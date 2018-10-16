@@ -1,0 +1,16 @@
+{
+    "name": "codeinwp/otter-blocks",
+    "description": "A set of awesome Gutenberg Blocks by ThemeIsle.",
+    "type": "wordpress-plugin",
+    "require": {
+        "codeinwp/gutenberg-blocks": "dev-master"
+    },
+    "license": "GPL-2.0+",
+    "authors": [
+        {
+            "name": "ThemeIsle Team",
+            "email": "friends@themeisle.com"
+        }
+    ],
+    "minimum-stability": "dev"
+}

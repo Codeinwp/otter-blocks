@@ -1,0 +1,28 @@
+{
+  "name": "otter-blocks",
+  "version": "1.0.0",
+  "description": "Awesome Gutenberg Blocks",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Codeinwp/otter-blocks.git"
+  },
+  "keywords": [
+    "wordpress-plugin"
+  ],
+  "textdomain": "otter-blocks",
+  "category": "plugins",
+  "author": "ThemeIsle <friends@themeisle.com>",
+  "license": "GPL-2.0+",
+  "bugs": {
+    "url": "https://github.com/Codeinwp/otter-blocks/issues"
+  },
+  "pot": {
+    "reportmsgidbugsto": "https://github.com/Codeinwp/otter-blocks/issues",
+    "languageteam": "Themeisle Translate <friends@themeisle.com>",
+    "lasttranslator": "Themeisle Translate Team <friends@themeisle.com>"
+  },
+  "devDependencies": {
+    "grunt-plugin-fleet": "github:codeinwp/grunt-plugin-fleet",
+    "load-project-config": "~0.2.0"
+  }
+}

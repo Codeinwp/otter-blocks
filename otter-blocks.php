@@ -1,0 +1,39 @@
+<?php
+/**
+ * Plugin Name:       Otter Blocks - Awesome Gutenberg Blocks
+ * Plugin URI:        https://themeisle.com/plugins/otter-blocks
+ * Description:       Create beautiful and attracting posts, pages, and landing pages with Otter Blocks. Otter Blocks comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
+ * Version:           1.0.0
+ * Author:            ThemeIsle
+ * Author URI:        https://themeisle.com
+ * License:           GPL-2.0+
+ * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * Text Domain:       otter-blocks
+ * Domain Path:       /languages
+ * WordPress Available:  yes
+ * Requires License:    no
+ */
+
+// If this file is called directly, abort.
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
+
+define( 'OTTER_BLOCKS_URL', plugins_url( '/', __FILE__ ) );
+define( 'OTTER_BLOCKS_PATH', dirname( __FILE__ ) );
+
+$vendor_file = OTTER_BLOCKS_PATH . '/vendor/autoload.php';
+if ( is_readable( $vendor_file ) ) {
+	require_once $vendor_file;
+}
+
+add_action(
+	'plugins_loaded',
+	function () {
+		// call this only if Gutenberg is active
+		if ( function_exists( 'register_block_type' ) ) {
+			require_once dirname( __FILE__ ) . '/class-otter-blocks.php';
+			Otter_Blocks::instance();
+		}
+	}
+);
