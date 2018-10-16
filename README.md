@@ -1,14 +1,14 @@
 # Otter Blocks - Awesome Gutenberg Blocks #
-**Contributors:** [themeisle](https://profiles.wordpress.org/themeisle), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani)
-**Tags:** gutenberg, block, services block, pricing block, testimonials block, post grid block, google map block, font awesome block, sharing icons block, about author block, accodion block, pie chart block, notice block, tweet block
-**Requires at least:** 4.9
+**Contributors:** [themeisle](https://profiles.wordpress.org/themeisle), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani)  
+**Tags:** gutenberg, block, services block, pricing block, testimonials block, post grid block, google map block, font awesome block, sharing icons block, about author block, accodion block, pie chart block, notice block, tweet block. 
+**Requires at least:** 4.9.  
 **Tested up to:** 4.9  
 **Requires PHP:** 5.4  
 **Stable tag:** trunk
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html  
 
-Otter Blocks - Awesome Gutenberg Blocks
+Create beautiful and attracting posts, pages, and landing pages with Otter Blocks. Otter Blocks comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
 
 ## Description ##
 
