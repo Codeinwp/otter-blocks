@@ -2,12 +2,14 @@
 
 /**
  * Class Otter_Blocks
+ *
+ * Otter Blocks class to initilize Guterberg Blocks.
  */
 class Otter_Blocks {
 
-	protected $blocks_classes = array();
-
 	/**
+	 * Otter_Blocks class instance.
+	 *
 	 * @var Otter_Blocks
 	 */
 	public static $instance = null;
@@ -42,6 +44,9 @@ class Otter_Blocks {
 		wp_enqueue_style( 'font-awesome-4-shims', plugins_url( 'assets/fontawesome/css/v4-shims.min.css', __FILE__ ) );
 	}
 
+	/**
+	 * Load Gutenberg Blocks
+	 */
 	function load_gutenberg_blocks() {
 		if ( class_exists( '\ThemeIsle\GutenbergBlocks' ) ) {
 			\ThemeIsle\GutenbergBlocks::instance( $this->name );
@@ -49,6 +54,8 @@ class Otter_Blocks {
 	}
 
 	/**
+	 * Instance Otter Blocks class.
+	 *
 	 * @static
 	 * @since 1.0.0
 	 * @access public
