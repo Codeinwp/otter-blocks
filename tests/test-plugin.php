@@ -14,6 +14,6 @@ class Test_Plugin extends WP_Ajax_UnitTestCase {
 	 * Test SDK loading.
 	 */
 	public function test_generic() {
-		$this->assertTrue( defined( "OTTER_BLOCKS_URL" ) );
+		$this->assertTrue( defined( 'OTTER_BLOCKS_URL' ) );
 	}
 }
