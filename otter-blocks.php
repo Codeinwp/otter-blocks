@@ -37,8 +37,11 @@ add_action(
 		}
 	}
 );
-add_filter( 'themeisle_sdk_products', function ( $products ) {
-	$products[] = __FILE__;
+add_filter(
+	'themeisle_sdk_products',
+	function ( $products ) {
+		$products[] = __FILE__;
 
-	return $products;
-} );
+		return $products;
+	}
+);
