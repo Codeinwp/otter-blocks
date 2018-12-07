@@ -1,7 +1,7 @@
 # Otter Blocks - Awesome Gutenberg Blocks #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani)  
 **Tags:** gutenberg, block, services block, pricing block, testimonials block, post grid block, google map block, font awesome block, sharing icons block, about author block, accodion block, pie chart block, notice block, tweet block  
-**Requires at least:** 4.9    
+**Requires at least:** 4.9      
 **Tested up to:** 5.0    
 **Requires PHP:** 5.4    
 **Stable tag:** trunk  
