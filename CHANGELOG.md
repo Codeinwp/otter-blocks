@@ -1,4 +1,8 @@
 
+ ### v1.0.3 - 2018-12-07 
+ **Changes:** 
+ * - Fixes issue with Posts Grid block displaying wrong author
+ 
  ### v1.0.2 - 2018-12-05 
  **Changes:** 
  * - Fixed Notice Block and Font Awesome Icons
