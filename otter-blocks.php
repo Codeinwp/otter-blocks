@@ -3,7 +3,7 @@
  * Plugin Name:       Otter Blocks - Awesome Gutenberg Blocks
  * Plugin URI:        https://themeisle.com/plugins/otter-blocks
  * Description:       Create beautiful and attracting posts, pages, and landing pages with Otter Blocks. Otter Blocks comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
- * Version:           1.0.2
+ * Version:           1.0.3
  * Author:            ThemeIsle
  * Author URI:        https://themeisle.com
  * License:           GPL-2.0+
