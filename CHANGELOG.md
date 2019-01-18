@@ -1,4 +1,11 @@
 
+ ### v1.1.0 - 2019-01-18 
+ **Changes:** 
+ * Added Section Block, with Template Library
+* Added Advanced Heading Block
+* Added Button Group Block
+* Deprecated Notice, Click to Tweet, Chart, Accordion, blocks
+ 
  ### v1.0.4 - 2018-12-07 
  **Changes:** 
  * - Fixed dependencies issue

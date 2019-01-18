@@ -1,13 +1,14 @@
 # Otter: Blocks for Gutenberg #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani)  
 **Tags:** gutenberg, block, services block, pricing block, testimonials block, post grid block, google map block, font awesome block, sharing icons block, about author block, columns block, advanced columns, section, columds, row, layout  
-**Requires at least:** 4.9    
+**Requires at least:** 4.9      
+**Tested up to:** 5.0    
 **Requires PHP:** 5.4    
 **Stable tag:** trunk  
 **License:** GPLv3    
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html    
 
-Create beautiful and attracting posts, pages, and landing pages with Otter: Blocks for Gutenberg. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
+**Create beautiful and attracting posts, pages, and landing pages with Otter:** Blocks for Gutenberg. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.  
 
 ## Description ##
 
@@ -35,13 +36,6 @@ It has:
 - Font Awesome Block
 - Sharing Icons Block
 - Plugin Card Block
-
-## Installation ##
-Activating this plugin is just like any other plugin. If you’ve uploaded the plugin package to your server already, skip to step 5 below:
-
-1. Install using the WordPress built-in Plugin installer, or Extract the zip file and drop the contents in the wp-content/plugins/ directory of your WordPress installation.
-2. Activate the plugin through the ‘Plugins’ menu in WordPress.
-3. Go to Gutenberg editor and play around with the block.
 
 ## Screenshots ##
 
