@@ -1,7 +1,7 @@
 {
   "name": "otter-blocks",
-  "version": "1.0.4",
-  "description": "Awesome Gutenberg Blocks",
+  "version": "1.1.0",
+  "description": "Otter: Blocks for Gutenberg",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Codeinwp/otter-blocks.git"
