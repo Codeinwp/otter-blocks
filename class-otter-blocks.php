@@ -21,8 +21,8 @@ class Otter_Blocks {
 	 * @access  public
 	 */
 	public function __construct() {
-		$this->name           = __( 'Otter Blocks', 'otter-blocks' );
-		$this->description    = __( 'A set of awesome Gutenberg Blocks!', 'otter-blocks' );
+		$this->name           = __( 'Otter', 'otter-blocks' );
+		$this->description    = __( 'Blocks for Gutenberg', 'otter-blocks' );
 	}
 
 	/**

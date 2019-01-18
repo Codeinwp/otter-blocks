@@ -1,36 +1,40 @@
-# Otter Blocks - Awesome Gutenberg Blocks #
+# Otter: Blocks for Gutenberg #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani)  
-**Tags:** gutenberg, block, services block, pricing block, testimonials block, post grid block, google map block, font awesome block, sharing icons block, about author block, accodion block, pie chart block, notice block, tweet block  
-**Requires at least:** 4.9      
-**Tested up to:** 5.0    
+**Tags:** gutenberg, block, services block, pricing block, testimonials block, post grid block, google map block, font awesome block, sharing icons block, about author block, columns block, advanced columns, section, columds, row, layout  
+**Requires at least:** 4.9    
 **Requires PHP:** 5.4    
 **Stable tag:** trunk  
 **License:** GPLv3    
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html    
 
-Create beautiful and attracting posts, pages, and landing pages with Otter Blocks. Otter Blocks comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
+Create beautiful and attracting posts, pages, and landing pages with Otter: Blocks for Gutenberg. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
 
 ## Description ##
 
-Create beautiful and attracting posts, pages, and landing pages with Otter Blocks. Otter Blocks comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
+Otter: Blocks for Gutenberg is a lightweight WordPress plugin that brings extra Gutenberg blocks to your site. So if you want to create complex pages and posts optimized for e-commerce, business, social media, blogs - you name it -comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
 
-See what you can do with Otter Blocks: [https://demo.themeisle.com/otter-blocks/](https://demo.themeisle.com/otter-blocks/)
+See what you can do with Otter:
+
+https://www.youtube.com/watch?v=uLNL1WGnzWo
+
+A feature that is worth mentioning is the Section Block that allows you to build columns and various layouts in Gutenberg. Moreover, aside from the Gutenberg blocks, the plugin provides a beautiful library of pre-built Gutenberg-compatible templates that you can simply import via one click. The templates have block-friendly layouts that can be customized with no effort.
+
+Every block can be customized in a few seconds, as they come with an easy and intuitive user 
 
 It has:
 
-- Our Services Block
+- Section Block
+- Advanced Heading Block
+- Button Group
+- Service Block
 - Pricing Block
-- Testimonials Block
-- Post Grid Block
-- Plugin Card Block
-- Google Map Block
-- Font Awesome Icon Block
-- Sharing Icons Block
+- Testimonial Block
+- Google Maps Block
 - About Author Block
-- Accordion Block
-- Pie Chart Block
-- Notice Block
-- Click to Tweet Block
+- Post Grid Block
+- Font Awesome Block
+- Sharing Icons Block
+- Plugin Card Block
 
 ## Installation ##
 Activating this plugin is just like any other plugin. If you’ve uploaded the plugin package to your server already, skip to step 5 below:
@@ -42,7 +46,6 @@ Activating this plugin is just like any other plugin. If you’ve uploaded the p
 ## Screenshots ##
 
 1. Otter Blocks
-2. Pricing Block
-3. Service Block
-4. Pie Chart Block
-5. Plugin Card Block
+2. Section Block
+3. Template Library
+4. Pre-built Section
