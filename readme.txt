@@ -47,6 +47,28 @@ It has:
 4. Pre-built Section
 
 == Changelog ==
+= 1.1.1 - 2019-01-25  = 
+
+* Added Developer Documentation
+* Added Typography Option to Block Toolbar
+* Fixed Padding Resizer
+* Made Template Library Responsive
+* Fixed Close Icon Alignment on Chrome
+* Fixed Alignment with Span Tag in Advanced Heading Block
+* Added Line Height Option to Button Group
+* Added Option to Collapse Buttons
+* Fixed Icon Issue in Button Group
+* Increased Maximum Font Size Limit
+* Fixed Font Weight Value Error
+* Fixed Fatal Error Caused by Gutenberg Plugin
+* Fixed Unescaped Character Preview in Post Grid
+* Improved Handling of Unique Block IDs
+* Added Left/Right Margin Options to Section Column
+* Added Controls for Responsive Alignment to Advanced Heading Block
+* Fixed Vertical Alignment in Section Block
+* Fixed Alignment Issue in Social Sharing Block
+
+
 
 = 1.1.0 - 2019-01-18 =
 * Added Section Block, with Template Library
