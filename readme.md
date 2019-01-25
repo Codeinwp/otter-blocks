@@ -14,6 +14,8 @@
 
 Otter: Blocks for Gutenberg is a lightweight WordPress plugin that brings extra Gutenberg blocks to your site. So if you want to create complex pages and posts optimized for e-commerce, business, social media, blogs - you name it -comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
 
+[Live Demo](http://demo.themeisle.com/otter-playground/)
+
 See what you can do with Otter:
 
 https://www.youtube.com/watch?v=uLNL1WGnzWo
@@ -43,3 +45,28 @@ It has:
 2. Section Block
 3. Template Library
 4. Pre-built Section
+
+## Changelog ##
+
+### 1.1.0 - 2019-01-18 ###
+* Added Section Block, with Template Library
+* Added Advanced Heading Block
+* Added Button Group Block
+* Deprecated Notice, Click to Tweet, Chart, Accordion, blocks
+
+### 1.0.4 - 2018-12-07 ###
+* Fixed dependencies issue
+ 
+### 1.0.3 - 2018-12-07 ###
+* Fixes issue with Posts Grid block displaying wrong author
+ 
+### 1.0.2 - 2018-12-05 ###
+* Fixed Notice Block and Font Awesome Icons
+* Optimized build size
+ 
+### 1.0.1 - 2018-10-29 ###
+* Bug fixed with Google Map block.
+ 
+### 1.0.0 - 2018-10-17 ###
+* Adds docker env.
+* Adds hash back.
