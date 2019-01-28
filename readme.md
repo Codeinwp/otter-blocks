@@ -47,6 +47,12 @@ It has:
 4. Pre-built Section
 
 ## Changelog ##
+### 1.1.2 - 2019-01-28  ###
+
+* Fix Button Group Migration
+* Revamped Font Awesome Icon Picker
+
+
 ### 1.1.1 - 2019-01-25  ###
 
 * Added Developer Documentation

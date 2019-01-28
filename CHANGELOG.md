@@ -1,4 +1,9 @@
 
+ ### v1.1.2 - 2019-01-28 
+ **Changes:** 
+ * Fix Button Group Migration
+* Revamped Font Awesome Icon Picker
+ 
  ### v1.1.1 - 2019-01-25 
  **Changes:** 
  * Added Developer Documentation
