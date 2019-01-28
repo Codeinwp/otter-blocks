@@ -1,4 +1,4 @@
-# Otter: Blocks for Gutenberg #
+# Gutenberg Blocks and Template Library by Otter #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani)  
 **Tags:** gutenberg, block, services block, pricing block, testimonials block, post grid block, google map block, font awesome block, sharing icons block, about author block, columns block, advanced columns, section, columds, row, layout  
 **Requires at least:** 4.9    
@@ -7,11 +7,11 @@
 **License:** GPLv3    
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html    
 
-Create beautiful and attracting posts, pages, and landing pages with Otter: Blocks for Gutenberg. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
+Create beautiful and attracting posts, pages, and landing pages with Gutenberg Blocks and Template Library by Otter. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
 
 ## Description ##
 
-Otter: Blocks for Gutenberg is a lightweight WordPress plugin that brings extra Gutenberg blocks to your site. So if you want to create complex pages and posts optimized for e-commerce, business, social media, blogs - you name it -comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
+Gutenberg Blocks and Template Library by Otter is a lightweight WordPress plugin that brings extra Gutenberg blocks to your site. So if you want to create complex pages and posts optimized for e-commerce, business, social media, blogs - you name it -comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
 
 [Live Demo](http://demo.themeisle.com/otter-playground/)
 
