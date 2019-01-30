@@ -1,4 +1,4 @@
-=== Otter: Blocks for Gutenberg ===
+=== Gutenberg Blocks and Template Library by Otter ===
 Contributors: themeisle, hardeepasrani
 Tags: gutenberg, block, services block, pricing block, testimonials block, post grid block, google map block, font awesome block, sharing icons block, about author block, columns block, advanced columns, section, columds, row, layout
 Requires at least: 4.9    
@@ -8,11 +8,11 @@ Stable tag: trunk
 License: GPLv3  
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html  
 
-Create beautiful and attracting posts, pages, and landing pages with Otter: Blocks for Gutenberg. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
+Create beautiful and attracting posts, pages, and landing pages with Gutenberg Blocks and Template Library by Otter. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
 
 == Description ==
 
-Otter: Blocks for Gutenberg is a lightweight WordPress plugin that brings extra Gutenberg blocks to your site. So if you want to create complex pages and posts optimized for e-commerce, business, social media, blogs - you name it -comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
+Gutenberg Blocks and Template Library by Otter is a lightweight WordPress plugin that brings extra Gutenberg blocks to your site. So if you want to create complex pages and posts optimized for e-commerce, business, social media, blogs - you name it -comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
 
 [Live Demo](http://demo.themeisle.com/otter-playground/)
 
@@ -47,6 +47,28 @@ It has:
 4. Pre-built Section
 
 == Changelog ==
+= 1.1.1 - 2019-01-25  = 
+
+* Added Developer Documentation
+* Added Typography Option to Block Toolbar
+* Fixed Padding Resizer
+* Made Template Library Responsive
+* Fixed Close Icon Alignment on Chrome
+* Fixed Alignment with Span Tag in Advanced Heading Block
+* Added Line Height Option to Button Group
+* Added Option to Collapse Buttons
+* Fixed Icon Issue in Button Group
+* Increased Maximum Font Size Limit
+* Fixed Font Weight Value Error
+* Fixed Fatal Error Caused by Gutenberg Plugin
+* Fixed Unescaped Character Preview in Post Grid
+* Improved Handling of Unique Block IDs
+* Added Left/Right Margin Options to Section Column
+* Added Controls for Responsive Alignment to Advanced Heading Block
+* Fixed Vertical Alignment in Section Block
+* Fixed Alignment Issue in Social Sharing Block
+
+
 
 = 1.1.0 - 2019-01-18 =
 * Added Section Block, with Template Library
