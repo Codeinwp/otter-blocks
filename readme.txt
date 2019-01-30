@@ -47,6 +47,14 @@ It has:
 4. Pre-built Section
 
 == Changelog ==
+= 1.1.3 - 2019-01-30  = 
+
+* Adds Feedback for Button Group Switch
+* Fixes Post Grid throwing an error
+* Fixes issue with multiple block templates being inserted on the same post
+* Fixes Font Awesome block alignment on the backend
+
+
 = 1.1.2 - 2019-01-28  = 
 
 * Fix Button Group Migration

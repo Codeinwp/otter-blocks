@@ -1,4 +1,11 @@
 
+ ### v1.1.3 - 2019-01-30 
+ **Changes:** 
+ * Adds Feedback for Button Group Switch
+* Fixes Post Grid throwing an error
+* Fixes issue with multiple block templates being inserted on the same post
+* Fixes Font Awesome block alignment on the backend
+ 
  ### v1.1.2 - 2019-01-28 
  **Changes:** 
  * Fix Button Group Migration
