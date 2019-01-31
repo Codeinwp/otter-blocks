@@ -1,4 +1,10 @@
 
+ ### v1.1.4 - 2019-01-31 
+ **Changes:** 
+ * Fix Font Awesome Block update path
+* Show selected font in Google Font picker
+* Fix Font Awesome Picker component being case-sensitive
+ 
  ### v1.1.3 - 2019-01-30 
  **Changes:** 
  * Adds Feedback for Button Group Switch

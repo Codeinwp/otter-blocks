@@ -47,6 +47,13 @@ It has:
 4. Pre-built Section
 
 ## Changelog ##
+### 1.1.4 - 2019-01-31  ###
+
+* Fix Font Awesome Block update path
+* Show selected font in Google Font picker
+* Fix Font Awesome Picker component being case-sensitive
+
+
 ### 1.1.3 - 2019-01-30  ###
 
 * Adds Feedback for Button Group Switch
