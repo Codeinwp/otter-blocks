@@ -2,7 +2,7 @@
 Contributors: themeisle, hardeepasrani
 Tags: gutenberg, block, services block, pricing block, testimonials block, post grid block, google map block, font awesome block, sharing icons block, about author block, columns block, advanced columns, section, columds, row, layout
 Requires at least: 4.9    
-Tested up to: 5.0  
+Tested up to: 5.1  
 Requires PHP: 5.4  
 Stable tag: trunk
 License: GPLv3  
@@ -18,7 +18,7 @@ Gutenberg Blocks and Template Library by Otter is a lightweight WordPress plugin
 
 See what you can do with Otter:
 
-https://www.youtube.com/watch?v=uLNL1WGnzWo
+https://www.youtube.com/watch?v=d8fRY4Xa7Vc
 
 A feature that is worth mentioning is the Section Block that allows you to build columns and various layouts in Gutenberg. Moreover, aside from the Gutenberg blocks, the plugin provides a beautiful library of pre-built Gutenberg-compatible templates that you can simply import via one click. The templates have block-friendly layouts that can be customized with no effort.
 
