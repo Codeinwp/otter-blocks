@@ -21,6 +21,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 define( 'OTTER_BLOCKS_URL', plugins_url( '/', __FILE__ ) );
 define( 'OTTER_BLOCKS_PATH', dirname( __FILE__ ) );
+define( 'OTTER_BLOCKS_VERSION', '1.1.5' );
 
 $vendor_file = OTTER_BLOCKS_PATH . '/vendor/autoload.php';
 if ( is_readable( $vendor_file ) ) {
