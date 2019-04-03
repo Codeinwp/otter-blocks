@@ -50,8 +50,14 @@ class Otter_Blocks {
 	 * Load Gutenberg Blocks
 	 */
 	function load_gutenberg_blocks() {
+		load_plugin_textdomain( 'otter-blocks', false, basename( dirname( __FILE__ ) ) . '/languages' );
+
 		if ( class_exists( '\ThemeIsle\GutenbergBlocks' ) ) {
 			\ThemeIsle\GutenbergBlocks::instance( $this->name );
+		}
+
+		if ( class_exists( '\ThemeIsle\GutenbergCSS' ) ) {
+			\ThemeIsle\GutenbergCSS::instance();
 		}
 	}
 
