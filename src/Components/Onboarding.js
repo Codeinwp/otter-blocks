@@ -34,7 +34,7 @@ class Onboarding extends Component {
 				},
 				{
 					target: '.otter-step-two',
-					content: __( 'CSS Modules allow you to add custom CSS to your blocks in the Block Editor. You can jazz up your blocks with some sparkly CSS.' )
+					content: __( 'Jazz up your blocks with some sparkly custom CSS right inside the block. CSS Modules allow you to add custom CSS to your blocks in the Block Editor.' )
 				},
 				{
 					target: '.otter-step-three',
@@ -54,11 +54,11 @@ class Onboarding extends Component {
 				},
 				{
 					target: '.otter-step-seven',
-					content: __( 'And if you love what we do, please leave us a good review at WordPress.org. Your review keeps us motivated to make awesome things.' )
+					content: __( 'And if you love what we do, please leave us a review at WordPress.org. Your review keeps us motivated to make awesome things.' )
 				},
 				{
 					target: '.otter-step-one',
-					content: __( 'That\'s it for now! Hope you enjoying Otter and love it as much as we do.' )
+					content: __( 'That\'s it for now! Hope you enjoy Otter and love it as much as we do.' )
 				}
 			]
 		};
@@ -105,7 +105,7 @@ class Onboarding extends Component {
 						className="otter-onboarding-modal"
 					>
 						<div className="otter-onboarding-modal-content">
-							{ __( 'Thank you for installing Otter. Would you like to start the onboarding wizard which will help you personalize the plugin for yourself?' ) }
+							{ __( 'Would you like to start the onboarding wizard which will help you personalize the plugin for yourself?' ) }
 						</div>
 
 						<div className="otter-onboarding-modal-action">
@@ -152,5 +152,3 @@ class Onboarding extends Component {
 }
 
 export default Onboarding;
-
-// finished, skipped

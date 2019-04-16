@@ -211,36 +211,35 @@ class Main extends Component {
 						</PanelBody>
 					</div>
 
-					<div className="otter-step-six">
-						<PanelBody>
-							<div className="otter-info">
-								<h2>{ __( 'Got a question for us?' ) }</h2>
+					<PanelBody>
+						<div className="otter-info">
+							<h2>{ __( 'Got a question for us?' ) }</h2>
 
-								<p>{ __( 'We would love to help you out if you need any help with Otter.' ) }</p>
+							<p>{ __( 'We would love to help you out if you need any help with Otter.' ) }</p>
 
-								<div className="otter-info-button-group">
-									<Button
-										isDefault
-										isLarge
-										target="_blank"
-										href="https://wordpress.org/support/plugin/otter-blocks"
-									>
-										{ __( 'Ask a question' ) }
-									</Button>
+							<div className="otter-info-button-group">
+								<Button
+									isDefault
+									isLarge
+									target="_blank"
+									href="https://wordpress.org/support/plugin/otter-blocks"
+									className="otter-step-six"
+								>
+									{ __( 'Ask a question' ) }
+								</Button>
 
-									<Button
-										isDefault
-										isLarge
-										target="_blank"
-										href="https://wordpress.org/support/plugin/otter-blocks/reviews/#new-post"
-										className="otter-step-seven"
-									>
-										{ __( 'Leave a review' ) }
-									</Button>
-								</div>
+								<Button
+									isDefault
+									isLarge
+									target="_blank"
+									href="https://wordpress.org/support/plugin/otter-blocks/reviews/#new-post"
+									className="otter-step-seven"
+								>
+									{ __( 'Leave a review' ) }
+								</Button>
 							</div>
-						</PanelBody>
-					</div>
+						</div>
+					</PanelBody>
 				</div>
 			</Fragment>
 		);

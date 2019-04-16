@@ -193,11 +193,23 @@
 }
 
 .otter-onboarding-modal {
+	max-width: 350px;
+
+	.components-modal__header {
+		text-align: center;
+
+		h1 {
+			width: 100%;
+		}
+	}
+
 	.otter-onboarding-modal-content {
-		margin: 10px 0;
+		text-align: center;
+		margin: 10px 0 15px;
 	}
 
 	.otter-onboarding-modal-action {
+		text-align: center;
 		margin: 10px 0;
 
 		.components-button {
@@ -207,6 +219,10 @@
 			margin-right: 10px;
 		}
 	}
+}
+
+.components-modal__screen-overlay {
+	background-color: rgba(0, 0, 0, 0.5);
 }
 
 .react-joyride__tooltip {
@@ -220,6 +236,10 @@
 		&:nth-of-type( 2 ) {
 			margin-top: 5px !important;
 		}
+	}
+
+	button {
+		text-decoration: underline;
 	}
 }
 
@@ -253,6 +273,7 @@
 
 		&[data-action="back"] {
 			color: #23282d !important;
+			font-size: 14px !important;
 		}
 	}
 }
