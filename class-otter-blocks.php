@@ -75,7 +75,7 @@ class Otter_Blocks {
 	/**
 	 * Register Admin Page
 	 * 
-	 * @since   2.0.0
+	 * @since   1.2.0
 	 * @access  public
 	 */
 	public function register_menu_page() {
@@ -93,7 +93,7 @@ class Otter_Blocks {
 	/**
 	 * Register Settings
 	 * 
-	 * @since   2.0.0
+	 * @since   1.2.0
 	 * @access  public
 	 */
 	public function register_settings() {
@@ -134,7 +134,7 @@ class Otter_Blocks {
 	/**
 	 * Load assets for option page.
 	 * 
-	 * @since   2.0.0
+	 * @since   1.2.0
 	 * @access  public
 	 */
 	public function enqueue_options_assets() {
@@ -170,7 +170,7 @@ class Otter_Blocks {
 	/**
 	 * Register Admin Page
 	 * 
-	 * @since   2.0.0
+	 * @since   1.2.0
 	 * @access  public
 	 */
 	public function menu_callback() {
@@ -180,7 +180,7 @@ class Otter_Blocks {
 	/**
 	 * Maybe redirect to dashboard page.
 	 * 
-	 * @since   2.0.0
+	 * @since   1.2.0
 	 * @access  public
 	 */
 	public function maybe_redirect() {
