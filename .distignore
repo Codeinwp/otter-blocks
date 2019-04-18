@@ -19,3 +19,8 @@ composer.json
 composer.lock
 package-lock.json
 themeisle-hash.json
+vendor/codeinwp/gutenberg-blocks/src/**/*.js
+vendor/codeinwp/gutenberg-blocks/src/**/*.json
+vendor/codeinwp/gutenberg-blocks/src/**/*.scss
+!vendor/codeinwp/gutenberg-blocks/src/frontend/**/*.js
+vendor/codeinwp/gutenberg-css/src

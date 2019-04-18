@@ -1,7 +1,11 @@
 {
   "name": "otter-blocks",
-  "version": "1.1.5",
+  "version": "1.2.0",
   "description": "Gutenberg Blocks and Template Library by Otter",
+  "scripts": {
+    "build": "cross-env BABEL_ENV=default NODE_ENV=production webpack",
+    "dev": "cross-env BABEL_ENV=default NODE_ENV=development webpack --watch"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Codeinwp/otter-blocks.git"
@@ -21,8 +25,33 @@
     "languageteam": "Themeisle Translate <friends@themeisle.com>",
     "lasttranslator": "Themeisle Translate Team <friends@themeisle.com>"
   },
+  "dependencies": {
+    "classnames": "^2.2.6",
+    "react-joyride": "^2.0.5",
+    "react-notifications-component": "^1.1.1"
+  },
   "devDependencies": {
+    "@babel/core": "^7.1.6",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/plugin-transform-async-to-generator": "^7.1.0",
+    "@babel/plugin-transform-react-jsx": "^7.1.6",
+    "@babel/preset-env": "^7.1.6",
+    "autoprefixer": "^9.3.1",
+    "babel-loader": "^8.0.4",
+    "cross-env": "3.2.4",
+    "css-loader": "^1.0.1",
+    "eslint": "^5.7.0",
+    "eslint-config-wordpress": "^2.0.0",
+    "eslint-loader": "^2.1.1",
+    "eslint-plugin-react": "^7.11.1",
     "grunt-plugin-fleet": "github:codeinwp/grunt-plugin-fleet",
-    "load-project-config": "~0.2.0"
+    "load-project-config": "~0.2.0",
+    "mini-css-extract-plugin": "^0.4.4",
+    "node-sass": "^4.10.0",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^7.1.0",
+    "url-loader": "^1.1.2",
+    "webpack": "^4.25.1",
+    "webpack-cli": "^3.1.2"
   }
 }
