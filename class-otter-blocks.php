@@ -43,7 +43,7 @@ class Otter_Blocks {
 
 	/**
 	 * Load assets for our blocks.
-	 * 
+	 *
 	 * @since   1.0.0
 	 * @access  public
 	 */
@@ -56,7 +56,7 @@ class Otter_Blocks {
 
 	/**
 	 * Load Gutenberg Blocks
-	 * 
+	 *
 	 * @since   1.0.0
 	 * @access  public
 	 */
@@ -74,17 +74,17 @@ class Otter_Blocks {
 
 	/**
 	 * Register Admin Page
-	 * 
+	 *
 	 * @since   1.2.0
 	 * @access  public
 	 */
 	public function register_menu_page() {
-		$page_hook_suffix = add_options_page( 
-			__( 'Otter', 'textdomain' ),
-        	__( 'Otter', 'textdomain' ),
-        	'manage_options',
-        	'otter',
-        	array( $this, 'menu_callback' )
+		$page_hook_suffix = add_options_page(
+			__( 'Otter', 'otter-blocks' ),
+			__( 'Otter', 'otter-blocks' ),
+			'manage_options',
+			'otter',
+			array( $this, 'menu_callback' )
 		);
 
 		add_action( "admin_print_scripts-{$page_hook_suffix}", array( $this, 'enqueue_options_assets' ) );
@@ -92,7 +92,7 @@ class Otter_Blocks {
 
 	/**
 	 * Register Settings
-	 * 
+	 *
 	 * @since   1.2.0
 	 * @access  public
 	 */
@@ -102,9 +102,9 @@ class Otter_Blocks {
 			'themeisle_blocks_settings_redirect',
 			array(
 				'type'              => 'boolean',
-				'description'       => __( 'Redirect on new install.', 'textdomain' ),
+				'description'       => __( 'Redirect on new install.', 'otter-blocks' ),
 				'show_in_rest'      => true,
-				'default'           => true
+				'default'           => true,
 			)
 		);
 
@@ -113,9 +113,9 @@ class Otter_Blocks {
 			'themeisle_blocks_settings_tour',
 			array(
 				'type'              => 'boolean',
-				'description'       => __( 'Show tour for Otter.', 'textdomain' ),
+				'description'       => __( 'Show tour for Otter.', 'otter-blocks' ),
 				'show_in_rest'      => true,
-				'default'           => true
+				'default'           => true,
 			)
 		);
 
@@ -124,16 +124,16 @@ class Otter_Blocks {
 			'themeisle_blocks_settings_css_module',
 			array(
 				'type'              => 'boolean',
-				'description'       => __( 'Custom CSS module allows to add custom CSS to each block in Block Editor.', 'textdomain' ),
+				'description'       => __( 'Custom CSS module allows to add custom CSS to each block in Block Editor.', 'otter-blocks' ),
 				'show_in_rest'      => true,
-				'default'           => true
+				'default'           => true,
 			)
 		);
 	}
 
 	/**
 	 * Load assets for option page.
-	 * 
+	 *
 	 * @since   1.2.0
 	 * @access  public
 	 */
@@ -143,7 +143,7 @@ class Otter_Blocks {
 		} else {
 			$version = OTTER_BLOCKS_VERSION;
 		}
-	
+
 		$tour = get_option( 'themeisle_blocks_settings_tour' );
 
 		wp_enqueue_style(
@@ -160,16 +160,18 @@ class Otter_Blocks {
 			true
 		);
 
-		wp_localize_script( 'otter-blocks-scripts', 'otterObj', array(
-			'version' => OTTER_BLOCKS_VERSION,
-			'assetsPath' => plugins_url( 'assets/', __FILE__ ),
-			'showTour' => $tour
-		) );
+		wp_localize_script(
+			'otter-blocks-scripts', 'otterObj', array(
+				'version' => OTTER_BLOCKS_VERSION,
+				'assetsPath' => plugins_url( 'assets/', __FILE__ ),
+				'showTour' => $tour,
+			)
+		);
 	}
 
 	/**
 	 * Register Admin Page
-	 * 
+	 *
 	 * @since   1.2.0
 	 * @access  public
 	 */
@@ -179,7 +181,7 @@ class Otter_Blocks {
 
 	/**
 	 * Maybe redirect to dashboard page.
-	 * 
+	 *
 	 * @since   1.2.0
 	 * @access  public
 	 */
@@ -192,11 +194,11 @@ class Otter_Blocks {
 			return;
 		}
 
-		if ( is_network_admin() || isset( $_GET[ 'activate-multi' ] ) ) {
+		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) {
 			return;
 		}
 
-		if ( ! get_option( 'themeisle_blocks_settings_tour') ) {
+		if ( ! get_option( 'themeisle_blocks_settings_tour' ) ) {
 			return;
 		}
 
