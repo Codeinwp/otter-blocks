@@ -47,6 +47,41 @@ It has:
 4. Pre-built Section
 
 ## Changelog ##
+### 1.1.5 - 2019-03-08  ###
+
+* Redesign Template Library
+* Added Dynamic Column Resizing
+* Added option to Auto Display Columns on Pages
+* Added Section Outline to make it easier to edit sections
+* Added Hover and Link settings to Font Awesome Block
+* Removed Google + icon from Sharing Icons Block
+* Fixed alignment controls
+* Fixed issue with non-editors not being able to use inline CSS and template library.
+* Fixed Button Group errors
+* Fixed Sharing Icons block having wrong icon order in front-end
+
+
+### 1.1.4 - 2019-01-31  ###
+
+* Fix Font Awesome Block update path
+* Show selected font in Google Font picker
+* Fix Font Awesome Picker component being case-sensitive
+
+
+### 1.1.3 - 2019-01-30  ###
+
+* Adds Feedback for Button Group Switch
+* Fixes Post Grid throwing an error
+* Fixes issue with multiple block templates being inserted on the same post
+* Fixes Font Awesome block alignment on the backend
+
+
+### 1.1.2 - 2019-01-28  ###
+
+* Fix Button Group Migration
+* Revamped Font Awesome Icon Picker
+
+
 ### 1.1.1 - 2019-01-25  ###
 
 * Added Developer Documentation
