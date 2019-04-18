@@ -1,0 +1,339 @@
+* {
+	box-sizing: inherit;
+}
+
+.settings_page_otter {
+	background: #f6f6f6;
+	font-size: 14px;
+	position: relative;
+	box-sizing: border-box;
+	font-family: Helvetica Neue,Helvetica,Arial,Lucida Grande,sans-serif;
+}
+
+#wpcontent {
+	padding-left: 0;
+}
+
+.auto-fold { 
+	#wpcontent {
+		padding-left: 0;
+	}
+}
+
+#otter {
+	.otter-header {
+		padding: 20px 10px;
+		background-color: #ffffff;
+		box-shadow: 0 1px 0 rgba(213,213,213,0.5),0 1px 2px #eee;
+
+		&.onboarding {
+
+			.otter-container {
+				.otter-logo {
+					justify-content: center;
+				}
+			}
+		}
+
+		.otter-container {
+			margin: 0 auto;
+			max-width: 100%;
+			max-width: 750px; // 930
+
+			.otter-logo {
+				display: flex;
+				align-items: center;
+
+				img {
+					max-width: 200px;
+				}
+	
+				.version {
+					background-color: #e5e5e5;
+					border-radius: 3px;
+					font-size: 0.8em;
+					font-weight: 400;
+					margin-left: 10px;
+					padding: 2px 7px;
+				}
+			}
+		}
+	}
+
+	.otter-main {
+		margin-left: auto;
+		margin-right: auto;
+		max-width: 750px;
+
+		.components-panel__body {
+			margin: 25px 0;
+			background: #fff;
+			border: 1px solid #e2e4e7;
+
+			.components-panel__body-toggle {
+				border-bottom: 1px solid #d6e2ed;
+			}
+
+			.components-panel__row {
+				padding: 20px 10px 10px;
+
+				.components-base-control {
+
+					.components-base-control__field {
+						display: flex;
+						align-items: center;
+						margin-bottom: 10px;
+					}
+
+					&.otter-text-field {
+						width: 100%;
+
+						.components-base-control__field {
+							display: block;
+
+							label {
+								font-weight: 600;
+								margin-bottom: 10px;
+							}
+
+							input {
+								border: 1px solid #b7c9d9;
+								border-radius: 3px;
+								font-size: 14px;
+								padding: 9px 15px;
+								width: 100%;
+								box-shadow: none;
+								height: 40px;
+								margin: 0 0 10px 0;
+								color: #444;
+
+								&:disabled {
+									background: #f6f6f6;
+									border-color: #eeeeee;
+									color: #bbbbbb;
+								}
+
+								&:focus {
+									border-color: #00a0d2;
+									box-shadow: 0 0 0 1px #00a0d2;
+									outline: 2px solid transparent;
+									outline-offset: -2px;
+								}
+							}
+
+							.otter-text-field-button-group {
+								display: flex;
+								align-items: center;
+								margin: 2px 0 15px;
+
+								.is-primary {
+									padding: 2px 20px;
+									height: auto;
+									font-size: 14px;
+									margin-right: 10px;
+								}
+							}
+						}
+					}
+				}
+			}
+
+			.otter-info {
+				padding: 0 10px 10px;
+				background-image: url( '../assets/images/logo-alt.png' );
+				background-size: 100px;
+				background-repeat: no-repeat;	
+				background-position: bottom right;
+
+				h2 {
+					font-weight: 300;
+					margin-bottom: 10px;
+				}
+
+				p {
+					margin: 0 0 1.5em 0;
+				}
+			
+				.otter-info-button-group {
+					display: flex;
+
+					.is-default {
+						padding: 2px 20px;
+						height: auto;
+						font-size: 14px;
+
+						&:first-child {
+							margin-right: 15px;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	.otter-footer {
+		text-align: center;
+		color: #72777c;
+		font-style: italic;
+		border-top: 1px #e1e1e1 solid;
+		border-bottom: 1px #e1e1e1 solid;
+		padding: 20px;
+		margin: 2rem 0 1.5rem;
+
+		.otter-container {
+			margin: 0 auto;
+		}
+	}
+
+	.components-placeholder {
+		background: #f6f6f6;
+		margin-top: 25vh;
+		margin-bottom: 25vh;
+	}
+}
+
+.otter-onboarding-modal {
+	max-width: 350px;
+
+	.components-modal__header {
+		text-align: center;
+
+		h1 {
+			width: 100%;
+		}
+	}
+
+	.otter-onboarding-modal-content {
+		text-align: center;
+		margin: 10px 0 15px;
+	}
+
+	.otter-onboarding-modal-action {
+		text-align: center;
+		margin: 10px 0;
+
+		.components-button {
+			padding: 2px 20px;
+			height: auto;
+			font-size: 14px;
+			margin-right: 10px;
+		}
+	}
+}
+
+.components-modal__screen-overlay {
+	background-color: rgba(0, 0, 0, 0.5);
+}
+
+.react-joyride__tooltip {
+	font-size: 13px !important;
+
+	> div {
+		text-align: left !important;
+	}
+
+	div {
+		&:nth-of-type( 2 ) {
+			margin-top: 5px !important;
+		}
+	}
+
+	button {
+		text-decoration: underline;
+	}
+}
+
+.react-joyride__beacon {
+	span {
+		&:first-child {
+			background-color: #00739c !important;
+		}
+
+		&:last-child {
+			background-color: rgba(26, 129, 165, 0.4) !important;
+			border: 2px solid #00739c !important;
+		}
+	}
+}
+
+.react-joyride__tooltip {
+	button {
+		&[data-action="primary"] {
+			background: #0085ba !important;
+			border-color: #006a95 #00648c #00648c !important;
+			box-shadow: inset 0 -1px 0 #00648c !important;
+			color: #fff !important;
+			text-decoration: none !important;
+			text-shadow: 0 -1px 1px #005d82,1px 0 1px #005d82,0 1px 1px #005d82,-1px 0 1px #005d82 !important;
+			padding: 2px 20px !important;
+			height: auto !important;
+			line-height: 28px !important;
+			font-size: 14px !important;
+		}
+
+		&[data-action="back"] {
+			color: #23282d !important;
+			font-size: 14px !important;
+		}
+	}
+}
+
+.react-notification-root {
+	.notification-container-top-right {
+		top: 50px;
+	}
+}
+
+.notification-item-root {
+
+	.notification-content {
+		padding: 12px 15px;
+	}
+	.notification-close {
+		top: auto;
+	}
+}
+
+@media ( min-width: 782px ) {
+
+	.react-joyride__spotlight,
+	.__floater,
+	.__floater__open,
+	.react-joyride__beacon {
+		margin-top: -32px;
+	}
+}
+
+@media ( max-width: 782px ) {
+	#otter {
+		.otter-header {
+
+			.otter-container {
+
+				.otter-logo {
+					justify-content: center;
+				}
+			}
+		}
+
+		.otter-info {
+			background-image: none !important;
+		}
+	}
+
+	.react-joyride__spotlight,
+	.__floater,
+	.__floater__open,
+	.react-joyride__beacon {
+		margin-top: -44px;
+	}
+}
+
+@media ( max-width: 600px ) {
+	.react-joyride__spotlight,
+	.__floater,
+	.__floater__open,
+	.react-joyride__beacon {
+		margin-top: 0;
+	}
+}
