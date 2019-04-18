@@ -47,6 +47,15 @@ It has:
 4. Pre-built Section
 
 == Changelog ==
+= 1.2.0 - 2019-04-18  = 
+
+* Added Otter Option page
+* Added update notice on Template Library
+* Redesigned Google Map block
+* Redesigned Post Grid block
+* Removed Handsontable from Chart block
+
+
 = 1.1.5 - 2019-03-08  = 
 
 * Redesign Template Library
