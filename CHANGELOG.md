@@ -1,4 +1,8 @@
 
+ ### v1.2.1 - 2019-04-20 
+ **Changes:** 
+ * Update version
+ 
  ### v1.2.0 - 2019-04-18 
  **Changes:** 
  * Added Otter Option page

@@ -47,6 +47,11 @@ It has:
 4. Pre-built Section
 
 == Changelog ==
+= 1.2.1 - 2019-04-20  = 
+
+* Update version
+
+
 = 1.2.0 - 2019-04-18  = 
 
 * Added Otter Option page
