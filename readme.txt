@@ -14,11 +14,9 @@ Create beautiful and attracting posts, pages, and landing pages with Gutenberg B
 
 Gutenberg Blocks and Template Library by Otter is a lightweight WordPress plugin that brings extra Gutenberg blocks to your site. So if you want to create complex pages and posts optimized for e-commerce, business, social media, blogs - you name it -comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
 
-[Live Demo](http://demo.themeisle.com/otter-playground/)
-
 See what you can do with Otter:
 
-https://www.youtube.com/watch?v=d8fRY4Xa7Vc
+https://www.youtube.com/watch?v=ypIeTgvYeRE
 
 A feature that is worth mentioning is the Section Block that allows you to build columns and various layouts in Gutenberg. Moreover, aside from the Gutenberg blocks, the plugin provides a beautiful library of pre-built Gutenberg-compatible templates that you can simply import via one click. The templates have block-friendly layouts that can be customized with no effort.
 
@@ -60,13 +58,11 @@ It has:
 * Fixed Button Group errors
 * Fixed Sharing Icons block having wrong icon order in front-end
 
-
 = 1.1.4 - 2019-01-31  = 
 
 * Fix Font Awesome Block update path
 * Show selected font in Google Font picker
 * Fix Font Awesome Picker component being case-sensitive
-
 
 = 1.1.3 - 2019-01-30  = 
 
@@ -75,12 +71,10 @@ It has:
 * Fixes issue with multiple block templates being inserted on the same post
 * Fixes Font Awesome block alignment on the backend
 
-
 = 1.1.2 - 2019-01-28  = 
 
 * Fix Button Group Migration
 * Revamped Font Awesome Icon Picker
-
 
 = 1.1.1 - 2019-01-25  = 
 
@@ -102,8 +96,6 @@ It has:
 * Added Controls for Responsive Alignment to Advanced Heading Block
 * Fixed Vertical Alignment in Section Block
 * Fixed Alignment Issue in Social Sharing Block
-
-
 
 = 1.1.0 - 2019-01-18 =
 * Added Section Block, with Template Library
