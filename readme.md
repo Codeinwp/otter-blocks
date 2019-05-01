@@ -47,7 +47,8 @@ It has:
 ## Changelog ##
 ### 1.2.1 - 2019-04-20  ###
 
-* Update version
+* Fixed issue with constant not being checked in Otter
+* Added error handling in Backbone functions
 
 
 ### 1.2.0 - 2019-04-18  ###
