@@ -34,7 +34,7 @@ class Onboarding extends Component {
 				},
 				{
 					target: '.otter-step-two',
-					content: __( 'Jazz up your blocks with some sparkly custom CSS right inside the block. CSS Modules allow you to add custom CSS to your blocks in the Block Editor.' )
+					content: __( 'Jazz up your blocks with some sparkly custom CSS or Blocks Animation right inside the block. Here you can enable modules to enhance your experience with Block Editor.' )
 				},
 				{
 					target: '.otter-step-three',

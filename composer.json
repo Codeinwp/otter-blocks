@@ -5,6 +5,7 @@
     "require": {
         "codeinwp/gutenberg-blocks": "dev-master",
         "codeinwp/gutenberg-css": "dev-master",
+        "codeinwp/gutenberg-animation": "dev-master",
         "codeinwp/themeisle-sdk": "dev-master"
     },
     "license": "GPL-2.0+",
