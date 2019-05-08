@@ -39,6 +39,7 @@ class Main extends Component {
 			isAPISaving: false,
 			notification: null,
 			cssModule: false,
+			blocksAnimation: false,
 			isDefaultSection: true,
 			googleMapsAPI: ''
 		};
@@ -52,6 +53,7 @@ class Main extends Component {
 				this.settings.fetch().then( response => {
 					this.setState({
 						cssModule: Boolean( response.themeisle_blocks_settings_css_module ),
+						blocksAnimation: Boolean( response.themeisle_blocks_settings_blocks_animation ),
 						isDefaultSection: Boolean( response.themeisle_blocks_settings_default_block ),
 						googleMapsAPI: response.themeisle_google_map_block_api_key,
 						isAPILoaded: true
@@ -149,6 +151,15 @@ class Main extends Component {
 									help={ 'Custom CSS module allows to add custom CSS to each block in Block Editor.' }
 									checked={ this.state.cssModule }
 									onChange={ () => this.changeOptions( 'themeisle_blocks_settings_css_module', 'cssModule', ! this.state.cssModule ) }
+								/>
+							</PanelRow>
+
+							<PanelRow>
+								<ToggleControl
+									label={ __( 'Enable Blocks Animation Module' ) }
+									help={ 'Blocks Animation module allows to add CSS animations to each block in Block Editor.' }
+									checked={ this.state.blocksAnimation }
+									onChange={ () => this.changeOptions( 'themeisle_blocks_settings_blocks_animation', 'blocksAnimation', ! this.state.blocksAnimation ) }
 								/>
 							</PanelRow>
 						</PanelBody>
