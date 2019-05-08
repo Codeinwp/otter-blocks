@@ -70,6 +70,10 @@ class Otter_Blocks {
 		if ( class_exists( '\ThemeIsle\GutenbergCSS' ) && get_option( 'themeisle_blocks_settings_css_module', true ) ) {
 			\ThemeIsle\GutenbergCSS::instance();
 		}
+
+		if ( class_exists( '\ThemeIsle\GutenbergAnimation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {
+			\ThemeIsle\GutenbergAnimation::instance();
+		}
 	}
 
 	/**
@@ -125,6 +129,17 @@ class Otter_Blocks {
 			array(
 				'type'              => 'boolean',
 				'description'       => __( 'Custom CSS module allows to add custom CSS to each block in Block Editor.', 'otter-blocks' ),
+				'show_in_rest'      => true,
+				'default'           => true,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_blocks_animation',
+			array(
+				'type'              => 'boolean',
+				'description'       => __( 'Blocks Animation module allows to add CSS animations to each block in Block Editor.', 'otter-blocks' ),
 				'show_in_rest'      => true,
 				'default'           => true,
 			)
