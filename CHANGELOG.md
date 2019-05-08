@@ -1,4 +1,16 @@
 
+ ### v1.2.2 - 2019-05-08 
+ **Changes:** 
+ * Add HTML Anchor to Section Block.
+* Change Default Section setting.
+* Fix resizer styles.
+* Add Link Component.
+* Add Marker button to Map.
+* Remove Padding Resizer.
+* Better UI for Sizing Control.
+* Fix Dynamic CSS not rendering on reusable blocks.
+* Validate blocks before importing.
+ 
  ### v1.2.1 - 2019-04-20 
  **Changes:** 
  * Update version

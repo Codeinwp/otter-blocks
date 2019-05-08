@@ -45,11 +45,23 @@ It has:
 4. Pre-built Section
 
 ## Changelog ##
+### 1.2.2 - 2019-05-08  ###
+
+* Add HTML Anchor to Section Block.
+* Change Default Section setting.
+* Fix resizer styles.
+* Add Link Component.
+* Add Marker button to Map.
+* Remove Padding Resizer.
+* Better UI for Sizing Control.
+* Fix Dynamic CSS not rendering on reusable blocks.
+* Validate blocks before importing.
+
+
 ### 1.2.1 - 2019-04-20  ###
 
 * Fixed issue with constant not being checked in Otter
 * Added error handling in Backbone functions
-
 
 ### 1.2.0 - 2019-04-18  ###
 
