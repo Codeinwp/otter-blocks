@@ -16,7 +16,7 @@ module.exports = {
 	        prefix: 'Version\\:\.*\\s'
         },
         src: [
-            'otter.php',
+            'otter-blocks.php',
         ]
     }
 };
