@@ -45,6 +45,14 @@ It has:
 4. Pre-built Section
 
 ## Changelog ##
+### 1.2.3 - 2019-05-24  ###
+
+* Add BlockInserter
+* Google Maps Improvements
+* Link Component Improvements
+* Fix Sizing Control value type
+
+
 ### 1.2.2 - 2019-05-08  ###
 
 * Add HTML Anchor to Section Block.

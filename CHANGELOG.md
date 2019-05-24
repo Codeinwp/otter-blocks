@@ -1,4 +1,11 @@
 
+ ### v1.2.3 - 2019-05-24 
+ **Changes:** 
+ * Add BlockInserter
+* Google Maps Improvements
+* Link Component Improvements
+* Fix Sizing Control value type
+ 
  ### v1.2.2 - 2019-05-08 
  **Changes:** 
  * Add HTML Anchor to Section Block.
