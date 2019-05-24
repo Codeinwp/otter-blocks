@@ -1,8 +1,8 @@
 === Gutenberg Blocks and Template Library by Otter ===
 Contributors: themeisle, hardeepasrani
 Tags: gutenberg, block, services block, pricing block, testimonials block, post grid block, google map block, font awesome block, sharing icons block, about author block, columns block, advanced columns, section, columds, row, layout
-Requires at least: 4.9    
-Tested up to: 5.1  
+Requires at least: 5.0    
+Tested up to: 5.2  
 Requires PHP: 5.4  
 Stable tag: trunk
 License: GPLv3  
