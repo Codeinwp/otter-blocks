@@ -45,6 +45,13 @@ It has:
 4. Pre-built Section
 
 ## Changelog ##
+### 1.2.4 - 2019-07-30  ###
+
+* Fix Internet Explorer incompatibility
+* Add option to choose Marker color for Google Map block
+* Refreshed "New Marker" UI for Google Map block
+
+
 ### 1.2.3 - 2019-05-24  ###
 
 * Add BlockInserter
