@@ -1,4 +1,8 @@
 
+ ### v1.2.5 - 2019-09-10 
+ **Changes:** 
+ * Fix AMP compatibility errors.
+ 
  ### v1.2.4 - 2019-07-30 
  **Changes:** 
  * Fix Internet Explorer incompatibility

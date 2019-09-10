@@ -44,6 +44,11 @@ It has:
 3. Posts Block
 
 == Changelog ==
+= 1.2.5 - 2019-09-10  = 
+
+* Fix AMP compatibility errors.
+
+
 = 1.2.4 - 2019-07-30  = 
 
 * Fix Internet Explorer incompatibility
