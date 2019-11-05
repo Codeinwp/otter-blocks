@@ -49,10 +49,12 @@ add_filter(
 	}
 );
 
-add_action( 'plugin_action_links_' . plugin_basename( __FILE__ ), function( $links ) {
-	array_unshift(
-		$links,
-		sprintf( '<a href="%s">%s</a>', admin_url( 'options-general.php?page=otter' ), __( 'Settings', 'otter-blocks' ) )
-	);
-	return $links;
-} );
+add_action(
+	'plugin_action_links_' . plugin_basename( __FILE__ ), function( $links ) {
+		array_unshift(
+			$links,
+			sprintf( '<a href="%s">%s</a>', admin_url( 'options-general.php?page=otter' ), __( 'Settings', 'otter-blocks' ) )
+		);
+		return $links;
+	}
+);
