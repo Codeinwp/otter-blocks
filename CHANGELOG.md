@@ -1,4 +1,19 @@
 
+ ### v1.3.0 - 2019-11-05 
+ **Changes:** 
+ * Lazy load Font Awesome Picker to improve load time.
+* Fixed link fetching in WP 5.0
+* Added Style Switcher to Block Controls
+* Added Map Styles to Google Map Block
+* Improved CSS handling for blocks
+* Added block navigator to Section block
+* Added inserter to Button Group
+* Fixed Marker Modal closing on search
+* Fixed sizing control focus
+* Fixed post excerpt now showing in Posts Grid
+* Added meta control options to Posts Block
+* Added improved Gradient Picker control
+ 
  ### v1.2.5 - 2019-09-10 
  **Changes:** 
  * Fix AMP compatibility errors.
