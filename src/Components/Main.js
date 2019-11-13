@@ -56,6 +56,7 @@ class Main extends Component {
 						blocksAnimation: Boolean( response.themeisle_blocks_settings_blocks_animation ),
 						isDefaultSection: Boolean( response.themeisle_blocks_settings_default_block ),
 						googleMapsAPI: response.themeisle_google_map_block_api_key,
+						isLoggingData: response.otter_blocks_logger_flag,
 						isAPILoaded: true
 					});
 				});
@@ -222,6 +223,21 @@ class Main extends Component {
 						</PanelBody>
 					</div>
 
+					<div className="otter-step-six">
+						<PanelBody
+							title={ __( 'Other' ) }
+						>
+							<PanelRow>
+								<ToggleControl
+									label={ __( 'Anonymous Data Tracking.' ) }
+									help={ 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.' }
+									checked={ 'yes' === this.state.isLoggingData ? true : false }
+									onChange={ () => this.changeOptions( 'otter_blocks_logger_flag', 'isLoggingData', ( 'yes' === this.state.isLoggingData ? 'no' : 'yes' ) ) }
+								/>
+							</PanelRow>
+						</PanelBody>
+					</div>
+
 					<PanelBody>
 						<div className="otter-info">
 							<h2>{ __( 'Got a question for us?' ) }</h2>
@@ -234,7 +250,7 @@ class Main extends Component {
 									isLarge
 									target="_blank"
 									href="https://wordpress.org/support/plugin/otter-blocks"
-									className="otter-step-six"
+									className="otter-step-seven"
 								>
 									{ __( 'Ask a question' ) }
 								</Button>
@@ -244,7 +260,7 @@ class Main extends Component {
 									isLarge
 									target="_blank"
 									href="https://wordpress.org/support/plugin/otter-blocks/reviews/#new-post"
-									className="otter-step-seven"
+									className="otter-step-eight"
 								>
 									{ __( 'Leave a review' ) }
 								</Button>

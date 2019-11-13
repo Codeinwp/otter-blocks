@@ -50,10 +50,14 @@ class Onboarding extends Component {
 				},
 				{
 					target: '.otter-step-six',
-					content: __( 'If you ever need any help, we are a team of real Otter-lovers who would love to help you out.' )
+					content: __( 'Help us in making our plugin better with anonymous data tracking.' )
 				},
 				{
 					target: '.otter-step-seven',
+					content: __( 'If you ever need any help, we are a team of real Otter-lovers who would love to help you out.' )
+				},
+				{
+					target: '.otter-step-eight',
 					content: __( 'And if you love what we do, please leave us a review at WordPress.org. Your review keeps us motivated to make awesome things.' )
 				},
 				{
