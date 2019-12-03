@@ -1,4 +1,9 @@
 
+ ### v1.3.1 - 2019-12-03 
+ **Changes:** 
+ * - Added Slider Block
+* - Fixed issue with extensions failing with ServerSideRenderer
+ 
  ### v1.3.0 - 2019-11-05 
  **Changes:** 
  * Lazy load Font Awesome Picker to improve load time.

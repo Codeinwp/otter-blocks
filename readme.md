@@ -45,6 +45,12 @@ It has:
 3. Posts Block
 
 ## Changelog ##
+### 1.3.1 - 2019-12-03  ###
+
+* - Added Slider Block
+* - Fixed issue with extensions failing with ServerSideRenderer
+
+
 ### 1.3.0 - 2019-11-05  ###
 
 * Lazy load Font Awesome Picker to improve load time.
