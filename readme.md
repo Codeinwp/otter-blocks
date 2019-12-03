@@ -2,7 +2,7 @@
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani)  
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout  
 **Requires at least:** 5.0      
-**Tested up to:** 5.2    
+**Tested up to:** 5.3    
 **Requires PHP:** 5.4    
 **Stable tag:** trunk  
 **License:** GPLv3    
@@ -26,13 +26,14 @@ It has:
 
 - Section Block
 - Advanced Heading Block
-- Button Group
+- Button Group Block
+- Slider Block
+- Google Maps Block
+- Post Grid Block
 - Service Block
 - Pricing Block
 - Testimonial Block
-- Google Maps Block
 - About Author Block
-- Post Grid Block
 - Font Awesome Block
 - Sharing Icons Block
 - Plugin Card Block
