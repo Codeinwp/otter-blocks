@@ -40,6 +40,7 @@ add_action(
 		}
 	}
 );
+
 add_filter(
 	'themeisle_sdk_products',
 	function ( $products ) {
