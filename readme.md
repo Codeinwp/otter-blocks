@@ -26,13 +26,14 @@ It has:
 
 - Section Block
 - Advanced Heading Block
-- Button Group
+- Button Group Block
+- Slider Block
+- Google Maps Block
+- Post Grid Block
 - Service Block
 - Pricing Block
 - Testimonial Block
-- Google Maps Block
 - About Author Block
-- Post Grid Block
 - Font Awesome Block
 - Sharing Icons Block
 - Plugin Card Block
