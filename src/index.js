@@ -15,28 +15,22 @@ import Footer from './Components/Footer.js';
  * WordPress dependencies.
  */
 const {
-	Component,
+	render,
 	Fragment
 } = wp.element;
 
-class App extends Component {
-	constructor() {
-		super( ...arguments );
-	}
+const App = () => {
+	return (
+		<Fragment>
+			{ Boolean( otterObj.showTour ) && <Onboarding /> }
+			<Header />
+			<Main />
+			<Footer />
+		</Fragment>
+	);
+};
 
-	render() {
-		return (
-			<Fragment>
-				{ Boolean( otterObj.showTour ) && <Onboarding /> }
-				<Header />
-				<Main />
-				<Footer />
-			</Fragment>
-		);
-	}
-}
-
-ReactDOM.render(
+render(
 	<App />,
 	document.getElementById( 'otter' )
 );
