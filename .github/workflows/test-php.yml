@@ -51,6 +51,13 @@ jobs:
         volumes:
           - $HOME/mysql:/var/lib/mysql
     steps:
+      - name: Set up container
+        run: |
+          echo "Update package lists."
+          apt-get update
+          echo "Install base packages."
+          apt-get install -y build-essential libssl-dev gnupg libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libicu-dev libxml2-dev vim wget unzip git subversion default-mysql-client
+
       - name: Checkout repository
         uses: actions/checkout@v1
       - name: Run composer install
