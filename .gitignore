@@ -4,5 +4,4 @@ logs
 dist
 artifact
 vendor
-bin/
 .DS_Store

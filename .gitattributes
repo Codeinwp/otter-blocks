@@ -12,6 +12,7 @@ tests               export-ignore
 Gruntfile.js        export-ignore
 composer.json 	    export-ignore
 composer.lock 	    export-ignore
+bin 	            export-ignore
 .gitattributes 	    export-ignore
 .distignore         export-ignore
 phpunit.xml         export-ignore
