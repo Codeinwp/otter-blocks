@@ -31,8 +31,17 @@ jobs:
       - name: Run PHPCS
         run: composer run lint
   phpunit:
-      name: Phplint
+      name: Phpunit
       runs-on: ubuntu-latest
+      services:
+        mysql:
+          image: mysql:${{ matrix.mysql }}
+          env:
+            MYSQL_ROOT_PASSWORD: root
+          ports:
+            - 3306
+          volumes:
+            - $HOME/mysql:/var/lib/mysql
       steps:
         - name: Setup PHP version
           uses: shivammathur/setup-php@v1
@@ -40,6 +49,9 @@ jobs:
             php-version: '7.2'
             extensions: simplexml
             tools: phpunit:7.5.15
+        - name: Install WordPress Test Suite
+          run: |
+            bash bin/install-wp-tests.sh wordpress_test root root mysql 5.2.2
         - name: Checkout source code
           uses: actions/checkout@v2
         - name: Get Composer Cache Directory
