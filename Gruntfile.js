@@ -17,7 +17,7 @@ module.exports = function (grunt) {
 					prefix: 'Version:\\s*',
 					flags: ''
 				},
-				src: [ 'otter-blocs.php' ]
+				src: [ 'otter-blocks.php' ]
 			},
 			php: {
 				options: {
