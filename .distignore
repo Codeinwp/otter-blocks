@@ -8,6 +8,16 @@ grunt
 phpcs.xml
 node_modules
 logs
+.github
+.wordpress-org
+.idea
+src
+.eslintrc
+.gitattributes
+.releaserc.yml
+docker-compose.yml
+webpack.config.js
+CONTRIBUTING.md
 package.json
 bin
 tests
@@ -19,8 +29,3 @@ composer.json
 composer.lock
 package-lock.json
 themeisle-hash.json
-vendor/codeinwp/gutenberg-blocks/src/**/*.js
-vendor/codeinwp/gutenberg-blocks/src/**/*.json
-vendor/codeinwp/gutenberg-blocks/src/**/*.scss
-!vendor/codeinwp/gutenberg-blocks/src/frontend/**/*.js
-vendor/codeinwp/gutenberg-css/src

@@ -1,0 +1,25 @@
+.eslintrc  	        export-ignore
+.gitignore  	    export-ignore
+phpcs.xml  	        export-ignore
+package.json     	export-ignore
+package-lock.json   export-ignore
+webpack.config.js export-ignore
+src                 export-ignore
+tests                 export-ignore
+.github             export-ignore
+.wordpress-org             export-ignore
+.releaserc.yml      export-ignore
+Gruntfile.js        export-ignore
+composer.json 	    export-ignore
+composer.lock 	    export-ignore
+.gitattributes 	    export-ignore
+
+# Set the default behavior for all files.
+* text=auto
+
+# Normalized and converts to
+# native line endings on checkout.
+*.php text
+
+# Convert to LF line endings on checkout.
+*.sh text eol=lf

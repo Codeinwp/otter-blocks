@@ -4,6 +4,7 @@
   "description": "Gutenberg Blocks and Template Library by Otter",
   "scripts": {
     "build": "cross-env BABEL_ENV=default NODE_ENV=production webpack",
+    "lint": "eslint src/*/*/*.js",
     "dev": "cross-env BABEL_ENV=default NODE_ENV=development webpack --watch"
   },
   "repository": {
@@ -31,6 +32,15 @@
     "react-notifications-component": "^1.1.1"
   },
   "devDependencies": {
+    "@semantic-release/changelog": "^3.0.6",
+    "@semantic-release/exec": "^3.3.8",
+    "@semantic-release/git": "^7.0.18",
+    "conventional-changelog-simple-preset": "^1.0.10",
+    "grunt": "^1.0.4",
+    "grunt-version": "^1.3.2",
+    "grunt-wp-readme-to-markdown": "^2.0.1",
+    "replace-in-file": "^5.0.2",
+    "semantic-release": "^15.13.31",
     "@babel/core": "^7.1.6",
     "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
     "@babel/plugin-transform-async-to-generator": "^7.1.0",
@@ -44,7 +54,6 @@
     "eslint-config-wordpress": "^2.0.0",
     "eslint-loader": "^2.1.1",
     "eslint-plugin-react": "^7.11.1",
-    "grunt-plugin-fleet": "github:codeinwp/grunt-plugin-fleet",
     "load-project-config": "~0.2.0",
     "mini-css-extract-plugin": "^0.4.4",
     "node-sass": "^4.10.0",

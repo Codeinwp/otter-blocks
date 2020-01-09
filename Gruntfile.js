@@ -2,14 +2,39 @@
 /* global require */
 
 module.exports = function (grunt) {
-	'use strict';
+	grunt.loadNpmTasks('grunt-version');
+	grunt.loadNpmTasks('grunt-wp-readme-to-markdown');
+	grunt.initConfig({
+		version: {
+			json: {
+				options: {
+					flags: ''
+				},
+				src: [ 'package.json', 'composer.json', 'package-lock.json' ]
+			},
+			metatag: {
+				options: {
+					prefix: 'Version:\\s*',
+					flags: ''
+				},
+				src: [ 'otter-blocs.php' ]
+			},
+			php: {
+				options: {
+					prefix: 'OTTER_BLOCKS_VERSION\', \'',
+					flags: ''
+				},
+				src: [ 'otter-blocks.php' ]
 
-	var loader = require('load-project-config'),
-		config = require('grunt-plugin-fleet');
-	config = config();
-	// jshint ignore: start
-	config.files.js.push('!**/*.js');
-	// jshint ignore: end
-	loader(grunt, config).init();
-	loader(grunt, config).init();
+			}
+		},
+		wp_readme_to_markdown: {
+			plugin: {
+				files: {
+					'readme.md': 'readme.txt'
+				},
+			},
+		},
+	});
+
 };
