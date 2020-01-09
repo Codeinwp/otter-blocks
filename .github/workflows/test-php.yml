@@ -31,7 +31,7 @@ jobs:
       - name: Run PHPCS
         run: composer run lint
   phpunit:
-    name: Phplint
+      name: Phplint
       runs-on: ubuntu-latest
       steps:
         - name: Setup PHP version
