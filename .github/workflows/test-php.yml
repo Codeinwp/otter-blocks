@@ -72,6 +72,7 @@ jobs:
           docker-php-ext-enable mcrypt
       - name: Checkout repository
         uses: actions/checkout@v1
+
       - name: Run composer install
         run: |
           composer install --prefer-dist --no-dev
