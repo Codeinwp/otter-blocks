@@ -52,7 +52,7 @@ jobs:
           - $HOME/mysql:/var/lib/mysql
     steps:
       - name: Set up container
-          run: |
+        run: |
             echo "Update package lists."
             apt-get update
             echo "Install base packages."
