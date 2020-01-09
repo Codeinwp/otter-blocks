@@ -2,7 +2,6 @@
  * External dependencies.
  */
 import ReactNotification from 'react-notifications-component';
-
 import 'react-notifications-component/dist/theme.css';
 
 /**
@@ -22,51 +21,46 @@ const {
 } = wp.components;
 
 const {
-	Component,
-	Fragment
+	Fragment,
+	useEffect,
+	useRef,
+	useState
 } = wp.element;
 
-class Main extends Component {
-	constructor() {
-		super( ...arguments );
-
-		this.changeOptions = this.changeOptions.bind( this );
-		this.addNotification = this.addNotification.bind( this );
-		this.notificationDOMRef = React.createRef();
-
-		this.state = {
-			isAPILoaded: false,
-			isAPISaving: false,
-			notification: null,
-			cssModule: false,
-			blocksAnimation: false,
-			isDefaultSection: true,
-			googleMapsAPI: ''
-		};
-	}
-
-	async componentDidMount() {
+const Main = () => {
+	useEffect( () => {
 		wp.api.loadPromise.then( () => {
-			this.settings = new wp.api.models.Settings();
+			settingsRef.current = new wp.api.models.Settings();
 
-			if ( false === this.state.isAPILoaded ) {
-				this.settings.fetch().then( response => {
-					this.setState({
-						cssModule: Boolean( response.themeisle_blocks_settings_css_module ),
-						blocksAnimation: Boolean( response.themeisle_blocks_settings_blocks_animation ),
-						isDefaultSection: Boolean( response.themeisle_blocks_settings_default_block ),
-						googleMapsAPI: response.themeisle_google_map_block_api_key,
-						isAPILoaded: true
-					});
+			if ( false === isAPILoaded ) {
+				settingsRef.current.fetch().then( response => {
+					setCSSModule( Boolean( response.themeisle_blocks_settings_css_module ) );
+					setBlocksAnimation( Boolean( response.themeisle_blocks_settings_blocks_animation ) );
+					setDefaultSection( Boolean( response.themeisle_blocks_settings_default_block ) );
+					setGoogleMapsAPI( response.themeisle_google_map_block_api_key );
+					setLoggingData( response.otter_blocks_logger_flag );
+					setAPILoaded( true );
 				});
 			}
 		});
-	}
+	}, []);
 
-	changeOptions( option, state, value ) {
-		this.setState({ isAPISaving: true });
+	const [ isAPILoaded, setAPILoaded ] = useState( false );
+	const [ isAPISaving, setAPISaving ] = useState( false );
+	const [ notification, setNotification ] = useState( null );
+	const [ cssModule, setCSSModule ] = useState( false );
+	const [ blocksAnimation, setBlocksAnimation ] = useState( false );
+	const [ isDefaultSection, setDefaultSection ] = useState( true );
+	const [ googleMapsAPI, setGoogleMapsAPI ] = useState( '' );
+	const [ isLoggingData, setLoggingData ] = useState( 'no' );
 
-		this.addNotification( __( 'Updating settings…' ), 'info' );
+	const settingsRef = useRef( null );
+	const notificationDOMRef = useRef( null );
+
+	const changeOptions = ( option, state, value ) => {
+		setAPISaving( true );
+
+		addNotification( __( 'Updating settings…' ), 'info' );
 
 		const model = new wp.api.models.Settings({
 			// eslint-disable-next-line camelcase
@@ -76,41 +70,60 @@ class Main extends Component {
 		const save = model.save();
 
 		save.success( ( response, status ) => {
-			this.notificationDOMRef.current.removeNotification( this.state.notification );
+			notificationDOMRef.current.removeNotification( notification );
 
 			if ( 'success' === status ) {
-				this.setState({
-					[state]: response[option]
-				});
+
+				setOptions( state, response[option]);
 
 				setTimeout( () => {
-					this.addNotification( __( 'Settings saved.' ), 'success' );
-					this.setState({ isAPISaving: false });
+					addNotification( __( 'Settings saved.' ), 'success' );
+					setAPISaving( false );
 				}, 800 );
 			}
 
 			if ( 'error' === status ) {
 				setTimeout( () => {
-					this.addNotification( __( 'An unknown error occurred.' ), 'danger' );
-					this.setState({ isAPISaving: false });
+					addNotification( __( 'An unknown error occurred.' ), 'danger' );
+					setAPISaving( false );
 				}, 800 );
 			}
 
-			this.settings.fetch();
+			settingsRef.current.fetch();
 		});
 
 		save.error( ( response, status ) => {
-			this.notificationDOMRef.current.removeNotification( this.state.notification );
+			notificationDOMRef.current.removeNotification( notification );
 
 			setTimeout( () => {
-				this.addNotification( response.responseJSON.message ? response.responseJSON.message : __( 'An unknown error occurred.' ), 'danger' );
-				this.setState({ isAPISaving: false });
+				addNotification( response.responseJSON.message ? response.responseJSON.message : __( 'An unknown error occurred.' ), 'danger' );
+				setAPISaving( false );
 			}, 800 );
 		});
-	}
+	};
 
-	addNotification( message, type ) {
-		const notification = this.notificationDOMRef.current.addNotification({
+	const setOptions = ( option, value ) => {
+		switch ( option ) {
+		case 'cssModule':
+			setCSSModule( value );
+			break;
+		case 'blocksAnimation':
+			setBlocksAnimation( value );
+			break;
+		case 'isDefaultSection':
+			setDefaultSection( value );
+			break;
+		case 'googleMapsAPI':
+			setGoogleMapsAPI( value );
+			break;
+		case 'isLoggingData':
+			setLoggingData( value );
+			break;
+		}
+	};
+
+	const addNotification = ( message, type ) => {
+		const notification = notificationDOMRef.current.addNotification({
 			message,
 			type,
 			insert: 'top',
@@ -123,138 +136,150 @@ class Main extends Component {
 			dismissable: { click: true }
 		});
 
-		this.setState({ notification });
-	}
+		setNotification( notification );
+	};
 
-	render() {
-		if ( ! this.state.isAPILoaded ) {
-			return (
-				<Placeholder>
-					<Spinner />
-				</Placeholder>
-			);
-		}
-
+	if ( ! isAPILoaded ) {
 		return (
-			<Fragment>
-				<ReactNotification ref={ this.notificationDOMRef } />
-
-				<div className="otter-main">
-
-					<div className="otter-step-two">
-						<PanelBody
-							title={ __( 'Modules' ) }
-						>
-							<PanelRow>
-								<ToggleControl
-									label={ __( 'Enable Custom CSS Module' ) }
-									help={ 'Custom CSS module allows to add custom CSS to each block in Block Editor.' }
-									checked={ this.state.cssModule }
-									onChange={ () => this.changeOptions( 'themeisle_blocks_settings_css_module', 'cssModule', ! this.state.cssModule ) }
-								/>
-							</PanelRow>
-
-							<PanelRow>
-								<ToggleControl
-									label={ __( 'Enable Blocks Animation Module' ) }
-									help={ 'Blocks Animation module allows to add CSS animations to each block in Block Editor.' }
-									checked={ this.state.blocksAnimation }
-									onChange={ () => this.changeOptions( 'themeisle_blocks_settings_blocks_animation', 'blocksAnimation', ! this.state.blocksAnimation ) }
-								/>
-							</PanelRow>
-						</PanelBody>
-					</div>
-
-					<div className="otter-step-three">
-						<PanelBody
-							title={ __( 'Section' ) }
-						>
-							<PanelRow>
-								<ToggleControl
-									label={ __( 'Make Section your default block for Pages' ) }
-									help={ 'Everytime you create a new page, Section block will be appended there by default.' }
-									checked={ this.state.isDefaultSection }
-									onChange={ () => this.changeOptions( 'themeisle_blocks_settings_default_block', 'isDefaultSection', ! this.state.isDefaultSection ) }
-								/>
-							</PanelRow>
-						</PanelBody>
-					</div>
-
-					<div className="otter-step-four">
-						<PanelBody
-							title={ __( 'Maps' ) }
-						>
-							<PanelRow>
-								<BaseControl
-									label={ __( 'Google Maps API' ) }
-									help={ 'In order to use Google Maps block, you need to use Google Maps and Places API.' }
-									id="otter-options-google-map-api"
-									className="otter-text-field"
-								>
-									<input
-										type="text"
-										id="otter-options-google-map-api"
-										value={ this.state.googleMapsAPI }
-										placeholder={ __( 'Google Maps API Key' ) }
-										disabled={ this.state.isAPISaving }
-										onChange={ e => this.setState({ googleMapsAPI: e.target.value }) }
-									/>
-
-									<div className="otter-text-field-button-group">
-										<Button
-											isPrimary
-											isLarge
-											disabled={ this.state.isAPISaving }
-											onClick={ () => this.changeOptions( 'themeisle_google_map_block_api_key', 'googleMapsAPI', this.state.googleMapsAPI ) }
-										>
-											{ __( 'Save' ) }
-										</Button>
-
-										<ExternalLink
-											href="https://developers.google.com/maps/documentation/javascript/get-api-key"
-											className="otter-step-five"
-										>
-											{ __( 'Get API Key' ) }
-										</ExternalLink>
-									</div>
-								</BaseControl>
-							</PanelRow>
-						</PanelBody>
-					</div>
-
-					<PanelBody>
-						<div className="otter-info">
-							<h2>{ __( 'Got a question for us?' ) }</h2>
-
-							<p>{ __( 'We would love to help you out if you need any help with Otter.' ) }</p>
-
-							<div className="otter-info-button-group">
-								<Button
-									isDefault
-									isLarge
-									target="_blank"
-									href="https://wordpress.org/support/plugin/otter-blocks"
-									className="otter-step-six"
-								>
-									{ __( 'Ask a question' ) }
-								</Button>
-
-								<Button
-									isDefault
-									isLarge
-									target="_blank"
-									href="https://wordpress.org/support/plugin/otter-blocks/reviews/#new-post"
-									className="otter-step-seven"
-								>
-									{ __( 'Leave a review' ) }
-								</Button>
-							</div>
-						</div>
-					</PanelBody>
-				</div>
-			</Fragment>
+			<Placeholder>
+				<Spinner />
+			</Placeholder>
 		);
 	}
-}
+
+	return (
+		<Fragment>
+			<ReactNotification ref={ notificationDOMRef } />
+
+			<div className="otter-main">
+				<div className="otter-step-two">
+					<PanelBody
+						title={ __( 'Modules' ) }
+					>
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Enable Custom CSS Module' ) }
+								help={ 'Custom CSS module allows to add custom CSS to each block in Block Editor.' }
+								checked={ cssModule }
+								onChange={ () => changeOptions( 'themeisle_blocks_settings_css_module', 'cssModule', ! cssModule ) }
+							/>
+						</PanelRow>
+
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Enable Blocks Animation Module' ) }
+								help={ 'Blocks Animation module allows to add CSS animations to each block in Block Editor.' }
+								checked={ blocksAnimation }
+								onChange={ () => changeOptions( 'themeisle_blocks_settings_blocks_animation', 'blocksAnimation', ! blocksAnimation ) }
+							/>
+						</PanelRow>
+					</PanelBody>
+				</div>
+
+				<div className="otter-step-three">
+					<PanelBody
+						title={ __( 'Section' ) }
+					>
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Make Section your default block for Pages' ) }
+								help={ 'Everytime you create a new page, Section block will be appended there by default.' }
+								checked={ isDefaultSection }
+								onChange={ () => changeOptions( 'themeisle_blocks_settings_default_block', 'isDefaultSection', ! isDefaultSection ) }
+							/>
+						</PanelRow>
+					</PanelBody>
+				</div>
+
+				<div className="otter-step-four">
+					<PanelBody
+						title={ __( 'Maps' ) }
+					>
+						<PanelRow>
+							<BaseControl
+								label={ __( 'Google Maps API' ) }
+								help={ 'In order to use Google Maps block, you need to use Google Maps and Places API.' }
+								id="otter-options-google-map-api"
+								className="otter-text-field"
+							>
+								<input
+									type="text"
+									id="otter-options-google-map-api"
+									value={ googleMapsAPI }
+									placeholder={ __( 'Google Maps API Key' ) }
+									disabled={ isAPISaving }
+									onChange={ e => setGoogleMapsAPI( e.target.value ) }
+								/>
+
+								<div className="otter-text-field-button-group">
+									<Button
+										isPrimary
+										isLarge
+										disabled={ isAPISaving }
+										onClick={ () => changeOptions( 'themeisle_google_map_block_api_key', 'googleMapsAPI', googleMapsAPI ) }
+									>
+										{ __( 'Save' ) }
+									</Button>
+
+									<ExternalLink
+										href="https://developers.google.com/maps/documentation/javascript/get-api-key"
+										className="otter-step-five"
+									>
+										{ __( 'Get API Key' ) }
+									</ExternalLink>
+								</div>
+							</BaseControl>
+						</PanelRow>
+					</PanelBody>
+				</div>
+
+				<div className="otter-step-six">
+					<PanelBody
+						title={ __( 'Other' ) }
+					>
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Anonymous Data Tracking.' ) }
+								help={ 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.' }
+								checked={ 'yes' === isLoggingData ? true : false }
+								onChange={ () => changeOptions( 'otter_blocks_logger_flag', 'isLoggingData', ( 'yes' === isLoggingData ? 'no' : 'yes' ) ) }
+							/>
+						</PanelRow>
+					</PanelBody>
+				</div>
+
+				<PanelBody>
+					<div className="otter-info">
+						<h2>{ __( 'Got a question for us?' ) }</h2>
+
+						<p>{ __( 'We would love to help you out if you need any help with Otter.' ) }</p>
+
+						<div className="otter-info-button-group">
+							<Button
+								isDefault
+								isLarge
+								target="_blank"
+								href="https://wordpress.org/support/plugin/otter-blocks"
+								className="otter-step-seven"
+							>
+								{ __( 'Ask a question' ) }
+							</Button>
+
+							<Button
+								isDefault
+								isLarge
+								target="_blank"
+								href="https://wordpress.org/support/plugin/otter-blocks/reviews/#new-post"
+								className="otter-step-eight"
+							>
+								{ __( 'Leave a review' ) }
+							</Button>
+						</div>
+					</div>
+				</PanelBody>
+			</div>
+		</Fragment>
+	);
+};
 
 export default Main;

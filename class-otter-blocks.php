@@ -144,6 +144,17 @@ class Otter_Blocks {
 				'default'           => true,
 			)
 		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'otter_blocks_logger_flag',
+			array(
+				'type'              => 'string',
+				'description'       => __( 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.', 'otter-blocks' ),
+				'show_in_rest'      => true,
+				'default'           => 'no',
+			)
+		);
 	}
 
 	/**

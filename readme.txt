@@ -1,7 +1,7 @@
 === Gutenberg Blocks and Template Library by Otter ===
 Contributors: themeisle, hardeepasrani
 Tags: gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout
-Requires at least: 5.0    
+Requires at least: 5.2    
 Tested up to: 5.3  
 Requires PHP: 5.4  
 Stable tag: trunk
