@@ -4,7 +4,7 @@
   "description": "Gutenberg Blocks and Template Library by Otter",
   "scripts": {
     "build": "cross-env BABEL_ENV=default NODE_ENV=production webpack",
-    "lint": "eslint src/*/*/*.js",
+    "lint": "eslint src/**.js",
     "dev": "cross-env BABEL_ENV=default NODE_ENV=development webpack --watch"
   },
   "repository": {
