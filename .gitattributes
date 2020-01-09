@@ -3,17 +3,20 @@
 phpcs.xml  	        export-ignore
 package.json     	export-ignore
 package-lock.json   export-ignore
-webpack.config.js export-ignore
+webpack.config.js   export-ignore
 src                 export-ignore
-tests                 export-ignore
+tests               export-ignore
 .github             export-ignore
-.wordpress-org             export-ignore
+.wordpress-org      export-ignore
 .releaserc.yml      export-ignore
 Gruntfile.js        export-ignore
 composer.json 	    export-ignore
 composer.lock 	    export-ignore
 .gitattributes 	    export-ignore
-
+.distignore         export-ignore
+phpunit.xml         export-ignore
+docker-compose.yml  export-ignore
+grunt               export-ignore
 # Set the default behavior for all files.
 * text=auto
 
