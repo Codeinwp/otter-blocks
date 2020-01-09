@@ -32,19 +32,19 @@ jobs:
         run: composer run lint
   phpunit:
     name: Build
-      strategy:
-        matrix:
-          php: [7.3]
-          mysql: [5.7.27]
-          wordpress: [5.2.2]
-          phpunit: [7.5.15]
-      runs-on: ubuntu-latest
-      container:
-        image: php:${{ matrix.php }}-apache
-        ports:
-          - 80
-        volumes:
-          - $GITHUB_WORKSPACE:/var/www/html
+    strategy:
+      matrix:
+        php: [7.3]
+        mysql: [5.7.27]
+        wordpress: [5.2.2]
+        phpunit: [7.5.15]
+    runs-on: ubuntu-latest
+    container:
+      image: php:${{ matrix.php }}-apache
+      ports:
+        - 80
+      volumes:
+        - $GITHUB_WORKSPACE:/var/www/html
     services:
       mysql:
         image: mysql:${{ matrix.mysql }}
