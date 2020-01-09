@@ -51,6 +51,22 @@ jobs:
         volumes:
           - $HOME/mysql:/var/lib/mysql
     steps:
+      - name: Set up container
+          run: |
+            echo "Update package lists."
+            apt-get update
+            echo "Install base packages."
+            apt-get install -y build-essential libssl-dev gnupg libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libicu-dev libxml2-dev vim wget unzip git subversion default-mysql-client
+            echo "Install composer."
+            curl -sS https://getcomposer.org/installer | php
+            mv composer.phar /usr/local/bin/composer
+            echo "Install PHP extensions."
+            docker-php-ext-install -j$(nproc) iconv intl xml soap opcache pdo pdo_mysql mysqli mbstring
+            docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/
+            docker-php-ext-install -j$(nproc) gd
+            pecl install mcrypt-1.0.2
+            docker-php-ext-enable mcrypt
+
       - name: Checkout repository
         uses: actions/checkout@v1
       - name: Run composer install
