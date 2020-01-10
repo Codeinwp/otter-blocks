@@ -1,0 +1,26 @@
+name: Test JS
+
+
+on: [pull_request]
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
+    name: JS Test
+    steps:
+      - uses: actions/checkout@master
+        with:
+          persist-credentials: false
+      - name: Build files using ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Lint js files
+        run: |
+          npm ci
+          npm run lint
+        env:
+          CI: true

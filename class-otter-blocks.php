@@ -1,4 +1,9 @@
 <?php
+/**
+ * Otter main class.
+ *
+ * @package @OtterBlocks
+ */
 
 /**
  * Class Otter_Blocks
@@ -23,8 +28,8 @@ class Otter_Blocks {
 	 * @access  public
 	 */
 	public function __construct() {
-		$this->name           = __( 'Otter', 'otter-blocks' );
-		$this->description    = __( 'Blocks for Gutenberg', 'otter-blocks' );
+		$this->name        = __( 'Otter', 'otter-blocks' );
+		$this->description = __( 'Blocks for Gutenberg', 'otter-blocks' );
 	}
 
 	/**
@@ -49,8 +54,8 @@ class Otter_Blocks {
 	 */
 	public function enqueue_block_assets() {
 		if ( is_admin() || has_block( 'themeisle-blocks/button-group' ) || has_block( 'themeisle-blocks/font-awesome-icons' ) || has_block( 'themeisle-blocks/sharing-icons' ) || has_block( 'themeisle-blocks/plugin-cards' ) || has_block( 'block' ) ) {
-			wp_enqueue_style( 'font-awesome-5', plugins_url( 'assets/fontawesome/css/all.min.css', __FILE__ ) );
-			wp_enqueue_style( 'font-awesome-4-shims', plugins_url( 'assets/fontawesome/css/v4-shims.min.css', __FILE__ ) );
+			wp_enqueue_style( 'font-awesome-5', plugins_url( 'assets/fontawesome/css/all.min.css', __FILE__ ), [], OTTER_BLOCKS_VERSION );
+			wp_enqueue_style( 'font-awesome-4-shims', plugins_url( 'assets/fontawesome/css/v4-shims.min.css', __FILE__ ), [], OTTER_BLOCKS_VERSION );
 		}
 	}
 
@@ -105,10 +110,10 @@ class Otter_Blocks {
 			'themeisle_blocks_settings',
 			'themeisle_blocks_settings_redirect',
 			array(
-				'type'              => 'boolean',
-				'description'       => __( 'Redirect on new install.', 'otter-blocks' ),
-				'show_in_rest'      => true,
-				'default'           => true,
+				'type'         => 'boolean',
+				'description'  => __( 'Redirect on new install.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
 			)
 		);
 
@@ -116,10 +121,10 @@ class Otter_Blocks {
 			'themeisle_blocks_settings',
 			'themeisle_blocks_settings_tour',
 			array(
-				'type'              => 'boolean',
-				'description'       => __( 'Show tour for Otter.', 'otter-blocks' ),
-				'show_in_rest'      => true,
-				'default'           => true,
+				'type'         => 'boolean',
+				'description'  => __( 'Show tour for Otter.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
 			)
 		);
 
@@ -127,10 +132,10 @@ class Otter_Blocks {
 			'themeisle_blocks_settings',
 			'themeisle_blocks_settings_css_module',
 			array(
-				'type'              => 'boolean',
-				'description'       => __( 'Custom CSS module allows to add custom CSS to each block in Block Editor.', 'otter-blocks' ),
-				'show_in_rest'      => true,
-				'default'           => true,
+				'type'         => 'boolean',
+				'description'  => __( 'Custom CSS module allows to add custom CSS to each block in Block Editor.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
 			)
 		);
 
@@ -138,10 +143,21 @@ class Otter_Blocks {
 			'themeisle_blocks_settings',
 			'themeisle_blocks_settings_blocks_animation',
 			array(
-				'type'              => 'boolean',
-				'description'       => __( 'Blocks Animation module allows to add CSS animations to each block in Block Editor.', 'otter-blocks' ),
-				'show_in_rest'      => true,
-				'default'           => true,
+				'type'         => 'boolean',
+				'description'  => __( 'Blocks Animation module allows to add CSS animations to each block in Block Editor.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'otter_blocks_logger_flag',
+			array(
+				'type'         => 'string',
+				'description'  => __( 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => 'no',
 			)
 		);
 	}
@@ -164,7 +180,8 @@ class Otter_Blocks {
 		wp_enqueue_style(
 			'otter-blocks-styles',
 			plugins_url( 'build/build.css', __FILE__ ),
-			array( 'wp-components' )
+			array( 'wp-components' ),
+			$version
 		);
 
 		wp_enqueue_script(
@@ -176,10 +193,12 @@ class Otter_Blocks {
 		);
 
 		wp_localize_script(
-			'otter-blocks-scripts', 'otterObj', array(
-				'version' => OTTER_BLOCKS_VERSION,
+			'otter-blocks-scripts',
+			'otterObj',
+			array(
+				'version'    => OTTER_BLOCKS_VERSION,
 				'assetsPath' => plugins_url( 'assets/', __FILE__ ),
-				'showTour' => $tour,
+				'showTour'   => $tour,
 			)
 		);
 	}
@@ -209,7 +228,7 @@ class Otter_Blocks {
 			return;
 		}
 
-		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) {
+		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) { //phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected,WordPress.Security.NonceVerification.NoNonceVerification
 			return;
 		}
 
