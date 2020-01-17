@@ -1,5 +1,9 @@
 <?php
 /**
+ * Main file.
+ *
+ * @package OtterBlocks
+ *
  * Plugin Name:       Gutenberg Blocks and Template Library by Otter
  * Plugin URI:        https://themeisle.com/plugins/otter-blocks
  * Description:       Create beautiful and attracting posts, pages, and landing pages with Gutenberg Blocks and Template Library by Otter. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
@@ -33,7 +37,7 @@ if ( is_readable( $vendor_file ) ) {
 add_action(
 	'plugins_loaded',
 	function () {
-		// call this only if Gutenberg is active
+		// call this only if Gutenberg is active.
 		if ( function_exists( 'register_block_type' ) ) {
 			require_once dirname( __FILE__ ) . '/class-otter-blocks.php';
 			Otter_Blocks::instance();
@@ -51,7 +55,8 @@ add_filter(
 );
 
 add_action(
-	'plugin_action_links_' . plugin_basename( __FILE__ ), function( $links ) {
+	'plugin_action_links_' . plugin_basename( __FILE__ ),
+	function( $links ) {
 		array_unshift(
 			$links,
 			sprintf( '<a href="%s">%s</a>', admin_url( 'options-general.php?page=otter' ), __( 'Settings', 'otter-blocks' ) )

@@ -4,7 +4,4 @@ logs
 dist
 artifact
 vendor
-composer.lock
-bin/
-package-lock.json
 .DS_Store
