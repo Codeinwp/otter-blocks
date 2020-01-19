@@ -46,6 +46,13 @@ It has:
 
 == Changelog ==
 
+##### [Version 1.3.3](https://github.com/Codeinwp/otter-blocks/compare/v1.3.2...v1.3.3) (2020-01-19)
+
+Fix issue with Custom CSS module not working
+
+
+
+
 ##### [Version 1.3.2](https://github.com/Codeinwp/otter-blocks/compare/v1.3.1...v1.3.2) (2020-01-10)
 
 - Add Slider Transforms [#142](https://github.com/Codeinwp/otter-blocks/issues/142)
