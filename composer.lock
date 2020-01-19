@@ -98,26 +98,29 @@
         },
         {
             "name": "codeinwp/gutenberg-css",
-            "version": "1.0.7",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-css.git",
-                "reference": "0ee40a9feee4d0bb2a384a33c417e936da582c33"
+                "reference": "da13824df56b8be9227584c587605063249c23a1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/0ee40a9feee4d0bb2a384a33c417e936da582c33",
-                "reference": "0ee40a9feee4d0bb2a384a33c417e936da582c33",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/da13824df56b8be9227584c587605063249c23a1",
+                "reference": "da13824df56b8be9227584c587605063249c23a1",
                 "shasum": ""
             },
             "require-dev": {
-                "automattic/vipwpcs": "^0.3.0",
-                "dealerdirect/phpcodesniffer-composer-installer": "0.4.4",
+                "automattic/vipwpcs": "^0.3.0 || ^1.0.0",
+                "dealerdirect/phpcodesniffer-composer-installer": "0.5.0",
                 "phpcompatibility/php-compatibility": "^9",
                 "squizlabs/php_codesniffer": "^3.3",
                 "wp-coding-standards/wpcs": "^1"
             },
             "type": "library",
+            "extra": {
+                "installer-disable": "true"
+            },
             "autoload": {
                 "files": [
                     "load.php"
@@ -136,7 +139,7 @@
             ],
             "description": "CSS Editor for Gutenberg Blocks",
             "homepage": "https://github.com/Codeinwp/gutenberg-css",
-            "time": "2020-01-07T21:14:19+00:00"
+            "time": "2020-01-15T08:46:44+00:00"
         },
         {
             "name": "codeinwp/themeisle-sdk",

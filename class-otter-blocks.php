@@ -68,16 +68,16 @@ class Otter_Blocks {
 	public function load_gutenberg_blocks() {
 		load_plugin_textdomain( 'otter-blocks', false, basename( dirname( __FILE__ ) ) . '/languages' );
 
-		if ( class_exists( '\ThemeIsle\GutenbergBlocks' ) ) {
-			\ThemeIsle\GutenbergBlocks::instance( $this->name );
-		}
-
 		if ( class_exists( '\ThemeIsle\GutenbergCSS' ) && get_option( 'themeisle_blocks_settings_css_module', true ) ) {
 			\ThemeIsle\GutenbergCSS::instance();
 		}
 
 		if ( class_exists( '\ThemeIsle\GutenbergAnimation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {
 			\ThemeIsle\GutenbergAnimation::instance();
+		}
+
+		if ( class_exists( '\ThemeIsle\GutenbergBlocks' ) ) {
+			\ThemeIsle\GutenbergBlocks::instance( $this->name );
 		}
 	}
 
