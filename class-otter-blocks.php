@@ -76,8 +76,8 @@ class Otter_Blocks {
 			\ThemeIsle\GutenbergAnimation::instance();
 		}
 
-		if ( class_exists( '\ThemeIsle\GutenbergBlocks' ) ) {
-			\ThemeIsle\GutenbergBlocks::instance( $this->name );
+		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Main' ) ) {
+			\ThemeIsle\GutenbergBlocks\Main::instance( $this->name );
 		}
 	}
 
