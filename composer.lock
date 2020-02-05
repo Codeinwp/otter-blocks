@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "25cbd6d307884066d1fdbbea49d87306",
+    "content-hash": "61f80b2dc9c59f78cbde2df7af391ad3",
     "packages": [
         {
             "name": "codeinwp/gutenberg-animation",
@@ -50,16 +50,16 @@
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.3.4",
+            "version": "1.3.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "c314c3f0a1c7ff1b2d970be8627dea9c204a60ee"
+                "reference": "d72dbee369e9b3bdcbdba8ec6241a40c9122f53f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/c314c3f0a1c7ff1b2d970be8627dea9c204a60ee",
-                "reference": "c314c3f0a1c7ff1b2d970be8627dea9c204a60ee",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/d72dbee369e9b3bdcbdba8ec6241a40c9122f53f",
+                "reference": "d72dbee369e9b3bdcbdba8ec6241a40c9122f53f",
                 "shasum": ""
             },
             "require": {
@@ -77,9 +77,9 @@
                 "installer-disable": "true"
             },
             "autoload": {
-                "files": [
-                    "load.php"
-                ]
+                "psr-4": {
+                    "ThemeIsle\\GutenbergBlocks\\": "inc/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -94,7 +94,7 @@
             ],
             "description": "A set of awesome Gutenberg Blocks!",
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
-            "time": "2020-01-09T22:21:50+00:00"
+            "time": "2020-02-03T10:22:28+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
@@ -407,16 +407,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.5.3",
+            "version": "3.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "557a1fc7ac702c66b0bbfe16ab3d55839ef724cb"
+                "reference": "dceec07328401de6211037abbb18bda423677e26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/557a1fc7ac702c66b0bbfe16ab3d55839ef724cb",
-                "reference": "557a1fc7ac702c66b0bbfe16ab3d55839ef724cb",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/dceec07328401de6211037abbb18bda423677e26",
+                "reference": "dceec07328401de6211037abbb18bda423677e26",
                 "shasum": ""
             },
             "require": {
@@ -454,7 +454,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2019-12-04T04:46:47+00:00"
+            "time": "2020-01-30T22:20:29+00:00"
         },
         {
             "name": "wp-coding-standards/wpcs",

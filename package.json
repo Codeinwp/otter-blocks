@@ -1,10 +1,11 @@
 {
   "name": "otter-blocks",
-  "version": "1.3.1",
+  "version": "1.3.3",
   "description": "Gutenberg Blocks and Template Library by Otter",
   "scripts": {
     "build": "cross-env BABEL_ENV=default NODE_ENV=production webpack",
     "lint": "eslint src/**.js",
+    "release": "semantic-release",
     "dev": "cross-env BABEL_ENV=default NODE_ENV=development webpack --watch"
   },
   "repository": {
@@ -48,7 +49,7 @@
     "@babel/preset-env": "^7.1.6",
     "autoprefixer": "^9.3.1",
     "babel-loader": "^8.0.4",
-    "cross-env": "3.2.4",
+    "cross-env": "6.0.3",
     "css-loader": "^1.0.1",
     "eslint": "^5.7.0",
     "eslint-config-wordpress": "^2.0.0",
