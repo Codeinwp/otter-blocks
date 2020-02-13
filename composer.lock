@@ -50,16 +50,16 @@
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.3.5",
+            "version": "1.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "d72dbee369e9b3bdcbdba8ec6241a40c9122f53f"
+                "reference": "dbf5ed8cc9c4df1035ca6c127fb41a66e970d983"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/d72dbee369e9b3bdcbdba8ec6241a40c9122f53f",
-                "reference": "d72dbee369e9b3bdcbdba8ec6241a40c9122f53f",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/dbf5ed8cc9c4df1035ca6c127fb41a66e970d983",
+                "reference": "dbf5ed8cc9c4df1035ca6c127fb41a66e970d983",
                 "shasum": ""
             },
             "require": {
@@ -76,11 +76,6 @@
             "extra": {
                 "installer-disable": "true"
             },
-            "autoload": {
-                "psr-4": {
-                    "ThemeIsle\\GutenbergBlocks\\": "inc/"
-                }
-            },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "GPL-2.0-or-later"
@@ -94,7 +89,7 @@
             ],
             "description": "A set of awesome Gutenberg Blocks!",
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
-            "time": "2020-02-03T10:22:28+00:00"
+            "time": "2020-02-13T12:51:18+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",

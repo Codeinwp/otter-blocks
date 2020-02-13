@@ -28,6 +28,9 @@
     "extra": {
         "installer-disable": "true"
     },
+    "autoload": {
+        "classmap": ["vendor/codeinwp/gutenberg-blocks/inc/"]
+    },
     "minimum-stability": "dev",
     "require": {
         "codeinwp/themeisle-sdk": "^3.1",
