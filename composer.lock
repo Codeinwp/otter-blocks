@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "61f80b2dc9c59f78cbde2df7af391ad3",
+    "content-hash": "4e8ee84e50a69b0bfe316c7f0aaaf530",
     "packages": [
         {
             "name": "codeinwp/gutenberg-animation",
@@ -231,16 +231,16 @@
     "packages-dev": [
         {
             "name": "automattic/vipwpcs",
-            "version": "0.3.1",
+            "version": "1.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Automattic/VIP-Coding-Standards.git",
-                "reference": "6ee2440476918f7f8d1419fab41a71a835cd3c0b"
+                "reference": "8544a94c32f990b6669f2c7f034d4ba75ccbb558"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Automattic/VIP-Coding-Standards/zipball/6ee2440476918f7f8d1419fab41a71a835cd3c0b",
-                "reference": "6ee2440476918f7f8d1419fab41a71a835cd3c0b",
+                "url": "https://api.github.com/repos/Automattic/VIP-Coding-Standards/zipball/8544a94c32f990b6669f2c7f034d4ba75ccbb558",
+                "reference": "8544a94c32f990b6669f2c7f034d4ba75ccbb558",
                 "shasum": ""
             },
             "require": {
@@ -249,11 +249,12 @@
                 "wp-coding-standards/wpcs": "1.*"
             },
             "require-dev": {
+                "dealerdirect/phpcodesniffer-composer-installer": "^0.5",
                 "phpcompatibility/php-compatibility": "^9",
-                "phpunit/phpunit": "*"
+                "phpunit/phpunit": "^5 || ^6 || ^7"
             },
             "suggest": {
-                "dealerdirect/phpcodesniffer-composer-installer": "^0.4.3 || This Composer plugin will sort out the PHPCS 'installed_paths' automatically."
+                "dealerdirect/phpcodesniffer-composer-installer": "^0.5 || This Composer plugin will sort out the PHPCS 'installed_paths' automatically."
             },
             "type": "phpcodesniffer-standard",
             "notification-url": "https://packagist.org/downloads/",
@@ -272,7 +273,7 @@
                 "standards",
                 "wordpress"
             ],
-            "time": "2018-12-04T18:31:10+00:00"
+            "time": "2019-04-24T21:34:09+00:00"
         },
         {
             "name": "dealerdirect/phpcodesniffer-composer-installer",
