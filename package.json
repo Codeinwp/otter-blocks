@@ -30,7 +30,7 @@
   "dependencies": {
     "classnames": "^2.2.6",
     "react-joyride": "^2.0.5",
-    "react-notifications-component": "^1.1.1"
+    "react-notifications-component": "^2.0.1"
   },
   "devDependencies": {
     "@semantic-release/changelog": "^3.0.6",
