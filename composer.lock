@@ -8,21 +8,21 @@
     "packages": [
         {
             "name": "codeinwp/gutenberg-animation",
-            "version": "1.0.4",
+            "version": "1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-animation.git",
-                "reference": "36a0eac6f19c82831f30b2e719c41467353e0e73"
+                "reference": "c2c7055dfa1ac6d72a5ba7b950a95cf47040b5f9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-animation/zipball/36a0eac6f19c82831f30b2e719c41467353e0e73",
-                "reference": "36a0eac6f19c82831f30b2e719c41467353e0e73",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-animation/zipball/c2c7055dfa1ac6d72a5ba7b950a95cf47040b5f9",
+                "reference": "c2c7055dfa1ac6d72a5ba7b950a95cf47040b5f9",
                 "shasum": ""
             },
             "require-dev": {
-                "automattic/vipwpcs": "^0.3.0",
-                "dealerdirect/phpcodesniffer-composer-installer": "0.4.4",
+                "automattic/vipwpcs": "^0.3.0 || ^1.0.0",
+                "dealerdirect/phpcodesniffer-composer-installer": "0.6.2",
                 "phpcompatibility/php-compatibility": "^9",
                 "squizlabs/php_codesniffer": "^3.3",
                 "wp-coding-standards/wpcs": "^1"
@@ -46,7 +46,7 @@
             ],
             "description": "CSS Animations for Gutenberg Blocks",
             "homepage": "https://github.com/Codeinwp/gutenberg-animation",
-            "time": "2020-01-06T14:22:45+00:00"
+            "time": "2020-02-15T00:15:35+00:00"
         },
         {
             "name": "codeinwp/gutenberg-blocks",

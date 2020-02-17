@@ -1,7 +1,7 @@
 /**
  * External dependencies.
  */
-import ReactNotification from 'react-notifications-component';
+import { store } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
 
 /**
@@ -70,7 +70,7 @@ const Main = () => {
 		const save = model.save();
 
 		save.success( ( response, status ) => {
-			notificationDOMRef.current.removeNotification( notification );
+			store.removeNotification( notification );
 
 			if ( 'success' === status ) {
 
@@ -93,7 +93,7 @@ const Main = () => {
 		});
 
 		save.error( ( response, status ) => {
-			notificationDOMRef.current.removeNotification( notification );
+			store.removeNotification( notification );
 
 			setTimeout( () => {
 				addNotification( response.responseJSON.message ? response.responseJSON.message : __( 'An unknown error occurred.' ), 'danger' );
@@ -123,17 +123,20 @@ const Main = () => {
 	};
 
 	const addNotification = ( message, type ) => {
-		const notification = notificationDOMRef.current.addNotification({
+		const notification = store.addNotification({
 			message,
 			type,
 			insert: 'top',
-			container: 'top-right',
-			slidingEnter: {
-				duration: 0,
-				delay: 0
+			container: 'bottom-left',
+			isMobile: true,
+			dismiss: {
+				duration: 2000,
+				showIcon: true
 			},
-			dismiss: { duration: 2000 },
-			dismissable: { click: true }
+			dismissable: {
+				click: true,
+				touch: true
+			}
 		});
 
 		setNotification( notification );
@@ -149,8 +152,6 @@ const Main = () => {
 
 	return (
 		<Fragment>
-			<ReactNotification ref={ notificationDOMRef } />
-
 			<div className="otter-main">
 				<div className="otter-step-two">
 					<PanelBody
