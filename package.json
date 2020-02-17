@@ -56,7 +56,7 @@
     "eslint-loader": "^3.0.3",
     "eslint-plugin-react": "^7.11.1",
     "load-project-config": "~0.2.0",
-    "mini-css-extract-plugin": "^0.4.4",
+    "mini-css-extract-plugin": "^0.9.0",
     "node-sass": "^4.10.0",
     "postcss-loader": "^3.0.0",
     "sass-loader": "^7.1.0",
