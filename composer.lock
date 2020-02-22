@@ -50,16 +50,16 @@
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.3.6",
+            "version": "1.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "dbf5ed8cc9c4df1035ca6c127fb41a66e970d983"
+                "reference": "b80a0ab6102825567a59948856e11b7cb43a55bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/dbf5ed8cc9c4df1035ca6c127fb41a66e970d983",
-                "reference": "dbf5ed8cc9c4df1035ca6c127fb41a66e970d983",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/b80a0ab6102825567a59948856e11b7cb43a55bc",
+                "reference": "b80a0ab6102825567a59948856e11b7cb43a55bc",
                 "shasum": ""
             },
             "require": {
@@ -67,7 +67,7 @@
             },
             "require-dev": {
                 "automattic/vipwpcs": "^0.3.0",
-                "dealerdirect/phpcodesniffer-composer-installer": "0.4.4",
+                "dealerdirect/phpcodesniffer-composer-installer": "0.6.2",
                 "phpcompatibility/php-compatibility": "^9",
                 "squizlabs/php_codesniffer": "^3.3",
                 "wp-coding-standards/wpcs": "^1"
@@ -89,7 +89,7 @@
             ],
             "description": "A set of awesome Gutenberg Blocks!",
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
-            "time": "2020-02-13T12:51:18+00:00"
+            "time": "2020-02-22T09:19:17+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
