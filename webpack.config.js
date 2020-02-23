@@ -49,13 +49,7 @@ module.exports = {
 						]
 					}
 				},
-				{
-					loader: 'sass-loader',
-					query: {
-						outputStyle:
-							'production' === process.env.NODE_ENV ? 'compressed' : 'nested'
-					}
-				} ]
+				'sass-loader' ]
 			},
 			{
 				test: /\.(png|jpg)$/,

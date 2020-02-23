@@ -280,18 +280,12 @@
 }
 
 .react-notification-root {
-	.notification-container-top-right {
-		top: 50px;
+	.notification-container-bottom-left {
+		bottom: 40px;
 	}
-}
 
-.notification-item-root {
-
-	.notification-content {
-		padding: 12px 15px;
-	}
-	.notification-close {
-		top: auto;
+	.notification-container-mobile-bottom {
+		bottom: 60px;
 	}
 }
 

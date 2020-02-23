@@ -1,6 +1,8 @@
 /**
  * Internal dependencies.
  */
+import ReactNotification from 'react-notifications-component';
+
 import './style.scss';
 
 import Onboarding from './Components/Onboarding.js';
@@ -23,6 +25,7 @@ const App = () => {
 	return (
 		<Fragment>
 			{ Boolean( otterObj.showTour ) && <Onboarding /> }
+			<ReactNotification/>
 			<Header />
 			<Main />
 			<Footer />

@@ -7,8 +7,8 @@
         "squizlabs/php_codesniffer": "^3.3",
         "wp-coding-standards/wpcs": "^1",
         "phpcompatibility/php-compatibility": "^9",
-        "dealerdirect/phpcodesniffer-composer-installer": "0.4.4",
-        "automattic/vipwpcs": "^0.3.0"
+        "dealerdirect/phpcodesniffer-composer-installer": "0.6.2",
+        "automattic/vipwpcs": "^1.0.0"
     },
     "license": "GPL-2.0+",
     "authors": [
@@ -27,6 +27,9 @@
     },
     "extra": {
         "installer-disable": "true"
+    },
+    "autoload": {
+        "classmap": ["vendor/codeinwp/gutenberg-blocks/inc/"]
     },
     "minimum-stability": "dev",
     "require": {
