@@ -46,6 +46,23 @@ It has:
 
 == Changelog ==
 
+#### [Version 1.4.0](https://github.com/Codeinwp/otter-blocks/compare/v1.3.3...v1.4.0) (2020-02-23)
+
+- Add Column Width control to Sidebar
+- Remove Inline CSS from Blocks
+- Fix Block ID Mechanism
+- Add Global Defaults
+- Improve Vertical Alignment to Section Block
+- Add option to disable Arrows/Bullets in Slider Block
+- Option to reverse columns in Section
+- Add theme_support for global defaults
+- Inherit Sizing values
+- Button Group consistency with Button Block
+- Add Anchor field to Advanced Heading Block
+
+
+
+
 ##### [Version 1.3.3](https://github.com/Codeinwp/otter-blocks/compare/v1.3.2...v1.3.3) (2020-01-19)
 
 Fix issue with Custom CSS module not working
