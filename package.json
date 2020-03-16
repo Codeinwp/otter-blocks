@@ -30,7 +30,7 @@
   "dependencies": {
     "classnames": "^2.2.6",
     "react-joyride": "^2.0.5",
-    "react-notifications-component": "^2.3.0"
+    "react-notifications-component": "^2.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",
