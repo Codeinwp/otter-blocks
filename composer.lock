@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a3e7a2bf6c735f01401a4b5da132fb50",
+    "content-hash": "ea5fc5897894d48d64fa3c567651d077",
     "packages": [
         {
             "name": "codeinwp/gutenberg-animation",
@@ -50,16 +50,16 @@
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.4.0",
+            "version": "1.4.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "b80a0ab6102825567a59948856e11b7cb43a55bc"
+                "reference": "162f71df51e8abdef964628343fd9f558a035e1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/b80a0ab6102825567a59948856e11b7cb43a55bc",
-                "reference": "b80a0ab6102825567a59948856e11b7cb43a55bc",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/162f71df51e8abdef964628343fd9f558a035e1f",
+                "reference": "162f71df51e8abdef964628343fd9f558a035e1f",
                 "shasum": ""
             },
             "require": {
@@ -89,7 +89,7 @@
             ],
             "description": "A set of awesome Gutenberg Blocks!",
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
-            "time": "2020-02-22T09:19:17+00:00"
+            "time": "2020-02-29T20:51:24+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
@@ -138,16 +138,16 @@
         },
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.1.8",
+            "version": "3.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "d036ec8dd9ad318a05af3f21222025ec6a389a42"
+                "reference": "6134a5b28a76fb164ed47cc610dced00e6a98ca1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/d036ec8dd9ad318a05af3f21222025ec6a389a42",
-                "reference": "d036ec8dd9ad318a05af3f21222025ec6a389a42",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/6134a5b28a76fb164ed47cc610dced00e6a98ca1",
+                "reference": "6134a5b28a76fb164ed47cc610dced00e6a98ca1",
                 "shasum": ""
             },
             "require-dev": {
@@ -172,7 +172,7 @@
             "keywords": [
                 "wordpress"
             ],
-            "time": "2019-11-18T12:33:19+00:00"
+            "time": "2020-03-05T15:56:15+00:00"
         },
         {
             "name": "tubalmartin/cssmin",
