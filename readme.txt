@@ -46,6 +46,14 @@ It has:
 
 == Changelog ==
 
+##### [Version 1.5.1](https://github.com/Codeinwp/otter-blocks/compare/v1.5.0...v1.5.1) (2020-03-20)
+
+- Adds compatibility with WordPress 5.4
+- Fixed release issue with 1.5.0
+
+
+
+
 #### [Version 1.5.0](https://github.com/Codeinwp/otter-blocks/compare/v1.4.1...v1.5.0) (2020-03-20)
 
 - Adds compatibility with WordPress 5.4
