@@ -105,6 +105,7 @@ const Onboarding = () => {
 				<Modal
 					title={ __( 'Welcome to Otter!' ) }
 					isDismissable={ false }
+					isDismissible={ false }
 					className="otter-onboarding-modal"
 				>
 					<div className="otter-onboarding-modal-content">
