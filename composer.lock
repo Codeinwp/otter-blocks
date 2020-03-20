@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ea5fc5897894d48d64fa3c567651d077",
+    "content-hash": "d6b2cabcdaa45f42873d1f0e78cb18f2",
     "packages": [
         {
             "name": "codeinwp/gutenberg-animation",
@@ -50,16 +50,16 @@
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.4.1",
+            "version": "1.4.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "162f71df51e8abdef964628343fd9f558a035e1f"
+                "reference": "93c60a115aa5f49c01941f5ed6da0949dc55b430"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/162f71df51e8abdef964628343fd9f558a035e1f",
-                "reference": "162f71df51e8abdef964628343fd9f558a035e1f",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/93c60a115aa5f49c01941f5ed6da0949dc55b430",
+                "reference": "93c60a115aa5f49c01941f5ed6da0949dc55b430",
                 "shasum": ""
             },
             "require": {
@@ -89,7 +89,7 @@
             ],
             "description": "A set of awesome Gutenberg Blocks!",
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
-            "time": "2020-02-29T20:51:24+00:00"
+            "time": "2020-03-20T08:38:39+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
