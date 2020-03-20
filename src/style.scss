@@ -129,7 +129,6 @@
 
 								.is-primary {
 									padding: 2px 20px;
-									height: auto;
 									font-size: 14px;
 									margin-right: 10px;
 								}
@@ -158,9 +157,9 @@
 				.otter-info-button-group {
 					display: flex;
 
-					.is-default {
+					.is-default,
+					.is-secondary {
 						padding: 2px 20px;
-						height: auto;
 						font-size: 14px;
 
 						&:first-child {
@@ -190,6 +189,10 @@
 		background: #f6f6f6;
 		margin-top: 25vh;
 		margin-bottom: 25vh;
+
+		.components-placeholder__fieldset {
+			justify-content: center;
+		}
 	}
 }
 
@@ -215,7 +218,6 @@
 
 		.components-button {
 			padding: 2px 20px;
-			height: auto;
 			font-size: 14px;
 			margin-right: 10px;
 		}
@@ -330,5 +332,46 @@
 	.__floater__open,
 	.react-joyride__beacon {
 		margin-top: 0;
+	}
+}
+
+
+.branch-5-2,
+.branch-5-3 {
+	#otter {
+		.otter-main {
+			.components-panel__body {
+				.components-panel__row {
+					.components-base-control {
+						&.otter-text-field {
+							.components-base-control__field {
+								.otter-text-field-button-group {
+									.is-primary {
+										height: auto;
+									}
+								}
+							}
+						}
+					}
+				}
+	
+				.otter-info {
+					.otter-info-button-group {
+						.is-default,
+						.is-secondary {
+							height: auto;
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	.otter-onboarding-modal {
+		.otter-onboarding-modal-action {
+			.components-button {
+				height: auto;
+			}
+		}
 	}
 }
