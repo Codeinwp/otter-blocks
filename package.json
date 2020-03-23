@@ -36,7 +36,7 @@
     "@babel/core": "^7.8.7",
     "@babel/plugin-proposal-object-rest-spread": "^7.8.3",
     "@babel/plugin-transform-async-to-generator": "^7.8.3",
-    "@babel/plugin-transform-react-jsx": "^7.8.3",
+    "@babel/plugin-transform-react-jsx": "^7.9.1",
     "@babel/preset-env": "^7.8.7",
     "@semantic-release/changelog": "^5.0.0",
     "@semantic-release/exec": "^5.0.0",
