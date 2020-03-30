@@ -60,7 +60,7 @@
     "replace-in-file": "^5.0.2",
     "sass-loader": "^8.0.2",
     "semantic-release": "^17.0.4",
-    "url-loader": "^3.0.0",
+    "url-loader": "^4.0.0",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
   }
