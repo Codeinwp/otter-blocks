@@ -50,16 +50,16 @@
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.4.2",
+            "version": "1.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "93c60a115aa5f49c01941f5ed6da0949dc55b430"
+                "reference": "e26d624bbe6946d070bdfa95383fa8e55dee5d0d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/93c60a115aa5f49c01941f5ed6da0949dc55b430",
-                "reference": "93c60a115aa5f49c01941f5ed6da0949dc55b430",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/e26d624bbe6946d070bdfa95383fa8e55dee5d0d",
+                "reference": "e26d624bbe6946d070bdfa95383fa8e55dee5d0d",
                 "shasum": ""
             },
             "require": {
@@ -89,7 +89,7 @@
             ],
             "description": "A set of awesome Gutenberg Blocks!",
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
-            "time": "2020-03-20T08:38:39+00:00"
+            "time": "2020-03-30T21:49:53+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
@@ -138,16 +138,16 @@
         },
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.2.2",
+            "version": "3.2.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "1b787d10970575780b35f96380c6ef3173b00d18"
+                "reference": "ce152edef1634d7c3ce75ed292efcc7a5f73806e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/1b787d10970575780b35f96380c6ef3173b00d18",
-                "reference": "1b787d10970575780b35f96380c6ef3173b00d18",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/ce152edef1634d7c3ce75ed292efcc7a5f73806e",
+                "reference": "ce152edef1634d7c3ce75ed292efcc7a5f73806e",
                 "shasum": ""
             },
             "require-dev": {
@@ -172,7 +172,7 @@
             "keywords": [
                 "wordpress"
             ],
-            "time": "2020-03-13T15:58:53+00:00"
+            "time": "2020-03-24T16:54:54+00:00"
         },
         {
             "name": "tubalmartin/cssmin",
