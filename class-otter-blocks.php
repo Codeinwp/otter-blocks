@@ -157,7 +157,6 @@ class Otter_Blocks {
 				'type'         => 'string',
 				'description'  => __( 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.', 'otter-blocks' ),
 				'show_in_rest' => true,
-				'default'      => 'no',
 			)
 		);
 	}

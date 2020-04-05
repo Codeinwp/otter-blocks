@@ -2,7 +2,7 @@
 Contributors: themeisle, hardeepasrani
 Tags: gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout
 Requires at least: 5.2    
-Tested up to: 5.3  
+Tested up to: 5.4  
 Requires PHP: 5.4  
 Stable tag: trunk
 License: GPLv3  
@@ -45,6 +45,17 @@ It has:
 3. Posts Block
 
 == Changelog ==
+
+##### [Version 1.4.1](https://github.com/Codeinwp/otter-blocks/compare/v1.4.0...v1.4.1) (2020-02-29)
+
+- Fix issue with Button Group & Global Defaults
+- Add Offset to Posts Block
+- Allow custom IDs in Section & Advanced Heading Block
+- Add speed option in Slider Block
+- Fix issue with Overlay Gradient not working in Section Block
+
+
+
 
 #### [Version 1.4.0](https://github.com/Codeinwp/otter-blocks/compare/v1.3.3...v1.4.0) (2020-02-23)
 
