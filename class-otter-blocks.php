@@ -22,6 +22,20 @@ class Otter_Blocks {
 	public static $instance = null;
 
 	/**
+	 * Rest route namespace.
+	 *
+	 * @var Otter_Blocks
+	 */
+	public $namespace = 'themeisle-gutenberg-blocks/';
+
+	/**
+	 * Rest route version.
+	 *
+	 * @var Otter_Blocks
+	 */
+	public $version = 'v1';
+
+	/**
 	 * Otter_Blocks constructor.
 	 *
 	 * @since   1.0.0
@@ -44,6 +58,7 @@ class Otter_Blocks {
 		add_action( 'admin_menu', array( $this, 'register_menu_page' ) );
 		add_action( 'init', array( $this, 'register_settings' ), 99 );
 		add_action( 'admin_init', array( $this, 'maybe_redirect' ) );
+		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
 
 	/**
@@ -176,6 +191,9 @@ class Otter_Blocks {
 
 		$tour = get_option( 'themeisle_blocks_settings_tour' );
 
+		$wp_upload_dir = wp_upload_dir( null, false );
+		$basedir       = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/';
+
 		wp_enqueue_style(
 			'otter-blocks-styles',
 			plugins_url( 'build/build.css', __FILE__ ),
@@ -186,7 +204,7 @@ class Otter_Blocks {
 		wp_enqueue_script(
 			'otter-blocks-scripts',
 			plugins_url( 'build/build.js', __FILE__ ),
-			array( 'react', 'react-dom', 'wp-i18n', 'wp-api', 'wp-components', 'wp-element' ),
+			array( 'react', 'react-dom', 'wp-api-fetch', 'wp-i18n', 'wp-api', 'wp-components', 'wp-element' ),
 			$version,
 			true
 		);
@@ -195,9 +213,10 @@ class Otter_Blocks {
 			'otter-blocks-scripts',
 			'otterObj',
 			array(
-				'version'    => OTTER_BLOCKS_VERSION,
-				'assetsPath' => plugins_url( 'assets/', __FILE__ ),
-				'showTour'   => $tour,
+				'version'     => OTTER_BLOCKS_VERSION,
+				'assetsPath'  => plugins_url( 'assets/', __FILE__ ),
+				'showTour'    => $tour,
+				'stylesExist' => is_dir( $basedir )
 			)
 		);
 	}
@@ -238,6 +257,103 @@ class Otter_Blocks {
 		update_option( 'themeisle_blocks_settings_redirect', false );
 		wp_safe_redirect( admin_url( 'options-general.php?page=otter' ) );
 		exit;
+	}
+
+	/**
+	 * Register REST API route
+	 *
+	 * @since   1.5.3
+	 * @access  public
+	 */
+	public function register_routes() {
+		$namespace = $this->namespace . $this->version;
+
+		register_rest_route(
+			$namespace,
+			'/regenerate_styles',
+			array(
+				array(
+					'methods'  => \WP_REST_Server::DELETABLE,
+					'callback' => array( $this, 'regenerate_styles' )
+				),
+			)
+		);
+	}
+
+	/**
+	 * Function to delete Otter generated styles.
+	 *
+	 * @param \WP_REST_Request $request Rest request.
+	 *
+	 * @return mixed
+	 * @since   1.5.3
+	 * @access  public
+	 */
+	public function regenerate_styles( \WP_REST_Request $request ) {
+		global $wp_filesystem;
+
+		if ( ! current_user_can( 'edit_posts' ) ) {
+			return;
+		}
+
+		require_once ABSPATH . '/wp-admin/includes/file.php';
+		WP_Filesystem();
+
+		$wp_upload_dir = wp_upload_dir( null, false );
+		$basedir       = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/';
+
+		if ( ! $wp_filesystem->is_writable( $wp_upload_dir['basedir'] ) ) {
+			return rest_ensure_response(
+				array(
+					'success' => false,
+					'data' => array(
+						'message' => __( 'Sorry, the filesystem isn\'t writeable.', 'textdomain' ),
+					)
+				)
+			);
+		}
+
+		if ( ! is_dir( $basedir ) ) {
+			return rest_ensure_response(
+				array(
+					'success' => false,
+					'data' => array(
+						'message' => __( 'Sorry, the directory doesn\'t exist.', 'textdomain' ),
+					)
+				)
+			);
+		}
+
+		$this->delete_files( $basedir );
+
+		return rest_ensure_response(
+			array(
+				'success' => true,
+				'data' => array(
+					'message' => __( 'Styles deleted.', 'textdomain' )
+				)
+			)
+		);
+	}
+
+	/**
+	 * Function to delete Otter generated styles.
+	 *
+	 * @since   1.5.3
+	 * @access  public
+	 */
+	public function delete_files( $target ) {
+		if ( is_dir( $target ) ) {
+			$files = glob( $target . '*', GLOB_MARK );
+
+			foreach( $files as $file ){
+				$this->delete_files( $file );
+			}
+
+			rmdir( $target );
+		} elseif ( is_file( $target ) ) {
+			unlink( $target );
+		}
 	}
 
 	/**

@@ -75,8 +75,12 @@
 			}
 
 			.components-panel__row {
-				padding: 20px 10px 10px;
+				padding: 10px;
 				margin: 0;
+
+				&:first-of-type {
+					padding-top: 20px;
+				}
 
 				.components-base-control {
 
@@ -86,13 +90,13 @@
 						margin-bottom: 10px;
 					}
 
-					&.otter-text-field {
+					&.otter-button-field {
 						width: 100%;
 
 						.components-base-control__field {
 							display: block;
 
-							label {
+							.components-base-control__label {
 								font-weight: 600;
 								margin-bottom: 10px;
 							}
@@ -122,7 +126,7 @@
 								}
 							}
 
-							.otter-text-field-button-group {
+							.otter-button-group {
 								display: flex;
 								align-items: center;
 								margin: 2px 0 15px;
@@ -220,6 +224,44 @@
 			padding: 2px 20px;
 			font-size: 14px;
 			margin-right: 10px;
+		}
+	}
+}
+
+.otter-button-control {
+	display: flex;
+	flex: 1;
+	justify-content: space-between;
+	align-items: center;
+
+	.components-base-control_labels {
+		.components-base-control__label {
+			font-weight: 600;
+			margin-bottom: 10px;
+		}
+	}
+
+	.otter-button-control-group {
+		.components-button {
+			padding: 2px 20px;
+			font-size: 14px;
+			margin-right: 10px;
+		}
+	}
+}
+
+.otter-modal-actions {
+    display: flex;
+	justify-content: flex-end;
+	margin-top: 10px;
+
+	.components-button {
+		padding: 2px 20px;
+		font-size: 14px;
+		margin-right: 10px;
+
+		&:last-child {
+			margin: 0;
 		}
 	}
 }
@@ -343,9 +385,9 @@
 			.components-panel__body {
 				.components-panel__row {
 					.components-base-control {
-						&.otter-text-field {
+						&.otter-button-field {
 							.components-base-control__field {
-								.otter-text-field-button-group {
+								.otter-button-field-button-group {
 									.is-primary {
 										height: auto;
 									}
