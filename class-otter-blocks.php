@@ -326,6 +326,10 @@ class Otter_Blocks {
 
 		$this->delete_files( $basedir );
 
+		delete_post_meta_by_key( '_themeisle_gutenberg_block_stylesheet' );
+		delete_post_meta_by_key( '_themeisle_gutenberg_block_styles' );
+		delete_post_meta_by_key( '_themeisle_gutenberg_block_fonts' );
+
 		return rest_ensure_response(
 			array(
 				'success' => true,
