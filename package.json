@@ -6,6 +6,7 @@
     "build": "cross-env BABEL_ENV=default NODE_ENV=production webpack",
     "lint": "eslint src/**.js",
     "release": "semantic-release",
+    "dist": "bash bin/dist.sh",
     "dev": "cross-env BABEL_ENV=default NODE_ENV=development webpack --watch"
   },
   "repository": {
@@ -48,7 +49,7 @@
     "css-loader": "^3.4.2",
     "eslint": "^6.8.0",
     "eslint-config-wordpress": "^2.0.0",
-    "eslint-loader": "^3.0.3",
+    "eslint-loader": "^4.0.0",
     "eslint-plugin-react": "^7.19.0",
     "grunt": "^1.1.0",
     "grunt-version": "^2.0.0",
