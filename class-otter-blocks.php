@@ -216,7 +216,7 @@ class Otter_Blocks {
 				'version'     => OTTER_BLOCKS_VERSION,
 				'assetsPath'  => plugins_url( 'assets/', __FILE__ ),
 				'showTour'    => $tour,
-				'stylesExist' => is_dir( $basedir )
+				'stylesExist' => is_dir( $basedir ),
 			)
 		);
 	}
@@ -274,7 +274,7 @@ class Otter_Blocks {
 			array(
 				array(
 					'methods'  => \WP_REST_Server::DELETABLE,
-					'callback' => array( $this, 'regenerate_styles' )
+					'callback' => array( $this, 'regenerate_styles' ),
 				),
 			)
 		);
@@ -306,9 +306,9 @@ class Otter_Blocks {
 			return rest_ensure_response(
 				array(
 					'success' => false,
-					'data' => array(
-						'message' => __( 'Sorry, the filesystem isn\'t writeable.', 'textdomain' ),
-					)
+					'data'    => array(
+						'message' => __( 'Sorry, the filesystem isn\'t writeable.', 'otter-blocks' ),
+					),
 				)
 			);
 		}
@@ -317,9 +317,9 @@ class Otter_Blocks {
 			return rest_ensure_response(
 				array(
 					'success' => false,
-					'data' => array(
-						'message' => __( 'Sorry, the directory doesn\'t exist.', 'textdomain' ),
-					)
+					'data'    => array(
+						'message' => __( 'Sorry, the directory doesn\'t exist.', 'otter-blocks' ),
+					),
 				)
 			);
 		}
@@ -333,15 +333,17 @@ class Otter_Blocks {
 		return rest_ensure_response(
 			array(
 				'success' => true,
-				'data' => array(
-					'message' => __( 'Styles deleted.', 'textdomain' )
-				)
+				'data'    => array(
+					'message' => __( 'Styles deleted.', 'otter-blocks' ),
+				),
 			)
 		);
 	}
 
 	/**
 	 * Function to delete Otter generated styles.
+	 *
+	 * @param string $target File path.
 	 *
 	 * @since   1.5.3
 	 * @access  public
@@ -350,7 +352,7 @@ class Otter_Blocks {
 		if ( is_dir( $target ) ) {
 			$files = glob( $target . '*', GLOB_MARK );
 
-			foreach( $files as $file ){
+			foreach ( $files as $file ) {
 				$this->delete_files( $file );
 			}
 
