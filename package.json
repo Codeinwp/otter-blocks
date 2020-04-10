@@ -6,6 +6,7 @@
     "build": "cross-env BABEL_ENV=default NODE_ENV=production webpack",
     "lint": "eslint src/**.js",
     "release": "semantic-release",
+    "dist": "bash bin/dist.sh",
     "dev": "cross-env BABEL_ENV=default NODE_ENV=development webpack --watch"
   },
   "repository": {
@@ -34,21 +35,21 @@
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
-    "@babel/plugin-proposal-object-rest-spread": "^7.9.0",
+    "@babel/plugin-proposal-object-rest-spread": "^7.9.5",
     "@babel/plugin-transform-async-to-generator": "^7.8.3",
     "@babel/plugin-transform-react-jsx": "^7.9.4",
-    "@babel/preset-env": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/exec": "^5.0.0",
     "@semantic-release/git": "^9.0.0",
-    "autoprefixer": "^9.7.5",
+    "autoprefixer": "^9.7.6",
     "babel-loader": "^8.1.0",
     "conventional-changelog-simple-preset": "^1.0.10",
     "cross-env": "7.0.2",
-    "css-loader": "^3.4.2",
+    "css-loader": "^3.5.2",
     "eslint": "^6.8.0",
     "eslint-config-wordpress": "^2.0.0",
-    "eslint-loader": "^3.0.3",
+    "eslint-loader": "^4.0.0",
     "eslint-plugin-react": "^7.19.0",
     "grunt": "^1.1.0",
     "grunt-version": "^2.0.0",
@@ -60,7 +61,7 @@
     "replace-in-file": "^5.0.2",
     "sass-loader": "^8.0.2",
     "semantic-release": "^17.0.4",
-    "url-loader": "^4.0.0",
+    "url-loader": "^4.1.0",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
   }

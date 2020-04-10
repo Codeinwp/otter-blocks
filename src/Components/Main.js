@@ -5,14 +5,22 @@ import { store } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
 
 /**
+ * Internal dependencies.
+ */
+import ButtonControl from './Button-Control.js';
+
+/**
  * WordPress dependencies.
  */
 const { __ } = wp.i18n;
+
+const { apiFetch } = wp;
 
 const {
 	BaseControl,
 	Button,
 	ExternalLink,
+	Modal,
 	PanelBody,
 	PanelRow,
 	Placeholder,
@@ -43,6 +51,10 @@ const Main = () => {
 				});
 			}
 		});
+
+		if ( ! Boolean( otterObj.stylesExist ) ) {
+			setRegeneratedDisabled( true );
+		}
 	}, []);
 
 	const [ isAPILoaded, setAPILoaded ] = useState( false );
@@ -53,6 +65,8 @@ const Main = () => {
 	const [ isDefaultSection, setDefaultSection ] = useState( true );
 	const [ googleMapsAPI, setGoogleMapsAPI ] = useState( '' );
 	const [ isLoggingData, setLoggingData ] = useState( 'no' );
+	const [ isOpen, setOpen ] = useState( false );
+	const [ isRegeneratedDisabled, setRegeneratedDisabled ] = useState( false );
 
 	const settingsRef = useRef( null );
 	const notificationDOMRef = useRef( null );
@@ -120,6 +134,15 @@ const Main = () => {
 			setLoggingData( value );
 			break;
 		}
+	};
+
+	const regenerateStyles = async() => {
+		setAPISaving( true );
+		let data = await apiFetch({ path: 'themeisle-gutenberg-blocks/v1/regenerate_styles', method: 'DELETE' });
+		addNotification( data.data.message, data.success ? 'success' : 'danger' );
+		setRegeneratedDisabled( true );
+		setAPISaving( false );
+		setOpen( false );
 	};
 
 	const addNotification = ( message, type ) => {
@@ -201,7 +224,7 @@ const Main = () => {
 								label={ __( 'Google Maps API' ) }
 								help={ 'In order to use Google Maps block, you need to use Google Maps and Places API.' }
 								id="otter-options-google-map-api"
-								className="otter-text-field"
+								className="otter-button-field"
 							>
 								<input
 									type="text"
@@ -212,7 +235,7 @@ const Main = () => {
 									onChange={ e => setGoogleMapsAPI( e.target.value ) }
 								/>
 
-								<div className="otter-text-field-button-group">
+								<div className="otter-button-group">
 									<Button
 										isPrimary
 										isLarge
@@ -244,6 +267,16 @@ const Main = () => {
 								help={ 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.' }
 								checked={ 'yes' === isLoggingData ? true : false }
 								onChange={ () => changeOptions( 'otter_blocks_logger_flag', 'isLoggingData', ( 'yes' === isLoggingData ? 'no' : 'yes' ) ) }
+							/>
+						</PanelRow>
+
+						<PanelRow>
+							<ButtonControl
+								label={ __( 'Regenerate Styles' ) }
+								help={ 'Clicking on this will delete all the Otter generated CSS files.' }
+								buttonLabel={ __( 'Regenerate' ) }
+								disabled={ isRegeneratedDisabled }
+								action={ () => setOpen( true ) }
 							/>
 						</PanelRow>
 					</PanelBody>
@@ -279,6 +312,36 @@ const Main = () => {
 					</div>
 				</PanelBody>
 			</div>
+
+			{ isOpen && (
+				<Modal
+					title={ __( 'Are you sure?' ) }
+					onRequestClose={ () => setOpen( false ) }
+				>
+					<p>{ __( 'Are you sure you want to delete all Otter generated CSS files?' ) }</p>
+					<p>{ __( 'Note: Styles will be regenerated as users start visiting your pages.' ) }</p>
+
+					<div className="otter-modal-actions">
+						<Button
+							isSecondary
+							isLarge
+							onClick={ () => setOpen( false ) }
+						>
+							{ __( 'Cancel' ) }
+						</Button>
+
+						<Button
+							isPrimary
+							isLarge
+							disabled={ isAPISaving }
+							isBusy={ isAPISaving }
+							onClick={ regenerateStyles }
+						>
+							{ __( 'Confirm' ) }
+						</Button>
+					</div>
+				</Modal>
+			) }
 		</Fragment>
 	);
 };
