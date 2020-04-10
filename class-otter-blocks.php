@@ -349,6 +349,11 @@ class Otter_Blocks {
 	 * @access  public
 	 */
 	public function delete_files( $target ) {
+		global $wp_filesystem;
+
+		require_once ABSPATH . '/wp-admin/includes/file.php';
+		WP_Filesystem();
+
 		if ( is_dir( $target ) ) {
 			$files = glob( $target . '*', GLOB_MARK );
 
@@ -356,9 +361,9 @@ class Otter_Blocks {
 				$this->delete_files( $file );
 			}
 
-			rmdir( $target );
+			$wp_filesystem->delete( $target, true );
 		} elseif ( is_file( $target ) ) {
-			unlink( $target );
+			$wp_filesystem->delete( $target, true );
 		}
 	}
 
