@@ -46,6 +46,19 @@ It has:
 
 == Changelog ==
 
+##### [Version 1.5.3](https://github.com/Codeinwp/otter-blocks/compare/v1.5.2...v1.5.3) (2020-04-10)
+
+- Remove Icons from Range Controls
+- Add ColorIndicator to Color Controls
+- Move Vertical Alignment to Toolbar
+- Fix Button Hover Color not saving
+- Fix Responsive Controls not working
+- Regenerate CSS file if it doesn't exist
+- Update Font Awesome to the latest version
+
+
+
+
 ##### [Version 1.5.2](https://github.com/Codeinwp/otter-blocks/compare/v1.5.1...v1.5.2) (2020-03-30)
 
 - Improve Responsiveness Control
