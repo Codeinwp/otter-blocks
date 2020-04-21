@@ -138,16 +138,16 @@
         },
         {
             "name": "codeinwp/gutenberg-menu-icons",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-menu-icons.git",
-                "reference": "4258c194d037d765730f5b0e0420b10a62ef5505"
+                "reference": "db2a807f83b892f68df8b673e8ac54c1ecd8ba13"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-menu-icons/zipball/4258c194d037d765730f5b0e0420b10a62ef5505",
-                "reference": "4258c194d037d765730f5b0e0420b10a62ef5505",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-menu-icons/zipball/db2a807f83b892f68df8b673e8ac54c1ecd8ba13",
+                "reference": "db2a807f83b892f68df8b673e8ac54c1ecd8ba13",
                 "shasum": ""
             },
             "require-dev": {
@@ -176,7 +176,7 @@
             ],
             "description": "Menu Icons for Gutenberg",
             "homepage": "https://github.com/Codeinwp/gutenberg-menu-icons",
-            "time": "2020-04-19T13:34:32+00:00"
+            "time": "2020-04-21T15:14:15+00:00"
         },
         {
             "name": "codeinwp/themeisle-sdk",
