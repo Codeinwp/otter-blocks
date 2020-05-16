@@ -69,10 +69,11 @@ class Otter_Blocks {
 	 */
 	public function enqueue_block_assets() {
 		wp_register_style( 'font-awesome-5', plugins_url( 'assets/fontawesome/css/all.min.css', __FILE__ ), [], OTTER_BLOCKS_VERSION );
+		wp_register_style( 'font-awesome-4-shims', plugins_url( 'assets/fontawesome/css/v4-shims.min.css', __FILE__ ), [], OTTER_BLOCKS_VERSION );
 
-		if ( is_admin() || has_block( 'themeisle-blocks/button-group' ) || has_block( 'themeisle-blocks/font-awesome-icons' ) || has_block( 'themeisle-blocks/sharing-icons' ) || has_block( 'themeisle-blocks/plugin-cards' ) || has_block( 'block' ) ) {
+		if ( is_admin() ) {
 			wp_enqueue_style( 'font-awesome-5' );
-			wp_enqueue_style( 'font-awesome-4-shims', plugins_url( 'assets/fontawesome/css/v4-shims.min.css', __FILE__ ), [], OTTER_BLOCKS_VERSION );
+			wp_enqueue_style( 'font-awesome-4-shims' );
 		}
 	}
 
