@@ -60,7 +60,7 @@
     "postcss-loader": "^3.0.0",
     "replace-in-file": "^6.0.0",
     "sass-loader": "^8.0.2",
-    "semantic-release": "^17.0.7",
+    "semantic-release": "^17.0.8",
     "url-loader": "^4.1.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11"
