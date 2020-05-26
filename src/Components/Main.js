@@ -44,6 +44,7 @@ const Main = () => {
 				settingsRef.current.fetch().then( response => {
 					setCSSModule( Boolean( response.themeisle_blocks_settings_css_module ) );
 					setBlocksAnimation( Boolean( response.themeisle_blocks_settings_blocks_animation ) );
+					setMenuIcons( Boolean( response.themeisle_blocks_settings_menu_icons ) );
 					setDefaultSection( Boolean( response.themeisle_blocks_settings_default_block ) );
 					setGoogleMapsAPI( response.themeisle_google_map_block_api_key );
 					setLoggingData( response.otter_blocks_logger_flag );
@@ -62,6 +63,7 @@ const Main = () => {
 	const [ notification, setNotification ] = useState( null );
 	const [ cssModule, setCSSModule ] = useState( false );
 	const [ blocksAnimation, setBlocksAnimation ] = useState( false );
+	const [ menuIcons, setMenuIcons ] = useState( false );
 	const [ isDefaultSection, setDefaultSection ] = useState( true );
 	const [ googleMapsAPI, setGoogleMapsAPI ] = useState( '' );
 	const [ isLoggingData, setLoggingData ] = useState( 'no' );
@@ -123,6 +125,9 @@ const Main = () => {
 			break;
 		case 'blocksAnimation':
 			setBlocksAnimation( value );
+			break;
+		case 'menuIcons':
+			setMenuIcons( value );
 			break;
 		case 'isDefaultSection':
 			setDefaultSection( value );
@@ -197,6 +202,17 @@ const Main = () => {
 								onChange={ () => changeOptions( 'themeisle_blocks_settings_blocks_animation', 'blocksAnimation', ! blocksAnimation ) }
 							/>
 						</PanelRow>
+
+						{ Boolean( otterObj.navExists ) && (
+							<PanelRow>
+								<ToggleControl
+									label={ __( 'Enable Menu Icons Module' ) }
+									help={ 'Menu Icons module allows to add icons to navigation menu items in Block Editor.' }
+									checked={ menuIcons }
+									onChange={ () => changeOptions( 'themeisle_blocks_settings_menu_icons', 'menuIcons', ! menuIcons ) }
+								/>
+							</PanelRow>
+						) }
 					</PanelBody>
 				</div>
 

@@ -68,9 +68,12 @@ class Otter_Blocks {
 	 * @access  public
 	 */
 	public function enqueue_block_assets() {
-		if ( is_admin() || has_block( 'themeisle-blocks/button-group' ) || has_block( 'themeisle-blocks/font-awesome-icons' ) || has_block( 'themeisle-blocks/sharing-icons' ) || has_block( 'themeisle-blocks/plugin-cards' ) || has_block( 'block' ) ) {
-			wp_enqueue_style( 'font-awesome-5', plugins_url( 'assets/fontawesome/css/all.min.css', __FILE__ ), [], OTTER_BLOCKS_VERSION );
-			wp_enqueue_style( 'font-awesome-4-shims', plugins_url( 'assets/fontawesome/css/v4-shims.min.css', __FILE__ ), [], OTTER_BLOCKS_VERSION );
+		wp_register_style( 'font-awesome-5', plugins_url( 'assets/fontawesome/css/all.min.css', __FILE__ ), [], OTTER_BLOCKS_VERSION );
+		wp_register_style( 'font-awesome-4-shims', plugins_url( 'assets/fontawesome/css/v4-shims.min.css', __FILE__ ), [], OTTER_BLOCKS_VERSION );
+
+		if ( is_admin() ) {
+			wp_enqueue_style( 'font-awesome-5' );
+			wp_enqueue_style( 'font-awesome-4-shims' );
 		}
 	}
 
@@ -89,6 +92,10 @@ class Otter_Blocks {
 
 		if ( class_exists( '\ThemeIsle\GutenbergAnimation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {
 			\ThemeIsle\GutenbergAnimation::instance();
+		}
+
+		if ( class_exists( '\ThemeIsle\GutenbergMenuIcons' ) && get_option( 'themeisle_blocks_settings_menu_icons', true ) ) {
+			\ThemeIsle\GutenbergMenuIcons::instance();
 		}
 
 		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Main' ) ) {
@@ -167,6 +174,17 @@ class Otter_Blocks {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_menu_icons',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Menu Icons module allows to add icons to navigation menu items in Block Editor.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'otter_blocks_logger_flag',
 			array(
 				'type'         => 'string',
@@ -217,6 +235,7 @@ class Otter_Blocks {
 				'assetsPath'  => plugins_url( 'assets/', __FILE__ ),
 				'showTour'    => $tour,
 				'stylesExist' => is_dir( $basedir ),
+				'navExists'   => WP_Block_Type_Registry::get_instance()->is_registered( 'core/navigation' ),
 			)
 		);
 	}

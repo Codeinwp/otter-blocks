@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d1ebddf7122b73c4e8b4c1f0e6b31609",
+    "content-hash": "6e625b99b15586d111dee727394acce5",
     "packages": [
         {
             "name": "codeinwp/gutenberg-animation",
@@ -50,19 +50,20 @@
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.5.1",
+            "version": "1.5.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "0d85a6a780dcafcc8895d003d7b3249cc4109489"
+                "reference": "39af85f894e67fca1a8ac3a172bebe6688b83480"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/0d85a6a780dcafcc8895d003d7b3249cc4109489",
-                "reference": "0d85a6a780dcafcc8895d003d7b3249cc4109489",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/39af85f894e67fca1a8ac3a172bebe6688b83480",
+                "reference": "39af85f894e67fca1a8ac3a172bebe6688b83480",
                 "shasum": ""
             },
             "require": {
+                "masterminds/html5": "^2.7",
                 "tubalmartin/cssmin": "^4.1"
             },
             "require-dev": {
@@ -89,25 +90,25 @@
             ],
             "description": "A set of awesome Gutenberg Blocks!",
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
-            "time": "2020-04-10T22:03:57+00:00"
+            "time": "2020-05-26T15:53:06+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
-            "version": "1.0.8",
+            "version": "1.0.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-css.git",
-                "reference": "da13824df56b8be9227584c587605063249c23a1"
+                "reference": "4d891b7969d903439b7f48f3ce088029c0c7dbd5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/da13824df56b8be9227584c587605063249c23a1",
-                "reference": "da13824df56b8be9227584c587605063249c23a1",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/4d891b7969d903439b7f48f3ce088029c0c7dbd5",
+                "reference": "4d891b7969d903439b7f48f3ce088029c0c7dbd5",
                 "shasum": ""
             },
             "require-dev": {
                 "automattic/vipwpcs": "^0.3.0 || ^1.0.0",
-                "dealerdirect/phpcodesniffer-composer-installer": "0.5.0",
+                "dealerdirect/phpcodesniffer-composer-installer": "0.6.2",
                 "phpcompatibility/php-compatibility": "^9",
                 "squizlabs/php_codesniffer": "^3.3",
                 "wp-coding-standards/wpcs": "^1"
@@ -134,20 +135,62 @@
             ],
             "description": "CSS Editor for Gutenberg Blocks",
             "homepage": "https://github.com/Codeinwp/gutenberg-css",
-            "time": "2020-01-15T08:46:44+00:00"
+            "time": "2020-05-25T14:37:28+00:00"
         },
         {
-            "name": "codeinwp/themeisle-sdk",
-            "version": "3.2.8",
+            "name": "codeinwp/gutenberg-menu-icons",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
-                "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "ce152edef1634d7c3ce75ed292efcc7a5f73806e"
+                "url": "https://github.com/Codeinwp/gutenberg-menu-icons.git",
+                "reference": "121ef82c57a556301265cbd1032d28619235e488"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/ce152edef1634d7c3ce75ed292efcc7a5f73806e",
-                "reference": "ce152edef1634d7c3ce75ed292efcc7a5f73806e",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-menu-icons/zipball/121ef82c57a556301265cbd1032d28619235e488",
+                "reference": "121ef82c57a556301265cbd1032d28619235e488",
+                "shasum": ""
+            },
+            "require-dev": {
+                "automattic/vipwpcs": "^0.3.0 || ^1.0.0",
+                "dealerdirect/phpcodesniffer-composer-installer": "0.6.2",
+                "phpcompatibility/php-compatibility": "^9",
+                "squizlabs/php_codesniffer": "^3.3",
+                "wp-coding-standards/wpcs": "^1"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "load.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "ThemeIsle team",
+                    "email": "friends@themeisle.com",
+                    "homepage": "https://themeisle.com"
+                }
+            ],
+            "description": "Menu Icons for Gutenberg",
+            "homepage": "https://github.com/Codeinwp/gutenberg-menu-icons",
+            "time": "2020-05-17T21:08:46+00:00"
+        },
+        {
+            "name": "codeinwp/themeisle-sdk",
+            "version": "3.2.9",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Codeinwp/themeisle-sdk.git",
+                "reference": "5923b377554028b3e2c2e98a5f752b9bcd23d4da"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/5923b377554028b3e2c2e98a5f752b9bcd23d4da",
+                "reference": "5923b377554028b3e2c2e98a5f752b9bcd23d4da",
                 "shasum": ""
             },
             "require-dev": {
@@ -172,7 +215,74 @@
             "keywords": [
                 "wordpress"
             ],
-            "time": "2020-03-24T16:54:54+00:00"
+            "time": "2020-05-18T16:59:05+00:00"
+        },
+        {
+            "name": "masterminds/html5",
+            "version": "2.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Masterminds/html5-php.git",
+                "reference": "104443ad663d15981225f99532ba73c2f1d6b6f2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/104443ad663d15981225f99532ba73c2f1d6b6f2",
+                "reference": "104443ad663d15981225f99532ba73c2f1d6b6f2",
+                "shasum": ""
+            },
+            "require": {
+                "ext-ctype": "*",
+                "ext-dom": "*",
+                "ext-libxml": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35",
+                "sami/sami": "~2.0",
+                "satooshi/php-coveralls": "1.0.*"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.7-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Masterminds\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matt Butcher",
+                    "email": "technosophos@gmail.com"
+                },
+                {
+                    "name": "Matt Farina",
+                    "email": "matt@mattfarina.com"
+                },
+                {
+                    "name": "Asmir Mustafic",
+                    "email": "goetas@gmail.com"
+                }
+            ],
+            "description": "An HTML5 parser and serializer.",
+            "homepage": "http://masterminds.github.io/html5-php",
+            "keywords": [
+                "HTML5",
+                "dom",
+                "html",
+                "parser",
+                "querypath",
+                "serializer",
+                "xml"
+            ],
+            "time": "2019-07-25T07:03:26+00:00"
         },
         {
             "name": "tubalmartin/cssmin",
