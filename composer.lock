@@ -94,16 +94,16 @@
         },
         {
             "name": "codeinwp/gutenberg-css",
-            "version": "1.0.9",
+            "version": "1.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-css.git",
-                "reference": "4d891b7969d903439b7f48f3ce088029c0c7dbd5"
+                "reference": "b7162f5b828bfc9223f862e392abbca0805580a4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/4d891b7969d903439b7f48f3ce088029c0c7dbd5",
-                "reference": "4d891b7969d903439b7f48f3ce088029c0c7dbd5",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/b7162f5b828bfc9223f862e392abbca0805580a4",
+                "reference": "b7162f5b828bfc9223f862e392abbca0805580a4",
                 "shasum": ""
             },
             "require-dev": {
@@ -135,7 +135,7 @@
             ],
             "description": "CSS Editor for Gutenberg Blocks",
             "homepage": "https://github.com/Codeinwp/gutenberg-css",
-            "time": "2020-05-25T14:37:28+00:00"
+            "time": "2020-06-14T00:07:37+00:00"
         },
         {
             "name": "codeinwp/gutenberg-menu-icons",
