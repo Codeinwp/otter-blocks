@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "codeinwp/gutenberg-animation",
-            "version": "1.0.5",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-animation.git",
-                "reference": "c2c7055dfa1ac6d72a5ba7b950a95cf47040b5f9"
+                "reference": "a685db628c163b39aff81fbbe7d27962dc68511c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-animation/zipball/c2c7055dfa1ac6d72a5ba7b950a95cf47040b5f9",
-                "reference": "c2c7055dfa1ac6d72a5ba7b950a95cf47040b5f9",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-animation/zipball/a685db628c163b39aff81fbbe7d27962dc68511c",
+                "reference": "a685db628c163b39aff81fbbe7d27962dc68511c",
                 "shasum": ""
             },
             "require-dev": {
@@ -46,7 +46,7 @@
             ],
             "description": "CSS Animations for Gutenberg Blocks",
             "homepage": "https://github.com/Codeinwp/gutenberg-animation",
-            "time": "2020-02-15T00:15:35+00:00"
+            "time": "2020-06-13T23:34:22+00:00"
         },
         {
             "name": "codeinwp/gutenberg-blocks",
