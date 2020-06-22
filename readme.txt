@@ -48,7 +48,6 @@ It has:
 
 ##### [Version 1.5.5](https://github.com/Codeinwp/otter-blocks/compare/v1.5.4...v1.5.5) (2020-06-22)
 
-- Dropped support for WordPress 5.4
 - Store images locally when importing templates
 - The improved template import mechanism
 - Fix CSS file is not enqueued for posts outside the main loop
