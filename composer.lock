@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "codeinwp/gutenberg-animation",
-            "version": "1.0.5",
+            "version": "1.0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-animation.git",
-                "reference": "c2c7055dfa1ac6d72a5ba7b950a95cf47040b5f9"
+                "reference": "a685db628c163b39aff81fbbe7d27962dc68511c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-animation/zipball/c2c7055dfa1ac6d72a5ba7b950a95cf47040b5f9",
-                "reference": "c2c7055dfa1ac6d72a5ba7b950a95cf47040b5f9",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-animation/zipball/a685db628c163b39aff81fbbe7d27962dc68511c",
+                "reference": "a685db628c163b39aff81fbbe7d27962dc68511c",
                 "shasum": ""
             },
             "require-dev": {
@@ -46,20 +46,20 @@
             ],
             "description": "CSS Animations for Gutenberg Blocks",
             "homepage": "https://github.com/Codeinwp/gutenberg-animation",
-            "time": "2020-02-15T00:15:35+00:00"
+            "time": "2020-06-13T23:34:22+00:00"
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.5.2",
+            "version": "1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "39af85f894e67fca1a8ac3a172bebe6688b83480"
+                "reference": "ad512c53be4f7ebe79ac2ed40f39cf9a9d4a4885"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/39af85f894e67fca1a8ac3a172bebe6688b83480",
-                "reference": "39af85f894e67fca1a8ac3a172bebe6688b83480",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/ad512c53be4f7ebe79ac2ed40f39cf9a9d4a4885",
+                "reference": "ad512c53be4f7ebe79ac2ed40f39cf9a9d4a4885",
                 "shasum": ""
             },
             "require": {
@@ -90,20 +90,20 @@
             ],
             "description": "A set of awesome Gutenberg Blocks!",
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
-            "time": "2020-05-26T15:53:06+00:00"
+            "time": "2020-06-22T21:35:29+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
-            "version": "1.0.9",
+            "version": "1.0.11",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-css.git",
-                "reference": "4d891b7969d903439b7f48f3ce088029c0c7dbd5"
+                "reference": "e777778305b4a5e1572df55d5f70ecfe8bddf89a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/4d891b7969d903439b7f48f3ce088029c0c7dbd5",
-                "reference": "4d891b7969d903439b7f48f3ce088029c0c7dbd5",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/e777778305b4a5e1572df55d5f70ecfe8bddf89a",
+                "reference": "e777778305b4a5e1572df55d5f70ecfe8bddf89a",
                 "shasum": ""
             },
             "require-dev": {
@@ -135,7 +135,7 @@
             ],
             "description": "CSS Editor for Gutenberg Blocks",
             "homepage": "https://github.com/Codeinwp/gutenberg-css",
-            "time": "2020-05-25T14:37:28+00:00"
+            "time": "2020-06-17T19:09:12+00:00"
         },
         {
             "name": "codeinwp/gutenberg-menu-icons",
@@ -181,16 +181,16 @@
         },
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.2.9",
+            "version": "3.2.14",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "5923b377554028b3e2c2e98a5f752b9bcd23d4da"
+                "reference": "992f5e8347836e325ffc50760da1d550b79831c4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/5923b377554028b3e2c2e98a5f752b9bcd23d4da",
-                "reference": "5923b377554028b3e2c2e98a5f752b9bcd23d4da",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/992f5e8347836e325ffc50760da1d550b79831c4",
+                "reference": "992f5e8347836e325ffc50760da1d550b79831c4",
                 "shasum": ""
             },
             "require-dev": {
@@ -215,20 +215,20 @@
             "keywords": [
                 "wordpress"
             ],
-            "time": "2020-05-18T16:59:05+00:00"
+            "time": "2020-06-10T16:25:09+00:00"
         },
         {
             "name": "masterminds/html5",
-            "version": "2.7.0",
+            "version": "2.7.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Masterminds/html5-php.git",
-                "reference": "104443ad663d15981225f99532ba73c2f1d6b6f2"
+                "reference": "a3edfe52f9e7380e498d33157e1330e85386645d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/104443ad663d15981225f99532ba73c2f1d6b6f2",
-                "reference": "104443ad663d15981225f99532ba73c2f1d6b6f2",
+                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/a3edfe52f9e7380e498d33157e1330e85386645d",
+                "reference": "a3edfe52f9e7380e498d33157e1330e85386645d",
                 "shasum": ""
             },
             "require": {
@@ -282,7 +282,7 @@
                 "serializer",
                 "xml"
             ],
-            "time": "2019-07-25T07:03:26+00:00"
+            "time": "2020-02-06T11:39:04+00:00"
         },
         {
             "name": "tubalmartin/cssmin",

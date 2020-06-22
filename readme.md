@@ -1,7 +1,7 @@
 # Gutenberg Blocks and Template Library by Otter #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani)  
-**Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout  
-**Requires at least:** 5.2      
+**Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates  
+**Requires at least:** 5.4      
 **Tested up to:** 5.4    
 **Requires PHP:** 5.4    
 **Stable tag:** trunk  
