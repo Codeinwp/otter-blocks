@@ -104,7 +104,6 @@ const Onboarding = () => {
 			{ isOpen && (
 				<Modal
 					title={ __( 'Welcome to Otter!' ) }
-					isDismissable={ false }
 					isDismissible={ false }
 					className="otter-onboarding-modal"
 				>
@@ -125,7 +124,7 @@ const Onboarding = () => {
 						</Button>
 
 						<Button
-							isDefault
+							isSecondary
 							isLarge
 							onClick={ () => skipTour( 'skipped' ) }
 						>

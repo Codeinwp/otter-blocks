@@ -72,6 +72,10 @@
 
 			.components-panel__body-toggle {
 				border-bottom: 1px solid #d6e2ed;
+
+				&:hover {
+					border-bottom: 1px solid #d6e2ed !important;
+				}
 			}
 
 			.components-panel__row {
@@ -166,7 +170,7 @@
 						padding: 2px 20px;
 						font-size: 14px;
 
-						&:first-child {
+						&:not(:last-child) {
 							margin-right: 15px;
 						}
 					}
