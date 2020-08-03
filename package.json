@@ -62,7 +62,7 @@
     "sass-loader": "^9.0.2",
     "semantic-release": "^17.1.1",
     "url-loader": "^4.1.0",
-    "webpack": "^4.44.0",
+    "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12"
   }
 }
