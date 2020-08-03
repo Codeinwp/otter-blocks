@@ -46,7 +46,7 @@
     "babel-loader": "^8.1.0",
     "conventional-changelog-simple-preset": "^1.0.14",
     "cross-env": "7.0.2",
-    "css-loader": "^4.0.0",
+    "css-loader": "^4.2.0",
     "eslint": "^7.5.0",
     "eslint-config-wordpress": "^2.0.0",
     "eslint-loader": "^4.0.2",
