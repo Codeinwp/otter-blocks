@@ -1,17 +1,7 @@
 /**
- * Internal dependencies.
+ * External dependencies.
  */
 import ReactNotification from 'react-notifications-component';
-
-import './style.scss';
-
-import Onboarding from './Components/Onboarding.js';
-
-import Header from './Components/Header.js';
-
-import Main from './Components/Main.js';
-
-import Footer from './Components/Footer.js';
 
 /**
  * WordPress dependencies.
@@ -20,6 +10,15 @@ const {
 	render,
 	Fragment
 } = wp.element;
+
+/**
+ * Internal dependencies.
+ */
+import './style.scss';
+import Onboarding from './Components/Onboarding.js';
+import Header from './Components/Header.js';
+import Main from './Components/Main.js';
+import Footer from './Components/Footer.js';
 
 const App = () => {
 	return (

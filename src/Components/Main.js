@@ -5,11 +5,6 @@ import { store } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
 
 /**
- * Internal dependencies.
- */
-import ButtonControl from './Button-Control.js';
-
-/**
  * WordPress dependencies.
  */
 const { __ } = wp.i18n;
@@ -34,6 +29,11 @@ const {
 	useRef,
 	useState
 } = wp.element;
+
+/**
+ * Internal dependencies.
+ */
+import ButtonControl from './ButtonControl.js';
 
 const Main = () => {
 	useEffect( () => {
@@ -295,6 +295,16 @@ const Main = () => {
 								action={ () => setOpen( true ) }
 							/>
 						</PanelRow>
+
+						<PanelRow>
+							<div>
+								{ [
+									__( 'Let us know how we can improve. Vote on existing ideas or suggest new ones.' ),
+									' ',
+									<ExternalLink href="https://otter.nolt.io/">{ __( 'Give feedback!' ) }</ExternalLink>
+								] }
+							</div>
+						</PanelRow>
 					</PanelBody>
 				</div>
 
@@ -306,7 +316,7 @@ const Main = () => {
 
 						<div className="otter-info-button-group">
 							<Button
-								isDefault
+								isSecondary
 								isLarge
 								target="_blank"
 								href="https://wordpress.org/support/plugin/otter-blocks"
@@ -316,7 +326,7 @@ const Main = () => {
 							</Button>
 
 							<Button
-								isDefault
+								isSecondary
 								isLarge
 								target="_blank"
 								href="https://wordpress.org/support/plugin/otter-blocks/reviews/#new-post"
