@@ -1,3 +1,13 @@
+##### [Version 1.5.6](https://github.com/Codeinwp/otter-blocks/compare/v1.5.5...v1.5.6) (2020-08-03)
+
+- Button Group Improvements
+- Fixed Caption field missing from Slider Block
+- Image management in Slider & Gallery Block
+- Fix issue with CSS inline loading twice
+- Fix Posts Block offset bug
+- Remove default font size from Posts Block
+- Improve Animation Picker
+
 ##### [Version 1.5.5](https://github.com/Codeinwp/otter-blocks/compare/v1.5.4...v1.5.5) (2020-06-22)
 
 - Dropped support for WordPress 5.4

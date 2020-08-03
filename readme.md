@@ -36,11 +36,11 @@ It has:
 - Sharing Icons Block
 - Plugin Card Block
 
-### STUNNING WEB PAGES WITH DRAG AND DROP EFFICIENCY
+# STUNNING WEB PAGES WITH DRAG AND DROP EFFICIENCY #
 
 Otter can be used to build everything from a personal blog to an international store without losing the personal touch. Otter’s famous ease-of-use transforms basic blocks into expressive layouts in seconds:
 
-### DO IT YOUR WAY WITH SECTION BLOCKS
+# DO IT YOUR WAY WITH SECTION BLOCKS #
 
 With Otter’s Section Block you will be able to create innovative layouts that improve readability with enhanced visual appeal. The Section Block lets you create interesting layouts that help emphasis your content. 
 
@@ -48,7 +48,7 @@ You can create your own layouts or select one of Otter’s layouts and templates
 
 You can take advantage of the responsive controls to increase padding and margins or drop elements to create visual experiences perfect for mobile, tablet, or desktop. 
 
-### TEMPLATE LIBRARY
+# TEMPLATE LIBRARY #
 
 Unleash your inner designer with Otter’s template library. With over 50 different templates you can build a professional site quickly and efficiently. 
 
@@ -58,16 +58,16 @@ All of your website’s most important areas are covered; headers, testimonials,
 
 From headers with images to headers with features, from content with images to about sections with video. Otter has a template to match your vision, just add the content and you’ll be set.   
 
-### REDESIGNED GOOGLE MAPS BLOCK
+# REDESIGNED GOOGLE MAPS BLOCK #
 
 Otter’s integration with the WordPress Block Editor allows you to see your changes live from the backend. Innovative blocks like the Google Maps block help you customise the experience right down to the color and description of the markers, search for places by name or coordinates, add and remove map controls, or change the size and style of the maps with a few clicks. 
 
-### CSS ON EVERY BLOCK
+# CSS ON EVERY BLOCK #
 
 Otter’s commitment to user centred building includes a unique block-by-block CSS extension that makes it easy for you to add CSS to your blocks. The additional CSS area is integrated into the backend to make targeting your blocks easier. You can add media queries, change colours, and add borders all in one easy to follow area.  
 
-### CUSTOMIZE EVERY BLOCK
- 
+# CUSTOMIZE EVERY BLOCK #
+
 More than layouts and sections, you need advanced customisation options to give you control over style and appearance. With Otter, you’ve got it all.
 
 Create mobile-friendly designs with Otter’s built-in responsive settings. Each block can be tweaked to provide a consistent experience for mobile, tablet, and desktop. 
@@ -86,9 +86,21 @@ Help your site shine with design options built to enhance your brand. Every bloc
 
 ## Changelog ##
 
+##### [Version 1.5.6](https://github.com/Codeinwp/otter-blocks/compare/v1.5.5...v1.5.6) (2020-08-03)
+
+- Button Group Improvements
+- Fixed Caption field missing from Slider Block
+- Image management in Slider & Gallery Block
+- Fix issue with CSS inline loading twice
+- Fix Posts Block offset bug
+- Remove default font size from Posts Block
+- Improve Animation Picker
+
+
+
+
 ##### [Version 1.5.5](https://github.com/Codeinwp/otter-blocks/compare/v1.5.4...v1.5.5) (2020-06-22)
 
-- Dropped support for WordPress 5.4
 - Store images locally when importing templates
 - The improved template import mechanism
 - Fix CSS file is not enqueued for posts outside the main loop
