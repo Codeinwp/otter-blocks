@@ -8,21 +8,21 @@
     "packages": [
         {
             "name": "codeinwp/gutenberg-animation",
-            "version": "1.0.6",
+            "version": "1.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-animation.git",
-                "reference": "a685db628c163b39aff81fbbe7d27962dc68511c"
+                "reference": "76b7d1b2458148280dc03be8fe163a21bb0ee738"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-animation/zipball/a685db628c163b39aff81fbbe7d27962dc68511c",
-                "reference": "a685db628c163b39aff81fbbe7d27962dc68511c",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-animation/zipball/76b7d1b2458148280dc03be8fe163a21bb0ee738",
+                "reference": "76b7d1b2458148280dc03be8fe163a21bb0ee738",
                 "shasum": ""
             },
             "require-dev": {
                 "automattic/vipwpcs": "^0.3.0 || ^1.0.0",
-                "dealerdirect/phpcodesniffer-composer-installer": "0.6.2",
+                "dealerdirect/phpcodesniffer-composer-installer": "0.7.0",
                 "phpcompatibility/php-compatibility": "^9",
                 "squizlabs/php_codesniffer": "^3.3",
                 "wp-coding-standards/wpcs": "^1"
@@ -46,20 +46,20 @@
             ],
             "description": "CSS Animations for Gutenberg Blocks",
             "homepage": "https://github.com/Codeinwp/gutenberg-animation",
-            "time": "2020-06-13T23:34:22+00:00"
+            "time": "2020-08-03T11:01:26+00:00"
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.5.3",
+            "version": "1.5.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "ad512c53be4f7ebe79ac2ed40f39cf9a9d4a4885"
+                "reference": "6ae404626b17e9677f5340da22d31f8f9a5279fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/ad512c53be4f7ebe79ac2ed40f39cf9a9d4a4885",
-                "reference": "ad512c53be4f7ebe79ac2ed40f39cf9a9d4a4885",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/6ae404626b17e9677f5340da22d31f8f9a5279fd",
+                "reference": "6ae404626b17e9677f5340da22d31f8f9a5279fd",
                 "shasum": ""
             },
             "require": {
@@ -68,7 +68,7 @@
             },
             "require-dev": {
                 "automattic/vipwpcs": "^0.3.0",
-                "dealerdirect/phpcodesniffer-composer-installer": "0.6.2",
+                "dealerdirect/phpcodesniffer-composer-installer": "0.7.0",
                 "phpcompatibility/php-compatibility": "^9",
                 "squizlabs/php_codesniffer": "^3.3",
                 "wp-coding-standards/wpcs": "^1"
@@ -90,7 +90,7 @@
             ],
             "description": "A set of awesome Gutenberg Blocks!",
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
-            "time": "2020-06-22T21:35:29+00:00"
+            "time": "2020-08-03T06:25:38+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
@@ -610,6 +610,5 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "platform-dev": []
 }

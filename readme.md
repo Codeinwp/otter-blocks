@@ -1,26 +1,24 @@
 # Gutenberg Blocks and Template Library by Otter #
-**Contributors:** [themeisle](https://profiles.wordpress.org/themeisle), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani)  
+**Contributors:** [themeisle](https://profiles.wordpress.org/themeisle), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1)  
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates  
 **Requires at least:** 5.4      
-**Tested up to:** 5.4    
+**Tested up to:** 5.5    
 **Requires PHP:** 5.4    
 **Stable tag:** trunk  
 **License:** GPLv3    
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html    
 
-Create beautiful and attracting posts, pages, and landing pages with Gutenberg Blocks and Template Library by Otter. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
+Otter is a dynamic collection of page building blocks and templates for the WordPress block editor. Create beautiful and attracting posts, pages, and landing pages with Gutenberg Blocks and Template Library by Otter. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
 
 ## Description ##
 
-Gutenberg Blocks and Template Library by Otter is a lightweight WordPress plugin that brings extra Gutenberg blocks to your site. So if you want to create complex pages and posts optimized for e-commerce, business, social media, blogs - you name it -comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
+Otter is a dynamic collection of page building blocks and templates for the WordPress block editor. 
 
-See what you can do with Otter:
+The growing list of page building blocks covers all of the elements you need to build your WordPress site. Combine the blocks with Otter to build stunning pages and posts with the simplicity of  designing.  
+
+With a lightweight approach, Otter enhances WordPress site building without impacting site speed. With Otter, you can truly harness the potential of the new WordPress era. 
 
 https://www.youtube.com/watch?v=ypIeTgvYeRE
-
-A feature that is worth mentioning is the Section Block that allows you to build columns and various layouts in Gutenberg. Moreover, aside from the Gutenberg blocks, the plugin provides a beautiful library of pre-built Gutenberg-compatible templates that you can simply import via one click. The templates have block-friendly layouts that can be customized with no effort.
-
-Every block can be customized in a few seconds, as they come with an easy and intuitive user 
 
 It has:
 
@@ -37,6 +35,48 @@ It has:
 - Font Awesome Block
 - Sharing Icons Block
 - Plugin Card Block
+
+### STUNNING WEB PAGES WITH DRAG AND DROP EFFICIENCY
+
+Otter can be used to build everything from a personal blog to an international store without losing the personal touch. Otter’s famous ease-of-use transforms basic blocks into expressive layouts in seconds:
+
+### DO IT YOUR WAY WITH SECTION BLOCKS
+
+With Otter’s Section Block you will be able to create innovative layouts that improve readability with enhanced visual appeal. The Section Block lets you create interesting layouts that help emphasis your content. 
+
+You can create your own layouts or select one of Otter’s layouts and templates. Each of the layouts has been professionally designed to provide a range of visually pleasing sections like About, Headers, Pricing, Testimonials. 
+
+You can take advantage of the responsive controls to increase padding and margins or drop elements to create visual experiences perfect for mobile, tablet, or desktop. 
+
+### TEMPLATE LIBRARY
+
+Unleash your inner designer with Otter’s template library. With over 50 different templates you can build a professional site quickly and efficiently. 
+
+The template library provides a range of different elements in a variety of styles to help you build great pages. 
+
+All of your website’s most important areas are covered; headers, testimonials, pricing tables, content and more. 
+
+From headers with images to headers with features, from content with images to about sections with video. Otter has a template to match your vision, just add the content and you’ll be set.   
+
+### REDESIGNED GOOGLE MAPS BLOCK
+
+Otter’s integration with the WordPress Block Editor allows you to see your changes live from the backend. Innovative blocks like the Google Maps block help you customise the experience right down to the color and description of the markers, search for places by name or coordinates, add and remove map controls, or change the size and style of the maps with a few clicks. 
+
+### CSS ON EVERY BLOCK
+
+Otter’s commitment to user centred building includes a unique block-by-block CSS extension that makes it easy for you to add CSS to your blocks. The additional CSS area is integrated into the backend to make targeting your blocks easier. You can add media queries, change colours, and add borders all in one easy to follow area.  
+
+### CUSTOMIZE EVERY BLOCK
+ 
+More than layouts and sections, you need advanced customisation options to give you control over style and appearance. With Otter, you’ve got it all.
+
+Create mobile-friendly designs with Otter’s built-in responsive settings. Each block can be tweaked to provide a consistent experience for mobile, tablet, and desktop. 
+
+Help your site shine with design options built to enhance your brand. Every block has customization support to help you style your site according to your vision:  
+
+- Color controls for primary, accents, and backgrounds.
+- Animation at the click of a button.
+- Typography controls from spacing to font choice.
 
 ## Screenshots ##
 
