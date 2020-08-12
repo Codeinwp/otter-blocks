@@ -34,7 +34,7 @@
     "react-notifications-component": "^2.4.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.11.0",
+    "@babel/core": "^7.11.1",
     "@babel/plugin-proposal-object-rest-spread": "^7.11.0",
     "@babel/plugin-transform-async-to-generator": "^7.10.4",
     "@babel/plugin-transform-react-jsx": "^7.10.4",
@@ -46,7 +46,7 @@
     "babel-loader": "^8.1.0",
     "conventional-changelog-simple-preset": "^1.0.14",
     "cross-env": "7.0.2",
-    "css-loader": "^4.2.0",
+    "css-loader": "^4.2.1",
     "eslint": "^7.6.0",
     "eslint-config-wordpress": "^2.0.0",
     "eslint-loader": "^4.0.2",
@@ -59,7 +59,7 @@
     "node-sass": "^4.14.1",
     "postcss-loader": "^3.0.0",
     "replace-in-file": "^6.1.0",
-    "sass-loader": "^9.0.2",
+    "sass-loader": "^9.0.3",
     "semantic-release": "^17.1.1",
     "url-loader": "^4.1.0",
     "webpack": "^4.44.1",

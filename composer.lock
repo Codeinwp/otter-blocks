@@ -50,16 +50,16 @@
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.5.4",
+            "version": "1.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "6ae404626b17e9677f5340da22d31f8f9a5279fd"
+                "reference": "ec7de44221a23f77c2e2b7448153976a73192955"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/6ae404626b17e9677f5340da22d31f8f9a5279fd",
-                "reference": "6ae404626b17e9677f5340da22d31f8f9a5279fd",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/ec7de44221a23f77c2e2b7448153976a73192955",
+                "reference": "ec7de44221a23f77c2e2b7448153976a73192955",
                 "shasum": ""
             },
             "require": {
@@ -90,7 +90,7 @@
             ],
             "description": "A set of awesome Gutenberg Blocks!",
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
-            "time": "2020-08-03T06:25:38+00:00"
+            "time": "2020-08-12T10:55:29+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
@@ -511,16 +511,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.5.5",
+            "version": "3.5.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "73e2e7f57d958e7228fce50dc0c61f58f017f9f6"
+                "reference": "e97627871a7eab2f70e59166072a6b767d5834e0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/73e2e7f57d958e7228fce50dc0c61f58f017f9f6",
-                "reference": "73e2e7f57d958e7228fce50dc0c61f58f017f9f6",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/e97627871a7eab2f70e59166072a6b767d5834e0",
+                "reference": "e97627871a7eab2f70e59166072a6b767d5834e0",
                 "shasum": ""
             },
             "require": {
@@ -558,7 +558,7 @@
                 "phpcs",
                 "standards"
             ],
-            "time": "2020-04-17T01:09:41+00:00"
+            "time": "2020-08-10T04:50:15+00:00"
         },
         {
             "name": "wp-coding-standards/wpcs",
