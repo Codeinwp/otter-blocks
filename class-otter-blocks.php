@@ -294,6 +294,9 @@ class Otter_Blocks {
 				array(
 					'methods'  => \WP_REST_Server::DELETABLE,
 					'callback' => array( $this, 'regenerate_styles' ),
+					'permission_callback' => function () {
+						return current_user_can( 'manage_options' );
+					},
 				),
 			)
 		);
