@@ -86,6 +86,15 @@ Help your site shine with design options built to enhance your brand. Every bloc
 
 ## Changelog ##
 
+##### [Version 1.5.7](https://github.com/Codeinwp/otter-blocks/compare/v1.5.6...v1.5.7) (2020-08-12)
+
+- Fix Button Group Block borders
+- Fix Plugin Card failing with additional attributes
+- Fix permission callback missing in REST API Route
+
+
+
+
 ##### [Version 1.5.6](https://github.com/Codeinwp/otter-blocks/compare/v1.5.5...v1.5.6) (2020-08-03)
 
 - Button Group Improvements
