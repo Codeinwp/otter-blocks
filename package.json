@@ -50,7 +50,7 @@
     "eslint": "^7.7.0",
     "eslint-config-wordpress": "^2.0.0",
     "eslint-loader": "^4.0.2",
-    "eslint-plugin-react": "^7.20.5",
+    "eslint-plugin-react": "^7.20.6",
     "grunt": "^1.2.1",
     "grunt-version": "^2.0.0",
     "grunt-wp-readme-to-markdown": "^2.0.1",
