@@ -1,6 +1,6 @@
 # Gutenberg Blocks and Template Library by Otter #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1)  
-**Tags:** gutenberg blocks, gutenberg, block, post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar  
+**Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar  
 **Requires at least:** 5.4      
 **Tested up to:** 5.5    
 **Requires PHP:** 5.4    
@@ -87,6 +87,17 @@ Help your site shine with design options built to enhance your brand. Every bloc
 3. Posts Block
 
 ## Changelog ##
+
+##### [Version 1.5.8](https://github.com/Codeinwp/otter-blocks/compare/v1.5.7...v1.5.8) (2020-09-14)
+
+- Add Lottie Animations Block.
+- Add Progress Bar Block.
+- Prevent old custom CSS from being cached.
+- Fix Slider in Section's Vertical Alignment on AMP.
+- Consensual Tracking Data.
+
+
+
 
 ##### [Version 1.5.7](https://github.com/Codeinwp/otter-blocks/compare/v1.5.6...v1.5.7) (2020-08-12)
 

@@ -1,3 +1,11 @@
+##### [Version 1.5.8](https://github.com/Codeinwp/otter-blocks/compare/v1.5.7...v1.5.8) (2020-09-14)
+
+- Add Lottie Animations Block.
+- Add Progress Bar Block.
+- Prevent old custom CSS from being cached.
+- Fix Slider in Section's Vertical Alignment on AMP.
+- Consensual Tracking Data.
+
 ##### [Version 1.5.7](https://github.com/Codeinwp/otter-blocks/compare/v1.5.6...v1.5.7) (2020-08-12)
 
 - Fix Button Group Block borders
