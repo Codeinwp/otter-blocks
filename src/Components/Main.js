@@ -48,6 +48,7 @@ const Main = () => {
 					setDefaultSection( Boolean( response.themeisle_blocks_settings_default_block ) );
 					setGoogleMapsAPI( response.themeisle_google_map_block_api_key );
 					setLoggingData( response.otter_blocks_logger_flag );
+					setJSONUploads( Boolean( response.themeisle_allow_json_upload ) );
 					setAPILoaded( true );
 				});
 			}
@@ -67,6 +68,7 @@ const Main = () => {
 	const [ isDefaultSection, setDefaultSection ] = useState( true );
 	const [ googleMapsAPI, setGoogleMapsAPI ] = useState( '' );
 	const [ isLoggingData, setLoggingData ] = useState( 'no' );
+	const [ allowJSONUploads, setJSONUploads ] = useState( false );
 	const [ isOpen, setOpen ] = useState( false );
 	const [ isRegeneratedDisabled, setRegeneratedDisabled ] = useState( false );
 
@@ -137,6 +139,9 @@ const Main = () => {
 			break;
 		case 'isLoggingData':
 			setLoggingData( value );
+			break;
+		case 'allowJSONUploads':
+			setJSONUploads( value );
 			break;
 		}
 	};
@@ -283,6 +288,15 @@ const Main = () => {
 								help={ 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.' }
 								checked={ 'yes' === isLoggingData ? true : false }
 								onChange={ () => changeOptions( 'otter_blocks_logger_flag', 'isLoggingData', ( 'yes' === isLoggingData ? 'no' : 'yes' ) ) }
+							/>
+						</PanelRow>
+
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Allow JSON Uploads.' ) }
+								help={ 'This option allows JSON files to be uploaded to the media library to use in Lottie Block. Only enable this option if you want to use custom JSON uploads in Lottie Block.' }
+								checked={ allowJSONUploads }
+								onChange={ () => changeOptions( 'themeisle_allow_json_upload', 'allowJSONUploads', ! allowJSONUploads ) }
 							/>
 						</PanelRow>
 

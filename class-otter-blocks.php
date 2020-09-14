@@ -192,6 +192,54 @@ class Otter_Blocks {
 				'show_in_rest' => true,
 			)
 		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'otter_blocks_logger_data',
+			array(
+				'type'         => 'object',
+				'description'  => __( 'Anonymous data tracking object.', 'otter-blocks' ),
+				'show_in_rest' => array(
+					'schema' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'blocks'     => array(
+								'type'  => 'array',
+								'items' => array(
+									'type'       => 'object',
+									'properties' => array(
+										'name'       => array(
+											'type' => 'string',
+										),
+										'instances'  => array(
+											'type' => 'number',
+										),
+									),
+								),
+							),
+							'templates'  => array(
+								'type'  => 'array',
+								'items' => array(
+									'type'       => 'object',
+									'properties' => array(
+										'url'        => array(
+											'type' => 'string',
+										),
+										'instances'  => array(
+											'type' => 'number',
+										),
+									),
+								),
+							),
+						),
+					),
+				),
+				'default'      => array(
+					'blocks' => array(),
+					'templates' => array(),
+				),
+			)
+		);
 	}
 
 	/**
