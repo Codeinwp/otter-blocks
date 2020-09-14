@@ -55,7 +55,7 @@
     "grunt-version": "^2.0.0",
     "grunt-wp-readme-to-markdown": "^2.0.1",
     "load-project-config": "~0.2.0",
-    "mini-css-extract-plugin": "^0.11.0",
+    "mini-css-extract-plugin": "^0.11.2",
     "node-sass": "^4.14.1",
     "postcss-loader": "^3.0.0",
     "replace-in-file": "^6.1.0",
