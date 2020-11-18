@@ -50,16 +50,16 @@
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.5.7",
+            "version": "1.5.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "4fe3a7c749ffa541fc6273d21e09c72ed2b3e6a3"
+                "reference": "f73508d8c50b8b1e56baeb16ec6afd2323ec4fc2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/4fe3a7c749ffa541fc6273d21e09c72ed2b3e6a3",
-                "reference": "4fe3a7c749ffa541fc6273d21e09c72ed2b3e6a3",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/f73508d8c50b8b1e56baeb16ec6afd2323ec4fc2",
+                "reference": "f73508d8c50b8b1e56baeb16ec6afd2323ec4fc2",
                 "shasum": ""
             },
             "require": {
@@ -90,7 +90,7 @@
             ],
             "description": "A set of awesome Gutenberg Blocks!",
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
-            "time": "2020-09-14T19:50:48+00:00"
+            "time": "2020-11-18T22:49:20+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
@@ -181,22 +181,24 @@
         },
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.2.15",
+            "version": "3.2.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "95b7447a5f4faba410c281c4bf278fbd740fed71"
+                "reference": "b116dffbe39ea9e37169fdd683bab54c545fe560"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/95b7447a5f4faba410c281c4bf278fbd740fed71",
-                "reference": "95b7447a5f4faba410c281c4bf278fbd740fed71",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/b116dffbe39ea9e37169fdd683bab54c545fe560",
+                "reference": "b116dffbe39ea9e37169fdd683bab54c545fe560",
                 "shasum": ""
             },
             "require-dev": {
-                "dealerdirect/phpcodesniffer-composer-installer": "^0.4.4",
-                "squizlabs/php_codesniffer": "^3.1",
-                "wp-coding-standards/wpcs": "^1.0.0"
+                "automattic/vipwpcs": "^1.0.0",
+                "dealerdirect/phpcodesniffer-composer-installer": "0.7.0",
+                "phpcompatibility/php-compatibility": "^9",
+                "squizlabs/php_codesniffer": "^3.3",
+                "wp-coding-standards/wpcs": "^1"
             },
             "type": "library",
             "notification-url": "https://packagist.org/downloads/",
@@ -210,12 +212,12 @@
                     "homepage": "https://themeisle.com"
                 }
             ],
-            "description": "ThemeIsle SDK.",
+            "description": "ThemeIsle SDK",
             "homepage": "https://github.com/Codeinwp/themeisle-sdk",
             "keywords": [
                 "wordpress"
             ],
-            "time": "2020-07-23T15:02:10+00:00"
+            "time": "2020-11-17T08:35:16+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -608,6 +610,5 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "platform-dev": []
 }

@@ -32,7 +32,7 @@ It has:
 - Pricing Block
 - Testimonial Block
 - About Author Block
-- Font Awesome Block
+- Icon Block
 - Lottie Animation Block
 - Progress Bar Block
 - Sharing Icons Block
