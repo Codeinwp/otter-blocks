@@ -50,16 +50,16 @@
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.5.8",
+            "version": "1.5.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "f73508d8c50b8b1e56baeb16ec6afd2323ec4fc2"
+                "reference": "f1973d4b3256d7f438dc1e46e1bb627cc8b9be0b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/f73508d8c50b8b1e56baeb16ec6afd2323ec4fc2",
-                "reference": "f73508d8c50b8b1e56baeb16ec6afd2323ec4fc2",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/f1973d4b3256d7f438dc1e46e1bb627cc8b9be0b",
+                "reference": "f1973d4b3256d7f438dc1e46e1bb627cc8b9be0b",
                 "shasum": ""
             },
             "require": {
@@ -90,7 +90,7 @@
             ],
             "description": "A set of awesome Gutenberg Blocks!",
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
-            "time": "2020-11-18T22:49:20+00:00"
+            "time": "2020-11-22T20:11:20+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
