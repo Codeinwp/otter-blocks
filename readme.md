@@ -88,6 +88,16 @@ Help your site shine with design options built to enhance your brand. Every bloc
 
 ## Changelog ##
 
+##### [Version 1.5.10](https://github.com/Codeinwp/otter-blocks/compare/v1.5.9...v1.5.10) (2020-11-22)
+
+- Responsive Images in Posts Block.
+- Fix Progress Blocks.
+- Don't enqueue CSS on Classic Editor posts.
+- Change the Highlight tag.
+
+
+
+
 ##### [Version 1.5.9](https://github.com/Codeinwp/otter-blocks/compare/v1.5.8...v1.5.9) (2020-11-18)
 
 - WordPress 5.6 compatibility.
