@@ -2,7 +2,7 @@
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1)  
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar  
 **Requires at least:** 5.4      
-**Tested up to:** 5.5    
+**Tested up to:** 5.6    
 **Requires PHP:** 5.4    
 **Stable tag:** trunk  
 **License:** GPLv3    
