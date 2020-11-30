@@ -34,7 +34,7 @@
     "react-notifications-component": "^2.4.1"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.3",
+    "@babel/core": "^7.12.9",
     "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
     "@babel/plugin-transform-async-to-generator": "^7.12.1",
     "@babel/plugin-transform-react-jsx": "^7.12.5",
