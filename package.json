@@ -31,7 +31,7 @@
   "dependencies": {
     "classnames": "^2.2.6",
     "react-joyride": "^2.3.0",
-    "react-notifications-component": "^2.4.1"
+    "react-notifications-component": "^3.0.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
