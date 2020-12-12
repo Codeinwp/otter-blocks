@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e4d3b69edc64451047289e2f53c7888d",
+    "content-hash": "59473795431bf3e4ecfa8e950ffec86e",
     "packages": [
         {
             "name": "codeinwp/gutenberg-animation",
@@ -610,5 +610,8 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": [],
-    "platform-dev": []
+    "platform-dev": [],
+    "platform-overrides": {
+        "php": "5.6"
+    }
 }
