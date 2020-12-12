@@ -1,3 +1,7 @@
+##### [Version 1.5.12](https://github.com/Codeinwp/otter-blocks/compare/v1.5.11...v1.5.12) (2020-12-12)
+
+- Fix ThemeIsle icons not appearing on WebKit browsers
+
 ##### [Version 1.5.11](https://github.com/Codeinwp/otter-blocks/compare/v1.5.10...v1.5.11) (2020-11-25)
 
 - Do not add the background image to the Section when the URL is not set.
