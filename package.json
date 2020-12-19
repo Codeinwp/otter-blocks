@@ -37,8 +37,8 @@
     "@babel/core": "^7.12.10",
     "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
     "@babel/plugin-transform-async-to-generator": "^7.12.1",
-    "@babel/plugin-transform-react-jsx": "^7.12.10",
-    "@babel/preset-env": "^7.12.10",
+    "@babel/plugin-transform-react-jsx": "^7.12.11",
+    "@babel/preset-env": "^7.12.11",
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/exec": "^5.0.0",
     "@semantic-release/git": "^9.0.0",
@@ -47,7 +47,7 @@
     "conventional-changelog-simple-preset": "^1.0.14",
     "cross-env": "7.0.3",
     "css-loader": "^4.3.0",
-    "eslint": "^7.15.0",
+    "eslint": "^7.16.0",
     "eslint-config-wordpress": "^2.0.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-react": "^7.21.5",
@@ -62,7 +62,7 @@
     "sass-loader": "^10.1.0",
     "semantic-release": "^17.3.0",
     "url-loader": "^4.1.1",
-    "webpack": "^5.10.1",
+    "webpack": "^5.11.0",
     "webpack-cli": "^4.2.0"
   }
 }
