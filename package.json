@@ -45,7 +45,7 @@
     "autoprefixer": "^9.8.6",
     "babel-loader": "^8.2.2",
     "conventional-changelog-simple-preset": "^1.0.14",
-    "cross-env": "7.0.2",
+    "cross-env": "7.0.3",
     "css-loader": "^4.3.0",
     "eslint": "^7.15.0",
     "eslint-config-wordpress": "^2.0.0",
