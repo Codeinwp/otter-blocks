@@ -88,6 +88,17 @@ Help your site shine with design options built to enhance your brand. Every bloc
 
 ## Changelog ##
 
+#### [Version 1.6.0](https://github.com/Codeinwp/otter-blocks/compare/v1.5.12...v1.6.0) (2021-01-06)
+
+- New Icon List Block.
+- Allow editing text in Progress Bar Block.
+- Reuse Gradient Control from Core.
+- Fix Font Awesome loading when the non-Icon button is being used.
+- Improve Server-Side CSS Method
+
+
+
+
 ##### [Version 1.5.12](https://github.com/Codeinwp/otter-blocks/compare/v1.5.11...v1.5.12) (2020-12-12)
 
 - Fix ThemeIsle icons not appearing on WebKit browsers

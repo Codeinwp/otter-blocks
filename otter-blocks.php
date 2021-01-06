@@ -7,7 +7,7 @@
  * Plugin Name:       Gutenberg Blocks and Template Library by Otter
  * Plugin URI:        https://themeisle.com/plugins/otter-blocks
  * Description:       Create beautiful and attracting posts, pages, and landing pages with Gutenberg Blocks and Template Library by Otter. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
- * Version:           1.5.12
+ * Version:           1.6.0
  * Author:            ThemeIsle
  * Author URI:        https://themeisle.com
  * License:           GPL-2.0+
@@ -26,7 +26,7 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'OTTER_BLOCKS_BASEFILE', __FILE__ );
 define( 'OTTER_BLOCKS_URL', plugins_url( '/', __FILE__ ) );
 define( 'OTTER_BLOCKS_PATH', dirname( __FILE__ ) );
-define( 'OTTER_BLOCKS_VERSION', '1.5.12' );
+define( 'OTTER_BLOCKS_VERSION', '1.6.0' );
 define( 'OTTER_BLOCKS_DEV', false );
 
 $vendor_file = OTTER_BLOCKS_PATH . '/vendor/autoload.php';
