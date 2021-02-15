@@ -95,21 +95,21 @@
         },
         {
             "name": "codeinwp/gutenberg-css",
-            "version": "1.0.11",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-css.git",
-                "reference": "e777778305b4a5e1572df55d5f70ecfe8bddf89a"
+                "reference": "1f67e8657b29a6d106541e43dd88508680cd7c37"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/e777778305b4a5e1572df55d5f70ecfe8bddf89a",
-                "reference": "e777778305b4a5e1572df55d5f70ecfe8bddf89a",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/1f67e8657b29a6d106541e43dd88508680cd7c37",
+                "reference": "1f67e8657b29a6d106541e43dd88508680cd7c37",
                 "shasum": ""
             },
             "require-dev": {
                 "automattic/vipwpcs": "^0.3.0 || ^1.0.0",
-                "dealerdirect/phpcodesniffer-composer-installer": "0.6.2",
+                "dealerdirect/phpcodesniffer-composer-installer": "0.7.1",
                 "phpcompatibility/php-compatibility": "^9",
                 "squizlabs/php_codesniffer": "^3.3",
                 "wp-coding-standards/wpcs": "^1"
@@ -136,7 +136,11 @@
             ],
             "description": "CSS Editor for Gutenberg Blocks",
             "homepage": "https://github.com/Codeinwp/gutenberg-css",
-            "time": "2020-06-17T19:09:12+00:00"
+            "support": {
+                "issues": "https://github.com/Codeinwp/gutenberg-css/issues",
+                "source": "https://github.com/Codeinwp/gutenberg-css/tree/v1.1.1"
+            },
+            "time": "2021-02-09T23:41:09+00:00"
         },
         {
             "name": "codeinwp/gutenberg-menu-icons",
@@ -614,5 +618,6 @@
     "platform-dev": [],
     "platform-overrides": {
         "php": "5.6"
-    }
+    },
+    "plugin-api-version": "2.0.0"
 }
