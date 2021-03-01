@@ -47,7 +47,7 @@
     "conventional-changelog-simple-preset": "^1.0.14",
     "cross-env": "7.0.3",
     "css-loader": "^4.3.0",
-    "eslint": "^7.17.0",
+    "eslint": "^7.21.0",
     "eslint-config-wordpress": "^2.0.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-react": "^7.22.0",
