@@ -46,20 +46,24 @@
             ],
             "description": "CSS Animations for Gutenberg Blocks",
             "homepage": "https://github.com/Codeinwp/gutenberg-animation",
+            "support": {
+                "issues": "https://github.com/Codeinwp/gutenberg-animation/issues",
+                "source": "https://github.com/Codeinwp/gutenberg-animation/tree/master"
+            },
             "time": "2020-08-03T11:01:26+00:00"
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.6.0",
+            "version": "1.6.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "0815d2fc940f4a535e3ccf4da61cc7cc4603f9c4"
+                "reference": "86ce7144e5c10d713443d04a35c026104083a5d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/0815d2fc940f4a535e3ccf4da61cc7cc4603f9c4",
-                "reference": "0815d2fc940f4a535e3ccf4da61cc7cc4603f9c4",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/86ce7144e5c10d713443d04a35c026104083a5d1",
+                "reference": "86ce7144e5c10d713443d04a35c026104083a5d1",
                 "shasum": ""
             },
             "require": {
@@ -91,25 +95,29 @@
             ],
             "description": "A set of awesome Gutenberg Blocks!",
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
-            "time": "2021-01-06T12:11:27+00:00"
+            "support": {
+                "issues": "https://github.com/Codeinwp/gutenberg-blocks/issues",
+                "source": "https://github.com/Codeinwp/gutenberg-blocks/tree/v1.6.1"
+            },
+            "time": "2021-03-02T18:21:40+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
-            "version": "1.0.11",
+            "version": "1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-css.git",
-                "reference": "e777778305b4a5e1572df55d5f70ecfe8bddf89a"
+                "reference": "1f67e8657b29a6d106541e43dd88508680cd7c37"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/e777778305b4a5e1572df55d5f70ecfe8bddf89a",
-                "reference": "e777778305b4a5e1572df55d5f70ecfe8bddf89a",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/1f67e8657b29a6d106541e43dd88508680cd7c37",
+                "reference": "1f67e8657b29a6d106541e43dd88508680cd7c37",
                 "shasum": ""
             },
             "require-dev": {
                 "automattic/vipwpcs": "^0.3.0 || ^1.0.0",
-                "dealerdirect/phpcodesniffer-composer-installer": "0.6.2",
+                "dealerdirect/phpcodesniffer-composer-installer": "0.7.1",
                 "phpcompatibility/php-compatibility": "^9",
                 "squizlabs/php_codesniffer": "^3.3",
                 "wp-coding-standards/wpcs": "^1"
@@ -136,7 +144,11 @@
             ],
             "description": "CSS Editor for Gutenberg Blocks",
             "homepage": "https://github.com/Codeinwp/gutenberg-css",
-            "time": "2020-06-17T19:09:12+00:00"
+            "support": {
+                "issues": "https://github.com/Codeinwp/gutenberg-css/issues",
+                "source": "https://github.com/Codeinwp/gutenberg-css/tree/v1.1.1"
+            },
+            "time": "2021-02-09T23:41:09+00:00"
         },
         {
             "name": "codeinwp/gutenberg-menu-icons",
@@ -178,6 +190,10 @@
             ],
             "description": "Menu Icons for Gutenberg",
             "homepage": "https://github.com/Codeinwp/gutenberg-menu-icons",
+            "support": {
+                "issues": "https://github.com/Codeinwp/gutenberg-menu-icons/issues",
+                "source": "https://github.com/Codeinwp/gutenberg-menu-icons/tree/v1.0.4"
+            },
             "time": "2020-05-17T21:08:46+00:00"
         },
         {
@@ -218,6 +234,10 @@
             "keywords": [
                 "wordpress"
             ],
+            "support": {
+                "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.2.16"
+            },
             "time": "2020-11-17T08:35:16+00:00"
         },
         {
@@ -283,6 +303,10 @@
                 "serializer",
                 "xml"
             ],
+            "support": {
+                "issues": "https://github.com/Masterminds/html5-php/issues",
+                "source": "https://github.com/Masterminds/html5-php/tree/2.7.4"
+            },
             "time": "2020-10-01T13:52:52+00:00"
         },
         {
@@ -336,6 +360,10 @@
                 "minify",
                 "yui"
             ],
+            "support": {
+                "issues": "https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port/issues",
+                "source": "https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port"
+            },
             "time": "2018-01-15T15:26:51+00:00"
         }
     ],
@@ -384,6 +412,11 @@
                 "standards",
                 "wordpress"
             ],
+            "support": {
+                "issues": "https://github.com/Automattic/VIP-Coding-Standards/issues",
+                "source": "https://github.com/Automattic/VIP-Coding-Standards",
+                "wiki": "https://github.com/Automattic/VIP-Coding-Standards/wiki"
+            },
             "time": "2019-04-24T21:34:09+00:00"
         },
         {
@@ -450,6 +483,10 @@
                 "stylecheck",
                 "tests"
             ],
+            "support": {
+                "issues": "https://github.com/dealerdirect/phpcodesniffer-composer-installer/issues",
+                "source": "https://github.com/dealerdirect/phpcodesniffer-composer-installer"
+            },
             "time": "2020-12-07T18:04:37+00:00"
         },
         {
@@ -508,6 +545,10 @@
                 "phpcs",
                 "standards"
             ],
+            "support": {
+                "issues": "https://github.com/PHPCompatibility/PHPCompatibility/issues",
+                "source": "https://github.com/PHPCompatibility/PHPCompatibility"
+            },
             "time": "2019-12-27T09:44:58+00:00"
         },
         {
@@ -559,6 +600,11 @@
                 "phpcs",
                 "standards"
             ],
+            "support": {
+                "issues": "https://github.com/squizlabs/PHP_CodeSniffer/issues",
+                "source": "https://github.com/squizlabs/PHP_CodeSniffer",
+                "wiki": "https://github.com/squizlabs/PHP_CodeSniffer/wiki"
+            },
             "time": "2020-10-23T02:01:07+00:00"
         },
         {
@@ -602,6 +648,11 @@
                 "standards",
                 "wordpress"
             ],
+            "support": {
+                "issues": "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/issues",
+                "source": "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards",
+                "wiki": "https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/wiki"
+            },
             "time": "2018-12-18T09:43:51+00:00"
         }
     ],
@@ -614,5 +665,6 @@
     "platform-dev": [],
     "platform-overrides": {
         "php": "5.6"
-    }
+    },
+    "plugin-api-version": "2.0.0"
 }
