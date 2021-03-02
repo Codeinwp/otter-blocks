@@ -39,9 +39,8 @@ jobs:
           env:
             MYSQL_ROOT_PASSWORD: root
           ports:
-            - 3306
-          volumes:
-            - $HOME/mysql:/var/lib/mysql
+            - 3306/tcp
+          options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
       steps:
         - name: Setup PHP version
           uses: shivammathur/setup-php@v1
