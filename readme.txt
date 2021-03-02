@@ -88,6 +88,15 @@ Help your site shine with design options built to enhance your brand. Every bloc
 
 == Changelog ==
 
+##### [Version 1.6.1](https://github.com/Codeinwp/otter-blocks/compare/v1.6.0...v1.6.1) (2021-03-02)
+
+- Fix CSS Extensions causing Reusable Blocks to crash.
+- Add new Map Block
+- Various fixes
+
+
+
+
 #### [Version 1.6.0](https://github.com/Codeinwp/otter-blocks/compare/v1.5.12...v1.6.0) (2021-01-06)
 
 - New Icon List Block.
