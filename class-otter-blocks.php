@@ -203,29 +203,29 @@ class Otter_Blocks {
 					'schema' => array(
 						'type'       => 'object',
 						'properties' => array(
-							'blocks'     => array(
+							'blocks'    => array(
 								'type'  => 'array',
 								'items' => array(
 									'type'       => 'object',
 									'properties' => array(
-										'name'       => array(
+										'name'      => array(
 											'type' => 'string',
 										),
-										'instances'  => array(
+										'instances' => array(
 											'type' => 'number',
 										),
 									),
 								),
 							),
-							'templates'  => array(
+							'templates' => array(
 								'type'  => 'array',
 								'items' => array(
 									'type'       => 'object',
 									'properties' => array(
-										'url'        => array(
+										'url'       => array(
 											'type' => 'string',
 										),
-										'instances'  => array(
+										'instances' => array(
 											'type' => 'number',
 										),
 									),
@@ -235,7 +235,7 @@ class Otter_Blocks {
 					),
 				),
 				'default'      => array(
-					'blocks' => array(),
+					'blocks'    => array(),
 					'templates' => array(),
 				),
 			)
