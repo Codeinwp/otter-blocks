@@ -1,9 +1,9 @@
 # Gutenberg Blocks and Template Library by Otter #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1)  
-**Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar  
-**Requires at least:** 5.4  
-**Tested up to:** 5.6  
-**Requires PHP:** 5.4  
+**Tags:** gutenberg blocks, gutenberg, block, post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar  
+**Requires at least:** 5.4      
+**Tested up to:** 5.7    
+**Requires PHP:** 5.4    
 **Stable tag:** trunk  
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html  
@@ -26,6 +26,7 @@ It has:
 - Advanced Heading Block
 - Button Group Block
 - Slider Block
+- Accordion Block
 - Google Maps Block
 - Post Grid Block
 - Service Block
@@ -35,6 +36,7 @@ It has:
 - Icon Block
 - Lottie Animation Block
 - Progress Bar Block
+- Circular Progress Block
 - Sharing Icons Block
 - Plugin Card Block
 

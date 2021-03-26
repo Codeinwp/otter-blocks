@@ -26,6 +26,7 @@ It has:
 - Advanced Heading Block
 - Button Group Block
 - Slider Block
+- Accordion Block
 - Google Maps Block
 - Post Grid Block
 - Service Block
@@ -35,6 +36,7 @@ It has:
 - Icon Block
 - Lottie Animation Block
 - Progress Bar Block
+- Circular Progress Block
 - Sharing Icons Block
 - Plugin Card Block
 

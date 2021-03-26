@@ -54,16 +54,16 @@
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.6.1",
+            "version": "1.6.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "86ce7144e5c10d713443d04a35c026104083a5d1"
+                "reference": "b4a8e12b7b4a8b71d908111e05ca40cf2c86d624"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/86ce7144e5c10d713443d04a35c026104083a5d1",
-                "reference": "86ce7144e5c10d713443d04a35c026104083a5d1",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/b4a8e12b7b4a8b71d908111e05ca40cf2c86d624",
+                "reference": "b4a8e12b7b4a8b71d908111e05ca40cf2c86d624",
                 "shasum": ""
             },
             "require": {
@@ -97,9 +97,9 @@
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
             "support": {
                 "issues": "https://github.com/Codeinwp/gutenberg-blocks/issues",
-                "source": "https://github.com/Codeinwp/gutenberg-blocks/tree/v1.6.1"
+                "source": "https://github.com/Codeinwp/gutenberg-blocks/tree/v1.6.2"
             },
-            "time": "2021-03-02T18:21:40+00:00"
+            "time": "2021-03-26T18:25:50+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
@@ -198,24 +198,20 @@
         },
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.2.16",
+            "version": "3.2.19",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "b116dffbe39ea9e37169fdd683bab54c545fe560"
+                "reference": "abb31e2382fd8c40bcc18d7c9f3501d14bf48e87"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/b116dffbe39ea9e37169fdd683bab54c545fe560",
-                "reference": "b116dffbe39ea9e37169fdd683bab54c545fe560",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/abb31e2382fd8c40bcc18d7c9f3501d14bf48e87",
+                "reference": "abb31e2382fd8c40bcc18d7c9f3501d14bf48e87",
                 "shasum": ""
             },
             "require-dev": {
-                "automattic/vipwpcs": "^1.0.0",
-                "dealerdirect/phpcodesniffer-composer-installer": "0.7.0",
-                "phpcompatibility/php-compatibility": "^9",
-                "squizlabs/php_codesniffer": "^3.3",
-                "wp-coding-standards/wpcs": "^1"
+                "codeinwp/phpcs-ruleset": "dev-main"
             },
             "type": "library",
             "notification-url": "https://packagist.org/downloads/",
@@ -236,9 +232,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.2.16"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.2.19"
             },
-            "time": "2020-11-17T08:35:16+00:00"
+            "time": "2021-03-12T08:54:44+00:00"
         },
         {
             "name": "masterminds/html5",
