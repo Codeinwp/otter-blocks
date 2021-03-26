@@ -1,3 +1,10 @@
+##### [Version 1.6.2](https://github.com/Codeinwp/otter-blocks/compare/v1.6.1...v1.6.2) (2021-03-26)
+
+- Fix Button Groups alignment
+- Don't enqueue empty CSS
+- Adds new Accordion Block
+- CPT support to Posts Block
+
 ##### [Version 1.6.1](https://github.com/Codeinwp/otter-blocks/compare/v1.6.0...v1.6.1) (2021-03-02)
 
 - Fix CSS Extensions causing Reusable Blocks to crash.
