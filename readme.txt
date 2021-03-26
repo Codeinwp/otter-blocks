@@ -90,6 +90,134 @@ Help your site shine with design options built to enhance your brand. Every bloc
 
 == Changelog ==
 
+##### [Version 1.6.1](https://github.com/Codeinwp/otter-blocks/compare/v1.6.0...v1.6.1) (2021-03-02)
+
+- Fix CSS Extensions causing Reusable Blocks to crash.
+- Add new Map Block
+- Various fixes
+
+
+
+
+#### [Version 1.6.0](https://github.com/Codeinwp/otter-blocks/compare/v1.5.12...v1.6.0) (2021-01-06)
+
+- New Icon List Block.
+- Allow editing text in Progress Bar Block.
+- Reuse Gradient Control from Core.
+- Fix Font Awesome loading when the non-Icon button is being used.
+- Improve Server-Side CSS Method
+
+
+
+
+##### [Version 1.5.12](https://github.com/Codeinwp/otter-blocks/compare/v1.5.11...v1.5.12) (2020-12-12)
+
+- Fix ThemeIsle icons not appearing on WebKit browsers
+
+
+
+
+##### [Version 1.5.11](https://github.com/Codeinwp/otter-blocks/compare/v1.5.10...v1.5.11) (2020-11-25)
+
+- Do not add the background image to the Section when the URL is not set.
+- WordPress 5.6 update chores.
+
+
+
+
+##### [Version 1.5.10](https://github.com/Codeinwp/otter-blocks/compare/v1.5.9...v1.5.10) (2020-11-22)
+
+- Responsive Images in Posts Block.
+- Fix Progress Blocks.
+- Don't enqueue CSS on Classic Editor posts.
+- Change the Highlight tag.
+
+
+
+
+##### [Version 1.5.9](https://github.com/Codeinwp/otter-blocks/compare/v1.5.8...v1.5.9) (2020-11-18)
+
+- WordPress 5.6 compatibility.
+- Fix duplicate posts appear in Posts block when using WPML.
+- Fox Sharing Icons block links.
+- Improve Font Awesome Icons background.
+- Fix Progress Bar percentage animation.
+- Add ThemeIsle Icons to Buttons & Font Awesome Icons Block.
+- Rename Font Awesome Icons Block to Icon Block.
+- Add Circular Progress Block.
+- Allow zero value for borderSize in Button Block.
+
+
+
+
+##### [Version 1.5.8](https://github.com/Codeinwp/otter-blocks/compare/v1.5.7...v1.5.8) (2020-09-14)
+
+- Add Lottie Animations Block.
+- Add Progress Bar Block.
+- Prevent old custom CSS from being cached.
+- Fix Slider in Section's Vertical Alignment on AMP.
+- Consensual Tracking Data.
+
+
+
+
+##### [Version 1.5.7](https://github.com/Codeinwp/otter-blocks/compare/v1.5.6...v1.5.7) (2020-08-12)
+
+- Fix Button Group Block borders
+- Fix Plugin Card failing with additional attributes
+- Fix permission callback missing in REST API Route
+
+
+
+
+##### [Version 1.5.6](https://github.com/Codeinwp/otter-blocks/compare/v1.5.5...v1.5.6) (2020-08-03)
+
+- Button Group Improvements
+- Fixed Caption field missing from Slider Block
+- Image management in Slider & Gallery Block
+- Fix issue with CSS inline loading twice
+- Fix Posts Block offset bug
+- Remove default font size from Posts Block
+- Improve Animation Picker
+
+
+
+
+##### [Version 1.5.5](https://github.com/Codeinwp/otter-blocks/compare/v1.5.4...v1.5.5) (2020-06-22)
+
+- Store images locally when importing templates
+- The improved template import mechanism
+- Fix CSS file is not enqueued for posts outside the main loop
+- Drop support for WordPress 5.3
+- Add backward compatibility to Template Library import
+- Fix category filter in Posts Section
+- Add new Block Templates
+
+
+
+
+##### [Version 1.5.4](https://github.com/Codeinwp/otter-blocks/compare/v1.5.3...v1.5.4) (2020-05-26)
+
+- Use WP File System in Template Import
+- Fix CSS Regeneration
+- Add TinyMCE in Map Marker
+- Use ServerSideLoader in Author & Sharing Blocks
+- Fix Posts Block for Gutenberg 8.0
+- Display template name in Template Library
+- Add AMP Support to Slider Block
+- Remove Section Outline
+- Add AMP Support to Google Maps Block
+- Fix Horizontal/Vertical Alignment
+- Add Template Preview in Template Library
+- Fix issue with Color resetting in Button Group & Section
+- Fix Font Awesome not loading on Index Pages
+- Add two new templates
+- Fix SVG issue in Slider & Section Block
+- Add Menu Icons Module
+
+
+
+
 ##### [Version 1.5.3](https://github.com/Codeinwp/otter-blocks/compare/v1.5.2...v1.5.3) (2020-04-10)
 
 - Remove Icons from Range Controls
