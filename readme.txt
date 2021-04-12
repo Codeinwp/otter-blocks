@@ -90,6 +90,16 @@ Help your site shine with design options built to enhance your brand. Every bloc
 
 == Changelog ==
 
+##### [Version 1.6.4](https://github.com/Codeinwp/otter-blocks/compare/v1.6.3...v1.6.4) (2021-04-12)
+
+- Fix button not centering
+- Fix custom CSS not working on Leaflet Map Block
+- Fix Columns width resetting
+- Fix Resizer in Columns
+
+
+
+
 ##### [Version 1.6.3](https://github.com/Codeinwp/otter-blocks/compare/v1.6.2...v1.6.3) (2021-03-29)
 
 - Fix Columns range crashing in Section Block.
