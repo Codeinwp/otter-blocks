@@ -54,16 +54,16 @@
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.6.3",
+            "version": "1.6.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "899656c7feca625f0b1e876053895c78a82254f3"
+                "reference": "f3fb4b83b459bd759073d18f3ce32496879ef5e3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/899656c7feca625f0b1e876053895c78a82254f3",
-                "reference": "899656c7feca625f0b1e876053895c78a82254f3",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/f3fb4b83b459bd759073d18f3ce32496879ef5e3",
+                "reference": "f3fb4b83b459bd759073d18f3ce32496879ef5e3",
                 "shasum": ""
             },
             "require": {
@@ -97,9 +97,9 @@
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
             "support": {
                 "issues": "https://github.com/Codeinwp/gutenberg-blocks/issues",
-                "source": "https://github.com/Codeinwp/gutenberg-blocks/tree/v1.6.3"
+                "source": "https://github.com/Codeinwp/gutenberg-blocks/tree/v1.6.4"
             },
-            "time": "2021-03-29T21:20:00+00:00"
+            "time": "2021-04-12T22:14:13+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
@@ -198,16 +198,16 @@
         },
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.2.19",
+            "version": "3.2.20",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "abb31e2382fd8c40bcc18d7c9f3501d14bf48e87"
+                "reference": "aeef3f159c1b35451d87672b6984ccde36c0d21d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/abb31e2382fd8c40bcc18d7c9f3501d14bf48e87",
-                "reference": "abb31e2382fd8c40bcc18d7c9f3501d14bf48e87",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/aeef3f159c1b35451d87672b6984ccde36c0d21d",
+                "reference": "aeef3f159c1b35451d87672b6984ccde36c0d21d",
                 "shasum": ""
             },
             "require-dev": {
@@ -232,9 +232,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.2.19"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.2.20"
             },
-            "time": "2021-03-12T08:54:44+00:00"
+            "time": "2021-03-30T09:16:29+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -549,16 +549,16 @@
         },
         {
             "name": "squizlabs/php_codesniffer",
-            "version": "3.5.8",
+            "version": "3.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "9d583721a7157ee997f235f327de038e7ea6dac4"
+                "reference": "ffced0d2c8fa8e6cdc4d695a743271fab6c38625"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/9d583721a7157ee997f235f327de038e7ea6dac4",
-                "reference": "9d583721a7157ee997f235f327de038e7ea6dac4",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/ffced0d2c8fa8e6cdc4d695a743271fab6c38625",
+                "reference": "ffced0d2c8fa8e6cdc4d695a743271fab6c38625",
                 "shasum": ""
             },
             "require": {
@@ -601,7 +601,7 @@
                 "source": "https://github.com/squizlabs/PHP_CodeSniffer",
                 "wiki": "https://github.com/squizlabs/PHP_CodeSniffer/wiki"
             },
-            "time": "2020-10-23T02:01:07+00:00"
+            "time": "2021-04-09T00:54:41+00:00"
         },
         {
             "name": "wp-coding-standards/wpcs",
