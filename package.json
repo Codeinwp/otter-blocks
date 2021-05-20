@@ -42,7 +42,7 @@
     "@semantic-release/changelog": "^5.0.1",
     "@semantic-release/exec": "^5.0.0",
     "@semantic-release/git": "^9.0.0",
-    "autoprefixer": "^9.8.6",
+    "autoprefixer": "^10.2.5",
     "babel-loader": "^8.2.2",
     "conventional-changelog-simple-preset": "^1.0.15",
     "cross-env": "7.0.3",
