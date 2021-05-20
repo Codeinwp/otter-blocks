@@ -1,3 +1,22 @@
+##### [Version 1.6.4](https://github.com/Codeinwp/otter-blocks/compare/v1.6.3...v1.6.4) (2021-04-12)
+
+- Fix button not centering
+- Fix custom CSS not working on Leaflet Map Block
+- Fix Columns width resetting
+- Fix Resizer in Columns
+
+##### [Version 1.6.3](https://github.com/Codeinwp/otter-blocks/compare/v1.6.2...v1.6.3) (2021-03-29)
+
+- Fix Columns range crashing in Section Block.
+- Fix Progress Blocks not loading on the front-end.
+
+##### [Version 1.6.2](https://github.com/Codeinwp/otter-blocks/compare/v1.6.1...v1.6.2) (2021-03-26)
+
+- Fix Button Groups alignment
+- Don't enqueue empty CSS
+- Adds new Accordion Block
+- CPT support to Posts Block
+
 ##### [Version 1.6.1](https://github.com/Codeinwp/otter-blocks/compare/v1.6.0...v1.6.1) (2021-03-02)
 
 - Fix CSS Extensions causing Reusable Blocks to crash.
