@@ -29,6 +29,7 @@ It has:
 - Accordion Block
 - Google Maps Block
 - Post Grid Block
+- Product Review Block
 - Service Block
 - Pricing Block
 - Testimonial Block
