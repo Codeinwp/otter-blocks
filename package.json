@@ -61,6 +61,7 @@
     "replace-in-file": "^6.2.0",
     "sass-loader": "^11.1.1",
     "semantic-release": "^17.4.3",
+    "semantic-release-slack-bot": "^2.1.0",
     "url-loader": "^4.1.1",
     "webpack": "^5.37.1",
     "webpack-cli": "^4.7.0"
