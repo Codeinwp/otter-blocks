@@ -1,6 +1,6 @@
 # Gutenberg Blocks and Template Library by Otter #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1)  
-**Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar  
+**Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review  
 **Requires at least:** 5.4  
 **Tested up to:** 5.7  
 **Requires PHP:** 5.4  
@@ -90,6 +90,22 @@ Help your site shine with design options built to enhance your brand. Every bloc
 3. Posts Block
 
 ## Changelog ##
+
+##### [Version 1.6.5](https://github.com/Codeinwp/otter-blocks/compare/v1.6.4...v1.6.5) (2021-05-21)
+
+- Add Product Review Block
+- Make blocks AMP-ready
+- Fix the post excerpt becoming corrupted when containing multi-byte character
+- Fix Section's Overlay Gradient not working
+- Fix Icon List reset on refresh
+- Add Product Review Block
+- Make blocks AMP-ready
+- Fix the post excerpt becoming corrupted when containing multi-byte character
+- Fix Section's Overlay Gradient not working
+- Fix Icon List reset on refresh
+
+
+
 
 ##### [Version 1.6.4](https://github.com/Codeinwp/otter-blocks/compare/v1.6.3...v1.6.4) (2021-04-12)
 
