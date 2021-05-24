@@ -1,3 +1,7 @@
+##### [Version 1.6.6](https://github.com/Codeinwp/otter-blocks/compare/v1.6.5...v1.6.6) (2021-05-24)
+
+- Fix Product Review Block conflict with WooCommerce
+
 ##### [Version 1.6.5](https://github.com/Codeinwp/otter-blocks/compare/v1.6.4...v1.6.5) (2021-05-21)
 
 - Add Product Review Block
