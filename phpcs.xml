@@ -3,6 +3,15 @@
     <description>ThemeIsle ruleset</description>
     <rule ref="WordPress-VIP-Go" />
 
+    <exclude-pattern>node_modules/*</exclude-pattern>
+    <exclude-pattern>vendor/*</exclude-pattern>
+    <exclude-pattern>tests/*</exclude-pattern>
+    <exclude-pattern>Gruntfile.js</exclude-pattern>
+    <exclude-pattern>dist</exclude-pattern>
+    <exclude-pattern>cypress</exclude-pattern>
+    <exclude-pattern>dist/*</exclude-pattern>
+    <exclude-pattern>artifact/*</exclude-pattern>
+    <exclude-pattern>assets/*</exclude-pattern>
     <rule ref="WordPress-Core" />
 
     <rule ref="WordPress-Docs" />
@@ -17,9 +26,11 @@
 
     <rule ref="PHPCompatibility" />
     <rule ref="WordPress.WP.I18n">
+        <include-pattern>*/vendor/*</include-pattern>
         <properties>
             <property name="text_domain" value="otter-blocks" />
         </properties>
+
     </rule>
 
 
@@ -27,14 +38,5 @@
     <arg value="s"/>
 
     <file>.</file>
-    <exclude-pattern>node_modules/*</exclude-pattern>
-    <exclude-pattern>vendor/*</exclude-pattern>
-    <exclude-pattern>tests/*</exclude-pattern>
-    <exclude-pattern>Gruntfile.js</exclude-pattern>
-    <exclude-pattern>dist</exclude-pattern>
-    <exclude-pattern>cypress</exclude-pattern>
-    <exclude-pattern>dist/*</exclude-pattern>
-    <exclude-pattern>artifact/*</exclude-pattern>
-    <exclude-pattern>assets/*</exclude-pattern>
 
 </ruleset>

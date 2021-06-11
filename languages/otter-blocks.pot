@@ -1,0 +1,1643 @@
+# Copyright (C) 2021 ThemeIsle
+# This file is distributed under the GPL-2.0+.
+msgid ""
+msgstr ""
+"Project-Id-Version: Gutenberg Blocks and Template Library by Otter 1.6.6\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/otter-blocks\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2021-06-11T13:55:34+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.5.0\n"
+"X-Domain: otter-blocks\n"
+
+#: inc/class-main.php:93
+msgid "A set of awesome Gutenberg Blocks!"
+msgstr ""
+
+#: inc/class-main.php:706
+#: inc/class-main.php:723
+msgid "Skill"
+msgstr ""
+
+#: inc/css/class-block-frontend.php:472
+#: inc/css/class-block-frontend.php:484
+#: inc/css/class-css-handler.php:346
+#: inc/css/class-css-handler.php:358
+#: inc/plugins/class-options-settings.php:133
+#: inc/plugins/class-options-settings.php:145
+#: inc/server/class-plugin-card-server.php:243
+#: inc/server/class-plugin-card-server.php:255
+#: inc/server/class-template-library-server.php:735
+#: inc/server/class-template-library-server.php:747
+#: class-otter-blocks.php:468
+#: class-otter-blocks.php:480
+msgid "Cheatin&#8217; huh?"
+msgstr ""
+
+#: inc/css/class-css-handler.php:55
+msgid "ID of the Post."
+msgstr ""
+
+#: inc/css/class-css-handler.php:79
+msgid "ID of the Reusable Block."
+msgstr ""
+
+#: inc/css/class-css-handler.php:110
+#: inc/css/class-css-handler.php:181
+msgid "CSS updated."
+msgstr ""
+
+#: inc/plugins/class-options-settings.php:42
+msgid "Google Map API key for the Google Maps Gutenberg Block."
+msgstr ""
+
+#: inc/plugins/class-options-settings.php:54
+#: src/plugins/options/index.js:170
+msgid "Make Section block your default block for Pages?"
+msgstr ""
+
+#: inc/plugins/class-options-settings.php:66
+msgid "Global defaults for Gutenberg Blocks."
+msgstr ""
+
+#: inc/plugins/class-options-settings.php:78
+msgid "Allow JSON Upload to Media Library."
+msgstr ""
+
+#: inc/render/class-plugin-card-block.php:101
+msgid "Plugin Stats"
+msgstr ""
+
+#: inc/render/class-plugin-card-block.php:105
+msgid "active installs"
+msgstr ""
+
+#: inc/render/class-plugin-card-block.php:109
+msgid "version"
+msgstr ""
+
+#: inc/render/class-plugin-card-block.php:113
+msgid "tested up to"
+msgstr ""
+
+#: inc/render/class-plugin-card-block.php:119
+msgid "Download"
+msgstr ""
+
+#: inc/render/class-plugin-card-block.php:141
+#: inc/server/class-plugin-card-server.php:108
+#: inc/server/class-plugin-card-server.php:169
+msgid "Something went wrong"
+msgstr ""
+
+#: inc/render/class-posts-grid-block.php:216
+msgid "on"
+msgstr ""
+
+#: inc/render/class-posts-grid-block.php:225
+msgid "by"
+msgstr ""
+
+#: inc/render/class-review-block.php:62
+msgid "Stability"
+msgstr ""
+
+#: inc/render/class-review-block.php:66
+msgid "Ease of Use"
+msgstr ""
+
+#: inc/render/class-review-block.php:70
+msgid "Look & Feel"
+msgstr ""
+
+#: inc/render/class-review-block.php:74
+#: src/blocks/review/inspector.js:179
+msgid "Price"
+msgstr ""
+
+#: inc/render/class-review-block.php:82
+msgid "Easy to use"
+msgstr ""
+
+#: inc/render/class-review-block.php:83
+msgid "Good price"
+msgstr ""
+
+#: inc/render/class-review-block.php:84
+msgid "Sturdy build and ergonomics"
+msgstr ""
+
+#: inc/render/class-review-block.php:90
+msgid "Incompatible with old versions"
+msgstr ""
+
+#: inc/render/class-review-block.php:91
+msgid "Hard to assemble"
+msgstr ""
+
+#: inc/render/class-review-block.php:92
+msgid "Bad color combination"
+msgstr ""
+
+#: inc/render/class-review-block.php:99
+msgid "Buy on Amazon"
+msgstr ""
+
+#: inc/render/class-review-block.php:103
+msgid "Buy on eBay"
+msgstr ""
+
+#. translators: Overall rating from 0 to 10.
+#: inc/render/class-review-block.php:148
+msgid "%s out of 10"
+msgstr ""
+
+#: inc/render/class-review-block.php:199
+#: src/blocks/review/edit.js:284
+#: src/blocks/review/inspector.js:259
+msgid "Pros"
+msgstr ""
+
+#: inc/render/class-review-block.php:212
+#: src/blocks/review/edit.js:312
+#: src/blocks/review/inspector.js:288
+msgid "Cons"
+msgstr ""
+
+#: inc/render/class-review-block.php:226
+#: src/blocks/review/edit.js:342
+msgid "Buy this product"
+msgstr ""
+
+#: inc/render/class-sharing-icons-block.php:75
+#: src/blocks/sharing-icons/services.js:8
+msgid "Facebook"
+msgstr ""
+
+#: inc/render/class-sharing-icons-block.php:81
+#: src/blocks/sharing-icons/services.js:12
+msgid "Twitter"
+msgstr ""
+
+#: inc/render/class-sharing-icons-block.php:87
+#: src/blocks/sharing-icons/services.js:16
+msgid "Linkedin"
+msgstr ""
+
+#: inc/render/class-sharing-icons-block.php:93
+#: src/blocks/sharing-icons/services.js:20
+msgid "Pinterest"
+msgstr ""
+
+#: inc/render/class-sharing-icons-block.php:99
+#: src/blocks/sharing-icons/services.js:24
+msgid "Tumblr"
+msgstr ""
+
+#: inc/render/class-sharing-icons-block.php:105
+#: src/blocks/sharing-icons/services.js:28
+msgid "Reddit"
+msgstr ""
+
+#: inc/server/class-plugin-card-server.php:60
+msgid "Search query."
+msgstr ""
+
+#: inc/server/class-plugin-card-server.php:81
+msgid "Slug of the plugin."
+msgstr ""
+
+#: inc/server/class-template-library-server.php:78
+msgid "URL of the JSON file."
+msgstr ""
+
+#: inc/server/class-template-library-server.php:83
+msgid "Load for Block Preview."
+msgstr ""
+
+#: inc/server/class-template-library-server.php:108
+#: inc/server/class-template-library-server.php:126
+msgid "Header with Features"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:110
+#: inc/server/class-template-library-server.php:119
+#: inc/server/class-template-library-server.php:128
+#: inc/server/class-template-library-server.php:137
+#: inc/server/class-template-library-server.php:146
+#: inc/server/class-template-library-server.php:155
+#: inc/server/class-template-library-server.php:164
+#: inc/server/class-template-library-server.php:173
+#: inc/server/class-template-library-server.php:182
+#: inc/server/class-template-library-server.php:191
+#: inc/server/class-template-library-server.php:200
+#: inc/server/class-template-library-server.php:209
+#: inc/server/class-template-library-server.php:218
+#: inc/server/class-template-library-server.php:227
+#: inc/server/class-template-library-server.php:236
+#: inc/server/class-template-library-server.php:245
+#: inc/server/class-template-library-server.php:254
+#: inc/server/class-template-library-server.php:263
+#: inc/server/class-template-library-server.php:272
+#: inc/server/class-template-library-server.php:281
+#: inc/server/class-template-library-server.php:290
+#: inc/server/class-template-library-server.php:299
+#: inc/server/class-template-library-server.php:308
+#: inc/server/class-template-library-server.php:317
+#: inc/server/class-template-library-server.php:326
+#: inc/server/class-template-library-server.php:335
+#: inc/server/class-template-library-server.php:344
+#: inc/server/class-template-library-server.php:353
+#: inc/server/class-template-library-server.php:362
+#: inc/server/class-template-library-server.php:371
+#: inc/server/class-template-library-server.php:380
+#: inc/server/class-template-library-server.php:389
+#: inc/server/class-template-library-server.php:398
+#: inc/server/class-template-library-server.php:407
+#: inc/server/class-template-library-server.php:416
+#: inc/server/class-template-library-server.php:425
+#: inc/server/class-template-library-server.php:434
+#: inc/server/class-template-library-server.php:443
+#: inc/server/class-template-library-server.php:452
+#: inc/server/class-template-library-server.php:461
+#: inc/server/class-template-library-server.php:470
+#: inc/server/class-template-library-server.php:479
+#: inc/server/class-template-library-server.php:488
+#: inc/server/class-template-library-server.php:497
+#: inc/server/class-template-library-server.php:506
+#: inc/server/class-template-library-server.php:515
+#: inc/server/class-template-library-server.php:524
+#: inc/server/class-template-library-server.php:533
+#: inc/server/class-template-library-server.php:542
+#: inc/server/class-template-library-server.php:551
+#: inc/server/class-template-library-server.php:560
+#: class-otter-blocks.php:45
+#: class-otter-blocks.php:114
+#: class-otter-blocks.php:115
+msgid "Otter"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:117
+msgid "Header with Solid Background"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:135
+msgid "Header with Image Background"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:144
+msgid "Header with Image"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:153
+msgid "Header"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:162
+msgid "Blogger Header"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:171
+#: inc/server/class-template-library-server.php:180
+#: inc/server/class-template-library-server.php:189
+#: inc/server/class-template-library-server.php:198
+#: inc/server/class-template-library-server.php:207
+#: inc/server/class-template-library-server.php:216
+#: inc/server/class-template-library-server.php:225
+#: inc/server/class-template-library-server.php:234
+#: inc/server/class-template-library-server.php:243
+#: inc/server/class-template-library-server.php:252
+#: inc/server/class-template-library-server.php:261
+msgid "Services"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:270
+msgid "Content with Left Image"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:279
+msgid "Content with Right Image"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:288
+#: inc/server/class-template-library-server.php:351
+#: inc/server/class-template-library-server.php:360
+#: inc/server/class-template-library-server.php:369
+#: inc/server/class-template-library-server.php:378
+msgid "Content with Images"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:297
+msgid "About with Video"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:306
+msgid "FAQ"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:315
+msgid "Content Two Columns"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:324
+msgid "Content with Sharing Icons"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:333
+msgid "Content with Image"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:342
+msgid "Video with Features"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:387
+msgid "Content with Features"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:396
+msgid "Blogger About"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:405
+#: inc/server/class-template-library-server.php:414
+#: inc/server/class-template-library-server.php:423
+#: inc/server/class-template-library-server.php:432
+msgid "Team"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:441
+#: inc/server/class-template-library-server.php:450
+#: inc/server/class-template-library-server.php:459
+#: inc/server/class-template-library-server.php:468
+#: inc/server/class-template-library-server.php:477
+#: inc/server/class-template-library-server.php:486
+msgid "Testimonials"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:495
+#: inc/server/class-template-library-server.php:504
+#: inc/server/class-template-library-server.php:513
+#: inc/server/class-template-library-server.php:522
+msgid "Call to Action"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:531
+#: inc/server/class-template-library-server.php:540
+#: inc/server/class-template-library-server.php:549
+#: inc/server/class-template-library-server.php:558
+msgid "Footer"
+msgstr ""
+
+#: inc/server/class-template-library-server.php:600
+msgid "File doesn't exist"
+msgstr ""
+
+#: src/blocks/about-author/index.js:17
+msgid "About Author"
+msgstr ""
+
+#: src/blocks/about-author/index.js:18
+msgid "About Author block is the easiest way to add a author bio below your posts."
+msgstr ""
+
+#: src/blocks/advanced-heading/controls.js:81
+msgid "Select tag"
+msgstr ""
+
+#: src/blocks/advanced-heading/controls.js:85
+#: src/blocks/advanced-heading/controls.js:90
+#: src/blocks/advanced-heading/controls.js:95
+#: src/blocks/advanced-heading/controls.js:100
+#: src/blocks/advanced-heading/controls.js:105
+#: src/blocks/advanced-heading/controls.js:110
+msgid "Heading"
+msgstr ""
+
+#: src/blocks/advanced-heading/controls.js:115
+msgid "Division"
+msgstr ""
+
+#: src/blocks/advanced-heading/controls.js:120
+msgid "Paragraph"
+msgstr ""
+
+#: src/blocks/advanced-heading/controls.js:125
+msgid "Span Tag"
+msgstr ""
+
+#: src/blocks/advanced-heading/controls.js:143
+#: src/blocks/advanced-heading/inspector.js:484
+msgid "Typography Settings"
+msgstr ""
+
+#: src/blocks/advanced-heading/controls.js:152
+#: src/blocks/advanced-heading/inspector.js:488
+msgid "Font Family"
+msgstr ""
+
+#: src/blocks/advanced-heading/controls.js:165
+#: src/blocks/advanced-heading/inspector.js:500
+msgid "Line Height"
+msgstr ""
+
+#: src/blocks/advanced-heading/controls.js:173
+#: src/blocks/advanced-heading/inspector.js:508
+msgid "Letter Spacing"
+msgstr ""
+
+#: src/blocks/advanced-heading/edit.js:281
+msgid "Write heading…"
+msgstr ""
+
+#: src/blocks/advanced-heading/index.js:22
+msgid "Advanced Heading"
+msgstr ""
+
+#: src/blocks/advanced-heading/index.js:23
+msgid "Advanced Heading gives a spin to editor's Heading block with much needed customization options."
+msgstr ""
+
+#: src/blocks/advanced-heading/index.js:27
+msgid "heading"
+msgstr ""
+
+#: src/blocks/advanced-heading/index.js:28
+msgid "title"
+msgstr ""
+
+#: src/blocks/advanced-heading/index.js:29
+msgid "advanced heading"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:426
+#: src/blocks/section/columns/inspector.js:918
+msgid "Style"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:439
+#: src/blocks/section/columns/inspector.js:931
+msgid "Advanced"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:448
+msgid "General Settings"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:451
+msgid "Heading Color"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:525
+#: src/blocks/advanced-heading/inspector.js:529
+#: src/blocks/font-awesome-icons/inspector.js:109
+#: src/blocks/review/inspector.js:354
+#: src/blocks/section/columns/inspector.js:1469
+#: src/blocks/section/columns/inspector.js:1665
+#: src/blocks/section/columns/inspector.js:1669
+msgid "Color"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:539
+#: src/blocks/section/columns/inspector.js:1579
+msgid "Opacity"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:547
+#: src/blocks/section/columns/inspector.js:1402
+#: src/blocks/section/columns/inspector.js:1587
+msgid "Blur"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:555
+#: src/blocks/section/columns/inspector.js:1603
+msgid "Horizontal"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:563
+#: src/blocks/section/columns/inspector.js:1611
+msgid "Vertical"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:580
+#: src/blocks/advanced-heading/inspector.js:583
+msgid "Highlight Color"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:594
+msgid "Highlight Background"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:606
+#: src/blocks/section/columns/inspector.js:975
+msgid "Spacing"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:620
+#: src/blocks/advanced-heading/inspector.js:654
+#: src/blocks/section/columns/inspector.js:989
+#: src/blocks/section/columns/inspector.js:1023
+#: src/blocks/section/columns/inspector.js:1490
+#: src/blocks/section/columns/inspector.js:1532
+#: src/blocks/section/columns/inspector.js:1635
+msgid "Top"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:625
+#: src/blocks/advanced-heading/inspector.js:659
+#: src/blocks/section/columns/inspector.js:994
+#: src/blocks/section/columns/inspector.js:1028
+#: src/blocks/section/columns/inspector.js:1082
+#: src/blocks/section/columns/inspector.js:1495
+#: src/blocks/section/columns/inspector.js:1537
+msgid "Right"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:630
+#: src/blocks/advanced-heading/inspector.js:663
+#: src/blocks/section/columns/inspector.js:999
+#: src/blocks/section/columns/inspector.js:1032
+#: src/blocks/section/columns/inspector.js:1500
+#: src/blocks/section/columns/inspector.js:1542
+#: src/blocks/section/columns/inspector.js:1644
+msgid "Bottom"
+msgstr ""
+
+#: src/blocks/advanced-heading/inspector.js:635
+#: src/blocks/advanced-heading/inspector.js:668
+#: src/blocks/section/columns/inspector.js:1004
+#: src/blocks/section/columns/inspector.js:1037
+#: src/blocks/section/columns/inspector.js:1064
+#: src/blocks/section/columns/inspector.js:1505
+#: src/blocks/section/columns/inspector.js:1547
+msgid "Left"
+msgstr ""
+
+#: src/blocks/advanced-heading/registerHeadingHighlight.js:27
+#: src/blocks/advanced-heading/registerHeadingHighlight.js:44
+msgid "Highlight"
+msgstr ""
+
+#: src/blocks/font-awesome-icons/index.js:20
+#: src/blocks/font-awesome-icons/inspector.js:62
+msgid "Icon"
+msgstr ""
+
+#. translators: %1$s Font Awesome translators: %2$s ThemeIsle Icons
+#: src/blocks/font-awesome-icons/index.js:24
+msgid "Add icons from %1$s or %2$s library to your website."
+msgstr ""
+
+#: src/blocks/font-awesome-icons/inspector.js:66
+#: src/blocks/icon-list/item/inspector.js:65
+msgid "Icon Picker"
+msgstr ""
+
+#: src/blocks/font-awesome-icons/inspector.js:77
+msgid "Icon Sizes"
+msgstr ""
+
+#: src/blocks/font-awesome-icons/inspector.js:81
+msgid "Icon Size"
+msgstr ""
+
+#: src/blocks/font-awesome-icons/inspector.js:90
+msgid "Padding"
+msgstr ""
+
+#: src/blocks/font-awesome-icons/inspector.js:99
+msgid "Margin"
+msgstr ""
+
+#: src/blocks/font-awesome-icons/inspector.js:119
+#: src/blocks/section/columns/inspector.js:1455
+msgid "Normal"
+msgstr ""
+
+#: src/blocks/font-awesome-icons/inspector.js:128
+msgid "Hover"
+msgstr ""
+
+#: src/blocks/font-awesome-icons/inspector.js:220
+msgid "Border Settings"
+msgstr ""
+
+#: src/blocks/font-awesome-icons/inspector.js:224
+msgid "Border Size"
+msgstr ""
+
+#: src/blocks/font-awesome-icons/inspector.js:232
+#: src/blocks/section/columns/inspector.js:1524
+msgid "Border Radius"
+msgstr ""
+
+#: src/blocks/icon-list/item/edit.js:176
+msgid "Write your content…"
+msgstr ""
+
+#: src/blocks/icon-list/item/index.js:17
+msgid "Icon List Item"
+msgstr ""
+
+#: src/blocks/icon-list/item/index.js:18
+msgid "Display an item for the icon list."
+msgstr ""
+
+#: src/blocks/icon-list/item/inspector.js:61
+#: otter-blocks.php:62
+msgid "Settings"
+msgstr ""
+
+#: src/blocks/icon-list/item/inspector.js:75
+msgid "Content Color"
+msgstr ""
+
+#: src/blocks/icon-list/item/inspector.js:81
+msgid "Icon Color"
+msgstr ""
+
+#: src/blocks/leaflet-map/components/marker-editor.js:48
+#: src/blocks/leaflet-map/components/marker.js:167
+msgid "Description"
+msgstr ""
+
+#: src/blocks/leaflet-map/components/marker-wrapper.js:59
+msgid "Add Marker"
+msgstr ""
+
+#: src/blocks/leaflet-map/components/marker.js:88
+msgid "Custom Marker"
+msgstr ""
+
+#: src/blocks/leaflet-map/components/marker.js:93
+msgid "Remove Marker"
+msgstr ""
+
+#: src/blocks/leaflet-map/components/marker.js:107
+msgid "Location"
+msgstr ""
+
+#: src/blocks/leaflet-map/components/marker.js:114
+msgid "Press Enter to search the location"
+msgstr ""
+
+#: src/blocks/leaflet-map/components/marker.js:119
+msgid "Latitude"
+msgstr ""
+
+#: src/blocks/leaflet-map/components/marker.js:135
+msgid "Longitude"
+msgstr ""
+
+#: src/blocks/leaflet-map/components/marker.js:151
+#: src/blocks/review/inspector.js:231
+#: src/blocks/review/inspector.js:268
+#: src/blocks/review/inspector.js:297
+msgid "Title"
+msgstr ""
+
+#: src/blocks/lottie/index.js:22
+msgid "Lottie Animation"
+msgstr ""
+
+#: src/blocks/lottie/index.js:23
+msgid "Add Lottie animations to your WordPress."
+msgstr ""
+
+#: src/blocks/lottie/placeholder.js:63
+#: src/blocks/lottie/placeholder.js:79
+msgid "Add Lottie animations and files to your website."
+msgstr ""
+
+#: src/blocks/lottie/placeholder.js:78
+msgid "Lottie"
+msgstr ""
+
+#: src/blocks/lottie/placeholder.js:89
+msgid "Enter URL to embed here…"
+msgstr ""
+
+#: src/blocks/lottie/placeholder.js:98
+msgid "Embed"
+msgstr ""
+
+#: src/blocks/lottie/placeholder.js:106
+msgid "Upload"
+msgstr ""
+
+#: src/blocks/lottie/placeholder.js:114
+msgid "Allow JSON Uploads"
+msgstr ""
+
+#: src/blocks/lottie/placeholder.js:115
+#: src/components/block-navigator-control/index.js:72
+#: src/plugins/options/global-defaults/block-item.js:75
+msgid "Close"
+msgstr ""
+
+#: src/blocks/lottie/placeholder.js:119
+msgid "This file type is not permitted for security reasons. Would you still like to enable JSON uploads?"
+msgstr ""
+
+#: src/blocks/lottie/placeholder.js:121
+msgid "You can enable JSON uploads from Otter."
+msgstr ""
+
+#: src/blocks/lottie/placeholder.js:123
+msgid "You will have to refresh the page after changing JSON upload settings."
+msgstr ""
+
+#: src/blocks/plugin-card/controls.js:20
+msgid "Edit"
+msgstr ""
+
+#: src/blocks/plugin-card/index.js:19
+#: src/blocks/plugin-card/placeholder.js:169
+msgid "Plugin Card"
+msgstr ""
+
+#: src/blocks/plugin-card/index.js:20
+msgid "Plugin Card block lets you display plugins data in your blog posts."
+msgstr ""
+
+#: src/blocks/plugin-card/placeholder.js:170
+msgid "Search for the plugin you want to display."
+msgstr ""
+
+#: src/blocks/plugin-card/placeholder.js:182
+msgid "Search for plugin…"
+msgstr ""
+
+#: src/blocks/plugin-card/placeholder.js:229
+msgid "There seems to be an error. Make sure your internet is working properly."
+msgstr ""
+
+#. translators: %s Date posted
+#: src/blocks/posts/components/layout/grid.js:88
+msgid "on %s"
+msgstr ""
+
+#. translators: %s Author
+#: src/blocks/posts/components/layout/grid.js:96
+msgid " by %s"
+msgstr ""
+
+#: src/blocks/review/edit.js:160
+#: src/blocks/review/inspector.js:157
+msgid "Name of your product…"
+msgstr ""
+
+#. translators: %s Rating score.
+#: src/blocks/review/edit.js:180
+msgid "%d out of 10"
+msgstr ""
+
+#: src/blocks/review/edit.js:217
+msgid "Product description or a small review…"
+msgstr ""
+
+#: src/blocks/review/edit.js:249
+#: src/blocks/review/inspector.js:233
+msgid "Feature title"
+msgstr ""
+
+#: src/blocks/review/edit.js:292
+#: src/blocks/review/inspector.js:270
+msgid "Why do you like the product?"
+msgstr ""
+
+#: src/blocks/review/edit.js:320
+#: src/blocks/review/inspector.js:299
+msgid "What can be improved?"
+msgstr ""
+
+#: src/blocks/review/edit.js:348
+#: src/blocks/review/inspector.js:328
+msgid "Button label"
+msgstr ""
+
+#: src/blocks/review/inspector.js:45
+msgid "Remove"
+msgstr ""
+
+#: src/blocks/review/inspector.js:68
+#: src/blocks/review/inspector.js:227
+msgid "Feature"
+msgstr ""
+
+#: src/blocks/review/inspector.js:128
+#: src/blocks/structural/pricing/edit.js:55
+msgid "Buy Now"
+msgstr ""
+
+#: src/blocks/review/inspector.js:152
+msgid "Product Details"
+msgstr ""
+
+#: src/blocks/review/inspector.js:155
+msgid "Product Name"
+msgstr ""
+
+#: src/blocks/review/inspector.js:164
+msgid "Currency"
+msgstr ""
+
+#: src/blocks/review/inspector.js:166
+msgid "Currency code, like USD or EUR."
+msgstr ""
+
+#: src/blocks/review/inspector.js:171
+msgid "Currency code in three digit ISO 4217 code."
+msgstr ""
+
+#: src/blocks/review/inspector.js:174
+msgid "List of ISO 4217 codes."
+msgstr ""
+
+#: src/blocks/review/inspector.js:186
+msgid "Discounted Price"
+msgstr ""
+
+#: src/blocks/review/inspector.js:195
+msgid "Product Image"
+msgstr ""
+
+#: src/blocks/review/inspector.js:215
+msgid "Remove image"
+msgstr ""
+
+#: src/blocks/review/inspector.js:222
+msgid "Product Features"
+msgstr ""
+
+#: src/blocks/review/inspector.js:239
+msgid "Rating"
+msgstr ""
+
+#: src/blocks/review/inspector.js:254
+msgid "Add Feature"
+msgstr ""
+
+#: src/blocks/review/inspector.js:264
+msgid "Pro"
+msgstr ""
+
+#: src/blocks/review/inspector.js:283
+#: src/blocks/review/inspector.js:312
+msgid "Add Item"
+msgstr ""
+
+#: src/blocks/review/inspector.js:293
+msgid "Con"
+msgstr ""
+
+#: src/blocks/review/inspector.js:317
+msgid "Links"
+msgstr ""
+
+#: src/blocks/review/inspector.js:322
+#: src/blocks/review/inspector.js:334
+msgid "Link"
+msgstr ""
+
+#: src/blocks/review/inspector.js:326
+msgid "Label"
+msgstr ""
+
+#: src/blocks/review/inspector.js:336
+msgid "https://…"
+msgstr ""
+
+#: src/blocks/review/inspector.js:349
+msgid "Add Links"
+msgstr ""
+
+#: src/blocks/review/inspector.js:360
+msgid "Primary"
+msgstr ""
+
+#: src/blocks/review/inspector.js:365
+msgid "Background"
+msgstr ""
+
+#: src/blocks/review/inspector.js:370
+msgid "Text"
+msgstr ""
+
+#: src/blocks/review/inspector.js:375
+msgid "Button Text"
+msgstr ""
+
+#: src/blocks/section/column/index.js:18
+msgid "Section Column"
+msgstr ""
+
+#: src/blocks/section/column/index.js:19
+msgid "A single column within a Section block."
+msgstr ""
+
+#: src/blocks/section/columns/index.js:18
+#: src/Components/Main.js:226
+msgid "Section"
+msgstr ""
+
+#: src/blocks/section/columns/index.js:19
+msgid "Add a Section block that displays content in multiple columns, then add whatever content blocks you’d like."
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:905
+#: src/blocks/section/columns/inspector.js:951
+msgid "Layout"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:940
+msgid "Columns & Layout"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:943
+msgid "Columns"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:960
+msgid "Columns Gap"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:963
+msgid "Default (10px)"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:964
+msgid "No Gap"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:965
+msgid "Narrow (5px)"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:966
+msgid "Extended (15px)"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:967
+msgid "Wide (20px)"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:968
+msgid "Wider (30px)"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1046
+msgid "Section Structure"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1050
+msgid "Maximum Content Width"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1073
+msgid "Center"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1093
+msgid "Minimum Height"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1096
+#: src/blocks/section/columns/inspector.js:1194
+#: src/blocks/section/columns/inspector.js:1337
+#: src/components/google-fonts-control/index.js:94
+#: src/components/google-fonts-control/index.js:170
+#: src/components/google-fonts-control/index.js:242
+msgid "Default"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1097
+msgid "Fit to Screen"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1098
+msgid "Custom"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1122
+msgid "Background Settings"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1126
+msgid "Background Type"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1134
+msgid "Background Color"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1162
+#: src/blocks/section/columns/inspector.js:1305
+msgid "Remove Image"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1172
+#: src/blocks/section/columns/inspector.js:1315
+msgid "Change or Remove Image"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1180
+#: src/blocks/section/columns/inspector.js:1323
+msgid "Background Attachment"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1183
+#: src/blocks/section/columns/inspector.js:1326
+msgid "Scroll"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1184
+#: src/blocks/section/columns/inspector.js:1327
+msgid "Fixed"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1185
+#: src/blocks/section/columns/inspector.js:1328
+msgid "Local"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1191
+#: src/blocks/section/columns/inspector.js:1334
+msgid "Background Position"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1195
+#: src/blocks/section/columns/inspector.js:1338
+msgid "Top Left"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1196
+#: src/blocks/section/columns/inspector.js:1339
+msgid "Top Center"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1197
+#: src/blocks/section/columns/inspector.js:1340
+msgid "Top Right"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1198
+#: src/blocks/section/columns/inspector.js:1341
+msgid "Center Left"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1199
+#: src/blocks/section/columns/inspector.js:1342
+msgid "Center Center"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1200
+#: src/blocks/section/columns/inspector.js:1343
+msgid "Center Right"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1201
+#: src/blocks/section/columns/inspector.js:1344
+msgid "Bottom Left"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1202
+#: src/blocks/section/columns/inspector.js:1345
+msgid "Bottom Center"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1203
+#: src/blocks/section/columns/inspector.js:1346
+msgid "Bottom Right"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1209
+#: src/blocks/section/columns/inspector.js:1352
+msgid "Background Repeat"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1212
+#: src/blocks/section/columns/inspector.js:1355
+msgid "Repeat"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1213
+#: src/blocks/section/columns/inspector.js:1356
+msgid "No-repeat"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1219
+#: src/blocks/section/columns/inspector.js:1362
+msgid "Background Size"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1222
+#: src/blocks/section/columns/inspector.js:1365
+msgid "Auto"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1223
+#: src/blocks/section/columns/inspector.js:1366
+msgid "Cover"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1224
+#: src/blocks/section/columns/inspector.js:1367
+msgid "Contain"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1235
+#: src/blocks/section/columns/inspector.js:1378
+msgid "Background Image"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1236
+#: src/blocks/section/columns/inspector.js:1379
+msgid "an image"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1256
+msgid "Background Overlay"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1261
+msgid "Overlay Type"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1267
+msgid "Overlay Opacity"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1277
+msgid "Overlay Color"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1410
+msgid "Brightness"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1418
+msgid "Contrast"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1426
+msgid "Grayscale"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1434
+#: src/blocks/section/columns/inspector.js:1467
+msgid "Hue"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1442
+#: src/blocks/section/columns/inspector.js:1468
+msgid "Saturation"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1452
+msgid "Blend Mode"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1456
+msgid "Multiply"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1457
+msgid "Screen"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1458
+msgid "Overlay"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1459
+msgid "Darken"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1460
+msgid "Lighten"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1461
+msgid "Color Dodge"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1462
+msgid "Color Burn"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1463
+msgid "Hard Light"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1464
+msgid "Soft Light"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1465
+msgid "Difference"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1466
+msgid "Exclusion"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1470
+msgid "Luminosity"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1477
+msgid "Border"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1482
+msgid "Border Width"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1513
+msgid "Border Color"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1564
+msgid "Shadow Color"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1595
+msgid "Spread"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1624
+msgid "Shape Divider"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1649
+msgid "Type"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1652
+msgid "None"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1653
+msgid "Triangle"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1654
+msgid "Right Curve"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1655
+msgid "Curve"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1656
+msgid "Slant"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1657
+msgid "Cloud"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1713
+msgid "Responsive"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1753
+msgid "Section Settings"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1757
+msgid "HTML Tag"
+msgstr ""
+
+#: src/blocks/section/columns/inspector.js:1760
+msgid "Default (div)"
+msgstr ""
+
+#: src/blocks/sharing-icons/index.js:18
+msgid "Sharing Icons"
+msgstr ""
+
+#: src/blocks/sharing-icons/index.js:19
+msgid "Share buttons for your website visitors to share content on any social sharing service."
+msgstr ""
+
+#: src/blocks/sharing-icons/index.js:32
+#: src/components/google-fonts-control/index.js:110
+#: src/components/google-fonts-control/index.js:226
+msgid "Regular"
+msgstr ""
+
+#: src/blocks/sharing-icons/index.js:33
+msgid "Icons Only"
+msgstr ""
+
+#: src/blocks/structural/pricing/edit.js:10
+msgid "Basic"
+msgstr ""
+
+#: src/blocks/structural/pricing/edit.js:16
+msgid "$9.99"
+msgstr ""
+
+#: src/blocks/structural/pricing/edit.js:24
+msgid "Per Month"
+msgstr ""
+
+#: src/blocks/structural/pricing/edit.js:31
+msgid "First Feature"
+msgstr ""
+
+#: src/blocks/structural/pricing/edit.js:38
+msgid "Second Feature"
+msgstr ""
+
+#: src/blocks/structural/pricing/edit.js:45
+msgid "Last Feature"
+msgstr ""
+
+#: src/blocks/structural/pricing/index.js:16
+msgid "Pricing"
+msgstr ""
+
+#: src/blocks/structural/pricing/index.js:17
+msgid "Pricing tables are a critical part in showcasing your services, prices and overall offerings."
+msgstr ""
+
+#: src/blocks/structural/testimonials/edit.js:13
+msgid "John Doe"
+msgstr ""
+
+#: src/blocks/structural/testimonials/edit.js:23
+msgid "Jedi Master"
+msgstr ""
+
+#: src/blocks/structural/testimonials/edit.js:31
+msgid "What is the point of being alive if you don’t at least try to do something remarkable?"
+msgstr ""
+
+#: src/components/block-navigator-control/index.js:61
+msgid "Open block navigator"
+msgstr ""
+
+#: src/components/block-navigator-control/index.js:71
+msgid "Block Navigator"
+msgstr ""
+
+#: src/components/control-panel-control/index.js:75
+msgid "Reset to default"
+msgstr ""
+
+#: src/components/google-fonts-control/index.js:114
+#: src/components/google-fonts-control/index.js:230
+msgid "Italic"
+msgstr ""
+
+#: src/components/google-fonts-control/index.js:151
+msgid "Select Font Family"
+msgstr ""
+
+#: src/components/google-fonts-control/index.js:155
+msgid "Google Fonts"
+msgstr ""
+
+#: src/components/google-fonts-control/index.js:208
+msgid "Loading…"
+msgstr ""
+
+#: src/components/google-fonts-control/index.js:214
+msgid "Font Width"
+msgstr ""
+
+#: src/components/google-fonts-control/index.js:222
+msgid "Font Style"
+msgstr ""
+
+#: src/components/google-fonts-control/index.js:238
+msgid "Font Transform"
+msgstr ""
+
+#: src/components/google-fonts-control/index.js:246
+msgid "Uppercase"
+msgstr ""
+
+#: src/components/google-fonts-control/index.js:250
+msgid "Lowercase"
+msgstr ""
+
+#: src/components/google-fonts-control/index.js:254
+msgid "Capitalize"
+msgstr ""
+
+#: src/components/image-grid/SortableList.js:56
+msgid "Add Images"
+msgstr ""
+
+#: src/plugins/options/global-defaults/block-item.js:66
+msgid "Reset"
+msgstr ""
+
+#: src/plugins/options/global-defaults/block-item.js:88
+#: src/Components/Main.js:266
+msgid "Save"
+msgstr ""
+
+#: src/plugins/options/global-defaults/index.js:70
+msgid "With Global Defaults, you can set site-wide block defaults for Otter."
+msgstr ""
+
+#: src/plugins/options/index.js:109
+#: src/plugins/options/index.js:150
+msgid "Option updated."
+msgstr ""
+
+#: src/plugins/options/index.js:160
+#: src/plugins/options/index.js:165
+msgid "Otter Options"
+msgstr ""
+
+#. Plugin Name of the plugin
+#: src/Components/Header.js:23
+msgid "Gutenberg Blocks and Template Library by Otter"
+msgstr ""
+
+#. Plugin URI of the plugin
+msgid "https://themeisle.com/plugins/otter-blocks"
+msgstr ""
+
+#. Description of the plugin
+msgid "Create beautiful and attracting posts, pages, and landing pages with Gutenberg Blocks and Template Library by Otter. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages."
+msgstr ""
+
+#. Author of the plugin
+msgid "ThemeIsle"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://themeisle.com"
+msgstr ""
+
+#: class-otter-blocks.php:46
+msgid "Blocks for Gutenberg"
+msgstr ""
+
+#: class-otter-blocks.php:136
+msgid "Redirect on new install."
+msgstr ""
+
+#: class-otter-blocks.php:147
+msgid "Show tour for Otter."
+msgstr ""
+
+#: class-otter-blocks.php:158
+msgid "Custom CSS module allows to add custom CSS to each block in Block Editor."
+msgstr ""
+
+#: class-otter-blocks.php:169
+msgid "Blocks Animation module allows to add CSS animations to each block in Block Editor."
+msgstr ""
+
+#: class-otter-blocks.php:180
+msgid "Menu Icons module allows to add icons to navigation menu items in Block Editor."
+msgstr ""
+
+#: class-otter-blocks.php:191
+msgid "Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected."
+msgstr ""
+
+#: class-otter-blocks.php:201
+msgid "Anonymous data tracking object."
+msgstr ""
+
+#: class-otter-blocks.php:380
+msgid "Sorry, the filesystem isn't writeable."
+msgstr ""
+
+#: class-otter-blocks.php:391
+msgid "Sorry, the directory doesn't exist."
+msgstr ""
+
+#: class-otter-blocks.php:407
+msgid "Styles deleted."
+msgstr ""
+
+#: src/Components/Footer.js:10
+msgid "No otters were harmed during the making of this plugin."
+msgstr ""
+
+#: src/Components/Main.js:81
+msgid "Updating settings…"
+msgstr ""
+
+#: src/Components/Main.js:98
+msgid "Settings saved."
+msgstr ""
+
+#: src/Components/Main.js:105
+#: src/Components/Main.js:117
+msgid "An unknown error occurred."
+msgstr ""
+
+#: src/Components/Main.js:191
+msgid "Modules"
+msgstr ""
+
+#: src/Components/Main.js:195
+msgid "Enable Custom CSS Module"
+msgstr ""
+
+#: src/Components/Main.js:204
+msgid "Enable Blocks Animation Module"
+msgstr ""
+
+#: src/Components/Main.js:214
+msgid "Enable Menu Icons Module"
+msgstr ""
+
+#: src/Components/Main.js:230
+msgid "Make Section your default block for Pages"
+msgstr ""
+
+#: src/Components/Main.js:241
+msgid "Maps"
+msgstr ""
+
+#: src/Components/Main.js:245
+msgid "Google Maps API"
+msgstr ""
+
+#: src/Components/Main.js:254
+msgid "Google Maps API Key"
+msgstr ""
+
+#: src/Components/Main.js:273
+msgid "Get API Key"
+msgstr ""
+
+#: src/Components/Main.js:283
+msgid "Other"
+msgstr ""
+
+#: src/Components/Main.js:287
+msgid "Anonymous Data Tracking."
+msgstr ""
+
+#: src/Components/Main.js:296
+msgid "Allow JSON Uploads."
+msgstr ""
+
+#: src/Components/Main.js:305
+msgid "Regenerate Styles"
+msgstr ""
+
+#: src/Components/Main.js:307
+msgid "Regenerate"
+msgstr ""
+
+#: src/Components/Main.js:316
+msgid "Let us know how we can improve. Vote on existing ideas or suggest new ones."
+msgstr ""
+
+#: src/Components/Main.js:318
+msgid "Give feedback!"
+msgstr ""
+
+#: src/Components/Main.js:327
+msgid "Got a question for us?"
+msgstr ""
+
+#: src/Components/Main.js:329
+msgid "We would love to help you out if you need any help with Otter."
+msgstr ""
+
+#: src/Components/Main.js:339
+msgid "Ask a question"
+msgstr ""
+
+#: src/Components/Main.js:349
+msgid "Leave a review"
+msgstr ""
+
+#: src/Components/Main.js:358
+msgid "Are you sure?"
+msgstr ""
+
+#: src/Components/Main.js:361
+msgid "Are you sure you want to delete all Otter generated CSS files?"
+msgstr ""
+
+#: src/Components/Main.js:362
+msgid "Note: Styles will be regenerated as users start visiting your pages."
+msgstr ""
+
+#: src/Components/Main.js:370
+msgid "Cancel"
+msgstr ""
+
+#: src/Components/Main.js:380
+msgid "Confirm"
+msgstr ""
