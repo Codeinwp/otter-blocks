@@ -20,7 +20,7 @@ const Headers = () => {
 				<div className="otter-logo">
 					<img
 						src={ otterObj.assetsPath + 'images/logo.png' }
-						title={ __( 'Gutenberg Blocks and Template Library by Otter','otter-blocks' ) }
+						title={ __( 'Gutenberg Blocks and Template Library by Otter', 'otter-blocks' ) }
 					/>
 
 					<abbr

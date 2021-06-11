@@ -37,40 +37,40 @@ const Onboarding = () => {
 	const steps = [
 		{
 			target: '.otter-step-one',
-			content: __( 'Howdy, I\','otter-blocks'm Ollie The Otter! I will help you configure your Otter experience. So let\'s start the magic!' ),
+			content: __( 'Howdy, I\'m Ollie The Otter! I will help you configure your Otter experience. So let\'s start the magic!', 'otter-blocks' ),
 			disableBeacon: true
 		},
 		{
 			target: '.otter-step-two',
-			content: __( 'Jazz up your blocks with some sparkly custom CSS or Blocks Animation right inside the block. Here you can enable modules to enhance your experience with Block Editor.','otter-blocks' )
+			content: __( 'Jazz up your blocks with some sparkly custom CSS or Blocks Animation right inside the block. Here you can enable modules to enhance your experience with Block Editor.', 'otter-blocks' )
 		},
 		{
 			target: '.otter-step-three',
-			content: __( 'Section Block is the signature feature of Otter. It allows you to build beautiful layouts right inside the Block Editor. You can set Section Block as the default block for your new Pages.','otter-blocks' )
+			content: __( 'Section Block is the signature feature of Otter. It allows you to build beautiful layouts right inside the Block Editor. You can set Section Block as the default block for your new Pages.', 'otter-blocks' )
 		},
 		{
 			target: '.otter-step-four',
-			content: __( 'We love maps! Here you can set your Google Maps API key for Otter\','otter-blocks's Map Block.' )
+			content: __( 'We love maps! Here you can set your Google Maps API key for Otter\'s Map Block.', 'otter-blocks' )
 		},
 		{
 			target: '.otter-step-five',
-			content: __( 'If you don\','otter-blocks't have an API key, you can register one by clicking here.' )
+			content: __( 'If you don\'t have an API key, you can register one by clicking here.', 'otter-blocks' )
 		},
 		{
 			target: '.otter-step-six',
-			content: __( 'Help us in making our plugin better with anonymous data tracking.','otter-blocks' )
+			content: __( 'Help us in making our plugin better with anonymous data tracking.', 'otter-blocks' )
 		},
 		{
 			target: '.otter-step-seven',
-			content: __( 'If you ever need any help, we are a team of real Otter-lovers who would love to help you out.','otter-blocks' )
+			content: __( 'If you ever need any help, we are a team of real Otter-lovers who would love to help you out.', 'otter-blocks' )
 		},
 		{
 			target: '.otter-step-eight',
-			content: __( 'And if you love what we do, please leave us a review at WordPress.org. Your review keeps us motivated to make awesome things.','otter-blocks' )
+			content: __( 'And if you love what we do, please leave us a review at WordPress.org. Your review keeps us motivated to make awesome things.', 'otter-blocks' )
 		},
 		{
 			target: '.otter-step-one',
-			content: __( 'That\','otter-blocks's it for now! Hope you enjoy Otter and love it as much as we do.' )
+			content: __( 'That\'s it for now! Hope you enjoy Otter and love it as much as we do.', 'otter-blocks' )
 		}
 	];
 
@@ -103,12 +103,12 @@ const Onboarding = () => {
 		<Fragment>
 			{ isOpen && (
 				<Modal
-					title={ __( 'Welcome to Otter!','otter-blocks' ) }
+					title={ __( 'Welcome to Otter!', 'otter-blocks' ) }
 					isDismissible={ false }
 					className="otter-onboarding-modal"
 				>
 					<div className="otter-onboarding-modal-content">
-						{ __( 'Would you like to start the onboarding wizard which will help you personalize the plugin for yourself?','otter-blocks' ) }
+						{ __( 'Would you like to start the onboarding wizard which will help you personalize the plugin for yourself?', 'otter-blocks' ) }
 					</div>
 
 					<div className="otter-onboarding-modal-action">
@@ -120,7 +120,7 @@ const Onboarding = () => {
 								setRunTour( true );
 							} }
 						>
-							{ __( 'Start','otter-blocks' ) }
+							{ __( 'Start', 'otter-blocks' ) }
 						</Button>
 
 						<Button
@@ -128,7 +128,7 @@ const Onboarding = () => {
 							isLarge
 							onClick={ () => skipTour( 'skipped' ) }
 						>
-							{ __( 'Skip','otter-blocks' ) }
+							{ __( 'Skip', 'otter-blocks' ) }
 						</Button>
 					</div>
 				</Modal>
@@ -141,11 +141,11 @@ const Onboarding = () => {
 				scrollToFirstStep
 				showSkipButton
 				locale={ {
-					back: __( 'Back','otter-blocks' ),
-					close: __( 'Close','otter-blocks' ),
-					last: __( 'Finish','otter-blocks' ),
-					next: __( 'Next','otter-blocks' ),
-					skip: __( 'Skip','otter-blocks' )
+					back: __( 'Back', 'otter-blocks' ),
+					close: __( 'Close', 'otter-blocks' ),
+					last: __( 'Finish', 'otter-blocks' ),
+					next: __( 'Next', 'otter-blocks' ),
+					skip: __( 'Skip', 'otter-blocks' )
 				} }
 				callback={ data => skipTour( data.status )}
 			/>

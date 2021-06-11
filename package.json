@@ -5,7 +5,7 @@
   "scripts": {
     "build": "cross-env BABEL_ENV=default NODE_ENV=production webpack",
     "build:makepot": "docker run --user root --rm --volume  \"$(pwd):/var/www/html/otter-blocks\" wordpress:cli bash -c 'php -d memory_limit=1024M \"$(which wp)\" i18n make-pot ./otter-blocks/ ./otter-blocks/languages/otter-blocks.pot  --merge=./otter-blocks/vendor/codeinwp/gutenberg-blocks/languages/otter-blocks.pot --allow-root --exclude=dist,build,bundle --include=vendor '",
-    "lint": "eslint src/**.js",
+    "lint": "eslint src/*/**.js",
     "release": "semantic-release",
     "dist": "bash bin/dist.sh",
     "dev": "cross-env BABEL_ENV=default NODE_ENV=development webpack --watch"
