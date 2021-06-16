@@ -20,7 +20,14 @@ module.exports = {
 				use: [ {
 					loader: 'babel-loader',
 					options: {
-						presets: [ '@babel/preset-env' ],
+						presets: [
+							[
+								'@babel/preset-env', {
+									useBuiltIns: 'entry',
+									corejs: '3.14'
+								}
+							]
+						],
 						plugins: [
 							'@babel/plugin-transform-async-to-generator',
 							'@babel/plugin-proposal-object-rest-spread',

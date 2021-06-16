@@ -2,6 +2,8 @@
  * External dependencies.
  */
 import ReactNotification from 'react-notifications-component';
+import 'core-js';
+import 'regenerator-runtime/runtime';
 
 /**
  * WordPress dependencies.
