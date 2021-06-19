@@ -262,7 +262,7 @@ class Otter_Blocks {
 		);
 
 		wp_enqueue_style(
-			'otter-blocks-styles',
+			'otter-blocks-assets',
 			plugins_url( 'build/index.css', __FILE__ ),
 			array(),
 			$asset_file['version']
