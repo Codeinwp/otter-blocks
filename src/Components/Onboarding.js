@@ -6,21 +6,23 @@ import Joyride from 'react-joyride';
 /**
  * WordPress dependencies.
  */
-const { debounce } = lodash;
+import { debounce } from 'lodash';
 
-const { __ } = wp.i18n;
+import { __ } from '@wordpress/i18n';
 
-const {
+import api from '@wordpress/api';
+
+import {
 	Button,
 	Modal
-} = wp.components;
+} from '@wordpress/components';
 
-const {
+import {
 	Fragment,
 	useEffect,
 	useRef,
 	useState
-} = wp.element;
+} from '@wordpress/element';
 
 const Onboarding = () => {
 	const [ isOpen, setOpen ] = useState( true );
@@ -29,8 +31,8 @@ const Onboarding = () => {
 	const settingsRef = useRef( null );
 
 	useEffect( () => {
-		wp.api.loadPromise.then( () => {
-			settingsRef.current = new wp.api.models.Settings();
+		api.loadPromise.then( () => {
+			settingsRef.current = new api.models.Settings();
 		});
 	}, []);
 
@@ -83,7 +85,7 @@ const Onboarding = () => {
 			return;
 		}
 
-		const model = new wp.api.models.Settings({
+		const model = new api.models.Settings({
 			// eslint-disable-next-line camelcase
 			'themeisle_blocks_settings_tour': false
 		});

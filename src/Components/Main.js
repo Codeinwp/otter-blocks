@@ -7,11 +7,13 @@ import 'react-notifications-component/dist/theme.css';
 /**
  * WordPress dependencies.
  */
-const { __ } = wp.i18n;
+import { __ } from '@wordpress/i18n';
 
-const { apiFetch } = wp;
+import apiFetch from '@wordpress/api-fetch';
 
-const {
+import api from '@wordpress/api';
+
+import {
 	BaseControl,
 	Button,
 	ExternalLink,
@@ -21,14 +23,14 @@ const {
 	Placeholder,
 	Spinner,
 	ToggleControl
-} = wp.components;
+} from '@wordpress/components';
 
-const {
+import {
 	Fragment,
 	useEffect,
 	useRef,
 	useState
-} = wp.element;
+} from '@wordpress/element';
 
 /**
  * Internal dependencies.
@@ -37,8 +39,8 @@ import ButtonControl from './ButtonControl.js';
 
 const Main = () => {
 	useEffect( () => {
-		wp.api.loadPromise.then( () => {
-			settingsRef.current = new wp.api.models.Settings();
+		api.loadPromise.then( () => {
+			settingsRef.current = new api.models.Settings();
 
 			if ( false === isAPILoaded ) {
 				settingsRef.current.fetch().then( response => {
@@ -80,7 +82,7 @@ const Main = () => {
 
 		addNotification( __( 'Updating settings…' ), 'info' );
 
-		const model = new wp.api.models.Settings({
+		const model = new api.models.Settings({
 			// eslint-disable-next-line camelcase
 			[option]: value
 		});

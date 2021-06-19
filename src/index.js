@@ -8,10 +8,10 @@ import 'regenerator-runtime/runtime';
 /**
  * WordPress dependencies.
  */
-const {
+import {
 	render,
 	Fragment
-} = wp.element;
+} from '@wordpress/element';
 
 /**
  * Internal dependencies.
