@@ -54,16 +54,16 @@
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.6.7",
+            "version": "1.6.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "96b8d33c030ed7e907b14a488d107a333872d5ea"
+                "reference": "85ebb64ecdde1a854a44be516769cff4402b135d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/96b8d33c030ed7e907b14a488d107a333872d5ea",
-                "reference": "96b8d33c030ed7e907b14a488d107a333872d5ea",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/85ebb64ecdde1a854a44be516769cff4402b135d",
+                "reference": "85ebb64ecdde1a854a44be516769cff4402b135d",
                 "shasum": ""
             },
             "require": {
@@ -97,9 +97,9 @@
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
             "support": {
                 "issues": "https://github.com/Codeinwp/gutenberg-blocks/issues",
-                "source": "https://github.com/Codeinwp/gutenberg-blocks/tree/v1.6.7"
+                "source": "https://github.com/Codeinwp/gutenberg-blocks/tree/v1.6.8"
             },
-            "time": "2021-05-24T09:31:55+00:00"
+            "time": "2021-06-11T13:47:37+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
@@ -238,16 +238,16 @@
         },
         {
             "name": "masterminds/html5",
-            "version": "2.7.4",
+            "version": "2.7.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Masterminds/html5-php.git",
-                "reference": "9227822783c75406cfe400984b2f095cdf03d417"
+                "reference": "f640ac1bdddff06ea333a920c95bbad8872429ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/9227822783c75406cfe400984b2f095cdf03d417",
-                "reference": "9227822783c75406cfe400984b2f095cdf03d417",
+                "url": "https://api.github.com/repos/Masterminds/html5-php/zipball/f640ac1bdddff06ea333a920c95bbad8872429ab",
+                "reference": "f640ac1bdddff06ea333a920c95bbad8872429ab",
                 "shasum": ""
             },
             "require": {
@@ -257,7 +257,7 @@
                 "php": ">=5.3.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "^4.8.35"
+                "phpunit/phpunit": "^4.8.35 || ^5.7.21 || ^6 || ^7"
             },
             "type": "library",
             "extra": {
@@ -301,9 +301,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Masterminds/html5-php/issues",
-                "source": "https://github.com/Masterminds/html5-php/tree/2.7.4"
+                "source": "https://github.com/Masterminds/html5-php/tree/2.7.5"
             },
-            "time": "2020-10-01T13:52:52+00:00"
+            "time": "2021-07-01T14:25:37+00:00"
         },
         {
             "name": "tubalmartin/cssmin",
@@ -662,5 +662,5 @@
     "platform-overrides": {
         "php": "5.6"
     },
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
