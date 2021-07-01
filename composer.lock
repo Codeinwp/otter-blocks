@@ -103,16 +103,16 @@
         },
         {
             "name": "codeinwp/gutenberg-css",
-            "version": "1.1.1",
+            "version": "1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-css.git",
-                "reference": "1f67e8657b29a6d106541e43dd88508680cd7c37"
+                "reference": "04c3498c38e1d8a0598804f58b6c1a85b7677cba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/1f67e8657b29a6d106541e43dd88508680cd7c37",
-                "reference": "1f67e8657b29a6d106541e43dd88508680cd7c37",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/04c3498c38e1d8a0598804f58b6c1a85b7677cba",
+                "reference": "04c3498c38e1d8a0598804f58b6c1a85b7677cba",
                 "shasum": ""
             },
             "require-dev": {
@@ -146,9 +146,9 @@
             "homepage": "https://github.com/Codeinwp/gutenberg-css",
             "support": {
                 "issues": "https://github.com/Codeinwp/gutenberg-css/issues",
-                "source": "https://github.com/Codeinwp/gutenberg-css/tree/v1.1.1"
+                "source": "https://github.com/Codeinwp/gutenberg-css/tree/v1.1.2"
             },
-            "time": "2021-02-09T23:41:09+00:00"
+            "time": "2021-06-21T22:12:24+00:00"
         },
         {
             "name": "codeinwp/gutenberg-menu-icons",
@@ -662,5 +662,5 @@
     "platform-overrides": {
         "php": "5.6"
     },
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
