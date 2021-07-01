@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "codeinwp/gutenberg-animation",
-            "version": "1.0.7",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-animation.git",
-                "reference": "76b7d1b2458148280dc03be8fe163a21bb0ee738"
+                "reference": "77ce9ca0b1598e3645f10ce516ccfcefc33b0704"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-animation/zipball/76b7d1b2458148280dc03be8fe163a21bb0ee738",
-                "reference": "76b7d1b2458148280dc03be8fe163a21bb0ee738",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-animation/zipball/77ce9ca0b1598e3645f10ce516ccfcefc33b0704",
+                "reference": "77ce9ca0b1598e3645f10ce516ccfcefc33b0704",
                 "shasum": ""
             },
             "require-dev": {
@@ -48,9 +48,9 @@
             "homepage": "https://github.com/Codeinwp/gutenberg-animation",
             "support": {
                 "issues": "https://github.com/Codeinwp/gutenberg-animation/issues",
-                "source": "https://github.com/Codeinwp/gutenberg-animation/tree/master"
+                "source": "https://github.com/Codeinwp/gutenberg-animation/tree/v1.0.8"
             },
-            "time": "2020-08-03T11:01:26+00:00"
+            "time": "2021-06-21T22:13:51+00:00"
         },
         {
             "name": "codeinwp/gutenberg-blocks",
@@ -662,5 +662,5 @@
     "platform-overrides": {
         "php": "5.6"
     },
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
