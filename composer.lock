@@ -198,16 +198,16 @@
         },
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.2.20",
+            "version": "3.2.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "aeef3f159c1b35451d87672b6984ccde36c0d21d"
+                "reference": "cafd016b61ec0928c0234e312046782a77c14318"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/aeef3f159c1b35451d87672b6984ccde36c0d21d",
-                "reference": "aeef3f159c1b35451d87672b6984ccde36c0d21d",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/cafd016b61ec0928c0234e312046782a77c14318",
+                "reference": "cafd016b61ec0928c0234e312046782a77c14318",
                 "shasum": ""
             },
             "require-dev": {
@@ -232,9 +232,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.2.20"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.2.21"
             },
-            "time": "2021-03-30T09:16:29+00:00"
+            "time": "2021-06-30T10:55:18+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -662,5 +662,5 @@
     "platform-overrides": {
         "php": "5.6"
     },
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }
