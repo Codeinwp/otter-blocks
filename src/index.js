@@ -2,14 +2,16 @@
  * External dependencies.
  */
 import ReactNotification from 'react-notifications-component';
+import 'core-js';
+import 'regenerator-runtime/runtime';
 
 /**
  * WordPress dependencies.
  */
-const {
+import {
 	render,
 	Fragment
-} = wp.element;
+} from '@wordpress/element';
 
 /**
  * Internal dependencies.

@@ -23,6 +23,7 @@
     },
     "prefer-stable": true,
     "config": {
+        "vendor-dir": "packages",
         "optimize-autoloader": true,
         "platform": {
           "php": "5.6"
@@ -32,7 +33,7 @@
         "installer-disable": "true"
     },
     "autoload": {
-        "classmap": ["vendor/codeinwp/gutenberg-blocks/inc/"]
+        "classmap": ["packages/codeinwp/gutenberg-blocks/inc/"]
     },
     "minimum-stability": "dev",
     "require": {
