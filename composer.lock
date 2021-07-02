@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "codeinwp/gutenberg-animation",
-            "version": "1.0.7",
+            "version": "1.0.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-animation.git",
-                "reference": "76b7d1b2458148280dc03be8fe163a21bb0ee738"
+                "reference": "77ce9ca0b1598e3645f10ce516ccfcefc33b0704"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-animation/zipball/76b7d1b2458148280dc03be8fe163a21bb0ee738",
-                "reference": "76b7d1b2458148280dc03be8fe163a21bb0ee738",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-animation/zipball/77ce9ca0b1598e3645f10ce516ccfcefc33b0704",
+                "reference": "77ce9ca0b1598e3645f10ce516ccfcefc33b0704",
                 "shasum": ""
             },
             "require-dev": {
@@ -48,22 +48,22 @@
             "homepage": "https://github.com/Codeinwp/gutenberg-animation",
             "support": {
                 "issues": "https://github.com/Codeinwp/gutenberg-animation/issues",
-                "source": "https://github.com/Codeinwp/gutenberg-animation/tree/master"
+                "source": "https://github.com/Codeinwp/gutenberg-animation/tree/v1.0.8"
             },
-            "time": "2020-08-03T11:01:26+00:00"
+            "time": "2021-06-21T22:13:51+00:00"
         },
         {
             "name": "codeinwp/gutenberg-blocks",
-            "version": "1.6.7",
+            "version": "1.6.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-blocks.git",
-                "reference": "96b8d33c030ed7e907b14a488d107a333872d5ea"
+                "reference": "c58fc700fe616d8b4f6029c109a869257d6daeed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/96b8d33c030ed7e907b14a488d107a333872d5ea",
-                "reference": "96b8d33c030ed7e907b14a488d107a333872d5ea",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-blocks/zipball/c58fc700fe616d8b4f6029c109a869257d6daeed",
+                "reference": "c58fc700fe616d8b4f6029c109a869257d6daeed",
                 "shasum": ""
             },
             "require": {
@@ -97,22 +97,22 @@
             "homepage": "https://github.com/Codeinwp/gutenberg-blocks",
             "support": {
                 "issues": "https://github.com/Codeinwp/gutenberg-blocks/issues",
-                "source": "https://github.com/Codeinwp/gutenberg-blocks/tree/v1.6.7"
+                "source": "https://github.com/Codeinwp/gutenberg-blocks/tree/v1.6.9"
             },
-            "time": "2021-05-24T09:31:55+00:00"
+            "time": "2021-07-02T20:24:47+00:00"
         },
         {
             "name": "codeinwp/gutenberg-css",
-            "version": "1.1.1",
+            "version": "1.1.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-css.git",
-                "reference": "1f67e8657b29a6d106541e43dd88508680cd7c37"
+                "reference": "ff3005e3cb149555378c6a319d7857086d2521fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/1f67e8657b29a6d106541e43dd88508680cd7c37",
-                "reference": "1f67e8657b29a6d106541e43dd88508680cd7c37",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-css/zipball/ff3005e3cb149555378c6a319d7857086d2521fc",
+                "reference": "ff3005e3cb149555378c6a319d7857086d2521fc",
                 "shasum": ""
             },
             "require-dev": {
@@ -146,22 +146,22 @@
             "homepage": "https://github.com/Codeinwp/gutenberg-css",
             "support": {
                 "issues": "https://github.com/Codeinwp/gutenberg-css/issues",
-                "source": "https://github.com/Codeinwp/gutenberg-css/tree/v1.1.1"
+                "source": "https://github.com/Codeinwp/gutenberg-css/tree/v1.1.3"
             },
-            "time": "2021-02-09T23:41:09+00:00"
+            "time": "2021-07-02T20:14:58+00:00"
         },
         {
             "name": "codeinwp/gutenberg-menu-icons",
-            "version": "1.0.4",
+            "version": "1.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/gutenberg-menu-icons.git",
-                "reference": "121ef82c57a556301265cbd1032d28619235e488"
+                "reference": "fce0fae088cc85001620d83253568aeec2af51c0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-menu-icons/zipball/121ef82c57a556301265cbd1032d28619235e488",
-                "reference": "121ef82c57a556301265cbd1032d28619235e488",
+                "url": "https://api.github.com/repos/Codeinwp/gutenberg-menu-icons/zipball/fce0fae088cc85001620d83253568aeec2af51c0",
+                "reference": "fce0fae088cc85001620d83253568aeec2af51c0",
                 "shasum": ""
             },
             "require-dev": {
@@ -192,22 +192,22 @@
             "homepage": "https://github.com/Codeinwp/gutenberg-menu-icons",
             "support": {
                 "issues": "https://github.com/Codeinwp/gutenberg-menu-icons/issues",
-                "source": "https://github.com/Codeinwp/gutenberg-menu-icons/tree/v1.0.4"
+                "source": "https://github.com/Codeinwp/gutenberg-menu-icons/tree/v1.0.5"
             },
-            "time": "2020-05-17T21:08:46+00:00"
+            "time": "2021-06-23T20:23:12+00:00"
         },
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.2.20",
+            "version": "3.2.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "aeef3f159c1b35451d87672b6984ccde36c0d21d"
+                "reference": "cafd016b61ec0928c0234e312046782a77c14318"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/aeef3f159c1b35451d87672b6984ccde36c0d21d",
-                "reference": "aeef3f159c1b35451d87672b6984ccde36c0d21d",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/cafd016b61ec0928c0234e312046782a77c14318",
+                "reference": "cafd016b61ec0928c0234e312046782a77c14318",
                 "shasum": ""
             },
             "require-dev": {
@@ -232,9 +232,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.2.20"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.2.21"
             },
-            "time": "2021-03-30T09:16:29+00:00"
+            "time": "2021-06-30T10:55:18+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -662,5 +662,5 @@
     "platform-overrides": {
         "php": "5.6"
     },
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.0.0"
 }

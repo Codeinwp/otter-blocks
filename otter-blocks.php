@@ -28,7 +28,7 @@ define( 'OTTER_BLOCKS_URL', plugins_url( '/', __FILE__ ) );
 define( 'OTTER_BLOCKS_PATH', dirname( __FILE__ ) );
 define( 'OTTER_BLOCKS_VERSION', '1.6.4' );
 
-$vendor_file = OTTER_BLOCKS_PATH . '/vendor/autoload.php';
+$vendor_file = OTTER_BLOCKS_PATH . '/packages/autoload.php';
 if ( is_readable( $vendor_file ) ) {
 	require_once $vendor_file;
 }
