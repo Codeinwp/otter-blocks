@@ -249,29 +249,30 @@ class Otter_Blocks {
 	 * @access  public
 	 */
 	public function enqueue_options_assets() {
-		if ( OTTER_BLOCKS_DEV ) {
-			$version = time();
-		} else {
-			$version = OTTER_BLOCKS_VERSION;
-		}
-
-		$tour = get_option( 'themeisle_blocks_settings_tour' );
-
+		$tour          = get_option( 'themeisle_blocks_settings_tour' );
 		$wp_upload_dir = wp_upload_dir( null, false );
 		$basedir       = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/';
+		$asset_file    = include plugin_dir_path( __FILE__ ) . 'build/index.asset.php';
 
 		wp_enqueue_style(
 			'otter-blocks-styles',
-			plugins_url( 'build/build.css', __FILE__ ),
+			plugins_url( 'build/style-index.css', __FILE__ ),
 			array( 'wp-components' ),
-			$version
+			$asset_file['version']
+		);
+
+		wp_enqueue_style(
+			'otter-blocks-assets',
+			plugins_url( 'build/index.css', __FILE__ ),
+			array(),
+			$asset_file['version']
 		);
 
 		wp_enqueue_script(
 			'otter-blocks-scripts',
-			plugins_url( 'build/build.js', __FILE__ ),
-			array( 'react', 'react-dom', 'wp-api-fetch', 'wp-i18n', 'wp-api', 'wp-components', 'wp-element' ),
-			$version,
+			plugins_url( 'build/index.js', __FILE__ ),
+			$asset_file['dependencies'],
+			$asset_file['version'],
 			true
 		);
 

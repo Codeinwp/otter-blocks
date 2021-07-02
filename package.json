@@ -1,70 +1,52 @@
 {
-  "name": "otter-blocks",
-  "version": "1.6.8",
-  "description": "Gutenberg Blocks and Template Library by Otter",
-  "scripts": {
-    "build": "cross-env BABEL_ENV=default NODE_ENV=production webpack",
-    "build:makepot": "docker run --user root --rm --volume  \"$(pwd):/var/www/html/otter-blocks\" wordpress:cli bash -c 'php -d memory_limit=1024M \"$(which wp)\" i18n make-pot ./otter-blocks/ ./otter-blocks/languages/otter-blocks.pot  --merge=./otter-blocks/vendor/codeinwp/gutenberg-blocks/languages/otter-blocks.pot --allow-root --exclude=dist,build,bundle --include=vendor '",
-    "lint": "eslint src/*/**.js",
-    "release": "semantic-release",
-    "dist": "bash bin/dist.sh",
-    "dev": "cross-env BABEL_ENV=default NODE_ENV=development webpack --watch"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/Codeinwp/otter-blocks.git"
-  },
-  "keywords": [
-    "wordpress-plugin"
-  ],
-  "textdomain": "otter-blocks",
-  "category": "plugins",
-  "author": "ThemeIsle <friends@themeisle.com>",
-  "license": "GPL-2.0+",
-  "bugs": {
-    "url": "https://github.com/Codeinwp/otter-blocks/issues"
-  },
-  "pot": {
-    "reportmsgidbugsto": "https://github.com/Codeinwp/otter-blocks/issues",
-    "languageteam": "Themeisle Translate <friends@themeisle.com>",
-    "lasttranslator": "Themeisle Translate Team <friends@themeisle.com>"
-  },
-  "dependencies": {
-    "classnames": "^2.3.1",
-    "react-joyride": "^2.3.0",
-    "react-notifications-component": "^3.1.0"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.14.3",
-    "@babel/plugin-proposal-object-rest-spread": "^7.14.2",
-    "@babel/plugin-transform-async-to-generator": "^7.13.0",
-    "@babel/plugin-transform-react-jsx": "^7.14.3",
-    "@babel/preset-env": "^7.14.2",
-    "@semantic-release/changelog": "^5.0.1",
-    "@semantic-release/exec": "^5.0.0",
-    "@semantic-release/git": "^9.0.0",
-    "autoprefixer": "^10.2.5",
-    "babel-loader": "^8.2.2",
-    "conventional-changelog-simple-preset": "^1.0.15",
-    "cross-env": "7.0.3",
-    "css-loader": "^5.2.5",
-    "eslint": "^7.26.0",
-    "eslint-config-wordpress": "^2.0.0",
-    "eslint-loader": "^4.0.2",
-    "eslint-plugin-react": "^7.23.2",
-    "grunt": "^1.4.0",
-    "grunt-version": "^2.0.0",
-    "grunt-wp-readme-to-markdown": "^2.0.1",
-    "load-project-config": "~0.2.0",
-    "mini-css-extract-plugin": "^1.6.0",
-    "node-sass": "^4.14.1",
-    "postcss-loader": "^5.3.0",
-    "replace-in-file": "^6.2.0",
-    "sass-loader": "^11.1.1",
-    "semantic-release": "^17.4.3",
-    "semantic-release-slack-bot": "^2.1.0",
-    "url-loader": "^4.1.1",
-    "webpack": "^5.37.1",
-    "webpack-cli": "^4.7.0"
-  }
+	"name": "otter-blocks",
+	"version": "1.6.4",
+	"description": "Gutenberg Blocks and Template Library by Otter",
+	"scripts": {
+		"build": "wp-scripts build",
+		"start": "wp-scripts start",
+		"lint": "wp-scripts lint-js ./src --fix",
+		"format": "wp-scripts format ./src",
+		"packages-update": "wp-scripts packages-update",
+		"release": "semantic-release",
+		"dist": "bash bin/dist.sh"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Codeinwp/otter-blocks.git"
+	},
+	"keywords": [
+		"wordpress-plugin"
+	],
+	"textdomain": "otter-blocks",
+	"category": "plugins",
+	"author": "ThemeIsle <friends@themeisle.com>",
+	"license": "GPL-2.0+",
+	"bugs": {
+		"url": "https://github.com/Codeinwp/otter-blocks/issues"
+	},
+	"pot": {
+		"reportmsgidbugsto": "https://github.com/Codeinwp/otter-blocks/issues",
+		"languageteam": "Themeisle Translate <friends@themeisle.com>",
+		"lasttranslator": "Themeisle Translate Team <friends@themeisle.com>"
+	},
+	"dependencies": {
+		"classnames": "^2.3.1",
+		"react-joyride": "^2.3.0",
+		"react-notifications-component": "^3.1.0"
+	},
+	"devDependencies": {
+		"@semantic-release/changelog": "^5.0.1",
+		"@semantic-release/exec": "^5.0.0",
+		"@semantic-release/git": "^9.0.0",
+		"@wordpress/scripts": "^16.1.4",
+		"conventional-changelog-simple-preset": "^1.0.15",
+		"eslint-config-wordpress": "^2.0.0",
+		"grunt": "^1.4.0",
+		"grunt-version": "^2.0.0",
+		"grunt-wp-readme-to-markdown": "^2.0.1",
+		"replace-in-file": "^6.2.0",
+		"semantic-release": "^17.4.3",
+		"semantic-release-slack-bot": "^2.1.0"
+	}
 }

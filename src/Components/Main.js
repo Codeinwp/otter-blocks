@@ -7,11 +7,13 @@ import 'react-notifications-component/dist/theme.css';
 /**
  * WordPress dependencies.
  */
-const { __ } = wp.i18n;
+import { __ } from '@wordpress/i18n';
 
-const { apiFetch } = wp;
+import apiFetch from '@wordpress/api-fetch';
 
-const {
+import api from '@wordpress/api';
+
+import {
 	BaseControl,
 	Button,
 	ExternalLink,
@@ -21,14 +23,14 @@ const {
 	Placeholder,
 	Spinner,
 	ToggleControl
-} = wp.components;
+} from '@wordpress/components';
 
-const {
+import {
 	Fragment,
 	useEffect,
 	useRef,
 	useState
-} = wp.element;
+} from '@wordpress/element';
 
 /**
  * Internal dependencies.
@@ -37,8 +39,8 @@ import ButtonControl from './ButtonControl.js';
 
 const Main = () => {
 	useEffect( () => {
-		wp.api.loadPromise.then( () => {
-			settingsRef.current = new wp.api.models.Settings();
+		api.loadPromise.then( () => {
+			settingsRef.current = new api.models.Settings();
 
 			if ( false === isAPILoaded ) {
 				settingsRef.current.fetch().then( response => {
@@ -80,7 +82,7 @@ const Main = () => {
 
 		addNotification( __( 'Updating settings…', 'otter-blocks' ), 'info' );
 
-		const model = new wp.api.models.Settings({
+		const model = new api.models.Settings({
 			// eslint-disable-next-line camelcase
 			[option]: value
 		});
@@ -193,7 +195,7 @@ const Main = () => {
 						<PanelRow>
 							<ToggleControl
 								label={ __( 'Enable Custom CSS Module', 'otter-blocks' ) }
-								help={ 'Custom CSS module allows to add custom CSS to each block in Block Editor.' }
+								help={ __( 'Custom CSS module allows to add custom CSS to each block in Block Editor.', 'otter-blocks' ) }
 								checked={ cssModule }
 								onChange={ () => changeOptions( 'themeisle_blocks_settings_css_module', 'cssModule', ! cssModule ) }
 							/>
@@ -202,7 +204,7 @@ const Main = () => {
 						<PanelRow>
 							<ToggleControl
 								label={ __( 'Enable Blocks Animation Module', 'otter-blocks' ) }
-								help={ 'Blocks Animation module allows to add CSS animations to each block in Block Editor.' }
+								help={ __( 'Blocks Animation module allows to add CSS animations to each block in Block Editor.', 'otter-blocks' ) }
 								checked={ blocksAnimation }
 								onChange={ () => changeOptions( 'themeisle_blocks_settings_blocks_animation', 'blocksAnimation', ! blocksAnimation ) }
 							/>
@@ -212,7 +214,7 @@ const Main = () => {
 							<PanelRow>
 								<ToggleControl
 									label={ __( 'Enable Menu Icons Module', 'otter-blocks' ) }
-									help={ 'Menu Icons module allows to add icons to navigation menu items in Block Editor.' }
+									help={ __( 'Menu Icons module allows to add icons to navigation menu items in Block Editor.', 'otter-blocks' ) }
 									checked={ menuIcons }
 									onChange={ () => changeOptions( 'themeisle_blocks_settings_menu_icons', 'menuIcons', ! menuIcons ) }
 								/>
@@ -228,7 +230,7 @@ const Main = () => {
 						<PanelRow>
 							<ToggleControl
 								label={ __( 'Make Section your default block for Pages', 'otter-blocks' ) }
-								help={ 'Everytime you create a new page, Section block will be appended there by default.' }
+								help={ __( 'Everytime you create a new page, Section block will be appended there by default.', 'otter-blocks' ) }
 								checked={ isDefaultSection }
 								onChange={ () => changeOptions( 'themeisle_blocks_settings_default_block', 'isDefaultSection', ! isDefaultSection ) }
 							/>
@@ -243,7 +245,7 @@ const Main = () => {
 						<PanelRow>
 							<BaseControl
 								label={ __( 'Google Maps API', 'otter-blocks' ) }
-								help={ 'In order to use Google Maps block, you need to use Google Maps and Places API.' }
+								help={ __( 'In order to use Google Maps block, you need to use Google Maps and Places API.', 'otter-blocks' ) }
 								id="otter-options-google-map-api"
 								className="otter-button-field"
 							>
@@ -285,7 +287,7 @@ const Main = () => {
 						<PanelRow>
 							<ToggleControl
 								label={ __( 'Anonymous Data Tracking.', 'otter-blocks' ) }
-								help={ 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.' }
+								help={ __( 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.', 'otter-blocks' ) }
 								checked={ 'yes' === isLoggingData ? true : false }
 								onChange={ () => changeOptions( 'otter_blocks_logger_flag', 'isLoggingData', ( 'yes' === isLoggingData ? 'no' : 'yes' ) ) }
 							/>
@@ -294,7 +296,7 @@ const Main = () => {
 						<PanelRow>
 							<ToggleControl
 								label={ __( 'Allow JSON Uploads.', 'otter-blocks' ) }
-								help={ 'This option allows JSON files to be uploaded to the media library to use in Lottie Block. Only enable this option if you want to use custom JSON uploads in Lottie Block.' }
+								help={ __( 'This option allows JSON files to be uploaded to the media library to use in Lottie Block. Only enable this option if you want to use custom JSON uploads in Lottie Block.', 'otter-blocks' ) }
 								checked={ allowJSONUploads }
 								onChange={ () => changeOptions( 'themeisle_allow_json_upload', 'allowJSONUploads', ! allowJSONUploads ) }
 							/>
@@ -303,7 +305,7 @@ const Main = () => {
 						<PanelRow>
 							<ButtonControl
 								label={ __( 'Regenerate Styles', 'otter-blocks' ) }
-								help={ 'Clicking on this will delete all the Otter generated CSS files.' }
+								help={ __( 'Clicking on this will delete all the Otter generated CSS files.', 'otter-blocks' ) }
 								buttonLabel={ __( 'Regenerate', 'otter-blocks' ) }
 								disabled={ isRegeneratedDisabled }
 								action={ () => setOpen( true ) }
