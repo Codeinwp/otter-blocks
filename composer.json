@@ -18,8 +18,8 @@
         }
     ],
     "scripts": {
-        "lint": "phpcs --standard=phpcs.xml  -v --report=summary vendor ",
-        "format": "phpcbf  --standard=phpcs.xml --report-summary --report-source -s "
+        "lint": "phpcs",
+        "format": "phpcbf"
     },
     "prefer-stable": true,
     "config": {
