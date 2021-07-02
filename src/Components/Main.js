@@ -80,7 +80,7 @@ const Main = () => {
 	const changeOptions = ( option, state, value ) => {
 		setAPISaving( true );
 
-		addNotification( __( 'Updating settings…' ), 'info' );
+		addNotification( __( 'Updating settings…', 'otter-blocks' ), 'info' );
 
 		const model = new api.models.Settings({
 			// eslint-disable-next-line camelcase
@@ -97,14 +97,14 @@ const Main = () => {
 				setOptions( state, response[option]);
 
 				setTimeout( () => {
-					addNotification( __( 'Settings saved.' ), 'success' );
+					addNotification( __( 'Settings saved.', 'otter-blocks' ), 'success' );
 					setAPISaving( false );
 				}, 800 );
 			}
 
 			if ( 'error' === status ) {
 				setTimeout( () => {
-					addNotification( __( 'An unknown error occurred.' ), 'danger' );
+					addNotification( __( 'An unknown error occurred.', 'otter-blocks' ), 'danger' );
 					setAPISaving( false );
 				}, 800 );
 			}
@@ -116,7 +116,7 @@ const Main = () => {
 			store.removeNotification( notification );
 
 			setTimeout( () => {
-				addNotification( response.responseJSON.message ? response.responseJSON.message : __( 'An unknown error occurred.' ), 'danger' );
+				addNotification( response.responseJSON.message ? response.responseJSON.message : __( 'An unknown error occurred.', 'otter-blocks' ), 'danger' );
 				setAPISaving( false );
 			}, 800 );
 		});
@@ -190,11 +190,11 @@ const Main = () => {
 			<div className="otter-main">
 				<div className="otter-step-two">
 					<PanelBody
-						title={ __( 'Modules' ) }
+						title={ __( 'Modules', 'otter-blocks' ) }
 					>
 						<PanelRow>
 							<ToggleControl
-								label={ __( 'Enable Custom CSS Module' ) }
+								label={ __( 'Enable Custom CSS Module', 'otter-blocks' ) }
 								help={ 'Custom CSS module allows to add custom CSS to each block in Block Editor.' }
 								checked={ cssModule }
 								onChange={ () => changeOptions( 'themeisle_blocks_settings_css_module', 'cssModule', ! cssModule ) }
@@ -203,7 +203,7 @@ const Main = () => {
 
 						<PanelRow>
 							<ToggleControl
-								label={ __( 'Enable Blocks Animation Module' ) }
+								label={ __( 'Enable Blocks Animation Module', 'otter-blocks' ) }
 								help={ 'Blocks Animation module allows to add CSS animations to each block in Block Editor.' }
 								checked={ blocksAnimation }
 								onChange={ () => changeOptions( 'themeisle_blocks_settings_blocks_animation', 'blocksAnimation', ! blocksAnimation ) }
@@ -213,7 +213,7 @@ const Main = () => {
 						{ Boolean( otterObj.navExists ) && (
 							<PanelRow>
 								<ToggleControl
-									label={ __( 'Enable Menu Icons Module' ) }
+									label={ __( 'Enable Menu Icons Module', 'otter-blocks' ) }
 									help={ 'Menu Icons module allows to add icons to navigation menu items in Block Editor.' }
 									checked={ menuIcons }
 									onChange={ () => changeOptions( 'themeisle_blocks_settings_menu_icons', 'menuIcons', ! menuIcons ) }
@@ -225,11 +225,11 @@ const Main = () => {
 
 				<div className="otter-step-three">
 					<PanelBody
-						title={ __( 'Section' ) }
+						title={ __( 'Section', 'otter-blocks' ) }
 					>
 						<PanelRow>
 							<ToggleControl
-								label={ __( 'Make Section your default block for Pages' ) }
+								label={ __( 'Make Section your default block for Pages', 'otter-blocks' ) }
 								help={ 'Everytime you create a new page, Section block will be appended there by default.' }
 								checked={ isDefaultSection }
 								onChange={ () => changeOptions( 'themeisle_blocks_settings_default_block', 'isDefaultSection', ! isDefaultSection ) }
@@ -240,11 +240,11 @@ const Main = () => {
 
 				<div className="otter-step-four">
 					<PanelBody
-						title={ __( 'Maps' ) }
+						title={ __( 'Maps', 'otter-blocks' ) }
 					>
 						<PanelRow>
 							<BaseControl
-								label={ __( 'Google Maps API' ) }
+								label={ __( 'Google Maps API', 'otter-blocks' ) }
 								help={ 'In order to use Google Maps block, you need to use Google Maps and Places API.' }
 								id="otter-options-google-map-api"
 								className="otter-button-field"
@@ -253,7 +253,7 @@ const Main = () => {
 									type="text"
 									id="otter-options-google-map-api"
 									value={ googleMapsAPI }
-									placeholder={ __( 'Google Maps API Key' ) }
+									placeholder={ __( 'Google Maps API Key', 'otter-blocks' ) }
 									disabled={ isAPISaving }
 									onChange={ e => setGoogleMapsAPI( e.target.value ) }
 								/>
@@ -265,14 +265,14 @@ const Main = () => {
 										disabled={ isAPISaving }
 										onClick={ () => changeOptions( 'themeisle_google_map_block_api_key', 'googleMapsAPI', googleMapsAPI ) }
 									>
-										{ __( 'Save' ) }
+										{ __( 'Save', 'otter-blocks' ) }
 									</Button>
 
 									<ExternalLink
 										href="https://developers.google.com/maps/documentation/javascript/get-api-key"
 										className="otter-step-five"
 									>
-										{ __( 'Get API Key' ) }
+										{ __( 'Get API Key', 'otter-blocks' ) }
 									</ExternalLink>
 								</div>
 							</BaseControl>
@@ -282,11 +282,11 @@ const Main = () => {
 
 				<div className="otter-step-six">
 					<PanelBody
-						title={ __( 'Other' ) }
+						title={ __( 'Other', 'otter-blocks' ) }
 					>
 						<PanelRow>
 							<ToggleControl
-								label={ __( 'Anonymous Data Tracking.' ) }
+								label={ __( 'Anonymous Data Tracking.', 'otter-blocks' ) }
 								help={ 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.' }
 								checked={ 'yes' === isLoggingData ? true : false }
 								onChange={ () => changeOptions( 'otter_blocks_logger_flag', 'isLoggingData', ( 'yes' === isLoggingData ? 'no' : 'yes' ) ) }
@@ -295,7 +295,7 @@ const Main = () => {
 
 						<PanelRow>
 							<ToggleControl
-								label={ __( 'Allow JSON Uploads.' ) }
+								label={ __( 'Allow JSON Uploads.', 'otter-blocks' ) }
 								help={ 'This option allows JSON files to be uploaded to the media library to use in Lottie Block. Only enable this option if you want to use custom JSON uploads in Lottie Block.' }
 								checked={ allowJSONUploads }
 								onChange={ () => changeOptions( 'themeisle_allow_json_upload', 'allowJSONUploads', ! allowJSONUploads ) }
@@ -304,9 +304,9 @@ const Main = () => {
 
 						<PanelRow>
 							<ButtonControl
-								label={ __( 'Regenerate Styles' ) }
+								label={ __( 'Regenerate Styles', 'otter-blocks' ) }
 								help={ 'Clicking on this will delete all the Otter generated CSS files.' }
-								buttonLabel={ __( 'Regenerate' ) }
+								buttonLabel={ __( 'Regenerate', 'otter-blocks' ) }
 								disabled={ isRegeneratedDisabled }
 								action={ () => setOpen( true ) }
 							/>
@@ -315,9 +315,9 @@ const Main = () => {
 						<PanelRow>
 							<div>
 								{ [
-									__( 'Let us know how we can improve. Vote on existing ideas or suggest new ones.' ),
+									__( 'Let us know how we can improve. Vote on existing ideas or suggest new ones.', 'otter-blocks' ),
 									' ',
-									<ExternalLink href="https://otter.nolt.io/">{ __( 'Give feedback!' ) }</ExternalLink>
+									<ExternalLink href="https://otter.nolt.io/">{ __( 'Give feedback!', 'otter-blocks' ) }</ExternalLink>
 								] }
 							</div>
 						</PanelRow>
@@ -326,9 +326,9 @@ const Main = () => {
 
 				<PanelBody>
 					<div className="otter-info">
-						<h2>{ __( 'Got a question for us?' ) }</h2>
+						<h2>{ __( 'Got a question for us?', 'otter-blocks' ) }</h2>
 
-						<p>{ __( 'We would love to help you out if you need any help with Otter.' ) }</p>
+						<p>{ __( 'We would love to help you out if you need any help with Otter.', 'otter-blocks' ) }</p>
 
 						<div className="otter-info-button-group">
 							<Button
@@ -338,7 +338,7 @@ const Main = () => {
 								href="https://wordpress.org/support/plugin/otter-blocks"
 								className="otter-step-seven"
 							>
-								{ __( 'Ask a question' ) }
+								{ __( 'Ask a question', 'otter-blocks' ) }
 							</Button>
 
 							<Button
@@ -348,7 +348,7 @@ const Main = () => {
 								href="https://wordpress.org/support/plugin/otter-blocks/reviews/#new-post"
 								className="otter-step-eight"
 							>
-								{ __( 'Leave a review' ) }
+								{ __( 'Leave a review', 'otter-blocks' ) }
 							</Button>
 						</div>
 					</div>
@@ -357,11 +357,11 @@ const Main = () => {
 
 			{ isOpen && (
 				<Modal
-					title={ __( 'Are you sure?' ) }
+					title={ __( 'Are you sure?', 'otter-blocks' ) }
 					onRequestClose={ () => setOpen( false ) }
 				>
-					<p>{ __( 'Are you sure you want to delete all Otter generated CSS files?' ) }</p>
-					<p>{ __( 'Note: Styles will be regenerated as users start visiting your pages.' ) }</p>
+					<p>{ __( 'Are you sure you want to delete all Otter generated CSS files?', 'otter-blocks' ) }</p>
+					<p>{ __( 'Note: Styles will be regenerated as users start visiting your pages.', 'otter-blocks' ) }</p>
 
 					<div className="otter-modal-actions">
 						<Button
@@ -369,7 +369,7 @@ const Main = () => {
 							isLarge
 							onClick={ () => setOpen( false ) }
 						>
-							{ __( 'Cancel' ) }
+							{ __( 'Cancel', 'otter-blocks' ) }
 						</Button>
 
 						<Button
@@ -379,7 +379,7 @@ const Main = () => {
 							isBusy={ isAPISaving }
 							onClick={ regenerateStyles }
 						>
-							{ __( 'Confirm' ) }
+							{ __( 'Confirm', 'otter-blocks' ) }
 						</Button>
 					</div>
 				</Modal>

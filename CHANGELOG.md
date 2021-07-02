@@ -1,3 +1,28 @@
+##### [Version 1.6.8](https://github.com/Codeinwp/otter-blocks/compare/v1.6.7...v1.6.8) (2021-06-11)
+
+* add JS translation compatibility
+
+##### [Version 1.6.7](https://github.com/Codeinwp/otter-blocks/compare/v1.6.6...v1.6.7) (2021-06-11)
+
+* Enhance translation compatibility
+
+##### [Version 1.6.6](https://github.com/Codeinwp/otter-blocks/compare/v1.6.5...v1.6.6) (2021-05-24)
+
+- Fix Product Review Block conflict with WooCommerce
+
+##### [Version 1.6.5](https://github.com/Codeinwp/otter-blocks/compare/v1.6.4...v1.6.5) (2021-05-21)
+
+- Add Product Review Block
+- Make blocks AMP-ready
+- Fix the post excerpt becoming corrupted when containing multi-byte character
+- Fix Section's Overlay Gradient not working
+- Fix Icon List reset on refresh
+- Add Product Review Block
+- Make blocks AMP-ready
+- Fix the post excerpt becoming corrupted when containing multi-byte character
+- Fix Section's Overlay Gradient not working
+- Fix Icon List reset on refresh
+
 ##### [Version 1.6.4](https://github.com/Codeinwp/otter-blocks/compare/v1.6.3...v1.6.4) (2021-04-12)
 
 - Fix button not centering

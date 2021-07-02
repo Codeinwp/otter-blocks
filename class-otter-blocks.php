@@ -276,6 +276,8 @@ class Otter_Blocks {
 			true
 		);
 
+		wp_set_script_translations( 'otter-blocks-scripts', 'otter-blocks' );
+
 		wp_localize_script(
 			'otter-blocks-scripts',
 			'otterObj',
