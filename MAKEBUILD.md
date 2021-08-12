@@ -14,7 +14,7 @@ At this point, you have all the repository of the blocks set to `main/master` br
 
 ### Step 3: Testing branches on the block repository
 
-If you want to test a new block of the Gutenberg Block from someone fork ([Hardeep](https://github.com/HardeepAsrani/gutenberg-blocks), [Robert](https://github.com/Soare-Robert-Daniel/gutenberg-blocks)), you need to go in `/packages/codeinwp/` and delete the folder that you want and replace with the desired repo.
+If you want to test a new block of the Gutenberg Block from someone fork ([Hardeep](https://github.com/HardeepAsrani/gutenberg-blocks), [Robert](https://github.com/Soare-Robert-Daniel/gutenberg-blocks)), you need to go in `/packages/codeinwp/` and delete the folder that you want and replace it with the desired repo.
 
 E.g:
 
