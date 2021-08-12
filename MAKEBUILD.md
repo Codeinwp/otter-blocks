@@ -10,7 +10,7 @@ Gutenberg Blocks, Animation, etc do not come by default in the repository. They 
 
 At this point, you have all the repository of the blocks set to `main/master` branch. If that is enough, you could just `zip` the `otter-blocks` folder and load it to WordPress. 
 
-**Remember to eliminate folders from the `zip` file like `node_modules` or `.git`**.They do not affect the plugin, but they occupy a lot of space in the zip file.
+**Remember to exclude folders from the `zip` file like `node_modules` or `.git`**.They do not affect the plugin, but they occupy a lot of space in the zip file.
 
 ### Step 3: Testing branches on the block repository
 
