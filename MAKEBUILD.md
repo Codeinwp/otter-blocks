@@ -44,3 +44,8 @@ git checkout development # change from the `main` branch to the dev branch
 ### Zip file
 
 To create a zip file you can use your os solution for this ([Mac](https://support.apple.com/guide/mac-help/zip-and-unzip-files-and-folders-on-mac-mchlp2528/mac), [Windows](https://support.microsoft.com/en-us/windows/zip-and-unzip-files-8d28fa72-f2f9-712f-67df-f80cf89fd4e5)) or `zip` command for [Linux](https://www.geeksforgeeks.org/zip-command-in-linux-with-examples/)
+
+E.g. for `zip`
+```bash
+zip -r otter-build.zip . -x "**/node_modules/**" -x "**/.git/**" -x "**/composer/**" -x "**/squizlabs/**" -x "node_modules/*" -x ".git/*" -x "**/wp-coding-standards/**"
+```
