@@ -22,8 +22,7 @@ import {
 	PanelRow,
 	Placeholder,
 	Spinner,
-	ToggleControl,
-	TextControl
+	ToggleControl
 } from '@wordpress/components';
 
 import {
@@ -53,8 +52,6 @@ const Main = () => {
 					setLoggingData( response.otter_blocks_logger_flag );
 					setJSONUploads( Boolean( response.themeisle_allow_json_upload ) );
 					setAPILoaded( true );
-					setGoogleCaptchaAPISiteKey( response.themeisle_google_captcha_api_site_key );
-					setGoogleCaptchaAPISecretKey( response.themeisle_google_captcha_api_secret_key );
 				});
 			}
 		});
@@ -76,9 +73,6 @@ const Main = () => {
 	const [ allowJSONUploads, setJSONUploads ] = useState( false );
 	const [ isOpen, setOpen ] = useState( false );
 	const [ isRegeneratedDisabled, setRegeneratedDisabled ] = useState( false );
-	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
-	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
-
 
 	const settingsRef = useRef( null );
 	const notificationDOMRef = useRef( null );
@@ -150,12 +144,6 @@ const Main = () => {
 			break;
 		case 'allowJSONUploads':
 			setJSONUploads( value );
-			break;
-		case 'googleCaptchaAPISiteKey':
-			setGoogleCaptchaAPISiteKey( value );
-			break;
-		case 'googleCaptchaAPISecretKey':
-			setGoogleCaptchaAPISecretKey( value );
 			break;
 		}
 	};
@@ -282,62 +270,6 @@ const Main = () => {
 
 									<ExternalLink
 										href="https://developers.google.com/maps/documentation/javascript/get-api-key"
-										className="otter-step-five"
-									>
-										{ __( 'Get API Key', 'otter-blocks' ) }
-									</ExternalLink>
-								</div>
-							</BaseControl>
-						</PanelRow>
-					</PanelBody>
-				</div>
-
-				<div className="otter-step-four">
-					<PanelBody
-						title={ __( 'reCaptcha', 'otter-blocks' ) }
-					>
-						<PanelRow>
-							<BaseControl
-								label={ __( 'Google reCaptacha API', 'otter-blocks' ) }
-								help={ __( 'In order to use reReptcha field  in the Form block, you need to use Google reCaptcha API.', 'otter-blocks' ) }
-								id="otter-options-google-recaptcha-api"
-								className="otter-button-field"
-							>
-								<TextControl
-									type="text"
-									id="otter-options-google-recaptcha-api-site"
-									label={ __( 'Site Key', 'otter-blocks' ) }
-									value={ googleCaptchaAPISiteKey }
-									placeholder={ __( 'Site Key', 'otter-blocks' ) }
-									disabled={ isAPISaving }
-									onChange={ e => setGoogleCaptchaAPISiteKey( e.target.value ) }
-								/>
-
-								<TextControl
-									type="text"
-									id="otter-options-google-recaptcha-api-secret"
-									label={ __( 'Secret Key', 'otter-blocks' ) }
-									value={ googleCaptchaAPISecretKey }
-									placeholder={ __( 'Secret Key', 'otter-blocks' ) }
-									disabled={ isAPISaving }
-									onChange={ e => setGoogleCaptchaAPISecretKey( e.target.value ) }
-								/>
-
-								<div className="otter-button-group">
-									<Button
-										isPrimary
-										isLarge
-										disabled={ isAPISaving }
-										onClick={ () => {
-											changeOptions( 'themeisle_google_captcha_api_site_key', 'googleCaptchaAPISiteKey', googleCaptchaAPISiteKey );
-											changeOptions( 'themeisle_google_captcha_api_secret_key', 'googleCaptchaAPISecretKey', googleCaptchaAPISecretKey );
-										} }
-									>
-										{ __( 'Save', 'otter-blocks' ) }
-									</Button>
-
-									<ExternalLink
-										href="http://www.google.com/recaptcha/admin"
 										className="otter-step-five"
 									>
 										{ __( 'Get API Key', 'otter-blocks' ) }
