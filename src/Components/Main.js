@@ -310,7 +310,7 @@ const Main = () => {
 									value={ googleCaptchaAPISiteKey }
 									placeholder={ __( 'Site Key', 'otter-blocks' ) }
 									disabled={ isAPISaving }
-									onChange={ e => setGoogleCaptchaAPISiteKey( e.target.value ) }
+									onChange={ value => setGoogleCaptchaAPISiteKey( value ) }
 								/>
 
 								<TextControl
@@ -320,7 +320,7 @@ const Main = () => {
 									value={ googleCaptchaAPISecretKey }
 									placeholder={ __( 'Secret Key', 'otter-blocks' ) }
 									disabled={ isAPISaving }
-									onChange={ e => setGoogleCaptchaAPISecretKey( e.target.value ) }
+									onChange={ value => setGoogleCaptchaAPISecretKey( value ) }
 								/>
 
 								<div className="otter-button-group">
