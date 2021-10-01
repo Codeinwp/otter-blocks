@@ -52,11 +52,11 @@ const Onboarding = () => {
 		},
 		{
 			target: '.otter-step-four',
-			content: __( 'We love maps! Here you can set your Google Maps API key for Otter\'s Map Block.', 'otter-blocks' )
+			content: __( 'Here you can set API keys that various blocks need in order to work.', 'otter-blocks' )
 		},
 		{
 			target: '.otter-step-five',
-			content: __( 'If you don\'t have an API key, you can register one by clicking here.', 'otter-blocks' )
+			content: __( 'If you want to get an API key, you will find a help link after each API field.', 'otter-blocks' )
 		},
 		{
 			target: '.otter-step-six',

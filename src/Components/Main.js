@@ -79,9 +79,7 @@ const Main = () => {
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
 
-
 	const settingsRef = useRef( null );
-	const notificationDOMRef = useRef( null );
 
 	const changeOptions = ( option, state, value ) => {
 		setAPISaving( true );
@@ -252,7 +250,7 @@ const Main = () => {
 
 				<div className="otter-step-four">
 					<PanelBody
-						title={ __( 'Maps', 'otter-blocks' ) }
+						title={ __( 'API Keys', 'otter-blocks' ) }
 					>
 						<PanelRow>
 							<BaseControl
@@ -289,23 +287,16 @@ const Main = () => {
 								</div>
 							</BaseControl>
 						</PanelRow>
-					</PanelBody>
-				</div>
 
-				<div className="otter-step-four">
-					<PanelBody
-						title={ __( 'reCaptcha', 'otter-blocks' ) }
-					>
 						<PanelRow>
 							<BaseControl
 								label={ __( 'Google reCaptacha API', 'otter-blocks' ) }
-								help={ __( 'In order to use reReptcha field  in the Form block, you need to use Google reCaptcha API.', 'otter-blocks' ) }
+								help={ __( 'In order to use reReptcha field in the Form block, you need to use Google reCaptcha API.', 'otter-blocks' ) }
 								id="otter-options-google-recaptcha-api"
 								className="otter-button-field"
 							>
 								<TextControl
 									type="text"
-									id="otter-options-google-recaptcha-api-site"
 									label={ __( 'Site Key', 'otter-blocks' ) }
 									value={ googleCaptchaAPISiteKey }
 									placeholder={ __( 'Site Key', 'otter-blocks' ) }
@@ -315,7 +306,6 @@ const Main = () => {
 
 								<TextControl
 									type="text"
-									id="otter-options-google-recaptcha-api-secret"
 									label={ __( 'Secret Key', 'otter-blocks' ) }
 									value={ googleCaptchaAPISecretKey }
 									placeholder={ __( 'Secret Key', 'otter-blocks' ) }
