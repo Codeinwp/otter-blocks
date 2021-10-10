@@ -32,7 +32,7 @@
 	},
 	"dependencies": {
 		"classnames": "^2.3.1",
-		"react-joyride": "^2.3.0",
+		"react-joyride": "^2.3.1",
 		"react-notifications-component": "^3.1.0"
 	},
 	"devDependencies": {
