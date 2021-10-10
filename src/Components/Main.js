@@ -260,7 +260,7 @@ const Main = () => {
 								className="otter-button-field"
 							>
 								<input
-									type="text"
+									type="password"
 									id="otter-options-google-map-api"
 									value={ googleMapsAPI }
 									placeholder={ __( 'Google Maps API Key', 'otter-blocks' ) }
@@ -296,7 +296,7 @@ const Main = () => {
 								className="otter-button-field"
 							>
 								<TextControl
-									type="text"
+									type="password"
 									label={ __( 'Site Key', 'otter-blocks' ) }
 									value={ googleCaptchaAPISiteKey }
 									placeholder={ __( 'Site Key', 'otter-blocks' ) }
@@ -305,7 +305,7 @@ const Main = () => {
 								/>
 
 								<TextControl
-									type="text"
+									type="password"
 									label={ __( 'Secret Key', 'otter-blocks' ) }
 									value={ googleCaptchaAPISecretKey }
 									placeholder={ __( 'Secret Key', 'otter-blocks' ) }
@@ -327,7 +327,7 @@ const Main = () => {
 									</Button>
 
 									<ExternalLink
-										href="http://www.google.com/recaptcha/admin"
+										href="https://www.google.com/recaptcha/admin"
 										className="otter-step-five"
 									>
 										{ __( 'Get API Key', 'otter-blocks' ) }
