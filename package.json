@@ -39,7 +39,7 @@
 		"@semantic-release/changelog": "^5.0.1",
 		"@semantic-release/exec": "^5.0.0",
 		"@semantic-release/git": "^9.0.1",
-		"@wordpress/scripts": "^16.1.4",
+		"@wordpress/scripts": "^18.0.1",
 		"conventional-changelog-simple-preset": "^1.0.19",
 		"eslint-config-wordpress": "^2.0.0",
 		"grunt": "^1.4.0",
