@@ -144,8 +144,6 @@ class Main {
 
 		$allow_json = get_option( 'themeisle_allow_json_upload' );
 
-		add_action( 'admin_menu', array( $this, 'register_menu_page' ) );
-		add_action( 'admin_init', array( $this, 'maybe_redirect' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ), 1 );
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_frontend_assets' ) );
 		add_action( 'init', array( $this, 'autoload_classes' ), 11 );
@@ -174,111 +172,6 @@ class Main {
 			add_filter( 'upload_mimes', array( $this, 'allow_json' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
 			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json' ), 75, 4 );
 		}
-	}
-
-	/**
-	 * Register Admin Page
-	 *
-	 * @since   1.2.0
-	 * @access  public
-	 */
-	public function register_menu_page() {
-		$page_hook_suffix = add_options_page(
-			__( 'Otter', 'otter-blocks' ),
-			__( 'Otter', 'otter-blocks' ),
-			'manage_options',
-			'otter',
-			array( $this, 'menu_callback' )
-		);
-
-		add_action( "admin_print_scripts-{$page_hook_suffix}", array( $this, 'enqueue_options_assets' ) );
-	}
-
-	/**
-	 * Register Admin Page
-	 *
-	 * @since   1.2.0
-	 * @access  public
-	 */
-	public function menu_callback() {
-		echo '<div id="otter"></div>';
-	}
-
-	/**
-	 * Load assets for option page.
-	 *
-	 * @since   1.2.0
-	 * @access  public
-	 */
-	public function enqueue_options_assets() {
-		$tour          = get_option( 'themeisle_blocks_settings_tour' );
-		$wp_upload_dir = wp_upload_dir( null, false );
-		$basedir       = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/';
-		$asset_file    = include OTTER_BLOCKS_PATH . '/build/dashboard/index.asset.php';
-
-		wp_enqueue_style(
-			'otter-blocks-styles',
-			plugin_dir_url( $this->get_dir() ) . 'build/dashboard/style-index.css',
-			array( 'wp-components' ),
-			$asset_file['version']
-		);
-
-		wp_enqueue_style(
-			'otter-blocks-assets',
-			plugin_dir_url( $this->get_dir() ) . 'build/dashboard/index.css',
-			array(),
-			$asset_file['version']
-		);
-
-		wp_enqueue_script(
-			'otter-blocks-scripts',
-			plugin_dir_url( $this->get_dir() ) . 'build/dashboard/index.js',
-			$asset_file['dependencies'],
-			$asset_file['version'],
-			true
-		);
-
-		wp_set_script_translations( 'otter-blocks-scripts', 'otter-blocks' );
-
-		wp_localize_script(
-			'otter-blocks-scripts',
-			'otterObj',
-			array(
-				'version'     => OTTER_BLOCKS_VERSION,
-				'assetsPath'  => plugin_dir_url( $this->get_dir() ) . 'assets/',
-				'showTour'    => $tour,
-				'stylesExist' => is_dir( $basedir ),
-				'navExists'   => \WP_Block_Type_Registry::get_instance()->is_registered( 'core/navigation' ),
-			)
-		);
-	}
-
-	/**
-	 * Maybe redirect to dashboard page.
-	 *
-	 * @since   1.2.0
-	 * @access  public
-	 */
-	public function maybe_redirect() {
-		if ( ! get_option( 'themeisle_blocks_settings_redirect' ) ) {
-			return;
-		}
-
-		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
-			return;
-		}
-
-		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) { // phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected,WordPress.Security.NonceVerification.NoNonceVerification
-			return;
-		}
-
-		if ( ! get_option( 'themeisle_blocks_settings_tour' ) ) {
-			return;
-		}
-
-		update_option( 'themeisle_blocks_settings_redirect', false );
-		wp_safe_redirect( admin_url( 'options-general.php?page=otter' ) );
-		exit;
 	}
 
 	/**
@@ -505,33 +398,6 @@ class Main {
 			self::$assets_version,
 			true
 		);
-	}
-
-	/**
-	 * Loop through block content to find specified blocks.
-	 *
-	 * @param array  $blocks Parsed array of blocks.
-	 * @param string $block_name name of the block.
-	 * @param array  $target Target variable.
-	 */
-	public function loop_blocks( $blocks, $block_name, $target = array() ) {
-		if ( is_array( $block_name ) ) {
-			foreach ( $block_name as $name ) {
-				$target = $this->loop_blocks( $blocks, $name, $target );
-			}
-		} else {
-			foreach ( $blocks as $block ) {
-				if ( $block_name === $block['blockName'] ) {
-					array_push( $target, $block );
-				}
-
-				if ( count( $block['innerBlocks'] ) ) {
-					$target = $this->loop_blocks( $block['innerBlocks'], $block_name, $target );
-				}
-			}
-		}
-
-		return $target;
 	}
 
 	/**
@@ -939,6 +805,7 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\CSS\Block_Frontend',
 			'\ThemeIsle\GutenbergBlocks\CSS\CSS_Handler',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Block_Conditions',
+			'\ThemeIsle\GutenbergBlocks\Plugins\Dashboard',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Options_Settings',
 			'\ThemeIsle\GutenbergBlocks\Server\Dashboard_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Filter_Blocks_Server',
@@ -967,26 +834,6 @@ class Main {
 
 		if ( class_exists( '\ThemeIsle\GutenbergMenuIcons' ) && get_option( 'themeisle_blocks_settings_menu_icons', true ) ) {
 			\ThemeIsle\GutenbergMenuIcons::instance();
-		}
-	}
-
-	/**
-	 * Render server-side CSS
-	 *
-	 * @param string $post_id Post id.
-	 *
-	 * @since   1.1.0
-	 * @access  public
-	 */
-	public function render_server_side_css( $post_id = '' ) {
-		$post = $post_id ? $post_id : get_the_ID();
-		if ( function_exists( 'has_blocks' ) && has_blocks( $post ) ) {
-			if ( class_exists( '\ThemeIsle\GutenbergBlocks\CSS\Block_Frontend' ) ) {
-				$class = '\ThemeIsle\GutenbergBlocks\CSS\Block_Frontend';
-				$path  = new $class();
-
-				return $path->enqueue_styles( $post, true );
-			}
 		}
 	}
 
