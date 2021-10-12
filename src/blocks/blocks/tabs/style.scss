@@ -1,0 +1,117 @@
+.wp-block-themeisle-blocks-tabs {
+	.wp-block-themeisle-blocks-tabs__header {
+		display: flex;
+		flex-direction: row;
+		overflow: hidden;
+
+		@media ( max-width: 800px ) {
+			display: none;
+		}
+
+		.wp-block-themeisle-blocks-tabs__header_item {
+			padding: 5px 10px;
+			white-space: nowrap;
+			border-color: inherit;
+			cursor: pointer;
+			border-color: transparent;
+			border-style: solid;
+			border-bottom-style: none;
+			border-left-style: none;
+			border-right-style: none;
+
+			&.active {
+				border: 3px solid;
+				border-bottom-style: none;
+				position: relative;
+				border-color: inherit;
+
+				&::before {
+					right: 100%;
+					bottom: 0;
+					height: 0;
+					width: 999rem;
+					border-bottom-style: solid;
+
+					display: block;
+					content: "";
+					position: absolute;
+					box-sizing: border-box;
+					border-width: 3px;
+					border-color: inherit;
+				}
+
+				&::after {
+					left: 100%;
+					bottom: 0;
+					height: 0;
+					width: 999rem;
+					border-bottom-style: solid;
+					display: block;
+					content: "";
+					position: absolute;
+					box-sizing: border-box;
+					border-width: 3px;
+					border-color: inherit;
+				}
+			}
+		}
+	}
+
+	.wp-block-themeisle-blocks-tabs__content {
+		.wp-block-themeisle-blocks-tabs-item {
+			&:not(:last-child) {
+				.wp-block-themeisle-blocks-tabs-item__header {
+					border-bottom-style: none;
+				}
+		
+				@media (max-width: 800px) {
+					.wp-block-themeisle-blocks-tabs-item__content {
+						border-bottom-style: none;
+					}
+				}
+			}
+		
+			.wp-block-themeisle-blocks-tabs-item__header {
+				width: 100%;
+				border: 3px solid black;
+				padding: 5px 10px;
+				cursor: pointer;
+		
+				@media (min-width: 800px) {
+					display: none;
+				}
+		
+				&.active {
+					border-bottom-style: none;
+				}
+			}
+
+			.wp-block-themeisle-blocks-tabs-item__content {
+				border: 3px solid #000;
+				border-top: 0px;
+				width: 100%;
+				padding: 10px;
+				display: none;
+				border-top: 0px;
+		
+				&.active {
+					display: block;
+				}
+		
+				&.hidden {
+					display: none;
+				}
+			}
+
+			&:first-child {
+				.wp-block-themeisle-blocks-tabs-item__content {
+					display: block;
+		
+					&.hidden {
+						display: none;
+					}
+				}
+			}
+		}		
+	}
+}

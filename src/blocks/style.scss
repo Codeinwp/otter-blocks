@@ -1,0 +1,23 @@
+.otter-masonry {
+    .blocks-gallery-grid {
+        .blocks-gallery-item {
+            img {
+                width: 100%;
+            }
+        }
+    }
+}
+
+.wp-block-themeisle-blocks-woo-comparison {
+    .nv-ct-layout-row {
+        tbody {
+            tr {
+                td {
+                    &:first-child {
+                        border-left: 1px solid var(--borderColor);
+                    }
+                }
+            }
+        }
+    }
+}

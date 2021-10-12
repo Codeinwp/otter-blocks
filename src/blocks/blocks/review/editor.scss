@@ -1,0 +1,56 @@
+@import 'style';
+
+.wp-block-themeisle-blocks-review__inspector_image {
+	img {
+		max-height: 250px;
+		border: 2px solid var( --wp-admin-theme-color );
+	}
+}
+
+.wp-block-themeisle-blocks-review__inspector_add {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+}
+
+.wp-block-themeisle-blocks-review__inspector_panel_item {
+	margin: 10px 0;
+
+	.wp-block-themeisle-blocks-review__inspector_panel_item__header {
+		display: flex;
+		border: 1px solid #d5dadf;
+
+		.wp-block-themeisle-blocks-review__inspector_panel_item__title {
+			flex-basis: 80%;
+			padding: 10px 15px;
+			cursor: pointer;
+			text-align: left;
+			overflow: hidden;
+			white-space: nowrap;
+		}
+
+		.wp-block-themeisle-blocks-review__inspector_panel_item__arrow {
+			display: flex;
+			flex-basis: 20%;
+			justify-content: center;
+			padding: 10px 5px;
+			border-left: 1px solid #d5dadf;
+			cursor: pointer;
+
+			.dashicon {
+				margin: 2px;
+			}
+		}
+	}
+
+	.wp-block-themeisle-blocks-review__inspector_panel_item__content {
+		border: 1px solid #d5dadf;
+		border-top: none;
+		padding: 10px 15px;
+		display: block;
+
+		.components-base-control {
+			margin-top: 12px;
+		}
+	}
+}

@@ -10,7 +10,7 @@ module.exports = function (grunt) {
 				options: {
 					flags: ''
 				},
-				src: [ 'package.json', 'composer.json', 'package-lock.json' ]
+				src: [ 'package.json', 'composer.json', 'package-lock.json', 'src/blocks/package.json', 'src/blocks/package-lock.json' ]
 			},
 			metatag: {
 				options: {
@@ -25,7 +25,13 @@ module.exports = function (grunt) {
 					flags: ''
 				},
 				src: [ 'otter-blocks.php' ]
-
+			},
+			blocks: {
+				options: {
+					prefix: 'THEMEISLE_BLOCKS_VERSION\', \'',
+					flags: ''
+				},
+				src: [ 'inc/class-main.php' ]
 			}
 		},
 		wp_readme_to_markdown: {

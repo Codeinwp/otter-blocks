@@ -1,0 +1,21 @@
+@import 'style.scss';
+
+.wp-block-themeisle-blocks-form {
+	.otter-form__container {
+		.wp-block-themeisle-blocks-form-input {
+			.otter-form-input {
+				padding: 10px 5px;
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	.components-placeholder__label > svg {
+		width: 32px;
+		height: 32px;
+	}
+
+	.otter-form-captcha {
+		margin: 10px 0px;
+	}
+}

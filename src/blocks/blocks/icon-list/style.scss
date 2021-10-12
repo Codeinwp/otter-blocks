@@ -1,0 +1,24 @@
+.wp-block-themeisle-blocks-icon-list { 
+	display: flex;
+	flex-direction: column;
+
+	&.is-style-horizontal {
+		flex-wrap: wrap;
+		flex-direction: row;
+	}
+
+	.wp-block-themeisle-blocks-icon-list-item {
+		display: inline-flex;
+		align-items: center;
+		transition: margin 0.10s linear;
+
+		.wp-block-themeisle-blocks-icon-list-item-content,
+		.wp-block-themeisle-blocks-icon-list-item-content-custom {
+			margin: 0 10px;
+		}
+
+		p {
+			margin-bottom: 0px;
+		}
+	}
+}

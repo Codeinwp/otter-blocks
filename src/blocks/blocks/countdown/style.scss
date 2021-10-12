@@ -1,0 +1,55 @@
+.wp-block-themeisle-blocks-countdown {
+	.otter-countdown__container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+		.otter-countdown__display {
+			display: flex;
+			flex-direction: row;
+			gap: 6px;
+
+			.otter-countdown__display-area {
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				flex-direction: column;
+				width: max-content;
+				border: solid;
+				border-radius: 10%;
+				border-width: 2px;
+				width: 70px;
+				height: 70px;
+
+				@media ( max-width: 960px ) {
+					width: 70px;
+					height: 70px;
+				}
+
+				.otter-countdown__value {
+					font-size: 1.4rem;
+					line-height: 1.2;
+					text-align: center;
+					width: 100%;
+				}
+
+				.otter-countdown__label {
+					font-size: 0.6rem;
+					min-height: 1rem;
+					text-align: center;
+					width: 100%;
+				}
+
+				&[name="separator"] {
+					.otter-countdown__label {
+						opacity: 0%;
+					}
+
+					border: unset;
+					background-color: transparent;
+					width: max-content;
+				}
+			}
+		}
+	}
+}

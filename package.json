@@ -3,8 +3,8 @@
 	"version": "1.6.9",
 	"description": "Gutenberg Blocks and Template Library by Otter",
 	"scripts": {
-		"build": "wp-scripts build",
-		"start": "wp-scripts start",
+		"build": "wp-scripts build src/dashboard/index.js --output-path=build/dashboard",
+		"start": "wp-scripts start src/dashboard/index.js --output-path=build/dashboard",
 		"lint": "wp-scripts lint-js ./src --fix",
 		"format": "wp-scripts format ./src",
 		"packages-update": "wp-scripts packages-update",

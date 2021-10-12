@@ -1,0 +1,48 @@
+.otter-style-switcher {
+	display: grid;
+	grid-template-columns: 50% 50%;
+	grid-row-gap: 5px;
+
+	.otter-style-switcher-item {
+		display: block;
+		height: auto;
+		margin: 0 4px;
+		padding: 5px;
+		flex-basis: 50%;
+		cursor: pointer;
+		overflow: hidden;
+		border-radius: 4px;
+		min-width: 100px;
+		min-height: 100px;
+
+		&.is-active {
+			box-shadow: 0 0 0 2px #000;
+		}
+
+		&:hover {
+			background: #f3f4f5;
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 2px #00a0d2;
+		}
+
+		.otter-style-switcher-item-preview {
+
+			img {
+				border: 1px solid #dcddde;
+				border-radius: 5px;
+			}
+		}
+
+		.otter-style-switcher-item-label {
+			text-align: center;
+		}
+	}
+}
+
+.otter-styles-popover-content {
+	.components-popover__content {
+		padding: 20px;
+	}
+}
