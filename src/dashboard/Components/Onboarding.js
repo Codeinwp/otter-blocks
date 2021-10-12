@@ -92,11 +92,11 @@ const Onboarding = () => {
 
 		const save = model.save();
 
-		save.success( ( response, status ) => {
+		save.success( () => {
 			settingsRef.current.fetch();
 		});
 
-		save.error( ( response, status ) => {
+		save.error( ( response ) => {
 			console.warning( response.responseJSON.message );
 		});
 	}, 1000 );

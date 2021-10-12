@@ -116,7 +116,7 @@ const Main = () => {
 			settingsRef.current.fetch();
 		});
 
-		save.error( ( response, status ) => {
+		save.error( ( response ) => {
 			store.removeNotification( notification );
 
 			setTimeout( () => {

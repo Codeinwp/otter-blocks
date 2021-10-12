@@ -603,7 +603,7 @@ class Template_Library_Server {
 			if ( function_exists( 'vip_safe_wp_remote_get' ) ) {
 				$request = vip_safe_wp_remote_get( $url );
 			} else {
-				$request = wp_remote_get( $url ); //phpcs:ignore WordPressVIPMinimum.VIP.RestrictedFunctions.wp_remote_get_wp_remote_get
+				$request = wp_remote_get( $url ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
 			}
 
 			$json = wp_remote_retrieve_body( $request );
@@ -643,7 +643,7 @@ class Template_Library_Server {
 	public function get_saved_image( $url ) {
 		global $wpdb;
 
-		$post_id = $wpdb->get_var( // phpcs:ignore WordPress.VIP.DirectDatabaseQuery.DirectQuery, WordPress.VIP.DirectDatabaseQuery.NoCaching
+		$post_id = $wpdb->get_var( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->prepare(
 				'SELECT `post_id` FROM `' . $wpdb->postmeta . '` WHERE `meta_key` = \'_themeisle_blocks_image_hash\' AND `meta_value` = %s LIMIT 1;',
 				sha1( $url )

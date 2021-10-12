@@ -100,7 +100,7 @@ class Filter_Blocks_Server {
 				array(
 					'posts_per_page' => 100,
 					'post_type'      => $post_type,
-					'meta_query'     => array( // phpcs:ignore WordPress.VIP.SlowDBQuery.slow_db_query_meta_query
+					'meta_query'     => array( // phpcs:ignore WordPress.VIP.SlowDBQuery.slow_db_query_meta_query, WordPress.DB.SlowDBQuery.slow_db_query_meta_query
 						array(
 							'key'   => '_themeisle_gutenberg_block_has_review',
 							'value' => true,

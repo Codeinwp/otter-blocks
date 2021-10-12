@@ -116,8 +116,6 @@ class Main {
 	/**
 	 * GutenbergBlocks constructor.
 	 *
-	 * @param string $name Colection name.
-	 *
 	 * @since   1.0.0
 	 * @access  public
 	 */
@@ -173,7 +171,7 @@ class Main {
 		add_filter( 'render_block', array( $this, 'render_blocks' ), 10, 3 );
 
 		if ( isset( $allow_json ) && true === (bool) $allow_json && ! function_exists( 'is_wpcom_vip' ) ) {
-			add_filter( 'upload_mimes', array( $this, 'allow_json' ) ); //phpcs:ignore WordPressVIPMinimum.Filters.RestrictedHook.UploadMimes
+			add_filter( 'upload_mimes', array( $this, 'allow_json' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
 			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json' ), 75, 4 );
 		}
 	}
@@ -220,7 +218,7 @@ class Main {
 
 		wp_enqueue_style(
 			'otter-blocks-styles',
-			plugin_dir_url( $this->get_dir() ) .'build/dashboard/style-index.css',
+			plugin_dir_url( $this->get_dir() ) . 'build/dashboard/style-index.css',
 			array( 'wp-components' ),
 			$asset_file['version']
 		);
@@ -234,7 +232,7 @@ class Main {
 
 		wp_enqueue_script(
 			'otter-blocks-scripts',
-			plugin_dir_url( $this->get_dir() ) .'build/dashboard/index.js',
+			plugin_dir_url( $this->get_dir() ) . 'build/dashboard/index.js',
 			$asset_file['dependencies'],
 			$asset_file['version'],
 			true
@@ -270,7 +268,7 @@ class Main {
 			return;
 		}
 
-		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) { //phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected,WordPress.Security.NonceVerification.NoNonceVerification
+		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) { // phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected,WordPress.Security.NonceVerification.NoNonceVerification
 			return;
 		}
 
@@ -424,7 +422,7 @@ class Main {
 				'optionsPath'    => admin_url( 'options-general.php?page=otter' ),
 				'mapsAPI'        => $api,
 				'themeDefaults'  => $this->get_global_defaults(),
-				'imageSizes'     => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), //phpcs:ignore WordPressVIPMinimum.VIP.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
+				'imageSizes'     => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
 				'themeMods'      => array(
 					'listingType'   => get_theme_mod( 'neve_comparison_table_product_listing_type', 'column' ),
 					'altRow'        => get_theme_mod( 'neve_comparison_table_enable_alternating_row_bg_color', false ),
@@ -588,7 +586,7 @@ class Main {
 					true
 				);
 
-				wp_enqueue_script( //phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
+				wp_enqueue_script( // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
 					'google-maps',
 					'https://maps.googleapis.com/maps/api/js?key=' . esc_attr( $apikey ) . '&libraries=places&callback=initMapScript',
 					array( 'themeisle-gutenberg-google-maps' ),
@@ -1388,8 +1386,6 @@ class Main {
 	 * Singleton method.
 	 *
 	 * @static
-	 *
-	 * @param array $name Category Name.
 	 *
 	 * @return  GutenbergBlocks
 	 * @since   1.0.0
