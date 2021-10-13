@@ -25,6 +25,14 @@ class Options_Settings {
 	public function init() {
 		add_action( 'init', array( $this, 'register_settings' ), 99 );
 		add_action( 'init', array( $this, 'default_block' ), 99 );
+		add_action( 'init', array( $this, 'register_meta' ), 11 );
+
+		$allow_json = get_option( 'themeisle_allow_json_upload' );
+
+		if ( isset( $allow_json ) && true === (bool) $allow_json && ! function_exists( 'is_wpcom_vip' ) ) {
+			add_filter( 'upload_mimes', array( $this, 'allow_json' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
+			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json' ), 75, 4 );
+		}
 	}
 
 	/**
@@ -292,6 +300,28 @@ class Options_Settings {
 		);
 	}
 
+	/**
+	 * Register post meta.
+	 *
+	 * @return mixed
+	 * @since  1.7.0
+	 * @access public
+	 * @link   https://developer.wordpress.org/reference/functions/register_meta/
+	 */
+	public function register_meta() {
+		register_post_meta(
+			'',
+			'_themeisle_gutenberg_block_has_review',
+			array(
+				'show_in_rest'  => true,
+				'single'        => true,
+				'type'          => 'boolean',
+				'auth_callback' => function() {
+					return current_user_can( 'edit_posts' );
+				},
+			)
+		);
+	}
 
 	/**
 	 * Display Default Block
@@ -319,6 +349,45 @@ class Options_Settings {
 		$post_type_object->template = array(
 			array( 'themeisle-blocks/advanced-columns', $attributes ),
 		);
+	}
+
+	/**
+	 * Allow JSON uploads
+	 *
+	 * @param array $mimes Supported mimes.
+	 *
+	 * @return array
+	 * @since  1.5.7
+	 * @access public
+	 */
+	public function allow_json( $mimes ) {
+		$mimes['json'] = 'application/json';
+		return $mimes;
+	}
+
+	/**
+	 * Allow JSON uploads
+	 *
+	 * @param null $data File data.
+	 * @param null $file File object.
+	 * @param null $filename File name.
+	 * @param null $mimes Supported mimes.
+	 *
+	 * @return array
+	 * @since  1.5.7
+	 * @access public
+	 */
+	public function fix_mime_type_json( $data = null, $file = null, $filename = null, $mimes = null ) {
+		$ext = isset( $data['ext'] ) ? $data['ext'] : '';
+		if ( 1 > strlen( $ext ) ) {
+			$exploded = explode( '.', $filename );
+			$ext      = strtolower( end( $exploded ) );
+		}
+		if ( 'json' === $ext ) {
+			$data['type'] = 'application/json';
+			$data['ext']  = 'json';
+		}
+		return $data;
 	}
 
 	/**
