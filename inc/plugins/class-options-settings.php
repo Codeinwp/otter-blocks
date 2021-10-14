@@ -25,7 +25,7 @@ class Options_Settings {
 	public function init() {
 		add_action( 'init', array( $this, 'register_settings' ), 99 );
 		add_action( 'init', array( $this, 'default_block' ), 99 );
-		add_action( 'init', array( $this, 'register_meta' ), 11 );
+		add_action( 'init', array( $this, 'register_meta' ), 19 );
 
 		$allow_json = get_option( 'themeisle_allow_json_upload' );
 
