@@ -283,8 +283,6 @@ const Edit = ({
 				});
 			}
 
-			console.log( isMissing, hasUpdated );
-
 			if ( isMissing || hasUpdated ) {
 				const model = new api.models.Settings({
 					// eslint-disable-next-line camelcase
