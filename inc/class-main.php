@@ -7,8 +7,6 @@
 
 namespace ThemeIsle\GutenbergBlocks;
 
-use Masterminds\HTML5;
-
 /**
  * Class Main
  */
@@ -142,10 +140,10 @@ class Main {
 			self::$assets_version = THEMEISLE_BLOCKS_VERSION;
 		}
 
+		add_action( 'init', array( $this, 'autoload_classes' ), 11 );
+		add_action( 'init', array( $this, 'register_blocks' ), 11 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ), 1 );
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_frontend_assets' ) );
-		add_action( 'init', array( $this, 'autoload_classes' ), 11 );
-		add_action( 'init', array( $this, 'load_server_side_blocks' ), 11 );
 
 		add_action(
 			'get_footer',
@@ -161,9 +159,83 @@ class Main {
 		} else {
 			add_filter( 'block_categories', array( $this, 'block_categories' ) );
 		}
+	}
 
-		add_filter( 'render_block', array( $this, 'render_amp' ), 10, 3 );
-		add_filter( 'render_block', array( $this, 'render_blocks' ), 10, 3 );
+	/**
+	 * Autoload classes for each block.
+	 *
+	 * @since   1.0.0
+	 * @access  public
+	 */
+	public function autoload_classes() {
+		$classnames = array(
+			'\ThemeIsle\GutenbergBlocks\CSS\Block_Frontend',
+			'\ThemeIsle\GutenbergBlocks\CSS\CSS_Handler',
+			'\ThemeIsle\GutenbergBlocks\Plugins\Block_Conditions',
+			'\ThemeIsle\GutenbergBlocks\Plugins\Dashboard',
+			'\ThemeIsle\GutenbergBlocks\Plugins\Options_Settings',
+			'\ThemeIsle\GutenbergBlocks\Render\AMP\Circle_Counter_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\AMP\Lottie_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\AMP\Slider_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Masonry_Variant',
+			'\ThemeIsle\GutenbergBlocks\Server\Dashboard_Server',
+			'\ThemeIsle\GutenbergBlocks\Server\Filter_Blocks_Server',
+			'\ThemeIsle\GutenbergBlocks\Server\Plugin_Card_Server',
+			'\ThemeIsle\GutenbergBlocks\Server\Template_Library_Server',
+			'\ThemeIsle\GutenbergBlocks\Server\Form_Server',
+		);
+
+		foreach ( $classnames as $classname ) {
+			$classname = new $classname();
+
+			if ( method_exists( $classname, 'instance' ) ) {
+				$classname->instance();
+			}
+		}
+
+		load_plugin_textdomain( 'otter-blocks', false, basename( OTTER_BLOCKS_PATH ) . '/languages' );
+
+		if ( class_exists( '\ThemeIsle\GutenbergCSS' ) && get_option( 'themeisle_blocks_settings_css_module', true ) ) {
+			\ThemeIsle\GutenbergCSS::instance();
+		}
+
+		if ( class_exists( '\ThemeIsle\GutenbergAnimation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {
+			\ThemeIsle\GutenbergAnimation::instance();
+		}
+
+		if ( class_exists( '\ThemeIsle\GutenbergMenuIcons' ) && get_option( 'themeisle_blocks_settings_menu_icons', true ) ) {
+			\ThemeIsle\GutenbergMenuIcons::instance();
+		}
+	}
+
+	/**
+	 * Autoload server side blocks.
+	 *
+	 * @since   1.0.0
+	 * @access  public
+	 */
+	public function register_blocks() {
+		$classnames = array(
+			'\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Review_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
+		);
+
+		foreach ( $classnames as $classname ) {
+			$block = new $classname();
+
+			if ( method_exists( $block, 'register_block' ) ) {
+				$block->register_block();
+			}
+		}
 	}
 
 	/**
@@ -756,80 +828,6 @@ class Main {
 	}
 
 	/**
-	 * Autoload server side blocks.
-	 *
-	 * @since   1.0.0
-	 * @access  public
-	 */
-	public function load_server_side_blocks() {
-		$classnames = array(
-			'\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Review_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
-
-		);
-
-		foreach ( $classnames as $classname ) {
-			$block = new $classname();
-
-			if ( method_exists( $block, 'register_block' ) ) {
-				$block->register_block();
-			}
-		}
-	}
-
-	/**
-	 * Autoload classes for each block.
-	 *
-	 * @since   1.0.0
-	 * @access  public
-	 */
-	public function autoload_classes() {
-		$classnames = array(
-			'\ThemeIsle\GutenbergBlocks\CSS\Block_Frontend',
-			'\ThemeIsle\GutenbergBlocks\CSS\CSS_Handler',
-			'\ThemeIsle\GutenbergBlocks\Plugins\Block_Conditions',
-			'\ThemeIsle\GutenbergBlocks\Plugins\Dashboard',
-			'\ThemeIsle\GutenbergBlocks\Plugins\Options_Settings',
-			'\ThemeIsle\GutenbergBlocks\Server\Dashboard_Server',
-			'\ThemeIsle\GutenbergBlocks\Server\Filter_Blocks_Server',
-			'\ThemeIsle\GutenbergBlocks\Server\Plugin_Card_Server',
-			'\ThemeIsle\GutenbergBlocks\Server\Template_Library_Server',
-			'\ThemeIsle\GutenbergBlocks\Server\Form_Server',
-		);
-
-		foreach ( $classnames as $classname ) {
-			$classname = new $classname();
-
-			if ( method_exists( $classname, 'instance' ) ) {
-				$classname->instance();
-			}
-		}
-
-		load_plugin_textdomain( 'otter-blocks', false, basename( OTTER_BLOCKS_PATH ) . '/languages' );
-
-		if ( class_exists( '\ThemeIsle\GutenbergCSS' ) && get_option( 'themeisle_blocks_settings_css_module', true ) ) {
-			\ThemeIsle\GutenbergCSS::instance();
-		}
-
-		if ( class_exists( '\ThemeIsle\GutenbergAnimation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {
-			\ThemeIsle\GutenbergAnimation::instance();
-		}
-
-		if ( class_exists( '\ThemeIsle\GutenbergMenuIcons' ) && get_option( 'themeisle_blocks_settings_menu_icons', true ) ) {
-			\ThemeIsle\GutenbergMenuIcons::instance();
-		}
-	}
-
-	/**
 	 * Register our custom block category.
 	 *
 	 * @param array $categories All categories.
@@ -849,120 +847,6 @@ class Main {
 				),
 			)
 		);
-	}
-
-	/**
-	 * Render Blocks
-	 *
-	 * @param string $block_content Content of block.
-	 * @param array  $block Block Attributes.
-	 *
-	 * @return mixed
-	 * @since  1.7.0
-	 * @access public
-	 */
-	public function render_blocks( $block_content, $block ) {
-		if ( ! is_admin() && 'core/gallery' === $block['blockName'] && isset( $block['attrs']['isMasonry'] ) ) {
-			wp_enqueue_script(
-				'macy',
-				plugin_dir_url( $this->get_dir() ) . 'assets/macy/macy.js',
-				[],
-				self::$assets_version,
-				true
-			);
-
-			wp_enqueue_script(
-				'themeisle-gutenberg-masonry',
-				plugin_dir_url( $this->get_dir() ) . 'build/blocks/masonry.js',
-				array( 'wp-dom-ready', 'macy' ),
-				self::$assets_version,
-				true
-			);
-
-			$margin = isset( $block['attrs']['margin'] ) ? $block['attrs']['margin'] : 0;
-
-			$output = '<div class="otter-masonry" data-margin="' . $margin . '">' . $block_content . '</div>';
-
-			return $output;
-		}
-
-		return $block_content;
-	}
-
-	/**
-	 * Render Blocks for AMP
-	 *
-	 * @param string $block_content Content of block.
-	 * @param array  $block Block Attributes.
-	 *
-	 * @return mixed
-	 * @since  1.5.2
-	 * @access public
-	 */
-	public function render_amp( $block_content, $block ) {
-		if ( 'themeisle-blocks/slider' === $block['blockName'] && function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
-			$html5  = new HTML5();
-			$dom    = $html5->loadHTML( $block['innerHTML'] );
-			$id     = $block['attrs']['id'];
-			$images = $dom->getElementsByTagName( 'figure' );
-			$output = '<amp-carousel id="' . $id . '" class="wp-block-themeisle-blocks-slider" width="400" height="300" layout="responsive" type="slides" autoplay delay="2000">';
-			foreach ( $images as $image ) {
-				$output .= $html5->saveHTML( $image );
-			}
-			$output .= '</amp-carousel>';
-			return $output;
-		}
-
-		if ( 'themeisle-blocks/circle-counter' === $block['blockName'] && function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
-			$id     = $block['attrs']['id'];
-			$output = '<div id="' . $id . '" class="wp-block-themeisle-blocks-circle-counter">';
-
-			if ( 'default' === ( isset( $block['attrs']['titleStyle'] ) ? $block['attrs']['titleStyle'] : 'default' ) ) {
-				$output .= '<div class="wp-block-themeisle-blocks-circle-counter-title__area">';
-				$output .= '<span class="wp-block-themeisle-blocks-circle-counter-title__value">';
-				$output .= esc_html( isset( $block['attrs']['title'] ) ? $block['attrs']['title'] : __( 'Skill', 'otter-blocks' ) );
-				$output .= '</span>';
-				$output .= '</div>';
-			}
-
-			$output .= '<div class="wp-block-themeisle-blocks-circle-counter__bar">';
-			$output .= '<div class="wp-block-themeisle-blocks-circle-counter-container">';
-			$output .= '<span class="wp-block-themeisle-blocks-circle-counter-text">' . intval( isset( $block['attrs']['percentage'] ) ? $block['attrs']['percentage'] : 50 ) . '%</span>';
-			$output .= '<div class="wp-block-themeisle-blocks-circle-counter-overlay"></div>';
-			$output .= '<div class="wp-block-themeisle-blocks-circle-counter-status"></div>';
-			$output .= '<div class="wp-block-themeisle-blocks-circle-counter-status"></div>';
-			$output .= '</div>';
-			$output .= '</div>';
-
-			if ( 'bottom' === ( isset( $block['attrs']['titleStyle'] ) ? $block['attrs']['titleStyle'] : 'default' ) ) {
-				$output .= '<div class="wp-block-themeisle-blocks-circle-counter-title__area">';
-				$output .= '<span class="wp-block-themeisle-blocks-circle-counter-title__value">';
-				$output .= esc_html( isset( $block['attrs']['title'] ) ? $block['attrs']['title'] : __( 'Skill', 'otter-blocks' ) );
-				$output .= '</span>';
-				$output .= '</div>';
-			}
-
-			$output .= '</div>';
-			return $output;
-		}
-
-		if ( 'themeisle-blocks/lottie' === $block['blockName'] && function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
-			if ( ! isset( $block['attrs']['file'] ) ) {
-				return $block_content;
-			}
-
-			$file = $block['attrs']['file'];
-			$size = isset( $block['attrs']['width'] ) ? $block['attrs']['width'] : 400;
-			$loop = ( isset( $block['attrs']['loop'] ) && true === $block['attrs']['loop'] ) ? 'true' : 'false';
-			if ( isset( $block['attrs']['count'] ) ) {
-				$loop = intval( $block['attrs']['count'] );
-			}
-
-			$output = '<amp-bodymovin-animation layout="responsive" width="' . intval( $size ) . '" height="' . intval( $size ) . '" loop="' . $loop . '" src="' . esc_url( $file['url'] ) . '"></amp-bodymovin-animation>';
-			return $output;
-		}
-
-		return $block_content;
 	}
 
 	/**
