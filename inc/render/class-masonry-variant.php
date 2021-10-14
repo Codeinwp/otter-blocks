@@ -35,7 +35,7 @@ class Masonry_Variant {
 	public function render_blocks( $block_content, $block ) {
 		if ( ! is_admin() && 'core/gallery' === $block['blockName'] && isset( $block['attrs']['isMasonry'] ) ) {
 
-            $version = THEMEISLE_BLOCKS_DEV ? time() : THEMEISLE_BLOCKS_VERSION;
+			$version = THEMEISLE_BLOCKS_DEV ? time() : THEMEISLE_BLOCKS_VERSION;
 
 			wp_enqueue_script(
 				'macy',

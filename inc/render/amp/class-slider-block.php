@@ -36,17 +36,17 @@ class Slider_Block {
 	 */
 	public function render_blocks( $block_content, $block ) {
 		if ( 'themeisle-blocks/slider' === $block['blockName'] && function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
-			$html5  = new HTML5();
-			$dom    = $html5->loadHTML( $block['innerHTML'] );
-			$id     = $block['attrs']['id'];
-			$images = $dom->getElementsByTagName( 'figure' );
+			$html5         = new HTML5();
+			$dom           = $html5->loadHTML( $block['innerHTML'] );
+			$id            = $block['attrs']['id'];
+			$images        = $dom->getElementsByTagName( 'figure' );
 			$block_content = '<amp-carousel id="' . $id . '" class="wp-block-themeisle-blocks-slider" width="400" height="300" layout="responsive" type="slides" autoplay delay="2000">';
 
-            foreach ( $images as $image ) {
+			foreach ( $images as $image ) {
 				$block_content .= $html5->saveHTML( $image );
 			}
 
-            $block_content .= '</amp-carousel>';
+			$block_content .= '</amp-carousel>';
 
 			return $block_content;
 		}
