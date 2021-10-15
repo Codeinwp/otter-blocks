@@ -2,22 +2,31 @@
 	"root": true,
 	"env": {
 		"browser": true,
-		"es6": true
+		"es2021": true
 	},
-	"extends": "wordpress",
-	"parser": "@babel/eslint-parser",
-	"parserOptions": {
-		"allowImportExportEverywhere": true,
-		"ecmaFeatures": {
-			"jsx": true
-		},
-		"ecmaVersion": 2018,
-		"sourceType": "module"
-	},
-	"plugins": [
-		"react"
-	],
+	"settings": {
+        "react": {
+            "version": "detect"
+        }
+    },
+	"extends": [ "plugin:@wordpress/eslint-plugin/recommended" ],
+	// "parser": "@babel/eslint-parser",
+	// "parserOptions": {
+	// 	"allowImportExportEverywhere": true,
+	// 	"ecmaFeatures": {
+	// 		"jsx": true
+	// 	},
+	// 	"requireConfigFile": false,
+	// 	"ecmaVersion": 2018,
+	// 	"sourceType": "module"
+	// },
+	// "plugins": [
+	// 	"@babel/plugin-syntax-jsx",
+	// 	"react"
+	// ],
 	"rules": {
+		"object-curly-spacing": ["warn", "always"],
+        "array-bracket-spacing": ["error", "always", { "arraysInArrays": false, "objectsInArrays": false }],
 		"indent": [
 			"error",
 			"tab"
