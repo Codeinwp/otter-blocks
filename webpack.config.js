@@ -44,5 +44,30 @@ module.exports = [
 			filename: '[name].js',
 			chunkFilename: 'chunk-[name].js',
 		},
+		optimization: {
+			...defaultConfig.optimization,
+			splitChunks: {
+				cacheGroups: {
+					// vendor: {
+					// 	name: 'vendor',
+					// 	test: /[\\/]node_modules[\\/]/,
+					// 	chunks: 'all',
+					// 	reuseExistingChunk: true,
+					// },
+					editorStyles: {
+						name: 'editor',
+						test: /editor\.scss$/,
+						chunks: 'all',
+						enforce: true,
+					},
+					frontendStyles: {
+						name: 'style',
+						test: /style\.scss$/,
+						chunks: 'all',
+						enforce: true,
+					},
+				},
+			},
+		},
 	},
 ];

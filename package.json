@@ -54,6 +54,7 @@
 		"classnames": "^2.3.1",
 		"currency-symbol-map": "^5.0.1",
 		"dom-scroll-into-view": "^2.0.1",
+		"glob": "^7.2.0",
 		"hex-rgba": "^1.0.2",
 		"lodash": "^4.17.21",
 		"moment": "^2.29.1",
