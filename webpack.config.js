@@ -5,6 +5,7 @@ const path = require( 'path' );
 
 module.exports = [
 	{
+
 		// OTTER DASHBOARD
 		...defaultConfig,
 		stats: 'minimal',
@@ -13,10 +14,11 @@ module.exports = [
 			index: './src/dashboard/index.js'
 		},
 		output: {
-			path: path.resolve( __dirname, './build/dashboard' ),
-		},
+			path: path.resolve( __dirname, './build/dashboard' )
+		}
 	},
 	{
+
 		// OTTER BLOCKS
 		...defaultConfig,
 		stats: 'minimal',
@@ -43,6 +45,6 @@ module.exports = [
 			path: path.resolve( __dirname, './build/blocks' ),
 			filename: '[name].js',
 			chunkFilename: 'chunk-[name].js'
-		},
+		}
 	}
 ];
