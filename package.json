@@ -38,7 +38,6 @@
 		"dom-scroll-into-view": "^2.0.1",
 		"glob": "^7.2.0",
 		"hex-rgba": "^1.0.2",
-		"lodash": "^4.17.21",
 		"moment": "^2.29.1",
 		"react-google-font-loader": "1.0.5",
 		"react-joyride": "^2.3.1",
@@ -49,7 +48,6 @@
 	},
 	"devDependencies": {
 		"@babel/core": "^7.15.8",
-		"@babel/eslint-parser": "^7.15.8",
 		"@emotion/babel-preset-css-prop": "^11.2.0",
 		"@semantic-release/changelog": "^5.0.1",
 		"@semantic-release/exec": "^5.0.0",
@@ -76,10 +74,10 @@
 		"chokidar": "^3.5.2",
 		"conventional-changelog-simple-preset": "^1.0.20",
 		"cross-env": "7.0.3",
-		"eslint": "^7.32.0",
 		"grunt": "^1.4.0",
 		"grunt-version": "^2.0.0",
 		"grunt-wp-readme-to-markdown": "^2.0.1",
+		"lodash": "^4.17.21",
 		"replace-in-file": "^6.2.0",
 		"semantic-release": "^17.4.4",
 		"semantic-release-slack-bot": "^2.1.0"
