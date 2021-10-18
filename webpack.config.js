@@ -48,12 +48,12 @@ module.exports = [
 			...defaultConfig.optimization,
 			splitChunks: {
 				cacheGroups: {
-					// vendor: {
-					// 	name: 'vendor',
-					// 	test: /[\\/]node_modules[\\/]/,
-					// 	chunks: 'all',
-					// 	reuseExistingChunk: true,
-					// },
+					vendor: {
+						name: 'vendor',
+						test: /[\\/]node_modules[\\/]/,
+						chunks: 'all',
+						reuseExistingChunk: true,
+					},
 					editorStyles: {
 						name: 'editor',
 						test: /editor\.scss$/,

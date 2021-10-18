@@ -319,7 +319,7 @@ class Main {
 
 		wp_enqueue_script(
 			'themeisle-gutenberg-blocks-vendor',
-			plugin_dir_url( $this->get_dir() ) . 'build/blocks/chunk-vendor.js',
+			plugin_dir_url( $this->get_dir() ) . 'build/blocks/vendor.js',
 			array( 'react', 'react-dom' ),
 			self::$assets_version,
 			true
