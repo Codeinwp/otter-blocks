@@ -4,6 +4,15 @@
 		"browser": true,
 		"es2021": true
 	},
+	"parser": "@babel/eslint-parser",
+	"parserOptions": {
+		"allowImportExportEverywhere": true,
+		"ecmaFeatures": {
+			"jsx": true
+		},
+		"ecmaVersion": 2021,
+		"sourceType": "module"
+	},
 	"settings": {
         "react": {
             "version": "detect"
@@ -46,6 +55,11 @@
 		"prettier/prettier": 0,
 		"require-jsdoc": "off",
 		"@wordpress/no-unsafe-wp-apis": "off",
-		"no-console": "warn"
+		"no-console": "warn",
+		"jsdoc/check-tag-names": "off",
+		"jsdoc/no-undefined-types": "off",
+		"jsdoc/require-returns-type": "off",
+		"jsdoc/require-returns-description": "off",
+		"jsdoc/require-param-type": "off"
 	}
 }
