@@ -45,13 +45,7 @@
 		"react/jsx-uses-vars": "error",
 		"prettier/prettier": 0,
 		"require-jsdoc": "off",
-		// "jsdoc/check-tag-names": "off",
-		// "jsdoc/no-undefined-types": "off",
-		// "jsdoc/require-returns-type": "off",
-		// "jsdoc/require-returns-description": "off",
-		// "jsdoc/require-param-type": "off",
 		"@wordpress/no-unsafe-wp-apis": "off",
-		"no-console": "warn",
-		// "jsx-a11y/*": "warn"
+		"no-console": "warn"
 	}
 }
