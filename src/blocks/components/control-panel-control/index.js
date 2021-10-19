@@ -57,7 +57,7 @@ const ControlPanelControl = ({
 				<div className="components-base-control__title">
 					<label
 						className="components-base-control__label"
-						for={ id }
+						htmlFor={ id }
 					>
 						{ label }
 					</label>

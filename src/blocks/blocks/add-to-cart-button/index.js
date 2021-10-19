@@ -10,8 +10,8 @@ import { Placeholder } from '@wordpress/components';
 import { store as icon } from '@wordpress/icons';
 
 /**
-  * Internal dependencies
-  */
+ * Internal dependencies
+ */
 import attributes from './attributes.js';
 import edit from './edit.js';
 

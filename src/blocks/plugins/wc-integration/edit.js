@@ -41,13 +41,12 @@ const Edit = ({
 						message: error.message || __( 'Unknown error', 'otter-blocks' )
 					}
 				};
-			} else {
-				results = select( COLLECTIONS_STORE_KEY ).getCollection( '/wc/store', 'products', {}, [ props.attributes.product ]);
+			}
+			results = select( COLLECTIONS_STORE_KEY ).getCollection( '/wc/store', 'products', {}, [ props.attributes.product ]);
 
-				if ( ! isEmpty( results ) ) {
-					results = extractProductData( results );
-					status = 'isLoaded';
-				}
+			if ( ! isEmpty( results ) ) {
+				results = extractProductData( results );
+				status = 'isLoaded';
 			}
 		} else {
 			status = 'isInactive';

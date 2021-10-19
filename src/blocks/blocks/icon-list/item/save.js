@@ -17,7 +17,7 @@ const Edit = ({
 	attributes,
 	className
 }) => {
-	const iconClassName =  `${ attributes.iconPrefix } fa-${ attributes.icon }`;
+	const iconClassName = `${ attributes.iconPrefix } fa-${ attributes.icon }`;
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
 	return (

@@ -35,7 +35,7 @@ registerBlockType( 'themeisle-blocks/form', {
 		{
 			name: 'themeisle-blocks/form-contact',
 			description: __( 'Contact form for clients', 'otter-blocks' ),
-			icon: icon,
+			icon,
 			title: __( 'Contact Form', 'otter-blocks' ),
 			innerBlocks: [
 				[
@@ -72,7 +72,7 @@ registerBlockType( 'themeisle-blocks/form', {
 		{
 			name: 'themeisle-blocks/form-subscribe',
 			description: __( 'Add the clients to your subscription list', 'otter-blocks' ),
-			icon: icon,
+			icon,
 			title: __( 'Subscribe Form', 'otter-blocks' ),
 			innerBlocks: [
 				[

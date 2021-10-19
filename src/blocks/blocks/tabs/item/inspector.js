@@ -17,7 +17,6 @@ const Inspector = ({
 	setAttributes,
 	selectParent
 }) => {
-
 	const onTitleChange = ( value ) => {
 		setAttributes({
 			title: value

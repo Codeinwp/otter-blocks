@@ -1,6 +1,6 @@
 /**
-  * WordPress dependencies.
-  */
+ * WordPress dependencies.
+ */
 import {
 	__,
 	sprintf
@@ -53,6 +53,8 @@ const BlockPlaceholder = ({
 			<span className="otter-review-comparison__tag_title">{ label }</span>
 
 			<Button
+
+				/* translators: %s Label */
 				label={ sprintf( __( 'Remove %s', 'otter-blocks' ), label ) }
 				icon="dismiss"
 				onClick={ () => toggleReview( value ) }
@@ -94,9 +96,7 @@ const BlockPlaceholder = ({
 						<div className="otter-review-comparison__placeholder__selected_label">
 							{
 
-								/**
-								 * translators: %s Number of selected reviews.
-								 */
+								/* translators: %s Number of selected reviews. */
 								sprintf( __( '%s reviews selected', 'otter-blocks' ), attributes.reviews.length )
 							}
 						</div>
@@ -117,11 +117,12 @@ const BlockPlaceholder = ({
 					/>
 
 					<MenuGroup>
-						{ data.filter( review => ( review.attrs.title || __( 'Untitled review', 'otter-blocks'  ) ).toLowerCase().includes( query.toLowerCase() ) ).map( review => {
+						{ data.filter( review => ( review.attrs.title || __( 'Untitled review', 'otter-blocks' ) ).toLowerCase().includes( query.toLowerCase() ) ).map( review => {
 							const ID = review.ID + '-' + review.attrs.id.slice( review.attrs.id.length - 8 );
 
 							return (
 								<CheckboxControl
+									key={ ID }
 									label={ review.attrs.title || __( 'Untitled review', 'otter-blocks' ) }
 									checked={ attributes.reviews.includes( ID ) }
 									onChange={ () => toggleReview( ID ) }

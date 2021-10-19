@@ -25,10 +25,11 @@ window.themeisleGutenberg.blockIDs ??= [];
 
 /**
  * Utiliy function for creating a function that add the gobal defaults values to the block's attribute value.
- * @param {Object} attributes The block's attributes provided by WordPress
- * @param {function} setAttributes The block's attributes update function provided by WordPress
- * @param {string} name The block's name provided by WordPress
- * @param {Object} defaultAttributes The default attributes of the block.
+ *
+ * @param {Object}   attributes        The block's attributes provided by WordPress
+ * @param {Function} setAttributes     The block's attributes update function provided by WordPress
+ * @param {string}   name              The block's name provided by WordPress
+ * @param {Object}   defaultAttributes The default attributes of the block.
  */
 export const addGlobalDefaults = ( attributes, setAttributes, name, defaultAttributes ) => {
 
@@ -49,6 +50,7 @@ export const addGlobalDefaults = ( attributes, setAttributes, name, defaultAttri
 
 /**
  * An object that keep tracking of the block instances. Is used for preventing id duplication on action like: create, duplicate, copy on editor page.
+ *
  * @type {Object.<string, Set.<string>>}
  */
 const localIDs = {};
@@ -59,9 +61,10 @@ const localIDs = {};
  * Reference: https://github.com/Codeinwp/neve/blob/master/gutenberg/blocks/blog/template.json
  * The created block will share the same client Id at the beggining, after refresh a new will be generated and thus the problem will fix itself
  * by creating new id based on the new uniq `clientId`
- * @param {string} idPrefix The prefix used for generating the block id
- * @param {string} clientId The block's client id provided by WordPress
- * @param {Set.<string>} idsList The ids list for the current type of block
+ *
+ * @param {string}       idPrefix The prefix used for generating the block id
+ * @param {string}       clientId The block's client id provided by WordPress
+ * @param {Set.<string>} idsList  The ids list for the current type of block
  * @returns An uniq id instance
  */
 const generateUniqIdInstance = ( idPrefix, clientId, idsList ) => {
@@ -78,6 +81,7 @@ const generateUniqIdInstance = ( idPrefix, clientId, idsList ) => {
 
 /**
  * Generate the id prefix based on the name of the block
+ *
  * @param {string} name Name of the block
  * @returns {string}
  */
@@ -87,29 +91,30 @@ const generatePrefix = ( name ) => {
 
 /**
  * THe args definition for the block id generator
+ *
  * @typedef {Object} AddBlockIdProps
- * @property {Object} attributes The block's attributes provided by WordPress
- * @property {function} setAttributes The block's attributes update function provided by WordPress
- * @property {string} name The block's name provided by WordPress
- * @property {string} clientId The block's client id provided by WordPress
- * @property {Object} defaultAttributes The default attributes of the block.
- * @property {(string|undefined)} idPrefix (Optional) The prefix used for generating the block id
+ * @property {Object}             attributes        The block's attributes provided by WordPress
+ * @property {Function}           setAttributes     The block's attributes update function provided by WordPress
+ * @property {string}             name              The block's name provided by WordPress
+ * @property {string}             clientId          The block's client id provided by WordPress
+ * @property {Object}             defaultAttributes The default attributes of the block.
+ * @property {(string|undefined)} idPrefix          (Optional) The prefix used for generating the block id
  */
-
 
 /**
  * Generate an Id for block so that it will create a conlfict with the others.
  * Prevent the duplicate Id for actions like: duplicate, copy
+ *
  * @param {AddBlockIdProps} args Block informatin about clientId, attributes, etc
  * @return {Function} A function that clean up the id from the internal list tracking
  * @external addBlockId
  */
 export const addBlockId = ( args ) => {
-
 	const { attributes, setAttributes, clientId, idPrefix, name, defaultAttributes } = args;
 
 	/**
 	 * Create an alias for the global id tracker
+	 *
 	 * @type {Array.<string>}
 	 */
 	const blockIDs = window.themeisleGutenberg.blockIDs;
@@ -162,12 +167,12 @@ export const addBlockId = ( args ) => {
 	return deleteBlockIdFromRegister;
 };
 
-
 const getBlock = select( 'core/block-editor' ).getBlock;
 const updateBlockAttributes = dispatch( 'core/block-editor' ).updateBlockAttributes;
 
 /**
  * Create the function that behaves like `setAttributes` using the client id
+ *
  * @param {*} clientId The block's client id provided by WordPress
  * @returns {Function} Function that mimics `setAttributes`
  */
@@ -177,15 +182,16 @@ const updateAttrs = ( clientId ) => ( attr ) => {
 
 /**
  * THe args definition for the block id generator
+ *
  * @typedef {Object} BlockData
- * @property {Object} attributes The block's attributes provided by WordPress
- * @property {function} setAttributes The block's attributes update function provided by WordPress
- * @property {string} name The block's name provided by WordPress
+ * @property {Object}   attributes    The block's attributes provided by WordPress
+ * @property {Function} setAttributes The block's attributes update function provided by WordPress
+ * @property {string}   name          The block's name provided by WordPress
  */
-
 
 /**
  * Extract the attributes, setAttributes, and the name of the block using the data api
+ *
  * @param {string} clientId The block's client id provided by WordPress
  * @returns {BlockData}
  */
@@ -197,7 +203,8 @@ const extractBlockData = ( clientId ) => {
 /**
  * Generate the id attribute for the given block.
  * This function is a simple wrapper around {@link addBlockId}
- * @param {string} clientId The block's client id provided by WordPress
+ *
+ * @param {string} clientId          The block's client id provided by WordPress
  * @param {Object} defaultAttributes The default attributes of the block.
  * @return {Function} A function that clean up the id from the internal list tracking
  * @example

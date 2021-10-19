@@ -24,7 +24,7 @@ domReady( () => {
 
 		Object.keys( options ).map( option => options[option] = Number( options[option]) );
 
-		new Glide( `#${ slider.id }`, {
+		new window.Glide( `#${ slider.id }`, {
 			type: 'carousel',
 			keyboard: true,
 			autoplay,

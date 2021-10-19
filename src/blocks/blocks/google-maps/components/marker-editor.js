@@ -12,8 +12,6 @@ import {
 	useRef
 } from '@wordpress/element';
 
-import oldEditor from '@wordpress/old-editor';
-
 const MarkerEditor = ({
 	value,
 	onChange
@@ -22,12 +20,12 @@ const MarkerEditor = ({
 
 	useEffect( () => {
 		const settings = {
-			'classic_block_editor': true,
-			'plugins': 'lists,media,paste,tabfocus,wordpress,wpautoresize,wpeditimage,wpgallery,wplink,wpdialogs,wptextpattern,wpview',
-			'toolbar1': 'formatselect,bold,italic,bullist,numlist,alignleft,aligncenter,alignright,link,unlink,spellchecker,wp_add_media'
+			classic_block_editor: true, // eslint-disable-line camelcase
+			plugins: 'lists,media,paste,tabfocus,wordpress,wpautoresize,wpeditimage,wpgallery,wplink,wpdialogs,wptextpattern,wpview',
+			toolbar1: 'formatselect,bold,italic,bullist,numlist,alignleft,aligncenter,alignright,link,unlink,spellchecker,wp_add_media'
 		};
 
-		oldEditor.initialize( editorRef.current.id, {
+		window.wp.oldEditor.initialize( editorRef.current.id, {
 			tinymce: { ...settings }
 		});
 
@@ -35,7 +33,7 @@ const MarkerEditor = ({
 
 		editor.on( 'change', () => onChange( editor.getContent() ) );
 
-		return () => oldEditor.remove( editorRef.current.id );
+		return () => window.wp.oldEditor.remove( editorRef.current.id );
 	}, []);
 
 	const id = `inspector-textarea-control-${ instanceId }`;

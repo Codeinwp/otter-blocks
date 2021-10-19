@@ -111,7 +111,6 @@ const Slide = ({
 							/>
 						</div>
 
-
 						<div className="wp-block-themeisle-blocks-slider-item-delete-menu">
 							<Button
 								icon={ <Icon icon={ closeSmall } /> }

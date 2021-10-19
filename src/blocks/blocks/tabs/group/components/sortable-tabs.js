@@ -1,6 +1,6 @@
 /**
  * External dependencies
-*/
+ */
 import {
 	SortableElement,
 	SortableHandle
@@ -8,7 +8,7 @@ import {
 
 /**
  * WordPress dependencies
-*/
+ */
 import { __ } from '@wordpress/i18n';
 
 import { Button } from '@wordpress/components';
@@ -24,7 +24,7 @@ const DragHandle = SortableHandle( () => {
 export const SortableTab = SortableElement( ({ tab, deleteTab, selectTab }) => {
 	return (
 		<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option">
-			<DragHandle/>
+			<DragHandle />
 
 			<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option__name">
 				{ tab.attributes.title || __( 'Untitled Tab', 'otter-blocks' ) }
@@ -48,5 +48,4 @@ export const SortableTab = SortableElement( ({ tab, deleteTab, selectTab }) => {
 		</div>
 	);
 });
-
 

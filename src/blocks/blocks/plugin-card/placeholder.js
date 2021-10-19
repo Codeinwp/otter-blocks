@@ -8,6 +8,8 @@ import scrollIntoView from 'dom-scroll-into-view';
  */
 import { __ } from '@wordpress/i18n';
 
+import { unescape } from 'lodash';
+
 import apiFetch from '@wordpress/api-fetch';
 
 import {
@@ -38,7 +40,7 @@ const BlockPlaceholder = ({
 }) => {
 	const searchRef = useRef( null );
 	let scrollingIntoView = false;
-	let suggestionNodes = [];
+	const suggestionNodes = [];
 
 	const [ isLoading, setLoading ] = useState( false );
 	const [ query, setQuery ] = useState( '' );
@@ -71,7 +73,7 @@ const BlockPlaceholder = ({
 		setAttributes({ slug: '' });
 		setLoading( true );
 		setError( false );
-		let data = await apiFetch({ path: `themeisle-gutenberg-blocks/v1/get_plugins?search=${ encodeURIComponent( query ) }` });
+		const data = await apiFetch({ path: `themeisle-gutenberg-blocks/v1/get_plugins?search=${ encodeURIComponent( query ) }` });
 		if ( data.data.errors ) {
 			setError( true );
 			setLoading( false );
@@ -171,10 +173,10 @@ const BlockPlaceholder = ({
 			className={ className }
 		>
 			<div className="wp-block-themeisle-blocks-plugin-cards-search-field">
-				<Dashicon icon="search"/>
+				<Dashicon icon="search" />
 
 				{ isLoading && (
-					<Spinner/>
+					<Spinner />
 				) }
 
 				<TextControl
@@ -216,7 +218,7 @@ const BlockPlaceholder = ({
 									onKeyDown={ e => listKeyDown( e, pluginData ) }
 								>
 									<img src={ icon } />
-									<span dangerouslySetInnerHTML={ { __html: _.unescape( pluginData.name ) } }></span>
+									<span dangerouslySetInnerHTML={ { __html: unescape( pluginData.name ) } }></span>
 								</button>
 							);
 						}) }

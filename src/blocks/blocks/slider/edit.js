@@ -34,12 +34,10 @@ const Edit = ({
 	isSelected,
 	toggleSelection
 }) => {
-
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => {
 			unsubscribe( attributes.id );
-
 		};
 	}, [ attributes.id ]);
 
@@ -74,7 +72,7 @@ const Edit = ({
 	const [ selectedImage, setSelectedImage ] = useState( null );
 
 	const initSlider = () => {
-		sliderRef.current = new Glide( `#${ attributes.id || instanceIdRef.current }`, {
+		sliderRef.current = new window.Glide( `#${ attributes.id || instanceIdRef.current }`, {
 			type: 'carousel',
 			keyboard: false,
 			perView: attributes.perView,
@@ -190,6 +188,7 @@ const Edit = ({
 						>
 							{ attributes.images.map( ( image, index ) => (
 								<Slide
+									key={ image.url }
 									images={ attributes.images }
 									image={ image }
 									index={ index }

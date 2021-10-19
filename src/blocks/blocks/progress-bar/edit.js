@@ -32,7 +32,6 @@ const ProgressBar = ({
 	clientId,
 	toggleSelection
 }) => {
-
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
@@ -55,7 +54,7 @@ const ProgressBar = ({
 
 		setShowPercentage( false );
 
-		setTimeout( () => setShowPercentage( true ),  attributes.duration * 1000 );
+		setTimeout( () => setShowPercentage( true ), attributes.duration * 1000 );
 
 		barRef.current.animate(
 			{
@@ -79,7 +78,6 @@ const ProgressBar = ({
 					titleStyle: attributes.titleStyle,
 					percentagePosition: attributes.percentagePosition
 				});
-
 			}
 
 			setAttributes({
@@ -113,7 +111,7 @@ const ProgressBar = ({
 			/>
 
 			<div
-				className={ classnames( className, {'has-tooltip': 'tooltip' === attributes.percentagePosition }) }
+				className={ classnames( className, { 'has-tooltip': 'tooltip' === attributes.percentagePosition }) }
 				id={ attributes.id }
 			>
 				{ ( 'outer' === attributes.titleStyle || 'outer' === attributes.percentagePosition ) && (

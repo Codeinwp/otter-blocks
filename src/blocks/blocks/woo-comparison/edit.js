@@ -22,8 +22,8 @@ import {
 import ServerSideRender from '@wordpress/server-side-render';
 
 /**
-  * Internal dependencies
-  */
+ * Internal dependencies
+ */
 import defaultAttributes from './attributes.js';
 import Placeholder from './placeholder.js';
 import Controls from './controls.js';
@@ -54,7 +54,7 @@ const Edit = ({
 			--headerColor: ${ attributes.headerColor };
 			--color: ${ attributes.textColor };
 			--borderColor: ${ attributes.borderColor };
-			${ Boolean( attributes.altRow ) &&  `--alternateBg: ${ attributes.altRowColor };` }
+			${ Boolean( attributes.altRow ) && `--alternateBg: ${ attributes.altRowColor };` }
 		}
 	`;
 

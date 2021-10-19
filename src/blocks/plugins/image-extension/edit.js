@@ -58,11 +58,9 @@ const Edit = ({
 				const anchor = `wp-block-themeisle-blocks-image-${ uuidv4().substr( 0, 8 ) }`;
 				setAttributes({ anchor });
 			}
-		} else {
-			if ( attributes.anchor && attributes.anchor.includes( 'wp-block-themeisle-blocks-image-' ) ) {
-				const anchor = undefined;
-				setAttributes({ anchor });
-			}
+		} else if ( attributes.anchor && attributes.anchor.includes( 'wp-block-themeisle-blocks-image-' ) ) {
+			const anchor = undefined;
+			setAttributes({ anchor });
 		}
 	}, [ attributes.boxShadow ]);
 

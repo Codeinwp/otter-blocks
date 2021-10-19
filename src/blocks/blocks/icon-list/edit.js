@@ -8,7 +8,6 @@ import {
 	useEffect
 } from '@wordpress/element';
 
-
 /**
  * Internal dependencies
  */
@@ -22,7 +21,6 @@ const Edit = ({
 	clientId,
 	className
 }) => {
-
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );

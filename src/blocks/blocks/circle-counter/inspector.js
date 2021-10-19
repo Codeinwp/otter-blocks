@@ -21,10 +21,9 @@ const Inspector = ({
 	setAttributes,
 	onHeightChange
 }) => {
-
 	const onPercentageChange = value => {
 		if ( value === undefined ) {
-			return ;
+			return;
 		}
 		value = clamp( value, 0, 100 );
 		setAttributes({ percentage: value });
@@ -48,7 +47,7 @@ const Inspector = ({
 
 	const onDurationChange = value => {
 		if ( value === undefined ) {
-			return ;
+			return;
 		}
 
 		value = clamp( value, 0, 3 );
@@ -102,7 +101,7 @@ const Inspector = ({
 					] }
 					onChange={ selectTitleStyle }
 				/>
-	   		</PanelBody>
+			</PanelBody>
 
 			<PanelBody
 				title={ __( 'Style', 'otter-blocks' ) }
@@ -133,7 +132,7 @@ const Inspector = ({
 					onChange={ onFontSizeTitleChange }
 					initialPosition={ 37 }
 					min={ 0 }
-					max={ Math.round( attributes.height  * 0.60 ) }
+					max={ Math.round( attributes.height * 0.60 ) }
 				/>
 
 				<RangeControl
@@ -143,7 +142,7 @@ const Inspector = ({
 					onChange={ onFontSizePercentChange }
 					initialPosition={ 27 }
 					min={ 0 }
-					max={ Math.round( attributes.height  * 0.27 ) }
+					max={ Math.round( attributes.height * 0.27 ) }
 				/>
 
 				{ ( 'hide' !== attributes.titleStyle ) && (
@@ -166,7 +165,7 @@ const Inspector = ({
 					onColorChange={ onBackgroundColorChange }
 				/>
 			</PanelBody>
-	   </InspectorControls>
+		</InspectorControls>
 	);
 };
 

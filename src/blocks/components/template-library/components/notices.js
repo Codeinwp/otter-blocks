@@ -17,6 +17,7 @@ const Notices = () => {
 		<div className="library-modal-error">
 			{ notices.map( notice => (
 				<Notice
+					key={ notice.id }
 					status={ notice.status }
 					isDismissible={ notice.isDismissible }
 					onRemove={ () => removeNotice( notice.id, 'themeisle-blocks/notices/template-library' ) }

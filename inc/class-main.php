@@ -325,19 +325,16 @@ class Main {
 			true
 		);
 
-		$deps = array( 'lodash', 'wp-api', 'wp-i18n', 'wp-blocks', 'wp-components', 'wp-compose', 'wp-data', 'wp-date', 'wp-element', 'wp-html-entities', 'wp-keycodes', 'wp-plugins', 'wp-primitives', 'wp-rich-text', 'wp-server-side-render', 'wp-url', 'wp-viewport', 'wp-polyfill', 'themeisle-gutenberg-blocks-vendor', 'glidejs', 'lottie-player', 'macy' );
-
-		$current_screen = get_current_screen();
-
-		if ( ! 'widgets' === $current_screen->base ) {
-			array_push( $deps, 'wp-editor', 'wp-edit-post' );
-		}
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
 
 		wp_enqueue_script(
 			'themeisle-gutenberg-blocks',
 			plugin_dir_url( $this->get_dir() ) . 'build/blocks/blocks.js',
-			$deps,
-			self::$assets_version,
+			array_merge(
+				$asset_file['dependencies'],
+				array( 'themeisle-gutenberg-blocks-vendor', 'glidejs', 'lottie-player', 'macy' )
+			),
+			$asset_file['version'],
 			true
 		);
 
@@ -508,11 +505,13 @@ class Main {
 
 			// Don't output anything if there is no API key.
 			if ( null !== $apikey && ! empty( $apikey ) ) {
+				$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/maps.asset.php';
+
 				wp_enqueue_script(
 					'themeisle-gutenberg-google-maps',
 					plugin_dir_url( $this->get_dir() ) . 'build/blocks/maps.js',
-					'',
-					self::$assets_version,
+					$asset_file['dependencies'],
+					$asset_file['version'],
 					true
 				);
 
@@ -537,11 +536,16 @@ class Main {
 				true
 			);
 
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/slider.asset.php';
+
 			wp_enqueue_script(
 				'themeisle-gutenberg-slider',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/slider.js',
-				array( 'glidejs', 'wp-dom-ready', 'lodash' ),
-				self::$assets_version,
+				array_merge(
+					$asset_file['dependencies'],
+					array( 'glidejs' )
+				),
+				$asset_file['version'],
 				true
 			);
 
@@ -563,11 +567,13 @@ class Main {
 		}
 
 		if ( ! self::$is_progress_bar_loaded && has_block( 'themeisle-blocks/progress-bar', $post ) ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/progress-bar.asset.php';
+
 			wp_enqueue_script(
 				'themeisle-gutenberg-progress-bar',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/progress-bar.js',
-				array( 'wp-dom-ready', 'lodash' ),
-				self::$assets_version,
+				$asset_file['dependencies'],
+				$asset_file['version'],
 				true
 			);
 
@@ -575,11 +581,13 @@ class Main {
 		}
 
 		if ( ! self::$is_circle_counter_loaded && has_block( 'themeisle-blocks/circle-counter', $post ) ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/circle-counter.asset.php';
+
 			wp_enqueue_script(
 				'themeisle-gutenberg-circle-counter',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/circle-counter.js',
-				array( 'wp-dom-ready', 'lodash' ),
-				self::$assets_version,
+				$asset_file['dependencies'],
+				$asset_file['version'],
 				true
 			);
 
@@ -603,11 +611,16 @@ class Main {
 				true
 			);
 
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
+
 			wp_enqueue_script(
 				'themeisle-gutenberg-lottie',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/lottie.js',
-				array( 'wp-dom-ready', 'lottie-player', 'lottie-interactivity' ),
-				self::$assets_version,
+				array_merge(
+					$asset_file['dependencies'],
+					array( 'lottie-player', 'lottie-interactivity' )
+				),
+				$asset_file['version'],
 				true
 			);
 
@@ -645,11 +658,16 @@ class Main {
 				self::$assets_version
 			);
 
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/leaflet-map.asset.php';
+
 			wp_enqueue_script(
 				'themeisle-gutenberg-leaflet-block',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/leaflet-map.js',
-				array( 'wp-dom-ready', 'themeisle-gutenberg-map-leaflet', 'themeisle-gutenberg-map-leaflet-gesture', 'wp-i18n' ),
-				self::$assets_version,
+				array_merge(
+					$asset_file['dependencies'],
+					array( 'themeisle-gutenberg-map-leaflet', 'themeisle-gutenberg-map-leaflet-gesture' )
+				),
+				$asset_file['version'],
 				true
 			);
 
@@ -657,11 +675,13 @@ class Main {
 		}
 
 		if ( ! self::$is_tabs_loaded && has_block( 'themeisle-blocks/tabs', $post ) ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/tabs.asset.php';
+
 			wp_enqueue_script(
 				'themeisle-gutenberg-tabs',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/tabs.js',
-				array( 'wp-i18n', 'wp-dom-ready' ),
-				self::$assets_version,
+				$asset_file['dependencies'],
+				$asset_file['version'],
 				true
 			);
 
@@ -669,11 +689,13 @@ class Main {
 		}
 
 		if ( ! self::$is_form_loaded && has_block( 'themeisle-blocks/form', $post ) ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/form.asset.php';
+
 			wp_enqueue_script(
 				'themeisle-gutenberg-form',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/form.js',
-				array( 'wp-i18n', 'wp-dom-ready', 'wp-api-fetch' ),
-				self::$assets_version,
+				$asset_file['dependencies'],
+				$asset_file['version'],
 				true
 			);
 
@@ -689,11 +711,13 @@ class Main {
 		}
 
 		if ( ! self::$is_countdown_loaded && has_block( 'themeisle-blocks/countdown', $post ) ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/countdown.asset.php';
+
 			wp_enqueue_script(
 				'themeisle-gutenberg-countdown',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/countdown.js',
-				array( 'wp-i18n', 'wp-date', 'wp-dom-ready', 'lodash', 'moment' ),
-				self::$assets_version,
+				$asset_file['dependencies'],
+				$asset_file['version'],
 				true
 			);
 
@@ -701,11 +725,13 @@ class Main {
 		}
 
 		if ( ! self::$is_popup_loaded && has_block( 'themeisle-blocks/popup', $post ) ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/popup.asset.php';
+
 			wp_enqueue_script(
 				'themeisle-gutenberg-popup',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/popup.js',
-				array( 'wp-dom-ready' ),
-				self::$assets_version,
+				$asset_file['dependencies'],
+				$asset_file['version'],
 				true
 			);
 

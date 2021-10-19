@@ -139,7 +139,7 @@ const SectionColumns = ({
 	const getPadding = type => {
 		let value;
 
-		if ( 'top' == type ) {
+		if ( 'top' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingTop;
 			}
@@ -153,7 +153,7 @@ const SectionColumns = ({
 			}
 		}
 
-		if ( 'right' == type ) {
+		if ( 'right' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingRight;
 			}
@@ -167,7 +167,7 @@ const SectionColumns = ({
 			}
 		}
 
-		if ( 'bottom' == type ) {
+		if ( 'bottom' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingBottom;
 			}
@@ -181,7 +181,7 @@ const SectionColumns = ({
 			}
 		}
 
-		if ( 'left' == type ) {
+		if ( 'left' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingLeft;
 			}
@@ -290,7 +290,7 @@ const SectionColumns = ({
 	const getMargin = type => {
 		let value;
 
-		if ( 'top' == type ) {
+		if ( 'top' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.marginType ? defaults.margin : defaults.marginTop;
 			}
@@ -304,7 +304,7 @@ const SectionColumns = ({
 			}
 		}
 
-		if ( 'bottom' == type ) {
+		if ( 'bottom' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.marginType ? defaults.margin : defaults.marginBottom;
 			}
@@ -444,7 +444,7 @@ const SectionColumns = ({
 					/>
 				</ResponsiveControl>
 
-				<hr/>
+				<hr />
 
 				<ResponsiveControl
 					label={ __( 'Margin', 'otter-blocks' ) }
@@ -497,7 +497,7 @@ const SectionColumns = ({
 					onChange={ value => changeConfig( blockName, { columnsHTMLTag: value }) }
 				/>
 
-				<hr/>
+				<hr />
 
 				<RangeControl
 					label={ __( 'Maximum Content Width', 'otter-blocks' ) }
@@ -507,7 +507,7 @@ const SectionColumns = ({
 					max={ 1200 }
 				/>
 
-				<hr/>
+				<hr />
 
 				{ defaults.columnsWidth && (
 					<Fragment>
@@ -544,7 +544,7 @@ const SectionColumns = ({
 							</ButtonGroup>
 						</BaseControl>
 
-						<hr/>
+						<hr />
 					</Fragment>
 				) }
 
@@ -559,7 +559,7 @@ const SectionColumns = ({
 					onChange={ value => changeConfig( blockName, { columnsHeight: value }) }
 				/>
 
-				<hr/>
+				<hr />
 
 				{ 'custom' === defaults.columnsHeight && (
 					<Fragment>
@@ -574,7 +574,7 @@ const SectionColumns = ({
 							/>
 						</ResponsiveControl>
 
-						<hr/>
+						<hr />
 					</Fragment>
 				) }
 

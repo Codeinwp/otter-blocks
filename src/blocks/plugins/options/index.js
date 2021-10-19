@@ -42,13 +42,13 @@ const Options = () => {
 	const { createNotice } = useDispatch( 'core/notices' );
 
 	useEffect( async() => {
-		let data = await apiFetch({ path: 'wp/v2/users/me?context=edit' });
+		const data = await apiFetch({ path: 'wp/v2/users/me?context=edit' });
 
 		if ( data.capabilities.manage_options ) {
 			setCanUser( true );
 
-			await wp.api.loadPromise.then( () => {
-				settingsRef.current = new wp.api.models.Settings();
+			await window.wp.api.loadPromise.then( () => {
+				settingsRef.current = new window.wp.api.models.Settings();
 			});
 
 			if ( false === isAPILoaded ) {
@@ -99,7 +99,7 @@ const Options = () => {
 	};
 
 	const changeOptions = () => {
-		const model = new wp.api.models.Settings({
+		const model = new window.wp.api.models.Settings({
 			// eslint-disable-next-line camelcase
 			themeisle_blocks_settings_default_block: ! Boolean( isDefault )
 		});
@@ -140,7 +140,7 @@ const Options = () => {
 			});
 		});
 
-		const model = new wp.api.models.Settings({
+		const model = new window.wp.api.models.Settings({
 			// eslint-disable-next-line camelcase
 			themeisle_blocks_settings_global_defaults: JSON.stringify( filterDefault )
 		});

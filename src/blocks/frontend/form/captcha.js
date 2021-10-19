@@ -6,7 +6,7 @@ export const addCaptchaOnPage = ( forms ) => {
 
 		script.addEventListener( 'load', () => {
 			const tryRenderCaptcha = setInterval( () => {
-				if ( window.hasOwnProperty( 'grecaptcha' ) && grecaptcha.hasOwnProperty( 'render' ) ) {
+				if ( window.hasOwnProperty( 'grecaptcha' ) && window.grecaptcha.hasOwnProperty( 'render' ) ) {
 					forms.forEach( form => {
 						if ( form?.classList?.contains( 'has-captcha' ) ) {
 							renderCapthcaOn( form );
@@ -23,6 +23,7 @@ export const addCaptchaOnPage = ( forms ) => {
 
 /**
  * Render the captcha component on form
+ *
  * @param {HTMLDivElement} form The form container
  */
 const renderCapthcaOn = ( form ) => {
@@ -35,7 +36,6 @@ const renderCapthcaOn = ( form ) => {
 	const captchaNode = document.createElement( 'div' );
 	const container = form.querySelector( '.otter-form__container' );
 	container?.insertBefore( captchaNode, container.lastChild );
-
 
 	const captcha = window.grecaptcha?.render(
 		captchaNode,

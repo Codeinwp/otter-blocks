@@ -27,10 +27,10 @@ const BlockPlaceholder = ({
 	if ( ! isAPILoaded ) {
 		return (
 			<Fragment>
-				<br/>
+				<br />
 				<Placeholder>
 					<div>
-						<Spinner/>
+						<Spinner />
 						{ __( 'Checking the API Keys for reCaptcha', 'otter-blocks' ) }
 					</div>
 				</Placeholder>

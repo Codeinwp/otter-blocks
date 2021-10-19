@@ -58,7 +58,7 @@ const Edit = ({
 	return (
 		<Fragment>
 			<Inspector
-				attributes={ attributes  }
+				attributes={ attributes }
 				setAttributes={ setAttributes }
 			/>
 

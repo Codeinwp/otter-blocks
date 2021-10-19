@@ -8,8 +8,8 @@ import { registerBlockType } from '@wordpress/blocks';
 import { Placeholder } from '@wordpress/components';
 
 /**
-  * Internal dependencies
-  */
+ * Internal dependencies
+ */
 import './style.scss';
 import './editor.scss';
 import { faIcon as icon } from '../../helpers/icons.js';

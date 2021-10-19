@@ -87,7 +87,7 @@ const Onboarding = () => {
 
 		const model = new api.models.Settings({
 			// eslint-disable-next-line camelcase
-			'themeisle_blocks_settings_tour': false
+			themeisle_blocks_settings_tour: false
 		});
 
 		const save = model.save();
@@ -149,7 +149,7 @@ const Onboarding = () => {
 					next: __( 'Next', 'otter-blocks' ),
 					skip: __( 'Skip', 'otter-blocks' )
 				} }
-				callback={ data => skipTour( data.status )}
+				callback={ data => skipTour( data.status ) }
 			/>
 		</Fragment>
 	);

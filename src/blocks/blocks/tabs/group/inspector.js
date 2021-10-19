@@ -1,6 +1,6 @@
 /**
  * External dependencies
-*/
+ */
 import { SortableContainer } from 'react-sortable-hoc';
 
 /**
@@ -101,7 +101,7 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelBody
-				title={__( 'Settings', 'otter-blocks' ) }
+				title={ __( 'Settings', 'otter-blocks' ) }
 				initialOpen={ true }
 			>
 				<RangeControl

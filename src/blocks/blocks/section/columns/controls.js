@@ -28,9 +28,9 @@ const Controls = ({
 			return 'top';
 		} else if ( 'flex-end' === attributes.verticalAlign ) {
 			return 'bottom';
-		} else {
-			return attributes.verticalAlign;
 		}
+
+		return attributes.verticalAlign;
 	};
 
 	getVerticalAlignValue = getVerticalAlignValue();

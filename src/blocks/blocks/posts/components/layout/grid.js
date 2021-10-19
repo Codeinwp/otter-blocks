@@ -4,8 +4,8 @@
 import classnames from 'classnames';
 
 /**
-* WordPress dependencies
-*/
+ * WordPress dependencies
+ */
 import {
 	__,
 	sprintf
@@ -45,7 +45,10 @@ const Grid = ({
 				}
 
 				return (
-					<div key={post.link} className="wp-block-themeisle-blocks-posts-grid-post-blog wp-block-themeisle-blocks-posts-grid-post-plain">
+					<div
+						key={ post.link }
+						className="wp-block-themeisle-blocks-posts-grid-post-blog wp-block-themeisle-blocks-posts-grid-post-plain"
+					>
 						<div className="wp-block-themeisle-blocks-posts-grid-post">
 							{ ( undefined !== post.featured_media && 0 !== post.featured_media && attributes.displayFeaturedImage ) && (
 								<Thumbnail
@@ -60,7 +63,7 @@ const Grid = ({
 								{ attributes.template.map( element => {
 									if ( 'category' === element ) {
 										if ( undefined !== category && ( attributes.displayCategory && categoriesList ) ) {
-											return <span class="wp-block-themeisle-blocks-posts-grid-post-category">{ category.name }</span>;
+											return <span className="wp-block-themeisle-blocks-posts-grid-post-category">{ category.name }</span>;
 										}
 									}
 

@@ -50,7 +50,7 @@ const Marker = ({
 				type: ActionType.UPDATE,
 				ids: [ marker.id ],
 				updatedProps: {
-					location: location,
+					location,
 					latitude: LngLat.latitude,
 					longitude: LngLat.longitude
 				}
@@ -104,7 +104,7 @@ const Marker = ({
 						<TextControl
 							label={ __( 'Location', 'otter-blocks' ) }
 							type="text"
-							className={ classnames({'wp-block-themeisle-blocks-leaflet-map-input-error': 'LOCATION' === error.target })}
+							className={ classnames({ 'wp-block-themeisle-blocks-leaflet-map-input-error': 'LOCATION' === error.target }) }
 							value={ location }
 							onChange={ e => {
 								setLocation( e );

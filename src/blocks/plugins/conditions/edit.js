@@ -46,7 +46,7 @@ const Edit = ({
 				return;
 			}
 
-			let otterConditions = [ ...attributes.otterConditions  ];
+			let otterConditions = [ ...attributes.otterConditions ];
 
 			otterConditions.forEach( ( i, n ) => {
 				if ( isEmpty( i ) ) {
@@ -84,25 +84,25 @@ const Edit = ({
 	});
 
 	const addGroup = () => {
-		const otterConditions = [ ...( attributes.otterConditions || [])  ];
+		const otterConditions = [ ...( attributes.otterConditions || []) ];
 		otterConditions.push([ {} ]);
 		setAttributes({ otterConditions });
 	};
 
 	const removeGroup = n => {
-		let otterConditions = [ ...attributes.otterConditions  ];
+		const otterConditions = [ ...attributes.otterConditions ];
 		otterConditions.splice( n, 1 );
 		setAttributes({ otterConditions });
 	};
 
 	const addNewCondition = index => {
-		let otterConditions = [ ...attributes.otterConditions  ];
+		const otterConditions = [ ...attributes.otterConditions ];
 		otterConditions[ index ].push({});
 		setAttributes({ otterConditions });
 	};
 
 	const removeCondition = ( index, key ) => {
-		let otterConditions = [ ...attributes.otterConditions  ];
+		const otterConditions = [ ...attributes.otterConditions ];
 		otterConditions[ index ].splice( key, 1 );
 
 		if ( 0 === otterConditions[ index ]) {
@@ -113,9 +113,9 @@ const Edit = ({
 	};
 
 	const changeCondition = ( value, index, key ) => {
-		let otterConditions = [ ...attributes.otterConditions  ];
+		const otterConditions = [ ...attributes.otterConditions ];
 
-		let attrs = {};
+		const attrs = {};
 
 		if ( 'userRoles' === value || 'postAuthor' === value || 'postMeta' === value ) {
 			attrs.visibility = true;
@@ -139,25 +139,25 @@ const Edit = ({
 	};
 
 	const changeRoles = ( value, index, key ) => {
-		let otterConditions = [ ...attributes.otterConditions  ];
+		const otterConditions = [ ...attributes.otterConditions ];
 		otterConditions[ index ][ key ].roles = value;
 		setAttributes({ otterConditions });
 	};
 
 	const changeAuthors = ( value, index, key ) => {
-		let otterConditions = [ ...attributes.otterConditions  ];
+		const otterConditions = [ ...attributes.otterConditions ];
 		otterConditions[ index ][ key ].authors = value;
 		setAttributes({ otterConditions });
 	};
 
 	const changeVisibility = ( value, index, key ) => {
-		let otterConditions = [ ...attributes.otterConditions  ];
+		const otterConditions = [ ...attributes.otterConditions ];
 		otterConditions[ index ][ key ].visibility = 'true' === value ? true : false;
 		setAttributes({ otterConditions });
 	};
 
 	const changeValue = ( value, index, key, field ) => {
-		let otterConditions = [ ...attributes.otterConditions  ];
+		const otterConditions = [ ...attributes.otterConditions ];
 		if ( null !== value ) {
 			otterConditions[ index ][ key ][ field ] = value;
 		} else {
@@ -167,7 +167,7 @@ const Edit = ({
 	};
 
 	const changeDays = ( value, index, key ) => {
-		let otterConditions = [ ...attributes.otterConditions  ];
+		const otterConditions = [ ...attributes.otterConditions ];
 
 		if ( ! otterConditions[ index ][ key ].days ) {
 			otterConditions[ index ][ key ].days = [];
@@ -327,13 +327,13 @@ const Edit = ({
 
 				{ attributes.otterConditions && attributes.otterConditions.map( ( group, index ) => {
 					return (
-						<Fragment>
+						<Fragment key={ index }>
 							<PanelTab
 								label={ __( 'Rule Group', 'otter-blocks' ) }
 								onDelete={ () => removeGroup( index ) }
 							>
 								{ group && group.map( ( i, n ) => (
-									<Fragment>
+									<Fragment key={ `${ index }-${ i }` }>
 										<BaseControl
 											label={ __( 'Condition', 'otter-blocks' ) }
 											help={ getConditions().find( condition => condition.value === ( i.type || 'none' ) ).help }
@@ -462,6 +462,7 @@ const Edit = ({
 											>
 												{ week.map( ({ label, value }) => (
 													<CheckboxControl
+														key={ label }
 														label={ label }
 														checked={ i.days && i.days.includes( value ) }
 														onChange={ () => changeDays( value, index, n ) }
@@ -478,7 +479,7 @@ const Edit = ({
 													<div className="otter-blocks-conditions">
 														<input
 															aria-label={ __( 'Hours', 'otter-blocks' ) }
-															class="components-datetime__time-field-hours-input"
+															className="components-datetime__time-field-hours-input"
 															type="number"
 															step="1"
 															min="0"
@@ -503,7 +504,7 @@ const Edit = ({
 
 														<input
 															aria-label={ __( 'Minutes', 'otter-blocks' ) }
-															class="components-datetime__time-field-hours-input"
+															className="components-datetime__time-field-hours-input"
 															type="number"
 															step="1"
 															min="0"
@@ -529,7 +530,7 @@ const Edit = ({
 															isSmall
 															disabled={ ! i.start_time }
 															onClick={ () => {
-																let otterConditions = [ ...attributes.otterConditions  ];
+																const otterConditions = [ ...attributes.otterConditions ];
 																delete otterConditions[ index ][ n ].start_time;
 																setAttributes({ otterConditions });
 															} }
@@ -545,7 +546,7 @@ const Edit = ({
 													<div className="otter-blocks-conditions">
 														<input
 															aria-label={ __( 'Hours', 'otter-blocks' ) }
-															class="components-datetime__time-field-hours-input"
+															className="components-datetime__time-field-hours-input"
 															type="number"
 															step="1"
 															min="0"
@@ -570,7 +571,7 @@ const Edit = ({
 
 														<input
 															aria-label={ __( 'Minutes', 'otter-blocks' ) }
-															class="components-datetime__time-field-hours-input"
+															className="components-datetime__time-field-hours-input"
 															type="number"
 															step="1"
 															min="0"
@@ -596,7 +597,7 @@ const Edit = ({
 															isSmall
 															disabled={ ! i.end_time }
 															onClick={ () => {
-																let otterConditions = [ ...attributes.otterConditions  ];
+																const otterConditions = [ ...attributes.otterConditions ];
 																delete otterConditions[ index ][ n ].end_time;
 																setAttributes({ otterConditions });
 															} }

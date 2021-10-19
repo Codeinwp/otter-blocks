@@ -39,7 +39,7 @@ domReady( () => {
 				headerMobile.classList.toggle( 'active', o === index );
 				headerMobile.classList.toggle( 'hidden', o !== index );
 
-				const headerItems = Array.from ( header.childNodes );
+				const headerItems = Array.from( header.childNodes );
 
 				headerItems.forEach( ( h, o ) => {
 					h.classList.toggle( 'active', o === index );

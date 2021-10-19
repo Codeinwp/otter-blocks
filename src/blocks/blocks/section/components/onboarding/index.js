@@ -47,7 +47,7 @@ const Onboarding = ({
 					>
 						<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
 							<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"></Path>
-							<Rect x="22.9" y="13" width="2.2" height="22"/>
+							<Rect x="22.9" y="13" width="2.2" height="22" />
 						</SVG>
 					</Button>
 				</Tooltip>
@@ -59,8 +59,8 @@ const Onboarding = ({
 						onClick={ () => setupColumns( 2, 'oneTwo' ) }
 					>
 						<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-							<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-							<Rect x="16.9" y="13" width="2.2" height="22"/>
+							<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z" />
+							<Rect x="16.9" y="13" width="2.2" height="22" />
 						</SVG>
 					</Button>
 				</Tooltip>
@@ -72,8 +72,8 @@ const Onboarding = ({
 						onClick={ () => setupColumns( 2, 'twoOne' ) }
 					>
 						<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-							<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-							<Rect x="28.9" y="13" width="2.2" height="22"/>
+							<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z" />
+							<Rect x="28.9" y="13" width="2.2" height="22" />
 						</SVG>
 					</Button>
 				</Tooltip>
@@ -85,9 +85,9 @@ const Onboarding = ({
 						onClick={ () => setupColumns( 3, 'equal' ) }
 					>
 						<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-							<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-							<Rect x="28.9" y="13" width="2.2" height="22"/>
-							<Rect x="16.9" y="13" width="2.2" height="22"/>
+							<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z" />
+							<Rect x="28.9" y="13" width="2.2" height="22" />
+							<Rect x="16.9" y="13" width="2.2" height="22" />
 						</SVG>
 					</Button>
 				</Tooltip>
@@ -99,9 +99,9 @@ const Onboarding = ({
 						onClick={ () => setupColumns( 3, 'oneOneTwo' ) }
 					>
 						<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-							<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-							<Rect x="22.9" y="13" width="2.2" height="22"/>
-							<Rect x="12.9" y="13" width="2.2" height="22"/>
+							<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z" />
+							<Rect x="22.9" y="13" width="2.2" height="22" />
+							<Rect x="12.9" y="13" width="2.2" height="22" />
 						</SVG>
 					</Button>
 				</Tooltip>
@@ -113,9 +113,9 @@ const Onboarding = ({
 						onClick={ () => setupColumns( 3, 'twoOneOne' ) }
 					>
 						<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-							<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-							<Rect x="22.9" y="13" width="2.2" height="22"/>
-							<Rect x="32.9" y="13" width="2.2" height="22"/>
+							<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z" />
+							<Rect x="22.9" y="13" width="2.2" height="22" />
+							<Rect x="32.9" y="13" width="2.2" height="22" />
 						</SVG>
 					</Button>
 				</Tooltip>
@@ -127,10 +127,10 @@ const Onboarding = ({
 						onClick={ () => setupColumns( 4, 'equal' ) }
 					>
 						<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-							<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-							<Rect x="13.9" y="13" width="2.2" height="22"/>
-							<Rect x="32.9" y="13" width="2.2" height="22"/>
-							<Rect x="22.9" y="13" width="2.2" height="22"/>
+							<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z" />
+							<Rect x="13.9" y="13" width="2.2" height="22" />
+							<Rect x="32.9" y="13" width="2.2" height="22" />
+							<Rect x="22.9" y="13" width="2.2" height="22" />
 						</SVG>
 					</Button>
 				</Tooltip>
@@ -143,7 +143,7 @@ const Onboarding = ({
 					className="wp-block-themeisle-template-library"
 					onClick={ () => setIsLibraryOpen( true ) }
 				>
-					<Dashicon icon="category"/>
+					<Dashicon icon="category" />
 					{ __( 'Template Library', 'otter-blocks' ) }
 				</Button>
 

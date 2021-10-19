@@ -8,11 +8,11 @@ import domReady from '@wordpress/dom-ready';
 const createPopupContent = ( markerProps ) => {
 
 	/**
-     * The Popup can take a string or a HTMLElement
-     * For simple use, a string is enough.
-     * But we need interaction, in our case, to remove the marker.
-     * So, creating an HTMLElement will allow us to bind function very easily.
-     */
+	 * The Popup can take a string or a HTMLElement
+	 * For simple use, a string is enough.
+	 * But we need interaction, in our case, to remove the marker.
+	 * So, creating an HTMLElement will allow us to bind function very easily.
+	 */
 	const container = document.createElement( 'div' );
 	const title = document.createElement( 'h6' );
 	const content = document.createElement( 'div' );
@@ -33,19 +33,19 @@ const createPopupContent = ( markerProps ) => {
 };
 
 const createMarker = ( markerProps ) => {
-	const markerMap = L.marker([ markerProps.latitude, markerProps.longitude ]);
+	const markerMap = window.L.marker([ markerProps.latitude, markerProps.longitude ]);
 
-	markerMap.bindTooltip( markerProps.title, { direction: 'auto'});
+	markerMap.bindTooltip( markerProps.title, { direction: 'auto' });
 	markerMap.bindPopup( createPopupContent( markerProps ) );
 
 	return markerMap;
 };
 
 const createLeafletMap = ( containerId, attributes ) => {
-	const container = document.querySelector( `#${containerId}` );
+	const container = document.querySelector( `#${ containerId }` );
 
 	if ( ! container ) {
-		console.warn( __( `The placeholer for the leaflet map block with id: ${containerId} does not exist!`, 'otter-blocks' ) );
+		console.warn( `The placeholer for the leaflet map block with id: ${ containerId } does not exist!` );
 		return;
 	}
 
@@ -54,7 +54,7 @@ const createLeafletMap = ( containerId, attributes ) => {
 	container.classList.add( 'wp-block-themeisle-leaflet-blocks-map' );
 
 	// Create the map
-	const map = L.map( container, {
+	const map = window.L.map( container, {
 		zoomControl: attributes.zoomControl,
 		dragging: attributes.draggable,
 		gestureHandling: true,
@@ -66,17 +66,16 @@ const createLeafletMap = ( containerId, attributes ) => {
 			}
 		}
 	});
-	L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	window.L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 		subdomains: [ 'a', 'b', 'c' ]
 	}).addTo( map );
-
 
 	// Set the view
 	map.setView([ attributes.latitude, attributes.longitude ], attributes.zoom || 13 );
 
 	// Add the markers
-	attributes.markers.map( markerProps => createMarker( markerProps ) ).forEach( marker => {
+	attributes.markers.map( ( markerProps ) => createMarker( markerProps ) ).forEach( ( marker ) => {
 		map.addLayer( marker );
 	});
 };
@@ -87,7 +86,7 @@ domReady( () => {
 		return;
 	}
 
-	if ( ! L ) {
+	if ( ! window.L ) {
 		console.warn( 'The leaflet script did not load on the page!' );
 		return;
 	}

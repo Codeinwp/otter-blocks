@@ -6,7 +6,10 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { __ } from '@wordpress/i18n';
+import {
+	__,
+	sprintf
+} from '@wordpress/i18n';
 
 import { BlockControls } from '@wordpress/block-editor';
 
@@ -24,17 +27,22 @@ import SocialIcons from './icons.js';
 
 const Controls = ({ attributes, setAttributes }) => {
 	const toggleIcons = ( item ) => {
-		setAttributes({ [ item ]: ! attributes[item] });
+		setAttributes({ [ item ]: ! attributes[ item ] });
 	};
 
 	return (
 		<BlockControls>
 			<Toolbar>
 				{ Object.keys( socialList ).map( ( item ) => {
-					let prop = attributes[item];
+					const prop = attributes[ item ];
 
 					return (
-						<Tooltip text={ __( `Display ${ socialList[item].label }`, 'otter-blocks' )	}>
+						<Tooltip
+							key={ item.label }
+
+							/* translators: %s Social Website */
+							text={ sprintf( __( 'Display %s', 'otter-blocks' ), socialList[ item ].label ) }
+						>
 							<Button
 								className={ classnames(
 									'components-button',
@@ -43,7 +51,7 @@ const Controls = ({ attributes, setAttributes }) => {
 								) }
 								onClick={ () => toggleIcons( item ) }
 							>
-								<SocialIcons icon={ item }/>
+								<SocialIcons icon={ item } />
 							</Button>
 						</Tooltip>
 					);

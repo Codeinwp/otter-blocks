@@ -47,7 +47,6 @@ const Edit = ({
 	isSelected,
 	toggleSelection
 }) => {
-
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
@@ -59,14 +58,14 @@ const Edit = ({
 	const [ openMarker, setOpenMarker ] = useState( null );
 
 	const createMarker = ( markerProps, dispatch ) => {
-		if ( L && map && dispatch && markerProps ) {
+		if ( window.L && map && dispatch && markerProps ) {
 			markerProps.id ??= uuidv4();
 			markerProps.latitude ??= map.getCenter().lat;
 			markerProps.longitude ??= map.getCenter().lng;
 			markerProps.title ??= __( 'Add a title', 'otter-blocks' );
 			markerProps.description ??= '';
 
-			const markerMap = L.marker([ markerProps.latitude, markerProps.longitude ] || map.getCenter(), {
+			const markerMap = window.L.marker([ markerProps.latitude, markerProps.longitude ] || map.getCenter(), {
 				draggable: true
 			});
 
@@ -156,8 +155,7 @@ const Edit = ({
 	 */
 	const [ markersStore, dispatch ] = useReducer( markerReducer, []);
 	const createMap = () => {
-
-		if ( ! mapRef.current && ! L ) {
+		if ( ! mapRef.current && ! window.L ) {
 			return;
 		}
 
@@ -165,22 +163,22 @@ const Edit = ({
 		mapRef.current.innerHTML = '';
 
 		// Reference for mobile dragging: https://gis.stackexchange.com/questions/200189/cant-continue-scrolling-on-mobile-devices-when-a-map-occupy-all-the-screen
-		const _map = L.map(
+		const _map = window.L.map(
 			mapRef.current,
 			{
 				gestureHandling: true,
 				gestureHandlingOptions: {
 					text: {
-						touch: __ ( 'Use two fingers to move the map', 'otter-blocks' ),
-						scroll: __ ( 'Use ctrl + scroll to zoom the map', 'otter-blocks' ),
-						scrollMac: __ ( 'Use \u2318 + scroll to zoom the map', 'otter-blocks' )
+						touch: __( 'Use two fingers to move the map', 'otter-blocks' ),
+						scroll: __( 'Use ctrl + scroll to zoom the map', 'otter-blocks' ),
+						scrollMac: __( 'Use \u2318 + scroll to zoom the map', 'otter-blocks' )
 					}
 				}
 			}
 		);
 
 		// Add Open Street Map as source
-		L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		window.L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			subdomains: [ 'a', 'b', 'c' ]
 		}).addTo( _map );
@@ -215,15 +213,15 @@ const Edit = ({
 		 * Create the Add Marker button on the map
 		 * Reference: https://leafletjs.com/examples/extending/extending-3-controls.html
 		 */
-		L.Control.AddMarker = L.Control.extend({
+		window.L.Control.AddMarker = window.L.Control.extend({
 			onAdd: () => {
-				const button = L.DomUtil.create( 'button', 'wp-block-themeisle-blocks-leaflet-map-marker-button' );
-				const span = L.DomUtil.create( 'span', 'dashicons dashicons-sticky', button );
+				const button = window.L.DomUtil.create( 'button', 'wp-block-themeisle-blocks-leaflet-map-marker-button' );
+				const span = window.L.DomUtil.create( 'span', 'dashicons dashicons-sticky', button );
 
-				L.DomEvent.on( button, 'click', event => {
+				window.L.DomEvent.on( button, 'click', ( event ) => {
 
 					// Do not sent this event to the rest of the components
-					L.DomEvent.stopPropagation( event );
+					window.L.DomEvent.stopPropagation( event );
 					setActiveAddingToLocation( ! isAddingToLocationActive );
 				});
 
@@ -235,11 +233,11 @@ const Edit = ({
 			onRemove: () => { }
 		});
 
-		L.control.addmarker = ( opts ) => {
-			return new L.Control.AddMarker( opts );
+		window.L.control.addmarker = ( opts ) => {
+			return new window.L.Control.AddMarker( opts );
 		};
 
-		L.control.addmarker({ position: 'bottomleft' }).addTo( _map );
+		window.L.control.addmarker({ position: 'bottomleft' }).addTo( _map );
 
 		setMap( _map );
 
@@ -247,7 +245,7 @@ const Edit = ({
 		dispatch({
 			type: ActionType.INIT,
 			markers: attributes.markers,
-			dispatch: dispatch
+			dispatch
 		});
 	};
 
@@ -361,8 +359,8 @@ const Edit = ({
 				setAttributes={ setAttributes }
 				dispatch={ dispatch }
 				markersInteraction={ {
-					openMarker: openMarker,
-					setOpenMarker: setOpenMarker
+					openMarker,
+					setOpenMarker
 				} }
 			/>
 

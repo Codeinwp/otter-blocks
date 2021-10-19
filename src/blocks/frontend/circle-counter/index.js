@@ -25,13 +25,12 @@ domReady( () => {
 		const progressStroke = progressBar.dataset.progressStroke;
 
 		const center = size / 2;
-		const radius = center -  strokeWidth / 2;
+		const radius = center - ( strokeWidth / 2 );
 		const circumference = 2 * Math.PI * radius;
 
 		if ( 0 > radius ) {
 			return;
 		}
-
 
 		/*
 			Create SVG
@@ -84,11 +83,10 @@ domReady( () => {
 			progressCircle.style.strokeDashoffset = ( ( 100 - percentage ) / 100 ) * circumference;
 			value.innerHTML = percentage + '%';
 		} else {
-
 			progressCircle.style.strokeDashoffset = circumference;
 			value.innerText = '0%';
 
-			let options = {
+			const options = {
 				root: null,
 				rootMargin: '0px',
 				threshold: [ 0.6 ]
@@ -96,15 +94,12 @@ domReady( () => {
 
 			let interval;
 
-			let observer = new IntersectionObserver( entries => {
+			const observer = new IntersectionObserver( entries => {
 				entries.forEach( entry => {
 					if ( entry.isIntersecting ) {
-
 						if ( 0 >= entry.intersectionRect.height ) {
 							progressCircle.style.strokeDashoffset = ( ( 100 - percentage ) / 100 ) * circumference;
 							value.innerHTML = percentage + '%';
-
-							observer.unobserve( bar );
 							return;
 						}
 
@@ -113,11 +108,11 @@ domReady( () => {
 						}
 
 						const step = 20; // for a more smother animation, decrease the value
-						const totalPercent =  parseInt( percentage );
-						const percentPerTime = range( 0, duration, step ).map( x => linear( x  / duration ) * totalPercent ).reverse();
+						const totalPercent = parseInt( percentage );
+						const percentPerTime = range( 0, duration, step ).map( x => linear( x / duration ) * totalPercent ).reverse();
 
 						interval = setInterval( () => {
-							const valuePercent =  Math.round( percentPerTime.pop() );
+							const valuePercent = Math.round( percentPerTime.pop() );
 							progressCircle.style.strokeDashoffset = ( ( 100 - valuePercent ) / 100 ) * circumference;
 							value.innerHTML = valuePercent + '%';
 							if ( ! percentPerTime.length ) {
@@ -125,7 +120,6 @@ domReady( () => {
 								clearInterval( interval );
 							}
 						}, step );
-
 					}
 				});
 			}, options );

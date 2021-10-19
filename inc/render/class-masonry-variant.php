@@ -35,21 +35,24 @@ class Masonry_Variant {
 	public function render_blocks( $block_content, $block ) {
 		if ( ! is_admin() && 'core/gallery' === $block['blockName'] && isset( $block['attrs']['isMasonry'] ) ) {
 
-			$version = THEMEISLE_BLOCKS_DEV ? time() : THEMEISLE_BLOCKS_VERSION;
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/masonry.asset.php';
 
 			wp_enqueue_script(
 				'macy',
 				OTTER_BLOCKS_URL . 'assets/macy/macy.js',
 				[],
-				$version,
+				$asset_file['version'],
 				true
 			);
 
 			wp_enqueue_script(
 				'themeisle-gutenberg-masonry',
 				OTTER_BLOCKS_URL . 'build/blocks/masonry.js',
-				array( 'wp-dom-ready', 'macy' ),
-				$version,
+				array_merge(
+					$asset_file['dependencies'],
+					array( 'macy ')
+				),
+				$asset_file['version'],
 				true
 			);
 

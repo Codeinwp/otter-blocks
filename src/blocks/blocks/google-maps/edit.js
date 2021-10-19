@@ -38,22 +38,20 @@ const Edit = ({
 	isSelected,
 	toggleSelection
 }) => {
-
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
 	useEffect( () => {
-
 		const setApi = async() => {
-			await wp.api.loadPromise.then( () => {
-				settingsRef.current = new wp.api.models.Settings();
+			await window.wp.api.loadPromise.then( () => {
+				settingsRef.current = new window.wp.api.models.Settings();
 			});
 
 			if ( false === Boolean( window.themeisleGutenberg.mapsAPI ) ) {
 				if ( ! isAPILoaded ) {
-					settingsRef.current.fetch().then( response => {
+					settingsRef.current.fetch().then( ( response ) => {
 						setAPI( response.themeisle_google_map_block_api_key );
 						setAPILoaded( true );
 
@@ -63,20 +61,18 @@ const Edit = ({
 						}
 					});
 				}
-			} else {
-				if ( ! isAPILoaded ) {
-					setAPI( window.themeisleGutenberg.mapsAPI );
-					setAPILoaded( true );
-					setAPISaved( true );
-					enqueueScript( window.themeisleGutenberg.mapsAPI );
-				}
+			} else if ( ! isAPILoaded ) {
+				setAPI( window.themeisleGutenberg.mapsAPI );
+				setAPILoaded( true );
+				setAPISaved( true );
+				enqueueScript( window.themeisleGutenberg.mapsAPI );
 			}
 		};
 
 		setApi();
 
 		window.isMapLoaded = window.isMapLoaded || false;
-		window[`removeMarker_${ clientId.substr( 0, 8 ) }`] = removeMarker;
+		window[ `removeMarker_${ clientId.substr( 0, 8 ) }` ] = removeMarker;
 
 		linkRef.current = document.createElement( 'script' );
 		linkRef.current.type = 'text/javascript';
@@ -140,7 +136,7 @@ const Edit = ({
 	};
 
 	const initMap = () => {
-		mapRef.current = new google.maps.Map( document.getElementById( attributes.id ), {
+		mapRef.current = new window.google.maps.Map( document.getElementById( attributes.id ), {
 			center: {
 				lat: Number( attributes.latitude ) || 41.4036299,
 				lng: Number( attributes.longitude ) || 2.1743558000000576
@@ -157,10 +153,10 @@ const Edit = ({
 				fields: [ 'name', 'geometry' ]
 			};
 
-			const service = new google.maps.places.PlacesService( mapRef.current );
+			const service = new window.google.maps.places.PlacesService( mapRef.current );
 
 			service.findPlaceFromQuery( request, ( results, status ) => {
-				if ( status === google.maps.places.PlacesServiceStatus.OK ) {
+				if ( status === window.google.maps.places.PlacesServiceStatus.OK ) {
 					if ( 0 < results.length ) {
 						mapRef.current.setCenter( results[0].geometry.location );
 					}
@@ -168,7 +164,7 @@ const Edit = ({
 			});
 		}
 
-		google.maps.event.addListenerOnce( mapRef.current, 'idle', () => {
+		window.google.maps.event.addListenerOnce( mapRef.current, 'idle', () => {
 			setMapLoaded( true );
 		});
 
@@ -201,7 +197,7 @@ const Edit = ({
 			fields: [ 'name', 'geometry' ]
 		};
 
-		const service = new google.maps.places.PlacesService( mapRef.current );
+		const service = new window.google.maps.places.PlacesService( mapRef.current );
 
 		service.findPlaceFromQuery( request, ( results, status ) => {
 			if ( 'REQUEST_DENIED' === status ) {
@@ -211,11 +207,11 @@ const Edit = ({
 	};
 
 	const addMarker = ( location, title, icon, description, latitude, longitude ) => {
-		const latLng = new google.maps.LatLng( latitude, longitude );
+		const latLng = new window.google.maps.LatLng( latitude, longitude );
 
 		const id = uuidv4();
 
-		const mark = new google.maps.Marker({
+		const mark = new window.google.maps.Marker({
 			position: latLng,
 			map: mapRef.current,
 			title,
@@ -223,7 +219,7 @@ const Edit = ({
 			icon
 		});
 
-		google.maps.event.addListener( mark, 'dragend', event => {
+		window.google.maps.event.addListener( mark, 'dragend', event => {
 			const lat = event.latLng.lat();
 			const lng = event.latLng.lng();
 
@@ -249,7 +245,7 @@ const Edit = ({
 
 		setAttributes({ markers });
 
-		google.maps.event.addListener( mark, 'click', () => {
+		window.google.maps.event.addListener( mark, 'click', () => {
 			if ( lastInfoWindowRef.current ) {
 				lastInfoWindowRef.current.close();
 			}
@@ -263,7 +259,7 @@ const Edit = ({
 	const addInfoWindow = ( marker, id, title, description ) => {
 		const contentString = `<div class="wp-block-themeisle-blocks-map-overview"><h6 class="wp-block-themeisle-blocks-map-overview-title">${ title }</h6><div class="wp-block-themeisle-blocks-map-overview-content">${ description ? `<p>${ description }</p>` : '' }<a class="wp-block-themeisle-blocks-map-overview-delete" onclick="removeMarker_${ clientId.substr( 0, 8 ) }( '${ id }' )">${ __( 'Delete Marker', 'otter-blocks' ) }</a></div></div>`;
 
-		const infowindow = new google.maps.InfoWindow({
+		const infowindow = new window.google.maps.InfoWindow({
 			content: contentString
 		});
 
@@ -272,11 +268,11 @@ const Edit = ({
 			infowindow.open( mapRef.current, marker );
 		});
 
-		google.maps.event.addListener( infowindow, 'domready', () => {
+		window.google.maps.event.addListener( infowindow, 'domready', () => {
 			setMarkerOpen( id );
 		});
 
-		google.maps.event.addListener( infowindow, 'closeclick', () => {
+		window.google.maps.event.addListener( infowindow, 'closeclick', () => {
 			setMarkerOpen( false );
 		});
 	};
@@ -285,9 +281,9 @@ const Edit = ({
 		markers.forEach( marker => {
 			const latitude = marker.latitude;
 			const longitude = marker.longitude;
-			const position = new google.maps.LatLng( latitude, longitude );
+			const position = new window.google.maps.LatLng( latitude, longitude );
 
-			let mark = new google.maps.Marker({
+			const mark = new window.google.maps.Marker({
 				position,
 				map: mapRef.current,
 				title: marker.title,
@@ -295,7 +291,7 @@ const Edit = ({
 				icon: marker.icon || 'https://maps.google.com/mapfiles/ms/icons/red-dot.png'
 			});
 
-			google.maps.event.addListener( mark, 'dragend', event => {
+			window.google.maps.event.addListener( mark, 'dragend', ( event ) => {
 				const lat = event.latLng.lat();
 				const lng = event.latLng.lng();
 
@@ -305,7 +301,7 @@ const Edit = ({
 
 			markersRef.current.push( mark );
 
-			google.maps.event.addListener( mark, 'click', () => {
+			window.google.maps.event.addListener( mark, 'click', () => {
 				if ( lastInfoWindowRef.current ) {
 					lastInfoWindowRef.current.close();
 				}
@@ -320,7 +316,7 @@ const Edit = ({
 
 		if ( ! isSelectingMarker ) {
 			mapRef.current.addListener( 'click', e => {
-				google.maps.event.clearListeners( mapRef.current, 'click' );
+				window.google.maps.event.clearListeners( mapRef.current, 'click' );
 
 				const id = uuidv4();
 				const title = __( 'Custom Marker', 'otter-blocks' );
@@ -340,7 +336,7 @@ const Edit = ({
 				});
 			});
 		} else {
-			google.maps.event.clearListeners( mapRef.current, 'click' );
+			window.google.maps.event.clearListeners( mapRef.current, 'click' );
 		}
 	};
 
@@ -366,11 +362,11 @@ const Edit = ({
 
 	const changeMarkerProp = ( id, prop, value ) => {
 		const markers = [ ...markersAttrRef.current ];
-		markers.map( marker => {
-			if ( marker.id === id ) {
-				return marker[ prop ] = value.toString();
-			}
+		const marker = markers.find( marker => {
+			return marker.id === id;
 		});
+
+		marker[ prop ] = value.toString();
 
 		removeMarkers();
 		cycleMarkers( markers );
@@ -401,7 +397,7 @@ const Edit = ({
 		if ( false === Boolean( window.themeisleGutenberg.mapsAPI ) ) {
 			setSaving( true );
 
-			const model = new wp.api.models.Settings({
+			const model = new window.wp.api.models.Settings({
 				// eslint-disable-next-line camelcase
 				themeisle_google_map_block_api_key: api
 			});

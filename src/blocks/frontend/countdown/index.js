@@ -15,6 +15,7 @@ import {
 
 /**
  * Get an object with the update function for every component
+ *
  * @param {HTMLDivElement} root
  * @returns {Object.<string, Function>}
  */
@@ -39,7 +40,7 @@ const getComponentsUpdate = ( root ) => {
 
 /**
  *
- * @param {*} date The deadline of the countdown
+ * @param {*} date             The deadline of the countdown
  * @param {*} updateComponents The object with the update functions
  * @returns {Function} Function that update the countdown every time it is called. You can send a callback to be triggered when is finised.
  */
@@ -48,7 +49,7 @@ const updateTime = ( date, updateComponents ) => {
 	_date = moment( _date ).unix() * 1000;
 	return ( onFinishCb ) => {
 		const time = getIntervalFromUnix( _date - Date.now() );
-		time.forEach( ({ tag, value, name}) => {
+		time.forEach( ({ tag, value, name }) => {
 			updateComponents[tag]?.( name, value );
 		});
 

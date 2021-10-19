@@ -94,6 +94,8 @@ const Edit = ({
 
 	/**
 	 * ------------ Tab Actions ------------
+	 *
+	 * @param  blockId
 	 */
 	const selectTab = ( blockId ) => {
 		if ( 0 < children?.length ) {
@@ -232,6 +234,7 @@ const Edit = ({
 					{ children?.map( tabHeader => {
 						return (
 							<TabHeader
+								key={ tabHeader.clientId }
 								title={ tabHeader.attributes.title || __( 'Insert Title', 'otter-blocks' ) }
 								active={ tabHeader.clientId === activeTab }
 								onClick={ () => toggleActiveTab( tabHeader.clientId ) }

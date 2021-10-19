@@ -34,7 +34,6 @@ domReady( () => {
 			tooltip.style.opacity = 1;
 		}
 
-
 		if ( 0 === duration ) {
 			bar.style.width = `${ parseInt( progressBar.dataset.percent ) }%`;
 			number.innerHTML = `${ parseInt( progressBar.dataset.percent ) }%`;
@@ -47,7 +46,6 @@ domReady( () => {
 				append.style.opacity = 1;
 			}
 		} else {
-
 			if ( number ) {
 				number.innerText = '0%';
 			}
@@ -56,16 +54,15 @@ domReady( () => {
 				borderRadius *= 2;
 			}
 
-			let options = {
+			const options = {
 				root: null,
 				rootMargin: '0px',
 				threshold: [ 0.6 ]
 			};
 
-			let observer = new IntersectionObserver( entries => {
+			const observer = new IntersectionObserver( entries => {
 				entries.forEach( entry => {
 					if ( entry.isIntersecting ) {
-
 						if ( 0 >= entry.intersectionRect.height ) {
 							bar.style.width = `${ parseInt( progressBar.dataset.percent ) }%`;
 							number.innerHTML = `${ parseInt( progressBar.dataset.percent ) }%`;
@@ -89,8 +86,8 @@ domReady( () => {
 						}
 
 						const step = 20; // for a more smother animation, decrease the value
-						const totalPercent =  parseInt( progressBar.dataset.percent );
-						const percentPerTime = range( 0, duration, step ).map( x => linear( x  / duration ) * totalPercent ).reverse();
+						const totalPercent = parseInt( progressBar.dataset.percent );
+						const percentPerTime = range( 0, duration, step ).map( x => linear( x / duration ) * totalPercent ).reverse();
 
 						interval = setInterval( () => {
 							const value = percentPerTime.pop();
@@ -107,22 +104,18 @@ domReady( () => {
 							}
 
 							if ( tooltip && outerTitle ) {
-
 								if ( currentWidth > titleWidth + 10 ) {
 									tooltip.style.opacity = 1;
 								}
-
 							}
 
 							if ( append ) {
 								if ( innerTitle ) {
-									if ( currentWidth > titleWidth + numberWidth * 1.5 ) {
+									if ( currentWidth > ( titleWidth + ( numberWidth * 1.5 ) ) ) {
 										append.style.opacity = 1;
 									}
-								} else {
-									if ( currentWidth > numberWidth * 1.8 ) {
-										append.style.opacity = 1;
-									}
+								} else if ( currentWidth > numberWidth * 1.8 ) {
+									append.style.opacity = 1;
 								}
 							}
 
@@ -131,7 +124,6 @@ domReady( () => {
 								clearInterval( interval );
 							}
 						}, step );
-
 					}
 				});
 			}, options );

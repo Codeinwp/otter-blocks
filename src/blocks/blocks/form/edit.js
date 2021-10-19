@@ -46,7 +46,6 @@ const Edit = ({
 	clientId,
 	name
 }) => {
-
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
 	const [ isAPILoaded, setAPILoaded ] = useState( false );
@@ -102,9 +101,9 @@ const Edit = ({
 	 * Create the form identification tag for Otter Options.
 	 */
 	useEffect( () => {
-		if (  attributes.id && select( 'core/edit-widgets' ) ) {
+		if ( attributes.id && select( 'core/edit-widgets' ) ) {
 			setAttributes({ optionName: `widget_${ attributes.id.slice( -8 ) }` });
-		} else  if ( attributes.id && select( 'core/editor' )?.getCurrentPostId() ) {
+		} else if ( attributes.id && select( 'core/editor' )?.getCurrentPostId() ) {
 			setAttributes({ optionName: `${ select( 'core/editor' ).getCurrentPostId() }_${ attributes.id.slice( -8 ) }` });
 		}
 	}, [ attributes.id ]);
@@ -149,12 +148,12 @@ const Edit = ({
 				let isMissing = true;
 				let hasChanged = false;
 
-				emails?.forEach( ({ form }, index )=> {
+				emails?.forEach( ({ form }, index ) => {
 					if ( form === attributes.optionName ) {
 						if ( emails[index].hasCaptcha !== attributes.hasCaptcha ) {
 							hasChanged = true;
 						}
-						emails[index].hasCaptcha = attributes.hasCaptcha; // update the value
+						emails[index].hasCaptcha = attributes.hasCaptcha;
 						isMissing = false;
 					}
 				});
@@ -191,7 +190,6 @@ const Edit = ({
 	 * Check if the API Keys are set.
 	 */
 	useEffect( () => {
-
 		const getAPIData = async() => {
 			if ( ! isAPILoaded ) {
 				settingsRef?.current?.fetch().then( response => {
@@ -213,8 +211,7 @@ const Edit = ({
 	 * Save API Keys in the Otter options.
 	 */
 	const saveAPIKey = () => {
-
-		const model = new wp.api.models.Settings({
+		const model = new window.wp.api.models.Settings({
 			// eslint-disable-next-line camelcase
 			themeisle_google_captcha_api_site_key: googleCaptchaAPISiteKey,
 			// eslint-disable-next-line camelcase
@@ -241,7 +238,6 @@ const Edit = ({
 				}
 			);
 		});
-
 	};
 
 	/**
@@ -254,15 +250,15 @@ const Edit = ({
 			let hasUpdated = false;
 			let hasUpdatedNotice = false;
 
-			emails?.forEach( ({ form }, index )=> {
+			emails?.forEach( ({ form }, index ) => {
 				if ( form === attributes.optionName ) {
 					if ( ! emails[index]?.integration ) {
 						emails[index].integration = {};
 					}
 
-					hasUpdated = emails[index].integration.provider !== attributes.provider || emails[index].integration.apiKey !== attributes.apiKey || emails[index].integration.listId !== attributes.listId || emails[index].integration.action !== attributes.action;
+					hasUpdated = emails[index].integration.provider !== attributes.provider || emails[ index ].integration.apiKey !== attributes.apiKey || emails[index].integration.listId !== attributes.listId || emails[index].integration.action !== attributes.action;
 					isMissing = false;
-					hasUpdatedNotice =  attributes.apiKey && ( emails[index].integration.listId !== attributes.listId || emails[index].integration.action !== attributes.action );
+					hasUpdatedNotice = attributes.apiKey && ( emails[index].integration.listId !== attributes.listId || emails[index].integration.action !== attributes.action );
 
 					emails[index].integration.provider = attributes.provider; // update the value
 					emails[index].integration.apiKey = attributes.apiKey;
@@ -302,7 +298,6 @@ const Edit = ({
 					}
 				});
 			}
-
 		});
 	}, [ attributes.optionName, attributes.provider, attributes.apiKey, attributes.listId, attributes.action, settingsRef.current ]);
 
@@ -342,7 +337,7 @@ const Edit = ({
 
 							<div className="wp-block-button">
 								<button className="wp-block-button__link">
-									{ __( hasIntegrationActive && 'subscribe' === attributes.action ? 'Subscribe' : 'Submit', 'otter-blocks' ) }
+									{ hasIntegrationActive && 'subscribe' === attributes.action ? __( 'Subscribe', 'otter-blocks' ) : __( 'Submit', 'otter-blocks' ) }
 								</button>
 							</div>
 						</div>

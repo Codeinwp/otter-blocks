@@ -38,7 +38,7 @@ const Marker = ({
 
 		Object.keys( elements ).forEach( e => elements[e].remove() );
 
-		const searchBox = new google.maps.places.SearchBox( searchRef.current );
+		const searchBox = new window.google.maps.places.SearchBox( searchRef.current );
 
 		searchBox.addListener( 'places_changed', () => {
 			const places = searchBox.getPlaces();

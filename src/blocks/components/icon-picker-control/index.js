@@ -44,7 +44,7 @@ const IconPickerControl = ({
 	const instanceId = useInstanceId( IconPickerControl );
 
 	useEffect( () => {
-		let icons = [];
+		const icons = [];
 
 		Object.keys( data ).forEach( i => {
 			Object.keys( data[i].styles ).forEach( o => {
@@ -73,7 +73,7 @@ const IconPickerControl = ({
 				icons.push({
 					name: i,
 					unicode: data[i].unicode,
-					prefix: prefix,
+					prefix,
 					label: data[i].label,
 					search: terms
 				});
@@ -92,9 +92,9 @@ const IconPickerControl = ({
 
 	const ThemeIsleIcon = ({ itemIcon = icon }) => {
 		const Icon = themeIsleIcons.icons[ itemIcon ];
-		return  Icon ? (
+		return Icon ? (
 			<Fragment>
-				<Icon/>
+				<Icon />
 				{ itemIcon }
 			</Fragment>
 
@@ -149,7 +149,7 @@ const IconPickerControl = ({
 					onChange( i );
 				}}
 			>
-				<ThemeIsleIcon itemIcon={ i} />
+				<ThemeIsleIcon itemIcon={ i } />
 			</MenuItem>
 		);
 	};
@@ -202,7 +202,7 @@ const IconPickerControl = ({
 												__( 'Select Icon', 'otter-blocks' )
 										) }
 
-										{ 'themeisle-icons' === library && <ThemeIsleIcon/> }
+										{ 'themeisle-icons' === library && <ThemeIsleIcon /> }
 									</Fragment>
 								) :
 									__( 'Select Icon', 'otter-blocks' )
@@ -220,7 +220,7 @@ const IconPickerControl = ({
 
 						<div className="components-popover__items">
 							{ selectedIcons.map( i => {
-								if ( 'fontawesome' === library && ( ! search || i.search.some( o => o.toLowerCase().match( search.toLowerCase() ) )  ) ) {
+								if ( 'fontawesome' === library && ( ! search || i.search.some( ( o ) => o.toLowerCase().match( search.toLowerCase() ) ) ) ) {
 									return (
 										<FontAwesomeIconsList
 											i={ i }

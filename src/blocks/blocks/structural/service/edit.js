@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 
 import { InnerBlocks } from '@wordpress/block-editor';
 
-const TEMPLATE =  [
+const TEMPLATE = [
 	[ 'themeisle-blocks/font-awesome-icons', {
 		fontSize: 62,
 		prefix: 'fab',

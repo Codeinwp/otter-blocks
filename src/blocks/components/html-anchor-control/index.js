@@ -52,7 +52,7 @@ const HTMLAnchorControl = ({
 					<input
 						type="text"
 						className="otter-html-anchor-control-input"
-						readonly={ isEditing ? false : 'readonly' }
+						readOnly={ isEditing ? false : 'readonly' }
 						value={ isEditing ? ID : value }
 						onChange={ e => setID( e.target.value ) }
 						onClick={ e => e.target.select() }

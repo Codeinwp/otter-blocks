@@ -17,7 +17,10 @@ import {
 	toLower
 } from 'lodash';
 
-import { __ } from '@wordpress/i18n';
+import {
+	__,
+	sprintf
+} from '@wordpress/i18n';
 
 import {
 	Button,
@@ -52,11 +55,15 @@ export const SortableItem = ({
 
 	const label = startCase( toLower( value ) );
 	let icon = 'hidden';
-	let message = __( `Display ${ label }`, 'otter-blocks' );
+
+	/* translators: %s Label */
+	let message = sprintf( __( 'Display %s', 'otter-blocks' ), label );
 
 	if ( getFields( value ) ) {
 		icon = 'visibility';
-		message = __( `Hide ${ label }`, 'otter-blocks' );
+
+		/* translators: %s Label */
+		message = sprintf( __( 'Hide %s', 'otter-blocks' ), label );
 	}
 
 	let edit;
@@ -228,7 +235,7 @@ export const SortableList = SortableContainer( ({
 		<div>
 			{ template.map( ( value, index ) => (
 				<SortableItemContainer
-					key={`item-${ value }`}
+					key={ `item-${ value }` }
 					index={ index }
 					value={ value }
 					getFields={ getFields }

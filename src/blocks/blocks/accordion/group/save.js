@@ -18,7 +18,7 @@ const Save = ({
 			className={ classnames(
 				className,
 				{
-					[`is-${ attributes.gap }-gap`]: attributes.gap
+					[ `is-${ attributes.gap }-gap` ]: attributes.gap
 				}
 			) }
 		>

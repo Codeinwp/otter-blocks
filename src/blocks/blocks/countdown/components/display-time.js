@@ -30,7 +30,7 @@ const DisplayTimeComponent = ({
 			className={ classnames(
 				'otter-countdown__display-area',
 				{
-					'is-main-component': 'separator' !==  tag
+					'is-main-component': 'separator' !== tag
 				}
 			) }
 		>

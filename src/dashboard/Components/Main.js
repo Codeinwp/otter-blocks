@@ -59,7 +59,7 @@ const Main = () => {
 			}
 		});
 
-		if ( ! Boolean( otterObj.stylesExist ) ) {
+		if ( ! Boolean( window.otterObj.stylesExist ) ) {
 			setRegeneratedDisabled( true );
 		}
 	}, []);
@@ -97,7 +97,6 @@ const Main = () => {
 			store.removeNotification( notification );
 
 			if ( 'success' === status ) {
-
 				setOptions( state, response[option]);
 
 				setTimeout( () => {
@@ -160,7 +159,7 @@ const Main = () => {
 
 	const regenerateStyles = async() => {
 		setAPISaving( true );
-		let data = await apiFetch({ path: 'themeisle-gutenberg-blocks/v1/regenerate_styles', method: 'DELETE' });
+		const data = await apiFetch({ path: 'themeisle-gutenberg-blocks/v1/regenerate_styles', method: 'DELETE' });
 		addNotification( data.data.message, data.success ? 'success' : 'danger' );
 		setRegeneratedDisabled( true );
 		setAPISaving( false );
@@ -220,7 +219,7 @@ const Main = () => {
 							/>
 						</PanelRow>
 
-						{ Boolean( otterObj.navExists ) && (
+						{ Boolean( window.otterObj.navExists ) && (
 							<PanelRow>
 								<ToggleControl
 									label={ __( 'Enable Menu Icons Module', 'otter-blocks' ) }

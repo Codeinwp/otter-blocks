@@ -62,7 +62,7 @@ const saveWidgets = debounce( async() => {
 	);
 }, 5000 );
 
-let reusableBlocks = {};
+const reusableBlocks = {};
 
 subscribe( () => {
 	if ( select( 'core/edit-widgets' ) ) {
@@ -125,18 +125,18 @@ subscribe( () => {
 		const getReusableBlocks = __experimentalReusableBlocks || [];
 		const postPublished = isCurrentPostPublished();
 
-		getReusableBlocks.map( block => {
+		getReusableBlocks.forEach( block => {
 			if ( block ) {
 				const isBlockSaving = isSavingReusableBlock( block.id );
 
-				if  ( isBlockSaving && ! block.isTemporary ) {
+				if ( isBlockSaving && ! block.isTemporary ) {
 					reusableBlocks[ block.id ] = {
 						id: block.id,
 						isSaving: true
 					};
 				}
 
-				if  ( ! isBlockSaving && ! block.isTemporary && !! reusableBlocks[ block.id ]) {
+				if ( ! isBlockSaving && ! block.isTemporary && !! reusableBlocks[ block.id ]) {
 					if ( block.id === reusableBlocks[ block.id ].id && ( ! isBlockSaving && reusableBlocks[ block.id ].isSaving ) ) {
 						reusableBlocks[ block.id ].isSaving = false;
 						apiFetch({ path: `themeisle-gutenberg-blocks/v1/save_block_meta/${ block.id }`, method: 'POST' });
