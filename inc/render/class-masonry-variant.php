@@ -50,7 +50,7 @@ class Masonry_Variant {
 				OTTER_BLOCKS_URL . 'build/blocks/masonry.js',
 				array_merge(
 					$asset_file['dependencies'],
-					array( 'macy ')
+					array( 'macy' )
 				),
 				$asset_file['version'],
 				true
