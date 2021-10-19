@@ -1,0 +1,43 @@
+name: Sync with staging
+
+on:
+    push:
+        branches: [development]
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        env:
+            SSH_USERNAME: ${{ secrets.PAGELY_SSH_USER }}
+            SSH_KEY: ${{ secrets.PAGELY_SSH_KEY }}
+            SSH_PORT: ${{ secrets.PAGELY_SSH_PORT }}
+            SSH_HOST: ${{ secrets.PAGELY_SSH_HOST }}
+            SSH_PATH: ${{ secrets.SSH_STAGING_PATH }}
+        steps:
+            - name: Check out source files
+              uses: actions/checkout@v2
+            - name: Get Composer Cache Directory
+              id: composer-cache
+              run: |
+                echo "::set-output name=dir::$(composer config cache-files-dir)"
+            - name: Configure Composer cache
+              uses: actions/cache@v1
+              with:
+                path: ${{ steps.composer-cache.outputs.dir }}
+                key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+                restore-keys: |
+                  ${{ runner.os }}-composer-
+            - name: Install composer deps
+              run: composer install --no-dev --prefer-dist --no-progress --no-suggest
+            - name: Install npm deps
+              run: npm ci
+            - name: Build files
+              run: npm run build
+            - name: Add SSH Key
+              run: |
+                  mkdir $HOME/.ssh
+                  echo "$SSH_KEY" > "$HOME/.ssh/key"
+                  chmod 600 "$HOME/.ssh/key"
+            - name: Deploy on server
+              run: |
+                  rsync -rc --delete --exclude-from="$GITHUB_WORKSPACE/.distignore" -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no -p $SSH_PORT" "$GITHUB_WORKSPACE/" $SSH_USERNAME@$SSH_HOST:$SSH_PATH

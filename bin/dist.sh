@@ -16,9 +16,11 @@ if [ ! -d "artifact" ]; then
   mkdir "artifact"
 fi
 
+# Take all the files, filter the dev ones (e.g. node_modules, src), and save the result to './dist'
 rsync -rc --exclude-from ".distignore" "./" "dist/$BUILD_NAME"
 
 cd dist
+# Create a zip file in './artifact' from the filtered files in the './dist'
 zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/"
 cd -
 
