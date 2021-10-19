@@ -327,6 +327,15 @@ class Main {
 
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
 
+		$current_screen = get_current_screen();
+
+		if ( 'widgets' === $current_screen->base ) {
+			if ( in_array( 'wp-edit-post', $asset_file['dependencies'] ) ) {
+				unset( $asset_file['dependencies'][ array_search( 'wp-editor', $asset_file['dependencies'] ) ] );
+				unset( $asset_file['dependencies'][ array_search( 'wp-edit-post', $asset_file['dependencies'] ) ] );
+			}
+		}
+
 		wp_enqueue_script(
 			'themeisle-gutenberg-blocks',
 			plugin_dir_url( $this->get_dir() ) . 'build/blocks/blocks.js',
