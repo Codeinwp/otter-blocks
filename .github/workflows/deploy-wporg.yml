@@ -9,10 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Build
-        run: |
-          npm ci
-          composer install --no-dev --prefer-dist --no-progress --no-suggest
+      - name: Install composer deps
+        run: composer install --no-dev --prefer-dist --no-progress --no-suggest
+      - name: Install npm deps
+        run: npm ci
+      - name: Build files
+        run: npm run build
       - name: WordPress Plugin Deploy
         uses: 10up/action-wordpress-plugin-deploy@master
         env:
