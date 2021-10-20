@@ -6,7 +6,7 @@ import classnames from 'classnames';
 const Save = ({ attributes, className }) => {
 	return (
 		<div
-			className={ classnames( className, {'has-tooltip': 'tooltip' === attributes.percentagePosition }) }
+			className={ classnames( className, { 'has-tooltip': 'tooltip' === attributes.percentagePosition }) }
 			id={ attributes.id }
 			data-percent={ attributes.percentage }
 			data-duration={ attributes.duration }
@@ -45,7 +45,7 @@ const Save = ({ attributes, className }) => {
 							<span className="wp-block-themeisle-blocks-progress-bar__number">
 								{ attributes.percentage }
 							</span>
-							 <span className="wp-block-themeisle-blocks-progress-bar__area__arrow"></span>
+							<span className="wp-block-themeisle-blocks-progress-bar__area__arrow"></span>
 						</span>
 					)}
 

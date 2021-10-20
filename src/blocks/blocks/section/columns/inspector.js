@@ -207,7 +207,7 @@ const Inspector = ({
 	const getPadding = type => {
 		let value;
 
-		if ( 'top' == type ) {
+		if ( 'top' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingTop;
 			}
@@ -221,7 +221,7 @@ const Inspector = ({
 			}
 		}
 
-		if ( 'right' == type ) {
+		if ( 'right' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingRight;
 			}
@@ -235,7 +235,7 @@ const Inspector = ({
 			}
 		}
 
-		if ( 'bottom' == type ) {
+		if ( 'bottom' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingBottom;
 			}
@@ -249,7 +249,7 @@ const Inspector = ({
 			}
 		}
 
-		if ( 'left' == type ) {
+		if ( 'left' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingLeft;
 			}
@@ -340,7 +340,7 @@ const Inspector = ({
 	const getMargin = type => {
 		let value;
 
-		if ( 'top' == type ) {
+		if ( 'top' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === attributes.marginType ? attributes.margin : attributes.marginTop;
 			}
@@ -354,7 +354,7 @@ const Inspector = ({
 			}
 		}
 
-		if ( 'bottom' == type ) {
+		if ( 'bottom' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === attributes.marginType ? attributes.margin : attributes.marginBottom;
 			}
@@ -559,19 +559,19 @@ const Inspector = ({
 	const getBorder = type => {
 		let value;
 
-		if ( 'top' == type ) {
+		if ( 'top' === type ) {
 			value = 'linked' === attributes.borderType ? attributes.border : attributes.borderTop;
 		}
 
-		if ( 'right' == type ) {
+		if ( 'right' === type ) {
 			value = 'linked' === attributes.borderType ? attributes.border : attributes.borderRight;
 		}
 
-		if ( 'bottom' == type ) {
+		if ( 'bottom' === type ) {
 			value = 'linked' === attributes.borderType ? attributes.border : attributes.borderBottom;
 		}
 
-		if ( 'left' == type ) {
+		if ( 'left' === type ) {
 			value = 'linked' === attributes.borderType ? attributes.border : attributes.borderLeft;
 		}
 
@@ -604,19 +604,19 @@ const Inspector = ({
 	const getBorderRadius = type => {
 		let value;
 
-		if ( 'top' == type ) {
+		if ( 'top' === type ) {
 			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusTop;
 		}
 
-		if ( 'right' == type ) {
+		if ( 'right' === type ) {
 			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusRight;
 		}
 
-		if ( 'bottom' == type ) {
+		if ( 'bottom' === type ) {
 			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusBottom;
 		}
 
-		if ( 'left' == type ) {
+		if ( 'left' === type ) {
 			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusLeft;
 		}
 
@@ -654,11 +654,11 @@ const Inspector = ({
 	let getDividerType = () => {
 		let value;
 
-		if ( 'top' == dividerViewType ) {
+		if ( 'top' === dividerViewType ) {
 			value = attributes.dividerTopType;
 		}
 
-		if ( 'bottom' == dividerViewType ) {
+		if ( 'bottom' === dividerViewType ) {
 			value = attributes.dividerBottomType;
 		}
 
@@ -668,11 +668,11 @@ const Inspector = ({
 	getDividerType = getDividerType();
 
 	const changeDividerType = value => {
-		if ( 'top' == dividerViewType ) {
+		if ( 'top' === dividerViewType ) {
 			setAttributes({ dividerTopType: value });
 		}
 
-		if ( 'bottom' == dividerViewType ) {
+		if ( 'bottom' === dividerViewType ) {
 			setAttributes({ dividerBottomType: value });
 		}
 	};
@@ -680,11 +680,11 @@ const Inspector = ({
 	let getDividerColor = () => {
 		let value;
 
-		if ( 'top' == dividerViewType ) {
+		if ( 'top' === dividerViewType ) {
 			value = attributes.dividerTopColor;
 		}
 
-		if ( 'bottom' == dividerViewType ) {
+		if ( 'bottom' === dividerViewType ) {
 			value = attributes.dividerBottomColor;
 		}
 
@@ -694,10 +694,10 @@ const Inspector = ({
 	getDividerColor = getDividerColor();
 
 	const changeDividerColor = value => {
-		if ( 'top' == dividerViewType ) {
+		if ( 'top' === dividerViewType ) {
 			setAttributes({ dividerTopColor: value });
 		}
-		if ( 'bottom' == dividerViewType ) {
+		if ( 'bottom' === dividerViewType ) {
 			setAttributes({ dividerBottomColor: value });
 		}
 	};
@@ -705,30 +705,30 @@ const Inspector = ({
 	let getDividerWidth = () => {
 		let value;
 
-		if ( 'top' == dividerViewType ) {
-			if ( 'Desktop' == getView ) {
+		if ( 'top' === dividerViewType ) {
+			if ( 'Desktop' === getView ) {
 				value = attributes.dividerTopWidth;
 			}
 
-			if ( 'Tablet' == getView ) {
+			if ( 'Tablet' === getView ) {
 				value = attributes.dividerTopWidthTablet;
 			}
 
-			if ( 'Mobile' == getView ) {
+			if ( 'Mobile' === getView ) {
 				value = attributes.dividerTopWidthMobile;
 			}
 		}
 
-		if ( 'bottom' == dividerViewType ) {
-			if ( 'Desktop' == getView ) {
+		if ( 'bottom' === dividerViewType ) {
+			if ( 'Desktop' === getView ) {
 				value = attributes.dividerBottomWidth;
 			}
 
-			if ( 'Tablet' == getView ) {
+			if ( 'Tablet' === getView ) {
 				value = attributes.dividerBottomWidthTablet;
 			}
 
-			if ( 'Mobile' == getView ) {
+			if ( 'Mobile' === getView ) {
 				value = attributes.dividerBottomWidthMobile;
 			}
 		}
@@ -739,30 +739,30 @@ const Inspector = ({
 	getDividerWidth = getDividerWidth();
 
 	const changeDividerWidth = value => {
-		if ( 'top' == dividerViewType ) {
-			if ( 'Desktop' == getView ) {
+		if ( 'top' === dividerViewType ) {
+			if ( 'Desktop' === getView ) {
 				setAttributes({ dividerTopWidth: value });
 			}
 
-			if ( 'Tablet' == getView ) {
+			if ( 'Tablet' === getView ) {
 				setAttributes({ dividerTopWidthTablet: value });
 			}
 
-			if ( 'Mobile' == getView ) {
+			if ( 'Mobile' === getView ) {
 				setAttributes({ dividerTopWidthMobile: value });
 			}
 		}
 
-		if ( 'bottom' == dividerViewType ) {
-			if ( 'Desktop' == getView ) {
+		if ( 'bottom' === dividerViewType ) {
+			if ( 'Desktop' === getView ) {
 				setAttributes({ dividerBottomWidth: value });
 			}
 
-			if ( 'Tablet' == getView ) {
+			if ( 'Tablet' === getView ) {
 				setAttributes({ dividerBottomWidthTablet: value });
 			}
 
-			if ( 'Mobile' == getView ) {
+			if ( 'Mobile' === getView ) {
 				setAttributes({ dividerBottomWidthMobile: value });
 			}
 		}
@@ -771,30 +771,30 @@ const Inspector = ({
 	let getDividerHeight = () => {
 		let value;
 
-		if ( 'top' == dividerViewType ) {
-			if ( 'Desktop' == getView ) {
+		if ( 'top' === dividerViewType ) {
+			if ( 'Desktop' === getView ) {
 				value = attributes.dividerTopHeight;
 			}
 
-			if ( 'Tablet' == getView ) {
+			if ( 'Tablet' === getView ) {
 				value = attributes.dividerTopHeightTablet;
 			}
 
-			if ( 'Mobile' == getView ) {
+			if ( 'Mobile' === getView ) {
 				value = attributes.dividerTopHeightMobile;
 			}
 		}
 
-		if ( 'bottom' == dividerViewType ) {
-			if ( 'Desktop' == getView ) {
+		if ( 'bottom' === dividerViewType ) {
+			if ( 'Desktop' === getView ) {
 				value = attributes.dividerBottomHeight;
 			}
 
-			if ( 'Tablet' == getView ) {
+			if ( 'Tablet' === getView ) {
 				value = attributes.dividerBottomHeightTablet;
 			}
 
-			if ( 'Mobile' == getView ) {
+			if ( 'Mobile' === getView ) {
 				value = attributes.dividerBottomHeightMobile;
 			}
 		}
@@ -805,30 +805,30 @@ const Inspector = ({
 	getDividerHeight = getDividerHeight();
 
 	const changeDividerHeight = value => {
-		if ( 'top' == dividerViewType ) {
-			if ( 'Desktop' == getView ) {
+		if ( 'top' === dividerViewType ) {
+			if ( 'Desktop' === getView ) {
 				setAttributes({ dividerTopHeight: value });
 			}
 
-			if ( 'Tablet' == getView ) {
+			if ( 'Tablet' === getView ) {
 				setAttributes({ dividerTopHeightTablet: value });
 			}
 
-			if ( 'Mobile' == getView ) {
+			if ( 'Mobile' === getView ) {
 				setAttributes({ dividerTopHeightMobile: value });
 			}
 		}
 
-		if ( 'bottom' == dividerViewType ) {
-			if ( 'Desktop' == getView ) {
+		if ( 'bottom' === dividerViewType ) {
+			if ( 'Desktop' === getView ) {
 				setAttributes({ dividerBottomHeight: value });
 			}
 
-			if ( 'Tablet' == getView ) {
+			if ( 'Tablet' === getView ) {
 				setAttributes({ dividerBottomHeightTablet: value });
 			}
 
-			if ( 'Mobile' == getView ) {
+			if ( 'Mobile' === getView ) {
 				setAttributes({ dividerBottomHeightMobile: value });
 			}
 		}
@@ -837,11 +837,11 @@ const Inspector = ({
 	let getDividerInvert = () => {
 		let value;
 
-		if ( 'top' == dividerViewType ) {
+		if ( 'top' === dividerViewType ) {
 			value = attributes.dividerTopInvert;
 		}
 
-		if ( 'bottom' == dividerViewType ) {
+		if ( 'bottom' === dividerViewType ) {
 			value = attributes.dividerBottomInvert;
 		}
 
@@ -851,11 +851,11 @@ const Inspector = ({
 	getDividerInvert = getDividerInvert();
 
 	const changeDividerInvert = () => {
-		if ( 'top' == dividerViewType ) {
+		if ( 'top' === dividerViewType ) {
 			setAttributes({ dividerTopInvert: ! attributes.dividerTopInvert });
 		}
 
-		if ( 'bottom' == dividerViewType ) {
+		if ( 'bottom' === dividerViewType ) {
 			setAttributes({ dividerBottomInvert: ! attributes.dividerBottomInvert });
 		}
 	};
@@ -901,7 +901,7 @@ const Inspector = ({
 						onClick={ () => setTab( 'layout' ) }
 					>
 						<span>
-							<Dashicon icon="editor-table"/>
+							<Dashicon icon="editor-table" />
 							{ __( 'Layout', 'otter-blocks' ) }
 						</span>
 					</Button>
@@ -914,7 +914,7 @@ const Inspector = ({
 						onClick={ () => setTab( 'style' ) }
 					>
 						<span>
-							<Dashicon icon="admin-customizer"/>
+							<Dashicon icon="admin-customizer" />
 							{ __( 'Style', 'otter-blocks' ) }
 						</span>
 					</Button>
@@ -927,7 +927,7 @@ const Inspector = ({
 						onClick={ () => setTab( 'advanced' ) }
 					>
 						<span>
-							<Dashicon icon="admin-generic"/>
+							<Dashicon icon="admin-generic" />
 							{ __( 'Advanced', 'otter-blocks' ) }
 						</span>
 					</Button>

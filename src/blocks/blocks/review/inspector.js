@@ -161,7 +161,7 @@ const Inspector = ({
 							isDismissible={ false }
 							className="otter-html-anchor-control-notice"
 						>
-							{__( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
+							{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
 						</Notice>
 					)
 				}
@@ -179,7 +179,7 @@ const Inspector = ({
 						label={ __( 'Currency', 'otter-blocks' ) }
 						type="text"
 						placeholder={ __( 'Currency code, like USD or EUR.', 'otter-blocks' ) }
-						value={ productAttributes?.currency ||  attributes.currency }
+						value={ productAttributes?.currency || attributes.currency }
 						disabled={ attributes.product }
 						onChange={ currency => setAttributes({ currency }) }
 					/>
@@ -243,6 +243,7 @@ const Inspector = ({
 			>
 				{ 0 < attributes.features.length && attributes.features.map( ( feature, index ) => (
 					<PanelItem
+						key={ feature.title }
 						title={ feature.title || __( 'Feature', 'otter-blocks' ) }
 						remove={ () => removeFeature( index ) }
 					>
@@ -280,6 +281,7 @@ const Inspector = ({
 			>
 				{ 0 < attributes.pros.length && attributes.pros.map( ( pro, index ) => (
 					<PanelItem
+						key={ pro }
 						title={ pro || __( 'Pro', 'otter-blocks' ) }
 						remove={ () => removePro( index ) }
 					>
@@ -309,6 +311,7 @@ const Inspector = ({
 			>
 				{ 0 < attributes.cons.length && attributes.cons.map( ( con, index ) => (
 					<PanelItem
+						key={ con }
 						title={ con || __( 'Con', 'otter-blocks' ) }
 						remove={ () => removeCon( index ) }
 					>
@@ -343,13 +346,14 @@ const Inspector = ({
 							isDismissible={ false }
 							className="otter-html-anchor-control-notice"
 						>
-							{__( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
+							{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
 						</Notice>
 					)
 				}
 
 				{ 0 < productAttributes?.links?.length && productAttributes?.links?.map( ( link, index ) => (
 					<PanelItem
+						key={ link.href }
 						title={ link.label || __( 'Link', 'otter-blocks' ) }
 						remove={ () => removeLinks( index ) }
 					>
@@ -382,6 +386,7 @@ const Inspector = ({
 						<Fragment>
 							{ 0 < attributes.links.length && attributes.links.map( ( link, index ) => (
 								<PanelItem
+									key={ link.href }
 									title={ link.label || __( 'Link', 'otter-blocks' ) }
 									remove={ () => removeLinks( index ) }
 								>
@@ -420,7 +425,6 @@ const Inspector = ({
 						</Fragment>
 					)
 				}
-
 
 			</PanelBody>
 
@@ -464,10 +468,10 @@ const Inspector = ({
 					title={ __( 'More Features', 'otter-blocks' ) }
 					initialOpen={ false }
 				>
-					<p>{ __( 'Build comparison tables for reviews, synchronize review data with WooCommerce products and more with Neve Pro. ', 'otter-blocks' )  }</p>
+					<p>{ __( 'Build comparison tables for reviews, synchronize review data with WooCommerce products and more with Neve Pro. ', 'otter-blocks' ) }</p>
 
 					<ExternalLink href="https://themeisle.com/themes/neve/pricing">
-						{ __( 'Get Neve Pro. ', 'otter-blocks' )  }
+						{ __( 'Get Neve Pro. ', 'otter-blocks' ) }
 					</ExternalLink>
 				</PanelBody>
 			) }

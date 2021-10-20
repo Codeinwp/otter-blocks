@@ -183,7 +183,7 @@ const Inspector = ({
 	const getPadding = type => {
 		let value;
 
-		if ( 'top' == type ) {
+		if ( 'top' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingTop;
 			}
@@ -197,7 +197,7 @@ const Inspector = ({
 			}
 		}
 
-		if ( 'right' == type ) {
+		if ( 'right' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingRight;
 			}
@@ -211,7 +211,7 @@ const Inspector = ({
 			}
 		}
 
-		if ( 'bottom' == type ) {
+		if ( 'bottom' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingBottom;
 			}
@@ -225,7 +225,7 @@ const Inspector = ({
 			}
 		}
 
-		if ( 'left' == type ) {
+		if ( 'left' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingLeft;
 			}
@@ -319,10 +319,10 @@ const Inspector = ({
 		}
 	};
 
-	const getMargin = type => {
+	const getMargin = ( type ) => {
 		let value;
 
-		if ( 'top' == type ) {
+		if ( 'top' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === attributes.marginType ? attributes.margin : attributes.marginTop;
 			}
@@ -336,7 +336,7 @@ const Inspector = ({
 			}
 		}
 
-		if ( 'right' == type ) {
+		if ( 'right' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === attributes.marginType ? attributes.margin : attributes.marginRight;
 			}
@@ -350,7 +350,7 @@ const Inspector = ({
 			}
 		}
 
-		if ( 'bottom' == type ) {
+		if ( 'bottom' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === attributes.marginType ? attributes.margin : attributes.marginBottom;
 			}
@@ -364,7 +364,7 @@ const Inspector = ({
 			}
 		}
 
-		if ( 'left' == type ) {
+		if ( 'left' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === attributes.marginType ? attributes.margin : attributes.marginLeft;
 			}
@@ -445,19 +445,19 @@ const Inspector = ({
 	const getBorder = type => {
 		let value;
 
-		if ( 'top' == type ) {
+		if ( 'top' === type ) {
 			value = 'linked' === attributes.borderType ? attributes.border : attributes.borderTop;
 		}
 
-		if ( 'right' == type ) {
+		if ( 'right' === type ) {
 			value = 'linked' === attributes.borderType ? attributes.border : attributes.borderRight;
 		}
 
-		if ( 'bottom' == type ) {
+		if ( 'bottom' === type ) {
 			value = 'linked' === attributes.borderType ? attributes.border : attributes.borderBottom;
 		}
 
-		if ( 'left' == type ) {
+		if ( 'left' === type ) {
 			value = 'linked' === attributes.borderType ? attributes.border : attributes.borderLeft;
 		}
 
@@ -490,19 +490,19 @@ const Inspector = ({
 	const getBorderRadius = type => {
 		let value;
 
-		if ( 'top' == type ) {
+		if ( 'top' === type ) {
 			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusTop;
 		}
 
-		if ( 'right' == type ) {
+		if ( 'right' === type ) {
 			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusRight;
 		}
 
-		if ( 'bottom' == type ) {
+		if ( 'bottom' === type ) {
 			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusBottom;
 		}
 
-		if ( 'left' == type ) {
+		if ( 'left' === type ) {
 			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusLeft;
 		}
 
@@ -552,7 +552,7 @@ const Inspector = ({
 					onClick={ () => setTab( 'layout' ) }
 				>
 					<span>
-						<Dashicon icon="editor-table"/>
+						<Dashicon icon="editor-table" />
 						{ __( 'Layout', 'otter-blocks' ) }
 					</span>
 				</Button>
@@ -565,7 +565,7 @@ const Inspector = ({
 					onClick={ () => setTab( 'style' ) }
 				>
 					<span>
-						<Dashicon icon="admin-customizer"/>
+						<Dashicon icon="admin-customizer" />
 						{ __( 'Style', 'otter-blocks' ) }
 					</span>
 				</Button>
@@ -578,7 +578,7 @@ const Inspector = ({
 					onClick={ () => setTab( 'advanced' ) }
 				>
 					<span>
-						<Dashicon icon="admin-generic"/>
+						<Dashicon icon="admin-generic" />
 						{ __( 'Advanced', 'otter-blocks' ) }
 					</span>
 				</Button>

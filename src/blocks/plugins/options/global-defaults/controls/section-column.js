@@ -128,7 +128,7 @@ const SectionColumn = ({
 	const getPadding = type => {
 		let value;
 
-		if ( 'top' == type ) {
+		if ( 'top' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingTop;
 			}
@@ -142,7 +142,7 @@ const SectionColumn = ({
 			}
 		}
 
-		if ( 'right' == type ) {
+		if ( 'right' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingRight;
 			}
@@ -156,7 +156,7 @@ const SectionColumn = ({
 			}
 		}
 
-		if ( 'bottom' == type ) {
+		if ( 'bottom' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingBottom;
 			}
@@ -170,7 +170,7 @@ const SectionColumn = ({
 			}
 		}
 
-		if ( 'left' == type ) {
+		if ( 'left' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingLeft;
 			}
@@ -285,7 +285,7 @@ const SectionColumn = ({
 	const getMargin = type => {
 		let value;
 
-		if ( 'top' == type ) {
+		if ( 'top' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.marginType ? defaults.margin : defaults.marginTop;
 			}
@@ -299,7 +299,7 @@ const SectionColumn = ({
 			}
 		}
 
-		if ( 'right' == type ) {
+		if ( 'right' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.marginType ? defaults.margin : defaults.marginRight;
 			}
@@ -313,7 +313,7 @@ const SectionColumn = ({
 			}
 		}
 
-		if ( 'bottom' == type ) {
+		if ( 'bottom' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.marginType ? defaults.margin : defaults.marginBottom;
 			}
@@ -327,7 +327,7 @@ const SectionColumn = ({
 			}
 		}
 
-		if ( 'left' == type ) {
+		if ( 'left' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.marginType ? defaults.margin : defaults.marginLeft;
 			}
@@ -383,7 +383,7 @@ const SectionColumn = ({
 					/>
 				</ResponsiveControl>
 
-				<hr/>
+				<hr />
 
 				<ResponsiveControl
 					label={ __( 'Margin', 'otter-blocks' ) }

@@ -37,7 +37,7 @@ const BlockPlaceholder = ({
 
 		const { COLLECTIONS_STORE_KEY } = window.wc.wcBlocksData;
 
-		const args =  [
+		const args = [
 			'/wc/store', 'products',
 			{
 				per_page: 100
@@ -71,7 +71,7 @@ const BlockPlaceholder = ({
 		};
 	}, []);
 
-	const isLoading  = 'loading' === status;
+	const isLoading = 'loading' === status;
 	const isComplete = 'loaded' === status;
 	const isError = 'error' === status;
 
@@ -100,6 +100,8 @@ const BlockPlaceholder = ({
 			<span className="otter-review-comparison__tag_title">{ label }</span>
 
 			<Button
+
+				/* translators: %s Label */
 				label={ sprintf( __( 'Remove %s', 'otter-blocks' ), label ) }
 				icon="dismiss"
 				onClick={ () => toggleProduct( value ) }
@@ -129,9 +131,7 @@ const BlockPlaceholder = ({
 						<div className="otter-review-comparison__placeholder__selected_label">
 							{
 
-								/**
-								 * translators: %s Number of selected products.
-								 */
+								/* translators: %s Number of selected products. */
 								sprintf( __( '%s products selected', 'otter-blocks' ), attributes.products.length )
 							}
 						</div>
@@ -155,6 +155,7 @@ const BlockPlaceholder = ({
 						{ data.filter( product => product.label.toLowerCase().includes( query.toLowerCase() ) ).map( product => {
 							return (
 								<CheckboxControl
+									key={ product.value }
 									label={ product.label || __( 'Untitled product', 'otter-blocks' ) }
 									checked={ attributes.products.includes( product.value ) }
 									onChange={ () => toggleProduct( product.value ) }

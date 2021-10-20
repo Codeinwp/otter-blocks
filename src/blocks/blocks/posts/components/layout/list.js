@@ -4,8 +4,8 @@
 import classnames from 'classnames';
 
 /**
-* WordPress dependencies
-*/
+ * WordPress dependencies
+ */
 import {
 	__,
 	sprintf
@@ -25,7 +25,7 @@ const List = ({
 	authors
 }) => {
 	const Tag = attributes.titleTag || 'h5';
-	console.log( posts );
+
 	return (
 		<div className={ classnames(
 			className,
@@ -33,7 +33,6 @@ const List = ({
 			{ 'has-shadow': attributes.imageBoxShadow }
 		) }>
 			{ posts.filter( post => post ).map( post => {
-
 				let category, author;
 
 				if ( categoriesList && 0 < post?.categories?.length ) {
@@ -45,7 +44,10 @@ const List = ({
 				}
 
 				return (
-					<div key={post.link} className="wp-block-themeisle-blocks-posts-grid-post-blog wp-block-themeisle-blocks-posts-grid-post-plain">
+					<div
+						key={ post.link }
+						className="wp-block-themeisle-blocks-posts-grid-post-blog wp-block-themeisle-blocks-posts-grid-post-plain"
+					>
 						<div className="wp-block-themeisle-blocks-posts-grid-post">
 							{ ( 0 !== post.featured_media && attributes.displayFeaturedImage ) && (
 								<Thumbnail
@@ -63,7 +65,7 @@ const List = ({
 								{ attributes.template.map( element => {
 									if ( 'category' === element ) {
 										if ( undefined !== category && ( attributes.displayCategory && categoriesList ) ) {
-											return <span class="wp-block-themeisle-blocks-posts-grid-post-category">{ category.name }</span>;
+											return <span className="wp-block-themeisle-blocks-posts-grid-post-category">{ category.name }</span>;
 										}
 									}
 
@@ -84,10 +86,14 @@ const List = ({
 											return (
 												<p className="wp-block-themeisle-blocks-posts-grid-post-meta">
 													{ ( attributes.displayDate ) && (
+
+														/* translators: %s Date posted */
 														sprintf( __( 'on %s', 'otter-blocks' ), formatDate( post.date ) )
 													) }
 
 													{ ( attributes.displayAuthor && undefined !== author && authors ) && (
+
+														/* translators: %s Author of the post */
 														sprintf( __( ' by %s', 'otter-blocks' ), author.name )
 													) }
 												</p>

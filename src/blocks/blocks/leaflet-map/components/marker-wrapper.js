@@ -29,7 +29,7 @@ const MarkerWrapper = ({
 	return (
 		<Fragment>
 			<div className="wp-block-themeisle-blocks-leaflet-map-marker-group">
-				{ markers.map(  marker => {
+				{ markers.map( marker => {
 					return (
 						<Marker
 							key={ marker.id }
@@ -52,7 +52,7 @@ const MarkerWrapper = ({
 						marker: {
 							id: uuidv4()
 						},
-						dispatch: dispatch
+						dispatch
 					});
 				}}
 			>

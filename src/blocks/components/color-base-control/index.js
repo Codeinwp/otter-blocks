@@ -9,8 +9,8 @@ import classnames from 'classnames';
 import { ColorIndicator } from '@wordpress/components';
 
 /**
-* Internal dependencies
-*/
+ * Internal dependencies
+ */
 import './editor.scss';
 
 function ColorBaseControl({

@@ -28,7 +28,6 @@ const Edit = ({
 	isSelected,
 	clientId
 }) => {
-
 	const playerRef = useRef( null );
 
 	useEffect( () => {

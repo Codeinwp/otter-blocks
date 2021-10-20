@@ -10,8 +10,8 @@ import { Fragment } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
 
 /**
-  * Internal dependencies.
-  */
+ * Internal dependencies.
+ */
 import './editor.scss';
 import Edit from './edit.js';
 

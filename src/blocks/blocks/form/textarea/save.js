@@ -12,7 +12,7 @@ const Save = ({
 	return (
 		<div className={ className } >
 			<label
-				for={ attributes.id }
+				htmlFor={ attributes.id }
 				className="otter-form-textarea-label"
 			>
 				<RichText.Content
@@ -22,7 +22,7 @@ const Save = ({
 				/>
 
 				{ attributes.isRequired && (
-					<span class="required">{ __( '(required)', 'otter-blocks' ) }</span>
+					<span className="required">{ __( '(required)', 'otter-blocks' ) }</span>
 				) }
 			</label>
 

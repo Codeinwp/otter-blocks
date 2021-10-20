@@ -55,15 +55,15 @@ const Inspector = ({
 	};
 
 	const onBackgroundColorChange = value => {
-		setAttributes({ backgroundColor: value});
+		setAttributes({ backgroundColor: value });
 	};
 
 	const onLabelColorChange = value => {
-		setAttributes({ labelColor: value});
+		setAttributes({ labelColor: value });
 	};
 
 	const onValueColorChange = value => {
-		setAttributes({ valueColor: value});
+		setAttributes({ valueColor: value });
 	};
 
 	const onGapChange = value => {
@@ -149,19 +149,19 @@ const Inspector = ({
 	const getBorderRadius = type => {
 		let value;
 
-		if ( 'top-right' == type ) {
+		if ( 'top-right' === type ) {
 			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusTopRight;
 		}
 
-		if ( 'top-left' == type ) {
+		if ( 'top-left' === type ) {
 			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusTopLeft;
 		}
 
-		if ( 'bottom-right' == type ) {
+		if ( 'bottom-right' === type ) {
 			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusBottomRight;
 		}
 
-		if ( 'bottom-left' == type ) {
+		if ( 'bottom-left' === type ) {
 			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusBottomLeft;
 		}
 

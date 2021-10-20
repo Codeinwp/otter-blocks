@@ -31,6 +31,6 @@ registerBlockType( 'themeisle-blocks/form-nonce', {
 		align: [ 'wide', 'full' ],
 		inserter: false
 	},
-	edit: edit,
+	edit,
 	save: () => null
 });

@@ -143,7 +143,7 @@ const Edit = ({
 			mainComponents: {
 				backgroundColor: attributes.backgroundColor,
 				width: px( attributes?.widthMobile ),
-				borderWidth: px ( attributes.borderWidthMobile ),
+				borderWidth: px( attributes.borderWidthMobile ),
 				borderColor: attributes.borderColor
 			}
 		};
@@ -155,7 +155,7 @@ const Edit = ({
 			},
 			label: {
 				color: attributes.labelColor,
-				fontSize: px(  attributes.labelFontSize )
+				fontSize: px( attributes.labelFontSize )
 			},
 			display: {
 				gap: px( attributes.gap )

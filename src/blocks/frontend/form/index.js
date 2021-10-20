@@ -16,8 +16,9 @@ const TIME_UNTIL_REMOVE = 10_000;
 
 /**
  * Send the date from the form to the server
- * @param {HTMLDivElement} form The element that contains all the inputs
- * @param {HTMLButtonElement} btn The submit button
+ *
+ * @param {HTMLDivElement}    form The element that contains all the inputs
+ * @param {HTMLButtonElement} btn  The submit button
  */
 const collectAndSendInputFormData = ( form, btn ) => {
 	const id = form?.id;
@@ -31,7 +32,6 @@ const collectAndSendInputFormData = ( form, btn ) => {
 	const inputs = form?.querySelectorAll( '.otter-form__container .wp-block-themeisle-blocks-form-input' );
 	const textarea = form?.querySelectorAll( '.otter-form__container .wp-block-themeisle-blocks-form-textarea' );
 
-
 	[ ...inputs, ...textarea ]?.forEach( input => {
 		const label = input.querySelector( '.otter-form-input-label__label, .otter-form-textarea-label__label' )?.innerHTML;
 		const valueElem = input.querySelector( '.otter-form-input, .otter-form-textarea-input' );
@@ -39,7 +39,7 @@ const collectAndSendInputFormData = ( form, btn ) => {
 		// TODO: use checkbox in the future versions
 		const checked = input.querySelector( '.otter-form-input[type="checkbox"]' )?.checked;
 
-		if ( valueElem?.hasAttribute( 'required' ) &&  ! valueElem?.checkValidity() ) {
+		if ( valueElem?.hasAttribute( 'required' ) && ! valueElem?.checkValidity() ) {
 			elemsWithError.push( valueElem );
 		}
 
@@ -50,7 +50,7 @@ const collectAndSendInputFormData = ( form, btn ) => {
 				type: valueElem?.type,
 				checked
 			});
-		};
+		}
 	});
 
 	const query = `.protection #${ form.id || '' }_nonce_field`;
@@ -60,9 +60,10 @@ const collectAndSendInputFormData = ( form, btn ) => {
 	msgAnchor?.classList.add( 'has-submit-msg' );
 
 	/**
-		 * Add the message to the anchor element then removed after a fixed time
-		 * @param {HTMLDivElement} msg The message container
-		 */
+	 * Add the message to the anchor element then removed after a fixed time
+	 *
+	 * @param {HTMLDivElement} msg The message container
+	 */
 	const addThenRemoveMsg = ( msg ) => {
 
 		// Remove old messages
@@ -76,7 +77,7 @@ const collectAndSendInputFormData = ( form, btn ) => {
 			if ( msg && msgAnchor === msg.parentNode ) {
 				msgAnchor.removeChild( msg );
 			}
-		},  TIME_UNTIL_REMOVE );
+		}, TIME_UNTIL_REMOVE );
 	};
 
 	if ( 0 < elemsWithError.length || ( form?.classList?.contains( 'has-captcha' ) && id && ! window.themeisleGutenberg?.tokens[id].token ) ) {
@@ -84,7 +85,7 @@ const collectAndSendInputFormData = ( form, btn ) => {
 			input?.reportValidity();
 		});
 
-		if (  form?.classList?.contains( 'has-captcha' ) && id && ! window.themeisleGutenberg?.tokens[id].token  ) {
+		if ( form?.classList?.contains( 'has-captcha' ) && id && ! window.themeisleGutenberg?.tokens[id].token ) {
 			const msg = document.createElement( 'div' );
 			msg.classList.add( 'otter-form-server-response' );
 			if ( ! window.hasOwnProperty( 'grecaptcha' ) ) {
@@ -108,8 +109,8 @@ const collectAndSendInputFormData = ( form, btn ) => {
 			data.formOption = form?.dataset?.optionName;
 		}
 
-		if (  form?.classList?.contains( 'has-captcha' ) && id && window.themeisleGutenberg?.tokens?.[id].token ) {
-			data.token = window.themeisleGutenberg?.tokens?.[id].token;
+		if ( form?.classList?.contains( 'has-captcha' ) && id && window.themeisleGutenberg?.tokens?.[ id ].token ) {
+			data.token = window.themeisleGutenberg?.tokens?.[ id ].token;
 		}
 
 		if ( form?.id ) {
@@ -140,12 +141,11 @@ const collectAndSendInputFormData = ( form, btn ) => {
 
 		msgAnchor?.classList.add( 'loading' );
 
-
 		apiFetch({
 			path: 'themeisle-gutenberg-blocks/v1/forms',
 			method: 'POST',
 			data
-		}).then( res => {
+		}).then( ( res ) => {
 			msgAnchor?.classList.remove( 'loading' );
 			const msg = document.createElement( 'div' );
 			msg.classList.add( 'otter-form-server-response' );
@@ -154,7 +154,6 @@ const collectAndSendInputFormData = ( form, btn ) => {
 				msg.innerHTML = __( 'Success', 'otter-blocks' );
 				msg.classList.add( 'success' );
 			} else {
-
 				msg.classList.add( 'error' );
 
 				if ( 'provider' === res?.error_source ) {
@@ -171,18 +170,20 @@ const collectAndSendInputFormData = ( form, btn ) => {
 					msg.innerHTML = __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' );
 				}
 
+				// eslint-disable-next-line no-console
 				console.error( res?.error, res?.reasons );
 			}
 
 			addThenRemoveMsg( msg );
 
-			if ( window.themeisleGutenberg?.tokens?.[id].reset ) {
-				window.themeisleGutenberg?.tokens?.[id].reset();
+			if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
+				window.themeisleGutenberg?.tokens?.[ id ].reset();
 			}
 			btn.disabled = false;
-		})?.catch( error => {
+		})?.catch( ( error ) => {
 			msgAnchor?.classList.remove( 'loading' );
 
+			// eslint-disable-next-line no-console
 			console.error( error );
 
 			const msg = document.createElement( 'div' );
@@ -191,8 +192,8 @@ const collectAndSendInputFormData = ( form, btn ) => {
 			msg.classList.add( 'error' );
 
 			addThenRemoveMsg( msg );
-			if ( window.themeisleGutenberg?.tokens?.[id].reset ) {
-				window.themeisleGutenberg?.tokens?.[id].reset();
+			if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
+				window.themeisleGutenberg?.tokens?.[ id ].reset();
 			}
 			btn.disabled = false;
 		});
@@ -204,8 +205,7 @@ domReady( () => {
 
 	addCaptchaOnPage( forms );
 
-	forms.forEach( form => {
-
+	forms.forEach( ( form ) => {
 		if ( form.classList.contains( 'can-submit-and-subscribe' ) ) {
 			renderConsentCheckbox( form );
 		}
@@ -219,11 +219,11 @@ domReady( () => {
 			}
 		});
 	});
-
 });
 
 /**
  * Render a checkbox for consent
+ *
  * @param {HTMLDivElement} form
  */
 const renderConsentCheckbox = ( form ) => {

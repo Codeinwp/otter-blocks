@@ -44,7 +44,7 @@ const Inspector = ({
 
 		Object.keys( elements ).forEach( e => elements[e].remove() );
 
-		const searchBox = new google.maps.places.SearchBox( searchRef.current );
+		const searchBox = new window.google.maps.places.SearchBox( searchRef.current );
 
 		searchBox.addListener( 'places_changed', () => {
 			const places = searchBox.getPlaces();
@@ -53,7 +53,7 @@ const Inspector = ({
 				places.forEach( place => {
 					const latitude = place.geometry.location.lat();
 					const longitude = place.geometry.location.lng();
-					const latLng = new google.maps.LatLng( latitude, longitude );
+					const latLng = new window.google.maps.LatLng( latitude, longitude );
 					map.setCenter( latLng );
 					setAttributes({
 						location: place.formatted_address || place.name,
@@ -73,7 +73,7 @@ const Inspector = ({
 		setAttributes({ latitude: value.toString() });
 		const latitude = Number( value );
 		const longitude = attributes.longitude;
-		const latLng = new google.maps.LatLng( latitude, longitude );
+		const latLng = new window.google.maps.LatLng( latitude, longitude );
 		map.setCenter( latLng );
 	};
 
@@ -81,13 +81,13 @@ const Inspector = ({
 		setAttributes({ longitude: value.toString() });
 		const latitude = attributes.latitude;
 		const longitude = Number( value );
-		const latLng = new google.maps.LatLng( latitude, longitude );
+		const latLng = new window.google.maps.LatLng( latitude, longitude );
 		map.setCenter( latLng );
 	};
 
 	const changeMapType = value => {
 		setAttributes({ type: value });
-		map.setMapTypeId( google.maps.MapTypeId[ value.toUpperCase() ]);
+		map.setMapTypeId( window.google.maps.MapTypeId[ value.toUpperCase() ]);
 	};
 
 	const changeZoom = value => {

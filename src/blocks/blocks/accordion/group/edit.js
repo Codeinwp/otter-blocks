@@ -35,7 +35,6 @@ const Edit = ({
 	clientId,
 	isSelected
 }) => {
-
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
@@ -70,7 +69,7 @@ const Edit = ({
 				className={ classnames(
 					className,
 					{
-						[`is-${ attributes.gap }-gap`]: attributes.gap
+						[ `is-${ attributes.gap }-gap` ]: attributes.gap
 					}
 				) }
 				css={ styles }

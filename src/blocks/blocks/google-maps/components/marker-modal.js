@@ -56,7 +56,7 @@ const MarkerModal = ({
 
 		Object.keys( elements ).forEach( e => elements[e].remove() );
 
-		const searchBox = new google.maps.places.SearchBox( searchRef.current );
+		const searchBox = new window.google.maps.places.SearchBox( searchRef.current );
 
 		searchBox.addListener( 'places_changed', () => {
 			const places = searchBox.getPlaces();
@@ -146,7 +146,7 @@ const MarkerModal = ({
 				<Button
 					isLarge
 					isPrimary
-					onClick={ () => addMarker( location, title, icon, description, latitude, longitude  ) }
+					onClick={ () => addMarker( location, title, icon, description, latitude, longitude ) }
 				>
 					{ __( 'Add', 'otter-blocks' ) }
 				</Button>

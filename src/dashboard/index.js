@@ -2,8 +2,6 @@
  * External dependencies.
  */
 import ReactNotification from 'react-notifications-component';
-import 'core-js';
-import 'regenerator-runtime/runtime';
 
 /**
  * WordPress dependencies.
@@ -25,8 +23,8 @@ import Footer from './Components/Footer.js';
 const App = () => {
 	return (
 		<Fragment>
-			{ Boolean( otterObj.showTour ) && <Onboarding /> }
-			<ReactNotification/>
+			{ Boolean( window.otterObj.showTour ) && <Onboarding /> }
+			<ReactNotification />
 			<Header />
 			<Main />
 			<Footer />

@@ -44,6 +44,7 @@ const StyleSwitcherControl = ({
 				{ options.map( option => {
 					return (
 						<Button
+							key={ option.value }
 							className={ classnames(
 								'otter-style-switcher-item',
 								{ 'is-active': option.value === value }
@@ -100,6 +101,7 @@ export const StyleSwitcherBlockControl = ({
 								{ options.map( option => {
 									return (
 										<Button
+											key={ option.value }
 											className={ classnames(
 												'otter-style-switcher-item',
 												{ 'is-active': option.value === value }

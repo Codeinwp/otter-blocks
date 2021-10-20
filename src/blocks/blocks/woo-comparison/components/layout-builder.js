@@ -12,14 +12,13 @@ const LayoutBuilder = ({
 	attributes,
 	setAttributes
 }) => {
-	const onSortEnd = ({ oldIndex, newIndex })  => {
+	const onSortEnd = ({ oldIndex, newIndex }) => {
 		const fields = JSON.stringify( arrayMove( JSON.parse( attributes.fields ), oldIndex, newIndex ) );
 		setAttributes({ fields });
 	};
 
 	let template = JSON.parse( window.themeisleGutenberg.themeMods.defaultFields );
 	template = template.filter( item => ! JSON.parse( attributes.fields ).includes( item ) );
-
 
 	const toggleFields = value => {
 		const fields = JSON.parse( attributes.fields );
@@ -47,7 +46,7 @@ const LayoutBuilder = ({
 
 			{ template.map( ( value, index ) => (
 				<SortableItem
-					key={`item-${ value }`}
+					key={ `item-${ value }` }
 					index={ index }
 					value={ value }
 					hidden={ true }

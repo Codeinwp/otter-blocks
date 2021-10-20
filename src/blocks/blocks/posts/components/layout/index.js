@@ -14,11 +14,11 @@ const Layout = ({
 	if ( 'grid' === attributes.style ) {
 		return (
 			<Grid
-				className= { className }
-				attributes= { attributes }
-				posts= { posts }
-				categoriesList= { categoriesList }
-				authors= { authors }
+				className={ className }
+				attributes={ attributes }
+				posts={ posts }
+				categoriesList={ categoriesList }
+				authors={ authors }
 			/>
 		);
 	}
@@ -26,11 +26,11 @@ const Layout = ({
 	if ( 'list' === attributes.style ) {
 		return (
 			<List
-				className= { className }
-				attributes= { attributes }
-				posts= { posts }
-				categoriesList= { categoriesList }
-				authors= { authors }
+				className={ className }
+				attributes={ attributes }
+				posts={ posts }
+				categoriesList={ categoriesList }
+				authors={ authors }
 			/>
 		);
 	}

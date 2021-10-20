@@ -37,7 +37,6 @@ const Edit = ({
 	onRemove,
 	mergeBlocks
 }) => {
-
 	const {
 		hasParent,
 		parentClass,
@@ -64,7 +63,7 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
-	const  iconClassName = `${ attributes.iconPrefix || parentAttributes.defaultIconPrefix } fa-${ attributes.icon || parentAttributes.defaultIcon }`;
+	const iconClassName = `${ attributes.iconPrefix || parentAttributes.defaultIconPrefix } fa-${ attributes.icon || parentAttributes.defaultIcon }`;
 	const contentStyle = {
 		color: attributes.contentColor || parentAttributes.defaultContentColor,
 		fontSize: parentAttributes.defaultSize + 'px'
@@ -75,7 +74,7 @@ const Edit = ({
 		fontSize: parentAttributes.defaultSize + 'px'
 	};
 	const itemStyle = {
-		marginRight: parentClass.includes( 'is-style-horizontal' ) ? parentAttributes.gap + 'px'  :  parentAttributes.gap + 'px'
+		marginRight: parentClass.includes( 'is-style-horizontal' ) ? parentAttributes.gap + 'px' : parentAttributes.gap + 'px'
 	};
 
 	/**
@@ -87,12 +86,11 @@ const Edit = ({
 			icon: attributes.icon || parentAttributes.defaultIcon,
 			iconPrefix: attributes.iconPrefix || parentAttributes.defaultIconPrefix
 		});
-	};
+	}
 
 	const changeContent = value => {
 		setAttributes({ content: value });
 	};
-
 
 	return (
 		<Fragment>

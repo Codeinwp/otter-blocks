@@ -37,11 +37,11 @@ const Edit = ({
 
 			<div className={ className } >
 				<label
-					for={ attributes.id }
+					htmlFor={ attributes.id }
 					className="otter-form-textarea-label"
 				>
 					<RichText
-						placeholder={ __( 'Type here…', 'otter-blocks' )}
+						placeholder={ __( 'Type here…', 'otter-blocks' ) }
 						className="otter-form-textarea-label__label"
 						value={ attributes.label }
 						onChange={ label => setAttributes({ label }) }
@@ -49,7 +49,7 @@ const Edit = ({
 					/>
 
 					{ attributes.isRequired && (
-						<span class="required">{ __( '(required)', 'otter-blocks' ) }</span>
+						<span className="required">{ __( '(required)', 'otter-blocks' ) }</span>
 					) }
 				</label>
 

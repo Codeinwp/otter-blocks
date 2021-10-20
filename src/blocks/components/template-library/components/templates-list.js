@@ -64,7 +64,7 @@ const TemplatesList = ({
 	if ( isLoading ) {
 		return (
 			<div className="library-modal-loader">
-				<Spinner/>
+				<Spinner />
 			</div>
 		);
 	}

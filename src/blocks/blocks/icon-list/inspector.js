@@ -69,7 +69,7 @@ const Inspector = ({
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>
-				<Suspense fallback={<Placeholder><Spinner /></Placeholder>}>
+				<Suspense fallback={ <Placeholder><Spinner /></Placeholder> }>
 					<IconPickerControl
 						label={ __( 'Icon Picker', 'otter-blocks' ) }
 						library={ attributes.defaultLibrary }

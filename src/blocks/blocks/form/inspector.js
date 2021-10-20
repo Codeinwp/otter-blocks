@@ -78,7 +78,7 @@ const Inspector = ({
 				err => {
 					createNotice(
 						'error',
-						__( err?.error, 'otter-blocks' ),
+						err?.error,
 						{
 							isDismissible: true,
 							type: 'snackbar',
@@ -98,7 +98,7 @@ const Inspector = ({
 			let isMissing = true;
 			let hasUpdated = false;
 
-			emails?.forEach( ({ form }, index )=> {
+			emails?.forEach( ({ form }, index ) => {
 				if ( form === attributes.optionName ) {
 					if ( emails[index].email !== email ) {
 						emails[index].email = email; // update the value
@@ -111,7 +111,7 @@ const Inspector = ({
 			if ( isMissing ) {
 				emails.push({
 					form: attributes.optionName,
-					email: email
+					email
 				});
 			}
 
@@ -141,7 +141,6 @@ const Inspector = ({
 					});
 				});
 			}
-
 		});
 	};
 
@@ -196,16 +195,16 @@ const Inspector = ({
 					)
 				}
 
-	   		</PanelBody>
+			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Integration', 'otter-blocks' )}
+				title={ __( 'Integration', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
 				{
 					__( 'Add your client email to a Digital Marketing provider.', 'otter-blocks' )
 				}
-				<br/> <br/>
+				<br /> <br />
 				<b> { __( 'You need to have at least one email field in your form. For multiple email fields, only the first will be used.', 'otter-blocks' ) } </b>
 
 				<SelectControl
@@ -238,7 +237,7 @@ const Inspector = ({
 							{
 								attributes.apiKey && 2 > listIDOptions.length && 'loading' === fetchListIdStatus && (
 									<Fragment>
-										<Spinner/>
+										<Spinner />
 										{ __( 'Fetching data from provider.', 'otter-blocks' ) }
 									</Fragment>
 								)

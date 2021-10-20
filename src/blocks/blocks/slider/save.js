@@ -39,12 +39,12 @@ const Save = ({
 					{ attributes.images.map( image => {
 						return (
 							<div
+								key={ image.id }
 								className="wp-block-themeisle-blocks-slider-item-wrapper glide__slide"
 								tabIndex="0"
 							>
 								<figure>
 									<img
-										key={ image.id }
 										className="wp-block-themeisle-blocks-slider-item"
 										src={ image.url }
 										alt={ image.alt }

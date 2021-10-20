@@ -1,47 +1,32 @@
 {
-	"root": true,
-	"env": {
-		"browser": true,
-		"es6": true
-	},
-	"extends": "wordpress",
-	"parser": "babel-eslint",
-	"parserOptions": {
-		"allowImportExportEverywhere": true,
-		"ecmaFeatures": {
-			"jsx": true
-		},
-		"ecmaVersion": 2018,
-		"sourceType": "module"
-	},
-	"plugins": [
-		"react"
-	],
-	"rules": {
-		"indent": [
-			"error",
-			"tab"
-		],
-		"linebreak-style": [
-			"error",
-			"unix"
-		],
-		"quotes": [
-			"error",
-			"single"
-		],
-		"semi": [
-			"error",
-			"always"
-		],
-		"no-unused-vars": [
-			"error", {
-				"vars": "all",
-				"args": "after-used",
-				"ignoreRestSiblings": false
-			}
-		],
-		"react/jsx-uses-react": "error",
-		"react/jsx-uses-vars": "error"
-	}
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": "wordpress",
+    "parserOptions": {
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "ecmaVersion": 2021,
+        "sourceType": "module"
+    },
+    "rules": {
+        "indent": [
+            "error",
+            "tab"
+        ],
+        "linebreak-style": [
+            "error",
+            "unix"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ]
+    }
 }

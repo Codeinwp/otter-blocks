@@ -23,7 +23,7 @@ const BlockPlaceholder = ({
 	if ( ! isAPILoaded ) {
 		return (
 			<Placeholder>
-				<Spinner/>
+				<Spinner />
 				{ __( 'Loading…', 'otter-blocks' ) }
 			</Placeholder>
 		);

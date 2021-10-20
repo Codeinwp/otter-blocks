@@ -24,7 +24,7 @@ const LottiePlayer = ({
 			if ( attributes.direction ) {
 				playerRef.current.seek( '100%' );
 			}
-		} else  {
+		} else {
 			playerRef.current.stop();
 		}
 	}, [ isSelected ]);

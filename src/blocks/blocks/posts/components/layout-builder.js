@@ -24,7 +24,7 @@ const LayoutBuilder = ({
 	titleTag,
 	excerptLimit
 }) => {
-	const onSortEnd = ({ oldIndex, newIndex })  => {
+	const onSortEnd = ({ oldIndex, newIndex }) => {
 		const template = arrayMove( attributes.template, oldIndex, newIndex );
 		setAttributes({ template });
 	};

@@ -32,8 +32,8 @@ const BlockPlaceholder = ({
 	onChange
 }) => {
 	useEffect( () => {
-		wp.api.loadPromise.then( () => {
-			const settings = new wp.api.models.Settings();
+		window.wp.api.loadPromise.then( () => {
+			const settings = new window.wp.api.models.Settings();
 
 			settings.fetch().then( response => {
 				if ( response.themeisle_allow_json_upload ) {
@@ -62,7 +62,7 @@ const BlockPlaceholder = ({
 					title: __( 'Lottie', 'otter-blocks' ),
 					instructions: __( 'Add Lottie animations and files to your website.', 'otter-blocks' )
 				} }
-				icon={ <BlockIcon icon={ video } />}
+				icon={ <BlockIcon icon={ video } /> }
 				accept={ [ 'application/json' ] }
 				allowedTypes={ [ 'application/json' ] }
 				value={ { ...file } }
@@ -77,7 +77,7 @@ const BlockPlaceholder = ({
 			<Placeholder
 				label={ __( 'Lottie', 'otter-blocks' ) }
 				instructions={ __( 'Add Lottie animations and files to your website.', 'otter-blocks' ) }
-				icon={ <BlockIcon icon={ video } />}
+				icon={ <BlockIcon icon={ video } /> }
 				className={ className }
 			>
 				<form onSubmit={ onChangeValue }>
@@ -117,9 +117,9 @@ const BlockPlaceholder = ({
 					overlayClassName="wp-block-themeisle-blocks-lottie-modal"
 				>
 					{ __( 'This file type is not permitted for security reasons. Would you still like to enable JSON uploads?', 'otter-blocks' ) }
-					<br/><br/>
+					<br /><br />
 					<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'You can enable JSON uploads from Otter.', 'otter-blocks' ) }</ExternalLink>
-					<br/><br/>
+					<br /><br />
 					{ __( 'You will have to refresh the page after changing JSON upload settings.', 'otter-blocks' ) }
 				</Modal>
 			) }

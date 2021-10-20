@@ -62,21 +62,21 @@ const Library = ({
 			}
 
 			try {
-				let data = await apiFetch({ path: 'themeisle-gutenberg-blocks/v1/fetch_templates' });
+				const data = await apiFetch({ path: 'themeisle-gutenberg-blocks/v1/fetch_templates' });
 
 				let blocksCategories = [];
 				let templateCategories = [];
 
-				data.map( i => {
+				data.forEach( i => {
 					if ( i.categories && i.template_url ) {
 						if ( 'block' === i.type ) {
-							i.categories.map( o => {
+							i.categories.forEach( o => {
 								blocksCategories.push( o );
 							});
 						}
 
 						if ( 'template' === i.type ) {
-							i.categories.map( o => {
+							i.categories.forEach( o => {
 								templateCategories.push( o );
 							});
 						}
@@ -169,7 +169,7 @@ const Library = ({
 			}
 
 			if ( url.includes( 'https://raw.githubusercontent.com/Codeinwp/' ) && window.themeisleGutenberg.dataLogging.templates && Boolean( window.themeisleGutenberg.canTrack ) ) {
-				const obj = window.themeisleGutenberg.dataLogging.templates.find( template => template.url === url );
+				const obj = window.themeisleGutenberg.dataLogging.templates.find( ( template ) => template.url === url );
 
 				if ( obj ) {
 					obj.instances = obj.instances + 1;
@@ -224,7 +224,7 @@ const Library = ({
 				changeSearch={ e => setSearch( e ) }
 			/>
 
-			<Notices/>
+			<Notices />
 
 			<TemplatesList
 				preview={ preview }

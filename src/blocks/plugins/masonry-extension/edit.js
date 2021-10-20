@@ -41,7 +41,7 @@ const Edit = ({
 		if ( props.attributes.isMasonry ) {
 			deleteMasonry();
 
-			macy.current = Macy({
+			macy.current = window.Macy({
 				container: `#block-${ props.clientId } .blocks-gallery-grid`,
 				trueOrder: false,
 				waitForImages: false,
@@ -100,7 +100,7 @@ const Edit = ({
 			</InspectorControls>
 
 			{ props.attributes.isMasonry ? (
-				<div class="otter-masonry">
+				<div className="otter-masonry">
 					<BlockEdit { ...props } />
 				</div>
 			) : (

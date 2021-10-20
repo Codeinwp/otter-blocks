@@ -58,6 +58,7 @@ const SizingControl = ({
 				>
 					{ options.map( ( i, n ) => (
 						<Field
+							key={ n }
 							id={ instanceId }
 							index={ i }
 							option={ n }

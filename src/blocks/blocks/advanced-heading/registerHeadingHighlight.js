@@ -16,7 +16,7 @@ import {
 import {
 	RichTextShortcut,
 	RichTextToolbarButton
-} from '@wordpress/block-editor';;
+} from '@wordpress/block-editor';
 
 import { Fragment } from '@wordpress/element';
 

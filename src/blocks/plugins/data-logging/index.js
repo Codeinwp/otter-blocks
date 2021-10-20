@@ -28,8 +28,8 @@ if ( select( 'core/editor' ) ) {
 		}
 	};
 
-	wp.api.loadPromise.then( () => {
-		const settings = new wp.api.models.Settings();
+	window.wp.api.loadPromise.then( () => {
+		const settings = new window.wp.api.models.Settings();
 
 		settings.fetch().then( response => {
 			if ( response.otter_blocks_logger_data && Boolean( window.themeisleGutenberg.canTrack ) ) {
@@ -111,7 +111,7 @@ if ( select( 'core/editor' ) ) {
 			}
 		}
 
-		const model = new wp.api.models.Settings({
+		const model = new window.wp.api.models.Settings({
 			// eslint-disable-next-line camelcase
 			otter_blocks_logger_data: dataLogging
 		});

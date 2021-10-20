@@ -188,7 +188,7 @@ const AdvancedHeading = ({
 	const getPadding = type => {
 		let value;
 
-		if ( 'top' == type ) {
+		if ( 'top' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingTop;
 			}
@@ -202,7 +202,7 @@ const AdvancedHeading = ({
 			}
 		}
 
-		if ( 'right' == type ) {
+		if ( 'right' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingRight;
 			}
@@ -216,7 +216,7 @@ const AdvancedHeading = ({
 			}
 		}
 
-		if ( 'bottom' == type ) {
+		if ( 'bottom' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingBottom;
 			}
@@ -230,7 +230,7 @@ const AdvancedHeading = ({
 			}
 		}
 
-		if ( 'left' == type ) {
+		if ( 'left' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingLeft;
 			}
@@ -339,7 +339,7 @@ const AdvancedHeading = ({
 	const getMargin = type => {
 		let value;
 
-		if ( 'top' == type ) {
+		if ( 'top' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.marginType ? defaults.margin : defaults.marginTop;
 			}
@@ -353,7 +353,7 @@ const AdvancedHeading = ({
 			}
 		}
 
-		if ( 'bottom' == type ) {
+		if ( 'bottom' === type ) {
 			if ( 'Desktop' === getView ) {
 				value = 'linked' === defaults.marginType ? defaults.margin : defaults.marginBottom;
 			}
@@ -402,7 +402,7 @@ const AdvancedHeading = ({
 					/>
 				</ColorBaseControl>
 
-				<hr/>
+				<hr />
 
 				<ResponsiveControl
 					label={ __( 'Font Size', 'otter-blocks' ) }
@@ -432,7 +432,7 @@ const AdvancedHeading = ({
 					onChangeTextTransform={ value => changeConfig( blockName, { textTransform: value }) }
 				/>
 
-				<hr/>
+				<hr />
 
 				<RangeControl
 					label={ __( 'Line Height', 'otter-blocks' ) }
@@ -442,7 +442,7 @@ const AdvancedHeading = ({
 					max={ 200 }
 				/>
 
-				<hr/>
+				<hr />
 
 				<RangeControl
 					label={ __( 'Letter Spacing', 'otter-blocks' ) }
@@ -491,7 +491,7 @@ const AdvancedHeading = ({
 					/>
 				</ResponsiveControl>
 
-				<hr/>
+				<hr />
 
 				<ResponsiveControl
 					label={ __( 'Margin', 'otter-blocks' ) }

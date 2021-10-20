@@ -29,7 +29,6 @@ const Inspector = ({
 	changeStyle,
 	categoriesList
 }) => {
-
 	const {
 		slugs
 	} = useSelect( select => {
@@ -77,13 +76,11 @@ const Inspector = ({
 					}
 				}).filter( e => undefined !== e );
 			}
-		} else {
-			if ( '' !== value ) {
-				categories = [ {
-					id: value,
-					name: categoriesList.find( e => e.id === Number( value ) ).name
-				} ];
-			}
+		} else if ( '' !== value ) {
+			categories = [ {
+				id: value,
+				name: categoriesList.find( e => e.id === Number( value ) ).name
+			} ];
 		}
 
 		setAttributes({ categories });
@@ -205,9 +202,9 @@ const Inspector = ({
 
 				<SelectControl
 					label={ __( 'Post Type', 'otter-blocks' ) }
-					value= { attributes.postTypes[0] || null }
+					value={ attributes.postTypes[0] || null }
 					onChange={ ( value ) => value && setAttributes({ postTypes: [ value ] }) }
-					options= {
+					options={
 						slugs.map( slug => ({ label: convertToTitleCase( slug ), value: slug }) )
 					}
 				/>

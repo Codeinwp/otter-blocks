@@ -33,7 +33,7 @@ domReady( () => {
 			const trigger = animation.getAttribute( 'trigger' );
 
 			if ( 'scroll' === trigger ) {
-				return LottieInteractivity.create({
+				return window.LottieInteractivity.create({
 					mode: 'scroll',
 					player: `#${ animation.id }`,
 					actions: [ {

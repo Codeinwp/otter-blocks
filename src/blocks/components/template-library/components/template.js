@@ -19,7 +19,7 @@ const Template = ({
 		<div
 			aria-label={ template.title || __( 'Untitled Gutenberg Template', 'otter-blocks' ) }
 			className="library-modal-content__item"
-			tabindex="0"
+			tabIndex="0"
 		>
 			<div className="library-modal-content__preview">
 				<LazyLoad>

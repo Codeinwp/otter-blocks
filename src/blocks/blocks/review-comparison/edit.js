@@ -13,8 +13,8 @@ import classnames from 'classnames';
 import getSymbolFromCurrency from 'currency-symbol-map';
 
 /**
-  * WordPress dependencies.
-  */
+ * WordPress dependencies.
+ */
 import { __ } from '@wordpress/i18n';
 
 import apiFetch from '@wordpress/api-fetch';
@@ -26,8 +26,8 @@ import {
 } from '@wordpress/element';
 
 /**
-  * Internal dependencies
-  */
+ * Internal dependencies
+ */
 import defaultAttributes from './attributes.js';
 import Placeholder from './placeholder.js';
 import Controls from './controls.js';
@@ -98,7 +98,7 @@ const Edit = ({
 
 		attributes.reviews.forEach( value => {
 			const values = value.split( '-' );
-			const review = data.find( review => review.ID === Number( values[0]) && review.attrs.id.slice( review.attrs.id.length - 8 ) === values[1]);
+			const review = data.find( review => review.ID === Number( values[ 0 ]) && review.attrs.id.slice( review.attrs.id.length - 8 ) === values[ 1 ]);
 
 			if ( ! review ) {
 				return;
@@ -106,7 +106,7 @@ const Edit = ({
 
 			const currency = getSymbolFromCurrency( review.attrs.currency ) ?? '$';
 			const features = review.attrs.features || defaultReviewAttributes.features.default;
-			const overallRatings = Math.round( features.reduce( ( accumulator, feature ) =>  accumulator + feature.rating, 0 ) / features.length ) / 2;
+			const overallRatings = Math.round( features.reduce( ( accumulator, feature ) => accumulator + feature.rating, 0 ) / features.length ) / 2;
 			const links = review.attrs.links || defaultReviewAttributes.links.default;
 
 			const featureRatings = [];
@@ -138,7 +138,7 @@ const Edit = ({
 		});
 	}, [ attributes.reviews, data ]);
 
-	const isLoading  = 'loading' === status;
+	const isLoading = 'loading' === status;
 	const isComplete = 'loaded' === status;
 	const isError = 'error' === status;
 

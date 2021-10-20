@@ -4,6 +4,11 @@
 import classnames from 'classnames';
 
 /**
+ * External dependencies
+ */
+import { Fragment } from '@wordpress/element';
+
+/**
  * Internal dependencies
  */
 import {
@@ -24,7 +29,7 @@ const DisplayTimeComponent = ({
 			className={ classnames(
 				'otter-countdown__display-area',
 				{
-					'is-main-component': 'separator' !==  tag
+					'is-main-component': 'separator' !== tag
 				}
 			) }
 		>

@@ -24,7 +24,7 @@ domReady( () => {
 
 		container.removeAttribute( 'class' );
 
-		Macy({
+		window.Macy({
 			container: gallery.querySelector( '.blocks-gallery-grid' ),
 			trueOrder: false,
 			waitForImages: false,

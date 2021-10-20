@@ -189,7 +189,7 @@ const Edit = ({
 
 	if ( true === attributes.boxShadow ) {
 		boxShadowStyle = {
-			boxShadow: `${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ attributes.boxShadowSpread }px ${  hexToRgba( ( attributes.boxShadowColor ? attributes.boxShadowColor : '#000000' ), attributes.boxShadowColorOpacity ) }`
+			boxShadow: `${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ attributes.boxShadowSpread }px ${ hexToRgba( ( attributes.boxShadowColor ? attributes.boxShadowColor : '#000000' ), attributes.boxShadowColorOpacity ) }`
 		};
 	}
 
@@ -258,7 +258,7 @@ const Edit = ({
 	);
 
 	const updateColumnsWidth = ( columns, layout ) => {
-		( sectionBlock.innerBlocks ).map( ( innerBlock, i ) => {
+		( sectionBlock.innerBlocks ).forEach( ( innerBlock, i ) => {
 			updateBlockAttributes( innerBlock.clientId, {
 				columnWidth: layouts[columns][layout][i]
 			});
@@ -364,7 +364,7 @@ const Edit = ({
 	getDividerBottomHeight = getDividerBottomHeight();
 
 	const getColumnsTemplate = columns => {
-		return times( columns, i => [ 'themeisle-blocks/advanced-column', { columnWidth: layouts[columns][attributes.layout][i] } ]);
+		return times( columns, i => [ 'themeisle-blocks/advanced-column', { columnWidth: layouts[ columns ][ attributes.layout ][ i ] } ]);
 	};
 
 	if ( ! attributes.columns ) {

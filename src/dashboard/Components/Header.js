@@ -19,15 +19,15 @@ const Headers = () => {
 			>
 				<div className="otter-logo">
 					<img
-						src={ otterObj.assetsPath + 'images/logo.png' }
+						src={ window.otterObj.assetsPath + 'images/logo.png' }
 						title={ __( 'Gutenberg Blocks and Template Library by Otter', 'otter-blocks' ) }
 					/>
 
 					<abbr
-						title={ `Version: ${ otterObj.version }` }
+						title={ `Version: ${ window.otterObj.version }` }
 						className="version"
 					>
-						{ otterObj.version }
+						{ window.otterObj.version }
 					</abbr>
 				</div>
 			</div>

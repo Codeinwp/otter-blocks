@@ -1,11 +1,11 @@
 /**
  * External dependencies
-*/
+ */
 import { chevronLeft, chevronRight, edit } from '@wordpress/icons';
 
 /**
  * WordPress dependencies
-*/
+ */
 import { __ } from '@wordpress/i18n';
 
 import { BlockControls } from '@wordpress/block-editor';
@@ -29,6 +29,7 @@ const Controls = ({
 
 	/**
 	 * Move the tab to a given direction
+	 *
 	 * @param {('left'|'right')} direction
 	 */
 	const moveTabTo = ( direction ) => {

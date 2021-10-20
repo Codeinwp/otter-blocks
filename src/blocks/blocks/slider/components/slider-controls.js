@@ -58,6 +58,7 @@ export const SliderControlsBullets = ({ attributes }) => {
 				>
 					{ attributes.images.map( ( image, index ) => (
 						<button
+							key={ image.id }
 							className="glide__bullet"
 							data-glide-dir={ `=${ index }` }
 						>

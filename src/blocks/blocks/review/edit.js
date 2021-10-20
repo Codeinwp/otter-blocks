@@ -6,7 +6,7 @@ import classnames from 'classnames';
 import getSymbolFromCurrency from 'currency-symbol-map';
 
 /**
-* WordPress dependencies.
+ * WordPress dependencies.
  */
 import {
 	__,
@@ -51,7 +51,7 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
-	const overallRatings = ( attributes.features.reduce( ( accumulator, feature ) =>  accumulator + feature.rating, 0 ) / attributes.features.length ).toFixed( 1 );
+	const overallRatings = ( attributes.features.reduce( ( accumulator, feature ) => accumulator + feature.rating, 0 ) / attributes.features.length ).toFixed( 1 );
 
 	const stars = [];
 
@@ -99,7 +99,6 @@ const Edit = ({
 		setAttributes({ links });
 	};
 
-
 	if ( 'isLoading' === status ) {
 		return (
 			<Fragment>
@@ -109,11 +108,10 @@ const Edit = ({
 					productAttributes={ productAttributes }
 				/>
 
-				<Placeholder><Spinner/></Placeholder>
+				<Placeholder><Spinner /></Placeholder>
 			</Fragment>
 		);
 	}
-
 
 	if ( 'object' === typeof status && null !== status && status.isError ) {
 		return (
@@ -177,7 +175,6 @@ const Edit = ({
 						)
 					}
 
-
 					<div className="wp-block-themeisle-blocks-review__header_meta">
 						<div className="wp-block-themeisle-blocks-review__header_ratings">
 							{ stars }
@@ -187,7 +184,7 @@ const Edit = ({
 									color: attributes.textColor
 								} }
 							>
-								{ /** translators: %s Rating score. **/ sprintf( __( '%f out of 10', 'otter-blocks' ), Math.abs( overallRatings ) || 0 ) }
+								{ /** translators: %s Rating score. */ sprintf( __( '%f out of 10', 'otter-blocks' ), Math.abs( overallRatings ) || 0 ) }
 							</span>
 						</div>
 
@@ -201,7 +198,7 @@ const Edit = ({
 								<del>{ ( getSymbolFromCurrency( productAttributes?.currency || attributes.currency ) ?? '$' ) + '' + ( productAttributes?.price || attributes.price ) || 0 }</del>
 							) }
 
-							{ ( attributes.price || attributes.discounted || productAttributes?.price || productAttributes?.discounted ) && ( getSymbolFromCurrency(  productAttributes?.currency || attributes.currency ) ?? '$' ) + '' + ( ( productAttributes?.discounted || attributes.discounted ) ? ( productAttributes?.discounted || attributes.discounted ) : ( productAttributes?.price || attributes.price ) ) }
+							{ ( attributes.price || attributes.discounted || productAttributes?.price || productAttributes?.discounted ) && ( getSymbolFromCurrency( productAttributes?.currency || attributes.currency ) ?? '$' ) + '' + ( ( productAttributes?.discounted || attributes.discounted ) ? ( productAttributes?.discounted || attributes.discounted ) : ( productAttributes?.price || attributes.price ) ) }
 						</span>
 					</div>
 				</div>
@@ -268,7 +265,10 @@ const Edit = ({
 							}
 
 							return (
-								<div className="wp-block-themeisle-blocks-review__left_feature">
+								<div
+									key={ attributes.features.title }
+									className="wp-block-themeisle-blocks-review__left_feature"
+								>
 									<RichText
 										placeholder={ __( 'Feature title', 'otter-blocks' ) }
 										value={ feature.title }
@@ -309,7 +309,10 @@ const Edit = ({
 							</h4>
 
 							{ attributes.pros.map( ( pro, index ) => (
-								<div className="wp-block-themeisle-blocks-review__right_pros_item">
+								<div
+									key={ pro }
+									className="wp-block-themeisle-blocks-review__right_pros_item"
+								>
 									{ check }
 
 									<RichText
@@ -322,7 +325,7 @@ const Edit = ({
 										} }
 									/>
 								</div>
-							) )}
+							) ) }
 						</div>
 					) }
 
@@ -337,7 +340,10 @@ const Edit = ({
 							</h4>
 
 							{ attributes.cons.map( ( con, index ) => (
-								<div className="wp-block-themeisle-blocks-review__right_cons_item">
+								<div
+									key={ con }
+									className="wp-block-themeisle-blocks-review__right_cons_item"
+								>
 									{ close }
 
 									<RichText
@@ -369,6 +375,7 @@ const Edit = ({
 						<div className="wp-block-themeisle-blocks-review__footer_buttons">
 							{ ( productAttributes?.links || attributes.links ).map( ( link, index ) => (
 								<RichText
+									key={ link }
 									placeholder={ __( 'Button label', 'otter-blocks' ) }
 									value={ link.label }
 									disabled={ 0 < productAttributes?.links }

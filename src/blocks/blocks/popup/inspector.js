@@ -106,7 +106,7 @@ const Inspector = ({
 				<SelectControl
 					label={ __( 'Open Trigger', 'otter-blocks' ) }
 					help={ ( Boolean( window.themeisleGutenberg.hasNeveSupport.hasNeve ) && ! Boolean( window.themeisleGutenberg.hasNeveSupport.hasNevePro ) ) && __( 'You need to have Neve Pro to activate Pro features.', 'otter-blocks' ) }
-					options={ triggerOptions  }
+					options={ triggerOptions }
 					value={ attributes.trigger }
 					onChange={ trigger => setAttributes({ trigger }) }
 				/>
@@ -168,7 +168,7 @@ const Inspector = ({
 						</Disabled>
 
 						<ExternalLink href="https://themeisle.com/themes/neve/pricing">
-							{ __( 'Extend Popup block functionalities with more options in Neve Pro.', 'otter-blocks' )  }
+							{ __( 'Extend Popup block functionalities with more options in Neve Pro.', 'otter-blocks' ) }
 						</ExternalLink>
 					</Fragment>
 				) }

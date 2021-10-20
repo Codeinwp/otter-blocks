@@ -39,7 +39,6 @@ const Edit = ({
 	setAttributes,
 	className
 }) => {
-
 	const [ slugs, setSlugs ] = useState([]);
 
 	const {
@@ -59,11 +58,11 @@ const Edit = ({
 
 		const slugs = attributes.postTypes;
 		const posts = ( 0 < slugs.length ) ? (
-			slugs.map( slug =>  select( 'core' ).getEntityRecords( 'postType', slug, latestPostsQuery ) ).flat()
+			slugs.map( slug => select( 'core' ).getEntityRecords( 'postType', slug, latestPostsQuery ) ).flat()
 		) : select( 'core' ).getEntityRecords( 'postType', 'post', latestPostsQuery );
 
 		return {
-			posts: posts,
+			posts,
 			// eslint-disable-next-line camelcase
 			categoriesList: select( 'core' ).getEntityRecords( 'taxonomy', 'category', { per_page: 100 }),
 			authors: select( 'core' ).getAuthors()
@@ -89,7 +88,7 @@ const Edit = ({
 		return (
 			<Fragment>
 				<Placeholder>
-					<Spinner/>
+					<Spinner />
 					{ __( 'Loading Posts', 'otter-blocks' ) }
 				</Placeholder>
 

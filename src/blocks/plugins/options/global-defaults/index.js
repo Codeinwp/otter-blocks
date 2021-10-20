@@ -57,7 +57,7 @@ const GlobalDefaults = ({
 	if ( ! isAPILoaded ) {
 		return (
 			<Placeholder>
-				<Spinner/>
+				<Spinner />
 			</Placeholder>
 		);
 	}
@@ -75,6 +75,7 @@ const GlobalDefaults = ({
 
 					return (
 						<ButtomItem
+							key={ i.name }
 							blockName={ i.name }
 							saveConfig={ saveConfig }
 							resetConfig={ resetConfig }

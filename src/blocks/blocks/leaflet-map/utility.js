@@ -26,7 +26,6 @@ export async function getLocation( location ) {
 	const data = await makeSearchRequest( location );
 
 	if ( data?.features.length ) {
-
 		const feature = data.features[0];
 
 		if ( feature?.geometry?.coordinates.length ) {

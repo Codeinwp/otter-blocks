@@ -47,7 +47,9 @@ export const range = ( start, end, step ) => {
 		throw TypeError( 'Start and end arguments must be of same type.' );
 	}
 
-	undefined === typeof step && ( step = 1 );
+	if ( undefined === typeof step ) {
+		step = 1;
+	}
 
 	if ( end < start ) {
 		step = -step;
@@ -59,7 +61,7 @@ export const range = ( start, end, step ) => {
 			start += step;
 		}
 	} else if ( 'string' === typeofStart ) {
-		if ( 1 != start.length || 1 != end.length ) {
+		if ( 1 !== start.length || 1 !== end.length ) {
 			throw TypeError( 'Only strings with one character are supported.' );
 		}
 
@@ -95,10 +97,10 @@ export const easeInOutSine = ( x ) => {
 };
 
 export const getCustomPostTypeSlugs = async() => {
-	const dataTypes = await ( new wp.api.collections.Types() ).fetch();
+	const dataTypes = await ( new window.wp.api.collections.Types() ).fetch();
 
 	if ( dataTypes ) {
-		const allExistingSlugs = Object.keys( dataTypes ).filter( type => dataTypes[type]?.slug ).map(  type => dataTypes[type].slug );
+		const allExistingSlugs = Object.keys( dataTypes ).filter( type => dataTypes[type]?.slug ).map( type => dataTypes[type].slug );
 
 		return without( allExistingSlugs, 'attachment', 'wp_block' );
 	}
@@ -115,8 +117,9 @@ export const convertToTitleCase = ( word ) => {
 
 /**
  * Insert an item between the element of the array
+ *
  * @param {Array} arr
- * @param {any} item
+ * @param {any}   item
  * @returns An array with the given item inserted between initial elements
  */
 export const insertBetweenItems = ( arr, item ) => {
@@ -140,12 +143,12 @@ const _MS_PER_DAY = _MS_PER_HOURS * 24;
 
 /**
  * Get the time interval from the unix time
+ *
  * @param {number} unixTime Time as UNIX
- * @param {object} settings Options to keep a components or/and allow negative time
+ * @param {Object} settings Options to keep a components or/and allow negative time
  * @returns An object with the values for days, hours, minutes, seconds
  */
 export const getIntervalFromUnix = ( unixTime, settings ) => {
-
 	unixTime = unixTime ? unixTime : 0; // Check for null/undefined
 
 	const days = Math.floor( unixTime / _MS_PER_DAY );
