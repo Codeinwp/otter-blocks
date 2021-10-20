@@ -5,27 +5,30 @@ const path = require( 'path' );
 
 module.exports = [
 	{
+
 		// OTTER DASHBOARD
 		...defaultConfig,
 		stats: 'minimal',
 		mode: NODE_ENV,
 		entry: {
-			index: './src/dashboard/index.js',
+			index: './src/dashboard/index.js'
 		},
 		output: {
-			path: path.resolve( __dirname, './build/dashboard' ),
-		},
+			path: path.resolve( __dirname, './build/dashboard' )
+		}
 	},
 	{
+
 		// OTTER BLOCKS
 		...defaultConfig,
 		stats: 'minimal',
-		mode: NODE_ENV,
+		devtool: 'eval-source-map',
+		mode: 'production',
 		entry: {
-			blocks: [
+			'otter-blocks': [
 				'./src/blocks/index.js',
 				'./src/blocks/plugins/registerPlugin.js',
-				...glob.sync( './src/blocks/blocks/**/index.js' ),
+				...glob.sync( './src/blocks/blocks/**/index.js' )
 			],
 			'leaflet-map': './src/blocks/frontend/leaflet-map/index.js',
 			maps: './src/blocks/frontend/google-map/index.js',
@@ -37,12 +40,12 @@ module.exports = [
 			masonry: './src/blocks/frontend/masonry/index.js',
 			form: './src/blocks/frontend/form/index.js',
 			countdown: './src/blocks/frontend/countdown/index.js',
-			popup: './src/blocks/frontend/popup/index.js',
+			popup: './src/blocks/frontend/popup/index.js'
 		},
 		output: {
 			path: path.resolve( __dirname, './build/blocks' ),
 			filename: '[name].js',
-			chunkFilename: 'chunk-[name].js',
+			chunkFilename: 'chunk-[name].js'
 		},
 		optimization: {
 			...defaultConfig.optimization,
@@ -52,22 +55,22 @@ module.exports = [
 						name: 'vendor',
 						test: /[\\/]node_modules[\\/]/,
 						chunks: 'all',
-						reuseExistingChunk: true,
+						reuseExistingChunk: true
 					},
 					editorStyles: {
 						name: 'editor',
 						test: /editor\.scss$/,
 						chunks: 'all',
-						enforce: true,
+						enforce: true
 					},
 					frontendStyles: {
 						name: 'style',
 						test: /style\.scss$/,
 						chunks: 'all',
-						enforce: true,
-					},
-				},
-			},
-		},
-	},
+						enforce: true
+					}
+				}
+			}
+		}
+	}
 ];

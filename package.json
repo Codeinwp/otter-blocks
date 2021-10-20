@@ -4,7 +4,7 @@
 	"description": "Gutenberg Blocks and Template Library by Otter",
 	"scripts": {
 		"build": "wp-scripts build",
-		"start": "wp-scripts start",
+		"start": "wp-scripts start --watch",
 		"lint": "wp-scripts lint-js ./src --fix",
 		"packages-update": "wp-scripts packages-update",
 		"release": "semantic-release",
