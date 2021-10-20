@@ -25,7 +25,7 @@ module.exports = [
 		devtool: 'eval-source-map',
 		mode: 'production',
 		entry: {
-			'otter-blocks': [
+			blocks: [
 				'./src/blocks/index.js',
 				'./src/blocks/plugins/registerPlugin.js',
 				...glob.sync( './src/blocks/blocks/**/index.js' )
