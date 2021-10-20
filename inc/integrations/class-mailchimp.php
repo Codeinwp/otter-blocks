@@ -1,13 +1,11 @@
 <?php
 /**
- * Card server logic.
+ * Mailchimp server logic.
  *
  * @package ThemeIsle\GutenbergBlocks\Integration
  */
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
-
-use Exception;
 
 /**
  * Class Plugin_Card_Server
