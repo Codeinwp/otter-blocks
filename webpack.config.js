@@ -23,7 +23,7 @@ module.exports = [
 		...defaultConfig,
 		stats: 'minimal',
 		devtool: 'eval-source-map',
-		mode: 'production',
+		mode: NODE_ENV,
 		entry: {
 			blocks: [
 				'./src/blocks/index.js',
@@ -54,20 +54,17 @@ module.exports = [
 					vendor: {
 						name: 'vendor',
 						test: /[\\/]node_modules[\\/]/,
-						chunks: 'all',
-						reuseExistingChunk: true
+						chunks: 'initial'
 					},
 					editorStyles: {
 						name: 'editor',
 						test: /editor\.scss$/,
-						chunks: 'all',
-						enforce: true
+						chunks: 'all'
 					},
 					frontendStyles: {
 						name: 'style',
 						test: /style\.scss$/,
-						chunks: 'all',
-						enforce: true
+						chunks: 'all'
 					}
 				}
 			}
