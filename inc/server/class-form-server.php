@@ -8,6 +8,7 @@
 namespace ThemeIsle\GutenbergBlocks\Server;
 
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
+use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Mailchimp_Integration;
 use ThemeIsle\GutenbergBlocks\Integration\Sendinblue_Integration;
 
@@ -88,19 +89,20 @@ class Form_Server {
 	public function submit_form( $request ) {
 
 		$data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
+		$res = new Form_Data_Response();
 
 		if ( ! $this->has_requiered_data( $data ) ) {
-			$return['error']   = __( 'Invalid request!', 'otter-blocks' );
-			$return['reasons'] = __( 'Essential data is missing!', 'otter-blocks' );
-			return $return;
+			$res->set_error(__( 'Invalid request!', 'otter-blocks' ));
+			$res->add_reason(__( 'Essential data is missing!', 'otter-blocks' ));
+			return $res->build_response();
 		}
 
 		$reasons = $this->check_form_conditions( $data );
 
 		if ( 0 < count( $reasons ) ) {
-			$return['error']   = __( 'Invalid request!', 'otter-blocks' );
-			$return['reasons'] = $reasons;
-			return $return;
+			$res->set_error(__( 'Invalid request!', 'otter-blocks' ));
+			$res->set_reasons( $reasons );
+			return $res->build_response();
 		}
 
 		if ( $data->is_set('token') ) {
@@ -116,8 +118,8 @@ class Form_Server {
 			);
 			$result = json_decode( $resp['body'], true );
 			if ( false == $result['success'] ) {
-				$return['error'] = __( 'The reCaptha was invalid!', 'otter-blocks' );
-				return rest_ensure_response( $return );
+				$res->set_error(__( 'The reCaptha was invalid!', 'otter-blocks' ));
+				return $res->build_response();
 			}
 		}
 
@@ -130,36 +132,33 @@ class Form_Server {
 			if ( 'subscribe' === $data->get('action') ) {
 				switch ( $integration['provider'] ) {
 					case 'mailchimp':
-						return $this->subscribe_to_mailchimp( $data );
+						return $this->subscribe_to_mailchimp( $data, $res );
 					case 'sendinblue':
-						return $this->subscribe_to_sendinblue( $data );
+						return $this->subscribe_to_sendinblue( $data, $res );
 				}
 			} elseif ( 'submit-subscribe' === $data->get('action') && $data->get('consent') ) {
 				switch ( $integration['provider'] ) {
 					case 'mailchimp':
-						$this->subscribe_to_mailchimp( $data );
+						$this->subscribe_to_mailchimp( $data, $res );
 						break;
 					case 'sendinblue':
-						$this->subscribe_to_sendinblue( $data );
+						$this->subscribe_to_sendinblue( $data, $res );
 						break;
 				}
 			}
 		}
 
-		return $this->send_email( $data );
+		return $this->send_email( $data, $res );
 	}
 
 	/**
 	 * Send Email using SMTP
 	 *
 	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request $data Data from request body.
-	 *
+	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response $res The response.
 	 * @return mixed|\WP_REST_Response
 	 */
-	private function send_email( $data ) {
-		$return = array(
-			'success' => false,
-		);
+	private function send_email( $data, $res ) {
 
 		$email_subject = $data->is_set('emailSubject') ? $data->get('emailSubject') : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) ) ;
 		$email_body    = $this->prepare_body( $data->get('data') );
@@ -184,11 +183,11 @@ class Form_Server {
 		try {
 			// phpcs:ignore
 			wp_mail( $to, $email_subject, $email_body, $headers );
-			$return['success'] = true;
+			$res->mark_as_succes();
 		} catch ( \Exception $e ) {
-			$return['error'] = $e->getMessage();
+			$res->set_error($e->getMessage());
 		} finally {
-			return rest_ensure_response( $return );
+			return $res->build_response();
 		}
 	}
 
@@ -262,9 +261,7 @@ class Form_Server {
 	 * @return mixed|\WP_REST_Response
 	 */
 	public function get_integration_data( $request ) {
-		$return = array(
-			'success' => false,
-		);
+		$res = new Form_Data_Response();
 
 		$data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
 
@@ -274,10 +271,10 @@ class Form_Server {
 			case 'sendinblue':
 				return $this->get_sendinblue_data( $data );
 			default:
-				$return['error'] = __( 'Invalid request! Provider is missing.', 'otter-blocks' );
+				$res->set_error( __( 'Invalid request! Provider is missing.', 'otter-blocks' ) );
 		}
 
-		return rest_ensure_response( $return );
+		return $res->build_response();
 	}
 
 	/**
@@ -290,9 +287,7 @@ class Form_Server {
 	 * @see https://mailchimp.com/developer/marketing/api/list-members/
 	 */
 	public function get_mailchimp_data( $data ) {
-		$return = array(
-			'success' => false,
-		);
+		$res = new Form_Data_Response();
 
 		$valid_api_key = Mailchimp_Integration::validate_api_key( $data->get('apiKey') );
 
@@ -300,10 +295,10 @@ class Form_Server {
 			$integ = new Mailchimp_Integration( $data->get('apiKey') );
 			return $integ->get_lists();
 		} else {
-			$return['error'] = $valid_api_key['reason'];
+			$res->set_error( $valid_api_key['reason'], 'mailchimp' );
 		}
 
-		return rest_ensure_response( $return );
+		return $res->build_response();
 	}
 
 	/**
@@ -316,9 +311,7 @@ class Form_Server {
 	 * @see https://developers.sendinblue.com/reference/getlists-1
 	 */
 	public function get_sendinblue_data( $data ) {
-		$return = array(
-			'success' => false,
-		);
+		$res = new Form_Data_Response();
 
 		$valid_api_key = Sendinblue_Integration::validate_api_key( $data->get('apiKey') );
 
@@ -326,24 +319,20 @@ class Form_Server {
 			$integ = new Sendinblue_Integration( $data->get('apiKey') );
 			return $integ->get_lists();
 		} else {
-			$return['error'] = $valid_api_key['reason'];
+			$res->set_error( $valid_api_key['reason'], 'sendinblue' );
 		}
 
-		return rest_ensure_response( $return );
+		return $res->build_response();
 	}
 
 	/**
 	 * Add a new subscriber to Mailchimp
 	 *
 	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request $data Data from request body.
-	 *
+	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response $res The response.
 	 * @return mixed|\WP_REST_Response
 	 */
-	private function subscribe_to_mailchimp( $data ) {
-
-		$return = array(
-			'success' => false,
-		);
+	private function subscribe_to_mailchimp( $data, $res ) {
 
 		// Get the first email from form.
 		$email = '';
@@ -355,7 +344,8 @@ class Form_Server {
 		}
 
 		if ( '' === $email ) {
-			return rest_ensure_response( $return );
+			$res->set_error('No email provided!');
+			return $res->build_response();
 		}
 
 		$integration = $this->get_form_option_settings( $data['formOption'] );
@@ -372,27 +362,23 @@ class Form_Server {
 
 			if ( $valid_api_key['valid'] ) {
 				$mailchimp = new Mailchimp_Integration( $api_key );
-				$return    = $mailchimp->subscribe( $list_id, $email );
+				$res->copy( $mailchimp->subscribe( $list_id, $email ) );
 			} else {
-				$return['error'] = $valid_api_key['reason'];
+				$res->set_error($valid_api_key['reason']);
 			}
 		}
 
-		return rest_ensure_response( $return );
+		return $res->build_response();
 	}
 
 	/**
 	 * Add a new subscriber to Sendinblue
 	 *
 	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request $data Data from request body.
-	 *
+	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response $res The response.
 	 * @return mixed|\WP_REST_Response
 	 */
-	private function subscribe_to_sendinblue( $data ) {
-
-		$return = array(
-			'success' => false,
-		);
+	private function subscribe_to_sendinblue( $data, $res ) {
 
 		// Get the first email from form.
 		$email = '';
@@ -404,7 +390,8 @@ class Form_Server {
 		}
 
 		if ( '' === $email ) {
-			return rest_ensure_response( $return );
+			$res->set_error('No email provided!');
+			return $res->build_response();
 		}
 
 		// Get the api credentials from the Form block.
@@ -425,13 +412,13 @@ class Form_Server {
 
 			if ( $valid_api_key['valid'] ) {
 				$sendinblue = new Sendinblue_Integration( $api_key );
-				$return     = $sendinblue->subscribe( $list_id, $email );
+				$res->copy( $sendinblue->subscribe( $list_id, $email ) );
 			} else {
-				$return['error'] = $valid_api_key['reason'];
+				$res->set_error($valid_api_key['reason']);
 			}
 		}
 
-		return rest_ensure_response( $return );
+		return $res->build_response();
 	}
 
 	/**
