@@ -76,10 +76,10 @@ class Sendinblue_Integration {
 	 * @param string $list_id Contact list id.
 	 * @param string $email The client email.
 	 *
-	 * @return mixed
+	 * @return \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response
 	 */
 	public function subscribe( $list_id, $email ) {
-		$return    = array();
+		$res = new Form_Data_Response();
 		$url       = 'https://api.sendinblue.com/v3/contacts';
 		$form_data = array(
 			'email'            => $email,
@@ -101,14 +101,17 @@ class Sendinblue_Integration {
 		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( is_wp_error( $response ) || 400 === wp_remote_retrieve_response_code( $response ) || ( ( isset( $body['code'] ) && 'unauthorized' === $body['code'] ) ) ) {
-			$return['error']        = ! empty( $body['message'] ) && 'null' !== $body['message'] ? $body['message'] : __( 'The request has been rejected by the provider!', 'otter-blocks' );
-			$return['error']        = ( isset( $body['code'] ) && 'unauthorized' === $body['code'] ) ? $body['message'] : $return['error'];
-			$return['error_source'] = 'provider';
+
+			$res->set_error( ! empty( $body['message'] ) && 'null' !== $body['message'] ? $body['message'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'sendinblue' );
+
+			if( isset( $body['code'] ) && 'unauthorized' === $body['code'] ) {
+				$res->set_error( $body['message'], 'sendinblue' );
+			}
 		} else {
-			$return['success'] = true;
+			$res->mark_as_succes();
 		}
 
-		return $return;
+		return $res;
 	}
 
 	/**
