@@ -15,14 +15,33 @@ class Form_Data_Request {
 		$this->data = $this->sanitize_request_data($request_data);
 	}
 
+	/**
+	 * Get the value of the field.
+	 *
+	 * @param string $field_name The name of the field.
+	 * @return mixed
+	 */
 	public function get( $field_name ) {
 		return $this->is_set($field_name) ? $this->data[$field_name] : null;
 	}
 
+	/**
+	 * Check if the value of the field is set.
+	 *
+	 * @param string $field_name The name of the field.
+	 * @return boolean
+	 */
 	public function is_set( $field_name ) {
+		// TODO: we can do a more refined verification like checking for empty strings or arrays
 		return isset($data[$field_name]);
 	}
 
+	/**
+	 * Check if the given fields are set.
+	 *
+	 * @param array $fields_name The name of the fields.
+	 * @return boolean
+	 */
 	public function are_fields_set( $fields_name ) {
 		return 0 < count(
 			array_filter(
@@ -39,6 +58,13 @@ class Form_Data_Request {
 		);
 	}
 
+	/**
+	 * Check if the field has one of the given values.
+	 *
+	 * @param string $field_name The name of the field.
+	 * @param array $values The desired values of the field.
+	 * @return boolean
+	 */
 	public function field_has( $field_name, $values ) {
 		return in_array( $this->get( $field_name ), $values, true );
 	}
