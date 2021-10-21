@@ -2,6 +2,46 @@ const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const glob = require( 'glob' );
 const path = require( 'path' );
+const _ = require( 'lodash' );
+
+const blockNames = [
+	'about-author',
+	'accordion',
+	'add-to-cart-button',
+	'advanced-heading',
+	'business-hours',
+	'button-group',
+	'circle-counter',
+	'countdown',
+	'font-awesome-icons',
+	'form',
+	'google-maps',
+	'icon-list',
+	'leaflet-map',
+	'lottie',
+	'plugin-card',
+	'popup',
+	'posts',
+	'progress-bar',
+	'review',
+	'review-comparision',
+	'section',
+	'sharing-icons',
+	'slider',
+	'structural',
+	'tabs',
+	'woo-comparision'
+];
+
+const frontendCSSEntries = _.omitBy(
+	_.zipObject(
+		blockNames,
+		blockNames.map( name => glob.sync( `./src/blocks/blocks/${name}/**/style.scss` ) )
+	),
+	_.isEmpty
+);
+
+console.log( frontendCSSEntries );
 
 module.exports = [
 	{
@@ -30,6 +70,8 @@ module.exports = [
 				'./src/blocks/plugins/registerPlugin.js',
 				...glob.sync( './src/blocks/blocks/**/index.js' )
 			],
+
+			...frontendCSSEntries,
 			'leaflet-map': './src/blocks/frontend/leaflet-map/index.js',
 			maps: './src/blocks/frontend/google-map/index.js',
 			slider: './src/blocks/frontend/slider/index.js',
@@ -60,12 +102,13 @@ module.exports = [
 						name: 'editor',
 						test: /editor\.scss$/,
 						chunks: 'all'
-					},
-					frontendStyles: {
-						name: 'style',
-						test: /style\.scss$/,
-						chunks: 'all'
 					}
+
+					// frontendStyles: {
+					// 	name: 'style',
+					// 	test: /style\.scss$/,
+					// 	chunks: 'all'
+					// }
 				}
 			}
 		}
