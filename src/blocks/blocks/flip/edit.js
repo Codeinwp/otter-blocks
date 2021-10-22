@@ -46,27 +46,38 @@ const Edit = ({
 
 	const [ isFliped, setFliped ] = useState( false );
 
-	const innerStyle = css`
-		transform: ${ isFliped ? 'rotateY(180deg)' : 'unset' };
-	`;
-
 	return (
 		<Fragment>
-			{/* <Inspector
+			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-			/> */}
+			/>
 
 			<div
 				id={ attributes.id }
 				className={ classnames( className ) }
 			>
-				<div className="o-inner" css={innerStyle}>
-					<div className="o-front">
+				<div
+					className="o-inner"
+					style={{
+						transform: isFliped ? 'rotateY(180deg)' : 'unset',
+						width: attributes.width,
+						height: attributes.height,
+						borderRadius: attributes.borderRadius,
+						backgroundColor: attributes.backgroundColor
+					}}
+				>
+					<div
+						className="o-front"
+						style={{ padding: attributes.padding }}
+					>
 						<h1>FRONT</h1>
-						<p>Lorem ipsilum</p>
+						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris laoreet tempor ante, ac consequat nisl luctus nec. Etiam eu pellentesque tortor. Vivamus lobortis vitae torto</p>
 					</div>
-					<div className="o-back">
+					<div
+						className="o-back"
+						style={{ padding: attributes.padding }}
+					>
 						<InnerBlocks
 							renderAppender={ InnerBlocks.ButtonBlockAppender  }
 						/>
