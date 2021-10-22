@@ -195,8 +195,8 @@ class Main {
 
 		load_plugin_textdomain( 'otter-blocks', false, basename( OTTER_BLOCKS_PATH ) . '/languages' );
 
-		if ( class_exists( '\ThemeIsle\GutenbergCSS' ) && get_option( 'themeisle_blocks_settings_css_module', true ) ) {
-			\ThemeIsle\GutenbergCSS::instance();
+		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_CSS' ) && get_option( 'themeisle_blocks_settings_css_module', true ) ) {
+			\ThemeIsle\GutenbergBlocks\Blocks_CSS::instance();
 		}
 
 		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Animation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {

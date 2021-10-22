@@ -1,0 +1,23 @@
+{
+	"name": "blocks-css",
+	"version": "1.1.2",
+	"description": "CSS Editor for Gutenberg Blocks.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Codeinwp/otter-blocks.git"
+	},
+	"keywords": [
+		"wordpress-plugin"
+	],
+	"category": "plugins",
+	"author": "ThemeIsle <friends@themeisle.com>",
+	"license": "GPL-3.0+",
+	"bugs": {
+		"url": "https://github.com/Codeinwp/otter-blocks/issues"
+	},
+	"pot": {
+		"reportmsgidbugsto": "https://github.com/Codeinwp/otter-blocks/issues",
+		"languageteam": "Themeisle Translate <friends@themeisle.com>",
+		"lasttranslator": "Themeisle Translate Team <friends@themeisle.com>"
+	}
+}

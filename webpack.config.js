@@ -33,6 +33,19 @@ module.exports = [
 	},
 	{
 
+		// CSS
+		...defaultConfig,
+		stats: 'minimal',
+		mode: NODE_ENV,
+		entry: {
+			index: './src/css/index.js'
+		},
+		output: {
+			path: path.resolve( __dirname, './build/css' )
+		}
+	},
+	{
+
 		// OTTER BLOCKS
 		...defaultConfig,
 		stats: 'minimal',

@@ -8,6 +8,8 @@ phpcs.xml
 .eslintrc
 .gitattributes
 .releaserc.yml
+.browserslistrc
+.editorconfig
 docker-compose.yml
 webpack.config.js
 CONTRIBUTING.md
