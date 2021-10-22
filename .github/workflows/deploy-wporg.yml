@@ -15,8 +15,22 @@ jobs:
         run: npm ci
       - name: Build files
         run: npm run build
-      - name: WordPress Plugin Deploy
+      - name: WordPress Plugin Deploy - Otter
         uses: 10up/action-wordpress-plugin-deploy@master
         env:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+      - name: WordPress Plugin Deploy - Animations
+        uses: nk-o/action-wordpress-plugin-deploy@master
+        env:
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SOURCE_DIR: dist/blocks-animation/
+          SLUG: blocks-animation
+      - name: WordPress Plugin Deploy - CSS
+        uses: nk-o/action-wordpress-plugin-deploy@master
+        env:
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SOURCE_DIR: dist/blocks-css/
+          SLUG: blocks-css
