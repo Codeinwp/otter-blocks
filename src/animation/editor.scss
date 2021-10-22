@@ -1,0 +1,112 @@
+.hidden-animated {
+	visibility: hidden;
+}
+
+.animated.delay-100ms {
+	-webkit-animation-delay: 100ms;
+	animation-delay: 100ms;
+}
+
+.animated.delay-200ms {
+	-webkit-animation-delay: 200ms;
+	animation-delay: 200ms;
+}
+
+.animated.delay-500ms {
+	-webkit-animation-delay: 500ms;
+	animation-delay: 500ms;
+}
+
+.themeisle-animations-control__popover {
+   &:not( .is-mobile ).is-bottom {
+      z-index: 9999999;
+   }
+
+   .components-popover__content {
+      overflow-y: hidden;
+   }
+
+   .components-menu-group {
+      padding: 7px;
+   }
+
+   .components-popover__items {
+      max-height: 300px;
+      overflow-y: auto;
+
+      button {
+         &.is-selected {
+            background: #f8f9f9;
+         }
+
+         i {
+            margin-right: 5px;
+         }
+      }
+
+      .themeisle-animations-control__category {
+         font-weight: bold;
+      }
+   }
+}
+
+.themeisle-animations-control {
+   .components-dropdown {
+      display: flex;
+   }
+
+   .themeisle-animations-control__button {
+      background: transparent;
+      position: relative;
+      width: 100%;
+      height: auto;
+      line-height: 28px;
+      padding: 0 12px 2px;
+      box-shadow: 0 0 0 transparent;
+      transition: box-shadow 0.1s linear;
+      border-radius: 4px;
+      border: 1px solid #8d96a0;
+
+      &.is-button {
+         background: transparent;
+      }
+
+      &:hover {
+         background: #fafafa;
+         border-color: #999;
+         box-shadow: inset 0 -1px 0 #999;
+         color: #23282d;
+         text-decoration: none;
+      }
+
+      &:focus {
+         border: 1px solid black;
+      }
+
+      &:after {
+         content: "";
+         pointer-events: none;
+         display: block;
+         width: 0;
+         height: 0;
+         border-left: 3px solid transparent;
+         border-right: 3px solid transparent;
+         border-top: 5px solid currentColor;
+         margin-left: 4px;
+         margin-right: 2px;
+         right: 8px;
+         top: 12px;
+         position: absolute;
+      }
+   }
+}
+
+@media ( max-width: 782px ) {
+	.themeisle-animations-control .themeisle-animations-control__button {
+	  padding: 5px 24px 5px 8px;
+	}
+
+	.themeisle-animations-control .themeisle-animations-control__button:after {
+	  top: 16px;
+	}
+}

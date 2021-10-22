@@ -31,6 +31,12 @@ plugins:
         - otter-blocks.php
         - readme.md
         - package.json
+        - plugins/blocks-animation/blocks-animation.php
+        - plugins/blocks-animation/readme.md
+        - plugins/blocks-animation/readme.txt
+        - plugins/blocks-css/blocks-css.php
+        - plugins/blocks-css/readme.md
+        - plugins/blocks-css/readme.txt
       message: "chore(release): ${nextRelease.version} \n\n${nextRelease.notes}"
   - - "@semantic-release/github"
 

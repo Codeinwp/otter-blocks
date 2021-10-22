@@ -39,8 +39,6 @@
     "minimum-stability": "dev",
     "require": {
         "codeinwp/themeisle-sdk": "^3.1",
-        "codeinwp/gutenberg-css": "^1.0",
-        "codeinwp/gutenberg-animation": "^1.0",
         "codeinwp/gutenberg-menu-icons": "^1.0",
         "masterminds/html5": "^2.7",
         "tubalmartin/cssmin": "^4.1"

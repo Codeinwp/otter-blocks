@@ -19,6 +19,33 @@ module.exports = [
 	},
 	{
 
+		// ANIMATION
+		...defaultConfig,
+		stats: 'minimal',
+		mode: NODE_ENV,
+		entry: {
+			index: './src/animation/index.js',
+			frontend: './src/animation/frontend.js'
+		},
+		output: {
+			path: path.resolve( __dirname, './build/animation' )
+		}
+	},
+	{
+
+		// CSS
+		...defaultConfig,
+		stats: 'minimal',
+		mode: NODE_ENV,
+		entry: {
+			index: './src/css/index.js'
+		},
+		output: {
+			path: path.resolve( __dirname, './build/css' )
+		}
+	},
+	{
+
 		// OTTER BLOCKS
 		...defaultConfig,
 		stats: 'minimal',
