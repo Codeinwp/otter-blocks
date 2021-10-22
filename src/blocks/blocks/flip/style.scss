@@ -1,0 +1,45 @@
+.wp-block-themeisle-blocks-flip {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+
+	background-color: transparent;
+	border: 1px solid #f1f1f1;
+	perspective: 1000px; /* Remove this if you don't want the 3D effect */
+
+	&:hover {
+		&.anim {
+			.o-inner {
+				transform: rotateY(180deg);
+			}
+		}
+	}
+
+	.o-inner {
+		position: relative;
+		width: 500px;
+		height: 300px;
+		text-align: center;
+		transition: transform 0.8s;
+		transform-style: preserve-3d;
+		background-color: dodgerblue;
+		border-radius: 10px;
+
+
+		.o-front, .o-back {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			-webkit-backface-visibility: hidden; /* Safari */
+			backface-visibility: hidden;
+		}
+
+		.o-back {
+			transform: rotateY(180deg);
+		}
+
+		.block-editor-block-list__layout > div:last-child {
+			transform: rotateY(180deg);
+		}
+	}
+}
