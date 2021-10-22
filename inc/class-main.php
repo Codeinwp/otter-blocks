@@ -496,12 +496,8 @@ class Main {
 			return false;
 		}
 
-		wp_enqueue_style(
-			'themeisle-block_styles',
-			plugin_dir_url( $this->get_dir() ) . 'build/blocks/style.css',
-			[],
-			self::$assets_version
-		);
+		$css_loader = new CSS_Frontend_Loader( $post,  plugin_dir_url( $this->get_dir() )  );
+		$css_loader->load();
 
 
 		// On AMP context, we don't load JS files.
@@ -754,8 +750,6 @@ class Main {
 
 			self::$is_popup_loaded = true;
 		}
-
-		// TODO: add css pipeline
 	}
 
 	/**

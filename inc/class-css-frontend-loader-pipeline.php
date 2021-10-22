@@ -60,7 +60,7 @@ class CSS_Frontend_Loader {
 		'progress-bar',
 		'review',
 		'review-comparision',
-		'section',
+		'advanced-columns', // section
 		'sharing-icons',
 		'slider',
 		'structural',
@@ -71,6 +71,7 @@ class CSS_Frontend_Loader {
 	protected $post = null;
 	protected $root_path = '';
 	protected $blocks_paths = array();
+	protected $deps = array();
 
 	public function __construct( $post, $root_path )
 	{
@@ -79,6 +80,16 @@ class CSS_Frontend_Loader {
 		$pairs = array_combine( $this->blockSlugs, $this->cssFilesName );
 		$used_blocks = $this->get_used_blocks($pairs);
 		$this->blocks_paths = $this->get_css_files($used_blocks);
+	}
+
+	public function load() {
+		foreach( $this->blocks_paths as $slug => $path ) {
+			wp_enqueue_style(
+				"themeisle-gutenberg-css-$slug",
+				$path,
+				[]
+			);
+		}
 	}
 
 	private function get_used_blocks( $pairs )
@@ -95,19 +106,11 @@ class CSS_Frontend_Loader {
 	private function get_css_files( $used_blocks ) {
 		array_walk(
 			$used_blocks,
-			function( $cssFileBlockName ) {
-				return "/build/blocks/{$cssFileBlockName}.css";
+			function( &$cssFileBlockName ) {
+				$cssFileBlockName = $this->root_path . "build/blocks/{$cssFileBlockName}.css";
 			}
 		);
-		return array_filter(
-			$used_blocks,
-			function( $cssFilePath ) {
-				return file_exists( $this->root_path . $cssFilePath );
-			}
-		);
-	}
-
-	public function load() {
-		// TODO: load the files
+		// TODO: we can a filter for invalid URl/files
+		return $used_blocks;
 	}
 }
