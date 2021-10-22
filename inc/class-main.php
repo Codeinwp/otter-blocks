@@ -199,8 +199,8 @@ class Main {
 			\ThemeIsle\GutenbergCSS::instance();
 		}
 
-		if ( class_exists( '\ThemeIsle\GutenbergAnimation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {
-			\ThemeIsle\GutenbergAnimation::instance();
+		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Animation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {
+			\ThemeIsle\GutenbergBlocks\Blocks_Animation::instance();
 		}
 
 		if ( class_exists( '\ThemeIsle\GutenbergMenuIcons' ) && get_option( 'themeisle_blocks_settings_menu_icons', true ) ) {
