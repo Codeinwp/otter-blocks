@@ -25,6 +25,7 @@ jobs:
         env:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          ASSETS_DIR: dist/blocks-animation/.wordpress-org
           SOURCE_DIR: dist/blocks-animation/
           SLUG: blocks-animation
       - name: WordPress Plugin Deploy - CSS
@@ -32,5 +33,6 @@ jobs:
         env:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          ASSETS_DIR: dist/blocks-css/.wordpress-org
           SOURCE_DIR: dist/blocks-css/
           SLUG: blocks-css
