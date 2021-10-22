@@ -55,7 +55,7 @@ cd dist
 
 mv $BUILD_NAME/animation $BUILD_NAME/build/animation
 
-zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/"
+zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/" -x "*.wordpress-org*"
 
 echo "BUILD GENERATED: $BUILD_NAME"
 
@@ -85,7 +85,7 @@ cd dist
 
 mv $BUILD_NAME/css $BUILD_NAME/build/css
 
-zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/"
+zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/" -x "*.wordpress-org*"
 
 echo "BUILD GENERATED: $BUILD_NAME"
 
