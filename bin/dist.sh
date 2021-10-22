@@ -30,7 +30,7 @@ cd -
 BUILD_NAME="blocks-animation"
 export BUILD_NAME
 
-echo "::set-env name=BUILD_NAME::$BUILD_NAME"
+echo "BUILD_NAME=$BUILD_NAME"
 
 cd plugins/$BUILD_NAME
 
@@ -57,14 +57,13 @@ mv $BUILD_NAME/animation $BUILD_NAME/build/animation
 zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/" -x "*.wordpress-org*"
 
 echo "BUILD GENERATED: $BUILD_NAME"
-echo "::set-env name=BUILD_VERSION::$BUILD_VERSION"
 
 cd -
 
 BUILD_NAME="blocks-css"
 export BUILD_NAME
 
-echo "::set-env name=BUILD_NAME::$BUILD_NAME"
+echo "BUILD_NAME=$BUILD_NAME"
 
 cd plugins/$BUILD_NAME
 
@@ -85,6 +84,5 @@ mv $BUILD_NAME/css $BUILD_NAME/build/css
 zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/" -x "*.wordpress-org*"
 
 echo "BUILD GENERATED: $BUILD_NAME"
-echo "::set-env name=BUILD_VERSION::$BUILD_VERSION"
 
 cd -
