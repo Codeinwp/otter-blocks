@@ -25,13 +25,10 @@ echo "BUILD GENERATED: $BUILD_NAME"
 
 cd -
 
-BUILD_VERSION=$(node -pe "require('./plugins/blocks-animation/package.json').version")
-export BUILD_VERSION
-BUILD_NAME=$(node -pe "require('./plugins/blocks-animation/package.json').name")
+BUILD_NAME="blocks-animation"
 export BUILD_NAME
 
 echo "::set-env name=BUILD_NAME::$BUILD_NAME"
-echo "::set-env name=BUILD_VERSION::$BUILD_VERSION"
 
 cd plugins/$BUILD_NAME
 
@@ -58,16 +55,14 @@ mv $BUILD_NAME/animation $BUILD_NAME/build/animation
 zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/" -x "*.wordpress-org*"
 
 echo "BUILD GENERATED: $BUILD_NAME"
+echo "::set-env name=BUILD_VERSION::$BUILD_VERSION"
 
 cd -
 
-BUILD_VERSION=$(node -pe "require('./plugins/blocks-css/package.json').version")
-export BUILD_VERSION
-BUILD_NAME=$(node -pe "require('./plugins/blocks-css/package.json').name")
+BUILD_NAME="blocks-css"
 export BUILD_NAME
 
 echo "::set-env name=BUILD_NAME::$BUILD_NAME"
-echo "::set-env name=BUILD_VERSION::$BUILD_VERSION"
 
 cd plugins/$BUILD_NAME
 
@@ -88,5 +83,6 @@ mv $BUILD_NAME/css $BUILD_NAME/build/css
 zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/" -x "*.wordpress-org*"
 
 echo "BUILD GENERATED: $BUILD_NAME"
+echo "::set-env name=BUILD_VERSION::$BUILD_VERSION"
 
 cd -
