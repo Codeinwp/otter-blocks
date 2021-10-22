@@ -89,7 +89,13 @@ class CSS_Frontend_Loader {
 				$path,
 				[]
 			);
+			array_push( $this->deps, "themeisle-gutenberg-css-$slug");
 		}
+		return $this->deps;
+	}
+
+	public function get_deps() {
+		return $this->deps;
 	}
 
 	private function get_used_blocks( $pairs )
