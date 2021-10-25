@@ -13,7 +13,7 @@ const Save = ({
 	className
 }) => {
 	return (
-		<div className={className, 'anim'}>
+		<div id={ attributes.id } className={className, 'anim'}>
 			<div
 				className="o-inner"
 			>
