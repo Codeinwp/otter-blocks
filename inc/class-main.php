@@ -523,6 +523,7 @@ class Main {
 					$asset_file['version'],
 					true
 				);
+				wp_script_add_data( 'themeisle-gutenberg-google-maps', 'async', true );
 
 				wp_enqueue_script( // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
 					'google-maps',
@@ -544,6 +545,8 @@ class Main {
 				self::$assets_version,
 				true
 			);
+			wp_script_add_data( 'glidejs', 'async', true );
+
 
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/slider.asset.php';
 
@@ -557,6 +560,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
+			wp_script_add_data( 'themeisle-gutenberg-slider', 'async', true );
 
 			wp_enqueue_style(
 				'glidejs-core',
@@ -571,6 +575,7 @@ class Main {
 				[],
 				self::$assets_version
 			);
+			wp_script_add_data( 'glidejs-theme', 'async', true );
 
 			self::$is_glide_loaded = true;
 		}
@@ -585,6 +590,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
+			wp_script_add_data( 'themeisle-gutenberg-progress-bar', 'async', true );
 
 			self::$is_progress_bar_loaded = true;
 		}
@@ -599,6 +605,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
+			wp_script_add_data( 'themeisle-gutenberg-circle-counter', 'async', true );
 
 			self::$is_circle_counter_loaded = true;
 		}
@@ -611,6 +618,7 @@ class Main {
 				self::$assets_version,
 				true
 			);
+			wp_script_add_data( 'lottie-player', 'async', true );
 
 			wp_enqueue_script(
 				'lottie-interactivity',
@@ -619,6 +627,7 @@ class Main {
 				self::$assets_version,
 				true
 			);
+			wp_script_add_data( 'lottie-interactivity', 'async', true );
 
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
 
@@ -632,6 +641,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
+			wp_script_add_data( 'themeisle-gutenberg-lottie', 'async', true );
 
 			self::$is_lottie_loaded = true;
 		}
@@ -644,6 +654,7 @@ class Main {
 				self::$assets_version,
 				true
 			);
+			wp_script_add_data( 'themeisle-gutenberg-map-leaflet', 'async', true );
 
 			wp_enqueue_style(
 				'leaflet-css',
@@ -651,6 +662,7 @@ class Main {
 				[],
 				self::$assets_version
 			);
+			wp_script_add_data( 'themeisle-gutenberg-map-leaflet', 'async', true );
 
 			wp_enqueue_script(
 				'themeisle-gutenberg-map-leaflet-gesture',
@@ -659,6 +671,7 @@ class Main {
 				self::$assets_version,
 				true
 			);
+			wp_script_add_data( 'themeisle-gutenberg-map-leaflet-gesture', 'async', true );
 
 			wp_enqueue_style(
 				'leaflet-theme-gesture',
@@ -666,6 +679,7 @@ class Main {
 				[],
 				self::$assets_version
 			);
+			wp_script_add_data( 'leaflet-theme-gesture', 'async', true );
 
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/leaflet-map.asset.php';
 
@@ -679,6 +693,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
+			wp_script_add_data( 'themeisle-gutenberg-leaflet-block', 'async', true );
 
 			self::$is_leaflet_loaded = true;
 		}
@@ -693,6 +708,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
+			wp_script_add_data( 'themeisle-gutenberg-tabs', 'async', true );
 
 			self::$is_tabs_loaded = true;
 		}
@@ -707,6 +723,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
+			wp_script_add_data( 'themeisle-gutenberg-form', 'async', true );
 
 			wp_localize_script(
 				'themeisle-gutenberg-form',
@@ -729,6 +746,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
+			wp_script_add_data( 'themeisle-gutenberg-countdown', 'async', true );
 
 			self::$is_countdown_loaded = true;
 		}
@@ -743,6 +761,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
+			wp_script_add_data( 'themeisle-gutenberg-popup', 'async', true );
 
 			wp_localize_script(
 				'themeisle-gutenberg-popup',
