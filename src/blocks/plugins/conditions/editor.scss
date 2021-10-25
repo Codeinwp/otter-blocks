@@ -1,0 +1,53 @@
+.otter-blocks-conditions {
+	margin-top: 10px;
+
+	.components-button {
+		&.is-small {
+			margin-left: 10px;
+			height: 28px;
+		}
+	}
+}
+
+.otter-blocks-conditions__operator-wrapper {
+	position: relative;
+	height: 45px;
+	margin: 10px 0;
+
+	.otter-blocks-conditions__operator-line {
+		position: absolute;
+		left: 50%;
+		top: 5px;
+		bottom: 5px;
+		width: 1px;
+		background: #d4d4d4;
+		z-index: 1;
+	}
+
+	.otter-blocks-conditions__operator-word {
+		text-align: center;
+		height: 12px;
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 50%;
+		margin-top: -10px;
+		z-index: 2;
+	
+		span {
+			color: #747d86;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+			padding: 3px;
+			font-size: 11px;
+			background: #fff;
+		}
+	}
+}
+
+.otter-blocks-conditions__add {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	margin-top: 15px;
+}

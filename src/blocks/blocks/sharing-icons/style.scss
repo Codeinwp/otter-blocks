@@ -1,0 +1,75 @@
+.wp-block-themeisle-blocks-sharing-icons {
+	.social-icon {
+		background: #999999;
+		color: #ffffff;
+		font-size: 14px;
+		position: relative;
+		margin: 10px 5px 10px 0;;
+		padding: 12px;
+		border: none;
+		border-radius: 3px;
+		white-space: normal;
+		letter-spacing: 0;
+		display: inline-block;
+		text-align: center;
+		vertical-align: middle;
+		touch-action: manipulation;
+		cursor: pointer;
+		background-image: none;
+		line-height: 20px;
+
+		&.is-facebook {
+			background-color: #3b5998;
+			border-color: #3b5998;
+			color: #ffffff;
+		}
+
+		&.is-twitter {
+			background-color: #55acee;
+			border-color: #55acee;
+			color: #ffffff;
+		}
+
+		&.is-linkedin {
+			background-color: #0976b4;
+			border-color: #0976b4;
+			color: #ffffff;
+		}
+
+		&.is-pinterest {
+			background-color: #cc2127;
+			border-color: #cc2127;
+			color: #ffffff;
+		}
+
+		&.is-tumblr {
+			background-color: #35465c;
+			border-color: #35465c;
+			color: #ffffff;
+		}
+
+		&.is-reddit {
+			background-color: #ff4500;
+			border-color: #ff4500;
+			color: #ffffff;
+		}
+
+		&:hover {
+			box-shadow: 0 14px 26px -12px rgba(59, 89, 152, 0.42), 0 4px 23px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(59, 89, 152, 0.2);
+		}
+
+		i {
+			min-width: 20px;
+			color: #ffffff;
+			font-size: 16px;
+		}
+	}
+
+	&.has-label {
+		i {
+			border-right: 1px solid rgba( 255, 255, 255, 0.5 );
+			margin-right: 10px;
+			padding-right: 10px;
+		}
+	}
+}

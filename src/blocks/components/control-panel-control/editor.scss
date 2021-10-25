@@ -1,0 +1,51 @@
+.otter-control-panel-control {
+	padding: 10px 0;
+
+	.components-base-control__title {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+
+		label {
+			padding: 5px 0;
+		}
+
+		.floating-controls {
+			.components-dropdown {
+				display: flex;
+
+				button {
+					border: 1px solid #555d66;
+
+					&.is-tertiary {
+						border: none;
+						box-shadow: none;
+						color: #1e1e1e;
+
+						&:hover {
+							color: var(--wp-admin-theme-color);
+						}
+					}
+
+					&.is-active {
+						color: var(--wp-admin-theme-color);
+					}
+
+					.dashicon {
+						margin: 2px;
+					}
+				}
+			}
+		}
+	}
+}
+
+.otter-popover-settings {
+	padding: 10px;
+	min-width: 300px;
+	overflow: hidden;
+
+	.components-button-group {
+		padding-bottom: 10px;
+	}
+}

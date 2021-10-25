@@ -1,0 +1,80 @@
+.editor-styles-wrapper .wp-block {
+	@import 'style';
+}
+
+.otter-review-comparison__placeholder {
+	.otter-review-comparison__placeholder__selected {
+		border-top: 1px solid #f0f0f0;
+		border-bottom: 1px solid #f0f0f0;
+		padding: 15px 0;
+		margin: 15px 0;
+
+		.otter-review-comparison__placeholder__selected_label {
+			font-weight: 600;
+			margin-bottom: 15px;
+		}
+
+		.otter-review-comparison__tag {
+			display: inline-flex;
+			margin: 1px 4px 1px 0;
+			overflow: hidden;
+			vertical-align: middle;
+
+			.otter-review-comparison__tag_title {
+				align-self: center;
+				color: #757575;
+				white-space: nowrap;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				padding: 0 4px 0 8px;
+				border-radius: 12px 0 0 12px;
+				display: inline-block;
+				line-height: 24px;
+				background: #f0f0f0;
+				transition: all .2s cubic-bezier(.4,1,.4,1);
+			}
+
+			.components-button {
+				display: flex;
+				background: #f0f0f0;
+				transition: all .2s cubic-bezier(.4,1,.4,1);
+				padding: 0 2px;
+				border-radius: 0 12px 12px 0;
+				color: #757575;
+				line-height: 10px;
+				text-indent: 0;
+				height: 24px;
+				cursor: pointer;
+				min-width: 20px;
+
+				.dashicon {
+					margin-left: 0;
+					margin-right: 0;
+				}
+			}
+		}
+	}
+
+	.components-menu-group {
+		max-height: 17em;
+		overflow-x: hidden;
+		overflow-y: auto;
+		border: 1px solid #e0e0e0;
+		margin: 15px 0;
+
+		.components-base-control__field {
+			display: flex;
+			align-items: center;
+			margin-bottom: 0;
+			padding: 8px 16px;
+			border-bottom: 1px solid #f0f0f0;
+			color: #757575;
+			font-weight: 400;
+			font-size: 14px;
+
+			.components-checkbox-control__label {
+				width: 100%;
+			}
+		}
+	}
+}

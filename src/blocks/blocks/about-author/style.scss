@@ -1,0 +1,58 @@
+.wp-block-themeisle-blocks-about-author {
+    border: 0;
+    margin-bottom: 30px;
+    border-radius: 6px;
+    color: rgba(0,0,0,.87);
+    width: 100%;
+    position: relative;
+    display: flex;
+	word-wrap: break-word;
+
+	.wp-block-themeisle-author-image {
+		width: 16.66666667%;
+		float: left;
+		max-width: 130px;
+		max-height: 130px;
+		margin: auto 15px;
+
+		.author-image {
+			width: 100%;
+			height: auto;
+			box-shadow: 0 16px 38px -12px rgba(0, 0, 0, 0.56), 0 4px 25px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
+			border-radius: 50%;
+
+			&:hover {
+				opacity: 0.8;
+			}
+		}
+	}
+
+	.wp-block-themeisle-author-data {
+		width: 83.33333333%;
+		float: left;
+		margin: 0 15px;
+
+		p {
+			font-size: 14px;
+		}
+	}
+}
+
+@media ( max-width:961px ) {
+	.wp-block-themeisle-blocks-about-author {
+		display: inline-block;
+		text-align: center;
+
+		.wp-block-themeisle-author-image {
+			width: auto;
+			float: none;
+			max-width: 130px;
+			max-height: 130px;
+			margin: auto;
+		}
+		.wp-block-themeisle-author-data {
+			width: auto;
+			float: none;
+		}
+	}
+}

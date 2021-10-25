@@ -1,0 +1,104 @@
+.wp-block-themeisle-blocks-form {
+	.otter-form__container {
+		.wp-block-themeisle-blocks-form-input {
+			display: flex;
+			flex-direction: column;
+			.otter-form-input-label {
+				width: 100%;
+				font-weight: bold;
+
+				.required {
+					font-size: 14px;
+					margin-left: 5px;
+					color: #28303d;
+					font-weight: normal;
+				}
+			}
+
+			.otter-form-input {
+				width: 100%;
+				margin-bottom: 1.5em;
+			}
+		}
+
+		.wp-block-themeisle-blocks-form-textarea {
+			.otter-form-textarea-label {
+				width: 100%;
+				font-weight: bold;
+
+				.required {
+					font-size: 14px;
+					margin-left: 5px;
+					color: #28303d;
+				}
+			}
+
+			.otter-form-textarea-input {
+				width: 100%;
+				height: 200px;
+				margin-bottom: 1.5em;
+			}
+		}
+
+		.otter-form-consent {
+			label {
+				margin-left: 10px;
+			}
+
+			input {
+				transform: scale(1.5);
+			}
+		}
+
+		.wp-block-button {
+			margin-top: 1.5em;
+		}
+
+	}
+
+	.otter-form-server-response {
+		text-align: left;
+		padding: 1rem;
+		font-size: 1.2rem;
+		border-radius: 10%;
+		margin-left: 10px;
+
+		&.success {
+			color: green;
+		}
+
+		&.error {
+			color: red;
+		}
+
+		&.info {
+			color: rgb(79, 123, 204);
+		}
+
+		&.warning {
+			color: rgb(255, 196, 0);
+		}
+	}
+
+	.has-submit-msg {
+		display: flex;
+		align-items: baseline;
+		flex-direction: row;
+	}
+
+	.loading {
+		animation: blink 3s ease-in-out infinite both;
+	}
+
+	@keyframes blink {
+		0%,
+		50%,
+		100% {
+		  opacity: 1;
+		}
+		25%,
+		75% {
+		  opacity: 0.5;
+		}
+	  }
+}

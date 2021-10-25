@@ -1,0 +1,56 @@
+.editor-styles-wrapper {
+	.wp-block-themeisle-blocks-woo-comparison {
+		--borderColor: #BDC7CB;
+		--color: var(--nv-text-color);
+		--headerColor: var(--nv-text-color);
+		--bgColor: var(--nv-site-bg);
+
+		.nv-ct-2-product {
+			width: 60%;
+
+			td {
+				width: 33.3333333333%;
+			}
+		}
+
+		.nv-ct {
+			td {
+				font-size: .9em;
+
+				.button {
+					color: var(--primaryBtnColor);
+				}
+			}
+
+			a:not(.button) {
+				color: var(--color);
+			}
+
+			.nv-ct-image-container {
+				border-top-width: 1px;
+			}
+
+			td,
+			th {
+				width: 200px;
+				min-width: 200px;
+				border-style: solid;
+				border-width: 0 1px 1px 0;
+				border-color: var(--borderColor);
+
+				@media ( min-width:960px ) {
+					min-width: unset;
+					width: unset;
+				}
+			}
+
+			&.nv-ct-layout-row {
+
+				td,
+				th {
+					border-width: 0 0 1px 0;
+				}
+			}
+		}
+	}
+}

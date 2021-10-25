@@ -29,20 +29,19 @@ define( 'OTTER_BLOCKS_PATH', dirname( __FILE__ ) );
 define( 'OTTER_BLOCKS_VERSION', '1.7.0' );
 
 $vendor_file = OTTER_BLOCKS_PATH . '/packages/autoload.php';
+
 if ( is_readable( $vendor_file ) ) {
 	require_once $vendor_file;
 }
 
-add_action(
-	'plugins_loaded',
-	function () {
-		// call this only if Gutenberg is active.
-		if ( function_exists( 'register_block_type' ) ) {
-			require_once dirname( __FILE__ ) . '/class-otter-blocks.php';
-			Otter_Blocks::instance();
-		}
-	}
-);
+require_once dirname( __FILE__ ) . '/autoloader.php';
+$autoloader = new \ThemeIsle\GutenbergBlocks\Autoloader();
+$autoloader->add_namespace( '\ThemeIsle\GutenbergBlocks', dirname( __FILE__ ) . '/inc/' );
+$autoloader->register();
+
+if ( class_exists( '\ThemeIsle\GutenbergBlocks\Main' ) ) {
+	\ThemeIsle\GutenbergBlocks\Main::instance();
+}
 
 add_filter(
 	'themeisle_sdk_products',

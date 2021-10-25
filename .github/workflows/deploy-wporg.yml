@@ -5,16 +5,36 @@ on:
       - "*"
 jobs:
   tag:
-    name: New version
+    name: Deploy to WordPress.org
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Build
-        run: |
-          npm ci
-          composer install --no-dev --prefer-dist --no-progress --no-suggest
-      - name: WordPress Plugin Deploy
+      - name: Install composer deps
+        run: composer install --no-dev --prefer-dist --no-progress --no-suggest
+      - name: Install npm deps
+        run: npm ci
+      - name: Build files
+        run: npm run build
+      - name: Build zip
+        run: npm run dist
+      - name: WordPress Plugin Deploy - Otter
         uses: 10up/action-wordpress-plugin-deploy@master
         env:
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+      - name: WordPress Plugin Deploy - Animations
+        uses: nk-o/action-wordpress-plugin-deploy@master
+        env:
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          ASSETS_DIR: dist/blocks-animation/.wordpress-org
+          SOURCE_DIR: dist/blocks-animation/
+          SLUG: blocks-animation
+      - name: WordPress Plugin Deploy - CSS
+        uses: nk-o/action-wordpress-plugin-deploy@master
+        env:
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          ASSETS_DIR: dist/blocks-css/.wordpress-org
+          SOURCE_DIR: dist/blocks-css/
+          SLUG: blocks-css
