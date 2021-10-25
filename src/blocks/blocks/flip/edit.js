@@ -13,7 +13,7 @@ import {
 /**
  * WordPress dependencies.
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks, RichText } from '@wordpress/block-editor';
 
 import { __ } from '@wordpress/i18n';
 
@@ -55,12 +55,18 @@ const Edit = ({
 
 			<div
 				id={ attributes.id }
-				className={ classnames( className ) }
+				className={
+					classnames(
+						className,
+						{'flipX': 'flipX' === attributes.animType},
+						{'flipY': 'flipY' === attributes.animType}
+					)
+				}
 			>
 				<div
 					className="o-inner"
 					style={{
-						transform: isFliped ? 'rotateY(180deg)' : 'unset',
+						transform: isFliped ? 'var(--flip-anim)' : 'unset',
 						width: attributes.width,
 						height: attributes.height,
 						borderRadius: attributes.borderRadius,
@@ -71,8 +77,20 @@ const Edit = ({
 						className="o-front"
 						style={{ padding: attributes.padding }}
 					>
-						<h1>FRONT</h1>
-						<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris laoreet tempor ante, ac consequat nisl luctus nec. Etiam eu pellentesque tortor. Vivamus lobortis vitae torto</p>
+
+						<RichText
+							tagName="h1"
+							value={ attributes.title }
+							onChange={ title => setAttributes({ title })}
+							placeholder={ __( 'Insert a title', 'otter-blocks' )}
+						/>
+
+						<RichText
+							tagName="p"
+							value={ attributes.description }
+							onChange={ description => setAttributes({ description })}
+							placeholder={ __( 'Insert a description', 'otter-blocks' )}
+						/>
 					</div>
 					<div
 						className="o-back"

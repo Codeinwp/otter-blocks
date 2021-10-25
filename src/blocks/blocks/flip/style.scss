@@ -1,4 +1,7 @@
 .wp-block-themeisle-blocks-flip {
+
+	--flip-anim: unset;
+
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -7,10 +10,18 @@
 	border: 1px solid #f1f1f1;
 	perspective: 1000px; /* Remove this if you don't want the 3D effect */
 
+	&.flipX {
+		--flip-anim: rotateX(180deg);
+	}
+
+	&.flipY {
+		--flip-anim: rotateY(180deg);
+	}
+
 	&:hover {
 		&.anim {
 			.o-inner {
-				transform: rotateY(180deg);
+				transform: var(--flip-anim);
 			}
 		}
 	}
@@ -37,7 +48,7 @@
 		}
 
 		.o-back {
-			transform: rotateY(180deg);
+			transform: var(--flip-anim);
 		}
 
 		.block-editor-block-list__layout > div:last-child {

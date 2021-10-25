@@ -49,6 +49,17 @@ const Inspector = ({
 			<PanelBody
 				title={ __( 'Style', 'otter-blocks' ) }
 			>
+
+				<SelectControl
+					label={ __( 'Flip Type', 'otter-blocks' )}
+					value={ attributes.animType }
+					options={ [
+						{ label: __( 'X axis', 'otter-blocks' ), value: 'flipX' },
+						{ label: __( 'Y axis', 'otter-blocks' ), value: 'flipY' }
+					]}
+					onChange={ animType => setAttributes({ animType })}
+				/>
+
 				<RangeControl
 					label={ __( 'Padding', 'otter-blocks' ) }
 					value={ attributes.padding }

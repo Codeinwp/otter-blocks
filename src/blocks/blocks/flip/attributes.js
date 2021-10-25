@@ -2,6 +2,16 @@ const attributes = {
 	id: {
 		type: 'string'
 	},
+	title: {
+		type: 'string'
+	},
+	description: {
+		type: 'string'
+	},
+	animType: {
+		type: 'string',
+		default: 'flipY'
+	},
 	width: {
 		type: 'number'
 	},
