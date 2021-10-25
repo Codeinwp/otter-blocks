@@ -5,8 +5,8 @@ export BUILD_VERSION
 BUILD_NAME=$(node -pe "require('./package.json').name")
 export BUILD_NAME
 
-echo "::set-env name=BUILD_NAME::$BUILD_NAME"
-echo "::set-env name=BUILD_VERSION::$BUILD_VERSION"
+echo "BUILD_NAME=$BUILD_NAME"  >> $GITHUB_ENV
+echo "BUILD_VERSION=$BUILD_VERSION"  >> $GITHUB_ENV
 
 if [ ! -d "dist" ]; then
   mkdir "dist"
@@ -16,22 +16,21 @@ if [ ! -d "artifact" ]; then
   mkdir "artifact"
 fi
 
+# Take all the files, filter the dev ones (e.g. node_modules, src), and save the result to './dist'
 rsync -rc --exclude-from ".distignore" "./" "dist/$BUILD_NAME"
 
 cd dist
+# Create a zip file in './artifact' from the filtered files in the './dist'
 zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/"
 
 echo "BUILD GENERATED: $BUILD_NAME"
 
 cd -
 
-BUILD_VERSION=$(node -pe "require('./plugins/blocks-animation/package.json').version")
-export BUILD_VERSION
-BUILD_NAME=$(node -pe "require('./plugins/blocks-animation/package.json').name")
+BUILD_NAME="blocks-animation"
 export BUILD_NAME
 
-echo "::set-env name=BUILD_NAME::$BUILD_NAME"
-echo "::set-env name=BUILD_VERSION::$BUILD_VERSION"
+echo "BUILD_NAME=$BUILD_NAME"
 
 cd plugins/$BUILD_NAME
 
@@ -55,19 +54,16 @@ cd dist
 
 mv $BUILD_NAME/animation $BUILD_NAME/build/animation
 
-zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/"
+zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/" -x "*.wordpress-org*"
 
 echo "BUILD GENERATED: $BUILD_NAME"
 
 cd -
 
-BUILD_VERSION=$(node -pe "require('./plugins/blocks-css/package.json').version")
-export BUILD_VERSION
-BUILD_NAME=$(node -pe "require('./plugins/blocks-css/package.json').name")
+BUILD_NAME="blocks-css"
 export BUILD_NAME
 
-echo "::set-env name=BUILD_NAME::$BUILD_NAME"
-echo "::set-env name=BUILD_VERSION::$BUILD_VERSION"
+echo "BUILD_NAME=$BUILD_NAME"
 
 cd plugins/$BUILD_NAME
 
@@ -85,7 +81,7 @@ cd dist
 
 mv $BUILD_NAME/css $BUILD_NAME/build/css
 
-zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/"
+zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/" -x "*.wordpress-org*"
 
 echo "BUILD GENERATED: $BUILD_NAME"
 
