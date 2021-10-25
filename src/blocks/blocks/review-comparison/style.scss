@@ -1,0 +1,114 @@
+.wp-block-themeisle-blocks-review-comparison {
+	display: block;
+	overflow: auto;
+	border-spacing: 0;
+	margin: 20px 0;
+
+	thead {
+		tr {
+			th {
+				border-top: 0;
+				border-bottom: 1px solid #dddddd;
+				border-left: 0;
+				border-right: 0;
+				min-width: 150px;
+			}
+
+			td {
+				padding: 20px;
+				text-align: center;
+				border-style: solid;
+				border-width: 1px 0 1px 1px;
+				border-color: #dddddd;
+				min-width: 150px;
+
+				&:first-child {
+					border-width: 1px 1px 0 1px;
+				}
+
+				&:last-child {
+					border-width: 1px;
+				}
+
+				img {
+					height: auto;
+					max-width: 100%;
+				}
+			}
+		}
+	}
+
+	tbody {
+		th {
+			border-width: 0 0 1px 1px;
+			border-style: solid;
+			border-color: #dddddd;
+			text-align: left;
+			min-width: 150px;
+		}
+
+		td {
+			border-style: solid;
+			border-width: 0 0 1px 1px;;
+			border-color: #dddddd;
+			min-width: 150px;
+
+			del {
+				color: #A2A2A2;
+				padding-right: 5px;
+			}
+
+			.otter-review-comparison__ratings {
+				display: flex;
+
+				svg {
+					max-width: 25px;
+					max-height: 25px;
+					width: 100%;
+					fill: #8F8F8F;
+
+					&.low {
+						fill: #D56159;
+					}
+
+					&.medium {
+						fill: #F2A141;
+					}
+
+					&.high {
+						fill: #63A76E;
+					}
+				}
+			}
+
+			.otter-review-comparison__rating_container {
+				margin-bottom: 10px;
+			}
+
+			.otter-review-comparison__buttons {
+				display: flex;
+				flex-direction: column;
+
+				span,
+				a {
+					font-size: .8em;
+					font-weight: 600;
+					padding: 8px 12px;
+					transition: all .15s ease-in-out;
+					text-align: center;
+					border: 1px solid transparent;
+					border-radius: 3px;
+					text-transform: uppercase;
+					cursor: pointer;
+					line-height: normal;
+					font-family: inherit;
+					margin: 10px;
+				}
+			}
+
+			&:last-child {
+				border-width: 0 1px 1px 1px;
+			}
+		}
+	}
+}

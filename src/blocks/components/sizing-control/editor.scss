@@ -1,0 +1,86 @@
+.otter-sizing-control {
+	.components-base-control__label {
+		margin-bottom: 4px;
+	}
+
+	.otter-sizing-control-wrapper {
+		display: grid;
+		grid-template-columns: 25% 25% 25% 25%;
+		padding: 6px 0;
+
+		&.linking {
+			grid-template-columns: 20% 20% 20% 20% 20%;
+		}
+
+		.otter-sizing-control-item {
+			.otter-sizing-control-item-input {
+				width: 100%;
+				min-height: 30px;
+				border-radius: 0;
+				text-align: center;
+				padding: 0 5px;
+
+				&[disabled] {
+					background-color: #e6e9ec;
+					cursor: not-allowed;
+				}
+
+				.dashicon {
+					margin: 2px;
+				}
+			}
+
+			.otter-sizing-control-item-label {
+				display: block;
+				text-align: center;
+				font-size: 9px;
+				text-transform: uppercase;
+				padding-top: 2px;
+			}
+
+			&:first-child {
+				.otter-sizing-control-item-input {
+					border-radius: 5px 0 0 5px;
+				}
+			}
+
+			&:last-child {
+				.otter-sizing-control-item-input {
+					border-radius: 0 5px 5px 0;
+				}
+			}
+
+			&.toggle-linking {
+				display: flex;
+
+				.otter-sizing-control-item-input {
+					height: 30px;
+					border: 1px solid #8d96a0;
+					width: 100%;
+					display: flex;
+					justify-content: center;
+
+					svg {
+						width: 16px;
+					    height: 16px;
+					}
+				}
+
+				&.is-linked {
+					.otter-sizing-control-item-input {
+						background: #a4afb7;
+						color: #fff;
+
+						&:hover {
+							&:not(:disabled):not([aria-disabled="true"]):not(.is-secondary):not(.is-primary):not(.is-tertiary):not(.is-link) {
+								background: #a4afb7;
+								color: #fff;
+								box-shadow: inset 0 0 0 1px #e2e4e7,inset 0 0 0 2px #a4afb7,0 1px 1px rgba(25,30,35,.2);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}

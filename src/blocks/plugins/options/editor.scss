@@ -1,0 +1,132 @@
+.wp-block-themeisle-blocks-options-general {
+	.components-toggle-control {
+		.components-base-control__field {
+			display: flex;
+			align-items: center;
+			margin-bottom: 0;
+		}
+	}
+}
+
+.wp-block-themeisle-blocks-options-global-defaults {
+	.wp-block-themeisle-blocks-options-global-defaults-list {
+		display: flex;
+		flex-wrap: wrap;
+		margin: 10px 0;
+
+		.wp-block-themeisle-blocks-options-global-defaults-list-item {
+			display: flex;
+			flex-direction: column;
+			flex: 0 0 50%;
+			width: 50%;
+			height: auto;
+			font-size: 13px;
+			color: #32373c;
+			padding: 0 4px;
+			align-items: stretch;
+			justify-content: center;
+			cursor: pointer;
+			background: transparent;
+			word-break: break-word;
+			border-radius: 4px;
+			border: 1px solid transparent;
+			transition: all .05s ease-in-out;
+			position: relative;
+
+			&:focus,
+			&:active {
+				position: relative;
+				color: #191e23;
+				box-shadow: 0 0 0 1px #fff, 0 0 0 3px #00a0d2;
+				outline: 2px solid transparent;
+			}
+
+			.wp-block-themeisle-blocks-options-global-defaults-list-item-icon {
+				padding: 12px 20px;
+				border-radius: 4px;
+				color: #555d66;
+				transition: all .05s ease-in-out;
+
+				svg {
+					width: 20px;
+					height: 20px;
+				}
+			}
+
+			.wp-block-themeisle-blocks-options-global-defaults-list-item-title {
+				padding: 4px 2px 8px;
+			}
+		}
+	}
+}
+
+.wp-block-themeisle-blocks-options-global-defaults-modal {
+	.components-modal__frame {
+		.components-modal__content {
+			padding: 0;
+			margin: 0;
+			overflow: hidden;
+
+			.components-modal__header {
+				padding: 0 24px;
+				margin: 0;
+			}
+
+			.components-panel__body-toggle {
+				padding: 15px 24px;
+
+				.components-panel__arrow {
+					right: 22px;
+				}
+			}
+
+			.components-base-control,
+			.otter-responsive-control {
+				padding: 10px;
+				margin: 0;
+			}
+
+			div:not( .components-base-control__field ) {
+				 > .otter-sizing-control {
+					padding: 10px;
+					margin: 0;
+				}
+			}
+
+			.components-base-control {
+				.components-base-control__label {
+					margin-bottom: 1em;
+				}
+			}
+
+			hr {
+				border: 0.1px solid #f3f3f3;
+			}
+
+			.wp-block-themeisle-blocks-options-global-defaults-actions {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				padding: 15px 24px;
+
+				button {
+					height: auto;
+					line-height: 28px;
+					padding: 0 12px 2px;
+
+					&.is-primary {
+						margin-left: 10px;
+					}
+				}
+			}
+		}
+	}
+}
+
+@media ( min-width: 782px ) {
+	.wp-block-themeisle-blocks-options-global-defaults-modal {
+		.components-modal__frame {
+			width: 360px;
+		}
+	}
+}

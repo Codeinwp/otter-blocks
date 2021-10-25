@@ -1,0 +1,208 @@
+.wp-block-themeisle-blocks-leaflet-map-input-error {
+	.components-base-control__field {
+		input {
+			border-color: red;
+		}
+	}
+}
+
+.wp-block-themeisle-blocks-leaflet-map-add-marker-control {
+	display: block;
+	background-color: #fff;
+	color: #000000;
+	border: 2px solid rgba(0, 0, 0, 0.2);
+	border-radius: 4px;
+	cursor: auto;
+	background-clip: padding-box;
+	font-size: 16px;
+}
+
+.wp-block-themeisle-blocks-leaflet-map {
+	.leaflet-pane {
+		z-index: 0;
+	};
+
+	&.components-placeholder {
+		padding: 40px 20px;
+
+		.components-placeholder__text {
+			margin-top: 10px;
+			margin-bottom: 10px;
+		}
+
+		.components-placeholder__actions {
+			display: flex;
+			flex-direction: row;
+			width: 100%;
+			flex-wrap: wrap;
+			z-index: 1;
+
+			.components-base-control__field {
+				margin-right: 8px;
+			}
+
+			.components-placeholder__input {
+				input[type="text"] {
+					min-height: 36px;
+				}
+			}
+		}
+	}
+
+	.gmnoprint {
+		&:hover {
+			* {
+				cursor: pointer !important;
+			}
+		}
+	}
+
+	&.is-selecting-location * {
+		cursor: crosshair;
+
+		.wp-block-themeisle-blocks-leaflet-map-marker-button {
+			background-color: #e7bb41;
+
+			* {
+				cursor: pointer;
+			}
+
+			.dashicons {
+				&:before {
+					content: "\f109";
+				}
+				color: #fff;
+			}
+		}
+	}
+}
+
+.wp-block-themeisle-blocks-leaflet-map-marker-button {
+	background-color: #fff;
+	border: 2px solid #fff;
+	border-radius: 3px;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+	margin-left: 10px;
+	padding: 8px;
+	text-align: center;
+	z-index: 0;
+	position: absolute;
+	bottom: 26px;
+	left: 0px;
+
+	&:hover {
+		cursor: pointer;
+
+		* {
+			cursor: pointer;
+		}
+
+		.dashicons {
+			&:before {
+				content: "\f109";
+			}
+		}
+	}
+
+	.dashicons {
+		color: #666666;
+
+		&:hover {
+			color: #000000;
+		}
+	}
+}
+
+.wp-block-themeisle-blocks-leaflet-map-search {
+	width: 100%;
+}
+
+.wp-block-themeisle-blocks-leaflet-map-marker-group {
+	.wp-block-themeisle-blocks-leaflet-map-marker {
+		margin: 10px 0;
+
+		.wp-block-themeisle-blocks-leaflet-map-marker-title-area {
+			display: flex;
+			border: 1px solid #d5dadf;
+
+			&:hover {
+				border-color: #a4afb7;
+			}
+
+			.wp-block-themeisle-blocks-leaflet-map-marker-title {
+				flex-basis: 80%;
+				padding: 10px 15px;
+				cursor: pointer;
+
+				&:hover {
+					background: #fafafb;
+				}
+			}
+
+			.wp-block-themeisle-blocks-leaflet-map-marker-remove {
+				display: flex;
+				flex-basis: 20%;
+				justify-content: center;
+				padding: 10px 5px;
+				border-left: 1px solid #d5dadf;
+				cursor: pointer;
+
+				&:hover {
+					background: #fafafb;
+					border-radius: 0;
+					box-shadow: none;
+				}
+
+				.dashicon {
+					margin: 2px;
+				}
+			}
+		}
+
+		.wp-block-themeisle-blocks-leaflet-map-marker-control-area {
+			border: 1px solid #d5dadf;
+			border-top: none;
+			padding: 10px 15px;
+			display: block;
+		}
+	}
+}
+
+.wp-block-themeisle-blocks-leaflet-map-marker-add {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+}
+
+.wp-block-themeisle-blocks-map-overview {
+	h6.wp-block-themeisle-blocks-map-overview-title {
+		font-size: 14px;
+		margin: 10px 0;
+	}
+
+	.wp-block-themeisle-blocks-map-overview-content p {
+		font-size: 12px;
+		margin-top: 0px;
+		margin-bottom: 0px;
+	}
+
+	.wp-block-themeisle-blocks-map-overview-delete {
+		cursor: pointer;
+		margin-top: 8px;
+	}
+}
+
+.wp-block-themeisle-blocks-leaflet-map-resizer {
+	// margin-bottom: 70px;
+	&.is-focused {
+		.components-resizable-box__handle {
+			display: block;
+			z-index: 1;
+		}
+	}
+}
+
+.pac-container {
+	z-index: 999999;
+}
+

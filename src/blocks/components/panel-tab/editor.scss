@@ -1,0 +1,74 @@
+.otter-panel-tab {
+	z-index: 999999;
+
+	.otter-panel-tab__header {
+		display: flex;
+		background: #ffffff;
+		border: 1px solid #d5dadf;
+
+		.otter-panel-tab__header__label {
+			cursor: default;
+			flex-basis: 60%;
+			display: flex;
+			align-items: center;
+			padding-left: 15px;
+
+			&::selection {
+				background: none;
+			}
+		}
+
+		.components-button {
+			height: auto;
+			flex-basis: 20%;
+			justify-content: center;
+			padding: 10px 5px;
+			border-left: 1px solid #d5dadf;
+			border-radius: 0;
+
+			.dashicon {
+				margin: 2px;
+			}
+		}
+
+		&:hover {
+			background: #fafafb;
+		}
+	}
+
+	.otter-panel-tab__content {
+		background: #ffffff;
+		border: 1px solid #d5dadf;
+		border-top: none;
+		padding: 10px 15px;
+
+		.components-select-control {
+			label {
+				overflow: visible;
+				white-space: normal;
+			}
+		}
+
+		.components-base-control {
+			margin: 12px 0;
+
+			.components-dropdown {
+				width: 100%;
+
+				.components-button {
+					display: flex;
+					justify-content: center;
+					width: 100%;
+				}
+			}
+
+			.components-datetime__time-field-hours-input {
+				min-width: 60px;
+			}
+
+			.components-datetime__timezone {
+				display: inline-block;
+			}
+		}
+	}
+}

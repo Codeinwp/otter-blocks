@@ -1,0 +1,81 @@
+.wp-block-themeisle-blocks-business-hours {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	overflow: hidden;
+
+	&.is-style-black-white {
+		background-color: #2a2730;
+		border-radius: 10px;
+
+		.otter-business-hour__container {
+			.otter-business-hour__title {
+				text-align: center;
+				color: #fff;
+			}
+
+			.otter-business-hour__content {
+				.wp-block-themeisle-blocks-business-hours-item {
+					background-color: #fff;
+
+					&:nth-of-type(even) {
+						background-color: #f9fafc;
+					}
+				}
+
+				.block-editor-block-list__block {
+					.wp-block-themeisle-blocks-business-hours-item {
+						background-color: #fff;
+						border-radius: 0;
+					}
+	
+					&:nth-of-type(even) {
+						.wp-block-themeisle-blocks-business-hours-item {
+							background-color: #f9fafc;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	.otter-business-hour__container {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+
+		.otter-business-hour__title {
+			position: relative;
+			font-size: 24px;
+			padding: 20px 40px;
+		}
+
+		.otter-business-hour__content {
+			display: flex;
+			flex-direction: column;
+
+			.wp-block-themeisle-blocks-business-hours-item {
+				display: flex;
+				flex-direction: row;
+				width: 100%;
+				padding-top: 10px;
+				padding-bottom: 10px;
+				padding-left: 40px;
+				padding-right: 40px;
+
+				.otter-business-hour-item__label {
+					width: 50%;
+				}
+			
+				.otter-business-hour-item__time {
+					width: 50%;
+				}
+			}
+
+			.wp-block-separator {
+				margin: 0;
+			}
+		}
+	}
+}

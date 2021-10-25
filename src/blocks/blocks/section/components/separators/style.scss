@@ -1,0 +1,26 @@
+.wp-block-themeisle-blocks-advanced-columns-separators {
+	position: absolute;
+	left: 0;
+	width: 100%;
+
+	&.top {
+		top: 0;
+	}
+
+	&.bottom {
+		bottom: 0;
+
+		svg {
+			position: absolute;
+			bottom: 0;
+		}
+	}
+
+	svg {
+		height: 100px;
+	}
+
+	.rotate {
+		transform: rotate(180deg);
+	}
+}
