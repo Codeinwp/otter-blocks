@@ -524,7 +524,7 @@ class Main {
 					$asset_file['version'],
 					true
 				);
-				wp_script_add_data( 'themeisle-gutenberg-google-maps', 'async', true );
+				wp_script_add_data( 'themeisle-gutenberg-google-maps', 'defer', true );
 
 				wp_enqueue_script( // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
 					'google-maps',
@@ -533,6 +533,7 @@ class Main {
 					'',
 					true
 				);
+				wp_script_add_data( 'google-maps', 'defer', true );
 
 				self::$is_map_loaded = true;
 			}
@@ -591,7 +592,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
-			wp_script_add_data( 'themeisle-gutenberg-progress-bar', 'async', true );
+			wp_script_add_data( 'themeisle-gutenberg-progress-bar', 'defer', true );
 
 			self::$is_progress_bar_loaded = true;
 		}
@@ -606,7 +607,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
-			wp_script_add_data( 'themeisle-gutenberg-circle-counter', 'async', true );
+			wp_script_add_data( 'themeisle-gutenberg-circle-counter', 'defer', true );
 
 			self::$is_circle_counter_loaded = true;
 		}
@@ -642,7 +643,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
-			wp_script_add_data( 'themeisle-gutenberg-lottie', 'async', true );
+			wp_script_add_data( 'themeisle-gutenberg-lottie', 'defer', true );
 
 			self::$is_lottie_loaded = true;
 		}
@@ -672,7 +673,7 @@ class Main {
 				self::$assets_version,
 				true
 			);
-			wp_script_add_data( 'themeisle-gutenberg-map-leaflet-gesture', 'async', true );
+			wp_script_add_data( 'themeisle-gutenberg-map-leaflet-gesture', 'defer', true );
 
 			wp_enqueue_style(
 				'leaflet-theme-gesture',
@@ -694,7 +695,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
-			wp_script_add_data( 'themeisle-gutenberg-leaflet-block', 'async', true );
+			wp_script_add_data( 'themeisle-gutenberg-leaflet-block', 'defer', true );
 
 			self::$is_leaflet_loaded = true;
 		}
@@ -709,7 +710,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
-			wp_script_add_data( 'themeisle-gutenberg-tabs', 'async', true );
+			wp_script_add_data( 'themeisle-gutenberg-tabs', 'defer', true );
 
 			self::$is_tabs_loaded = true;
 		}
@@ -724,7 +725,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
-			wp_script_add_data( 'themeisle-gutenberg-form', 'async', true );
+			wp_script_add_data( 'themeisle-gutenberg-form', 'defer', true );
 
 			wp_localize_script(
 				'themeisle-gutenberg-form',
@@ -747,7 +748,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
-			wp_script_add_data( 'themeisle-gutenberg-countdown', 'async', true );
+			wp_script_add_data( 'themeisle-gutenberg-countdown', 'defer', true );
 
 			self::$is_countdown_loaded = true;
 		}
@@ -762,7 +763,7 @@ class Main {
 				$asset_file['version'],
 				true
 			);
-			wp_script_add_data( 'themeisle-gutenberg-popup', 'async', true );
+			wp_script_add_data( 'themeisle-gutenberg-popup', 'defer', true );
 
 			wp_localize_script(
 				'themeisle-gutenberg-popup',
