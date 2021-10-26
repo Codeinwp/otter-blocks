@@ -59,8 +59,14 @@
 			transform: var(--flip-anim);
 		}
 
-		.block-editor-block-list__layout > div:last-child {
-			transform: rotateY(180deg);
+		&.invert {
+			.o-front {
+				transform: var(--flip-anim);
+			}
+
+			.o-back {
+				transform: unset;
+			}
 		}
 	}
 }

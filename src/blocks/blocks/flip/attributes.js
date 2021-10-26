@@ -2,6 +2,9 @@ const attributes = {
 	id: {
 		type: 'string'
 	},
+	isInverted: {
+		type: 'boolean'
+	},
 	title: {
 		type: 'string'
 	},

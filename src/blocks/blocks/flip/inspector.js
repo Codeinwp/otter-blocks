@@ -13,7 +13,8 @@ import {
 import {
 	PanelBody,
 	RangeControl,
-	SelectControl
+	SelectControl,
+	ToggleControl
 } from '@wordpress/components';
 
 const Inspector = ({
@@ -43,6 +44,13 @@ const Inspector = ({
 					onChange={ height => setAttributes({ height }) }
 					min={ 0 }
 					max={ 1200 }
+				/>
+
+				<ToggleControl
+					label={ __( 'Invert the sides', 'otter-blocks' ) }
+					checked={ attributes.isInverted }
+					onChange={ isInverted => setAttributes({ isInverted })}
+					help={ __( 'Use this to display the back side first.', 'otter-blocks' ) }
 				/>
 			</PanelBody>
 

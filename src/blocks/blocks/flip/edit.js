@@ -64,7 +64,12 @@ const Edit = ({
 				}
 			>
 				<div
-					className="o-inner"
+					className={
+						classnames(
+							'o-inner',
+							{ invert: attributes.isInverted }
+						)
+					}
 					style={{
 						transform: isFliped ? 'var(--flip-anim)' : 'unset',
 						width: attributes.width,
