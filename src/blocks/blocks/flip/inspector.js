@@ -54,6 +54,7 @@ const Inspector = ({
 					label={ __( 'Vertical Align', 'otter-blocks' )}
 					value={ attributes.verticalAlign }
 					options={ [
+						{ label: __( 'Default', 'otter-blocks' ), value: '' },
 						{ label: __( 'Top', 'otter-blocks' ), value: 'flex-start' },
 						{ label: __( 'Center', 'otter-blocks' ), value: 'center' },
 						{ label: __( 'Botton', 'otter-blocks' ), value: 'flex-end' }
@@ -65,6 +66,7 @@ const Inspector = ({
 					label={ __( 'Horizontal Align', 'otter-blocks' )}
 					value={ attributes.horizontalAlign }
 					options={ [
+						{ label: __( 'Default', 'otter-blocks' ), value: 'flex-start' },
 						{ label: __( 'Left', 'otter-blocks' ), value: 'flex-start' },
 						{ label: __( 'Center', 'otter-blocks' ), value: 'center' },
 						{ label: __( 'Right', 'otter-blocks' ), value: 'flex-end' }

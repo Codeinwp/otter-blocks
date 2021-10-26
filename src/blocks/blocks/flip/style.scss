@@ -46,6 +46,8 @@
 			padding: 20px;
 			-webkit-backface-visibility: hidden; /* Safari */
 			backface-visibility: hidden;
+			overflow: hidden;
+			overflow-y: scroll;
 		}
 
 		.o-front {
