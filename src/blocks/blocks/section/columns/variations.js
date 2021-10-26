@@ -3,12 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import {
-	Path,
-	SVG,
-	Rect
-} from '@wordpress/components';
-import { cols112, cols12, cols21, cols211, cols2Equal, cols3Equal, cols4Equal, colsFull } from '../../../helpers/themeisle-icons';
+import { cols112, cols12, cols21, cols211, cols2Equal, cols3Equal, cols4Equal, colsFull } from '../../../helpers/icons.js';
 
 const variations =
 	[
