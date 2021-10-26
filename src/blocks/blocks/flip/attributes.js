@@ -26,6 +26,12 @@ const attributes = {
 	},
 	backgroundColor: {
 		type: 'string'
+	},
+	verticalAlign: {
+		type: 'string'
+	},
+	horizontalAlign: {
+		type: 'string'
 	}
 };
 

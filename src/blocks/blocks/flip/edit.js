@@ -75,7 +75,11 @@ const Edit = ({
 				>
 					<div
 						className="o-front"
-						style={{ padding: attributes.padding }}
+						style={{
+							padding: attributes.padding,
+							alignItems: attributes.horizontalAlign,
+							justifyContent: attributes.verticalAlign
+						}}
 					>
 
 						<RichText
