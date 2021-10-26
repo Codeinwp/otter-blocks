@@ -47,6 +47,34 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelBody
+				title={ __( 'Front', 'otter-blocks' ) }
+			>
+
+				<SelectControl
+					label={ __( 'Vertical Align', 'otter-blocks' )}
+					value={ attributes.verticalAlign }
+					options={ [
+						{ label: __( 'Top', 'otter-blocks' ), value: 'flex-start' },
+						{ label: __( 'Center', 'otter-blocks' ), value: 'center' },
+						{ label: __( 'Botton', 'otter-blocks' ), value: 'flex-end' }
+					]}
+					onChange={ verticalAlign => setAttributes({ verticalAlign })}
+				/>
+
+				<SelectControl
+					label={ __( 'Horizontal Align', 'otter-blocks' )}
+					value={ attributes.horizontalAlign }
+					options={ [
+						{ label: __( 'Left', 'otter-blocks' ), value: 'flex-start' },
+						{ label: __( 'Center', 'otter-blocks' ), value: 'center' },
+						{ label: __( 'Right', 'otter-blocks' ), value: 'flex-end' }
+					]}
+					onChange={ horizontalAlign => setAttributes({ horizontalAlign })}
+				/>
+
+			</PanelBody>
+
+			<PanelBody
 				title={ __( 'Style', 'otter-blocks' ) }
 			>
 
