@@ -86,12 +86,19 @@ domReady( () => {
 		return;
 	}
 
-	if ( ! window.L ) {
-		console.warn( 'The leaflet script did not load on the page!' );
-		return;
-	}
+	const checker = setInterval(
+		() => {
+			if ( ! window.L ) {
+				console.warn( 'The leaflet script did not load on the page! Waiting for loading.' );
+				return;
+			}
 
-	window.themeisleLeafletMaps.forEach( block => {
-		createLeafletMap( block.container, block.attributes );
-	});
+			window.themeisleLeafletMaps.forEach( block => {
+				createLeafletMap( block.container, block.attributes );
+			});
+
+			clearInterval( checker );
+		},
+		2_000
+	);
 });

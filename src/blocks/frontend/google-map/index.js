@@ -1,3 +1,5 @@
+import domReady from '@wordpress/dom-ready';
+
 /**
  * Internal dependencies
  */
@@ -71,4 +73,6 @@ const initMapScript = () => {
 	});
 };
 
-window.initMapScript = initMapScript;
+domReady( () => {
+	window.initMapScript = initMapScript;
+});
