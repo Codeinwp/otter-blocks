@@ -32,7 +32,6 @@ const BlockPlaceholder = ({
 	isJSONAllowed,
 	attributes
 }) => {
-
 	const [ url, setURL ] = useState( attributes.file?.url || null );
 	const [ isOpen, setOpen ] = useState( false );
 

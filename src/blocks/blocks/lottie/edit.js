@@ -15,20 +15,12 @@ import {
 	useRef
 } from '@wordpress/element';
 
-import {
-	Dashicon,
-	Button,
-	Toolbar,
-	Tooltip
-} from '@wordpress/components';
-
-import { BlockControls } from '@wordpress/block-editor';
-
 /**
  * Internal dependencies
  */
 import Placeholder from './placeholder.js';
 import Inspector from './inspector.js';
+import Controls from './controls.js';
 import LottiePlayer from './components/lottie-player.js';
 import { blockInit } from '../../helpers/block-utility.js';
 import defaultAttributes from './attributes.js';
@@ -41,7 +33,7 @@ const Edit = ({
 	clientId
 }) => {
 	const playerRef = useRef( null );
-	const [ editMode, setEditMode ] = useState( ! Boolean( attributes.file ) );
+	const [ isEditing, setEditing ] = useState( ! Boolean( attributes.file ) );
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -60,7 +52,7 @@ const Edit = ({
 		}
 
 		setAttributes({ file: { ...obj } });
-		setEditMode( false );
+		setEditing( false );
 	};
 
 	useEffect( () => {
@@ -79,51 +71,37 @@ const Edit = ({
 
 	return (
 		<Fragment>
+			<Controls
+				isEditing={ isEditing }
+				setEditing={ setEditing }
+			/>
 
-			<BlockControls>
-				<Toolbar>
-					<Tooltip text={ __( 'Edit', 'otter-blocks' ) }>
-						<Button
-							onClick={ () => setEditMode( ! editMode ) }
-						>
-							<Dashicon icon="edit" />
-						</Button>
-					</Tooltip>
-				</Toolbar>
-			</BlockControls>
+			{ ( isEmpty( attributes.file ) || isEditing ) && (
+				<Placeholder
+					className={ className }
+					value={ attributes.file }
+					onChange={ onChangeFile }
+					isJSONAllowed={ isJSONAllowed }
+					attributes={ attributes }
+				/>
+			) }
 
-			{
-				( isEmpty( attributes.file ) || editMode ) && (
-					<Placeholder
-						className={ className }
-						value={ attributes.file }
-						onChange={ onChangeFile }
-						isJSONAllowed={ isJSONAllowed }
-						attributes={ attributes }
-					/>
-				)
-			}
+			{ ! ( isEmpty( attributes.file ) || isEditing ) && (
+				<Inspector
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+					playerRef={ playerRef }
+				/>
+			) }
 
-			{
-				! ( isEmpty( attributes.file ) || editMode ) && (
-					<Inspector
-						attributes={ attributes }
-						setAttributes={ setAttributes }
-						playerRef={ playerRef }
-					/>
-				)
-			}
-
-			{
-				! ( isEmpty( attributes.file ) || editMode ) && (
-					<LottiePlayer
-						attributes={ attributes }
-						className={ className }
-						isSelected={ isSelected }
-						playerRef={ playerRef }
-					/>
-				)
-			}
+			{ ! ( isEmpty( attributes.file ) || isEditing ) && (
+				<LottiePlayer
+					attributes={ attributes }
+					className={ className }
+					isSelected={ isSelected }
+					playerRef={ playerRef }
+				/>
+			) }
 		</Fragment>
 	);
 };
