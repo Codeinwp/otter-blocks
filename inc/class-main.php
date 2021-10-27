@@ -202,10 +202,6 @@ class Main {
 		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Animation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {
 			\ThemeIsle\GutenbergBlocks\Blocks_Animation::instance();
 		}
-
-		if ( class_exists( '\ThemeIsle\GutenbergMenuIcons' ) && get_option( 'themeisle_blocks_settings_menu_icons', true ) ) {
-			\ThemeIsle\GutenbergMenuIcons::instance();
-		}
 	}
 
 	/**
@@ -295,6 +291,16 @@ class Main {
 			}
 
 			if ( 'fontawesome' === $block['attrs']['library'] ) {
+				self::$is_fa_loaded = true;
+
+				return $block_content;
+			}
+		}
+
+		$has_navigation_block = \WP_Block_Type_Registry::get_instance()->is_registered( 'core/navigation' );
+
+		if ( $has_navigation_block && ( 'core/navigation-link' === $block['blockName'] || 'core/navigation-submenu' === $block['blockName'] ) ) {
+			if ( isset( $block['attrs']['className'] ) && strpos( $block['attrs']['className'], 'fa-' ) !== false ) {
 				self::$is_fa_loaded = true;
 
 				return $block_content;
@@ -754,7 +760,6 @@ class Main {
 
 			self::$is_popup_loaded = true;
 		}
-
 	}
 
 	/**
