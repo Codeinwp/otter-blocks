@@ -59,7 +59,6 @@ const Edit = ({
 			obj.url = value;
 		}
 
-		console.log( obj );
 		setAttributes({ file: { ...obj } });
 		setEditMode( false );
 	};
@@ -81,24 +80,10 @@ const Edit = ({
 	return (
 		<Fragment>
 
-			{
-				attributes.file && (
-					<Inspector
-						attributes={ attributes }
-						setAttributes={ setAttributes }
-						playerRef={ playerRef }
-						editMode={ editMode }
-						setEditMode={ setEditMode }
-					/>
-				)
-			}
-
 			<BlockControls>
 				<Toolbar>
 					<Tooltip text={ __( 'Edit', 'otter-blocks' ) }>
 						<Button
-
-							//className="components-icon-button components-toolbar__control wp-block-themeisle-blocks-plugin-cards-edit-plugin-card"
 							onClick={ () => setEditMode( ! editMode ) }
 						>
 							<Dashicon icon="edit" />
@@ -114,6 +99,16 @@ const Edit = ({
 						value={ attributes.file }
 						onChange={ onChangeFile }
 						isJSONAllowed={ isJSONAllowed }
+					/>
+				)
+			}
+
+			{
+				! ( isEmpty( attributes.file ) || editMode ) && (
+					<Inspector
+						attributes={ attributes }
+						setAttributes={ setAttributes }
+						playerRef={ playerRef }
 					/>
 				)
 			}
