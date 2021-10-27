@@ -7,7 +7,16 @@ import hexToRgba from 'hex-rgba';
 /**
  * WordPress dependencies
  */
+import { __ } from '@wordpress/i18n';
+
 import { times } from 'lodash';
+
+import {
+	Button,
+	Dashicon,
+	Placeholder,
+	Tooltip
+} from '@wordpress/components';
 
 import { useViewportMatch } from '@wordpress/compose';
 
@@ -16,10 +25,17 @@ import {
 	useSelect
 } from '@wordpress/data';
 
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	__experimentalBlockVariationPicker as VariationPicker,
+	InnerBlocks
+} from '@wordpress/block-editor';
 
 import {
-	Fragment,
+	createBlock,
+	createBlocksFromInnerBlocksTemplate
+} from '@wordpress/blocks';
+
+import {
 	useEffect,
 	useState
 } from '@wordpress/element';
@@ -33,36 +49,95 @@ import Controls from './controls.js';
 import Inspector from './inspector.js';
 import BlockNavigatorControl from '../../../components/block-navigator-control/index.js';
 import Separators from '../components/separators/index.js';
-import Onboarding from '../components/onboarding/index.js';
 import { blockInit } from '../../../helpers/block-utility.js';
+import Library from '../../../components/template-library/index.js';
 
 const Edit = ({
 	attributes,
 	setAttributes,
 	className,
-	clientId
+	clientId,
+	name
 }) => {
-	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
+	useEffect( () => {
+		const unsubscribe = blockInit( clientId, defaultAttributes );
+		return () => unsubscribe( attributes.id );
+	}, [ attributes.id ]);
+
+	const { updateBlockAttributes, replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 
 	const {
 		sectionBlock,
 		isViewportAvailable,
 		isPreviewDesktop,
 		isPreviewTablet,
-		isPreviewMobile
+		isPreviewMobile,
+		children,
+		variations,
+		defaultVariation
 	} = useSelect( select => {
-		const { getBlock } = select( 'core/block-editor' );
+		const {
+			getBlock
+		} = select( 'core/block-editor' );
+
+		const {
+			getBlockVariations,
+			getBlockType,
+			getDefaultBlockVariation
+		} = select( 'core/blocks' );
+
 		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
 		const sectionBlock = getBlock( clientId );
 
 		return {
 			sectionBlock,
+			children: sectionBlock.innerBlocks,
 			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
 			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
 			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
+			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false,
+			blockType: getBlockType( name ),
+			defaultVariation: getDefaultBlockVariation( name, 'block' ),
+			variations: getBlockVariations( name, 'block' ).filter( ({ isDefault }) => ! isDefault )
 		};
 	}, []);
+
+	// +-------------------------------- COLUMNS MANIPULATION --------------------------------+
+	const {
+		insertBlock,
+		removeBlock
+	} = useDispatch( 'core/block-editor' );
+
+	const changeColumnsNumbers = ( newColumnsNumber ) => {
+		if ( attributes.columns < newColumnsNumber ) {
+			times(  newColumnsNumber - attributes.columns, () => {
+				const columnBlock = createBlock( 'themeisle-blocks/advanced-column' );
+				if ( columnBlock ) {
+					insertBlock( columnBlock, ( children?.length ) || 0, clientId, false );
+				}
+			});
+		} else if ( attributes.columns > newColumnsNumber ) {
+			children.slice( newColumnsNumber ).forEach( column => removeBlock( column.clientId, false ) );
+		}
+	};
+
+	const updateColumnsWidth = ( columns, layout ) => {
+		( sectionBlock.innerBlocks ).map( ( innerBlock, i ) => {
+			updateBlockAttributes( innerBlock.clientId, {
+				columnWidth: layouts[columns][layout][i]
+			});
+		});
+	};
+
+	useEffect( () => {
+		if ( attributes.columns !== children.length ) {
+			setAttributes({
+				columns: children.length
+			});
+		}
+	}, [ children ]);
+
+	// +-------------------------------- SCREEN SIZE --------------------------------+
 
 	const isLarger = useViewportMatch( 'large', '>=' );
 
@@ -71,13 +146,6 @@ const Edit = ({
 	const isSmall = useViewportMatch( 'small', '>=' );
 
 	const isSmaller = useViewportMatch( 'small', '<=' );
-
-	useEffect( () => {
-		const unsubscribe = blockInit( clientId, defaultAttributes );
-		return () => unsubscribe( attributes.id );
-	}, [ attributes.id ]);
-
-	const [ dividerViewType, setDividerViewType ] = useState( 'top' );
 
 	let isDesktop = isLarger && ! isLarge && isSmall && ! isSmaller;
 
@@ -90,6 +158,40 @@ const Edit = ({
 		isTablet = isPreviewTablet;
 		isMobile = isPreviewMobile;
 	}
+
+	// +-------------------------------- DIVIDER SIZE --------------------------------+
+
+	const [ dividerViewType, setDividerViewType ] = useState( 'top' );
+
+	const getValueBasedOnScreenSize = ({ mobile, tablet, desktop }) => {
+		return ( isMobile && mobile ) || ( isTablet && tablet ) || ( isDesktop && desktop ) || undefined;
+	};
+
+	const getDividerTopWidth = getValueBasedOnScreenSize({
+		mobile: attributes.dividerTopWidthMobile,
+		tablet: attributes.dividerTopWidthTablet,
+		desktop: attributes.dividerTopWidth
+	});
+
+	const getDividerBottomWidth = getValueBasedOnScreenSize({
+		mobile: attributes.dividerBottomWidthMobile,
+		tablet: attributes.dividerBottomWidthTablet,
+		desktop: attributes.dividerBottomWidth
+	});
+
+	const getDividerTopHeight = getValueBasedOnScreenSize({
+		mobile: attributes.dividerTopHeightMobile,
+		tablet: attributes.dividerTopHeightTablet,
+		desktop: attributes.dividerTopHeight
+	});
+
+	const getDividerBottomHeight = getValueBasedOnScreenSize({
+		mobile: attributes.dividerBottomHeightMobile,
+		tablet: attributes.dividerBottomHeightTablet,
+		desktop: attributes.dividerBottomHeight
+	});
+
+	// +-------------------------------- STYLING --------------------------------+
 
 	const Tag = attributes.columnsHTMLTag;
 
@@ -105,9 +207,7 @@ const Edit = ({
 			marginBottom: 'linked' === attributes.marginType ? `${ attributes.margin }px` : `${ attributes.marginBottom }px`,
 			minHeight: 'custom' === attributes.columnsHeight ? `${ attributes.columnsHeightCustom }px` : attributes.columnsHeight
 		};
-	}
-
-	if ( isTablet ) {
+	} else if ( isTablet ) {
 		stylesheet = {
 			paddingTop: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingTopTablet }px`,
 			paddingRight: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingRightTablet }px`,
@@ -117,9 +217,7 @@ const Edit = ({
 			marginBottom: 'linked' === attributes.marginTypeTablet ? `${ attributes.marginTablet }px` : `${ attributes.marginBottomTablet }px`,
 			minHeight: 'custom' === attributes.columnsHeight ? `${ attributes.columnsHeightCustomTablet }px` : attributes.columnsHeight
 		};
-	}
-
-	if ( isMobile ) {
+	} else if ( isMobile ) {
 		stylesheet = {
 			paddingTop: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingTopMobile }px`,
 			paddingRight: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingRightMobile }px`,
@@ -189,7 +287,7 @@ const Edit = ({
 
 	if ( true === attributes.boxShadow ) {
 		boxShadowStyle = {
-			boxShadow: `${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ attributes.boxShadowSpread }px ${ hexToRgba( ( attributes.boxShadowColor ? attributes.boxShadowColor : '#000000' ), attributes.boxShadowColorOpacity ) }`
+			boxShadow: `${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ attributes.boxShadowSpread }px ${  hexToRgba( ( attributes.boxShadowColor ? attributes.boxShadowColor : '#000000' ), attributes.boxShadowColorOpacity ) }`
 		};
 	}
 
@@ -257,127 +355,56 @@ const Edit = ({
 		{ 'has-viewport-mobile': isMobile }
 	);
 
-	const updateColumnsWidth = ( columns, layout ) => {
-		( sectionBlock.innerBlocks ).forEach( ( innerBlock, i ) => {
-			updateBlockAttributes( innerBlock.clientId, {
-				columnWidth: layouts[columns][layout][i]
-			});
-		});
-	};
-
-	const setupColumns = ( columns, layout ) => {
-		if ( 1 >= columns ) {
-			setAttributes({
-				columns,
-				layout,
-				layoutTablet: 'equal',
-				layoutMobile: 'equal'
-			});
-		} else {
-			setAttributes({
-				columns,
-				layout,
-				layoutTablet: 'equal',
-				layoutMobile: 'collapsedRows'
-			});
-		}
-	};
-
-	let getDividerTopWidth = () => {
-		let value;
-
-		if ( isDesktop ) {
-			value = attributes.dividerTopWidth;
-		}
-
-		if ( isTablet ) {
-			value = attributes.dividerTopWidthTablet;
-		}
-
-		if ( isMobile ) {
-			value = attributes.dividerTopWidthMobile;
-		}
-
-		return value;
-	};
-
-	getDividerTopWidth = getDividerTopWidth();
-
-	let getDividerBottomWidth = () => {
-		let value;
-
-		if ( isDesktop ) {
-			value = attributes.dividerBottomWidth;
-		}
-
-		if ( isTablet ) {
-			value = attributes.dividerBottomWidthTablet;
-		}
-
-		if ( isMobile ) {
-			value = attributes.dividerBottomWidthMobile;
-		}
-
-		return value;
-	};
-
-	getDividerBottomWidth = getDividerBottomWidth();
-
-	let getDividerTopHeight = () => {
-		let value;
-
-		if ( isDesktop ) {
-			value = attributes.dividerTopHeight;
-		}
-
-		if ( isTablet ) {
-			value = attributes.dividerTopHeightTablet;
-		}
-
-		if ( isMobile ) {
-			value = attributes.dividerTopHeightMobile;
-		}
-
-		return value;
-	};
-
-	getDividerTopHeight = getDividerTopHeight();
-
-	let getDividerBottomHeight = () => {
-		let value;
-
-		if ( isDesktop ) {
-			value = attributes.dividerBottomHeight;
-		}
-
-		if ( isTablet ) {
-			value = attributes.dividerBottomHeightTablet;
-		}
-
-		if ( isMobile ) {
-			value = attributes.dividerBottomHeightMobile;
-		}
-
-		return value;
-	};
-
-	getDividerBottomHeight = getDividerBottomHeight();
-
-	const getColumnsTemplate = columns => {
-		return times( columns, i => [ 'themeisle-blocks/advanced-column', { columnWidth: layouts[ columns ][ attributes.layout ][ i ] } ]);
-	};
+	// +-------------------------------- Template Library --------------------------------+
+	const [ isLibraryOpen, setIsLibraryOpen ] = useState( false );
 
 	if ( ! attributes.columns ) {
 		return (
-			<Onboarding
-				clientId={ clientId }
-				setupColumns={ setupColumns }
-			/>
+			<Placeholder
+				label={ __( 'Section', 'otter-blocks' )  }
+				instructions={ __( 'Select a layout to start with, or make one yourself.', 'otter-blocks' ) }
+				className="otter-section-layout-picker"
+			>
+				<VariationPicker
+					variations={ variations }
+					onSelect={ ( nextVariation = defaultVariation ) => {
+						if ( nextVariation ) {
+							replaceInnerBlocks(
+								clientId,
+								createBlocksFromInnerBlocksTemplate(
+									nextVariation.innerBlocks
+								),
+								true
+							);
+							setAttributes( nextVariation.attributes );
+						}
+					} }
+					allowSkip
+				/>
+				<Tooltip text={ __( 'Open Template Library', 'otter-blocks' ) } >
+					<Button
+						isPrimary
+						isLarge
+						className="wp-block-themeisle-template-library"
+						onClick={ () => setIsLibraryOpen( true ) }
+					>
+						<Dashicon icon="category"/>
+						{ __( 'Template Library', 'otter-blocks' ) }
+					</Button>
+
+					{ isLibraryOpen && (
+						<Library
+							clientId={ clientId }
+							close={ () => setIsLibraryOpen( false ) }
+						/>
+					) }
+				</Tooltip>
+			</Placeholder>
 		);
 	}
 
 	return (
-		<Fragment>
+		<div>
 			<BlockNavigatorControl clientId={ clientId } />
 
 			<Controls
@@ -391,6 +418,7 @@ const Edit = ({
 				updateColumnsWidth={ updateColumnsWidth }
 				dividerViewType={ dividerViewType }
 				setDividerViewType={ setDividerViewType }
+				changeColumnsNumbers={ changeColumnsNumbers }
 			/>
 
 			<Tag
@@ -419,8 +447,7 @@ const Edit = ({
 				>
 					<InnerBlocks
 						allowedBlocks={ [ 'themeisle-blocks/advanced-column' ] }
-						template={ getColumnsTemplate( attributes.columns ) }
-						templateLock="all"
+						orientation="horizontal"
 					/>
 				</div>
 
@@ -433,7 +460,7 @@ const Edit = ({
 					height={ getDividerBottomHeight }
 				/>
 			</Tag>
-		</Fragment>
+		</div>
 	);
 };
 

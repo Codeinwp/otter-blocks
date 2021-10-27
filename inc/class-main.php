@@ -206,6 +206,10 @@ class Main {
 		if ( class_exists( '\ThemeIsle\GutenbergMenuIcons' ) && get_option( 'themeisle_blocks_settings_menu_icons', true ) ) {
 			\ThemeIsle\GutenbergMenuIcons::instance();
 		}
+
+		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Export_Import' ) ) {
+			\ThemeIsle\GutenbergBlocks\Blocks_Export_Import::instance();
+		}
 	}
 
 	/**

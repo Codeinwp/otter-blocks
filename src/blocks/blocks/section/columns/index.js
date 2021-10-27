@@ -13,6 +13,7 @@ import attributes from './attributes.js';
 import deprecated from './deprecated.js';
 import edit from './edit.js';
 import save from './save.js';
+import variations from './variations.js';
 
 registerBlockType( 'themeisle-blocks/advanced-columns', {
 	title: __( 'Section', 'otter-blocks' ),
@@ -30,6 +31,7 @@ registerBlockType( 'themeisle-blocks/advanced-columns', {
 		html: false
 	},
 	deprecated,
+	variations,
 	edit,
 	save
 });
