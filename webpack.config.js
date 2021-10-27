@@ -46,6 +46,19 @@ module.exports = [
 	},
 	{
 
+		// Export Import
+		...defaultConfig,
+		stats: 'minimal',
+		mode: NODE_ENV,
+		entry: {
+			index: './src/export-import/index.js'
+		},
+		output: {
+			path: path.resolve( __dirname, './build/export-import' )
+		}
+	},
+	{
+
 		// OTTER BLOCKS
 		...defaultConfig,
 		stats: 'minimal',
