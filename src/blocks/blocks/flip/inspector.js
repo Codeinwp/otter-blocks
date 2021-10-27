@@ -3,14 +3,18 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { clamp } from 'lodash';
+import { pick } from 'lodash';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
-	InspectorControls
+	InspectorControls,
+	MediaReplaceFlow
 } from '@wordpress/block-editor';
 
 import {
+	BaseControl,
+	Button,
+	FocalPointPicker,
 	PanelBody,
 	RangeControl,
 	SelectControl,
@@ -57,6 +61,61 @@ const Inspector = ({
 			<PanelBody
 				title={ __( 'Front', 'otter-blocks' ) }
 			>
+
+				<BaseControl
+					label={ __( 'Background Image', 'otter-blocks' ) }
+					help={ __( 'Set an image as background.', 'otter-blocks' ) }
+				>
+					<MediaReplaceFlow
+						mediaId={ attributes.frontImg?.id }
+						mediaURL={ attributes.frontImg?.url }
+						allowedTypes={ [ 'image' ] }
+						accept="image/*,video/*"
+						onSelect={ media => {
+							setAttributes({
+								frontImg: pick( media, [ 'id', 'url' ])
+							});
+						} }
+						name={ ! attributes.frontImg?.url ? __( 'Add image', 'otter-blocks' ) : __( 'Replace or remove image', 'otter-blocks' ) }
+					>
+					</MediaReplaceFlow>
+					<Button
+						onClick={ () => {
+							setAttributes({
+								frontImg: undefined
+							});
+						}}
+					>
+						{__( 'Clear image', 'otter-blocks' )}
+					</Button>
+				</BaseControl>
+
+				{
+					attributes.frontImg?.url && (
+						<FocalPointPicker
+							label={ __( 'Focal point picker', 'otter-blocks' ) }
+							url={ attributes.frontImg?.url }
+							value={ attributes.frontImgFocalpoint }
+
+							// TODO: change to reference manipulation for speed
+							onDragStart={ ( newFocalPoint ) =>
+								setAttributes({
+									frontImgFocalpoint: newFocalPoint
+								}) }
+
+							// TODO: change to reference manipulation for speed
+							onDrag={ ( newFocalPoint ) =>
+								setAttributes({
+									frontImgFocalpoint: newFocalPoint
+								}) }
+							onChange={ ( newFocalPoint ) =>
+								setAttributes({
+									frontImgFocalpoint: newFocalPoint
+								})
+							}
+						/>
+					)
+				}
 
 				<SelectControl
 					label={ __( 'Vertical Align', 'otter-blocks' )}
