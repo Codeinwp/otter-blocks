@@ -577,7 +577,6 @@ class Main {
 				[],
 				self::$assets_version
 			);
-			wp_script_add_data( 'glidejs-theme', 'async', true );
 
 			self::$is_glide_loaded = true;
 		}
@@ -664,7 +663,6 @@ class Main {
 				[],
 				self::$assets_version
 			);
-			wp_script_add_data( 'themeisle-gutenberg-map-leaflet', 'async', true );
 
 			wp_enqueue_script(
 				'themeisle-gutenberg-map-leaflet-gesture',
@@ -681,7 +679,6 @@ class Main {
 				[],
 				self::$assets_version
 			);
-			wp_script_add_data( 'leaflet-theme-gesture', 'async', true );
 
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/leaflet-map.asset.php';
 
