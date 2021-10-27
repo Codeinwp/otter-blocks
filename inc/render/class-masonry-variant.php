@@ -44,6 +44,7 @@ class Masonry_Variant {
 				$asset_file['version'],
 				true
 			);
+			wp_script_add_data( 'macy', 'async', true );
 
 			wp_enqueue_script(
 				'themeisle-gutenberg-masonry',
@@ -55,6 +56,7 @@ class Masonry_Variant {
 				$asset_file['version'],
 				true
 			);
+			wp_script_add_data( 'themeisle-gutenberg-masonry', 'defer', true );
 
 			$margin = isset( $block['attrs']['margin'] ) ? $block['attrs']['margin'] : 0;
 
