@@ -95,6 +95,7 @@ const Edit = ({
 		updateWidth();
 	}, [ attributes.columnWidth ]);
 
+
 	const [ currentWidth, setCurrentWidth ] = useState( 0 );
 	const [ nextWidth, setNextWidth ] = useState( 0 );
 
@@ -111,7 +112,7 @@ const Edit = ({
 	}
 
 	if ( attributes.columnWidth === undefined ) {
-		( parentBlock.innerBlocks ).forEach( ( innerBlock, i ) => {
+		( parentBlock.innerBlocks ).map( ( innerBlock, i ) => {
 			if ( clientId === innerBlock.clientId ) {
 				const columns = parentBlock.attributes.columns;
 				const layout = parentBlock.attributes.layout;
@@ -281,7 +282,7 @@ const Edit = ({
 
 	if ( true === attributes.boxShadow ) {
 		boxShadowStyle = {
-			boxShadow: `${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ attributes.boxShadowSpread }px ${ hexToRgba( ( attributes.boxShadowColor ? attributes.boxShadowColor : '#000000' ), attributes.boxShadowColorOpacity ) }`
+			boxShadow: `${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ attributes.boxShadowSpread }px ${  hexToRgba( ( attributes.boxShadowColor ? attributes.boxShadowColor : '#000000' ), attributes.boxShadowColorOpacity ) }`
 		};
 	}
 
