@@ -35,6 +35,15 @@ const attributes = {
 	},
 	horizontalAlign: {
 		type: 'string'
+	},
+	frontImg: {
+		type: 'object'
+	},
+	frontImgFocalpoint: {
+		type: 'object'
+	},
+	backImg: {
+		type: 'object'
 	}
 };
 

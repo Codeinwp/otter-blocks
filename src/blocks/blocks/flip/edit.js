@@ -62,6 +62,12 @@ const Edit = ({
 						{'flipY': 'flipY' === attributes.animType}
 					)
 				}
+				css={ css`
+					--front-img: url( ${ attributes.frontImg?.url } );
+					--back-img: url( ${ attributes.backImg?.url } );
+					--front-bg-color: ${ attributes.backgroundColor };
+					--back-bg-color: ${ attributes.backgroundColor };
+				`}
 			>
 				<div
 					className={
@@ -74,8 +80,7 @@ const Edit = ({
 						transform: isFliped ? 'var(--flip-anim)' : 'unset',
 						width: attributes.width,
 						height: attributes.height,
-						borderRadius: attributes.borderRadius,
-						backgroundColor: attributes.backgroundColor
+						borderRadius: attributes.borderRadius
 					}}
 				>
 					<div
@@ -83,7 +88,9 @@ const Edit = ({
 						style={{
 							padding: attributes.padding,
 							alignItems: attributes.horizontalAlign,
-							justifyContent: attributes.verticalAlign
+							justifyContent: attributes.verticalAlign,
+							backgroundImage: `url( ${ attributes.frontImg?.url } )`,
+							backgroundPosition: `${ Math.round( attributes.frontImgFocalpoint.x * 100 ) }% ${ Math.round( attributes.frontImgFocalpoint.y * 100 ) }%`
 						}}
 					>
 

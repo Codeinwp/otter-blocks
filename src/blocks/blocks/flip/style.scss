@@ -1,13 +1,15 @@
 .wp-block-themeisle-blocks-flip {
 
 	--flip-anim: unset;
+	--front-img: unset;
+	--back-img: unset;
+	--front-bg-color: dodgerblue;
+	--back-bg-color: unset;
 
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 
-	background-color: transparent;
-	border: 1px solid #f1f1f1;
 	perspective: 1000px; /* Remove this if you don't want the 3D effect */
 
 	&.flipX {
@@ -21,6 +23,8 @@
 	&:hover {
 		&.anim {
 			.o-inner {
+				background-color: var(--back-bg-color);
+				background-image: var(--back-img);
 				transform: var(--flip-anim);
 			}
 		}
@@ -34,8 +38,9 @@
 		text-align: center;
 		transition: transform 0.8s;
 		transform-style: preserve-3d;
-		background-color: dodgerblue;
+		background-color: var(--front-bg-color);
 		border-radius: 10px;
+		background-image: var(--front-img);
 
 		.o-front, .o-back {
 			display: flex;
