@@ -202,6 +202,10 @@ class Main {
 		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Animation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {
 			\ThemeIsle\GutenbergBlocks\Blocks_Animation::instance();
 		}
+
+		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Export_Import' ) ) {
+			\ThemeIsle\GutenbergBlocks\Blocks_Export_Import::instance();
+		}
 	}
 
 	/**
