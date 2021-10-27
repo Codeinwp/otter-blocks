@@ -37,6 +37,9 @@ plugins:
         - plugins/blocks-css/blocks-css.php
         - plugins/blocks-css/readme.md
         - plugins/blocks-css/readme.txt
+        - plugins/blocks-export-import/blocks-export-import.php
+        - plugins/blocks-export-import/readme.md
+        - plugins/blocks-export-import/readme.txt
       message: "chore(release): ${nextRelease.version} \n\n${nextRelease.notes}"
   - - "@semantic-release/github"
 

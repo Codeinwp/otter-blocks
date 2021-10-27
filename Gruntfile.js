@@ -10,7 +10,7 @@ module.exports = function (grunt) {
 				options: {
 					flags: ''
 				},
-				src: [ 'package.json', 'composer.json', 'package-lock.json', 'src/blocks/package.json', 'src/blocks/package-lock.json' ]
+				src: [ 'package.json', 'composer.json', 'package-lock.json' ]
 			},
 			metatag: {
 				options: {
@@ -21,6 +21,7 @@ module.exports = function (grunt) {
 					'otter-blocks.php',
 					'plugins/blocks-animation/blocks-animation.php',
 					'plugins/blocks-css/blocks-css.php',
+					'plugins/blocks-export-import/blocks-export-imports.php',
 				]
 			},
 			php: {
@@ -43,7 +44,8 @@ module.exports = function (grunt) {
 				files: {
 					'readme.md': 'readme.txt',
 					'plugins/blocks-animation/readme.md': 'plugins/blocks-animation/readme.txt',
-					'plugins/blocks-css/readme.md': 'plugins/blocks-css/readme.txt'
+					'plugins/blocks-css/readme.md': 'plugins/blocks-css/readme.txt',
+					'plugins/blocks-export-import/readme.md': 'plugins/blocks-export-import/readme.txt'
 				},
 			},
 		},
