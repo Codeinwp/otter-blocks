@@ -99,6 +99,7 @@ const Edit = ({
 						value={ attributes.file }
 						onChange={ onChangeFile }
 						isJSONAllowed={ isJSONAllowed }
+						attributes={ attributes }
 					/>
 				)
 			}

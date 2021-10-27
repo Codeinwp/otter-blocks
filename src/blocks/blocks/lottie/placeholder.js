@@ -22,16 +22,15 @@ import {
 
 import {
 	Fragment,
-	useEffect,
 	useState
 } from '@wordpress/element';
-import attributes from './attributes';
 
 const BlockPlaceholder = ({
 	className,
 	file,
 	onChange,
-	isJSONAllowed
+	isJSONAllowed,
+	attributes
 }) => {
 
 	const [ url, setURL ] = useState( attributes.file?.url || null );
