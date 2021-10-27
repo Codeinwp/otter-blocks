@@ -25,33 +25,22 @@ import {
 	useEffect,
 	useState
 } from '@wordpress/element';
+import attributes from './attributes';
 
 const BlockPlaceholder = ({
 	className,
 	file,
-	onChange
+	onChange,
+	isJSONAllowed
 }) => {
-	useEffect( () => {
-		window.wp.api.loadPromise.then( () => {
-			const settings = new window.wp.api.models.Settings();
 
-			settings.fetch().then( response => {
-				if ( response.themeisle_allow_json_upload ) {
-					setJSONAllowed( response.themeisle_allow_json_upload );
-				}
-			});
-		});
-	}, []);
-
-	const [ isJSONAllowed, setJSONAllowed ] = useState( false );
-	const [ url, setURL ] = useState( null );
+	const [ url, setURL ] = useState( attributes.file?.url || null );
 	const [ isOpen, setOpen ] = useState( false );
 
 	const onChangeValue = e => {
 		if ( e ) {
 			e.preventDefault();
 		}
-
 		return onChange( url );
 	};
 

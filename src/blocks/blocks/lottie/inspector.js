@@ -18,7 +18,9 @@ import { Fragment } from '@wordpress/element';
 const Inspector = ({
 	attributes,
 	setAttributes,
-	playerRef
+	playerRef,
+	editMode,
+	setEditMode
 }) => {
 	const onChangeTrigger = value => {
 		setAttributes({ trigger: value });
@@ -59,6 +61,13 @@ const Inspector = ({
 				title={ __( 'Settings', 'otter-blocks' ) }
 				initialOpen={ true }
 			>
+				<ToggleControl
+					label={ __( 'Edit Mode', 'otter-blocks' ) }
+					help={ __( 'Enter in edit mode to the change the file.', 'otter-blocks' ) }
+					checked={ editMode }
+					onChange={ value => setEditMode( value ) }
+				/>
+
 				<SelectControl
 					label={ __( 'Trigger', 'otter-blocks' ) }
 					help={ __( 'Animation trigger. This will only work on the front-end.', 'otter-blocks' ) }
