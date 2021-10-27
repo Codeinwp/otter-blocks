@@ -413,6 +413,6 @@ export const IconPickerToolbarControl = ({
 			/>
 		</ToolbarGroup>
 	);
-}
+};
 
 export default IconPickerControl;
