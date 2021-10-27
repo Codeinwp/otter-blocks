@@ -76,7 +76,7 @@ class Blocks_Animation {
 			return;
 		}
 
-		
+
 		$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/frontend.asset.php';
 
 		wp_enqueue_style(
@@ -104,6 +104,7 @@ class Blocks_Animation {
 			$asset_file['version'],
 			true
 		);
+		wp_script_add_data( 'themeisle-gutenberg-animation-frontend', 'defer', true );
 	}
 
 	/**
