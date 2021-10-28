@@ -63,10 +63,12 @@ const Edit = ({
 					)
 				}
 				css={ css`
-					--front-img: url( ${ attributes.frontImg?.url } );
-					--back-img: url( ${ attributes.backImg?.url } );
-					--front-bg-color: ${ attributes.backgroundColor };
-					--back-bg-color: ${ attributes.backgroundColor };
+					--border-radius: ${ attributes.borderRadius }px;
+					--padding: ${ attributes.padding }px;
+
+					.o-content {
+						background-color: rgba(0, 0, 0, ${ ( attributes.frontOverlayOpacity || 0 ) / 100});
+					}
 				`}
 			>
 				<div
@@ -79,49 +81,64 @@ const Edit = ({
 					style={{
 						transform: isFliped ? 'var(--flip-anim)' : 'unset',
 						width: attributes.width,
-						height: attributes.height,
-						borderRadius: attributes.borderRadius
+						height: attributes.height
 					}}
 				>
 					<div
 						className="o-front"
 						style={{
-							padding: attributes.padding,
-							alignItems: attributes.horizontalAlign,
-							justifyContent: attributes.verticalAlign,
-							backgroundImage: `url( ${ attributes.frontImg?.url } )`,
+							backgroundColor: attributes.frontBackgroundColor,
+							backgroundImage: `url(${attributes.frontImg?.url})`,
 							backgroundPosition: `${ Math.round( attributes.frontImgFocalpoint.x * 100 ) }% ${ Math.round( attributes.frontImgFocalpoint.y * 100 ) }%`
 						}}
 					>
+						<div
+							className="o-content"
+							style={{
+								alignItems: attributes.horizontalAlign,
+								justifyContent: attributes.verticalAlign
+							}}
+						>
+							{
+								attributes.frontMedia?.url && (
+									<img
+										style={{
+											width: attributes.frontMediaWidth + 'px',
+											height: attributes.frontMediaHeight + 'px'
+										}}
+										className="o-img"
+										srcSet={ attributes.frontMedia?.url }
+									/>
+								)
+							}
 
-						<RichText
-							tagName="h1"
-							value={ attributes.title }
-							onChange={ title => setAttributes({ title })}
-							placeholder={ __( 'Insert a title', 'otter-blocks' )}
-						/>
+							<RichText
+								tagName="h1"
+								value={ attributes.title }
+								onChange={ title => setAttributes({ title })}
+								placeholder={ __( 'Insert a title', 'otter-blocks' )}
+							/>
 
-						<RichText
-							tagName="p"
-							value={ attributes.description }
-							onChange={ description => setAttributes({ description })}
-							placeholder={ __( 'Insert a description', 'otter-blocks' )}
-						/>
+							<RichText
+								tagName="p"
+								value={ attributes.description }
+								onChange={ description => setAttributes({ description })}
+								placeholder={ __( 'Insert a description', 'otter-blocks' )}
+							/>
+						</div>
+
 					</div>
 					<div
 						className="o-back"
-						style={{ padding: attributes.padding }}
+						style={{
+							backgroundColor: attributes.backBackgroundColor,
+							backgroundImage: `url(${attributes.backImg?.url})`
+						}}
 					>
 						<InnerBlocks
 							renderAppender={ InnerBlocks.ButtonBlockAppender  }
 						/>
 					</div>
-					{/* <InnerBlocks /> // BUG: this does not show any display
-						allowedBlocks={ [ 'themeisle-blocks/flip-item' ] }
-						template={ [ [ 'themeisle-blocks/flip-item' ], [ 'themeisle-blocks/flip-item' ] ] }
-						templateLock="all"
-						renderAppender={ InnerBlocks.ButtonBlockAppender  }
-					/> */}
 				</div>
 
 				<div className="o-switcher">
