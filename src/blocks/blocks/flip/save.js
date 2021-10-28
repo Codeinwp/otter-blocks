@@ -6,25 +6,57 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies.
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks, RichText } from '@wordpress/block-editor';
 
 const Save = ({
 	attributes,
 	className
 }) => {
 	return (
-		<div id={ attributes.id } className={className, 'anim'}>
+		<div
+			id={ attributes.id }
+			className={
+				classnames(
+					className,
+					{'flipX': 'flipX' === attributes.animType},
+					{'flipY': 'flipY' === attributes.animType},
+					'anim'
+				)
+			}
+		>
 			<div
-				className="o-inner"
+				className={
+					classnames(
+						'o-inner',
+						{ invert: attributes.isInverted }
+					)
+				}
 			>
 				<div className="o-front">
-					<h1>FRONT</h1>
-					<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris laoreet tempor ante, ac consequat nisl luctus nec. Etiam eu pellentesque tortor. Vivamus lobortis vitae tortor.</p>
+					<div
+						className="o-content"
+					>
+						{
+							attributes.frontMedia?.url && (
+								<img
+									srcSet={ attributes.frontMedia?.url }
+								/>
+							)
+						}
+
+						<RichText.Content
+							tagName="h1"
+							value={ attributes.title }
+						/>
+
+						<RichText.Content
+							tagName="p"
+							value={ attributes.description }
+						/>
+					</div>
 				</div>
 				<div className="o-back">
-					<InnerBlocks.Content
-
-					/>
+					<InnerBlocks.Content />
 				</div>
 			</div>
 		</div>

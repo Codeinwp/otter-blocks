@@ -108,7 +108,7 @@ const Edit = ({
 						style={{
 							backgroundColor: attributes.frontBackgroundColor,
 							backgroundImage: `url(${attributes.frontImg?.url})`,
-							backgroundPosition: `${ Math.round( attributes.frontImgFocalpoint.x * 100 ) }% ${ Math.round( attributes.frontImgFocalpoint.y * 100 ) }%`
+							backgroundPosition: `${ Math.round( attributes.frontImgFocalpoint?.x * 100 ) }% ${ Math.round( attributes.frontImgFocalpoint?.y * 100 ) }%`
 						}}
 					>
 						<div
