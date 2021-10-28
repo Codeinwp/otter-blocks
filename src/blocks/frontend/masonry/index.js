@@ -24,12 +24,17 @@ domReady( () => {
 
 		container.removeAttribute( 'class' );
 
-		window.Macy({
-			container: gallery.querySelector( '.blocks-gallery-grid' ),
-			trueOrder: false,
-			waitForImages: false,
-			margin,
-			columns
-		});
+		const checker = setInterval( () => {
+			if ( window?.Macy ) {
+				window.Macy({
+					container: gallery.querySelector( '.blocks-gallery-grid' ),
+					trueOrder: false,
+					waitForImages: false,
+					margin,
+					columns
+				});
+				clearInterval( checker );
+			}
+		}, 1_500 );
 	});
 });
