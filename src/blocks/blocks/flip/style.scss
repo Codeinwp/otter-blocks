@@ -1,10 +1,8 @@
 .wp-block-themeisle-blocks-flip {
 
 	--flip-anim: unset;
-	--front-img: unset;
-	--back-img: unset;
-	--front-bg-color: dodgerblue;
-	--back-bg-color: unset;
+	--border-radius: 10px;
+	--padding: 20px;
 
 	display: flex;
 	flex-direction: column;
@@ -23,8 +21,6 @@
 	&:hover {
 		&.anim {
 			.o-inner {
-				background-color: var(--back-bg-color);
-				background-image: var(--back-img);
 				transform: var(--flip-anim);
 			}
 		}
@@ -38,29 +34,42 @@
 		text-align: center;
 		transition: transform 0.8s;
 		transform-style: preserve-3d;
-		background-color: var(--front-bg-color);
-		border-radius: 10px;
-		background-image: var(--front-img);
+		background-size: cover;
 
 		.o-front, .o-back {
+			border-radius: var(--border-radius);
 			display: flex;
 			flex-direction: column;
 			position: absolute;
 			width: 100%;
 			height: 100%;
-			padding: 20px;
 			-webkit-backface-visibility: hidden; /* Safari */
 			backface-visibility: hidden;
 			overflow: hidden;
-			overflow-y: scroll;
+			overflow-y: auto;
+			background-size: inherit;
 		}
 
 		.o-front {
-			justify-content: center;
-			align-items: center;
+			.o-content {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+
+				padding: var(--padding);
+				width: 100%;
+				height: 100%;
+
+				.o-img {
+					width: 150px;
+					height: 150px;
+				}
+			}
 		}
 
 		.o-back {
+			padding: var(--padding);
 			transform: var(--flip-anim);
 		}
 

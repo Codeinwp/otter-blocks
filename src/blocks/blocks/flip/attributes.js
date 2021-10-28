@@ -36,14 +36,35 @@ const attributes = {
 	horizontalAlign: {
 		type: 'string'
 	},
+	frontMedia: {
+		type: 'object'
+	},
+	frontMediaWidth: {
+		type: 'number'
+	},
+	frontMediaHeight: {
+		type: 'number'
+	},
 	frontImg: {
 		type: 'object'
+	},
+	frontBackgroundColor: {
+		type: 'string'
 	},
 	frontImgFocalpoint: {
 		type: 'object'
 	},
 	backImg: {
 		type: 'object'
+	},
+	backBackgroundColor: {
+		type: 'string'
+	},
+	backImgFocalpoint: {
+		type: 'object'
+	},
+	frontOverlayOpacity: {
+		type: 'number'
 	}
 };
 
