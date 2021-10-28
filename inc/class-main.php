@@ -144,6 +144,7 @@ class Main {
 		add_action( 'init', array( $this, 'register_blocks' ), 11 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ), 1 );
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_frontend_assets' ) );
+		add_filter( 'script_loader_tag', array( $this, 'filter_script_loader_tag' ), 10, 2 );
 
 		add_action(
 			'get_footer',
@@ -528,6 +529,8 @@ class Main {
 					true
 				);
 
+				wp_script_add_data( 'themeisle-gutenberg-google-maps', 'defer', true );
+
 				wp_enqueue_script( // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
 					'google-maps',
 					'https://maps.googleapis.com/maps/api/js?key=' . esc_attr( $apikey ) . '&libraries=places&callback=initMapScript',
@@ -535,6 +538,8 @@ class Main {
 					'',
 					true
 				);
+
+				wp_script_add_data( 'google-maps', 'defer', true );
 
 				self::$is_map_loaded = true;
 			}
@@ -549,6 +554,8 @@ class Main {
 				true
 			);
 
+			wp_script_add_data( 'glidejs', 'async', true );
+
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/slider.asset.php';
 
 			wp_enqueue_script(
@@ -561,6 +568,8 @@ class Main {
 				$asset_file['version'],
 				true
 			);
+
+			wp_script_add_data( 'themeisle-gutenberg-slider', 'async', true );
 
 			wp_enqueue_style(
 				'glidejs-core',
@@ -590,6 +599,8 @@ class Main {
 				true
 			);
 
+			wp_script_add_data( 'themeisle-gutenberg-progress-bar', 'defer', true );
+
 			self::$is_progress_bar_loaded = true;
 		}
 
@@ -604,6 +615,8 @@ class Main {
 				true
 			);
 
+			wp_script_add_data( 'themeisle-gutenberg-circle-counter', 'defer', true );
+
 			self::$is_circle_counter_loaded = true;
 		}
 
@@ -616,6 +629,8 @@ class Main {
 				true
 			);
 
+			wp_script_add_data( 'lottie-player', 'async', true );
+
 			wp_enqueue_script(
 				'lottie-interactivity',
 				plugin_dir_url( $this->get_dir() ) . 'assets/lottie/lottie-interactivity.min.js',
@@ -623,6 +638,8 @@ class Main {
 				self::$assets_version,
 				true
 			);
+
+			wp_script_add_data( 'lottie-interactivity', 'async', true );
 
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
 
@@ -637,6 +654,8 @@ class Main {
 				true
 			);
 
+			wp_script_add_data( 'themeisle-gutenberg-lottie', 'defer', true );
+
 			self::$is_lottie_loaded = true;
 		}
 
@@ -648,6 +667,8 @@ class Main {
 				self::$assets_version,
 				true
 			);
+
+			wp_script_add_data( 'themeisle-gutenberg-map-leaflet', 'async', true );
 
 			wp_enqueue_style(
 				'leaflet-css',
@@ -663,6 +684,8 @@ class Main {
 				self::$assets_version,
 				true
 			);
+
+			wp_script_add_data( 'themeisle-gutenberg-map-leaflet-gesture', 'defer', true );
 
 			wp_enqueue_style(
 				'leaflet-theme-gesture',
@@ -684,6 +707,8 @@ class Main {
 				true
 			);
 
+			wp_script_add_data( 'themeisle-gutenberg-leaflet-block', 'defer', true );
+
 			self::$is_leaflet_loaded = true;
 		}
 
@@ -698,6 +723,8 @@ class Main {
 				true
 			);
 
+			wp_script_add_data( 'themeisle-gutenberg-tabs', 'defer', true );
+
 			self::$is_tabs_loaded = true;
 		}
 
@@ -711,6 +738,8 @@ class Main {
 				$asset_file['version'],
 				true
 			);
+
+			wp_script_add_data( 'themeisle-gutenberg-form', 'defer', true );
 
 			wp_localize_script(
 				'themeisle-gutenberg-form',
@@ -734,6 +763,8 @@ class Main {
 				true
 			);
 
+			wp_script_add_data( 'themeisle-gutenberg-countdown', 'defer', true );
+
 			self::$is_countdown_loaded = true;
 		}
 
@@ -747,6 +778,8 @@ class Main {
 				$asset_file['version'],
 				true
 			);
+
+			wp_script_add_data( 'themeisle-gutenberg-popup', 'defer', true );
 
 			wp_localize_script(
 				'themeisle-gutenberg-popup',
@@ -1069,6 +1102,34 @@ class Main {
 		$symbol = isset( $symbols[ $currency ] ) ? $symbols[ $currency ] : '&#36;';
 
 		return $symbol;
+	}
+
+	/**
+	 * Adds async/defer attributes to enqueued / registered scripts.
+	 *
+	 * If #12009 lands in WordPress, this function can no-op since it would be handled in core.
+	 *
+	 * @link https://core.trac.wordpress.org/ticket/12009
+	 *
+	 * @param string $tag The script tag.
+	 * @param string $handle The script handle.
+	 *
+	 * @return string Script HTML string.
+	 */
+	public function filter_script_loader_tag( $tag, $handle ) {
+		foreach ( array( 'async', 'defer' ) as $attr ) {
+			if ( ! wp_scripts()->get_data( $handle, $attr ) ) {
+				continue;
+			}
+			// Prevent adding attribute when already added in #12009.
+			if ( ! preg_match( ":\s$attr(=|>|\s):", $tag ) ) {
+				$tag = preg_replace( ':(?=></script>):', " $attr", $tag, 1 );
+			}
+			// Only allow async or defer, not both.
+			break;
+		}
+
+		return $tag;
 	}
 
 	/**
