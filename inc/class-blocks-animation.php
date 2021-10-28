@@ -104,6 +104,7 @@ class Blocks_Animation {
 			$asset_file['version'],
 			true
 		);
+
 		wp_script_add_data( 'themeisle-gutenberg-animation-frontend', 'sync', true );
 	}
 
