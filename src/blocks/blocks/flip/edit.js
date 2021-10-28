@@ -31,13 +31,13 @@ import defaultAttributes from './attributes.js';
 import Inspector from './inspector.js';
 import { blockInit } from '../../helpers/block-utility.js';
 import { Button } from '@wordpress/components';
+import hexToRgba from 'hex-rgba';
 
 const Edit = ({
 	attributes,
 	setAttributes,
 	className,
-	clientId,
-	isSelected
+	clientId
 }) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -45,6 +45,23 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const [ isFliped, setFliped ] = useState( false );
+
+	const getShadowColor = () => {
+		if ( attributes.boxShadowColor ) {
+			if ( attributes.boxShadowColor.includes( '#' ) && 0 <= attributes.boxShadowColorOpacity ) {
+				return hexToRgba( attributes.boxShadowColor, attributes.boxShadowColorOpacity || 0.00001 );
+			}
+			return attributes.boxShadowColor;
+		}
+		return hexToRgba( '#000000', attributes.boxShadowColorOpacity !== undefined ? ( attributes.boxShadowColorOpacity || 0.00001 ) : 1 );
+	};
+
+	const shadowCSS = attributes.boxShadow ?
+		css`
+		.o-front:hover, .o-back:hover {
+			box-shadow: ${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ getShadowColor() };
+		}
+		` : '';
 
 	return (
 		<Fragment>
@@ -69,6 +86,8 @@ const Edit = ({
 					.o-content {
 						background-color: rgba(0, 0, 0, ${ ( attributes.frontOverlayOpacity || 0 ) / 100});
 					}
+
+					${shadowCSS}
 				`}
 			>
 				<div
