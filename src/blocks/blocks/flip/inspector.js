@@ -14,6 +14,7 @@ import {
 import {
 	BaseControl,
 	Button,
+	ColorPalette,
 	FocalPointPicker,
 	PanelBody,
 	RangeControl,
@@ -21,10 +22,49 @@ import {
 	ToggleControl
 } from '@wordpress/components';
 
+import {
+	Fragment
+} from '@wordpress/element';
+import ControlPanelControl from '../../components/control-panel-control';
+import ColorBaseControl from '../../components/color-base-control';
+
 const Inspector = ({
 	attributes,
 	setAttributes
 }) => {
+
+	const changeBoxShadowColor = value => {
+		setAttributes({
+			boxShadowColor: ( 100 > attributes.boxShadowColorOpacity && attributes.boxShadowColor?.includes( 'var(' ) ) ?
+				getComputedStyle( document.documentElement, null ).getPropertyValue( value?.replace( 'var(', '' )?.replace( ')', '' ) ) :
+				value
+		});
+	};
+
+	const changeBoxShadow = value => {
+		setAttributes({ boxShadow: value });
+	};
+
+	const changeBoxShadowColorOpacity = value => {
+		const changes = { boxShadowColorOpacity: value };
+		if ( 100 > value && attributes.boxShadowColor?.includes( 'var(' ) ) {
+			changes.boxShadowColor = getComputedStyle( document.documentElement, null ).getPropertyValue( attributes.boxShadowColor.replace( 'var(', '' ).replace( ')', '' ) );
+		}
+		setAttributes( changes );
+	};
+
+	const changeBoxShadowBlur = value => {
+		setAttributes({ boxShadowBlur: value });
+	};
+
+	const changeBoxShadowHorizontal = value => {
+		setAttributes({ boxShadowHorizontal: value });
+	};
+
+	const changeBoxShadowVertical = value => {
+		setAttributes({ boxShadowVertical: value });
+	};
+
 
 	return (
 		<InspectorControls>
@@ -60,6 +100,7 @@ const Inspector = ({
 
 			<PanelBody
 				title={ __( 'Front', 'otter-blocks' ) }
+				initialOpen={ false }
 			>
 
 				<BaseControl
@@ -258,6 +299,68 @@ const Inspector = ({
 					colorValue={ attributes.backBackgroundColor }
 					onColorChange={ backBackgroundColor => setAttributes({ backBackgroundColor }) }
 				/>
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Box Shadow', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<ToggleControl
+					label={ __( 'Shadow Properties', 'otter-blocks' ) }
+					checked={ attributes.boxShadow }
+					onChange={ changeBoxShadow }
+				/>
+
+				{ attributes.boxShadow && (
+					<Fragment>
+						<ColorBaseControl
+							label={ __( 'Color', 'otter-blocks' ) }
+							colorValue={ attributes.boxShadowColor }
+						>
+							<ColorPalette
+								label={ __( 'Color', 'otter-blocks' ) }
+								value={ attributes.boxShadowColor }
+								onChange={ changeBoxShadowColor }
+							/>
+						</ColorBaseControl>
+
+						<ControlPanelControl
+							label={ __( 'Shadow Properties', 'otter-blocks' ) }
+						>
+							<RangeControl
+								label={ __( 'Opacity', 'otter-blocks' ) }
+								value={ attributes.boxShadowColorOpacity }
+								onChange={ changeBoxShadowColorOpacity }
+								min={ 0 }
+								max={ 100 }
+							/>
+
+							<RangeControl
+								label={ __( 'Blur', 'otter-blocks' ) }
+								value={ attributes.boxShadowBlur }
+								onChange={ changeBoxShadowBlur }
+								min={ 0 }
+								max={ 100 }
+							/>
+
+							<RangeControl
+								label={ __( 'Horizontal', 'otter-blocks' ) }
+								value={ attributes.boxShadowHorizontal }
+								onChange={ changeBoxShadowHorizontal }
+								min={ -100 }
+								max={ 100 }
+							/>
+
+							<RangeControl
+								label={ __( 'Vertical', 'otter-blocks' ) }
+								value={ attributes.boxShadowVertical }
+								onChange={ changeBoxShadowVertical }
+								min={ -100 }
+								max={ 100 }
+							/>
+						</ControlPanelControl>
+					</Fragment>
+				) }
 			</PanelBody>
 		</InspectorControls>
 	);
