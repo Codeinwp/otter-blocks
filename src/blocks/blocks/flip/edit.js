@@ -63,8 +63,8 @@ const Edit = ({
 					)
 				}
 				css={ css`
-					--border-radius: ${ attributes.borderRadius }px;
-					--padding: ${ attributes.padding }px;
+					--border-radius: ${ attributes.borderRadius || 10 }px;
+					--padding: ${ attributes.padding || 20 }px;
 
 					.o-content {
 						background-color: rgba(0, 0, 0, ${ ( attributes.frontOverlayOpacity || 0 ) / 100});
