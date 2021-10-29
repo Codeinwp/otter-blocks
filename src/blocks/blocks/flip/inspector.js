@@ -120,7 +120,7 @@ const Inspector = ({
 							mediaId={ attributes.frontMedia?.id }
 							mediaURL={ attributes.frontMedia?.url }
 							allowedTypes={ [ 'image' ] }
-							accept="image/*,video/*"
+							accept="image/*"
 							onSelect={ media => {
 								setAttributes({
 									frontMedia: pick( media, [ 'id', 'url' ])
@@ -174,7 +174,7 @@ const Inspector = ({
 							mediaId={ attributes.frontImg?.id }
 							mediaURL={ attributes.frontImg?.url }
 							allowedTypes={ [ 'image' ] }
-							accept="image/*,video/*"
+							accept="image/*"
 							onSelect={ media => {
 								setAttributes({
 									frontImg: pick( media, [ 'id', 'url' ])
