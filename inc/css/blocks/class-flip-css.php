@@ -169,7 +169,7 @@ class Flip_CSS extends Base_CSS {
 						'property' => 'background-position',
 						'value'    => 'frontImgFocalpoint',
 						'format'   => function( $value, $attrs ) {
-							return( $value['x'] * 100) . "% " . ($value['y'] * 100) . "%";
+							return( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
 						},
 					),
 				),
@@ -215,7 +215,7 @@ class Flip_CSS extends Base_CSS {
 						'property' => 'background-position',
 						'value'    => 'backImgFocalpoint',
 						'format'   => function( $value, $attrs ) {
-							return ($value['x'] * 100) . "% " . ($value['y'] * 100) . "%";
+							return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
 						},
 					),
 				),
