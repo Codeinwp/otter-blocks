@@ -256,8 +256,8 @@ const Inspector = ({
 					label={ __( 'Flip Type', 'otter-blocks' )}
 					value={ attributes.animType }
 					options={ [
-						{ label: __( 'X axis', 'otter-blocks' ), value: 'flipX' },
-						{ label: __( 'Y axis', 'otter-blocks' ), value: 'flipY' }
+						{ label: __( 'Bottom to Top', 'otter-blocks' ), value: 'flipX' },
+						{ label: __( 'Left to right', 'otter-blocks' ), value: 'flipY' }
 					]}
 					onChange={ animType => setAttributes({ animType })}
 				/>
