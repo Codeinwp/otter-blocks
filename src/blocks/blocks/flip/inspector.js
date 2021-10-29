@@ -229,7 +229,7 @@ const Inspector = ({
 						{ label: __( 'Default', 'otter-blocks' ), value: '' },
 						{ label: __( 'Top', 'otter-blocks' ), value: 'flex-start' },
 						{ label: __( 'Center', 'otter-blocks' ), value: 'center' },
-						{ label: __( 'Botton', 'otter-blocks' ), value: 'flex-end' }
+						{ label: __( 'Bottom', 'otter-blocks' ), value: 'flex-end' }
 					]}
 					onChange={ verticalAlign => setAttributes({ verticalAlign })}
 				/>
@@ -325,7 +325,7 @@ const Inspector = ({
 						{ label: __( 'Default', 'otter-blocks' ), value: '' },
 						{ label: __( 'Top', 'otter-blocks' ), value: 'flex-start' },
 						{ label: __( 'Center', 'otter-blocks' ), value: 'center' },
-						{ label: __( 'Botton', 'otter-blocks' ), value: 'flex-end' }
+						{ label: __( 'Bottom', 'otter-blocks' ), value: 'flex-end' }
 					]}
 					onChange={ backVerticalAlign => setAttributes({ backVerticalAlign })}
 				/>
