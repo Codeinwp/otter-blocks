@@ -180,7 +180,7 @@ const Inspector = ({
 									frontImg: pick( media, [ 'id', 'url' ])
 								});
 							} }
-							name={ ! attributes.frontImg?.url ? __( 'Add image', 'otter-blocks' ) : __( 'Replace or remove image', 'otter-blocks' ) }
+							name={ ! attributes.frontImg?.url ? __( 'Add image', 'otter-blocks' ) : __( 'Replace image', 'otter-blocks' ) }
 						>
 						</MediaReplaceFlow>
 						<Button
@@ -276,7 +276,7 @@ const Inspector = ({
 									backImg: pick( media, [ 'id', 'url' ])
 								});
 							} }
-							name={ ! attributes.backImg?.url ? __( 'Add image', 'otter-blocks' ) : __( 'Replace or remove image', 'otter-blocks' ) }
+							name={ ! attributes.backImg?.url ? __( 'Add image', 'otter-blocks' ) : __( 'Replace image', 'otter-blocks' ) }
 						>
 						</MediaReplaceFlow>
 						<Button
