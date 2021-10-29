@@ -165,6 +165,13 @@ class Flip_CSS extends Base_CSS {
 							return "url({$value['url']})";
 						},
 					),
+					array(
+						'property' => 'background-position',
+						'value'    => 'frontImgFocalpoint',
+						'format'   => function( $value, $attrs ) {
+							return( $value['x'] * 100) . "% " . ($value['y'] * 100) . "%";
+						},
+					),
 				),
 			)
 		);
@@ -188,6 +195,20 @@ class Flip_CSS extends Base_CSS {
 					array(
 						'property' => 'background-color',
 						'value'    => 'backBackgroundColor',
+					),
+					array(
+						'property' => 'background-image',
+						'value'    => 'backImg',
+						'format'   => function( $value, $attrs ) {
+							return "url({$value['url']})";
+						},
+					),
+					array(
+						'property' => 'background-position',
+						'value'    => 'backImgFocalpoint',
+						'format'   => function( $value, $attrs ) {
+							return ($value['x'] * 100) . "% " . ($value['y'] * 100) . "%";
+						},
 					),
 				),
 			)
