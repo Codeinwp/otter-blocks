@@ -178,6 +178,16 @@ class Block_Conditions {
 			}
 		}
 
+		if ( 'wooTotalCartValue' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
+			if ( isset( $condition['value'] ) ) {
+				if ( 'greater_than' === $condition['compare'] ) {
+					return $this->has_total_cart_value( $condition );
+				} else {
+					return ! $this->has_total_cart_value( $condition );
+				}
+			}
+		}
+
 		return true;
 	}
 
@@ -400,6 +410,24 @@ class Block_Conditions {
 		}
 
 		return $in_cart;
+	}
+
+	/**
+	 * Check based on WooCommerce cart value.
+	 *
+	 * @param array $condition Condition.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 */
+	public function has_total_cart_value( $condition ) {
+		$total = \WC()->cart->total;
+
+		if ( floatval( $condition['value'] ) < floatval( $total ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

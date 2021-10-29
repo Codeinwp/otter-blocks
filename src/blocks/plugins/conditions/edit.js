@@ -1,7 +1,10 @@
 /**
  * WordPress dependencies.
  */
-import { __ } from '@wordpress/i18n';
+import {
+	__,
+	sprintf
+} from '@wordpress/i18n';
 
 import { isEmpty } from 'lodash';
 
@@ -193,6 +196,11 @@ const Edit = ({
 			attrs.on = 'products';
 		}
 
+		if ( 'wooTotalCartValue' === value ) {
+			// eslint-disable-next-line camelcase
+			attrs.compare = 'greater_than';
+		}
+
 		if ( 'none' === value ) {
 			otterConditions[ index ][ key ] = {};
 		} else {
@@ -297,37 +305,42 @@ const Edit = ({
 			{
 				value: 'userRoles',
 				label: __( 'User Roles', 'otter-blocks' ),
-				help: __( 'The selected block will only be visible to defined user roles.' )
+				help: __( 'The selected block will be visible based on user roles.' )
 			},
 			{
 				value: 'postAuthor',
 				label: __( 'Post Author', 'otter-blocks' ),
-				help: __( 'The selected block will only be visible to posts written by selected authors.' )
+				help: __( 'The selected block will be visible based on post author.' )
 			},
 			{
 				value: 'postMeta',
 				label: __( 'Post Meta', 'otter-blocks' ),
-				help: __( 'The selected block will only be visible based on post meta condition.' )
+				help: __( 'The selected block will be visible based on post meta condition.' )
 			},
 			{
 				value: 'dateRange',
 				label: __( 'Date Range', 'otter-blocks' ),
-				help: __( 'The selected block will only be visible based the date range. Timezone is used based on your WordPress settings.' )
+				help: __( 'The selected block will be visible based on the date range. Timezone is used based on your WordPress settings.' )
 			},
 			{
 				value: 'dateRecurring',
 				label: __( 'Date Recurring', 'otter-blocks' ),
-				help: __( 'The selected block will only be visible on the selected days. Timezone is used based on your WordPress settings.' )
+				help: __( 'The selected block will be visible based on the selected days. Timezone is used based on your WordPress settings.' )
 			},
 			{
 				value: 'timeRecurring',
 				label: __( 'Time Recurring', 'otter-blocks' ),
-				help: __( 'The selected block will only be visible during selected time. Timezone is used based on your WordPress settings.' )
+				help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.' )
 			},
 			{
 				value: 'wooProductsInCart',
 				label: __( 'Products in Cart', 'otter-blocks' ),
-				help: __( 'The selected block will only be visible based on the products added to WooCommerce cart.' )
+				help: __( 'The selected block will be visible based on the products added to WooCommerce cart.' )
+			},
+			{
+				value: 'wooTotalCartValue',
+				label: __( 'Total Cart Value', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on the total value of WooCommerce cart.' )
 			}
 		];
 
@@ -465,6 +478,7 @@ const Edit = ({
 												{ Boolean( window.themeisleGutenberg.hasWooCommerce ) && (
 													<optgroup label={ __( 'WooCommerce', 'otter-blocks' ) }>
 														<option value="wooProductsInCart">{ __( 'Products in Cart', 'otter-blocks' ) }</option>
+														<option value="wooTotalCartValue">{ __( 'Total Cart Value', 'otter-blocks' ) }</option>
 													</optgroup>
 												) }
 											</select>
@@ -780,6 +794,34 @@ const Edit = ({
 														{ 'loading' === categoriesStatus && <Placeholder><Spinner /></Placeholder> }
 													</Fragment>
 												) }
+											</Fragment>
+										) }
+
+										{ 'wooTotalCartValue' === i.type && (
+											<Fragment>
+												<TextControl
+													label={ __( 'Total Cart Value', 'otter-blocks' ) }
+													help={ sprintf( __( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-blocks' ), window.wcSettings.currency.code ) }
+													placeholder={ 9.99 }
+													value={ i.value }
+													onChange={ e => changeValue( e.replace( /[^0-9.]/g, '' ), index, n, 'value' ) }
+												/>
+
+												<SelectControl
+													label={ __( 'Compare Operator', 'otter-blocks' ) }
+													options={ [
+														{
+															value: 'greater_than',
+															label: __( 'Greater Than (>)', 'otter-blocks' )
+														},
+														{
+															value: 'less_than',
+															label: __( 'Less Than (<)', 'otter-blocks' )
+														}
+													] }
+													value={ i.compare }
+													onChange={ e => changeValue( e, index, n, 'compare' ) }
+												/>
 											</Fragment>
 										) }
 
