@@ -151,7 +151,8 @@ const Edit = ({
 						className="o-back"
 						style={{
 							backgroundColor: attributes.backBackgroundColor,
-							backgroundImage: `url(${attributes.backImg?.url})`
+							backgroundImage: `url(${attributes.backImg?.url})`,
+							backgroundPosition: `${ Math.round( attributes.backImgFocalpoint?.x * 100 ) }% ${ Math.round( attributes.backImgFocalpoint?.y * 100 ) }%`
 						}}
 					>
 						<InnerBlocks
