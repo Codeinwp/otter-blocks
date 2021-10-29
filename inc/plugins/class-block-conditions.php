@@ -168,6 +168,16 @@ class Block_Conditions {
 			}
 		}
 
+		if ( 'wooProductsInCart' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
+			if ( isset( $condition['on'] ) ) {
+				if ( $visibility ) {
+					return $this->has_product_in_cart( $condition );
+				} else {
+					return ! $this->has_product_in_cart( $condition );
+				}
+			}
+		}
+
 		return true;
 	}
 
@@ -346,6 +356,50 @@ class Block_Conditions {
 		$absmin   = abs( $offset );
 		$timezone = sprintf( '%s%02d:%02d', $sign, $absmin / 60, $absmin % 60 );
 		return $timezone;
+	}
+
+	/**
+	 * Check based on WooCommerce cart.
+	 *
+	 * @param array $condition Condition.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 */
+	public function has_product_in_cart( $condition ) {
+		$in_cart = false;
+
+		if ( 'products' === $condition['on'] && isset( $condition['products'] ) ) {
+			foreach ( \WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+				if ( in_array( $cart_item['product_id'], $condition['products'], true ) ) {
+					$in_cart = true;
+					break;
+				}
+			}
+		}
+
+		if ( 'categories' === $condition['on'] && isset( $condition['categories'] ) ) {
+			foreach ( \WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+				$terms = get_the_terms( $cart_item['product_id'], 'product_cat' );
+
+				if ( gettype( $terms ) !== 'array' ) {
+					continue;
+				}
+
+				foreach ( $terms as $term ) {
+					if ( in_array( $term->term_id, $condition['categories'], true ) ) {
+						$in_cart = true;
+						break;
+					}
+				}
+
+				if ( $in_cart ) {
+					break;
+				}
+			}
+		}
+
+		return $in_cart;
 	}
 
 	/**

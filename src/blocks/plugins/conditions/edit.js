@@ -15,7 +15,9 @@ import {
 	Dropdown,
 	FormTokenField,
 	PanelBody,
+	Placeholder,
 	SelectControl,
+	Spinner,
 	TextControl
 } from '@wordpress/components';
 
@@ -30,6 +32,8 @@ import {
 	Fragment,
 	useEffect
 } from '@wordpress/element';
+
+import { decodeEntities } from '@wordpress/html-entities';
 
 /**
  * Internal dependencies.
@@ -83,6 +87,65 @@ const Edit = ({
 		};
 	});
 
+	const {
+		products,
+		categories,
+		productsStatus,
+		categoriesStatus
+	} = useSelect( select => {
+		let products = [];
+		let categories = [];
+		let productsStatus = 'loading';
+		let categoriesStatus = 'loading';
+
+		if ( Boolean( window.themeisleGutenberg.hasWooCommerce ) ) {
+			const { COLLECTIONS_STORE_KEY } = window.wc.wcBlocksData;
+
+			// eslint-disable-next-line camelcase
+			const productsError = select( COLLECTIONS_STORE_KEY ).getCollectionError( '/wc/store', 'products', { per_page: 100 });
+
+			if ( productsError ) {
+				productsStatus = 'error';
+			} else {
+				// eslint-disable-next-line camelcase
+				products = select( COLLECTIONS_STORE_KEY ).getCollection( '/wc/store', 'products', { per_page: 100 });
+
+				if ( ! isEmpty( products ) ) {
+					productsStatus = 'loaded';
+
+					products = products.map( result => ({
+						value: result.id,
+						label: decodeEntities( result.name )
+					}) );
+				}
+			}
+
+			const categoriesError = select( COLLECTIONS_STORE_KEY ).getCollectionError( '/wc/store', 'products/categories' );
+
+			if ( categoriesError ) {
+				categoriesStatus = 'error';
+			} else {
+				categories = select( COLLECTIONS_STORE_KEY ).getCollection( '/wc/store', 'products/categories' );
+
+				if ( ! isEmpty( categories ) ) {
+					categoriesStatus = 'loaded';
+
+					categories = categories.map( result => ({
+						value: result.id,
+						label: decodeEntities( result.name )
+					}) );
+				}
+			}
+		}
+
+		return {
+			products,
+			categories,
+			productsStatus,
+			categoriesStatus
+		};
+	}, []);
+
 	const addGroup = () => {
 		const otterConditions = [ ...( attributes.otterConditions || []) ];
 		otterConditions.push([ {} ]);
@@ -126,6 +189,10 @@ const Edit = ({
 			attrs.meta_compare = 'is_true';
 		}
 
+		if ( 'wooProductsInCart' == value ) {
+			attrs.on = 'products';
+		}
+
 		if ( 'none' === value ) {
 			otterConditions[ index ][ key ] = {};
 		} else {
@@ -147,6 +214,32 @@ const Edit = ({
 	const changeAuthors = ( value, index, key ) => {
 		const otterConditions = [ ...attributes.otterConditions ];
 		otterConditions[ index ][ key ].authors = value;
+		setAttributes({ otterConditions });
+	};
+
+	const changeProducts = ( values, index, key ) => {
+		const regex = /^([^.]+)/;
+
+		values.forEach( ( value, key ) => {
+			const m = regex.exec( value );
+			null !== m ? values[ key ] = Number( m[0]) : value;
+		});
+
+		const otterConditions = [ ...attributes.otterConditions ];
+		otterConditions[ index ][ key ].products = values;
+		setAttributes({ otterConditions });
+	};
+
+	const changeCategories = ( values, index, key ) => {
+		const regex = /^([^.]+)/;
+
+		values.forEach( ( value, key ) => {
+			const m = regex.exec( value );
+			null !== m ? values[ key ] = Number( m[0]) : value;
+		});
+
+		const otterConditions = [ ...attributes.otterConditions ];
+		otterConditions[ index ][ key ].categories = values;
 		setAttributes({ otterConditions });
 	};
 
@@ -230,6 +323,11 @@ const Edit = ({
 				value: 'timeRecurring',
 				label: __( 'Time Recurring', 'otter-blocks' ),
 				help: __( 'The selected block will only be visible during selected time. Timezone is used based on your WordPress settings.' )
+			},
+			{
+				value: 'wooProductsInCart',
+				label: __( 'Products in Cart', 'otter-blocks' ),
+				help: __( 'The selected block will only be visible based on the products added to WooCommerce cart.' )
 			}
 		];
 
@@ -363,6 +461,12 @@ const Edit = ({
 													<option value="dateRecurring">{ __( 'Date Recurring', 'otter-blocks' ) }</option>
 													<option value="timeRecurring">{ __( 'Time Recurring', 'otter-blocks' ) }</option>
 												</optgroup>
+
+												{ Boolean( window.themeisleGutenberg.hasWooCommerce ) && (
+													<optgroup label={ __( 'WooCommerce', 'otter-blocks' ) }>
+														<option value="wooProductsInCart">{ __( 'Products in Cart', 'otter-blocks' ) }</option>
+													</optgroup>
+												) }
 											</select>
 										</BaseControl>
 
@@ -609,7 +713,77 @@ const Edit = ({
 											</Fragment>
 										) }
 
-										{ ( 'userRoles' === i.type || 'postAuthor' === i.type || 'postMeta' === i.type ) && (
+										{ 'wooProductsInCart' === i.type && (
+											<Fragment>
+												<SelectControl
+													label={ __( 'Based on', 'otter-blocks' ) }
+													options={ [
+														{
+															value: 'products',
+															label: __( 'Products', 'otter-blocks' )
+														},
+														{
+															value: 'categories',
+															label: __( 'Categories', 'otter-blocks' )
+														}
+													] }
+													value={ i.on }
+													onChange={ e => changeValue( e, index, n, 'on' ) }
+												/>
+
+												{ 'products' === i.on && (
+													<Fragment>
+														{ 'loaded' === productsStatus && (
+															<FormTokenField
+																label={ __( 'Products', 'otter-blocks' ) }
+																value={ ( i.products && 'object' === typeof i.products ) ? i.products.map( id => {
+																	const obj = products.find( product => Number( id ) === Number( product.value ) );
+																	return `${ obj.value }. ${ obj.label }`;
+																}) : undefined }
+																suggestions={ products.map( product => `${ product.value }. ${ product.label }` ) }
+																onChange={ values => changeProducts( values, index, n ) }
+																__experimentalExpandOnFocus={ true }
+																__experimentalValidateInput={ value => {
+																	const regex = /^([^.]+)/;
+																	const m = regex.exec( value );
+																	null !== m ? value = Number( m[0]) : value;
+																	return undefined !== products.find( product => Number( value ) === Number( product.value ) );
+																} }
+															/>
+														) }
+
+														{ 'loading' === productsStatus && <Placeholder><Spinner /></Placeholder> }
+													</Fragment>
+												) }
+
+												{ 'categories' === i.on && (
+													<Fragment>
+														{ 'loaded' === categoriesStatus && (
+															<FormTokenField
+																label={ __( 'Categories', 'otter-blocks' ) }
+																value={ ( i.categories && 'object' === typeof i.categories ) ? i.categories.map( id => {
+																	const obj = categories.find( category => Number( id ) === Number( category.value ) );
+																	return `${ obj.value }. ${ obj.label }`;
+																}) : undefined }
+																suggestions={ categories.map( category => `${ category.value }. ${ category.label }` ) }
+																onChange={ values => changeCategories( values, index, n ) }
+																__experimentalExpandOnFocus={ true }
+																__experimentalValidateInput={ value => {
+																	const regex = /^([^.]+)/;
+																	const m = regex.exec( value );
+																	null !== m ? value = Number( m[0]) : value;
+																	return undefined !== categories.find( category => Number( value ) === Number( category.value ) );
+																} }
+															/>
+														) }
+
+														{ 'loading' === categoriesStatus && <Placeholder><Spinner /></Placeholder> }
+													</Fragment>
+												) }
+											</Fragment>
+										) }
+
+										{ ( 'userRoles' === i.type || 'postAuthor' === i.type || 'postMeta' === i.type || 'wooProductsInCart' === i.type ) && (
 											<SelectControl
 												label={ __( 'If condition is true, the block should be:', 'otter-blocks' ) }
 												options={ [
