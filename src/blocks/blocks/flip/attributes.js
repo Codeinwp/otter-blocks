@@ -33,6 +33,9 @@ const attributes = {
 	verticalAlign: {
 		type: 'string'
 	},
+	backVerticalAlign: {
+		type: 'string'
+	},
 	horizontalAlign: {
 		type: 'string'
 	},
