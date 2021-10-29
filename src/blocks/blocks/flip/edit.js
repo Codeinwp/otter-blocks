@@ -150,6 +150,7 @@ const Edit = ({
 					<div
 						className="o-back"
 						style={{
+							justifyContent: attributes.backVerticalAlign,
 							backgroundColor: attributes.backBackgroundColor,
 							backgroundImage: `url(${attributes.backImg?.url})`,
 							backgroundPosition: `${ Math.round( attributes.backImgFocalpoint?.x * 100 ) }% ${ Math.round( attributes.backImgFocalpoint?.y * 100 ) }%`

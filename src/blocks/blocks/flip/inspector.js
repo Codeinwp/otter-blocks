@@ -318,6 +318,18 @@ const Inspector = ({
 					)
 				}
 
+				<SelectControl
+					label={ __( 'Vertical Align', 'otter-blocks' )}
+					value={ attributes.backVerticalAlign }
+					options={ [
+						{ label: __( 'Default', 'otter-blocks' ), value: '' },
+						{ label: __( 'Top', 'otter-blocks' ), value: 'flex-start' },
+						{ label: __( 'Center', 'otter-blocks' ), value: 'center' },
+						{ label: __( 'Botton', 'otter-blocks' ), value: 'flex-end' }
+					]}
+					onChange={ backVerticalAlign => setAttributes({ backVerticalAlign })}
+				/>
+
 			</PanelBody>
 
 			<PanelBody

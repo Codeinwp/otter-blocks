@@ -181,8 +181,12 @@ class Flip_CSS extends Base_CSS {
 				'selector'   => ' .o-front .o-content',
 				'properties' => array(
 					array(
-						'property' => 'background-color',
-						'value'    => 'frontBackgroundColor',
+						'property' => 'justify-content',
+						'value'    => 'verticalAlign',
+					),
+					array(
+						'property' => 'align-items',
+						'value'    => 'horizontalAlign',
 					),
 				),
 			)
@@ -192,6 +196,10 @@ class Flip_CSS extends Base_CSS {
 			array(
 				'selector'   => ' .o-back',
 				'properties' => array(
+					array(
+						'property' => 'justify-content',
+						'value'    => 'backVerticalAlign',
+					),
 					array(
 						'property' => 'background-color',
 						'value'    => 'backBackgroundColor',
