@@ -103,7 +103,7 @@ class Flip_CSS extends Base_CSS {
 							),
 						),
 						'condition'      => function( $attrs ) {
-							return isset( $attrs['boxShadow'] ) && (! isset( $attrs['isInverted'] ) ||  (isset( $attrs['isInverted'] ) && false === $attrs['isInverted']) );
+							return isset( $attrs['boxShadow'] ) && ( ! isset( $attrs['isInverted'] ) || ( isset( $attrs['isInverted'] ) && false === $attrs['isInverted'] ) );
 						},
 					),
 				),
@@ -143,7 +143,7 @@ class Flip_CSS extends Base_CSS {
 							),
 						),
 						'condition'      => function( $attrs ) {
-							return isset( $attrs['boxShadow'] ) && ( isset( $attrs['isInverted'] ) && $attrs['isInverted']);
+							return isset( $attrs['boxShadow'] ) && ( isset( $attrs['isInverted'] ) && $attrs['isInverted'] );
 						},
 					),
 				),
@@ -161,10 +161,10 @@ class Flip_CSS extends Base_CSS {
 					array(
 						'property' => 'background-image',
 						'value'    => 'frontImg',
-						'format'  => function( $value, $attrs ) {
+						'format'   => function( $value, $attrs ) {
 							return "url({$value['url']})";
 						},
-					)
+					),
 				),
 			)
 		);
