@@ -249,6 +249,78 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelBody
+				title={ __( 'Back', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+
+				<BaseControl
+					label={ __( 'Background Image', 'otter-blocks' ) }
+					help={ __( 'Set an image as background.', 'otter-blocks' ) }
+				>
+					<div
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							border: '0.5px solid #aaa',
+							borderRadius: '5px',
+							marginTop: '4px'
+						}}
+					>
+						<MediaReplaceFlow
+							mediaId={ attributes.backImg?.id }
+							mediaURL={ attributes.backImg?.url }
+							allowedTypes={ [ 'image' ] }
+							accept="image/*,video/*"
+							onSelect={ media => {
+								setAttributes({
+									backImg: pick( media, [ 'id', 'url' ])
+								});
+							} }
+							name={ ! attributes.backImg?.url ? __( 'Add image', 'otter-blocks' ) : __( 'Replace or remove image', 'otter-blocks' ) }
+						>
+						</MediaReplaceFlow>
+						<Button
+							onClick={ () => {
+								setAttributes({
+									backImg: undefined
+								});
+							}}
+						>
+							{__( 'Clear image', 'otter-blocks' )}
+						</Button>
+					</div>
+				</BaseControl>
+
+				{
+					attributes.frontImg?.url && (
+						<FocalPointPicker
+							label={ __( 'Focal point picker', 'otter-blocks' ) }
+							url={ attributes.backImg?.url }
+							value={ attributes.backImgFocalpoint }
+
+							// TODO: change to reference manipulation for speed
+							onDragStart={ ( newFocalPoint ) =>
+								setAttributes({
+									backImgFocalpoint: newFocalPoint
+								}) }
+
+							// TODO: change to reference manipulation for speed
+							onDrag={ ( newFocalPoint ) =>
+								setAttributes({
+									backImgFocalpoint: newFocalPoint
+								}) }
+							onChange={ ( newFocalPoint ) =>
+								setAttributes({
+									backImgFocalpoint: newFocalPoint
+								})
+							}
+						/>
+					)
+				}
+
+			</PanelBody>
+
+			<PanelBody
 				title={ __( 'Style', 'otter-blocks' ) }
 			>
 
