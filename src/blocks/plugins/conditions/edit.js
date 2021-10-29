@@ -341,6 +341,11 @@ const Edit = ({
 				value: 'wooTotalCartValue',
 				label: __( 'Total Cart Value', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on the total value of WooCommerce cart.' )
+			},
+			{
+				value: 'wooPurchaseHistory',
+				label: __( 'Purchase History', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on user\'s WooCommerce purchase history.' )
 			}
 		];
 
@@ -479,6 +484,7 @@ const Edit = ({
 													<optgroup label={ __( 'WooCommerce', 'otter-blocks' ) }>
 														<option value="wooProductsInCart">{ __( 'Products in Cart', 'otter-blocks' ) }</option>
 														<option value="wooTotalCartValue">{ __( 'Total Cart Value', 'otter-blocks' ) }</option>
+														<option value="wooPurchaseHistory">{ __( 'Purchase History', 'otter-blocks' ) }</option>
 													</optgroup>
 												) }
 											</select>
@@ -825,7 +831,32 @@ const Edit = ({
 											</Fragment>
 										) }
 
-										{ ( 'userRoles' === i.type || 'postAuthor' === i.type || 'postMeta' === i.type || 'wooProductsInCart' === i.type ) && (
+										{ 'wooPurchaseHistory' === i.type && (
+											<Fragment>
+												{ 'loaded' === productsStatus && (
+													<FormTokenField
+														label={ __( 'Products', 'otter-blocks' ) }
+														value={ ( i.products && 'object' === typeof i.products ) ? i.products.map( id => {
+															const obj = products.find( product => Number( id ) === Number( product.value ) );
+															return `${ obj.value }. ${ obj.label }`;
+														}) : undefined }
+														suggestions={ products.map( product => `${ product.value }. ${ product.label }` ) }
+														onChange={ values => changeProducts( values, index, n ) }
+														__experimentalExpandOnFocus={ true }
+														__experimentalValidateInput={ value => {
+															const regex = /^([^.]+)/;
+															const m = regex.exec( value );
+															null !== m ? value = Number( m[0]) : value;
+															return undefined !== products.find( product => Number( value ) === Number( product.value ) );
+														} }
+													/>
+												) }
+
+												{ 'loading' === productsStatus && <Placeholder><Spinner /></Placeholder> }
+											</Fragment>
+										) }
+
+										{ ( 'userRoles' === i.type || 'postAuthor' === i.type || 'postMeta' === i.type || 'wooProductsInCart' === i.type || 'wooPurchaseHistory' === i.type ) && (
 											<SelectControl
 												label={ __( 'If condition is true, the block should be:', 'otter-blocks' ) }
 												options={ [

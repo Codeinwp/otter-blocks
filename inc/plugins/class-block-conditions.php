@@ -181,9 +181,19 @@ class Block_Conditions {
 		if ( 'wooTotalCartValue' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
 			if ( isset( $condition['value'] ) ) {
 				if ( 'greater_than' === $condition['compare'] ) {
-					return $this->has_total_cart_value( $condition );
+					return $this->has_total_cart_value( $condition['value'] );
 				} else {
-					return ! $this->has_total_cart_value( $condition );
+					return ! $this->has_total_cart_value( $condition['value'] );
+				}
+			}
+		}
+
+		if ( 'wooPurchaseHistory' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
+			if ( isset( $condition['products'] ) ) {
+				if ( $visibility ) {
+					return $this->has_product( $condition['products'] );
+				} else {
+					return ! $this->has_product( $condition['products'] );
 				}
 			}
 		}
@@ -415,19 +425,41 @@ class Block_Conditions {
 	/**
 	 * Check based on WooCommerce cart value.
 	 *
-	 * @param array $condition Condition.
+	 * @param array $value Cart Value.
 	 *
 	 * @since  2.0.0
 	 * @access public
 	 */
-	public function has_total_cart_value( $condition ) {
+	public function has_total_cart_value( $value ) {
 		$total = \WC()->cart->total;
 
-		if ( floatval( $condition['value'] ) < floatval( $total ) ) {
+		if ( floatval( $value ) < floatval( $total ) ) {
 			return true;
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check based on WooCommerce product history.
+	 *
+	 * @param array $products IDs of Products.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 */
+	public function has_product( $products ) {
+		$bought       = false;
+		$current_user = wp_get_current_user();
+
+		foreach ( $products as $product ) {
+			if ( wc_customer_bought_product( $current_user->user_email, $current_user->ID, $product ) ) {
+				$bought = true;
+				break;
+			};
+		}
+
+		return $bought;
 	}
 
 	/**
