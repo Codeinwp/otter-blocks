@@ -58,7 +58,7 @@ const Edit = ({
 
 	const shadowCSS = attributes.boxShadow ?
 		css`
-		.o-front:hover, .o-back:hover {
+		.o-front${ ! attributes.isInverted ? ':hover' : '' }, .o-back${ attributes.isInverted ? ':hover' : '' } {
 			box-shadow: ${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ getShadowColor() };
 		}
 		` : '';
