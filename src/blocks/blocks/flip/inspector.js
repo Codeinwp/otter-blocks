@@ -8,7 +8,8 @@ import { pick } from 'lodash';
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
 	InspectorControls,
-	MediaReplaceFlow
+	MediaReplaceFlow,
+	PanelColorSettings
 } from '@wordpress/block-editor';
 
 import {
@@ -365,6 +366,14 @@ const Inspector = ({
 				/>
 
 				<RangeControl
+					label={ __( 'Border Width', 'otter-blocks' ) }
+					value={ attributes.borderWidth }
+					onChange={ borderWidth => setAttributes({ borderWidth }) }
+					min={ 0 }
+					max={ 50 }
+				/>
+
+				<RangeControl
 					label={ __( 'Border Radius', 'otter-blocks' ) }
 					value={ attributes.borderRadius }
 					onChange={ borderRadius => setAttributes({ borderRadius }) }
@@ -372,18 +381,30 @@ const Inspector = ({
 					max={ 50 }
 				/>
 
-				<ColorGradientControl
-					label={ __( 'Front Side Background Color', 'otter-blocks' ) }
-					colorValue={ attributes.frontBackgroundColor }
-					onColorChange={ frontBackgroundColor => setAttributes({ frontBackgroundColor }) }
-				/>
-
-				<ColorGradientControl
-					label={ __( 'Back Side Background Color', 'otter-blocks' ) }
-					colorValue={ attributes.backBackgroundColor }
-					onColorChange={ backBackgroundColor => setAttributes({ backBackgroundColor }) }
-				/>
 			</PanelBody>
+
+			<PanelColorSettings
+				title={ __( 'Color', 'otter-blocks' ) }
+				initialOpen={ false }
+				colorSettings={ [
+					{
+						value: attributes.frontBackgroundColor,
+						onChange: frontBackgroundColor => setAttributes({ frontBackgroundColor }),
+						label: __( 'Front Side Background Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.backBackgroundColor,
+						onChange: backBackgroundColor => setAttributes({ backBackgroundColor }),
+						label: __( 'Back Side Background Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.borderColor,
+						onChange: borderColor => setAttributes({ borderColor }),
+						label: __( 'Border Color', 'otter-blocks' )
+					}
+				] }
+			>
+			</PanelColorSettings>
 
 			<PanelBody
 				title={ __( 'Box Shadow', 'otter-blocks' ) }

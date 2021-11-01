@@ -54,24 +54,6 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .o-front, .o-back',
-				'properties' => array(
-					array(
-						'property' => 'padding',
-						'value'    => 'padding',
-						'unit'     => 'px',
-					),
-					array(
-						'property' => 'border-radius',
-						'value'    => 'borderRadius',
-						'unit'     => 'px',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
 				'selector'   => ' .o-front:hover, .o-back',
 				'properties' => array(
 					array(
@@ -155,6 +137,20 @@ class Flip_CSS extends Base_CSS {
 				'selector'   => ' .o-front',
 				'properties' => array(
 					array(
+						'property' => 'border-color',
+						'value'    => 'borderColor',
+					),
+					array(
+						'property' => 'border-width',
+						'value'    => 'borderWidth',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => 'border-radius',
+						'value'    => 'borderRadius',
+						'unit'     => 'px',
+					),
+					array(
 						'property' => 'background-color',
 						'value'    => 'frontBackgroundColor',
 					),
@@ -181,6 +177,11 @@ class Flip_CSS extends Base_CSS {
 				'selector'   => ' .o-front .o-content',
 				'properties' => array(
 					array(
+						'property' => 'padding',
+						'value'    => 'padding',
+						'unit'     => 'px',
+					),
+					array(
 						'property' => 'justify-content',
 						'value'    => 'verticalAlign',
 					),
@@ -196,6 +197,25 @@ class Flip_CSS extends Base_CSS {
 			array(
 				'selector'   => ' .o-back',
 				'properties' => array(
+					array(
+						'property' => 'border-color',
+						'value'    => 'borderColor',
+					),
+					array(
+						'property' => 'border-width',
+						'value'    => 'borderWidth',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => 'padding',
+						'value'    => 'padding',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => 'border-radius',
+						'value'    => 'borderRadius',
+						'unit'     => 'px',
+					),
 					array(
 						'property' => 'justify-content',
 						'value'    => 'backVerticalAlign',
