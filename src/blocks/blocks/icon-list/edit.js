@@ -1,3 +1,5 @@
+/** @jsx jsx */
+
 /**
  * WordPress dependencies.
  */
@@ -7,6 +9,11 @@ import {
 	Fragment,
 	useEffect
 } from '@wordpress/element';
+
+import {
+	css,
+	jsx
+} from '@emotion/react';
 
 /**
  * Internal dependencies
@@ -36,6 +43,13 @@ const Edit = ({
 			<div
 				id={ attributes.id }
 				className={ className }
+				css={
+					css`
+						.block-editor-block-list__block {
+							justify-content: ${ attributes.verticalAlign || 'unset' } !important;
+						}
+					`
+				}
 			>
 				<InnerBlocks
 					allowedBlocks={ [ 'themeisle-blocks/icon-list-item' ] }

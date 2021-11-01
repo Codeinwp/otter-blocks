@@ -12,7 +12,8 @@ import {
 	PanelBody,
 	RangeControl,
 	Placeholder,
-	Spinner
+	Spinner,
+	SelectControl
 } from '@wordpress/components';
 
 import {
@@ -108,6 +109,18 @@ const Inspector = ({
 					label={ __( 'Icon Color', 'otter-blocks' ) }
 					colorValue={ attributes.defaultIconColor }
 					onColorChange={ onDefaultIconColorChange }
+				/>
+
+				<SelectControl
+					label={ __( 'Vertical Align', 'otter-blocks' ) }
+					value={ attributes.verticalAlign }
+					options={ [
+						{ label: __( 'Default', 'otter-blocks' ), value: '' },
+						{ label: __( 'Left', 'otter-blocks' ), value: 'flex-start' },
+						{ label: __( 'Center', 'otter-blocks' ), value: 'center' },
+						{ label: __( 'Right', 'otter-blocks' ), value: 'flex-end' }
+					] }
+					onChange={ verticalAlign => setAttributes({ verticalAlign }) }
 				/>
 			</PanelBody>
 		</InspectorControls>

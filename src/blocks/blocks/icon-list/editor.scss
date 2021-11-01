@@ -1,6 +1,7 @@
 .wp-block-themeisle-blocks-icon-list {
 	display: flex;
 	flex-direction: column;
+	width: 100%;
 
 	&.is-style-horizontal {
 		flex-direction: unset;
@@ -21,10 +22,12 @@
 
 			.block-editor-block-list__block {
 				margin: 0px;
+				display: flex;
 
 				.wp-block-themeisle-blocks-icon-list-item {
 					display: flex;
 					align-items: center;
+					justify-content: center;
 					transition: margin 0.10s linear;
 
 					.wp-block-themeisle-blocks-icon-list-item-content,

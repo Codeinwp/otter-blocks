@@ -27,6 +27,9 @@ const attributes = {
 	gap: {
 		type: 'number',
 		default: 5
+	},
+	verticalAlign: {
+		type: 'string'
 	}
 };
 
