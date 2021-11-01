@@ -38,7 +38,7 @@
 		"currency-symbol-map": "^5.0.1",
 		"dom-scroll-into-view": "^2.0.1",
 		"hex-rgba": "^1.0.2",
-		"react-google-font-loader": "1.0.5",
+		"react-google-font-loader": "1.1.0",
 		"react-joyride": "^2.3.1",
 		"react-lazy-load": "^3.1.13",
 		"react-notifications-component": "^3.1.0",
