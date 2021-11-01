@@ -21,8 +21,14 @@ const attributes = {
 	height: {
 		type: 'number'
 	},
-	paddings: {
+	padding: {
 		type: 'number'
+	},
+	borderWidth: {
+		type: 'string'
+	},
+	borderColor: {
+		type: 'string'
 	},
 	borderRadius: {
 		type: 'number'

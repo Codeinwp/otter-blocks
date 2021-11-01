@@ -80,9 +80,6 @@ const Edit = ({
 					)
 				}
 				css={ css`
-					--border-radius: ${ undefined !== attributes.borderRadius ? attributes.borderRadius : 10 }px;
-					--padding: ${ undefined !== attributes.padding ? attributes.padding : 20 }px;
-
 					.o-content {
 						background-color: rgba(0, 0, 0, ${ ( attributes.frontOverlayOpacity || 0 ) / 100});
 					}
@@ -106,6 +103,9 @@ const Edit = ({
 					<div
 						className="o-front"
 						style={{
+							borderColor: attributes.borderColor,
+							borderRadius: attributes.borderRadius,
+							borderWidth: attributes.borderWidth,
 							backgroundColor: attributes.frontBackgroundColor,
 							backgroundImage: `url(${attributes.frontImg?.url})`,
 							backgroundPosition: `${ Math.round( attributes.frontImgFocalpoint?.x * 100 ) }% ${ Math.round( attributes.frontImgFocalpoint?.y * 100 ) }%`
@@ -114,6 +114,7 @@ const Edit = ({
 						<div
 							className="o-content"
 							style={{
+								padding: attributes.padding,
 								alignItems: attributes.horizontalAlign,
 								justifyContent: attributes.verticalAlign
 							}}
@@ -150,6 +151,10 @@ const Edit = ({
 					<div
 						className="o-back"
 						style={{
+							padding: attributes.padding,
+							borderColor: attributes.borderColor,
+							borderRadius: attributes.borderRadius,
+							borderWidth: attributes.borderWidth,
 							justifyContent: attributes.backVerticalAlign,
 							backgroundColor: attributes.backBackgroundColor,
 							backgroundImage: `url(${attributes.backImg?.url})`,
