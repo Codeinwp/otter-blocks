@@ -99,7 +99,6 @@ class Dashboard {
 				'assetsPath'  => OTTER_BLOCKS_URL . 'assets/',
 				'showTour'    => $tour,
 				'stylesExist' => is_dir( $basedir ),
-				'navExists'   => \WP_Block_Type_Registry::get_instance()->is_registered( 'core/navigation' ),
 			)
 		);
 	}

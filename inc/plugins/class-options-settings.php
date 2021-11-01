@@ -88,17 +88,6 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
-			'themeisle_blocks_settings_menu_icons',
-			array(
-				'type'         => 'boolean',
-				'description'  => __( 'Menu Icons module allows to add icons to navigation menu items in Block Editor.', 'otter-blocks' ),
-				'show_in_rest' => true,
-				'default'      => true,
-			)
-		);
-
-		register_setting(
-			'themeisle_blocks_settings',
 			'otter_blocks_logger_flag',
 			array(
 				'type'         => 'string',
