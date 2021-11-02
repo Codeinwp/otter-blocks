@@ -111,16 +111,17 @@ const Inspector = ({
 					onColorChange={ onDefaultIconColorChange }
 				/>
 
+
 				<SelectControl
-					label={ __( 'Vertical Align', 'otter-blocks' ) }
-					value={ attributes.verticalAlign }
+					label={ __( 'Align', 'otter-blocks' ) }
+					value={ attributes.horizontalAlign }
 					options={ [
 						{ label: __( 'Default', 'otter-blocks' ), value: '' },
 						{ label: __( 'Left', 'otter-blocks' ), value: 'flex-start' },
 						{ label: __( 'Center', 'otter-blocks' ), value: 'center' },
 						{ label: __( 'Right', 'otter-blocks' ), value: 'flex-end' }
 					] }
-					onChange={ verticalAlign => setAttributes({ verticalAlign }) }
+					onChange={ horizontalAlign => setAttributes({ horizontalAlign }) }
 				/>
 			</PanelBody>
 		</InspectorControls>

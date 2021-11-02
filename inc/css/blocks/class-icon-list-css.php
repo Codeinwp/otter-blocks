@@ -40,7 +40,11 @@ class Icon_List_CSS extends Base_CSS {
 				'properties' => array(
 					array(
 						'property' => 'align-items',
-						'value'    => 'verticalAlign',
+						'value'    => 'horizontalAlign',
+					),
+					array(
+						'property' => 'justify-content',
+						'value'    => 'horizontalAlign',
 					),
 				),
 			)

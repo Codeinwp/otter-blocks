@@ -30,6 +30,9 @@ const attributes = {
 	},
 	verticalAlign: {
 		type: 'string'
+	},
+	horizontalAlign: {
+		type: 'string'
 	}
 };
 

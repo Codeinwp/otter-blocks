@@ -13,12 +13,14 @@
 		display: flex;
 		flex-direction: inherit;
 		align-items: inherit;
+		width: 100%;
 
 		.block-editor-block-list__layout {
 			display: flex;
 			flex-direction: inherit;
 			flex-wrap: wrap;
 			align-items: inherit;
+			width: 100%;
 
 			.block-editor-block-list__block {
 				margin: 0px;

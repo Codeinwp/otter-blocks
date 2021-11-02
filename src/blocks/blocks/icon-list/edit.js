@@ -45,8 +45,9 @@ const Edit = ({
 				className={ className }
 				css={
 					css`
-						.block-editor-block-list__block {
-							justify-content: ${ attributes.verticalAlign || 'unset' } !important;
+						.block-editor-block-list__layout {
+							align-items: ${ attributes.horizontalAlign || 'unset' } !important;
+							justify-content: ${ attributes.horizontalAlign || 'unset' } !important;
 						}
 					`
 				}
