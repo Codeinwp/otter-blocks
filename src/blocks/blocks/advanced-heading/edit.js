@@ -123,9 +123,11 @@ const Edit = ({
 	let fontSizeStyle, stylesheet, textShadowStyle;
 
 	if ( isDesktop ) {
+		console.log( attributes.fontSize );
 		fontSizeStyle = {
-			fontSize: `${ attributes.fontSize }px`
+			fontSize: attributes.fontSize ? `${ attributes.fontSize }px` : undefined
 		};
+		console.log( fontSizeStyle );
 
 		stylesheet = {
 			textAlign: attributes.align,
@@ -140,7 +142,7 @@ const Edit = ({
 
 	if ( isTablet ) {
 		fontSizeStyle = {
-			fontSize: `${ attributes.fontSizeTablet }px`
+			fontSize: attributes.fontSizeTablet ? `${ attributes.fontSizeTablet }px` : undefined
 		};
 
 		stylesheet = {
@@ -156,7 +158,7 @@ const Edit = ({
 
 	if ( isMobile ) {
 		fontSizeStyle = {
-			fontSize: `${ attributes.fontSizeMobile }px`
+			fontSize: attributes.fontSizeMobile ? `${ attributes.fontSizeMobile }px` : undefined
 		};
 
 		stylesheet = {

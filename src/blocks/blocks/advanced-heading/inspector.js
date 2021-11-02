@@ -410,6 +410,20 @@ const Inspector = ({
 		setAttributes({ id: value });
 	};
 
+	const reset = ( attribute ) => {
+		switch ( attribute ) {
+		case 'fontSize':
+			if ( 'Desktop' === getView ) {
+				setAttributes({ fontSize: undefined });
+			} else if ( 'Tablet' === getView ) {
+				setAttributes({ fontSizeTablet: undefined });
+			} else if ( 'Mobile' === getView ) {
+				setAttributes({ fontSizeMobile: undefined });
+			}
+			break;
+		}
+	};
+
 	return (
 		<Fragment>
 			<InspectorControls>
@@ -446,6 +460,7 @@ const Inspector = ({
 					<Fragment>
 						<PanelBody
 							title={ __( 'General Settings', 'otter-blocks' ) }
+							className="o-adv-h-panel"
 						>
 							<ColorBaseControl
 								label={ __( 'Heading Color', 'otter-blocks' ) }
@@ -468,6 +483,18 @@ const Inspector = ({
 									max={ 500 }
 								/>
 							</ResponsiveControl>
+
+							<div className="o-cnt">
+								<Button
+									isLink
+									isSmall
+									onClick={ () => reset( 'fontSize' )}
+								>
+									{
+										__( 'Reset', 'otter-blocks' )
+									}
+								</Button>
+							</div>
 
 							<ResponsiveControl
 								label={ __( 'Alignment', 'otter-blocks' ) }
