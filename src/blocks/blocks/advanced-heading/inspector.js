@@ -486,12 +486,12 @@ const Inspector = ({
 
 							<div className="o-cnt">
 								<Button
-									isLink
+									isSecondary
 									isSmall
 									onClick={ () => reset( 'fontSize' )}
 								>
 									{
-										__( 'Reset', 'otter-blocks' )
+										__( 'Clear', 'otter-blocks' )
 									}
 								</Button>
 							</div>
