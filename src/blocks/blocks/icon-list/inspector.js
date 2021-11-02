@@ -99,6 +99,18 @@ const Inspector = ({
 					max={ 60 }
 				/>
 
+				<SelectControl
+					label={ __( 'Alignment', 'otter-blocks' ) }
+					value={ attributes.horizontalAlign }
+					options={ [
+						{ label: __( 'Default', 'otter-blocks' ), value: '' },
+						{ label: __( 'Left', 'otter-blocks' ), value: 'flex-start' },
+						{ label: __( 'Center', 'otter-blocks' ), value: 'center' },
+						{ label: __( 'Right', 'otter-blocks' ), value: 'flex-end' }
+					] }
+					onChange={ horizontalAlign => setAttributes({ horizontalAlign }) }
+				/>
+
 				<ColorGradientControl
 					label={ __( 'Content Color', 'otter-blocks' ) }
 					colorValue={ attributes.defaultContentColor }
@@ -111,18 +123,6 @@ const Inspector = ({
 					onColorChange={ onDefaultIconColorChange }
 				/>
 
-
-				<SelectControl
-					label={ __( 'Align', 'otter-blocks' ) }
-					value={ attributes.horizontalAlign }
-					options={ [
-						{ label: __( 'Default', 'otter-blocks' ), value: '' },
-						{ label: __( 'Left', 'otter-blocks' ), value: 'flex-start' },
-						{ label: __( 'Center', 'otter-blocks' ), value: 'center' },
-						{ label: __( 'Right', 'otter-blocks' ), value: 'flex-end' }
-					] }
-					onChange={ horizontalAlign => setAttributes({ horizontalAlign }) }
-				/>
 			</PanelBody>
 		</InspectorControls>
 	);
