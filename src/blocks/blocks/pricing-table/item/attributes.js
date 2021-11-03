@@ -1,11 +1,11 @@
+import { __ } from '@wordpress/i18n';
+
 const attributes = {
 	title: {
-		type: 'string',
-		default: __( 'Pricing Title', 'otter-blocks' )
+		type: 'string'
 	},
 	description: {
-		type: 'string',
-		default: __( 'Pricing Description', 'otter-blocks' )
+		type: 'string'
 	},
 	buttonText: {
 		type: 'string',
@@ -27,8 +27,8 @@ const attributes = {
 		type: 'string'
 	},
 	linkText: {
-		default: __( 'See all features', 'otter-blocks' ),
-		type: 'string'
+		type: 'string',
+		default: __( 'See all features', 'otter-blocks' )
 	}
 };
 
