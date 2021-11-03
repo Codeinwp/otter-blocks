@@ -1,0 +1,33 @@
+.fas,
+.fab,
+.far {
+	&.wp-block-navigation-item {
+		display: flex;
+		align-items: center;
+		font-weight: inherit;
+		-moz-osx-font-smoothing: inherit;
+		-webkit-font-smoothing: inherit;
+		line-height: inherit;
+
+		&:before {
+			margin-right: 5px;
+		}
+	}
+}
+
+.fab,
+.far {
+	&.wp-block-navigation-item {
+		&:before {
+			font-weight: 400;
+		}
+	}
+}
+
+.fas {
+	&.wp-block-navigation-item {
+		&:before {
+			font-weight: 900;	
+		}
+	}
+}
