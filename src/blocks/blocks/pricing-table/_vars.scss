@@ -1,0 +1,79 @@
+$ti-gray: #f4f4f4 !default;
+$ti-woo-purple: #9C5D90 !default;
+$ti-neve-blue: #0466CB !default;
+$ti-accent-green: #43C2D1 !default;
+$ti-neve-blue-gradient: linear-gradient(180deg, #0063CA 0%, #1863B1 100%) !default;
+$ti-dark-blue: #32466B !default;
+$ti-arrow-gray: #D8D8D8 !default;
+
+$tablet-sm: "600px";
+$tablet: "782px";
+$laptop-min: "959px";
+$laptop: "960px";
+$desktop: "1200px";
+$tablet-min: '959px';
+
+
+@mixin box-bottom-right() {
+  content: "";
+  display: block;
+  width: 340px;
+  height: 430px;
+  border: 20px solid #FFFFFF;
+  position: absolute;
+  bottom: 45px;
+  right: 30px;
+  z-index: -1;
+  @media (max-width: $laptop) {
+	transform-origin: bottom right;
+	transform: scale(.75)
+  }
+  @media (max-width: $tablet) {
+	transform-origin: bottom right;
+	bottom: 20px;
+	right: 0;
+	transform: scale(.35)
+  }
+}
+
+@mixin dots-top-left() {
+  content: "";
+  display: block;
+  width: 260px;
+  height: 300px;
+  position: absolute;
+  top: 20px;
+  left: -10px;
+  z-index: -1;
+  background-image: url('../../images/dot.svg');
+  @media (max-width: $laptop) {
+	transform-origin: top left;
+	transform: scale(.5)
+  }
+}
+
+@mixin slanted-dots() {
+  @include dots-top-left();
+  width: 300px;
+  height: 330px;
+  transform: rotate(15deg) scale(1.5);
+  top: 75px;
+  left: 185px;
+  @media (max-width: $laptop)  {
+	transform: rotate(15deg) scale(.8);
+	left: 10px;
+  }
+}
+
+@mixin grid-background-pseudo() {
+  position: absolute;
+  top: -40px;
+  max-width: 100%;
+  left: 0;
+  bottom: 0;
+  content: "";
+  right: 0;
+  background-image: url('../../images/grid.svg');
+  z-index: -1;
+  background-size: cover;
+}
