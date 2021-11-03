@@ -35,6 +35,13 @@ const Inspector = ({ attributes, setAttributes }) => {
 				/>
 
 				<TextControl
+					label={ __( 'Currency', 'otter-blocks' ) }
+					help={ __( 'Set the currency. E.g.: $, £, €, ¥, ₹', 'otter-blocks' ) }
+					value={ attributes.currency }
+					onChange={ currency => setAttributes({ currency }) }
+				/>
+
+				<TextControl
 					label={ __( 'Period', 'otter-blocks' ) }
 					help={ __( 'Set the period. E.g.: month, year' ) }
 					value={ attributes.period }

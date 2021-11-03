@@ -22,6 +22,10 @@ const attributes = {
 		type: 'number',
 		default: 9.99
 	},
+	currency: {
+		type: 'string',
+		default: '$'
+	},
 	period: {
 		type: 'string',
 		default: __( 'month', 'otter-blocks' )

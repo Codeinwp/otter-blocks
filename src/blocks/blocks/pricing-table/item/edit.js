@@ -38,7 +38,7 @@ export default ({ attributes, className, setAttributes }) => {
 			<div className="o-pricing-price">
 				<h5>
 					<del className="full-price">
-						<sup>€</sup>
+						<sup>{ attributes.currency }</sup>
 						<span>{ attributes.oldPrice }</span>
 					</del>
 					<span
@@ -47,7 +47,7 @@ export default ({ attributes, className, setAttributes }) => {
 							color: attributes.priceColor
 						}}
 					>
-						<sup>€</sup>
+						<sup>{ attributes.currency }</sup>
 						<span>{ attributes.price }</span>
 					</span>
 					<sub className="period">/{ attributes.period }</sub>
