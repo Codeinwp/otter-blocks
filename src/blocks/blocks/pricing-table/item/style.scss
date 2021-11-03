@@ -22,8 +22,8 @@ $border-color: #E1E1E1 !default;
 	}
 }
 
-.pricing-table-wrap, .ti-features-table-wrap {
-	.ti-pricing-header {
+.pricing-table-wrap, .o-features-table-wrap {
+	.o-pricing-header {
 		text-align: center;
 		border-bottom: 1px solid $border-color;
 		padding: 40px 0 20px;
@@ -31,22 +31,22 @@ $border-color: #E1E1E1 !default;
 		position: relative;
 	}
 
-	.ti-pricing-title {
+	.o-pricing-title {
 		font-size: 25px;
 		line-height: 130%;
-		color: $ti-dark-blue;
+		color: $o-dark-blue;
 		margin: 0 0 15px;
 		letter-spacing: normal;
 	}
 
-	.ti-pricing-description {
+	.o-pricing-description {
 		color: #a2a9ba;
 		margin-bottom: 10px;
 	}
 
-	.ti-pricing-price {
+	.o-pricing-price {
 		h5 {
-			color: $ti-dark-blue;
+			color: $o-dark-blue;
 			margin: 0;
 
 			.price {
@@ -83,13 +83,13 @@ $border-color: #E1E1E1 !default;
 	}
 
 	li {
-		color: $ti-dark-blue;
+		color: $o-dark-blue;
 		margin: 0 !important;
 		border-bottom: 1px solid $border-color;
 		padding: 10px 0 7px;
 	}
 
-	.ti-pricing-footer {
+	.o-pricing-footer {
 		margin-top: 20px;
 		display: flex;
 		flex-direction: column;
@@ -100,11 +100,11 @@ $border-color: #E1E1E1 !default;
 		text-decoration: underline !important;
 	}
 
-	.ti-pricing-action {
+	.o-pricing-action {
 		display: block;
 		color: #fff;
 		text-transform: uppercase;
-		background: $ti-accent-green;
+		background: $o-accent-green;
 		font-size: 17px;
 		line-height: 20px;
 		border-radius: 4px;
@@ -114,7 +114,7 @@ $border-color: #E1E1E1 !default;
 	}
 }
 
-.ti-pricing-action-wrap {
+.o-pricing-action-wrap {
 	padding: 15px 30px 0;
 
 	.featured & {
@@ -130,24 +130,24 @@ $border-color: #E1E1E1 !default;
 		margin-top: 15px;
 	}
 
-	.ti-pricing-header {
+	.o-pricing-header {
 		padding-bottom: 20px;
 	}
 
-	.ti-pricing-title {
+	.o-pricing-title {
 		font-size: 40px;
 		line-height: 120%;
 	}
 
-	.ti-pricing-price {
+	.o-pricing-price {
 		.price {
 			font-size: 47px;
 		}
 	}
 }
 
-.wp-block-themeisle-pricing-table.featured, .ti-features-table-wrap .featured {
-	.ti-pricing-action {
+.wp-block-themeisle-pricing-table.featured, .o-features-table-wrap .featured {
+	.o-pricing-action {
 		background-color: #FF7E65;
 	}
 }

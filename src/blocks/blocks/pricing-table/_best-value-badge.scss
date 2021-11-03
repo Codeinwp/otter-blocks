@@ -10,14 +10,14 @@
   line-height: 25px;
   font-weight: 600;
   letter-spacing: normal;
-  background-color: $ti-accent-green;
+  background-color: $o-accent-green;
   z-index: 10;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 
   &:before {
 	top: calc(50% - 1px);
 	position: absolute;
-	background-color: $ti-accent-green;
+	background-color: $o-accent-green;
 	height: 3px;
 	content: "";
 	left: -35px;
@@ -27,7 +27,7 @@
 
   &:after {
 	position: absolute;
-	border: 18px solid $ti-accent-green;
+	border: 18px solid $o-accent-green;
 	border-right: 10px solid transparent;
 	border-left: 10px solid transparent;
 	box-sizing: content-box;

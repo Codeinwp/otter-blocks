@@ -7,11 +7,11 @@ export default ({ attributes }) => {
 	const { hasMoneyBackSection, title, text } = attributes;
 	return (
 		<>
-			<div className="ti-pricing-table-group-wrap">
+			<div className="o-pricing-table-group-wrap">
 				<InnerBlocks.Content />
 			</div>
 			{ hasMoneyBackSection && (
-				<div className="ti-money-back">
+				<div className="o-money-back">
 					<div className="icon">
 						<img
 

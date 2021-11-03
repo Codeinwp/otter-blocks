@@ -17,7 +17,7 @@ export default ( { attributes } ) => {
 	const tableClasses = classnames( className, { featured: isFeatured } );
 
 	const Header = () => (
-		<div className="ti-pricing-header">
+		<div className="o-pricing-header">
 			{ isFeatured && (
 				<span className="featured-badge">Best value!</span>
 			) }
@@ -25,7 +25,7 @@ export default ( { attributes } ) => {
 				<RichText.Content
 					identifier="title"
 					tagName="h3"
-					className="ti-pricing-title"
+					className="o-pricing-title"
 					value={ title }
 				/>
 			) }
@@ -33,11 +33,11 @@ export default ( { attributes } ) => {
 				<RichText.Content
 					identifier="description"
 					tagName="p"
-					className="ti-pricing-description"
+					className="o-pricing-description"
 					value={ description }
 				/>
 			) }
-			<div className="ti-pricing-price">
+			<div className="o-pricing-price">
 				{ variations.map( ( variation, index ) => {
 					const classes = classnames( [
 						variation,
@@ -70,7 +70,7 @@ export default ( { attributes } ) => {
 					);
 				} ) }
 			</div>
-			<div className="ti-pricing-action-wrap">
+			<div className="o-pricing-action-wrap">
 				<ActionButton />
 			</div>
 		</div>
@@ -81,7 +81,7 @@ export default ( { attributes } ) => {
 			const classes = classnames( [
 				variation,
 				`variation-${ index + 1 }`,
-				'ti-pricing-action',
+				'o-pricing-action',
 				'fast-spring',
 			] );
 
@@ -107,7 +107,7 @@ export default ( { attributes } ) => {
 			<div className="pricing-table-wrap">
 				<Header />
 				<InnerBlocks.Content />
-				<div className="ti-pricing-footer">
+				<div className="o-pricing-footer">
 					{ hasTableLink && (
 						<a
 							href="#"

@@ -2,19 +2,19 @@ import {
 	PanelBody,
 	BaseControl,
 	ToggleControl,
-	FormTokenField,
+	FormTokenField
 } from '@wordpress/components';
 import { InspectorControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
-const Inspector = ( { attributes, setAttributes } ) => {
+const Inspector = ({ attributes, setAttributes }) => {
 	const {
 		variations,
 		buttonText,
 		isFeatured,
 		hasTableLink,
 		selector,
-		linkText,
+		linkText
 	} = attributes;
 
 	return (
@@ -29,7 +29,7 @@ const Inspector = ( { attributes, setAttributes } ) => {
 						id="button-text"
 						value={ buttonText }
 						onChange={ ( e ) => {
-							setAttributes( { buttonText: e.target.value } );
+							setAttributes({ buttonText: e.target.value });
 						} }
 					/>
 				</BaseControl>
@@ -46,9 +46,9 @@ const Inspector = ( { attributes, setAttributes } ) => {
 						</>
 					}
 					onChange={ ( nextVariations ) =>
-						setAttributes( {
-							variations: nextVariations,
-						} )
+						setAttributes({
+							variations: nextVariations
+						})
 					}
 					placeholder={ __( 'Type in a Variation', 'themeisle' ) }
 				/>
@@ -61,7 +61,7 @@ const Inspector = ( { attributes, setAttributes } ) => {
 					) }
 					checked={ isFeatured }
 					onChange={ ( nextVal ) =>
-						setAttributes( { isFeatured: nextVal } )
+						setAttributes({ isFeatured: nextVal })
 					}
 				/>
 			</PanelBody>
@@ -74,7 +74,7 @@ const Inspector = ( { attributes, setAttributes } ) => {
 					) }
 					checked={ hasTableLink }
 					onChange={ ( nextVal ) =>
-						setAttributes( { hasTableLink: nextVal } )
+						setAttributes({ hasTableLink: nextVal })
 					}
 				/>
 				{ hasTableLink && (
@@ -88,9 +88,9 @@ const Inspector = ( { attributes, setAttributes } ) => {
 								id="link-text"
 								value={ linkText }
 								onChange={ ( e ) => {
-									setAttributes( {
-										linkText: e.target.value,
-									} );
+									setAttributes({
+										linkText: e.target.value
+									});
 								} }
 							/>
 						</BaseControl>
@@ -107,9 +107,9 @@ const Inspector = ( { attributes, setAttributes } ) => {
 								id="css-selector"
 								value={ selector }
 								onChange={ ( e ) => {
-									setAttributes( {
-										selector: e.target.value,
-									} );
+									setAttributes({
+										selector: e.target.value
+									});
 								} }
 							/>
 						</BaseControl>

@@ -1,6 +1,6 @@
 @import "../vars";
 
-.ti-pricing-table-group-wrap {
+.o-pricing-table-group-wrap {
   display: grid;
   padding: 0 15px;
   grid-template-columns: 1fr;
@@ -11,7 +11,7 @@
   }
 }
 
-.ti-money-back {
+.o-money-back {
   margin: 50px 0 0;
   background: #FFFFFF;
   border-radius: 8px;
@@ -21,7 +21,7 @@
   .icon {
 	display: none;
 	align-items: center;
-	background-color: $ti-dark-blue;
+	background-color: $o-dark-blue;
 	padding: 10px;
 
 	img {
@@ -42,7 +42,7 @@
 	  margin: 0 0 15px;
 	  font-size: 30px;
 	  line-height: 35px;
-	  color: $ti-dark-blue;
+	  color: $o-dark-blue;
 	}
 
 	p {
@@ -57,7 +57,7 @@
 
 
 @media (min-width: $laptop) {
-  .ti-money-back {
+  .o-money-back {
 	.content {
 	  padding: 40px 80px 21px 30px;
 	}
@@ -72,7 +72,7 @@
 	}
   }
 
-  .ti-pricing-table-group-wrap {
+  .o-pricing-table-group-wrap {
 	grid-template-columns: repeat(3, 1fr);
 	grid-row-gap: 0;
 	grid-column-gap: 15px;

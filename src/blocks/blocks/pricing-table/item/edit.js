@@ -17,14 +17,14 @@ export default ({ attributes, className, setAttributes }) => {
 	const tableClasses = classnames([ className, { featured: isFeatured } ]);
 
 	const Header = () => (
-		<div className="ti-pricing-header">
+		<div className="o-pricing-header">
 			{ isFeatured && (
 				<span className="featured-badge">Best value!</span>
 			) }
 			<RichText
 				identifier="title"
 				tagName="h3"
-				className="ti-pricing-title"
+				className="o-pricing-title"
 				placeholder={ __( 'Plan Name', 'otter-blocks' ) }
 				value={ title }
 				onChange={ ( nextTitle ) =>
@@ -34,14 +34,14 @@ export default ({ attributes, className, setAttributes }) => {
 			<RichText
 				identifier="description"
 				tagName="p"
-				className="ti-pricing-description"
+				className="o-pricing-description"
 				placeholder={ __( 'Plan Description', 'otter-blocks' ) }
 				value={ description }
 				onChange={ ( nextDescription ) =>
 					setAttributes({ description: nextDescription })
 				}
 			/>
-			<div className="ti-pricing-price">
+			<div className="o-pricing-price">
 				<h5>
 					<del className="full-price">
 						<sup>€</sup>
@@ -54,8 +54,8 @@ export default ({ attributes, className, setAttributes }) => {
 					<sub className="period">/year</sub>
 				</h5>
 			</div>
-			<div className="ti-pricing-action-wrap">
-				<a className="ti-pricing-action" href="#">
+			<div className="o-pricing-action-wrap">
+				<a className="o-pricing-action" href="#">
 					{ buttonText }
 				</a>
 			</div>
@@ -75,7 +75,7 @@ export default ({ attributes, className, setAttributes }) => {
 						template={ [ [ 'core/list' ], [ 'core/list' ] ] }
 						allowedBlocks={ [ 'core/list' ] }
 					/>
-					<div className="ti-pricing-footer">
+					<div className="o-pricing-footer">
 						{ hasTableLink && (
 							<a href="#" className="open-features-table">
 								{ linkText }

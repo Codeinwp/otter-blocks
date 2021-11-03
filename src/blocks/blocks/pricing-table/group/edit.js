@@ -14,7 +14,7 @@ export default ({ className, attributes, setAttributes }) => {
 				setAttributes={ setAttributes }
 				attributes={ attributes }
 			/>
-			<div className={ `ti-pricing-table-group-wrap ${ className }` }>
+			<div className={ `o-pricing-table-group-wrap ${ className }` }>
 				<InnerBlocks
 					allowedBlocks={ allowedBlocks }
 					template={ [
@@ -44,7 +44,7 @@ export default ({ className, attributes, setAttributes }) => {
 				/>
 			</div>
 			{ hasMoneyBackSection && (
-				<div className="ti-money-back">
+				<div className="o-money-back">
 					<div className="icon">
 						<img
 							alt={ __( 'Money back icon', 'themeisle' ) }
