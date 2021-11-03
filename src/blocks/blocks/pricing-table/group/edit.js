@@ -47,7 +47,7 @@ export default ({ className, attributes, setAttributes }) => {
 				<div className="o-money-back">
 					<div className="icon">
 						<img
-							alt={ __( 'Money back icon', 'themeisle' ) }
+							alt={ __( 'Money back icon', 'otter-blocks' ) }
 						/>
 					</div>
 					<div className="content">

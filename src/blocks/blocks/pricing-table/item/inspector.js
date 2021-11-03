@@ -2,7 +2,8 @@ import {
 	PanelBody,
 	BaseControl,
 	ToggleControl,
-	FormTokenField
+	FormTokenField,
+	TextControl
 } from '@wordpress/components';
 import { InspectorControls } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
@@ -19,58 +20,36 @@ const Inspector = ({ attributes, setAttributes }) => {
 
 	return (
 		<InspectorControls>
-			<PanelBody title={ __( 'FastSpring Package', 'themeisle' ) }>
-				<BaseControl
-					id="button-text"
-					label={ __( 'Button Text', 'themeisle' ) }
-				>
-					<input
-						type="text"
-						id="button-text"
-						value={ buttonText }
-						onChange={ ( e ) => {
-							setAttributes({ buttonText: e.target.value });
-						} }
-					/>
-				</BaseControl>
-				<hr />
-				<FormTokenField
-					value={ variations }
-					label={
-						<>
-							<h4>Variations:</h4>
-							<small>
-								e.g. <code>neve-8</code>, <code>neve-2</code>,
-								etc.
-							</small>
-						</>
-					}
-					onChange={ ( nextVariations ) =>
-						setAttributes({
-							variations: nextVariations
-						})
-					}
-					placeholder={ __( 'Type in a Variation', 'themeisle' ) }
+			<PanelBody title={ __( 'Settings', 'otter-blocks' ) }>
+				<TextControl
+					label={ __( 'Button Text', 'otter-blocks' ) }
+					value={ attributes.buttonText }
+					onChange={ buttonText => setAttributes({ buttonText }) }
 				/>
-				<hr />
+
+				<TextControl
+					label={ __( 'Button Link', 'otter-blocks' ) }
+					help={ __( 'Set a link to redirect the user after clinking.', 'otter-blocks' ) }
+					value={ attributes.buttonLink }
+					onChange={ buttonLink => setAttributes({ buttonLink }) }
+				/>
+
 				<ToggleControl
 					label={ __( 'Featured Package' ) }
 					help={ __(
 						'Is this a featured package? Adds a `Best Value` ribbon at the top and pops up the pricing table.',
-						'themeisle'
+						'otter-blocks'
 					) }
 					checked={ isFeatured }
-					onChange={ ( nextVal ) =>
-						setAttributes({ isFeatured: nextVal })
-					}
+					onChange={ isFeatured => setAttributes({ isFeatured }) }
 				/>
 			</PanelBody>
-			<PanelBody title={ __( 'Table Link', 'themeisle' ) }>
+			<PanelBody title={ __( 'Table Link', 'otter-blocks' ) }>
 				<ToggleControl
-					label={ __( 'Should have table link', 'themeisle' ) }
+					label={ __( 'Should have table link', 'otter-blocks' ) }
 					help={ __(
 						'This should be enabled if there is a features table at the end of page.',
-						'themeisle'
+						'otter-blocks'
 					) }
 					checked={ hasTableLink }
 					onChange={ ( nextVal ) =>
@@ -81,7 +60,7 @@ const Inspector = ({ attributes, setAttributes }) => {
 					<>
 						<BaseControl
 							id="link-text"
-							label={ __( 'Link Text', 'themeisle' ) }
+							label={ __( 'Link Text', 'otter-blocks' ) }
 						>
 							<input
 								type="text"
@@ -96,10 +75,10 @@ const Inspector = ({ attributes, setAttributes }) => {
 						</BaseControl>
 						<BaseControl
 							id="css-selector"
-							label={ __( 'On link click', 'themeisle' ) }
+							label={ __( 'On link click', 'otter-blocks' ) }
 							help={ __(
 								'Go to this selector and show it. It will be hidden at page load initially.',
-								'themeisle'
+								'otter-blocks'
 							) }
 						>
 							<input
