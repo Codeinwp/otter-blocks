@@ -11,6 +11,9 @@ const attributes = {
 		type: 'string',
 		default: __( 'Purchase', 'otter-blocks' )
 	},
+	buttonLink: {
+		type: 'string'
+	},
 	variations: {
 		type: 'array',
 		default: []
@@ -29,6 +32,21 @@ const attributes = {
 	linkText: {
 		type: 'string',
 		default: __( 'See all features', 'otter-blocks' )
+	},
+	buttonColor: {
+		type: 'string'
+	},
+	backgroundColor: {
+		type: 'string'
+	},
+	titleColorColor: {
+		type: 'string'
+	},
+	descriptionColor: {
+		type: 'string'
+	},
+	priceColor: {
+		type: 'string'
 	}
 };
 

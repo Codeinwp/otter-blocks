@@ -5,7 +5,7 @@ import {
 	FormTokenField,
 	TextControl
 } from '@wordpress/components';
-import { InspectorControls } from '@wordpress/block-editor';
+import { ContrastChecker, InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 
 const Inspector = ({ attributes, setAttributes }) => {
@@ -95,6 +95,45 @@ const Inspector = ({ attributes, setAttributes }) => {
 					</>
 				) }
 			</PanelBody>
+
+			<PanelColorSettings
+				title={ __( 'Color', 'otter-blocks' ) }
+				initialOpen={ false }
+				colorSettings={ [
+					{
+						value: attributes.backgroundColor,
+						onChange: backgroundColor => setAttributes({ backgroundColor }),
+						label: __( 'Background', 'otter-blocks' )
+					},
+					{
+						value: attributes.titleColor,
+						onChange: titleColor => setAttributes({ titleColor }),
+						label: __( 'Title Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.descriptionColor,
+						onChange: descriptionColor => setAttributes({ descriptionColor }),
+						label: __( 'Description Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.priceColor,
+						onChange: priceColor => setAttributes({ priceColor }),
+						label: __( 'Price Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.buttonColor,
+						onChange: buttonColor => setAttributes({ buttonColor }),
+						label: __( 'Button Color', 'otter-blocks' )
+					}
+				] }
+			>
+				<ContrastChecker
+					{ ...{
+						textColor: attributes.titleColor,
+						backgroundColor: attributes.backgroundColor
+					} }
+				/>
+			</PanelColorSettings>
 		</InspectorControls>
 	);
 };
