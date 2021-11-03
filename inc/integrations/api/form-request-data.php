@@ -33,7 +33,7 @@ class Form_Data_Request {
 	 */
 	public function is_set( $field_name ) {
 		// TODO: we can do a more refined verification like checking for empty strings or arrays
-		return isset($data[$field_name]);
+		return isset($this->data[$field_name]);
 	}
 
 	/**

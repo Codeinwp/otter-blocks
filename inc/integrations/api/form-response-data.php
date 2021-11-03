@@ -45,9 +45,9 @@ class Form_Data_Response {
 	}
 
 	public function copy( $other ) {
-		$response['success'] = $other->is_success();
+		$this->response['success'] = $other->is_success();
 		$this->set_reasons( $other->get_reasons());
-		$this->set_error($other->set_error());
+		$this->set_error($other->get_error());
 	}
 
 	public function get_error() {

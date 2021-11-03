@@ -348,7 +348,7 @@ class Form_Server {
 			return $res->build_response();
 		}
 
-		$integration = $this->get_form_option_settings( $data['formOption'] );
+		$integration = $this->get_form_option_settings( $data->get('formOption') );
 
 		if (
 			isset( $integration['apiKey'], $integration['listId'] ) &&
