@@ -14,6 +14,18 @@ const attributes = {
 	buttonLink: {
 		type: 'string'
 	},
+	price: {
+		type: 'number',
+		default: 4.99
+	},
+	oldPrice: {
+		type: 'number',
+		default: 9.99
+	},
+	period: {
+		type: 'string',
+		default: __( 'month', 'otter-blocks' )
+	},
 	variations: {
 		type: 'array',
 		default: []

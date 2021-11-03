@@ -9,14 +9,6 @@ import { ContrastChecker, InspectorControls, PanelColorSettings } from '@wordpre
 import { __ } from '@wordpress/i18n';
 
 const Inspector = ({ attributes, setAttributes }) => {
-	const {
-		variations,
-		buttonText,
-		isFeatured,
-		hasTableLink,
-		selector,
-		linkText
-	} = attributes;
 
 	return (
 		<InspectorControls>
@@ -34,13 +26,28 @@ const Inspector = ({ attributes, setAttributes }) => {
 					onChange={ buttonLink => setAttributes({ buttonLink }) }
 				/>
 
+				<TextControl
+					label={ __( 'Price', 'otter-blocks' ) }
+					type="number"
+					help={ __( 'Set the price.', 'otter-blocks' ) }
+					value={ attributes.price }
+					onChange={ price => setAttributes({ price }) }
+				/>
+
+				<TextControl
+					label={ __( 'Period', 'otter-blocks' ) }
+					help={ __( 'Set the period. E.g.: month, year' ) }
+					value={ attributes.period }
+					onChange={ period => setAttributes({ period }) }
+				/>
+
 				<ToggleControl
 					label={ __( 'Featured Package' ) }
 					help={ __(
 						'Is this a featured package? Adds a `Best Value` ribbon at the top and pops up the pricing table.',
 						'otter-blocks'
 					) }
-					checked={ isFeatured }
+					checked={ attributes.isFeatured }
 					onChange={ isFeatured => setAttributes({ isFeatured }) }
 				/>
 			</PanelBody>
@@ -51,12 +58,12 @@ const Inspector = ({ attributes, setAttributes }) => {
 						'This should be enabled if there is a features table at the end of page.',
 						'otter-blocks'
 					) }
-					checked={ hasTableLink }
+					checked={ attributes.hasTableLink }
 					onChange={ ( nextVal ) =>
 						setAttributes({ hasTableLink: nextVal })
 					}
 				/>
-				{ hasTableLink && (
+				{ attributes.hasTableLink && (
 					<>
 						<BaseControl
 							id="link-text"
@@ -65,7 +72,7 @@ const Inspector = ({ attributes, setAttributes }) => {
 							<input
 								type="text"
 								id="link-text"
-								value={ linkText }
+								value={ attributes.linkText }
 								onChange={ ( e ) => {
 									setAttributes({
 										linkText: e.target.value
@@ -84,7 +91,7 @@ const Inspector = ({ attributes, setAttributes }) => {
 							<input
 								type="text"
 								id="css-selector"
-								value={ selector }
+								value={ attributes.selector }
 								onChange={ ( e ) => {
 									setAttributes({
 										selector: e.target.value

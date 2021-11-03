@@ -39,7 +39,7 @@ export default ({ attributes, className, setAttributes }) => {
 				<h5>
 					<del className="full-price">
 						<sup>€</sup>
-						<span>59</span>
+						<span>{ attributes.oldPrice }</span>
 					</del>
 					<span
 						className="price"
@@ -48,9 +48,9 @@ export default ({ attributes, className, setAttributes }) => {
 						}}
 					>
 						<sup>€</sup>
-						<span>41</span>
+						<span>{ attributes.price }</span>
 					</span>
-					<sub className="period">/year</sub>
+					<sub className="period">/{ attributes.period }</sub>
 				</h5>
 			</div>
 			<div
