@@ -7,45 +7,14 @@ import './editor.scss';
 
 import edit from './edit';
 import save from './save';
+import attributes from './attributes';
 
 registerBlockType( 'themeisle/pricing-table-item', {
 	title: __( 'Pricing Table', 'otter-blocks' ),
 	icon,
 	category: 'themeisle-blocks',
 	keywords: [ 'themeisle', 'pricing', 'table' ],
-	attributes: {
-		title: {
-			type: 'string',
-			default: __( 'Pricing Title', 'otter-blocks' )
-		},
-		description: {
-			type: 'string',
-			default: __( 'Pricing Description', 'otter-blocks' )
-		},
-		buttonText: {
-			type: 'string',
-			default: __( 'Purchase', 'otter-blocks' )
-		},
-		variations: {
-			type: 'array',
-			default: []
-		},
-		isFeatured: {
-			type: 'boolean',
-			default: false
-		},
-		hasTableLink: {
-			type: 'boolean',
-			default: false
-		},
-		selector: {
-			type: 'string'
-		},
-		linkText: {
-			default: __( 'See all features', 'otter-blocks' ),
-			type: 'string'
-		}
-	},
+	attributes,
 	edit,
 	save
 });

@@ -3,6 +3,7 @@ import './style.scss';
 
 import edit from './edit';
 import save from './save';
+import attributes from './attributes';
 
 import { rotateRight as icon } from '@wordpress/icons';
 import { registerBlockType } from '@wordpress/blocks';
@@ -13,18 +14,7 @@ registerBlockType( 'themeisle/pricing-table', {
 	icon,
 	category: 'themeisle-blocks',
 	keywords: [ 'themeisle', 'pricing', 'tables', 'group' ],
-	attributes: {
-		hasMoneyBackSection: {
-			type: 'boolean',
-			default: false
-		},
-		title: {
-			type: 'string'
-		},
-		text: {
-			type: 'string'
-		}
-	},
+	attributes,
 	edit,
 	save
 });
