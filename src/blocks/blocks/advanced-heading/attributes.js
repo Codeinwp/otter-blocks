@@ -47,12 +47,10 @@ const attributes = {
 		type: 'string'
 	},
 	fontStyle: {
-		type: 'string',
-		default: 'normal'
+		type: 'string'
 	},
 	textTransform: {
-		type: 'string',
-		default: 'none'
+		type: 'string'
 	},
 	lineHeight: {
 		type: 'number'
@@ -97,8 +95,7 @@ const attributes = {
 		default: 'linked'
 	},
 	padding: {
-		type: 'number',
-		default: 0
+		type: 'number'
 	},
 	paddingTablet: {
 		type: 'number'

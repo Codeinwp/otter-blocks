@@ -23,6 +23,10 @@ import {
 	useEffect
 } from '@wordpress/element';
 
+import {
+	omitBy
+} from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -123,11 +127,10 @@ const Edit = ({
 	let fontSizeStyle, stylesheet, textShadowStyle;
 
 	if ( isDesktop ) {
-		console.log( attributes.fontSize );
+
 		fontSizeStyle = {
 			fontSize: attributes.fontSize ? `${ attributes.fontSize }px` : undefined
 		};
-		console.log( fontSizeStyle );
 
 		stylesheet = {
 			textAlign: attributes.align,
@@ -181,11 +184,11 @@ const Edit = ({
 	const style = {
 		color: attributes.headingColor,
 		...fontSizeStyle,
-		fontFamily: attributes.fontFamily,
+		fontFamily: attributes.fontFamily || undefined,
 		fontWeight: 'regular' === attributes.fontVariant ? 'normal' : attributes.fontVariant,
-		fontStyle: attributes.fontStyle,
-		textTransform: attributes.textTransform,
-		lineHeight: 3 < attributes.lineHeight ? attributes.lineHeight + 'px' : attributes.lineHeight,
+		fontStyle: attributes.fontStyle || undefined,
+		textTransform: attributes.textTransform || undefined,
+		lineHeight: ( 3 < attributes.lineHeight ? attributes.lineHeight + 'px' : attributes.lineHeight ) || undefined,
 		letterSpacing: attributes.letterSpacing && `${ attributes.letterSpacing }px`,
 		...stylesheet,
 		...textShadowStyle
