@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 
 export default ({ attributes, className, setAttributes }) => {
 
+	// TODO: dynamic change change
 	const tableClasses = classnames([ className, { featured: attributes.isFeatured } ]);
 
 	const Header = () => (

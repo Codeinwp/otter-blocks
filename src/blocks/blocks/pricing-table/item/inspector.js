@@ -13,6 +13,8 @@ const Inspector = ({ attributes, setAttributes }) => {
 	return (
 		<InspectorControls>
 			<PanelBody title={ __( 'Settings', 'otter-blocks' ) }>
+
+				// TODO: add RangeControl to change the number of items
 				<TextControl
 					label={ __( 'Button Text', 'otter-blocks' ) }
 					value={ attributes.buttonText }
@@ -43,13 +45,13 @@ const Inspector = ({ attributes, setAttributes }) => {
 
 				<TextControl
 					label={ __( 'Period', 'otter-blocks' ) }
-					help={ __( 'Set the period. E.g.: month, year' ) }
+					help={ __( 'Set the period. E.g.: month, year', 'otter-blocks' ) }
 					value={ attributes.period }
 					onChange={ period => setAttributes({ period }) }
 				/>
 
 				<ToggleControl
-					label={ __( 'Featured Package' ) }
+					label={ __( 'Featured Package', 'otter-blocks' ) }
 					help={ __(
 						'Is this a featured package? Adds a `Best Value` ribbon at the top and pops up the pricing table.',
 						'otter-blocks'
@@ -66,46 +68,27 @@ const Inspector = ({ attributes, setAttributes }) => {
 						'otter-blocks'
 					) }
 					checked={ attributes.hasTableLink }
-					onChange={ ( nextVal ) =>
-						setAttributes({ hasTableLink: nextVal })
-					}
+					onChange={ hasTableLink => setAttributes({ hasTableLink }) }
 				/>
+
+				// TODO: refactor this to InputControl
 				{ attributes.hasTableLink && (
 					<>
-						<BaseControl
-							id="link-text"
-							label={ __( 'Link Text', 'otter-blocks' ) }
-						>
-							<input
-								type="text"
-								id="link-text"
-								value={ attributes.linkText }
-								onChange={ ( e ) => {
-									setAttributes({
-										linkText: e.target.value
-									});
-								} }
-							/>
-						</BaseControl>
-						<BaseControl
-							id="css-selector"
+						<TextControl
+							label={ __( 'See More Link Text', 'otter-blocks' ) }
+							help={ __( 'Set the text for the link in the fotter.', 'otter-blocks' ) }
+							value={ attributes.linkText }
+							onChange={ linkText => setAttributes({ linkText }) }
+						/>
+						<TextControl
 							label={ __( 'On link click', 'otter-blocks' ) }
 							help={ __(
 								'Go to this selector and show it. It will be hidden at page load initially.',
 								'otter-blocks'
 							) }
-						>
-							<input
-								type="text"
-								id="css-selector"
-								value={ attributes.selector }
-								onChange={ ( e ) => {
-									setAttributes({
-										selector: e.target.value
-									});
-								} }
-							/>
-						</BaseControl>
+							value={ attributes.selector }
+							onChange={ selector => setAttributes({ selector }) }
+						/>
 					</>
 				) }
 			</PanelBody>

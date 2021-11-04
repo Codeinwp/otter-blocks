@@ -1,7 +1,7 @@
 import { RichText, InnerBlocks } from '@wordpress/block-editor';
 import classnames from 'classnames';
 
-export default ( { attributes } ) => {
+export default ({ attributes }) => {
 	const {
 		title,
 		description,
@@ -11,10 +11,10 @@ export default ( { attributes } ) => {
 		className,
 		hasTableLink,
 		linkText,
-		selector,
+		selector
 	} = attributes;
 
-	const tableClasses = classnames( className, { featured: isFeatured } );
+	const tableClasses = classnames( className, { featured: isFeatured });
 
 	const Header = () => (
 		<div className="o-pricing-header">
@@ -39,12 +39,12 @@ export default ( { attributes } ) => {
 			) }
 			<div className="o-pricing-price">
 				{ variations.map( ( variation, index ) => {
-					const classes = classnames( [
+					const classes = classnames([
 						variation,
 						`variation-${ index + 1 }`,
 						'fsc-bind-price',
-						'fast-spring',
-					] );
+						'fast-spring'
+					]);
 
 					const variationStyle =
 						1 < variations.length ? { display: 'none' } : {};
@@ -68,7 +68,7 @@ export default ( { attributes } ) => {
 							<sub className="period">/year</sub>
 						</h5>
 					);
-				} ) }
+				}) }
 			</div>
 			<div className="o-pricing-action-wrap">
 				<ActionButton />
@@ -78,12 +78,12 @@ export default ( { attributes } ) => {
 
 	const ActionButton = () =>
 		variations.map( ( variation, index ) => {
-			const classes = classnames( [
+			const classes = classnames([
 				variation,
 				`variation-${ index + 1 }`,
 				'o-pricing-action',
-				'fast-spring',
-			] );
+				'fast-spring'
+			]);
 
 			const btnStyle = 1 < variations.length ? { display: 'none' } : {};
 
@@ -100,7 +100,7 @@ export default ( { attributes } ) => {
 					{ buttonText }
 				</a>
 			);
-		} );
+		});
 
 	return (
 		<div className={ tableClasses }>
