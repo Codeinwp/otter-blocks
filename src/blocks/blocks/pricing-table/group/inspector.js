@@ -7,14 +7,8 @@ const Inspector = ({ attributes, setAttributes }) => {
 
 	return (
 		<InspectorControls>
-			<PanelBody title={ __( 'Money Back Section', 'otter-blocks' ) }>
-				<ToggleControl
-					label={ __( 'Enable Money Back Section', 'otter-blocks' ) }
-					checked={ hasMoneyBackSection }
-					onChange={ ( nextVal ) =>
-						setAttributes({ hasMoneyBackSection: nextVal })
-					}
-				/>
+			<PanelBody title={ __( 'Settings', 'otter-blocks' ) }>
+
 			</PanelBody>
 		</InspectorControls>
 	);

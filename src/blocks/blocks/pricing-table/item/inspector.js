@@ -14,7 +14,6 @@ const Inspector = ({ attributes, setAttributes }) => {
 		<InspectorControls>
 			<PanelBody title={ __( 'Settings', 'otter-blocks' ) }>
 
-				// TODO: add RangeControl to change the number of items
 				<TextControl
 					label={ __( 'Button Text', 'otter-blocks' ) }
 					value={ attributes.buttonText }

@@ -28,52 +28,21 @@ export default ({ className, attributes, setAttributes }) => {
 						[
 							'themeisle/pricing-table-item',
 							{
-								title: 'Personal',
-								description: 'Ideal for getting started',
+								title: 'Team',
+								description: 'Ideal for teams',
 								isFeatured: true
 							}
 						],
 						[
 							'themeisle/pricing-table-item',
 							{
-								title: 'Personal',
-								description: 'Ideal for getting started'
+								title: 'Enterprise',
+								description: 'Ideal for serious money bussiness'
 							}
 						]
 					] }
 				/>
 			</div>
-			{ hasMoneyBackSection && (
-				<div className="o-money-back">
-					<div className="icon">
-						<img
-							alt={ __( 'Money back icon', 'otter-blocks' ) }
-						/>
-					</div>
-					<div className="content">
-						<RichText
-							tagName="h3"
-							identifier="money-back-title"
-							value={ title }
-							onChange={ ( nextTitle ) => {
-								setAttributes({
-									title: nextTitle
-								});
-							} }
-						/>
-						<RichText
-							tagName="p"
-							identifier="money-back-text"
-							value={ text }
-							onChange={ ( nextText ) => {
-								setAttributes({
-									text: nextText
-								});
-							} }
-						/>
-					</div>
-				</div>
-			) }
 		</>
 	);
 };
