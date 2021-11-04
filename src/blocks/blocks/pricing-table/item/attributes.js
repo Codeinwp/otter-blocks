@@ -68,6 +68,9 @@ const attributes = {
 	priceColor: {
 		type: 'string'
 	},
+	oldPriceColor: {
+		type: 'string'
+	},
 	ribbonColor: {
 		type: 'string'
 	}

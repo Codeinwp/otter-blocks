@@ -127,8 +127,11 @@ const Inspector = ({ attributes, setAttributes }) => {
 						onChange: priceColor => setAttributes({ priceColor }),
 						label: __( 'Price Color', 'otter-blocks' )
 					},
-
-					// Add option to change the old price color
+					{
+						value: attributes.oldPriceColor,
+						onChange: oldPriceColor => setAttributes({ oldPriceColor }),
+						label: __( 'Old Price Color', 'otter-blocks' )
+					},
 					{
 						value: attributes.buttonColor,
 						onChange: buttonColor => setAttributes({ buttonColor }),
