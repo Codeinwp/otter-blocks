@@ -59,6 +59,17 @@ const Inspector = ({ attributes, setAttributes }) => {
 					checked={ attributes.isFeatured }
 					onChange={ isFeatured => setAttributes({ isFeatured }) }
 				/>
+				{
+					attributes.isFeatured && (
+						<TextControl
+							label={ __( 'Ribbon Text', 'otter-blocks' ) }
+							help={ __( 'Set the ribbon message. E.g.: Best Value, Best Buy, Offer.', 'otter-blocks' ) }
+							value={ attributes.ribbonText }
+							onChange={ ribbonText => setAttributes({ ribbonText }) }
+						/>
+					)
+				}
+
 			</PanelBody>
 			<PanelBody title={ __( 'Table Link', 'otter-blocks' ) }>
 				<ToggleControl
@@ -71,7 +82,6 @@ const Inspector = ({ attributes, setAttributes }) => {
 					onChange={ hasTableLink => setAttributes({ hasTableLink }) }
 				/>
 
-				// TODO: refactor this to InputControl
 				{ attributes.hasTableLink && (
 					<>
 						<TextControl
@@ -117,10 +127,17 @@ const Inspector = ({ attributes, setAttributes }) => {
 						onChange: priceColor => setAttributes({ priceColor }),
 						label: __( 'Price Color', 'otter-blocks' )
 					},
+
+					// Add option to change the old price color
 					{
 						value: attributes.buttonColor,
 						onChange: buttonColor => setAttributes({ buttonColor }),
 						label: __( 'Button Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.ribbonColor,
+						onChange: ribbonColor => setAttributes({ ribbonColor }),
+						label: __( 'Ribbon Color', 'otter-blocks' )
 					}
 				] }
 			>

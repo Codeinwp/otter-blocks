@@ -30,6 +30,10 @@ const attributes = {
 		type: 'string',
 		default: __( 'month', 'otter-blocks' )
 	},
+	ribbonText: {
+		type: 'string',
+		default: __( 'Best Value!', 'otter-blocks' )
+	},
 	variations: {
 		type: 'array',
 		default: []
@@ -62,6 +66,9 @@ const attributes = {
 		type: 'string'
 	},
 	priceColor: {
+		type: 'string'
+	},
+	ribbonColor: {
 		type: 'string'
 	}
 };

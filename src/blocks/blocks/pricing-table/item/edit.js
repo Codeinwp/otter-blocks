@@ -1,5 +1,11 @@
+/** @jsx jsx */
 import Inspector from './inspector';
 import classnames from 'classnames';
+
+import {
+	css,
+	jsx
+} from '@emotion/react';
 
 import { RichText, InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
@@ -12,7 +18,25 @@ export default ({ attributes, className, setAttributes }) => {
 	const Header = () => (
 		<div className="o-pricing-header">
 			{  attributes.isFeatured && (
-				<span className="featured-badge">Best value!</span>
+				<span
+					className="featured-badge"
+					style={{
+						backgroundColor: attributes.ribbonColor
+					}}
+					css={
+						css`
+							&:before {
+								background-color: ${attributes.ribbonColor};
+							}
+							&:after {
+								border-top-color: ${attributes.ribbonColor};
+								border-bottom-color: ${attributes.ribbonColor};
+							}
+							`
+					}
+				>
+					{ attributes.ribbonText }
+				</span>
 			) }
 			<RichText
 				identifier="title"
