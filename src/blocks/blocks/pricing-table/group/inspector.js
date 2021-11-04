@@ -18,7 +18,7 @@ const Inspector = ({ attributes, setAttributes }) => {
 				/>
 				<RangeControl
 					label={ __( 'Column Width', 'otter-blocks' )}
-					help={ __( 'Set width of the column. Use this when the items does not fit with default size.', 'otter-blocks' ) }
+					help={ __( 'Set the width of the column. Use this when the items does not fit with the default size.', 'otter-blocks' ) }
 					value={ attributes.columnWidth }
 					onChange={ columnWidth => setAttributes({ columnWidth })}
 					min={0}
