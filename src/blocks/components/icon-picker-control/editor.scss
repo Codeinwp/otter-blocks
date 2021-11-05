@@ -33,6 +33,10 @@
 			}
 		}
 	}
+
+	.remove-icon {
+		color: #cc1818;
+	}
 }
 
 .block-editor-block-inspector {
@@ -106,6 +110,11 @@
 			}
 		}
 	}
+}
+
+.otter-icon-picker-toolbar-button {
+	display: flex;
+	justify-content: center;
 }
 
 @media ( max-width: 782px ) {

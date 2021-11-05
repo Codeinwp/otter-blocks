@@ -96,6 +96,33 @@ Help your site shine with design options built to enhance your brand. Every bloc
 
 ## Changelog ##
 
+#### [Version 1.7.0](https://github.com/Codeinwp/otter-blocks/compare/v1.6.9...v1.7.0) (2021-10-11)
+
+- Add Masonry Variation to Gallery
+- Add Countdown Block
+- Add Popup Block
+- Add Contact Form Block
+- Add Box Shadow extension for Image Block
+- Add Review Comparison Table Block for Neve Pro
+- Add Block Conditions Extension for Neve Pro
+- Add WooCommerce Extension to Review Block for Neve Pro
+- Add Add to Cart Block for Neve Pro
+- Add Business Hours Block for Neve Pro
+- Add WooCommerce Comparison Table Block for Neve Pro
+- Use date format specified in general WordPress settings
+- Remove duplicate category picker from Posts Block
+- Allow Decimal ratings in Product Review Block
+- Fix Accordion Block Styles
+- Fix blocks not working on Widgets Editor
+- Fix wp_enqueue_script() was called incorrectly error
+- Fix price not removing in Product Review Block
+- Fix Font Awesome Styles loading on all Dynamic Blocks
+- Improve Review Block styles for Mobile Devices
+- CSS loading improvements
+
+
+
+
 ##### [Version 1.6.9](https://github.com/Codeinwp/otter-blocks/compare/v1.6.8...v1.6.9) (2021-07-02)
 
 - Fix links in Review Block

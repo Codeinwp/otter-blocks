@@ -1,6 +1,6 @@
 {
 	"name": "otter-blocks",
-	"version": "1.6.9",
+	"version": "1.7.0",
 	"description": "Gutenberg Blocks and Template Library by Otter",
 	"scripts": {
 		"build": "wp-scripts build",
@@ -9,8 +9,7 @@
 		"format": "wp-scripts lint-js ./src --fix",
 		"packages-update": "wp-scripts packages-update",
 		"release": "semantic-release",
-		"dist": "bash bin/dist.sh",
-		"prepare": "husky install"
+		"dist": "bash bin/dist.sh"
 	},
 	"repository": {
 		"type": "git",
@@ -58,7 +57,6 @@
 		"grunt-wp-readme-to-markdown": "^2.0.1",
 		"replace-in-file": "^6.3.1",
 		"semantic-release": "^17.4.4",
-		"semantic-release-slack-bot": "^2.1.0",
-		"husky": "^7.0.0"
+		"semantic-release-slack-bot": "^2.1.0"
 	}
 }

@@ -8,6 +8,7 @@ import classnames from 'classnames';
  */
 import {
 	Path,
+	Rect,
 	SVG
 } from '@wordpress/components';
 
@@ -221,3 +222,241 @@ export const close = (
 		<Path d="M13 11.8l6.1-6.3-1-1-6.1 6.2-6.1-6.2-1 1 6.1 6.3-6.5 6.7 1 1 6.5-6.6 6.5 6.6 1-1z" />
 	</SVG>
 );
+
+export const colsFull = ( props ) => {
+	return (
+		<SVG
+			width="48"
+			height="48"
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/2000/svg"
+			{...props}
+		>
+			<Path
+				fillRule="evenodd"
+				clipRule="evenodd"
+				d="m39.0625 14h-30.0625v20.0938h30.0625zm-30.0625-2c-1.10457 0-2 .8954-2 2v20.0938c0 1.1045.89543 2 2 2h30.0625c1.1046 0 2-.8955 2-2v-20.0938c0-1.1046-.8954-2-2-2z"
+			/>
+		</SVG>
+	);
+};
+
+
+export const cols2Equal = ( props ) => {
+	return (
+		<SVG
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/1999/xlink"
+			{...props}
+		>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+			<Rect x="16.9" y="13" width="2.2" height="22"/>
+		</SVG>
+
+	);
+};
+
+export const cols12 = ( props ) => {
+	return (
+		<SVG
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/1999/xlink"
+			{...props}
+		>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+			<Rect x="16.9" y="13" width="2.2" height="22"/>
+		</SVG>
+	);
+};
+
+export const cols21 = ( props ) => {
+	return (
+		<SVG
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/1999/xlink"
+			{...props}
+		>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+			<Rect x="28.9" y="13" width="2.2" height="22"/>
+		</SVG>
+	);
+};
+
+export const cols3Equal = ( props ) => {
+	return (
+		<SVG
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/1999/xlink"
+			{...props}
+		>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+			<Rect x="28.9" y="13" width="2.2" height="22"/>
+			<Rect x="16.9" y="13" width="2.2" height="22"/>
+		</SVG>
+	);
+};
+
+export const cols112 = ( props ) => {
+	return (
+		<SVG
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/1999/xlink"
+			{...props}
+		>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+			<Rect x="22.9" y="13" width="2.2" height="22"/>
+			<Rect x="12.9" y="13" width="2.2" height="22"/>
+		</SVG>
+	);
+};
+
+export const cols211 = ( props ) => {
+	return (
+		<SVG
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/1999/xlink"
+			{...props}
+		>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+			<Rect x="22.9" y="13" width="2.2" height="22"/>
+			<Rect x="32.9" y="13" width="2.2" height="22"/>
+		</SVG>
+	);
+};
+
+export const cols121 = ( props ) => {
+	return (
+		<SVG
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/1999/xlink"
+			{...props}
+		>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+			<Rect x="13.9" y="13" width="2.2" height="22"/>
+			<Rect x="31.9" y="13" width="2.2" height="22"/>
+		</SVG>
+	);
+};
+
+export const cols131 = ( props ) => {
+	return (
+		<SVG
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/1999/xlink"
+			{...props}
+		>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+			<Rect x="11.9" y="13" width="2.2" height="22"/>
+			<Rect x="33.9" y="13" width="2.2" height="22"/>
+		</SVG>
+	);
+};
+
+
+export const cols4Equal = ( props ) => {
+	return (
+		<SVG
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/1999/xlink"
+			{...props}
+		>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+			<Rect x="13.9" y="13" width="2.2" height="22"/>
+			<Rect x="32.9" y="13" width="2.2" height="22"/>
+			<Rect x="22.9" y="13" width="2.2" height="22"/>
+		</SVG>
+	);
+};
+
+export const cols5Equal = ( props ) => {
+	return (
+		<SVG
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/1999/xlink"
+			{...props}
+		>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+			<Rect x="10.9" y="13" width="2.2" height="22"/>
+			<Rect x="34.9" y="13" width="2.2" height="22"/>
+			<Rect x="26.9" y="13" width="2.2" height="22"/>
+			<Rect x="18.9" y="13" width="2.2" height="22"/>
+		</SVG>
+	);
+};
+
+export const colsCollapsed = ( props ) => {
+	return (
+		<SVG
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/1999/xlink"
+			{...props}
+		>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+			<Rect x="4" y="22.9" width="40" height="2.2"/>
+			<Rect x="22.9" y="13" width="2.2" height="22"/>
+		</SVG>
+	);
+};
+
+export const rowsCollapsed = ( props ) => {
+	return (
+		<SVG
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/1999/xlink"
+			{...props}
+		>
+			<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
+				<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+				<Rect x="6" y="22.9" width="36" height="2.2"/>
+			</SVG>
+		</SVG>
+	);
+};
+
+export const cols6Equal = ( props ) => {
+	return (
+		<SVG
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/1999/xlink"
+			{...props}
+		>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+			<Rect x="10.4" y="13" width="2.2" height="22"/>
+			<Rect x="35.9" y="13" width="2.2" height="22"/>
+			<Rect x="29.4" y="13" width="2.2" height="22"/>
+			<Rect x="16.4" y="13" width="2.2" height="22"/>
+			<Rect x="22.9" y="13" width="2.2" height="22"/>
+		</SVG>
+	);
+};
+
+export const cols2Grid = ( props ) => {
+	return (
+		<SVG
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/1999/xlink"
+			{...props}
+		>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+			<Rect x="4" y="18.9" width="40" height="2.2"/>
+			<Rect x="22.9" y="13" width="2.2" height="22"/>
+			<Rect x="4" y="26.9" width="40" height="2.2"/>
+		</SVG>
+	);
+};
+
+export const cols3Grid = ( props ) => {
+	return (
+		<SVG
+			viewBox="0 0 48 48"
+			xmlns="http://www.w3.org/1999/xlink"
+			{...props}
+		>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
+			<Rect x="4" y="22.9" width="40" height="2.2"/>
+			<Rect x="28.9" y="13" width="2.2" height="22"/>
+			<Rect x="16.9" y="13" width="2.2" height="22"/>
+		</SVG>
+	);
+};

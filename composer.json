@@ -2,7 +2,7 @@
     "name": "codeinwp/otter-blocks",
     "description": "A set of awesome Gutenberg Blocks by ThemeIsle.",
     "type": "wordpress-plugin",
-    "version": "1.6.9",
+    "version": "1.7.0",
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.3",
         "wp-coding-standards/wpcs": "^1",
@@ -24,7 +24,6 @@
     },
     "prefer-stable": true,
     "config": {
-        "vendor-dir": "packages",
         "optimize-autoloader": true,
         "platform": {
           "php": "5.6"
@@ -39,7 +38,6 @@
     "minimum-stability": "dev",
     "require": {
         "codeinwp/themeisle-sdk": "^3.1",
-        "codeinwp/gutenberg-menu-icons": "^1.0",
         "masterminds/html5": "^2.7",
         "tubalmartin/cssmin": "^4.1"
     }

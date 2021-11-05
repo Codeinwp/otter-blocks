@@ -12,34 +12,29 @@ const Controls = ({
 }) => {
 	const changeVerticalAlign = value => {
 		if ( attributes.verticalAlign === value ) {
-			return setAttributes({ verticalAlign: 'unset' });
-		}
-		if ( 'top' === value ) {
-			value = 'flex-start';
+			setAttributes({ verticalAlign: 'unset' });
+		} else if ( 'top' === value ) {
+			setAttributes({ verticalAlign: 'flex-start' });
 		} else if ( 'bottom' === value ) {
-			value = 'flex-end';
+			setAttributes({ verticalAlign: 'flex-end' });
 		}
 
-		setAttributes({ verticalAlign: value });
 	};
 
-	let getVerticalAlignValue = () => {
+	const getVerticalAlignValue = () => {
 		if ( 'flex-start' === attributes.verticalAlign ) {
 			return 'top';
 		} else if ( 'flex-end' === attributes.verticalAlign ) {
 			return 'bottom';
 		}
-
 		return attributes.verticalAlign;
 	};
-
-	getVerticalAlignValue = getVerticalAlignValue();
 
 	return (
 		<BlockControls>
 			<BlockVerticalAlignmentToolbar
 				onChange={ changeVerticalAlign }
-				value={ getVerticalAlignValue }
+				value={ getVerticalAlignValue() }
 			/>
 		</BlockControls>
 	);

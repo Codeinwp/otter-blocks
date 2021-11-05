@@ -4,54 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8abcc39e68bb07de66d6f362fd5805fb",
+    "content-hash": "8f63b5cb72dbac8cbb0d9c801232def7",
     "packages": [
-        {
-            "name": "codeinwp/gutenberg-menu-icons",
-            "version": "1.0.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/Codeinwp/gutenberg-menu-icons.git",
-                "reference": "fce0fae088cc85001620d83253568aeec2af51c0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/gutenberg-menu-icons/zipball/fce0fae088cc85001620d83253568aeec2af51c0",
-                "reference": "fce0fae088cc85001620d83253568aeec2af51c0",
-                "shasum": ""
-            },
-            "require-dev": {
-                "automattic/vipwpcs": "^0.3.0 || ^1.0.0",
-                "dealerdirect/phpcodesniffer-composer-installer": "0.6.2",
-                "phpcompatibility/php-compatibility": "^9",
-                "squizlabs/php_codesniffer": "^3.3",
-                "wp-coding-standards/wpcs": "^1"
-            },
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "load.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "GPL-3.0-or-later"
-            ],
-            "authors": [
-                {
-                    "name": "ThemeIsle team",
-                    "email": "friends@themeisle.com",
-                    "homepage": "https://themeisle.com"
-                }
-            ],
-            "description": "Menu Icons for Gutenberg",
-            "homepage": "https://github.com/Codeinwp/gutenberg-menu-icons",
-            "support": {
-                "issues": "https://github.com/Codeinwp/gutenberg-menu-icons/issues",
-                "source": "https://github.com/Codeinwp/gutenberg-menu-icons/tree/v1.0.5"
-            },
-            "time": "2021-06-23T20:23:12+00:00"
-        },
         {
             "name": "codeinwp/themeisle-sdk",
             "version": "3.2.21",

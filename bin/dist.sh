@@ -86,3 +86,30 @@ zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/" -x "*.wordpress-org*"
 echo "BUILD GENERATED: $BUILD_NAME"
 
 cd -
+
+BUILD_NAME="blocks-export-import"
+export BUILD_NAME
+
+echo "BUILD_NAME=$BUILD_NAME"
+
+cd plugins/$BUILD_NAME
+
+rsync -rc --exclude-from ".distignore" "./" "../../dist/$BUILD_NAME"
+
+cd ../..
+
+if [ ! -d "dist/$BUILD_NAME/build" ]; then
+  mkdir "dist/$BUILD_NAME/build"
+fi
+
+cp inc/class-blocks-export-import.php build/export-import dist/$BUILD_NAME -r
+
+cd dist
+
+mv $BUILD_NAME/export-import $BUILD_NAME/build/export-import
+
+zip -r "../artifact/$BUILD_NAME" "./$BUILD_NAME/" -x "*.wordpress-org*"
+
+echo "BUILD GENERATED: $BUILD_NAME"
+
+cd -

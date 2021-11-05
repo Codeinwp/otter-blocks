@@ -10,9 +10,6 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	Button,
-	Path,
-	Rect,
-	SVG,
 	Tooltip
 } from '@wordpress/components';
 
@@ -25,6 +22,7 @@ import { Fragment } from '@wordpress/element';
  */
 import './editor.scss';
 import ResponsiveControl from '../../../../components/responsive-control/index.js';
+import { cols112, cols12, cols121, cols131, cols21, cols211, cols2Equal, cols2Grid, cols3Equal, cols3Grid, cols4Equal, cols5Equal, cols6Equal, colsCollapsed, colsFull, rowsCollapsed } from '../../../../helpers/icons';
 
 const LayoutControl = ({
 	label,
@@ -65,9 +63,7 @@ const LayoutControl = ({
 						) }
 						onClick={ () => onClick( 'equal' ) }
 					>
-						<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-							<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-						</SVG>
+						{ colsFull() }
 					</Button>
 				</Tooltip>
 			) || 2 === columns && (
@@ -80,10 +76,7 @@ const LayoutControl = ({
 							) }
 							onClick={ () => onClick( 'equal' ) }
 						>
-							<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-								<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-								<Rect x="22.9" y="13" width="2.2" height="22"/>
-							</SVG>
+							{ cols2Equal() }
 						</Button>
 					</Tooltip>
 
@@ -95,10 +88,7 @@ const LayoutControl = ({
 							) }
 							onClick={ () => onClick( 'oneTwo' ) }
 						>
-							<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-								<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-								<Rect x="16.9" y="13" width="2.2" height="22"/>
-							</SVG>
+							{ cols12() }
 						</Button>
 					</Tooltip>
 
@@ -110,10 +100,7 @@ const LayoutControl = ({
 							) }
 							onClick={ () => onClick( 'twoOne' ) }
 						>
-							<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-								<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-								<Rect x="28.9" y="13" width="2.2" height="22"/>
-							</SVG>
+							{ cols21() }
 						</Button>
 					</Tooltip>
 
@@ -126,10 +113,7 @@ const LayoutControl = ({
 								) }
 								onClick={ () => onClick( 'collapsedRows' ) }
 							>
-								<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-									<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-									<Rect x="6" y="22.9" width="36" height="2.2"/>
-								</SVG>
+								{ rowsCollapsed() }
 							</Button>
 						</Tooltip>
 					) }
@@ -144,11 +128,7 @@ const LayoutControl = ({
 							) }
 							onClick={ () => onClick( 'equal' ) }
 						>
-							<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-								<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-								<Rect x="28.9" y="13" width="2.2" height="22"/>
-								<Rect x="16.9" y="13" width="2.2" height="22"/>
-							</SVG>
+							{ cols3Equal() }
 						</Button>
 					</Tooltip>
 
@@ -160,11 +140,7 @@ const LayoutControl = ({
 							) }
 							onClick={ () => onClick( 'oneOneTwo' ) }
 						>
-							<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-								<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-								<Rect x="22.9" y="13" width="2.2" height="22"/>
-								<Rect x="12.9" y="13" width="2.2" height="22"/>
-							</SVG>
+							{ cols112() }
 						</Button>
 					</Tooltip>
 
@@ -176,11 +152,7 @@ const LayoutControl = ({
 							) }
 							onClick={ () => onClick( 'twoOneOne' ) }
 						>
-							<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-								<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-								<Rect x="22.9" y="13" width="2.2" height="22"/>
-								<Rect x="32.9" y="13" width="2.2" height="22"/>
-							</SVG>
+							{ cols211() }
 						</Button>
 					</Tooltip>
 
@@ -192,11 +164,7 @@ const LayoutControl = ({
 							) }
 							onClick={ () => onClick( 'oneTwoOne' ) }
 						>
-							<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-								<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-								<Rect x="13.9" y="13" width="2.2" height="22"/>
-								<Rect x="31.9" y="13" width="2.2" height="22"/>
-							</SVG>
+							{ cols121() }
 						</Button>
 					</Tooltip>
 
@@ -208,11 +176,7 @@ const LayoutControl = ({
 							) }
 							onClick={ () => onClick( 'oneThreeOne' ) }
 						>
-							<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-								<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-								<Rect x="11.9" y="13" width="2.2" height="22"/>
-								<Rect x="33.9" y="13" width="2.2" height="22"/>
-							</SVG>
+							{ cols131() }
 						</Button>
 					</Tooltip>
 
@@ -225,10 +189,7 @@ const LayoutControl = ({
 								) }
 								onClick={ () => onClick( 'collapsedRows' ) }
 							>
-								<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-									<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-									<Rect x="6" y="22.9" width="36" height="2.2"/>
-								</SVG>
+								{ rowsCollapsed() }
 							</Button>
 						</Tooltip>
 					) }
@@ -243,12 +204,7 @@ const LayoutControl = ({
 							) }
 							onClick={ () => onClick( 'equal' ) }
 						>
-							<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-								<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-								<Rect x="13.9" y="13" width="2.2" height="22"/>
-								<Rect x="32.9" y="13" width="2.2" height="22"/>
-								<Rect x="22.9" y="13" width="2.2" height="22"/>
-							</SVG>
+							{ cols4Equal() }
 						</Button>
 					</Tooltip>
 
@@ -262,11 +218,7 @@ const LayoutControl = ({
 									) }
 									onClick={ () => onClick( 'twoColumnGrid' ) }
 								>
-									<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-										<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-										<Rect x="4" y="22.9" width="40" height="2.2"/>
-										<Rect x="22.9" y="13" width="2.2" height="22"/>
-									</SVG>
+									{ colsCollapsed() }
 								</Button>
 							</Tooltip>
 
@@ -278,10 +230,7 @@ const LayoutControl = ({
 									) }
 									onClick={ () => onClick( 'collapsedRows' ) }
 								>
-									<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-										<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-										<Rect x="6" y="22.9" width="36" height="2.2"/>
-									</SVG>
+									{ colsCollapsed() }
 								</Button>
 							</Tooltip>
 						</Fragment>
@@ -297,13 +246,7 @@ const LayoutControl = ({
 							) }
 							onClick={ () => onClick( 'equal' ) }
 						>
-							<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-								<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-								<Rect x="10.9" y="13" width="2.2" height="22"/>
-								<Rect x="34.9" y="13" width="2.2" height="22"/>
-								<Rect x="26.9" y="13" width="2.2" height="22"/>
-								<Rect x="18.9" y="13" width="2.2" height="22"/>
-							</SVG>
+							{ cols5Equal() }
 						</Button>
 					</Tooltip>
 
@@ -316,10 +259,7 @@ const LayoutControl = ({
 								) }
 								onClick={ () => onClick( 'collapsedRows' ) }
 							>
-								<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-									<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-									<Rect x="6" y="22.9" width="36" height="2.2"/>
-								</SVG>
+								{ rowsCollapsed() }
 							</Button>
 						</Tooltip>
 					) }
@@ -334,14 +274,7 @@ const LayoutControl = ({
 							) }
 							onClick={ () => onClick( 'equal' ) }
 						>
-							<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-								<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-								<Rect x="10.4" y="13" width="2.2" height="22"/>
-								<Rect x="35.9" y="13" width="2.2" height="22"/>
-								<Rect x="29.4" y="13" width="2.2" height="22"/>
-								<Rect x="16.4" y="13" width="2.2" height="22"/>
-								<Rect x="22.9" y="13" width="2.2" height="22"/>
-							</SVG>
+							{ cols6Equal() }
 						</Button>
 					</Tooltip>
 
@@ -355,12 +288,7 @@ const LayoutControl = ({
 									) }
 									onClick={ () => onClick( 'twoColumnGrid' ) }
 								>
-									<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-										<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-										<Rect x="4" y="18.9" width="40" height="2.2"/>
-										<Rect x="22.9" y="13" width="2.2" height="22"/>
-										<Rect x="4" y="26.9" width="40" height="2.2"/>
-									</SVG>
+									{ cols2Grid() }
 								</Button>
 							</Tooltip>
 
@@ -372,12 +300,7 @@ const LayoutControl = ({
 									) }
 									onClick={ () => onClick( 'threeColumnGrid' ) }
 								>
-									<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-										<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-										<Rect x="4" y="22.9" width="40" height="2.2"/>
-										<Rect x="28.9" y="13" width="2.2" height="22"/>
-										<Rect x="16.9" y="13" width="2.2" height="22"/>
-									</SVG>
+									{ cols3Grid() }
 								</Button>
 							</Tooltip>
 
@@ -389,10 +312,7 @@ const LayoutControl = ({
 									) }
 									onClick={ () => onClick( 'collapsedRows' ) }
 								>
-									<SVG viewBox="0 0 48 48" xmlns="http://www.w3.org/1999/xlink">
-										<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-										<Rect x="6" y="22.9" width="36" height="2.2"/>
-									</SVG>
+									{ rowsCollapsed() }
 								</Button>
 							</Tooltip>
 						</Fragment>

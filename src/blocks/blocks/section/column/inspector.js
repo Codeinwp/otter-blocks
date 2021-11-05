@@ -103,33 +103,30 @@ const Inspector = ({
 		});
 	};
 
-	let getPaddingType = () => {
-		let value;
-
-		if ( 'Desktop' === getView ) {
-			value = attributes.paddingType;
+	const getPaddingType = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return attributes.paddingType;
+		case 'Tablet':
+			return attributes.paddingTypeTablet;
+		case 'Mobile':
+			return attributes.paddingTypeMobile;
+		default:
+			return undefined;
 		}
-		if ( 'Tablet' === getView ) {
-			value = attributes.paddingTypeTablet;
-		}
-		if ( 'Mobile' === getView ) {
-			value = attributes.paddingTypeMobile;
-		}
-
-		return value;
 	};
 
-	getPaddingType = getPaddingType();
-
 	const changePaddingType = value => {
-		if ( 'Desktop' === getView ) {
+		switch ( getView ) {
+		case 'Desktop':
 			setAttributes({ paddingType: value });
-		}
-		if ( 'Tablet' === getView ) {
+			break;
+		case 'Tablet':
 			setAttributes({ paddingTypeTablet: value });
-		}
-		if ( 'Mobile' === getView ) {
+			break;
+		case 'Mobile':
 			setAttributes({ paddingTypeMobile: value });
+			break;
 		}
 	};
 
@@ -161,17 +158,13 @@ const Inspector = ({
 			} else {
 				setAttributes({ [desktopPaddingType[type]]: value });
 			}
-		}
-
-		if ( 'Tablet' === getView ) {
+		} else if ( 'Tablet' === getView ) {
 			if ( 'linked' === attributes.paddingTypeTablet ) {
 				setAttributes({ paddingTablet: value });
 			} else {
 				setAttributes({ [tabletPaddingType[type]]: value });
 			}
-		}
-
-		if ( 'Mobile' === getView ) {
+		} else if ( 'Mobile' === getView ) {
 			if ( 'linked' === attributes.paddingTypeMobile ) {
 				setAttributes({ paddingMobile: value });
 			} else {
@@ -181,94 +174,71 @@ const Inspector = ({
 	};
 
 	const getPadding = type => {
-		let value;
-
-		if ( 'top' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingTop;
+		if ( 'top' == type ) {
+			switch ( getView ) {
+			case 'Desktop':
+				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingTop;
+			case 'Tablet':
+				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingTopTablet;
+			case 'Mobile':
+				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingTopMobile;
 			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingTopTablet;
+		} else if ( 'right' == type ) {
+			switch ( getView ) {
+			case 'Desktop':
+				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingRight;
+			case 'Tablet':
+				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingRightTablet;
+			case 'Mobile':
+				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingRightMobile;
 			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingTopMobile;
+		} else if ( 'bottom' == type ) {
+			switch ( getView ) {
+			case 'Desktop':
+				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingBottom;
+			case 'Tablet':
+				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingBottomTablet;
+			case 'Mobile':
+				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingBottomMobile;
 			}
-		}
-
-		if ( 'right' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingRight;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingRightTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingRightMobile;
-			}
-		}
-
-		if ( 'bottom' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingBottom;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingBottomTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingBottomMobile;
+		} else if ( 'left' == type ) {
+			switch ( getView ) {
+			case 'Desktop':
+				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingLeft;
+			case 'Tablet':
+				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingLeftTablet;
+			case 'Mobile':
+				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingLeftMobile;
 			}
 		}
 
-		if ( 'left' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingLeft;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingLeftTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingLeftMobile;
-			}
-		}
-
-		return value;
+		return undefined;
 	};
 
 	let getMarginType = () => {
-		let value;
-
-		if ( 'Desktop' === getView ) {
-			value = attributes.marginType;
+		switch ( getView ) {
+		case 'Desktop':
+			return attributes.marginType;
+		case 'Tablet':
+			return attributes.marginTypeTablet;
+		case 'Mobile':
+			return attributes.marginTypeMobile;
+		default:
+			return undefined;
 		}
-		if ( 'Tablet' === getView ) {
-			value = attributes.marginTypeTablet;
-		}
-		if ( 'Mobile' === getView ) {
-			value = attributes.marginTypeMobile;
-		}
-
-		return value;
 	};
 
-	getMarginType = getMarginType();
-
 	const changeMarginType = value => {
-		if ( 'Desktop' === getView ) {
+		switch ( getView ) {
+		case 'Desktop':
 			setAttributes({ marginType: value });
-		}
-		if ( 'Tablet' === getView ) {
+			break;
+		case 'Tablet':
 			setAttributes({ marginTypeTablet: value });
-		}
-		if ( 'Mobile' === getView ) {
+			break;
+		case 'Mobile':
 			setAttributes({ marginTypeMobile: value });
+			break;
 		}
 	};
 
@@ -300,17 +270,13 @@ const Inspector = ({
 			} else {
 				setAttributes({ [desktopMarginType[type]]: value });
 			}
-		}
-
-		if ( 'Tablet' === getView ) {
+		} else if ( 'Tablet' === getView ) {
 			if ( 'linked' === attributes.marginTypeTablet ) {
 				setAttributes({ marginTablet: value });
 			} else {
 				setAttributes({ [tabletMarginType[type]]: value });
 			}
-		}
-
-		if ( 'Mobile' === getView ) {
+		} else if ( 'Mobile' === getView ) {
 			if ( 'linked' === attributes.marginTypeMobile ) {
 				setAttributes({ marginMobile: value });
 			} else {
@@ -319,67 +285,49 @@ const Inspector = ({
 		}
 	};
 
-	const getMargin = ( type ) => {
-		let value;
 
-		if ( 'top' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === attributes.marginType ? attributes.margin : attributes.marginTop;
+	const getMargin = type => {
+		if ( 'top' == type ) {
+			switch ( getView ) {
+			case 'Desktop':
+				return 'linked' === attributes.marginType ? attributes.margin : attributes.marginTop;
+			case 'Tablet':
+				return 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginTopTablet;
+			case 'Mobile':
+				return 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginTopMobile;
 			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginTopTablet;
+		} else if ( 'bottom' == type ) {
+			switch ( getView ) {
+			case 'Desktop':
+				return 'linked' === attributes.marginType ? attributes.margin : attributes.marginBottom;
+			case 'Tablet':
+				return 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginBottomTablet;
+			case 'Mobile':
+				return 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginBottomMobile;
 			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginTopMobile;
+		} else if ( 'left' == type ) {
+			switch ( getView ) {
+			case 'Desktop':
+				return 'linked' === attributes.marginType ? attributes.margin : attributes.marginLeft;
+			case 'Tablet':
+				return 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginLeftTablet;
+			case 'Mobile':
+				return 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginLeftMobile;
 			}
-		}
-
-		if ( 'right' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === attributes.marginType ? attributes.margin : attributes.marginRight;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginRightTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginRightMobile;
-			}
-		}
-
-		if ( 'bottom' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === attributes.marginType ? attributes.margin : attributes.marginBottom;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginBottomTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginBottomMobile;
+		} else if ( 'right' == type ) {
+			switch ( getView ) {
+			case 'Desktop':
+				return 'linked' === attributes.marginType ? attributes.margin : attributes.marginRight;
+			case 'Tablet':
+				return 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginRightTablet;
+			case 'Mobile':
+				return 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginRightMobile;
 			}
 		}
 
-		if ( 'left' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === attributes.marginType ? attributes.margin : attributes.marginLeft;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginLeftTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginLeftMobile;
-			}
-		}
-
-		return value;
+		return undefined;
 	};
+
 
 	const changeBackgroundType = value => {
 		setAttributes({ backgroundType: value });
@@ -443,25 +391,18 @@ const Inspector = ({
 	};
 
 	const getBorder = type => {
-		let value;
-
-		if ( 'top' === type ) {
-			value = 'linked' === attributes.borderType ? attributes.border : attributes.borderTop;
+		switch ( type ) {
+		case 'top':
+			return 'linked' === attributes.borderType ? attributes.border : attributes.borderTop;
+		case 'right':
+			return 'linked' === attributes.borderType ? attributes.border : attributes.borderRight;
+		case 'bottom':
+			return 'linked' === attributes.borderType ? attributes.border : attributes.borderBottom;
+		case 'left':
+			return 'linked' === attributes.borderType ? attributes.border : attributes.borderLeft;
+		default:
+			return undefined;
 		}
-
-		if ( 'right' === type ) {
-			value = 'linked' === attributes.borderType ? attributes.border : attributes.borderRight;
-		}
-
-		if ( 'bottom' === type ) {
-			value = 'linked' === attributes.borderType ? attributes.border : attributes.borderBottom;
-		}
-
-		if ( 'left' === type ) {
-			value = 'linked' === attributes.borderType ? attributes.border : attributes.borderLeft;
-		}
-
-		return value;
 	};
 
 	const changeBorderColor = value => {
@@ -488,25 +429,18 @@ const Inspector = ({
 	};
 
 	const getBorderRadius = type => {
-		let value;
-
-		if ( 'top' === type ) {
-			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusTop;
+		switch ( type ) {
+		case 'top':
+			return 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusTop;
+		case 'right':
+			return 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusRight;
+		case 'bottom':
+			return 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusBottom;
+		case 'left':
+			return 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusLeft;
+		default:
+			return undefined;
 		}
-
-		if ( 'right' === type ) {
-			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusRight;
-		}
-
-		if ( 'bottom' === type ) {
-			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusBottom;
-		}
-
-		if ( 'left' === type ) {
-			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusLeft;
-		}
-
-		return value;
 	};
 
 	const changeBoxShadow = () => {
@@ -552,7 +486,7 @@ const Inspector = ({
 					onClick={ () => setTab( 'layout' ) }
 				>
 					<span>
-						<Dashicon icon="editor-table" />
+						<Dashicon icon="editor-table"/>
 						{ __( 'Layout', 'otter-blocks' ) }
 					</span>
 				</Button>
@@ -565,7 +499,7 @@ const Inspector = ({
 					onClick={ () => setTab( 'style' ) }
 				>
 					<span>
-						<Dashicon icon="admin-customizer" />
+						<Dashicon icon="admin-customizer"/>
 						{ __( 'Style', 'otter-blocks' ) }
 					</span>
 				</Button>
@@ -578,7 +512,7 @@ const Inspector = ({
 					onClick={ () => setTab( 'advanced' ) }
 				>
 					<span>
-						<Dashicon icon="admin-generic" />
+						<Dashicon icon="admin-generic"/>
 						{ __( 'Advanced', 'otter-blocks' ) }
 					</span>
 				</Button>
@@ -603,7 +537,7 @@ const Inspector = ({
 							label={ __( 'Padding', 'otter-blocks' ) }
 						>
 							<SizingControl
-								type={ getPaddingType }
+								type={ getPaddingType() }
 								min={ 0 }
 								max={ 500 }
 								changeType={ changePaddingType }
@@ -637,7 +571,7 @@ const Inspector = ({
 							label={ __( 'Margin', 'otter-blocks' ) }
 						>
 							<SizingControl
-								type={ getMarginType }
+								type={ getMarginType() }
 								min={ -500 }
 								max={ 500 }
 								changeType={ changeMarginType }
