@@ -171,9 +171,9 @@ class Block_Conditions {
 		if ( 'wooProductsInCart' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
 			if ( isset( $condition['on'] ) ) {
 				if ( $visibility ) {
-					return $this->has_product_in_cart( $condition );
+					return $this->has_products_in_cart( $condition );
 				} else {
-					return ! $this->has_product_in_cart( $condition );
+					return ! $this->has_products_in_cart( $condition );
 				}
 			}
 		}
@@ -191,9 +191,19 @@ class Block_Conditions {
 		if ( 'wooPurchaseHistory' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
 			if ( isset( $condition['products'] ) ) {
 				if ( $visibility ) {
-					return $this->has_product( $condition['products'] );
+					return $this->has_products( $condition['products'] );
 				} else {
-					return ! $this->has_product( $condition['products'] );
+					return ! $this->has_products( $condition['products'] );
+				}
+			}
+		}
+
+		if ( 'learnDashPurchaseHistory' === $condition['type'] && defined( 'LEARNDASH_VERSION' ) ) {
+			if ( isset( $condition['on'] ) ) {
+				if ( $visibility ) {
+					return $this->has_courses_or_groups( $condition );
+				} else {
+					return ! $this->has_courses_or_groups( $condition );
 				}
 			}
 		}
@@ -386,7 +396,7 @@ class Block_Conditions {
 	 * @since  2.0.0
 	 * @access public
 	 */
-	public function has_product_in_cart( $condition ) {
+	public function has_products_in_cart( $condition ) {
 		$in_cart = false;
 
 		if ( 'products' === $condition['on'] && isset( $condition['products'] ) ) {
@@ -448,7 +458,7 @@ class Block_Conditions {
 	 * @since  2.0.0
 	 * @access public
 	 */
-	public function has_product( $products ) {
+	public function has_products( $products ) {
 		$bought       = false;
 		$current_user = wp_get_current_user();
 
@@ -457,6 +467,45 @@ class Block_Conditions {
 				$bought = true;
 				break;
 			};
+		}
+
+		return $bought;
+	}
+
+	/**
+	 * Check based on LearnDash product history.
+	 *
+	 * @param array $condition Condition.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 */
+	public function has_courses_or_groups( $condition ) {
+		$bought       = false;
+		$current_user = wp_get_current_user();
+
+		if ( 'courses' === $condition['on'] && isset( $condition['courses'] ) ) {
+			foreach ( $condition['courses'] as $course ) {
+				if ( ld_course_check_user_access( $course, $current_user->ID ) ) {
+					$bought = true;
+					break;
+				};
+			}
+		}
+
+		if ( 'groups' === $condition['on'] && isset( $condition['groups'] ) ) {
+			foreach ( $condition['groups'] as $group ) {
+				$users = learndash_get_groups_user_ids( $group );
+
+				if ( in_array( $current_user->ID, $users, true ) ) {
+					$bought = true;
+					break;
+				}
+
+				if ( $bought ) {
+					break;
+				}
+			}
 		}
 
 		return $bought;

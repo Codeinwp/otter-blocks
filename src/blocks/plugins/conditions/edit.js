@@ -8,6 +8,8 @@ import {
 
 import { isEmpty } from 'lodash';
 
+import apiFetch from '@wordpress/api-fetch';
+
 import { InspectorControls } from '@wordpress/block-editor';
 
 import {
@@ -33,7 +35,8 @@ import { useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
-	useEffect
+	useEffect,
+	useState
 } from '@wordpress/element';
 
 import { decodeEntities } from '@wordpress/html-entities';
@@ -67,6 +70,44 @@ const Edit = ({
 
 			setAttributes({ otterConditions });
 		};
+	}, []);
+
+	const [ courses, setCourses ] = useState([]);
+	const [ coursesStatus, setCoursesStatus ] = useState( 'loading' );
+	const [ courseGroups, setCourseGroups ] = useState([]);
+	const [ courseGroupsStatus, setCourseGroupsStatus ] = useState( 'loading' );
+
+	useEffect( () => {
+		if ( Boolean( window.themeisleGutenberg.hasLearnDash ) ) {
+			( async() => {
+				setCoursesStatus( 'loading' );
+				setCourseGroupsStatus( 'loading' );
+
+				try {
+					const data = await apiFetch({ path: 'ldlms/v2/sfwd-courses' });
+					const items = data.map( datum => ({
+						value: datum.id,
+						label: datum.title.rendered
+					}) );
+					setCourses( items );
+					setCoursesStatus( 'loaded' );
+				} catch ( error ) {
+					setCoursesStatus( 'error' );
+				}
+
+				try {
+					const data = await apiFetch({ path: 'ldlms/v2/groups' });
+					const items = data.map( datum => ({
+						value: datum.id,
+						label: datum.title.rendered
+					}) );
+					setCourseGroups( items );
+					setCourseGroupsStatus( 'loaded' );
+				} catch ( error ) {
+					setCourseGroupsStatus( 'error' );
+				}
+			})();
+		}
 	}, []);
 
 	const { postAuthors } = useSelect( select => {
@@ -201,6 +242,10 @@ const Edit = ({
 			attrs.compare = 'greater_than';
 		}
 
+		if ( 'learnDashPurchaseHistory' == value ) {
+			attrs.on = 'courses';
+		}
+
 		if ( 'none' === value ) {
 			otterConditions[ index ][ key ] = {};
 		} else {
@@ -250,6 +295,33 @@ const Edit = ({
 		otterConditions[ index ][ key ].categories = values;
 		setAttributes({ otterConditions });
 	};
+
+	const changeCourses = ( values, index, key ) => {
+		const regex = /^([^.]+)/;
+
+		values.forEach( ( value, key ) => {
+			const m = regex.exec( value );
+			null !== m ? values[ key ] = Number( m[0]) : value;
+		});
+
+		const otterConditions = [ ...attributes.otterConditions ];
+		otterConditions[ index ][ key ].courses = values;
+		setAttributes({ otterConditions });
+	};
+
+	const changeGroups = ( values, index, key ) => {
+		const regex = /^([^.]+)/;
+
+		values.forEach( ( value, key ) => {
+			const m = regex.exec( value );
+			null !== m ? values[ key ] = Number( m[0]) : value;
+		});
+
+		const otterConditions = [ ...attributes.otterConditions ];
+		otterConditions[ index ][ key ].groups = values;
+		setAttributes({ otterConditions });
+	};
+
 
 	const changeVisibility = ( value, index, key ) => {
 		const otterConditions = [ ...attributes.otterConditions ];
@@ -346,6 +418,11 @@ const Edit = ({
 				value: 'wooPurchaseHistory',
 				label: __( 'Purchase History', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on user\'s WooCommerce purchase history.' )
+			},
+			{
+				value: 'learnDashPurchaseHistory',
+				label: __( 'Purchase History', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on user\'s LearnDash purchase history.' )
 			}
 		];
 
@@ -432,6 +509,32 @@ const Edit = ({
 		);
 	};
 
+	const Multiselect = ({
+		label,
+		items,
+		values,
+		onChange
+	}) => {
+		return (
+			<FormTokenField
+				label={ label }
+				value={ ( values && 'object' === typeof values ) ? values.map( id => {
+					const obj = items.find( item => Number( id ) === Number( item.value ) );
+					return `${ obj.value }. ${ obj.label }`;
+				}) : undefined }
+				suggestions={ items.map( item => `${ item.value }. ${ item.label }` ) }
+				onChange={ onChange }
+				__experimentalExpandOnFocus={ true }
+				__experimentalValidateInput={ value => {
+					const regex = /^([^.]+)/;
+					const m = regex.exec( value );
+					null !== m ? value = Number( m[0]) : value;
+					return undefined !== items.find( item => Number( value ) === Number( item.value ) );
+				} }
+			/>
+		);
+	};
+
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -485,6 +588,12 @@ const Edit = ({
 														<option value="wooProductsInCart">{ __( 'Products in Cart', 'otter-blocks' ) }</option>
 														<option value="wooTotalCartValue">{ __( 'Total Cart Value', 'otter-blocks' ) }</option>
 														<option value="wooPurchaseHistory">{ __( 'Purchase History', 'otter-blocks' ) }</option>
+													</optgroup>
+												) }
+
+												{ Boolean( window.themeisleGutenberg.hasLearnDash ) && (
+													<optgroup label={ __( 'LearnDash', 'otter-blocks' ) }>
+														<option value="learnDashPurchaseHistory">{ __( 'Purchase History', 'otter-blocks' ) }</option>
 													</optgroup>
 												) }
 											</select>
@@ -754,21 +863,11 @@ const Edit = ({
 												{ 'products' === i.on && (
 													<Fragment>
 														{ 'loaded' === productsStatus && (
-															<FormTokenField
+															<Multiselect
 																label={ __( 'Products', 'otter-blocks' ) }
-																value={ ( i.products && 'object' === typeof i.products ) ? i.products.map( id => {
-																	const obj = products.find( product => Number( id ) === Number( product.value ) );
-																	return `${ obj.value }. ${ obj.label }`;
-																}) : undefined }
-																suggestions={ products.map( product => `${ product.value }. ${ product.label }` ) }
+																items={ products }
+																values={ i.products }
 																onChange={ values => changeProducts( values, index, n ) }
-																__experimentalExpandOnFocus={ true }
-																__experimentalValidateInput={ value => {
-																	const regex = /^([^.]+)/;
-																	const m = regex.exec( value );
-																	null !== m ? value = Number( m[0]) : value;
-																	return undefined !== products.find( product => Number( value ) === Number( product.value ) );
-																} }
 															/>
 														) }
 
@@ -779,21 +878,11 @@ const Edit = ({
 												{ 'categories' === i.on && (
 													<Fragment>
 														{ 'loaded' === categoriesStatus && (
-															<FormTokenField
+															<Multiselect
 																label={ __( 'Categories', 'otter-blocks' ) }
-																value={ ( i.categories && 'object' === typeof i.categories ) ? i.categories.map( id => {
-																	const obj = categories.find( category => Number( id ) === Number( category.value ) );
-																	return `${ obj.value }. ${ obj.label }`;
-																}) : undefined }
-																suggestions={ categories.map( category => `${ category.value }. ${ category.label }` ) }
+																items={ categories }
+																values={ i.categories }
 																onChange={ values => changeCategories( values, index, n ) }
-																__experimentalExpandOnFocus={ true }
-																__experimentalValidateInput={ value => {
-																	const regex = /^([^.]+)/;
-																	const m = regex.exec( value );
-																	null !== m ? value = Number( m[0]) : value;
-																	return undefined !== categories.find( category => Number( value ) === Number( category.value ) );
-																} }
 															/>
 														) }
 
@@ -834,21 +923,11 @@ const Edit = ({
 										{ 'wooPurchaseHistory' === i.type && (
 											<Fragment>
 												{ 'loaded' === productsStatus && (
-													<FormTokenField
+													<Multiselect
 														label={ __( 'Products', 'otter-blocks' ) }
-														value={ ( i.products && 'object' === typeof i.products ) ? i.products.map( id => {
-															const obj = products.find( product => Number( id ) === Number( product.value ) );
-															return `${ obj.value }. ${ obj.label }`;
-														}) : undefined }
-														suggestions={ products.map( product => `${ product.value }. ${ product.label }` ) }
+														items={ products }
+														values={ i.products }
 														onChange={ values => changeProducts( values, index, n ) }
-														__experimentalExpandOnFocus={ true }
-														__experimentalValidateInput={ value => {
-															const regex = /^([^.]+)/;
-															const m = regex.exec( value );
-															null !== m ? value = Number( m[0]) : value;
-															return undefined !== products.find( product => Number( value ) === Number( product.value ) );
-														} }
 													/>
 												) }
 
@@ -856,7 +935,57 @@ const Edit = ({
 											</Fragment>
 										) }
 
-										{ ( 'userRoles' === i.type || 'postAuthor' === i.type || 'postMeta' === i.type || 'wooProductsInCart' === i.type || 'wooPurchaseHistory' === i.type ) && (
+										{ 'learnDashPurchaseHistory' === i.type && (
+											<Fragment>
+												<SelectControl
+													label={ __( 'Based on', 'otter-blocks' ) }
+													options={ [
+														{
+															value: 'courses',
+															label: __( 'Courses', 'otter-blocks' )
+														},
+														{
+															value: 'groups',
+															label: __( 'Groups', 'otter-blocks' )
+														}
+													] }
+													value={ i.on }
+													onChange={ e => changeValue( e, index, n, 'on' ) }
+												/>
+
+												{ 'courses' === i.on && (
+													<Fragment>
+														{ 'loaded' === coursesStatus && (
+															<Multiselect
+																label={ __( 'Courses', 'otter-blocks' ) }
+																items={ courses }
+																values={ i.courses }
+																onChange={ values => changeCourses( values, index, n ) }
+															/>
+														) }
+
+														{ 'loading' === coursesStatus && <Placeholder><Spinner /></Placeholder> }
+													</Fragment>
+												) }
+
+												{ 'groups' === i.on && (
+													<Fragment>
+														{ 'loaded' === courseGroupsStatus && (
+															<Multiselect
+																label={ __( 'Groups', 'otter-blocks' ) }
+																items={ courseGroups }
+																values={ i.groups }
+																onChange={ values => changeGroups( values, index, n ) }
+															/>
+														) }
+
+														{ 'loading' === courseGroupsStatus && <Placeholder><Spinner /></Placeholder> }
+													</Fragment>
+												) }
+											</Fragment>
+										) }
+
+										{ ( 'userRoles' === i.type || 'postAuthor' === i.type || 'postMeta' === i.type || 'wooProductsInCart' === i.type || 'wooPurchaseHistory' === i.type || 'learnDashPurchaseHistory' === i.type ) && (
 											<SelectControl
 												label={ __( 'If condition is true, the block should be:', 'otter-blocks' ) }
 												options={ [
