@@ -246,6 +246,10 @@ const Edit = ({
 			attrs.on = 'courses';
 		}
 
+		if ( 'learnDashCourseStatus' == value ) {
+			attrs.status = 'not_started';
+		}
+
 		if ( 'none' === value ) {
 			otterConditions[ index ][ key ] = {};
 		} else {
@@ -423,6 +427,11 @@ const Edit = ({
 				value: 'learnDashPurchaseHistory',
 				label: __( 'Purchase History', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on user\'s LearnDash purchase history.' )
+			},
+			{
+				value: 'learnDashCourseStatus',
+				label: __( 'Course Status', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on user\'s LearnDash course status.' )
 			}
 		];
 
@@ -594,6 +603,7 @@ const Edit = ({
 												{ Boolean( window.themeisleGutenberg.hasLearnDash ) && (
 													<optgroup label={ __( 'LearnDash', 'otter-blocks' ) }>
 														<option value="learnDashPurchaseHistory">{ __( 'Purchase History', 'otter-blocks' ) }</option>
+														<option value="learnDashCourseStatus">{ __( 'Course Status', 'otter-blocks' ) }</option>
 													</optgroup>
 												) }
 											</select>
@@ -985,7 +995,44 @@ const Edit = ({
 											</Fragment>
 										) }
 
-										{ ( 'userRoles' === i.type || 'postAuthor' === i.type || 'postMeta' === i.type || 'wooProductsInCart' === i.type || 'wooPurchaseHistory' === i.type || 'learnDashPurchaseHistory' === i.type ) && (
+										{ 'learnDashCourseStatus' === i.type && (
+											<Fragment>
+												{ 'loaded' === coursesStatus && (
+													<Fragment>
+														<SelectControl
+															label={ __( 'Course', 'otter-blocks' ) }
+															options={ courses }
+															value={ i.course }
+															onChange={ e => changeValue( Number( e ), index, n, 'course' ) }
+														/>
+
+														<SelectControl
+															label={ __( 'Status', 'otter-blocks' ) }
+															options={ [
+																{
+																	value: 'not_started',
+																	label: __( 'Not Started', 'otter-blocks' )
+																},
+																{
+																	value: 'in_progress',
+																	label: __( 'In Progress', 'otter-blocks' )
+																},
+																{
+																	value: 'completed',
+																	label: __( 'Completed', 'otter-blocks' )
+																}
+															] }
+															value={ i.status }
+															onChange={ e => changeValue( e, index, n, 'status' ) }
+														/>
+													</Fragment>
+												) }
+
+												{ 'loading' === coursesStatus && <Placeholder><Spinner /></Placeholder> }
+											</Fragment>
+										) }
+
+										{ ( 'userRoles' === i.type || 'postAuthor' === i.type || 'postMeta' === i.type || 'wooProductsInCart' === i.type || 'wooPurchaseHistory' === i.type || 'learnDashPurchaseHistory' === i.type || 'learnDashCourseStatus' === i.type ) && (
 											<SelectControl
 												label={ __( 'If condition is true, the block should be:', 'otter-blocks' ) }
 												options={ [

@@ -208,6 +208,16 @@ class Block_Conditions {
 			}
 		}
 
+		if ( 'learnDashCourseStatus' === $condition['type'] && defined( 'LEARNDASH_VERSION' ) ) {
+			if ( isset( $condition['course'] ) ) {
+				if ( $visibility ) {
+					return $this->has_course_status( $condition );
+				} else {
+					return ! $this->has_course_status( $condition );
+				}
+			}
+		}
+
 		return true;
 	}
 
@@ -509,6 +519,25 @@ class Block_Conditions {
 		}
 
 		return $bought;
+	}
+
+	/**
+	 * Check based on LearnDash course status.
+	 *
+	 * @param array $condition Condition.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 */
+	public function has_course_status( $condition ) {
+		$current_user = wp_get_current_user();
+		$progress     = learndash_user_get_course_progress( $current_user->ID, $condition['course'], 'summary' );
+
+		if ( $progress['status'] === $condition['status'] ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
