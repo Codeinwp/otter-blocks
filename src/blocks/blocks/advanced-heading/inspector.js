@@ -38,6 +38,7 @@ import ControlPanelControl from '../../components/control-panel-control/index.js
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import SizingControl from '../../components/sizing-control/index.js';
 import HTMLAnchorControl from '../../components/html-anchor-control/index.js';
+import ClearButton from '../../components/clear-button/index.js';
 
 const Inspector = ({
 	attributes,
@@ -484,17 +485,10 @@ const Inspector = ({
 								/>
 							</ResponsiveControl>
 
-							<div className="o-cnt">
-								<Button
-									isSecondary
-									isSmall
-									onClick={ () => reset( 'fontSize' )}
-								>
-									{
-										__( 'Clear', 'otter-blocks' )
-									}
-								</Button>
-							</div>
+							<ClearButton
+								values={[ 'fontSize' ]}
+								setAttributes={setAttributes}
+							/>
 
 							<ResponsiveControl
 								label={ __( 'Alignment', 'otter-blocks' ) }

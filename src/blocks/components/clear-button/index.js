@@ -39,16 +39,22 @@ const ClearButton = ({
 					return undefined;
 				}
 			)
-			.fiter( isString )
+			.filter( isString )
 			.reduce( ( acc, attrName ) => {
 				acc[attrName] = undefined;
 				return acc;
-			});
+			}, {});
 		setAttributes( attrToClear );
 	};
 
 	return (
-		<div>
+		<div
+			style={{
+				width: '100%',
+				display: 'flex',
+				justifyContent: 'flex-end'
+			}}
+		>
 			<Button
 				isSmall
 				isSecondary
