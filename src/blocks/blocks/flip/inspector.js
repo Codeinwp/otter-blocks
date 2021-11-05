@@ -42,9 +42,6 @@ const Inspector = ({
 		});
 	};
 
-	const changeBoxShadow = value => {
-		setAttributes({ boxShadow: value });
-	};
 
 	const changeBoxShadowColorOpacity = value => {
 		const changes = { boxShadowColorOpacity: value };
@@ -53,19 +50,6 @@ const Inspector = ({
 		}
 		setAttributes( changes );
 	};
-
-	const changeBoxShadowBlur = value => {
-		setAttributes({ boxShadowBlur: value });
-	};
-
-	const changeBoxShadowHorizontal = value => {
-		setAttributes({ boxShadowHorizontal: value });
-	};
-
-	const changeBoxShadowVertical = value => {
-		setAttributes({ boxShadowVertical: value });
-	};
-
 
 	return (
 		<InspectorControls>
@@ -202,23 +186,9 @@ const Inspector = ({
 							label={ __( 'Focal point picker', 'otter-blocks' ) }
 							url={ attributes.frontImg?.url }
 							value={ attributes.frontImgFocalpoint }
-
-							// TODO: change to reference manipulation for speed
-							onDragStart={ ( newFocalPoint ) =>
-								setAttributes({
-									frontImgFocalpoint: newFocalPoint
-								}) }
-
-							// TODO: change to reference manipulation for speed
-							onDrag={ ( newFocalPoint ) =>
-								setAttributes({
-									frontImgFocalpoint: newFocalPoint
-								}) }
-							onChange={ ( newFocalPoint ) =>
-								setAttributes({
-									frontImgFocalpoint: newFocalPoint
-								})
-							}
+							onDragStart={ frontImgFocalpoint => setAttributes({ frontImgFocalpoint }) }
+							onDrag={ frontImgFocalpoint => setAttributes({ frontImgFocalpoint }) }
+							onChange={ frontImgFocalpoint => setAttributes({ frontImgFocalpoint }) }
 						/>
 					)
 				}
@@ -313,23 +283,9 @@ const Inspector = ({
 							label={ __( 'Focal point picker', 'otter-blocks' ) }
 							url={ attributes.backImg?.url }
 							value={ attributes.backImgFocalpoint }
-
-							// TODO: change to reference manipulation for speed
-							onDragStart={ ( newFocalPoint ) =>
-								setAttributes({
-									backImgFocalpoint: newFocalPoint
-								}) }
-
-							// TODO: change to reference manipulation for speed
-							onDrag={ ( newFocalPoint ) =>
-								setAttributes({
-									backImgFocalpoint: newFocalPoint
-								}) }
-							onChange={ ( newFocalPoint ) =>
-								setAttributes({
-									backImgFocalpoint: newFocalPoint
-								})
-							}
+							onDragStart={ backImgFocalpoint => setAttributes({ backImgFocalpoint }) }
+							onDrag={ backImgFocalpoint => setAttributes({ backImgFocalpoint }) }
+							onChange={ backImgFocalpoint => setAttributes({ backImgFocalpoint }) }
 						/>
 					)
 				}
@@ -438,7 +394,7 @@ const Inspector = ({
 				<ToggleControl
 					label={ __( 'Shadow Properties', 'otter-blocks' ) }
 					checked={ attributes.boxShadow }
-					onChange={ changeBoxShadow }
+					onChange={ boxShadow => setAttributes({ boxShadow }) }
 				/>
 
 				{ attributes.boxShadow && (
@@ -468,7 +424,7 @@ const Inspector = ({
 							<RangeControl
 								label={ __( 'Blur', 'otter-blocks' ) }
 								value={ attributes.boxShadowBlur }
-								onChange={ changeBoxShadowBlur }
+								onChange={ boxShadowBlur => setAttributes({ boxShadowBlur }) }
 								min={ 0 }
 								max={ 100 }
 							/>
@@ -476,7 +432,7 @@ const Inspector = ({
 							<RangeControl
 								label={ __( 'Horizontal', 'otter-blocks' ) }
 								value={ attributes.boxShadowHorizontal }
-								onChange={ changeBoxShadowHorizontal }
+								onChange={ boxShadowHorizontal => setAttributes({ boxShadowHorizontal })}
 								min={ -100 }
 								max={ 100 }
 							/>
@@ -484,7 +440,7 @@ const Inspector = ({
 							<RangeControl
 								label={ __( 'Vertical', 'otter-blocks' ) }
 								value={ attributes.boxShadowVertical }
-								onChange={ changeBoxShadowVertical }
+								onChange={ boxShadowVertical => setAttributes({ boxShadowVertical }) }
 								min={ -100 }
 								max={ 100 }
 							/>
