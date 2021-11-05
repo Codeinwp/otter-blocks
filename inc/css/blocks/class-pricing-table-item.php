@@ -44,13 +44,13 @@ class Pricing_Table_Item_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property'  => 'border-color',
-						'value'     => 'borderColor',
+						'property' => 'border-color',
+						'value'    => 'borderColor',
 					),
 					array(
-						'property'  => 'border-style',
-						'value'     => 'borderStyle',
-						'default'   => 'solid',
+						'property' => 'border-style',
+						'value'    => 'borderStyle',
+						'default'  => 'solid',
 					),
 					array(
 						'property' => 'border-radius',
