@@ -133,10 +133,14 @@ const Edit = ({
 							}
 
 							<RichText
-								tagName="h1"
+								tagName="h2"
 								value={ attributes.title }
 								onChange={ title => setAttributes({ title })}
 								placeholder={ __( 'Insert a title', 'otter-blocks' )}
+								style={{
+									fontSize: attributes.titleFontSize ? attributes.titleFontSize + 'px' : undefined,
+									color: attributes.titleColor
+								}}
 							/>
 
 							<RichText
@@ -144,6 +148,10 @@ const Edit = ({
 								value={ attributes.description }
 								onChange={ description => setAttributes({ description })}
 								placeholder={ __( 'Insert a description', 'otter-blocks' )}
+								style={{
+									fontSize: attributes.descriptionFontSize ? attributes.descriptionFontSize + 'px' : undefined,
+									color: attributes.descriptionColor
+								}}
 							/>
 						</div>
 

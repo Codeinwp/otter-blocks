@@ -247,6 +247,21 @@ const Inspector = ({
 					onChange={ horizontalAlign => setAttributes({ horizontalAlign })}
 				/>
 
+				<RangeControl
+					label={ __( 'Title Font Size', 'otter-blocks' ) }
+					value={ attributes.titleFontSize }
+					onChange={ titleFontSize => setAttributes({ titleFontSize }) }
+					min={ 0 }
+					max={ 50 }
+				/>
+
+				<RangeControl
+					label={ __( 'Description Font Size', 'otter-blocks' ) }
+					value={ attributes.descriptionFontSize }
+					onChange={ descriptionFontSize => setAttributes({ descriptionFontSize }) }
+					min={ 0 }
+					max={ 50 }
+				/>
 			</PanelBody>
 
 			<PanelBody
@@ -401,6 +416,16 @@ const Inspector = ({
 						value: attributes.borderColor,
 						onChange: borderColor => setAttributes({ borderColor }),
 						label: __( 'Border Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.titleColor,
+						onChange: titleColor => setAttributes({ titleColor }),
+						label: __( 'Title Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.descriptionColor,
+						onChange: descriptionColor => setAttributes({ descriptionColor }),
+						label: __( 'Description Color', 'otter-blocks' )
 					}
 				] }
 			>

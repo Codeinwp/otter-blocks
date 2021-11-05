@@ -195,6 +195,40 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
+				'selector'   => ' .o-front .o-content h2',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'titleColor',
+					),
+					array(
+						'property' => 'font-size',
+						'value'    => 'titleFontSize',
+						'unit'     => 'px',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .o-front .o-content p',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'descriptionColor',
+					),
+					array(
+						'property' => 'font-size',
+						'value'    => 'descriptionFontSize',
+						'unit'     => 'px',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
 				'selector'   => ' .o-back',
 				'properties' => array(
 					array(
