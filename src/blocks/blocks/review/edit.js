@@ -309,10 +309,7 @@ const Edit = ({
 							</h4>
 
 							{ attributes.pros.map( ( pro, index ) => (
-								<div
-									key={ pro }
-									className="wp-block-themeisle-blocks-review__right_pros_item"
-								>
+								<div className="wp-block-themeisle-blocks-review__right_pros_item">
 									{ check }
 
 									<RichText
@@ -340,10 +337,7 @@ const Edit = ({
 							</h4>
 
 							{ attributes.cons.map( ( con, index ) => (
-								<div
-									key={ con }
-									className="wp-block-themeisle-blocks-review__right_cons_item"
-								>
+								<div className="wp-block-themeisle-blocks-review__right_cons_item">
 									{ close }
 
 									<RichText
@@ -375,7 +369,6 @@ const Edit = ({
 						<div className="wp-block-themeisle-blocks-review__footer_buttons">
 							{ ( productAttributes?.links || attributes.links ).map( ( link, index ) => (
 								<RichText
-									key={ link }
 									placeholder={ __( 'Button label', 'otter-blocks' ) }
 									value={ link.label }
 									disabled={ 0 < productAttributes?.links }
