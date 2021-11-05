@@ -3,13 +3,14 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	isString,
-	isObject
+	isObject,
+	isArray
 } from 'lodash';
 
 /**
  * @typedef {Object} IClearButton
  * @property {React.ReactNode} children
- * @property {(string | Object.<string, ?boolean>)[]} values
+ * @property {((string | Object.<string, ?boolean>)[]  | string)} values
  * @property {Function} setAttributes
  */
 
@@ -25,7 +26,8 @@ const ClearButton = ({
 }) => {
 
 	const clearValues = () => {
-		const attrToClear = values
+
+		const attrToClear = ( isArray( values ) ? values : [ values ])
 			.map(
 				value => {
 					if ( isString( value ) ) {

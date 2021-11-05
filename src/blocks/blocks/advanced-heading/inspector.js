@@ -486,7 +486,7 @@ const Inspector = ({
 							</ResponsiveControl>
 
 							<ClearButton
-								values={[ 'fontSize' ]}
+								values={ 'fontSize' }
 								setAttributes={setAttributes}
 							/>
 
@@ -517,6 +517,11 @@ const Inspector = ({
 								onChangeTextTransform={ changeTextTransform }
 							/>
 
+							<ClearButton
+								values={[ 'fontFamily', 'fontVariant', 'fontStyle', 'textTransform' ]}
+								setAttributes={setAttributes}
+							/>
+
 							<RangeControl
 								label={ __( 'Line Height', 'otter-blocks' ) }
 								value={ attributes.lineHeight }
@@ -526,12 +531,22 @@ const Inspector = ({
 								max={ 3 }
 							/>
 
+							<ClearButton
+								values={[ 'lineHeight' ]}
+								setAttributes={setAttributes}
+							/>
+
 							<RangeControl
 								label={ __( 'Letter Spacing', 'otter-blocks' ) }
 								value={ attributes.letterSpacing }
 								onChange={ changeLetterSpacing }
 								min={ -50 }
 								max={ 100 }
+							/>
+
+							<ClearButton
+								values={ 'letterSpacing' }
+								setAttributes={setAttributes}
 							/>
 
 							<ToggleControl
@@ -662,6 +677,27 @@ const Inspector = ({
 								/>
 							</ResponsiveControl>
 
+							<ClearButton
+								values={[
+									{ 'padding': 'Desktop' === getView && 'linked' === attributes.paddingType },
+									{ 'paddingTablet': 'Tablet' === getView && 'linked' === attributes.paddingType },
+									{ 'paddingMobile': 'Mobile' === getView && 'linked' === attributes.paddingType },
+									{ 'paddingRight': 'Desktop' === getView && 'linked' !== attributes.paddingType },
+									{ 'paddingRightTablet': 'Tablet' === getView && 'linked' !== attributes.paddingType },
+									{ 'paddingRightMobile': 'Mobile' === getView && 'linked' !== attributes.paddingType },
+									{ 'paddingTop': 'Desktop' === getView && 'linked' !== attributes.paddingType },
+									{ 'paddingTopTablet': 'Tablet' === getView && 'linked' !== attributes.paddingType },
+									{ 'paddingTopMobile': 'Mobile' === getView && 'linked' !== attributes.paddingType },
+									{ 'paddingBottom': 'Desktop' === getView && 'linked' !== attributes.paddingType },
+									{ 'paddingBottomTablet': 'Tablet' === getView && 'linked' !== attributes.paddingType },
+									{ 'paddingBottomMobile': 'Mobile' === getView && 'linked' !== attributes.paddingType },
+									{ 'paddingLeft': 'Desktop' === getView && 'linked' !== attributes.paddingType },
+									{ 'paddingLeftTablet': 'Tablet' === getView && 'linked' !== attributes.paddingType },
+									{ 'paddingLeftMobile': 'Mobile' === getView && 'linked' !== attributes.paddingType }
+								]}
+								setAttributes={setAttributes}
+							/>
+
 							<ResponsiveControl
 								label={ __( 'Margin', 'otter-blocks' ) }
 							>
@@ -693,6 +729,21 @@ const Inspector = ({
 									] }
 								/>
 							</ResponsiveControl>
+
+							<ClearButton
+								values={[
+									{ 'margin': 'Desktop' === getView && 'linked' === attributes.marginType },
+									{ 'marginTablet': 'Tablet' === getView && 'linked' === attributes.marginType },
+									{ 'marginMobile': 'Mobile' === getView && 'linked' === attributes.marginType },
+									{ 'marginTop': 'Desktop' === getView && 'linked' !== attributes.marginType },
+									{ 'marginTopTablet': 'Tablet' === getView && 'linked' !== attributes.marginType },
+									{ 'marginTopMobile': 'Mobile' === getView && 'linked' !== attributes.marginType },
+									{ 'marginBottom': 'Desktop' === getView && 'linked' !== attributes.marginType },
+									{ 'marginBottomTablet': 'Tablet' === getView && 'linked' !== attributes.marginType },
+									{ 'marginBottomMobile': 'Mobile' === getView && 'linked' !== attributes.marginType }
+								]}
+								setAttributes={setAttributes}
+							/>
 						</PanelBody>
 					</Fragment>
 				) }
