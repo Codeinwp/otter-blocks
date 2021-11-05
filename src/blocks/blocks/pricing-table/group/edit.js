@@ -9,7 +9,7 @@ import {
 	jsx
 } from '@emotion/react';
 
-export default ({ className, attributes, setAttributes }) => {
+const Edit = ({ className, attributes, setAttributes }) => {
 	const allowedBlocks = [ 'themeisle/pricing-table-item' ];
 
 	const columnsNumberCSS = ( attributes.columns && (
@@ -74,3 +74,5 @@ export default ({ className, attributes, setAttributes }) => {
 		</>
 	);
 };
+
+export default Edit;

@@ -16,7 +16,7 @@ import { __ } from '@wordpress/i18n';
 import defaultAttributes from './attributes.js';
 import { blockInit } from '../../../helpers/block-utility';
 
-export default ({ attributes, className, setAttributes, clientId }) => {
+const Edit = ({ attributes, className, setAttributes, clientId }) => {
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -149,3 +149,5 @@ export default ({ attributes, className, setAttributes, clientId }) => {
 		</>
 	);
 };
+
+export default Edit;
