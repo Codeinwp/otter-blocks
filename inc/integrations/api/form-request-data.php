@@ -7,12 +7,26 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
+/**
+ * Class Form_Data_Request
+ */
 class Form_Data_Request {
 
+	/**
+	 * Request Data.
+	 *
+	 * @var array
+	 */
 	protected $data = array();
 
-	function __construct( $request_data ) {
-		$this->data = $this->sanitize_request_data($request_data);
+	/**
+	 * Constructor.
+	 *
+	 * @access  public
+	 * @param array $request_data Request Data.
+	 */
+	public function __construct( $request_data ) {
+		$this->data = $this->sanitize_request_data( $request_data );
 	}
 
 	/**
@@ -22,7 +36,7 @@ class Form_Data_Request {
 	 * @return mixed
 	 */
 	public function get( $field_name ) {
-		return $this->is_set($field_name) ? $this->data[$field_name] : null;
+		return $this->is_set( $field_name ) ? $this->data[ $field_name ] : null;
 	}
 
 	/**
@@ -32,8 +46,8 @@ class Form_Data_Request {
 	 * @return boolean
 	 */
 	public function is_set( $field_name ) {
-		// TODO: we can do a more refined verification like checking for empty strings or arrays
-		return isset($this->data[$field_name]);
+		// TODO: we can do a more refined verification like checking for empty strings or arrays.
+		return isset( $this->data[ $field_name ] );
 	}
 
 	/**
@@ -47,7 +61,7 @@ class Form_Data_Request {
 			array_filter(
 				array_map(
 					function( $field_name ) {
-						return $this->is_set($field_name);
+						return $this->is_set( $field_name );
 					},
 					$fields_name
 				),
@@ -62,7 +76,7 @@ class Form_Data_Request {
 	 * Check if the field has one of the given values.
 	 *
 	 * @param string $field_name The name of the field.
-	 * @param array $values The desired values of the field.
+	 * @param array  $values The desired values of the field.
 	 * @return boolean
 	 */
 	public function field_has( $field_name, $values ) {
@@ -106,8 +120,8 @@ class Form_Data_Request {
 		if ( isset( $data['data'] ) ) {
 			$data['data'] = array_map(
 				function( $input ) {
-					$input['label'] = sanitize_text_field('label');
-					$input['input'] = sanitize_text_field('input');
+					$input['label'] = sanitize_text_field( 'label' );
+					$input['input'] = sanitize_text_field( 'input' );
 					return $input;
 				},
 				$data['data']

@@ -85,7 +85,7 @@ class Mailchimp_Integration {
 	 * @return \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response
 	 */
 	public function subscribe( $list_id, $email ) {
-		$res = new Form_Data_Response();
+		$res         = new Form_Data_Response();
 		$user_status = $this->get_new_user_status_mailchimp( $list_id );
 
 		$url       = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $list_id . '/members/' . md5( strtolower( $email ) );
@@ -105,7 +105,7 @@ class Mailchimp_Integration {
 		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-			$res->set_error(! empty( $body['detail'] ) && 'null' !== $body['detail'] ? $body['detail'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'mailchimp');
+			$res->set_error( ! empty( $body['detail'] ) && 'null' !== $body['detail'] ? $body['detail'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'mailchimp' );
 		} else {
 			$res->mark_as_succes();
 		}

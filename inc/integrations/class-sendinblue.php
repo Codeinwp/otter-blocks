@@ -79,7 +79,7 @@ class Sendinblue_Integration {
 	 * @return \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response
 	 */
 	public function subscribe( $list_id, $email ) {
-		$res = new Form_Data_Response();
+		$res       = new Form_Data_Response();
 		$url       = 'https://api.sendinblue.com/v3/contacts';
 		$form_data = array(
 			'email'            => $email,
@@ -104,7 +104,7 @@ class Sendinblue_Integration {
 
 			$res->set_error( ! empty( $body['message'] ) && 'null' !== $body['message'] ? $body['message'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'sendinblue' );
 
-			if( isset( $body['code'] ) && 'unauthorized' === $body['code'] ) {
+			if ( isset( $body['code'] ) && 'unauthorized' === $body['code'] ) {
 				$res->set_error( $body['message'], 'sendinblue' );
 			}
 		} else {
