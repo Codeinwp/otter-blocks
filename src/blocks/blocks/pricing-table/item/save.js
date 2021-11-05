@@ -32,18 +32,12 @@ const Save = ({ attributes, className }) => {
 						<h5>
 							<del
 								className="full-price"
-								style={{
-									color: attributes.oldPriceColor
-								}}
 							>
 								<sup>{ attributes.currency }</sup>
 								<span>{ attributes.oldPrice }</span>
 							</del>
 							<span
 								className="price"
-								style={{
-									color: attributes.priceColor
-								}}
 							>
 								<sup>{ attributes.currency }</sup>
 								<span>{ attributes.price }</span>
@@ -57,9 +51,6 @@ const Save = ({ attributes, className }) => {
 						<a
 							className="o-pricing-action"
 							href={ attributes.buttonLink }
-							style={{
-								background: attributes.buttonColor
-							}}
 						>
 							{ attributes.buttonText }
 						</a>

@@ -3,7 +3,9 @@ import {
 	BaseControl,
 	ToggleControl,
 	FormTokenField,
-	TextControl
+	TextControl,
+	RangeControl,
+	SelectControl
 } from '@wordpress/components';
 import { ContrastChecker, InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
@@ -102,6 +104,34 @@ const Inspector = ({ attributes, setAttributes }) => {
 				) }
 			</PanelBody>
 
+			<PanelBody
+				title={ __( 'Style', 'otter-blocks' ) }
+			>
+				<RangeControl
+					label={ __( 'Border Width', 'otter-blocks' ) }
+					help={ __( 'Set the width of the border', 'otter-blocks' ) }
+					value={ attributes.borderWidth }
+					onChange={ borderWidth => setAttributes({ borderWidth })}
+				/>
+
+				<SelectControl
+					label={ __( 'Border Style', 'otter-blocks' ) }
+					help={ __( 'Set the style of the border', 'otter-blocks' ) }
+					value={ attributes.borderStyle }
+					options={[
+						{label: __( 'Default', 'otter-blocks' ), value: '' },
+						{label: __( 'Dashed', 'otter-blocks' ), value: 'dashed' },
+						{label: __( 'Dotted', 'otter-blocks' ), value: 'dotted' },
+						{label: __( 'Double', 'otter-blocks' ), value: 'double' },
+						{label: __( 'Groove', 'otter-blocks' ), value: 'groove' },
+						{label: __( 'Ridge', 'otter-blocks' ), value: 'ridge' },
+						{label: __( 'Solid', 'otter-blocks' ), value: 'solid' }
+					]}
+					onChange={ borderStyle => setAttributes({ borderStyle }) }
+				/>
+			</PanelBody>
+
+
 			<PanelColorSettings
 				title={ __( 'Color', 'otter-blocks' ) }
 				initialOpen={ false }
@@ -140,6 +170,11 @@ const Inspector = ({ attributes, setAttributes }) => {
 						value: attributes.ribbonColor,
 						onChange: ribbonColor => setAttributes({ ribbonColor }),
 						label: __( 'Ribbon Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.borderColor,
+						onChange: borderColor => setAttributes({ borderColor }),
+						label: __( 'Border Color', 'otter-blocks' )
 					}
 				] }
 			>

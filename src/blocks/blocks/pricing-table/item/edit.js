@@ -26,7 +26,10 @@ export default ({ attributes, className, setAttributes }) => {
 				<div
 					className="pricing-table-wrap"
 					style={{
-						backgroundColor: attributes.backgroundColor
+						backgroundColor: attributes.backgroundColor,
+						borderWidth: attributes.borderWidth,
+						borderColor: attributes.borderColor,
+						borderStyle: attributes.borderStyle
 					}}
 				>
 					<div className="o-pricing-header">

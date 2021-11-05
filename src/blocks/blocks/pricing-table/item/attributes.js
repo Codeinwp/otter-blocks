@@ -73,6 +73,15 @@ const attributes = {
 	},
 	ribbonColor: {
 		type: 'string'
+	},
+	borderWidth: {
+		type: 'string'
+	},
+	borderStyle: {
+		type: 'string'
+	},
+	borderColor: {
+		type: 'string'
 	}
 };
 
