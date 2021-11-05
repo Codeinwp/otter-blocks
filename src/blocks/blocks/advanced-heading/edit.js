@@ -89,40 +89,6 @@ const Edit = ({
 		setAttributes({ content: value });
 	};
 
-	const changeFontFamily = value => {
-		if ( ! value ) {
-			setAttributes({
-				fontFamily: value,
-				fontVariant: value
-			});
-		} else {
-			setAttributes({
-				fontFamily: value,
-				fontVariant: 'normal',
-				fontStyle: 'normal'
-			});
-		}
-	};
-
-	const changeFontVariant = value => {
-		setAttributes({ fontVariant: value });
-	};
-
-	const changeFontStyle = value => {
-		setAttributes({ fontStyle: value });
-	};
-
-	const changeTextTransform = value => {
-		setAttributes({ textTransform: value });
-	};
-
-	const changeLineHeight = value => {
-		setAttributes({ lineHeight: value });
-	};
-
-	const changeLetterSpacing = value => {
-		setAttributes({ letterSpacing: value });
-	};
 
 	let fontSizeStyle, stylesheet, textShadowStyle;
 
@@ -192,7 +158,7 @@ const Edit = ({
 		letterSpacing: attributes.letterSpacing && `${ attributes.letterSpacing }px`,
 		...stylesheet,
 		...textShadowStyle
-	}, x => x?.includes( 'undefined' ) );
+	}, x => x?.includes?.( 'undefined' ) );
 
 	console.log( style );
 
@@ -215,23 +181,11 @@ const Edit = ({
 			<Controls
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				changeFontFamily={ changeFontFamily }
-				changeFontVariant={ changeFontVariant }
-				changeFontStyle={ changeFontStyle }
-				changeTextTransform={ changeTextTransform }
-				changeLineHeight={ changeLineHeight }
-				changeLetterSpacing={ changeLetterSpacing }
 			/>
 
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				changeFontFamily={ changeFontFamily }
-				changeFontVariant={ changeFontVariant }
-				changeFontStyle={ changeFontStyle }
-				changeTextTransform={ changeTextTransform }
-				changeLineHeight={ changeLineHeight }
-				changeLetterSpacing={ changeLetterSpacing }
 			/>
 
 			<RichText

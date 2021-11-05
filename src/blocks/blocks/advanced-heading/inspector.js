@@ -42,13 +42,7 @@ import ClearButton from '../../components/clear-button/index.js';
 
 const Inspector = ({
 	attributes,
-	setAttributes,
-	changeFontFamily,
-	changeFontVariant,
-	changeFontStyle,
-	changeTextTransform,
-	changeLineHeight,
-	changeLetterSpacing
+	setAttributes
 }) => {
 	const getView = useSelect( select => {
 		const { getView } = select( 'themeisle-gutenberg/data' );
@@ -59,136 +53,87 @@ const Inspector = ({
 
 	const [ tab, setTab ] = useState( 'style' );
 
-	const changeHeadingColor = value => {
-		setAttributes({ headingColor: value });
+	const changeFontFamily = value => {
+		if ( ! value ) {
+			setAttributes({
+				fontFamily: value,
+				fontVariant: value
+			});
+		} else {
+			setAttributes({
+				fontFamily: value,
+				fontVariant: 'normal',
+				fontStyle: 'normal'
+			});
+		}
 	};
 
-	let getFontSize = () => {
-		let value;
-
-		if ( 'Desktop' === getView ) {
-			value = attributes.fontSize;
+	const getFontSize = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return attributes.fontSize;
+		case 'Tablet':
+			return attributes.fontSizeTablet;
+		case 'Mobile':
+			return attributes.fontSizeMobile;
+		default:
+			return undefined;
 		}
-
-		if ( 'Tablet' === getView ) {
-			value = attributes.fontSizeTablet;
-		}
-
-		if ( 'Mobile' === getView ) {
-			value = attributes.fontSizeMobile;
-		}
-
-		return value;
 	};
-
-	getFontSize = getFontSize();
 
 	const changeFontSize = value => {
 		if ( 'Desktop' === getView ) {
 			setAttributes({ fontSize: value });
-		}
-
-		if ( 'Tablet' === getView ) {
+		} else if ( 'Tablet' === getView ) {
 			setAttributes({ fontSizeTablet: value });
-		}
-
-		if ( 'Mobile' === getView ) {
+		} else if ( 'Mobile' === getView ) {
 			setAttributes({ fontSizeMobile: value });
 		}
 	};
 
-	let getAlignment = () => {
-		let value;
-
-		if ( 'Desktop' === getView ) {
-			value = attributes.align;
+	const getAlignment = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return attributes.align;
+		case 'Tablet':
+			return attributes.alignTablet;
+		case 'Mobile':
+			return attributes.alignMobile;
+		default:
+			return undefined;
 		}
-
-		if ( 'Tablet' === getView ) {
-			value = attributes.alignTablet;
-		}
-
-		if ( 'Mobile' === getView ) {
-			value = attributes.alignMobile;
-		}
-
-		return value;
 	};
 
-	getAlignment = getAlignment();
 
 	const changeAlignment = value => {
 		if ( 'Desktop' === getView ) {
 			setAttributes({ align: value });
-		}
-
-		if ( 'Tablet' === getView ) {
+		} else if ( 'Tablet' === getView ) {
 			setAttributes({ alignTablet: value });
-		}
-
-		if ( 'Mobile' === getView ) {
+		} else if ( 'Mobile' === getView ) {
 			setAttributes({ alignMobile: value });
 		}
 	};
 
-	const changeTextShadowColor = value => {
-		setAttributes({ textShadowColor: value });
-	};
-
-	const changeTextShadow = value => {
-		setAttributes({ textShadow: value });
-	};
-
-	const changeTextShadowColorOpacity = value => {
-		setAttributes({ textShadowColorOpacity: value });
-	};
-
-	const changeTextShadowBlur = value => {
-		setAttributes({ textShadowBlur: value });
-	};
-
-	const changeTextShadowHorizontal = value => {
-		setAttributes({ textShadowHorizontal: value });
-	};
-
-	const changeTextShadowVertical = value => {
-		setAttributes({ textShadowVertical: value });
-	};
-
-	const changeHighlightColor = value => {
-		setAttributes({ highlightColor: value });
-	};
-
-	const changeHighlightBackground = value => {
-		setAttributes({ highlightBackground: value });
-	};
-
-	let getPaddingType = () => {
-		let value;
-
-		if ( 'Desktop' === getView ) {
-			value = attributes.paddingType;
+	const getPaddingType = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return attributes.paddingType;
+		case 'Tablet':
+			return attributes.paddingTypeTablet;
+		case 'Mobile':
+			return attributes.paddingTypeMobile;
+		default:
+			return undefined;
 		}
-		if ( 'Tablet' === getView ) {
-			value = attributes.paddingTypeTablet;
-		}
-		if ( 'Mobile' === getView ) {
-			value = attributes.paddingTypeMobile;
-		}
-
-		return value;
 	};
-
-	getPaddingType = getPaddingType();
 
 	const changePaddingType = value => {
 		if ( 'Desktop' === getView ) {
 			setAttributes({ paddingType: value });
-		}
-		if ( 'Tablet' === getView ) {
+		} else if ( 'Tablet' === getView ) {
 			setAttributes({ paddingTypeTablet: value });
-		}
-		if ( 'Mobile' === getView ) {
+		} else if ( 'Mobile' === getView ) {
 			setAttributes({ paddingTypeMobile: value });
 		}
 	};
@@ -215,120 +160,98 @@ const Inspector = ({
 	};
 
 	const changePadding = ( type, value ) => {
-		if ( 'Desktop' === getView ) {
+		switch ( getView ) {
+		case 'Desktop':
 			if ( 'linked' === attributes.paddingType ) {
 				setAttributes({ padding: value });
 			} else {
 				setAttributes({ [desktopPaddingType[type]]: value });
 			}
-		}
-
-		if ( 'Tablet' === getView ) {
+			break;
+		case 'Tablet':
 			if ( 'linked' === attributes.paddingTypeTablet ) {
 				setAttributes({ paddingTablet: value });
 			} else {
 				setAttributes({ [tabletPaddingType[type]]: value });
 			}
-		}
-
-		if ( 'Mobile' === getView ) {
+			break;
+		case 'Mobile':
 			if ( 'linked' === attributes.paddingTypeMobile ) {
 				setAttributes({ paddingMobile: value });
 			} else {
 				setAttributes({ [mobilePaddingType[type]]: value });
 			}
+			break;
 		}
 	};
 
 	const getPadding = type => {
-		let value;
-
 		if ( 'top' == type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingTop;
+			switch ( getView ) {
+			case 'Desktop':
+				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingTop;
+			case 'Tablet':
+				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingTopTablet;
+			case 'Mobile':
+				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingTopMobile;
 			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingTopTablet;
+		} else if ( 'right' == type ) {
+			switch ( getView ) {
+			case 'Desktop':
+				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingRight;
+			case 'Tablet':
+				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingRightTablet;
+			case 'Mobile':
+				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingRightMobile;
 			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingTopMobile;
+		} else if ( 'bottom' == type ) {
+			switch ( getView ) {
+			case 'Desktop':
+				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingBottom;
+			case 'Tablet':
+				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingBottomTablet;
+			case 'Mobile':
+				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingBottomMobile;
 			}
-		}
-
-		if ( 'right' == type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingRight;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingRightTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingRightMobile;
-			}
-		}
-
-		if ( 'bottom' == type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingBottom;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingBottomTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingBottomMobile;
+		} else if ( 'left' == type ) {
+			switch ( getView ) {
+			case 'Desktop':
+				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingLeft;
+			case 'Tablet':
+				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingLeftTablet;
+			case 'Mobile':
+				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingLeftMobile;
 			}
 		}
 
-		if ( 'left' == type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingLeft;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingLeftTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingLeftMobile;
-			}
-		}
-
-		return value;
+		return undefined;
 	};
 
-	let getMarginType = () => {
-		let value;
 
-		if ( 'Desktop' === getView ) {
-			value = attributes.marginType;
+	const getMarginType = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return attributes.marginType;
+		case 'Tablet':
+			return attributes.marginTypeTablet;
+		case 'Mobile':
+			return attributes.marginTypeMobile;
+		default:
+			return undefined;
 		}
-		if ( 'Tablet' === getView ) {
-			value = attributes.marginTypeTablet;
-		}
-		if ( 'Mobile' === getView ) {
-			value = attributes.marginTypeMobile;
-		}
-
-		return value;
 	};
-
-	getMarginType = getMarginType();
 
 	const changeMarginType = value => {
-		if ( 'Desktop' === getView ) {
+		switch ( getView ) {
+		case 'Desktop':
 			setAttributes({ marginType: value });
-		}
-		if ( 'Tablet' === getView ) {
+			break;
+		case 'Tablet':
 			setAttributes({ marginTypeTablet: value });
-		}
-		if ( 'Mobile' === getView ) {
+			break;
+		case 'Mobile':
 			setAttributes({ marginTypeMobile: value });
+			break;
 		}
 	};
 
@@ -348,81 +271,53 @@ const Inspector = ({
 	};
 
 	const changeMargin = ( type, value ) => {
-		if ( 'Desktop' === getView ) {
+		switch ( getView ) {
+		case 'Desktop':
 			if ( 'linked' === attributes.marginType ) {
 				setAttributes({ margin: value });
 			} else {
 				setAttributes({ [desktopMarginType[type]]: value });
 			}
-		}
-
-		if ( 'Tablet' === getView ) {
+			break;
+		case 'Tablet':
 			if ( 'linked' === attributes.marginTypeTablet ) {
 				setAttributes({ marginTablet: value });
 			} else {
 				setAttributes({ [tabletMarginType[type]]: value });
 			}
-		}
-
-		if ( 'Mobile' === getView ) {
+			break;
+		case 'Mobile':
 			if ( 'linked' === attributes.marginTypeMobile ) {
 				setAttributes({ marginMobile: value });
 			} else {
 				setAttributes({ [mobileMarginType[type]]: value });
 			}
+			break;
 		}
 	};
 
 	const getMargin = type => {
-		let value;
-
 		if ( 'top' == type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === attributes.marginType ? attributes.margin : attributes.marginTop;
+			switch ( getView ) {
+			case 'Desktop':
+				return 'linked' === attributes.marginType ? attributes.margin : attributes.marginTop;
+			case 'Tablet':
+				return 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginTopTablet;
+			case 'Mobile':
+				return 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginTopMobile;
 			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginTopTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginTopMobile;
-			}
-		}
-
-		if ( 'bottom' == type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === attributes.marginType ? attributes.margin : attributes.marginBottom;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginBottomTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginBottomMobile;
+		} else if ( 'bottom' == type ) {
+			switch ( getView ) {
+			case 'Desktop':
+				return 'linked' === attributes.marginType ? attributes.margin : attributes.marginBottom;
+			case 'Tablet':
+				return 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginBottomTablet;
+			case 'Mobile':
+				return 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginBottomMobile;
 			}
 		}
 
-		return value;
-	};
-
-	const changeID = value => {
-		setAttributes({ id: value });
-	};
-
-	const reset = ( attribute ) => {
-		switch ( attribute ) {
-		case 'fontSize':
-			if ( 'Desktop' === getView ) {
-				setAttributes({ fontSize: undefined });
-			} else if ( 'Tablet' === getView ) {
-				setAttributes({ fontSizeTablet: undefined });
-			} else if ( 'Mobile' === getView ) {
-				setAttributes({ fontSizeMobile: undefined });
-			}
-			break;
-		}
+		return undefined;
 	};
 
 	return (
@@ -470,7 +365,7 @@ const Inspector = ({
 								<ColorPalette
 									label={ __( 'Heading Color', 'otter-blocks' ) }
 									value={ attributes.headingColor }
-									onChange={ changeHeadingColor }
+									onChange={ headingColor => setAttributes({ headingColor }) }
 								/>
 							</ColorBaseControl>
 
@@ -478,7 +373,7 @@ const Inspector = ({
 								label={ __( 'Font Size', 'otter-blocks' ) }
 							>
 								<RangeControl
-									value={ getFontSize || '' }
+									value={ getFontSize() || '' }
 									onChange={ changeFontSize }
 									min={ 1 }
 									max={ 500 }
@@ -494,7 +389,7 @@ const Inspector = ({
 								label={ __( 'Alignment', 'otter-blocks' ) }
 							>
 								<AlignmentToolbar
-									value={ getAlignment }
+									value={ getAlignment() }
 									onChange={ changeAlignment }
 									isCollapsed={ false }
 								/>
@@ -510,11 +405,11 @@ const Inspector = ({
 								value={ attributes.fontFamily }
 								onChangeFontFamily={ changeFontFamily }
 								valueVariant={ attributes.fontVariant }
-								onChangeFontVariant={ changeFontVariant }
+								onChangeFontVariant={ fontVariant => setAttributes({ fontVariant }) }
 								valueStyle={ attributes.fontStyle }
-								onChangeFontStyle={ changeFontStyle }
+								onChangeFontStyle={ fontStyle => setAttributes({ fontStyle }) }
 								valueTransform={ attributes.textTransform }
-								onChangeTextTransform={ changeTextTransform }
+								onChangeTextTransform={ textTransform => setAttributes({ textTransform }) }
 							/>
 
 							<ClearButton
@@ -525,7 +420,7 @@ const Inspector = ({
 							<RangeControl
 								label={ __( 'Line Height', 'otter-blocks' ) }
 								value={ attributes.lineHeight }
-								onChange={ changeLineHeight }
+								onChange={ lineHeight => setAttributes({ lineHeight }) }
 								min={ 0 }
 								step={ 0.1 }
 								max={ 3 }
@@ -539,7 +434,7 @@ const Inspector = ({
 							<RangeControl
 								label={ __( 'Letter Spacing', 'otter-blocks' ) }
 								value={ attributes.letterSpacing }
-								onChange={ changeLetterSpacing }
+								onChange={ letterSpacing => setAttributes({ letterSpacing }) }
 								min={ -50 }
 								max={ 100 }
 							/>
@@ -552,7 +447,7 @@ const Inspector = ({
 							<ToggleControl
 								label={ __( 'Shadow Properties', 'otter-blocks' ) }
 								checked={ attributes.textShadow }
-								onChange={ changeTextShadow }
+								onChange={ textShadow => setAttributes({ textShadow }) }
 							/>
 
 							{ attributes.textShadow && (
@@ -565,7 +460,7 @@ const Inspector = ({
 										<ColorPalette
 											label={ __( 'Color', 'otter-blocks' ) }
 											value={ attributes.textShadowColor }
-											onChange={ changeTextShadowColor }
+											onChange={ textShadowColor => setAttributes({ textShadowColor }) }
 										/>
 									</ColorBaseControl>
 
@@ -575,7 +470,7 @@ const Inspector = ({
 										<RangeControl
 											label={ __( 'Opacity', 'otter-blocks' ) }
 											value={ attributes.textShadowColorOpacity }
-											onChange={ changeTextShadowColorOpacity }
+											onChange={ textShadowColorOpacity => setAttributes({ textShadowColorOpacity }) }
 											min={ 0 }
 											max={ 100 }
 										/>
@@ -583,7 +478,7 @@ const Inspector = ({
 										<RangeControl
 											label={ __( 'Blur', 'otter-blocks' ) }
 											value={ attributes.textShadowBlur }
-											onChange={ changeTextShadowBlur }
+											onChange={ textShadowBlur => setAttributes({ textShadowBlur }) }
 											min={ 0 }
 											max={ 100 }
 										/>
@@ -591,7 +486,7 @@ const Inspector = ({
 										<RangeControl
 											label={ __( 'Horizontal', 'otter-blocks' ) }
 											value={ attributes.textShadowHorizontal }
-											onChange={ changeTextShadowHorizontal }
+											onChange={ textShadowHorizontal => setAttributes({ textShadowHorizontal }) }
 											min={ -100 }
 											max={ 100 }
 										/>
@@ -599,7 +494,7 @@ const Inspector = ({
 										<RangeControl
 											label={ __( 'Vertical', 'otter-blocks' ) }
 											value={ attributes.textShadowVertical }
-											onChange={ changeTextShadowVertical }
+											onChange={ textShadowVertical => setAttributes({ textShadowVertical }) }
 											min={ -100 }
 											max={ 100 }
 										/>
@@ -623,7 +518,7 @@ const Inspector = ({
 								<ColorPalette
 									label={ __( 'Highlight Color', 'otter-blocks' ) }
 									value={ attributes.highlightColor }
-									onChange={ changeHighlightColor }
+									onChange={ highlightColor => setAttributes({ highlightColor }) }
 								/>
 							</ColorBaseControl>
 
@@ -634,7 +529,7 @@ const Inspector = ({
 								<ColorPalette
 									label={ __( 'Highlight Background', 'otter-blocks' ) }
 									value={ attributes.highlightBackground }
-									onChange={ changeHighlightBackground }
+									onChange={ highlightBackground => setAttributes({ highlightBackground }) }
 								/>
 							</ColorBaseControl>
 						</PanelBody>
@@ -647,7 +542,7 @@ const Inspector = ({
 								label={ __( 'Padding', 'otter-blocks' ) }
 							>
 								<SizingControl
-									type={ getPaddingType }
+									type={ getPaddingType() }
 									min={ 0 }
 									max={ 500 }
 									changeType={ changePaddingType }
@@ -702,7 +597,7 @@ const Inspector = ({
 								label={ __( 'Margin', 'otter-blocks' ) }
 							>
 								<SizingControl
-									type={ getMarginType }
+									type={ getMarginType() }
 									min={ -500 }
 									max={ 500 }
 									changeType={ changeMarginType }
@@ -751,7 +646,7 @@ const Inspector = ({
 
 			<HTMLAnchorControl
 				value={ attributes.id }
-				onChange={ changeID }
+				onChange={ id => setAttributes({ id }) }
 			/>
 		</Fragment>
 	);
