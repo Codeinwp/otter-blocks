@@ -98,6 +98,18 @@ const attributes = {
 	boxShadowVertical: {
 		type: 'number',
 		default: 0
+	},
+	titleFontSize: {
+		type: 'number'
+	},
+	descriptionFontSize: {
+		type: 'number'
+	},
+	titleColor: {
+		type: 'string'
+	},
+	descriptionColor: {
+		type: 'string'
 	}
 };
 
