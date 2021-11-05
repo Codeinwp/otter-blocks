@@ -181,7 +181,7 @@ const Edit = ({
 		};
 	}
 
-	const style = {
+	const style = omitBy({
 		color: attributes.headingColor,
 		...fontSizeStyle,
 		fontFamily: attributes.fontFamily || undefined,
@@ -192,7 +192,9 @@ const Edit = ({
 		letterSpacing: attributes.letterSpacing && `${ attributes.letterSpacing }px`,
 		...stylesheet,
 		...textShadowStyle
-	};
+	}, x => x?.includes( 'undefined' ) );
+
+	console.log( style );
 
 	return (
 		<Fragment>
