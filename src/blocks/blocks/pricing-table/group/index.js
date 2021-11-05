@@ -9,7 +9,7 @@ import { rotateRight as icon } from '@wordpress/icons';
 import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 
-registerBlockType( 'themeisle/pricing-table', {
+registerBlockType( 'themeisle-blocks/pricing-table', {
 	title: __( 'Pricing Tables', 'otter-blocks' ),
 	icon,
 	category: 'themeisle-blocks',

@@ -6,7 +6,7 @@ const Save = ({ attributes, className }) => {
 	const tableClasses = classnames( className, { featured: attributes.isFeatured });
 
 	return (
-		<div className={ tableClasses }>
+		<div id={attributes.id} className={ tableClasses }>
 			<div className="pricing-table-wrap">
 				<div className="o-pricing-header">
 					{  attributes.isFeatured && (

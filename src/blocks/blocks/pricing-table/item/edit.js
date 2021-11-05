@@ -7,10 +7,21 @@ import {
 	jsx
 } from '@emotion/react';
 
+import {
+	useEffect
+} from '@wordpress/element';
+
 import { RichText, InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
+import defaultAttributes from './attributes.js';
+import { blockInit } from '../../../helpers/block-utility';
 
-export default ({ attributes, className, setAttributes }) => {
+export default ({ attributes, className, setAttributes, clientId }) => {
+
+	useEffect( () => {
+		const unsubscribe = blockInit( clientId, defaultAttributes );
+		return () => unsubscribe( attributes.id );
+	}, []);
 
 	const tableClasses = classnames([ className, { featured: attributes.isFeatured } ]);
 
@@ -96,7 +107,12 @@ export default ({ attributes, className, setAttributes }) => {
 									<sup>{ attributes.currency }</sup>
 									<span>{ attributes.price }</span>
 								</span>
-								<sub className="period">/{ attributes.period }</sub>
+								<sub
+									className="period"
+									style={{
+										color: attributes.priceColor
+									}}
+								>/{ attributes.period }</sub>
 							</h5>
 						</div>
 						<div

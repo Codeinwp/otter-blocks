@@ -9,7 +9,7 @@ import edit from './edit';
 import save from './save';
 import attributes from './attributes';
 
-registerBlockType( 'themeisle/pricing-table-item', {
+registerBlockType( 'themeisle-blocks/pricing-table-item', {
 	title: __( 'Pricing Table', 'otter-blocks' ),
 	icon,
 	category: 'themeisle-blocks',
