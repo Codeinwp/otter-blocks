@@ -382,7 +382,7 @@ const Inspector = ({
 
 							<ClearButton
 								values={ 'fontSize' }
-								setAttributes={setAttributes}
+								setAttributes={ setAttributes }
 							/>
 
 							<ResponsiveControl
@@ -414,7 +414,7 @@ const Inspector = ({
 
 							<ClearButton
 								values={[ 'fontFamily', 'fontVariant', 'fontStyle', 'textTransform' ]}
-								setAttributes={setAttributes}
+								setAttributes={ setAttributes }
 							/>
 
 							<RangeControl
@@ -427,8 +427,8 @@ const Inspector = ({
 							/>
 
 							<ClearButton
-								values={[ 'lineHeight' ]}
-								setAttributes={setAttributes}
+								values={ 'lineHeight' }
+								setAttributes={ setAttributes }
 							/>
 
 							<RangeControl
@@ -441,7 +441,7 @@ const Inspector = ({
 
 							<ClearButton
 								values={ 'letterSpacing' }
-								setAttributes={setAttributes}
+								setAttributes={ setAttributes }
 							/>
 
 							<ToggleControl
@@ -590,7 +590,7 @@ const Inspector = ({
 									{ 'paddingLeftTablet': 'Tablet' === getView && 'linked' !== attributes.paddingType },
 									{ 'paddingLeftMobile': 'Mobile' === getView && 'linked' !== attributes.paddingType }
 								]}
-								setAttributes={setAttributes}
+								setAttributes={ setAttributes }
 							/>
 
 							<ResponsiveControl
@@ -637,7 +637,7 @@ const Inspector = ({
 									{ 'marginBottomTablet': 'Tablet' === getView && 'linked' !== attributes.marginType },
 									{ 'marginBottomMobile': 'Mobile' === getView && 'linked' !== attributes.marginType }
 								]}
-								setAttributes={setAttributes}
+								setAttributes={ setAttributes }
 							/>
 						</PanelBody>
 					</Fragment>

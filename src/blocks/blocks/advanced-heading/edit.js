@@ -10,6 +10,8 @@ import GoogleFontLoader from 'react-google-font-loader';
  */
 import { __ } from '@wordpress/i18n';
 
+import { omitBy } from 'lodash';
+
 import { createBlock } from '@wordpress/blocks';
 
 import { RichText } from '@wordpress/block-editor';
@@ -22,10 +24,6 @@ import {
 	Fragment,
 	useEffect
 } from '@wordpress/element';
-
-import {
-	omitBy
-} from 'lodash';
 
 /**
  * Internal dependencies

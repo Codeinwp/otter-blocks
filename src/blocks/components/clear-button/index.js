@@ -1,4 +1,6 @@
-import { Button } from '@wordpress/components';
+/**
+ * WordPress dependencies.
+ */
 import { __ } from '@wordpress/i18n';
 
 import {
@@ -7,26 +9,13 @@ import {
 	isArray
 } from 'lodash';
 
-/**
- * @typedef {Object} IClearButton
- * @property {React.ReactNode} children
- * @property {((string | Object.<string, ?boolean>)[]  | string)} values
- * @property {Function} setAttributes
- */
+import { Button } from '@wordpress/components';
 
-/**
- * A button for clearing the values of array of attributes
- * @param {...IClearButton} props
- * @returns {React.FunctionComponent}
- */
 const ClearButton = ({
-	children,
 	values,
 	setAttributes
 }) => {
-
 	const clearValues = () => {
-
 		const attrToClear = ( isArray( values ) ? values : [ values ])
 			.map(
 				value => {
@@ -50,19 +39,13 @@ const ClearButton = ({
 	};
 
 	return (
-		<div
-			style={{
-				width: '100%',
-				display: 'flex',
-				justifyContent: 'flex-end'
-			}}
-		>
+		<div className="otter-clear-button">
 			<Button
 				isSmall
 				isSecondary
 				onClick={ clearValues }
 			>
-				{children || __( 'Clear', 'otter-blocks' )}
+				{ __( 'Clear', 'otter-blocks' ) }
 			</Button>
 		</div>
 	);
