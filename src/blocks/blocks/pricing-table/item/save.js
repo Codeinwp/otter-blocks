@@ -30,12 +30,16 @@ const Save = ({ attributes, className }) => {
 					) }
 					<div className="o-pricing-price">
 						<h5>
-							<del
-								className="full-price"
-							>
-								<sup>{ attributes.currency }</sup>
-								<span>{ attributes.oldPrice }</span>
-							</del>
+							{
+								attributes.isSale && (
+									<del
+										className="full-price"
+									>
+										<sup>{ attributes.currency }</sup>
+										<span>{ attributes.oldPrice }</span>
+									</del>
+								)
+							}
 							<span
 								className="price"
 							>

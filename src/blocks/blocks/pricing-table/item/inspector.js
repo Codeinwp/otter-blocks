@@ -32,7 +32,7 @@ const Inspector = ({ attributes, setAttributes }) => {
 				<TextControl
 					label={ __( 'Price', 'otter-blocks' ) }
 					type="number"
-					help={ __( 'Set the price.', 'otter-blocks' ) }
+					help={ __( 'Set the current price.', 'otter-blocks' ) }
 					value={ attributes.price }
 					onChange={ price => setAttributes({ price }) }
 				/>
@@ -50,6 +50,30 @@ const Inspector = ({ attributes, setAttributes }) => {
 					value={ attributes.period }
 					onChange={ period => setAttributes({ period }) }
 				/>
+
+				<ToggleControl
+					label={ __( 'Is on sale', 'otter-blocks' ) }
+					help={ __(
+						'Show the old price.',
+						'otter-blocks'
+					) }
+					checked={ attributes.isSale }
+					onChange={ isSale => setAttributes({ isSale }) }
+				/>
+
+				{
+					attributes.isSale && (
+						<TextControl
+							label={ __( 'Old Price', 'otter-blocks' ) }
+							type="number"
+							help={ __( 'Set the old price.', 'otter-blocks' ) }
+							value={ attributes.oldPrice }
+							onChange={ oldPrice => setAttributes({ price }) }
+						/>
+
+					)
+				}
+
 
 				<ToggleControl
 					label={ __( 'Featured Package', 'otter-blocks' ) }

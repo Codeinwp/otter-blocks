@@ -89,15 +89,19 @@ export default ({ attributes, className, setAttributes, clientId }) => {
 						/>
 						<div className="o-pricing-price">
 							<h5>
-								<del
-									className="full-price"
-									style={{
-										color: attributes.oldPriceColor
-									}}
-								>
-									<sup>{ attributes.currency }</sup>
-									<span>{ attributes.oldPrice }</span>
-								</del>
+								{
+									attributes.isSale && (
+										<del
+											className="full-price"
+											style={{
+												color: attributes.oldPriceColor
+											}}
+										>
+											<sup>{ attributes.currency }</sup>
+											<span>{ attributes.oldPrice }</span>
+										</del>
+									)
+								}
 								<span
 									className="price"
 									style={{

@@ -21,6 +21,9 @@ const attributes = {
 		type: 'number',
 		default: 4.99
 	},
+	isSale: {
+		type: 'boolean'
+	},
 	oldPrice: {
 		type: 'number',
 		default: 9.99
