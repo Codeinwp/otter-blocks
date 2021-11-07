@@ -124,10 +124,6 @@ const Inspector = ({
 		}
 	};
 
-	const changeColumnsGap = value => {
-		setAttributes({ columnsGap: value });
-	};
-
 	let getPaddingType = () => {
 		switch ( getView ) {
 		case 'Desktop':
@@ -344,10 +340,6 @@ const Inspector = ({
 		setAttributes({ horizontalAlign: value });
 	};
 
-	const changeColumnsHeight = value => {
-		setAttributes({ columnsHeight: value });
-	};
-
 	let getColumnsHeightCustom = () => {
 		switch ( getView ) {
 		case 'Desktop':
@@ -375,126 +367,6 @@ const Inspector = ({
 			setAttributes({ columnsHeightCustomMobile: value });
 			break;
 		}
-	};
-
-	const changeBackgroundType = value => {
-		setAttributes({ backgroundType: value });
-	};
-
-	const changeBackgroundColor = value => {
-		setAttributes({ backgroundColor: value });
-	};
-
-	const removeBackgroundImage = () => {
-		setAttributes({
-			backgroundImageID: '',
-			backgroundImageURL: ''
-		});
-	};
-
-	const changeBackgroundAttachment = value => {
-		setAttributes({ backgroundAttachment: value });
-	};
-
-	const changeBackgroundPosition = value => {
-		setAttributes({ backgroundPosition: value });
-	};
-
-	const changeBackgroundRepeat = value => {
-		setAttributes({ backgroundRepeat: value });
-	};
-
-	const changeBackgroundSize = value => {
-		setAttributes({ backgroundSize: value });
-	};
-
-	const changeBackgroundImage = value => {
-		setAttributes({
-			backgroundImageID: value.id,
-			backgroundImageURL: value.url
-		});
-	};
-
-	const changeBackgroundGradient = value => {
-		setAttributes({ backgroundGradient: value });
-	};
-
-	const changeBackgroundOverlayType = value => {
-		setAttributes({ backgroundOverlayType: value });
-	};
-
-	const changeBackgroundOverlayOpacity = value => {
-		setAttributes({ backgroundOverlayOpacity: value });
-	};
-
-	const changeBackgroundOverlayColor = value => {
-		setAttributes({ backgroundOverlayColor: value });
-	};
-
-	const removeBackgroundOverlayImage = () => {
-		setAttributes({
-			backgroundOverlayImageID: '',
-			backgroundOverlayImageURL: ''
-		});
-	};
-
-	const changeBackgroundOverlayAttachment = value => {
-		setAttributes({ backgroundOverlayAttachment: value });
-	};
-
-	const changeBackgroundOverlayPosition = value => {
-		setAttributes({ backgroundOverlayPosition: value });
-	};
-
-	const changeBackgroundOverlayRepeat = value => {
-		setAttributes({ backgroundOverlayRepeat: value });
-	};
-
-	const changeBackgroundOverlaySize = value => {
-		setAttributes({ backgroundOverlaySize: value });
-	};
-
-	const changeBackgroundOverlayImage = value => {
-		setAttributes({
-			backgroundOverlayImageID: value.id,
-			backgroundOverlayImageURL: value.url
-		});
-	};
-
-	const changeBackgroundOverlayGradient = value => {
-		setAttributes({ backgroundOverlayGradient: value });
-	};
-
-	const changebackgroundOverlayFilterBlur = value => {
-		setAttributes({ backgroundOverlayFilterBlur: value });
-	};
-
-	const changebackgroundOverlayFilterBrightness = value => {
-		setAttributes({ backgroundOverlayFilterBrightness: value });
-	};
-
-	const changebackgroundOverlayFilterContrast = value => {
-		setAttributes({ backgroundOverlayFilterContrast: value });
-	};
-
-	const changebackgroundOverlayFilterGrayscale = value => {
-		setAttributes({ backgroundOverlayFilterGrayscale: value });
-	};
-
-	const changebackgroundOverlayFilterHue = value => {
-		setAttributes({ backgroundOverlayFilterHue: value });
-	};
-
-	const changebackgroundOverlayFilterSaturate = value => {
-		setAttributes({ backgroundOverlayFilterSaturate: value });
-	};
-
-	const changebackgroundOverlayBlend = value => {
-		setAttributes({ backgroundOverlayBlend: value });
-	};
-
-	const changeBorderType = value => {
-		setAttributes({ borderType: value });
 	};
 
 	const borderWidthDirection = {
@@ -527,14 +399,6 @@ const Inspector = ({
 		}
 	};
 
-	const changeBorderColor = value => {
-		setAttributes({ borderColor: value });
-	};
-
-	const changeBorderRadiusType = value => {
-		setAttributes({ borderRadiusType: value });
-	};
-
 	const borderRadiusDirection = {
 		top: 'borderRadiusTop',
 		right: 'borderRadiusRight',
@@ -563,34 +427,6 @@ const Inspector = ({
 		default:
 			return undefined;
 		}
-	};
-
-	const changeBoxShadow = () => {
-		setAttributes({ boxShadow: ! attributes.boxShadow });
-	};
-
-	const changeBoxShadowColor = value => {
-		setAttributes({ boxShadowColor: value });
-	};
-
-	const changeBoxShadowColorOpacity = value => {
-		setAttributes({ boxShadowColorOpacity: value });
-	};
-
-	const changeBoxShadowBlur = value => {
-		setAttributes({ boxShadowBlur: value });
-	};
-
-	const changeBoxShadowSpread = value => {
-		setAttributes({ boxShadowSpread: value });
-	};
-
-	const changeBoxShadowHorizontal = value => {
-		setAttributes({ boxShadowHorizontal: value });
-	};
-
-	const changeBoxShadowVertical = value => {
-		setAttributes({ boxShadowVertical: value });
 	};
 
 	const getDividerType = () => {
@@ -780,14 +616,6 @@ const Inspector = ({
 		}
 	};
 
-	const changeColumnsHTMLTag = value => {
-		setAttributes({ columnsHTMLTag: value });
-	};
-
-	const changeID = value => {
-		setAttributes({ id: value });
-	};
-
 	return (
 		<Fragment>
 			<InspectorControls>
@@ -866,7 +694,7 @@ const Inspector = ({
 									{ label: __( 'Wide (20px)', 'otter-blocks' ), value: 'wide' },
 									{ label: __( 'Wider (30px)', 'otter-blocks' ), value: 'wider' }
 								] }
-								onChange={ changeColumnsGap }
+								onChange={ value => setAttributes({ columnsGap: value }) }
 							/>
 						</PanelBody>
 
@@ -996,7 +824,7 @@ const Inspector = ({
 									{ label: __( 'Fit to Screen', 'otter-blocks' ), value: '100vh' },
 									{ label: __( 'Custom', 'otter-blocks' ), value: 'custom' }
 								] }
-								onChange={ changeColumnsHeight }
+								onChange={ value => setAttributes({ columnsHeight: value }) }
 							/>
 
 							{ 'custom' === attributes.columnsHeight && (
@@ -1024,7 +852,7 @@ const Inspector = ({
 							<BackgroundControl
 								label={ __( 'Background Type', 'otter-blocks' ) }
 								backgroundType={ attributes.backgroundType }
-								changeBackgroundType={ changeBackgroundType }
+								changeBackgroundType={ value => setAttributes({ backgroundType: value }) }
 							/>
 
 							{ 'color' === attributes.backgroundType && (
@@ -1036,7 +864,7 @@ const Inspector = ({
 									<ColorPalette
 										label={ __( 'Background Color', 'otter-blocks' ) }
 										value={ attributes.backgroundColor }
-										onChange={ changeBackgroundColor }
+										onChange={ value => setAttributes({ backgroundColor: value }) }
 									/>
 								</ColorBaseControl>
 
@@ -1055,7 +883,12 @@ const Inspector = ({
 
 												<div
 													className="wp-block-themeisle-image-container-delete"
-													onClick={ removeBackgroundImage }
+													onClick={ () => {
+														setAttributes({
+															backgroundImageID: '',
+															backgroundImageURL: ''
+														});
+													} }
 												>
 													<Dashicon icon="trash" />
 													<span>{ __( 'Remove Image', 'otter-blocks' ) }</span>
@@ -1066,7 +899,12 @@ const Inspector = ({
 										<Button
 											isSecondary
 											className="wp-block-themeisle-image-container-delete-button"
-											onClick={ removeBackgroundImage }
+											onClick={ () => {
+												setAttributes({
+													backgroundImageID: '',
+													backgroundImageURL: ''
+												});
+											} }
 										>
 											{ __( 'Change or Remove Image', 'otter-blocks' ) }
 										</Button>
@@ -1083,7 +921,7 @@ const Inspector = ({
 													{ label: __( 'Fixed', 'otter-blocks' ), value: 'fixed' },
 													{ label: __( 'Local', 'otter-blocks' ), value: 'local' }
 												] }
-												onChange={ changeBackgroundAttachment }
+												onChange={ value => setAttributes({ backgroundAttachment: value }) }
 											/>
 
 											<SelectControl
@@ -1101,7 +939,7 @@ const Inspector = ({
 													{ label: __( 'Bottom Center', 'otter-blocks' ), value: 'bottom center' },
 													{ label: __( 'Bottom Right', 'otter-blocks' ), value: 'bottom right' }
 												] }
-												onChange={ changeBackgroundPosition }
+												onChange={ value => setAttributes({ backgroundPosition: value }) }
 											/>
 
 											<SelectControl
@@ -1111,7 +949,7 @@ const Inspector = ({
 													{ label: __( 'Repeat', 'otter-blocks' ), value: 'repeat' },
 													{ label: __( 'No-repeat', 'otter-blocks' ), value: 'no-repeat' }
 												] }
-												onChange={ changeBackgroundRepeat }
+												onChange={ value => setAttributes({ backgroundRepeat: value }) }
 											/>
 
 											<SelectControl
@@ -1122,7 +960,7 @@ const Inspector = ({
 													{ label: __( 'Cover', 'otter-blocks' ), value: 'cover' },
 													{ label: __( 'Contain', 'otter-blocks' ), value: 'contain' }
 												] }
-												onChange={ changeBackgroundSize }
+												onChange={ value => setAttributes({ backgroundSize: value }) }
 											/>
 
 										</ControlPanelControl>
@@ -1135,7 +973,12 @@ const Inspector = ({
 											name: __( 'an image', 'otter-blocks' )
 										} }
 										value={ attributes.backgroundImageID }
-										onSelect={ changeBackgroundImage }
+										onSelect={ value => {
+											setAttributes({
+												backgroundImageID: value.id,
+												backgroundImageURL: value.url
+											});
+										} }
 										accept="image/*"
 										allowedTypes={ [ 'image' ] }
 									/>
@@ -1145,7 +988,7 @@ const Inspector = ({
 									label={ __( 'Background Gradient', 'otter-blocks' ) }
 									gradientValue={ attributes.backgroundGradient }
 									disableCustomColors={ true }
-									onGradientChange={ changeBackgroundGradient }
+									onGradientChange={ value => setAttributes({ backgroundGradient: value }) }
 									clearable={ false }
 								/>
 							) }
@@ -1159,13 +1002,13 @@ const Inspector = ({
 							<BackgroundControl
 								label={ __( 'Overlay Type', 'otter-blocks' ) }
 								backgroundType={ attributes.backgroundOverlayType }
-								changeBackgroundType={ changeBackgroundOverlayType }
+								changeBackgroundType={ value => setAttributes({ backgroundOverlayType: value }) }
 							/>
 
 							<RangeControl
 								label={ __( 'Overlay Opacity', 'otter-blocks' ) }
 								value={ attributes.backgroundOverlayOpacity }
-								onChange={ changeBackgroundOverlayOpacity }
+								onChange={ value => setAttributes({ backgroundOverlayOpacity: value }) }
 								min={ 0 }
 								max={ 100 }
 							/>
@@ -1179,7 +1022,7 @@ const Inspector = ({
 									<ColorPalette
 										label={ __( 'Overlay Color', 'otter-blocks' ) }
 										value={ attributes.backgroundOverlayColor }
-										onChange={ changeBackgroundOverlayColor }
+										onChange={ value => setAttributes({ backgroundOverlayColor: value }) }
 									/>
 								</ColorBaseControl>
 
@@ -1198,7 +1041,12 @@ const Inspector = ({
 
 												<div
 													className="wp-block-themeisle-image-container-delete"
-													onClick={ removeBackgroundOverlayImage }
+													onClick={ () => {
+														setAttributes({
+															backgroundOverlayImageID: '',
+															backgroundOverlayImageURL: ''
+														});
+													} }
 												>
 													<Dashicon icon="trash" />
 													<span>{ __( 'Remove Image', 'otter-blocks' ) }</span>
@@ -1209,7 +1057,12 @@ const Inspector = ({
 										<Button
 											isSecondary
 											className="wp-block-themeisle-image-container-delete-button"
-											onClick={ removeBackgroundOverlayImage }
+											onClick={ () => {
+												setAttributes({
+													backgroundOverlayImageID: '',
+													backgroundOverlayImageURL: ''
+												});
+											} }
 										>
 											{ __( 'Change or Remove Image', 'otter-blocks' ) }
 										</Button>
@@ -1226,7 +1079,7 @@ const Inspector = ({
 													{ label: __( 'Fixed', 'otter-blocks' ), value: 'fixed' },
 													{ label: __( 'Local', 'otter-blocks' ), value: 'local' }
 												] }
-												onChange={ changeBackgroundOverlayAttachment }
+												onChange={ value => setAttributes({ backgroundOverlayAttachment: value }) }
 											/>
 
 											<SelectControl
@@ -1244,7 +1097,7 @@ const Inspector = ({
 													{ label: __( 'Bottom Center', 'otter-blocks' ), value: 'bottom center' },
 													{ label: __( 'Bottom Right', 'otter-blocks' ), value: 'bottom right' }
 												] }
-												onChange={ changeBackgroundOverlayPosition }
+												onChange={ value => setAttributes({ backgroundOverlayPosition: value }) }
 											/>
 
 											<SelectControl
@@ -1254,7 +1107,7 @@ const Inspector = ({
 													{ label: __( 'Repeat', 'otter-blocks' ), value: 'repeat' },
 													{ label: __( 'No-repeat', 'otter-blocks' ), value: 'no-repeat' }
 												] }
-												onChange={ changeBackgroundOverlayRepeat }
+												onChange={ value => setAttributes({ backgroundOverlayRepeat: value }) }
 											/>
 
 											<SelectControl
@@ -1265,7 +1118,7 @@ const Inspector = ({
 													{ label: __( 'Cover', 'otter-blocks' ), value: 'cover' },
 													{ label: __( 'Contain', 'otter-blocks' ), value: 'contain' }
 												] }
-												onChange={ changeBackgroundOverlaySize }
+												onChange={ value => setAttributes({ backgroundOverlaySize: value }) }
 											/>
 
 										</ControlPanelControl>
@@ -1278,7 +1131,12 @@ const Inspector = ({
 											name: __( 'an image', 'otter-blocks' )
 										} }
 										value={ attributes.backgroundOverlayImageID }
-										onSelect={ changeBackgroundOverlayImage }
+										onSelect={ value => {
+											setAttributes({
+												backgroundOverlayImageID: value.id,
+												backgroundOverlayImageURL: value.url
+											});
+										} }
 										accept="image/*"
 										allowedTypes={ [ 'image' ] }
 									/>
@@ -1288,7 +1146,7 @@ const Inspector = ({
 									label={ __( 'Background Gradient', 'otter-blocks' ) }
 									gradientValue={ attributes.backgroundOverlayGradient }
 									disableCustomColors={ true }
-									onGradientChange={ changeBackgroundOverlayGradient }
+									onGradientChange={ value => setAttributes({ backgroundOverlayGradient: value }) }
 									clearable={ false }
 								/>
 							) }
@@ -1299,7 +1157,7 @@ const Inspector = ({
 								<RangeControl
 									label={ __( 'Blur', 'otter-blocks' ) }
 									value={ attributes.backgroundOverlayFilterBlur }
-									onChange={ changebackgroundOverlayFilterBlur }
+									onChange={ value => setAttributes({ backgroundOverlayFilterBlur: value }) }
 									min={ 0 }
 									max={ 100 }
 								/>
@@ -1307,7 +1165,7 @@ const Inspector = ({
 								<RangeControl
 									label={ __( 'Brightness', 'otter-blocks' ) }
 									value={ attributes.backgroundOverlayFilterBrightness }
-									onChange={ changebackgroundOverlayFilterBrightness }
+									onChange={ value => setAttributes({ backgroundOverlayFilterBrightness: value }) }
 									min={ 0 }
 									max={ 100 }
 								/>
@@ -1315,7 +1173,7 @@ const Inspector = ({
 								<RangeControl
 									label={ __( 'Contrast', 'otter-blocks' ) }
 									value={ attributes.backgroundOverlayFilterContrast }
-									onChange={ changebackgroundOverlayFilterContrast }
+									onChange={ value => setAttributes({ backgroundOverlayFilterContrast: value }) }
 									min={ 0 }
 									max={ 100 }
 								/>
@@ -1323,7 +1181,7 @@ const Inspector = ({
 								<RangeControl
 									label={ __( 'Grayscale', 'otter-blocks' ) }
 									value={ attributes.backgroundOverlayFilterGrayscale }
-									onChange={ changebackgroundOverlayFilterGrayscale }
+									onChange={ value => setAttributes({ backgroundOverlayFilterGrayscale: value }) }
 									min={ 0 }
 									max={ 100 }
 								/>
@@ -1331,7 +1189,7 @@ const Inspector = ({
 								<RangeControl
 									label={ __( 'Hue', 'otter-blocks' ) }
 									value={ attributes.backgroundOverlayFilterHue }
-									onChange={ changebackgroundOverlayFilterHue }
+									onChange={ value => setAttributes({ backgroundOverlayFilterHue: value }) }
 									min={ 0 }
 									max={ 360 }
 								/>
@@ -1339,7 +1197,7 @@ const Inspector = ({
 								<RangeControl
 									label={ __( 'Saturation', 'otter-blocks' ) }
 									value={ attributes.backgroundOverlayFilterSaturate }
-									onChange={ changebackgroundOverlayFilterSaturate }
+									onChange={ value => setAttributes({ backgroundOverlayFilterSaturate: value }) }
 									min={ 0 }
 									max={ 100 }
 								/>
@@ -1366,7 +1224,7 @@ const Inspector = ({
 									{ label: __( 'Color', 'otter-blocks' ), value: 'color' },
 									{ label: __( 'Luminosity', 'otter-blocks' ), value: 'luminosity' }
 								] }
-								onChange={ changebackgroundOverlayBlend }
+								onChange={ value => setAttributes({ backgroundOverlayBlend: value }) }
 							/>
 						</PanelBody>
 
@@ -1380,7 +1238,7 @@ const Inspector = ({
 								type={ attributes.borderType }
 								min={ 0 }
 								max={ 500 }
-								changeType={ changeBorderType }
+								changeType={ value => setAttributes({ borderType: value }) }
 								onChange={ changeBorder }
 								options={ [
 									{
@@ -1413,7 +1271,7 @@ const Inspector = ({
 								<ColorPalette
 									label={ __( 'Border Color', 'otter-blocks' ) }
 									value={ attributes.borderColor }
-									onChange={ changeBorderColor }
+									onChange={ value => setAttributes({ borderColor: value }) }
 								/>
 							</ColorBaseControl>
 
@@ -1422,7 +1280,7 @@ const Inspector = ({
 								type={ attributes.borderRadiusType }
 								min={ 0 }
 								max={ 500 }
-								changeType={ changeBorderRadiusType }
+								changeType={ value => setAttributes({ borderRadiusType: value }) }
 								onChange={ changeBorderRadius }
 								options={ [
 									{
@@ -1451,7 +1309,7 @@ const Inspector = ({
 							<ToggleControl
 								label={ __( 'Box Shadow', 'otter-blocks' ) }
 								checked={ attributes.boxShadow }
-								onChange={ changeBoxShadow }
+								onChange={ () => setAttributes({ boxShadow: ! attributes.boxShadow }) }
 							/>
 
 							{ attributes.boxShadow && (
@@ -1464,7 +1322,7 @@ const Inspector = ({
 										<ColorPalette
 											label={ __( 'Shadow Color', 'otter-blocks' ) }
 											value={ attributes.boxShadowColor }
-											onChange={ changeBoxShadowColor }
+											onChange={ value => setAttributes({ boxShadowColor: value }) }
 										/>
 									</ColorBaseControl>
 
@@ -1474,7 +1332,7 @@ const Inspector = ({
 										<RangeControl
 											label={ __( 'Opacity', 'otter-blocks' ) }
 											value={ attributes.boxShadowColorOpacity }
-											onChange={ changeBoxShadowColorOpacity }
+											onChange={ value => setAttributes({ boxShadowColorOpacity: value }) }
 											min={ 0 }
 											max={ 100 }
 										/>
@@ -1482,7 +1340,7 @@ const Inspector = ({
 										<RangeControl
 											label={ __( 'Blur', 'otter-blocks' ) }
 											value={ attributes.boxShadowBlur }
-											onChange={ changeBoxShadowBlur }
+											onChange={ value => setAttributes({ boxShadowBlur: value }) }
 											min={ 0 }
 											max={ 100 }
 										/>
@@ -1490,7 +1348,7 @@ const Inspector = ({
 										<RangeControl
 											label={ __( 'Spread', 'otter-blocks' ) }
 											value={ attributes.boxShadowSpread }
-											onChange={ changeBoxShadowSpread }
+											onChange={ value => setAttributes({ boxShadowSpread: value }) }
 											min={ -100 }
 											max={ 100 }
 										/>
@@ -1498,7 +1356,7 @@ const Inspector = ({
 										<RangeControl
 											label={ __( 'Horizontal', 'otter-blocks' ) }
 											value={ attributes.boxShadowHorizontal }
-											onChange={ changeBoxShadowHorizontal }
+											onChange={ value => setAttributes({ boxShadowHorizontal: value }) }
 											min={ -100 }
 											max={ 100 }
 										/>
@@ -1506,7 +1364,7 @@ const Inspector = ({
 										<RangeControl
 											label={ __( 'Vertical', 'otter-blocks' ) }
 											value={ attributes.boxShadowVertical }
-											onChange={ changeBoxShadowVertical }
+											onChange={ value => setAttributes({ boxShadowVertical: value }) }
 											min={ -100 }
 											max={ 100 }
 										/>
@@ -1659,7 +1517,7 @@ const Inspector = ({
 									{ label: 'article', value: 'article' },
 									{ label: 'main', value: 'main' }
 								] }
-								onChange={ changeColumnsHTMLTag }
+								onChange={ value => setAttributes({ columnsHTMLTag: value }) }
 							/>
 						</PanelBody>
 					</Fragment>
@@ -1669,7 +1527,7 @@ const Inspector = ({
 
 			<HTMLAnchorControl
 				value={ attributes.id }
-				onChange={ changeID }
+				onChange={ value => setAttributes({ id: value }) }
 			/>
 		</Fragment>
 	);
