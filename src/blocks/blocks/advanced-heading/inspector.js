@@ -377,13 +377,9 @@ const Inspector = ({
 									onChange={ changeFontSize }
 									min={ 1 }
 									max={ 500 }
+									allowReset={ true }
 								/>
 							</ResponsiveControl>
-
-							<ClearButton
-								values={ 'fontSize' }
-								setAttributes={ setAttributes }
-							/>
 
 							<ResponsiveControl
 								label={ __( 'Alignment', 'otter-blocks' ) }
@@ -424,11 +420,7 @@ const Inspector = ({
 								min={ 0 }
 								step={ 0.1 }
 								max={ 3 }
-							/>
-
-							<ClearButton
-								values={ 'lineHeight' }
-								setAttributes={ setAttributes }
+								allowReset={ true }
 							/>
 
 							<RangeControl
@@ -437,11 +429,7 @@ const Inspector = ({
 								onChange={ letterSpacing => setAttributes({ letterSpacing }) }
 								min={ -50 }
 								max={ 100 }
-							/>
-
-							<ClearButton
-								values={ 'letterSpacing' }
-								setAttributes={ setAttributes }
+								allowReset={ true }
 							/>
 
 							<ToggleControl

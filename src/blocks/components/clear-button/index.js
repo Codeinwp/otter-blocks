@@ -11,6 +11,8 @@ import {
 
 import { Button } from '@wordpress/components';
 
+import './editor.scss';
+
 const ClearButton = ({
 	values,
 	setAttributes

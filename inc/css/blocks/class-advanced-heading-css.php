@@ -65,22 +65,26 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'format'   => function( $value, $attrs ) {
 							return 'regular' === $value ? 'normal' : $value;
 						},
+						'condition'      => function( $attrs ) {
+							return isset( $attrs['font-weight'] );
+						},
 					),
 					array(
 						'property' => 'font-style',
 						'value'    => 'fontStyle',
-						'default'  => 'normal',
 					),
 					array(
 						'property' => 'text-transform',
 						'value'    => 'textTransform',
-						'default'  => 'none',
 					),
 					array(
 						'property' => 'line-height',
 						'value'    => 'lineHeight',
 						'format'   => function( $value, $attrs ) {
 							return 3 < $value ? $value . 'px' : $value;
+						},
+						'condition'      => function( $attrs ) {
+							return isset( $attrs['line-height'] );
 						},
 					),
 					array(

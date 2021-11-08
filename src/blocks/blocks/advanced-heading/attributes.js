@@ -95,13 +95,16 @@ const attributes = {
 		default: 'linked'
 	},
 	padding: {
-		type: 'number'
+		type: 'number',
+		default: 0
 	},
 	paddingTablet: {
-		type: 'number'
+		type: 'number',
+		default: 0
 	},
 	paddingMobile: {
-		type: 'number'
+		type: 'number',
+		default: 0
 	},
 	paddingTop: {
 		type: 'number',
