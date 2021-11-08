@@ -81,14 +81,26 @@ const attributes = {
 	backImg: {
 		type: 'object'
 	},
+	backBackgroundType: {
+		type: 'string'
+	},
 	backBackgroundColor: {
 		type: 'string'
 	},
-	backBackgroundColorGradient: {
+	backBackgroundGradient: {
 		type: 'string'
 	},
 	backImgFocalpoint: {
 		type: 'object'
+	},
+	backBackgroundRepeat: {
+		type: 'string'
+	},
+	backBackgroundRepeat: {
+		type: 'string'
+	},
+	backBackgroundSize: {
+		type: 'string'
 	},
 	frontOverlayOpacity: {
 		type: 'number'

@@ -216,56 +216,28 @@ const Inspector = ({
 				initialOpen={ false }
 			>
 
-				<BaseControl
-					label={ __( 'Background Image', 'otter-blocks' ) }
-					help={ __( 'Set an image as background.', 'otter-blocks' ) }
-				>
-					<div
-						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							border: '0.5px solid #aaa',
-							borderRadius: '5px',
-							marginTop: '4px'
-						}}
-					>
-						<MediaReplaceFlow
-							mediaId={ attributes.backImg?.id }
-							mediaURL={ attributes.backImg?.url }
-							allowedTypes={ [ 'image' ] }
-							accept="image/*,video/*"
-							onSelect={ media => {
-								setAttributes({
-									backImg: pick( media, [ 'id', 'url' ])
-								});
-							} }
-							name={ ! attributes.backImg?.url ? __( 'Add image', 'otter-blocks' ) : __( 'Replace image', 'otter-blocks' ) }
-						>
-						</MediaReplaceFlow>
-						<Button
-							onClick={ () => {
-								setAttributes({
-									backImg: undefined
-								});
-							}}
-						>
-							{__( 'Clear image', 'otter-blocks' )}
-						</Button>
-					</div>
-				</BaseControl>
-
-				{
-					attributes.backImg?.url && (
-						<FocalPointPicker
-							label={ __( 'Focal point picker', 'otter-blocks' ) }
-							url={ attributes.backImg?.url }
-							value={ attributes.backImgFocalpoint }
-							onDragStart={ backImgFocalpoint => setAttributes({ backImgFocalpoint }) }
-							onDrag={ backImgFocalpoint => setAttributes({ backImgFocalpoint }) }
-							onChange={ backImgFocalpoint => setAttributes({ backImgFocalpoint }) }
-						/>
-					)
-				}
+				<BackgroundSelector
+					backgroundType={ attributes.backBackgroundType }
+					backgroundColor={ attributes.backBackgroundColor }
+					image={ attributes.backImg }
+					gradient={ attributes.backBackgroundGradient }
+					focalPoint={ attributes.backImgFocalpoint }
+					backgroundAttachment={ attributes.backBackgroundAttachment }
+					backgroundRepeat={ attributes.backBackgroundRepeat }
+					backgroundSize={ attributes.backBackgroundSize }
+					changeBackgroundType={ backBackgroundType => setAttributes({ backBackgroundType }) }
+					changeImage={ media => {
+						setAttributes({
+							backImg: pick( media, [ 'id', 'url' ])
+						});
+					}}
+					removeImage={ () => setAttributes({ backImg: undefined })}
+					changeColor={ backBackgroundColor => setAttributes({ backBackgroundColor })}
+					changeGradient={ backBackgroundGradient => setAttributes({ backBackgroundGradient }) }
+					changeBackgroundAttachment={ backBackgroundAttachment => setAttributes({ backBackgroundAttachment })}
+					changeBackgroundRepeat={ backBackgroundRepeat => setAttributes({ backBackgroundRepeat })}
+					changeFocalPoint={ backImgFocalpoint => setAttributes({ backImgFocalpoint }) }
+				/>
 
 				<SelectControl
 					label={ __( 'Vertical Align', 'otter-blocks' )}

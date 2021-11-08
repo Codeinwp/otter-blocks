@@ -168,9 +168,12 @@ const Edit = ({
 							borderRadius: attributes.borderRadius,
 							borderWidth: attributes.borderWidth,
 							justifyContent: attributes.backVerticalAlign,
-							backgroundColor: attributes.backBackgroundColor,
-							backgroundImage: `url(${attributes.backImg?.url})`,
-							backgroundPosition: `${ Math.round( attributes.backImgFocalpoint?.x * 100 ) }% ${ Math.round( attributes.backImgFocalpoint?.y * 100 ) }%`
+							backgroundColor: 'color' === attributes.backBackgroundType ? attributes.backBackgroundColor : undefined,
+							backgroundImage: 'image' === attributes.backBackgroundType ? `url(${attributes.backImg?.url})` : ( attributes.backBackgroundGradient || undefined ),
+							backgroundPosition: 'image' === attributes.backBackgroundType ? `${ Math.round( attributes.backImgFocalpoint?.x * 100 ) }% ${ Math.round( attributes.backImgFocalpoint?.y * 100 ) }%` : undefined,
+							backgroundRepeat: 'image' === attributes.backBackgroundType ? attributes.fontBackgroundRepeat : undefined,
+							backgroundAttachment: 'image' === attributes.backBackgroundType ? attributes.backBackgroundAttachment : undefined,
+							backgroundSize: 'image' === attributes.backBackgroundType ? attributes.backBackgroundSize : undefined
 						}}
 					>
 						<InnerBlocks
