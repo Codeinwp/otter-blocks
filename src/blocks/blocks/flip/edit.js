@@ -63,6 +63,7 @@ const Edit = ({
 		}
 		` : '';
 
+	console.log( 'color' === attributes.frontBackgroundType ? attributes.frontBackgroundColor : attributes.frontBackgroundGradient );
 	return (
 		<Fragment>
 			<Inspector
@@ -106,9 +107,12 @@ const Edit = ({
 							borderColor: attributes.borderColor,
 							borderRadius: attributes.borderRadius,
 							borderWidth: attributes.borderWidth,
-							backgroundColor: attributes.frontBackgroundColor,
-							backgroundImage: `url(${attributes.frontImg?.url})`,
-							backgroundPosition: `${ Math.round( attributes.frontImgFocalpoint?.x * 100 ) }% ${ Math.round( attributes.frontImgFocalpoint?.y * 100 ) }%`
+							backgroundColor: 'color' === attributes.frontBackgroundType ? attributes.frontBackgroundColor : undefined,
+							backgroundImage: 'image' === attributes.frontBackgroundType ? `url(${attributes.frontImg?.url})` : ( attributes.frontBackgroundGradient || undefined ),
+							backgroundPosition: 'image' === attributes.frontBackgroundType ? `${ Math.round( attributes.frontImgFocalpoint?.x * 100 ) }% ${ Math.round( attributes.frontImgFocalpoint?.y * 100 ) }%` : undefined,
+							backgroundRepeat: 'image' === attributes.frontBackgroundType ? attributes.fontBackgroundRepeat : undefined,
+							backgroundAttachment: 'image' === attributes.frontBackgroundType ? attributes.frontBackgroundAttachment : undefined,
+							backgroundSize: 'image' === attributes.frontBackgroundType ? attributes.frontBackgroundSize : undefined
 						}}
 					>
 						<div
