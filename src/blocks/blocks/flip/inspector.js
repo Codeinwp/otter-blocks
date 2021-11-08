@@ -28,6 +28,7 @@ import {
 } from '@wordpress/element';
 import ControlPanelControl from '../../components/control-panel-control';
 import ColorBaseControl from '../../components/color-base-control';
+import BackgroundSelector from '../../components/background-selector';
 
 const Inspector = ({
 	attributes,
@@ -132,6 +133,7 @@ const Inspector = ({
 					onChange={ frontMediaWidth => setAttributes({ frontMediaWidth }) }
 					min={ 0 }
 					max={ 1000 }
+					allowReset={ true }
 				/>
 
 				<RangeControl
@@ -140,58 +142,8 @@ const Inspector = ({
 					onChange={ frontMediaHeight => setAttributes({ frontMediaHeight }) }
 					min={ 0 }
 					max={ 1000 }
+					allowReset={ true }
 				/>
-
-				<BaseControl
-					label={ __( 'Background Image', 'otter-blocks' ) }
-					help={ __( 'Set an image as background.', 'otter-blocks' ) }
-				>
-					<div
-						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							border: '0.5px solid #aaa',
-							borderRadius: '5px',
-							marginTop: '4px'
-						}}
-					>
-						<MediaReplaceFlow
-							mediaId={ attributes.frontImg?.id }
-							mediaURL={ attributes.frontImg?.url }
-							allowedTypes={ [ 'image' ] }
-							accept="image/*"
-							onSelect={ media => {
-								setAttributes({
-									frontImg: pick( media, [ 'id', 'url' ])
-								});
-							} }
-							name={ ! attributes.frontImg?.url ? __( 'Add image', 'otter-blocks' ) : __( 'Replace image', 'otter-blocks' ) }
-						>
-						</MediaReplaceFlow>
-						<Button
-							onClick={ () => {
-								setAttributes({
-									frontImg: undefined
-								});
-							}}
-						>
-							{__( 'Clear image', 'otter-blocks' )}
-						</Button>
-					</div>
-				</BaseControl>
-
-				{
-					attributes.frontImg?.url && (
-						<FocalPointPicker
-							label={ __( 'Focal point picker', 'otter-blocks' ) }
-							url={ attributes.frontImg?.url }
-							value={ attributes.frontImgFocalpoint }
-							onDragStart={ frontImgFocalpoint => setAttributes({ frontImgFocalpoint }) }
-							onDrag={ frontImgFocalpoint => setAttributes({ frontImgFocalpoint }) }
-							onChange={ frontImgFocalpoint => setAttributes({ frontImgFocalpoint }) }
-						/>
-					)
-				}
 
 				<SelectControl
 					label={ __( 'Vertical Align', 'otter-blocks' )}
@@ -223,6 +175,7 @@ const Inspector = ({
 					onChange={ titleFontSize => setAttributes({ titleFontSize }) }
 					min={ 0 }
 					max={ 50 }
+					allowReset={ true }
 				/>
 
 				<RangeControl
@@ -231,6 +184,30 @@ const Inspector = ({
 					onChange={ descriptionFontSize => setAttributes({ descriptionFontSize }) }
 					min={ 0 }
 					max={ 50 }
+					allowReset={ true }
+				/>
+
+				<BackgroundSelector
+					backgroundType={ attributes.frontBackgroundType }
+					backgroundColor={ attributes.frontBackgroundColor }
+					image={ attributes.frontImg }
+					gradient={ attributes.frontBackgroundGradient }
+					focalPoint={ attributes.frontImgFocalpoint }
+					backgroundAttachment={ attributes.frontBackgroundAttachment }
+					backgroundRepeat={ attributes.frontBackgroundRepeat }
+					backgroundSize={ attributes.frontBackgroundSize }
+					changeBackgroundType={ frontBackgroundType => setAttributes({ frontBackgroundType }) }
+					changeImage={ media => {
+						setAttributes({
+							frontImg: pick( media, [ 'id', 'url' ])
+						});
+					}}
+					removeImage={ () => setAttributes({ frontImg: undefined })}
+					changeColor={ frontBackgroundColor => setAttributes({ frontBackgroundColor })}
+					changeGradient={ frontBackgroundGradient => setAttributes({ frontBackgroundGradient }) }
+					changeBackgroundAttachment={ frontBackgroundAttachment => setAttributes({ frontBackgroundAttachment })}
+					changeBackgroundRepeat={ frontBackgroundRepeat => setAttributes({ frontBackgroundRepeat })}
+					changeFocalPoint={ frontImgFocalpoint => setAttributes({ frontImgFocalpoint }) }
 				/>
 			</PanelBody>
 
@@ -278,7 +255,7 @@ const Inspector = ({
 				</BaseControl>
 
 				{
-					attributes.frontImg?.url && (
+					attributes.backImg?.url && (
 						<FocalPointPicker
 							label={ __( 'Focal point picker', 'otter-blocks' ) }
 							url={ attributes.backImg?.url }
@@ -301,11 +278,11 @@ const Inspector = ({
 					]}
 					onChange={ backVerticalAlign => setAttributes({ backVerticalAlign })}
 				/>
-
 			</PanelBody>
 
 			<PanelBody
 				title={ __( 'Style', 'otter-blocks' ) }
+				initialOpen={ false }
 			>
 
 				<SelectControl

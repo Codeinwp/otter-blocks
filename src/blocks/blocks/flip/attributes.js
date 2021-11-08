@@ -57,16 +57,34 @@ const attributes = {
 	frontImg: {
 		type: 'object'
 	},
+	frontBackgroundType: {
+		type: 'string'
+	},
 	frontBackgroundColor: {
+		type: 'string'
+	},
+	frontBackgroundGradient: {
 		type: 'string'
 	},
 	frontImgFocalpoint: {
 		type: 'object'
 	},
+	frontBackgroundRepeat: {
+		type: 'string'
+	},
+	frontBackgroundRepeat: {
+		type: 'string'
+	},
+	frontBackgroundSize: {
+		type: 'string'
+	},
 	backImg: {
 		type: 'object'
 	},
 	backBackgroundColor: {
+		type: 'string'
+	},
+	backBackgroundColorGradient: {
 		type: 'string'
 	},
 	backImgFocalpoint: {
