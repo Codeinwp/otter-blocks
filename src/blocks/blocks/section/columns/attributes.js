@@ -20,109 +20,23 @@ const attributes = {
 		type: 'string',
 		default: 'default'
 	},
-	paddingType: {
-		type: 'string',
-		default: 'linked'
-	},
-	paddingTypeTablet: {
-		type: 'string',
-		default: 'linked'
-	},
-	paddingTypeMobile: {
-		type: 'string',
-		default: 'linked'
-	},
 	padding: {
-		type: 'number',
-		default: 20
+		type: 'object'
 	},
 	paddingTablet: {
-		type: 'number'
+		type: 'object'
 	},
 	paddingMobile: {
-		type: 'number'
-	},
-	paddingTop: {
-		type: 'number',
-		default: 20
-	},
-	paddingTopTablet: {
-		type: 'number'
-	},
-	paddingTopMobile: {
-		type: 'number'
-	},
-	paddingRight: {
-		type: 'number',
-		default: 20
-	},
-	paddingRightTablet: {
-		type: 'number'
-	},
-	paddingRightMobile: {
-		type: 'number'
-	},
-	paddingBottom: {
-		type: 'number',
-		default: 20
-	},
-	paddingBottomTablet: {
-		type: 'number'
-	},
-	paddingBottomMobile: {
-		type: 'number'
-	},
-	paddingLeft: {
-		type: 'number',
-		default: 20
-	},
-	paddingLeftTablet: {
-		type: 'number'
-	},
-	paddingLeftMobile: {
-		type: 'number'
-	},
-	marginType: {
-		type: 'string',
-		default: 'unlinked'
-	},
-	marginTypeTablet: {
-		type: 'string',
-		default: 'unlinked'
-	},
-	marginTypeMobile: {
-		type: 'string',
-		default: 'unlinked'
+		type: 'object'
 	},
 	margin: {
-		type: 'number',
-		default: 20
+		type: 'object'
 	},
 	marginTablet: {
-		type: 'number'
+		type: 'object'
 	},
 	marginMobile: {
-		type: 'number'
-	},
-	marginTop: {
-		type: 'number',
-		default: 20
-	},
-	marginTopTablet: {
-		type: 'number'
-	},
-	marginTopMobile: {
-		type: 'number'
-	},
-	marginBottom: {
-		type: 'number',
-		default: 20
-	},
-	marginBottomTablet: {
-		type: 'number'
-	},
-	marginBottomMobile: {
-		type: 'number'
+		type: 'object'
 	},
 	columnsWidth: {
 		type: 'number'
@@ -246,57 +160,15 @@ const attributes = {
 		type: 'string',
 		default: 'normal'
 	},
-	borderType: {
-		type: 'string',
-		default: 'linked'
-	},
 	border: {
-		type: 'number',
-		default: 0
-	},
-	borderTop: {
-		type: 'number',
-		default: 0
-	},
-	borderRight: {
-		type: 'number',
-		default: 0
-	},
-	borderBottom: {
-		type: 'number',
-		default: 0
-	},
-	borderLeft: {
-		type: 'number',
-		default: 0
+		type: 'object'
 	},
 	borderColor: {
 		type: 'string',
 		default: '#000000'
 	},
-	borderRadiusType: {
-		type: 'string',
-		default: 'linked'
-	},
 	borderRadius: {
-		type: 'number',
-		default: 0
-	},
-	borderRadiusTop: {
-		type: 'number',
-		default: 0
-	},
-	borderRadiusRight: {
-		type: 'number',
-		default: 0
-	},
-	borderRadiusBottom: {
-		type: 'number',
-		default: 0
-	},
-	borderRadiusLeft: {
-		type: 'number',
-		default: 0
+		type: 'object'
 	},
 	boxShadow: {
 		type: 'boolean',

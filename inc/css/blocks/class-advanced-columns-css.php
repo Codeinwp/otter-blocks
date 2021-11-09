@@ -32,27 +32,116 @@ class Advanced_Columns_CSS extends Base_CSS {
 	 * @access  public
 	 */
 	public function render_css( $block ) {
-		$css = new CSS_Utility( $block );
+		$css   = new CSS_Utility( $block );
+		$attrs = $block['attrs'];
+
+		$old_attributes = array(
+			'padding',
+			'paddingTablet',
+			'paddingMobile',
+			'paddingTop',
+			'paddingTopTablet',
+			'paddingTopMobile',
+			'paddingRight',
+			'paddingRightTablet',
+			'paddingRightMobile',
+			'paddingBottom',
+			'paddingBottomTablet',
+			'paddingBottomMobile',
+			'paddingLeft',
+			'paddingLeftTablet',
+			'paddingLeftMobile',
+			'margin',
+			'marginTablet',
+			'marginMobile',
+			'marginTop',
+			'marginTopTablet',
+			'marginTopMobile',
+			'marginBottom',
+			'marginBottomTablet',
+			'marginBottomMobile',
+			'borderType',
+			'border',
+			'borderTop',
+			'borderRight',
+			'borderBottom',
+			'borderLeft',
+			'borderRadiusType',
+			'borderRadius',
+			'borderRadiusTop',
+			'borderRadiusRight',
+			'borderRadiusBottom',
+			'borderRadiusLeft',
+		);
+
+		$uses_old_sizing = $this->array_any(
+			$old_attributes,
+			function( $value ) use ( $attrs ) {
+				return isset( $attrs[ $value ] ) && is_numeric( $attrs[ $value ] );
+			} 
+		);
 
 		$css->add_item(
 			array(
 				'properties' => array(
 					array(
-						'property'  => 'padding',
+						'property'  => 'padding-top',
 						'value'     => 'padding',
-						'unit'      => 'px',
-						'default'   => 20,
+						'format'    => function( $value, $attrs ) {
+							return $value['top'];
+						},
 						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'] );
+							return isset( $attrs['padding'] ) && isset( $attrs['padding']['top'] );
 						},
 					),
 					array(
-						'property'  => 'padding-top',
-						'value'     => 'paddingTop',
-						'unit'      => 'px',
-						'default'   => 20,
+						'property'  => 'padding-bottom',
+						'value'     => 'padding',
+						'format'    => function( $value, $attrs ) {
+							return $value['bottom'];
+						},
 						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'];
+							return isset( $attrs['padding'] ) && isset( $attrs['padding']['bottom'] );
+						},
+					),
+					array(
+						'property'  => 'padding-left',
+						'value'     => 'padding',
+						'format'    => function( $value, $attrs ) {
+							return $value['left'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['padding'] ) && isset( $attrs['padding']['left'] );
+						},
+					),
+					array(
+						'property'  => 'padding-right',
+						'value'     => 'padding',
+						'format'    => function( $value, $attrs ) {
+							return $value['right'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['padding'] ) && isset( $attrs['padding']['right'] );
+						},
+					),
+					array(
+						'property'  => 'margin-top',
+						'value'     => 'margin',
+						'format'    => function( $value, $attrs ) {
+							return $value['top'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['margin'] ) && isset( $attrs['margin']['top'] );
+						},
+					),
+					array(
+						'property'  => 'margin-bottom',
+						'value'     => 'margin',
+						'format'    => function( $value, $attrs ) {
+							return $value['bottom'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['margin'] ) && isset( $attrs['margin']['bottom'] );
 						},
 					),
 					array(
@@ -60,8 +149,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'value'     => 'paddingRight',
 						'unit'      => 'px',
 						'default'   => 20,
-						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'] && true === $uses_old_sizing;
 						},
 					),
 					array(
@@ -69,8 +158,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'value'     => 'paddingBottom',
 						'unit'      => 'px',
 						'default'   => 20,
-						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'] && true === $uses_old_sizing;
 						},
 					),
 					array(
@@ -78,8 +167,53 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'value'     => 'paddingLeft',
 						'unit'      => 'px',
 						'default'   => 20,
-						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'] && true === $uses_old_sizing;
+						},
+					),
+					array(
+						'property'  => 'padding',
+						'value'     => 'padding',
+						'unit'      => 'px',
+						'default'   => 20,
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return ! ( isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'] ) && true === $uses_old_sizing;
+						},
+					),
+					array(
+						'property'  => 'padding-top',
+						'value'     => 'paddingTop',
+						'unit'      => 'px',
+						'default'   => 20,
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'] && true === $uses_old_sizing;
+						},
+					),
+					array(
+						'property'  => 'padding-right',
+						'value'     => 'paddingRight',
+						'unit'      => 'px',
+						'default'   => 20,
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'] && true === $uses_old_sizing;
+						},
+					),
+					array(
+						'property'  => 'padding-bottom',
+						'value'     => 'paddingBottom',
+						'unit'      => 'px',
+						'default'   => 20,
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'] && true === $uses_old_sizing;
+						},
+					),
+					array(
+						'property'  => 'padding-left',
+						'value'     => 'paddingLeft',
+						'unit'      => 'px',
+						'default'   => 20,
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'] && true === $uses_old_sizing;
 						},
 					),
 					array(
@@ -87,8 +221,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'value'     => 'margin',
 						'unit'      => 'px',
 						'default'   => 20,
-						'condition' => function( $attrs ) {
-							return isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] && true === $uses_old_sizing;
 						},
 					),
 					array(
@@ -96,8 +230,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'value'     => 'margin',
 						'unit'      => 'px',
 						'default'   => 20,
-						'condition' => function( $attrs ) {
-							return isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] && true === $uses_old_sizing;
 						},
 					),
 					array(
@@ -105,8 +239,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'value'     => 'marginTop',
 						'unit'      => 'px',
 						'default'   => 20,
-						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] );
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return ! ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] ) && true === $uses_old_sizing;
 						},
 					),
 					array(
@@ -114,8 +248,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'value'     => 'marginBottom',
 						'unit'      => 'px',
 						'default'   => 20,
-						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] );
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return ! ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] ) && true === $uses_old_sizing;
 						},
 					),
 					array(
@@ -246,6 +380,95 @@ class Advanced_Columns_CSS extends Base_CSS {
 						},
 					),
 					array(
+						'property'       => 'border-width',
+						'pattern'        => 'top right bottom left',
+						'pattern_values' => array(
+							'top'    => array(
+								'value'   => 'border',
+								'default' => 0,
+								'format'  => function( $value, $attrs ) {
+									return $value['top'];
+								},
+							),
+							'right'  => array(
+								'value'   => 'border',
+								'default' => 0,
+								'format'  => function( $value, $attrs ) {
+									return $value['right'];
+								},
+							),
+							'bottom' => array(
+								'value'   => 'border',
+								'default' => 0,
+								'format'  => function( $value, $attrs ) {
+									return $value['bottom'];
+								},
+							),
+							'left'   => array(
+								'value'   => 'border',
+								'default' => 0,
+								'format'  => function( $value, $attrs ) {
+									return $value['left'];
+								},
+							),
+						),
+						'condition'      => function( $attrs ) {
+							return isset( $attrs['border'] ) && is_array( $attrs['border'] );
+						},
+					),
+					array(
+						'property'  => 'border-style',
+						'default'   => 'solid',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['border'] ) && is_array( $attrs['border'] );
+						},
+					),
+					array(
+						'property'  => 'border-color',
+						'value'     => 'borderColor',
+						'default'   => '#000000',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['border'] ) && is_array( $attrs['border'] );
+						},
+					),
+					array(
+						'property'       => 'border-radius',
+						'pattern'        => 'top-left top-right bottom-right bottom-left',
+						'pattern_values' => array(
+							'top-left'     => array(
+								'value'   => 'borderRadius',
+								'default' => 0,
+								'format'  => function( $value, $attrs ) {
+									return $value['top'];
+								},
+							),
+							'top-right'    => array(
+								'value'   => 'borderRadius',
+								'default' => 0,
+								'format'  => function( $value, $attrs ) {
+									return $value['right'];
+								},
+							),
+							'bottom-right' => array(
+								'value'   => 'borderRadius',
+								'default' => 0,
+								'format'  => function( $value, $attrs ) {
+									return $value['bottom'];
+								},
+							),
+							'bottom-left'  => array(
+								'value'   => 'borderRadius',
+								'default' => 0,
+								'format'  => function( $value, $attrs ) {
+									return $value['left'];
+								},
+							),
+						),
+						'condition'      => function( $attrs ) {
+							return isset( $attrs['borderRadius'] ) && is_array( $attrs['borderRadius'] );
+						},
+					),
+					array(
 						'property'       => 'border',
 						'pattern'        => 'width solid color',
 						'pattern_values' => array(
@@ -259,8 +482,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 								'default' => '#000000',
 							),
 						),
-						'condition'      => function( $attrs ) {
-							return ! ( isset( $attrs['borderType'] ) && 'unlinked' === $attrs['borderType'] );
+						'condition'      => function( $attrs ) use ( $uses_old_sizing ) {
+							return ! ( isset( $attrs['borderType'] ) && 'unlinked' === $attrs['borderType'] ) && true === $uses_old_sizing;
 						},
 					),
 					array(
@@ -288,23 +511,23 @@ class Advanced_Columns_CSS extends Base_CSS {
 								'default' => 0,
 							),
 						),
-						'condition'      => function( $attrs ) {
-							return isset( $attrs['borderType'] ) && 'unlinked' === $attrs['borderType'];
+						'condition'      => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['borderType'] ) && 'unlinked' === $attrs['borderType'] && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'border-style',
 						'default'   => 'solid',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['borderType'] ) && 'unlinked' === $attrs['borderType'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['borderType'] ) && 'unlinked' === $attrs['borderType'] && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'border-color',
 						'value'     => 'borderColor',
 						'default'   => '#000000',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['borderType'] ) && 'unlinked' === $attrs['borderType'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['borderType'] ) && 'unlinked' === $attrs['borderType'] && true === $uses_old_sizing;
 						},
 					),
 					array(
@@ -312,8 +535,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'value'     => 'borderRadius',
 						'unit'      => 'px',
 						'default'   => 0,
-						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] );
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return ! ( isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] ) && true === $uses_old_sizing;
 						},
 					),
 					array(
@@ -341,8 +564,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 								'default' => 0,
 							),
 						),
-						'condition'      => function( $attrs ) {
-							return isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'];
+						'condition'      => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] && true === $uses_old_sizing;
 						},
 					),
 					array(
@@ -560,12 +783,49 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'default'  => 'normal',
 					),
 					array(
+						'property'       => 'border-radius',
+						'pattern'        => 'top-left top-right bottom-right bottom-left',
+						'pattern_values' => array(
+							'top-left'     => array(
+								'value'   => 'borderRadius',
+								'default' => 0,
+								'format'  => function( $value, $attrs ) {
+									return $value['top'];
+								},
+							),
+							'top-right'    => array(
+								'value'   => 'borderRadius',
+								'default' => 0,
+								'format'  => function( $value, $attrs ) {
+									return $value['right'];
+								},
+							),
+							'bottom-right' => array(
+								'value'   => 'borderRadius',
+								'default' => 0,
+								'format'  => function( $value, $attrs ) {
+									return $value['bottom'];
+								},
+							),
+							'bottom-left'  => array(
+								'value'   => 'borderRadius',
+								'default' => 0,
+								'format'  => function( $value, $attrs ) {
+									return $value['left'];
+								},
+							),
+						),
+						'condition'      => function( $attrs ) {
+							return isset( $attrs['borderRadius'] ) && is_array( $attrs['borderRadius'] );
+						},
+					),
+					array(
 						'property'  => 'border-radius',
 						'value'     => 'borderRadius',
 						'unit'      => 'px',
 						'default'   => 0,
-						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] );
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return ! ( isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] ) && true === $uses_old_sizing;
 						},
 					),
 					array(
@@ -593,8 +853,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 								'default' => 0,
 							),
 						),
-						'condition'      => function( $attrs ) {
-							return isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'];
+						'condition'      => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] && true === $uses_old_sizing;
 						},
 					),
 				),
@@ -675,75 +935,135 @@ class Advanced_Columns_CSS extends Base_CSS {
 				'query'      => '@media ( min-width: 600px ) and ( max-width: 960px )',
 				'properties' => array(
 					array(
+						'property'  => 'padding-top',
+						'value'     => 'paddingTablet',
+						'format'    => function( $value, $attrs ) {
+							return $value['top'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['top'] );
+						},
+					),
+					array(
+						'property'  => 'padding-bottom',
+						'value'     => 'paddingTablet',
+						'format'    => function( $value, $attrs ) {
+							return $value['bottom'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['bottom'] );
+						},
+					),
+					array(
+						'property'  => 'padding-left',
+						'value'     => 'paddingTablet',
+						'format'    => function( $value, $attrs ) {
+							return $value['left'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['left'] );
+						},
+					),
+					array(
+						'property'  => 'padding-right',
+						'value'     => 'paddingTablet',
+						'format'    => function( $value, $attrs ) {
+							return $value['right'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['right'] );
+						},
+					),
+					array(
+						'property'  => 'margin-top',
+						'value'     => 'marginTablet',
+						'format'    => function( $value, $attrs ) {
+							return $value['top'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['marginTablet'] ) && isset( $attrs['marginTablet']['top'] );
+						},
+					),
+					array(
+						'property'  => 'margin-bottom',
+						'value'     => 'marginTablet',
+						'format'    => function( $value, $attrs ) {
+							return $value['bottom'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['marginTablet'] ) && isset( $attrs['marginTablet']['bottom'] );
+						},
+					),
+					array(
 						'property'  => 'padding',
 						'value'     => 'paddingTablet',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'] );
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return ! ( isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'] ) && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'padding-top',
 						'value'     => 'paddingTopTablet',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'] && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'padding-right',
 						'value'     => 'paddingRightTablet',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'] && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'padding-bottom',
 						'value'     => 'paddingBottomTablet',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'] && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'padding-left',
 						'value'     => 'paddingLeftTablet',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'] && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'margin-top',
 						'value'     => 'marginTablet',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'] && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'margin-bottom',
 						'value'     => 'marginTablet',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'] && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'margin-top',
 						'value'     => 'marginTopTablet',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'] );
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return ! ( isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'] ) && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'margin-bottom',
 						'value'     => 'marginBottomTablet',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'] );
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return ! ( isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'] ) && true === $uses_old_sizing;
 						},
 					),
 					array(
@@ -821,75 +1141,135 @@ class Advanced_Columns_CSS extends Base_CSS {
 				'query'      => '@media ( max-width: 600px )',
 				'properties' => array(
 					array(
+						'property'  => 'padding-top',
+						'value'     => 'paddingMobile',
+						'format'    => function( $value, $attrs ) {
+							return $value['top'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['top'] );
+						},
+					),
+					array(
+						'property'  => 'padding-bottom',
+						'value'     => 'paddingMobile',
+						'format'    => function( $value, $attrs ) {
+							return $value['bottom'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['bottom'] );
+						},
+					),
+					array(
+						'property'  => 'padding-left',
+						'value'     => 'paddingMobile',
+						'format'    => function( $value, $attrs ) {
+							return $value['left'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['left'] );
+						},
+					),
+					array(
+						'property'  => 'padding-right',
+						'value'     => 'paddingMobile',
+						'format'    => function( $value, $attrs ) {
+							return $value['right'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['right'] );
+						},
+					),
+					array(
+						'property'  => 'margin-top',
+						'value'     => 'marginMobile',
+						'format'    => function( $value, $attrs ) {
+							return $value['top'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['marginMobile'] ) && isset( $attrs['marginMobile']['top'] );
+						},
+					),
+					array(
+						'property'  => 'margin-bottom',
+						'value'     => 'marginMobile',
+						'format'    => function( $value, $attrs ) {
+							return $value['bottom'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['marginMobile'] ) && isset( $attrs['marginMobile']['bottom'] );
+						},
+					),
+					array(
 						'property'  => 'padding',
 						'value'     => 'paddingMobile',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'] );
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return ! ( isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'] ) && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'padding-top',
 						'value'     => 'paddingTopMobile',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'] && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'padding-right',
 						'value'     => 'paddingRightMobile',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'] && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'padding-bottom',
 						'value'     => 'paddingBottomMobile',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'] && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'padding-left',
 						'value'     => 'paddingLeftMobile',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'] && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'margin-top',
 						'value'     => 'marginMobile',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'] && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'margin-bottom',
 						'value'     => 'marginMobile',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'];
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'] && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'margin-top',
 						'value'     => 'marginTopMobile',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'] );
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return ! ( isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'] ) && true === $uses_old_sizing;
 						},
 					),
 					array(
 						'property'  => 'margin-bottom',
 						'value'     => 'marginBottomMobile',
 						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'] );
+						'condition' => function( $attrs ) use ( $uses_old_sizing ) {
+							return ! ( isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'] ) && true === $uses_old_sizing;
 						},
 					),
 					array(
@@ -965,5 +1345,23 @@ class Advanced_Columns_CSS extends Base_CSS {
 		$style = $css->generate();
 
 		return $style;
+	}
+
+	/**
+	 * A port of array.some for PHP.
+	 *
+	 * @param array    $array Haystack.
+	 * @param callback $fn Callback function.
+	 * @return boolean
+	 * @since   2.0.0
+	 * @access  public
+	 */
+	public function array_any( $array, $fn ) {
+		foreach ( $array as $value ) {
+			if ( $fn( $value ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

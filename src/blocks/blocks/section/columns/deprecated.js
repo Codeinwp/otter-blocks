@@ -16,6 +16,11 @@ import {
 	Path
 } from '@wordpress/components';
 
+/**
+ * Internal dependencies
+ */
+import { isNullObject } from '../../../helpers/helper-functions.js';
+
 const attributes = {
 	align: {
 		type: 'string'
@@ -1454,6 +1459,344 @@ const deprecated = [ {
 	},
 
 	isEligible: attributes => ( 'gradient' === attributes.backgroundType && undefined !== attributes.backgroundGradientFirstColor ) || ( 'gradient' === attributes.backgroundOverlayType && undefined !== attributes.backgroundOverlayGradientFirstColor ),
+
+	save: ({
+		attributes,
+		className
+	}) => {
+		const Tag = attributes.columnsHTMLTag;
+
+		const desktopLayout = attributes.hide ? '' : `has-desktop-${ attributes.layout }-layout`;
+		const tabletLayout = attributes.hideTablet ? '' : `has-tablet-${ attributes.layoutTablet }-layout`;
+		const mobileLayout = attributes.hideMobile ? '' : `has-mobile-${ attributes.layoutMobile }-layout`;
+
+		const classes = classnames(
+			className,
+			`has-${ attributes.columns }-columns`,
+			desktopLayout,
+			tabletLayout,
+			mobileLayout,
+			{ 'hide-in-desktop': attributes.hide },
+			{ 'hide-in-tablet': attributes.hideTablet },
+			{ 'hide-in-mobile': attributes.hideMobile },
+			{ 'has-reverse-columns-tablet': ( attributes.reverseColumnsTablet && ! attributes.hideTablet && 'collapsedRows' === attributes.layoutTablet ) },
+			{ 'has-reverse-columns-mobile': ( attributes.reverseColumnsMobile && ! attributes.hideMobile && 'collapsedRows' === attributes.layoutMobile ) },
+			`has-${ attributes.columnsGap }-gap`,
+			`has-vertical-${ attributes.verticalAlign }`
+		);
+
+		return (
+			<Tag
+				className={ classes }
+				id={ attributes.id }
+			>
+				<div className="wp-block-themeisle-blocks-advanced-columns-overlay"></div>
+
+				<SeparatorsNew
+					type="top"
+					front={ true }
+					style={ attributes.dividerTopType }
+					fill={ attributes.dividerTopColor }
+					invert={ attributes.dividerTopInvert }
+				/>
+
+				<div className="innerblocks-wrap">
+					<InnerBlocks.Content />
+				</div>
+
+				<SeparatorsNew
+					type="bottom"
+					front={ true }
+					style={ attributes.dividerBottomType }
+					fill={ attributes.dividerBottomColor }
+					invert={ attributes.dividerBottomInvert }
+				/>
+			</Tag>
+		);
+	}
+}, {
+	attributes: {
+		...omit(
+			attributes,
+			[
+				'backgroundGradientFirstColor',
+				'backgroundGradientFirstLocation',
+				'backgroundGradientSecondColor',
+				'backgroundGradientSecondLocation',
+				'backgroundGradientType',
+				'backgroundGradientAngle',
+				'backgroundGradientPosition',
+				'backgroundOverlayGradientFirstColor',
+				'backgroundOverlayGradientFirstLocation',
+				'backgroundOverlayGradientSecondColor',
+				'backgroundOverlayGradientSecondLocation',
+				'backgroundOverlayGradientType',
+				'backgroundOverlayGradientAngle',
+				'backgroundOverlayGradientPosition'
+			]
+		),
+		paddingTablet: {
+			type: 'number'
+		},
+		paddingMobile: {
+			type: 'number'
+		},
+		paddingTopTablet: {
+			type: 'number'
+		},
+		paddingTopMobile: {
+			type: 'number'
+		},
+		paddingRightTablet: {
+			type: 'number'
+		},
+		paddingRightMobile: {
+			type: 'number'
+		},
+		paddingBottomTablet: {
+			type: 'number'
+		},
+		paddingBottomMobile: {
+			type: 'number'
+		},
+		paddingLeftTablet: {
+			type: 'number'
+		},
+		paddingLeftMobile: {
+			type: 'number'
+		},
+		marginTablet: {
+			type: 'number'
+		},
+		marginMobile: {
+			type: 'number'
+		},
+		marginTopTablet: {
+			type: 'number'
+		},
+		marginTopMobile: {
+			type: 'number'
+		},
+		marginBottomTablet: {
+			type: 'number'
+		},
+		marginBottomMobile: {
+			type: 'number'
+		},
+		backgroundGradient: {
+			type: 'string',
+			default: 'linear-gradient(90deg,rgba(54,209,220,1) 0%,rgba(91,134,229,1) 100%)'
+		},
+		backgroundOverlayGradient: {
+			type: 'string',
+			default: 'linear-gradient(90deg,rgba(54,209,220,1) 0%,rgba(91,134,229,1) 100%)'
+		},
+		reverseColumnsTablet: {
+			type: 'boolean',
+			default: false
+		},
+		reverseColumnsMobile: {
+			type: 'boolean',
+			default: false
+		}
+	},
+
+	supports: {
+		align: [ 'wide', 'full' ],
+		html: false
+	},
+
+	migrate: ( oldAttributes ) => {
+		const padding = {};
+		const paddingTablet = {};
+		const paddingMobile = {};
+		const margin = {};
+		const marginTablet = {};
+		const marginMobile = {};
+		const border = {};
+		const borderRadius = {};
+
+		if ( 'unlinked' === oldAttributes.paddingType ) {
+			padding.top = oldAttributes.paddingTop ? oldAttributes.paddingTop + 'px' : '20px';
+			padding.bottom = oldAttributes.paddingBottom ? oldAttributes.paddingBottom + 'px' : '20px';
+			padding.left = oldAttributes.paddingLeft ? oldAttributes.paddingLeft + 'px' : '20px';
+			padding.right = oldAttributes.paddingRight ? oldAttributes.paddingRight + 'px' : '20px';
+		} else {
+			padding.top = oldAttributes.padding ? oldAttributes.padding + 'px' : '20px';
+			padding.bottom = oldAttributes.padding ? oldAttributes.padding + 'px' : '20px';
+			padding.left = oldAttributes.padding ? oldAttributes.padding + 'px' : '20px';
+			padding.right = oldAttributes.padding ? oldAttributes.padding + 'px' : '20px';
+		}
+
+		if ( 'unlinked' === oldAttributes.paddingTypeTablet ) {
+			paddingTablet.top = oldAttributes.paddingTopTablet ? oldAttributes.paddingTopTablet + 'px' : null;
+			paddingTablet.bottom = oldAttributes.paddingBottomTablet ? oldAttributes.paddingBottomTablet + 'px' : null;
+			paddingTablet.left = oldAttributes.paddingLeftTablet ? oldAttributes.paddingLeftTablet + 'px' : null;
+			paddingTablet.right = oldAttributes.paddingRightTablet ? oldAttributes.paddingRightTablet + 'px' : null;
+		} else {
+			paddingTablet.top = oldAttributes.paddingTablet ? oldAttributes.paddingTablet + 'px' : null;
+			paddingTablet.bottom = oldAttributes.paddingTablet ? oldAttributes.paddingTablet + 'px' : null;
+			paddingTablet.left = oldAttributes.paddingTablet ? oldAttributes.paddingTablet + 'px' : null;
+			paddingTablet.right = oldAttributes.paddingTablet ? oldAttributes.paddingTablet + 'px' : null;
+		}
+
+		if ( 'unlinked' === oldAttributes.paddingTypeMobile ) {
+			paddingMobile.top = oldAttributes.paddingMobileTop ? oldAttributes.paddingMobileTop + 'px' : null;
+			paddingMobile.bottom = oldAttributes.paddingMobileBottom ? oldAttributes.paddingMobileBottom + 'px' : null;
+			paddingMobile.left = oldAttributes.paddingMobileLeft ? oldAttributes.paddingMobileLeft + 'px' : null;
+			paddingMobile.right = oldAttributes.paddingMobileRight ? oldAttributes.paddingMobileRight + 'px' : null;
+		} else {
+			paddingMobile.top = oldAttributes.paddingMobile ? oldAttributes.paddingMobile + 'px' : null;
+			paddingMobile.bottom = oldAttributes.paddingMobile ? oldAttributes.paddingMobile + 'px' : null;
+			paddingMobile.left = oldAttributes.paddingMobile ? oldAttributes.paddingMobile + 'px' : null;
+			paddingMobile.right = oldAttributes.paddingMobile ? oldAttributes.paddingMobile + 'px' : null;
+		}
+
+		if ( 'linked' === oldAttributes.marginType ) {
+			margin.top = oldAttributes.margin ? oldAttributes.margin + 'px' : '20px';
+			margin.bottom = oldAttributes.margin ? oldAttributes.margin + 'px' : '20px';
+		} else {
+			margin.top = oldAttributes.marginTop ? oldAttributes.marginTop + 'px' : '20px';
+			margin.bottom = oldAttributes.marginBottom ? oldAttributes.marginBottom + 'px' : '20px';
+		}
+
+		if ( 'linked' === oldAttributes.marginTypeTablet ) {
+			marginTablet.top = oldAttributes.marginTablet ? oldAttributes.marginTablet + 'px' : null;
+			marginTablet.bottom = oldAttributes.marginTablet ? oldAttributes.marginTablet + 'px' : null;
+		} else {
+			marginTablet.top = oldAttributes.marginTopTablet ? oldAttributes.marginTopTablet + 'px' : null;
+			marginTablet.bottom = oldAttributes.marginBottomTablet ? oldAttributes.marginBottomTablet + 'px' : null;
+		}
+
+		if ( 'linked' === oldAttributes.marginTypeMobile ) {
+			marginMobile.top = oldAttributes.marginMobile ? oldAttributes.marginMobile + 'px' : null;
+			marginMobile.bottom = oldAttributes.marginMobile ? oldAttributes.marginMobile + 'px' : null;
+		} else {
+			marginMobile.top = oldAttributes.marginTopMobile ? oldAttributes.marginTopMobile + 'px' : null;
+			marginMobile.bottom = oldAttributes.marginBottomMobile ? oldAttributes.marginBottomMobile + 'px' : null;
+		}
+
+		if ( 'unlinked' === oldAttributes.borderType ) {
+			border.top = oldAttributes.borderTop ? oldAttributes.borderTop + 'px' : null;
+			border.bottom = oldAttributes.borderBottom ? oldAttributes.borderBottom + 'px' : null;
+			border.left = oldAttributes.borderLeft ? oldAttributes.borderLeft + 'px' : null;
+			border.right = oldAttributes.borderRight ? oldAttributes.borderRight + 'px' : null;
+		} else {
+			border.top = oldAttributes.border ? oldAttributes.border + 'px' : null;
+			border.bottom = oldAttributes.border ? oldAttributes.border + 'px' : null;
+			border.left = oldAttributes.border ? oldAttributes.border + 'px' : null;
+			border.right = oldAttributes.border ? oldAttributes.border + 'px' : null;
+		}
+
+		if ( 'unlinked' === oldAttributes.borderRadiusType ) {
+			borderRadius.top = oldAttributes.borderRadiusTop ? oldAttributes.borderRadiusTop + 'px' : null;
+			borderRadius.bottom = oldAttributes.borderRadiusBottom ? oldAttributes.borderRadiusBottom + 'px' : null;
+			borderRadius.left = oldAttributes.borderRadiusLeft ? oldAttributes.borderRadiusLeft + 'px' : null;
+			borderRadius.right = oldAttributes.borderRadiusRight ? oldAttributes.borderRadiusRight + 'px' : null;
+		} else {
+			borderRadius.top = oldAttributes.borderRadius ? oldAttributes.borderRadius + 'px' : null;
+			borderRadius.bottom = oldAttributes.borderRadius ? oldAttributes.borderRadius + 'px' : null;
+			borderRadius.left = oldAttributes.borderRadius ? oldAttributes.borderRadius + 'px' : null;
+			borderRadius.right = oldAttributes.borderRadius ? oldAttributes.borderRadius + 'px' : null;
+		}
+
+		const attributes = {
+			...omit(
+				oldAttributes,
+				[
+					'paddingType',
+					'paddingTypeTablet',
+					'paddingTypeMobile',
+					'paddingTop',
+					'paddingTopTablet',
+					'paddingTopMobile',
+					'paddingRight',
+					'paddingRightTablet',
+					'paddingRightMobile',
+					'paddingBottom',
+					'paddingBottomTablet',
+					'paddingBottomMobile',
+					'paddingLeft',
+					'paddingLeftTablet',
+					'paddingLeftMobile',
+					'marginType',
+					'marginTypeTablet',
+					'marginTypeMobile',
+					'marginTop',
+					'marginTopTablet',
+					'marginTopMobile',
+					'marginBottom',
+					'marginBottomTablet',
+					'marginBottomMobile',
+					'borderType',
+					'borderTop',
+					'borderRight',
+					'borderBottom',
+					'borderLeft',
+					'borderRadiusType',
+					'borderRadiusTop',
+					'borderRadiusRight',
+					'borderRadiusBottom',
+					'borderRadiusLeft'
+				]
+			),
+			...( ! isNullObject( padding ) && { padding }),
+			...( ! isNullObject( paddingTablet ) && { paddingTablet }),
+			...( ! isNullObject( paddingMobile ) && { paddingMobile }),
+			...( ! isNullObject( margin ) && { margin }),
+			...( ! isNullObject( marginTablet ) && { marginTablet }),
+			...( ! isNullObject( marginMobile ) && { marginMobile }),
+			...( ! isNullObject( border ) && { border }),
+			...( ! isNullObject( borderRadius ) && { borderRadius })
+		};
+
+		return {
+			...attributes
+		};
+	},
+
+	isEligible: attributes => {
+		const oldAttributes = [
+			'padding',
+			'paddingTablet',
+			'paddingMobile',
+			'paddingTop',
+			'paddingTopTablet',
+			'paddingTopMobile',
+			'paddingRight',
+			'paddingRightTablet',
+			'paddingRightMobile',
+			'paddingBottom',
+			'paddingBottomTablet',
+			'paddingBottomMobile',
+			'paddingLeft',
+			'paddingLeftTablet',
+			'paddingLeftMobile',
+			'margin',
+			'marginTablet',
+			'marginMobile',
+			'marginTop',
+			'marginTopTablet',
+			'marginTopMobile',
+			'marginBottom',
+			'marginBottomTablet',
+			'marginBottomMobile',
+			'borderType',
+			'border',
+			'borderTop',
+			'borderRight',
+			'borderBottom',
+			'borderLeft',
+			'borderRadiusType',
+			'borderRadius',
+			'borderRadiusTop',
+			'borderRadiusRight',
+			'borderRadiusBottom',
+			'borderRadiusLeft'
+		];
+
+		return oldAttributes.some( attr => attributes[ attr ] && 'number' === typeof attributes[ attr ]);
+	},
 
 	save: ({
 		attributes,

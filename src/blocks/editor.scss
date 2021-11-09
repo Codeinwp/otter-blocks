@@ -13,3 +13,7 @@
         }
     }
 }
+
+[id^="inspector-box-control"] {
+    max-width: none !important;
+}
