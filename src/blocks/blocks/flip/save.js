@@ -40,7 +40,9 @@ const Save = ({
 							attributes.frontMedia?.url && (
 								<img
 									className="o-ing"
+									src={ attributes.frontMedia?.url }
 									srcSet={ attributes.frontMedia?.url }
+									alt={ attributes.frontMedia?.alt }
 								/>
 							)
 						}

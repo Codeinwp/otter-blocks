@@ -9,7 +9,8 @@ import {
 	__experimentalColorGradientControl as ColorGradientControl,
 	InspectorControls,
 	MediaReplaceFlow,
-	PanelColorSettings
+	PanelColorSettings,
+	MediaPlaceholder
 } from '@wordpress/block-editor';
 
 import {
@@ -93,38 +94,36 @@ const Inspector = ({
 					label={ __( 'Media Image', 'otter-blocks' ) }
 					help={ __( 'Set an image as showcase.', 'otter-blocks' ) }
 				>
-					<div
-						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							border: '0.5px solid #aaa',
-							borderRadius: '5px',
-							marginTop: '4px'
-						}}
-					>
-						<MediaReplaceFlow
-							mediaId={ attributes.frontMedia?.id }
-							mediaURL={ attributes.frontMedia?.url }
-							allowedTypes={ [ 'image' ] }
-							accept="image/*"
-							onSelect={ media => {
-								setAttributes({
-									frontMedia: pick( media, [ 'id', 'url' ])
-								});
+					{ ! ( attributes.frontMedia?.url ) ? (
+						<MediaPlaceholder
+							labels={ {
+								title: __( 'Media Image', 'otter-blocks' )
 							} }
-							name={ ! attributes.frontMedia?.url ? __( 'Add image', 'otter-blocks' ) : __( 'Replace or remove image', 'otter-blocks' ) }
+							accept="image/*"
+							allowedTypes={ [ 'image' ] }
+							value={ attributes.frontMedia }
+							onSelect={ value => setAttributes({ frontMedia: pick( value, [ 'id', 'alt', 'url' ]) }) }
+						/>
+					) : (
+						<BaseControl
 						>
-						</MediaReplaceFlow>
-						<Button
-							onClick={ () => {
-								setAttributes({
-									frontMedia: undefined
-								});
-							}}
-						>
-							{__( 'Clear image', 'otter-blocks' )}
-						</Button>
-					</div>
+							<img
+								src={ attributes.frontMedia.url }
+								alt={ attributes.frontMedia.alt }
+								style={{
+									border: '2px solid var( --wp-admin-theme-color)',
+									maxHeight: '250px'
+								}}
+							/>
+
+							<Button
+								isSecondary
+								onClick={ () => setAttributes({ frontMedia: undefined }) }
+							>
+								{ __( 'Remove image', 'otter-blocks' ) }
+							</Button>
+						</BaseControl>
+					) }
 				</BaseControl>
 
 				<RangeControl
