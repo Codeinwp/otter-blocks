@@ -412,6 +412,7 @@ class Main {
 				'canTrack'       => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
 				'userRoles'      => $wp_roles->roles,
 				'hasWooCommerce' => class_exists( 'WooCommerce' ),
+				'hasLearnDash'   => defined( 'LEARNDASH_VERSION' ),
 				'hasNeveSupport' => array(
 					'hasNeve'         => defined( 'NEVE_VERSION' ),
 					'hasNevePro'      => defined( 'NEVE_VERSION' ) && 'valid' === apply_filters( 'product_neve_license_status', false ),

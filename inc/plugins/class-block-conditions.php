@@ -168,6 +168,56 @@ class Block_Conditions {
 			}
 		}
 
+		if ( 'wooProductsInCart' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
+			if ( isset( $condition['on'] ) ) {
+				if ( $visibility ) {
+					return $this->has_products_in_cart( $condition );
+				} else {
+					return ! $this->has_products_in_cart( $condition );
+				}
+			}
+		}
+
+		if ( 'wooTotalCartValue' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
+			if ( isset( $condition['value'] ) ) {
+				if ( 'greater_than' === $condition['compare'] ) {
+					return $this->has_total_cart_value( $condition['value'] );
+				} else {
+					return ! $this->has_total_cart_value( $condition['value'] );
+				}
+			}
+		}
+
+		if ( 'wooPurchaseHistory' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
+			if ( isset( $condition['products'] ) ) {
+				if ( $visibility ) {
+					return $this->has_products( $condition['products'] );
+				} else {
+					return ! $this->has_products( $condition['products'] );
+				}
+			}
+		}
+
+		if ( 'learnDashPurchaseHistory' === $condition['type'] && defined( 'LEARNDASH_VERSION' ) ) {
+			if ( isset( $condition['on'] ) ) {
+				if ( $visibility ) {
+					return $this->has_courses_or_groups( $condition );
+				} else {
+					return ! $this->has_courses_or_groups( $condition );
+				}
+			}
+		}
+
+		if ( 'learnDashCourseStatus' === $condition['type'] && defined( 'LEARNDASH_VERSION' ) ) {
+			if ( isset( $condition['course'] ) ) {
+				if ( $visibility ) {
+					return $this->has_course_status( $condition );
+				} else {
+					return ! $this->has_course_status( $condition );
+				}
+			}
+		}
+
 		return true;
 	}
 
@@ -346,6 +396,148 @@ class Block_Conditions {
 		$absmin   = abs( $offset );
 		$timezone = sprintf( '%s%02d:%02d', $sign, $absmin / 60, $absmin % 60 );
 		return $timezone;
+	}
+
+	/**
+	 * Check based on WooCommerce cart.
+	 *
+	 * @param array $condition Condition.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 */
+	public function has_products_in_cart( $condition ) {
+		$in_cart = false;
+
+		if ( 'products' === $condition['on'] && isset( $condition['products'] ) ) {
+			foreach ( \WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+				if ( in_array( $cart_item['product_id'], $condition['products'], true ) ) {
+					$in_cart = true;
+					break;
+				}
+			}
+		}
+
+		if ( 'categories' === $condition['on'] && isset( $condition['categories'] ) ) {
+			foreach ( \WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+				$terms = get_the_terms( $cart_item['product_id'], 'product_cat' );
+
+				if ( gettype( $terms ) !== 'array' ) {
+					continue;
+				}
+
+				foreach ( $terms as $term ) {
+					if ( in_array( $term->term_id, $condition['categories'], true ) ) {
+						$in_cart = true;
+						break;
+					}
+				}
+
+				if ( $in_cart ) {
+					break;
+				}
+			}
+		}
+
+		return $in_cart;
+	}
+
+	/**
+	 * Check based on WooCommerce cart value.
+	 *
+	 * @param array $value Cart Value.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 */
+	public function has_total_cart_value( $value ) {
+		$total = \WC()->cart->total;
+
+		if ( floatval( $value ) < floatval( $total ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check based on WooCommerce product history.
+	 *
+	 * @param array $products IDs of Products.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 */
+	public function has_products( $products ) {
+		$bought       = false;
+		$current_user = wp_get_current_user();
+
+		foreach ( $products as $product ) {
+			if ( wc_customer_bought_product( $current_user->user_email, $current_user->ID, $product ) ) {
+				$bought = true;
+				break;
+			};
+		}
+
+		return $bought;
+	}
+
+	/**
+	 * Check based on LearnDash product history.
+	 *
+	 * @param array $condition Condition.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 */
+	public function has_courses_or_groups( $condition ) {
+		$bought       = false;
+		$current_user = wp_get_current_user();
+
+		if ( 'courses' === $condition['on'] && isset( $condition['courses'] ) ) {
+			foreach ( $condition['courses'] as $course ) {
+				if ( ld_course_check_user_access( $course, $current_user->ID ) ) {
+					$bought = true;
+					break;
+				};
+			}
+		}
+
+		if ( 'groups' === $condition['on'] && isset( $condition['groups'] ) ) {
+			foreach ( $condition['groups'] as $group ) {
+				$users = learndash_get_groups_user_ids( $group );
+
+				if ( in_array( $current_user->ID, $users, true ) ) {
+					$bought = true;
+					break;
+				}
+
+				if ( $bought ) {
+					break;
+				}
+			}
+		}
+
+		return $bought;
+	}
+
+	/**
+	 * Check based on LearnDash course status.
+	 *
+	 * @param array $condition Condition.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 */
+	public function has_course_status( $condition ) {
+		$current_user = wp_get_current_user();
+		$progress     = learndash_user_get_course_progress( $current_user->ID, $condition['course'], 'summary' );
+
+		if ( $progress['status'] === $condition['status'] ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
