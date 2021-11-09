@@ -80,6 +80,9 @@ const defaultsAttrs = {
 	},
 	'themeisle-blocks/accordion': {
 
+	},
+	'themeisle-blocks/progress-bar': {
+
 	}
 };
 

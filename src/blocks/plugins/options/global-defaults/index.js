@@ -22,6 +22,7 @@ import SectionColumn from './controls/section-column.js';
 import IconListControl from './controls/icon-list.js';
 import TabsControl from './controls/tabs.js';
 import AccordionControl from './controls/accordion.js';
+import ProgressBarControl from './controls/progress-bar.js';
 
 const GlobalDefaults = ({
 	isAPILoaded,
@@ -66,6 +67,10 @@ const GlobalDefaults = ({
 		{
 			name: 'themeisle-blocks/accordion',
 			control: AccordionControl
+		},
+		{
+			name: 'themeisle-blocks/progress-bar',
+			control: ProgressBarControl
 		}
 	];
 
