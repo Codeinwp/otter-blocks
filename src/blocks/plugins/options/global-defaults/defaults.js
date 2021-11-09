@@ -77,6 +77,9 @@ const defaultsAttrs = {
 	},
 	'themeisle-blocks/tabs': {
 
+	},
+	'themeisle-blocks/accordion': {
+
 	}
 };
 
