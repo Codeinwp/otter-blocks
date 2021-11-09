@@ -83,6 +83,9 @@ const defaultsAttrs = {
 	},
 	'themeisle-blocks/progress-bar': {
 
+	},
+	'themeisle-blocks/review': {
+
 	}
 };
 
