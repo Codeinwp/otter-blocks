@@ -28,9 +28,6 @@ const attributes = {
 		type: 'number',
 		default: 5
 	},
-	verticalAlign: {
-		type: 'string'
-	},
 	horizontalAlign: {
 		type: 'string'
 	}

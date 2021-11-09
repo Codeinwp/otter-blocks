@@ -3,7 +3,7 @@
 /**
  * WordPress dependencies.
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import { AlignmentToolbar, BlockControls, InnerBlocks } from '@wordpress/block-editor';
 
 import {
 	Fragment,
@@ -39,6 +39,25 @@ const Edit = ({
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 			/>
+
+			<BlockControls group="block">
+				<AlignmentToolbar
+					value={ attributes.horizontalAlign }
+					onChange={ align => {
+						switch ( align ) {
+						case 'left':
+							setAttributes({ horizontalAlign: 'flex-start' });
+							break;
+						case 'center':
+							setAttributes({ horizontalAlign: 'center' });
+							break;
+						case 'right':
+							setAttributes({ horizontalAlign: 'flex-end' });
+							break;
+						}
+					} }
+				/>
+			</BlockControls>
 
 			<div
 				id={ attributes.id }

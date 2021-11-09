@@ -36,7 +36,6 @@ class Icon_List_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' ',
 				'properties' => array(
 					array(
 						'property' => 'align-items',
