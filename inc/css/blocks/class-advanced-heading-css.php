@@ -60,12 +60,12 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'    => 'fontFamily',
 					),
 					array(
-						'property' => 'font-weight',
-						'value'    => 'fontVariant',
-						'format'   => function( $value, $attrs ) {
+						'property'  => 'font-weight',
+						'value'     => 'fontVariant',
+						'format'    => function( $value, $attrs ) {
 							return 'regular' === $value ? 'normal' : $value;
 						},
-						'condition'      => function( $attrs ) {
+						'condition' => function( $attrs ) {
 							return isset( $attrs['font-weight'] );
 						},
 					),
@@ -78,12 +78,12 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'    => 'textTransform',
 					),
 					array(
-						'property' => 'line-height',
-						'value'    => 'lineHeight',
-						'format'   => function( $value, $attrs ) {
+						'property'  => 'line-height',
+						'value'     => 'lineHeight',
+						'format'    => function( $value, $attrs ) {
 							return 3 < $value ? $value . 'px' : $value;
 						},
-						'condition'      => function( $attrs ) {
+						'condition' => function( $attrs ) {
 							return isset( $attrs['line-height'] );
 						},
 					),
