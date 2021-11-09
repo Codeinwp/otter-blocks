@@ -500,7 +500,7 @@ class Main {
 
 			$post = $content;
 		} else {
-			$content = get_the_content( $post );
+			$content = get_the_content( null, false, $post );
 		}
 
 		if ( strpos( $content, '<!-- wp:' ) === false ) {
