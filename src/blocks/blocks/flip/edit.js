@@ -37,7 +37,8 @@ const Edit = ({
 	attributes,
 	setAttributes,
 	className,
-	clientId
+	clientId,
+	isSelected
 }) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -137,7 +138,7 @@ const Edit = ({
 							}
 
 							<RichText
-								tagName="h2"
+								tagName="h3"
 								value={ attributes.title }
 								onChange={ title => setAttributes({ title })}
 								placeholder={ __( 'Insert a title', 'otter-blocks' )}
@@ -178,6 +179,7 @@ const Edit = ({
 					>
 						<InnerBlocks
 							renderAppender={ InnerBlocks.ButtonBlockAppender  }
+							renderAppender={ isSelected ? InnerBlocks.ButtonBlockAppender : '' }
 						/>
 					</div>
 				</div>

@@ -48,7 +48,7 @@ const Save = ({
 						}
 
 						<RichText.Content
-							tagName="h2"
+							tagName="h3"
 							value={ attributes.title }
 						/>
 
