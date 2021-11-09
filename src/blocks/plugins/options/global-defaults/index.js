@@ -20,6 +20,7 @@ import FontAwesomeIcons from './controls/font-awesome-icons.js';
 import SectionColumns from './controls/section-columns.js';
 import SectionColumn from './controls/section-column.js';
 import IconListControl from './controls/icon-list.js';
+import TabsControl from './controls/tabs.js';
 
 const GlobalDefaults = ({
 	isAPILoaded,
@@ -56,6 +57,10 @@ const GlobalDefaults = ({
 		{
 			name: 'themeisle-blocks/icon-list',
 			control: IconListControl
+		},
+		{
+			name: 'themeisle-blocks/tabs',
+			control: TabsControl
 		}
 	];
 

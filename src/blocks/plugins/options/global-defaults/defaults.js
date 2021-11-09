@@ -74,6 +74,9 @@ const defaultsAttrs = {
 	'themeisle-blocks/icon-list': {
 		defaultSize: 20,
 		gap: 5
+	},
+	'themeisle-blocks/tabs': {
+
 	}
 };
 
