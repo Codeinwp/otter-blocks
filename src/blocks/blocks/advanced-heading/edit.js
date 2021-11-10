@@ -10,6 +10,8 @@ import GoogleFontLoader from 'react-google-font-loader';
  */
 import { __ } from '@wordpress/i18n';
 
+import { omitBy } from 'lodash';
+
 import { createBlock } from '@wordpress/blocks';
 
 import { RichText } from '@wordpress/block-editor';
@@ -85,46 +87,13 @@ const Edit = ({
 		setAttributes({ content: value });
 	};
 
-	const changeFontFamily = value => {
-		if ( ! value ) {
-			setAttributes({
-				fontFamily: value,
-				fontVariant: value
-			});
-		} else {
-			setAttributes({
-				fontFamily: value,
-				fontVariant: 'normal',
-				fontStyle: 'normal'
-			});
-		}
-	};
-
-	const changeFontVariant = value => {
-		setAttributes({ fontVariant: value });
-	};
-
-	const changeFontStyle = value => {
-		setAttributes({ fontStyle: value });
-	};
-
-	const changeTextTransform = value => {
-		setAttributes({ textTransform: value });
-	};
-
-	const changeLineHeight = value => {
-		setAttributes({ lineHeight: value });
-	};
-
-	const changeLetterSpacing = value => {
-		setAttributes({ letterSpacing: value });
-	};
 
 	let fontSizeStyle, stylesheet, textShadowStyle;
 
 	if ( isDesktop ) {
+
 		fontSizeStyle = {
-			fontSize: `${ attributes.fontSize }px`
+			fontSize: attributes.fontSize ? `${ attributes.fontSize }px` : undefined
 		};
 
 		stylesheet = {
@@ -140,7 +109,7 @@ const Edit = ({
 
 	if ( isTablet ) {
 		fontSizeStyle = {
-			fontSize: `${ attributes.fontSizeTablet }px`
+			fontSize: attributes.fontSizeTablet ? `${ attributes.fontSizeTablet }px` : undefined
 		};
 
 		stylesheet = {
@@ -156,7 +125,7 @@ const Edit = ({
 
 	if ( isMobile ) {
 		fontSizeStyle = {
-			fontSize: `${ attributes.fontSizeMobile }px`
+			fontSize: attributes.fontSizeMobile ? `${ attributes.fontSizeMobile }px` : undefined
 		};
 
 		stylesheet = {
@@ -176,18 +145,18 @@ const Edit = ({
 		};
 	}
 
-	const style = {
+	const style = omitBy({
 		color: attributes.headingColor,
 		...fontSizeStyle,
-		fontFamily: attributes.fontFamily,
+		fontFamily: attributes.fontFamily || undefined,
 		fontWeight: 'regular' === attributes.fontVariant ? 'normal' : attributes.fontVariant,
-		fontStyle: attributes.fontStyle,
-		textTransform: attributes.textTransform,
-		lineHeight: 3 < attributes.lineHeight ? attributes.lineHeight + 'px' : attributes.lineHeight,
+		fontStyle: attributes.fontStyle || undefined,
+		textTransform: attributes.textTransform || undefined,
+		lineHeight: ( 3 < attributes.lineHeight ? attributes.lineHeight + 'px' : attributes.lineHeight ) || undefined,
 		letterSpacing: attributes.letterSpacing && `${ attributes.letterSpacing }px`,
 		...stylesheet,
 		...textShadowStyle
-	};
+	}, x => x?.includes?.( 'undefined' ) );
 
 	return (
 		<Fragment>
@@ -208,23 +177,11 @@ const Edit = ({
 			<Controls
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				changeFontFamily={ changeFontFamily }
-				changeFontVariant={ changeFontVariant }
-				changeFontStyle={ changeFontStyle }
-				changeTextTransform={ changeTextTransform }
-				changeLineHeight={ changeLineHeight }
-				changeLetterSpacing={ changeLetterSpacing }
 			/>
 
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				changeFontFamily={ changeFontFamily }
-				changeFontVariant={ changeFontVariant }
-				changeFontStyle={ changeFontStyle }
-				changeTextTransform={ changeTextTransform }
-				changeLineHeight={ changeLineHeight }
-				changeLetterSpacing={ changeLetterSpacing }
 			/>
 
 			<RichText

@@ -47,12 +47,10 @@ const attributes = {
 		type: 'string'
 	},
 	fontStyle: {
-		type: 'string',
-		default: 'normal'
+		type: 'string'
 	},
 	textTransform: {
-		type: 'string',
-		default: 'none'
+		type: 'string'
 	},
 	lineHeight: {
 		type: 'number'
