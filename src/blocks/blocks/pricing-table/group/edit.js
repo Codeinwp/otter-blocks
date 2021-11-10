@@ -47,14 +47,14 @@ const Edit = ({ className, attributes, setAttributes }) => {
 					allowedBlocks={ allowedBlocks }
 					template={ [
 						[
-							'themeisle/pricing-table-item',
+							'themeisle-blocks/pricing-table-item',
 							{
 								title: 'Personal',
 								description: 'Ideal for getting started'
 							}
 						],
 						[
-							'themeisle/pricing-table-item',
+							'themeisle-blocks/pricing-table-item',
 							{
 								title: 'Team',
 								description: 'Ideal for teams',
@@ -62,7 +62,7 @@ const Edit = ({ className, attributes, setAttributes }) => {
 							}
 						],
 						[
-							'themeisle/pricing-table-item',
+							'themeisle-blocks/pricing-table-item',
 							{
 								title: 'Enterprise',
 								description: 'Ideal for serious money bussiness'
