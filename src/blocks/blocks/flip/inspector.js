@@ -66,6 +66,7 @@ const Inspector = ({
 					onChange={ width => setAttributes({ width }) }
 					min={ 0 }
 					max={ 1200 }
+					allowReset={ true }
 				/>
 
 				<RangeControl
@@ -75,6 +76,7 @@ const Inspector = ({
 					onChange={ height => setAttributes({ height }) }
 					min={ 0 }
 					max={ 1200 }
+					allowReset={ true }
 				/>
 
 				<ToggleControl
