@@ -158,8 +158,6 @@ const Edit = ({
 		...textShadowStyle
 	}, x => x?.includes?.( 'undefined' ) );
 
-	console.log( style );
-
 	return (
 		<Fragment>
 			<style>

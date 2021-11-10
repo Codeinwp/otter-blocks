@@ -99,12 +99,10 @@ const attributes = {
 		default: 0
 	},
 	paddingTablet: {
-		type: 'number',
-		default: 0
+		type: 'number'
 	},
 	paddingMobile: {
-		type: 'number',
-		default: 0
+		type: 'number'
 	},
 	paddingTop: {
 		type: 'number',
