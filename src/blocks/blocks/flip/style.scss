@@ -17,7 +17,7 @@
 
 	&:hover {
 		&.anim {
-			.o-inner {
+			 > .o-inner {
 				transform: var(--flip-anim);
 			}
 		}
@@ -46,6 +46,7 @@
 			background-size: inherit;
 			border-style: solid;
 			border-radius: 10px;
+			border-color: #aaaaaa;
 		}
 
 		.o-front {
@@ -71,8 +72,6 @@
 		}
 
 		.o-back {
-			border-style: solid;
-			border-radius: 10px;
 			padding: 20px;
 			transform: var(--flip-anim);
 		}
