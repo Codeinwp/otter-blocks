@@ -69,12 +69,10 @@ class Advanced_Heading_CSS extends Base_CSS {
 					array(
 						'property' => 'font-style',
 						'value'    => 'fontStyle',
-						'default'  => 'normal',
 					),
 					array(
 						'property' => 'text-transform',
 						'value'    => 'textTransform',
-						'default'  => 'none',
 					),
 					array(
 						'property' => 'line-height',
