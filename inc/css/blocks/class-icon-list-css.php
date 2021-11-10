@@ -36,6 +36,21 @@ class Icon_List_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
+				'properties' => array(
+					array(
+						'property' => 'align-items',
+						'value'    => 'horizontalAlign',
+					),
+					array(
+						'property' => 'justify-content',
+						'value'    => 'horizontalAlign',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
 				'selector'   => ' .wp-block-themeisle-blocks-icon-list-item',
 				'properties' => array(
 					array(

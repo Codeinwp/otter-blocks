@@ -1,3 +1,5 @@
+/** @jsx jsx */
+
 /**
  * WordPress dependencies.
  */
@@ -8,11 +10,17 @@ import {
 	useEffect
 } from '@wordpress/element';
 
+import {
+	css,
+	jsx
+} from '@emotion/react';
+
 /**
  * Internal dependencies
  */
 import { blockInit } from '../../helpers/block-utility.js';
 import defaultAttributes from './attributes.js';
+import Controls from './controls.js';
 import Inspector from './inspector.js';
 
 const Edit = ({
@@ -28,6 +36,11 @@ const Edit = ({
 
 	return (
 		<Fragment>
+			<Controls
+				attributes={ attributes }
+				setAttributes={ setAttributes }
+			/>
+
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
@@ -36,6 +49,14 @@ const Edit = ({
 			<div
 				id={ attributes.id }
 				className={ className }
+				css={
+					css`
+						.block-editor-block-list__layout {
+							align-items: ${ attributes.horizontalAlign || 'unset' } !important;
+							justify-content: ${ attributes.horizontalAlign || 'unset' } !important;
+						}
+					`
+				}
 			>
 				<InnerBlocks
 					allowedBlocks={ [ 'themeisle-blocks/icon-list-item' ] }
