@@ -3,7 +3,7 @@
 /**
  * WordPress dependencies.
  */
-import { AlignmentToolbar, BlockControls, InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks } from '@wordpress/block-editor';
 
 import {
 	Fragment,
@@ -20,6 +20,7 @@ import {
  */
 import { blockInit } from '../../helpers/block-utility.js';
 import defaultAttributes from './attributes.js';
+import Controls from './controls.js';
 import Inspector from './inspector.js';
 
 const Edit = ({
@@ -35,29 +36,15 @@ const Edit = ({
 
 	return (
 		<Fragment>
-			<Inspector
+			<Controls
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 			/>
 
-			<BlockControls group="block">
-				<AlignmentToolbar
-					value={ attributes.horizontalAlign }
-					onChange={ align => {
-						switch ( align ) {
-						case 'left':
-							setAttributes({ horizontalAlign: 'flex-start' });
-							break;
-						case 'center':
-							setAttributes({ horizontalAlign: 'center' });
-							break;
-						case 'right':
-							setAttributes({ horizontalAlign: 'flex-end' });
-							break;
-						}
-					} }
-				/>
-			</BlockControls>
+			<Inspector
+				attributes={ attributes }
+				setAttributes={ setAttributes }
+			/>
 
 			<div
 				id={ attributes.id }

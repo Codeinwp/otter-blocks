@@ -12,8 +12,7 @@ import {
 	PanelBody,
 	RangeControl,
 	Placeholder,
-	Spinner,
-	SelectControl
+	Spinner
 } from '@wordpress/components';
 
 import {
@@ -110,7 +109,6 @@ const Inspector = ({
 					colorValue={ attributes.defaultIconColor }
 					onColorChange={ onDefaultIconColorChange }
 				/>
-
 			</PanelBody>
 		</InspectorControls>
 	);
