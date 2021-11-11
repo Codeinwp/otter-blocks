@@ -72,9 +72,6 @@ const attributes = {
 	frontBackgroundRepeat: {
 		type: 'string'
 	},
-	frontBackgroundRepeat: {
-		type: 'string'
-	},
 	frontBackgroundSize: {
 		type: 'string'
 	},
@@ -92,9 +89,6 @@ const attributes = {
 	},
 	backImgFocalpoint: {
 		type: 'object'
-	},
-	backBackgroundRepeat: {
-		type: 'string'
 	},
 	backBackgroundRepeat: {
 		type: 'string'
