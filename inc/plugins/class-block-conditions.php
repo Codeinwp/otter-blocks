@@ -37,7 +37,7 @@ class Block_Conditions {
 	 * @access  public
 	 */
 	public function render_blocks( $block_content, $block ) {
-		if ( ! is_admin() && ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) && isset( $block['attrs']['otterConditions'] ) && 'valid' === apply_filters( 'product_neve_license_status', false ) ) {
+		if ( ! is_admin() && ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) && isset( $block['attrs']['otterConditions'] ) ) {
 			$display = true;
 
 			foreach ( $block['attrs']['otterConditions'] as $group ) {
@@ -102,6 +102,7 @@ class Block_Conditions {
 			return true;
 		}
 
+		$has_pro    = 'valid' === apply_filters( 'product_neve_license_status', false );
 		$visibility = isset( $condition['visibility'] ) ? boolval( $condition['visibility'] ) : true;
 
 		if ( 'loggedInUser' === $condition['type'] ) {
@@ -140,7 +141,7 @@ class Block_Conditions {
 			}
 		}
 
-		if ( 'postMeta' === $condition['type'] ) {
+		if ( 'postMeta' === $condition['type'] && $has_pro ) {
 			if ( isset( $condition['meta_key'] ) ) {
 				if ( $visibility ) {
 					return $this->has_meta( $condition );
@@ -150,25 +151,25 @@ class Block_Conditions {
 			}
 		}
 
-		if ( 'dateRange' === $condition['type'] ) {
+		if ( 'dateRange' === $condition['type'] && $has_pro ) {
 			if ( isset( $condition['start_date'] ) ) {
 				return $this->has_date_range( $condition );
 			}
 		}
 
-		if ( 'dateRecurring' === $condition['type'] ) {
+		if ( 'dateRecurring' === $condition['type'] && $has_pro ) {
 			if ( isset( $condition['days'] ) ) {
 				return $this->has_date_recurring( $condition['days'] );
 			}
 		}
 
-		if ( 'timeRecurring' === $condition['type'] ) {
+		if ( 'timeRecurring' === $condition['type'] && $has_pro ) {
 			if ( isset( $condition['start_time'] ) ) {
 				return $this->has_time_recurring( $condition );
 			}
 		}
 
-		if ( 'wooProductsInCart' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
+		if ( 'wooProductsInCart' === $condition['type'] && class_exists( 'WooCommerce' ) && $has_pro ) {
 			if ( isset( $condition['on'] ) ) {
 				if ( $visibility ) {
 					return $this->has_products_in_cart( $condition );
@@ -178,7 +179,7 @@ class Block_Conditions {
 			}
 		}
 
-		if ( 'wooTotalCartValue' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
+		if ( 'wooTotalCartValue' === $condition['type'] && class_exists( 'WooCommerce' ) && $has_pro ) {
 			if ( isset( $condition['value'] ) ) {
 				if ( 'greater_than' === $condition['compare'] ) {
 					return $this->has_total_cart_value( $condition['value'] );
@@ -188,7 +189,7 @@ class Block_Conditions {
 			}
 		}
 
-		if ( 'wooPurchaseHistory' === $condition['type'] && class_exists( 'WooCommerce' ) ) {
+		if ( 'wooPurchaseHistory' === $condition['type'] && class_exists( 'WooCommerce' ) && $has_pro ) {
 			if ( isset( $condition['products'] ) ) {
 				if ( $visibility ) {
 					return $this->has_products( $condition['products'] );
@@ -198,7 +199,7 @@ class Block_Conditions {
 			}
 		}
 
-		if ( 'learnDashPurchaseHistory' === $condition['type'] && defined( 'LEARNDASH_VERSION' ) ) {
+		if ( 'learnDashPurchaseHistory' === $condition['type'] && defined( 'LEARNDASH_VERSION' ) && $has_pro ) {
 			if ( isset( $condition['on'] ) ) {
 				if ( $visibility ) {
 					return $this->has_courses_or_groups( $condition );
@@ -208,7 +209,7 @@ class Block_Conditions {
 			}
 		}
 
-		if ( 'learnDashCourseStatus' === $condition['type'] && defined( 'LEARNDASH_VERSION' ) ) {
+		if ( 'learnDashCourseStatus' === $condition['type'] && defined( 'LEARNDASH_VERSION' ) && $has_pro ) {
 			if ( isset( $condition['course'] ) ) {
 				if ( $visibility ) {
 					return $this->has_course_status( $condition );

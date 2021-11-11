@@ -18,6 +18,7 @@ import {
 	CheckboxControl,
 	DateTimePicker,
 	Dropdown,
+	ExternalLink,
 	FormTokenField,
 	PanelBody,
 	Placeholder,
@@ -45,6 +46,10 @@ import { decodeEntities } from '@wordpress/html-entities';
  * Internal dependencies.
  */
 import PanelTab from '../../components/panel-tab/index.js';
+
+const isBoosterActive = Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive );
+const isNeve = Boolean( window.themeisleGutenberg.hasNeveSupport.hasNeve );
+const isNevePro = Boolean( window.themeisleGutenberg.hasNeveSupport.hasNevePro );
 
 const Edit = ({
 	attributes,
@@ -78,7 +83,7 @@ const Edit = ({
 	const [ courseGroupsStatus, setCourseGroupsStatus ] = useState( 'loading' );
 
 	useEffect( () => {
-		if ( Boolean( window.themeisleGutenberg.hasLearnDash ) ) {
+		if ( Boolean( window.themeisleGutenberg.hasLearnDash ) && isBoosterActive ) {
 			( async() => {
 				setCoursesStatus( 'loading' );
 				setCourseGroupsStatus( 'loading' );
@@ -142,7 +147,7 @@ const Edit = ({
 		let productsStatus = 'loading';
 		let categoriesStatus = 'loading';
 
-		if ( Boolean( window.themeisleGutenberg.hasWooCommerce ) ) {
+		if ( Boolean( window.themeisleGutenberg.hasWooCommerce ) && isBoosterActive ) {
 			const { COLLECTIONS_STORE_KEY } = window.wc.wcBlocksData;
 
 			// eslint-disable-next-line camelcase
@@ -471,9 +476,9 @@ const Edit = ({
 
 	const Separator = ({ label }) => {
 		return (
-			<div className="otter-blocks-conditions__operator-wrapper">
-				<div className="otter-blocks-conditions__operator-line"></div>
-				<div className="otter-blocks-conditions__operator-word">
+			<div className="otter-conditions__operator-wrapper">
+				<div className="otter-conditions__operator-line"></div>
+				<div className="otter-conditions__operator-word">
 					<span>{ label }</span>
 				</div>
 			</div>
@@ -551,6 +556,27 @@ const Edit = ({
 				initialOpen={ false }
 			>
 				<p>{ __( 'Control the visibility of your blocks based on the following conditions.', 'otter-blocks' ) }</p>
+
+				{ ( isNeve && ! isBoosterActive ) && (
+					<Fragment>
+						<p>{ __( 'Unlock the full power of Block Conditions with Neve Pro\'s Block Editor Booster. ', 'otter-blocks' ) }</p>
+
+						<p>
+							{ ! isNevePro && (
+								<ExternalLink href="https://themeisle.com/themes/neve/pricing">
+									{ __( 'Get Neve Pro.', 'otter-blocks' ) }
+								</ExternalLink>
+							) }
+
+							{ isNevePro && (
+								<ExternalLink href={ window.themeisleGutenberg.hasNeveSupport.optionsPage }>
+									{ __( 'Enable Block Editor Booster.', 'otter-blocks' ) }
+								</ExternalLink>
+							) }
+						</p>
+					</Fragment>
+				) }
+
 				<p>{ __( 'Display the block if…', 'otter-blocks' ) }</p>
 
 				{ attributes.otterConditions && attributes.otterConditions.map( ( group, index ) => {
@@ -565,13 +591,13 @@ const Edit = ({
 										<BaseControl
 											label={ __( 'Condition', 'otter-blocks' ) }
 											help={ getConditions().find( condition => condition.value === ( i.type || 'none' ) ).help }
-											id={ `otter-blocks-conditions-${ index }-${ n }` }
+											id={ `otter-conditions-${ index }-${ n }` }
 										>
 											<select
 												value={ i.type || '' }
 												onChange={ e => changeCondition( e.target.value, index, n ) }
 												className="components-select-control__input"
-												id={ `otter-blocks-conditions-${ index }-${ n }` }
+												id={ `otter-conditions-${ index }-${ n }` }
 											>
 												<option value="none">{ __( 'Select a condition', 'otter-blocks' ) }</option>
 
@@ -583,27 +609,31 @@ const Edit = ({
 
 												<optgroup label={ __( 'Posts', 'otter-blocks' ) }>
 													<option value="postAuthor">{ __( 'Post Author', 'otter-blocks' ) }</option>
-													<option value="postMeta">{ __( 'Post Meta', 'otter-blocks' ) }</option>
+													{ ( isBoosterActive || isNeve ) && (
+														<option value="postMeta" disabled={ ! isBoosterActive }>{ __( 'Post Meta', 'otter-blocks' ) }</option>
+													) }
 												</optgroup>
 
-												<optgroup label={ __( 'Date & Time', 'otter-blocks' ) }>
-													<option value="dateRange">{ __( 'Date Range', 'otter-blocks' ) }</option>
-													<option value="dateRecurring">{ __( 'Date Recurring', 'otter-blocks' ) }</option>
-													<option value="timeRecurring">{ __( 'Time Recurring', 'otter-blocks' ) }</option>
-												</optgroup>
-
-												{ Boolean( window.themeisleGutenberg.hasWooCommerce ) && (
-													<optgroup label={ __( 'WooCommerce', 'otter-blocks' ) }>
-														<option value="wooProductsInCart">{ __( 'Products in Cart', 'otter-blocks' ) }</option>
-														<option value="wooTotalCartValue">{ __( 'Total Cart Value', 'otter-blocks' ) }</option>
-														<option value="wooPurchaseHistory">{ __( 'Purchase History', 'otter-blocks' ) }</option>
+												{ ( isBoosterActive || isNeve ) && (
+													<optgroup label={ __( 'Date & Time', 'otter-blocks' ) }>
+														<option value="dateRange" disabled={ ! isBoosterActive }>{ __( 'Date Range', 'otter-blocks' ) }</option>
+														<option value="dateRecurring" disabled={ ! isBoosterActive }>{ __( 'Date Recurring', 'otter-blocks' ) }</option>
+														<option value="timeRecurring" disabled={ ! isBoosterActive }>{ __( 'Time Recurring', 'otter-blocks' ) }</option>
 													</optgroup>
 												) }
 
-												{ Boolean( window.themeisleGutenberg.hasLearnDash ) && (
+												{ ( Boolean( window.themeisleGutenberg.hasWooCommerce ) && ( isBoosterActive || isNeve ) ) && (
+													<optgroup label={ __( 'WooCommerce', 'otter-blocks' ) }>
+														<option value="wooProductsInCart" disabled={ ! isBoosterActive }>{ __( 'Products in Cart', 'otter-blocks' ) }</option>
+														<option value="wooTotalCartValue" disabled={ ! isBoosterActive }>{ __( 'Total Cart Value', 'otter-blocks' ) }</option>
+														<option value="wooPurchaseHistory" disabled={ ! isBoosterActive }>{ __( 'Purchase History', 'otter-blocks' ) }</option>
+													</optgroup>
+												) }
+
+												{ ( Boolean( window.themeisleGutenberg.hasLearnDash ) && ( isBoosterActive || isNeve ) ) && (
 													<optgroup label={ __( 'LearnDash', 'otter-blocks' ) }>
-														<option value="learnDashPurchaseHistory">{ __( 'Purchase History', 'otter-blocks' ) }</option>
-														<option value="learnDashCourseStatus">{ __( 'Course Status', 'otter-blocks' ) }</option>
+														<option value="learnDashPurchaseHistory" disabled={ ! isBoosterActive }>{ __( 'Purchase History', 'otter-blocks' ) }</option>
+														<option value="learnDashCourseStatus" disabled={ ! isBoosterActive }>{ __( 'Course Status', 'otter-blocks' ) }</option>
 													</optgroup>
 												) }
 											</select>
@@ -684,14 +714,14 @@ const Edit = ({
 											<Fragment>
 												<DateRange
 													label={ __( 'Start Date', 'otter-blocks' ) }
-													id={ `otter-blocks-conditions-date-start${ index }-${ n }` }
+													id={ `otter-conditions-date-start${ index }-${ n }` }
 													value={ i.start_date }
 													onChange={ e => changeValue( e, index, n, 'start_date' ) }
 												/>
 
 												<DateRange
 													label={ __( 'End Date (Optional)', 'otter-blocks' ) }
-													id={ `otter-blocks-conditions-date-end${ index }-${ n }` }
+													id={ `otter-conditions-date-end${ index }-${ n }` }
 													value={ i.end_date }
 													onChange={ e => changeValue( e, index, n, 'end_date' ) }
 												/>
@@ -719,7 +749,7 @@ const Edit = ({
 												<BaseControl
 													label={ __( 'Start Time', 'otter-blocks' ) }
 												>
-													<div className="otter-blocks-conditions">
+													<div className="otter-conditions">
 														<input
 															aria-label={ __( 'Hours', 'otter-blocks' ) }
 															className="components-datetime__time-field-hours-input"
@@ -786,7 +816,7 @@ const Edit = ({
 												<BaseControl
 													label={ __( 'End Time', 'otter-blocks' ) }
 												>
-													<div className="otter-blocks-conditions">
+													<div className="otter-conditions">
 														<input
 															aria-label={ __( 'Hours', 'otter-blocks' ) }
 															className="components-datetime__time-field-hours-input"
@@ -1053,7 +1083,7 @@ const Edit = ({
 										<Button
 											isLarge
 											isDestructive
-											className="otter-blocks-conditions__add"
+											className="otter-conditions__add"
 											onClick={ () => removeCondition( index, n ) }
 										>
 											{ __( 'Delete Condition', 'otter-blocks' ) }
@@ -1068,7 +1098,7 @@ const Edit = ({
 								<Button
 									isSecondary
 									isLarge
-									className="otter-blocks-conditions__add"
+									className="otter-conditions__add"
 									onClick={ () => addNewCondition( index ) }
 								>
 									{ __( 'Add a New Condition', 'otter-blocks' ) }
@@ -1085,7 +1115,7 @@ const Edit = ({
 				<Button
 					isSecondary
 					isLarge
-					className="otter-blocks-conditions__add"
+					className="otter-conditions__add"
 					onClick={ addGroup }
 				>
 					{ __( 'Add Rule Group', 'otter-blocks' ) }
