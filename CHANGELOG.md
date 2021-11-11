@@ -1,3 +1,8 @@
+##### [Version 1.7.1](https://github.com/Codeinwp/otter-blocks/compare/v1.7.0...v1.7.1) (2021-10-25)
+
+- Development changes
+- Development changes
+
 #### [Version 1.7.0](https://github.com/Codeinwp/otter-blocks/compare/v1.6.9...v1.7.0) (2021-10-11)
 
 - Add Masonry Variation to Gallery
