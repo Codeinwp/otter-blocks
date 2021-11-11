@@ -41,7 +41,7 @@
 			height: 100%;
 			-webkit-backface-visibility: hidden; /* Safari */
 			backface-visibility: hidden;
-			overflow: hidden;
+			overflow-x: hidden;
 			overflow-y: auto;
 			background-size: inherit;
 			border-style: solid;
