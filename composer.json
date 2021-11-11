@@ -9,7 +9,8 @@
         "phpcompatibility/php-compatibility": "^9",
         "dealerdirect/phpcodesniffer-composer-installer": "0.7.1",
         "automattic/vipwpcs": "^1.0.0",
-        "phpunit/phpunit": "7.5.9"
+        "phpunit/phpunit": "7.5.9",
+        "yoast/phpunit-polyfills": "^1.0"
     },
     "license": "GPL-2.0+",
     "authors": [
