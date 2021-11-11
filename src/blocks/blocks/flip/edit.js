@@ -13,9 +13,11 @@ import {
 /**
  * WordPress dependencies.
  */
+import { __ } from '@wordpress/i18n';
+
 import { InnerBlocks, RichText } from '@wordpress/block-editor';
 
-import { __ } from '@wordpress/i18n';
+import { Button } from '@wordpress/components';
 
 import {
 	Fragment,
@@ -27,10 +29,8 @@ import {
  * Internal dependencies
  */
 import defaultAttributes from './attributes.js';
-
 import Inspector from './inspector.js';
 import { blockInit } from '../../helpers/block-utility.js';
-import { Button } from '@wordpress/components';
 import hexToRgba from 'hex-rgba';
 
 const Edit = ({
@@ -64,7 +64,6 @@ const Edit = ({
 		}
 		` : '';
 
-	console.log( 'color' === attributes.frontBackgroundType ? attributes.frontBackgroundColor : attributes.frontBackgroundGradient );
 	return (
 		<Fragment>
 			<Inspector
@@ -77,8 +76,8 @@ const Edit = ({
 				className={
 					classnames(
 						className,
-						{'flipX': 'flipX' === attributes.animType},
-						{'flipY': 'flipY' === attributes.animType}
+						{ 'flipX': 'flipX' === attributes.animType },
+						{ 'flipY': 'flipY' === attributes.animType }
 					)
 				}
 				css={ css`
@@ -96,46 +95,44 @@ const Edit = ({
 							{ invert: attributes.isInverted }
 						)
 					}
-					style={{
+					style={ {
 						transform: isFliped ? 'var(--flip-anim)' : 'unset',
 						width: attributes.width,
 						height: attributes.height
-					}}
+					} }
 				>
 					<div
 						className="o-front"
-						style={{
+						style={ {
 							borderColor: attributes.borderColor,
 							borderRadius: attributes.borderRadius,
 							borderWidth: attributes.borderWidth,
 							backgroundColor: 'color' === attributes.frontBackgroundType ? attributes.frontBackgroundColor : undefined,
-							backgroundImage: 'image' === attributes.frontBackgroundType ? `url(${attributes.frontImg?.url})` : ( attributes.frontBackgroundGradient || undefined ),
-							backgroundPosition: 'image' === attributes.frontBackgroundType ? `${ Math.round( attributes.frontImgFocalpoint?.x * 100 ) }% ${ Math.round( attributes.frontImgFocalpoint?.y * 100 ) }%` : undefined,
+							backgroundImage: 'image' === attributes.frontBackgroundType ? `url(${attributes.frontBackgroundImage?.url})` : ( attributes.frontBackgroundGradient || undefined ),
+							backgroundPosition: 'image' === attributes.frontBackgroundType ? `${ Math.round( attributes.frontBackgroundPosition?.x * 100 ) }% ${ Math.round( attributes.frontBackgroundPosition?.y * 100 ) }%` : undefined,
 							backgroundRepeat: 'image' === attributes.frontBackgroundType ? attributes.fontBackgroundRepeat : undefined,
 							backgroundAttachment: 'image' === attributes.frontBackgroundType ? attributes.frontBackgroundAttachment : undefined,
 							backgroundSize: 'image' === attributes.frontBackgroundType ? attributes.frontBackgroundSize : undefined
-						}}
+						} }
 					>
 						<div
 							className="o-content"
-							style={{
+							style={ {
 								padding: attributes.padding,
 								alignItems: attributes.horizontalAlign,
 								justifyContent: attributes.verticalAlign
-							}}
+							} }
 						>
-							{
-								attributes.frontMedia?.url && (
-									<img
-										style={{
-											width: attributes.frontMediaWidth + 'px',
-											height: attributes.frontMediaHeight + 'px'
-										}}
-										className="o-img"
-										srcSet={ attributes.frontMedia?.url }
-									/>
-								)
-							}
+							{ attributes.frontMedia?.url && (
+								<img
+									style={{
+										width: attributes.frontMediaWidth + 'px',
+										height: attributes.frontMediaHeight + 'px'
+									}}
+									className="o-img"
+									srcSet={ attributes.frontMedia?.url }
+								/>
+							) }
 
 							<RichText
 								tagName="h3"
@@ -159,26 +156,25 @@ const Edit = ({
 								}}
 							/>
 						</div>
-
 					</div>
+
 					<div
 						className="o-back"
-						style={{
+						style={ {
 							padding: attributes.padding,
 							borderColor: attributes.borderColor,
 							borderRadius: attributes.borderRadius,
 							borderWidth: attributes.borderWidth,
 							justifyContent: attributes.backVerticalAlign,
 							backgroundColor: 'color' === attributes.backBackgroundType ? attributes.backBackgroundColor : undefined,
-							backgroundImage: 'image' === attributes.backBackgroundType ? `url(${attributes.backImg?.url})` : ( attributes.backBackgroundGradient || undefined ),
-							backgroundPosition: 'image' === attributes.backBackgroundType ? `${ Math.round( attributes.backImgFocalpoint?.x * 100 ) }% ${ Math.round( attributes.backImgFocalpoint?.y * 100 ) }%` : undefined,
+							backgroundImage: 'image' === attributes.backBackgroundType ? `url(${attributes.backBackgroundImage?.url})` : ( attributes.backBackgroundGradient || undefined ),
+							backgroundPosition: 'image' === attributes.backBackgroundType ? `${ Math.round( attributes.backBackgroundPosition?.x * 100 ) }% ${ Math.round( attributes.backBackgroundPosition?.y * 100 ) }%` : undefined,
 							backgroundRepeat: 'image' === attributes.backBackgroundType ? attributes.fontBackgroundRepeat : undefined,
 							backgroundAttachment: 'image' === attributes.backBackgroundType ? attributes.backBackgroundAttachment : undefined,
 							backgroundSize: 'image' === attributes.backBackgroundType ? attributes.backBackgroundSize : undefined
-						}}
+						} }
 					>
 						<InnerBlocks
-							renderAppender={ InnerBlocks.ButtonBlockAppender  }
 							renderAppender={ isSelected ? InnerBlocks.ButtonBlockAppender : '' }
 						/>
 					</div>
@@ -187,8 +183,10 @@ const Edit = ({
 				<div className="o-switcher">
 					<Button
 						isPrimary
-						onClick={ () => setFliped( ! isFliped )}
-					> { __( 'Flip to ', 'otter-blocks' ) + ( isFliped  ? __( 'front', 'otter-blocks' ) : __( 'back', 'otter-blocks' ) ) } </Button>
+						onClick={ () => setFliped( ! isFliped ) }
+					>
+						{ isFliped  ? __( 'Flip to front', 'otter-blocks' ) : __( 'Flip to back', 'otter-blocks' ) }
+					</Button>
 				</div>
 			</div>
 		</Fragment>

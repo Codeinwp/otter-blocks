@@ -6,7 +6,10 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies.
  */
-import { InnerBlocks, RichText } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	RichText
+} from '@wordpress/block-editor';
 
 const Save = ({
 	attributes,
@@ -18,8 +21,8 @@ const Save = ({
 			className={
 				classnames(
 					className,
-					{'flipX': 'flipX' === attributes.animType},
-					{'flipY': 'flipY' === attributes.animType},
+					{ 'flipX': 'flipX' === attributes.animType },
+					{ 'flipY': 'flipY' === attributes.animType },
 					'anim'
 				)
 			}
@@ -33,19 +36,15 @@ const Save = ({
 				}
 			>
 				<div className="o-front">
-					<div
-						className="o-content"
-					>
-						{
-							attributes.frontMedia?.url && (
-								<img
-									className="o-ing"
-									src={ attributes.frontMedia?.url }
-									srcSet={ attributes.frontMedia?.url }
-									alt={ attributes.frontMedia?.alt }
-								/>
-							)
-						}
+					<div className="o-content">
+						{ attributes.frontMedia?.url && (
+							<img
+								className="o-ing"
+								src={ attributes.frontMedia?.url }
+								srcSet={ attributes.frontMedia?.url }
+								alt={ attributes.frontMedia?.alt }
+							/>
+						) }
 
 						<RichText.Content
 							tagName="h3"
@@ -58,6 +57,7 @@ const Save = ({
 						/>
 					</div>
 				</div>
+
 				<div className="o-back">
 					<InnerBlocks.Content />
 				</div>

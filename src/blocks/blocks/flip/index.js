@@ -20,12 +20,12 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/flip', {
-	title: __( 'Flip Block', 'otter-blocks' ),
-	description: __( 'Make a container with a flip effect.', 'otter-blocks' ),
+	title: __( 'Flip Card', 'otter-blocks' ),
+	description: __( 'Make a card with a flip effect.', 'otter-blocks' ),
 	icon,
 	category: 'themeisle-blocks',
 	keywords: [
-		'flip',
+		'flip card',
 		'container',
 		'animation'
 	],

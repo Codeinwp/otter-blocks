@@ -158,41 +158,41 @@ class Flip_CSS extends Base_CSS {
 						'property'  => 'background-image',
 						'value'     => 'frontBackgroundGradient',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['frontBackgroundType'] ) && 'gradient' == $attrs['frontBackgroundType'];
+							return isset( $attrs['frontBackgroundType'] ) && 'gradient' === $attrs['frontBackgroundType'];
 						},
 					),
 					array(
 						'property'  => 'background-image',
-						'value'     => 'frontImg',
+						'value'     => 'frontBackgroundImage',
 						'format'    => function( $value, $attrs ) {
 							return "url({$value['url']})";
 						},
 						'condition' => function( $attrs ) {
-							return isset( $attrs['frontBackgroundType'] ) && 'image' == $attrs['frontBackgroundType'];
+							return isset( $attrs['frontBackgroundType'] ) && 'image' === $attrs['frontBackgroundType'];
 						},
 					),
 					array(
 						'property'  => 'background-position',
-						'value'     => 'frontImgFocalpoint',
+						'value'     => 'frontBackgroundPosition',
 						'format'    => function( $value, $attrs ) {
-							return( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
+							return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
 						},
 						'condition' => function( $attrs ) {
-							return isset( $attrs['frontBackgroundType'] ) && 'image' == $attrs['frontBackgroundType'];
+							return isset( $attrs['frontBackgroundType'] ) && 'image' === $attrs['frontBackgroundType'];
 						},
 					),
 					array(
 						'property'  => 'background-repeat',
 						'value'     => 'frontBackgroundRepeat',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['frontBackgroundType'] ) && 'image' == $attrs['frontBackgroundType'];
+							return isset( $attrs['frontBackgroundType'] ) && 'image' === $attrs['frontBackgroundType'];
 						},
 					),
 					array(
 						'property'  => 'background-size',
 						'value'     => 'frontBackgroundSize',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['frontBackgroundType'] ) && 'image' == $attrs['frontBackgroundType'];
+							return isset( $attrs['frontBackgroundType'] ) && 'image' === $attrs['frontBackgroundType'];
 						},
 					),
 				),
@@ -289,41 +289,41 @@ class Flip_CSS extends Base_CSS {
 						'property'  => 'background-image',
 						'value'     => 'backBackgroundGradient',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['backBackgroundType'] ) && 'gradient' == $attrs['backBackgroundType'];
+							return isset( $attrs['backBackgroundType'] ) && 'gradient' === $attrs['backBackgroundType'];
 						},
 					),
 					array(
 						'property'  => 'background-image',
-						'value'     => 'backImg',
+						'value'     => 'backBackgroundImage',
 						'format'    => function( $value, $attrs ) {
 							return "url({$value['url']})";
 						},
 						'condition' => function( $attrs ) {
-							return isset( $attrs['backBackgroundType'] ) && 'image' == $attrs['backBackgroundType'];
+							return isset( $attrs['backBackgroundType'] ) && 'image' === $attrs['backBackgroundType'];
 						},
 					),
 					array(
 						'property'  => 'background-position',
-						'value'     => 'backImgFocalpoint',
+						'value'     => 'backBackgroundPosition',
 						'format'    => function( $value, $attrs ) {
-							return( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
+							return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
 						},
 						'condition' => function( $attrs ) {
-							return isset( $attrs['backBackgroundType'] ) && 'image' == $attrs['backBackgroundType'];
+							return isset( $attrs['backBackgroundType'] ) && 'image' === $attrs['backBackgroundType'];
 						},
 					),
 					array(
 						'property'  => 'background-repeat',
 						'value'     => 'backBackgroundRepeat',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['backBackgroundType'] ) && 'image' == $attrs['backBackgroundType'];
+							return isset( $attrs['backBackgroundType'] ) && 'image' === $attrs['backBackgroundType'];
 						},
 					),
 					array(
 						'property'  => 'background-size',
 						'value'     => 'backBackgroundSize',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['backBackgroundType'] ) && 'image' == $attrs['backBackgroundType'];
+							return isset( $attrs['backBackgroundType'] ) && 'image' === $attrs['backBackgroundType'];
 						},
 					),
 				),

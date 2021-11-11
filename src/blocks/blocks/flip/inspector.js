@@ -6,9 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { pick } from 'lodash';
 
 import {
-	__experimentalColorGradientControl as ColorGradientControl,
 	InspectorControls,
-	MediaReplaceFlow,
 	PanelColorSettings,
 	MediaPlaceholder
 } from '@wordpress/block-editor';
@@ -17,25 +15,25 @@ import {
 	BaseControl,
 	Button,
 	ColorPalette,
-	FocalPointPicker,
 	PanelBody,
 	RangeControl,
 	SelectControl,
 	ToggleControl
 } from '@wordpress/components';
 
-import {
-	Fragment
-} from '@wordpress/element';
-import ControlPanelControl from '../../components/control-panel-control';
-import ColorBaseControl from '../../components/color-base-control';
-import BackgroundSelector from '../../components/background-selector';
+import { Fragment } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import ControlPanelControl from '../../components/control-panel-control/index.js';
+import ColorBaseControl from '../../components/color-base-control/index.js';
+import BackgroundSelector from '../../components/background-selector/index.js';
 
 const Inspector = ({
 	attributes,
 	setAttributes
 }) => {
-
 	const changeBoxShadowColor = value => {
 		setAttributes({
 			boxShadowColor: ( 100 > attributes.boxShadowColorOpacity && attributes.boxShadowColor?.includes( 'var(' ) ) ?
@@ -43,7 +41,6 @@ const Inspector = ({
 				value
 		});
 	};
-
 
 	const changeBoxShadowColorOpacity = value => {
 		const changes = { boxShadowColorOpacity: value };
@@ -57,7 +54,6 @@ const Inspector = ({
 		<InspectorControls>
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
-				initialOpen={ true }
 			>
 				<RangeControl
 					label={ __( 'Width', 'otter-blocks' ) }
@@ -91,7 +87,6 @@ const Inspector = ({
 				title={ __( 'Front', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-
 				<BaseControl
 					label={ __( 'Media Image', 'otter-blocks' ) }
 					help={ __( 'Set an image as showcase.', 'otter-blocks' ) }
@@ -191,24 +186,24 @@ const Inspector = ({
 				<BackgroundSelector
 					backgroundType={ attributes.frontBackgroundType }
 					backgroundColor={ attributes.frontBackgroundColor }
-					image={ attributes.frontImg }
+					image={ attributes.frontBackgroundImage }
 					gradient={ attributes.frontBackgroundGradient }
-					focalPoint={ attributes.frontImgFocalpoint }
+					focalPoint={ attributes.frontBackgroundPosition }
 					backgroundAttachment={ attributes.frontBackgroundAttachment }
 					backgroundRepeat={ attributes.frontBackgroundRepeat }
 					backgroundSize={ attributes.frontBackgroundSize }
 					changeBackgroundType={ frontBackgroundType => setAttributes({ frontBackgroundType }) }
 					changeImage={ media => {
 						setAttributes({
-							frontImg: pick( media, [ 'id', 'url' ])
+							frontBackgroundImage: pick( media, [ 'id', 'url' ])
 						});
 					}}
-					removeImage={ () => setAttributes({ frontImg: undefined })}
+					removeImage={ () => setAttributes({ frontBackgroundImage: undefined })}
 					changeColor={ frontBackgroundColor => setAttributes({ frontBackgroundColor })}
 					changeGradient={ frontBackgroundGradient => setAttributes({ frontBackgroundGradient }) }
 					changeBackgroundAttachment={ frontBackgroundAttachment => setAttributes({ frontBackgroundAttachment })}
 					changeBackgroundRepeat={ frontBackgroundRepeat => setAttributes({ frontBackgroundRepeat })}
-					changeFocalPoint={ frontImgFocalpoint => setAttributes({ frontImgFocalpoint }) }
+					changeFocalPoint={ frontBackgroundPosition => setAttributes({ frontBackgroundPosition }) }
 				/>
 			</PanelBody>
 
@@ -216,28 +211,27 @@ const Inspector = ({
 				title={ __( 'Back', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-
 				<BackgroundSelector
 					backgroundType={ attributes.backBackgroundType }
 					backgroundColor={ attributes.backBackgroundColor }
-					image={ attributes.backImg }
+					image={ attributes.backBackgroundImage }
 					gradient={ attributes.backBackgroundGradient }
-					focalPoint={ attributes.backImgFocalpoint }
+					focalPoint={ attributes.backBackgroundPosition }
 					backgroundAttachment={ attributes.backBackgroundAttachment }
 					backgroundRepeat={ attributes.backBackgroundRepeat }
 					backgroundSize={ attributes.backBackgroundSize }
 					changeBackgroundType={ backBackgroundType => setAttributes({ backBackgroundType }) }
 					changeImage={ media => {
 						setAttributes({
-							backImg: pick( media, [ 'id', 'url' ])
+							backBackgroundImage: pick( media, [ 'id', 'url' ])
 						});
 					}}
-					removeImage={ () => setAttributes({ backImg: undefined })}
+					removeImage={ () => setAttributes({ backBackgroundImage: undefined })}
 					changeColor={ backBackgroundColor => setAttributes({ backBackgroundColor })}
 					changeGradient={ backBackgroundGradient => setAttributes({ backBackgroundGradient }) }
 					changeBackgroundAttachment={ backBackgroundAttachment => setAttributes({ backBackgroundAttachment })}
 					changeBackgroundRepeat={ backBackgroundRepeat => setAttributes({ backBackgroundRepeat })}
-					changeFocalPoint={ backImgFocalpoint => setAttributes({ backImgFocalpoint }) }
+					changeFocalPoint={ backBackgroundPosition => setAttributes({ backBackgroundPosition }) }
 				/>
 
 				<SelectControl
@@ -257,7 +251,6 @@ const Inspector = ({
 				title={ __( 'Style', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-
 				<SelectControl
 					label={ __( 'Flip Type', 'otter-blocks' )}
 					value={ attributes.animType }
@@ -268,7 +261,6 @@ const Inspector = ({
 					onChange={ animType => setAttributes({ animType })}
 				/>
 
-
 				<RangeControl
 					label={ __( 'Overlay Opacity', 'otter-blocks' ) }
 					value={ attributes.frontOverlayOpacity }
@@ -276,7 +268,6 @@ const Inspector = ({
 					min={ 0 }
 					max={ 100 }
 				/>
-
 
 				<RangeControl
 					label={ __( 'Padding', 'otter-blocks' ) }
@@ -301,23 +292,12 @@ const Inspector = ({
 					min={ 0 }
 					max={ 50 }
 				/>
-
 			</PanelBody>
 
 			<PanelColorSettings
 				title={ __( 'Color', 'otter-blocks' ) }
 				initialOpen={ false }
 				colorSettings={ [
-					{
-						value: attributes.frontBackgroundColor,
-						onChange: frontBackgroundColor => setAttributes({ frontBackgroundColor }),
-						label: __( 'Front Side Background Color', 'otter-blocks' )
-					},
-					{
-						value: attributes.backBackgroundColor,
-						onChange: backBackgroundColor => setAttributes({ backBackgroundColor }),
-						label: __( 'Back Side Background Color', 'otter-blocks' )
-					},
 					{
 						value: attributes.borderColor,
 						onChange: borderColor => setAttributes({ borderColor }),

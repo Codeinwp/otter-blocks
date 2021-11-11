@@ -54,11 +54,12 @@ const attributes = {
 	frontMediaHeight: {
 		type: 'number'
 	},
-	frontImg: {
+	frontBackgroundImage: {
 		type: 'object'
 	},
 	frontBackgroundType: {
-		type: 'string'
+		type: 'string',
+		default: 'color'
 	},
 	frontBackgroundColor: {
 		type: 'string'
@@ -66,7 +67,7 @@ const attributes = {
 	frontBackgroundGradient: {
 		type: 'string'
 	},
-	frontImgFocalpoint: {
+	frontBackgroundPosition: {
 		type: 'object'
 	},
 	frontBackgroundRepeat: {
@@ -75,11 +76,12 @@ const attributes = {
 	frontBackgroundSize: {
 		type: 'string'
 	},
-	backImg: {
+	backBackgroundImage: {
 		type: 'object'
 	},
 	backBackgroundType: {
-		type: 'string'
+		type: 'string',
+		default: 'color'
 	},
 	backBackgroundColor: {
 		type: 'string'
@@ -87,7 +89,7 @@ const attributes = {
 	backBackgroundGradient: {
 		type: 'string'
 	},
-	backImgFocalpoint: {
+	backBackgroundPosition: {
 		type: 'object'
 	},
 	backBackgroundRepeat: {
