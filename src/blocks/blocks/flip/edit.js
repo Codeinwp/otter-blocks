@@ -125,13 +125,20 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<BlockControls group="block">
-				<BlockAlignmentMatrixControl
-					label={ __( 'Change front content position', 'otter-blocks' ) }
-					value={ attributes.frontAlign }
-					onChange={ frontAlign => setAttributes({ frontAlign })}
-				/>
-			</BlockControls>
+			{
+				(
+					( ! attributes.isInverted  && false === isFliped ) || ( attributes.isInverted && isFliped )
+				) && (
+
+					<BlockControls group="block">
+						<BlockAlignmentMatrixControl
+							label={ __( 'Change front side content position', 'otter-blocks' ) }
+							value={ attributes.frontAlign }
+							onChange={ frontAlign => setAttributes({ frontAlign })}
+						/>
+					</BlockControls>
+				)
+			}
 
 			<div
 				id={ attributes.id }
