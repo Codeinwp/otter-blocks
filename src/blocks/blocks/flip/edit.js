@@ -15,7 +15,12 @@ import {
  */
 import { __ } from '@wordpress/i18n';
 
-import { InnerBlocks, RichText } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	RichText,
+	BlockControls,
+	__experimentalBlockAlignmentMatrixControl as BlockAlignmentMatrixControl
+} from '@wordpress/block-editor';
 
 import { Button } from '@wordpress/components';
 
@@ -32,6 +37,49 @@ import defaultAttributes from './attributes.js';
 import Inspector from './inspector.js';
 import { blockInit } from '../../helpers/block-utility.js';
 import hexToRgba from 'hex-rgba';
+
+const CONTENT_POSITIONS = {
+	'top left': {
+		alignItems: 'flex-start',
+		justifyContent: 'flex-start'
+	},
+	'top center': {
+		alignItems: 'center',
+		justifyContent: 'flex-start'
+	},
+	'top right': {
+		alignItems: 'flex-end',
+		justifyContent: 'flex-start'
+	},
+	'center left': {
+		alignItems: 'flex-start',
+		justifyContent: 'center'
+	},
+	'center center': {
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	center: {
+		alignItems: 'center',
+		justifyContent: 'center'
+	},
+	'center right': {
+		alignItems: 'flex-end',
+		justifyContent: 'center'
+	},
+	'bottom left': {
+		alignItems: 'flex-start',
+		justifyContent: 'flex-end'
+	},
+	'bottom center': {
+		alignItems: 'center',
+		justifyContent: 'flex-end'
+	},
+	'bottom right': {
+		alignItems: 'flex-end',
+		justifyContent: 'flex-end'
+	}
+};
 
 const Edit = ({
 	attributes,
@@ -71,6 +119,14 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
+			<BlockControls group="block">
+				<BlockAlignmentMatrixControl
+					label={ __( 'Change front content position', 'otter-blocks' ) }
+					value={ attributes.frontAlign }
+					onChange={ frontAlign => setAttributes({ frontAlign })}
+				/>
+			</BlockControls>
+
 			<div
 				id={ attributes.id }
 				className={
@@ -80,13 +136,7 @@ const Edit = ({
 						{ 'flipY': 'flipY' === attributes.animType }
 					)
 				}
-				css={ css`
-					.o-content {
-						background-color: rgba(0, 0, 0, ${ ( attributes.frontOverlayOpacity || 0 ) / 100});
-					}
-
-					${shadowCSS}
-				`}
+				css={ shadowCSS }
 			>
 				<div
 					className={
@@ -119,9 +169,12 @@ const Edit = ({
 							className="o-content"
 							style={ {
 								padding: attributes.padding,
-								alignItems: attributes.horizontalAlign,
-								justifyContent: attributes.verticalAlign
+								...( CONTENT_POSITIONS[attributes.frontAlign] || {})
 							} }
+							css={css`
+							background-color: rgba(0, 0, 0, ${ ( attributes.frontOverlayOpacity || 0 ) / 100});
+							`
+							}
 						>
 							{ attributes.frontMedia?.url && (
 								<img

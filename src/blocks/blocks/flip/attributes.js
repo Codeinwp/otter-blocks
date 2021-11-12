@@ -36,13 +36,10 @@ const attributes = {
 	backgroundColor: {
 		type: 'string'
 	},
-	verticalAlign: {
+	frontAlign: {
 		type: 'string'
 	},
 	backVerticalAlign: {
-		type: 'string'
-	},
-	horizontalAlign: {
 		type: 'string'
 	},
 	frontMedia: {
