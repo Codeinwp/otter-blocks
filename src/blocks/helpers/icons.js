@@ -249,10 +249,9 @@ export const cols2Equal = ( props ) => {
 			xmlns="http://www.w3.org/1999/xlink"
 			{...props}
 		>
-			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"/>
-			<Rect x="16.9" y="13" width="2.2" height="22"/>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"></Path>
+			<Rect x="22.9" y="13" width="2.2" height="22"/>
 		</SVG>
-
 	);
 };
 
