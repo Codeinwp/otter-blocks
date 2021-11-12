@@ -112,6 +112,12 @@ const Edit = ({
 		}
 		` : '';
 
+	useEffect( () => {
+		if ( false === isSelected ) {
+			setFliped( isSelected );
+		}
+	}, [ isSelected ]);
+
 	return (
 		<Fragment>
 			<Inspector
@@ -233,14 +239,18 @@ const Edit = ({
 					</div>
 				</div>
 
-				<div className="o-switcher">
-					<Button
-						isPrimary
-						onClick={ () => setFliped( ! isFliped ) }
-					>
-						{ isFliped  ? __( 'Flip to front', 'otter-blocks' ) : __( 'Flip to back', 'otter-blocks' ) }
-					</Button>
-				</div>
+				{
+					isSelected && (
+						<div className="o-switcher">
+							<Button
+								isPrimary
+								onClick={ () => setFliped( ! isFliped ) }
+							>
+								{ isFliped  ? __( 'Flip to front', 'otter-blocks' ) : __( 'Flip to back', 'otter-blocks' ) }
+							</Button>
+						</div>
+					)
+				}
 			</div>
 		</Fragment>
 	);
