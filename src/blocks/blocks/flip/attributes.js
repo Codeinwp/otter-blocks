@@ -70,6 +70,9 @@ const attributes = {
 	frontBackgroundRepeat: {
 		type: 'string'
 	},
+	frontBackgroundAttachment: {
+		type: 'string'
+	},
 	frontBackgroundSize: {
 		type: 'string'
 	},
@@ -93,6 +96,9 @@ const attributes = {
 		type: 'string'
 	},
 	backBackgroundSize: {
+		type: 'string'
+	},
+	backBackgroundAttachment: {
 		type: 'string'
 	},
 	frontOverlayOpacity: {

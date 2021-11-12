@@ -162,37 +162,40 @@ class Flip_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property'  => 'background-image',
-						'value'     => 'frontBackgroundImage',
-						'format'    => function( $value, $attrs ) {
-							return "url({$value['url']})";
-						},
-						'condition' => function( $attrs ) {
-							return isset( $attrs['frontBackgroundType'] ) && 'image' === $attrs['frontBackgroundType'];
-						},
-					),
-					array(
-						'property'  => 'background-position',
-						'value'     => 'frontBackgroundPosition',
-						'format'    => function( $value, $attrs ) {
-							return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
-						},
-						'condition' => function( $attrs ) {
-							return isset( $attrs['frontBackgroundType'] ) && 'image' === $attrs['frontBackgroundType'];
-						},
-					),
-					array(
-						'property'  => 'background-repeat',
-						'value'     => 'frontBackgroundRepeat',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['frontBackgroundType'] ) && 'image' === $attrs['frontBackgroundType'];
-						},
-					),
-					array(
-						'property'  => 'background-size',
-						'value'     => 'frontBackgroundSize',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['frontBackgroundType'] ) && 'image' === $attrs['frontBackgroundType'];
+						'property'       => 'background',
+						'pattern'        => 'url( imageURL ) repeat attachment position/size',
+						'pattern_values' => array(
+							'imageURL'   => array(
+								'value' => 'frontBackgroundImage',
+								'format'    => function( $value, $attrs ) {
+									return $value['url'];
+								},
+							),
+							'repeat'     => array(
+								'value'   => 'frontBackgroundRepeat',
+								'default' => 'repeat',
+							),
+							'attachment' => array(
+								'value'   => 'frontBackgroundAttachment',
+								'default' => 'scroll',
+							),
+							'position'   => array(
+								'value'   => 'frontBackgroundPosition',
+								'default' => 'top left',
+								'format'    => function( $value, $attrs ) {
+									if( isset( $value['x'] ) ) {
+										return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
+									}
+									return 'top left';
+								},
+							),
+							'size'       => array(
+								'value'   => 'backgroundSize',
+								'default' => 'auto',
+							),
+						),
+						'condition'      => function( $attrs ) {
+							return isset( $attrs['frontBackgroundType'] ) && 'image' === $attrs['frontBackgroundType'] && isset( $attrs['frontBackgroundImage'] ) && isset( $attrs['frontBackgroundImage']['url'] );
 						},
 					),
 				),
@@ -318,37 +321,40 @@ class Flip_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property'  => 'background-image',
-						'value'     => 'backBackgroundImage',
-						'format'    => function( $value, $attrs ) {
-							return "url({$value['url']})";
-						},
-						'condition' => function( $attrs ) {
-							return isset( $attrs['backBackgroundType'] ) && 'image' === $attrs['backBackgroundType'];
-						},
-					),
-					array(
-						'property'  => 'background-position',
-						'value'     => 'backBackgroundPosition',
-						'format'    => function( $value, $attrs ) {
-							return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
-						},
-						'condition' => function( $attrs ) {
-							return isset( $attrs['backBackgroundType'] ) && 'image' === $attrs['backBackgroundType'];
-						},
-					),
-					array(
-						'property'  => 'background-repeat',
-						'value'     => 'backBackgroundRepeat',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['backBackgroundType'] ) && 'image' === $attrs['backBackgroundType'];
-						},
-					),
-					array(
-						'property'  => 'background-size',
-						'value'     => 'backBackgroundSize',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['backBackgroundType'] ) && 'image' === $attrs['backBackgroundType'];
+						'property'       => 'background',
+						'pattern'        => 'url( imageURL ) repeat attachment position/size',
+						'pattern_values' => array(
+							'imageURL'   => array(
+								'value' => 'backBackgroundImage',
+								'format'    => function( $value, $attrs ) {
+									return $value['url'];
+								},
+							),
+							'repeat'     => array(
+								'value'   => 'backBackgroundRepeat',
+								'default' => 'repeat',
+							),
+							'attachment' => array(
+								'value'   => 'backBackgroundAttachment',
+								'default' => 'scroll',
+							),
+							'position'   => array(
+								'value'   => 'backBackgroundPosition',
+								'default' => 'top left',
+								'format'    => function( $value, $attrs ) {
+									if( isset( $value['x'] ) ) {
+										return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
+									}
+									return 'top left';
+								},
+							),
+							'size'       => array(
+								'value'   => 'backgroundSize',
+								'default' => 'auto',
+							),
+						),
+						'condition'      => function( $attrs ) {
+							return isset( $attrs['backBackgroundType'] ) && 'image' === $attrs['backBackgroundType'] && isset( $attrs['backBackgroundImage'] ) && isset( $attrs['backBackgroundImage']['url'] );
 						},
 					),
 				),
