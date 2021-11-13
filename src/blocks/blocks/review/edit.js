@@ -265,10 +265,7 @@ const Edit = ({
 							}
 
 							return (
-								<div
-									key={ attributes.features.title }
-									className="wp-block-themeisle-blocks-review__left_feature"
-								>
+								<div className="wp-block-themeisle-blocks-review__left_feature">
 									<RichText
 										placeholder={ __( 'Feature title', 'otter-blocks' ) }
 										value={ feature.title }
