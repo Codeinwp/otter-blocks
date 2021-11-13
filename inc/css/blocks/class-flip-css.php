@@ -166,8 +166,8 @@ class Flip_CSS extends Base_CSS {
 						'pattern'        => 'url( imageURL ) repeat attachment position/size',
 						'pattern_values' => array(
 							'imageURL'   => array(
-								'value' => 'frontBackgroundImage',
-								'format'    => function( $value, $attrs ) {
+								'value'  => 'frontBackgroundImage',
+								'format' => function( $value, $attrs ) {
 									return $value['url'];
 								},
 							),
@@ -182,8 +182,8 @@ class Flip_CSS extends Base_CSS {
 							'position'   => array(
 								'value'   => 'frontBackgroundPosition',
 								'default' => 'top left',
-								'format'    => function( $value, $attrs ) {
-									if( isset( $value['x'] ) ) {
+								'format'  => function( $value, $attrs ) {
+									if ( isset( $value['x'] ) ) {
 										return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
 									}
 									return 'top left';
@@ -207,6 +207,7 @@ class Flip_CSS extends Base_CSS {
 			if ( 1 === count( $values ) ) {
 				$position = 0;
 			}
+
 			switch ( $values[ $position ] ) {
 				case 'top':
 				case 'left':
@@ -325,8 +326,8 @@ class Flip_CSS extends Base_CSS {
 						'pattern'        => 'url( imageURL ) repeat attachment position/size',
 						'pattern_values' => array(
 							'imageURL'   => array(
-								'value' => 'backBackgroundImage',
-								'format'    => function( $value, $attrs ) {
+								'value'  => 'backBackgroundImage',
+								'format' => function( $value, $attrs ) {
 									return $value['url'];
 								},
 							),
@@ -341,8 +342,8 @@ class Flip_CSS extends Base_CSS {
 							'position'   => array(
 								'value'   => 'backBackgroundPosition',
 								'default' => 'top left',
-								'format'    => function( $value, $attrs ) {
-									if( isset( $value['x'] ) ) {
+								'format'  => function( $value, $attrs ) {
+									if ( isset( $value['x'] ) ) {
 										return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
 									}
 									return 'top left';

@@ -17,9 +17,7 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	InnerBlocks,
-	RichText,
-	BlockControls,
-	__experimentalBlockAlignmentMatrixControl as BlockAlignmentMatrixControl
+	RichText
 } from '@wordpress/block-editor';
 
 import { Button } from '@wordpress/components';
@@ -34,6 +32,7 @@ import {
  * Internal dependencies
  */
 import defaultAttributes from './attributes.js';
+import Controls from './controls.js';
 import Inspector from './inspector.js';
 import { blockInit } from '../../helpers/block-utility.js';
 import hexToRgba from 'hex-rgba';
@@ -120,25 +119,16 @@ const Edit = ({
 
 	return (
 		<Fragment>
+			<Controls
+				attributes={ attributes }
+				setAttributes={ setAttributes }
+				isFliped={ isFliped }
+			/>
+
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 			/>
-
-			{
-				(
-					( ! attributes.isInverted  && false === isFliped ) || ( attributes.isInverted && isFliped )
-				) && (
-
-					<BlockControls group="block">
-						<BlockAlignmentMatrixControl
-							label={ __( 'Change front side content position', 'otter-blocks' ) }
-							value={ attributes.frontAlign }
-							onChange={ frontAlign => setAttributes({ frontAlign })}
-						/>
-					</BlockControls>
-				)
-			}
 
 			<div
 				id={ attributes.id }
@@ -182,12 +172,11 @@ const Edit = ({
 							className="o-content"
 							style={ {
 								padding: attributes.padding,
-								...( CONTENT_POSITIONS[attributes.frontAlign] || {})
+								...( CONTENT_POSITIONS[ attributes.frontAlign ] || {})
 							} }
-							css={css`
-							background-color: rgba(0, 0, 0, ${ ( attributes.frontOverlayOpacity || 0 ) / 100});
-							`
-							}
+							css={ css`
+								background-color: rgba(0, 0, 0, ${ ( attributes.frontOverlayOpacity || 0 ) / 100 });
+							` }
 						>
 							{ attributes.frontMedia?.url && (
 								<img
@@ -246,18 +235,16 @@ const Edit = ({
 					</div>
 				</div>
 
-				{
-					isSelected && (
-						<div className="o-switcher">
-							<Button
-								isPrimary
-								onClick={ () => setFliped( ! isFliped ) }
-							>
-								{ isFliped  ? __( 'Flip to front', 'otter-blocks' ) : __( 'Flip to back', 'otter-blocks' ) }
-							</Button>
-						</div>
-					)
-				}
+				{ isSelected && (
+					<div className="o-switcher">
+						<Button
+							isPrimary
+							onClick={ () => setFliped( ! isFliped ) }
+						>
+							{ isFliped  ? __( 'Flip to front', 'otter-blocks' ) : __( 'Flip to back', 'otter-blocks' ) }
+						</Button>
+					</div>
+				) }
 			</div>
 		</Fragment>
 	);
