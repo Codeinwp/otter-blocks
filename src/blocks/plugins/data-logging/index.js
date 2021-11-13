@@ -10,7 +10,7 @@ import {
 
 window.themeisleGutenberg.dataLogging = {};
 
-if ( select( 'core/editor' ) ) {
+if ( window.themeisleGutenberg.isBlockEditor && select( 'core/editor' ) ) {
 	let hasEditorLoaded = false;
 	let hasSaved = false;
 

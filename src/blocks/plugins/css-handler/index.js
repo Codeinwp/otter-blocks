@@ -79,7 +79,7 @@ subscribe( () => {
 		}
 	}
 
-	if ( select( 'core/editor' ) ) {
+	if ( window.themeisleGutenberg.isBlockEditor && select( 'core/editor' ) ) {
 		const {
 			isCurrentPostPublished,
 			getEditedPostAttribute,
