@@ -3,14 +3,14 @@
  */
 import { __ } from '@wordpress/i18n';
 
+import { BlockControls } from '@wordpress/block-editor';
+
 import {
 	Dashicon,
 	Button,
 	Toolbar,
 	Tooltip
 } from '@wordpress/components';
-
-import { BlockControls } from '@wordpress/block-editor';
 
 const Controls = ({
 	isEditing,
