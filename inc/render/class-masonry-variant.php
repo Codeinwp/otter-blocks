@@ -48,7 +48,7 @@ class Masonry_Variant {
 			wp_script_add_data( 'macy', 'async', true );
 
 			wp_enqueue_script(
-				'themeisle-gutenberg-masonry',
+				'otter-masonry',
 				OTTER_BLOCKS_URL . 'build/blocks/masonry.js',
 				array_merge(
 					$asset_file['dependencies'],
@@ -58,7 +58,7 @@ class Masonry_Variant {
 				true
 			);
 
-			wp_script_add_data( 'themeisle-gutenberg-masonry', 'defer', true );
+			wp_script_add_data( 'otter-masonry', 'defer', true );
 
 			$margin = isset( $block['attrs']['margin'] ) ? $block['attrs']['margin'] : 0;
 

@@ -1,5 +1,5 @@
 export const getListIdOptionFrom = ( provider, apiKey, onSuccess, onError ) => {
-	window.wp.apiFetch({ path: 'themeisle-gutenberg-blocks/v1/integration', method: 'POST', data: { provider, apiKey }}).then(
+	window.wp.apiFetch({ path: 'otter/v1/integration', method: 'POST', data: { provider, apiKey }}).then(
 		res => {
 			if ( res?.success ) {
 				const result = res?.list_id?.map( item => {
