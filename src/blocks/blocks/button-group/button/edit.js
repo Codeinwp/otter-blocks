@@ -78,9 +78,6 @@ const Edit = ({
 	}
 
 	if ( hasParent ) {
-		buttonStyleParent = {
-			marginRight: ! isLastChild && `${ parentAttributes.spacing }px`
-		};
 
 		buttonStyle = {
 			paddingTop: `${ parentAttributes.paddingTopBottom }px`,
