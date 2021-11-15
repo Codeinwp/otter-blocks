@@ -24,7 +24,7 @@ class Base_CSS {
 	 *
 	 * @var string
 	 */
-	public $namespace = 'themeisle-gutenberg-blocks/';
+	public $namespace = 'otter/';
 
 	/**
 	 * Rest route version.

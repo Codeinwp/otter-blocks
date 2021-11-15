@@ -28,7 +28,7 @@ class Template_Library_Server {
 	 *
 	 * @var Template_Library_Server
 	 */
-	public $namespace = 'themeisle-gutenberg-blocks/';
+	public $namespace = 'otter/';
 
 	/**
 	 * Rest route version.
@@ -52,7 +52,7 @@ class Template_Library_Server {
 
 		register_rest_route(
 			$namespace,
-			'/fetch_templates',
+			'/templates',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
@@ -66,7 +66,7 @@ class Template_Library_Server {
 
 		register_rest_route(
 			$namespace,
-			'/import_template',
+			'/import',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
