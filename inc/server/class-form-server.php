@@ -29,7 +29,7 @@ class Form_Server {
 	 *
 	 * @var Form_Server
 	 */
-	public $namespace = 'themeisle-gutenberg-blocks/';
+	public $namespace = 'otter/';
 
 	/**
 	 * Rest route version.

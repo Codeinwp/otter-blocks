@@ -44,7 +44,7 @@ class CSS_Handler extends Base_CSS {
 
 		register_rest_route(
 			$namespace,
-			'/save_post_meta/(?P<id>\d+)',
+			'/post_styles/(?P<id>\d+)',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::EDITABLE,
@@ -68,7 +68,7 @@ class CSS_Handler extends Base_CSS {
 
 		register_rest_route(
 			$namespace,
-			'/save_block_meta/(?P<id>\d+)',
+			'/block_styles/(?P<id>\d+)',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::EDITABLE,
@@ -92,7 +92,7 @@ class CSS_Handler extends Base_CSS {
 
 		register_rest_route(
 			$namespace,
-			'/save_widgets_styles/',
+			'/widget_styles',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::EDITABLE,

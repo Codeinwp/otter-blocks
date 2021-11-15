@@ -154,7 +154,7 @@ const Main = () => {
 
 	const regenerateStyles = async() => {
 		setAPISaving( true );
-		const data = await apiFetch({ path: 'themeisle-gutenberg-blocks/v1/regenerate_styles', method: 'DELETE' });
+		const data = await apiFetch({ path: 'otter/v1/regenerate', method: 'DELETE' });
 		addNotification( data.data.message, data.success ? 'success' : 'danger' );
 		setRegeneratedDisabled( true );
 		setAPISaving( false );

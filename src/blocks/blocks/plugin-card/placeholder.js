@@ -73,7 +73,7 @@ const BlockPlaceholder = ({
 		setAttributes({ slug: '' });
 		setLoading( true );
 		setError( false );
-		const data = await apiFetch({ path: `themeisle-gutenberg-blocks/v1/get_plugins?search=${ encodeURIComponent( query ) }` });
+		const data = await apiFetch({ path: `otter/v1/plugins?search=${ encodeURIComponent( query ) }` });
 		if ( data.data.errors ) {
 			setError( true );
 			setLoading( false );
