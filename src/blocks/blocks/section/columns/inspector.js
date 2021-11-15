@@ -169,11 +169,14 @@ const Inspector = ({
 	};
 
 	const changeMargin = value => {
+		console.log( value );
 		if ( isNullObject( value ) ) {
 			value = undefined;
 		}
 
-		value = Object.fromEntries( Object.entries( value ).filter( ([ _, v ]) => null !== v ) );
+		if ( 'object' === typeof value ) {
+			value = Object.fromEntries( Object.entries( value ).filter( ([ _, v ]) => null !== v ) );
+		}
 
 		switch ( getView ) {
 		case 'Desktop':
@@ -1053,6 +1056,7 @@ const Inspector = ({
 										label: '%'
 									}
 								] }
+								id="otter-border-raduis-box"
 								onChange={ changeBorderRadius }
 							/>
 

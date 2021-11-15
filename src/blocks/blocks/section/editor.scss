@@ -435,3 +435,13 @@
 		}
 	}
 }
+
+#otter-border-raduis-box {
+	>.component-box-control__header-control-wrapper {
+		>.components-flex-item {
+			&:first-child {
+				transform: rotate( 315deg );
+			}
+		}
+	}
+}

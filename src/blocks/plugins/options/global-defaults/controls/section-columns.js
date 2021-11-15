@@ -96,7 +96,9 @@ const SectionColumns = ({
 			value = undefined;
 		}
 
-		value = Object.fromEntries( Object.entries( value ).filter( ([ _, v ]) => null !== v ) );
+		if ( 'object' === typeof value ) {
+			value = Object.fromEntries( Object.entries( value ).filter( ([ _, v ]) => null !== v ) );
+		}
 
 		switch ( getView ) {
 		case 'Desktop':
