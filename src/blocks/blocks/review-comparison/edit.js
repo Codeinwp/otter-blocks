@@ -62,7 +62,7 @@ const Edit = ({
 		( async() => {
 			try {
 				setStatus( 'loading' );
-				const data = await apiFetch({ path: 'themeisle-gutenberg-blocks/v1/filter_blocks?block=themeisle-blocks/review' });
+				const data = await apiFetch({ path: 'otter/v1/filter_blocks?block=themeisle-blocks/review' });
 				setData( data );
 				setStatus( 'loaded' );
 				setEditing( ! Boolean( attributes.reviews.length ) );

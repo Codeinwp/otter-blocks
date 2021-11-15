@@ -24,7 +24,7 @@ class Base_CSS {
 	 *
 	 * @var string
 	 */
-	public $namespace = 'themeisle-gutenberg-blocks/';
+	public $namespace = 'otter/';
 
 	/**
 	 * Rest route version.
@@ -80,6 +80,7 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Font_Awesome_Icons_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Icon_List_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Icon_List_Item_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Flip_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Progress_Bar_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Popup_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Review_CSS',

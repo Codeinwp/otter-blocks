@@ -23,49 +23,46 @@ import GoogleFontsControl from '../../components/google-fonts-control/index.js';
 
 const Controls = ({
 	attributes,
-	setAttributes,
-	changeFontFamily,
-	changeFontVariant,
-	changeFontStyle,
-	changeTextTransform,
-	changeLineHeight,
-	changeLetterSpacing
+	setAttributes
 }) => {
+
+	const changeFontFamily = value => {
+		if ( ! value ) {
+			setAttributes({
+				fontFamily: value,
+				fontVariant: value
+			});
+		} else {
+			setAttributes({
+				fontFamily: value,
+				fontVariant: 'normal',
+				fontStyle: 'normal'
+			});
+		}
+	};
+
 	const getTagIcon = value => {
-		if ( 'h1' === value ) {
+		switch ( value ) {
+		case 'h1':
 			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">H1</text></SVG>;
-		}
-
-		if ( 'h2' === value ) {
+		case 'h2':
 			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">H2</text></SVG>;
-		}
-
-		if ( 'h3' === value ) {
+		case 'h3':
 			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">H3</text></SVG>;
-		}
-
-		if ( 'h4' === value ) {
+		case 'h4':
 			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">H4</text></SVG>;
-		}
-
-		if ( 'h5' === value ) {
+		case 'h5':
 			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">H5</text></SVG>;
-		}
-
-		if ( 'h6' === value ) {
+		case 'h6':
 			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">H6</text></SVG>;
-		}
-
-		if ( 'div' === value ) {
+		case 'div':
 			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">DIV</text></SVG>;
-		}
-
-		if ( 'p' === value ) {
+		case 'p':
 			return <SVG style={ { width: '25px', height: '20px' } }><text x="0" y="15">P</text></SVG>;
-		}
-
-		if ( 'span' === value ) {
+		case 'span':
 			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">SPAN</text></SVG>;
+		default:
+			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">DEFAULT</text></SVG>;
 		}
 	};
 
@@ -152,27 +149,28 @@ const Controls = ({
 								label={ __( 'Font Family', 'otter-blocks' ) }
 								value={ attributes.fontFamily }
 								onChangeFontFamily={ changeFontFamily }
-								isSelect={ true }
 								valueVariant={ attributes.fontVariant }
-								onChangeFontVariant={ changeFontVariant }
+								onChangeFontVariant={ fontVariant => setAttributes({ fontVariant }) }
 								valueStyle={ attributes.fontStyle }
-								onChangeFontStyle={ changeFontStyle }
+								onChangeFontStyle={ fontStyle => setAttributes({ fontStyle }) }
 								valueTransform={ attributes.textTransform }
-								onChangeTextTransform={ changeTextTransform }
+								onChangeTextTransform={ textTransform => setAttributes({ textTransform }) }
 							/>
+
 
 							<RangeControl
 								label={ __( 'Line Height', 'otter-blocks' ) }
 								value={ attributes.lineHeight }
-								onChange={ changeLineHeight }
+								onChange={ lineHeight => setAttributes({ lineHeight }) }
 								min={ 0 }
-								max={ 200 }
+								step={ 0.1 }
+								max={ 3 }
 							/>
 
 							<RangeControl
 								label={ __( 'Letter Spacing', 'otter-blocks' ) }
 								value={ attributes.letterSpacing }
-								onChange={ changeLetterSpacing }
+								onChange={ letterSpacing => setAttributes({ letterSpacing }) }
 								min={ -50 }
 								max={ 100 }
 							/>

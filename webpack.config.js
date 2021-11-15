@@ -62,7 +62,7 @@ module.exports = [
 		// OTTER BLOCKS
 		...defaultConfig,
 		stats: 'minimal',
-		devtool: 'eval-source-map',
+		devtool: 'development' === NODE_ENV ? 'eval-source-map' : undefined,
 		mode: NODE_ENV,
 		entry: {
 			blocks: [

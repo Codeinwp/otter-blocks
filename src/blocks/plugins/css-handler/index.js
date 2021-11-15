@@ -13,6 +13,8 @@ import {
 	subscribe
 } from '@wordpress/data';
 
+let isSavingCSS = false;
+
 const { createNotice } = dispatch( 'core/notices' );
 
 const savePostMeta = debounce( async() => {
@@ -28,7 +30,7 @@ const savePostMeta = debounce( async() => {
 		}
 	);
 
-	await apiFetch({ path: `themeisle-gutenberg-blocks/v1/save_post_meta/${ postId }`, method: 'POST' });
+	await apiFetch({ path: `otter/v1/post_styles/${ postId }`, method: 'POST' });
 
 	createNotice(
 		'info',
@@ -38,7 +40,9 @@ const savePostMeta = debounce( async() => {
 			type: 'snackbar'
 		}
 	);
-}, 5000 );
+
+	isSavingCSS = false;
+}, 1000 );
 
 const saveWidgets = debounce( async() => {
 	createNotice(
@@ -50,7 +54,7 @@ const saveWidgets = debounce( async() => {
 		}
 	);
 
-	await apiFetch({ path: 'themeisle-gutenberg-blocks/v1/save_widgets_styles', method: 'POST' });
+	await apiFetch({ path: 'otter/v1/widget_styles', method: 'POST' });
 
 	createNotice(
 		'info',
@@ -60,7 +64,9 @@ const saveWidgets = debounce( async() => {
 			type: 'snackbar'
 		}
 	);
-}, 5000 );
+
+	isSavingCSS = false;
+}, 1000 );
 
 const reusableBlocks = {};
 
@@ -74,7 +80,8 @@ subscribe( () => {
 		const isSavingWidgets = isSavingWidgetAreas();
 		const editedAreas = getEditedWidgetAreas();
 
-		if ( isSavingWidgets && 0 < editedAreas.length ) {
+		if ( isSavingWidgets && 0 < editedAreas.length && ! isSavingCSS ) {
+			isSavingCSS = true;
 			saveWidgets();
 		}
 	}
@@ -139,13 +146,14 @@ subscribe( () => {
 				if ( ! isBlockSaving && ! block.isTemporary && !! reusableBlocks[ block.id ]) {
 					if ( block.id === reusableBlocks[ block.id ].id && ( ! isBlockSaving && reusableBlocks[ block.id ].isSaving ) ) {
 						reusableBlocks[ block.id ].isSaving = false;
-						apiFetch({ path: `themeisle-gutenberg-blocks/v1/save_block_meta/${ block.id }`, method: 'POST' });
+						apiFetch({ path: `otter/v1/block_styles/${ block.id }`, method: 'POST' });
 					}
 				}
 			}
 		});
 
-		if ( ( isPublishing || ( postPublished && isSaving ) ) && ! isAutoSaving ) {
+		if ( ( isPublishing || ( postPublished && isSaving ) ) && ! isAutoSaving && ! isSavingCSS ) {
+			isSavingCSS = true;
 			savePostMeta();
 		}
 	}

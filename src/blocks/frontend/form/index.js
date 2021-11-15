@@ -142,7 +142,7 @@ const collectAndSendInputFormData = ( form, btn ) => {
 		msgAnchor?.classList.add( 'loading' );
 
 		apiFetch({
-			path: 'themeisle-gutenberg-blocks/v1/forms',
+			path: 'otter/v1/forms',
 			method: 'POST',
 			data
 		}).then( ( res ) => {

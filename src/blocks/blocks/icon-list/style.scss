@@ -1,10 +1,11 @@
-.wp-block-themeisle-blocks-icon-list { 
+.wp-block-themeisle-blocks-icon-list {
 	display: flex;
 	flex-direction: column;
 
 	&.is-style-horizontal {
 		flex-wrap: wrap;
 		flex-direction: row;
+		width: 100%;
 	}
 
 	.wp-block-themeisle-blocks-icon-list-item {
