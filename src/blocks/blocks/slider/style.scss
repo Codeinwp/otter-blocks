@@ -2,6 +2,12 @@
 
 	.glide__slides {
 		height: 400px;
+		animation: load 4s 3;
+
+		@keyframes load {
+			0%, 100% {background-color: inherit;}
+			50% {background-color: #d8d8d8;}
+		  }
 	}
 
 	.wp-block-themeisle-blocks-slider-item-wrapper {
