@@ -103,7 +103,7 @@ const Edit = ({
 	useEffect( () => {
 		if ( attributes.id && select( 'core/edit-widgets' ) ) {
 			setAttributes({ optionName: `widget_${ attributes.id.slice( -8 ) }` });
-		} else if ( attributes.id && select( 'core/editor' )?.getCurrentPostId() ) {
+		} else if ( attributes.id && Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor' )?.getCurrentPostId() ) {
 			setAttributes({ optionName: `${ select( 'core/editor' ).getCurrentPostId() }_${ attributes.id.slice( -8 ) }` });
 		}
 	}, [ attributes.id ]);

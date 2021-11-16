@@ -25,7 +25,7 @@ import './menu-icons/index.js';
 
 const icon = <Icon icon={ otterIcon } />;
 
-if ( select( 'core/editor' ) ) {
+if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor' ) ) {
 	registerPlugin( 'themeisle-blocks', {
 		icon,
 		render: Options

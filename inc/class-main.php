@@ -418,6 +418,7 @@ class Main {
 					'isBoosterActive' => 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ),
 					'wooComparison'   => class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options' ) ? \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options::is_module_activated() : false,
 				),
+				'isBlockEditor'  => 'post' === $current_screen->base,
 			)
 		);
 
