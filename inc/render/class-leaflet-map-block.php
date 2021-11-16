@@ -94,7 +94,7 @@ class Leaflet_Map_Block extends Base_Block {
 		// Set the ID and the class name.
 		$id    = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-map-' . wp_rand( 10, 100 );
 		$class = 'wp-block-themeisle-blocks-map';
-		$style = "";
+		$style = '';
 
 		if ( isset( $attributes['className'] ) ) {
 			$class .= ' ' . esc_attr( $attributes['className'] );
@@ -105,7 +105,7 @@ class Leaflet_Map_Block extends Base_Block {
 		}
 
 		if ( isset( $attributes['height'] ) ) {
-			$style .= 'height:' . esc_attr( $attributes['height'] . 'px;');
+			$style .= 'height:' . esc_attr( $attributes['height'] . 'px;' );
 		}
 
 		// Load the attributes in the page and make a placeholder to render the map.

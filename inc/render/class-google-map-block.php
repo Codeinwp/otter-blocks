@@ -123,7 +123,7 @@ class Google_Map_Block extends Base_Block {
 		}
 
 		if ( isset( $attributes['height'] ) ) {
-			$style .= 'height:' . esc_attr( $attributes['height'] . 'px;');
+			$style .= 'height:' . esc_attr( $attributes['height'] . 'px;' );
 		}
 
 		// Load the attributes in the page and make a placeholder to render the map.

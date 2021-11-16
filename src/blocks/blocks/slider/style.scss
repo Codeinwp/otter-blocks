@@ -1,4 +1,9 @@
 .wp-block-themeisle-blocks-slider {
+
+	.glide__slides {
+		height: 400px;
+	}
+
 	.wp-block-themeisle-blocks-slider-item-wrapper {
 		position: relative;
 
@@ -63,7 +68,7 @@
 			-o-object-fit: cover;
 			object-fit: cover;
 		}
-	
+
 		figcaption {
 			position: absolute;
 			bottom: 0;
