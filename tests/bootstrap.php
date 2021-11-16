@@ -7,6 +7,10 @@
 
 $_tests_dir = getenv( 'WP_TESTS_DIR' );
 
+if ( class_exists( '\Yoast\PHPUnitPolyfills\Autoload' ) === false ) {
+	require_once 'vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
+}
+
 if ( ! $_tests_dir ) {
 	$_tests_dir = '/tmp/wordpress-tests-lib';
 }
@@ -16,10 +20,6 @@ require_once $_tests_dir . '/includes/functions.php';
 
 // Start up the WP testing environment.
 require $_tests_dir . '/includes/bootstrap.php';
-
-if ( class_exists( '\Yoast\PHPUnitPolyfills\Autoload' ) === false ) {
-	require_once 'vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
-}
 
 require dirname( dirname( __FILE__ ) ) . '/inc/css/class-css-utility.php';
 
