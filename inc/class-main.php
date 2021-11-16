@@ -420,6 +420,7 @@ class Main {
 					'wooComparison'   => class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options' ) ? \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options::is_module_activated() : false,
 					'optionsPage'     => admin_url( 'themes.php?page=neve-welcome' ),
 				),
+				'isBlockEditor'  => 'post' === $current_screen->base,
 			)
 		);
 
