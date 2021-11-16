@@ -16,6 +16,11 @@ require_once $_tests_dir . '/includes/functions.php';
 
 // Start up the WP testing environment.
 require $_tests_dir . '/includes/bootstrap.php';
+
+if ( class_exists( '\Yoast\PHPUnitPolyfills\Autoload' ) === false ) {
+	require_once 'vendor/yoast/phpunit-polyfills/phpunitpolyfills-autoload.php';
+}
+
 require dirname( dirname( __FILE__ ) ) . '/inc/css/class-css-utility.php';
 
 global $current_user;
