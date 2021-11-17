@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 /**
  * WordPress dependencies
  */
@@ -16,7 +15,7 @@ import ServerSideRender from '@wordpress/server-side-render';
 /**
  * Internal dependencies.
  */
-import SelectProducts from '../../components/select-products-control/index.js';
+import SelectProducts from '../../../components/select-products-control/index.js';
 
 const Edit = ({
 	attributes,
