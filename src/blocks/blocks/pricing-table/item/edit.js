@@ -35,7 +35,7 @@ const Edit = ({ attributes, className, setAttributes, clientId }) => {
 				className={ tableClasses }
 			>
 				<div
-					className="pricing-table-wrap"
+					className="o-pricing-table-wrap"
 					style={{
 						backgroundColor: attributes.backgroundColor,
 						borderWidth: attributes.borderWidth,

@@ -10,7 +10,8 @@ import save from './save';
 import attributes from './attributes';
 
 registerBlockType( 'themeisle-blocks/pricing-table-item', {
-	title: __( 'Pricing Table', 'otter-blocks' ),
+	parent: [ 'themeisle-blocks/pricing-table' ],
+	title: __( 'Pricing Section', 'otter-blocks' ),
 	icon,
 	category: 'themeisle-blocks',
 	keywords: [ 'themeisle', 'pricing', 'table' ],

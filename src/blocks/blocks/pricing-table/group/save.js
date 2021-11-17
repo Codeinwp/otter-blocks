@@ -1,14 +1,14 @@
 
 
-import { InnerBlocks, RichText } from '@wordpress/block-editor';
+import { InnerBlocks } from '@wordpress/block-editor';
 
 
-export default ({ attributes }) => {
+const Save = ({ className }) => {
 	return (
-		<>
-			<div className="o-pricing-table-group-wrap">
-				<InnerBlocks.Content />
-			</div>
-		</>
+		<div className={className}>
+			<InnerBlocks.Content />
+		</div>
 	);
 };
+
+export default Save;

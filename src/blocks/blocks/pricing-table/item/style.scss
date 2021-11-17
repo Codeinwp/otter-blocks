@@ -1,154 +1,214 @@
-@import "../vars";
-@import "../best-value-badge";
+$border-color: #e1e1e1;
+$o-gray: #f4f4f4 !default;
+$o-woo-purple: #9c5d90 !default;
+$o-neve-blue: #0466cb !default;
+$o-accent-green: #43c2d1 !default;
+$o-neve-blue-gradient: linear-gradient(
+	180deg,
+	#0063ca 0%,
+	#1863b1 100%
+) !default;
+$o-dark-blue: #32466b !default;
+$o-arrow-gray: #d8d8d8 !default;
 
-$border-color: #E1E1E1 !default;
+$tablet-sm: "600px";
+$tablet: "782px";
+$laptop-min: "959px";
+$laptop: "960px";
+$desktop: "1200px";
+$tablet-min: "959px";
 
-.pricing-table-wrap {
-	background: #FFFFFF;
-	box-shadow: 0 2px 80px rgba(0, 0, 0, .09);
-	border-radius: 20px 20px 8px 8px;
-	height: 100%;
-	display: flex;
-	flex-direction: column;
-	border-style: solid;
-
-	.featured & {
-		height: calc(100% + 30px);
-	}
-
-	@media (max-width: $laptop-min) {
-		height: auto !important;
-		max-width: 500px;
-		margin: 0 auto;
-	}
-}
-
-.pricing-table-wrap, .o-features-table-wrap {
-	.o-pricing-header {
-		text-align: center;
-		border-bottom: 1px solid $border-color;
-		padding: 40px 0 20px;
-		margin-bottom: 10px;
-		position: relative;
-	}
-
-	.o-pricing-title {
-		font-size: 25px;
-		line-height: 130%;
-		color: $o-dark-blue;
-		margin: 0 0 15px;
-		letter-spacing: normal;
-	}
-
-	.o-pricing-description {
-		color: #a2a9ba;
-		margin-bottom: 10px;
-	}
-
-	.o-pricing-price {
-		h5 {
-			color: $o-dark-blue;
-			margin: 0;
-
-			.price {
-				font-size: 45px;
-			}
-
-			sup {
-				font-size: .5em;
-				line-height: normal;
-				top: .1em;
-				position: relative;
-			}
-
-			sub {
-				position: relative;
-				bottom: 5px;
-			}
-
-			del {
-				vertical-align: super;
-				margin-right: 5px;
-				font-size: 20px;
-				opacity: .5;
-				position: relative;
-				top: -0.4em;
-			}
-		}
-	}
-
-	ul {
-		margin: 0;
-		padding: 0 30px !important;
-		list-style: none !important;
-	}
-
-	li {
-		color: $o-dark-blue;
-		margin: 0 !important;
-		border-bottom: 1px solid $border-color;
-		padding: 10px 0 7px;
-	}
-
-	.o-pricing-footer {
-		margin-top: 20px;
+.wp-block-themeisle-blocks-pricing-table-item {
+	.o-pricing-table-wrap {
+		background: #ffffff;
+		box-shadow: 0 2px 80px rgba(0, 0, 0, 0.09);
+		border-radius: 20px 20px 8px 8px;
+		height: 100%;
 		display: flex;
 		flex-direction: column;
-		padding: 0 30px 30px;
-	}
+		border-style: solid;
 
-	.open-features-table {
-		text-decoration: underline !important;
-	}
+		.featured & {
+			height: calc(100% + 30px);
+		}
 
-	.o-pricing-action {
-		display: block;
-		color: #fff;
-		text-transform: uppercase;
-		background: $o-accent-green;
-		font-size: 17px;
-		line-height: 20px;
-		border-radius: 4px;
-		text-align: center;
-		letter-spacing: 1.2px;
-		padding: 20px 0;
-	}
-}
-
-.o-pricing-action-wrap {
-	padding: 15px 30px 0;
-
-	.featured & {
-		padding: 25px 30px 0;
-	}
-}
-
-.wp-block-themeisle-pricing-table.featured {
-	top: -30px;
-	position: relative;
-	@media (max-width: $laptop-min) {
-		top: unset;
-		margin-top: 15px;
-	}
-
-	.o-pricing-header {
-		padding-bottom: 20px;
-	}
-
-	.o-pricing-title {
-		font-size: 40px;
-		line-height: 120%;
-	}
-
-	.o-pricing-price {
-		.price {
-			font-size: 47px;
+		@media (max-width: $laptop-min) {
+			height: auto;
+			max-width: 500px;
+			margin: 0 auto;
 		}
 	}
-}
 
-.wp-block-themeisle-pricing-table.featured, .o-features-table-wrap .featured {
-	.o-pricing-action {
-		background-color: #FF7E65;
+	.o-pricing-table-wrap,
+	.o-features-table-wrap {
+		.o-pricing-header {
+			text-align: center;
+			border-bottom: 1px solid $border-color;
+			padding: 40px 0 20px;
+			margin-bottom: 10px;
+			position: relative;
+		}
+
+		.o-pricing-title {
+			font-size: 25px;
+			line-height: 130%;
+			color: $o-dark-blue;
+			margin: 0 0 15px;
+			letter-spacing: normal;
+		}
+
+		.o-pricing-description {
+			color: #a2a9ba;
+			margin-bottom: 10px;
+		}
+
+		.o-pricing-price {
+			h5 {
+				color: $o-dark-blue;
+				margin: 0;
+
+				.price {
+					font-size: 45px;
+				}
+
+				sup {
+					font-size: 0.5em;
+					line-height: normal;
+					top: 0.1em;
+					position: relative;
+				}
+
+				sub {
+					position: relative;
+					bottom: 5px;
+				}
+
+				del {
+					vertical-align: super;
+					margin-right: 5px;
+					font-size: 20px;
+					opacity: 0.5;
+					position: relative;
+					top: -0.4em;
+				}
+			}
+		}
+
+		ul {
+			margin: 0;
+			padding: 0 30px !important;
+			list-style: none !important;
+		}
+
+		li {
+			color: $o-dark-blue;
+			margin: 0 !important;
+			border-bottom: 1px solid $border-color;
+			padding: 10px 0 7px;
+		}
+
+		.o-pricing-footer {
+			margin-top: 20px;
+			display: flex;
+			flex-direction: column;
+			padding: 0 30px 30px;
+		}
+
+		.open-features-table {
+			text-decoration: underline !important;
+		}
+
+		.o-pricing-action {
+			display: block;
+			color: #fff;
+			text-transform: uppercase;
+			background: $o-accent-green;
+			font-size: 17px;
+			line-height: 20px;
+			border-radius: 4px;
+			text-align: center;
+			letter-spacing: 1.2px;
+			padding: 20px 0;
+		}
+	}
+
+	.o-pricing-action-wrap {
+		padding: 15px 30px 0;
+
+		.featured & {
+			padding: 25px 30px 0;
+		}
+	}
+
+	.featured {
+		top: -30px;
+		position: relative;
+		@media (max-width: $laptop-min) {
+			top: unset;
+			margin-top: 15px;
+		}
+
+		.o-pricing-header {
+			padding-bottom: 20px;
+		}
+
+		.o-pricing-title {
+			font-size: 40px;
+			line-height: 120%;
+		}
+
+		.o-pricing-price {
+			.price {
+				font-size: 47px;
+			}
+		}
+	}
+
+	.wp-block-themeisle-pricing-table.featured,
+	.o-features-table-wrap .featured {
+		.o-pricing-action {
+			background-color: #ff7e65;
+		}
+	}
+
+	.featured-badge {
+		position: absolute;
+		top: 0;
+		margin: 0 auto;
+		display: block;
+		right: 50%;
+		transform: translate(50%, -50%);
+		color: #fff;
+		font-size: 17px;
+		line-height: 25px;
+		font-weight: 600;
+		letter-spacing: normal;
+		background-color: $o-accent-green;
+		z-index: 10;
+		box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+
+		&:before {
+			top: calc(50% - 1px);
+			position: absolute;
+			background-color: $o-accent-green;
+			height: 3px;
+			content: "";
+			left: -35px;
+			right: -35px;
+			z-index: -1;
+		}
+
+		&:after {
+			position: absolute;
+			border: 18px solid $o-accent-green;
+			border-right: 10px solid transparent;
+			border-left: 10px solid transparent;
+			box-sizing: content-box;
+			top: -5px;
+			right: -45px;
+			left: -45px;
+			content: "";
+			z-index: -2;
+		}
 	}
 }

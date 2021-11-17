@@ -9,8 +9,11 @@ import {
 	jsx
 } from '@emotion/react';
 
-const Edit = ({ className, attributes, setAttributes }) => {
-	const allowedBlocks = [ 'themeisle/pricing-table-item' ];
+const Edit = ({
+	className,
+	attributes,
+	setAttributes
+}) => {
 
 	const columnsNumberCSS = ( attributes.columns && (
 		css`
@@ -22,14 +25,14 @@ const Edit = ({ className, attributes, setAttributes }) => {
 
 	const columnWidthCSS = ( attributes.columnWidth && (
 		css`
-			.pricing-table-wrap {
+			.o-pricing-table-wrap {
 				width: ${attributes.columnWidth}px;
 			}
 		`
 	) ) || '';
 
 	return (
-		<>
+		<div className={className}>
 			<Inspector
 				setAttributes={ setAttributes }
 				attributes={ attributes }
@@ -44,7 +47,7 @@ const Edit = ({ className, attributes, setAttributes }) => {
 				}
 			>
 				<InnerBlocks
-					allowedBlocks={ allowedBlocks }
+					allowedBlocks={ [ 'themeisle/pricing-table-item' ] }
 					template={ [
 						[
 							'themeisle-blocks/pricing-table-item',
@@ -71,7 +74,7 @@ const Edit = ({ className, attributes, setAttributes }) => {
 					] }
 				/>
 			</div>
-		</>
+		</div>
 	);
 };
 

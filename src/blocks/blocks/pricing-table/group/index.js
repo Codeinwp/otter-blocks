@@ -10,7 +10,7 @@ import { registerBlockType } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 
 registerBlockType( 'themeisle-blocks/pricing-table', {
-	title: __( 'Pricing Tables', 'otter-blocks' ),
+	title: __( 'Pricing Table', 'otter-blocks' ),
 	icon,
 	category: 'themeisle-blocks',
 	keywords: [ 'themeisle', 'pricing', 'tables', 'group' ],
