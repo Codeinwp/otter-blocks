@@ -15,6 +15,7 @@ const Inspector = ({ attributes, setAttributes }) => {
 					onChange={ columns => setAttributes({ columns })}
 					min={1}
 					max={5}
+					allowReset={true}
 				/>
 				<RangeControl
 					label={ __( 'Column Width', 'otter-blocks' )}
@@ -23,6 +24,7 @@ const Inspector = ({ attributes, setAttributes }) => {
 					onChange={ columnWidth => setAttributes({ columnWidth })}
 					min={0}
 					max={400}
+					allowReset={true}
 				/>
 
 			</PanelBody>
