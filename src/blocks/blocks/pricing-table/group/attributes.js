@@ -1,4 +1,7 @@
 const attributes = {
+	id: {
+		type: 'string'
+	},
 	columns: {
 		type: 'number'
 	},

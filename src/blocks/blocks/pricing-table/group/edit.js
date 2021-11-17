@@ -1,19 +1,30 @@
 /** @jsx jsx */
-import { RichText, InnerBlocks } from '@wordpress/block-editor';
+import { InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
-
-import Inspector from './inspector';
-
 import {
 	css,
 	jsx
 } from '@emotion/react';
+import {
+	useEffect
+} from '@wordpress/element';
+
+import { blockInit } from '../../../helpers/block-utility';
+import Inspector from './inspector';
+import defaultAttributes from './attributes.js';
 
 const Edit = ({
 	className,
 	attributes,
-	setAttributes
+	setAttributes,
+	clientId
 }) => {
+
+	useEffect( () => {
+		const unsubscribe = blockInit( clientId, defaultAttributes );
+		return () => unsubscribe( attributes.id );
+	}, []);
+
 
 	const columnsNumberCSS = ( attributes.columns && (
 		css`

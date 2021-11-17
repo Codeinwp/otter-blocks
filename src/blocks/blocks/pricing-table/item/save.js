@@ -3,11 +3,9 @@ import classnames from 'classnames';
 
 const Save = ({ attributes, className }) => {
 
-	const tableClasses = classnames( className, { featured: attributes.isFeatured });
-
 	return (
-		<div id={attributes.id} className={ tableClasses }>
-			<div className="pricing-table-wrap">
+		<div id={attributes.id} className={ classnames( className, { featured: attributes.isFeatured })}>
+			<div className="o-pricing-table-wrap">
 				<div className="o-pricing-header">
 					{  attributes.isFeatured && (
 						<span className="featured-badge">{ attributes.ribbonText }</span>

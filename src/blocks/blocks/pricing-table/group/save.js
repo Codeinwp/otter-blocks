@@ -3,9 +3,9 @@
 import { InnerBlocks } from '@wordpress/block-editor';
 
 
-const Save = ({ className }) => {
+const Save = ({ className, attributes }) => {
 	return (
-		<div className={className}>
+		<div id={attributes.id} className={className}>
 			<InnerBlocks.Content />
 		</div>
 	);
