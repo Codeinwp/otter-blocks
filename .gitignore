@@ -6,3 +6,4 @@ build
 artifact
 vendor
 .DS_Store
+.vscode
