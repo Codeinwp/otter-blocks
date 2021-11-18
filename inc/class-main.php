@@ -426,7 +426,7 @@ class Main {
 			'otter-editor',
 			plugin_dir_url( $this->get_dir() ) . 'build/blocks/editor.css',
 			array( 'wp-edit-blocks' ),
-			self::$assets_version
+			$asset_file['version']
 		);
 
 		wp_enqueue_style(
@@ -508,13 +508,14 @@ class Main {
 			return false;
 		}
 
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+
 		wp_enqueue_style(
 			'otter-blocks',
 			plugin_dir_url( $this->get_dir() ) . 'build/blocks/style.css',
 			[],
-			self::$assets_version
+			$asset_file['version']
 		);
-
 
 		// On AMP context, we don't load JS files.
 		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
@@ -668,14 +669,14 @@ class Main {
 
 		if ( ! self::$is_leaflet_loaded && has_block( 'themeisle-blocks/leaflet-map', $post ) ) {
 			wp_enqueue_script(
-				'otter-leaflet',
+				'leaflet',
 				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.js',
 				array( 'wp-dom-ready' ),
 				self::$assets_version,
 				true
 			);
 
-			wp_script_add_data( 'otter-leaflet', 'async', true );
+			wp_script_add_data( 'leaflet', 'async', true );
 
 			wp_enqueue_style(
 				'leaflet-css',
@@ -708,7 +709,7 @@ class Main {
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/leaflet-map.js',
 				array_merge(
 					$asset_file['dependencies'],
-					array( 'otter-leaflet', 'otter-leaflet-gesture' )
+					array( 'leaflet', 'otter-leaflet-gesture' )
 				),
 				$asset_file['version'],
 				true
