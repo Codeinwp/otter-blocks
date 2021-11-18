@@ -96,6 +96,14 @@ Help your site shine with design options built to enhance your brand. Every bloc
 
 == Changelog ==
 
+##### [Version 1.7.3](https://github.com/Codeinwp/otter-blocks/compare/v1.7.2...v1.7.3) (2021-11-18)
+
+
+- Plus a lot more features from 1.7.2: https://github.com/Codeinwp/otter-blocks/blob/master/CHANGELOG.md#version-172-2021-11-18
+
+
+
+
 ##### [Version 1.7.2](https://github.com/Codeinwp/otter-blocks/compare/v1.7.1...v1.7.2) (2021-11-18)
 
 - Add Duplicate/Move/Delete options to Section Block’s Columns
