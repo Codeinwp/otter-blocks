@@ -1,0 +1,31 @@
+name: Sync branches
+on:
+  push:
+    branches:
+      - 'master'
+      - 'development'
+jobs:
+  sync-branch:
+    runs-on: ubuntu-latest
+    if: ${{ github.repository_owner == 'Codeinwp' }} # Disable on forks
+    steps:
+      - uses: actions/checkout@master
+      - name: Retrieve branch name
+        id: retrieve-branch-name
+        run: echo "::set-output name=branch_name::$(REF=${GITHUB_HEAD_REF:-$GITHUB_REF} && echo ${REF#refs/heads/} | sed 's/\//-/g')"
+      - name: Merge master -> development
+        if: ${{ steps.retrieve-branch-name.outputs.branch_name == 'master' }}
+        uses: Codeinwp/merge-branch@master
+        with:
+          type: now
+          from_branch: master
+          target_branch: development
+          github_token: ${{ secrets.BOT_TOKEN }}
+      - name: Merge development -> v2.0
+        if: ${{ steps.retrieve-branch-name.outputs.branch_name == 'development' }}
+        uses: Codeinwp/merge-branch@master
+        with:
+          type: now
+          from_branch: development
+          target_branch: v2.0
+          github_token: ${{ secrets.BOT_TOKEN }}

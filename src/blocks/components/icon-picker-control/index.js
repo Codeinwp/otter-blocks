@@ -17,7 +17,9 @@ import {
 	MenuGroup,
 	MenuItem,
 	SelectControl,
-	TextControl
+	TextControl,
+	ToolbarButton,
+	ToolbarGroup
 } from '@wordpress/components';
 
 import {
@@ -30,8 +32,35 @@ import {
  * Internal dependencies
  */
 import './editor.scss';
-import data from './icons.json';
-import themeIsleIcons from './../../helpers/themeisle-icons';
+import data from '../../helpers/fa-icons.json';
+import themeIsleIcons from './../../helpers/themeisle-icons.js';
+
+const FontAwesomeIconsList = ({
+	i,
+	icon,
+	prefix,
+	onToggle
+}) => {
+	return (
+		<MenuItem
+			label={ i.label }
+			className={ classnames(
+				{ 'is-selected': ( i.name === icon && i.prefix === prefix ) }
+			) }
+			onClick={ onToggle }
+		>
+			<i
+				className={ classnames(
+					i.prefix,
+					`fa-${ i.name }`,
+					'fa-fw'
+				) }
+			>
+			</i>
+			{ i.name }
+		</MenuItem>
+	);
+};
 
 const IconPickerControl = ({
 	label,
@@ -100,37 +129,6 @@ const IconPickerControl = ({
 
 		) : (
 			<Fragment></Fragment>
-		);
-	};
-
-	const FontAwesomeIconsList = ({
-		i,
-		onToggle
-	}) => {
-		return (
-			<MenuItem
-				label={ i.label }
-				className={ classnames(
-					{ 'is-selected': ( i.name === icon && i.prefix === prefix ) }
-				) }
-				onClick={ () => {
-					onToggle();
-					onChange({
-						name: i.name,
-						prefix: i.prefix
-					});
-				}}
-			>
-				<i
-					className={ classnames(
-						i.prefix,
-						`fa-${ i.name }`,
-						'fa-fw'
-					) }
-				>
-				</i>
-				{ i.name }
-			</MenuItem>
 		);
 	};
 
@@ -224,7 +222,15 @@ const IconPickerControl = ({
 									return (
 										<FontAwesomeIconsList
 											i={ i }
-											onToggle={ onToggle }
+											icon={ icon }
+											prefix={ prefix }
+											onToggle={ () => {
+												onToggle();
+												onChange({
+													name: i.name,
+													prefix: i.prefix
+												});
+											}}
 										/>
 									);
 								}
@@ -243,6 +249,169 @@ const IconPickerControl = ({
 				) }
 			/>
 		</BaseControl>
+	);
+};
+
+export const IconPickerToolbarControl = ({
+	label,
+	classes,
+	setAttributes
+}) => {
+	useEffect( () => {
+		const icons = [];
+
+		Object.keys( data ).forEach( i => {
+			Object.keys( data[i].styles ).forEach( o => {
+				let prefix = '';
+				let terms = data[i].search.terms;
+
+				switch ( data[i].styles[o]) {
+				case 'brands':
+					prefix = 'fab';
+					break;
+				case 'solid':
+					prefix = 'fas';
+					break;
+				case 'regular':
+					prefix = 'far';
+					break;
+				default:
+					prefix = 'fas';
+				}
+
+				terms.push(
+					i,
+					data[i].label
+				);
+
+				icons.push({
+					name: i,
+					unicode: data[i].unicode,
+					prefix,
+					label: data[i].label,
+					search: terms
+				});
+			});
+		});
+
+		setIcons( icons );
+
+		if ( classes ) {
+			const classList = classes.split( ' ' );
+			const prefix =
+				classList.find(
+					( i ) =>
+						i.includes( 'fab' ) ||
+						i.includes( 'far' ) ||
+						i.includes( 'fas' )
+				) || 'fas';
+			const icon = classList.find( ( i ) => i.includes( 'fa-' ) );
+
+			if ( icon ) {
+				setPrefix( prefix );
+				setIcon( icon );
+			}
+		}
+	}, []);
+
+	const [ search, setSearch ] = useState( '' );
+	const [ icons, setIcons ] = useState( null );
+	const [ prefix, setPrefix ] = useState( '' );
+	const [ icon, setIcon ] = useState( '' );
+
+	const onSelectIcon = ( onToggle, i ) => {
+		onToggle();
+		let classList = classes ? classes.split( ' ' ) : [];
+		classList.splice( classList.indexOf( prefix ), 1 );
+		classList.splice( classList.indexOf( icon ), 1 );
+		classList.push( i.prefix, `fa-${ i.name }` );
+		classList = classList.join( ' ' );
+
+		setAttributes({
+			className: classList
+		});
+
+		setPrefix( i.prefix );
+		setIcon( `fa-${ i.name }` );
+	};
+
+	const onRemoveIcon = ( onToggle ) => {
+		onToggle();
+		let classList = classes ? classes.split( ' ' ) : [];
+		classList.splice( classList.indexOf( prefix ), 1 );
+		classList.splice( classList.indexOf( icon ), 1 );
+		classList = classList.join( ' ' );
+
+		setAttributes({
+			className: classList
+		});
+
+		setPrefix( '' );
+		setIcon( '' );
+	};
+
+	return (
+		<ToolbarGroup>
+			<Dropdown
+				contentClassName="otter-icon-picker-popover"
+				position="bottom center"
+				renderToggle={ ({ isOpen, onToggle }) => (
+					<ToolbarButton
+						label={ __( 'Menu Icons', 'otter-blocks' ) }
+						className="otter-icon-picker-toolbar-button"
+						showTooltip
+						onClick={ onToggle }
+					>
+						{ prefix && icon ? (
+							<i
+								className={ classnames(
+									prefix,
+									icon,
+									'fa-fw'
+								) }
+							/>
+						) : (
+							<i className="fas fa-icons fa-fw" />
+						) }
+					</ToolbarButton>
+				) }
+				renderContent={ ({ onToggle }) => (
+					<MenuGroup label={ label }>
+						<TextControl
+							value={ search }
+							onChange={ e => setSearch( e ) }
+						/>
+
+						<div className="components-popover__items">
+							{ icon && prefix && ! search && (
+								<MenuItem
+									label={ __( 'None', 'otter-blocks' ) }
+									showTooltip={ true }
+									onClick={ () => onRemoveIcon( onToggle ) }
+								>
+									<i className="fas fa-times fa-fw remove-icon" />
+
+									{ __( 'Remove Icon', 'otter-blocks' ) }
+								</MenuItem>
+							) }
+
+							{ icons.map( i => {
+								if ( ! search || i.search.some( ( o ) => o.toLowerCase().match( search.toLowerCase() ) ) ) {
+									return (
+										<FontAwesomeIconsList
+											i={ i }
+											icon={ icon }
+											prefix={ prefix }
+											onToggle={ () => onSelectIcon( onToggle, i ) }
+										/>
+									);
+								}
+							}) }
+						</div>
+					</MenuGroup>
+				) }
+			/>
+		</ToolbarGroup>
 	);
 };
 

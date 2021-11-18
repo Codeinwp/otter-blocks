@@ -38,3 +38,11 @@ jobs:
           ASSETS_DIR: dist/blocks-css/.wordpress-org
           SOURCE_DIR: dist/blocks-css/
           SLUG: blocks-css
+      - name: WordPress Plugin Deploy - Export Import
+        uses: nk-o/action-wordpress-plugin-deploy@master
+        env:
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          ASSETS_DIR: dist/blocks-export-import/.wordpress-org
+          SOURCE_DIR: dist/blocks-export-import/
+          SLUG: blocks-export-import

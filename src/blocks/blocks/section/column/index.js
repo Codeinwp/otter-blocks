@@ -24,7 +24,6 @@ registerBlockType( 'themeisle-blocks/advanced-column', {
 	deprecated,
 	supports: {
 		inserter: false,
-		reusable: false,
 		html: false
 	},
 	edit,

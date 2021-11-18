@@ -24,7 +24,7 @@ class Filter_Blocks_Server {
 	 *
 	 * @var Filter_Blocks_Server
 	 */
-	public $namespace = 'themeisle-gutenberg-blocks/';
+	public $namespace = 'otter/';
 
 	/**
 	 * Rest route version.

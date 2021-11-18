@@ -5,5 +5,5 @@ dist
 build
 artifact
 vendor
-packages
 .DS_Store
+.vscode

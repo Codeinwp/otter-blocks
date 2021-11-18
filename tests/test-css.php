@@ -7,10 +7,14 @@
 
 use ThemeIsle\GutenbergBlocks\CSS\CSS_Utility;
 
+use PHPUnit\Framework\TestCase;
+use Yoast\PHPUnitPolyfills\Polyfills\AssertEqualsCanonicalizing;
+use Yoast\PHPUnitPolyfills\Polyfills\AssertNotEqualsCanonicalizing;
+
 /**
  * Sample test case.
  */
-class TestCSS extends WP_UnitTestCase {
+class TestCSS extends TestCase {
 	/**
 	 * Test Simple CSS.
 	 */
@@ -38,7 +42,7 @@ class TestCSS extends WP_UnitTestCase {
 
 		$style = $css->generate();
 
-		$this->assertEquals(
+		$this->assertEqualsCanonicalizing(
 			$style,
 			'#wp-block {margin: 10px;}'
 		);
@@ -72,7 +76,7 @@ class TestCSS extends WP_UnitTestCase {
 
 		$style = $css->generate();
 
-		$this->assertEquals(
+		$this->assertEqualsCanonicalizing(
 			$style,
 			'#wp-block .wp-block {margin: 20px;}'
 		);
@@ -109,7 +113,7 @@ class TestCSS extends WP_UnitTestCase {
 
 		$style = $css->generate();
 
-		$this->assertEquals(
+		$this->assertEqualsCanonicalizing(
 			$style,
 			'#wp-block .wp-block {margin: 5px;}'
 		);
@@ -150,7 +154,7 @@ class TestCSS extends WP_UnitTestCase {
 
 		$style = $css->generate();
 
-		$this->assertNotEquals(
+		$this->assertNotEqualsCanonicalizing(
 			$style,
 			'#wp-block .wp-block {margin: 10px;}'
 		);
@@ -189,7 +193,7 @@ class TestCSS extends WP_UnitTestCase {
 
 		$style = $css->generate();
 
-		$this->assertEquals(
+		$this->assertEqualsCanonicalizing(
 			$style,
 			'#wp-block .wp-block {margin: 10px 20px;}'
 		);

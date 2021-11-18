@@ -51,14 +51,14 @@ class Blocks_Animation {
 		$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/index.asset.php';
 
 		wp_enqueue_script(
-			'themeisle-gutenberg-animation',
+			'otter-animation',
 			BLOCKS_ANIMATION_URL . '/build/animation/index.js',
 			$asset_file['dependencies'],
 			$asset_file['version'],
 			true
 		);
 
-		wp_set_script_translations( 'themeisle-gutenberg-animation', 'otter-blocks' );
+		wp_set_script_translations( 'otter-animation', 'otter-blocks' );
 	}
 
 	/**
@@ -76,7 +76,7 @@ class Blocks_Animation {
 			return;
 		}
 
-		
+
 		$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/frontend.asset.php';
 
 		wp_enqueue_style(
@@ -87,7 +87,7 @@ class Blocks_Animation {
 		);
 
 		wp_enqueue_style(
-			'themeisle-gutenberg-animation-style',
+			'otter-animation',
 			BLOCKS_ANIMATION_URL . '/build/animation/index.css',
 			array(),
 			$asset_file['version']
@@ -98,12 +98,14 @@ class Blocks_Animation {
 		}
 
 		wp_enqueue_script(
-			'themeisle-gutenberg-animation-frontend',
+			'otter-animation-frontend',
 			BLOCKS_ANIMATION_URL . '/build/animation/frontend.js',
 			$asset_file['dependencies'],
 			$asset_file['version'],
 			true
 		);
+
+		wp_script_add_data( 'otter-animation-frontend', 'sync', true );
 	}
 
 	/**

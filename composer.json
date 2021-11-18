@@ -9,7 +9,8 @@
         "phpcompatibility/php-compatibility": "^9",
         "dealerdirect/phpcodesniffer-composer-installer": "0.7.1",
         "automattic/vipwpcs": "^1.0.0",
-        "phpunit/phpunit": "^5.7"
+        "phpunit/phpunit": "7.5.9",
+        "yoast/phpunit-polyfills": "^1.0"
     },
     "license": "GPL-2.0+",
     "authors": [
@@ -24,10 +25,9 @@
     },
     "prefer-stable": true,
     "config": {
-        "vendor-dir": "packages",
         "optimize-autoloader": true,
         "platform": {
-          "php": "5.6"
+          "php": "7.4"
         }
     },
     "extra": {
@@ -39,7 +39,6 @@
     "minimum-stability": "dev",
     "require": {
         "codeinwp/themeisle-sdk": "^3.1",
-        "codeinwp/gutenberg-menu-icons": "^1.0",
         "masterminds/html5": "^2.7",
         "tubalmartin/cssmin": "^4.1"
     }

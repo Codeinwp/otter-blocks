@@ -24,7 +24,7 @@ class Dashboard_Server {
 	 *
 	 * @var Dashboard_Server
 	 */
-	public $namespace = 'themeisle-gutenberg-blocks/';
+	public $namespace = 'otter/';
 
 	/**
 	 * Rest route version.
@@ -48,7 +48,7 @@ class Dashboard_Server {
 
 		register_rest_route(
 			$namespace,
-			'/regenerate_styles',
+			'/regenerate',
 			array(
 				array(
 					'methods'             => \WP_REST_Server::DELETABLE,

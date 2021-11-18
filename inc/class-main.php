@@ -144,6 +144,7 @@ class Main {
 		add_action( 'init', array( $this, 'register_blocks' ), 11 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ), 1 );
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_frontend_assets' ) );
+		add_filter( 'script_loader_tag', array( $this, 'filter_script_loader_tag' ), 10, 2 );
 
 		add_action(
 			'get_footer',
@@ -203,8 +204,8 @@ class Main {
 			\ThemeIsle\GutenbergBlocks\Blocks_Animation::instance();
 		}
 
-		if ( class_exists( '\ThemeIsle\GutenbergMenuIcons' ) && get_option( 'themeisle_blocks_settings_menu_icons', true ) ) {
-			\ThemeIsle\GutenbergMenuIcons::instance();
+		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Export_Import' ) ) {
+			\ThemeIsle\GutenbergBlocks\Blocks_Export_Import::instance();
 		}
 	}
 
@@ -301,6 +302,16 @@ class Main {
 			}
 		}
 
+		$has_navigation_block = \WP_Block_Type_Registry::get_instance()->is_registered( 'core/navigation' );
+
+		if ( $has_navigation_block && ( 'core/navigation-link' === $block['blockName'] || 'core/navigation-submenu' === $block['blockName'] ) ) {
+			if ( isset( $block['attrs']['className'] ) && strpos( $block['attrs']['className'], 'fa-' ) !== false ) {
+				self::$is_fa_loaded = true;
+
+				return $block_content;
+			}
+		}
+
 		return $block_content;
 	}
 
@@ -318,7 +329,7 @@ class Main {
 		}
 
 		wp_enqueue_script(
-			'themeisle-gutenberg-blocks-vendor',
+			'otter-vendor',
 			plugin_dir_url( $this->get_dir() ) . 'build/blocks/vendor.js',
 			array( 'react', 'react-dom' ),
 			self::$assets_version,
@@ -337,11 +348,11 @@ class Main {
 		}
 
 		wp_enqueue_script(
-			'themeisle-gutenberg-blocks',
+			'otter-blocks',
 			plugin_dir_url( $this->get_dir() ) . 'build/blocks/blocks.js',
 			array_merge(
 				$asset_file['dependencies'],
-				array( 'themeisle-gutenberg-blocks-vendor', 'glidejs', 'lottie-player', 'macy' )
+				array( 'otter-vendor', 'glidejs', 'lottie-player', 'macy' )
 			),
 			$asset_file['version'],
 			true
@@ -363,7 +374,7 @@ class Main {
 			true
 		);
 
-		wp_set_script_translations( 'themeisle-gutenberg-blocks', 'otter-blocks' );
+		wp_set_script_translations( 'otter-blocks', 'otter-blocks' );
 
 		global $wp_roles;
 
@@ -375,7 +386,7 @@ class Main {
 		}
 
 		wp_localize_script(
-			'themeisle-gutenberg-blocks',
+			'otter-blocks',
 			'themeisleGutenberg',
 			array(
 				'isCompatible'   => $this->is_compatible(),
@@ -407,14 +418,15 @@ class Main {
 					'isBoosterActive' => 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ),
 					'wooComparison'   => class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options' ) ? \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options::is_module_activated() : false,
 				),
+				'isBlockEditor'  => 'post' === $current_screen->base,
 			)
 		);
 
 		wp_enqueue_style(
-			'themeisle-gutenberg-blocks-editor',
+			'otter-editor',
 			plugin_dir_url( $this->get_dir() ) . 'build/blocks/editor.css',
 			array( 'wp-edit-blocks' ),
-			self::$assets_version
+			$asset_file['version']
 		);
 
 		wp_enqueue_style(
@@ -432,7 +444,7 @@ class Main {
 		);
 
 		wp_enqueue_script(
-			'themeisle-gutenberg-map-block',
+			'otter-map',
 			plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.js',
 			array( 'wp-dom-ready' ),
 			self::$assets_version,
@@ -447,7 +459,7 @@ class Main {
 		);
 
 		wp_enqueue_script(
-			'themeisle-gutenberg-map-block-gesture',
+			'otter-map-gesture',
 			plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.js',
 			array( 'wp-dom-ready' ),
 			self::$assets_version,
@@ -489,20 +501,21 @@ class Main {
 
 			$post = $content;
 		} else {
-			$content = get_the_content( $post );
+			$content = get_the_content( null, false, $post );
 		}
 
 		if ( strpos( $content, '<!-- wp:' ) === false ) {
 			return false;
 		}
 
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+
 		wp_enqueue_style(
-			'themeisle-block_styles',
+			'otter-blocks',
 			plugin_dir_url( $this->get_dir() ) . 'build/blocks/style.css',
 			[],
-			self::$assets_version
+			$asset_file['version']
 		);
-
 
 		// On AMP context, we don't load JS files.
 		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
@@ -517,20 +530,24 @@ class Main {
 				$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/maps.asset.php';
 
 				wp_enqueue_script(
-					'themeisle-gutenberg-google-maps',
+					'otter-google-map',
 					plugin_dir_url( $this->get_dir() ) . 'build/blocks/maps.js',
 					$asset_file['dependencies'],
 					$asset_file['version'],
 					true
 				);
 
+				wp_script_add_data( 'otter-google-map', 'defer', true );
+
 				wp_enqueue_script( // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
 					'google-maps',
 					'https://maps.googleapis.com/maps/api/js?key=' . esc_attr( $apikey ) . '&libraries=places&callback=initMapScript',
-					array( 'themeisle-gutenberg-google-maps' ),
+					array( 'otter-google-map' ),
 					'',
 					true
 				);
+
+				wp_script_add_data( 'google-maps', 'defer', true );
 
 				self::$is_map_loaded = true;
 			}
@@ -545,10 +562,12 @@ class Main {
 				true
 			);
 
+			wp_script_add_data( 'glidejs', 'async', true );
+
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/slider.asset.php';
 
 			wp_enqueue_script(
-				'themeisle-gutenberg-slider',
+				'otter-slider',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/slider.js',
 				array_merge(
 					$asset_file['dependencies'],
@@ -557,6 +576,8 @@ class Main {
 				$asset_file['version'],
 				true
 			);
+
+			wp_script_add_data( 'otter-slider', 'async', true );
 
 			wp_enqueue_style(
 				'glidejs-core',
@@ -579,12 +600,14 @@ class Main {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/progress-bar.asset.php';
 
 			wp_enqueue_script(
-				'themeisle-gutenberg-progress-bar',
+				'otter-progress-bar',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/progress-bar.js',
 				$asset_file['dependencies'],
 				$asset_file['version'],
 				true
 			);
+
+			wp_script_add_data( 'otter-progress-bar', 'defer', true );
 
 			self::$is_progress_bar_loaded = true;
 		}
@@ -593,12 +616,14 @@ class Main {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/circle-counter.asset.php';
 
 			wp_enqueue_script(
-				'themeisle-gutenberg-circle-counter',
+				'otter-circle-counter',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/circle-counter.js',
 				$asset_file['dependencies'],
 				$asset_file['version'],
 				true
 			);
+
+			wp_script_add_data( 'otter-circle-counter', 'defer', true );
 
 			self::$is_circle_counter_loaded = true;
 		}
@@ -612,6 +637,8 @@ class Main {
 				true
 			);
 
+			wp_script_add_data( 'lottie-player', 'async', true );
+
 			wp_enqueue_script(
 				'lottie-interactivity',
 				plugin_dir_url( $this->get_dir() ) . 'assets/lottie/lottie-interactivity.min.js',
@@ -620,10 +647,12 @@ class Main {
 				true
 			);
 
+			wp_script_add_data( 'lottie-interactivity', 'async', true );
+
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
 
 			wp_enqueue_script(
-				'themeisle-gutenberg-lottie',
+				'otter-lottie',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/lottie.js',
 				array_merge(
 					$asset_file['dependencies'],
@@ -633,17 +662,21 @@ class Main {
 				true
 			);
 
+			wp_script_add_data( 'otter-lottie', 'defer', true );
+
 			self::$is_lottie_loaded = true;
 		}
 
 		if ( ! self::$is_leaflet_loaded && has_block( 'themeisle-blocks/leaflet-map', $post ) ) {
 			wp_enqueue_script(
-				'themeisle-gutenberg-map-leaflet',
+				'leaflet',
 				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.js',
 				array( 'wp-dom-ready' ),
 				self::$assets_version,
 				true
 			);
+
+			wp_script_add_data( 'leaflet', 'async', true );
 
 			wp_enqueue_style(
 				'leaflet-css',
@@ -653,12 +686,14 @@ class Main {
 			);
 
 			wp_enqueue_script(
-				'themeisle-gutenberg-map-leaflet-gesture',
+				'otter-leaflet-gesture',
 				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.js',
 				array( 'wp-dom-ready' ),
 				self::$assets_version,
 				true
 			);
+
+			wp_script_add_data( 'otter-leaflet-gesture', 'defer', true );
 
 			wp_enqueue_style(
 				'leaflet-theme-gesture',
@@ -670,15 +705,17 @@ class Main {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/leaflet-map.asset.php';
 
 			wp_enqueue_script(
-				'themeisle-gutenberg-leaflet-block',
+				'otter-leaflet-block',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/leaflet-map.js',
 				array_merge(
 					$asset_file['dependencies'],
-					array( 'themeisle-gutenberg-map-leaflet', 'themeisle-gutenberg-map-leaflet-gesture' )
+					array( 'leaflet', 'otter-leaflet-gesture' )
 				),
 				$asset_file['version'],
 				true
 			);
+
+			wp_script_add_data( 'otter-leaflet-block', 'defer', true );
 
 			self::$is_leaflet_loaded = true;
 		}
@@ -687,12 +724,14 @@ class Main {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/tabs.asset.php';
 
 			wp_enqueue_script(
-				'themeisle-gutenberg-tabs',
+				'otter-tabs',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/tabs.js',
 				$asset_file['dependencies'],
 				$asset_file['version'],
 				true
 			);
+
+			wp_script_add_data( 'otter-tabs', 'defer', true );
 
 			self::$is_tabs_loaded = true;
 		}
@@ -701,15 +740,17 @@ class Main {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/form.asset.php';
 
 			wp_enqueue_script(
-				'themeisle-gutenberg-form',
+				'otter-form',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/form.js',
 				$asset_file['dependencies'],
 				$asset_file['version'],
 				true
 			);
 
+			wp_script_add_data( 'otter-form', 'defer', true );
+
 			wp_localize_script(
-				'themeisle-gutenberg-form',
+				'otter-form',
 				'themeisleGutenbergForm',
 				array(
 					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
@@ -723,12 +764,14 @@ class Main {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/countdown.asset.php';
 
 			wp_enqueue_script(
-				'themeisle-gutenberg-countdown',
+				'otter-countdown',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/countdown.js',
 				$asset_file['dependencies'],
 				$asset_file['version'],
 				true
 			);
+
+			wp_script_add_data( 'otter-countdown', 'defer', true );
 
 			self::$is_countdown_loaded = true;
 		}
@@ -737,15 +780,17 @@ class Main {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/popup.asset.php';
 
 			wp_enqueue_script(
-				'themeisle-gutenberg-popup',
+				'otter-popup',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/popup.js',
 				$asset_file['dependencies'],
 				$asset_file['version'],
 				true
 			);
 
+			wp_script_add_data( 'otter-popup', 'defer', true );
+
 			wp_localize_script(
-				'themeisle-gutenberg-popup',
+				'otter-popup',
 				'themeisleGutenberg',
 				array(
 					'isPreview' => is_preview(),
@@ -754,7 +799,6 @@ class Main {
 
 			self::$is_popup_loaded = true;
 		}
-
 	}
 
 	/**
@@ -1065,6 +1109,34 @@ class Main {
 		$symbol = isset( $symbols[ $currency ] ) ? $symbols[ $currency ] : '&#36;';
 
 		return $symbol;
+	}
+
+	/**
+	 * Adds async/defer attributes to enqueued / registered scripts.
+	 *
+	 * If #12009 lands in WordPress, this function can no-op since it would be handled in core.
+	 *
+	 * @link https://core.trac.wordpress.org/ticket/12009
+	 *
+	 * @param string $tag The script tag.
+	 * @param string $handle The script handle.
+	 *
+	 * @return string Script HTML string.
+	 */
+	public function filter_script_loader_tag( $tag, $handle ) {
+		foreach ( array( 'async', 'defer' ) as $attr ) {
+			if ( ! wp_scripts()->get_data( $handle, $attr ) ) {
+				continue;
+			}
+			// Prevent adding attribute when already added in #12009.
+			if ( ! preg_match( ":\s$attr(=|>|\s):", $tag ) ) {
+				$tag = preg_replace( ':(?=></script>):', " $attr", $tag, 1 );
+			}
+			// Only allow async or defer, not both.
+			break;
+		}
+
+		return $tag;
 	}
 
 	/**

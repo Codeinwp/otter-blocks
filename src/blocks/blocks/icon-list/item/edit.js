@@ -73,9 +73,6 @@ const Edit = ({
 		fill: attributes.iconColor || parentAttributes.defaultIconColor,
 		fontSize: parentAttributes.defaultSize + 'px'
 	};
-	const itemStyle = {
-		marginRight: parentClass.includes( 'is-style-horizontal' ) ? parentAttributes.gap + 'px' : parentAttributes.gap + 'px'
-	};
 
 	/**
 	 * Add the missing components from parent's attributes
@@ -101,7 +98,6 @@ const Edit = ({
 
 			<div
 				className={ className }
-				style={ itemStyle }
 			>
 				{ 'themeisle-icons' === attributes.library && attributes.icon && Icon !== undefined ? (
 					<Icon

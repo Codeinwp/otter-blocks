@@ -1,8 +1,15 @@
+/** @jsx jsx */
+
 /**
  * External dependencies
  */
 import classnames from 'classnames';
 import GoogleFontLoader from 'react-google-font-loader';
+
+import {
+	css,
+	jsx
+} from '@emotion/react';
 
 /**
  * WordPress dependencies.
@@ -102,6 +109,13 @@ const Edit = ({
 						'collapse': ( 'collapse-desktop' === attributes.collapse && ( isDesktop || isTablet || isMobile ) ) || ( 'collapse-tablet' === attributes.collapse && ( isTablet || isMobile ) ) || ( 'collapse-mobile' === attributes.collapse && isMobile )
 					}
 				) }
+				css={
+					css`
+						.block-editor-block-list__layout {
+							column-gap: ${ attributes.spacing }px;
+						}
+					`
+				}
 			>
 				<InnerBlocks
 					allowedBlocks={ [ 'themeisle-blocks/button' ] }

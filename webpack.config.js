@@ -46,10 +46,23 @@ module.exports = [
 	},
 	{
 
+		// Export Import
+		...defaultConfig,
+		stats: 'minimal',
+		mode: NODE_ENV,
+		entry: {
+			index: './src/export-import/index.js'
+		},
+		output: {
+			path: path.resolve( __dirname, './build/export-import' )
+		}
+	},
+	{
+
 		// OTTER BLOCKS
 		...defaultConfig,
 		stats: 'minimal',
-		devtool: 'eval-source-map',
+		devtool: 'development' === NODE_ENV ? 'eval-source-map' : undefined,
 		mode: NODE_ENV,
 		entry: {
 			blocks: [

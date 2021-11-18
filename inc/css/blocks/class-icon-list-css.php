@@ -36,13 +36,14 @@ class Icon_List_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-icon-list-item',
 				'properties' => array(
 					array(
-						'property' => 'margin-bottom',
-						'value'    => 'gap',
-						'unit'     => 'px',
-						'default'  => 5,
+						'property' => 'align-items',
+						'value'    => 'horizontalAlign',
+					),
+					array(
+						'property' => 'justify-content',
+						'value'    => 'horizontalAlign',
 					),
 				),
 			)
@@ -50,18 +51,11 @@ class Icon_List_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => '.is-style-horizontal .wp-block-themeisle-blocks-icon-list-item',
 				'properties' => array(
 					array(
-						'property' => 'margin-right',
+						'property' => 'gap',
 						'value'    => 'gap',
 						'unit'     => 'px',
-						'default'  => 5,
-					),
-					array(
-						'property' => 'margin-bottom',
-						'unit'     => 'px',
-						'default'  => 0,
 					),
 				),
 			)
@@ -79,7 +73,6 @@ class Icon_List_CSS extends Base_CSS {
 						'property' => 'font-size',
 						'value'    => 'defaultSize',
 						'unit'     => 'px',
-						'default'  => 20,
 					),
 				),
 			)
