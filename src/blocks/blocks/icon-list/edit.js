@@ -54,6 +54,7 @@ const Edit = ({
 						.block-editor-block-list__layout {
 							align-items: ${ attributes.horizontalAlign || 'unset' } !important;
 							justify-content: ${ attributes.horizontalAlign || 'unset' } !important;
+							gap: ${ attributes.gap }px;
 						}
 					`
 				}
