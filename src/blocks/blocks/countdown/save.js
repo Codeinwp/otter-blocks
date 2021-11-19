@@ -19,12 +19,11 @@ import {
 const DisplayTimeComponent = ({
 	name,
 	value,
-	tag,
-	key
+	tag
 }) => {
 	return (
 		<div
-			key={ key }
+			key={ name }
 			name={ tag }
 			className={ classnames(
 				'otter-countdown__display-area',
@@ -45,7 +44,7 @@ const DisplayTime = ({
 }) => {
 	const elemToDisplay = hasSeparators ? insertBetweenItems( time, { name: 'sep', value: ':', tag: 'separator' }) : time;
 
-	const renderElem = elemToDisplay?.map( ( elem, key ) => <DisplayTimeComponent { ...elem } key={ key } /> );
+	const renderElem = elemToDisplay?.map( ( elem ) => <DisplayTimeComponent { ...elem } /> );
 
 	return time !== undefined ? (
 		<div className="otter-countdown__container">

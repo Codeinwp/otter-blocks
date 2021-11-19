@@ -12,7 +12,7 @@ import {
 import {
 	Button,
 	Modal,
-	Toolbar
+	ToolbarGroup
 } from '@wordpress/components';
 
 import {
@@ -55,7 +55,7 @@ const BlockNavigatorControl = ({ clientId }) => {
 	return (
 		<Fragment>
 			<BlockControls>
-				<Toolbar>
+				<ToolbarGroup>
 					<Button
 						className="components-toolbar__control"
 						label={ __( 'Open block navigator', 'otter-blocks' ) }
@@ -63,7 +63,7 @@ const BlockNavigatorControl = ({ clientId }) => {
 						onClick={ () => setOpen( true ) }
 						icon={ navigatorIcon }
 					/>
-				</Toolbar>
+				</ToolbarGroup>
 			</BlockControls>
 
 			{ isOpen && (
