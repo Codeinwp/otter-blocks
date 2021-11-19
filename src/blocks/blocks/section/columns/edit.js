@@ -86,7 +86,7 @@ const Edit = ({
 			getDefaultBlockVariation
 		} = select( 'core/blocks' );
 
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined};
 		const sectionBlock = getBlock( clientId );
 
 		return {

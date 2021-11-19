@@ -57,7 +57,7 @@ const Edit = ({
 			getBlock,
 			getBlockRootClientId
 		} = select( 'core/block-editor' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined};
 		const block = getBlock( clientId );
 		const adjacentBlockClientId = getAdjacentBlockClientId( clientId );
 		const adjacentBlock = getBlock( adjacentBlockClientId );
