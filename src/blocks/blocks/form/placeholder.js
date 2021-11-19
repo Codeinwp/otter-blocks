@@ -64,7 +64,7 @@ const BlockPlaceholder = ({
 					/>
 
 					<Button
-						isLarge
+
 						variant="primary"
 						type="submit"
 						onClick={ saveAPIKey }

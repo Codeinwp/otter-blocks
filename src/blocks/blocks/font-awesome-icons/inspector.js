@@ -112,8 +112,7 @@ const Inspector = ({
 				<ButtonGroup>
 					<Button
 						isSmall
-						isSecondary={ hover }
-						isPrimary={ ! hover }
+						variant={ ! hover ? 'primary' : 'secondary' }
 						onClick={ () => setHover( false ) }
 					>
 						{ __( 'Normal', 'otter-blocks' ) }
@@ -121,8 +120,7 @@ const Inspector = ({
 
 					<Button
 						isSmall
-						isSecondary={ ! hover }
-						isPrimary={ hover }
+						variant={ hover ? 'primary' : 'secondary' }
 						onClick={ () => setHover( true ) }
 					>
 						{ __( 'Hover', 'otter-blocks' ) }

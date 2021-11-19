@@ -519,8 +519,8 @@ const SectionColumns = ({
 									icon="editor-alignleft"
 									label={ __( 'Left', 'otter-blocks' ) }
 									showTooltip={ true }
-									isLarge
-									isPrimary={ 'flex-start' === defaults.horizontalAlign }
+
+									variant={ 'flex-start' === defaults.horizontalAlign ? 'primary' : undefined}
 									onClick={ () => changeHorizontalAlign( 'flex-start' ) }
 								/>
 
@@ -528,8 +528,8 @@ const SectionColumns = ({
 									icon="editor-aligncenter"
 									label={ __( 'Center', 'otter-blocks' ) }
 									showTooltip={ true }
-									isLarge
-									isPrimary={ 'center' === defaults.horizontalAlign }
+
+									variant={ 'center' === defaults.horizontalAlign ? 'primary' : undefined }
 									onClick={ () => changeHorizontalAlign( 'center' ) }
 								/>
 
@@ -537,8 +537,8 @@ const SectionColumns = ({
 									icon="editor-alignright"
 									label={ __( 'Right', 'otter-blocks' ) }
 									showTooltip={ true }
-									isLarge
-									isPrimary={ 'flex-end' === defaults.horizontalAlign }
+
+									variant={ 'flex-end' === defaults.horizontalAlign ? 'primary' : undefined }
 									onClick={ () => changeHorizontalAlign( 'flex-end' ) }
 								/>
 							</ButtonGroup>
@@ -589,8 +589,8 @@ const SectionColumns = ({
 							/> }
 							label={ __( 'Top', 'otter-blocks' ) }
 							showTooltip={ true }
-							isLarge
-							isPrimary={ 'flex-start' === defaults.verticalAlign }
+
+							variant={ 'flex-start' === defaults.verticalAlign ? 'primary' : undefined }
 							onClick={ () => changeVerticalAlign( 'flex-start' ) }
 						/>
 
@@ -601,8 +601,8 @@ const SectionColumns = ({
 							/> }
 							label={ __( 'Middle', 'otter-blocks' ) }
 							showTooltip={ true }
-							isLarge
-							isPrimary={ 'center' === defaults.verticalAlign }
+
+							variant={ 'center' === defaults.verticalAlign ? 'primary' : undefined }
 							onClick={ () => changeVerticalAlign( 'center' ) }
 						/>
 
@@ -613,8 +613,8 @@ const SectionColumns = ({
 							/> }
 							label={ __( 'Bottom', 'otter-blocks' ) }
 							showTooltip={ true }
-							isLarge
-							isPrimary={ 'flex-end' === defaults.verticalAlign }
+
+							variant={ 'flex-end' === defaults.verticalAlign ? 'primary' : undefined }
 							onClick={ () => changeVerticalAlign( 'flex-end' ) }
 						/>
 					</ButtonGroup>

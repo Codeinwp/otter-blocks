@@ -198,7 +198,7 @@ const Inspector = ({
 						<>
 							<Button
 								onClick={ onToggle }
-								isSecondary
+								 variant="secondary"
 								aria-expanded={ isOpen }
 							>
 								{ attributes.date ? format( settings.formats.datetime, attributes.date ) : __( 'Select Date', 'otter-blocks' ) }

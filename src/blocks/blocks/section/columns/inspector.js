@@ -962,8 +962,7 @@ const Inspector = ({
 											icon="editor-alignleft"
 											label={ __( 'Left', 'otter-blocks' ) }
 											showTooltip={ true }
-											isLarge
-											isPrimary={ 'flex-start' === attributes.horizontalAlign }
+											variant={ 'flex-start' === attributes.horizontalAlign ? 'primary' : 'secondary' }
 											onClick={ () => changeHorizontalAlign( 'flex-start' ) }
 										/>
 
@@ -971,8 +970,7 @@ const Inspector = ({
 											icon="editor-aligncenter"
 											label={ __( 'Center', 'otter-blocks' ) }
 											showTooltip={ true }
-											isLarge
-											isPrimary={ 'center' === attributes.horizontalAlign }
+											variant={ 'center' === attributes.horizontalAlign ? 'primary' : 'secondary' }
 											onClick={ () => changeHorizontalAlign( 'center' ) }
 										/>
 
@@ -980,8 +978,7 @@ const Inspector = ({
 											icon="editor-alignright"
 											label={ __( 'Right', 'otter-blocks' ) }
 											showTooltip={ true }
-											isLarge
-											isPrimary={ 'flex-end' === attributes.horizontalAlign }
+											variant={ 'flex-end' === attributes.horizontalAlign ? 'primary' : 'secondary' }
 											onClick={ () => changeHorizontalAlign( 'flex-end' ) }
 										/>
 									</ButtonGroup>
@@ -1064,7 +1061,7 @@ const Inspector = ({
 										</div>
 
 										<Button
-											isSecondary
+											 variant="secondary"
 											className="wp-block-themeisle-image-container-delete-button"
 											onClick={ removeBackgroundImage }
 										>
@@ -1207,7 +1204,7 @@ const Inspector = ({
 										</div>
 
 										<Button
-											isSecondary
+											 variant="secondary"
 											className="wp-block-themeisle-image-container-delete-button"
 											onClick={ removeBackgroundOverlayImage }
 										>
@@ -1523,8 +1520,7 @@ const Inspector = ({
 							<ButtonGroup>
 								<Button
 									isSmall
-									isSecondary={ 'top' !== dividerViewType }
-									isPrimary={ 'top' === dividerViewType }
+									variant={ 'top' === dividerViewType ? 'primary' : 'secondary' }
 									onClick={ () => setDividerViewType( 'top' ) }
 								>
 									{ __( 'Top', 'otter-blocks' ) }
@@ -1532,8 +1528,7 @@ const Inspector = ({
 
 								<Button
 									isSmall
-									isSecondary={ 'bottom' !== dividerViewType }
-									isPrimary={ 'bottom' === dividerViewType }
+									variant={ 'bottom' === dividerViewType ? 'primary' : 'secondary' }
 									onClick={ () => setDividerViewType( 'bottom' ) }
 								>
 									{ __( 'Bottom', 'otter-blocks' ) }

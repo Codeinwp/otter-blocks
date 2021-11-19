@@ -142,7 +142,7 @@ const BlocksImporter = ({
 			<FormFileUpload
 				accept="text/json"
 				onChange={ ( e ) => uploadImport( e.target.files ) }
-				isSecondary
+				 variant="secondary"
 			>
 				{ __( 'Upload' ) }
 			</FormFileUpload>

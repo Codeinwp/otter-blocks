@@ -32,7 +32,7 @@ const ButtonControl = ({
 			<div className="otter-button-control-group">
 				<Button
 					variant="primary"
-					isLarge
+
 					disabled={ disabled }
 					onClick={ action }
 				>

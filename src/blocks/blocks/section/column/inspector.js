@@ -651,7 +651,7 @@ const Inspector = ({
 									</div>
 
 									<Button
-										isSecondary
+										 variant="secondary"
 										className="wp-block-themeisle-image-container-delete-button"
 										onClick={ removeBackgroundImage }
 									>

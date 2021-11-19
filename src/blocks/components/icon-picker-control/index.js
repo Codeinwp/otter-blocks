@@ -176,7 +176,7 @@ const IconPickerControl = ({
 							label={ label }
 						>
 							<Button
-								isLarge
+
 								className="otter-icon-picker-button"
 								onClick={ onToggle }
 								aria-expanded={ isOpen }

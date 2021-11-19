@@ -142,7 +142,7 @@ const GoogleFontsControl = ({
 							position="bottom center"
 							renderToggle={ ({ isOpen, onToggle }) => (
 								<Button
-									isLarge
+
 									className="otter-gfont-button"
 									id={ id }
 									onClick={ onToggle }

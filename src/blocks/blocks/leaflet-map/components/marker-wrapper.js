@@ -43,8 +43,8 @@ const MarkerWrapper = ({
 			</div>
 
 			<Button
-				isSecondary
-				isLarge
+				 variant="secondary"
+
 				className="wp-block-themeisle-blocks-leaflet-map-marker-add"
 				onClick={ () => {
 					dispatch({

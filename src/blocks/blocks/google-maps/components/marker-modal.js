@@ -144,7 +144,7 @@ const MarkerModal = ({
 
 			<ButtonGroup>
 				<Button
-					isLarge
+
 					variant="primary"
 					onClick={ () => addMarker( location, title, icon, description, latitude, longitude ) }
 				>
@@ -152,8 +152,8 @@ const MarkerModal = ({
 				</Button>
 
 				<Button
-					isLarge
-					isSecondary
+
+					 variant="secondary"
 					onClick={ close }
 				>
 					{ __( 'Cancel', 'otter-blocks' ) }

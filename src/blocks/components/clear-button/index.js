@@ -44,7 +44,7 @@ const ClearButton = ({
 		<div className="otter-clear-button">
 			<Button
 				isSmall
-				isSecondary
+				 variant="secondary"
 				onClick={ clearValues }
 			>
 				{ __( 'Clear', 'otter-blocks' ) }

@@ -227,7 +227,7 @@ const Inspector = ({
 						/>
 
 						<Button
-							isSecondary
+							 variant="secondary"
 							onClick={ () => setAttributes({ image: undefined }) }
 							disabled={ attributes.product }
 						>
@@ -265,8 +265,8 @@ const Inspector = ({
 				) ) }
 
 				<Button
-					isSecondary
-					isLarge
+					 variant="secondary"
+
 					className="wp-block-themeisle-blocks-review__inspector_add"
 					onClick={ addFeature }
 				>
@@ -294,8 +294,8 @@ const Inspector = ({
 				) ) }
 
 				<Button
-					isSecondary
-					isLarge
+					 variant="secondary"
+
 					className="wp-block-themeisle-blocks-review__inspector_add"
 					onClick={ addPro }
 				>
@@ -323,8 +323,8 @@ const Inspector = ({
 				) ) }
 
 				<Button
-					isSecondary
-					isLarge
+					 variant="secondary"
+
 					className="wp-block-themeisle-blocks-review__inspector_add"
 					onClick={ addCon }
 				>
@@ -410,8 +410,8 @@ const Inspector = ({
 							) ) }
 
 							<Button
-								isSecondary
-								isLarge
+								 variant="secondary"
+
 								className="wp-block-themeisle-blocks-review__inspector_add"
 								onClick={ addLinks }
 							>

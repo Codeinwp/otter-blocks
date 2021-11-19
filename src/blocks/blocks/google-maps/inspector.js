@@ -316,8 +316,8 @@ const Inspector = ({
 				/>
 
 				<Button
-					isLarge
-					isSecondary
+
+					 variant="secondary"
 					type="submit"
 					onClick={ saveAPIKey }
 					isBusy={ isSaving }

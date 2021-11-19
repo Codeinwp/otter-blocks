@@ -29,7 +29,7 @@ const Inspector = ({
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>
 				<Button
-					isSecondary
+					 variant="secondary"
 					onClick={ () => selectParent() }
 				>
 					{ __( 'Back to the Tabs', 'otter-blocks' ) }

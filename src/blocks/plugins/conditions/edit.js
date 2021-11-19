@@ -298,7 +298,7 @@ const Edit = ({
 							<Button
 								id={ id }
 								onClick={ onToggle }
-								isSecondary
+								 variant="secondary"
 								aria-expanded={ isOpen }
 							>
 								{ value ? format( settings.formats.datetime, value ) : __( 'Select Date', 'otter-blocks' ) }
@@ -526,7 +526,7 @@ const Edit = ({
 														/>
 
 														<Button
-															isSecondary
+															 variant="secondary"
 															isSmall
 															disabled={ ! i.start_time }
 															onClick={ () => {
@@ -593,7 +593,7 @@ const Edit = ({
 														/>
 
 														<Button
-															isSecondary
+															 variant="secondary"
 															isSmall
 															disabled={ ! i.end_time }
 															onClick={ () => {
@@ -628,7 +628,7 @@ const Edit = ({
 										) }
 
 										<Button
-											isLarge
+
 											isDestructive
 											className="otter-blocks-conditions__add"
 											onClick={ () => removeCondition( index, n ) }
@@ -643,8 +643,8 @@ const Edit = ({
 								) ) }
 
 								<Button
-									isSecondary
-									isLarge
+									 variant="secondary"
+
 									className="otter-blocks-conditions__add"
 									onClick={ () => addNewCondition( index ) }
 								>
@@ -660,8 +660,8 @@ const Edit = ({
 				}) }
 
 				<Button
-					isSecondary
-					isLarge
+					 variant="secondary"
+
 					className="otter-blocks-conditions__add"
 					onClick={ addGroup }
 				>

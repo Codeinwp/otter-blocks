@@ -76,8 +76,7 @@ const ButtonGroupBlock = ({
 				<ButtonGroup>
 					<Button
 						isSmall
-						isSecondary={ hover }
-						isPrimary={ ! hover }
+						variant={ ! hover ? 'primary' : 'secondary' }
 						onClick={ () => setHover( false ) }
 					>
 						{ __( 'Normal', 'otter-blocks' ) }
@@ -85,8 +84,7 @@ const ButtonGroupBlock = ({
 
 					<Button
 						isSmall
-						isSecondary={ ! hover }
-						isPrimary={ hover }
+						variant={ hover ? 'primary' : 'secondary' }
 						onClick={ () => setHover( true ) }
 					>
 						{ __( 'Hover', 'otter-blocks' ) }

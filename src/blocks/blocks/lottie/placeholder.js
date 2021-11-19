@@ -87,7 +87,7 @@ const BlockPlaceholder = ({
 
 					{ ! Boolean( window.themeisleGutenberg.isWPVIP ) && (
 						<Button
-							isSecondary
+							 variant="secondary"
 							onClick={ () => setOpen( true ) }
 						>
 							{ __( 'Upload', 'otter-blocks' ) }

@@ -6,6 +6,8 @@ import {
 	BlockVerticalAlignmentToolbar
 } from '@wordpress/block-editor';
 
+import { ToolbarItem } from '@wordpress/components';
+
 const Controls = ({
 	attributes,
 	setAttributes
@@ -32,10 +34,12 @@ const Controls = ({
 
 	return (
 		<BlockControls>
-			<BlockVerticalAlignmentToolbar
-				onChange={ changeVerticalAlign }
-				value={ getVerticalAlignValue() }
-			/>
+			<ToolbarItem>
+				<BlockVerticalAlignmentToolbar
+					onChange={ changeVerticalAlign }
+					value={ getVerticalAlignValue() }
+				/>
+			</ToolbarItem>
 		</BlockControls>
 	);
 };
