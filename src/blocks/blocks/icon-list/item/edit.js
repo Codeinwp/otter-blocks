@@ -145,7 +145,6 @@ const Edit = ({
 					onMerge={ mergeBlocks }
 					onReplace={ onReplace }
 					onRemove={ onRemove }
-					keepPlaceholderOnFocus={ true }
 				/>
 			</div>
 		</Fragment>
