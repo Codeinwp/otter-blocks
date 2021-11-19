@@ -132,7 +132,7 @@ const BlockPlaceholder = ({
 					</MenuGroup>
 
 					<Button
-						isPrimary
+						variant="primary"
 						onClick={ onComplete }
 					>
 						{ __( 'Done', 'otter-blocks' ) }

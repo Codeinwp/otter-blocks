@@ -253,7 +253,7 @@ const Main = () => {
 
 								<div className="otter-button-group">
 									<Button
-										isPrimary
+										variant="primary"
 										isLarge
 										disabled={ isAPISaving }
 										onClick={ () => changeOptions( 'themeisle_google_map_block_api_key', 'googleMapsAPI', googleMapsAPI ) }
@@ -298,7 +298,7 @@ const Main = () => {
 
 								<div className="otter-button-group">
 									<Button
-										isPrimary
+										variant="primary"
 										isLarge
 										disabled={ isAPISaving }
 										onClick={ () => {
@@ -414,7 +414,7 @@ const Main = () => {
 						</Button>
 
 						<Button
-							isPrimary
+							variant="primary"
 							isLarge
 							disabled={ isAPISaving }
 							isBusy={ isAPISaving }

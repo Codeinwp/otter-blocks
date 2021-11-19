@@ -383,8 +383,8 @@ const Edit = ({
 				/>
 				<Tooltip text={ __( 'Open Template Library', 'otter-blocks' ) } >
 					<Button
-						isPrimary
-						isLarge
+						variant="primary"
+						isLarge={ true }
 						className="wp-block-themeisle-template-library"
 						onClick={ () => setIsLibraryOpen( true ) }
 					>

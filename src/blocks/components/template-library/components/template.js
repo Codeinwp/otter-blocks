@@ -52,7 +52,7 @@ const Template = ({
 					</Button>
 
 					<Button
-						isPrimary
+						variant="primary"
 						isLarge
 						className="library-modal-overlay__actions"
 						onClick={ () => importTemplate( template.template_url ) }

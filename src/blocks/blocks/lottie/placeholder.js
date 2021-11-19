@@ -78,7 +78,7 @@ const BlockPlaceholder = ({
 					/>
 
 					<Button
-						isPrimary
+						variant="primary"
 						disabled={ ! url }
 						type="submit"
 					>

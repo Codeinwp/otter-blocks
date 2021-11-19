@@ -76,7 +76,7 @@ const BlockItem = ({
 							</Button>
 
 							<Button
-								isPrimary
+								variant="primary"
 								isLarge
 								isBusy={ isLoading }
 								onClick={ async() => {

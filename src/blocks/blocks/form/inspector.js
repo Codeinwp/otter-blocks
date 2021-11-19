@@ -166,7 +166,7 @@ const Inspector = ({
 				/>
 
 				<Button
-					isPrimary
+					variant="primary"
 					onClick={ saveEmail }
 					disabled={ email === savedEmail }
 				>

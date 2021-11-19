@@ -67,7 +67,7 @@ const Edit = ({
 				className={ className }
 			>
 				<Button
-					isPrimary
+					variant="primary"
 					icon={ external }
 					onClick={ () => setEditing( true ) }
 				>

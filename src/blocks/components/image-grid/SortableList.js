@@ -55,7 +55,7 @@ const SortableList = SortableContainer( ({
 			<Button
 				label={ __( 'Add Images', 'otter-blocks' ) }
 				icon={ <Icon icon={ plus } /> }
-				isPrimary
+				variant="primary"
 				onClick={ open }
 			/>
 		</div>

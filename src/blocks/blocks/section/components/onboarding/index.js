@@ -144,7 +144,7 @@ const Onboarding = ({
 
 			<Tooltip text={ __( 'Open Template Library', 'otter-blocks' ) } >
 				<Button
-					isPrimary
+					variant="primary"
 					isLarge
 					className="wp-block-themeisle-template-library"
 					onClick={ () => setIsLibraryOpen( true ) }

@@ -115,7 +115,7 @@ const Onboarding = () => {
 
 					<div className="otter-onboarding-modal-action">
 						<Button
-							isPrimary
+							variant="primary"
 							isLarge
 							onClick={ () => {
 								setOpen( false );
