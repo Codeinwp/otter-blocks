@@ -77,7 +77,6 @@ function AnimationPopover({
 				position="bottom center"
 				renderToggle={ ({ isOpen, onToggle }) => (
 					<Button
-						isLarge
 						className="themeisle-animations-control__button"
 						id={ id }
 						onClick={ onToggle }

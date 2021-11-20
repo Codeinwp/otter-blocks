@@ -226,7 +226,7 @@ const Edit = ({
 
 	if ( 'color' === attributes.backgroundType ) {
 		background = {
-			background: attributes.backgroundColor
+			backgroundColor: attributes.backgroundColor
 		};
 	}
 
@@ -242,7 +242,7 @@ const Edit = ({
 
 	if ( 'gradient' === attributes.backgroundType ) {
 		background = {
-			background: attributes.backgroundGradient
+			backgroundImage: attributes.backgroundGradient
 		};
 	}
 

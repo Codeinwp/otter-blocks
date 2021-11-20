@@ -1,4 +1,9 @@
 /**
+ * External dependencies.
+ */
+import { external } from '@wordpress/icons';
+
+/**
  * WordPress dependencies.
  */
 import { kebabCase } from 'lodash';
@@ -114,7 +119,7 @@ const BlocksExporter = () => {
 
 	return (
 		<PluginBlockSettingsMenuItem
-			icon="share-alt2"
+			icon={ external }
 			label={ __( 'Export as JSON', 'otter-blocks' ) }
 			onClick={ exportBlocks }
 		/>

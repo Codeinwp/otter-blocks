@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import LazyLoad from 'react-lazy-load';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -80,6 +75,7 @@ const TemplatesList = ({
 				) {
 					return (
 						<Template
+							key={ i.template_url }
 							template={ i }
 							importPreview={ importPreview }
 							importTemplate={ importTemplate }
@@ -93,9 +89,7 @@ const TemplatesList = ({
 				className="library-modal-content__item"
 			>
 				<div className="library-modal-content__preview">
-					<LazyLoad>
-						<img src={ 'https://raw.githubusercontent.com/Codeinwp/gutenberg-templates/master/assets/images/coming-soon.jpg' } />
-					</LazyLoad>
+					<img src={ 'https://raw.githubusercontent.com/Codeinwp/gutenberg-templates/master/assets/images/coming-soon.jpg' } />
 				</div>
 			</div>
 		</div>

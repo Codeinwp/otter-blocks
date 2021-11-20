@@ -92,7 +92,6 @@ const Inspector = ({
 
 				<Button
 					isSecondary
-					isLarge
 					className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
 					onClick={ addTab }
 				>

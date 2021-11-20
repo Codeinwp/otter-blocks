@@ -116,7 +116,6 @@ const Onboarding = () => {
 					<div className="otter-onboarding-modal-action">
 						<Button
 							isPrimary
-							isLarge
 							onClick={ () => {
 								setOpen( false );
 								setRunTour( true );
@@ -127,7 +126,6 @@ const Onboarding = () => {
 
 						<Button
 							isSecondary
-							isLarge
 							onClick={ () => skipTour( 'skipped' ) }
 						>
 							{ __( 'Skip', 'otter-blocks' ) }

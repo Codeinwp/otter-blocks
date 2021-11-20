@@ -9,7 +9,7 @@ import {
 	DropdownMenu,
 	RangeControl,
 	SVG,
-	Toolbar
+	ToolbarGroup
 } from '@wordpress/components';
 
 import { BlockControls } from '@wordpress/block-editor';
@@ -126,7 +126,7 @@ const Controls = ({
 				] }
 			/>
 
-			<Toolbar>
+			<ToolbarGroup>
 				<Dropdown
 					contentClassName="wp-themesiel-blocks-advanced-heading-popover-content"
 					position="bottom center"
@@ -177,7 +177,7 @@ const Controls = ({
 						</Fragment>
 					) }
 				/>
-			</Toolbar>
+			</ToolbarGroup>
 		</BlockControls>
 	);
 };

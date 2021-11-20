@@ -230,7 +230,7 @@ const Edit = ({
 
 	if ( 'color' === attributes.backgroundType ) {
 		background = {
-			background: attributes.backgroundColor
+			backgroundColor: attributes.backgroundColor
 		};
 	}
 
@@ -246,7 +246,7 @@ const Edit = ({
 
 	if ( 'gradient' === attributes.backgroundType ) {
 		background = {
-			background: attributes.backgroundGradient
+			backgroundImage: attributes.backgroundGradient
 		};
 	}
 
@@ -383,7 +383,6 @@ const Edit = ({
 				<Tooltip text={ __( 'Open Template Library', 'otter-blocks' ) } >
 					<Button
 						isPrimary
-						isLarge
 						className="wp-block-themeisle-template-library"
 						onClick={ () => setIsLibraryOpen( true ) }
 					>
