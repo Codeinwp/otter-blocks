@@ -86,12 +86,11 @@ const Edit = ({
 			getDefaultBlockVariation
 		} = select( 'core/blocks' );
 
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined};
-		const sectionBlock = getBlock( clientId );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
 
 		return {
-			sectionBlock,
-			children: sectionBlock.innerBlocks,
+			sectionBlock: getBlock( clientId ),
+			children: getBlock( clientId )?.innerBlocks || [],
 			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
 			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
 			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
