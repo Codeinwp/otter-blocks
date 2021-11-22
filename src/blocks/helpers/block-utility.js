@@ -38,7 +38,7 @@ export const addGlobalDefaults = ( attributes, setAttributes, name, defaultAttri
 		const defaultGlobalAttrs = { ...window.themeisleGutenberg.globalDefaults[name] };
 
 		const attrs = Object.keys( defaultGlobalAttrs )
-			.filter( attr => attributes[ attr ] === defaultAttributes[ attr ]?.default ) // Keep only the properties with the default value.
+			.filter( attr => isEqual( attributes[ attr ], defaultAttributes[ attr ]?.default ) ) // Keep only the properties with the default value.
 			// Build an attribute object with the properties that are gone take the Global Defaults values.
 			.reduce( ( attrs, attr ) => {
 				attrs[ attr ] = defaultGlobalAttrs[ attr ];
