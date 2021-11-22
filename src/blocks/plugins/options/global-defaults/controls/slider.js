@@ -30,6 +30,7 @@ const SliderControl = ({
 				onChange={ perView => changeConfig( blockName, { perView }) }
 				min={ 1 }
 				max={ 2 }
+				allowReset={ true }
 			/>
 
 			{ 1 < defaults.perView && (
@@ -41,6 +42,7 @@ const SliderControl = ({
 						onChange={ gap => changeConfig( blockName, { gap }) }
 						min={ 0 }
 						max={ 100 }
+						allowReset={ true }
 					/>
 
 					<RangeControl
@@ -50,6 +52,7 @@ const SliderControl = ({
 						onChange={ peek => changeConfig( blockName, { peek }) }
 						min={ 0 }
 						max={ 100 }
+						allowReset={ true }
 					/>
 				</Fragment>
 			) }
@@ -69,6 +72,7 @@ const SliderControl = ({
 					onChange={ delay => changeConfig( blockName, { delay }) }
 					min={ 1 }
 					max={ 10 }
+					allowReset={ true }
 				/>
 			) }
 
