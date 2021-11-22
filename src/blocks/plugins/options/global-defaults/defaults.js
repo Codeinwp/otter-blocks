@@ -84,6 +84,9 @@ const defaultsAttrs = {
 	'themeisle-blocks/progress-bar': {
 
 	},
+	'themeisle-blocks/circle-counter': {
+
+	},
 	'themeisle-blocks/review': {
 		features: []
 	}

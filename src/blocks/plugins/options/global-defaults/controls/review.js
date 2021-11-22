@@ -90,8 +90,6 @@ const ReviewControl = ({
 		setAttributes({ features });
 	};
 
-	console.log( defaults.features );
-
 	return (
 		<Fragment>
 			<BaseControl>
