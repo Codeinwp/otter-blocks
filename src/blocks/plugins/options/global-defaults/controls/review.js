@@ -9,15 +9,54 @@ import {
 } from '@wordpress/block-editor';
 
 import {
-	RangeControl
+	RangeControl,
+	TextControl,
+	PanelBody,
+	Button,
+	BaseControl,
+	ExternalLink
 } from '@wordpress/components';
 
-import { Fragment } from '@wordpress/element';
+import { Fragment, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 
+const PanelItem = ({
+	title,
+	remove,
+	children
+}) => {
+	const [ isOpen, setOpen ] = useState( false );
+
+	return (
+		<div className="wp-block-themeisle-blocks-review__inspector_panel_item">
+			<div className="wp-block-themeisle-blocks-review__inspector_panel_item__header">
+				<Button
+					className="wp-block-themeisle-blocks-review__inspector_panel_item__title"
+					onClick={ () => setOpen( ! isOpen ) }
+				>
+					{ title }
+				</Button>
+
+				<Button
+					icon="no-alt"
+					label={ __( 'Remove', 'otter-blocks' ) }
+					showTooltip={ true }
+					className="wp-block-themeisle-blocks-review__inspector_panel_item__arrow"
+					onClick={ remove }
+				/>
+			</div>
+
+			{ isOpen && (
+				<div className="wp-block-themeisle-blocks-review__inspector_panel_item__content">
+					{ children }
+				</div>
+			) }
+		</div>
+	);
+};
 
 const ReviewControl = ({
 	blockName,
@@ -25,8 +64,90 @@ const ReviewControl = ({
 	changeConfig
 }) => {
 
+	const setAttributes = ( attrs ) => changeConfig( blockName, attrs );
+
+	const addFeature = () => {
+		const features = [ ...defaults.features ];
+		features.push({
+			title: __( 'Feature', 'otter-blocks' ),
+			rating: 9
+		});
+		setAttributes({ features });
+	};
+
+	const changeFeature = ( index, value ) => {
+		const features = [ ...defaults.features ];
+		features[ index ] = {
+			...features[ index ],
+			...value
+		};
+		setAttributes({ features });
+	};
+
+	const removeFeature = ( index ) => {
+		let features = [ ...defaults.features ];
+		features = features.filter( ( el, i ) => i !== index );
+		setAttributes({ features });
+	};
+
+	console.log( defaults.features );
+
 	return (
 		<Fragment>
+			<BaseControl>
+				<TextControl
+					label={ __( 'Currency', 'otter-blocks' ) }
+					type="text"
+					placeholder={ __( 'Currency code, like USD or EUR.', 'otter-blocks' ) }
+					value={ defaults.currency }
+					onChange={ currency => setAttributes({ currency }) }
+				/>
+
+				{ __( 'Currency code in three digit ISO 4217 code.', 'otter-blocks' ) + ' ' }
+
+				<ExternalLink href="https://en.wikipedia.org/wiki/ISO_4217#Active_codes">
+					{ __( 'List of ISO 4217 codes.', 'otter-blocks' ) }
+				</ExternalLink>
+			</BaseControl>
+
+			<PanelBody
+				title={ __( 'Product Features', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				{ 0 < defaults?.features?.length && defaults?.features?.map( ( feature, index ) => (
+					<PanelItem
+						key={ feature.title }
+						title={ feature.title || __( 'Feature', 'otter-blocks' ) }
+						remove={ () => removeFeature( index ) }
+					>
+						<TextControl
+							label={ __( 'Title', 'otter-blocks' ) }
+							type="text"
+							placeholder={ __( 'Feature title', 'otter-blocks' ) }
+							value={ feature.title }
+							onChange={ title => changeFeature( index, { title }) }
+						/>
+
+						<RangeControl
+							label={ __( 'Rating', 'otter-blocks' ) }
+							value={ feature.rating }
+							onChange={ value => changeFeature( index, { rating: Number( value ) }) }
+							min={ 1 }
+							max={ 10 }
+						/>
+					</PanelItem>
+				) ) }
+
+				<Button
+					isSecondary
+					isLarge
+					className="wp-block-themeisle-blocks-review__inspector_add"
+					onClick={ addFeature }
+				>
+					{ __( 'Add Feature', 'otter-blocks' ) }
+				</Button>
+			</PanelBody>
+
 			<PanelColorSettings
 				title={ __( 'Color', 'otter-blocks' ) }
 				initialOpen={ true }

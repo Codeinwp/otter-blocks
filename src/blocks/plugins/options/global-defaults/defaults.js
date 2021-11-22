@@ -85,7 +85,7 @@ const defaultsAttrs = {
 
 	},
 	'themeisle-blocks/review': {
-
+		features: []
 	}
 };
 
