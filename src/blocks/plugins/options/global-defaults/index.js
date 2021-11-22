@@ -28,6 +28,7 @@ import CircleCounterControl from './controls/circle-counter.js';
 import SliderControl from './controls/slider.js';
 import LeafletMapControl from './controls/leaflet-map.js';
 import GoogleMapControl from './controls/google-map.js';
+import LottieControl from './controls/lottie.js';
 
 const GlobalDefaults = ({
 	isAPILoaded,
@@ -92,6 +93,10 @@ const GlobalDefaults = ({
 		{
 			name: 'themeisle-blocks/google-map',
 			control: GoogleMapControl
+		},
+		{
+			name: 'themeisle-blocks/lottie',
+			control: LottieControl
 		},
 		{
 			name: 'themeisle-blocks/review',

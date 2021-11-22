@@ -96,6 +96,9 @@ const defaultsAttrs = {
 	'themeisle-blocks/google-map': {
 
 	},
+	'themeisle-blocks/lottie': {
+
+	},
 	'themeisle-blocks/review': {
 		features: []
 	}
