@@ -93,6 +93,9 @@ const defaultsAttrs = {
 	'themeisle-blocks/leaflet-map': {
 
 	},
+	'themeisle-blocks/google-map': {
+
+	},
 	'themeisle-blocks/review': {
 		features: []
 	}
