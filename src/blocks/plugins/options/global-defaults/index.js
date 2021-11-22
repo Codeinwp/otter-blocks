@@ -26,6 +26,7 @@ import ProgressBarControl from './controls/progress-bar.js';
 import ReviewControl from './controls/review.js';
 import CircleCounterControl from './controls/circle-counter.js';
 import SliderControl from './controls/slider.js';
+import LeafletMapControl from './controls/leaflet-map.js';
 
 const GlobalDefaults = ({
 	isAPILoaded,
@@ -82,6 +83,10 @@ const GlobalDefaults = ({
 		{
 			name: 'themeisle-blocks/slider',
 			control: SliderControl
+		},
+		{
+			name: 'themeisle-blocks/leaflet-map',
+			control: LeafletMapControl
 		},
 		{
 			name: 'themeisle-blocks/review',

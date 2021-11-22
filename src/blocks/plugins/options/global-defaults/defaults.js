@@ -90,6 +90,9 @@ const defaultsAttrs = {
 	'themeisle-blocks/slider': {
 
 	},
+	'themeisle-blocks/leaflet-map': {
+
+	},
 	'themeisle-blocks/review': {
 		features: []
 	}
