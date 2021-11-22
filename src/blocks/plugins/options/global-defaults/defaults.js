@@ -99,6 +99,9 @@ const defaultsAttrs = {
 	'themeisle-blocks/lottie': {
 
 	},
+	'themeisle-blocks/popup': {
+
+	},
 	'themeisle-blocks/review': {
 		features: []
 	}

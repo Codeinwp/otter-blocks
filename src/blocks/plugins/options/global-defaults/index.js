@@ -29,6 +29,7 @@ import SliderControl from './controls/slider.js';
 import LeafletMapControl from './controls/leaflet-map.js';
 import GoogleMapControl from './controls/google-map.js';
 import LottieControl from './controls/lottie.js';
+import PopupControl from './controls/popup.js';
 
 const GlobalDefaults = ({
 	isAPILoaded,
@@ -97,6 +98,10 @@ const GlobalDefaults = ({
 		{
 			name: 'themeisle-blocks/lottie',
 			control: LottieControl
+		},
+		{
+			name: 'themeisle-blocks/popup',
+			control: PopupControl
 		},
 		{
 			name: 'themeisle-blocks/review',
