@@ -38,10 +38,6 @@ const Inspector = ({
 							value: 'date'
 						},
 						{
-							label: __( 'Text', 'otter-blocks' ),
-							value: 'text'
-						},
-						{
 							label: __( 'Number', 'otter-blocks' ),
 							value: 'number'
 						}
