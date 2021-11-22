@@ -25,6 +25,7 @@ import AccordionControl from './controls/accordion.js';
 import ProgressBarControl from './controls/progress-bar.js';
 import ReviewControl from './controls/review.js';
 import CircleCounterControl from './controls/circle-counter.js';
+import SliderControl from './controls/slider.js';
 
 const GlobalDefaults = ({
 	isAPILoaded,
@@ -77,6 +78,10 @@ const GlobalDefaults = ({
 		{
 			name: 'themeisle-blocks/circle-counter',
 			control: CircleCounterControl
+		},
+		{
+			name: 'themeisle-blocks/slider',
+			control: SliderControl
 		},
 		{
 			name: 'themeisle-blocks/review',

@@ -87,6 +87,9 @@ const defaultsAttrs = {
 	'themeisle-blocks/circle-counter': {
 
 	},
+	'themeisle-blocks/slider': {
+
+	},
 	'themeisle-blocks/review': {
 		features: []
 	}
