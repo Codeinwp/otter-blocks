@@ -36,15 +36,35 @@ class Pricing_Table_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
+				'selector'   => ' .pricing-table-wrap',
 				'properties' => array(
 					array(
-						'property'       => 'grid-template-columns',
-						'pattern'        => 'repeat(columns, 1fr)',
-						'pattern_values' => array(
-							'columns' => array(
-								'value' => 'columns',
-							),
-						),
+						'property' => 'border-width',
+						'value'    => 'borderWidth',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => 'border-color',
+						'value'    => 'borderColor',
+					),
+					array(
+						'property' => 'border-style',
+						'value'    => 'borderStyle',
+						'default'  => 'solid',
+					),
+					array(
+						'property' => 'border-radius',
+						'value'    => 'borderRadius',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => 'background-color',
+						'value'    => 'backgroundColor',
+					),
+					array(
+						'property' => 'width',
+						'value'    => 'width',
+						'unit'     => 'px',
 					),
 				),
 			)
@@ -52,12 +72,99 @@ class Pricing_Table_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .o-pricing-table-wrap',
+				'selector'   => ' .o-pricing-header .featured-badge',
 				'properties' => array(
 					array(
-						'property' => 'width',
-						'value'    => 'columnWidth',
-						'unit'     => 'px',
+						'property' => 'background-color',
+						'value'    => 'ribbonColor',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .o-pricing-header .featured-badge:before',
+				'properties' => array(
+					array(
+						'property' => 'background-color',
+						'value'    => 'ribbonColor',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .o-pricing-header .featured-badge:after',
+				'properties' => array(
+					array(
+						'property' => 'border-top-color',
+						'value'    => 'ribbonColor',
+					),
+					array(
+						'property' => 'border-bottom-color',
+						'value'    => 'ribbonColor',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .o-pricing-header .o-pricing-title',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'titleColor',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .o-pricing-header .o-pricing-description',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'descriptionColor',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .o-pricing-price .full-price',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'oldPriceColor',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .o-pricing-price .price, .period',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'priceColor',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .o-pricing-action-wrap .o-pricing-action',
+				'properties' => array(
+					array(
+						'property' => 'background-color',
+						'value'    => 'buttonColor',
 					),
 				),
 			)

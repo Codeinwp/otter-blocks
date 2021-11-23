@@ -19,6 +19,8 @@ $desktop: "1200px";
 $tablet-min: "959px";
 
 .wp-block-themeisle-blocks-pricing-table-item {
+	display: flex;
+	justify-content: center;
 	.o-pricing-table-wrap {
 		background: #ffffff;
 		box-shadow: 0px 0px 11px 1px rgba(0, 0, 0, 0.09);

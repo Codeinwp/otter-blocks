@@ -14,7 +14,7 @@ import {
 import { RichText, InnerBlocks } from '@wordpress/block-editor';
 import { __ } from '@wordpress/i18n';
 import defaultAttributes from './attributes.js';
-import { blockInit } from '../../../helpers/block-utility';
+import { blockInit } from '../../helpers/block-utility';
 
 const Edit = ({ attributes, className, setAttributes, clientId }) => {
 
