@@ -40,6 +40,10 @@ const GlobalDefaults = ({
 }) => {
 	const blocks = [
 		{
+			name: 'themeisle-blocks/accordion',
+			control: AccordionControl
+		},
+		{
 			name: 'themeisle-blocks/advanced-heading',
 			control: AdvancedHeading
 		},
@@ -52,8 +56,8 @@ const GlobalDefaults = ({
 			control: Button
 		},
 		{
-			name: 'themeisle-blocks/font-awesome-icons',
-			control: FontAwesomeIcons
+			name: 'themeisle-blocks/review',
+			control: ReviewControl
 		},
 		{
 			name: 'themeisle-blocks/advanced-columns',
@@ -64,16 +68,16 @@ const GlobalDefaults = ({
 			control: SectionColumn
 		},
 		{
+			name: 'themeisle-blocks/font-awesome-icons',
+			control: FontAwesomeIcons
+		},
+		{
 			name: 'themeisle-blocks/icon-list',
 			control: IconListControl
 		},
 		{
 			name: 'themeisle-blocks/tabs',
 			control: TabsControl
-		},
-		{
-			name: 'themeisle-blocks/accordion',
-			control: AccordionControl
 		},
 		{
 			name: 'themeisle-blocks/progress-bar',
@@ -102,10 +106,6 @@ const GlobalDefaults = ({
 		{
 			name: 'themeisle-blocks/popup',
 			control: PopupControl
-		},
-		{
-			name: 'themeisle-blocks/review',
-			control: ReviewControl
 		}
 	];
 

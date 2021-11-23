@@ -9,7 +9,8 @@ import {
 } from '@wordpress/block-editor';
 
 import {
-	SelectControl
+	SelectControl,
+	PanelBody
 } from '@wordpress/components';
 
 import { Fragment } from '@wordpress/element';
@@ -27,19 +28,21 @@ const AccordionControl = ({
 
 	return (
 		<Fragment>
-
-
-			<SelectControl
-				label={ __( 'Gap', 'otter-blocks' ) }
-				value={ defaults.gap }
-				options={ [
-					{ label: __( 'No Gap', 'otter-blocks' ), value: '' },
-					{ label: __( 'Narrow (5px)', 'otter-blocks' ), value: 'narrow' },
-					{ label: __( 'Wide (10px)', 'otter-blocks' ), value: 'wide' },
-					{ label: __( 'Wider (20px)', 'otter-blocks' ), value: 'wider' }
-				] }
-				onChange={ gap => changeConfig( blockName, {gap}) }
-			/>
+			<PanelBody
+				title={ __( 'Setting', 'otter-blocks' )}
+			>
+				<SelectControl
+					label={ __( 'Gap', 'otter-blocks' ) }
+					value={ defaults.gap }
+					options={ [
+						{ label: __( 'No Gap', 'otter-blocks' ), value: '' },
+						{ label: __( 'Narrow (5px)', 'otter-blocks' ), value: 'narrow' },
+						{ label: __( 'Wide (10px)', 'otter-blocks' ), value: 'wide' },
+						{ label: __( 'Wider (20px)', 'otter-blocks' ), value: 'wider' }
+					] }
+					onChange={ gap => changeConfig( blockName, {gap}) }
+				/>
+			</PanelBody>
 
 			<PanelColorSettings
 				title={ __( 'Color', 'otter-blocks' ) }
