@@ -59,17 +59,6 @@ const Save = ({ attributes, className }) => {
 					</div>
 				</div>
 				<InnerBlocks.Content />
-				<div className="o-pricing-footer">
-					{  attributes.hasTableLink && (
-						<a
-							href="#"
-							className="open-features-table"
-							data-selector={  attributes.selector }
-						>
-							{  attributes.linkText }
-						</a>
-					) }
-				</div>
 			</div>
 		</div>
 	);

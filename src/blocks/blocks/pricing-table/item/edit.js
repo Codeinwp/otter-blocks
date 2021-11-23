@@ -137,13 +137,7 @@ const Edit = ({ attributes, className, setAttributes, clientId }) => {
 						template={ [ [ 'core/list' ], [ 'core/list' ] ] }
 						allowedBlocks={ [ 'core/list' ] }
 					/>
-					<div className="o-pricing-footer">
-						{  attributes.hasTableLink && (
-							<a href="#" className="open-features-table">
-								{ attributes.linkText }
-							</a>
-						) }
-					</div>
+
 				</div>
 			</div>
 		</>

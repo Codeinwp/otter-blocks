@@ -96,37 +96,6 @@ const Inspector = ({ attributes, setAttributes }) => {
 				}
 
 			</PanelBody>
-			<PanelBody title={ __( 'Table Link', 'otter-blocks' ) }>
-				<ToggleControl
-					label={ __( 'Should have table link', 'otter-blocks' ) }
-					help={ __(
-						'This should be enabled if there is a features table at the end of page.',
-						'otter-blocks'
-					) }
-					checked={ attributes.hasTableLink }
-					onChange={ hasTableLink => setAttributes({ hasTableLink }) }
-				/>
-
-				{ attributes.hasTableLink && (
-					<>
-						<TextControl
-							label={ __( 'See More Link Text', 'otter-blocks' ) }
-							help={ __( 'Set the text for the link in the fotter.', 'otter-blocks' ) }
-							value={ attributes.linkText }
-							onChange={ linkText => setAttributes({ linkText }) }
-						/>
-						<TextControl
-							label={ __( 'On link click', 'otter-blocks' ) }
-							help={ __(
-								'Go to this selector and show it. It will be hidden at page load initially.',
-								'otter-blocks'
-							) }
-							value={ attributes.selector }
-							onChange={ selector => setAttributes({ selector }) }
-						/>
-					</>
-				) }
-			</PanelBody>
 
 			<PanelBody
 				title={ __( 'Style', 'otter-blocks' ) }

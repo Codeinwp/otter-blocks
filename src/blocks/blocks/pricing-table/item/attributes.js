@@ -48,17 +48,6 @@ const attributes = {
 		type: 'boolean',
 		default: false
 	},
-	hasTableLink: {
-		type: 'boolean',
-		default: false
-	},
-	selector: {
-		type: 'string'
-	},
-	linkText: {
-		type: 'string',
-		default: __( 'See all features', 'otter-blocks' )
-	},
 	buttonColor: {
 		type: 'string'
 	},
