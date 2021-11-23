@@ -75,31 +75,7 @@ const defaultsAttrs = {
 		defaultSize: 20,
 		gap: 5
 	},
-	'themeisle-blocks/tabs': {
-
-	},
 	'themeisle-blocks/accordion': {
-
-	},
-	'themeisle-blocks/progress-bar': {
-
-	},
-	'themeisle-blocks/circle-counter': {
-
-	},
-	'themeisle-blocks/slider': {
-
-	},
-	'themeisle-blocks/leaflet-map': {
-
-	},
-	'themeisle-blocks/google-map': {
-
-	},
-	'themeisle-blocks/lottie': {
-
-	},
-	'themeisle-blocks/popup': {
 
 	},
 	'themeisle-blocks/review': {

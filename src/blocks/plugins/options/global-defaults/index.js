@@ -16,20 +16,11 @@ import ButtomItem from './block-item.js';
 import AdvancedHeading from './controls/advanced-heading.js';
 import ButtonGroup from './controls/button-group.js';
 import Button from './controls/button.js';
-import FontAwesomeIcons from './controls/font-awesome-icons.js';
 import SectionColumns from './controls/section-columns.js';
 import SectionColumn from './controls/section-column.js';
-import IconListControl from './controls/icon-list.js';
-import TabsControl from './controls/tabs.js';
 import AccordionControl from './controls/accordion.js';
-import ProgressBarControl from './controls/progress-bar.js';
 import ReviewControl from './controls/review.js';
-import CircleCounterControl from './controls/circle-counter.js';
-import SliderControl from './controls/slider.js';
-import LeafletMapControl from './controls/leaflet-map.js';
-import GoogleMapControl from './controls/google-map.js';
-import LottieControl from './controls/lottie.js';
-import PopupControl from './controls/popup.js';
+
 
 const GlobalDefaults = ({
 	isAPILoaded,
@@ -66,46 +57,6 @@ const GlobalDefaults = ({
 		{
 			name: 'themeisle-blocks/advanced-column',
 			control: SectionColumn
-		},
-		{
-			name: 'themeisle-blocks/font-awesome-icons',
-			control: FontAwesomeIcons
-		},
-		{
-			name: 'themeisle-blocks/icon-list',
-			control: IconListControl
-		},
-		{
-			name: 'themeisle-blocks/tabs',
-			control: TabsControl
-		},
-		{
-			name: 'themeisle-blocks/progress-bar',
-			control: ProgressBarControl
-		},
-		{
-			name: 'themeisle-blocks/circle-counter',
-			control: CircleCounterControl
-		},
-		{
-			name: 'themeisle-blocks/slider',
-			control: SliderControl
-		},
-		{
-			name: 'themeisle-blocks/leaflet-map',
-			control: LeafletMapControl
-		},
-		{
-			name: 'themeisle-blocks/google-map',
-			control: GoogleMapControl
-		},
-		{
-			name: 'themeisle-blocks/lottie',
-			control: LottieControl
-		},
-		{
-			name: 'themeisle-blocks/popup',
-			control: PopupControl
 		}
 	];
 
