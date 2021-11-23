@@ -22,6 +22,9 @@ registerBlockType( 'themeisle-blocks/pricing', {
 		'table',
 		'money'
 	],
+	supports: {
+		inserter: false
+	},
 	edit,
 	save
 });
