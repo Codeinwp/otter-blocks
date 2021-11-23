@@ -16,6 +16,7 @@ import {
 } from '@wordpress/block-editor';
 
 import {
+	__experimentalBoxControl as BoxControl,
 	Button,
 	Dashicon,
 	PanelBody,
@@ -37,10 +38,10 @@ import {
  * Internal dependencies
  */
 import ColorBaseControl from '../../../components/color-base-control/index.js';
-import SizingControl from '../../../components/sizing-control/index.js';
 import ResponsiveControl from '../../../components/responsive-control/index.js';
 import BackgroundControl from '../components/background-control/index.js';
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
+import { isNullObject } from '../../../helpers/helper-functions.js';
 
 const Inspector = ({
 	attributes,
@@ -103,289 +104,80 @@ const Inspector = ({
 		});
 	};
 
-	const getPaddingType = () => {
+	const getPadding = () => {
 		switch ( getView ) {
 		case 'Desktop':
-			return attributes.paddingType;
+			return attributes.padding;
 		case 'Tablet':
-			return attributes.paddingTypeTablet;
+			return attributes.paddingTablet;
 		case 'Mobile':
-			return attributes.paddingTypeMobile;
+			return attributes.paddingMobile;
 		default:
 			return undefined;
 		}
 	};
 
-	const changePaddingType = value => {
+	const changePadding = value => {
+		if ( isNullObject( value ) ) {
+			value = undefined;
+		}
+
 		switch ( getView ) {
 		case 'Desktop':
-			setAttributes({ paddingType: value });
-			break;
+			return setAttributes({ padding: value });
 		case 'Tablet':
-			setAttributes({ paddingTypeTablet: value });
-			break;
+			return setAttributes({ paddingTablet: value });
 		case 'Mobile':
-			setAttributes({ paddingTypeMobile: value });
-			break;
-		}
-	};
-
-	const desktopPaddingType = {
-		top: 'paddingTop',
-		right: 'paddingRight',
-		bottom: 'paddingBottom',
-		left: 'paddingLeft'
-	};
-
-	const tabletPaddingType = {
-		top: 'paddingTopTablet',
-		right: 'paddingRightTablet',
-		bottom: 'paddingBottomTablet',
-		left: 'paddingLeftTablet'
-	};
-
-	const mobilePaddingType = {
-		top: 'paddingTopMobile',
-		right: 'paddingRightMobile',
-		bottom: 'paddingBottomMobile',
-		left: 'paddingLeftMobile'
-	};
-
-	const changePadding = ( type, value ) => {
-		if ( 'Desktop' === getView ) {
-			if ( 'linked' === attributes.paddingType ) {
-				setAttributes({ padding: value });
-			} else {
-				setAttributes({ [desktopPaddingType[type]]: value });
-			}
-		} else if ( 'Tablet' === getView ) {
-			if ( 'linked' === attributes.paddingTypeTablet ) {
-				setAttributes({ paddingTablet: value });
-			} else {
-				setAttributes({ [tabletPaddingType[type]]: value });
-			}
-		} else if ( 'Mobile' === getView ) {
-			if ( 'linked' === attributes.paddingTypeMobile ) {
-				setAttributes({ paddingMobile: value });
-			} else {
-				setAttributes({ [mobilePaddingType[type]]: value });
-			}
-		}
-	};
-
-	const getPadding = type => {
-		if ( 'top' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingTop;
-			case 'Tablet':
-				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingTopTablet;
-			case 'Mobile':
-				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingTopMobile;
-			}
-		} else if ( 'right' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingRight;
-			case 'Tablet':
-				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingRightTablet;
-			case 'Mobile':
-				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingRightMobile;
-			}
-		} else if ( 'bottom' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingBottom;
-			case 'Tablet':
-				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingBottomTablet;
-			case 'Mobile':
-				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingBottomMobile;
-			}
-		} else if ( 'left' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingLeft;
-			case 'Tablet':
-				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingLeftTablet;
-			case 'Mobile':
-				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingLeftMobile;
-			}
-		}
-
-		return undefined;
-	};
-
-	let getMarginType = () => {
-		switch ( getView ) {
-		case 'Desktop':
-			return attributes.marginType;
-		case 'Tablet':
-			return attributes.marginTypeTablet;
-		case 'Mobile':
-			return attributes.marginTypeMobile;
+			return setAttributes({ paddingMobile: value });
 		default:
 			return undefined;
 		}
 	};
 
-	const changeMarginType = value => {
+	const getMargin = () => {
 		switch ( getView ) {
 		case 'Desktop':
-			setAttributes({ marginType: value });
-			break;
+			return attributes.margin;
 		case 'Tablet':
-			setAttributes({ marginTypeTablet: value });
-			break;
+			return attributes.marginTablet;
 		case 'Mobile':
-			setAttributes({ marginTypeMobile: value });
-			break;
-		}
-	};
-
-	const desktopMarginType = {
-		top: 'marginTop',
-		right: 'marginRight',
-		bottom: 'marginBottom',
-		left: 'marginLeft'
-	};
-
-	const tabletMarginType = {
-		top: 'marginTopTablet',
-		right: 'marginRightTablet',
-		bottom: 'marginBottomTablet',
-		left: 'marginLeftTablet'
-	};
-
-	const mobileMarginType = {
-		top: 'marginTopMobile',
-		right: 'marginRightMobile',
-		bottom: 'marginBottomMobile',
-		left: 'marginLeftMobile'
-	};
-
-	const changeMargin = ( type, value ) => {
-		if ( 'Desktop' === getView ) {
-			if ( 'linked' === attributes.marginType ) {
-				setAttributes({ margin: value });
-			} else {
-				setAttributes({ [desktopMarginType[type]]: value });
-			}
-		} else if ( 'Tablet' === getView ) {
-			if ( 'linked' === attributes.marginTypeTablet ) {
-				setAttributes({ marginTablet: value });
-			} else {
-				setAttributes({ [tabletMarginType[type]]: value });
-			}
-		} else if ( 'Mobile' === getView ) {
-			if ( 'linked' === attributes.marginTypeMobile ) {
-				setAttributes({ marginMobile: value });
-			} else {
-				setAttributes({ [mobileMarginType[type]]: value });
-			}
-		}
-	};
-
-
-	const getMargin = type => {
-		if ( 'top' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.marginType ? attributes.margin : attributes.marginTop;
-			case 'Tablet':
-				return 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginTopTablet;
-			case 'Mobile':
-				return 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginTopMobile;
-			}
-		} else if ( 'bottom' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.marginType ? attributes.margin : attributes.marginBottom;
-			case 'Tablet':
-				return 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginBottomTablet;
-			case 'Mobile':
-				return 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginBottomMobile;
-			}
-		} else if ( 'left' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.marginType ? attributes.margin : attributes.marginLeft;
-			case 'Tablet':
-				return 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginLeftTablet;
-			case 'Mobile':
-				return 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginLeftMobile;
-			}
-		} else if ( 'right' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.marginType ? attributes.margin : attributes.marginRight;
-			case 'Tablet':
-				return 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginRightTablet;
-			case 'Mobile':
-				return 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginRightMobile;
-			}
-		}
-
-		return undefined;
-	};
-
-	const borderWidthDirection = {
-		top: 'borderTop',
-		right: 'borderRight',
-		bottom: 'borderBottom',
-		left: 'borderLeft'
-	};
-
-	const changeBorder = ( type, value ) => {
-		if ( 'linked' === attributes.borderType ) {
-			setAttributes({ border: value });
-		} else {
-			setAttributes({ [borderWidthDirection[type]]: value });
-		}
-	};
-
-	const getBorder = type => {
-		switch ( type ) {
-		case 'top':
-			return 'linked' === attributes.borderType ? attributes.border : attributes.borderTop;
-		case 'right':
-			return 'linked' === attributes.borderType ? attributes.border : attributes.borderRight;
-		case 'bottom':
-			return 'linked' === attributes.borderType ? attributes.border : attributes.borderBottom;
-		case 'left':
-			return 'linked' === attributes.borderType ? attributes.border : attributes.borderLeft;
+			return attributes.marginMobile;
 		default:
 			return undefined;
 		}
 	};
 
-	const borderRadiusDirection = {
-		top: 'borderRadiusTop',
-		right: 'borderRadiusRight',
-		bottom: 'borderRadiusBottom',
-		left: 'borderRadiusLeft'
-	};
-
-	const changeBorderRadius = ( type, value ) => {
-		if ( 'linked' === attributes.borderRadiusType ) {
-			setAttributes({ borderRadius: value });
-		} else {
-			setAttributes({ [borderRadiusDirection[type]]: value });
+	const changeMargin = value => {
+		if ( isNullObject( value ) ) {
+			value = undefined;
 		}
-	};
 
-	const getBorderRadius = type => {
-		switch ( type ) {
-		case 'top':
-			return 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusTop;
-		case 'right':
-			return 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusRight;
-		case 'bottom':
-			return 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusBottom;
-		case 'left':
-			return 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusLeft;
+		switch ( getView ) {
+		case 'Desktop':
+			return setAttributes({ margin: value });
+		case 'Tablet':
+			return setAttributes({ marginTablet: value });
+		case 'Mobile':
+			return setAttributes({ marginMobile: value });
 		default:
 			return undefined;
 		}
+	};
+
+	const changeBorder = value => {
+		if ( isNullObject( value ) ) {
+			value = undefined;
+		}
+
+		setAttributes({ border: value });
+	};
+
+	const changeBorderRadius = value => {
+		if ( isNullObject( value ) ) {
+			value = undefined;
+		}
+
+		setAttributes({ borderRadius: value });
 	};
 
 	return (
@@ -447,70 +239,27 @@ const Inspector = ({
 						) }
 
 						<ResponsiveControl
-							label={ __( 'Padding', 'otter-blocks' ) }
+							label={ __( 'Screen Type', 'otter-blocks' ) }
+							className="otter-section-padding-responsive-control"
 						>
-							<SizingControl
-								type={ getPaddingType() }
-								min={ 0 }
-								max={ 500 }
-								changeType={ changePaddingType }
+							<BoxControl
+								label={ __( 'Padding', 'otter-blocks' ) }
+								values={ getPadding() }
+								inputProps={ {
+									min: 0,
+									max: 500
+								} }
 								onChange={ changePadding }
-								options={ [
-									{
-										label: __( 'Top', 'otter-blocks' ),
-										type: 'top',
-										value: getPadding( 'top' )
-									},
-									{
-										label: __( 'Right', 'otter-blocks' ),
-										type: 'right',
-										value: getPadding( 'right' )
-									},
-									{
-										label: __( 'Bottom', 'otter-blocks' ),
-										type: 'bottom',
-										value: getPadding( 'bottom' )
-									},
-									{
-										label: __( 'Left', 'otter-blocks' ),
-										type: 'left',
-										value: getPadding( 'left' )
-									}
-								] }
 							/>
-						</ResponsiveControl>
 
-						<ResponsiveControl
-							label={ __( 'Margin', 'otter-blocks' ) }
-						>
-							<SizingControl
-								type={ getMarginType() }
-								min={ -500 }
-								max={ 500 }
-								changeType={ changeMarginType }
+							<BoxControl
+								label={ __( 'Margin', 'otter-blocks' ) }
+								values={ getMargin() }
+								inputProps={ {
+									min: -500,
+									max: 500
+								} }
 								onChange={ changeMargin }
-								options={ [
-									{
-										label: __( 'Top', 'otter-blocks' ),
-										type: 'top',
-										value: getMargin( 'top' )
-									},
-									{
-										label: __( 'Right', 'otter-blocks' ),
-										type: 'right',
-										value: getMargin( 'right' )
-									},
-									{
-										label: __( 'Bottom', 'otter-blocks' ),
-										type: 'bottom',
-										value: getMargin( 'bottom' )
-									},
-									{
-										label: __( 'Left', 'otter-blocks' ),
-										type: 'left',
-										value: getMargin( 'left' )
-									}
-								] }
 							/>
 						</ResponsiveControl>
 					</PanelBody>
@@ -669,35 +418,20 @@ const Inspector = ({
 						className="wp-block-themeisle-border-container"
 						initialOpen={ false }
 					>
-						<SizingControl
+						<BoxControl
 							label={ __( 'Border Width', 'otter-blocks' ) }
-							type={ attributes.borderType }
-							min={ 0 }
-							max={ 500 }
-							changeType={ value => setAttributes({ borderType: value }) }
-							onChange={ changeBorder }
-							options={ [
+							values={ attributes.border }
+							inputProps={ {
+								min: 0,
+								max: 500
+							} }
+							units={ [
 								{
-									label: __( 'Top', 'otter-blocks' ),
-									type: 'top',
-									value: getBorder( 'top' )
-								},
-								{
-									label: __( 'Right', 'otter-blocks' ),
-									type: 'right',
-									value: getBorder( 'right' )
-								},
-								{
-									label: __( 'Bottom', 'otter-blocks' ),
-									type: 'bottom',
-									value: getBorder( 'bottom' )
-								},
-								{
-									label: __( 'Left', 'otter-blocks' ),
-									type: 'left',
-									value: getBorder( 'left' )
+									value: 'px',
+									label: 'px'
 								}
 							] }
+							onChange={ changeBorder }
 						/>
 
 						<ColorBaseControl
@@ -711,35 +445,25 @@ const Inspector = ({
 							/>
 						</ColorBaseControl>
 
-						<SizingControl
+						<BoxControl
 							label={ __( 'Border Radius', 'otter-blocks' ) }
-							type={ attributes.borderRadiusType }
-							min={ 0 }
-							max={ 500 }
-							changeType={ value => setAttributes({ borderRadiusType: value }) }
-							onChange={ changeBorderRadius }
-							options={ [
+							values={ attributes.borderRadius }
+							inputProps={ {
+								min: 0,
+								max: 500
+							} }
+							units={ [
 								{
-									label: __( 'Top', 'otter-blocks' ),
-									type: 'top',
-									value: getBorderRadius( 'top' )
+									value: 'px',
+									label: 'px'
 								},
 								{
-									label: __( 'Right', 'otter-blocks' ),
-									type: 'right',
-									value: getBorderRadius( 'right' )
-								},
-								{
-									label: __( 'Bottom', 'otter-blocks' ),
-									type: 'bottom',
-									value: getBorderRadius( 'bottom' )
-								},
-								{
-									label: __( 'Left', 'otter-blocks' ),
-									type: 'left',
-									value: getBorderRadius( 'left' )
+									value: '%',
+									label: '%'
 								}
 							] }
+							id="otter-border-raduis-box"
+							onChange={ changeBorderRadius }
 						/>
 
 						<ToggleControl

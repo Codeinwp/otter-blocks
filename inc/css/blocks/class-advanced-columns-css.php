@@ -82,8 +82,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 			$block['attrs'] = $this->merge_old_attributes( $block['attrs'] );
 		}
 
-		$css   = new CSS_Utility( $block );
-		$attrs = $block['attrs'];
+		$css = new CSS_Utility( $block );
 
 		$css->add_item(
 			array(
@@ -1011,15 +1010,15 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['paddingTablet'] ) ) {
 				$padding_tablet['top'] = $attrs['paddingTablet'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['paddingTablet'] ) ) {
 				$padding_tablet['bottom'] = $attrs['paddingTablet'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['paddingTablet'] ) ) {
 				$padding_tablet['left'] = $attrs['paddingTablet'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['paddingTablet'] ) ) {
 				$padding_tablet['right'] = $attrs['paddingTablet'] . 'px';
 			}
@@ -1029,15 +1028,15 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['paddingTopMobile'] ) ) {
 				$padding_mobile['top'] = $attrs['paddingTopMobile'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['paddingBottomMobile'] ) ) {
 				$padding_mobile['bottom'] = $attrs['paddingBottomMobile'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['paddingLeftMobile'] ) ) {
 				$padding_mobile['left'] = $attrs['paddingLeftMobile'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['paddingRightMobile'] ) ) {
 				$padding_mobile['right'] = $attrs['paddingRightMobile'] . 'px';
 			}
@@ -1045,15 +1044,15 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['paddingMobile'] ) ) {
 				$padding_mobile['top'] = $attrs['paddingMobile'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['paddingMobile'] ) ) {
 				$padding_mobile['bottom'] = $attrs['paddingMobile'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['paddingMobile'] ) ) {
 				$padding_mobile['left'] = $attrs['paddingMobile'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['paddingMobile'] ) ) {
 				$padding_mobile['right'] = $attrs['paddingMobile'] . 'px';
 			}
@@ -1071,7 +1070,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['marginTopTablet'] ) ) {
 				$margin_tablet['top'] = $attrs['marginTopTablet'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['marginBottomTablet'] ) ) {
 				$margin_tablet['bottom'] = $attrs['marginBottomTablet'] . 'px';
 			}
@@ -1079,7 +1078,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['marginTablet'] ) ) {
 				$margin_tablet['top'] = $attrs['marginTablet'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['marginTablet'] ) ) {
 				$margin_tablet['bottom'] = $attrs['marginTablet'] . 'px';
 			}
@@ -1089,7 +1088,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['marginTopMobile'] ) ) {
 				$margin_mobile['top'] = $attrs['marginTopMobile'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['marginBottomMobile'] ) ) {
 				$margin_mobile['bottom'] = $attrs['marginBottomMobile'] . 'px';
 			}
@@ -1097,7 +1096,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['marginMobile'] ) ) {
 				$margin_mobile['top'] = $attrs['marginMobile'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['marginMobile'] ) ) {
 				$margin_mobile['bottom'] = $attrs['marginMobile'] . 'px';
 			}
@@ -1107,15 +1106,15 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['borderTop'] ) ) {
 				$border['top'] = $attrs['borderTop'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['borderBottom'] ) ) {
 				$border['bottom'] = $attrs['borderBottom'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['borderLeft'] ) ) {
 				$border['left'] = $attrs['borderLeft'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['borderRight'] ) ) {
 				$border['right'] = $attrs['borderRight'] . 'px';
 			}
@@ -1123,15 +1122,15 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['border'] ) ) {
 				$border['top'] = $attrs['border'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['border'] ) ) {
 				$border['bottom'] = $attrs['border'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['border'] ) ) {
 				$border['left'] = $attrs['border'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['border'] ) ) {
 				$border['right'] = $attrs['border'] . 'px';
 			}
@@ -1141,15 +1140,15 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['borderRadiusTop'] ) ) {
 				$border_radius['top'] = $attrs['borderRadiusTop'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['borderRadiusBottom'] ) ) {
 				$border_radius['bottom'] = $attrs['borderRadiusBottom'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['borderRadiusLeft'] ) ) {
 				$border_radius['left'] = $attrs['borderRadiusLeft'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['borderRadiusRight'] ) ) {
 				$border_radius['right'] = $attrs['borderRadiusRight'] . 'px';
 			}
@@ -1157,15 +1156,15 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['borderRadius'] ) ) {
 				$border_radius['top'] = $attrs['borderRadius'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['borderRadius'] ) ) {
 				$border_radius['bottom'] = $attrs['borderRadius'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['borderRadius'] ) ) {
 				$border_radius['left'] = $attrs['borderRadius'] . 'px';
 			}
-				
+
 			if ( isset( $attrs['borderRadius'] ) ) {
 				$border_radius['right'] = $attrs['borderRadius'] . 'px';
 			}

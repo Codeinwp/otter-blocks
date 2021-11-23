@@ -169,7 +169,6 @@ const Inspector = ({
 	};
 
 	const changeMargin = value => {
-		console.log( value );
 		if ( isNullObject( value ) ) {
 			value = undefined;
 		}

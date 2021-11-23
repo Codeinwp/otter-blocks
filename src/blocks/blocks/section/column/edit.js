@@ -6,6 +6,8 @@ import hexToRgba from 'hex-rgba';
 /**
  * WordPress dependencies
  */
+import { isEmpty } from 'lodash';
+
 import { ResizableBox } from '@wordpress/components';
 
 import { useViewportMatch } from '@wordpress/compose';
@@ -187,40 +189,40 @@ const Edit = ({
 
 	if ( isDesktop ) {
 		stylesheet = {
-			paddingTop: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingTop }px`,
-			paddingRight: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingRight }px`,
-			paddingBottom: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingBottom }px`,
-			paddingLeft: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingLeft }px`,
-			marginTop: 'linked' === attributes.marginType ? `${ attributes.margin }px` : `${ attributes.marginTop }px`,
-			marginRight: 'linked' === attributes.marginType ? `${ attributes.margin }px` : `${ attributes.marginRight }px`,
-			marginBottom: 'linked' === attributes.marginType ? `${ attributes.margin }px` : `${ attributes.marginBottom }px`,
-			marginLeft: 'linked' === attributes.marginType ? `${ attributes.margin }px` : `${ attributes.marginLeft }px`
+			paddingTop: attributes.padding && attributes.padding.top,
+			paddingRight: attributes.padding && attributes.padding.right,
+			paddingBottom: attributes.padding && attributes.padding.bottom,
+			paddingLeft: attributes.padding && attributes.padding.left,
+			marginTop: attributes.margin && attributes.margin.top,
+			marginRight: attributes.margin && attributes.margin.right,
+			marginBottom: attributes.margin && attributes.margin.bottom,
+			marginLeft: attributes.margin && attributes.margin.left
 		};
 	}
 
 	if ( isTablet ) {
 		stylesheet = {
-			paddingTop: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingTopTablet }px`,
-			paddingRight: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingRightTablet }px`,
-			paddingBottom: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingBottomTablet }px`,
-			paddingLeft: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingLeftTablet }px`,
-			marginTop: 'linked' === attributes.marginTypeTablet ? `${ attributes.marginTablet }px` : `${ attributes.marginTopTablet }px`,
-			marginRight: 'linked' === attributes.marginTypeTablet ? `${ attributes.marginTablet }px` : `${ attributes.marginRightTablet }px`,
-			marginBottom: 'linked' === attributes.marginTypeTablet ? `${ attributes.marginTablet }px` : `${ attributes.marginBottomTablet }px`,
-			marginLeft: 'linked' === attributes.marginTypeTablet ? `${ attributes.marginTablet }px` : `${ attributes.marginLeftTablet }px`
+			paddingTop: attributes.paddingTablet && attributes.paddingTablet.top,
+			paddingRight: attributes.paddingTablet && attributes.paddingTablet.right,
+			paddingBottom: attributes.paddingTablet && attributes.paddingTablet.bottom,
+			paddingLeft: attributes.paddingTablet && attributes.paddingTablet.left,
+			marginTop: attributes.marginTablet && attributes.marginTablet.top,
+			marginRight: attributes.marginTablet && attributes.marginTablet.right,
+			marginBottom: attributes.marginTablet && attributes.marginTablet.bottom,
+			marginLeft: attributes.marginTablet && attributes.marginTablet.left
 		};
 	}
 
 	if ( isMobile ) {
 		stylesheet = {
-			paddingTop: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingTopMobile }px`,
-			paddingRight: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingRightMobile }px`,
-			paddingBottom: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingBottomMobile }px`,
-			paddingLeft: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingLeftMobile }px`,
-			marginTop: 'linked' === attributes.marginTypeMobile ? `${ attributes.marginMobile }px` : `${ attributes.marginTopMobile }px`,
-			marginRight: 'linked' === attributes.marginTypeMobile ? `${ attributes.marginMobile }px` : `${ attributes.marginRightMobile }px`,
-			marginBottom: 'linked' === attributes.marginTypeMobile ? `${ attributes.marginMobile }px` : `${ attributes.marginBottomMobile }px`,
-			marginLeft: 'linked' === attributes.marginTypeMobile ? `${ attributes.marginMobile }px` : `${ attributes.marginLeftMobile }px`
+			paddingTop: attributes.paddingMobile && attributes.paddingMobile.top,
+			paddingRight: attributes.paddingMobile && attributes.paddingMobile.right,
+			paddingBottom: attributes.paddingMobile && attributes.paddingMobile.bottom,
+			paddingLeft: attributes.paddingMobile && attributes.paddingMobile.left,
+			marginTop: attributes.marginMobile && attributes.marginMobile.top,
+			marginRight: attributes.marginMobile && attributes.marginMobile.right,
+			marginBottom: attributes.marginMobile && attributes.marginMobile.bottom,
+			marginLeft: attributes.marginMobile && attributes.marginMobile.left
 		};
 	}
 
@@ -246,37 +248,23 @@ const Edit = ({
 		};
 	}
 
-	if ( 'linked' === attributes.borderType ) {
+	if ( attributes.border && ! isEmpty( attributes.border ) ) {
 		borderStyle = {
-			borderWidth: `${ attributes.border }px`,
+			borderTopWidth: attributes.border.top,
+			borderRightWidth: attributes.border.right,
+			borderBottomWidth: attributes.border.bottom,
+			borderLeftWidth: attributes.border.left,
 			borderStyle: 'solid',
 			borderColor: attributes.borderColor
 		};
 	}
 
-	if ( 'unlinked' === attributes.borderType ) {
-		borderStyle = {
-			borderTopWidth: `${ attributes.borderTop }px`,
-			borderRightWidth: `${ attributes.borderRight }px`,
-			borderBottomWidth: `${ attributes.borderBottom }px`,
-			borderLeftWidth: `${ attributes.borderLeft }px`,
-			borderStyle: 'solid',
-			borderColor: attributes.borderColor
-		};
-	}
-
-	if ( 'linked' === attributes.borderRadiusType ) {
+	if ( attributes.borderRadius && ! isEmpty( attributes.borderRadius ) ) {
 		borderRadiusStyle = {
-			borderRadius: `${ attributes.borderRadius }px`
-		};
-	}
-
-	if ( 'unlinked' === attributes.borderRadiusType ) {
-		borderRadiusStyle = {
-			borderTopLeftRadius: `${ attributes.borderRadiusTop }px`,
-			borderTopRightRadius: `${ attributes.borderRadiusRight }px`,
-			borderBottomRightRadius: `${ attributes.borderRadiusBottom }px`,
-			borderBottomLeftRadius: `${ attributes.borderRadiusLeft }px`
+			borderTopLeftRadius: attributes.borderRadius.top,
+			borderTopRightRadius: attributes.borderRadius.right,
+			borderBottomRightRadius: attributes.borderRadius.bottom,
+			borderBottomLeftRadius: attributes.borderRadius.left
 		};
 	}
 
