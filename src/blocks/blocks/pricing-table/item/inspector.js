@@ -16,6 +16,16 @@ const Inspector = ({ attributes, setAttributes }) => {
 		<InspectorControls>
 			<PanelBody title={ __( 'Settings', 'otter-blocks' ) }>
 
+				<RangeControl
+					label={ __( 'Column Width', 'otter-blocks' )}
+					help={ __( 'Set the width of the column. Use this when the items does not fit with the default size.', 'otter-blocks' ) }
+					value={ attributes.columnWidth }
+					onChange={ columnWidth => setAttributes({ columnWidth })}
+					min={0}
+					max={400}
+					allowReset={true}
+				/>
+
 				<TextControl
 					label={ __( 'Button Text', 'otter-blocks' ) }
 					value={ attributes.buttonText }

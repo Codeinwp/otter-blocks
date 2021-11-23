@@ -10,6 +10,9 @@ const attributes = {
 	description: {
 		type: 'string'
 	},
+	width: {
+		type: 'number'
+	},
 	buttonText: {
 		type: 'string',
 		default: __( 'Purchase', 'otter-blocks' )

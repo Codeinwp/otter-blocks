@@ -28,6 +28,7 @@ $tablet-min: "959px";
 		flex-direction: column;
 		border-style: solid;
 		border-width: 0px;
+		width: 250px;
 
 		.featured & {
 			height: calc(100% + 30px);
