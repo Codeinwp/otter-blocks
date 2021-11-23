@@ -686,14 +686,14 @@ class Main {
 			);
 
 			wp_enqueue_script(
-				'otter-leaflet-gesture',
+				'leaflet-gesture-handling',
 				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.js',
-				array( 'wp-dom-ready' ),
+				array( 'leaflet', 'wp-dom-ready' ),
 				self::$assets_version,
 				true
 			);
 
-			wp_script_add_data( 'otter-leaflet-gesture', 'defer', true );
+			wp_script_add_data( 'leaflet-gesture-handling', 'defer', true );
 
 			wp_enqueue_style(
 				'leaflet-theme-gesture',
@@ -709,7 +709,7 @@ class Main {
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/leaflet-map.js',
 				array_merge(
 					$asset_file['dependencies'],
-					array( 'leaflet', 'otter-leaflet-gesture' )
+					array( 'leaflet', 'leaflet-gesture-handling' )
 				),
 				$asset_file['version'],
 				true

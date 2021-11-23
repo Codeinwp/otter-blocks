@@ -40,7 +40,7 @@ const Inspector = ({
 				{ items.map( ( tab, index ) => {
 					return (
 						<SortableTab
-							key={ tab.id }
+							key={ tab.clientId }
 							tab={ tab }
 							index={ index }
 							deleteTab={ deleteTab }
