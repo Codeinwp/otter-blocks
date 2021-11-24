@@ -109,7 +109,7 @@ class Leaflet_Map_Block extends Base_Block {
 		}
 
 		// Load the attributes in the page and make a placeholder to render the map.
-		$output  = "<div class=\"$class\" id=\"$id\" style=\"$style\"></div>" . "\n";
+		$output  = "<div class=\"$class\" id=\"$id\" style=\"$style\"></div> \n";
 		$output .= '<script type="text/javascript">' . "\n";
 		$output .= '	/* <![CDATA[ */' . "\n";
 		$output .= '		if ( ! window.themeisleLeafletMaps ) window.themeisleLeafletMaps =[];' . "\n";
