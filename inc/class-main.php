@@ -418,6 +418,7 @@ class Main {
 					'isBoosterActive' => 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ),
 					'wooComparison'   => class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options' ) ? \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options::is_module_activated() : false,
 				),
+				'isBlockEditor'  => 'post' === $current_screen->base,
 			)
 		);
 
@@ -425,7 +426,7 @@ class Main {
 			'otter-editor',
 			plugin_dir_url( $this->get_dir() ) . 'build/blocks/editor.css',
 			array( 'wp-edit-blocks' ),
-			self::$assets_version
+			$asset_file['version']
 		);
 
 		wp_enqueue_style(
@@ -507,13 +508,14 @@ class Main {
 			return false;
 		}
 
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+
 		wp_enqueue_style(
 			'otter-blocks',
 			plugin_dir_url( $this->get_dir() ) . 'build/blocks/style.css',
 			[],
-			self::$assets_version
+			$asset_file['version']
 		);
-
 
 		// On AMP context, we don't load JS files.
 		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
@@ -675,14 +677,13 @@ class Main {
 
 		if ( ! self::$is_leaflet_loaded && has_block( 'themeisle-blocks/leaflet-map', $post ) ) {
 			wp_enqueue_script(
-				'otter-leaflet',
+				'leaflet',
 				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.js',
 				[],
 				self::$assets_version,
 				true
 			);
 
-			// wp_script_add_data( 'otter-leaflet', 'async', true );
 
 			wp_register_style(
 				'leaflet-css',
@@ -715,7 +716,7 @@ class Main {
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/leaflet-map.js',
 				array_merge(
 					$asset_file['dependencies'],
-					array( 'otter-leaflet', 'otter-leaflet-gesture' )
+					array( 'leaflet', 'otter-leaflet-gesture' )
 				),
 				$asset_file['version'],
 				true

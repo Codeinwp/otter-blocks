@@ -86,7 +86,7 @@ subscribe( () => {
 		}
 	}
 
-	if ( select( 'core/editor' ) ) {
+	if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor' ) ) {
 		const {
 			isCurrentPostPublished,
 			getEditedPostAttribute,

@@ -1,6 +1,7 @@
 .wp-block-themeisle-blocks-icon-list {
 	display: flex;
 	flex-direction: column;
+	gap: 5px;
 
 	&.is-style-horizontal {
 		flex-wrap: wrap;
@@ -19,6 +20,7 @@
 		}
 
 		p {
+			font-size: 20px;
 			margin-bottom: 0px;
 		}
 	}
