@@ -1,7 +1,7 @@
 === Gutenberg Blocks and Template Library by Otter ===
 Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1
 Tags: gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder
-Requires at least: 5.5
+Requires at least: 5.6
 Tested up to: 5.8
 Requires PHP: 5.4
 Stable tag: trunk

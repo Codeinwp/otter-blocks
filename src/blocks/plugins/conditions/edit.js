@@ -628,7 +628,6 @@ const Edit = ({
 										) }
 
 										<Button
-											isLarge
 											isDestructive
 											className="otter-blocks-conditions__add"
 											onClick={ () => removeCondition( index, n ) }
@@ -644,7 +643,6 @@ const Edit = ({
 
 								<Button
 									isSecondary
-									isLarge
 									className="otter-blocks-conditions__add"
 									onClick={ () => addNewCondition( index ) }
 								>
@@ -661,7 +659,6 @@ const Edit = ({
 
 				<Button
 					isSecondary
-					isLarge
 					className="otter-blocks-conditions__add"
 					onClick={ addGroup }
 				>

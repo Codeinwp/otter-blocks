@@ -316,7 +316,6 @@ const Inspector = ({
 				/>
 
 				<Button
-					isLarge
 					isSecondary
 					type="submit"
 					onClick={ saveAPIKey }

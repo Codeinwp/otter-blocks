@@ -14,7 +14,7 @@ import {
 import { BlockControls } from '@wordpress/block-editor';
 
 import {
-	Toolbar,
+	ToolbarGroup,
 	Button,
 	Tooltip
 } from '@wordpress/components';
@@ -32,7 +32,7 @@ const Controls = ({ attributes, setAttributes }) => {
 
 	return (
 		<BlockControls>
-			<Toolbar>
+			<ToolbarGroup>
 				{ Object.keys( socialList ).map( ( item ) => {
 					const prop = attributes[ item ];
 
@@ -56,7 +56,7 @@ const Controls = ({ attributes, setAttributes }) => {
 						</Tooltip>
 					);
 				}) }
-			</Toolbar>
+			</ToolbarGroup>
 		</BlockControls>
 	);
 };

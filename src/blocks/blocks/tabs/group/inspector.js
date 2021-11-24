@@ -40,7 +40,7 @@ const Inspector = ({
 				{ items.map( ( tab, index ) => {
 					return (
 						<SortableTab
-							key={ tab.id }
+							key={ tab.clientId }
 							tab={ tab }
 							index={ index }
 							deleteTab={ deleteTab }
@@ -92,7 +92,6 @@ const Inspector = ({
 
 				<Button
 					isSecondary
-					isLarge
 					className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
 					onClick={ addTab }
 				>
