@@ -419,25 +419,6 @@ const SectionColumn = ({
 					/>
 				</ResponsiveControl>
 			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Section Settings', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				<SelectControl
-					label={ __( 'HTML Tag', 'otter-blocks' ) }
-					value={ defaults.columnsHTMLTag }
-					options={ [
-						{ label: __( 'Default (div)', 'otter-blocks' ), value: 'div' },
-						{ label: 'section', value: 'section' },
-						{ label: 'header', value: 'header' },
-						{ label: 'footer', value: 'footer' },
-						{ label: 'article', value: 'article' },
-						{ label: 'main', value: 'main' }
-					] }
-					onChange={ value => changeConfig( blockName, { columnsHTMLTag: value }) }
-				/>
-			</PanelBody>
 		</Fragment>
 	);
 };
