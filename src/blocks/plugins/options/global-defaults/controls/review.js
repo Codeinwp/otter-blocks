@@ -148,7 +148,7 @@ const ReviewControl = ({
 
 			<PanelColorSettings
 				title={ __( 'Color', 'otter-blocks' ) }
-				initialOpen={ true }
+				initialOpen={ false }
 				colorSettings={ [
 					{
 						value: defaults.primaryColor,
