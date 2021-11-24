@@ -1,11 +1,6 @@
 /**
  * WordPress dependencies.
  */
-import classnames from 'classnames';
-
-/**
- * WordPress dependencies.
- */
 import { assign } from 'lodash';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -42,21 +37,7 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 	};
 }, 'withMasonryExtension' );
 
-const withConditionsIndicator = createHigherOrderComponent( BlockListBlock => {
-	return ( props ) => {
-		return (
-			<BlockListBlock
-				{ ...props }
-				className={ classnames(
-					{
-						'otter-has-condition': props.attributes.otterConditions && Boolean( props.attributes.otterConditions.length )
-					}
-				) }
-			/>
-		);
-	};
-}, 'withMasonryExtension' );
-
-addFilter( 'blocks.registerBlockType', 'themeisle-gutenberg/conditions-register', addAttribute );
-addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/conditions-inspector', withConditions );
-addFilter( 'editor.BlockListBlock', 'block-visibility/contextual-indicators', withConditionsIndicator );
+if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) ) {
+	addFilter( 'blocks.registerBlockType', 'themeisle-gutenberg/conditions', addAttribute );
+	addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/conditions', withConditions );
+}
