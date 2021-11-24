@@ -142,7 +142,7 @@ class Main {
 
 		add_action( 'init', array( $this, 'autoload_classes' ), 11 );
 		add_action( 'init', array( $this, 'register_blocks' ), 11 );
-		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ), 1 );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) ); // Don't change the priority or else Blocks CSS will stop working.
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_frontend_assets' ) );
 		add_filter( 'script_loader_tag', array( $this, 'filter_script_loader_tag' ), 10, 2 );
 
