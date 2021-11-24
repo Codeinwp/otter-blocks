@@ -1081,7 +1081,6 @@ const Edit = ({
 										) }
 
 										<Button
-											isLarge
 											isDestructive
 											className="otter-conditions__add"
 											onClick={ () => removeCondition( index, n ) }

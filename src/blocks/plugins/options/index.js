@@ -41,39 +41,43 @@ import defaultsAttrs from './global-defaults/defaults.js';
 const Options = () => {
 	const { createNotice } = useDispatch( 'core/notices' );
 
-	useEffect( async() => {
-		const data = await apiFetch({ path: 'wp/v2/users/me?context=edit' });
+	useEffect( () => {
+		const fetchData = async() => {
+			const data = await apiFetch({ path: 'wp/v2/users/me?context=edit' });
 
-		if ( data.capabilities.manage_options ) {
-			setCanUser( true );
+			if ( data.capabilities.manage_options ) {
+				setCanUser( true );
 
-			await window.wp.api.loadPromise.then( () => {
-				settingsRef.current = new window.wp.api.models.Settings();
-			});
-
-			if ( false === isAPILoaded ) {
-				settingsRef.current.fetch().then( response => {
-					setDefault( Boolean( response.themeisle_blocks_settings_default_block ) );
-					if ( '' !== response.themeisle_blocks_settings_global_defaults ) {
-						let defaults = cloneDeep( defaultsAttrs );
-						if ( 'object' === typeof window.themeisleGutenberg.themeDefaults ) {
-							defaults = merge( defaults, window.themeisleGutenberg.themeDefaults );
-						}
-						defaults = merge( defaults, JSON.parse( response.themeisle_blocks_settings_global_defaults ) );
-						window.themeisleGutenberg.globalDefaults = JSON.parse( response.themeisle_blocks_settings_global_defaults );
-						setBlockDefaults( defaults );
-					} else {
-						let defaults = cloneDeep( defaultsAttrs );
-						if ( 'object' === typeof window.themeisleGutenberg.themeDefaults ) {
-							defaults = merge( defaults, window.themeisleGutenberg.themeDefaults );
-						}
-						window.themeisleGutenberg.globalDefaults = {};
-						setBlockDefaults( defaults );
-					}
-					setAPILoaded( true );
+				await window.wp.api.loadPromise.then( () => {
+					settingsRef.current = new window.wp.api.models.Settings();
 				});
+
+				if ( false === isAPILoaded ) {
+					settingsRef.current.fetch().then( response => {
+						setDefault( Boolean( response.themeisle_blocks_settings_default_block ) );
+						if ( '' !== response.themeisle_blocks_settings_global_defaults ) {
+							let defaults = cloneDeep( defaultsAttrs );
+							if ( 'object' === typeof window.themeisleGutenberg.themeDefaults ) {
+								defaults = merge( defaults, window.themeisleGutenberg.themeDefaults );
+							}
+							defaults = merge( defaults, JSON.parse( response.themeisle_blocks_settings_global_defaults ) );
+							window.themeisleGutenberg.globalDefaults = JSON.parse( response.themeisle_blocks_settings_global_defaults );
+							setBlockDefaults( defaults );
+						} else {
+							let defaults = cloneDeep( defaultsAttrs );
+							if ( 'object' === typeof window.themeisleGutenberg.themeDefaults ) {
+								defaults = merge( defaults, window.themeisleGutenberg.themeDefaults );
+							}
+							window.themeisleGutenberg.globalDefaults = {};
+							setBlockDefaults( defaults );
+						}
+						setAPILoaded( true );
+					});
+				}
 			}
-		}
+		};
+
+		fetchData();
 	}, []);
 
 	const [ canUser, setCanUser ] = useState( false );

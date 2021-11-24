@@ -105,7 +105,7 @@ class Blocks_Animation {
 			true
 		);
 
-		wp_script_add_data( 'otter-animation-frontend', 'sync', true );
+		wp_script_add_data( 'otter-animation-frontend', 'async', true );
 	}
 
 	/**

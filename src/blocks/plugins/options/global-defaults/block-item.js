@@ -69,7 +69,6 @@ const BlockItem = ({
 						<div className="wp-block-themeisle-blocks-options-global-defaults-actions-primary">
 							<Button
 								isSecondary
-								isLarge
 								onClick={ () => setOpen( false ) }
 							>
 								{ __( 'Close', 'otter-blocks' ) }
@@ -77,7 +76,6 @@ const BlockItem = ({
 
 							<Button
 								isPrimary
-								isLarge
 								isBusy={ isLoading }
 								onClick={ async() => {
 									setLoading( true );

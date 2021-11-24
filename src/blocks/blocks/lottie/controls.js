@@ -8,7 +8,7 @@ import { BlockControls } from '@wordpress/block-editor';
 import {
 	Dashicon,
 	Button,
-	Toolbar,
+	ToolbarGroup,
 	Tooltip
 } from '@wordpress/components';
 
@@ -18,7 +18,7 @@ const Controls = ({
 }) => {
 	return (
 		<BlockControls>
-			<Toolbar>
+			<ToolbarGroup>
 				<Tooltip text={ isEditing ? __( 'Save', 'otter-blocks' ) : __( 'Edit', 'otter-blocks' ) }>
 					<Button
 						onClick={ () => setEditing( ! isEditing ) }
@@ -26,7 +26,7 @@ const Controls = ({
 						<Dashicon icon={ isEditing ? 'yes' : 'edit' } />
 					</Button>
 				</Tooltip>
-			</Toolbar>
+			</ToolbarGroup>
 		</BlockControls>
 	);
 };

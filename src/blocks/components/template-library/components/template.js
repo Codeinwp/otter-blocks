@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import LazyLoad from 'react-lazy-load';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -22,9 +17,7 @@ const Template = ({
 			tabIndex="0"
 		>
 			<div className="library-modal-content__preview">
-				<LazyLoad>
-					<img src={ template.screenshot_url || 'https://raw.githubusercontent.com/Codeinwp/gutenberg-templates/master/assets/images/default.jpg' } />
-				</LazyLoad>
+				<img src={ template.screenshot_url || 'https://raw.githubusercontent.com/Codeinwp/gutenberg-templates/master/assets/images/default.jpg' } />
 			</div>
 
 			<div className="library-modal-content__footer">
@@ -43,20 +36,18 @@ const Template = ({
 				<div className="library-modal-content__footer_actions">
 					<Button
 						isSecondary
-						isLarge
 						className="library-modal-overlay__actions"
 						onClick={ () => importPreview( template ) }
-						tabindex="0"
+						tabIndex="0"
 					>
 						{ __( 'Preview', 'otter-blocks' ) }
 					</Button>
 
 					<Button
 						isPrimary
-						isLarge
 						className="library-modal-overlay__actions"
 						onClick={ () => importTemplate( template.template_url ) }
-						tabindex="0"
+						tabIndex="0"
 					>
 						{ __( 'Insert', 'otter-blocks' ) }
 					</Button>
