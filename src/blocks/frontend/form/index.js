@@ -11,6 +11,7 @@ import domReady from '@wordpress/dom-ready';
  * Internal dependencies.
  */
 import { addCaptchaOnPage } from './captcha.js';
+import initSticky from '../sticky/index.js';
 
 const TIME_UNTIL_REMOVE = 10_000;
 
@@ -206,6 +207,7 @@ domReady( () => {
 	addCaptchaOnPage( forms );
 
 	forms.forEach( ( form ) => {
+		initSticky( form );
 		if ( form.classList.contains( 'can-submit-and-subscribe' ) ) {
 			renderConsentCheckbox( form );
 		}
