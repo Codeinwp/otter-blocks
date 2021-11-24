@@ -446,7 +446,7 @@ class Main {
 		wp_enqueue_script(
 			'otter-map',
 			plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.js',
-			array( 'wp-dom-ready' ),
+			[],
 			self::$assets_version,
 			true
 		);
@@ -461,7 +461,7 @@ class Main {
 		wp_enqueue_script(
 			'otter-map-gesture',
 			plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.js',
-			array( 'wp-dom-ready' ),
+			array( 'otter-map' ),
 			self::$assets_version,
 			true
 		);
@@ -695,7 +695,7 @@ class Main {
 			wp_enqueue_script(
 				'otter-leaflet-gesture',
 				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.js',
-				array( 'otter-leaflet' ),
+				array( 'leaflet' ),
 				self::$assets_version,
 				true
 			);
