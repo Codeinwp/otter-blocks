@@ -180,12 +180,14 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'pattern'        => 'url( imageURL ) repeat attachment position/size',
 						'pattern_values' => array(
 							'imageURL'   => array(
-								'value'  => 'backgroundImageURL',
-								'format' => function( $value, $attrs ) {
-									if ( isset( $attrs['backgroundImage'] ) && ( $attrs['backgroundImage']['url'] ) ) {
-										return $attrs['backgroundImage']['url'];
+								'value'   => 'backgroundImage',
+								'default' => 'none',
+								'format'  => function( $value, $attrs ) {
+									if ( isset( $attrs['backgroundImageURL'] ) ) {
+										return $attrs['backgroundImageURL'];
 									}
-									return $value;
+
+									return $attrs['backgroundImage']['url'];
 								},
 							),
 							'repeat'     => array(
@@ -441,12 +443,14 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'pattern'        => 'url( imageURL ) repeat attachment position/size',
 						'pattern_values' => array(
 							'imageURL'   => array(
-								'value'  => 'backgroundOverlayImageURL',
-								'format' => function( $value, $attrs ) {
-									if ( isset( $attrs['backgroundOverlayImage'] ) && ( $attrs['backgroundOverlayImage']['url'] ) ) {
-										return $attrs['backgroundOverlayImage']['url'];
+								'value'   => 'backgroundOverlayImage',
+								'default' => 'none',
+								'format'  => function( $value, $attrs ) {
+									if ( isset( $attrs['backgroundOverlayImageURL'] ) ) {
+										return $attrs['backgroundOverlayImageURL'];
 									}
-									return $value;
+
+									return $attrs['backgroundOverlayImage']['url'];
 								},
 							),
 							'repeat'     => array(

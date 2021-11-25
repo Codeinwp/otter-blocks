@@ -338,7 +338,6 @@ const Edit = ({
 		`has-desktop-${ attributes.layout }-layout`,
 		`has-tablet-${ attributes.layoutTablet }-layout`,
 		`has-mobile-${ attributes.layoutMobile }-layout`,
-		`has-${ attributes.columnsGap }-gap`,
 		`has-vertical-${ attributes.verticalAlign }`,
 		`has-horizontal-${ attributes.horizontalAlign }`,
 		{ 'has-reverse-columns-tablet': ( attributes.reverseColumnsTablet && ! attributes.hideTablet && 'collapsedRows' === attributes.layoutTablet ) },

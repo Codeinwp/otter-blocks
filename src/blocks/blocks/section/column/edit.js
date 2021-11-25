@@ -234,9 +234,9 @@ const Edit = ({
 
 	if ( 'image' === attributes.backgroundType ) {
 		background = {
-			backgroundImage: `url( '${ attributes.backgroundImageURL }' )`,
+			backgroundImage: `url( '${ attributes.backgroundImage?.url }' )`,
 			backgroundAttachment: attributes.backgroundAttachment,
-			backgroundPosition: attributes.backgroundPosition,
+			backgroundPosition: `${ Math.round( attributes.backgroundPosition?.x * 100 ) }% ${ Math.round( attributes.backgroundPosition?.y * 100 ) }%`,
 			backgroundRepeat: attributes.backgroundRepeat,
 			backgroundSize: attributes.backgroundSize
 		};

@@ -8,11 +8,11 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
+import { pick } from 'lodash';
+
 import {
-	__experimentalColorGradientControl as ColorGradientControl,
 	ColorPalette,
-	InspectorControls,
-	MediaPlaceholder
+	InspectorControls
 } from '@wordpress/block-editor';
 
 import {
@@ -39,7 +39,7 @@ import {
  */
 import ColorBaseControl from '../../../components/color-base-control/index.js';
 import ResponsiveControl from '../../../components/responsive-control/index.js';
-import BackgroundControl from '../components/background-control/index.js';
+import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
 import { isNullObject } from '../../../helpers/helper-functions.js';
 
@@ -268,149 +268,30 @@ const Inspector = ({
 				<Fragment>
 					<PanelBody
 						title={ __( 'Background Settings', 'otter-blocks' ) }
-						className="wp-block-themeisle-image-container"
 					>
-						<BackgroundControl
-							label={ __( 'Background Type', 'otter-blocks' ) }
+						<BackgroundSelectorControl
 							backgroundType={ attributes.backgroundType }
+							backgroundColor={ attributes.backgroundColor }
+							image={ attributes.backgroundImage }
+							gradient={ attributes.backgroundGradient }
+							focalPoint={ attributes.backgroundPosition }
+							backgroundAttachment={ attributes.backgroundAttachment }
+							backgroundRepeat={ attributes.backgroundRepeat }
+							backgroundSize={ attributes.backgroundSize }
 							changeBackgroundType={ value => setAttributes({ backgroundType: value }) }
+							changeImage={ media => {
+								setAttributes({
+									backgroundImage: pick( media, [ 'id', 'url' ])
+								});
+							}}
+							removeImage={ () => setAttributes({ backgroundImage: undefined })}
+							changeColor={ value => setAttributes({ backgroundColor: value })}
+							changeGradient={ value => setAttributes({ backgroundGradient: value }) }
+							changeBackgroundAttachment={ value => setAttributes({ backgroundAttachment: value })}
+							changeBackgroundRepeat={ value => setAttributes({ backgroundRepeat: value })}
+							changeFocalPoint={ value => setAttributes({ backgroundPosition: value }) }
+							changeBackgroundSize={ value => setAttributes({ backgroundSize: value }) }
 						/>
-
-						{ 'color' === attributes.backgroundType && (
-
-							<ColorBaseControl
-								label={ __( 'Background Color', 'otter-blocks' ) }
-								colorValue={ attributes.headingColor }
-							>
-								<ColorPalette
-									label={ __( 'Background Color', 'otter-blocks' ) }
-									value={ attributes.backgroundColor }
-									onChange={ value => setAttributes({ backgroundColor: value }) }
-								/>
-							</ColorBaseControl>
-
-						) || 'image' === attributes.backgroundType && (
-							attributes.backgroundImageURL ?
-
-								<Fragment>
-									<div className="wp-block-themeisle-image-container-body">
-										<div className="wp-block-themeisle-image-container-area">
-											<div
-												className="wp-block-themeisle-image-container-holder"
-												style={ {
-													backgroundImage: `url('${ attributes.backgroundImageURL }')`
-												} }
-											></div>
-
-											<div
-												className="wp-block-themeisle-image-container-delete"
-												onClick={ () => {
-													setAttributes({
-														backgroundImageID: '',
-														backgroundImageURL: ''
-													});
-												} }
-											>
-												<Dashicon icon="trash" />
-												<span>{ __( 'Remove Image', 'otter-blocks' ) }</span>
-											</div>
-										</div>
-									</div>
-
-									<Button
-										isSecondary
-										className="wp-block-themeisle-image-container-delete-button"
-										onClick={ () => {
-											setAttributes({
-												backgroundImageID: '',
-												backgroundImageURL: ''
-											});
-										} }
-									>
-										{ __( 'Change or Remove Image', 'otter-blocks' ) }
-									</Button>
-
-									<ControlPanelControl
-										label={ __( 'Background Settings', 'otter-blocks' ) }
-									>
-										<SelectControl
-											label={ __( 'Background Attachment', 'otter-blocks' ) }
-											value={ attributes.backgroundAttachment }
-											options={ [
-												{ label: __( 'Scroll', 'otter-blocks' ), value: 'scroll' },
-												{ label: __( 'Fixed', 'otter-blocks' ), value: 'fixed' },
-												{ label: __( 'Local', 'otter-blocks' ), value: 'local' }
-											] }
-											onChange={ value => setAttributes({ backgroundAttachment: value }) }
-										/>
-
-										<SelectControl
-											label={ __( 'Background Position', 'otter-blocks' ) }
-											value={ attributes.backgroundPosition }
-											options={ [
-												{ label: __( 'Default', 'otter-blocks' ), value: 'top left' },
-												{ label: __( 'Top Left', 'otter-blocks' ), value: 'top left' },
-												{ label: __( 'Top Center', 'otter-blocks' ), value: 'top center' },
-												{ label: __( 'Top Right', 'otter-blocks' ), value: 'top right' },
-												{ label: __( 'Center Left', 'otter-blocks' ), value: 'center left' },
-												{ label: __( 'Center Center', 'otter-blocks' ), value: 'center center' },
-												{ label: __( 'Center Right', 'otter-blocks' ), value: 'center right' },
-												{ label: __( 'Bottom Left', 'otter-blocks' ), value: 'bottom left' },
-												{ label: __( 'Bottom Center', 'otter-blocks' ), value: 'bottom center' },
-												{ label: __( 'Bottom Right', 'otter-blocks' ), value: 'bottom right' }
-											] }
-											onChange={ value => setAttributes({ backgroundPosition: value }) }
-										/>
-
-										<SelectControl
-											label={ __( 'Background Repeat', 'otter-blocks' ) }
-											value={ attributes.backgroundRepeat }
-											options={ [
-												{ label: __( 'Repeat', 'otter-blocks' ), value: 'repeat' },
-												{ label: __( 'No-repeat', 'otter-blocks' ), value: 'no-repeat' }
-											] }
-											onChange={ value => setAttributes({ backgroundRepeat: value }) }
-										/>
-
-										<SelectControl
-											label={ __( 'Background Size', 'otter-blocks' ) }
-											value={ attributes.backgroundSize }
-											options={ [
-												{ label: __( 'Auto', 'otter-blocks' ), value: 'auto' },
-												{ label: __( 'Cover', 'otter-blocks' ), value: 'cover' },
-												{ label: __( 'Contain', 'otter-blocks' ), value: 'contain' }
-											] }
-											onChange={ value => setAttributes({ backgroundSize: value }) }
-										/>
-									</ControlPanelControl>
-								</Fragment> :
-
-								<MediaPlaceholder
-									icon="format-image"
-									labels={ {
-										title: __( 'Background Image', 'otter-blocks' ),
-										name: __( 'an image', 'otter-blocks' )
-									} }
-									value={ attributes.backgroundImageID }
-									onSelect={ value => {
-										setAttributes({
-											backgroundImageID: value.id,
-											backgroundImageURL: value.url
-										});
-									}}
-									accept="image/*"
-									allowedTypes={ [ 'image' ] }
-								/>
-
-						) || 'gradient' === attributes.backgroundType && (
-							<ColorGradientControl
-								label={ __( 'Background Gradient', 'otter-blocks' ) }
-								gradientValue={ attributes.backgroundGradient }
-								disableCustomColors={ true }
-								onGradientChange={ value => setAttributes({ backgroundGradient: value }) }
-								clearable={ false }
-							/>
-						) }
 					</PanelBody>
 
 					<PanelBody

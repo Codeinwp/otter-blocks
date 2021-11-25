@@ -11,17 +11,22 @@ import {
 
 import {
 	Button,
+	ButtonGroup,
 	FocalPointPicker,
+	Icon,
 	PanelRow,
 	SelectControl
 } from '@wordpress/components';
+
+import { useInstanceId } from '@wordpress/compose';
 
 import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import BackgroundControl from '../../blocks/section/components/background-control/index.js';
+import './editor.scss';
+import { barcodeIcon } from '../../helpers/icons.js';
 import ColorBaseControl from '../color-base-control/index.js';
 import ControlPanelControl from '../control-panel-control/index.js';
 
@@ -44,13 +49,42 @@ const BackgroundSelectorControl = ({
 	changeBackgroundSize,
 	changeFocalPoint
 }) => {
+	const instanceId = useInstanceId( BackgroundSelectorControl );
+
+	const id = `inspector-background-selector-control-${ instanceId }`;
+
 	return (
-		<Fragment>
-			<BackgroundControl
-				label={ __( 'Background Type', 'otter-blocks' ) }
-				backgroundType={ backgroundType }
-				changeBackgroundType={ changeBackgroundType }
-			/>
+		<div id={ id } className="components-base-control otter-background-selector-control">
+			<div className="components-base-control__field">
+				<div className="components-base-control__title">
+					<label className="components-base-control__label">{ __( 'Background Type', 'otter-blocks' ) }</label>
+					<ButtonGroup className="linking-controls">
+						<Button
+							icon={ 'admin-customizer' }
+							label={ __( 'Color', 'otter-blocks' ) }
+							showTooltip={ true }
+							isPrimary={ 'color' === backgroundType }
+							onClick={ () => changeBackgroundType( 'color' ) }
+						/>
+
+						<Button
+							icon={ 'format-image' }
+							label={ __( 'Image', 'otter-blocks' ) }
+							showTooltip={ true }
+							isPrimary={ 'image' === backgroundType }
+							onClick={ () => changeBackgroundType( 'image' ) }
+						/>
+
+						<Button
+							icon={ () => <Icon icon={ barcodeIcon } /> }
+							label={ __( 'Gradient', 'otter-blocks' ) }
+							showTooltip={ true }
+							isPrimary={ 'gradient' === backgroundType }
+							onClick={ () => changeBackgroundType( 'gradient' ) }
+						/>
+					</ButtonGroup>
+				</div>
+			</div>
 
 			{ 'color' === backgroundType && (
 				<ColorBaseControl
@@ -143,7 +177,7 @@ const BackgroundSelectorControl = ({
 					clearable={ false }
 				/>
 			) }
-		</Fragment>
+		</div>
 	);
 };
 

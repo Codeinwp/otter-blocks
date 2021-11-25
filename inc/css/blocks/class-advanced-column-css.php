@@ -186,7 +186,15 @@ class Advanced_Column_CSS extends Base_CSS {
 						'pattern'        => 'url( imageURL ) repeat attachment position/size',
 						'pattern_values' => array(
 							'imageURL'   => array(
-								'value' => 'backgroundImageURL',
+								'value'   => 'backgroundImage',
+								'default' => 'none',
+								'format'  => function( $value, $attrs ) {
+									if ( isset( $attrs['backgroundImageURL'] ) ) {
+										return $attrs['backgroundImageURL'];
+									}
+
+									return $attrs['backgroundImage']['url'];
+								},
 							),
 							'repeat'     => array(
 								'value'   => 'backgroundRepeat',
@@ -198,7 +206,14 @@ class Advanced_Column_CSS extends Base_CSS {
 							),
 							'position'   => array(
 								'value'   => 'backgroundPosition',
-								'default' => 'top left',
+								'default' => '50% 50%',
+								'format'  => function( $value, $attrs ) {
+									if ( is_array( $value ) && isset( $value['x'] ) ) {
+										return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
+									}
+
+									return $value;
+								},
 							),
 							'size'       => array(
 								'value'   => 'backgroundSize',
@@ -206,7 +221,7 @@ class Advanced_Column_CSS extends Base_CSS {
 							),
 						),
 						'condition'      => function( $attrs ) {
-							return isset( $attrs['backgroundType'] ) && 'image' === $attrs['backgroundType'] && isset( $attrs['backgroundImageURL'] );
+							return isset( $attrs['backgroundType'] ) && 'image' === $attrs['backgroundType'] && ( isset( $attrs['backgroundImageURL'] ) || isset( $attrs['backgroundImage'] ) );
 						},
 					),
 					array(

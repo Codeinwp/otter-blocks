@@ -16,10 +16,6 @@ const attributes = {
 		type: 'string',
 		default: 'equal'
 	},
-	columnsGap: {
-		type: 'string',
-		default: 'default'
-	},
 	padding: {
 		type: 'object'
 	},

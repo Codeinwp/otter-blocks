@@ -630,6 +630,8 @@ const deprecated = [ {
 		const marginMobile = {};
 		const border = {};
 		const borderRadius = {};
+		let backgroundImage = {};
+		let backgroundPosition = {};
 
 		if ( 'unlinked' === oldAttributes.paddingType ) {
 			padding.top = oldAttributes.paddingTop ? oldAttributes.paddingTop + 'px' : '20px';
@@ -727,6 +729,56 @@ const deprecated = [ {
 			borderRadius.right = oldAttributes.borderRadius ? oldAttributes.borderRadius + 'px' : null;
 		}
 
+		if ( undefined !== oldAttributes.backgroundImageURL && undefined !== oldAttributes.backgroundImageID ) {
+			backgroundImage = {
+				id: oldAttributes.backgroundImageID,
+				url: oldAttributes.backgroundImageURL
+			};
+		}
+
+		const positions = {
+			'top left': {
+				x: '0.00',
+				y: '0.00'
+			},
+			'top center': {
+				x: '0.50',
+				y: '0.00'
+			},
+			'top right': {
+				x: '1.00',
+				y: '0.00'
+			},
+			'center left': {
+				x: '0.00',
+				y: '0.50'
+			},
+			'center center': {
+				x: '0.50',
+				y: '0.50'
+			},
+			'center right': {
+				x: '1.00',
+				y: '0.50'
+			},
+			'bottom left': {
+				x: '0.00',
+				y: '1.00'
+			},
+			'bottom center': {
+				x: '0.50',
+				y: '1.00'
+			},
+			'bottom right': {
+				x: '1.00',
+				y: '1.00'
+			}
+		};
+
+		if ( undefined !== oldAttributes.backgroundPosition ) {
+			backgroundPosition = positions[ oldAttributes.backgroundPosition ];
+		}
+
 		const attributes = {
 			...omit(
 				oldAttributes,
@@ -780,7 +832,9 @@ const deprecated = [ {
 			...( ! isNullObject( marginTablet ) && { marginTablet }),
 			...( ! isNullObject( marginMobile ) && { marginMobile }),
 			...( ! isNullObject( border ) && { border }),
-			...( ! isNullObject( borderRadius ) && { borderRadius })
+			...( ! isNullObject( borderRadius ) && { borderRadius }),
+			...( ! isNullObject( backgroundImage ) && { backgroundImage }),
+			...( ! isNullObject( backgroundPosition ) && { backgroundPosition })
 		};
 
 		return {
@@ -834,7 +888,9 @@ const deprecated = [ {
 			'borderRadiusLeft'
 		];
 
-		return oldAttributes.some( attr => attributes[ attr ] && 'number' === typeof attributes[ attr ]);
+		const isEligible = oldAttributes.some( attr => attributes[ attr ] && 'number' === typeof attributes[ attr ]) || ( undefined !== attributes.backgroundImageURL && undefined !== attributes.backgroundImageID ) || ( undefined !== attributes.backgroundPosition && object !== attributes.backgroundPosition );
+
+		return isEligible;
 	},
 
 	save: ({

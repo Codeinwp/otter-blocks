@@ -501,20 +501,6 @@ const Inspector = ({
 								layoutMobile={ attributes.layoutMobile }
 								onClick={ changeLayout }
 							/>
-
-							<SelectControl
-								label={ __( 'Columns Gap', 'otter-blocks' ) }
-								value={ attributes.columnsGap }
-								options={ [
-									{ label: __( 'Default (10px)', 'otter-blocks' ), value: 'default' },
-									{ label: __( 'No Gap', 'otter-blocks' ), value: 'nogap' },
-									{ label: __( 'Narrow (5px)', 'otter-blocks' ), value: 'narrow' },
-									{ label: __( 'Extended (15px)', 'otter-blocks' ), value: 'extended' },
-									{ label: __( 'Wide (20px)', 'otter-blocks' ), value: 'wide' },
-									{ label: __( 'Wider (30px)', 'otter-blocks' ), value: 'wider' }
-								] }
-								onChange={ value => setAttributes({ columnsGap: value }) }
-							/>
 						</PanelBody>
 
 						<PanelBody
