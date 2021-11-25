@@ -270,7 +270,7 @@ const Edit = ({
 	 */
 	useEffect( () => {
 		if ( attributes.latitude && attributes.longitude && map ) {
-			map.setView([ attributes.latitude, attributes.longitude ], attributes.zoom || 13 );
+			map.setView([ attributes.latitude, attributes.longitude ], attributes.zoom || 15 );
 		}
 	}, [ attributes.latitude, attributes.longitude, attributes.zoom, map ]);
 

@@ -72,7 +72,7 @@ const createLeafletMap = ( containerId, attributes ) => {
 	}).addTo( map );
 
 	// Set the view
-	map.setView([ attributes.latitude, attributes.longitude ], attributes.zoom || 13 );
+	map.setView([ attributes.latitude, attributes.longitude ], attributes.zoom || 15 );
 
 	// Add the markers
 	attributes.markers.map( ( markerProps ) => createMarker( markerProps ) ).forEach( ( marker ) => {
