@@ -189,40 +189,40 @@ const Edit = ({
 
 	if ( isDesktop ) {
 		stylesheet = {
-			paddingTop: attributes.padding && attributes.padding.top,
-			paddingRight: attributes.padding && attributes.padding.right,
-			paddingBottom: attributes.padding && attributes.padding.bottom,
-			paddingLeft: attributes.padding && attributes.padding.left,
-			marginTop: attributes.margin && attributes.margin.top,
-			marginRight: attributes.margin && attributes.margin.right,
-			marginBottom: attributes.margin && attributes.margin.bottom,
-			marginLeft: attributes.margin && attributes.margin.left
+			paddingTop: attributes.padding?.top,
+			paddingRight: attributes.padding?.right,
+			paddingBottom: attributes.padding?.bottom,
+			paddingLeft: attributes.padding?.left,
+			marginTop: attributes.margin?.top,
+			marginRight: attributes.margin?.right,
+			marginBottom: attributes.margin?.bottom,
+			marginLeft: attributes.margin?.left
 		};
 	}
 
 	if ( isTablet ) {
 		stylesheet = {
-			paddingTop: attributes.paddingTablet && attributes.paddingTablet.top,
-			paddingRight: attributes.paddingTablet && attributes.paddingTablet.right,
-			paddingBottom: attributes.paddingTablet && attributes.paddingTablet.bottom,
-			paddingLeft: attributes.paddingTablet && attributes.paddingTablet.left,
-			marginTop: attributes.marginTablet && attributes.marginTablet.top,
-			marginRight: attributes.marginTablet && attributes.marginTablet.right,
-			marginBottom: attributes.marginTablet && attributes.marginTablet.bottom,
-			marginLeft: attributes.marginTablet && attributes.marginTablet.left
+			paddingTop: attributes.paddingTablet?.top,
+			paddingRight: attributes.paddingTablet?.right,
+			paddingBottom: attributes.paddingTablet?.bottom,
+			paddingLeft: attributes.paddingTablet?.left,
+			marginTop: attributes.marginTablet?.top,
+			marginRight: attributes.marginTablet?.right,
+			marginBottom: attributes.marginTablet?.bottom,
+			marginLeft: attributes.marginTablet?.left
 		};
 	}
 
 	if ( isMobile ) {
 		stylesheet = {
-			paddingTop: attributes.paddingMobile && attributes.paddingMobile.top,
-			paddingRight: attributes.paddingMobile && attributes.paddingMobile.right,
-			paddingBottom: attributes.paddingMobile && attributes.paddingMobile.bottom,
-			paddingLeft: attributes.paddingMobile && attributes.paddingMobile.left,
-			marginTop: attributes.marginMobile && attributes.marginMobile.top,
-			marginRight: attributes.marginMobile && attributes.marginMobile.right,
-			marginBottom: attributes.marginMobile && attributes.marginMobile.bottom,
-			marginLeft: attributes.marginMobile && attributes.marginMobile.left
+			paddingTop: attributes.paddingMobile?.top,
+			paddingRight: attributes.paddingMobile?.right,
+			paddingBottom: attributes.paddingMobile?.bottom,
+			paddingLeft: attributes.paddingMobile?.left,
+			marginTop: attributes.marginMobile?.top,
+			marginRight: attributes.marginMobile?.right,
+			marginBottom: attributes.marginMobile?.bottom,
+			marginLeft: attributes.marginMobile?.left
 		};
 	}
 
