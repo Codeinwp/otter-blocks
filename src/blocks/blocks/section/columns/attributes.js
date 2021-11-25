@@ -69,19 +69,15 @@ const attributes = {
 	backgroundColor: {
 		type: 'string'
 	},
-	backgroundImageID: {
-		type: 'number'
-	},
-	backgroundImageURL: {
-		type: 'string'
+	backgroundImage: {
+		type: 'object'
 	},
 	backgroundAttachment: {
 		type: 'string',
 		default: 'scroll'
 	},
 	backgroundPosition: {
-		type: 'string',
-		default: 'top left'
+		type: 'object'
 	},
 	backgroundRepeat: {
 		type: 'string',
@@ -106,19 +102,15 @@ const attributes = {
 	backgroundOverlayColor: {
 		type: 'string'
 	},
-	backgroundOverlayImageID: {
-		type: 'number'
-	},
-	backgroundOverlayImageURL: {
-		type: 'string'
+	backgroundOverlayImage: {
+		type: 'object'
 	},
 	backgroundOverlayAttachment: {
 		type: 'string',
 		default: 'scroll'
 	},
 	backgroundOverlayPosition: {
-		type: 'string',
-		default: 'top left'
+		type: 'object'
 	},
 	backgroundOverlayRepeat: {
 		type: 'string',

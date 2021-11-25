@@ -244,9 +244,9 @@ const Edit = ({
 
 	if ( 'image' === attributes.backgroundType ) {
 		background = {
-			backgroundImage: `url( '${ attributes.backgroundImageURL }' )`,
+			backgroundImage: `url( '${ attributes.backgroundImage?.url }' )`,
 			backgroundAttachment: attributes.backgroundAttachment,
-			backgroundPosition: attributes.backgroundPosition,
+			backgroundPosition: `${ Math.round( attributes.backgroundPosition?.x * 100 ) }% ${ Math.round( attributes.backgroundPosition?.y * 100 ) }%`,
 			backgroundRepeat: attributes.backgroundRepeat,
 			backgroundSize: attributes.backgroundSize
 		};
@@ -301,9 +301,9 @@ const Edit = ({
 
 	if ( 'image' === attributes.backgroundOverlayType ) {
 		overlayBackground = {
-			backgroundImage: `url( '${ attributes.backgroundOverlayImageURL }' )`,
+			backgroundImage: `url( '${ attributes.backgroundOverlayImage?.url }' )`,
 			backgroundAttachment: attributes.backgroundOverlayAttachment,
-			backgroundPosition: attributes.backgroundOverlayPosition,
+			backgroundPosition: `${ Math.round( attributes.backgroundOverlayPosition?.x * 100 ) }% ${ Math.round( attributes.backgroundOverlayPosition?.y * 100 ) }%`,
 			backgroundRepeat: attributes.backgroundOverlayRepeat,
 			backgroundSize: attributes.backgroundOverlaySize,
 			opacity: attributes.backgroundOverlayOpacity / 100

@@ -12,6 +12,7 @@ import {
 import {
 	Button,
 	FocalPointPicker,
+	PanelRow,
 	SelectControl
 } from '@wordpress/components';
 
@@ -24,7 +25,7 @@ import BackgroundControl from '../../blocks/section/components/background-contro
 import ColorBaseControl from '../color-base-control/index.js';
 import ControlPanelControl from '../control-panel-control/index.js';
 
-const BackgroundSelector = ({
+const BackgroundSelectorControl = ({
 	backgroundType,
 	backgroundColor,
 	image,
@@ -74,14 +75,6 @@ const BackgroundSelector = ({
 							onChange={ changeFocalPoint }
 						/>
 
-						<Button
-							isSecondary
-							className="wp-block-themeisle-image-container-delete-button"
-							onClick={ removeImage }
-						>
-							{ __( 'Change or Remove Image', 'otter-blocks' ) }
-						</Button>
-
 						<ControlPanelControl
 							label={ __( 'Background Settings', 'otter-blocks' ) }
 						>
@@ -117,6 +110,16 @@ const BackgroundSelector = ({
 								onChange={ changeBackgroundSize }
 							/>
 						</ControlPanelControl>
+
+						<PanelRow>
+							<Button
+								isSmall
+								isSecondary
+								onClick={ removeImage }
+							>
+								{ __( 'Clear Image', 'otter-blocks' ) }
+							</Button>
+						</PanelRow>
 					</Fragment>
 				) : (
 					<MediaPlaceholder
@@ -144,4 +147,4 @@ const BackgroundSelector = ({
 	);
 };
 
-export default BackgroundSelector;
+export default BackgroundSelectorControl;

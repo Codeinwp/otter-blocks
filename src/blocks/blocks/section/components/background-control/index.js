@@ -36,7 +36,7 @@ const BackgroundControl = ({
 						<Button
 							icon={ 'admin-customizer' }
 							label={ __( 'Color', 'otter-blocks' ) }
-							showTootlip={ true }
+							showTooltip={ true }
 							isPrimary={ 'color' === backgroundType }
 							onClick={ () => changeBackgroundType( 'color' ) }
 						/>
@@ -44,7 +44,7 @@ const BackgroundControl = ({
 						<Button
 							icon={ 'format-image' }
 							label={ __( 'Image', 'otter-blocks' ) }
-							showTootlip={ true }
+							showTooltip={ true }
 							isPrimary={ 'image' === backgroundType }
 							onClick={ () => changeBackgroundType( 'image' ) }
 						/>
@@ -52,7 +52,7 @@ const BackgroundControl = ({
 						<Button
 							icon={ () => <Icon icon={ barcodeIcon } /> }
 							label={ __( 'Gradient', 'otter-blocks' ) }
-							showTootlip={ true }
+							showTooltip={ true }
 							isPrimary={ 'gradient' === backgroundType }
 							onClick={ () => changeBackgroundType( 'gradient' ) }
 						/>

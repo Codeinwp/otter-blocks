@@ -180,7 +180,13 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'pattern'        => 'url( imageURL ) repeat attachment position/size',
 						'pattern_values' => array(
 							'imageURL'   => array(
-								'value' => 'backgroundImageURL',
+								'value'  => 'backgroundImageURL',
+								'format' => function( $value, $attrs ) {
+									if ( isset( $attrs['backgroundImage'] ) && ( $attrs['backgroundImage']['url'] ) ) {
+										return $attrs['backgroundImage']['url'];
+									}
+									return $value;
+								},
 							),
 							'repeat'     => array(
 								'value'   => 'backgroundRepeat',
@@ -192,7 +198,14 @@ class Advanced_Columns_CSS extends Base_CSS {
 							),
 							'position'   => array(
 								'value'   => 'backgroundPosition',
-								'default' => 'top left',
+								'default' => '50% 50%',
+								'format'  => function( $value, $attrs ) {
+									if ( is_array( $value ) && isset( $value['x'] ) ) {
+										return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
+									}
+
+									return $value;
+								},
 							),
 							'size'       => array(
 								'value'   => 'backgroundSize',
@@ -200,7 +213,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 							),
 						),
 						'condition'      => function( $attrs ) {
-							return isset( $attrs['backgroundType'] ) && 'image' === $attrs['backgroundType'] && isset( $attrs['backgroundImageURL'] );
+							return isset( $attrs['backgroundType'] ) && 'image' === $attrs['backgroundType'] && ( isset( $attrs['backgroundImageURL'] ) || isset( $attrs['backgroundImage'] ) );
 						},
 					),
 					array(
@@ -428,7 +441,13 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'pattern'        => 'url( imageURL ) repeat attachment position/size',
 						'pattern_values' => array(
 							'imageURL'   => array(
-								'value' => 'backgroundOverlayImageURL',
+								'value'  => 'backgroundOverlayImageURL',
+								'format' => function( $value, $attrs ) {
+									if ( isset( $attrs['backgroundOverlayImage'] ) && ( $attrs['backgroundOverlayImage']['url'] ) ) {
+										return $attrs['backgroundOverlayImage']['url'];
+									}
+									return $value;
+								},
 							),
 							'repeat'     => array(
 								'value'   => 'backgroundOverlayRepeat',
@@ -440,7 +459,14 @@ class Advanced_Columns_CSS extends Base_CSS {
 							),
 							'position'   => array(
 								'value'   => 'backgroundOverlayPosition',
-								'default' => 'top left',
+								'default' => '50% 50%',
+								'format'  => function( $value, $attrs ) {
+									if ( is_array( $value ) && isset( $value['x'] ) ) {
+										return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
+									}
+
+									return $value;
+								},
 							),
 							'size'       => array(
 								'value'   => 'backgroundOverlaySize',
@@ -448,7 +474,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 							),
 						),
 						'condition'      => function( $attrs ) {
-							return isset( $attrs['backgroundOverlayType'] ) && 'image' === $attrs['backgroundOverlayType'] && isset( $attrs['backgroundOverlayImageURL'] );
+							return isset( $attrs['backgroundOverlayType'] ) && 'image' === $attrs['backgroundOverlayType'] && ( isset( $attrs['backgroundOverlayImageURL'] ) || isset( $attrs['backgroundOverlayImage'] ) );
 						},
 					),
 					array(

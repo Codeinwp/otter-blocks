@@ -1615,6 +1615,10 @@ const deprecated = [ {
 		const marginMobile = {};
 		const border = {};
 		const borderRadius = {};
+		let backgroundImage = {};
+		let backgroundOverlayImage = {};
+		let backgroundPosition = {};
+		let backgroundOverlayPosition = {};
 
 		if ( 'unlinked' === oldAttributes.paddingType ) {
 			padding.top = oldAttributes.paddingTop ? oldAttributes.paddingTop + 'px' : '20px';
@@ -1700,6 +1704,67 @@ const deprecated = [ {
 			borderRadius.right = oldAttributes.borderRadius ? oldAttributes.borderRadius + 'px' : null;
 		}
 
+		if ( undefined !== oldAttributes.backgroundImageURL && undefined !== oldAttributes.backgroundImageID ) {
+			backgroundImage = {
+				id: oldAttributes.backgroundImageID,
+				url: oldAttributes.backgroundImageURL
+			};
+		}
+
+		if ( undefined !== oldAttributes.backgroundOverlayImageURL && undefined !== oldAttributes.backgroundOverlayImageID ) {
+			backgroundOverlayImage = {
+				id: oldAttributes.backgroundOverlayImageID,
+				url: oldAttributes.backgroundOverlayImageURL
+			};
+		}
+
+		const positions = {
+			'top left': {
+				x: '0.00',
+				y: '0.00'
+			},
+			'top center': {
+				x: '0.50',
+				y: '0.00'
+			},
+			'top right': {
+				x: '1.00',
+				y: '0.00'
+			},
+			'center left': {
+				x: '0.00',
+				y: '0.50'
+			},
+			'center center': {
+				x: '0.50',
+				y: '0.50'
+			},
+			'center right': {
+				x: '1.00',
+				y: '0.50'
+			},
+			'bottom left': {
+				x: '0.00',
+				y: '1.00'
+			},
+			'bottom center': {
+				x: '0.50',
+				y: '1.00'
+			},
+			'bottom right': {
+				x: '1.00',
+				y: '1.00'
+			}
+		};
+
+		if ( undefined !== oldAttributes.backgroundPosition ) {
+			backgroundPosition = positions[ oldAttributes.backgroundPosition ];
+		}
+
+		if ( undefined !== oldAttributes.backgroundOverlayPosition ) {
+			backgroundOverlayPosition = positions[ oldAttributes.backgroundOverlayPosition ];
+		}
+
 		const attributes = {
 			...omit(
 				oldAttributes,
@@ -1747,7 +1812,11 @@ const deprecated = [ {
 			...( ! isNullObject( marginTablet ) && { marginTablet }),
 			...( ! isNullObject( marginMobile ) && { marginMobile }),
 			...( ! isNullObject( border ) && { border }),
-			...( ! isNullObject( borderRadius ) && { borderRadius })
+			...( ! isNullObject( borderRadius ) && { borderRadius }),
+			...( ! isNullObject( backgroundImage ) && { backgroundImage }),
+			...( ! isNullObject( backgroundPosition ) && { backgroundPosition }),
+			...( ! isNullObject( backgroundOverlayImage ) && { backgroundOverlayImage }),
+			...( ! isNullObject( backgroundOverlayPosition ) && { backgroundOverlayPosition })
 		};
 
 		return {
@@ -1795,7 +1864,9 @@ const deprecated = [ {
 			'borderRadiusLeft'
 		];
 
-		return oldAttributes.some( attr => attributes[ attr ] && 'number' === typeof attributes[ attr ]);
+		const isEligible = oldAttributes.some( attr => attributes[ attr ] && 'number' === typeof attributes[ attr ]) || ( undefined !== attributes.backgroundImageURL && undefined !== attributes.backgroundImageID ) || ( undefined !== attributes.backgroundOverlayImageURL && undefined !== attributes.backgroundOverlayImageID ) || ( undefined !== attributes.backgroundPosition && object !== attributes.backgroundPosition ) || ( undefined !== attributes.backgroundOverlayPosition && object !== attributes.backgroundOverlayPosition );
+
+		return isEligible;
 	},
 
 	save: ({

@@ -630,7 +630,6 @@ const deprecated = [ {
 		const marginMobile = {};
 		const border = {};
 		const borderRadius = {};
-		console.log( oldAttributes );
 
 		if ( 'unlinked' === oldAttributes.paddingType ) {
 			padding.top = oldAttributes.paddingTop ? oldAttributes.paddingTop + 'px' : '20px';
