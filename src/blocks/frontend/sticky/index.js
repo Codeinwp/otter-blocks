@@ -56,6 +56,22 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 		return '';
 	};
 
+	// @type {HTMLDivElement}
+	const placeholder = document.createElement( 'div' );
+	placeholder.style.height = height + 'px';
+
+	const insertPlaceholder = () => {
+		if ( ! elem.parentElement.contains( placeholder ) ) {
+			elem.parentElement.insertBefore( placeholder, elem );
+		}
+	};
+
+	const removePlaceholder = () => {
+		if ( elem.parentElement.contains( placeholder ) ) {
+			elem.parentElement.removeChild( placeholder );
+		}
+	};
+
 	window.addEventListener( 'scroll', () => {
 
 		// Check if the scroll with the activation offset has passed the top of the element
@@ -73,7 +89,7 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 				elem.style.transform = 'unset';
 				break;
 			case 'constrain-top':
-				elem.style.transform = `translateY(${ -( window.pageYOffset + activationOffset - containerBottomPosition ) }px)`;
+				elem.style.transform = `translateY(${ -( window.pageYOffset + activationOffset - containerBottomPosition + height ) }px)`;
 				break;
 			case 'constrain-bottom':
 				elem.style.transform = `translateY(${ -( window.pageYOffset - activationOffset + window.innerHeight - containerBottomPosition ) }px)`;
@@ -81,12 +97,14 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 			default:
 				console.warn( 'Unknown position', pos );
 			}
+			insertPlaceholder();
 			console.log( pos );
 		} else {
 			elem.classList.remove( 'is-sticky' );
 			elem.style.top = 'unset';
 			elem.style.left = 'unset';
 			elem.style.transform = 'unset';
+			removePlaceholder();
 		}
 	});
 };
