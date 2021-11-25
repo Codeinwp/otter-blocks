@@ -112,7 +112,7 @@ const Review = ({
 			>
 				{ 0 < defaults?.features?.length && defaults?.features?.map( ( feature, index ) => (
 					<PanelItem
-						key={ feature.title }
+						key={ index }
 						title={ feature.title || __( 'Feature', 'otter-blocks' ) }
 						remove={ () => removeFeature( index ) }
 					>
