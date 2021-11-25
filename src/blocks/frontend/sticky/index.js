@@ -32,10 +32,13 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 	elem.style.border = '1px dashed red';
 
 	const getScrollActivePosition = () => {
+		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+		const scrollBottom = scrollTop + window.innerHeight;
+
 		if ( 'top' === position &&
 			(
-				( window.pageYOffset + activationOffset > elemTopPositionInPage ) &&
-				( ! container || window.pageYOffset + activationOffset + height < containerBottomPosition )
+				( scrollTop + activationOffset > elemTopPositionInPage ) &&
+				( ! container || scrollTop + activationOffset + height < containerBottomPosition )
 			)
 		) {
 			return 'top';
@@ -43,18 +46,18 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 
 		if ( 'bottom' === position &&
 			(
-				( window.pageYOffset - activationOffset + window.innerHeight > elemBottomPositionInPage ) &&
-				( ! container ||  window.pageYOffset - activationOffset + window.innerHeight < containerBottomPosition )
+				( scrollBottom - activationOffset > elemBottomPositionInPage ) &&
+				( ! container ||  scrollBottom - activationOffset < containerBottomPosition )
 			)
 		) {
 			return 'bottom';
 		}
 
 		if ( container ) {
-			if ( 'top' === position && (  window.pageYOffset + activationOffset + height > containerBottomPosition ) ) {
+			if ( 'top' === position && (  scrollBottom + activationOffset + height > containerBottomPosition ) ) {
 				return 'constrain-top';
 			}
-			if ( 'bottom' === position && (  window.pageYOffset - activationOffset + window.innerHeight > containerBottomPosition ) ) {
+			if ( 'bottom' === position && (  scrollBottom - activationOffset  >= containerBottomPosition ) ) {
 				return 'constrain-bottom';
 			}
 		}
@@ -103,7 +106,7 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 			case 'constrain-bottom':
 				elem.style.bottom = '0px';
 				elem.style.transformOrigin = 'left bottom';
-				elem.style.transform = `translateY(${ containerBottomPosition - scrollBottom }px)`;
+				elem.style.transform = `translateY(${ containerTopPosition + height - scrollTop }px)`;
 				break;
 			default:
 				console.warn( 'Unknown position', pos );
