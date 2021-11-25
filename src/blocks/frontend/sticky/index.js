@@ -23,13 +23,19 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 	const offsetX = elem.offsetLeft;
 
 	// We need to activate the sticky mode more early for smooth transition
-	const activationOffset = 40;
+	const activationOffset = 60;
+
+	// DEBUG
+	if ( container ) {
+		container.style.border = '1px dashed black';
+	}
+	elem.style.border = '1px dashed red';
 
 	const getScrollActivePosition = () => {
 		if ( 'top' === position &&
 			(
 				( window.pageYOffset + activationOffset > elemTopPositionInPage ) &&
-				( ! container || window.pageYOffset - activationOffset + height < containerBottomPosition )
+				( ! container || window.pageYOffset + activationOffset + height < containerBottomPosition )
 			)
 		) {
 			return 'top';
@@ -48,7 +54,7 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 			if ( 'top' === position && (  window.pageYOffset + activationOffset + height > containerBottomPosition ) ) {
 				return 'constrain-top';
 			}
-			if ( 'bottom' === position && (  window.pageYOffset - activationOffset + window.innerHeight > elemBottomPositionInPage ) ) {
+			if ( 'bottom' === position && (  window.pageYOffset - activationOffset + window.innerHeight > containerBottomPosition ) ) {
 				return 'constrain-bottom';
 			}
 		}
@@ -73,6 +79,8 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 	};
 
 	window.addEventListener( 'scroll', () => {
+		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+		const scrollBottom = scrollTop + window.innerHeight;
 
 		// Check if the scroll with the activation offset has passed the top of the element
 		const pos = getScrollActivePosition();
@@ -89,16 +97,19 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 				elem.style.transform = 'unset';
 				break;
 			case 'constrain-top':
-				elem.style.transform = `translateY(${ -( window.pageYOffset + activationOffset - containerBottomPosition + height ) }px)`;
+				elem.style.top = '0px';
+				elem.style.transform = `translateY(${ containerBottomPosition - height - scrollTop }px)`;
 				break;
 			case 'constrain-bottom':
-				elem.style.transform = `translateY(${ -( window.pageYOffset - activationOffset + window.innerHeight - containerBottomPosition ) }px)`;
+				elem.style.bottom = '0px';
+				elem.style.transformOrigin = 'left bottom';
+				elem.style.transform = `translateY(${ containerBottomPosition - scrollBottom }px)`;
 				break;
 			default:
 				console.warn( 'Unknown position', pos );
 			}
 			insertPlaceholder();
-			console.log( pos );
+			console.log( 'Position case: ' + pos );
 		} else {
 			elem.classList.remove( 'is-sticky' );
 			elem.style.top = 'unset';
