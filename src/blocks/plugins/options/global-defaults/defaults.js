@@ -29,7 +29,6 @@ const defaultsAttrs = {
 		margin: 5
 	},
 	'themeisle-blocks/advanced-columns': {
-		columnsGap: 'default',
 		horizontalAlign: 'unset',
 		columnsHeight: 'auto',
 		verticalAlign: 'unset',

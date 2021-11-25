@@ -195,20 +195,6 @@ const SectionColumns = ({
 			<PanelBody
 				title={ __( 'Sizing', 'otter-blocks' ) }
 			>
-				<SelectControl
-					label={ __( 'Columns Gap', 'otter-blocks' ) }
-					value={ defaults.columnsGap }
-					options={ [
-						{ label: __( 'Default (10px)', 'otter-blocks' ), value: 'default' },
-						{ label: __( 'No Gap', 'otter-blocks' ), value: 'nogap' },
-						{ label: __( 'Narrow (5px)', 'otter-blocks' ), value: 'narrow' },
-						{ label: __( 'Extended (15px)', 'otter-blocks' ), value: 'extended' },
-						{ label: __( 'Wide (20px)', 'otter-blocks' ), value: 'wide' },
-						{ label: __( 'Wider (30px)', 'otter-blocks' ), value: 'wider' }
-					] }
-					onChange={ value => changeConfig( blockName, { columnsGap: value }) }
-				/>
-
 				<ResponsiveControl
 					label={ __( 'Screen Type', 'otter-blocks' ) }
 					className="otter-section-padding-responsive-control"
