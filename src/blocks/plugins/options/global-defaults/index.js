@@ -12,15 +12,15 @@ import {
 /**
  * Internal dependencies
  */
-import ButtomItem from './block-item.js';
+import BlockItem from './block-item.js';
+import Accordion from './controls/accordion.js';
 import AdvancedHeading from './controls/advanced-heading.js';
-import ButtonGroup from './controls/button-group.js';
 import Button from './controls/button.js';
+import ButtonGroup from './controls/button-group.js';
+import FontAwesomeIcons from './controls/font-awesome-icons.js';
 import SectionColumns from './controls/section-columns.js';
 import SectionColumn from './controls/section-column.js';
-import AccordionControl from './controls/accordion.js';
 import ReviewControl from './controls/review.js';
-
 
 const GlobalDefaults = ({
 	isAPILoaded,
@@ -32,7 +32,7 @@ const GlobalDefaults = ({
 	const blocks = [
 		{
 			name: 'themeisle-blocks/accordion',
-			control: AccordionControl
+			control: Accordion
 		},
 		{
 			name: 'themeisle-blocks/advanced-heading',
@@ -45,6 +45,10 @@ const GlobalDefaults = ({
 		{
 			name: 'themeisle-blocks/button',
 			control: Button
+		},
+		{
+			name: 'themeisle-blocks/font-awesome-icons',
+			control: FontAwesomeIcons
 		},
 		{
 			name: 'themeisle-blocks/review',
@@ -80,7 +84,7 @@ const GlobalDefaults = ({
 					const Controls = i.control;
 
 					return (
-						<ButtomItem
+						<BlockItem
 							key={ i.name }
 							blockName={ i.name }
 							saveConfig={ saveConfig }
@@ -91,7 +95,7 @@ const GlobalDefaults = ({
 								defaults={ blockDefaults[ i.name ] }
 								changeConfig={ changeConfig }
 							/>
-						</ButtomItem>
+						</BlockItem>
 					);
 				}) }
 			</div>

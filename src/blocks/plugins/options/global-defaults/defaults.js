@@ -75,9 +75,7 @@ const defaultsAttrs = {
 		defaultSize: 20,
 		gap: 5
 	},
-	'themeisle-blocks/accordion': {
-
-	},
+	'themeisle-blocks/accordion': {},
 	'themeisle-blocks/review': {
 		features: []
 	}

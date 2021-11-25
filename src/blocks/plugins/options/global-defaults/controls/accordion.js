@@ -15,17 +15,11 @@ import {
 
 import { Fragment } from '@wordpress/element';
 
-/**
- * Internal dependencies
- */
-
-
-const AccordionControl = ({
+const Accordion = ({
 	blockName,
 	defaults,
 	changeConfig
 }) => {
-
 	return (
 		<Fragment>
 			<PanelBody
@@ -40,7 +34,7 @@ const AccordionControl = ({
 						{ label: __( 'Wide (10px)', 'otter-blocks' ), value: 'wide' },
 						{ label: __( 'Wider (20px)', 'otter-blocks' ), value: 'wider' }
 					] }
-					onChange={ gap => changeConfig( blockName, {gap}) }
+					onChange={ value => changeConfig( blockName, { gap: value }) }
 				/>
 			</PanelBody>
 
@@ -50,22 +44,22 @@ const AccordionControl = ({
 				colorSettings={ [
 					{
 						value: defaults.titleColor,
-						onChange: titleColor => changeConfig( blockName, {titleColor}),
+						onChange: value => changeConfig( blockName, { titleColor: value }),
 						label: __( 'Title', 'otter-blocks' )
 					},
 					{
 						value: defaults.titleBackground,
-						onChange: titleBackground => changeConfig( blockName, {titleBackground}),
+						onChange: value => changeConfig( blockName, { titleBackground: value }),
 						label: __( 'Title Background', 'otter-blocks' )
 					},
 					{
 						value: defaults.contentBackground,
-						onChange: contentBackground => changeConfig( blockName, {contentBackground}),
+						onChange: value => changeConfig( blockName, { contentBackground: value }),
 						label: __( 'Content Background', 'otter-blocks' )
 					},
 					{
 						value: defaults.borderColor,
-						onChange: borderColor => changeConfig( blockName, {borderColor}),
+						onChange: value => changeConfig( blockName, { borderColor: value }),
 						label: __( 'Border Color', 'otter-blocks' )
 					}
 				] }
@@ -81,4 +75,4 @@ const AccordionControl = ({
 	);
 };
 
-export default AccordionControl;
+export default Accordion;

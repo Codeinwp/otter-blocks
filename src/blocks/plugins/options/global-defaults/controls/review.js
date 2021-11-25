@@ -17,11 +17,10 @@ import {
 	ExternalLink
 } from '@wordpress/components';
 
-import { Fragment, useState } from '@wordpress/element';
-
-/**
- * Internal dependencies
- */
+import {
+	Fragment,
+	useState
+} from '@wordpress/element';
 
 const PanelItem = ({
 	title,
@@ -58,12 +57,11 @@ const PanelItem = ({
 	);
 };
 
-const ReviewControl = ({
+const Review = ({
 	blockName,
 	defaults,
 	changeConfig
 }) => {
-
 	const setAttributes = ( attrs ) => changeConfig( blockName, attrs );
 
 	const addFeature = () => {
@@ -98,7 +96,7 @@ const ReviewControl = ({
 					type="text"
 					placeholder={ __( 'Currency code, like USD or EUR.', 'otter-blocks' ) }
 					value={ defaults.currency }
-					onChange={ currency => setAttributes({ currency }) }
+					onChange={ value => setAttributes({ currency: value }) }
 				/>
 
 				{ __( 'Currency code in three digit ISO 4217 code.', 'otter-blocks' ) + ' ' }
@@ -152,22 +150,22 @@ const ReviewControl = ({
 				colorSettings={ [
 					{
 						value: defaults.primaryColor,
-						onChange: primaryColor => changeConfig( blockName, {primaryColor}),
+						onChange: value => changeConfig( blockName, { primaryColor: value }),
 						label: __( 'Primary', 'otter-blocks' )
 					},
 					{
 						value: defaults.backgroundColor,
-						onChange: backgroundColor => changeConfig( blockName, {backgroundColor}),
+						onChange: value => changeConfig( blockName, { backgroundColor: value }),
 						label: __( 'Background', 'otter-blocks' )
 					},
 					{
 						value: defaults.textColor,
-						onChange: textColor => changeConfig( blockName, {textColor}),
+						onChange: value => changeConfig( blockName, { textColor: value }),
 						label: __( 'Text', 'otter-blocks' )
 					},
 					{
 						value: defaults.buttonTextColor,
-						onChange: buttonTextColor => changeConfig( blockName, {buttonTextColor}),
+						onChange: value => changeConfig( blockName, { buttonTextColor: value }),
 						label: __( 'Button Text', 'otter-blocks' )
 					}
 				] }
@@ -184,4 +182,4 @@ const ReviewControl = ({
 	);
 };
 
-export default ReviewControl;
+export default Review;
