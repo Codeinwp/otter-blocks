@@ -71,10 +71,6 @@ const defaultsAttrs = {
 		marginLeft: 0,
 		columnsHTMLTag: 'div'
 	},
-	'themeisle-blocks/icon-list': {
-		defaultSize: 20,
-		gap: 5
-	},
 	'themeisle-blocks/accordion': {},
 	'themeisle-blocks/review': {
 		features: []
