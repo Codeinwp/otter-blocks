@@ -189,7 +189,6 @@ const Inspector = ({
 		<InspectorControls>
 			<PanelBody
 				title={ __( 'Time', 'otter-blocks' ) }
-				initialOpen={ true }
 			>
 				<Dropdown
 					position="bottom left"
@@ -216,7 +215,7 @@ const Inspector = ({
 
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
-				initialOpen={ true }
+				initialOpen={ false }
 			>
 				<ToggleControl
 					label={ __( 'Display Days', 'otter-blocks' ) }

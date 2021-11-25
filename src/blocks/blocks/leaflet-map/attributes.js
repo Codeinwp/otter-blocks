@@ -19,8 +19,7 @@ const attributes = {
 		default: '2.1207046508789067%2C41.34807736149302%2C2.2288513183593754%2C41.45816618938139'
 	},
 	zoom: {
-		type: 'number',
-		default: 13
+		type: 'number'
 	},
 	height: {
 		type: 'number',

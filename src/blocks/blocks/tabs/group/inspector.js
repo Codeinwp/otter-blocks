@@ -76,7 +76,6 @@ const Inspector = ({
 		<InspectorControls>
 			<PanelBody
 				title={ __( 'Tabs Management', 'otter-blocks' ) }
-				initialOpen={ true }
 			>
 				<p>{ __( 'Press and hold to use drag and drop to sort the tabs', 'otter-blocks' ) }</p>
 
@@ -101,7 +100,7 @@ const Inspector = ({
 
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
-				initialOpen={ true }
+				initialOpen={ false }
 			>
 				<RangeControl
 					label={ __( 'Border Width', 'otter-blocks' ) }
