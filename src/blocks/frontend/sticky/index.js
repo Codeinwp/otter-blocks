@@ -1,3 +1,6 @@
+import domReady from '@wordpress/dom-ready';
+
+
 /**
  * Make an element sticky
  * @param {HTMLDivElement|string} selector
@@ -123,10 +126,49 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 	});
 };
 
-
 // Testing purpose
 // We can make elem sticky in browser for testing various scenario with different blocks
 window.otterSticky = initSticky;
 
+/**
+ *
+ * @param {HTMLDivElement} elem
+ */
+const getStickyContainer = ( elem ) => {
+	let parent = elem?.parentElement;
 
-export default initSticky;
+	while ( parent ) {
+		if ( parent.classList.contains( 'o-is-sticky-container' ) ) {
+			return parent;
+		}
+		parent = parent.parentElement;
+	}
+	return document.body;
+};
+
+/**
+ *
+ * @param {HTMLDivElement} elem
+ */
+const getPositionByClass = ( elem ) => {
+	if ( elem.classList.contains( '.o-sticky-top' ) ) {
+		return 'top';
+	}
+	if ( elem.classList.contains( '.o-sticky-bottom' ) ) {
+		return 'botton';
+	}
+	return 'top';
+};
+
+domReady( () => {
+	const elems = document.querySelectorAll( '.o-is-sticky' );
+
+	elems.forEach( elem => {
+
+		initSticky(
+			elem,
+			getPositionByClass( elem ),
+			getStickyContainer( elem )
+		);
+	});
+});

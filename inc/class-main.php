@@ -522,6 +522,18 @@ class Main {
 			return;
 		}
 
+		// DEBUG
+		// TODO: load this only when a block has a sticky block
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/sticky.asset.php';
+		wp_enqueue_script(
+			'otter-sticky',
+			plugin_dir_url( $this->get_dir() ) . 'build/blocks/sticky.js',
+			$asset_file['dependencies'],
+			$asset_file['version'],
+			true
+		);
+		wp_script_add_data( 'otter-sticky', 'defer', true );
+
 		if ( ! self::$is_map_loaded && has_block( 'themeisle-blocks/google-map', $post ) ) {
 			$apikey = get_option( 'themeisle_google_map_block_api_key' );
 

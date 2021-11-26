@@ -2,14 +2,11 @@
  * WordPress dependencies
  */
 import domReady from '@wordpress/dom-ready';
-import initSticky from '../sticky/index.js';
 
 /**
  * Internal dependencies
  */
 import { range, linear } from './../../helpers/helper-functions.js';
-
-window.otterSticky = initSticky;
 
 domReady( () => {
 	const progressBars = document.querySelectorAll( '.wp-block-themeisle-blocks-progress-bar' );
