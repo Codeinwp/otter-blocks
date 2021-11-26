@@ -95,15 +95,13 @@ const StickyMenu = () => {
 const withStickyExtension = createHigherOrderComponent( BlockEdit => {
 	return ( props ) => {
 
-		// TODO: transform this to a wrapper
-		if (  props.attributes?.className?.split( ' ' )?.includes( 'o-is-sticky', 'o-is-sticky-container' ) ) {
+		if (  props.attributes?.className?.includes( 'o-is-sticky', 'o-is-sticky-container' ) ) {
 			return (
-				<Fragment>
-					{/* <Edit
-						attributes={props.attributes}
-					/> */}
+				<Edit
+					attributes={props.attributes}
+				>
 					<BlockEdit { ...props } />
-				</Fragment>
+				</Edit>
 			);
 		}
 

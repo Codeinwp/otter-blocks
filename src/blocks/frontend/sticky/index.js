@@ -104,11 +104,15 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 				break;
 			case 'constrain-top':
 				elem.style.top = '0px';
+
+				// TODO: improve formule
 				elem.style.transform = `translateY(${ containerBottomPosition - height - scrollTop }px)`;
 				break;
 			case 'constrain-bottom':
 				elem.style.bottom = '0px';
 				elem.style.transformOrigin = 'left bottom';
+
+				// TODO: improve formule
 				elem.style.transform = `translateY(${ containerTopPosition + height - scrollTop }px)`;
 				break;
 			default:
