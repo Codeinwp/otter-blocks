@@ -16,41 +16,60 @@ import {
 
 import { hasBlockSupport } from '@wordpress/blocks';
 
+import { createHigherOrderComponent } from '@wordpress/compose';
+
+import { addFilter } from '@wordpress/hooks';
+
+import Edit from './edit';
+
 const updateBlockAttributes = dispatch( 'core/block-editor' ).updateBlockAttributes;
 
 const StickyMenu = () => {
 
-	const { block, isSticky } = useSelect( ( select ) => {
+	const { block, isSticky, classes, isContainer } = useSelect( ( select ) => {
 		const {
 			getSelectedBlock
 		} = select( 'core/block-editor' );
 
 		const block = getSelectedBlock();
-		const isSticky = block?.attributes?.className?.split( ' ' )?.includes( 'o-is-sticky' ) || false;
+		const classes = block?.attributes?.className?.split( ' ' );
+		const isSticky = classes?.includes( 'o-is-sticky' ) || false;
+		const isContainer = classes?.includes( 'o-is-sticky-container' ) || false;
 
 		return {
 			block,
-			isSticky
+			isSticky,
+			isContainer,
+			classes
 		};
 	});
 
 	const makeBlockSticky = () => {
 		if ( hasBlockSupport( block, 'customClassName', true ) ) {
 			const attr = block.attributes;
-			const classes = attr?.className?.split( ' ' )?.filter( c => 'o-is-sticky' !== c ) || [];
+			const className = classes?.filter( c => 'o-is-sticky' !== c ) || [];
 
 			if ( ! isSticky ) {
-				classes.push( 'o-is-sticky' );
+				className.push( 'o-is-sticky' );
 			}
-			attr.className = classes.join( ' ' );
+			attr.className = className.join( ' ' );
 			attr.hasCustomCSS = true;
 			updateBlockAttributes( block.clientId, attr );
 		}
-
 	};
 
 	const makeBlockContainer = () => {
+		if ( hasBlockSupport( block, 'customClassName', true ) ) {
+			const attr = block.attributes;
+			const className = classes?.filter( c => 'o-is-sticky-container' !== c ) || [];
 
+			if ( ! isContainer ) {
+				className.push( 'o-is-sticky-container' );
+			}
+			attr.className = className.join( ' ' );
+			attr.hasCustomCSS = true;
+			updateBlockAttributes( block.clientId, attr );
+		}
 	};
 
 	return (
@@ -64,13 +83,35 @@ const StickyMenu = () => {
 			/>
 			<PluginBlockSettingsMenuItem
 				icon="share-alt2"
-				label={ ! isSticky ? __( 'Transform to sticky container', 'otter-blocks' ) : __( 'Remove sticky container', 'otter-blocks' ) }
+				label={ ! isContainer ? __( 'Transform to sticky container', 'otter-blocks' ) : __( 'Remove sticky container', 'otter-blocks' ) }
 				onClick={() => {
-					console.log( 'Make container' );
+					makeBlockContainer();
 				}}
 			/>
 		</Fragment>
 	);
 };
+
+const withStickyExtension = createHigherOrderComponent( BlockEdit => {
+	return ( props ) => {
+
+		// TODO: transform this to a wrapper
+		if (  props.attributes?.className?.split( ' ' )?.includes( 'o-is-sticky', 'o-is-sticky-container' ) ) {
+			return (
+				<Fragment>
+					{/* <Edit
+						attributes={props.attributes}
+					/> */}
+					<BlockEdit { ...props } />
+				</Fragment>
+			);
+		}
+
+		return <BlockEdit { ...props } />;
+	};
+}, 'withStickyExtension' );
+
+
+addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/sticky-extension', withStickyExtension );
 
 export default StickyMenu;
