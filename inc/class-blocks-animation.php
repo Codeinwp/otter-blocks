@@ -72,10 +72,11 @@ class Blocks_Animation {
 			return;
 		}
 
-		if ( is_singular() && strpos( get_the_content(), '<!-- wp:' ) === false ) {
+		global $post;
+
+		if ( is_singular() && strpos( get_the_content( null, false, $post ), '<!-- wp:' ) === false ) {
 			return;
 		}
-
 
 		$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/frontend.asset.php';
 
