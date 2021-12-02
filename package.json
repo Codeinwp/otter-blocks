@@ -31,7 +31,7 @@
 		"lasttranslator": "Themeisle Translate Team <friends@themeisle.com>"
 	},
 	"dependencies": {
-		"@emotion/react": "^11.5.0",
+		"@emotion/react": "^11.7.0",
 		"@wordpress/icons": "^6.0.0",
 		"array-move": "^3.0.1",
 		"classnames": "^2.3.1",
@@ -56,6 +56,6 @@
 		"grunt-wp-readme-to-markdown": "^2.0.1",
 		"replace-in-file": "^6.3.1",
 		"semantic-release": "^17.4.4",
-		"semantic-release-slack-bot": "^2.1.0"
+		"semantic-release-slack-bot": "^3.0.0"
 	}
 }
