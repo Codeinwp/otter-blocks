@@ -36,7 +36,7 @@ const SectionColumns = ({
 }) => {
 	const getView = useSelect( select => {
 		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
 
 		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
 	}, []);
@@ -519,7 +519,6 @@ const SectionColumns = ({
 									icon="editor-alignleft"
 									label={ __( 'Left', 'otter-blocks' ) }
 									showTooltip={ true }
-									isLarge
 									isPrimary={ 'flex-start' === defaults.horizontalAlign }
 									onClick={ () => changeHorizontalAlign( 'flex-start' ) }
 								/>
@@ -528,7 +527,6 @@ const SectionColumns = ({
 									icon="editor-aligncenter"
 									label={ __( 'Center', 'otter-blocks' ) }
 									showTooltip={ true }
-									isLarge
 									isPrimary={ 'center' === defaults.horizontalAlign }
 									onClick={ () => changeHorizontalAlign( 'center' ) }
 								/>
@@ -537,7 +535,6 @@ const SectionColumns = ({
 									icon="editor-alignright"
 									label={ __( 'Right', 'otter-blocks' ) }
 									showTooltip={ true }
-									isLarge
 									isPrimary={ 'flex-end' === defaults.horizontalAlign }
 									onClick={ () => changeHorizontalAlign( 'flex-end' ) }
 								/>
@@ -589,7 +586,6 @@ const SectionColumns = ({
 							/> }
 							label={ __( 'Top', 'otter-blocks' ) }
 							showTooltip={ true }
-							isLarge
 							isPrimary={ 'flex-start' === defaults.verticalAlign }
 							onClick={ () => changeVerticalAlign( 'flex-start' ) }
 						/>
@@ -601,7 +597,6 @@ const SectionColumns = ({
 							/> }
 							label={ __( 'Middle', 'otter-blocks' ) }
 							showTooltip={ true }
-							isLarge
 							isPrimary={ 'center' === defaults.verticalAlign }
 							onClick={ () => changeVerticalAlign( 'center' ) }
 						/>
@@ -613,7 +608,6 @@ const SectionColumns = ({
 							/> }
 							label={ __( 'Bottom', 'otter-blocks' ) }
 							showTooltip={ true }
-							isLarge
 							isPrimary={ 'flex-end' === defaults.verticalAlign }
 							onClick={ () => changeVerticalAlign( 'flex-end' ) }
 						/>

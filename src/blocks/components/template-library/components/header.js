@@ -112,7 +112,7 @@ const Header = ({
 						<Button
 							className="library-modal-header-tabs-button insert-button"
 							onClick={ () => importTemplate( selectedTemplate.template_url ) }
-							tabindex="0"
+							tabIndex="0"
 						>
 							<Dashicon icon="arrow-down-alt" size={ 16 } />
 							{ __( 'Insert', 'otter-blocks' ) }

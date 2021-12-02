@@ -58,6 +58,7 @@ const Edit = ({
 	for ( let i = 0; 10 > i; i++ ) {
 		stars.push(
 			<StarFilled
+				key={ i }
 				className={ classnames(
 					{
 						'low': 3 >= Math.round( overallRatings ) && i < Math.round( overallRatings ),
@@ -253,6 +254,7 @@ const Edit = ({
 							for ( let i = 0; 10 > i; i++ ) {
 								ratings.push(
 									<StarFilled
+										key={ i }
 										className={ classnames(
 											{
 												'low': 3 >= Math.round( feature.rating ) && i < Math.round( feature.rating ),
@@ -265,7 +267,7 @@ const Edit = ({
 							}
 
 							return (
-								<div className="wp-block-themeisle-blocks-review__left_feature">
+								<div className="wp-block-themeisle-blocks-review__left_feature" key={ index }>
 									<RichText
 										placeholder={ __( 'Feature title', 'otter-blocks' ) }
 										value={ feature.title }
@@ -306,7 +308,7 @@ const Edit = ({
 							</h4>
 
 							{ attributes.pros.map( ( pro, index ) => (
-								<div className="wp-block-themeisle-blocks-review__right_pros_item">
+								<div className="wp-block-themeisle-blocks-review__right_pros_item" key={ index }>
 									{ check }
 
 									<RichText
@@ -334,7 +336,7 @@ const Edit = ({
 							</h4>
 
 							{ attributes.cons.map( ( con, index ) => (
-								<div className="wp-block-themeisle-blocks-review__right_cons_item">
+								<div className="wp-block-themeisle-blocks-review__right_cons_item" key={ index }>
 									{ close }
 
 									<RichText
@@ -366,6 +368,7 @@ const Edit = ({
 						<div className="wp-block-themeisle-blocks-review__footer_buttons">
 							{ ( productAttributes?.links || attributes.links ).map( ( link, index ) => (
 								<RichText
+									key={ index }
 									placeholder={ __( 'Button label', 'otter-blocks' ) }
 									value={ link.label }
 									disabled={ 0 < productAttributes?.links }

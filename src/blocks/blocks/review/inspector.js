@@ -266,7 +266,6 @@ const Inspector = ({
 
 				<Button
 					isSecondary
-					isLarge
 					className="wp-block-themeisle-blocks-review__inspector_add"
 					onClick={ addFeature }
 				>
@@ -280,6 +279,7 @@ const Inspector = ({
 			>
 				{ 0 < attributes.pros.length && attributes.pros.map( ( pro, index ) => (
 					<PanelItem
+						key={ index }
 						title={ pro || __( 'Pro', 'otter-blocks' ) }
 						remove={ () => removePro( index ) }
 					>
@@ -295,7 +295,6 @@ const Inspector = ({
 
 				<Button
 					isSecondary
-					isLarge
 					className="wp-block-themeisle-blocks-review__inspector_add"
 					onClick={ addPro }
 				>
@@ -309,6 +308,7 @@ const Inspector = ({
 			>
 				{ 0 < attributes.cons.length && attributes.cons.map( ( con, index ) => (
 					<PanelItem
+						key={ index }
 						title={ con || __( 'Con', 'otter-blocks' ) }
 						remove={ () => removeCon( index ) }
 					>
@@ -324,7 +324,6 @@ const Inspector = ({
 
 				<Button
 					isSecondary
-					isLarge
 					className="wp-block-themeisle-blocks-review__inspector_add"
 					onClick={ addCon }
 				>
@@ -350,6 +349,7 @@ const Inspector = ({
 
 				{ 0 < productAttributes?.links?.length && productAttributes?.links?.map( ( link, index ) => (
 					<PanelItem
+						key={ index }
 						title={ link.label || __( 'Link', 'otter-blocks' ) }
 						remove={ () => removeLinks( index ) }
 					>
@@ -411,7 +411,6 @@ const Inspector = ({
 
 							<Button
 								isSecondary
-								isLarge
 								className="wp-block-themeisle-blocks-review__inspector_add"
 								onClick={ addLinks }
 							>

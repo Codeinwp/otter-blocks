@@ -66,13 +66,13 @@ const createLeafletMap = ( containerId, attributes ) => {
 			}
 		}
 	});
-	window.L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	window.L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 		subdomains: [ 'a', 'b', 'c' ]
 	}).addTo( map );
 
 	// Set the view
-	map.setView([ attributes.latitude, attributes.longitude ], attributes.zoom || 13 );
+	map.setView([ attributes.latitude, attributes.longitude ], attributes.zoom || 15 );
 
 	// Add the markers
 	attributes.markers.map( ( markerProps ) => createMarker( markerProps ) ).forEach( ( marker ) => {
