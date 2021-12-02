@@ -55,7 +55,7 @@
 		"grunt-version": "^2.0.0",
 		"grunt-wp-readme-to-markdown": "^2.0.1",
 		"replace-in-file": "^6.3.1",
-		"semantic-release": "^17.4.4",
+		"semantic-release": "^18.0.1",
 		"semantic-release-slack-bot": "^3.0.0"
 	}
 }
