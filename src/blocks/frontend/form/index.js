@@ -206,7 +206,6 @@ domReady( () => {
 	addCaptchaOnPage( forms );
 
 	forms.forEach( ( form ) => {
-		initSticky( form );
 		if ( form.classList.contains( 'can-submit-and-subscribe' ) ) {
 			renderConsentCheckbox( form );
 		}

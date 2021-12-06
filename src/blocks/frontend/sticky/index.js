@@ -4,10 +4,13 @@ import domReady from '@wordpress/dom-ready';
 /**
  * Make an element sticky
  * @param {HTMLDivElement|string} selector
- * @param {'top'|'bottom'} position
+ * @param {Object} config
  * @param {HTMLDivElement|string} container
  */
-const initSticky = ( selector, position = 'top', containerSelector ) => {
+const initSticky = ( selector, config, containerSelector ) => {
+	const position = config?.position || 'top';
+	const offset = config?.offset || 40;
+
 	const elem = 'string' === typeof selector || selector instanceof String ? document.querySelector( selector ) : selector;
 	const container = 'string' === typeof containerSelector || containerSelector instanceof String ? document.querySelector( containerSelector ) : containerSelector;
 
@@ -17,14 +20,12 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 	const elemTopPositionInPage = top + scrollTop;
 	const elemBottomPositionInPage = elemTopPositionInPage + height;
 
-	console.log( width );
-
 	// Calculate the container position in the page
 	const containerTopPosition = container ? container?.getBoundingClientRect()?.top + scrollTop : 0;
 	const containerBottomPosition = containerTopPosition + ( container?.getBoundingClientRect()?.height || 0 );
 
 	// The new positions on the screen when the sticky mod is active
-	const offsetY = '40px';
+	const offsetY = offset + 'px';
 	const offsetX = elem.offsetLeft;
 
 	// We need to activate the sticky mode more early for smooth transition
@@ -67,7 +68,7 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 			}
 		}
 
-		return '';
+		return undefined;
 	};
 
 	// @type {HTMLDivElement}
@@ -92,6 +93,8 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 
 		// Check if the scroll with the activation offset has passed the top of the element
 		const pos = getScrollActivePosition();
+		console.log( 'Position case: ' + pos );
+
 		if ( pos ) {
 			elem.classList.add( 'is-sticky' );
 			elem.style.left = offsetX;
@@ -122,7 +125,6 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 				console.warn( 'Unknown position', pos );
 			}
 			insertPlaceholder();
-			console.log( 'Position case: ' + pos );
 		} else {
 			elem.classList.remove( 'is-sticky' );
 			elem.style.top = 'unset';
@@ -138,14 +140,15 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 window.otterSticky = initSticky;
 
 /**
- *
- * @param {HTMLDivElement} elem
+ * Get the container for the given element
+ * @param {HTMLDivElement} elem The sticky element
+ * @return {HTMLDivElement} The parent container. Return `body` as default
  */
 const getStickyContainer = ( elem ) => {
 	let parent = elem?.parentElement;
 
 	while ( parent ) {
-		if ( parent.classList.contains( 'o-is-sticky-container' ) ) {
+		if ( parent.classList.contains( 'o-sticky-container' ) ) {
 			return parent;
 		}
 		parent = parent.parentElement;
@@ -154,24 +157,29 @@ const getStickyContainer = ( elem ) => {
 };
 
 /**
- *
- * @param {HTMLDivElement} elem
+ * Get the configuration options
+ * @param {HTMLDivElement} elem The sticky element
+ * @return {Object} The configuration
  */
-const getPositionByClass = ( elem ) => {
-	if ( elem.classList.contains( 'o-sticky-bottom' ) ) {
-		return 'bottom';
-	}
-	return 'top';
+const getConfigOptions = ( elem ) => {
+	const classes = Array.from( elem.classList );
+	return {
+		position: classes?.includes( 'o-sticky-pos-bottom' ) ? 'bottom' : 'top',
+		offset: parseInt( classes
+			?.filter( c => c?.includes( 'o-sticky-offset' ) )
+			?.reduce( ( acc, c ) =>{
+				return c?.split( '-' )?.pop();
+			}, 40 ) )
+	};
 };
 
 domReady( () => {
-	const elems = document.querySelectorAll( '.o-is-sticky' );
+	const elems = document.querySelectorAll( '.o-sticky' );
 
-	elems.forEach( ( elem, index ) => {
-
+	elems.forEach( ( elem ) => {
 		initSticky(
 			elem,
-			getPositionByClass( elem ),
+			getConfigOptions( elem ),
 			getStickyContainer( elem )
 		);
 	});

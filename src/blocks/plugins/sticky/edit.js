@@ -38,8 +38,8 @@ const Edit = ({
 	children
 }) => {
 
-	const isContainer = attributes.className?.includes( 'o-is-sticky-container' );
-	const position = attributes.className?.includes( 'o-sticky-bottom' ) ? 'o-sticky-bottom' : 'o-sticky-top';
+	const isContainer = attributes.className?.includes( 'o-sticky-container' );
+	const position = attributes.className?.includes( 'o-sticky-pos-bottom' ) ? 'o-sticky-pos-bottom' : 'o-sticky-pos-top';
 
 	const { block, isSticky, classes } = useSelect( ( select ) => {
 		const {
@@ -48,7 +48,7 @@ const Edit = ({
 
 		const block = getSelectedBlock();
 		const classes = block?.attributes?.className?.split( ' ' );
-		const isSticky = classes?.includes( 'o-is-sticky' ) || false;
+		const isSticky = classes?.includes( 'o-sticky' ) || false;
 
 		return {
 			block,
@@ -58,10 +58,10 @@ const Edit = ({
 	});
 
 
-	const addCSSClass = ( cssClass ) => {
+	const addCSSClass = ( cssClass, removeCondition ) => {
 		if ( hasBlockSupport( block, 'customClassName', true ) ) {
 			const attr = block.attributes;
-			const className = classes?.filter( c => cssClass !== c ) || [];
+			const className = classes?.filter( c => cssClass !== c || ( ! removeCondition || ! cssClass.includes( removeCondition ) ) ) || [];
 
 			if ( isSticky ) {
 				className.push( cssClass );
@@ -72,33 +72,58 @@ const Edit = ({
 		}
 	};
 
+	const getOffsetValue = classes => {
+		return parseInt( classes
+			?.filter( c => c?.includes( 'o-sticky-offset' ) )
+			?.reduce( ( acc, c ) =>{
+				return c?.split( '-' )?.pop();
+			}, 40 ) );
+	};
+
+	const setOffsetValue = value => {
+		addCSSClass( `o-sticky-offset-${ value }`, 'o-sticky-offset' );
+	};
+
 	/*
 		TODO: Make the values from the Inspector to be classes
 		E.g:
 			Position -> 'o-sticky-pos-top'
-			Top Offset -> 'o-sticky-offset-top-40' where 40 will be value (it will be extracted by the frontend script)
+			Top Offset -> 'o-sticky-offset--40' where 40 will be value (it will be extracted by the frontend script)
 
-		And element with the classe like this 'o-is-sticky o-sticky-pos-bottom o-sticky-bottom-30', it will be a sticky element with 30px distance from the bottom of the window viewport
+		And element with the classe like this 'o-sticky o-sticky-pos-bottom o-sticky-pos-bottom-30', it will be a sticky element with 30px distance from the bottom of the window viewport
 	*/
 
 	return (
 		<Fragment>
-			<InspectorControls>
-				<PanelBody
-					title={ __( 'Sticky', 'otter-blocks' ) }
-					initialOpen={ false }
-				>
-					<SelectControl
-						label={ __( 'Position', 'otter-blocks' ) }
-						value={ position }
-						options={[
-							{ label: __( 'Top', 'otter-blocks' ), value: 'o-sticky-top' },
-							{ label: __( 'Bottom', 'otter-blocks' ), value: 'o-sticky-bottom' }
-						]}
-						onChange={ value => addCSSClass( value )}
-					/>
-				</PanelBody>
-			</InspectorControls>
+			{
+				! isContainer && (
+					<InspectorControls>
+						<PanelBody
+							title={ __( 'Sticky', 'otter-blocks' ) }
+							initialOpen={ false }
+						>
+							<SelectControl
+								label={ __( 'Position', 'otter-blocks' ) }
+								value={ position }
+								options={[
+									{ label: __( 'Top', 'otter-blocks' ), value: 'o-sticky-pos-top' },
+									{ label: __( 'Bottom', 'otter-blocks' ), value: 'o-sticky-pos-bottom' }
+								]}
+								onChange={ addCSSClass }
+							/>
+
+							<RangeControl
+								label={ __( 'Distance from screen', 'otter-blocks' ) }
+								value={ getOffsetValue( classes ) }
+								min={0}
+								max={80}
+								onChange={ setOffsetValue }
+							/>
+						</PanelBody>
+					</InspectorControls>
+				)
+			}
+
 			<div className={classnames( 'o-sticky-highlight', { 'o-container': isContainer })}>
 				<div className="o-sticky-badge">
 					{
