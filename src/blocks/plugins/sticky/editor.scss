@@ -3,14 +3,18 @@
 
 	.o-sticky-badge {
 		position: absolute;
-		left: -20px;
-		top: -10px;
+		right: -20px;
+		top: -11px;
 		background: red;
 		text-align: center;
 		border-radius: 3px;
 		color: white;
 		padding: 3px 5px;
 		font-size: 10px;
-		z-index: 1000;
+		z-index: 30;
+	}
+
+	&.o-container {
+		border-top: 1px dashed red;
 	}
 }

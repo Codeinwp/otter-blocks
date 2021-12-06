@@ -8,6 +8,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
 	RangeControl,
+	SelectControl,
 	ToggleControl
 } from '@wordpress/components';
 
@@ -16,16 +17,61 @@ import {
 	useEffect
 } from '@wordpress/element';
 
+import {
+	dispatch,
+	useDispatch,
+	useSelect
+} from '@wordpress/data';
+
+
+import { hasBlockSupport } from '@wordpress/blocks';
+
+
 import './editor.scss';
+import classnames from 'classnames';
+
+
+const updateBlockAttributes = dispatch( 'core/block-editor' ).updateBlockAttributes;
 
 const Edit = ({
 	attributes,
 	children
 }) => {
 
-	const isContainer = attributes.className.includes( 'o-is-sticky-container' );
+	const { block, isSticky, classes, isContainer, position } = useSelect( ( select ) => {
+		const {
+			getSelectedBlock
+		} = select( 'core/block-editor' );
 
-	// TODO: add function to add the classes to the block
+		const block = getSelectedBlock();
+		const classes = block?.attributes?.className?.split( ' ' );
+		const isSticky = classes?.includes( 'o-is-sticky' ) || false;
+		const position = classes?.includes( 'o-sticky-bottom' ) ? 'o-sticky-bottom' : 'o-sticky-top';
+		const isContainer = classes?.includes( 'o-is-sticky-container' ) || false;
+
+		return {
+			block,
+			isSticky,
+			isContainer,
+			position,
+			classes
+		};
+	});
+
+
+	const addCSSClass = ( cssClass ) => {
+		if ( hasBlockSupport( block, 'customClassName', true ) ) {
+			const attr = block.attributes;
+			const className = classes?.filter( c => cssClass !== c ) || [];
+
+			if ( isSticky ) {
+				className.push( cssClass );
+			}
+			attr.className = className.join( ' ' );
+			attr.hasCustomCSS = true;
+			updateBlockAttributes( block.clientId, attr );
+		}
+	};
 
 	/*
 		TODO: Make the values from the Inspector to be classes
@@ -43,10 +89,18 @@ const Edit = ({
 					title={ __( 'Sticky', 'otter-blocks' ) }
 					initialOpen={ false }
 				>
-					WIP
+					<SelectControl
+						label={ __( 'Position', 'otter-blocks' ) }
+						value={ position }
+						options={[
+							{ label: __( 'Top', 'otter-blocks' ), value: 'o-sticky-top' },
+							{ label: __( 'Bottom', 'otter-blocks' ), value: 'o-sticky-bottom' }
+						]}
+						onChange={ value => addCSSClass( value )}
+					/>
 				</PanelBody>
 			</InspectorControls>
-			<div className="o-sticky-highlight">
+			<div className={classnames( 'o-sticky-highlight', { 'o-container': isContainer })}>
 				<div className="o-sticky-badge">
 					{
 						isContainer ? __( 'Sticky Container' ) : __( 'Sticky Element' )
