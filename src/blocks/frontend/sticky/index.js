@@ -57,7 +57,7 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 		}
 
 		if ( container ) {
-			if ( 'top' === position && (  scrollBottom + activationOffset + height > containerBottomPosition ) ) {
+			if ( 'top' === position && (  scrollTop + activationOffset + height > containerBottomPosition ) ) {
 				return 'constrain-top';
 			}
 			if ( 'bottom' === position && (  scrollBottom - activationOffset  >= containerBottomPosition ) ) {
