@@ -13,9 +13,11 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 
 	// Calculate the element position in the page
 	const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-	const { top, height } = elem.getBoundingClientRect();
+	const { top, height, width } = elem.getBoundingClientRect();
 	const elemTopPositionInPage = top + scrollTop;
 	const elemBottomPositionInPage = elemTopPositionInPage + height;
+
+	console.log( width );
 
 	// Calculate the container position in the page
 	const containerTopPosition = container ? container?.getBoundingClientRect()?.top + scrollTop : 0;
@@ -93,6 +95,7 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 		if ( pos ) {
 			elem.classList.add( 'is-sticky' );
 			elem.style.left = offsetX;
+			elem.style.width = width + 'px';
 			switch ( pos ) {
 			case 'top':
 				elem.style.top = offsetY;
@@ -167,7 +170,7 @@ const getPositionByClass = ( elem ) => {
 domReady( () => {
 	const elems = document.querySelectorAll( '.o-is-sticky' );
 
-	elems.forEach( elem => {
+	elems.forEach( ( elem, index ) => {
 
 		initSticky(
 			elem,
