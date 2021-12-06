@@ -38,7 +38,10 @@ const Edit = ({
 	children
 }) => {
 
-	const { block, isSticky, classes, isContainer, position } = useSelect( ( select ) => {
+	const isContainer = attributes.className?.includes( 'o-is-sticky-container' );
+	const position = attributes.className?.includes( 'o-sticky-bottom' ) ? 'o-sticky-bottom' : 'o-sticky-top';
+
+	const { block, isSticky, classes } = useSelect( ( select ) => {
 		const {
 			getSelectedBlock
 		} = select( 'core/block-editor' );
@@ -46,14 +49,10 @@ const Edit = ({
 		const block = getSelectedBlock();
 		const classes = block?.attributes?.className?.split( ' ' );
 		const isSticky = classes?.includes( 'o-is-sticky' ) || false;
-		const position = classes?.includes( 'o-sticky-bottom' ) ? 'o-sticky-bottom' : 'o-sticky-top';
-		const isContainer = classes?.includes( 'o-is-sticky-container' ) || false;
 
 		return {
 			block,
 			isSticky,
-			isContainer,
-			position,
 			classes
 		};
 	});

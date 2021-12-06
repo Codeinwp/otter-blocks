@@ -24,6 +24,13 @@ import Edit from './edit';
 
 const updateBlockAttributes = dispatch( 'core/block-editor' ).updateBlockAttributes;
 
+const EXCEPTED_BLOCK_CONDITIONS = [ '-item', 'form-' ]; // Exclude sub-blocks
+const CONTAINER_BLOCKS = [
+	'themeisle-blocks/advanced-colum',
+	'group',
+	'columns'
+];
+
 const StickyMenu = () => {
 
 	const { block, isSticky, classes, isContainer } = useSelect( ( select ) => {
@@ -72,22 +79,32 @@ const StickyMenu = () => {
 		}
 	};
 
+	if ( EXCEPTED_BLOCK_CONDITIONS.some( cond => block?.name?.includes( cond ) ) ) { // Exclude sub-blocks
+		return (
+			<Fragment></Fragment>
+		);
+	}
+
 	return (
 		<Fragment>
 			<PluginBlockSettingsMenuItem
-				icon="share-alt2"
+				icon="sticky"
 				label={ ! isSticky ? __( 'Transform to sticky element', 'otter-blocks' ) : __( 'Remove sticky element', 'otter-blocks' ) }
 				onClick={() => {
 					makeBlockSticky();
 				}}
 			/>
-			<PluginBlockSettingsMenuItem
-				icon="share-alt2"
-				label={ ! isContainer ? __( 'Transform to sticky container', 'otter-blocks' ) : __( 'Remove sticky container', 'otter-blocks' ) }
-				onClick={() => {
-					makeBlockContainer();
-				}}
-			/>
+			{
+				( CONTAINER_BLOCKS.some( cond => block?.name?.includes( cond ) ) ) && (
+					<PluginBlockSettingsMenuItem
+						icon="sticky"
+						label={ ! isContainer ? __( 'Transform to sticky container', 'otter-blocks' ) : __( 'Remove sticky container', 'otter-blocks' ) }
+						onClick={() => {
+							makeBlockContainer();
+						}}
+					/>
+				)
+			}
 		</Fragment>
 	);
 };
