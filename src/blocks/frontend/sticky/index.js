@@ -116,7 +116,7 @@ const initSticky = ( selector, position = 'top', containerSelector ) => {
 				elem.style.transformOrigin = 'left bottom';
 
 				// TODO: improve formule
-				elem.style.transform = `translateY(${ containerTopPosition + height - scrollTop }px)`;
+				elem.style.transform = `translateY(${ containerBottomPosition - scrollBottom }px)`;
 				break;
 			default:
 				console.warn( 'Unknown position', pos );
@@ -158,11 +158,8 @@ const getStickyContainer = ( elem ) => {
  * @param {HTMLDivElement} elem
  */
 const getPositionByClass = ( elem ) => {
-	if ( elem.classList.contains( '.o-sticky-top' ) ) {
-		return 'top';
-	}
-	if ( elem.classList.contains( '.o-sticky-bottom' ) ) {
-		return 'botton';
+	if ( elem.classList.contains( 'o-sticky-bottom' ) ) {
+		return 'bottom';
 	}
 	return 'top';
 };
