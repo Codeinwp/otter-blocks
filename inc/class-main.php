@@ -175,6 +175,7 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Plugins\Block_Conditions',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Dashboard',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Options_Settings',
+			'\ThemeIsle\GutenbergBlocks\Plugins\WooCommerce_Builder',
 			'\ThemeIsle\GutenbergBlocks\Render\AMP\Circle_Counter_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\AMP\Lottie_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\AMP\Slider_Block',
@@ -228,7 +229,9 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Product_Image_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Price_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Short_Description_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Title_Block',
 		);
 
 		foreach ( $classnames as $classname ) {
@@ -358,6 +361,21 @@ class Main {
 			$asset_file['version'],
 			true
 		);
+
+		
+		if ( class_exists( 'WooCommerce' ) && defined( 'NEVE_VERSION' ) && 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ) && 'post.php' === $pagenow && isset( $_GET['post'] ) && 'product' === get_post_type( $_GET['post'] ) ) {
+			global $pagenow;
+
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/woocommerce.asset.php';
+	
+			wp_enqueue_script(
+				'otter-blocks-woocommerce',
+				plugin_dir_url( $this->get_dir() ) . 'build/blocks/woocommerce.js',
+				$asset_file['dependencies'],
+				$asset_file['version'],
+				true
+			);
+		}
 
 		wp_enqueue_script(
 			'glidejs',

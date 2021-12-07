@@ -1,6 +1,6 @@
 <?php
 /**
- * Product_Image_Block
+ * Product_Title_Block
  *
  * @package ThemeIsle\GutenbergBlocks\Render
  */
@@ -10,9 +10,9 @@ namespace ThemeIsle\GutenbergBlocks\Render;
 use ThemeIsle\GutenbergBlocks\Base_Block;
 
 /**
- * Class Product_Image_Block
+ * Class Product_Title_Block
  */
-class Product_Image_Block extends Base_Block {
+class Product_Title_Block extends Base_Block {
 
 	/**
 	 * Every block needs a slug, so we need to define one and assign it to the `$this->block_slug` property
@@ -20,7 +20,7 @@ class Product_Image_Block extends Base_Block {
 	 * @return mixed
 	 */
 	protected function set_block_slug() {
-		$this->block_slug = 'product-image';
+		$this->block_slug = 'product-title';
 	}
 
 	/**
@@ -29,11 +29,7 @@ class Product_Image_Block extends Base_Block {
 	 * @return mixed
 	 */
 	protected function set_attributes() {
-		$this->attributes = array(
-			'product' => array(
-				'type' => 'number',
-			),
-		);
+		$this->attributes = array();
 	}
 
 	/**
@@ -46,15 +42,12 @@ class Product_Image_Block extends Base_Block {
 	 * @return mixed|string
 	 */
 	protected function render( $attributes ) {
-		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! class_exists( 'WooCommerce' ) && ! isset( $attributes['product'] ) ) {
+		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! class_exists( 'WooCommerce' ) ) {
 			return;
 		}
 
         ob_start();
-        $product = get_post( $attributes['product'], OBJECT );
-        setup_postdata( $product );
-		woocommerce_show_product_images();
-		wp_reset_postdata();
+        the_title( '<h1 class="product_title entry-title">', '</h1>' );
         $output = ob_get_clean();
         return $output;
 	}
