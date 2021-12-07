@@ -229,6 +229,9 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Add_To_Cart_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Images_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Meta_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Product_Price_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Product_Short_Description_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Product_Title_Block',
@@ -362,12 +365,11 @@ class Main {
 			true
 		);
 
-		
-		if ( class_exists( 'WooCommerce' ) && defined( 'NEVE_VERSION' ) && 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ) && 'post.php' === $pagenow && isset( $_GET['post'] ) && 'product' === get_post_type( $_GET['post'] ) ) {
-			global $pagenow;
+		global $pagenow;
 
+		if ( class_exists( 'WooCommerce' ) && defined( 'NEVE_VERSION' ) && 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ) && 'post.php' === $pagenow && isset( $_GET['post'] ) && 'product' === get_post_type( sanitize_text_field( $_GET['post'] ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/woocommerce.asset.php';
-	
+
 			wp_enqueue_script(
 				'otter-blocks-woocommerce',
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/woocommerce.js',

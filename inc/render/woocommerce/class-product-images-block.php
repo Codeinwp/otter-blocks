@@ -1,6 +1,6 @@
 <?php
 /**
- * Product_Price_Block
+ * Product_Images_Block
  *
  * @package ThemeIsle\GutenbergBlocks\Render
  */
@@ -10,9 +10,9 @@ namespace ThemeIsle\GutenbergBlocks\Render;
 use ThemeIsle\GutenbergBlocks\Base_Block;
 
 /**
- * Class Product_Price_Block
+ * Class Product_Images_Block
  */
-class Product_Price_Block extends Base_Block {
+class Product_Images_Block extends Base_Block {
 
 	/**
 	 * Every block needs a slug, so we need to define one and assign it to the `$this->block_slug` property
@@ -20,7 +20,7 @@ class Product_Price_Block extends Base_Block {
 	 * @return mixed
 	 */
 	protected function set_block_slug() {
-		$this->block_slug = 'product-price';
+		$this->block_slug = 'product-images';
 	}
 
 	/**
@@ -53,7 +53,12 @@ class Product_Price_Block extends Base_Block {
 		if ( ! $product ) {
 			return;
 		};
-		woocommerce_template_single_price();
+
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			remove_action( 'woocommerce_product_thumbnails', 'woocommerce_show_product_thumbnails', 20 );
+		}
+
+		woocommerce_show_product_images();
 		$output = ob_get_clean();
 		return $output;
 	}

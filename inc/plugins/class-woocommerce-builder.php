@@ -27,10 +27,13 @@ class WooCommerce_Builder {
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'enable_block_editor' ), 11, 2 );
 		add_filter( 'wc_get_template_part', array( $this, 'wc_get_template_part' ), 1000, 3 );
 		add_action( 'themeisle_gutenberg_woocommerce_content', 'the_content' );
+		add_filter( 'body_class', array( $this, 'add_body_class' ), 1000, 1 );
 	}
 
 	/**
 	 * Register Metabox
+	 * 
+	 * @param string $post_type Post type.
 	 *
 	 * @since   2.0.0
 	 * @access  public
@@ -47,7 +50,7 @@ class WooCommerce_Builder {
 	}
 
 	/**
-	 * Register Metabox
+	 * Render Metabox
 	 * 
 	 * @param string $post_type Post type.
 	 * 
@@ -57,12 +60,12 @@ class WooCommerce_Builder {
 	public function render_metabox( $post_type ) {
 		$woo_builder_enabled = get_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', true );
 
-		if ( boolval ( $woo_builder_enabled ) ) {
+		if ( boolval( $woo_builder_enabled ) ) {
 			?>
 			<div class="clear">
 				<p><?php _e( 'You can go back to the regular editor from this option.', 'otter-blocks' ); ?></p>
-	
-				<a href="<?php echo add_query_arg( 'otter-woo-builder', 0 ); ?>" class="button button-primary" id="otter-woo-builder">
+
+				<a href="<?php echo esc_url( add_query_arg( 'otter-woo-builder', 0 ) ); ?>" class="button button-primary" id="otter-woo-builder">
 					<?php _e( 'Disable WooCommerce Builder', 'otter-blocks' ); ?>
 				</a>
 			</div>
@@ -71,34 +74,34 @@ class WooCommerce_Builder {
 			?>
 			<div class="clear">
 				<p><?php _e( 'Use WooCommerce Builder by Otter to build a custom page for your WooCommerce products.', 'otter-blocks' ); ?></p>
-	
-				<a href="<?php echo add_query_arg( 'otter-woo-builder', 1 ); ?>" class="button button-primary" id="otter-woo-builder">
+
+				<a href="<?php echo esc_url( add_query_arg( 'otter-woo-builder', 1 ) ); ?>" class="button button-primary" id="otter-woo-builder">
 					<?php _e( 'Enable WooCommerce Builder', 'otter-blocks' ); ?>
 				</a>
 			</div>
-		<?php
+			<?php
 		}
 	}
 
 	/**
 	 * Enable the Block Editfor
 	 * 
-	 * @param bool $can_edit Whether the post type can be edited or not.
+	 * @param bool   $can_edit Whether the post type can be edited or not.
 	 * @param string $post_type Post type.
 	 *
 	 * @since   2.0.0
 	 * @access  public
 	 */
 	public function enable_block_editor( $can_edit, $post_type ) {
-		if ( isset( $_GET['otter-woo-builder'] ) && 'product' === $post_type ) {
-			if ( ! boolval( $_GET['otter-woo-builder'] ) ) {
-				$_GET['toggle-woobuilder'] = false;
+		if ( isset( $_GET['otter-woo-builder'] ) && 'product' === $post_type ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+			if ( ! boolval( $_GET['otter-woo-builder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+				$_GET['toggle-woobuilder'] = 0; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 				delete_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder' );
-			}  else {
-				update_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', $_GET['otter-woo-builder'] );
+			} else {
+				update_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', rest_sanitize_boolean( $_GET['otter-woo-builder'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			}
 
-			return boolval( $_GET['otter-woo-builder'] );
+			return rest_sanitize_boolean( $_GET['otter-woo-builder'] ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		}
 
 		$woo_builder_enabled = get_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', true );
@@ -107,7 +110,7 @@ class WooCommerce_Builder {
 	}
 
 	/**
-	 * Enable the Block Editfor
+	 * Get Block Template
 	 * 
 	 * @param string $template Template path.
 	 * @param string $slug Template slug.
@@ -128,6 +131,25 @@ class WooCommerce_Builder {
 		}
 
 		return $template;
+	}
+
+	/**
+	 * Add Body Class
+	 * 
+	 * @param array $classes Body classes.
+	 *
+	 * @since   2.0.0
+	 * @access  public
+	 * @return  array
+	 */
+	public function add_body_class( $classes ) {
+		$woo_builder_enabled = get_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', true );
+
+		if ( boolval( $woo_builder_enabled ) ) {
+			$classes[] = 'o-woocommerce-builder';
+		}
+
+		return $classes;
 	}
 
 	/**

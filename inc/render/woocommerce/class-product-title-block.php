@@ -46,9 +46,15 @@ class Product_Title_Block extends Base_Block {
 			return;
 		}
 
-        ob_start();
-        the_title( '<h1 class="product_title entry-title">', '</h1>' );
-        $output = ob_get_clean();
-        return $output;
+		ob_start();
+
+		global $product;
+
+		if ( ! $product ) {
+			return;
+		};
+		woocommerce_template_single_title();
+		$output = ob_get_clean();
+		return $output;
 	}
 }

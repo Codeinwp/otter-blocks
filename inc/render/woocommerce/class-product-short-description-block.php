@@ -47,19 +47,13 @@ class Product_Short_Description_Block extends Base_Block {
 		}
 
 		ob_start();
-		global $post;
 
-		$short_description = apply_filters( 'woocommerce_short_description', $post->post_excerpt );
-		
-		if ( ! $short_description ) {
+		global $product;
+
+		if ( ! $product ) {
 			return;
-		}
-		
-		?>
-		<div class="woocommerce-product-details__short-description">
-			<?php echo $short_description; // WPCS: XSS ok. ?>
-		</div>
-		<?php
+		};
+		woocommerce_template_single_excerpt();
 		$output = ob_get_clean();
 		return $output;
 	}
