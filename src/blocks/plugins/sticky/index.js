@@ -54,7 +54,7 @@ const StickyMenu = () => {
 	const makeBlockSticky = () => {
 		if ( hasBlockSupport( block, 'customClassName', true ) ) {
 			const attr = block.attributes;
-			const className = classes?.filter( c => 'o-sticky' !== c ) || [];
+			const className = classes?.filter( c => ! c.includes( 'o-sticky' ) ) || [];
 
 			if ( ! isSticky ) {
 				className.push( 'o-sticky' );
@@ -68,7 +68,7 @@ const StickyMenu = () => {
 	const makeBlockContainer = () => {
 		if ( hasBlockSupport( block, 'customClassName', true ) ) {
 			const attr = block.attributes;
-			const className = classes?.filter( c => 'o-sticky-container' !== c ) || [];
+			const className = classes?.filter( c => ! c.includes( 'o-sticky' )  ) || [];
 
 			if ( ! isContainer ) {
 				className.push( 'o-sticky-container' );
@@ -112,10 +112,12 @@ const StickyMenu = () => {
 const withStickyExtension = createHigherOrderComponent( BlockEdit => {
 	return ( props ) => {
 
-		if (  props.attributes?.className?.includes( 'o-sticky', 'o-sticky-container' ) ) {
+		if ( ( props.attributes?.className?.includes( 'o-sticky' ) ||  props.attributes?.className?.includes( 'o-sticky-container' )  ) ) {
 			return (
 				<Edit
 					attributes={props.attributes}
+					isSelected={props.isSelected}
+					clientId={props.clientId}
 				>
 					<BlockEdit { ...props } />
 				</Edit>

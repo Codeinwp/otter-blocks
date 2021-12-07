@@ -14,12 +14,13 @@ import {
 
 import {
 	Fragment,
-	useEffect
+	useEffect,
+	useState
 } from '@wordpress/element';
 
 import {
 	dispatch,
-	useDispatch,
+	select,
 	useSelect
 } from '@wordpress/data';
 
@@ -32,48 +33,79 @@ import classnames from 'classnames';
 
 
 const updateBlockAttributes = dispatch( 'core/block-editor' ).updateBlockAttributes;
+const getBlock = select( 'core/block-editor' ).getBlock;
 
 const Edit = ({
 	attributes,
-	children
+	children,
+	isSelected,
+	clientId
 }) => {
 
 	const isContainer = attributes.className?.includes( 'o-sticky-container' );
 	const position = attributes.className?.includes( 'o-sticky-pos-bottom' ) ? 'o-sticky-pos-bottom' : 'o-sticky-pos-top';
+	const isSticky = attributes.className?.includes( 'o-sticky' );
+	const [ parentClientId, setParentClientId ] = useState( '' );
 
-	const { block, isSticky, classes } = useSelect( ( select ) => {
+	const { parent, parents } = useSelect( ( select ) => {
 		const {
-			getSelectedBlock
+			getBlockParents,
+			getBlocksByClientId
 		} = select( 'core/block-editor' );
 
-		const block = getSelectedBlock();
-		const classes = block?.attributes?.className?.split( ' ' );
-		const isSticky = classes?.includes( 'o-sticky' ) || false;
+		const parents = getBlocksByClientId( getBlockParents( clientId ) );
+		const parent = parents?.filter( block => block?.attributes?.className?.includes( 'o-sticky-container' ) )?.pop();
 
 		return {
-			block,
-			isSticky,
-			classes
+			parent,
+			parents
 		};
-	});
+	}, []);
 
+	useEffect( () => {
 
-	const addCSSClass = ( cssClass, removeCondition ) => {
-		if ( hasBlockSupport( block, 'customClassName', true ) ) {
+		if ( parentClientId ) {
+			const parentDom = document.querySelector( `#block-${parentClientId} > .o-sticky-highlight ` );
+			console.log( parentDom, isSelected );
+			parentDom?.classList?.toggle( 'active', isSelected );
+			parentDom?.querySelector( '.o-sticky-badge' )?.classList?.toggle( 'active', isSelected );
+		}
+		console.log({isSelected});
+
+	}, [ isSelected, parentClientId ]);
+
+	useEffect( () => {
+		if ( parent ) {
+			setParentClientId( parent.clientId );
+		}
+	}, [ parent ]);
+
+	const addCSSClass = ( block, cssClass, removeCondition ) => {
+		if ( block && hasBlockSupport( block, 'customClassName', true ) ) {
 			const attr = block.attributes;
-			const className = classes?.filter( c => cssClass !== c || ( ! removeCondition || ! cssClass.includes( removeCondition ) ) ) || [];
+			const classes = block?.attributes?.className?.split( ' ' );
+			const isSticky = classes?.includes( 'o-sticky' ) || false;
+			const className = classes?.filter( c => cssClass !== c && ( ! removeCondition || ! c.includes( removeCondition ) ) ) || [];
 
-			if ( isSticky ) {
+			if ( isSticky && cssClass ) {
 				className.push( cssClass );
 			}
+
+			// debugger;
+
+			if ( 'o-sticky-container' === cssClass ) {
+				className.push( 'o-sticky-container' );
+			}
+
 			attr.className = className.join( ' ' );
 			attr.hasCustomCSS = true;
 			updateBlockAttributes( block.clientId, attr );
 		}
 	};
 
-	const getOffsetValue = classes => {
-		return parseInt( classes
+	const getOffsetValue = () => {
+		return parseInt( attributes?.className
+			?.split( ' ' )
 			?.filter( c => c?.includes( 'o-sticky-offset' ) )
 			?.reduce( ( acc, c ) =>{
 				return c?.split( '-' )?.pop();
@@ -82,6 +114,27 @@ const Edit = ({
 
 	const setOffsetValue = value => {
 		addCSSClass( `o-sticky-offset-${ value }`, 'o-sticky-offset' );
+	};
+
+	const countStickyComponents = ( parentClientId ) => {
+		const parentDOM = document.querySelector( `#block-${parentClientId}` );
+		return parentDOM.querySelectorAll( '.o-sticky:not(.o-sticky-container)' ).length;
+	};
+
+	const selectParent = ( newParentId ) => {
+		parents.forEach( block => {
+			if ( newParentId !== block.clientId && 1 === countStickyComponents( block.clientId ) ) {
+				addCSSClass( block, undefined, 'o-sticky' );
+			}
+		});
+
+		if ( parent ) {
+			const parentDom = document.querySelector( `#block-${parentClientId} > .o-sticky-highlight ` );
+			parentDom?.classList?.remove( 'active' );
+			parentDom?.querySelector( '.o-sticky-badge' )?.classList?.remove( 'active' );
+		}
+		addCSSClass( getBlock( newParentId ), 'o-sticky-container' );
+		setParentClientId( newParentId );
 	};
 
 	/*
@@ -102,6 +155,19 @@ const Edit = ({
 							title={ __( 'Sticky', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
+							{
+								0 < parents?.length && (
+									<SelectControl
+										label={ __( 'Parent Container', 'otter-blocks' ) }
+										value={ parent?.clientId }
+										options={
+											parents.map( p => ({ label: p.name, value: p.clientId }) )
+										}
+										onChange={ selectParent }
+									/>
+								)
+							}
+
 							<SelectControl
 								label={ __( 'Position', 'otter-blocks' ) }
 								value={ position }
@@ -109,12 +175,12 @@ const Edit = ({
 									{ label: __( 'Top', 'otter-blocks' ), value: 'o-sticky-pos-top' },
 									{ label: __( 'Bottom', 'otter-blocks' ), value: 'o-sticky-pos-bottom' }
 								]}
-								onChange={ addCSSClass }
+								onChange={ value => addCSSClass( getBlock( clientId ), value ) }
 							/>
 
 							<RangeControl
 								label={ __( 'Distance from screen', 'otter-blocks' ) }
-								value={ getOffsetValue( classes ) }
+								value={ getOffsetValue( ) }
 								min={0}
 								max={80}
 								onChange={ setOffsetValue }
@@ -124,14 +190,21 @@ const Edit = ({
 				)
 			}
 
-			<div className={classnames( 'o-sticky-highlight', { 'o-container': isContainer })}>
-				<div className="o-sticky-badge">
-					{
-						isContainer ? __( 'Sticky Container' ) : __( 'Sticky Element' )
-					}
-				</div>
-				{children}
-			</div>
+			{
+				( isSticky || isContainer ) ? (
+					<div className={classnames( 'o-sticky-highlight', { 'o-container': isContainer }, {'active': isSelected})}>
+						<div className={classnames( 'o-sticky-badge', {'active': isSelected})}>
+							{
+								isContainer ? __( 'Sticky Container' ) : __( 'Sticky Element' )
+							}
+						</div>
+						{children}
+					</div>
+				) : (
+					children
+				)
+			}
+
 		</Fragment>
 	);
 };

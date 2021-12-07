@@ -2,6 +2,7 @@
 	position:relative;
 
 	.o-sticky-badge {
+		display: none;
 		position: absolute;
 		right: -20px;
 		top: -11px;
@@ -13,10 +14,17 @@
 		padding: 3px 5px;
 		font-size: 10px;
 		z-index: 30;
+
+		&.active {
+			display: inherit;
+		}
+	}
+
+	&.active {
+		outline: 1px dashed var(--wp-admin-theme-color);
 	}
 
 	&.o-container {
-		outline: 1px dashed var(--wp-admin-theme-color);
 		&> .o-sticky-badge {
 			background-color: #EEF2FE;
 		}
