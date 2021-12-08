@@ -233,6 +233,7 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Render\Product_Images_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Product_Meta_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Product_Price_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Related_Products_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Product_Short_Description_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Product_Title_Block',
 		);
