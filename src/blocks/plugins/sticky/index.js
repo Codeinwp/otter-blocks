@@ -25,11 +25,6 @@ import Edit from './edit';
 const updateBlockAttributes = dispatch( 'core/block-editor' ).updateBlockAttributes;
 
 const EXCEPTED_BLOCK_CONDITIONS = [ '-item', 'form-' ]; // Exclude sub-blocks
-const CONTAINER_BLOCKS = [
-	'themeisle-blocks/advanced-colum',
-	'group',
-	'columns'
-];
 
 const StickyMenu = () => {
 
@@ -65,20 +60,6 @@ const StickyMenu = () => {
 		}
 	};
 
-	const makeBlockContainer = () => {
-		if ( hasBlockSupport( block, 'customClassName', true ) ) {
-			const attr = block.attributes;
-			const className = classes?.filter( c => ! c.includes( 'o-sticky' )  ) || [];
-
-			if ( ! isContainer ) {
-				className.push( 'o-sticky-container' );
-			}
-			attr.className = className.join( ' ' );
-			attr.hasCustomCSS = true;
-			updateBlockAttributes( block.clientId, attr );
-		}
-	};
-
 	if ( EXCEPTED_BLOCK_CONDITIONS.some( cond => block?.name?.includes( cond ) ) ) { // Exclude sub-blocks
 		return (
 			<Fragment></Fragment>
@@ -94,37 +75,23 @@ const StickyMenu = () => {
 					makeBlockSticky();
 				}}
 			/>
-			{
-				( CONTAINER_BLOCKS.some( cond => block?.name?.includes( cond ) ) ) && (
-					<PluginBlockSettingsMenuItem
-						icon="sticky"
-						label={ ! isContainer ? __( 'Transform to sticky container', 'otter-blocks' ) : __( 'Remove sticky container', 'otter-blocks' ) }
-						onClick={() => {
-							makeBlockContainer();
-						}}
-					/>
-				)
-			}
 		</Fragment>
 	);
 };
 
 const withStickyExtension = createHigherOrderComponent( BlockEdit => {
 	return ( props ) => {
+		return (
+			<Fragment>
+				{
+					( props.attributes?.className?.includes( 'o-sticky' ) ||  props.attributes?.className?.includes( 'o-sticky-container' )  ) && (
+						<Edit { ...props }/>
+					)
+				}
+				<BlockEdit { ...props } />
+			</Fragment>
+		);
 
-		if ( ( props.attributes?.className?.includes( 'o-sticky' ) ||  props.attributes?.className?.includes( 'o-sticky-container' )  ) ) {
-			return (
-				<Edit
-					attributes={props.attributes}
-					isSelected={props.isSelected}
-					clientId={props.clientId}
-				>
-					<BlockEdit { ...props } />
-				</Edit>
-			);
-		}
-
-		return <BlockEdit { ...props } />;
 	};
 }, 'withStickyExtension' );
 

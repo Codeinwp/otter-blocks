@@ -144,16 +144,23 @@ window.otterSticky = initSticky;
  * @param {HTMLDivElement} elem The sticky element
  * @return {HTMLDivElement} The parent container. Return `body` as default
  */
-const getStickyContainer = ( elem ) => {
+const getStickyContainer = ( elem, scope ) => {
 	let parent = elem?.parentElement;
-
+	const sections = [];
 	while ( parent ) {
-		if ( parent.classList.contains( 'o-sticky-container' ) ) {
+		if ( parent.classList.contains( 'wp-block-themeisle-blocks-advanced-column' ) && 'o-sticky-scope-row' === scope ) {
 			return parent;
+		}
+		if ( parent.classList.contains( 'wp-block-themeisle-blocks-advanced-columns' ) ) {
+			if ( 'o-sticky-scope-section' === scope ) {
+				return parent;
+			} else if ( 'o-sticky-scope-main-area' ) {
+				sections.push( parent );
+			}
 		}
 		parent = parent.parentElement;
 	}
-	return document.body;
+	return sections.pop() || document.body;
 };
 
 /**
@@ -162,25 +169,27 @@ const getStickyContainer = ( elem ) => {
  * @return {Object} The configuration
  */
 const getConfigOptions = ( elem ) => {
-	const classes = Array.from( elem.classList );
-	return {
-		position: classes?.includes( 'o-sticky-pos-bottom' ) ? 'bottom' : 'top',
-		offset: parseInt( classes
-			?.filter( c => c?.includes( 'o-sticky-offset' ) )
-			?.reduce( ( acc, c ) =>{
-				return c?.split( '-' )?.pop();
-			}, 40 ) )
-	};
+	return Array.from( elem.classList ).reduce( ( config, cssClass ) => {
+		if ( cssClass.includes( 'o-sticky-pos-bottom' ) ) {
+			config.position = 'bottom';
+		} else if ( cssClass.includes( 'o-sticky-offset' ) ) {
+			config.offset = cssClass.split( '-' )?.pop() || config.offset;
+		} else if ( cssClass.includes( 'o-sticky-scope' ) ) {
+			config.scope = cssClass;
+		}
+		return config;
+	}, { position: 'top', offset: 40, scope: '' });
 };
 
 domReady( () => {
 	const elems = document.querySelectorAll( '.o-sticky' );
 
 	elems.forEach( ( elem ) => {
+		const config = getConfigOptions( elem );
 		initSticky(
 			elem,
-			getConfigOptions( elem ),
-			getStickyContainer( elem )
+			config,
+			getStickyContainer( elem, config.scope )
 		);
 	});
 });
