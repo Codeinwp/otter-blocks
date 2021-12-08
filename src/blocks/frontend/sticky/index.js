@@ -1,5 +1,52 @@
 import domReady from '@wordpress/dom-ready';
 
+const createObserver = () => {
+	const blocks = {};
+	const activeIndex = new Set();
+
+	let indexBlock = 0;
+
+	const activate = ( index ) => {
+		activeIndex.add( index );
+	};
+
+	const deactivate = ( index ) => {
+		activeIndex.delete( index );
+	};
+
+	const register = ( block, config, container ) => {
+		indexBlock += 1;
+		blocks[indexBlock.toString()] = {block, config, container};
+		return indexBlock;
+	};
+
+	const calculateGap = ( index ) => {
+		const { container } = blocks[index.toString()];
+		let gap = 0;
+		console.group( 'Gap calculation for #' + index );
+		activeIndex.forEach( otherIndex => {
+			if ( container === blocks[otherIndex.toString()].container ) {
+				if ( otherIndex < index ) {
+					const {config, block} = blocks[otherIndex.toString()];
+					gap += 60 + block?.getBoundingClientRect()?.height || 0;
+					console.log( 'Found ' + otherIndex + ' -- Gap: ' + ( 60 + block?.getBoundingClientRect()?.height || 0 ) );
+				}
+			}
+		});
+		console.log( 'Total gap is ' + gap );
+		console.groupEnd();
+
+		return gap;
+	};
+
+
+	return {
+		register,
+		activate,
+		deactivate,
+		calculateGap
+	};
+};
 
 /**
  * Make an element sticky
@@ -7,9 +54,10 @@ import domReady from '@wordpress/dom-ready';
  * @param {Object} config
  * @param {HTMLDivElement|string} container
  */
-const initSticky = ( selector, config, containerSelector ) => {
+const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 	const position = config?.position || 'top';
 	const offset = config?.offset || 40;
+
 
 	const elem = 'string' === typeof selector || selector instanceof String ? document.querySelector( selector ) : selector;
 	const container = 'string' === typeof containerSelector || containerSelector instanceof String ? document.querySelector( containerSelector ) : containerSelector;
@@ -25,11 +73,20 @@ const initSticky = ( selector, config, containerSelector ) => {
 	const containerBottomPosition = containerTopPosition + ( container?.getBoundingClientRect()?.height || 0 );
 
 	// The new positions on the screen when the sticky mod is active
-	const offsetY = offset + 'px';
+	const offsetY = offset;
 	const offsetX = elem.offsetLeft;
 
 	// We need to activate the sticky mode more early for smooth transition
 	const activationOffset = 60;
+
+	let activate, deactivate, calculateGap;
+
+	if ( observer ) {
+		const index = observer.register( elem, config, container );
+		activate = () => observer.activate( index );
+		deactivate = () => observer.deactivate( index );
+		calculateGap = () => observer.calculateGap( index );
+	}
 
 	// DEBUG
 	if ( container ) {
@@ -96,16 +153,18 @@ const initSticky = ( selector, config, containerSelector ) => {
 		console.log( 'Position case: ' + pos );
 
 		if ( pos ) {
+
 			elem.classList.add( 'is-sticky' );
 			elem.style.left = offsetX;
 			elem.style.width = width + 'px';
+			console.warn( calculateGap() || 0 );
 			switch ( pos ) {
 			case 'top':
-				elem.style.top = offsetY;
+				elem.style.top = ( offsetY + calculateGap() || 0 ) + 'px';
 				elem.style.transform = 'unset';
 				break;
 			case 'bottom':
-				elem.style.bottom = offsetY;
+				elem.style.bottom = ( offsetY + calculateGap() || 0 ) + 'px';
 				elem.style.transform = 'unset';
 				break;
 			case 'constrain-top':
@@ -125,19 +184,27 @@ const initSticky = ( selector, config, containerSelector ) => {
 				console.warn( 'Unknown position', pos );
 			}
 			insertPlaceholder();
+			activate?.();
 		} else {
 			elem.classList.remove( 'is-sticky' );
 			elem.style.top = 'unset';
 			elem.style.left = 'unset';
 			elem.style.transform = 'unset';
 			removePlaceholder();
+			deactivate?.();
 		}
 	});
+
+	return {
+		elem,
+		container,
+		config
+	};
 };
 
 // Testing purpose
 // We can make elem sticky in browser for testing various scenario with different blocks
-window.otterSticky = initSticky;
+window.otterSticky = makeElementSticky;
 
 /**
  * Get the container for the given element
@@ -173,7 +240,7 @@ const getConfigOptions = ( elem ) => {
 		if ( cssClass.includes( 'o-sticky-pos-bottom' ) ) {
 			config.position = 'bottom';
 		} else if ( cssClass.includes( 'o-sticky-offset' ) ) {
-			config.offset = cssClass.split( '-' )?.pop() || config.offset;
+			config.offset = parseInt( cssClass.split( '-' )?.pop() ) || config.offset;
 		} else if ( cssClass.includes( 'o-sticky-scope' ) ) {
 			config.scope = cssClass;
 		}
@@ -183,13 +250,17 @@ const getConfigOptions = ( elem ) => {
 
 domReady( () => {
 	const elems = document.querySelectorAll( '.o-sticky' );
+	const observer = createObserver();
 
 	elems.forEach( ( elem ) => {
 		const config = getConfigOptions( elem );
-		initSticky(
+		const container = getStickyContainer( elem, config.scope );
+
+		makeElementSticky(
 			elem,
 			config,
-			getStickyContainer( elem, config.scope )
+			container,
+			observer
 		);
 	});
 });
