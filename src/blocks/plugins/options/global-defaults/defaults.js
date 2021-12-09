@@ -70,6 +70,10 @@ const defaultsAttrs = {
 		marginBottom: 20,
 		marginLeft: 0,
 		columnsHTMLTag: 'div'
+	},
+	'themeisle-blocks/accordion': {},
+	'themeisle-blocks/review': {
+		features: []
 	}
 };
 

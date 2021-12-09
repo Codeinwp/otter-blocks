@@ -60,7 +60,6 @@ const MarkerWrapper = ({
 
 			<Button
 				isSecondary
-				isLarge
 				className="wp-block-themeisle-blocks-google-map-marker-add"
 				onClick={ addMarker }
 			>

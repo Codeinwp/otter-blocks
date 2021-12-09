@@ -1,7 +1,7 @@
 # Gutenberg Blocks and Template Library by Otter #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/)  
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder  
-**Requires at least:** 5.5  
+**Requires at least:** 5.6  
 **Tested up to:** 5.8  
 **Requires PHP:** 5.4  
 **Stable tag:** trunk  
@@ -95,6 +95,31 @@ Help your site shine with design options built to enhance your brand. Every bloc
 3. Posts Block
 
 ## Changelog ##
+
+##### [Version 1.7.3](https://github.com/Codeinwp/otter-blocks/compare/v1.7.2...v1.7.3) (2021-11-18)
+
+
+- Plus a lot more features from 1.7.2: https://github.com/Codeinwp/otter-blocks/blob/master/CHANGELOG.md#version-172-2021-11-18
+
+
+
+
+##### [Version 1.7.2](https://github.com/Codeinwp/otter-blocks/compare/v1.7.1...v1.7.2) (2021-11-18)
+
+- Add Duplicate/Move/Delete options to Section Block’s Columns
+- Add Edit option in Lottie Block
+- Optimize JavaScript loading
+- Fix Pro/Cons leaving focus in Review Block
+- Form Block Improvements
+- Advance Heading Improvements
+- Add Alignment option to Icon List Block
+- Reduce Build Size
+- Fix Button Group spacing on Mobile
+- Fix edge cases of Widget screen breaking
+- Icon List block improvements
+
+
+
 
 ##### [Version 1.7.1](https://github.com/Codeinwp/otter-blocks/compare/v1.7.0...v1.7.1) (2021-10-25)
 

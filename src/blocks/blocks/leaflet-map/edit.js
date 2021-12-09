@@ -178,7 +178,7 @@ const Edit = ({
 		);
 
 		// Add Open Street Map as source
-		window.L.tileLayer( 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		window.L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			subdomains: [ 'a', 'b', 'c' ]
 		}).addTo( _map );

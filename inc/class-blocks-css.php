@@ -52,7 +52,7 @@ class Blocks_CSS {
 
 		wp_enqueue_script(
 			'otter-css',
-			BLOCKS_CSS_URL . '/build/css/index.js',
+			BLOCKS_CSS_URL . 'build/css/index.js',
 			array_merge( $asset_file['dependencies'], array( 'code-editor', 'csslint' ) ),
 			$asset_file['version'],
 			true
@@ -62,7 +62,7 @@ class Blocks_CSS {
 
 		wp_enqueue_style(
 			'otter-css',
-			BLOCKS_CSS_URL . '/build/css/index.css',
+			BLOCKS_CSS_URL . 'build/css/index.css',
 			array( 'code-editor' ),
 			$asset_file['version']
 		);

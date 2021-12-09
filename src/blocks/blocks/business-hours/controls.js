@@ -3,6 +3,7 @@
  */
 import {
 	AlignmentControl,
+	AlignmentToolbar,
 	BlockControls
 } from '@wordpress/block-editor';
 
@@ -10,9 +11,11 @@ const Controls = ({
 	attributes,
 	setAttributes
 }) => {
+	const Alignment = AlignmentControl || AlignmentToolbar;
+
 	return (
 		<BlockControls>
-			<AlignmentControl
+			<Alignment
 				value={ attributes.titleAlignment }
 				onChange={ titleAlignment => setAttributes({ titleAlignment }) }
 			/>

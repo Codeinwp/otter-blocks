@@ -71,18 +71,10 @@ const Edit = ({
 
 	return (
 		<Fragment>
-			<Controls
-				isEditing={ isEditing }
-				setEditing={ setEditing }
-			/>
-
-			{ ( isEmpty( attributes.file ) || isEditing ) && (
-				<Placeholder
-					className={ className }
-					value={ attributes.file }
-					onChange={ onChangeFile }
-					isJSONAllowed={ isJSONAllowed }
-					attributes={ attributes }
+			{ ( ( ! isEmpty( attributes.file ) && isEditing ) || ! isEditing ) && (
+				<Controls
+					isEditing={ isEditing }
+					setEditing={ setEditing }
 				/>
 			) }
 
@@ -91,6 +83,16 @@ const Edit = ({
 					attributes={ attributes }
 					setAttributes={ setAttributes }
 					playerRef={ playerRef }
+				/>
+			) }
+
+			{ ( isEmpty( attributes.file ) || isEditing ) && (
+				<Placeholder
+					className={ className }
+					value={ attributes.file }
+					onChange={ onChangeFile }
+					isJSONAllowed={ isJSONAllowed }
+					attributes={ attributes }
 				/>
 			) }
 

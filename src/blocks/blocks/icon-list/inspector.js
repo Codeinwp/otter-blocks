@@ -87,6 +87,7 @@ const Inspector = ({
 					onChange={ onDefaultSizeChange }
 					min={ 0 }
 					max={ 60 }
+					allowReset={true}
 				/>
 
 				<RangeControl
@@ -96,6 +97,7 @@ const Inspector = ({
 					onChange={ onGapChange }
 					min={ 0 }
 					max={ 60 }
+					allowReset={ true }
 				/>
 
 				<ColorGradientControl

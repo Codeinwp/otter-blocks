@@ -172,11 +172,8 @@ const IconPickerControl = ({
 							onChange={ changeLibrary }
 						/>
 
-						<BaseControl
-							label={ label }
-						>
+						<BaseControl label={ label }>
 							<Button
-								isLarge
 								className="otter-icon-picker-button"
 								onClick={ onToggle }
 								aria-expanded={ isOpen }
