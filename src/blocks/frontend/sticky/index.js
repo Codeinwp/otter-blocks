@@ -50,9 +50,9 @@ const createObserver = () => {
 		activeIndex.forEach( otherIndex => {
 			if ( container === blocks[otherIndex.toString()].container ) {
 				if ( otherIndex < index ) {
-					const {block} = blocks[otherIndex.toString()];
-					earlyActivation += 60 + block?.getBoundingClientRect()?.height || 0;
-					console.log( 'Found ' + otherIndex + ' -- EarlyActivation: ' + ( 60 + block?.getBoundingClientRect()?.height || 0 ) );
+					const {block, metadata} = blocks[otherIndex.toString()];
+					earlyActivation += metadata.activationOffset + block?.getBoundingClientRect()?.height || 0;
+					console.log( 'Found ' + otherIndex + ' -- EarlyActivation: ' + ( metadata.activationOffset + block?.getBoundingClientRect()?.height || 0 ) );
 				}
 			}
 		});
@@ -71,8 +71,8 @@ const createObserver = () => {
 				if ( otherIndex < index ) {
 					const {config, block} = blocks[otherIndex.toString()];
 					if ( 'stack' === config?.behaviour ) {
-						gap += 60 + block?.getBoundingClientRect()?.height || 0;
-						console.log( 'Found ' + otherIndex + ' -- Gap: ' + ( 60 + block?.getBoundingClientRect()?.height || 0 ) );
+						gap += config.offset + block?.getBoundingClientRect()?.height || 0;
+						console.log( 'Found ' + otherIndex + ' -- Gap: ' + ( config.offset + block?.getBoundingClientRect()?.height || 0 ) );
 					}
 				}
 			}
@@ -144,6 +144,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 	const elemBottomPositionInPage = elemTopPositionInPage + height;
 
 	// Calculate the container position in the page
+	const containerHeight = container?.getBoundingClientRect()?.height || 0;
 	const containerTopPosition = container ? container?.getBoundingClientRect()?.top + scrollTop : 0;
 	const containerBottomPosition = containerTopPosition + ( container?.getBoundingClientRect()?.height || 0 );
 
@@ -152,12 +153,14 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 	const offsetX = elem.offsetLeft;
 
 	// We need to activate the sticky mode more early for smooth transition
-	const activationOffset = 60;
+	const activationOffset = offset + 20;
+
+	console.log( ({activationOffset}) );
 
 	let activate, deactivate, calculateGap, calculateOpacity, earlyActivate, earlyDeactivate, calculateEarlyActivation;
 
 	if ( observer ) {
-		const index = observer.register( elem, config, container, { elemTopPositionInPage, elemBottomPositionInPage, elemLeftPositionInPage });
+		const index = observer.register( elem, config, container, { elemTopPositionInPage, elemBottomPositionInPage, elemLeftPositionInPage, activationOffset });
 		activate = () => observer.activate( index );
 		deactivate = () => observer.deactivate( index );
 		calculateGap = () => observer.calculateGap( index );
@@ -245,6 +248,10 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 			elem.style.left = offsetX;
 			elem.style.width = width + 'px';
 			elem.style.position = 'fixed';
+
+			if ( container ) {
+				container.style.height = 0 < containerHeight ? containerHeight + 'px' : '';
+			}
 			switch ( pos ) {
 			case 'top':
 				elem.style.top = ( offsetY + calculateGap() || 0 ) + 'px';
@@ -280,6 +287,9 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 			elem.style.transform = '';
 			elem.style.opacity = '';
 			removePlaceholder();
+			if ( container ) {
+				container.style.height = '';
+			}
 			deactivate?.();
 		}
 	});
