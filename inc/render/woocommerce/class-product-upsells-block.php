@@ -1,6 +1,6 @@
 <?php
 /**
- * Product_Images_Block
+ * Product_Upsells_Block
  *
  * @package ThemeIsle\GutenbergBlocks\Render
  */
@@ -10,9 +10,9 @@ namespace ThemeIsle\GutenbergBlocks\Render;
 use ThemeIsle\GutenbergBlocks\Base_Block;
 
 /**
- * Class Product_Images_Block
+ * Class Product_Upsells_Block
  */
-class Product_Images_Block extends Base_Block {
+class Product_Upsells_Block extends Base_Block {
 
 	/**
 	 * Every block needs a slug, so we need to define one and assign it to the `$this->block_slug` property
@@ -20,7 +20,7 @@ class Product_Images_Block extends Base_Block {
 	 * @return mixed
 	 */
 	protected function set_block_slug() {
-		$this->block_slug = 'product-images';
+		$this->block_slug = 'product-upsells';
 	}
 
 	/**
@@ -42,7 +42,7 @@ class Product_Images_Block extends Base_Block {
 	 * @return mixed|string
 	 */
 	protected function render( $attributes ) {
-		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! class_exists( 'WooCommerce' ) ) {
+		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! class_exists( 'WooCommerce' ) || is_admin() ) {
 			return;
 		}
 
@@ -53,18 +53,7 @@ class Product_Images_Block extends Base_Block {
 		if ( ! $product ) {
 			return;
 		};
-
-		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
-			remove_action( 'woocommerce_product_thumbnails', 'woocommerce_show_product_thumbnails', 20 );
-			echo '<div class="woocommerce">';
-		}
-
-		woocommerce_show_product_images();
-		woocommerce_show_product_sale_flash();
-
-        if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
-			echo '</div>';
-        }
+		woocommerce_upsell_display();
 		$output = ob_get_clean();
 		return $output;
 	}

@@ -1,6 +1,6 @@
 <?php
 /**
- * Product_Images_Block
+ * Product_Stock_Block
  *
  * @package ThemeIsle\GutenbergBlocks\Render
  */
@@ -10,9 +10,9 @@ namespace ThemeIsle\GutenbergBlocks\Render;
 use ThemeIsle\GutenbergBlocks\Base_Block;
 
 /**
- * Class Product_Images_Block
+ * Class Product_Stock_Block
  */
-class Product_Images_Block extends Base_Block {
+class Product_Stock_Block extends Base_Block {
 
 	/**
 	 * Every block needs a slug, so we need to define one and assign it to the `$this->block_slug` property
@@ -20,7 +20,7 @@ class Product_Images_Block extends Base_Block {
 	 * @return mixed
 	 */
 	protected function set_block_slug() {
-		$this->block_slug = 'product-images';
+		$this->block_slug = 'product-stock';
 	}
 
 	/**
@@ -46,26 +46,12 @@ class Product_Images_Block extends Base_Block {
 			return;
 		}
 
-		ob_start();
-
 		global $product;
 
 		if ( ! $product ) {
 			return;
 		};
-
-		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
-			remove_action( 'woocommerce_product_thumbnails', 'woocommerce_show_product_thumbnails', 20 );
-			echo '<div class="woocommerce">';
-		}
-
-		woocommerce_show_product_images();
-		woocommerce_show_product_sale_flash();
-
-        if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
-			echo '</div>';
-        }
-		$output = ob_get_clean();
+		$output = wc_get_stock_html( $product );
 		return $output;
 	}
 }
