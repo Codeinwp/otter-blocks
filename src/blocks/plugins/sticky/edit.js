@@ -100,7 +100,7 @@ const Edit = ({
 						label={ __( 'Distance from screen', 'otter-blocks' ) }
 						value={ getOffsetValue( ) }
 						min={0}
-						max={80}
+						max={500}
 						onChange={ value => addOption( `o-sticky-offset-${ value }`, FILTER_OPTIONS.offset ) }
 					/>
 				</PanelBody>
