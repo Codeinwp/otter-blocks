@@ -237,6 +237,7 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Render\Product_Related_Products_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Product_Stock_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Product_Short_Description_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Tabs_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Product_Title_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Product_Upsells_Block',
 		);
