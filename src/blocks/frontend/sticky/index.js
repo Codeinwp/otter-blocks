@@ -3,33 +3,77 @@ import domReady from '@wordpress/dom-ready';
 const createObserver = () => {
 	const blocks = {};
 	const activeIndex = new Set();
+	const dormantIndex = new Set();
 
 	let indexBlock = 0;
+
+	const addZIndex = () => {
+		dormantIndex.forEach( index => {
+			const { block } = blocks[index.toString()];
+			if ( 'fixed' !== block.style.position ) {
+				block.style.position = 'relative';
+			}
+			block.style.zIndex = 9999 + index;
+		});
+	};
 
 	const activate = ( index ) => {
 		activeIndex.add( index );
 	};
 
-	const deactivate = ( index ) => {
-		activeIndex.delete( index );
+	const earlyActivate = ( index ) => {
+		dormantIndex.add( index );
+		addZIndex();
 	};
 
-	const register = ( block, config, container ) => {
+	const deactivate = ( index ) => {
+		activeIndex.delete( index );
+		const { block } = blocks[index.toString()];
+		block.style.zIndex = '';
+		block.style.position = '';
+	};
+
+	const earlyDeactivate = ( index ) => {
+		dormantIndex.delete( index );
+	};
+
+	const register = ( block, config, container, metadata ) => {
 		indexBlock += 1;
-		blocks[indexBlock.toString()] = {block, config, container};
+		blocks[indexBlock.toString()] = {block, config, container, metadata};
 		return indexBlock;
+	};
+
+	const calculateEarlyActivation = ( index ) => {
+		const { container } = blocks[index.toString()];
+		let earlyActivation = 0;
+		console.groupCollapsed( 'Early calculation for #' + index );
+		activeIndex.forEach( otherIndex => {
+			if ( container === blocks[otherIndex.toString()].container ) {
+				if ( otherIndex < index ) {
+					const {block} = blocks[otherIndex.toString()];
+					earlyActivation += 60 + block?.getBoundingClientRect()?.height || 0;
+					console.log( 'Found ' + otherIndex + ' -- EarlyActivation: ' + ( 60 + block?.getBoundingClientRect()?.height || 0 ) );
+				}
+			}
+		});
+		console.log( 'Early activation is ' + earlyActivation );
+		console.groupEnd();
+
+		return earlyActivation;
 	};
 
 	const calculateGap = ( index ) => {
 		const { container } = blocks[index.toString()];
 		let gap = 0;
-		console.group( 'Gap calculation for #' + index );
+		console.groupCollapsed( 'Gap calculation for #' + index );
 		activeIndex.forEach( otherIndex => {
 			if ( container === blocks[otherIndex.toString()].container ) {
 				if ( otherIndex < index ) {
 					const {config, block} = blocks[otherIndex.toString()];
-					gap += 60 + block?.getBoundingClientRect()?.height || 0;
-					console.log( 'Found ' + otherIndex + ' -- Gap: ' + ( 60 + block?.getBoundingClientRect()?.height || 0 ) );
+					if ( 'stack' === config?.behaviour ) {
+						gap += 60 + block?.getBoundingClientRect()?.height || 0;
+						console.log( 'Found ' + otherIndex + ' -- Gap: ' + ( 60 + block?.getBoundingClientRect()?.height || 0 ) );
+					}
 				}
 			}
 		});
@@ -39,12 +83,41 @@ const createObserver = () => {
 		return gap;
 	};
 
+	const calculateOpacity = ( index ) => {
+		const { block, container, config, metadata } = blocks[index.toString()];
+		let opacity = 1;
+
+		const blockHeight = block.getBoundingClientRect()?.height || 0;
+		const blockWidth = block.getBoundingClientRect()?.width || 0;
+		const currentBottomPosInPage =  blockHeight + config.offset + ( window.pageYOffset || document.documentElement.scrollTop );
+
+		for ( let otherIndex of dormantIndex ) {
+			if ( container === blocks[otherIndex.toString()].container ) {
+				if ( otherIndex > index ) {
+					const { block: otherBlock, metadata: otherMetadata} = blocks[otherIndex.toString()];
+					const otherBlockHeight = otherBlock.getBoundingClientRect()?.height || 0;
+
+					if ( blockWidth > Math.abs( metadata.elemLeftPositionInPage - otherMetadata.elemLeftPositionInPage ) ) {
+						const height = Math.min( blockHeight, otherBlockHeight );
+						opacity = Math.min( 1, Math.max( 0, otherMetadata.elemTopPositionInPage + height - currentBottomPosInPage ) / height  );
+						return opacity;
+					}
+				}
+			}
+		}
+
+		return opacity;
+	};
 
 	return {
 		register,
 		activate,
 		deactivate,
-		calculateGap
+		earlyActivate,
+		earlyDeactivate,
+		calculateEarlyActivation,
+		calculateGap,
+		calculateOpacity
 	};
 };
 
@@ -64,8 +137,10 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 
 	// Calculate the element position in the page
 	const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-	const { top, height, width } = elem.getBoundingClientRect();
+	const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+	const { top, left, height, width } = elem.getBoundingClientRect();
 	const elemTopPositionInPage = top + scrollTop;
+	const elemLeftPositionInPage = left + scrollLeft;
 	const elemBottomPositionInPage = elemTopPositionInPage + height;
 
 	// Calculate the container position in the page
@@ -79,13 +154,17 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 	// We need to activate the sticky mode more early for smooth transition
 	const activationOffset = 60;
 
-	let activate, deactivate, calculateGap;
+	let activate, deactivate, calculateGap, calculateOpacity, earlyActivate, earlyDeactivate, calculateEarlyActivation;
 
 	if ( observer ) {
-		const index = observer.register( elem, config, container );
+		const index = observer.register( elem, config, container, { elemTopPositionInPage, elemBottomPositionInPage, elemLeftPositionInPage });
 		activate = () => observer.activate( index );
 		deactivate = () => observer.deactivate( index );
 		calculateGap = () => observer.calculateGap( index );
+		calculateOpacity = () => observer.calculateOpacity( index );
+		earlyActivate = () => observer.earlyActivate( index );
+		earlyDeactivate = () => observer.earlyDeactivate( index );
+		calculateEarlyActivation = () => observer.calculateEarlyActivation( index );
 	}
 
 	// DEBUG
@@ -94,14 +173,14 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 	}
 	elem.style.border = '1px dashed red';
 
-	const getScrollActivePosition = () => {
+	const getScrollActivePosition = ( earlyActivation = 0 ) => {
 		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 		const scrollBottom = scrollTop + window.innerHeight;
 
 		if ( 'top' === position &&
 			(
-				( scrollTop + activationOffset > elemTopPositionInPage ) &&
-				( ! container || scrollTop + activationOffset + height < containerBottomPosition )
+				( scrollTop + activationOffset + earlyActivation > elemTopPositionInPage ) &&
+				( ! container || scrollTop + activationOffset + height + earlyActivation < containerBottomPosition )
 			)
 		) {
 			return 'top';
@@ -117,7 +196,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 		}
 
 		if ( container ) {
-			if ( 'top' === position && (  scrollTop + activationOffset + height > containerBottomPosition ) ) {
+			if ( 'top' === position && (  scrollTop + activationOffset + height + earlyActivation > containerBottomPosition ) ) {
 				return 'constrain-top';
 			}
 			if ( 'bottom' === position && (  scrollBottom - activationOffset  >= containerBottomPosition ) ) {
@@ -131,6 +210,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 	// @type {HTMLDivElement}
 	const placeholder = document.createElement( 'div' );
 	placeholder.style.height = height + 'px';
+	placeholder.style.width = width + 'px';
 
 	const insertPlaceholder = () => {
 		if ( ! elem.parentElement.contains( placeholder ) ) {
@@ -149,15 +229,22 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 		const scrollBottom = scrollTop + window.innerHeight;
 
 		// Check if the scroll with the activation offset has passed the top of the element
-		const pos = getScrollActivePosition();
-		console.log( 'Position case: ' + pos );
+		const pos = 'stack' === config.behaviour ? getScrollActivePosition( calculateGap() ) : getScrollActivePosition() ;
+
+		// console.log( 'Position case: ' + pos );
+
+		if ( getScrollActivePosition( calculateEarlyActivation?.() ) ) {
+			earlyActivate?.();
+		} else {
+			earlyActivate?.();
+		}
 
 		if ( pos ) {
 
 			elem.classList.add( 'is-sticky' );
 			elem.style.left = offsetX;
 			elem.style.width = width + 'px';
-			console.warn( calculateGap() || 0 );
+			elem.style.position = 'fixed';
 			switch ( pos ) {
 			case 'top':
 				elem.style.top = ( offsetY + calculateGap() || 0 ) + 'px';
@@ -185,11 +272,13 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 			}
 			insertPlaceholder();
 			activate?.();
+			elem.style.opacity = calculateOpacity?.();
 		} else {
 			elem.classList.remove( 'is-sticky' );
-			elem.style.top = 'unset';
-			elem.style.left = 'unset';
-			elem.style.transform = 'unset';
+			elem.style.top = '';
+			elem.style.left = '';
+			elem.style.transform = '';
+			elem.style.opacity = '';
 			removePlaceholder();
 			deactivate?.();
 		}
@@ -245,7 +334,7 @@ const getConfigOptions = ( elem ) => {
 			config.scope = cssClass;
 		}
 		return config;
-	}, { position: 'top', offset: 40, scope: '' });
+	}, { position: 'top', offset: 40, scope: '', behaviour: 'hide' });
 };
 
 domReady( () => {
