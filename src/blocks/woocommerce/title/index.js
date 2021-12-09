@@ -19,7 +19,7 @@ if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Bool
 		title: __( 'Product Title', 'otter-blocks' ),
 		description: __( 'Display the title of your WooCommerce product.', 'otter-blocks' ),
 		icon,
-		category: 'themeisle-blocks',
+		category: 'themeisle-woocommerce-blocks',
 		keywords: [
 			'woocommerce',
 			'products',
@@ -33,7 +33,7 @@ if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Bool
 		title: __( 'Product Title', 'otter-blocks' ),
 		description: __( 'Display the title of your WooCommerce product.', 'otter-blocks' ),
 		icon,
-		category: 'themeisle-blocks',
+		category: 'themeisle-woocommerce-blocks',
 		keywords: [
 			'woocommerce',
 			'products',

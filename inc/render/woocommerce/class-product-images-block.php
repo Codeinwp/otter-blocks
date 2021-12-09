@@ -62,9 +62,9 @@ class Product_Images_Block extends Base_Block {
 		woocommerce_show_product_images();
 		woocommerce_show_product_sale_flash();
 
-        if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
 			echo '</div>';
-        }
+		}
 		$output = ob_get_clean();
 		return $output;
 	}

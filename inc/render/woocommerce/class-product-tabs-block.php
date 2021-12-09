@@ -54,10 +54,13 @@ class Product_Tabs_Block extends Base_Block {
 			return;
 		};
 
-		add_filter( 'woocommerce_product_tabs', function( $tabs ) {
-			unset( $tabs['description'] );
-			return $tabs;
-		} );
+		add_filter(
+			'woocommerce_product_tabs',
+			function( $tabs ) {
+				unset( $tabs['description'] );
+				return $tabs;
+			} 
+		);
 
 		echo '<div class="woocommerce">';
 		woocommerce_output_product_data_tabs();

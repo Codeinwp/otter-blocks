@@ -956,6 +956,10 @@ class Main {
 					'slug'  => 'themeisle-blocks',
 					'title' => $this->name,
 				),
+				array(
+					'slug'  => 'themeisle-woocommerce-blocks',
+					'title' => __( 'WooCommerce Builder by Otter', 'otter-blocks' ),
+				),
 			)
 		);
 	}

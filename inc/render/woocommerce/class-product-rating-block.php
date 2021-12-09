@@ -54,13 +54,13 @@ class Product_Rating_Block extends Base_Block {
 			return;
 		};
 
-        if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
 			echo '<div class="woocommerce">';
-            woocommerce_template_single_rating();
+			woocommerce_template_single_rating();
 			echo '</div>';
 		} else {
-            woocommerce_template_single_rating();
-        }
+			woocommerce_template_single_rating();
+		}
 
 		$output = ob_get_clean();
 		return $output;
