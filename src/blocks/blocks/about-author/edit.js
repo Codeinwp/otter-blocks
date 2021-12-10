@@ -9,10 +9,8 @@ import { Disabled } from '@wordpress/components';
 import ServerSideRender from '@wordpress/server-side-render';
 
 const Edit = () => {
-	const blockProps = useBlockProps();
-
 	return (
-		<div { ...blockProps }>
+		<div { ...useBlockProps() }>
 			<Disabled>
 				<ServerSideRender block="themeisle-blocks/about-author"/>
 			</Disabled>

@@ -4,6 +4,8 @@
  */
 import { __ } from '@wordpress/i18n';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import {
 	Disabled,
 	Placeholder
@@ -22,12 +24,15 @@ const Edit = ({
 	attributes,
 	setAttributes
 }) => {
+	const blockProps = useBlockProps();
+
 	if ( ! attributes.product ) {
 		return (
 			<Placeholder
 				icon={ store }
 				label={ __( 'Add to Cart Button', 'otter-blocks' ) }
 				instructions={ __( 'Select a WooCommerce product for the Add to Cart button.', 'otter-blocks' ) }
+				{ ...blockProps }
 			>
 				<SelectProducts
 					label={ __( 'Select Product', 'otter-blocks' ) }
@@ -40,12 +45,14 @@ const Edit = ({
 	}
 
 	return (
-		<Disabled>
-			<ServerSideRender
-				block="themeisle-blocks/add-to-cart-button"
-				attributes={ { ...attributes } }
-			/>
-		</Disabled>
+		<div { ...blockProps }>
+			<Disabled>
+				<ServerSideRender
+					block="themeisle-blocks/add-to-cart-button"
+					attributes={ { ...attributes } }
+				/>
+			</Disabled>
+		</div>
 	);
 };
 

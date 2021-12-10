@@ -71,6 +71,5 @@ class About_Author_Block extends Base_Block {
 			$title_markup,
 			$content_markup
 		);
-
 	}
 }

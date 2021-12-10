@@ -41,8 +41,6 @@ const Edit = ({
 		}
 	};
 
-	const blockProps = useBlockProps();
-
 	return (
 		<Fragment>
 			<Inspector
@@ -50,7 +48,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div { ...blockProps }>
+			<div { ...useBlockProps() }>
 				<div
 					className="wp-block-themeisle-blocks-accordion-item__title"
 					onClick={ toggle }

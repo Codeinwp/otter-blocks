@@ -5,6 +5,8 @@ import { __ } from '@wordpress/i18n';
 
 import { registerBlockType } from '@wordpress/blocks';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import { Placeholder } from '@wordpress/components';
 
 import { store as icon } from '@wordpress/icons';
@@ -17,6 +19,7 @@ import edit from './edit.js';
 
 if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Boolean( window.themeisleGutenberg.hasWooCommerce ) ) {
 	registerBlockType( 'themeisle-blocks/add-to-cart-button', {
+		apiVersion: 2,
 		title: __( 'Add to Cart Button', 'otter-blocks' ),
 		description: __( 'Display an Add to Cart button for your WooCommerce products.', 'otter-blocks' ),
 		icon,
@@ -47,6 +50,7 @@ if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Bool
 	});
 } else {
 	registerBlockType( 'themeisle-blocks/add-to-cart-button', {
+		apiVersion: 2,
 		title: __( 'Add to Cart Button', 'otter-blocks' ),
 		description: __( 'Display an Add to Cart button for your WooCommerce products.', 'otter-blocks' ),
 		icon,
@@ -60,7 +64,7 @@ if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Bool
 		supports: {
 			inserter: false
 		},
-		edit: () => <Placeholder>{ __( 'You need to have Neve Pro & WooCommerce installed to edit Add to Cart Button block.', 'otter-blocks' ) }</Placeholder>,
+		edit: () => <Placeholder { ...useBlockProps() }>{ __( 'You need to have Neve Pro & WooCommerce installed to edit Add to Cart Button block.', 'otter-blocks' ) }</Placeholder>,
 		save: () => null
 	});
 }
