@@ -10,7 +10,8 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	InnerBlocks,
-	RichText
+	RichText,
+	useBlockProps
 } from '@wordpress/block-editor';
 
 import { Icon } from '@wordpress/components';
@@ -40,6 +41,8 @@ const Edit = ({
 		}
 	};
 
+	const blockProps = useBlockProps();
+
 	return (
 		<Fragment>
 			<Inspector
@@ -47,7 +50,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div className={ className } >
+			<div { ...blockProps }>
 				<div
 					className="wp-block-themeisle-blocks-accordion-item__title"
 					onClick={ toggle }

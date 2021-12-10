@@ -1,17 +1,22 @@
 /**
  * WordPress dependencies.
  */
-import { InnerBlocks, RichText } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 const Save = ({
 	attributes,
 	className
 }) => {
+	const blockProps = useBlockProps.save({
+		open: attributes.initialOpen ? true : false
+	});
+
 	return (
-		<details
-			className={ className }
-			open={ attributes.initialOpen ? true : false }
-		>
+		<details { ...blockProps }>
 			<summary className="wp-block-themeisle-blocks-accordion-item__title">
 				<RichText.Content
 					tagName="div"
