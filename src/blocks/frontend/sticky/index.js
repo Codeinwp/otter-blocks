@@ -88,7 +88,7 @@ const createObserver = () => {
 		const blockWidth = block.getBoundingClientRect()?.width || 0;
 		const currentBottomPosInPage =  blockHeight + config.offset + ( window.pageYOffset || document.documentElement.scrollTop );
 
-		for ( let otherIndex of dormantIndex ) {
+		for ( let otherIndex of ( new Set( dormantIndex, activeIndex ) ) ) {
 			if ( container === blocks[otherIndex.toString()].container ) {
 				if ( otherIndex > index ) {
 					const { block: otherBlock, metadata: otherMetadata} = blocks[otherIndex.toString()];
@@ -311,7 +311,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 			insertPlaceholder();
 			activate?.();
 			if ( 'o-sticky-bhvr-hide' === config.behaviour ) {
-				elem.style.opacity = easeOutQuad( calculateOpacity?.() || 1 );
+				elem.style.opacity = easeOutQuad( calculateOpacity?.() );
 			}
 		} else {
 			elem.classList.remove( 'is-sticky' );
