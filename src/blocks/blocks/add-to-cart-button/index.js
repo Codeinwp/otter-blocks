@@ -64,7 +64,7 @@ if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Bool
 		supports: {
 			inserter: false
 		},
-		edit: () => <Placeholder { ...useBlockProps() }>{ __( 'You need to have Neve Pro & WooCommerce installed to edit Add to Cart Button block.', 'otter-blocks' ) }</Placeholder>,
+		edit: () => <div { ...useBlockProps() }><Placeholder>{ __( 'You need to have Neve Pro & WooCommerce installed to edit Add to Cart Button block.', 'otter-blocks' ) }</Placeholder></div>,
 		save: () => null
 	});
 }
