@@ -245,7 +245,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 		if ( pos ) {
 
 			elem.classList.add( 'is-sticky' );
-			elem.style.left = offsetX;
+			elem.style.left = elemLeftPositionInPage + 'px';
 			elem.style.width = width + 'px';
 			elem.style.position = 'fixed';
 
@@ -320,13 +320,13 @@ const getStickyContainer = ( elem, scope ) => {
 		if ( parent.classList.contains( 'wp-block-themeisle-blocks-advanced-columns' ) ) {
 			if ( 'o-sticky-scope-section' === scope ) {
 				return parent;
-			} else if ( 'o-sticky-scope-main-area' ) {
+			} else if ( 'o-sticky-scope-main-area' === scope ) {
 				sections.push( parent );
 			}
 		}
 		parent = parent.parentElement;
 	}
-	return sections.pop() || document.body;
+	return 'o-sticky-scope-main-area' === scope ? sections.pop() : document.body;
 };
 
 /**
