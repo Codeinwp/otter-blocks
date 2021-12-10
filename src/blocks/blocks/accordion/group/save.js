@@ -12,13 +12,11 @@ import {
 } from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
 		className: classnames(
-			className,
 			{
 				[ `is-${ attributes.gap }-gap` ]: attributes.gap
 			}

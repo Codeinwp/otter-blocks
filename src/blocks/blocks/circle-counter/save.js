@@ -4,12 +4,10 @@
 import { useBlockProps } from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
-		className,
 		'data-percentage': attributes.percentage,
 		'data-duration': attributes.duration,
 		'data-height': attributes.height,

@@ -12,15 +12,13 @@ import {
 } from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
 	const collapseClass = 'collapse-none' !== attributes.collapse ? attributes.collapse : '';
 
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
 		className: classnames(
-			className,
 			collapseClass,
 			'wp-block-buttons',
 			{

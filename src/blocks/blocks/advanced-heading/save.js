@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import classnames from 'classnames';
-
-/**
  * WordPress dependencies.
  */
 import {
@@ -12,15 +7,11 @@ import {
 } from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
-		className: classnames(
-			attributes.id,
-			className
-		)
+		className: attributes.id
 	});
 
 	return (

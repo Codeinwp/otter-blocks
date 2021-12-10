@@ -32,8 +32,7 @@ const CircularProgressBarBlock = ({
 	attributes,
 	setAttributes,
 	isSelected,
-	toggleSelection,
-	className
+	toggleSelection
 }) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -111,8 +110,7 @@ const CircularProgressBarBlock = ({
 	};
 
 	const blockProps = useBlockProps({
-		id: attributes.id,
-		className
+		id: attributes.id
 	});
 
 	return (

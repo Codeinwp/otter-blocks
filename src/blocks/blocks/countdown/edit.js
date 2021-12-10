@@ -32,7 +32,6 @@ const px = value => value ? `${ value }px` : value;
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId
 }) => {
 	const [ unixTime, setUnixTime ] = useState( 0 );
@@ -178,8 +177,7 @@ const Edit = ({
 	styles.mainComponents.borderRadius = 'linked' === attributes.borderRadiusType ? attributes.borderRadius + '%' : `${ attributes.borderRadiusTopLeft }% ${ attributes.borderRadiusTopRight }% ${ attributes.borderRadiusBottomRight }% ${ attributes.borderRadiusBottomLeft }%`;
 
 	const blockProps = useBlockProps({
-		id: attributes.id,
-		className
+		id: attributes.id
 	});
 
 	return (

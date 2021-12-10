@@ -38,7 +38,6 @@ import Inspector from './inspector.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId,
 	mergeBlocks,
 	insertBlocksAfter,
@@ -160,7 +159,6 @@ const Edit = ({
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		className,
 		style
 	});
 

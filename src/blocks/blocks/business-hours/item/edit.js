@@ -23,7 +23,6 @@ import Inspector from './inspector.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId
 }) => {
 	useEffect( () => {
@@ -37,7 +36,6 @@ const Edit = ({
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		className,
 		style
 	});
 

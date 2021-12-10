@@ -28,7 +28,6 @@ import Inspector from './inspector.js';
 
 const Edit = ({
 	attributes,
-	className,
 	setAttributes
 }) => {
 	const [ isOpen, setOpen ] = useState( true );

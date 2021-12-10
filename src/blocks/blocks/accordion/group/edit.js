@@ -34,7 +34,6 @@ import { blockInit } from '../../../helpers/block-utility.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId,
 	isSelected
 }) => {
@@ -63,7 +62,6 @@ const Edit = ({
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames(
-			className,
 			{
 				[ `is-${ attributes.gap }-gap` ]: attributes.gap
 			}

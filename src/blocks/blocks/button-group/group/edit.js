@@ -39,7 +39,6 @@ import { blockInit } from '../../../helpers/block-utility.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId
 }) => {
 	const {
@@ -86,7 +85,6 @@ const Edit = ({
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames(
-			className,
 			'wp-block-buttons',
 			{
 				[ `align-${ attributes.align }` ]: attributes.align,

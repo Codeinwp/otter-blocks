@@ -59,12 +59,10 @@ const DisplayTime = ({
 };
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
-		className,
 		'data-date': attributes.date
 	});
 

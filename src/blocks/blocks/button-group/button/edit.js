@@ -39,7 +39,6 @@ import { blockInit } from '../../../helpers/block-utility.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	isSelected,
 	clientId
 }) => {
@@ -125,10 +124,7 @@ const Edit = ({
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		className: classnames(
-			className,
-			'wp-block-button'
-		),
+		className: 'wp-block-button',
 		style: buttonStyleParent
 	});
 

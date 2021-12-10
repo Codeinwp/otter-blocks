@@ -17,17 +17,13 @@ import {
 import themeIsleIcons from './../../../helpers/themeisle-icons';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
-		className: classnames(
-			className,
-			'wp-block-button'
-		)
+		className: 'wp-block-button'
 	});
 
 	return (
