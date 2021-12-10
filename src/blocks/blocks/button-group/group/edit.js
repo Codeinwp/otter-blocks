@@ -14,7 +14,10 @@ import {
 /**
  * WordPress dependencies.
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import { useViewportMatch } from '@wordpress/compose';
 
@@ -80,6 +83,23 @@ const Edit = ({
 		isMobile = isPreviewMobile;
 	}
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		className: classnames(
+			className,
+			'wp-block-buttons',
+			{
+				[ `align-${ attributes.align }` ]: attributes.align,
+				'collapse': ( 'collapse-desktop' === attributes.collapse && ( isDesktop || isTablet || isMobile ) ) || ( 'collapse-tablet' === attributes.collapse && ( isTablet || isMobile ) ) || ( 'collapse-mobile' === attributes.collapse && isMobile )
+			}
+		),
+		css: css`
+		.block-editor-block-list__layout {
+			gap: ${ attributes.spacing }px;
+		}
+		`
+	});
+
 	return (
 		<Fragment>
 			{ attributes.fontFamily && (
@@ -99,24 +119,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={ classnames(
-					className,
-					'wp-block-buttons',
-					{
-						[ `align-${ attributes.align }` ]: attributes.align,
-						'collapse': ( 'collapse-desktop' === attributes.collapse && ( isDesktop || isTablet || isMobile ) ) || ( 'collapse-tablet' === attributes.collapse && ( isTablet || isMobile ) ) || ( 'collapse-mobile' === attributes.collapse && isMobile )
-					}
-				) }
-				css={
-					css`
-						.block-editor-block-list__layout {
-							column-gap: ${ attributes.spacing }px;
-						}
-					`
-				}
-			>
+			<div { ...blockProps }>
 				<InnerBlocks
 					allowedBlocks={ [ 'themeisle-blocks/button' ] }
 					__experimentalMoverDirection="horizontal"

@@ -14,9 +14,7 @@
 	}
 
 	&.collapse-desktop {
-		.wp-block-themeisle-blocks-button {
-			display: block;
-		}
+		flex-direction: column;
 	}
 
 	.wp-block-themeisle-blocks-button {
@@ -53,9 +51,7 @@
 @media ( max-width: 960px ) {
 	.wp-block-themeisle-blocks-button-group {
 		&.collapse-tablet {
-			.wp-block-themeisle-blocks-button {
-				display: block;
-			}
+			flex-direction: column;
 		}
 	}
 }
@@ -63,9 +59,7 @@
 @media ( max-width: 600px ) {
 	.wp-block-themeisle-blocks-button-group {
 		&.collapse-mobile {
-			.wp-block-themeisle-blocks-button {
-				display: block;
-			}
+			flex-direction: column;
 		}
 	}
 }

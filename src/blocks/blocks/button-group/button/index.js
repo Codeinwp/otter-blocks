@@ -14,6 +14,7 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/button', {
+	apiVersion: 2,
 	title: __( 'Button', 'otter-blocks' ),
 	description: __( 'Prompt visitors to take action with a button group.', 'otter-blocks' ),
 	parent: [ 'themeisle-blocks/button-group' ],
