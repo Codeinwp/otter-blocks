@@ -3,7 +3,10 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import {
 	Fragment,
@@ -32,6 +35,12 @@ const Edit = ({
 		backgroundColor: attributes.backgroundColor
 	};
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		className,
+		style
+	});
+
 	return (
 		<Fragment>
 			<Inspector
@@ -39,11 +48,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div
-				className={ className }
-				id={ attributes.id }
-				style={ style }
-			>
+			<div { ...blockProps }>
 				<div
 					className="otter-business-hour-item__label"
 					style={ {
