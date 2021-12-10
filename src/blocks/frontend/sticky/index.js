@@ -38,7 +38,7 @@ const createObserver = () => {
 		const { container } = blocks[index.toString()];
 		let earlyActivation = 0;
 
-		console.groupCollapsed( 'Early calculation for #' + index );
+		//console.groupCollapsed( 'Early calculation for #' + index );
 		activeIndex.forEach( otherIndex => {
 			if ( container === blocks[otherIndex.toString()].container ) {
 				if ( otherIndex < index ) {
@@ -50,8 +50,8 @@ const createObserver = () => {
 			}
 		});
 
-		console.log( 'Early activation is ' + earlyActivation );
-		console.groupEnd();
+		//console.log( 'Early activation is ' + earlyActivation );
+		//console.groupEnd();
 
 		return earlyActivation;
 	};
@@ -177,12 +177,6 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 		calculateEarlyActivation = () => observer.calculateEarlyActivation( index );
 	}
 
-	// DEBUG
-	if ( container ) {
-		container.style.border = '1px dashed black';
-	}
-	elem.style.border = '1px dashed red';
-
 	/**
 	 * This function will compute the position case in which the element must be.
 	 * @param {number} earlyActivation An offset that activate the position earlier or later (if the number is negative).
@@ -247,6 +241,14 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 	 * Listen to the scroll event and compute the position of the element.
 	 */
 	window.addEventListener( 'scroll', () => {
+
+		// DEBUG
+		if ( window?.debugSticky ) {
+			if ( container ) {
+				container.style.border = '1px dashed black';
+			}
+			elem.style.border = '1px dashed red';
+		}
 
 		// Get the scroll values
 		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -348,6 +350,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 
 // Testing purpose
 // We can make elem sticky in browser for testing various scenario with different blocks
+window.debugSticky = false;
 window.otterSticky = makeElementSticky;
 
 /**
