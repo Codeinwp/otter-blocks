@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import classnames from 'classnames';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -19,7 +14,10 @@ import {
 	useRef
 } from '@wordpress/element';
 
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -37,7 +35,6 @@ const CircularProgressBarBlock = ({
 	toggleSelection,
 	className
 }) => {
-
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
@@ -113,6 +110,11 @@ const CircularProgressBarBlock = ({
 		setAttributes({ title: value });
 	};
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		className
+	});
+
 	return (
 		<Fragment>
 			<Inspector
@@ -121,10 +123,7 @@ const CircularProgressBarBlock = ({
 				onHeightChange={ onHeightChange }
 			/>
 
-			<div
-				className={ classnames( className ) }
-				id={ attributes.id }
-			>
+			<div { ...blockProps }>
 				{ ( 'default' === attributes.titleStyle ) && (
 					<div className="wp-block-themeisle-blocks-circle-counter-title__area">
 						<RichText
