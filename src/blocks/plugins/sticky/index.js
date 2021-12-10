@@ -84,7 +84,7 @@ const withStickyExtension = createHigherOrderComponent( BlockEdit => {
 		return (
 			<Fragment>
 				{
-					( props.attributes?.className?.includes( 'o-sticky' ) ||  props.attributes?.className?.includes( 'o-sticky-container' )  ) && (
+					props.attributes?.className?.includes( 'o-sticky' ) && (
 						<Edit { ...props }/>
 					)
 				}

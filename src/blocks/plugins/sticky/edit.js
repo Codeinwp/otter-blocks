@@ -62,7 +62,7 @@ const Edit = ({
 
 	if ( ! hasBlockSupport( name, 'customClassName', true ) ) {
 		return (
-			<Fragment></Fragment>
+			<Fragment>No support</Fragment>
 		);
 	}
 

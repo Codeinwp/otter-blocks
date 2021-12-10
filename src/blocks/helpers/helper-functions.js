@@ -96,6 +96,10 @@ export const easeInOutSine = ( x ) => {
 	return -( Math.cos( Math.PI * x ) - 1 ) / 2;
 };
 
+export const easeOutQuad = ( x ) => {
+	return 1 - ( 1 - x ) * ( 1 - x );
+};
+
 export const getCustomPostTypeSlugs = async() => {
 	const dataTypes = await ( new window.wp.api.collections.Types() ).fetch();
 

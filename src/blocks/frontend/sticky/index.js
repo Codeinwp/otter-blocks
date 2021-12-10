@@ -1,4 +1,5 @@
 import domReady from '@wordpress/dom-ready';
+import { easeOutQuad } from '../../helpers/helper-functions';
 
 const createObserver = () => {
 	const blocks = {};
@@ -7,15 +8,9 @@ const createObserver = () => {
 
 	let indexBlock = 0;
 
-	const addZIndex = () => {
-		dormantIndex.forEach( index => {
-			const { block } = blocks[index.toString()];
-			if ( 'fixed' !== block.style.position ) {
-				block.style.position = 'relative';
-			}
-			block.style.zIndex = 9999 + index;
-		});
-	};
+	const isEarlyActivated = ( index ) => dormantIndex.has( index );
+
+	const isActive = ( index ) => activeIndex.has( index );
 
 	const activate = ( index ) => {
 		activeIndex.add( index );
@@ -23,14 +18,10 @@ const createObserver = () => {
 
 	const earlyActivate = ( index ) => {
 		dormantIndex.add( index );
-		addZIndex();
 	};
 
 	const deactivate = ( index ) => {
 		activeIndex.delete( index );
-		const { block } = blocks[index.toString()];
-		block.style.zIndex = '';
-		block.style.position = '';
 	};
 
 	const earlyDeactivate = ( index ) => {
@@ -111,6 +102,8 @@ const createObserver = () => {
 
 	return {
 		register,
+		isActive,
+		isEarlyActivated,
 		activate,
 		deactivate,
 		earlyActivate,
@@ -150,17 +143,18 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 
 	// The new positions on the screen when the sticky mod is active
 	const offsetY = offset;
-	const offsetX = elem.offsetLeft;
 
 	// We need to activate the sticky mode more early for smooth transition
 	const activationOffset = offset + 20;
 
 	console.log( ({activationOffset}) );
 
-	let activate, deactivate, calculateGap, calculateOpacity, earlyActivate, earlyDeactivate, calculateEarlyActivation;
+	let activate, deactivate, calculateGap, calculateOpacity, earlyActivate, earlyDeactivate, calculateEarlyActivation, isActive, isEarlyActivated, index;
 
 	if ( observer ) {
-		const index = observer.register( elem, config, container, { elemTopPositionInPage, elemBottomPositionInPage, elemLeftPositionInPage, activationOffset });
+		index = observer.register( elem, config, container, { elemTopPositionInPage, elemBottomPositionInPage, elemLeftPositionInPage, activationOffset });
+		isActive = () => observer.isActive( index );
+		isEarlyActivated = () => observer.isEarlyActivated( index );
 		activate = () => observer.activate( index );
 		deactivate = () => observer.deactivate( index );
 		calculateGap = () => observer.calculateGap( index );
@@ -239,7 +233,12 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 		if ( getScrollActivePosition( calculateEarlyActivation?.() ) ) {
 			earlyActivate?.();
 		} else {
-			earlyActivate?.();
+			earlyDeactivate?.();
+		}
+
+		if ( isEarlyActivated?.() && ! isActive?.() ) {
+			elem.style.position = 'relative';
+			elem.style.zIndex = 9999 + ( index || 0 );
 		}
 
 		if ( pos ) {
@@ -279,20 +278,26 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 			}
 			insertPlaceholder();
 			activate?.();
-			elem.style.opacity = calculateOpacity?.();
+			elem.style.opacity = easeOutQuad( calculateOpacity?.() || 1 );
 		} else {
 			elem.classList.remove( 'is-sticky' );
 			elem.style.top = '';
 			elem.style.left = '';
 			elem.style.transform = '';
 			elem.style.opacity = '';
+
 			removePlaceholder();
-			if ( container ) {
-				container.style.height = '';
-			}
 			deactivate?.();
 		}
+
+
+		if ( ! isEarlyActivated?.() && ! isActive?.() ) {
+			elem.style.position = '';
+			elem.style.zIndex = '';
+			container.style.height = '';
+		}
 	});
+
 
 	return {
 		elem,
