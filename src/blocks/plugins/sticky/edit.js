@@ -77,8 +77,8 @@ const Edit = ({
 					initialOpen={ false }
 				>
 					<SelectControl
-						label={ __( 'Movement Limit', 'otter-blocks' ) }
-						help={ __( 'Limit the movement to a container. By default is set to the main parent.', 'otter-blocks' ) }
+						label={ __( 'Sticky to', 'otter-blocks' ) }
+						help={ __( 'Stick to another group, column, section block.', 'otter-blocks' ) }
 						value={ limit }
 						options={[
 							{ label: __( 'Default', 'otter-blocks' ), value: 'o-sticky-scope-main-area' },
