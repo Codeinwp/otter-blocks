@@ -22,7 +22,8 @@ import './editor.scss';
 const FILTER_OPTIONS = {
 	position: 'o-sticky-pos',
 	offset: 'o-sticky-offset',
-	scope: 'o-sticky-scope'
+	scope: 'o-sticky-scope',
+	behaviour: 'o-sticky-bhvr'
 };
 
 const Edit = ({
@@ -32,7 +33,8 @@ const Edit = ({
 }) => {
 
 	const position = attributes?.className?.includes( 'o-sticky-pos-bottom' ) ? 'o-sticky-pos-bottom' : 'o-sticky-pos-top';
-	const limit = attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-scope' ) ).pop() || '';
+	const limit = attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-scope' ) ).pop() || 'o-sticky-scope-main-area';
+	const behaviour = attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-bhvr' ) ).pop() || 'o-sticky-bhvr-keep';
 
 	const addOption = ( option, filterOption = FILTER_OPTIONS.position ) => {
 		const classes = new Set( attributes?.className?.split( ' ' )?.filter( c =>  ! c.includes( filterOption ) ) || []);
@@ -62,7 +64,7 @@ const Edit = ({
 
 	if ( ! hasBlockSupport( name, 'customClassName', true ) ) {
 		return (
-			<Fragment>No support</Fragment>
+			<Fragment></Fragment>
 		);
 	}
 
@@ -76,18 +78,20 @@ const Edit = ({
 				>
 					<SelectControl
 						label={ __( 'Movement Limit', 'otter-blocks' ) }
+						help={ __( 'Limit the movement to a container. By default is set to the main parent.', 'otter-blocks' ) }
 						value={ limit }
 						options={[
-							{ label: __( 'None', 'otter-blocks' ), value: '' },
-							{ label: __( 'Row', 'otter-blocks' ), value: 'o-sticky-scope-row' },
+							{ label: __( 'Default', 'otter-blocks' ), value: 'o-sticky-scope-main-area' },
+							{ label: __( 'Parent', 'otter-blocks' ), value: 'o-sticky-scope-parent' },
 							{ label: __( 'Section', 'otter-blocks' ), value: 'o-sticky-scope-section' },
-							{ label: __( 'Main Area', 'otter-blocks' ), value: 'o-sticky-scope-main-area' }
+							{ label: __( 'Screen', 'otter-blocks' ), value: 'o-sticky-scope-screen' }
 						]}
 						onChange={ value => addOption(  value, FILTER_OPTIONS.scope ) }
 					/>
 
 					<SelectControl
 						label={ __( 'Position', 'otter-blocks' ) }
+						help={ __( 'Stick the block to the top or the bottom of the screen.', 'otter-blocks' ) }
 						value={ position }
 						options={[
 							{ label: __( 'Top', 'otter-blocks' ), value: 'o-sticky-pos-top' },
@@ -97,11 +101,23 @@ const Edit = ({
 					/>
 
 					<RangeControl
-						label={ __( 'Distance from screen', 'otter-blocks' ) }
+						label={ __( 'Offset', 'otter-blocks' ) }
+						help={ __( 'Set the distance from the screen.', 'otter-blocks' ) }
 						value={ getOffsetValue( ) }
 						min={0}
 						max={500}
 						onChange={ value => addOption( `o-sticky-offset-${ value }`, FILTER_OPTIONS.offset ) }
+					/>
+
+					<SelectControl
+						label={ __( 'Behaviour', 'otter-blocks' ) }
+						help={ __( 'Set the action when multiple sticky blocks with the same movement limit collide.' ) }
+						value={ behaviour }
+						options={[
+							{ label: __( 'Default', 'otter-blocks' ), value: 'o-sticky-bhvr-keep' },
+							{ label: __( 'Hide', 'otter-blocks' ), value: 'o-sticky-bhvr-hide' }
+						]}
+						onChange={ value => addOption(  value, FILTER_OPTIONS.behaviour ) }
 					/>
 				</PanelBody>
 			</InspectorControls>

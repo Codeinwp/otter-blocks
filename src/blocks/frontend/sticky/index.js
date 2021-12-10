@@ -38,20 +38,20 @@ const createObserver = () => {
 		const { container } = blocks[index.toString()];
 		let earlyActivation = 0;
 
-		//console.groupCollapsed( 'Early calculation for #' + index );
+		console.groupCollapsed( 'Early calculation for #' + index );
 		activeIndex.forEach( otherIndex => {
 			if ( container === blocks[otherIndex.toString()].container ) {
 				if ( otherIndex < index ) {
 					const {block, metadata} = blocks[otherIndex.toString()];
-					earlyActivation += metadata.activationOffset + block?.getBoundingClientRect()?.height || 0;
+					earlyActivation += metadata.activationOffset + ( block?.getBoundingClientRect()?.height || 0 );
 
 					//console.log( 'Found ' + otherIndex + ' -- EarlyActivation: ' + ( metadata.activationOffset + block?.getBoundingClientRect()?.height || 0 ) );
 				}
 			}
 		});
 
-		//console.log( 'Early activation is ' + earlyActivation );
-		//console.groupEnd();
+		console.log( 'Early activation is ' + earlyActivation );
+		console.groupEnd();
 
 		return earlyActivation;
 	};
@@ -253,7 +253,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 		const scrollBottom = scrollTop + window.innerHeight;
 
 		// Check if the scroll with the activation offset has passed the top of the element
-		const stickyPosition = 'stack' === config.behaviour ? getScrollActivePosition( calculateGap() ) : getScrollActivePosition() ;
+		const stickyPosition = 'o-sticky-bhvr-stack' === config.behaviour ? getScrollActivePosition( calculateGap() ) : getScrollActivePosition() ;
 
 		// console.log( 'Position case: ' + pos );
 
@@ -310,7 +310,9 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 			}
 			insertPlaceholder();
 			activate?.();
-			elem.style.opacity = easeOutQuad( calculateOpacity?.() || 1 );
+			if ( 'o-sticky-bhvr-hide' === config.behaviour ) {
+				elem.style.opacity = easeOutQuad( calculateOpacity?.() || 1 );
+			}
 		} else {
 			elem.classList.remove( 'is-sticky' );
 			elem.style.top = '';
@@ -318,15 +320,22 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 			elem.style.transform = '';
 			elem.style.opacity = '';
 
+			if ( ! isEarlyActivated?.() ) {
+				console.log( 'Clean' );
+				elem.style.position = '';
+				elem.style.zIndex = '';
+			}
+
 			removePlaceholder();
 			deactivate?.();
 		}
 
-		if ( ! isEarlyActivated?.() && ! isActive?.() ) {
-			elem.style.position = '';
-			elem.style.zIndex = '';
-			container.style.height = '';
-		}
+		// if ( ! isEarlyActivated?.() && ! isActive?.() ) {
+		// 	console.log( 'Clean' );
+		// 	elem.style.position = '';
+		// 	elem.style.zIndex = '';
+		// 	container.style.height = '';
+		// }
 	});
 
 
@@ -356,7 +365,7 @@ const getStickyContainer = ( elem, scope ) => {
 				parent.classList.contains( 'wp-block-group' ) ||
 				parent.classList.contains( 'wp-block-column' )
 			) &&
-			'o-sticky-scope-row' === scope
+			'o-sticky-scope-parent' === scope
 		) {
 			return parent;
 		}
@@ -389,9 +398,11 @@ const getConfigOptions = ( elem ) => {
 			config.offset = parseInt( cssClass.split( '-' )?.pop() ) || config.offset;
 		} else if ( cssClass.includes( 'o-sticky-scope' ) ) {
 			config.scope = cssClass;
+		} else if ( cssClass.includes( 'o-sticky-bhvr' ) ) {
+			config.behaviour = cssClass;
 		}
 		return config;
-	}, { position: 'top', offset: 40, scope: '', behaviour: 'hide' });
+	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep' });
 };
 
 domReady( () => {

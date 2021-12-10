@@ -52,7 +52,7 @@ const StickyMenu = () => {
 			const className = classes?.filter( c => ! c.includes( 'o-sticky' ) ) || [];
 
 			if ( ! isSticky ) {
-				className.push( 'o-sticky' );
+				className.push( 'o-sticky', 'o-sticky-scope-main-area', 'o-sticky-pos-top', 'o-sticky-bhvr-keep' );
 			}
 			attr.className = className.join( ' ' );
 			attr.hasCustomCSS = true;
