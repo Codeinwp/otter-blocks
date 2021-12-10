@@ -1,6 +1,8 @@
 /**
  * WordPress dependencies
  */
+import { useBlockProps } from '@wordpress/block-editor';
+
 import { useViewportMatch } from '@wordpress/compose';
 
 import { useSelect } from '@wordpress/data';
@@ -175,6 +177,11 @@ const Edit = ({
 	// Add `border-radius` for all the platforms
 	styles.mainComponents.borderRadius = 'linked' === attributes.borderRadiusType ? attributes.borderRadius + '%' : `${ attributes.borderRadiusTopLeft }% ${ attributes.borderRadiusTopRight }% ${ attributes.borderRadiusBottomRight }% ${ attributes.borderRadiusBottomLeft }%`;
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		className
+	});
+
 	return (
 		<Fragment>
 			<Inspector
@@ -182,10 +189,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={ className }
-			>
+			<div { ...blockProps }>
 				<DisplayTime
 					time={ getIntervalFromUnix( unixTime, { exclude: attributes?.exclude }) }
 					styles={ styles }
