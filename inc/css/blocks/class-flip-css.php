@@ -341,12 +341,15 @@ class Flip_CSS extends Base_CSS {
 							),
 							'position'   => array(
 								'value'   => 'backBackgroundPosition',
-								'default' => 'top left',
+								'default' => array(
+									'x' => 50,
+									'y' => 50
+								),
 								'format'  => function( $value, $attrs ) {
-									if ( isset( $value['x'] ) ) {
+									if ( isset( $value['x'] ) && isset( $value['y'] ) ) {
 										return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
 									}
-									return 'top left';
+									return '50% 50%';
 								},
 							),
 							'size'       => array(
