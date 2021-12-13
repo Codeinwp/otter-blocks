@@ -331,7 +331,7 @@ const Inspector = ({
 	};
 
 	const changeColumnsWidth = value => {
-		if ( ( 0 <= value && 1200 >= value ) || undefined === value ) {
+		if ( ( 0 <= value && 1800 >= value ) || undefined === value ) {
 			setAttributes({ columnsWidth: value });
 		}
 	};
