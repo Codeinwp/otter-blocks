@@ -331,7 +331,7 @@ const Inspector = ({
 	};
 
 	const changeColumnsWidth = value => {
-		if ( ( 0 <= value && 1800 >= value ) || undefined === value ) {
+		if ( ( 0 <= value && 2400 >= value ) || undefined === value ) {
 			setAttributes({ columnsWidth: value });
 		}
 	};
@@ -950,7 +950,7 @@ const Inspector = ({
 								value={ attributes.columnsWidth || '' }
 								onChange={ changeColumnsWidth }
 								min={ 0 }
-								max={ 1800 }
+								max={ 2400 }
 							/>
 
 							{ attributes.columnsWidth && (
