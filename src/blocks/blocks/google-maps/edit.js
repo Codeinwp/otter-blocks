@@ -9,6 +9,8 @@ import { v4 as uuidv4 } from 'uuid';
  */
 import { __ } from '@wordpress/i18n';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import { ResizableBox } from '@wordpress/components';
 
 import {
@@ -33,7 +35,6 @@ import { blockInit } from '../../helpers/block-utility.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId,
 	isSelected,
 	toggleSelection
@@ -425,16 +426,24 @@ const Edit = ({
 		mapRef.current.setOptions({ styles: styles[ value ] });
 	};
 
+	const blockProps = useBlockProps({
+		className: classnames(
+			'wp-block-themeisle-blocks-google-map-resizer',
+			{ 'is-focused': isSelected }
+		)
+	});
+
 	if ( ! isAPILoaded || ! isAPISaved ) {
 		return (
-			<Placeholder
-				className={ className }
-				api={ api }
-				isAPILoaded={ isAPILoaded }
-				isAPISaved={ isAPISaved }
-				changeAPI={ setAPI }
-				saveAPIKey={ saveAPIKey }
-			/>
+			<div { ...blockProps }>
+				<Placeholder
+					api={ api }
+					isAPILoaded={ isAPILoaded }
+					isAPISaved={ isAPISaved }
+					changeAPI={ setAPI }
+					saveAPIKey={ saveAPIKey }
+				/>
+			</div>
 		);
 	}
 
@@ -505,42 +514,39 @@ const Edit = ({
 				/>
 			) }
 
-			<ResizableBox
-				size={ {
-					height: attributes.height
-				} }
-				enable={ {
-					top: false,
-					right: false,
-					bottom: true,
-					left: false
-				} }
-				minHeight={ 100 }
-				maxHeight={ 1400 }
-				onResizeStart={ () => {
-					toggleSelection( false );
-				} }
-				onResizeStop={ ( event, direction, elt, delta ) => {
-					setAttributes({
-						height: parseInt( attributes.height + delta.height, 10 )
-					});
-					toggleSelection( true );
-				} }
-				className={ classnames(
-					'wp-block-themeisle-blocks-google-map-resizer',
-					{ 'is-focused': isSelected }
-				) }
-			>
-				<Map
-					attributes={ attributes }
-					className={ className }
-					initMap={ initMap }
-					displayMap={ displayMap }
-					isMapLoaded={ isMapLoaded }
-					selectMarker={ selectMarker }
-					isSelectingMarker={ isSelectingMarker }
-				/>
-			</ResizableBox>
+			<div { ...blockProps }>
+				<ResizableBox
+					size={ {
+						height: attributes.height
+					} }
+					enable={ {
+						top: false,
+						right: false,
+						bottom: true,
+						left: false
+					} }
+					minHeight={ 100 }
+					maxHeight={ 1400 }
+					onResizeStart={ () => {
+						toggleSelection( false );
+					} }
+					onResizeStop={ ( event, direction, elt, delta ) => {
+						setAttributes({
+							height: parseInt( attributes.height + delta.height, 10 )
+						});
+						toggleSelection( true );
+					} }
+				>
+					<Map
+						attributes={ attributes }
+						initMap={ initMap }
+						displayMap={ displayMap }
+						isMapLoaded={ isMapLoaded }
+						selectMarker={ selectMarker }
+						isSelectingMarker={ isSelectingMarker }
+					/>
+				</ResizableBox>
+			</div>
 		</Fragment>
 	);
 };

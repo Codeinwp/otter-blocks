@@ -58,15 +58,9 @@ class About_Author_Block extends Base_Block {
 			esc_html( wp_strip_all_tags( get_the_author_meta( 'description' ) ) )
 		);
 
-		$class = 'wp-block-themeisle-blocks-about-author';
-
-		if ( isset( $attributes['className'] ) ) {
-			$class .= ' ' . esc_attr( $attributes['className'] );
-		}
-
 		return sprintf(
 			'<section %1$s><div class="o-author-image">%2$s</div><div class="o-author-data">%3$s%4$s</div></section>',
-			$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => $class ) ),
+			$wrapper_attributes = get_block_wrapper_attributes(),
 			$img_markup,
 			$title_markup,
 			$content_markup
