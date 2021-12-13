@@ -16,11 +16,9 @@ const Save = ({
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
-		className: classnames(
-			{
-				[ `is-${ attributes.gap }-gap` ]: attributes.gap
-			}
-		)
+		className: classnames({
+			[ `is-${ attributes.gap }-gap` ]: attributes.gap
+		})
 	});
 
 	return (

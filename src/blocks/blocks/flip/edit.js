@@ -119,10 +119,10 @@ const Edit = ({
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		className: classnames(
-			{ 'flipX': 'flipX' === attributes.animType },
-			{ 'flipY': 'flipY' === attributes.animType }
-		),
+		className: classnames({
+			'flipX': 'flipX' === attributes.animType,
+			'flipY': 'flipY' === attributes.animType
+		}),
 		css: shadowCSS
 	});
 

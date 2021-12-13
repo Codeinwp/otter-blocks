@@ -9,7 +9,8 @@ import api from '@wordpress/api';
 
 import {
 	__experimentalBlockVariationPicker as VariationPicker,
-	InnerBlocks
+	InnerBlocks,
+	useBlockProps
 } from '@wordpress/block-editor';
 
 import {
@@ -42,7 +43,6 @@ import Placeholder from './placeholder.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId,
 	name
 }) => {
@@ -303,6 +303,10 @@ const Edit = ({
 
 	const hasIntegrationActive = attributes.provider && attributes.apiKey && attributes.listId;
 
+	const blockProps = useBlockProps({
+		id: attributes.id
+	});
+
 	return (
 		<Fragment>
 			<Inspector
@@ -310,10 +314,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div
-				className={ className }
-				id={ attributes.id }
-			>
+			<div { ...blockProps }>
 				{
 					( hasInnerBlocks ) ? (
 						<div className="otter-form__container">

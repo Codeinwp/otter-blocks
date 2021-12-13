@@ -18,21 +18,21 @@ const Save = ({
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
 		className: classnames(
-			{ 'flipX': 'flipX' === attributes.animType },
-			{ 'flipY': 'flipY' === attributes.animType },
-			'anim'
+			'anim',
+			{
+				'flipX': 'flipX' === attributes.animType,
+				'flipY': 'flipY' === attributes.animType
+			}
 		)
 
 	});
 	return (
 		<div { ...blockProps }>
 			<div
-				className={
-					classnames(
-						'o-inner',
-						{ invert: attributes.isInverted }
-					)
-				}
+				className={ classnames(
+					'o-inner',
+					{ invert: attributes.isInverted }
+				) }
 			>
 				<div className="o-front">
 					<div className="o-content">

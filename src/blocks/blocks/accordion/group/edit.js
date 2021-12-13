@@ -61,11 +61,9 @@ const Edit = ({
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		className: classnames(
-			{
-				[ `is-${ attributes.gap }-gap` ]: attributes.gap
-			}
-		),
+		className: classnames({
+			[ `is-${ attributes.gap }-gap` ]: attributes.gap
+		}),
 		css: styles
 	});
 
