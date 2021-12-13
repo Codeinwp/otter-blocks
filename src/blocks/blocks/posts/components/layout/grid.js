@@ -63,14 +63,14 @@ const Grid = ({
 								{ attributes.template.map( element => {
 									if ( 'category' === element ) {
 										if ( undefined !== category && ( attributes.displayCategory && categoriesList ) ) {
-											return <span className="wp-block-themeisle-blocks-posts-grid-post-category">{ category.name }</span>;
+											return <span key={ element } className="wp-block-themeisle-blocks-posts-grid-post-category">{ category.name }</span>;
 										}
 									}
 
 									if ( 'title' === element ) {
 										if ( attributes.displayTitle ) {
 											return (
-												<Tag className="wp-block-themeisle-blocks-posts-grid-post-title">
+												<Tag key={ element } className="wp-block-themeisle-blocks-posts-grid-post-title">
 													<a href={ post.link }>
 														{ unescapeHTML( post.title?.rendered ) }
 													</a>
@@ -82,7 +82,7 @@ const Grid = ({
 									if ( 'meta' === element ) {
 										if ( attributes.displayMeta && ( attributes.displayDate || attributes.displayAuthor ) ) {
 											return (
-												<p className="wp-block-themeisle-blocks-posts-grid-post-meta">
+												<p key={ element } className="wp-block-themeisle-blocks-posts-grid-post-meta">
 													{ ( attributes.displayDate ) && (
 
 														/**
@@ -106,7 +106,7 @@ const Grid = ({
 									if ( 'description' === element ) {
 										if ( 0 < attributes.excerptLength && attributes.displayDescription ) {
 											return (
-												<p className="wp-block-themeisle-blocks-posts-grid-post-description">
+												<p key={ element } className="wp-block-themeisle-blocks-posts-grid-post-description">
 													{ post.excerpt?.rendered && unescapeHTML( post.excerpt.rendered ).substring( 0, attributes.excerptLength ) + '…' }
 												</p>
 											);

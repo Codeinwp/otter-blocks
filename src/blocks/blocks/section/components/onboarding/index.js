@@ -47,7 +47,6 @@ const Onboarding = ({
 			<div className="wp-block-themeisle-layout-picker">
 				<Tooltip text={ __( 'Equal', 'otter-blocks' ) } >
 					<Button
-						isLarge
 						className="wp-block-themeisle-blocks-advanced-column-layout"
 						onClick={ () => setupColumns( 2, 'equal' ) }
 					>
@@ -60,7 +59,6 @@ const Onboarding = ({
 
 				<Tooltip text={ __( '1:2', 'otter-blocks' ) } >
 					<Button
-						isLarge
 						className="wp-block-themeisle-blocks-advanced-column-layout"
 						onClick={ () => setupColumns( 2, 'oneTwo' ) }
 					>
@@ -73,7 +71,6 @@ const Onboarding = ({
 
 				<Tooltip text={ __( '2:1', 'otter-blocks' ) } >
 					<Button
-						isLarge
 						className="wp-block-themeisle-blocks-advanced-column-layout"
 						onClick={ () => setupColumns( 2, 'twoOne' ) }
 					>
@@ -86,7 +83,6 @@ const Onboarding = ({
 
 				<Tooltip text={ __( 'Equal', 'otter-blocks' ) } >
 					<Button
-						isLarge
 						className="wp-block-themeisle-blocks-advanced-column-layout"
 						onClick={ () => setupColumns( 3, 'equal' ) }
 					>
@@ -100,7 +96,6 @@ const Onboarding = ({
 
 				<Tooltip text={ __( '1:1:2', 'otter-blocks' ) } >
 					<Button
-						isLarge
 						className="wp-block-themeisle-blocks-advanced-column-layout"
 						onClick={ () => setupColumns( 3, 'oneOneTwo' ) }
 					>
@@ -114,7 +109,6 @@ const Onboarding = ({
 
 				<Tooltip text={ __( '2:1:1', 'otter-blocks' ) } >
 					<Button
-						isLarge
 						className="wp-block-themeisle-blocks-advanced-column-layout"
 						onClick={ () => setupColumns( 3, 'twoOneOne' ) }
 					>
@@ -128,7 +122,6 @@ const Onboarding = ({
 
 				<Tooltip text={ __( 'Equal', 'otter-blocks' ) } >
 					<Button
-						isLarge
 						className="wp-block-themeisle-blocks-advanced-column-layout"
 						onClick={ () => setupColumns( 4, 'equal' ) }
 					>
@@ -145,7 +138,6 @@ const Onboarding = ({
 			<Tooltip text={ __( 'Open Template Library', 'otter-blocks' ) } >
 				<Button
 					isPrimary
-					isLarge
 					className="wp-block-themeisle-template-library"
 					onClick={ () => setIsLibraryOpen( true ) }
 				>

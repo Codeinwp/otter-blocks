@@ -70,7 +70,6 @@ const Inspector = ({
 		<InspectorControls>
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
-				initialOpen={ true }
 			>
 				<RangeControl
 					label={ __( 'Percentage', 'otter-blocks' ) }

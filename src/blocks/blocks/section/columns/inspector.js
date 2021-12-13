@@ -55,7 +55,7 @@ const Inspector = ({
 }) => {
 	const getView = useSelect( ( select ) => {
 		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
 
 		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
 	}, []);
@@ -962,7 +962,6 @@ const Inspector = ({
 											icon="editor-alignleft"
 											label={ __( 'Left', 'otter-blocks' ) }
 											showTooltip={ true }
-											isLarge
 											isPrimary={ 'flex-start' === attributes.horizontalAlign }
 											onClick={ () => changeHorizontalAlign( 'flex-start' ) }
 										/>
@@ -971,7 +970,6 @@ const Inspector = ({
 											icon="editor-aligncenter"
 											label={ __( 'Center', 'otter-blocks' ) }
 											showTooltip={ true }
-											isLarge
 											isPrimary={ 'center' === attributes.horizontalAlign }
 											onClick={ () => changeHorizontalAlign( 'center' ) }
 										/>
@@ -980,7 +978,6 @@ const Inspector = ({
 											icon="editor-alignright"
 											label={ __( 'Right', 'otter-blocks' ) }
 											showTooltip={ true }
-											isLarge
 											isPrimary={ 'flex-end' === attributes.horizontalAlign }
 											onClick={ () => changeHorizontalAlign( 'flex-end' ) }
 										/>

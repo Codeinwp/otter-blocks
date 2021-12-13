@@ -48,7 +48,7 @@ const Edit = ({
 		isPreviewTablet,
 		isPreviewMobile
 	} = useSelect( select => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
 
 		return {
 			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
@@ -196,7 +196,7 @@ const Edit = ({
 				formattingControls={ [ 'bold', 'italic', 'link', 'strikethrough', 'highlight' ] }
 				allowedFormats={ [ 'core/bold', 'core/italic', 'core/link', 'core/strikethrough', 'themeisle-blocks/highlight' ] }
 				onMerge={ mergeBlocks }
-				unstableOnSplit={
+				onSplit={
 					insertBlocksAfter ?
 						( before, after, ...blocks ) => {
 							setAttributes({ content: before });

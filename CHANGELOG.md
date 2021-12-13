@@ -1,3 +1,10 @@
+##### [Version 1.7.4](https://github.com/Codeinwp/otter-blocks/compare/v1.7.3...v1.7.4) (2021-12-02)
+
+- Fix Leaflet scripts not loading properly
+- Fix blocks causing errors on widgets
+- Fix Blocks CSS not working properly
+- Fix Blocks Animation causing the debugging error
+
 ##### [Version 1.7.3](https://github.com/Codeinwp/otter-blocks/compare/v1.7.2...v1.7.3) (2021-11-18)
 
 

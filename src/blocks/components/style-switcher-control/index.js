@@ -10,7 +10,7 @@ import {
 	BaseControl,
 	Button,
 	Dropdown,
-	Toolbar
+	ToolbarGroup
 } from '@wordpress/components';
 
 import { useInstanceId } from '@wordpress/compose';
@@ -78,7 +78,7 @@ export const StyleSwitcherBlockControl = ({
 
 	return (
 		<BlockControls>
-			<Toolbar>
+			<ToolbarGroup>
 				<Dropdown
 					contentClassName="otter-styles-popover-content"
 					position="bottom center"
@@ -122,7 +122,7 @@ export const StyleSwitcherBlockControl = ({
 						</Fragment>
 					) }
 				/>
-			</Toolbar>
+			</ToolbarGroup>
 		</BlockControls>
 	);
 };

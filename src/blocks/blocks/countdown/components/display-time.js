@@ -17,14 +17,12 @@ const DisplayTimeComponent = ({
 	name,
 	value,
 	tag,
-	key,
 	styles
 }) => {
 	const compStyle = 'sep' !== name ? { ...styles.allComponents, ...styles.mainComponents } : styles.allComponents;
 
 	return (
 		<div
-			key={ key }
 			style={ compStyle }
 			name={ tag }
 			className={ classnames(

@@ -142,7 +142,7 @@ class Main {
 
 		add_action( 'init', array( $this, 'autoload_classes' ), 11 );
 		add_action( 'init', array( $this, 'register_blocks' ), 11 );
-		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ), 1 );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) ); // Don't change the priority or else Blocks CSS will stop working.
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_frontend_assets' ) );
 		add_filter( 'script_loader_tag', array( $this, 'filter_script_loader_tag' ), 10, 2 );
 
@@ -684,26 +684,25 @@ class Main {
 				true
 			);
 
-
 			wp_register_style(
-				'leaflet-css',
+				'leaflet',
 				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.css',
 				[],
 				self::$assets_version
 			);
 
 			wp_enqueue_script(
-				'otter-leaflet-gesture',
+				'leaflet-gesture-handling',
 				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.js',
 				array( 'leaflet' ),
 				self::$assets_version,
 				true
 			);
 
-			wp_script_add_data( 'otter-leaflet-gesture', 'defer', true );
+			wp_script_add_data( 'leaflet-gesture-handling', 'defer', true );
 
 			wp_register_style(
-				'leaflet-theme-gesture',
+				'leaflet-gesture-handling',
 				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.css',
 				[],
 				self::$assets_version
@@ -716,7 +715,7 @@ class Main {
 				plugin_dir_url( $this->get_dir() ) . 'build/blocks/leaflet-map.js',
 				array_merge(
 					$asset_file['dependencies'],
-					array( 'leaflet', 'otter-leaflet-gesture' )
+					array( 'leaflet', 'leaflet-gesture-handling' )
 				),
 				$asset_file['version'],
 				true
@@ -727,8 +726,8 @@ class Main {
 			add_action(
 				'get_footer',
 				static function () {
-					wp_enqueue_style( 'leaflet-css' );
-					wp_enqueue_style( 'leaflet-theme-gesture' );
+					wp_enqueue_style( 'leaflet' );
+					wp_enqueue_style( 'leaflet-gesture-handling' );
 				}
 			);
 

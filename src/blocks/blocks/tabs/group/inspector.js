@@ -40,7 +40,7 @@ const Inspector = ({
 				{ items.map( ( tab, index ) => {
 					return (
 						<SortableTab
-							key={ tab.id }
+							key={ tab.clientId }
 							tab={ tab }
 							index={ index }
 							deleteTab={ deleteTab }
@@ -76,7 +76,6 @@ const Inspector = ({
 		<InspectorControls>
 			<PanelBody
 				title={ __( 'Tabs Management', 'otter-blocks' ) }
-				initialOpen={ true }
 			>
 				<p>{ __( 'Press and hold to use drag and drop to sort the tabs', 'otter-blocks' ) }</p>
 
@@ -92,7 +91,6 @@ const Inspector = ({
 
 				<Button
 					isSecondary
-					isLarge
 					className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
 					onClick={ addTab }
 				>
@@ -102,7 +100,7 @@ const Inspector = ({
 
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
-				initialOpen={ true }
+				initialOpen={ false }
 			>
 				<RangeControl
 					label={ __( 'Border Width', 'otter-blocks' ) }
