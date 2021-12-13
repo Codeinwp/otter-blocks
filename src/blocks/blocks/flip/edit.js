@@ -17,7 +17,8 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	InnerBlocks,
-	RichText
+	RichText,
+	useBlockProps
 } from '@wordpress/block-editor';
 
 import { Button } from '@wordpress/components';
@@ -83,7 +84,6 @@ const CONTENT_POSITIONS = {
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId,
 	isSelected
 }) => {
@@ -117,6 +117,15 @@ const Edit = ({
 		}
 	}, [ isSelected ]);
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		className: classnames(
+			{ 'flipX': 'flipX' === attributes.animType },
+			{ 'flipY': 'flipY' === attributes.animType }
+		),
+		css: shadowCSS
+	});
+
 	return (
 		<Fragment>
 			<Controls
@@ -130,17 +139,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={
-					classnames(
-						className,
-						{ 'flipX': 'flipX' === attributes.animType },
-						{ 'flipY': 'flipY' === attributes.animType }
-					)
-				}
-				css={ shadowCSS }
-			>
+			<div { ...blockProps }>
 				<div
 					className={
 						classnames(

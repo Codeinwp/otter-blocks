@@ -20,6 +20,7 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/flip', {
+	apiVersion: 2,
 	title: __( 'Flip Card', 'otter-blocks' ),
 	description: __( 'Make a card with a flip effect.', 'otter-blocks' ),
 	icon,

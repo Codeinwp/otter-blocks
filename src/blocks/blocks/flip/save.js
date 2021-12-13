@@ -8,25 +8,24 @@ import classnames from 'classnames';
  */
 import {
 	InnerBlocks,
-	RichText
+	RichText,
+	useBlockProps
 } from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
+	const blockProps = useBlockProps.save({
+		id: attributes.id,
+		className: classnames(
+			{ 'flipX': 'flipX' === attributes.animType },
+			{ 'flipY': 'flipY' === attributes.animType },
+			'anim'
+		)
+
+	});
 	return (
-		<div
-			id={ attributes.id }
-			className={
-				classnames(
-					className,
-					{ 'flipX': 'flipX' === attributes.animType },
-					{ 'flipY': 'flipY' === attributes.animType },
-					'anim'
-				)
-			}
-		>
+		<div { ...blockProps }>
 			<div
 				className={
 					classnames(

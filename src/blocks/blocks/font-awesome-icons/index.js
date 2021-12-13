@@ -17,6 +17,7 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/font-awesome-icons', {
+	apiVersion: 2,
 	title: __( 'Icon', 'otter-blocks' ),
 	description: __( 'Add icons from Font Awesome or ThemeIsle Icons library to your website.', 'otter-blocks' ),
 	icon,
