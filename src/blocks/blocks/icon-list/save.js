@@ -1,20 +1,23 @@
 /**
  * WordPress dependencies.
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
-const Edit = ({
-	attributes,
-	className
+const Save = ({
+	attributes
 }) => {
+	const blockProps = useBlockProps.save({
+		id: attributes.id
+	});
+
 	return (
-		<div
-			className={ className }
-			id={ attributes.id }
-		>
+		<div { ...blockProps }>
 			<InnerBlocks.Content />
 		</div>
 	);
 };
 
-export default Edit;
+export default Save;

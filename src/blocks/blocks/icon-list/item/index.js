@@ -14,6 +14,7 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/icon-list-item', {
+	apiVersion: 2,
 	title: __( 'Icon List Item', 'otter-blocks' ),
 	description: __( 'Display an item for the icon list.', 'otter-blocks' ),
 	icon,
