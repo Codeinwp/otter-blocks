@@ -84,8 +84,8 @@ const Edit = ({
 	attributes,
 	setAttributes,
 	className,
-	clientId,
-	isSelected
+	isSelected,
+	clientId
 }) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -110,12 +110,6 @@ const Edit = ({
 			box-shadow: ${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ getShadowColor() };
 		}
 		` : '';
-
-	useEffect( () => {
-		if ( false === isSelected ) {
-			setFliped( isSelected );
-		}
-	}, [ isSelected ]);
 
 	return (
 		<Fragment>
