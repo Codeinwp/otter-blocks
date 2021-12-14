@@ -11,7 +11,10 @@ import {
  */
 import { __ } from '@wordpress/i18n';
 
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import { Button } from '@wordpress/components';
 
@@ -55,6 +58,10 @@ const Edit = ({
 		}
 	};
 
+	const blockProps = useBlockProps({
+		id: attributes.id
+	});
+
 	return (
 		<Fragment>
 			<Inspector
@@ -62,10 +69,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={ className }
-			>
+			<div { ...blockProps }>
 				<Button
 					isPrimary
 					icon={ external }
