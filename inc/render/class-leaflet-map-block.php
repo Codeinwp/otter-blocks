@@ -93,18 +93,19 @@ class Leaflet_Map_Block extends Base_Block {
 
 		// Set the ID and the class name.
 		$id    = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-map-' . wp_rand( 10, 100 );
-		$class = 'wp-block-themeisle-blocks-map';
-
-		if ( isset( $attributes['className'] ) ) {
-			$class .= ' ' . esc_attr( $attributes['className'] );
-		}
+		$class = '';
 
 		if ( isset( $attributes['align'] ) ) {
-			$class .= ' align' . esc_attr( $attributes['align'] );
+			$class .= 'align' . esc_attr( $attributes['align'] );
 		}
 
+		$wrapper_attributes = get_block_wrapper_attributes( array(
+			'id'    => $id,
+			'class' => $class
+		) );
+
 		// Load the attributes in the page and make a placeholder to render the map.
-		$output  = '<div class="' . esc_attr( $class ) . '" id="' . esc_attr( $id ) . '"></div>' . "\n";
+		$output  = '<div ' . $wrapper_attributes . '></div>' . "\n";
 		$output .= '<script type="text/javascript">' . "\n";
 		$output .= '	/* <![CDATA[ */' . "\n";
 		$output .= '		if ( ! window.themeisleLeafletMaps ) window.themeisleLeafletMaps =[];' . "\n";

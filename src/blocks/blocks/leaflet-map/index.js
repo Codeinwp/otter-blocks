@@ -16,6 +16,7 @@ import edit from './edit.js';
 import transforms from './transforms.js';
 
 registerBlockType( 'themeisle-blocks/leaflet-map', {
+	apiVersion: 2,
 	title: __( 'Maps', 'otter-blocks' ),
 	description: __( 'Display Open Street Maps on your website with Maps block.', 'otter-blocks' ),
 	icon,
