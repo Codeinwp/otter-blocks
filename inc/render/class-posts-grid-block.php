@@ -251,11 +251,7 @@ class Posts_Grid_Block extends Base_Block {
 			$list_items_markup .= '</div></div></div>';
 		}
 
-		$class = 'wp-block-themeisle-blocks-posts-grid';
-
-		if ( isset( $attributes['className'] ) ) {
-			$class .= ' ' . esc_attr( $attributes['className'] );
-		}
+		$class = '';
 
 		if ( isset( $attributes['align'] ) ) {
 			$class .= ' align' . $attributes['align'];
@@ -277,9 +273,13 @@ class Posts_Grid_Block extends Base_Block {
 			$class .= ' has-shadow';
 		}
 
+		$wrapper_attributes = get_block_wrapper_attributes( array(
+			'class' => trim( $class )
+		) );
+
 		$block_content = sprintf(
-			'<div class="%1$s">%2$s</div>',
-			esc_attr( $class ),
+			'<div %1$s>%2$s</div>',
+			$wrapper_attributes,
 			$list_items_markup
 		);
 

@@ -15,6 +15,7 @@ import attributes from './attributes.js';
 import edit from './edit.js';
 
 registerBlockType( 'themeisle-blocks/review', {
+	apiVersion: 2,
 	title: __( 'Product Review', 'otter-blocks' ),
 	description: __( 'Turn your posts into smart reviews with ratings and generate leads with a performing review block.', 'otter-blocks' ),
 	icon,
