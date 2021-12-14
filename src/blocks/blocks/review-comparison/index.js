@@ -5,6 +5,8 @@ import { __ } from '@wordpress/i18n';
 
 import { registerBlockType } from '@wordpress/blocks';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import { Placeholder } from '@wordpress/components';
 
 /**
@@ -18,6 +20,7 @@ import edit from './edit.js';
 
 if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) ) {
 	registerBlockType( 'themeisle-blocks/review-comparison', {
+		apiVersion: 2,
 		title: __( 'Review Comparison Table', 'otter-blocks' ),
 		description: __( 'A way to compare different product reviews made on the website.', 'otter-blocks' ),
 		icon,
@@ -36,6 +39,7 @@ if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) ) {
 	});
 } else {
 	registerBlockType( 'themeisle-blocks/review-comparison', {
+		apiVersion: 2,
 		title: __( 'Review Comparison Table', 'otter-blocks' ),
 		description: __( 'A way to compare different product reviews made on the website.', 'otter-blocks' ),
 		icon,
@@ -49,7 +53,7 @@ if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) ) {
 		supports: {
 			inserter: false
 		},
-		edit: () => <Placeholder>{ __( 'You need to have Neve Pro installed to edit Review Comparison Table block.', 'otter-blocks' ) }</Placeholder>,
+		edit: () => <div { ...useBlockProps() }><Placeholder>{ __( 'You need to have Neve Pro installed to edit Review Comparison Table block.', 'otter-blocks' ) }</Placeholder></div>,
 		save: () => null
 	});
 }
