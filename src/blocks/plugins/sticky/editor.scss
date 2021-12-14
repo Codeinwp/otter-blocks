@@ -30,3 +30,23 @@
 		}
 	}
 }
+
+
+.o-sticky:not( .is-selected )::after {
+	content: "Sticky";
+	z-index: 1;
+	font-size: 10px;
+	font-weight: bold;
+	color: var(--wp-admin-theme-color);
+	text-transform: uppercase;
+	text-align: center;
+	line-height: 20px;
+	width: 120px;
+	display: block;
+	position: absolute;
+	height: 20px;
+	right: 0;
+	left: auto;
+	top: 0;
+	border: 1px solid var(--wp-admin-theme-color);
+}
