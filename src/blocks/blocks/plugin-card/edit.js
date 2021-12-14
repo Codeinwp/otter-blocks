@@ -1,6 +1,8 @@
 /**
  * WordPress dependencies
  */
+import { useBlockProps } from '@wordpress/block-editor';
+
 import { Disabled } from '@wordpress/components';
 
 import {
@@ -18,20 +20,22 @@ import Controls from './controls.js';
 
 const Edit = ({
 	attributes,
-	setAttributes,
-	className
+	setAttributes
 }) => {
 	const [ hasError, setError ] = useState( false );
 
+	const blockProps = useBlockProps();
+
 	if ( ! attributes.slug ) {
 		return (
-			<Placeholder
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-				hasError={ hasError }
-				setError={ setError }
-				className={ className }
-			/>
+			<div { ...blockProps }>
+				<Placeholder
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+					hasError={ hasError }
+					setError={ setError }
+				/>
+			</div>
 		);
 	}
 
@@ -39,13 +43,14 @@ const Edit = ({
 		<Fragment>
 			<Controls setAttributes={ setAttributes }/>
 
-			<Disabled>
-				<ServerSideRender
-					block="themeisle-blocks/plugin-cards"
-					className={ attributes.className }
-					attributes={ { ...attributes } }
-				/>
-			</Disabled>
+			<div { ...blockProps }>
+				<Disabled>
+					<ServerSideRender
+						block="themeisle-blocks/plugin-cards"
+						attributes={ { ...attributes } }
+					/>
+				</Disabled>
+			</div>
 		</Fragment>
 	);
 };
