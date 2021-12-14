@@ -16,6 +16,7 @@ import deprecated from './deprecated.js';
 import edit from './edit.js';
 
 registerBlockType( 'themeisle-blocks/posts-grid', {
+	apiVersion: 2,
 	title: __( 'Posts', 'otter-blocks' ),
 	description: __( 'Display a list of your most recent posts in a beautiful layout.', 'otter-blocks' ),
 	icon,

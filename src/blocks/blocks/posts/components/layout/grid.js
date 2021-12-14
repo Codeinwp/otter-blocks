@@ -18,7 +18,6 @@ import { unescapeHTML, formatDate } from '../../../../helpers/helper-functions.j
 import Thumbnail from './thumbnail.js';
 
 const Grid = ({
-	className,
 	attributes,
 	posts,
 	categoriesList,
@@ -28,7 +27,6 @@ const Grid = ({
 
 	return (
 		<div className={ classnames(
-			className,
 			'is-grid',
 			`wp-block-themeisle-blocks-posts-grid-columns-${ attributes.columns }`,
 			{ 'has-shadow': attributes.imageBoxShadow }
