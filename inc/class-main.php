@@ -807,6 +807,18 @@ class Main {
 
 			self::$is_popup_loaded = true;
 		}
+
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/anim-count.asset.php';
+		wp_enqueue_script(
+			'otter-count',
+			plugin_dir_url( $this->get_dir() ) . 'build/blocks/anim-count.js',
+			$asset_file['dependencies'],
+			$asset_file['version'],
+			true
+		);
+
+		wp_script_add_data( 'otter-count', 'defer', true );
+
 	}
 
 	/**

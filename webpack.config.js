@@ -80,7 +80,8 @@ module.exports = [
 			masonry: './src/blocks/frontend/masonry/index.js',
 			form: './src/blocks/frontend/form/index.js',
 			countdown: './src/blocks/frontend/countdown/index.js',
-			popup: './src/blocks/frontend/popup/index.js'
+			popup: './src/blocks/frontend/popup/index.js',
+			'anim-count': './src/blocks/frontend/count/index.js'
 		},
 		output: {
 			path: path.resolve( __dirname, './build/blocks' ),
