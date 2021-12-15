@@ -15,6 +15,7 @@ import attributes from './attributes.js';
 import edit from './edit.js';
 
 registerBlockType( 'themeisle-blocks/sharing-icons', {
+	apiVersion: 2,
 	title: __( 'Sharing Icons', 'otter-blocks' ),
 	description: __( 'Share buttons for your website visitors to share content on any social sharing service.', 'otter-blocks' ),
 	icon,
