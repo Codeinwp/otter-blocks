@@ -17,6 +17,7 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/slider', {
+	apiVersion: 2,
 	title: __( 'Slider', 'otter-blocks' ),
 	description: __( 'Minimal image slider to showcase beautiful images.', 'otter-blocks' ),
 	icon: 'images-alt2',
