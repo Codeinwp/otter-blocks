@@ -13,6 +13,8 @@ import {
  */
 import { Disabled } from '@wordpress/components';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import {
 	Fragment,
 	useEffect,
@@ -58,13 +60,17 @@ const Edit = ({
 		}
 	`;
 
+	const blockProps = useBlockProps();
+
 	if ( isEditing ) {
 		return (
-			<Placeholder
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-				onComplete={ () => setEditing( false ) }
-			/>
+			<div { ...blockProps }>
+				<Placeholder
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+					onComplete={ () => setEditing( false ) }
+				/>
+			</div>
 		);
 	}
 
@@ -77,14 +83,16 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<Disabled
-				css={ styles }
-			>
-				<ServerSideRender
-					block="themeisle-blocks/woo-comparison"
-					attributes={ { ...attributes } }
-				/>
-			</Disabled>
+			<div { ...blockProps }>
+				<Disabled
+					css={ styles }
+				>
+					<ServerSideRender
+						block="themeisle-blocks/woo-comparison"
+						attributes={ { ...attributes } }
+					/>
+				</Disabled>
+			</div>
 		</Fragment>
 	);
 };

@@ -146,10 +146,14 @@ class Woo_Comparison_Block extends Base_Block {
 		$table->render_comparison_products_table( false, true, $attributes );
 
 		$id    = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-woo-comparison-' . wp_rand( 10, 100 );
-		$class = isset( $attributes['className'] ) ? $attributes['className'] : '';
-		$class = 'wp-block-themeisle-blocks-woo-comparison nv-ct-enabled nv-ct-comparison-table-content woocommerce ' . esc_attr( $class );
+		$class = 'nv-ct-enabled nv-ct-comparison-table-content woocommerce';
 
-		$output  = '<div id="' . $id . '" class="' . $class . '">';
+		$wrapper_attributes = get_block_wrapper_attributes( array(
+			'id'    => $id,
+			'class' => $class
+		) );
+
+		$output  = '<div ' . $wrapper_attributes . '>';
 		$output .= ob_get_contents();
 		$output .= '</div>';
 		ob_end_clean();
