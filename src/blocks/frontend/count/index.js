@@ -83,8 +83,22 @@ const initCount = ( elem ) => {
 };
 
 domReady( () => {
+	const options = {
+		root: null,
+		rootMargin: '0px',
+		threshold: [ 0.6 ]
+	};
+
 	const anims = document.querySelectorAll( 'o-anim-count' );
 	anims.forEach( ( elem ) => {
-		initCount( elem );
+		const observer = new IntersectionObserver( ( entries ) => {
+			entries.forEach( entry => {
+				if ( entry.isIntersecting && 0 < entry.intersectionRect.height ) {
+					initCount( elem );
+					observer.unobserve( elem );
+				}
+			});
+		}, options );
+		observer.observe( elem );
 	});
 });
