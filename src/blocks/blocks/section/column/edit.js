@@ -6,6 +6,11 @@ import hexToRgba from 'hex-rgba';
 /**
  * WordPress dependencies
  */
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
+
 import { ResizableBox } from '@wordpress/components';
 
 import { useViewportMatch } from '@wordpress/compose';
@@ -14,8 +19,6 @@ import {
 	useDispatch,
 	useSelect
 } from '@wordpress/data';
-
-import { InnerBlocks } from '@wordpress/block-editor';
 
 import {
 	Fragment,
@@ -294,6 +297,11 @@ const Edit = ({
 		...boxShadowStyle
 	};
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		style
+	});
+
 	return (
 		<Fragment>
 			<Inspector
@@ -317,11 +325,7 @@ const Edit = ({
 				onResize={ onResize }
 				onResizeStop={ onResizeStop }
 			>
-				<Tag
-					className={ className }
-					id={ attributes.id }
-					style={ style }
-				>
+				<Tag { ...blockProps }>
 					<InnerBlocks
 						templateLock={ false }
 						renderAppender={ ! hasInnerBlocks && InnerBlocks.ButtonBlockAppender }

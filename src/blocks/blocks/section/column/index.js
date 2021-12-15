@@ -15,6 +15,7 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/advanced-column', {
+	apiVersion: 2,
 	title: __( 'Section Column', 'otter-blocks' ),
 	description: __( 'A single column within a Section block.', 'otter-blocks' ),
 	parent: [ 'themeisle-blocks/advanced-columns' ],

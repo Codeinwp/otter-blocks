@@ -12,6 +12,17 @@ import { __ } from '@wordpress/i18n';
 import { times } from 'lodash';
 
 import {
+	createBlock,
+	createBlocksFromInnerBlocksTemplate
+} from '@wordpress/blocks';
+
+import {
+	__experimentalBlockVariationPicker as VariationPicker,
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
+
+import {
 	Button,
 	Dashicon,
 	Placeholder,
@@ -26,16 +37,7 @@ import {
 } from '@wordpress/data';
 
 import {
-	__experimentalBlockVariationPicker as VariationPicker,
-	InnerBlocks
-} from '@wordpress/block-editor';
-
-import {
-	createBlock,
-	createBlocksFromInnerBlocksTemplate
-} from '@wordpress/blocks';
-
-import {
+	Fragment,
 	useEffect,
 	useState
 } from '@wordpress/element';
@@ -55,7 +57,6 @@ import Library from '../../../components/template-library/index.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId,
 	name
 }) => {
@@ -339,7 +340,6 @@ const Edit = ({
 	}
 
 	const classes = classnames(
-		className,
 		`has-${ attributes.columns }-columns`,
 		`has-desktop-${ attributes.layout }-layout`,
 		`has-tablet-${ attributes.layoutTablet }-layout`,
@@ -357,52 +357,62 @@ const Edit = ({
 	// +-------------------------------- Template Library --------------------------------+
 	const [ isLibraryOpen, setIsLibraryOpen ] = useState( false );
 
+	const placeholderProps = useBlockProps();
+
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		className: classes,
+		style
+	});
+
 	if ( ! attributes.columns ) {
 		return (
-			<Placeholder
-				label={ __( 'Section', 'otter-blocks' )  }
-				instructions={ __( 'Select a layout to start with, or make one yourself.', 'otter-blocks' ) }
-				className="otter-section-layout-picker"
-			>
-				<VariationPicker
-					variations={ variations }
-					onSelect={ ( nextVariation = defaultVariation ) => {
-						if ( nextVariation ) {
-							replaceInnerBlocks(
-								clientId,
-								createBlocksFromInnerBlocksTemplate(
-									nextVariation.innerBlocks
-								),
-								true
-							);
-							setAttributes( nextVariation.attributes );
-						}
-					} }
-					allowSkip
-				/>
-				<Tooltip text={ __( 'Open Template Library', 'otter-blocks' ) } >
-					<Button
-						isPrimary
-						className="wp-block-themeisle-template-library"
-						onClick={ () => setIsLibraryOpen( true ) }
-					>
-						<Dashicon icon="category"/>
-						{ __( 'Template Library', 'otter-blocks' ) }
-					</Button>
+			<div { ...placeholderProps }>
+				<Placeholder
+					label={ __( 'Section', 'otter-blocks' )  }
+					instructions={ __( 'Select a layout to start with, or make one yourself.', 'otter-blocks' ) }
+					className="otter-section-layout-picker"
+				>
+					<VariationPicker
+						variations={ variations }
+						onSelect={ ( nextVariation = defaultVariation ) => {
+							if ( nextVariation ) {
+								replaceInnerBlocks(
+									clientId,
+									createBlocksFromInnerBlocksTemplate(
+										nextVariation.innerBlocks
+									),
+									true
+								);
+								setAttributes( nextVariation.attributes );
+							}
+						} }
+						allowSkip
+					/>
+					<Tooltip text={ __( 'Open Template Library', 'otter-blocks' ) } >
+						<Button
+							isPrimary
+							className="wp-block-themeisle-template-library"
+							onClick={ () => setIsLibraryOpen( true ) }
+						>
+							<Dashicon icon="category"/>
+							{ __( 'Template Library', 'otter-blocks' ) }
+						</Button>
 
-					{ isLibraryOpen && (
-						<Library
-							clientId={ clientId }
-							close={ () => setIsLibraryOpen( false ) }
-						/>
-					) }
-				</Tooltip>
-			</Placeholder>
+						{ isLibraryOpen && (
+							<Library
+								clientId={ clientId }
+								close={ () => setIsLibraryOpen( false ) }
+							/>
+						) }
+					</Tooltip>
+				</Placeholder>
+			</div>
 		);
 	}
 
 	return (
-		<div>
+		<Fragment>
 			<BlockNavigatorControl clientId={ clientId } />
 
 			<Controls
@@ -419,11 +429,7 @@ const Edit = ({
 				changeColumnsNumbers={ changeColumnsNumbers }
 			/>
 
-			<Tag
-				className={ classes }
-				id={ attributes.id }
-				style={ style }
-			>
+			<Tag { ...blockProps }>
 				<div
 					className="wp-block-themeisle-blocks-advanced-columns-overlay"
 					style={ overlayStyle }
@@ -458,7 +464,7 @@ const Edit = ({
 					height={ getDividerBottomHeight }
 				/>
 			</Tag>
-		</div>
+		</Fragment>
 	);
 };
 

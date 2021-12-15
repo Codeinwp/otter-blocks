@@ -57,7 +57,7 @@ const Edit = ({
 }) => {
 	useEffect( () => {
 		return () => {
-			if ( ! Boolean( attributes.otterConditions.length ) ) {
+			if ( ! Boolean( attributes?.otterConditions?.length ) ) {
 				return;
 			}
 
