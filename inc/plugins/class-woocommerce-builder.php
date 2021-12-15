@@ -96,7 +96,18 @@ class WooCommerce_Builder {
 		if ( isset( $_GET['otter-woo-builder'] ) && 'product' === $post_type ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 			if ( ! boolval( $_GET['otter-woo-builder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 				$_GET['toggle-woobuilder'] = 0; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-				delete_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder' );
+				$post_id = get_the_ID();
+
+				if ( has_blocks( $post_id ) ) {
+					$post = array(
+						'ID'           => $post_id,
+						'post_content' => '',
+					);
+
+					wp_update_post( $post );
+				}
+
+				delete_post_meta( $post_id, '_themeisle_gutenberg_woo_builder' );
 			} else {
 				update_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', rest_sanitize_boolean( $_GET['otter-woo-builder'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 			}
