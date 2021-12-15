@@ -106,7 +106,7 @@ const Edit = ({
 
 	const shadowCSS = attributes.boxShadow ?
 		css`
-		.o-front${ ! attributes.isInverted ? ':hover' : '' }, .o-back${ attributes.isInverted ? ':hover' : '' } {
+		.o-flip-front${ ! attributes.isInverted ? ':hover' : '' }, .o-flip-back${ attributes.isInverted ? ':hover' : '' } {
 			box-shadow: ${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ getShadowColor() };
 		}
 		` : '';
@@ -138,7 +138,7 @@ const Edit = ({
 				<div
 					className={
 						classnames(
-							'o-inner',
+							'o-flip-inner',
 							{ invert: attributes.isInverted }
 						)
 					}
@@ -149,7 +149,7 @@ const Edit = ({
 					} }
 				>
 					<div
-						className="o-front"
+						className="o-flip-front"
 						style={ {
 							borderColor: attributes.borderColor,
 							borderRadius: attributes.borderRadius,
@@ -163,7 +163,7 @@ const Edit = ({
 						} }
 					>
 						<div
-							className="o-content"
+							className="o-flip-content"
 							style={ {
 								padding: attributes.padding,
 								...( CONTENT_POSITIONS[ attributes.frontAlign ] || {})
@@ -208,7 +208,7 @@ const Edit = ({
 					</div>
 
 					<div
-						className="o-back"
+						className="o-flip-back"
 						style={ {
 							padding: attributes.padding,
 							borderColor: attributes.borderColor,
