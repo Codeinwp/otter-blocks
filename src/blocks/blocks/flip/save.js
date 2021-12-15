@@ -30,13 +30,13 @@ const Save = ({
 			<div
 				className={
 					classnames(
-						'o-inner',
+						'o-flip-inner',
 						{ invert: attributes.isInverted }
 					)
 				}
 			>
-				<div className="o-front">
-					<div className="o-content">
+				<div className="o-flip-front">
+					<div className="o-flip-content">
 						{ attributes.frontMedia?.url && (
 							<img
 								className="o-ing"
@@ -58,7 +58,7 @@ const Save = ({
 					</div>
 				</div>
 
-				<div className="o-back">
+				<div className="o-flip-back">
 					<InnerBlocks.Content />
 				</div>
 			</div>

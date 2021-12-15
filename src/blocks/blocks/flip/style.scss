@@ -16,13 +16,13 @@
 
 	&:hover {
 		&.anim {
-			 > .o-inner {
+			 > .o-flip-inner {
 				transform: var(--flip-anim);
 			}
 		}
 	}
 
-	.o-inner {
+	.o-flip-inner {
 		position: relative;
 		width: 100%;
 		height: 300px;
@@ -32,7 +32,7 @@
 		transform-style: preserve-3d;
 		background-size: cover;
 
-		.o-front, .o-back {
+		.o-flip-front, .o-flip-back {
 			display: flex;
 			flex-direction: column;
 			position: absolute;
@@ -48,8 +48,8 @@
 			border-color: #aaaaaa;
 		}
 
-		.o-front {
-			.o-content {
+		.o-flip-front {
+			.o-flip-content {
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
@@ -70,17 +70,17 @@
 			}
 		}
 
-		.o-back {
+		.o-flip-back {
 			padding: 20px;
 			transform: var(--flip-anim);
 		}
 
 		&.invert {
-			.o-front {
+			.o-flip-front {
 				transform: var(--flip-anim);
 			}
 
-			.o-back {
+			.o-flip-back {
 				transform: unset;
 			}
 		}
