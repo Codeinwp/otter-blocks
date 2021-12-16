@@ -2,7 +2,7 @@
  * WordPress dependencies
  */
 import domReady from '@wordpress/dom-ready';
-import { range } from '../../helpers/helper-functions';
+import { range } from '../../../blocks/helpers/helper-functions';
 
 const makeInterval = ( duration, deltaTime ) => {
 
