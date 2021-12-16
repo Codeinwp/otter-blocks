@@ -28,7 +28,7 @@ const name = 'themeisle-blocks/count-animation';
  * @param {string} text
  */
 const isValidNumberFormat = ( text ) => {
-	return Array.from( text ).every( x => '0123456789 .,'.includes( x ) );
+	return Array.from( text ).every( x => '0123456789.,-+$%'.includes( x ) );
 };
 
 
