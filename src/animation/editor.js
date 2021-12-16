@@ -174,6 +174,11 @@ function AnimationControls({ attributes, clientId, setAttributes }) {
 			/>
 			{ 'none' !== animation && (
 				<Fragment>
+					{
+						'o-count' === animation && (
+							__( 'Select the number from the paragraph and animate it usign the option from the toolbar.', 'otter-blocks' )
+						)
+					}
 					<SelectControl
 						label={ __( 'Delay', 'otter-blocks' ) }
 						value={ delay || 'default' }
