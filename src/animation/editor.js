@@ -52,7 +52,8 @@ function AnimationControls({ attributes, clientId, setAttributes }) {
 
 		} else {
 			console.log({hasCountTag});
-			if ( hasCountTag && ( 'o-count' !== animationClass.value ) ) {
+			if ( hasCountTag ) {
+				setAnimation( 'o-count' );
 				setTimeout( () => updateAnimation( 'o-count' ), 500 );
 			}
 		}
