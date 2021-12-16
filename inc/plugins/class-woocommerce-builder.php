@@ -96,7 +96,7 @@ class WooCommerce_Builder {
 		if ( isset( $_GET['otter-woo-builder'] ) && 'product' === $post_type ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 			if ( ! boolval( $_GET['otter-woo-builder'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 				$_GET['toggle-woobuilder'] = 0; // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-				$post_id = get_the_ID();
+				$post_id                   = get_the_ID();
 
 				if ( has_blocks( $post_id ) ) {
 					$post = array(
@@ -138,6 +138,21 @@ class WooCommerce_Builder {
 			'single-product' == $name &&
 			boolval( $woo_builder_enabled )
 		) {
+
+			if ( class_exists( '\Neve\Views\Product_Layout' ) && class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Views\Single_Product' ) ) {
+				$single_product     = new \Neve_Pro\Modules\Woocommerce_Booster\Views\Single_Product();
+				$product_layout     = new \Neve\Views\Product_Layout();
+				$product_navigation = get_theme_mod( 'neve_enable_product_navigation', false );
+
+				if ( $product_navigation ) {
+					remove_action( 'woocommerce_before_single_product_summary', array( $single_product, 'render_product_navigation' ), 10 );
+					add_action( 'woocommerce_before_single_product', array( $single_product, 'render_product_navigation' ), 10 );
+				}
+
+				remove_action( 'woocommerce_after_single_product_summary', array( $this, 'render_exclusive_products_section' ), 20 );
+				add_action( 'woocommerce_after_single_product', array( $product_layout, 'render_exclusive_products_section' ), 20 );
+			}
+
 			return OTTER_BLOCKS_PATH . '/inc/render/woocommerce/tpl/content-single-product.php';
 		}
 
