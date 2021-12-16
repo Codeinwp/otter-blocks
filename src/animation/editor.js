@@ -17,12 +17,13 @@ import AnimationPopover from './components/animation-popover';
 function AnimationControls({ attributes, clientId, setAttributes }) {
 	useEffect( () => {
 		let classes;
+		const hasCountTag = attributes?.content.includes( '<o-anim-count>' );
 
 		if ( attributes.className ) {
 			classes = attributes.className;
 			classes = classes.split( ' ' );
 
-			const animationClass = Array.from( animationsList ).find( ( i ) => {
+			let animationClass = Array.from( animationsList ).find( ( i ) => {
 				return classes.find( ( o ) => o === i.value );
 			});
 
@@ -34,13 +35,28 @@ function AnimationControls({ attributes, clientId, setAttributes }) {
 				return classes.find( ( o ) => o === i.value );
 			});
 
+			if ( hasCountTag && ( 'o-count' !== animationClass.value ) ) {
+				animationClass = {
+					label: __( 'Count Numbers', 'otter-blocks' ),
+					value: 'o-count'
+				};
+				setTimeout( () => updateAnimation( animationClass.value ), 500 );
+			}
+
 			setAnimation( animationClass ? animationClass.value : 'none' );
 			setDelay( delayClass ? delayClass.value : 'default' );
 			setSpeed( speedClass ? speedClass.value : 'default' );
 			setCurrentAnimationLabel(
 				animationClass ? animationClass.label : 'none'
 			);
+
+		} else {
+			console.log({hasCountTag});
+			if ( hasCountTag && ( 'o-count' !== animationClass.value ) ) {
+				setTimeout( () => updateAnimation( 'o-count' ), 500 );
+			}
 		}
+
 	}, []);
 
 	const [ animation, setAnimation ] = useState( 'none' );
