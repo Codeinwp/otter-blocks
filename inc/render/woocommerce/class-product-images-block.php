@@ -56,15 +56,11 @@ class Product_Images_Block extends Base_Block {
 
 		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
 			remove_action( 'woocommerce_product_thumbnails', 'woocommerce_show_product_thumbnails', 20 );
-			echo '<div class="woocommerce">';
 		}
 
 		woocommerce_show_product_images();
 		woocommerce_show_product_sale_flash();
 
-		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
-			echo '</div>';
-		}
 		$output = ob_get_clean();
 		return $output;
 	}

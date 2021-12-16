@@ -62,9 +62,7 @@ class Product_Tabs_Block extends Base_Block {
 			} 
 		);
 
-		echo '<div class="woocommerce">';
 		woocommerce_output_product_data_tabs();
-		echo '</div>';
 		$output = ob_get_clean();
 		return $output;
 	}

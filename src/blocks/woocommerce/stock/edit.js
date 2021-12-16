@@ -1,6 +1,8 @@
 /**
  * WordPress dependencies
  */
+import { useBlockProps } from '@wordpress/block-editor';
+
 import { Disabled } from '@wordpress/components';
 
 import ServerSideRender from '@wordpress/server-side-render';
@@ -8,13 +10,17 @@ import ServerSideRender from '@wordpress/server-side-render';
 const Edit = ({
 	attributes
 }) => {
+	const blockProps = useBlockProps();
+
 	return (
-		<Disabled>
-			<ServerSideRender
-				block="themeisle-blocks/product-stock"
-				attributes={ { ...attributes } }
-			/>
-		</Disabled>
+		<div { ...blockProps }>
+			<Disabled>
+				<ServerSideRender
+					block="themeisle-blocks/product-stock"
+					attributes={ { ...attributes } }
+				/>
+			</Disabled>
+		</div>
 	);
 };
 

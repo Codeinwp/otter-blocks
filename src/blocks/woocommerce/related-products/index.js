@@ -5,12 +5,15 @@ import { __ } from '@wordpress/i18n';
 
 import { registerBlockType } from '@wordpress/blocks';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import { Placeholder } from '@wordpress/components';
 
 import { store as icon } from '@wordpress/icons';
 
 if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Boolean( window.themeisleGutenberg.hasWooCommerce ) ) {
 	registerBlockType( 'themeisle-blocks/product-related-products', {
+		apiVersion: 2,
 		title: __( 'Product Related Products', 'otter-blocks' ),
 		description: __( 'Display related products for your WooCommerce product.', 'otter-blocks' ),
 		icon,
@@ -25,6 +28,7 @@ if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Bool
 	});
 } else {
 	registerBlockType( 'themeisle-blocks/product-related-products', {
+		apiVersion: 2,
 		title: __( 'Product Related Products', 'otter-blocks' ),
 		description: __( 'Display related products for your WooCommerce product.', 'otter-blocks' ),
 		icon,
@@ -37,7 +41,7 @@ if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Bool
 		supports: {
 			inserter: false
 		},
-		edit: () => <Placeholder>{ __( 'You need to have Neve Pro & WooCommerce installed to edit WooCommerce Related Products block.', 'otter-blocks' ) }</Placeholder>,
+		edit: () => <div { ...useBlockProps() }><Placeholder>{ __( 'You need to have Neve Pro & WooCommerce installed to edit WooCommerce Related Products block.', 'otter-blocks' ) }</Placeholder></div>,
 		save: () => null
 	});
 }
