@@ -33,6 +33,44 @@ const makeInterval = ( duration, deltaTime ) => {
 	};
 };
 
+// List to all characters that are in a number structure
+const NUMERIC_FORMATS = new Set( Array.from( '0123456789,.' ) );
+
+/**
+ *
+ * @param {string} text
+ */
+const extract = ( text ) => {
+	const arr = Array.from( text );
+
+	const prefix = [];
+	const suffix = [];
+	const number = [];
+
+	let isPrefix = true;
+
+	for ( let x of arr ) {
+		if ( NUMERIC_FORMATS.has( x ) ) {
+			if ( isPrefix ) {
+				isPrefix = false;
+			}
+			number.push( x );
+		} else {
+			if ( isPrefix ) {
+				prefix.push( x );
+			} else {
+				suffix.push( x );
+			}
+		}
+	}
+
+	return {
+		prefix: prefix.join( '' ),
+		suffix: suffix.join( '' ),
+		number
+	};
+};
+
 /**
  *
  * @param {HTMLDivElement} elem
@@ -40,18 +78,28 @@ const makeInterval = ( duration, deltaTime ) => {
 const initCount = ( elem ) => {
 	const text = elem?.innerHTML || '';
 	const len = text.length;
-	const formatElements = Array.from( text ).reverse().map( ( c, idx ) => {
-		if ( ! ' ,'.includes( c ) ) {
-			return null;
+
+	const {
+		suffix,
+		prefix,
+		number
+	} = extract( text );
+
+	const formatElements = [ ...number ].reverse().map( ( c, idx ) => {
+		if ( ',' === c ) {
+			return {
+				position: idx,
+				character: c
+			};
 		}
 
-		return {
-			position: idx,
-			character: c
-		};
+		return null;
 	}).filter( x => x );
-	const numAfterComma = text?.split( '.' )?.[1]?.length || 0;
-	const number = parseFloat( text.replace( /[\s,]/g, '' ) );
+
+	const numAfterComma = number.join( '' )?.split( '.' )?.[1]?.length || 0;
+	const parsedNumber = parseFloat( number.filter( c => ',' !== c ).join( '' )  );
+
+	// console.log( extract( text ), {parsedNumber}, {num: number.filter( c => ',' !== c )});
 
 	/**
 	 *
@@ -66,15 +114,16 @@ const initCount = ( elem ) => {
 			}
 		});
 
-		return num.reverse().join( '' ).padStart( len, ' ' );
+		return ( ( prefix || '' ) + ( num.reverse().join( '' ) ) ).padStart( len - suffix.length, ' ' ) + suffix || '';
 	};
 
 	const { start, steps } = makeInterval( 3, 0.2 );
-	const delta = Math.round( number /  steps );
-	const values = range( 0, number, delta );
-	values[steps - 1] =  number;
+	const delta = Math.round( parsedNumber /  steps );
+	const values = range( 0, parsedNumber, delta );
+	values[steps - 1] =  parsedNumber;
 
 	elem.style.whiteSpace = 'pre';
+
 	start( ( i ) => {
 		elem.innerHTML = applyFormat( values[i]);
 	}, () => {
