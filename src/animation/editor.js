@@ -53,6 +53,7 @@ function AnimationControls({ attributes, clientId, setAttributes }) {
 		} else {
 			console.log({hasCountTag});
 			if ( hasCountTag ) {
+				setCurrentAnimationLabel( __( 'Count Numbers', 'otter-blocks' ) );
 				setAnimation( 'o-count' );
 				setTimeout( () => updateAnimation( 'o-count' ), 500 );
 			}
