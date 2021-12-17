@@ -14,7 +14,6 @@ import {
 } from '@wordpress/rich-text';
 
 import {
-	RichTextShortcut,
 	RichTextToolbarButton
 } from '@wordpress/block-editor';
 
@@ -23,12 +22,16 @@ import './editor.scss';
 
 const name = 'themeisle-blocks/count-animation';
 
+// List to all characters that are in a number structure
+const NUMERIC_FORMATS = new Set( Array.from( '0123456789,.' ) );
+const OTHER_FORMATS = new Set( Array.from( '-+$%€' ) );
+
 /**
  *
  * @param {string} text
  */
 const isValidNumberFormat = ( text ) => {
-	return Array.from( text ).every( x => '0123456789.,-+$%'.includes( x ) );
+	return Array.from( text ).every( x => NUMERIC_FORMATS.has( x ) || OTHER_FORMATS.has( x ) );
 };
 
 
