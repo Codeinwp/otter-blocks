@@ -158,6 +158,11 @@ const initCount = ( elem ) => {
 
 	const { start, steps } = makeInterval( config?.speed || 2, 0.05 );
 	const delta = Math.round( parsedNumber /  steps );
+
+	if ( 0.00000001 > delta ) {
+		return;
+	}
+
 	const values = range( 0, parsedNumber, delta );
 	values[steps - 1] =  parsedNumber;
 
