@@ -1,6 +1,8 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+
 import hexToRgba from 'hex-rgba';
 
 /**
@@ -37,7 +39,6 @@ import { blockInit } from '../../../helpers/block-utility.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	isSelected,
 	clientId,
 	toggleSelection
@@ -98,9 +99,9 @@ const Edit = ({
 		updateWidth();
 	}, [ attributes.columnWidth ]);
 
-
 	const [ currentWidth, setCurrentWidth ] = useState( 0 );
 	const [ nextWidth, setNextWidth ] = useState( 0 );
+	const [ hasSelected, setSelected ] = useState( false );
 
 	let isDesktop = isLarger && ! isLarge && isSmall && ! isSmaller;
 
@@ -127,7 +128,7 @@ const Edit = ({
 	}
 
 	const updateWidth = () => {
-		const columnContainer = document.getElementById( `block-${ clientId }` );
+		const columnContainer = document.querySelector( `.wp-themeisle-block-advanced-column-resize-container-${ clientId }` );
 
 		if ( null !== columnContainer ) {
 			if ( isDesktop ) {
@@ -139,7 +140,7 @@ const Edit = ({
 	};
 
 	const onResizeStart = () => {
-		const handle = document.querySelector( `#block-${ clientId } .wp-themeisle-block-advanced-column-resize-container-handle .components-resizable-box__handle` );
+		const handle = document.querySelector( `.wp-themeisle-block-advanced-column-resize-container-${ clientId } .components-resizable-box__handle` );
 		const handleTooltipLeft = document.createElement( 'div' );
 		const handleTooltipRight = document.createElement( 'div' );
 
@@ -153,6 +154,7 @@ const Edit = ({
 		setCurrentWidth( attributes.columnWidth );
 		setNextWidth( adjacentBlock.attributes.columnWidth );
 		toggleSelection( false );
+		setSelected( true );
 	};
 
 	const onResize = ( event, direction, elt, delta ) => {
@@ -182,6 +184,7 @@ const Edit = ({
 		handleTooltipLeft.parentNode.removeChild( handleTooltipLeft );
 		handleTooltipRight.parentNode.removeChild( handleTooltipRight );
 		toggleSelection( true );
+		setSelected( false );
 	};
 
 	const Tag = attributes.columnsHTMLTag;
@@ -316,7 +319,12 @@ const Edit = ({
 			/>
 
 			<ResizableBox
-				className="block-library-spacer__resize-container wp-themeisle-block-advanced-column-resize-container"
+				className={ classnames(
+					`wp-themeisle-block-advanced-column-resize-container wp-themeisle-block-advanced-column-resize-container-${ clientId }`,
+					{
+						'is-selected': hasSelected
+					}
+				) }
 				enable={ {
 					right: adjacentBlockClientId ? true : false
 				} }

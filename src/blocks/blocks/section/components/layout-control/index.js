@@ -230,7 +230,7 @@ const LayoutControl = ({
 									) }
 									onClick={ () => onClick( 'collapsedRows' ) }
 								>
-									{ colsCollapsed() }
+									{ rowsCollapsed() }
 								</Button>
 							</Tooltip>
 						</Fragment>
