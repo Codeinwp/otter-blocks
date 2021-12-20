@@ -2,16 +2,20 @@
 
 ## Console Snippets
 
-#### Insert all blocks
+### Insert all blocks
 
 ```javascript
 wp.data.select( 'core/blocks' ).getBlockTypes()
 	.filter( ({ name }) => name.includes( 'themeisle-blocks/' ))
 	.map( ({name}) => wp.blocks.createBlock(name, {}))
-	.forEach(block => wp.data.dispatch( 'core/block-editor' ).insertBlock(block))
+	.forEach( (block, idx) => {
+		// use delay to easy monitor in inspector if a problem appear during a block insertion
+		const delay = 0; // seconds
+		setTimeout(() => wp.data.dispatch( 'core/block-editor' ).insertBlock(block), delay * idx * 1000);
+	})
 ```
 
-#### Insert blocks that don't need Neve or Neve Pro to work
+### Insert blocks that don't need Neve or Neve Pro to work
 ```javascript
 wp.data.select( 'core/blocks' ).getBlockTypes()
 	.filter( ({ name }) => {
@@ -24,7 +28,11 @@ wp.data.select( 'core/blocks' ).getBlockTypes()
 		return name.includes( 'themeisle-blocks/' ) && !neveBlocks.includes(name);	
 	})
 	.map( ({name}) => wp.blocks.createBlock(name, {}))
-	.forEach(block => wp.data.dispatch( 'core/block-editor' ).insertBlock(block))
+	.forEach( (block, idx) => {
+		// use delay to easy monitor in inspector if a problem appear during a block insertion
+		const delay = 0; // seconds
+		setTimeout(() => wp.data.dispatch( 'core/block-editor' ).insertBlock(block), delay * idx * 1000);
+	})
 ```
 
 ### Insert blocks that use Neve or Neve Pro to work or to enable some features 
@@ -42,5 +50,9 @@ wp.data.select( 'core/blocks' ).getBlockTypes()
 		return neveBlocks.includes(name);	
 	})
 	.map( ({name}) => wp.blocks.createBlock(name, {}))
-	.forEach(block => wp.data.dispatch( 'core/block-editor' ).insertBlock(block))
+	.forEach( (block, idx) => {
+		// use delay to easy monitor in inspector if a problem appear during a block insertion
+		const delay = 0; // seconds
+		setTimeout(() => wp.data.dispatch( 'core/block-editor' ).insertBlock(block), delay * idx * 1000);
+	})
 ```
