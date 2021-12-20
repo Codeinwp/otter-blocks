@@ -56,3 +56,32 @@ wp.data.select( 'core/blocks' ).getBlockTypes()
 		setTimeout(() => wp.data.dispatch( 'core/block-editor' ).insertBlock(block), delay * idx * 1000);
 	})
 ```
+
+### Insert all blocks, save and reload the page
+
+```javascript
+(() => {
+	const blocksAdded = wp.data.select( 'core/blocks' ).getBlockTypes()
+		.filter( ({ name }) => name.includes( 'themeisle-blocks/' ))
+		.map( ({name}) => wp.blocks.createBlock(name, {}))
+		.map( (block, idx) => {
+			// use delay to easy monitor in inspector if a problem appear during a block insertion
+			const delay = 0; // seconds
+			return new Promise( (resolve, reject) => {
+				setTimeout(() => { 
+					wp.data.dispatch( 'core/block-editor' ).insertBlock(block);
+					resolve(block.name);
+				}, delay * idx * 1000);
+
+			});
+		})
+	Promise.all(blocksAdded).then( () => {
+		setTimeout( () => {
+			wp.data.dispatch( 'core/editor' ).savePost();
+			setTimeout( () => {
+				location.reload()
+			}, 1000);
+		}, 1000);
+	})
+})()
+```
