@@ -305,14 +305,14 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 				elem.style.top = '0px';
 
 				// TODO: improve formule
-				elem.style.transform = `translateY(${ containerBottomPosition + gap - height - scrollTop }px)`;
+				elem.style.transform = `translateY(${ containerBottomPosition - height - scrollTop }px)`;
 				break;
 			case 'constrain-bottom':
 				elem.style.bottom = '0px';
 				elem.style.transformOrigin = 'left bottom';
 
 				// TODO: improve formule
-				elem.style.transform = `translateY(${ containerBottomPosition + gap  - scrollBottom }px)`;
+				elem.style.transform = `translateY(${ containerBottomPosition  - scrollBottom }px)`;
 				break;
 			default:
 				console.warn( 'Unknown position', stickyPosition );
