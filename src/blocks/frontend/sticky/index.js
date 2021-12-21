@@ -65,7 +65,7 @@ const createObserver = () => {
 			if ( container === blocks[otherIndex.toString()].container ) {
 				if ( otherIndex < index ) {
 					const {config, block} = blocks[otherIndex.toString()];
-					if ( 'stack' === config?.behaviour ) {
+					if ( 'o-sticky-bhvr-stack' === config?.behaviour ) {
 						gap += config.offset + block?.getBoundingClientRect()?.height || 0;
 
 						//console.log( 'Found ' + otherIndex + ' -- Gap: ' + ( config.offset + block?.getBoundingClientRect()?.height || 0 ) );
@@ -196,6 +196,8 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 		}
 
 		if ( 'bottom' === position &&
+
+			// TODO: add early activation
 			(
 				( scrollBottom - activationOffset > elemBottomPositionInPage ) &&
 				( ! container ||  scrollBottom - activationOffset < containerBottomPosition )
@@ -208,6 +210,8 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 			if ( 'top' === position && (  scrollTop + activationOffset + height + earlyActivation > containerBottomPosition ) ) {
 				return 'constrain-top';
 			}
+
+			// TODO: add early activation
 			if ( 'bottom' === position && (  scrollBottom - activationOffset  >= containerBottomPosition ) ) {
 				return 'constrain-bottom';
 			}
@@ -255,7 +259,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 		const scrollBottom = scrollTop + window.innerHeight;
 
 		// Check if the scroll with the activation offset has passed the top of the element
-		const stickyPosition = 'o-sticky-bhvr-stack' === config.behaviour ? getScrollActivePosition( calculateGap() ) : getScrollActivePosition() ;
+		const stickyPosition = 'o-sticky-bhvr-stack' === config.behaviour ? getScrollActivePosition( calculateGap() ) : getScrollActivePosition();
 
 		// console.log( 'Position case: ' + pos );
 
@@ -284,28 +288,31 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 				container.style.height = 0 < containerHeight ? containerHeight + 'px' : '';
 			}
 
+			// Calculate the gap for stacked elements
+			const gap = 'o-sticky-bhvr-stack' === config.behaviour ? calculateGap() : 0;
+
 			// Compute the position of the element
 			switch ( stickyPosition ) {
 			case 'top':
-				elem.style.top = ( offsetY + calculateGap() || 0 ) + 'px';
+				elem.style.top = ( offsetY + gap ) + 'px';
 				elem.style.transform = 'unset';
 				break;
 			case 'bottom':
-				elem.style.bottom = ( offsetY + calculateGap() || 0 ) + 'px';
+				elem.style.bottom = ( offsetY + gap ) + 'px';
 				elem.style.transform = 'unset';
 				break;
 			case 'constrain-top':
 				elem.style.top = '0px';
 
 				// TODO: improve formule
-				elem.style.transform = `translateY(${ containerBottomPosition - height - scrollTop }px)`;
+				elem.style.transform = `translateY(${ containerBottomPosition + gap - height - scrollTop }px)`;
 				break;
 			case 'constrain-bottom':
 				elem.style.bottom = '0px';
 				elem.style.transformOrigin = 'left bottom';
 
 				// TODO: improve formule
-				elem.style.transform = `translateY(${ containerBottomPosition - scrollBottom }px)`;
+				elem.style.transform = `translateY(${ containerBottomPosition + gap  - scrollBottom }px)`;
 				break;
 			default:
 				console.warn( 'Unknown position', stickyPosition );
@@ -332,12 +339,6 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 			deactivate?.();
 		}
 
-		// if ( ! isEarlyActivated?.() && ! isActive?.() ) {
-		// 	console.log( 'Clean' );
-		// 	elem.style.position = '';
-		// 	elem.style.zIndex = '';
-		// 	container.style.height = '';
-		// }
 	});
 
 
