@@ -82,7 +82,7 @@ const Edit = ({
 						value={ limit }
 						options={[
 							{ label: __( 'Default', 'otter-blocks' ), value: 'o-sticky-scope-main-area' },
-							{ label: __( 'Parent', 'otter-blocks' ), value: 'o-sticky-scope-parent' },
+							{ label: __( 'Column/Group', 'otter-blocks' ), value: 'o-sticky-scope-parent' },
 							{ label: __( 'Section', 'otter-blocks' ), value: 'o-sticky-scope-section' },
 							{ label: __( 'Screen', 'otter-blocks' ), value: 'o-sticky-scope-screen' }
 						]}
@@ -115,7 +115,8 @@ const Edit = ({
 						value={ behaviour }
 						options={[
 							{ label: __( 'Default', 'otter-blocks' ), value: 'o-sticky-bhvr-keep' },
-							{ label: __( 'Hide', 'otter-blocks' ), value: 'o-sticky-bhvr-hide' }
+							{ label: __( 'Hide', 'otter-blocks' ), value: 'o-sticky-bhvr-hide' },
+							{ label: __( 'Stack', 'otter-blocks' ), value: 'o-sticky-bhvr-stack' }
 						]}
 						onChange={ value => addOption(  value, FILTER_OPTIONS.behaviour ) }
 					/>
