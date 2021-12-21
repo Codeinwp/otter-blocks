@@ -128,7 +128,7 @@ const createObserver = () => {
  */
 const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 	const position = config?.position || 'top';
-	const offset = config?.offset || 40;
+	const offset = config?.offset !== undefined ? config.offset : 40;
 
 	// Get node reference for the element and the container
 	const elem = 'string' === typeof selector || selector instanceof String ? document.querySelector( selector ) : selector;
@@ -399,7 +399,7 @@ const getConfigOptions = ( elem ) => {
 		if ( cssClass.includes( 'o-sticky-pos-bottom' ) ) {
 			config.position = 'bottom';
 		} else if ( cssClass.includes( 'o-sticky-offset' ) ) {
-			config.offset = parseInt( cssClass.split( '-' )?.pop() ) || config.offset;
+			config.offset = parseInt( cssClass.split( '-' )?.pop() );
 		} else if ( cssClass.includes( 'o-sticky-scope' ) ) {
 			config.scope = cssClass;
 		} else if ( cssClass.includes( 'o-sticky-bhvr' ) ) {
