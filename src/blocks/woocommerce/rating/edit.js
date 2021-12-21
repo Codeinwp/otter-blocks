@@ -1,0 +1,29 @@
+/**
+ * WordPress dependencies
+ */
+import { useBlockProps } from '@wordpress/block-editor';
+
+import { Disabled } from '@wordpress/components';
+
+import ServerSideRender from '@wordpress/server-side-render';
+
+const Edit = ({
+	attributes
+}) => {
+	const blockProps = useBlockProps({
+		className: 'woocommerce'
+	});
+
+	return (
+		<div { ...blockProps }>
+			<Disabled>
+				<ServerSideRender
+					block="themeisle-blocks/product-rating"
+					attributes={ { ...attributes } }
+				/>
+			</Disabled>
+		</div>
+	);
+};
+
+export default Edit;

@@ -70,6 +70,9 @@ module.exports = [
 				'./src/blocks/plugins/registerPlugin.js',
 				...glob.sync( './src/blocks/blocks/**/index.js' )
 			],
+			woocommerce: [
+				...glob.sync( './src/blocks/woocommerce/**/index.js' )
+			],
 			'leaflet-map': './src/blocks/frontend/leaflet-map/index.js',
 			maps: './src/blocks/frontend/google-map/index.js',
 			slider: './src/blocks/frontend/slider/index.js',

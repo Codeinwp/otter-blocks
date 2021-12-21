@@ -1,4 +1,3 @@
-/* eslint-disable camelcase */
 /**
  * WordPress dependencies
  */
