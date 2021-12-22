@@ -45,12 +45,11 @@ import ControlPanelControl from '../../../components/control-panel-control/index
 const Inspector = ({
 	attributes,
 	setAttributes,
-	isSelected,
-	clientId,
-	adjacentBlock,
 	parentBlock,
 	updateBlockAttributes,
-	adjacentBlockClientId
+	currentBlockWidth,
+	nextBlock,
+	nextBlockWidth
 }) => {
 	const getView = useSelect( ( select ) => {
 		const { getView } = select( 'themeisle-gutenberg/data' );
@@ -59,41 +58,10 @@ const Inspector = ({
 		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
 	}, []);
 
-	useEffect( () => {
-		if ( 1 < parentBlock.innerBlocks.length ) {
-			if ( ! adjacentBlockClientId ) {
-				const blockId = parentBlock.innerBlocks.findIndex( e => e.clientId === clientId );
-				const previousBlock = parentBlock.innerBlocks[ blockId - 1 ];
-				nextBlock.current = previousBlock.clientId;
-				nextBlockWidth.current = previousBlock.attributes.columnWidth;
-			}
-		}
-	}, []);
-
-	useEffect( () => {
-		if ( 1 < parentBlock.innerBlocks.length ) {
-			if ( ! adjacentBlockClientId ) {
-				const blockId = parentBlock.innerBlocks.findIndex( e => e.clientId === clientId );
-				const previousBlock = parentBlock.innerBlocks[ blockId - 1 ];
-				nextBlockWidth.current = previousBlock.attributes.columnWidth;
-				nextBlock.current = previousBlock.clientId;
-				currentBlockWidth.current = attributes.columnWidth;
-			} else {
-				nextBlockWidth.current = adjacentBlock.attributes.columnWidth;
-				nextBlock.current = adjacentBlockClientId;
-				currentBlockWidth.current = attributes.columnWidth;
-			}
-		}
-	}, [ isSelected, attributes.columnWidth, parentBlock.innerBlocks.length ]);
-
 	const [ tab, setTab ] = useState( 'layout' );
 
-	const currentBlockWidth = useRef( attributes.columnWidth );
-	const nextBlock = useRef( adjacentBlockClientId && adjacentBlockClientId );
-	const nextBlockWidth = useRef( adjacentBlock && adjacentBlock.attributes.columnWidth );
-
 	const changeColumnWidth = value => {
-		const width = value || 10;
+		const width = value || 20;
 		const nextWidth = ( Number( currentBlockWidth.current ) - width ) + Number( nextBlockWidth.current );
 		currentBlockWidth.current = width;
 		nextBlockWidth.current = nextWidth;
@@ -528,8 +496,8 @@ const Inspector = ({
 								label={ __( 'Column Width', 'otter-blocks' ) }
 								value={ Number( attributes.columnWidth ) }
 								onChange={ changeColumnWidth }
-								min={ 10 }
-								max={ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 10 }
+								min={ 20 }
+								max={ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 20 }
 							/>
 						) }
 

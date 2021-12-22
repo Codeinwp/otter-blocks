@@ -25,6 +25,7 @@ import {
 import {
 	Fragment,
 	useEffect,
+	useRef,
 	useState
 } from '@wordpress/element';
 
@@ -99,9 +100,42 @@ const Edit = ({
 		updateWidth();
 	}, [ attributes.columnWidth ]);
 
+	useEffect( () => {
+		if ( 1 < parentBlock.innerBlocks.length ) {
+			if ( ! adjacentBlockClientId ) {
+				const blockId = parentBlock.innerBlocks.findIndex( e => e.clientId === clientId );
+				const previousBlock = parentBlock.innerBlocks[ blockId - 1 ];
+				nextBlock.current = previousBlock.clientId;
+				nextBlockWidth.current = previousBlock.attributes.columnWidth;
+			}
+		}
+	}, []);
+
+	useEffect( () => {
+		if ( 1 < parentBlock.innerBlocks.length ) {
+			if ( ! adjacentBlockClientId ) {
+				const blockId = parentBlock.innerBlocks.findIndex( e => e.clientId === clientId );
+				const previousBlock = parentBlock.innerBlocks[ blockId - 1 ];
+				nextBlockWidth.current = previousBlock.attributes.columnWidth;
+				nextBlock.current = previousBlock.clientId;
+				currentBlockWidth.current = attributes.columnWidth;
+			} else {
+				nextBlockWidth.current = adjacentBlock.attributes.columnWidth;
+				nextBlock.current = adjacentBlockClientId;
+				currentBlockWidth.current = attributes.columnWidth;
+			}
+		}
+	}, [ isSelected, attributes.columnWidth, parentBlock.innerBlocks.length ]);
+
+	const currentBlockWidth = useRef( attributes.columnWidth );
+	const nextBlock = useRef( adjacentBlockClientId && adjacentBlockClientId );
+	const nextBlockWidth = useRef( adjacentBlock && adjacentBlock.attributes.columnWidth );
+
 	const [ currentWidth, setCurrentWidth ] = useState( 0 );
 	const [ nextWidth, setNextWidth ] = useState( 0 );
 	const [ hasSelected, setSelected ] = useState( false );
+
+	const resizerRef = useRef();
 
 	let isDesktop = isLarger && ! isLarge && isSmall && ! isSmaller;
 
@@ -130,12 +164,8 @@ const Edit = ({
 	const updateWidth = () => {
 		const columnContainer = document.querySelector( `.wp-themeisle-block-advanced-column-resize-container-${ clientId }` );
 
-		if ( null !== columnContainer ) {
-			if ( isDesktop ) {
-				columnContainer.style.flexBasis = `${ attributes.columnWidth }%`;
-			} else {
-				columnContainer.style.flexBasis = '';
-			}
+		if ( null !== columnContainer && isDesktop ) {
+			resizerRef.current.updateSize({ width: `${ attributes.columnWidth }%` });
 		}
 	};
 
@@ -166,7 +196,7 @@ const Edit = ({
 		const handleTooltipLeft = document.querySelector( '.resizable-tooltip-left' );
 		const handleTooltipRight = document.querySelector( '.resizable-tooltip-right' );
 
-		if ( 10 <= width && 10 <= nextColumnWidth ) {
+		if ( 20 <= width && 20 <= nextColumnWidth ) {
 			handleTooltipLeft.innerHTML = `${ width.toFixed( 0 ) }%`;
 			handleTooltipRight.innerHTML = `${ nextColumnWidth.toFixed( 0 ) }%`;
 
@@ -310,15 +340,15 @@ const Edit = ({
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				isSelected={ isSelected }
-				clientId={ clientId }
-				adjacentBlock={ adjacentBlock }
 				parentBlock={ parentBlock }
 				updateBlockAttributes={ updateBlockAttributes }
-				adjacentBlockClientId={ adjacentBlockClientId }
+				currentBlockWidth={ currentBlockWidth }
+				nextBlock={ nextBlock }
+				nextBlockWidth={ nextBlockWidth }
 			/>
 
 			<ResizableBox
+				ref={ resizerRef }
 				className={ classnames(
 					`wp-themeisle-block-advanced-column-resize-container wp-themeisle-block-advanced-column-resize-container-${ clientId }`,
 					{
@@ -332,6 +362,8 @@ const Edit = ({
 				onResizeStart={ onResizeStart }
 				onResize={ onResize }
 				onResizeStop={ onResizeStop }
+				minWidth="20%"
+				maxWidth={ `${ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 20 }%` }
 			>
 				<Tag { ...blockProps }>
 					<InnerBlocks
