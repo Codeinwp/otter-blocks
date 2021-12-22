@@ -36,7 +36,7 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .o-inner',
+				'selector'   => ' .o-flip-inner',
 				'properties' => array(
 					array(
 						'property' => 'width',
@@ -54,7 +54,7 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .o-front:hover, .o-back',
+				'selector'   => ' .o-flip-front:hover, .o-flip-back',
 				'properties' => array(
 					array(
 						'property'       => 'box-shadow',
@@ -94,7 +94,7 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .o-front, .o-back:hover',
+				'selector'   => ' .o-flip-front, .o-flip-back:hover',
 				'properties' => array(
 					array(
 						'property'       => 'box-shadow',
@@ -134,7 +134,7 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .o-front',
+				'selector'   => ' .o-flip-front',
 				'properties' => array(
 					array(
 						'property' => 'border-color',
@@ -181,12 +181,15 @@ class Flip_CSS extends Base_CSS {
 							),
 							'position'   => array(
 								'value'   => 'frontBackgroundPosition',
-								'default' => 'top left',
+								'default' => array(
+									'x' => 0.5,
+									'y' => 0.5,
+								),
 								'format'  => function( $value, $attrs ) {
-									if ( isset( $value['x'] ) ) {
+									if ( isset( $value['x'] ) && isset( $value['y'] ) ) {
 										return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
 									}
-									return 'top left';
+									return '50% 50%';
 								},
 							),
 							'size'       => array(
@@ -224,7 +227,7 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .o-front .o-content',
+				'selector'   => ' .o-flip-front .o-flip-content',
 				'properties' => array(
 					array(
 						'property' => 'padding',
@@ -251,7 +254,7 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .o-front .o-content h2',
+				'selector'   => ' .o-flip-front .o-flip-content h2',
 				'properties' => array(
 					array(
 						'property' => 'color',
@@ -268,7 +271,7 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .o-front .o-content p',
+				'selector'   => ' .o-flip-front .o-flip-content p',
 				'properties' => array(
 					array(
 						'property' => 'color',
@@ -285,7 +288,7 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .o-back',
+				'selector'   => ' .o-flip-back',
 				'properties' => array(
 					array(
 						'property' => 'border-color',
@@ -341,12 +344,15 @@ class Flip_CSS extends Base_CSS {
 							),
 							'position'   => array(
 								'value'   => 'backBackgroundPosition',
-								'default' => 'top left',
+								'default' => array(
+									'x' => 0.5,
+									'y' => 0.5,
+								),
 								'format'  => function( $value, $attrs ) {
-									if ( isset( $value['x'] ) ) {
+									if ( isset( $value['x'] ) && isset( $value['y'] ) ) {
 										return ( $value['x'] * 100 ) . '% ' . ( $value['y'] * 100 ) . '%';
 									}
-									return 'top left';
+									return '50% 50%';
 								},
 							),
 							'size'       => array(

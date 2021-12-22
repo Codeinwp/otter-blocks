@@ -175,6 +175,7 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Plugins\Block_Conditions',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Dashboard',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Options_Settings',
+			'\ThemeIsle\GutenbergBlocks\Plugins\WooCommerce_Builder',
 			'\ThemeIsle\GutenbergBlocks\Render\AMP\Circle_Counter_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\AMP\Lottie_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\AMP\Slider_Block',
@@ -228,6 +229,17 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
 			'\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Add_To_Cart_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Images_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Meta_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Price_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Rating_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Related_Products_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Stock_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Short_Description_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Tabs_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Title_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\Product_Upsells_Block',
 		);
 
 		foreach ( $classnames as $classname ) {
@@ -357,6 +369,20 @@ class Main {
 			$asset_file['version'],
 			true
 		);
+
+		global $pagenow;
+
+		if ( class_exists( 'WooCommerce' ) && defined( 'NEVE_VERSION' ) && 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ) && ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && ( ( isset( $_GET['post'] ) && 'product' === get_post_type( sanitize_text_field( $_GET['post'] ) ) ) || ( isset( $_GET['post_type'] ) || 'product' === sanitize_text_field( $_GET['post_type'] ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/woocommerce.asset.php';
+
+			wp_enqueue_script(
+				'otter-blocks-woocommerce',
+				plugin_dir_url( $this->get_dir() ) . 'build/blocks/woocommerce.js',
+				$asset_file['dependencies'],
+				$asset_file['version'],
+				true
+			);
+		}
 
 		wp_enqueue_script(
 			'glidejs',
@@ -678,7 +704,9 @@ class Main {
 				true
 			);
 
-			wp_register_style(
+			wp_script_add_data( 'leaflet', 'async', true );
+
+			wp_enqueue_style(
 				'leaflet',
 				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.css',
 				[],
@@ -807,6 +835,10 @@ class Main {
 
 			self::$is_popup_loaded = true;
 		}
+
+		if ( has_block( 'themeisle-blocks/product-image', $post ) ) {
+			wp_enqueue_script( 'wc-single-product' );
+		}
 	}
 
 	/**
@@ -931,6 +963,10 @@ class Main {
 				array(
 					'slug'  => 'themeisle-blocks',
 					'title' => $this->name,
+				),
+				array(
+					'slug'  => 'themeisle-woocommerce-blocks',
+					'title' => __( 'WooCommerce Builder by Otter', 'otter-blocks' ),
 				),
 			)
 		);
