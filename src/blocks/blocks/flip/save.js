@@ -24,13 +24,13 @@ const Save = ({
 				'flipY': 'flipY' === attributes.animType
 			}
 		)
-
 	});
+
 	return (
 		<div { ...blockProps }>
 			<div
 				className={ classnames(
-						'o-flip-inner',
+					'o-flip-inner',
 					{ invert: attributes.isInverted }
 				) }
 			>
