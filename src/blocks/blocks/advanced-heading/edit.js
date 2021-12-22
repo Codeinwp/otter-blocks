@@ -44,18 +44,16 @@ const Edit = ({
 	onReplace
 }) => {
 	const {
-		isViewportAvailable,
 		isPreviewDesktop,
 		isPreviewTablet,
 		isPreviewMobile
 	} = useSelect( select => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
 
 		return {
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
+			isPreviewDesktop: 'Desktop' === __experimentalGetPreviewDeviceType(),
+			isPreviewTablet: 'Tablet' === __experimentalGetPreviewDeviceType(),
+			isPreviewMobile: 'Mobile' === __experimentalGetPreviewDeviceType()
 		};
 	}, []);
 
@@ -78,7 +76,7 @@ const Edit = ({
 
 	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
 
-	if ( isViewportAvailable && ! isMobile ) {
+	if ( ! isMobile ) {
 		isDesktop = isPreviewDesktop;
 		isTablet = isPreviewTablet;
 		isMobile = isPreviewMobile;
