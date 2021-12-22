@@ -30,7 +30,7 @@ class Add_To_Cart_Button_Block extends Base_Block {
 	 */
 	protected function set_attributes() {
 		$this->attributes = array(
-			'product'   => array(
+			'product' => array(
 				'type' => 'number',
 			),
 		);

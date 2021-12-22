@@ -160,9 +160,11 @@ class Review_Block extends Base_Block {
 		$id        = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-' . wp_rand( 10, 100 );
 		$is_single = ( isset( $attributes['image'] ) && isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ? '' : ' is-single';
 
-		$wrapper_attributes = get_block_wrapper_attributes( array(
-			'id'    => $id
-		) );
+		$wrapper_attributes = get_block_wrapper_attributes(
+			array(
+				'id' => $id,
+			) 
+		);
 
 		$html  = '<div ' . $wrapper_attributes . '>';
 		$html .= '  <div class ="wp-block-themeisle-blocks-review__header">';

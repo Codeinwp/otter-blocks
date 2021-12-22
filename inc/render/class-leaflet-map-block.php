@@ -99,10 +99,12 @@ class Leaflet_Map_Block extends Base_Block {
 			$class .= 'align' . esc_attr( $attributes['align'] );
 		}
 
-		$wrapper_attributes = get_block_wrapper_attributes( array(
-			'id'    => $id,
-			'class' => $class
-		) );
+		$wrapper_attributes = get_block_wrapper_attributes(
+			array(
+				'id'    => $id,
+				'class' => $class,
+			) 
+		);
 
 		// Load the attributes in the page and make a placeholder to render the map.
 		$output  = '<div ' . $wrapper_attributes . '></div>' . "\n";

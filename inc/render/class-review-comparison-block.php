@@ -219,9 +219,11 @@ class Review_Comparison_Block extends Base_Block {
 
 		$id = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-comparison-' . wp_rand( 10, 100 );
 
-		$wrapper_attributes = get_block_wrapper_attributes( array(
-			'id'    => $id
-		) );
+		$wrapper_attributes = get_block_wrapper_attributes(
+			array(
+				'id' => $id,
+			) 
+		);
 
 		$html  = '<table ' . $wrapper_attributes . '>';
 		$html .= '	<thead>';

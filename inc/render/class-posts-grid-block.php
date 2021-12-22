@@ -273,9 +273,11 @@ class Posts_Grid_Block extends Base_Block {
 			$class .= ' has-shadow';
 		}
 
-		$wrapper_attributes = get_block_wrapper_attributes( array(
-			'class' => trim( $class )
-		) );
+		$wrapper_attributes = get_block_wrapper_attributes(
+			array(
+				'class' => trim( $class ),
+			) 
+		);
 
 		$block_content = sprintf(
 			'<div %1$s>%2$s</div>',
