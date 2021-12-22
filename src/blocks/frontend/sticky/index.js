@@ -38,44 +38,34 @@ const createObserver = () => {
 		const { container } = blocks[index.toString()];
 		let earlyActivation = 0;
 
-		//console.groupCollapsed( 'Early calculation for #' + index );
 		activeIndex.forEach( otherIndex => {
 			if ( container === blocks[otherIndex.toString()].container ) {
 				if ( otherIndex < index ) {
 					const {block, metadata} = blocks[otherIndex.toString()];
 					earlyActivation += metadata.activationOffset + ( block?.getBoundingClientRect()?.height || 0 );
-
-					//console.log( 'Found ' + otherIndex + ' -- EarlyActivation: ' + ( metadata.activationOffset + block?.getBoundingClientRect()?.height || 0 ) );
 				}
 			}
 		});
-
-		//console.log( 'Early activation is ' + earlyActivation );
-		//console.groupEnd();
 
 		return earlyActivation;
 	};
 
 	const calculateGap = ( index ) => {
-		const { container } = blocks[index.toString()];
+		const { block, container, config, metadata } = blocks[index.toString()];
 		let gap = 0;
+		const blockWidth = block.getBoundingClientRect()?.width || 0;
 
-		//console.groupCollapsed( 'Gap calculation for #' + index );
 		activeIndex.forEach( otherIndex => {
 			if ( container === blocks[otherIndex.toString()].container ) {
 				if ( otherIndex < index ) {
-					const {config, block} = blocks[otherIndex.toString()];
-					if ( 'o-sticky-bhvr-stack' === config?.behaviour ) {
-						gap += config.offset + block?.getBoundingClientRect()?.height || 0;
+					const {config: otherConfig, block: otherBlock, metadata: otherMetadata} = blocks[otherIndex.toString()];
 
-						//console.log( 'Found ' + otherIndex + ' -- Gap: ' + ( config.offset + block?.getBoundingClientRect()?.height || 0 ) );
+					if ( 'o-sticky-bhvr-stack' === otherConfig?.behaviour &&  blockWidth > Math.abs( metadata.elemLeftPositionInPage - otherMetadata.elemLeftPositionInPage ) ) {
+						gap += otherConfig.offset + otherBlock?.getBoundingClientRect()?.height || 0;
 					}
 				}
 			}
 		});
-
-		//console.log( 'Total gap is ' + gap );
-		//console.groupEnd();
 
 		return gap;
 	};
@@ -88,7 +78,7 @@ const createObserver = () => {
 		const blockWidth = block.getBoundingClientRect()?.width || 0;
 		const currentBottomPosInPage =  blockHeight + config.offset + ( window.pageYOffset || document.documentElement.scrollTop );
 
-		for ( let otherIndex of ( new Set( dormantIndex, activeIndex ) ) ) {
+		for ( let otherIndex of ( new Set([ ...dormantIndex, ...activeIndex ]) ) ) {
 			if ( container === blocks[otherIndex.toString()].container ) {
 				if ( otherIndex > index ) {
 					const { block: otherBlock, metadata: otherMetadata} = blocks[otherIndex.toString()];
@@ -153,8 +143,6 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 	// We need to activate the sticky mode more early for smooth transition
 	const activationOffset = offset + 20;
 
-	console.log( ({activationOffset}) );
-
 	/*
 		OBSERVER
 
@@ -196,11 +184,9 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 		}
 
 		if ( 'bottom' === position &&
-
-			// TODO: add early activation
 			(
-				( scrollBottom - activationOffset > elemBottomPositionInPage ) &&
-				( ! container ||  scrollBottom - activationOffset < containerBottomPosition )
+				( scrollBottom - activationOffset - earlyActivation > elemBottomPositionInPage ) &&
+				( ! container ||  scrollBottom - activationOffset - earlyActivation < containerBottomPosition )
 			)
 		) {
 			return 'bottom';
@@ -211,8 +197,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 				return 'constrain-top';
 			}
 
-			// TODO: add early activation
-			if ( 'bottom' === position && (  scrollBottom - activationOffset  >= containerBottomPosition ) ) {
+			if ( 'bottom' === position && (  scrollBottom - activationOffset - earlyActivation  >= containerBottomPosition ) ) {
 				return 'constrain-bottom';
 			}
 		}
@@ -261,8 +246,6 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 		// Check if the scroll with the activation offset has passed the top of the element
 		const stickyPosition = 'o-sticky-bhvr-stack' === config.behaviour ? getScrollActivePosition( calculateGap() ) : getScrollActivePosition();
 
-		// console.log( 'Position case: ' + pos );
-
 		// Check for early activation
 		if ( getScrollActivePosition( calculateEarlyActivation?.() ) ) {
 			earlyActivate?.();
@@ -303,15 +286,11 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 				break;
 			case 'constrain-top':
 				elem.style.top = '0px';
-
-				// TODO: improve formule
 				elem.style.transform = `translateY(${ containerBottomPosition - height - scrollTop }px)`;
 				break;
 			case 'constrain-bottom':
 				elem.style.bottom = '0px';
 				elem.style.transformOrigin = 'left bottom';
-
-				// TODO: improve formule
 				elem.style.transform = `translateY(${ containerBottomPosition  - scrollBottom }px)`;
 				break;
 			default:
