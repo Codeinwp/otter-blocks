@@ -59,7 +59,7 @@ const Inspector = ({
 	const [ tab, setTab ] = useState( 'layout' );
 
 	const changeColumnWidth = value => {
-		const width = value || 20;
+		const width = value || 10;
 		const nextWidth = ( Number( currentBlockWidth.current ) - width ) + Number( nextBlockWidth.current );
 		currentBlockWidth.current = width;
 		nextBlockWidth.current = nextWidth;
@@ -494,8 +494,8 @@ const Inspector = ({
 								label={ __( 'Column Width', 'otter-blocks' ) }
 								value={ Number( attributes.columnWidth ) }
 								onChange={ changeColumnWidth }
-								min={ 20 }
-								max={ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 20 }
+								min={ 10 }
+								max={ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 10 }
 							/>
 						) }
 

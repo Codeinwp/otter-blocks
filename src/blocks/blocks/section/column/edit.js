@@ -95,10 +95,6 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	useEffect( () => {
-		updateWidth();
-	}, [ attributes.columnWidth ]);
-
-	useEffect( () => {
 		if ( 1 < parentBlock.innerBlocks.length ) {
 			if ( ! adjacentBlockClientId ) {
 				const blockId = parentBlock.innerBlocks.findIndex( e => e.clientId === clientId );
@@ -132,6 +128,7 @@ const Edit = ({
 	const [ currentWidth, setCurrentWidth ] = useState( 0 );
 	const [ nextWidth, setNextWidth ] = useState( 0 );
 	const [ hasSelected, setSelected ] = useState( false );
+	const [ responsiveSize, setResponsiveSize ] = useState( attributes.columnWidth );
 
 	const resizerRef = useRef();
 
@@ -141,31 +138,40 @@ const Edit = ({
 
 	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
 
-	if ( isMobile ) {
+	if ( ! isMobile ) {
 		isDesktop = isPreviewDesktop;
 		isTablet = isPreviewTablet;
 		isMobile = isPreviewMobile;
 	}
 
-	if ( attributes.columnWidth === undefined ) {
-		( parentBlock.innerBlocks ).map( ( innerBlock, i ) => {
-			if ( clientId === innerBlock.clientId ) {
-				const columns = parentBlock.attributes.columns;
-				const layout = parentBlock.attributes.layout;
-				updateBlockAttributes( clientId, {
-					columnWidth: layouts[columns][layout][i]
-				});
-			}
-		});
-	}
-
-	const updateWidth = () => {
-		const columnContainer = document.querySelector( `.wp-themeisle-block-advanced-column-resize-container-${ clientId }` );
-
-		if ( null !== columnContainer && isDesktop ) {
+	useEffect( () => {
+		if ( isDesktop ) {
 			resizerRef.current.updateSize({ width: `${ attributes.columnWidth }%` });
 		}
-	};
+	}, [ isDesktop, attributes.columnWidth ]);
+
+	useEffect( () => {
+		if ( isTablet || isMobile ) {
+			const columns = parentBlock.attributes.columns;
+			let layout = parentBlock.attributes.layoutTablet || 'equal';
+
+			if ( isMobile ) {
+				layout = parentBlock.attributes.layoutMobile || 'equal';
+			}
+
+			const index = parentBlock.innerBlocks.findIndex( i => i.clientId === clientId );
+			setResponsiveSize( `${ layouts[columns][layout][index] }%` );
+		}
+	}, [ isTablet, isMobile, parentBlock.attributes.columns, parentBlock.attributes.layoutTablet, parentBlock.attributes.layoutMobile ]);
+
+	if ( attributes.columnWidth === undefined ) {
+		const index = parentBlock.innerBlocks.findIndex( i => i.clientId === clientId );
+		const columns = parentBlock.attributes.columns;
+		const layout = parentBlock.attributes.layout;
+		updateBlockAttributes( clientId, {
+			columnWidth: layouts[columns][layout][index]
+		});
+	}
 
 	const onResizeStart = () => {
 		const handle = document.querySelector( `.wp-themeisle-block-advanced-column-resize-container-${ clientId } .components-resizable-box__handle` );
@@ -194,7 +200,7 @@ const Edit = ({
 		const handleTooltipLeft = document.querySelector( '.resizable-tooltip-left' );
 		const handleTooltipRight = document.querySelector( '.resizable-tooltip-right' );
 
-		if ( 20 <= width && 20 <= nextColumnWidth ) {
+		if ( 10 <= width && 10 <= nextColumnWidth ) {
 			handleTooltipLeft.innerHTML = `${ width.toFixed( 0 ) }%`;
 			handleTooltipRight.innerHTML = `${ nextColumnWidth.toFixed( 0 ) }%`;
 
@@ -360,8 +366,17 @@ const Edit = ({
 				onResizeStart={ onResizeStart }
 				onResize={ onResize }
 				onResizeStop={ onResizeStop }
-				minWidth="20%"
-				maxWidth={ `${ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 20 }%` }
+				minWidth="10%"
+
+				{ ... ( isDesktop && 1 < parentBlock.attributes.columns ) ? {
+					maxWidth: `${ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 10 }%`
+				} : {} }
+
+				{ ... ( isTablet || isMobile ) ? {
+					size: {
+						width: responsiveSize
+					}
+				} : {} }
 			>
 				<Tag { ...blockProps }>
 					<InnerBlocks
