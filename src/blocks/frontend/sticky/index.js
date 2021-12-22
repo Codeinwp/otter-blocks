@@ -51,7 +51,7 @@ const createObserver = () => {
 	};
 
 	const calculateGap = ( index ) => {
-		const { block, container, config, metadata } = blocks[index.toString()];
+		const { block, container, metadata } = blocks[index.toString()];
 		let gap = 0;
 		const blockWidth = block.getBoundingClientRect()?.width || 0;
 
