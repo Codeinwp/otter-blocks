@@ -3,7 +3,15 @@ import { easeOutQuad } from '../../helpers/helper-functions';
 
 const createObserver = () => {
 	const blocks = {};
+
+	/**
+	 * The index of the active blocks
+	 */
 	const activeIndex = new Set();
+
+	/**
+	 * The index of the blocks that are close to being active.
+	 */
 	const dormantIndex = new Set();
 
 	let indexBlock = 0;
@@ -34,6 +42,11 @@ const createObserver = () => {
 		return indexBlock;
 	};
 
+	/**
+	 * Calculate how much space the active blocks is occupying in the screen, use this for detecting the block that are close to be activated.
+	 * @param {number} index The registration index.
+	 * @returns {number} The space occupied.
+	 */
 	const calculateEarlyActivation = ( index ) => {
 		const { container } = blocks[index.toString()];
 		let earlyActivation = 0;
@@ -50,6 +63,11 @@ const createObserver = () => {
 		return earlyActivation;
 	};
 
+	/**
+	 * Calculate the space occupied by other block with the `stack` option, and the same container.
+	 * @param {number} index The registration index.
+	 * @returns {number} The space occupied by other active blocks.
+	 */
 	const calculateGap = ( index ) => {
 		const { block, container, metadata } = blocks[index.toString()];
 		let gap = 0;
@@ -70,6 +88,11 @@ const createObserver = () => {
 		return gap;
 	};
 
+	/**
+	 * Calculate the opacity taken in the consideration the blocks after this one.
+	 * @param {number} index The registration index.
+	 * @returns {number} The opacity.
+	 */
 	const calculateOpacity = ( index ) => {
 		const { block, container, config, metadata } = blocks[index.toString()];
 		let opacity = 1;
@@ -84,6 +107,7 @@ const createObserver = () => {
 					const { block: otherBlock, metadata: otherMetadata} = blocks[otherIndex.toString()];
 					const otherBlockHeight = otherBlock.getBoundingClientRect()?.height || 0;
 
+					// Check if the the blocks collide / Check if the block in on top, and not left or right.
 					if ( blockWidth > Math.abs( metadata.elemLeftPositionInPage - otherMetadata.elemLeftPositionInPage ) ) {
 						const height = Math.min( blockHeight, otherBlockHeight );
 						opacity = Math.min( 1, Math.max( 0, otherMetadata.elemTopPositionInPage + height - currentBottomPosInPage ) / height  );
@@ -302,6 +326,8 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 				elem.style.opacity = easeOutQuad( calculateOpacity?.() );
 			}
 		} else {
+
+			// Clean up the sticky option from the element when is not active
 			elem.classList.remove( 'is-sticky' );
 			elem.style.top = '';
 			elem.style.left = '';
