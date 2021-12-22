@@ -82,7 +82,7 @@ const Edit = ({
 						value={ limit }
 						options={[
 							{ label: __( 'Default', 'otter-blocks' ), value: 'o-sticky-scope-main-area' },
-							{ label: __( 'Column/Group', 'otter-blocks' ), value: 'o-sticky-scope-parent' },
+							{ label: __( 'Parent Column/Group', 'otter-blocks' ), value: 'o-sticky-scope-parent' },
 							{ label: __( 'Section', 'otter-blocks' ), value: 'o-sticky-scope-section' },
 							{ label: __( 'Screen', 'otter-blocks' ), value: 'o-sticky-scope-screen' }
 						]}
@@ -120,6 +120,12 @@ const Edit = ({
 						]}
 						onChange={ value => addOption(  value, FILTER_OPTIONS.behaviour ) }
 					/>
+
+					{
+						'o-sticky-bhvr-stack'  === behaviour && (
+							__( 'The block will stack with other sticky elements with the same \'Stick To\' container, and Stack option in Behaviour. It works better with \'Stick to\' as Default or Screen.', 'otter-blocks' )
+						)
+					}
 				</PanelBody>
 			</InspectorControls>
 		</Fragment>
