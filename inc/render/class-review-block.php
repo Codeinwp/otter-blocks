@@ -198,9 +198,9 @@ class Review_Block extends Base_Block {
 			$html .= '	<div class="wp-block-themeisle-blocks-review__left_details' . $is_single . '">';
 			if ( isset( $attributes['image'] ) ) {
 				if ( wp_attachment_is_image( $attributes['image']['id'] ) ) {
-					$html .= wp_get_attachment_image( $attributes['image']['id'], 'thumbnail' );
+					$html .= wp_get_attachment_image( $attributes['image']['id'], 'medium' );
 				} else {
-					$html .= '	<img src="' . $attributes['image']['url'] . '" alt="' . $attributes['image']['alt'] . '"/>';
+					$html .= '	<img src="' . esc_url( $attributes['image']['url'] ) . '" alt="' . esc_attr( $attributes['image']['alt'] ) . '"/>';
 				}
 			}
 
