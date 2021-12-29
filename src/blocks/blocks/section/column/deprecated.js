@@ -888,7 +888,7 @@ const deprecated = [ {
 			'borderRadiusLeft'
 		];
 
-		const isEligible = oldAttributes.some( attr => attributes[ attr ] && 'number' === typeof attributes[ attr ]) || ( undefined !== attributes.backgroundImageURL && undefined !== attributes.backgroundImageID ) || ( undefined !== attributes.backgroundPosition && object !== attributes.backgroundPosition );
+		const isEligible = oldAttributes.some( attr => attributes[ attr ] && 'number' === typeof attributes[ attr ]) || ( undefined !== attributes.backgroundImageURL && undefined !== attributes.backgroundImageID ) || ( undefined !== attributes.backgroundPosition && 'object' !== attributes.backgroundPosition );
 
 		return isEligible;
 	},
