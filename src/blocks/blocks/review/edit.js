@@ -1,6 +1,13 @@
+/** @jsx jsx */
+
 /**
  * External dependencies.
  */
+import {
+	css,
+	jsx
+} from '@emotion/react';
+
 import classnames from 'classnames';
 
 import getSymbolFromCurrency from 'currency-symbol-map';
@@ -252,9 +259,11 @@ const Edit = ({
 								placeholder={ __( 'Product description or a small review…', 'otter-blocks' ) }
 								value={ productAttributes?.description }
 								tagName="p"
-								style={ {
-									color: attributes.textColor
-								} }
+								css={ css`
+									p {
+										color: ${ attributes.textColor } !important;
+									}
+								` }
 							/>
 						) }
 					</div>
