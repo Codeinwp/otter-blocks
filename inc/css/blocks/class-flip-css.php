@@ -236,17 +236,11 @@ class Flip_CSS extends Base_CSS {
 					),
 					array(
 						'property' => 'justify-content',
-						'value'    => 'frontAlign',
-						'format'   => function( $value, $attrs ) use ( $parse_matrix_align_values ) {
-							return $parse_matrix_align_values( $value, 0 );
-						},
+						'value'    => 'frontVerticalAlign',
 					),
 					array(
 						'property' => 'align-items',
-						'value'    => 'frontAlign',
-						'format'   => function( $value, $attrs ) use ( $parse_matrix_align_values ) {
-							return $parse_matrix_align_values( $value, 1 );
-						},
+						'value'    => 'frontHorizontalAlign',
 					),
 				),
 			)
