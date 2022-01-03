@@ -180,7 +180,7 @@ window.addEventListener( 'load', () => {
 		for ( const element of elements ) {
 			if (
 				element.getBoundingClientRect().top <=
-					window.innerHeight * 0.75 &&
+					window.innerHeight * 0.95 &&
 				0 < element.getBoundingClientRect().top
 			) {
 				if (
