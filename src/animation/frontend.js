@@ -128,7 +128,7 @@ const delay = [
 
 const speed = [ 'none', 'slow', 'slower', 'fast', 'faster' ];
 
-window.onload = () => {
+window.addEventListener( 'load', () => {
 	const elements = document.querySelectorAll( '.animated' );
 	for ( const element of elements ) {
 		classes = element.classList;
@@ -176,7 +176,7 @@ window.onload = () => {
 		});
 	}
 
-	window.onscroll = () => {
+	window.addEventListener( 'scroll', () => {
 		for ( const element of elements ) {
 			if (
 				element.getBoundingClientRect().top <=
@@ -194,8 +194,8 @@ window.onload = () => {
 				}
 			}
 		}
-	};
-};
+	});
+});
 
 const isElementInViewport = ( el ) => {
 	const scroll = window.scrollY || window.pageYOffset;
