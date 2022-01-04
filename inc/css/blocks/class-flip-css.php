@@ -205,26 +205,6 @@ class Flip_CSS extends Base_CSS {
 			)
 		);
 
-		$parse_matrix_align_values = function( $attr, $position ) {
-			$values = explode( ' ', $attr );
-			if ( 1 === count( $values ) ) {
-				$position = 0;
-			}
-
-			switch ( $values[ $position ] ) {
-				case 'top':
-				case 'left':
-					return 'flex-start';
-				case 'center':
-					return 'center';
-				case 'bottom':
-				case 'right':
-					return 'flex-end';
-				default:
-					return '';
-			}
-		};
-
 		$css->add_item(
 			array(
 				'selector'   => ' .o-flip-front .o-flip-content',
