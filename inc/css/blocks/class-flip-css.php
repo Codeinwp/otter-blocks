@@ -94,46 +94,6 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .o-flip-front, .o-flip-back:hover',
-				'properties' => array(
-					array(
-						'property'       => 'box-shadow',
-						'pattern'        => 'horizontal vertical blur color',
-						'pattern_values' => array(
-							'horizontal' => array(
-								'value'   => 'boxShadowHorizontal',
-								'unit'    => 'px',
-								'default' => 0,
-							),
-							'vertical'   => array(
-								'value'   => 'boxShadowVertical',
-								'unit'    => 'px',
-								'default' => 0,
-							),
-							'blur'       => array(
-								'value'   => 'boxShadowBlur',
-								'unit'    => 'px',
-								'default' => 5,
-							),
-							'color'      => array(
-								'value'   => 'boxShadowColor',
-								'default' => '#000',
-								'format'  => function( $value, $attrs ) {
-									$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 );
-									return ( strpos( $value, '#' ) !== false && $opacity < 100 ) ? $this->hex2rgba( $value, $opacity / 100 ) : $value;
-								},
-							),
-						),
-						'condition'      => function( $attrs ) {
-							return isset( $attrs['boxShadow'] ) && ( isset( $attrs['isInverted'] ) && $attrs['isInverted'] );
-						},
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
 				'selector'   => ' .o-flip-front',
 				'properties' => array(
 					array(
