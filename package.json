@@ -31,7 +31,7 @@
 		"lasttranslator": "Themeisle Translate Team <friends@themeisle.com>"
 	},
 	"dependencies": {
-		"@emotion/react": "^11.7.0",
+		"@emotion/react": "^11.7.1",
 		"@wordpress/icons": "^6.1.1",
 		"array-move": "^3.0.1",
 		"classnames": "^2.3.1",
@@ -47,7 +47,7 @@
 	"devDependencies": {
 		"@semantic-release/changelog": "^5.0.1",
 		"@semantic-release/exec": "^5.0.0",
-		"@semantic-release/git": "^9.0.0",
+		"@semantic-release/git": "^10.0.1",
 		"@wordpress/scripts": "^19.2.2",
 		"conventional-changelog-simple-preset": "^1.0.20",
 		"eslint-config-wordpress": "^2.0.0",
@@ -56,6 +56,6 @@
 		"grunt-wp-readme-to-markdown": "^2.0.1",
 		"replace-in-file": "^6.3.1",
 		"semantic-release": "^18.0.1",
-		"semantic-release-slack-bot": "^3.0.0"
+		"semantic-release-slack-bot": "^3.3.0"
 	}
 }
