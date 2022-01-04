@@ -159,7 +159,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 
 	if ( elemBottomPositionInPage < triggerLimit ) {
 		console.groupCollapsed( 'Sticky Warning' );
-		console.warn( elem, 'This element needs to be position lower in the page for using position \'Bottom\'. You use position \'Top\' as an alternative.' );
+		console.warn( elem, 'This element needs to be position lower in the page when using position \'Bottom\'. You can use position \'Top\' as an alternative.' );
 		console.groupEnd();
 		return;
 	}

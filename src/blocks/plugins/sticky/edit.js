@@ -91,7 +91,7 @@ const Edit = ({
 
 					<SelectControl
 						label={ __( 'Position', 'otter-blocks' ) }
-						help={ __( 'Stick the block to the top or the bottom of the screen.', 'otter-blocks' ) }
+						help={ __( 'Stick the block to the top or the bottom of the screen. When using \'Bottom\', make sure that the element is closer or lower than the bottom of the screen when scroll is on the start position; use Preview to check.', 'otter-blocks' ) }
 						value={ position }
 						options={[
 							{ label: __( 'Top', 'otter-blocks' ), value: 'o-sticky-pos-top' },
