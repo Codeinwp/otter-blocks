@@ -143,6 +143,7 @@ const createObserver = () => {
 const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 	const position = config?.position || 'top';
 	const offset = config?.offset !== undefined ? config.offset : 40;
+	const triggerLimit = 'bottom' === config?.position ? window.innerHeight - offset : 0;
 
 	// Get node reference for the element and the container
 	const elem = 'string' === typeof selector || selector instanceof String ? document.querySelector( selector ) : selector;
@@ -155,6 +156,13 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 	const elemTopPositionInPage = top + scrollTop;
 	const elemLeftPositionInPage = left + scrollLeft;
 	const elemBottomPositionInPage = elemTopPositionInPage + height;
+
+	if ( elemBottomPositionInPage < triggerLimit ) {
+		console.groupCollapsed( 'Sticky Warning' );
+		console.warn( elem, 'This element needs to be position lower in the page for using position \'Bottom\'. You use position \'Top\' as an alternative.' );
+		console.groupEnd();
+		return;
+	}
 
 	// Calculate the container position in the page
 	const containerHeight = container?.getBoundingClientRect()?.height || 0;
@@ -335,7 +343,6 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 			elem.style.opacity = '';
 
 			if ( ! isEarlyActivated?.() ) {
-				console.log( 'Clean' );
 				elem.style.position = '';
 				elem.style.zIndex = '';
 			}
