@@ -7,11 +7,13 @@ import { __ } from '@wordpress/i18n';
 
 import { hasBlockSupport } from '@wordpress/blocks';
 
+import { InspectorControls } from '@wordpress/block-editor';
+
 import { PanelBody } from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
-import { InspectorControls } from '@wordpress/block-editor';
+import { select } from '@wordpress/data';
 
 import { Fragment } from '@wordpress/element';
 
@@ -70,5 +72,7 @@ const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 	};
 }, 'withInspectorControl' );
 
-addFilter( 'blocks.registerBlockType', 'themeisle-custom-css/attribute', addAttribute );
-addFilter( 'editor.BlockEdit', 'themeisle-custom-css/with-inspector-controls', withInspectorControls );
+if ( ! select( 'core/edit-site' ) ) {
+	addFilter( 'blocks.registerBlockType', 'themeisle-custom-css/attribute', addAttribute );
+	addFilter( 'editor.BlockEdit', 'themeisle-custom-css/with-inspector-controls', withInspectorControls );
+}

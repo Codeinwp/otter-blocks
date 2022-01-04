@@ -46,9 +46,7 @@ function AnimationControls({ attributes, clientId, setAttributes }) {
 	const [ animation, setAnimation ] = useState( 'none' );
 	const [ delay, setDelay ] = useState( 'default' );
 	const [ speed, setSpeed ] = useState( 'default' );
-	const [ currentAnimationLabel, setCurrentAnimationLabel ] = useState(
-		'none'
-	);
+	const [ currentAnimationLabel, setCurrentAnimationLabel ] = useState( 'none' );
 
 	const updateAnimation = ( e ) => {
 		let classes;
@@ -95,7 +93,7 @@ function AnimationControls({ attributes, clientId, setAttributes }) {
 		setAnimation( e );
 		setAttributes({ className: classes });
 
-		let block = document.querySelector( `#block-${ clientId } .animated` );
+		let block = document.querySelector( `#block-${ clientId } .animated` ) || document.querySelector( `#block-${ clientId }.animated` );
 
 		if ( block ) {
 			outAnimation.forEach( ( i ) => {
@@ -172,6 +170,7 @@ function AnimationControls({ attributes, clientId, setAttributes }) {
 				currentAnimationLabel={ currentAnimationLabel }
 				setCurrentAnimationLabel={ setCurrentAnimationLabel }
 			/>
+
 			{ 'none' !== animation && (
 				<Fragment>
 					<SelectControl
