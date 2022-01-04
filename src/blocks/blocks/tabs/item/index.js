@@ -18,6 +18,7 @@ import save from './save.js';
 import attributes from './attributes.js';
 
 registerBlockType( 'themeisle-blocks/tabs-item', {
+	apiVersion: 2,
 	title: __( 'Tab Item', 'otter-blocks' ),
 	description: __( 'Organize and allow navigation between groups of content with Tabs block.', 'otter-blocks' ),
 	icon,

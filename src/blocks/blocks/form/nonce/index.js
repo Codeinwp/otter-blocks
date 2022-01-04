@@ -12,6 +12,7 @@ import { inputIcon as icon } from '../../../helpers/icons.js';
 import edit from './edit.js';
 
 registerBlockType( 'themeisle-blocks/form-nonce', {
+	apiVersion: 2,
 	title: __( 'Nonce Field', 'otter-blocks' ),
 	description: __( 'Protect the form from CSRF.', 'otter-blocks' ),
 	icon,

@@ -20,6 +20,7 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/countdown', {
+	apiVersion: 2,
 	title: __( 'Countdown', 'otter-blocks' ),
 	description: __( 'Set a countdown for a date.', 'otter-blocks' ),
 	icon,

@@ -111,23 +111,23 @@ class Google_Map_Block extends Base_Block {
 		}
 
 		$id    = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-google-map-' . wp_rand( 10, 100 );
-		$class = 'wp-block-themeisle-blocks-google-map';
+		$class = '';
 		$style = '';
 
-		if ( isset( $attributes['className'] ) ) {
-			$class .= ' ' . esc_attr( $attributes['className'] );
-		}
-
 		if ( isset( $attributes['align'] ) ) {
-			$class .= ' align' . esc_attr( $attributes['align'] );
+			$class .= 'align' . esc_attr( $attributes['align'] );
 		}
 
 		if ( isset( $attributes['height'] ) ) {
 			$style .= 'height:' . esc_attr( $attributes['height'] . 'px;' );
 		}
 
-		// Load the attributes in the page and make a placeholder to render the map.
-		$output  = "<div class=\"$class\" id=\"$id\" style=\"$style\"></div> \n";
+		$wrapper_attributes = get_block_wrapper_attributes( array(
+			'class' => $class,
+			'style' => $style,
+		) );
+
+		$output  = '<div ' . $wrapper_attributes . ' id="' . esc_attr( $id ) . '"></div>' . "\n";
 		$output .= '<script type="text/javascript">' . "\n";
 		$output .= '	/* <![CDATA[ */' . "\n";
 		$output .= '		if ( ! window.themeisleGoogleMaps ) window.themeisleGoogleMaps =[];' . "\n";

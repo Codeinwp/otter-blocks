@@ -16,6 +16,7 @@ import save from './save.js';
 import variations from './variations.js';
 
 registerBlockType( 'themeisle-blocks/advanced-columns', {
+	apiVersion: 2,
 	title: __( 'Section', 'otter-blocks' ),
 	description: __( 'Add a Section block that displays content in multiple columns, then add whatever content blocks you’d like.', 'otter-blocks' ),
 	icon,

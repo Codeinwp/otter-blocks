@@ -1,12 +1,19 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+
 import hexToRgba from 'hex-rgba';
 
 /**
  * WordPress dependencies
  */
 import { isEmpty } from 'lodash';
+
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import { ResizableBox } from '@wordpress/components';
 
@@ -17,11 +24,10 @@ import {
 	useSelect
 } from '@wordpress/data';
 
-import { InnerBlocks } from '@wordpress/block-editor';
-
 import {
 	Fragment,
 	useEffect,
+	useRef,
 	useState
 } from '@wordpress/element';
 
@@ -36,7 +42,6 @@ import { blockInit } from '../../../helpers/block-utility.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	isSelected,
 	clientId,
 	toggleSelection
@@ -49,7 +54,6 @@ const Edit = ({
 		parentClientId,
 		parentBlock,
 		hasInnerBlocks,
-		isViewportAvailable,
 		isPreviewDesktop,
 		isPreviewTablet,
 		isPreviewMobile
@@ -59,7 +63,7 @@ const Edit = ({
 			getBlock,
 			getBlockRootClientId
 		} = select( 'core/block-editor' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
 		const block = getBlock( clientId );
 		const adjacentBlockClientId = getAdjacentBlockClientId( clientId );
 		const adjacentBlock = getBlock( adjacentBlockClientId );
@@ -73,10 +77,9 @@ const Edit = ({
 			parentClientId,
 			parentBlock,
 			hasInnerBlocks,
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
+			isPreviewDesktop: 'Desktop' === __experimentalGetPreviewDeviceType(),
+			isPreviewTablet: 'Tablet' === __experimentalGetPreviewDeviceType(),
+			isPreviewMobile: 'Mobile' === __experimentalGetPreviewDeviceType()
 		};
 	}, []);
 
@@ -94,12 +97,42 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	useEffect( () => {
-		updateWidth();
-	}, [ attributes.columnWidth ]);
+		if ( 1 < parentBlock.innerBlocks.length ) {
+			if ( ! adjacentBlockClientId ) {
+				const blockId = parentBlock.innerBlocks.findIndex( e => e.clientId === clientId );
+				const previousBlock = parentBlock.innerBlocks[ blockId - 1 ];
+				nextBlock.current = previousBlock.clientId;
+				nextBlockWidth.current = previousBlock.attributes.columnWidth;
+			}
+		}
+	}, []);
 
+	useEffect( () => {
+		if ( 1 < parentBlock.innerBlocks.length ) {
+			if ( ! adjacentBlockClientId ) {
+				const blockId = parentBlock.innerBlocks.findIndex( e => e.clientId === clientId );
+				const previousBlock = parentBlock.innerBlocks[ blockId - 1 ];
+				nextBlockWidth.current = previousBlock.attributes.columnWidth;
+				nextBlock.current = previousBlock.clientId;
+				currentBlockWidth.current = attributes.columnWidth;
+			} else {
+				nextBlockWidth.current = adjacentBlock.attributes.columnWidth;
+				nextBlock.current = adjacentBlockClientId;
+				currentBlockWidth.current = attributes.columnWidth;
+			}
+		}
+	}, [ isSelected, attributes.columnWidth, parentBlock.innerBlocks.length ]);
+
+	const currentBlockWidth = useRef( attributes.columnWidth );
+	const nextBlock = useRef( adjacentBlockClientId && adjacentBlockClientId );
+	const nextBlockWidth = useRef( adjacentBlock && adjacentBlock.attributes.columnWidth );
 
 	const [ currentWidth, setCurrentWidth ] = useState( 0 );
 	const [ nextWidth, setNextWidth ] = useState( 0 );
+	const [ hasSelected, setSelected ] = useState( false );
+	const [ responsiveSize, setResponsiveSize ] = useState( attributes.columnWidth );
+
+	const resizerRef = useRef();
 
 	let isDesktop = isLarger && ! isLarge && isSmall && ! isSmaller;
 
@@ -107,38 +140,43 @@ const Edit = ({
 
 	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
 
-	if ( isViewportAvailable && ! isMobile ) {
+	if ( ! isMobile ) {
 		isDesktop = isPreviewDesktop;
 		isTablet = isPreviewTablet;
 		isMobile = isPreviewMobile;
 	}
 
-	if ( attributes.columnWidth === undefined ) {
-		( parentBlock.innerBlocks ).map( ( innerBlock, i ) => {
-			if ( clientId === innerBlock.clientId ) {
-				const columns = parentBlock.attributes.columns;
-				const layout = parentBlock.attributes.layout;
-				updateBlockAttributes( clientId, {
-					columnWidth: layouts[columns][layout][i]
-				});
+	useEffect( () => {
+		if ( isDesktop ) {
+			resizerRef.current.updateSize({ width: `${ attributes.columnWidth }%` });
+		}
+	}, [ isDesktop, attributes.columnWidth ]);
+
+	useEffect( () => {
+		if ( isTablet || isMobile ) {
+			const columns = parentBlock.attributes.columns;
+			let layout = parentBlock.attributes.layoutTablet || 'equal';
+
+			if ( isMobile ) {
+				layout = parentBlock.attributes.layoutMobile || 'equal';
 			}
+
+			const index = parentBlock.innerBlocks.findIndex( i => i.clientId === clientId );
+			setResponsiveSize( `${ layouts[columns][layout][index] }%` );
+		}
+	}, [ isTablet, isMobile, parentBlock.attributes.columns, parentBlock.attributes.layoutTablet, parentBlock.attributes.layoutMobile ]);
+
+	if ( attributes.columnWidth === undefined ) {
+		const index = parentBlock.innerBlocks.findIndex( i => i.clientId === clientId );
+		const columns = parentBlock.attributes.columns;
+		const layout = parentBlock.attributes.layout;
+		updateBlockAttributes( clientId, {
+			columnWidth: layouts[columns][layout][index]
 		});
 	}
 
-	const updateWidth = () => {
-		const columnContainer = document.getElementById( `block-${ clientId }` );
-
-		if ( null !== columnContainer ) {
-			if ( isDesktop ) {
-				columnContainer.style.flexBasis = `${ attributes.columnWidth }%`;
-			} else {
-				columnContainer.style.flexBasis = '';
-			}
-		}
-	};
-
 	const onResizeStart = () => {
-		const handle = document.querySelector( `#block-${ clientId } .wp-themeisle-block-advanced-column-resize-container-handle .components-resizable-box__handle` );
+		const handle = document.querySelector( `.wp-themeisle-block-advanced-column-resize-container-${ clientId } .components-resizable-box__handle` );
 		const handleTooltipLeft = document.createElement( 'div' );
 		const handleTooltipRight = document.createElement( 'div' );
 
@@ -152,6 +190,7 @@ const Edit = ({
 		setCurrentWidth( attributes.columnWidth );
 		setNextWidth( adjacentBlock.attributes.columnWidth );
 		toggleSelection( false );
+		setSelected( true );
 	};
 
 	const onResize = ( event, direction, elt, delta ) => {
@@ -181,6 +220,7 @@ const Edit = ({
 		handleTooltipLeft.parentNode.removeChild( handleTooltipLeft );
 		handleTooltipRight.parentNode.removeChild( handleTooltipRight );
 		toggleSelection( true );
+		setSelected( false );
 	};
 
 	const Tag = attributes.columnsHTMLTag;
@@ -282,21 +322,31 @@ const Edit = ({
 		...boxShadowStyle
 	};
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		style
+	});
+
 	return (
 		<Fragment>
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				isSelected={ isSelected }
-				clientId={ clientId }
-				adjacentBlock={ adjacentBlock }
 				parentBlock={ parentBlock }
 				updateBlockAttributes={ updateBlockAttributes }
-				adjacentBlockClientId={ adjacentBlockClientId }
+				currentBlockWidth={ currentBlockWidth }
+				nextBlock={ nextBlock }
+				nextBlockWidth={ nextBlockWidth }
 			/>
 
 			<ResizableBox
-				className="block-library-spacer__resize-container wp-themeisle-block-advanced-column-resize-container"
+				ref={ resizerRef }
+				className={ classnames(
+					`wp-themeisle-block-advanced-column-resize-container wp-themeisle-block-advanced-column-resize-container-${ clientId }`,
+					{
+						'is-selected': hasSelected
+					}
+				) }
 				enable={ {
 					right: adjacentBlockClientId ? true : false
 				} }
@@ -304,12 +354,19 @@ const Edit = ({
 				onResizeStart={ onResizeStart }
 				onResize={ onResize }
 				onResizeStop={ onResizeStop }
+				minWidth="10%"
+
+				{ ... ( isDesktop && 1 < parentBlock.attributes.columns ) ? {
+					maxWidth: `${ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 10 }%`
+				} : {} }
+
+				{ ... ( isTablet || isMobile ) ? {
+					size: {
+						width: responsiveSize
+					}
+				} : {} }
 			>
-				<Tag
-					className={ className }
-					id={ attributes.id }
-					style={ style }
-				>
+				<Tag { ...blockProps }>
 					<InnerBlocks
 						templateLock={ false }
 						renderAppender={ ! hasInnerBlocks && InnerBlocks.ButtonBlockAppender }

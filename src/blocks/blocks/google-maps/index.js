@@ -16,6 +16,7 @@ import edit from './edit.js';
 import transforms from './transforms.js';
 
 registerBlockType( 'themeisle-blocks/google-map', {
+	apiVersion: 2,
 	title: __( 'Google Maps', 'otter-blocks' ),
 	description: __( 'Display Google Maps on your website with Google Map block.', 'otter-blocks' ),
 	icon,

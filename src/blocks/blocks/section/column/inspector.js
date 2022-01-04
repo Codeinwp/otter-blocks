@@ -46,52 +46,18 @@ import { isNullObject } from '../../../helpers/helper-functions.js';
 const Inspector = ({
 	attributes,
 	setAttributes,
-	isSelected,
-	clientId,
-	adjacentBlock,
 	parentBlock,
 	updateBlockAttributes,
-	adjacentBlockClientId
+	currentBlockWidth,
+	nextBlock,
+	nextBlockWidth
 }) => {
 	const getView = useSelect( ( select ) => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
-
-		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
+		return __experimentalGetPreviewDeviceType();
 	}, []);
-
-	useEffect( () => {
-		if ( 1 < parentBlock.innerBlocks.length ) {
-			if ( ! adjacentBlockClientId ) {
-				const blockId = parentBlock.innerBlocks.findIndex( e => e.clientId === clientId );
-				const previousBlock = parentBlock.innerBlocks[ blockId - 1 ];
-				nextBlock.current = previousBlock.clientId;
-				nextBlockWidth.current = previousBlock.attributes.columnWidth;
-			}
-		}
-	}, []);
-
-	useEffect( () => {
-		if ( 1 < parentBlock.innerBlocks.length ) {
-			if ( ! adjacentBlockClientId ) {
-				const blockId = parentBlock.innerBlocks.findIndex( e => e.clientId === clientId );
-				const previousBlock = parentBlock.innerBlocks[ blockId - 1 ];
-				nextBlockWidth.current = previousBlock.attributes.columnWidth;
-				nextBlock.current = previousBlock.clientId;
-				currentBlockWidth.current = attributes.columnWidth;
-			} else {
-				nextBlockWidth.current = adjacentBlock.attributes.columnWidth;
-				nextBlock.current = adjacentBlockClientId;
-				currentBlockWidth.current = attributes.columnWidth;
-			}
-		}
-	}, [ isSelected, attributes.columnWidth, parentBlock.innerBlocks.length ]);
 
 	const [ tab, setTab ] = useState( 'layout' );
-
-	const currentBlockWidth = useRef( attributes.columnWidth );
-	const nextBlock = useRef( adjacentBlockClientId && adjacentBlockClientId );
-	const nextBlockWidth = useRef( adjacentBlock && adjacentBlock.attributes.columnWidth );
 
 	const changeColumnWidth = value => {
 		const width = value || 10;

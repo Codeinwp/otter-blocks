@@ -21,6 +21,7 @@ import save from './save.js';
 import transforms from './transforms.js';
 
 registerBlockType( 'themeisle-blocks/circle-counter', {
+	apiVersion: 2,
 	title: __( 'Circle Counter', 'otter-blocks' ),
 	description: __( 'Show your progress with a beautiful Circle Counter block.', 'otter-blocks' ),
 	icon,

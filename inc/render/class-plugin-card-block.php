@@ -30,10 +30,7 @@ class Plugin_Card_Block extends Base_Block {
 	 */
 	protected function set_attributes() {
 		$this->attributes = array(
-			'slug'      => array(
-				'type' => 'string',
-			),
-			'className' => array(
+			'slug' => array(
 				'type' => 'string',
 			),
 		);
@@ -72,13 +69,9 @@ class Plugin_Card_Block extends Base_Block {
 				$icon = $results->icons['default'];
 			}
 
-			$class = 'wp-block-themeisle-blocks-plugin-cards';
+			$wrapper_attributes = get_block_wrapper_attributes();
 
-			if ( isset( $attributes['className'] ) ) {
-				$class .= ' ' . esc_attr( $attributes['className'] );
-			}
-
-			$markup = '<div class="' . esc_attr( $class ) . '">
+			$markup = '<div ' . $wrapper_attributes . '>
 				<div class="wp-block-themeisle-blocks-plugin-cards-wrapper">
 					<div class="wp-block-themeisle-blocks-plugin-cards-header">
 						<div class="wp-block-themeisle-blocks-plugin-cards-main">

@@ -1,5 +1,5 @@
 .wp-block-themeisle-blocks-google-map {
-	&.components-placeholder {
+	.components-placeholder {
 		padding: 40px 20px;
 
 		.components-placeholder__text {
@@ -34,7 +34,7 @@
 		}
 	}
 
-	&.is-selecting-marker * {
+	.is-selecting-marker * {
 		cursor: crosshair;
 	}
 }

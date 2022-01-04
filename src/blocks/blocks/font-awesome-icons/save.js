@@ -1,19 +1,24 @@
 /**
+ * WordPress dependencies
+ */
+import { useBlockProps } from '@wordpress/block-editor';
+
+/**
  * Internal dependencies
  */
 import themeIsleIcons from './../../helpers/themeisle-icons';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
+	const blockProps = useBlockProps.save({
+		id: attributes.id
+	});
+
 	return (
-		<p
-			className={ className }
-			id={ attributes.id }
-		>
+		<p { ...blockProps }>
 			<span className="wp-block-themeisle-blocks-font-awesome-icons-container">
 				{ ( attributes.link ) ? (
 					<a

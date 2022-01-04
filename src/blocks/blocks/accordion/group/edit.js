@@ -13,7 +13,10 @@ import {
 /**
  * WordPress dependencies.
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import {
 	Fragment,
@@ -31,7 +34,6 @@ import { blockInit } from '../../../helpers/block-utility.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId,
 	isSelected
 }) => {
@@ -57,6 +59,14 @@ const Edit = ({
 		}
 	`;
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		className: classnames({
+			[ `is-${ attributes.gap }-gap` ]: attributes.gap
+		}),
+		css: styles
+	});
+
 	return (
 		<Fragment>
 			<Inspector
@@ -64,16 +74,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={ classnames(
-					className,
-					{
-						[ `is-${ attributes.gap }-gap` ]: attributes.gap
-					}
-				) }
-				css={ styles }
-			>
+			<div { ...blockProps }>
 				<InnerBlocks
 					allowedBlocks={ [ 'themeisle-blocks/accordion-item' ] }
 					template={ [ [ 'themeisle-blocks/accordion-item' ] ] }

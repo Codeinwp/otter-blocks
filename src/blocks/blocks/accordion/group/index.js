@@ -14,6 +14,7 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/accordion', {
+	apiVersion: 2,
 	title: __( 'Accordion', 'otter-blocks' ),
 	description: __( 'Vertically collapsing accordions perfect for displaying your FAQs.', 'otter-blocks' ),
 	icon,

@@ -8,32 +8,31 @@ import classnames from 'classnames';
  */
 import {
 	InnerBlocks,
-	RichText
+	RichText,
+	useBlockProps
 } from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
-	return (
-		<div
-			id={ attributes.id }
-			className={
-				classnames(
-					className,
-					{ 'flipX': 'flipX' === attributes.animType },
-					{ 'flipY': 'flipY' === attributes.animType },
-					'anim'
-				)
+	const blockProps = useBlockProps.save({
+		id: attributes.id,
+		className: classnames(
+			'anim',
+			{
+				'flipX': 'flipX' === attributes.animType,
+				'flipY': 'flipY' === attributes.animType
 			}
-		>
+		)
+	});
+
+	return (
+		<div { ...blockProps }>
 			<div
-				className={
-					classnames(
-						'o-flip-inner',
-						{ invert: attributes.isInverted }
-					)
-				}
+				className={ classnames(
+					'o-flip-inner',
+					{ invert: attributes.isInverted }
+				) }
 			>
 				<div className="o-flip-front">
 					<div className="o-flip-content">

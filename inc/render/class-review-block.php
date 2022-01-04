@@ -34,9 +34,6 @@ class Review_Block extends Base_Block {
 			'id'          => array(
 				'type' => 'string',
 			),
-			'className'   => array(
-				'type' => 'string',
-			),
 			'title'       => array(
 				'type' => 'string',
 			),
@@ -161,11 +158,15 @@ class Review_Block extends Base_Block {
 		}
 
 		$id        = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-' . wp_rand( 10, 100 );
-		$class     = isset( $attributes['className'] ) ? $attributes['className'] : '';
-		$class     = 'wp-block-themeisle-blocks-review ' . esc_attr( $class );
 		$is_single = ( isset( $attributes['image'] ) && isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ? '' : ' is-single';
 
-		$html  = '<div id="' . esc_attr( $id ) . '" class="' . trim( $class ) . '">';
+		$wrapper_attributes = get_block_wrapper_attributes(
+			array(
+				'id' => $id,
+			) 
+		);
+
+		$html  = '<div ' . $wrapper_attributes . '>';
 		$html .= '  <div class ="wp-block-themeisle-blocks-review__header">';
 
 		if ( isset( $attributes['title'] ) && ! empty( $attributes['title'] ) ) {

@@ -3,7 +3,10 @@
 /**
  * WordPress dependencies.
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import {
 	Fragment,
@@ -26,13 +29,23 @@ import Inspector from './inspector.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	clientId,
-	className
+	clientId
 }) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
+
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		css: css`
+			.block-editor-block-list__layout {
+				align-items: ${ attributes.horizontalAlign || 'unset' } !important;
+				justify-content: ${ attributes.horizontalAlign || 'unset' } !important;
+				gap: ${ attributes.gap }px;
+			}
+		`
+	});
 
 	return (
 		<Fragment>
@@ -46,19 +59,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={ className }
-				css={
-					css`
-						.block-editor-block-list__layout {
-							align-items: ${ attributes.horizontalAlign || 'unset' } !important;
-							justify-content: ${ attributes.horizontalAlign || 'unset' } !important;
-							gap: ${ attributes.gap }px;
-						}
-					`
-				}
-			>
+			<div { ...blockProps }>
 				<InnerBlocks
 					allowedBlocks={ [ 'themeisle-blocks/icon-list-item' ] }
 					__experimentalMoverDirection="vertical"

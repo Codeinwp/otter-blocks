@@ -5,7 +5,6 @@ import Grid from './grid.js';
 import List from './list.js';
 
 const Layout = ({
-	className,
 	attributes,
 	posts,
 	categoriesList,
@@ -14,7 +13,6 @@ const Layout = ({
 	if ( 'grid' === attributes.style ) {
 		return (
 			<Grid
-				className={ className }
 				attributes={ attributes }
 				posts={ posts }
 				categoriesList={ categoriesList }
@@ -26,7 +24,6 @@ const Layout = ({
 	if ( 'list' === attributes.style ) {
 		return (
 			<List
-				className={ className }
 				attributes={ attributes }
 				posts={ posts }
 				categoriesList={ categoriesList }

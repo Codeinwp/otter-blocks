@@ -1,6 +1,8 @@
 /**
  * WordPress dependencies
  */
+import { useBlockProps } from '@wordpress/block-editor';
+
 import { useViewportMatch } from '@wordpress/compose';
 
 import { useSelect } from '@wordpress/data';
@@ -30,7 +32,6 @@ const px = value => value ? `${ value }px` : value;
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId
 }) => {
 	const [ unixTime, setUnixTime ] = useState( 0 );
@@ -61,18 +62,16 @@ const Edit = ({
 	 * Determine the platform
 	 */
 	const {
-		isViewportAvailable,
 		isPreviewDesktop,
 		isPreviewTablet,
 		isPreviewMobile
 	} = useSelect( select => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
 
 		return {
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
+			isPreviewDesktop: 'Desktop' === __experimentalGetPreviewDeviceType(),
+			isPreviewTablet: 'Tablet' === __experimentalGetPreviewDeviceType(),
+			isPreviewMobile: 'Mobile' === __experimentalGetPreviewDeviceType()
 		};
 	}, []);
 
@@ -90,7 +89,7 @@ const Edit = ({
 
 	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
 
-	if ( isViewportAvailable && ! isMobile ) {
+	if ( ! isMobile ) {
 		isDesktop = isPreviewDesktop;
 		isTablet = isPreviewTablet;
 		isMobile = isPreviewMobile;
@@ -175,6 +174,10 @@ const Edit = ({
 	// Add `border-radius` for all the platforms
 	styles.mainComponents.borderRadius = 'linked' === attributes.borderRadiusType ? attributes.borderRadius + '%' : `${ attributes.borderRadiusTopLeft }% ${ attributes.borderRadiusTopRight }% ${ attributes.borderRadiusBottomRight }% ${ attributes.borderRadiusBottomLeft }%`;
 
+	const blockProps = useBlockProps({
+		id: attributes.id
+	});
+
 	return (
 		<Fragment>
 			<Inspector
@@ -182,10 +185,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={ className }
-			>
+			<div { ...blockProps }>
 				<DisplayTime
 					time={ getIntervalFromUnix( unixTime, { exclude: attributes?.exclude }) }
 					styles={ styles }

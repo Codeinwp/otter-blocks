@@ -18,7 +18,10 @@ import { __ } from '@wordpress/i18n';
 
 import { createBlock } from '@wordpress/blocks';
 
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import { Icon } from '@wordpress/components';
 
@@ -200,6 +203,13 @@ const Edit = ({
 		);
 	};
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		style: {
+			borderColor: attributes.borderColor
+		}
+	});
+
 	return (
 		<Fragment>
 			<Controls
@@ -220,13 +230,7 @@ const Edit = ({
 				addTab={ addTab }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={ className }
-				style={ {
-					borderColor: attributes.borderColor
-				} }
-			>
+			<div { ...blockProps }>
 				<div
 					css={ tabStyle }
 					className="wp-block-themeisle-blocks-tabs__header"

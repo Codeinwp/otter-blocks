@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
 import hexToRgba from 'hex-rgba';
 import GoogleFontLoader from 'react-google-font-loader';
 
@@ -14,7 +13,10 @@ import { omitBy } from 'lodash';
 
 import { createBlock } from '@wordpress/blocks';
 
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import { useViewportMatch } from '@wordpress/compose';
 
@@ -36,25 +38,22 @@ import Inspector from './inspector.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId,
 	mergeBlocks,
 	insertBlocksAfter,
 	onReplace
 }) => {
 	const {
-		isViewportAvailable,
 		isPreviewDesktop,
 		isPreviewTablet,
 		isPreviewMobile
 	} = useSelect( select => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
 
 		return {
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
+			isPreviewDesktop: 'Desktop' === __experimentalGetPreviewDeviceType(),
+			isPreviewTablet: 'Tablet' === __experimentalGetPreviewDeviceType(),
+			isPreviewMobile: 'Mobile' === __experimentalGetPreviewDeviceType()
 		};
 	}, []);
 
@@ -77,7 +76,7 @@ const Edit = ({
 
 	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
 
-	if ( isViewportAvailable && ! isMobile ) {
+	if ( ! isMobile ) {
 		isDesktop = isPreviewDesktop;
 		isTablet = isPreviewTablet;
 		isMobile = isPreviewMobile;
@@ -87,11 +86,9 @@ const Edit = ({
 		setAttributes({ content: value });
 	};
 
-
 	let fontSizeStyle, stylesheet, textShadowStyle;
 
 	if ( isDesktop ) {
-
 		fontSizeStyle = {
 			fontSize: attributes.fontSize ? `${ attributes.fontSize }px` : undefined
 		};
@@ -158,10 +155,15 @@ const Edit = ({
 		...textShadowStyle
 	}, x => x?.includes?.( 'undefined' ) );
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		style
+	});
+
 	return (
 		<Fragment>
 			<style>
-				{ `.${ attributes.id } mark, .${ attributes.id } .highlight {
+				{ `#${ attributes.id } mark, #${ attributes.id } .highlight {
 						color: ${ attributes.highlightColor };
 						background: ${ attributes.highlightBackground };
 					}` }
@@ -186,10 +188,6 @@ const Edit = ({
 
 			<RichText
 				identifier="content"
-				className={ classnames(
-					attributes.id,
-					className
-				) }
 				value={ attributes.content }
 				placeholder={ __( 'Write heading…', 'otter-blocks' ) }
 				tagName={ attributes.tag }
@@ -208,8 +206,8 @@ const Edit = ({
 						undefined
 				}
 				onRemove={ () => onReplace([]) }
-				style={ style }
 				onChange={ changeContent }
+				{ ...blockProps }
 			/>
 		</Fragment>
 	);
