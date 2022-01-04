@@ -11,20 +11,26 @@ import {
 
 import {
 	Button,
+	ButtonGroup,
 	FocalPointPicker,
+	Icon,
+	PanelRow,
 	SelectControl
 } from '@wordpress/components';
+
+import { useInstanceId } from '@wordpress/compose';
 
 import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import BackgroundControl from '../../blocks/section/components/background-control/index.js';
+import './editor.scss';
+import { barcodeIcon } from '../../helpers/icons.js';
 import ColorBaseControl from '../color-base-control/index.js';
 import ControlPanelControl from '../control-panel-control/index.js';
 
-const BackgroundSelector = ({
+const BackgroundSelectorControl = ({
 	backgroundType,
 	backgroundColor,
 	image,
@@ -43,13 +49,42 @@ const BackgroundSelector = ({
 	changeBackgroundSize,
 	changeFocalPoint
 }) => {
+	const instanceId = useInstanceId( BackgroundSelectorControl );
+
+	const id = `inspector-background-selector-control-${ instanceId }`;
+
 	return (
-		<Fragment>
-			<BackgroundControl
-				label={ __( 'Background Type', 'otter-blocks' ) }
-				backgroundType={ backgroundType }
-				changeBackgroundType={ changeBackgroundType }
-			/>
+		<div id={ id } className="components-base-control otter-background-selector-control">
+			<div className="components-base-control__field">
+				<div className="components-base-control__title">
+					<label className="components-base-control__label">{ __( 'Background Type', 'otter-blocks' ) }</label>
+					<ButtonGroup className="linking-controls">
+						<Button
+							icon={ 'admin-customizer' }
+							label={ __( 'Color', 'otter-blocks' ) }
+							showTooltip={ true }
+							isPrimary={ 'color' === backgroundType }
+							onClick={ () => changeBackgroundType( 'color' ) }
+						/>
+
+						<Button
+							icon={ 'format-image' }
+							label={ __( 'Image', 'otter-blocks' ) }
+							showTooltip={ true }
+							isPrimary={ 'image' === backgroundType }
+							onClick={ () => changeBackgroundType( 'image' ) }
+						/>
+
+						<Button
+							icon={ () => <Icon icon={ barcodeIcon } /> }
+							label={ __( 'Gradient', 'otter-blocks' ) }
+							showTooltip={ true }
+							isPrimary={ 'gradient' === backgroundType }
+							onClick={ () => changeBackgroundType( 'gradient' ) }
+						/>
+					</ButtonGroup>
+				</div>
+			</div>
 
 			{ 'color' === backgroundType && (
 				<ColorBaseControl
@@ -73,14 +108,6 @@ const BackgroundSelector = ({
 							onDrag={ changeFocalPoint }
 							onChange={ changeFocalPoint }
 						/>
-
-						<Button
-							isSecondary
-							className="wp-block-themeisle-image-container-delete-button"
-							onClick={ removeImage }
-						>
-							{ __( 'Change or Remove Image', 'otter-blocks' ) }
-						</Button>
 
 						<ControlPanelControl
 							label={ __( 'Background Settings', 'otter-blocks' ) }
@@ -117,6 +144,16 @@ const BackgroundSelector = ({
 								onChange={ changeBackgroundSize }
 							/>
 						</ControlPanelControl>
+
+						<PanelRow>
+							<Button
+								isSmall
+								isSecondary
+								onClick={ removeImage }
+							>
+								{ __( 'Clear Image', 'otter-blocks' ) }
+							</Button>
+						</PanelRow>
 					</Fragment>
 				) : (
 					<MediaPlaceholder
@@ -140,8 +177,8 @@ const BackgroundSelector = ({
 					clearable={ false }
 				/>
 			) }
-		</Fragment>
+		</div>
 	);
 };
 
-export default BackgroundSelector;
+export default BackgroundSelectorControl;

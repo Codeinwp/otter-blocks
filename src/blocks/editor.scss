@@ -5,11 +5,15 @@
 }
 
 .otter-masonry {
-	.blocks-gallery-grid {
-		.blocks-gallery-item {
-			img {
-				width: 100%;
-			}
-		}
-	}
+    .blocks-gallery-grid {
+        .blocks-gallery-item {
+            img {
+                width: 100%;
+            }
+        }
+    }
+}
+
+[id^="inspector-box-control"] {
+    max-width: none !important;
 }

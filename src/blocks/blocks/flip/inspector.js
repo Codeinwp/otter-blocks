@@ -28,7 +28,7 @@ import { Fragment } from '@wordpress/element';
  */
 import ControlPanelControl from '../../components/control-panel-control/index.js';
 import ColorBaseControl from '../../components/color-base-control/index.js';
-import BackgroundSelector from '../../components/background-selector/index.js';
+import BackgroundSelectorControl from '../../components/background-selector-control/index.js';
 
 const Inspector = ({
 	attributes,
@@ -183,7 +183,7 @@ const Inspector = ({
 					allowReset={ true }
 				/>
 
-				<BackgroundSelector
+				<BackgroundSelectorControl
 					backgroundType={ attributes.frontBackgroundType }
 					backgroundColor={ attributes.frontBackgroundColor }
 					image={ attributes.frontBackgroundImage }
@@ -204,6 +204,7 @@ const Inspector = ({
 					changeBackgroundAttachment={ frontBackgroundAttachment => setAttributes({ frontBackgroundAttachment })}
 					changeBackgroundRepeat={ frontBackgroundRepeat => setAttributes({ frontBackgroundRepeat })}
 					changeFocalPoint={ frontBackgroundPosition => setAttributes({ frontBackgroundPosition }) }
+					changeBackgroundSize={ frontBackgroundSize => setAttributes({ frontBackgroundSize }) }
 				/>
 			</PanelBody>
 
@@ -211,7 +212,7 @@ const Inspector = ({
 				title={ __( 'Back', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<BackgroundSelector
+				<BackgroundSelectorControl
 					backgroundType={ attributes.backBackgroundType }
 					backgroundColor={ attributes.backBackgroundColor }
 					image={ attributes.backBackgroundImage }
@@ -232,6 +233,7 @@ const Inspector = ({
 					changeBackgroundAttachment={ backBackgroundAttachment => setAttributes({ backBackgroundAttachment })}
 					changeBackgroundRepeat={ backBackgroundRepeat => setAttributes({ backBackgroundRepeat })}
 					changeFocalPoint={ backBackgroundPosition => setAttributes({ backBackgroundPosition }) }
+					changeBackgroundSize={ backBackgroundSize => setAttributes({ backBackgroundSize }) }
 				/>
 
 				<SelectControl
