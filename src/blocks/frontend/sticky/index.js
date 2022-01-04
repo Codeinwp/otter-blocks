@@ -291,7 +291,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 			elem.style.position = 'fixed';
 
 			// Make the container height to be fixed
-			if ( container ) {
+			if ( container && 'BODY' !== container.tagName ) {
 				container.style.height = 0 < containerHeight ? containerHeight + 'px' : '';
 			}
 
