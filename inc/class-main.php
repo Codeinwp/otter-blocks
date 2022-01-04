@@ -474,7 +474,7 @@ class Main {
 		wp_enqueue_script(
 			'otter-map',
 			plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.js',
-			array( 'wp-dom-ready' ),
+			[],
 			self::$assets_version,
 			true
 		);
@@ -489,7 +489,7 @@ class Main {
 		wp_enqueue_script(
 			'otter-map-gesture',
 			plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.js',
-			array( 'wp-dom-ready' ),
+			array( 'otter-map' ),
 			self::$assets_version,
 			true
 		);
@@ -607,18 +607,26 @@ class Main {
 
 			wp_script_add_data( 'otter-slider', 'async', true );
 
-			wp_enqueue_style(
+			wp_register_style(
 				'glidejs-core',
 				plugin_dir_url( $this->get_dir() ) . 'assets/glide/glide.core.min.css',
 				[],
 				self::$assets_version
 			);
 
-			wp_enqueue_style(
+			wp_register_style(
 				'glidejs-theme',
 				plugin_dir_url( $this->get_dir() ) . 'assets/glide/glide.theme.min.css',
 				[],
 				self::$assets_version
+			);
+
+			add_action(
+				'get_footer',
+				static function () {
+					wp_enqueue_style( 'glidejs-core' );
+					wp_enqueue_style( 'glidejs-theme' );
+				}
 			);
 
 			self::$is_glide_loaded = true;
