@@ -228,7 +228,7 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .o-flip-front .o-flip-content h2',
+				'selector'   => ' .o-flip-front .o-flip-content h3',
 				'properties' => array(
 					array(
 						'property' => 'color',
