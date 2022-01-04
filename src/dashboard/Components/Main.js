@@ -51,6 +51,7 @@ const Main = () => {
 					setGoogleMapsAPI( response.themeisle_google_map_block_api_key );
 					setLoggingData( response.otter_blocks_logger_flag );
 					setJSONUploads( Boolean( response.themeisle_allow_json_upload ) );
+					setSVGUploads( Boolean( response.themeisle_allow_svg_upload ) );
 					setAPILoaded( true );
 					setGoogleCaptchaAPISiteKey( response.themeisle_google_captcha_api_site_key );
 					setGoogleCaptchaAPISecretKey( response.themeisle_google_captcha_api_secret_key );
@@ -72,6 +73,7 @@ const Main = () => {
 	const [ googleMapsAPI, setGoogleMapsAPI ] = useState( '' );
 	const [ isLoggingData, setLoggingData ] = useState( 'no' );
 	const [ allowJSONUploads, setJSONUploads ] = useState( false );
+	const [ allowSVGUploads, setSVGUploads ] = useState( false );
 	const [ isOpen, setOpen ] = useState( false );
 	const [ isRegeneratedDisabled, setRegeneratedDisabled ] = useState( false );
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
@@ -338,6 +340,15 @@ const Main = () => {
 								help={ __( 'This option allows JSON files to be uploaded to the media library to use in Lottie Block. Only enable this option if you want to use custom JSON uploads in Lottie Block.', 'otter-blocks' ) }
 								checked={ allowJSONUploads }
 								onChange={ () => changeOptions( 'themeisle_allow_json_upload', 'allowJSONUploads', ! allowJSONUploads ) }
+							/>
+						</PanelRow>
+
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Allow SVG Uploads.', 'otter-blocks' ) }
+								help={ __( 'This option allows SVG files to be uploaded to the media library to use in Lottie Block. Only enable this option if you want to use custom SVG uploads in Lottie Block.', 'otter-blocks' ) }
+								checked={ allowSVGUploads }
+								onChange={ () => changeOptions( 'themeisle_allow_svg_upload', 'allowSVGUploads', ! allowSVGUploads ) }
 							/>
 						</PanelRow>
 
