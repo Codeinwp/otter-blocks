@@ -38,49 +38,6 @@ import Inspector from './inspector.js';
 import { blockInit } from '../../helpers/block-utility.js';
 import hexToRgba from 'hex-rgba';
 
-const CONTENT_POSITIONS = {
-	'top left': {
-		alignItems: 'flex-start',
-		justifyContent: 'flex-start'
-	},
-	'top center': {
-		alignItems: 'center',
-		justifyContent: 'flex-start'
-	},
-	'top right': {
-		alignItems: 'flex-end',
-		justifyContent: 'flex-start'
-	},
-	'center left': {
-		alignItems: 'flex-start',
-		justifyContent: 'center'
-	},
-	'center center': {
-		alignItems: 'center',
-		justifyContent: 'center'
-	},
-	center: {
-		alignItems: 'center',
-		justifyContent: 'center'
-	},
-	'center right': {
-		alignItems: 'flex-end',
-		justifyContent: 'center'
-	},
-	'bottom left': {
-		alignItems: 'flex-start',
-		justifyContent: 'flex-end'
-	},
-	'bottom center': {
-		alignItems: 'center',
-		justifyContent: 'flex-end'
-	},
-	'bottom right': {
-		alignItems: 'flex-end',
-		justifyContent: 'flex-end'
-	}
-};
-
 const Edit = ({
 	attributes,
 	setAttributes,
@@ -165,7 +122,8 @@ const Edit = ({
 							className="o-flip-content"
 							style={ {
 								padding: attributes.padding,
-								...( CONTENT_POSITIONS[ attributes.frontAlign ] || {})
+								justifyContent: attributes.frontVerticalAlign || 'center',
+								alignItems: attributes.frontHorizontalAlign
 							} }
 							css={ css`
 								background-color: rgba(0, 0, 0, ${ ( attributes.frontOverlayOpacity || 0 ) / 100 });

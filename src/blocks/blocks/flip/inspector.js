@@ -143,26 +143,26 @@ const Inspector = ({
 
 				<SelectControl
 					label={ __( 'Vertical Align', 'otter-blocks' )}
-					value={ attributes.verticalAlign }
+					value={ attributes.frontVerticalAlign }
 					options={ [
 						{ label: __( 'Default', 'otter-blocks' ), value: '' },
 						{ label: __( 'Top', 'otter-blocks' ), value: 'flex-start' },
 						{ label: __( 'Center', 'otter-blocks' ), value: 'center' },
 						{ label: __( 'Bottom', 'otter-blocks' ), value: 'flex-end' }
 					]}
-					onChange={ verticalAlign => setAttributes({ verticalAlign })}
+					onChange={ frontVerticalAlign => setAttributes({ frontVerticalAlign })}
 				/>
 
 				<SelectControl
 					label={ __( 'Horizontal Align', 'otter-blocks' )}
-					value={ attributes.horizontalAlign }
+					value={ attributes.frontHorizontalAlign }
 					options={ [
 						{ label: __( 'Default', 'otter-blocks' ), value: '' },
 						{ label: __( 'Left', 'otter-blocks' ), value: 'flex-start' },
 						{ label: __( 'Center', 'otter-blocks' ), value: 'center' },
 						{ label: __( 'Right', 'otter-blocks' ), value: 'flex-end' }
 					]}
-					onChange={ horizontalAlign => setAttributes({ horizontalAlign })}
+					onChange={ frontHorizontalAlign => setAttributes({ frontHorizontalAlign })}
 				/>
 
 				<RangeControl

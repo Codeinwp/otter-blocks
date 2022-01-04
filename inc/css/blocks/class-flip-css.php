@@ -94,46 +94,6 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .o-flip-front, .o-flip-back:hover',
-				'properties' => array(
-					array(
-						'property'       => 'box-shadow',
-						'pattern'        => 'horizontal vertical blur color',
-						'pattern_values' => array(
-							'horizontal' => array(
-								'value'   => 'boxShadowHorizontal',
-								'unit'    => 'px',
-								'default' => 0,
-							),
-							'vertical'   => array(
-								'value'   => 'boxShadowVertical',
-								'unit'    => 'px',
-								'default' => 0,
-							),
-							'blur'       => array(
-								'value'   => 'boxShadowBlur',
-								'unit'    => 'px',
-								'default' => 5,
-							),
-							'color'      => array(
-								'value'   => 'boxShadowColor',
-								'default' => '#000',
-								'format'  => function( $value, $attrs ) {
-									$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 );
-									return ( strpos( $value, '#' ) !== false && $opacity < 100 ) ? $this->hex2rgba( $value, $opacity / 100 ) : $value;
-								},
-							),
-						),
-						'condition'      => function( $attrs ) {
-							return isset( $attrs['boxShadow'] ) && ( isset( $attrs['isInverted'] ) && $attrs['isInverted'] );
-						},
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
 				'selector'   => ' .o-flip-front',
 				'properties' => array(
 					array(
@@ -205,26 +165,6 @@ class Flip_CSS extends Base_CSS {
 			)
 		);
 
-		$parse_matrix_align_values = function( $attr, $position ) {
-			$values = explode( ' ', $attr );
-			if ( 1 === count( $values ) ) {
-				$position = 0;
-			}
-
-			switch ( $values[ $position ] ) {
-				case 'top':
-				case 'left':
-					return 'flex-start';
-				case 'center':
-					return 'center';
-				case 'bottom':
-				case 'right':
-					return 'flex-end';
-				default:
-					return '';
-			}
-		};
-
 		$css->add_item(
 			array(
 				'selector'   => ' .o-flip-front .o-flip-content',
@@ -236,17 +176,11 @@ class Flip_CSS extends Base_CSS {
 					),
 					array(
 						'property' => 'justify-content',
-						'value'    => 'frontAlign',
-						'format'   => function( $value, $attrs ) use ( $parse_matrix_align_values ) {
-							return $parse_matrix_align_values( $value, 0 );
-						},
+						'value'    => 'frontVerticalAlign',
 					),
 					array(
 						'property' => 'align-items',
-						'value'    => 'frontAlign',
-						'format'   => function( $value, $attrs ) use ( $parse_matrix_align_values ) {
-							return $parse_matrix_align_values( $value, 1 );
-						},
+						'value'    => 'frontHorizontalAlign',
 					),
 				),
 			)
@@ -254,7 +188,25 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .o-flip-front .o-flip-content h2',
+				'selector'   => ' .o-flip-front .o-flip-content .o-img',
+				'properties' => array(
+					array(
+						'property' => 'width',
+						'value'    => 'frontMediaWidth',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => 'height',
+						'value'    => 'frontMediaHeight',
+						'unit'     => 'px',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .o-flip-front .o-flip-content h3',
 				'properties' => array(
 					array(
 						'property' => 'color',

@@ -38,7 +38,7 @@ const Save = ({
 					<div className="o-flip-content">
 						{ attributes.frontMedia?.url && (
 							<img
-								className="o-ing"
+								className="o-img"
 								src={ attributes.frontMedia?.url }
 								srcSet={ attributes.frontMedia?.url }
 								alt={ attributes.frontMedia?.alt }
