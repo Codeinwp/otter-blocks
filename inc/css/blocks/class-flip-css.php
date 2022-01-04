@@ -228,6 +228,24 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
+				'selector'   => ' .o-flip-front .o-flip-content .o-img',
+				'properties' => array(
+					array(
+						'property' => 'width',
+						'value'    => 'frontMediaWidth',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => 'height',
+						'value'    => 'frontMediaHeight',
+						'unit'     => 'px',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
 				'selector'   => ' .o-flip-front .o-flip-content h3',
 				'properties' => array(
 					array(
