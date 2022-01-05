@@ -15,7 +15,7 @@ const speedConfig = {
 };
 
 /**
- *
+ * Get the configuration option from the element CSS classes.
  * @param {HTMLDivElement} elem
  */
 const getConfiguration = ( elem ) => {
@@ -40,17 +40,32 @@ const getConfiguration = ( elem ) => {
 	return undefined;
 };
 
+/**
+ * Create utility functions for an interval timer.
+ * @param {number} duration The duration, in seconds.
+ * @param {number} deltaTime The time between two time ticks, in seconds.
+ * @returns {Object} Utility functions.
+ */
 const makeInterval = ( duration, deltaTime ) => {
 
 	let interval;
 	let currentStep = 0;
 	const steps = ( Math.ceil( duration / deltaTime ) + 1 ) || 0;
 
+	/**
+	 * Stop the interval. Get a callback function that execute at the end.
+	 * @param {Function} callback Function that execute at the end.
+	 */
 	const stop = ( callback ) => {
 		clearInterval( interval );
 		callback?.();
 	};
 
+	/**
+	 * Start the interval. Get a callback function that execute at every tick and the one that execute at the end.
+	 * @param {Function} callback Function that execute at every tick.
+	 * @param {Function} endCallback Function that execute at the end.
+	 */
 	const start = ( callback, endCallback ) => {
 		interval = setInterval( () => {
 			if ( currentStep < steps ) {
@@ -73,7 +88,7 @@ const makeInterval = ( duration, deltaTime ) => {
 const NUMERIC_FORMATS = new Set( Array.from( '0123456789,.' ) );
 
 /**
- *
+ * Extract the number, prefix, and suffix.
  * @param {string} text
  */
 const extract = ( text ) => {
@@ -108,12 +123,11 @@ const extract = ( text ) => {
 };
 
 /**
- *
- * @param {HTMLDivElement} elem
+ * Start the count animation.
+ * @param {HTMLDivElement} elem The HTML element.
  */
 const initCount = ( elem ) => {
 	const text = elem?.innerHTML || '';
-	const len = text.length;
 	const config = getConfiguration( elem );
 
 	console.log( elem, config );
@@ -135,14 +149,17 @@ const initCount = ( elem ) => {
 		return null;
 	}).filter( x => x );
 
+	// Get precision based on the numbers after the comma.
 	const numAfterComma = number.join( '' )?.split( '.' )?.[1]?.length || 0;
+
+	// Clean the string and the get the number.
 	const parsedNumber = parseFloat( number.filter( c => ',' !== c ).join( '' )  );
 
-	// console.log( extract( text ), {parsedNumber}, {num: number.filter( c => ',' !== c )});
+	const paddingLen = text.length - suffix.length;
 
 	/**
-	 *
-	 * @param {number} n
+	 * Apply the format to the number.
+	 * @param {number} n The number.
 	 */
 	const applyFormat = ( n ) => {
 		const num = ( numAfterComma ? n.toFixed( numAfterComma ) : n ).toString().split( '' ).reverse();
@@ -153,13 +170,14 @@ const initCount = ( elem ) => {
 			}
 		});
 
-		return ( ( prefix || '' ) + ( num.reverse().join( '' ) ) ).padStart( len - suffix.length, ' ' ) + suffix || '';
+		return ( ( prefix || '' ) + ( num.reverse().join( '' ) ) ).padStart( paddingLen, ' ' ) + suffix || '';
 	};
 
 	const { start, steps } = makeInterval( config?.speed || 2, 0.05 );
 	const delta = Math.round( parsedNumber /  steps );
 
-	if ( 0.00000001 > delta ) {
+	// Don't animate if the difference is very small.
+	if ( 0.000000001 > delta ) {
 		return;
 	}
 
@@ -173,6 +191,7 @@ const initCount = ( elem ) => {
 			elem.innerHTML = applyFormat( values[i]);
 		}, () => {
 			elem.style.whiteSpace = '';
+			elem.innerHTML = text;
 		});
 
 	}, config?.delay || 0 );
@@ -184,6 +203,8 @@ domReady( () => {
 		rootMargin: '0px',
 		threshold: [ 0.6 ]
 	};
+
+	console.group( 'Count Init' );
 
 	const anims = document.querySelectorAll( 'o-anim-count' );
 	anims.forEach( ( elem ) => {
@@ -197,4 +218,6 @@ domReady( () => {
 		}, options );
 		observer.observe( elem );
 	});
+
+	console.groupEnd();
 });
