@@ -3,15 +3,19 @@
  */
 import { __ } from '@wordpress/i18n';
 
+import { pick } from 'lodash';
+
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
-	InspectorControls
+	InspectorControls,
+	MediaPlaceholder
 } from '@wordpress/block-editor';
 
 import {
 	PanelBody,
 	RangeControl,
 	Placeholder,
+	ToggleControl,
 	Spinner
 } from '@wordpress/components';
 
@@ -69,16 +73,37 @@ const Inspector = ({
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>
-				<Suspense fallback={ <Placeholder><Spinner /></Placeholder> }>
-					<IconPickerControl
-						label={ __( 'Icon Picker', 'otter-blocks' ) }
-						library={ attributes.defaultLibrary }
-						prefix={ attributes.defaultPrefix }
-						icon={ attributes.defaultIcon }
-						changeLibrary={ changeLibrary }
-						onChange={ changeIcon }
-					/>
-				</Suspense>
+
+				{
+					( attributes.defaultIsImage ) ? (
+						<MediaPlaceholder
+							labels={ {
+								title: __( 'Media Image', 'otter-blocks' )
+							} }
+							accept="image/*"
+							allowedTypes={ [ 'image' ] }
+							value={ attributes.defaultImage }
+							onSelect={ value => setAttributes({ defaultImage: pick( value, [ 'id', 'alt', 'url' ]) }) }
+						/>
+					) : (
+						<Suspense fallback={ <Placeholder><Spinner /></Placeholder> }>
+							<IconPickerControl
+								label={ __( 'Icon Picker', 'otter-blocks' ) }
+								library={ attributes.defaultLibrary }
+								prefix={ attributes.defaultPrefix }
+								icon={ attributes.defaultIcon }
+								changeLibrary={ changeLibrary }
+								onChange={ changeIcon }
+							/>
+						</Suspense>
+					)
+				}
+
+				<ToggleControl
+					label={ __( 'Use images instead of icon.', 'otter-blocks' ) }
+					value={ attributes.defaultIsImage }
+					onChange={ defaultIsImage => setAttributes({ defaultIsImage })}
+				/>
 
 				<RangeControl
 					label={ __( 'Font Size', 'otter-blocks' ) }
