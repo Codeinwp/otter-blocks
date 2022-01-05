@@ -5,12 +5,14 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
-	InspectorControls
+	InspectorControls,
+	MediaPlaceholder
 } from '@wordpress/block-editor';
 
 import {
 	PanelBody,
 	Placeholder,
+	ToggleControl,
 	Spinner
 } from '@wordpress/components';
 
@@ -60,16 +62,36 @@ const Inspector = ({
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>
-				<Suspense fallback={ <Placeholder><Spinner /></Placeholder> }>
-					<IconPickerControl
-						label={ __( 'Icon Picker', 'otter-blocks' ) }
-						library={ attributes.library }
-						prefix={ attributes.iconPrefix }
-						icon={ attributes.icon }
-						changeLibrary={ changeLibrary }
-						onChange={ changeIcon }
-					/>
-				</Suspense>
+				{
+					( attributes.isImage ) ? (
+						<MediaPlaceholder
+							labels={ {
+								title: __( 'Media Image', 'otter-blocks' )
+							} }
+							accept="image/*"
+							allowedTypes={ [ 'image' ] }
+							value={ attributes.image }
+							onSelect={ value => setAttributes({ image: pick( value, [ 'id', 'alt', 'url' ]) }) }
+						/>
+					) : (
+						<Suspense fallback={ <Placeholder><Spinner /></Placeholder> }>
+							<IconPickerControl
+								label={ __( 'Icon Picker', 'otter-blocks' ) }
+								library={ attributes.library }
+								prefix={ attributes.prefix }
+								icon={ attributes.icon }
+								changeLibrary={ changeLibrary }
+								onChange={ changeIcon }
+							/>
+						</Suspense>
+					)
+				}
+
+				<ToggleControl
+					label={ __( 'Use images instead of icons.', 'otter-blocks' ) }
+					checked={ attributes.isImage }
+					onChange={ isImage => setAttributes({ isImage })}
+				/>
 
 				<ColorGradientControl
 					label={ __( 'Content Color', 'otter-blocks' ) }

@@ -100,8 +100,8 @@ const Inspector = ({
 				}
 
 				<ToggleControl
-					label={ __( 'Use images instead of icon.', 'otter-blocks' ) }
-					value={ attributes.defaultIsImage }
+					label={ __( 'Use images instead of icons.', 'otter-blocks' ) }
+					checked={ attributes.defaultIsImage }
 					onChange={ defaultIsImage => setAttributes({ defaultIsImage })}
 				/>
 
