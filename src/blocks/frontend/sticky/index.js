@@ -138,7 +138,8 @@ const createObserver = () => {
  * Make an element sticky
  * @param {HTMLDivElement|string} selector
  * @param {Object} config
- * @param {HTMLDivElement|string} container
+ * @param {HTMLDivElement|string} containerSelector
+ * @param {Object} observer
  */
 const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 	const position = config?.position || 'top';
@@ -154,7 +155,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 	const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
 	const { top, left, height, width } = elem.getBoundingClientRect();
 	const elemTopPositionInPage = top + scrollTop;
-	const elemLeftPositionInPage = left + scrollLeft;
+	let elemLeftPositionInPage = left + scrollLeft;
 	const elemBottomPositionInPage = elemTopPositionInPage + height;
 
 	if ( elemBottomPositionInPage < triggerLimit ) {
@@ -351,6 +352,13 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 			deactivate?.();
 		}
 
+	});
+
+	/**
+	 * Update the lef position when resizing.
+	 */
+	window.addEventListener( 'resize', () => {
+		elemLeftPositionInPage = ( isActive?.() ? placeholder : elem ).getBoundingClientRect().left + scrollLeft;
 	});
 
 
