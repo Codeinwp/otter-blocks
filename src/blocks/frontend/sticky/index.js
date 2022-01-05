@@ -242,7 +242,6 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 	 * By making the element sticky, we use 'fixed' positioning which removes the element from the document workflow.
 	 * We need to put a placeholder with the same height and width as the element so we can keep layout flow.
 	 */
-	// @type {HTMLDivElement}
 	const placeholder = document.createElement( 'div' );
 	placeholder.style.height = height + 'px';
 	placeholder.style.width = width + 'px';
@@ -286,6 +285,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 			earlyDeactivate?.();
 		}
 
+		// Make the element to be over the previous one
 		if ( isEarlyActivated?.() && ! isActive?.() ) {
 			elem.style.position = 'relative';
 			elem.style.zIndex = 9999 + ( index || 0 );
@@ -307,7 +307,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 			// Calculate the gap for stacked elements
 			const gap = 'o-sticky-bhvr-stack' === config.behaviour ? calculateGap() : 0;
 
-			// Compute the position of the element
+			// Set the position of the element
 			switch ( stickyPosition ) {
 			case 'top':
 				elem.style.top = ( offsetY + gap ) + 'px';
@@ -372,7 +372,6 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 // Testing purpose
 // We can make elem sticky in browser for testing various scenario with different blocks
 window.debugSticky = false;
-window.otterSticky = makeElementSticky;
 
 /**
  * Get the container for the given element
