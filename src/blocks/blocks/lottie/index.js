@@ -13,7 +13,6 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import './editor.scss';
 import edit from './edit.js';
 import save from './save.js';
 import attributes from './attributes.js';

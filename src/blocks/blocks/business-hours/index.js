@@ -12,8 +12,6 @@ import { Placeholder } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import './style.scss';
-import './editor.scss';
 import { receipt as icon } from '@wordpress/icons';
 import attributes from './attributes.js';
 import edit from './edit.js';

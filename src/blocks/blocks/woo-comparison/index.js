@@ -12,7 +12,6 @@ import { Placeholder } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import './editor.scss';
 import { faIcon as icon } from '../../helpers/icons.js';
 import attributes from './attributes.js';
 import edit from './edit.js';

@@ -540,7 +540,7 @@ class Main {
 
 		wp_enqueue_style(
 			'otter-blocks',
-			plugin_dir_url( $this->get_dir() ) . 'build/blocks/style.css',
+			plugin_dir_url( $this->get_dir() ) . 'build/blocks/blocks.css',
 			[],
 			$asset_file['version']
 		);

@@ -103,11 +103,6 @@ module.exports = [
 						name: 'editor',
 						test: /editor\.scss$/,
 						chunks: 'all'
-					},
-					frontendStyles: {
-						name: 'style',
-						test: /style\.scss$/,
-						chunks: 'all'
 					}
 				}
 			}

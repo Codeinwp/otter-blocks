@@ -8,8 +8,6 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import './editor.scss';
-import './style.scss';
 import { authorIcon as icon } from '../../helpers/icons.js';
 import edit from './edit.js';
 

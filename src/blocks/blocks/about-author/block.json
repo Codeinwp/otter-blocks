@@ -1,0 +1,19 @@
+{
+	"apiVersion": 2,
+	"name": "my-plugin/notice",
+	"title": "Notice",
+	"category": "text",
+	"description": "Shows warning, error or success notices…",
+	"keywords": [ "alert", "message" ],
+	"textdomain": "my-plugin",
+	"attributes": {
+		"message": {
+			"type": "string",
+			"source": "html",
+			"selector": ".message"
+		}
+	},
+	"supports": {
+		"align": true
+	}
+}

@@ -14,8 +14,6 @@ import { store as icon } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
-import './editor.scss';
-import './style.scss';
 import edit from './edit.js';
 
 if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Boolean( window.themeisleGutenberg.hasWooCommerce ) ) {

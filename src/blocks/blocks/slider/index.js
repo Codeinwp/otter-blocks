@@ -8,8 +8,6 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import './style.scss';
-import './editor.scss';
 import attributes from './attributes.js';
 import deprecated from './deprecated.js';
 import transforms from './transforms.js';
