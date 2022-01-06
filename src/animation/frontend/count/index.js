@@ -50,7 +50,7 @@ const makeInterval = ( duration, deltaTime ) => {
 
 	let interval;
 	let currentStep = 0;
-	const steps = ( Math.ceil( duration / deltaTime ) + 1 ) || 0;
+	const steps = ( Math.ceil( duration / deltaTime ) + 1 ) || 1;
 
 	/**
 	 * Stop the interval. Get a callback function that execute at the end.
@@ -162,7 +162,7 @@ const initCount = ( elem ) => {
 	 * @param {number} n The number.
 	 */
 	const applyFormat = ( n ) => {
-		const num = ( numAfterComma ? n.toFixed( numAfterComma ) : n ).toString().split( '' ).reverse();
+		const num = n.split( '' ).reverse();
 
 		formatElements.forEach( f => {
 			if ( f.position < num.length ) {
@@ -174,16 +174,30 @@ const initCount = ( elem ) => {
 	};
 
 	const { start, steps } = makeInterval( config?.speed || 2, 0.05 );
-	const delta = Math.round( parsedNumber /  steps );
+	const delta =  parseFloat( ( parsedNumber /  steps ).toFixed( numAfterComma || 2 ) ) ;
 
 	// Don't animate if the difference is very small.
-	if ( 0.000000001 > delta ) {
+	if ( 0.000000000001 > delta ) {
 		return;
 	}
 
-	const values = range( 0, parsedNumber, delta );
+
+	let values = [ 0 ];
+	for ( let i = 1; i < steps; ++i ) {
+		values.push(  values[i - 1] + delta );
+	}
+	values = values.map( n => n.toFixed( numAfterComma ) );
+
+	console.log({
+		values,
+		steps,
+		delta,
+		parsedNumber
+	});
+
+
 	if ( 0 < values.length ) {
-		values[steps - 1] =  parsedNumber;
+		values[steps - 1] =  parsedNumber.toFixed( numAfterComma || 0 );
 		elem.innerHTML =  applyFormat( values[0]);
 
 		setTimeout( () => {
