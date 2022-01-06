@@ -17,8 +17,7 @@ import {
 import themeIsleIcons from './../../../helpers/themeisle-icons.js';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
 	const iconClassName = `${ attributes.iconPrefix } fa-${ attributes.icon }`;
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
@@ -29,22 +28,29 @@ const Save = ({
 
 	return (
 		<div { ...blockProps }>
-			{ 'themeisle-icons' === attributes.library && attributes.icon ? (
-				<Icon
-					className={ classnames(
-						{ 'wp-block-themeisle-blocks-icon-list-item-icon': ! attributes.iconColor },
-						{ 'wp-block-themeisle-blocks-icon-list-item-icon-custom': attributes.iconColor }
-					) }
-				/>
-			) : (
-				<i
-					className={ classnames(
-						iconClassName,
-						{ 'wp-block-themeisle-blocks-icon-list-item-icon': ! attributes.iconColor },
-						{ 'wp-block-themeisle-blocks-icon-list-item-icon-custom': attributes.iconColor }
-					) }
-				></i>
-			) }
+			{
+				attributes.isImage && attributes?.image ? (
+					<img src={attributes.image.url} alt={attributes.image.alt} />
+				) : (
+					'themeisle-icons' === attributes.library && attributes.icon ? (
+						<Icon
+							className={ classnames(
+								{ 'wp-block-themeisle-blocks-icon-list-item-icon': ! attributes.iconColor },
+								{ 'wp-block-themeisle-blocks-icon-list-item-icon-custom': attributes.iconColor }
+							) }
+						/>
+					) : (
+						<i
+							className={ classnames(
+								iconClassName,
+								{ 'wp-block-themeisle-blocks-icon-list-item-icon': ! attributes.iconColor },
+								{ 'wp-block-themeisle-blocks-icon-list-item-icon-custom': attributes.iconColor }
+							) }
+						></i>
+					)
+				)
+			}
+
 
 			<RichText.Content
 				tagName="p"
