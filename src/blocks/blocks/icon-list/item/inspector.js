@@ -13,13 +13,19 @@ import {
 	PanelBody,
 	Placeholder,
 	ToggleControl,
-	Spinner
+	Spinner,
+	BaseControl,
+	Button
 } from '@wordpress/components';
 
 import {
 	lazy,
 	Suspense
 } from '@wordpress/element';
+
+
+import { pick } from 'lodash';
+
 
 /**
  * Internal dependencies
@@ -64,15 +70,34 @@ const Inspector = ({
 			>
 				{
 					( attributes.isImage ) ? (
-						<MediaPlaceholder
-							labels={ {
-								title: __( 'Media Image', 'otter-blocks' )
-							} }
-							accept="image/*"
-							allowedTypes={ [ 'image' ] }
-							value={ attributes.image }
-							onSelect={ value => setAttributes({ image: pick( value, [ 'id', 'alt', 'url' ]) }) }
-						/>
+						! attributes.image?.url ?
+							(						<MediaPlaceholder
+								labels={ {
+									title: __( 'Media Image', 'otter-blocks' )
+								} }
+								accept="image/*"
+								allowedTypes={ [ 'image' ] }
+								value={ attributes.image }
+								onSelect={ value => setAttributes({ image: pick( value, [ 'id', 'alt', 'url' ]) }) }
+							/>
+							) : (
+								<BaseControl
+									label={ __( 'Image', 'otter-blocks' ) }
+									className='.o-vrt-base-control'
+								>
+									<br/><br/>
+									<img src={attributes.image.url} alt={attributes.image.alt} width="100px" />
+									<br/>
+									<Button
+										variant="primary"
+										onClick={ () => setAttributes({
+											image: {}
+										})}
+									>
+										{__( 'Replace Image', 'otter-blocks' )}
+									</Button>
+								</BaseControl>
+							)
 					) : (
 						<Suspense fallback={ <Placeholder><Spinner /></Placeholder> }>
 							<IconPickerControl

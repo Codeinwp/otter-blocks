@@ -16,12 +16,15 @@ import {
 	RangeControl,
 	Placeholder,
 	ToggleControl,
-	Spinner
+	Spinner,
+	Button,
+	BaseControl
 } from '@wordpress/components';
 
 import {
 	lazy,
-	Suspense
+	Suspense,
+	Fragment
 } from '@wordpress/element';
 
 /**
@@ -76,15 +79,34 @@ const Inspector = ({
 
 				{
 					( attributes.defaultIsImage ) ? (
-						<MediaPlaceholder
-							labels={ {
-								title: __( 'Media Image', 'otter-blocks' )
-							} }
-							accept="image/*"
-							allowedTypes={ [ 'image' ] }
-							value={ attributes.defaultImage }
-							onSelect={ value => setAttributes({ defaultImage: pick( value, [ 'id', 'alt', 'url' ]) }) }
-						/>
+						! attributes.defaultImage?.url ?
+							(						<MediaPlaceholder
+								labels={ {
+									title: __( 'Media Image', 'otter-blocks' )
+								} }
+								accept="image/*"
+								allowedTypes={ [ 'image' ] }
+								value={ attributes.defaultImage }
+								onSelect={ value => setAttributes({ defaultImage: pick( value, [ 'id', 'alt', 'url' ]) }) }
+							/>
+							) : (
+								<BaseControl
+									label={ __( 'Image', 'otter-blocks' ) }
+									className='.o-vrt-base-control'
+								>
+									<br/><br/>
+									<img src={attributes.defaultImage.url} alt={attributes.defaultImage.alt} width="100px" />
+									<br/>
+									<Button
+										variant="primary"
+										onClick={ () => setAttributes({
+											defaultImage: {}
+										})}
+									>
+										{__( 'Replace Image', 'otter-blocks' )}
+									</Button>
+								</BaseControl>
+							)
 					) : (
 						<Suspense fallback={ <Placeholder><Spinner /></Placeholder> }>
 							<IconPickerControl

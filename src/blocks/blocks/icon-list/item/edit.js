@@ -63,22 +63,14 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	useEffect( () => {
-
-		if ( hasParent && ( ! attributes.iconPrefix || ! attributes.library ) ) {
-			setAttributes({
-				library: attributes.library || parentAttributes.defaultLibrary,
-				icon: attributes.icon || parentAttributes.defaultIcon,
-				iconPrefix: attributes.iconPrefix || parentAttributes.defaultIconPrefix
-			});
-		}
-
-		if ( hasParent &&  parentAttributes.defaultIsImage !== undefined && attributes.isImage === undefined && attributes.icon === parentAttributes.defaultIcon ) {
-			setAttributes({
-				isImage: attributes.isImage || parentAttributes.defaultIsImage,
-				image: attributes.image || parentAttributes.defaultImage
-			});
-		}
-
+		console.log( attributes );
+		setAttributes({
+			library: attributes.library || parentAttributes.defaultLibrary,
+			icon: attributes.icon || parentAttributes.defaultIcon,
+			iconPrefix: attributes.iconPrefix || parentAttributes.defaultIconPrefix,
+			isImage: attributes.isImage || ( parentAttributes.defaultIsImage && parentAttributes.defaultIsImage !== undefined && attributes.isImage === undefined && attributes.icon === undefined ? parentAttributes.defaultIsImage :  undefined ),
+			image: attributes.image || parentAttributes.defaultImage
+		});
 	}, [ hasParent, parentAttributes, attributes ]);
 
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
@@ -108,7 +100,7 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				{
-					attributes.isImage ? (
+					attributes.isImage && attributes?.image ? (
 						<img src={attributes.image.url} alt={attributes.image.alt} width={ parentAttributes.defaultSize + 'px' } />
 					) : (
 						'themeisle-icons' === attributes.library && attributes.icon && Icon !== undefined ? (
