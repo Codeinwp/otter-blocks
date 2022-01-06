@@ -182,19 +182,21 @@ const initCount = ( elem ) => {
 	}
 
 	const values = range( 0, parsedNumber, delta );
-	values[steps - 1] =  parsedNumber;
+	if ( 0 < values.length ) {
+		values[steps - 1] =  parsedNumber;
+		elem.innerHTML =  applyFormat( values[0]);
 
+		setTimeout( () => {
+			elem.style.whiteSpace = 'pre';
+			start( ( i ) => {
+				elem.innerHTML = applyFormat( values[i]);
+			}, () => {
+				elem.style.whiteSpace = '';
+				elem.innerHTML = text;
+			});
 
-	setTimeout( () => {
-		elem.style.whiteSpace = 'pre';
-		start( ( i ) => {
-			elem.innerHTML = applyFormat( values[i]);
-		}, () => {
-			elem.style.whiteSpace = '';
-			elem.innerHTML = text;
-		});
-
-	}, config?.delay || 0 );
+		}, config?.delay || 0 );
+	}
 };
 
 domReady( () => {
@@ -204,20 +206,22 @@ domReady( () => {
 		threshold: [ 0.6 ]
 	};
 
-	console.group( 'Count Init' );
+	setTimeout( () => {
 
-	const anims = document.querySelectorAll( 'o-anim-count' );
-	anims.forEach( ( elem ) => {
-		const observer = new IntersectionObserver( ( entries ) => {
-			entries.forEach( entry => {
-				if ( entry.isIntersecting && 0 < entry.intersectionRect.height ) {
-					observer.unobserve( elem );
-					initCount( elem );
-				}
-			});
-		}, options );
-		observer.observe( elem );
-	});
+		console.group( 'Count Init' );
+		const anims = document.querySelectorAll( 'o-anim-count' );
+		anims.forEach( ( elem ) => {
+			const observer = new IntersectionObserver( ( entries ) => {
+				entries.forEach( entry => {
+					if ( entry.isIntersecting && 0 < entry.intersectionRect.height ) {
+						observer.unobserve( elem );
+						initCount( elem );
+					}
+				});
+			}, options );
+			observer.observe( elem );
+		});
+		console.groupEnd();
+	}, 300 );
 
-	console.groupEnd();
 });
