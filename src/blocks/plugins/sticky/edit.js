@@ -8,7 +8,8 @@ import { InspectorControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
 	RangeControl,
-	SelectControl
+	SelectControl,
+	ToggleControl
 } from '@wordpress/components';
 
 import {
@@ -23,7 +24,8 @@ const FILTER_OPTIONS = {
 	position: 'o-sticky-pos',
 	offset: 'o-sticky-offset',
 	scope: 'o-sticky-scope',
-	behaviour: 'o-sticky-bhvr'
+	behaviour: 'o-sticky-bhvr',
+	usage: 'o-sticky-use'
 };
 
 const Edit = ({
@@ -35,6 +37,7 @@ const Edit = ({
 	const position = attributes?.className?.includes( 'o-sticky-pos-bottom' ) ? 'o-sticky-pos-bottom' : 'o-sticky-pos-top';
 	const limit = attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-scope' ) ).pop() || 'o-sticky-scope-main-area';
 	const behaviour = attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-bhvr' ) ).pop() || 'o-sticky-bhvr-keep';
+	const useOnMobile = Boolean( attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-use-mobile' ) ).pop() || false );
 
 	const addOption = ( option, filterOption = FILTER_OPTIONS.position ) => {
 		const classes = new Set( attributes?.className?.split( ' ' )?.filter( c =>  ! c.includes( filterOption ) ) || []);
@@ -78,7 +81,7 @@ const Edit = ({
 				>
 					<SelectControl
 						label={ __( 'Sticky to', 'otter-blocks' ) }
-						help={ __( 'Stick to a group, columns, section block, or screen to limit the movement.', 'otter-blocks' ) }
+						help={ __( 'Stick to a group, columns, section block, or screen to limit the movement. The limit will differ from block to block, except for the blocks with the same parent.', 'otter-blocks' ) }
 						value={ limit }
 						options={[
 							{ label: __( 'Top Level Block', 'otter-blocks' ), value: 'o-sticky-scope-main-area' },
@@ -111,7 +114,7 @@ const Edit = ({
 
 					<SelectControl
 						label={ __( 'Behaviour', 'otter-blocks' ) }
-						help={ __( 'Set the action when multiple sticky blocks with the same block movement limit collide.' ) }
+						help={ __( 'Set the action when multiple sticky blocks with the same movement limit collide. Check the \'Stick to\' since it can differ from block to block.', 'otter-blocks' ) }
 						value={ behaviour }
 						options={[
 							{ label: __( 'Collapse', 'otter-blocks' ), value: 'o-sticky-bhvr-keep' },
@@ -126,6 +129,13 @@ const Edit = ({
 							__( 'The block will stack with other sticky elements with the same \'Stick To\' container, and Stack option in Behaviour. It works better with \'Stick to\' as Top Level Block or Screen.', 'otter-blocks' )
 						)
 					}
+
+					<ToggleControl
+						label={ __( 'Enable on Mobile', 'otter-blocks' ) }
+						help={ __( 'Make the sticky mode active for mobile users. Please check the functionality in Preview mode.' ) }
+						checked={useOnMobile}
+						onChange={ () => addOption(  'o-sticky-use-mobile', FILTER_OPTIONS.usage ) }
+					/>
 				</PanelBody>
 			</InspectorControls>
 		</Fragment>

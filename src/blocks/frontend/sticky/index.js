@@ -142,6 +142,11 @@ const createObserver = () => {
  * @param {Object} observer
  */
 const makeElementSticky = ( selector, config, containerSelector, observer ) => {
+
+	if ( 800 > window.innerWidth && ! config.useOnMobile ) {
+		return ;
+	}
+
 	const position = config?.position || 'top';
 	const offset = config?.offset !== undefined ? config.offset : 40;
 	const triggerLimit = 'bottom' === config?.position ? window.innerHeight - offset : 0;
@@ -411,7 +416,7 @@ const getStickyContainer = ( elem, scope ) => {
 /**
  * Get the configuration options
  * @param {HTMLDivElement} elem The sticky element
- * @return {Object} The configuration
+ * @return The configuration
  */
 const getConfigOptions = ( elem ) => {
 	return Array.from( elem.classList ).reduce( ( config, cssClass ) => {
@@ -423,9 +428,11 @@ const getConfigOptions = ( elem ) => {
 			config.scope = cssClass;
 		} else if ( cssClass.includes( 'o-sticky-bhvr' ) ) {
 			config.behaviour = cssClass;
+		} else if ( cssClass.includes( 'o-sticky-use-mobile' ) ) {
+			config.useOnMobile = true;
 		}
 		return config;
-	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep' });
+	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false});
 };
 
 domReady( () => {
