@@ -183,7 +183,7 @@ class Flip_CSS extends Base_CSS {
 								'value'   => 'frontBackgroundPosition',
 								'default' => array(
 									'x' => 0.5,
-									'y' => 0.5
+									'y' => 0.5,
 								),
 								'format'  => function( $value, $attrs ) {
 									if ( isset( $value['x'] ) && isset( $value['y'] ) ) {
@@ -346,7 +346,7 @@ class Flip_CSS extends Base_CSS {
 								'value'   => 'backBackgroundPosition',
 								'default' => array(
 									'x' => 0.5,
-									'y' => 0.5
+									'y' => 0.5,
 								),
 								'format'  => function( $value, $attrs ) {
 									if ( isset( $value['x'] ) && isset( $value['y'] ) ) {
