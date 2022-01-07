@@ -17,6 +17,7 @@ const speedConfig = {
 /**
  * Get the configuration option from the element CSS classes.
  * @param {HTMLDivElement} elem
+ * @returns Configuration options.
  */
 const getConfiguration = ( elem ) => {
 	let parent = elem.parentElement;
@@ -44,7 +45,7 @@ const getConfiguration = ( elem ) => {
  * Create utility functions for an interval timer.
  * @param {number} duration The duration, in seconds.
  * @param {number} deltaTime The time between two time ticks, in seconds.
- * @returns {Object} Utility functions.
+ * @returns Utility functions.
  */
 const makeInterval = ( duration, deltaTime ) => {
 
@@ -84,12 +85,16 @@ const makeInterval = ( duration, deltaTime ) => {
 	};
 };
 
-// List to all characters that are in a number structure
+// List to all characters that can be in a number structure.
 const NUMERIC_FORMATS = new Set( Array.from( '0123456789,.' ) );
+
+// List to extra characters that ca be in a number format. E.g: `-` with 23-34-12-12.
+const NUMBER_EXTRA_FORMAT = new Set( Array.from( ',' ) );
 
 /**
  * Extract the number, prefix, and suffix.
- * @param {string} text
+ * @param {string} text The selected text
+ * @returns An object with the number, prefix and suffix
  */
 const extract = ( text ) => {
 	const arr = Array.from( text );
@@ -110,9 +115,9 @@ const extract = ( text ) => {
 
 				// If there are more numbers in the selection, consider them as suffix.
 				suffix.push( x );
-				continue;
+			} else {
+				number.push( x );
 			}
-			number.push( x );
 		} else {
 			if ( isPrefix ) {
 				prefix.push( x );
@@ -140,8 +145,6 @@ const initCount = ( elem ) => {
 	const text = elem?.innerHTML || '';
 	const config = getConfiguration( elem );
 
-	console.log( elem, config );
-
 	const {
 		suffix,
 		prefix,
@@ -149,7 +152,7 @@ const initCount = ( elem ) => {
 	} = extract( text );
 
 	const formatElements = [ ...number ].reverse().map( ( c, idx ) => {
-		if ( ',' === c ) {
+		if ( NUMBER_EXTRA_FORMAT.has( c ) ) {
 			return {
 				position: idx,
 				character: c
@@ -159,7 +162,7 @@ const initCount = ( elem ) => {
 		return null;
 	}).filter( x => x );
 
-	// Get precision based on the numbers after the comma.
+	// Get the precision based on the numbers after the comma.
 	const numAfterComma = number.join( '' )?.split( '.' )?.[1]?.length || 0;
 
 	// Clean the string and the get the number.
@@ -186,7 +189,7 @@ const initCount = ( elem ) => {
 	const { start, steps } = makeInterval( config?.speed || 2, 0.05 );
 	const delta =  parseFloat( ( parsedNumber /  steps ).toFixed( numAfterComma || 2 ) ) ;
 
-	// Don't animate if the difference is very small.
+	// Don't animate it if the difference is very small.
 	if ( 0.000000000001 > delta ) {
 		return;
 	}
@@ -197,14 +200,6 @@ const initCount = ( elem ) => {
 		values.push(  values[i - 1] + delta );
 	}
 	values = values.map( n => n.toFixed( numAfterComma ) );
-
-	console.log({
-		values,
-		steps,
-		delta,
-		parsedNumber
-	});
-
 
 	if ( 0 < values.length ) {
 		values[steps - 1] =  parsedNumber.toFixed( numAfterComma || 0 );
@@ -231,8 +226,6 @@ domReady( () => {
 	};
 
 	setTimeout( () => {
-
-		console.group( 'Count Init' );
 		const anims = document.querySelectorAll( 'o-anim-count' );
 		anims.forEach( ( elem ) => {
 			const observer = new IntersectionObserver( ( entries ) => {
@@ -245,7 +238,6 @@ domReady( () => {
 			}, options );
 			observer.observe( elem );
 		});
-		console.groupEnd();
 	}, 300 );
 
 });
