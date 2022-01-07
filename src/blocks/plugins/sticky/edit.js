@@ -78,11 +78,11 @@ const Edit = ({
 				>
 					<SelectControl
 						label={ __( 'Sticky to', 'otter-blocks' ) }
-						help={ __( 'Stick to another group, column, section block.', 'otter-blocks' ) }
+						help={ __( 'Stick to a group, columns, section block, or screen to limit the movement.', 'otter-blocks' ) }
 						value={ limit }
 						options={[
-							{ label: __( 'Default', 'otter-blocks' ), value: 'o-sticky-scope-main-area' },
-							{ label: __( 'Parent Column/Group', 'otter-blocks' ), value: 'o-sticky-scope-parent' },
+							{ label: __( 'Top Level Block', 'otter-blocks' ), value: 'o-sticky-scope-main-area' },
+							{ label: __( 'Parent Block', 'otter-blocks' ), value: 'o-sticky-scope-parent' },
 							{ label: __( 'Section', 'otter-blocks' ), value: 'o-sticky-scope-section' },
 							{ label: __( 'Screen', 'otter-blocks' ), value: 'o-sticky-scope-screen' }
 						]}
@@ -102,7 +102,7 @@ const Edit = ({
 
 					<RangeControl
 						label={ __( 'Offset', 'otter-blocks' ) }
-						help={ __( 'Set the distance from the screen.', 'otter-blocks' ) }
+						help={ __( 'Set the distance from the block to the screen when sticky mode is active. ', 'otter-blocks' ) }
 						value={ getOffsetValue( ) }
 						min={0}
 						max={500}
@@ -111,10 +111,10 @@ const Edit = ({
 
 					<SelectControl
 						label={ __( 'Behaviour', 'otter-blocks' ) }
-						help={ __( 'Set the action when multiple sticky blocks with the same movement limit collide.' ) }
+						help={ __( 'Set the action when multiple sticky blocks with the same block movement limit collide.' ) }
 						value={ behaviour }
 						options={[
-							{ label: __( 'Default', 'otter-blocks' ), value: 'o-sticky-bhvr-keep' },
+							{ label: __( 'Collapse', 'otter-blocks' ), value: 'o-sticky-bhvr-keep' },
 							{ label: __( 'Hide', 'otter-blocks' ), value: 'o-sticky-bhvr-hide' },
 							{ label: __( 'Stack', 'otter-blocks' ), value: 'o-sticky-bhvr-stack' }
 						]}
@@ -123,7 +123,7 @@ const Edit = ({
 
 					{
 						'o-sticky-bhvr-stack'  === behaviour && (
-							__( 'The block will stack with other sticky elements with the same \'Stick To\' container, and Stack option in Behaviour. It works better with \'Stick to\' as Default or Screen.', 'otter-blocks' )
+							__( 'The block will stack with other sticky elements with the same \'Stick To\' container, and Stack option in Behaviour. It works better with \'Stick to\' as Top Level Block or Screen.', 'otter-blocks' )
 						)
 					}
 				</PanelBody>
