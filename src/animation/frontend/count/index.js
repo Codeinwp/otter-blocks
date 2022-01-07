@@ -99,17 +99,27 @@ const extract = ( text ) => {
 	const number = [];
 
 	let isPrefix = true;
+	let isSuffix = false;
 
 	for ( let x of arr ) {
 		if ( NUMERIC_FORMATS.has( x ) ) {
 			if ( isPrefix ) {
 				isPrefix = false;
 			}
+			if ( isSuffix ) {
+
+				// If there are more numbers in the selection, consider them as suffix.
+				suffix.push( x );
+				continue;
+			}
 			number.push( x );
 		} else {
 			if ( isPrefix ) {
 				prefix.push( x );
 			} else {
+				if ( ! isSuffix ) {
+					isSuffix = true;
+				}
 				suffix.push( x );
 			}
 		}
