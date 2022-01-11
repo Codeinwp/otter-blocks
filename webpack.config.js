@@ -25,14 +25,14 @@ const blocks = {
 	},
 	'business-hours-item': {
 		block: 'blocks/business-hours/item/block.json'
+	},
+	'button-group': {
+		block: 'blocks/button-group/group/block.json'
+	},
+	'button': {
+		block: 'blocks/button-group/button/block.json'
 	}
 
-	// 'button-group': {
-	// 	block: 'button-group/group/block.json'
-	// },
-	// 'button': {
-	// 	block: 'blocks/button-group/button/block.json'
-	// },
 	// 'circle-counter': {
 	// 	block: 'blocks/circle-counter/block.json'
 	// },

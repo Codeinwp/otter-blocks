@@ -35,18 +35,15 @@ module.exports = function( grunt ) {
 				'business-hours/editor.css': 'blocks/business-hours/editor.scss',
 				'business-hours/style.css': 'blocks/business-hours/style.scss'
 			}
+		},
+		'button-group': {
+			block: 'blocks/button-group/group/block.json',
+			assets: {
+				'button-group/editor.css': 'blocks/button-group/editor.scss',
+				'button-group/style.css': 'blocks/button-group/style.scss'
+			}
 		}
 
-		// 'button-group': {
-		// 	block: 'button-group/group/block.json',
-		// 	assets: {
-		// 		'button-group/editor.css': 'blocks/button-group/editor.scss',
-		// 		'button-group/style.css': 'blocks/button-group/style.scss'
-		// 	}
-		// },
-		// 'button': {
-		// 	block: 'blocks/button-group/button/block.json'
-		// },
 		// 'circle-counter': {
 		// 	block: 'blocks/circle-counter/block.json',
 		// 	assets: {

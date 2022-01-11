@@ -10,7 +10,6 @@ import { registerBlockType } from '@wordpress/blocks';
  */
 import metadata from './block.json';
 import { mapIcon as icon } from '../../../helpers/icons.js';
-import attributes from './attributes.js';
 import edit from './edit.js';
 import save from './save.js';
 
@@ -28,7 +27,6 @@ registerBlockType( name, {
 		'time',
 		'schedule'
 	],
-	attributes,
 	supports: {
 		align: [ 'wide', 'full' ]
 	},

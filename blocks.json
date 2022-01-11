@@ -35,7 +35,7 @@
 		"block": "blocks/business-hours/item/block.json"
 	},
 	"button-group": {
-		"block": "button-group/group/block.json",
+		"block": "blocks/button-group/group/block.json",
 		"assets": {
 			"button-group/editor.css": "blocks/button-group/editor.scss",
 			"button-group/style.css": "blocks/button-group/style.scss"
