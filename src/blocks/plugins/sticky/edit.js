@@ -9,7 +9,8 @@ import {
 	PanelBody,
 	RangeControl,
 	SelectControl,
-	ToggleControl
+	ToggleControl,
+	Button
 } from '@wordpress/components';
 
 import {
@@ -57,8 +58,7 @@ const Edit = ({
 	};
 
 	/*
-		TODO: Make the values from the Inspector to be classes
-		E.g:
+s		E.g:
 			Position -> 'o-sticky-pos-top'
 			Top Offset -> 'o-sticky-offset--40' where 40 will be value (it will be extracted by the frontend script)
 
@@ -80,7 +80,7 @@ const Edit = ({
 					initialOpen={ false }
 				>
 					<SelectControl
-						label={ __( 'Sticky to', 'otter-blocks' ) }
+						label={ __( 'Sticky To', 'otter-blocks' ) }
 						help={ __( 'Stick to a group, columns, section block, or screen to limit the movement. The limit will differ from block to block, except for the blocks with the same parent.', 'otter-blocks' ) }
 						value={ limit }
 						options={[
@@ -118,7 +118,7 @@ const Edit = ({
 						value={ behaviour }
 						options={[
 							{ label: __( 'Collapse', 'otter-blocks' ), value: 'o-sticky-bhvr-keep' },
-							{ label: __( 'Hide', 'otter-blocks' ), value: 'o-sticky-bhvr-hide' },
+							{ label: __( 'Fade', 'otter-blocks' ), value: 'o-sticky-bhvr-hide' },
 							{ label: __( 'Stack', 'otter-blocks' ), value: 'o-sticky-bhvr-stack' }
 						]}
 						onChange={ value => addOption(  value, FILTER_OPTIONS.behaviour ) }
@@ -126,16 +126,39 @@ const Edit = ({
 
 					{
 						'o-sticky-bhvr-stack'  === behaviour && (
-							__( 'The block will stack with other sticky elements with the same \'Stick To\' container, and Stack option in Behaviour. It works better with \'Stick to\' as Top Level Block or Screen.', 'otter-blocks' )
+							<div
+								style={{
+									backgroundColor: '#fdf8e6',
+									borderRadius: '5px',
+									padding: '10px',
+									textAlign: 'justify'
+								}}
+							>
+								{__( 'The block will stack with other sticky elements with the same \'Stick To\' container, and Stack option in Behaviour. It works better with \'Stick to\' as Top Level Block or Screen.', 'otter-blocks' )}
+							</div>
 						)
 					}
 
 					<ToggleControl
 						label={ __( 'Enable on Mobile', 'otter-blocks' ) }
-						help={ __( 'Make the sticky mode active for mobile users. Please check the functionality in Preview mode.' ) }
+						help={ __( 'Make the sticky mode active for mobile users. Please check the functionality in Preview mode, some elements might not work properly' ) }
 						checked={useOnMobile}
 						onChange={ () => addOption(  'o-sticky-use-mobile', FILTER_OPTIONS.usage ) }
 					/>
+
+					{
+
+						// Add link to the documentation about this feature.
+					}
+
+					<Button
+						isLink
+						target='_blank'
+						rel='noopener noreferrer'
+						href={ 'https://docs.themeisle.com/article/1478-otter-blocks-documentation' }
+					>
+						{__( 'Learn more about sticky', 'otter-blocks' )}
+					</Button>
 				</PanelBody>
 			</InspectorControls>
 		</Fragment>
