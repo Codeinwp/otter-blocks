@@ -12,27 +12,24 @@ import { Placeholder } from '@wordpress/components';
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import { receipt as icon } from '@wordpress/icons';
-import attributes from './attributes.js';
 import edit from './edit.js';
 import save from './save.js';
 
+const { name } = metadata;
+
 if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) ) {
-	registerBlockType( 'themeisle-blocks/business-hours', {
-		apiVersion: 2,
+	registerBlockType( name, {
+		...metadata,
 		title: __( 'Business Hours', 'otter-blocks' ),
 		description: __( 'Display your business schedule on your website.', 'otter-blocks' ),
 		icon,
-		category: 'themeisle-blocks',
 		keywords: [
 			'business',
 			'schedule',
 			'time'
 		],
-		attributes,
-		supports: {
-			align: [ 'wide', 'full' ]
-		},
 		styles: [
 			{
 				name: 'default',
@@ -48,18 +45,16 @@ if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) ) {
 		save
 	});
 } else {
-	registerBlockType( 'themeisle-blocks/business-hours', {
-		apiVersion: 2,
+	registerBlockType( name, {
+		...metadata,
 		title: __( 'Business Hours', 'otter-blocks' ),
 		description: __( 'Display your business schedule on your website.', 'otter-blocks' ),
 		icon,
-		category: 'themeisle-blocks',
 		keywords: [
 			'business',
 			'schedule',
 			'time'
 		],
-		attributes,
 		supports: {
 			inserter: false
 		},

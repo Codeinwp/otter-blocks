@@ -8,13 +8,16 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import { mapIcon as icon } from '../../../helpers/icons.js';
 import attributes from './attributes.js';
 import edit from './edit.js';
 import save from './save.js';
 
-registerBlockType( 'themeisle-blocks/business-hours-item', {
-	apiVersion: 2,
+const { name } = metadata;
+
+registerBlockType( name, {
+	...metadata,
 	title: __( 'Business Hours Item', 'otter-blocks' ),
 	description: __( 'Item used by Business Hours block to display the time.', 'otter-blocks' ),
 	icon,

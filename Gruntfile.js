@@ -22,25 +22,21 @@ module.exports = function( grunt ) {
 				'accordion/editor.css': 'blocks/accordion/editor.scss',
 				'accordion/style.css': 'blocks/accordion/style.scss'
 			}
+		},
+		'advanced-heading': {
+			block: 'blocks/advanced-heading/block.json',
+			assets: {
+				'advanced-heading/editor.css': 'blocks/advanced-heading/editor.scss'
+			}
+		},
+		'business-hours': {
+			block: 'blocks/business-hours/block.json',
+			assets: {
+				'business-hours/editor.css': 'blocks/business-hours/editor.scss',
+				'business-hours/style.css': 'blocks/business-hours/style.scss'
+			}
 		}
 
-		// 'advanced-heading': {
-		// 	block: 'blocks/advanced-heading/block.json',
-		// 	assets: {
-		// 		'advanced-heading/editor.css': 'blocks/advanced-heading/editor.scss',
-		// 		'advanced-heading/style.css': 'blocks/advanced-heading/style.scss'
-		// 	}
-		// },
-		// 'business-hours': {
-		// 	block: 'blocks/business-hours/block.json',
-		// 	assets: {
-		// 		'business-hours/editor.css': 'blocks/business-hours/editor.scss',
-		// 		'business-hours/style.css': 'blocks/business-hours/style.scss'
-		// 	}
-		// },
-		// 'business-hours-item': {
-		// 	block: 'blocks/business-hours/item/block.json'
-		// },
 		// 'button-group': {
 		// 	block: 'button-group/group/block.json',
 		// 	assets: {

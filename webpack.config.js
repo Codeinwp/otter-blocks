@@ -16,17 +16,17 @@ const blocks = {
 	},
 	'add-to-cart-button': {
 		block: 'blocks/add-to-cart-button/block.json'
+	},
+	'advanced-heading': {
+		block: 'blocks/advanced-heading/block.json'
+	},
+	'business-hours': {
+		block: 'blocks/business-hours/block.json'
+	},
+	'business-hours-item': {
+		block: 'blocks/business-hours/item/block.json'
 	}
 
-	// 'advanced-heading': {
-	// 	block: 'blocks/advanced-heading/block.json'
-	// },
-	// 'business-hours': {
-	// 	block: 'blocks/business-hours/block.json'
-	// },
-	// 'business-hours-item': {
-	// 	block: 'blocks/business-hours/item/block.json'
-	// },
 	// 'button-group': {
 	// 	block: 'button-group/group/block.json'
 	// },

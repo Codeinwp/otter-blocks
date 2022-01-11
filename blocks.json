@@ -21,8 +21,7 @@
 	"advanced-heading": {
 		"block": "blocks/advanced-heading/block.json",
 		"assets": {
-			"advanced-heading/editor.css": "blocks/advanced-heading/editor.scss",
-			"advanced-heading/style.css": "blocks/advanced-heading/style.scss"
+			"advanced-heading/editor.css": "blocks/advanced-heading/editor.scss"
 		}
 	},
 	"business-hours": {
