@@ -217,37 +217,130 @@ class Main {
 	 * @access  public
 	 */
 	public function register_blocks() {
-		$classnames = array(
-			'\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Review_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Product_Add_To_Cart_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Product_Images_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Product_Meta_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Product_Price_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Product_Rating_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Product_Related_Products_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Product_Stock_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Product_Short_Description_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Product_Tabs_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Product_Title_Block',
-			'\ThemeIsle\GutenbergBlocks\Render\Product_Upsells_Block',
+		// $classnames = array(
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Review_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Add_To_Cart_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Images_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Meta_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Price_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Rating_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Related_Products_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Stock_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Short_Description_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Tabs_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Title_Block',
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Upsells_Block',
+		// );
+
+		$dynamic_blocks = array(
+			'about-author' => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
+			'add-to-cart-button' => '\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
 		);
 
-		foreach ( $classnames as $classname ) {
-			$block = new $classname();
+		$blocks = array(
+			'about-author',
+			'accordion',
+			'accordion-item',
+			'add-to-cart-button',
+			'advanced-column',
+			'advanced-columns',
+			'advanced-heading',
+			'business-hours',
+			'business-hours-item',
+			'button',
+			'button-group',
+			'circle-counter',
+			'countdown',
+			'flip',
+			'font-awesome-icons',
+			'form',
+			'form-input',
+			'form-nonce',
+			'form-textarea',
+			'google-maps',
+			'icon-list',
+			'icon-list-item',
+			'leaflet-map',
+			'lottie',
+			'plugin-card',
+			'popup',
+			'posts-list',
+			'pricing',
+			'product-add-to-cart',
+			'product-images',
+			'product-meta',
+			'product-price',
+			'product-rating',
+			'product-related-products',
+			'product-short-description',
+			'product-stock',
+			'product-tabs',
+			'product-title',
+			'product-upsells',
+			'progress-bar',
+			'review',
+			'review-comparison',
+			'service',
+			'sharing-icons',
+			'slider',
+			'tabs',
+			'tabs-item',
+			'testimonials',
+			'woo-comparison',
+		);
 
-			if ( method_exists( $block, 'register_block' ) ) {
-				$block->register_block();
+		foreach ( $blocks as $block ) {
+			$block_path    = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
+			$metadata_file = trailingslashit( $block_path ) . 'block.json';
+			$style         = trailingslashit( $block_path ) . 'style.css';
+			$editor_style  = trailingslashit( $block_path ) . 'editor.css';
+
+			if ( ! file_exists( $metadata_file ) ) {
+				continue;
 			}
+
+			$metadata = json_decode( file_get_contents( $metadata_file ), true );
+
+			if ( file_exists( $style ) && ! empty( $metadata['style'] ) ) {
+				wp_register_style( 
+					$metadata['style'],
+					plugin_dir_url( $this->get_dir() ) . 'build/blocks/' . $block . '/style.css'
+				);
+			}
+
+			if ( file_exists( $editor_style ) && ! empty( $metadata['editorStyle'] ) ) {
+				wp_register_style( 
+					$metadata['editorStyle'],
+					plugin_dir_url( $this->get_dir() ) . 'build/blocks/' . $block . '/editor.css'
+				);
+			}
+
+			if ( ! is_array( $metadata ) || empty( $metadata['name'] ) ) {
+				continue;
+			}
+
+			if ( isset( $dynamic_blocks[ $block ] ) ) {
+				$classname = $dynamic_blocks[ $block ];
+				$renderer  = new $classname();
+		
+				if ( method_exists( $renderer, 'render' ) ) {
+					register_block_type_from_metadata( $metadata_file, array(
+						'render_callback' => array( $renderer, 'render' )
+					) );
+
+					continue;
+				}
+			}
+
+			register_block_type_from_metadata( $metadata_file );
 		}
 	}
 

@@ -26,10 +26,11 @@ import {
 /**
  * Internal dependencies
  */
-import defaultAttributes from './attributes.js';
-
+import metadata from './block.json';
 import Inspector from './inspector.js';
 import { blockInit } from '../../../helpers/block-utility.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
 	attributes,
