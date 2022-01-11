@@ -32,6 +32,8 @@ const getConfiguration = ( elem ) => {
 			const speedOptions = Object.keys( speedConfig );
 			const speed = arr?.filter( x => speedOptions.includes( x ) )?.pop() || 'fast';
 
+			parent.classList.remove( 'hidden-animated' );
+
 			return {
 				speed: speedConfig[speed],
 				delay: number * ( isMS ? 0 : 1000 )
@@ -225,18 +227,24 @@ domReady( () => {
 		threshold: [ 0.6 ]
 	};
 
+	const NUMBERS = new Set( '0123456789' );
+
 	setTimeout( () => {
 		const anims = document.querySelectorAll( 'o-anim-count' );
 		anims.forEach( ( elem ) => {
-			const observer = new IntersectionObserver( ( entries ) => {
-				entries.forEach( entry => {
-					if ( entry.isIntersecting && 0 < entry.intersectionRect.height ) {
-						observer.unobserve( elem );
-						initCount( elem );
-					}
-				});
-			}, options );
-			observer.observe( elem );
+			if ( Array.from( elem.innerHTML ).some( c  => NUMBERS.has( c ) ) ) {
+				const observer = new IntersectionObserver( ( entries ) => {
+					entries.forEach( entry => {
+						if ( entry.isIntersecting && 0 < entry.intersectionRect.height ) {
+							observer.unobserve( elem );
+							initCount( elem );
+						}
+					});
+				}, options );
+				observer.observe( elem );
+			} else {
+				console.log( elem );
+			}
 		});
 	}, 300 );
 
