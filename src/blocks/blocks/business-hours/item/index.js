@@ -14,6 +14,7 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/business-hours-item', {
+	apiVersion: 2,
 	title: __( 'Business Hours Item', 'otter-blocks' ),
 	description: __( 'Item used by Business Hours block to display the time.', 'otter-blocks' ),
 	icon,

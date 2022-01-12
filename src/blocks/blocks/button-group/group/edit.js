@@ -1,13 +1,23 @@
+/** @jsx jsx */
+
 /**
  * External dependencies
  */
 import classnames from 'classnames';
 import GoogleFontLoader from 'react-google-font-loader';
 
+import {
+	css,
+	jsx
+} from '@emotion/react';
+
 /**
  * WordPress dependencies.
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import { useViewportMatch } from '@wordpress/compose';
 
@@ -29,22 +39,19 @@ import { blockInit } from '../../../helpers/block-utility.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId
 }) => {
 	const {
-		isViewportAvailable,
 		isPreviewDesktop,
 		isPreviewTablet,
 		isPreviewMobile
 	} = useSelect( select => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
 
 		return {
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
+			isPreviewDesktop: 'Desktop' === __experimentalGetPreviewDeviceType(),
+			isPreviewTablet: 'Tablet' === __experimentalGetPreviewDeviceType(),
+			isPreviewMobile: 'Mobile' === __experimentalGetPreviewDeviceType()
 		};
 	}, [ attributes.id ]);
 
@@ -67,11 +74,27 @@ const Edit = ({
 
 	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
 
-	if ( isViewportAvailable && ! isMobile ) {
+	if ( ! isMobile ) {
 		isDesktop = isPreviewDesktop;
 		isTablet = isPreviewTablet;
 		isMobile = isPreviewMobile;
 	}
+
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		className: classnames(
+			'wp-block-buttons',
+			{
+				[ `align-${ attributes.align }` ]: attributes.align,
+				'collapse': ( 'collapse-desktop' === attributes.collapse && ( isDesktop || isTablet || isMobile ) ) || ( 'collapse-tablet' === attributes.collapse && ( isTablet || isMobile ) ) || ( 'collapse-mobile' === attributes.collapse && isMobile )
+			}
+		),
+		css: css`
+		.block-editor-block-list__layout {
+			gap: ${ attributes.spacing }px;
+		}
+		`
+	});
 
 	return (
 		<Fragment>
@@ -92,17 +115,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={ classnames(
-					className,
-					'wp-block-buttons',
-					{
-						[ `align-${ attributes.align }` ]: attributes.align,
-						'collapse': ( 'collapse-desktop' === attributes.collapse && ( isDesktop || isTablet || isMobile ) ) || ( 'collapse-tablet' === attributes.collapse && ( isTablet || isMobile ) ) || ( 'collapse-mobile' === attributes.collapse && isMobile )
-					}
-				) }
-			>
+			<div { ...blockProps }>
 				<InnerBlocks
 					allowedBlocks={ [ 'themeisle-blocks/button' ] }
 					__experimentalMoverDirection="horizontal"

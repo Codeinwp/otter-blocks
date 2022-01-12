@@ -6,25 +6,29 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
  */
 import themeIsleIcons from './../../../helpers/themeisle-icons.js';
 
-const Edit = ({
+const Save = ({
 	attributes,
 	className
 }) => {
 	const iconClassName = `${ attributes.iconPrefix } fa-${ attributes.icon }`;
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
+	const blockProps = useBlockProps.save({
+		id: attributes.id
+	});
+
 	return (
-		<div
-			className={ className }
-			id={ attributes.id }
-		>
+		<div { ...blockProps }>
 			{ 'themeisle-icons' === attributes.library && attributes.icon ? (
 				<Icon
 					className={ classnames(
@@ -54,4 +58,4 @@ const Edit = ({
 	);
 };
 
-export default Edit;
+export default Save;

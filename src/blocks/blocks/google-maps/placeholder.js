@@ -12,7 +12,6 @@ import {
 } from '@wordpress/components';
 
 const BlockPlaceholder = ({
-	className,
 	api,
 	isAPILoaded,
 	isAPISaved,
@@ -35,7 +34,6 @@ const BlockPlaceholder = ({
 				icon="admin-site"
 				label={ __( 'Google Maps', 'otter-blocks' ) }
 				instructions={ __( 'A Google Maps API key is required, please enter one below.', 'otter-blocks' ) }
-				className={ className }
 			>
 				<div className="components-placeholder__actions">
 					<TextControl
@@ -47,7 +45,6 @@ const BlockPlaceholder = ({
 					/>
 
 					<Button
-						isLarge
 						isPrimary
 						type="submit"
 						onClick={ saveAPIKey }

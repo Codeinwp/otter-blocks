@@ -14,6 +14,7 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/accordion-item', {
+	apiVersion: 2,
 	title: __( 'Accordion Item', 'otter-blocks' ),
 	description: __( 'Vertically collapsing accordions perfect for displaying your FAQs.', 'otter-blocks' ),
 	parent: [ 'themeisle-blocks/accordion' ],

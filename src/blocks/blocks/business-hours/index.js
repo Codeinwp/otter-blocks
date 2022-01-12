@@ -5,6 +5,8 @@ import { __ } from '@wordpress/i18n';
 
 import { registerBlockType } from '@wordpress/blocks';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import { Placeholder } from '@wordpress/components';
 
 /**
@@ -19,6 +21,7 @@ import save from './save.js';
 
 if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) ) {
 	registerBlockType( 'themeisle-blocks/business-hours', {
+		apiVersion: 2,
 		title: __( 'Business Hours', 'otter-blocks' ),
 		description: __( 'Display your business schedule on your website.', 'otter-blocks' ),
 		icon,
@@ -48,6 +51,7 @@ if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) ) {
 	});
 } else {
 	registerBlockType( 'themeisle-blocks/business-hours', {
+		apiVersion: 2,
 		title: __( 'Business Hours', 'otter-blocks' ),
 		description: __( 'Display your business schedule on your website.', 'otter-blocks' ),
 		icon,
@@ -61,7 +65,7 @@ if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) ) {
 		supports: {
 			inserter: false
 		},
-		edit: () => <Placeholder>{ __( 'You need to have Neve Pro installed to edit Business Hours block.', 'otter-blocks' ) }</Placeholder>,
+		edit: () => <div { ...useBlockProps() }><Placeholder>{ __( 'You need to have Neve Pro installed to edit Business Hours block.', 'otter-blocks' ) }</Placeholder></div>,
 		save
 	});
 }

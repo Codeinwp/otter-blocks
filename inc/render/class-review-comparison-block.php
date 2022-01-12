@@ -34,9 +34,6 @@ class Review_Comparison_Block extends Base_Block {
 			'id'          => array(
 				'type' => 'string',
 			),
-			'className'   => array(
-				'type' => 'string',
-			),
 			'reviews'     => array(
 				'type'    => 'array',
 				'default' => array(),
@@ -220,11 +217,15 @@ class Review_Comparison_Block extends Base_Block {
 			$table_links .= '</td>';
 		}
 
-		$id    = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-comparison-' . wp_rand( 10, 100 );
-		$class = isset( $attributes['className'] ) ? $attributes['className'] : '';
-		$class = 'wp-block-themeisle-blocks-review-comparison ' . esc_attr( $class );
+		$id = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-comparison-' . wp_rand( 10, 100 );
 
-		$html  = '<table id="' . esc_attr( $id ) . '" class="' . trim( $class ) . '">';
+		$wrapper_attributes = get_block_wrapper_attributes(
+			array(
+				'id' => $id,
+			) 
+		);
+
+		$html  = '<table ' . $wrapper_attributes . '>';
 		$html .= '	<thead>';
 		$html .= '		<tr>';
 		$html .= '			<th></th>';

@@ -5,6 +5,8 @@ import { __ } from '@wordpress/i18n';
 
 import { registerBlockType } from '@wordpress/blocks';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import { Placeholder } from '@wordpress/components';
 
 /**
@@ -17,6 +19,7 @@ import edit from './edit.js';
 
 if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Boolean( window.themeisleGutenberg.hasWooCommerce ) && Boolean( window.themeisleGutenberg.hasNeveSupport.wooComparison ) ) {
 	registerBlockType( 'themeisle-blocks/woo-comparison', {
+		apiVersion: 2,
 		title: __( 'WooCommerce Comparison Table', 'otter-blocks' ),
 		description: __( 'A way to compare different WooCommerce products made on the website.', 'otter-blocks' ),
 		icon,
@@ -35,6 +38,7 @@ if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Bool
 	});
 } else {
 	registerBlockType( 'themeisle-blocks/woo-comparison', {
+		apiVersion: 2,
 		title: __( 'WooCommerce Comparison Table', 'otter-blocks' ),
 		description: __( 'A way to compare different WooCommerce products made on the website.', 'otter-blocks' ),
 		icon,
@@ -48,7 +52,7 @@ if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Bool
 		supports: {
 			inserter: false
 		},
-		edit: () => <Placeholder>{ __( 'You need to have Neve Pro & WooCommerce installed to edit WooCommerce Comparison Table block.', 'otter-blocks' ) }</Placeholder>,
+		edit: () => <div { ...useBlockProps() }><Placeholder>{ __( 'You need to have Neve Pro & WooCommerce installed to edit WooCommerce Comparison Table block.', 'otter-blocks' ) }</Placeholder></div>,
 		save: () => null
 	});
 }

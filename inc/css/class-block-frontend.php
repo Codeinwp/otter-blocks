@@ -129,7 +129,7 @@ class Block_Frontend extends Base_CSS {
 			}
 
 			if ( count( $fonts ) > 0 ) {
-				wp_enqueue_style( 'themeisle-gutenberg-google-fonts-' . $post_id, '//fonts.googleapis.com/css?family=' . implode( '|', $fonts ), [], THEMEISLE_BLOCKS_VERSION );
+				wp_enqueue_style( 'otter-google-fonts-' . $post_id, '//fonts.googleapis.com/css?family=' . implode( '|', $fonts ), [], THEMEISLE_BLOCKS_VERSION );
 			}
 		}
 	}
@@ -156,7 +156,7 @@ class Block_Frontend extends Base_CSS {
 				array_push( $fonts, $item );
 			}
 
-			wp_enqueue_style( 'themeisle-gutenberg-google-fonts', '//fonts.googleapis.com/css?family=' . implode( '|', $fonts ), [], THEMEISLE_BLOCKS_VERSION );
+			wp_enqueue_style( 'otter-google-fonts', '//fonts.googleapis.com/css?family=' . implode( '|', $fonts ), [], THEMEISLE_BLOCKS_VERSION );
 		}
 	}
 
@@ -298,7 +298,7 @@ class Block_Frontend extends Base_CSS {
 			add_action(
 				'wp_footer',
 				function () use ( $post_id, $file_name, $file_url ) {
-					return wp_enqueue_style( 'themeisle-gutenberg-' . $file_name, $file_url, array( 'themeisle-block_styles' ), THEMEISLE_BLOCKS_VERSION );
+					return wp_enqueue_style( 'otter-' . $file_name, $file_url, array( 'otter-blocks' ), THEMEISLE_BLOCKS_VERSION );
 				}
 			);
 
@@ -308,7 +308,7 @@ class Block_Frontend extends Base_CSS {
 		add_action(
 			'wp_enqueue_scripts',
 			function () use ( $post_id, $file_name, $file_url ) {
-				return wp_enqueue_style( 'themeisle-gutenberg-' . $file_name, $file_url, array( 'themeisle-block_styles' ), THEMEISLE_BLOCKS_VERSION );
+				return wp_enqueue_style( 'otter-' . $file_name, $file_url, array( 'otter-blocks' ), THEMEISLE_BLOCKS_VERSION );
 			}
 		);
 	}
@@ -506,7 +506,7 @@ class Block_Frontend extends Base_CSS {
 			}
 
 			if ( count( $fonts ) > 0 ) {
-				wp_enqueue_style( 'themeisle-gutenberg-widgets-google-fonts', '//fonts.googleapis.com/css?family=' . implode( '|', $fonts ), [], THEMEISLE_BLOCKS_VERSION );
+				wp_enqueue_style( 'otter-widgets-fonts', '//fonts.googleapis.com/css?family=' . implode( '|', $fonts ), [], THEMEISLE_BLOCKS_VERSION );
 			}
 		}
 
@@ -532,7 +532,7 @@ class Block_Frontend extends Base_CSS {
 
 		$file_url = CSS_Handler::get_css_url( 'widgets' );
 
-		return wp_enqueue_style( 'themeisle-gutenberg-widgets', $file_url, array( 'themeisle-block_styles' ), THEMEISLE_BLOCKS_VERSION );
+		return wp_enqueue_style( 'otter-widgets', $file_url, array( 'otter-blocks' ), THEMEISLE_BLOCKS_VERSION );
 	}
 
 	/**

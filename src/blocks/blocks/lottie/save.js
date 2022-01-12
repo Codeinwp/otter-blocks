@@ -1,15 +1,22 @@
+/**
+ * Wordpress dependencies
+ */
+import { useBlockProps } from '@wordpress/block-editor';
+
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
+	const blockProps = useBlockProps.save({
+		id: attributes.id,
+		src: attributes.file ? attributes.file.url : '',
+		width: attributes.width
+	});
+
 	if ( 'scroll' === attributes.trigger ) {
 		return (
 			<lottie-player
-				id={ attributes.id }
-				className={ className }
-				src={ attributes.file ? attributes.file.url : '' }
 				trigger={ attributes.trigger }
-				width={ attributes.width }
+				{ ...blockProps }
 			>
 			</lottie-player>
 		);
@@ -17,18 +24,15 @@ const Save = ({
 
 	return (
 		<lottie-player
-			id={ attributes.id }
-			className={ className }
-			src={ attributes.file ? attributes.file.url : '' }
 			autoplay
 			loop
 			count={ attributes.direction ? attributes.count * -1 : attributes.count }
 			speed={ attributes.speed }
 			direction={ attributes.direction ? -1 : 1 }
 			trigger={ attributes.trigger }
-			width={ attributes.width }
 			data-loop={ attributes.loop }
 			mode="normal"
+			{ ...blockProps }
 		>
 		</lottie-player>
 	);

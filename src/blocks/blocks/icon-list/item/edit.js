@@ -8,7 +8,10 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import { createBlock } from '@wordpress/blocks';
 
@@ -30,7 +33,6 @@ import { blockInit } from '../../../helpers/block-utility.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	name,
 	clientId,
 	onReplace,
@@ -39,7 +41,6 @@ const Edit = ({
 }) => {
 	const {
 		hasParent,
-		parentClass,
 		parentAttributes
 	} = useSelect( select => {
 		const {
@@ -52,7 +53,6 @@ const Edit = ({
 
 		return {
 			hasParent: parentBlock ? true : false,
-			parentClass: parentBlock.attributes.className || '',
 			parentAttributes: parentBlock ? parentBlock.attributes : {}
 		};
 	}, []);
@@ -73,9 +73,6 @@ const Edit = ({
 		fill: attributes.iconColor || parentAttributes.defaultIconColor,
 		fontSize: parentAttributes.defaultSize + 'px'
 	};
-	const itemStyle = {
-		marginRight: parentClass.includes( 'is-style-horizontal' ) ? parentAttributes.gap + 'px' : parentAttributes.gap + 'px'
-	};
 
 	/**
 	 * Add the missing components from parent's attributes
@@ -92,6 +89,8 @@ const Edit = ({
 		setAttributes({ content: value });
 	};
 
+	const blockProps = useBlockProps();
+
 	return (
 		<Fragment>
 			<Inspector
@@ -99,10 +98,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div
-				className={ className }
-				style={ itemStyle }
-			>
+			<div { ...blockProps }>
 				{ 'themeisle-icons' === attributes.library && attributes.icon && Icon !== undefined ? (
 					<Icon
 						className={ classnames(

@@ -51,14 +51,14 @@ class Blocks_Animation {
 		$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/index.asset.php';
 
 		wp_enqueue_script(
-			'themeisle-gutenberg-animation',
-			BLOCKS_ANIMATION_URL . '/build/animation/index.js',
+			'otter-animation',
+			BLOCKS_ANIMATION_URL . 'build/animation/index.js',
 			$asset_file['dependencies'],
 			$asset_file['version'],
 			true
 		);
 
-		wp_set_script_translations( 'themeisle-gutenberg-animation', 'otter-blocks' );
+		wp_set_script_translations( 'otter-animation', 'otter-blocks' );
 	}
 
 	/**
@@ -72,23 +72,24 @@ class Blocks_Animation {
 			return;
 		}
 
-		if ( is_singular() && strpos( get_the_content(), '<!-- wp:' ) === false ) {
+		global $post;
+
+		if ( is_singular() && strpos( get_the_content( null, false, $post ), '<!-- wp:' ) === false ) {
 			return;
 		}
-
 
 		$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/frontend.asset.php';
 
 		wp_enqueue_style(
 			'animate-css',
-			BLOCKS_ANIMATION_URL . '/assets/animate/animate.min.css',
+			BLOCKS_ANIMATION_URL . 'assets/animate/animate.min.css',
 			array(),
 			$asset_file['version']
 		);
 
 		wp_enqueue_style(
-			'themeisle-gutenberg-animation-style',
-			BLOCKS_ANIMATION_URL . '/build/animation/index.css',
+			'otter-animation',
+			BLOCKS_ANIMATION_URL . 'build/animation/index.css',
 			array(),
 			$asset_file['version']
 		);
@@ -98,14 +99,14 @@ class Blocks_Animation {
 		}
 
 		wp_enqueue_script(
-			'themeisle-gutenberg-animation-frontend',
-			BLOCKS_ANIMATION_URL . '/build/animation/frontend.js',
+			'otter-animation-frontend',
+			BLOCKS_ANIMATION_URL . 'build/animation/frontend.js',
 			$asset_file['dependencies'],
 			$asset_file['version'],
 			true
 		);
 
-		wp_script_add_data( 'themeisle-gutenberg-animation-frontend', 'sync', true );
+		wp_script_add_data( 'otter-animation-frontend', 'async', true );
 	}
 
 	/**

@@ -15,6 +15,7 @@ import attributes from './attributes.js';
 import edit from './edit.js';
 
 registerBlockType( 'themeisle-blocks/plugin-cards', {
+	apiVersion: 2,
 	title: __( 'Plugin Card', 'otter-blocks' ),
 	description: __( 'Plugin Card block lets you display plugins data in your blog posts.', 'otter-blocks' ),
 	icon,

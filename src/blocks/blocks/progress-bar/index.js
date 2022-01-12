@@ -16,6 +16,7 @@ import save from './save.js';
 import transforms from './transforms.js';
 
 registerBlockType( 'themeisle-blocks/progress-bar', {
+	apiVersion: 2,
 	title: __( 'Progress Bar', 'otter-blocks' ),
 	description: __( 'Show your progress with a beautiful Progress Bar block.', 'otter-blocks' ),
 	icon: 'minus',

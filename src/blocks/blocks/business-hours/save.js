@@ -3,18 +3,19 @@
  */
 import {
 	InnerBlocks,
-	RichText
+	RichText,
+	useBlockProps
 } from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
+	const blockProps = useBlockProps.save({
+		id: attributes.id
+	});
+
 	return (
-		<div
-			className={ className }
-			id={ attributes.id }
-		>
+		<div { ...blockProps }>
 			<div className="otter-business-hour__container">
 				<div className="otter-business-hour__title">
 					<RichText.Content

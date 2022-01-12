@@ -62,7 +62,7 @@ const Library = ({
 			}
 
 			try {
-				const data = await apiFetch({ path: 'themeisle-gutenberg-blocks/v1/fetch_templates' });
+				const data = await apiFetch({ path: 'otter/v1/templates' });
 
 				let blocksCategories = [];
 				let templateCategories = [];
@@ -132,7 +132,7 @@ const Library = ({
 		setLoading( true );
 
 		try {
-			let data = await apiFetch({ path: `themeisle-gutenberg-blocks/v1/import_template?url=${ template.template_url }&preview=true` });
+			let data = await apiFetch({ path: `otter/v1/import?url=${ template.template_url }&preview=true` });
 
 			if ( data.__file && data.content && 'wp_export' === data.__file ) {
 				data = parse( data.content );
@@ -162,7 +162,7 @@ const Library = ({
 		setLoading( true );
 
 		try {
-			let data = await apiFetch({ path: `themeisle-gutenberg-blocks/v1/import_template?url=${ url }` });
+			let data = await apiFetch({ path: `otter/v1/import?url=${ url }` });
 
 			if ( data.__file && data.content && 'wp_export' === data.__file ) {
 				data = parse( data.content );

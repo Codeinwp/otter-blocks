@@ -13,6 +13,7 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/pricing', {
+	apiVersion: 2,
 	title: __( 'Pricing', 'otter-blocks' ),
 	description: __( 'Pricing tables are a critical part in showcasing your services, prices and overall offerings.', 'otter-blocks' ),
 	icon,

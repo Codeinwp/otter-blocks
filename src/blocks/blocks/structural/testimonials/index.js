@@ -14,6 +14,7 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/testimonials', {
+	apiVersion: 2,
 	title: __( 'Testimonials', 'otter-blocks' ),
 	description: __( 'Display kudos from customers and clients and display them on your website.', 'otter-blocks' ),
 	icon,

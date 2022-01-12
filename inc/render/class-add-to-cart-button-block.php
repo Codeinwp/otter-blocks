@@ -30,10 +30,7 @@ class Add_To_Cart_Button_Block extends Base_Block {
 	 */
 	protected function set_attributes() {
 		$this->attributes = array(
-			'className' => array(
-				'type' => 'string',
-			),
-			'product'   => array(
+			'product' => array(
 				'type' => 'number',
 			),
 		);
@@ -49,7 +46,7 @@ class Add_To_Cart_Button_Block extends Base_Block {
 	 * @return mixed|string
 	 */
 	protected function render( $attributes ) {
-		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! class_exists( 'WooCommerce' ) ) {
+		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! class_exists( 'WooCommerce' ) || ! isset( $attributes['product'] ) ) {
 			return;
 		}
 
@@ -58,9 +55,6 @@ class Add_To_Cart_Button_Block extends Base_Block {
 		if ( ! $product ) {
 			return;
 		}
-
-		$class = isset( $attributes['className'] ) ? $attributes['className'] : '';
-		$class = 'wp-block-button ' . esc_attr( $class );
 
 		$attrs = array(
 			'aria-label'       => $product->add_to_cart_description(),
@@ -86,6 +80,10 @@ class Add_To_Cart_Button_Block extends Base_Block {
 			esc_html( $product->add_to_cart_text() )
 		);
 
-		return '<div class="' . $class . '">' . $button . '</div>';
+		return sprintf(
+			'<div %1$s>%2$s</div>',
+			$wrapper_attributes = get_block_wrapper_attributes( array( 'class' => 'wp-block-button' ) ),
+			$button
+		);
 	}
 }

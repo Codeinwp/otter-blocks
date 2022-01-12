@@ -144,7 +144,6 @@ const MarkerModal = ({
 
 			<ButtonGroup>
 				<Button
-					isLarge
 					isPrimary
 					onClick={ () => addMarker( location, title, icon, description, latitude, longitude ) }
 				>
@@ -152,7 +151,6 @@ const MarkerModal = ({
 				</Button>
 
 				<Button
-					isLarge
 					isSecondary
 					onClick={ close }
 				>

@@ -16,6 +16,7 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/form', {
+	apiVersion: 2,
 	title: __( 'Form', 'otter-blocks' ),
 	description: __( 'Display a form for your clients.', 'otter-blocks' ),
 	icon,

@@ -6,7 +6,7 @@ import { __ } from '@wordpress/i18n';
 import {
 	Dashicon,
 	Button,
-	Toolbar,
+	ToolbarGroup,
 	Tooltip
 } from '@wordpress/components';
 
@@ -15,7 +15,7 @@ import { BlockControls } from '@wordpress/block-editor';
 const Controls = ({ setAttributes }) => {
 	return (
 		<BlockControls>
-			<Toolbar>
+			<ToolbarGroup>
 				<Tooltip text={ __( 'Edit', 'otter-blocks' ) }>
 					<Button
 						className="components-icon-button components-toolbar__control wp-block-themeisle-blocks-plugin-cards-edit-plugin-card"
@@ -24,7 +24,7 @@ const Controls = ({ setAttributes }) => {
 						<Dashicon icon="edit" />
 					</Button>
 				</Tooltip>
-			</Toolbar>
+			</ToolbarGroup>
 		</BlockControls>
 	);
 };

@@ -1,6 +1,13 @@
+/** @jsx jsx */
+
 /**
  * External dependencies.
  */
+import {
+	css,
+	jsx
+} from '@emotion/react';
+
 import classnames from 'classnames';
 
 import getSymbolFromCurrency from 'currency-symbol-map';
@@ -13,7 +20,10 @@ import {
 	sprintf
 } from '@wordpress/i18n';
 
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import {
 	Placeholder,
@@ -41,7 +51,6 @@ const Edit = ({
 	attributes,
 	setAttributes,
 	clientId,
-	className,
 	isSelected,
 	status = 'isInactive',
 	productAttributes = {}
@@ -58,6 +67,7 @@ const Edit = ({
 	for ( let i = 0; 10 > i; i++ ) {
 		stars.push(
 			<StarFilled
+				key={ i }
 				className={ classnames(
 					{
 						'low': 3 >= Math.round( overallRatings ) && i < Math.round( overallRatings ),
@@ -99,6 +109,18 @@ const Edit = ({
 		setAttributes({ links });
 	};
 
+	let placeholderProps = useBlockProps({
+		id: attributes.id,
+		className: 'is-placeholder'
+	});
+
+	let blockProps = useBlockProps({
+		id: attributes.id,
+		style: {
+			backgroundColor: attributes.backgroundColor
+		}
+	});
+
 	if ( 'isLoading' === status ) {
 		return (
 			<Fragment>
@@ -108,7 +130,9 @@ const Edit = ({
 					productAttributes={ productAttributes }
 				/>
 
-				<Placeholder><Spinner /></Placeholder>
+				<div { ...placeholderProps }>
+					<Placeholder><Spinner /></Placeholder>
+				</div>
 			</Fragment>
 		);
 	}
@@ -122,9 +146,11 @@ const Edit = ({
 					productAttributes={ productAttributes }
 				/>
 
-				<Placeholder
-					instructions={ status.message }
-				/>
+				<div { ...placeholderProps }>
+					<Placeholder
+						instructions={ status.message }
+					/>
+				</div>
 			</Fragment>
 		);
 	}
@@ -137,13 +163,7 @@ const Edit = ({
 				productAttributes={ productAttributes }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={ className }
-				style={ {
-					backgroundColor: attributes.backgroundColor
-				} }
-			>
+			<div { ...blockProps }>
 				<div
 					className="wp-block-themeisle-blocks-review__header"
 					style={ {
@@ -239,9 +259,11 @@ const Edit = ({
 								placeholder={ __( 'Product description or a small review…', 'otter-blocks' ) }
 								value={ productAttributes?.description }
 								tagName="p"
-								style={ {
-									color: attributes.textColor
-								} }
+								css={ css`
+									p {
+										color: ${ attributes.textColor } !important;
+									}
+								` }
 							/>
 						) }
 					</div>
@@ -253,6 +275,7 @@ const Edit = ({
 							for ( let i = 0; 10 > i; i++ ) {
 								ratings.push(
 									<StarFilled
+										key={ i }
 										className={ classnames(
 											{
 												'low': 3 >= Math.round( feature.rating ) && i < Math.round( feature.rating ),
@@ -265,10 +288,7 @@ const Edit = ({
 							}
 
 							return (
-								<div
-									key={ attributes.features.title }
-									className="wp-block-themeisle-blocks-review__left_feature"
-								>
+								<div className="wp-block-themeisle-blocks-review__left_feature" key={ index }>
 									<RichText
 										placeholder={ __( 'Feature title', 'otter-blocks' ) }
 										value={ feature.title }
@@ -309,10 +329,7 @@ const Edit = ({
 							</h4>
 
 							{ attributes.pros.map( ( pro, index ) => (
-								<div
-									key={ pro }
-									className="wp-block-themeisle-blocks-review__right_pros_item"
-								>
+								<div className="wp-block-themeisle-blocks-review__right_pros_item" key={ index }>
 									{ check }
 
 									<RichText
@@ -340,10 +357,7 @@ const Edit = ({
 							</h4>
 
 							{ attributes.cons.map( ( con, index ) => (
-								<div
-									key={ con }
-									className="wp-block-themeisle-blocks-review__right_cons_item"
-								>
+								<div className="wp-block-themeisle-blocks-review__right_cons_item" key={ index }>
 									{ close }
 
 									<RichText
@@ -375,7 +389,7 @@ const Edit = ({
 						<div className="wp-block-themeisle-blocks-review__footer_buttons">
 							{ ( productAttributes?.links || attributes.links ).map( ( link, index ) => (
 								<RichText
-									key={ link }
+									key={ index }
 									placeholder={ __( 'Button label', 'otter-blocks' ) }
 									value={ link.label }
 									disabled={ 0 < productAttributes?.links }

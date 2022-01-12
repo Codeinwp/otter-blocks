@@ -81,9 +81,20 @@
 			gap: 50px;
 			align-items: center;
 
+			img {
+				max-width: 200px;
+				max-height: 400px;
+			}
+
 			&.is-single {
 				grid-template-columns: 1fr;
+
+				img {
+					max-width: 400px;
+				}
 			}
+
+
 		}
 
 		.wp-block-themeisle-blocks-review__left_features {
@@ -130,7 +141,7 @@
 							fill: #63A76E;
 						}
 					}
-	
+
 					span {
 						padding-left: 10px;
 						font-size: 13px;
@@ -274,7 +285,7 @@
 					&:nth-child( odd ) {
 						padding-right: 0;
 					}
-	
+
 					&:nth-child( even ) {
 						padding-left: 0;
 					}

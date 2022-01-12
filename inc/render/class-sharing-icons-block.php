@@ -57,10 +57,6 @@ class Sharing_Icons_Block extends Base_Block {
 				'type'    => 'boolean',
 				'default' => 0,
 			),
-			'className' => array(
-				'type'    => 'string',
-				'default' => 'is-default',
-			),
 		);
 	}
 
@@ -123,26 +119,20 @@ class Sharing_Icons_Block extends Base_Block {
 	protected function render( $attributes ) {
 		$social_attributes = $this->get_social_profiles();
 
-		if ( isset( $attributes['className'] ) && strpos( $attributes['className'], 'is-style-icons' ) !== false ) {
-			$class = 'wp-block-themeisle-blocks-sharing-icons';
-		} else {
-			$class = 'wp-block-themeisle-blocks-sharing-icons has-label';
-		}
-
-		if ( isset( $attributes['className'] ) ) {
-			$class .= ' ' . esc_attr( $attributes['className'] );
-		}
+		$class = '';
 
 		if ( isset( $attributes['align'] ) ) {
 			$class .= ' align' . esc_attr( $attributes['align'] );
 		}
 
-		$html = '<div class="' . esc_attr( $class ) . '">';
+		$wrapper_attributes = get_block_wrapper_attributes();
+
+		$html = '<div ' . $wrapper_attributes . '>';
 		foreach ( $social_attributes as $key => $icon ) {
 			if ( 'className' !== $key && 1 == $attributes[ $key ] ) {
 				$html .= '<a class="social-icon is-' . esc_html( $key ) . '" href="' . esc_url( $icon['url'] ) . '" target="_blank">';
 				$html .= '<i class="fab fa-' . esc_html( $icon['icon'] ) . '"></i>';
-				if ( strpos( $attributes['className'], 'is-style-icons' ) === false ) {
+				if ( strpos( $wrapper_attributes, 'is-style-icons' ) === false ) {
 					$html .= esc_html( $icon['label'] );
 				}
 				$html .= '</a>';

@@ -171,7 +171,7 @@ const Inspector = ({
 
 			<PanelBody
 				title={ __( 'Markers', 'otter-blocks' ) }
-				initialOpen={ true }
+				initialOpen={ false }
 			>
 				<MarkerWrapper
 					markers={ attributes.markers }

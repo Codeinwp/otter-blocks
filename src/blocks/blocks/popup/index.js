@@ -20,6 +20,7 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/popup', {
+	apiVersion: 2,
 	title: __( 'Popup', 'otter-blocks' ),
 	description: __( 'Display your content in beautiful popup with many customization options..', 'otter-blocks' ),
 	icon,

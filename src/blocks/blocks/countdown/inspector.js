@@ -36,10 +36,8 @@ const Inspector = ({
 	setAttributes
 }) => {
 	const getView = useSelect( ( select ) => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
 		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
-
-		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+		return __experimentalGetPreviewDeviceType();
 	}, []);
 
 	const excludeComponent = ( value, componentName ) => {
@@ -189,7 +187,6 @@ const Inspector = ({
 		<InspectorControls>
 			<PanelBody
 				title={ __( 'Time', 'otter-blocks' ) }
-				initialOpen={ true }
 			>
 				<Dropdown
 					position="bottom left"
@@ -216,7 +213,7 @@ const Inspector = ({
 
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
-				initialOpen={ true }
+				initialOpen={ false }
 			>
 				<ToggleControl
 					label={ __( 'Display Days', 'otter-blocks' ) }

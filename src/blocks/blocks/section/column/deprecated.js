@@ -10,6 +10,11 @@ import { omit } from 'lodash';
 
 import { InnerBlocks } from '@wordpress/block-editor';
 
+/**
+ * Internal dependencies
+ */
+import { isNullObject } from '../../../helpers/helper-functions.js';
+
 const attributes = {
 	id: {
 		type: 'string'
@@ -514,6 +519,379 @@ const deprecated = [ {
 	},
 
 	isEligible: attributes => 'gradient' === attributes.backgroundType && undefined !== attributes.backgroundGradientFirstColor,
+
+	save: ({
+		attributes,
+		className
+	}) => {
+		const Tag = attributes.columnsHTMLTag;
+
+		return (
+			<Tag
+				className={ className }
+				id={ attributes.id }
+			>
+				<InnerBlocks.Content />
+			</Tag>
+		);
+	}
+}, {
+	attributes: {
+		...omit(
+			attributes,
+			[
+				'backgroundGradientFirstColor',
+				'backgroundGradientFirstLocation',
+				'backgroundGradientSecondColor',
+				'backgroundGradientSecondLocation',
+				'backgroundGradientType',
+				'backgroundGradientAngle',
+				'backgroundGradientPosition'
+			]
+		),
+		paddingTablet: {
+			type: 'number'
+		},
+		paddingMobile: {
+			type: 'number'
+		},
+		paddingTopTablet: {
+			type: 'number'
+		},
+		paddingTopMobile: {
+			type: 'number'
+		},
+		paddingRightTablet: {
+			type: 'number'
+		},
+		paddingRightMobile: {
+			type: 'number'
+		},
+		paddingBottomTablet: {
+			type: 'number'
+		},
+		paddingBottomMobile: {
+			type: 'number'
+		},
+		paddingLeftTablet: {
+			type: 'number'
+		},
+		paddingLeftMobile: {
+			type: 'number'
+		},
+		marginTablet: {
+			type: 'number'
+		},
+		marginMobile: {
+			type: 'number'
+		},
+		marginTopTablet: {
+			type: 'number'
+		},
+		marginTopMobile: {
+			type: 'number'
+		},
+		marginRightTablet: {
+			type: 'number'
+		},
+		marginRightMobile: {
+			type: 'number'
+		},
+		marginBottomTablet: {
+			type: 'number'
+		},
+		marginBottomMobile: {
+			type: 'number'
+		},
+		marginLeftTablet: {
+			type: 'number'
+		},
+		marginLeftMobile: {
+			type: 'number'
+		},
+		backgroundGradient: {
+			type: 'string',
+			default: 'linear-gradient(90deg,rgba(54,209,220,1) 0%,rgba(91,134,229,1) 100%)'
+		}
+	},
+
+	supports: {
+		inserter: false,
+		reusable: false,
+		html: false
+	},
+
+	migrate: ( oldAttributes ) => {
+		const padding = {};
+		const paddingTablet = {};
+		const paddingMobile = {};
+		const margin = {};
+		const marginTablet = {};
+		const marginMobile = {};
+		const border = {};
+		const borderRadius = {};
+		let backgroundImage = {};
+		let backgroundPosition = {};
+
+		if ( 'unlinked' === oldAttributes.paddingType ) {
+			padding.top = oldAttributes.paddingTop ? oldAttributes.paddingTop + 'px' : '20px';
+			padding.bottom = oldAttributes.paddingBottom ? oldAttributes.paddingBottom + 'px' : '20px';
+			padding.left = oldAttributes.paddingLeft ? oldAttributes.paddingLeft + 'px' : '20px';
+			padding.right = oldAttributes.paddingRight ? oldAttributes.paddingRight + 'px' : '20px';
+		} else {
+			padding.top = oldAttributes.padding ? oldAttributes.padding + 'px' : '20px';
+			padding.bottom = oldAttributes.padding ? oldAttributes.padding + 'px' : '20px';
+			padding.left = oldAttributes.padding ? oldAttributes.padding + 'px' : '20px';
+			padding.right = oldAttributes.padding ? oldAttributes.padding + 'px' : '20px';
+		}
+
+		if ( 'unlinked' === oldAttributes.paddingTypeTablet ) {
+			paddingTablet.top = oldAttributes.paddingTopTablet ? oldAttributes.paddingTopTablet + 'px' : null;
+			paddingTablet.bottom = oldAttributes.paddingBottomTablet ? oldAttributes.paddingBottomTablet + 'px' : null;
+			paddingTablet.left = oldAttributes.paddingLeftTablet ? oldAttributes.paddingLeftTablet + 'px' : null;
+			paddingTablet.right = oldAttributes.paddingRightTablet ? oldAttributes.paddingRightTablet + 'px' : null;
+		} else {
+			paddingTablet.top = oldAttributes.paddingTablet ? oldAttributes.paddingTablet + 'px' : null;
+			paddingTablet.bottom = oldAttributes.paddingTablet ? oldAttributes.paddingTablet + 'px' : null;
+			paddingTablet.left = oldAttributes.paddingTablet ? oldAttributes.paddingTablet + 'px' : null;
+			paddingTablet.right = oldAttributes.paddingTablet ? oldAttributes.paddingTablet + 'px' : null;
+		}
+
+		if ( 'unlinked' === oldAttributes.paddingTypeMobile ) {
+			paddingMobile.top = oldAttributes.paddingMobileTop ? oldAttributes.paddingMobileTop + 'px' : null;
+			paddingMobile.bottom = oldAttributes.paddingMobileBottom ? oldAttributes.paddingMobileBottom + 'px' : null;
+			paddingMobile.left = oldAttributes.paddingMobileLeft ? oldAttributes.paddingMobileLeft + 'px' : null;
+			paddingMobile.right = oldAttributes.paddingMobileRight ? oldAttributes.paddingMobileRight + 'px' : null;
+		} else {
+			paddingMobile.top = oldAttributes.paddingMobile ? oldAttributes.paddingMobile + 'px' : null;
+			paddingMobile.bottom = oldAttributes.paddingMobile ? oldAttributes.paddingMobile + 'px' : null;
+			paddingMobile.left = oldAttributes.paddingMobile ? oldAttributes.paddingMobile + 'px' : null;
+			paddingMobile.right = oldAttributes.paddingMobile ? oldAttributes.paddingMobile + 'px' : null;
+		}
+
+		if ( 'linked' === oldAttributes.marginType ) {
+			margin.top = oldAttributes.margin ? oldAttributes.margin + 'px' : '20px';
+			margin.bottom = oldAttributes.margin ? oldAttributes.margin + 'px' : '20px';
+			margin.left = oldAttributes.margin ? oldAttributes.margin + 'px' : '20px';
+			margin.right = oldAttributes.margin ? oldAttributes.margin + 'px' : '20px';
+		} else {
+			margin.top = oldAttributes.marginTop ? oldAttributes.marginTop + 'px' : '20px';
+			margin.bottom = oldAttributes.marginBottom ? oldAttributes.marginBottom + 'px' : '20px';
+			margin.left = oldAttributes.marginLeft ? oldAttributes.marginLeft + 'px' : '20px';
+			margin.right = oldAttributes.marginRight ? oldAttributes.marginRight + 'px' : '20px';
+		}
+
+		if ( 'linked' === oldAttributes.marginTypeTablet ) {
+			marginTablet.top = oldAttributes.marginTablet ? oldAttributes.marginTablet + 'px' : null;
+			marginTablet.bottom = oldAttributes.marginTablet ? oldAttributes.marginTablet + 'px' : null;
+			marginTablet.left = oldAttributes.marginTablet ? oldAttributes.marginTablet + 'px' : null;
+			marginTablet.right = oldAttributes.marginTablet ? oldAttributes.marginTablet + 'px' : null;
+		} else {
+			marginTablet.top = oldAttributes.marginTopTablet ? oldAttributes.marginTopTablet + 'px' : null;
+			marginTablet.bottom = oldAttributes.marginBottomTablet ? oldAttributes.marginBottomTablet + 'px' : null;
+			marginTablet.left = oldAttributes.marginLeftTablet ? oldAttributes.marginLeftTablet + 'px' : null;
+			marginTablet.right = oldAttributes.marginRightTablet ? oldAttributes.marginRightTablet + 'px' : null;
+		}
+
+		if ( 'linked' === oldAttributes.marginTypeMobile ) {
+			marginMobile.top = oldAttributes.marginMobile ? oldAttributes.marginMobile + 'px' : null;
+			marginMobile.bottom = oldAttributes.marginMobile ? oldAttributes.marginMobile + 'px' : null;
+			marginMobile.left = oldAttributes.marginMobile ? oldAttributes.marginMobile + 'px' : null;
+			marginMobile.right = oldAttributes.marginMobile ? oldAttributes.marginMobile + 'px' : null;
+		} else {
+			marginMobile.top = oldAttributes.marginTopMobile ? oldAttributes.marginTopMobile + 'px' : null;
+			marginMobile.bottom = oldAttributes.marginBottomMobile ? oldAttributes.marginBottomMobile + 'px' : null;
+			marginMobile.left = oldAttributes.marginLeftMobile ? oldAttributes.marginLeftMobile + 'px' : null;
+			marginMobile.right = oldAttributes.marginRightMobile ? oldAttributes.marginRightMobile + 'px' : null;
+		}
+
+		if ( 'unlinked' === oldAttributes.borderType ) {
+			border.top = oldAttributes.borderTop ? oldAttributes.borderTop + 'px' : null;
+			border.bottom = oldAttributes.borderBottom ? oldAttributes.borderBottom + 'px' : null;
+			border.left = oldAttributes.borderLeft ? oldAttributes.borderLeft + 'px' : null;
+			border.right = oldAttributes.borderRight ? oldAttributes.borderRight + 'px' : null;
+		} else {
+			border.top = oldAttributes.border ? oldAttributes.border + 'px' : null;
+			border.bottom = oldAttributes.border ? oldAttributes.border + 'px' : null;
+			border.left = oldAttributes.border ? oldAttributes.border + 'px' : null;
+			border.right = oldAttributes.border ? oldAttributes.border + 'px' : null;
+		}
+
+		if ( 'unlinked' === oldAttributes.borderRadiusType ) {
+			borderRadius.top = oldAttributes.borderRadiusTop ? oldAttributes.borderRadiusTop + 'px' : null;
+			borderRadius.bottom = oldAttributes.borderRadiusBottom ? oldAttributes.borderRadiusBottom + 'px' : null;
+			borderRadius.left = oldAttributes.borderRadiusLeft ? oldAttributes.borderRadiusLeft + 'px' : null;
+			borderRadius.right = oldAttributes.borderRadiusRight ? oldAttributes.borderRadiusRight + 'px' : null;
+		} else {
+			borderRadius.top = oldAttributes.borderRadius ? oldAttributes.borderRadius + 'px' : null;
+			borderRadius.bottom = oldAttributes.borderRadius ? oldAttributes.borderRadius + 'px' : null;
+			borderRadius.left = oldAttributes.borderRadius ? oldAttributes.borderRadius + 'px' : null;
+			borderRadius.right = oldAttributes.borderRadius ? oldAttributes.borderRadius + 'px' : null;
+		}
+
+		if ( undefined !== oldAttributes.backgroundImageURL && undefined !== oldAttributes.backgroundImageID ) {
+			backgroundImage = {
+				id: oldAttributes.backgroundImageID,
+				url: oldAttributes.backgroundImageURL
+			};
+		}
+
+		const positions = {
+			'top left': {
+				x: '0.00',
+				y: '0.00'
+			},
+			'top center': {
+				x: '0.50',
+				y: '0.00'
+			},
+			'top right': {
+				x: '1.00',
+				y: '0.00'
+			},
+			'center left': {
+				x: '0.00',
+				y: '0.50'
+			},
+			'center center': {
+				x: '0.50',
+				y: '0.50'
+			},
+			'center right': {
+				x: '1.00',
+				y: '0.50'
+			},
+			'bottom left': {
+				x: '0.00',
+				y: '1.00'
+			},
+			'bottom center': {
+				x: '0.50',
+				y: '1.00'
+			},
+			'bottom right': {
+				x: '1.00',
+				y: '1.00'
+			}
+		};
+
+		if ( undefined !== oldAttributes.backgroundPosition ) {
+			backgroundPosition = positions[ oldAttributes.backgroundPosition ];
+		}
+
+		const attributes = {
+			...omit(
+				oldAttributes,
+				[
+					'paddingType',
+					'paddingTypeTablet',
+					'paddingTypeMobile',
+					'paddingTop',
+					'paddingTopTablet',
+					'paddingTopMobile',
+					'paddingRight',
+					'paddingRightTablet',
+					'paddingRightMobile',
+					'paddingBottom',
+					'paddingBottomTablet',
+					'paddingBottomMobile',
+					'paddingLeft',
+					'paddingLeftTablet',
+					'paddingLeftMobile',
+					'marginType',
+					'marginTypeTablet',
+					'marginTypeMobile',
+					'marginTop',
+					'marginTopTablet',
+					'marginTopMobile',
+					'marginRight',
+					'marginRightTablet',
+					'marginRightMobile',
+					'marginBottom',
+					'marginBottomTablet',
+					'marginBottomMobile',
+					'marginLeft',
+					'marginLeftTablet',
+					'marginLeftMobile',
+					'borderType',
+					'borderTop',
+					'borderRight',
+					'borderBottom',
+					'borderLeft',
+					'borderRadiusType',
+					'borderRadiusTop',
+					'borderRadiusRight',
+					'borderRadiusBottom',
+					'borderRadiusLeft'
+				]
+			),
+			...( ! isNullObject( padding ) && { padding }),
+			...( ! isNullObject( paddingTablet ) && { paddingTablet }),
+			...( ! isNullObject( paddingMobile ) && { paddingMobile }),
+			...( ! isNullObject( margin ) && { margin }),
+			...( ! isNullObject( marginTablet ) && { marginTablet }),
+			...( ! isNullObject( marginMobile ) && { marginMobile }),
+			...( ! isNullObject( border ) && { border }),
+			...( ! isNullObject( borderRadius ) && { borderRadius }),
+			...( ! isNullObject( backgroundImage ) && { backgroundImage }),
+			...( ! isNullObject( backgroundPosition ) && { backgroundPosition })
+		};
+
+		return {
+			...attributes
+		};
+	},
+
+	isEligible: attributes => {
+		const oldAttributes = [
+			'padding',
+			'paddingTablet',
+			'paddingMobile',
+			'paddingTop',
+			'paddingTopTablet',
+			'paddingTopMobile',
+			'paddingRight',
+			'paddingRightTablet',
+			'paddingRightMobile',
+			'paddingBottom',
+			'paddingBottomTablet',
+			'paddingBottomMobile',
+			'paddingLeft',
+			'paddingLeftTablet',
+			'paddingLeftMobile',
+			'margin',
+			'marginTablet',
+			'marginMobile',
+			'marginTop',
+			'marginTopTablet',
+			'marginTopMobile',
+			'marginRight',
+			'marginRightTablet',
+			'marginRightMobile',
+			'marginBottom',
+			'marginBottomTablet',
+			'marginBottomMobile',
+			'marginLeft',
+			'marginLeftTablet',
+			'marginLeftMobile',
+			'borderType',
+			'border',
+			'borderTop',
+			'borderRight',
+			'borderBottom',
+			'borderLeft',
+			'borderRadiusType',
+			'borderRadius',
+			'borderRadiusTop',
+			'borderRadiusRight',
+			'borderRadiusBottom',
+			'borderRadiusLeft'
+		];
+
+		const isEligible = oldAttributes.some( attr => attributes[ attr ] && 'number' === typeof attributes[ attr ]) || ( undefined !== attributes.backgroundImageURL && undefined !== attributes.backgroundImageID ) || ( undefined !== attributes.backgroundPosition && 'object' !== typeof attributes.backgroundPosition );
+
+		return isEligible;
+	},
 
 	save: ({
 		attributes,

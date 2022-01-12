@@ -34,9 +34,6 @@ class Review_Block extends Base_Block {
 			'id'          => array(
 				'type' => 'string',
 			),
-			'className'   => array(
-				'type' => 'string',
-			),
 			'title'       => array(
 				'type' => 'string',
 			),
@@ -161,11 +158,15 @@ class Review_Block extends Base_Block {
 		}
 
 		$id        = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-' . wp_rand( 10, 100 );
-		$class     = isset( $attributes['className'] ) ? $attributes['className'] : '';
-		$class     = 'wp-block-themeisle-blocks-review ' . esc_attr( $class );
 		$is_single = ( isset( $attributes['image'] ) && isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ? '' : ' is-single';
 
-		$html  = '<div id="' . esc_attr( $id ) . '" class="' . trim( $class ) . '">';
+		$wrapper_attributes = get_block_wrapper_attributes(
+			array(
+				'id' => $id,
+			) 
+		);
+
+		$html  = '<div ' . $wrapper_attributes . '>';
 		$html .= '  <div class ="wp-block-themeisle-blocks-review__header">';
 
 		if ( isset( $attributes['title'] ) && ! empty( $attributes['title'] ) ) {
@@ -197,7 +198,11 @@ class Review_Block extends Base_Block {
 		if ( ( isset( $attributes['image'] ) || ( isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ) ) {
 			$html .= '	<div class="wp-block-themeisle-blocks-review__left_details' . $is_single . '">';
 			if ( isset( $attributes['image'] ) ) {
-				$html .= '	<img src="' . $attributes['image']['url'] . '" alt="' . $attributes['image']['alt'] . '"/>';
+				if ( wp_attachment_is_image( $attributes['image']['id'] ) ) {
+					$html .= wp_get_attachment_image( $attributes['image']['id'], 'medium' );
+				} else {
+					$html .= '	<img src="' . esc_url( $attributes['image']['url'] ) . '" alt="' . esc_attr( $attributes['image']['alt'] ) . '"/>';
+				}
 			}
 
 			if ( isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) {

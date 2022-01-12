@@ -19,6 +19,8 @@ import { __ } from '@wordpress/i18n';
 
 import apiFetch from '@wordpress/api-fetch';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import {
 	Fragment,
 	useEffect,
@@ -50,7 +52,6 @@ let tableLinks = [];
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId
 }) => {
 	useEffect( () => {
@@ -62,7 +63,7 @@ const Edit = ({
 		( async() => {
 			try {
 				setStatus( 'loading' );
-				const data = await apiFetch({ path: 'themeisle-gutenberg-blocks/v1/filter_blocks?block=themeisle-blocks/review' });
+				const data = await apiFetch({ path: 'otter/v1/filter_blocks?block=themeisle-blocks/review' });
 				setData( data );
 				setStatus( 'loaded' );
 				setEditing( ! Boolean( attributes.reviews.length ) );
@@ -172,17 +173,23 @@ const Edit = ({
 		return stars;
 	};
 
+	const blockProps = useBlockProps({
+		id: attributes.id
+	});
+
 	if ( isEditing ) {
 		return (
-			<Placeholder
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-				data={ data }
-				onComplete={ () => setEditing( false ) }
-				isLoading={ isLoading }
-				isComplete={ isComplete }
-				isError={ isError }
-			/>
+			<div { ...blockProps }>
+				<Placeholder
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+					data={ data }
+					onComplete={ () => setEditing( false ) }
+					isLoading={ isLoading }
+					isComplete={ isComplete }
+					isError={ isError }
+				/>
+			</div>
 		);
 	}
 
@@ -195,10 +202,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<table
-				id={ attributes.id }
-				className={ className }
-			>
+			<table { ...blockProps }>
 				<thead>
 					<tr>
 						<th></th>

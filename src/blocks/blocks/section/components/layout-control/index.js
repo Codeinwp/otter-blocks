@@ -33,10 +33,8 @@ const LayoutControl = ({
 	columns
 }) => {
 	const getView = useSelect( ( select ) => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-
-		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
+		return __experimentalGetPreviewDeviceType();
 	}, []);
 
 	let value;
@@ -230,7 +228,7 @@ const LayoutControl = ({
 									) }
 									onClick={ () => onClick( 'collapsedRows' ) }
 								>
-									{ colsCollapsed() }
+									{ rowsCollapsed() }
 								</Button>
 							</Tooltip>
 						</Fragment>

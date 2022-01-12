@@ -154,7 +154,7 @@ const Main = () => {
 
 	const regenerateStyles = async() => {
 		setAPISaving( true );
-		const data = await apiFetch({ path: 'themeisle-gutenberg-blocks/v1/regenerate_styles', method: 'DELETE' });
+		const data = await apiFetch({ path: 'otter/v1/regenerate', method: 'DELETE' });
 		addNotification( data.data.message, data.success ? 'success' : 'danger' );
 		setRegeneratedDisabled( true );
 		setAPISaving( false );
@@ -254,7 +254,6 @@ const Main = () => {
 								<div className="otter-button-group">
 									<Button
 										isPrimary
-										isLarge
 										disabled={ isAPISaving }
 										onClick={ () => changeOptions( 'themeisle_google_map_block_api_key', 'googleMapsAPI', googleMapsAPI ) }
 									>
@@ -299,7 +298,6 @@ const Main = () => {
 								<div className="otter-button-group">
 									<Button
 										isPrimary
-										isLarge
 										disabled={ isAPISaving }
 										onClick={ () => {
 											changeOptions( 'themeisle_google_captcha_api_site_key', 'googleCaptchaAPISiteKey', googleCaptchaAPISiteKey );
@@ -355,11 +353,9 @@ const Main = () => {
 
 						<PanelRow>
 							<div>
-								{ [
-									__( 'Let us know how we can improve. Vote on existing ideas or suggest new ones.', 'otter-blocks' ),
-									' ',
-									<ExternalLink href="https://otter.nolt.io/">{ __( 'Give feedback!', 'otter-blocks' ) }</ExternalLink>
-								] }
+								{ __( 'Let us know how we can improve. Vote on existing ideas or suggest new ones.', 'otter-blocks' ) }
+								{ ' ' }
+								<ExternalLink href="https://otter.nolt.io/">{ __( 'Give feedback!', 'otter-blocks' ) }</ExternalLink>
 							</div>
 						</PanelRow>
 					</PanelBody>
@@ -374,7 +370,6 @@ const Main = () => {
 						<div className="otter-info-button-group">
 							<Button
 								isSecondary
-								isLarge
 								target="_blank"
 								href="https://wordpress.org/support/plugin/otter-blocks"
 								className="otter-step-seven"
@@ -384,7 +379,6 @@ const Main = () => {
 
 							<Button
 								isSecondary
-								isLarge
 								target="_blank"
 								href="https://wordpress.org/support/plugin/otter-blocks/reviews/#new-post"
 								className="otter-step-eight"
@@ -407,7 +401,6 @@ const Main = () => {
 					<div className="otter-modal-actions">
 						<Button
 							isSecondary
-							isLarge
 							onClick={ () => setOpen( false ) }
 						>
 							{ __( 'Cancel', 'otter-blocks' ) }
@@ -415,7 +408,6 @@ const Main = () => {
 
 						<Button
 							isPrimary
-							isLarge
 							disabled={ isAPISaving }
 							isBusy={ isAPISaving }
 							onClick={ regenerateStyles }

@@ -8,7 +8,10 @@ import classnames from 'classnames';
  */
 import { ResizableBox } from '@wordpress/components';
 
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import {
 	Fragment,
@@ -27,7 +30,6 @@ import Inspector from './inspector.js';
 const ProgressBar = ({
 	attributes,
 	setAttributes,
-	className,
 	isSelected,
 	clientId,
 	toggleSelection
@@ -100,6 +102,11 @@ const ProgressBar = ({
 		}
 	};
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		className: classnames({ 'has-tooltip': 'tooltip' === attributes.percentagePosition })
+	});
+
 	return (
 		<Fragment>
 			<Inspector
@@ -110,10 +117,7 @@ const ProgressBar = ({
 				setHeightMode={ setHeightMode }
 			/>
 
-			<div
-				className={ classnames( className, { 'has-tooltip': 'tooltip' === attributes.percentagePosition }) }
-				id={ attributes.id }
-			>
+			<div { ...blockProps }>
 				{ ( 'outer' === attributes.titleStyle || 'outer' === attributes.percentagePosition ) && (
 					<div className="wp-block-themeisle-blocks-progress-bar__outer">
 						{ 'outer' === attributes.titleStyle && (

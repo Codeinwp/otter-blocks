@@ -1,4 +1,4 @@
-.otter-blocks-conditions {
+.otter-conditions {
 	margin-top: 10px;
 
 	.components-button {
@@ -9,12 +9,12 @@
 	}
 }
 
-.otter-blocks-conditions__operator-wrapper {
+.otter-conditions__operator-wrapper {
 	position: relative;
 	height: 45px;
 	margin: 10px 0;
 
-	.otter-blocks-conditions__operator-line {
+	.otter-conditions__operator-line {
 		position: absolute;
 		left: 50%;
 		top: 5px;
@@ -24,7 +24,7 @@
 		z-index: 1;
 	}
 
-	.otter-blocks-conditions__operator-word {
+	.otter-conditions__operator-word {
 		text-align: center;
 		height: 12px;
 		position: absolute;
@@ -45,9 +45,33 @@
 	}
 }
 
-.otter-blocks-conditions__add {
+.otter-conditions__add {
 	display: flex;
 	justify-content: center;
 	width: 100%;
 	margin-top: 15px;
+}
+
+.block-editor-block-list__layout {
+	.block-editor-block-list__block {
+		&:not( .is-selected ) {
+			&.otter-has-condition::after {
+				content: "Block Conditions";
+				z-index: 1;
+				font-size: 10px;
+				font-weight: bold;
+				color: var(--wp-admin-theme-color);
+				text-transform: uppercase;
+				text-align: center;
+				line-height: 20px;
+				width: 120px;
+				display: block;
+				position: absolute;
+				height: 20px;
+				right: 0;
+				left: auto;
+				border: 1px solid var(--wp-admin-theme-color);
+			}
+		}
+	}
 }

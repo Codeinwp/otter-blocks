@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
 import hexToRgba from 'hex-rgba';
 import GoogleFontLoader from 'react-google-font-loader';
 
@@ -10,9 +9,14 @@ import GoogleFontLoader from 'react-google-font-loader';
  */
 import { __ } from '@wordpress/i18n';
 
+import { omitBy } from 'lodash';
+
 import { createBlock } from '@wordpress/blocks';
 
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import { useViewportMatch } from '@wordpress/compose';
 
@@ -34,25 +38,22 @@ import Inspector from './inspector.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId,
 	mergeBlocks,
 	insertBlocksAfter,
 	onReplace
 }) => {
 	const {
-		isViewportAvailable,
 		isPreviewDesktop,
 		isPreviewTablet,
 		isPreviewMobile
 	} = useSelect( select => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
 
 		return {
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
+			isPreviewDesktop: 'Desktop' === __experimentalGetPreviewDeviceType(),
+			isPreviewTablet: 'Tablet' === __experimentalGetPreviewDeviceType(),
+			isPreviewMobile: 'Mobile' === __experimentalGetPreviewDeviceType()
 		};
 	}, []);
 
@@ -75,7 +76,7 @@ const Edit = ({
 
 	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
 
-	if ( isViewportAvailable && ! isMobile ) {
+	if ( ! isMobile ) {
 		isDesktop = isPreviewDesktop;
 		isTablet = isPreviewTablet;
 		isMobile = isPreviewMobile;
@@ -85,46 +86,11 @@ const Edit = ({
 		setAttributes({ content: value });
 	};
 
-	const changeFontFamily = value => {
-		if ( ! value ) {
-			setAttributes({
-				fontFamily: value,
-				fontVariant: value
-			});
-		} else {
-			setAttributes({
-				fontFamily: value,
-				fontVariant: 'normal',
-				fontStyle: 'normal'
-			});
-		}
-	};
-
-	const changeFontVariant = value => {
-		setAttributes({ fontVariant: value });
-	};
-
-	const changeFontStyle = value => {
-		setAttributes({ fontStyle: value });
-	};
-
-	const changeTextTransform = value => {
-		setAttributes({ textTransform: value });
-	};
-
-	const changeLineHeight = value => {
-		setAttributes({ lineHeight: value });
-	};
-
-	const changeLetterSpacing = value => {
-		setAttributes({ letterSpacing: value });
-	};
-
 	let fontSizeStyle, stylesheet, textShadowStyle;
 
 	if ( isDesktop ) {
 		fontSizeStyle = {
-			fontSize: `${ attributes.fontSize }px`
+			fontSize: attributes.fontSize ? `${ attributes.fontSize }px` : undefined
 		};
 
 		stylesheet = {
@@ -140,7 +106,7 @@ const Edit = ({
 
 	if ( isTablet ) {
 		fontSizeStyle = {
-			fontSize: `${ attributes.fontSizeTablet }px`
+			fontSize: attributes.fontSizeTablet ? `${ attributes.fontSizeTablet }px` : undefined
 		};
 
 		stylesheet = {
@@ -156,7 +122,7 @@ const Edit = ({
 
 	if ( isMobile ) {
 		fontSizeStyle = {
-			fontSize: `${ attributes.fontSizeMobile }px`
+			fontSize: attributes.fontSizeMobile ? `${ attributes.fontSizeMobile }px` : undefined
 		};
 
 		stylesheet = {
@@ -176,23 +142,28 @@ const Edit = ({
 		};
 	}
 
-	const style = {
+	const style = omitBy({
 		color: attributes.headingColor,
 		...fontSizeStyle,
-		fontFamily: attributes.fontFamily,
+		fontFamily: attributes.fontFamily || undefined,
 		fontWeight: 'regular' === attributes.fontVariant ? 'normal' : attributes.fontVariant,
-		fontStyle: attributes.fontStyle,
-		textTransform: attributes.textTransform,
-		lineHeight: 3 < attributes.lineHeight ? attributes.lineHeight + 'px' : attributes.lineHeight,
+		fontStyle: attributes.fontStyle || undefined,
+		textTransform: attributes.textTransform || undefined,
+		lineHeight: ( 3 < attributes.lineHeight ? attributes.lineHeight + 'px' : attributes.lineHeight ) || undefined,
 		letterSpacing: attributes.letterSpacing && `${ attributes.letterSpacing }px`,
 		...stylesheet,
 		...textShadowStyle
-	};
+	}, x => x?.includes?.( 'undefined' ) );
+
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		style
+	});
 
 	return (
 		<Fragment>
 			<style>
-				{ `.${ attributes.id } mark, .${ attributes.id } .highlight {
+				{ `#${ attributes.id } mark, #${ attributes.id } .highlight {
 						color: ${ attributes.highlightColor };
 						background: ${ attributes.highlightBackground };
 					}` }
@@ -208,38 +179,22 @@ const Edit = ({
 			<Controls
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				changeFontFamily={ changeFontFamily }
-				changeFontVariant={ changeFontVariant }
-				changeFontStyle={ changeFontStyle }
-				changeTextTransform={ changeTextTransform }
-				changeLineHeight={ changeLineHeight }
-				changeLetterSpacing={ changeLetterSpacing }
 			/>
 
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				changeFontFamily={ changeFontFamily }
-				changeFontVariant={ changeFontVariant }
-				changeFontStyle={ changeFontStyle }
-				changeTextTransform={ changeTextTransform }
-				changeLineHeight={ changeLineHeight }
-				changeLetterSpacing={ changeLetterSpacing }
 			/>
 
 			<RichText
 				identifier="content"
-				className={ classnames(
-					attributes.id,
-					className
-				) }
 				value={ attributes.content }
 				placeholder={ __( 'Write heading…', 'otter-blocks' ) }
 				tagName={ attributes.tag }
 				formattingControls={ [ 'bold', 'italic', 'link', 'strikethrough', 'highlight' ] }
 				allowedFormats={ [ 'core/bold', 'core/italic', 'core/link', 'core/strikethrough', 'themeisle-blocks/highlight' ] }
 				onMerge={ mergeBlocks }
-				unstableOnSplit={
+				onSplit={
 					insertBlocksAfter ?
 						( before, after, ...blocks ) => {
 							setAttributes({ content: before });
@@ -251,8 +206,8 @@ const Edit = ({
 						undefined
 				}
 				onRemove={ () => onReplace([]) }
-				style={ style }
 				onChange={ changeContent }
+				{ ...blockProps }
 			/>
 		</Fragment>
 	);

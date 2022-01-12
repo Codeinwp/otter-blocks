@@ -51,18 +51,18 @@ class Blocks_CSS {
 		$asset_file = include BLOCKS_CSS_PATH . '/build/css/index.asset.php';
 
 		wp_enqueue_script(
-			'themeisle-gutenberg-css',
-			BLOCKS_CSS_URL . '/build/css/index.js',
+			'otter-css',
+			BLOCKS_CSS_URL . 'build/css/index.js',
 			array_merge( $asset_file['dependencies'], array( 'code-editor', 'csslint' ) ),
 			$asset_file['version'],
 			true
 		);
 
-		wp_set_script_translations( 'themeisle-gutenberg-css', 'otter-blocks' );
+		wp_set_script_translations( 'otter-css', 'otter-blocks' );
 
 		wp_enqueue_style(
-			'themeisle-gutenberg-css',
-			BLOCKS_CSS_URL . '/build/css/index.css',
+			'otter-css',
+			BLOCKS_CSS_URL . 'build/css/index.css',
 			array( 'code-editor' ),
 			$asset_file['version']
 		);

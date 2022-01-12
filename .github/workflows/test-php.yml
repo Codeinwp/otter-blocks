@@ -65,6 +65,6 @@ jobs:
             restore-keys: |
               ${{ runner.os }}-composer-
         - name: Install composer
-          run: composer install --prefer-dist --no-progress --no-suggest --no-dev
+          run: composer install --prefer-dist --no-progress --no-suggest
         - name: Run phpunit
           run: phpunit

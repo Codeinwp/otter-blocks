@@ -15,7 +15,8 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	InnerBlocks,
-	RichText
+	RichText,
+	useBlockProps
 } from '@wordpress/block-editor';
 
 import {
@@ -34,7 +35,6 @@ import Inspector from './inspector.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	isSelected,
 	clientId
 }) => {
@@ -68,6 +68,12 @@ const Edit = ({
 		}
 	`;
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		style: style.container,
+		css: contentCSS
+	});
+
 	return (
 		<Fragment>
 			<Controls
@@ -80,12 +86,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div
-				className={ className }
-				id={ attributes.id }
-				style={ style.container }
-				css={ contentCSS }
-			>
+			<div { ...blockProps }>
 				<div className="otter-business-hour__container">
 					<div
 						style={ style.title }

@@ -40,13 +40,12 @@ class Button_Group_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-button',
 				'properties' => array(
 					array(
-						'property' => 'margin-right',
+						'property' => 'gap',
 						'value'    => 'spacing',
-						'unit'     => 'px',
 						'default'  => 20,
+						'unit'     => 'px',
 					),
 				),
 			)

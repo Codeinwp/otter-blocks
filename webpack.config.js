@@ -62,13 +62,16 @@ module.exports = [
 		// OTTER BLOCKS
 		...defaultConfig,
 		stats: 'minimal',
-		devtool: 'eval-source-map',
+		devtool: 'development' === NODE_ENV ? 'eval-source-map' : undefined,
 		mode: NODE_ENV,
 		entry: {
 			blocks: [
 				'./src/blocks/index.js',
 				'./src/blocks/plugins/registerPlugin.js',
 				...glob.sync( './src/blocks/blocks/**/index.js' )
+			],
+			woocommerce: [
+				...glob.sync( './src/blocks/woocommerce/**/index.js' )
 			],
 			'leaflet-map': './src/blocks/frontend/leaflet-map/index.js',
 			maps: './src/blocks/frontend/google-map/index.js',

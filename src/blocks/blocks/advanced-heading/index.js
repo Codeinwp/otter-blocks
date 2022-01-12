@@ -19,6 +19,7 @@ import edit from './edit.js';
 import save from './save.js';
 
 registerBlockType( 'themeisle-blocks/advanced-heading', {
+	apiVersion: 2,
 	title: __( 'Advanced Heading', 'otter-blocks' ),
 	description: __( 'Advanced Heading gives a spin to editor\'s Heading block with much needed customization options.', 'otter-blocks' ),
 	icon,

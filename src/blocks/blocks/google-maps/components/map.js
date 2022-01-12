@@ -17,7 +17,6 @@ import {
 
 const Map = ({
 	attributes,
-	className,
 	initMap,
 	displayMap,
 	isMapLoaded,
@@ -34,10 +33,7 @@ const Map = ({
 		<Fragment>
 			<div
 				id={ attributes.id }
-				className={ classnames(
-					className,
-					{ 'is-selecting-marker': isSelectingMarker }
-				) }
+				className={ classnames({ 'is-selecting-marker': isSelectingMarker }) }
 				style={ {
 					height: attributes.height + 'px'
 				} }

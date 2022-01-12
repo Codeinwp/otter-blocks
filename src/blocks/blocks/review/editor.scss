@@ -1,5 +1,12 @@
 @import 'style';
 
+.wp-block-themeisle-blocks-review {
+	&.is-placeholder,
+	&.has-warning {
+		display: block;
+	}
+}
+
 .wp-block-themeisle-blocks-review__inspector_image {
 	img {
 		max-height: 250px;

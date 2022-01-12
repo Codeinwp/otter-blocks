@@ -8,6 +8,8 @@ import {
 
 import { __ } from '@wordpress/i18n';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import {
 	Fragment,
 	useEffect,
@@ -28,7 +30,6 @@ import defaultAttributes from './attributes.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	isSelected,
 	clientId
 }) => {
@@ -69,20 +70,14 @@ const Edit = ({
 
 	const [ isJSONAllowed, setJSONAllowed ] = useState( false );
 
+	const blockProps = useBlockProps();
+
 	return (
 		<Fragment>
-			<Controls
-				isEditing={ isEditing }
-				setEditing={ setEditing }
-			/>
-
-			{ ( isEmpty( attributes.file ) || isEditing ) && (
-				<Placeholder
-					className={ className }
-					value={ attributes.file }
-					onChange={ onChangeFile }
-					isJSONAllowed={ isJSONAllowed }
-					attributes={ attributes }
+			{ ( ( ! isEmpty( attributes.file ) && isEditing ) || ! isEditing ) && (
+				<Controls
+					isEditing={ isEditing }
+					setEditing={ setEditing }
 				/>
 			) }
 
@@ -94,14 +89,24 @@ const Edit = ({
 				/>
 			) }
 
-			{ ! ( isEmpty( attributes.file ) || isEditing ) && (
-				<LottiePlayer
-					attributes={ attributes }
-					className={ className }
-					isSelected={ isSelected }
-					playerRef={ playerRef }
-				/>
-			) }
+			<div { ...blockProps }>
+				{ ( isEmpty( attributes.file ) || isEditing ) && (
+					<Placeholder
+						value={ attributes.file }
+						onChange={ onChangeFile }
+						isJSONAllowed={ isJSONAllowed }
+						attributes={ attributes }
+					/>
+				) }
+
+				{ ! ( isEmpty( attributes.file ) || isEditing ) && (
+					<LottiePlayer
+						attributes={ attributes }
+						isSelected={ isSelected }
+						playerRef={ playerRef }
+					/>
+				) }
+			</div>
 		</Fragment>
 	);
 };

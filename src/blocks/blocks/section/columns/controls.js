@@ -19,6 +19,7 @@ const Controls = ({
 			setAttributes({ verticalAlign: 'flex-end' });
 		}
 
+		return setAttributes({ verticalAlign: value });
 	};
 
 	const getVerticalAlignValue = () => {
