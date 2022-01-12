@@ -135,7 +135,6 @@ const Edit = ({ attributes, className, setAttributes, clientId }) => {
 					</div>
 					<InnerBlocks
 						template={ [ [ 'core/list' ], [ 'core/list' ] ] }
-						allowedBlocks={ [ 'core/list' ] }
 					/>
 
 				</div>
