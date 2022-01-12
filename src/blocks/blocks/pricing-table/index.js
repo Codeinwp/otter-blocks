@@ -31,8 +31,8 @@ registerBlockVariation( 'themeisle-blocks/advanced-columns', {
 		{
 			name: 'themeisle-blocks/advanced-column',
 			attributes: {
-				columnWidth: "250px",
-				margin: {"top":"10px","right":"10px","bottom":"10px","left":"10px"}
+				columnWidth: '250px',
+				margin: {'top': '10px', 'right': '10px', 'bottom': '10px', 'left': '10px'}
 			},
 			innerBlocks: [
 				{ name: 'themeisle-blocks/pricing-table' }
@@ -41,8 +41,8 @@ registerBlockVariation( 'themeisle-blocks/advanced-columns', {
 		{
 			name: 'themeisle-blocks/advanced-column',
 			attributes: {
-				columnWidth: "250px",
-				margin: {"top":"10px","right":"10px","bottom":"10px","left":"10px"}
+				columnWidth: '250px',
+				margin: {'top': '10px', 'right': '10px', 'bottom': '10px', 'left': '10px'}
 			},
 			innerBlocks: [
 				{ name: 'themeisle-blocks/pricing-table' }
@@ -51,8 +51,8 @@ registerBlockVariation( 'themeisle-blocks/advanced-columns', {
 		{
 			name: 'themeisle-blocks/advanced-column',
 			attributes: {
-				columnWidth: "250px",
-				margin: {"top":"10px","right":"10px","bottom":"10px","left":"10px"}
+				columnWidth: '250px',
+				margin: {'top': '10px', 'right': '10px', 'bottom': '10px', 'left': '10px'}
 			},
 			innerBlocks: [
 				{ name: 'themeisle-blocks/pricing-table' }
