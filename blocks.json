@@ -65,7 +65,6 @@
 	"font-awesome-icons": {
 		"block": "blocks/font-awesome-icons/block.json",
 		"assets": {
-			"font-awesome-icons/editor.css": "blocks/font-awesome-icons/editor.scss",
 			"font-awesome-icons/style.css": "blocks/font-awesome-icons/style.scss"
 		}
 	},

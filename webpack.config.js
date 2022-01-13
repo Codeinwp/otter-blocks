@@ -40,11 +40,11 @@ const blocks = {
 	},
 	'flip': {
 		block: 'blocks/flip/block.json'
+	},
+	'font-awesome-icons': {
+		block: 'blocks/font-awesome-icons/block.json'
 	}
 
-	// 'font-awesome-icons': {
-	// 	block: 'blocks/font-awesome-icons/block.json'
-	// },
 	// 'form': {
 	// 	block: 'blocks/form/block.json'
 	// },

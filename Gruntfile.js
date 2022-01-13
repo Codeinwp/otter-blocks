@@ -60,15 +60,14 @@ module.exports = function( grunt ) {
 			assets: {
 				'flip/style.css': 'blocks/flip/style.scss'
 			}
+		},
+		'font-awesome-icons': {
+			block: 'blocks/font-awesome-icons/block.json',
+			assets: {
+				'font-awesome-icons/style.css': 'blocks/font-awesome-icons/style.scss'
+			}
 		}
 
-		// 'font-awesome-icons': {
-		// 	block: 'blocks/font-awesome-icons/block.json',
-		// 	assets: {
-		// 		'font-awesome-icons/editor.css': 'blocks/font-awesome-icons/editor.scss',
-		// 		'font-awesome-icons/style.css': 'blocks/font-awesome-icons/style.scss'
-		// 	}
-		// },
 		// 'form': {
 		// 	block: 'blocks/form/block.json',
 		// 	assets: {
