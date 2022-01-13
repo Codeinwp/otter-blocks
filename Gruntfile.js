@@ -54,15 +54,14 @@ module.exports = function( grunt ) {
 			assets: {
 				'countdown/style.css': 'blocks/countdown/style.scss'
 			}
+		},
+		'flip': {
+			block: 'blocks/flip/block.json',
+			assets: {
+				'flip/style.css': 'blocks/flip/style.scss'
+			}
 		}
 
-		// 'flip': {
-		// 	block: 'blocks/flip/block.json',
-		// 	assets: {
-		// 		'flip/editor.css': 'blocks/flip/editor.scss',
-		// 		'flip/style.css': 'blocks/flip/style.scss'
-		// 	}
-		// },
 		// 'font-awesome-icons': {
 		// 	block: 'blocks/font-awesome-icons/block.json',
 		// 	assets: {

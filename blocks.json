@@ -59,7 +59,6 @@
 	"flip": {
 		"block": "blocks/flip/block.json",
 		"assets": {
-			"flip/editor.css": "blocks/flip/editor.scss",
 			"flip/style.css": "blocks/flip/style.scss"
 		}
 	},

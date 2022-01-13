@@ -37,11 +37,11 @@ const blocks = {
 	},
 	'countdown': {
 		block: 'blocks/countdown/block.json'
+	},
+	'flip': {
+		block: 'blocks/flip/block.json'
 	}
 
-	// 'flip': {
-	// 	block: 'blocks/flip/block.json'
-	// },
 	// 'font-awesome-icons': {
 	// 	block: 'blocks/font-awesome-icons/block.json'
 	// },
