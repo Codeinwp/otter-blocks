@@ -43,20 +43,20 @@ const blocks = {
 	},
 	'font-awesome-icons': {
 		block: 'blocks/font-awesome-icons/block.json'
+	},
+	'form': {
+		block: 'blocks/form/block.json'
+	},
+	'form-input': {
+		block: 'blocks/form/input/block.json'
+	},
+	'form-nonce': {
+		block: 'blocks/form/nonce/block.json'
+	},
+	'form-textarea': {
+		block: 'blocks/form/textarea/block.json'
 	}
 
-	// 'form': {
-	// 	block: 'blocks/form/block.json'
-	// },
-	// 'form-input': {
-	// 	block: 'blocks/form-input/block.json'
-	// },
-	// 'form-nonce': {
-	// 	block: 'blocks/form-nonce/block.json'
-	// },
-	// 'form-textarea': {
-	// 	block: 'blocks/form-textarea/block.json'
-	// },
 	// 'google-maps': {
 	// 	block: 'blocks/google-map/block.json'
 	// },

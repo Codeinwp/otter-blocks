@@ -76,13 +76,13 @@
 		}
 	},
 	"form-input": {
-		"block": "blocks/form-input/block.json"
+		"block": "blocks/form/input/block.json"
 	},
 	"form-nonce": {
-		"block": "blocks/form-nonce/block.json"
+		"block": "blocks/form/nonce/block.json"
 	},
 	"form-textarea": {
-		"block": "blocks/form-textarea/block.json"
+		"block": "blocks/form/textarea/block.json"
 	},
 	"google-maps": {
 		"block": "blocks/google-map/block.json",

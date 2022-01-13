@@ -218,7 +218,6 @@ class Main {
 	 */
 	public function register_blocks() {
 		// $classnames = array(
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
@@ -243,10 +242,12 @@ class Main {
 		// Handle Front:
 		// Circle Counter
 		// Countdown
+		// Form
 
 		$dynamic_blocks = array(
 			'about-author' => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
 			'add-to-cart-button' => '\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
+			'form-nonce' => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
 		);
 
 		$blocks = array(

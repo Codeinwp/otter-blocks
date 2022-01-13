@@ -66,24 +66,24 @@ module.exports = function( grunt ) {
 			assets: {
 				'font-awesome-icons/style.css': 'blocks/font-awesome-icons/style.scss'
 			}
+		},
+		'form': {
+			block: 'blocks/form/block.json',
+			assets: {
+				'form/editor.css': 'blocks/form/editor.scss',
+				'form/style.css': 'blocks/form/style.scss'
+			}
+		},
+		'form-input': {
+			block: 'blocks/form-input/block.json'
+		},
+		'form-nonce': {
+			block: 'blocks/form-nonce/block.json'
+		},
+		'form-textarea': {
+			block: 'blocks/form-textarea/block.json'
 		}
 
-		// 'form': {
-		// 	block: 'blocks/form/block.json',
-		// 	assets: {
-		// 		'form/editor.css': 'blocks/form/editor.scss',
-		// 		'form/style.css': 'blocks/form/style.scss'
-		// 	}
-		// },
-		// 'form-input': {
-		// 	block: 'blocks/form-input/block.json'
-		// },
-		// 'form-nonce': {
-		// 	block: 'blocks/form-nonce/block.json'
-		// },
-		// 'form-textarea': {
-		// 	block: 'blocks/form-textarea/block.json'
-		// },
 		// 'google-maps': {
 		// 	block: 'blocks/google-map/block.json',
 		// 	assets: {
