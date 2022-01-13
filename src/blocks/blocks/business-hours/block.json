@@ -55,6 +55,6 @@
 			"label": "Black & White"
 		}
 	],
-	"editorStyle": "themeisle-blocks-business-hours-editor",
-	"style": "themeisle-blocks-business-hours-style"
+	"editorStyle": "otter-business-hours-editor",
+	"style": "otter-business-hours-style"
 }

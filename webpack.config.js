@@ -31,11 +31,11 @@ const blocks = {
 	},
 	'button': {
 		block: 'blocks/button-group/button/block.json'
+	},
+	'circle-counter': {
+		block: 'blocks/circle-counter/block.json'
 	}
 
-	// 'circle-counter': {
-	// 	block: 'blocks/circle-counter/block.json'
-	// },
 	// 'countdown': {
 	// 	block: 'blocks/countdown/block.json'
 	// },

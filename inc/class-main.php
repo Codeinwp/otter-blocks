@@ -218,6 +218,7 @@ class Main {
 	 */
 	public function register_blocks() {
 		// $classnames = array(
+		// 	'\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
@@ -225,7 +226,6 @@ class Main {
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Review_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Add_To_Cart_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Images_Block',
@@ -239,6 +239,9 @@ class Main {
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Title_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Upsells_Block',
 		// );
+
+		// Handle Front:
+		// Circle Counter
 
 		$dynamic_blocks = array(
 			'about-author' => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',

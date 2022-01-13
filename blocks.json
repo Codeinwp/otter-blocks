@@ -47,7 +47,6 @@
 	"circle-counter": {
 		"block": "blocks/circle-counter/block.json",
 		"assets": {
-			"circle-counter/editor.css": "blocks/circle-counter/editor.scss",
 			"circle-counter/style.css": "blocks/circle-counter/style.scss"
 		}
 	},

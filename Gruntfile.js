@@ -42,15 +42,14 @@ module.exports = function( grunt ) {
 				'button-group/editor.css': 'blocks/button-group/editor.scss',
 				'button-group/style.css': 'blocks/button-group/style.scss'
 			}
+		},
+		'circle-counter': {
+			block: 'blocks/circle-counter/block.json',
+			assets: {
+				'circle-counter/style.css': 'blocks/circle-counter/style.scss'
+			}
 		}
 
-		// 'circle-counter': {
-		// 	block: 'blocks/circle-counter/block.json',
-		// 	assets: {
-		// 		'circle-counter/editor.css': 'blocks/circle-counter/editor.scss',
-		// 		'circle-counter/style.css': 'blocks/circle-counter/style.scss'
-		// 	}
-		// },
 		// 'countdown': {
 		// 	block: 'blocks/countdown/block.json',
 		// 	assets: {

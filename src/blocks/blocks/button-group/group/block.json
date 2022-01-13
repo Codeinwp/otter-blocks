@@ -46,6 +46,6 @@
 			"type": "number"
 		}
 	},
-	"editorStyle": "themeisle-blocks-button-group-editor",
-	"style": "themeisle-blocks-button-group-style"
+	"editorStyle": "otter-button-group-editor",
+	"style": "otter-button-group-style"
 }

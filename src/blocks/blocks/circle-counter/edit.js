@@ -22,10 +22,12 @@ import {
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import Inspector from './inspector.js';
-import CircularProgressBar from './components/CircleCounter.js';
+import CircularProgressBar from './components/circular-progress-bar.js';
 import { blockInit } from '../../helpers/block-utility.js';
-import defaultAttributes from './attributes.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const CircularProgressBarBlock = ({
 	clientId,
