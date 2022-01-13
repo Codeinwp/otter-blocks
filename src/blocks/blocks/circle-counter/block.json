@@ -49,6 +49,6 @@
 		"titleColor": {
 			"type": "string"
 		}
-		},
+	},
 	"style": "otter-circle-counter-style"
 }

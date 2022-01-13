@@ -242,6 +242,7 @@ class Main {
 
 		// Handle Front:
 		// Circle Counter
+		// Countdown
 
 		$dynamic_blocks = array(
 			'about-author' => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',

@@ -48,15 +48,14 @@ module.exports = function( grunt ) {
 			assets: {
 				'circle-counter/style.css': 'blocks/circle-counter/style.scss'
 			}
+		},
+		'countdown': {
+			block: 'blocks/countdown/block.json',
+			assets: {
+				'countdown/style.css': 'blocks/countdown/style.scss'
+			}
 		}
 
-		// 'countdown': {
-		// 	block: 'blocks/countdown/block.json',
-		// 	assets: {
-		// 		'countdown/editor.css': 'blocks/countdown/editor.scss',
-		// 		'countdown/style.css': 'blocks/countdown/style.scss'
-		// 	}
-		// },
 		// 'flip': {
 		// 	block: 'blocks/flip/block.json',
 		// 	assets: {

@@ -34,11 +34,11 @@ const blocks = {
 	},
 	'circle-counter': {
 		block: 'blocks/circle-counter/block.json'
+	},
+	'countdown': {
+		block: 'blocks/countdown/block.json'
 	}
 
-	// 'countdown': {
-	// 	block: 'blocks/countdown/block.json'
-	// },
 	// 'flip': {
 	// 	block: 'blocks/flip/block.json'
 	// },
