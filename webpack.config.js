@@ -64,11 +64,11 @@ const blocks = {
 	},
 	'icon-list-item': {
 		block: 'blocks/icon-list/item/block.json'
+	},
+	'leaflet-map': {
+		block: 'blocks/leaflet-map/block.json'
 	}
 
-	// 'leaflet-map': {
-	// 	block: 'blocks/leaflet-map/block.json'
-	// },
 	// 'lottie': {
 	// 	block: 'blocks/lottie/block.json'
 	// },

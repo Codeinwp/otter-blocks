@@ -96,15 +96,15 @@ module.exports = function( grunt ) {
 				'icon-list/editor.css': 'blocks/icon-list/editor.scss',
 				'icon-list/style.css': 'blocks/icon-list/style.scss'
 			}
+		},
+		'leaflet-map': {
+			block: 'blocks/leaflet-map/block.json',
+			assets: {
+				'leaflet-map/editor.css': 'blocks/leaflet-map/editor.scss',
+				'leaflet-map/style.css': 'blocks/leaflet-map/style.scss'
+			}
 		}
 
-		// 'leaflet-map': {
-		// 	block: 'blocks/leaflet-map/block.json',
-		// 	assets: {
-		// 		'leaflet-map/editor.css': 'blocks/leaflet-map/editor.scss',
-		// 		'leaflet-map/style.css': 'blocks/leaflet-map/style.scss'
-		// 	}
-		// },
 		// 'lottie': {
 		// 	block: 'blocks/lottie/block.json',
 		// 	assets: {
