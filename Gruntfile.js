@@ -103,14 +103,14 @@ module.exports = function( grunt ) {
 				'leaflet-map/editor.css': 'blocks/leaflet-map/editor.scss',
 				'leaflet-map/style.css': 'blocks/leaflet-map/style.scss'
 			}
+		},
+		'lottie': {
+			block: 'blocks/lottie/block.json',
+			assets: {
+				'lottie/editor.css': 'blocks/lottie/editor.scss'
+			}
 		}
 
-		// 'lottie': {
-		// 	block: 'blocks/lottie/block.json',
-		// 	assets: {
-		// 		'lottie/editor.css': 'blocks/lottie/editor.scss'
-		// 	}
-		// },
 		// 'plugin-card': {
 		// 	block: 'blocks/plugin-card/block.json',
 		// 	assets: {

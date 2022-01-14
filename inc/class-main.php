@@ -243,6 +243,7 @@ class Main {
 		// Form
 		// Google Map
 		// Leaflet Map - Also L is undefined error.
+		// Lottie
 
 		$dynamic_blocks = array(
 			'about-author' => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',

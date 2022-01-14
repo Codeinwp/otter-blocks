@@ -67,11 +67,11 @@ const blocks = {
 	},
 	'leaflet-map': {
 		block: 'blocks/leaflet-map/block.json'
+	},
+	'lottie': {
+		block: 'blocks/lottie/block.json'
 	}
 
-	// 'lottie': {
-	// 	block: 'blocks/lottie/block.json'
-	// },
 	// 'plugin-card': {
 	// 	block: 'blocks/plugin-card/block.json'
 	// },
@@ -81,7 +81,6 @@ const blocks = {
 	// 'posts-list': {
 	// 	block: 'blocks/posts/block.json'
 	// },
-
 	// 'progress-bar': {
 	// 	block: 'blocks/progress-bar/block.json'
 	// },
