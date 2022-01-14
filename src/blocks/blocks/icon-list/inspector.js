@@ -23,8 +23,7 @@ import {
 
 import {
 	lazy,
-	Suspense,
-	Fragment
+	Suspense
 } from '@wordpress/element';
 
 /**
@@ -94,17 +93,27 @@ const Inspector = ({
 									label={ __( 'Image', 'otter-blocks' ) }
 									className='.o-vrt-base-control'
 								>
-									<br/><br/>
-									<img src={attributes.defaultImage.url} alt={attributes.defaultImage.alt} width="100px" />
-									<br/>
-									<Button
-										variant="primary"
-										onClick={ () => setAttributes({
-											defaultImage: {}
-										})}
+									<div
+										style={{
+											width: '100%',
+											padding: '5px',
+											display: 'flex',
+											flexDirection: 'column',
+											alignItems: 'flex-start',
+											gap: '5px'
+										}}
 									>
-										{__( 'Replace Image', 'otter-blocks' )}
-									</Button>
+										<img src={attributes.defaultImage.url} alt={attributes.defaultImage.alt} width="130px" />
+										<Button
+											variant='secondary'
+											isSecondary
+											onClick={ () => setAttributes({
+												defaultImage: {}
+											})}
+										>
+											{__( 'Replace Image', 'otter-blocks' )}
+										</Button>
+									</div>
 								</BaseControl>
 							)
 					) : (

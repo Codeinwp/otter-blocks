@@ -85,17 +85,27 @@ const Inspector = ({
 									label={ __( 'Image', 'otter-blocks' ) }
 									className='.o-vrt-base-control'
 								>
-									<br/><br/>
-									<img src={attributes.image.url} alt={attributes.image.alt} width="100px" />
-									<br/>
-									<Button
-										variant="primary"
-										onClick={ () => setAttributes({
-											image: {}
-										})}
+									<div
+										style={{
+											width: '100%',
+											padding: '5px',
+											display: 'flex',
+											flexDirection: 'column',
+											alignItems: 'flex-start',
+											gap: '5px'
+										}}
 									>
-										{__( 'Replace Image', 'otter-blocks' )}
-									</Button>
+										<img src={attributes.image.url} alt={attributes.image.alt} width="130px" />
+										<Button
+											variant="primary"
+											isSecondary
+											onClick={ () => setAttributes({
+												image: {}
+											})}
+										>
+											{__( 'Replace Image', 'otter-blocks' )}
+										</Button>
+									</div>
 								</BaseControl>
 							)
 					) : (
