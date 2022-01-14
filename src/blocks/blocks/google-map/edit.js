@@ -23,14 +23,16 @@ import {
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import Placeholder from './placeholder.js';
 import Inspector from './inspector.js';
 import { StyleSwitcherBlockControl } from '../../components/style-switcher-control/index.js';
 import MarkerModal from './components/marker-modal.js';
 import Map from './components/map.js';
 import styles from './components/styles.js';
-import defaultAttributes from './attributes.js';
 import { blockInit } from '../../helpers/block-utility.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
 	attributes,

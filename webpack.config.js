@@ -55,11 +55,11 @@ const blocks = {
 	},
 	'form-textarea': {
 		block: 'blocks/form/textarea/block.json'
+	},
+	'google-map': {
+		block: 'blocks/google-map/block.json'
 	}
 
-	// 'google-maps': {
-	// 	block: 'blocks/google-map/block.json'
-	// },
 	// 'icon-list': {
 	// 	block: 'blocks/icon-list/block.json'
 	// },

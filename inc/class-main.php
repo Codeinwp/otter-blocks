@@ -218,7 +218,6 @@ class Main {
 	 */
 	public function register_blocks() {
 		// $classnames = array(
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
@@ -243,11 +242,13 @@ class Main {
 		// Circle Counter
 		// Countdown
 		// Form
+		// Google Map
 
 		$dynamic_blocks = array(
 			'about-author' => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
 			'add-to-cart-button' => '\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
 			'form-nonce' => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
+			'google-map' => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
 		);
 
 		$blocks = array(
@@ -270,7 +271,7 @@ class Main {
 			'form-input',
 			'form-nonce',
 			'form-textarea',
-			'google-maps',
+			'google-map',
 			'icon-list',
 			'icon-list-item',
 			'leaflet-map',

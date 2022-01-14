@@ -82,15 +82,15 @@ module.exports = function( grunt ) {
 		},
 		'form-textarea': {
 			block: 'blocks/form-textarea/block.json'
+		},
+		'google-map': {
+			block: 'blocks/google-map/block.json',
+			assets: {
+				'google-map/editor.css': 'blocks/google-map/editor.scss',
+				'google-map/style.css': 'blocks/google-map/style.scss'
+			}
 		}
 
-		// 'google-maps': {
-		// 	block: 'blocks/google-map/block.json',
-		// 	assets: {
-		// 		'google-maps/editor.css': 'blocks/google-maps/editor.scss',
-		// 		'google-maps/style.css': 'blocks/google-maps/style.scss'
-		// 	}
-		// },
 		// 'icon-list': {
 		// 	block: 'blocks/icon-list/block.json',
 		// 	assets: {

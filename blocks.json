@@ -84,11 +84,11 @@
 	"form-textarea": {
 		"block": "blocks/form/textarea/block.json"
 	},
-	"google-maps": {
+	"google-map": {
 		"block": "blocks/google-map/block.json",
 		"assets": {
-			"google-maps/editor.css": "blocks/google-maps/editor.scss",
-			"google-maps/style.css": "blocks/google-maps/style.scss"
+			"google-maps/editor.css": "blocks/google-map/editor.scss",
+			"google-maps/style.css": "blocks/google-map/style.scss"
 		}
 	},
 	"icon-list": {
