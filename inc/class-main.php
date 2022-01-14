@@ -218,7 +218,6 @@ class Main {
 	 */
 	public function register_blocks() {
 		// $classnames = array(
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Review_Block',
 		// 	'\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
@@ -244,6 +243,7 @@ class Main {
 		// Google Map
 		// Leaflet Map - Also L is undefined error.
 		// Lottie
+		// Popup
 
 		$dynamic_blocks = array(
 			'about-author' => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
@@ -251,6 +251,7 @@ class Main {
 			'form-nonce' => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
 			'google-map' => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
 			'leaflet-map' => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
+			'plugin-card' => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
 		);
 
 		$blocks = array(

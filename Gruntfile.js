@@ -109,22 +109,22 @@ module.exports = function( grunt ) {
 			assets: {
 				'lottie/editor.css': 'blocks/lottie/editor.scss'
 			}
+		},
+		'plugin-card': {
+			block: 'blocks/plugin-card/block.json',
+			assets: {
+				'plugin-card/editor.css': 'blocks/plugin-card/editor.scss',
+				'plugin-card/style.css': 'blocks/plugin-card/style.scss'
+			}
 		}
 
-		// 'plugin-card': {
-		// 	block: 'blocks/plugin-card/block.json',
-		// 	assets: {
-		// 		'plugin-card/editor.css': 'blocks/plugin-card/editor.scss',
-		// 		'plugin-card/style.css': 'blocks/plugin-card/style.scss'
-		// 	}
-		// },
 		// 'popup': {
 		// 	block: 'blocks/popup/block.json',
 		// 	assets: {
-		// 		'popup/editor.css': 'blocks/popup/editor.scss',
 		// 		'popup/style.css': 'blocks/popup/style.scss'
 		// 	}
-		// },
+		// }
+
 		// 'posts-list': {
 		// 	block: 'blocks/posts/block.json',
 		// 	assets: {
