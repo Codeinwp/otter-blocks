@@ -58,14 +58,14 @@ const blocks = {
 	},
 	'google-map': {
 		block: 'blocks/google-map/block.json'
+	},
+	'icon-list': {
+		block: 'blocks/icon-list/block.json'
+	},
+	'icon-list-item': {
+		block: 'blocks/icon-list/item/block.json'
 	}
 
-	// 'icon-list': {
-	// 	block: 'blocks/icon-list/block.json'
-	// },
-	// 'icon-list-item': {
-	// 	block: 'blocks/icon-list/item/block.json'
-	// },
 	// 'leaflet-map': {
 	// 	block: 'blocks/leaflet-map/block.json'
 	// },

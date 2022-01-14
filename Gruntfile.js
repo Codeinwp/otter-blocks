@@ -89,18 +89,15 @@ module.exports = function( grunt ) {
 				'google-map/editor.css': 'blocks/google-map/editor.scss',
 				'google-map/style.css': 'blocks/google-map/style.scss'
 			}
+		},
+		'icon-list': {
+			block: 'blocks/icon-list/block.json',
+			assets: {
+				'icon-list/editor.css': 'blocks/icon-list/editor.scss',
+				'icon-list/style.css': 'blocks/icon-list/style.scss'
+			}
 		}
 
-		// 'icon-list': {
-		// 	block: 'blocks/icon-list/block.json',
-		// 	assets: {
-		// 		'icon-list/editor.css': 'blocks/icon-list/editor.scss',
-		// 		'icon-list/style.css': 'blocks/icon-list/style.scss'
-		// 	}
-		// },
-		// 'icon-list-item': {
-		// 	block: 'blocks/icon-list/item/block.json'
-		// },
 		// 'leaflet-map': {
 		// 	block: 'blocks/leaflet-map/block.json',
 		// 	assets: {
