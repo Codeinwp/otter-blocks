@@ -135,15 +135,15 @@ module.exports = function( grunt ) {
 			assets: {
 				'progress-bar/style.css': 'blocks/progress-bar/style.scss'
 			}
+		},
+		'review': {
+			block: 'blocks/review/block.json',
+			assets: {
+				'review/editor.css': 'blocks/review/editor.scss',
+				'review/style.css': 'blocks/review/style.scss'
+			}
 		}
 
-		// 'review': {
-		// 	block: 'blocks/review/block.json',
-		// 	assets: {
-		// 		'review/editor.css': 'blocks/review/editor.scss',
-		// 		'review/style.css': 'blocks/review/style.scss'
-		// 	}
-		// },
 		// 'review-comparison': {
 		// 	block: 'blocks/review-comparison/block.json',
 		// 	assets: {

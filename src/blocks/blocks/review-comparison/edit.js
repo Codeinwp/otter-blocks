@@ -35,11 +35,13 @@ import Placeholder from './placeholder.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import { blockInit } from '../../helpers/block-utility.js';
-import defaultReviewAttributes from '../review/attributes.js';
+import reviewMetadata from '../review/block.json';
 import {
 	StarFilled,
 	StarHalf
 } from '../../helpers/icons.js';
+
+const { attributes: defaultReviewAttributes } = reviewMetadata;
 
 let tableImages = [];
 let tableName = [];

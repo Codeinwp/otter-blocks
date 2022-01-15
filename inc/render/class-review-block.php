@@ -8,105 +8,11 @@
 namespace ThemeIsle\GutenbergBlocks\Render;
 
 use ThemeIsle\GutenbergBlocks\Main;
-use ThemeIsle\GutenbergBlocks\Base_Block;
 
 /**
  * Class Review_Block
  */
-class Review_Block extends Base_Block {
-
-	/**
-	 * Every block needs a slug, so we need to define one and assign it to the `$this->block_slug` property
-	 *
-	 * @return mixed
-	 */
-	protected function set_block_slug() {
-		$this->block_slug = 'review';
-	}
-
-	/**
-	 * Set the attributes required on the server side.
-	 *
-	 * @return mixed
-	 */
-	protected function set_attributes() {
-		$this->attributes = array(
-			'id'          => array(
-				'type' => 'string',
-			),
-			'title'       => array(
-				'type' => 'string',
-			),
-			'currency'    => array(
-				'type'    => 'string',
-				'default' => 'USD',
-			),
-			'price'       => array(
-				'type' => 'number',
-			),
-			'discounted'  => array(
-				'type' => 'number',
-			),
-			'image'       => array(
-				'type' => 'object',
-			),
-			'description' => array(
-				'type' => 'string',
-			),
-			'features'    => array(
-				'type'    => 'array',
-				'default' => array(
-					array(
-						'title'  => __( 'Stability', 'otter-blocks' ),
-						'rating' => 9,
-					),
-					array(
-						'title'  => __( 'Ease of Use', 'otter-blocks' ),
-						'rating' => 4,
-					),
-					array(
-						'title'  => __( 'Look & Feel', 'otter-blocks' ),
-						'rating' => 9,
-					),
-					array(
-						'title'  => __( 'Price', 'otter-blocks' ),
-						'rating' => 7,
-					),
-				),
-			),
-			'pros'        => array(
-				'type'    => 'array',
-				'default' => array(
-					__( 'Easy to use', 'otter-blocks' ),
-					__( 'Good price', 'otter-blocks' ),
-					__( 'Sturdy build and ergonomics', 'otter-blocks' ),
-				),
-			),
-			'cons'        => array(
-				'type'    => 'array',
-				'default' => array(
-					__( 'Incompatible with old versions', 'otter-blocks' ),
-					__( 'Hard to assemble', 'otter-blocks' ),
-					__( 'Bad color combination', 'otter-blocks' ),
-				),
-			),
-			'links'       => array(
-				'type'    => 'array',
-				'default' => array(
-					array(
-						'label'       => __( 'Buy on Amazon', 'otter-blocks' ),
-						'href'        => '',
-						'isSponsored' => false,
-					),
-					array(
-						'label'       => __( 'Buy on eBay', 'otter-blocks' ),
-						'href'        => '',
-						'isSponsored' => false,
-					),
-				),
-			),
-		);
-	}
+class Review_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -117,7 +23,7 @@ class Review_Block extends Base_Block {
 	 * @param array $attributes Blocks attrs.
 	 * @return mixed|string
 	 */
-	protected function render( $attributes ) {
+	public	 function render( $attributes ) {
 		if ( isset( $attributes['product'] ) && intval( $attributes['product'] ) >= 0 && 'valid' === apply_filters( 'product_neve_license_status', false ) && class_exists( 'WooCommerce' ) ) {
 			$product = wc_get_product( $attributes['product'] );
 
@@ -197,7 +103,7 @@ class Review_Block extends Base_Block {
 		$html .= '	<div class="wp-block-themeisle-blocks-review__left">';
 		if ( ( isset( $attributes['image'] ) || ( isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ) ) {
 			$html .= '	<div class="wp-block-themeisle-blocks-review__left_details' . $is_single . '">';
-			if ( isset( $attributes['image'] ) ) {
+			if ( isset( $attributes['image'] ) && isset( $attributes['image']['id'] ) ) {
 				if ( wp_attachment_is_image( $attributes['image']['id'] ) ) {
 					$html .= wp_get_attachment_image( $attributes['image']['id'], 'medium' );
 				} else {
@@ -282,7 +188,7 @@ class Review_Block extends Base_Block {
 	 *
 	 * @return int
 	 */
-	protected function get_overall_ratings( $features ) {
+	public	 function get_overall_ratings( $features ) {
 		if ( count( $features ) <= 0 ) {
 			return 0;
 		}
@@ -308,7 +214,7 @@ class Review_Block extends Base_Block {
 	 *
 	 * @return string
 	 */
-	protected function get_overall_stars( $ratings = 0 ) {
+	public	 function get_overall_stars( $ratings = 0 ) {
 		$stars = '';
 
 		for ( $i = 0; $i < 10; $i++ ) {
@@ -342,7 +248,7 @@ class Review_Block extends Base_Block {
 			'name'     => $attributes['title'],
 		);
 
-		if ( isset( $attributes['image'] ) ) {
+		if ( isset( $attributes['image'] ) && isset( $attributes['image']['url'] ) ) {
 			$json['image'] = $attributes['image']['url'];
 		}
 

@@ -82,11 +82,11 @@ const blocks = {
 	},
 	'progress-bar': {
 		block: 'blocks/progress-bar/block.json'
+	},
+	'review': {
+		block: 'blocks/review/block.json'
 	}
 
-	// 'review': {
-	// 	block: 'blocks/review/block.json'
-	// },
 	// 'review-comparison': {
 	// 	block: 'blocks/review-comparison/block.json'
 	// },
