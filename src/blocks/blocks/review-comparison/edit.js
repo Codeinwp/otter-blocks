@@ -30,7 +30,7 @@ import {
 /**
  * Internal dependencies
  */
-import defaultAttributes from './attributes.js';
+import metadata from './block.json';
 import Placeholder from './placeholder.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
@@ -40,6 +40,8 @@ import {
 	StarFilled,
 	StarHalf
 } from '../../helpers/icons.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const { attributes: defaultReviewAttributes } = reviewMetadata;
 

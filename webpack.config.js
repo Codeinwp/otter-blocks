@@ -85,11 +85,11 @@ const blocks = {
 	},
 	'review': {
 		block: 'blocks/review/block.json'
+	},
+	'review-comparison': {
+		block: 'blocks/review-comparison/block.json'
 	}
 
-	// 'review-comparison': {
-	// 	block: 'blocks/review-comparison/block.json'
-	// },
 	// 'advanced-columns': {
 	// 	block: 'blocks/section/columns/block.json'
 	// },

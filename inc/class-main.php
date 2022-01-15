@@ -218,7 +218,6 @@ class Main {
 	 */
 	public function register_blocks() {
 		// $classnames = array(
-		// '\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
 		// '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
 		// '\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
 		// '\ThemeIsle\GutenbergBlocks\Render\Product_Add_To_Cart_Block',
@@ -251,6 +250,7 @@ class Main {
 			'plugin-card'        => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
 			'posts-grid'         => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
 			'review'             => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
+			'review-comparison'  => '\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
 		);
 
 		$blocks = array(

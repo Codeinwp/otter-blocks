@@ -142,15 +142,15 @@ module.exports = function( grunt ) {
 				'review/editor.css': 'blocks/review/editor.scss',
 				'review/style.css': 'blocks/review/style.scss'
 			}
+		},
+		'review-comparison': {
+			block: 'blocks/review-comparison/block.json',
+			assets: {
+				'review-comparison/editor.css': 'blocks/review-comparison/editor.scss',
+				'review-comparison/style.css': 'blocks/review-comparison/style.scss'
+			}
 		}
 
-		// 'review-comparison': {
-		// 	block: 'blocks/review-comparison/block.json',
-		// 	assets: {
-		// 		'review-comparison/editor.css': 'blocks/review-comparison/editor.scss',
-		// 		'review-comparison/style.css': 'blocks/review-comparison/style.scss'
-		// 	}
-		// },
 		// 'advanced-columns': {
 		// 	block: 'blocks/section/columns/block.json',
 		// 	assets: {
