@@ -122,15 +122,14 @@ module.exports = function( grunt ) {
 			assets: {
 				'popup/style.css': 'blocks/popup/style.scss'
 			}
+		},
+		'posts-grid': {
+			block: 'blocks/posts/block.json',
+			assets: {
+				'posts-grid/editor.css': 'blocks/posts/editor.scss',
+				'posts-grid/style.css': 'blocks/posts/style.scss'
+			}
 		}
-
-		// 'posts-list': {
-		// 	block: 'blocks/posts/block.json',
-		// 	assets: {
-		// 		'posts-list/editor.css': 'blocks/posts/editor.scss',
-		// 		'posts-list/style.css': 'blocks/posts/style.scss'
-		// 	}
-		// },
 
 		// 'progress-bar': {
 		// 	block: 'blocks/progress-bar/block.json',

@@ -218,7 +218,6 @@ class Main {
 	 */
 	public function register_blocks() {
 		// $classnames = array(
-		// '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
 		// '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
 		// '\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
 		// '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
@@ -250,6 +249,7 @@ class Main {
 			'google-map'         => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
 			'leaflet-map'        => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
 			'plugin-card'        => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
+			'posts-grid'         => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block'
 		);
 
 		$blocks = array(
@@ -279,7 +279,7 @@ class Main {
 			'lottie',
 			'plugin-card',
 			'popup',
-			'posts-list',
+			'posts-grid',
 			'pricing',
 			'product-add-to-cart',
 			'product-images',

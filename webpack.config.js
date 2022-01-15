@@ -76,11 +76,11 @@ const blocks = {
 	},
 	'popup': {
 		block: 'blocks/popup/block.json'
+	},
+	'posts-grid': {
+		block: 'blocks/posts/block.json'
 	}
 
-	// 'posts-list': {
-	// 	block: 'blocks/posts/block.json'
-	// },
 	// 'progress-bar': {
 	// 	block: 'blocks/progress-bar/block.json'
 	// },

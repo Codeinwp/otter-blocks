@@ -127,11 +127,11 @@
 			"popup/style.css": "blocks/popup/style.scss"
 		}
 	},
-	"posts-list": {
+	"posts-grid": {
 		"block": "blocks/posts/block.json",
 		"assets": {
-			"posts-list/editor.css": "blocks/posts/editor.scss",
-			"posts-list/style.css": "blocks/posts/style.scss"
+			"posts-grid/editor.css": "blocks/posts/editor.scss",
+			"posts-grid/style.css": "blocks/posts/style.scss"
 		}
 	},
 	"progress-bar": {
