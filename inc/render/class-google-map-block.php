@@ -50,10 +50,12 @@ class Google_Map_Block {
 			$style .= 'height:' . esc_attr( $attributes['height'] . 'px;' );
 		}
 
-		$wrapper_attributes = get_block_wrapper_attributes( array(
-			'class' => $class,
-			'style' => $style,
-		) );
+		$wrapper_attributes = get_block_wrapper_attributes(
+			array(
+				'class' => $class,
+				'style' => $style,
+			) 
+		);
 
 		$output  = '<div ' . $wrapper_attributes . ' id="' . esc_attr( $id ) . '"></div>' . "\n";
 		$output .= '<script type="text/javascript">' . "\n";

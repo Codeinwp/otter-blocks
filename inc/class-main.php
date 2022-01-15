@@ -218,24 +218,23 @@ class Main {
 	 */
 	public function register_blocks() {
 		// $classnames = array(
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Review_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Add_To_Cart_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Images_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Meta_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Price_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Rating_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Related_Products_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Stock_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Short_Description_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Tabs_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Title_Block',
-		// 	'\ThemeIsle\GutenbergBlocks\Render\Product_Upsells_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Product_Add_To_Cart_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Product_Images_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Product_Meta_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Product_Price_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Product_Rating_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Product_Related_Products_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Product_Stock_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Product_Short_Description_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Product_Tabs_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Product_Title_Block',
+		// '\ThemeIsle\GutenbergBlocks\Render\Product_Upsells_Block',
 		// );
-
 		// Handle Front:
 		// Circle Counter
 		// Countdown
@@ -244,14 +243,13 @@ class Main {
 		// Leaflet Map - Also L is undefined error.
 		// Lottie
 		// Popup
-
 		$dynamic_blocks = array(
-			'about-author' => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
+			'about-author'       => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
 			'add-to-cart-button' => '\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
-			'form-nonce' => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
-			'google-map' => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
-			'leaflet-map' => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
-			'plugin-card' => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
+			'form-nonce'         => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
+			'google-map'         => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
+			'leaflet-map'        => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
+			'plugin-card'        => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
 		);
 
 		$blocks = array(
@@ -316,19 +314,31 @@ class Main {
 				continue;
 			}
 
-			$metadata = json_decode( file_get_contents( $metadata_file ), true );
+			$metadata = [];
 
-			if ( file_exists( $style ) && ! empty( $metadata['style'] ) ) {
-				wp_register_style( 
-					$metadata['style'],
-					plugin_dir_url( $this->get_dir() ) . 'build/blocks/' . $block . '/style.css'
-				);
+			if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
+				$metadata = json_decode( wpcom_vip_file_get_contents( $metadata_file ), true );
+			} else {
+				$metadata = json_decode( file_get_contents( $metadata_file ), true ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
 			}
+
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
 
 			if ( file_exists( $editor_style ) && ! empty( $metadata['editorStyle'] ) ) {
 				wp_register_style( 
 					$metadata['editorStyle'],
-					plugin_dir_url( $this->get_dir() ) . 'build/blocks/' . $block . '/editor.css'
+					plugin_dir_url( $this->get_dir() ) . 'build/blocks/' . $block . '/editor.css',
+					[],
+					$asset_file['version']
+				);
+			}
+
+			if ( file_exists( $style ) && ! empty( $metadata['style'] ) ) {
+				wp_register_style( 
+					$metadata['style'],
+					plugin_dir_url( $this->get_dir() ) . 'build/blocks/' . $block . '/style.css',
+					[],
+					$asset_file['version']
 				);
 			}
 
@@ -341,9 +351,12 @@ class Main {
 				$renderer  = new $classname();
 		
 				if ( method_exists( $renderer, 'render' ) ) {
-					register_block_type_from_metadata( $metadata_file, array(
-						'render_callback' => array( $renderer, 'render' )
-					) );
+					register_block_type_from_metadata(
+						$metadata_file,
+						array(
+							'render_callback' => array( $renderer, 'render' ),
+						) 
+					);
 
 					continue;
 				}
