@@ -137,7 +137,6 @@
 	"progress-bar": {
 		"block": "blocks/progress-bar/block.json",
 		"assets": {
-			"progress-bar/editor.css": "blocks/progress-bar/editor.scss",
 			"progress-bar/style.css": "blocks/progress-bar/style.scss"
 		}
 	},

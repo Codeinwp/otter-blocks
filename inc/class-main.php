@@ -242,6 +242,7 @@ class Main {
 		// Leaflet Map - Also L is undefined error.
 		// Lottie
 		// Popup
+		// Progress Bar
 		$dynamic_blocks = array(
 			'about-author'       => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
 			'add-to-cart-button' => '\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',

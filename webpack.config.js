@@ -79,11 +79,11 @@ const blocks = {
 	},
 	'posts-grid': {
 		block: 'blocks/posts/block.json'
+	},
+	'progress-bar': {
+		block: 'blocks/progress-bar/block.json'
 	}
 
-	// 'progress-bar': {
-	// 	block: 'blocks/progress-bar/block.json'
-	// },
 	// 'review': {
 	// 	block: 'blocks/review/block.json'
 	// },
