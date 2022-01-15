@@ -73,11 +73,10 @@ const blocks = {
 	},
 	'plugin-card': {
 		block: 'blocks/plugin-card/block.json'
+	},
+	'popup': {
+		block: 'blocks/popup/block.json'
 	}
-
-	// 'popup': {
-	// 	block: 'blocks/popup/block.json'
-	// }
 
 	// 'posts-list': {
 	// 	block: 'blocks/posts/block.json'

@@ -124,7 +124,6 @@
 	"popup": {
 		"block": "blocks/popup/block.json",
 		"assets": {
-			"popup/editor.css": "blocks/popup/editor.scss",
 			"popup/style.css": "blocks/popup/style.scss"
 		}
 	},

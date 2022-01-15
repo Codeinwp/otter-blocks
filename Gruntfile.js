@@ -116,14 +116,13 @@ module.exports = function( grunt ) {
 				'plugin-card/editor.css': 'blocks/plugin-card/editor.scss',
 				'plugin-card/style.css': 'blocks/plugin-card/style.scss'
 			}
+		},
+		'popup': {
+			block: 'blocks/popup/block.json',
+			assets: {
+				'popup/style.css': 'blocks/popup/style.scss'
+			}
 		}
-
-		// 'popup': {
-		// 	block: 'blocks/popup/block.json',
-		// 	assets: {
-		// 		'popup/style.css': 'blocks/popup/style.scss'
-		// 	}
-		// }
 
 		// 'posts-list': {
 		// 	block: 'blocks/posts/block.json',
