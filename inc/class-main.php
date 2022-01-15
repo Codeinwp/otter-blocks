@@ -250,7 +250,7 @@ class Main {
 			'google-map'         => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
 			'leaflet-map'        => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
 			'plugin-card'        => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
-			'posts-grid'         => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block'
+			'posts-grid'         => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
 		);
 
 		$blocks = array(
