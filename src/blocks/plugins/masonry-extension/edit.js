@@ -99,13 +99,7 @@ const Edit = ({
 				</PanelBody>
 			</InspectorControls>
 
-			{ props.attributes.isMasonry ? (
-				<div className="otter-masonry">
-					{children}
-				</div>
-			) : (
-				children
-			) }
+			{ props.attributes.isMasonry ? <div className="otter-masonry">{ children }</div> : children }
 		</Fragment>
 	);
 };
