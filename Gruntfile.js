@@ -149,18 +149,15 @@ module.exports = function( grunt ) {
 				'review-comparison/editor.css': 'blocks/review-comparison/editor.scss',
 				'review-comparison/style.css': 'blocks/review-comparison/style.scss'
 			}
+		},
+		'advanced-columns': {
+			block: 'blocks/section/columns/block.json',
+			assets: {
+				'advanced-columns/editor.css': 'blocks/section/editor.scss',
+				'advanced-columns/style.css': 'blocks/section/style.scss'
+			}
 		}
 
-		// 'advanced-columns': {
-		// 	block: 'blocks/section/columns/block.json',
-		// 	assets: {
-		// 		'advanced-columns/editor.css': 'blocks/section/editor.scss',
-		// 		'advanced-columns/style.css': 'blocks/section/style.scss'
-		// 	}
-		// },
-		// 'advanced-column': {
-		// 	block: 'blocks/section/column/block.json'
-		// },
 		// 'sharing-icons': {
 		// 	block: 'blocks/sharing-icons/block.json',
 		// 	assets: {

@@ -88,14 +88,14 @@ const blocks = {
 	},
 	'review-comparison': {
 		block: 'blocks/review-comparison/block.json'
+	},
+	'advanced-columns': {
+		block: 'blocks/section/columns/block.json'
+	},
+	'advanced-column': {
+		block: 'blocks/section/column/block.json'
 	}
 
-	// 'advanced-columns': {
-	// 	block: 'blocks/section/columns/block.json'
-	// },
-	// 'advanced-column': {
-	// 	block: 'blocks/section/column/block.json'
-	// },
 	// 'sharing-icons': {
 	// 	block: 'blocks/sharing-icons/block.json'
 	// },
