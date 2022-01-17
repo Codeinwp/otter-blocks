@@ -23,7 +23,7 @@ class Review_Block {
 	 * @param array $attributes Blocks attrs.
 	 * @return mixed|string
 	 */
-	public	 function render( $attributes ) {
+	public function render( $attributes ) {
 		if ( isset( $attributes['product'] ) && intval( $attributes['product'] ) >= 0 && 'valid' === apply_filters( 'product_neve_license_status', false ) && class_exists( 'WooCommerce' ) ) {
 			$product = wc_get_product( $attributes['product'] );
 
@@ -188,7 +188,7 @@ class Review_Block {
 	 *
 	 * @return int
 	 */
-	public	 function get_overall_ratings( $features ) {
+	public function get_overall_ratings( $features ) {
 		if ( count( $features ) <= 0 ) {
 			return 0;
 		}
@@ -214,7 +214,7 @@ class Review_Block {
 	 *
 	 * @return string
 	 */
-	public	 function get_overall_stars( $ratings = 0 ) {
+	public function get_overall_stars( $ratings = 0 ) {
 		$stars = '';
 
 		for ( $i = 0; $i < 10; $i++ ) {

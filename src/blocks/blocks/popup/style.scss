@@ -3,10 +3,6 @@ $base-index: 9999 !default;
 .wp-block-themeisle-blocks-popup {
 	&.is-front {
 		display: none;
-
-		.otter-popup__modal_wrap {
-			z-index: $base-index;
-		}
 	}
 
 	&.is-front.active {
@@ -29,7 +25,7 @@ $base-index: 9999 !default;
 		bottom: 0;
 		right: 0;
 		left: 0;
-		z-index: 2;
+		z-index: $base-index;
 		display: flex;
 		align-items: center;
 		justify-content: center;

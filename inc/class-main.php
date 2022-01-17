@@ -241,11 +241,7 @@ class Main {
 		// Lottie
 		// Popup
 		// Progress Bar
-		// BlockNavigationDropdown in Section, check if it exist for below 5.9
-		// Let's bring back editor.scss for each file to avoid double loading
 		// Section CSS file causing debugging errors.
-
-
 		$dynamic_blocks = array(
 			'about-author'       => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
 			'add-to-cart-button' => '\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
@@ -339,7 +335,7 @@ class Main {
 				);
 			}
 
-			if ( file_exists( $style ) && ! empty( $metadata['style'] ) ) {
+			if ( ! is_admin() && file_exists( $style ) && ! empty( $metadata['style'] ) ) {
 				wp_register_style( 
 					$metadata['style'],
 					plugin_dir_url( $this->get_dir() ) . 'build/blocks/' . $block . '/style.css',

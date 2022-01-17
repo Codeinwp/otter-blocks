@@ -13,6 +13,7 @@ module.exports = function( grunt ) {
 		'about-author': {
 			block: 'blocks/about-author/block.json',
 			assets: {
+				'about-author/editor.css': 'blocks/about-author/editor.scss',
 				'about-author/style.css': 'blocks/about-author/style.scss'
 			}
 		},
@@ -26,7 +27,8 @@ module.exports = function( grunt ) {
 		'advanced-heading': {
 			block: 'blocks/advanced-heading/block.json',
 			assets: {
-				'advanced-heading/editor.css': 'blocks/advanced-heading/editor.scss'
+				'advanced-heading/editor.css': 'blocks/advanced-heading/editor.scss',
+				'advanced-heading/style.css': 'blocks/advanced-heading/style.scss'
 			}
 		},
 		'business-hours': {
@@ -46,24 +48,28 @@ module.exports = function( grunt ) {
 		'circle-counter': {
 			block: 'blocks/circle-counter/block.json',
 			assets: {
+				'circle-counter/editor.css': 'blocks/circle-counter/editor.scss',
 				'circle-counter/style.css': 'blocks/circle-counter/style.scss'
 			}
 		},
 		'countdown': {
 			block: 'blocks/countdown/block.json',
 			assets: {
+				'countdown/editor.css': 'blocks/countdown/editor.scss',
 				'countdown/style.css': 'blocks/countdown/style.scss'
 			}
 		},
 		'flip': {
 			block: 'blocks/flip/block.json',
 			assets: {
+				'flip/editor.css': 'blocks/flip/editor.scss',
 				'flip/style.css': 'blocks/flip/style.scss'
 			}
 		},
 		'font-awesome-icons': {
 			block: 'blocks/font-awesome-icons/block.json',
 			assets: {
+				'font-awesome-icons/editor.css': 'blocks/font-awesome-icons/editor.scss',
 				'font-awesome-icons/style.css': 'blocks/font-awesome-icons/style.scss'
 			}
 		},
@@ -120,6 +126,7 @@ module.exports = function( grunt ) {
 		'popup': {
 			block: 'blocks/popup/block.json',
 			assets: {
+				'popup/editor.css': 'blocks/popup/editor.scss',
 				'popup/style.css': 'blocks/popup/style.scss'
 			}
 		},
@@ -133,6 +140,7 @@ module.exports = function( grunt ) {
 		'progress-bar': {
 			block: 'blocks/progress-bar/block.json',
 			assets: {
+				'progress-bar/editor.css': 'blocks/progress-bar/editor.scss',
 				'progress-bar/style.css': 'blocks/progress-bar/style.scss'
 			}
 		},

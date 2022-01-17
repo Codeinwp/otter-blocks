@@ -23,7 +23,7 @@ class Review_Comparison_Block {
 	 * @param array $attributes Blocks attrs.
 	 * @return mixed|string
 	 */
-	public	 function render( $attributes ) {
+	public function render( $attributes ) {
 		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! isset( $attributes['reviews'] ) ) {
 			return;
 		}
@@ -258,7 +258,7 @@ class Review_Comparison_Block {
 	 *
 	 * @return int
 	 */
-	public	 function get_overall_ratings( $features ) {
+	public function get_overall_ratings( $features ) {
 		if ( count( $features ) <= 0 ) {
 			return 0;
 		}
@@ -284,7 +284,7 @@ class Review_Comparison_Block {
 	 *
 	 * @return string
 	 */
-	public	 function get_stars( $ratings = 0 ) {
+	public function get_stars( $ratings = 0 ) {
 		$stars = '';
 
 		for ( $i = 0; $i < 5; $i++ ) {

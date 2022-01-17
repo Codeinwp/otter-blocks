@@ -117,5 +117,6 @@
 	"supports": {
 		"align": [ "wide", "full" ]
 	},
+	"editorStyle": "otter-countdown-editor",
 	"style": "otter-countdown-style"
 }

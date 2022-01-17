@@ -72,5 +72,6 @@
 			"default": 0
 		}
 	},
+	"editorStyle": "otter-font-awesome-editor",
 	"style": "otter-font-awesome-style"
 }

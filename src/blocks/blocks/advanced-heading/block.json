@@ -196,5 +196,6 @@
 			"type": "number"
 		}
 	},
-	"editorStyle": "otter-advanced-heading-editor"
+	"editorStyle": "otter-advanced-heading-editor",
+	"style": "otter-advanced-heading-style"
 }
