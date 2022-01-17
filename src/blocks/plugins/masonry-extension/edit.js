@@ -18,8 +18,8 @@ import {
 } from '@wordpress/element';
 
 const Edit = ({
-	BlockEdit,
-	props
+	props,
+	children
 }) => {
 	useEffect( () => {
 		initMasonry();
@@ -99,13 +99,7 @@ const Edit = ({
 				</PanelBody>
 			</InspectorControls>
 
-			{ props.attributes.isMasonry ? (
-				<div className="otter-masonry">
-					<BlockEdit { ...props } />
-				</div>
-			) : (
-				<BlockEdit { ...props } />
-			) }
+			{ props.attributes.isMasonry ? <div className="otter-masonry">{ children }</div> : children }
 		</Fragment>
 	);
 };
