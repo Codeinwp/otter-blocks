@@ -171,15 +171,15 @@ module.exports = function( grunt ) {
 				'sharing-icons/editor.css': 'blocks/sharing-icons/editor.scss',
 				'sharing-icons/style.css': 'blocks/sharing-icons/style.scss'
 			}
+		},
+		'slider': {
+			block: 'blocks/slider/block.json',
+			assets: {
+				'slider/editor.css': 'blocks/slider/editor.scss',
+				'slider/style.css': 'blocks/slider/style.scss'
+			}
 		}
 
-		// 'slider': {
-		// 	block: 'blocks/slider/block.json',
-		// 	assets: {
-		// 		'slider/editor.css': 'blocks/slider/editor.scss',
-		// 		'slider/style.css': 'blocks/slider/style.scss'
-		// 	}
-		// },
 		// 'pricing': {
 		// 	block: 'blocks/pricing/block.json'
 		// },

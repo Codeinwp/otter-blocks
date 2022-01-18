@@ -97,11 +97,11 @@ const blocks = {
 	},
 	'sharing-icons': {
 		block: 'blocks/sharing-icons/block.json'
+	},
+	'slider': {
+		block: 'blocks/slider/block.json'
 	}
 
-	// 'slider': {
-	// 	block: 'blocks/slider/block.json'
-	// },
 	// 'pricing': {
 	// 	block: 'blocks/pricing/block.json'
 	// },
