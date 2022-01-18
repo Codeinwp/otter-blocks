@@ -1,0 +1,52 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/sharing-icons",
+	"title": "Sharing Icons",
+	"category": "themeisle-blocks",
+	"description": "Share buttons for your website visitors to share content on any social sharing service.",
+	"keywords": [ "social media", "sharing", "icons" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"facebook": {
+			"type": "boolean",
+			"default": true
+		},
+		"twitter": {
+			"type": "boolean",
+			"default": true
+		},
+		"linkedin": {
+			"type": "boolean",
+			"default": true
+		},
+		"pinterest": {
+			"type": "boolean",
+			"default": false
+		},
+		"tumblr": {
+			"type": "boolean",
+			"default": false
+		},
+		"reddit": {
+			"type": "boolean",
+			"default": false
+		}
+	},
+	"styles": [
+		{
+			"name": "default",
+			"label": "Regular",
+			"isDefault": true
+		},
+		{
+			"name": "icons",
+			"label": "Icons Only"
+		}
+	],
+	"supports": {
+		"align": [ "left", "center", "right" ]
+	},
+	"editorStyle": "otter-sharing-icons-editor",
+	"style": "otter-sharing-icons-style"
+}

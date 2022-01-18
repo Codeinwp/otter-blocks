@@ -94,11 +94,11 @@ const blocks = {
 	},
 	'advanced-column': {
 		block: 'blocks/section/column/block.json'
+	},
+	'sharing-icons': {
+		block: 'blocks/sharing-icons/block.json'
 	}
 
-	// 'sharing-icons': {
-	// 	block: 'blocks/sharing-icons/block.json'
-	// },
 	// 'slider': {
 	// 	block: 'blocks/slider/block.json'
 	// },

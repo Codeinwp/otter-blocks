@@ -164,15 +164,15 @@ module.exports = function( grunt ) {
 				'advanced-columns/editor.css': 'blocks/section/editor.scss',
 				'advanced-columns/style.css': 'blocks/section/style.scss'
 			}
+		},
+		'sharing-icons': {
+			block: 'blocks/sharing-icons/block.json',
+			assets: {
+				'sharing-icons/editor.css': 'blocks/sharing-icons/editor.scss',
+				'sharing-icons/style.css': 'blocks/sharing-icons/style.scss'
+			}
 		}
 
-		// 'sharing-icons': {
-		// 	block: 'blocks/sharing-icons/block.json',
-		// 	assets: {
-		// 		'sharing-icons/editor.css': 'blocks/sharing-icons/editor.scss',
-		// 		'sharing-icons/style.css': 'blocks/sharing-icons/style.scss'
-		// 	}
-		// },
 		// 'slider': {
 		// 	block: 'blocks/slider/block.json',
 		// 	assets: {
