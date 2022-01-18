@@ -100,17 +100,17 @@ const blocks = {
 	},
 	'slider': {
 		block: 'blocks/slider/block.json'
+	},
+	'pricing': {
+		block: 'blocks/structural/pricing/block.json'
+	},
+	'service': {
+		block: 'blocks/structural/service/block.json'
+	},
+	'testimonials': {
+		block: 'blocks/structural/testimonials/block.json'
 	}
 
-	// 'pricing': {
-	// 	block: 'blocks/pricing/block.json'
-	// },
-	// 'service': {
-	// 	block: 'blocks/service/block.json'
-	// },
-	// 'testimonials': {
-	// 	block: 'blocks/testimonials/block.json'
-	// },
 	// 'tabs': {
 	// 	block: 'blocks/tabs/group/block.json'
 	// },

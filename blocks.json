@@ -187,13 +187,13 @@
 		}
 	},
 	"pricing": {
-		"block": "blocks/pricing/block.json"
+		"block": "blocks/structural/pricing/block.json"
 	},
 	"service": {
-		"block": "blocks/service/block.json"
+		"block": "blocks/structural/service/block.json"
 	},
 	"testimonials": {
-		"block": "blocks/testimonials/block.json"
+		"block": "blocks/structural/testimonials/block.json"
 	},
 	"tabs": {
 		"block": "blocks/tabs/group/block.json",
