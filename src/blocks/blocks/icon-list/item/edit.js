@@ -63,7 +63,6 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	useEffect( () => {
-		console.log( attributes );
 		setAttributes({
 			library: attributes.library || parentAttributes.defaultLibrary,
 			icon: attributes.icon || parentAttributes.defaultIcon,
