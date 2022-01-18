@@ -27,15 +27,12 @@ class Options_Settings {
 		add_action( 'init', array( $this, 'default_block' ), 99 );
 		add_action( 'init', array( $this, 'register_meta' ), 19 );
 
-		$allow_json = get_option( 'themeisle_allow_json_upload' );
+		$allow_json_svg = get_option( 'themeisle_allow_json_upload' );
 		$allow_svg = get_option( 'themeisle_allow_svg_upload' );
 
-		if ( isset( $allow_json ) && true === (bool) $allow_json && ! function_exists( 'is_wpcom_vip' ) ) {
-			add_filter( 'upload_mimes', array( $this, 'allow_json' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
-			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json' ), 75, 4 );
-		}
-
-		if ( isset( $allow_svg ) && true === (bool) $allow_svg && ! function_exists( 'is_wpcom_vip' ) ) {
+		if ( isset( $allow_json_svg ) && true === (bool) $allow_json_svg && ! function_exists( 'is_wpcom_vip' ) ) {
+			add_filter( 'upload_mimes', array( $this, 'allow_json_svg') ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
+			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg'), 75, 4 );
 			add_filter( 'upload_mimes', array( $this, 'allow_svg' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
 			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_svg' ), 75, 4 );
 		}
@@ -212,22 +209,10 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
-			'themeisle_allow_json_upload',
+			'themeisle_allow_json_svg_upload',
 			array(
 				'type'              => 'boolean',
-				'description'       => __( 'Allow JSON Upload to Media Library.', 'otter-blocks' ),
-				'sanitize_callback' => 'rest_sanitize_boolean',
-				'show_in_rest'      => true,
-				'default'           => false,
-			)
-		);
-
-		register_setting(
-			'themeisle_blocks_settings',
-			'themeisle_allow_svg_upload',
-			array(
-				'type'              => 'boolean',
-				'description'       => __( 'Allow SVG Upload to Media Library.', 'otter-blocks' ),
+				'description'       => __( 'Allow JSON & JSON Uploads to Media Library.', 'otter-blocks' ),
 				'sanitize_callback' => 'rest_sanitize_boolean',
 				'show_in_rest'      => true,
 				'default'           => false,
@@ -367,21 +352,8 @@ class Options_Settings {
 	 * @since  1.5.7
 	 * @access public
 	 */
-	public function allow_json( $mimes ) {
+	public function allow_json_svg($mimes ) {
 		$mimes['json'] = 'application/json';
-		return $mimes;
-	}
-
-	/**
-	 * Allow SVG uploads
-	 *
-	 * @param array $mimes Supported mimes.
-	 *
-	 * @return array
-	 * @since  2.0.0
-	 * @access public
-	 */
-	public function allow_svg( $mimes ) {
 		$mimes['svg'] = 'image/svg+xml';
 		return $mimes;
 	}
@@ -398,7 +370,7 @@ class Options_Settings {
 	 * @since  1.5.7
 	 * @access public
 	 */
-	public function fix_mime_type_json( $data = null, $file = null, $filename = null, $mimes = null ) {
+	public function fix_mime_type_json_svg($data = null, $file = null, $filename = null, $mimes = null ) {
 		$ext = isset( $data['ext'] ) ? $data['ext'] : '';
 		if ( 1 > strlen( $ext ) ) {
 			$exploded = explode( '.', $filename );
@@ -407,27 +379,6 @@ class Options_Settings {
 		if ( 'json' === $ext ) {
 			$data['type'] = 'application/json';
 			$data['ext']  = 'json';
-		}
-		return $data;
-	}
-
-	/**
-	 * Allow SVG uploads
-	 *
-	 * @param null $data File data.
-	 * @param null $file File object.
-	 * @param null $filename File name.
-	 * @param null $mimes Supported mimes.
-	 *
-	 * @return array
-	 * @since  2.0.0
-	 * @access public
-	 */
-	public function fix_mime_type_svg( $data = null, $file = null, $filename = null, $mimes = null ) {
-		$ext = isset( $data['ext'] ) ? $data['ext'] : '';
-		if ( 1 > strlen( $ext ) ) {
-			$exploded = explode( '.', $filename );
-			$ext      = strtolower( end( $exploded ) );
 		}
 		if ( 'svg' === $ext ) {
 			$data['type'] = 'image/svg+xml';
