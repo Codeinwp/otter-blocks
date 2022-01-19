@@ -109,14 +109,14 @@ const blocks = {
 	},
 	'testimonials': {
 		block: 'blocks/structural/testimonials/block.json'
+	},
+	'tabs': {
+		block: 'blocks/tabs/group/block.json'
+	},
+	'tabs-item': {
+		block: 'blocks/tabs/item/block.json'
 	}
 
-	// 'tabs': {
-	// 	block: 'blocks/tabs/group/block.json'
-	// },
-	// 'tabs-item': {
-	// 	block: 'blocks/tabs/item/block.json'
-	// },
 	// 'woo-comparison': {
 	// 	block: 'blocks/woo-comparison/block.json'
 	// },

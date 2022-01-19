@@ -178,18 +178,15 @@ module.exports = function( grunt ) {
 				'slider/editor.css': 'blocks/slider/editor.scss',
 				'slider/style.css': 'blocks/slider/style.scss'
 			}
+		},
+		'tabs': {
+			block: 'blocks/tabs/group/block.json',
+			assets: {
+				'tabs/editor.css': 'blocks/tabs/editor.scss',
+				'tabs/style.css': 'blocks/tabs/style.scss'
+			}
 		}
 
-		// 'tabs': {
-		// 	block: 'blocks/tabs/group/block.json',
-		// 	assets: {
-		// 		'tabs/editor.css': 'blocks/tabs/editor.scss',
-		// 		'tabs/style.css': 'blocks/tabs/style.scss'
-		// 	}
-		// },
-		// 'tabs-item': {
-		// 	block: 'blocks/tabs/item/block.json'
-		// },
 		// 'woo-comparison': {
 		// 	block: 'blocks/woo-comparison/block.json',
 		// 	assets: {
