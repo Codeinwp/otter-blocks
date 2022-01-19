@@ -52,65 +52,6 @@ class Woo_Comparison_Block {
 	}
 
 	/**
-	 * Set the attributes required on the server side.
-	 *
-	 * @return mixed
-	 */
-	// protected function set_attributes() {
-	// 	$default_fields = array();
-
-		// if ( class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Fields' ) ) {
-		// 	$fields         = new \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Fields();
-		// 	$default_fields = wp_json_encode( array_keys( ( $fields->get_fields() ) ) );
-		// }
-
-		// $this->attributes = array(
-		// 	'id'          => array(
-		// 		'type' => 'string',
-		// 	),
-		// 	'className'   => array(
-		// 		'type' => 'string',
-		// 	),
-		// 	'products'    => array(
-		// 		'type'    => 'array',
-		// 		'default' => array(),
-		// 	),
-		// 	'listingType' => array(
-		// 		'type'    => 'string',
-		// 		'default' => get_theme_mod( 'neve_comparison_table_product_listing_type', 'column' ),
-		// 	),
-		// 	'altRow'      => array(
-		// 		'type'    => 'boolean',
-		// 		'default' => get_theme_mod( 'neve_comparison_table_enable_alternating_row_bg_color', false ),
-		// 	),
-		// 	'fields'      => array(
-		// 		'type'    => 'string',
-		// 		'default' => get_theme_mod( 'neve_comparison_table_fields', $default_fields ),
-		// 	),
-		// 	'rowColor'    => array(
-		// 		'type'    => 'string',
-		// 		'default' => get_theme_mod( 'neve_comparison_table_rows_background_color', 'var(--nv-site-bg)' ),
-		// 	),
-		// 	'headerColor' => array(
-		// 		'type'    => 'string',
-		// 		'default' => get_theme_mod( 'neve_comparison_table_header_text_color', 'var(--nv-text-color)' ),
-		// 	),
-		// 	'textColor'   => array(
-		// 		'type'    => 'string',
-		// 		'default' => get_theme_mod( 'neve_comparison_table_text_color', 'var(--nv-text-color)' ),
-		// 	),
-		// 	'borderColor' => array(
-		// 		'type'    => 'string',
-		// 		'default' => get_theme_mod( 'neve_comparison_table_borders_color', '#BDC7CB' ),
-		// 	),
-		// 	'altRowColor' => array(
-		// 		'type'    => 'string',
-		// 		'default' => get_theme_mod( 'neve_comparison_table_alternate_row_bg_color', 'var(--nv-light-bg)' ),
-		// 	),
-		// );
-	// }
-
-	/**
 	 * Block render function for server-side.
 	 *
 	 * This method will pe passed to the render_callback parameter and it will output
