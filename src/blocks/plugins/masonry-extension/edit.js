@@ -42,7 +42,7 @@ const Edit = ({
 			deleteMasonry();
 
 			macy.current = window.Macy({
-				container: `#block-${ props.clientId } .blocks-gallery-grid`,
+				container: `#block-${ props.clientId }`,
 				trueOrder: false,
 				waitForImages: false,
 				margin: props.attributes.margin || 0,
