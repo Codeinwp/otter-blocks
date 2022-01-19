@@ -14,15 +14,17 @@ import { store as icon } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import edit from './edit.js';
 
+const { name } = metadata;
+
 if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Boolean( window.themeisleGutenberg.hasWooCommerce ) ) {
-	registerBlockType( 'themeisle-blocks/product-stock', {
-		apiVersion: 2,
+	registerBlockType( name, {
+		...metadata,
 		title: __( 'Product Stock', 'otter-blocks' ),
 		description: __( 'Display the stock of your WooCommerce product.', 'otter-blocks' ),
 		icon,
-		category: 'themeisle-woocommerce-blocks',
 		keywords: [
 			'woocommerce',
 			'products',
@@ -32,12 +34,11 @@ if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Bool
 		save: () => null
 	});
 } else {
-	registerBlockType( 'themeisle-blocks/product-stock', {
-		apiVersion: 2,
+	registerBlockType( name, {
+		...metadata,
 		title: __( 'Product Stock', 'otter-blocks' ),
 		description: __( 'Display the stock of your WooCommerce product.', 'otter-blocks' ),
 		icon,
-		category: 'themeisle-woocommerce-blocks',
 		keywords: [
 			'woocommerce',
 			'products',

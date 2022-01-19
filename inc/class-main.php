@@ -217,19 +217,6 @@ class Main {
 	 * @access  public
 	 */
 	public function register_blocks() {
-		// $classnames = array(
-		// '\ThemeIsle\GutenbergBlocks\Render\Product_Add_To_Cart_Block',
-		// '\ThemeIsle\GutenbergBlocks\Render\Product_Images_Block',
-		// '\ThemeIsle\GutenbergBlocks\Render\Product_Meta_Block',
-		// '\ThemeIsle\GutenbergBlocks\Render\Product_Price_Block',
-		// '\ThemeIsle\GutenbergBlocks\Render\Product_Rating_Block',
-		// '\ThemeIsle\GutenbergBlocks\Render\Product_Related_Products_Block',
-		// '\ThemeIsle\GutenbergBlocks\Render\Product_Stock_Block',
-		// '\ThemeIsle\GutenbergBlocks\Render\Product_Short_Description_Block',
-		// '\ThemeIsle\GutenbergBlocks\Render\Product_Tabs_Block',
-		// '\ThemeIsle\GutenbergBlocks\Render\Product_Title_Block',
-		// '\ThemeIsle\GutenbergBlocks\Render\Product_Upsells_Block',
-		// );
 		// Handle Front:
 		// Circle Counter
 		// Countdown
@@ -241,17 +228,28 @@ class Main {
 		// Progress Bar
 		// Section CSS file causing debugging errors.
 		$dynamic_blocks = array(
-			'about-author'       => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
-			'add-to-cart-button' => '\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
-			'form-nonce'         => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
-			'google-map'         => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
-			'leaflet-map'        => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
-			'plugin-card'        => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
-			'posts-grid'         => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
-			'review'             => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
-			'review-comparison'  => '\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
-			'sharing-icons'      => '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
-			'woo-comparison'     => '\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
+			'about-author'              => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
+			'add-to-cart-button'        => '\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
+			'form-nonce'                => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
+			'google-map'                => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
+			'leaflet-map'               => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
+			'plugin-card'               => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
+			'posts-grid'                => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
+			'review'                    => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
+			'review-comparison'         => '\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
+			'sharing-icons'             => '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
+			'woo-comparison'            => '\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
+			'product-add-to-cart'       => '\ThemeIsle\GutenbergBlocks\Render\Product_Add_To_Cart_Block',
+			'product-images'            => '\ThemeIsle\GutenbergBlocks\Render\Product_Images_Block',
+			'product-meta'              => '\ThemeIsle\GutenbergBlocks\Render\Product_Meta_Block',
+			'product-price'             => '\ThemeIsle\GutenbergBlocks\Render\Product_Price_Block',
+			'product-rating'            => '\ThemeIsle\GutenbergBlocks\Render\Product_Rating_Block',
+			'product-related-products'  => '\ThemeIsle\GutenbergBlocks\Render\Product_Related_Products_Block',
+			'product-short-description' => '\ThemeIsle\GutenbergBlocks\Render\Product_Short_Description_Block',
+			'product-stock'             => '\ThemeIsle\GutenbergBlocks\Render\Product_Stock_Block',
+			'product-tabs'              => '\ThemeIsle\GutenbergBlocks\Render\Product_Tabs_Block',
+			'product-title'             => '\ThemeIsle\GutenbergBlocks\Render\Product_Title_Block',
+			'product-upsells'           => '\ThemeIsle\GutenbergBlocks\Render\Product_Upsells_Block',
 		);
 
 		$blocks = array(
