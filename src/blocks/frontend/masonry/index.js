@@ -27,7 +27,7 @@ domReady( () => {
 		const checker = setInterval( () => {
 			if ( window?.Macy ) {
 				window.Macy({
-					container: gallery.querySelector( '.blocks-gallery-grid' ),
+					container,
 					trueOrder: false,
 					waitForImages: false,
 					margin,
