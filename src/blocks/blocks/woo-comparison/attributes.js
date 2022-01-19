@@ -38,7 +38,6 @@ const attributes = {
 		type: 'string',
 		default: window.themeisleGutenberg.themeMods.altRowColor
 	}
-
 };
 
 export default attributes;

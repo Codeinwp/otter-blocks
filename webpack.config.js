@@ -115,11 +115,11 @@ const blocks = {
 	},
 	'tabs-item': {
 		block: 'blocks/tabs/item/block.json'
+	},
+	'woo-comparison': {
+		block: 'blocks/woo-comparison/block.json'
 	}
 
-	// 'woo-comparison': {
-	// 	block: 'blocks/woo-comparison/block.json'
-	// },
 	// 'product-add-to-cart': {
 	// 	block: 'woocommerce/add-to-cart/block.json'
 	// },

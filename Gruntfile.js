@@ -185,14 +185,14 @@ module.exports = function( grunt ) {
 				'tabs/editor.css': 'blocks/tabs/editor.scss',
 				'tabs/style.css': 'blocks/tabs/style.scss'
 			}
+		},
+		'woo-comparison': {
+			block: 'blocks/woo-comparison/block.json',
+			assets: {
+				'woo-comparison/editor.css': 'blocks/woo-comparison/editor.scss'
+			}
 		}
 
-		// 'woo-comparison': {
-		// 	block: 'blocks/woo-comparison/block.json',
-		// 	assets: {
-		// 		'woo-comparison/editor.css': 'blocks/woo-comparison/editor.scss'
-		// 	}
-		// },
 		// 'product-add-to-cart': {
 		// 	block: 'woocommerce/add-to-cart/block.json'
 		// },
