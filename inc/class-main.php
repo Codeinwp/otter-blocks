@@ -19,13 +19,6 @@ class Main {
 	public static $is_fa_loaded = false;
 
 	/**
-	 * Flag to mark that maps scripts has been loaded.
-	 *
-	 * @var bool $is_map_loaded Is Map loaded?
-	 */
-	public static $is_map_loaded = false;
-
-	/**
 	 * Flag to mark that Leaflet scripts has been loaded.
 	 *
 	 * @var bool $is_leaflet_loaded Is Leaflet loaded?
@@ -414,42 +407,6 @@ class Main {
 			[],
 			$asset_file['version']
 		);
-
-		// On AMP context, we don't load JS files.
-		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
-			return;
-		}
-
-		if ( ! self::$is_map_loaded && has_block( 'themeisle-blocks/google-map', $post ) ) {
-			$apikey = get_option( 'themeisle_google_map_block_api_key' );
-
-			// Don't output anything if there is no API key.
-			if ( null !== $apikey && ! empty( $apikey ) ) {
-				$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/maps.asset.php';
-
-				wp_enqueue_script(
-					'otter-google-map',
-					plugin_dir_url( $this->get_dir() ) . 'build/blocks/maps.js',
-					$asset_file['dependencies'],
-					$asset_file['version'],
-					true
-				);
-
-				wp_script_add_data( 'otter-google-map', 'defer', true );
-
-				wp_enqueue_script( // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
-					'google-maps',
-					'https://maps.googleapis.com/maps/api/js?key=' . esc_attr( $apikey ) . '&libraries=places&callback=initMapScript',
-					array( 'otter-google-map' ),
-					'',
-					true
-				);
-
-				wp_script_add_data( 'google-maps', 'defer', true );
-
-				self::$is_map_loaded = true;
-			}
-		}
 
 		if ( ! self::$is_leaflet_loaded && has_block( 'themeisle-blocks/leaflet-map', $post ) ) {
 			wp_enqueue_script(

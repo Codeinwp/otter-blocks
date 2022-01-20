@@ -68,82 +68,34 @@ class Registration {
 	 */
 	public function enqueue_scripts() {
 		// Handle Front:
-		// Google Map
 		// Leaflet Map - Also L is undefined error.
 		// Section CSS file causing debugging errors.
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
-
-		wp_register_script(
-			'lottie-player',
-			OTTER_BLOCKS_URL . 'assets/lottie/lottie-player.min.js',
-			[],
-			$asset_file['version'],
-			true
-		);
-
+		wp_register_script( 'lottie-player', OTTER_BLOCKS_URL . 'assets/lottie/lottie-player.min.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'lottie-player', 'async', true );
 
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/slider.asset.php';
-
-		wp_register_script(
-			'glidejs',
-			OTTER_BLOCKS_URL . 'assets/glide/glide.min.js',
-			[],
-			$asset_file['version'],
-			true
-		);
-
+		wp_register_script( 'glidejs', OTTER_BLOCKS_URL . 'assets/glide/glide.min.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'glidejs', 'async', true );
-
-		wp_register_style(
-			'glidejs-core',
-			OTTER_BLOCKS_URL . 'assets/glide/glide.core.min.css',
-			[],
-			$asset_file['version']
-		);
-
-		wp_register_style(
-			'glidejs-theme',
-			OTTER_BLOCKS_URL . 'assets/glide/glide.theme.min.css',
-			[],
-			$asset_file['version']
-		);
+		wp_register_style( 'glidejs-core', OTTER_BLOCKS_URL . 'assets/glide/glide.core.min.css', [], $asset_file['version'] );
+		wp_register_style( 'glidejs-theme', OTTER_BLOCKS_URL . 'assets/glide/glide.theme.min.css', [], $asset_file['version'] );
+		
+		// On AMP context, we don't load JS files.
+		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+			return;
+		}
 
 		if ( ! is_admin() ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/circle-counter.asset.php';
-
-			wp_register_script(
-				'otter-circle-counter',
-				OTTER_BLOCKS_URL . 'build/blocks/circle-counter.js',
-				$asset_file['dependencies'],
-				$asset_file['version'],
-				true
-			);
-
+			wp_register_script( 'otter-circle-counter', OTTER_BLOCKS_URL . 'build/blocks/circle-counter.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-circle-counter', 'defer', true );
 
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/countdown.asset.php';
-
-			wp_register_script(
-				'otter-countdown',
-				OTTER_BLOCKS_URL . 'build/blocks/countdown.js',
-				$asset_file['dependencies'],
-				$asset_file['version'],
-				true
-			);
-
+			wp_register_script( 'otter-countdown', OTTER_BLOCKS_URL . 'build/blocks/countdown.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-countdown', 'defer', true );
 
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/form.asset.php';
-
-			wp_register_script(
-				'otter-form',
-				OTTER_BLOCKS_URL . 'build/blocks/form.js',
-				$asset_file['dependencies'],
-				$asset_file['version'],
-				true
-			);
-
+			wp_register_script( 'otter-form', OTTER_BLOCKS_URL . 'build/blocks/form.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-form', 'defer', true );
 
 			wp_localize_script(
@@ -154,16 +106,19 @@ class Registration {
 				)
 			);
 
+			$apikey = get_option( 'themeisle_google_map_block_api_key' );
+
+			// Don't output anything if there is no API key.
+			if ( null !== $apikey && ! empty( $apikey ) ) {
+				$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/maps.asset.php';
+				wp_register_script( 'otter-google-map', OTTER_BLOCKS_URL . 'build/blocks/maps.js', $asset_file['dependencies'], $asset_file['version'], true );
+				wp_script_add_data( 'otter-google-map', 'defer', true );
+				wp_register_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . esc_attr( $apikey ) . '&libraries=places&callback=initMapScript', array( 'otter-google-map' ), '', true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
+				wp_script_add_data( 'google-maps', 'defer', true );
+			}
+
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
-
-			wp_register_script(
-				'lottie-interactivity',
-				OTTER_BLOCKS_URL . 'assets/lottie/lottie-interactivity.min.js',
-				array( 'lottie-player' ),
-				$asset_file['version'],
-				true
-			);
-
+			wp_register_script( 'lottie-interactivity', OTTER_BLOCKS_URL . 'assets/lottie/lottie-interactivity.min.js', array( 'lottie-player' ), $asset_file['version'], true );
 			wp_script_add_data( 'lottie-interactivity', 'async', true );
 
 			wp_register_script(
@@ -195,27 +150,11 @@ class Registration {
 			wp_script_add_data( 'otter-slider', 'async', true );
 
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/tabs.asset.php';
-
-			wp_register_script(
-				'otter-tabs',
-				OTTER_BLOCKS_URL . 'build/blocks/tabs.js',
-				$asset_file['dependencies'],
-				$asset_file['version'],
-				true
-			);
-
+			wp_register_script( 'otter-tabs', OTTER_BLOCKS_URL . 'build/blocks/tabs.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-tabs', 'defer', true );
 
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/popup.asset.php';
-
-			wp_register_script(
-				'otter-popup',
-				OTTER_BLOCKS_URL . 'build/blocks/popup.js',
-				$asset_file['dependencies'],
-				$asset_file['version'],
-				true
-			);
-
+			wp_register_script( 'otter-popup', OTTER_BLOCKS_URL . 'build/blocks/popup.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-popup', 'defer', true );
 
 			wp_localize_script(
@@ -227,15 +166,7 @@ class Registration {
 			);
 
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/progress-bar.asset.php';
-	
-			wp_register_script(
-				'otter-progress-bar',
-				OTTER_BLOCKS_URL . 'build/blocks/progress-bar.js',
-				$asset_file['dependencies'],
-				$asset_file['version'],
-				true
-			);
-
+			wp_register_script( 'otter-progress-bar', OTTER_BLOCKS_URL . 'build/blocks/progress-bar.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-progress-bar', 'defer', true );
 		}
 	}

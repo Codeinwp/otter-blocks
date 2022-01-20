@@ -67,5 +67,6 @@
 		"html": false
 	},
 	"editorStyle": "otter-google-map-editor",
-	"style": "otter-google-map-style"
+	"style": "otter-google-map-style",
+	"script": "google-maps"
 }
