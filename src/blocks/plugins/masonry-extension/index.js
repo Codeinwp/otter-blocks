@@ -41,7 +41,6 @@ const withMasonryExtension = createHigherOrderComponent( BlockEdit => {
 		);
 
 		if ( 'core/gallery' === props.name && ! imagesUploading ) {
-			console.log( 'Add masonry' );
 			return (
 				<Edit
 					props={ props }
