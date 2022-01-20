@@ -72,7 +72,6 @@ class Registration {
 		// Leaflet Map - Also L is undefined error.
 		// Lottie
 		// Section CSS file causing debugging errors.
-
 		if ( ! is_admin() ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/circle-counter.asset.php';
 
