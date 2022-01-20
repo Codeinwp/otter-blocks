@@ -30,7 +30,7 @@ class Registration {
 		}
 
 		add_action( 'init', array( $this, 'register_blocks' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'enqueue_block_assets', array( $this, 'enqueue_scripts' ) );
 	}
 
 	/**
@@ -70,8 +70,46 @@ class Registration {
 		// Handle Front:
 		// Google Map
 		// Leaflet Map - Also L is undefined error.
-		// Lottie
 		// Section CSS file causing debugging errors.
+
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
+
+		wp_register_script(
+			'lottie-player',
+			OTTER_BLOCKS_URL . 'assets/lottie/lottie-player.min.js',
+			[],
+			$asset_file['version'],
+			true
+		);
+
+		wp_script_add_data( 'lottie-player', 'async', true );
+
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/slider.asset.php';
+
+		wp_register_script(
+			'glidejs',
+			OTTER_BLOCKS_URL . 'assets/glide/glide.min.js',
+			[],
+			$asset_file['version'],
+			true
+		);
+
+		wp_script_add_data( 'glidejs', 'async', true );
+
+		wp_register_style(
+			'glidejs-core',
+			OTTER_BLOCKS_URL . 'assets/glide/glide.core.min.css',
+			[],
+			$asset_file['version'],
+		);
+
+		wp_register_style(
+			'glidejs-theme',
+			OTTER_BLOCKS_URL . 'assets/glide/glide.theme.min.css',
+			[],
+			$asset_file['version'],
+		);
+
 		if ( ! is_admin() ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/circle-counter.asset.php';
 
@@ -116,6 +154,46 @@ class Registration {
 					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
 				)
 			);
+
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
+
+			wp_register_script(
+				'lottie-interactivity',
+				OTTER_BLOCKS_URL . 'assets/lottie/lottie-interactivity.min.js',
+				array( 'lottie-player' ),
+				$asset_file['version'],
+				true
+			);
+
+			wp_script_add_data( 'lottie-interactivity', 'async', true );
+
+			wp_register_script(
+				'otter-lottie',
+				OTTER_BLOCKS_URL . 'build/blocks/lottie.js',
+				array_merge(
+					$asset_file['dependencies'],
+					array( 'lottie-player', 'lottie-interactivity' )
+				),
+				$asset_file['version'],
+				true
+			);
+
+			wp_script_add_data( 'otter-lottie', 'defer', true );
+
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/slider.asset.php';
+
+			wp_register_script(
+				'otter-slider',
+				OTTER_BLOCKS_URL . 'build/blocks/slider.js',
+				array_merge(
+					$asset_file['dependencies'],
+					array( 'glidejs' )
+				),
+				$asset_file['version'],
+				true
+			);
+
+			wp_script_add_data( 'otter-slider', 'async', true );
 
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/tabs.asset.php';
 
@@ -195,6 +273,10 @@ class Registration {
 			'product-upsells'           => '\ThemeIsle\GutenbergBlocks\Render\Product_Upsells_Block',
 		);
 
+		$dependencies = array(
+			'slider' => array( 'glidejs-core', 'glidejs-theme' ),
+		);
+
 		$blocks = array(
 			'about-author',
 			'accordion',
@@ -267,11 +349,17 @@ class Registration {
 
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
 
+			$deps = [];
+
+			if ( isset( $dependencies[ $block ] ) ) {
+				$deps = $dependencies[ $block ];
+			}
+
 			if ( file_exists( $editor_style ) && ! empty( $metadata['editorStyle'] ) ) {
 				wp_register_style( 
 					$metadata['editorStyle'],
 					OTTER_BLOCKS_URL . 'build/blocks/' . $block . '/editor.css',
-					[],
+					$deps,
 					$asset_file['version']
 				);
 			}
@@ -280,7 +368,7 @@ class Registration {
 				wp_register_style( 
 					$metadata['style'],
 					OTTER_BLOCKS_URL . 'build/blocks/' . $block . '/style.css',
-					[],
+					$deps,
 					$asset_file['version']
 				);
 			}

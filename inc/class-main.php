@@ -19,13 +19,6 @@ class Main {
 	public static $is_fa_loaded = false;
 
 	/**
-	 * Flag to mark that the Glide related scripts has been loaded.
-	 *
-	 * @var bool $is_glide_loaded Is FA loaded?
-	 */
-	public static $is_glide_loaded = false;
-
-	/**
 	 * Flag to mark that maps scripts has been loaded.
 	 *
 	 * @var bool $is_map_loaded Is Map loaded?
@@ -33,16 +26,9 @@ class Main {
 	public static $is_map_loaded = false;
 
 	/**
-	 * Flag to mark that lottie scripts has been loaded.
-	 *
-	 * @var bool $is_lottie_loaded Is Lottie loaded?
-	 */
-	public static $is_lottie_loaded = false;
-
-	/**
 	 * Flag to mark that Leaflet scripts has been loaded.
 	 *
-	 * @var bool $is_lottie_loaded Is Lottie loaded?
+	 * @var bool $is_leaflet_loaded Is Leaflet loaded?
 	 */
 	public static $is_leaflet_loaded = false;
 	/**
@@ -298,22 +284,6 @@ class Main {
 			);
 		}
 
-		wp_enqueue_script(
-			'glidejs',
-			plugin_dir_url( $this->get_dir() ) . 'assets/glide/glide.min.js',
-			[],
-			self::$assets_version,
-			true
-		);
-
-		wp_enqueue_script(
-			'lottie-player',
-			plugin_dir_url( $this->get_dir() ) . 'assets/lottie/lottie-player.min.js',
-			[],
-			self::$assets_version,
-			true
-		);
-
 		wp_set_script_translations( 'otter-blocks', 'otter-blocks' );
 
 		global $wp_roles;
@@ -369,20 +339,6 @@ class Main {
 			plugin_dir_url( $this->get_dir() ) . 'build/blocks/editor.css',
 			array( 'wp-edit-blocks' ),
 			$asset_file['version']
-		);
-
-		wp_enqueue_style(
-			'glidejs-core',
-			plugin_dir_url( $this->get_dir() ) . 'assets/glide/glide.core.min.css',
-			[],
-			self::$assets_version
-		);
-
-		wp_enqueue_style(
-			'glidejs-theme',
-			plugin_dir_url( $this->get_dir() ) . 'assets/glide/glide.theme.min.css',
-			[],
-			self::$assets_version
 		);
 
 		wp_enqueue_script(
@@ -493,96 +449,6 @@ class Main {
 
 				self::$is_map_loaded = true;
 			}
-		}
-
-		if ( ! self::$is_glide_loaded && has_block( 'themeisle-blocks/slider', $post ) ) {
-			wp_enqueue_script(
-				'glidejs',
-				plugin_dir_url( $this->get_dir() ) . 'assets/glide/glide.min.js',
-				[],
-				self::$assets_version,
-				true
-			);
-
-			wp_script_add_data( 'glidejs', 'async', true );
-
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/slider.asset.php';
-
-			wp_enqueue_script(
-				'otter-slider',
-				plugin_dir_url( $this->get_dir() ) . 'build/blocks/slider.js',
-				array_merge(
-					$asset_file['dependencies'],
-					array( 'glidejs' )
-				),
-				$asset_file['version'],
-				true
-			);
-
-			wp_script_add_data( 'otter-slider', 'async', true );
-
-			wp_register_style(
-				'glidejs-core',
-				plugin_dir_url( $this->get_dir() ) . 'assets/glide/glide.core.min.css',
-				[],
-				self::$assets_version
-			);
-
-			wp_register_style(
-				'glidejs-theme',
-				plugin_dir_url( $this->get_dir() ) . 'assets/glide/glide.theme.min.css',
-				[],
-				self::$assets_version
-			);
-
-			add_action(
-				'get_footer',
-				static function () {
-					wp_enqueue_style( 'glidejs-core' );
-					wp_enqueue_style( 'glidejs-theme' );
-				}
-			);
-
-			self::$is_glide_loaded = true;
-		}
-
-		if ( ! self::$is_lottie_loaded && has_block( 'themeisle-blocks/lottie', $post ) ) {
-			wp_enqueue_script(
-				'lottie-player',
-				plugin_dir_url( $this->get_dir() ) . 'assets/lottie/lottie-player.min.js',
-				[],
-				self::$assets_version,
-				true
-			);
-
-			wp_script_add_data( 'lottie-player', 'async', true );
-
-			wp_enqueue_script(
-				'lottie-interactivity',
-				plugin_dir_url( $this->get_dir() ) . 'assets/lottie/lottie-interactivity.min.js',
-				array( 'lottie-player' ),
-				self::$assets_version,
-				true
-			);
-
-			wp_script_add_data( 'lottie-interactivity', 'async', true );
-
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
-
-			wp_enqueue_script(
-				'otter-lottie',
-				plugin_dir_url( $this->get_dir() ) . 'build/blocks/lottie.js',
-				array_merge(
-					$asset_file['dependencies'],
-					array( 'lottie-player', 'lottie-interactivity' )
-				),
-				$asset_file['version'],
-				true
-			);
-
-			wp_script_add_data( 'otter-lottie', 'defer', true );
-
-			self::$is_lottie_loaded = true;
 		}
 
 		if ( ! self::$is_leaflet_loaded && has_block( 'themeisle-blocks/leaflet-map', $post ) ) {

@@ -81,5 +81,7 @@
 		"align": [ "wide", "full" ]
 	},
 	"editorStyle": "otter-slider-editor",
-	"style": "otter-slider-style"
+	"style": "otter-slider-style",
+	"editorScript": "glidejs",
+	"script": "otter-slider"
 }
