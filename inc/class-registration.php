@@ -71,7 +71,6 @@ class Registration {
 		// Google Map
 		// Leaflet Map - Also L is undefined error.
 		// Section CSS file causing debugging errors.
-
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
 
 		wp_register_script(
@@ -100,14 +99,14 @@ class Registration {
 			'glidejs-core',
 			OTTER_BLOCKS_URL . 'assets/glide/glide.core.min.css',
 			[],
-			$asset_file['version'],
+			$asset_file['version']
 		);
 
 		wp_register_style(
 			'glidejs-theme',
 			OTTER_BLOCKS_URL . 'assets/glide/glide.theme.min.css',
 			[],
-			$asset_file['version'],
+			$asset_file['version']
 		);
 
 		if ( ! is_admin() ) {
