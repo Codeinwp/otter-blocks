@@ -92,23 +92,6 @@ class Base_CSS {
 	}
 
 	/**
-	 * Parse Blocks for Gutenberg and WordPress 5.0
-	 *
-	 * @param string $content Content.
-	 *
-	 * @return string
-	 * @since   1.3.0
-	 * @access  public
-	 */
-	public function parse_blocks( $content ) {
-		if ( ! function_exists( 'parse_blocks' ) ) {
-			return gutenberg_parse_blocks( $content );
-		} else {
-			return parse_blocks( $content );
-		}
-	}
-
-	/**
 	 * Check if string is empty without accepting zero
 	 *
 	 * @param string $var Var to check.

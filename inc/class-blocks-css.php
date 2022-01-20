@@ -69,22 +69,6 @@ class Blocks_CSS {
 	}
 
 	/**
-	 * Parse Blocks for Gutenberg and WordPress 5.0
-	 *
-	 * @param string $content Content to parse.
-	 * 
-	 * @since   1.0.0
-	 * @access  public
-	 */
-	public function parse_blocks( $content ) {
-		if ( ! function_exists( 'parse_blocks' ) ) {
-			return gutenberg_parse_blocks( $content );
-		} else {
-			return parse_blocks( $content );
-		}
-	}
-
-	/**
 	 * Render server-side CSS
 	 * 
 	 * @since   1.0.0
