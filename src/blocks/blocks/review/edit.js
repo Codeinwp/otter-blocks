@@ -111,16 +111,14 @@ const Edit = ({
 		setAttributes({ links });
 	};
 
-	let placeholderProps = useBlockProps({
-		id: attributes.id,
-		className: 'is-placeholder'
-	});
+	const isPlaceholder = ( 'object' === typeof status && null !== status && status.isError ) || 'isLoading' === status;
 
 	let blockProps = useBlockProps({
 		id: attributes.id,
-		style: {
+		className: isPlaceholder && 'is-placeholder',
+		style: ! isPlaceholder ? {
 			backgroundColor: attributes.backgroundColor
-		}
+		} : {}
 	});
 
 	if ( 'isLoading' === status ) {
@@ -132,7 +130,7 @@ const Edit = ({
 					productAttributes={ productAttributes }
 				/>
 
-				<div { ...placeholderProps }>
+				<div { ...blockProps }>
 					<Placeholder><Spinner /></Placeholder>
 				</div>
 			</Fragment>
@@ -148,7 +146,7 @@ const Edit = ({
 					productAttributes={ productAttributes }
 				/>
 
-				<div { ...placeholderProps }>
+				<div { ...blockProps }>
 					<Placeholder
 						instructions={ status.message }
 					/>

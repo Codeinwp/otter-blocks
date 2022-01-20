@@ -33,20 +33,6 @@ class Main {
 	public static $is_map_loaded = false;
 
 	/**
-	 * Flag to mark that progress bar scripts has been loaded.
-	 *
-	 * @var bool $is_progress_bar_loaded Is Map loaded?
-	 */
-	public static $is_progress_bar_loaded = false;
-
-	/**
-	 * Flag to mark that circulat progress bar scripts has been loaded.
-	 *
-	 * @var bool $is_circular_progress_bar_loaded Is Map loaded?
-	 */
-	public static $is_circle_counter_loaded = false;
-
-	/**
 	 * Flag to mark that lottie scripts has been loaded.
 	 *
 	 * @var bool $is_lottie_loaded Is Lottie loaded?
@@ -59,35 +45,6 @@ class Main {
 	 * @var bool $is_lottie_loaded Is Lottie loaded?
 	 */
 	public static $is_leaflet_loaded = false;
-
-	/**
-	 * Flag to mark that Tabs script has been loaded.
-	 *
-	 * @var bool $is_tabs_loaded Is Tabs loaded?
-	 */
-	public static $is_tabs_loaded = false;
-
-	/**
-	 * Flag to mark that Form script has been loaded.
-	 *
-	 * @var bool $is_form_loaded Is Form loaded?
-	 */
-	public static $is_form_loaded = false;
-
-	/**
-	 * Flag to mark that Countdown script has been loaded.
-	 *
-	 * @var bool $is_countdown_loaded Is Tabs loaded?
-	 */
-	public static $is_countdown_loaded = false;
-
-	/**
-	 * Flag to mark that Popup script has been loaded.
-	 *
-	 * @var bool $is_popup_loaded Is Tabs loaded?
-	 */
-	public static $is_popup_loaded = false;
-
 	/**
 	 * Define assets version.
 	 *
@@ -589,38 +546,6 @@ class Main {
 			self::$is_glide_loaded = true;
 		}
 
-		if ( ! self::$is_progress_bar_loaded && has_block( 'themeisle-blocks/progress-bar', $post ) ) {
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/progress-bar.asset.php';
-
-			wp_enqueue_script(
-				'otter-progress-bar',
-				plugin_dir_url( $this->get_dir() ) . 'build/blocks/progress-bar.js',
-				$asset_file['dependencies'],
-				$asset_file['version'],
-				true
-			);
-
-			wp_script_add_data( 'otter-progress-bar', 'defer', true );
-
-			self::$is_progress_bar_loaded = true;
-		}
-
-		if ( ! self::$is_circle_counter_loaded && has_block( 'themeisle-blocks/circle-counter', $post ) ) {
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/circle-counter.asset.php';
-
-			wp_enqueue_script(
-				'otter-circle-counter',
-				plugin_dir_url( $this->get_dir() ) . 'build/blocks/circle-counter.js',
-				$asset_file['dependencies'],
-				$asset_file['version'],
-				true
-			);
-
-			wp_script_add_data( 'otter-circle-counter', 'defer', true );
-
-			self::$is_circle_counter_loaded = true;
-		}
-
 		if ( ! self::$is_lottie_loaded && has_block( 'themeisle-blocks/lottie', $post ) ) {
 			wp_enqueue_script(
 				'lottie-player',
@@ -719,86 +644,6 @@ class Main {
 			);
 
 			self::$is_leaflet_loaded = true;
-		}
-
-		if ( ! self::$is_tabs_loaded && has_block( 'themeisle-blocks/tabs', $post ) ) {
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/tabs.asset.php';
-
-			wp_enqueue_script(
-				'otter-tabs',
-				plugin_dir_url( $this->get_dir() ) . 'build/blocks/tabs.js',
-				$asset_file['dependencies'],
-				$asset_file['version'],
-				true
-			);
-
-			wp_script_add_data( 'otter-tabs', 'defer', true );
-
-			self::$is_tabs_loaded = true;
-		}
-
-		if ( ! self::$is_form_loaded && has_block( 'themeisle-blocks/form', $post ) ) {
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/form.asset.php';
-
-			wp_enqueue_script(
-				'otter-form',
-				plugin_dir_url( $this->get_dir() ) . 'build/blocks/form.js',
-				$asset_file['dependencies'],
-				$asset_file['version'],
-				true
-			);
-
-			wp_script_add_data( 'otter-form', 'defer', true );
-
-			wp_localize_script(
-				'otter-form',
-				'themeisleGutenbergForm',
-				array(
-					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
-				)
-			);
-
-			self::$is_form_loaded = true;
-		}
-
-		if ( ! self::$is_countdown_loaded && has_block( 'themeisle-blocks/countdown', $post ) ) {
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/countdown.asset.php';
-
-			wp_enqueue_script(
-				'otter-countdown',
-				plugin_dir_url( $this->get_dir() ) . 'build/blocks/countdown.js',
-				$asset_file['dependencies'],
-				$asset_file['version'],
-				true
-			);
-
-			wp_script_add_data( 'otter-countdown', 'defer', true );
-
-			self::$is_countdown_loaded = true;
-		}
-
-		if ( ! self::$is_popup_loaded && has_block( 'themeisle-blocks/popup', $post ) ) {
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/popup.asset.php';
-
-			wp_enqueue_script(
-				'otter-popup',
-				plugin_dir_url( $this->get_dir() ) . 'build/blocks/popup.js',
-				$asset_file['dependencies'],
-				$asset_file['version'],
-				true
-			);
-
-			wp_script_add_data( 'otter-popup', 'defer', true );
-
-			wp_localize_script(
-				'otter-popup',
-				'themeisleGutenberg',
-				array(
-					'isPreview' => is_preview(),
-				)
-			);
-
-			self::$is_popup_loaded = true;
 		}
 
 		if ( has_block( 'themeisle-blocks/product-image', $post ) ) {

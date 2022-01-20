@@ -52,5 +52,6 @@
 		}
 	},
 	"editorStyle": "otter-progress-bar-editor",
-	"style": "otter-progress-bar-style"
+	"style": "otter-progress-bar-style",
+	"script": "otter-progress-bar"
 }

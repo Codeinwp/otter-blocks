@@ -82,7 +82,7 @@ class Blocks_CSS {
 				return;
 			}
 
-			$blocks = $this->parse_blocks( $post->post_content );
+			$blocks = parse_blocks( $post->post_content );
 
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 				return;
@@ -134,7 +134,7 @@ class Blocks_CSS {
 					return;
 				}
 
-				$blocks = $this->parse_blocks( $reusable_block->post_content );
+				$blocks = parse_blocks( $reusable_block->post_content );
 
 				$style .= $this->cycle_through_blocks( $blocks, $reusable_block->ID );
 			}

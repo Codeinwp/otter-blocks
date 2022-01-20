@@ -28,5 +28,6 @@
 		"align": [ "left", "center", "right" ]
 	},
 	"editorStyle": "otter-tabs-editor",
-	"style": "otter-tabs-style"
+	"style": "otter-tabs-style",
+	"script": "otter-tabs"
 }

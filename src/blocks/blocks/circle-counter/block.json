@@ -52,5 +52,6 @@
 		}
 	},
 	"editorStyle": "otter-circle-counter-editor",
-	"style": "otter-circle-counter-style"
+	"style": "otter-circle-counter-style",
+	"script": "otter-circle-counter"
 }

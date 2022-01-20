@@ -42,5 +42,6 @@
 		"align": [ "wide", "full" ]
 	},
 	"editorStyle": "otter-form-editor",
-	"style": "otter-form-style"
+	"style": "otter-form-style",
+	"script": "otter-form"
 }

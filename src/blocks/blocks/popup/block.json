@@ -62,5 +62,6 @@
 		}
 	},
 	"editorStyle": "otter-popup-editor",
-	"style": "otter-popup-style"
+	"style": "otter-popup-style",
+	"script": "otter-popup"
 }

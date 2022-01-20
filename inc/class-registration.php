@@ -30,6 +30,7 @@ class Registration {
 		}
 
 		add_action( 'init', array( $this, 'register_blocks' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	}
 
 	/**
@@ -58,6 +59,111 @@ class Registration {
 		);
 	}
 
+
+	/**
+	 * Register scripts for blocks.
+	 *
+	 * @since   2.0.0
+	 * @access public
+	 */
+	public function enqueue_scripts() {
+		// Handle Front:
+		// Google Map
+		// Leaflet Map - Also L is undefined error.
+		// Lottie
+		// Section CSS file causing debugging errors.
+
+		if ( ! is_admin() ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/circle-counter.asset.php';
+
+			wp_register_script(
+				'otter-circle-counter',
+				OTTER_BLOCKS_URL . 'build/blocks/circle-counter.js',
+				$asset_file['dependencies'],
+				$asset_file['version'],
+				true
+			);
+
+			wp_script_add_data( 'otter-circle-counter', 'defer', true );
+
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/countdown.asset.php';
+
+			wp_register_script(
+				'otter-countdown',
+				OTTER_BLOCKS_URL . 'build/blocks/countdown.js',
+				$asset_file['dependencies'],
+				$asset_file['version'],
+				true
+			);
+
+			wp_script_add_data( 'otter-countdown', 'defer', true );
+
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/form.asset.php';
+
+			wp_register_script(
+				'otter-form',
+				OTTER_BLOCKS_URL . 'build/blocks/form.js',
+				$asset_file['dependencies'],
+				$asset_file['version'],
+				true
+			);
+
+			wp_script_add_data( 'otter-form', 'defer', true );
+
+			wp_localize_script(
+				'otter-form',
+				'themeisleGutenbergForm',
+				array(
+					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
+				)
+			);
+
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/tabs.asset.php';
+
+			wp_register_script(
+				'otter-tabs',
+				OTTER_BLOCKS_URL . 'build/blocks/tabs.js',
+				$asset_file['dependencies'],
+				$asset_file['version'],
+				true
+			);
+
+			wp_script_add_data( 'otter-tabs', 'defer', true );
+
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/popup.asset.php';
+
+			wp_register_script(
+				'otter-popup',
+				OTTER_BLOCKS_URL . 'build/blocks/popup.js',
+				$asset_file['dependencies'],
+				$asset_file['version'],
+				true
+			);
+
+			wp_script_add_data( 'otter-popup', 'defer', true );
+
+			wp_localize_script(
+				'otter-popup',
+				'themeisleGutenberg',
+				array(
+					'isPreview' => is_preview(),
+				)
+			);
+
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/progress-bar.asset.php';
+	
+			wp_register_script(
+				'otter-progress-bar',
+				OTTER_BLOCKS_URL . 'build/blocks/progress-bar.js',
+				$asset_file['dependencies'],
+				$asset_file['version'],
+				true
+			);
+
+			wp_script_add_data( 'otter-progress-bar', 'defer', true );
+		}
+	}
+
 	/**
 	 * Blocks Registration.
 	 *
@@ -65,16 +171,6 @@ class Registration {
 	 * @access  public
 	 */
 	public function register_blocks() {
-		// Handle Front:
-		// Circle Counter
-		// Countdown
-		// Form
-		// Google Map
-		// Leaflet Map - Also L is undefined error.
-		// Lottie
-		// Popup
-		// Progress Bar
-		// Section CSS file causing debugging errors.
 		$dynamic_blocks = array(
 			'about-author'              => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
 			'add-to-cart-button'        => '\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',

@@ -234,7 +234,7 @@ class Base_CSS {
 	public function get_blocks_css( $post_id ) {
 		if ( function_exists( 'has_blocks' ) ) {
 			$content = get_post_field( 'post_content', $post_id );
-			$blocks  = $this->parse_blocks( $content );
+			$blocks  = parse_blocks( $content );
 
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 				return;
@@ -262,7 +262,7 @@ class Base_CSS {
 				}
 			}
 
-			$blocks = $this->parse_blocks( $content );
+			$blocks = parse_blocks( $content );
 
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 				return;
@@ -291,7 +291,7 @@ class Base_CSS {
 			return;
 		}
 
-		$blocks = $this->parse_blocks( $reusable_block->post_content );
+		$blocks = parse_blocks( $reusable_block->post_content );
 
 		return $this->cycle_through_static_blocks( $blocks );
 	}
