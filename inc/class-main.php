@@ -419,6 +419,7 @@ class Main {
 					'wooComparison'   => class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options' ) ? \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options::is_module_activated() : false,
 				),
 				'isBlockEditor'  => 'post' === $current_screen->base,
+				'useOldMacyContainer' => version_compare(get_bloginfo('version'),'5.9', '<'),
 			)
 		);
 
@@ -480,6 +481,7 @@ class Main {
 			self::$assets_version,
 			true
 		);
+
 	}
 
 	/**
@@ -805,6 +807,7 @@ class Main {
 
 			self::$is_popup_loaded = true;
 		}
+
 	}
 
 	/**

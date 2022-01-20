@@ -5,6 +5,7 @@ import domReady from '@wordpress/dom-ready';
 
 domReady( () => {
 	const galleries = document.getElementsByClassName( 'otter-masonry' );
+	const useOldContainer = Boolean(parseInt(window.themeisleOtterMetadata?.useOldMacyContainer || '0'));
 
 	Array.from( galleries ).forEach( gallery => {
 		const container = gallery.querySelector( '.wp-block-gallery' );
@@ -27,7 +28,7 @@ domReady( () => {
 		const checker = setInterval( () => {
 			if ( window?.Macy ) {
 				window.Macy({
-					container,
+					container: useOldContainer ? gallery.querySelector( '.blocks-gallery-grid' ) : container,
 					trueOrder: false,
 					waitForImages: false,
 					margin,

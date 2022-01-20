@@ -58,6 +58,14 @@ class Masonry_Variant {
 				true
 			);
 
+			wp_localize_script(
+				'otter-masonry-metadata',
+				'themeisleOtterMetadata',
+				array(
+					'useOldMacyContainer' => version_compare(get_bloginfo('version'),'5.9', '<'),
+				)
+			);
+
 			wp_script_add_data( 'otter-masonry', 'defer', true );
 
 			$margin = isset( $block['attrs']['margin'] ) ? $block['attrs']['margin'] : 0;
