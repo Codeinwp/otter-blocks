@@ -41,7 +41,7 @@ const Edit = ({
 		if ( props.attributes.isMasonry ) {
 			deleteMasonry();
 
-			const useOldContainer = Boolean(parseInt(window.themeisleGutenberg?.useOldMacyContainer || '0'));
+			const useOldContainer = Boolean( parseInt( window.themeisleGutenberg?.useOldMacyContainer || '0' ) );
 
 			macy.current = window.Macy({
 				container: useOldContainer ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }`,

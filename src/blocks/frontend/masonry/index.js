@@ -5,7 +5,7 @@ import domReady from '@wordpress/dom-ready';
 
 domReady( () => {
 	const galleries = document.getElementsByClassName( 'otter-masonry' );
-	const useOldContainer = Boolean(parseInt(window.themeisleOtterMetadata?.useOldMacyContainer || '0'));
+	const useOldContainer = Boolean( parseInt( window.themeisleOtterMetadata?.useOldMacyContainer || '0' ) );
 
 	Array.from( galleries ).forEach( gallery => {
 		const container = gallery.querySelector( '.wp-block-gallery' );
