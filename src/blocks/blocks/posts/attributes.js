@@ -85,6 +85,31 @@ const attributes = {
 	displayAuthor: {
 		type: 'boolean',
 		default: true
+	},
+	displayComments: {
+		type: 'boolean',
+		default: true
+	},
+	displayPostCategory: {
+		type: 'boolean',
+		default: false
+	},
+	displayReadMoreLink: {
+		type: 'boolean',
+		default: false
+	},
+	cropImage: {
+		type: 'boolean',
+		default: false
+	},
+	enableCustomFontSize: {
+		type: 'boolean'
+	},
+	customFontSize: {
+		type: 'number'
+	},
+	borderRadius: {
+		type: 'number'
 	}
 };
 

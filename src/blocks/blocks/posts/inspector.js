@@ -90,84 +90,6 @@ const Inspector = ({
 		setAttributes({ columns: value });
 	};
 
-	const getFields = field => {
-		if ( 'image' === field ) {
-			return attributes.displayFeaturedImage;
-		}
-		if ( 'imageBoxShadow' === field ) {
-			return attributes.imageBoxShadow;
-		}
-
-		if ( 'category' === field ) {
-			return attributes.displayCategory;
-		}
-
-		if ( 'title' === field ) {
-			return attributes.displayTitle;
-		}
-
-		if ( 'meta' === field ) {
-			return attributes.displayMeta;
-		}
-
-		if ( 'description' === field ) {
-			return attributes.displayDescription;
-		}
-
-		if ( 'date' === field ) {
-			return attributes.displayDate;
-		}
-
-		if ( 'author' === field ) {
-			return attributes.displayAuthor;
-		}
-	};
-
-	const toggleFields = field => {
-		if ( 'image' === field ) {
-			setAttributes({ displayFeaturedImage: ! attributes.displayFeaturedImage });
-		}
-
-		if ( 'imageBoxShadow' === field ) {
-			setAttributes({ imageBoxShadow: ! attributes.imageBoxShadow });
-		}
-
-		if ( 'category' === field ) {
-			setAttributes({ displayCategory: ! attributes.displayCategory });
-		}
-
-		if ( 'title' === field ) {
-			setAttributes({ displayTitle: ! attributes.displayTitle });
-		}
-
-		if ( 'meta' === field ) {
-			setAttributes({ displayMeta: ! attributes.displayMeta });
-		}
-
-		if ( 'description' === field ) {
-			setAttributes({ displayDescription: ! attributes.displayDescription });
-		}
-
-		if ( 'date' === field ) {
-			setAttributes({ displayDate: ! attributes.displayDate });
-		}
-
-		if ( 'author' === field ) {
-			setAttributes({ displayAuthor: ! attributes.displayAuthor });
-		}
-	};
-
-	const changeImageSize = value => {
-		setAttributes({ imageSize: value });
-	};
-
-	const changeTitleTag = value => {
-		setAttributes({ titleTag: value });
-	};
-
-	const changeExcerptLength = value => {
-		setAttributes({ excerptLength: value });
-	};
 
 	return (
 		<InspectorControls>
@@ -253,21 +175,7 @@ const Inspector = ({
 			>
 				<LayoutBuilder
 					attributes={ attributes }
-					getFields={ getFields }
-					toggleFields={ toggleFields }
 					setAttributes={ setAttributes }
-					imageSize={ {
-						value: attributes.imageSize,
-						onChange: changeImageSize
-					} }
-					titleTag={ {
-						value: attributes.titleTag,
-						onChange: changeTitleTag
-					} }
-					excerptLimit={ {
-						value: attributes.excerptLength,
-						onChange: changeExcerptLength
-					} }
 				/>
 			</PanelBody>
 		</InspectorControls>

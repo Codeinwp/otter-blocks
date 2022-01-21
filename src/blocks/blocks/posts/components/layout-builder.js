@@ -17,12 +17,7 @@ import { SortableItem, SortableList } from './sortable.js';
 
 const LayoutBuilder = ({
 	attributes,
-	setAttributes,
-	getFields,
-	toggleFields,
-	imageSize,
-	titleTag,
-	excerptLimit
+	setAttributes
 }) => {
 	const onSortEnd = ({ oldIndex, newIndex }) => {
 		const template = arrayMove( attributes.template, oldIndex, newIndex );
@@ -38,20 +33,16 @@ const LayoutBuilder = ({
 				) }
 			>
 				<SortableItem
+					attributes={ attributes }
+					setAttributes={ setAttributes }
 					value={ 'image' }
 					disabled={ true }
-					getFields={ getFields }
-					toggleFields={ toggleFields }
-					imageSize={ imageSize }
 				/>
 
 				<SortableList
-					template={ attributes.template }
+					attributes={ attributes }
+					setAttributes={ setAttributes }
 					onSortEnd={ onSortEnd }
-					getFields={ getFields }
-					toggleFields={ toggleFields }
-					titleTag={ titleTag }
-					excerptLimit={ excerptLimit }
 					useDragHandle
 					axis="y"
 					lockAxis="y"
