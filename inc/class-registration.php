@@ -20,6 +20,20 @@ class Registration {
 	public static $instance = null;
 
 	/**
+	 * Flag to list all the blocks.
+	 *
+	 * @var array
+	 */
+	public static $blocks = array();
+
+	/**
+	 * Flag to list all the blocks dependencies.
+	 *
+	 * @var array
+	 */
+	public static $block_dependencies = array();
+
+	/**
 	 * Flag to mark that the scripts which have loaded.
 	 *
 	 * @var array
@@ -37,6 +51,13 @@ class Registration {
 		'product-image'  => false,
 		'progress-bar'   => false,
 	);
+
+	/**
+	 * Flag to mark that the styles which have loaded.
+	 *
+	 * @var array
+	 */
+	public static $styles_loaded = array();
 
 	/**
 	 * Initialize the class
@@ -77,6 +98,35 @@ class Registration {
 				),
 			)
 		);
+	}
+
+	/**
+	 * Get block metadata from file.
+	 *
+	 * @param string $metadata_file Metadata file link.
+	 *
+	 * @return mixed
+	 * @since   2.0.0
+	 * @access public
+	 */
+	public function get_metadata( $metadata_file ) {
+		if ( ! file_exists( $metadata_file ) ) {
+			return false;
+		}
+
+		$metadata = [];
+
+		if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
+			$metadata = json_decode( wpcom_vip_file_get_contents( $metadata_file ), true );
+		} else {
+			$metadata = json_decode( file_get_contents( $metadata_file ), true ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
+		}
+
+		if ( ! is_array( $metadata ) || empty( $metadata['name'] ) ) {
+			return false;
+		}
+
+		return $metadata;
 	}
 
 
@@ -189,6 +239,8 @@ class Registration {
 		if ( strpos( $content, '<!-- wp:' ) === false ) {
 			return false;
 		}
+
+		$this->enqueue_block_styles( $post );
 
 		if ( ! self::$scripts_loaded['circle-counter'] && has_block( 'themeisle-blocks/circle-counter', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/circle-counter.asset.php';
@@ -313,6 +365,51 @@ class Registration {
 		}
 	}
 
+
+	/**
+	 * Enqueue block styles.
+	 *
+	 * @since   2.0.0
+	 * @param null $post Current post.
+	 * @access  public
+	 */
+	public function enqueue_block_styles( $post ) {
+		foreach ( self::$blocks as $block ) {
+			if ( in_array( $block, self::$styles_loaded ) || ! has_block( 'themeisle-blocks/' . $block, $post ) ) {
+				continue;
+			}
+
+			$block_path    = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
+			$metadata_file = trailingslashit( $block_path ) . 'block.json';
+			$style         = trailingslashit( $block_path ) . 'style.css';
+
+			$metadata = $this->get_metadata( $metadata_file );
+
+			if ( false === $metadata ) {
+				continue;
+			}
+
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+
+			$deps = [];
+
+			if ( isset( self::$block_dependencies[ $block ] ) ) {
+				$deps = self::$block_dependencies[ $block ];
+			}
+
+			if ( file_exists( $style ) && ! empty( $metadata['style'] ) ) {
+				wp_register_style(
+					$metadata['style'],
+					OTTER_BLOCKS_URL . 'build/blocks/' . $block . '/style.css',
+					$deps,
+					$asset_file['version']
+				);
+			}
+
+			array_push( self::$styles_loaded, $block );
+		}
+	}
+
 	/**
 	 * Blocks Registration.
 	 *
@@ -345,12 +442,7 @@ class Registration {
 			'product-upsells'           => '\ThemeIsle\GutenbergBlocks\Render\Product_Upsells_Block',
 		);
 
-		$dependencies = array(
-			'leaflet-map' => array( 'leaflet', 'leaflet-gesture-handling' ),
-			'slider'      => array( 'glidejs-core', 'glidejs-theme' ),
-		);
-
-		$blocks = array(
+		self::$blocks = array(
 			'about-author',
 			'accordion',
 			'accordion-item',
@@ -402,22 +494,20 @@ class Registration {
 			'woo-comparison',
 		);
 
-		foreach ( $blocks as $block ) {
+		self::$block_dependencies = array(
+			'leaflet-map' => array( 'leaflet', 'leaflet-gesture-handling' ),
+			'slider'      => array( 'glidejs-core', 'glidejs-theme' ),
+		);
+
+		foreach ( self::$blocks as $block ) {
 			$block_path    = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
 			$metadata_file = trailingslashit( $block_path ) . 'block.json';
-			$style         = trailingslashit( $block_path ) . 'style.css';
 			$editor_style  = trailingslashit( $block_path ) . 'editor.css';
 
-			if ( ! file_exists( $metadata_file ) ) {
+			$metadata = $this->get_metadata( $metadata_file );
+
+			if ( false === $metadata ) {
 				continue;
-			}
-
-			$metadata = [];
-
-			if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
-				$metadata = json_decode( wpcom_vip_file_get_contents( $metadata_file ), true );
-			} else {
-				$metadata = json_decode( file_get_contents( $metadata_file ), true ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
 			}
 
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
@@ -429,25 +519,12 @@ class Registration {
 			}
 
 			if ( file_exists( $editor_style ) && ! empty( $metadata['editorStyle'] ) ) {
-				wp_register_style( 
+				wp_register_style(
 					$metadata['editorStyle'],
 					OTTER_BLOCKS_URL . 'build/blocks/' . $block . '/editor.css',
 					$deps,
 					$asset_file['version']
 				);
-			}
-
-			if ( ! is_admin() && file_exists( $style ) && ! empty( $metadata['style'] ) ) {
-				wp_register_style( 
-					$metadata['style'],
-					OTTER_BLOCKS_URL . 'build/blocks/' . $block . '/style.css',
-					$deps,
-					$asset_file['version']
-				);
-			}
-
-			if ( ! is_array( $metadata ) || empty( $metadata['name'] ) ) {
-				continue;
 			}
 
 			if ( isset( $dynamic_blocks[ $block ] ) ) {
