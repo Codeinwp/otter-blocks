@@ -20,6 +20,25 @@ class Registration {
 	public static $instance = null;
 
 	/**
+	 * Flag to mark that the scripts which have loaded.
+	 *
+	 * @var array
+	 */
+	public static $scripts_loaded = array(
+		'circle-counter' => false,
+		'countdown'      => false,
+		'form'           => false,
+		'google-map'     => false,
+		'leaflet-map'    => false,
+		'lottie'         => false,
+		'slider'         => false,
+		'tabs'           => false,
+		'popup'          => false,
+		'product-image'  => false,
+		'progress-bar'   => false,
+	);
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -30,7 +49,8 @@ class Registration {
 		}
 
 		add_action( 'init', array( $this, 'register_blocks' ) );
-		add_action( 'enqueue_block_assets', array( $this, 'enqueue_scripts' ) );
+		add_action( 'enqueue_block_assets', array( $this, 'enqueue_assets' ), 1 );
+		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
 	}
 
 	/**
@@ -66,10 +86,15 @@ class Registration {
 	 * @since   2.0.0
 	 * @access public
 	 */
-	public function enqueue_scripts() {
-		// Handle Front:
-		// Leaflet Map - Also L is undefined error.
-		// Section CSS file causing debugging errors.
+	public function enqueue_assets() {
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/leaflet-map.asset.php';
+		wp_register_script( 'leaflet', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet.js', [], $asset_file['version'], true );
+		wp_script_add_data( 'leaflet', 'async', true );
+		wp_register_script( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet-gesture-handling.min.js', array( 'leaflet' ), $asset_file['version'], true );
+		wp_script_add_data( 'leaflet-gesture-handling', 'defer', true );
+		wp_register_style( 'leaflet', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet.css', [], $asset_file['version'] );
+		wp_register_style( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet-gesture-handling.min.css', [], $asset_file['version'] );
+
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
 		wp_register_script( 'lottie-player', OTTER_BLOCKS_URL . 'assets/lottie/lottie-player.min.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'lottie-player', 'async', true );
@@ -79,21 +104,105 @@ class Registration {
 		wp_script_add_data( 'glidejs', 'async', true );
 		wp_register_style( 'glidejs-core', OTTER_BLOCKS_URL . 'assets/glide/glide.core.min.css', [], $asset_file['version'] );
 		wp_register_style( 'glidejs-theme', OTTER_BLOCKS_URL . 'assets/glide/glide.theme.min.css', [], $asset_file['version'] );
-		
+	}
+
+
+	/**
+	 * Load frontend assets for our blocks.
+	 *
+	 * @since   2.0.0
+	 * @access  public
+	 */
+	public function enqueue_block_assets() {
+		global $wp_query, $wp_registered_sidebars;
+
+		if ( is_admin() ) {
+			return;
+		}
+
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+		wp_enqueue_style( 'otter-blocks', OTTER_BLOCKS_URL . 'build/blocks/blocks.css', [], $asset_file['version'] );
+
+		if ( is_singular() ) {
+			$this->enqueue_dependencies();
+		} else {
+			$posts = wp_list_pluck( $wp_query->posts, 'ID' );
+
+			foreach ( $posts as $post ) {
+				$this->enqueue_dependencies( $post );
+			}
+		}
+
+		add_filter(
+			'the_content',
+			function ( $content ) {
+				$this->enqueue_dependencies();
+
+				return $content;
+			}
+		);
+
+		$has_widgets = false;
+
+		foreach ( $wp_registered_sidebars as $key => $sidebar ) {
+			if ( is_active_sidebar( $key ) ) {
+				$has_widgets = true;
+				break;
+			}
+		}
+
+		if ( $has_widgets ) {
+			$this->enqueue_dependencies( 'widgets' );
+		}
+	}
+
+
+	/**
+	 * Handler which checks the blocks used and enqueue the assets which needs.
+	 *
+	 * @since   2.0.0
+	 * @param null $post Current post.
+	 * @access  public
+	 */
+	public function enqueue_dependencies( $post = null ) {
 		// On AMP context, we don't load JS files.
 		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
 			return;
 		}
 
-		if ( ! is_admin() ) {
+		$content = '';
+
+		if ( 'widgets' === $post ) {
+			$widgets = get_option( 'widget_block', array() );
+
+			foreach ( $widgets as $widget ) {
+				if ( is_array( $widget ) && isset( $widget['content'] ) ) {
+					$content .= $widget['content'];
+				}
+			}
+
+			$post = $content;
+		} else {
+			$content = get_the_content( null, false, $post );
+		}
+
+		if ( strpos( $content, '<!-- wp:' ) === false ) {
+			return false;
+		}
+
+		if ( ! self::$scripts_loaded['circle-counter'] && has_block( 'themeisle-blocks/circle-counter', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/circle-counter.asset.php';
 			wp_register_script( 'otter-circle-counter', OTTER_BLOCKS_URL . 'build/blocks/circle-counter.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-circle-counter', 'defer', true );
+		}
 
+		if ( ! self::$scripts_loaded['countdown'] && has_block( 'themeisle-blocks/countdown', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/countdown.asset.php';
 			wp_register_script( 'otter-countdown', OTTER_BLOCKS_URL . 'build/blocks/countdown.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-countdown', 'defer', true );
+		}
 
+		if ( ! self::$scripts_loaded['form'] && has_block( 'themeisle-blocks/form', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/form.asset.php';
 			wp_register_script( 'otter-form', OTTER_BLOCKS_URL . 'build/blocks/form.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-form', 'defer', true );
@@ -105,7 +214,9 @@ class Registration {
 					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
 				)
 			);
+		}
 
+		if ( ! self::$scripts_loaded['google-map'] && has_block( 'themeisle-blocks/google-map', $post ) ) {
 			$apikey = get_option( 'themeisle_google_map_block_api_key' );
 
 			// Don't output anything if there is no API key.
@@ -116,7 +227,26 @@ class Registration {
 				wp_register_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . esc_attr( $apikey ) . '&libraries=places&callback=initMapScript', array( 'otter-google-map' ), '', true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
 				wp_script_add_data( 'google-maps', 'defer', true );
 			}
+		}
 
+		if ( ! self::$scripts_loaded['leaflet-map'] && has_block( 'themeisle-blocks/leaflet-map', $post ) ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/leaflet-map.asset.php';
+
+			wp_register_script(
+				'otter-leaflet',
+				OTTER_BLOCKS_URL . 'build/blocks/leaflet-map.js',
+				array_merge(
+					$asset_file['dependencies'],
+					array( 'leaflet', 'leaflet-gesture-handling' )
+				),
+				$asset_file['version'],
+				true
+			);
+
+			wp_script_add_data( 'otter-leaflet', 'defer', true );
+		}
+
+		if ( ! self::$scripts_loaded['lottie'] && has_block( 'themeisle-blocks/lottie', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
 			wp_register_script( 'lottie-interactivity', OTTER_BLOCKS_URL . 'assets/lottie/lottie-interactivity.min.js', array( 'lottie-player' ), $asset_file['version'], true );
 			wp_script_add_data( 'lottie-interactivity', 'async', true );
@@ -133,7 +263,9 @@ class Registration {
 			);
 
 			wp_script_add_data( 'otter-lottie', 'defer', true );
+		}
 
+		if ( ! self::$scripts_loaded['slider'] && has_block( 'themeisle-blocks/slider', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/slider.asset.php';
 
 			wp_register_script(
@@ -148,11 +280,15 @@ class Registration {
 			);
 
 			wp_script_add_data( 'otter-slider', 'async', true );
+		}
 
+		if ( ! self::$scripts_loaded['tabs'] && has_block( 'themeisle-blocks/tabs', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/tabs.asset.php';
 			wp_register_script( 'otter-tabs', OTTER_BLOCKS_URL . 'build/blocks/tabs.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-tabs', 'defer', true );
+		}
 
+		if ( ! self::$scripts_loaded['popup'] && has_block( 'themeisle-blocks/popup', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/popup.asset.php';
 			wp_register_script( 'otter-popup', OTTER_BLOCKS_URL . 'build/blocks/popup.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-popup', 'defer', true );
@@ -164,10 +300,16 @@ class Registration {
 					'isPreview' => is_preview(),
 				)
 			);
+		}
 
+		if ( ! self::$scripts_loaded['progress-bar'] && has_block( 'themeisle-blocks/progress-bar', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/progress-bar.asset.php';
 			wp_register_script( 'otter-progress-bar', OTTER_BLOCKS_URL . 'build/blocks/progress-bar.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-progress-bar', 'defer', true );
+		}
+
+		if ( ! self::$scripts_loaded['product-image'] && has_block( 'themeisle-blocks/product-image', $post ) ) {
+			wp_enqueue_script( 'wc-single-product' );
 		}
 	}
 
@@ -204,7 +346,8 @@ class Registration {
 		);
 
 		$dependencies = array(
-			'slider' => array( 'glidejs-core', 'glidejs-theme' ),
+			'leaflet-map' => array( 'leaflet', 'leaflet-gesture-handling' ),
+			'slider'      => array( 'glidejs-core', 'glidejs-theme' ),
 		);
 
 		$blocks = array(

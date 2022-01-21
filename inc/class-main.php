@@ -17,13 +17,6 @@ class Main {
 	 * @var bool $is_fa_loaded Is FA loaded?
 	 */
 	public static $is_fa_loaded = false;
-
-	/**
-	 * Flag to mark that Leaflet scripts has been loaded.
-	 *
-	 * @var bool $is_leaflet_loaded Is Leaflet loaded?
-	 */
-	public static $is_leaflet_loaded = false;
 	/**
 	 * Define assets version.
 	 *
@@ -335,36 +328,6 @@ class Main {
 		);
 
 		wp_enqueue_script(
-			'otter-map',
-			plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.js',
-			[],
-			self::$assets_version,
-			true
-		);
-
-		wp_enqueue_style(
-			'leaflet-theme',
-			plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.css',
-			[],
-			self::$assets_version
-		);
-
-		wp_enqueue_script(
-			'otter-map-gesture',
-			plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.js',
-			array( 'otter-map' ),
-			self::$assets_version,
-			true
-		);
-
-		wp_enqueue_style(
-			'leaflet-theme-gesture',
-			plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.css',
-			[],
-			self::$assets_version
-		);
-
-		wp_enqueue_script(
 			'macy',
 			plugin_dir_url( $this->get_dir() ) . 'assets/macy/macy.js',
 			[],
@@ -374,115 +337,12 @@ class Main {
 	}
 
 	/**
-	 * Handler which checks the blocks used and enqueue the assets which needs.
-	 *
-	 * @param null $post Current post.
-	 */
-	public function enqueue_dependencies( $post = null ) {
-		$content = '';
-
-		if ( 'widgets' === $post ) {
-			$widgets = get_option( 'widget_block', array() );
-
-			foreach ( $widgets as $widget ) {
-				if ( is_array( $widget ) && isset( $widget['content'] ) ) {
-					$content .= $widget['content'];
-				}
-			}
-
-			$post = $content;
-		} else {
-			$content = get_the_content( null, false, $post );
-		}
-
-		if ( strpos( $content, '<!-- wp:' ) === false ) {
-			return false;
-		}
-
-		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
-
-		wp_enqueue_style(
-			'otter-blocks',
-			plugin_dir_url( $this->get_dir() ) . 'build/blocks/blocks.css',
-			[],
-			$asset_file['version']
-		);
-
-		if ( ! self::$is_leaflet_loaded && has_block( 'themeisle-blocks/leaflet-map', $post ) ) {
-			wp_enqueue_script(
-				'leaflet',
-				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.js',
-				[],
-				self::$assets_version,
-				true
-			);
-
-			wp_script_add_data( 'leaflet', 'async', true );
-
-			wp_enqueue_style(
-				'leaflet',
-				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet.css',
-				[],
-				self::$assets_version
-			);
-
-			wp_enqueue_script(
-				'leaflet-gesture-handling',
-				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.js',
-				array( 'leaflet' ),
-				self::$assets_version,
-				true
-			);
-
-			wp_script_add_data( 'leaflet-gesture-handling', 'defer', true );
-
-			wp_register_style(
-				'leaflet-gesture-handling',
-				plugin_dir_url( $this->get_dir() ) . 'assets/leaflet/leaflet-gesture-handling.min.css',
-				[],
-				self::$assets_version
-			);
-
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/leaflet-map.asset.php';
-
-			wp_enqueue_script(
-				'otter-leaflet-block',
-				plugin_dir_url( $this->get_dir() ) . 'build/blocks/leaflet-map.js',
-				array_merge(
-					$asset_file['dependencies'],
-					array( 'leaflet', 'leaflet-gesture-handling' )
-				),
-				$asset_file['version'],
-				true
-			);
-
-			wp_script_add_data( 'otter-leaflet-block', 'defer', true );
-
-			add_action(
-				'get_footer',
-				static function () {
-					wp_enqueue_style( 'leaflet' );
-					wp_enqueue_style( 'leaflet-gesture-handling' );
-				}
-			);
-
-			self::$is_leaflet_loaded = true;
-		}
-
-		if ( has_block( 'themeisle-blocks/product-image', $post ) ) {
-			wp_enqueue_script( 'wc-single-product' );
-		}
-	}
-
-	/**
 	 * Load assets for our blocks.
 	 *
 	 * @since   1.0.0
 	 * @access  public
 	 */
 	public function enqueue_block_frontend_assets() {
-		global $wp_query, $wp_registered_sidebars;
-
 		wp_register_style( 'font-awesome-5', plugin_dir_url( $this->get_dir() ) . 'assets/fontawesome/css/all.min.css', [], OTTER_BLOCKS_VERSION );
 		wp_register_style( 'font-awesome-4-shims', plugin_dir_url( $this->get_dir() ) . 'assets/fontawesome/css/v4-shims.min.css', [], OTTER_BLOCKS_VERSION );
 
@@ -490,40 +350,6 @@ class Main {
 			wp_enqueue_style( 'font-awesome-5' );
 			wp_enqueue_style( 'font-awesome-4-shims' );
 			return;
-		}
-
-		if ( is_singular() ) {
-			$this->enqueue_dependencies();
-		} else {
-			$posts = wp_list_pluck( $wp_query->posts, 'ID' );
-
-			foreach ( $posts as $post ) {
-				$this->enqueue_dependencies( $post );
-			}
-		}
-
-		add_filter( 'render_block', [ $this, 'subscribe_fa' ], 10, 2 );
-
-		add_filter(
-			'the_content',
-			function ( $content ) {
-				$this->enqueue_dependencies();
-
-				return $content;
-			}
-		);
-
-		$has_widgets = false;
-
-		foreach ( $wp_registered_sidebars as $key => $sidebar ) {
-			if ( is_active_sidebar( $key ) ) {
-				$has_widgets = true;
-				break;
-			}
-		}
-
-		if ( $has_widgets ) {
-			$this->enqueue_dependencies( 'widgets' );
 		}
 	}
 
