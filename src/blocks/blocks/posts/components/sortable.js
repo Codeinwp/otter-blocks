@@ -45,12 +45,11 @@ const DragHandle = SortableHandle( () => {
 });
 
 
-
 export const SortableItem = ({
 	attributes,
 	setAttributes,
 	value,
-	disabled,
+	disabled
 }) => {
 	const [ isOpen, setOpen ] = useState( false );
 	const [ templateLookUp, setTemplateLookUp ] = useState({
@@ -61,19 +60,19 @@ export const SortableItem = ({
 		description: attributes.displayDescription
 	});
 
-	useEffect(() => {
-		 setTemplateLookUp({
-		 	image: attributes.displayFeaturedImage,
+	useEffect( () => {
+		setTemplateLookUp({
+			image: attributes.displayFeaturedImage,
 			category: attributes.displayCategory,
 			title: attributes.displayTitle,
 			meta: attributes.displayMeta,
 			description: attributes.displayDescription
 		});
-	}, [attributes.displayCategory, attributes.displayTitle, attributes.displayMeta, attributes.displayDescription]);
+	}, [ attributes.displayCategory, attributes.displayTitle, attributes.displayMeta, attributes.displayDescription ]);
 
 	const toggleField = fieldName => {
-		setAttributes({ [fieldName]: !attributes[fieldName] });
-	}
+		setAttributes({ [fieldName]: ! attributes[fieldName] });
+	};
 
 	const FeaturedImage = () => {
 		return (
@@ -107,7 +106,7 @@ export const SortableItem = ({
 
 			</Fragment>
 		);
-	}
+	};
 
 	const PostTitle = () => {
 		return (
@@ -138,8 +137,8 @@ export const SortableItem = ({
 					max={ 50 }
 				/>
 			</Fragment>
-		)
-	}
+		);
+	};
 
 	const PostMeta = () => {
 		return (
@@ -165,8 +164,8 @@ export const SortableItem = ({
 					onChange={ displayPostCategory => setAttributes({ displayPostCategory }) }
 				/>
 			</Fragment>
-		)
-	}
+		);
+	};
 
 	const Excerpt = () => {
 		return (
@@ -183,8 +182,8 @@ export const SortableItem = ({
 					onChange={ displayReadMoreLink => setAttributes({ displayReadMoreLink }) }
 				/>
 			</Fragment>
-		)
-	}
+		);
+	};
 
 
 	const label = startCase( toLower( value ) );
@@ -194,6 +193,7 @@ export const SortableItem = ({
 	/* translators: %s Label */
 	let message = sprintf( __( 'Display %s', 'otter-blocks' ), label );
 	if ( edit ) {
+
 		/* translators: %s Label */
 		message = sprintf( __( 'Hide %s', 'otter-blocks' ), label );
 	}
@@ -278,7 +278,7 @@ const SortableItemContainer = SortableElement( ({
 
 export const SortableList = SortableContainer( ({
 	attributes,
-	setAttributes,
+	setAttributes
 }) => {
 	return (
 		<div>
