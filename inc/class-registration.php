@@ -514,8 +514,8 @@ class Registration {
 
 			$deps = [];
 
-			if ( isset( $dependencies[ $block ] ) ) {
-				$deps = $dependencies[ $block ];
+			if ( isset( self::$block_dependencies[ $block ] ) ) {
+				$deps = self::$block_dependencies[ $block ];
 			}
 
 			if ( file_exists( $editor_style ) && ! empty( $metadata['editorStyle'] ) ) {
