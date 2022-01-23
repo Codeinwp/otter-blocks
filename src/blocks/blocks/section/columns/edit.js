@@ -47,7 +47,6 @@ import defaultAttributes from './attributes.js';
 import layouts from '../layouts.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import BlockNavigatorControl from '../../../components/block-navigator-control/index.js';
 import Separators from '../components/separators/index.js';
 import { blockInit } from '../../../helpers/block-utility.js';
 import Library from '../../../components/template-library/index.js';
@@ -403,8 +402,6 @@ const Edit = ({
 
 	return (
 		<div>
-			<BlockNavigatorControl clientId={ clientId } />
-
 			<Controls
 				attributes={ attributes }
 				setAttributes={ setAttributes }
