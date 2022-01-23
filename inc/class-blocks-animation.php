@@ -20,15 +20,6 @@ class Blocks_Animation {
 	public static $instance = null;
 
 	/**
-	 * Holds the module slug.
-	 *
-	 * @since   1.0.0
-	 * @access  protected
-	 * @var     string $slug The module slug.
-	 */
-	protected $slug = 'gutenberg-animation';
-
-	/**
 	 * Initialize the class
 	 */
 	public function init() {

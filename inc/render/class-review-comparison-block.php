@@ -7,7 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
-use ThemeIsle\GutenbergBlocks\Main;
+use ThemeIsle\GutenbergBlocks\Render\Review_Block;
 
 /**
  * Class Review_Comparison_Block
@@ -48,7 +48,7 @@ class Review_Comparison_Block {
 
 			$post_blocks = parse_blocks( $post->post_content );
 
-			$block = [];
+			$block = array();
 
 			foreach ( $post_blocks as $post_block ) {
 				if ( 'themeisle-blocks/review' === $post_block['blockName'] && substr( $post_block['attrs']['id'], -8 ) === $id[1] ) {
@@ -126,7 +126,7 @@ class Review_Comparison_Block {
 
 			$table_price .= '<td>';
 			if ( isset( $block['attrs']['price'] ) ) {
-				$currency = Main::get_currency( isset( $block['attrs']['currency'] ) ? $block['attrs']['currency'] : 'USD' );
+				$currency = Review_Block::get_currency( isset( $block['attrs']['currency'] ) ? $block['attrs']['currency'] : 'USD' );
 
 				if ( isset( $block['attrs']['discounted'] ) ) {
 					$table_price .= '<del>' . $currency . $block['attrs']['price'] . '</del> ' . $currency . $block['attrs']['discounted'];

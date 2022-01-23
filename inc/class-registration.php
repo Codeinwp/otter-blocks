@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks;
 
+use ThemeIsle\GutenbergBlocks\Main;
+
 /**
  * Class Registration.
  */
@@ -60,6 +62,13 @@ class Registration {
 	public static $styles_loaded = array();
 
 	/**
+	 * Flag to mark that the  FA has been loaded.
+	 *
+	 * @var bool $is_fa_loaded Is FA loaded?
+	 */
+	public static $is_fa_loaded = false;
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -70,8 +79,20 @@ class Registration {
 		}
 
 		add_action( 'init', array( $this, 'register_blocks' ) );
+		add_action( 'init', array( $this, 'init_amp_blocks' ) );
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_assets' ), 1 );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) ); // Don't change the priority or else Blocks CSS will stop working.
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
+
+		add_action(
+			'get_footer',
+			static function () {
+				if ( Registration::$is_fa_loaded ) {
+					wp_enqueue_style( 'font-awesome-5' );
+					wp_enqueue_style( 'font-awesome-4-shims' );
+				}
+			}
+		);
 	}
 
 	/**
@@ -114,7 +135,7 @@ class Registration {
 			return false;
 		}
 
-		$metadata = [];
+		$metadata = array();
 
 		if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
 			$metadata = json_decode( wpcom_vip_file_get_contents( $metadata_file ), true );
@@ -129,7 +150,6 @@ class Registration {
 		return $metadata;
 	}
 
-
 	/**
 	 * Register scripts for blocks.
 	 *
@@ -137,6 +157,10 @@ class Registration {
 	 * @access public
 	 */
 	public function enqueue_assets() {
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+		wp_register_style( 'font-awesome-5', OTTER_BLOCKS_URL . 'assets/fontawesome/css/all.min.css', [], $asset_file['version'] );
+		wp_register_style( 'font-awesome-4-shims', OTTER_BLOCKS_URL . 'assets/fontawesome/css/v4-shims.min.css', [], $asset_file['version'] );
+
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/leaflet-map.asset.php';
 		wp_register_script( 'leaflet', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'leaflet', 'async', true );
@@ -156,6 +180,110 @@ class Registration {
 		wp_register_style( 'glidejs-theme', OTTER_BLOCKS_URL . 'assets/glide/glide.theme.min.css', [], $asset_file['version'] );
 	}
 
+
+	/**
+	 * Load Gutenberg blocks.
+	 *
+	 * @since   2.0.0
+	 * @access  public
+	 */
+	public function enqueue_block_editor_assets() {
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+
+		$current_screen = get_current_screen();
+
+		if ( 'widgets' === $current_screen->base ) {
+			if ( in_array( 'wp-edit-post', $asset_file['dependencies'] ) ) {
+				unset( $asset_file['dependencies'][ array_search( 'wp-editor', $asset_file['dependencies'] ) ] );
+				unset( $asset_file['dependencies'][ array_search( 'wp-edit-post', $asset_file['dependencies'] ) ] );
+			}
+		}
+
+		wp_register_script( 'otter-vendor', OTTER_BLOCKS_URL . 'build/blocks/vendor.js', array( 'react', 'react-dom' ), $asset_file['version'], true );
+		wp_register_script( 'macy', OTTER_BLOCKS_URL . 'assets/macy/macy.js', [], $asset_file['version'], true );
+
+		wp_enqueue_script(
+			'otter-blocks',
+			OTTER_BLOCKS_URL . 'build/blocks/blocks.js',
+			array_merge(
+				$asset_file['dependencies'],
+				array( 'otter-vendor', 'glidejs', 'lottie-player', 'macy' )
+			),
+			$asset_file['version'],
+			true
+		);
+
+		wp_set_script_translations( 'otter-blocks', 'otter-blocks' );
+
+		if ( defined( 'THEMEISLE_GUTENBERG_GOOGLE_MAPS_API' ) ) {
+			$api = THEMEISLE_GUTENBERG_GOOGLE_MAPS_API;
+		} else {
+			$api = false;
+		}
+
+		global $wp_roles;
+
+		$default_fields = array();
+
+		if ( class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Fields' ) ) {
+			$fields         = new \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Fields();
+			$default_fields = wp_json_encode( array_keys( ( $fields->get_fields() ) ) );
+		}
+
+		wp_localize_script(
+			'otter-blocks',
+			'themeisleGutenberg',
+			array(
+				'isCompatible'   => Main::is_compatible(),
+				'assetsPath'     => OTTER_BLOCKS_URL . 'assets',
+				'updatePath'     => admin_url( 'update-core.php' ),
+				'optionsPath'    => admin_url( 'options-general.php?page=otter' ),
+				'mapsAPI'        => $api,
+				'themeDefaults'  => Main::get_global_defaults(),
+				'imageSizes'     => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
+				'themeMods'      => array(
+					'listingType'   => get_theme_mod( 'neve_comparison_table_product_listing_type', 'column' ),
+					'altRow'        => get_theme_mod( 'neve_comparison_table_enable_alternating_row_bg_color', false ),
+					'fields'        => get_theme_mod( 'neve_comparison_table_fields', $default_fields ),
+					'rowColor'      => get_theme_mod( 'neve_comparison_table_rows_background_color', 'var(--nv-site-bg)' ),
+					'headerColor'   => get_theme_mod( 'neve_comparison_table_header_text_color', 'var(--nv-text-color)' ),
+					'textColor'     => get_theme_mod( 'neve_comparison_table_text_color', 'var(--nv-text-color)' ),
+					'borderColor'   => get_theme_mod( 'neve_comparison_table_borders_color', '#BDC7CB' ),
+					'altRowColor'   => get_theme_mod( 'neve_comparison_table_alternate_row_bg_color', 'var(--nv-light-bg)' ),
+					'defaultFields' => $default_fields,
+				),
+				'isWPVIP'        => function_exists( 'is_wpcom_vip' ),
+				'canTrack'       => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
+				'userRoles'      => $wp_roles->roles,
+				'hasWooCommerce' => class_exists( 'WooCommerce' ),
+				'hasLearnDash'   => defined( 'LEARNDASH_VERSION' ),
+				'hasNeveSupport' => array(
+					'hasNeve'         => defined( 'NEVE_VERSION' ),
+					'hasNevePro'      => defined( 'NEVE_VERSION' ) && 'valid' === apply_filters( 'product_neve_license_status', false ),
+					'isBoosterActive' => 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ),
+					'wooComparison'   => class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options' ) ? \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options::is_module_activated() : false,
+					'optionsPage'     => admin_url( 'themes.php?page=neve-welcome' ),
+				),
+				'isBlockEditor'  => 'post' === $current_screen->base,
+			)
+		);
+
+		wp_enqueue_style( 'otter-editor', OTTER_BLOCKS_URL . 'build/blocks/editor.css', array( 'wp-edit-blocks', 'font-awesome-5', 'font-awesome-4-shims' ), $asset_file['version'] );
+
+		global $pagenow;
+
+		if ( class_exists( 'WooCommerce' ) && defined( 'NEVE_VERSION' ) && 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ) && ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && ( ( isset( $_GET['post'] ) && 'product' === get_post_type( sanitize_text_field( $_GET['post'] ) ) ) || ( isset( $_GET['post_type'] ) && 'product' === sanitize_text_field( $_GET['post_type'] ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/woocommerce.asset.php';
+
+			wp_enqueue_script(
+				'otter-blocks-woocommerce',
+				OTTER_BLOCKS_URL . 'build/blocks/woocommerce.js',
+				$asset_file['dependencies'],
+				$asset_file['version'],
+				true
+			);
+		}
+	}
 
 	/**
 	 * Load frontend assets for our blocks.
@@ -183,6 +311,8 @@ class Registration {
 			}
 		}
 
+		add_filter( 'render_block', [ $this, 'subscribe_fa' ], 10, 2 );
+
 		add_filter(
 			'the_content',
 			function ( $content ) {
@@ -205,7 +335,6 @@ class Registration {
 			$this->enqueue_dependencies( 'widgets' );
 		}
 	}
-
 
 	/**
 	 * Handler which checks the blocks used and enqueue the assets which needs.
@@ -365,7 +494,6 @@ class Registration {
 		}
 	}
 
-
 	/**
 	 * Enqueue block styles.
 	 *
@@ -391,7 +519,7 @@ class Registration {
 
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
 
-			$deps = [];
+			$deps = array();
 
 			if ( isset( self::$block_dependencies[ $block ] ) ) {
 				$deps = self::$block_dependencies[ $block ];
@@ -512,7 +640,7 @@ class Registration {
 
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
 
-			$deps = [];
+			$deps = array();
 
 			if ( isset( self::$block_dependencies[ $block ] ) ) {
 				$deps = self::$block_dependencies[ $block ];
@@ -545,6 +673,104 @@ class Registration {
 
 			register_block_type_from_metadata( $metadata_file );
 		}
+	}
+
+	/**
+	 * Initialize AMP blocks.
+	 *
+	 * @since   1.0.0
+	 * @access  public
+	 */
+	public function init_amp_blocks() {
+		$classnames = array(
+			'\ThemeIsle\GutenbergBlocks\Render\AMP\Circle_Counter_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\AMP\Lottie_Block',
+			'\ThemeIsle\GutenbergBlocks\Render\AMP\Slider_Block',
+		);
+
+		foreach ( $classnames as $classname ) {
+			$classname = new $classname();
+
+			if ( method_exists( $classname, 'instance' ) ) {
+				$classname->instance();
+			}
+		}
+	}
+
+	/**
+	 * Subscribe to FA enqueue.
+	 *
+	 * @param string $block_content Block content parsed.
+	 * @param array  $block Block details.
+	 *
+	 * @return mixed
+	 */
+	public function subscribe_fa( $block_content, $block ) {
+		if ( ! isset( $block['blockName'] ) ) {
+			return $block_content;
+		}
+
+		if ( self::$is_fa_loaded ) {
+			return $block_content;
+		}
+
+		// always load for those.
+		static $always_load = [
+			'themeisle-blocks/sharing-icons' => true,
+			'themeisle-blocks/plugin-cards'  => true,
+		];
+
+		if ( isset( $always_load[ $block['blockName'] ] ) ) {
+			self::$is_fa_loaded = true;
+
+			return $block_content;
+		}
+
+		if ( 'themeisle-blocks/button' === $block['blockName'] ) {
+			if ( isset( $block['attrs']['library'] ) && 'themeisle-icons' === $block['attrs']['library'] ) {
+				return $block_content;
+			}
+
+			if ( isset( $block['attrs']['iconType'] ) ) {
+				self::$is_fa_loaded = true;
+
+				return $block_content;
+			}
+		}
+
+		if ( 'themeisle-blocks/font-awesome-icons' === $block['blockName'] ) {
+			if ( ! isset( $block['attrs']['library'] ) ) {
+				self::$is_fa_loaded = true;
+
+				return $block_content;
+			}
+		}
+
+		if ( 'themeisle-blocks/icon-list-item' === $block['blockName'] ) {
+			if ( ! isset( $block['attrs']['library'] ) ) {
+				self::$is_fa_loaded = true;
+
+				return $block_content;
+			}
+
+			if ( 'fontawesome' === $block['attrs']['library'] ) {
+				self::$is_fa_loaded = true;
+
+				return $block_content;
+			}
+		}
+
+		$has_navigation_block = \WP_Block_Type_Registry::get_instance()->is_registered( 'core/navigation' );
+
+		if ( $has_navigation_block && ( 'core/navigation-link' === $block['blockName'] || 'core/navigation-submenu' === $block['blockName'] ) ) {
+			if ( isset( $block['attrs']['className'] ) && strpos( $block['attrs']['className'], 'fa-' ) !== false ) {
+				self::$is_fa_loaded = true;
+
+				return $block_content;
+			}
+		}
+
+		return $block_content;
 	}
 
 	/**

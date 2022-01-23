@@ -348,17 +348,15 @@ const Edit = ({
 	// +-------------------------------- Template Library --------------------------------+
 	const [ isLibraryOpen, setIsLibraryOpen ] = useState( false );
 
-	const placeholderProps = useBlockProps();
-
-	const blockProps = useBlockProps({
+	const blockProps = attributes.columns ? useBlockProps({
 		id: attributes.id,
 		className: classes,
 		style
-	});
+	}) : useBlockProps();;
 
 	if ( ! attributes.columns ) {
 		return (
-			<div { ...placeholderProps }>
+			<div { ...blockProps }>
 				<Placeholder
 					label={ __( 'Section', 'otter-blocks' )  }
 					instructions={ __( 'Select a layout to start with, or make one yourself.', 'otter-blocks' ) }
