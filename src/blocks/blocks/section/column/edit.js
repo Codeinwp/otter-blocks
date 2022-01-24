@@ -15,8 +15,6 @@ import {
 	useBlockProps
 } from '@wordpress/block-editor';
 
-import { ResizableBox } from '@wordpress/components';
-
 import { useViewportMatch } from '@wordpress/compose';
 
 import {
@@ -45,15 +43,13 @@ const Edit = ({
 	attributes,
 	setAttributes,
 	isSelected,
-	clientId,
-	toggleSelection
+	clientId
 }) => {
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
 
 	const {
 		adjacentBlockClientId,
 		adjacentBlock,
-		parentClientId,
 		parentBlock,
 		hasInnerBlocks,
 		isPreviewDesktop,
@@ -76,7 +72,6 @@ const Edit = ({
 		return {
 			adjacentBlockClientId,
 			adjacentBlock,
-			parentClientId,
 			parentBlock,
 			hasInnerBlocks,
 			isPreviewDesktop: 'Desktop' === __experimentalGetPreviewDeviceType(),
@@ -129,13 +124,6 @@ const Edit = ({
 	const nextBlock = useRef( adjacentBlockClientId && adjacentBlockClientId );
 	const nextBlockWidth = useRef( adjacentBlock && adjacentBlock.attributes.columnWidth );
 
-	const [ currentWidth, setCurrentWidth ] = useState( 0 );
-	const [ nextWidth, setNextWidth ] = useState( 0 );
-	const [ hasSelected, setSelected ] = useState( false );
-	const [ responsiveSize, setResponsiveSize ] = useState( attributes.columnWidth );
-
-	const resizerRef = useRef();
-
 	let isDesktop = isLarger && ! isLarge && isSmall && ! isSmaller;
 
 	let isTablet = ! isLarger && ! isLarge && isSmall && ! isSmaller;
@@ -148,26 +136,6 @@ const Edit = ({
 		isMobile = isPreviewMobile;
 	}
 
-	useEffect( () => {
-		if ( isDesktop ) {
-			resizerRef.current.updateSize({ width: `${ attributes.columnWidth }%` });
-		}
-	}, [ isDesktop, attributes.columnWidth ]);
-
-	useEffect( () => {
-		if ( isTablet || isMobile ) {
-			const columns = parentBlock.attributes.columns;
-			let layout = parentBlock.attributes.layoutTablet || 'equal';
-
-			if ( isMobile ) {
-				layout = parentBlock.attributes.layoutMobile || 'equal';
-			}
-
-			const index = parentBlock.innerBlocks.findIndex( i => i.clientId === clientId );
-			setResponsiveSize( `${ layouts[columns][layout][index] }%` );
-		}
-	}, [ isTablet, isMobile, parentBlock.attributes.columns, parentBlock.attributes.layoutTablet, parentBlock.attributes.layoutMobile ]);
-
 	if ( attributes.columnWidth === undefined ) {
 		const index = parentBlock.innerBlocks.findIndex( i => i.clientId === clientId );
 		const columns = parentBlock.attributes.columns;
@@ -176,54 +144,6 @@ const Edit = ({
 			columnWidth: layouts[columns][layout][index]
 		});
 	}
-
-	const onResizeStart = () => {
-		const handle = document.querySelector( `.wp-themeisle-block-advanced-column-resize-container-${ clientId } .components-resizable-box__handle` );
-		const handleTooltipLeft = document.createElement( 'div' );
-		const handleTooltipRight = document.createElement( 'div' );
-
-		handleTooltipLeft.setAttribute( 'class', 'resizable-tooltip resizable-tooltip-left' );
-		handleTooltipLeft.innerHTML = `${ parseFloat( attributes.columnWidth ).toFixed( 0 ) }%`;
-		handle.appendChild( handleTooltipLeft );
-		handleTooltipRight.setAttribute( 'class', 'resizable-tooltip resizable-tooltip-right' );
-		handleTooltipRight.innerHTML = `${ parseFloat( adjacentBlock.attributes.columnWidth ).toFixed( 0 ) }%`;
-		handle.appendChild( handleTooltipRight );
-
-		setCurrentWidth( attributes.columnWidth );
-		setNextWidth( adjacentBlock.attributes.columnWidth );
-		toggleSelection( false );
-		setSelected( true );
-	};
-
-	const onResize = ( event, direction, elt, delta ) => {
-		const parent = document.getElementById( `block-${ parentClientId }` );
-		const parentWidth = parent.getBoundingClientRect().width;
-		const changedWidth = ( delta.width / parentWidth ) * 100;
-		const width = parseFloat( currentWidth ) + changedWidth;
-		const nextColumnWidth = nextWidth - changedWidth;
-		const handleTooltipLeft = document.querySelector( '.resizable-tooltip-left' );
-		const handleTooltipRight = document.querySelector( '.resizable-tooltip-right' );
-
-		if ( 10 <= width && 10 <= nextColumnWidth ) {
-			handleTooltipLeft.innerHTML = `${ width.toFixed( 0 ) }%`;
-			handleTooltipRight.innerHTML = `${ nextColumnWidth.toFixed( 0 ) }%`;
-
-			setAttributes({ columnWidth: width.toFixed( 2 ) });
-			updateBlockAttributes( adjacentBlockClientId, {
-				columnWidth: nextColumnWidth.toFixed( 2 )
-			});
-		}
-	};
-
-	const onResizeStop = () => {
-		const handleTooltipLeft = document.querySelector( '.resizable-tooltip-left' );
-		const handleTooltipRight = document.querySelector( '.resizable-tooltip-right' );
-
-		handleTooltipLeft.parentNode.removeChild( handleTooltipLeft );
-		handleTooltipRight.parentNode.removeChild( handleTooltipRight );
-		toggleSelection( true );
-		setSelected( false );
-	};
 
 	const Tag = attributes.columnsHTMLTag;
 
@@ -317,6 +237,7 @@ const Edit = ({
 	}
 
 	const style = {
+		flexBasis: `${ attributes.columnWidth }%`,
 		...stylesheet,
 		...background,
 		...borderStyle,
@@ -341,40 +262,12 @@ const Edit = ({
 				nextBlockWidth={ nextBlockWidth }
 			/>
 
-			<ResizableBox
-				ref={ resizerRef }
-				className={ classnames(
-					`wp-themeisle-block-advanced-column-resize-container wp-themeisle-block-advanced-column-resize-container-${ clientId }`,
-					{
-						'is-selected': hasSelected
-					}
-				) }
-				enable={ {
-					right: adjacentBlockClientId ? true : false
-				} }
-				handleWrapperClass="wp-themeisle-block-advanced-column-resize-container-handle"
-				onResizeStart={ onResizeStart }
-				onResize={ onResize }
-				onResizeStop={ onResizeStop }
-				minWidth="10%"
-
-				{ ... ( isDesktop && 1 < parentBlock.attributes.columns ) ? {
-					maxWidth: `${ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 10 }%`
-				} : {} }
-
-				{ ... ( isTablet || isMobile ) ? {
-					size: {
-						width: responsiveSize
-					}
-				} : {} }
-			>
-				<Tag { ...blockProps }>
-					<InnerBlocks
-						templateLock={ false }
-						renderAppender={ ! hasInnerBlocks && InnerBlocks.ButtonBlockAppender }
-					/>
-				</Tag>
-			</ResizableBox>
+			<Tag { ...blockProps }>
+				<InnerBlocks
+					templateLock={ false }
+					renderAppender={ ! hasInnerBlocks && InnerBlocks.ButtonBlockAppender }
+				/>
+			</Tag>
 		</Fragment>
 	);
 };
