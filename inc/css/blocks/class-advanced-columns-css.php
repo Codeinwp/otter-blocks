@@ -1013,7 +1013,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 			$padding['bottom'] = isset( $attrs['paddingBottom'] ) ? $attrs['paddingBottom'] . 'px' : '20px';
 			$padding['left']   = isset( $attrs['paddingLeft'] ) ? $attrs['paddingLeft'] . 'px' : '20px';
 			$padding['right']  = isset( $attrs['paddingRight'] ) ? $attrs['paddingRight'] . 'px' : '20px';
-		} else {
+		} elseif ( isset( $attrs['padding'] ) && ! is_array( $attrs['padding'] ) ) {
 			$padding['top']    = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
 			$padding['bottom'] = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
 			$padding['left']   = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
@@ -1036,7 +1036,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['paddingRightTablet'] ) ) {
 				$padding_tablet['right'] = $attrs['paddingRightTablet'] . 'px';
 			}
-		} else {
+		} elseif ( isset( $attrs['paddingTablet'] ) && ! is_array( $attrs['paddingTablet'] ) ) {
 			if ( isset( $attrs['paddingTablet'] ) ) {
 				$padding_tablet['top'] = $attrs['paddingTablet'] . 'px';
 			}
@@ -1070,7 +1070,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['paddingRightMobile'] ) ) {
 				$padding_mobile['right'] = $attrs['paddingRightMobile'] . 'px';
 			}
-		} else {
+		} elseif ( isset( $attrs['paddingMobile'] ) && ! is_array( $attrs['paddingMobile'] ) ) {
 			if ( isset( $attrs['paddingMobile'] ) ) {
 				$padding_mobile['top'] = $attrs['paddingMobile'] . 'px';
 			}
@@ -1091,7 +1091,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 		if ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] ) {
 			$margin['top']    = isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : '20px';
 			$margin['bottom'] = isset( $attrs['marginBottom'] ) ? $attrs['marginBottom'] . 'px' : '20px';
-		} else {
+		} elseif ( isset( $attrs['margin'] ) && ! is_array( $attrs['margin'] ) ) {
 			$margin['top']    = isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : '20px';
 			$margin['bottom'] = isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : '20px';
 		}
@@ -1104,7 +1104,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['marginBottomTablet'] ) ) {
 				$margin_tablet['bottom'] = $attrs['marginBottomTablet'] . 'px';
 			}
-		} else {
+		} elseif ( isset( $attrs['marginTablet'] ) && ! is_array( $attrs['marginTablet'] ) ) {
 			if ( isset( $attrs['marginTablet'] ) ) {
 				$margin_tablet['top'] = $attrs['marginTablet'] . 'px';
 			}
@@ -1122,7 +1122,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['marginBottomMobile'] ) ) {
 				$margin_mobile['bottom'] = $attrs['marginBottomMobile'] . 'px';
 			}
-		} else {
+		} elseif ( isset( $attrs['marginMobile'] ) && ! is_array( $attrs['marginMobile'] ) ) {
 			if ( isset( $attrs['marginMobile'] ) ) {
 				$margin_mobile['top'] = $attrs['marginMobile'] . 'px';
 			}
@@ -1148,7 +1148,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['borderRight'] ) ) {
 				$border['right'] = $attrs['borderRight'] . 'px';
 			}
-		} else {
+		} elseif ( isset( $attrs['border'] ) && ! is_array( $attrs['border'] ) ) {
 			if ( isset( $attrs['border'] ) ) {
 				$border['top'] = $attrs['border'] . 'px';
 			}
@@ -1182,7 +1182,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 			if ( isset( $attrs['borderRadiusRight'] ) ) {
 				$border_radius['right'] = $attrs['borderRadiusRight'] . 'px';
 			}
-		} else {
+		} elseif ( isset( $attrs['borderRadius'] ) && ! is_array( $attrs['borderRadius'] ) ) {
 			if ( isset( $attrs['borderRadius'] ) ) {
 				$border_radius['top'] = $attrs['borderRadius'] . 'px';
 			}
