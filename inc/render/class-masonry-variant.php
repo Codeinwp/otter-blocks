@@ -46,7 +46,7 @@ class Masonry_Variant {
 			);
 
 			wp_script_add_data( 'macy', 'async', true );
-
++
 			wp_enqueue_script(
 				'otter-masonry',
 				OTTER_BLOCKS_URL . 'build/blocks/masonry.js',
@@ -59,10 +59,10 @@ class Masonry_Variant {
 			);
 
 			wp_localize_script(
-				'otter-masonry-metadata',
+				'otter-masonry',
 				'themeisleOtterMetadata',
 				array(
-					'useOldMacyContainer' => version_compare(get_bloginfo('version'),'5.9', '<='),
+					'useOldMacyContainer' => version_compare(get_bloginfo('version'),'5.8', '<='),
 				)
 			);
 
