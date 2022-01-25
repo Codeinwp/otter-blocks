@@ -419,9 +419,11 @@ class Main {
 					'wooComparison'   => class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options' ) ? \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options::is_module_activated() : false,
 				),
 				'isBlockEditor'  => 'post' === $current_screen->base,
-				'useOldMacyContainer' => version_compare(get_bloginfo('version'),'5.8', '<='),
+				'useOldMacyContainer' => version_compare(get_bloginfo('version'),'5.8.10', '<='),
 			)
 		);
+
+		$r = version_compare(get_bloginfo('version'),'5.8.10', '<=');
 
 		wp_enqueue_style(
 			'otter-editor',

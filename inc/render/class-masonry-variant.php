@@ -62,7 +62,7 @@ class Masonry_Variant {
 				'otter-masonry',
 				'themeisleOtterMetadata',
 				array(
-					'useOldMacyContainer' => version_compare(get_bloginfo('version'),'5.8', '<='),
+					'useOldMacyContainer' => version_compare(get_bloginfo('version'),'5.8.10', '<='),
 				)
 			);
 
