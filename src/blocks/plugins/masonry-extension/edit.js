@@ -14,16 +14,27 @@ import { InspectorControls } from '@wordpress/block-editor';
 import {
 	Fragment,
 	useEffect,
-	useRef
+	useRef,
+	useState
 } from '@wordpress/element';
 
 const Edit = ({
 	props,
 	children
 }) => {
+
+	const macy = useRef( null );
+	const observer = useRef( null );
+
 	useEffect( () => {
 		initMasonry();
-
+		observer.current = new MutationObserver( mutations => {
+			mutations.forEach( mutation => {
+				if ( 'childList' === mutation.type ) {
+					initMasonry();
+				}
+			});
+		});
 		return () => {
 			deleteMasonry();
 		};
@@ -35,13 +46,15 @@ const Edit = ({
 		}
 	}, [ props.attributes ]);
 
-	const macy = useRef( null );
 
 	const initMasonry = () => {
 		if ( props.attributes.isMasonry ) {
 			deleteMasonry();
 
+			observer.current?.disconnect();
 			const useOldContainer = Boolean( parseInt( window.themeisleGutenberg?.useOldMacyContainer || '0' ) );
+			const container = document.querySelector( useOldContainer ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }` );
+			observer.current?.observe( container, {childList: true});
 
 			macy.current = window.Macy({
 				container: useOldContainer ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }`,
