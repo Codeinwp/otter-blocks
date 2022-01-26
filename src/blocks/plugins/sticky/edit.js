@@ -13,14 +13,6 @@ import {
 	Button
 } from '@wordpress/components';
 
-import {
-	Fragment
-} from '@wordpress/element';
-
-import { hasBlockSupport } from '@wordpress/blocks';
-
-import './editor.scss';
-
 const FILTER_OPTIONS = {
 	position: 'o-sticky-pos',
 	offset: 'o-sticky-offset',
@@ -65,103 +57,119 @@ s		E.g:
 		And element with the classe like this 'o-sticky o-sticky-pos-bottom o-sticky-pos-bottom-30', it will be a sticky element with 30px distance from the bottom of the window viewport
 	*/
 
-	if ( ! hasBlockSupport( name, 'customClassName', true ) ) {
-		return (
-			<Fragment></Fragment>
-		);
-	}
-
 	return (
-		<Fragment>
+		<InspectorControls>
+			<PanelBody
+				title={ __( 'Sticky', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<SelectControl
+					label={ __( 'Sticky To', 'otter-blocks' ) }
+					help={ __( 'Stick to a group, columns, section block, or screen to limit the movement. The limit will differ from block to block, except for the blocks with the same parent.', 'otter-blocks' ) }
+					value={ limit }
+					options={ [
+						{
+							label: __( 'Top Level Block', 'otter-blocks' ),
+							value: 'o-sticky-scope-main-area'
+						},
+						{
+							label: __( 'Parent Block', 'otter-blocks' ),
+							value: 'o-sticky-scope-parent'
+						},
+						{
+							label: __( 'Section', 'otter-blocks' ),
+							value: 'o-sticky-scope-section'
+						},
+						{
+							label: __( 'Screen', 'otter-blocks' ),
+							value: 'o-sticky-scope-screen'
+						}
+					] }
+					onChange={ value => addOption( value, FILTER_OPTIONS.scope ) }
+				/>
 
-			<InspectorControls>
-				<PanelBody
-					title={ __( 'Sticky', 'otter-blocks' ) }
-					initialOpen={ false }
-				>
-					<SelectControl
-						label={ __( 'Sticky To', 'otter-blocks' ) }
-						help={ __( 'Stick to a group, columns, section block, or screen to limit the movement. The limit will differ from block to block, except for the blocks with the same parent.', 'otter-blocks' ) }
-						value={ limit }
-						options={[
-							{ label: __( 'Top Level Block', 'otter-blocks' ), value: 'o-sticky-scope-main-area' },
-							{ label: __( 'Parent Block', 'otter-blocks' ), value: 'o-sticky-scope-parent' },
-							{ label: __( 'Section', 'otter-blocks' ), value: 'o-sticky-scope-section' },
-							{ label: __( 'Screen', 'otter-blocks' ), value: 'o-sticky-scope-screen' }
-						]}
-						onChange={ value => addOption(  value, FILTER_OPTIONS.scope ) }
-					/>
+				<SelectControl
+					label={ __( 'Position', 'otter-blocks' ) }
+					help={ __( 'Stick the block to the top or the bottom of the screen. When using \'Bottom\', make sure that the element is closer or lower than the bottom of the screen when scroll is on the start position; use Preview to check.', 'otter-blocks' ) }
+					value={ position }
+					options={ [
+						{
+							label: __( 'Top', 'otter-blocks' ),
+							value: 'o-sticky-pos-top'
+						},
+						{
+							label: __( 'Bottom', 'otter-blocks' ),
+							value: 'o-sticky-pos-bottom'
+						}
+					] }
+					onChange={ value => addOption(  value, FILTER_OPTIONS.position ) }
+				/>
 
-					<SelectControl
-						label={ __( 'Position', 'otter-blocks' ) }
-						help={ __( 'Stick the block to the top or the bottom of the screen. When using \'Bottom\', make sure that the element is closer or lower than the bottom of the screen when scroll is on the start position; use Preview to check.', 'otter-blocks' ) }
-						value={ position }
-						options={[
-							{ label: __( 'Top', 'otter-blocks' ), value: 'o-sticky-pos-top' },
-							{ label: __( 'Bottom', 'otter-blocks' ), value: 'o-sticky-pos-bottom' }
-						]}
-						onChange={ value => addOption(  value, FILTER_OPTIONS.position ) }
-					/>
+				<RangeControl
+					label={ __( 'Offset', 'otter-blocks' ) }
+					help={ __( 'Set the distance from the block to the screen when sticky mode is active. ', 'otter-blocks' ) }
+					value={ getOffsetValue( ) }
+					min={ 0 }
+					max={ 500 }
+					onChange={ value => addOption( `o-sticky-offset-${ value }`, FILTER_OPTIONS.offset ) }
+				/>
 
-					<RangeControl
-						label={ __( 'Offset', 'otter-blocks' ) }
-						help={ __( 'Set the distance from the block to the screen when sticky mode is active. ', 'otter-blocks' ) }
-						value={ getOffsetValue( ) }
-						min={0}
-						max={500}
-						onChange={ value => addOption( `o-sticky-offset-${ value }`, FILTER_OPTIONS.offset ) }
-					/>
+				<SelectControl
+					label={ __( 'Behaviour', 'otter-blocks' ) }
+					help={ __( 'Set the action when multiple sticky blocks with the same movement limit collide. Check the \'Stick to\' since it can differ from block to block.', 'otter-blocks' ) }
+					value={ behaviour }
+					options={ [
+						{
+							label: __( 'Collapse', 'otter-blocks' ),
+							value: 'o-sticky-bhvr-keep'
+						},
+						{
+							label: __( 'Fade', 'otter-blocks' ),
+							value: 'o-sticky-bhvr-hide'
+						},
+						{
+							label: __( 'Stack', 'otter-blocks' ),
+							value: 'o-sticky-bhvr-stack'
+						}
+					] }
+					onChange={ value => addOption(  value, FILTER_OPTIONS.behaviour ) }
+				/>
 
-					<SelectControl
-						label={ __( 'Behaviour', 'otter-blocks' ) }
-						help={ __( 'Set the action when multiple sticky blocks with the same movement limit collide. Check the \'Stick to\' since it can differ from block to block.', 'otter-blocks' ) }
-						value={ behaviour }
-						options={[
-							{ label: __( 'Collapse', 'otter-blocks' ), value: 'o-sticky-bhvr-keep' },
-							{ label: __( 'Fade', 'otter-blocks' ), value: 'o-sticky-bhvr-hide' },
-							{ label: __( 'Stack', 'otter-blocks' ), value: 'o-sticky-bhvr-stack' }
-						]}
-						onChange={ value => addOption(  value, FILTER_OPTIONS.behaviour ) }
-					/>
-
-					{
-						'o-sticky-bhvr-stack'  === behaviour && (
-							<div
-								style={{
-									backgroundColor: '#fdf8e6',
-									borderRadius: '5px',
-									padding: '10px',
-									textAlign: 'justify'
-								}}
-							>
-								{__( 'The block will stack with other sticky elements with the same \'Stick To\' container, and Stack option in Behaviour. It works better with \'Stick to\' as Top Level Block or Screen.', 'otter-blocks' )}
-							</div>
-						)
-					}
-
-					<ToggleControl
-						label={ __( 'Enable on Mobile', 'otter-blocks' ) }
-						help={ __( 'Make the sticky mode active for mobile users. Please check the functionality in Preview mode, some elements might not work properly' ) }
-						checked={useOnMobile}
-						onChange={ () => addOption(  'o-sticky-use-mobile', FILTER_OPTIONS.usage ) }
-					/>
-
-					{
-
-						// Add link to the documentation about this feature.
-					}
-
-					<Button
-						isLink
-						target='_blank'
-						rel='noopener noreferrer'
-						href={ 'https://docs.themeisle.com/article/1478-otter-blocks-documentation' }
+				{ 'o-sticky-bhvr-stack'  === behaviour && (
+					<div
+						style={ {
+							backgroundColor: '#fdf8e6',
+							borderRadius: '5px',
+							padding: '10px',
+							textAlign: 'justify'
+						} }
 					>
-						{__( 'Learn more about sticky', 'otter-blocks' )}
-					</Button>
-				</PanelBody>
-			</InspectorControls>
-		</Fragment>
+						{ __( 'The block will stack with other sticky elements with the same \'Stick To\' container, and Stack option in Behaviour. It works better with \'Stick to\' as Top Level Block or Screen.', 'otter-blocks' ) }
+					</div>
+				) }
+
+				<ToggleControl
+					label={ __( 'Enable on Mobile', 'otter-blocks' ) }
+					help={ __( 'Make the sticky mode active for mobile users. Please check the functionality in Preview mode, some elements might not work properly' ) }
+					checked={ useOnMobile }
+					onChange={ () => addOption( 'o-sticky-use-mobile', FILTER_OPTIONS.usage ) }
+				/>
+
+				{
+
+					// Add link to the documentation about this feature.
+				}
+
+				<Button
+					isLink
+					target='_blank'
+					rel='noopener noreferrer'
+					href="https://docs.themeisle.com/article/1478-otter-blocks-documentation"
+				>
+					{ __( 'Learn more about sticky', 'otter-blocks' ) }
+				</Button>
+			</PanelBody>
+		</InspectorControls>
 	);
 };
 

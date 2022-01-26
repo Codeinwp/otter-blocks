@@ -1,101 +1,71 @@
 /**
  * WordPress dependencies.
  */
-
 import { __ } from '@wordpress/i18n';
-
-import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
-
-import { Fragment } from '@wordpress/element';
-
-import {
-	dispatch,
-	useDispatch,
-	useSelect
-} from '@wordpress/data';
 
 import { hasBlockSupport } from '@wordpress/blocks';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
+import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
+
+import { Fragment } from '@wordpress/element';
+
 import { addFilter } from '@wordpress/hooks';
 
-import Edit from './edit';
-
-const updateBlockAttributes = dispatch( 'core/block-editor' ).updateBlockAttributes;
+/**
+ * Internal dependencies.
+ */
+import './editor.scss';
+import Edit from './edit.js';
 
 const EXCEPTED_BLOCK_CONDITIONS = [ '-item', 'form-' ]; // Exclude sub-blocks
 
-const StickyMenu = () => {
+const withStickyExtension = createHigherOrderComponent( BlockEdit => {
+	return ( props ) => {
+		const hasCustomClassName = hasBlockSupport(
+			props.name,
+			'customClassName',
+			true
+		);
 
-	const { block, isSticky, classes, isContainer } = useSelect( ( select ) => {
-		const {
-			getSelectedBlock
-		} = select( 'core/block-editor' );
-
-		const block = getSelectedBlock();
-		const classes = block?.attributes?.className?.split( ' ' );
+		const classes =  props.attributes?.className?.split( ' ' );
 		const isSticky = classes?.includes( 'o-sticky' ) || false;
-		const isContainer = classes?.includes( 'o-sticky-container' ) || false;
 
-		return {
-			block,
-			isSticky,
-			isContainer,
-			classes
-		};
-	});
-
-	const makeBlockSticky = () => {
-		if ( hasBlockSupport( block, 'customClassName', true ) ) {
-			const attr = block.attributes;
-			const className = classes?.filter( c => ! c.includes( 'o-sticky' ) ) || [];
+		const toggleSticky = () => {
+			let className = classes?.filter( c => ! c.includes( 'o-sticky' ) ) || [];
 
 			if ( ! isSticky ) {
 				className.push( 'o-sticky', 'o-sticky-scope-main-area', 'o-sticky-pos-top', 'o-sticky-bhvr-keep' );
 			}
-			attr.className = className.join( ' ' );
-			attr.hasCustomCSS = true;
-			updateBlockAttributes( block.clientId, attr );
+
+			className = className.join( ' ' );
+			props.setAttributes({ className });
+		};
+
+		if ( hasCustomClassName && props.isSelected ) {
+			return (
+				<Fragment>
+					<BlockEdit { ...props } />
+
+					{ ! EXCEPTED_BLOCK_CONDITIONS.some( cond => props.name?.includes( cond ) ) && (
+						<PluginBlockSettingsMenuItem
+							icon="sticky"
+							label={ ! isSticky ? __( 'Transform to Sticky', 'otter-blocks' ) : __( 'Remove Sticky Element', 'otter-blocks' ) }
+							onClick={ toggleSticky }
+						/>
+					) }
+
+					{ props.attributes?.className?.includes( 'o-sticky' ) && (
+						<Edit { ...props } />
+					) }
+				</Fragment>
+			);
 		}
-	};
 
-	if ( EXCEPTED_BLOCK_CONDITIONS.some( cond => block?.name?.includes( cond ) ) ) { // Exclude sub-blocks
-		return (
-			<Fragment></Fragment>
-		);
-	}
-
-	return (
-		<Fragment>
-			<PluginBlockSettingsMenuItem
-				icon="sticky"
-				label={ ! isSticky ? __( 'Transform to sticky element', 'otter-blocks' ) : __( 'Remove sticky element', 'otter-blocks' ) }
-				onClick={() => {
-					makeBlockSticky();
-				}}
-			/>
-		</Fragment>
-	);
-};
-
-const withStickyExtension = createHigherOrderComponent( BlockEdit => {
-	return ( props ) => {
-		return (
-			<Fragment>
-				{
-					props.attributes?.className?.includes( 'o-sticky' ) && (
-						<Edit { ...props }/>
-					)
-				}
-				<BlockEdit { ...props } />
-			</Fragment>
-		);
+		return <BlockEdit { ...props } />;
 
 	};
 }, 'withStickyExtension' );
 
-
 addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/sticky-extension', withStickyExtension );
-
-export default StickyMenu;
