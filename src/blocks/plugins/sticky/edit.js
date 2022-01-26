@@ -6,11 +6,11 @@ import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 
 import {
+	ExternalLink,
 	PanelBody,
 	RangeControl,
 	SelectControl,
-	ToggleControl,
-	Button
+	ToggleControl
 } from '@wordpress/components';
 
 const FILTER_OPTIONS = {
@@ -23,10 +23,8 @@ const FILTER_OPTIONS = {
 
 const Edit = ({
 	attributes,
-	setAttributes,
-	name
+	setAttributes
 }) => {
-
 	const position = attributes?.className?.includes( 'o-sticky-pos-bottom' ) ? 'o-sticky-pos-bottom' : 'o-sticky-pos-top';
 	const limit = attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-scope' ) ).pop() || 'o-sticky-scope-main-area';
 	const behaviour = attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-bhvr' ) ).pop() || 'o-sticky-bhvr-keep';
@@ -160,14 +158,13 @@ s		E.g:
 					// Add link to the documentation about this feature.
 				}
 
-				<Button
-					isLink
+				<ExternalLink
 					target='_blank'
 					rel='noopener noreferrer'
 					href="https://docs.themeisle.com/article/1478-otter-blocks-documentation"
 				>
-					{ __( 'Learn more about sticky', 'otter-blocks' ) }
-				</Button>
+					{ __( 'Learn more about Sticky', 'otter-blocks' ) }
+				</ExternalLink>
 			</PanelBody>
 		</InspectorControls>
 	);
