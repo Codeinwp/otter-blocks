@@ -14,8 +14,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import {
 	Fragment,
 	useEffect,
-	useRef,
-	useState
+	useRef
 } from '@wordpress/element';
 
 const Edit = ({
@@ -31,7 +30,7 @@ const Edit = ({
 		observer.current = new MutationObserver( mutations => {
 			mutations.forEach( mutation => {
 				if ( 'childList' === mutation.type ) {
-					initMasonry();
+					macy.current?.recalculate( true );
 				}
 			});
 		});
@@ -60,9 +59,13 @@ const Edit = ({
 				container: useOldContainer ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }`,
 				trueOrder: false,
 				waitForImages: false,
-				margin: props.attributes.margin || 0,
+				margin: props.attributes.margin !== undefined ? props.attributes.margin : 10,
 				columns: props.attributes.columns || 3
 			});
+
+			if ( container?.style.height ) {
+				container.style.height = '';
+			}
 		}
 	};
 
