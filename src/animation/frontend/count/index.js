@@ -2,7 +2,6 @@
  * WordPress dependencies
  */
 import domReady from '@wordpress/dom-ready';
-import { range } from '../../../blocks/helpers/helper-functions';
 
 const MAX_PARENT_SEARCH = 3;
 
