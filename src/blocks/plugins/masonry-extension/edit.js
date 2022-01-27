@@ -29,6 +29,9 @@ const Edit = ({
 	const macy = useRef( null );
 	const observer = useRef( null );
 
+	// TODO: Remove this when we no longer support WP 5.8
+	const useOldContainer = useRef( Boolean( parseInt( window.themeisleGutenberg?.useOldMacyContainer || '0' ) ) );
+
 	const imagesNumber = useSelect( select => {
 		const {
 			getBlock
@@ -38,6 +41,7 @@ const Edit = ({
 
 	useEffect( () => {
 		if ( props.attributes.isMasonry && 0 < imagesNumber ) {
+			useOldContainer.current = Boolean( parseInt( window.themeisleGutenberg?.useOldMacyContainer || '0' ) );
 			initMasonry();
 			observer.current = new MutationObserver( mutations => {
 				mutations.forEach( mutation => {
@@ -53,17 +57,17 @@ const Edit = ({
 	}, []);
 
 	useEffect( () => {
-		if ( props.attributes.isMasonry && 0 < imagesNumber ) {
+		if ( props.attributes.isMasonry && ( 0 < imagesNumber ||  useOldContainer.current )  ) {
 			initMasonry();
 		}
-	}, [ props.attributes, imagesNumber ]);
+	}, [ props.attributes, imagesNumber, useOldContainer.current ]);
 
 
 	const initMasonry = () => {
 		if ( props.attributes.isMasonry ) {
+			const container = document.querySelector( useOldContainer.current ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }` );
 
-			const useOldContainer = Boolean( parseInt( window.themeisleGutenberg?.useOldMacyContainer || '0' ) );
-			const container = document.querySelector( useOldContainer ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }` );
+			console.log({ container });
 
 			macy.current?.remove();
 			macy.current = window.Macy({
