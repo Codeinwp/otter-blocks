@@ -47,7 +47,7 @@ class Woo_Comparison_Block extends Base_Block {
 
 			$table = new \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Main();
 
-			if( method_exists( $table, 'enqueue_assets' ) ) {
+			if ( method_exists( $table, 'enqueue_assets' ) ) {
 				$table->enqueue_assets();
 			}
 		}
