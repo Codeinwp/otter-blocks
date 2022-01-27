@@ -46,7 +46,7 @@ class Woo_Comparison_Block extends Base_Block {
 			wp_enqueue_style( 'neve-woocommerce', NEVE_ASSETS_URL . 'css/woocommerce' . ( ( NEVE_DEBUG ) ? '' : '.min' ) . '.css', array( 'woocommerce-general' ), apply_filters( 'neve_version_filter', NEVE_VERSION ) );
 
 			$table = new \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Main();
-			$table->register_assets();
+			$table->enqueue_assets();
 		}
 
 		if ( is_admin() && class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Module' ) ) {
