@@ -29,9 +29,9 @@ class Blocks_CSS {
 		}
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ), 1 );
-		add_action( 'wp_head', array( $this, 'render_server_side_css' ) );
 		add_action( 'wp_loaded', array( $this, 'add_attributes_to_blocks' ) );
 		add_filter( 'themeisle_gutenberg_blocks_css', array( $this, 'add_css_to_otter' ), 10, 1 );
+		add_filter( 'render_block', array( $this, 'render_block_css' ), 10, 3 );
 	}
 
 	/**
@@ -43,8 +43,8 @@ class Blocks_CSS {
 	public function enqueue_editor_assets() {
 		wp_enqueue_code_editor( array( 'type' => 'text/css' ) );
 
-		wp_add_inline_script( 
-			'wp-codemirror', 
+		wp_add_inline_script(
+			'wp-codemirror',
 			'window.CodeMirror = wp.CodeMirror;'
 		);
 
@@ -72,7 +72,7 @@ class Blocks_CSS {
 	 * Parse Blocks for Gutenberg and WordPress 5.0
 	 *
 	 * @param string $content Content to parse.
-	 * 
+	 *
 	 * @since   1.0.0
 	 * @access  public
 	 */
@@ -85,52 +85,37 @@ class Blocks_CSS {
 	}
 
 	/**
-	 * Render server-side CSS
-	 * 
-	 * @since   1.0.0
-	 * @access  public
+	 * Render block CSS
+	 *
+	 * @param string $block_content
+	 * @param array $block
+	 * @param \WP_Block $instance
+	 *
+	 * @return string
 	 */
-	public function render_server_side_css() {
-		if ( function_exists( 'has_blocks' ) && has_blocks( get_the_ID() ) ) {
-			global $post;
-
-			if ( ! is_object( $post ) ) {
-				return;
-			}
-
-			$blocks = $this->parse_blocks( $post->post_content );
-
-			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
-				return;
-			}
-
-			$css = $this->cycle_through_blocks( $blocks, $post->ID );
-
-			if ( empty( $css ) ) {
-				return;
-			}
-
-			$style  = "\n" . '<style type="text/css" media="all">' . "\n";
-			$style .= $css;
-			$style .= "\n" . '</style>' . "\n";
-
-			echo $style; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	public function render_block_css( $block_content, $block, $instance ) {
+		if ( ! empty( $css = $this->cycle_through_blocks( [ $block ], ! empty( $instance->context['postId'] ) ? $instance->context['postId'] : null ) ) ) {
+			$block_content .= "\n" . '<style type="text/css" media="all">' . "\n";
+			$block_content .= $css;
+			$block_content .= "\n" . '</style>' . "\n";
 		}
+
+		return $block_content;
 	}
 
 	/**
-	 * Cycle thorugh Blocks
+	 * Cycle through Blocks
 	 *
 	 * @param array $inner_blocks Array of blocks.
-	 * @param int   $id Post ID.
-	 * 
+	 * @param int $id Post ID.
+	 *
 	 * @since   1.0.0
 	 * @access  public
 	 */
 	public function cycle_through_blocks( $inner_blocks, $id ) {
 		$style = '';
 		foreach ( $inner_blocks as $block ) {
-			$file_name  = get_post_meta( $id, '_themeisle_gutenberg_block_stylesheet', true );
+			$file_name  = ! empty( $id ) ? get_post_meta( $id, '_themeisle_gutenberg_block_stylesheet', true ) : null;
 			$render_css = empty( $file_name ) || strpos( $file_name, 'post-v2' ) === false;
 
 			if ( $render_css && isset( $block['attrs'] ) ) {
@@ -159,6 +144,7 @@ class Blocks_CSS {
 				$style .= $this->cycle_through_blocks( $block['innerBlocks'], $id );
 			}
 		}
+
 		return $style;
 	}
 
@@ -209,9 +195,9 @@ class Blocks_CSS {
 	 * Defines and returns the instance of the static class.
 	 *
 	 * @static
+	 * @return Blocks_CSS
 	 * @since 1.0.0
 	 * @access public
-	 * @return Blocks_CSS
 	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
@@ -229,8 +215,8 @@ class Blocks_CSS {
 	 * object therefore, we don't want the object to be cloned.
 	 *
 	 * @access public
-	 * @since 1.0.0
 	 * @return void
+	 * @since 1.0.0
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
@@ -241,8 +227,8 @@ class Blocks_CSS {
 	 * Disable unserializing of the class
 	 *
 	 * @access public
-	 * @since 1.0.0
 	 * @return void
+	 * @since 1.0.0
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
