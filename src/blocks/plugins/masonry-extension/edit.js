@@ -17,6 +17,10 @@ import {
 	useRef
 } from '@wordpress/element';
 
+import {
+	useSelect
+} from '@wordpress/data';
+
 const Edit = ({
 	props,
 	children
@@ -25,36 +29,43 @@ const Edit = ({
 	const macy = useRef( null );
 	const observer = useRef( null );
 
+	const imagesNumber = useSelect( select => {
+		const {
+			getBlock
+		} = select( 'core/block-editor' );
+		return getBlock( props.clientId ).innerBlocks?.length;
+	});
+
 	useEffect( () => {
-		initMasonry();
-		observer.current = new MutationObserver( mutations => {
-			mutations.forEach( mutation => {
-				if ( 'childList' === mutation.type ) {
-					macy.current?.recalculate( true );
-				}
+		if ( props.attributes.isMasonry && 0 < imagesNumber ) {
+			initMasonry();
+			observer.current = new MutationObserver( mutations => {
+				mutations.forEach( mutation => {
+					if ( 'childList' === mutation.type ) {
+						macy.current?.recalculate( true, true );
+					}
+				});
 			});
-		});
+		}
 		return () => {
 			deleteMasonry();
 		};
 	}, []);
 
 	useEffect( () => {
-		if ( props.attributes.isMasonry ) {
+		if ( props.attributes.isMasonry && 0 < imagesNumber ) {
 			initMasonry();
 		}
-	}, [ props.attributes ]);
+	}, [ props.attributes, imagesNumber ]);
 
 
 	const initMasonry = () => {
 		if ( props.attributes.isMasonry ) {
-			deleteMasonry();
 
-			observer.current?.disconnect();
 			const useOldContainer = Boolean( parseInt( window.themeisleGutenberg?.useOldMacyContainer || '0' ) );
 			const container = document.querySelector( useOldContainer ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }` );
-			observer.current?.observe( container, {childList: true});
 
+			macy.current?.remove();
 			macy.current = window.Macy({
 				container: useOldContainer ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }`,
 				trueOrder: false,
@@ -62,6 +73,12 @@ const Edit = ({
 				margin: props.attributes.margin !== undefined ? props.attributes.margin : 10,
 				columns: props.attributes.columns || 3
 			});
+
+			// Handle the case when we update with new images.
+			setTimeout( () => macy.current?.recalculate( true, true ), 300 );
+
+			observer.current?.disconnect();
+			observer.current?.observe( container, {childList: true});
 
 			if ( container?.style.height ) {
 				container.style.height = '';
