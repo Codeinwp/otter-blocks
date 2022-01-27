@@ -68,7 +68,7 @@ class Masonry_Variant {
 
 			wp_script_add_data( 'otter-masonry', 'defer', true );
 
-			$margin = isset( $block['attrs']['margin'] ) ? $block['attrs']['margin'] : 0;
+			$margin = isset( $block['attrs']['margin'] ) ? $block['attrs']['margin'] : 10;
 
 			$block_content = '<div class="otter-masonry" data-margin="' . $margin . '">' . $block_content . '</div>';
 

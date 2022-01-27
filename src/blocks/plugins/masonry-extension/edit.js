@@ -71,7 +71,7 @@ const Edit = ({
 
 			macy.current?.remove();
 			macy.current = window.Macy({
-				container: useOldContainer ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }`,
+				container: useOldContainer.current ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }`,
 				trueOrder: false,
 				waitForImages: false,
 				margin: props.attributes.margin !== undefined ? props.attributes.margin : 10,
