@@ -17,9 +17,7 @@ import {
 	useRef
 } from '@wordpress/element';
 
-import {
-	useSelect
-} from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 
 const Edit = ({
 	props,

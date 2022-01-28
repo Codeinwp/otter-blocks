@@ -389,15 +389,15 @@ class Main {
 			'otter-blocks',
 			'themeisleGutenberg',
 			array(
-				'isCompatible'   => $this->is_compatible(),
-				'packagePath'    => plugin_dir_url( $this->get_dir() ) . 'build/blocks/',
-				'assetsPath'     => plugin_dir_url( $this->get_dir() ) . 'assets',
-				'updatePath'     => admin_url( 'update-core.php' ),
-				'optionsPath'    => admin_url( 'options-general.php?page=otter' ),
-				'mapsAPI'        => $api,
-				'themeDefaults'  => $this->get_global_defaults(),
-				'imageSizes'     => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
-				'themeMods'      => array(
+				'isCompatible'        => $this->is_compatible(),
+				'packagePath'         => plugin_dir_url( $this->get_dir() ) . 'build/blocks/',
+				'assetsPath'          => plugin_dir_url( $this->get_dir() ) . 'assets',
+				'updatePath'          => admin_url( 'update-core.php' ),
+				'optionsPath'         => admin_url( 'options-general.php?page=otter' ),
+				'mapsAPI'             => $api,
+				'themeDefaults'       => $this->get_global_defaults(),
+				'imageSizes'          => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
+				'themeMods'           => array(
 					'listingType'   => get_theme_mod( 'neve_comparison_table_product_listing_type', 'column' ),
 					'altRow'        => get_theme_mod( 'neve_comparison_table_enable_alternating_row_bg_color', false ),
 					'fields'        => get_theme_mod( 'neve_comparison_table_fields', $default_fields ),
@@ -408,22 +408,20 @@ class Main {
 					'altRowColor'   => get_theme_mod( 'neve_comparison_table_alternate_row_bg_color', 'var(--nv-light-bg)' ),
 					'defaultFields' => $default_fields,
 				),
-				'isWPVIP'        => function_exists( 'is_wpcom_vip' ),
-				'canTrack'       => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
-				'userRoles'      => $wp_roles->roles,
-				'hasWooCommerce' => class_exists( 'WooCommerce' ),
-				'hasNeveSupport' => array(
+				'isWPVIP'             => function_exists( 'is_wpcom_vip' ),
+				'canTrack'            => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
+				'userRoles'           => $wp_roles->roles,
+				'hasWooCommerce'      => class_exists( 'WooCommerce' ),
+				'hasNeveSupport'      => array(
 					'hasNeve'         => defined( 'NEVE_VERSION' ),
 					'hasNevePro'      => defined( 'NEVE_VERSION' ) && 'valid' === apply_filters( 'product_neve_license_status', false ),
 					'isBoosterActive' => 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ),
 					'wooComparison'   => class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options' ) ? \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options::is_module_activated() : false,
 				),
-				'isBlockEditor'  => 'post' === $current_screen->base,
-				'useOldMacyContainer' => version_compare(get_bloginfo('version'),'5.8.10', '<='),
+				'isBlockEditor'       => 'post' === $current_screen->base,
+				'useOldMacyContainer' => version_compare( get_bloginfo( 'version' ), '5.8.10', '<=' ),
 			)
 		);
-
-		$r = version_compare(get_bloginfo('version'),'5.8.10', '<=');
 
 		wp_enqueue_style(
 			'otter-editor',
