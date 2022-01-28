@@ -66,10 +66,12 @@ const Edit = ({
 	const initMasonry = () => {
 		if ( props.attributes.isMasonry ) {
 			const container = document.querySelector( useOldContainer.current ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }` );
-
-			console.log({ container });
-
 			macy.current?.remove();
+
+			if ( useOldContainer.current && ! props.attributes.images?.length ) {
+				return;
+			}
+
 			macy.current = window.Macy({
 				container: useOldContainer.current ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }`,
 				trueOrder: false,

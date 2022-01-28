@@ -28,6 +28,9 @@
         "optimize-autoloader": true,
         "platform": {
           "php": "7.4"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": false
         }
     },
     "extra": {
