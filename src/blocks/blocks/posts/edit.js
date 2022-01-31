@@ -158,14 +158,14 @@ const Edit = ({
 			/>
 
 			<div { ...blockProps }>
-				<Disabled>
-					<Layout
-						attributes={ attributes }
-						posts={ posts }
-						categoriesList={ categoriesList }
-						authors={ authors }
-					/>
-				</Disabled>
+
+				<Layout
+					attributes={ attributes }
+					posts={ posts }
+					categoriesList={ categoriesList }
+					authors={ authors }
+				/>
+
 
 			</div>
 		</Fragment>

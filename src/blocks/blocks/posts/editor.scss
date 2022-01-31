@@ -1,7 +1,7 @@
 .wp-block-themeisle-blocks-posts-grid {
 	.has-shadow {
 		.wp-block-themeisle-blocks-posts-grid-post-blog {
-			.wp-block-themeisle-blocks-posts-grid-post {	
+			.wp-block-themeisle-blocks-posts-grid-post {
 				.wp-block-themeisle-blocks-posts-grid-post-image {
 					img {
 						box-shadow: 0 10px 25px 0 rgba( 0, 0, 0, .2 );
@@ -21,21 +21,21 @@
 				max-width: 50%;
 			}
 		}
-	
+
 		&.wp-block-themeisle-blocks-posts-grid-columns-3 {
 			.wp-block-themeisle-blocks-posts-grid-post-blog {
 				flex: 0 0 33%;
 				max-width: 33%;
 			}
 		}
-	
+
 		&.wp-block-themeisle-blocks-posts-grid-columns-4 {
 			.wp-block-themeisle-blocks-posts-grid-post-blog {
 				flex: 0 0 25%;
 				max-width: 25%;
 			}
 		}
-	
+
 		&.wp-block-themeisle-blocks-posts-grid-columns-5 {
 			.wp-block-themeisle-blocks-posts-grid-post-blog {
 				flex: 0 0 20%;
@@ -50,12 +50,12 @@
 
 		.wp-block-themeisle-blocks-posts-grid-post {
 			display: flex;
-	
+
 			.wp-block-themeisle-blocks-posts-grid-post-image {
 				flex-basis: 33.33%;
 				padding: 20px;
 			}
-	
+
 			.wp-block-themeisle-blocks-posts-grid-post-body {
 				flex-basis: 66.66%;
 				padding-top: 20px;
@@ -79,7 +79,7 @@
 
 			.wp-block-themeisle-blocks-posts-grid-post-image {
 				position: relative;
-	
+
 				img {
 					max-width: 100%;
 					border-radius: 5px;
@@ -91,37 +91,46 @@
 				&.is-full {
 					flex-basis: 100%;
 				}
-	
+
 				.wp-block-themeisle-blocks-posts-grid-post-category {
 					font-size: 12px;
 					text-transform: capitalize;
 					font-weight: 700;
 					margin: 5px 0;
 				}
-		
+
 				.wp-block-themeisle-blocks-posts-grid-post-title {
 					margin: 10px 0;
 					line-height: 1.25em;
-		
+
 					a {
 						text-decoration: none;
 						transition: all .15s ease 0s;
-		
+
 						&:hover {
 							text-decoration: underline;
 						}
 					}
 				}
-		
+
 				.wp-block-themeisle-blocks-posts-grid-post-meta {
 					font-size: 14px;
 					margin: 10px 0;
 				}
-		
+
 				.wp-block-themeisle-blocks-posts-grid-post-description {
-					font-size: 16px;
 					margin: 10px 0;
-				}}
+
+					p {
+						font-size: 16px;
+						margin-bottom: 0px;
+					}
+
+					.o-posts-read-more {
+						display: block;
+					}
+				}
+			}
 		}
 	}
 }

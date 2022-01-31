@@ -1,8 +1,22 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
+ * WordPress dependencies
+ */
+import {
+	__,
+	sprintf
+} from '@wordpress/i18n';
+
+/**
  * Internal dependencies
  */
-import Grid from './grid.js';
-import List from './list.js';
+
+import Thumbnail from './thumbnail.js';
+import { unescapeHTML, formatDate } from '../../../../helpers/helper-functions.js';
 
 const Layout = ({
 	attributes,
@@ -10,27 +24,139 @@ const Layout = ({
 	categoriesList,
 	authors
 }) => {
-	if ( 'grid' === attributes.style ) {
-		return (
-			<Grid
-				attributes={ attributes }
-				posts={ posts }
-				categoriesList={ categoriesList }
-				authors={ authors }
-			/>
-		);
-	}
 
-	if ( 'list' === attributes.style ) {
+	const Tag = attributes.titleTag || 'h5';
+
+	const Category = ({element, category}) => {
+		if ( undefined !== category && ( attributes.displayCategory && categoriesList ) ) {
+			return <span key={ element } className="wp-block-themeisle-blocks-posts-grid-post-category">{ category.name }</span>;
+		}
+		return '';
+	};
+
+	const Title = ({ element, post }) => {
+		console.log( post );
+		if ( attributes.displayTitle ) {
+			return (
+				<Tag key={ element } className="wp-block-themeisle-blocks-posts-grid-post-title">
+					<a href={ post.link }>
+						{ unescapeHTML( post.title?.rendered ) }
+					</a>
+				</Tag>
+			);
+		}
+		return '';
+	};
+
+	const Meta = ({ element, post, author }) => {
+		if ( attributes.displayMeta && ( attributes.displayDate || attributes.displayAuthor ) ) {
+			return (
+				<p key={ element } className="wp-block-themeisle-blocks-posts-grid-post-meta">
+					{ ( attributes.displayDate ) && (
+
+						/* translators: %s Date posted */
+						sprintf( __( 'on %s', 'otter-blocks' ), formatDate( post.date ) )
+					) }
+
+					{ ( attributes.displayAuthor && undefined !== author && authors ) && (
+
+						/* translators: %s Author of the post */
+						sprintf( __( ' by %s', 'otter-blocks' ), author.name )
+					) }
+				</p>
+			);
+		}
+		return '';
+	};
+
+	const Description = ({ element, post }) => {
+		if ( 0 < attributes.excerptLength && attributes.displayDescription ) {
+			return (
+				<div key={ element } className="wp-block-themeisle-blocks-posts-grid-post-description">
+					<p>
+						{ post.excerpt?.rendered && unescapeHTML( post.excerpt.rendered ).substring( 0, attributes.excerptLength ) + '…' }
+					</p>
+					{
+						attributes.displayReadMoreLink && (
+							<a href={ post.link } className="o-posts-read-more">
+								Read more
+							</a>
+						)
+					}
+				</div>
+			);
+		}
+		return '';
+	};
+
+	const Container = ({ children }) => {
+		if ( 'grid' === attributes.style ) {
+			return (
+				<div className={ classnames(
+					'is-grid',
+					`wp-block-themeisle-blocks-posts-grid-columns-${ attributes.columns }`,
+					{ 'has-shadow': attributes.imageBoxShadow }
+				) }>
+					{children}
+				</div>
+			);
+		}
 		return (
-			<List
-				attributes={ attributes }
-				posts={ posts }
-				categoriesList={ categoriesList }
-				authors={ authors }
-			/>
+			<div className={ classnames(
+				'is-list',
+				{ 'has-shadow': attributes.imageBoxShadow }
+			) }>
+				{children}
+			</div>
 		);
-	}
+	};
+
+	return (
+		<Container>
+			{
+				posts.filter( post => post ).map( post => {
+					const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
+					const author = authors && post.author ? authors.find( item => item.id === post.author ) : undefined;
+
+					return (
+						<div className="wp-block-themeisle-blocks-posts-grid-post">
+							{ ( 0 !== post.featured_media && attributes.displayFeaturedImage ) && (
+								<Thumbnail
+									id={ post.featured_media }
+									link={ post.link }
+									alt={ post.title?.rendered }
+									size={ attributes.imageSize }
+								/>
+							) }
+
+							<div className={ classnames(
+								'wp-block-themeisle-blocks-posts-grid-post-body',
+								{ 'is-full': ! attributes.displayFeaturedImage }
+							) }>
+								{
+									attributes.template.map( element => {
+										switch ( element ) {
+										case 'category':
+											return <Category element={element} category={category} />;
+										case 'title':
+											return <Title element={element} post={post} />;
+										case 'meta':
+											return <Meta element={element} post={post} author={author} />;
+										case 'description':
+											return <Description element={element} post={post} />;
+										default:
+											return '';
+										}
+									})
+								}
+							</div>
+						</div>
+					);
+
+				})
+			}
+		</Container>
+	);
 };
 
 export default Layout;
