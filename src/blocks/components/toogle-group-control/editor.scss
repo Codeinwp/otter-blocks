@@ -1,0 +1,66 @@
+.o-toggle-group-control {
+	display: flex;
+	flex-direction: row;
+	margin: 10px 5px;
+	justify-content: center;
+	width: 100%;
+
+	.o-toggle-option {
+		&:root {
+			--o-toogle-btn-rad: 0px;
+		}
+
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+
+		button {
+			display: flex;
+			justify-content: center;
+			background: #EEEEEE;
+			border: 1px solid #DDDDDD;
+			border-radius: var(--o-toogle-btn-rad);
+			min-width: 82px;
+
+			svg {
+				fill: #555D66;;
+				stroke: #555D66;;
+			}
+		}
+
+		p {
+			font-style: normal;
+			font-weight: bold;
+			font-size: 10px;
+			line-height: 18px;
+
+			display: flex;
+			align-items: center;
+			text-align: center;
+			text-transform: uppercase;
+
+			color: #606770;
+		}
+
+
+		&.selected {
+			button {
+				background: #2873AF;
+
+				svg {
+					fill: #FFFFFF;
+					stroke: #FFFFFF;
+				}
+			}
+
+		}
+
+		&:first-child {
+			--o-toogle-btn-rad: 5px 0px 0px 5px;
+		}
+
+		&:last-child {
+			--o-toogle-btn-rad: 0px 5px 5px 0px;
+		}
+	}
+}

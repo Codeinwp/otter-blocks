@@ -35,7 +35,6 @@ const Layout = ({
 	};
 
 	const Title = ({ element, post }) => {
-		console.log( post );
 		if ( attributes.displayTitle ) {
 			return (
 				<Tag key={ element } className="wp-block-themeisle-blocks-posts-grid-post-title">
@@ -58,7 +57,7 @@ const Layout = ({
 						sprintf( __( 'on %s', 'otter-blocks' ), formatDate( post.date ) )
 					) }
 
-					{ ( attributes.displayAuthor && undefined !== author && authors ) && (
+					{ ( attributes.displayAuthor && undefined !== author ) && (
 
 						/* translators: %s Author of the post */
 						sprintf( __( ' by %s', 'otter-blocks' ), author.name )
@@ -124,7 +123,7 @@ const Layout = ({
 					const author = authors && post.author ? authors.find( item => item.id === post.author ) : undefined;
 
 					return (
-						<div className="wp-block-themeisle-blocks-posts-grid-post">
+						<div className={classnames( 'wp-block-themeisle-blocks-posts-grid-post', { 'o-crop-image': attributes.cropImage})}>
 							{ ( 0 !== post.featured_media && attributes.displayFeaturedImage ) && (
 								<Thumbnail
 									id={ post.featured_media }
@@ -134,10 +133,16 @@ const Layout = ({
 								/>
 							) }
 
-							<div className={ classnames(
-								'wp-block-themeisle-blocks-posts-grid-post-body',
-								{ 'is-full': ! attributes.displayFeaturedImage }
-							) }>
+							<div
+								className={ classnames(
+									'wp-block-themeisle-blocks-posts-grid-post-body',
+									{ 'is-full': ! attributes.displayFeaturedImage }
+								) }
+								style={{
+									textAlign: attributes.textAlign,
+									justifyContent: attributes.verticalAlign
+								}}
+							>
 								{
 									attributes.template.map( element => {
 										switch ( element ) {

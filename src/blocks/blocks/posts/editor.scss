@@ -59,8 +59,14 @@
 			.wp-block-themeisle-blocks-posts-grid-post-body {
 				flex-basis: 66.66%;
 				padding-top: 20px;
+
 			}
 		}
+	}
+
+	.wp-block-themeisle-blocks-posts-grid-post-body {
+		display: flex;
+		flex-direction: column;
 	}
 
 	.wp-block-themeisle-blocks-posts-grid-post-blog {

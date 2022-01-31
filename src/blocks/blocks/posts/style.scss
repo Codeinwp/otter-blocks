@@ -82,6 +82,12 @@
 					max-width: 100%;
 					border-radius: 5px;
 				}
+
+				.o-crop-img {
+					width: 150px;
+					height: 150px;
+					object-fit: contain;
+				}
 			}
 
 			.wp-block-themeisle-blocks-posts-grid-post-body {

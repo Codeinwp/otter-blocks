@@ -9,8 +9,16 @@ import {
 	RangeControl,
 	TextControl,
 	BaseControl,
-	SelectControl
+	SelectControl,
+	Button
 } from '@wordpress/components';
+
+import {
+	Icon,
+	alignCenter,
+	alignRight,
+	alignLeft
+} from '@wordpress/icons';
 
 import { InspectorControls } from '@wordpress/block-editor';
 
@@ -22,6 +30,8 @@ import { useSelect } from '@wordpress/data';
 import LayoutBuilder from './components/layout-builder.js';
 import { StyleSwitcherInspectorControl } from '../../components/style-switcher-control/index.js';
 import { convertToTitleCase } from '../../helpers/helper-functions.js';
+import ToogleGroupControl from '../../components/toogle-group-control/index.js';
+import { alignTop, alignCenter as alignCenterVertical, alignBottom } from '../../helpers/icons.js';
 
 const Inspector = ({
 	attributes,
@@ -89,7 +99,6 @@ const Inspector = ({
 	const changeColumns = value => {
 		setAttributes({ columns: value });
 	};
-
 
 	return (
 		<InspectorControls>
@@ -167,6 +176,58 @@ const Inspector = ({
 					min={ 0 }
 					onChange={ value => setAttributes({ offset: Number( value ) }) }
 				/>
+
+				<BaseControl
+					label={ __( 'Text alignment', 'otter-blocks' ) }
+				>
+					<ToogleGroupControl
+						value={ attributes.textAlign }
+						options={[
+							{
+								icon: <Icon icon={alignLeft} />,
+								label: __( 'Left', 'otter-blocks' ),
+								value: 'left'
+							},
+							{
+								icon: <Icon icon={alignCenter} />,
+								label: __( 'Center', 'otter-blocks' ),
+								value: 'center'
+							},
+							{
+								icon: <Icon icon={alignRight} />,
+								label: __( 'Right', 'otter-blocks' ),
+								value: 'right'
+							}
+						]}
+						onChange={ textAlign => setAttributes({ textAlign }) }
+					/>
+				</BaseControl>
+
+				<BaseControl
+					label={ __( 'Vertical alignment', 'otter-blocks' ) }
+				>
+					<ToogleGroupControl
+						value={ attributes.verticalAlign }
+						options={[
+							{
+								icon: <Icon icon={alignTop} />,
+								label: __( 'Top', 'otter-blocks' ),
+								value: 'flex-start'
+							},
+							{
+								icon: <Icon icon={alignCenterVertical} />,
+								label: __( 'Center', 'otter-blocks' ),
+								value: 'center'
+							},
+							{
+								icon: <Icon icon={alignBottom} />,
+								label: __( 'Bottom', 'otter-blocks' ),
+								value: 'flex-end'
+							}
+						]}
+						onChange={ verticalAlign => setAttributes({ verticalAlign }) }
+					/>
+				</BaseControl>
 			</PanelBody>
 
 			<PanelBody

@@ -110,6 +110,12 @@ const attributes = {
 	},
 	borderRadius: {
 		type: 'number'
+	},
+	textAlign: {
+		type: 'string'
+	},
+	verticalAlign: {
+		type: 'string'
 	}
 };
 
