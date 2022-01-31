@@ -48,7 +48,7 @@ const Layout = ({
 		return '';
 	};
 
-	const Meta = ({ element, post, author }) => {
+	const Meta = ({ element, post, author, category }) => {
 		if ( attributes.displayMeta && ( attributes.displayDate || attributes.displayAuthor ) ) {
 			return (
 				<p key={ element } className="wp-block-themeisle-blocks-posts-grid-post-meta">
@@ -62,6 +62,11 @@ const Layout = ({
 
 						/* translators: %s Author of the post */
 						sprintf( __( ' by %s', 'otter-blocks' ), author.name )
+					) }
+
+					{ ( attributes.displayPostCategory && undefined !== category?.name ) && (
+
+						sprintf( __( ' - %s', 'otter-blocks' ), category.name )
 					) }
 				</p>
 			);
@@ -141,7 +146,7 @@ const Layout = ({
 										case 'title':
 											return <Title element={element} post={post} />;
 										case 'meta':
-											return <Meta element={element} post={post} author={author} />;
+											return <Meta element={element} post={post} author={author} category={category} />;
 										case 'description':
 											return <Description element={element} post={post} />;
 										default:
