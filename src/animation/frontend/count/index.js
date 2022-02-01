@@ -25,7 +25,7 @@ const getConfiguration = ( elem ) => {
 			const arr = Array.from( parent.classList );
 
 			const delay = arr.filter( x => x.includes( 'o-count-delay-' ) ).pop();
-			const number = parseInt( delay?.split( '-' )?.[1] || '0' );
+			const number = parseInt( delay?.split( '-' )?.[3] || '0' );
 			const isMS = delay?.includes( 'ms' );
 
 			const speedOptions = Object.keys( speedConfig );

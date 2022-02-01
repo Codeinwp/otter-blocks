@@ -216,7 +216,6 @@ function AnimationControls({
 	const updateCountDelay = ( e ) => {
 		let classes;
 		let delayValue = 'none' !== e ? `o-count-${ e }` : '';
-		console.log( delayValue );
 
 		if ( attributes.className ) {
 			classes = attributes.className;
