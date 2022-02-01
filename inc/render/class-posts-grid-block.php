@@ -109,37 +109,37 @@ class Posts_Grid_Block extends Base_Block {
 				'type'    => 'boolean',
 				'default' => true,
 			),
-			'displayComments'        => array(
+			'displayComments'      => array(
 				'type'    => 'boolean',
 				'default' => true,
 			),
-			'displayPostCategory'        => array(
+			'displayPostCategory'  => array(
 				'type'    => 'boolean',
 				'default' => false,
 			),
-			'displayReadMoreLink'        => array(
+			'displayReadMoreLink'  => array(
 				'type'    => 'boolean',
 				'default' => false,
 			),
-			'enableCustomFontSize'        => array(
+			'enableCustomFontSize' => array(
 				'type'    => 'boolean',
 				'default' => false,
 			),
-			'customFontSize'        => array(
-				'type'    => 'number',
+			'customFontSize'       => array(
+				'type' => 'number',
 			),
-			'borderRadius'        => array(
-				'type'    => 'number',
+			'borderRadius'         => array(
+				'type' => 'number',
 			),
-			'cropImage'        => array(
+			'cropImage'            => array(
 				'type'    => 'boolean',
 				'default' => false,
 			),
-			'textAlign'        => array(
-				'type'    => 'string',
+			'textAlign'            => array(
+				'type' => 'string',
 			),
 			'verticalAlign'        => array(
-				'type'    => 'string',
+				'type' => 'string',
 			),
 		);
 	}
@@ -278,7 +278,7 @@ class Posts_Grid_Block extends Base_Block {
 				}
 
 				if ( 'description' === $element ) {
-					if( ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) || ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink'] ) ) {
+					if ( ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) || ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink'] ) ) {
 						$list_items_markup .= '<div class="wp-block-themeisle-blocks-posts-grid-post-description">';
 
 						if ( ( isset( $attributes['excerptLength'] ) && $attributes['excerptLength'] > 0 ) && ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) ) {
@@ -288,7 +288,7 @@ class Posts_Grid_Block extends Base_Block {
 							);
 						}
 
-						if ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink']  ) {
+						if ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink'] ) {
 							$list_items_markup .= sprintf(
 								'<a class="o-posts-read-more" href="%1$s">%2$s</a>',
 								esc_url( get_the_permalink( $id ) ),
@@ -298,8 +298,7 @@ class Posts_Grid_Block extends Base_Block {
 
 						$list_items_markup .= '</div>';
 
-					}
-
+					}               
 				}
 			}
 

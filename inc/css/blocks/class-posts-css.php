@@ -34,12 +34,29 @@ class Posts_CSS extends Base_CSS {
 	public function render_css( $block ) {
 		$css = new CSS_Utility( $block );
 
+		// TODO: find why this is not working
+		$css->add_item(
+			array(
+				'selector'   => ' .wp-block-themeisle-blocks-posts-grid-post-body',
+				'properties' => array(
+					array(
+						'property' => 'text-align',
+						'value'    => 'textAlign',
+					),
+					array(
+						'property' => 'justify-content',
+						'value'    => 'verticalAlign',
+					),
+				),
+			)
+		);
+
 		$css->add_item(
 			array(
 				'selector'   => ' .wp-block-themeisle-blocks-posts-grid .wp-block-themeisle-blocks-posts-grid-post-image img',
 				'properties' => array(
 					array(
-						'property'  => 'border-radius',
+						'property' => 'border-radius',
 						'value'    => 'borderRadius',
 					),
 				),
