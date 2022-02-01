@@ -102,8 +102,8 @@ export const SortableItem = ({
 					onChange={ borderRadius => setAttributes({ borderRadius }) }
 					min={ 0 }
 					max={ 50 }
+					allowReset
 				/>
-
 			</Fragment>
 		);
 	};
@@ -127,7 +127,7 @@ export const SortableItem = ({
 				<ToggleControl
 					label={ __( 'Enable custom font size', 'otter-blocks' ) }
 					checked={ attributes.enableCustomFontSize }
-					onChange={ enableCustomFontSize => setAttributes({ enableCustomFontSize }) }
+					onChange={ enableCustomFontSize => setAttributes({ enableCustomFontSize, customFontSize: undefined }) }
 				/>
 				<RangeControl
 					label={ __( 'Font size', 'otter-blocks' ) }

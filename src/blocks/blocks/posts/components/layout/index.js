@@ -136,6 +136,9 @@ const Layout = ({
 										link={ post.link }
 										alt={ post.title?.rendered }
 										size={ attributes.imageSize }
+										imgStyle={{
+											borderRadius: attributes.borderRadius !== undefined ? attributes.borderRadius + 'px' : undefined
+										}}
 									/>
 								) }
 

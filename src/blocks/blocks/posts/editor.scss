@@ -109,6 +109,7 @@
 			}
 
 			.wp-block-themeisle-blocks-posts-grid-post-body {
+				padding-bottom: 15px;
 
 				&.is-full {
 					flex-basis: 100%;
@@ -150,6 +151,7 @@
 
 					.o-posts-read-more {
 						display: block;
+						margin-bottom: 5px;
 					}
 				}
 			}

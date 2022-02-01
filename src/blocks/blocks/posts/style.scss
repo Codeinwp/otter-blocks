@@ -90,16 +90,6 @@
 		.wp-block-themeisle-blocks-posts-grid-post {
 			margin-bottom: 10px;
 
-			.o-crop-img {
-				.wp-block-themeisle-blocks-posts-grid-post-image {
-					img {
-						width: 150px;
-						height: 150px;
-						object-fit: contain;
-					}
-				}
-			}
-
 			.wp-block-themeisle-blocks-posts-grid-post-image {
 				position: relative;
 
@@ -110,6 +100,7 @@
 			}
 
 			.wp-block-themeisle-blocks-posts-grid-post-body {
+				padding-bottom: 15px;
 
 				&.is-full {
 					flex-basis: 100%;
