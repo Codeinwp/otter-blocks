@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import { backup, Icon } from '@wordpress/icons';
+import { backup, settings, Icon } from '@wordpress/icons';
 
 /**
  * WordPress dependencies
@@ -81,7 +81,7 @@ const ControlPanelControl = ({
 
 									<Button
 										id={ id }
-										icon="admin-settings"
+										icon={ settings }
 										label={ label }
 										shotTooltip={ true }
 										onClick={ () => {

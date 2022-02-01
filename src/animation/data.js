@@ -53,10 +53,6 @@ export const animationsList = [
 		value: 'bounceOutUp'
 	},
 	{
-		label: __( 'Count Numbers', 'otter-blocks' ),
-		value: 'o-count'
-	},
-	{
 		label: __( 'Fade In', 'otter-blocks' ),
 		value: 'fadeIn'
 	},
@@ -326,10 +322,6 @@ export const categories = [
 	{
 		label: __( 'Bouncing', 'otter-blocks' ),
 		value: 'bounce'
-	},
-	{
-		label: __( 'Counting', 'otter-blocks' ),
-		value: 'o-count'
 	},
 	{
 		label: __( 'Fading', 'otter-blocks' ),

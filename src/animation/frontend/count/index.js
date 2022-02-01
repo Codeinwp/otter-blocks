@@ -7,10 +7,10 @@ const MAX_PARENT_SEARCH = 3;
 
 const speedConfig = {
 	'none': undefined,
-	'slower': 3,
-	'slow': 2,
-	'fast': 1.5,
-	'fastest': 1
+	'o-count-slower': 3,
+	'o-count-slow': 2,
+	'o-count-fast': 1.5,
+	'o-count-fastest': 1
 };
 
 /**
@@ -21,17 +21,15 @@ const speedConfig = {
 const getConfiguration = ( elem ) => {
 	let parent = elem.parentElement;
 	for ( let i = 0; i < MAX_PARENT_SEARCH; ++i ) {
-		if ( parent.classList.contains( 'o-count' ) ) {
+		if ( Array.from( parent.classList ).some( o => o.includes( 'o-count-' ) ) ) {
 			const arr = Array.from( parent.classList );
 
-			const delay = arr.filter( x => x.includes( 'delay-' ) ).pop();
+			const delay = arr.filter( x => x.includes( 'o-count-delay-' ) ).pop();
 			const number = parseInt( delay?.split( '-' )?.[1] || '0' );
 			const isMS = delay?.includes( 'ms' );
 
 			const speedOptions = Object.keys( speedConfig );
 			const speed = arr?.filter( x => speedOptions.includes( x ) )?.pop() || 'fast';
-
-			parent.classList.remove( 'hidden-animated' );
 
 			return {
 				speed: speedConfig[speed],
