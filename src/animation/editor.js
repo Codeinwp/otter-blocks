@@ -331,7 +331,7 @@ function AnimationControls({
 							className="otter-animations-count-image"
 						/>
 
-						<p>{ __( 'You can add counting animation to from the format toolbar of this block. Once you have added them, you will see customization settings here.', 'otter-blocks' ) }</p>
+						<p>{ __( 'You can add counting animation from the format toolbar of this block. Once you have added them, you will see customization settings here.', 'otter-blocks' ) }</p>
 						<p>{ __( 'Note: This feature is not available in all the blocks.', 'otter-blocks' ) }</p>
 					</Fragment>
 				) }
