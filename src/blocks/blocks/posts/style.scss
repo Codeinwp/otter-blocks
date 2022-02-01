@@ -61,14 +61,14 @@
 		}
 	}
 
-	.o-crop-img {
+	&.o-crop-img {
 		.wp-block-themeisle-blocks-posts-grid-post-blog {
 			.wp-block-themeisle-blocks-posts-grid-post {
 				.wp-block-themeisle-blocks-posts-grid-post-image {
 					img {
 						width: 150px;
 						height: 150px;
-						object-fit: contain;
+						object-fit: cover;
 					}
 				}
 			}
@@ -133,13 +133,19 @@
 				}
 
 				.wp-block-themeisle-blocks-posts-grid-post-description {
-					font-size: 16px;
 					margin: 10px 0;
+
+					p {
+						font-size: 16px;
+						margin-bottom: 0px;
+					}
 
 					.o-posts-read-more {
 						display: block;
+						margin-bottom: 5px;
 					}
-				}}
+				}
+			}
 		}
 	}
 }

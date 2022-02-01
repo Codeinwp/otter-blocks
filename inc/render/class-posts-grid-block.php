@@ -109,6 +109,38 @@ class Posts_Grid_Block extends Base_Block {
 				'type'    => 'boolean',
 				'default' => true,
 			),
+			'displayComments'        => array(
+				'type'    => 'boolean',
+				'default' => true,
+			),
+			'displayPostCategory'        => array(
+				'type'    => 'boolean',
+				'default' => false,
+			),
+			'displayReadMoreLink'        => array(
+				'type'    => 'boolean',
+				'default' => false,
+			),
+			'enableCustomFontSize'        => array(
+				'type'    => 'boolean',
+				'default' => false,
+			),
+			'customFontSize'        => array(
+				'type'    => 'number',
+			),
+			'borderRadius'        => array(
+				'type'    => 'number',
+			),
+			'cropImage'        => array(
+				'type'    => 'boolean',
+				'default' => false,
+			),
+			'textAlign'        => array(
+				'type'    => 'string',
+			),
+			'verticalAlign'        => array(
+				'type'    => 'string',
+			),
 		);
 	}
 
@@ -234,17 +266,40 @@ class Posts_Grid_Block extends Base_Block {
 							);
 						}
 
+						if ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] && isset( $category[0] ) ) {
+							$list_items_markup .= sprintf(
+								' - %1$s',
+								$category[0]->cat_name
+							);
+						}
+
 						$list_items_markup .= '</p>';
 					}
 				}
 
 				if ( 'description' === $element ) {
-					if ( ( isset( $attributes['excerptLength'] ) && $attributes['excerptLength'] > 0 ) && ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) ) {
-						$list_items_markup .= sprintf(
-							'<p class="wp-block-themeisle-blocks-posts-grid-post-description">%1$s</p>',
-							$this->get_excerpt_by_id( $id, $attributes['excerptLength'] )
-						);
+					if( ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) || ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink'] ) ) {
+						$list_items_markup .= '<div class="wp-block-themeisle-blocks-posts-grid-post-description">';
+
+						if ( ( isset( $attributes['excerptLength'] ) && $attributes['excerptLength'] > 0 ) && ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) ) {
+							$list_items_markup .= sprintf(
+								'<p>%1$s</p>',
+								$this->get_excerpt_by_id( $id, $attributes['excerptLength'] )
+							);
+						}
+
+						if ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink']  ) {
+							$list_items_markup .= sprintf(
+								'<a class="o-posts-read-more" href="%1$s">%2$s</a>',
+								esc_url( get_the_permalink( $id ) ),
+								__( 'Read More', 'otter-blocks' )
+							);
+						}
+
+						$list_items_markup .= '</div>';
+
 					}
+
 				}
 			}
 
@@ -273,10 +328,14 @@ class Posts_Grid_Block extends Base_Block {
 			$class .= ' has-shadow';
 		}
 
+		if ( isset( $attributes['cropImage'] ) && true === $attributes['cropImage'] ) {
+			$class .= ' o-crop-img';
+		}
+
 		$wrapper_attributes = get_block_wrapper_attributes(
 			array(
 				'class' => trim( $class ),
-			) 
+			)
 		);
 
 		$block_content = sprintf(
