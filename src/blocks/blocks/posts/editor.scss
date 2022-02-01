@@ -69,6 +69,20 @@
 		flex-direction: column;
 	}
 
+	.o-crop-img {
+		.wp-block-themeisle-blocks-posts-grid-post-blog {
+			.wp-block-themeisle-blocks-posts-grid-post {
+				.wp-block-themeisle-blocks-posts-grid-post-image {
+					img {
+						width: 200px;
+						height: 200px;
+						object-fit: cover;
+					}
+				}
+			}
+		}
+	}
+
 	.wp-block-themeisle-blocks-posts-grid-post-blog {
 		width: 100%;
 		position: relative;
@@ -82,6 +96,8 @@
 
 		.wp-block-themeisle-blocks-posts-grid-post {
 			margin-bottom: 10px;
+
+
 
 			.wp-block-themeisle-blocks-posts-grid-post-image {
 				position: relative;

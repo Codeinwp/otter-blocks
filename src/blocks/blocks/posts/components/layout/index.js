@@ -99,7 +99,8 @@ const Layout = ({
 				<div className={ classnames(
 					'is-grid',
 					`wp-block-themeisle-blocks-posts-grid-columns-${ attributes.columns }`,
-					{ 'has-shadow': attributes.imageBoxShadow }
+					{ 'has-shadow': attributes.imageBoxShadow },
+					{'o-crop-image': attributes.cropImage }
 				) }>
 					{children}
 				</div>
@@ -108,7 +109,8 @@ const Layout = ({
 		return (
 			<div className={ classnames(
 				'is-list',
-				{ 'has-shadow': attributes.imageBoxShadow }
+				{ 'has-shadow': attributes.imageBoxShadow },
+				{'o-crop-img': attributes.cropImage }
 			) }>
 				{children}
 			</div>
@@ -123,42 +125,47 @@ const Layout = ({
 					const author = authors && post.author ? authors.find( item => item.id === post.author ) : undefined;
 
 					return (
-						<div className={classnames( 'wp-block-themeisle-blocks-posts-grid-post', { 'o-crop-image': attributes.cropImage})}>
-							{ ( 0 !== post.featured_media && attributes.displayFeaturedImage ) && (
-								<Thumbnail
-									id={ post.featured_media }
-									link={ post.link }
-									alt={ post.title?.rendered }
-									size={ attributes.imageSize }
-								/>
-							) }
-
-							<div
-								className={ classnames(
-									'wp-block-themeisle-blocks-posts-grid-post-body',
-									{ 'is-full': ! attributes.displayFeaturedImage }
+						<div
+							key={ post.link }
+							className="wp-block-themeisle-blocks-posts-grid-post-blog wp-block-themeisle-blocks-posts-grid-post-plain"
+						>
+							<div className={classnames( 'wp-block-themeisle-blocks-posts-grid-post' )}>
+								{ ( 0 !== post.featured_media && attributes.displayFeaturedImage ) && (
+									<Thumbnail
+										id={ post.featured_media }
+										link={ post.link }
+										alt={ post.title?.rendered }
+										size={ attributes.imageSize }
+									/>
 								) }
-								style={{
-									textAlign: attributes.textAlign,
-									justifyContent: attributes.verticalAlign
-								}}
-							>
-								{
-									attributes.template.map( element => {
-										switch ( element ) {
-										case 'category':
-											return <Category element={element} category={category} />;
-										case 'title':
-											return <Title element={element} post={post} />;
-										case 'meta':
-											return <Meta element={element} post={post} author={author} category={category} />;
-										case 'description':
-											return <Description element={element} post={post} />;
-										default:
-											return '';
-										}
-									})
-								}
+
+								<div
+									className={ classnames(
+										'wp-block-themeisle-blocks-posts-grid-post-body',
+										{ 'is-full': ! attributes.displayFeaturedImage }
+									) }
+									style={{
+										textAlign: attributes.textAlign,
+										justifyContent: attributes.verticalAlign
+									}}
+								>
+									{
+										attributes.template.map( element => {
+											switch ( element ) {
+											case 'category':
+												return <Category element={element} category={category} />;
+											case 'title':
+												return <Title element={element} post={post} />;
+											case 'meta':
+												return <Meta element={element} post={post} author={author} category={category} />;
+											case 'description':
+												return <Description element={element} post={post} />;
+											default:
+												return '';
+											}
+										})
+									}
+								</div>
 							</div>
 						</div>
 					);
