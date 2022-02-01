@@ -25,7 +25,8 @@ module.exports = [
 		mode: NODE_ENV,
 		entry: {
 			index: './src/animation/index.js',
-			frontend: './src/animation/frontend.js'
+			frontend: './src/animation/frontend.js',
+			'anim-count': './src/animation/frontend/count/index.js'
 		},
 		output: {
 			path: path.resolve( __dirname, './build/animation' )
