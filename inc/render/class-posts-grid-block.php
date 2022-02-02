@@ -27,7 +27,7 @@ class Posts_Grid_Block extends Base_Block {
 	protected function set_attributes() {
 		$this->attributes = array(
 			'id'                   => array(
-				'type'    => 'string',
+				'type' => 'string',
 			),
 			'style'                => array(
 				'type'    => 'string',
@@ -370,12 +370,13 @@ class Posts_Grid_Block extends Base_Block {
 	 * Render the featured post
 	 *
 	 * @param WP_Post $post Post.
+	 * @param array   $attributes Blocks attrs.
 	 *
 	 * @return string
 	 */
-	protected function render_featured_post( $post = null, $attributes ) {
+	protected function render_featured_post( $post, $attributes ) {
 
-		if( !isset( $post ) ) {
+		if ( ! isset( $post ) ) {
 			return '';
 		}
 
@@ -386,7 +387,7 @@ class Posts_Grid_Block extends Base_Block {
 		$thumbnail = wp_get_attachment_image( get_post_thumbnail_id( $id ), $size );
 		$category  = get_the_category( $id );
 
-		if( isset( $thumbnail ) ) {
+		if ( isset( $thumbnail ) ) {
 			$html .= sprintf(
 				'<div class="wp-block-themeisle-blocks-posts-grid-post-image"><a href="%1$s">%2$s</a></div>',
 				esc_url( get_the_permalink( $id ) ),
@@ -472,20 +473,21 @@ class Posts_Grid_Block extends Base_Block {
 	/**
 	 * Render the featured post
 	 *
-	 * @param WP_Post $post Post.
+	 * @param WP_Post $featured_post_type Featured post.
+	 * @param array   $recent_posts Recen posts.
 	 *
 	 * @return WP_Post|null
 	 */
-	protected function get_featured_post( $featured_post_type , $recent_posts = null ) {
+	protected function get_featured_post( $featured_post_type, $recent_posts ) {
 
-		if( ! isset( $featured_post_type ) && ! isset( $recent_posts ) && 0 < count($recent_posts)) {
+		if ( ! isset( $featured_post_type ) && ! isset( $recent_posts ) && 0 < count( $recent_posts ) ) {
 			return null;
 		}
 
-		if( 'latest' === $featured_post_type ) {
-			$latest =  $recent_posts[0];
+		if ( 'latest' === $featured_post_type ) {
+			$latest = $recent_posts[0];
 			foreach ( $recent_posts as $post ) {
-				if( $latest['post_date'] < $post['post_date'] ) {
+				if ( $latest['post_date'] < $post['post_date'] ) {
 					$latest = $post;
 				}
 			}
@@ -493,7 +495,7 @@ class Posts_Grid_Block extends Base_Block {
 		}
 
 		foreach ( $recent_posts as $post ) {
-			if( strval( $post['ID'] ) === $featured_post_type ) {
+			if ( strval( $post['ID'] ) === $featured_post_type ) {
 				return $post;
 			}
 		}

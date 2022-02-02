@@ -57,7 +57,7 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => 'border-radius',
 						'value'    => 'borderRadius',
-						'unit' =>  'px'
+						'unit'     => 'px',
 					),
 				),
 			)
