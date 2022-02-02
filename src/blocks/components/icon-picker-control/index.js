@@ -8,6 +8,8 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
+import { MediaPlaceholder } from '@wordpress/block-editor';
+
 import { useInstanceId } from '@wordpress/compose';
 
 import {
@@ -68,7 +70,8 @@ const IconPickerControl = ({
 	prefix,
 	icon,
 	changeLibrary,
-	onChange
+	onChange,
+	allowImage = false
 }) => {
 	const instanceId = useInstanceId( IconPickerControl );
 
@@ -167,43 +170,78 @@ const IconPickerControl = ({
 							value={ library }
 							options={ [
 								{ label: __( 'Font Awesome', 'otter-blocks' ), value: 'fontawesome' },
-								{ label: __( 'ThemeIsle Icons', 'otter-blocks' ), value: 'themeisle-icons' }
+								{ label: __( 'ThemeIsle Icons', 'otter-blocks' ), value: 'themeisle-icons' },
+								...( allowImage ? [ { label: __( 'Custom Image', 'otter-blocks' ), value: 'image' } ] : [])
 							] }
 							onChange={ changeLibrary }
 						/>
 
-						<BaseControl label={ label }>
-							<Button
-								className="otter-icon-picker-button"
-								onClick={ onToggle }
-								aria-expanded={ isOpen }
-							>
-								{ icon ? (
-									<Fragment>
-										{ 'fontawesome' === library && (
-											prefix ? (
-												<Fragment>
-													<i
-														className={ classnames(
-															prefix,
-															`fa-${ icon }`,
-															'fa-fw'
-														) }
-													>
-													</i>
-													{ icon }
-												</Fragment>
-											) :
-												__( 'Select Icon', 'otter-blocks' )
-										) }
+						{ 'image' !== library ? (
+							<BaseControl label={ label }>
+								<Button
+									className="otter-icon-picker-button"
+									onClick={ onToggle }
+									aria-expanded={ isOpen }
+								>
+									{ icon ? (
+										<Fragment>
+											{ 'fontawesome' === library && (
+												prefix ? (
+													<Fragment>
+														<i
+															className={ classnames(
+																prefix,
+																`fa-${ icon }`,
+																'fa-fw'
+															) }
+														>
+														</i>
+														{ icon }
+													</Fragment>
+												) :
+													__( 'Select Icon', 'otter-blocks' )
+											) }
 
-										{ 'themeisle-icons' === library && <ThemeIsleIcon /> }
-									</Fragment>
-								) :
-									__( 'Select Icon', 'otter-blocks' )
-								}
-							</Button>
-						</BaseControl>
+											{ 'themeisle-icons' === library && <ThemeIsleIcon /> }
+										</Fragment>
+									) :
+										__( 'Select Icon', 'otter-blocks' )
+									}
+								</Button>
+							</BaseControl>
+						) : (
+							<Fragment>
+								{ icon && (
+									<BaseControl
+										label={ __( 'Image', 'otter-blocks' ) }
+										className='o-vrt-base-control'
+									>
+										<div
+											style={{
+												width: '100%',
+												padding: '5px',
+												display: 'flex',
+												flexDirection: 'column',
+												alignItems: 'flex-start',
+												gap: '5px'
+											}}
+										>
+											<img src={ icon } width="130px" />
+										</div>
+									</BaseControl>
+								) }
+
+								<MediaPlaceholder
+									labels={ {
+										title: __( 'Image', 'otter-blocks' )
+									} }
+									accept="image/*"
+									allowedTypes={ [ 'image' ] }
+									value={ icon }
+									onSelect={ onChange }
+								/>
+							</Fragment>
+						) }
 					</Fragment>
 				) }
 				renderContent={ ({ onToggle }) => (

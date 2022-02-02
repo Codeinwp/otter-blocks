@@ -5,27 +5,19 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
-	InspectorControls,
-	MediaPlaceholder
+	InspectorControls
 } from '@wordpress/block-editor';
 
 import {
 	PanelBody,
 	Placeholder,
-	ToggleControl,
-	Spinner,
-	BaseControl,
-	Button
+	Spinner
 } from '@wordpress/components';
 
 import {
 	lazy,
 	Suspense
 } from '@wordpress/element';
-
-
-import { pick } from 'lodash';
-
 
 /**
  * Internal dependencies
@@ -37,6 +29,10 @@ const Inspector = ({
 	setAttributes
 }) => {
 	const changeIcon = value => {
+		if ( 'image' === attributes.library && value?.url ) {
+			return setAttributes({ icon: value.url });
+		}
+
 		if ( 'object' === typeof value ) {
 			setAttributes({
 				icon: value.name,
@@ -68,65 +64,17 @@ const Inspector = ({
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>
-				{
-					( attributes.isImage ) ? (
-						! attributes.image?.url ?
-							(						<MediaPlaceholder
-								labels={ {
-									title: __( 'Media Image', 'otter-blocks' )
-								} }
-								accept="image/*"
-								allowedTypes={ [ 'image' ] }
-								value={ attributes.image }
-								onSelect={ value => setAttributes({ image: pick( value, [ 'id', 'alt', 'url' ]) }) }
-							/>
-							) : (
-								<BaseControl
-									label={ __( 'Image', 'otter-blocks' ) }
-									className='.o-vrt-base-control'
-								>
-									<div
-										style={{
-											width: '100%',
-											padding: '5px',
-											display: 'flex',
-											flexDirection: 'column',
-											alignItems: 'flex-start',
-											gap: '5px'
-										}}
-									>
-										<img src={attributes.image.url} alt={attributes.image.alt} width="130px" />
-										<Button
-											variant="primary"
-											isSecondary
-											onClick={ () => setAttributes({
-												image: {}
-											})}
-										>
-											{__( 'Replace Image', 'otter-blocks' )}
-										</Button>
-									</div>
-								</BaseControl>
-							)
-					) : (
-						<Suspense fallback={ <Placeholder><Spinner /></Placeholder> }>
-							<IconPickerControl
-								label={ __( 'Icon Picker', 'otter-blocks' ) }
-								library={ attributes.library }
-								prefix={ attributes.prefix }
-								icon={ attributes.icon }
-								changeLibrary={ changeLibrary }
-								onChange={ changeIcon }
-							/>
-						</Suspense>
-					)
-				}
-
-				<ToggleControl
-					label={ __( 'Use images instead of icons.', 'otter-blocks' ) }
-					checked={ attributes.isImage }
-					onChange={ isImage => setAttributes({ isImage })}
-				/>
+				<Suspense fallback={ <Placeholder><Spinner /></Placeholder> }>
+					<IconPickerControl
+						label={ __( 'Icon Picker', 'otter-blocks' ) }
+						library={ attributes.library }
+						prefix={ attributes.iconPrefix }
+						icon={ attributes.icon }
+						changeLibrary={ changeLibrary }
+						onChange={ changeIcon }
+						allowImage
+					/>
+				</Suspense>
 
 				<ColorGradientControl
 					label={ __( 'Content Color', 'otter-blocks' ) }
@@ -134,11 +82,13 @@ const Inspector = ({
 					onColorChange={ onDefaultContentColorChange }
 				/>
 
-				<ColorGradientControl
-					label={ __( 'Icon Color', 'otter-blocks' ) }
-					colorValue={ attributes.iconColor }
-					onColorChange={ onDefaultIconColorChange }
-				/>
+				{ 'image' !== attributes.library && (
+					<ColorGradientControl
+						label={ __( 'Icon Color', 'otter-blocks' ) }
+						colorValue={ attributes.iconColor }
+						onColorChange={ onDefaultIconColorChange }
+					/>
+				) }
 			</PanelBody>
 		</InspectorControls>
 	);

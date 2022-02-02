@@ -3,22 +3,16 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { pick } from 'lodash';
-
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
-	InspectorControls,
-	MediaPlaceholder
+	InspectorControls
 } from '@wordpress/block-editor';
 
 import {
 	PanelBody,
 	RangeControl,
 	Placeholder,
-	ToggleControl,
-	Spinner,
-	Button,
-	BaseControl
+	Spinner
 } from '@wordpress/components';
 
 import {
@@ -44,6 +38,10 @@ const Inspector = ({
 	};
 
 	const changeIcon = value => {
+		if ( 'image' === attributes.defaultLibrary && value?.url ) {
+			return setAttributes({ defaultIcon: value.url });
+		}
+
 		if ( 'object' === typeof value ) {
 			setAttributes({
 				defaultIcon: value.name,
@@ -75,66 +73,17 @@ const Inspector = ({
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>
-
-				{
-					( attributes.defaultIsImage ) ? (
-						! attributes.defaultImage?.url ?
-							(						<MediaPlaceholder
-								labels={ {
-									title: __( 'Media Image', 'otter-blocks' )
-								} }
-								accept="image/*"
-								allowedTypes={ [ 'image' ] }
-								value={ attributes.defaultImage }
-								onSelect={ value => setAttributes({ defaultImage: pick( value, [ 'id', 'alt', 'url' ]) }) }
-							/>
-							) : (
-								<BaseControl
-									label={ __( 'Image', 'otter-blocks' ) }
-									className='.o-vrt-base-control'
-								>
-									<div
-										style={{
-											width: '100%',
-											padding: '5px',
-											display: 'flex',
-											flexDirection: 'column',
-											alignItems: 'flex-start',
-											gap: '5px'
-										}}
-									>
-										<img src={attributes.defaultImage.url} alt={attributes.defaultImage.alt} width="130px" />
-										<Button
-											variant='secondary'
-											isSecondary
-											onClick={ () => setAttributes({
-												defaultImage: {}
-											})}
-										>
-											{__( 'Replace Image', 'otter-blocks' )}
-										</Button>
-									</div>
-								</BaseControl>
-							)
-					) : (
-						<Suspense fallback={ <Placeholder><Spinner /></Placeholder> }>
-							<IconPickerControl
-								label={ __( 'Icon Picker', 'otter-blocks' ) }
-								library={ attributes.defaultLibrary }
-								prefix={ attributes.defaultPrefix }
-								icon={ attributes.defaultIcon }
-								changeLibrary={ changeLibrary }
-								onChange={ changeIcon }
-							/>
-						</Suspense>
-					)
-				}
-
-				<ToggleControl
-					label={ __( 'Use images instead of icons.', 'otter-blocks' ) }
-					checked={ attributes.defaultIsImage }
-					onChange={ defaultIsImage => setAttributes({ defaultIsImage })}
-				/>
+				<Suspense fallback={ <Placeholder><Spinner /></Placeholder> }>
+					<IconPickerControl
+						label={ __( 'Icon Picker', 'otter-blocks' ) }
+						library={ attributes.defaultLibrary }
+						prefix={ attributes.defaultPrefix }
+						icon={ attributes.defaultIcon }
+						changeLibrary={ changeLibrary }
+						onChange={ changeIcon }
+						allowImage
+					/>
+				</Suspense>
 
 				<RangeControl
 					label={ __( 'Font Size', 'otter-blocks' ) }

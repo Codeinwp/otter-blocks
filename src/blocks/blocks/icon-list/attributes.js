@@ -24,12 +24,6 @@ const attributes = {
 		type: 'number',
 		default: 20
 	},
-	defaultIsImage: {
-		type: 'boolean'
-	},
-	defaultImage: {
-		type: 'object'
-	},
 	gap: {
 		type: 'number',
 		default: 5

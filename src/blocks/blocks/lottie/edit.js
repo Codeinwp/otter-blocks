@@ -61,8 +61,8 @@ const Edit = ({
 			const settings = new window.wp.api.models.Settings();
 
 			settings.fetch().then( response => {
-				if ( response.themeisle_allow_json_svg_upload ) {
-					setJSONAllowed( response.themeisle_allow_json_svg_upload );
+				if ( response.themeisle_allow_json_upload ) {
+					setJSONAllowed( response.themeisle_allow_json_upload );
 				}
 			});
 		});

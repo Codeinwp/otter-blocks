@@ -27,7 +27,7 @@ class Options_Settings {
 		add_action( 'init', array( $this, 'default_block' ), 99 );
 		add_action( 'init', array( $this, 'register_meta' ), 19 );
 
-		$allow_json_svg = get_option( 'themeisle_allow_json_svg_upload' );
+		$allow_json_svg = get_option( 'themeisle_allow_json_upload' );
 
 		if ( isset( $allow_json_svg ) && true === (bool) $allow_json_svg && ! function_exists( 'is_wpcom_vip' ) ) {
 			add_filter( 'upload_mimes', array( $this, 'allow_json_svg' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
@@ -206,10 +206,10 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
-			'themeisle_allow_json_svg_upload',
+			'themeisle_allow_json_upload',
 			array(
 				'type'              => 'boolean',
-				'description'       => __( 'Allow JSON & JSON Uploads to Media Library.', 'otter-blocks' ),
+				'description'       => __( 'Allow JSON & SVG Uploads to Media Library.', 'otter-blocks' ),
 				'sanitize_callback' => 'rest_sanitize_boolean',
 				'show_in_rest'      => true,
 				'default'           => false,

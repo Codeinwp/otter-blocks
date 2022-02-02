@@ -19,12 +19,6 @@ const attributes = {
 	},
 	icon: {
 		type: 'string'
-	},
-	isImage: {
-		type: 'boolean'
-	},
-	image: {
-		type: 'object'
 	}
 };
 

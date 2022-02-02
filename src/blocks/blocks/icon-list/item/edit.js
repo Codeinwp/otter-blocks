@@ -66,9 +66,7 @@ const Edit = ({
 		setAttributes({
 			library: attributes.library || parentAttributes.defaultLibrary,
 			icon: attributes.icon || parentAttributes.defaultIcon,
-			iconPrefix: attributes.iconPrefix || parentAttributes.defaultIconPrefix,
-			isImage: attributes.isImage || ( parentAttributes.defaultIsImage && parentAttributes.defaultIsImage !== undefined && attributes.isImage === undefined && attributes.icon === undefined ? parentAttributes.defaultIsImage :  undefined ),
-			image: attributes.image || parentAttributes.defaultImage
+			iconPrefix: attributes.iconPrefix || parentAttributes.defaultIconPrefix
 		});
 	}, [ hasParent, parentAttributes, attributes ]);
 
@@ -99,8 +97,8 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				{
-					attributes.isImage && attributes?.image ? (
-						<img src={attributes.image.url} alt={attributes.image.alt} width={ parentAttributes.defaultSize + 'px' } />
+					'image' === attributes.library && attributes.icon ? (
+						<img src={ attributes.icon } width={ parentAttributes.defaultSize + 'px' } />
 					) : (
 						'themeisle-icons' === attributes.library && attributes.icon && Icon !== undefined ? (
 							<Icon
