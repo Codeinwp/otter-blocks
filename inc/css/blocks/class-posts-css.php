@@ -34,7 +34,6 @@ class Posts_CSS extends Base_CSS {
 	public function render_css( $block ) {
 		$css = new CSS_Utility( $block );
 
-		// TODO: find why this is not working
 		$css->add_item(
 			array(
 				'selector'   => ' .wp-block-themeisle-blocks-posts-grid-post-body',
@@ -53,11 +52,12 @@ class Posts_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-posts-grid .wp-block-themeisle-blocks-posts-grid-post-image img',
+				'selector'   => ' .wp-block-themeisle-blocks-posts-grid-post-image img',
 				'properties' => array(
 					array(
 						'property' => 'border-radius',
 						'value'    => 'borderRadius',
+						'unit' =>  'px'
 					),
 				),
 			)

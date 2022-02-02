@@ -10,7 +10,7 @@ import {
 	TextControl,
 	BaseControl,
 	SelectControl,
-	Button
+	ToggleControl
 } from '@wordpress/components';
 
 import {
@@ -37,7 +37,8 @@ const Inspector = ({
 	attributes,
 	setAttributes,
 	changeStyle,
-	categoriesList
+	categoriesList,
+	posts
 }) => {
 	const {
 		slugs
@@ -176,6 +177,36 @@ const Inspector = ({
 					min={ 0 }
 					onChange={ value => setAttributes({ offset: Number( value ) }) }
 				/>
+
+				<ToggleControl
+					label={ __( 'Enable featured post', 'otter-blocks' ) }
+					checked={ attributes.enableFeaturedPost }
+					onChange={ enableFeaturedPost => setAttributes({ enableFeaturedPost })}
+				/>
+
+				{
+					attributes.enableFeaturedPost && (
+						<SelectControl
+							label={ __( 'Featured Post', 'otter-blocks' ) }
+							value={ attributes.featuredPost }
+							options={[
+								{
+									label: __( 'None', 'otter-blocks' ),
+									value: ''
+								},
+								{
+									label: __( 'Latest', 'otter-blocks' ),
+									value: 'latest'
+								},
+								...posts?.map( post => ({
+									label: post?.title.rendered,
+									value: post?.id?.toString()
+								}) )
+							]}
+							onChange={ featuredPost => setAttributes({ featuredPost }) }
+						/>
+					)
+				}
 
 				<BaseControl
 					label={ __( 'Text alignment', 'otter-blocks' ) }

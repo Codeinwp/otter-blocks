@@ -1,4 +1,7 @@
 const attributes = {
+	id: {
+		type: 'string'
+	},
 	style: {
 		type: 'string',
 		default: 'grid'
@@ -115,6 +118,12 @@ const attributes = {
 		type: 'string'
 	},
 	verticalAlign: {
+		type: 'string'
+	},
+	enableFeaturedPost: {
+		type: 'boolean'
+	},
+	featuredPost: {
 		type: 'string'
 	}
 };

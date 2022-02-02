@@ -26,6 +26,9 @@ class Posts_Grid_Block extends Base_Block {
 	 */
 	protected function set_attributes() {
 		$this->attributes = array(
+			'id'                   => array(
+				'type'    => 'string',
+			),
 			'style'                => array(
 				'type'    => 'string',
 				'default' => 'grid',
@@ -217,7 +220,7 @@ class Posts_Grid_Block extends Base_Block {
 						'<div class="wp-block-themeisle-blocks-posts-grid-post-image"><a href="%1$s">%2$s</a></div>',
 						esc_url( get_the_permalink( $id ) ),
 						wp_get_attachment_image( get_post_thumbnail_id( $id ), $size ),
-						esc_html( get_the_title( $id ) )
+						esc_html( get_the_title( $id ) ) // This does nothing?
 					);
 				}
 			}
@@ -298,7 +301,7 @@ class Posts_Grid_Block extends Base_Block {
 
 						$list_items_markup .= '</div>';
 
-					}               
+					}
 				}
 			}
 
@@ -331,15 +334,14 @@ class Posts_Grid_Block extends Base_Block {
 			$class .= ' o-crop-img';
 		}
 
-		$wrapper_attributes = get_block_wrapper_attributes(
-			array(
-				'class' => trim( $class ),
-			)
-		);
+		$wrapper_attributes = get_block_wrapper_attributes();
 
 		$block_content = sprintf(
-			'<div %1$s>%2$s</div>',
+			'<div %1$s id="%2$s">%3$s<div class="%4$s">%5$s</div> </div>',
 			$wrapper_attributes,
+			isset( $attributes['id'] ) ? $attributes['id'] : '',
+			isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] ? $this->render_featured_post( $this->get_featured_post( $attributes['featuredPost'], $recent_posts ), $attributes ) : '',
+			trim( $class ),
 			$list_items_markup
 		);
 
@@ -362,5 +364,138 @@ class Posts_Grid_Block extends Base_Block {
 		}
 
 		return $excerpt;
+	}
+
+	/**
+	 * Render the featured post
+	 *
+	 * @param WP_Post $post Post.
+	 *
+	 * @return string
+	 */
+	protected function render_featured_post( $post = null, $attributes ) {
+
+		if( !isset( $post ) ) {
+			return '';
+		}
+
+		$html = '';
+
+		$id        = $post['ID'];
+		$size      = isset( $attributes['imageSize'] ) ? $attributes['imageSize'] : 'medium';
+		$thumbnail = wp_get_attachment_image( get_post_thumbnail_id( $id ), $size );
+		$category  = get_the_category( $id );
+
+		if( isset( $thumbnail ) ) {
+			$html .= sprintf(
+				'<div class="wp-block-themeisle-blocks-posts-grid-post-image"><a href="%1$s">%2$s</a></div>',
+				esc_url( get_the_permalink( $id ) ),
+				$thumbnail
+			);
+		}
+
+		$html .= '<div class="wp-block-themeisle-blocks-posts-grid-post-body' . ( $thumbnail && $attributes['displayFeaturedImage'] ? '' : ' is-full' ) . '">';
+
+		foreach ( $attributes['template'] as $element ) {
+
+			if ( 'title' === $element ) {
+				if ( isset( $attributes['displayTitle'] ) && $attributes['displayTitle'] ) {
+					$html .= sprintf(
+						'<%1$s class="wp-block-themeisle-blocks-posts-grid-post-title"><a href="%2$s">%3$s</a></%1$s>',
+						esc_attr( $attributes['titleTag'] ),
+						esc_url( get_the_permalink( $id ) ),
+						esc_html( get_the_title( $id ) )
+					);
+				}
+			}
+
+			if ( 'meta' === $element ) {
+				if ( ( isset( $attributes['displayMeta'] ) && $attributes['displayMeta'] ) && ( ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) || ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) ) ) {
+					$html .= '<p class="wp-block-themeisle-blocks-posts-grid-post-meta">';
+
+					if ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) {
+						$html .= sprintf(
+							'%1$s <time datetime="%2$s">%3$s</time> ',
+							__( 'on', 'otter-blocks' ),
+							esc_attr( get_the_date( 'c', $id ) ),
+							esc_html( get_the_date( get_option( 'date_format' ), $id ) )
+						);
+					}
+
+					if ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) {
+						$html .= sprintf(
+							'%1$s %2$s',
+							__( 'by', 'otter-blocks' ),
+							get_the_author_meta( 'display_name', get_post_field( 'post_author', $id ) )
+						);
+					}
+
+					if ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] && isset( $category[0] ) ) {
+						$html .= sprintf(
+							' - %1$s',
+							$category[0]->cat_name
+						);
+					}
+
+					$html .= '</p>';
+				}
+			}
+
+			if ( 'description' === $element ) {
+				if ( ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) || ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink'] ) ) {
+					$html .= '<div class="wp-block-themeisle-blocks-posts-grid-post-description">';
+
+					if ( ( isset( $attributes['excerptLength'] ) && $attributes['excerptLength'] > 0 ) && ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) ) {
+						$html .= sprintf(
+							'<p>%1$s</p>',
+							$this->get_excerpt_by_id( $id, $attributes['excerptLength'] )
+						);
+					}
+
+					if ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink'] ) {
+						$html .= sprintf(
+							'<a class="o-posts-read-more" href="%1$s">%2$s</a>',
+							esc_url( get_the_permalink( $id ) ),
+							__( 'Read More', 'otter-blocks' )
+						);
+					}
+
+					$html .= '</div>';
+
+				}
+			}
+		}
+		$html .= '</div>';
+		return sprintf( '<div class="o-featured-post">%1$s</div>', $html );
+	}
+
+	/**
+	 * Render the featured post
+	 *
+	 * @param WP_Post $post Post.
+	 *
+	 * @return WP_Post|null
+	 */
+	protected function get_featured_post( $featured_post_type , $recent_posts = null ) {
+
+		if( ! isset( $featured_post_type ) && ! isset( $recent_posts ) && 0 < count($recent_posts)) {
+			return null;
+		}
+
+		if( 'latest' === $featured_post_type ) {
+			$latest =  $recent_posts[0];
+			foreach ( $recent_posts as $post ) {
+				if( $latest['post_date'] < $post['post_date'] ) {
+					$latest = $post;
+				}
+			}
+			return $latest;
+		}
+
+		foreach ( $recent_posts as $post ) {
+			if( strval( $post['ID'] ) === $featured_post_type ) {
+				return $post;
+			}
+		}
 	}
 }

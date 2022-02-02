@@ -35,7 +35,7 @@ const Thumbnail = ({
 			featuredImage,
 			altText: image && image.alt_text ? image.alt_text : alt
 		};
-	}, [ size ]);
+	}, [ size, id ]);
 
 
 	if ( null === featuredImage ) {

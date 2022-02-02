@@ -100,7 +100,7 @@ const Layout = ({
 					'is-grid',
 					`wp-block-themeisle-blocks-posts-grid-columns-${ attributes.columns }`,
 					{ 'has-shadow': attributes.imageBoxShadow },
-					{'o-crop-image': attributes.cropImage }
+					{'o-crop-img': attributes.cropImage }
 				) }>
 					{children}
 				</div>
