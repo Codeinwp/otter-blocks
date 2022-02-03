@@ -39,6 +39,7 @@ class Review_Block {
 			}
 
 			$attributes['image'] = array(
+				'id'  => $product->get_image_id(),
 				'url' => wp_get_attachment_image_url( $product->get_image_id(), '' ),
 				'alt' => get_post_meta( $product->get_image_id(), '_wp_attachment_image_alt', true ),
 			);
@@ -84,10 +85,10 @@ class Review_Block {
 		$html .= '				<span>' . sprintf( __( '%g out of 10', 'otter-blocks' ), $this->get_overall_ratings( $attributes['features'] ) ) . '</span>';
 		$html .= '			</div>';
 
-		if ( isset( $attributes['price'] ) || isset( $attributes['discounted'] ) ) {
+		if ( ( isset( $attributes['price'] ) && ! empty( $attributes['price'] ) ) || isset( $attributes['discounted'] ) ) {
 			$html .= '			<span class="wp-block-themeisle-blocks-review__header_price">';
 
-			if ( isset( $attributes['price'] ) && isset( $attributes['discounted'] ) ) {
+			if ( ( isset( $attributes['price'] ) && ! empty( $attributes['price'] ) ) && isset( $attributes['discounted'] ) ) {
 				$html .= '			<del>' . self::get_currency( isset( $attributes['currency'] ) ? $attributes['currency'] : 'USD' ) . $attributes['price'] . '</del>';
 			}
 
@@ -101,8 +102,8 @@ class Review_Block {
 		$html .= '	<div class="wp-block-themeisle-blocks-review__left">';
 		if ( ( isset( $attributes['image'] ) || ( isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ) ) {
 			$html .= '	<div class="wp-block-themeisle-blocks-review__left_details' . $is_single . '">';
-			if ( isset( $attributes['image'] ) && isset( $attributes['image']['id'] ) ) {
-				if ( wp_attachment_is_image( $attributes['image']['id'] ) ) {
+			if ( isset( $attributes['image'] ) ) {
+				if ( isset( $attributes['image']['id'] ) && wp_attachment_is_image( $attributes['image']['id'] ) ) {
 					$html .= wp_get_attachment_image( $attributes['image']['id'], 'medium' );
 				} else {
 					$html .= '	<img src="' . esc_url( $attributes['image']['url'] ) . '" alt="' . esc_attr( $attributes['image']['alt'] ) . '"/>';
