@@ -64,6 +64,7 @@ const ToogleGroupControl = props => {
 						>
 							<Button
 								isPrimary={ value == option?.value }
+								variant={ value == option?.value ? 'primary' : 'secondary' }
 								icon={option?.icon }
 								label={ option?.label }
 								onClick={ () => onChange( option?.value )}
