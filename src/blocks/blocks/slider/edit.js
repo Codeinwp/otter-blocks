@@ -42,6 +42,10 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	useEffect( () => {
+		if ( attributes.images.length ) {
+			initSlider();
+		}
+
 		return () => {
 			if ( attributes.images.length ) {
 				sliderRef.current.destroy();
