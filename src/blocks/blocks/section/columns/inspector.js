@@ -45,6 +45,7 @@ import ControlPanelControl from '../../../components/control-panel-control/index
 import HTMLAnchorControl from '../../../components/html-anchor-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
 import { isNullObject } from '../../../helpers/helper-functions.js';
+import ToogleGroupControl from '../../../components/toogle-group-control/index.js';
 
 const Inspector = ({
 	attributes,
@@ -548,31 +549,28 @@ const Inspector = ({
 								<BaseControl
 									label={ __( 'Horizontal Align', 'otter-blocks' ) }
 								>
-									<ButtonGroup className="wp-block-themeisle-icon-buttom-group">
-										<Button
-											icon="editor-alignleft"
-											label={ __( 'Left', 'otter-blocks' ) }
-											showTooltip={ true }
-											isPrimary={ 'flex-start' === attributes.horizontalAlign }
-											onClick={ () => changeHorizontalAlign( 'flex-start' ) }
-										/>
-
-										<Button
-											icon="editor-aligncenter"
-											label={ __( 'Center', 'otter-blocks' ) }
-											showTooltip={ true }
-											isPrimary={ 'center' === attributes.horizontalAlign }
-											onClick={ () => changeHorizontalAlign( 'center' ) }
-										/>
-
-										<Button
-											icon="editor-alignright"
-											label={ __( 'Right', 'otter-blocks' ) }
-											showTooltip={ true }
-											isPrimary={ 'flex-end' === attributes.horizontalAlign }
-											onClick={ () => changeHorizontalAlign( 'flex-end' ) }
-										/>
-									</ButtonGroup>
+									<ToogleGroupControl
+										value={ attributes.textAlign }
+										options={[
+											{
+												icon: 'editor-alignleft',
+												label: __( 'Left', 'otter-blocks' ),
+												value: 'flex-start'
+											},
+											{
+												icon: 'editor-aligncenter',
+												label: __( 'Center', 'otter-blocks' ),
+												value: 'center'
+											},
+											{
+												icon: 'editor-alignright',
+												label: __( 'Right', 'otter-blocks' ),
+												value: 'flex-end'
+											}
+										]}
+										onChange={ align => changeHorizontalAlign( align ) }
+										hideLabels
+									/>
 								</BaseControl>
 							) }
 

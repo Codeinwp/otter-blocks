@@ -215,22 +215,23 @@ const Inspector = ({
 						value={ attributes.textAlign }
 						options={[
 							{
-								icon: <Icon icon={alignLeft} />,
+								icon: 'editor-alignleft',
 								label: __( 'Left', 'otter-blocks' ),
 								value: 'left'
 							},
 							{
-								icon: <Icon icon={alignCenter} />,
+								icon: 'editor-aligncenter',
 								label: __( 'Center', 'otter-blocks' ),
 								value: 'center'
 							},
 							{
-								icon: <Icon icon={alignRight} />,
+								icon: 'editor-alignright',
 								label: __( 'Right', 'otter-blocks' ),
 								value: 'right'
 							}
 						]}
 						onChange={ textAlign => setAttributes({ textAlign }) }
+						showBottomLabels
 					/>
 				</BaseControl>
 
@@ -257,6 +258,7 @@ const Inspector = ({
 							}
 						]}
 						onChange={ verticalAlign => setAttributes({ verticalAlign }) }
+						showBottomLabels
 					/>
 				</BaseControl>
 			</PanelBody>
