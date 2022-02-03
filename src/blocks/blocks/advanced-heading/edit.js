@@ -192,7 +192,7 @@ const Edit = ({
 				placeholder={ __( 'Write heading…', 'otter-blocks' ) }
 				tagName={ attributes.tag }
 				formattingControls={ [ 'bold', 'italic', 'link', 'strikethrough', 'highlight' ] }
-				allowedFormats={ [ 'core/bold', 'core/italic', 'core/link', 'core/strikethrough', 'themeisle-blocks/highlight', 'themeisle-blocks/count-animation' ] }
+				allowedFormats={ [ 'core/bold', 'core/italic', 'core/link', 'core/strikethrough', 'themeisle-blocks/highlight', 'themeisle-blocks/count-animation', 'themeisle-blocks/typing-animation' ] }
 				onMerge={ mergeBlocks }
 				onSplit={
 					insertBlocksAfter ?
