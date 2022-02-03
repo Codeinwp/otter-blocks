@@ -297,28 +297,28 @@ class Advanced_Columns_CSS extends Base_CSS {
 								'value'   => 'border',
 								'default' => 0,
 								'format'  => function( $value, $attrs ) {
-									return $value['top'];
+									return isset( $value['top'] ) ? $value['top'] : 0;
 								},
 							),
 							'right'  => array(
 								'value'   => 'border',
 								'default' => 0,
 								'format'  => function( $value, $attrs ) {
-									return $value['right'];
+									return isset( $value['right'] ) ? $value['right'] : 0;
 								},
 							),
 							'bottom' => array(
 								'value'   => 'border',
 								'default' => 0,
 								'format'  => function( $value, $attrs ) {
-									return $value['bottom'];
+									return isset( $value['bottom'] ) ? $value['bottom'] : 0;
 								},
 							),
 							'left'   => array(
 								'value'   => 'border',
 								'default' => 0,
 								'format'  => function( $value, $attrs ) {
-									return $value['left'];
+									return isset( $value['left'] ) ? $value['left'] : 0;
 								},
 							),
 						),
@@ -349,28 +349,28 @@ class Advanced_Columns_CSS extends Base_CSS {
 								'value'   => 'borderRadius',
 								'default' => 0,
 								'format'  => function( $value, $attrs ) {
-									return $value['top'];
+									return isset( $value['top'] ) ? $value['top'] : 0;
 								},
 							),
 							'top-right'    => array(
 								'value'   => 'borderRadius',
 								'default' => 0,
 								'format'  => function( $value, $attrs ) {
-									return $value['right'];
+									return isset( $value['right'] ) ? $value['right'] : 0;
 								},
 							),
 							'bottom-right' => array(
 								'value'   => 'borderRadius',
 								'default' => 0,
 								'format'  => function( $value, $attrs ) {
-									return $value['bottom'];
+									return isset( $value['bottom'] ) ? $value['bottom'] : 0;
 								},
 							),
 							'bottom-left'  => array(
 								'value'   => 'borderRadius',
 								'default' => 0,
 								'format'  => function( $value, $attrs ) {
-									return $value['left'];
+									return isset( $value['left'] ) ? $value['left'] : 0;
 								},
 							),
 						),
@@ -615,28 +615,28 @@ class Advanced_Columns_CSS extends Base_CSS {
 								'value'   => 'borderRadius',
 								'default' => 0,
 								'format'  => function( $value, $attrs ) {
-									return $value['top'];
+									return isset( $value['top'] ) ? $value['top'] : 0;
 								},
 							),
 							'top-right'    => array(
 								'value'   => 'borderRadius',
 								'default' => 0,
 								'format'  => function( $value, $attrs ) {
-									return $value['right'];
+									return isset( $value['right'] ) ? $value['right'] : 0;
 								},
 							),
 							'bottom-right' => array(
 								'value'   => 'borderRadius',
 								'default' => 0,
 								'format'  => function( $value, $attrs ) {
-									return $value['bottom'];
+									return isset( $value['bottom'] ) ? $value['bottom'] : 0;
 								},
 							),
 							'bottom-left'  => array(
 								'value'   => 'borderRadius',
 								'default' => 0,
 								'format'  => function( $value, $attrs ) {
-									return $value['left'];
+									return isset( $value['left'] ) ? $value['left'] : 0;
 								},
 							),
 						),
