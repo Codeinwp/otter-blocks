@@ -193,8 +193,10 @@ function AnimationControls({
 			break;
 		case AnimationType.typing:
 			template = 'o-typing-';
+			break;
 		case AnimationType.default:
 			template = '';
+			break;
 		}
 
 		const oldClassName = template + oldValue;
