@@ -6,11 +6,14 @@ import { makeInterval } from '../../utils';
 
 const MAX_PARENT_SEARCH = 3;
 
+/**
+ * This is the speed per characher and not the total one like in the other animations.
+ */
 const speedConfig = {
 	'none': undefined,
-	'o-typing-slower': 0.5,
-	'o-typing-slow': 0.3,
-	'o-typing-fast': 0.1,
+	'o-typing-slower': 0.4,
+	'o-typing-slow': 0.25,
+	'o-typing-fast': 0.05,
 	'o-typing-fastest': 0.01
 };
 
@@ -66,14 +69,16 @@ const initTyping = ( elem ) => {
 	fillPlaceholder.style.whiteSpace = 'pre';
 	fillPlaceholder.style.visibility = 'hidden';
 
-	let originalContent;
+	const originalContent = elem.innerHTML;
+
+	elem.innerHTML = '';
+	elem.appendChild( typingPlaceholder );
+	elem.appendChild( fillPlaceholder );
+	typingPlaceholder.innerHTML = text.slice( 0, 0 );
+	fillPlaceholder.innerHTML = text.slice( 0 );
+
 
 	setTimeout( () => {
-		originalContent = elem.innerHTML;
-
-		elem.innerHTML = '';
-		elem.appendChild( typingPlaceholder );
-		elem.appendChild( fillPlaceholder );
 		start( ( i ) => {
 			typingPlaceholder.innerHTML = text.slice( 0, i );
 			if ( i < len ) {
@@ -110,6 +115,6 @@ domReady( () => {
 			}, options );
 			observer.observe( elem );
 		});
-	}, 300 );
+	}, 100 );
 
 });
