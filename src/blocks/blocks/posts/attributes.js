@@ -108,7 +108,22 @@ const attributes = {
 	enableCustomFontSize: {
 		type: 'boolean'
 	},
-	customFontSize: {
+	customTitleFontSize: {
+		type: 'number'
+	},
+	customTitleFontSizeTable: {
+		type: 'number'
+	},
+	customTitleFontSizeMobile: {
+		type: 'number'
+	},
+	customDescriptionFontSize: {
+		type: 'number'
+	},
+	customDescriptionFontSizeTablet: {
+		type: 'number'
+	},
+	customDescriptionFontSizeMobile: {
 		type: 'number'
 	},
 	borderRadius: {

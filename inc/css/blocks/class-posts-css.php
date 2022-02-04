@@ -36,27 +36,43 @@ class Posts_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-posts-grid-post-body',
 				'properties' => array(
 					array(
-						'property' => 'text-align',
+						'property' => '--o-posts-text-align',
 						'value'    => 'textAlign',
 					),
 					array(
-						'property' => 'justify-content',
+						'property' => '--o-posts-img-br-radius',
 						'value'    => 'verticalAlign',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-themeisle-blocks-posts-grid-post-image img',
-				'properties' => array(
 					array(
-						'property' => 'border-radius',
-						'value'    => 'borderRadius',
+						'property' => '--o-posts-title-text-size',
+						'value'    => 'customTitleFontSize',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--o-posts-title-text-size-tablet',
+						'value'    => 'customTitleFontSizeTablet',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--o-posts-title-text-size-mobile',
+						'value'    => 'customTitleFontSizeMobile',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--o-posts-description-text-size',
+						'value'    => 'customDescriptionFontSize',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--o-posts-description-text-size-tablet',
+						'value'    => 'customDescriptionFontSizeTablet',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--o-posts-description-text-size-mobile',
+						'value'    => 'customDescriptionFontSizeMobile',
 						'unit'     => 'px',
 					),
 				),

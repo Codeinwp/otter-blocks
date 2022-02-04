@@ -24,7 +24,8 @@ import {
 import {
 	Fragment,
 	useEffect,
-	useState
+	useState,
+	useRef
 } from '@wordpress/element';
 
 /**
@@ -52,6 +53,7 @@ const Edit = ({
 
 	const [ slugs, setSlugs ] = useState([]);
 	const [ featured, setFeatured ] = useState( '' );
+	const blockRef = useRef( null );
 
 	const {
 		posts,
@@ -118,9 +120,20 @@ const Edit = ({
 		}
 	}, [ posts, attributes.enableFeaturedPost, attributes.featuredPost ]);
 
-	const blockProps = useBlockProps();
+	useEffect( () => {
 
-	console.log( posts );
+		// TODO: find why is not working
+		if ( blockRef.current ) {
+			blockRef.current.style.setProperty( '--o-posts-title-text-size', attributes.customTitleFontSize );
+			blockRef.current.style.setProperty( '--o-posts-title-text-size-tablet', attributes.customTitleFontSizeTablet );
+			blockRef.current.style.setProperty( '--o-posts-title-text-size-mobile', attributes.customTitleFontSizeMobile );
+			blockRef.current.style.setProperty( '--o-posts-description-text-size', attributes.customDescriptionFontSize );
+			blockRef.current.style.setProperty( '--o-posts-description-text-size-tablet', attributes.customDescriptionFontSizeTablet );
+			blockRef.current.style.setProperty( '--o-posts-description-text-size-mobile', attributes.customDescriptionFontSizeMobile );
+		}
+	}, [ blockRef.current, attributes ]);
+
+	const blockProps = useBlockProps();
 
 	if ( ! posts || ! categoriesList || ! authors ) {
 		return (
@@ -193,7 +206,7 @@ const Edit = ({
 				posts={posts}
 			/>
 
-			<div { ...blockProps }>
+			<div ref={blockRef} { ...blockProps }>
 				{
 					attributes.enableFeaturedPost && (
 						<FeaturedPost

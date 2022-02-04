@@ -36,6 +36,10 @@ import {
 	useEffect
 } from '@wordpress/element';
 
+import { useSelect } from '@wordpress/data';
+
+import ResponsiveControl from '../../../components/responsive-control';
+
 const DragHandle = SortableHandle( () => {
 	return (
 		<div className="otter-blocks-sortable-handle" tabIndex="0">
@@ -72,6 +76,57 @@ export const SortableItem = ({
 
 	const toggleField = fieldName => {
 		setAttributes({ [fieldName]: ! attributes[fieldName] });
+	};
+
+	const getView = useSelect( select => {
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
+		return __experimentalGetPreviewDeviceType();
+	}, []);
+
+	const getTitleFontSize = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return attributes.customTitleFontSize;
+		case 'Tablet':
+			return attributes.customTitleFontSizeTablet;
+		case 'Mobile':
+			return attributes.customTitleFontSizeMobile;
+		default:
+			return undefined;
+		}
+	};
+
+	const changeTitleFontSize = value => {
+		if ( 'Desktop' === getView ) {
+			setAttributes({ customTitleFontSize: value });
+		} else if ( 'Tablet' === getView ) {
+			setAttributes({ customTitleFontSizeTablet: value });
+		} else if ( 'Mobile' === getView ) {
+			setAttributes({ customTitleFontSizeMobile: value });
+		}
+	};
+
+	const getDescriptionFontSize = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return attributes.customDescriptionFontSize;
+		case 'Tablet':
+			return attributes.customDescriptionFontSizeTablet;
+		case 'Mobile':
+			return attributes.customDescriptionFontSizeMobile;
+		default:
+			return undefined;
+		}
+	};
+
+	const changeDescriptionFontSize = value => {
+		if ( 'Desktop' === getView ) {
+			setAttributes({ customDescriptionFontSize: value });
+		} else if ( 'Tablet' === getView ) {
+			setAttributes({ customDescriptionFontSizeTablet: value });
+		} else if ( 'Mobile' === getView ) {
+			setAttributes({ customDescriptionFontSizeMobile: value });
+		}
 	};
 
 	const FeaturedImage = () => {
@@ -127,15 +182,19 @@ export const SortableItem = ({
 				<ToggleControl
 					label={ __( 'Enable custom font size', 'otter-blocks' ) }
 					checked={ attributes.enableCustomFontSize }
-					onChange={ enableCustomFontSize => setAttributes({ enableCustomFontSize, customFontSize: undefined }) }
+					onChange={ enableCustomFontSize => setAttributes({ enableCustomFontSize, customTitleFontSize: undefined, customTitleFontSizeTablet: undefined, customTitleFontSizeMobile: undefined }) }
 				/>
-				<RangeControl
+				<ResponsiveControl
 					label={ __( 'Font size', 'otter-blocks' ) }
-					value={ attributes.customFontSize }
-					onChange={ customFontSize => setAttributes({ customFontSize }) }
-					min={ 0 }
-					max={ 50 }
-				/>
+				>
+					<RangeControl
+						value={ getTitleFontSize() }
+						onChange={ changeTitleFontSize }
+						min={ 0 }
+						max={ 50 }
+						allowReset
+					/>
+				</ResponsiveControl>
 			</Fragment>
 		);
 	};
@@ -181,6 +240,17 @@ export const SortableItem = ({
 					checked={ attributes.displayReadMoreLink }
 					onChange={ displayReadMoreLink => setAttributes({ displayReadMoreLink }) }
 				/>
+				<ResponsiveControl
+					label={ __( 'Font size', 'otter-blocks' ) }
+				>
+					<RangeControl
+						value={ getDescriptionFontSize() }
+						onChange={ changeDescriptionFontSize }
+						min={ 0 }
+						max={ 50 }
+						allowReset
+					/>
+				</ResponsiveControl>
 			</Fragment>
 		);
 	};
