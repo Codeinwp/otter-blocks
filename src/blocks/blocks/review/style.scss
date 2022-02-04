@@ -1,4 +1,10 @@
 .wp-block-themeisle-blocks-review {
+	--backgroundColor: transparent;
+	--primaryColor: #1357BD;
+	--textColor: inherit;
+	--buttonTextColor: #FFF;
+
+	background: var( --backgroundColor );
 	border: 1px #eaeaea solid;
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
@@ -8,11 +14,12 @@
 
 	.wp-block-themeisle-blocks-review__header {
 		padding: 20px 30px;
-		border-left: 10px solid #1357BD;
+		border-left: 10px solid var( --primaryColor );
 		grid-area: header;
 		overflow: hidden;
 
-		h2 {
+		h3 {
+			color: var( --textColor );
 			font-size: 28px;
 			font-style: normal;
 			font-weight: 700;
@@ -52,6 +59,7 @@
 				}
 
 				span {
+					color: var( --textColor );
 					padding-left: 10px;
 					font-size: 13px;
 					min-width: 50px;
@@ -59,6 +67,8 @@
 			}
 
 			.wp-block-themeisle-blocks-review__header_price {
+				color: var( --textColor );
+
 				del {
 					color: #A2A2A2;
 					padding-right: 10px;
@@ -81,6 +91,10 @@
 			gap: 50px;
 			align-items: center;
 
+			p {
+				color: var( --textColor );
+			}
+
 			img {
 				max-width: 200px;
 				max-height: 400px;
@@ -93,8 +107,6 @@
 					max-width: 400px;
 				}
 			}
-
-
 		}
 
 		.wp-block-themeisle-blocks-review__left_features {
@@ -117,6 +129,7 @@
 				}
 
 				.wp-block-themeisle-blocks-review__left_feature_title {
+					color: var( --textColor );
 					font-weight: 600;
 				}
 
@@ -143,6 +156,7 @@
 					}
 
 					span {
+						color: var( --textColor );
 						padding-left: 10px;
 						font-size: 13px;
 						word-break: keep-all;
@@ -161,6 +175,10 @@
 
 		.wp-block-themeisle-blocks-review__right_pros,
 		.wp-block-themeisle-blocks-review__right_cons {
+			h4 {
+				color: var( --textColor );
+			}
+
 			.wp-block-themeisle-blocks-review__right_pros_item,
 			.wp-block-themeisle-blocks-review__right_cons_item {
 				display: flex;
@@ -179,6 +197,7 @@
 				}
 
 				p {
+					color: var( --textColor );
 					margin: 0;
 				}
 			}
@@ -195,6 +214,7 @@
 		overflow: hidden;
 
 		.wp-block-themeisle-blocks-review__footer_label {
+			color: var( --textColor );
 			font-weight: 600;
 		}
 
@@ -204,8 +224,8 @@
 
 			a,
 			span {
-				background: #1357BD;
-				color: #ffffff;
+				background: var( --primaryColor );
+				color: var( --buttonTextColor );
 				padding: 12px 50px;
 				margin: 10px;
 				cursor: pointer;

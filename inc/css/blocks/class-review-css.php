@@ -34,67 +34,24 @@ class Review_CSS extends Base_CSS {
 	public function render_css( $block ) {
 		$css = new CSS_Utility( $block );
 
-		$selectors = array(
-			' .wp-block-themeisle-blocks-review__header h3',
-			' .wp-block-themeisle-blocks-review__header .wp-block-themeisle-blocks-review__header_meta .wp-block-themeisle-blocks-review__header_ratings span',
-			' .wp-block-themeisle-blocks-review__header .wp-block-themeisle-blocks-review__header_meta .wp-block-themeisle-blocks-review__header_price',
-			' .wp-block-themeisle-blocks-review__left .wp-block-themeisle-blocks-review__left_details p',
-			' .wp-block-themeisle-blocks-review__left .wp-block-themeisle-blocks-review__left_features .wp-block-themeisle-blocks-review__left_feature span',
-			' .wp-block-themeisle-blocks-review__right .wp-block-themeisle-blocks-review__right_pros h4',
-			' .wp-block-themeisle-blocks-review__right .wp-block-themeisle-blocks-review__right_pros .wp-block-themeisle-blocks-review__right_pros_item p',
-			' .wp-block-themeisle-blocks-review__right .wp-block-themeisle-blocks-review__right_cons h4',
-			' .wp-block-themeisle-blocks-review__right .wp-block-themeisle-blocks-review__right_cons .wp-block-themeisle-blocks-review__right_cons_item p',
-			' .wp-block-themeisle-blocks-review__footer .wp-block-themeisle-blocks-review__footer_label',
-		);
-
 		$css->add_item(
 			array(
 				'properties' => array(
 					array(
-						'property' => 'background-color',
+						'property' => '--backgroundColor',
 						'value'    => 'backgroundColor',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-themeisle-blocks-review__header',
-				'properties' => array(
 					array(
-						'property' => 'border-color',
+						'property' => '--primaryColor',
 						'value'    => 'primaryColor',
 					),
-				),
-			)
-		);
-
-		foreach ( $selectors as $selector ) {
-			$css->add_item(
-				array(
-					'selector'   => $selector,
-					'properties' => array(
-						array(
-							'property' => 'color',
-							'value'    => 'textColor',
-						),
-					),
-				)
-			);
-		}
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-themeisle-blocks-review__footer .wp-block-themeisle-blocks-review__footer_buttons a',
-				'properties' => array(
 					array(
-						'property' => 'color',
+						'property' => '--textColor',
+						'value'    => 'textColor',
+					),
+					array(
+						'property' => '--buttonTextColor',
 						'value'    => 'buttonTextColor',
-					),
-					array(
-						'property' => 'background-color',
-						'value'    => 'primaryColor',
 					),
 				),
 			)
