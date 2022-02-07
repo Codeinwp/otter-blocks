@@ -17,7 +17,7 @@ domReady( () => {
 		items.forEach( ( item, index ) => {
 			const headerItem = document.createElement( 'div' );
 			headerItem.classList.add( 'wp-block-themeisle-blocks-tabs__header_item' );
-			const content = item.querySelector( '.wp-block-themeisle-blocks-tabs-item__content' );
+			const content = item.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__content' );
 
 			if ( 0 === index ) {
 				headerItem.classList.add( 'active' );
@@ -29,21 +29,21 @@ domReady( () => {
 
 			const headerMobile = item.querySelector( '.wp-block-themeisle-blocks-tabs-item__header' );
 
-			const toggleTabs = ( i, o ) => {
-				const content = i.querySelector( '.wp-block-themeisle-blocks-tabs-item__content' );
-				const headerMobile = i.querySelector( '.wp-block-themeisle-blocks-tabs-item__header' );
+			const toggleTabs = ( i, idx ) => {
+				const content = i.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__content' );
+				const headerMobile = i.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__header' );
 
-				content.classList.toggle( 'active', o === index );
-				content.classList.toggle( 'hidden', o !== index );
+				content.classList.toggle( 'active', idx === index );
+				content.classList.toggle( 'hidden', idx !== index );
 
-				headerMobile.classList.toggle( 'active', o === index );
-				headerMobile.classList.toggle( 'hidden', o !== index );
+				headerMobile.classList.toggle( 'active', idx === index );
+				headerMobile.classList.toggle( 'hidden', idx !== index );
 
 				const headerItems = Array.from( header.childNodes );
 
-				headerItems.forEach( ( h, o ) => {
-					h.classList.toggle( 'active', o === index );
-					h.classList.toggle( 'hidden', o !== index );
+				headerItems.forEach( ( h, idx ) => {
+					h.classList.toggle( 'active', idx === index );
+					h.classList.toggle( 'hidden', idx !== index );
 				});
 			};
 
