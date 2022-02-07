@@ -42,11 +42,11 @@ class Progress_Bar_CSS extends Base_CSS {
 					array(
 						'property' => '--percentage',
 						'value'    => 'percentage',
-						'unit'     => '%'
+						'unit'     => '%',
 					),
 					array(
-						'property'  => '--titleColor',
-						'value'     => 'titleColor'
+						'property' => '--titleColor',
+						'value'    => 'titleColor',
 					),
 					array(
 						'property'  => '--percentageColor',

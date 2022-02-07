@@ -36,43 +36,26 @@ class Popup_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .otter-popup__modal_content',
 				'properties' => array(
 					array(
-						'property' => 'min-width',
+						'property' => '--minWidth',
 						'value'    => 'minWidth',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => 'background',
+						'property' => '--backgroundColor',
 						'value'    => 'backgroundColor',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .otter-popup__modal_header button',
-				'properties' => array(
 					array(
-						'property' => 'color',
+						'property' => '--closeColor',
 						'value'    => 'closeColor',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .otter-popup__modal_wrap_overlay',
-				'properties' => array(
 					array(
-						'property' => 'background',
+						'property' => '--overlayColor',
 						'value'    => 'overlayColor',
 					),
 					array(
-						'property' => 'opacity',
+						'property' => '--overlayOpacity',
 						'value'    => 'overlayOpacity',
 						'format'   => function( $value ) {
 							return $value / 100;
