@@ -45,19 +45,17 @@ class Posts_CSS extends Base_CSS {
 						'property' => '--o-posts-img-br-radius',
 						'value'    => 'verticalAlign',
 					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'query' => ' @media ( min-width: 960px )',
+				'properties' => array(
 					array(
 						'property' => '--o-posts-title-text-size',
 						'value'    => 'customTitleFontSize',
-						'unit'     => 'px',
-					),
-					array(
-						'property' => '--o-posts-title-text-size-tablet',
-						'value'    => 'customTitleFontSizeTablet',
-						'unit'     => 'px',
-					),
-					array(
-						'property' => '--o-posts-title-text-size-mobile',
-						'value'    => 'customTitleFontSizeMobile',
 						'unit'     => 'px',
 					),
 					array(
@@ -65,19 +63,46 @@ class Posts_CSS extends Base_CSS {
 						'value'    => 'customDescriptionFontSize',
 						'unit'     => 'px',
 					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'query' => ' @media ( min-width: 600px ) and ( max-width: 960px )',
+				'properties' => array(
 					array(
-						'property' => '--o-posts-description-text-size-tablet',
-						'value'    => 'customDescriptionFontSizeTablet',
+						'property' => '--o-posts-title-text-size',
+						'value'    => 'customTitleFontSizeTablet',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--o-posts-description-text-size-mobile',
+						'property' => '--o-posts-description-text-size',
+						'value'    => 'customDescriptionFontSizeTablet',
+						'unit'     => 'px',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'query' => ' @media ( max-width: 600px )',
+				'properties' => array(
+					array(
+						'property' => '--o-posts-title-text-size',
+						'value'    => 'customTitleFontSizeMobile',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--o-posts-description-text-size',
 						'value'    => 'customDescriptionFontSizeMobile',
 						'unit'     => 'px',
 					),
 				),
 			)
 		);
+
 
 		$style = $css->generate();
 

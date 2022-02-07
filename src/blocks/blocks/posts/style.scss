@@ -1,15 +1,12 @@
+:root {
+	--o-posts-text-align: initial;
+	--o-posts-img-br-radius: 5px;
+	--o-posts-img-width: initial;
+	--o-posts-title-text-size: initial;
+	--o-posts-description-text-size: initial;
+}
+
 .wp-block-themeisle-blocks-posts-grid {
-	:root {
-		--o-posts-text-align: initial;
-		--o-posts-img-br-radius: 5px;
-		--o-posts-img-width: initial;
-		--o-posts-title-text-size: initial;
-		--o-posts-title-text-size-tablet: initial;
-		--o-posts-title-text-size-mobile: initial;
-		--o-posts-description-text-size: initial;
-		--o-posts-description-text-size-tablet: initial;
-		--o-posts-description-text-size-mobile: initial;
-	}
 
 	.has-shadow {
 		.wp-block-themeisle-blocks-posts-grid-post-blog {
@@ -140,6 +137,7 @@
 			a {
 				text-decoration: none;
 				transition: all .15s ease 0s;
+				font-size: var(--o-posts-title-text-size);
 
 				&:hover {
 					text-decoration: underline;
@@ -154,6 +152,7 @@
 
 		.wp-block-themeisle-blocks-posts-grid-post-description {
 			margin: 10px 0;
+			font-size: var(--o-posts-description-text-size);
 
 			p {
 				margin-bottom: 0px;
@@ -182,35 +181,11 @@
 	}
 }
 
-@media ( min-width: 960px ) {
-	.wp-block-themeisle-blocks-posts-grid {
-		.wp-block-themeisle-blocks-posts-grid-post-body {
-			.wp-block-themeisle-blocks-posts-grid-post-title a {
-				font-size: var(--o-posts-title-text-size);
-			}
-
-			.wp-block-themeisle-blocks-posts-grid-post-description {
-				font-size: var(--o-posts-description-text-size);
-			}
-		}
-	}
-}
-
 @media ( min-width: 600px ) and ( max-width: 960px ) {
 	.wp-block-themeisle-blocks-posts-grid {
 		&.is-grid {
 			.wp-block-themeisle-blocks-posts-grid-post-blog {
 				min-width: 33%;
-			}
-		}
-
-		.wp-block-themeisle-blocks-posts-grid-post-body {
-			.wp-block-themeisle-blocks-posts-grid-post-title a {
-				font-size: var(--o-posts-title-text-size-tablet);
-			}
-
-			.wp-block-themeisle-blocks-posts-grid-post-description {
-				font-size: var(--o-posts-description-text-size-tablet);
 			}
 		}
 	}
@@ -239,16 +214,6 @@
 					flex-basis: 100%;
 					padding: 0;
 				}
-			}
-		}
-
-		.wp-block-themeisle-blocks-posts-grid-post-body {
-			.wp-block-themeisle-blocks-posts-grid-post-title a {
-				font-size: var(--o-posts-title-text-size-mobile);
-			}
-
-			.wp-block-themeisle-blocks-posts-grid-post-description {
-				font-size: var(--o-posts-description-text-size-mobile);
 			}
 		}
 	}
