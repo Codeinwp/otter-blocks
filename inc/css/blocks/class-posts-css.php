@@ -45,13 +45,18 @@ class Posts_CSS extends Base_CSS {
 						'property' => '--o-posts-img-br-radius',
 						'value'    => 'verticalAlign',
 					),
+					array(
+						'property' => '--o-posts-img-width',
+						'value'    => 'imageWidth',
+						'unit'     => 'px',
+					),
 				),
 			)
 		);
 
 		$css->add_item(
 			array(
-				'query' => ' @media ( min-width: 960px )',
+				'query' => '@media ( min-width: 960px )',
 				'properties' => array(
 					array(
 						'property' => '--o-posts-title-text-size',
@@ -69,7 +74,7 @@ class Posts_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'query' => ' @media ( min-width: 600px ) and ( max-width: 960px )',
+				'query' => '@media ( min-width: 600px ) and ( max-width: 960px )',
 				'properties' => array(
 					array(
 						'property' => '--o-posts-title-text-size',
@@ -87,7 +92,7 @@ class Posts_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'query' => ' @media ( max-width: 600px )',
+				'query' => '@media ( max-width: 600px )',
 				'properties' => array(
 					array(
 						'property' => '--o-posts-title-text-size',

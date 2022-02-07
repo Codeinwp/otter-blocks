@@ -125,6 +125,7 @@ const Edit = ({
 	}, [ posts, attributes.enableFeaturedPost, attributes.featuredPost ]);
 
 	const fontSizeStyle = css`
+		--o-posts-img-width: ${px( attributes.imageWidth )};
 		@media ( min-width: 960px ) {
 			--o-posts-title-text-size: ${px( attributes.customTitleFontSize )};
 			--o-posts-description-text-size: ${px( attributes.customDescriptionFontSize )};

@@ -140,6 +140,9 @@ const attributes = {
 	},
 	featuredPost: {
 		type: 'string'
+	},
+	imageWidth: {
+		type: 'number'
 	}
 };
 

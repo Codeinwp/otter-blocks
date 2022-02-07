@@ -168,6 +168,14 @@ export const SortableItem = ({
 					max={ 50 }
 					allowReset
 				/>
+				<RangeControl
+					label={ __( 'Image Width', 'otter-blocks' ) }
+					value={ attributes.imageWidth }
+					onChange={ imageWidth => setAttributes({ imageWidth }) }
+					min={ 0 }
+					max={ 500 }
+					allowReset
+				/>
 			</Fragment>
 		);
 	};
