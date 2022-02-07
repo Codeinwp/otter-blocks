@@ -8,6 +8,7 @@ import {
 
 import Thumbnail from './thumbnail.js';
 import { unescapeHTML, formatDate } from '../../../../helpers/helper-functions.js';
+import classNames from 'classnames';
 
 const FeaturedPost = props => {
 	const {
@@ -26,7 +27,7 @@ const FeaturedPost = props => {
 	console.log({post});
 
 	return (
-		<div className="o-featured-post">
+		<div className={classNames( 'o-featured-post', { 'has-shadow': attributes.imageBoxShadow })}>
 			{
 				attributes.displayFeaturedImage && (
 					<Thumbnail

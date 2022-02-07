@@ -203,3 +203,7 @@ export const getTimezone = () => {
 export const isNullObject = obj => {
 	return ! Object.keys( obj ).some( k => null !== obj[ k ]);
 };
+
+export const px = value => {
+	return value ? value + 'px' : undefined;
+};

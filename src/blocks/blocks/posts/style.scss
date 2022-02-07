@@ -9,15 +9,8 @@
 .wp-block-themeisle-blocks-posts-grid {
 
 	.has-shadow {
-		.wp-block-themeisle-blocks-posts-grid-post-blog {
-			.wp-block-themeisle-blocks-posts-grid-post {
-				.wp-block-themeisle-blocks-posts-grid-post-image {
-					img {
-						box-shadow: 0 10px 25px 0 rgba( 0, 0, 0, .2 );
-						border-radius: var(--o-posts-img-br-radius);
-					}
-				}
-			}
+		img {
+			box-shadow: 0 10px 25px 0 rgba( 0, 0, 0, .2 );
 		}
 	}
 

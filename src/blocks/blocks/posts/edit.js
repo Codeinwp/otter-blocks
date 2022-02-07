@@ -1,3 +1,4 @@
+/** @jsx jsx */
 /**
  * WordPress dependencies
  */
@@ -24,9 +25,13 @@ import {
 import {
 	Fragment,
 	useEffect,
-	useState,
-	useRef
+	useState
 } from '@wordpress/element';
+
+import {
+	css,
+	jsx
+} from '@emotion/react';
 
 /**
  * Internal dependencies
@@ -34,7 +39,7 @@ import {
 import { StyleSwitcherBlockControl } from '../../components/style-switcher-control/index.js';
 import Inspector from './inspector.js';
 import Layout from './components/layout/index.js';
-import { getCustomPostTypeSlugs } from '../../helpers/helper-functions.js';
+import { getCustomPostTypeSlugs, px } from '../../helpers/helper-functions.js';
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
 import { blockInit } from '../../helpers/block-utility.js';
@@ -53,7 +58,6 @@ const Edit = ({
 
 	const [ slugs, setSlugs ] = useState([]);
 	const [ featured, setFeatured ] = useState( '' );
-	const blockRef = useRef( null );
 
 	const {
 		posts,
@@ -120,18 +124,22 @@ const Edit = ({
 		}
 	}, [ posts, attributes.enableFeaturedPost, attributes.featuredPost ]);
 
-	useEffect( () => {
-
-		// TODO: find why is not working
-		if ( blockRef.current ) {
-			blockRef.current.style.setProperty( '--o-posts-title-text-size', attributes.customTitleFontSize );
-			blockRef.current.style.setProperty( '--o-posts-title-text-size-tablet', attributes.customTitleFontSizeTablet );
-			blockRef.current.style.setProperty( '--o-posts-title-text-size-mobile', attributes.customTitleFontSizeMobile );
-			blockRef.current.style.setProperty( '--o-posts-description-text-size', attributes.customDescriptionFontSize );
-			blockRef.current.style.setProperty( '--o-posts-description-text-size-tablet', attributes.customDescriptionFontSizeTablet );
-			blockRef.current.style.setProperty( '--o-posts-description-text-size-mobile', attributes.customDescriptionFontSizeMobile );
+	const fontSizeStyle = css`
+		@media ( min-width: 960px ) {
+			--o-posts-title-text-size: ${px( attributes.customTitleFontSize )};
+			--o-posts-description-text-size: ${px( attributes.customDescriptionFontSize )};
 		}
-	}, [ blockRef.current, attributes ]);
+
+		@media ( min-width: 600px ) and ( max-width: 960px ) {
+			--o-posts-title-text-size: ${px( attributes.customTitleFontSizeTablet )};
+			--o-posts-description-text-size: ${px( attributes.customDescriptionFontSizeTablet )};
+		}
+
+		@media ( max-width: 600px ) {
+			--o-posts-title-text-size: ${px( attributes.customTitleFontSizeMobile )};
+			--o-posts-description-text-size: ${px( attributes.customDescriptionFontSizeMobile )};
+		}
+	`;
 
 	const blockProps = useBlockProps();
 
@@ -206,25 +214,25 @@ const Edit = ({
 				posts={posts}
 			/>
 
-			<div ref={blockRef} { ...blockProps }>
-				{
-					attributes.enableFeaturedPost && (
-						<FeaturedPost
-							attributes={ attributes }
-							post={ featured }
-							category={ categoriesList[0] }
-							author={ authors[0] }
-						/>
-					)
-				}
-				<Layout
-					attributes={ attributes }
-					posts={ posts }
-					categoriesList={ categoriesList }
-					authors={ authors }
-				/>
-
-
+			<div { ...blockProps } css={fontSizeStyle}>
+				<Disabled>
+					{
+						attributes.enableFeaturedPost && (
+							<FeaturedPost
+								attributes={ attributes }
+								post={ featured }
+								category={ categoriesList[0] }
+								author={ authors[0] }
+							/>
+						)
+					}
+					<Layout
+						attributes={ attributes }
+						posts={ posts }
+						categoriesList={ categoriesList }
+						authors={ authors }
+					/>
+				</Disabled>
 			</div>
 		</Fragment>
 	);

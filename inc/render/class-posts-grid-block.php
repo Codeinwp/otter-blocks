@@ -389,13 +389,14 @@ class Posts_Grid_Block extends Base_Block {
 
 		if ( isset( $thumbnail ) ) {
 			$html .= sprintf(
-				'<div class="wp-block-themeisle-blocks-posts-grid-post-image"><a href="%1$s">%2$s</a></div>',
+				'<div class="wp-block-themeisle-blocks-posts-grid-post-image %1$s"><a href="%2$s">%3$s</a></div>',
+				isset( $attributes['imageBoxShadow'] ) && true === $attributes['imageBoxShadow'] ? 'has-shadow' : '',
 				esc_url( get_the_permalink( $id ) ),
 				$thumbnail
 			);
 		}
 
-		$html .= '<div class="wp-block-themeisle-blocks-posts-grid-post-body' . ( $thumbnail && $attributes['displayFeaturedImage'] ? '' : ' is-full' ) . '">';
+		$html .= '<div class="wp-block-themeisle-blocks-posts-grid-post-body' . ( $thumbnail && $attributes['displayFeaturedImage'] ? '' : ' is-full' ) .  '">';
 
 		foreach ( $attributes['template'] as $element ) {
 
