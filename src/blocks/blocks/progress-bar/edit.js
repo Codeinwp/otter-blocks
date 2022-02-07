@@ -23,9 +23,11 @@ import {
 /**
  * Internal dependencies
  */
-import defaultAttributes from './attributes.js';
+import metadata from './block.json';
 import { blockInit } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const ProgressBar = ({
 	attributes,

@@ -40,15 +40,16 @@ import {
 /**
  * Internal dependencies.
  */
+import metadata from './block.json';
 import Inspector from './inspector.js';
 import Controls from './controls.js';
 import { blockInit } from '../../../helpers/block-utility.js';
-import defaultAttributes from './attributes.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	isSelected,
 	clientId
 }) => {

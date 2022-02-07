@@ -2,6 +2,18 @@ const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const glob = require( 'glob' );
 const path = require( 'path' );
+const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
+const blocks = require( './blocks.json' );
+
+const blockFiles = Object.keys( blocks ).filter( block => blocks[ block ].block !== undefined )
+	.map( block => {
+		return {
+			source: `src/blocks/${ blocks[ block ].block }`,
+			destination: `build/blocks/${ block }/`
+		};
+	});
+
+const folders = Object.keys( blocks ).map( block => `build/blocks/${ block }` );
 
 module.exports = [
 	{
@@ -104,14 +116,20 @@ module.exports = [
 						name: 'editor',
 						test: /editor\.scss$/,
 						chunks: 'all'
-					},
-					frontendStyles: {
-						name: 'style',
-						test: /style\.scss$/,
-						chunks: 'all'
 					}
 				}
 			}
-		}
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new FileManagerPlugin({
+				events: {
+					onEnd: {
+						mkdir: folders,
+						copy: blockFiles
+					}
+				}
+			})
+		]
 	}
 ];

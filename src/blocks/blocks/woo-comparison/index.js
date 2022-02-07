@@ -12,37 +12,34 @@ import { Placeholder } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import './editor.scss';
-import { faIcon as icon } from '../../helpers/icons.js';
+import metadata from './block.json';
 import attributes from './attributes.js';
+import { faIcon as icon } from '../../helpers/icons.js';
 import edit from './edit.js';
 
+const { name } = metadata;
+
 if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Boolean( window.themeisleGutenberg.hasWooCommerce ) && Boolean( window.themeisleGutenberg.hasNeveSupport.wooComparison ) ) {
-	registerBlockType( 'themeisle-blocks/woo-comparison', {
-		apiVersion: 2,
+	registerBlockType( name, {
+		...metadata,
 		title: __( 'WooCommerce Comparison Table', 'otter-blocks' ),
 		description: __( 'A way to compare different WooCommerce products made on the website.', 'otter-blocks' ),
 		icon,
-		category: 'themeisle-blocks',
 		keywords: [
 			'woocommerce',
 			'comparison',
 			'table'
 		],
 		attributes,
-		supports: {
-			html: false
-		},
 		edit,
 		save: () => null
 	});
 } else {
-	registerBlockType( 'themeisle-blocks/woo-comparison', {
-		apiVersion: 2,
+	registerBlockType( name, {
+		...metadata,
 		title: __( 'WooCommerce Comparison Table', 'otter-blocks' ),
 		description: __( 'A way to compare different WooCommerce products made on the website.', 'otter-blocks' ),
 		icon,
-		category: 'themeisle-blocks',
 		keywords: [
 			'woocommerce',
 			'comparison',

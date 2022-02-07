@@ -1,0 +1,52 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/button-group",
+	"title": "Button Group",
+	"category": "themeisle-blocks",
+	"description": "Prompt visitors to take action with a button group.",
+	"keywords": [ "button", "buttons", "button group" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"align": {
+			"type": "string"
+		},
+		"spacing": {
+			"type": "number",
+			"default": 20
+		},
+		"paddingTopBottom": {
+			"type": "number"
+		},
+		"paddingLeftRight": {
+			"type": "number"
+		},
+		"collapse": {
+			"type": "string",
+			"default": "collapse-none"
+		},
+		"fontSize": {
+			"type": "number"
+		},
+		"fontFamily": {
+			"type": "string"
+		},
+		"fontVariant": {
+			"type": "string"
+		},
+		"textTransform": {
+			"type": "string"
+		},
+		"fontStyle": {
+			"type": "string"
+		},
+		"lineHeight": {
+			"type": "number"
+		}
+	},
+	"editorStyle": "otter-button-group-editor",
+	"style": "otter-button-group-style"
+}

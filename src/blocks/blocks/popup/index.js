@@ -13,24 +13,22 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import './editor.scss';
-import './style.scss';
-import attributes from './attributes.js';
+import metadata from './block.json';
 import edit from './edit.js';
 import save from './save.js';
 
-registerBlockType( 'themeisle-blocks/popup', {
-	apiVersion: 2,
+const { name } = metadata;
+
+registerBlockType( name, {
+	...metadata,
 	title: __( 'Popup', 'otter-blocks' ),
-	description: __( 'Display your content in beautiful popup with many customization options..', 'otter-blocks' ),
+	description: __( 'Display your content in beautiful popup with many customization options.', 'otter-blocks' ),
 	icon,
-	category: 'themeisle-blocks',
 	keywords: [
 		'popup',
 		'modal',
 		'lightbox'
 	],
-	attributes,
 	edit,
 	save
 });

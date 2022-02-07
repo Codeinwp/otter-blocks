@@ -9,16 +9,18 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import { testimonialsIcon as icon } from '../../../helpers/icons.js';
 import edit from './edit.js';
 import save from './save.js';
 
-registerBlockType( 'themeisle-blocks/testimonials', {
-	apiVersion: 2,
+const { name } = metadata;
+
+registerBlockType( name, {
+	...metadata,
 	title: __( 'Testimonials', 'otter-blocks' ),
 	description: __( 'Display kudos from customers and clients and display them on your website.', 'otter-blocks' ),
 	icon,
-	category: 'themeisle-blocks',
 	keywords: [
 		'testimonials',
 		'quotes',

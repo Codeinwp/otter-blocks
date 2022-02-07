@@ -1,0 +1,57 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/circle-counter",
+	"title": "Circle Counter",
+	"category": "themeisle-blocks",
+	"description": "Show your progress with a beautiful Circle Counter block.",
+	"keywords": [ "progress", "circle", "counter" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"title": {
+			"type": "string",
+			"default": "Skill"
+		},
+		"percentage": {
+			"type": "number",
+			"default": 50
+		},
+		"duration": {
+			"type": "number",
+			"default": 2
+		},
+		"titleStyle": {
+			"type": "string",
+			"default": "default"
+		},
+		"height": {
+			"type": "number",
+			"default": 100
+		},
+		"fontSizeTitle": {
+			"type": "number"
+		},
+		"fontSizePercent": {
+			"type": "number"
+		},
+		"strokeWidth": {
+			"type": "number",
+			"default": 10
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"progressColor": {
+			"type": "string"
+		},
+		"titleColor": {
+			"type": "string"
+		}
+	},
+	"editorStyle": "otter-circle-counter-editor",
+	"style": "otter-circle-counter-style",
+	"script": "otter-circle-counter"
+}

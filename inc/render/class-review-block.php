@@ -7,106 +7,10 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
-use ThemeIsle\GutenbergBlocks\Main;
-use ThemeIsle\GutenbergBlocks\Base_Block;
-
 /**
  * Class Review_Block
  */
-class Review_Block extends Base_Block {
-
-	/**
-	 * Every block needs a slug, so we need to define one and assign it to the `$this->block_slug` property
-	 *
-	 * @return mixed
-	 */
-	protected function set_block_slug() {
-		$this->block_slug = 'review';
-	}
-
-	/**
-	 * Set the attributes required on the server side.
-	 *
-	 * @return mixed
-	 */
-	protected function set_attributes() {
-		$this->attributes = array(
-			'id'          => array(
-				'type' => 'string',
-			),
-			'title'       => array(
-				'type' => 'string',
-			),
-			'currency'    => array(
-				'type'    => 'string',
-				'default' => 'USD',
-			),
-			'price'       => array(
-				'type' => 'number',
-			),
-			'discounted'  => array(
-				'type' => 'number',
-			),
-			'image'       => array(
-				'type' => 'object',
-			),
-			'description' => array(
-				'type' => 'string',
-			),
-			'features'    => array(
-				'type'    => 'array',
-				'default' => array(
-					array(
-						'title'  => __( 'Stability', 'otter-blocks' ),
-						'rating' => 9,
-					),
-					array(
-						'title'  => __( 'Ease of Use', 'otter-blocks' ),
-						'rating' => 4,
-					),
-					array(
-						'title'  => __( 'Look & Feel', 'otter-blocks' ),
-						'rating' => 9,
-					),
-					array(
-						'title'  => __( 'Price', 'otter-blocks' ),
-						'rating' => 7,
-					),
-				),
-			),
-			'pros'        => array(
-				'type'    => 'array',
-				'default' => array(
-					__( 'Easy to use', 'otter-blocks' ),
-					__( 'Good price', 'otter-blocks' ),
-					__( 'Sturdy build and ergonomics', 'otter-blocks' ),
-				),
-			),
-			'cons'        => array(
-				'type'    => 'array',
-				'default' => array(
-					__( 'Incompatible with old versions', 'otter-blocks' ),
-					__( 'Hard to assemble', 'otter-blocks' ),
-					__( 'Bad color combination', 'otter-blocks' ),
-				),
-			),
-			'links'       => array(
-				'type'    => 'array',
-				'default' => array(
-					array(
-						'label'       => __( 'Buy on Amazon', 'otter-blocks' ),
-						'href'        => '',
-						'isSponsored' => false,
-					),
-					array(
-						'label'       => __( 'Buy on eBay', 'otter-blocks' ),
-						'href'        => '',
-						'isSponsored' => false,
-					),
-				),
-			),
-		);
-	}
+class Review_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -117,7 +21,7 @@ class Review_Block extends Base_Block {
 	 * @param array $attributes Blocks attrs.
 	 * @return mixed|string
 	 */
-	protected function render( $attributes ) {
+	public function render( $attributes ) {
 		if ( isset( $attributes['product'] ) && intval( $attributes['product'] ) >= 0 && 'valid' === apply_filters( 'product_neve_license_status', false ) && class_exists( 'WooCommerce' ) ) {
 			$product = wc_get_product( $attributes['product'] );
 
@@ -135,6 +39,7 @@ class Review_Block extends Base_Block {
 			}
 
 			$attributes['image'] = array(
+				'id'  => $product->get_image_id(),
 				'url' => wp_get_attachment_image_url( $product->get_image_id(), '' ),
 				'alt' => get_post_meta( $product->get_image_id(), '_wp_attachment_image_alt', true ),
 			);
@@ -180,14 +85,14 @@ class Review_Block extends Base_Block {
 		$html .= '				<span>' . sprintf( __( '%g out of 10', 'otter-blocks' ), $this->get_overall_ratings( $attributes['features'] ) ) . '</span>';
 		$html .= '			</div>';
 
-		if ( isset( $attributes['price'] ) || isset( $attributes['discounted'] ) ) {
+		if ( ( isset( $attributes['price'] ) && ! empty( $attributes['price'] ) ) || isset( $attributes['discounted'] ) ) {
 			$html .= '			<span class="wp-block-themeisle-blocks-review__header_price">';
 
-			if ( isset( $attributes['price'] ) && isset( $attributes['discounted'] ) ) {
-				$html .= '			<del>' . Main::get_currency( isset( $attributes['currency'] ) ? $attributes['currency'] : 'USD' ) . $attributes['price'] . '</del>';
+			if ( ( isset( $attributes['price'] ) && ! empty( $attributes['price'] ) ) && isset( $attributes['discounted'] ) ) {
+				$html .= '			<del>' . self::get_currency( isset( $attributes['currency'] ) ? $attributes['currency'] : 'USD' ) . $attributes['price'] . '</del>';
 			}
 
-			$html .= Main::get_currency( isset( $attributes['currency'] ) ? $attributes['currency'] : 'USD' ) . ( isset( $attributes['discounted'] ) ? $attributes['discounted'] : $attributes['price'] );
+			$html .= self::get_currency( isset( $attributes['currency'] ) ? $attributes['currency'] : 'USD' ) . ( isset( $attributes['discounted'] ) ? $attributes['discounted'] : $attributes['price'] );
 			$html .= '			</span>';
 		}
 
@@ -198,7 +103,7 @@ class Review_Block extends Base_Block {
 		if ( ( isset( $attributes['image'] ) || ( isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ) ) {
 			$html .= '	<div class="wp-block-themeisle-blocks-review__left_details' . $is_single . '">';
 			if ( isset( $attributes['image'] ) ) {
-				if ( wp_attachment_is_image( $attributes['image']['id'] ) ) {
+				if ( isset( $attributes['image']['id'] ) && wp_attachment_is_image( $attributes['image']['id'] ) ) {
 					$html .= wp_get_attachment_image( $attributes['image']['id'], 'medium' );
 				} else {
 					$html .= '	<img src="' . esc_url( $attributes['image']['url'] ) . '" alt="' . esc_attr( $attributes['image']['alt'] ) . '"/>';
@@ -282,7 +187,7 @@ class Review_Block extends Base_Block {
 	 *
 	 * @return int
 	 */
-	protected function get_overall_ratings( $features ) {
+	public function get_overall_ratings( $features ) {
 		if ( count( $features ) <= 0 ) {
 			return 0;
 		}
@@ -308,7 +213,7 @@ class Review_Block extends Base_Block {
 	 *
 	 * @return string
 	 */
-	protected function get_overall_stars( $ratings = 0 ) {
+	public function get_overall_stars( $ratings = 0 ) {
 		$stars = '';
 
 		for ( $i = 0; $i < 10; $i++ ) {
@@ -342,7 +247,7 @@ class Review_Block extends Base_Block {
 			'name'     => $attributes['title'],
 		);
 
-		if ( isset( $attributes['image'] ) ) {
+		if ( isset( $attributes['image'] ) && isset( $attributes['image']['url'] ) ) {
 			$json['image'] = $attributes['image']['url'];
 		}
 
@@ -393,5 +298,188 @@ class Review_Block extends Base_Block {
 		}
 
 		return apply_filters( 'themeisle_gutenberg_review_block_schema', $json, $attributes );
+	}
+
+	/**
+	 * Get currency symbol
+	 *
+	 * @param string $currency Currency.
+	 *
+	 * @return string
+	 */
+	public static function get_currency( $currency = 'USD' ) {
+		$symbols = apply_filters(
+			'themeisle_gutenberg_currency_symbols',
+			array(
+				'AED' => '&#x62f;.&#x625;',
+				'AFN' => '&#x60b;',
+				'ALL' => 'L',
+				'AMD' => 'AMD',
+				'ANG' => '&fnof;',
+				'AOA' => 'Kz',
+				'ARS' => '&#36;',
+				'AUD' => '&#36;',
+				'AWG' => 'Afl.',
+				'AZN' => 'AZN',
+				'BAM' => 'KM',
+				'BBD' => '&#36;',
+				'BDT' => '&#2547;&nbsp;',
+				'BGN' => '&#1083;&#1074;.',
+				'BHD' => '.&#x62f;.&#x628;',
+				'BIF' => 'Fr',
+				'BMD' => '&#36;',
+				'BND' => '&#36;',
+				'BOB' => 'Bs.',
+				'BRL' => '&#82;&#36;',
+				'BSD' => '&#36;',
+				'BTC' => '&#3647;',
+				'BTN' => 'Nu.',
+				'BWP' => 'P',
+				'BYR' => 'Br',
+				'BYN' => 'Br',
+				'BZD' => '&#36;',
+				'CAD' => '&#36;',
+				'CDF' => 'Fr',
+				'CHF' => '&#67;&#72;&#70;',
+				'CLP' => '&#36;',
+				'CNY' => '&yen;',
+				'COP' => '&#36;',
+				'CRC' => '&#x20a1;',
+				'CUC' => '&#36;',
+				'CUP' => '&#36;',
+				'CVE' => '&#36;',
+				'CZK' => '&#75;&#269;',
+				'DJF' => 'Fr',
+				'DKK' => 'DKK',
+				'DOP' => 'RD&#36;',
+				'DZD' => '&#x62f;.&#x62c;',
+				'EGP' => 'EGP',
+				'ERN' => 'Nfk',
+				'ETB' => 'Br',
+				'EUR' => '&euro;',
+				'FJD' => '&#36;',
+				'FKP' => '&pound;',
+				'GBP' => '&pound;',
+				'GEL' => '&#x20be;',
+				'GGP' => '&pound;',
+				'GHS' => '&#x20b5;',
+				'GIP' => '&pound;',
+				'GMD' => 'D',
+				'GNF' => 'Fr',
+				'GTQ' => 'Q',
+				'GYD' => '&#36;',
+				'HKD' => '&#36;',
+				'HNL' => 'L',
+				'HRK' => 'kn',
+				'HTG' => 'G',
+				'HUF' => '&#70;&#116;',
+				'IDR' => 'Rp',
+				'ILS' => '&#8362;',
+				'IMP' => '&pound;',
+				'INR' => '&#8377;',
+				'IQD' => '&#x639;.&#x62f;',
+				'IRR' => '&#xfdfc;',
+				'IRT' => '&#x062A;&#x0648;&#x0645;&#x0627;&#x0646;',
+				'ISK' => 'kr.',
+				'JEP' => '&pound;',
+				'JMD' => '&#36;',
+				'JOD' => '&#x62f;.&#x627;',
+				'JPY' => '&yen;',
+				'KES' => 'KSh',
+				'KGS' => '&#x441;&#x43e;&#x43c;',
+				'KHR' => '&#x17db;',
+				'KMF' => 'Fr',
+				'KPW' => '&#x20a9;',
+				'KRW' => '&#8361;',
+				'KWD' => '&#x62f;.&#x643;',
+				'KYD' => '&#36;',
+				'KZT' => '&#8376;',
+				'LAK' => '&#8365;',
+				'LBP' => '&#x644;.&#x644;',
+				'LKR' => '&#xdbb;&#xdd4;',
+				'LRD' => '&#36;',
+				'LSL' => 'L',
+				'LYD' => '&#x644;.&#x62f;',
+				'MAD' => '&#x62f;.&#x645;.',
+				'MDL' => 'MDL',
+				'MGA' => 'Ar',
+				'MKD' => '&#x434;&#x435;&#x43d;',
+				'MMK' => 'Ks',
+				'MNT' => '&#x20ae;',
+				'MOP' => 'P',
+				'MRU' => 'UM',
+				'MUR' => '&#x20a8;',
+				'MVR' => '.&#x783;',
+				'MWK' => 'MK',
+				'MXN' => '&#36;',
+				'MYR' => '&#82;&#77;',
+				'MZN' => 'MT',
+				'NAD' => 'N&#36;',
+				'NGN' => '&#8358;',
+				'NIO' => 'C&#36;',
+				'NOK' => '&#107;&#114;',
+				'NPR' => '&#8360;',
+				'NZD' => '&#36;',
+				'OMR' => '&#x631;.&#x639;.',
+				'PAB' => 'B/.',
+				'PEN' => 'S/',
+				'PGK' => 'K',
+				'PHP' => '&#8369;',
+				'PKR' => '&#8360;',
+				'PLN' => '&#122;&#322;',
+				'PRB' => '&#x440;.',
+				'PYG' => '&#8370;',
+				'QAR' => '&#x631;.&#x642;',
+				'RMB' => '&yen;',
+				'RON' => 'lei',
+				'RSD' => '&#1088;&#1089;&#1076;',
+				'RUB' => '&#8381;',
+				'RWF' => 'Fr',
+				'SAR' => '&#x631;.&#x633;',
+				'SBD' => '&#36;',
+				'SCR' => '&#x20a8;',
+				'SDG' => '&#x62c;.&#x633;.',
+				'SEK' => '&#107;&#114;',
+				'SGD' => '&#36;',
+				'SHP' => '&pound;',
+				'SLL' => 'Le',
+				'SOS' => 'Sh',
+				'SRD' => '&#36;',
+				'SSP' => '&pound;',
+				'STN' => 'Db',
+				'SYP' => '&#x644;.&#x633;',
+				'SZL' => 'L',
+				'THB' => '&#3647;',
+				'TJS' => '&#x405;&#x41c;',
+				'TMT' => 'm',
+				'TND' => '&#x62f;.&#x62a;',
+				'TOP' => 'T&#36;',
+				'TRY' => '&#8378;',
+				'TTD' => '&#36;',
+				'TWD' => '&#78;&#84;&#36;',
+				'TZS' => 'Sh',
+				'UAH' => '&#8372;',
+				'UGX' => 'UGX',
+				'USD' => '&#36;',
+				'UYU' => '&#36;',
+				'UZS' => 'UZS',
+				'VEF' => 'Bs F',
+				'VES' => 'Bs.S',
+				'VND' => '&#8363;',
+				'VUV' => 'Vt',
+				'WST' => 'T',
+				'XAF' => 'CFA',
+				'XCD' => '&#36;',
+				'XOF' => 'CFA',
+				'XPF' => 'Fr',
+				'YER' => '&#xfdfc;',
+				'ZAR' => '&#82;',
+				'ZMW' => 'ZK',
+			)
+		);
+
+		$symbol = isset( $symbols[ $currency ] ) ? $symbols[ $currency ] : '&#36;';
+
+		return $symbol;
 	}
 }

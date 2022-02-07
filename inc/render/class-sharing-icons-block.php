@@ -7,65 +7,17 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
-use ThemeIsle\GutenbergBlocks\Base_Block;
-
 /**
  * Class Sharing_Icons_Block
  */
-class Sharing_Icons_Block extends Base_Block {
-
-	/**
-	 * Every block needs a slug, so we need to define one and assign it to the `$this->block_slug` property
-	 *
-	 * @return mixed
-	 */
-	protected function set_block_slug() {
-		$this->block_slug = 'sharing-icons';
-	}
-
-	/**
-	 * Set the attributes required on the server side.
-	 *
-	 * @return mixed
-	 */
-	protected function set_attributes() {
-		$this->attributes = array(
-			'align'     => array(
-				'type' => 'string',
-			),
-			'facebook'  => array(
-				'type'    => 'boolean',
-				'default' => 1,
-			),
-			'twitter'   => array(
-				'type'    => 'boolean',
-				'default' => 1,
-			),
-			'linkedin'  => array(
-				'type'    => 'boolean',
-				'default' => 1,
-			),
-			'pinterest' => array(
-				'type'    => 'boolean',
-				'default' => 0,
-			),
-			'tumblr'    => array(
-				'type'    => 'boolean',
-				'default' => 0,
-			),
-			'reddit'    => array(
-				'type'    => 'boolean',
-				'default' => 0,
-			),
-		);
-	}
+class Sharing_Icons_Block {
 
 	/**
 	 * Return attributes for social media services.
 	 *
 	 * @return array
 	 */
-	protected function get_social_profiles() {
+	public function get_social_profiles() {
 		$social_attributes = array(
 			'facebook'  => array(
 				'label' => esc_html__( 'Facebook', 'otter-blocks' ),
@@ -116,7 +68,7 @@ class Sharing_Icons_Block extends Base_Block {
 	 * @param array $attributes Blocks attrs.
 	 * @return mixed|string
 	 */
-	protected function render( $attributes ) {
+	public function render( $attributes ) {
 		$social_attributes = $this->get_social_profiles();
 
 		$class = '';

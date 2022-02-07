@@ -1,18 +1,6 @@
+@import 'style';
+
 .wp-block-themeisle-blocks-button-group {
-	display: flex;
-
-	&.align-left {
-		justify-content: flex-start;
-	}
-
-	&.align-center {
-		justify-content: center;
-	}
-
-	&.align-right {
-		justify-content: flex-end;
-	}
-
 	&.collapse {
 		.block-editor-block-list__layout {
 			flex-direction: column;
@@ -38,16 +26,6 @@
 			box-shadow: 0 0 0 1px #fff,0 0 0 3px #00a0d2;
 		}
 
-		i {
-			&.margin-left {
-				margin-left: 10px;
-			}
-
-			&.margin-right {
-				margin-right: 10px;
-			}
-		}
-
 		svg {
 			fill: currentColor;
 			width: 16px;
@@ -67,6 +45,16 @@
 
 			&:focus {
 				box-shadow: unset;
+			}
+		}
+	}
+
+
+	> .block-editor-inner-blocks {
+		> .block-editor-block-list__layout {
+			> .block-list-appender {
+				position: relative;
+				align-self: center;
 			}
 		}
 	}

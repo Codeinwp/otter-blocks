@@ -92,23 +92,6 @@ class Base_CSS {
 	}
 
 	/**
-	 * Parse Blocks for Gutenberg and WordPress 5.0
-	 *
-	 * @param string $content Content.
-	 *
-	 * @return string
-	 * @since   1.3.0
-	 * @access  public
-	 */
-	public function parse_blocks( $content ) {
-		if ( ! function_exists( 'parse_blocks' ) ) {
-			return gutenberg_parse_blocks( $content );
-		} else {
-			return parse_blocks( $content );
-		}
-	}
-
-	/**
 	 * Check if string is empty without accepting zero
 	 *
 	 * @param string $var Var to check.
@@ -251,7 +234,7 @@ class Base_CSS {
 	public function get_blocks_css( $post_id ) {
 		if ( function_exists( 'has_blocks' ) ) {
 			$content = get_post_field( 'post_content', $post_id );
-			$blocks  = $this->parse_blocks( $content );
+			$blocks  = parse_blocks( $content );
 
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 				return;
@@ -279,7 +262,7 @@ class Base_CSS {
 				}
 			}
 
-			$blocks = $this->parse_blocks( $content );
+			$blocks = parse_blocks( $content );
 
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 				return;
@@ -308,7 +291,7 @@ class Base_CSS {
 			return;
 		}
 
-		$blocks = $this->parse_blocks( $reusable_block->post_content );
+		$blocks = parse_blocks( $reusable_block->post_content );
 
 		return $this->cycle_through_static_blocks( $blocks );
 	}
