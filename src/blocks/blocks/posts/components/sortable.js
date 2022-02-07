@@ -48,6 +48,14 @@ const DragHandle = SortableHandle( () => {
 	);
 });
 
+const fieldMapping = {
+	image: 'displayFeaturedImage',
+	category: 'displayCategory',
+	title: 'displayTitle',
+	meta: 'displayMeta',
+	description: 'displayDescription'
+};
+
 
 export const SortableItem = ({
 	attributes,
@@ -72,10 +80,11 @@ export const SortableItem = ({
 			meta: attributes.displayMeta,
 			description: attributes.displayDescription
 		});
-	}, [ attributes.displayCategory, attributes.displayTitle, attributes.displayMeta, attributes.displayDescription ]);
+	}, [ attributes.displayFeaturedImage, attributes.displayCategory, attributes.displayTitle, attributes.displayMeta, attributes.displayDescription ]);
 
 	const toggleField = fieldName => {
-		setAttributes({ [fieldName]: ! attributes[fieldName] });
+		const field = fieldMapping[fieldName];
+		setAttributes({ [field]: ! attributes[field] });
 	};
 
 	const getView = useSelect( select => {
@@ -267,6 +276,14 @@ export const SortableItem = ({
 		/* translators: %s Label */
 		message = sprintf( __( 'Hide %s', 'otter-blocks' ), label );
 	}
+
+	console.log({
+		value,
+		icon,
+		edit,
+		message,
+		display: attributes.displayFeaturedImage
+	});
 
 	return (
 		<div
