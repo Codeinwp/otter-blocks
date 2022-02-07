@@ -1,6 +1,12 @@
+/** @jsx jsx */
 /**
  * External dependencies
  */
+import {
+	css,
+	jsx
+} from '@emotion/react';
+
 import classnames from 'classnames';
 
 /**
@@ -65,16 +71,8 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
+
 	const iconClassName = `${ attributes.iconPrefix || parentAttributes.defaultIconPrefix } fa-${ attributes.icon || parentAttributes.defaultIcon }`;
-	const contentStyle = {
-		color: attributes.contentColor || parentAttributes.defaultContentColor,
-		fontSize: parentAttributes.defaultSize + 'px'
-	};
-	const iconStyle = {
-		color: attributes.iconColor || parentAttributes.defaultIconColor,
-		fill: attributes.iconColor || parentAttributes.defaultIconColor,
-		fontSize: parentAttributes.defaultSize + 'px'
-	};
 
 	/**
 	 * Add the missing components from parent's attributes
@@ -91,7 +89,14 @@ const Edit = ({
 		setAttributes({ content: value });
 	};
 
-	const blockProps = useBlockProps();
+	const styles = css`
+		--contentColor: ${ attributes.contentColor || parentAttributes.defaultContentColor };
+		--iconColor: ${ attributes.iconColor || parentAttributes.defaultIconColor };
+	`;
+
+	const blockProps = useBlockProps({
+		css: styles
+	});
 
 	return (
 		<Fragment>
@@ -107,10 +112,6 @@ const Edit = ({
 							{ 'wp-block-themeisle-blocks-icon-list-item-icon': ! attributes.iconColor },
 							{ 'wp-block-themeisle-blocks-icon-list-item-icon-custom': attributes.iconColor }
 						) }
-						style={ {
-							...iconStyle,
-							width: parentAttributes.defaultSize + 'px'
-						} }
 					/>
 				) : (
 					<i
@@ -119,7 +120,6 @@ const Edit = ({
 							{ 'wp-block-themeisle-blocks-icon-list-item-icon': ! attributes.iconColor },
 							{ 'wp-block-themeisle-blocks-icon-list-item-icon-custom': attributes.iconColor }
 						) }
-						style={ iconStyle }
 					></i>
 				) }
 
@@ -131,7 +131,6 @@ const Edit = ({
 						{ 'wp-block-themeisle-blocks-icon-list-item-content': ! attributes.contentColor },
 						{ 'wp-block-themeisle-blocks-icon-list-item-content-custom': attributes.contentColor }
 					) }
-					style={ contentStyle }
 					value={ attributes.content }
 					onChange={ changeContent }
 					onSplit={ ( value ) => {

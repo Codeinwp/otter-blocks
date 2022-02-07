@@ -38,96 +38,24 @@ class Icon_List_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => 'align-items',
+						'property' => '--horizontalAlign',
 						'value'    => 'horizontalAlign',
 					),
 					array(
-						'property' => 'justify-content',
-						'value'    => 'horizontalAlign',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'properties' => array(
-					array(
-						'property' => 'gap',
+						'property' => '--gap',
 						'value'    => 'gap',
 						'unit'     => 'px',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-themeisle-blocks-icon-list-item .wp-block-themeisle-blocks-icon-list-item-content',
-				'properties' => array(
 					array(
-						'property' => 'color',
+						'property' => '--contentColor',
 						'value'    => 'defaultContentColor',
 					),
 					array(
-						'property' => 'font-size',
-						'value'    => 'defaultSize',
-						'unit'     => 'px',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-themeisle-blocks-icon-list-item .wp-block-themeisle-blocks-icon-list-item-content-custom',
-				'properties' => array(
-					array(
-						'property' => 'font-size',
-						'value'    => 'defaultSize',
-						'unit'     => 'px',
-						'default'  => 20,
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-themeisle-blocks-icon-list-item .wp-block-themeisle-blocks-icon-list-item-icon',
-				'properties' => array(
-					array(
-						'property' => 'color',
+						'property' => '--iconColor',
 						'value'    => 'defaultIconColor',
 					),
 					array(
-						'property' => 'fill',
-						'value'    => 'defaultIconColor',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-themeisle-blocks-icon-list-item i',
-				'properties' => array(
-					array(
-						'property' => 'font-size',
-						'value'    => 'defaultSize',
-						'unit'     => 'px',
-						'default'  => 20,
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-themeisle-blocks-icon-list-item svg',
-				'properties' => array(
-					array(
-						'property' => 'width',
+						'property' => '--fontSize',
 						'value'    => 'defaultSize',
 						'unit'     => 'px',
 						'default'  => 20,
