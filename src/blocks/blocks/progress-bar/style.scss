@@ -1,10 +1,16 @@
-$height-value: 30;
-$font-ratio: 0.65;
-
-$height: $height-value + 0px;
-$font-size: $height-value * $font-ratio + 0px;
-
 .wp-block-themeisle-blocks-progress-bar {
+	--percentage: 50%;
+	--titleColor: inherit;
+	--percentageColor: rgba(0, 0, 0, 0.4);
+	--percentageColorOuter: inherit;
+	--percentageColorTooltip: #FFF;
+	--percentageColorAppend: #FFF;
+	--backgroundColor: #EEE;
+	--borderRadius: 5px;
+	--height: 30px;
+	--fontSize: calc( var( --height ) * 0.65 );
+	--barBackground: #6adcfa;
+
 	display: flex;
 	flex-direction: column;
 
@@ -19,12 +25,14 @@ $font-size: $height-value * $font-ratio + 0px;
 		margin-bottom: .25em;
 
 		.wp-block-themeisle-blocks-progress-bar__outer__title {
+			color: var( --titleColor );
 			margin: 0px;
 			display: grid;
 			align-items: center;
 		}
 
 		.wp-block-themeisle-blocks-progress-bar__outer__value {
+			color: var( --percentageColorOuter );
 			margin-left: auto;
 			display: grid;
 			align-items: center;
@@ -37,9 +45,9 @@ $font-size: $height-value * $font-ratio + 0px;
 		display: block;
 		margin-bottom: 15px;
 		width: 100%;
-		background: #eee;
-		height: $height;
-		border-radius: 5px;
+		background: var( --backgroundColor );
+		height: var( --height );
+		border-radius: var( --borderRadius );
 		transition: 0.4s linear;
 		transition-property: width, background-color;
 
@@ -49,20 +57,17 @@ $font-size: $height-value * $font-ratio + 0px;
 			position: absolute;
 			right: 10px;
 			top: 0;
-			font-size: $font-size;
-			height: $height;
+			font-size: var( --fontSize );
+			height: var( --height );
 			line-height: 30px;
-			color: #ffffff;
-			color: rgba(0, 0, 0, 0.4);
+			color: var( --percentageColor );
 		}
 
-		
-
 		.wp-block-themeisle-blocks-progress-bar__area__bar {
-			height: $height;
+			height: var( --height );
 			width: 0px;
-			background: #6adcfa;
-			border-radius: 5px;
+			background: var( --barBackground);
+			border-radius: var( --borderRadius );
 			opacity: 0;
 
 			&.show {
@@ -77,11 +82,11 @@ $font-size: $height-value * $font-ratio + 0px;
 				right: 10px;
 				left: 0px;
 				top: 0;
-				font-size: $font-size;
+				font-size: var( --fontSize );
 				margin-right: 5px;
-				height: $height;
+				height: var( --height );
 				line-height: 30px;
-				color: #fff;
+				color: var( --percentageColorAppend );
 				opacity: 0;
 
 				&.show {
@@ -95,7 +100,7 @@ $font-size: $height-value * $font-ratio + 0px;
 				float: right;
 				bottom: 40px;
 				left: 20px;
-				color: white;
+				color: var( --percentageColorTooltip );
 				transition: all 1s;
 				position: relative;
 				padding: 4px 10px 7px 10px;
@@ -132,29 +137,44 @@ $font-size: $height-value * $font-ratio + 0px;
 		left: 0;
 		width: auto;
 		font-weight: bold;
-		font-size: $font-size;
+		font-size: var( --fontSize );
+		height: var( --height );
 		color: #ffffff;
 		background: transparent;
-		border-radius: 5px 0px 0px 5px;
-		
+		border-radius: var( --borderRadius ) 0px 0px var( --borderRadius );
 
 		&.highlight {
-			background: #6adcfa;
+			background: var( --barBackground );
+
 			span {
+				color: var( --titleColor );
 				background: rgba(0, 0, 0, 0.1);
 			}
 		}
 
 		span {
+			color: var( --titleColor );
 			display: flex;
 			align-items: center;
-			border-radius: 5px 0px 0px 5px;
+			border-radius: var( --borderRadius ) 0px 0px var( --borderRadius );
 			width: 100%;
 			background: transparent;
 			padding: 0 20px;
-			height: $height;
+			height: var( --height );
 			line-height: 30px;
-			border-radius: 3px;
+		}
+	}
+}
+
+html[amp] {
+	.wp-block-themeisle-blocks-progress-bar {
+		.wp-block-themeisle-blocks-progress-bar__area__bar {
+			width: var( --percentage );
+			opacity: 1;
+		}
+
+		.wp-block-themeisle-blocks-progress-bar__area__tooltip {
+			opacity: 1;
 		}
 	}
 }
