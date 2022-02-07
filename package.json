@@ -32,7 +32,7 @@
 	},
 	"dependencies": {
 		"@emotion/react": "^11.7.1",
-		"@wordpress/icons": "^6.1.1",
+		"@wordpress/icons": "^6.2.0",
 		"array-move": "^3.0.1",
 		"classnames": "^2.3.1",
 		"currency-symbol-map": "^5.0.1",
@@ -55,7 +55,7 @@
 		"grunt-version": "^2.0.0",
 		"grunt-wp-readme-to-markdown": "^2.0.1",
 		"replace-in-file": "^6.3.1",
-		"semantic-release": "^18.0.1",
+		"semantic-release": "^19.0.2",
 		"semantic-release-slack-bot": "^3.3.0"
 	}
 }
