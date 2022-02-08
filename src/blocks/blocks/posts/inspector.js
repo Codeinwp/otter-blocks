@@ -198,16 +198,15 @@ const Inspector = ({
 									label: __( 'Latest', 'otter-blocks' ),
 									value: 'latest'
 								},
-								...( posts?.map( post => ({
+								...( posts?.filter( post => post )?.map( post => ({
 									label: post?.title.rendered,
 									value: post?.id?.toString()
-								}) ) || {})
+								}) ) || [])
 							]}
 							onChange={ featuredPost => setAttributes({ featuredPost }) }
 						/>
 					)
 				}
-
 				<BaseControl
 					label={ __( 'Text alignment', 'otter-blocks' ) }
 				>
