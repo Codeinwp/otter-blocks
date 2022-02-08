@@ -138,9 +138,9 @@ export const SortableItem = ({
 		}
 	};
 
-	const FeaturedImage = () => {
+	const FeaturedImage = ({ key }) => {
 		return (
-			<Fragment>
+			<Fragment key={key}>
 				<SelectControl
 					label={ __( 'Image Size', 'otter-blocks' ) }
 					value={ attributes.imageSize }
@@ -180,9 +180,9 @@ export const SortableItem = ({
 		);
 	};
 
-	const PostTitle = () => {
+	const PostTitle = ({ key }) => {
 		return (
-			<Fragment>
+			<Fragment key={key}>
 				<SelectControl
 					label={ __( 'Title Tag', 'otter-blocks' ) }
 					value={ attributes.titleTag || 'h5' }
@@ -195,11 +195,6 @@ export const SortableItem = ({
 						{ label: __( 'H6', 'otter-blocks' ), value: 'h6' }
 					] }
 					onChange={ titleTag => setAttributes({ titleTag }) }
-				/>
-				<ToggleControl
-					label={ __( 'Enable custom font size', 'otter-blocks' ) }
-					checked={ attributes.enableCustomFontSize }
-					onChange={ enableCustomFontSize => setAttributes({ enableCustomFontSize, customTitleFontSize: undefined, customTitleFontSizeTablet: undefined, customTitleFontSizeMobile: undefined }) }
 				/>
 				<ResponsiveControl
 					label={ __( 'Font size', 'otter-blocks' ) }
@@ -216,9 +211,9 @@ export const SortableItem = ({
 		);
 	};
 
-	const PostMeta = () => {
+	const PostMeta = ({ key }) => {
 		return (
-			<Fragment>
+			<Fragment key={key}>
 				<ToggleControl
 					label={ __( 'Display post date', 'otter-blocks' ) }
 					checked={ attributes.displayDate }
@@ -243,9 +238,9 @@ export const SortableItem = ({
 		);
 	};
 
-	const Excerpt = () => {
+	const Excerpt = ({ key }) => {
 		return (
-			<Fragment>
+			<Fragment key={key}>
 				<TextControl
 					label={ __( 'Excerpt Limit', 'otter-blocks' ) }
 					type="number"
@@ -299,6 +294,7 @@ export const SortableItem = ({
 				'otter-blocks-sortable-item-area',
 				`otter-blocks-sortable-item-area-${ value }`
 			) }
+			key={`element-${value}`}
 		>
 			<div
 				className={ classnames(
@@ -316,7 +312,7 @@ export const SortableItem = ({
 					{ label }
 				</div>
 
-				{ edit && (
+				{ edit && 'category' !== value && (
 					<Button
 						icon={ isOpen ? 'arrow-up-alt2' : 'arrow-down-alt2' }
 						label={ isOpen ? __( 'Close Settings', 'otter-blocks' ) : __( 'Open Settings', 'otter-blocks' ) }
@@ -338,17 +334,18 @@ export const SortableItem = ({
 				/>
 			</div>
 
-			{ edit && (
+			{ edit && 'category' !== value && (
 				<div
 					className={ classnames(
 						'otter-blocks-sortable-control-area',
 						{ 'opened': isOpen && templateLookUp[value] }
 					) }
+					key={`control-${value}`}
 				>
-					{ ( 'image' === value ) && <FeaturedImage /> }
-					{ ( 'title' === value ) && <PostTitle /> }
-					{ ( 'meta' === value ) && <PostMeta /> }
-					{ ( 'description' === value ) && <Excerpt /> }
+					{ ( 'image' === value ) && <FeaturedImage key={`image-${value}`} /> }
+					{ ( 'title' === value ) && <PostTitle key={`title-${value}`} /> }
+					{ ( 'meta' === value ) && <PostMeta key={`meta-${value}`} /> }
+					{ ( 'description' === value ) && <Excerpt key={`desc-${value}`} /> }
 				</div>
 			) }
 		</div>

@@ -124,10 +124,6 @@ class Posts_Grid_Block extends Base_Block {
 				'type'    => 'boolean',
 				'default' => false,
 			),
-			'enableCustomFontSize' => array(
-				'type'    => 'boolean',
-				'default' => false,
-			),
 			'customFontSize'       => array(
 				'type' => 'number',
 			),
@@ -396,7 +392,7 @@ class Posts_Grid_Block extends Base_Block {
 			);
 		}
 
-		$html .= '<div class="wp-block-themeisle-blocks-posts-grid-post-body' . ( $thumbnail && $attributes['displayFeaturedImage'] ? '' : ' is-full' ) .  '">';
+		$html .= '<div class="wp-block-themeisle-blocks-posts-grid-post-body' . ( $thumbnail && $attributes['displayFeaturedImage'] ? '' : ' is-full' ) . '">';
 
 		foreach ( $attributes['template'] as $element ) {
 

@@ -105,9 +105,6 @@ const attributes = {
 		type: 'boolean',
 		default: false
 	},
-	enableCustomFontSize: {
-		type: 'boolean'
-	},
 	customTitleFontSize: {
 		type: 'number'
 	},

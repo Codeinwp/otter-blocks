@@ -244,7 +244,7 @@ const Inspector = ({
 							{
 								icon: <Icon icon={alignTop} />,
 								label: __( 'Top', 'otter-blocks' ),
-								value: 'flex-start'
+								value: 'top'
 							},
 							{
 								icon: <Icon icon={alignCenterVertical} />,
@@ -254,7 +254,7 @@ const Inspector = ({
 							{
 								icon: <Icon icon={alignBottom} />,
 								label: __( 'Bottom', 'otter-blocks' ),
-								value: 'flex-end'
+								value: 'bottom'
 							}
 						]}
 						onChange={ verticalAlign => setAttributes({ verticalAlign }) }

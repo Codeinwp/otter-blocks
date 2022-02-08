@@ -30,6 +30,7 @@
 		&.editable {
 			.otter-blocks-sortable-label {
 				flex-basis: 40%;
+				flex-grow: 1;
 			}
 
 			&.disabled {

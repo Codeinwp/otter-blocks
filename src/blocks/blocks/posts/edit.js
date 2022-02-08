@@ -39,10 +39,11 @@ import {
 import { StyleSwitcherBlockControl } from '../../components/style-switcher-control/index.js';
 import Inspector from './inspector.js';
 import Layout from './components/layout/index.js';
-import { getCustomPostTypeSlugs, px } from '../../helpers/helper-functions.js';
+import { _align, getCustomPostTypeSlugs, _px } from '../../helpers/helper-functions.js';
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
 import { blockInit } from '../../helpers/block-utility.js';
+import Controls from './controls.js';
 import defaultAttributes from './attributes.js';
 
 const Edit = ({
@@ -125,20 +126,22 @@ const Edit = ({
 	}, [ posts, attributes.enableFeaturedPost, attributes.featuredPost ]);
 
 	const fontSizeStyle = css`
-		--o-posts-img-width: ${px( attributes.imageWidth )};
+		--o-posts-img-width: ${_px( attributes.imageWidth )};
+		--o-posts-vert-align: ${_align( attributes.verticalAlign )};
+
 		@media ( min-width: 960px ) {
-			--o-posts-title-text-size: ${px( attributes.customTitleFontSize )};
-			--o-posts-description-text-size: ${px( attributes.customDescriptionFontSize )};
+			--o-posts-title-text-size: ${_px( attributes.customTitleFontSize )};
+			--o-posts-description-text-size: ${_px( attributes.customDescriptionFontSize )};
 		}
 
 		@media ( min-width: 600px ) and ( max-width: 960px ) {
-			--o-posts-title-text-size: ${px( attributes.customTitleFontSizeTablet )};
-			--o-posts-description-text-size: ${px( attributes.customDescriptionFontSizeTablet )};
+			--o-posts-title-text-size: ${_px( attributes.customTitleFontSizeTablet )};
+			--o-posts-description-text-size: ${_px( attributes.customDescriptionFontSizeTablet )};
 		}
 
 		@media ( max-width: 600px ) {
-			--o-posts-title-text-size: ${px( attributes.customTitleFontSizeMobile )};
-			--o-posts-description-text-size: ${px( attributes.customDescriptionFontSizeMobile )};
+			--o-posts-title-text-size: ${_px( attributes.customTitleFontSizeMobile )};
+			--o-posts-description-text-size: ${_px( attributes.customDescriptionFontSizeMobile )};
 		}
 	`;
 
@@ -213,6 +216,11 @@ const Edit = ({
 				changeStyle={ changeStyle }
 				categoriesList={ categoriesList }
 				posts={posts}
+			/>
+
+			<Controls
+				attributes={ attributes }
+				setAttributes={ setAttributes }
 			/>
 
 			<div { ...blockProps } css={fontSizeStyle}>

@@ -1,5 +1,6 @@
 :root {
 	--o-posts-text-align: initial;
+	--o-posts-vert-align: initial;
 	--o-posts-img-br-radius: 5px;
 	--o-posts-img-width: initial;
 	--o-posts-title-text-size: initial;
@@ -109,6 +110,9 @@
 	}
 
 	.wp-block-themeisle-blocks-posts-grid-post-body {
+		display: flex;
+		flex-direction: column;
+		justify-content: var(--o-posts-vert-align);
 		padding-bottom: 15px;
 		text-align: var(--o-posts-text-align);
 

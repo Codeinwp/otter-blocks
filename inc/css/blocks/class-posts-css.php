@@ -34,6 +34,12 @@ class Posts_CSS extends Base_CSS {
 	public function render_css( $block ) {
 		$css = new CSS_Utility( $block );
 
+		$verticalValueMapping = array(
+			'top'    => 'flex-start',
+			'center' => 'center',
+			'bottom' => 'flex-end',
+		);
+
 		$css->add_item(
 			array(
 				'properties' => array(
@@ -42,8 +48,11 @@ class Posts_CSS extends Base_CSS {
 						'value'    => 'textAlign',
 					),
 					array(
-						'property' => '--o-posts-img-br-radius',
+						'property' => '--o-posts-vert-align',
 						'value'    => 'verticalAlign',
+						'format'   => function( $value, $attrs ) use ( $verticalValueMapping ) {
+							return $verticalValueMapping[ $value ];
+						},
 					),
 					array(
 						'property' => '--o-posts-img-width',
@@ -56,7 +65,7 @@ class Posts_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'query' => '@media ( min-width: 960px )',
+				'query'      => '@media ( min-width: 960px )',
 				'properties' => array(
 					array(
 						'property' => '--o-posts-title-text-size',
@@ -74,7 +83,7 @@ class Posts_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'query' => '@media ( min-width: 600px ) and ( max-width: 960px )',
+				'query'      => '@media ( min-width: 600px ) and ( max-width: 960px )',
 				'properties' => array(
 					array(
 						'property' => '--o-posts-title-text-size',
@@ -92,7 +101,7 @@ class Posts_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'query' => '@media ( max-width: 600px )',
+				'query'      => '@media ( max-width: 600px )',
 				'properties' => array(
 					array(
 						'property' => '--o-posts-title-text-size',
