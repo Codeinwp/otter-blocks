@@ -55,7 +55,6 @@ const fieldMapping = {
 	description: 'displayDescription'
 };
 
-
 export const SortableItem = ({
 	attributes,
 	setAttributes,
@@ -125,135 +124,6 @@ export const SortableItem = ({
 		} else if ( 'Mobile' === getView ) {
 			setAttributes({ customDescriptionFontSizeMobile: value });
 		}
-	};
-
-	const FeaturedImage = ({ key }) => {
-		return (
-			<Fragment key={key}>
-				<SelectControl
-					label={ __( 'Image Size', 'otter-blocks' ) }
-					value={ attributes.imageSize }
-					options={ window.themeisleGutenberg.imageSizes.map( size => ({
-						label: startCase( toLower( size ) ),
-						value: size
-					}) ) }
-					onChange={ imageSize => setAttributes({ imageSize }) }
-				/>
-				<ToggleControl
-					label={ __( 'Crop image to fit', 'otter-blocks' ) }
-					checked={ attributes.cropImage }
-					onChange={ cropImage => setAttributes({ cropImage }) }
-				/>
-				<ToggleControl
-					label={ __( 'Display box shadow', 'otter-blocks' ) }
-					checked={ attributes.imageBoxShadow }
-					onChange={ imageBoxShadow => setAttributes({ imageBoxShadow }) }
-				/>
-				<RangeControl
-					label={ __( 'Border Radius', 'otter-blocks' ) }
-					value={ attributes.borderRadius }
-					onChange={ borderRadius => setAttributes({ borderRadius }) }
-					min={ 0 }
-					max={ 50 }
-					allowReset
-				/>
-				<RangeControl
-					label={ __( 'Image Width', 'otter-blocks' ) }
-					value={ attributes.imageWidth }
-					onChange={ imageWidth => setAttributes({ imageWidth }) }
-					min={ 0 }
-					max={ 500 }
-					allowReset
-				/>
-			</Fragment>
-		);
-	};
-
-	const PostTitle = ({ key }) => {
-		return (
-			<Fragment key={key}>
-				<SelectControl
-					label={ __( 'Title Tag', 'otter-blocks' ) }
-					value={ attributes.titleTag || 'h5' }
-					options={ [
-						{ label: __( 'H1', 'otter-blocks' ), value: 'h1' },
-						{ label: __( 'H2', 'otter-blocks' ), value: 'h2' },
-						{ label: __( 'H3', 'otter-blocks' ), value: 'h3' },
-						{ label: __( 'H4', 'otter-blocks' ), value: 'h4' },
-						{ label: __( 'H5', 'otter-blocks' ), value: 'h5' },
-						{ label: __( 'H6', 'otter-blocks' ), value: 'h6' }
-					] }
-					onChange={ titleTag => setAttributes({ titleTag }) }
-				/>
-				<ResponsiveControl
-					label={ __( 'Font size', 'otter-blocks' ) }
-				>
-					<RangeControl
-						value={ getTitleFontSize() }
-						onChange={ changeTitleFontSize }
-						min={ 0 }
-						max={ 50 }
-						allowReset
-					/>
-				</ResponsiveControl>
-			</Fragment>
-		);
-	};
-
-	const PostMeta = ({ key }) => {
-		return (
-			<Fragment key={key}>
-				<ToggleControl
-					label={ __( 'Display post date', 'otter-blocks' ) }
-					checked={ attributes.displayDate }
-					onChange={ displayDate => setAttributes({ displayDate }) }
-				/>
-				<ToggleControl
-					label={ __( 'Display author', 'otter-blocks' ) }
-					checked={ attributes.displayAuthor }
-					onChange={ displayAuthor => setAttributes({ displayAuthor }) }
-				/>
-				<ToggleControl
-					label={ __( 'Display comments', 'otter-blocks' ) }
-					checked={ attributes.displayComments }
-					onChange={ displayComments => setAttributes({ displayComments }) }
-				/>
-				<ToggleControl
-					label={ __( 'Display category', 'otter-blocks' ) }
-					checked={ attributes.displayPostCategory }
-					onChange={ displayPostCategory => setAttributes({ displayPostCategory }) }
-				/>
-			</Fragment>
-		);
-	};
-
-	const Excerpt = ({ key }) => {
-		return (
-			<Fragment key={key}>
-				<TextControl
-					label={ __( 'Excerpt Limit', 'otter-blocks' ) }
-					type="number"
-					value={ attributes.excerptLimit }
-					onChange={ excerptLimit => setAttributes({ excerptLimit }) }
-				/>
-				<ToggleControl
-					label={ __( 'Display read more link', 'otter-blocks' ) }
-					checked={ attributes.displayReadMoreLink }
-					onChange={ displayReadMoreLink => setAttributes({ displayReadMoreLink }) }
-				/>
-				<ResponsiveControl
-					label={ __( 'Font size', 'otter-blocks' ) }
-				>
-					<RangeControl
-						value={ getDescriptionFontSize() }
-						onChange={ changeDescriptionFontSize }
-						min={ 0 }
-						max={ 50 }
-						allowReset
-					/>
-				</ResponsiveControl>
-			</Fragment>
-		);
 	};
 
 
@@ -331,10 +201,125 @@ export const SortableItem = ({
 					) }
 					key={`control-${value}`}
 				>
-					{ ( 'image' === value ) && <FeaturedImage key={`image-${value}`} /> }
-					{ ( 'title' === value ) && <PostTitle key={`title-${value}`} /> }
-					{ ( 'meta' === value ) && <PostMeta key={`meta-${value}`} /> }
-					{ ( 'description' === value ) && <Excerpt key={`desc-${value}`} /> }
+					{
+						( 'image' === value ) && (
+							<Fragment >
+								<SelectControl
+									label={ __( 'Image Size', 'otter-blocks' ) }
+									value={ attributes.imageSize }
+									options={ window.themeisleGutenberg.imageSizes.map( size => ({
+										label: startCase( toLower( size ) ),
+										value: size
+									}) ) }
+									onChange={ imageSize => setAttributes({ imageSize }) }
+								/>
+								<ToggleControl
+									label={ __( 'Crop image to fit', 'otter-blocks' ) }
+									checked={ attributes.cropImage }
+									onChange={ cropImage => setAttributes({ cropImage }) }
+								/>
+								<ToggleControl
+									label={ __( 'Display box shadow', 'otter-blocks' ) }
+									checked={ attributes.imageBoxShadow }
+									onChange={ imageBoxShadow => setAttributes({ imageBoxShadow }) }
+								/>
+								<RangeControl
+									label={ __( 'Border Radius', 'otter-blocks' ) }
+									value={ attributes.borderRadius }
+									onChange={ borderRadius => setAttributes({ borderRadius }) }
+									min={ 0 }
+									max={ 50 }
+									allowReset
+								/>
+								<RangeControl
+									label={ __( 'Image Width', 'otter-blocks' ) }
+									value={ attributes.imageWidth }
+									onChange={ imageWidth => setAttributes({ imageWidth }) }
+									min={ 0 }
+									max={ 500 }
+									allowReset
+								/>
+							</Fragment>
+						)
+					}
+					{ ( 'title' === value ) && (
+						<Fragment >
+							<SelectControl
+								label={ __( 'Title Tag', 'otter-blocks' ) }
+								value={ attributes.titleTag || 'h5' }
+								options={ [
+									{ label: __( 'H1', 'otter-blocks' ), value: 'h1' },
+									{ label: __( 'H2', 'otter-blocks' ), value: 'h2' },
+									{ label: __( 'H3', 'otter-blocks' ), value: 'h3' },
+									{ label: __( 'H4', 'otter-blocks' ), value: 'h4' },
+									{ label: __( 'H5', 'otter-blocks' ), value: 'h5' },
+									{ label: __( 'H6', 'otter-blocks' ), value: 'h6' }
+								] }
+								onChange={ titleTag => setAttributes({ titleTag }) }
+							/>
+							<ResponsiveControl
+								label={ __( 'Font size', 'otter-blocks' ) }
+							>
+								<RangeControl
+									value={ getTitleFontSize() }
+									onChange={ changeTitleFontSize }
+									min={ 0 }
+									max={ 50 }
+									allowReset
+								/>
+							</ResponsiveControl>
+						</Fragment>
+					) }
+					{ ( 'meta' === value ) && (
+						<Fragment >
+							<ToggleControl
+								label={ __( 'Display post date', 'otter-blocks' ) }
+								checked={ attributes.displayDate }
+								onChange={ displayDate => setAttributes({ displayDate }) }
+							/>
+							<ToggleControl
+								label={ __( 'Display author', 'otter-blocks' ) }
+								checked={ attributes.displayAuthor }
+								onChange={ displayAuthor => setAttributes({ displayAuthor }) }
+							/>
+							<ToggleControl
+								label={ __( 'Display comments', 'otter-blocks' ) }
+								checked={ attributes.displayComments }
+								onChange={ displayComments => setAttributes({ displayComments }) }
+							/>
+							<ToggleControl
+								label={ __( 'Display category', 'otter-blocks' ) }
+								checked={ attributes.displayPostCategory }
+								onChange={ displayPostCategory => setAttributes({ displayPostCategory }) }
+							/>
+						</Fragment>
+					) }
+					{ ( 'description' === value ) && (
+						<Fragment >
+							<TextControl
+								label={ __( 'Excerpt Limit', 'otter-blocks' ) }
+								type="number"
+								value={ attributes.excerptLimit }
+								onChange={ excerptLimit => setAttributes({ excerptLimit }) }
+							/>
+							<ToggleControl
+								label={ __( 'Display read more link', 'otter-blocks' ) }
+								checked={ attributes.displayReadMoreLink }
+								onChange={ displayReadMoreLink => setAttributes({ displayReadMoreLink }) }
+							/>
+							<ResponsiveControl
+								label={ __( 'Font size', 'otter-blocks' ) }
+							>
+								<RangeControl
+									value={ getDescriptionFontSize() }
+									onChange={ changeDescriptionFontSize }
+									min={ 0 }
+									max={ 50 }
+									allowReset
+								/>
+							</ResponsiveControl>
+						</Fragment>
+					) }
 				</div>
 			) }
 		</div>
