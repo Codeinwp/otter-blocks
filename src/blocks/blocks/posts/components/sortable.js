@@ -32,8 +32,7 @@ import {
 
 import {
 	Fragment,
-	useState,
-	useEffect
+	useState
 } from '@wordpress/element';
 
 import { useSelect } from '@wordpress/data';
@@ -64,23 +63,13 @@ export const SortableItem = ({
 	disabled
 }) => {
 	const [ isOpen, setOpen ] = useState( false );
-	const [ templateLookUp, setTemplateLookUp ] = useState({
+	const templateLookUp = {
 		image: attributes.displayFeaturedImage,
 		category: attributes.displayCategory,
 		title: attributes.displayTitle,
 		meta: attributes.displayMeta,
 		description: attributes.displayDescription
-	});
-
-	useEffect( () => {
-		setTemplateLookUp({
-			image: attributes.displayFeaturedImage,
-			category: attributes.displayCategory,
-			title: attributes.displayTitle,
-			meta: attributes.displayMeta,
-			description: attributes.displayDescription
-		});
-	}, [ attributes.displayFeaturedImage, attributes.displayCategory, attributes.displayTitle, attributes.displayMeta, attributes.displayDescription ]);
+	};
 
 	const toggleField = fieldName => {
 		const field = fieldMapping[fieldName];
