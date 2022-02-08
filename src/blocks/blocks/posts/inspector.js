@@ -198,10 +198,10 @@ const Inspector = ({
 									label: __( 'Latest', 'otter-blocks' ),
 									value: 'latest'
 								},
-								...posts?.map( post => ({
+								...( posts?.map( post => ({
 									label: post?.title.rendered,
 									value: post?.id?.toString()
-								}) )
+								}) ) || {})
 							]}
 							onChange={ featuredPost => setAttributes({ featuredPost }) }
 						/>

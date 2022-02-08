@@ -93,32 +93,23 @@ const Layout = ({
 		return '';
 	};
 
-	const Container = ({ children }) => {
-		if ( 'grid' === attributes.style ) {
-			return (
-				<div className={ classnames(
-					'is-grid',
-					`wp-block-themeisle-blocks-posts-grid-columns-${ attributes.columns }`,
-					{ 'has-shadow': attributes.imageBoxShadow },
-					{'o-crop-img': attributes.cropImage }
-				) }>
-					{children}
-				</div>
-			);
-		}
-		return (
-			<div className={ classnames(
-				'is-list',
-				{ 'has-shadow': attributes.imageBoxShadow },
-				{'o-crop-img': attributes.cropImage }
-			) }>
-				{children}
-			</div>
-		);
-	};
-
 	return (
-		<Container>
+		<div
+			className={
+				'grid' === attributes.style ?
+					classnames(
+						'is-grid',
+						`wp-block-themeisle-blocks-posts-grid-columns-${ attributes.columns }`,
+						{ 'has-shadow': attributes.imageBoxShadow },
+						{'o-crop-img': attributes.cropImage }
+					) :
+					classnames(
+						'is-list',
+						{ 'has-shadow': attributes.imageBoxShadow },
+						{'o-crop-img': attributes.cropImage }
+					)
+			}
+		>
 			{
 				posts.filter( post => post ).map( post => {
 					const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
@@ -175,7 +166,7 @@ const Layout = ({
 
 				})
 			}
-		</Container>
+		</div>
 	);
 };
 
