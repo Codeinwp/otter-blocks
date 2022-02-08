@@ -233,33 +233,6 @@ const Inspector = ({
 						showBottomLabels
 					/>
 				</BaseControl>
-
-				<BaseControl
-					label={ __( 'Vertical alignment', 'otter-blocks' ) }
-				>
-					<ToogleGroupControl
-						value={ attributes.verticalAlign }
-						options={[
-							{
-								icon: <Icon icon={alignTop} />,
-								label: __( 'Top', 'otter-blocks' ),
-								value: 'top'
-							},
-							{
-								icon: <Icon icon={alignCenterVertical} />,
-								label: __( 'Center', 'otter-blocks' ),
-								value: 'center'
-							},
-							{
-								icon: <Icon icon={alignBottom} />,
-								label: __( 'Bottom', 'otter-blocks' ),
-								value: 'bottom'
-							}
-						]}
-						onChange={ verticalAlign => setAttributes({ verticalAlign }) }
-						showBottomLabels
-					/>
-				</BaseControl>
 			</PanelBody>
 
 			<PanelBody
