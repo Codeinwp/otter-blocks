@@ -133,8 +133,6 @@ s		E.g:
 					parent = parent.parentElement;
 				}
 
-				console.log( containers );
-
 				if ( containers.some( x => 'section' === x ) ) {
 					options.push({
 						label: __( 'Top Level Block', 'otter-blocks' ),
