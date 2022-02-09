@@ -19,7 +19,8 @@ import { useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
-	useEffect
+	useEffect,
+	useState
 } from '@wordpress/element';
 
 /**
@@ -39,6 +40,9 @@ const Edit = ({
 	onRemove,
 	mergeBlocks
 }) => {
+
+	const [ isURL, setIsUrl ] = useState( false );
+
 	const {
 		hasParent,
 		parentAttributes
@@ -70,6 +74,20 @@ const Edit = ({
 		});
 	}, [ hasParent, parentAttributes, attributes ]);
 
+	useEffect( () => {
+		if ( 'image' === attributes.library ) {
+			try {
+				const imageURL = new URL( attributes.icon );
+
+				if (  'http:' === imageURL?.protocol || 'https:' === imageURL?.protocol ) {
+					setIsUrl( true );
+				}
+			} catch ( _ ) {
+				setIsUrl( false );
+			}
+		}
+	}, [ attributes.library, attributes.icon ]);
+
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 	const iconClassName = `${ attributes.iconPrefix || parentAttributes.defaultIconPrefix } fa-${ attributes.icon || parentAttributes.defaultIcon }`;
 	const contentStyle = {
@@ -88,6 +106,7 @@ const Edit = ({
 
 	const blockProps = useBlockProps();
 
+
 	return (
 		<Fragment>
 			<Inspector
@@ -97,7 +116,7 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				{
-					'image' === attributes.library && attributes.icon ? (
+					'image' === attributes.library && isURL ? (
 						<img src={ attributes.icon } width={ parentAttributes.defaultSize + 'px' } />
 					) : (
 						'themeisle-icons' === attributes.library && attributes.icon && Icon !== undefined ? (
