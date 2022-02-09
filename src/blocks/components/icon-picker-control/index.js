@@ -266,44 +266,52 @@ const IconPickerControl = ({
 						) }
 					</Fragment>
 				) }
-				renderContent={ ({ onToggle }) => (
-					<MenuGroup label={ 'fontawesome' === library ? __( 'Font Awesome Icons', 'otter-blocks' ) : __( 'ThemeIsle Icons', 'otter-blocks' ) }>
-						<TextControl
-							value={ search }
-							onChange={ e => setSearch( e ) }
-						/>
+				renderContent={ ({ onToggle }) => {
 
-						<div className="components-popover__items">
-							{ selectedIcons.map( i => {
-								if ( 'fontawesome' === library && ( ! search || i.search.some( ( o ) => o.toLowerCase().match( search.toLowerCase() ) ) ) ) {
-									return (
-										<FontAwesomeIconsList
-											i={ i }
-											icon={ icon }
-											prefix={ prefix }
-											onToggle={ () => {
-												onToggle();
-												onChange({
-													name: i.name,
-													prefix: i.prefix
-												});
-											}}
-										/>
-									);
-								}
+					if ( 'image' === library ) {
+						return <Fragment></Fragment>;
+					}
 
-								if ( 'themeisle-icons' === library && ( ! search || i.toLowerCase().match( search.toLowerCase() ) ) ) {
-									return (
-										<ThemeIsleIconsList
-											i={ i }
-											onToggle={ onToggle }
-										/>
-									);
-								}
-							}) }
-						</div>
-					</MenuGroup>
-				) }
+					return (
+
+						<MenuGroup label={ 'fontawesome' === library ? __( 'Font Awesome Icons', 'otter-blocks' ) : __( 'ThemeIsle Icons', 'otter-blocks' ) }>
+							<TextControl
+								value={ search }
+								onChange={ e => setSearch( e ) }
+							/>
+
+							<div className="components-popover__items">
+								{ selectedIcons.map( i => {
+									if ( 'fontawesome' === library && ( ! search || i.search.some( ( o ) => o.toLowerCase().match( search.toLowerCase() ) ) ) ) {
+										return (
+											<FontAwesomeIconsList
+												i={ i }
+												icon={ icon }
+												prefix={ prefix }
+												onToggle={ () => {
+													onToggle();
+													onChange({
+														name: i.name,
+														prefix: i.prefix
+													});
+												}}
+											/>
+										);
+									}
+
+									if ( 'themeisle-icons' === library && ( ! search || i.toLowerCase().match( search.toLowerCase() ) ) ) {
+										return (
+											<ThemeIsleIconsList
+												i={ i }
+												onToggle={ onToggle }
+											/>
+										);
+									}
+								}) }
+							</div>
+						</MenuGroup>
+					);
+				} }
 			/>
 		</BaseControl>
 	);
