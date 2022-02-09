@@ -131,7 +131,7 @@ const IconPickerControl = ({
 			</Fragment>
 
 		) : (
-			<Fragment></Fragment>
+			<Fragment>{ __( 'Select Icon', 'otter-blocks' ) }</Fragment>
 		);
 	};
 
