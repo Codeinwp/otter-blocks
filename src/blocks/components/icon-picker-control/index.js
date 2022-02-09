@@ -115,6 +115,22 @@ const IconPickerControl = ({
 		setIcons( icons );
 	}, []);
 
+	const [ isURL, setIsUrl ] = useState( false );
+
+	useEffect( () => {
+		if ( 'image' === library ) {
+			try {
+				const imageURL = new URL( icon );
+
+				if (  'http:' === imageURL?.protocol || 'https:' === imageURL?.protocol ) {
+					setIsUrl( true );
+				}
+			} catch ( _ ) {
+				setIsUrl( false );
+			}
+		}
+	}, [ library, icon ]);
+
 	const [ search, setSearch ] = useState( '' );
 	const [ icons, setIcons ] = useState( null );
 
@@ -226,7 +242,13 @@ const IconPickerControl = ({
 												gap: '5px'
 											}}
 										>
-											<img src={ icon } width="130px" />
+											{ isURL ? (
+												<img src={ icon } width="130px" />
+											) : (
+												<span>
+													{__( 'Please select an image.', 'otter-blocks' )}
+												</span>
+											) }
 										</div>
 									</BaseControl>
 								) }
