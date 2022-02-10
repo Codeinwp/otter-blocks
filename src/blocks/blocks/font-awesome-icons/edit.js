@@ -11,11 +11,13 @@ import {
 /**
  * Internal dependencies
  */
-import defaultAttributes from './attributes.js';
+import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import themeIsleIcons from './../../helpers/themeisle-icons';
 import { blockInit } from '../../helpers/block-utility.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
 	attributes,

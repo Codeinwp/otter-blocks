@@ -8,30 +8,22 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import { inputIcon as icon } from '../../../helpers/icons.js';
 import edit from './edit.js';
 
-registerBlockType( 'themeisle-blocks/form-nonce', {
-	apiVersion: 2,
+const { name } = metadata;
+
+registerBlockType( name, {
+	...metadata,
 	title: __( 'Nonce Field', 'otter-blocks' ),
 	description: __( 'Protect the form from CSRF.', 'otter-blocks' ),
 	icon,
-	parent: [ 'themeisle-blocks/form' ],
-	category: 'themeisle-blocks',
 	keywords: [
 		'protection',
 		'csrf',
 		'field'
 	],
-	attributes: {
-		formId: {
-			type: 'string'
-		}
-	},
-	supports: {
-		align: [ 'wide', 'full' ],
-		inserter: false
-	},
 	edit,
 	save: () => null
 });

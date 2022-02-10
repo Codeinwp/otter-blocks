@@ -7,34 +7,10 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
-use ThemeIsle\GutenbergBlocks\Base_Block;
-
 /**
  * Class Add_To_Cart_Button_Block
  */
-class Add_To_Cart_Button_Block extends Base_Block {
-
-	/**
-	 * Every block needs a slug, so we need to define one and assign it to the `$this->block_slug` property
-	 *
-	 * @return mixed
-	 */
-	protected function set_block_slug() {
-		$this->block_slug = 'add-to-cart-button';
-	}
-
-	/**
-	 * Set the attributes required on the server side.
-	 *
-	 * @return mixed
-	 */
-	protected function set_attributes() {
-		$this->attributes = array(
-			'product' => array(
-				'type' => 'number',
-			),
-		);
-	}
+class Add_To_Cart_Button_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -45,7 +21,7 @@ class Add_To_Cart_Button_Block extends Base_Block {
 	 * @param array $attributes Block attrs.
 	 * @return mixed|string
 	 */
-	protected function render( $attributes ) {
+	public function render( $attributes ) {
 		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! class_exists( 'WooCommerce' ) || ! isset( $attributes['product'] ) ) {
 			return;
 		}

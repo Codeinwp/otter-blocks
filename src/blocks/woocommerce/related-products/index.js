@@ -11,28 +11,33 @@ import { Placeholder } from '@wordpress/components';
 
 import { store as icon } from '@wordpress/icons';
 
+/**
+ * Internal dependencies
+ */
+import metadata from './block.json';
+
+const { name } = metadata;
+
 if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Boolean( window.themeisleGutenberg.hasWooCommerce ) ) {
-	registerBlockType( 'themeisle-blocks/product-related-products', {
-		apiVersion: 2,
+	registerBlockType( name, {
+		...metadata,
 		title: __( 'Product Related Products', 'otter-blocks' ),
 		description: __( 'Display related products for your WooCommerce product.', 'otter-blocks' ),
 		icon,
-		category: 'themeisle-woocommerce-blocks',
 		keywords: [
 			'woocommerce',
 			'products',
 			'related products'
 		],
-		edit: () => <Placeholder>{ __( 'Related products will be displayed here on the product page.', 'otter-blocks' ) }</Placeholder>,
+		edit: () => <div { ...useBlockProps() }><Placeholder>{ __( 'Related products will be displayed here on the product page.', 'otter-blocks' ) }</Placeholder></div>,
 		save: () => null
 	});
 } else {
-	registerBlockType( 'themeisle-blocks/product-related-products', {
-		apiVersion: 2,
+	registerBlockType( name, {
+		...metadata,
 		title: __( 'Product Related Products', 'otter-blocks' ),
 		description: __( 'Display related products for your WooCommerce product.', 'otter-blocks' ),
 		icon,
-		category: 'themeisle-woocommerce-blocks',
 		keywords: [
 			'woocommerce',
 			'products',

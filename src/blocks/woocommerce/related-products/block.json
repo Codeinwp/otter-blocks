@@ -1,0 +1,10 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/product-related-products",
+	"title": "Product Related Products",
+	"category": "themeisle-woocommerce-blocks",
+	"description": "Display related products for your WooCommerce product.",
+	"keywords": [ "woocommerce", "products", "related products" ],
+	"textdomain": "otter-blocks"
+}

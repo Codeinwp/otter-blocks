@@ -7,69 +7,10 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
-use ThemeIsle\GutenbergBlocks\Base_Block;
-
 /**
  * Class Leaflet_Map_Block
  */
-class Leaflet_Map_Block extends Base_Block {
-	/**
-	 * Every block needs a slug, so we need to define one and assign it to the `$this->block_slug` property
-	 *
-	 * @return mixed
-	 */
-	protected function set_block_slug() {
-		$this->block_slug = 'leaflet-map';
-	}
-
-	/**
-	 * Set the attributes required on the server side.
-	 *
-	 * @return mixed
-	 */
-	protected function set_attributes() {
-		$this->attributes = array(
-			'id'          => array(
-				'type' => 'string',
-			),
-			'location'    => array(
-				'type'    => 'string',
-				'default' => 'La Sagrada Familia, Barcelona, Spain',
-			),
-			'latitude'    => array(
-				'type'    => 'string',
-				'default' => '41.4036299',
-			),
-			'longitude'   => array(
-				'type'    => 'string',
-				'default' => '2.1743558000000576',
-			),
-			'zoom'        => array(
-				'type'    => 'number',
-				'default' => 15,
-			),
-			'height'      => array(
-				'type'    => 'number',
-				'default' => 400,
-			),
-			'markers'     => array(
-				'type'    => 'object',
-				'default' => [],
-			),
-			'draggable'   => array(
-				'type'    => 'boolean',
-				'default' => true,
-			),
-			'zoomControl' => array(
-				'type'    => 'boolean',
-				'default' => true,
-			),
-			'bbox'        => array(
-				'type'    => 'string',
-				'default' => '2.1207046508789067%2C41.34807736149302%2C2.2288513183593754%2C41.45816618938139',
-			),
-		);
-	}
+class Leaflet_Map_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -80,7 +21,7 @@ class Leaflet_Map_Block extends Base_Block {
 	 * @param array $attributes Blocks attrs.
 	 * @return mixed|string
 	 */
-	protected function render( $attributes ) {
+	public function render( $attributes ) {
 		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
 			$link = 'https://www.openstreetmap.org/export/embed.html?bbox=' . stripslashes( esc_attr( $attributes['bbox'] ) ) . '&amp;layer=mapnik';
 

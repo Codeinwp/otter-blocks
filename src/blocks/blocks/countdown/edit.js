@@ -18,14 +18,16 @@ import moment from 'moment';
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import { blockInit } from '../../helpers/block-utility';
-import defaultAttributes from './attributes.js';
 import Inspector from './inspector.js';
 import {
 	getIntervalFromUnix,
 	getTimezone
 } from '../../helpers/helper-functions.js';
 import DisplayTime from './components/display-time.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const px = value => value ? `${ value }px` : value;
 

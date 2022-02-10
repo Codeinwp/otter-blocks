@@ -8,27 +8,23 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import { buttonsIcon as icon } from '../../../helpers/icons.js';
-import attributes from './attributes.js';
 import edit from './edit.js';
 import save from './save.js';
 
-registerBlockType( 'themeisle-blocks/button', {
-	apiVersion: 2,
+const { name } = metadata;
+
+registerBlockType( name, {
+	...metadata,
 	title: __( 'Button', 'otter-blocks' ),
 	description: __( 'Prompt visitors to take action with a button group.', 'otter-blocks' ),
-	parent: [ 'themeisle-blocks/button-group' ],
 	icon,
-	category: 'themeisle-blocks',
 	keywords: [
 		'button',
 		'buttons',
 		'button group'
 	],
-	attributes,
-	supports: {
-		reusable: false
-	},
 	styles: [
 		{
 			name: 'fill',

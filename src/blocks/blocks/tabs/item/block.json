@@ -1,0 +1,16 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/tabs-item",
+	"title": "Tab Item",
+	"category": "themeisle-blocks",
+	"description": "Organize and allow navigation between groups of content with Tabs block.",
+	"keywords": [ "media", "tab", "item" ],
+    "parent": [ "themeisle-blocks/tabs" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"title": {
+			"type": "string"
+		}
+	}
+}

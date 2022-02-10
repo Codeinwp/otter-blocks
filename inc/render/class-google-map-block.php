@@ -7,82 +7,10 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
-use ThemeIsle\GutenbergBlocks\Base_Block;
-
 /**
  * Class Google_Map_Block
  */
-class Google_Map_Block extends Base_Block {
-
-	/**
-	 * Every block needs a slug, so we need to define one and assign it to the `$this->block_slug` property
-	 *
-	 * @return mixed
-	 */
-	protected function set_block_slug() {
-		$this->block_slug = 'google-map';
-	}
-
-	/**
-	 * Set the attributes required on the server side.
-	 *
-	 * @return mixed
-	 */
-	protected function set_attributes() {
-		$this->attributes = array(
-			'id'                => array(
-				'type' => 'string',
-			),
-			'location'          => array(
-				'type'    => 'string',
-				'default' => 'La Sagrada Familia, Barcelona, Spain',
-			),
-			'latitude'          => array(
-				'type'    => 'string',
-				'default' => '41.4036299',
-			),
-			'longitude'         => array(
-				'type'    => 'string',
-				'default' => '2.1743558000000576',
-			),
-			'type'              => array(
-				'type'    => 'string',
-				'default' => 'roadmap',
-			),
-			'zoom'              => array(
-				'type'    => 'number',
-				'default' => 15,
-			),
-			'height'            => array(
-				'type'    => 'number',
-				'default' => 400,
-			),
-			'draggable'         => array(
-				'type'    => 'boolean',
-				'default' => true,
-			),
-			'mapTypeControl'    => array(
-				'type'    => 'boolean',
-				'default' => true,
-			),
-			'zoomControl'       => array(
-				'type'    => 'boolean',
-				'default' => true,
-			),
-			'fullscreenControl' => array(
-				'type'    => 'boolean',
-				'default' => true,
-			),
-			'streetViewControl' => array(
-				'type'    => 'boolean',
-				'default' => true,
-			),
-			'markers'           => array(
-				'type'    => 'object',
-				'default' => [],
-			),
-		);
-	}
+class Google_Map_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -94,7 +22,7 @@ class Google_Map_Block extends Base_Block {
 	 *
 	 * @return mixed|string
 	 */
-	protected function render( $attributes ) {
+	public function render( $attributes ) {
 		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
 			$apikey = get_option( 'themeisle_google_map_block_api_key' );
 

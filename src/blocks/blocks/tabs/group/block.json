@@ -1,0 +1,33 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/tabs",
+	"title": "Tabs",
+	"category": "themeisle-blocks",
+	"description": "Organize and allow navigation between groups of content with Tabs block.",
+	"keywords": [ "media", "tabs", "select" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"tabColor": {
+			"type": "string"
+		},
+		"borderColor": {
+			"type": "string"
+		},
+		"borderWidth": {
+			"type": "number"
+		},
+		"activeTitleColor": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"align": [ "left", "center", "right" ]
+	},
+	"editorStyle": "otter-tabs-editor",
+	"style": "otter-tabs-style",
+	"script": "otter-tabs"
+}

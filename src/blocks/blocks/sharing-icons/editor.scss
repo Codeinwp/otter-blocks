@@ -1,5 +1,23 @@
 @import 'style';
 
+.wp-block[data-align="left"] {
+	.wp-block-themeisle-blocks-sharing-icons {
+		text-align: left;
+	}
+}
+
+.wp-block[data-align="center"] {
+	.wp-block-themeisle-blocks-sharing-icons {
+		text-align: center;
+	}
+}
+
+.wp-block[data-align="right"] {
+	.wp-block-themeisle-blocks-sharing-icons {
+		text-align: right;
+	}
+}
+
 .wp-block-themeisle-toolbar {
 	&.is-active {
 

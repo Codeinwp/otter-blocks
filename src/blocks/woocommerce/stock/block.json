@@ -1,0 +1,10 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/product-stock",
+	"title": "Product Stock",
+	"category": "themeisle-woocommerce-blocks",
+	"description": "Display the stock description of your WooCommerce product.",
+	"keywords": [ "woocommerce", "products", "stock" ],
+	"textdomain": "otter-blocks"
+}

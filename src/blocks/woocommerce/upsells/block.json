@@ -1,0 +1,10 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/product-upsells",
+	"title": "Product Upsells",
+	"category": "themeisle-woocommerce-blocks",
+	"description": "Display upsells for your WooCommerce product.",
+	"keywords": [ "woocommerce", "products", "upsells" ],
+	"textdomain": "otter-blocks"
+}

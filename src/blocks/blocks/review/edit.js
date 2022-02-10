@@ -38,7 +38,7 @@ import {
 /**
  * Internal dependencies
  */
-import defaultAttributes from './attributes.js';
+import metadata from './block.json';
 import Inspector from './inspector.js';
 import {
 	check,
@@ -46,6 +46,8 @@ import {
 	StarFilled
 } from '../../helpers/icons.js';
 import { blockInit } from '../../helpers/block-utility.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
 	attributes,
@@ -109,16 +111,14 @@ const Edit = ({
 		setAttributes({ links });
 	};
 
-	let placeholderProps = useBlockProps({
-		id: attributes.id,
-		className: 'is-placeholder'
-	});
+	const isPlaceholder = ( 'object' === typeof status && null !== status && status.isError ) || 'isLoading' === status;
 
 	let blockProps = useBlockProps({
 		id: attributes.id,
-		style: {
+		className: isPlaceholder && 'is-placeholder',
+		style: ! isPlaceholder ? {
 			backgroundColor: attributes.backgroundColor
-		}
+		} : {}
 	});
 
 	if ( 'isLoading' === status ) {
@@ -130,7 +130,7 @@ const Edit = ({
 					productAttributes={ productAttributes }
 				/>
 
-				<div { ...placeholderProps }>
+				<div { ...blockProps }>
 					<Placeholder><Spinner /></Placeholder>
 				</div>
 			</Fragment>
@@ -146,7 +146,7 @@ const Edit = ({
 					productAttributes={ productAttributes }
 				/>
 
-				<div { ...placeholderProps }>
+				<div { ...blockProps }>
 					<Placeholder
 						instructions={ status.message }
 					/>

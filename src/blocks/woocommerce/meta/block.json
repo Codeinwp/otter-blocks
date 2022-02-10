@@ -1,0 +1,10 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/product-meta",
+	"title": "Product Meta",
+	"category": "themeisle-woocommerce-blocks",
+	"description": "Display the meta of your WooCommerce product.",
+	"keywords": [ "woocommerce", "products", "meta" ],
+	"textdomain": "otter-blocks"
+}

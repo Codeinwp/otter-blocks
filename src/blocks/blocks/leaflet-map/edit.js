@@ -26,9 +26,11 @@ import {
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import Inspector from './inspector';
-import defaultAttributes from './attributes';
 import { blockInit } from '../../helpers/block-utility';
+
+const { attributes: defaultAttributes } = metadata;
 
 /**
  * Definition of the action type for the marker reducer

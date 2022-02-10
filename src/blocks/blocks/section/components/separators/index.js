@@ -3,12 +3,6 @@
  */
 import classnames from 'classnames';
 
-/**
- * Internal dependencies
- */
-import './style.scss';
-import './editor.scss';
-
 const Separators = ({
 	type,
 	front,

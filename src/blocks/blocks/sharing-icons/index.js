@@ -8,27 +8,22 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import './style.scss';
-import './editor.scss';
+import metadata from './block.json';
 import { sharingIcon as icon } from '../../helpers/icons.js';
-import attributes from './attributes.js';
 import edit from './edit.js';
 
-registerBlockType( 'themeisle-blocks/sharing-icons', {
-	apiVersion: 2,
+const { name } = metadata;
+
+registerBlockType( name, {
+	...metadata,
 	title: __( 'Sharing Icons', 'otter-blocks' ),
 	description: __( 'Share buttons for your website visitors to share content on any social sharing service.', 'otter-blocks' ),
 	icon,
-	category: 'themeisle-blocks',
 	keywords: [
 		'social media',
 		'sharing',
 		'icons'
 	],
-	attributes,
-	supports: {
-		align: [ 'left', 'center', 'right' ]
-	},
 	styles: [
 		{ name: 'default', label: __( 'Regular', 'otter-blocks' ), isDefault: true },
 		{ name: 'icons', label: __( 'Icons Only', 'otter-blocks' ) }

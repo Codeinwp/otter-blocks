@@ -11,28 +11,33 @@ import { Placeholder } from '@wordpress/components';
 
 import { store as icon } from '@wordpress/icons';
 
+/**
+ * Internal dependencies
+ */
+import metadata from './block.json';
+
+const { name } = metadata;
+
 if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Boolean( window.themeisleGutenberg.hasWooCommerce ) ) {
-	registerBlockType( 'themeisle-blocks/product-upsells', {
-		apiVersion: 2,
+	registerBlockType( name, {
+		...metadata,
 		title: __( 'Product Upsells', 'otter-blocks' ),
 		description: __( 'Display upsells for your WooCommerce product.', 'otter-blocks' ),
 		icon,
-		category: 'themeisle-woocommerce-blocks',
 		keywords: [
 			'woocommerce',
 			'products',
 			'upsells'
 		],
-		edit: () => <Placeholder>{ __( 'Upsell products will be displayed here on the product page.', 'otter-blocks' ) }</Placeholder>,
+		edit: () => <div { ...useBlockProps() }><Placeholder>{ __( 'Upsell products will be displayed here on the product page.', 'otter-blocks' ) }</Placeholder></div>,
 		save: () => null
 	});
 } else {
-	registerBlockType( 'themeisle-blocks/product-upsells', {
-		apiVersion: 2,
+	registerBlockType( name, {
+		...metadata,
 		title: __( 'Product Upsells', 'otter-blocks' ),
 		description: __( 'Display upsells for your WooCommerce product.', 'otter-blocks' ),
 		icon,
-		category: 'themeisle-woocommerce-blocks',
 		keywords: [
 			'woocommerce',
 			'products',

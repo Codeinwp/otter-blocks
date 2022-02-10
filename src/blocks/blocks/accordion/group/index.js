@@ -8,26 +8,23 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import { buttonsIcon as icon } from '../../../helpers/icons.js';
-import attributes from './attributes.js';
 import edit from './edit.js';
 import save from './save.js';
 
-registerBlockType( 'themeisle-blocks/accordion', {
-	apiVersion: 2,
+const { name } = metadata;
+
+registerBlockType( name, {
+	...metadata,
 	title: __( 'Accordion', 'otter-blocks' ),
 	description: __( 'Vertically collapsing accordions perfect for displaying your FAQs.', 'otter-blocks' ),
 	icon,
-	category: 'themeisle-blocks',
 	keywords: [
 		'accordions',
 		'collapse',
 		'faq'
 	],
-	attributes,
-	supports: {
-		html: false
-	},
 	edit,
 	save
 });

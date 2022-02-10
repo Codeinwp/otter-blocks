@@ -48,14 +48,15 @@ import {
 /**
  * Internal dependencies
  */
-import defaultAttributes from './attributes.js';
+import metadata from './block.json';
 import layouts from '../layouts.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import BlockNavigatorControl from '../../../components/block-navigator-control/index.js';
 import Separators from '../components/separators/index.js';
 import { blockInit } from '../../../helpers/block-utility.js';
 import Library from '../../../components/template-library/index.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
 	attributes,
@@ -347,17 +348,15 @@ const Edit = ({
 	// +-------------------------------- Template Library --------------------------------+
 	const [ isLibraryOpen, setIsLibraryOpen ] = useState( false );
 
-	const placeholderProps = useBlockProps();
-
-	const blockProps = useBlockProps({
+	const blockProps = attributes.columns ? useBlockProps({
 		id: attributes.id,
 		className: classes,
 		style
-	});
+	}) : useBlockProps();;
 
 	if ( ! attributes.columns ) {
 		return (
-			<div { ...placeholderProps }>
+			<div { ...blockProps }>
 				<Placeholder
 					label={ __( 'Section', 'otter-blocks' )  }
 					instructions={ __( 'Select a layout to start with, or make one yourself.', 'otter-blocks' ) }
@@ -403,8 +402,6 @@ const Edit = ({
 
 	return (
 		<Fragment>
-			<BlockNavigatorControl clientId={ clientId } />
-
 			<Controls
 				attributes={ attributes }
 				setAttributes={ setAttributes }

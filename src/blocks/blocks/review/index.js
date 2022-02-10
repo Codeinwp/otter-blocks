@@ -8,27 +8,22 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
-import './style.scss';
-import './editor.scss';
+import metadata from './block.json';
 import { faIcon as icon } from '../../helpers/icons.js';
-import attributes from './attributes.js';
 import edit from './edit.js';
 
-registerBlockType( 'themeisle-blocks/review', {
-	apiVersion: 2,
+const { name } = metadata;
+
+registerBlockType( name, {
+	...metadata,
 	title: __( 'Product Review', 'otter-blocks' ),
 	description: __( 'Turn your posts into smart reviews with ratings and generate leads with a performing review block.', 'otter-blocks' ),
 	icon,
-	category: 'themeisle-blocks',
 	keywords: [
 		'product',
 		'review',
 		'stars'
 	],
-	attributes,
-	supports: {
-		html: false
-	},
 	styles: [
 		{
 			name: 'default',
