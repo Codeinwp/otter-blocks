@@ -36,15 +36,17 @@ import {
 /**
  * Internal dependencies
  */
-import { StyleSwitcherBlockControl } from '../../components/style-switcher-control/index.js';
+import metadata from './block.json';
+import Controls from './controls.js';
 import Inspector from './inspector.js';
+import { blockInit } from '../../helpers/block-utility.js';
 import Layout from './components/layout/index.js';
 import { _align, getCustomPostTypeSlugs, _px } from '../../helpers/helper-functions.js';
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
-import { blockInit } from '../../helpers/block-utility.js';
-import Controls from './controls.js';
-import defaultAttributes from './attributes.js';
+import { StyleSwitcherBlockControl } from '../../components/style-switcher-control/index.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
 	attributes,
