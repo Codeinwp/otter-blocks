@@ -117,7 +117,13 @@ const Edit = ({
 			<div { ...blockProps }>
 				{
 					'image' === attributes.library && isURL ? (
-						<img src={ attributes.icon } width={ parentAttributes.defaultSize + 'px' } />
+						<img
+							src={ attributes.icon }
+							width={ parentAttributes.defaultSize + 'px' }
+							style={ {
+								minWidth: parentAttributes.defaultSize + 'px'
+							} }
+						/>
 					) : (
 						'themeisle-icons' === attributes.library && attributes.icon && Icon !== undefined ? (
 							<Icon
@@ -127,7 +133,8 @@ const Edit = ({
 								) }
 								style={ {
 									...iconStyle,
-									width: parentAttributes.defaultSize + 'px'
+									width: parentAttributes.defaultSize + 'px',
+									minWidth: parentAttributes.defaultSize + 'px'
 								} }
 							/>
 						) : (

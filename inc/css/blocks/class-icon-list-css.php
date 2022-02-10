@@ -104,6 +104,12 @@ class Icon_List_CSS extends Base_CSS {
 						'property' => 'fill',
 						'value'    => 'defaultIconColor',
 					),
+					array(
+						'property' => 'min-width',
+						'value'    => 'defaultSize',
+						'unit'     => 'px',
+						'default'  => 20,
+					),
 				),
 			)
 		);
@@ -128,6 +134,12 @@ class Icon_List_CSS extends Base_CSS {
 				'properties' => array(
 					array(
 						'property' => 'width',
+						'value'    => 'defaultSize',
+						'unit'     => 'px',
+						'default'  => 20,
+					),
+					array(
+						'property' => 'min-width',
 						'value'    => 'defaultSize',
 						'unit'     => 'px',
 						'default'  => 20,
