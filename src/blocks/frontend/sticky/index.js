@@ -170,7 +170,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 		return;
 	}
 
-	// Calculate the container position in the page
+	// Calculate the container positions in the page
 	const containerHeight = container?.getBoundingClientRect()?.height || 0;
 	const containerTopPosition = container ? container?.getBoundingClientRect()?.top + scrollTop : 0;
 	const containerBottomPosition = containerTopPosition + ( container?.getBoundingClientRect()?.height || 0 );
@@ -178,14 +178,14 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 	// The new positions on the screen when the sticky mod is active
 	const offsetY = offset;
 
-	// We need to activate the sticky mode more early for smooth transition
+	// We need to activate the sticky mode early for smooth transition
 	const activationOffset = offset + 20;
 
 	/*
 		OBSERVER
 
 		Register the element in observer so that it can be aware of the other sticky elements.
-		The observer must be optional. The usage need to take in considaration in the case in which this is
+		The observer must be optional. The usage need to take in considaration the case in which this is
 		not defined.
 	*/
 	let activate, deactivate, calculateGap, calculateOpacity, earlyActivate, earlyDeactivate, calculateEarlyActivation, isActive, isEarlyActivated, index;
