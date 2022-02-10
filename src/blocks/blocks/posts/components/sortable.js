@@ -71,7 +71,7 @@ export const SortableItem = ({
 	};
 
 	const toggleField = fieldName => {
-		const field = fieldMapping[fieldName];
+		const field = fieldMapping[fieldName] || fieldName;
 		setAttributes({ [field]: ! attributes[field] });
 	};
 
@@ -138,14 +138,6 @@ export const SortableItem = ({
 		/* translators: %s Label */
 		message = sprintf( __( 'Hide %s', 'otter-blocks' ), label );
 	}
-
-	console.log({
-		value,
-		icon,
-		edit,
-		message,
-		display: attributes.displayFeaturedImage
-	});
 
 	return (
 		<div
