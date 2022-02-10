@@ -7,37 +7,10 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
-use ThemeIsle\GutenbergBlocks\Base_Block;
-
 /**
  * Class Plugin_Card_Block
  */
-class Plugin_Card_Block extends Base_Block {
-
-	/**
-	 * Every block needs a slug, so we need to define one and assign it to the `$this->block_slug` property
-	 *
-	 * @return mixed
-	 */
-	protected function set_block_slug() {
-		$this->block_slug = 'plugin-cards';
-	}
-
-	/**
-	 * Set the attributes required on the server side.
-	 *
-	 * @return mixed
-	 */
-	protected function set_attributes() {
-		$this->attributes = array(
-			'slug'      => array(
-				'type' => 'string',
-			),
-			'className' => array(
-				'type' => 'string',
-			),
-		);
-	}
+class Plugin_Card_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -48,7 +21,7 @@ class Plugin_Card_Block extends Base_Block {
 	 * @param array $attributes Blocks attrs.
 	 * @return mixed|string
 	 */
-	protected function render( $attributes ) {
+	public function render( $attributes ) {
 		if ( empty( $attributes['slug'] ) ) {
 			return;
 		}
@@ -72,13 +45,9 @@ class Plugin_Card_Block extends Base_Block {
 				$icon = $results->icons['default'];
 			}
 
-			$class = 'wp-block-themeisle-blocks-plugin-cards';
+			$wrapper_attributes = get_block_wrapper_attributes();
 
-			if ( isset( $attributes['className'] ) ) {
-				$class .= ' ' . esc_attr( $attributes['className'] );
-			}
-
-			$markup = '<div class="' . esc_attr( $class ) . '">
+			$markup = '<div ' . $wrapper_attributes . '>
 				<div class="wp-block-themeisle-blocks-plugin-cards-wrapper">
 					<div class="wp-block-themeisle-blocks-plugin-cards-header">
 						<div class="wp-block-themeisle-blocks-plugin-cards-main">

@@ -1,17 +1,20 @@
 /**
  * WordPress dependencies
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
+	const blockProps = useBlockProps.save({
+		id: attributes.id
+	});
+
 	return (
-		<div
-			id={ attributes.id }
-			className={ className }
-		>
+		<div { ...blockProps }>
 			<div className="wp-block-themeisle-blocks-tabs__content">
 				<InnerBlocks.Content />
 			</div>

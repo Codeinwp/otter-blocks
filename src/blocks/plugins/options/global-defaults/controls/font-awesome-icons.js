@@ -25,7 +25,7 @@ import {
  */
 import ColorBaseControl from '../../../../components/color-base-control/index.js';
 
-const ButtonGroupBlock = ({
+const FontAwesomeIcons = ({
 	blockName,
 	defaults,
 	changeConfig
@@ -161,4 +161,4 @@ const ButtonGroupBlock = ({
 	);
 };
 
-export default ButtonGroupBlock;
+export default FontAwesomeIcons;

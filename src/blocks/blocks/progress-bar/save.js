@@ -3,14 +3,23 @@
  */
 import classnames from 'classnames';
 
-const Save = ({ attributes, className }) => {
+/**
+ * WordPress dependencies
+ */
+import { useBlockProps } from '@wordpress/block-editor';
+
+const Save = ({
+	attributes
+}) => {
+	const blockProps = useBlockProps.save({
+		id: attributes.id,
+		className: classnames({ 'has-tooltip': 'tooltip' === attributes.percentagePosition }),
+		'data-percent': attributes.percentage,
+		'data-duration': attributes.duration
+	});
+
 	return (
-		<div
-			className={ classnames( className, { 'has-tooltip': 'tooltip' === attributes.percentagePosition }) }
-			id={ attributes.id }
-			data-percent={ attributes.percentage }
-			data-duration={ attributes.duration }
-		>
+		<div { ...blockProps }>
 			{ ( 'outer' === attributes.titleStyle || 'outer' === attributes.percentagePosition ) && (
 				<div className="wp-block-themeisle-blocks-progress-bar__outer">
 					{ 'outer' === attributes.titleStyle && (

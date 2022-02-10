@@ -1,6 +1,13 @@
+/** @jsx jsx */
+
 /**
  * External dependencies.
  */
+import {
+	css,
+	jsx
+} from '@emotion/react';
+
 import classnames from 'classnames';
 
 import getSymbolFromCurrency from 'currency-symbol-map';
@@ -13,7 +20,10 @@ import {
 	sprintf
 } from '@wordpress/i18n';
 
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import {
 	Placeholder,
@@ -28,7 +38,7 @@ import {
 /**
  * Internal dependencies
  */
-import defaultAttributes from './attributes.js';
+import metadata from './block.json';
 import Inspector from './inspector.js';
 import {
 	check,
@@ -37,11 +47,12 @@ import {
 } from '../../helpers/icons.js';
 import { blockInit } from '../../helpers/block-utility.js';
 
+const { attributes: defaultAttributes } = metadata;
+
 const Edit = ({
 	attributes,
 	setAttributes,
 	clientId,
-	className,
 	isSelected,
 	status = 'isInactive',
 	productAttributes = {}
@@ -100,6 +111,16 @@ const Edit = ({
 		setAttributes({ links });
 	};
 
+	const isPlaceholder = ( 'object' === typeof status && null !== status && status.isError ) || 'isLoading' === status;
+
+	let blockProps = useBlockProps({
+		id: attributes.id,
+		className: isPlaceholder && 'is-placeholder',
+		style: ! isPlaceholder ? {
+			backgroundColor: attributes.backgroundColor
+		} : {}
+	});
+
 	if ( 'isLoading' === status ) {
 		return (
 			<Fragment>
@@ -109,7 +130,9 @@ const Edit = ({
 					productAttributes={ productAttributes }
 				/>
 
-				<Placeholder><Spinner /></Placeholder>
+				<div { ...blockProps }>
+					<Placeholder><Spinner /></Placeholder>
+				</div>
 			</Fragment>
 		);
 	}
@@ -123,9 +146,11 @@ const Edit = ({
 					productAttributes={ productAttributes }
 				/>
 
-				<Placeholder
-					instructions={ status.message }
-				/>
+				<div { ...blockProps }>
+					<Placeholder
+						instructions={ status.message }
+					/>
+				</div>
 			</Fragment>
 		);
 	}
@@ -138,13 +163,7 @@ const Edit = ({
 				productAttributes={ productAttributes }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={ className }
-				style={ {
-					backgroundColor: attributes.backgroundColor
-				} }
-			>
+			<div { ...blockProps }>
 				<div
 					className="wp-block-themeisle-blocks-review__header"
 					style={ {
@@ -240,9 +259,11 @@ const Edit = ({
 								placeholder={ __( 'Product description or a small review…', 'otter-blocks' ) }
 								value={ productAttributes?.description }
 								tagName="p"
-								style={ {
-									color: attributes.textColor
-								} }
+								css={ css`
+									p {
+										color: ${ attributes.textColor } !important;
+									}
+								` }
 							/>
 						) }
 					</div>

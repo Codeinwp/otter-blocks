@@ -1,0 +1,57 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/progress-bar",
+	"title": "Progress Bar",
+	"category": "themeisle-blocks",
+	"description": "Show your progress with a beautiful Progress Bar block.",
+	"keywords": [ "progress", "bar", "skills" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"title": {
+			"type": "string",
+			"default": "Skill"
+		},
+		"percentage": {
+			"type": "number",
+			"default": 50
+		},
+		"duration": {
+			"type": "number",
+			"default": 2
+		},
+		"titleStyle": {
+			"type": "string",
+			"default": "default"
+		},
+		"percentagePosition": {
+			"type": "string",
+			"default": "default"
+		},
+		"height": {
+			"type": "number",
+			"default": 30
+		},
+		"borderRadius": {
+			"type": "number"
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"barBackgroundColor": {
+			"type": "string"
+		},
+		"titleColor": {
+			"type": "string"
+		},
+		"percentageColor": {
+			"type": "string"
+		}
+	},
+	"editorStyle": "otter-progress-bar-editor",
+	"style": "otter-progress-bar-style",
+	"script": "otter-progress-bar"
+}

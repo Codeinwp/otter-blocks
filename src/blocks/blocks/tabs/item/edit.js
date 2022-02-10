@@ -10,7 +10,8 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	InnerBlocks,
-	RichText
+	RichText,
+	useBlockProps
 } from '@wordpress/block-editor';
 
 import {
@@ -31,7 +32,6 @@ import Inspector from './inspector.js';
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId
 }) => {
 	const contentRef = useRef( null );
@@ -72,6 +72,10 @@ const Edit = ({
 		}
 	};
 
+	const blockProps = useBlockProps({
+		ref: contentRef
+	});
+
 	return (
 		<Fragment>
 			<Inspector
@@ -79,10 +83,7 @@ const Edit = ({
 				selectParent={ () => selectBlock( parentClientId ) }
 			/>
 
-			<div
-				className={ className }
-				ref={ contentRef }
-			>
+			<div { ...blockProps }>
 				<RichText
 					placeholder={ __( 'Add title…', 'otter-blocks' ) }
 					value={ attributes.title }

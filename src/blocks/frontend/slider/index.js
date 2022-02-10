@@ -7,7 +7,7 @@ import domReady from '@wordpress/dom-ready';
 
 const SliderArrows = '<div class="glide__arrows" data-glide-el="controls"><button class="glide__arrow glide__arrow--left" data-glide-dir="<"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewbox="0 0 100 100" role="img" aria-hidden="true"><path d="M 10,50 L 60,100 L 70,90 L 30,50  L 70,10 L 60,0 Z"></path></svg></button><button class="glide__arrow glide__arrow--right" data-glide-dir="&gt;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewbox="0 0 100 100" role="img" aria-hidden="true"><path d="M 10,50 L 60,100 L 70,90 L 30,50  L 70,10 L 60,0 Z"></path></svg></button></div>';
 
-domReady( () => {
+const init = () => {
 	const sliders = document.querySelectorAll( '.wp-block-themeisle-blocks-slider' );
 
 	sliders.forEach( slider => {
@@ -43,4 +43,13 @@ domReady( () => {
 			track.style.height = slider.dataset.height;
 		}
 	});
+};
+
+domReady( () => {
+	const t = setInterval( () => {
+		if ( window?.Glide !== undefined ) {
+			clearInterval( t );
+			init();
+		}
+	}, 500 );
 });

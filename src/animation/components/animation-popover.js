@@ -68,16 +68,16 @@ function AnimationPopover({
 		);
 	};
 
-	const id = `inspector-themeisle-animations-control-${ instanceId }`;
+	const id = `inspector-o-animations-control-${ instanceId }`;
 
 	return (
 		<BaseControl label={ __( 'Animation', 'otter-blocks' ) } id={ id }>
 			<Dropdown
-				contentClassName="themeisle-animations-control__popover"
+				contentClassName="o-animations-control__popover"
 				position="bottom center"
 				renderToggle={ ({ isOpen, onToggle }) => (
 					<Button
-						className="themeisle-animations-control__button"
+						className="o-animations-control__button"
 						id={ id }
 						onClick={ onToggle }
 						aria-expanded={ isOpen }
@@ -104,7 +104,7 @@ function AnimationPopover({
 											categories.map( ( category ) => {
 												return category.value ===
 													animation.value ? (
-														<div className="themeisle-animations-control__category">
+														<div className="o-animations-control__category">
 															{ category.label }
 														</div>
 													) : (

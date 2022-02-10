@@ -19,6 +19,8 @@ import { __ } from '@wordpress/i18n';
 
 import apiFetch from '@wordpress/api-fetch';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import {
 	Fragment,
 	useEffect,
@@ -28,16 +30,20 @@ import {
 /**
  * Internal dependencies
  */
-import defaultAttributes from './attributes.js';
+import metadata from './block.json';
 import Placeholder from './placeholder.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import { blockInit } from '../../helpers/block-utility.js';
-import defaultReviewAttributes from '../review/attributes.js';
+import reviewMetadata from '../review/block.json';
 import {
 	StarFilled,
 	StarHalf
 } from '../../helpers/icons.js';
+
+const { attributes: defaultAttributes } = metadata;
+
+const { attributes: defaultReviewAttributes } = reviewMetadata;
 
 let tableImages = [];
 let tableName = [];
@@ -50,7 +56,6 @@ let tableLinks = [];
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId
 }) => {
 	useEffect( () => {
@@ -172,17 +177,23 @@ const Edit = ({
 		return stars;
 	};
 
+	const blockProps = useBlockProps({
+		id: attributes.id
+	});
+
 	if ( isEditing ) {
 		return (
-			<Placeholder
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-				data={ data }
-				onComplete={ () => setEditing( false ) }
-				isLoading={ isLoading }
-				isComplete={ isComplete }
-				isError={ isError }
-			/>
+			<div { ...blockProps }>
+				<Placeholder
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+					data={ data }
+					onComplete={ () => setEditing( false ) }
+					isLoading={ isLoading }
+					isComplete={ isComplete }
+					isError={ isError }
+				/>
+			</div>
 		);
 	}
 
@@ -195,10 +206,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<table
-				id={ attributes.id }
-				className={ className }
-			>
+			<table { ...blockProps }>
 				<thead>
 					<tr>
 						<th></th>

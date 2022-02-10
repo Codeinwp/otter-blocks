@@ -1,0 +1,23 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/accordion-item",
+    "title": "Accordion Item",
+	"category": "themeisle-blocks",
+    "description": "Vertically collapsing accordions perfect for displaying your FAQs.",
+    "keywords": [ "accordions", "collapse", "faq" ],
+    "parent": [ "themeisle-blocks/accordion" ],
+	"textdomain": "otter-blocks",
+    "attributes": {
+        "title": {
+            "type": "string"
+        },
+        "initialOpen": {
+            "type": "boolean",
+            "default": false
+        }
+    },
+	"supports": {
+		"reusable": false
+	}
+}

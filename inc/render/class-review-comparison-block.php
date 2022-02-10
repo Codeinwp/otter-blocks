@@ -7,48 +7,12 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
-use ThemeIsle\GutenbergBlocks\Main;
-use ThemeIsle\GutenbergBlocks\Base_Block;
+use ThemeIsle\GutenbergBlocks\Render\Review_Block;
 
 /**
  * Class Review_Comparison_Block
  */
-class Review_Comparison_Block extends Base_Block {
-
-	/**
-	 * Every block needs a slug, so we need to define one and assign it to the `$this->block_slug` property
-	 *
-	 * @return mixed
-	 */
-	protected function set_block_slug() {
-		$this->block_slug = 'review-comparison';
-	}
-
-	/**
-	 * Set the attributes required on the server side.
-	 *
-	 * @return mixed
-	 */
-	protected function set_attributes() {
-		$this->attributes = array(
-			'id'          => array(
-				'type' => 'string',
-			),
-			'className'   => array(
-				'type' => 'string',
-			),
-			'reviews'     => array(
-				'type'    => 'array',
-				'default' => array(),
-			),
-			'buttonColor' => array(
-				'type' => 'string',
-			),
-			'buttonText'  => array(
-				'type' => 'string',
-			),
-		);
-	}
+class Review_Comparison_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -59,7 +23,7 @@ class Review_Comparison_Block extends Base_Block {
 	 * @param array $attributes Blocks attrs.
 	 * @return mixed|string
 	 */
-	protected function render( $attributes ) {
+	public function render( $attributes ) {
 		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! isset( $attributes['reviews'] ) ) {
 			return;
 		}
@@ -84,7 +48,7 @@ class Review_Comparison_Block extends Base_Block {
 
 			$post_blocks = parse_blocks( $post->post_content );
 
-			$block = [];
+			$block = array();
 
 			foreach ( $post_blocks as $post_block ) {
 				if ( 'themeisle-blocks/review' === $post_block['blockName'] && substr( $post_block['attrs']['id'], -8 ) === $id[1] ) {
@@ -162,7 +126,7 @@ class Review_Comparison_Block extends Base_Block {
 
 			$table_price .= '<td>';
 			if ( isset( $block['attrs']['price'] ) ) {
-				$currency = Main::get_currency( isset( $block['attrs']['currency'] ) ? $block['attrs']['currency'] : 'USD' );
+				$currency = Review_Block::get_currency( isset( $block['attrs']['currency'] ) ? $block['attrs']['currency'] : 'USD' );
 
 				if ( isset( $block['attrs']['discounted'] ) ) {
 					$table_price .= '<del>' . $currency . $block['attrs']['price'] . '</del> ' . $currency . $block['attrs']['discounted'];
@@ -220,11 +184,15 @@ class Review_Comparison_Block extends Base_Block {
 			$table_links .= '</td>';
 		}
 
-		$id    = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-comparison-' . wp_rand( 10, 100 );
-		$class = isset( $attributes['className'] ) ? $attributes['className'] : '';
-		$class = 'wp-block-themeisle-blocks-review-comparison ' . esc_attr( $class );
+		$id = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-comparison-' . wp_rand( 10, 100 );
 
-		$html  = '<table id="' . esc_attr( $id ) . '" class="' . trim( $class ) . '">';
+		$wrapper_attributes = get_block_wrapper_attributes(
+			array(
+				'id' => $id,
+			) 
+		);
+
+		$html  = '<table ' . $wrapper_attributes . '>';
 		$html .= '	<thead>';
 		$html .= '		<tr>';
 		$html .= '			<th></th>';
@@ -290,7 +258,7 @@ class Review_Comparison_Block extends Base_Block {
 	 *
 	 * @return int
 	 */
-	protected function get_overall_ratings( $features ) {
+	public function get_overall_ratings( $features ) {
 		if ( count( $features ) <= 0 ) {
 			return 0;
 		}
@@ -316,7 +284,7 @@ class Review_Comparison_Block extends Base_Block {
 	 *
 	 * @return string
 	 */
-	protected function get_stars( $ratings = 0 ) {
+	public function get_stars( $ratings = 0 ) {
 		$stars = '';
 
 		for ( $i = 0; $i < 5; $i++ ) {

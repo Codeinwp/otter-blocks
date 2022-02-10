@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import { backup, Icon } from '@wordpress/icons';
+import { backup, settings, Icon } from '@wordpress/icons';
 
 /**
  * WordPress dependencies
@@ -73,7 +73,7 @@ const ControlPanelControl = ({
 										<Button
 											icon={ <Icon icon={ backup } /> }
 											label={ __( 'Reset to default', 'otter-blocks' ) }
-											shotTooltip={ true }
+											showTooltip={ true }
 											isTertiary
 											onClick={ () => setAttributes({ ...resetValues }) }
 										/>
@@ -81,9 +81,9 @@ const ControlPanelControl = ({
 
 									<Button
 										id={ id }
-										icon="admin-settings"
+										icon={ settings }
 										label={ label }
-										shotTooltip={ true }
+										showTooltip={ true }
 										onClick={ () => {
 											onToggle();
 											if ( onClick ) {

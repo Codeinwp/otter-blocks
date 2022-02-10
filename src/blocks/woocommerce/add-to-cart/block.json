@@ -1,0 +1,10 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/product-add-to-cart",
+	"title": "Product Add to Cart",
+	"category": "themeisle-woocommerce-blocks",
+	"description": "Display the add to cart section of your WooCommerce product.",
+	"keywords": [ "woocommerce", "products", "add to cart" ],
+	"textdomain": "otter-blocks"
+}

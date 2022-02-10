@@ -25,13 +25,15 @@
 			}
 
 			> div {
-				display: flex;
-				justify-content: space-between;
+				display: grid;
+				grid-template-columns: max-content auto min-content;
 				align-items: center;
 				padding: 18px 24px;
 
 				&::after {
 					content: '';
+					justify-self: end;
+					align-self: center;
 					border-right: 2px solid #1e1e1e;
 					border-bottom: 2px solid #1e1e1e;
 					width: 8px;

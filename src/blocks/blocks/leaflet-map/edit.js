@@ -11,6 +11,8 @@ import { merge } from 'lodash';
 
 import { __ } from '@wordpress/i18n';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import { ResizableBox } from '@wordpress/components';
 
 import {
@@ -24,9 +26,11 @@ import {
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import Inspector from './inspector';
-import defaultAttributes from './attributes';
 import { blockInit } from '../../helpers/block-utility';
+
+const { attributes: defaultAttributes } = metadata;
 
 /**
  * Definition of the action type for the marker reducer
@@ -43,7 +47,6 @@ const Edit = ({
 	clientId,
 	attributes,
 	setAttributes,
-	className,
 	isSelected,
 	toggleSelection
 }) => {
@@ -352,6 +355,8 @@ const Edit = ({
 		}
 	}, [ markersStore ]);
 
+	const blockProps = useBlockProps();
+
 	return (
 		<Fragment>
 			<Inspector
@@ -364,34 +369,32 @@ const Edit = ({
 				} }
 			/>
 
-			<ResizableBox
-				size={ {
-					height: attributes.height
-				} }
-				enable={ {
-					top: false,
-					right: false,
-					bottom: true,
-					left: false
-				} }
-				minHeight={ 100 }
-				maxHeight={ 1400 }
-				onResizeStart={ () => {
-					toggleSelection( false );
-				} }
-				onResizeStop={ ( event, direction, elt, delta ) => {
-					setAttributes({
-						height: parseInt( attributes.height + delta.height, 10 )
-					});
-					toggleSelection( true );
-				} }
-				className={ classnames(
-					'wp-block-themeisle-blocks-leaflet-map-resizer',
-					{ 'is-focused': isSelected }
-				) }
-			>
-				<div
-					className={ className }
+			<div { ...blockProps }>
+				<ResizableBox
+					size={ {
+						height: attributes.height
+					} }
+					enable={ {
+						top: false,
+						right: false,
+						bottom: true,
+						left: false
+					} }
+					minHeight={ 100 }
+					maxHeight={ 1400 }
+					onResizeStart={ () => {
+						toggleSelection( false );
+					} }
+					onResizeStop={ ( event, direction, elt, delta ) => {
+						setAttributes({
+							height: parseInt( attributes.height + delta.height, 10 )
+						});
+						toggleSelection( true );
+					} }
+					className={ classnames(
+						'wp-block-themeisle-blocks-leaflet-map-resizer',
+						{ 'is-focused': isSelected }
+					) }
 				>
 					<div
 						id={ attributes.id }
@@ -401,9 +404,8 @@ const Edit = ({
 							height: attributes.height || 400
 						} }>
 					</div>
-				</div>
-
-			</ResizableBox>
+				</ResizableBox>
+			</div>
 		</Fragment>
 	);
 };

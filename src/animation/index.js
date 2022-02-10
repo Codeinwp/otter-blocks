@@ -21,6 +21,7 @@ import { addFilter } from '@wordpress/hooks';
 import './editor.scss';
 
 import AnimationControls from './editor.js';
+import './count/index.js';
 
 const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 	return ( props ) => {

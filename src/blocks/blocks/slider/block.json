@@ -1,0 +1,87 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/slider",
+	"title": "Slider",
+	"category": "themeisle-blocks",
+	"description": "Minimal image slider to showcase beautiful images.",
+	"keywords": [ "slider", "gallery", "carousel" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"images": {
+			"type": "array",
+			"default": [],
+			"source": "query",
+			"selector": ".wp-block-themeisle-blocks-slider-item-wrapper",
+			"query": {
+			"id": {
+				"type": "number",
+				"source": "attribute",
+				"selector": "img",
+				"attribute": "data-id"
+			},
+			"url": {
+				"type": "string",
+				"source": "attribute",
+				"selector": "img",
+				"attribute": "src"
+			},
+			"alt": {
+				"type": "string",
+				"source": "attribute",
+				"selector": "img",
+				"attribute": "alt",
+				"default": ""
+			},
+			"caption": {
+				"type": "string",
+				"source": "html",
+				"selector": "figcaption",
+				"default": ""
+			}
+			}
+		},
+		"perView": {
+			"type": "number",
+			"default": 1
+		},
+		"gap": {
+			"type": "number",
+			"default": 0
+		},
+		"peek": {
+			"type": "number",
+			"default": 0
+		},
+		"autoplay": {
+			"type": "boolean",
+			"default": true
+		},
+		"delay": {
+			"type": "number",
+			"default": 2
+		},
+		"hideArrows": {
+			"type": "boolean",
+			"default": false
+		},
+		"hideBullets": {
+			"type": "boolean",
+			"default": false
+		},
+		"height": {
+			"type": "number",
+			"default": 400
+		}
+	},
+	"supports": {
+		"align": [ "wide", "full" ]
+	},
+	"editorStyle": "otter-slider-editor",
+	"style": "otter-slider-style",
+	"editorScript": "glidejs",
+	"script": "otter-slider"
+}

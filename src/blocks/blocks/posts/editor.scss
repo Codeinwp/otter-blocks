@@ -1,8 +1,5 @@
 .wp-block-themeisle-blocks-posts-grid {
-	display: flex;
-	flex-wrap: wrap;
-
-	&.has-shadow {
+	.has-shadow {
 		.wp-block-themeisle-blocks-posts-grid-post-blog {
 			.wp-block-themeisle-blocks-posts-grid-post {	
 				.wp-block-themeisle-blocks-posts-grid-post-image {
@@ -14,7 +11,9 @@
 		}
 	}
 
-	&.is-grid {
+	.is-grid {
+		display: flex;
+		flex-wrap: wrap;
 
 		&.wp-block-themeisle-blocks-posts-grid-columns-2 {
 			.wp-block-themeisle-blocks-posts-grid-post-blog {
@@ -45,7 +44,10 @@
 		}
 	}
 
-	&.is-list {
+	.is-list {
+		display: flex;
+		flex-wrap: wrap;
+
 		.wp-block-themeisle-blocks-posts-grid-post {
 			display: flex;
 	
@@ -260,10 +262,7 @@
 
 @media ( min-width: 600px ) and ( max-width: 960px ) {
 	.wp-block-themeisle-blocks-posts-grid {
-		display: flex;
-		flex-wrap: wrap;
-	
-		&.is-grid {
+		.is-grid {
 			.wp-block-themeisle-blocks-posts-grid-post-blog {
 				min-width: 33%;
 			}
@@ -273,10 +272,7 @@
 
 @media ( max-width: 600px ) {
 	.wp-block-themeisle-blocks-posts-grid {
-		display: flex;
-		flex-wrap: wrap;
-	
-		&.is-grid {
+		.is-grid {
 			.wp-block-themeisle-blocks-posts-grid-post-blog {
 				min-width: 100%;
 			}

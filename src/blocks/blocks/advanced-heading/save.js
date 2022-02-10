@@ -1,26 +1,24 @@
 /**
- * External dependencies
- */
-import classnames from 'classnames';
-
-/**
  * WordPress dependencies.
  */
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
+	const blockProps = useBlockProps.save({
+		id: attributes.id,
+		className: attributes.id
+	});
+
 	return (
 		<RichText.Content
 			tagName={ attributes.tag }
 			value={ attributes.content }
-			id={ attributes.id }
-			className={ classnames(
-				attributes.id,
-				className
-			) }
+			{ ...blockProps }
 		/>
 	);
 };

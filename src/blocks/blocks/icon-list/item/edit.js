@@ -8,7 +8,10 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import { createBlock } from '@wordpress/blocks';
 
@@ -22,15 +25,16 @@ import {
 /**
  * Internal dependencies
  */
-import defaultAttributes from './attributes.js';
+import metadata from './block.json';
 import Inspector from './inspector.js';
 import themeIsleIcons from './../../../helpers/themeisle-icons.js';
 import { blockInit } from '../../../helpers/block-utility.js';
 
+const { attributes: defaultAttributes } = metadata;
+
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	name,
 	clientId,
 	onReplace,
@@ -39,7 +43,6 @@ const Edit = ({
 }) => {
 	const {
 		hasParent,
-		parentClass,
 		parentAttributes
 	} = useSelect( select => {
 		const {
@@ -52,7 +55,6 @@ const Edit = ({
 
 		return {
 			hasParent: parentBlock ? true : false,
-			parentClass: parentBlock.attributes.className || '',
 			parentAttributes: parentBlock ? parentBlock.attributes : {}
 		};
 	}, []);
@@ -89,6 +91,8 @@ const Edit = ({
 		setAttributes({ content: value });
 	};
 
+	const blockProps = useBlockProps();
+
 	return (
 		<Fragment>
 			<Inspector
@@ -96,9 +100,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div
-				className={ className }
-			>
+			<div { ...blockProps }>
 				{ 'themeisle-icons' === attributes.library && attributes.icon && Icon !== undefined ? (
 					<Icon
 						className={ classnames(

@@ -50,13 +50,13 @@ const ResponsiveControl = ({
 
 	const getView = useSelect( select => {
 		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
 
-		return __experimentalGetPreviewDeviceType && ! isMobile ? __experimentalGetPreviewDeviceType() : getView();
+		return ! isMobile ? __experimentalGetPreviewDeviceType() : getView();
 	});
 
 	const { updateView } = useDispatch( 'themeisle-gutenberg/data' );
-	const { __experimentalSetPreviewDeviceType } = useDispatch( 'core/edit-post' ) ? useDispatch( 'core/edit-post' ) : false;
+	const { __experimentalSetPreviewDeviceType } = useDispatch( 'core/edit-post' );
 
 	const setView = __experimentalSetPreviewDeviceType && ! isMobile ? __experimentalSetPreviewDeviceType : updateView;
 

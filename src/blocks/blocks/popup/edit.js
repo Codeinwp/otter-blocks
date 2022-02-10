@@ -11,7 +11,10 @@ import {
  */
 import { __ } from '@wordpress/i18n';
 
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import { Button } from '@wordpress/components';
 
@@ -24,9 +27,11 @@ import {
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import Inspector from './inspector.js';
-import defaultAttributes from './attributes.js';
-import { blockInit } from '../../helpers/block-utility.js';
+import { blockInit } from '../../helpers/block-utility';
+
+const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
 	attributes,
@@ -55,6 +60,10 @@ const Edit = ({
 		}
 	};
 
+	const blockProps = useBlockProps({
+		id: attributes.id
+	});
+
 	return (
 		<Fragment>
 			<Inspector
@@ -62,10 +71,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={ className }
-			>
+			<div { ...blockProps }>
 				<Button
 					isPrimary
 					icon={ external }

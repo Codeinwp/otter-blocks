@@ -19,8 +19,6 @@ import { useState } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import './editor.scss';
-
 import { columnsIcon } from '../../../../helpers/icons.js';
 import Library from '../../../../components/template-library/index.js';
 

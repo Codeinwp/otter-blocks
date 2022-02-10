@@ -1,0 +1,10 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/product-rating",
+	"title": "Product Rating",
+	"category": "themeisle-woocommerce-blocks",
+	"description": "Display the rating of your WooCommerce product.",
+	"keywords": [ "woocommerce", "products", "rating" ],
+	"textdomain": "otter-blocks"
+}

@@ -102,7 +102,7 @@ class Block_Frontend extends Base_CSS {
 		$post_id    = $post_id ? $post_id : get_the_ID();
 		$fonts_list = get_post_meta( $post_id, '_themeisle_gutenberg_block_fonts', true );
 		$content    = get_post_field( 'post_content', $post_id );
-		$blocks     = $this->parse_blocks( $content );
+		$blocks     = parse_blocks( $content );
 
 		if ( is_array( $blocks ) || ! empty( $blocks ) ) {
 			$this->enqueue_reusable_fonts( $blocks );
@@ -268,7 +268,7 @@ class Block_Frontend extends Base_CSS {
 
 		$content = get_post_field( 'post_content', $post_id );
 
-		$blocks = $this->parse_blocks( $content );
+		$blocks = parse_blocks( $content );
 
 		if ( is_array( $blocks ) || ! empty( $blocks ) ) {
 			$this->enqueue_reusable_styles( $blocks, $footer );
@@ -379,7 +379,7 @@ class Block_Frontend extends Base_CSS {
 
 			$content = get_post_field( 'post_content', $post_id );
 
-			$blocks = $this->parse_blocks( $content );
+			$blocks = parse_blocks( $content );
 
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 				return $style;
@@ -438,7 +438,7 @@ class Block_Frontend extends Base_CSS {
 				$content = get_post_field( 'post_content', $post_id );
 			}
 
-			$blocks = $this->parse_blocks( $content );
+			$blocks = parse_blocks( $content );
 
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 				return '';

@@ -1,6 +1,8 @@
 /**
  * WordPress dependencies...
  */
+import { useBlockProps } from '@wordpress/block-editor';
+
 import {
 	Fragment,
 	useEffect
@@ -9,11 +11,13 @@ import {
 /**
  * Internal dependencies
  */
-import defaultAttributes from './attributes.js';
+import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import themeIsleIcons from './../../helpers/themeisle-icons';
 import { blockInit } from '../../helpers/block-utility.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
 	attributes,
@@ -55,6 +59,11 @@ const Edit = ({
 
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		style: { textAlign: attributes.align }
+	});
+
 	return (
 		<Fragment>
 			<Controls
@@ -82,11 +91,7 @@ const Edit = ({
 				}
 			</style>
 
-			<p
-				className={ className }
-				id={ attributes.id }
-				style={ { textAlign: attributes.align } }
-			>
+			<p { ...blockProps }>
 				<span
 					className="wp-block-themeisle-blocks-font-awesome-icons-container"
 					style={ containerStyle }

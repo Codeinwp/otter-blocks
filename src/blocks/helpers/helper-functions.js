@@ -202,3 +202,8 @@ export const getTimezone = () => {
 	const timezone = sprintf( '%s%02d:%02d', sign, absmin / 60, absmin % 60 );
 	return timezone;
 };
+
+// Check if object has only null values.
+export const isNullObject = obj => {
+	return ! Object.keys( obj ).some( k => null !== obj[ k ]);
+};

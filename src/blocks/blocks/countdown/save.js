@@ -6,6 +6,8 @@ import classnames from 'classnames';
 /**
  * External dependencies
  */
+import { useBlockProps } from '@wordpress/block-editor';
+
 import { Fragment } from '@wordpress/element';
 
 /**
@@ -19,12 +21,10 @@ import {
 const DisplayTimeComponent = ({
 	name,
 	value,
-	tag,
-	key
+	tag
 }) => {
 	return (
 		<div
-			key={ key }
 			name={ tag }
 			className={ classnames(
 				'otter-countdown__display-area',
@@ -59,15 +59,15 @@ const DisplayTime = ({
 };
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
+	const blockProps = useBlockProps.save({
+		id: attributes.id,
+		'data-date': attributes.date
+	});
+
 	return (
-		<div
-			id={ attributes.id }
-			className={ className }
-			data-date={ attributes.date }
-		>
+		<div { ...blockProps }>
 			<DisplayTime
 				time={ getIntervalFromUnix( 0, { exclude: attributes?.exclude }) }
 				hasSeparators={ attributes?.hasSeparators }

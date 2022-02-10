@@ -7,7 +7,6 @@ import { useEffect } from '@wordpress/element';
 
 const LottiePlayer = ({
 	attributes,
-	className,
 	isSelected,
 	playerRef
 }) => {
@@ -40,7 +39,6 @@ const LottiePlayer = ({
 	return (
 		<lottie-player
 			id={ attributes.id }
-			className={ className }
 			ref={ playerRef }
 			src={ attributes.file.url }
 			autoplay

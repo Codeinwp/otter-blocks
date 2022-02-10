@@ -11,7 +11,6 @@ const initMapScript = () => {
 
 	maps.forEach( map => {
 		const mapContainer = document.getElementById( map.container );
-		mapContainer.style.height = `${ map.attributes.height }px`;
 
 		const googleMap = new window.google.maps.Map( mapContainer, {
 			center: {
