@@ -494,7 +494,7 @@ class Registration {
 		}
 
 		// DEBUG
-		// TODO: load this only when a block has a sticky block
+		// TODO: load this only when a block has a sticky block.
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/sticky.asset.php';
 		wp_enqueue_script(
 			'otter-sticky',
