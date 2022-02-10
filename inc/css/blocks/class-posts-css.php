@@ -34,7 +34,7 @@ class Posts_CSS extends Base_CSS {
 	public function render_css( $block ) {
 		$css = new CSS_Utility( $block );
 
-		$verticalValueMapping = array(
+		$vertical_value_mapping = array(
 			'top'    => 'flex-start',
 			'center' => 'center',
 			'bottom' => 'flex-end',
@@ -50,8 +50,8 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--o-posts-vert-align',
 						'value'    => 'verticalAlign',
-						'format'   => function( $value, $attrs ) use ( $verticalValueMapping ) {
-							return $verticalValueMapping[ $value ];
+						'format'   => function( $value, $attrs ) use ( $vertical_value_mapping ) {
+							return $vertical_value_mapping[ $value ];
 						},
 					),
 					array(
