@@ -1,3 +1,20 @@
+##### [Version 1.7.5](https://github.com/Codeinwp/otter-blocks/compare/v1.7.4...v1.7.5) (2022-02-07)
+
+- Increase Section's Max Width
+- Fix vertical alignment not working in Section block
+- Improve CSS Animation module
+- Fix CSS Animation conflicting with third-party plugins
+- Disable CSS Editor for Site Editor
+- Fix errors occurring with WordPress 5.9
+- Fix child tabs block not working properly
+
+##### [Version 1.7.4](https://github.com/Codeinwp/otter-blocks/compare/v1.7.3...v1.7.4) (2021-12-02)
+
+- Fix Leaflet scripts not loading properly
+- Fix blocks causing errors on widgets
+- Fix Blocks CSS not working properly
+- Fix Blocks Animation causing the debugging error
+
 ##### [Version 1.7.3](https://github.com/Codeinwp/otter-blocks/compare/v1.7.2...v1.7.3) (2021-11-18)
 
 

@@ -47,7 +47,6 @@ import defaultAttributes from './attributes.js';
 import layouts from '../layouts.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import BlockNavigatorControl from '../../../components/block-navigator-control/index.js';
 import Separators from '../components/separators/index.js';
 import { blockInit } from '../../../helpers/block-utility.js';
 import Library from '../../../components/template-library/index.js';
@@ -86,12 +85,11 @@ const Edit = ({
 			getDefaultBlockVariation
 		} = select( 'core/blocks' );
 
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const sectionBlock = getBlock( clientId );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
 
 		return {
-			sectionBlock,
-			children: sectionBlock.innerBlocks,
+			sectionBlock: getBlock( clientId ),
+			children: getBlock( clientId )?.innerBlocks || [],
 			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
 			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
 			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
@@ -231,7 +229,7 @@ const Edit = ({
 
 	if ( 'color' === attributes.backgroundType ) {
 		background = {
-			background: attributes.backgroundColor
+			backgroundColor: attributes.backgroundColor
 		};
 	}
 
@@ -247,7 +245,7 @@ const Edit = ({
 
 	if ( 'gradient' === attributes.backgroundType ) {
 		background = {
-			background: attributes.backgroundGradient
+			backgroundImage: attributes.backgroundGradient
 		};
 	}
 
@@ -384,7 +382,6 @@ const Edit = ({
 				<Tooltip text={ __( 'Open Template Library', 'otter-blocks' ) } >
 					<Button
 						isPrimary
-						isLarge
 						className="wp-block-themeisle-template-library"
 						onClick={ () => setIsLibraryOpen( true ) }
 					>
@@ -405,8 +402,6 @@ const Edit = ({
 
 	return (
 		<div>
-			<BlockNavigatorControl clientId={ clientId } />
-
 			<Controls
 				attributes={ attributes }
 				setAttributes={ setAttributes }

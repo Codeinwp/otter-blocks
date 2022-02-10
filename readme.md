@@ -1,8 +1,8 @@
 # Gutenberg Blocks and Template Library by Otter #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/)  
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder  
-**Requires at least:** 5.5  
-**Tested up to:** 5.8  
+**Requires at least:** 5.6  
+**Tested up to:** 5.9  
 **Requires PHP:** 5.4  
 **Stable tag:** trunk  
 **License:** GPLv3  
@@ -95,6 +95,29 @@ Help your site shine with design options built to enhance your brand. Every bloc
 3. Posts Block
 
 ## Changelog ##
+
+##### [Version 1.7.5](https://github.com/Codeinwp/otter-blocks/compare/v1.7.4...v1.7.5) (2022-02-07)
+
+- Increase Section's Max Width
+- Fix vertical alignment not working in Section block
+- Improve CSS Animation module
+- Fix CSS Animation conflicting with third-party plugins
+- Disable CSS Editor for Site Editor
+- Fix errors occurring with WordPress 5.9
+- Fix child tabs block not working properly
+
+
+
+
+##### [Version 1.7.4](https://github.com/Codeinwp/otter-blocks/compare/v1.7.3...v1.7.4) (2021-12-02)
+
+- Fix Leaflet scripts not loading properly
+- Fix blocks causing errors on widgets
+- Fix Blocks CSS not working properly
+- Fix Blocks Animation causing the debugging error
+
+
+
 
 ##### [Version 1.7.3](https://github.com/Codeinwp/otter-blocks/compare/v1.7.2...v1.7.3) (2021-11-18)
 

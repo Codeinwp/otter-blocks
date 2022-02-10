@@ -63,19 +63,13 @@ const Edit = ({
 	}, []);
 
 	const { postAuthors } = useSelect( select => {
-		const {
-			getAuthors,
-			getUsers
-		} = select( 'core' );
-
-		const authors = getAuthors();
-		const include = authors.map( author => author.id );
-		const users = getUsers({ include });
+		const { getUsers } = select( 'core' );
+		const authors = getUsers({ who: 'authors' });
 
 		let postAuthors = [];
 
-		if ( users && Boolean( users.length ) ) {
-			postAuthors = users.map( user => user.username );
+		if ( authors && Boolean( authors.length ) ) {
+			postAuthors = authors.map( author => author.username );
 		}
 
 		return {
@@ -628,9 +622,8 @@ const Edit = ({
 										) }
 
 										<Button
-											isLarge
 											isDestructive
-											className="otter-blocks-conditions__add"
+											className="otter-conditions__add"
 											onClick={ () => removeCondition( index, n ) }
 										>
 											{ __( 'Delete Condition', 'otter-blocks' ) }
@@ -644,8 +637,7 @@ const Edit = ({
 
 								<Button
 									isSecondary
-									isLarge
-									className="otter-blocks-conditions__add"
+									className="otter-conditions__add"
 									onClick={ () => addNewCondition( index ) }
 								>
 									{ __( 'Add a New Condition', 'otter-blocks' ) }
@@ -661,8 +653,7 @@ const Edit = ({
 
 				<Button
 					isSecondary
-					isLarge
-					className="otter-blocks-conditions__add"
+					className="otter-conditions__add"
 					onClick={ addGroup }
 				>
 					{ __( 'Add Rule Group', 'otter-blocks' ) }
