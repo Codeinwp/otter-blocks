@@ -145,7 +145,6 @@ export const SortableItem = ({
 				'otter-blocks-sortable-item-area',
 				`otter-blocks-sortable-item-area-${ value }`
 			) }
-			key={`element-${value}`}
 		>
 			<div
 				className={ classnames(
@@ -191,7 +190,6 @@ export const SortableItem = ({
 						'otter-blocks-sortable-control-area',
 						{ 'opened': isOpen && templateLookUp[value] }
 					) }
-					key={`control-${value}`}
 				>
 					{
 						( 'image' === value ) && (

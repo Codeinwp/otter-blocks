@@ -13,13 +13,6 @@ import {
 	ToggleControl
 } from '@wordpress/components';
 
-import {
-	Icon,
-	alignCenter,
-	alignRight,
-	alignLeft
-} from '@wordpress/icons';
-
 import { InspectorControls } from '@wordpress/block-editor';
 
 import { useSelect } from '@wordpress/data';
@@ -31,7 +24,6 @@ import LayoutBuilder from './components/layout-builder.js';
 import { StyleSwitcherInspectorControl } from '../../components/style-switcher-control/index.js';
 import { convertToTitleCase } from '../../helpers/helper-functions.js';
 import ToogleGroupControl from '../../components/toogle-group-control/index.js';
-import { alignTop, alignCenter as alignCenterVertical, alignBottom } from '../../helpers/icons.js';
 
 const Inspector = ({
 	attributes,

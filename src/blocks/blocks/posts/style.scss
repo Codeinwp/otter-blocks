@@ -149,13 +149,14 @@
 
 		.wp-block-themeisle-blocks-posts-grid-post-description {
 			margin: 10px 0;
-			font-size: var(--o-posts-description-text-size);
 
 			p {
 				margin-bottom: 0px;
+				font-size: var(--o-posts-description-text-size);
 			}
 
 			.o-posts-read-more {
+				font-size: var(--o-posts-description-text-size);
 				display: block;
 				margin-bottom: 5px;
 			}
