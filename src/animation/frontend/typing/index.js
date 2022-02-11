@@ -63,10 +63,10 @@ const initTyping = ( elem ) => {
 
 	const typingPlaceholder = document.createElement( 'span' );
 	typingPlaceholder.classList.add( 'o-anim-typing-caret' );
-	typingPlaceholder.style.whiteSpace = 'pre';
+	typingPlaceholder.style.whiteSpace = 'pre-wrap';
 
 	const fillPlaceholder = document.createElement( 'span' );
-	fillPlaceholder.style.whiteSpace = 'pre';
+	fillPlaceholder.style.whiteSpace = 'pre-wrap';
 	fillPlaceholder.style.visibility = 'hidden';
 
 	const originalContent = elem.innerHTML;
