@@ -104,6 +104,12 @@ class Icon_List_CSS extends Base_CSS {
 						'property' => 'fill',
 						'value'    => 'defaultIconColor',
 					),
+					array(
+						'property' => 'min-width',
+						'value'    => 'defaultSize',
+						'unit'     => 'px',
+						'default'  => 20,
+					),
 				),
 			)
 		);
@@ -124,10 +130,16 @@ class Icon_List_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-icon-list-item svg',
+				'selector'   => ' .wp-block-themeisle-blocks-icon-list-item svg, .wp-block-themeisle-blocks-icon-list-item img',
 				'properties' => array(
 					array(
 						'property' => 'width',
+						'value'    => 'defaultSize',
+						'unit'     => 'px',
+						'default'  => 20,
+					),
+					array(
+						'property' => 'min-width',
 						'value'    => 'defaultSize',
 						'unit'     => 'px',
 						'default'  => 20,

@@ -42,3 +42,10 @@
 		}
 	}
 }
+
+.o-vrt-base-control {
+	&> div, .components-base-control__field {
+		display: flex;
+		flex-direction: column;
+	}
+}

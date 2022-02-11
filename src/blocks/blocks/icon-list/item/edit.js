@@ -19,7 +19,8 @@ import { useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
-	useEffect
+	useEffect,
+	useState
 } from '@wordpress/element';
 
 /**
@@ -41,6 +42,9 @@ const Edit = ({
 	onRemove,
 	mergeBlocks
 }) => {
+
+	const [ isURL, setIsUrl ] = useState( false );
+
 	const {
 		hasParent,
 		parentAttributes
@@ -64,6 +68,28 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
+	useEffect( () => {
+		setAttributes({
+			library: attributes.library || parentAttributes.defaultLibrary,
+			icon: attributes.icon || parentAttributes.defaultIcon,
+			iconPrefix: attributes.iconPrefix || parentAttributes.defaultIconPrefix
+		});
+	}, [ hasParent, parentAttributes, attributes ]);
+
+	useEffect( () => {
+		if ( 'image' === attributes.library ) {
+			try {
+				const imageURL = new URL( attributes.icon );
+
+				if (  'http:' === imageURL?.protocol || 'https:' === imageURL?.protocol ) {
+					setIsUrl( true );
+				}
+			} catch ( _ ) {
+				setIsUrl( false );
+			}
+		}
+	}, [ attributes.library, attributes.icon ]);
+
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 	const iconClassName = `${ attributes.iconPrefix || parentAttributes.defaultIconPrefix } fa-${ attributes.icon || parentAttributes.defaultIcon }`;
 	const contentStyle = {
@@ -76,22 +102,12 @@ const Edit = ({
 		fontSize: parentAttributes.defaultSize + 'px'
 	};
 
-	/**
-	 * Add the missing components from parent's attributes
-	 */
-	if ( hasParent && ( ! attributes.iconPrefix || ! attributes.library ) ) {
-		setAttributes({
-			library: attributes.library || parentAttributes.defaultLibrary,
-			icon: attributes.icon || parentAttributes.defaultIcon,
-			iconPrefix: attributes.iconPrefix || parentAttributes.defaultIconPrefix
-		});
-	}
-
 	const changeContent = value => {
 		setAttributes({ content: value });
 	};
 
 	const blockProps = useBlockProps();
+
 
 	return (
 		<Fragment>
@@ -101,27 +117,40 @@ const Edit = ({
 			/>
 
 			<div { ...blockProps }>
-				{ 'themeisle-icons' === attributes.library && attributes.icon && Icon !== undefined ? (
-					<Icon
-						className={ classnames(
-							{ 'wp-block-themeisle-blocks-icon-list-item-icon': ! attributes.iconColor },
-							{ 'wp-block-themeisle-blocks-icon-list-item-icon-custom': attributes.iconColor }
-						) }
-						style={ {
-							...iconStyle,
-							width: parentAttributes.defaultSize + 'px'
-						} }
-					/>
-				) : (
-					<i
-						className={ classnames(
-							iconClassName,
-							{ 'wp-block-themeisle-blocks-icon-list-item-icon': ! attributes.iconColor },
-							{ 'wp-block-themeisle-blocks-icon-list-item-icon-custom': attributes.iconColor }
-						) }
-						style={ iconStyle }
-					></i>
-				) }
+				{
+					'image' === attributes.library && isURL ? (
+						<img
+							src={ attributes.icon }
+							width={ parentAttributes.defaultSize + 'px' }
+							style={ {
+								minWidth: parentAttributes.defaultSize + 'px'
+							} }
+						/>
+					) : (
+						'themeisle-icons' === attributes.library && attributes.icon && Icon !== undefined ? (
+							<Icon
+								className={ classnames(
+									{ 'wp-block-themeisle-blocks-icon-list-item-icon': ! attributes.iconColor },
+									{ 'wp-block-themeisle-blocks-icon-list-item-icon-custom': attributes.iconColor }
+								) }
+								style={ {
+									...iconStyle,
+									width: parentAttributes.defaultSize + 'px',
+									minWidth: parentAttributes.defaultSize + 'px'
+								} }
+							/>
+						) : (
+							<i
+								className={ classnames(
+									iconClassName,
+									{ 'wp-block-themeisle-blocks-icon-list-item-icon': ! attributes.iconColor },
+									{ 'wp-block-themeisle-blocks-icon-list-item-icon-custom': attributes.iconColor }
+								) }
+								style={ iconStyle }
+							></i>
+						)
+					)
+				}
 
 				<RichText
 					identifier="content"
