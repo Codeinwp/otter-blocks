@@ -33,6 +33,8 @@ import ControlPanelControl from './../blocks/components/control-panel-control/in
 
 import countPlaceholder from './../../assets/images/count-animation.png';
 
+import typingPlaceholder from './../../assets/images/typing-animation.png';
+
 const AnimationType = {
 	count: 'count',
 	typing: 'typing',
@@ -283,7 +285,7 @@ function AnimationControls({
 				) : (
 					<Fragment>
 						<img
-							src={ countPlaceholder }
+							src={ typingPlaceholder }
 							alt={ _( 'Using Count Animation in the Block Editor', 'otter-blocks' ) }
 							className="otter-animations-count-image"
 						/>
@@ -293,6 +295,7 @@ function AnimationControls({
 					</Fragment>
 				) }
 			</ControlPanelControl>
+
 			<ControlPanelControl
 				label={ __( 'Typing Animations', 'otter-blocks' ) }
 			>

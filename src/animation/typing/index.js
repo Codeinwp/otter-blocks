@@ -9,15 +9,15 @@ import { brush } from '@wordpress/icons';
 import { __ } from '@wordpress/i18n';
 
 import {
-	registerFormatType,
-	toggleFormat
-} from '@wordpress/rich-text';
-
-import {
 	RichTextToolbarButton
 } from '@wordpress/block-editor';
 
 import { Fragment } from '@wordpress/element';
+
+import {
+	registerFormatType,
+	toggleFormat
+} from '@wordpress/rich-text';
 
 /**
  * Internal dependencies.
@@ -33,9 +33,7 @@ registerFormatType( name, {
 	edit: ({ isActive, value, onChange }) => {
 
 		const onToggle = () => {
-
 			onChange( toggleFormat( value, { type: name }) );
-
 		};
 
 		return (
