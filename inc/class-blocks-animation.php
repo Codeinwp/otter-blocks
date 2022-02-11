@@ -82,7 +82,7 @@ class Blocks_Animation {
 
 		wp_enqueue_style(
 			'animate-css',
-			BLOCKS_ANIMATION_URL . 'assets/animate/animate.min.css',
+			BLOCKS_ANIMATION_URL . 'assets/animate/animate.compact.css',
 			array(),
 			$asset_file['version']
 		);

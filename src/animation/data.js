@@ -9,6 +9,38 @@ export const animationsList = [
 		value: 'none'
 	},
 	{
+		label: __( 'Back In Down', 'otter-blocks' ),
+		value: 'backInDown'
+	},
+	{
+		label: __( 'Back In Left', 'otter-blocks' ),
+		value: 'backInLeft'
+	},
+	{
+		label: __( 'Back In Right', 'otter-blocks' ),
+		value: 'backInRight'
+	},
+	{
+		label: __( 'Back In Up', 'otter-blocks' ),
+		value: 'backInUp'
+	},
+	{
+		label: __( 'Back Out Down', 'otter-blocks' ),
+		value: 'backOutDown'
+	},
+	{
+		label: __( 'Back Out Left', 'otter-blocks' ),
+		value: 'backOutLeft'
+	},
+	{
+		label: __( 'Back Out Right', 'otter-blocks' ),
+		value: 'backOutRight'
+	},
+	{
+		label: __( 'Back Out Up', 'otter-blocks' ),
+		value: 'backOutUp'
+	},
+	{
 		label: __( 'Bounce', 'otter-blocks' ),
 		value: 'bounce'
 	},
@@ -85,6 +117,22 @@ export const animationsList = [
 		value: 'fadeInUp'
 	},
 	{
+		label: __( 'Fade In Top Left', 'otter-blocks' ),
+		value: 'fadeInTopLeft'
+	},
+	{
+		label: __( 'Fade In Top Right', 'otter-blocks' ),
+		value: 'fadeInTopRight'
+	},
+	{
+		label: __( 'Fade In Bottom Left', 'otter-blocks' ),
+		value: 'fadeInBottomLeft'
+	},
+	{
+		label: __( 'Fade In Bottom Right', 'otter-blocks' ),
+		value: 'fadeInBottomRight'
+	},
+	{
 		label: __( 'Fade Out', 'otter-blocks' ),
 		value: 'fadeOut'
 	},
@@ -119,6 +167,22 @@ export const animationsList = [
 	{
 		label: __( 'Fade Out Up Big', 'otter-blocks' ),
 		value: 'fadeOutUpBig'
+	},
+	{
+		label: __( 'Fade Out Top Left', 'otter-blocks' ),
+		value: 'fadeOutTopLeft'
+	},
+	{
+		label: __( 'Fade Out Top Right', 'otter-blocks' ),
+		value: 'fadeOutTopRight'
+	},
+	{
+		label: __( 'Fade Out Bottom Right', 'otter-blocks' ),
+		value: 'fadeOutBottomRight'
+	},
+	{
+		label: __( 'Fade Out Bottom Left', 'otter-blocks' ),
+		value: 'fadeOutBottomLeft'
 	},
 	{
 		label: __( 'Flip', 'otter-blocks' ),
@@ -261,12 +325,20 @@ export const animationsList = [
 		value: 'rollOut'
 	},
 	{
-		label: __( 'Light Speed In', 'otter-blocks' ),
-		value: 'lightSpeedIn'
+		label: __( 'Light Speed In Right', 'otter-blocks' ),
+		value: 'lightSpeedInRight'
 	},
 	{
-		label: __( 'Light Speed Out', 'otter-blocks' ),
-		value: 'lightSpeedOut'
+		label: __( 'Light Speed In Left', 'otter-blocks' ),
+		value: 'lightSpeedInLeft'
+	},
+	{
+		label: __( 'Light Speed Out Right', 'otter-blocks' ),
+		value: 'lightSpeedOutRight'
+	},
+	{
+		label: __( 'Light Speed Out Left', 'otter-blocks' ),
+		value: 'lightSpeedOutLeft'
 	},
 	{
 		label: __( 'Flash', 'otter-blocks' ),
@@ -281,8 +353,12 @@ export const animationsList = [
 		value: 'rubberBand'
 	},
 	{
-		label: __( 'Shake', 'otter-blocks' ),
-		value: 'shake'
+		label: __( 'Shake X', 'otter-blocks' ),
+		value: 'shakeX'
+	},
+	{
+		label: __( 'Shake Y', 'otter-blocks' ),
+		value: 'shakeY'
 	},
 	{
 		label: __( 'Head Shake', 'otter-blocks' ),
@@ -320,6 +396,10 @@ export const animationsList = [
 
 export const categories = [
 	{
+		label: __( 'Backing', 'otter-blocks' ),
+		value: 'backInDown'
+	},
+	{
 		label: __( 'Bouncing', 'otter-blocks' ),
 		value: 'bounce'
 	},
@@ -348,12 +428,20 @@ export const categories = [
 		value: 'rollIn'
 	},
 	{
+		label: __( 'Light Speed', 'otter-blocks' ),
+		value: 'lightSpeedInRight'
+	},
+	{
 		label: __( 'Other', 'otter-blocks' ),
-		value: 'lightSpeedIn'
+		value: 'flash'
 	}
 ];
 
 export const outAnimation = [
+	'backOutDown',
+	'backOutLeft',
+	'backOutRight',
+	'backOutUp',
 	'bounceOut',
 	'bounceOutDown',
 	'bounceOutLeft',
@@ -368,9 +456,14 @@ export const outAnimation = [
 	'fadeOutRightBig',
 	'fadeOutUp',
 	'fadeOutUpBig',
+	'fadeOutTopLeft',
+	'fadeOutTopRight',
+	'fadeOutBottomRight',
+	'fadeOutBottomLeft',
 	'flipOutX',
 	'flipOutY',
-	'lightSpeedOut',
+	'lightSpeedOutRight',
+	'lightSpeedOutLeft',
 	'rotateOut',
 	'rotateOutDownLeft',
 	'rotateOutDownRight',
