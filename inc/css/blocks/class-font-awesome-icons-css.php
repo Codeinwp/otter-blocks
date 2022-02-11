@@ -87,9 +87,9 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property'  => '--padding',
-						'value'     => 'padding',
-						'unit'      => 'px',
+						'property' => '--padding',
+						'value'    => 'padding',
+						'unit'     => 'px',
 					),
 					array(
 						'property' => '--fontSize',
