@@ -38,7 +38,8 @@ module.exports = [
 		entry: {
 			index: './src/animation/index.js',
 			frontend: './src/animation/frontend.js',
-			'anim-count': './src/animation/frontend/count/index.js'
+			'anim-count': './src/animation/frontend/count/index.js',
+			'anim-typing': './src/animation/frontend/typing/index.js'
 		},
 		output: {
 			path: path.resolve( __dirname, './build/animation' )

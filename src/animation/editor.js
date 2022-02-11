@@ -33,6 +33,14 @@ import ControlPanelControl from './../blocks/components/control-panel-control/in
 
 import countPlaceholder from './../../assets/images/count-animation.png';
 
+import typingPlaceholder from './../../assets/images/typing-animation.png';
+
+const AnimationType = {
+	count: 'count',
+	typing: 'typing',
+	default: 'default'
+};
+
 function AnimationControls({
 	clientId,
 	attributes,
@@ -65,6 +73,14 @@ function AnimationControls({
 				return classes.find( ( o ) => o === `o-count-${ i.value }` );
 			});
 
+			const typingDelayClass = Array.from( delayList ).find( ( i ) => {
+				return classes.find( ( o ) => o === `o-typing-${ i.value }` );
+			});
+
+			const typingSpeedClass = Array.from( speedList ).find( ( i ) => {
+				return classes.find( ( o ) => o === `o-typing-${ i.value }` );
+			});
+
 			setAnimation( animationClass ? animationClass.value : 'none' );
 			setDelay( delayClass ? delayClass.value : 'none' );
 			setSpeed( speedClass ? speedClass.value : 'none' );
@@ -74,21 +90,26 @@ function AnimationControls({
 
 			setCountDelay( countDelayClass ? countDelayClass.value : 'none' );
 			setCountSpeed( countSpeedClass ? countSpeedClass.value : 'none' );
+
+			setTypingDelay( typingDelayClass ? typingDelayClass.value : 'none' );
+			setTypingSpeed( typingSpeedClass ? typingSpeedClass.value : 'none' );
 		}
 
 	}, []);
 
-	const hasFormat = useSelect( select => {
+	const { hasCountFormat, hasTypingFormat } = useSelect( select => {
 		const { getBlock } = select( 'core/block-editor' );
 		const html = serialize( getBlock( clientId ) );
 		const block = create({ html });
-		let hasFormat = false;
+		let hasCountFormat = false;
+		let hasTypingFormat = false;
 
 		if ( block.formats ) {
-			hasFormat = block.formats.some( format => true === format.some( i => 'themeisle-blocks/count-animation' === i.type ) );
+			hasCountFormat = block.formats.some( format => true === format.some( format => 'themeisle-blocks/count-animation' === format.type ) );
+			hasTypingFormat = block.formats.some( format => true === format.some( format => 'themeisle-blocks/typing-animation' === format.type ) );
 		}
 
-		return hasFormat;
+		return { hasCountFormat, hasTypingFormat};
 	}, []);
 
 	const [ animation, setAnimation ] = useState( 'none' );
@@ -98,6 +119,9 @@ function AnimationControls({
 
 	const [ countDelay, setCountDelay ] = useState( 'none' );
 	const [ countSpeed, setCountSpeed ] = useState( 'none' );
+
+	const [ typingDelay, setTypingDelay ] = useState( 'none' );
+	const [ typingSpeed, setTypingSpeed ] = useState( 'none' );
 
 	const updateAnimation = ( e ) => {
 		let classes;
@@ -163,102 +187,37 @@ function AnimationControls({
 		}
 	};
 
-	const updateDelay = ( e ) => {
+	const updateAnimConfig = ( type, oldValue, newValue, callback ) => {
+		let template;
+		switch ( type ) {
+		case AnimationType.count:
+			template = 'o-count-';
+			break;
+		case AnimationType.typing:
+			template = 'o-typing-';
+			break;
+		case AnimationType.default:
+			template = '';
+			break;
+		}
+
+		const oldClassName = template + oldValue;
+		const newClassName = 'none' !== newValue ? template + newValue : '';
 		let classes;
-		let delayValue = 'none' !== e ? e : '';
 
 		if ( attributes.className ) {
 			classes = attributes.className;
 			classes = classes.split( ' ' );
-			const exists = classes.find( ( i ) => i === delay );
+			const exists = classes.find( ( i ) => i === oldClassName );
 
 			if ( exists ) {
-				classes = classes.join( ' ' ).replace( delay, delayValue );
+				classes = classes.join( ' ' ).replace( oldClassName, newClassName );
 			} else {
-				classes.push( delayValue );
-				classes = classes.join( ' ' );
-			}
-		} else {
-			classes = delayValue;
-		}
-
-		classes = classes.replace( /\s+/g, ' ' );
-
-		setDelay( e );
-		setAttributes({ className: classes });
-	};
-
-	const updateSpeed = ( e ) => {
-		let classes;
-		let speedValue = 'none' !== e ? e : '';
-
-		if ( attributes.className ) {
-			classes = attributes.className;
-			classes = classes.split( ' ' );
-			const exists = classes.find( ( i ) => i === speed );
-
-			if ( exists ) {
-				classes = classes.join( ' ' ).replace( speed, speedValue );
-			} else {
-				classes.push( speedValue );
-				classes = classes.join( ' ' );
-			}
-		} else {
-			classes = speedValue;
-		}
-
-		classes = classes.replace( /\s+/g, ' ' );
-
-		setSpeed( e );
-		setAttributes({ className: classes });
-	};
-
-	const updateCountDelay = ( e ) => {
-		let classes;
-		let delayValue = 'none' !== e ? `o-count-${ e }` : '';
-
-		if ( attributes.className ) {
-			classes = attributes.className;
-			classes = classes.split( ' ' );
-			const exists = classes.find( ( i ) => i === `o-count-${ countDelay }` );
-
-			if ( exists ) {
-				classes = classes.join( ' ' ).replace( `o-count-${ countDelay }`, delayValue );
-			} else {
-				classes.push( delayValue );
-				classes = classes.join( ' ' );
-			}
-		} else {
-			classes = delayValue;
-		}
-
-		classes = classes.replace( /\s+/g, ' ' ).trim();
-
-		if ( '' === classes ) {
-			classes = undefined;
-		}
-
-		setCountDelay( e );
-		setAttributes({ className: classes });
-	};
-
-	const updateCountSpeed = ( e ) => {
-		let classes;
-		let speedValue = 'none' !== e ? `o-count-${ e }` : '';
-
-		if ( attributes.className ) {
-			classes = attributes.className;
-			classes = classes.split( ' ' );
-			const exists = classes.find( ( i ) => i === `o-count-${ countSpeed }` );
-
-			if ( exists ) {
-				classes = classes.join( ' ' ).replace( `o-count-${ countSpeed }`, speedValue );
-			} else {
-				classes.push( speedValue );
+				classes.push( newClassName );
 				classes = classes.join( ' ' ).trim();
 			}
 		} else {
-			classes = speedValue;
+			classes = newClassName;
 		}
 
 		classes = classes.replace( /\s+/g, ' ' );
@@ -267,8 +226,8 @@ function AnimationControls({
 			classes = undefined;
 		}
 
-		setCountSpeed( e );
 		setAttributes({ className: classes });
+		callback?.();
 	};
 
 	return (
@@ -290,14 +249,14 @@ function AnimationControls({
 								label={ __( 'Delay', 'otter-blocks' ) }
 								value={ delay || 'none' }
 								options={ delayList }
-								onChange={ updateDelay }
+								onChange={  value => updateAnimConfig( AnimationType.default, delay, value, () => setDelay( value ) ) }
 							/>
 
 							<SelectControl
 								label={ __( 'Speed', 'otter-blocks' ) }
 								value={ speed || 'none' }
 								options={ speedList }
-								onChange={ updateSpeed }
+								onChange={ value => updateAnimConfig( AnimationType.default, speed, value, () => setSpeed( value ) ) }
 							/>
 						</Fragment>
 					) }
@@ -307,31 +266,64 @@ function AnimationControls({
 			<ControlPanelControl
 				label={ __( 'Count Animations', 'otter-blocks' ) }
 			>
-				{ hasFormat ? (
+				{ hasCountFormat ? (
 					<Fragment>
 						<SelectControl
 							label={ __( 'Delay', 'otter-blocks' ) }
 							value={ countDelay || 'none' }
 							options={ delayList }
-							onChange={ updateCountDelay }
+							onChange={ value => updateAnimConfig( AnimationType.count, countDelay, value, () => setCountDelayDelay( value ) ) }
 						/>
 
 						<SelectControl
 							label={ __( 'Speed', 'otter-blocks' ) }
 							value={ countSpeed || 'none' }
 							options={ speedList }
-							onChange={ updateCountSpeed }
+							onChange={ value => updateAnimConfig( AnimationType.count, countSpeed, value, () => setTypingSpeed( value ) ) }
+						/>
+					</Fragment>
+				) : (
+					<Fragment>
+						<img
+							src={ typingPlaceholder }
+							alt={ _( 'Using Count Animation in the Block Editor', 'otter-blocks' ) }
+							className="otter-animations-count-image"
+						/>
+
+						<p>{ __( 'You can add counting animation from the format toolbar of this block. Once you have added them, you will see customization settings here.', 'otter-blocks' ) }</p>
+						<p>{ __( 'Note: This feature is not available in all the blocks.', 'otter-blocks' ) }</p>
+					</Fragment>
+				) }
+			</ControlPanelControl>
+
+			<ControlPanelControl
+				label={ __( 'Typing Animations', 'otter-blocks' ) }
+			>
+				{ hasTypingFormat ? (
+					<Fragment>
+						<SelectControl
+							label={ __( 'Delay', 'otter-blocks' ) }
+							value={ typingDelay || 'none' }
+							options={ delayList }
+							onChange={ value => updateAnimConfig( AnimationType.typing, typingDelay, value, () => setTypingDelay( value ) ) }
+						/>
+
+						<SelectControl
+							label={ __( 'Speed', 'otter-blocks' ) }
+							value={ typingSpeed || 'none' }
+							options={ speedList }
+							onChange={ value => updateAnimConfig( AnimationType.typing, typingSpeed, value, () => setTypingSpeed( value ) ) }
 						/>
 					</Fragment>
 				) : (
 					<Fragment>
 						<img
 							src={ countPlaceholder }
-							alt={ _( 'Using Count Animation in the Block Editor', 'otter-blocks' ) }
+							alt={ _( 'Using Typing Animation in the Block Editor', 'otter-blocks' ) }
 							className="otter-animations-count-image"
 						/>
 
-						<p>{ __( 'You can add counting animation from the format toolbar of this block. Once you have added them, you will see customization settings here.', 'otter-blocks' ) }</p>
+						<p>{ __( 'You can add typing animation from the format toolbar of this block. Once you have added them, you will see customization settings here.', 'otter-blocks' ) }</p>
 						<p>{ __( 'Note: This feature is not available in all the blocks.', 'otter-blocks' ) }</p>
 					</Fragment>
 				) }

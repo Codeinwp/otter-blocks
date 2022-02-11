@@ -22,6 +22,7 @@ import './editor.scss';
 
 import AnimationControls from './editor.js';
 import './count/index.js';
+import './typing/index.js';
 
 const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 	return ( props ) => {
