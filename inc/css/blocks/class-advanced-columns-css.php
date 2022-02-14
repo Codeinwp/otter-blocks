@@ -75,7 +75,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 			$old_attributes,
 			function( $value ) use ( $block ) {
 				return isset( $block['attrs'][ $value ] ) && is_numeric( $block['attrs'][ $value ] );
-			} 
+			}
 		);
 
 		if ( true === $uses_old_sizing ) {
@@ -215,7 +215,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 							),
 						),
 						'condition'      => function( $attrs ) {
-							return isset( $attrs['backgroundType'] ) && 'image' === $attrs['backgroundType'] && ( isset( $attrs['backgroundImageURL'] ) || isset( $attrs['backgroundImage'] ) );
+							return isset( $attrs['backgroundType'] ) && 'image' === $attrs['backgroundType'] && isset( $attrs['backgroundImageURL'] ) && $this->is_image_url( $attrs['backgroundImageURL'] );
 						},
 					),
 					array(
@@ -478,7 +478,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 							),
 						),
 						'condition'      => function( $attrs ) {
-							return isset( $attrs['backgroundOverlayType'] ) && 'image' === $attrs['backgroundOverlayType'] && ( isset( $attrs['backgroundOverlayImageURL'] ) || isset( $attrs['backgroundOverlayImage'] ) );
+							return isset( $attrs['backgroundOverlayType'] ) && 'image' === $attrs['backgroundOverlayType'] && isset( $attrs['backgroundOverlayImageURL'] ) && $this->is_image_url( $attrs['backgroundOverlayImageURL'] );
 						},
 					),
 					array(

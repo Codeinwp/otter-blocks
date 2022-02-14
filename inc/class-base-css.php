@@ -321,6 +321,19 @@ class Base_CSS {
 	}
 
 	/**
+	 * Check if an url points to an image by checking if the an image extension exists.
+	 *
+	 * @param string $url The url.
+	 *
+	 * @return bool
+	 * @since   1.4.4
+	 * @access  public
+	 */
+	public function is_image_url( $url ) {
+		return is_string( $url ) && preg_match( '/\.(jpeg|jpg|png|gif|svg|bmp|ico|tiff)$/i', $url );
+	}
+
+	/**
 	 * Method to return path to child class in a Reflective Way.
 	 *
 	 * @return  string

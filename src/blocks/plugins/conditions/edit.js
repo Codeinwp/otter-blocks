@@ -116,19 +116,13 @@ const Edit = ({
 	}, []);
 
 	const { postAuthors } = useSelect( select => {
-		const {
-			getAuthors,
-			getUsers
-		} = select( 'core' );
-
-		const authors = getAuthors();
-		const include = authors.map( author => author.id );
-		const users = getUsers({ include });
+		const { getUsers } = select( 'core' );
+		const authors = getUsers({ who: 'authors' });
 
 		let postAuthors = [];
 
-		if ( users && Boolean( users.length ) ) {
-			postAuthors = users.map( user => user.username );
+		if ( authors && Boolean( authors.length ) ) {
+			postAuthors = authors.map( author => author.username );
 		}
 
 		return {

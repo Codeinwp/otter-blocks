@@ -31,6 +31,7 @@ const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 			'customClassName',
 			true
 		);
+
 		if ( hasCustomClassName && props.isSelected ) {
 			return (
 				<Fragment>

@@ -63,24 +63,24 @@
 				.wp-block-themeisle-blocks-tabs-item__header {
 					border-bottom-style: none;
 				}
-		
+
 				@media (max-width: 800px) {
 					.wp-block-themeisle-blocks-tabs-item__content {
 						border-bottom-style: none;
 					}
 				}
 			}
-		
+
 			.wp-block-themeisle-blocks-tabs-item__header {
 				width: 100%;
 				border: 3px solid black;
 				padding: 5px 10px;
 				cursor: pointer;
-		
+
 				@media (min-width: 800px) {
 					display: none;
 				}
-		
+
 				&.active {
 					border-bottom-style: none;
 				}
@@ -93,25 +93,25 @@
 				padding: 10px;
 				display: none;
 				border-top: 0px;
-		
+
 				&.active {
 					display: block;
 				}
-		
+
 				&.hidden {
 					display: none;
 				}
 			}
 
-			&:first-child {
+			&> :first-child {
 				.wp-block-themeisle-blocks-tabs-item__content {
 					display: block;
-		
+
 					&.hidden {
 						display: none;
 					}
 				}
 			}
-		}		
+		}
 	}
 }

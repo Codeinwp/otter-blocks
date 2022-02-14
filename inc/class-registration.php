@@ -492,6 +492,18 @@ class Registration {
 		if ( ! self::$scripts_loaded['product-image'] && has_block( 'themeisle-blocks/product-image', $post ) ) {
 			wp_enqueue_script( 'wc-single-product' );
 		}
+
+		// DEBUG
+		// TODO: load this only when a block has a sticky block.
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/sticky.asset.php';
+		wp_enqueue_script(
+			'otter-sticky',
+			OTTER_BLOCKS_URL . 'build/blocks/sticky.js',
+			$asset_file['dependencies'],
+			$asset_file['version'],
+			true
+		);
+		wp_script_add_data( 'otter-sticky', 'defer', true );
 	}
 
 	/**
@@ -658,13 +670,13 @@ class Registration {
 			if ( isset( $dynamic_blocks[ $block ] ) ) {
 				$classname = $dynamic_blocks[ $block ];
 				$renderer  = new $classname();
-		
+
 				if ( method_exists( $renderer, 'render' ) ) {
 					register_block_type_from_metadata(
 						$metadata_file,
 						array(
 							'render_callback' => array( $renderer, 'render' ),
-						) 
+						)
 					);
 
 					continue;

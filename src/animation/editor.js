@@ -168,7 +168,7 @@ function AnimationControls({
 		setAnimation( e );
 		setAttributes({ className: classes });
 
-		let block = document.querySelector( `#block-${ clientId } .animated` );
+		let block = document.querySelector( `#block-${ clientId } .animated` ) || document.querySelector( `#block-${ clientId }.animated` );
 
 		if ( block ) {
 			outAnimation.forEach( ( i ) => {

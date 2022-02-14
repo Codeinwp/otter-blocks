@@ -272,8 +272,8 @@ const Main = () => {
 
 						<PanelRow>
 							<BaseControl
-								label={ __( 'Google reCaptacha API', 'otter-blocks' ) }
-								help={ __( 'In order to use reReptcha field in the Form block, you need to use Google reCaptcha API.', 'otter-blocks' ) }
+								label={ __( 'Google reCaptcha API', 'otter-blocks' ) }
+								help={ __( 'In order to use reCaptcha field in the Form block, you need to use Google reCaptcha API.', 'otter-blocks' ) }
 								id="otter-options-google-recaptcha-api"
 								className="otter-button-field"
 							>
