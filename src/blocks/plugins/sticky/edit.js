@@ -173,7 +173,7 @@ s		E.g:
 			>
 				<SelectControl
 					label={ __( 'Sticky To', 'otter-blocks' ) }
-					help={ __( 'Stick to a group, columns, section block, or screen to limit the movement. The limit will differ from block to block, except for the blocks with the same parent.', 'otter-blocks' ) }
+					help={ __( 'Select the parent element for the sticky block.', 'otter-blocks' ) }
 					value={ limit }
 					options={ containerOptions }
 					onChange={ value => addOption( value, FILTER_OPTIONS.scope ) }
@@ -181,7 +181,7 @@ s		E.g:
 
 				<SelectControl
 					label={ __( 'Position', 'otter-blocks' ) }
-					help={ __( 'Stick the block to the top or the bottom of the screen. When using \'Bottom\', make sure that the element is closer or lower than the bottom of the screen when scroll is on the start position; use Preview to check.', 'otter-blocks' ) }
+					help={ __( 'Position of the block in relation to the screen.', 'otter-blocks' ) }
 					value={ position }
 					options={ [
 						{
@@ -198,7 +198,7 @@ s		E.g:
 
 				<RangeControl
 					label={ __( 'Offset', 'otter-blocks' ) }
-					help={ __( 'Set the distance from the block to the screen when sticky mode is active. ', 'otter-blocks' ) }
+					help={ __( 'Distance from the block to the screen.', 'otter-blocks' ) }
 					value={ getOffsetValue( ) }
 					min={ 0 }
 					max={ 500 }
@@ -207,7 +207,7 @@ s		E.g:
 
 				<SelectControl
 					label={ __( 'Behaviour', 'otter-blocks' ) }
-					help={ __( 'Set the action when multiple sticky blocks with the same movement limit collide. Check the \'Stick to\' since it can differ from block to block.', 'otter-blocks' ) }
+					help={ __( 'Behaviour when multiple sticky blocks with the same movement limit collide.', 'otter-blocks' ) }
 					value={ behaviour }
 					options={ [
 						{
@@ -241,7 +241,7 @@ s		E.g:
 
 				<ToggleControl
 					label={ __( 'Enable on Mobile', 'otter-blocks' ) }
-					help={ __( 'Make the sticky mode active for mobile users. Please check the functionality in Preview mode, some elements might not work properly' ) }
+					help={ __( 'Make the sticky mode active for mobile users.' ) }
 					checked={ useOnMobile }
 					onChange={ () => addOption( 'o-sticky-use-mobile', FILTER_OPTIONS.usage ) }
 				/>
