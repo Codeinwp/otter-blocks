@@ -52,10 +52,33 @@ class Woo_Comparison_Block extends Base_Block {
 			}
 		}
 
-		if ( is_admin() && class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Module' ) ) {
-			$module = new \Neve_Pro\Modules\Woocommerce_Booster\Module();
-			add_action( 'admin_enqueue_scripts', array( $module, 'enqueue_scripts' ) );
+		$this->load_woocommerce_booster_assets();
+	}
+
+	/**
+	 * Load Scripts and Styles of the WooCommerce Booster
+	 *
+	 * @return bool
+	 */
+	protected function load_woocommerce_booster_assets() {
+		if( ! is_admin() ) {
+			return false;
 		}
+
+		if( defined( 'NEVE_PRO_COMPATIBILITY_FEATURES' ) && isset( NEVE_PRO_COMPATIBILITY_FEATURES[ 'singleton_pattern_on_pro_modules' ] )  ) {
+			$module = neve_pro()->module('woocommerce_booster');
+		}else if( class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Module' ) ) {
+			$module = new \Neve_Pro\Modules\Woocommerce_Booster\Module();
+		}else{
+			return false;
+		}
+
+		if( ! method_exists( $module, 'enqueue_scripts' ) ) {
+			return false;
+		}
+
+		add_action( 'admin_enqueue_scripts', array( $module, 'enqueue_scripts' ) );
+		return true;
 	}
 
 	/**
