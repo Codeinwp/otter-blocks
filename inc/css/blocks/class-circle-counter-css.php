@@ -49,62 +49,19 @@ class Circle_Counter_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-circle-counter-title__area .wp-block-themeisle-blocks-circle-counter-title__value',
 				'properties' => array(
 					array(
-						'property' => 'color',
-						'value'    => 'titleColor',
-					),
-					array(
-						'property' => 'font-size',
+						'property' => '--fontSizeTitle',
 						'value'    => 'fontSizeTitle',
 						'unit'     => 'px',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => 'html[amp] [id] .wp-block-themeisle-blocks-circle-counter__bar .wp-block-themeisle-blocks-circle-counter-container',
-				'properties' => array(
 					array(
-						'property' => 'width',
+						'property' => '--height',
 						'value'    => 'height',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => 'height',
-						'value'    => 'height',
-						'unit'     => 'px',
-					),
-					array(
-						'property' => 'line-height',
-						'value'    => 'height',
-						'unit'     => 'px',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => 'html[amp] [id] .wp-block-themeisle-blocks-circle-counter__bar .wp-block-themeisle-blocks-circle-counter-text',
-				'properties' => array(
-					array(
-						'property' => 'color',
-						'value'    => 'progressColor',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => 'html[amp] [id] .wp-block-themeisle-blocks-circle-counter__bar .wp-block-themeisle-blocks-circle-counter-overlay',
-				'properties' => array(
-					array(
-						'property' => 'border-color',
+						'property' => '--backgroundColor',
 						'value'    => 'backgroundColor',
 						'format'   => function( $value, $attrs ) {
 							$percentage = isset( $attrs['percentage'] ) ? $attrs['percentage'] : 50;
@@ -116,27 +73,8 @@ class Circle_Counter_CSS extends Base_CSS {
 							return $value;
 						},
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => 'html[amp] [id] .wp-block-themeisle-blocks-circle-counter__bar .wp-block-themeisle-blocks-circle-counter-status',
-				'properties' => array(
 					array(
-						'property'       => 'border-radius',
-						'pattern'        => 'radius 0 0 radius',
-						'pattern_values' => array(
-							'radius' => array(
-								'value'   => 'height',
-								'unit'    => 'px',
-								'default' => 50,
-							),
-						),
-					),
-					array(
-						'property' => 'border-color',
+						'property' => '--progressColor',
 						'value'    => 'progressColor',
 						'format'   => function( $value, $attrs ) {
 							$percentage = isset( $attrs['percentage'] ) ? $attrs['percentage'] : 50;
@@ -149,7 +87,18 @@ class Circle_Counter_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => 'transform',
+						'property'       => 'border-radius',
+						'pattern'        => 'radius 0 0 radius',
+						'pattern_values' => array(
+							'radius' => array(
+								'value'   => 'height',
+								'unit'    => 'px',
+								'default' => 50,
+							),
+						),
+					),
+					array(
+						'property' => '--percentageStart',
 						'value'    => 'percentage',
 						'default'  => 50,
 						'format'   => function( $value, $attrs ) {
@@ -160,16 +109,8 @@ class Circle_Counter_CSS extends Base_CSS {
 							return 'rotate( 180deg )';
 						},
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => 'html[amp] [id] .wp-block-themeisle-blocks-circle-counter__bar .wp-block-themeisle-blocks-circle-counter-status:last-of-type',
-				'properties' => array(
 					array(
-						'property' => 'transform',
+						'property' => '--percentageEnd',
 						'value'    => 'percentage',
 						'default'  => 50,
 						'format'   => function( $value, $attrs ) {
@@ -179,6 +120,30 @@ class Circle_Counter_CSS extends Base_CSS {
 
 							return 'rotate( ' . $this->degree( $value ) . 'deg )';
 						},
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .wp-block-themeisle-blocks-circle-counter-title__area .wp-block-themeisle-blocks-circle-counter-title__value',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'titleColor',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => 'html[amp] [id] .wp-block-themeisle-blocks-circle-counter__bar .wp-block-themeisle-blocks-circle-counter-text',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'progressColor',
 					),
 				),
 			)

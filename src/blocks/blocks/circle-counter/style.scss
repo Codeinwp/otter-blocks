@@ -1,4 +1,7 @@
 .wp-block-themeisle-blocks-circle-counter {
+	--fontSizeTitle: 15px;
+	--height: 100px;
+
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -17,7 +20,7 @@
 		.wp-block-themeisle-blocks-circle-counter-title__value {
 			font-weight: bold;
 			text-align: center;
-			font-size: 15px;
+			font-size: var( --fontSizeTitle );
 		}
 	}
 	
@@ -56,26 +59,31 @@
 html {
 	&[amp] {
 		.wp-block-themeisle-blocks-circle-counter {
+			--backgroundColor: #e3ecf4;
+			--progressColor: #3878ff;
+			--borderRadius: 100px 0px 0px 100px;
+			--percentageStart: rotate( 180deg );
+			--percentageEnd: rotate( 300deg );
+
 			.wp-block-themeisle-blocks-circle-counter__bar {
 				.wp-block-themeisle-blocks-circle-counter-container {
-					width: 100px;
-					height: 100px;
+					width: var( --height );
+					height: var( --height );
 					color: #fff;
 					border-radius: 50%;
 					overflow: hidden;
 					position: relative;
 					text-align: center;
-					line-height: 100px;
+					line-height: var( --height );
 					margin: 20px
 				}
 		
 				.wp-block-themeisle-blocks-circle-counter-overlay {
-					border-color: #e3ecf4;
 					z-index: 1;
 					transform: rotate( 0);
 					width: 100%;
 					height: 100%;
-					border: 10px solid #4682b426;
+					border: 10px solid var( --backgroundColor );
 					border-radius: 100%;
 					margin: 0;
 					position: relative;
@@ -90,15 +98,15 @@ html {
 					position: absolute;
 					top: 0;
 					left: 0;
-					border: 11px solid #3878ff;
-					border-radius: 100px 0px 0px 100px;
+					border: 11px solid var( --progressColor );
+					border-radius: var( --borderRadius );
 					border-right: 0;
 					transform-origin: right;
 					z-index: 100;
-					transform: rotate(180deg);
+					transform: var( --percentageStart );
 
 					&:last-of-type {
-						transform: rotate(300deg);
+						transform: var( --percentageEnd );
 					}
 				}
 			}
