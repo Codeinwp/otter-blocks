@@ -1,4 +1,26 @@
 .wp-block-themeisle-blocks-countdown {
+	--backgroundColor: transparent;
+	--borderColor: #000;
+	--borderRadius: 0;
+	--width: 70px;
+	--widthTablet: 70px;
+	--widthMobile: 70px;
+	--height: 70px;
+	--heightTablet: 70px;
+	--heightMobile: 70px;
+	--borderWidth: 2px;
+	--borderWidthTablet: 2px;
+	--borderWidthMobile: 2px;
+	--gap: 6px;
+	--gapTablet: 6px;
+	--gapMobile: 6px;
+	--valueFontSize: 1.5rem;
+	--valueFontSizeTablet: 1.5rem;
+	--valueFontSizeMobile: 1.5rem;
+	--labelFontSize: 0.6rem;
+	--labelFontSizeTablet: 0.6rem;
+	--labelFontSizeMobile: 0.6rem;
+
 	.otter-countdown__container {
 		display: flex;
 		justify-content: center;
@@ -7,37 +29,68 @@
 		.otter-countdown__display {
 			display: flex;
 			flex-direction: row;
-			gap: 6px;
+			gap: var( --gap );
+
+			@media ( min-width: 600px ) and ( max-width: 960px ) {
+				gap: var( --gapTablet );
+			}
+
+			@media ( max-width: 600px ) {
+				gap: var( --gapMobile );
+			}
 
 			.otter-countdown__display-area {
 				display: flex;
 				justify-content: center;
 				align-items: center;
 				flex-direction: column;
+				background: var( --backgroundColor );
+				border: var( --borderWidth ) solid var( --borderColor );
 				width: max-content;
-				border: solid;
-				border-radius: 10%;
-				border-width: 2px;
-				width: 70px;
-				height: 70px;
+				border-radius: var( --borderRadius );
+				width: var( --width );
+				height: var( --height );
 
-				@media ( max-width: 960px ) {
-					width: 70px;
-					height: 70px;
+				@media ( min-width: 600px ) and ( max-width: 960px ) {
+					width: var( --widthTablet );
+					height: var( --heightTablet );
+					border: var( --borderWidthTablet ) solid var( --borderColor );
+				}
+
+				@media ( max-width: 600px ) {
+					width: var( --widthMobile );
+					height: var( --heightMobile );
+					border: var( --borderWidthMobile ) solid var( --borderColor );
 				}
 
 				.otter-countdown__value {
-					font-size: 1.4rem;
+					font-size: var( --valueFontSize );
 					line-height: 1.2;
 					text-align: center;
 					width: 100%;
+
+					@media ( min-width: 600px ) and ( max-width: 960px ) {
+						font-size: var( --valueFontSizeTablet );
+					}
+		
+					@media ( max-width: 600px ) {
+						font-size: var( --valueFontSizeMobile );
+					}
 				}
 
 				.otter-countdown__label {
-					font-size: 0.6rem;
+					font-size: var( --labelFontSize );
 					min-height: 1rem;
 					text-align: center;
 					width: 100%;
+
+					@media ( min-width: 600px ) and ( max-width: 960px ) {
+						font-size: var( --labelFontSizeTablet );
+					}
+		
+					@media ( max-width: 600px ) {
+						font-size: var( --labelFontSizeMobile );
+					}
 				}
 
 				&[name="separator"] {
