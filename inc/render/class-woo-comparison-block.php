@@ -61,19 +61,19 @@ class Woo_Comparison_Block extends Base_Block {
 	 * @return bool
 	 */
 	protected function load_woocommerce_booster_assets() {
-		if( ! is_admin() ) {
+		if ( ! is_admin() ) {
 			return false;
 		}
 
-		if( defined( 'NEVE_PRO_COMPATIBILITY_FEATURES' ) && isset( NEVE_PRO_COMPATIBILITY_FEATURES[ 'singleton_pattern_on_pro_modules' ] )  ) {
-			$module = neve_pro()->module('woocommerce_booster');
-		}else if( class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Module' ) ) {
+		if ( defined( 'NEVE_PRO_COMPATIBILITY_FEATURES' ) && isset( NEVE_PRO_COMPATIBILITY_FEATURES['singleton_pattern_on_pro_modules'] ) ) {
+			$module = neve_pro()->module( 'woocommerce_booster' );
+		} elseif ( class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Module' ) ) {
 			$module = new \Neve_Pro\Modules\Woocommerce_Booster\Module();
-		}else{
+		} else {
 			return false;
 		}
 
-		if( ! method_exists( $module, 'enqueue_scripts' ) ) {
+		if ( ! method_exists( $module, 'enqueue_scripts' ) ) {
 			return false;
 		}
 
