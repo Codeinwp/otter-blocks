@@ -1,4 +1,19 @@
 .wp-block-themeisle-blocks-flip {
+	--width: 100%;
+	--height: 300px;
+	--borderWidth: 3px;
+	--borderColor: #aaa;
+	--borderRadius: 10px;
+	--frontBackground: transparent;
+	--backBackground: transparent;
+	--padding: 20px;
+	--boxShadow: none;
+	--frontVerticalAlign: center;
+	--frontHorizontalAlign: center;
+	--backVerticalAlign: flex-start;
+	--frontMediaWidth: 150px;
+	--frontMediaHeight: 150px;
+
 	--flip-anim: unset;
 	display: flex;
 	flex-direction: column;
@@ -17,15 +32,15 @@
 	&:hover {
 		&.anim {
 			 > .o-flip-inner {
-				transform: var(--flip-anim);
+				transform: var( --flip-anim );
 			}
 		}
 	}
 
 	.o-flip-inner {
 		position: relative;
-		width: 100%;
-		height: 300px;
+		width: var( --width );
+		height: var( --height );
 
 		text-align: center;
 		transition: transform 0.8s;
@@ -43,19 +58,20 @@
 			overflow-x: hidden;
 			overflow-y: auto;
 			background-size: inherit;
-			border-style: solid;
-			border-radius: 10px;
-			border-color: #aaaaaa;
+			border: var( --borderWidth ) solid var( --borderColor );
+			border-radius: var( --borderRadius );
 		}
 
 		.o-flip-front {
+			background: var( --frontBackground );
+
 			.o-flip-content {
 				display: flex;
 				flex-direction: column;
-				justify-content: center;
-				align-items: center;
+				justify-content: var( --frontVerticalAlign );
+				align-items: var( --frontHorizontalAlign );
 
-				padding: 20px;
+				padding: var( --padding );
 				width: 100%;
 				height: 100%;
 
@@ -64,20 +80,27 @@
 				}
 
 				.o-img {
-					width: 150px;
-					height: 150px;
+					width: var( --frontMediaWidth );
+					height: var( --frontMediaHeight );
 				}
+			}
+
+			&:hover {
+				box-shadow: var( --boxShadow );
 			}
 		}
 
 		.o-flip-back {
-			padding: 20px;
-			transform: var(--flip-anim);
+			background: var( --backBackground );
+			padding: var( --padding );
+			box-shadow: var( --boxShadow );
+			transform: var( --flip-anim );
+			justify-content: var( --backVerticalAlign );
 		}
 
 		&.invert {
 			.o-flip-front {
-				transform: var(--flip-anim);
+				transform: var( --flip-anim );
 			}
 
 			.o-flip-back {

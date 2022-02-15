@@ -36,93 +36,47 @@ class Flip_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .o-flip-inner',
 				'properties' => array(
 					array(
-						'property' => 'width',
+						'property' => '--width',
 						'value'    => 'width',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => 'height',
+						'property' => '--height',
 						'value'    => 'height',
 						'unit'     => 'px',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .o-flip-front:hover, .o-flip-back',
-				'properties' => array(
 					array(
-						'property'       => 'box-shadow',
-						'pattern'        => 'horizontal vertical blur color',
-						'pattern_values' => array(
-							'horizontal' => array(
-								'value'   => 'boxShadowHorizontal',
-								'unit'    => 'px',
-								'default' => 0,
-							),
-							'vertical'   => array(
-								'value'   => 'boxShadowVertical',
-								'unit'    => 'px',
-								'default' => 0,
-							),
-							'blur'       => array(
-								'value'   => 'boxShadowBlur',
-								'unit'    => 'px',
-								'default' => 5,
-							),
-							'color'      => array(
-								'value'   => 'boxShadowColor',
-								'default' => '#000',
-								'format'  => function( $value, $attrs ) {
-									$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 );
-									return ( strpos( $value, '#' ) !== false && $opacity < 100 ) ? $this->hex2rgba( $value, $opacity / 100 ) : $value;
-								},
-							),
-						),
-						'condition'      => function( $attrs ) {
-							return isset( $attrs['boxShadow'] ) && ( ! isset( $attrs['isInverted'] ) || ( isset( $attrs['isInverted'] ) && false === $attrs['isInverted'] ) );
-						},
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .o-flip-front',
-				'properties' => array(
-					array(
-						'property' => 'border-color',
+						'property' => '--borderColor',
 						'value'    => 'borderColor',
 					),
 					array(
-						'property' => 'border-width',
+						'property' => '--borderWidth',
 						'value'    => 'borderWidth',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => 'border-radius',
+						'property' => '--borderRadius',
 						'value'    => 'borderRadius',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => 'background-color',
-						'value'    => 'frontBackgroundColor',
+						'property'  => '--frontBackground',
+						'value'     => 'frontBackgroundColor',
+						'condition' => function( $attrs ) {
+							return ! isset( $attrs['frontBackgroundType'] );
+						},
 					),
 					array(
-						'property'  => 'background-image',
+						'property'  => '--frontBackground',
 						'value'     => 'frontBackgroundGradient',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['frontBackgroundType'] ) && 'gradient' === $attrs['frontBackgroundType'];
 						},
 					),
 					array(
-						'property'       => 'background',
+						'property'       => '--frontBackground',
 						'pattern'        => 'url( imageURL ) repeat attachment position/size',
 						'pattern_values' => array(
 							'imageURL'   => array(
@@ -161,123 +115,30 @@ class Flip_CSS extends Base_CSS {
 							return isset( $attrs['frontBackgroundType'] ) && 'image' === $attrs['frontBackgroundType'] && isset( $attrs['frontBackgroundImage'] ) && isset( $attrs['frontBackgroundImage']['url'] );
 						},
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .o-flip-front .o-flip-content',
-				'properties' => array(
 					array(
-						'property' => 'padding',
-						'value'    => 'padding',
-						'unit'     => 'px',
-					),
-					array(
-						'property' => 'justify-content',
+						'property' => '--frontVerticalAlign',
 						'value'    => 'frontVerticalAlign',
 					),
 					array(
-						'property' => 'align-items',
+						'property' => '--frontHorizontalAlign',
 						'value'    => 'frontHorizontalAlign',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .o-flip-front .o-flip-content .o-img',
-				'properties' => array(
 					array(
-						'property' => 'width',
-						'value'    => 'frontMediaWidth',
-						'unit'     => 'px',
+						'property'  => '--backBackground',
+						'value'     => 'backBackgroundColor',
+						'condition' => function( $attrs ) {
+							return ! isset( $attrs['backBackgroundType'] );
+						},
 					),
 					array(
-						'property' => 'height',
-						'value'    => 'frontMediaHeight',
-						'unit'     => 'px',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .o-flip-front .o-flip-content h3',
-				'properties' => array(
-					array(
-						'property' => 'color',
-						'value'    => 'titleColor',
-					),
-					array(
-						'property' => 'font-size',
-						'value'    => 'titleFontSize',
-						'unit'     => 'px',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .o-flip-front .o-flip-content p',
-				'properties' => array(
-					array(
-						'property' => 'color',
-						'value'    => 'descriptionColor',
-					),
-					array(
-						'property' => 'font-size',
-						'value'    => 'descriptionFontSize',
-						'unit'     => 'px',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .o-flip-back',
-				'properties' => array(
-					array(
-						'property' => 'border-color',
-						'value'    => 'borderColor',
-					),
-					array(
-						'property' => 'border-width',
-						'value'    => 'borderWidth',
-						'unit'     => 'px',
-					),
-					array(
-						'property' => 'padding',
-						'value'    => 'padding',
-						'unit'     => 'px',
-					),
-					array(
-						'property' => 'border-radius',
-						'value'    => 'borderRadius',
-						'unit'     => 'px',
-					),
-					array(
-						'property' => 'justify-content',
-						'value'    => 'backVerticalAlign',
-					),
-					array(
-						'property' => 'background-color',
-						'value'    => 'backBackgroundColor',
-					),
-					array(
-						'property'  => 'background-image',
+						'property'  => '--backBackground',
 						'value'     => 'backBackgroundGradient',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['backBackgroundType'] ) && 'gradient' === $attrs['backBackgroundType'];
 						},
 					),
 					array(
-						'property'       => 'background',
+						'property'       => '--backBackground',
 						'pattern'        => 'url( imageURL ) repeat attachment position/size',
 						'pattern_values' => array(
 							'imageURL'   => array(
@@ -315,6 +176,91 @@ class Flip_CSS extends Base_CSS {
 						'condition'      => function( $attrs ) {
 							return isset( $attrs['backBackgroundType'] ) && 'image' === $attrs['backBackgroundType'] && isset( $attrs['backBackgroundImage'] ) && isset( $attrs['backBackgroundImage']['url'] );
 						},
+					),
+					array(
+						'property' => '--backVerticalAlign',
+						'value'    => 'backVerticalAlign',
+					),
+					array(
+						'property' => '--padding',
+						'value'    => 'padding',
+						'unit'     => 'px',
+					),
+					array(
+						'property'       => '--boxShadow',
+						'pattern'        => 'horizontal vertical blur color',
+						'pattern_values' => array(
+							'horizontal' => array(
+								'value'   => 'boxShadowHorizontal',
+								'unit'    => 'px',
+								'default' => 0,
+							),
+							'vertical'   => array(
+								'value'   => 'boxShadowVertical',
+								'unit'    => 'px',
+								'default' => 0,
+							),
+							'blur'       => array(
+								'value'   => 'boxShadowBlur',
+								'unit'    => 'px',
+								'default' => 5,
+							),
+							'color'      => array(
+								'value'   => 'boxShadowColor',
+								'default' => '#000',
+								'format'  => function( $value, $attrs ) {
+									$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 );
+									return ( strpos( $value, '#' ) !== false && $opacity < 100 ) ? $this->hex2rgba( $value, $opacity / 100 ) : $value;
+								},
+							),
+						),
+						'condition'      => function( $attrs ) {
+							return isset( $attrs['boxShadow'] ) && ( ! isset( $attrs['isInverted'] ) || ( isset( $attrs['isInverted'] ) && false === $attrs['isInverted'] ) );
+						},
+					),
+					array(
+						'property' => '--frontMediaWidth',
+						'value'    => 'frontMediaWidth',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--frontMediaHeight',
+						'value'    => 'frontMediaHeight',
+						'unit'     => 'px',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .o-flip-front .o-flip-content h3',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'titleColor',
+					),
+					array(
+						'property' => 'font-size',
+						'value'    => 'titleFontSize',
+						'unit'     => 'px',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .o-flip-front .o-flip-content p',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'descriptionColor',
+					),
+					array(
+						'property' => 'font-size',
+						'value'    => 'descriptionFontSize',
+						'unit'     => 'px',
 					),
 				),
 			)
