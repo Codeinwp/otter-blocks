@@ -138,7 +138,7 @@ class Review_Comparison_Block {
 			}
 			$table_price .= '</td>';
 
-			$table_ratings .= '<td><div class="otter-review-comparison__ratings">' . $this->get_stars( $this->get_overall_ratings( $features ) ) . '</div></td>';
+			$table_ratings .= '<td><div class="o-review-comparison_ratings">' . $this->get_stars( $this->get_overall_ratings( $features ) ) . '</div></td>';
 
 			$table_description .= '<td>';
 			if ( isset( $block['attrs']['description'] ) ) {
@@ -148,9 +148,9 @@ class Review_Comparison_Block {
 
 			$table_features .= '<td>';
 			foreach ( $features as $feature ) {
-				$table_features .= '<div class="otter-review-comparison__rating_container">';
-				$table_features .= '	<div class="otter-review-comparison__rating_title">' . $feature['title'] . '</div>';
-				$table_features .= '	<div class="otter-review-comparison__ratings">' . $this->get_stars( $feature['rating'] / 2 ) . '</div>';
+				$table_features .= '<div class="o-review-comparison_rating_container">';
+				$table_features .= '	<div class="o-review-comparison_rating_title">' . $feature['title'] . '</div>';
+				$table_features .= '	<div class="o-review-comparison_ratings">' . $this->get_stars( $feature['rating'] / 2 ) . '</div>';
 				$table_features .= '</div>';
 			}
 			$table_features .= '</td>';
@@ -174,7 +174,7 @@ class Review_Comparison_Block {
 
 			$table_links .= '<td>';
 			if ( 0 < count( $links ) ) {
-				$table_links .= '<div class="otter-review-comparison__buttons wp-block-button">';
+				$table_links .= '<div class="o-review-comparison_buttons wp-block-button">';
 				foreach ( $links as $link ) {
 					$rel          = ( isset( $link['isSponsored'] ) && true === $link['isSponsored'] ) ? 'sponsored' : 'nofollow';
 					$table_links .= '	<a href="' . esc_url( $link['href'] ) . '" rel="' . $rel . '" class="wp-block-button__link" target="_blank">' . esc_html( $link['label'] ) . '</a>';

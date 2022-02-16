@@ -1,4 +1,4 @@
-.otter-library-modal {
+.o-library-modal {
 	.components-modal__content {
 		padding: 0;
 	
@@ -344,7 +344,7 @@
 }
 
 @media ( max-width: 782px ) {
-	.otter-library-modal {
+	.o-library-modal {
 		.components-modal__content {
 			.library-modal-control-panel {
 				.library-modal-actions {
@@ -369,14 +369,14 @@
 
 
 @media ( max-width:1439px ) {
-	.otter-library-modal {
+	.o-library-modal {
 		width: 100%;
 		max-width: 990px;
    }
 }
 
 @media ( min-width:1440px ) {
-	.otter-library-modal {
+	.o-library-modal {
 		width: 100%;
 		max-width: 1200px;
    }

@@ -1,4 +1,4 @@
-.otter-icon-picker-popover {
+.o-icon-picker-popover {
 	&:not(.is-mobile) {
 		&.is-bottom {
 			z-index: 9999999;
@@ -40,7 +40,7 @@
 }
 
 .block-editor-block-inspector {
-	.otter-icon-picker-control {
+	.o-icon-picker-control {
 		margin: 8px 0;
 	
 		.components-dropdown {
@@ -52,7 +52,7 @@
 			}
 		}
 	
-		.otter-icon-picker-button {
+		.o-icon-picker-button {
 			background: transparent;
 			position: relative;
 			width: 100%;
@@ -112,14 +112,14 @@
 	}
 }
 
-.otter-icon-picker-toolbar-button {
+.o-icon-picker-toolbar-button {
 	display: flex;
 	justify-content: center;
 }
 
 @media ( max-width: 782px ) {
-	.otter-icon-picker-control {
-		.otter-icon-picker-button {
+	.o-icon-picker-control {
+		.o-icon-picker-button {
 			padding: 5px 24px 5px 8px;
 	
 			&:after {

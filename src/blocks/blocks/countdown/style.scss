@@ -25,84 +25,84 @@
 		display: flex;
 		justify-content: center;
 		align-items: center;
+	}
 
-		.otter-countdown__display {
-			display: flex;
-			flex-direction: row;
-			gap: var( --gap );
+	.otter-countdown__display {
+		display: flex;
+		flex-direction: row;
+		gap: var( --gap );
 
-			@media ( min-width: 600px ) and ( max-width: 960px ) {
-				gap: var( --gapTablet );
+		@media ( min-width: 600px ) and ( max-width: 960px ) {
+			gap: var( --gapTablet );
+		}
+
+		@media ( max-width: 600px ) {
+			gap: var( --gapMobile );
+		}
+	}
+
+	.otter-countdown__display-area {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		background: var( --backgroundColor );
+		border: var( --borderWidth ) solid var( --borderColor );
+		width: max-content;
+		border-radius: var( --borderRadius );
+		width: var( --width );
+		height: var( --height );
+
+		@media ( min-width: 600px ) and ( max-width: 960px ) {
+			width: var( --widthTablet );
+			height: var( --heightTablet );
+			border: var( --borderWidthTablet ) solid var( --borderColor );
+		}
+
+		@media ( max-width: 600px ) {
+			width: var( --widthMobile );
+			height: var( --heightMobile );
+			border: var( --borderWidthMobile ) solid var( --borderColor );
+		}
+
+		&[name="separator"] {
+			.otter-countdown__label {
+				opacity: 0%;
 			}
 
-			@media ( max-width: 600px ) {
-				gap: var( --gapMobile );
-			}
+			border: unset;
+			background-color: transparent;
+			width: max-content;
+		}
+	}
 
-			.otter-countdown__display-area {
-				display: flex;
-				justify-content: center;
-				align-items: center;
-				flex-direction: column;
-				background: var( --backgroundColor );
-				border: var( --borderWidth ) solid var( --borderColor );
-				width: max-content;
-				border-radius: var( --borderRadius );
-				width: var( --width );
-				height: var( --height );
+	.otter-countdown__value {
+		font-size: var( --valueFontSize );
+		line-height: 1.2;
+		text-align: center;
+		width: 100%;
 
-				@media ( min-width: 600px ) and ( max-width: 960px ) {
-					width: var( --widthTablet );
-					height: var( --heightTablet );
-					border: var( --borderWidthTablet ) solid var( --borderColor );
-				}
+		@media ( min-width: 600px ) and ( max-width: 960px ) {
+			font-size: var( --valueFontSizeTablet );
+		}
 
-				@media ( max-width: 600px ) {
-					width: var( --widthMobile );
-					height: var( --heightMobile );
-					border: var( --borderWidthMobile ) solid var( --borderColor );
-				}
+		@media ( max-width: 600px ) {
+			font-size: var( --valueFontSizeMobile );
+		}
+	}
 
-				.otter-countdown__value {
-					font-size: var( --valueFontSize );
-					line-height: 1.2;
-					text-align: center;
-					width: 100%;
+	.otter-countdown__label {
+		font-size: var( --labelFontSize );
+		min-height: 1rem;
+		text-align: center;
+		width: 100%;
 
-					@media ( min-width: 600px ) and ( max-width: 960px ) {
-						font-size: var( --valueFontSizeTablet );
-					}
-		
-					@media ( max-width: 600px ) {
-						font-size: var( --valueFontSizeMobile );
-					}
-				}
+		@media ( min-width: 600px ) and ( max-width: 960px ) {
+			font-size: var( --labelFontSizeTablet );
+		}
 
-				.otter-countdown__label {
-					font-size: var( --labelFontSize );
-					min-height: 1rem;
-					text-align: center;
-					width: 100%;
-
-					@media ( min-width: 600px ) and ( max-width: 960px ) {
-						font-size: var( --labelFontSizeTablet );
-					}
-		
-					@media ( max-width: 600px ) {
-						font-size: var( --labelFontSizeMobile );
-					}
-				}
-
-				&[name="separator"] {
-					.otter-countdown__label {
-						opacity: 0%;
-					}
-
-					border: unset;
-					background-color: transparent;
-					width: max-content;
-				}
-			}
+		@media ( max-width: 600px ) {
+			font-size: var( --labelFontSizeMobile );
 		}
 	}
 }

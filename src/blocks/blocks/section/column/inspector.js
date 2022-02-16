@@ -148,7 +148,7 @@ const Inspector = ({
 
 	return (
 		<InspectorControls>
-			<PanelBody className="wp-block-themeisle-blocks-advanced-columns-header-panel">
+			<PanelBody className="o-section-header-panel">
 				<Button
 					className={ classnames(
 						'header-tab',
@@ -262,7 +262,7 @@ const Inspector = ({
 
 					<PanelBody
 						title={ __( 'Border', 'otter-blocks' ) }
-						className="wp-block-themeisle-border-container"
+						className="o-section-border-container"
 						initialOpen={ false }
 					>
 						<BoxControl

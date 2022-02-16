@@ -155,10 +155,10 @@ const IconPickerControl = ({
 	return (
 		<BaseControl
 			id={ id }
-			className="otter-icon-picker-control"
+			className="o-icon-picker-control"
 		>
 			<Dropdown
-				contentClassName="otter-icon-picker-popover"
+				contentClassName="o-icon-picker-popover"
 				position="bottom center"
 				renderToggle={ ({ isOpen, onToggle }) => (
 					<Fragment>
@@ -174,7 +174,7 @@ const IconPickerControl = ({
 
 						<BaseControl label={ label }>
 							<Button
-								className="otter-icon-picker-button"
+								className="o-icon-picker-button"
 								onClick={ onToggle }
 								aria-expanded={ isOpen }
 							>
@@ -350,12 +350,12 @@ export const IconPickerToolbarControl = ({
 	return (
 		<ToolbarGroup>
 			<Dropdown
-				contentClassName="otter-icon-picker-popover"
+				contentClassName="o-icon-picker-popover"
 				position="bottom center"
 				renderToggle={ ({ isOpen, onToggle }) => (
 					<ToolbarButton
 						label={ __( 'Menu Icons', 'otter-blocks' ) }
-						className="otter-icon-picker-toolbar-button"
+						className="o-icon-picker-toolbar-button"
 						showTooltip
 						onClick={ onToggle }
 					>
