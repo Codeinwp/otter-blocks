@@ -113,7 +113,7 @@
 			}
 		}
 
-		&:first-child {
+		&> :first-child {
 			.wp-block-themeisle-blocks-tabs-item__content {
 				display: block;
 	
