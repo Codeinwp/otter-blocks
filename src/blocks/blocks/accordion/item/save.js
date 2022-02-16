@@ -8,8 +8,7 @@ import {
 } from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
 	const blockProps = useBlockProps.save({
 		open: attributes.initialOpen ? true : false
