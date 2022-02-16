@@ -7,28 +7,28 @@
 	}
 }
 
-.wp-block-themeisle-blocks-review__inspector_image {
+.o-review__inspector_image {
 	img {
 		max-height: 250px;
 		border: 2px solid var( --wp-admin-theme-color );
 	}
 }
 
-.wp-block-themeisle-blocks-review__inspector_add {
+.o-review__inspector_add {
 	display: flex;
 	justify-content: center;
 	width: 100%;
 }
 
-.wp-block-themeisle-blocks-review__inspector_panel_item {
+.o-review__inspector_panel_item {
 	margin: 10px 0;
 
-	.wp-block-themeisle-blocks-review__inspector_panel_item__header {
+	.o-review__inspector_panel_item__header {
 		display: flex;
 		border: 1px solid #d5dadf;
 	}
 
-	.wp-block-themeisle-blocks-review__inspector_panel_item__title {
+	.o-review__inspector_panel_item__title {
 		flex-basis: 80%;
 		padding: 10px 15px;
 		cursor: pointer;
@@ -37,7 +37,7 @@
 		white-space: nowrap;
 	}
 
-	.wp-block-themeisle-blocks-review__inspector_panel_item__arrow {
+	.o-review__inspector_panel_item__arrow {
 		display: flex;
 		flex-basis: 20%;
 		justify-content: center;
@@ -50,7 +50,7 @@
 		}
 	}
 
-	.wp-block-themeisle-blocks-review__inspector_panel_item__content {
+	.o-review__inspector_panel_item__content {
 		border: 1px solid #d5dadf;
 		border-top: none;
 		padding: 10px 15px;

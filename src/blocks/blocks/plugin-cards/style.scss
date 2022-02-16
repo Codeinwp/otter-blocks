@@ -1,7 +1,7 @@
 .wp-block-themeisle-blocks-plugin-cards {
 	padding: 20px 0;
 
-	.wp-block-themeisle-blocks-plugin-cards-wrapper {
+	.o-plugin-cards-wrapper {
 		background: #ffffff;
 		border: 1px #eaeaea solid;
 		display: inline-block;
@@ -14,13 +14,13 @@
 		}
 	}
 
-	.wp-block-themeisle-blocks-plugin-cards-header {
+	.o-plugin-cards-header {
 		background: #ffffff;
 		text-align: center;
 		padding: 25px;
 	}
 
-	.wp-block-themeisle-blocks-plugin-cards-logo {
+	.o-plugin-cards-logo {
 		padding: 10px;
 
 		img {
@@ -30,7 +30,7 @@
 		}
 	}
 
-	.wp-block-themeisle-blocks-plugin-cards-info {
+	.o-plugin-cards-info {
 		padding: 10px;
 
 		h4 {
@@ -44,7 +44,7 @@
 		}
 	}
 
-	.wp-block-themeisle-blocks-plugin-cards-ratings {
+	.o-plugin-cards-ratings {
 		font-family: "Font Awesome 5 Free";
 
 		.star-full:before {
@@ -62,7 +62,7 @@
 		}
 	}
 
-	.wp-block-themeisle-blocks-plugin-cards-details {
+	.o-plugin-cards-details {
 		background: #FCFCFC;
 		border-top: 1px #EAEAEA solid;
 		padding: 20px;
@@ -70,13 +70,13 @@
 		text-align: center;
 	}
 
-	.wp-block-themeisle-blocks-plugin-cards-description {
+	.o-plugin-cards-description {
 		color: #707070;
 		font-size: 12px;
 		text-align: center;
 	}
 
-	.wp-block-themeisle-blocks-plugin-cards-stats {
+	.o-plugin-cards-stats {
 		padding: 25px 0 0 0;
 		text-align: justify;
 
@@ -88,23 +88,23 @@
 		}
 	}
 
-	.wp-block-themeisle-blocks-plugin-cards-stats-list {
+	.o-plugin-cards-stats-list {
 		display: flex;
 	}
 
-	.wp-block-themeisle-blocks-plugin-cards-stat {
+	.o-plugin-cards-stat {
 		flex: auto;
 		padding-top: 10px;
 		text-align: center;
 	}
 
-	.wp-block-themeisle-blocks-plugin-cards-text-large {
+	.o-plugin-cards-text-large {
 		color: #4550ae;
 		font-size: 24px;
 		display: block;
 	}
 
-	.wp-block-themeisle-blocks-plugin-cards-download {
+	.o-plugin-cards-download {
 		background: #4551af;
 		text-align: center;
 
@@ -124,11 +124,11 @@
 
 @media ( max-width:415px ) {
 	.wp-block-themeisle-blocks-plugin-cards {
-		.wp-block-themeisle-blocks-plugin-cards-wrapper {
+		.o-plugin-cards-wrapper {
 			width: auto;
 		}
 
-		.wp-block-themeisle-blocks-plugin-cards-stats-list {
+		.o-plugin-cards-stats-list {
 			display: block;
 		}
 	}

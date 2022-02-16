@@ -169,7 +169,7 @@ const Edit = ({
 			/>
 
 			<div { ...blockProps }>
-				<div className="wp-block-themeisle-blocks-review__header">
+				<div className="o-review__header">
 					{
 						! productAttributes?.title ? (
 							<RichText
@@ -189,8 +189,8 @@ const Edit = ({
 						)
 					}
 
-					<div className="wp-block-themeisle-blocks-review__header_meta">
-						<div className="wp-block-themeisle-blocks-review__header_ratings">
+					<div className="o-review__header_meta">
+						<div className="o-review__header_ratings">
 							{ stars }
 
 							<span>
@@ -199,7 +199,7 @@ const Edit = ({
 						</div>
 
 						<span
-							className="wp-block-themeisle-blocks-review__header_price"
+							className="o-review__header_price"
 						>
 							{ ( ( productAttributes?.price && productAttributes?.discounted ) || ( attributes.price && attributes.discounted ) ) && (
 								<del>{ ( getSymbolFromCurrency( productAttributes?.currency || attributes.currency ) ?? '$' ) + '' + ( productAttributes?.price || attributes.price ) || 0 }</del>
@@ -210,10 +210,10 @@ const Edit = ({
 					</div>
 				</div>
 
-				<div className="wp-block-themeisle-blocks-review__left">
+				<div className="o-review__left">
 					<div
 						className={ classnames(
-							'wp-block-themeisle-blocks-review__left_details',
+							'o-review__left_details',
 							{
 								'is-single': ! attributes.image || ( ! isSelected && ! attributes.description )
 							}
@@ -247,7 +247,7 @@ const Edit = ({
 						) }
 					</div>
 
-					<div className="wp-block-themeisle-blocks-review__left_features">
+					<div className="o-review__left_features">
 						{ 0 < attributes.features.length && attributes.features.map( ( feature, index ) => {
 							const ratings = [];
 
@@ -267,16 +267,16 @@ const Edit = ({
 							}
 
 							return (
-								<div className="wp-block-themeisle-blocks-review__left_feature" key={ index }>
+								<div className="o-review__left_feature" key={ index }>
 									<RichText
 										placeholder={ __( 'Feature title', 'otter-blocks' ) }
 										value={ feature.title }
-										className="wp-block-themeisle-blocks-review__left_feature_title"
+										className="o-review__left_feature_title"
 										onChange={ title => changeFeature( index, { title }) }
 										tagName="span"
 									/>
 
-									<div className="wp-block-themeisle-blocks-review__left_feature_ratings">
+									<div className="o-review__left_feature_ratings">
 										{ ratings }
 
 										<span>{ feature.rating.toFixed( 1 ) }/10</span>
@@ -287,13 +287,13 @@ const Edit = ({
 					</div>
 				</div>
 
-				<div className="wp-block-themeisle-blocks-review__right">
+				<div className="o-review__right">
 					{ 0 < attributes.pros.length && (
-						<div className="wp-block-themeisle-blocks-review__right_pros">
+						<div className="o-review__right_pros">
 							<h4>{ __( 'Pros', 'otter-blocks' ) }</h4>
 
 							{ attributes.pros.map( ( pro, index ) => (
-								<div className="wp-block-themeisle-blocks-review__right_pros_item" key={ index }>
+								<div className="o-review__right_pros_item" key={ index }>
 									{ check }
 
 									<RichText
@@ -308,11 +308,11 @@ const Edit = ({
 					) }
 
 					{ 0 < attributes.cons.length && (
-						<div className="wp-block-themeisle-blocks-review__right_cons">
+						<div className="o-review__right_cons">
 							<h4>{ __( 'Cons', 'otter-blocks' ) }</h4>
 
 							{ attributes.cons.map( ( con, index ) => (
-								<div className="wp-block-themeisle-blocks-review__right_cons_item" key={ index }>
+								<div className="o-review__right_cons_item" key={ index }>
 									{ close }
 
 									<RichText
@@ -328,12 +328,12 @@ const Edit = ({
 				</div>
 
 				{ ( 0 < productAttributes?.links?.length || 0 < attributes.links.length ) && (
-					<div className="wp-block-themeisle-blocks-review__footer">
-						<span className="wp-block-themeisle-blocks-review__footer_label">
+					<div className="o-review__footer">
+						<span className="o-review__footer_label">
 							{ __( 'Buy this product', 'otter-blocks' ) }
 						</span>
 
-						<div className="wp-block-themeisle-blocks-review__footer_buttons">
+						<div className="o-review__footer_buttons">
 							{ ( productAttributes?.links || attributes.links ).map( ( link, index ) => (
 								<RichText
 									key={ index }
