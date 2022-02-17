@@ -10,7 +10,7 @@ domReady( () => {
 		const container = gallery.querySelector( '.wp-block-gallery' );
 		const pattern = /columns-(\d)/;
 
-		const margin = Number( gallery.dataset.margin ) || 0;
+		const margin = gallery.dataset.margin !== undefined ? Number( gallery.dataset.margin ) : 10;
 
 		let columns = Array.from( container.classList ).find( className => {
 			const res = pattern.exec( className );
@@ -27,7 +27,7 @@ domReady( () => {
 		const checker = setInterval( () => {
 			if ( window?.Macy ) {
 				window.Macy({
-					container: gallery.querySelector( '.blocks-gallery-grid' ),
+					container: gallery.querySelector( '.blocks-gallery-grid' ) || container,
 					trueOrder: false,
 					waitForImages: false,
 					margin,

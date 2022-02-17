@@ -85,12 +85,12 @@
                 background-color: inherit;
 
                 div {
-                    border-color: inherit;
                     margin-top: 0px;
                     margin-bottom: 0px;
                 }
 
                 .block-editor-block-list__block {
+					border-color: inherit;
                     &:not(:last-of-type) {
                         .wp-block-themeisle-blocks-tabs-item__header {
                             border-bottom-style: none;
@@ -99,6 +99,7 @@
                         @media (max-width: 800px) {
                             .wp-block-themeisle-blocks-tabs-item__content {
                                 border-bottom-style: none;
+								border-color: inherit;
                             }
                         }
                     }

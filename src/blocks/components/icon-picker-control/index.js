@@ -8,6 +8,8 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
+import { MediaPlaceholder } from '@wordpress/block-editor';
+
 import { useInstanceId } from '@wordpress/compose';
 
 import {
@@ -68,7 +70,8 @@ const IconPickerControl = ({
 	prefix,
 	icon,
 	changeLibrary,
-	onChange
+	onChange,
+	allowImage = false
 }) => {
 	const instanceId = useInstanceId( IconPickerControl );
 
@@ -112,6 +115,22 @@ const IconPickerControl = ({
 		setIcons( icons );
 	}, []);
 
+	const [ isURL, setIsUrl ] = useState( false );
+
+	useEffect( () => {
+		if ( 'image' === library ) {
+			try {
+				const imageURL = new URL( icon );
+
+				if (  'http:' === imageURL?.protocol || 'https:' === imageURL?.protocol ) {
+					setIsUrl( true );
+				}
+			} catch ( _ ) {
+				setIsUrl( false );
+			}
+		}
+	}, [ library, icon ]);
+
 	const [ search, setSearch ] = useState( '' );
 	const [ icons, setIcons ] = useState( null );
 
@@ -128,7 +147,7 @@ const IconPickerControl = ({
 			</Fragment>
 
 		) : (
-			<Fragment></Fragment>
+			<Fragment>{ __( 'Select Icon', 'otter-blocks' ) }</Fragment>
 		);
 	};
 
@@ -167,83 +186,132 @@ const IconPickerControl = ({
 							value={ library }
 							options={ [
 								{ label: __( 'Font Awesome', 'otter-blocks' ), value: 'fontawesome' },
-								{ label: __( 'ThemeIsle Icons', 'otter-blocks' ), value: 'themeisle-icons' }
+								{ label: __( 'ThemeIsle Icons', 'otter-blocks' ), value: 'themeisle-icons' },
+								...( allowImage ? [ { label: __( 'Custom Image', 'otter-blocks' ), value: 'image' } ] : [])
 							] }
 							onChange={ changeLibrary }
 						/>
 
-						<BaseControl label={ label }>
-							<Button
-								className="o-icon-picker-button"
-								onClick={ onToggle }
-								aria-expanded={ isOpen }
-							>
-								{ icon ? (
-									<Fragment>
-										{ 'fontawesome' === library && (
-											prefix ? (
-												<Fragment>
-													<i
-														className={ classnames(
-															prefix,
-															`fa-${ icon }`,
-															'fa-fw'
-														) }
-													>
-													</i>
-													{ icon }
-												</Fragment>
-											) :
-												__( 'Select Icon', 'otter-blocks' )
-										) }
+						{ 'image' !== library ? (
+							<BaseControl label={ label }>
+								<Button
+									className="o-icon-picker-button"
+									onClick={ onToggle }
+									aria-expanded={ isOpen }
+								>
+									{ icon ? (
+										<Fragment>
+											{ 'fontawesome' === library && (
+												prefix ? (
+													<Fragment>
+														<i
+															className={ classnames(
+																prefix,
+																`fa-${ icon }`,
+																'fa-fw'
+															) }
+														>
+														</i>
+														{ icon }
+													</Fragment>
+												) :
+													__( 'Select Icon', 'otter-blocks' )
+											) }
 
-										{ 'themeisle-icons' === library && <ThemeIsleIcon /> }
-									</Fragment>
-								) :
-									__( 'Select Icon', 'otter-blocks' )
-								}
-							</Button>
-						</BaseControl>
+											{ 'themeisle-icons' === library && <ThemeIsleIcon /> }
+										</Fragment>
+									) :
+										__( 'Select Icon', 'otter-blocks' )
+									}
+								</Button>
+							</BaseControl>
+						) : (
+							<Fragment>
+								{ icon && (
+									<BaseControl
+										label={ __( 'Image', 'otter-blocks' ) }
+										className='o-icon-picker-image-control'
+									>
+										<div
+											style={{
+												width: '100%',
+												padding: '5px',
+												display: 'flex',
+												flexDirection: 'column',
+												alignItems: 'flex-start',
+												gap: '5px'
+											}}
+										>
+											{ isURL ? (
+												<img src={ icon } width="130px" />
+											) : (
+												<span>
+													{__( 'Please select an image.', 'otter-blocks' )}
+												</span>
+											) }
+										</div>
+									</BaseControl>
+								) }
+
+								<MediaPlaceholder
+									labels={ {
+										title: __( 'Image', 'otter-blocks' )
+									} }
+									accept="image/*"
+									allowedTypes={ [ 'image' ] }
+									value={ icon }
+									onSelect={ onChange }
+								/>
+							</Fragment>
+						) }
 					</Fragment>
 				) }
-				renderContent={ ({ onToggle }) => (
-					<MenuGroup label={ 'fontawesome' === library ? __( 'Font Awesome Icons', 'otter-blocks' ) : __( 'ThemeIsle Icons', 'otter-blocks' ) }>
-						<TextControl
-							value={ search }
-							onChange={ e => setSearch( e ) }
-						/>
+				renderContent={ ({ onToggle }) => {
 
-						<div className="components-popover__items">
-							{ selectedIcons.map( i => {
-								if ( 'fontawesome' === library && ( ! search || i.search.some( ( o ) => o.toLowerCase().match( search.toLowerCase() ) ) ) ) {
-									return (
-										<FontAwesomeIconsList
-											i={ i }
-											icon={ icon }
-											prefix={ prefix }
-											onToggle={ () => {
-												onToggle();
-												onChange({
-													name: i.name,
-													prefix: i.prefix
-												});
-											}}
-										/>
-									);
-								}
+					if ( 'image' === library ) {
+						return <Fragment></Fragment>;
+					}
 
-								if ( 'themeisle-icons' === library && ( ! search || i.toLowerCase().match( search.toLowerCase() ) ) ) {
-									return (
-										<ThemeIsleIconsList
-											i={ i }
-											onToggle={ onToggle }
-										/>
-									);
-								}
-							}) }
-						</div>
-					</MenuGroup>
-				) }
+					return (
+
+						<MenuGroup label={ 'fontawesome' === library ? __( 'Font Awesome Icons', 'otter-blocks' ) : __( 'ThemeIsle Icons', 'otter-blocks' ) }>
+							<TextControl
+								value={ search }
+								onChange={ e => setSearch( e ) }
+							/>
+
+							<div className="components-popover__items">
+								{ selectedIcons.map( i => {
+									if ( 'fontawesome' === library && ( ! search || i.search.some( ( o ) => o.toLowerCase().match( search.toLowerCase() ) ) ) ) {
+										return (
+											<FontAwesomeIconsList
+												i={ i }
+												icon={ icon }
+												prefix={ prefix }
+												onToggle={ () => {
+													onToggle();
+													onChange({
+														name: i.name,
+														prefix: i.prefix
+													});
+												}}
+											/>
+										);
+									}
+
+									if ( 'themeisle-icons' === library && ( ! search || i.toLowerCase().match( search.toLowerCase() ) ) ) {
+										return (
+											<ThemeIsleIconsList
+												i={ i }
+												onToggle={ onToggle }
+											/>
+										);
+									}
+								}) }
+							</div>
+						</MenuGroup>
+					);
+				} }
 			/>
 		</BaseControl>
 	);

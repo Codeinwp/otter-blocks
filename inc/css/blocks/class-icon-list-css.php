@@ -60,6 +60,12 @@ class Icon_List_CSS extends Base_CSS {
 						'unit'     => 'px',
 						'default'  => 20,
 					),
+					array(
+						'property' => 'min-width',
+						'value'    => 'defaultSize',
+						'unit'     => 'px',
+						'default'  => 20,
+					),
 				),
 			)
 		);
