@@ -78,12 +78,12 @@ class Posts_Grid_Block {
 			$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $id ), $size );
 			$category  = get_the_category( $id );
 
-			$list_items_markup .= '<div class="wp-block-themeisle-blocks-posts-grid-post-blog wp-block-themeisle-blocks-posts-grid-post-plain"><div class="wp-block-themeisle-blocks-posts-grid-post">';
+			$list_items_markup .= '<div class="o-posts-grid-post-blog o-posts-grid-post-plain"><div class="o-posts-grid-post">';
 
 			if ( isset( $attributes['displayFeaturedImage'] ) && $attributes['displayFeaturedImage'] ) {
 				if ( $thumbnail ) {
 					$list_items_markup .= sprintf(
-						'<div class="wp-block-themeisle-blocks-posts-grid-post-image"><a href="%1$s">%2$s</a></div>',
+						'<div class="o-posts-grid-post-image"><a href="%1$s">%2$s</a></div>',
 						esc_url( get_the_permalink( $id ) ),
 						wp_get_attachment_image( get_post_thumbnail_id( $id ), $size ),
 						esc_html( get_the_title( $id ) ) // This does nothing?
@@ -91,13 +91,13 @@ class Posts_Grid_Block {
 				}
 			}
 
-			$list_items_markup .= '<div class="wp-block-themeisle-blocks-posts-grid-post-body' . ( $thumbnail && $attributes['displayFeaturedImage'] ? '' : ' is-full' ) . '">';
+			$list_items_markup .= '<div class="o-posts-grid-post-body' . ( $thumbnail && $attributes['displayFeaturedImage'] ? '' : ' is-full' ) . '">';
 
 			foreach ( $attributes['template'] as $element ) {
 				if ( 'category' === $element ) {
 					if ( isset( $attributes['displayCategory'] ) && isset( $category[0] ) && $attributes['displayCategory'] ) {
 						$list_items_markup .= sprintf(
-							'<span class="wp-block-themeisle-blocks-posts-grid-post-category">%1$s</span>',
+							'<span class="o-posts-grid-post-category">%1$s</span>',
 							esc_html( $category[0]->cat_name )
 						);
 					}
@@ -106,7 +106,7 @@ class Posts_Grid_Block {
 				if ( 'title' === $element ) {
 					if ( isset( $attributes['displayTitle'] ) && $attributes['displayTitle'] ) {
 						$list_items_markup .= sprintf(
-							'<%1$s class="wp-block-themeisle-blocks-posts-grid-post-title"><a href="%2$s">%3$s</a></%1$s>',
+							'<%1$s class="o-posts-grid-post-title"><a href="%2$s">%3$s</a></%1$s>',
 							esc_attr( $attributes['titleTag'] ),
 							esc_url( get_the_permalink( $id ) ),
 							esc_html( get_the_title( $id ) )
@@ -116,7 +116,7 @@ class Posts_Grid_Block {
 
 				if ( 'meta' === $element ) {
 					if ( ( isset( $attributes['displayMeta'] ) && $attributes['displayMeta'] ) && ( ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) || ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) ) ) {
-						$list_items_markup .= '<p class="wp-block-themeisle-blocks-posts-grid-post-meta">';
+						$list_items_markup .= '<p class="o-posts-grid-post-meta">';
 
 						if ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) {
 							$list_items_markup .= sprintf(
@@ -148,7 +148,7 @@ class Posts_Grid_Block {
 
 				if ( 'description' === $element ) {
 					if ( ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) || ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink'] ) ) {
-						$list_items_markup .= '<div class="wp-block-themeisle-blocks-posts-grid-post-description">';
+						$list_items_markup .= '<div class="o-posts-grid-post-description">';
 
 						if ( ( isset( $attributes['excerptLength'] ) && $attributes['excerptLength'] > 0 ) && ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) ) {
 							$list_items_markup .= sprintf(
@@ -189,7 +189,7 @@ class Posts_Grid_Block {
 		}
 
 		if ( ( isset( $attributes['style'] ) && 'grid' === $attributes['style'] ) || ( isset( $attributes['grid'] ) && true === $attributes['grid'] ) ) {
-			$class .= ' wp-block-themeisle-blocks-posts-grid-columns-' . $attributes['columns'];
+			$class .= ' o-posts-grid-columns-' . $attributes['columns'];
 		}
 
 		if ( isset( $attributes['imageBoxShadow'] ) && true === $attributes['imageBoxShadow'] ) {
@@ -255,21 +255,21 @@ class Posts_Grid_Block {
 
 		if ( isset( $thumbnail ) ) {
 			$html .= sprintf(
-				'<div class="wp-block-themeisle-blocks-posts-grid-post-image %1$s"><a href="%2$s">%3$s</a></div>',
+				'<div class="o-posts-grid-post-image %1$s"><a href="%2$s">%3$s</a></div>',
 				isset( $attributes['imageBoxShadow'] ) && true === $attributes['imageBoxShadow'] ? 'has-shadow' : '',
 				esc_url( get_the_permalink( $id ) ),
 				$thumbnail
 			);
 		}
 
-		$html .= '<div class="wp-block-themeisle-blocks-posts-grid-post-body' . ( $thumbnail && $attributes['displayFeaturedImage'] ? '' : ' is-full' ) . '">';
+		$html .= '<div class="o-posts-grid-post-body' . ( $thumbnail && $attributes['displayFeaturedImage'] ? '' : ' is-full' ) . '">';
 
 		foreach ( $attributes['template'] as $element ) {
 
 			if ( 'title' === $element ) {
 				if ( isset( $attributes['displayTitle'] ) && $attributes['displayTitle'] ) {
 					$html .= sprintf(
-						'<%1$s class="wp-block-themeisle-blocks-posts-grid-post-title"><a href="%2$s">%3$s</a></%1$s>',
+						'<%1$s class="o-posts-grid-post-title"><a href="%2$s">%3$s</a></%1$s>',
 						esc_attr( $attributes['titleTag'] ),
 						esc_url( get_the_permalink( $id ) ),
 						esc_html( get_the_title( $id ) )
@@ -279,7 +279,7 @@ class Posts_Grid_Block {
 
 			if ( 'meta' === $element ) {
 				if ( ( isset( $attributes['displayMeta'] ) && $attributes['displayMeta'] ) && ( ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) || ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) ) ) {
-					$html .= '<p class="wp-block-themeisle-blocks-posts-grid-post-meta">';
+					$html .= '<p class="o-posts-grid-post-meta">';
 
 					if ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) {
 						$html .= sprintf(
@@ -311,7 +311,7 @@ class Posts_Grid_Block {
 
 			if ( 'description' === $element ) {
 				if ( ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) || ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink'] ) ) {
-					$html .= '<div class="wp-block-themeisle-blocks-posts-grid-post-description">';
+					$html .= '<div class="o-posts-grid-post-description">';
 
 					if ( ( isset( $attributes['excerptLength'] ) && $attributes['excerptLength'] > 0 ) && ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) ) {
 						$html .= sprintf(

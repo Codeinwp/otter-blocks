@@ -18,29 +18,29 @@
 	}
 
 	.is-grid {
-		&.wp-block-themeisle-blocks-posts-grid-columns-2 {
-			.wp-block-themeisle-blocks-posts-grid-post-blog {
+		&.o-posts-grid-columns-2 {
+			.o-posts-grid-post-blog {
 				flex: 0 0 50%;
 				max-width: 50%;
 			}
 		}
 
-		&.wp-block-themeisle-blocks-posts-grid-columns-3 {
-			.wp-block-themeisle-blocks-posts-grid-post-blog {
+		&.o-posts-grid-columns-3 {
+			.o-posts-grid-post-blog {
 				flex: 0 0 33%;
 				max-width: 33%;
 			}
 		}
 
-		&.wp-block-themeisle-blocks-posts-grid-columns-4 {
-			.wp-block-themeisle-blocks-posts-grid-post-blog {
+		&.o-posts-grid-columns-4 {
+			.o-posts-grid-post-blog {
 				flex: 0 0 25%;
 				max-width: 25%;
 			}
 		}
 
-		&.wp-block-themeisle-blocks-posts-grid-columns-5 {
-			.wp-block-themeisle-blocks-posts-grid-post-blog {
+		&.o-posts-grid-columns-5 {
+			.o-posts-grid-post-blog {
 				flex: 0 0 20%;
 				max-width: 20%;
 			}
@@ -48,15 +48,15 @@
 	}
 
 	.is-list {
-		.wp-block-themeisle-blocks-posts-grid-post {
+		.o-posts-grid-post {
 			display: flex;
 
-			.wp-block-themeisle-blocks-posts-grid-post-image {
+			.o-posts-grid-post-image {
 				flex-basis: 33.33%;
 				padding: 20px;
 			}
 
-			.wp-block-themeisle-blocks-posts-grid-post-body {
+			.o-posts-grid-post-body {
 				flex-basis: 66.66%;
 				padding-top: 20px;
 			}
@@ -64,9 +64,9 @@
 	}
 
 	.o-crop-img {
-		.wp-block-themeisle-blocks-posts-grid-post-blog {
-			.wp-block-themeisle-blocks-posts-grid-post {
-				.wp-block-themeisle-blocks-posts-grid-post-image {
+		.o-posts-grid-post-blog {
+			.o-posts-grid-post {
+				.o-posts-grid-post-image {
 					img {
 						width: 150px;
 						height: 150px;
@@ -79,7 +79,7 @@
 	}
 
 
-	.wp-block-themeisle-blocks-posts-grid-post-blog {
+	.o-posts-grid-post-blog {
 		width: 100%;
 		position: relative;
 		margin-bottom: 30px;
@@ -90,12 +90,12 @@
 		word-wrap: break-word;
 		background-clip: border-box;
 
-		.wp-block-themeisle-blocks-posts-grid-post {
+		.o-posts-grid-post {
 			margin-bottom: 10px;
 		}
 	}
 
-	.wp-block-themeisle-blocks-posts-grid-post-image {
+	.o-posts-grid-post-image {
 		position: relative;
 
 		img {
@@ -106,7 +106,7 @@
 		}
 	}
 
-	.wp-block-themeisle-blocks-posts-grid-post-body {
+	.o-posts-grid-post-body {
 		display: flex;
 		flex-direction: column;
 		justify-content: var(--vert-align);
@@ -118,13 +118,13 @@
 			flex-basis: 100%;
 		}
 
-		.wp-block-themeisle-blocks-posts-grid-post-category {
+		.o-posts-grid-post-category {
 			font-size: 0.85em;
 			text-transform: capitalize;
 			margin: 5px 0;
 		}
 
-		.wp-block-themeisle-blocks-posts-grid-post-title {
+		.o-posts-grid-post-title {
 			margin: 10px 0;
 			line-height: 1.25em;
 
@@ -139,12 +139,12 @@
 			}
 		}
 
-		.wp-block-themeisle-blocks-posts-grid-post-meta {
+		.o-posts-grid-post-meta {
 			font-size: 0.85em;
 			margin: 10px 0;
 		}
 
-		.wp-block-themeisle-blocks-posts-grid-post-description {
+		.o-posts-grid-post-description {
 			margin: 10px 0;
 
 			p {
@@ -165,7 +165,7 @@
 		width: 100%;
 		padding: 20px;
 
-		.wp-block-themeisle-blocks-posts-grid-post-image {
+		.o-posts-grid-post-image {
 			img {
 				width: 100%;
 				height: 250px;
@@ -177,9 +177,9 @@
 }
 
 @media ( min-width: 600px ) and ( max-width: 960px ) {
-	.wp-block-themeisle-blocks-posts-grid {
+	.o-posts-grid {
 		&.is-grid {
-			.wp-block-themeisle-blocks-posts-grid-post-blog {
+			.o-posts-grid-post-blog {
 				min-width: 33%;
 			}
 		}
@@ -187,25 +187,25 @@
 }
 
 @media ( max-width: 600px ) {
-	.wp-block-themeisle-blocks-posts-grid {
+	.o-posts-grid {
 
 		&.is-grid {
-			.wp-block-themeisle-blocks-posts-grid-post-blog {
+			.o-posts-grid-post-blog {
 				min-width: 100%;
 			}
 		}
 
 		&.is-list {
-			.wp-block-themeisle-blocks-posts-grid-post {
+			.o-posts-grid-post {
 				flex-direction: column;
 				padding: 10px;
 
-				.wp-block-themeisle-blocks-posts-grid-post-image {
+				.o-posts-grid-post-image {
 					flex-basis: 100%;
 					padding: 0;
 				}
 
-				.wp-block-themeisle-blocks-posts-grid-post-body {
+				.o-posts-grid-post-body {
 					flex-basis: 100%;
 					padding: 0;
 				}

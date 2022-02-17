@@ -40,10 +40,10 @@ const FeaturedPost = props => {
 					/>
 				)
 			}
-			<div className="wp-block-themeisle-blocks-posts-grid-post-body">
+			<div className="o-posts-grid-post-body">
 				{
 					attributes.displayTitle && (
-						<Tag className="wp-block-themeisle-blocks-posts-grid-post-title">
+						<Tag className="o-posts-grid-post-title">
 							<a href={ post.link }>
 								{ unescapeHTML( post.title?.rendered ) }
 							</a>
@@ -53,7 +53,7 @@ const FeaturedPost = props => {
 
 				{
 					attributes.displayMeta && (
-						<p className='wp-block-themeisle-blocks-posts-grid-post-meta'>
+						<p className='o-posts-grid-post-meta'>
 							{ ( attributes.displayDate ) && (
 
 							/* translators: %s Date posted */
@@ -76,7 +76,7 @@ const FeaturedPost = props => {
 
 				{
 					attributes.displayDescription && (
-						<div className='wp-block-themeisle-blocks-posts-grid-post-description'>
+						<div className='o-posts-grid-post-description'>
 							<p>
 								{ post.excerpt?.rendered && unescapeHTML( post.excerpt.rendered ).substring( 0, attributes.excerptLength ) + '…' }
 							</p>

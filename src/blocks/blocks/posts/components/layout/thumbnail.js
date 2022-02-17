@@ -43,7 +43,7 @@ const Thumbnail = ({
 	}
 
 	return (
-		<div className="wp-block-themeisle-blocks-posts-grid-post-image">
+		<div className="o-posts-grid-post-image">
 			<a href={ link }>
 				{ featuredImage ? <img src={ featuredImage } size={ size } alt={ altText } data-id={ id } style={imgStyle} /> : <Placeholder><Spinner/></Placeholder> }
 			</a>

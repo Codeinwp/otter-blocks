@@ -29,7 +29,7 @@ const Layout = ({
 
 	const Category = ({element, category}) => {
 		if ( undefined !== category && ( attributes.displayCategory && categoriesList ) ) {
-			return <span key={ element } className="wp-block-themeisle-blocks-posts-grid-post-category">{ category.name }</span>;
+			return <span key={ element } className="o-posts-grid-post-category">{ category.name }</span>;
 		}
 		return '';
 	};
@@ -37,7 +37,7 @@ const Layout = ({
 	const Title = ({ element, post }) => {
 		if ( attributes.displayTitle ) {
 			return (
-				<Tag key={ element } className="wp-block-themeisle-blocks-posts-grid-post-title">
+				<Tag key={ element } className="o-posts-grid-post-title">
 					<a href={ post.link }>
 						{ unescapeHTML( post.title?.rendered ) }
 					</a>
@@ -50,7 +50,7 @@ const Layout = ({
 	const Meta = ({ element, post, author, category }) => {
 		if ( attributes.displayMeta && ( attributes.displayDate || attributes.displayAuthor ) ) {
 			return (
-				<p key={ element } className="wp-block-themeisle-blocks-posts-grid-post-meta">
+				<p key={ element } className="o-posts-grid-post-meta">
 					{ ( attributes.displayDate ) && (
 
 						/* translators: %s Date posted */
@@ -76,7 +76,7 @@ const Layout = ({
 	const Description = ({ element, post }) => {
 		if ( 0 < attributes.excerptLength && attributes.displayDescription ) {
 			return (
-				<div key={ element } className="wp-block-themeisle-blocks-posts-grid-post-description">
+				<div key={ element } className="o-posts-grid-post-description">
 					<p>
 						{ post.excerpt?.rendered && unescapeHTML( post.excerpt.rendered ).substring( 0, attributes.excerptLength ) + '…' }
 					</p>
@@ -99,7 +99,7 @@ const Layout = ({
 				'grid' === attributes.style ?
 					classnames(
 						'is-grid',
-						`wp-block-themeisle-blocks-posts-grid-columns-${ attributes.columns }`,
+						`o-posts-grid-columns-${ attributes.columns }`,
 						{ 'has-shadow': attributes.imageBoxShadow },
 						{'o-crop-img': attributes.cropImage }
 					) :
@@ -118,9 +118,9 @@ const Layout = ({
 					return (
 						<div
 							key={ post.link }
-							className="wp-block-themeisle-blocks-posts-grid-post-blog wp-block-themeisle-blocks-posts-grid-post-plain"
+							className="o-posts-grid-post-blog o-posts-grid-post-plain"
 						>
-							<div className={classnames( 'wp-block-themeisle-blocks-posts-grid-post' )}>
+							<div className={classnames( 'o-posts-grid-post' )}>
 								{ ( 0 !== post.featured_media && attributes.displayFeaturedImage ) && (
 									<Thumbnail
 										id={ post.featured_media }
@@ -135,7 +135,7 @@ const Layout = ({
 
 								<div
 									className={ classnames(
-										'wp-block-themeisle-blocks-posts-grid-post-body',
+										'o-posts-grid-post-body',
 										{ 'is-full': ! attributes.displayFeaturedImage }
 									) }
 									style={{

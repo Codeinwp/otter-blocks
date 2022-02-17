@@ -1,17 +1,17 @@
 @import 'style';
 
 
-.otter-blocks-sortable-item-area {
+.o-sortable-item-area {
 	margin: 10px 0;
 	z-index: 999999;
 
-	&.otter-blocks-sortable-item-area-meta {
-		.otter-blocks-sortable-control-area {
+	&.o-sortable-item-area-meta {
+		.o-sortable-control-area {
 			padding: 20px 15px 10px;
 		}
 	}
 
-	.otter-blocks-sortable-item {
+	.o-sortable-item {
 		display: flex;
 		background: #ffffff;
 		border: 1px solid #d5dadf;
@@ -21,20 +21,20 @@
 		}
 
 		&.disabled {
-			.otter-blocks-sortable-label {
+			.o-sortable-label {
 				flex-basis: 80%;
 				padding-left: 15px;
 			}
 		}
 
 		&.editable {
-			.otter-blocks-sortable-label {
+			.o-sortable-label {
 				flex-basis: 40%;
 				flex-grow: 1;
 			}
 
 			&.disabled {
-				.otter-blocks-sortable-label {
+				.o-sortable-label {
 					flex-basis: 60%;
 				}
 			}
@@ -43,24 +43,24 @@
 		&.hidden {
 			color: #e5e5e5;
 
-			.otter-blocks-sortable-handle {
+			.o-sortable-handle {
 				span {
 					background: linear-gradient(180deg,#e5e5e5,#e5e5e5 20%,#fff 0,#fff 40%,#e5e5e5 0,#e5e5e5 60%,#fff 0,#fff 80%,#e5e5e5 0,#e5e5e5);
 				}
 			}
 
-			.otter-blocks-sortable-label {
+			.o-sortable-label {
 				color: #e5e5e5;
 			}
 
-			.otter-blocks-sortable-button {
+			.o-sortable-button {
 				svg {
 					fill :#e5e5e5;
 				}
 			}
 		}
 
-		.otter-blocks-sortable-handle {
+		.o-sortable-handle {
 			display: flex;
 			justify-content: center;
 			align-self: center;
@@ -81,7 +81,7 @@
 			}
 		}
 
-		.otter-blocks-sortable-label {
+		.o-sortable-label {
 			cursor: default;
 			flex-basis: 60%;
 			display: flex;
@@ -92,7 +92,7 @@
 			}
 		}
 
-		.otter-blocks-sortable-button {
+		.o-sortable-button {
 			height: auto;
 			flex-basis: 20%;
 			justify-content: center;
@@ -115,7 +115,7 @@
 		}
 	}
 
-	.otter-blocks-sortable-control-area {
+	.o-sortable-control-area {
 		background: #ffffff;
 		border: 1px solid #d5dadf;
 		border-top: none;

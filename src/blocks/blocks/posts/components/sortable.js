@@ -41,7 +41,7 @@ import ResponsiveControl from '../../../components/responsive-control';
 
 const DragHandle = SortableHandle( () => {
 	return (
-		<div className="otter-blocks-sortable-handle" tabIndex="0">
+		<div className="o-sortable-handle" tabIndex="0">
 			<span></span>
 		</div>
 	);
@@ -142,13 +142,13 @@ export const SortableItem = ({
 	return (
 		<div
 			className={ classnames(
-				'otter-blocks-sortable-item-area',
-				`otter-blocks-sortable-item-area-${ value }`
+				'o-sortable-item-area',
+				`o-sortable-item-area-${ value }`
 			) }
 		>
 			<div
 				className={ classnames(
-					'otter-blocks-sortable-item',
+					'o-sortable-item',
 					{
 						'disabled': disabled,
 						'hidden': ! templateLookUp[value],
@@ -158,7 +158,7 @@ export const SortableItem = ({
 			>
 				{ ! disabled && <DragHandle /> }
 
-				<div className="otter-blocks-sortable-label">
+				<div className="o-sortable-label">
 					{ label }
 				</div>
 
@@ -167,7 +167,7 @@ export const SortableItem = ({
 						icon={ isOpen ? 'arrow-up-alt2' : 'arrow-down-alt2' }
 						label={ isOpen ? __( 'Close Settings', 'otter-blocks' ) : __( 'Open Settings', 'otter-blocks' ) }
 						showTooltip={ true }
-						className="otter-blocks-sortable-button"
+						className="o-sortable-button"
 						onClick={ () => setOpen( ! isOpen ) }
 					/>
 				) }
@@ -176,7 +176,7 @@ export const SortableItem = ({
 					icon={ icon }
 					label={ message }
 					showTooltip={ true }
-					className="otter-blocks-sortable-button"
+					className="o-sortable-button"
 					onClick={ () => {
 						toggleField( value );
 						setOpen( false );
@@ -187,7 +187,7 @@ export const SortableItem = ({
 			{ edit && 'category' !== value && (
 				<div
 					className={ classnames(
-						'otter-blocks-sortable-control-area',
+						'o-sortable-control-area',
 						{ 'opened': isOpen && templateLookUp[value] }
 					) }
 				>
