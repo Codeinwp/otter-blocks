@@ -250,7 +250,9 @@ class Block_Frontend extends Base_CSS {
 		}
 
 		if ( ! CSS_Handler::has_css_file( $post_id ) ) {
-			CSS_Handler::generate_css_file( $post_id );
+			if ( CSS_Handler::is_writable() ) {
+				CSS_Handler::generate_css_file( $post_id );
+			}
 
 			add_action(
 				$location,
@@ -511,7 +513,9 @@ class Block_Frontend extends Base_CSS {
 		}
 
 		if ( ! CSS_Handler::has_css_file( 'widgets' ) ) {
-			CSS_Handler::save_widgets_styles();
+			if ( CSS_Handler::is_writable() ) {
+				CSS_Handler::save_widgets_styles();
+			}
 
 			$css = get_option( 'themeisle_blocks_widgets_css' );
 
