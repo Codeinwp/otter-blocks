@@ -135,11 +135,11 @@ class Posts_Grid_Block {
 							);
 						}
 
-						if ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] && isset( $post["comment_count"] ) ) {
+						if ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] && isset( $post['comment_count'] ) ) {
 							$list_items_markup .= sprintf(
 								' - %1$s %2$s',
-								$post["comment_count"],
-								$post["comment_count"] === '1' ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
+								$post['comment_count'],
+								$post['comment_count'] === '1' ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
 							);
 						}
 
