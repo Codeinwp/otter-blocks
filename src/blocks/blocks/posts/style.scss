@@ -1,13 +1,10 @@
-:root {
-	--o-posts-text-align: initial;
-	--o-posts-vert-align: initial;
-	--o-posts-img-br-radius: 5px;
-	--o-posts-img-width: initial;
-	--o-posts-title-text-size: initial;
-	--o-posts-description-text-size: initial;
-}
-
 .wp-block-themeisle-blocks-posts-grid {
+	--text-align: initial;
+	--vert-align: initial;
+	--img-br-radius: 5px;
+	--img-width: initial;
+	--title-text-size: initial;
+	--description-text-size: initial;
 
 	.has-shadow {
 		img {
@@ -74,7 +71,7 @@
 						width: 150px;
 						height: 150px;
 						object-fit: cover;
-						border-radius: var(--o-posts-img-br-radius);
+						border-radius: var(--img-br-radius);
 					}
 				}
 			}
@@ -103,18 +100,18 @@
 
 		img {
 			max-width: 100%;
-			width: var(--o-posts-img-width);
+			width: var(--img-width);
 			border-radius: 5px;
-			border-radius: var(--o-posts-img-br-radius);
+			border-radius: var(--img-br-radius);
 		}
 	}
 
 	.wp-block-themeisle-blocks-posts-grid-post-body {
 		display: flex;
 		flex-direction: column;
-		justify-content: var(--o-posts-vert-align);
+		justify-content: var(--vert-align);
 		padding-bottom: 15px;
-		text-align: var(--o-posts-text-align);
+		text-align: var(--text-align);
 
 
 		&.is-full {
@@ -134,7 +131,7 @@
 			a {
 				text-decoration: none;
 				transition: all .15s ease 0s;
-				font-size: var(--o-posts-title-text-size);
+				font-size: var(--title-text-size);
 
 				&:hover {
 					text-decoration: underline;
@@ -152,11 +149,11 @@
 
 			p {
 				margin-bottom: 0px;
-				font-size: var(--o-posts-description-text-size);
+				font-size: var(--description-text-size);
 			}
 
-			.o-posts-read-more {
-				font-size: var(--o-posts-description-text-size);
+			.read-more {
+				font-size: var(--description-text-size);
 				display: block;
 				margin-bottom: 5px;
 			}

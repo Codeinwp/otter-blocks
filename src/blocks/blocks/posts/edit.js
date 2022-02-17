@@ -41,7 +41,7 @@ import Controls from './controls.js';
 import Inspector from './inspector.js';
 import { blockInit } from '../../helpers/block-utility.js';
 import Layout from './components/layout/index.js';
-import { _align, getCustomPostTypeSlugs, _px } from '../../helpers/helper-functions.js';
+import { _align, getCustomPostTypeSlugs } from '../../helpers/helper-functions.js';
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
 import { StyleSwitcherBlockControl } from '../../components/style-switcher-control/index.js';
@@ -128,22 +128,22 @@ const Edit = ({
 	}, [ posts, attributes.enableFeaturedPost, attributes.featuredPost ]);
 
 	const fontSizeStyle = css`
-		--o-posts-img-width: ${_px( attributes.imageWidth )};
-		--o-posts-vert-align: ${_align( attributes.verticalAlign )};
+		${ attributes.imageWidth && `--img-width: ${ attributes.imageWidth }px;` }
+		--vert-align: ${_align( attributes.verticalAlign )};
 
 		@media ( min-width: 960px ) {
-			--o-posts-title-text-size: ${_px( attributes.customTitleFontSize )};
-			--o-posts-description-text-size: ${_px( attributes.customDescriptionFontSize )};
+			${ attributes.customTitleFontSize && `--title-text-size: ${ attributes.customTitleFontSize }px;` }
+			${ attributes.customDescriptionFontSize && `--description-text-size: ${ attributes.customDescriptionFontSize }px;` }
 		}
 
 		@media ( min-width: 600px ) and ( max-width: 960px ) {
-			--o-posts-title-text-size: ${_px( attributes.customTitleFontSizeTablet )};
-			--o-posts-description-text-size: ${_px( attributes.customDescriptionFontSizeTablet )};
+			${ attributes.customTitleFontSizeTablet && `--title-text-size: ${ attributes.customTitleFontSizeTablet }px;` }
+			${ attributes.customDescriptionFontSizeTablet && `--description-text-size: ${ attributes.customDescriptionFontSizeTablet }px;` }
 		}
 
 		@media ( max-width: 600px ) {
-			--o-posts-title-text-size: ${_px( attributes.customTitleFontSizeMobile )};
-			--o-posts-description-text-size: ${_px( attributes.customDescriptionFontSizeMobile )};
+			${ attributes.customTitleFontSizeMobile && `--title-text-size: ${ attributes.customTitleFontSizeMobile }px;` }
+			${ attributes.customDescriptionFontSizeMobile && `--description-text-size: ${ attributes.customDescriptionFontSizeMobile }px;` }
 		}
 	`;
 
