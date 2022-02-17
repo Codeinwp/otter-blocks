@@ -246,7 +246,7 @@ const IconPickerControl = ({
 												<img src={ icon } width="130px" />
 											) : (
 												<span>
-													{__( 'Please select an image.', 'otter-blocks' )}
+													{ __( 'Please select an image.', 'otter-blocks' ) }
 												</span>
 											) }
 										</div>

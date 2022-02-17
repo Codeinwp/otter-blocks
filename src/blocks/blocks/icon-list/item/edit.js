@@ -113,7 +113,6 @@ const Edit = ({
 		css: styles
 	});
 
-
 	return (
 		<Fragment>
 			<Inspector
@@ -123,13 +122,7 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				{ 'image' === attributes.library && isURL ? (
-					<img
-						src={ attributes.icon }
-						width={ parentAttributes.defaultSize + 'px' }
-						style={ {
-							minWidth: parentAttributes.defaultSize + 'px'
-						} }
-					/>
+					<img src={ attributes.icon } />
 				) : (
 					'themeisle-icons' === attributes.library && attributes.icon && Icon !== undefined ? (
 						<Icon
