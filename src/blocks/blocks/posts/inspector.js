@@ -20,7 +20,7 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import LayoutBuilder from './components/layout-builder.js';
+import LayoutBuilder from './components/design-layout-builder.js';
 import { StyleSwitcherInspectorControl } from '../../components/style-switcher-control/index.js';
 import { convertToTitleCase } from '../../helpers/helper-functions.js';
 import ToogleGroupControl from '../../components/toogle-group-control/index.js';

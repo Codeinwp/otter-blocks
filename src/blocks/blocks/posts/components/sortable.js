@@ -58,10 +58,14 @@ const fieldMapping = {
 export const SortableItem = ({
 	attributes,
 	setAttributes,
-	value,
+	template,
 	disabled
 }) => {
 	const [ isOpen, setOpen ] = useState( false );
+
+	const isCustomMeta = template?.startsWith( 'custom_' );
+	const customMeta = attributes?.customMetas?.filter( ({id}) =>  id === template )?.pop();
+
 	const templateLookUp = {
 		image: attributes.displayFeaturedImage,
 		category: attributes.displayCategory,
@@ -126,24 +130,37 @@ export const SortableItem = ({
 		}
 	};
 
+	const setAttributesCustomMeta = attr => {
+		const newMeta = {...customMeta, ...attr};
+		setAttributes({
+			customMetas: attributes.customMetas.map( currentMeta => {
+				if ( currentMeta.id === customMeta.id ) {
+					return newMeta;
+				}
+				return currentMeta;
+			})
+		});
+	};
 
-	const label = startCase( toLower( value ) );
-	const edit = templateLookUp[value];
-	const icon = edit ? 'visibility' : 'hidden';
+
+	const label = ! isCustomMeta ? startCase( toLower( template ) ) :  startCase( toLower( customMeta.field || 'Custom Type' ) );
+	const canEdit = templateLookUp[template] || customMeta?.display;
+	const icon = canEdit ? 'visibility' : 'hidden';
 
 	/* translators: %s Label */
 	let message = sprintf( __( 'Display %s', 'otter-blocks' ), label );
-	if ( edit ) {
+	if ( canEdit ) {
 
 		/* translators: %s Label */
 		message = sprintf( __( 'Hide %s', 'otter-blocks' ), label );
 	}
 
+
 	return (
 		<div
 			className={ classnames(
 				'o-sortable-item-area',
-				`o-sortable-item-area-${ value }`
+				`o-sortable-item-area-${ template }`
 			) }
 		>
 			<div
@@ -151,8 +168,8 @@ export const SortableItem = ({
 					'o-sortable-item',
 					{
 						'disabled': disabled,
-						'hidden': ! templateLookUp[value],
-						'editable': edit
+						'hidden': ! canEdit,
+						'editable': canEdit
 					}
 				) }
 			>
@@ -162,7 +179,7 @@ export const SortableItem = ({
 					{ label }
 				</div>
 
-				{ edit && 'category' !== value && (
+				{ canEdit && 'category' !== template && (
 					<Button
 						icon={ isOpen ? 'arrow-up-alt2' : 'arrow-down-alt2' }
 						label={ isOpen ? __( 'Close Settings', 'otter-blocks' ) : __( 'Open Settings', 'otter-blocks' ) }
@@ -178,21 +195,25 @@ export const SortableItem = ({
 					showTooltip={ true }
 					className="o-sortable-button"
 					onClick={ () => {
-						toggleField( value );
+						if ( isCustomMeta ) {
+							setAttributesCustomMeta({ display: ! customMeta.display });
+						} else {
+							toggleField( template );
+						}
 						setOpen( false );
 					} }
 				/>
 			</div>
 
-			{ edit && 'category' !== value && (
+			{ canEdit && 'category' !== template && (
 				<div
 					className={ classnames(
 						'o-sortable-control-area',
-						{ 'opened': isOpen && templateLookUp[value] }
+						{ 'opened': isOpen && canEdit }
 					) }
 				>
 					{
-						( 'image' === value ) && (
+						( 'image' === template ) && (
 							<Fragment >
 								<SelectControl
 									label={ __( 'Image Size', 'otter-blocks' ) }
@@ -232,7 +253,7 @@ export const SortableItem = ({
 							</Fragment>
 						)
 					}
-					{ ( 'title' === value ) && (
+					{ ( 'title' === template ) && (
 						<Fragment >
 							<SelectControl
 								label={ __( 'Title Tag', 'otter-blocks' ) }
@@ -260,7 +281,7 @@ export const SortableItem = ({
 							</ResponsiveControl>
 						</Fragment>
 					) }
-					{ ( 'meta' === value ) && (
+					{ ( 'meta' === template ) && (
 						<Fragment >
 							<ToggleControl
 								label={ __( 'Display post date', 'otter-blocks' ) }
@@ -284,7 +305,7 @@ export const SortableItem = ({
 							/>
 						</Fragment>
 					) }
-					{ ( 'description' === value ) && (
+					{ ( 'description' === template ) && (
 						<Fragment >
 							<TextControl
 								label={ __( 'Excerpt Limit', 'otter-blocks' ) }
@@ -310,6 +331,25 @@ export const SortableItem = ({
 							</ResponsiveControl>
 						</Fragment>
 					) }
+					{ isCustomMeta && customMeta && (
+						<Fragment>
+							<TextControl
+								label={ __( 'Field', 'otter-blocks' ) }
+								value={ customMeta.field }
+								onChange={ field => setAttributesCustomMeta({ field }) }
+							/>
+							<TextControl
+								label={ __( 'Before', 'otter-blocks' ) }
+								value={ customMeta.before }
+								onChange={ before => setAttributesCustomMeta({ before }) }
+							/>
+							<TextControl
+								label={ __( 'After', 'otter-blocks' ) }
+								value={ customMeta.after }
+								onChange={ after => setAttributesCustomMeta({ after }) }
+							/>
+						</Fragment>
+					) }
 				</div>
 			) }
 		</div>
@@ -319,14 +359,14 @@ export const SortableItem = ({
 const SortableItemContainer = SortableElement( ({
 	attributes,
 	setAttributes,
-	value,
+	template,
 	disabled
 }) => {
 	return (
 		<SortableItem
 			attributes={ attributes }
 			setAttributes={ setAttributes }
-			value={ value }
+			template={ template }
 			disabled={ disabled }
 		/>
 	);
@@ -338,13 +378,13 @@ export const SortableList = SortableContainer( ({
 }) => {
 	return (
 		<div>
-			{ attributes?.template?.map( ( value, index ) => (
+			{ attributes?.template?.map( ( template, index ) => (
 				<SortableItemContainer
-					key={ `item-${ value }` }
+					key={ `item-${ template }` }
 					index={ index }
 					attributes={ attributes }
 					setAttributes={ setAttributes }
-					value={ value }
+					template={ template }
 				/>
 			) ) }
 		</div>

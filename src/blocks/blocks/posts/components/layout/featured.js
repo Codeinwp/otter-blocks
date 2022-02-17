@@ -24,8 +24,6 @@ const FeaturedPost = props => {
 		return '';
 	}
 
-	console.log({post});
-
 	return (
 		<div className={classNames( 'o-featured-post', { 'has-shadow': attributes.imageBoxShadow })}>
 			{

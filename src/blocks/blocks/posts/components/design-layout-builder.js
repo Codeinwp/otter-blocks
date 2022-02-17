@@ -5,10 +5,18 @@ import arrayMove from 'array-move';
 
 import classnames from 'classnames';
 
+import { v4 as uuidv4 } from 'uuid';
+
 /**
  * WordPress dependencies
  */
 import { Fragment } from '@wordpress/element';
+import {
+	Button
+} from '@wordpress/components';
+import {
+	__
+} from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -35,7 +43,7 @@ const LayoutBuilder = ({
 				<SortableItem
 					attributes={ attributes }
 					setAttributes={ setAttributes }
-					value={ 'image' }
+					template={ 'image' }
 					disabled={ true }
 				/>
 
@@ -47,6 +55,34 @@ const LayoutBuilder = ({
 					axis="y"
 					lockAxis="y"
 				/>
+
+				<Button
+					variant="primary"
+					isPrimary
+					onClick={ () => {
+
+						let id = uuidv4();
+						while ( 0 < attributes?.customMetas?.filter( ({ otherId }) => otherId === id )?.length  ) {
+							id = uuidv4();
+						}
+						id = `custom_${id}`;
+
+						const newMeta = {
+							id,
+							field: '',
+							before: '',
+							after: '',
+							display: true
+						};
+
+						setAttributes({
+							template: [ ...attributes.template, id ],
+							customMetas: attributes.customMetas ? [ ...attributes.customMetas, newMeta ] : [ newMeta ]
+						});
+					}}
+				>
+					{ __( 'Add custom type', 'otter-blocks' ) }
+				</Button>
 			</div>
 		</Fragment>
 	);
