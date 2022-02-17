@@ -63,6 +63,16 @@ const Layout = ({
 						sprintf( __( ' by %s', 'otter-blocks' ), author.name )
 					) }
 
+					{ ( attributes.displayComments ) && (
+
+						// TODO: A way to check the number of comments is to make an API request. This seems wasteful for now. It might change in the future.
+						sprintf(
+							' - %1$s %2$s',
+							'0',
+							'1' === '0' ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
+						)
+					) }
+
 					{ ( attributes.displayPostCategory && undefined !== category?.name ) && (
 
 						sprintf( __( ' - %s', 'otter-blocks' ), category.name )
@@ -93,6 +103,7 @@ const Layout = ({
 		return '';
 	};
 
+
 	return (
 		<div
 			className={
@@ -114,7 +125,7 @@ const Layout = ({
 				posts.filter( post => post ).map( post => {
 					const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
 					const author = authors && post.author ? authors.find( item => item.id === post.author ) : undefined;
-
+					console.log( post );
 					return (
 						<div
 							key={ post.link }

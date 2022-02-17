@@ -135,6 +135,14 @@ class Posts_Grid_Block {
 							);
 						}
 
+						if ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] && isset( $post["comment_count"] ) ) {
+							$list_items_markup .= sprintf(
+								' - %1$s %2$s',
+								$post["comment_count"],
+								$post["comment_count"] === '1' ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
+							);
+						}
+
 						if ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] && isset( $category[0] ) ) {
 							$list_items_markup .= sprintf(
 								' - %1$s',
