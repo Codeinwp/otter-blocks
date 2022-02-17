@@ -109,6 +109,13 @@
 				margin-right: 5px;
 			}
 		}
+
+		.o-icon-picker-image-control {
+			&> div, .components-base-control__field {
+				display: flex;
+				flex-direction: column;
+			}
+		}
 	}
 }
 
