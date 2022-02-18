@@ -25,7 +25,8 @@ import {
 import {
 	Fragment,
 	useEffect,
-	useState
+	useState,
+	createContext
 } from '@wordpress/element';
 
 import {
@@ -39,7 +40,7 @@ import {
 import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import { blockInit } from '../../helpers/block-utility.js';
+import { blockInit, useMeta } from '../../helpers/block-utility.js';
 import Layout from './components/layout/index.js';
 import { _align, getCustomPostTypeSlugs } from '../../helpers/helper-functions.js';
 import '../../components/store/index.js';
@@ -47,6 +48,8 @@ import FeaturedPost from './components/layout/featured.js';
 import { StyleSwitcherBlockControl } from '../../components/style-switcher-control/index.js';
 
 const { attributes: defaultAttributes } = metadata;
+
+export const CustomMetasContext = createContext({});
 
 const Edit = ({
 	attributes,
@@ -61,6 +64,8 @@ const Edit = ({
 
 	const [ slugs, setSlugs ] = useState([]);
 	const [ featured, setFeatured ] = useState( '' );
+	const [ metaValues, changeMetaValues ] = useMeta();
+	console.log({metaValues});
 
 	const {
 		posts,
@@ -194,57 +199,61 @@ const Edit = ({
 
 	return (
 		<Fragment>
-			<StyleSwitcherBlockControl
-				label={ __( 'Block Styles', 'otter-blocks' ) }
-				value={ attributes.style }
-				options={ [
-					{
-						label: __( 'Grid', 'otter-blocks' ),
-						value: 'grid',
-						image: window.themeisleGutenberg.assetsPath + '/icons/posts-grid.jpg'
-					},
-					{
-						label: __( 'List', 'otter-blocks' ),
-						value: 'list',
-						image: window.themeisleGutenberg.assetsPath + '/icons/posts-list.jpg'
-					}
-				] }
-				onChange={ changeStyle }
-			/>
+			<CustomMetasContext.Provider value={{customMetaFields: metaValues}}>
+				<StyleSwitcherBlockControl
+					label={ __( 'Block Styles', 'otter-blocks' ) }
+					value={ attributes.style }
+					options={ [
+						{
+							label: __( 'Grid', 'otter-blocks' ),
+							value: 'grid',
+							image: window.themeisleGutenberg.assetsPath + '/icons/posts-grid.jpg'
+						},
+						{
+							label: __( 'List', 'otter-blocks' ),
+							value: 'list',
+							image: window.themeisleGutenberg.assetsPath + '/icons/posts-list.jpg'
+						}
+					] }
+					onChange={ changeStyle }
+				/>
 
-			<Inspector
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-				changeStyle={ changeStyle }
-				categoriesList={ categoriesList }
-				posts={posts}
-			/>
+				<Inspector
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+					changeStyle={ changeStyle }
+					categoriesList={ categoriesList }
+					posts={posts}
+				/>
 
-			<Controls
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-			/>
+				<Controls
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+				/>
 
-			<div { ...blockProps } css={fontSizeStyle}>
-				<Disabled>
-					{
-						attributes.enableFeaturedPost && (
-							<FeaturedPost
-								attributes={ attributes }
-								post={ featured }
-								category={ categoriesList[0] }
-								author={ authors[0] }
-							/>
-						)
-					}
-					<Layout
-						attributes={ attributes }
-						posts={ posts }
-						categoriesList={ categoriesList }
-						authors={ authors }
-					/>
-				</Disabled>
-			</div>
+				<div { ...blockProps } css={fontSizeStyle}>
+					<Disabled>
+
+						{
+							attributes.enableFeaturedPost && (
+								<FeaturedPost
+									attributes={ attributes }
+									post={ featured }
+									category={ categoriesList[0] }
+									author={ authors[0] }
+								/>
+							)
+						}
+						<Layout
+							attributes={ attributes }
+							posts={ posts }
+							categoriesList={ categoriesList }
+							authors={ authors }
+						/>
+
+					</Disabled>
+				</div>
+			</CustomMetasContext.Provider>
 		</Fragment>
 	);
 };

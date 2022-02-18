@@ -27,17 +27,20 @@ import {
 	TextControl,
 	SelectControl,
 	ToggleControl,
-	RangeControl
+	RangeControl,
+	FormTokenField
 } from '@wordpress/components';
 
 import {
 	Fragment,
-	useState
+	useState,
+	useContext
 } from '@wordpress/element';
 
 import { useSelect } from '@wordpress/data';
 
 import ResponsiveControl from '../../../components/responsive-control';
+import { CustomMetasContext } from '../edit';
 
 const DragHandle = SortableHandle( () => {
 	return (
@@ -142,8 +145,10 @@ export const SortableItem = ({
 		});
 	};
 
+	const customMetaFields = Object.keys( useContext( CustomMetasContext )?.customMetaFields );
+	console.log( 'hey', {customMetaFields});
 
-	const label = ! isCustomMeta ? startCase( toLower( template ) ) :  startCase( toLower( customMeta.field || 'Custom Type' ) );
+	const label = ! isCustomMeta ? startCase( toLower( template ) ) :  startCase( toLower( customMeta?.field?.[0] || 'Custom Type' ) );
 	const canEdit = templateLookUp[template] || customMeta?.display;
 	const icon = canEdit ? 'visibility' : 'hidden';
 
@@ -333,10 +338,19 @@ export const SortableItem = ({
 					) }
 					{ isCustomMeta && customMeta && (
 						<Fragment>
-							<TextControl
+							<FormTokenField
 								label={ __( 'Field', 'otter-blocks' ) }
 								value={ customMeta.field }
+								suggestions={ customMetaFields }
 								onChange={ field => setAttributesCustomMeta({ field }) }
+								maxLength={1}
+								__experimentalExpandOnFocus={ true }
+								__experimentalValidateInput={ newValue => customMetaFields.includes( newValue ) }
+							/>
+							<TextControl
+								label={ __( 'Default Value', 'otter-blocks' ) }
+								value={ customMeta.defaultValue }
+								onChange={ defaultValue => setAttributesCustomMeta({ defaultValue }) }
 							/>
 							<TextControl
 								label={ __( 'Before', 'otter-blocks' ) }

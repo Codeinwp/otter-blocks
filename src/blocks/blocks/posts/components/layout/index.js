@@ -17,6 +17,12 @@ import {
 
 import Thumbnail from './thumbnail.js';
 import { unescapeHTML, formatDate } from '../../../../helpers/helper-functions.js';
+import {
+	Fragment,
+	useContext
+} from '@wordpress/element';
+import { CustomMetasContext } from '../../edit.js';
+import { useMeta } from '../../../../helpers/block-utility.js';
 
 const Layout = ({
 	attributes,
@@ -25,84 +31,13 @@ const Layout = ({
 	authors
 }) => {
 
-	const Tag = attributes.titleTag || 'h5';
-
-	const Category = ({element, category}) => {
-		if ( undefined !== category && ( attributes.displayCategory && categoriesList ) ) {
-			return <span key={ element } className="o-posts-grid-post-category">{ category.name }</span>;
+	const getTemplateType = ( template ) => {
+		if ( template?.startsWith( 'custom_' ) ) {
+			return 'custom';
 		}
-		return '';
+
+		return template;
 	};
-
-	const Title = ({ element, post }) => {
-		if ( attributes.displayTitle ) {
-			return (
-				<Tag key={ element } className="o-posts-grid-post-title">
-					<a href={ post.link }>
-						{ unescapeHTML( post.title?.rendered ) }
-					</a>
-				</Tag>
-			);
-		}
-		return '';
-	};
-
-	const Meta = ({ element, post, author, category }) => {
-		if ( attributes.displayMeta && ( attributes.displayDate || attributes.displayAuthor ) ) {
-			return (
-				<p key={ element } className="o-posts-grid-post-meta">
-					{ ( attributes.displayDate ) && (
-
-						/* translators: %s Date posted */
-						sprintf( __( 'on %s', 'otter-blocks' ), formatDate( post.date ) )
-					) }
-
-					{ ( attributes.displayAuthor && undefined !== author ) && (
-
-						/* translators: %s Author of the post */
-						sprintf( __( ' by %s', 'otter-blocks' ), author.name )
-					) }
-
-					{ ( attributes.displayComments ) && (
-
-						// TODO: A way to check the number of comments is to make an API request. This seems wasteful for now. It might change in the future.
-						sprintf(
-							' - %1$s %2$s',
-							'0',
-							'1' === '0' ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
-						)
-					) }
-
-					{ ( attributes.displayPostCategory && undefined !== category?.name ) && (
-
-						sprintf( __( ' - %s', 'otter-blocks' ), category.name )
-					) }
-				</p>
-			);
-		}
-		return '';
-	};
-
-	const Description = ({ element, post }) => {
-		if ( 0 < attributes.excerptLength && attributes.displayDescription ) {
-			return (
-				<div key={ element } className="o-posts-grid-post-description">
-					<p>
-						{ post.excerpt?.rendered && unescapeHTML( post.excerpt.rendered ).substring( 0, attributes.excerptLength ) + '…' }
-					</p>
-					{
-						attributes.displayReadMoreLink && (
-							<a href={ post.link } className="o-posts-read-more">
-								Read more
-							</a>
-						)
-					}
-				</div>
-			);
-		}
-		return '';
-	};
-
 
 	return (
 		<div
@@ -125,7 +60,6 @@ const Layout = ({
 				posts.filter( post => post ).map( post => {
 					const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
 					const author = authors && post.author ? authors.find( item => item.id === post.author ) : undefined;
-					console.log( post );
 					return (
 						<div
 							key={ post.link }
@@ -156,15 +90,19 @@ const Layout = ({
 								>
 									{
 										attributes.template.map( element => {
-											switch ( element ) {
+											switch ( getTemplateType( element ) ) {
 											case 'category':
-												return <Category element={element} category={category} />;
+												return <PostsCategory attributes={attributes} element={element} category={category} categoriesList={categoriesList}/>;
 											case 'title':
-												return <Title element={element} post={post} />;
+												return <PostsTitle attributes={attributes} element={element} post={post} />;
 											case 'meta':
-												return <Meta element={element} post={post} author={author} category={category} />;
+												return <PostsMeta attributes={attributes} element={element} post={post} author={author} category={category} />;
 											case 'description':
-												return <Description element={element} post={post} />;
+												return <PostsDescription attributes={attributes} element={element} post={post} />;
+											case 'custom':
+												const customFieldData = attributes.customMetas?.filter( ({ id }) => id === element )?.pop();
+												console.log( customFieldData );
+												return <PostsCustomMeta customFieldData={customFieldData} />;
 											default:
 												return '';
 											}
@@ -180,5 +118,102 @@ const Layout = ({
 		</div>
 	);
 };
+
+export const PostsCategory = ({attributes, element, category, categoriesList}) => {
+	if ( undefined !== category && ( attributes.displayCategory && categoriesList ) ) {
+		return <span key={ element } className="o-posts-grid-post-category">{ category.name }</span>;
+	}
+	return '';
+};
+
+export const PostsTitle = ({attributes,  element, post }) => {
+	const Tag = attributes.titleTag || 'h5';
+	if ( attributes.displayTitle ) {
+		return (
+			<Tag key={ element } className="o-posts-grid-post-title">
+				<a href={ post.link }>
+					{ unescapeHTML( post.title?.rendered ) }
+				</a>
+			</Tag>
+		);
+	}
+	return '';
+};
+
+export const PostsMeta = ({attributes,  element, post, author, category }) => {
+	if ( attributes.displayMeta && ( attributes.displayDate || attributes.displayAuthor ) ) {
+		return (
+			<p key={ element } className="o-posts-grid-post-meta">
+				{ ( attributes.displayDate ) && (
+
+					/* translators: %s Date posted */
+					sprintf( __( 'on %s', 'otter-blocks' ), formatDate( post.date ) )
+				) }
+
+				{ ( attributes.displayAuthor && undefined !== author ) && (
+
+					/* translators: %s Author of the post */
+					sprintf( __( ' by %s', 'otter-blocks' ), author.name )
+				) }
+
+				{ ( attributes.displayComments ) && (
+
+					// TODO: A way to check the number of comments is to make an API request. This seems wasteful for now. It might change in the future.
+					sprintf(
+						' - %1$s %2$s',
+						'0',
+						'1' === '0' ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
+					)
+				) }
+
+				{ ( attributes.displayPostCategory && undefined !== category?.name ) && (
+
+					sprintf( __( ' - %s', 'otter-blocks' ), category.name )
+				) }
+			</p>
+		);
+	}
+	return '';
+};
+
+export const PostsDescription = ({attributes,  element, post }) => {
+	if ( 0 < attributes.excerptLength && attributes.displayDescription ) {
+		return (
+			<div key={ element } className="o-posts-grid-post-description">
+				<p>
+					{ post.excerpt?.rendered && unescapeHTML( post.excerpt.rendered ).substring( 0, attributes.excerptLength ) + '…' }
+				</p>
+				{
+					attributes.displayReadMoreLink && (
+						<a href={ post.link } className="o-posts-read-more">
+							Read more
+						</a>
+					)
+				}
+			</div>
+		);
+	}
+	return '';
+};
+
+export const PostsCustomMeta = ({ customFieldData }) => {
+
+	if ( ! customFieldData ) {
+		return <Fragment></Fragment>;
+	}
+
+	const [ meta, setMeta ] = useMeta( customFieldData.field );
+
+	return (
+		<div className="o-posts-custom-field">
+			{
+
+				// TODO: Add field data from hook
+				( customFieldData?.before || '' ) + ( meta || customFieldData?.defaultValue || '' ) + ( customFieldData?.after || '' )
+			}
+		</div>
+	);
+};
+
 
 export default Layout;

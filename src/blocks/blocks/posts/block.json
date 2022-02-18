@@ -29,25 +29,14 @@
 				"category",
 				"title",
 				"meta",
-				"description",
-				"custom_9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+				"description"
 			]
 		},
 		"customMetas": {
 			"type": "array",
 			"items": {
 				"type": "object"
-			},
-			"default": [
-				{
-					"id": "custom_9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
-					"name": "Custom Field",
-					"field": "custom",
-					"before": "This a",
-					"after": "!",
-					"display": true
-				}
-			]
+			}
 		},
 		"categories": {
 			"type": "array",

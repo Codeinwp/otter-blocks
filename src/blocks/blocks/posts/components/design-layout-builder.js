@@ -69,7 +69,7 @@ const LayoutBuilder = ({
 
 						const newMeta = {
 							id,
-							field: '',
+							field: [],
 							before: '',
 							after: '',
 							display: true
@@ -81,7 +81,7 @@ const LayoutBuilder = ({
 						});
 					}}
 				>
-					{ __( 'Add custom type', 'otter-blocks' ) }
+					{ __( 'Add Meta Field', 'otter-blocks' ) }
 				</Button>
 			</div>
 		</Fragment>

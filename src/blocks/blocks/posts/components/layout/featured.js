@@ -7,8 +7,9 @@ import {
 } from '@wordpress/i18n';
 
 import Thumbnail from './thumbnail.js';
-import { unescapeHTML, formatDate } from '../../../../helpers/helper-functions.js';
 import classNames from 'classnames';
+import { PostsCustomMeta, PostsDescription, PostsMeta, PostsTitle } from './index.js';
+
 
 const FeaturedPost = props => {
 	const {
@@ -18,11 +19,18 @@ const FeaturedPost = props => {
 		category
 	} = props;
 
-	const Tag = attributes.titleTag || 'h5';
 
 	if ( ! post  ) {
 		return '';
 	}
+
+	const getTemplateType = ( template ) => {
+		if ( template?.startsWith( 'custom_' ) ) {
+			return 'custom';
+		}
+
+		return template;
+	};
 
 	return (
 		<div className={classNames( 'o-featured-post', { 'has-shadow': attributes.imageBoxShadow })}>
@@ -40,55 +48,23 @@ const FeaturedPost = props => {
 			}
 			<div className="o-posts-grid-post-body">
 				{
-					attributes.displayTitle && (
-						<Tag className="o-posts-grid-post-title">
-							<a href={ post.link }>
-								{ unescapeHTML( post.title?.rendered ) }
-							</a>
-						</Tag>
-					)
+					attributes.template.map( element => {
+						switch ( getTemplateType( element ) ) {
+						case 'title':
+							return <PostsTitle attributes={attributes} element={element} post={post} />;
+						case 'meta':
+							return <PostsMeta attributes={attributes} element={element} post={post} author={author} category={category} />;
+						case 'description':
+							return <PostsDescription attributes={attributes} element={element} post={post} />;
+						case 'custom':
+							const customFieldData = attributes.customMetas?.filter( ({ id }) => id === element )?.pop();
+							console.log( customFieldData );
+							return <PostsCustomMeta customFieldData={customFieldData} />;
+						default:
+							return '';
+						}
+					})
 				}
-
-				{
-					attributes.displayMeta && (
-						<p className='o-posts-grid-post-meta'>
-							{ ( attributes.displayDate ) && (
-
-							/* translators: %s Date posted */
-								sprintf( __( 'on %s', 'otter-blocks' ), formatDate( post.date ) )
-							) }
-
-							{ ( attributes.displayAuthor && undefined !== author ) && (
-
-							/* translators: %s Author of the post */
-								sprintf( __( ' by %s', 'otter-blocks' ), author.name )
-							) }
-
-							{ ( attributes.displayPostCategory && undefined !== category?.name ) && (
-
-								sprintf( __( ' - %s', 'otter-blocks' ), category.name )
-							) }
-						</p>
-					)
-				}
-
-				{
-					attributes.displayDescription && (
-						<div className='o-posts-grid-post-description'>
-							<p>
-								{ post.excerpt?.rendered && unescapeHTML( post.excerpt.rendered ).substring( 0, attributes.excerptLength ) + '…' }
-							</p>
-							{
-								attributes.displayReadMoreLink && (
-									<a href={ post.link } className="o-posts-read-more">
-										Read more
-									</a>
-								)
-							}
-						</div>
-					)
-				}
-
 			</div>
 		</div>
 	);
