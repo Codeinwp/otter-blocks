@@ -215,7 +215,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 							),
 						),
 						'condition'      => function( $attrs ) {
-							return isset( $attrs['backgroundType'] ) && 'image' === $attrs['backgroundType'] && isset( $attrs['backgroundImageURL'] ) && $this->is_image_url( $attrs['backgroundImageURL'] );
+							return isset( $attrs['backgroundType'] ) && 'image' === $attrs['backgroundType'] && ( isset( $attrs['backgroundImageURL'] ) && $this->is_image_url( $attrs['backgroundImageURL'] ) || isset( $attrs['backgroundImage'] ) && $this->is_image_url( $attrs['backgroundImage']['url'] ) );
 						},
 					),
 					array(
@@ -478,7 +478,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 							),
 						),
 						'condition'      => function( $attrs ) {
-							return isset( $attrs['backgroundOverlayType'] ) && 'image' === $attrs['backgroundOverlayType'] && isset( $attrs['backgroundOverlayImageURL'] ) && $this->is_image_url( $attrs['backgroundOverlayImageURL'] );
+							return isset( $attrs['backgroundOverlayType'] ) && 'image' === $attrs['backgroundOverlayType'] && ( isset( $attrs['backgroundOverlayImageURL'] ) && $this->is_image_url( $attrs['backgroundOverlayImageURL'] ) || isset( $attrs['backgroundOverlayImage'] ) && $this->is_image_url( $attrs['backgroundOverlayImage']['url'] ) );
 						},
 					),
 					array(
