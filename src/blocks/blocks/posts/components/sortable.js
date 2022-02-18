@@ -134,7 +134,7 @@ export const SortableItem = ({
 	};
 
 	const setAttributesCustomMeta = attr => {
-		const newMeta = {...customMeta, ...attr};
+		const newMeta = { ...customMeta, ...attr };
 		setAttributes({
 			customMetas: attributes.customMetas.map( currentMeta => {
 				if ( currentMeta.id === customMeta.id ) {
@@ -224,47 +224,50 @@ export const SortableItem = ({
 						{ 'opened': isOpen && canEdit }
 					) }
 				>
-					{
-						( 'image' === template ) && (
-							<Fragment >
-								<SelectControl
-									label={ __( 'Image Size', 'otter-blocks' ) }
-									value={ attributes.imageSize }
-									options={ window.themeisleGutenberg.imageSizes.map( size => ({
-										label: startCase( toLower( size ) ),
-										value: size
-									}) ) }
-									onChange={ imageSize => setAttributes({ imageSize }) }
-								/>
-								<ToggleControl
-									label={ __( 'Crop image to fit', 'otter-blocks' ) }
-									checked={ attributes.cropImage }
-									onChange={ cropImage => setAttributes({ cropImage }) }
-								/>
-								<ToggleControl
-									label={ __( 'Display box shadow', 'otter-blocks' ) }
-									checked={ attributes.imageBoxShadow }
-									onChange={ imageBoxShadow => setAttributes({ imageBoxShadow }) }
-								/>
-								<RangeControl
-									label={ __( 'Border Radius', 'otter-blocks' ) }
-									value={ attributes.borderRadius }
-									onChange={ borderRadius => setAttributes({ borderRadius }) }
-									min={ 0 }
-									max={ 50 }
-									allowReset
-								/>
-								<RangeControl
-									label={ __( 'Image Width', 'otter-blocks' ) }
-									value={ attributes.imageWidth }
-									onChange={ imageWidth => setAttributes({ imageWidth }) }
-									min={ 0 }
-									max={ 500 }
-									allowReset
-								/>
-							</Fragment>
-						)
-					}
+					{ ( 'image' === template ) && (
+						<Fragment >
+							<SelectControl
+								label={ __( 'Image Size', 'otter-blocks' ) }
+								value={ attributes.imageSize }
+								options={ window.themeisleGutenberg.imageSizes.map( size => ({
+									label: startCase( toLower( size ) ),
+									value: size
+								}) ) }
+								onChange={ imageSize => setAttributes({ imageSize }) }
+							/>
+
+							<ToggleControl
+								label={ __( 'Crop image to fit', 'otter-blocks' ) }
+								checked={ attributes.cropImage }
+								onChange={ cropImage => setAttributes({ cropImage }) }
+							/>
+
+							<ToggleControl
+								label={ __( 'Display box shadow', 'otter-blocks' ) }
+								checked={ attributes.imageBoxShadow }
+								onChange={ imageBoxShadow => setAttributes({ imageBoxShadow }) }
+							/>
+
+							<RangeControl
+								label={ __( 'Border Radius', 'otter-blocks' ) }
+								value={ attributes.borderRadius }
+								onChange={ borderRadius => setAttributes({ borderRadius }) }
+								min={ 0 }
+								max={ 50 }
+								allowReset
+							/>
+
+							<RangeControl
+								label={ __( 'Image Width', 'otter-blocks' ) }
+								value={ attributes.imageWidth }
+								onChange={ imageWidth => setAttributes({ imageWidth }) }
+								min={ 0 }
+								max={ 500 }
+								allowReset
+							/>
+						</Fragment>
+					) }
+
 					{ ( 'title' === template ) && (
 						<Fragment >
 							<SelectControl
@@ -280,6 +283,7 @@ export const SortableItem = ({
 								] }
 								onChange={ titleTag => setAttributes({ titleTag }) }
 							/>
+
 							<ResponsiveControl
 								label={ __( 'Font size', 'otter-blocks' ) }
 							>
@@ -293,6 +297,7 @@ export const SortableItem = ({
 							</ResponsiveControl>
 						</Fragment>
 					) }
+
 					{ ( 'meta' === template ) && (
 						<Fragment >
 							<ToggleControl
@@ -300,16 +305,19 @@ export const SortableItem = ({
 								checked={ attributes.displayDate }
 								onChange={ displayDate => setAttributes({ displayDate }) }
 							/>
+
 							<ToggleControl
 								label={ __( 'Display author', 'otter-blocks' ) }
 								checked={ attributes.displayAuthor }
 								onChange={ displayAuthor => setAttributes({ displayAuthor }) }
 							/>
+
 							<ToggleControl
 								label={ __( 'Display comments', 'otter-blocks' ) }
 								checked={ attributes.displayComments }
 								onChange={ displayComments => setAttributes({ displayComments }) }
 							/>
+
 							<ToggleControl
 								label={ __( 'Display category', 'otter-blocks' ) }
 								checked={ attributes.displayPostCategory }
@@ -317,6 +325,7 @@ export const SortableItem = ({
 							/>
 						</Fragment>
 					) }
+
 					{ ( 'description' === template ) && (
 						<Fragment >
 							<TextControl
@@ -325,11 +334,13 @@ export const SortableItem = ({
 								value={ attributes.excerptLimit }
 								onChange={ excerptLimit => setAttributes({ excerptLimit }) }
 							/>
+
 							<ToggleControl
 								label={ __( 'Display read more link', 'otter-blocks' ) }
 								checked={ attributes.displayReadMoreLink }
 								onChange={ displayReadMoreLink => setAttributes({ displayReadMoreLink }) }
 							/>
+
 							<ResponsiveControl
 								label={ __( 'Font size', 'otter-blocks' ) }
 							>
@@ -343,32 +354,37 @@ export const SortableItem = ({
 							</ResponsiveControl>
 						</Fragment>
 					) }
+
 					{ isCustomMeta && customMeta && (
 						<Fragment>
 							<FormTokenField
 								label={ __( 'Field', 'otter-blocks' ) }
 								value={ customMeta.field }
-								suggestions={ customMetaFields }
+								suggestions={ ! Boolean( customMeta?.field.length ) || customMetaFields }
 								onChange={ field => setAttributesCustomMeta({ field }) }
-								maxLength={1}
+								maxLength={ 1 }
 								__experimentalExpandOnFocus={ true }
-								__experimentalValidateInput={ newValue => customMetaFields.includes( newValue ) }
+								__experimentalShowHowTo={ false }
 							/>
+
 							<TextControl
 								label={ __( 'Default Value', 'otter-blocks' ) }
 								value={ customMeta.defaultValue }
 								onChange={ defaultValue => setAttributesCustomMeta({ defaultValue }) }
 							/>
+
 							<TextControl
 								label={ __( 'Before', 'otter-blocks' ) }
 								value={ customMeta.before }
 								onChange={ before => setAttributesCustomMeta({ before }) }
 							/>
+
 							<TextControl
 								label={ __( 'After', 'otter-blocks' ) }
 								value={ customMeta.after }
 								onChange={ after => setAttributesCustomMeta({ after }) }
 							/>
+
 							<Button
 								onClick={deleteCustomField}
 								variant="secondary"
