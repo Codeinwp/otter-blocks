@@ -40,22 +40,22 @@ const StyleSwitcherControl = ({
 			id={ id }
 			label={ label }
 		>
-			<div className="otter-style-switcher">
+			<div className="o-style-switcher">
 				{ options.map( option => {
 					return (
 						<Button
 							key={ option.value }
 							className={ classnames(
-								'otter-style-switcher-item',
+								'o-style-switcher-item',
 								{ 'is-active': option.value === value }
 							) }
 							tabIndex="0"
 							onClick={ () => onChangeValue( option.value ) }
 						>
-							<div className="otter-style-switcher-item-preview">
+							<div className="o-style-switcher-item-preview">
 								<img src={ option.image } />
 							</div>
-							<div className="otter-style-switcher-item-label">
+							<div className="o-style-switcher-item-label">
 								{ option.label }
 							</div>
 						</Button>
@@ -97,22 +97,22 @@ export const StyleSwitcherBlockControl = ({
 					) }
 					renderContent={ () => (
 						<Fragment>
-							<div className="otter-style-switcher">
+							<div className="o-style-switcher">
 								{ options.map( option => {
 									return (
 										<Button
 											key={ option.value }
 											className={ classnames(
-												'otter-style-switcher-item',
+												'o-style-switcher-item',
 												{ 'is-active': option.value === value }
 											) }
 											tabIndex="0"
 											onClick={ () => onChangeValue( option.value ) }
 										>
-											<div className="otter-style-switcher-item-preview">
+											<div className="o-style-switcher-item-preview">
 												<img src={ option.image } />
 											</div>
-											<div className="otter-style-switcher-item-label">
+											<div className="o-style-switcher-item-label">
 												{ option.label }
 											</div>
 										</Button>

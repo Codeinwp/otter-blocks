@@ -195,7 +195,7 @@
 	}
 }
 
-.wp-block-themeisle-blocks-advanced-columns-header-panel {
+.o-section-header-panel {
 	&.is-opened {
 		padding: 0;
 	}
@@ -233,7 +233,7 @@
 	}
 }
 
-.wp-block-themeisle-border-container {
+.o-section-border-container {
 	&.components-panel__body {
 		> .components-toggle-control {
 			margin: 1.5em 0 0 0;
@@ -276,7 +276,7 @@
 	}
 }
 
-.otter-section-layout-picker {
+.o-section-layout-picker {
 	.components-placeholder.components-placeholder {
 		padding: unset;
 		box-shadow: unset;

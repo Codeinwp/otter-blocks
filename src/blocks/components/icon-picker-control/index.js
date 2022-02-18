@@ -174,10 +174,10 @@ const IconPickerControl = ({
 	return (
 		<BaseControl
 			id={ id }
-			className="otter-icon-picker-control"
+			className="o-icon-picker-control"
 		>
 			<Dropdown
-				contentClassName="otter-icon-picker-popover"
+				contentClassName="o-icon-picker-popover"
 				position="bottom center"
 				renderToggle={ ({ isOpen, onToggle }) => (
 					<Fragment>
@@ -195,7 +195,7 @@ const IconPickerControl = ({
 						{ 'image' !== library ? (
 							<BaseControl label={ label }>
 								<Button
-									className="otter-icon-picker-button"
+									className="o-icon-picker-button"
 									onClick={ onToggle }
 									aria-expanded={ isOpen }
 								>
@@ -230,7 +230,7 @@ const IconPickerControl = ({
 								{ icon && (
 									<BaseControl
 										label={ __( 'Image', 'otter-blocks' ) }
-										className='o-vrt-base-control'
+										className='o-icon-picker-image-control'
 									>
 										<div
 											style={{
@@ -246,7 +246,7 @@ const IconPickerControl = ({
 												<img src={ icon } width="130px" />
 											) : (
 												<span>
-													{__( 'Please select an image.', 'otter-blocks' )}
+													{ __( 'Please select an image.', 'otter-blocks' ) }
 												</span>
 											) }
 										</div>
@@ -418,12 +418,12 @@ export const IconPickerToolbarControl = ({
 	return (
 		<ToolbarGroup>
 			<Dropdown
-				contentClassName="otter-icon-picker-popover"
+				contentClassName="o-icon-picker-popover"
 				position="bottom center"
 				renderToggle={ ({ isOpen, onToggle }) => (
 					<ToolbarButton
 						label={ __( 'Menu Icons', 'otter-blocks' ) }
-						className="otter-icon-picker-toolbar-button"
+						className="o-icon-picker-toolbar-button"
 						showTooltip
 						onClick={ onToggle }
 					>

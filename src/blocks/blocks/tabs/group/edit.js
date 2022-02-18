@@ -133,33 +133,12 @@ const Edit = ({
 	/**
 	 * ------------ Tab Dynamic CSS ------------
 	 */
-	const tabStyle = css`
-		.wp-block-themeisle-blocks-tabs__header_item.active {
-			background-color: ${ attributes.tabColor };
-		}
 
-		.wp-block-themeisle-blocks-tabs__header_item.active div {
-			color: ${ attributes.activeTitleColor };
-		}
-
-		.wp-block-themeisle-blocks-tabs__header_item, .wp-block-themeisle-blocks-tabs__header_item.active, .wp-block-themeisle-blocks-tabs__header_item.active::before, .wp-block-themeisle-blocks-tabs__header_item.active::after {
-			border-width: ${ attributes.borderWidth !== undefined ? attributes.borderWidth : 3 }px;
-		}
-	`;
-
-	const contentStyle = css`
-		.wp-block-themeisle-blocks-tabs-item__header, .wp-block-themeisle-blocks-tabs-item__content {
-			border-width: ${ attributes.borderWidth !== undefined ? attributes.borderWidth : 3 }px;
-		}
-
-		.wp-block-themeisle-blocks-tabs-item__header.active, .wp-block-themeisle-blocks-tabs-item__content.active {
-			background-color: ${ attributes.tabColor };
-			border-width: ${ attributes.borderWidth !== undefined ? attributes.borderWidth : 3 }px;
-		}
-
-		.wp-block-themeisle-blocks-tabs-item__header.active {
-			color: ${ attributes.activeTitleColor };
-		}
+	const styles = css`
+		--borderWidth: ${ undefined !== attributes.borderWidth ? attributes.borderWidth : 3 }px;
+		--borderColor: ${ attributes.borderColor };
+		--activeTitleColor: ${ attributes.activeTitleColor };
+		--tabColor: ${ attributes.tabColor };
 	`;
 
 	const tabHeaderStyle = css`
@@ -206,9 +185,7 @@ const Edit = ({
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		style: {
-			borderColor: attributes.borderColor
-		}
+		css: styles
 	});
 
 	return (
@@ -232,10 +209,7 @@ const Edit = ({
 			/>
 
 			<div { ...blockProps }>
-				<div
-					css={ tabStyle }
-					className="wp-block-themeisle-blocks-tabs__header"
-				>
+				<div className="wp-block-themeisle-blocks-tabs__header">
 					{ children?.map( tabHeader => {
 						return (
 							<TabHeader
@@ -253,7 +227,6 @@ const Edit = ({
 				<div
 					ref={ contentRef }
 					className="wp-block-themeisle-blocks-tabs__content"
-					css={ contentStyle }
 				>
 					<InnerBlocks
 						allowedBlocks={ [ 'themeisle-blocks/tabs-item' ] }

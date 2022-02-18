@@ -1,7 +1,8 @@
 .wp-block-themeisle-blocks-slider {
+	--height: 400px;
 
 	.glide__slides {
-		height: 400px;
+		height: var( --height );
 		animation: load 4s 3;
 
 		@keyframes load {

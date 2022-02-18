@@ -12,10 +12,16 @@ const Controls = ({
 	attributes,
 	setAttributes
 }) => {
+	const value = {
+		'flex-start': 'left',
+		'center': 'center',
+		'flex-end': 'right'
+	};
+
 	return (
 		<BlockControls>
 			<AlignmentToolbar
-				value={ attributes.horizontalAlign }
+				value={ value[ attributes.horizontalAlign ] }
 				onChange={ align => {
 					switch ( align ) {
 					case 'left':
@@ -27,6 +33,8 @@ const Controls = ({
 					case 'right':
 						setAttributes({ horizontalAlign: 'flex-end' });
 						break;
+					default:
+						setAttributes({ horizontalAlign: undefined });
 					}
 				} }
 			/>

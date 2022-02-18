@@ -436,7 +436,7 @@ const Inspector = ({
 	return (
 		<Fragment>
 			<InspectorControls>
-				<PanelBody className="wp-block-themeisle-blocks-advanced-columns-header-panel">
+				<PanelBody className="o-section-header-panel">
 					<Button
 						className={ classnames(
 							'header-tab',
@@ -539,6 +539,7 @@ const Inspector = ({
 							<RangeControl
 								label={ __( 'Maximum Content Width', 'otter-blocks' ) }
 								value={ attributes.columnsWidth || '' }
+								allowReset
 								onChange={ changeColumnsWidth }
 								min={ 0 }
 								max={ 2400 }
@@ -748,7 +749,7 @@ const Inspector = ({
 
 						<PanelBody
 							title={ __( 'Border', 'otter-blocks' ) }
-							className="wp-block-themeisle-border-container"
+							className="o-section-border-container"
 							initialOpen={ false }
 						>
 							<BoxControl

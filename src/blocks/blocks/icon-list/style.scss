@@ -1,7 +1,15 @@
 .wp-block-themeisle-blocks-icon-list {
+	--horizontalAlign: unset;
+	--gap: 5px;
+	--fontSize: 20px;
+	--contentColor: inherit;
+	--iconColor: inherit;
+
 	display: flex;
 	flex-direction: column;
-	gap: 5px;
+	align-items: var( --horizontalAlign );
+	justify-content: var( --horizontalAlign );
+	gap: var( --gap );
 
 	&.is-style-horizontal {
 		flex-wrap: wrap;
@@ -14,13 +22,33 @@
 		align-items: center;
 		transition: margin 0.10s linear;
 
-		.wp-block-themeisle-blocks-icon-list-item-content,
-		.wp-block-themeisle-blocks-icon-list-item-content-custom {
-			margin: 0 10px;
+		i {
+			font-size: var( --fontSize );
+		}
+
+		svg {
+			width: var( --fontSize );
+		}
+
+		img {
+			width: var( --fontSize );
 		}
 
 		p {
 			margin-bottom: 0px;
 		}
+	}
+
+	.wp-block-themeisle-blocks-icon-list-item-content,
+	.wp-block-themeisle-blocks-icon-list-item-content-custom {
+		color: var( --contentColor );
+		font-size: var( --fontSize );
+		margin: 0 10px;
+	}
+
+	.wp-block-themeisle-blocks-icon-list-item-icon,
+	.wp-block-themeisle-blocks-icon-list-item-icon-custom {
+		fill: var( --iconColor );
+		color: var( --iconColor );
 	}
 }

@@ -38,63 +38,30 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => 'text-align',
+						'property' => '--align',
 						'value'    => 'align',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-themeisle-blocks-font-awesome-icons-container',
-				'properties' => array(
 					array(
-						'property' => 'color',
-						'value'    => 'textColor',
-					),
-					array(
-						'property' => 'background',
-						'value'    => 'backgroundColor',
-					),
-					array(
-						'property' => 'border-color',
+						'property' => '--borderColor',
 						'value'    => 'borderColor',
 					),
 					array(
-						'property' => 'border-width',
+						'property' => '--borderSize',
 						'value'    => 'borderSize',
 						'unit'     => 'px',
-						'default'  => 0,
 					),
 					array(
-						'property'  => 'border-style',
-						'default'   => 'solid',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['borderSize'] );
-						},
-					),
-					array(
-						'property' => 'border-radius',
+						'property' => '--borderRadius',
 						'value'    => 'borderRadius',
-						'unit'     => 'px',
-						'default'  => 0,
+						'unit'     => '%',
 					),
 					array(
-						'property' => 'margin',
+						'property' => '--margin',
 						'value'    => 'margin',
 						'unit'     => 'px',
 					),
 					array(
-						'property'  => 'padding',
-						'value'     => 'padding',
-						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' );
-						},
-					),
-					array(
-						'property' => 'width',
+						'property' => '--width',
 						'unit'     => 'px',
 						'default'  => 0,
 						'format'   => function( $value, $attrs ) {
@@ -117,6 +84,41 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 							}
 
 							return $width;
+						},
+					),
+					array(
+						'property' => '--padding',
+						'value'    => 'padding',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--fontSize',
+						'value'    => 'fontSize',
+						'unit'     => 'px',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .wp-block-themeisle-blocks-font-awesome-icons-container',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'textColor',
+					),
+					array(
+						'property' => 'background',
+						'value'    => 'backgroundColor',
+					),
+					array(
+						'property'  => 'padding',
+						'value'     => 'padding',
+						'default'   => 5,
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' );
 						},
 					),
 				),
@@ -148,21 +150,6 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-font-awesome-icons-container:hover svg',
-				'properties' => array(
-					array(
-						'property'  => 'fill',
-						'value'     => 'textColorHover',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' );
-						},
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
 				'selector'   => ' .wp-block-themeisle-blocks-font-awesome-icons-container a',
 				'properties' => array(
 					array(
@@ -171,6 +158,19 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return ! ( isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' ) );
 						},
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .wp-block-themeisle-blocks-font-awesome-icons-container i',
+				'properties' => array(
+					array(
+						'property' => 'font-size',
+						'value'    => 'fontSize',
+						'unit'     => 'px',
 					),
 				),
 			)
@@ -187,44 +187,20 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 							return isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' );
 						},
 					),
-					array(
-						'property' => 'width',
-						'value'    => 'fontSize',
-						'unit'     => 'px',
-					),
-					array(
-						'property' => 'height',
-						'value'    => 'fontSize',
-						'unit'     => 'px',
-					),
 				),
 			)
 		);
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-font-awesome-icons-container i',
+				'selector'   => ' .wp-block-themeisle-blocks-font-awesome-icons-container:hover svg',
 				'properties' => array(
 					array(
-						'property'  => 'padding',
-						'value'     => 'padding',
-						'unit'      => 'px',
+						'property'  => 'fill',
+						'value'     => 'textColorHover',
 						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' ) );
+							return isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' );
 						},
-					),
-					array(
-						'property'  => 'border-radius',
-						'value'     => 'borderRadius',
-						'unit'      => '%',
-						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' ) );
-						},
-					),
-					array(
-						'property' => 'font-size',
-						'value'    => 'fontSize',
-						'unit'     => 'px',
 					),
 				),
 			)

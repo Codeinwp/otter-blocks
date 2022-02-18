@@ -36,10 +36,9 @@ class Slider_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .glide__slides',
 				'properties' => array(
 					array(
-						'property' => 'height',
+						'property' => '--height',
 						'value'    => 'height',
 						'unit'     => 'px',
 					),

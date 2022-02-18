@@ -30,10 +30,10 @@ const PanelItem = ({
 	const [ isOpen, setOpen ] = useState( false );
 
 	return (
-		<div className="wp-block-themeisle-blocks-review__inspector_panel_item">
-			<div className="wp-block-themeisle-blocks-review__inspector_panel_item__header">
+		<div className="o-review__inspector_panel_item">
+			<div className="o-review__inspector_panel_item__header">
 				<Button
-					className="wp-block-themeisle-blocks-review__inspector_panel_item__title"
+					className="o-review__inspector_panel_item__title"
 					onClick={ () => setOpen( ! isOpen ) }
 				>
 					{ title }
@@ -43,13 +43,13 @@ const PanelItem = ({
 					icon="no-alt"
 					label={ __( 'Remove', 'otter-blocks' ) }
 					showTooltip={ true }
-					className="wp-block-themeisle-blocks-review__inspector_panel_item__arrow"
+					className="o-review__inspector_panel_item__arrow"
 					onClick={ remove }
 				/>
 			</div>
 
 			{ isOpen && (
-				<div className="wp-block-themeisle-blocks-review__inspector_panel_item__content">
+				<div className="o-review__inspector_panel_item__content">
 					{ children }
 				</div>
 			) }
@@ -137,7 +137,7 @@ const Review = ({
 				<Button
 					isSecondary
 					isLarge
-					className="wp-block-themeisle-blocks-review__inspector_add"
+					className="o-review__inspector_add"
 					onClick={ addFeature }
 				>
 					{ __( 'Add Feature', 'otter-blocks' ) }

@@ -38,15 +38,15 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
+	const styles = css`
+		--horizontalAlign: ${ attributes.horizontalAlign };
+		${ attributes.gap && `--gap: ${ attributes.gap }px;` }
+		${ attributes.defaultSize && `--fontSize: ${ attributes.defaultSize }px;` }
+	`;
+
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		css: css`
-			.block-editor-block-list__layout {
-				align-items: ${ attributes.horizontalAlign || 'unset' } !important;
-				justify-content: ${ attributes.horizontalAlign || 'unset' } !important;
-				gap: ${ attributes.gap }px;
-			}
-		`
+		css: styles
 	});
 
 	return (

@@ -16,34 +16,34 @@
 	&.collapse-desktop {
 		flex-direction: column;
 	}
+}
 
-	.wp-block-themeisle-blocks-button {
-		svg {
-			fill: currentColor;
-			display: inline-block;
-			width: 16px;
+.wp-block-themeisle-blocks-button {
+	svg {
+		fill: currentColor;
+		display: inline-block;
+		width: 16px;
 
-			&.margin-left {
-				margin-left: 10px;
-			}
-
-			&.margin-right {
-				margin-right: 10px;
-			}
-
-			path {
-				transition: none;
-			}
+		&.margin-left {
+			margin-left: 10px;
 		}
 
-		i {
-			&.margin-left {
-				margin-left: 10px;
-			}
+		&.margin-right {
+			margin-right: 10px;
+		}
 
-			&.margin-right {
-				margin-right: 10px;
-			}
+		path {
+			transition: none;
+		}
+	}
+
+	i {
+		&.margin-left {
+			margin-left: 10px;
+		}
+
+		&.margin-right {
+			margin-right: 10px;
 		}
 	}
 }

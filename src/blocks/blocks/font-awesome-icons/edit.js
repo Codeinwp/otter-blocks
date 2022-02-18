@@ -1,3 +1,13 @@
+/** @jsx jsx */
+
+/**
+ * External dependencies.
+ */
+import {
+	css,
+	jsx
+} from '@emotion/react';
+
 /**
  * WordPress dependencies...
  */
@@ -22,7 +32,6 @@ const { attributes: defaultAttributes } = metadata;
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	isSelected,
 	clientId
 }) => {
@@ -32,36 +41,50 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
-	let iconStyle = {
-		borderRadius: attributes.borderRadius + '%',
-		fontSize: attributes.fontSize + 'px',
-		padding: attributes.padding + 'px'
-	};
-
-	if ( 'themeisle-icons' === attributes.library ) {
-		iconStyle = {
-			fill: attributes.textColor,
-			padding: attributes.padding + 'px',
-			width: attributes.fontSize + attributes.padding * 2 + attributes.borderSize * 2
-		};
-	}
-
-	const containerStyle = {
-		color: attributes.textColor,
-		backgroundColor: attributes.backgroundColor,
-		borderColor: attributes.borderColor,
-		borderRadius: attributes.borderRadius + '%',
-		borderStyle: 'solid',
-		borderWidth: attributes.borderSize + 'px',
-		margin: attributes.margin + 'px',
-		width: attributes.fontSize + attributes.padding * 2 + attributes.borderSize * 2
-	};
-
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
+
+	const styles = css`
+		--align: ${ attributes.align };
+		--borderColor: ${ attributes.borderColor };
+		${ attributes.borderSize && `--borderSize: ${ attributes.borderSize }px;` }
+		${ attributes.borderRadius && `--borderRadius: ${ attributes.borderRadius }%;` }
+		${ attributes.margin && `--margin: ${ attributes.margin }px;` }
+		${ attributes.padding && `--padding: ${ attributes.padding }px;` }
+		--width: ${ attributes.fontSize + attributes.padding * 2 + attributes.borderSize * 2 }px;
+		${ attributes.fontSize && `--fontSize: ${ attributes.fontSize }px;` }
+
+		.wp-block-themeisle-blocks-font-awesome-icons-container {
+			color: ${ attributes.textColor };
+			background-color: ${ attributes.backgroundColor };
+			${ ( 'themeisle-icons' === attributes.library && attributes.padding ) && `padding: ${ attributes.padding }px;` }
+		}
+
+		.wp-block-themeisle-blocks-font-awesome-icons-container:hover {
+			color: ${ attributes.textColorHover };
+			background-color: ${ attributes.backgroundColorHover };
+			border-color: ${ attributes.borderColorHover };
+		}
+
+		.wp-block-themeisle-blocks-font-awesome-icons-container a {
+			color: ${ attributes.textColor };
+		}
+
+		.wp-block-themeisle-blocks-font-awesome-icons-container i {
+			${ attributes.fontSize && `font-size: ${ attributes.fontSize }px;` }
+		}
+
+		.wp-block-themeisle-blocks-font-awesome-icons-container svg {
+			fill: ${ attributes.textColor };
+		}
+
+		.wp-block-themeisle-blocks-font-awesome-icons-container:hover svg {
+			fill: ${ attributes.textColorHover };
+		}
+	`;
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		style: { textAlign: attributes.align }
+		css: styles
 	});
 
 	return (
@@ -77,33 +100,9 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<style>
-				{
-					`#${ attributes.id } .${ className }-container:hover {
-						color: ${ attributes.textColorHover ? attributes.textColorHover : attributes.textColor } !important;
-						background: ${ attributes.backgroundColorHover ? attributes.backgroundColorHover : attributes.backgroundColor } !important;
-						border-color: ${ attributes.borderColorHover ? attributes.borderColorHover : attributes.borderColor } !important;
-					}
-
-					#${ attributes.id } .${ className }-container:hover svg {
-						fill: ${ attributes.textColorHover ? attributes.textColorHover : attributes.textColor } !important;
-					}`
-				}
-			</style>
-
 			<p { ...blockProps }>
-				<span
-					className="wp-block-themeisle-blocks-font-awesome-icons-container"
-					style={ containerStyle }
-				>
-					{ 'themeisle-icons' === attributes.library ?
-						<Icon style={ iconStyle } /> :
-						<i
-							className={ `${ attributes.prefix } fa-${ attributes.icon }` }
-							style={ iconStyle }
-						>
-						</i>
-					}
+				<span className="wp-block-themeisle-blocks-font-awesome-icons-container">
+					{ 'themeisle-icons' === attributes.library ? <Icon/> : <i className={ `${ attributes.prefix } fa-${ attributes.icon }` }></i> }
 				</span>
 			</p>
 		</Fragment>

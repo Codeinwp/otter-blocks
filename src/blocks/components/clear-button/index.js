@@ -41,7 +41,7 @@ const ClearButton = ({
 	};
 
 	return (
-		<div className="otter-clear-button">
+		<div className="o-clear-button">
 			<Button
 				isSmall
 				isSecondary

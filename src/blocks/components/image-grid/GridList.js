@@ -82,7 +82,7 @@ const GridList = ({
 	return (
 		<SortableList
 			className={ classnames(
-				'otter-images-grid-component',
+				'o-images-grid-component',
 				{ 'is-single': 1 === attributes.images.length }
 			) }
 			open={ open }

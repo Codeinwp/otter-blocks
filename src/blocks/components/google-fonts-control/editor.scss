@@ -1,4 +1,4 @@
-.otter-gfont-popover {
+.o-gfont-popover {
 	&:not(.is-mobile) {
 		&.is-bottom {
 			z-index: 9999999;
@@ -29,12 +29,12 @@
 	}
 }
 
-.otter-gfont-control {
+.o-gfont-control {
 	.components-dropdown {
 		display: flex;
 	}
 
-	.otter-gfont-button {
+	.o-gfont-button {
 		background: transparent;
 		position: relative;
 		width: 100%;
@@ -79,14 +79,14 @@
 		}
 	}
 
-	.otter-control-panel-control {
+	.o-control-panel-control {
 		padding: 0;
 	}
 }
 
 @media ( max-width: 782px ) {
-	.otter-gfont-control {
-		.otter-gfont-button {
+	.o-gfont-control {
+		.o-gfont-button {
 			padding: 5px 24px 5px 8px;
 	
 			&:after {

@@ -264,14 +264,6 @@ const Inspector = ({
 				/>
 
 				<RangeControl
-					label={ __( 'Overlay Opacity', 'otter-blocks' ) }
-					value={ attributes.frontOverlayOpacity }
-					onChange={ frontOverlayOpacity => setAttributes({ frontOverlayOpacity }) }
-					min={ 0 }
-					max={ 100 }
-				/>
-
-				<RangeControl
 					label={ __( 'Padding', 'otter-blocks' ) }
 					value={ attributes.padding }
 					onChange={ padding => setAttributes({ padding }) }

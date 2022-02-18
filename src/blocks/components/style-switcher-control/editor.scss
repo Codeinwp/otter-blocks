@@ -1,9 +1,9 @@
-.otter-style-switcher {
+.o-style-switcher {
 	display: grid;
 	grid-template-columns: 50% 50%;
 	grid-row-gap: 5px;
 
-	.otter-style-switcher-item {
+	.o-style-switcher-item {
 		display: block;
 		height: auto;
 		margin: 0 4px;
@@ -27,7 +27,7 @@
 			box-shadow: 0 0 0 2px #00a0d2;
 		}
 
-		.otter-style-switcher-item-preview {
+		.o-style-switcher-item-preview {
 
 			img {
 				border: 1px solid #dcddde;
@@ -35,7 +35,7 @@
 			}
 		}
 
-		.otter-style-switcher-item-label {
+		.o-style-switcher-item-label {
 			text-align: center;
 		}
 	}

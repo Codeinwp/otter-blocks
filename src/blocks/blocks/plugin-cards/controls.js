@@ -18,7 +18,7 @@ const Controls = ({ setAttributes }) => {
 			<ToolbarGroup>
 				<Tooltip text={ __( 'Edit', 'otter-blocks' ) }>
 					<Button
-						className="components-icon-button components-toolbar__control wp-block-themeisle-blocks-plugin-cards-edit-plugin-card"
+						className="components-icon-button components-toolbar__control o-plugin-cards-edit-plugin-card"
 						onClick={ () => setAttributes({ slug: undefined }) }
 					>
 						<Dashicon icon="edit" />
