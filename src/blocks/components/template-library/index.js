@@ -201,7 +201,7 @@ const Library = ({
 	return (
 		<Modal
 			className={ classnames(
-				'otter-library-modal',
+				'o-library-modal',
 				{ 'is-preview': preview }
 			) }
 			onRequestClose={ close }

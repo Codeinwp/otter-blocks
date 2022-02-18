@@ -1,4 +1,4 @@
-.otter-images-grid-component {
+.o-images-grid-component {
 	display: grid;
 	grid-template-columns: auto auto auto;
 	grid-column-gap: 10px;
@@ -7,7 +7,7 @@
 	&.is-single {
 		justify-content: start;
 
-		.otter-images-grid-component__image {
+		.o-images-grid-component__image {
 			margin-right: 5px;
 		}
 	}
@@ -36,7 +36,7 @@
 	}
 }
 
-.otter-images-grid-component__image {
+.o-images-grid-component__image {
 	width: 75px;
 	height: 75px;
 	background-size: cover;
@@ -61,7 +61,7 @@
 		background-blend-mode: luminosity;
 	}
 
-	.otter-images-grid-component__image__count {
+	.o-images-grid-component__image__count {
 		background: #007cba;
 		color: #fff;
 		width: 25px;
@@ -78,7 +78,7 @@
 }
 
 @media ( min-width: 540px ) and ( max-width: 782px ) {
-	.otter-images-grid-component {
+	.o-images-grid-component {
 		grid-template-columns: auto auto auto auto auto auto;
 	}
 }

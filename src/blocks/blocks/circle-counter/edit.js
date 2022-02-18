@@ -1,3 +1,13 @@
+/** @jsx jsx */
+
+/**
+ * External dependencies.
+ */
+import {
+	css,
+	jsx
+} from '@emotion/react';
+
 /**
  * WordPress dependencies
  */
@@ -28,6 +38,8 @@ import CircularProgressBar from './components/circular-progress-bar.js';
 import { blockInit } from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
+
+const px = value => value ? `${ value }px` : value;
 
 const CircularProgressBarBlock = ({
 	clientId,
@@ -111,8 +123,13 @@ const CircularProgressBarBlock = ({
 		setAttributes({ title: value });
 	};
 
+	const styles = css`
+		--fontSizeTitle: ${ px( attributes.fontSizeTitle ) };
+	`;
+
 	const blockProps = useBlockProps({
-		id: attributes.id
+		id: attributes.id,
+		css: styles
 	});
 
 	return (
@@ -135,8 +152,7 @@ const CircularProgressBarBlock = ({
 							onChange={ onTitleChange }
 							multiline={ false }
 							style={ {
-								color: attributes.titleColor,
-								fontSize: attributes.fontSizeTitle + 'px'
+								color: attributes.titleColor
 							} }
 						/>
 					</div>
@@ -182,8 +198,7 @@ const CircularProgressBarBlock = ({
 							onChange={ onTitleChange }
 							multiline={ false }
 							style={ {
-								color: attributes.titleColor,
-								fontSize: attributes.fontSizeTitle + 'px'
+								color: attributes.titleColor
 							} }
 						/>
 					</div>

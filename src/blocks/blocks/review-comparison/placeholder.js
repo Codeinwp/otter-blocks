@@ -49,8 +49,8 @@ const BlockPlaceholder = ({
 		label,
 		value
 	}) => (
-		<span className="otter-review-comparison__tag">
-			<span className="otter-review-comparison__tag_title">{ label }</span>
+		<span className="o-review-comparison_tag">
+			<span className="o-review-comparison_tag_title">{ label }</span>
 
 			<Button
 
@@ -82,7 +82,7 @@ const BlockPlaceholder = ({
 			instructions={ __( 'Display a selection of product reviews in a comparison table.', 'otter-blocks' ) }
 			icon={ blockTable }
 			isColumnLayout={ true }
-			className="otter-review-comparison__placeholder"
+			className="o-review-comparison__placeholder"
 		>
 			{ isLoading && <Spinner /> }
 
@@ -91,9 +91,9 @@ const BlockPlaceholder = ({
 			{ ( isComplete && ! Boolean( data.length ) ) && __( 'No reviews found.', 'otter-blocks' ) }
 
 			{ ( isComplete && Boolean( data.length ) ) && (
-				<div className="otter-review-comparison__placeholder__container">
-					<div className="otter-review-comparison__placeholder__selected">
-						<div className="otter-review-comparison__placeholder__selected_label">
+				<div className="o-review-comparison__placeholder__container">
+					<div className="o-review-comparison__placeholder__selected">
+						<div className="o-review-comparison__placeholder__selected_label">
 							{
 
 								/* translators: %s Number of selected reviews. */

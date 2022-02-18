@@ -120,11 +120,11 @@
 			"lottie/editor.css": "blocks/lottie/editor.scss"
 		}
 	},
-	"plugin-card": {
-		"block": "blocks/plugin-card/block.json",
+	"plugin-cards": {
+		"block": "blocks/plugin-cards/block.json",
 		"assets": {
-			"plugin-card/editor.css": "blocks/plugin-card/editor.scss",
-			"plugin-card/style.css": "blocks/plugin-card/style.scss"
+			"plugin-cards/editor.css": "blocks/plugin-cards/editor.scss",
+			"plugin-cards/style.css": "blocks/plugin-cards/style.scss"
 		}
 	},
 	"popup": {

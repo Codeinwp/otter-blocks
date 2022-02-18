@@ -52,7 +52,7 @@ const ControlPanelControl = ({
 	const id = `inspector-control-panel-control-${ instanceId }`;
 
 	return (
-		<div className="otter-control-panel-control">
+		<div className="o-control-panel-control">
 			<div className="components-base-control__field">
 				<div className="components-base-control__title">
 					<label

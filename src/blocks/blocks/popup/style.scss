@@ -1,6 +1,12 @@
 $base-index: 9999 !default;
 
 .wp-block-themeisle-blocks-popup {
+	--minWidth: 400px;
+	--backgroundColor: #fff;
+	--closeColor: #000;
+	--overlayColor: rgba(0, 0, 0, 0.5);
+	--overlayOpacity: 1;
+
 	&.is-front {
 		display: none;
 	}
@@ -10,7 +16,8 @@ $base-index: 9999 !default;
 	}
 
 	.otter-popup__modal_wrap_overlay {
-		background-color: rgba(0, 0, 0, 0.5);
+		background-color: var( --overlayColor );
+		opacity: var( --overlayOpacity );
 		left: 0;
 		right: 0;
 		top: 0;
@@ -34,8 +41,8 @@ $base-index: 9999 !default;
 	.otter-popup__modal_content {
 		position: relative;
 		z-index: $base-index + 1;
-		background-color: #fff;
-		min-width: 400px;
+		background-color: var( --backgroundColor );
+		min-width: var( --minWidth );
 		padding: 20px;
 		max-width: 100%;
 
@@ -66,7 +73,7 @@ $base-index: 9999 !default;
 
 		button {
 			background-color: transparent !important;
-			color: #000;
+			color: var( --closeColor );
 			height: auto !important;
 			display: flex;
 			align-items: center;

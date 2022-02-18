@@ -17,20 +17,20 @@ const Field = ({
 	const fieldRef = useRef( null );
 
 	return (
-		<div className="otter-sizing-control-item">
+		<div className="o-sizing-control-item">
 			{ index.disabled ? (
 				<input
 					type="number"
 					disabled={ index.disabled }
-					className="otter-sizing-control-item-input"
-					id={ `otter-sizing-control-item-input-${ option }` }
+					className="o-sizing-control-item-input"
+					id={ `o-sizing-control-item-input-${ option }` }
 				/>
 			) : (
 				<Fragment>
 					<input
 						type="number"
-						className="otter-sizing-control-item-input"
-						id={ `otter-sizing-control-item-input-${ option }-${ id }` }
+						className="o-sizing-control-item-input"
+						id={ `o-sizing-control-item-input-${ option }-${ id }` }
 						value={ undefined !== index.value ? index.value : '' }
 						min={ min }
 						max={ max }
@@ -42,8 +42,8 @@ const Field = ({
 
 			{ index.label && (
 				<label
-					className="otter-sizing-control-item-label"
-					htmlFor={ `otter-sizing-control-item-input-${ option }-${ id }` }
+					className="o-sizing-control-item-label"
+					htmlFor={ `o-sizing-control-item-input-${ option }-${ id }` }
 				>
 					{ index.label }
 				</label>

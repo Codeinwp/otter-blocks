@@ -10,6 +10,7 @@ phpcs.xml
 .releaserc.yml
 .browserslistrc
 .editorconfig
+blocks.json
 docker-compose.yml
 webpack.config.js
 CONTRIBUTING.md

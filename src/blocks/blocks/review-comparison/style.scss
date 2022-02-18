@@ -58,57 +58,57 @@
 				padding-right: 5px;
 			}
 
-			.otter-review-comparison__ratings {
-				display: flex;
-
-				svg {
-					max-width: 25px;
-					max-height: 25px;
-					width: 100%;
-					fill: #8F8F8F;
-
-					&.low {
-						fill: #D56159;
-					}
-
-					&.medium {
-						fill: #F2A141;
-					}
-
-					&.high {
-						fill: #63A76E;
-					}
-				}
-			}
-
-			.otter-review-comparison__rating_container {
-				margin-bottom: 10px;
-			}
-
-			.otter-review-comparison__buttons {
-				display: flex;
-				flex-direction: column;
-
-				span,
-				a {
-					font-size: .8em;
-					font-weight: 600;
-					padding: 8px 12px;
-					transition: all .15s ease-in-out;
-					text-align: center;
-					border: 1px solid transparent;
-					border-radius: 3px;
-					text-transform: uppercase;
-					cursor: pointer;
-					line-height: normal;
-					font-family: inherit;
-					margin: 10px;
-				}
-			}
-
 			&:last-child {
 				border-width: 0 1px 1px 1px;
 			}
+		}
+	}
+
+	.o-review-comparison_ratings {
+		display: flex;
+
+		svg {
+			max-width: 25px;
+			max-height: 25px;
+			width: 100%;
+			fill: #8F8F8F;
+
+			&.low {
+				fill: #D56159;
+			}
+
+			&.medium {
+				fill: #F2A141;
+			}
+
+			&.high {
+				fill: #63A76E;
+			}
+		}
+	}
+
+	.o-review-comparison_rating_container {
+		margin-bottom: 10px;
+	}
+
+	.o-review-comparison_buttons {
+		display: flex;
+		flex-direction: column;
+
+		span,
+		a {
+			font-size: .8em;
+			font-weight: 600;
+			padding: 8px 12px;
+			transition: all .15s ease-in-out;
+			text-align: center;
+			border: 1px solid transparent;
+			border-radius: 3px;
+			text-transform: uppercase;
+			cursor: pointer;
+			line-height: normal;
+			font-family: inherit;
+			margin: 10px;
 		}
 	}
 }

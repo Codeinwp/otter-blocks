@@ -72,21 +72,21 @@ class Review_Block {
 		);
 
 		$html  = '<div ' . $wrapper_attributes . '>';
-		$html .= '  <div class ="wp-block-themeisle-blocks-review__header">';
+		$html .= '  <div class ="o-review__header">';
 
 		if ( isset( $attributes['title'] ) && ! empty( $attributes['title'] ) ) {
 			$html .= '<h3>' . esc_html( $attributes['title'] ) . '</h3>';
 		}
 
-		$html .= '		<div class="wp-block-themeisle-blocks-review__header_meta">';
-		$html .= '			<div class="wp-block-themeisle-blocks-review__header_ratings">';
+		$html .= '		<div class="o-review__header_meta">';
+		$html .= '			<div class="o-review__header_ratings">';
 		$html .= $this->get_overall_stars( $this->get_overall_ratings( $attributes['features'] ) );
 		// translators: Overall rating from 0 to 10.
 		$html .= '				<span>' . sprintf( __( '%g out of 10', 'otter-blocks' ), $this->get_overall_ratings( $attributes['features'] ) ) . '</span>';
 		$html .= '			</div>';
 
 		if ( ( isset( $attributes['price'] ) && ! empty( $attributes['price'] ) ) || isset( $attributes['discounted'] ) ) {
-			$html .= '			<span class="wp-block-themeisle-blocks-review__header_price">';
+			$html .= '			<span class="o-review__header_price">';
 
 			if ( ( isset( $attributes['price'] ) && ! empty( $attributes['price'] ) ) && isset( $attributes['discounted'] ) ) {
 				$html .= '			<del>' . self::get_currency( isset( $attributes['currency'] ) ? $attributes['currency'] : 'USD' ) . $attributes['price'] . '</del>';
@@ -99,9 +99,9 @@ class Review_Block {
 		$html .= '		</div>';
 		$html .= '  </div>';
 
-		$html .= '	<div class="wp-block-themeisle-blocks-review__left">';
+		$html .= '	<div class="o-review__left">';
 		if ( ( isset( $attributes['image'] ) || ( isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ) ) {
-			$html .= '	<div class="wp-block-themeisle-blocks-review__left_details' . $is_single . '">';
+			$html .= '	<div class="o-review__left_details' . $is_single . '">';
 			if ( isset( $attributes['image'] ) ) {
 				if ( isset( $attributes['image']['id'] ) && wp_attachment_is_image( $attributes['image']['id'] ) ) {
 					$html .= wp_get_attachment_image( $attributes['image']['id'], 'medium' );
@@ -117,14 +117,14 @@ class Review_Block {
 		}
 
 		if ( isset( $attributes['features'] ) && count( $attributes['features'] ) > 0 ) {
-			$html .= '	<div class="wp-block-themeisle-blocks-review__left_features">';
+			$html .= '	<div class="o-review__left_features">';
 			foreach ( $attributes['features'] as $feature ) {
-				$html .= '	<div class="wp-block-themeisle-blocks-review__left_feature">';
+				$html .= '	<div class="o-review__left_feature">';
 				if ( isset( $feature['title'] ) ) {
-					$html .= '	<span class="wp-block-themeisle-blocks-review__left_feature_title">' . $feature['title'] . '</span>';
+					$html .= '	<span class="o-review__left_feature_title">' . $feature['title'] . '</span>';
 				}
 
-				$html .= '		<div class="wp-block-themeisle-blocks-review__left_feature_ratings">';
+				$html .= '		<div class="o-review__left_feature_ratings">';
 				$html .= $this->get_overall_stars( $feature['rating'] );
 				$html .= '			<span>' . round( $feature['rating'], 1 ) . '/10</span>';
 				$html .= '		</div>';
@@ -134,13 +134,13 @@ class Review_Block {
 		}
 		$html .= '	</div>';
 
-		$html .= '	<div class="wp-block-themeisle-blocks-review__right">';
+		$html .= '	<div class="o-review__right">';
 		if ( isset( $attributes['pros'] ) && count( $attributes['pros'] ) > 0 ) {
-			$html .= '	<div class="wp-block-themeisle-blocks-review__right_pros">';
+			$html .= '	<div class="o-review__right_pros">';
 			$html .= '		<h4>' . __( 'Pros', 'otter-blocks' ) . '</h4>';
 
 			foreach ( $attributes['pros'] as $pro ) {
-				$html .= '	<div class="wp-block-themeisle-blocks-review__right_pros_item">';
+				$html .= '	<div class="o-review__right_pros_item">';
 				$html .= '		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.3 5.6L9.9 16.9l-4.6-3.4-.9 2.4 5.8 4.3 9.3-12.6z" /></svg>';
 				$html .= '		<p>' . esc_html( $pro ) . '</p>';
 				$html .= '	</div>';
@@ -149,11 +149,11 @@ class Review_Block {
 		}
 
 		if ( isset( $attributes['cons'] ) && count( $attributes['cons'] ) > 0 ) {
-			$html .= '	<div class="wp-block-themeisle-blocks-review__right_cons">';
+			$html .= '	<div class="o-review__right_cons">';
 			$html .= '		<h4>' . __( 'Cons', 'otter-blocks' ) . '</h4>';
 
 			foreach ( $attributes['cons'] as $con ) {
-				$html .= '	<div class="wp-block-themeisle-blocks-review__right_cons_item">';
+				$html .= '	<div class="o-review__right_cons_item">';
 				$html .= '		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 11.8l6.1-6.3-1-1-6.1 6.2-6.1-6.2-1 1 6.1 6.3-6.5 6.7 1 1 6.5-6.6 6.5 6.6 1-1z" /></svg>';
 				$html .= '		<p>' . esc_html( $con ) . '</p>';
 				$html .= '	</div>';
@@ -163,10 +163,10 @@ class Review_Block {
 		$html .= '	</div>';
 
 		if ( isset( $attributes['links'] ) && count( $attributes['links'] ) > 0 ) {
-			$html .= '	<div class="wp-block-themeisle-blocks-review__footer">';
-			$html .= '		<span class="wp-block-themeisle-blocks-review__footer_label">' . __( 'Buy this product', 'otter-blocks' ) . '</span>';
+			$html .= '	<div class="o-review__footer">';
+			$html .= '		<span class="o-review__footer_label">' . __( 'Buy this product', 'otter-blocks' ) . '</span>';
 
-			$html .= '		<div class="wp-block-themeisle-blocks-review__footer_buttons">';
+			$html .= '		<div class="o-review__footer_buttons">';
 
 			foreach ( $attributes['links'] as $link ) {
 				$rel   = ( isset( $link['isSponsored'] ) && true === $link['isSponsored'] ) ? 'sponsored' : 'nofollow';
