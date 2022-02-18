@@ -7,6 +7,8 @@ import classnames from 'classnames';
 
 import { v4 as uuidv4 } from 'uuid';
 
+import { intersection, remove } from 'lodash';
+
 /**
  * WordPress dependencies
  */
@@ -30,6 +32,19 @@ const LayoutBuilder = ({
 	const onSortEnd = ({ oldIndex, newIndex }) => {
 		const template = arrayMove( attributes.template, oldIndex, newIndex );
 		setAttributes({ template });
+	};
+
+	const filterDeadCustomTemplates = () => {
+
+		const validCustomTemplates = intersection(
+			attributes.template,
+			attributes?.customMetas?.map( ({ id }) => id )
+		);
+
+		return {
+			template: attributes?.template.filter( t => ! t.startsWith( 'custom_' ) || ( validCustomTemplates.includes( t ) ) ),
+			customMetas: attributes.customMetas?.filter ( ({ id }) => validCustomTemplates.includes( id ) )
+		};
 	};
 
 	return (
@@ -76,9 +91,14 @@ const LayoutBuilder = ({
 							display: true
 						};
 
+						const {
+							template,
+							customMetas
+						} = filterDeadCustomTemplates();
+
 						setAttributes({
-							template: [ ...attributes.template, id ],
-							customMetas: attributes.customMetas ? [ ...attributes.customMetas, newMeta ] : [ newMeta ]
+							template: [ ...template, id ],
+							customMetas: customMetas ? [ ...customMetas, newMeta ] : [ newMeta ]
 						});
 					}}
 				>
