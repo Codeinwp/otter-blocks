@@ -539,6 +539,7 @@ const Inspector = ({
 							<RangeControl
 								label={ __( 'Maximum Content Width', 'otter-blocks' ) }
 								value={ attributes.columnsWidth || '' }
+								allowReset
 								onChange={ changeColumnsWidth }
 								min={ 0 }
 								max={ 2400 }
