@@ -65,7 +65,6 @@ const Edit = ({
 	const [ slugs, setSlugs ] = useState([]);
 	const [ featured, setFeatured ] = useState( '' );
 	const [ metaValues, changeMetaValues ] = useMeta();
-	console.log({metaValues});
 
 	const {
 		posts,

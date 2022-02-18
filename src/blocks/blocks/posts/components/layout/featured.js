@@ -58,7 +58,6 @@ const FeaturedPost = props => {
 							return <PostsDescription attributes={attributes} element={element} post={post} />;
 						case 'custom':
 							const customFieldData = attributes.customMetas?.filter( ({ id }) => id === element )?.pop();
-							console.log( customFieldData );
 							return <PostsCustomMeta customFieldData={customFieldData} />;
 						default:
 							return '';

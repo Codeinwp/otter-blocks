@@ -101,7 +101,6 @@ const Layout = ({
 												return <PostsDescription attributes={attributes} element={element} post={post} />;
 											case 'custom':
 												const customFieldData = attributes.customMetas?.filter( ({ id }) => id === element )?.pop();
-												console.log( customFieldData );
 												return <PostsCustomMeta customFieldData={customFieldData} />;
 											default:
 												return '';
@@ -198,7 +197,7 @@ export const PostsDescription = ({attributes,  element, post }) => {
 
 export const PostsCustomMeta = ({ customFieldData }) => {
 
-	if ( ! customFieldData ) {
+	if ( ! customFieldData || ( ! customFieldData.display ) ) {
 		return <Fragment></Fragment>;
 	}
 
@@ -207,9 +206,7 @@ export const PostsCustomMeta = ({ customFieldData }) => {
 	return (
 		<div className="o-posts-custom-field">
 			{
-
-				// TODO: Add field data from hook
-				( customFieldData?.before || '' ) + ( meta || customFieldData?.defaultValue || '' ) + ( customFieldData?.after || '' )
+				( customFieldData?.before || '' ) + ( meta !== undefined && '' !== meta ? meta : ( customFieldData?.defaultValue || '' ) ) + ( customFieldData?.after || '' )
 			}
 		</div>
 	);

@@ -57,8 +57,9 @@ const LayoutBuilder = ({
 				/>
 
 				<Button
-					variant="primary"
-					isPrimary
+					variant="secondary"
+					isSecondary
+					className="otter-conditions__add"
 					onClick={ () => {
 
 						let id = uuidv4();

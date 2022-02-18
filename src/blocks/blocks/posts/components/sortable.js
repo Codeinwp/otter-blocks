@@ -145,8 +145,15 @@ export const SortableItem = ({
 		});
 	};
 
-	const customMetaFields = Object.keys( useContext( CustomMetasContext )?.customMetaFields );
-	console.log( 'hey', {customMetaFields});
+	const deleteCustomField = () => {
+		setAttributes({
+			template: attributes.template?.filter( template => template !== customMeta?.id ),
+			customMetas: attributes.customMetas?.filter( currentMeta =>
+				currentMeta?.id !== customMeta?.id )
+		});
+	};
+
+	const customMetaFields = Object.keys( useContext( CustomMetasContext )?.customMetaFields ).filter( x => ! x.startsWith( 'meta_post' ) );
 
 	const label = ! isCustomMeta ? startCase( toLower( template ) ) :  startCase( toLower( customMeta?.field?.[0] || 'Custom Type' ) );
 	const canEdit = templateLookUp[template] || customMeta?.display;
@@ -362,6 +369,15 @@ export const SortableItem = ({
 								value={ customMeta.after }
 								onChange={ after => setAttributesCustomMeta({ after }) }
 							/>
+							<Button
+								onClick={deleteCustomField}
+								variant="secondary"
+								isSecondary
+								isDestructive
+								className="otter-conditions__add"
+							>
+								{ __( 'Delete Field', 'otter-blocks' ) }
+							</Button>
 						</Fragment>
 					) }
 				</div>

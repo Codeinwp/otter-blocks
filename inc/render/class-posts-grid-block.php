@@ -177,6 +177,39 @@ class Posts_Grid_Block {
 
 					}
 				}
+
+				if ( str_starts_with($element, "custom_") ) {
+					if ( isset($attributes["customMetas"]) ) {
+						$customMetaField = null;
+						foreach($attributes["customMetas"] as $metaField) {
+							if( $metaField["id"] === $element ) {
+								$customMetaField = $metaField;
+								break;
+							}
+						}
+
+						if( $customMetaField && ( !isset($customMetaField['display']) || true === $customMetaField['display'] )  ) {
+							$list_items_markup .= '<div class="o-posts-custom-field">';
+							if( isset($customMetaField["before"]) ) {
+								$list_items_markup .= esc_html($customMetaField["before"]);
+							}
+
+							if( isset( $customMetaField["field"] )   && isset($customMetaField["field"][0]) && $customMetaField["field"][0] !== '' && get_post_meta( $post["ID"] , $customMetaField["field"][0], true ) !== '' ) {
+								$list_items_markup .= esc_html( get_post_meta( $post["ID"] , $customMetaField["field"][0], true ));
+							} else if( isset( $customMetaField["defaultValue"] ) ) {
+								$list_items_markup .= esc_html($customMetaField["defaultValue"]);
+							}
+
+							if( isset($customMetaField["after"]) ) {
+								$list_items_markup .= esc_html($customMetaField["after"]);
+							}
+
+							$list_items_markup .= '</div>';
+						}
+
+					}
+
+				}
 			}
 
 			$list_items_markup .= '</div></div></div>';
@@ -338,6 +371,38 @@ class Posts_Grid_Block {
 
 					$html .= '</div>';
 
+				}
+			}
+
+			if ( str_starts_with($element, "custom_") ) {
+				if ( isset($attributes["customMetas"]) ) {
+					$customMetaField = null;
+					foreach($attributes["customMetas"] as $metaField) {
+						if( $metaField["id"] === $element ) {
+							$customMetaField = $metaField;
+							break;
+						}
+					}
+
+					if( $customMetaField ) {
+						$html .= '<div class="o-posts-custom-field">';
+						if( isset($customMetaField["before"]) ) {
+							$html .= esc_html($customMetaField["before"]);
+						}
+
+						if( isset( $customMetaField["field"] ) && isset($customMetaField["field"][0]) && $customMetaField["field"][0] !== '' && get_post_meta( $post["ID"] , $customMetaField["field"][0], true ) !== '' ) {
+							$html .= esc_html( get_post_meta( $post["ID"] , $customMetaField["field"][0], true ));
+
+						} else if( isset( $customMetaField["defaultValue"] ) ) {
+							$html .= esc_html($customMetaField["defaultValue"]);
+						}
+
+						if( isset($customMetaField["after"]) ) {
+							$html .= esc_html($customMetaField["after"]);
+						}
+
+						$html .= '</div>';
+					}
 				}
 			}
 		}
