@@ -96,6 +96,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['top'] );
 						},
+						'global'    => 'paddingTop',
 					),
 					array(
 						'property'  => 'padding-bottom',
@@ -106,6 +107,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['bottom'] );
 						},
+						'global'    => 'paddingBottom',
 					),
 					array(
 						'property'  => 'padding-left',
@@ -116,6 +118,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['left'] );
 						},
+						'global'    => 'paddingLeft',
 					),
 					array(
 						'property'  => 'padding-right',
@@ -126,6 +129,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['right'] );
 						},
+						'global'    => 'paddingRight',
 					),
 					array(
 						'property'  => 'margin-top',
@@ -136,6 +140,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['margin'] ) && isset( $attrs['margin']['top'] );
 						},
+						'global'    => 'marginTop',
 					),
 					array(
 						'property'  => 'margin-bottom',
@@ -146,6 +151,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['margin'] ) && isset( $attrs['margin']['bottom'] );
 						},
+						'global'    => 'marginRight',
 					),
 					array(
 						'property' => 'justify-content',

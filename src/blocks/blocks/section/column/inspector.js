@@ -29,8 +29,6 @@ import { useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
-	useEffect,
-	useRef,
 	useState
 } from '@wordpress/element';
 
@@ -41,9 +39,12 @@ import ColorBaseControl from '../../../components/color-base-control/index.js';
 import ResponsiveControl from '../../../components/responsive-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
+import SyncPanel from '../../../components/sync-panel/index.js';
+import SyncControl from '../../../components/sync-control/index.js';
 import { isNullObject } from '../../../helpers/helper-functions.js';
 
 const Inspector = ({
+	getValue,
 	attributes,
 	setAttributes,
 	parentBlock,
@@ -70,14 +71,27 @@ const Inspector = ({
 		});
 	};
 
+	const getPaddingField = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return 'padding';
+		case 'Tablet':
+			return 'paddingTablet';
+		case 'Mobile':
+			return 'paddingMobile';
+		default:
+			return undefined;
+		}
+	};
+
 	const getPadding = () => {
 		switch ( getView ) {
 		case 'Desktop':
-			return attributes.padding;
+			return getValue( 'padding' );
 		case 'Tablet':
-			return attributes.paddingTablet;
+			return getValue( 'paddingTablet' );
 		case 'Mobile':
-			return attributes.paddingMobile;
+			return getValue( 'paddingMobile' );
 		default:
 			return undefined;
 		}
@@ -100,14 +114,27 @@ const Inspector = ({
 		}
 	};
 
+	const getMarginField = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return 'margin';
+		case 'Tablet':
+			return 'marginTablet';
+		case 'Mobile':
+			return 'marginMobile';
+		default:
+			return undefined;
+		}
+	};
+
 	const getMargin = () => {
 		switch ( getView ) {
 		case 'Desktop':
-			return attributes.margin;
+			return getValue( 'margin' );
 		case 'Tablet':
-			return attributes.marginTablet;
+			return getValue( 'marginTablet' );
 		case 'Mobile':
-			return attributes.marginMobile;
+			return getValue( 'marginMobile' );
 		default:
 			return undefined;
 		}
@@ -148,6 +175,19 @@ const Inspector = ({
 
 	return (
 		<InspectorControls>
+			<SyncPanel
+				fields={[
+					'padding',
+					'paddingTablet',
+					'paddingMobile',
+					'margin',
+					'marginTablet',
+					'marginMobile'
+				]}
+				isSynced={ attributes.isSynced }
+				setAttributes={ setAttributes }
+			/>
+
 			<PanelBody className="o-section-header-panel">
 				<Button
 					className={ classnames(
@@ -208,25 +248,37 @@ const Inspector = ({
 							label={ __( 'Screen Type', 'otter-blocks' ) }
 							className="otter-section-padding-responsive-control"
 						>
-							<BoxControl
-								label={ __( 'Padding', 'otter-blocks' ) }
-								values={ getPadding() }
-								inputProps={ {
-									min: 0,
-									max: 500
-								} }
-								onChange={ changePadding }
-							/>
+							<SyncControl
+								field={ getPaddingField() }
+								isSynced={ attributes.isSynced }
+								setAttributes={ setAttributes }
+							>
+								<BoxControl
+									label={ __( 'Padding', 'otter-blocks' ) }
+									values={ getPadding() }
+									inputProps={ {
+										min: 0,
+										max: 500
+									} }
+									onChange={ changePadding }
+								/>
+							</SyncControl>
 
-							<BoxControl
-								label={ __( 'Margin', 'otter-blocks' ) }
-								values={ getMargin() }
-								inputProps={ {
-									min: -500,
-									max: 500
-								} }
-								onChange={ changeMargin }
-							/>
+							<SyncControl
+								field={ getMarginField() }
+								isSynced={ attributes.isSynced }
+								setAttributes={ setAttributes }
+							>
+								<BoxControl
+									label={ __( 'Margin', 'otter-blocks' ) }
+									values={ getMargin() }
+									inputProps={ {
+										min: -500,
+										max: 500
+									} }
+									onChange={ changeMargin }
+								/>
+							</SyncControl>
 						</ResponsiveControl>
 					</PanelBody>
 				</Fragment>

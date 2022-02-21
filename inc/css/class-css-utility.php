@@ -157,6 +157,11 @@ class CSS_Utility {
 						)
 					);
 
+					if ( isset( $property['global'] ) && ! empty( $property['global'] ) ) {
+						$item_style .= $property['property'] . ': var( --' . $property['global'] . ( isset( $property['default'] ) ? ', ' . $property['default'] : '' ) . ' );';
+						continue;
+					}
+
 					if ( isset( $property['condition'] ) && is_callable( $property['condition'] ) && ! $property['condition']( $attrs ) ) {
 						continue;
 					}

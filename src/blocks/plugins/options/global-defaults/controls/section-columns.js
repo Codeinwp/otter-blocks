@@ -6,8 +6,7 @@ import { __ } from '@wordpress/i18n';
 import {
 	__experimentalBoxControl as BoxControl,
 	PanelBody,
-	RangeControl,
-	SelectControl
+	RangeControl
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -152,22 +151,6 @@ const SectionColumns = ({
 				title={ __( 'Section Structure', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<SelectControl
-					label={ __( 'HTML Tag', 'otter-blocks' ) }
-					value={ defaults.columnsHTMLTag }
-					options={ [
-						{ label: __( 'Default (div)', 'otter-blocks' ), value: 'div' },
-						{ label: 'section', value: 'section' },
-						{ label: 'header', value: 'header' },
-						{ label: 'footer', value: 'footer' },
-						{ label: 'article', value: 'article' },
-						{ label: 'main', value: 'main' }
-					] }
-					onChange={ value => changeConfig( blockName, { columnsHTMLTag: value }) }
-				/>
-
-				<hr/>
-
 				<RangeControl
 					label={ __( 'Maximum Content Width', 'otter-blocks' ) }
 					value={ defaults.columnsWidth || '' }

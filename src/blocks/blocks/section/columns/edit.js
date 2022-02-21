@@ -53,7 +53,10 @@ import layouts from '../layouts.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import Separators from '../components/separators/index.js';
-import { blockInit } from '../../../helpers/block-utility.js';
+import {
+	blockInit,
+	getDefaultValueByField
+} from '../../../helpers/block-utility.js';
 import Library from '../../../components/template-library/index.js';
 
 const { attributes: defaultAttributes } = metadata;
@@ -139,6 +142,8 @@ const Edit = ({
 		}
 	}, [ children ]);
 
+	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
+
 	// +-------------------------------- SCREEN SIZE --------------------------------+
 
 	const isLarger = useViewportMatch( 'large', '>=' );
@@ -201,36 +206,36 @@ const Edit = ({
 
 	if ( isDesktop ) {
 		stylesheet = {
-			paddingTop: attributes.padding && attributes.padding.top,
-			paddingRight: attributes.padding && attributes.padding.right,
-			paddingBottom: attributes.padding && attributes.padding.bottom,
-			paddingLeft: attributes.padding && attributes.padding.left,
-			marginTop: attributes.margin && attributes.margin.top,
-			marginBottom: attributes.margin && attributes.margin.bottom,
+			paddingTop: getValue( 'padding' ) && getValue( 'padding' ).top,
+			paddingRight: getValue( 'padding' ) && getValue( 'padding' ).right,
+			paddingBottom: getValue( 'padding' ) && getValue( 'padding' ).bottom,
+			paddingLeft: getValue( 'padding' ) && getValue( 'padding' ).left,
+			marginTop: getValue( 'margin' ) && getValue( 'margin' ).top,
+			marginBottom: getValue( 'margin' ) && getValue( 'margin' ).bottom,
 			minHeight: 'custom' === attributes.columnsHeight ? `${ attributes.columnsHeightCustom }px` : attributes.columnsHeight
 		};
 	}
 
 	if ( isTablet ) {
 		stylesheet = {
-			paddingTop: attributes.paddingTablet?.top,
-			paddingRight: attributes.paddingTablet?.right,
-			paddingBottom: attributes.paddingTablet?.bottom,
-			paddingLeft: attributes.paddingTablet?.left,
-			marginTop: attributes.marginTablet?.top,
-			marginBottom: attributes.marginTablet?.bottom,
+			paddingTop: getValue( 'paddingTablet' )?.top,
+			paddingRight: getValue( 'paddingTablet' )?.right,
+			paddingBottom: getValue( 'paddingTablet' )?.bottom,
+			paddingLeft: getValue( 'paddingTablet' )?.left,
+			marginTop: getValue( 'marginTablet' )?.top,
+			marginBottom: getValue( 'marginTablet' )?.bottom,
 			minHeight: 'custom' === attributes.columnsHeight ? `${ attributes.columnsHeightCustomTablet }px` : attributes.columnsHeight
 		};
 	}
 
 	if ( isMobile ) {
 		stylesheet = {
-			paddingTop: attributes.paddingMobile?.top,
-			paddingRight: attributes.paddingMobile?.right,
-			paddingBottom: attributes.paddingMobile?.bottom,
-			paddingLeft: attributes.paddingMobile?.left,
-			marginTop: attributes.marginMobile?.top,
-			marginBottom: attributes.marginMobile?.bottom,
+			paddingTop: getValue( 'paddingMobile' )?.top,
+			paddingRight: getValue( 'paddingMobile' )?.right,
+			paddingBottom: getValue( 'paddingMobile' )?.bottom,
+			paddingLeft: getValue( 'paddingMobile' )?.left,
+			marginTop: getValue( 'marginMobile' )?.top,
+			marginBottom: getValue( 'marginMobile' )?.bottom,
 			minHeight: 'custom' === attributes.columnsHeight ? `${ attributes.columnsHeightCustomMobile }px` : attributes.columnsHeight
 		};
 	}
@@ -408,6 +413,7 @@ const Edit = ({
 			/>
 
 			<Inspector
+				getValue={ getValue }
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 				updateColumnsWidth={ updateColumnsWidth }
