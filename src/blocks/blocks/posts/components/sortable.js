@@ -153,7 +153,7 @@ export const SortableItem = ({
 		});
 	};
 
-	const customMetaFields = Object.keys( useContext( CustomMetasContext )?.customMetaFields ).filter( x => ! x.startsWith( 'meta_post' ) );
+	const customMetaFields = useContext( CustomMetasContext )?.customMetaFields;
 
 	const label = ! isCustomMeta ? startCase( toLower( template ) ) :  startCase( toLower( customMeta?.field?.[0] || 'Custom Type' ) );
 	const canEdit = templateLookUp[template] || customMeta?.display;

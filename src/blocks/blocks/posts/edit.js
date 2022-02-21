@@ -4,7 +4,8 @@
  */
 import {
 	isUndefined,
-	pickBy
+	pickBy,
+	union
 } from 'lodash';
 
 import { __ } from '@wordpress/i18n';
@@ -64,7 +65,11 @@ const Edit = ({
 
 	const [ slugs, setSlugs ] = useState([]);
 	const [ featured, setFeatured ] = useState( '' );
-	const [ metaValues, changeMetaValues ] = useMeta();
+
+	const [ customMetaFields, setCustomMetaFields ] = useState([]);
+	const [ registeredMetaValues ] = useMeta();
+	const [ acfMetaData, setACFMetaData ] = useState({});
+
 
 	const {
 		posts,
@@ -130,6 +135,20 @@ const Edit = ({
 			}
 		}
 	}, [ posts, attributes.enableFeaturedPost, attributes.featuredPost ]);
+
+	useEffect( () => {
+		const acfFieldsName = acf?.getFields()?.map( ({ data }) => data.name ) || [];
+		const registeredMetaFieldsName = Object.keys( registeredMetaValues ).filter( x => ! x.startsWith( 'meta_post' ) || ! x.startsWith( 'neve_' ) );
+
+		setCustomMetaFields( union(  registeredMetaFieldsName, acfFieldsName ) );
+		setACFMetaData( acf?.getFields()?.reduce( ( acc, { data }) => {
+			if ( data.name ) {
+				acc[data.name] = data.key;
+			}
+			console.log( 'ACC', acc );
+			return acc;
+		}, {}) );
+	}, [ registeredMetaValues ]);
 
 	const fontSizeStyle = css`
 		${ attributes.imageWidth && `--img-width: ${ attributes.imageWidth }px;` }
@@ -198,7 +217,7 @@ const Edit = ({
 
 	return (
 		<Fragment>
-			<CustomMetasContext.Provider value={{customMetaFields: metaValues}}>
+			<CustomMetasContext.Provider value={{customMetaFields, acfMetaData, registeredCustomMeta: registeredMetaValues}}>
 				<StyleSwitcherBlockControl
 					label={ __( 'Block Styles', 'otter-blocks' ) }
 					value={ attributes.style }

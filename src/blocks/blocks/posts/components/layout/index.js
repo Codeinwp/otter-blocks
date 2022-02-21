@@ -201,7 +201,8 @@ export const PostsCustomMeta = ({ customFieldData }) => {
 		return <Fragment></Fragment>;
 	}
 
-	const [ meta, setMeta ] = useMeta( customFieldData.field );
+	const { registeredCustomMeta, acfMetaData } = useContext( CustomMetasContext );
+	const meta = acfMetaData[customFieldData.field] ? acf?.getField( acfMetaData[customFieldData.field])?.getValue() : registeredCustomMeta[customFieldData.field];
 
 	return (
 		<div className="o-posts-custom-field">
