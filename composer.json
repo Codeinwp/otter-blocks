@@ -1,48 +1,51 @@
 {
-    "name": "codeinwp/otter-blocks",
-    "description": "A set of awesome Gutenberg Blocks by ThemeIsle.",
-    "type": "wordpress-plugin",
-    "version": "1.7.5",
-    "require-dev": {
-        "squizlabs/php_codesniffer": "^3.3",
-        "wp-coding-standards/wpcs": "^1",
-        "phpcompatibility/php-compatibility": "^9",
-        "dealerdirect/phpcodesniffer-composer-installer": "0.7.1",
-        "automattic/vipwpcs": "^1.0.0",
-        "phpunit/phpunit": "7.5.9",
-        "yoast/phpunit-polyfills": "^1.0"
-    },
-    "license": "GPL-2.0+",
-    "authors": [
-        {
-            "name": "ThemeIsle Team",
-            "email": "friends@themeisle.com"
-        }
-    ],
-    "scripts": {
-        "lint": "phpcs",
-        "format": "phpcbf"
-    },
-    "prefer-stable": true,
-    "config": {
-        "optimize-autoloader": true,
-        "platform": {
-          "php": "7.4"
-        },
-        "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
-        }
-    },
-    "extra": {
-        "installer-disable": "true"
-    },
-    "autoload": {
-        "classmap": ["inc/"]
-    },
-    "minimum-stability": "dev",
-    "require": {
-        "codeinwp/themeisle-sdk": "^3.1",
-        "masterminds/html5": "^2.7",
-        "tubalmartin/cssmin": "^4.1"
-    }
+	"name": "codeinwp/otter-blocks",
+	"description": "A set of awesome Gutenberg Blocks by ThemeIsle.",
+	"type": "wordpress-plugin",
+	"version": "1.7.5",
+	"require-dev": {
+		"squizlabs/php_codesniffer": "^3.3",
+		"wp-coding-standards/wpcs": "^1",
+		"phpcompatibility/php-compatibility": "^9",
+		"dealerdirect/phpcodesniffer-composer-installer": "0.7.1",
+		"automattic/vipwpcs": "^1.0.0",
+		"phpunit/phpunit": "7.5.9",
+		"yoast/phpunit-polyfills": "^1.0"
+	},
+	"license": "GPL-2.0+",
+	"authors": [
+		{
+			"name": "ThemeIsle Team",
+			"email": "friends@themeisle.com"
+		}
+	],
+	"scripts": {
+		"lint": "phpcs",
+		"format": "phpcbf"
+	},
+	"prefer-stable": true,
+	"config": {
+		"optimize-autoloader": true,
+		"platform": {
+			"php": "7.4"
+		},
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		}
+	},
+	"extra": {
+		"installer-disable": "true"
+	},
+	"autoload": {
+		"classmap": ["inc/"],
+		"files": [
+			"vendor/codeinwp/themeisle-sdk/load.php"
+		]
+	},
+	"minimum-stability": "dev",
+	"require": {
+		"codeinwp/themeisle-sdk": "^3.1",
+		"masterminds/html5": "^2.7",
+		"tubalmartin/cssmin": "^4.1"
+	}
 }
