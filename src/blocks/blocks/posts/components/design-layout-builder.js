@@ -14,7 +14,8 @@ import { intersection, remove } from 'lodash';
  */
 import { Fragment } from '@wordpress/element';
 import {
-	Button
+	Button,
+	ExternalLink
 } from '@wordpress/components';
 import {
 	__
@@ -71,39 +72,51 @@ const LayoutBuilder = ({
 					lockAxis="y"
 				/>
 
-				<Button
-					variant="secondary"
-					isSecondary
-					className="otter-conditions__add"
-					onClick={ () => {
+				{
+					window?.acf === undefined ? (
+						<ExternalLink
+							href="https://wordpress.org/plugins/advanced-custom-fields/"
+							target="_blank"
+						>
+							{__( 'Activate Advance Custom Fields to add more fields.', 'otter-blocks' )}
+						</ExternalLink>
+					) : (
+						<Button
+							variant="secondary"
+							isSecondary
+							className="otter-conditions__add"
+							disabled={ window?.acf === undefined }
+							onClick={ () => {
 
-						let id = uuidv4();
-						while ( 0 < attributes?.customMetas?.filter( ({ otherId }) => otherId === id )?.length  ) {
-							id = uuidv4();
-						}
-						id = `custom_${id}`;
+								let id = uuidv4();
+								while ( 0 < attributes?.customMetas?.some( ({ otherId }) => otherId === id )  ) {
+									id = uuidv4();
+								}
+								id = `custom_${id}`;
 
-						const newMeta = {
-							id,
-							field: '',
-							before: '',
-							after: '',
-							display: true
-						};
+								const newMeta = {
+									id,
+									field: '',
+									display: true
+								};
 
-						const {
-							template,
-							customMetas
-						} = filterDeadCustomTemplates();
+								const {
+									template,
+									customMetas
+								} = filterDeadCustomTemplates();
 
-						setAttributes({
-							template: [ ...template, id ],
-							customMetas: customMetas ? [ ...customMetas, newMeta ] : [ newMeta ]
-						});
-					}}
-				>
-					{ __( 'Add Meta Field', 'otter-blocks' ) }
-				</Button>
+								setAttributes({
+									template: [ ...template, id ],
+									customMetas: customMetas ? [ ...customMetas, newMeta ] : [ newMeta ]
+								});
+							}}
+						>
+							{ __( 'Add Meta Field', 'otter-blocks' ) }
+						</Button>
+
+					)
+				}
+
 			</div>
 		</Fragment>
 	);

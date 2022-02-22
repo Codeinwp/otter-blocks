@@ -14,7 +14,8 @@ import {
  */
 import {
 	startCase,
-	toLower
+	toLower,
+	isEmpty
 } from 'lodash';
 
 import {
@@ -155,7 +156,7 @@ export const SortableItem = ({
 
 	const { acfData, acfFieldDict, ALLOWED_ACF_TYPES } = useContext( CustomMetasContext );
 
-	const label = ! isCustomMeta ? startCase( toLower( template ) ) :  startCase( toLower( customMeta?.field?.[0] || 'Custom Type' ) );
+	const label = ! isCustomMeta ? startCase( toLower( template ) ) :  startCase( toLower( acfFieldDict[customMeta.field]?.label || 'Custom Type' ) );
 	const canEdit = templateLookUp[template] || customMeta?.display;
 	const icon = canEdit ? 'visibility' : 'hidden';
 
@@ -166,7 +167,6 @@ export const SortableItem = ({
 		/* translators: %s Label */
 		message = sprintf( __( 'Hide %s', 'otter-blocks' ), label );
 	}
-
 
 	return (
 		<div
@@ -355,7 +355,7 @@ export const SortableItem = ({
 						</Fragment>
 					) }
 
-					{ isCustomMeta && customMeta && acfData && (
+					{ isCustomMeta && customMeta && ( ! isEmpty( acfData ) ) && (
 						<Fragment>
 							<BaseControl
 								label={ __( 'Fields', 'otter-blocks' ) }
@@ -392,7 +392,7 @@ export const SortableItem = ({
 							</BaseControl>
 
 							{
-								acfFieldDict && acfFieldDict[customMeta.field] && (
+								( ! isEmpty( acfFieldDict ) ) && acfFieldDict[customMeta.field] && (
 									<Fragment>
 										{
 											( acfFieldDict[customMeta.field]['default_value']) && (
@@ -428,19 +428,17 @@ export const SortableItem = ({
 								)
 							}
 
-							{
-								0 < acfData?.length && (
-									<Button
-										onClick={deleteCustomField}
-										variant="secondary"
-										isSecondary
-										isDestructive
-										className="otter-conditions__add"
-									>
-										{ __( 'Delete Field', 'otter-blocks' ) }
-									</Button>
-								)
-							}
+
+							<Button
+								onClick={deleteCustomField}
+								variant="secondary"
+								isSecondary
+								isDestructive
+								className="otter-conditions__add"
+							>
+								{ __( 'Delete Field', 'otter-blocks' ) }
+							</Button>
+
 
 						</Fragment>
 					) }
@@ -472,15 +470,22 @@ export const SortableList = SortableContainer( ({
 }) => {
 	return (
 		<div>
-			{ attributes?.template?.map( ( template, index ) => (
-				<SortableItemContainer
-					key={ `item-${ template }` }
-					index={ index }
-					attributes={ attributes }
-					setAttributes={ setAttributes }
-					template={ template }
-				/>
-			) ) }
+			{ attributes?.template
+				?.filter( template => {
+					if ( template?.startsWith( 'custom_' ) && window?.acf === undefined ) {
+						return false;
+					}
+					return true;
+				})
+				.map( ( template, index ) => (
+					<SortableItemContainer
+						key={ `item-${ template }` }
+						index={ index }
+						attributes={ attributes }
+						setAttributes={ setAttributes }
+						template={ template }
+					/>
+				) ) }
 		</div>
 	);
 });

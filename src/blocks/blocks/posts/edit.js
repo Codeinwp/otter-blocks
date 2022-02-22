@@ -5,7 +5,6 @@
 import {
 	isUndefined,
 	pickBy,
-	union,
 	pick
 } from 'lodash';
 
@@ -164,17 +163,10 @@ const Edit = ({
 						}, {})
 				);
 
-				console.log( 'Test', resp?.groups
-					?.map( ({ fields }) => fields )
-					.flat() );
 			}
 
 		});
 	}, []);
-
-	useEffect( () => {
-		console.log( acfData, acfFieldDict );
-	}, [ acfData, acfFieldDict ]);
 
 	const fontSizeStyle = css`
 		${ attributes.imageWidth && `--img-width: ${ attributes.imageWidth }px;` }
