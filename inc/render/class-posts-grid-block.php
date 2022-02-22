@@ -396,24 +396,34 @@ class Posts_Grid_Block {
 						}
 					}
 
-					if( $customMetaField ) {
-						$html .= '<div class="o-posts-custom-field">';
-						if( isset($customMetaField["before"]) ) {
-							$html .= esc_html($customMetaField["before"]);
+					if(
+						(
+							!isset($customMetaField['display'])
+							|| true === $customMetaField['display']
+						)
+						&& isset( $customMetaField["field"] )
+						&& function_exists('get_field_object')
+					) {
+
+						$field = get_field_object( $customMetaField['field'], $id );
+						if( isset($field) ) {
+							$list_items_markup .= '<div class="o-posts-custom-field">';
+							if( isset($field['prepend']) ) {
+								$list_items_markup .= esc_html($field['prepend']);
+							}
+
+							if( isset($field['value'])  ) {
+								$list_items_markup .= esc_html( $field['value'] );
+							} else if( isset( $field["default_value"] ) ) {
+								$list_items_markup .= esc_html($field["default_value"]);
+							}
+
+							if( isset($field["append"]) ) {
+								$list_items_markup .= esc_html($field['append']);
+							}
+							$list_items_markup .= '</div>';
 						}
 
-						if( isset( $customMetaField["field"] ) && isset($customMetaField["field"][0]) && $customMetaField["field"][0] !== '' && get_post_meta( $post["ID"] , $customMetaField["field"][0], true ) !== '' ) {
-							$html .= esc_html( get_post_meta( $post["ID"] , $customMetaField["field"][0], true ));
-
-						} else if( isset( $customMetaField["defaultValue"] ) ) {
-							$html .= esc_html($customMetaField["defaultValue"]);
-						}
-
-						if( isset($customMetaField["after"]) ) {
-							$html .= esc_html($customMetaField["after"]);
-						}
-
-						$html .= '</div>';
 					}
 				}
 			}
