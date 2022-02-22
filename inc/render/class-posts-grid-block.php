@@ -139,7 +139,7 @@ class Posts_Grid_Block {
 							$list_items_markup .= sprintf(
 								' - %1$s %2$s',
 								$post['comment_count'],
-								$post['comment_count'] === '1' ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
+								'1' === $post['comment_count'] ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
 							);
 						}
 
