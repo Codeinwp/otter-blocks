@@ -178,49 +178,46 @@ class Posts_Grid_Block {
 					}
 				}
 
-				if ( str_starts_with($element, "custom_") ) {
-					if ( isset($attributes["customMetas"]) ) {
-						$customMetaField = null;
-						foreach($attributes["customMetas"] as $metaField) {
-							if( $metaField["id"] === $element ) {
-								$customMetaField = $metaField;
+				if ( str_starts_with( $element, 'custom_' ) ) {
+					if ( isset( $attributes['customMetas'] ) ) {
+						$custom_meta_field = null;
+						foreach ( $attributes['customMetas'] as $meta_field ) {
+							if ( $meta_field['id'] === $element ) {
+								$custom_meta_field = $meta_field;
 								break;
 							}
 						}
 
 
-						if(
+						if (
 							(
-								!isset($customMetaField['display'])
-								|| true === $customMetaField['display']
+								! isset( $custom_meta_field['display'] )
+								|| true === $custom_meta_field['display']
 							)
-							&& isset( $customMetaField["field"] )
-							&& function_exists('get_field_object')
+							&& isset( $custom_meta_field['field'] )
+							&& function_exists( 'get_field_object' )
 						) {
 
-							$field = get_field_object( $customMetaField['field'], $id );
-							if( isset($field) ) {
+							$field = get_field_object( $custom_meta_field['field'], $id );
+							if ( isset( $field ) ) {
 								$list_items_markup .= '<div class="o-posts-custom-field">';
-								if( isset($field['prepend']) ) {
-									$list_items_markup .= esc_html($field['prepend']);
+								if ( isset( $field['prepend'] ) ) {
+									$list_items_markup .= esc_html( $field['prepend'] );
 								}
 
-								if( isset($field['value'])  ) {
+								if ( isset( $field['value'] ) ) {
 									$list_items_markup .= esc_html( $field['value'] );
-								} else if( isset( $field["default_value"] ) ) {
-									$list_items_markup .= esc_html($field["default_value"]);
+								} elseif ( isset( $field['default_value'] ) ) {
+									$list_items_markup .= esc_html( $field['default_value'] );
 								}
 
-								if( isset($field["append"]) ) {
-									$list_items_markup .= esc_html($field['append']);
+								if ( isset( $field['append'] ) ) {
+									$list_items_markup .= esc_html( $field['append'] );
 								}
 								$list_items_markup .= '</div>';
-							}
-
-						}
-
-					}
-
+							}                       
+						}                   
+					}               
 				}
 			}
 
@@ -386,44 +383,43 @@ class Posts_Grid_Block {
 				}
 			}
 
-			if ( str_starts_with($element, "custom_") ) {
-				if ( isset($attributes["customMetas"]) ) {
-					$customMetaField = null;
-					foreach($attributes["customMetas"] as $metaField) {
-						if( $metaField["id"] === $element ) {
-							$customMetaField = $metaField;
+			if ( str_starts_with( $element, 'custom_' ) ) {
+				if ( isset( $attributes['customMetas'] ) ) {
+					$custom_meta_field = null;
+					foreach ( $attributes['customMetas'] as $meta_field ) {
+						if ( $meta_field['id'] === $element ) {
+							$custom_meta_field = $meta_field;
 							break;
 						}
 					}
 
-					if(
+					if (
 						(
-							!isset($customMetaField['display'])
-							|| true === $customMetaField['display']
+							! isset( $custom_meta_field['display'] )
+							|| true === $custom_meta_field['display']
 						)
-						&& isset( $customMetaField["field"] )
-						&& function_exists('get_field_object')
+						&& isset( $custom_meta_field['field'] )
+						&& function_exists( 'get_field_object' )
 					) {
 
-						$field = get_field_object( $customMetaField['field'], $id );
-						if( isset($field) ) {
+						$field = get_field_object( $custom_meta_field['field'], $id );
+						if ( isset( $field ) ) {
 							$list_items_markup .= '<div class="o-posts-custom-field">';
-							if( isset($field['prepend']) ) {
-								$list_items_markup .= esc_html($field['prepend']);
+							if ( isset( $field['prepend'] ) ) {
+								$list_items_markup .= esc_html( $field['prepend'] );
 							}
 
-							if( isset($field['value'])  ) {
+							if ( isset( $field['value'] ) ) {
 								$list_items_markup .= esc_html( $field['value'] );
-							} else if( isset( $field["default_value"] ) ) {
-								$list_items_markup .= esc_html($field["default_value"]);
+							} elseif ( isset( $field['default_value'] ) ) {
+								$list_items_markup .= esc_html( $field['default_value'] );
 							}
 
-							if( isset($field["append"]) ) {
-								$list_items_markup .= esc_html($field['append']);
+							if ( isset( $field['append'] ) ) {
+								$list_items_markup .= esc_html( $field['append'] );
 							}
 							$list_items_markup .= '</div>';
-						}
-
+						}                   
 					}
 				}
 			}

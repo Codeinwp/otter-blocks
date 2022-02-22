@@ -42,6 +42,7 @@ class Posts_ACF_Server {
 
 	/**
 	 * Register REST API route
+	 *
 	 * @since 1.7.6
 	 */
 	public function register_routes() {
@@ -55,8 +56,7 @@ class Posts_ACF_Server {
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_acf_fields' ),
 					'permission_callback' => function () {
-						return __return_true();
-						// return current_user_can( 'edit_posts' );
+						return current_user_can( 'edit_posts' );
 					},
 				),
 			)
@@ -69,32 +69,31 @@ class Posts_ACF_Server {
 	 * @return mixed|\WP_REST_Response
 	 * @since 1.7.6
 	 */
-	public function get_acf_fields( ) {
-
+	public function get_acf_fields() {
 		$return = array(
 			'success' => false,
 		);
 
-		if( ! ( function_exists('acf_get_field_groups') && function_exists('acf_get_fields') ) ) {
-			$return['error'] = esc_html__( 'ACF is not installed!', 'otter-blocks' );
+		if ( ! ( function_exists( 'acf_get_field_groups' ) && function_exists( 'acf_get_fields' ) ) ) {
+			$return['error']     = esc_html__( 'ACF is not installed!', 'otter-blocks' );
 			$return['eror_code'] = 1;
 			return rest_ensure_response( $return );
 		}
 
 		$return['groups'] = array();
-		$groups = acf_get_field_groups(array('post_type' => 'post'));
+		$groups           = acf_get_field_groups( array( 'post_type' => 'post' ) );
 
-		foreach($groups as $group) {
+		foreach ( $groups as $group ) {
 			$group_data = array(
-				'data' => $group,
-				'fields' => array()
+				'data'   => $group,
+				'fields' => array(),
 			);
-			$fields = acf_get_fields($group);
-			foreach($fields as $field) {
+			$fields     = acf_get_fields( $group );
+			foreach ( $fields as $field ) {
 
-				array_push($group_data['fields'], $field);
+				array_push( $group_data['fields'], $field );
 			}
-			array_push($return['groups'], $group_data);
+			array_push( $return['groups'], $group_data );
 		}
 
 		$return['success'] = true;
