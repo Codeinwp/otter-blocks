@@ -5,7 +5,8 @@
 import {
 	isUndefined,
 	pickBy,
-	union
+	union,
+	pick
 } from 'lodash';
 
 import { __ } from '@wordpress/i18n';
@@ -30,6 +31,8 @@ import {
 	createContext
 } from '@wordpress/element';
 
+import apiFetch from '@wordpress/api-fetch';
+
 import {
 	css,
 	jsx
@@ -52,6 +55,16 @@ const { attributes: defaultAttributes } = metadata;
 
 export const CustomMetasContext = createContext({});
 
+const ALLOWED_ACF_TYPES = [
+	'text',
+	'textarea',
+	'range',
+	'number',
+	'url',
+	'email',
+	'password'
+];
+
 const Edit = ({
 	attributes,
 	setAttributes,
@@ -66,9 +79,8 @@ const Edit = ({
 	const [ slugs, setSlugs ] = useState([]);
 	const [ featured, setFeatured ] = useState( '' );
 
-	const [ customMetaFields, setCustomMetaFields ] = useState([]);
-	const [ registeredMetaValues ] = useMeta();
-	const [ acfMetaData, setACFMetaData ] = useState({});
+	const [ acfData, setAcfData ] = useState([]);
+	const [ acfFieldDict, setAcfFieldDict ] = useState({});
 
 
 	const {
@@ -137,18 +149,32 @@ const Edit = ({
 	}, [ posts, attributes.enableFeaturedPost, attributes.featuredPost ]);
 
 	useEffect( () => {
-		const acfFieldsName = acf?.getFields()?.map( ({ data }) => data.name ) || [];
-		const registeredMetaFieldsName = Object.keys( registeredMetaValues ).filter( x => ! x.startsWith( 'meta_post' ) || ! x.startsWith( 'neve_' ) );
+		apiFetch({ path: 'otter/v1/acf-fields' }).then( resp => {
+			if ( resp?.success ) {
+				setAcfData( resp?.groups );
+				setAcfFieldDict(
+					resp?.groups
+						?.map( ({ fields }) => fields )
+						.flat()
+						.reduce( ( acc, field ) => {
+							if ( field.key && field.label ) {
+								acc[field.key] = pick( field, [ 'label', 'type', 'prepend', 'append', 'default_value', 'value' ]);
+							}
+							return acc;
+						}, {})
+				);
 
-		setCustomMetaFields( union(  registeredMetaFieldsName, acfFieldsName ) );
-		setACFMetaData( acf?.getFields()?.reduce( ( acc, { data }) => {
-			if ( data.name ) {
-				acc[data.name] = data.key;
+				console.log( 'Test', resp?.groups
+					?.map( ({ fields }) => fields )
+					.flat() );
 			}
-			console.log( 'ACC', acc );
-			return acc;
-		}, {}) );
-	}, [ registeredMetaValues ]);
+
+		});
+	}, []);
+
+	useEffect( () => {
+		console.log( acfData, acfFieldDict );
+	}, [ acfData, acfFieldDict ]);
 
 	const fontSizeStyle = css`
 		${ attributes.imageWidth && `--img-width: ${ attributes.imageWidth }px;` }
@@ -217,7 +243,7 @@ const Edit = ({
 
 	return (
 		<Fragment>
-			<CustomMetasContext.Provider value={{customMetaFields, acfMetaData, registeredCustomMeta: registeredMetaValues}}>
+			<CustomMetasContext.Provider value={{acfData, acfFieldDict, ALLOWED_ACF_TYPES}}>
 				<StyleSwitcherBlockControl
 					label={ __( 'Block Styles', 'otter-blocks' ) }
 					value={ attributes.style }
@@ -268,7 +294,6 @@ const Edit = ({
 							categoriesList={ categoriesList }
 							authors={ authors }
 						/>
-
 					</Disabled>
 				</div>
 			</CustomMetasContext.Provider>

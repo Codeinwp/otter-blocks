@@ -201,13 +201,13 @@ export const PostsCustomMeta = ({ customFieldData }) => {
 		return <Fragment></Fragment>;
 	}
 
-	const { registeredCustomMeta, acfMetaData } = useContext( CustomMetasContext );
-	const meta = acfMetaData[customFieldData.field] ? acf?.getField( acfMetaData[customFieldData.field])?.getValue() : registeredCustomMeta[customFieldData.field];
+	const { acfFieldDict } = useContext( CustomMetasContext );
+	const meta = acfFieldDict[customFieldData.field];
 
 	return (
 		<div className="o-posts-custom-field">
 			{
-				( customFieldData?.before || '' ) + ( meta !== undefined && '' !== meta ? meta : ( customFieldData?.defaultValue || '' ) ) + ( customFieldData?.after || '' )
+				( meta?.prepend || '' ) + ( meta?.value ? meta.value : ( meta?.default_value || '' ) ) + ( meta?.append || '' )
 			}
 		</div>
 	);

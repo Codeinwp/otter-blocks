@@ -28,7 +28,7 @@ import {
 	SelectControl,
 	ToggleControl,
 	RangeControl,
-	FormTokenField
+	BaseControl
 } from '@wordpress/components';
 
 import {
@@ -153,7 +153,7 @@ export const SortableItem = ({
 		});
 	};
 
-	const customMetaFields = useContext( CustomMetasContext )?.customMetaFields;
+	const { acfData, acfFieldDict, ALLOWED_ACF_TYPES } = useContext( CustomMetasContext );
 
 	const label = ! isCustomMeta ? startCase( toLower( template ) ) :  startCase( toLower( customMeta?.field?.[0] || 'Custom Type' ) );
 	const canEdit = templateLookUp[template] || customMeta?.display;
@@ -355,45 +355,93 @@ export const SortableItem = ({
 						</Fragment>
 					) }
 
-					{ isCustomMeta && customMeta && (
+					{ isCustomMeta && customMeta && acfData && (
 						<Fragment>
-							<FormTokenField
-								label={ __( 'Field', 'otter-blocks' ) }
-								value={ customMeta.field }
-								suggestions={ ! Boolean( customMeta?.field.length ) || customMetaFields }
-								onChange={ field => setAttributesCustomMeta({ field }) }
-								maxLength={ 1 }
-								__experimentalExpandOnFocus={ true }
-								__experimentalShowHowTo={ false }
-							/>
-
-							<TextControl
-								label={ __( 'Default Value', 'otter-blocks' ) }
-								value={ customMeta.defaultValue }
-								onChange={ defaultValue => setAttributesCustomMeta({ defaultValue }) }
-							/>
-
-							<TextControl
-								label={ __( 'Before', 'otter-blocks' ) }
-								value={ customMeta.before }
-								onChange={ before => setAttributesCustomMeta({ before }) }
-							/>
-
-							<TextControl
-								label={ __( 'After', 'otter-blocks' ) }
-								value={ customMeta.after }
-								onChange={ after => setAttributesCustomMeta({ after }) }
-							/>
-
-							<Button
-								onClick={deleteCustomField}
-								variant="secondary"
-								isSecondary
-								isDestructive
-								className="otter-conditions__add"
+							<BaseControl
+								label={ __( 'Fields', 'otter-blocks' ) }
 							>
-								{ __( 'Delete Field', 'otter-blocks' ) }
-							</Button>
+								<select
+									value={ customMeta.field || '' }
+									onChange={ event => {
+										setAttributesCustomMeta({ field: event.target.value  });
+									} }
+									className="components-select-control__input"
+								>
+									<option value="none">{ __( 'Select a field', 'otter-blocks' ) }</option>
+
+									{
+										acfData.map( group => {
+											return (
+												<optgroup
+													label={ group?.data?.title }
+												>
+													{
+														group?.fields
+															?.filter( ({ key, label, type }) => key && label &&  ALLOWED_ACF_TYPES.includes( type ) )
+															.map( ({ key, label }) => (
+																<option value={key}>
+																	{ label }
+																</option>
+															) )
+													}
+												</optgroup>
+											);
+										})
+									}
+								</select>
+							</BaseControl>
+
+							{
+								acfFieldDict && acfFieldDict[customMeta.field] && (
+									<Fragment>
+										{
+											( acfFieldDict[customMeta.field]['default_value']) && (
+												<TextControl
+													label={ __( 'Default Value', 'otter-blocks' ) }
+													value={ acfFieldDict[customMeta.field]['default_value']  }
+													disabled
+												/>
+											)
+										}
+
+										{
+											( acfFieldDict[customMeta.field].prepend ) && (
+												<TextControl
+													label={ __( 'Before', 'otter-blocks' ) }
+													value={  acfFieldDict[customMeta.field].prepend }
+													disabled
+												/>
+											)
+										}
+
+										{
+											( acfFieldDict[customMeta.field].append  ) && (
+												<TextControl
+													label={ __( 'After', 'otter-blocks' ) }
+													value={ acfFieldDict[customMeta.field].append }
+													disabled
+												/>
+											)
+										}
+
+									</Fragment>
+								)
+							}
+
+							{
+								0 < acfData?.length && (
+									<Button
+										onClick={deleteCustomField}
+										variant="secondary"
+										isSecondary
+										isDestructive
+										className="otter-conditions__add"
+									>
+										{ __( 'Delete Field', 'otter-blocks' ) }
+									</Button>
+								)
+							}
+
 						</Fragment>
 					) }
 				</div>

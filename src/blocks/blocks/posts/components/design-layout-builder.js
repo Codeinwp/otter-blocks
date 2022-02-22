@@ -85,7 +85,7 @@ const LayoutBuilder = ({
 
 						const newMeta = {
 							id,
-							field: [],
+							field: '',
 							before: '',
 							after: '',
 							display: true
