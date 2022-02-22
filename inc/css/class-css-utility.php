@@ -19,6 +19,7 @@
  *          'condition'   => function( $attrs ) {
  *              return true;
  *          },
+ *          'global'      => 'spacing', // If global sync is available, add the used CSS variable.
  *      ),
  *      array(
  *          'property'       => 'margin',
