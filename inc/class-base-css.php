@@ -299,8 +299,6 @@ class Base_CSS {
 	/**
 	 * Cycle thorugh Global Styles
 	 *
-	 * @param array $blocks List of blocks.
-	 *
 	 * @return string Style.
 	 * @since   2.0.0
 	 * @access  public
