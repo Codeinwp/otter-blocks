@@ -103,7 +103,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['top'] );
 						},
-						'global'    => 'paddingTop',
+						'global'    => 'columnPaddingTop',
 					),
 					array(
 						'property'  => 'padding-bottom',
@@ -114,7 +114,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['bottom'] );
 						},
-						'global'    => 'paddingBottom',
+						'global'    => 'columnPaddingBottom',
 					),
 					array(
 						'property'  => 'padding-left',
@@ -125,7 +125,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['left'] );
 						},
-						'global'    => 'paddingLeft',
+						'global'    => 'columnPaddingLeft',
 					),
 					array(
 						'property'  => 'padding-right',
@@ -136,7 +136,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['right'] );
 						},
-						'global'    => 'paddingRight',
+						'global'    => 'columnPaddingRight',
 					),
 					array(
 						'property'  => 'margin-top',
@@ -147,7 +147,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['margin'] ) && isset( $attrs['margin']['top'] );
 						},
-						'global'    => 'marginTop',
+						'global'    => 'columnMarginTop',
 					),
 					array(
 						'property'  => 'margin-bottom',
@@ -158,7 +158,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['margin'] ) && isset( $attrs['margin']['bottom'] );
 						},
-						'global'    => 'marginBottom',
+						'global'    => 'columnMarginBottom',
 					),
 					array(
 						'property'  => 'margin-left',
@@ -169,7 +169,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['margin'] ) && isset( $attrs['margin']['left'] );
 						},
-						'global'    => 'marginLeft',
+						'global'    => 'columnMarginLeft',
 					),
 					array(
 						'property'  => 'margin-right',
@@ -180,7 +180,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['margin'] ) && isset( $attrs['margin']['right'] );
 						},
-						'global'    => 'marginRight',
+						'global'    => 'columnMarginRight',
 					),
 					array(
 						'property'  => 'background',
@@ -462,6 +462,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['top'] );
 						},
+						'global'    => 'columnPaddingTopTablet',
 					),
 					array(
 						'property'  => 'padding-bottom',
@@ -472,6 +473,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['bottom'] );
 						},
+						'global'    => 'columnPaddingBottomTablet',
 					),
 					array(
 						'property'  => 'padding-left',
@@ -482,6 +484,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['left'] );
 						},
+						'global'    => 'columnPaddingLeftTablet',
 					),
 					array(
 						'property'  => 'padding-right',
@@ -492,6 +495,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['right'] );
 						},
+						'global'    => 'columnPaddingRightTablet',
 					),
 					array(
 						'property'  => 'margin-top',
@@ -502,6 +506,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginTablet'] ) && isset( $attrs['marginTablet']['top'] );
 						},
+						'global'    => 'columnMarginTopTablet',
 					),
 					array(
 						'property'  => 'margin-bottom',
@@ -512,6 +517,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginTablet'] ) && isset( $attrs['marginTablet']['bottom'] );
 						},
+						'global'    => 'columnMarginBottomTablet',
 					),
 					array(
 						'property'  => 'margin-left',
@@ -522,6 +528,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginTablet'] ) && isset( $attrs['marginTablet']['left'] );
 						},
+						'global'    => 'columnMarginLeftTablet',
 					),
 					array(
 						'property'  => 'margin-right',
@@ -532,6 +539,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginTablet'] ) && isset( $attrs['marginTablet']['right'] );
 						},
+						'global'    => 'columnMarginRightTablet',
 					),
 				),
 			)
@@ -550,6 +558,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['top'] );
 						},
+						'global'    => 'columnPaddingTopMobile',
 					),
 					array(
 						'property'  => 'padding-bottom',
@@ -560,6 +569,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['bottom'] );
 						},
+						'global'    => 'columnPaddingBottomMobile',
 					),
 					array(
 						'property'  => 'padding-left',
@@ -570,6 +580,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['left'] );
 						},
+						'global'    => 'columnPaddingLeftMobile',
 					),
 					array(
 						'property'  => 'padding-right',
@@ -580,6 +591,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['right'] );
 						},
+						'global'    => 'columnPaddingRightMobile',
 					),
 					array(
 						'property'  => 'margin-top',
@@ -590,6 +602,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginMobile'] ) && isset( $attrs['marginMobile']['top'] );
 						},
+						'global'    => 'columnMarginTopMobile',
 					),
 					array(
 						'property'  => 'margin-bottom',
@@ -600,6 +613,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginMobile'] ) && isset( $attrs['marginMobile']['bottom'] );
 						},
+						'global'    => 'columnMarginBottomMobile',
 					),
 					array(
 						'property'  => 'margin-left',
@@ -610,6 +624,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginMobile'] ) && isset( $attrs['marginMobile']['left'] );
 						},
+						'global'    => 'columnMarginLeftMobile',
 					),
 					array(
 						'property'  => 'margin-right',
@@ -620,6 +635,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginMobile'] ) && isset( $attrs['marginMobile']['right'] );
 						},
+						'global'    => 'columnMarginRightMobile',
 					),
 				),
 			)
@@ -894,6 +910,282 @@ class Advanced_Column_CSS extends Base_CSS {
 		}
 
 		return $attrs;
+	}
+
+	/**
+	 * Generate Advanced Columns Global CSS
+	 *
+	 * @return string
+	 * @since   2.0.0
+	 * @access  public
+	 */
+	public function render_global_css() {
+		$defaults = get_option( 'themeisle_blocks_settings_global_defaults' );
+		$block    = $this->library_prefix . '/' . $this->block_prefix;
+
+		if ( empty( $defaults ) ) {
+			return;
+		}
+
+		$defaults = json_decode( $defaults, true );
+
+		$block = array(
+			'attrs' => $defaults[ $block ],
+		);
+
+		$css = new CSS_Utility( $block );
+
+		$css->add_item(
+			array(
+				'selector'   => '.wp-block-themeisle-blocks-advanced-column',
+				'properties' => array(
+					array(
+						'property'  => '--columnPaddingTop',
+						'value'     => 'padding',
+						'format'    => function( $value, $attrs ) {
+							return $value['top'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['padding'] ) && isset( $attrs['padding']['top'] );
+						},
+					),
+					array(
+						'property'  => '--columnPaddingBottom',
+						'value'     => 'padding',
+						'format'    => function( $value, $attrs ) {
+							return $value['bottom'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['padding'] ) && isset( $attrs['padding']['bottom'] );
+						},
+					),
+					array(
+						'property'  => '--columnPaddingLeft',
+						'value'     => 'padding',
+						'format'    => function( $value, $attrs ) {
+							return $value['left'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['padding'] ) && isset( $attrs['padding']['left'] );
+						},
+					),
+					array(
+						'property'  => '--columnPaddingRight',
+						'value'     => 'padding',
+						'format'    => function( $value, $attrs ) {
+							return $value['right'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['padding'] ) && isset( $attrs['padding']['right'] );
+						},
+					),
+					array(
+						'property'  => '--columnMarginTop',
+						'value'     => 'margin',
+						'format'    => function( $value, $attrs ) {
+							return $value['top'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['margin'] ) && isset( $attrs['margin']['top'] );
+						},
+					),
+					array(
+						'property'  => '--columnMarginBottom',
+						'value'     => 'margin',
+						'format'    => function( $value, $attrs ) {
+							return $value['bottom'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['margin'] ) && isset( $attrs['margin']['bottom'] );
+						},
+					),
+					array(
+						'property'  => '--columnMarginLeft',
+						'value'     => 'margin',
+						'format'    => function( $value, $attrs ) {
+							return $value['left'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['margin'] ) && isset( $attrs['margin']['left'] );
+						},
+					),
+					array(
+						'property'  => '--columnMarginRight',
+						'value'     => 'margin',
+						'format'    => function( $value, $attrs ) {
+							return $value['right'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['margin'] ) && isset( $attrs['margin']['right'] );
+						},
+					),
+					array(
+						'property'  => '--columnPaddingTopTablet',
+						'value'     => 'paddingTablet',
+						'format'    => function( $value, $attrs ) {
+							return $value['top'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['top'] );
+						},
+					),
+					array(
+						'property'  => '--columnPaddingBottomTablet',
+						'value'     => 'paddingTablet',
+						'format'    => function( $value, $attrs ) {
+							return $value['bottom'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['bottom'] );
+						},
+					),
+					array(
+						'property'  => '--columnPaddingLeftTablet',
+						'value'     => 'paddingTablet',
+						'format'    => function( $value, $attrs ) {
+							return $value['left'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['left'] );
+						},
+					),
+					array(
+						'property'  => '--columnPaddingRightTablet',
+						'value'     => 'paddingTablet',
+						'format'    => function( $value, $attrs ) {
+							return $value['right'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['right'] );
+						},
+					),
+					array(
+						'property'  => '--columnMarginTopTablet',
+						'value'     => 'marginTablet',
+						'format'    => function( $value, $attrs ) {
+							return $value['top'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['marginTablet'] ) && isset( $attrs['marginTablet']['top'] );
+						},
+					),
+					array(
+						'property'  => '--columnMarginBottomTablet',
+						'value'     => 'marginTablet',
+						'format'    => function( $value, $attrs ) {
+							return $value['bottom'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['marginTablet'] ) && isset( $attrs['marginTablet']['bottom'] );
+						},
+					),
+					array(
+						'property'  => '--columnMarginLeftTablet',
+						'value'     => 'marginTablet',
+						'format'    => function( $value, $attrs ) {
+							return $value['left'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['marginTablet'] ) && isset( $attrs['marginTablet']['left'] );
+						},
+					),
+					array(
+						'property'  => '--columnMarginRightTablet',
+						'value'     => 'marginTablet',
+						'format'    => function( $value, $attrs ) {
+							return $value['right'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['marginTablet'] ) && isset( $attrs['marginTablet']['right'] );
+						},
+					),
+					array(
+						'property'  => '--columnPaddingTopMobile',
+						'value'     => 'paddingMobile',
+						'format'    => function( $value, $attrs ) {
+							return $value['top'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['top'] );
+						},
+					),
+					array(
+						'property'  => '--columnPaddingBottomMobile',
+						'value'     => 'paddingMobile',
+						'format'    => function( $value, $attrs ) {
+							return $value['bottom'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['bottom'] );
+						},
+					),
+					array(
+						'property'  => '--columnPaddingLeftMobile',
+						'value'     => 'paddingMobile',
+						'format'    => function( $value, $attrs ) {
+							return $value['left'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['left'] );
+						},
+					),
+					array(
+						'property'  => '--columnPaddingRightMobile',
+						'value'     => 'paddingMobile',
+						'format'    => function( $value, $attrs ) {
+							return $value['right'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['right'] );
+						},
+					),
+					array(
+						'property'  => '--columnMarginTopMobile',
+						'value'     => 'marginMobile',
+						'format'    => function( $value, $attrs ) {
+							return $value['top'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['marMobilegMobilein'] ) && isset( $attrs['marginMobile']['top'] );
+						},
+					),
+					array(
+						'property'  => '--columnMarginBottomMobile',
+						'value'     => 'marginMobile',
+						'format'    => function( $value, $attrs ) {
+							return $value['bottom'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['marginMobile'] ) && isset( $attrs['marginMobile']['bottom'] );
+						},
+					),
+					array(
+						'property'  => '--columnMarginLeftMobile',
+						'value'     => 'marginMobile',
+						'format'    => function( $value, $attrs ) {
+							return $value['left'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['marginMobile'] ) && isset( $attrs['marginMobile']['left'] );
+						},
+					),
+					array(
+						'property'  => '--columnMarginRightMobile',
+						'value'     => 'marginMobile',
+						'format'    => function( $value, $attrs ) {
+							return $value['right'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['marginMobile'] ) && isset( $attrs['marginMobile']['right'] );
+						},
+					),
+				),
+			)
+		);
+
+		$style = $css->generate();
+
+		return $style;
 	}
 
 	/**

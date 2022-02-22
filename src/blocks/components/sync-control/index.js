@@ -4,8 +4,8 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	Button,
-	Disabled
+	Disabled,
+	ToggleControl
 } from '@wordpress/components';
 
 /**
@@ -45,15 +45,11 @@ const SyncControl = ({
 	return (
 		<fieldset className="otter-sync-control">
 			<legend>
-				{ __( 'Sync with Defaults', 'otter-blocks' ) }
-
-				<Button
-					isSmall
-					variant="secondary"
-					onClick={ toggleSync }
-				>
-					{ isActive ? __( 'Unsync', 'otter-blocks' ) : __( 'Sync', 'otter-blocks' ) }
-				</Button>
+				<ToggleControl
+					label={ __( 'Sync with Globals', 'otter-blocks' ) }
+					checked={ isActive }
+					onChange={ toggleSync }
+				/>
 			</legend>
 
 			{ isActive ? <Disabled>{ children }</Disabled> : children }

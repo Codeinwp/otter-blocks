@@ -1,11 +1,12 @@
 .otter-sync-control {
 	border: 1px solid #ccc;
 	padding: 5px 10px 8px 10px;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
+	border-radius: 5px;
 
 	legend {
-		.components-button {
-			margin-left: 5px;
+		.components-toggle-control {
+			margin: 12px 6px;
 		}
 	}
 

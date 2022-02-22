@@ -137,11 +137,9 @@ class CSS_Utility {
 		$attrs = $this->block['attrs'];
 
 		if ( ! isset( $this->block_id ) ) {
-			if ( ! isset( $attrs['id'] ) ) {
-				return $style;
+			if ( isset( $attrs['id'] ) ) {
+				$this->block_id = $attrs['id'];
 			}
-
-			$this->block_id = $attrs['id'];
 		}
 
 		foreach ( $this->css_array as $media_query => $css_items ) {
@@ -208,8 +206,11 @@ class CSS_Utility {
 				}
 
 				if ( '' !== $item_style ) {
-					$selector = strpos( $selector, '[id]' ) !== false ? str_replace( '[id]', '#' . $this->block_id, $selector ) : '#' . $this->block_id . $selector;
-					$style   .= $selector . ' {' . $item_style . '}';
+					if ( ! ( ! isset( $attrs['id'] ) && ! empty( $selector ) ) ) {
+						$selector = strpos( $selector, '[id]' ) !== false ? str_replace( '[id]', '#' . $this->block_id, $selector ) : '#' . $this->block_id . $selector;
+					}
+
+					$style .= $selector . ' {' . $item_style . '}';
 				}
 			}
 
