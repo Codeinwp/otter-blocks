@@ -96,7 +96,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['top'] );
 						},
-						'global'    => 'sectionPaddingTop',
+						'hasSync'   => 'sectionPaddingTop',
 					),
 					array(
 						'property'  => 'padding-bottom',
@@ -107,7 +107,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['bottom'] );
 						},
-						'global'    => 'sectionPaddingBottom',
+						'hasSync'   => 'sectionPaddingBottom',
 					),
 					array(
 						'property'  => 'padding-left',
@@ -118,7 +118,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['left'] );
 						},
-						'global'    => 'sectionPaddingLeft',
+						'hasSync'   => 'sectionPaddingLeft',
 					),
 					array(
 						'property'  => 'padding-right',
@@ -129,7 +129,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['right'] );
 						},
-						'global'    => 'sectionPaddingRight',
+						'hasSync'   => 'sectionPaddingRight',
 					),
 					array(
 						'property'  => 'margin-top',
@@ -140,7 +140,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['margin'] ) && isset( $attrs['margin']['top'] );
 						},
-						'global'    => 'sectionMarginTop',
+						'hasSync'   => 'sectionMarginTop',
 					),
 					array(
 						'property'  => 'margin-bottom',
@@ -151,7 +151,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['margin'] ) && isset( $attrs['margin']['bottom'] );
 						},
-						'global'    => 'sectionMarginBottom',
+						'hasSync'   => 'sectionMarginBottom',
 					),
 					array(
 						'property' => 'justify-content',

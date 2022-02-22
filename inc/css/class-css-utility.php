@@ -19,7 +19,7 @@
  *          'condition'   => function( $attrs ) {
  *              return true;
  *          },
- *          'global'      => 'spacing', // If global sync is available, add the used CSS variable.
+ *          'hasSync'     => 'spacing', // If global sync is available, add the used CSS variable.
  *      ),
  *      array(
  *          'property'       => 'margin',
@@ -157,8 +157,8 @@ class CSS_Utility {
 					);
 
 					// If the item supports global default, check if the global default is active.
-					if ( isset( $property['property'] ) && isset( $property['value'] ) && isset( $property['global'] ) && ! empty( $property['global'] ) && ( isset( $attrs['isSynced'] ) && in_array( $property['value'], $attrs['isSynced'] ) ) ) {
-						$item_style .= $property['property'] . ': var( --' . $property['global'] . ( isset( $property['default'] ) ? ', ' . $property['default'] : '' ) . ' );';
+					if ( isset( $property['property'] ) && isset( $property['value'] ) && isset( $property['hasSync'] ) && ! empty( $property['hasSync'] ) && ( isset( $attrs['isSynced'] ) && in_array( $property['value'], $attrs['isSynced'] ) ) ) {
+						$item_style .= $property['property'] . ': var( --' . $property['hasSync'] . ( isset( $property['default'] ) ? ', ' . $property['default'] : '' ) . ' );';
 						continue;
 					}
 

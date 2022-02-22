@@ -103,7 +103,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['top'] );
 						},
-						'global'    => 'columnPaddingTop',
+						'hasSync'   => 'columnPaddingTop',
 					),
 					array(
 						'property'  => 'padding-bottom',
@@ -114,7 +114,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['bottom'] );
 						},
-						'global'    => 'columnPaddingBottom',
+						'hasSync'   => 'columnPaddingBottom',
 					),
 					array(
 						'property'  => 'padding-left',
@@ -125,7 +125,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['left'] );
 						},
-						'global'    => 'columnPaddingLeft',
+						'hasSync'   => 'columnPaddingLeft',
 					),
 					array(
 						'property'  => 'padding-right',
@@ -136,7 +136,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['right'] );
 						},
-						'global'    => 'columnPaddingRight',
+						'hasSync'   => 'columnPaddingRight',
 					),
 					array(
 						'property'  => 'margin-top',
@@ -147,7 +147,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['margin'] ) && isset( $attrs['margin']['top'] );
 						},
-						'global'    => 'columnMarginTop',
+						'hasSync'   => 'columnMarginTop',
 					),
 					array(
 						'property'  => 'margin-bottom',
@@ -158,7 +158,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['margin'] ) && isset( $attrs['margin']['bottom'] );
 						},
-						'global'    => 'columnMarginBottom',
+						'hasSync'   => 'columnMarginBottom',
 					),
 					array(
 						'property'  => 'margin-left',
@@ -169,7 +169,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['margin'] ) && isset( $attrs['margin']['left'] );
 						},
-						'global'    => 'columnMarginLeft',
+						'hasSync'   => 'columnMarginLeft',
 					),
 					array(
 						'property'  => 'margin-right',
@@ -180,7 +180,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['margin'] ) && isset( $attrs['margin']['right'] );
 						},
-						'global'    => 'columnMarginRight',
+						'hasSync'   => 'columnMarginRight',
 					),
 					array(
 						'property'  => 'background',
@@ -462,7 +462,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['top'] );
 						},
-						'global'    => 'columnPaddingTopTablet',
+						'hasSync'   => 'columnPaddingTopTablet',
 					),
 					array(
 						'property'  => 'padding-bottom',
@@ -473,7 +473,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['bottom'] );
 						},
-						'global'    => 'columnPaddingBottomTablet',
+						'hasSync'   => 'columnPaddingBottomTablet',
 					),
 					array(
 						'property'  => 'padding-left',
@@ -484,7 +484,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['left'] );
 						},
-						'global'    => 'columnPaddingLeftTablet',
+						'hasSync'   => 'columnPaddingLeftTablet',
 					),
 					array(
 						'property'  => 'padding-right',
@@ -495,7 +495,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingTablet'] ) && isset( $attrs['paddingTablet']['right'] );
 						},
-						'global'    => 'columnPaddingRightTablet',
+						'hasSync'   => 'columnPaddingRightTablet',
 					),
 					array(
 						'property'  => 'margin-top',
@@ -506,7 +506,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginTablet'] ) && isset( $attrs['marginTablet']['top'] );
 						},
-						'global'    => 'columnMarginTopTablet',
+						'hasSync'   => 'columnMarginTopTablet',
 					),
 					array(
 						'property'  => 'margin-bottom',
@@ -517,7 +517,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginTablet'] ) && isset( $attrs['marginTablet']['bottom'] );
 						},
-						'global'    => 'columnMarginBottomTablet',
+						'hasSync'   => 'columnMarginBottomTablet',
 					),
 					array(
 						'property'  => 'margin-left',
@@ -528,7 +528,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginTablet'] ) && isset( $attrs['marginTablet']['left'] );
 						},
-						'global'    => 'columnMarginLeftTablet',
+						'hasSync'   => 'columnMarginLeftTablet',
 					),
 					array(
 						'property'  => 'margin-right',
@@ -539,7 +539,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginTablet'] ) && isset( $attrs['marginTablet']['right'] );
 						},
-						'global'    => 'columnMarginRightTablet',
+						'hasSync'   => 'columnMarginRightTablet',
 					),
 				),
 			)
@@ -558,7 +558,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['top'] );
 						},
-						'global'    => 'columnPaddingTopMobile',
+						'hasSync'   => 'columnPaddingTopMobile',
 					),
 					array(
 						'property'  => 'padding-bottom',
@@ -569,7 +569,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['bottom'] );
 						},
-						'global'    => 'columnPaddingBottomMobile',
+						'hasSync'   => 'columnPaddingBottomMobile',
 					),
 					array(
 						'property'  => 'padding-left',
@@ -580,7 +580,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['left'] );
 						},
-						'global'    => 'columnPaddingLeftMobile',
+						'hasSync'   => 'columnPaddingLeftMobile',
 					),
 					array(
 						'property'  => 'padding-right',
@@ -591,7 +591,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['paddingMobile'] ) && isset( $attrs['paddingMobile']['right'] );
 						},
-						'global'    => 'columnPaddingRightMobile',
+						'hasSync'   => 'columnPaddingRightMobile',
 					),
 					array(
 						'property'  => 'margin-top',
@@ -602,7 +602,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginMobile'] ) && isset( $attrs['marginMobile']['top'] );
 						},
-						'global'    => 'columnMarginTopMobile',
+						'hasSync'   => 'columnMarginTopMobile',
 					),
 					array(
 						'property'  => 'margin-bottom',
@@ -613,7 +613,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginMobile'] ) && isset( $attrs['marginMobile']['bottom'] );
 						},
-						'global'    => 'columnMarginBottomMobile',
+						'hasSync'   => 'columnMarginBottomMobile',
 					),
 					array(
 						'property'  => 'margin-left',
@@ -624,7 +624,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginMobile'] ) && isset( $attrs['marginMobile']['left'] );
 						},
-						'global'    => 'columnMarginLeftMobile',
+						'hasSync'   => 'columnMarginLeftMobile',
 					),
 					array(
 						'property'  => 'margin-right',
@@ -635,7 +635,7 @@ class Advanced_Column_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['marginMobile'] ) && isset( $attrs['marginMobile']['right'] );
 						},
-						'global'    => 'columnMarginRightMobile',
+						'hasSync'   => 'columnMarginRightMobile',
 					),
 				),
 			)
