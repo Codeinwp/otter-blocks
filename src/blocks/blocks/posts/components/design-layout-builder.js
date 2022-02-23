@@ -88,9 +88,9 @@ const LayoutBuilder = ({
 							disabled={ window?.acf === undefined }
 							onClick={ () => {
 
-								let id = uuidv4();
+								let id = uuidv4().slice( 0, 8 );
 								while ( 0 < attributes?.customMetas?.some( ({ otherId }) => otherId === id )  ) {
-									id = uuidv4();
+									id = uuidv4().slice( 0, 8 );
 								}
 								id = `custom_${id}`;
 
