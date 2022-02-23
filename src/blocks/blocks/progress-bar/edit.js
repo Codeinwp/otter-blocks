@@ -123,6 +123,8 @@ const ProgressBar = ({
 		--barBackground: ${ attributes.barBackgroundColor };
 	`;
 
+	console.log( styles );
+
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames({ 'has-tooltip': 'tooltip' === attributes.percentagePosition }),
