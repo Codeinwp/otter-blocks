@@ -4,9 +4,9 @@
 import { __ } from '@wordpress/i18n';
 
 import {
+	__experimentalColorGradientControl as ColorGradientControl,
 	ContrastChecker,
-	InspectorControls,
-	PanelColorSettings
+	InspectorControls
 } from '@wordpress/block-editor';
 
 import {
@@ -14,12 +14,30 @@ import {
 	SelectControl
 } from '@wordpress/components';
 
+/**
+ * Internal dependencies
+ */
+import SyncPanel from '../../../components/sync-panel/index.js';
+import SyncControl from '../../../components/sync-control/index.js';
+
 const Inspector = ({
 	attributes,
-	setAttributes
+	setAttributes,
+	getValue
 }) => {
 	return (
 		<InspectorControls>
+			<SyncPanel
+				fields={[
+					'titleColor',
+					'titleBackground',
+					'contentBackground',
+					'borderColor'
+				]}
+				isSynced={ attributes.isSynced }
+				setAttributes={ setAttributes }
+			/>
+
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>
@@ -36,39 +54,66 @@ const Inspector = ({
 				/>
 			</PanelBody>
 
-			<PanelColorSettings
+			<PanelBody
 				title={ __( 'Color', 'otter-blocks' ) }
 				initialOpen={ false }
-				colorSettings={ [
-					{
-						value: attributes.titleColor,
-						onChange: value => setAttributes({ titleColor: value }),
-						label: __( 'Title', 'otter-blocks' )
-					},
-					{
-						value: attributes.titleBackground,
-						onChange: value => setAttributes({ titleBackground: value }),
-						label: __( 'Title Background', 'otter-blocks' )
-					},
-					{
-						value: attributes.contentBackground,
-						onChange: value => setAttributes({ contentBackground: value }),
-						label: __( 'Content Background', 'otter-blocks' )
-					},
-					{
-						value: attributes.borderColor,
-						onChange: value => setAttributes({ borderColor: value }),
-						label: __( 'Border Color', 'otter-blocks' )
-					}
-				] }
 			>
+				<SyncControl
+					field="titleColor"
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<ColorGradientControl
+						label={ __( 'Title', 'otter-blocks' ) }
+						colorValue={ attributes.titleColor }
+						onColorChange={ e => setAttributes({ titleColor: e }) }
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field="titleBackground"
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<ColorGradientControl
+						label={ __( 'Title Background', 'otter-blocks' ) }
+						colorValue={ attributes.titleBackground }
+						onColorChange={ e => setAttributes({ titleBackground: e }) }
+					/>
+				</SyncControl>
+
 				<ContrastChecker
 					{ ...{
-						textColor: attributes.titleColor,
-						backgroundColor: attributes.titleBackground
+						textColor: getValue( 'titleColor' ),
+						backgroundColor: getValue( 'titleBackground' )
 					} }
 				/>
-			</PanelColorSettings>
+
+				<SyncControl
+					field="contentBackground"
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<ColorGradientControl
+						label={ __( 'Content Background', 'otter-blocks' ) }
+						colorValue={ attributes.contentBackground }
+						onColorChange={ e => setAttributes({ contentBackground: e }) }
+					/>
+				</SyncControl>
+
+
+				<SyncControl
+					field="borderColor"
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<ColorGradientControl
+						label={ __( 'Border Color', 'otter-blocks' ) }
+						colorValue={ attributes.borderColor }
+						onColorChange={ e => setAttributes({ borderColor: e }) }
+					/>
+				</SyncControl>
+			</PanelBody>
 		</InspectorControls>
 	);
 };

@@ -1,8 +1,6 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
-
 import hexToRgba from 'hex-rgba';
 
 /**
@@ -25,8 +23,7 @@ import {
 import {
 	Fragment,
 	useEffect,
-	useRef,
-	useState
+	useRef
 } from '@wordpress/element';
 
 /**
@@ -259,9 +256,9 @@ const Edit = ({
 	return (
 		<Fragment>
 			<Inspector
-				getValue={ getValue }
 				attributes={ attributes }
 				setAttributes={ setAttributes }
+				getValue={ getValue }
 				parentBlock={ parentBlock }
 				updateBlockAttributes={ updateBlockAttributes }
 				currentBlockWidth={ currentBlockWidth }

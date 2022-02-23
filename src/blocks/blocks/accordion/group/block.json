@@ -26,10 +26,9 @@
         "borderColor": {
             "type": "string"
         },
-        "spacing": {
-            "type": "number",
-            "default": 20
-        }
+		"isSynced": {
+			"type": "array"
+		}
     },
 	"supports": {
 		"html": false

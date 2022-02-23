@@ -413,9 +413,9 @@ const Edit = ({
 			/>
 
 			<Inspector
-				getValue={ getValue }
 				attributes={ attributes }
 				setAttributes={ setAttributes }
+				getValue={ getValue }
 				updateColumnsWidth={ updateColumnsWidth }
 				dividerViewType={ dividerViewType }
 				setDividerViewType={ setDividerViewType }

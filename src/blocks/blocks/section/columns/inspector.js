@@ -49,9 +49,9 @@ import SyncControl from '../../../components/sync-control/index.js';
 import { isNullObject } from '../../../helpers/helper-functions.js';
 
 const Inspector = ({
-	getValue,
 	attributes,
 	setAttributes,
+	getValue,
 	updateColumnsWidth,
 	dividerViewType,
 	setDividerViewType,

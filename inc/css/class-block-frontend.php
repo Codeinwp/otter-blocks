@@ -49,10 +49,10 @@ class Block_Frontend extends Base_CSS {
 	 */
 	public function init() {
 		add_filter( 'get_the_excerpt', array( $this, 'get_excerpt_start' ), 1 );
-		add_filter( 'get_the_excerpt', array( $this, 'get_excerpt_end' ), 20 );
 		add_action( 'wp', array( $this, 'render_post_css' ), 10 );
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_google_fonts' ), 19 );
 		add_action( 'wp_head', array( $this, 'enqueue_google_fonts_backward' ), 19 );
+		add_filter( 'get_the_excerpt', array( $this, 'get_excerpt_end' ), 20 );
 		add_action( 'wp_footer', array( $this, 'enqueue_widgets_css' ) );
 		add_action( 'wp_footer', array( $this, 'enqueue_global_styles' ) );
 	}
@@ -549,7 +549,7 @@ class Block_Frontend extends Base_CSS {
 	public function enqueue_global_styles() {
 		$css = $this->cycle_through_global_styles();
 
-		if ( ! empty( $css ) ) {
+		if ( empty( $css ) ) {
 			return;
 		}
 
