@@ -913,7 +913,7 @@ class Advanced_Column_CSS extends Base_CSS {
 	}
 
 	/**
-	 * Generate Advanced Columns Global CSS
+	 * Generate Advanced Column Global CSS
 	 *
 	 * @return string
 	 * @since   2.0.0

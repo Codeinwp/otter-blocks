@@ -22,7 +22,7 @@ const SyncControl = ({
 	const isActive = isSynced?.includes( field );
 
 	const toggleSync = () => {
-		let fields = [ ...isSynced ];
+		let fields = [ ...( isSynced || []) ];
 
 		if ( isActive ) {
 			const index = fields.indexOf( field );

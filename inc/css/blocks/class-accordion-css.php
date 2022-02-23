@@ -67,7 +67,7 @@ class Accordion_CSS extends Base_CSS {
 	}
 
 	/**
-	 * Generate Advanced Columns Global CSS
+	 * Generate Accordion Global CSS
 	 *
 	 * @return string
 	 * @since   2.0.0
