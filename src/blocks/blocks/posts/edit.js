@@ -43,7 +43,7 @@ import {
 import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import { blockInit, useMeta } from '../../helpers/block-utility.js';
+import { blockInit } from '../../helpers/block-utility.js';
 import Layout from './components/layout/index.js';
 import { _align, getCustomPostTypeSlugs } from '../../helpers/helper-functions.js';
 import '../../components/store/index.js';
@@ -153,11 +153,16 @@ const Edit = ({
 				setAcfData( resp?.groups );
 				setAcfFieldDict(
 					resp?.groups
-						?.map( ({ fields }) => fields )
+						?.map( ({ fields, data }) => {
+							return fields.map( field => {
+								field.urlLocation = `${themeisleGutenberg?.rootUrl || ''}/wp-admin/post.php?post=${data.ID}&action=edit`;
+								return field;
+							});
+						})
 						.flat()
 						.reduce( ( acc, field ) => {
 							if ( field.key && field.label ) {
-								acc[field.key] = pick( field, [ 'label', 'type', 'prepend', 'append', 'default_value', 'value' ]);
+								acc[field.key] = pick( field, [ 'label', 'type', 'prepend', 'append', 'default_value', 'value', 'urlLocation' ]);
 							}
 							return acc;
 						}, {})

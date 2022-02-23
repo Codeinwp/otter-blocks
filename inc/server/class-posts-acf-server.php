@@ -55,6 +55,13 @@ class Posts_ACF_Server {
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_acf_fields' ),
+					'args'                => array(
+						'post' => array(
+							'type'        => 'int',
+							'required'    => true,
+							'description' => __( 'Search query.', 'otter-blocks' ),
+						),
+					),
 					'permission_callback' => function () {
 						return current_user_can( 'edit_posts' );
 					},
@@ -69,7 +76,7 @@ class Posts_ACF_Server {
 	 * @return mixed|\WP_REST_Response
 	 * @since 1.7.6
 	 */
-	public function get_acf_fields() {
+	public function get_acf_fields( $request ) {
 		$return = array(
 			'success' => false,
 		);
@@ -81,7 +88,7 @@ class Posts_ACF_Server {
 		}
 
 		$return['groups'] = array();
-		$groups           = acf_get_field_groups( array( 'post_type' => 'post' ) );
+		$groups           = acf_get_field_groups( $request->get_param( 'id' ) );
 
 		foreach ( $groups as $group ) {
 			$group_data = array(

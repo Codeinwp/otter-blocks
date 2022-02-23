@@ -265,6 +265,7 @@ class Registration {
 					'optionsPage'     => admin_url( 'themes.php?page=neve-welcome' ),
 				),
 				'isBlockEditor'  => 'post' === $current_screen->base,
+				'rootUrl'        => get_site_url(),
 			)
 		);
 
@@ -658,13 +659,13 @@ class Registration {
 			if ( isset( $dynamic_blocks[ $block ] ) ) {
 				$classname = $dynamic_blocks[ $block ];
 				$renderer  = new $classname();
-		
+
 				if ( method_exists( $renderer, 'render' ) ) {
 					register_block_type_from_metadata(
 						$metadata_file,
 						array(
 							'render_callback' => array( $renderer, 'render' ),
-						) 
+						)
 					);
 
 					continue;

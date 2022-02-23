@@ -29,7 +29,8 @@ import {
 	SelectControl,
 	ToggleControl,
 	RangeControl,
-	BaseControl
+	BaseControl,
+	ExternalLink
 } from '@wordpress/components';
 
 import {
@@ -425,6 +426,21 @@ export const SortableItem = ({
 										}
 
 									</Fragment>
+								)
+							}
+
+							{
+								acfFieldDict[customMeta.field]?.urlLocation && (
+									<Fragment>
+										<ExternalLink
+											href={acfFieldDict[customMeta.field]?.urlLocation}
+											target='_blank'
+										>
+											{__( 'Edit value in Dashboard.', 'otter-blocks' )}
+										</ExternalLink>
+										<br/>
+									</Fragment>
+
 								)
 							}
 
