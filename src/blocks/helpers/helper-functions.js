@@ -1,9 +1,12 @@
+/* global themeisleGutenberg */
 
 import { without } from 'lodash';
 
 import { sprintf } from '@wordpress/i18n';
 
 import { __experimentalGetSettings } from '@wordpress/date';
+
+import excludedTypes from './filter';
 
 // HTML to Plaintext
 export const unescapeHTML = value => {
@@ -97,12 +100,11 @@ export const easeInOutSine = ( x ) => {
 };
 
 export const getCustomPostTypeSlugs = async() => {
-	const dataTypes = await ( new window.wp.api.collections.Types() ).fetch();
+	const dataTypes = themeisleGutenberg.postTypes;
 
 	if ( dataTypes ) {
-		const allExistingSlugs = Object.keys( dataTypes ).filter( type => dataTypes[type]?.slug ).map( type => dataTypes[type].slug );
-
-		return without( allExistingSlugs, 'attachment', 'wp_block' );
+		const allExistingSlugs = Object.keys( dataTypes );
+		return without( allExistingSlugs, ...excludedTypes );
 	}
 
 	return undefined;
