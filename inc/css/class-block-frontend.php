@@ -349,6 +349,22 @@ class Block_Frontend extends Base_CSS {
 		if ( function_exists( 'has_blocks' ) && has_blocks( $post_id ) ) {
 			$css = $this->get_page_css_meta( $post_id );
 
+			$templates = get_block_templates();
+			$template_css = '';
+
+			// TODO: find a way to get only the template for the current post.
+			foreach ( $templates as $template ) {
+				$template->content = _remove_theme_attribute_in_block_template_content( $template->content );
+
+				$blocks = parse_blocks( $template->content );
+				if ( ! is_array( $blocks ) || empty( $blocks ) ) {
+					continue;
+				}
+				$template_css .= $this->cycle_through_blocks( $blocks );
+			}
+
+			$css .= $template_css;
+
 			if ( empty( $css ) || is_preview() ) {
 				$css = $this->get_page_css_inline( $post_id );
 			}
@@ -449,7 +465,7 @@ class Block_Frontend extends Base_CSS {
 			$css = $this->cycle_through_blocks( $blocks );
 		}
 
-		return $css;
+		return $template_css . $css;
 	}
 
 	/**
