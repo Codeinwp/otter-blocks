@@ -471,7 +471,9 @@ const Inspector = ({
 						'paddingMobile',
 						'margin',
 						'marginTablet',
-						'marginMobile'
+						'marginMobile',
+						'columnsWidth',
+						'horizontalAlign'
 					]}
 					isSynced={ attributes.isSynced }
 					setAttributes={ setAttributes }
@@ -589,45 +591,57 @@ const Inspector = ({
 							title={ __( 'Section Structure', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
-							<RangeControl
-								label={ __( 'Maximum Content Width', 'otter-blocks' ) }
-								value={ attributes.columnsWidth || '' }
-								allowReset
-								onChange={ changeColumnsWidth }
-								min={ 0 }
-								max={ 2400 }
-							/>
+							<SyncControl
+								field="columnsWidth"
+								isSynced={ attributes.isSynced }
+								setAttributes={ setAttributes }
+							>
+								<RangeControl
+									label={ __( 'Maximum Content Width', 'otter-blocks' ) }
+									value={ getValue( 'columnsWidth' ) || '' }
+									allowReset
+									onChange={ changeColumnsWidth }
+									min={ 0 }
+									max={ 2400 }
+								/>
+							</SyncControl>
 
-							{ attributes.columnsWidth && (
-								<BaseControl
-									label={ __( 'Horizontal Align', 'otter-blocks' ) }
+							{ getValue( 'columnsWidth' ) && (
+								<SyncControl
+									field="horizontalAlign"
+									isSynced={ attributes.isSynced }
+									setAttributes={ setAttributes }
 								>
-									<ButtonGroup className="wp-block-themeisle-icon-buttom-group">
-										<Button
-											icon="editor-alignleft"
-											label={ __( 'Left', 'otter-blocks' ) }
-											showTooltip={ true }
-											isPrimary={ 'flex-start' === attributes.horizontalAlign }
-											onClick={ () => changeHorizontalAlign( 'flex-start' ) }
-										/>
+									<BaseControl
+										label={ __( 'Horizontal Align', 'otter-blocks' ) }
+									>
+										<ButtonGroup className="wp-block-themeisle-icon-buttom-group">
+											<Button
+												icon="editor-alignleft"
+												label={ __( 'Left', 'otter-blocks' ) }
+												showTooltip={ true }
+												isPrimary={ 'flex-start' === getValue( 'horizontalAlign' ) }
+												onClick={ () => changeHorizontalAlign( 'flex-start' ) }
+											/>
 
-										<Button
-											icon="editor-aligncenter"
-											label={ __( 'Center', 'otter-blocks' ) }
-											showTooltip={ true }
-											isPrimary={ 'center' === attributes.horizontalAlign }
-											onClick={ () => changeHorizontalAlign( 'center' ) }
-										/>
+											<Button
+												icon="editor-aligncenter"
+												label={ __( 'Center', 'otter-blocks' ) }
+												showTooltip={ true }
+												isPrimary={ 'center' === getValue( 'horizontalAlign' ) }
+												onClick={ () => changeHorizontalAlign( 'center' ) }
+											/>
 
-										<Button
-											icon="editor-alignright"
-											label={ __( 'Right', 'otter-blocks' ) }
-											showTooltip={ true }
-											isPrimary={ 'flex-end' === attributes.horizontalAlign }
-											onClick={ () => changeHorizontalAlign( 'flex-end' ) }
-										/>
-									</ButtonGroup>
-								</BaseControl>
+											<Button
+												icon="editor-alignright"
+												label={ __( 'Right', 'otter-blocks' ) }
+												showTooltip={ true }
+												isPrimary={ 'flex-end' === getValue( 'horizontalAlign' ) }
+												onClick={ () => changeHorizontalAlign( 'flex-end' ) }
+											/>
+										</ButtonGroup>
+									</BaseControl>
+								</SyncControl>
 							) }
 
 							<SelectControl
