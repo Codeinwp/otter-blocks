@@ -215,9 +215,9 @@ class Posts_Grid_Block {
 									$list_items_markup .= esc_html( $field['append'] );
 								}
 								$list_items_markup .= '</div>';
-							}                       
-						}                   
-					}               
+							}
+						}
+					}
 				}
 			}
 
@@ -404,22 +404,22 @@ class Posts_Grid_Block {
 
 						$field = get_field_object( $custom_meta_field['field'], $id );
 						if ( isset( $field ) ) {
-							$list_items_markup .= '<div class="o-posts-custom-field">';
+							$html .= '<div class="o-posts-custom-field">';
 							if ( isset( $field['prepend'] ) ) {
-								$list_items_markup .= esc_html( $field['prepend'] );
+								$html .= esc_html( $field['prepend'] );
 							}
 
 							if ( isset( $field['value'] ) ) {
-								$list_items_markup .= esc_html( $field['value'] );
+								$html .= esc_html( $field['value'] );
 							} elseif ( isset( $field['default_value'] ) ) {
-								$list_items_markup .= esc_html( $field['default_value'] );
+								$html .= esc_html( $field['default_value'] );
 							}
 
 							if ( isset( $field['append'] ) ) {
-								$list_items_markup .= esc_html( $field['append'] );
+								$html .= esc_html( $field['append'] );
 							}
-							$list_items_markup .= '</div>';
-						}                   
+							$html .= '</div>';
+						}
 					}
 				}
 			}
