@@ -58,7 +58,7 @@ class Posts_ACF_Server {
 					'args'                => array(
 						'post' => array(
 							'type'        => 'int',
-							'required'    => true,
+							'required'    => false,
 							'description' => __( 'Search query.', 'otter-blocks' ),
 						),
 					),

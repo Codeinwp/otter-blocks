@@ -266,6 +266,7 @@ class Registration {
 				),
 				'isBlockEditor'  => 'post' === $current_screen->base,
 				'rootUrl'        => get_site_url(),
+				'postId'         => get_the_ID(),
 			)
 		);
 
