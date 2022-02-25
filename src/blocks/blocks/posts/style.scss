@@ -168,7 +168,9 @@
 		width: 100%;
 		padding: 20px;
 
-		.o-posts-grid-post-image {
+		.o-posts-grid-post-image a {
+			width: 100%;
+
 			img {
 				width: 100%;
 				height: 250px;
