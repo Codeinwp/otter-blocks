@@ -1,12 +1,64 @@
-/* global themeisleGutenberg */
-
 import { without } from 'lodash';
 
 import { sprintf } from '@wordpress/i18n';
 
 import { __experimentalGetSettings } from '@wordpress/date';
 
-import excludedTypes from './filter';
+// Post types to exclude
+const excludedTypes = [
+	'wp_template',
+	'wp_template_part',
+	'wp_navigation',
+	'nav_menu_item',
+	'wp_block',
+	'attachment',
+	'sfwd-certificates',
+	'e-landing-page',
+	'piotnetforms-book',
+	'piotnetforms',
+	'piotnetforms-data',
+	'jet-menu',
+	'jet-popup',
+	'adsforwp-groups',
+	'pgc_simply_gallery',
+	'editor-story',
+	'pafe-form-booking',
+	'sfwd-assignment',
+	'sfwd-essays',
+	'pafe-formabandonment',
+	'frm_display',
+	'sfwd-transactions',
+	'jet-engine',
+	'jet-theme-core',
+	'reply',
+	'jet_options_preset',
+	'tutor_assignments',
+	'brizy_template',
+	'jet-smart-filters',
+	'pafe-fonts',
+	'pafe-form-database',
+	'ct_content_block',
+	'adsforwp',
+	'iamport_payment',
+	'tribe_events',
+	'mec_esb',
+	'elementor_library',
+	'testimonial',
+	'zion_template',
+	'popup',
+	'jet-engine-booking',
+	'tutor_quiz',
+	'piotnetforms-aban',
+	'forum',
+	'topic',
+	'sfwd-quiz',
+	'mec-events',
+	'jet-woo-builder',
+	'neve_custom_layouts',
+	'feedzy_imports',
+	'neve_cart_notices',
+	'visualizer'
+];
 
 // HTML to Plaintext
 export const unescapeHTML = value => {
@@ -100,7 +152,7 @@ export const easeInOutSine = ( x ) => {
 };
 
 export const getCustomPostTypeSlugs = async() => {
-	const dataTypes = themeisleGutenberg.postTypes;
+	const dataTypes = window.themeisleGutenberg.postTypes;
 
 	if ( dataTypes ) {
 		const allExistingSlugs = Object.keys( dataTypes );
