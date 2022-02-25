@@ -75,7 +75,7 @@ class Posts_Grid_Block {
 		foreach ( $recent_posts as $post ) {
 			$id = $post['ID'];
 
-			if ( isset( $attributes['featuredPost'] ) && $attributes['featuredPost'] == $id ) {
+			if ( isset( $attributes['featuredPost'] ) && $attributes['featuredPost'] === $id ) {
 				continue;
 			}
 
