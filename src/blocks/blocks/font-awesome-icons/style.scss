@@ -1,16 +1,32 @@
 .wp-block-themeisle-blocks-font-awesome-icons {
-	text-align: center;
+	--align: center;
+	--borderColor: #000;
+	--borderSize: unset;
+	--borderRadius: 0%;
+	--margin: 0;
+	--padding: 0;
+	--width: 0;
+	--fontSize: 16px;
+
+	text-align: var( --align );
 
 	.wp-block-themeisle-blocks-font-awesome-icons-container {
 		display: inline-flex;
 		justify-content: center;
+		border: var( --borderSize ) solid var( --borderColor );
+		border-radius: var( --borderRadius );
+		margin: var( --margin );
+		width: var( --width );
 
 		svg {
-			width: 16px;
+			width: var( --fontSize );
+			height: var( --fontSize );
 		}
 
 		i {
 			width: 100%;
+			border-radius: var( --borderRadius );
+			padding: var( --padding );
 		}
 	}
 }

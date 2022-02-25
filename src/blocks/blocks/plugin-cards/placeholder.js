@@ -172,7 +172,7 @@ const BlockPlaceholder = ({
 			instructions={ __( 'Search for the plugin you want to display.', 'otter-blocks' ) }
 			className={ className }
 		>
-			<div className="wp-block-themeisle-blocks-plugin-cards-search-field">
+			<div className="o-plugin-cards-search-field">
 				<Dashicon icon="search" />
 
 				{ isLoading && (
@@ -191,7 +191,7 @@ const BlockPlaceholder = ({
 				{ results && (
 					<div
 						tabIndex="-1"
-						className="wp-block-themeisle-blocks-plugin-cards-search-results"
+						className="o-plugin-cards-search-results"
 						ref={ searchRef }
 					>
 						{ Object.keys( results ).map( i => {
@@ -208,7 +208,7 @@ const BlockPlaceholder = ({
 							}
 							return (
 								<button
-									className="wp-block-themeisle-blocks-plugin-cards-list-item"
+									className="o-plugin-cards-list-item"
 									key={ i }
 									ref={ bindSuggestionNode( i ) }
 									onClick={ e => {
@@ -227,7 +227,7 @@ const BlockPlaceholder = ({
 			</div>
 
 			{ hasError && (
-				<div className="wp-block-themeisle-blocks-plugin-cards-error">
+				<div className="o-plugin-cards-error">
 					<span>{ __( 'There seems to be an error. Make sure your internet is working properly.', 'otter-blocks' ) }</span>
 				</div>
 			) }

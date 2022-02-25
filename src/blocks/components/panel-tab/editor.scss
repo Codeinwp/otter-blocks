@@ -1,12 +1,12 @@
-.otter-panel-tab {
+.o-panel-tab {
 	z-index: 999999;
 
-	.otter-panel-tab__header {
+	.o-panel-tab__header {
 		display: flex;
 		background: #ffffff;
 		border: 1px solid #d5dadf;
 
-		.otter-panel-tab__header__label {
+		.o-panel-tab__header__label {
 			cursor: default;
 			flex-basis: 60%;
 			display: flex;
@@ -36,7 +36,7 @@
 		}
 	}
 
-	.otter-panel-tab__content {
+	.o-panel-tab__content {
 		background: #ffffff;
 		border: 1px solid #d5dadf;
 		border-top: none;

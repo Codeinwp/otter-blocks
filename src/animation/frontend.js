@@ -4,7 +4,8 @@ const animations = [
 	'flash',
 	'pulse',
 	'rubberBand',
-	'shake',
+	'shakeX',
+	'shakeY',
 	'headShake',
 	'swing',
 	'tada',
@@ -13,6 +14,14 @@ const animations = [
 	'heartBeat',
 	'hinge',
 	'jackInTheBox',
+	'backInDown',
+	'backInLeft',
+	'backInRight',
+	'backInUp',
+	'backOutDown',
+	'backOutLeft',
+	'backOutRight',
+	'backOutUp',
 	'bounceIn',
 	'bounceInDown',
 	'bounceInLeft',
@@ -31,6 +40,10 @@ const animations = [
 	'fadeInRight',
 	'fadeInRightBig',
 	'fadeInUp',
+	'fadeInTopLeft',
+	'fadeInTopRight',
+	'fadeInBottomLeft',
+	'fadeInBottomRight',
 	'fadeOut',
 	'fadeOutDown',
 	'fadeOutDownBig',
@@ -40,13 +53,19 @@ const animations = [
 	'fadeOutRightBig',
 	'fadeOutUp',
 	'fadeOutUpBig',
+	'fadeOutTopLeft',
+	'fadeOutTopRight',
+	'fadeOutBottomRight',
+	'fadeOutBottomLeft',
 	'flip',
 	'flipInX',
 	'flipInY',
 	'flipOutX',
 	'flipOutY',
-	'lightSpeedIn',
-	'lightSpeedOut',
+	'lightSpeedInRight',
+	'lightSpeedInLeft',
+	'lightSpeedOutRight',
+	'lightSpeedOutLeft',
 	'rotateIn',
 	'rotateInDownLeft',
 	'rotateInDownRight',
@@ -80,6 +99,10 @@ const animations = [
 ];
 
 const outAnimation = [
+	'backOutDown',
+	'backOutLeft',
+	'backOutRight',
+	'backOutUp',
 	'bounceOut',
 	'bounceOutDown',
 	'bounceOutLeft',
@@ -94,9 +117,14 @@ const outAnimation = [
 	'fadeOutRightBig',
 	'fadeOutUp',
 	'fadeOutUpBig',
+	'fadeOutTopLeft',
+	'fadeOutTopRight',
+	'fadeOutBottomRight',
+	'fadeOutBottomLeft',
 	'flipOutX',
 	'flipOutY',
-	'lightSpeedOut',
+	'lightSpeedOutRight',
+	'lightSpeedOutLeft',
 	'rotateOut',
 	'rotateOutDownLeft',
 	'rotateOutDownRight',
@@ -128,7 +156,7 @@ const delay = [
 
 const speed = [ 'none', 'slow', 'slower', 'fast', 'faster' ];
 
-window.onload = () => {
+window.addEventListener( 'load', () => {
 	const elements = document.querySelectorAll( '.animated' );
 	for ( const element of elements ) {
 		classes = element.classList;
@@ -176,11 +204,11 @@ window.onload = () => {
 		});
 	}
 
-	window.onscroll = () => {
+	window.addEventListener( 'scroll', () => {
 		for ( const element of elements ) {
 			if (
 				element.getBoundingClientRect().top <=
-					window.innerHeight * 0.75 &&
+					window.innerHeight * 0.95 &&
 				0 < element.getBoundingClientRect().top
 			) {
 				if (
@@ -194,8 +222,8 @@ window.onload = () => {
 				}
 			}
 		}
-	};
-};
+	});
+});
 
 const isElementInViewport = ( el ) => {
 	const scroll = window.scrollY || window.pageYOffset;

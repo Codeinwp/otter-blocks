@@ -234,14 +234,14 @@ class Registration {
 			'otter-blocks',
 			'themeisleGutenberg',
 			array(
-				'isCompatible'   => Main::is_compatible(),
-				'assetsPath'     => OTTER_BLOCKS_URL . 'assets',
-				'updatePath'     => admin_url( 'update-core.php' ),
-				'optionsPath'    => admin_url( 'options-general.php?page=otter' ),
-				'mapsAPI'        => $api,
-				'themeDefaults'  => Main::get_global_defaults(),
-				'imageSizes'     => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
-				'themeMods'      => array(
+				'isCompatible'        => Main::is_compatible(),
+				'assetsPath'          => OTTER_BLOCKS_URL . 'assets',
+				'updatePath'          => admin_url( 'update-core.php' ),
+				'optionsPath'         => admin_url( 'options-general.php?page=otter' ),
+				'mapsAPI'             => $api,
+				'themeDefaults'       => Main::get_global_defaults(),
+				'imageSizes'          => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
+				'themeMods'           => array(
 					'listingType'   => get_theme_mod( 'neve_comparison_table_product_listing_type', 'column' ),
 					'altRow'        => get_theme_mod( 'neve_comparison_table_enable_alternating_row_bg_color', false ),
 					'fields'        => get_theme_mod( 'neve_comparison_table_fields', $default_fields ),
@@ -252,19 +252,21 @@ class Registration {
 					'altRowColor'   => get_theme_mod( 'neve_comparison_table_alternate_row_bg_color', 'var(--nv-light-bg)' ),
 					'defaultFields' => $default_fields,
 				),
-				'isWPVIP'        => function_exists( 'is_wpcom_vip' ),
-				'canTrack'       => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
-				'userRoles'      => $wp_roles->roles,
-				'hasWooCommerce' => class_exists( 'WooCommerce' ),
-				'hasLearnDash'   => defined( 'LEARNDASH_VERSION' ),
-				'hasNeveSupport' => array(
+				'isWPVIP'             => function_exists( 'is_wpcom_vip' ),
+				'canTrack'            => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
+				'userRoles'           => $wp_roles->roles,
+				'hasWooCommerce'      => class_exists( 'WooCommerce' ),
+				'hasLearnDash'        => defined( 'LEARNDASH_VERSION' ),
+				'hasNeveSupport'      => array(
 					'hasNeve'         => defined( 'NEVE_VERSION' ),
 					'hasNevePro'      => defined( 'NEVE_VERSION' ) && 'valid' === apply_filters( 'product_neve_license_status', false ),
 					'isBoosterActive' => 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ),
 					'wooComparison'   => class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options' ) ? \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options::is_module_activated() : false,
 					'optionsPage'     => admin_url( 'themes.php?page=neve-welcome' ),
 				),
-				'isBlockEditor'  => 'post' === $current_screen->base,
+				'isBlockEditor'       => 'post' === $current_screen->base,
+				'useOldMacyContainer' => version_compare( get_bloginfo( 'version' ), '5.8.10', '<=' ),
+				'postTypes'           => get_post_types( [ 'public' => true ] ),
 			)
 		);
 
@@ -344,11 +346,6 @@ class Registration {
 	 * @access  public
 	 */
 	public function enqueue_dependencies( $post = null ) {
-		// On AMP context, we don't load JS files.
-		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
-			return;
-		}
-
 		$content = '';
 
 		if ( 'widgets' === $post ) {
@@ -371,6 +368,10 @@ class Registration {
 
 		$this->enqueue_block_styles( $post );
 
+		// On AMP context, we don't load JS files.
+		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+			return;
+		}
 		if ( ! self::$scripts_loaded['circle-counter'] && has_block( 'themeisle-blocks/circle-counter', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/circle-counter.asset.php';
 			wp_register_script( 'otter-circle-counter', OTTER_BLOCKS_URL . 'build/blocks/circle-counter.js', $asset_file['dependencies'], $asset_file['version'], true );
@@ -492,6 +493,18 @@ class Registration {
 		if ( ! self::$scripts_loaded['product-image'] && has_block( 'themeisle-blocks/product-image', $post ) ) {
 			wp_enqueue_script( 'wc-single-product' );
 		}
+
+		// DEBUG
+		// TODO: load this only when a block has a sticky block.
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/sticky.asset.php';
+		wp_enqueue_script(
+			'otter-sticky',
+			OTTER_BLOCKS_URL . 'build/blocks/sticky.js',
+			$asset_file['dependencies'],
+			$asset_file['version'],
+			true
+		);
+		wp_script_add_data( 'otter-sticky', 'defer', true );
 	}
 
 	/**
@@ -551,7 +564,7 @@ class Registration {
 			'form-nonce'                => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
 			'google-map'                => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
 			'leaflet-map'               => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
-			'plugin-card'               => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
+			'plugin-cards'              => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
 			'posts-grid'                => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
 			'review'                    => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
 			'review-comparison'         => '\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
@@ -595,7 +608,7 @@ class Registration {
 			'icon-list-item',
 			'leaflet-map',
 			'lottie',
-			'plugin-card',
+			'plugin-cards',
 			'popup',
 			'posts-grid',
 			'pricing',

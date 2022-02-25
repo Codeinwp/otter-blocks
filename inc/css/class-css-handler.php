@@ -256,20 +256,22 @@ class CSS_Handler extends Base_CSS {
 			}
 		}
 
-		$target_dir = $wp_filesystem->is_dir( $upload_dir );
+		if ( self::is_writable() ) {
+			$target_dir = $wp_filesystem->is_dir( $upload_dir );
 
-		if ( ! $wp_filesystem->is_writable( $wp_upload_dir['basedir'] ) ) {
-			return false;
-		}
+			if ( ! $wp_filesystem->is_writable( $wp_upload_dir['basedir'] ) ) {
+				return false;
+			}
 
-		if ( ! $target_dir ) {
-			wp_mkdir_p( $upload_dir );
-		}
+			if ( ! $target_dir ) {
+				wp_mkdir_p( $upload_dir );
+			}
 
-		$wp_filesystem->put_contents( $file_path, $css, FS_CHMOD_FILE );
+			$wp_filesystem->put_contents( $file_path, $css, FS_CHMOD_FILE );
 
-		if ( file_exists( $file_path ) ) {
-			update_post_meta( $post_id, '_themeisle_gutenberg_block_stylesheet', $file_name );
+			if ( file_exists( $file_path ) ) {
+				update_post_meta( $post_id, '_themeisle_gutenberg_block_stylesheet', $file_name );
+			}
 		}
 
 		return true;
@@ -309,7 +311,8 @@ class CSS_Handler extends Base_CSS {
 		$upload_dir = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/';
 		$file_path  = $upload_dir . $file_name . '.css';
 
-		if ( ! file_exists( $file_path ) ) {
+
+		if ( ! file_exists( $file_path ) || ! self::is_writable() ) {
 			return;
 		}
 
@@ -364,30 +367,56 @@ class CSS_Handler extends Base_CSS {
 
 		update_option( 'themeisle_blocks_widgets_css', $css );
 
-		$existing_file      = get_option( 'themeisle_blocks_widgets_css_file' );
-		$existing_file_path = $upload_dir . $existing_file . '.css';
+		if ( self::is_writable() ) {
+			$existing_file      = get_option( 'themeisle_blocks_widgets_css_file' );
+			$existing_file_path = $upload_dir . $existing_file . '.css';
 
-		if ( $existing_file && is_file( $existing_file_path ) ) {
-			$wp_filesystem->delete( $existing_file_path, true );
-		}
+			if ( $existing_file && is_file( $existing_file_path ) ) {
+				$wp_filesystem->delete( $existing_file_path, true );
+			}
 
-		$target_dir = $wp_filesystem->is_dir( $upload_dir );
+			$target_dir = $wp_filesystem->is_dir( $upload_dir );
 
-		if ( ! $wp_filesystem->is_writable( $wp_upload_dir['basedir'] ) ) {
-			return false;
-		}
+			if ( ! $wp_filesystem->is_writable( $wp_upload_dir['basedir'] ) ) {
+				return false;
+			}
 
-		if ( ! $target_dir ) {
-			wp_mkdir_p( $upload_dir );
-		}
+			if ( ! $target_dir ) {
+				wp_mkdir_p( $upload_dir );
+			}
 
-		$wp_filesystem->put_contents( $file_path, $css, FS_CHMOD_FILE );
+			$wp_filesystem->put_contents( $file_path, $css, FS_CHMOD_FILE );
 
-		if ( file_exists( $file_path ) ) {
-			update_option( 'themeisle_blocks_widgets_css_file', $file_name );
+			if ( file_exists( $file_path ) ) {
+				update_option( 'themeisle_blocks_widgets_css_file', $file_name );
+			}
 		}
 
 		return true;
+	}
+
+	/**
+	 * Check if the path is writable.
+	 *
+	 * @return boolean
+	 * @since   2.0.0
+	 * @access  public
+	 */
+	public static function is_writable() {
+		global $wp_filesystem;
+		include_once ABSPATH . 'wp-admin/includes/file.php';
+		WP_Filesystem();
+
+		$wp_upload_dir = wp_upload_dir( null, false );
+		$upload_dir    = $wp_upload_dir['basedir'];
+
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			return false;
+		}
+
+		$writable = WP_Filesystem( false, $upload_dir );
+
+		return $writable && 'direct' === $wp_filesystem->method;
 	}
 
 	/**

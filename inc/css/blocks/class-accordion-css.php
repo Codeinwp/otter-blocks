@@ -36,47 +36,22 @@ class Accordion_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-accordion-item .wp-block-themeisle-blocks-accordion-item__title',
 				'properties' => array(
 					array(
-						'property' => 'color',
+						'property' => '--titleColor',
 						'value'    => 'titleColor',
 					),
 					array(
-						'property' => 'background',
+						'property' => '--titleBackground',
 						'value'    => 'titleBackground',
 					),
 					array(
-						'property' => 'border-color',
+						'property' => '--borderColor',
 						'value'    => 'borderColor',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-themeisle-blocks-accordion-item .wp-block-themeisle-blocks-accordion-item__title > div::after',
-				'properties' => array(
 					array(
-						'property' => 'border-color',
-						'value'    => 'titleColor',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-themeisle-blocks-accordion-item .wp-block-themeisle-blocks-accordion-item__content',
-				'properties' => array(
-					array(
-						'property' => 'background',
+						'property' => '--contentBackground',
 						'value'    => 'contentBackground',
-					),
-					array(
-						'property' => 'border-color',
-						'value'    => 'borderColor',
 					),
 				),
 			)

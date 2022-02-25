@@ -1,9 +1,9 @@
-.otter-sizing-control {
+.o-sizing-control {
 	.components-base-control__label {
 		margin-bottom: 4px;
 	}
 
-	.otter-sizing-control-wrapper {
+	.o-sizing-control-wrapper {
 		display: grid;
 		grid-template-columns: 25% 25% 25% 25%;
 		padding: 6px 0;
@@ -12,8 +12,8 @@
 			grid-template-columns: 20% 20% 20% 20% 20%;
 		}
 
-		.otter-sizing-control-item {
-			.otter-sizing-control-item-input {
+		.o-sizing-control-item {
+			.o-sizing-control-item-input {
 				width: 100%;
 				min-height: 30px;
 				border-radius: 0;
@@ -30,7 +30,7 @@
 				}
 			}
 
-			.otter-sizing-control-item-label {
+			.o-sizing-control-item-label {
 				display: block;
 				text-align: center;
 				font-size: 9px;
@@ -39,13 +39,13 @@
 			}
 
 			&:first-child {
-				.otter-sizing-control-item-input {
+				.o-sizing-control-item-input {
 					border-radius: 5px 0 0 5px;
 				}
 			}
 
 			&:last-child {
-				.otter-sizing-control-item-input {
+				.o-sizing-control-item-input {
 					border-radius: 0 5px 5px 0;
 				}
 			}
@@ -53,7 +53,7 @@
 			&.toggle-linking {
 				display: flex;
 
-				.otter-sizing-control-item-input {
+				.o-sizing-control-item-input {
 					height: 30px;
 					border: 1px solid #8d96a0;
 					width: 100%;
@@ -67,7 +67,7 @@
 				}
 
 				&.is-linked {
-					.otter-sizing-control-item-input {
+					.o-sizing-control-item-input {
 						background: #a4afb7;
 						color: #fff;
 

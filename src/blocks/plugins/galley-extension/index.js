@@ -13,6 +13,8 @@ import { Fragment } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
+import domReady from '@wordpress/dom-ready';
+
 /**
  * Internal dependencies.
  */
@@ -57,5 +59,10 @@ const withGalleryExtension = createHigherOrderComponent( BlockEdit => {
 	};
 }, 'withGalleryExtension' );
 
-addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/gallery-extension', withGalleryExtension );
+domReady( () => {
+	const useOldContainer = Boolean( parseInt( window.themeisleGutenberg?.useOldMacyContainer || '0' ) );
+	if ( useOldContainer ) {
+		addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/gallery-extension', withGalleryExtension );
+	}
+});
 

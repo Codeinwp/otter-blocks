@@ -44,20 +44,10 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const styles = css`
-		&.wp-block-themeisle-blocks-accordion .wp-block-themeisle-blocks-accordion-item .wp-block-themeisle-blocks-accordion-item__title {
-			color: ${ attributes.titleColor };
-			background: ${ attributes.titleBackground };
-			border-color: ${ attributes.borderColor };
-		}
-
-		&.wp-block-themeisle-blocks-accordion .wp-block-themeisle-blocks-accordion-item .wp-block-themeisle-blocks-accordion-item__title svg {
-			fill: ${ attributes.titleColor };
-		}
-
-		&.wp-block-themeisle-blocks-accordion .wp-block-themeisle-blocks-accordion-item .wp-block-themeisle-blocks-accordion-item__content {
-			background: ${ attributes.contentBackground };
-			border-color: ${ attributes.borderColor };
-		}
+		--titleColor: ${ attributes.titleColor };
+		--titleBackground: ${ attributes.titleBackground };
+		--borderColor: ${ attributes.borderColor };
+		--contentBackground: ${ attributes.contentBackground };
 	`;
 
 	const blockProps = useBlockProps({

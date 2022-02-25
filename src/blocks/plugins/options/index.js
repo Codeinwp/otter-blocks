@@ -169,7 +169,7 @@ const Options = () => {
 				title={ __( 'Otter Options', 'otter-blocks' ) }
 				name="wp-block-themeisle-blocks-options"
 			>
-				<PanelBody className="wp-block-themeisle-blocks-options-general">
+				<PanelBody className="o-options-general">
 					<ToggleControl
 						label={ __( 'Make Section block your default block for Pages?', 'otter-blocks' ) }
 						checked={ isDefault }

@@ -24,7 +24,7 @@ function ColorBaseControl({
 			className={
 				classnames(
 					'components-base-control',
-					'otter-color-base-control',
+					'o-color-base-control',
 					className
 				)
 			}

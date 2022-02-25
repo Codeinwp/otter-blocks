@@ -1,59 +1,16 @@
 .wp-block-themeisle-blocks-form {
-	.otter-form__container {
-		.wp-block-themeisle-blocks-form-input {
-			display: flex;
-			flex-direction: column;
-			.otter-form-input-label {
-				width: 100%;
-				font-weight: bold;
-
-				.required {
-					font-size: 14px;
-					margin-left: 5px;
-					color: #28303d;
-					font-weight: normal;
-				}
-			}
-
-			.otter-form-input {
-				width: 100%;
-				margin-bottom: 1.5em;
-			}
+	.otter-form-consent {
+		label {
+			margin-left: 10px;
 		}
 
-		.wp-block-themeisle-blocks-form-textarea {
-			.otter-form-textarea-label {
-				width: 100%;
-				font-weight: bold;
-
-				.required {
-					font-size: 14px;
-					margin-left: 5px;
-					color: #28303d;
-				}
-			}
-
-			.otter-form-textarea-input {
-				width: 100%;
-				height: 200px;
-				margin-bottom: 1.5em;
-			}
+		input {
+			transform: scale(1.5);
 		}
+	}
 
-		.otter-form-consent {
-			label {
-				margin-left: 10px;
-			}
-
-			input {
-				transform: scale(1.5);
-			}
-		}
-
-		.wp-block-button {
-			margin-top: 1.5em;
-		}
-
+	.wp-block-button {
+		margin-top: 1.5em;
 	}
 
 	.otter-form-server-response {
@@ -101,4 +58,45 @@
 		  opacity: 0.5;
 		}
 	  }
+}
+
+.wp-block-themeisle-blocks-form-input {
+	display: flex;
+	flex-direction: column;
+
+	.otter-form-input-label {
+		width: 100%;
+		font-weight: bold;
+
+		.required {
+			font-size: 14px;
+			margin-left: 5px;
+			color: #28303d;
+			font-weight: normal;
+		}
+	}
+
+	.otter-form-input {
+		width: 100%;
+		margin-bottom: 1.5em;
+	}
+}
+
+.wp-block-themeisle-blocks-form-textarea {
+	.otter-form-textarea-label {
+		width: 100%;
+		font-weight: bold;
+
+		.required {
+			font-size: 14px;
+			margin-left: 5px;
+			color: #28303d;
+		}
+	}
+
+	.otter-form-textarea-input {
+		width: 100%;
+		height: 200px;
+		margin-bottom: 1.5em;
+	}
 }

@@ -1,4 +1,4 @@
-.otter-html-anchor-control {
+.o-html-anchor-control {
 	display: grid;
 	grid-template-columns: 80% 20%;
 	padding: 6px 0;
@@ -16,7 +16,7 @@
 	}
 
 	button {
-		&.otter-html-anchor-control-button {
+		&.o-html-anchor-control-button {
 			height: 30px;
 			width: 100%;
 			display: flex;
@@ -46,12 +46,12 @@
 	}
 }
 
-.otter-html-anchor-control-notice {
+.o-html-anchor-control-notice {
 	margin: 0 0 20px 0;
 }
 
 @media ( max-width: 782px ) {
-	.otter-html-anchor-control-button {
+	.o-html-anchor-control-button {
 		min-height: 40px;
 	}
 }

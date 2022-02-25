@@ -321,7 +321,7 @@ const Inspector = ({
 	return (
 		<Fragment>
 			<InspectorControls>
-				<PanelBody className="wp-block-themeisle-blocks-advanced-heading-header-panel">
+				<PanelBody className="o-heading-header-panel">
 					<Button
 						className={ classnames(
 							'header-tab',

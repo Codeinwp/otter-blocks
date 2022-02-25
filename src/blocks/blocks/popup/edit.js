@@ -1,6 +1,13 @@
+/** @jsx jsx */
+
 /**
  * External dependencies
  */
+import {
+	css,
+	jsx
+} from '@emotion/react';
+
 import {
 	closeSmall,
 	external
@@ -36,7 +43,6 @@ const { attributes: defaultAttributes } = metadata;
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId
 }) => {
 	useEffect( () => {
@@ -46,22 +52,17 @@ const Edit = ({
 
 	const [ isEditing, setEditing ] = useState( false );
 
-	const style = {
-		content: {
-			minWidth: attributes.minWidth,
-			background: attributes.backgroundColor
-		},
-		close: {
-			color: attributes.closeColor
-		},
-		overlay: {
-			background: attributes.overlayColor,
-			opacity: ( attributes.overlayOpacity || 75 ) / 100
-		}
-	};
+	const styles = css`
+		--minWidth: ${ attributes.minWidth ? attributes.minWidth + 'px' : '400px' };
+		--backgroundColor: ${ attributes.backgroundColor };
+		--closeColor: ${ attributes.closeColor };
+		--overlayColor: ${ attributes.overlayColor };
+		--overlayOpacity: ${ attributes.overlayOpacity ? attributes.overlayOpacity / 100 : 1 };
+	`;
 
 	const blockProps = useBlockProps({
-		id: attributes.id
+		id: attributes.id,
+		css: styles
 	});
 
 	return (
@@ -85,19 +86,14 @@ const Edit = ({
 						<div
 							role="presentation"
 							className="otter-popup__modal_wrap_overlay"
-							style={ style.overlay }
 							onClick={ () => setEditing( false ) }
 						/>
 
-						<div
-							className="otter-popup__modal_content"
-							style={ style.content }
-						>
+						<div className="otter-popup__modal_content">
 							{ attributes.showClose && (
 								<div className="otter-popup__modal_header">
 									<Button
 										icon={ closeSmall }
-										style={ style.close }
 										onClick={ () => setEditing( false ) }
 									/>
 								</div>
