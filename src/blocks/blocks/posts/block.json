@@ -26,16 +26,22 @@
 		"template": {
 			"type": "array",
 			"default": [
-			"category",
-			"title",
-			"meta",
-			"description"
+				"category",
+				"title",
+				"meta",
+				"description"
 			]
+		},
+		"customMetas": {
+			"type": "array",
+			"items": {
+				"type": "object"
+			}
 		},
 		"categories": {
 			"type": "array",
 			"items": {
-			"type": "object"
+				"type": "object"
 			}
 		},
 		"postsToShow": {

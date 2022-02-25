@@ -20,10 +20,10 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import LayoutBuilder from './components/layout-builder.js';
+import LayoutBuilder from './components/design-layout-builder.js';
 import { StyleSwitcherInspectorControl } from '../../components/style-switcher-control/index.js';
-import { convertToTitleCase } from '../../helpers/helper-functions.js';
 import ToogleGroupControl from '../../components/toogle-group-control/index.js';
+import { convertToTitleCase } from '../../helpers/helper-functions.js';
 
 const Inspector = ({
 	attributes,
@@ -176,29 +176,28 @@ const Inspector = ({
 					onChange={ enableFeaturedPost => setAttributes({ enableFeaturedPost })}
 				/>
 
-				{
-					attributes.enableFeaturedPost && (
-						<SelectControl
-							label={ __( 'Featured Post', 'otter-blocks' ) }
-							value={ attributes.featuredPost }
-							options={[
-								{
-									label: __( 'None', 'otter-blocks' ),
-									value: ''
-								},
-								{
-									label: __( 'Latest', 'otter-blocks' ),
-									value: 'latest'
-								},
-								...( posts?.filter( post => post )?.map( post => ({
-									label: post?.title.rendered,
-									value: post?.id?.toString()
-								}) ) || [])
-							]}
-							onChange={ featuredPost => setAttributes({ featuredPost }) }
-						/>
-					)
-				}
+				{ attributes.enableFeaturedPost && (
+					<SelectControl
+						label={ __( 'Featured Post', 'otter-blocks' ) }
+						value={ attributes.featuredPost }
+						options={[
+							{
+								label: __( 'None', 'otter-blocks' ),
+								value: ''
+							},
+							{
+								label: __( 'Latest', 'otter-blocks' ),
+								value: 'latest'
+							},
+							...( posts?.filter( post => post )?.map( post => ({
+								label: post?.title.rendered,
+								value: post?.id?.toString()
+							}) ) || [])
+						]}
+						onChange={ featuredPost => setAttributes({ featuredPost }) }
+					/>
+				) }
+
 				<BaseControl
 					label={ __( 'Text alignment', 'otter-blocks' ) }
 				>

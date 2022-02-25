@@ -267,6 +267,8 @@ class Registration {
 				'isBlockEditor'       => 'post' === $current_screen->base,
 				'useOldMacyContainer' => version_compare( get_bloginfo( 'version' ), '5.8.10', '<=' ),
 				'postTypes'           => get_post_types( [ 'public' => true ] ),
+				'rootUrl'             => get_site_url(),
+				'postId'              => get_the_ID(),
 			)
 		);
 

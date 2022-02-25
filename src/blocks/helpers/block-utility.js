@@ -224,3 +224,53 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 		...extractBlockData( clientId )
 	});
 };
+
+import { useDispatch, useSelect } from '@wordpress/data';
+
+/**
+ * useMeta Hook.
+ *
+ * useMeta hook to get/update WordPress' meta fields.
+ *
+ * Meta field needs to be registered to REST using `register_post_meta` function.
+ *
+ * This will return an array of all the meta fields and you return an object of meta values.
+ * const [ metaValue, changeMetaValue ] = useMeta();
+ *
+ * If you want to get/change a particular meta field then you can pass the key as argument.
+ * const [ metaValue, changeMetaValue ] = useMeta( 'meta_key' );
+ *
+ * @see     https://developer.wordpress.org/reference/functions/register_post_meta/
+ * @author  Hardeep Asrani <hardeepasrani@gmail.com>
+ * @version 1.0
+ *
+ */
+export const useMeta = key => {
+	const metaValue = useSelect( select => {
+		const { getEditedPostAttribute } = select( 'core/editor' );
+
+		if ( undefined === key ) {
+			return getEditedPostAttribute( 'meta' );
+		}
+
+		return getEditedPostAttribute( 'meta' )[ key ] || '';
+	}, [ key ]);
+
+	const { editPost } = useDispatch( 'core/editor' );
+
+	const changeMetaValue = value => {
+		if ( undefined === key ) {
+			return editPost({
+				meta: { ...value }
+			});
+		}
+
+		return editPost({
+			meta: {
+				[ key ]: value
+			}
+		});
+	};
+
+	return [ metaValue, changeMetaValue ];
+};

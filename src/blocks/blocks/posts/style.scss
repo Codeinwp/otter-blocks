@@ -1,10 +1,10 @@
 .wp-block-themeisle-blocks-posts-grid {
-	--text-align: initial;
-	--vert-align: initial;
-	--img-br-radius: 5px;
-	--img-width: initial;
-	--title-text-size: initial;
-	--description-text-size: initial;
+	--textAlign: initial;
+	--vertAlign: initial;
+	--imgBorderRadius: 5px;
+	--imgWidth: initial;
+	--titleTextSize: initial;
+	--descriptionTextSize: initial;
 
 	.has-shadow {
 		img {
@@ -71,13 +71,12 @@
 						width: 150px;
 						height: 150px;
 						object-fit: cover;
-						border-radius: var(--img-br-radius);
+						border-radius: var(--imgBorderRadius);
 					}
 				}
 			}
 		}
 	}
-
 
 	.o-posts-grid-post-blog {
 		width: 100%;
@@ -103,18 +102,18 @@
 
 		img {
 			max-width: 100%;
-			width: var(--img-width);
+			width: var(--imgWidth);
 			border-radius: 5px;
-			border-radius: var(--img-br-radius);
+			border-radius: var(--imgBorderRadius);
 		}
 	}
 
 	.o-posts-grid-post-body {
 		display: flex;
 		flex-direction: column;
-		justify-content: var(--vert-align);
+		justify-content: var(--vertAlign);
 		padding-bottom: 15px;
-		text-align: var(--text-align);
+		text-align: var(--textAlign);
 
 
 		&.is-full {
@@ -134,7 +133,7 @@
 			a {
 				text-decoration: none;
 				transition: all .15s ease 0s;
-				font-size: var(--title-text-size);
+				font-size: var(--titleTextSize);
 
 				&:hover {
 					text-decoration: underline;
@@ -152,11 +151,11 @@
 
 			p {
 				margin-bottom: 0px;
-				font-size: var(--description-text-size);
+				font-size: var(--descriptionTextSize);
 			}
 
 			.read-more {
-				font-size: var(--description-text-size);
+				font-size: var(--descriptionTextSize);
 				display: block;
 				margin-bottom: 5px;
 			}

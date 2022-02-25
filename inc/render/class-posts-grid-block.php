@@ -73,9 +73,9 @@ class Posts_Grid_Block {
 		$list_items_markup = '';
 
 		foreach ( $recent_posts as $post ) {
-			$id        = $post['ID'];
+			$id = $post['ID'];
 
-			if( isset( $attributes['featuredPost'] ) && $attributes['featuredPost'] == $id ) {
+			if ( isset( $attributes['featuredPost'] ) && $attributes['featuredPost'] === $id ) {
 				continue;
 			}
 
@@ -143,15 +143,15 @@ class Posts_Grid_Block {
 						if ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] && isset( $post['comment_count'] ) ) {
 							$list_items_markup .= sprintf(
 								' - %1$s %2$s',
-								esc_html($post['comment_count']),
-								esc_html('1' === $post['comment_count'] ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' ))
+								esc_html( $post['comment_count'] ),
+								esc_html( '1' === $post['comment_count'] ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' ) )
 							);
 						}
 
 						if ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] && isset( $category[0] ) ) {
 							$list_items_markup .= sprintf(
 								' - %1$s',
-								esc_html($category[0]->cat_name)
+								esc_html( $category[0]->cat_name )
 							);
 						}
 
@@ -180,6 +180,48 @@ class Posts_Grid_Block {
 
 						$list_items_markup .= '</div>';
 
+					}
+				}
+
+				if ( str_starts_with( $element, 'custom_' ) ) {
+					if ( isset( $attributes['customMetas'] ) ) {
+						$custom_meta_field = null;
+						foreach ( $attributes['customMetas'] as $meta_field ) {
+							if ( $meta_field['id'] === $element ) {
+								$custom_meta_field = $meta_field;
+								break;
+							}
+						}
+
+
+						if (
+							(
+								! isset( $custom_meta_field['display'] )
+								|| true === $custom_meta_field['display']
+							)
+							&& isset( $custom_meta_field['field'] )
+							&& function_exists( 'get_field_object' )
+						) {
+
+							$field = get_field_object( $custom_meta_field['field'], $id );
+							if ( isset( $field ) ) {
+								$list_items_markup .= '<div class="o-posts-custom-field">';
+								if ( isset( $field['prepend'] ) ) {
+									$list_items_markup .= esc_html( $field['prepend'] );
+								}
+
+								if ( isset( $field['value'] ) ) {
+									$list_items_markup .= esc_html( $field['value'] );
+								} elseif ( isset( $field['default_value'] ) ) {
+									$list_items_markup .= esc_html( $field['default_value'] );
+								}
+
+								if ( isset( $field['append'] ) ) {
+									$list_items_markup .= esc_html( $field['append'] );
+								}
+								$list_items_markup .= '</div>';
+							}
+						}
 					}
 				}
 			}
@@ -311,6 +353,14 @@ class Posts_Grid_Block {
 						);
 					}
 
+					if ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] && isset( $post['comment_count'] ) ) {
+						$html .= sprintf(
+							' - %1$s %2$s',
+							$post['comment_count'],
+							'1' === $post['comment_count'] ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
+						);
+					}
+
 					if ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] && isset( $category[0] ) ) {
 						$html .= sprintf(
 							' - %1$s',
@@ -343,6 +393,47 @@ class Posts_Grid_Block {
 
 					$html .= '</div>';
 
+				}
+			}
+
+			if ( str_starts_with( $element, 'custom_' ) ) {
+				if ( isset( $attributes['customMetas'] ) ) {
+					$custom_meta_field = null;
+					foreach ( $attributes['customMetas'] as $meta_field ) {
+						if ( $meta_field['id'] === $element ) {
+							$custom_meta_field = $meta_field;
+							break;
+						}
+					}
+
+					if (
+						(
+							! isset( $custom_meta_field['display'] )
+							|| true === $custom_meta_field['display']
+						)
+						&& isset( $custom_meta_field['field'] )
+						&& function_exists( 'get_field_object' )
+					) {
+
+						$field = get_field_object( $custom_meta_field['field'], $id );
+						if ( isset( $field ) ) {
+							$html .= '<div class="o-posts-custom-field">';
+							if ( isset( $field['prepend'] ) ) {
+								$html .= esc_html( $field['prepend'] );
+							}
+
+							if ( isset( $field['value'] ) ) {
+								$html .= esc_html( $field['value'] );
+							} elseif ( isset( $field['default_value'] ) ) {
+								$html .= esc_html( $field['default_value'] );
+							}
+
+							if ( isset( $field['append'] ) ) {
+								$html .= esc_html( $field['append'] );
+							}
+							$html .= '</div>';
+						}
+					}
 				}
 			}
 		}

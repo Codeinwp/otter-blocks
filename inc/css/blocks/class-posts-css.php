@@ -44,23 +44,23 @@ class Posts_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--text-align',
+						'property' => '--textAlign',
 						'value'    => 'textAlign',
 					),
 					array(
-						'property' => '--vert-align',
+						'property' => '--vertAlign',
 						'value'    => 'verticalAlign',
 						'format'   => function( $value, $attrs ) use ( $vertical_value_mapping ) {
 							return $vertical_value_mapping[ $value ];
 						},
 					),
 					array(
-						'property' => '--img-width',
+						'property' => '--imgWidth',
 						'value'    => 'imageWidth',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--img-br-radius',
+						'property' => '--imgBorderRadius',
 						'value'    => 'borderRadius',
 						'unit'     => 'px',
 					),
@@ -73,12 +73,12 @@ class Posts_CSS extends Base_CSS {
 				'query'      => '@media ( min-width: 960px )',
 				'properties' => array(
 					array(
-						'property' => '--title-text-size',
+						'property' => '--titleTextSize',
 						'value'    => 'customTitleFontSize',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--description-text-size',
+						'property' => '--descriptionTextSize',
 						'value'    => 'customDescriptionFontSize',
 						'unit'     => 'px',
 					),
@@ -91,12 +91,12 @@ class Posts_CSS extends Base_CSS {
 				'query'      => '@media ( min-width: 600px ) and ( max-width: 960px )',
 				'properties' => array(
 					array(
-						'property' => '--title-text-size',
+						'property' => '--titleTextSize',
 						'value'    => 'customTitleFontSizeTablet',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--description-text-size',
+						'property' => '--descriptionTextSize',
 						'value'    => 'customDescriptionFontSizeTablet',
 						'unit'     => 'px',
 					),
@@ -109,12 +109,12 @@ class Posts_CSS extends Base_CSS {
 				'query'      => '@media ( max-width: 600px )',
 				'properties' => array(
 					array(
-						'property' => '--title-text-size',
+						'property' => '--titleTextSize',
 						'value'    => 'customTitleFontSizeMobile',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--description-text-size',
+						'property' => '--descriptionTextSize',
 						'value'    => 'customDescriptionFontSizeMobile',
 						'unit'     => 'px',
 					),
