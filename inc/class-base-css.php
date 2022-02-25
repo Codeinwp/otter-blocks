@@ -55,7 +55,6 @@ class Base_CSS {
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'autoload_block_classes' ), 99 );
-		add_filter( 'safe_style_css', array( $this, 'used_css_properties' ), 99 );
 	}
 
 	/**
@@ -190,41 +189,6 @@ class Base_CSS {
 	}
 
 	/**
-	 * Used CSS properties
-	 *
-	 * @param array $attr Array to check.
-	 *
-	 * @return array
-	 * @since   1.3.0
-	 * @access  public
-	 */
-	public function used_css_properties( $attr ) {
-		$props = array(
-			'background-attachment',
-			'background-position',
-			'background-repeat',
-			'background-size',
-			'border-radius',
-			'border-top-left-radius',
-			'border-top-right-radius',
-			'border-bottom-right-radius',
-			'border-bottom-left-radius',
-			'box-shadow',
-			'display',
-			'justify-content',
-			'mix-blend-mode',
-			'opacity',
-			'text-shadow',
-			'text-transform',
-			'transform',
-		);
-
-		$list = array_merge( $props, $attr );
-
-		return $list;
-	}
-
-	/**
 	 * Get Blocks CSS
 	 *
 	 * @param int $post_id Post id.
@@ -355,6 +319,19 @@ class Base_CSS {
 		}
 
 		return $style;
+	}
+
+	/**
+	 * Check if an url points to an image by checking if the an image extension exists.
+	 *
+	 * @param string $url The url.
+	 *
+	 * @return bool
+	 * @since   1.4.4
+	 * @access  public
+	 */
+	public function is_image_url( $url ) {
+		return is_string( $url ) && preg_match( '/\.(jpeg|jpg|png|gif|svg|bmp|ico|tiff)$/i', $url );
 	}
 
 	/**

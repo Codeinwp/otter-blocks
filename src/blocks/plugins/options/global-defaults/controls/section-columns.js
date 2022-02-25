@@ -5,14 +5,9 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	__experimentalBoxControl as BoxControl,
-	BaseControl,
-	Button,
-	ButtonGroup,
-	Icon,
 	PanelBody,
 	RangeControl,
-	SelectControl,
-	ToggleControl
+	SelectControl
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -22,11 +17,6 @@ import { Fragment } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import {
-	topIcon,
-	middleIcon,
-	bottomIcon
-} from '../../../../helpers/icons.js';
 import ResponsiveControl from '../../../../components/responsive-control/index.js';
 import { isNullObject } from '../../../../helpers/helper-functions.js';
 
@@ -124,70 +114,6 @@ const SectionColumns = ({
 		}
 	};
 
-	const changeHorizontalAlign = value => {
-		if ( defaults.horizontalAlign === value ) {
-			return changeConfig( blockName, {
-				horizontalAlign: 'unset'
-			});
-		}
-
-		changeConfig( blockName, {
-			horizontalAlign: value
-		});
-	};
-
-	let getColumnsHeightCustom = () => {
-		let value;
-
-		if ( 'Desktop' === getView ) {
-			value = defaults.columnsHeightCustom;
-		}
-
-		if ( 'Tablet' === getView ) {
-			value = defaults.columnsHeightCustomTablet;
-		}
-
-		if ( 'Mobile' === getView ) {
-			value = defaults.columnsHeightCustomMobile;
-		}
-
-		return value;
-	};
-
-	getColumnsHeightCustom = getColumnsHeightCustom();
-
-	const changeColumnsHeightCustom = value => {
-		if ( 'Desktop' === getView ) {
-			changeConfig( blockName, {
-				columnsHeightCustom: value
-			});
-		}
-
-		if ( 'Tablet' === getView ) {
-			changeConfig( blockName, {
-				columnsHeightCustomTablet: value
-			});
-		}
-
-		if ( 'Mobile' === getView ) {
-			changeConfig( blockName, {
-				columnsHeightCustomMobile: value
-			});
-		}
-	};
-
-	const changeVerticalAlign = value => {
-		if ( defaults.verticalAlign === value ) {
-			return changeConfig( blockName, {
-				verticalAlign: 'unset'
-			});
-		}
-
-		changeConfig( blockName, {
-			verticalAlign: value
-		});
-	};
-
 	return (
 		<Fragment>
 			<PanelBody
@@ -248,136 +174,6 @@ const SectionColumns = ({
 					onChange={ changeColumnsWidth }
 					min={ 0 }
 					max={ 1200 }
-				/>
-
-				<hr/>
-
-				{ defaults.columnsWidth && (
-					<Fragment>
-						<BaseControl
-							label={ __( 'Horizontal Align', 'otter-blocks' ) }
-						>
-							<ButtonGroup className="wp-block-themeisle-icon-buttom-group">
-								<Button
-									icon="editor-alignleft"
-									label={ __( 'Left', 'otter-blocks' ) }
-									showTooltip={ true }
-									isPrimary={ 'flex-start' === defaults.horizontalAlign }
-									onClick={ () => changeHorizontalAlign( 'flex-start' ) }
-								/>
-
-								<Button
-									icon="editor-aligncenter"
-									label={ __( 'Center', 'otter-blocks' ) }
-									showTooltip={ true }
-									isPrimary={ 'center' === defaults.horizontalAlign }
-									onClick={ () => changeHorizontalAlign( 'center' ) }
-								/>
-
-								<Button
-									icon="editor-alignright"
-									label={ __( 'Right', 'otter-blocks' ) }
-									showTooltip={ true }
-									isPrimary={ 'flex-end' === defaults.horizontalAlign }
-									onClick={ () => changeHorizontalAlign( 'flex-end' ) }
-								/>
-							</ButtonGroup>
-						</BaseControl>
-
-						<hr/>
-					</Fragment>
-				) }
-
-				<SelectControl
-					label={ __( 'Minimum Height', 'otter-blocks' ) }
-					value={ defaults.columnsHeight }
-					options={ [
-						{ label: __( 'Default', 'otter-blocks' ), value: 'auto' },
-						{ label: __( 'Fit to Screen', 'otter-blocks' ), value: '100vh' },
-						{ label: __( 'Custom', 'otter-blocks' ), value: 'custom' }
-					] }
-					onChange={ value => changeConfig( blockName, { columnsHeight: value }) }
-				/>
-
-				<hr/>
-
-				{ 'custom' === defaults.columnsHeight && (
-					<Fragment>
-						<ResponsiveControl
-							label={ __( 'Custom Height', 'otter-blocks' ) }
-						>
-							<RangeControl
-								value={ getColumnsHeightCustom || '' }
-								onChange={ changeColumnsHeightCustom }
-								min={ 0 }
-								max={ 1000 }
-							/>
-						</ResponsiveControl>
-
-						<hr/>
-					</Fragment>
-				) }
-
-				<BaseControl
-					label={ __( 'Vertical Align', 'otter-blocks' ) }
-				>
-					<ButtonGroup className="wp-block-themeisle-icon-buttom-group">
-						<Button
-							icon={ <Icon
-								icon={ topIcon }
-								size={ 20 }
-							/> }
-							label={ __( 'Top', 'otter-blocks' ) }
-							showTooltip={ true }
-							isPrimary={ 'flex-start' === defaults.verticalAlign }
-							onClick={ () => changeVerticalAlign( 'flex-start' ) }
-						/>
-
-						<Button
-							icon={ <Icon
-								icon={ middleIcon }
-								size={ 20 }
-							/> }
-							label={ __( 'Middle', 'otter-blocks' ) }
-							showTooltip={ true }
-							isPrimary={ 'center' === defaults.verticalAlign }
-							onClick={ () => changeVerticalAlign( 'center' ) }
-						/>
-
-						<Button
-							icon={ <Icon
-								icon={ bottomIcon }
-								size={ 20 }
-							/> }
-							label={ __( 'Bottom', 'otter-blocks' ) }
-							showTooltip={ true }
-							isPrimary={ 'flex-end' === defaults.verticalAlign }
-							onClick={ () => changeVerticalAlign( 'flex-end' ) }
-						/>
-					</ButtonGroup>
-				</BaseControl>
-			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Responsive', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				<ToggleControl
-					label={ __( 'Hide this section on Desktop devices?', 'otter-blocks' ) }
-					checked={ defaults.hide }
-					onChange={ value => changeConfig( blockName, { hide: value }) }
-				/>
-
-				<ToggleControl
-					label={ __( 'Hide this section on Tablet devices?', 'otter-blocks' ) }
-					checked={ defaults.hideTablet }
-					onChange={ value => changeConfig( blockName, { hideTablet: value }) }
-				/>
-
-				<ToggleControl
-					label={ __( 'Hide this section on Mobile devices?', 'otter-blocks' ) }
-					checked={ defaults.hideMobile }
-					onChange={ value => changeConfig( blockName, { hideMobile: value }) }
 				/>
 			</PanelBody>
 		</Fragment>

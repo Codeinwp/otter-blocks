@@ -36,30 +36,13 @@ class Icon_List_Item_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-icon-list-item-content-custom',
 				'properties' => array(
 					array(
-						'property' => 'color',
+						'property' => '--contentColor',
 						'value'    => 'contentColor',
 					),
 					array(
-						'property' => 'fill',
-						'value'    => 'contentColor',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-themeisle-blocks-icon-list-item-icon-custom',
-				'properties' => array(
-					array(
-						'property' => 'color',
-						'value'    => 'iconColor',
-					),
-					array(
-						'property' => 'fill',
+						'property' => '--iconColor',
 						'value'    => 'iconColor',
 					),
 				),

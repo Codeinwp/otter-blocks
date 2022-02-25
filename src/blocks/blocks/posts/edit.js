@@ -107,7 +107,7 @@ const Edit = ({
 			posts,
 			// eslint-disable-next-line camelcase
 			categoriesList: select( 'core' ).getEntityRecords( 'taxonomy', 'category', { per_page: 100 }),
-			authors: select( 'core' ).getAuthors()
+			authors: select( 'core' ).getUsers({ who: 'authors' })
 		};
 	}, [ attributes.categories, attributes.order, attributes.orderBy, attributes.postsToShow, attributes.offset, attributes.postTypes ]);
 

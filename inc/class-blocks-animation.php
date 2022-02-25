@@ -84,7 +84,7 @@ class Blocks_Animation {
 
 		wp_enqueue_style(
 			'animate-css',
-			BLOCKS_ANIMATION_URL . 'assets/animate/animate.min.css',
+			BLOCKS_ANIMATION_URL . 'assets/animate/animate.compact.css',
 			array(),
 			$asset_file['version']
 		);
@@ -120,6 +120,17 @@ class Blocks_Animation {
 		);
 
 		wp_script_add_data( 'otter-count', 'defer', true );
+
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/animation/anim-typing.asset.php';
+		wp_enqueue_script(
+			'otter-typing',
+			BLOCKS_ANIMATION_URL . 'build/animation/anim-typing.js',
+			$asset_file['dependencies'],
+			$asset_file['version'],
+			true
+		);
+
+		wp_script_add_data( 'otter-typing', 'defer', true );
 	}
 
 	/**

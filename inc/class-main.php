@@ -42,6 +42,7 @@ class Main {
 
 		add_action( 'init', array( $this, 'autoload_classes' ), 9 );
 		add_filter( 'script_loader_tag', array( $this, 'filter_script_loader_tag' ), 10, 2 );
+		add_filter( 'safe_style_css', array( $this, 'used_css_properties' ), 99 );
 	}
 
 	/**
@@ -172,6 +173,41 @@ class Main {
 		}
 
 		return $tag;
+	}
+
+	/**
+	 * Used CSS properties
+	 *
+	 * @param array $attr Array to check.
+	 *
+	 * @return array
+	 * @since   2.0.0
+	 * @access  public
+	 */
+	public function used_css_properties( $attr ) {
+		$props = array(
+			'background-attachment',
+			'background-position',
+			'background-repeat',
+			'background-size',
+			'border-radius',
+			'border-top-left-radius',
+			'border-top-right-radius',
+			'border-bottom-right-radius',
+			'border-bottom-left-radius',
+			'box-shadow',
+			'display',
+			'justify-content',
+			'mix-blend-mode',
+			'opacity',
+			'text-shadow',
+			'text-transform',
+			'transform',
+		);
+
+		$list = array_merge( $props, $attr );
+
+		return $list;
 	}
 
 	/**

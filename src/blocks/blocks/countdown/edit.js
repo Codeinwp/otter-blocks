@@ -1,3 +1,13 @@
+/** @jsx jsx */
+
+/**
+ * External dependencies.
+ */
+import {
+	css,
+	jsx
+} from '@emotion/react';
+
 /**
  * WordPress dependencies
  */
@@ -100,16 +110,14 @@ const Edit = ({
 	/**
 	 * Compute the components style based on the platform
 	 */
-	let styles;
+	let stylesObj;
 
 	if ( isTablet ) {
-		styles = {
+		stylesObj = {
 			value: {
-				color: attributes.valueColor,
 				fontSize: px( attributes?.valueFontSizeTablet )
 			},
 			label: {
-				color: attributes.labelColor,
 				fontSize: px( attributes?.labelFontSizeTablet )
 			},
 			display: {
@@ -119,20 +127,16 @@ const Edit = ({
 				height: px( attributes?.heightTablet )
 			},
 			mainComponents: {
-				backgroundColor: attributes.backgroundColor,
 				width: px( attributes?.widthTablet ),
-				borderWidth: px( attributes.borderWidthTablet ),
-				borderColor: attributes.borderColor
+				borderWidth: px( attributes.borderWidthTablet )
 			}
 		};
 	} else if ( isMobile ) {
-		styles = {
+		stylesObj = {
 			value: {
-				color: attributes.valueColor,
 				fontSize: px( attributes.valueFontSizeMobile )
 			},
 			label: {
-				color: attributes.labelColor,
 				fontSize: px( attributes.labelFontSizeMobile )
 			},
 			display: {
@@ -142,20 +146,16 @@ const Edit = ({
 				height: px( attributes?.heightMobile )
 			},
 			mainComponents: {
-				backgroundColor: attributes.backgroundColor,
 				width: px( attributes?.widthMobile ),
-				borderWidth: px( attributes.borderWidthMobile ),
-				borderColor: attributes.borderColor
+				borderWidth: px( attributes.borderWidthMobile )
 			}
 		};
 	} else if ( isDesktop ) {
-		styles = {
+		stylesObj = {
 			value: {
-				color: attributes.valueColor,
 				fontSize: px( attributes.valueFontSize )
 			},
 			label: {
-				color: attributes.labelColor,
 				fontSize: px( attributes.labelFontSize )
 			},
 			display: {
@@ -165,19 +165,32 @@ const Edit = ({
 				height: px( attributes.height )
 			},
 			mainComponents: {
-				backgroundColor: attributes.backgroundColor,
 				width: px( attributes.width ),
-				borderWidth: px( attributes.borderWidth ),
-				borderColor: attributes.borderColor
+				borderWidth: px( attributes.borderWidth )
 			}
 		};
 	}
 
 	// Add `border-radius` for all the platforms
-	styles.mainComponents.borderRadius = 'linked' === attributes.borderRadiusType ? attributes.borderRadius + '%' : `${ attributes.borderRadiusTopLeft }% ${ attributes.borderRadiusTopRight }% ${ attributes.borderRadiusBottomRight }% ${ attributes.borderRadiusBottomLeft }%`;
+	const borderRadius = 'linked' === attributes.borderRadiusType ? attributes.borderRadius + '%' : `${ attributes.borderRadiusTopLeft }% ${ attributes.borderRadiusTopRight }% ${ attributes.borderRadiusBottomRight }% ${ attributes.borderRadiusBottomLeft }%`;
+
+	const styles = css`
+		--backgroundColor: ${ attributes.backgroundColor };
+		--borderColor: ${ attributes.borderColor };
+		--borderRadius: ${ borderRadius };
+
+		.otter-countdown__display-area .otter-countdown__value {
+			color: ${ attributes.valueColor };
+		}
+
+		.otter-countdown__display-area .otter-countdown__label {
+			color: ${ attributes.labelColor };
+		}
+	`;
 
 	const blockProps = useBlockProps({
-		id: attributes.id
+		id: attributes.id,
+		css: styles
 	});
 
 	return (
@@ -190,7 +203,7 @@ const Edit = ({
 			<div { ...blockProps }>
 				<DisplayTime
 					time={ getIntervalFromUnix( unixTime, { exclude: attributes?.exclude }) }
-					styles={ styles }
+					styles={ stylesObj }
 					hasSeparators={ attributes.hasSeparators }
 				/>
 			</div>

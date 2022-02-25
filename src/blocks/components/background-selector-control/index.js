@@ -54,7 +54,7 @@ const BackgroundSelectorControl = ({
 	const id = `inspector-background-selector-control-${ instanceId }`;
 
 	return (
-		<div id={ id } className="components-base-control otter-background-selector-control">
+		<div id={ id } className="components-base-control o-background-selector-control">
 			<div className="components-base-control__field">
 				<div className="components-base-control__title">
 					<label className="components-base-control__label">{ __( 'Background Type', 'otter-blocks' ) }</label>

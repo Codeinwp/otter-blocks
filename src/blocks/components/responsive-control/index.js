@@ -66,7 +66,7 @@ const ResponsiveControl = ({
 		<div
 			id={ id }
 			className={ classnames(
-				'otter-responsive-control',
+				'o-responsive-control',
 				className
 			) }
 		>
@@ -87,14 +87,14 @@ const ResponsiveControl = ({
 								/>
 							) }
 							renderContent={ () => (
-								<div className="otter-responsive-control-settings">
-									<div className="otter-responsive-control-settings-title">
+								<div className="o-responsive-control-settings">
+									<div className="o-responsive-control-settings-title">
 										{ __( 'View', 'otter-blocks' ) }
 									</div>
 
 									<Button
 										className={ classnames(
-											'otter-responsive-control-settings-item',
+											'o-responsive-control-settings-item',
 											{ 'is-selected': 'Desktop' === getView }
 										) }
 										onClick={ () => setView( 'Desktop' ) }
@@ -107,7 +107,7 @@ const ResponsiveControl = ({
 
 									<Button
 										className={ classnames(
-											'otter-responsive-control-settings-item',
+											'o-responsive-control-settings-item',
 											{ 'is-selected': 'Tablet' === getView }
 										) }
 										onClick={ () => setView( 'Tablet' ) }
@@ -120,7 +120,7 @@ const ResponsiveControl = ({
 
 									<Button
 										className={ classnames(
-											'otter-responsive-control-settings-item',
+											'o-responsive-control-settings-item',
 											{ 'is-selected': 'Mobile' === getView }
 										) }
 										onClick={ () => setView( 'Mobile' ) }

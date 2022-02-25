@@ -360,7 +360,7 @@ const Edit = ({
 				<Placeholder
 					label={ __( 'Section', 'otter-blocks' )  }
 					instructions={ __( 'Select a layout to start with, or make one yourself.', 'otter-blocks' ) }
-					className="otter-section-layout-picker"
+					className="o-section-layout-picker"
 				>
 					<VariationPicker
 						variations={ variations }
