@@ -356,41 +356,46 @@ export const SortableItem = ({
 						</Fragment>
 					) }
 
-					{ isCustomMeta && customMeta && ( ! isEmpty( acfData ) ) && (
+					{ isCustomMeta && customMeta && (
 						<Fragment>
-							<BaseControl
-								label={ __( 'Fields', 'otter-blocks' ) }
-							>
-								<select
-									value={ customMeta.field || '' }
-									onChange={ event => {
-										setAttributesCustomMeta({ field: event.target.value  });
-									} }
-									className="components-select-control__input"
-								>
-									<option value="none">{ __( 'Select a field', 'otter-blocks' ) }</option>
+							{
+								! isEmpty( acfData ) && (
+									<BaseControl
+										label={ __( 'Fields', 'otter-blocks' ) }
+									>
+										<select
+											value={  acfFieldDict[customMeta.field] ? customMeta.field : 'none' }
+											onChange={ event => {
+												setAttributesCustomMeta({ field: event.target.value  });
+											} }
+											className="components-select-control__input"
+										>
+											<option value="none">{ __( 'Select a field', 'otter-blocks' ) }</option>
 
-									{
-										acfData.map( group => {
-											return (
-												<optgroup
-													label={ group?.data?.title }
-												>
-													{
-														group?.fields
-															?.filter( ({ key, label, type }) => key && label &&  ALLOWED_ACF_TYPES.includes( type ) )
-															.map( ({ key, label }) => (
-																<option value={key}>
-																	{ label }
-																</option>
-															) )
-													}
-												</optgroup>
-											);
-										})
-									}
-								</select>
-							</BaseControl>
+											{
+												acfData.map( group => {
+													return (
+														<optgroup
+															label={ group?.data?.title }
+														>
+															{
+																group?.fields
+																	?.filter( ({ key, label, type }) => key && label &&  ALLOWED_ACF_TYPES.includes( type ) )
+																	.map( ({ key, label }) => (
+																		<option value={key}>
+																			{ label }
+																		</option>
+																	) )
+															}
+														</optgroup>
+													);
+												})
+											}
+										</select>
+									</BaseControl>
+
+								)
+							}
 
 							{
 								( ! isEmpty( acfFieldDict ) ) && acfFieldDict[customMeta.field] && (
@@ -444,6 +449,19 @@ export const SortableItem = ({
 								)
 							}
 
+							{
+								isEmpty( acfData ) ? (
+									<ExternalLink
+										href={`${themeisleGutenberg?.rootUrl || ''}/wp-admin/edit.php?post_type=acf-field-group`}
+										target='_blank'
+									>
+										{__( 'There are no ACF fields. Please add some fields using the Dashboard.', 'otter-blocks' )}
+									</ExternalLink>
+								) : ! acfFieldDict[customMeta.field] &&  (
+									__( 'The selected field does not longer exists. Please select another field.', 'otter-blocks' )
+								)
+							}
+
 
 							<Button
 								onClick={deleteCustomField}
@@ -452,7 +470,7 @@ export const SortableItem = ({
 								isDestructive
 								className="otter-conditions__add"
 							>
-								{ __( 'Delete Field', 'otter-blocks' ) }
+								{ __( 'Delete', 'otter-blocks' ) }
 							</Button>
 
 
