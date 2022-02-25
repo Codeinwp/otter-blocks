@@ -6,9 +6,9 @@ import { pick } from 'lodash';
 import { __ } from '@wordpress/i18n';
 
 import {
+	__experimentalColorGradientControl as ColorGradientControl,
 	ContrastChecker,
 	InspectorControls,
-	PanelColorSettings,
 	MediaPlaceholder
 } from '@wordpress/block-editor';
 
@@ -24,6 +24,12 @@ import {
 } from '@wordpress/components';
 
 import { useState, Fragment } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import SyncPanel from '../../components/sync-panel/index.js';
+import SyncControl from '../../components/sync-control/index.js';
 
 const PanelItem = ({
 	title,
@@ -63,6 +69,7 @@ const PanelItem = ({
 const Inspector = ({
 	attributes,
 	setAttributes,
+	getValue,
 	productAttributes
 }) => {
 	const addFeature = () => {
@@ -151,6 +158,17 @@ const Inspector = ({
 
 	return (
 		<InspectorControls>
+			<SyncPanel
+				fields={[
+					'backgroundColor',
+					'primaryColor',
+					'textColor',
+					'buttonTextColor'
+				]}
+				isSynced={ attributes.isSynced }
+				setAttributes={ setAttributes }
+			/>
+
 			<PanelBody
 				title={ __( 'Product Details', 'otter-blocks' ) }
 			>
@@ -419,43 +437,67 @@ const Inspector = ({
 						</Fragment>
 					)
 				}
-
 			</PanelBody>
 
-			<PanelColorSettings
+			<PanelBody
 				title={ __( 'Color', 'otter-blocks' ) }
 				initialOpen={ false }
-				colorSettings={ [
-					{
-						value: attributes.primaryColor,
-						onChange: value => setAttributes({ primaryColor: value }),
-						label: __( 'Primary', 'otter-blocks' )
-					},
-					{
-						value: attributes.backgroundColor,
-						onChange: value => setAttributes({ backgroundColor: value }),
-						label: __( 'Background', 'otter-blocks' )
-					},
-					{
-						value: attributes.textColor,
-						onChange: value => setAttributes({ textColor: value }),
-						label: __( 'Text', 'otter-blocks' )
-					},
-					{
-						value: attributes.buttonTextColor,
-						onChange: value => setAttributes({ buttonTextColor: value }),
-						label: __( 'Button Text', 'otter-blocks' )
-					}
-				] }
 			>
+				<SyncControl
+					field="primaryColor"
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<ColorGradientControl
+						label={ __( 'Primary', 'otter-blocks' ) }
+						colorValue={ getValue( 'primaryColor' ) }
+						onColorChange={ e => setAttributes({ primaryColor: e }) }
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field="backgroundColor"
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<ColorGradientControl
+						label={ __( 'Background', 'otter-blocks' ) }
+						colorValue={ getValue( 'backgroundColor' ) }
+						onColorChange={ e => setAttributes({ backgroundColor: e }) }
+					/>
+				</SyncControl>
 
 				<ContrastChecker
 					{ ...{
-						textColor: attributes.primaryColor,
-						backgroundColor: attributes.backgroundColor
+						textColor: getValue( 'primaryColor' ),
+						backgroundColor: getValue( 'backgroundColor' )
 					} }
 				/>
-			</PanelColorSettings>
+
+				<SyncControl
+					field="textColor"
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<ColorGradientControl
+						label={ __( 'Text', 'otter-blocks' ) }
+						colorValue={ getValue( 'textColor' ) }
+						onColorChange={ e => setAttributes({ textColor: e }) }
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field="buttonTextColor"
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<ColorGradientControl
+						label={ __( 'Button Text', 'otter-blocks' ) }
+						colorValue={ getValue( 'buttonTextColor' ) }
+						onColorChange={ e => setAttributes({ buttonTextColor: e }) }
+					/>
+				</SyncControl>
+			</PanelBody>
 
 			{ ( Boolean( window.themeisleGutenberg.hasNeveSupport.hasNeve ) && ! Boolean( window.themeisleGutenberg.hasNeveSupport.hasNevePro ) ) && (
 				<PanelBody
