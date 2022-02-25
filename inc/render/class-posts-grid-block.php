@@ -136,22 +136,22 @@ class Posts_Grid_Block {
 							$list_items_markup .= sprintf(
 								'%1$s %2$s',
 								__( 'by', 'otter-blocks' ),
-								get_the_author_meta( 'display_name', get_post_field( 'post_author', $id ) )
+								esc_html( get_the_author_meta( 'display_name', get_post_field( 'post_author', $id ) ) )
 							);
 						}
 
 						if ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] && isset( $post['comment_count'] ) ) {
 							$list_items_markup .= sprintf(
 								' - %1$s %2$s',
-								$post['comment_count'],
-								'1' === $post['comment_count'] ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
+								esc_html($post['comment_count']),
+								esc_html('1' === $post['comment_count'] ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' ))
 							);
 						}
 
 						if ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] && isset( $category[0] ) ) {
 							$list_items_markup .= sprintf(
 								' - %1$s',
-								$category[0]->cat_name
+								esc_html($category[0]->cat_name)
 							);
 						}
 
@@ -166,7 +166,7 @@ class Posts_Grid_Block {
 						if ( ( isset( $attributes['excerptLength'] ) && $attributes['excerptLength'] > 0 ) && ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) ) {
 							$list_items_markup .= sprintf(
 								'<p>%1$s</p>',
-								$this->get_excerpt_by_id( $id, $attributes['excerptLength'] )
+								esc_html( $this->get_excerpt_by_id( $id, $attributes['excerptLength'] ) )
 							);
 						}
 
@@ -278,7 +278,7 @@ class Posts_Grid_Block {
 	 * @return string
 	 */
 	public function get_excerpt_by_id( $post_id, $excerpt_length = 200 ) {
-		$excerpt = get_the_excerpt( $post_id );
+		$excerpt = wp_strip_all_tags( get_the_excerpt( $post_id ) );
 
 		if ( mb_strlen( $excerpt ) > $excerpt_length ) {
 			$excerpt = mb_substr( $excerpt, 0, $excerpt_length ) . '…';
