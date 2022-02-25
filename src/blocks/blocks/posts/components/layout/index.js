@@ -11,18 +11,17 @@ import {
 	sprintf
 } from '@wordpress/i18n';
 
-/**
- * Internal dependencies
- */
-
-import Thumbnail from './thumbnail.js';
-import { unescapeHTML, formatDate } from '../../../../helpers/helper-functions.js';
 import {
 	Fragment,
 	useContext
 } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import Thumbnail from './thumbnail.js';
+import { unescapeHTML, formatDate } from '../../../../helpers/helper-functions.js';
 import { CustomMetasContext } from '../../edit.js';
-import { useMeta } from '../../../../helpers/block-utility.js';
 
 const Layout = ({
 	attributes,
@@ -30,8 +29,7 @@ const Layout = ({
 	categoriesList,
 	authors
 }) => {
-
-	const getTemplateType = ( template ) => {
+	const getTemplateType = template => {
 		if ( template?.startsWith( 'custom_' ) ) {
 			return 'custom';
 		}
@@ -46,82 +44,81 @@ const Layout = ({
 					classnames(
 						'is-grid',
 						`o-posts-grid-columns-${ attributes.columns }`,
-						{ 'has-shadow': attributes.imageBoxShadow },
-						{'o-crop-img': attributes.cropImage }
+						{
+							'has-shadow': attributes.imageBoxShadow,
+							'o-crop-img': attributes.cropImage
+						}
 					) :
 					classnames(
 						'is-list',
-						{ 'has-shadow': attributes.imageBoxShadow },
-						{'o-crop-img': attributes.cropImage }
+						{
+							'has-shadow': attributes.imageBoxShadow,
+							'o-crop-img': attributes.cropImage
+						}
 					)
 			}
 		>
-			{
-				posts.filter( post => post && ( post?.id?.toString()  !== attributes.featuredPost ) ).map( post => {
-					const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
-					const author = authors && post.author ? authors.find( item => item.id === post.author ) : undefined;
-					return (
-						<div
-							key={ post.link }
-							className="o-posts-grid-post-blog o-posts-grid-post-plain"
-						>
-							<div className={classnames( 'o-posts-grid-post' )}>
-								{ ( 0 !== post.featured_media && attributes.displayFeaturedImage ) && (
-									<Thumbnail
-										id={ post.featured_media }
-										link={ post.link }
-										alt={ post.title?.rendered }
-										size={ attributes.imageSize }
-										imgStyle={{
-											borderRadius: attributes.borderRadius !== undefined ? attributes.borderRadius + 'px' : undefined
-										}}
-									/>
-								) }
+			{ posts.filter( post => post && ( post?.id?.toString()  !== attributes.featuredPost ) ).map( post => {
+				const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
+				const author = authors && post.author ? authors.find( item => item.id === post.author ) : undefined;
+				return (
+					<div
+						key={ post.link }
+						className="o-posts-grid-post-blog o-posts-grid-post-plain"
+					>
+						<div className={classnames( 'o-posts-grid-post' )}>
+							{ ( 0 !== post.featured_media && attributes.displayFeaturedImage ) && (
+								<Thumbnail
+									id={ post.featured_media }
+									link={ post.link }
+									alt={ post.title?.rendered }
+									size={ attributes.imageSize }
+									imgStyle={{
+										borderRadius: attributes.borderRadius !== undefined ? attributes.borderRadius + 'px' : undefined
+									}}
+								/>
+							) }
 
-								<div
-									className={ classnames(
-										'o-posts-grid-post-body',
-										{ 'is-full': ! attributes.displayFeaturedImage }
-									) }
-								>
-									{
-										attributes.template.map( element => {
-											switch ( getTemplateType( element ) ) {
-											case 'category':
-												return <PostsCategory attributes={attributes} element={element} category={category} categoriesList={categoriesList}/>;
-											case 'title':
-												return <PostsTitle attributes={attributes} element={element} post={post} />;
-											case 'meta':
-												return <PostsMeta attributes={attributes} element={element} post={post} author={author} category={category} />;
-											case 'description':
-												return <PostsDescription attributes={attributes} element={element} post={post} />;
-											case 'custom':
-												const customFieldData = attributes.customMetas?.filter( ({ id }) => id === element )?.pop();
-												return <PostsCustomMeta customFieldData={customFieldData} />;
-											default:
-												return '';
-											}
-										})
+							<div
+								className={ classnames(
+									'o-posts-grid-post-body',
+									{ 'is-full': ! attributes.displayFeaturedImage }
+								) }
+							>
+								{ attributes.template.map( element => {
+									switch ( getTemplateType( element ) ) {
+									case 'category':
+										return <PostsCategory attributes={attributes} element={element} category={category} categoriesList={categoriesList}/>;
+									case 'title':
+										return <PostsTitle attributes={attributes} element={element} post={post} />;
+									case 'meta':
+										return <PostsMeta attributes={attributes} element={element} post={post} author={author} category={category} />;
+									case 'description':
+										return <PostsDescription attributes={attributes} element={element} post={post} />;
+									case 'custom':
+										const customFieldData = attributes.customMetas?.filter( ({ id }) => id === element )?.pop();
+										return <PostsCustomMeta customFieldData={customFieldData} />;
+									default:
+										return '';
 									}
-								</div>
+								}) }
 							</div>
 						</div>
-					);
-
-				})
-			}
+					</div>
+				);
+			}) }
 		</div>
 	);
 };
 
-export const PostsCategory = ({attributes, element, category, categoriesList}) => {
+export const PostsCategory = ({ attributes, element, category, categoriesList }) => {
 	if ( undefined !== category && ( attributes.displayCategory && categoriesList ) ) {
 		return <span key={ element } className="o-posts-grid-post-category">{ category.name }</span>;
 	}
 	return '';
 };
 
-export const PostsTitle = ({attributes,  element, post }) => {
+export const PostsTitle = ({ attributes, element, post }) => {
 	const Tag = attributes.titleTag || 'h5';
 	if ( attributes.displayTitle ) {
 		return (
@@ -135,7 +132,7 @@ export const PostsTitle = ({attributes,  element, post }) => {
 	return '';
 };
 
-export const PostsMeta = ({attributes,  element, post, author, category }) => {
+export const PostsMeta = ({ attributes, element, post, author, category }) => {
 	if ( attributes.displayMeta && ( attributes.displayDate || attributes.displayAuthor ) ) {
 		return (
 			<p key={ element } className="o-posts-grid-post-meta">
@@ -178,13 +175,11 @@ export const PostsDescription = ({attributes,  element, post }) => {
 				<p>
 					{ post.excerpt?.rendered && unescapeHTML( post.excerpt.rendered ).substring( 0, attributes.excerptLength ) + '…' }
 				</p>
-				{
-					attributes.displayReadMoreLink && (
-						<a href={ post.link } className="o-posts-read-more">
-							Read more
-						</a>
-					)
-				}
+				{ attributes.displayReadMoreLink && (
+					<a href={ post.link } className="o-posts-read-more">
+						{ __( 'Read more', 'otter-blocks' ) }
+					</a>
+				) }
 			</div>
 		);
 	}
@@ -192,19 +187,16 @@ export const PostsDescription = ({attributes,  element, post }) => {
 };
 
 export const PostsCustomMeta = ({ customFieldData }) => {
-
 	if ( ! customFieldData || ( ! customFieldData.display ) ) {
 		return <Fragment></Fragment>;
 	}
 
 	const { acfFieldDict } = useContext( CustomMetasContext );
-	const meta = acfFieldDict[customFieldData.field];
+	const meta = acfFieldDict[ customFieldData.field ];
 
 	return (
 		<div className="o-posts-custom-field">
-			{
-				( meta?.prepend || '' ) + ( meta?.value ? meta.value : ( meta?.default_value || '' ) ) + ( meta?.append || '' )
-			}
+			{ ( meta?.prepend || '' ) + ( meta?.value ? meta.value : ( meta?.default_value || '' ) ) + ( meta?.append || '' ) }
 		</div>
 	);
 };

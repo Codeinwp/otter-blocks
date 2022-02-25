@@ -7,19 +7,19 @@ import classnames from 'classnames';
 
 import { v4 as uuidv4 } from 'uuid';
 
-import { intersection, remove } from 'lodash';
-
 /**
  * WordPress dependencies
  */
-import { Fragment } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+
+import { intersection } from 'lodash';
+
 import {
 	Button,
 	ExternalLink
 } from '@wordpress/components';
-import {
-	__
-} from '@wordpress/i18n';
+
+import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -36,7 +36,6 @@ const LayoutBuilder = ({
 	};
 
 	const filterDeadCustomTemplates = () => {
-
 		const validCustomTemplates = intersection(
 			attributes.template,
 			attributes?.customMetas?.map( ({ id }) => id )
@@ -44,7 +43,7 @@ const LayoutBuilder = ({
 
 		return {
 			template: attributes?.template.filter( t => ! t.startsWith( 'custom_' ) || ( validCustomTemplates.includes( t ) ) ),
-			customMetas: attributes.customMetas?.filter ( ({ id }) => validCustomTemplates.includes( id ) )
+			customMetas: attributes.customMetas?.filter( ({ id }) => validCustomTemplates.includes( id ) )
 		};
 	};
 
@@ -72,51 +71,46 @@ const LayoutBuilder = ({
 					lockAxis="y"
 				/>
 
-				{
-					window?.acf === undefined ? (
-						<ExternalLink
-							href="https://wordpress.org/plugins/advanced-custom-fields/"
-							target="_blank"
-						>
-							{__( 'Activate Advance Custom Fields to add more fields.', 'otter-blocks' )}
-						</ExternalLink>
-					) : (
-						<Button
-							variant="secondary"
-							isSecondary
-							className="otter-conditions__add"
-							disabled={ window?.acf === undefined }
-							onClick={ () => {
+				{ window?.acf === undefined ? (
+					<ExternalLink
+						href="https://wordpress.org/plugins/advanced-custom-fields/"
+						target="_blank"
+					>
+						{__( 'Activate Advance Custom Fields to add more fields.', 'otter-blocks' )}
+					</ExternalLink>
+				) : (
+					<Button
+						variant="secondary"
+						isSecondary
+						className="otter-conditions__add"
+						disabled={ window?.acf === undefined }
+						onClick={ () => {
+							let id = uuidv4().slice( 0, 8 );
+							while ( 0 < attributes?.customMetas?.some( ({ otherId }) => otherId === id )  ) {
+								id = uuidv4().slice( 0, 8 );
+							}
+							id = `custom_${ id }`;
 
-								let id = uuidv4().slice( 0, 8 );
-								while ( 0 < attributes?.customMetas?.some( ({ otherId }) => otherId === id )  ) {
-									id = uuidv4().slice( 0, 8 );
-								}
-								id = `custom_${id}`;
+							const newMeta = {
+								id,
+								field: '',
+								display: true
+							};
 
-								const newMeta = {
-									id,
-									field: '',
-									display: true
-								};
+							const {
+								template,
+								customMetas
+							} = filterDeadCustomTemplates();
 
-								const {
-									template,
-									customMetas
-								} = filterDeadCustomTemplates();
-
-								setAttributes({
-									template: [ ...template, id ],
-									customMetas: customMetas ? [ ...customMetas, newMeta ] : [ newMeta ]
-								});
-							}}
-						>
-							{ __( 'Add Meta Field', 'otter-blocks' ) }
-						</Button>
-
-					)
-				}
-
+							setAttributes({
+								template: [ ...template, id ],
+								customMetas: customMetas ? [ ...customMetas, newMeta ] : [ newMeta ]
+							});
+						}}
+					>
+						{ __( 'Add Meta Field', 'otter-blocks' ) }
+					</Button>
+				) }
 			</div>
 		</Fragment>
 	);

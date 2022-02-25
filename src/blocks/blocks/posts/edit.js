@@ -1,14 +1,24 @@
 /** @jsx jsx */
 /**
+ * External dependencies
+ */
+import {
+	css,
+	jsx
+} from '@emotion/react';
+
+/**
  * WordPress dependencies
  */
+import { __ } from '@wordpress/i18n';
+
 import {
 	isUndefined,
 	pickBy,
 	pick
 } from 'lodash';
 
-import { __ } from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
 
 import {
 	Disabled,
@@ -29,13 +39,6 @@ import {
 	useState,
 	createContext
 } from '@wordpress/element';
-
-import apiFetch from '@wordpress/api-fetch';
-
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * Internal dependencies
@@ -69,7 +72,6 @@ const Edit = ({
 	setAttributes,
 	clientId
 }) => {
-
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
@@ -80,7 +82,6 @@ const Edit = ({
 
 	const [ acfData, setAcfData ] = useState([]);
 	const [ acfFieldDict, setAcfFieldDict ] = useState({});
-
 
 	const {
 		posts,
@@ -148,7 +149,7 @@ const Edit = ({
 	}, [ posts, attributes.enableFeaturedPost, attributes.featuredPost ]);
 
 	useEffect( () => {
-		const path = themeisleGutenberg.postId ? `otter/v1/acf-fields?post=${themeisleGutenberg.postId}` : 'otter/v1/acf-fields';
+		const path = window.themeisleGutenberg.postId ? `otter/v1/acf-fields?post=${ window.themeisleGutenberg.postId }` : 'otter/v1/acf-fields';
 		apiFetch({ path }).then( resp => {
 			if ( resp?.success ) {
 				setAcfData( resp?.groups );
@@ -156,43 +157,42 @@ const Edit = ({
 					resp?.groups
 						?.map( ({ fields, data }) => {
 							return fields.map( field => {
-								field.urlLocation = `${themeisleGutenberg?.rootUrl || ''}/wp-admin/post.php?post=${data.ID}&action=edit`;
+								field.urlLocation = `${ window.themeisleGutenberg?.rootUrl || '' }/wp-admin/post.php?post=${ data.ID }&action=edit`;
 								return field;
 							});
 						})
 						.flat()
 						.reduce( ( acc, field ) => {
 							if ( field.key && field.label ) {
-								acc[field.key] = pick( field, [ 'label', 'type', 'prepend', 'append', 'default_value', 'value', 'urlLocation' ]);
+								acc[ field.key ] = pick( field, [ 'label', 'type', 'prepend', 'append', 'default_value', 'value', 'urlLocation' ]);
 							}
 							return acc;
 						}, {})
 				);
 
 			}
-
 		});
 	}, []);
 
 	const fontSizeStyle = css`
-		${ attributes.imageWidth && `--img-width: ${ attributes.imageWidth }px;` }
-		${ attributes.imageWidth && `--img-br-radius: ${ attributes.borderRadius }px;` }
-		--vert-align: ${_align( attributes.verticalAlign )};
-		--text-align: ${ attributes.textAlign };
+		${ attributes.imageWidth && `--imgWidth: ${ attributes.imageWidth }px;` }
+		${ attributes.imageWidth && `--imgBorderRadius: ${ attributes.borderRadius }px;` }
+		--vertAlign: ${_align( attributes.verticalAlign )};
+		--textAlign: ${ attributes.textAlign };
 
 		@media ( min-width: 960px ) {
-			${ attributes.customTitleFontSize && `--title-text-size: ${ attributes.customTitleFontSize }px;` }
-			${ attributes.customDescriptionFontSize && `--description-text-size: ${ attributes.customDescriptionFontSize }px;` }
+			${ attributes.customTitleFontSize && `--titleTextSize: ${ attributes.customTitleFontSize }px;` }
+			${ attributes.customDescriptionFontSize && `--descriptionTextSize: ${ attributes.customDescriptionFontSize }px;` }
 		}
 
 		@media ( min-width: 600px ) and ( max-width: 960px ) {
-			${ attributes.customTitleFontSizeTablet && `--title-text-size: ${ attributes.customTitleFontSizeTablet }px;` }
-			${ attributes.customDescriptionFontSizeTablet && `--description-text-size: ${ attributes.customDescriptionFontSizeTablet }px;` }
+			${ attributes.customTitleFontSizeTablet && `--titleTextSize: ${ attributes.customTitleFontSizeTablet }px;` }
+			${ attributes.customDescriptionFontSizeTablet && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeTablet }px;` }
 		}
 
 		@media ( max-width: 600px ) {
-			${ attributes.customTitleFontSizeMobile && `--title-text-size: ${ attributes.customTitleFontSizeMobile }px;` }
-			${ attributes.customDescriptionFontSizeMobile && `--description-text-size: ${ attributes.customDescriptionFontSizeMobile }px;` }
+			${ attributes.customTitleFontSizeMobile && `--titleTextSize: ${ attributes.customTitleFontSizeMobile }px;` }
+			${ attributes.customDescriptionFontSizeMobile && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeMobile }px;` }
 		}
 	`;
 
@@ -243,7 +243,7 @@ const Edit = ({
 
 	return (
 		<Fragment>
-			<CustomMetasContext.Provider value={{acfData, acfFieldDict, ALLOWED_ACF_TYPES}}>
+			<CustomMetasContext.Provider value={{ acfData, acfFieldDict, ALLOWED_ACF_TYPES }}>
 				<StyleSwitcherBlockControl
 					label={ __( 'Block Styles', 'otter-blocks' ) }
 					value={ attributes.style }
@@ -275,19 +275,16 @@ const Edit = ({
 					setAttributes={ setAttributes }
 				/>
 
-				<div { ...blockProps } css={fontSizeStyle}>
+				<div { ...blockProps } css={ fontSizeStyle }>
 					<Disabled>
-
-						{
-							attributes.enableFeaturedPost && (
-								<FeaturedPost
-									attributes={ attributes }
-									post={ featured }
-									category={ categoriesList[0] }
-									author={ authors[0] }
-								/>
-							)
-						}
+						{ attributes.enableFeaturedPost && (
+							<FeaturedPost
+								attributes={ attributes }
+								post={ featured }
+								category={ categoriesList[0] }
+								author={ authors[0] }
+							/>
+						) }
 						<Layout
 							attributes={ attributes }
 							posts={ posts }

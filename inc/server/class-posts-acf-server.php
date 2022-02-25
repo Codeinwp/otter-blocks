@@ -59,7 +59,7 @@ class Posts_ACF_Server {
 						'post' => array(
 							'type'        => 'int',
 							'required'    => false,
-							'description' => __( 'Search query.', 'otter-blocks' ),
+							'description' => __( 'Post ID', 'otter-blocks' ),
 						),
 					),
 					'permission_callback' => function () {
@@ -73,8 +73,10 @@ class Posts_ACF_Server {
 	/**
 	 * Get the ACF data about custom meta fields.
 	 *
-	 * @return mixed|\WP_REST_Response
+	 *
+	 * @param mixed $request Rest request.
 	 * @since 1.7.6
+	 * @return mixed|\WP_REST_Response
 	 */
 	public function get_acf_fields( $request ) {
 		$return = array(
@@ -95,9 +97,10 @@ class Posts_ACF_Server {
 				'data'   => $group,
 				'fields' => array(),
 			);
-			$fields     = acf_get_fields( $group );
-			foreach ( $fields as $field ) {
 
+			$fields     = acf_get_fields( $group );
+
+			foreach ( $fields as $field ) {
 				array_push( $group_data['fields'], $field );
 			}
 			array_push( $return['groups'], $group_data );

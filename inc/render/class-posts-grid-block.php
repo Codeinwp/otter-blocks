@@ -73,9 +73,9 @@ class Posts_Grid_Block {
 		$list_items_markup = '';
 
 		foreach ( $recent_posts as $post ) {
-			$id        = $post['ID'];
+			$id = $post['ID'];
 
-			if( isset( $attributes['featuredPost'] ) && $attributes['featuredPost'] == $id ) {
+			if ( isset( $attributes['featuredPost'] ) && $attributes['featuredPost'] == $id ) {
 				continue;
 			}
 
@@ -143,15 +143,15 @@ class Posts_Grid_Block {
 						if ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] && isset( $post['comment_count'] ) ) {
 							$list_items_markup .= sprintf(
 								' - %1$s %2$s',
-								esc_html($post['comment_count']),
-								esc_html('1' === $post['comment_count'] ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' ))
+								esc_html( $post['comment_count'] ),
+								esc_html( '1' === $post['comment_count'] ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' ) )
 							);
 						}
 
 						if ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] && isset( $category[0] ) ) {
 							$list_items_markup .= sprintf(
 								' - %1$s',
-								esc_html($category[0]->cat_name)
+								esc_html( $category[0]->cat_name )
 							);
 						}
 

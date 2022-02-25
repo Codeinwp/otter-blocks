@@ -13,15 +13,15 @@ import {
  * WordPress dependencies
  */
 import {
+	__,
+	sprintf
+} from '@wordpress/i18n';
+
+import {
 	startCase,
 	toLower,
 	isEmpty
 } from 'lodash';
-
-import {
-	__,
-	sprintf
-} from '@wordpress/i18n';
 
 import {
 	Button,
@@ -33,14 +33,17 @@ import {
 	ExternalLink
 } from '@wordpress/components';
 
+import { useSelect } from '@wordpress/data';
+
 import {
 	Fragment,
 	useState,
 	useContext
 } from '@wordpress/element';
 
-import { useSelect } from '@wordpress/data';
-
+/**
+ * Internal dependencies
+ */
 import ResponsiveControl from '../../../components/responsive-control';
 import { CustomMetasContext } from '../edit';
 
@@ -157,8 +160,8 @@ export const SortableItem = ({
 
 	const { acfData, acfFieldDict, ALLOWED_ACF_TYPES } = useContext( CustomMetasContext );
 
-	const label = ! isCustomMeta ? startCase( toLower( template ) ) :  startCase( toLower( acfFieldDict[customMeta.field]?.label || 'Custom Type' ) );
-	const canEdit = templateLookUp[template] || customMeta?.display;
+	const label = ! isCustomMeta ? startCase( toLower( template ) ) :  startCase( toLower( acfFieldDict[ customMeta.field ]?.label || 'Custom Type' ) );
+	const canEdit = templateLookUp[ template ] || customMeta?.display;
 	const icon = canEdit ? 'visibility' : 'hidden';
 
 	/* translators: %s Label */
@@ -358,113 +361,91 @@ export const SortableItem = ({
 
 					{ isCustomMeta && customMeta && (
 						<Fragment>
-							{
-								! isEmpty( acfData ) && (
-									<BaseControl
-										label={ __( 'Fields', 'otter-blocks' ) }
+							{ ! isEmpty( acfData ) && (
+								<BaseControl
+									label={ __( 'Fields', 'otter-blocks' ) }
+								>
+									<select
+										value={ acfFieldDict[ customMeta.field ] ? customMeta.field : 'none' }
+										onChange={ event => setAttributesCustomMeta({ field: event.target.value  }) }
+										className="components-select-control__input"
 									>
-										<select
-											value={  acfFieldDict[customMeta.field] ? customMeta.field : 'none' }
-											onChange={ event => {
-												setAttributesCustomMeta({ field: event.target.value  });
-											} }
-											className="components-select-control__input"
-										>
-											<option value="none">{ __( 'Select a field', 'otter-blocks' ) }</option>
+										<option value="none">{ __( 'Select a field', 'otter-blocks' ) }</option>
 
-											{
-												acfData.map( group => {
-													return (
-														<optgroup
-															label={ group?.data?.title }
-														>
-															{
-																group?.fields
-																	?.filter( ({ key, label, type }) => key && label &&  ALLOWED_ACF_TYPES.includes( type ) )
-																	.map( ({ key, label }) => (
-																		<option value={key}>
-																			{ label }
-																		</option>
-																	) )
-															}
-														</optgroup>
-													);
-												})
-											}
-										</select>
-									</BaseControl>
+										{ acfData.map( group => {
+											return (
+												<optgroup
+													label={ group?.data?.title }
+												>
+													{ group?.fields
+														?.filter( ({ key, label, type }) => key && label &&  ALLOWED_ACF_TYPES.includes( type ) )
+														.map( ({ key, label }) => (
+															<option value={ key }>
+																{ label }
+															</option>
+														) ) }
+												</optgroup>
+											);
+										}) }
+									</select>
+								</BaseControl>
+							) }
 
-								)
-							}
+							{ ( ! isEmpty( acfFieldDict ) ) && acfFieldDict[ customMeta.field ] && (
+								<Fragment>
+									{ ( acfFieldDict[ customMeta.field ][ 'default_value' ]) && (
+										<TextControl
+											label={ __( 'Default Value', 'otter-blocks' ) }
+											value={ acfFieldDict[ customMeta.field ][ 'default_value' ]  }
+											disabled
+										/>
+									) }
 
-							{
-								( ! isEmpty( acfFieldDict ) ) && acfFieldDict[customMeta.field] && (
-									<Fragment>
-										{
-											( acfFieldDict[customMeta.field]['default_value']) && (
-												<TextControl
-													label={ __( 'Default Value', 'otter-blocks' ) }
-													value={ acfFieldDict[customMeta.field]['default_value']  }
-													disabled
-												/>
-											)
-										}
+									{ ( acfFieldDict[ customMeta.field ].prepend ) && (
+										<TextControl
+											label={ __( 'Before', 'otter-blocks' ) }
+											value={  acfFieldDict[ customMeta.field ].prepend }
+											disabled
+										/>
+									) }
 
-										{
-											( acfFieldDict[customMeta.field].prepend ) && (
-												<TextControl
-													label={ __( 'Before', 'otter-blocks' ) }
-													value={  acfFieldDict[customMeta.field].prepend }
-													disabled
-												/>
-											)
-										}
+									{ ( acfFieldDict[ customMeta.field ].append  ) && (
+										<TextControl
+											label={ __( 'After', 'otter-blocks' ) }
+											value={ acfFieldDict[ customMeta.field ].append }
+											disabled
+										/>
+									) }
 
-										{
-											( acfFieldDict[customMeta.field].append  ) && (
-												<TextControl
-													label={ __( 'After', 'otter-blocks' ) }
-													value={ acfFieldDict[customMeta.field].append }
-													disabled
-												/>
-											)
-										}
+								</Fragment>
+							) }
 
-									</Fragment>
-								)
-							}
-
-							{
-								acfFieldDict[customMeta.field]?.urlLocation && (
-									<Fragment>
-										<ExternalLink
-											href={acfFieldDict[customMeta.field]?.urlLocation}
-											target='_blank'
-										>
-											{__( 'Edit value in Dashboard.', 'otter-blocks' )}
-										</ExternalLink>
-										<br/>
-									</Fragment>
-
-								)
-							}
-
-							{
-								isEmpty( acfData ) ? (
+							{ acfFieldDict[ customMeta.field ]?.urlLocation && (
+								<Fragment>
 									<ExternalLink
-										href={`${themeisleGutenberg?.rootUrl || ''}/wp-admin/edit.php?post_type=acf-field-group`}
+										href={ acfFieldDict[ customMeta.field ]?.urlLocation }
 										target='_blank'
 									>
-										{__( 'There are no ACF fields. Please add some fields using the Dashboard.', 'otter-blocks' )}
+										{ __( 'Edit in ACF', 'otter-blocks' ) }
 									</ExternalLink>
-								) : ! acfFieldDict[customMeta.field] &&  (
-									__( 'The selected field does not longer exists. Please select another field.', 'otter-blocks' )
-								)
-							}
+									<br/>
+								</Fragment>
 
+							) }
+
+							{ isEmpty( acfData ) ? (
+								<ExternalLink
+									href={ `${ window.themeisleGutenberg?.rootUrl || '' }/wp-admin/edit.php?post_type=acf-field-group` }
+									target='_blank'
+								>
+									{ __( 'There are no ACF fields. You can use this option after you add some.', 'otter-blocks' ) }
+								</ExternalLink>
+							) : ! acfFieldDict[ customMeta.field ] &&  (
+								__( 'The selected field does not longer exists. Please select another field.', 'otter-blocks' )
+							) }
 
 							<Button
-								onClick={deleteCustomField}
+								onClick={ deleteCustomField }
 								variant="secondary"
 								isSecondary
 								isDestructive
@@ -472,8 +453,6 @@ export const SortableItem = ({
 							>
 								{ __( 'Delete', 'otter-blocks' ) }
 							</Button>
-
-
 						</Fragment>
 					) }
 				</div>
