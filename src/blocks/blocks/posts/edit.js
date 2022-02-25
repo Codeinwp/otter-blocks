@@ -175,6 +175,7 @@ const Edit = ({
 
 	const fontSizeStyle = css`
 		${ attributes.imageWidth && `--img-width: ${ attributes.imageWidth }px;` }
+		${ attributes.imageWidth && `--img-br-radius: ${ attributes.borderRadius }px;` }
 		--vert-align: ${_align( attributes.verticalAlign )};
 		--text-align: ${_align( attributes.textAlign )};
 

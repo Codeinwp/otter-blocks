@@ -59,6 +59,11 @@ class Posts_CSS extends Base_CSS {
 						'value'    => 'imageWidth',
 						'unit'     => 'px',
 					),
+					array(
+						'property' => '--img-br-radius',
+						'value'    => 'borderRadius',
+						'unit'     => 'px',
+					),
 				),
 			)
 		);
