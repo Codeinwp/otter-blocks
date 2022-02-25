@@ -97,6 +97,9 @@
 
 	.o-posts-grid-post-image {
 		position: relative;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 
 		img {
 			max-width: 100%;
@@ -165,7 +168,9 @@
 		width: 100%;
 		padding: 20px;
 
-		.o-posts-grid-post-image {
+		.o-posts-grid-post-image a {
+			width: 100%;
+
 			img {
 				width: 100%;
 				height: 250px;

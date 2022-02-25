@@ -74,6 +74,11 @@ class Posts_Grid_Block {
 
 		foreach ( $recent_posts as $post ) {
 			$id        = $post['ID'];
+
+			if( isset( $attributes['featuredPost'] ) && $attributes['featuredPost'] == $id ) {
+				continue;
+			}
+
 			$size      = isset( $attributes['imageSize'] ) ? $attributes['imageSize'] : 'medium';
 			$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $id ), $size );
 			$category  = get_the_category( $id );
