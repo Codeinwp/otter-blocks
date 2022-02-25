@@ -57,7 +57,8 @@ const Layout = ({
 			}
 		>
 			{
-				posts.filter( post => post ).map( post => {
+				posts.filter( post => post && ( post?.id?.toString()  !== attributes.featuredPost ) ).map( post => {
+					console.log( post, attributes.featuredPost, post?.id  !== attributes.featuredPost );
 					const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
 					const author = authors && post.author ? authors.find( item => item.id === post.author ) : undefined;
 					return (
