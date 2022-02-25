@@ -73,7 +73,6 @@ class Posts_ACF_Server {
 	/**
 	 * Get the ACF data about custom meta fields.
 	 *
-	 *
 	 * @param mixed $request Rest request.
 	 * @since 1.7.6
 	 * @return mixed|\WP_REST_Response
@@ -98,7 +97,7 @@ class Posts_ACF_Server {
 				'fields' => array(),
 			);
 
-			$fields     = acf_get_fields( $group );
+			$fields = acf_get_fields( $group );
 
 			foreach ( $fields as $field ) {
 				array_push( $group_data['fields'], $field );
