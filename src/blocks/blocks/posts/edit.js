@@ -140,7 +140,7 @@ const Edit = ({
 						.pop()
 				);
 			} else if ( attributes.featuredPost ) {
-				setFeatured( posts?.find( post => post.id.toString() == attributes.featuredPost ) );
+				setFeatured( posts?.find( post => post?.id?.toString() == attributes.featuredPost ) );
 			} else {
 				setFeatured( '' );
 			}
@@ -176,6 +176,7 @@ const Edit = ({
 	const fontSizeStyle = css`
 		${ attributes.imageWidth && `--img-width: ${ attributes.imageWidth }px;` }
 		--vert-align: ${_align( attributes.verticalAlign )};
+		--text-align: ${_align( attributes.textAlign )};
 
 		@media ( min-width: 960px ) {
 			${ attributes.customTitleFontSize && `--title-text-size: ${ attributes.customTitleFontSize }px;` }

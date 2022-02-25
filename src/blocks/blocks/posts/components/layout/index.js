@@ -83,10 +83,6 @@ const Layout = ({
 										'o-posts-grid-post-body',
 										{ 'is-full': ! attributes.displayFeaturedImage }
 									) }
-									style={{
-										textAlign: attributes.textAlign,
-										justifyContent: attributes.verticalAlign
-									}}
 								>
 									{
 										attributes.template.map( element => {
