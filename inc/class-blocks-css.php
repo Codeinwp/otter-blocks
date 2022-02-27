@@ -69,22 +69,6 @@ class Blocks_CSS {
 	}
 
 	/**
-	 * Parse Blocks for Gutenberg and WordPress 5.0
-	 *
-	 * @param string $content Content to parse.
-	 * 
-	 * @since   1.0.0
-	 * @access  public
-	 */
-	public function parse_blocks( $content ) {
-		if ( ! function_exists( 'parse_blocks' ) ) {
-			return gutenberg_parse_blocks( $content );
-		} else {
-			return parse_blocks( $content );
-		}
-	}
-
-	/**
 	 * Render server-side CSS
 	 * 
 	 * @since   1.0.0
@@ -98,7 +82,7 @@ class Blocks_CSS {
 				return;
 			}
 
-			$blocks = $this->parse_blocks( $post->post_content );
+			$blocks = parse_blocks( $post->post_content );
 
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 				return;
@@ -150,7 +134,7 @@ class Blocks_CSS {
 					return;
 				}
 
-				$blocks = $this->parse_blocks( $reusable_block->post_content );
+				$blocks = parse_blocks( $reusable_block->post_content );
 
 				$style .= $this->cycle_through_blocks( $blocks, $reusable_block->ID );
 			}

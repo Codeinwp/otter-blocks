@@ -18,7 +18,6 @@ import { unescapeHTML, formatDate } from '../../../../helpers/helper-functions.j
 import Thumbnail from './thumbnail.js';
 
 const List = ({
-	className,
 	attributes,
 	posts,
 	categoriesList,
@@ -28,7 +27,6 @@ const List = ({
 
 	return (
 		<div className={ classnames(
-			className,
 			'is-list',
 			{ 'has-shadow': attributes.imageBoxShadow }
 		) }>

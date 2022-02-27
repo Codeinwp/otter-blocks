@@ -34,16 +34,16 @@ const BlockItem = ({
 	return (
 		<Fragment>
 			<Button
-				className="wp-block-themeisle-blocks-options-global-defaults-list-item block-editor-block-types-list__item"
+				className="o-options-global-defaults-list-item block-editor-block-types-list__item"
 				onClick={ () => setOpen( true ) }
 			>
-				<div className="wp-block-themeisle-blocks-options-global-defaults-list-item-icon">
+				<div className="o-options-global-defaults-list-item-icon">
 					<Icon
 						icon={ block.icon.src }
 					/>
 				</div>
 
-				<div className="wp-block-themeisle-blocks-options-global-defaults-list-item-title">
+				<div className="o-options-global-defaults-list-item-title">
 					{ block.title }
 				</div>
 			</Button>
@@ -53,11 +53,11 @@ const BlockItem = ({
 					title={ block.title }
 					onRequestClose={ () => setOpen( false ) }
 					shouldCloseOnClickOutside={ false }
-					overlayClassName="wp-block-themeisle-blocks-options-global-defaults-modal"
+					overlayClassName="o-options-global-defaults-modal"
 				>
 					{ children }
 
-					<div className="wp-block-themeisle-blocks-options-global-defaults-actions">
+					<div className="o-options-global-defaults-actions">
 						<Button
 							isLink
 							isDestructive
@@ -66,7 +66,7 @@ const BlockItem = ({
 							{ __( 'Reset', 'otter-blocks' ) }
 						</Button>
 
-						<div className="wp-block-themeisle-blocks-options-global-defaults-actions-primary">
+						<div className="o-options-global-defaults-actions-primary">
 							<Button
 								isSecondary
 								onClick={ () => setOpen( false ) }

@@ -19,6 +19,8 @@ import { __ } from '@wordpress/i18n';
 
 import apiFetch from '@wordpress/api-fetch';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import {
 	Fragment,
 	useEffect,
@@ -28,16 +30,20 @@ import {
 /**
  * Internal dependencies
  */
-import defaultAttributes from './attributes.js';
+import metadata from './block.json';
 import Placeholder from './placeholder.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import { blockInit } from '../../helpers/block-utility.js';
-import defaultReviewAttributes from '../review/attributes.js';
+import reviewMetadata from '../review/block.json';
 import {
 	StarFilled,
 	StarHalf
 } from '../../helpers/icons.js';
+
+const { attributes: defaultAttributes } = metadata;
+
+const { attributes: defaultReviewAttributes } = reviewMetadata;
 
 let tableImages = [];
 let tableName = [];
@@ -50,7 +56,6 @@ let tableLinks = [];
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId
 }) => {
 	useEffect( () => {
@@ -77,7 +82,7 @@ const Edit = ({
 	const [ isEditing, setEditing ] = useState( true );
 
 	const styles = css`
-		.otter-review-comparison__buttons span {
+		.o-review-comparison_buttons span {
 			background: ${ attributes.buttonColor } !important;
 			color: ${ attributes.buttonText } !important;
 		}
@@ -113,9 +118,9 @@ const Edit = ({
 
 			features.forEach( feature => {
 				featureRatings.push(
-					<div className="otter-review-comparison__rating_container">
-						<div className="otter-review-comparison__rating_title">{ feature.title }</div>
-						<div className="otter-review-comparison__ratings">{ getStars( feature.rating / 2 ) }</div>
+					<div className="o-review-comparison_rating_container">
+						<div className="o-review-comparison_rating_title">{ feature.title }</div>
+						<div className="o-review-comparison_ratings">{ getStars( feature.rating / 2 ) }</div>
 					</div>
 				);
 			});
@@ -131,10 +136,10 @@ const Edit = ({
 			tableImages.push( <td>{ review.attrs.image && <img src={ review.attrs.image.url } /> }</td> );
 			tableName.push( <td>{ review.attrs.title || __( 'Untitled review', 'otter-blocks' ) }</td> );
 			tablePrice.push( <td>{ review.attrs.discounted ? <Fragment><del>{ currency + review.attrs.price }</del> { currency + review.attrs.discounted }</Fragment> : ( review.attrs.price ? ( currency + review.attrs.price ) : '-' ) }</td> );
-			tableRating.push( <td><div className="otter-review-comparison__ratings">{ getStars( overallRatings ) }</div></td> );
+			tableRating.push( <td><div className="o-review-comparison_ratings">{ getStars( overallRatings ) }</div></td> );
 			tableDescription.push( <td dangerouslySetInnerHTML={ { __html: review.attrs.description } }></td> );
 			tableStatistics.push( <td>{ featureRatings }</td> );
-			tableLinks.push( <td><div className="otter-review-comparison__buttons wp-block-button">{ buttonLinks }</div></td> );
+			tableLinks.push( <td><div className="o-review-comparison_buttons wp-block-button">{ buttonLinks }</div></td> );
 		});
 	}, [ attributes.reviews, data ]);
 
@@ -172,17 +177,23 @@ const Edit = ({
 		return stars;
 	};
 
+	const blockProps = useBlockProps({
+		id: attributes.id
+	});
+
 	if ( isEditing ) {
 		return (
-			<Placeholder
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-				data={ data }
-				onComplete={ () => setEditing( false ) }
-				isLoading={ isLoading }
-				isComplete={ isComplete }
-				isError={ isError }
-			/>
+			<div { ...blockProps }>
+				<Placeholder
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+					data={ data }
+					onComplete={ () => setEditing( false ) }
+					isLoading={ isLoading }
+					isComplete={ isComplete }
+					isError={ isError }
+				/>
+			</div>
 		);
 	}
 
@@ -195,10 +206,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<table
-				id={ attributes.id }
-				className={ className }
-			>
+			<table { ...blockProps }>
 				<thead>
 					<tr>
 						<th></th>

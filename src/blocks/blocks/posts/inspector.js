@@ -195,6 +195,7 @@ const Inspector = ({
 
 			<PanelBody
 				title={ __( 'Post Types', 'otter-blocks' ) }
+				initialOpen={ false }
 			>
 				<BaseControl>
 					{ __( 'Select the types of the post. If none is selected, the default WordPress post will be displayed.', 'otter-blocks' ) }

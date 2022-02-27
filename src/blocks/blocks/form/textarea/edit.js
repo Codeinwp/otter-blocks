@@ -3,7 +3,10 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import {
 	Fragment,
@@ -13,20 +16,23 @@ import {
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import { blockInit } from '../../../helpers/block-utility.js';
-import defaultAttributes from './attributes.js';
 import Inspector from './inspector.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId
 }) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
+
+	const blockProps = useBlockProps();
 
 	return (
 		<Fragment>
@@ -35,7 +41,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div className={ className } >
+			<div { ...blockProps }>
 				<label
 					htmlFor={ attributes.id }
 					className="otter-form-textarea-label"

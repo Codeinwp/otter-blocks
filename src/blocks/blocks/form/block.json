@@ -1,0 +1,47 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/form",
+	"title": "Form",
+	"category": "themeisle-blocks",
+	"description": "Display a form for your clients.",
+	"keywords": [ "business", "form", "email" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"subject": {
+			"type": "string"
+		},
+		"emailTo": {
+			"type": "string"
+		},
+		"optionName": {
+			"type": "string"
+		},
+		"hasCaptcha": {
+			"type": "boolean"
+		},
+		"provider": {
+			"type": "string",
+			"default": ""
+		},
+		"apiKey": {
+			"type": "string"
+		},
+		"listId": {
+			"type": "string"
+		},
+		"action": {
+			"type": "string",
+			"default": "subscribe"
+		}
+	},
+	"supports": {
+		"align": [ "wide", "full" ]
+	},
+	"editorStyle": "otter-form-editor",
+	"style": "otter-form-style",
+	"script": "otter-form"
+}

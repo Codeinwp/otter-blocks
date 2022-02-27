@@ -38,6 +38,10 @@ const Inspector = ({
 	};
 
 	const changeIcon = value => {
+		if ( 'image' === attributes.defaultLibrary && value?.url ) {
+			return setAttributes({ defaultIcon: value.url });
+		}
+
 		if ( 'object' === typeof value ) {
 			setAttributes({
 				defaultIcon: value.name,
@@ -77,6 +81,7 @@ const Inspector = ({
 						icon={ attributes.defaultIcon }
 						changeLibrary={ changeLibrary }
 						onChange={ changeIcon }
+						allowImage
 					/>
 				</Suspense>
 

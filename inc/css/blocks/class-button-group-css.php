@@ -42,7 +42,7 @@ class Button_Group_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => 'column-gap',
+						'property' => 'gap',
 						'value'    => 'spacing',
 						'default'  => 20,
 						'unit'     => 'px',

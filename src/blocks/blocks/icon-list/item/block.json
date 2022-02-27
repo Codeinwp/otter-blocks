@@ -1,0 +1,34 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/icon-list-item",
+	"title": "Icon List Item",
+	"category": "themeisle-blocks",
+	"description": "Display an item for the icon list.",
+	"keywords": [ "icon", "list", "items" ],
+	"parent": [ "themeisle-blocks/icon-list" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"content": {
+			"type": "string"
+		},
+		"contentColor": {
+			"type": "string"
+		},
+		"iconColor": {
+			"type": "string"
+		},
+		"library": {
+			"type": "string"
+		},
+		"iconPrefix": {
+			"type": "string"
+		},
+		"icon": {
+			"type": "string"
+		}
+	}
+}

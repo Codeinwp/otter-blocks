@@ -1,12 +1,19 @@
 /**
  * External dependencies
  */
+import classnames from 'classnames';
+
 import hexToRgba from 'hex-rgba';
 
 /**
  * WordPress dependencies
  */
-import { ResizableBox } from '@wordpress/components';
+import { isEmpty } from 'lodash';
+
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import { useViewportMatch } from '@wordpress/compose';
 
@@ -15,39 +22,36 @@ import {
 	useSelect
 } from '@wordpress/data';
 
-import { InnerBlocks } from '@wordpress/block-editor';
-
 import {
 	Fragment,
 	useEffect,
+	useRef,
 	useState
 } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import defaultAttributes from './attributes.js';
+import metadata from './block.json';
 import layouts from '../layouts.js';
 import Inspector from './inspector.js';
 import { blockInit } from '../../../helpers/block-utility.js';
 
+const { attributes: defaultAttributes } = metadata;
+
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	isSelected,
-	clientId,
-	toggleSelection
+	clientId
 }) => {
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
 
 	const {
 		adjacentBlockClientId,
 		adjacentBlock,
-		parentClientId,
 		parentBlock,
 		hasInnerBlocks,
-		isViewportAvailable,
 		isPreviewDesktop,
 		isPreviewTablet,
 		isPreviewMobile
@@ -57,7 +61,7 @@ const Edit = ({
 			getBlock,
 			getBlockRootClientId
 		} = select( 'core/block-editor' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
 		const block = getBlock( clientId );
 		const adjacentBlockClientId = getAdjacentBlockClientId( clientId );
 		const adjacentBlock = getBlock( adjacentBlockClientId );
@@ -68,13 +72,11 @@ const Edit = ({
 		return {
 			adjacentBlockClientId,
 			adjacentBlock,
-			parentClientId,
 			parentBlock,
 			hasInnerBlocks,
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
+			isPreviewDesktop: 'Desktop' === __experimentalGetPreviewDeviceType(),
+			isPreviewTablet: 'Tablet' === __experimentalGetPreviewDeviceType(),
+			isPreviewMobile: 'Mobile' === __experimentalGetPreviewDeviceType()
 		};
 	}, []);
 
@@ -92,12 +94,35 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	useEffect( () => {
-		updateWidth();
-	}, [ attributes.columnWidth ]);
+		if ( 1 < parentBlock.innerBlocks.length ) {
+			if ( ! adjacentBlockClientId ) {
+				const blockId = parentBlock.innerBlocks.findIndex( e => e.clientId === clientId );
+				const previousBlock = parentBlock.innerBlocks[ blockId - 1 ];
+				nextBlock.current = previousBlock.clientId;
+				nextBlockWidth.current = previousBlock.attributes.columnWidth;
+			}
+		}
+	}, []);
 
+	useEffect( () => {
+		if ( 1 < parentBlock.innerBlocks.length ) {
+			if ( ! adjacentBlockClientId ) {
+				const blockId = parentBlock.innerBlocks.findIndex( e => e.clientId === clientId );
+				const previousBlock = parentBlock.innerBlocks[ blockId - 1 ];
+				nextBlockWidth.current = previousBlock.attributes.columnWidth;
+				nextBlock.current = previousBlock.clientId;
+				currentBlockWidth.current = attributes.columnWidth;
+			} else {
+				nextBlockWidth.current = adjacentBlock.attributes.columnWidth;
+				nextBlock.current = adjacentBlockClientId;
+				currentBlockWidth.current = attributes.columnWidth;
+			}
+		}
+	}, [ isSelected, attributes.columnWidth, parentBlock.innerBlocks.length ]);
 
-	const [ currentWidth, setCurrentWidth ] = useState( 0 );
-	const [ nextWidth, setNextWidth ] = useState( 0 );
+	const currentBlockWidth = useRef( attributes.columnWidth );
+	const nextBlock = useRef( adjacentBlockClientId && adjacentBlockClientId );
+	const nextBlockWidth = useRef( adjacentBlock && adjacentBlock.attributes.columnWidth );
 
 	let isDesktop = isLarger && ! isLarge && isSmall && ! isSmaller;
 
@@ -105,81 +130,20 @@ const Edit = ({
 
 	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
 
-	if ( isViewportAvailable && ! isMobile ) {
+	if ( ! isMobile ) {
 		isDesktop = isPreviewDesktop;
 		isTablet = isPreviewTablet;
 		isMobile = isPreviewMobile;
 	}
 
 	if ( attributes.columnWidth === undefined ) {
-		( parentBlock.innerBlocks ).map( ( innerBlock, i ) => {
-			if ( clientId === innerBlock.clientId ) {
-				const columns = parentBlock.attributes.columns;
-				const layout = parentBlock.attributes.layout;
-				updateBlockAttributes( clientId, {
-					columnWidth: layouts[columns][layout][i]
-				});
-			}
+		const index = parentBlock.innerBlocks.findIndex( i => i.clientId === clientId );
+		const columns = parentBlock.attributes.columns;
+		const layout = parentBlock.attributes.layout;
+		updateBlockAttributes( clientId, {
+			columnWidth: layouts[columns][layout][index]
 		});
 	}
-
-	const updateWidth = () => {
-		const columnContainer = document.getElementById( `block-${ clientId }` );
-
-		if ( null !== columnContainer ) {
-			if ( isDesktop ) {
-				columnContainer.style.flexBasis = `${ attributes.columnWidth }%`;
-			} else {
-				columnContainer.style.flexBasis = '';
-			}
-		}
-	};
-
-	const onResizeStart = () => {
-		const handle = document.querySelector( `#block-${ clientId } .wp-themeisle-block-advanced-column-resize-container-handle .components-resizable-box__handle` );
-		const handleTooltipLeft = document.createElement( 'div' );
-		const handleTooltipRight = document.createElement( 'div' );
-
-		handleTooltipLeft.setAttribute( 'class', 'resizable-tooltip resizable-tooltip-left' );
-		handleTooltipLeft.innerHTML = `${ parseFloat( attributes.columnWidth ).toFixed( 0 ) }%`;
-		handle.appendChild( handleTooltipLeft );
-		handleTooltipRight.setAttribute( 'class', 'resizable-tooltip resizable-tooltip-right' );
-		handleTooltipRight.innerHTML = `${ parseFloat( adjacentBlock.attributes.columnWidth ).toFixed( 0 ) }%`;
-		handle.appendChild( handleTooltipRight );
-
-		setCurrentWidth( attributes.columnWidth );
-		setNextWidth( adjacentBlock.attributes.columnWidth );
-		toggleSelection( false );
-	};
-
-	const onResize = ( event, direction, elt, delta ) => {
-		const parent = document.getElementById( `block-${ parentClientId }` );
-		const parentWidth = parent.getBoundingClientRect().width;
-		const changedWidth = ( delta.width / parentWidth ) * 100;
-		const width = parseFloat( currentWidth ) + changedWidth;
-		const nextColumnWidth = nextWidth - changedWidth;
-		const handleTooltipLeft = document.querySelector( '.resizable-tooltip-left' );
-		const handleTooltipRight = document.querySelector( '.resizable-tooltip-right' );
-
-		if ( 10 <= width && 10 <= nextColumnWidth ) {
-			handleTooltipLeft.innerHTML = `${ width.toFixed( 0 ) }%`;
-			handleTooltipRight.innerHTML = `${ nextColumnWidth.toFixed( 0 ) }%`;
-
-			setAttributes({ columnWidth: width.toFixed( 2 ) });
-			updateBlockAttributes( adjacentBlockClientId, {
-				columnWidth: nextColumnWidth.toFixed( 2 )
-			});
-		}
-	};
-
-	const onResizeStop = () => {
-		const handleTooltipLeft = document.querySelector( '.resizable-tooltip-left' );
-		const handleTooltipRight = document.querySelector( '.resizable-tooltip-right' );
-
-		handleTooltipLeft.parentNode.removeChild( handleTooltipLeft );
-		handleTooltipRight.parentNode.removeChild( handleTooltipRight );
-		toggleSelection( true );
-	};
 
 	const Tag = attributes.columnsHTMLTag;
 
@@ -187,40 +151,40 @@ const Edit = ({
 
 	if ( isDesktop ) {
 		stylesheet = {
-			paddingTop: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingTop }px`,
-			paddingRight: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingRight }px`,
-			paddingBottom: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingBottom }px`,
-			paddingLeft: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingLeft }px`,
-			marginTop: 'linked' === attributes.marginType ? `${ attributes.margin }px` : `${ attributes.marginTop }px`,
-			marginRight: 'linked' === attributes.marginType ? `${ attributes.margin }px` : `${ attributes.marginRight }px`,
-			marginBottom: 'linked' === attributes.marginType ? `${ attributes.margin }px` : `${ attributes.marginBottom }px`,
-			marginLeft: 'linked' === attributes.marginType ? `${ attributes.margin }px` : `${ attributes.marginLeft }px`
+			paddingTop: attributes.padding?.top,
+			paddingRight: attributes.padding?.right,
+			paddingBottom: attributes.padding?.bottom,
+			paddingLeft: attributes.padding?.left,
+			marginTop: attributes.margin?.top,
+			marginRight: attributes.margin?.right,
+			marginBottom: attributes.margin?.bottom,
+			marginLeft: attributes.margin?.left
 		};
 	}
 
 	if ( isTablet ) {
 		stylesheet = {
-			paddingTop: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingTopTablet }px`,
-			paddingRight: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingRightTablet }px`,
-			paddingBottom: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingBottomTablet }px`,
-			paddingLeft: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingLeftTablet }px`,
-			marginTop: 'linked' === attributes.marginTypeTablet ? `${ attributes.marginTablet }px` : `${ attributes.marginTopTablet }px`,
-			marginRight: 'linked' === attributes.marginTypeTablet ? `${ attributes.marginTablet }px` : `${ attributes.marginRightTablet }px`,
-			marginBottom: 'linked' === attributes.marginTypeTablet ? `${ attributes.marginTablet }px` : `${ attributes.marginBottomTablet }px`,
-			marginLeft: 'linked' === attributes.marginTypeTablet ? `${ attributes.marginTablet }px` : `${ attributes.marginLeftTablet }px`
+			paddingTop: attributes.paddingTablet?.top,
+			paddingRight: attributes.paddingTablet?.right,
+			paddingBottom: attributes.paddingTablet?.bottom,
+			paddingLeft: attributes.paddingTablet?.left,
+			marginTop: attributes.marginTablet?.top,
+			marginRight: attributes.marginTablet?.right,
+			marginBottom: attributes.marginTablet?.bottom,
+			marginLeft: attributes.marginTablet?.left
 		};
 	}
 
 	if ( isMobile ) {
 		stylesheet = {
-			paddingTop: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingTopMobile }px`,
-			paddingRight: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingRightMobile }px`,
-			paddingBottom: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingBottomMobile }px`,
-			paddingLeft: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingLeftMobile }px`,
-			marginTop: 'linked' === attributes.marginTypeMobile ? `${ attributes.marginMobile }px` : `${ attributes.marginTopMobile }px`,
-			marginRight: 'linked' === attributes.marginTypeMobile ? `${ attributes.marginMobile }px` : `${ attributes.marginRightMobile }px`,
-			marginBottom: 'linked' === attributes.marginTypeMobile ? `${ attributes.marginMobile }px` : `${ attributes.marginBottomMobile }px`,
-			marginLeft: 'linked' === attributes.marginTypeMobile ? `${ attributes.marginMobile }px` : `${ attributes.marginLeftMobile }px`
+			paddingTop: attributes.paddingMobile?.top,
+			paddingRight: attributes.paddingMobile?.right,
+			paddingBottom: attributes.paddingMobile?.bottom,
+			paddingLeft: attributes.paddingMobile?.left,
+			marginTop: attributes.marginMobile?.top,
+			marginRight: attributes.marginMobile?.right,
+			marginBottom: attributes.marginMobile?.bottom,
+			marginLeft: attributes.marginMobile?.left
 		};
 	}
 
@@ -232,9 +196,9 @@ const Edit = ({
 
 	if ( 'image' === attributes.backgroundType ) {
 		background = {
-			backgroundImage: `url( '${ attributes.backgroundImageURL }' )`,
+			backgroundImage: `url( '${ attributes.backgroundImage?.url }' )`,
 			backgroundAttachment: attributes.backgroundAttachment,
-			backgroundPosition: attributes.backgroundPosition,
+			backgroundPosition: `${ Math.round( attributes.backgroundPosition?.x * 100 ) }% ${ Math.round( attributes.backgroundPosition?.y * 100 ) }%`,
 			backgroundRepeat: attributes.backgroundRepeat,
 			backgroundSize: attributes.backgroundSize
 		};
@@ -246,37 +210,23 @@ const Edit = ({
 		};
 	}
 
-	if ( 'linked' === attributes.borderType ) {
+	if ( attributes.border && ! isEmpty( attributes.border ) ) {
 		borderStyle = {
-			borderWidth: `${ attributes.border }px`,
+			borderTopWidth: attributes.border.top,
+			borderRightWidth: attributes.border.right,
+			borderBottomWidth: attributes.border.bottom,
+			borderLeftWidth: attributes.border.left,
 			borderStyle: 'solid',
 			borderColor: attributes.borderColor
 		};
 	}
 
-	if ( 'unlinked' === attributes.borderType ) {
-		borderStyle = {
-			borderTopWidth: `${ attributes.borderTop }px`,
-			borderRightWidth: `${ attributes.borderRight }px`,
-			borderBottomWidth: `${ attributes.borderBottom }px`,
-			borderLeftWidth: `${ attributes.borderLeft }px`,
-			borderStyle: 'solid',
-			borderColor: attributes.borderColor
-		};
-	}
-
-	if ( 'linked' === attributes.borderRadiusType ) {
+	if ( attributes.borderRadius && ! isEmpty( attributes.borderRadius ) ) {
 		borderRadiusStyle = {
-			borderRadius: `${ attributes.borderRadius }px`
-		};
-	}
-
-	if ( 'unlinked' === attributes.borderRadiusType ) {
-		borderRadiusStyle = {
-			borderTopLeftRadius: `${ attributes.borderRadiusTop }px`,
-			borderTopRightRadius: `${ attributes.borderRadiusRight }px`,
-			borderBottomRightRadius: `${ attributes.borderRadiusBottom }px`,
-			borderBottomLeftRadius: `${ attributes.borderRadiusLeft }px`
+			borderTopLeftRadius: attributes.borderRadius.top,
+			borderTopRightRadius: attributes.borderRadius.right,
+			borderBottomRightRadius: attributes.borderRadius.bottom,
+			borderBottomLeftRadius: attributes.borderRadius.left
 		};
 	}
 
@@ -287,6 +237,7 @@ const Edit = ({
 	}
 
 	const style = {
+		flexBasis: `${ attributes.columnWidth }%`,
 		...stylesheet,
 		...background,
 		...borderStyle,
@@ -294,40 +245,29 @@ const Edit = ({
 		...boxShadowStyle
 	};
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		style
+	});
+
 	return (
 		<Fragment>
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				isSelected={ isSelected }
-				clientId={ clientId }
-				adjacentBlock={ adjacentBlock }
 				parentBlock={ parentBlock }
 				updateBlockAttributes={ updateBlockAttributes }
-				adjacentBlockClientId={ adjacentBlockClientId }
+				currentBlockWidth={ currentBlockWidth }
+				nextBlock={ nextBlock }
+				nextBlockWidth={ nextBlockWidth }
 			/>
 
-			<ResizableBox
-				className="block-library-spacer__resize-container wp-themeisle-block-advanced-column-resize-container"
-				enable={ {
-					right: adjacentBlockClientId ? true : false
-				} }
-				handleWrapperClass="wp-themeisle-block-advanced-column-resize-container-handle"
-				onResizeStart={ onResizeStart }
-				onResize={ onResize }
-				onResizeStop={ onResizeStop }
-			>
-				<Tag
-					className={ className }
-					id={ attributes.id }
-					style={ style }
-				>
-					<InnerBlocks
-						templateLock={ false }
-						renderAppender={ ! hasInnerBlocks && InnerBlocks.ButtonBlockAppender }
-					/>
-				</Tag>
-			</ResizableBox>
+			<Tag { ...blockProps }>
+				<InnerBlocks
+					templateLock={ false }
+					renderAppender={ ! hasInnerBlocks && InnerBlocks.ButtonBlockAppender }
+				/>
+			</Tag>
 		</Fragment>
 	);
 };

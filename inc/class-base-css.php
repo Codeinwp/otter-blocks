@@ -55,7 +55,6 @@ class Base_CSS {
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'autoload_block_classes' ), 99 );
-		add_filter( 'safe_style_css', array( $this, 'used_css_properties' ), 99 );
 	}
 
 	/**
@@ -80,30 +79,15 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Font_Awesome_Icons_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Icon_List_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Icon_List_Item_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Flip_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Progress_Bar_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Popup_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Slider_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Review_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Review_Comparison_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Tabs_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Woo_Comparison_CSS',
 		);
-	}
-
-	/**
-	 * Parse Blocks for Gutenberg and WordPress 5.0
-	 *
-	 * @param string $content Content.
-	 *
-	 * @return string
-	 * @since   1.3.0
-	 * @access  public
-	 */
-	public function parse_blocks( $content ) {
-		if ( ! function_exists( 'parse_blocks' ) ) {
-			return gutenberg_parse_blocks( $content );
-		} else {
-			return parse_blocks( $content );
-		}
 	}
 
 	/**
@@ -204,41 +188,6 @@ class Base_CSS {
 	}
 
 	/**
-	 * Used CSS properties
-	 *
-	 * @param array $attr Array to check.
-	 *
-	 * @return array
-	 * @since   1.3.0
-	 * @access  public
-	 */
-	public function used_css_properties( $attr ) {
-		$props = array(
-			'background-attachment',
-			'background-position',
-			'background-repeat',
-			'background-size',
-			'border-radius',
-			'border-top-left-radius',
-			'border-top-right-radius',
-			'border-bottom-right-radius',
-			'border-bottom-left-radius',
-			'box-shadow',
-			'display',
-			'justify-content',
-			'mix-blend-mode',
-			'opacity',
-			'text-shadow',
-			'text-transform',
-			'transform',
-		);
-
-		$list = array_merge( $props, $attr );
-
-		return $list;
-	}
-
-	/**
 	 * Get Blocks CSS
 	 *
 	 * @param int $post_id Post id.
@@ -249,7 +198,7 @@ class Base_CSS {
 	public function get_blocks_css( $post_id ) {
 		if ( function_exists( 'has_blocks' ) ) {
 			$content = get_post_field( 'post_content', $post_id );
-			$blocks  = $this->parse_blocks( $content );
+			$blocks  = parse_blocks( $content );
 
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 				return;
@@ -277,7 +226,7 @@ class Base_CSS {
 				}
 			}
 
-			$blocks = $this->parse_blocks( $content );
+			$blocks = parse_blocks( $content );
 
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 				return;
@@ -306,7 +255,7 @@ class Base_CSS {
 			return;
 		}
 
-		$blocks = $this->parse_blocks( $reusable_block->post_content );
+		$blocks = parse_blocks( $reusable_block->post_content );
 
 		return $this->cycle_through_static_blocks( $blocks );
 	}

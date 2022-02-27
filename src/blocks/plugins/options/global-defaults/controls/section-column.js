@@ -4,6 +4,7 @@
 import { __ } from '@wordpress/i18n';
 
 import {
+	__experimentalBoxControl as BoxControl,
 	PanelBody,
 	SelectControl
 } from '@wordpress/components';
@@ -16,7 +17,7 @@ import { Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import ResponsiveControl from '../../../../components/responsive-control/index.js';
-import SizingControl from '../../../../components/sizing-control/index.js';
+import { isNullObject } from '../../../../helpers/helper-functions.js';
 
 const SectionColumn = ({
 	blockName,
@@ -24,325 +25,80 @@ const SectionColumn = ({
 	changeConfig
 }) => {
 	const getView = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
-
-
-		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
+		return __experimentalGetPreviewDeviceType();
 	}, []);
 
-	let getPaddingType = () => {
-		let value;
-
-		if ( 'Desktop' === getView ) {
-			value = defaults.paddingType;
+	const getPadding = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return defaults.padding;
+		case 'Tablet':
+			return defaults.paddingTablet;
+		case 'Mobile':
+			return defaults.paddingMobile;
+		default:
+			return undefined;
 		}
-		if ( 'Tablet' === getView ) {
-			value = defaults.paddingTypeTablet;
-		}
-		if ( 'Mobile' === getView ) {
-			value = defaults.paddingTypeMobile;
-		}
-
-		return value;
 	};
 
-	getPaddingType = getPaddingType();
+	const changePadding = value => {
+		if ( isNullObject( value ) ) {
+			value = undefined;
+		}
 
-	const changePaddingType = value => {
-		if ( 'Desktop' === getView ) {
-			changeConfig( blockName, {
-				paddingType: value
+		switch ( getView ) {
+		case 'Desktop':
+			return changeConfig( blockName, {
+				padding: value
 			});
-		}
-		if ( 'Tablet' === getView ) {
-			changeConfig( blockName, {
-				paddingTypeTablet: value
+		case 'Tablet':
+			return changeConfig( blockName, {
+				paddingTablet: value
 			});
-		}
-		if ( 'Mobile' === getView ) {
-			changeConfig( blockName, {
-				paddingTypeMobile: value
+		case 'Mobile':
+			return changeConfig( blockName, {
+				paddingMobile: value
 			});
+		default:
+			return undefined;
 		}
 	};
 
-	const desktopPaddingType = {
-		top: 'paddingTop',
-		right: 'paddingRight',
-		bottom: 'paddingBottom',
-		left: 'paddingLeft'
-	};
-
-	const tabletPaddingType = {
-		top: 'paddingTopTablet',
-		right: 'paddingRightTablet',
-		bottom: 'paddingBottomTablet',
-		left: 'paddingLeftTablet'
-	};
-
-	const mobilePaddingType = {
-		top: 'paddingTopMobile',
-		right: 'paddingRightMobile',
-		bottom: 'paddingBottomMobile',
-		left: 'paddingLeftMobile'
-	};
-
-	const changePadding = ( type, value ) => {
-		if ( 'Desktop' === getView ) {
-			if ( 'linked' === defaults.paddingType ) {
-				changeConfig( blockName, {
-					padding: value
-				});
-			} else {
-				changeConfig( blockName, {
-					[desktopPaddingType[type]]: value
-				});
-			}
-		}
-
-		if ( 'Tablet' === getView ) {
-			if ( 'linked' === defaults.paddingTypeTablet ) {
-				changeConfig( blockName, {
-					paddingTablet: value
-				});
-			} else {
-				changeConfig( blockName, {
-					[tabletPaddingType[type]]: value
-				});
-			}
-		}
-
-		if ( 'Mobile' === getView ) {
-			if ( 'linked' === defaults.paddingTypeMobile ) {
-				changeConfig( blockName, {
-					paddingMobile: value
-				});
-			} else {
-				changeConfig( blockName, {
-					[mobilePaddingType[type]]: value
-				});
-			}
+	const getMargin = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return defaults.margin;
+		case 'Tablet':
+			return defaults.marginTablet;
+		case 'Mobile':
+			return defaults.marginMobile;
+		default:
+			return undefined;
 		}
 	};
 
-	const getPadding = type => {
-		let value;
-
-		if ( 'top' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingTop;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === defaults.paddingTypeTablet ? defaults.paddingTablet : defaults.paddingTopTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === defaults.paddingTypeMobile ? defaults.paddingMobile : defaults.paddingTopMobile;
-			}
+	const changeMargin = value => {
+		if ( isNullObject( value ) ) {
+			value = undefined;
 		}
 
-		if ( 'right' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingRight;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === defaults.paddingTypeTablet ? defaults.paddingTablet : defaults.paddingRightTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === defaults.paddingTypeMobile ? defaults.paddingMobile : defaults.paddingRightMobile;
-			}
-		}
-
-		if ( 'bottom' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingBottom;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === defaults.paddingTypeTablet ? defaults.paddingTablet : defaults.paddingBottomTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === defaults.paddingTypeMobile ? defaults.paddingMobile : defaults.paddingBottomMobile;
-			}
-		}
-
-		if ( 'left' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === defaults.paddingType ? defaults.padding : defaults.paddingLeft;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === defaults.paddingTypeTablet ? defaults.paddingTablet : defaults.paddingLeftTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === defaults.paddingTypeMobile ? defaults.paddingMobile : defaults.paddingLeftMobile;
-			}
-		}
-
-		return value;
-	};
-
-	let getMarginType = () => {
-		let value;
-
-		if ( 'Desktop' === getView ) {
-			value = defaults.marginType;
-		}
-		if ( 'Tablet' === getView ) {
-			value = defaults.marginTypeTablet;
-		}
-		if ( 'Mobile' === getView ) {
-			value = defaults.marginTypeMobile;
-		}
-
-		return value;
-	};
-
-	getMarginType = getMarginType();
-
-	const changeMarginType = value => {
-		if ( 'Desktop' === getView ) {
-			changeConfig( blockName, {
-				marginType: value
+		switch ( getView ) {
+		case 'Desktop':
+			return changeConfig( blockName, {
+				margin: value
 			});
-		}
-		if ( 'Tablet' === getView ) {
-			changeConfig( blockName, {
-				marginTypeTablet: value
+		case 'Tablet':
+			return changeConfig( blockName, {
+				marginTablet: value
 			});
-		}
-		if ( 'Mobile' === getView ) {
-			changeConfig( blockName, {
-				marginTypeMobile: value
+		case 'Mobile':
+			return changeConfig( blockName, {
+				marginMobile: value
 			});
+		default:
+			return undefined;
 		}
-	};
-
-	const desktopMarginType = {
-		top: 'marginTop',
-		right: 'marginRight',
-		bottom: 'marginBottom',
-		left: 'marginLeft'
-	};
-
-	const tabletMarginType = {
-		top: 'marginTopTablet',
-		right: 'marginRightTablet',
-		bottom: 'marginBottomTablet',
-		left: 'marginLeftTablet'
-	};
-
-	const mobileMarginType = {
-		top: 'marginTopMobile',
-		right: 'marginRightMobile',
-		bottom: 'marginBottomMobile',
-		left: 'marginLeftMobile'
-	};
-
-	const changeMargin = ( type, value ) => {
-		if ( 'Desktop' === getView ) {
-			if ( 'linked' === defaults.marginType ) {
-				changeConfig( blockName, {
-					margin: value
-				});
-			} else {
-				changeConfig( blockName, {
-					[desktopMarginType[type]]: value
-				});
-			}
-		}
-
-		if ( 'Tablet' === getView ) {
-			if ( 'linked' === defaults.marginTypeTablet ) {
-				changeConfig( blockName, {
-					marginTablet: value
-				});
-			} else {
-				changeConfig( blockName, {
-					[tabletMarginType[type]]: value
-				});
-			}
-		}
-
-		if ( 'Mobile' === getView ) {
-			if ( 'linked' === defaults.marginTypeMobile ) {
-				changeConfig( blockName, {
-					marginMobile: value
-				});
-			} else {
-				changeConfig( blockName, {
-					[mobileMarginType[type]]: value
-				});
-			}
-		}
-	};
-
-	const getMargin = type => {
-		let value;
-
-		if ( 'top' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === defaults.marginType ? defaults.margin : defaults.marginTop;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === defaults.marginTypeTablet ? defaults.marginTablet : defaults.marginTopTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === defaults.marginTypeMobile ? defaults.marginMobile : defaults.marginTopMobile;
-			}
-		}
-
-		if ( 'right' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === defaults.marginType ? defaults.margin : defaults.marginRight;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === defaults.marginTypeTablet ? defaults.marginTablet : defaults.marginRightTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === defaults.marginTypeMobile ? defaults.marginMobile : defaults.marginRightMobile;
-			}
-		}
-
-		if ( 'bottom' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === defaults.marginType ? defaults.margin : defaults.marginBottom;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === defaults.marginTypeTablet ? defaults.marginTablet : defaults.marginBottomTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === defaults.marginTypeMobile ? defaults.marginMobile : defaults.marginBottomMobile;
-			}
-		}
-
-		if ( 'left' === type ) {
-			if ( 'Desktop' === getView ) {
-				value = 'linked' === defaults.marginType ? defaults.margin : defaults.marginLeft;
-			}
-
-			if ( 'Tablet' === getView ) {
-				value = 'linked' === defaults.marginTypeTablet ? defaults.marginTablet : defaults.marginLeftTablet;
-			}
-
-			if ( 'Mobile' === getView ) {
-				value = 'linked' === defaults.marginTypeMobile ? defaults.marginMobile : defaults.marginLeftMobile;
-			}
-		}
-
-		return value;
 	};
 
 	return (
@@ -351,78 +107,35 @@ const SectionColumn = ({
 				title={ __( 'Sizing', 'otter-blocks' ) }
 			>
 				<ResponsiveControl
-					label={ __( 'Padding', 'otter-blocks' ) }
+					label={ __( 'Screen Type', 'otter-blocks' ) }
+					className="otter-section-padding-responsive-control"
 				>
-					<SizingControl
-						type={ getPaddingType }
-						min={ 0 }
-						max={ 500 }
-						changeType={ changePaddingType }
+					<BoxControl
+						label={ __( 'Padding', 'otter-blocks' ) }
+						values={ getPadding() }
+						inputProps={ {
+							min: 0,
+							max: 500
+						} }
 						onChange={ changePadding }
-						options={ [
-							{
-								label: __( 'Top', 'otter-blocks' ),
-								type: 'top',
-								value: getPadding( 'top' )
-							},
-							{
-								label: __( 'Right', 'otter-blocks' ),
-								type: 'right',
-								value: getPadding( 'right' )
-							},
-							{
-								label: __( 'Bottom', 'otter-blocks' ),
-								type: 'bottom',
-								value: getPadding( 'bottom' )
-							},
-							{
-								label: __( 'Left', 'otter-blocks' ),
-								type: 'left',
-								value: getPadding( 'left' )
-							}
-						] }
 					/>
-				</ResponsiveControl>
 
-				<hr />
+					<hr/>
 
-				<ResponsiveControl
-					label={ __( 'Margin', 'otter-blocks' ) }
-				>
-					<SizingControl
-						type={ getMarginType }
-						min={ -500 }
-						max={ 500 }
-						changeType={ changeMarginType }
+					<BoxControl
+						label={ __( 'Margin', 'otter-blocks' ) }
+						values={ getMargin() }
+						inputProps={ {
+							min: -500,
+							max: 500
+						} }
 						onChange={ changeMargin }
-						options={ [
-							{
-								label: __( 'Top', 'otter-blocks' ),
-								type: 'top',
-								value: getMargin( 'top' )
-							},
-							{
-								label: __( 'Right', 'otter-blocks' ),
-								type: 'right',
-								value: getMargin( 'right' )
-							},
-							{
-								label: __( 'Bottom', 'otter-blocks' ),
-								type: 'bottom',
-								value: getMargin( 'bottom' )
-							},
-							{
-								label: __( 'Left', 'otter-blocks' ),
-								type: 'left',
-								value: getMargin( 'left' )
-							}
-						] }
 					/>
 				</ResponsiveControl>
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Section Settings', 'otter-blocks' ) }
+				title={ __( 'Section Structure', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
 				<SelectControl

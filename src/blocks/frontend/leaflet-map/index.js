@@ -45,12 +45,11 @@ const createLeafletMap = ( containerId, attributes ) => {
 	const container = document.querySelector( `#${ containerId }` );
 
 	if ( ! container ) {
-		console.warn( `The placeholer for the leaflet map block with id: ${ containerId } does not exist!` );
+		console.warn( `The placeholder for the leaflet map block with id: ${ containerId } does not exist!` );
 		return;
 	}
 
 	// Add the height of the map first
-	container.style.height = attributes.height + 'px';
 	container.classList.add( 'wp-block-themeisle-leaflet-blocks-map' );
 
 	// Create the map

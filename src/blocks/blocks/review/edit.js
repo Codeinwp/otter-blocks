@@ -1,6 +1,13 @@
+/** @jsx jsx */
+
 /**
  * External dependencies.
  */
+import {
+	css,
+	jsx
+} from '@emotion/react';
+
 import classnames from 'classnames';
 
 import getSymbolFromCurrency from 'currency-symbol-map';
@@ -13,7 +20,10 @@ import {
 	sprintf
 } from '@wordpress/i18n';
 
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import {
 	Placeholder,
@@ -28,7 +38,7 @@ import {
 /**
  * Internal dependencies
  */
-import defaultAttributes from './attributes.js';
+import metadata from './block.json';
 import Inspector from './inspector.js';
 import {
 	check,
@@ -37,11 +47,12 @@ import {
 } from '../../helpers/icons.js';
 import { blockInit } from '../../helpers/block-utility.js';
 
+const { attributes: defaultAttributes } = metadata;
+
 const Edit = ({
 	attributes,
 	setAttributes,
 	clientId,
-	className,
 	isSelected,
 	status = 'isInactive',
 	productAttributes = {}
@@ -100,6 +111,21 @@ const Edit = ({
 		setAttributes({ links });
 	};
 
+	const styles = css`
+		--backgroundColor: ${ attributes.backgroundColor };
+		--primaryColor: ${ attributes.primaryColor };
+		--textColor: ${ attributes.textColor };
+		--buttonTextColor: ${ attributes.buttonTextColor };
+	`;
+
+	const isPlaceholder = ( 'object' === typeof status && null !== status && status.isError ) || 'isLoading' === status;
+
+	let blockProps = useBlockProps({
+		id: attributes.id,
+		className: isPlaceholder && 'is-placeholder',
+		css: styles
+	});
+
 	if ( 'isLoading' === status ) {
 		return (
 			<Fragment>
@@ -109,7 +135,9 @@ const Edit = ({
 					productAttributes={ productAttributes }
 				/>
 
-				<Placeholder><Spinner /></Placeholder>
+				<div { ...blockProps }>
+					<Placeholder><Spinner /></Placeholder>
+				</div>
 			</Fragment>
 		);
 	}
@@ -123,9 +151,11 @@ const Edit = ({
 					productAttributes={ productAttributes }
 				/>
 
-				<Placeholder
-					instructions={ status.message }
-				/>
+				<div { ...blockProps }>
+					<Placeholder
+						instructions={ status.message }
+					/>
+				</div>
 			</Fragment>
 		);
 	}
@@ -138,19 +168,8 @@ const Edit = ({
 				productAttributes={ productAttributes }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={ className }
-				style={ {
-					backgroundColor: attributes.backgroundColor
-				} }
-			>
-				<div
-					className="wp-block-themeisle-blocks-review__header"
-					style={ {
-						borderColor: attributes.primaryColor
-					} }
-				>
+			<div { ...blockProps }>
+				<div className="o-review__header">
 					{
 						! productAttributes?.title ? (
 							<RichText
@@ -159,9 +178,6 @@ const Edit = ({
 								value={ attributes.title }
 								onChange={ title => setAttributes({ title }) }
 								tagName="h3"
-								style={ {
-									color: attributes.textColor
-								} }
 							/>
 						) : (
 							<RichText.Content
@@ -169,31 +185,21 @@ const Edit = ({
 								allowedFormats={ [] }
 								value={ productAttributes?.title }
 								tagName="h3"
-								style={ {
-									color: attributes.textColor
-								} }
 							/>
 						)
 					}
 
-					<div className="wp-block-themeisle-blocks-review__header_meta">
-						<div className="wp-block-themeisle-blocks-review__header_ratings">
+					<div className="o-review__header_meta">
+						<div className="o-review__header_ratings">
 							{ stars }
 
-							<span
-								style={ {
-									color: attributes.textColor
-								} }
-							>
+							<span>
 								{ /** translators: %s Rating score. */ sprintf( __( '%f out of 10', 'otter-blocks' ), Math.abs( overallRatings ) || 0 ) }
 							</span>
 						</div>
 
 						<span
-							className="wp-block-themeisle-blocks-review__header_price"
-							style={ {
-								color: attributes.textColor
-							} }
+							className="o-review__header_price"
 						>
 							{ ( ( productAttributes?.price && productAttributes?.discounted ) || ( attributes.price && attributes.discounted ) ) && (
 								<del>{ ( getSymbolFromCurrency( productAttributes?.currency || attributes.currency ) ?? '$' ) + '' + ( productAttributes?.price || attributes.price ) || 0 }</del>
@@ -204,10 +210,10 @@ const Edit = ({
 					</div>
 				</div>
 
-				<div className="wp-block-themeisle-blocks-review__left">
+				<div className="o-review__left">
 					<div
 						className={ classnames(
-							'wp-block-themeisle-blocks-review__left_details',
+							'o-review__left_details',
 							{
 								'is-single': ! attributes.image || ( ! isSelected && ! attributes.description )
 							}
@@ -231,23 +237,17 @@ const Edit = ({
 								value={ attributes.description }
 								onChange={ description => setAttributes({ description }) }
 								tagName="p"
-								style={ {
-									color: attributes.textColor
-								} }
 							/>
 						) : (
 							<RichText.Content
 								placeholder={ __( 'Product description or a small review…', 'otter-blocks' ) }
 								value={ productAttributes?.description }
 								tagName="p"
-								style={ {
-									color: attributes.textColor
-								} }
 							/>
 						) }
 					</div>
 
-					<div className="wp-block-themeisle-blocks-review__left_features">
+					<div className="o-review__left_features">
 						{ 0 < attributes.features.length && attributes.features.map( ( feature, index ) => {
 							const ratings = [];
 
@@ -267,28 +267,19 @@ const Edit = ({
 							}
 
 							return (
-								<div className="wp-block-themeisle-blocks-review__left_feature" key={ index }>
+								<div className="o-review__left_feature" key={ index }>
 									<RichText
 										placeholder={ __( 'Feature title', 'otter-blocks' ) }
 										value={ feature.title }
-										className="wp-block-themeisle-blocks-review__left_feature_title"
+										className="o-review__left_feature_title"
 										onChange={ title => changeFeature( index, { title }) }
 										tagName="span"
-										style={ {
-											color: attributes.textColor
-										} }
 									/>
 
-									<div className="wp-block-themeisle-blocks-review__left_feature_ratings">
+									<div className="o-review__left_feature_ratings">
 										{ ratings }
 
-										<span
-											style={ {
-												color: attributes.textColor
-											} }
-										>
-											{ feature.rating.toFixed( 1 ) }/10
-										</span>
+										<span>{ feature.rating.toFixed( 1 ) }/10</span>
 									</div>
 								</div>
 							);
@@ -296,19 +287,13 @@ const Edit = ({
 					</div>
 				</div>
 
-				<div className="wp-block-themeisle-blocks-review__right">
+				<div className="o-review__right">
 					{ 0 < attributes.pros.length && (
-						<div className="wp-block-themeisle-blocks-review__right_pros">
-							<h4
-								style={ {
-									color: attributes.textColor
-								} }
-							>
-								{ __( 'Pros', 'otter-blocks' ) }
-							</h4>
+						<div className="o-review__right_pros">
+							<h4>{ __( 'Pros', 'otter-blocks' ) }</h4>
 
 							{ attributes.pros.map( ( pro, index ) => (
-								<div className="wp-block-themeisle-blocks-review__right_pros_item" key={ index }>
+								<div className="o-review__right_pros_item" key={ index }>
 									{ check }
 
 									<RichText
@@ -316,9 +301,6 @@ const Edit = ({
 										value={ pro }
 										onChange={ value => changePro( index, value ) }
 										tagName="p"
-										style={ {
-											color: attributes.textColor
-										} }
 									/>
 								</div>
 							) ) }
@@ -326,17 +308,11 @@ const Edit = ({
 					) }
 
 					{ 0 < attributes.cons.length && (
-						<div className="wp-block-themeisle-blocks-review__right_cons">
-							<h4
-								style={ {
-									color: attributes.textColor
-								} }
-							>
-								{ __( 'Cons', 'otter-blocks' ) }
-							</h4>
+						<div className="o-review__right_cons">
+							<h4>{ __( 'Cons', 'otter-blocks' ) }</h4>
 
 							{ attributes.cons.map( ( con, index ) => (
-								<div className="wp-block-themeisle-blocks-review__right_cons_item" key={ index }>
+								<div className="o-review__right_cons_item" key={ index }>
 									{ close }
 
 									<RichText
@@ -344,9 +320,6 @@ const Edit = ({
 										value={ con }
 										onChange={ value => changeCon( index, value ) }
 										tagName="p"
-										style={ {
-											color: attributes.textColor
-										} }
 									/>
 								</div>
 							) )}
@@ -355,17 +328,12 @@ const Edit = ({
 				</div>
 
 				{ ( 0 < productAttributes?.links?.length || 0 < attributes.links.length ) && (
-					<div className="wp-block-themeisle-blocks-review__footer">
-						<span
-							className="wp-block-themeisle-blocks-review__footer_label"
-							style={ {
-								color: attributes.textColor
-							} }
-						>
+					<div className="o-review__footer">
+						<span className="o-review__footer_label">
 							{ __( 'Buy this product', 'otter-blocks' ) }
 						</span>
 
-						<div className="wp-block-themeisle-blocks-review__footer_buttons">
+						<div className="o-review__footer_buttons">
 							{ ( productAttributes?.links || attributes.links ).map( ( link, index ) => (
 								<RichText
 									key={ index }
@@ -374,10 +342,6 @@ const Edit = ({
 									disabled={ 0 < productAttributes?.links }
 									onChange={ label => changeLinks( index, { label }) }
 									tagName="span"
-									style={ {
-										color: attributes.buttonTextColor,
-										backgroundColor: attributes.primaryColor
-									} }
 								/>
 							) ) }
 						</div>

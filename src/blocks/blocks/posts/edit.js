@@ -14,6 +14,8 @@ import {
 	Spinner
 } from '@wordpress/components';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import {
 	useSelect,
 	dispatch
@@ -36,8 +38,7 @@ import '../../components/store/index.js';
 
 const Edit = ({
 	attributes,
-	setAttributes,
-	className
+	setAttributes
 }) => {
 	const [ slugs, setSlugs ] = useState([]);
 
@@ -84,13 +85,17 @@ const Edit = ({
 		dispatch( 'otter-store' ).setPostsSlugs( slugs );
 	}, [ slugs ]);
 
+	const blockProps = useBlockProps();
+
 	if ( ! posts || ! categoriesList || ! authors ) {
 		return (
 			<Fragment>
-				<Placeholder>
-					<Spinner />
-					{ __( 'Loading Posts', 'otter-blocks' ) }
-				</Placeholder>
+				<div { ...blockProps }>
+					<Placeholder>
+						<Spinner />
+						{ __( 'Loading Posts', 'otter-blocks' ) }
+					</Placeholder>
+				</div>
 
 				{ ( categoriesList && attributes.offset ) ? (
 					<Inspector
@@ -107,9 +112,11 @@ const Edit = ({
 	if ( 0 === posts.length ) {
 		return (
 			<Fragment>
-				<Placeholder>
-					{ __( 'No Posts', 'otter-blocks' ) }
-				</Placeholder>
+				<div { ...blockProps }>
+					<Placeholder>
+						{ __( 'No Posts', 'otter-blocks' ) }
+					</Placeholder>
+				</div>
 
 				{ ( categoriesList && attributes.offset || slugs.length ) ? (
 					<Inspector
@@ -150,15 +157,17 @@ const Edit = ({
 				categoriesList={ categoriesList }
 			/>
 
-			<Disabled>
-				<Layout
-					className={ className }
-					attributes={ attributes }
-					posts={ posts }
-					categoriesList={ categoriesList }
-					authors={ authors }
-				/>
-			</Disabled>
+			<div { ...blockProps }>
+				<Disabled>
+					<Layout
+						attributes={ attributes }
+						posts={ posts }
+						categoriesList={ categoriesList }
+						authors={ authors }
+					/>
+				</Disabled>
+
+			</div>
 		</Fragment>
 	);
 };

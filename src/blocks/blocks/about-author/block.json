@@ -1,0 +1,15 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/about-author",
+	"title": "About Author",
+	"category": "themeisle-blocks",
+	"description": "About Author block is the easiest way to add a author bio below your posts.",
+	"keywords": [ "about", "author", "profile" ],
+	"textdomain": "otter-blocks",
+	"supports": {
+		"html": false
+	},
+	"editorStyle": "otter-about-author-editor",
+	"style": "otter-about-author-style"
+}

@@ -22,33 +22,6 @@
 		z-index: 0;
 	};
 
-	&.components-placeholder {
-		padding: 40px 20px;
-
-		.components-placeholder__text {
-			margin-top: 10px;
-			margin-bottom: 10px;
-		}
-
-		.components-placeholder__actions {
-			display: flex;
-			flex-direction: row;
-			width: 100%;
-			flex-wrap: wrap;
-			z-index: 1;
-
-			.components-base-control__field {
-				margin-right: 8px;
-			}
-
-			.components-placeholder__input {
-				input[type="text"] {
-					min-height: 36px;
-				}
-			}
-		}
-	}
-
 	.gmnoprint {
 		&:hover {
 			* {
@@ -57,7 +30,7 @@
 		}
 	}
 
-	&.is-selecting-location * {
+	.is-selecting-location {
 		cursor: crosshair;
 
 		.wp-block-themeisle-blocks-leaflet-map-marker-button {
@@ -111,10 +84,6 @@
 			color: #000000;
 		}
 	}
-}
-
-.wp-block-themeisle-blocks-leaflet-map-search {
-	width: 100%;
 }
 
 .wp-block-themeisle-blocks-leaflet-map-marker-group {
@@ -193,7 +162,6 @@
 }
 
 .wp-block-themeisle-blocks-leaflet-map-resizer {
-	// margin-bottom: 70px;
 	&.is-focused {
 		.components-resizable-box__handle {
 			display: block;
@@ -201,8 +169,3 @@
 		}
 	}
 }
-
-.pac-container {
-	z-index: 999999;
-}
-

@@ -8,14 +8,15 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
+import { pick } from 'lodash';
+
 import {
-	__experimentalColorGradientControl as ColorGradientControl,
 	ColorPalette,
-	InspectorControls,
-	MediaPlaceholder
+	InspectorControls
 } from '@wordpress/block-editor';
 
 import {
+	__experimentalBoxControl as BoxControl,
 	BaseControl,
 	Button,
 	ButtonGroup,
@@ -39,11 +40,11 @@ import {
  */
 import ColorBaseControl from '../../../components/color-base-control/index.js';
 import LayoutControl from './../components/layout-control/index.js';
-import SizingControl from '../../../components/sizing-control/index.js';
 import ResponsiveControl from '../../../components/responsive-control/index.js';
-import BackgroundControl from '../components/background-control/index.js';
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
 import HTMLAnchorControl from '../../../components/html-anchor-control/index.js';
+import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
+import { isNullObject } from '../../../helpers/helper-functions.js';
 
 const Inspector = ({
 	attributes,
@@ -54,10 +55,8 @@ const Inspector = ({
 	changeColumnsNumbers
 }) => {
 	const getView = useSelect( ( select ) => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
-
-		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
+		return __experimentalGetPreviewDeviceType();
 	}, []);
 
 	const [ tab, setTab ] = useState( 'layout' );
@@ -124,210 +123,68 @@ const Inspector = ({
 		}
 	};
 
-	const changeColumnsGap = value => {
-		setAttributes({ columnsGap: value });
-	};
-
-	let getPaddingType = () => {
+	const getPadding = () => {
 		switch ( getView ) {
 		case 'Desktop':
-			return attributes.paddingType;
+			return attributes.padding;
 		case 'Tablet':
-			return attributes.paddingTypeTablet;
+			return attributes.paddingTablet;
 		case 'Mobile':
-			return attributes.paddingTypeMobile;
+			return attributes.paddingMobile;
 		default:
 			return undefined;
 		}
 	};
 
-	getPaddingType = getPaddingType();
+	const changePadding = value => {
+		if ( isNullObject( value ) ) {
+			value = undefined;
+		}
 
-	const changePaddingType = value => {
 		switch ( getView ) {
 		case 'Desktop':
-			setAttributes({ paddingType: value });
-			break;
+			return setAttributes({ padding: value });
 		case 'Tablet':
-			setAttributes({ paddingTypeTablet: value });
-			break;
+			return setAttributes({ paddingTablet: value });
 		case 'Mobile':
-			setAttributes({ paddingTypeMobile: value });
-			break;
-		}
-	};
-
-	const desktopPaddingType = {
-		top: 'paddingTop',
-		right: 'paddingRight',
-		bottom: 'paddingBottom',
-		left: 'paddingLeft'
-	};
-
-	const tabletPaddingType = {
-		top: 'paddingTopTablet',
-		right: 'paddingRightTablet',
-		bottom: 'paddingBottomTablet',
-		left: 'paddingLeftTablet'
-	};
-
-	const mobilePaddingType = {
-		top: 'paddingTopMobile',
-		right: 'paddingRightMobile',
-		bottom: 'paddingBottomMobile',
-		left: 'paddingLeftMobile'
-	};
-
-	const changePadding = ( type, value ) => {
-		if ( 'Desktop' === getView ) {
-			if ( 'linked' === attributes.paddingType ) {
-				setAttributes({ padding: value });
-			} else {
-				setAttributes({ [desktopPaddingType[type]]: value });
-			}
-		} else if ( 'Tablet' === getView ) {
-			if ( 'linked' === attributes.paddingTypeTablet ) {
-				setAttributes({ paddingTablet: value });
-			} else {
-				setAttributes({ [tabletPaddingType[type]]: value });
-			}
-		} else if ( 'Mobile' === getView ) {
-			if ( 'linked' === attributes.paddingTypeMobile ) {
-				setAttributes({ paddingMobile: value });
-			} else {
-				setAttributes({ [mobilePaddingType[type]]: value });
-			}
-		}
-	};
-
-	const getPadding = type => {
-		if ( 'top' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingTop;
-			case 'Tablet':
-				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingTopTablet;
-			case 'Mobile':
-				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingTopMobile;
-			}
-		} else if ( 'right' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingRight;
-			case 'Tablet':
-				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingRightTablet;
-			case 'Mobile':
-				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingRightMobile;
-			}
-		} else if ( 'bottom' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingBottom;
-			case 'Tablet':
-				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingBottomTablet;
-			case 'Mobile':
-				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingBottomMobile;
-			}
-		} else if ( 'left' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingLeft;
-			case 'Tablet':
-				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingLeftTablet;
-			case 'Mobile':
-				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingLeftMobile;
-			}
-		}
-
-		return undefined;
-	};
-
-	const getMarginType = () => {
-		switch ( getView ) {
-		case 'Desktop':
-			return attributes.marginType;
-		case 'Tablet':
-			return attributes.marginTypeTablet;
-		case 'Mobile':
-			return attributes.marginTypeMobile;
+			return setAttributes({ paddingMobile: value });
 		default:
 			return undefined;
 		}
 	};
 
-	const changeMarginType = value => {
+	const getMargin = () => {
 		switch ( getView ) {
 		case 'Desktop':
-			setAttributes({ marginType: value });
-			break;
+			return attributes.margin;
 		case 'Tablet':
-			setAttributes({ marginTypeTablet: value });
-			break;
+			return attributes.marginTablet;
 		case 'Mobile':
-			setAttributes({ marginTypeMobile: value });
-			break;
+			return attributes.marginMobile;
+		default:
+			return undefined;
 		}
 	};
 
-	const desktopMarginType = {
-		top: 'marginTop',
-		bottom: 'marginBottom'
-	};
-
-	const tabletMarginType = {
-		top: 'marginTopTablet',
-		bottom: 'marginBottomTablet'
-	};
-
-	const mobileMarginType = {
-		top: 'marginTopMobile',
-		bottom: 'marginBottomMobile'
-	};
-
-	const changeMargin = ( type, value ) => {
-		if ( 'Desktop' === getView ) {
-			if ( 'linked' === attributes.marginType ) {
-				setAttributes({ margin: value });
-			} else {
-				setAttributes({ [desktopMarginType[type]]: value });
-			}
-		} else if ( 'Tablet' === getView ) {
-			if ( 'linked' === attributes.marginTypeTablet ) {
-				setAttributes({ marginTablet: value });
-			} else {
-				setAttributes({ [tabletMarginType[type]]: value });
-			}
-		} else if ( 'Mobile' === getView ) {
-			if ( 'linked' === attributes.marginTypeMobile ) {
-				setAttributes({ marginMobile: value });
-			} else {
-				setAttributes({ [mobileMarginType[type]]: value });
-			}
-		}
-	};
-
-	const getMargin = type => {
-		if ( 'top' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.marginType ? attributes.margin : attributes.marginTop;
-			case 'Tablet':
-				return 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginTopTablet;
-			case 'Mobile':
-				return 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginTopMobile;
-			}
-		} else if ( 'bottom' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.marginType ? attributes.margin : attributes.marginBottom;
-			case 'Tablet':
-				return 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginBottomTablet;
-			case 'Mobile':
-				return 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginBottomMobile;
-			}
+	const changeMargin = value => {
+		if ( isNullObject( value ) ) {
+			value = undefined;
 		}
 
-		return undefined;
+		if ( 'object' === typeof value ) {
+			value = Object.fromEntries( Object.entries( value ).filter( ([ _, v ]) => null !== v ) );
+		}
+
+		switch ( getView ) {
+		case 'Desktop':
+			return setAttributes({ margin: value });
+		case 'Tablet':
+			return setAttributes({ marginTablet: value });
+		case 'Mobile':
+			return setAttributes({ marginMobile: value });
+		default:
+			return undefined;
+		}
 	};
 
 	const changeColumnsWidth = value => {
@@ -342,10 +199,6 @@ const Inspector = ({
 		}
 
 		setAttributes({ horizontalAlign: value });
-	};
-
-	const changeColumnsHeight = value => {
-		setAttributes({ columnsHeight: value });
 	};
 
 	let getColumnsHeightCustom = () => {
@@ -377,220 +230,20 @@ const Inspector = ({
 		}
 	};
 
-	const changeBackgroundType = value => {
-		setAttributes({ backgroundType: value });
-	};
-
-	const changeBackgroundColor = value => {
-		setAttributes({ backgroundColor: value });
-	};
-
-	const removeBackgroundImage = () => {
-		setAttributes({
-			backgroundImageID: '',
-			backgroundImageURL: ''
-		});
-	};
-
-	const changeBackgroundAttachment = value => {
-		setAttributes({ backgroundAttachment: value });
-	};
-
-	const changeBackgroundPosition = value => {
-		setAttributes({ backgroundPosition: value });
-	};
-
-	const changeBackgroundRepeat = value => {
-		setAttributes({ backgroundRepeat: value });
-	};
-
-	const changeBackgroundSize = value => {
-		setAttributes({ backgroundSize: value });
-	};
-
-	const changeBackgroundImage = value => {
-		setAttributes({
-			backgroundImageID: value.id,
-			backgroundImageURL: value.url
-		});
-	};
-
-	const changeBackgroundGradient = value => {
-		setAttributes({ backgroundGradient: value });
-	};
-
-	const changeBackgroundOverlayType = value => {
-		setAttributes({ backgroundOverlayType: value });
-	};
-
-	const changeBackgroundOverlayOpacity = value => {
-		setAttributes({ backgroundOverlayOpacity: value });
-	};
-
-	const changeBackgroundOverlayColor = value => {
-		setAttributes({ backgroundOverlayColor: value });
-	};
-
-	const removeBackgroundOverlayImage = () => {
-		setAttributes({
-			backgroundOverlayImageID: '',
-			backgroundOverlayImageURL: ''
-		});
-	};
-
-	const changeBackgroundOverlayAttachment = value => {
-		setAttributes({ backgroundOverlayAttachment: value });
-	};
-
-	const changeBackgroundOverlayPosition = value => {
-		setAttributes({ backgroundOverlayPosition: value });
-	};
-
-	const changeBackgroundOverlayRepeat = value => {
-		setAttributes({ backgroundOverlayRepeat: value });
-	};
-
-	const changeBackgroundOverlaySize = value => {
-		setAttributes({ backgroundOverlaySize: value });
-	};
-
-	const changeBackgroundOverlayImage = value => {
-		setAttributes({
-			backgroundOverlayImageID: value.id,
-			backgroundOverlayImageURL: value.url
-		});
-	};
-
-	const changeBackgroundOverlayGradient = value => {
-		setAttributes({ backgroundOverlayGradient: value });
-	};
-
-	const changebackgroundOverlayFilterBlur = value => {
-		setAttributes({ backgroundOverlayFilterBlur: value });
-	};
-
-	const changebackgroundOverlayFilterBrightness = value => {
-		setAttributes({ backgroundOverlayFilterBrightness: value });
-	};
-
-	const changebackgroundOverlayFilterContrast = value => {
-		setAttributes({ backgroundOverlayFilterContrast: value });
-	};
-
-	const changebackgroundOverlayFilterGrayscale = value => {
-		setAttributes({ backgroundOverlayFilterGrayscale: value });
-	};
-
-	const changebackgroundOverlayFilterHue = value => {
-		setAttributes({ backgroundOverlayFilterHue: value });
-	};
-
-	const changebackgroundOverlayFilterSaturate = value => {
-		setAttributes({ backgroundOverlayFilterSaturate: value });
-	};
-
-	const changebackgroundOverlayBlend = value => {
-		setAttributes({ backgroundOverlayBlend: value });
-	};
-
-	const changeBorderType = value => {
-		setAttributes({ borderType: value });
-	};
-
-	const borderWidthDirection = {
-		top: 'borderTop',
-		right: 'borderRight',
-		bottom: 'borderBottom',
-		left: 'borderLeft'
-	};
-
-	const changeBorder = ( type, value ) => {
-		if ( 'linked' === attributes.borderType ) {
-			setAttributes({ border: value });
-		} else {
-			setAttributes({ [borderWidthDirection[type]]: value });
+	const changeBorder = value => {
+		if ( isNullObject( value ) ) {
+			value = undefined;
 		}
+
+		setAttributes({ border: value });
 	};
 
-	const getBorder = type => {
-		switch ( type ) {
-		case 'top':
-			return 'linked' === attributes.borderType ? attributes.border : attributes.borderTop;
-		case 'right':
-			return 'linked' === attributes.borderType ? attributes.border : attributes.borderRight;
-		case 'bottom':
-			return 'linked' === attributes.borderType ? attributes.border : attributes.borderBottom;
-		case 'left':
-			return 'linked' === attributes.borderType ? attributes.border : attributes.borderLeft;
-		default:
-			return undefined;
+	const changeBorderRadius = value => {
+		if ( isNullObject( value ) ) {
+			value = undefined;
 		}
-	};
 
-	const changeBorderColor = value => {
-		setAttributes({ borderColor: value });
-	};
-
-	const changeBorderRadiusType = value => {
-		setAttributes({ borderRadiusType: value });
-	};
-
-	const borderRadiusDirection = {
-		top: 'borderRadiusTop',
-		right: 'borderRadiusRight',
-		bottom: 'borderRadiusBottom',
-		left: 'borderRadiusLeft'
-	};
-
-	const changeBorderRadius = ( type, value ) => {
-		if ( 'linked' === attributes.borderRadiusType ) {
-			setAttributes({ borderRadius: value });
-		} else {
-			setAttributes({ [borderRadiusDirection[type]]: value });
-		}
-	};
-
-	const getBorderRadius = type => {
-		switch ( type ) {
-		case 'top':
-			return 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusTop;
-		case 'right':
-			return 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusRight;
-		case 'bottom':
-			return 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusBottom;
-		case 'left':
-			return 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusLeft;
-		default:
-			return undefined;
-		}
-	};
-
-	const changeBoxShadow = () => {
-		setAttributes({ boxShadow: ! attributes.boxShadow });
-	};
-
-	const changeBoxShadowColor = value => {
-		setAttributes({ boxShadowColor: value });
-	};
-
-	const changeBoxShadowColorOpacity = value => {
-		setAttributes({ boxShadowColorOpacity: value });
-	};
-
-	const changeBoxShadowBlur = value => {
-		setAttributes({ boxShadowBlur: value });
-	};
-
-	const changeBoxShadowSpread = value => {
-		setAttributes({ boxShadowSpread: value });
-	};
-
-	const changeBoxShadowHorizontal = value => {
-		setAttributes({ boxShadowHorizontal: value });
-	};
-
-	const changeBoxShadowVertical = value => {
-		setAttributes({ boxShadowVertical: value });
+		setAttributes({ borderRadius: value });
 	};
 
 	const getDividerType = () => {
@@ -780,18 +433,10 @@ const Inspector = ({
 		}
 	};
 
-	const changeColumnsHTMLTag = value => {
-		setAttributes({ columnsHTMLTag: value });
-	};
-
-	const changeID = value => {
-		setAttributes({ id: value });
-	};
-
 	return (
 		<Fragment>
 			<InspectorControls>
-				<PanelBody className="wp-block-themeisle-blocks-advanced-columns-header-panel">
+				<PanelBody className="o-section-header-panel">
 					<Button
 						className={ classnames(
 							'header-tab',
@@ -854,20 +499,6 @@ const Inspector = ({
 								layoutMobile={ attributes.layoutMobile }
 								onClick={ changeLayout }
 							/>
-
-							<SelectControl
-								label={ __( 'Columns Gap', 'otter-blocks' ) }
-								value={ attributes.columnsGap }
-								options={ [
-									{ label: __( 'Default (10px)', 'otter-blocks' ), value: 'default' },
-									{ label: __( 'No Gap', 'otter-blocks' ), value: 'nogap' },
-									{ label: __( 'Narrow (5px)', 'otter-blocks' ), value: 'narrow' },
-									{ label: __( 'Extended (15px)', 'otter-blocks' ), value: 'extended' },
-									{ label: __( 'Wide (20px)', 'otter-blocks' ), value: 'wide' },
-									{ label: __( 'Wider (30px)', 'otter-blocks' ), value: 'wider' }
-								] }
-								onChange={ changeColumnsGap }
-							/>
 						</PanelBody>
 
 						<PanelBody
@@ -875,68 +506,28 @@ const Inspector = ({
 							initialOpen={ false }
 						>
 							<ResponsiveControl
-								label={ __( 'Padding', 'otter-blocks' ) }
+								label={ __( 'Screen Type', 'otter-blocks' ) }
+								className="otter-section-padding-responsive-control"
 							>
-								<SizingControl
-									type={ getPaddingType }
-									min={ 0 }
-									max={ 500 }
-									changeType={ changePaddingType }
+								<BoxControl
+									label={ __( 'Padding', 'otter-blocks' ) }
+									values={ getPadding() }
+									inputProps={ {
+										min: 0,
+										max: 500
+									} }
 									onChange={ changePadding }
-									options={ [
-										{
-											label: __( 'Top', 'otter-blocks' ),
-											type: 'top',
-											value: getPadding( 'top' )
-										},
-										{
-											label: __( 'Right', 'otter-blocks' ),
-											type: 'right',
-											value: getPadding( 'right' )
-										},
-										{
-											label: __( 'Bottom', 'otter-blocks' ),
-											type: 'bottom',
-											value: getPadding( 'bottom' )
-										},
-										{
-											label: __( 'Left', 'otter-blocks' ),
-											type: 'left',
-											value: getPadding( 'left' )
-										}
-									] }
 								/>
-							</ResponsiveControl>
 
-							<ResponsiveControl
-								label={ __( 'Margin', 'otter-blocks' ) }
-							>
-								<SizingControl
-									type={ getMarginType() }
-									min={ -500 }
-									max={ 500 }
-									changeType={ changeMarginType }
+								<BoxControl
+									label={ __( 'Margin', 'otter-blocks' ) }
+									values={ getMargin() }
+									inputProps={ {
+										min: -500,
+										max: 500
+									} }
+									sides={ [ 'top', 'bottom' ] }
 									onChange={ changeMargin }
-									options={ [
-										{
-											label: __( 'Top', 'otter-blocks' ),
-											type: 'top',
-											value: getMargin( 'top' )
-										},
-										{
-											label: __( 'Right', 'otter-blocks' ),
-											disabled: true
-										},
-										{
-											label: __( 'Bottom', 'otter-blocks' ),
-											type: 'bottom',
-											value: getMargin( 'bottom' )
-										},
-										{
-											label: __( 'Left', 'otter-blocks' ),
-											disabled: true
-										}
-									] }
 								/>
 							</ResponsiveControl>
 						</PanelBody>
@@ -948,6 +539,7 @@ const Inspector = ({
 							<RangeControl
 								label={ __( 'Maximum Content Width', 'otter-blocks' ) }
 								value={ attributes.columnsWidth || '' }
+								allowReset
 								onChange={ changeColumnsWidth }
 								min={ 0 }
 								max={ 2400 }
@@ -993,7 +585,7 @@ const Inspector = ({
 									{ label: __( 'Fit to Screen', 'otter-blocks' ), value: '100vh' },
 									{ label: __( 'Custom', 'otter-blocks' ), value: 'custom' }
 								] }
-								onChange={ changeColumnsHeight }
+								onChange={ value => setAttributes({ columnsHeight: value }) }
 							/>
 
 							{ 'custom' === attributes.columnsHeight && (
@@ -1016,279 +608,67 @@ const Inspector = ({
 					<Fragment>
 						<PanelBody
 							title={ __( 'Background Settings', 'otter-blocks' ) }
-							className="wp-block-themeisle-image-container"
 						>
-							<BackgroundControl
-								label={ __( 'Background Type', 'otter-blocks' ) }
+							<BackgroundSelectorControl
 								backgroundType={ attributes.backgroundType }
-								changeBackgroundType={ changeBackgroundType }
+								backgroundColor={ attributes.backgroundColor }
+								image={ attributes.backgroundImage }
+								gradient={ attributes.backgroundGradient }
+								focalPoint={ attributes.backgroundPosition }
+								backgroundAttachment={ attributes.backgroundAttachment }
+								backgroundRepeat={ attributes.backgroundRepeat }
+								backgroundSize={ attributes.backgroundSize }
+								changeBackgroundType={ value => setAttributes({ backgroundType: value }) }
+								changeImage={ media => {
+									setAttributes({
+										backgroundImage: pick( media, [ 'id', 'url' ])
+									});
+								}}
+								removeImage={ () => setAttributes({ backgroundImage: undefined })}
+								changeColor={ value => setAttributes({ backgroundColor: value })}
+								changeGradient={ value => setAttributes({ backgroundGradient: value }) }
+								changeBackgroundAttachment={ value => setAttributes({ backgroundAttachment: value })}
+								changeBackgroundRepeat={ value => setAttributes({ backgroundRepeat: value })}
+								changeFocalPoint={ value => setAttributes({ backgroundPosition: value }) }
+								changeBackgroundSize={ value => setAttributes({ backgroundSize: value }) }
 							/>
-
-							{ 'color' === attributes.backgroundType && (
-
-								<ColorBaseControl
-									label={ __( 'Background Color', 'otter-blocks' ) }
-									colorValue={ attributes.backgroundColor }
-								>
-									<ColorPalette
-										label={ __( 'Background Color', 'otter-blocks' ) }
-										value={ attributes.backgroundColor }
-										onChange={ changeBackgroundColor }
-									/>
-								</ColorBaseControl>
-
-							) || 'image' === attributes.backgroundType && (
-								attributes.backgroundImageURL ?
-
-									<Fragment>
-										<div className="wp-block-themeisle-image-container-body">
-											<div className="wp-block-themeisle-image-container-area">
-												<div
-													className="wp-block-themeisle-image-container-holder"
-													style={ {
-														backgroundImage: `url('${ attributes.backgroundImageURL }')`
-													} }
-												></div>
-
-												<div
-													className="wp-block-themeisle-image-container-delete"
-													onClick={ removeBackgroundImage }
-												>
-													<Dashicon icon="trash" />
-													<span>{ __( 'Remove Image', 'otter-blocks' ) }</span>
-												</div>
-											</div>
-										</div>
-
-										<Button
-											isSecondary
-											className="wp-block-themeisle-image-container-delete-button"
-											onClick={ removeBackgroundImage }
-										>
-											{ __( 'Change or Remove Image', 'otter-blocks' ) }
-										</Button>
-
-										<ControlPanelControl
-											label={ __( 'Background Settings', 'otter-blocks' ) }
-										>
-
-											<SelectControl
-												label={ __( 'Background Attachment', 'otter-blocks' ) }
-												value={ attributes.backgroundAttachment }
-												options={ [
-													{ label: __( 'Scroll', 'otter-blocks' ), value: 'scroll' },
-													{ label: __( 'Fixed', 'otter-blocks' ), value: 'fixed' },
-													{ label: __( 'Local', 'otter-blocks' ), value: 'local' }
-												] }
-												onChange={ changeBackgroundAttachment }
-											/>
-
-											<SelectControl
-												label={ __( 'Background Position', 'otter-blocks' ) }
-												value={ attributes.backgroundPosition }
-												options={ [
-													{ label: __( 'Default', 'otter-blocks' ), value: 'top left' },
-													{ label: __( 'Top Left', 'otter-blocks' ), value: 'top left' },
-													{ label: __( 'Top Center', 'otter-blocks' ), value: 'top center' },
-													{ label: __( 'Top Right', 'otter-blocks' ), value: 'top right' },
-													{ label: __( 'Center Left', 'otter-blocks' ), value: 'center left' },
-													{ label: __( 'Center Center', 'otter-blocks' ), value: 'center center' },
-													{ label: __( 'Center Right', 'otter-blocks' ), value: 'center right' },
-													{ label: __( 'Bottom Left', 'otter-blocks' ), value: 'bottom left' },
-													{ label: __( 'Bottom Center', 'otter-blocks' ), value: 'bottom center' },
-													{ label: __( 'Bottom Right', 'otter-blocks' ), value: 'bottom right' }
-												] }
-												onChange={ changeBackgroundPosition }
-											/>
-
-											<SelectControl
-												label={ __( 'Background Repeat', 'otter-blocks' ) }
-												value={ attributes.backgroundRepeat }
-												options={ [
-													{ label: __( 'Repeat', 'otter-blocks' ), value: 'repeat' },
-													{ label: __( 'No-repeat', 'otter-blocks' ), value: 'no-repeat' }
-												] }
-												onChange={ changeBackgroundRepeat }
-											/>
-
-											<SelectControl
-												label={ __( 'Background Size', 'otter-blocks' ) }
-												value={ attributes.backgroundSize }
-												options={ [
-													{ label: __( 'Auto', 'otter-blocks' ), value: 'auto' },
-													{ label: __( 'Cover', 'otter-blocks' ), value: 'cover' },
-													{ label: __( 'Contain', 'otter-blocks' ), value: 'contain' }
-												] }
-												onChange={ changeBackgroundSize }
-											/>
-
-										</ControlPanelControl>
-									</Fragment> :
-
-									<MediaPlaceholder
-										icon="format-image"
-										labels={ {
-											title: __( 'Background Image', 'otter-blocks' ),
-											name: __( 'an image', 'otter-blocks' )
-										} }
-										value={ attributes.backgroundImageID }
-										onSelect={ changeBackgroundImage }
-										accept="image/*"
-										allowedTypes={ [ 'image' ] }
-									/>
-
-							) || 'gradient' === attributes.backgroundType && (
-								<ColorGradientControl
-									label={ __( 'Background Gradient', 'otter-blocks' ) }
-									gradientValue={ attributes.backgroundGradient }
-									disableCustomColors={ true }
-									onGradientChange={ changeBackgroundGradient }
-									clearable={ false }
-								/>
-							) }
 						</PanelBody>
 
 						<PanelBody
 							title={ __( 'Background Overlay', 'otter-blocks' ) }
-							className="wp-block-themeisle-image-container"
 							initialOpen={ false }
 						>
-							<BackgroundControl
-								label={ __( 'Overlay Type', 'otter-blocks' ) }
+							<BackgroundSelectorControl
 								backgroundType={ attributes.backgroundOverlayType }
-								changeBackgroundType={ changeBackgroundOverlayType }
+								backgroundColor={ attributes.backgroundOverlayColor }
+								image={ attributes.backgroundOverlayImage }
+								gradient={ attributes.backgroundOverlayGradient }
+								focalPoint={ attributes.backgroundOverlayPosition }
+								backgroundAttachment={ attributes.backgroundOverlayAttachment }
+								backgroundRepeat={ attributes.backgroundOverlayRepeat }
+								backgroundSize={ attributes.backgroundOverlaySize }
+								changeBackgroundType={ value => setAttributes({ backgroundOverlayType: value }) }
+								changeImage={ media => {
+									setAttributes({
+										backgroundOverlayImage: pick( media, [ 'id', 'url' ])
+									});
+								}}
+								removeImage={ () => setAttributes({ backgroundOverlayImage: undefined })}
+								changeColor={ value => setAttributes({ backgroundOverlayColor: value })}
+								changeGradient={ value => setAttributes({ backgroundOverlayGradient: value }) }
+								changeBackgroundAttachment={ value => setAttributes({ backgroundOverlayAttachment: value })}
+								changeBackgroundRepeat={ value => setAttributes({ backgroundOverlayRepeat: value })}
+								changeFocalPoint={ value => setAttributes({ backgroundOverlayPosition: value }) }
+								changeBackgroundSize={ value => setAttributes({ backgroundOverlaySize: value }) }
 							/>
 
 							<RangeControl
 								label={ __( 'Overlay Opacity', 'otter-blocks' ) }
 								value={ attributes.backgroundOverlayOpacity }
-								onChange={ changeBackgroundOverlayOpacity }
+								onChange={ value => setAttributes({ backgroundOverlayOpacity: value }) }
 								min={ 0 }
 								max={ 100 }
 							/>
-
-							{ 'color' === attributes.backgroundOverlayType && (
-
-								<ColorBaseControl
-									label={ __( 'Overlay Color', 'otter-blocks' ) }
-									colorValue={ attributes.backgroundOverlayColor }
-								>
-									<ColorPalette
-										label={ __( 'Overlay Color', 'otter-blocks' ) }
-										value={ attributes.backgroundOverlayColor }
-										onChange={ changeBackgroundOverlayColor }
-									/>
-								</ColorBaseControl>
-
-							) || 'image' === attributes.backgroundOverlayType && (
-								attributes.backgroundOverlayImageURL ?
-
-									<Fragment>
-										<div className="wp-block-themeisle-image-container-body">
-											<div className="wp-block-themeisle-image-container-area">
-												<div
-													className="wp-block-themeisle-image-container-holder"
-													style={ {
-														backgroundImage: `url('${ attributes.backgroundOverlayImageURL }')`
-													} }
-												></div>
-
-												<div
-													className="wp-block-themeisle-image-container-delete"
-													onClick={ removeBackgroundOverlayImage }
-												>
-													<Dashicon icon="trash" />
-													<span>{ __( 'Remove Image', 'otter-blocks' ) }</span>
-												</div>
-											</div>
-										</div>
-
-										<Button
-											isSecondary
-											className="wp-block-themeisle-image-container-delete-button"
-											onClick={ removeBackgroundOverlayImage }
-										>
-											{ __( 'Change or Remove Image', 'otter-blocks' ) }
-										</Button>
-
-										<ControlPanelControl
-											label={ __( 'Background Settings', 'otter-blocks' ) }
-										>
-
-											<SelectControl
-												label={ __( 'Background Attachment', 'otter-blocks' ) }
-												value={ attributes.backgroundOverlayAttachment }
-												options={ [
-													{ label: __( 'Scroll', 'otter-blocks' ), value: 'scroll' },
-													{ label: __( 'Fixed', 'otter-blocks' ), value: 'fixed' },
-													{ label: __( 'Local', 'otter-blocks' ), value: 'local' }
-												] }
-												onChange={ changeBackgroundOverlayAttachment }
-											/>
-
-											<SelectControl
-												label={ __( 'Background Position', 'otter-blocks' ) }
-												value={ attributes.backgroundOverlayPosition }
-												options={ [
-													{ label: __( 'Default', 'otter-blocks' ), value: 'top left' },
-													{ label: __( 'Top Left', 'otter-blocks' ), value: 'top left' },
-													{ label: __( 'Top Center', 'otter-blocks' ), value: 'top center' },
-													{ label: __( 'Top Right', 'otter-blocks' ), value: 'top right' },
-													{ label: __( 'Center Left', 'otter-blocks' ), value: 'center left' },
-													{ label: __( 'Center Center', 'otter-blocks' ), value: 'center center' },
-													{ label: __( 'Center Right', 'otter-blocks' ), value: 'center right' },
-													{ label: __( 'Bottom Left', 'otter-blocks' ), value: 'bottom left' },
-													{ label: __( 'Bottom Center', 'otter-blocks' ), value: 'bottom center' },
-													{ label: __( 'Bottom Right', 'otter-blocks' ), value: 'bottom right' }
-												] }
-												onChange={ changeBackgroundOverlayPosition }
-											/>
-
-											<SelectControl
-												label={ __( 'Background Repeat', 'otter-blocks' ) }
-												value={ attributes.backgroundOverlayRepeat }
-												options={ [
-													{ label: __( 'Repeat', 'otter-blocks' ), value: 'repeat' },
-													{ label: __( 'No-repeat', 'otter-blocks' ), value: 'no-repeat' }
-												] }
-												onChange={ changeBackgroundOverlayRepeat }
-											/>
-
-											<SelectControl
-												label={ __( 'Background Size', 'otter-blocks' ) }
-												value={ attributes.backgroundOverlaySize }
-												options={ [
-													{ label: __( 'Auto', 'otter-blocks' ), value: 'auto' },
-													{ label: __( 'Cover', 'otter-blocks' ), value: 'cover' },
-													{ label: __( 'Contain', 'otter-blocks' ), value: 'contain' }
-												] }
-												onChange={ changeBackgroundOverlaySize }
-											/>
-
-										</ControlPanelControl>
-									</Fragment> :
-
-									<MediaPlaceholder
-										icon="format-image"
-										labels={ {
-											title: __( 'Background Image', 'otter-blocks' ),
-											name: __( 'an image', 'otter-blocks' )
-										} }
-										value={ attributes.backgroundOverlayImageID }
-										onSelect={ changeBackgroundOverlayImage }
-										accept="image/*"
-										allowedTypes={ [ 'image' ] }
-									/>
-
-							) || 'gradient' === attributes.backgroundOverlayType && (
-								<ColorGradientControl
-									label={ __( 'Background Gradient', 'otter-blocks' ) }
-									gradientValue={ attributes.backgroundOverlayGradient }
-									disableCustomColors={ true }
-									onGradientChange={ changeBackgroundOverlayGradient }
-									clearable={ false }
-								/>
-							) }
 
 							<ControlPanelControl
 								label={ __( 'CSS Filters', 'otter-blocks' ) }
@@ -1296,7 +676,7 @@ const Inspector = ({
 								<RangeControl
 									label={ __( 'Blur', 'otter-blocks' ) }
 									value={ attributes.backgroundOverlayFilterBlur }
-									onChange={ changebackgroundOverlayFilterBlur }
+									onChange={ value => setAttributes({ backgroundOverlayFilterBlur: value }) }
 									min={ 0 }
 									max={ 100 }
 								/>
@@ -1304,7 +684,7 @@ const Inspector = ({
 								<RangeControl
 									label={ __( 'Brightness', 'otter-blocks' ) }
 									value={ attributes.backgroundOverlayFilterBrightness }
-									onChange={ changebackgroundOverlayFilterBrightness }
+									onChange={ value => setAttributes({ backgroundOverlayFilterBrightness: value }) }
 									min={ 0 }
 									max={ 100 }
 								/>
@@ -1312,7 +692,7 @@ const Inspector = ({
 								<RangeControl
 									label={ __( 'Contrast', 'otter-blocks' ) }
 									value={ attributes.backgroundOverlayFilterContrast }
-									onChange={ changebackgroundOverlayFilterContrast }
+									onChange={ value => setAttributes({ backgroundOverlayFilterContrast: value }) }
 									min={ 0 }
 									max={ 100 }
 								/>
@@ -1320,7 +700,7 @@ const Inspector = ({
 								<RangeControl
 									label={ __( 'Grayscale', 'otter-blocks' ) }
 									value={ attributes.backgroundOverlayFilterGrayscale }
-									onChange={ changebackgroundOverlayFilterGrayscale }
+									onChange={ value => setAttributes({ backgroundOverlayFilterGrayscale: value }) }
 									min={ 0 }
 									max={ 100 }
 								/>
@@ -1328,7 +708,7 @@ const Inspector = ({
 								<RangeControl
 									label={ __( 'Hue', 'otter-blocks' ) }
 									value={ attributes.backgroundOverlayFilterHue }
-									onChange={ changebackgroundOverlayFilterHue }
+									onChange={ value => setAttributes({ backgroundOverlayFilterHue: value }) }
 									min={ 0 }
 									max={ 360 }
 								/>
@@ -1336,7 +716,7 @@ const Inspector = ({
 								<RangeControl
 									label={ __( 'Saturation', 'otter-blocks' ) }
 									value={ attributes.backgroundOverlayFilterSaturate }
-									onChange={ changebackgroundOverlayFilterSaturate }
+									onChange={ value => setAttributes({ backgroundOverlayFilterSaturate: value }) }
 									min={ 0 }
 									max={ 100 }
 								/>
@@ -1363,44 +743,29 @@ const Inspector = ({
 									{ label: __( 'Color', 'otter-blocks' ), value: 'color' },
 									{ label: __( 'Luminosity', 'otter-blocks' ), value: 'luminosity' }
 								] }
-								onChange={ changebackgroundOverlayBlend }
+								onChange={ value => setAttributes({ backgroundOverlayBlend: value }) }
 							/>
 						</PanelBody>
 
 						<PanelBody
 							title={ __( 'Border', 'otter-blocks' ) }
-							className="wp-block-themeisle-border-container"
+							className="o-section-border-container"
 							initialOpen={ false }
 						>
-							<SizingControl
+							<BoxControl
 								label={ __( 'Border Width', 'otter-blocks' ) }
-								type={ attributes.borderType }
-								min={ 0 }
-								max={ 500 }
-								changeType={ changeBorderType }
-								onChange={ changeBorder }
-								options={ [
+								values={ attributes.border }
+								inputProps={ {
+									min: 0,
+									max: 500
+								} }
+								units={ [
 									{
-										label: __( 'Top', 'otter-blocks' ),
-										type: 'top',
-										value: getBorder( 'top' )
-									},
-									{
-										label: __( 'Right', 'otter-blocks' ),
-										type: 'right',
-										value: getBorder( 'right' )
-									},
-									{
-										label: __( 'Bottom', 'otter-blocks' ),
-										type: 'bottom',
-										value: getBorder( 'bottom' )
-									},
-									{
-										label: __( 'Left', 'otter-blocks' ),
-										type: 'left',
-										value: getBorder( 'left' )
+										value: 'px',
+										label: 'px'
 									}
 								] }
+								onChange={ changeBorder }
 							/>
 
 							<ColorBaseControl
@@ -1410,45 +775,35 @@ const Inspector = ({
 								<ColorPalette
 									label={ __( 'Border Color', 'otter-blocks' ) }
 									value={ attributes.borderColor }
-									onChange={ changeBorderColor }
+									onChange={ value => setAttributes({ borderColor: value }) }
 								/>
 							</ColorBaseControl>
 
-							<SizingControl
+							<BoxControl
 								label={ __( 'Border Radius', 'otter-blocks' ) }
-								type={ attributes.borderRadiusType }
-								min={ 0 }
-								max={ 500 }
-								changeType={ changeBorderRadiusType }
-								onChange={ changeBorderRadius }
-								options={ [
+								values={ attributes.borderRadius }
+								inputProps={ {
+									min: 0,
+									max: 500
+								} }
+								units={ [
 									{
-										label: __( 'Top', 'otter-blocks' ),
-										type: 'top',
-										value: getBorderRadius( 'top' )
+										value: 'px',
+										label: 'px'
 									},
 									{
-										label: __( 'Right', 'otter-blocks' ),
-										type: 'right',
-										value: getBorderRadius( 'right' )
-									},
-									{
-										label: __( 'Bottom', 'otter-blocks' ),
-										type: 'bottom',
-										value: getBorderRadius( 'bottom' )
-									},
-									{
-										label: __( 'Left', 'otter-blocks' ),
-										type: 'left',
-										value: getBorderRadius( 'left' )
+										value: '%',
+										label: '%'
 									}
 								] }
+								id="otter-border-raduis-box"
+								onChange={ changeBorderRadius }
 							/>
 
 							<ToggleControl
 								label={ __( 'Box Shadow', 'otter-blocks' ) }
 								checked={ attributes.boxShadow }
-								onChange={ changeBoxShadow }
+								onChange={ () => setAttributes({ boxShadow: ! attributes.boxShadow }) }
 							/>
 
 							{ attributes.boxShadow && (
@@ -1461,7 +816,7 @@ const Inspector = ({
 										<ColorPalette
 											label={ __( 'Shadow Color', 'otter-blocks' ) }
 											value={ attributes.boxShadowColor }
-											onChange={ changeBoxShadowColor }
+											onChange={ value => setAttributes({ boxShadowColor: value }) }
 										/>
 									</ColorBaseControl>
 
@@ -1471,7 +826,7 @@ const Inspector = ({
 										<RangeControl
 											label={ __( 'Opacity', 'otter-blocks' ) }
 											value={ attributes.boxShadowColorOpacity }
-											onChange={ changeBoxShadowColorOpacity }
+											onChange={ value => setAttributes({ boxShadowColorOpacity: value }) }
 											min={ 0 }
 											max={ 100 }
 										/>
@@ -1479,7 +834,7 @@ const Inspector = ({
 										<RangeControl
 											label={ __( 'Blur', 'otter-blocks' ) }
 											value={ attributes.boxShadowBlur }
-											onChange={ changeBoxShadowBlur }
+											onChange={ value => setAttributes({ boxShadowBlur: value }) }
 											min={ 0 }
 											max={ 100 }
 										/>
@@ -1487,7 +842,7 @@ const Inspector = ({
 										<RangeControl
 											label={ __( 'Spread', 'otter-blocks' ) }
 											value={ attributes.boxShadowSpread }
-											onChange={ changeBoxShadowSpread }
+											onChange={ value => setAttributes({ boxShadowSpread: value }) }
 											min={ -100 }
 											max={ 100 }
 										/>
@@ -1495,7 +850,7 @@ const Inspector = ({
 										<RangeControl
 											label={ __( 'Horizontal', 'otter-blocks' ) }
 											value={ attributes.boxShadowHorizontal }
-											onChange={ changeBoxShadowHorizontal }
+											onChange={ value => setAttributes({ boxShadowHorizontal: value }) }
 											min={ -100 }
 											max={ 100 }
 										/>
@@ -1503,7 +858,7 @@ const Inspector = ({
 										<RangeControl
 											label={ __( 'Vertical', 'otter-blocks' ) }
 											value={ attributes.boxShadowVertical }
-											onChange={ changeBoxShadowVertical }
+											onChange={ value => setAttributes({ boxShadowVertical: value }) }
 											min={ -100 }
 											max={ 100 }
 										/>
@@ -1656,7 +1011,7 @@ const Inspector = ({
 									{ label: 'article', value: 'article' },
 									{ label: 'main', value: 'main' }
 								] }
-								onChange={ changeColumnsHTMLTag }
+								onChange={ value => setAttributes({ columnsHTMLTag: value }) }
 							/>
 						</PanelBody>
 					</Fragment>
@@ -1666,7 +1021,7 @@ const Inspector = ({
 
 			<HTMLAnchorControl
 				value={ attributes.id }
-				onChange={ changeID }
+				onChange={ value => setAttributes({ id: value }) }
 			/>
 		</Fragment>
 	);

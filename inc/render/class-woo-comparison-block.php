@@ -7,12 +7,10 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
-use ThemeIsle\GutenbergBlocks\Base_Block;
-
 /**
  * Class Woo_Comparison_Block
  */
-class Woo_Comparison_Block extends Base_Block {
+class Woo_Comparison_Block {
 	/**
 	 * Flag to mark that we can render the table.
 	 *
@@ -27,8 +25,6 @@ class Woo_Comparison_Block extends Base_Block {
 	 * @access  public
 	 */
 	public function __construct() {
-		parent::__construct();
-
 		if (
 			! 'valid' === apply_filters( 'product_neve_license_status', false ) ||
 			true !== apply_filters( 'neve_has_block_editor_module', false ) ||
@@ -59,74 +55,6 @@ class Woo_Comparison_Block extends Base_Block {
 	}
 
 	/**
-	 * Every block needs a slug, so we need to define one and assign it to the `$this->block_slug` property
-	 *
-	 * @return mixed
-	 */
-	protected function set_block_slug() {
-		$this->block_slug = 'woo-comparison';
-	}
-
-	/**
-	 * Set the attributes required on the server side.
-	 *
-	 * @return mixed
-	 */
-	protected function set_attributes() {
-		$default_fields = array();
-
-		if ( class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Fields' ) ) {
-			$fields         = new \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Fields();
-			$default_fields = wp_json_encode( array_keys( ( $fields->get_fields() ) ) );
-		}
-
-		$this->attributes = array(
-			'id'          => array(
-				'type' => 'string',
-			),
-			'className'   => array(
-				'type' => 'string',
-			),
-			'products'    => array(
-				'type'    => 'array',
-				'default' => array(),
-			),
-			'listingType' => array(
-				'type'    => 'string',
-				'default' => get_theme_mod( 'neve_comparison_table_product_listing_type', 'column' ),
-			),
-			'altRow'      => array(
-				'type'    => 'boolean',
-				'default' => get_theme_mod( 'neve_comparison_table_enable_alternating_row_bg_color', false ),
-			),
-			'fields'      => array(
-				'type'    => 'string',
-				'default' => get_theme_mod( 'neve_comparison_table_fields', $default_fields ),
-			),
-			'rowColor'    => array(
-				'type'    => 'string',
-				'default' => get_theme_mod( 'neve_comparison_table_rows_background_color', 'var(--nv-site-bg)' ),
-			),
-			'headerColor' => array(
-				'type'    => 'string',
-				'default' => get_theme_mod( 'neve_comparison_table_header_text_color', 'var(--nv-text-color)' ),
-			),
-			'textColor'   => array(
-				'type'    => 'string',
-				'default' => get_theme_mod( 'neve_comparison_table_text_color', 'var(--nv-text-color)' ),
-			),
-			'borderColor' => array(
-				'type'    => 'string',
-				'default' => get_theme_mod( 'neve_comparison_table_borders_color', '#BDC7CB' ),
-			),
-			'altRowColor' => array(
-				'type'    => 'string',
-				'default' => get_theme_mod( 'neve_comparison_table_alternate_row_bg_color', 'var(--nv-light-bg)' ),
-			),
-		);
-	}
-
-	/**
 	 * Block render function for server-side.
 	 *
 	 * This method will pe passed to the render_callback parameter and it will output
@@ -136,10 +64,30 @@ class Woo_Comparison_Block extends Base_Block {
 	 *
 	 * @return mixed|string
 	 */
-	protected function render( $attributes ) {
-		if ( ! self::$should_render ) {
+	public function render( $attributes ) {
+		if ( ! self::$should_render && 0 < count( $attributes['products'] ) ) {
 			return;
 		}
+
+		$default_fields = array();
+
+		if ( class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Fields' ) ) {
+			$fields         = new \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Fields();
+			$default_fields = wp_json_encode( array_keys( ( $fields->get_fields() ) ) );
+		}
+
+		$defaults = array(
+			'listingType' => get_theme_mod( 'neve_comparison_table_product_listing_type', 'column' ),
+			'altRow'      => get_theme_mod( 'neve_comparison_table_enable_alternating_row_bg_color', false ),
+			'fields'      => get_theme_mod( 'neve_comparison_table_fields', $default_fields ),
+			'rowColor'    => get_theme_mod( 'neve_comparison_table_rows_background_color', 'var(--nv-site-bg)' ),
+			'headerColor' => get_theme_mod( 'neve_comparison_table_header_text_color', 'var(--nv-text-color)' ),
+			'textColor'   => get_theme_mod( 'neve_comparison_table_text_color', 'var(--nv-text-color)' ),
+			'borderColor' => get_theme_mod( 'neve_comparison_table_borders_color', '#BDC7CB' ),
+			'altRowColor' => get_theme_mod( 'neve_comparison_table_alternate_row_bg_color', 'var(--nv-light-bg)' ),
+		);
+
+		$attributes = array_merge( $defaults, array_filter( $attributes ) );
 
 		ob_start();
 		$table = new \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\View\Table();
@@ -149,10 +97,16 @@ class Woo_Comparison_Block extends Base_Block {
 		$table->render_comparison_products_table( false, true, $attributes );
 
 		$id    = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-woo-comparison-' . wp_rand( 10, 100 );
-		$class = isset( $attributes['className'] ) ? $attributes['className'] : '';
-		$class = 'wp-block-themeisle-blocks-woo-comparison nv-ct-enabled nv-ct-comparison-table-content woocommerce ' . esc_attr( $class );
+		$class = 'nv-ct-enabled nv-ct-comparison-table-content woocommerce';
 
-		$output  = '<div id="' . $id . '" class="' . $class . '">';
+		$wrapper_attributes = get_block_wrapper_attributes(
+			array(
+				'id'    => $id,
+				'class' => $class,
+			) 
+		);
+
+		$output  = '<div ' . $wrapper_attributes . '>';
 		$output .= ob_get_contents();
 		$output .= '</div>';
 		ob_end_clean();

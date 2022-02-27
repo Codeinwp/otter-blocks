@@ -18,7 +18,10 @@ import { __ } from '@wordpress/i18n';
 
 import { createBlock } from '@wordpress/blocks';
 
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import { Icon } from '@wordpress/components';
 
@@ -37,15 +40,16 @@ import {
 /**
  * Internal dependencies.
  */
+import metadata from './block.json';
 import Inspector from './inspector.js';
 import Controls from './controls.js';
 import { blockInit } from '../../../helpers/block-utility.js';
-import defaultAttributes from './attributes.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	isSelected,
 	clientId
 }) => {
@@ -129,33 +133,12 @@ const Edit = ({
 	/**
 	 * ------------ Tab Dynamic CSS ------------
 	 */
-	const tabStyle = css`
-		.wp-block-themeisle-blocks-tabs__header_item.active {
-			background-color: ${ attributes.tabColor };
-		}
 
-		.wp-block-themeisle-blocks-tabs__header_item.active div {
-			color: ${ attributes.activeTitleColor };
-		}
-
-		.wp-block-themeisle-blocks-tabs__header_item, .wp-block-themeisle-blocks-tabs__header_item.active, .wp-block-themeisle-blocks-tabs__header_item.active::before, .wp-block-themeisle-blocks-tabs__header_item.active::after {
-			border-width: ${ attributes.borderWidth !== undefined ? attributes.borderWidth : 3 }px;
-		}
-	`;
-
-	const contentStyle = css`
-		.wp-block-themeisle-blocks-tabs-item__header, .wp-block-themeisle-blocks-tabs-item__content {
-			border-width: ${ attributes.borderWidth !== undefined ? attributes.borderWidth : 3 }px;
-		}
-
-		.wp-block-themeisle-blocks-tabs-item__header.active, .wp-block-themeisle-blocks-tabs-item__content.active {
-			background-color: ${ attributes.tabColor };
-			border-width: ${ attributes.borderWidth !== undefined ? attributes.borderWidth : 3 }px;
-		}
-
-		.wp-block-themeisle-blocks-tabs-item__header.active {
-			color: ${ attributes.activeTitleColor };
-		}
+	const styles = css`
+		--borderWidth: ${ undefined !== attributes.borderWidth ? attributes.borderWidth : 3 }px;
+		--borderColor: ${ attributes.borderColor };
+		--activeTitleColor: ${ attributes.activeTitleColor };
+		--tabColor: ${ attributes.tabColor };
 	`;
 
 	const tabHeaderStyle = css`
@@ -200,6 +183,11 @@ const Edit = ({
 		);
 	};
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		css: styles
+	});
+
 	return (
 		<Fragment>
 			<Controls
@@ -220,17 +208,8 @@ const Edit = ({
 				addTab={ addTab }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={ className }
-				style={ {
-					borderColor: attributes.borderColor
-				} }
-			>
-				<div
-					css={ tabStyle }
-					className="wp-block-themeisle-blocks-tabs__header"
-				>
+			<div { ...blockProps }>
+				<div className="wp-block-themeisle-blocks-tabs__header">
 					{ children?.map( tabHeader => {
 						return (
 							<TabHeader
@@ -248,7 +227,6 @@ const Edit = ({
 				<div
 					ref={ contentRef }
 					className="wp-block-themeisle-blocks-tabs__content"
-					css={ contentStyle }
 				>
 					<InnerBlocks
 						allowedBlocks={ [ 'themeisle-blocks/tabs-item' ] }
