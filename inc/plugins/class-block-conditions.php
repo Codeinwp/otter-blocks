@@ -168,7 +168,38 @@ class Block_Conditions {
 			}
 		}
 
+		if ( 'queryString' === $condition['type'] ) {
+			if ( isset( $condition['param_name'] ) && isset( $condition['param_value'] ) ) {
+				if ( $visibility ) {
+					return $this->has_query_string( $condition );
+				} else {
+					return ! $this->has_query_string( $condition );
+				}
+			}
+		}
+
 		return true;
+	}
+
+	public function has_query_string( $query_string ) {
+		$url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+
+		$url_components = parse_url($url);
+
+		if ( ! isset( $url_components['query'] ) ) {
+			return false;
+		}
+ 
+		parse_str( $url_components['query'], $params );
+
+		$name  = $query_string['param_name'];
+		$value = $query_string['param_value']; 
+
+		if ( isset( $params[ $name ] ) && $params[ $name ] === $value ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**

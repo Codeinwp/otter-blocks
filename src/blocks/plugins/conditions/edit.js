@@ -224,6 +224,11 @@ const Edit = ({
 				value: 'timeRecurring',
 				label: __( 'Time Recurring', 'otter-blocks' ),
 				help: __( 'The selected block will only be visible during selected time. Timezone is used based on your WordPress settings.' )
+			},
+			{
+				value: 'queryString',
+				label: __( 'Query String in URL', 'otter-blocks' ),
+				help: __( 'The selected block will only be visible based on the specified query string.' )
 			}
 		];
 
@@ -357,8 +362,29 @@ const Edit = ({
 													<option value="dateRecurring">{ __( 'Date Recurring', 'otter-blocks' ) }</option>
 													<option value="timeRecurring">{ __( 'Time Recurring', 'otter-blocks' ) }</option>
 												</optgroup>
+
+												<optgroup label={ __( 'Query Strings', 'otter-blocks' ) }>
+													<option value="queryString">{ __( 'Query String in URL', 'otter-blocks' ) }</option>
+												</optgroup>
 											</select>
 										</BaseControl>
+
+										{ 'queryString' === i.type && (
+											<Fragment>
+												<TextControl
+													label={ __( 'Parameter', 'otter-blocks' ) }
+													help={ __( 'The query parameter.', 'otter-blocks' ) }
+													value={ i.param_name }
+													onChange={ e => changeValue( e, index, n, 'param_name' ) }
+												/>
+												<TextControl
+													label={ __( 'Value', 'otter-blocks' ) }
+													help={ __( 'The value of the parameter.', 'otter-blocks' ) }
+													value={ i.param_value }
+													onChange={ e => changeValue( e, index, n, 'param_value' ) }
+												/>
+											</Fragment>
+										) }
 
 										{ 'userRoles' === i.type && (
 											<FormTokenField
@@ -603,7 +629,7 @@ const Edit = ({
 											</Fragment>
 										) }
 
-										{ ( 'userRoles' === i.type || 'postAuthor' === i.type || 'postMeta' === i.type ) && (
+										{ ( 'userRoles' === i.type || 'postAuthor' === i.type || 'postMeta' === i.type || 'queryString' === i.type ) && (
 											<SelectControl
 												label={ __( 'If condition is true, the block should be:', 'otter-blocks' ) }
 												options={ [
