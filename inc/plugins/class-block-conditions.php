@@ -232,10 +232,17 @@ class Block_Conditions {
 		return true;
 	}
 
+	/**
+	 * Check URL parameters
+	 *
+	 * @param array $query_string Query String.
+	 *
+	 * @access public
+	 */
 	public function has_query_string( $query_string ) {
-		$url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+		$url = home_url( add_query_arg( null, null ) );
 
-		$url_components = parse_url($url);
+		$url_components = wp_parse_url( $url );
 
 		if ( ! isset( $url_components['query'] ) ) {
 			return false;
