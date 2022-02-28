@@ -79,37 +79,49 @@ const LayoutBuilder = ({
 						{__( 'Activate Advance Custom Fields to add more fields.', 'otter-blocks' )}
 					</ExternalLink>
 				) : (
-					<Button
-						variant="secondary"
-						isSecondary
-						className="otter-conditions__add"
-						disabled={ window?.acf === undefined }
-						onClick={ () => {
-							let id = uuidv4().slice( 0, 8 );
-							while ( 0 < attributes?.customMetas?.some( ({ otherId }) => otherId === id )  ) {
-								id = uuidv4().slice( 0, 8 );
-							}
-							id = `custom_${ id }`;
+					<Fragment>
+						<Button
+							variant="secondary"
+							isSecondary
+							className="o-conditions__add"
+							disabled={ window?.acf === undefined || ! window?.themeisleGutenberg?.hasNeveSupport?.hasNevePro}
+							onClick={ () => {
+								let id = uuidv4().slice( 0, 8 );
+								while ( 0 < attributes?.customMetas?.some( ({ otherId }) => otherId === id )  ) {
+									id = uuidv4().slice( 0, 8 );
+								}
+								id = `custom_${ id }`;
 
-							const newMeta = {
-								id,
-								field: '',
-								display: true
-							};
+								const newMeta = {
+									id,
+									field: '',
+									display: true
+								};
 
-							const {
-								template,
-								customMetas
-							} = filterDeadCustomTemplates();
+								const {
+									template,
+									customMetas
+								} = filterDeadCustomTemplates();
 
-							setAttributes({
-								template: [ ...template, id ],
-								customMetas: customMetas ? [ ...customMetas, newMeta ] : [ newMeta ]
-							});
-						}}
-					>
-						{ __( 'Add Meta Field', 'otter-blocks' ) }
-					</Button>
+								setAttributes({
+									template: [ ...template, id ],
+									customMetas: customMetas ? [ ...customMetas, newMeta ] : [ newMeta ]
+								});
+							}}
+						>
+							{ ! window.themeisleGutenberg?.hasNeveSupport?.hasNevePro ? __( 'You need Neve Pro!', 'otter-blocks' ) : __( 'Add Meta Field', 'otter-blocks' ) }
+						</Button>
+						{
+							( ! window.themeisleGutenberg?.hasNeveSupport?.hasNevePro ) && (
+								<ExternalLink
+									href="https://themeisle.com/themes/neve/"
+									target="_blank"
+								>
+									{__( 'Learn more about Neve.', 'otter-blocks' )}
+								</ExternalLink>
+							)
+						}
+					</Fragment>
 				) }
 			</div>
 		</Fragment>

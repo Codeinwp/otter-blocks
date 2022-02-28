@@ -13,6 +13,13 @@ namespace ThemeIsle\GutenbergBlocks\Render;
 class Posts_Grid_Block {
 
 	/**
+	 * Flag to mark that we can render the table.
+	 *
+	 * @var bool $$should_render_custom_meta Should we render the table?
+	 */
+	public static $should_render_custom_meta = true;
+
+	/**
 	 * Block render function for server-side.
 	 *
 	 * This method will pe passed to the render_callback parameter and it will output
@@ -22,6 +29,19 @@ class Posts_Grid_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
+
+		if (
+			! 'valid' === apply_filters( 'product_neve_license_status', false ) ||
+			true !== apply_filters( 'neve_has_block_editor_module', false ) ||
+			! class_exists( 'WooCommerce' ) ||
+			! class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\View\Table' ) ||
+			(
+				class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options' ) && true !== boolval( \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options::is_module_activated() )
+			)
+		) {
+			self::$should_render_custom_meta = false;
+		}
+
 		$categories = 0;
 
 		if ( isset( $attributes['categories'] ) ) {
@@ -183,7 +203,7 @@ class Posts_Grid_Block {
 					}
 				}
 
-				if ( str_starts_with( $element, 'custom_' ) ) {
+				if ( self::$should_render_custom_meta && str_starts_with( $element, 'custom_' ) ) {
 					if ( isset( $attributes['customMetas'] ) ) {
 						$custom_meta_field = null;
 						foreach ( $attributes['customMetas'] as $meta_field ) {
@@ -396,7 +416,7 @@ class Posts_Grid_Block {
 				}
 			}
 
-			if ( str_starts_with( $element, 'custom_' ) ) {
+			if ( self::$should_render_custom_meta && str_starts_with( $element, 'custom_' ) ) {
 				if ( isset( $attributes['customMetas'] ) ) {
 					$custom_meta_field = null;
 					foreach ( $attributes['customMetas'] as $meta_field ) {

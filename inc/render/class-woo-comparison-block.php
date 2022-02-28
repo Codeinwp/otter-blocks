@@ -12,9 +12,9 @@ namespace ThemeIsle\GutenbergBlocks\Render;
  */
 class Woo_Comparison_Block {
 	/**
-	 * Flag to mark that we can render the table.
+	 * Flag to mark that we can render the custom meta fields from ACF.
 	 *
-	 * @var bool $should_render Should we render the table?
+	 * @var bool $should_render Should we render the custom meta fields from ACF?
 	 */
 	public static $should_render = true;
 
@@ -103,7 +103,7 @@ class Woo_Comparison_Block {
 			array(
 				'id'    => $id,
 				'class' => $class,
-			) 
+			)
 		);
 
 		$output  = '<div ' . $wrapper_attributes . '>';

@@ -190,7 +190,7 @@ export const PostsDescription = ({attributes,  element, post }) => {
 };
 
 export const PostsCustomMeta = ({ customFieldData }) => {
-	if ( ! customFieldData || ( ! customFieldData.display ) ) {
+	if ( ! customFieldData || ( ! customFieldData.display ) || ( ! window?.themeisleGutenberg?.hasNeveSupport?.hasNevePro ) ) {
 		return <Fragment></Fragment>;
 	}
 
