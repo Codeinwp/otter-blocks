@@ -131,6 +131,22 @@ const Edit = ({
 		};
 	});
 
+	let { postCategories } = useSelect( select => {
+		const { getEntityRecords } = select( 'core' );
+		// eslint-disable-next-line camelcase
+		const categories = getEntityRecords( 'taxonomy', 'category', { per_page: 100 });
+
+		let postCategories = [];
+
+		if ( categories && Boolean( categories.length ) ) {
+			postCategories = categories.map( category => category.slug );
+		}
+
+		return {
+			postCategories
+		};
+	});
+
 	const {
 		products,
 		categories,
@@ -388,6 +404,11 @@ const Edit = ({
 				help: __( 'The selected block will be visible based on post type.' )
 			},
 			{
+				value: 'postCategory',
+				label: __( 'Post Category', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on post category.' )
+			},
+			{
 				value: 'postMeta',
 				label: __( 'Post Meta', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on post meta condition.' )
@@ -442,7 +463,7 @@ const Edit = ({
 		return conditions;
 	};
 
-	const customVisibility = [ 'userRoles', 'postAuthor', 'postMeta', 'postType', 'wooProductsInCart', 'wooPurchaseHistory', 'learnDashPurchaseHistory', 'learnDashCourseStatus', 'queryString' ];
+	const customVisibility = [ 'userRoles', 'postAuthor', 'postMeta', 'postType', 'postCategory', 'wooProductsInCart', 'wooPurchaseHistory', 'learnDashPurchaseHistory', 'learnDashCourseStatus', 'queryString' ];
 
 	const week = [
 		{
@@ -611,6 +632,7 @@ const Edit = ({
 												<optgroup label={ __( 'Posts', 'otter-blocks' ) }>
 													<option value="postAuthor">{ __( 'Post Author', 'otter-blocks' ) }</option>
 													<option value="postType">{ __( 'Post Type', 'otter-blocks' ) }</option>
+													<option value="postCategory">{ __( 'Post Category', 'otter-blocks' ) }</option>
 													{ ( isBoosterActive || isNeve ) && (
 														<option value="postMeta" disabled={ ! isBoosterActive }>{ __( 'Post Meta', 'otter-blocks' ) }</option>
 													) }
@@ -694,6 +716,17 @@ const Edit = ({
 												onChange={ types => changeArrayValue( types, index, n, 'post_types' ) }
 												__experimentalExpandOnFocus={ true }
 												__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
+											/>
+										) }
+
+										{ 'postCategory' === i.type && (
+											<FormTokenField
+												label={ __( 'Post Category', 'otter-blocks' ) }
+												value={ i.categories }
+												suggestions={ postCategories }
+												onChange={ categories => changeArrayValue( categories, index, n, 'categories' ) }
+												__experimentalExpandOnFocus={ true }
+												__experimentalValidateInput={ newValue => postCategories.includes( newValue ) }
 											/>
 										) }
 

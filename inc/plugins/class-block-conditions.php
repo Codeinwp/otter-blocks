@@ -151,6 +151,16 @@ class Block_Conditions {
 			}
 		}
 
+		if ( 'postCategory' === $condition['type'] ) {
+			if ( isset( $condition['categories'] ) ) {
+				if ( $visibility ) {
+					return $this->has_category( $condition['categories'] );
+				} else {
+					return ! $this->has_category( $condition['categories'] );
+				}
+			}
+		}
+
 		if ( 'postMeta' === $condition['type'] && $has_pro ) {
 			if ( isset( $condition['meta_key'] ) ) {
 				if ( $visibility ) {
@@ -318,6 +328,26 @@ class Block_Conditions {
 	public function is_type( $types ) {
 		$type = get_post_type();
 		return in_array( $type, $types );
+	}
+
+	/**
+	 * Check post category.
+	 *
+	 * @param array $categories Selected post categories.
+	 *
+	 * @access public
+	 */
+	public function has_category( $categories ) {
+		$used = get_the_category();
+
+		$used_categories = array_map(
+			function ( $category ) {
+				return $category->slug;
+			},
+			$used
+		);
+
+		return array_intersect( $categories, $used_categories ) === $categories;
 	}
 
 	/**
