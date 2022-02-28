@@ -141,6 +141,16 @@ class Block_Conditions {
 			}
 		}
 
+		if ( 'postType' === $condition['type'] ) {
+			if ( isset( $condition['post_types'] ) ) {
+				if ( $visibility ) {
+					return $this->is_type( $condition['post_types'] );
+				} else {
+					return ! $this->is_type( $condition['post_types'] );
+				}
+			}
+		}
+
 		if ( 'postMeta' === $condition['type'] && $has_pro ) {
 			if ( isset( $condition['meta_key'] ) ) {
 				if ( $visibility ) {
@@ -253,11 +263,7 @@ class Block_Conditions {
 		$name  = $query_string['param_name'];
 		$value = $query_string['param_value'];
 
-		if ( isset( $params[ $name ] ) && $params[ $name ] === $value ) {
-			return true;
-		}
-
-		return false;
+		return isset( $params[ $name ] ) && $params[ $name ] === $value;
 	}
 
 	/**
@@ -300,6 +306,18 @@ class Block_Conditions {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check post type.
+	 *
+	 * @param array $types Selected post types.
+	 *
+	 * @access public
+	 */
+	public function is_type( $types ) {
+		$type = get_post_type();
+		return in_array( $type, $types );
 	}
 
 	/**

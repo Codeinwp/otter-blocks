@@ -50,6 +50,7 @@ import PanelTab from '../../components/panel-tab/index.js';
 const isBoosterActive = Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive );
 const isNeve = Boolean( window.themeisleGutenberg.hasNeveSupport.hasNeve );
 const isNevePro = Boolean( window.themeisleGutenberg.hasNeveSupport.hasNevePro );
+const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 
 const Edit = ({
 	attributes,
@@ -261,15 +262,9 @@ const Edit = ({
 		setAttributes({ otterConditions });
 	};
 
-	const changeRoles = ( value, index, key ) => {
+	const changeArrayValue = ( value, index, key, type ) => {
 		const otterConditions = [ ...attributes.otterConditions ];
-		otterConditions[ index ][ key ].roles = value;
-		setAttributes({ otterConditions });
-	};
-
-	const changeAuthors = ( value, index, key ) => {
-		const otterConditions = [ ...attributes.otterConditions ];
-		otterConditions[ index ][ key ].authors = value;
+		otterConditions[ index ][ key ][ type ] = value;
 		setAttributes({ otterConditions });
 	};
 
@@ -388,6 +383,11 @@ const Edit = ({
 				help: __( 'The selected block will be visible based on post author.' )
 			},
 			{
+				value: 'postType',
+				label: __( 'Post Type', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on post type.' )
+			},
+			{
 				value: 'postMeta',
 				label: __( 'Post Meta', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on post meta condition.' )
@@ -441,6 +441,8 @@ const Edit = ({
 
 		return conditions;
 	};
+
+	const customVisibility = [ 'userRoles', 'postAuthor', 'postMeta', 'postType', 'wooProductsInCart', 'wooPurchaseHistory', 'learnDashPurchaseHistory', 'learnDashCourseStatus', 'queryString' ];
 
 	const week = [
 		{
@@ -608,6 +610,7 @@ const Edit = ({
 
 												<optgroup label={ __( 'Posts', 'otter-blocks' ) }>
 													<option value="postAuthor">{ __( 'Post Author', 'otter-blocks' ) }</option>
+													<option value="postType">{ __( 'Post Type', 'otter-blocks' ) }</option>
 													{ ( isBoosterActive || isNeve ) && (
 														<option value="postMeta" disabled={ ! isBoosterActive }>{ __( 'Post Meta', 'otter-blocks' ) }</option>
 													) }
@@ -666,7 +669,7 @@ const Edit = ({
 												label={ __( 'User Roles', 'otter-blocks' ) }
 												value={ i.roles }
 												suggestions={ Object.keys( window.themeisleGutenberg.userRoles ) }
-												onChange={ roles => changeRoles( roles, index, n ) }
+												onChange={ roles => changeArrayValue( roles, index, n, 'roles' ) }
 												__experimentalExpandOnFocus={ true }
 												__experimentalValidateInput={ newValue => Object.keys( window.themeisleGutenberg.userRoles ).includes( newValue ) }
 											/>
@@ -677,9 +680,20 @@ const Edit = ({
 												label={ __( 'Post Authors', 'otter-blocks' ) }
 												value={ i.authors }
 												suggestions={ postAuthors }
-												onChange={ authors => changeAuthors( authors, index, n ) }
+												onChange={ authors => changeArrayValue( authors, index, n, 'authors' ) }
 												__experimentalExpandOnFocus={ true }
 												__experimentalValidateInput={ newValue => postAuthors.includes( newValue ) }
+											/>
+										) }
+
+										{ 'postType' === i.type && (
+											<FormTokenField
+												label={ __( 'Post Types', 'otter-blocks' ) }
+												value={ i.post_types }
+												suggestions={ postTypes }
+												onChange={ types => changeArrayValue( types, index, n, 'post_types' ) }
+												__experimentalExpandOnFocus={ true }
+												__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
 											/>
 										) }
 
@@ -1084,7 +1098,7 @@ const Edit = ({
 											</Fragment>
 										) }
 
-										{ ( 'userRoles' === i.type || 'postAuthor' === i.type || 'postMeta' === i.type || 'wooProductsInCart' === i.type || 'wooPurchaseHistory' === i.type || 'learnDashPurchaseHistory' === i.type || 'learnDashCourseStatus' === i.type || 'queryString' === i.type ) && (
+										{ customVisibility.includes( i.type ) && (
 											<SelectControl
 												label={ __( 'If condition is true, the block should be:', 'otter-blocks' ) }
 												options={ [
