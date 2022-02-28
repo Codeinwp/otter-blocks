@@ -149,8 +149,10 @@ const Edit = ({
 	}, [ posts, attributes.enableFeaturedPost, attributes.featuredPost ]);
 
 	useEffect( () => {
-		const path = window.themeisleGutenberg.postId ? `otter/v1/acf-fields?post=${ window.themeisleGutenberg.postId }` : 'otter/v1/acf-fields';
-		apiFetch({ path }).then( resp => {
+		if ( ! window.acf ) {
+			return;
+		}
+		apiFetch({ path: 'otter/v1/acf-fields' }).then( resp => {
 			if ( resp?.success ) {
 				setAcfData( resp?.groups );
 				setAcfFieldDict(

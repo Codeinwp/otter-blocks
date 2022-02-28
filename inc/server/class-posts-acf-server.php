@@ -55,13 +55,6 @@ class Posts_ACF_Server {
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get_acf_fields' ),
-					'args'                => array(
-						'post' => array(
-							'type'        => 'int',
-							'required'    => false,
-							'description' => __( 'Post ID', 'otter-blocks' ),
-						),
-					),
 					'permission_callback' => function () {
 						return current_user_can( 'edit_posts' );
 					},
@@ -89,7 +82,7 @@ class Posts_ACF_Server {
 		}
 
 		$return['groups'] = array();
-		$groups           = acf_get_field_groups( $request->get_param( 'id' ) );
+		$groups           = acf_get_field_groups( );
 
 		foreach ( $groups as $group ) {
 			$group_data = array(
