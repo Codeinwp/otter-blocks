@@ -5,7 +5,7 @@
 	"scripts": {
 		"build": "wp-scripts build",
 		"start": "wp-scripts start --watch",
-		"dev": "NODE_ENV=development wp-scripts build",
+		"build-dev": "NODE_ENV=development wp-scripts build",
 		"lint": "wp-scripts lint-js ./src",
 		"format": "wp-scripts lint-js ./src --fix",
 		"packages-update": "wp-scripts packages-update",

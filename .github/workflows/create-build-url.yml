@@ -36,7 +36,7 @@ jobs:
       - name: Create zip
         run: npm run dist
       - name: Build dev files
-        run: npm run dev
+        run: npm run build-dev
       - name: Create zip
         run: npm run dist-dev
       - name: Retrieve branch name
