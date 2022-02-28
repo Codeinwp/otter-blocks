@@ -613,9 +613,11 @@ const Edit = ({
 													) }
 												</optgroup>
 
-												<optgroup label={ __( 'Query Strings', 'otter-blocks' ) }>
-													<option value="queryString">{ __( 'Query String in URL', 'otter-blocks' ) }</option>
-												</optgroup>
+												{ ( isBoosterActive || isNeve ) && (
+													<optgroup label={ __( 'Query Strings', 'otter-blocks' ) }>
+														<option value="queryString" disabled={ ! isBoosterActive }>{ __( 'Query String in URL', 'otter-blocks' ) }</option>
+													</optgroup>
+												) }
 
 												{ ( isBoosterActive || isNeve ) && (
 													<optgroup label={ __( 'Date & Time', 'otter-blocks' ) }>

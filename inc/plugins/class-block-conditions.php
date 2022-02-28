@@ -170,7 +170,7 @@ class Block_Conditions {
 		}
 
 		if ( 'queryString' === $condition['type'] ) {
-			if ( isset( $condition['param_name'] ) && isset( $condition['param_value'] ) ) {
+			if ( isset( $condition['param_name'] ) && isset( $condition['param_value'] ) && $has_pro ) {
 				if ( $visibility ) {
 					return $this->has_query_string( $condition );
 				} else {
