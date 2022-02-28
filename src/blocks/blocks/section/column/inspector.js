@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { pick } from 'lodash';
 
 import {
-	ColorPalette,
+	__experimentalColorGradientControl as ColorGradientControl,
 	InspectorControls
 } from '@wordpress/block-editor';
 
@@ -35,7 +35,6 @@ import {
 /**
  * Internal dependencies
  */
-import ColorBaseControl from '../../../components/color-base-control/index.js';
 import ResponsiveControl from '../../../components/responsive-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
@@ -333,16 +332,11 @@ const Inspector = ({
 							onChange={ changeBorder }
 						/>
 
-						<ColorBaseControl
+						<ColorGradientControl
 							label={ __( 'Border Color', 'otter-blocks' ) }
 							colorValue={ attributes.borderColor }
-						>
-							<ColorPalette
-								label={ __( 'Border Color', 'otter-blocks' ) }
-								value={ attributes.borderColor }
-								onChange={ value => setAttributes({ borderColor: value }) }
-							/>
-						</ColorBaseControl>
+							onColorChange={ value => setAttributes({ borderColor: value }) }
+						/>
 
 						<BoxControl
 							label={ __( 'Border Radius', 'otter-blocks' ) }
@@ -373,16 +367,11 @@ const Inspector = ({
 
 						{ attributes.boxShadow && (
 							<Fragment>
-								<ColorBaseControl
+								<ColorGradientControl
 									label={ __( 'Shadow Color', 'otter-blocks' ) }
 									colorValue={ attributes.boxShadowColor }
-								>
-									<ColorPalette
-										label={ __( 'Shadow Color', 'otter-blocks' ) }
-										value={ attributes.boxShadowColor }
-										onChange={ value => setAttributes({ boxShadowColor: value }) }
-									/>
-								</ColorBaseControl>
+									onColorChange={ value => setAttributes({ boxShadowColor: value }) }
+								/>
 
 								<ControlPanelControl
 									label={ __( 'Shadow Properties', 'otter-blocks' ) }
