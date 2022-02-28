@@ -78,7 +78,6 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const [ slugs, setSlugs ] = useState([]);
-	const [ featured, setFeatured ] = useState( '' );
 
 	const [ acfData, setAcfData ] = useState([]);
 	const [ acfFieldDict, setAcfFieldDict ] = useState({});
@@ -125,28 +124,6 @@ const Edit = ({
 	useEffect( () => {
 		dispatch( 'otter-store' ).setPostsSlugs( slugs );
 	}, [ slugs ]);
-
-	useEffect( () => {
-		if ( 0 < posts?.length && attributes.enableFeaturedPost  ) {
-			if ( 'latest' === attributes.featuredPost ) {
-				setFeatured(
-					posts
-						.map( post => ({
-							...post,
-							date: new Date( post.date )
-						}) )
-						.sort( ( a, b ) => {
-							return a.date - b.date;
-						})
-						.pop()
-				);
-			} else if ( attributes.featuredPost ) {
-				setFeatured( posts?.find( post => post?.id?.toString() == attributes.featuredPost ) );
-			} else {
-				setFeatured( '' );
-			}
-		}
-	}, [ posts, attributes.enableFeaturedPost, attributes.featuredPost ]);
 
 	useEffect( () => {
 		if ( ! window.acf ) {
@@ -282,7 +259,7 @@ const Edit = ({
 						{ attributes.enableFeaturedPost && (
 							<FeaturedPost
 								attributes={ attributes }
-								post={ featured }
+								post={ posts?.[0] }
 								category={ categoriesList[0] }
 								author={ authors[0] }
 							/>

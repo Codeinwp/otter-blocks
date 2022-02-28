@@ -58,55 +58,58 @@ const Layout = ({
 					)
 			}
 		>
-			{ posts.filter( post => post && ( post?.id?.toString()  !== attributes.featuredPost ) ).map( post => {
-				const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
-				const author = authors && post.author ? authors.find( item => item.id === post.author ) : undefined;
-				return (
-					<div
-						key={ post.link }
-						className="o-posts-grid-post-blog o-posts-grid-post-plain"
-					>
-						<div className={classnames( 'o-posts-grid-post' )}>
-							{ ( 0 !== post.featured_media && attributes.displayFeaturedImage ) && (
-								<Thumbnail
-									id={ post.featured_media }
-									link={ post.link }
-									alt={ post.title?.rendered }
-									size={ attributes.imageSize }
-									imgStyle={{
-										borderRadius: attributes.borderRadius !== undefined ? attributes.borderRadius + 'px' : undefined
-									}}
-								/>
-							) }
-
-							<div
-								className={ classnames(
-									'o-posts-grid-post-body',
-									{ 'is-full': ! attributes.displayFeaturedImage }
+			{ posts
+				.filter( post => post )
+				.slice( attributes.enableFeaturedPost ? 1 : 0 )
+				.map( post => {
+					const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
+					const author = authors && post.author ? authors.find( item => item.id === post.author ) : undefined;
+					return (
+						<div
+							key={ post.link }
+							className="o-posts-grid-post-blog o-posts-grid-post-plain"
+						>
+							<div className={classnames( 'o-posts-grid-post' )}>
+								{ ( 0 !== post.featured_media && attributes.displayFeaturedImage ) && (
+									<Thumbnail
+										id={ post.featured_media }
+										link={ post.link }
+										alt={ post.title?.rendered }
+										size={ attributes.imageSize }
+										imgStyle={{
+											borderRadius: attributes.borderRadius !== undefined ? attributes.borderRadius + 'px' : undefined
+										}}
+									/>
 								) }
-							>
-								{ attributes.template.map( element => {
-									switch ( getTemplateType( element ) ) {
-									case 'category':
-										return <PostsCategory attributes={attributes} element={element} category={category} categoriesList={categoriesList}/>;
-									case 'title':
-										return <PostsTitle attributes={attributes} element={element} post={post} />;
-									case 'meta':
-										return <PostsMeta attributes={attributes} element={element} post={post} author={author} category={category} />;
-									case 'description':
-										return <PostsDescription attributes={attributes} element={element} post={post} />;
-									case 'custom':
-										const customFieldData = attributes.customMetas?.filter( ({ id }) => id === element )?.pop();
-										return <PostsCustomMeta customFieldData={customFieldData} />;
-									default:
-										return '';
-									}
-								}) }
+
+								<div
+									className={ classnames(
+										'o-posts-grid-post-body',
+										{ 'is-full': ! attributes.displayFeaturedImage }
+									) }
+								>
+									{ attributes.template.map( element => {
+										switch ( getTemplateType( element ) ) {
+										case 'category':
+											return <PostsCategory attributes={attributes} element={element} category={category} categoriesList={categoriesList}/>;
+										case 'title':
+											return <PostsTitle attributes={attributes} element={element} post={post} />;
+										case 'meta':
+											return <PostsMeta attributes={attributes} element={element} post={post} author={author} category={category} />;
+										case 'description':
+											return <PostsDescription attributes={attributes} element={element} post={post} />;
+										case 'custom':
+											const customFieldData = attributes.customMetas?.filter( ({ id }) => id === element )?.pop();
+											return <PostsCustomMeta customFieldData={customFieldData} />;
+										default:
+											return '';
+										}
+									}) }
+								</div>
 							</div>
 						</div>
-					</div>
-				);
-			}) }
+					);
+				}) }
 		</div>
 	);
 };

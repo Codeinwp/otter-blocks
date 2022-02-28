@@ -72,7 +72,7 @@ class Posts_Grid_Block {
 
 		$list_items_markup = '';
 
-		foreach ( $recent_posts as $post ) {
+		foreach ( array_slice( $recent_posts, isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] && isset( $recent_posts[0] ) ? 1 : 0  ) as $post ) {
 			$id = $post['ID'];
 
 			if ( isset( $attributes['featuredPost'] ) && $attributes['featuredPost'] === $id ) {
@@ -261,7 +261,7 @@ class Posts_Grid_Block {
 			'<div %1$s id="%2$s">%3$s<div class="%4$s">%5$s</div> </div>',
 			$wrapper_attributes,
 			isset( $attributes['id'] ) ? $attributes['id'] : '',
-			isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] ? $this->render_featured_post( $this->get_featured_post( $attributes['featuredPost'], $recent_posts ), $attributes ) : '',
+			isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] && isset( $recent_posts[0] ) ? $this->render_featured_post( $recent_posts[0], $attributes ) : '',
 			trim( $class ),
 			$list_items_markup
 		);
@@ -349,7 +349,7 @@ class Posts_Grid_Block {
 						$html .= sprintf(
 							'%1$s %2$s',
 							__( 'by', 'otter-blocks' ),
-							get_the_author_meta( 'display_name', get_post_field( 'post_author', $id ) )
+							esc_html( get_the_author_meta( 'display_name', get_post_field( 'post_author', $id ) ) )
 						);
 					}
 
@@ -364,7 +364,7 @@ class Posts_Grid_Block {
 					if ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] && isset( $category[0] ) ) {
 						$html .= sprintf(
 							' - %1$s',
-							$category[0]->cat_name
+							esc_html( $category[0]->cat_name )
 						);
 					}
 
@@ -379,7 +379,7 @@ class Posts_Grid_Block {
 					if ( ( isset( $attributes['excerptLength'] ) && $attributes['excerptLength'] > 0 ) && ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) ) {
 						$html .= sprintf(
 							'<p>%1$s</p>',
-							$this->get_excerpt_by_id( $id, $attributes['excerptLength'] )
+							esc_html( $this->get_excerpt_by_id( $id, $attributes['excerptLength'] ) )
 						);
 					}
 
@@ -439,36 +439,5 @@ class Posts_Grid_Block {
 		}
 		$html .= '</div>';
 		return sprintf( '<div class="o-featured-post">%1$s</div>', $html );
-	}
-
-	/**
-	 * Render the featured post
-	 *
-	 * @param WP_Post $featured_post_type Featured post.
-	 * @param array   $recent_posts Recen posts.
-	 *
-	 * @return WP_Post|null
-	 */
-	protected function get_featured_post( $featured_post_type, $recent_posts ) {
-
-		if ( ! isset( $featured_post_type ) && ! isset( $recent_posts ) && 0 < count( $recent_posts ) ) {
-			return null;
-		}
-
-		if ( 'latest' === $featured_post_type ) {
-			$latest = $recent_posts[0];
-			foreach ( $recent_posts as $post ) {
-				if ( $latest['post_date'] < $post['post_date'] ) {
-					$latest = $post;
-				}
-			}
-			return $latest;
-		}
-
-		foreach ( $recent_posts as $post ) {
-			if ( strval( $post['ID'] ) === $featured_post_type ) {
-				return $post;
-			}
-		}
 	}
 }

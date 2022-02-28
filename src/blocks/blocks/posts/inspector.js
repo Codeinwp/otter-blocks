@@ -176,28 +176,6 @@ const Inspector = ({
 					onChange={ enableFeaturedPost => setAttributes({ enableFeaturedPost })}
 				/>
 
-				{ attributes.enableFeaturedPost && (
-					<SelectControl
-						label={ __( 'Featured Post', 'otter-blocks' ) }
-						value={ attributes.featuredPost }
-						options={[
-							{
-								label: __( 'None', 'otter-blocks' ),
-								value: ''
-							},
-							{
-								label: __( 'Latest', 'otter-blocks' ),
-								value: 'latest'
-							},
-							...( posts?.filter( post => post )?.map( post => ({
-								label: post?.title.rendered,
-								value: post?.id?.toString()
-							}) ) || [])
-						]}
-						onChange={ featuredPost => setAttributes({ featuredPost }) }
-					/>
-				) }
-
 				<BaseControl
 					label={ __( 'Text alignment', 'otter-blocks' ) }
 				>

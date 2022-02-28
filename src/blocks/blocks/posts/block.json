@@ -150,9 +150,6 @@
 		"enableFeaturedPost": {
 			"type": "boolean"
 		},
-		"featuredPost": {
-			"type": "string"
-		},
 		"imageWidth": {
 			"type": "number"
 		}
