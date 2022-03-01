@@ -190,11 +190,11 @@ class Block_Conditions {
 		}
 
 		if ( 'queryString' === $condition['type'] ) {
-			if ( isset( $condition['param_name'] ) && isset( $condition['param_value'] ) && $has_pro ) {
+			if ( isset( $condition['query_string'] ) && $has_pro ) {
 				if ( $visibility ) {
-					return $this->has_query_string( $condition );
+					return $this->has_query_string( $condition['query_string'] );
 				} else {
-					return ! $this->has_query_string( $condition );
+					return ! $this->has_query_string( $condition['query_string'] );
 				}
 			}
 		}
@@ -254,8 +254,9 @@ class Block_Conditions {
 
 	/**
 	 * Check URL parameters
+	 * Returns true if URL contains any of the parameters from the condition.
 	 *
-	 * @param array $query_string Query String.
+	 * @param string $query_string Query String.
 	 *
 	 * @access public
 	 */
@@ -269,11 +270,9 @@ class Block_Conditions {
 		}
 
 		parse_str( $url_components['query'], $params );
+		parse_str( $query_string, $cond_params );
 
-		$name  = $query_string['param_name'];
-		$value = $query_string['param_value'];
-
-		return isset( $params[ $name ] ) && $params[ $name ] === $value;
+		return count( array_intersect( $cond_params, $params ) ) > 0;
 	}
 
 	/**

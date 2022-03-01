@@ -24,7 +24,8 @@ import {
 	Placeholder,
 	SelectControl,
 	Spinner,
-	TextControl
+	TextControl,
+	TextareaControl
 } from '@wordpress/components';
 
 import {
@@ -455,8 +456,8 @@ const Edit = ({
 			},
 			{
 				value: 'queryString',
-				label: __( 'Query String in URL', 'otter-blocks' ),
-				help: __( 'The selected block will only be visible based on the specified query string.' )
+				label: __( 'Query String', 'otter-blocks' ),
+				help: __( 'The condition will be met if the URL contains any of the specified parameters.' )
 			}
 		];
 
@@ -639,8 +640,8 @@ const Edit = ({
 												</optgroup>
 
 												{ ( isBoosterActive || isNeve ) && (
-													<optgroup label={ __( 'Query Strings', 'otter-blocks' ) }>
-														<option value="queryString" disabled={ ! isBoosterActive }>{ __( 'Query String in URL', 'otter-blocks' ) }</option>
+													<optgroup label={ __( 'URL', 'otter-blocks' ) }>
+														<option value="queryString" disabled={ ! isBoosterActive }>{ __( 'Query String', 'otter-blocks' ) }</option>
 													</optgroup>
 												) }
 
@@ -671,17 +672,12 @@ const Edit = ({
 
 										{ 'queryString' === i.type && (
 											<Fragment>
-												<TextControl
-													label={ __( 'Parameter', 'otter-blocks' ) }
-													help={ __( 'The query parameter.', 'otter-blocks' ) }
-													value={ i.param_name }
-													onChange={ e => changeValue( e, index, n, 'param_name' ) }
-												/>
-												<TextControl
-													label={ __( 'Value', 'otter-blocks' ) }
-													help={ __( 'The value of the parameter.', 'otter-blocks' ) }
-													value={ i.param_value }
-													onChange={ e => changeValue( e, index, n, 'param_value' ) }
+												<TextareaControl
+													label={ __( 'Query String', 'otter-blocks' ) }
+													help={ __( 'Write a key-value pair for each parameter, one per line.', 'otter-blocks' ) }
+													placeholder='eg. utm_source=facebook'
+													value={ i.query_string.replace( '&', '\n' )}
+													onChange={ e => changeValue( e.replace( '\n', '&' ), index, n, 'query_string' ) }
 												/>
 											</Fragment>
 										) }
