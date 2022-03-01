@@ -82,7 +82,7 @@ class Posts_ACF_Server {
 		}
 
 		$return['groups'] = array();
-		$groups           = acf_get_field_groups( );
+		$groups           = acf_get_field_groups();
 
 		foreach ( $groups as $group ) {
 			$group_data = array(

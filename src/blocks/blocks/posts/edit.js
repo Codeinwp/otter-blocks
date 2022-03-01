@@ -148,7 +148,6 @@ const Edit = ({
 							return acc;
 						}, {})
 				);
-
 			}
 		});
 	}, []);

@@ -86,7 +86,7 @@ class Posts_Grid_Block {
 
 		$list_items_markup = '';
 
-		foreach ( array_slice( $recent_posts, isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] && isset( $recent_posts[0] ) ? 1 : 0  ) as $post ) {
+		foreach ( array_slice( $recent_posts, isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] && isset( $recent_posts[0] ) ? 1 : 0 ) as $post ) {
 			$id = $post['ID'];
 
 			if ( isset( $attributes['featuredPost'] ) && $attributes['featuredPost'] === $id ) {
