@@ -632,10 +632,12 @@ const Edit = ({
 
 												<optgroup label={ __( 'Posts', 'otter-blocks' ) }>
 													<option value="postAuthor">{ __( 'Post Author', 'otter-blocks' ) }</option>
-													<option value="postType">{ __( 'Post Type', 'otter-blocks' ) }</option>
 													<option value="postCategory">{ __( 'Post Category', 'otter-blocks' ) }</option>
 													{ ( isBoosterActive || isNeve ) && (
-														<option value="postMeta" disabled={ ! isBoosterActive }>{ __( 'Post Meta', 'otter-blocks' ) }</option>
+														<Fragment>
+															<option value="postType">{ __( 'Post Type', 'otter-blocks' ) }</option>
+															<option value="postMeta" disabled={ ! isBoosterActive }>{ __( 'Post Meta', 'otter-blocks' ) }</option>
+														</Fragment>
 													) }
 												</optgroup>
 

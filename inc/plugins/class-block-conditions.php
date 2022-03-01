@@ -190,7 +190,7 @@ class Block_Conditions {
 		}
 
 		if ( 'queryString' === $condition['type'] ) {
-			if ( isset( $condition['query_string'] ) && isset ( $condition['match'] ) && $has_pro ) {
+			if ( isset( $condition['query_string'] ) && isset( $condition['match'] ) && $has_pro ) {
 				if ( $visibility ) {
 					return $this->has_query_string( $condition );
 				} else {
@@ -274,7 +274,7 @@ class Block_Conditions {
 		parse_str( $url_components['query'], $params );
 		parse_str( $query_string, $cond_params );
 
-		if ( $condition['match'] === 'any' ) {
+		if ( 'any' === $condition['match'] ) {
 			return count( array_intersect( $cond_params, $params ) ) > 0;
 		}
 
