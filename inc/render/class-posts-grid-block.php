@@ -31,13 +31,7 @@ class Posts_Grid_Block {
 	public function render( $attributes ) {
 
 		if (
-			! 'valid' === apply_filters( 'product_neve_license_status', false ) ||
-			true !== apply_filters( 'neve_has_block_editor_module', false ) ||
-			! class_exists( 'WooCommerce' ) ||
-			! class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\View\Table' ) ||
-			(
-				class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options' ) && true !== boolval( \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options::is_module_activated() )
-			)
+			! 'valid' === apply_filters( 'product_neve_license_status', false )
 		) {
 			self::$should_render_custom_meta = false;
 		}
