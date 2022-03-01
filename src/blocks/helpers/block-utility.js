@@ -254,3 +254,5 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 		...extractBlockData( clientId )
 	});
 };
+
+import { useDispatch, useSelect } from '@wordpress/data';
