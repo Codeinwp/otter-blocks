@@ -142,86 +142,94 @@ s		E.g:
 					onChange={ value => addOption( value, FILTER_OPTIONS.scope ) }
 				/>
 				{
-					! hasPro && (
-						<ExternalLink
-							href='https://themeisle.com/themes/neve/'
-							target='_blank'
-						>
-							{ __( 'Enable more options with Neve Pro.', 'otter-blocks' ) }
-						</ExternalLink>
+					( window?.themeisleGutenberg?.hasNeveSupport?.hasNeve ) && (
+						<Fragment>
+							{
+								! hasPro && (
+									<ExternalLink
+										href='https://themeisle.com/themes/neve/'
+										target='_blank'
+									>
+										{ __( 'Enable more options with Neve Pro.', 'otter-blocks' ) }
+									</ExternalLink>
+								)
+							}
+
+							<SelectControl
+								label={ __( 'Position', 'otter-blocks' ) }
+								help={ __( 'Position of the block in relation to the screen.', 'otter-blocks' ) }
+								disabled={ ! hasPro }
+								value={ position }
+								options={ [
+									{
+										label: __( 'Top', 'otter-blocks' ),
+										value: 'o-sticky-pos-top'
+									},
+									{
+										label: __( 'Bottom', 'otter-blocks' ),
+										value: 'o-sticky-pos-bottom'
+									}
+								] }
+								onChange={ value => addOption(  value, FILTER_OPTIONS.position ) }
+							/>
+
+							<RangeControl
+								label={ __( 'Offset', 'otter-blocks' ) }
+								help={ __( 'Distance from the block to the screen.', 'otter-blocks' ) }
+								disabled={ ! hasPro }
+								value={ getOffsetValue( ) }
+								min={ 0 }
+								max={ 500 }
+								onChange={ value => addOption( `o-sticky-offset-${ value }`, FILTER_OPTIONS.offset ) }
+							/>
+
+							<SelectControl
+								label={ __( 'Behaviour', 'otter-blocks' ) }
+								help={ __( 'Behaviour when multiple sticky blocks with the same movement limit collide.', 'otter-blocks' ) }
+								disabled={ ! hasPro }
+								value={ behaviour }
+								options={ [
+									{
+										label: __( 'Collapse', 'otter-blocks' ),
+										value: 'o-sticky-bhvr-keep'
+									},
+									{
+										label: __( 'Fade', 'otter-blocks' ),
+										value: 'o-sticky-bhvr-hide'
+									},
+									{
+										label: __( 'Stack', 'otter-blocks' ),
+										value: 'o-sticky-bhvr-stack'
+									}
+								] }
+								onChange={ value => addOption(  value, FILTER_OPTIONS.behaviour ) }
+							/>
+
+							{ 'o-sticky-bhvr-stack'  === behaviour && (
+								<div
+									style={ {
+										backgroundColor: '#fdf8e6',
+										borderRadius: '5px',
+										padding: '10px',
+										textAlign: 'justify'
+									} }
+								>
+									{ __( 'The block will stack with other sticky elements with the same \'Stick To\' container, and Stack option in Behaviour. It works better with \'Stick to\' as Top Level Block or Screen.', 'otter-blocks' ) }
+								</div>
+							) }
+
+							<ToggleControl
+								label={ __( 'Enable on Mobile', 'otter-blocks' ) }
+								help={ __( 'Make the sticky mode active for mobile users.' ) }
+								disabled={ ! hasPro }
+								checked={ useOnMobile }
+								onChange={ () => addOption( 'o-sticky-use-mobile', FILTER_OPTIONS.usage ) }
+							/>
+
+						</Fragment>
 					)
 				}
 
-				<SelectControl
-					label={ __( 'Position', 'otter-blocks' ) }
-					help={ __( 'Position of the block in relation to the screen.', 'otter-blocks' ) }
-					disabled={ ! hasPro }
-					value={ position }
-					options={ [
-						{
-							label: __( 'Top', 'otter-blocks' ),
-							value: 'o-sticky-pos-top'
-						},
-						{
-							label: __( 'Bottom', 'otter-blocks' ),
-							value: 'o-sticky-pos-bottom'
-						}
-					] }
-					onChange={ value => addOption(  value, FILTER_OPTIONS.position ) }
-				/>
-
-				<RangeControl
-					label={ __( 'Offset', 'otter-blocks' ) }
-					help={ __( 'Distance from the block to the screen.', 'otter-blocks' ) }
-					disabled={ ! hasPro }
-					value={ getOffsetValue( ) }
-					min={ 0 }
-					max={ 500 }
-					onChange={ value => addOption( `o-sticky-offset-${ value }`, FILTER_OPTIONS.offset ) }
-				/>
-
-				<SelectControl
-					label={ __( 'Behaviour', 'otter-blocks' ) }
-					help={ __( 'Behaviour when multiple sticky blocks with the same movement limit collide.', 'otter-blocks' ) }
-					disabled={ ! hasPro }
-					value={ behaviour }
-					options={ [
-						{
-							label: __( 'Collapse', 'otter-blocks' ),
-							value: 'o-sticky-bhvr-keep'
-						},
-						{
-							label: __( 'Fade', 'otter-blocks' ),
-							value: 'o-sticky-bhvr-hide'
-						},
-						{
-							label: __( 'Stack', 'otter-blocks' ),
-							value: 'o-sticky-bhvr-stack'
-						}
-					] }
-					onChange={ value => addOption(  value, FILTER_OPTIONS.behaviour ) }
-				/>
-
-				{ 'o-sticky-bhvr-stack'  === behaviour && (
-					<div
-						style={ {
-							backgroundColor: '#fdf8e6',
-							borderRadius: '5px',
-							padding: '10px',
-							textAlign: 'justify'
-						} }
-					>
-						{ __( 'The block will stack with other sticky elements with the same \'Stick To\' container, and Stack option in Behaviour. It works better with \'Stick to\' as Top Level Block or Screen.', 'otter-blocks' ) }
-					</div>
-				) }
-
-				<ToggleControl
-					label={ __( 'Enable on Mobile', 'otter-blocks' ) }
-					help={ __( 'Make the sticky mode active for mobile users.' ) }
-					disabled={ ! hasPro }
-					checked={ useOnMobile }
-					onChange={ () => addOption( 'o-sticky-use-mobile', FILTER_OPTIONS.usage ) }
-				/>
 
 				{
 
