@@ -120,7 +120,7 @@ const LayoutBuilder = ({
 												href="https://themeisle.com/themes/neve/"
 												target="_blank"
 											>
-												{__( 'Unlock the option to add data from Advance Custom Fields into the posts display. Upgrade to Neve Pro.', 'otter-blocks' )}
+												{__( 'Upgrade to Neve Pro and unlock more options from Advance Custom Fields.', 'otter-blocks' )}
 											</ExternalLink>
 										)
 									}
