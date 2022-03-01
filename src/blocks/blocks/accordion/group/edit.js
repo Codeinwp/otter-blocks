@@ -28,11 +28,15 @@ import {
  */
 import metadata from './block.json';
 import Inspector from './inspector.js';
-import { blockInit } from '../../../helpers/block-utility.js';
+import {
+	blockInit,
+	getDefaultValueByField
+} from '../../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
+	name,
 	attributes,
 	setAttributes,
 	clientId,
@@ -43,11 +47,13 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
+	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
+
 	const styles = css`
-		--titleColor: ${ attributes.titleColor };
-		--titleBackground: ${ attributes.titleBackground };
-		--borderColor: ${ attributes.borderColor };
-		--contentBackground: ${ attributes.contentBackground };
+		--titleColor: ${ getValue( 'titleColor' ) };
+		--titleBackground: ${ getValue( 'titleBackground' ) };
+		--borderColor: ${ getValue( 'borderColor' ) };
+		--contentBackground: ${ getValue( 'contentBackground' ) };
 	`;
 
 	const blockProps = useBlockProps({
@@ -63,6 +69,7 @@ const Edit = ({
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
+				getValue={ getValue }
 			/>
 
 			<div { ...blockProps }>

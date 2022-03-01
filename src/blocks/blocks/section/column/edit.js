@@ -1,8 +1,6 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
-
 import hexToRgba from 'hex-rgba';
 
 /**
@@ -25,8 +23,7 @@ import {
 import {
 	Fragment,
 	useEffect,
-	useRef,
-	useState
+	useRef
 } from '@wordpress/element';
 
 /**
@@ -35,11 +32,15 @@ import {
 import metadata from './block.json';
 import layouts from '../layouts.js';
 import Inspector from './inspector.js';
-import { blockInit } from '../../../helpers/block-utility.js';
+import {
+	blockInit,
+	getDefaultValueByField
+} from '../../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
+	name,
 	attributes,
 	setAttributes,
 	isSelected,
@@ -124,6 +125,8 @@ const Edit = ({
 	const nextBlock = useRef( adjacentBlockClientId && adjacentBlockClientId );
 	const nextBlockWidth = useRef( adjacentBlock && adjacentBlock.attributes.columnWidth );
 
+	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
+
 	let isDesktop = isLarger && ! isLarge && isSmall && ! isSmaller;
 
 	let isTablet = ! isLarger && ! isLarge && isSmall && ! isSmaller;
@@ -151,40 +154,40 @@ const Edit = ({
 
 	if ( isDesktop ) {
 		stylesheet = {
-			paddingTop: attributes.padding?.top,
-			paddingRight: attributes.padding?.right,
-			paddingBottom: attributes.padding?.bottom,
-			paddingLeft: attributes.padding?.left,
-			marginTop: attributes.margin?.top,
-			marginRight: attributes.margin?.right,
-			marginBottom: attributes.margin?.bottom,
-			marginLeft: attributes.margin?.left
+			paddingTop: getValue( 'padding' )?.top,
+			paddingRight: getValue( 'padding' )?.right,
+			paddingBottom: getValue( 'padding' )?.bottom,
+			paddingLeft: getValue( 'padding' )?.left,
+			marginTop: getValue( 'margin' )?.top,
+			marginRight: getValue( 'margin' )?.right,
+			marginBottom: getValue( 'margin' )?.bottom,
+			marginLeft: getValue( 'margin' )?.left
 		};
 	}
 
 	if ( isTablet ) {
 		stylesheet = {
-			paddingTop: attributes.paddingTablet?.top,
-			paddingRight: attributes.paddingTablet?.right,
-			paddingBottom: attributes.paddingTablet?.bottom,
-			paddingLeft: attributes.paddingTablet?.left,
-			marginTop: attributes.marginTablet?.top,
-			marginRight: attributes.marginTablet?.right,
-			marginBottom: attributes.marginTablet?.bottom,
-			marginLeft: attributes.marginTablet?.left
+			paddingTop: getValue( 'paddingTablet' )?.top,
+			paddingRight: getValue( 'paddingTablet' )?.right,
+			paddingBottom: getValue( 'paddingTablet' )?.bottom,
+			paddingLeft: getValue( 'paddingTablet' )?.left,
+			marginTop: getValue( 'marginTablet' )?.top,
+			marginRight: getValue( 'marginTablet' )?.right,
+			marginBottom: getValue( 'marginTablet' )?.bottom,
+			marginLeft: getValue( 'marginTablet' )?.left
 		};
 	}
 
 	if ( isMobile ) {
 		stylesheet = {
-			paddingTop: attributes.paddingMobile?.top,
-			paddingRight: attributes.paddingMobile?.right,
-			paddingBottom: attributes.paddingMobile?.bottom,
-			paddingLeft: attributes.paddingMobile?.left,
-			marginTop: attributes.marginMobile?.top,
-			marginRight: attributes.marginMobile?.right,
-			marginBottom: attributes.marginMobile?.bottom,
-			marginLeft: attributes.marginMobile?.left
+			paddingTop: getValue( 'paddingMobile' )?.top,
+			paddingRight: getValue( 'paddingMobile' )?.right,
+			paddingBottom: getValue( 'paddingMobile' )?.bottom,
+			paddingLeft: getValue( 'paddingMobile' )?.left,
+			marginTop: getValue( 'marginMobile' )?.top,
+			marginRight: getValue( 'marginMobile' )?.right,
+			marginBottom: getValue( 'marginMobile' )?.bottom,
+			marginLeft: getValue( 'marginMobile' )?.left
 		};
 	}
 
@@ -255,6 +258,7 @@ const Edit = ({
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
+				getValue={ getValue }
 				parentBlock={ parentBlock }
 				updateBlockAttributes={ updateBlockAttributes }
 				currentBlockWidth={ currentBlockWidth }

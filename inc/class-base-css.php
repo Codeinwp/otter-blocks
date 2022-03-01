@@ -298,6 +298,26 @@ class Base_CSS {
 	}
 
 	/**
+	 * Cycle thorugh Global Styles
+	 *
+	 * @return string Style.
+	 * @since   2.0.0
+	 * @access  public
+	 */
+	public function cycle_through_global_styles() {
+		$style = '';
+		foreach ( self::$blocks_classes as $classname ) {
+			$path = new $classname();
+
+			if ( method_exists( $path, 'render_global_css' ) ) {
+				$style .= $path->render_global_css();
+			}
+		}
+
+		return $style;
+	}
+
+	/**
 	 * Cycle thorugh Reusable Blocks
 	 *
 	 * @param array $blocks List of blocks.

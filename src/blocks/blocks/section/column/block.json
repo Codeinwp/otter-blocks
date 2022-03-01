@@ -102,6 +102,9 @@
 		},
 		"columnWidth": {
 			"type": "string"
+		},
+		"isSynced": {
+			"type": "array"
 		}
 	},
 	"supports": {

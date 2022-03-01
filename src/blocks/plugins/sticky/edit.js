@@ -66,9 +66,6 @@ const Edit = ({
 	setAttributes,
 	clientId
 }) => {
-
-	console.log( attributes, {clientId});
-
 	const [ containerOptions, setContainerOptions ] = useState([ {
 		label: __( 'Screen', 'otter-blocks' ),
 		value: 'o-sticky-scope-screen'

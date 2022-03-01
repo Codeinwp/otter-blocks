@@ -11,7 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { pick } from 'lodash';
 
 import {
-	ColorPalette,
+	__experimentalColorGradientControl as ColorGradientControl,
 	InspectorControls
 } from '@wordpress/block-editor';
 
@@ -38,18 +38,19 @@ import {
 /**
  * Internal dependencies
  */
-import ColorBaseControl from '../../../components/color-base-control/index.js';
 import LayoutControl from './../components/layout-control/index.js';
 import ResponsiveControl from '../../../components/responsive-control/index.js';
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
 import HTMLAnchorControl from '../../../components/html-anchor-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
+import SyncControl from '../../../components/sync-control/index.js';
 import { isNullObject } from '../../../helpers/helper-functions.js';
 import ToogleGroupControl from '../../../components/toogle-group-control/index.js';
 
 const Inspector = ({
 	attributes,
 	setAttributes,
+	getValue,
 	updateColumnsWidth,
 	dividerViewType,
 	setDividerViewType,
@@ -124,14 +125,27 @@ const Inspector = ({
 		}
 	};
 
+	const getPaddingField = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return 'padding';
+		case 'Tablet':
+			return 'paddingTablet';
+		case 'Mobile':
+			return 'paddingMobile';
+		default:
+			return undefined;
+		}
+	};
+
 	const getPadding = () => {
 		switch ( getView ) {
 		case 'Desktop':
-			return attributes.padding;
+			return getValue( 'padding' );
 		case 'Tablet':
-			return attributes.paddingTablet;
+			return getValue( 'paddingTablet' );
 		case 'Mobile':
-			return attributes.paddingMobile;
+			return getValue( 'paddingMobile' );
 		default:
 			return undefined;
 		}
@@ -154,14 +168,27 @@ const Inspector = ({
 		}
 	};
 
+	const getMarginField = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return 'margin';
+		case 'Tablet':
+			return 'marginTablet';
+		case 'Mobile':
+			return 'marginMobile';
+		default:
+			return undefined;
+		}
+	};
+
 	const getMargin = () => {
 		switch ( getView ) {
 		case 'Desktop':
-			return attributes.margin;
+			return getValue( 'margin' );
 		case 'Tablet':
-			return attributes.marginTablet;
+			return getValue( 'marginTablet' );
 		case 'Mobile':
-			return attributes.marginMobile;
+			return getValue( 'marginMobile' );
 		default:
 			return undefined;
 		}
@@ -268,7 +295,6 @@ const Inspector = ({
 	};
 
 	const getDividerColor = () => {
-
 		if ( 'top' == dividerViewType ) {
 			return attributes.dividerTopColor;
 		} else if ( 'bottom' == dividerViewType ) {
@@ -510,26 +536,38 @@ const Inspector = ({
 								label={ __( 'Screen Type', 'otter-blocks' ) }
 								className="otter-section-padding-responsive-control"
 							>
-								<BoxControl
-									label={ __( 'Padding', 'otter-blocks' ) }
-									values={ getPadding() }
-									inputProps={ {
-										min: 0,
-										max: 500
-									} }
-									onChange={ changePadding }
-								/>
+								<SyncControl
+									field={ getPaddingField() }
+									isSynced={ attributes.isSynced }
+									setAttributes={ setAttributes }
+								>
+									<BoxControl
+										label={ __( 'Padding', 'otter-blocks' ) }
+										values={ getPadding() }
+										inputProps={ {
+											min: 0,
+											max: 500
+										} }
+										onChange={ changePadding }
+									/>
+								</SyncControl>
 
-								<BoxControl
-									label={ __( 'Margin', 'otter-blocks' ) }
-									values={ getMargin() }
-									inputProps={ {
-										min: -500,
-										max: 500
-									} }
-									sides={ [ 'top', 'bottom' ] }
-									onChange={ changeMargin }
-								/>
+								<SyncControl
+									field={ getMarginField() }
+									isSynced={ attributes.isSynced }
+									setAttributes={ setAttributes }
+								>
+									<BoxControl
+										label={ __( 'Margin', 'otter-blocks' ) }
+										values={ getMargin() }
+										inputProps={ {
+											min: -500,
+											max: 500
+										} }
+										sides={ [ 'top', 'bottom' ] }
+										onChange={ changeMargin }
+									/>
+								</SyncControl>
 							</ResponsiveControl>
 						</PanelBody>
 
@@ -537,42 +575,54 @@ const Inspector = ({
 							title={ __( 'Section Structure', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
-							<RangeControl
-								label={ __( 'Maximum Content Width', 'otter-blocks' ) }
-								value={ attributes.columnsWidth || '' }
-								allowReset
-								onChange={ changeColumnsWidth }
-								min={ 0 }
-								max={ 2400 }
-							/>
+							<SyncControl
+								field="columnsWidth"
+								isSynced={ attributes.isSynced }
+								setAttributes={ setAttributes }
+							>
+								<RangeControl
+									label={ __( 'Maximum Content Width', 'otter-blocks' ) }
+									value={ getValue( 'columnsWidth' ) || '' }
+									allowReset
+									onChange={ changeColumnsWidth }
+									min={ 0 }
+									max={ 2400 }
+								/>
+							</SyncControl>
 
-							{ attributes.columnsWidth && (
-								<BaseControl
-									label={ __( 'Horizontal Align', 'otter-blocks' ) }
+							{ getValue( 'columnsWidth' ) && (
+								<SyncControl
+									field="horizontalAlign"
+									isSynced={ attributes.isSynced }
+									setAttributes={ setAttributes }
 								>
-									<ToogleGroupControl
-										value={ attributes.textAlign }
-										options={[
-											{
-												icon: 'editor-alignleft',
-												label: __( 'Left', 'otter-blocks' ),
-												value: 'flex-start'
-											},
-											{
-												icon: 'editor-aligncenter',
-												label: __( 'Center', 'otter-blocks' ),
-												value: 'center'
-											},
-											{
-												icon: 'editor-alignright',
-												label: __( 'Right', 'otter-blocks' ),
-												value: 'flex-end'
-											}
-										]}
-										onChange={ align => changeHorizontalAlign( align ) }
-										hideLabels
-									/>
-								</BaseControl>
+									<BaseControl
+										label={ __( 'Horizontal Align', 'otter-blocks' ) }
+									>
+										<ToogleGroupControl
+											value={ attributes.textAlign }
+											options={[
+												{
+													icon: 'editor-alignleft',
+													label: __( 'Left', 'otter-blocks' ),
+													value: 'flex-start'
+												},
+												{
+													icon: 'editor-aligncenter',
+													label: __( 'Center', 'otter-blocks' ),
+													value: 'center'
+												},
+												{
+													icon: 'editor-alignright',
+													label: __( 'Right', 'otter-blocks' ),
+													value: 'flex-end'
+												}
+											]}
+											onChange={ align => changeHorizontalAlign( align ) }
+											hideLabels
+										/>
+									</BaseControl>
+								</SyncControl>
 							) }
 
 							<SelectControl
@@ -766,16 +816,11 @@ const Inspector = ({
 								onChange={ changeBorder }
 							/>
 
-							<ColorBaseControl
+							<ColorGradientControl
 								label={ __( 'Border Color', 'otter-blocks' ) }
 								colorValue={ attributes.borderColor }
-							>
-								<ColorPalette
-									label={ __( 'Border Color', 'otter-blocks' ) }
-									value={ attributes.borderColor }
-									onChange={ value => setAttributes({ borderColor: value }) }
-								/>
-							</ColorBaseControl>
+								onColorChange={ value => setAttributes({ borderColor: value }) }
+							/>
 
 							<BoxControl
 								label={ __( 'Border Radius', 'otter-blocks' ) }
@@ -806,17 +851,11 @@ const Inspector = ({
 
 							{ attributes.boxShadow && (
 								<Fragment>
-
-									<ColorBaseControl
+									<ColorGradientControl
 										label={ __( 'Shadow Color', 'otter-blocks' ) }
 										colorValue={ attributes.boxShadowColor }
-									>
-										<ColorPalette
-											label={ __( 'Shadow Color', 'otter-blocks' ) }
-											value={ attributes.boxShadowColor }
-											onChange={ value => setAttributes({ boxShadowColor: value }) }
-										/>
-									</ColorBaseControl>
+										onColorChange={ value => setAttributes({ boxShadowColor: value }) }
+									/>
 
 									<ControlPanelControl
 										label={ __( 'Border Shadow', 'otter-blocks' ) }
@@ -906,16 +945,11 @@ const Inspector = ({
 
 							{ 'none' !== dividerType && (
 								<Fragment>
-									<ColorBaseControl
+									<ColorGradientControl
 										label={ __( 'Color', 'otter-blocks' ) }
 										colorValue={ getDividerColor() }
-									>
-										<ColorPalette
-											label={ __( 'Color', 'otter-blocks' ) }
-											value={ getDividerColor() }
-											onChange={ changeDividerColor }
-										/>
-									</ColorBaseControl>
+										onColorChange={ changeDividerColor }
+									/>
 
 									<ResponsiveControl
 										label={ __( 'Width', 'otter-blocks' ) }

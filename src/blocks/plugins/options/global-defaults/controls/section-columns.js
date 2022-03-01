@@ -4,10 +4,12 @@
 import { __ } from '@wordpress/i18n';
 
 import {
+	BaseControl,
 	__experimentalBoxControl as BoxControl,
+	Button,
+	ButtonGroup,
 	PanelBody,
-	RangeControl,
-	SelectControl
+	RangeControl
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -114,6 +116,18 @@ const SectionColumns = ({
 		}
 	};
 
+	const changeHorizontalAlign = value => {
+		if ( defaults.horizontalAlign === value ) {
+			return changeConfig( blockName, {
+				horizontalAlign: 'unset'
+			});
+		}
+
+		changeConfig( blockName, {
+			horizontalAlign: value
+		});
+	};
+
 	return (
 		<Fragment>
 			<PanelBody
@@ -152,22 +166,6 @@ const SectionColumns = ({
 				title={ __( 'Section Structure', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<SelectControl
-					label={ __( 'HTML Tag', 'otter-blocks' ) }
-					value={ defaults.columnsHTMLTag }
-					options={ [
-						{ label: __( 'Default (div)', 'otter-blocks' ), value: 'div' },
-						{ label: 'section', value: 'section' },
-						{ label: 'header', value: 'header' },
-						{ label: 'footer', value: 'footer' },
-						{ label: 'article', value: 'article' },
-						{ label: 'main', value: 'main' }
-					] }
-					onChange={ value => changeConfig( blockName, { columnsHTMLTag: value }) }
-				/>
-
-				<hr/>
-
 				<RangeControl
 					label={ __( 'Maximum Content Width', 'otter-blocks' ) }
 					value={ defaults.columnsWidth || '' }
@@ -175,6 +173,38 @@ const SectionColumns = ({
 					min={ 0 }
 					max={ 1200 }
 				/>
+
+				{ defaults.columnsWidth && (
+					<BaseControl
+						label={ __( 'Horizontal Align', 'otter-blocks' ) }
+					>
+						<ButtonGroup className="wp-block-themeisle-icon-buttom-group">
+							<Button
+								icon="editor-alignleft"
+								label={ __( 'Left', 'otter-blocks' ) }
+								showTooltip={ true }
+								isPrimary={ 'flex-start' === defaults.horizontalAlign }
+								onClick={ () => changeHorizontalAlign( 'flex-start' ) }
+							/>
+
+							<Button
+								icon="editor-aligncenter"
+								label={ __( 'Center', 'otter-blocks' ) }
+								showTooltip={ true }
+								isPrimary={ 'center' === defaults.horizontalAlign }
+								onClick={ () => changeHorizontalAlign( 'center' ) }
+							/>
+
+							<Button
+								icon="editor-alignright"
+								label={ __( 'Right', 'otter-blocks' ) }
+								showTooltip={ true }
+								isPrimary={ 'flex-end' === defaults.horizontalAlign }
+								onClick={ () => changeHorizontalAlign( 'flex-end' ) }
+							/>
+						</ButtonGroup>
+					</BaseControl>
+				) }
 			</PanelBody>
 		</Fragment>
 	);

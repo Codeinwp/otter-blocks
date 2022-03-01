@@ -25,17 +25,20 @@ import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import themeIsleIcons from './../../helpers/themeisle-icons';
-import { blockInit } from '../../helpers/block-utility.js';
+import {
+	blockInit,
+	getDefaultValueByField
+} from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
+	name,
 	attributes,
 	setAttributes,
 	isSelected,
 	clientId
 }) => {
-
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
@@ -43,42 +46,43 @@ const Edit = ({
 
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
+	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
+
 	const styles = css`
 		--align: ${ attributes.align };
 		--borderColor: ${ attributes.borderColor };
 		${ attributes.borderSize && `--borderSize: ${ attributes.borderSize }px;` }
 		${ attributes.borderRadius && `--borderRadius: ${ attributes.borderRadius }%;` }
-		${ attributes.margin && `--margin: ${ attributes.margin }px;` }
-		${ attributes.padding && `--padding: ${ attributes.padding }px;` }
-		--width: ${ attributes.fontSize + attributes.padding * 2 + attributes.borderSize * 2 }px;
-		${ attributes.fontSize && `--fontSize: ${ attributes.fontSize }px;` }
+		${ attributes.margin && `--margin: ${ getValue( 'margin' ) }px;` }
+		${ attributes.padding && `--padding: ${ getValue( 'padding' ) }px;` }
+		${ attributes.fontSize && `--fontSize: ${ getValue( 'fontSize' ) }px;` }
 
 		.wp-block-themeisle-blocks-font-awesome-icons-container {
-			color: ${ attributes.textColor };
-			background-color: ${ attributes.backgroundColor };
-			${ ( 'themeisle-icons' === attributes.library && attributes.padding ) && `padding: ${ attributes.padding }px;` }
+			color: ${ getValue( 'textColor' ) };
+			background-color: ${ getValue( 'backgroundColor' ) };
+			${ ( 'themeisle-icons' === attributes.library && getValue( 'padding' ) ) && `padding: ${ getValue( 'padding' ) }px;` }
 		}
 
 		.wp-block-themeisle-blocks-font-awesome-icons-container:hover {
-			color: ${ attributes.textColorHover };
-			background-color: ${ attributes.backgroundColorHover };
+			color: ${ getValue( 'textColorHover' ) };
+			background-color: ${ getValue( 'backgroundColorHover' ) };
 			border-color: ${ attributes.borderColorHover };
 		}
 
 		.wp-block-themeisle-blocks-font-awesome-icons-container a {
-			color: ${ attributes.textColor };
+			color: ${ getValue( 'textColor' ) };
 		}
 
 		.wp-block-themeisle-blocks-font-awesome-icons-container i {
-			${ attributes.fontSize && `font-size: ${ attributes.fontSize }px;` }
+			${ getValue( 'fontSize' ) && `font-size: ${ getValue( 'fontSize' ) }px;` }
 		}
 
 		.wp-block-themeisle-blocks-font-awesome-icons-container svg {
-			fill: ${ attributes.textColor };
+			fill: ${ getValue( 'textColor' ) };
 		}
 
 		.wp-block-themeisle-blocks-font-awesome-icons-container:hover svg {
-			fill: ${ attributes.textColorHover };
+			fill: ${ getValue( 'textColorHover' ) };
 		}
 	`;
 
@@ -98,6 +102,7 @@ const Edit = ({
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
+				getValue={ getValue }
 			/>
 
 			<p { ...blockProps }>

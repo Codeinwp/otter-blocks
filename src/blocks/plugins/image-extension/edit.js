@@ -19,7 +19,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { __ } from '@wordpress/i18n';
 
 import {
-	ColorPalette,
+	__experimentalColorGradientControl as ColorGradientControl,
 	InspectorControls
 } from '@wordpress/block-editor';
 
@@ -39,7 +39,6 @@ import {
 /**
  * Internal dependencies.
  */
-import ColorBaseControl from '../../components/color-base-control/index.js';
 import ControlPanelControl from '../../components/control-panel-control/index.js';
 
 const Edit = ({
@@ -133,16 +132,11 @@ const Edit = ({
 
 					{ attributes.boxShadow && (
 						<Fragment>
-							<ColorBaseControl
+							<ColorGradientControl
 								label={ __( 'Color', 'otter-blocks' ) }
 								colorValue={ attributes.boxShadowColor }
-							>
-								<ColorPalette
-									label={ __( 'Color', 'otter-blocks' ) }
-									value={ attributes.boxShadowColor }
-									onChange={ changeBoxShadowColor }
-								/>
-							</ColorBaseControl>
+								onColorChange={ changeBoxShadowColor }
+							/>
 
 							<ControlPanelControl
 								label={ __( 'Shadow Properties', 'otter-blocks' ) }
