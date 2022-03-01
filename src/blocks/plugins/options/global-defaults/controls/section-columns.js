@@ -6,8 +6,6 @@ import { __ } from '@wordpress/i18n';
 import {
 	BaseControl,
 	__experimentalBoxControl as BoxControl,
-	Button,
-	ButtonGroup,
 	PanelBody,
 	RangeControl
 } from '@wordpress/components';
@@ -20,6 +18,7 @@ import { Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import ResponsiveControl from '../../../../components/responsive-control/index.js';
+import ToogleGroupControl from '../../../../components/toogle-group-control/index.js';
 import { isNullObject } from '../../../../helpers/helper-functions.js';
 
 const SectionColumns = ({
@@ -178,31 +177,28 @@ const SectionColumns = ({
 					<BaseControl
 						label={ __( 'Horizontal Align', 'otter-blocks' ) }
 					>
-						<ButtonGroup className="wp-block-themeisle-icon-buttom-group">
-							<Button
-								icon="editor-alignleft"
-								label={ __( 'Left', 'otter-blocks' ) }
-								showTooltip={ true }
-								isPrimary={ 'flex-start' === defaults.horizontalAlign }
-								onClick={ () => changeHorizontalAlign( 'flex-start' ) }
-							/>
-
-							<Button
-								icon="editor-aligncenter"
-								label={ __( 'Center', 'otter-blocks' ) }
-								showTooltip={ true }
-								isPrimary={ 'center' === defaults.horizontalAlign }
-								onClick={ () => changeHorizontalAlign( 'center' ) }
-							/>
-
-							<Button
-								icon="editor-alignright"
-								label={ __( 'Right', 'otter-blocks' ) }
-								showTooltip={ true }
-								isPrimary={ 'flex-end' === defaults.horizontalAlign }
-								onClick={ () => changeHorizontalAlign( 'flex-end' ) }
-							/>
-						</ButtonGroup>
+						<ToogleGroupControl
+							value={ defaults.horizontalAlign }
+							options={[
+								{
+									icon: 'editor-alignleft',
+									label: __( 'Left', 'otter-blocks' ),
+									value: 'flex-start'
+								},
+								{
+									icon: 'editor-aligncenter',
+									label: __( 'Center', 'otter-blocks' ),
+									value: 'center'
+								},
+								{
+									icon: 'editor-alignright',
+									label: __( 'Right', 'otter-blocks' ),
+									value: 'flex-end'
+								}
+							]}
+							onChange={ align => changeHorizontalAlign( align ) }
+							hideLabels
+						/>
 					</BaseControl>
 				) }
 			</PanelBody>

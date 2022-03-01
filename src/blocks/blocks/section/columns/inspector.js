@@ -600,7 +600,7 @@ const Inspector = ({
 										label={ __( 'Horizontal Align', 'otter-blocks' ) }
 									>
 										<ToogleGroupControl
-											value={ attributes.textAlign }
+											value={ attributes.horizontalAlign }
 											options={[
 												{
 													icon: 'editor-alignleft',

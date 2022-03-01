@@ -1,9 +1,20 @@
-import './editor.scss';
+/**
+ * External dependencies
+ */
 import classNames from 'classnames';
+
+/**
+ * WordPress dependencies
+ */
 import {
 	ButtonGroup,
 	Button
 } from '@wordpress/components';
+
+/**
+ * Internal dependencies
+ */
+import './editor.scss';
 
 /**
  * Style properties.
@@ -54,26 +65,27 @@ const ToogleGroupControl = props => {
 	} = props;
 
 	return (
-		<ButtonGroup className='o-toggle-group-control' style={style?.group}>
+		<ButtonGroup className='o-toggle-group-control' style={ style?.group }>
 			{
 				options?.map( option => {
 					return (
 						<div
 							className={ classNames( 'o-toggle-option' ) }
-							style={style?.option}
+							style={ style?.option }
 						>
 							<Button
 								isPrimary={ value == option?.value }
 								variant={ value == option?.value ? 'primary' : 'secondary' }
-								icon={option?.icon }
+								icon={ option?.icon }
 								label={ option?.label }
 								onClick={ () => onChange( option?.value )}
 								showTooltip={ Boolean( hideTooltip ) }
-								style={style?.button}
+								style={ style?.button }
 							>
-								{ option?.label && ! Boolean( hideLabels ) && ! Boolean( showBottomLabels ) ?  option?.label : '' }
+								{ option?.label && ! Boolean( hideLabels ) && ! Boolean( showBottomLabels ) ? option?.label : '' }
 							</Button>
-							<p style={style?.label}>{ option?.label && ! Boolean( hideLabels ) && Boolean( showBottomLabels ) ?  option?.label : '' }</p>
+
+							<p style={ style?.label }>{ option?.label && ! Boolean( hideLabels ) && Boolean( showBottomLabels ) ?  option?.label : '' }</p>
 						</div>
 					);
 				})
