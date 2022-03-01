@@ -5,7 +5,7 @@
 	"scripts": {
 		"build": "wp-scripts build && grunt build",
 		"grunt": "grunt build",
-		"start": "npm-run-all --parallel dev:*",
+		"start": "rm -rf build && npm-run-all --parallel dev:*",
 		"dev:webpack": "wp-scripts start --watch",
 		"dev:grunt": "grunt watch",
 		"build-dev": "NODE_ENV=development wp-scripts build && grunt build",

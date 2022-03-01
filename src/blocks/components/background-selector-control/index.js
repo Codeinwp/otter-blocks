@@ -5,7 +5,6 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
-	ColorPalette,
 	MediaPlaceholder
 } from '@wordpress/block-editor';
 
@@ -27,7 +26,6 @@ import { Fragment } from '@wordpress/element';
  */
 import './editor.scss';
 import { barcodeIcon } from '../../helpers/icons.js';
-import ColorBaseControl from '../color-base-control/index.js';
 import ControlPanelControl from '../control-panel-control/index.js';
 
 const BackgroundSelectorControl = ({
@@ -87,16 +85,11 @@ const BackgroundSelectorControl = ({
 			</div>
 
 			{ 'color' === backgroundType && (
-				<ColorBaseControl
+				<ColorGradientControl
 					label={ __( 'Background Color', 'otter-blocks' ) }
 					colorValue={ backgroundColor }
-				>
-					<ColorPalette
-						label={ __( 'Color', 'otter-blocks' ) }
-						value={ backgroundColor }
-						onChange={ changeColor }
-					/>
-				</ColorBaseControl>
+					onColorChange={ changeColor }
+				/>
 			) || 'image' === backgroundType && (
 				image?.url ? (
 					<Fragment>

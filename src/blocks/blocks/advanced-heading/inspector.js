@@ -10,7 +10,7 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	AlignmentToolbar,
-	ColorPalette,
+	__experimentalColorGradientControl as ColorGradientControl,
 	InspectorControls
 } from '@wordpress/block-editor';
 
@@ -32,7 +32,6 @@ import {
 /**
  * Internal dependencies
  */
-import ColorBaseControl from '../../components/color-base-control/index.js';
 import GoogleFontsControl from '../../components/google-fonts-control/index.js';
 import ControlPanelControl from '../../components/control-panel-control/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
@@ -356,16 +355,11 @@ const Inspector = ({
 							title={ __( 'General Settings', 'otter-blocks' ) }
 							className="o-adv-h-panel"
 						>
-							<ColorBaseControl
+							<ColorGradientControl
 								label={ __( 'Heading Color', 'otter-blocks' ) }
 								colorValue={ attributes.headingColor }
-							>
-								<ColorPalette
-									label={ __( 'Heading Color', 'otter-blocks' ) }
-									value={ attributes.headingColor }
-									onChange={ headingColor => setAttributes({ headingColor }) }
-								/>
-							</ColorBaseControl>
+								onColorChange={ headingColor => setAttributes({ headingColor }) }
+							/>
 
 							<ResponsiveControl
 								label={ __( 'Font Size', 'otter-blocks' ) }
@@ -438,17 +432,11 @@ const Inspector = ({
 
 							{ attributes.textShadow && (
 								<Fragment>
-
-									<ColorBaseControl
+									<ColorGradientControl
 										label={ __( 'Color', 'otter-blocks' ) }
 										colorValue={ attributes.textShadowColor }
-									>
-										<ColorPalette
-											label={ __( 'Color', 'otter-blocks' ) }
-											value={ attributes.textShadowColor }
-											onChange={ textShadowColor => setAttributes({ textShadowColor }) }
-										/>
-									</ColorBaseControl>
+										onColorChange={ textShadowColor => setAttributes({ textShadowColor }) }
+									/>
 
 									<ControlPanelControl
 										label={ __( 'Shadow Properties', 'otter-blocks' ) }
@@ -497,27 +485,17 @@ const Inspector = ({
 						<PanelBody
 							title={ __( 'Highlight Color', 'otter-blocks' ) }
 						>
-							<ColorBaseControl
+							<ColorGradientControl
 								label={ __( 'Highlight Color', 'otter-blocks' ) }
 								colorValue={ attributes.highlightColor }
-							>
-								<ColorPalette
-									label={ __( 'Highlight Color', 'otter-blocks' ) }
-									value={ attributes.highlightColor }
-									onChange={ highlightColor => setAttributes({ highlightColor }) }
-								/>
-							</ColorBaseControl>
+								onColorChange={ highlightColor => setAttributes({ highlightColor }) }
+							/>
 
-							<ColorBaseControl
+							<ColorGradientControl
 								label={ __( 'Highlight Background', 'otter-blocks' ) }
 								colorValue={ attributes.highlightBackground }
-							>
-								<ColorPalette
-									label={ __( 'Highlight Background', 'otter-blocks' ) }
-									value={ attributes.highlightBackground }
-									onChange={ highlightBackground => setAttributes({ highlightBackground }) }
-								/>
-							</ColorBaseControl>
+								onColorChange={ highlightBackground => setAttributes({ highlightBackground }) }
+							/>
 						</PanelBody>
 
 						<PanelBody

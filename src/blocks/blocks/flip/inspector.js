@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { pick } from 'lodash';
 
 import {
+	__experimentalColorGradientControl as ColorGradientControl,
 	InspectorControls,
 	PanelColorSettings,
 	MediaPlaceholder
@@ -14,7 +15,6 @@ import {
 import {
 	BaseControl,
 	Button,
-	ColorPalette,
 	PanelBody,
 	RangeControl,
 	SelectControl,
@@ -27,7 +27,6 @@ import { Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import ControlPanelControl from '../../components/control-panel-control/index.js';
-import ColorBaseControl from '../../components/color-base-control/index.js';
 import BackgroundSelectorControl from '../../components/background-selector-control/index.js';
 
 const Inspector = ({
@@ -323,16 +322,11 @@ const Inspector = ({
 
 				{ attributes.boxShadow && (
 					<Fragment>
-						<ColorBaseControl
+						<ColorGradientControl
 							label={ __( 'Color', 'otter-blocks' ) }
 							colorValue={ attributes.boxShadowColor }
-						>
-							<ColorPalette
-								label={ __( 'Color', 'otter-blocks' ) }
-								value={ attributes.boxShadowColor }
-								onChange={ changeBoxShadowColor }
-							/>
-						</ColorBaseControl>
+							onColorChange={ changeBoxShadowColor }
+						/>
 
 						<ControlPanelControl
 							label={ __( 'Shadow Properties', 'otter-blocks' ) }

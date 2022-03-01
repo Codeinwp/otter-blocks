@@ -7,11 +7,12 @@ import {
 	Button,
 	ButtonGroup,
 	PanelBody,
-	RangeControl
+	RangeControl,
+	SelectControl
 } from '@wordpress/components';
 
 import {
-	ColorPalette,
+	__experimentalColorGradientControl as ColorGradientControl,
 	ContrastChecker
 } from '@wordpress/block-editor';
 
@@ -20,11 +21,6 @@ import {
 	useState
 } from '@wordpress/element';
 
-/**
- * Internal dependencies
- */
-import ColorBaseControl from '../../../../components/color-base-control/index.js';
-
 const FontAwesomeIcons = ({
 	blockName,
 	defaults,
@@ -32,8 +28,30 @@ const FontAwesomeIcons = ({
 }) => {
 	const [ hover, setHover ] = useState( false );
 
+	const changeLibrary = value => {
+		changeConfig( blockName, {
+			library: value,
+			icon: 'fontawesome' === value ? 'themeisle' : 'balance',
+			prefix: 'fab'
+		});
+	};
+
 	return (
 		<Fragment>
+			<PanelBody
+				title={ __( 'Icon', 'otter-blocks' ) }
+			>
+				<SelectControl
+					label={ __( 'Icon Library', 'otter-blocks' ) }
+					value={ defaults.library || 'fontawesome' }
+					options={ [
+						{ label: __( 'Font Awesome', 'otter-blocks' ), value: 'fontawesome' },
+						{ label: __( 'ThemeIsle Icons', 'otter-blocks' ), value: 'themeisle-icons' }
+					] }
+					onChange={ changeLibrary }
+				/>
+			</PanelBody>
+
 			<PanelBody
 				title={ __( 'Sizing', 'otter-blocks' ) }
 			>
@@ -95,27 +113,17 @@ const FontAwesomeIcons = ({
 
 				{ hover ? (
 					<Fragment>
-						<ColorBaseControl
+						<ColorGradientControl
 							label={ __( 'Hover Background', 'otter-blocks' ) }
 							colorValue={ defaults.backgroundColorHover }
-						>
-							<ColorPalette
-								label={ __( 'Hover Background', 'otter-blocks' ) }
-								value={ defaults.backgroundColorHover }
-								onChange={ value => changeConfig( blockName, { backgroundColorHover: value }) }
-							/>
-						</ColorBaseControl>
+							onColorChange={ value => changeConfig( blockName, { backgroundColorHover: value }) }
+						/>
 
-						<ColorBaseControl
+						<ColorGradientControl
 							label={ __( 'Hover Icon', 'otter-blocks' ) }
 							colorValue={ defaults.textColorHover }
-						>
-							<ColorPalette
-								label={ __( 'Hover Icon', 'otter-blocks' ) }
-								value={ defaults.textColorHover }
-								onChange={ value => changeConfig( blockName, { textColorHover: value }) }
-							/>
-						</ColorBaseControl>
+							onColorChange={ value => changeConfig( blockName, { textColorHover: value }) }
+						/>
 
 						<ContrastChecker
 							{ ...{
@@ -126,27 +134,17 @@ const FontAwesomeIcons = ({
 					</Fragment>
 				) : (
 					<Fragment>
-						<ColorBaseControl
+						<ColorGradientControl
 							label={ __( 'Background', 'otter-blocks' ) }
 							colorValue={ defaults.backgroundColor }
-						>
-							<ColorPalette
-								label={ __( 'Background', 'otter-blocks' ) }
-								value={ defaults.backgroundColor }
-								onChange={ value => changeConfig( blockName, { backgroundColor: value }) }
-							/>
-						</ColorBaseControl>
+							onColorChange={ value => changeConfig( blockName, { backgroundColor: value }) }
+						/>
 
-						<ColorBaseControl
+						<ColorGradientControl
 							label={ __( 'Icon', 'otter-blocks' ) }
 							colorValue={ defaults.textColor }
-						>
-							<ColorPalette
-								label={ __( 'Icon', 'otter-blocks' ) }
-								value={ defaults.textColor }
-								onChange={ value => changeConfig( blockName, { textColor: value }) }
-							/>
-						</ColorBaseControl>
+							onColorChange={ value => changeConfig( blockName, { textColor: value }) }
+						/>
 
 						<ContrastChecker
 							{ ...{

@@ -53,7 +53,8 @@ class Block_Frontend extends Base_CSS {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_google_fonts' ), 19 );
 		add_action( 'wp_head', array( $this, 'enqueue_google_fonts_backward' ), 19 );
 		add_filter( 'get_the_excerpt', array( $this, 'get_excerpt_end' ), 20 );
-		add_filter( 'wp_footer', array( $this, 'enqueue_widgets_css' ) );
+		add_action( 'wp_footer', array( $this, 'enqueue_widgets_css' ) );
+		add_action( 'wp_footer', array( $this, 'enqueue_global_styles' ) );
 	}
 
 	/**
@@ -537,6 +538,26 @@ class Block_Frontend extends Base_CSS {
 		$file_url = CSS_Handler::get_css_url( 'widgets' );
 
 		return wp_enqueue_style( 'otter-widgets', $file_url, array( 'otter-blocks' ), THEMEISLE_BLOCKS_VERSION );
+	}
+
+	/**
+	 * Enqueue global defaults
+	 *
+	 * @since   2.0.0
+	 * @access  public
+	 */
+	public function enqueue_global_styles() {
+		$css = $this->cycle_through_global_styles();
+
+		if ( empty( $css ) ) {
+			return;
+		}
+
+		$style  = "\n" . '<style type="text/css" media="all">' . "\n";
+		$style .= $css;
+		$style .= "\n" . '</style>' . "\n";
+
+		echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
