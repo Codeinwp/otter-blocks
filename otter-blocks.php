@@ -19,9 +19,9 @@
  */
 
 // If this file is called directly, abort.
-// if ( ! defined( 'WPINC' ) ) {
-// 	die;
-// }
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 define( 'OTTER_BLOCKS_BASEFILE', __FILE__ );
 define( 'OTTER_BLOCKS_URL', plugins_url( '/', __FILE__ ) );
