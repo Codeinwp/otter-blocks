@@ -199,6 +199,16 @@ class Block_Conditions {
 			}
 		}
 
+		if ( 'wooTotalSpent' === $condition['type'] && class_exists( 'WooCommerce' ) && $has_pro ) {
+			if ( isset( $condition['value'] ) ) {
+				if ( $visibility ) {
+					return $this->has_total_spent( $condition['value'] );
+				} else {
+					return ! $this->has_total_spent( $condition['value'] );
+				}
+			}
+		}
+
 		if ( 'learnDashPurchaseHistory' === $condition['type'] && defined( 'LEARNDASH_VERSION' ) && $has_pro ) {
 			if ( isset( $condition['on'] ) ) {
 				if ( $visibility ) {
@@ -455,6 +465,24 @@ class Block_Conditions {
 		$total = \WC()->cart->total;
 
 		if ( floatval( $value ) < floatval( $total ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check based on WooCommerce total spent.
+	 *
+	 * @param array $value Total Money Spent.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 */
+	public function has_total_spent( $value ) {
+		$total = ( new \WC_Customer() )->get_total_spent();
+
+		if ( floatval( $value ) < $total ) {
 			return true;
 		}
 
