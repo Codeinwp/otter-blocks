@@ -52,44 +52,42 @@ import './editor.scss';
  * @param {ToogleGroupControlProps} props
  * @returns {JSX.Element}
  */
-const ToogleGroupControl = props => {
-
-	const {
-		value,
-		options,
-		onChange,
-		hideLabels,
-		hideTooltip,
-		showBottomLabels,
-		style
-	} = props;
-
+const ToogleGroupControl = ({
+	value,
+	options,
+	onChange,
+	hideLabels,
+	hideTooltip,
+	showBottomLabels,
+	style
+}) => {
 	return (
-		<ButtonGroup className='o-toggle-group-control' style={ style?.group }>
-			{
-				options?.map( option => {
-					return (
-						<div
-							className={ classNames( 'o-toggle-option' ) }
-							style={ style?.option }
+		<ButtonGroup
+			className="o-toggle-group-control"
+			style={ style?.group }
+		>
+			{ options?.map( option => {
+				return (
+					<div
+						className="o-toggle-option"
+						style={ style?.option }
+					>
+						<Button
+							isPrimary={ value == option?.value }
+							variant={ value == option?.value ? 'primary' : 'secondary' }
+							icon={ option?.icon }
+							label={ option?.label }
+							onClick={ () => onChange( option?.value )}
+							showTooltip={ Boolean( hideTooltip ) }
+							style={ style?.button }
 						>
-							<Button
-								isPrimary={ value == option?.value }
-								variant={ value == option?.value ? 'primary' : 'secondary' }
-								icon={ option?.icon }
-								label={ option?.label }
-								onClick={ () => onChange( option?.value )}
-								showTooltip={ Boolean( hideTooltip ) }
-								style={ style?.button }
-							>
-								{ option?.label && ! Boolean( hideLabels ) && ! Boolean( showBottomLabels ) ? option?.label : '' }
-							</Button>
+							{ option?.label && ! Boolean( hideLabels ) && ! Boolean( showBottomLabels ) ? option?.label : '' }
+						</Button>
 
-							<p style={ style?.label }>{ option?.label && ! Boolean( hideLabels ) && Boolean( showBottomLabels ) ?  option?.label : '' }</p>
-						</div>
-					);
-				})
-			}
+						<p style={ style?.label }>{ option?.label && ! Boolean( hideLabels ) && Boolean( showBottomLabels ) ?  option?.label : '' }</p>
+					</div>
+				);
+			}) }
 		</ButtonGroup>
 	);
 };

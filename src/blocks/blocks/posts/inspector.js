@@ -29,8 +29,7 @@ const Inspector = ({
 	attributes,
 	setAttributes,
 	changeStyle,
-	categoriesList,
-	posts
+	categoriesList
 }) => {
 	const {
 		slugs

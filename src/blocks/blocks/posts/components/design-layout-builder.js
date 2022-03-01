@@ -71,65 +71,61 @@ const LayoutBuilder = ({
 					lockAxis="y"
 				/>
 
-				{
-					window.themeisleGutenberg?.hasNeveSupport?.hasNeve && (
-						<Fragment>
-							{ window?.acf === undefined ? (
-								<ExternalLink
-									href="https://wordpress.org/plugins/advanced-custom-fields/"
-									target="_blank"
+				{ window.themeisleGutenberg?.hasNeveSupport?.hasNeve && (
+					<Fragment>
+						{ window?.acf === undefined ? (
+							<ExternalLink
+								href="https://wordpress.org/plugins/advanced-custom-fields/"
+								target="_blank"
+							>
+								{ __( 'Activate Advance Custom Fields to add more fields.', 'otter-blocks' ) }
+							</ExternalLink>
+						) : (
+							<Fragment>
+								<Button
+									variant="secondary"
+									isSecondary
+									className="o-conditions__add"
+									disabled={ window?.acf === undefined || ( ! window?.themeisleGutenberg?.hasNeveSupport?.hasNevePro || ! window?.themeisleGutenberg?.hasNeveSupport?.isBoosterActive ) }
+									onClick={ () => {
+										let id = uuidv4().slice( 0, 8 );
+										while ( 0 < attributes?.customMetas?.some( ({ otherId }) => otherId === id )  ) {
+											id = uuidv4().slice( 0, 8 );
+										}
+										id = `custom_${ id }`;
+
+										const newMeta = {
+											id,
+											field: '',
+											display: true
+										};
+
+										const {
+											template,
+											customMetas
+										} = filterDeadCustomTemplates();
+
+										setAttributes({
+											template: [ ...template, id ],
+											customMetas: customMetas ? [ ...customMetas, newMeta ] : [ newMeta ]
+										});
+									} }
 								>
-									{__( 'Activate Advance Custom Fields to add more fields.', 'otter-blocks' )}
-								</ExternalLink>
-							) : (
-								<Fragment>
-									<Button
-										variant="secondary"
-										isSecondary
-										className="o-conditions__add"
-										disabled={ window?.acf === undefined || ! window?.themeisleGutenberg?.hasNeveSupport?.hasNevePro}
-										onClick={ () => {
-											let id = uuidv4().slice( 0, 8 );
-											while ( 0 < attributes?.customMetas?.some( ({ otherId }) => otherId === id )  ) {
-												id = uuidv4().slice( 0, 8 );
-											}
-											id = `custom_${ id }`;
+									{ __( 'Add Meta Field', 'otter-blocks' ) }
+								</Button>
 
-											const newMeta = {
-												id,
-												field: '',
-												display: true
-											};
-
-											const {
-												template,
-												customMetas
-											} = filterDeadCustomTemplates();
-
-											setAttributes({
-												template: [ ...template, id ],
-												customMetas: customMetas ? [ ...customMetas, newMeta ] : [ newMeta ]
-											});
-										}}
+								{ ( ! window.themeisleGutenberg?.hasNeveSupport?.hasNevePro || ! window?.themeisleGutenberg?.hasNeveSupport?.isBoosterActive ) && (
+									<ExternalLink
+										href={ window.themeisleGutenberg?.hasNeveSupport?.hasNevePro ? window.themeisleGutenberg.hasNeveSupport.optionsPage : 'https://themeisle.com/themes/neve/' }
+										target="_blank"
 									>
-										{ __( 'Add Meta Field', 'otter-blocks' ) }
-									</Button>
-									{
-										( ! window.themeisleGutenberg?.hasNeveSupport?.hasNevePro ) && (
-											<ExternalLink
-												href="https://themeisle.com/themes/neve/"
-												target="_blank"
-											>
-												{__( 'Upgrade to Neve Pro and unlock more options from Advance Custom Fields.', 'otter-blocks' )}
-											</ExternalLink>
-										)
-									}
-								</Fragment>
-							) }
-						</Fragment>
-					)
-				}
-
+										{__( 'Enable ACF fields with Neve Pro\'s Block Editor Booster.', 'otter-blocks' )}
+									</ExternalLink>
+								) }
+							</Fragment>
+						) }
+					</Fragment>
+				) }
 			</div>
 		</Fragment>
 	);
