@@ -17,7 +17,6 @@ import {
 /**
  * Internal dependencies
  */
-import SyncPanel from '../../../components/sync-panel/index.js';
 import SyncControl from '../../../components/sync-control/index.js';
 
 const Inspector = ({
@@ -27,17 +26,6 @@ const Inspector = ({
 }) => {
 	return (
 		<InspectorControls>
-			<SyncPanel
-				fields={[
-					'titleColor',
-					'titleBackground',
-					'contentBackground',
-					'borderColor'
-				]}
-				isSynced={ attributes.isSynced }
-				setAttributes={ setAttributes }
-			/>
-
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>

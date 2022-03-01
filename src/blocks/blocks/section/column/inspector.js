@@ -38,7 +38,6 @@ import {
 import ResponsiveControl from '../../../components/responsive-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
-import SyncPanel from '../../../components/sync-panel/index.js';
 import SyncControl from '../../../components/sync-control/index.js';
 import { isNullObject } from '../../../helpers/helper-functions.js';
 
@@ -174,19 +173,6 @@ const Inspector = ({
 
 	return (
 		<InspectorControls>
-			<SyncPanel
-				fields={[
-					'padding',
-					'paddingTablet',
-					'paddingMobile',
-					'margin',
-					'marginTablet',
-					'marginMobile'
-				]}
-				isSynced={ attributes.isSynced }
-				setAttributes={ setAttributes }
-			/>
-
 			<PanelBody className="o-section-header-panel">
 				<Button
 					className={ classnames(

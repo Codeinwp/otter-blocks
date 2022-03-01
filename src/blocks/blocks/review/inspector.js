@@ -28,7 +28,6 @@ import { useState, Fragment } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import SyncPanel from '../../components/sync-panel/index.js';
 import SyncControl from '../../components/sync-control/index.js';
 
 const PanelItem = ({
@@ -158,17 +157,6 @@ const Inspector = ({
 
 	return (
 		<InspectorControls>
-			<SyncPanel
-				fields={[
-					'backgroundColor',
-					'primaryColor',
-					'textColor',
-					'buttonTextColor'
-				]}
-				isSynced={ attributes.isSynced }
-				setAttributes={ setAttributes }
-			/>
-
 			<PanelBody
 				title={ __( 'Product Details', 'otter-blocks' ) }
 			>
