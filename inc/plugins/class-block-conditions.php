@@ -190,11 +190,11 @@ class Block_Conditions {
 		}
 
 		if ( 'queryString' === $condition['type'] ) {
-			if ( isset( $condition['query_string'] ) && $has_pro ) {
+			if ( isset( $condition['query_string'] ) && isset ( $condition['match'] ) && $has_pro ) {
 				if ( $visibility ) {
-					return $this->has_query_string( $condition['query_string'] );
+					return $this->has_query_string( $condition );
 				} else {
-					return ! $this->has_query_string( $condition['query_string'] );
+					return ! $this->has_query_string( $condition );
 				}
 			}
 		}
@@ -254,13 +254,13 @@ class Block_Conditions {
 
 	/**
 	 * Check URL parameters
-	 * Returns true if URL contains any of the parameters from the condition.
+	 * Returns true if URL matches the parameters from the condition.
 	 *
-	 * @param string $query_string Query String.
+	 * @param array $condition Condition.
 	 *
 	 * @access public
 	 */
-	public function has_query_string( $query_string ) {
+	public function has_query_string( $condition ) {
 		$url = home_url( add_query_arg( null, null ) );
 
 		$url_components = wp_parse_url( $url );
@@ -269,10 +269,16 @@ class Block_Conditions {
 			return false;
 		}
 
+		$query_string = preg_replace( '/\s/', '', $condition['query_string'] );
+
 		parse_str( $url_components['query'], $params );
 		parse_str( $query_string, $cond_params );
 
-		return count( array_intersect( $cond_params, $params ) ) > 0;
+		if ( $condition['match'] === 'any' ) {
+			return count( array_intersect( $cond_params, $params ) ) > 0;
+		}
+
+		return array_intersect( $cond_params, $params ) === $cond_params;
 	}
 
 	/**

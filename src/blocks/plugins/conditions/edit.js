@@ -457,7 +457,7 @@ const Edit = ({
 			{
 				value: 'queryString',
 				label: __( 'Query String', 'otter-blocks' ),
-				help: __( 'The condition will be met if the URL contains any of the specified parameters.' )
+				help: __( 'The condition will be met if the URL contains the specified parameters.' )
 			}
 		];
 
@@ -676,8 +676,23 @@ const Edit = ({
 													label={ __( 'Query String', 'otter-blocks' ) }
 													help={ __( 'Write a key-value pair for each parameter, one per line.', 'otter-blocks' ) }
 													placeholder='eg. utm_source=facebook'
-													value={ i.query_string.replace( '&', '\n' )}
-													onChange={ e => changeValue( e.replace( '\n', '&' ), index, n, 'query_string' ) }
+													value={ i.query_string.replaceAll( '&', '\n' )}
+													onChange={ e => changeValue( e.replaceAll( '\n', '&' ), index, n, 'query_string' ) }
+												/>
+												<SelectControl
+													label={ __( 'Match if URL contains', 'otter-blocks' ) }
+													options={ [
+														{
+															value: 'any',
+															label: __( 'Any of the parameters', 'otter-blocks' )
+														},
+														{
+															value: 'all',
+															label: __( 'All the parameters', 'otter-blocks' )
+														}
+													] }
+													value={ i.compare }
+													onChange={ e => changeValue( e, index, n, 'match' ) }
 												/>
 											</Fragment>
 										) }
