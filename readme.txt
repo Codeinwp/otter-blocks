@@ -24,27 +24,33 @@ It has:
 
 - Section Block
 - Advanced Heading Block
+- Add to Cart Block
 - Button Group Block
+- Business Hours
 - Slider Block
 - Accordion Block
 - Tabs Block
 - Google Maps Block
+- Maps Block
 - Countdown Block
 - Contact Form Block
 - Masonry Gallery Block
-- Post Grid Block
+- Posts Block
 - Product Review Block
 - Service Block
 - Pricing Block
 - Testimonial Block
 - About Author Block
 - Icon Block
+- Icon List Block
 - Lottie Animation Block
 - Progress Bar Block
 - Popup Block
 - Circular Progress Block
 - Sharing Icons Block
 - Plugin Card Block
+- Pricing Section
+- Review Block
 
 === STUNNING WEB PAGES WITH DRAG AND DROP EFFICIENCY ===
 
