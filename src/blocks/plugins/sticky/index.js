@@ -7,6 +7,8 @@ import { hasBlockSupport } from '@wordpress/blocks';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
+import { select } from '@wordpress/data';
+
 import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
 
 import { Fragment } from '@wordpress/element';
@@ -68,4 +70,6 @@ const withStickyExtension = createHigherOrderComponent( BlockEdit => {
 	};
 }, 'withStickyExtension' );
 
-addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/sticky-extension', withStickyExtension );
+if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor' ) ) {
+	addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/sticky-extension', withStickyExtension );
+}

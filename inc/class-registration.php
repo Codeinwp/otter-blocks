@@ -197,6 +197,10 @@ class Registration {
 				unset( $asset_file['dependencies'][ array_search( 'wp-editor', $asset_file['dependencies'] ) ] );
 				unset( $asset_file['dependencies'][ array_search( 'wp-edit-post', $asset_file['dependencies'] ) ] );
 			}
+
+			if ( class_exists( 'WooCommerce' ) ) {
+				array_push( $asset_file['dependencies'], 'wc-blocks-data-store', 'wc-price-format' );
+			}
 		}
 
 		wp_register_script( 'otter-vendor', OTTER_BLOCKS_URL . 'build/blocks/vendor.js', array( 'react', 'react-dom' ), $asset_file['version'], true );
