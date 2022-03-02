@@ -201,7 +201,7 @@ class Block_Conditions {
 
 		if ( 'wooTotalSpent' === $condition['type'] && class_exists( 'WooCommerce' ) && $has_pro ) {
 			if ( isset( $condition['value'] ) ) {
-				if ( $visibility ) {
+				if ( 'greater_than' === $condition['compare'] ) {
 					return $this->has_total_spent( $condition['value'] );
 				} else {
 					return ! $this->has_total_spent( $condition['value'] );
