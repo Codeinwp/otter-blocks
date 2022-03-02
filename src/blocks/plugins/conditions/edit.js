@@ -250,6 +250,10 @@ const Edit = ({
 			attrs.meta_compare = 'is_true';
 		}
 
+		if ( 'queryString' === value ) {
+			attrs.match = 'any';
+		}
+
 		if ( 'wooProductsInCart' == value ) {
 			attrs.on = 'products';
 		}
@@ -336,7 +340,6 @@ const Edit = ({
 		otterConditions[ index ][ key ].groups = values;
 		setAttributes({ otterConditions });
 	};
-
 
 	const changeVisibility = ( value, index, key ) => {
 		const otterConditions = [ ...attributes.otterConditions ];
@@ -633,6 +636,7 @@ const Edit = ({
 												<optgroup label={ __( 'Posts', 'otter-blocks' ) }>
 													<option value="postAuthor">{ __( 'Post Author', 'otter-blocks' ) }</option>
 													<option value="postCategory">{ __( 'Post Category', 'otter-blocks' ) }</option>
+
 													{ ( isBoosterActive || isNeve ) && (
 														<Fragment>
 															<option value="postType">{ __( 'Post Type', 'otter-blocks' ) }</option>
@@ -672,33 +676,6 @@ const Edit = ({
 											</select>
 										</BaseControl>
 
-										{ 'queryString' === i.type && (
-											<Fragment>
-												<TextareaControl
-													label={ __( 'Query String', 'otter-blocks' ) }
-													help={ __( 'Write a key-value pair for each parameter, one per line.', 'otter-blocks' ) }
-													placeholder='eg. utm_source=facebook'
-													value={ i.query_string.replaceAll( '&', '\n' )}
-													onChange={ e => changeValue( e.replaceAll( '\n', '&' ), index, n, 'query_string' ) }
-												/>
-												<SelectControl
-													label={ __( 'Match if URL contains', 'otter-blocks' ) }
-													options={ [
-														{
-															value: 'any',
-															label: __( 'Any of the parameters', 'otter-blocks' )
-														},
-														{
-															value: 'all',
-															label: __( 'All the parameters', 'otter-blocks' )
-														}
-													] }
-													value={ i.compare }
-													onChange={ e => changeValue( e, index, n, 'match' ) }
-												/>
-											</Fragment>
-										) }
-
 										{ 'userRoles' === i.type && (
 											<FormTokenField
 												label={ __( 'User Roles', 'otter-blocks' ) }
@@ -721,17 +698,6 @@ const Edit = ({
 											/>
 										) }
 
-										{ 'postType' === i.type && (
-											<FormTokenField
-												label={ __( 'Post Types', 'otter-blocks' ) }
-												value={ i.post_types }
-												suggestions={ postTypes }
-												onChange={ types => changeArrayValue( types, index, n, 'post_types' ) }
-												__experimentalExpandOnFocus={ true }
-												__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
-											/>
-										) }
-
 										{ 'postCategory' === i.type && (
 											<FormTokenField
 												label={ __( 'Post Category', 'otter-blocks' ) }
@@ -740,6 +706,17 @@ const Edit = ({
 												onChange={ categories => changeArrayValue( categories, index, n, 'categories' ) }
 												__experimentalExpandOnFocus={ true }
 												__experimentalValidateInput={ newValue => postCategories.includes( newValue ) }
+											/>
+										) }
+
+										{ 'postType' === i.type && (
+											<FormTokenField
+												label={ __( 'Post Types', 'otter-blocks' ) }
+												value={ i.post_types }
+												suggestions={ postTypes }
+												onChange={ types => changeArrayValue( types, index, n, 'post_types' ) }
+												__experimentalExpandOnFocus={ true }
+												__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
 											/>
 										) }
 
@@ -789,6 +766,34 @@ const Edit = ({
 														onChange={ e => changeValue( e, index, n, 'meta_value' ) }
 													/>
 												) }
+											</Fragment>
+										) }
+
+										{ 'queryString' === i.type && (
+											<Fragment>
+												<TextareaControl
+													label={ __( 'Query String', 'otter-blocks' ) }
+													help={ __( 'Write a key-value pair for each parameter, one per line.', 'otter-blocks' ) }
+													placeholder='eg. utm_source=facebook'
+													value={ i.query_string }
+													onChange={ e => changeValue( e.replaceAll( '\n', '&' ), index, n, 'query_string' ) }
+												/>
+
+												<SelectControl
+													label={ __( 'Match if URL contains', 'otter-blocks' ) }
+													options={ [
+														{
+															value: 'any',
+															label: __( 'Any of the parameters', 'otter-blocks' )
+														},
+														{
+															value: 'all',
+															label: __( 'All the parameters', 'otter-blocks' )
+														}
+													] }
+													value={ i.compare }
+													onChange={ e => changeValue( e, index, n, 'match' ) }
+												/>
 											</Fragment>
 										) }
 
