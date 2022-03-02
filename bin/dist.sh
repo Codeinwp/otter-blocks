@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+# !/usr/bin/env bash
 
 BUILD_VERSION=$(node -pe "require('./package.json').version")
 export BUILD_VERSION
@@ -33,107 +33,48 @@ echo "BUILD GENERATED: $BUILD_NAME"
 
 cd -
 
-BUILD_NAME="blocks-animation"
-export BUILD_NAME
+plugins=( animation css export-import )
 
-if [ ! -z "$1" ] && [ $1 == 'development' ]; then
-  DIST_FOLDER="$BUILD_NAME-dev"
-else
-  DIST_FOLDER=$BUILD_NAME
-fi
+for i in "${plugins[@]}"
+do
+  BUILD_NAME="blocks-${i}"
+  export BUILD_NAME
 
-echo "BUILD_NAME=$BUILD_NAME"
+  if [ ! -z "$1" ] && [ $1 == 'development' ]; then
+    DIST_FOLDER="$BUILD_NAME-dev"
+  else
+    DIST_FOLDER=$BUILD_NAME
+  fi
 
-cd plugins/$BUILD_NAME
+  echo "BUILD_NAME=$BUILD_NAME"
 
-rsync -rc --exclude-from ".distignore" "./" "../../dist/$DIST_FOLDER"
+  cd plugins/$BUILD_NAME
 
-cd ../..
+  rsync -rc --exclude-from ".distignore" "./" "../../dist/$DIST_FOLDER"
 
-if [ ! -d "dist/$DIST_FOLDER/assets" ]; then
-  mkdir "dist/$DIST_FOLDER/assets"
-fi
+  cd ../..
 
-if [ ! -d "dist/$DIST_FOLDER/build" ]; then
-  mkdir "dist/$DIST_FOLDER/build"
-fi
+  if [ $i == 'animation' ] && [ ! -d "dist/$DIST_FOLDER/assets" ]; then
+    mkdir "dist/$DIST_FOLDER/assets"
+  fi
 
-cp inc/class-blocks-animation.php build/animation dist/$DIST_FOLDER -r
+  if [ ! -d "dist/$DIST_FOLDER/build" ]; then
+    mkdir "dist/$DIST_FOLDER/build"
+  fi
 
-cp assets/animate dist/$DIST_FOLDER/assets -r
+  cp inc/class-blocks-$i.php build/$i dist/$DIST_FOLDER -r
 
-cd dist
+  if [ $i == 'animation' ]; then
+    cp assets/animate dist/$DIST_FOLDER/assets -r
+  fi
 
-mv $DIST_FOLDER/animation $DIST_FOLDER/build/animation
+  cd dist
 
-zip -r "../artifact/$DIST_FOLDER" "./$DIST_FOLDER/" -x "*.wordpress-org*"
+  mv $DIST_FOLDER/$i $DIST_FOLDER/build/$i
 
-echo "BUILD GENERATED: $BUILD_NAME"
+  zip -r "../artifact/$DIST_FOLDER" "./$DIST_FOLDER/" -x "*.wordpress-org*"
 
-cd -
+  echo "BUILD GENERATED: $BUILD_NAME"
 
-BUILD_NAME="blocks-css"
-export BUILD_NAME
-
-if [ ! -z "$1" ] && [ $1 == 'development' ]; then
-  DIST_FOLDER="$BUILD_NAME-dev"
-else
-  DIST_FOLDER=$BUILD_NAME
-fi
-
-echo "BUILD_NAME=$BUILD_NAME"
-
-cd plugins/$BUILD_NAME
-
-rsync -rc --exclude-from ".distignore" "./" "../../dist/$DIST_FOLDER"
-
-cd ../..
-
-if [ ! -d "dist/$DIST_FOLDER/build" ]; then
-  mkdir "dist/$DIST_FOLDER/build"
-fi
-
-cp inc/class-blocks-css.php build/css dist/$DIST_FOLDER -r
-
-cd dist
-
-mv $DIST_FOLDER/css $DIST_FOLDER/build/css
-
-zip -r "../artifact/$DIST_FOLDER" "./$DIST_FOLDER/" -x "*.wordpress-org*"
-
-echo "BUILD GENERATED: $BUILD_NAME"
-
-cd -
-
-BUILD_NAME="blocks-export-import"
-export BUILD_NAME
-
-if [ ! -z "$1" ] && [ $1 == 'development' ]; then
-  DIST_FOLDER="$BUILD_NAME-dev"
-else
-  DIST_FOLDER=$BUILD_NAME
-fi
-
-echo "BUILD_NAME=$BUILD_NAME"
-
-cd plugins/$BUILD_NAME
-
-rsync -rc --exclude-from ".distignore" "./" "../../dist/$DIST_FOLDER"
-
-cd ../..
-
-if [ ! -d "dist/$DIST_FOLDER/build" ]; then
-  mkdir "dist/$DIST_FOLDER/build"
-fi
-
-cp inc/class-blocks-export-import.php build/export-import dist/$DIST_FOLDER -r
-
-cd dist
-
-mv $DIST_FOLDER/export-import $DIST_FOLDER/build/export-import
-
-zip -r "../artifact/$DIST_FOLDER" "./$DIST_FOLDER/" -x "*.wordpress-org*"
-
-echo "BUILD GENERATED: $BUILD_NAME"
-
-cd -
+  cd -
+done
