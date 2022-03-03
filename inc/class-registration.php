@@ -381,12 +381,14 @@ class Registration {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/circle-counter.asset.php';
 			wp_register_script( 'otter-circle-counter', OTTER_BLOCKS_URL . 'build/blocks/circle-counter.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-circle-counter', 'defer', true );
+			self::$scripts_loaded['circle-counter'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['countdown'] && has_block( 'themeisle-blocks/countdown', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/countdown.asset.php';
 			wp_register_script( 'otter-countdown', OTTER_BLOCKS_URL . 'build/blocks/countdown.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-countdown', 'defer', true );
+			self::$scripts_loaded['countdown'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['form'] && has_block( 'themeisle-blocks/form', $post ) ) {
@@ -401,6 +403,8 @@ class Registration {
 					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
 				)
 			);
+
+			self::$scripts_loaded['form'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['google-map'] && has_block( 'themeisle-blocks/google-map', $post ) ) {
@@ -413,6 +417,7 @@ class Registration {
 				wp_script_add_data( 'otter-google-map', 'defer', true );
 				wp_register_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . esc_attr( $apikey ) . '&libraries=places&callback=initMapScript', array( 'otter-google-map' ), '', true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
 				wp_script_add_data( 'google-maps', 'defer', true );
+				self::$scripts_loaded['google-map'] = true;
 			}
 		}
 
@@ -431,6 +436,7 @@ class Registration {
 			);
 
 			wp_script_add_data( 'otter-leaflet', 'defer', true );
+			self::$scripts_loaded['leaflet-map'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['lottie'] && has_block( 'themeisle-blocks/lottie', $post ) ) {
@@ -450,6 +456,7 @@ class Registration {
 			);
 
 			wp_script_add_data( 'otter-lottie', 'defer', true );
+			self::$scripts_loaded['lottie'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['slider'] && has_block( 'themeisle-blocks/slider', $post ) ) {
@@ -467,12 +474,14 @@ class Registration {
 			);
 
 			wp_script_add_data( 'otter-slider', 'async', true );
+			self::$scripts_loaded['slider'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['tabs'] && has_block( 'themeisle-blocks/tabs', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/tabs.asset.php';
 			wp_register_script( 'otter-tabs', OTTER_BLOCKS_URL . 'build/blocks/tabs.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-tabs', 'defer', true );
+			self::$scripts_loaded['tabs'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['popup'] && has_block( 'themeisle-blocks/popup', $post ) ) {
@@ -487,12 +496,15 @@ class Registration {
 					'isPreview' => is_preview(),
 				)
 			);
+
+			self::$scripts_loaded['popup'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['progress-bar'] && has_block( 'themeisle-blocks/progress-bar', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/progress-bar.asset.php';
 			wp_register_script( 'otter-progress-bar', OTTER_BLOCKS_URL . 'build/blocks/progress-bar.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-progress-bar', 'defer', true );
+			self::$scripts_loaded['progress-bar'] = true;
 		}
 
 		// DEBUG
