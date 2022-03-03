@@ -272,7 +272,7 @@ function AnimationControls({
 							label={ __( 'Delay', 'otter-blocks' ) }
 							value={ countDelay || 'none' }
 							options={ delayList }
-							onChange={ value => updateAnimConfig( AnimationType.count, countDelay, value, () => setCountDelayDelay( value ) ) }
+							onChange={ value => updateAnimConfig( AnimationType.count, countDelay, value, () => setCountDelay( value ) ) }
 						/>
 
 						<SelectControl
