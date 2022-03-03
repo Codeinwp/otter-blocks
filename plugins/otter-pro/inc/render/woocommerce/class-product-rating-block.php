@@ -1,16 +1,16 @@
 <?php
 /**
- * Product_Related_Products_Block
+ * Product_Rating_Block
  *
- * @package ThemeIsle\GutenbergBlocks\Render
+ * @package ThemeIsle\Otter_Pro\Render
  */
 
-namespace ThemeIsle\GutenbergBlocks\Render;
+namespace ThemeIsle\Otter_Pro\Render;
 
 /**
- * Class Product_Related_Products_Block
+ * Class Product_Rating_Block
  */
-class Product_Related_Products_Block {
+class Product_Rating_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -22,7 +22,7 @@ class Product_Related_Products_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! class_exists( 'WooCommerce' ) || is_admin() ) {
+		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! class_exists( 'WooCommerce' ) ) {
 			return;
 		}
 
@@ -33,8 +33,12 @@ class Product_Related_Products_Block {
 		if ( ! $product ) {
 			return;
 		};
-		woocommerce_output_related_products();
+		woocommerce_template_single_rating();
 		$output = ob_get_clean();
+
+		if ( empty( $output ) ) {
+			$output = __( 'Your product ratings will display here.', 'otter-blocks' );
+		}
 		return $output;
 	}
 }

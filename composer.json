@@ -43,6 +43,7 @@
 		]
 	},
 	"autoload-dev": {
+		"classmap": ["plugins/otter-pro/inc/"],
 		"files": [
 			"development.php"
 		]

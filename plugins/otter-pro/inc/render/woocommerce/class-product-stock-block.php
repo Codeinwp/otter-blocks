@@ -1,16 +1,16 @@
 <?php
 /**
- * Product_Title_Block
+ * Product_Stock_Block
  *
- * @package ThemeIsle\GutenbergBlocks\Render
+ * @package ThemeIsle\Otter_Pro\Render
  */
 
-namespace ThemeIsle\GutenbergBlocks\Render;
+namespace ThemeIsle\Otter_Pro\Render;
 
 /**
- * Class Product_Title_Block
+ * Class Product_Stock_Block
  */
-class Product_Title_Block {
+class Product_Stock_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -26,15 +26,16 @@ class Product_Title_Block {
 			return;
 		}
 
-		ob_start();
-
 		global $product;
 
 		if ( ! $product ) {
 			return;
 		};
-		woocommerce_template_single_title();
-		$output = ob_get_clean();
+		$output = wc_get_stock_html( $product );
+
+		if ( empty( $output ) ) {
+			$output = __( 'Your product stock will display here.', 'otter-blocks' );
+		}
 		return $output;
 	}
 }

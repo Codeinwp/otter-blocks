@@ -1,16 +1,16 @@
 <?php
 /**
- * Product_Upsells_Block
+ * Product_Meta_Block
  *
- * @package ThemeIsle\GutenbergBlocks\Render
+ * @package ThemeIsle\Otter_Pro\Render
  */
 
-namespace ThemeIsle\GutenbergBlocks\Render;
+namespace ThemeIsle\Otter_Pro\Render;
 
 /**
- * Class Product_Upsells_Block
+ * Class Product_Meta_Block
  */
-class Product_Upsells_Block {
+class Product_Meta_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -22,7 +22,7 @@ class Product_Upsells_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! class_exists( 'WooCommerce' ) || is_admin() ) {
+		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! class_exists( 'WooCommerce' ) ) {
 			return;
 		}
 
@@ -33,7 +33,7 @@ class Product_Upsells_Block {
 		if ( ! $product ) {
 			return;
 		};
-		woocommerce_upsell_display();
+		woocommerce_template_single_meta();
 		$output = ob_get_clean();
 		return $output;
 	}

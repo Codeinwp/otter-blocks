@@ -1,16 +1,16 @@
 <?php
 /**
- * Product_Rating_Block
+ * Product_Add_To_Cart_Block
  *
- * @package ThemeIsle\GutenbergBlocks\Render
+ * @package ThemeIsle\Otter_Pro\Render
  */
 
-namespace ThemeIsle\GutenbergBlocks\Render;
+namespace ThemeIsle\Otter_Pro\Render;
 
 /**
- * Class Product_Rating_Block
+ * Class Product_Add_To_Cart_Block
  */
-class Product_Rating_Block {
+class Product_Add_To_Cart_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -33,12 +33,8 @@ class Product_Rating_Block {
 		if ( ! $product ) {
 			return;
 		};
-		woocommerce_template_single_rating();
+		woocommerce_template_single_add_to_cart();
 		$output = ob_get_clean();
-
-		if ( empty( $output ) ) {
-			$output = __( 'Your product ratings will display here.', 'otter-blocks' );
-		}
 		return $output;
 	}
 }

@@ -1,16 +1,16 @@
 <?php
 /**
- * Product_Tabs_Block
+ * Product_Upsells_Block
  *
- * @package ThemeIsle\GutenbergBlocks\Render
+ * @package ThemeIsle\Otter_Pro\Render
  */
 
-namespace ThemeIsle\GutenbergBlocks\Render;
+namespace ThemeIsle\Otter_Pro\Render;
 
 /**
- * Class Product_Tabs_Block
+ * Class Product_Upsells_Block
  */
-class Product_Tabs_Block {
+class Product_Upsells_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -22,7 +22,7 @@ class Product_Tabs_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! class_exists( 'WooCommerce' ) ) {
+		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! class_exists( 'WooCommerce' ) || is_admin() ) {
 			return;
 		}
 
@@ -33,16 +33,7 @@ class Product_Tabs_Block {
 		if ( ! $product ) {
 			return;
 		};
-
-		add_filter(
-			'woocommerce_product_tabs',
-			function( $tabs ) {
-				unset( $tabs['description'] );
-				return $tabs;
-			} 
-		);
-
-		woocommerce_output_product_data_tabs();
+		woocommerce_upsell_display();
 		$output = ob_get_clean();
 		return $output;
 	}

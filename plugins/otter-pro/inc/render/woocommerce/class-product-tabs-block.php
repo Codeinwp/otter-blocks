@@ -1,16 +1,16 @@
 <?php
 /**
- * Product_Images_Block
+ * Product_Tabs_Block
  *
- * @package ThemeIsle\GutenbergBlocks\Render
+ * @package ThemeIsle\Otter_Pro\Render
  */
 
-namespace ThemeIsle\GutenbergBlocks\Render;
+namespace ThemeIsle\Otter_Pro\Render;
 
 /**
- * Class Product_Images_Block
+ * Class Product_Tabs_Block
  */
-class Product_Images_Block {
+class Product_Tabs_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -34,13 +34,15 @@ class Product_Images_Block {
 			return;
 		};
 
-		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
-			remove_action( 'woocommerce_product_thumbnails', 'woocommerce_show_product_thumbnails', 20 );
-		}
+		add_filter(
+			'woocommerce_product_tabs',
+			function( $tabs ) {
+				unset( $tabs['description'] );
+				return $tabs;
+			} 
+		);
 
-		woocommerce_show_product_images();
-		woocommerce_show_product_sale_flash();
-
+		woocommerce_output_product_data_tabs();
 		$output = ob_get_clean();
 		return $output;
 	}

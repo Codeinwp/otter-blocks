@@ -1,16 +1,16 @@
 <?php
 /**
- * Product_Meta_Block
+ * Product_Price_Block
  *
- * @package ThemeIsle\GutenbergBlocks\Render
+ * @package ThemeIsle\Otter_Pro\Render
  */
 
-namespace ThemeIsle\GutenbergBlocks\Render;
+namespace ThemeIsle\Otter_Pro\Render;
 
 /**
- * Class Product_Meta_Block
+ * Class Product_Price_Block
  */
-class Product_Meta_Block {
+class Product_Price_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -33,7 +33,7 @@ class Product_Meta_Block {
 		if ( ! $product ) {
 			return;
 		};
-		woocommerce_template_single_meta();
+		woocommerce_template_single_price();
 		$output = ob_get_clean();
 		return $output;
 	}

@@ -64,7 +64,6 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Plugins\Block_Conditions',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Dashboard',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Options_Settings',
-			'\ThemeIsle\GutenbergBlocks\Plugins\WooCommerce_Builder',
 			'\ThemeIsle\GutenbergBlocks\Render\Masonry_Variant',
 			'\ThemeIsle\GutenbergBlocks\Server\Dashboard_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Filter_Blocks_Server',
@@ -73,6 +72,8 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Server\Form_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Posts_ACF_Server',
 		);
+
+		$classnames = apply_filters( 'themeisle_blocks_autoloader', $classnames );
 
 		foreach ( $classnames as $classname ) {
 			$classname = new $classname();

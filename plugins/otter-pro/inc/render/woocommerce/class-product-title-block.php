@@ -1,16 +1,16 @@
 <?php
 /**
- * Product_Add_To_Cart_Block
+ * Product_Title_Block
  *
- * @package ThemeIsle\GutenbergBlocks\Render
+ * @package ThemeIsle\Otter_Pro\Render
  */
 
-namespace ThemeIsle\GutenbergBlocks\Render;
+namespace ThemeIsle\Otter_Pro\Render;
 
 /**
- * Class Product_Add_To_Cart_Block
+ * Class Product_Title_Block
  */
-class Product_Add_To_Cart_Block {
+class Product_Title_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -33,7 +33,7 @@ class Product_Add_To_Cart_Block {
 		if ( ! $product ) {
 			return;
 		};
-		woocommerce_template_single_add_to_cart();
+		woocommerce_template_single_title();
 		$output = ob_get_clean();
 		return $output;
 	}

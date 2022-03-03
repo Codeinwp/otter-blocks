@@ -1,16 +1,16 @@
 <?php
 /**
- * Product_Short_Description_Block
+ * Product_Images_Block
  *
- * @package ThemeIsle\GutenbergBlocks\Render
+ * @package ThemeIsle\Otter_Pro\Render
  */
 
-namespace ThemeIsle\GutenbergBlocks\Render;
+namespace ThemeIsle\Otter_Pro\Render;
 
 /**
- * Class Product_Short_Description_Block
+ * Class Product_Images_Block
  */
-class Product_Short_Description_Block {
+class Product_Images_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -33,7 +33,14 @@ class Product_Short_Description_Block {
 		if ( ! $product ) {
 			return;
 		};
-		woocommerce_template_single_excerpt();
+
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			remove_action( 'woocommerce_product_thumbnails', 'woocommerce_show_product_thumbnails', 20 );
+		}
+
+		woocommerce_show_product_images();
+		woocommerce_show_product_sale_flash();
+
 		$output = ob_get_clean();
 		return $output;
 	}

@@ -2,10 +2,10 @@
 /**
  * WooCommerce Builder.
  *
- * @package ThemeIsle\GutenbergBlocks\Plugins
+ * @package ThemeIsle\Otter_Pro\Plugins
  */
 
-namespace ThemeIsle\GutenbergBlocks\Plugins;
+namespace ThemeIsle\Otter_Pro\Plugins;
 
 /**
  * Class WooCommerce_Builder
@@ -186,7 +186,7 @@ class WooCommerce_Builder {
 				add_action( 'woocommerce_after_single_product', array( $product_layout, 'render_exclusive_products_section' ), 20 );
 			}
 
-			return OTTER_BLOCKS_PATH . '/inc/render/woocommerce/tpl/content-single-product.php';
+			return OTTER_PRO_PATH . '/inc/render/woocommerce/tpl/content-single-product.php';
 		}
 
 		return $template;
