@@ -42,6 +42,11 @@
 			"vendor/codeinwp/themeisle-sdk/load.php"
 		]
 	},
+	"autoload-dev": {
+		"files": [
+			"development.php"
+		]
+	},
 	"minimum-stability": "dev",
 	"require": {
 		"codeinwp/themeisle-sdk": "^3.1",

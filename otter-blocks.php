@@ -34,11 +34,6 @@ if ( is_readable( $vendor_file ) ) {
 	require_once $vendor_file;
 }
 
-require_once dirname( __FILE__ ) . '/autoloader.php';
-$autoloader = new \ThemeIsle\GutenbergBlocks\Autoloader();
-$autoloader->add_namespace( '\ThemeIsle\GutenbergBlocks', dirname( __FILE__ ) . '/inc/' );
-$autoloader->register();
-
 if ( class_exists( '\ThemeIsle\GutenbergBlocks\Main' ) ) {
 	\ThemeIsle\GutenbergBlocks\Main::instance();
 }
