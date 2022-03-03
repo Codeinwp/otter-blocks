@@ -25,7 +25,7 @@ class Main {
 	public function init() {
 		if ( ! defined( 'OTTER_PRO_URL' ) ) {
 			define( 'OTTER_PRO_URL', OTTER_BLOCKS_URL . 'plugins/otter-pro/' );
-			define( 'OTTER_PRO_PATH', OTTER_BLOCKS_PATH . 'plugins/otter-pro/' );
+			define( 'OTTER_PRO_PATH', OTTER_BLOCKS_PATH . '/plugins/otter-pro/' );
 		}
 
 		add_action( 'themeisle_blocks_autoloader', array( $this, 'autoload_classes' ) );

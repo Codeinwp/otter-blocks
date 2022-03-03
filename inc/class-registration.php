@@ -50,7 +50,6 @@ class Registration {
 		'slider'         => false,
 		'tabs'           => false,
 		'popup'          => false,
-		'product-image'  => false,
 		'progress-bar'   => false,
 	);
 
@@ -494,10 +493,6 @@ class Registration {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/progress-bar.asset.php';
 			wp_register_script( 'otter-progress-bar', OTTER_BLOCKS_URL . 'build/blocks/progress-bar.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-progress-bar', 'defer', true );
-		}
-
-		if ( ! self::$scripts_loaded['product-image'] && has_block( 'themeisle-blocks/product-image', $post ) ) {
-			wp_enqueue_script( 'wc-single-product' );
 		}
 
 		// DEBUG

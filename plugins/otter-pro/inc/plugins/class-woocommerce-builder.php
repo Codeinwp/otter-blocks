@@ -172,6 +172,10 @@ class WooCommerce_Builder {
 			boolval( $woo_builder_enabled )
 		) {
 
+			if ( has_block( 'themeisle-blocks/product-image', get_the_ID() ) ) {
+				wp_enqueue_script( 'wc-single-product' );
+			}
+
 			if ( class_exists( '\Neve\Views\Product_Layout' ) && class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Views\Single_Product' ) ) {
 				$single_product     = new \Neve_Pro\Modules\Woocommerce_Booster\Views\Single_Product();
 				$product_layout     = new \Neve\Views\Product_Layout();
@@ -186,7 +190,7 @@ class WooCommerce_Builder {
 				add_action( 'woocommerce_after_single_product', array( $product_layout, 'render_exclusive_products_section' ), 20 );
 			}
 
-			return OTTER_PRO_PATH . '/inc/render/woocommerce/tpl/content-single-product.php';
+			return OTTER_PRO_PATH . 'inc/render/woocommerce/tpl/content-single-product.php';
 		}
 
 		return $template;
