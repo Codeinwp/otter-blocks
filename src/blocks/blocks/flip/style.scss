@@ -99,7 +99,7 @@
 		justify-content: var( --backVerticalAlign );
 	}
 
-	&.invert {
+	.invert {
 		.o-flip-front {
 			transform: var( --flip-anim );
 		}
