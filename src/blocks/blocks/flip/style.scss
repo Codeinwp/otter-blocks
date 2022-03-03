@@ -102,10 +102,15 @@
 	.invert {
 		.o-flip-front {
 			transform: var( --flip-anim );
+			box-shadow: var( --boxShadow );
 		}
 
 		.o-flip-back {
 			transform: unset;
+			box-shadow: unset;
+			&:hover {
+				box-shadow: var( --boxShadow );
+			}
 		}
 	}
 }
