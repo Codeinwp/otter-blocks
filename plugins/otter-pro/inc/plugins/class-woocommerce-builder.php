@@ -39,27 +39,14 @@ class WooCommerce_Builder {
 	 * @access  public
 	 */
 	public function register_metabox( $post_type ) {
-		if ( defined( 'NEVE_VERSION' ) && 'valid' === apply_filters( 'product_neve_license_status', false ) ) {
-			add_meta_box(
-				'otter_woo_builder',
-				__( 'WooCommerce Builder by Otter', 'otter-blocks' ),
-				array( $this, 'render_metabox' ),
-				'product',
-				'side',
-				'high'
-			);
-		}
-
-		if ( defined( 'NEVE_VERSION' ) && ! 'valid' === apply_filters( 'product_neve_license_status', false ) ) {
-			add_meta_box(
-				'otter_woo_builder',
-				__( 'WooCommerce Builder by Otter', 'otter-blocks' ),
-				array( $this, 'render_metabox_upsell' ),
-				'product',
-				'side',
-				'high'
-			);
-		}
+		add_meta_box(
+			'otter_woo_builder',
+			__( 'WooCommerce Builder by Otter', 'otter-blocks' ),
+			array( $this, 'render_metabox' ),
+			'product',
+			'side',
+			'high'
+		);
 	}
 
 	/**
@@ -94,26 +81,6 @@ class WooCommerce_Builder {
 			</div>
 			<?php
 		}
-	}
-
-	/**
-	 * Render Metabox
-	 * 
-	 * @param string $post_type Post type.
-	 * 
-	 * @since   2.0.0
-	 * @access  public
-	 */
-	public function render_metabox_upsell( $post_type ) {
-		?>
-		<div class="clear">
-			<p><?php _e( 'Unlock the full power of WooCommerce Builder with Neve Pro\'s Block Editor Booster.', 'otter-blocks' ); ?></p>
-
-			<a href="https://themeisle.com/themes/neve/pricing" target="_blank" class="button button-primary">
-				<?php _e( 'Get Neve Pro', 'otter-blocks' ); ?>
-			</a>
-		</div>
-		<?php
 	}
 
 	/**

@@ -39,12 +39,14 @@ class Main {
 	/**
 	 * Autoload classes.
 	 *
+	 * @param string $classnames Block Classnames.
+	 * 
 	 * @since   2.0.1
 	 * @access  public
 	 */
 	public function autoload_classes( $classnames ) {
 		$classes = array(
-			'\ThemeIsle\Otter_Pro\Plugins\WooCommerce_Builder'
+			'\ThemeIsle\Otter_Pro\Plugins\WooCommerce_Builder',
 		);
 
 		$classnames = array_merge( $classnames, $classes );
@@ -85,6 +87,8 @@ class Main {
 	/**
 	 * Register Dynamic Blocks.
 	 *
+	 * @param string $dynamic_blocks Dynamic Blocks.
+	 * 
 	 * @since   2.0.1
 	 * @access  public
 	 */
@@ -111,6 +115,8 @@ class Main {
 	/**
 	 * Register Blocks.
 	 *
+	 * @param string $blocks Blocks List.
+	 * 
 	 * @since   2.0.1
 	 * @access  public
 	 */

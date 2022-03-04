@@ -38,5 +38,5 @@
     <exclude-pattern>dist/*</exclude-pattern>
     <exclude-pattern>artifact/*</exclude-pattern>
     <exclude-pattern>assets/*</exclude-pattern>
-
+    <exclude-pattern>/development.php</exclude-pattern>
 </ruleset>

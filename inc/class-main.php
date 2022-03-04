@@ -54,11 +54,10 @@ class Main {
 	public function autoload_classes() {
 		load_plugin_textdomain( 'otter-blocks', false, basename( OTTER_BLOCKS_PATH ) . '/languages' );
 
-		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Registration' ) ) {
-			\ThemeIsle\GutenbergBlocks\Registration::instance();
-		}
-
 		$classnames = array(
+			'\ThemeIsle\GutenbergBlocks\Registration',
+			'\ThemeIsle\GutenbergBlocks\Pro',
+			'\ThemeIsle\GutenbergBlocks\Blocks_Export_Import',
 			'\ThemeIsle\GutenbergBlocks\CSS\Block_Frontend',
 			'\ThemeIsle\GutenbergBlocks\CSS\CSS_Handler',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Block_Conditions',
@@ -89,10 +88,6 @@ class Main {
 
 		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Animation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {
 			\ThemeIsle\GutenbergBlocks\Blocks_Animation::instance();
-		}
-
-		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Export_Import' ) ) {
-			\ThemeIsle\GutenbergBlocks\Blocks_Export_Import::instance();
 		}
 	}
 

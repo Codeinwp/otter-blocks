@@ -519,7 +519,14 @@ class Registration {
 				continue;
 			}
 
-			$block_path    = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
+			$block_path = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
+			$style      = OTTER_BLOCKS_URL . 'build/blocks/' . $block . '/style.css';
+
+			if ( ! file_exists( $block_path ) && defined( 'OTTER_PRO_BUILD_PATH' ) ) {
+				$block_path = OTTER_PRO_BUILD_PATH . $block;
+				$style      = OTTER_PRO_BUILD_URL . $block . '/style.css';
+			}
+
 			$metadata_file = trailingslashit( $block_path ) . 'block.json';
 			$style         = trailingslashit( $block_path ) . 'style.css';
 
@@ -540,7 +547,7 @@ class Registration {
 			if ( file_exists( $style ) && ! empty( $metadata['style'] ) ) {
 				wp_register_style(
 					$metadata['style'],
-					OTTER_BLOCKS_URL . 'build/blocks/' . $block . '/style.css',
+					$style,
 					$deps,
 					$asset_file['version']
 				);
@@ -622,9 +629,16 @@ class Registration {
 		);
 
 		foreach ( self::$blocks as $block ) {
-			$block_path    = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
-			$metadata_file = trailingslashit( $block_path ) . 'block.json';
-			$editor_style  = trailingslashit( $block_path ) . 'editor.css';
+			$block_path   = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
+			$editor_style = OTTER_BLOCKS_URL . 'build/blocks/' . $block . '/editor.css';
+
+			if ( ! file_exists( $block_path ) && defined( 'OTTER_PRO_BUILD_PATH' ) ) {
+				$block_path   = OTTER_PRO_BUILD_PATH . $block;
+				$editor_style = OTTER_PRO_BUILD_URL . $block . '/editor.css';
+			}
+
+			$metadata_file     = trailingslashit( $block_path ) . 'block.json';
+			$editor_style_path = trailingslashit( $block_path ) . 'editor.css';
 
 			$metadata = $this->get_metadata( $metadata_file );
 
@@ -640,10 +654,10 @@ class Registration {
 				$deps = self::$block_dependencies[ $block ];
 			}
 
-			if ( file_exists( $editor_style ) && ! empty( $metadata['editorStyle'] ) ) {
+			if ( file_exists( $editor_style_path ) && ! empty( $metadata['editorStyle'] ) ) {
 				wp_register_style(
 					$metadata['editorStyle'],
-					OTTER_BLOCKS_URL . 'build/blocks/' . $block . '/editor.css',
+					$editor_style,
 					$deps,
 					$asset_file['version']
 				);
