@@ -25,9 +25,9 @@ class Pro {
 	 * @access  public
 	 */
 	public function init() {
-        if ( defined( 'OTTER_PRO_VERSION' ) ) {
-            return;
-        }
+		if ( defined( 'OTTER_PRO_VERSION' ) ) {
+			return;
+		}
 
 		add_action( 'add_meta_boxes', array( $this, 'register_metabox' ) );
 	}
@@ -41,14 +41,14 @@ class Pro {
 	 * @access  public
 	 */
 	public function register_metabox( $post_type ) {
-        add_meta_box(
-            'otter_woo_builder',
-            __( 'WooCommerce Builder by Otter', 'otter-blocks' ),
-            array( $this, 'render_metabox_upsell' ),
-            'product',
-            'side',
-            'high'
-        );
+		add_meta_box(
+			'otter_woo_builder',
+			__( 'WooCommerce Builder by Otter', 'otter-blocks' ),
+			array( $this, 'render_metabox_upsell' ),
+			'product',
+			'side',
+			'high'
+		);
 	}
 
 	/**
