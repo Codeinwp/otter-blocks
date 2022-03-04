@@ -26,4 +26,6 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'OTTER_PRO_BASEFILE', __FILE__ );
 define( 'OTTER_PRO_URL', plugins_url( '/', __FILE__ ) );
 define( 'OTTER_PRO_PATH', dirname( __FILE__ ) );
+define( 'OTTER_PRO_BUILD_URL', plugins_url( '/', __FILE__ ) . 'build/' );
+define( 'OTTER_PRO_BUILD_PATH', dirname( __FILE__ ) . '/build/' );
 define( 'OTTER_PRO_VERSION', '1.7.5' );

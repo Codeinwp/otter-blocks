@@ -17,8 +17,12 @@ module.exports = function( grunt ) {
 	Object.keys( blocks ).filter( block => blocks[ block ].assets !== undefined )
 		.forEach( block => {
 			Object.keys( blocks[ block ].assets ).forEach( s => {
-				sassFiles[ `build/blocks/${ s }` ] = `src/blocks/${ blocks[ block ].assets[ s ] }`;
-				sourceFiles.push( `src/blocks/${ blocks[ block ].assets[ s ] }` );
+				if ( blocks[ block ]?.isPro ) {
+					sassFiles[ `build/pro/${ s }` ] = `src/${ blocks[ block ].assets[ s ] }`;
+				} else {
+					sassFiles[ `build/blocks/${ s }` ] = `src/${ blocks[ block ].assets[ s ] }`;
+				}
+				sourceFiles.push( `src/${ blocks[ block ].assets[ s ] }` );
 			});
 		});
 

@@ -26,9 +26,12 @@ class Main {
 		if ( ! defined( 'OTTER_PRO_URL' ) ) {
 			define( 'OTTER_PRO_URL', OTTER_BLOCKS_URL . 'plugins/otter-pro/' );
 			define( 'OTTER_PRO_PATH', OTTER_BLOCKS_PATH . '/plugins/otter-pro/' );
+			define( 'OTTER_PRO_BUILD_URL', OTTER_BLOCKS_URL . 'build/pro/' );
+			define( 'OTTER_PRO_BUILD_PATH', OTTER_BLOCKS_PATH . '/build/pro/' );
 		}
 
 		add_action( 'themeisle_blocks_autoloader', array( $this, 'autoload_classes' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 		add_action( 'themeisle_blocks_register_blocks', array( $this, 'register_blocks' ) );
 		add_action( 'themeisle_blocks_register_dynamic_blocks', array( $this, 'register_dynamic_blocks' ) );
 	}
@@ -47,6 +50,36 @@ class Main {
 		$classnames = array_merge( $classnames, $classes );
 
 		return $classnames;
+	}
+
+	/**
+	 * Autoload classes.
+	 *
+	 * @since   2.0.1
+	 * @access  public
+	 */
+	public function enqueue_block_editor_assets() {
+		global $pagenow;
+
+		if ( class_exists( 'WooCommerce' ) && ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && ( ( isset( $_GET['post'] ) && 'product' === get_post_type( sanitize_text_field( $_GET['post'] ) ) ) || ( isset( $_GET['post_type'] ) && 'product' === sanitize_text_field( $_GET['post_type'] ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+			$asset_file = include OTTER_PRO_BUILD_PATH . 'woocommerce.asset.php';
+
+			wp_enqueue_script(
+				'otter-blocks-woocommerce',
+				OTTER_PRO_BUILD_URL . 'woocommerce.js',
+				$asset_file['dependencies'],
+				$asset_file['version'],
+				true
+			);
+
+			wp_localize_script(
+				'otter-blocks-woocommerce',
+				'otterPro',
+				array(
+					'hasWooCommerce' => class_exists( 'WooCommerce' ),
+				)
+			);
+		}
 	}
 
 	/**

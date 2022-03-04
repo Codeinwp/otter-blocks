@@ -5,15 +5,25 @@ const path = require( 'path' );
 const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
 const blocks = require( './blocks.json' );
 
-const blockFiles = Object.keys( blocks ).filter( block => blocks[ block ].block !== undefined )
+const blockFiles = Object.keys( blocks ).filter( block => blocks[ block ].block !== undefined && true !== blocks[ block ]?.isPro )
 	.map( block => {
 		return {
-			source: `src/blocks/${ blocks[ block ].block }`,
+			source: `src/${ blocks[ block ].block }`,
 			destination: `build/blocks/${ block }/`
 		};
 	});
 
-const folders = Object.keys( blocks ).map( block => `build/blocks/${ block }` );
+const folders = Object.keys( blocks ).filter( block => true !== blocks[ block ]?.isPro ).map( block => `build/blocks/${ block }` );
+
+const blockFilesPro = Object.keys( blocks ).filter( block => blocks[ block ].block !== undefined && true === blocks[ block ]?.isPro )
+	.map( block => {
+		return {
+			source: `src/${ blocks[ block ].block }`,
+			destination: `build/pro/${ block }/`
+		};
+	});
+
+const foldersPro = Object.keys( blocks ).filter( block => true === blocks[ block ]?.isPro ).map( block => `build/pro/${ block }` );
 
 module.exports = [
 	{
@@ -73,6 +83,51 @@ module.exports = [
 	},
 	{
 
+		// OTTER PRO
+		...defaultConfig,
+		stats: 'minimal',
+		devtool: 'development' === NODE_ENV ? 'eval-source-map' : undefined,
+		mode: NODE_ENV,
+		entry: {
+			blocks: [
+				'./src/pro/index.js'
+			],
+			woocommerce: [
+				...glob.sync( './src/pro/woocommerce/**/index.js' )
+			]
+		},
+		output: {
+			path: path.resolve( __dirname, './build/pro' ),
+			filename: '[name].js',
+			chunkFilename: 'chunk-[name].js'
+		},
+		optimization: {
+			...defaultConfig.optimization,
+			splitChunks: {
+				minSize: 50,
+				cacheGroups: {
+					editorStyles: {
+						name: 'editor',
+						test: /editor\.scss$/,
+						chunks: 'all'
+					}
+				}
+			}
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new FileManagerPlugin({
+				events: {
+					onEnd: {
+						mkdir: foldersPro,
+						copy: blockFilesPro
+					}
+				}
+			})
+		]
+	},
+	{
+
 		// OTTER BLOCKS
 		...defaultConfig,
 		stats: 'minimal',
@@ -83,9 +138,6 @@ module.exports = [
 				'./src/blocks/index.js',
 				'./src/blocks/plugins/registerPlugin.js',
 				...glob.sync( './src/blocks/blocks/**/index.js' )
-			],
-			woocommerce: [
-				...glob.sync( './src/blocks/woocommerce/**/index.js' )
 			],
 			'leaflet-map': './src/blocks/frontend/leaflet-map/index.js',
 			maps: './src/blocks/frontend/google-map/index.js',

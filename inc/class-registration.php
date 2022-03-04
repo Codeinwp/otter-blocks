@@ -276,20 +276,6 @@ class Registration {
 		);
 
 		wp_enqueue_style( 'otter-editor', OTTER_BLOCKS_URL . 'build/blocks/editor.css', array( 'wp-edit-blocks', 'font-awesome-5', 'font-awesome-4-shims' ), $asset_file['version'] );
-
-		global $pagenow;
-
-		if ( class_exists( 'WooCommerce' ) && defined( 'NEVE_VERSION' ) && 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ) && ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && ( ( isset( $_GET['post'] ) && 'product' === get_post_type( sanitize_text_field( $_GET['post'] ) ) ) || ( isset( $_GET['post_type'] ) && 'product' === sanitize_text_field( $_GET['post_type'] ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/woocommerce.asset.php';
-
-			wp_enqueue_script(
-				'otter-blocks-woocommerce',
-				OTTER_BLOCKS_URL . 'build/blocks/woocommerce.js',
-				$asset_file['dependencies'],
-				$asset_file['version'],
-				true
-			);
-		}
 	}
 
 	/**

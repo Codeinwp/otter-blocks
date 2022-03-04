@@ -1,247 +1,258 @@
 {
 	"about-author": {
-		"block": "blocks/about-author/block.json",
+		"block": "blocks/blocks/about-author/block.json",
 		"assets": {
-			"about-author/editor.css": "blocks/about-author/editor.scss",
-			"about-author/style.css": "blocks/about-author/style.scss"
+			"about-author/editor.css": "blocks/blocks/about-author/editor.scss",
+			"about-author/style.css": "blocks/blocks/about-author/style.scss"
 		}
 	},
 	"accordion": {
-		"block": "blocks/accordion/group/block.json",
+		"block": "blocks/blocks/accordion/group/block.json",
 		"assets": {
-			"accordion/editor.css": "blocks/accordion/editor.scss",
-			"accordion/style.css": "blocks/accordion/style.scss"
+			"accordion/editor.css": "blocks/blocks/accordion/editor.scss",
+			"accordion/style.css": "blocks/blocks/accordion/style.scss"
 		}
 	},
 	"accordion-item": {
-		"block": "blocks/accordion/item/block.json"
+		"block": "blocks/blocks/accordion/item/block.json"
 	},
 	"add-to-cart-button": {
-		"block": "blocks/add-to-cart-button/block.json"
+		"block": "blocks/blocks/add-to-cart-button/block.json"
 	},
 	"advanced-heading": {
-		"block": "blocks/advanced-heading/block.json",
+		"block": "blocks/blocks/advanced-heading/block.json",
 		"assets": {
-			"advanced-heading/editor.css": "blocks/advanced-heading/editor.scss",
-			"advanced-heading/style.css": "blocks/advanced-heading/style.scss"
+			"advanced-heading/editor.css": "blocks/blocks/advanced-heading/editor.scss",
+			"advanced-heading/style.css": "blocks/blocks/advanced-heading/style.scss"
 		}
 	},
 	"business-hours": {
-		"block": "blocks/business-hours/block.json",
+		"block": "blocks/blocks/business-hours/block.json",
 		"assets": {
-			"business-hours/editor.css": "blocks/business-hours/editor.scss",
-			"business-hours/style.css": "blocks/business-hours/style.scss"
+			"business-hours/editor.css": "blocks/blocks/business-hours/editor.scss",
+			"business-hours/style.css": "blocks/blocks/business-hours/style.scss"
 		}
 	},
 	"business-hours-item": {
-		"block": "blocks/business-hours/item/block.json"
+		"block": "blocks/blocks/business-hours/item/block.json"
 	},
 	"button-group": {
-		"block": "blocks/button-group/group/block.json",
+		"block": "blocks/blocks/button-group/group/block.json",
 		"assets": {
-			"button-group/editor.css": "blocks/button-group/editor.scss",
-			"button-group/style.css": "blocks/button-group/style.scss"
+			"button-group/editor.css": "blocks/blocks/button-group/editor.scss",
+			"button-group/style.css": "blocks/blocks/button-group/style.scss"
 		}
 	},
 	"button": {
-		"block": "blocks/button-group/button/block.json"
+		"block": "blocks/blocks/button-group/button/block.json"
 	},
 	"circle-counter": {
-		"block": "blocks/circle-counter/block.json",
+		"block": "blocks/blocks/circle-counter/block.json",
 		"assets": {
-			"circle-counter/editor.css": "blocks/circle-counter/editor.scss",
-			"circle-counter/style.css": "blocks/circle-counter/style.scss"
+			"circle-counter/editor.css": "blocks/blocks/circle-counter/editor.scss",
+			"circle-counter/style.css": "blocks/blocks/circle-counter/style.scss"
 		}
 	},
 	"countdown": {
-		"block": "blocks/countdown/block.json",
+		"block": "blocks/blocks/countdown/block.json",
 		"assets": {
-			"countdown/editor.css": "blocks/countdown/editor.scss",
-			"countdown/style.css": "blocks/countdown/style.scss"
+			"countdown/editor.css": "blocks/blocks/countdown/editor.scss",
+			"countdown/style.css": "blocks/blocks/countdown/style.scss"
 		}
 	},
 	"flip": {
-		"block": "blocks/flip/block.json",
+		"block": "blocks/blocks/flip/block.json",
 		"assets": {
-			"flip/editor.css": "blocks/flip/editor.scss",
-			"flip/style.css": "blocks/flip/style.scss"
+			"flip/editor.css": "blocks/blocks/flip/editor.scss",
+			"flip/style.css": "blocks/blocks/flip/style.scss"
 		}
 	},
 	"font-awesome-icons": {
-		"block": "blocks/font-awesome-icons/block.json",
+		"block": "blocks/blocks/font-awesome-icons/block.json",
 		"assets": {
-			"font-awesome-icons/editor.css": "blocks/font-awesome-icons/editor.scss",
-			"font-awesome-icons/style.css": "blocks/font-awesome-icons/style.scss"
+			"font-awesome-icons/editor.css": "blocks/blocks/font-awesome-icons/editor.scss",
+			"font-awesome-icons/style.css": "blocks/blocks/font-awesome-icons/style.scss"
 		}
 	},
 	"form": {
-		"block": "blocks/form/block.json",
+		"block": "blocks/blocks/form/block.json",
 		"assets": {
-			"form/editor.css": "blocks/form/editor.scss",
-			"form/style.css": "blocks/form/style.scss"
+			"form/editor.css": "blocks/blocks/form/editor.scss",
+			"form/style.css": "blocks/blocks/form/style.scss"
 		}
 	},
 	"form-input": {
-		"block": "blocks/form/input/block.json"
+		"block": "blocks/blocks/form/input/block.json"
 	},
 	"form-nonce": {
-		"block": "blocks/form/nonce/block.json"
+		"block": "blocks/blocks/form/nonce/block.json"
 	},
 	"form-textarea": {
-		"block": "blocks/form/textarea/block.json"
+		"block": "blocks/blocks/form/textarea/block.json"
 	},
 	"google-map": {
-		"block": "blocks/google-map/block.json",
+		"block": "blocks/blocks/google-map/block.json",
 		"assets": {
-			"google-map/editor.css": "blocks/google-map/editor.scss",
-			"google-map/style.css": "blocks/google-map/style.scss"
+			"google-map/editor.css": "blocks/blocks/google-map/editor.scss",
+			"google-map/style.css": "blocks/blocks/google-map/style.scss"
 		}
 	},
 	"icon-list": {
-		"block": "blocks/icon-list/block.json",
+		"block": "blocks/blocks/icon-list/block.json",
 		"assets": {
-			"icon-list/editor.css": "blocks/icon-list/editor.scss",
-			"icon-list/style.css": "blocks/icon-list/style.scss"
+			"icon-list/editor.css": "blocks/blocks/icon-list/editor.scss",
+			"icon-list/style.css": "blocks/blocks/icon-list/style.scss"
 		}
 	},
 	"icon-list-item": {
-		"block": "blocks/icon-list/item/block.json"
+		"block": "blocks/blocks/icon-list/item/block.json"
 	},
 	"leaflet-map": {
-		"block": "blocks/leaflet-map/block.json",
+		"block": "blocks/blocks/leaflet-map/block.json",
 		"assets": {
-			"leaflet-map/editor.css": "blocks/leaflet-map/editor.scss",
-			"leaflet-map/style.css": "blocks/leaflet-map/style.scss"
+			"leaflet-map/editor.css": "blocks/blocks/leaflet-map/editor.scss",
+			"leaflet-map/style.css": "blocks/blocks/leaflet-map/style.scss"
 		}
 	},
 	"lottie": {
-		"block": "blocks/lottie/block.json",
+		"block": "blocks/blocks/lottie/block.json",
 		"assets": {
-			"lottie/editor.css": "blocks/lottie/editor.scss"
+			"lottie/editor.css": "blocks/blocks/lottie/editor.scss"
 		}
 	},
 	"plugin-cards": {
-		"block": "blocks/plugin-cards/block.json",
+		"block": "blocks/blocks/plugin-cards/block.json",
 		"assets": {
-			"plugin-cards/editor.css": "blocks/plugin-cards/editor.scss",
-			"plugin-cards/style.css": "blocks/plugin-cards/style.scss"
+			"plugin-cards/editor.css": "blocks/blocks/plugin-cards/editor.scss",
+			"plugin-cards/style.css": "blocks/blocks/plugin-cards/style.scss"
 		}
 	},
 	"popup": {
-		"block": "blocks/popup/block.json",
+		"block": "blocks/blocks/popup/block.json",
 		"assets": {
-			"popup/editor.css": "blocks/popup/editor.scss",
-			"popup/style.css": "blocks/popup/style.scss"
+			"popup/editor.css": "blocks/blocks/popup/editor.scss",
+			"popup/style.css": "blocks/blocks/popup/style.scss"
 		}
 	},
 	"posts-grid": {
-		"block": "blocks/posts/block.json",
+		"block": "blocks/blocks/posts/block.json",
 		"assets": {
-			"posts-grid/editor.css": "blocks/posts/editor.scss",
-			"posts-grid/style.css": "blocks/posts/style.scss"
+			"posts-grid/editor.css": "blocks/blocks/posts/editor.scss",
+			"posts-grid/style.css": "blocks/blocks/posts/style.scss"
 		}
 	},
 	"progress-bar": {
-		"block": "blocks/progress-bar/block.json",
+		"block": "blocks/blocks/progress-bar/block.json",
 		"assets": {
-			"progress-bar/editor.css": "blocks/progress-bar/editor.scss",
-			"progress-bar/style.css": "blocks/progress-bar/style.scss"
+			"progress-bar/editor.css": "blocks/blocks/progress-bar/editor.scss",
+			"progress-bar/style.css": "blocks/blocks/progress-bar/style.scss"
 		}
 	},
 	"review": {
-		"block": "blocks/review/block.json",
+		"block": "blocks/blocks/review/block.json",
 		"assets": {
-			"review/editor.css": "blocks/review/editor.scss",
-			"review/style.css": "blocks/review/style.scss"
+			"review/editor.css": "blocks/blocks/review/editor.scss",
+			"review/style.css": "blocks/blocks/review/style.scss"
 		}
 	},
 	"review-comparison": {
-		"block": "blocks/review-comparison/block.json",
+		"block": "blocks/blocks/review-comparison/block.json",
 		"assets": {
-			"review-comparison/editor.css": "blocks/review-comparison/editor.scss",
-			"review-comparison/style.css": "blocks/review-comparison/style.scss"
+			"review-comparison/editor.css": "blocks/blocks/review-comparison/editor.scss",
+			"review-comparison/style.css": "blocks/blocks/review-comparison/style.scss"
 		}
 	},
 	"advanced-columns": {
-		"block": "blocks/section/columns/block.json",
+		"block": "blocks/blocks/section/columns/block.json",
 		"assets": {
-			"advanced-columns/editor.css": "blocks/section/editor.scss",
-			"advanced-columns/style.css": "blocks/section/style.scss"
+			"advanced-columns/editor.css": "blocks/blocks/section/editor.scss",
+			"advanced-columns/style.css": "blocks/blocks/section/style.scss"
 		}
 	},
 	"advanced-column": {
-		"block": "blocks/section/column/block.json"
+		"block": "blocks/blocks/section/column/block.json"
 	},
 	"sharing-icons": {
-		"block": "blocks/sharing-icons/block.json",
+		"block": "blocks/blocks/sharing-icons/block.json",
 		"assets": {
-			"sharing-icons/editor.css": "blocks/sharing-icons/editor.scss",
-			"sharing-icons/style.css": "blocks/sharing-icons/style.scss"
+			"sharing-icons/editor.css": "blocks/blocks/sharing-icons/editor.scss",
+			"sharing-icons/style.css": "blocks/blocks/sharing-icons/style.scss"
 		}
 	},
 	"slider": {
-		"block": "blocks/slider/block.json",
+		"block": "blocks/blocks/slider/block.json",
 		"assets": {
-			"slider/editor.css": "blocks/slider/editor.scss",
-			"slider/style.css": "blocks/slider/style.scss"
+			"slider/editor.css": "blocks/blocks/slider/editor.scss",
+			"slider/style.css": "blocks/blocks/slider/style.scss"
 		}
 	},
 	"pricing": {
-		"block": "blocks/structural/pricing/block.json"
+		"block": "blocks/blocks/structural/pricing/block.json"
 	},
 	"service": {
-		"block": "blocks/structural/service/block.json"
+		"block": "blocks/blocks/structural/service/block.json"
 	},
 	"testimonials": {
-		"block": "blocks/structural/testimonials/block.json"
+		"block": "blocks/blocks/structural/testimonials/block.json"
 	},
 	"tabs": {
-		"block": "blocks/tabs/group/block.json",
+		"block": "blocks/blocks/tabs/group/block.json",
 		"assets": {
-			"tabs/editor.css": "blocks/tabs/editor.scss",
-			"tabs/style.css": "blocks/tabs/style.scss"
+			"tabs/editor.css": "blocks/blocks/tabs/editor.scss",
+			"tabs/style.css": "blocks/blocks/tabs/style.scss"
 		}
 	},
 	"tabs-item": {
-		"block": "blocks/tabs/item/block.json"
+		"block": "blocks/blocks/tabs/item/block.json"
 	},
 	"woo-comparison": {
-		"block": "blocks/woo-comparison/block.json",
+		"block": "blocks/blocks/woo-comparison/block.json",
 		"assets": {
-			"woo-comparison/editor.css": "blocks/woo-comparison/editor.scss"
+			"woo-comparison/editor.css": "blocks/blocks/woo-comparison/editor.scss"
 		}
 	},
 	"product-add-to-cart": {
-		"block": "woocommerce/add-to-cart/block.json"
+		"isPro": true,
+		"block": "pro/woocommerce/add-to-cart/block.json"
 	},
 	"product-images": {
-		"block": "woocommerce/images/block.json"
+		"isPro": true,
+		"block": "pro/woocommerce/images/block.json"
 	},
 	"product-meta": {
-		"block": "woocommerce/meta/block.json"
+		"isPro": true,
+		"block": "pro/woocommerce/meta/block.json"
 	},
 	"product-price": {
-		"block": "woocommerce/price/block.json"
+		"isPro": true,
+		"block": "pro/woocommerce/price/block.json"
 	},
 	"product-rating": {
-		"block": "woocommerce/rating/block.json"
+		"isPro": true,
+		"block": "pro/woocommerce/rating/block.json"
 	},
 	"product-related-products": {
-		"block": "woocommerce/related-products/block.json"
+		"isPro": true,
+		"block": "pro/woocommerce/related-products/block.json"
 	},
 	"product-short-description": {
-		"block": "woocommerce/short-description/block.json"
+		"isPro": true,
+		"block": "pro/woocommerce/short-description/block.json"
 	},
 	"product-stock": {
-		"block": "woocommerce/stock/block.json"
+		"isPro": true,
+		"block": "pro/woocommerce/stock/block.json"
 	},
 	"product-tabs": {
-		"block": "woocommerce/tabs/block.json"
+		"isPro": true,
+		"block": "pro/woocommerce/tabs/block.json"
 	},
 	"product-title": {
-		"block": "woocommerce/title/block.json"
+		"isPro": true,
+		"block": "pro/woocommerce/title/block.json"
 	},
 	"product-upsells": {
-		"block": "woocommerce/upsells/block.json"
+		"isPro": true,
+		"block": "pro/woocommerce/upsells/block.json"
 	}
 }
