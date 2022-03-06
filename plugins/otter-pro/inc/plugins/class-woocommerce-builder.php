@@ -26,7 +26,7 @@ class WooCommerce_Builder {
 		add_action( 'add_meta_boxes', array( $this, 'register_metabox' ) );
 		add_filter( 'use_block_editor_for_post_type', array( $this, 'enable_block_editor' ), 11, 2 );
 		add_filter( 'wc_get_template_part', array( $this, 'wc_get_template_part' ), 1000, 3 );
-		add_action( 'themeisle_gutenberg_woocommerce_content', 'the_content' );
+		add_action( 'otter_blocks_woocommerce_content', 'the_content' );
 		add_filter( 'body_class', array( $this, 'add_body_class' ), 1000, 1 );
 	}
 
@@ -35,7 +35,7 @@ class WooCommerce_Builder {
 	 * 
 	 * @param string $post_type Post type.
 	 *
-	 * @since   2.0.0
+	 * @since   2.0.1
 	 * @access  public
 	 */
 	public function register_metabox( $post_type ) {
@@ -54,7 +54,7 @@ class WooCommerce_Builder {
 	 * 
 	 * @param string $post_type Post type.
 	 * 
-	 * @since   2.0.0
+	 * @since   2.0.1
 	 * @access  public
 	 */
 	public function render_metabox( $post_type ) {
@@ -89,7 +89,7 @@ class WooCommerce_Builder {
 	 * @param bool   $can_edit Whether the post type can be edited or not.
 	 * @param string $post_type Post type.
 	 *
-	 * @since   2.0.0
+	 * @since   2.0.1
 	 * @access  public
 	 */
 	public function enable_block_editor( $can_edit, $post_type ) {
@@ -127,7 +127,7 @@ class WooCommerce_Builder {
 	 * @param string $slug Template slug.
 	 * @param string $name Template name.
 	 *
-	 * @since   2.0.0
+	 * @since   2.0.1
 	 * @access  public
 	 */
 	public function wc_get_template_part( $template, $slug, $name ) {
@@ -168,7 +168,7 @@ class WooCommerce_Builder {
 	 * 
 	 * @param array $classes Body classes.
 	 *
-	 * @since   2.0.0
+	 * @since   2.0.1
 	 * @access  public
 	 * @return  array
 	 */
@@ -187,7 +187,7 @@ class WooCommerce_Builder {
 	 * Defines and returns the instance of the static class.
 	 *
 	 * @static
-	 * @since 2.0.0
+	 * @since 2.0.1
 	 * @access public
 	 * @return WooCommerce_Builder
 	 */
@@ -207,7 +207,7 @@ class WooCommerce_Builder {
 	 * object therefore, we don't want the object to be cloned.
 	 *
 	 * @access public
-	 * @since 2.0.0
+	 * @since 2.0.1
 	 * @return void
 	 */
 	public function __clone() {
@@ -219,7 +219,7 @@ class WooCommerce_Builder {
 	 * Disable unserializing of the class
 	 *
 	 * @access public
-	 * @since 2.0.0
+	 * @since 2.0.1
 	 * @return void
 	 */
 	public function __wakeup() {

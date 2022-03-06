@@ -18,7 +18,7 @@ if ( post_password_required() ) {
 ?>
 <div id="product-<?php the_ID(); ?>" <?php wc_product_class( '', $product ); ?>>
 
-	<?php do_action( 'themeisle_gutenberg_woocommerce_content' ); ?>
+	<?php do_action( 'otter_blocks_woocommerce_content' ); ?>
 </div>
 
 <?php do_action( 'woocommerce_after_single_product' ); ?>

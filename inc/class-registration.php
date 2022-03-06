@@ -528,7 +528,7 @@ class Registration {
 			}
 
 			$metadata_file = trailingslashit( $block_path ) . 'block.json';
-			$style         = trailingslashit( $block_path ) . 'style.css';
+			$style_path    = trailingslashit( $block_path ) . 'style.css';
 
 			$metadata = $this->get_metadata( $metadata_file );
 
@@ -544,7 +544,7 @@ class Registration {
 				$deps = self::$block_dependencies[ $block ];
 			}
 
-			if ( file_exists( $style ) && ! empty( $metadata['style'] ) ) {
+			if ( file_exists( $style_path ) && ! empty( $metadata['style'] ) ) {
 				wp_register_style(
 					$metadata['style'],
 					$style,
@@ -578,7 +578,7 @@ class Registration {
 			'woo-comparison'     => '\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
 		);
 
-		$dynamic_blocks = apply_filters( 'themeisle_blocks_register_dynamic_blocks', $dynamic_blocks );
+		$dynamic_blocks = apply_filters( 'otter_blocks_register_dynamic_blocks', $dynamic_blocks );
 
 		self::$blocks = array(
 			'about-author',
@@ -621,7 +621,7 @@ class Registration {
 			'woo-comparison',
 		);
 
-		self::$blocks = apply_filters( 'themeisle_blocks_register_blocks', self::$blocks );
+		self::$blocks = apply_filters( 'otter_blocks_register_blocks', self::$blocks );
 
 		self::$block_dependencies = array(
 			'leaflet-map' => array( 'leaflet', 'leaflet-gesture-handling' ),

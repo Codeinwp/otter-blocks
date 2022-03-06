@@ -30,10 +30,11 @@ class Main {
 			define( 'OTTER_PRO_BUILD_PATH', OTTER_BLOCKS_PATH . '/build/pro/' );
 		}
 
-		add_action( 'themeisle_blocks_autoloader', array( $this, 'autoload_classes' ) );
+		add_action( 'otter_blocks_autoloader', array( $this, 'autoload_classes' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
-		add_action( 'themeisle_blocks_register_blocks', array( $this, 'register_blocks' ) );
-		add_action( 'themeisle_blocks_register_dynamic_blocks', array( $this, 'register_dynamic_blocks' ) );
+		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
+		add_action( 'otter_blocks_register_blocks', array( $this, 'register_blocks' ) );
+		add_action( 'otter_blocks_register_dynamic_blocks', array( $this, 'register_dynamic_blocks' ) );
 	}
 
 	/**
@@ -46,6 +47,7 @@ class Main {
 	 */
 	public function autoload_classes( $classnames ) {
 		$classes = array(
+			'\ThemeIsle\Otter_Pro\Plugins\Review_Woo_Integration',
 			'\ThemeIsle\Otter_Pro\Plugins\WooCommerce_Builder',
 		);
 
@@ -61,6 +63,29 @@ class Main {
 	 * @access  public
 	 */
 	public function enqueue_block_editor_assets() {
+		$asset_file = include OTTER_PRO_BUILD_PATH . 'blocks.asset.php';
+
+		wp_enqueue_script(
+			'otter-pro',
+			OTTER_PRO_BUILD_URL . 'blocks.js',
+			array_merge(
+				$asset_file['dependencies'],
+				array( 'otter-blocks' )
+			),
+			$asset_file['version'],
+			true
+		);
+
+		wp_localize_script(
+			'otter-pro',
+			'otterPro',
+			array(
+				'hasWooCommerce' => class_exists( 'WooCommerce' ),
+			)
+		);
+
+		wp_enqueue_style( 'otter-pro-editor', OTTER_PRO_BUILD_URL . 'editor.css', array( 'wp-edit-blocks' ), $asset_file['version'] );
+
 		global $pagenow;
 
 		if ( class_exists( 'WooCommerce' ) && ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && ( ( isset( $_GET['post'] ) && 'product' === get_post_type( sanitize_text_field( $_GET['post'] ) ) ) || ( isset( $_GET['post_type'] ) && 'product' === sanitize_text_field( $_GET['post_type'] ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
@@ -73,15 +98,22 @@ class Main {
 				$asset_file['version'],
 				true
 			);
-
-			wp_localize_script(
-				'otter-blocks-woocommerce',
-				'otterPro',
-				array(
-					'hasWooCommerce' => class_exists( 'WooCommerce' ),
-				)
-			);
 		}
+	}
+
+	/**
+	 * Load frontend assets for our blocks.
+	 *
+	 * @since   2.0.1
+	 * @access  public
+	 */
+	public function enqueue_block_assets() {
+		if ( is_admin() ) {
+			return;
+		}
+
+		$asset_file = include OTTER_PRO_BUILD_PATH . 'blocks.asset.php';
+		wp_enqueue_style( 'otter-pro', OTTER_PRO_BUILD_URL . 'blocks.css', [], $asset_file['version'] );
 	}
 
 	/**
@@ -145,7 +177,7 @@ class Main {
 	 * Defines and returns the instance of the static class.
 	 *
 	 * @static
-	 * @since 1.0.0
+	 * @since 2.0.1
 	 * @access public
 	 * @return Main
 	 */
@@ -165,7 +197,7 @@ class Main {
 	 * object therefore, we don't want the object to be cloned.
 	 *
 	 * @access public
-	 * @since 1.0.0
+	 * @since 2.0.1
 	 * @return void
 	 */
 	public function __clone() {
@@ -177,7 +209,7 @@ class Main {
 	 * Disable unserializing of the class
 	 *
 	 * @access public
-	 * @since 1.0.0
+	 * @since 2.0.1
 	 * @return void
 	 */
 	public function __wakeup() {

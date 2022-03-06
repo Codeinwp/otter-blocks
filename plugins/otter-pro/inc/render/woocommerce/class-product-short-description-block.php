@@ -22,7 +22,7 @@ class Product_Short_Description_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! class_exists( 'WooCommerce' ) ) {
+		if ( ! class_exists( 'WooCommerce' ) ) {
 			return;
 		}
 

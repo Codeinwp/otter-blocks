@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
+use ThemeIsle\GutenbergBlocks\Pro;
+
 /**
  * Class Review_Block
  */
@@ -22,35 +24,8 @@ class Review_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		if ( isset( $attributes['product'] ) && intval( $attributes['product'] ) >= 0 && 'valid' === apply_filters( 'product_neve_license_status', false ) && class_exists( 'WooCommerce' ) ) {
-			$product = wc_get_product( $attributes['product'] );
-
-			if ( ! $product ) {
-				return;
-			}
-
-			$attributes['title']       = $product->get_name();
-			$attributes['description'] = $product->get_short_description();
-			$attributes['price']       = $product->get_regular_price() ? $product->get_regular_price() : $product->get_price();
-			$attributes['currency']    = get_woocommerce_currency();
-
-			if ( ! empty( $product->get_sale_price() ) && $attributes['price'] !== $product->get_sale_price() ) {
-				$attributes['discounted'] = $product->get_sale_price();
-			}
-
-			$attributes['image'] = array(
-				'id'  => $product->get_image_id(),
-				'url' => wp_get_attachment_image_url( $product->get_image_id(), '' ),
-				'alt' => get_post_meta( $product->get_image_id(), '_wp_attachment_image_alt', true ),
-			);
-
-			$attributes['links'] = array(
-				array(
-					'label'       => __( 'Buy Now', 'otter-blocks' ),
-					'href'        => method_exists( $product, 'get_product_url' ) ? $product->get_product_url() : $product->get_permalink(),
-					'isSponsored' => method_exists( $product, 'get_product_url' ),
-				),
-			);
+		if ( isset( $attributes['product'] ) && intval( $attributes['product'] ) >= 0 && Pro::is_pro() && class_exists( 'WooCommerce' ) ) {
+			$attributes = apply_filters( 'otter_blocks_review_block_woocommerce', $attributes );
 		}
 
 		if ( isset( $attributes['title'] ) && ! empty( $attributes['title'] ) && isset( $attributes['features'] ) && count( $attributes['features'] ) > 0 ) {
@@ -297,7 +272,7 @@ class Review_Block {
 			}
 		}
 
-		return apply_filters( 'themeisle_gutenberg_review_block_schema', $json, $attributes );
+		return apply_filters( 'otter_blocks_review_block_schema', $json, $attributes );
 	}
 
 	/**

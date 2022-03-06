@@ -72,7 +72,7 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Server\Posts_ACF_Server',
 		);
 
-		$classnames = apply_filters( 'themeisle_blocks_autoloader', $classnames );
+		$classnames = apply_filters( 'otter_blocks_autoloader', $classnames );
 
 		foreach ( $classnames as $classname ) {
 			$classname = new $classname();

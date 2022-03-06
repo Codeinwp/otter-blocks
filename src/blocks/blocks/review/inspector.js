@@ -160,17 +160,16 @@ const Inspector = ({
 			<PanelBody
 				title={ __( 'Product Details', 'otter-blocks' ) }
 			>
-				{
-					attributes.product && (
-						<Notice
-							status="warning"
-							isDismissible={ false }
-							className="o-html-anchor-control-notice"
-						>
-							{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
-						</Notice>
-					)
-				}
+				{ attributes.product && (
+					<Notice
+						status="warning"
+						isDismissible={ false }
+						className="o-html-anchor-control-notice"
+					>
+						{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
+					</Notice>
+				) }
+
 				<TextControl
 					label={ __( 'Product Name', 'otter-blocks' ) }
 					type="text"
@@ -341,17 +340,15 @@ const Inspector = ({
 				title={ __( 'Links', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				{
-					attributes.product && (
-						<Notice
-							status="warning"
-							isDismissible={ false }
-							className="o-html-anchor-control-notice"
-						>
-							{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
-						</Notice>
-					)
-				}
+				{ attributes.product && (
+					<Notice
+						status="warning"
+						isDismissible={ false }
+						className="o-html-anchor-control-notice"
+					>
+						{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
+					</Notice>
+				) }
 
 				{ 0 < productAttributes?.links?.length && productAttributes?.links?.map( ( link, index ) => (
 					<PanelItem
@@ -383,48 +380,46 @@ const Inspector = ({
 					</PanelItem>
 				) ) }
 
-				{
-					! ( 0 < productAttributes?.links?.length ) && (
-						<Fragment>
-							{ 0 < attributes.links.length && attributes.links.map( ( link, index ) => (
-								<PanelItem
-									title={ link.label || __( 'Link', 'otter-blocks' ) }
-									remove={ () => removeLinks( index ) }
-								>
-									<TextControl
-										label={ __( 'Label', 'otter-blocks' ) }
-										type="text"
-										placeholder={ __( 'Button label', 'otter-blocks' ) }
-										value={ link.label }
-										onChange={ label => changeLinks( index, { label }) }
-									/>
-
-									<TextControl
-										label={ __( 'Link', 'otter-blocks' ) }
-										type="url"
-										placeholder={ 'https://…' }
-										value={ link.href }
-										onChange={ href => changeLinks( index, { href }) }
-									/>
-
-									<ToggleControl
-										label={ __( 'Is this Sponsored?', 'otter-blocks' ) }
-										checked={ link.isSponsored }
-										onChange={ () => changeLinks( index, { isSponsored: ! link.isSponsored }) }
-									/>
-								</PanelItem>
-							) ) }
-
-							<Button
-								isSecondary
-								className="o-review__inspector_add"
-								onClick={ addLinks }
+				{ ! ( 0 < productAttributes?.links?.length ) && (
+					<Fragment>
+						{ 0 < attributes.links.length && attributes.links.map( ( link, index ) => (
+							<PanelItem
+								title={ link.label || __( 'Link', 'otter-blocks' ) }
+								remove={ () => removeLinks( index ) }
 							>
-								{ __( 'Add Links', 'otter-blocks' ) }
-							</Button>
-						</Fragment>
-					)
-				}
+								<TextControl
+									label={ __( 'Label', 'otter-blocks' ) }
+									type="text"
+									placeholder={ __( 'Button label', 'otter-blocks' ) }
+									value={ link.label }
+									onChange={ label => changeLinks( index, { label }) }
+								/>
+
+								<TextControl
+									label={ __( 'Link', 'otter-blocks' ) }
+									type="url"
+									placeholder={ 'https://…' }
+									value={ link.href }
+									onChange={ href => changeLinks( index, { href }) }
+								/>
+
+								<ToggleControl
+									label={ __( 'Is this Sponsored?', 'otter-blocks' ) }
+									checked={ link.isSponsored }
+									onChange={ () => changeLinks( index, { isSponsored: ! link.isSponsored }) }
+								/>
+							</PanelItem>
+						) ) }
+
+						<Button
+							isSecondary
+							className="o-review__inspector_add"
+							onClick={ addLinks }
+						>
+							{ __( 'Add Links', 'otter-blocks' ) }
+						</Button>
+					</Fragment>
+				) }
 			</PanelBody>
 
 			<PanelBody

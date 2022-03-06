@@ -25,11 +25,22 @@ class Pro {
 	 * @access  public
 	 */
 	public function init() {
-		if ( defined( 'OTTER_PRO_VERSION' ) ) {
+		if ( self::is_pro() ) {
 			return;
 		}
 
 		add_action( 'add_meta_boxes', array( $this, 'register_metabox' ) );
+	}
+
+	/**
+	 * Check if Otter Pro is available
+	 * 
+	 * @since   2.0.0
+	 * @access  public
+	 * @return  bool
+	 */
+	public static function is_pro() {
+		return class_exists( '\ThemeIsle\Otter_Pro\Main' );
 	}
 
 	/**

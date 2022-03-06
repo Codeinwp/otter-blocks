@@ -39,7 +39,7 @@ const withWooCommerceExtension = createHigherOrderComponent( ( BlockEdit ) => {
 	};
 }, 'withWooCommerceExtension' );
 
-if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Boolean( window.themeisleGutenberg.hasWooCommerce ) ) {
+if ( Boolean( window.otterPro.hasWooCommerce ) ) {
 	addFilter( 'blocks.registerBlockType', 'themeisle-gutenberg/review-woocommerce-extension-attributes', addAttribute );
 	addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/review-woocommerce-extension', withWooCommerceExtension );
 }

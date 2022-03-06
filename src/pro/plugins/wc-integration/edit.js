@@ -18,7 +18,7 @@ import { useSelect } from '@wordpress/data';
  */
 import { extractProductData } from './utility.js';
 
-import SelectProducts from '../../components/select-products-control/index.js';
+const { SelectProducts } = window.otterComponents;
 
 const Edit = ({
 	BlockEdit,

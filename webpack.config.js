@@ -13,7 +13,7 @@ const blockFiles = Object.keys( blocks ).filter( block => blocks[ block ].block 
 		};
 	});
 
-const folders = Object.keys( blocks ).filter( block => true !== blocks[ block ]?.isPro ).map( block => `build/blocks/${ block }` );
+const blockFolders = Object.keys( blocks ).filter( block => true !== blocks[ block ]?.isPro ).map( block => `build/blocks/${ block }` );
 
 const blockFilesPro = Object.keys( blocks ).filter( block => blocks[ block ].block !== undefined && true === blocks[ block ]?.isPro )
 	.map( block => {
@@ -23,7 +23,7 @@ const blockFilesPro = Object.keys( blocks ).filter( block => blocks[ block ].blo
 		};
 	});
 
-const foldersPro = Object.keys( blocks ).filter( block => true === blocks[ block ]?.isPro ).map( block => `build/pro/${ block }` );
+const blockFoldersPro = Object.keys( blocks ).filter( block => true === blocks[ block ]?.isPro ).map( block => `build/pro/${ block }` );
 
 module.exports = [
 	{
@@ -90,7 +90,8 @@ module.exports = [
 		mode: NODE_ENV,
 		entry: {
 			blocks: [
-				'./src/pro/index.js'
+				'./src/pro/index.js',
+				'./src/pro/plugins/index.js'
 			],
 			woocommerce: [
 				...glob.sync( './src/pro/woocommerce/**/index.js' )
@@ -104,7 +105,6 @@ module.exports = [
 		optimization: {
 			...defaultConfig.optimization,
 			splitChunks: {
-				minSize: 50,
 				cacheGroups: {
 					editorStyles: {
 						name: 'editor',
@@ -119,10 +119,12 @@ module.exports = [
 			new FileManagerPlugin({
 				events: {
 					onEnd: {
-						mkdir: foldersPro,
+						mkdir: blockFoldersPro,
 						copy: blockFilesPro
 					}
-				}
+				},
+				runOnceInWatchMode: false,
+				runTasksInSeries: true
 			})
 		]
 	},
@@ -137,6 +139,7 @@ module.exports = [
 			blocks: [
 				'./src/blocks/index.js',
 				'./src/blocks/plugins/registerPlugin.js',
+				'./src/blocks/components/index.js',
 				...glob.sync( './src/blocks/blocks/**/index.js' )
 			],
 			'leaflet-map': './src/blocks/frontend/leaflet-map/index.js',
@@ -179,10 +182,12 @@ module.exports = [
 			new FileManagerPlugin({
 				events: {
 					onEnd: {
-						mkdir: folders,
+						mkdir: blockFolders,
 						copy: blockFiles
 					}
-				}
+				},
+				runOnceInWatchMode: false,
+				runTasksInSeries: true
 			})
 		]
 	}

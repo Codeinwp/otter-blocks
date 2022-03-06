@@ -283,7 +283,7 @@ class Base_CSS {
 				}
 			}
 
-			$custom_css = apply_filters( 'themeisle_gutenberg_blocks_css', $block );
+			$custom_css = apply_filters( 'otter_blocks_css', $block );
 
 			if ( is_string( $custom_css ) ) {
 				$style .= $custom_css;
