@@ -126,6 +126,7 @@ class Main {
 	 */
 	public function register_dynamic_blocks( $dynamic_blocks ) {
 		$blocks = array(
+			'add-to-cart-button'        => '\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
 			'product-add-to-cart'       => '\ThemeIsle\Otter_Pro\Render\Product_Add_To_Cart_Block',
 			'product-images'            => '\ThemeIsle\Otter_Pro\Render\Product_Images_Block',
 			'product-meta'              => '\ThemeIsle\Otter_Pro\Render\Product_Meta_Block',

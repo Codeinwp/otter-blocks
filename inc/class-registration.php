@@ -238,7 +238,7 @@ class Registration {
 			'themeisleGutenberg',
 			array(
 				'isCompatible'        => Main::is_compatible(),
-				'hasPro'              => Pro::is_prop(),
+				'hasPro'              => Pro::is_pro(),
 				'upgradeLink'         => Pro::get_url(),
 				'assetsPath'          => OTTER_BLOCKS_URL . 'assets',
 				'updatePath'          => admin_url( 'update-core.php' ),
@@ -568,7 +568,6 @@ class Registration {
 	public function register_blocks() {
 		$dynamic_blocks = array(
 			'about-author'       => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
-			'add-to-cart-button' => '\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
 			'form-nonce'         => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
 			'google-map'         => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
 			'leaflet-map'        => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',

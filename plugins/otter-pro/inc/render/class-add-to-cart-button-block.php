@@ -22,7 +22,7 @@ class Add_To_Cart_Button_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! class_exists( 'WooCommerce' ) || ! isset( $attributes['product'] ) ) {
+		if ( ! class_exists( 'WooCommerce' ) || ! isset( $attributes['product'] ) ) {
 			return;
 		}
 

@@ -91,7 +91,8 @@ module.exports = [
 		entry: {
 			blocks: [
 				'./src/pro/index.js',
-				'./src/pro/plugins/index.js'
+				'./src/pro/plugins/index.js',
+				...glob.sync( './src/pro/blocks/**/index.js' )
 			],
 			woocommerce: [
 				...glob.sync( './src/pro/woocommerce/**/index.js' )

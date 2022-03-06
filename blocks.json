@@ -17,7 +17,7 @@
 		"block": "blocks/blocks/accordion/item/block.json"
 	},
 	"add-to-cart-button": {
-		"block": "blocks/blocks/add-to-cart-button/block.json"
+		"block": "pro/blocks/add-to-cart-button/block.json"
 	},
 	"advanced-heading": {
 		"block": "blocks/blocks/advanced-heading/block.json",

@@ -17,7 +17,7 @@ import ServerSideRender from '@wordpress/server-side-render';
 /**
  * Internal dependencies.
  */
-import SelectProducts from '../../components/select-products-control/index.js';
+const { SelectProducts } = window.otterComponents;
 
 const Edit = ({
 	attributes,
