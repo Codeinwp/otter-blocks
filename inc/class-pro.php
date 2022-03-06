@@ -43,6 +43,18 @@ class Pro {
 		return class_exists( '\ThemeIsle\Otter_Pro\Main' );
 	}
 
+
+	/**
+	 * Check Otter Pro URL
+	 * 
+	 * @since   2.0.0
+	 * @access  public
+	 * @return  string
+	 */
+	public static function get_url() {
+		return 'https://themeisle.com/plugins/otter-blocks';
+	}
+
 	/**
 	 * Register Metabox
 	 * 
@@ -75,7 +87,7 @@ class Pro {
 		<div class="clear">
 			<p><?php _e( 'Unlock the full power of WooCommerce Builder with Otter Pro.', 'otter-blocks' ); ?></p>
 
-			<a href="https://themeisle.com/plugins/otter-blocks" target="_blank" class="button button-primary">
+			<a href="<?php echo self::get_url(); ?>" target="_blank" class="button button-primary">
 				<?php _e( 'Get Otter Pro', 'otter-blocks' ); ?>
 			</a>
 		</div>

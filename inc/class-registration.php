@@ -7,7 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks;
 
-use ThemeIsle\GutenbergBlocks\Main;
+use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro;
 
 /**
  * Class Registration.
@@ -238,6 +238,8 @@ class Registration {
 			'themeisleGutenberg',
 			array(
 				'isCompatible'        => Main::is_compatible(),
+				'hasPro'              => Pro::is_prop(),
+				'upgradeLink'         => Pro::get_url(),
 				'assetsPath'          => OTTER_BLOCKS_URL . 'assets',
 				'updatePath'          => admin_url( 'update-core.php' ),
 				'optionsPath'         => admin_url( 'options-general.php?page=otter' ),

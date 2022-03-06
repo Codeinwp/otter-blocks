@@ -482,15 +482,15 @@ const Inspector = ({
 				</SyncControl>
 			</PanelBody>
 
-			{ ( Boolean( window.themeisleGutenberg.hasNeveSupport.hasNeve ) && ! Boolean( window.themeisleGutenberg.hasNeveSupport.hasNevePro ) ) && (
+			{ ( Boolean( window.themeisleGutenberg.hasNeveSupport.hasPro ) ) && (
 				<PanelBody
 					title={ __( 'More Features', 'otter-blocks' ) }
 					initialOpen={ false }
 				>
-					<p>{ __( 'Build comparison tables for reviews, synchronize review data with WooCommerce products and more with Neve Pro. ', 'otter-blocks' ) }</p>
+					<p>{ __( 'Build comparison tables for reviews, synchronize review data with WooCommerce products and more with Otter Pro. ', 'otter-blocks' ) }</p>
 
-					<ExternalLink href="https://themeisle.com/themes/neve/pricing">
-						{ __( 'Get Neve Pro. ', 'otter-blocks' ) }
+					<ExternalLink href={ window.themeisleGutenberg.upgradeLink }>
+						{ __( 'Get Otter Pro. ', 'otter-blocks' ) }
 					</ExternalLink>
 				</PanelBody>
 			) }
