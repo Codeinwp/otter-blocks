@@ -236,8 +236,7 @@ const Edit = ({
 			attrs.on = 'products';
 		}
 
-		if ( 'wooTotalCartValue' === value ) {
-			// eslint-disable-next-line camelcase
+		if ( 'wooTotalCartValue' === value || 'wooTotalSpent' === value ) {
 			attrs.compare = 'greater_than';
 		}
 
@@ -421,6 +420,11 @@ const Edit = ({
 				value: 'wooPurchaseHistory',
 				label: __( 'Purchase History', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on user\'s WooCommerce purchase history.' )
+			},
+			{
+				value: 'wooTotalSpent',
+				label: __( 'Total Spent', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on how much the user spent during lifetime.' )
 			},
 			{
 				value: 'learnDashPurchaseHistory',
@@ -621,6 +625,7 @@ const Edit = ({
 														<option value="wooProductsInCart" disabled={ ! isBoosterActive }>{ __( 'Products in Cart', 'otter-blocks' ) }</option>
 														<option value="wooTotalCartValue" disabled={ ! isBoosterActive }>{ __( 'Total Cart Value', 'otter-blocks' ) }</option>
 														<option value="wooPurchaseHistory" disabled={ ! isBoosterActive }>{ __( 'Purchase History', 'otter-blocks' ) }</option>
+														<option value="wooTotalSpent" disabled={ ! isBoosterActive }>{ __( 'Total Spent', 'otter-blocks' ) }</option>
 													</optgroup>
 												) }
 
@@ -927,31 +932,41 @@ const Edit = ({
 										) }
 
 										{ 'wooTotalCartValue' === i.type && (
-											<Fragment>
-												<TextControl
-													label={ __( 'Total Cart Value', 'otter-blocks' ) }
-													help={ sprintf( __( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-blocks' ), window.wcSettings.currency.code ) }
-													placeholder={ 9.99 }
-													value={ i.value }
-													onChange={ e => changeValue( e.replace( /[^0-9.]/g, '' ), index, n, 'value' ) }
-												/>
+											<TextControl
+												label={ __( 'Total Cart Value', 'otter-blocks' ) }
+												help={ sprintf( __( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-blocks' ), window.wcSettings.currency.code ) }
+												placeholder={ 9.99 }
+												value={ i.value }
+												onChange={ e => changeValue( e.replace( /[^0-9.]/g, '' ), index, n, 'value' ) }
+											/>
+										) }
 
-												<SelectControl
-													label={ __( 'Compare Operator', 'otter-blocks' ) }
-													options={ [
-														{
-															value: 'greater_than',
-															label: __( 'Greater Than (>)', 'otter-blocks' )
-														},
-														{
-															value: 'less_than',
-															label: __( 'Less Than (<)', 'otter-blocks' )
-														}
-													] }
-													value={ i.compare }
-													onChange={ e => changeValue( e, index, n, 'compare' ) }
-												/>
-											</Fragment>
+										{ 'wooTotalSpent' === i.type && (
+											<TextControl
+												label={ __( 'Total Money Spent', 'otter-blocks' ) }
+												help={ sprintf( __( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-blocks' ), window.wcSettings.currency.code ) }
+												placeholder={ 9.99 }
+												value={ i.value }
+												onChange={ e => changeValue( e.replace( /[^0-9.]/g, '' ), index, n, 'value' ) }
+											/>
+										) }
+
+										{ ( 'wooTotalCartValue' === i.type || 'wooTotalSpent' === i.type ) && (
+											<SelectControl
+												label={ __( 'Compare Operator', 'otter-blocks' ) }
+												options={ [
+													{
+														value: 'greater_than',
+														label: __( 'Greater Than (>)', 'otter-blocks' )
+													},
+													{
+														value: 'less_than',
+														label: __( 'Less Than (<)', 'otter-blocks' )
+													}
+												] }
+												value={ i.compare }
+												onChange={ e => changeValue( e, index, n, 'compare' ) }
+											/>
 										) }
 
 										{ 'wooPurchaseHistory' === i.type && (
