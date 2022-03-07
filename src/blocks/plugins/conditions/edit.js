@@ -24,7 +24,8 @@ import {
 	Placeholder,
 	SelectControl,
 	Spinner,
-	TextControl
+	TextControl,
+	TextareaControl
 } from '@wordpress/components';
 
 import {
@@ -50,6 +51,7 @@ import PanelTab from '../../components/panel-tab/index.js';
 const isBoosterActive = Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive );
 const isNeve = Boolean( window.themeisleGutenberg.hasNeveSupport.hasNeve );
 const isNevePro = Boolean( window.themeisleGutenberg.hasNeveSupport.hasNevePro );
+const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 
 const Edit = ({
 	attributes,
@@ -127,6 +129,22 @@ const Edit = ({
 
 		return {
 			postAuthors
+		};
+	});
+
+	let { postCategories } = useSelect( select => {
+		const { getEntityRecords } = select( 'core' );
+		// eslint-disable-next-line camelcase
+		const categories = getEntityRecords( 'taxonomy', 'category', { per_page: 100 });
+
+		let postCategories = [];
+
+		if ( categories && Boolean( categories.length ) ) {
+			postCategories = categories.map( category => category.slug );
+		}
+
+		return {
+			postCategories
 		};
 	});
 
@@ -232,12 +250,15 @@ const Edit = ({
 			attrs.meta_compare = 'is_true';
 		}
 
+		if ( 'queryString' === value ) {
+			attrs.match = 'any';
+		}
+
 		if ( 'wooProductsInCart' == value ) {
 			attrs.on = 'products';
 		}
 
-		if ( 'wooTotalCartValue' === value ) {
-			// eslint-disable-next-line camelcase
+		if ( 'wooTotalCartValue' === value || 'wooTotalSpent' === value ) {
 			attrs.compare = 'greater_than';
 		}
 
@@ -261,15 +282,9 @@ const Edit = ({
 		setAttributes({ otterConditions });
 	};
 
-	const changeRoles = ( value, index, key ) => {
+	const changeArrayValue = ( value, index, key, type ) => {
 		const otterConditions = [ ...attributes.otterConditions ];
-		otterConditions[ index ][ key ].roles = value;
-		setAttributes({ otterConditions });
-	};
-
-	const changeAuthors = ( value, index, key ) => {
-		const otterConditions = [ ...attributes.otterConditions ];
-		otterConditions[ index ][ key ].authors = value;
+		otterConditions[ index ][ key ][ type ] = value;
 		setAttributes({ otterConditions });
 	};
 
@@ -324,7 +339,6 @@ const Edit = ({
 		otterConditions[ index ][ key ].groups = values;
 		setAttributes({ otterConditions });
 	};
-
 
 	const changeVisibility = ( value, index, key ) => {
 		const otterConditions = [ ...attributes.otterConditions ];
@@ -388,9 +402,24 @@ const Edit = ({
 				help: __( 'The selected block will be visible based on post author.' )
 			},
 			{
+				value: 'postType',
+				label: __( 'Post Type', 'otter-blocks' ),
+				help: __( 'The selected block will be visible if post becomes to one of the selected post types.' )
+			},
+			{
+				value: 'postCategory',
+				label: __( 'Post Category', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on selected post categories.' )
+			},
+			{
 				value: 'postMeta',
 				label: __( 'Post Meta', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on post meta condition.' )
+			},
+			{
+				value: 'queryString',
+				label: __( 'Query String', 'otter-blocks' ),
+				help: __( 'The condition will be met if the URL contains specified parameters.' )
 			},
 			{
 				value: 'dateRange',
@@ -423,6 +452,11 @@ const Edit = ({
 				help: __( 'The selected block will be visible based on user\'s WooCommerce purchase history.' )
 			},
 			{
+				value: 'wooTotalSpent',
+				label: __( 'Total Spent', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on how much the user spent during lifetime.' )
+			},
+			{
 				value: 'learnDashPurchaseHistory',
 				label: __( 'Purchase History', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on user\'s LearnDash purchase history.' )
@@ -436,6 +470,8 @@ const Edit = ({
 
 		return conditions;
 	};
+
+	const customVisibility = [ 'userRoles', 'postAuthor', 'postMeta', 'postType', 'postCategory', 'wooProductsInCart', 'wooPurchaseHistory', 'learnDashPurchaseHistory', 'learnDashCourseStatus', 'queryString' ];
 
 	const week = [
 		{
@@ -603,10 +639,21 @@ const Edit = ({
 
 												<optgroup label={ __( 'Posts', 'otter-blocks' ) }>
 													<option value="postAuthor">{ __( 'Post Author', 'otter-blocks' ) }</option>
+													<option value="postCategory">{ __( 'Post Category', 'otter-blocks' ) }</option>
+
 													{ ( isBoosterActive || isNeve ) && (
-														<option value="postMeta" disabled={ ! isBoosterActive }>{ __( 'Post Meta', 'otter-blocks' ) }</option>
+														<Fragment>
+															<option value="postType">{ __( 'Post Type', 'otter-blocks' ) }</option>
+															<option value="postMeta" disabled={ ! isBoosterActive }>{ __( 'Post Meta', 'otter-blocks' ) }</option>
+														</Fragment>
 													) }
 												</optgroup>
+
+												{ ( isBoosterActive || isNeve ) && (
+													<optgroup label={ __( 'URL', 'otter-blocks' ) }>
+														<option value="queryString" disabled={ ! isBoosterActive }>{ __( 'Query String', 'otter-blocks' ) }</option>
+													</optgroup>
+												) }
 
 												{ ( isBoosterActive || isNeve ) && (
 													<optgroup label={ __( 'Date & Time', 'otter-blocks' ) }>
@@ -621,6 +668,7 @@ const Edit = ({
 														<option value="wooProductsInCart" disabled={ ! isBoosterActive }>{ __( 'Products in Cart', 'otter-blocks' ) }</option>
 														<option value="wooTotalCartValue" disabled={ ! isBoosterActive }>{ __( 'Total Cart Value', 'otter-blocks' ) }</option>
 														<option value="wooPurchaseHistory" disabled={ ! isBoosterActive }>{ __( 'Purchase History', 'otter-blocks' ) }</option>
+														<option value="wooTotalSpent" disabled={ ! isBoosterActive }>{ __( 'Total Spent', 'otter-blocks' ) }</option>
 													</optgroup>
 												) }
 
@@ -638,7 +686,7 @@ const Edit = ({
 												label={ __( 'User Roles', 'otter-blocks' ) }
 												value={ i.roles }
 												suggestions={ Object.keys( window.themeisleGutenberg.userRoles ) }
-												onChange={ roles => changeRoles( roles, index, n ) }
+												onChange={ roles => changeArrayValue( roles, index, n, 'roles' ) }
 												__experimentalExpandOnFocus={ true }
 												__experimentalValidateInput={ newValue => Object.keys( window.themeisleGutenberg.userRoles ).includes( newValue ) }
 											/>
@@ -649,9 +697,31 @@ const Edit = ({
 												label={ __( 'Post Authors', 'otter-blocks' ) }
 												value={ i.authors }
 												suggestions={ postAuthors }
-												onChange={ authors => changeAuthors( authors, index, n ) }
+												onChange={ authors => changeArrayValue( authors, index, n, 'authors' ) }
 												__experimentalExpandOnFocus={ true }
 												__experimentalValidateInput={ newValue => postAuthors.includes( newValue ) }
+											/>
+										) }
+
+										{ 'postCategory' === i.type && (
+											<FormTokenField
+												label={ __( 'Post Category', 'otter-blocks' ) }
+												value={ i.categories }
+												suggestions={ postCategories }
+												onChange={ categories => changeArrayValue( categories, index, n, 'categories' ) }
+												__experimentalExpandOnFocus={ true }
+												__experimentalValidateInput={ newValue => postCategories.includes( newValue ) }
+											/>
+										) }
+
+										{ 'postType' === i.type && (
+											<FormTokenField
+												label={ __( 'Post Types', 'otter-blocks' ) }
+												value={ i.post_types }
+												suggestions={ postTypes }
+												onChange={ types => changeArrayValue( types, index, n, 'post_types' ) }
+												__experimentalExpandOnFocus={ true }
+												__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
 											/>
 										) }
 
@@ -701,6 +771,34 @@ const Edit = ({
 														onChange={ e => changeValue( e, index, n, 'meta_value' ) }
 													/>
 												) }
+											</Fragment>
+										) }
+
+										{ 'queryString' === i.type && (
+											<Fragment>
+												<TextareaControl
+													label={ __( 'Query String', 'otter-blocks' ) }
+													help={ __( 'Write a key-value pair for each parameter, one per line.', 'otter-blocks' ) }
+													placeholder="eg. utm_source=facebook"
+													value={ i.query_string }
+													onChange={ e => changeValue( e.replaceAll( '\n', '&' ), index, n, 'query_string' ) }
+												/>
+
+												<SelectControl
+													label={ __( 'Match if URL contains', 'otter-blocks' ) }
+													options={ [
+														{
+															value: 'any',
+															label: __( 'Any of the parameters', 'otter-blocks' )
+														},
+														{
+															value: 'all',
+															label: __( 'All the parameters', 'otter-blocks' )
+														}
+													] }
+													value={ i.compare }
+													onChange={ e => changeValue( e, index, n, 'match' ) }
+												/>
 											</Fragment>
 										) }
 
@@ -927,31 +1025,41 @@ const Edit = ({
 										) }
 
 										{ 'wooTotalCartValue' === i.type && (
-											<Fragment>
-												<TextControl
-													label={ __( 'Total Cart Value', 'otter-blocks' ) }
-													help={ sprintf( __( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-blocks' ), window.wcSettings.currency.code ) }
-													placeholder={ 9.99 }
-													value={ i.value }
-													onChange={ e => changeValue( e.replace( /[^0-9.]/g, '' ), index, n, 'value' ) }
-												/>
+											<TextControl
+												label={ __( 'Total Cart Value', 'otter-blocks' ) }
+												help={ sprintf( __( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-blocks' ), window.wcSettings.currency.code ) }
+												placeholder={ 9.99 }
+												value={ i.value }
+												onChange={ e => changeValue( e.replace( /[^0-9.]/g, '' ), index, n, 'value' ) }
+											/>
+										) }
 
-												<SelectControl
-													label={ __( 'Compare Operator', 'otter-blocks' ) }
-													options={ [
-														{
-															value: 'greater_than',
-															label: __( 'Greater Than (>)', 'otter-blocks' )
-														},
-														{
-															value: 'less_than',
-															label: __( 'Less Than (<)', 'otter-blocks' )
-														}
-													] }
-													value={ i.compare }
-													onChange={ e => changeValue( e, index, n, 'compare' ) }
-												/>
-											</Fragment>
+										{ 'wooTotalSpent' === i.type && (
+											<TextControl
+												label={ __( 'Total Money Spent', 'otter-blocks' ) }
+												help={ sprintf( __( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-blocks' ), window.wcSettings.currency.code ) }
+												placeholder={ 9.99 }
+												value={ i.value }
+												onChange={ e => changeValue( e.replace( /[^0-9.]/g, '' ), index, n, 'value' ) }
+											/>
+										) }
+
+										{ ( 'wooTotalCartValue' === i.type || 'wooTotalSpent' === i.type ) && (
+											<SelectControl
+												label={ __( 'Compare Operator', 'otter-blocks' ) }
+												options={ [
+													{
+														value: 'greater_than',
+														label: __( 'Greater Than (>)', 'otter-blocks' )
+													},
+													{
+														value: 'less_than',
+														label: __( 'Less Than (<)', 'otter-blocks' )
+													}
+												] }
+												value={ i.compare }
+												onChange={ e => changeValue( e, index, n, 'compare' ) }
+											/>
 										) }
 
 										{ 'wooPurchaseHistory' === i.type && (
@@ -1056,7 +1164,7 @@ const Edit = ({
 											</Fragment>
 										) }
 
-										{ ( 'userRoles' === i.type || 'postAuthor' === i.type || 'postMeta' === i.type || 'wooProductsInCart' === i.type || 'wooPurchaseHistory' === i.type || 'learnDashPurchaseHistory' === i.type || 'learnDashCourseStatus' === i.type ) && (
+										{ customVisibility.includes( i.type ) && (
 											<SelectControl
 												label={ __( 'If condition is true, the block should be:', 'otter-blocks' ) }
 												options={ [

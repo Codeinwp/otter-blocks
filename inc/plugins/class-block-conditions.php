@@ -32,7 +32,7 @@ class Block_Conditions {
 	 *
 	 * @param string $block_content Content of block.
 	 * @param array  $block Block Attributes.
-	 * 
+	 *
 	 * @since   1.7.0
 	 * @access  public
 	 */
@@ -57,7 +57,7 @@ class Block_Conditions {
 					$display = true;
 					break;
 				}
-		
+
 
 				if ( false === $visibility ) {
 					$display = false;
@@ -141,6 +141,26 @@ class Block_Conditions {
 			}
 		}
 
+		if ( 'postType' === $condition['type'] ) {
+			if ( isset( $condition['post_types'] ) ) {
+				if ( $visibility ) {
+					return $this->is_type( $condition['post_types'] );
+				} else {
+					return ! $this->is_type( $condition['post_types'] );
+				}
+			}
+		}
+
+		if ( 'postCategory' === $condition['type'] ) {
+			if ( isset( $condition['categories'] ) ) {
+				if ( $visibility ) {
+					return $this->has_category( $condition['categories'] );
+				} else {
+					return ! $this->has_category( $condition['categories'] );
+				}
+			}
+		}
+
 		if ( 'postMeta' === $condition['type'] && $has_pro ) {
 			if ( isset( $condition['meta_key'] ) ) {
 				if ( $visibility ) {
@@ -166,6 +186,16 @@ class Block_Conditions {
 		if ( 'timeRecurring' === $condition['type'] && $has_pro ) {
 			if ( isset( $condition['start_time'] ) ) {
 				return $this->has_time_recurring( $condition );
+			}
+		}
+
+		if ( 'queryString' === $condition['type'] ) {
+			if ( isset( $condition['query_string'] ) && isset( $condition['match'] ) && $has_pro ) {
+				if ( $visibility ) {
+					return $this->has_query_string( $condition );
+				} else {
+					return ! $this->has_query_string( $condition );
+				}
 			}
 		}
 
@@ -199,6 +229,16 @@ class Block_Conditions {
 			}
 		}
 
+		if ( 'wooTotalSpent' === $condition['type'] && class_exists( 'WooCommerce' ) && $has_pro ) {
+			if ( isset( $condition['value'] ) ) {
+				if ( 'greater_than' === $condition['compare'] ) {
+					return $this->has_total_spent( $condition['value'] );
+				} else {
+					return ! $this->has_total_spent( $condition['value'] );
+				}
+			}
+		}
+
 		if ( 'learnDashPurchaseHistory' === $condition['type'] && defined( 'LEARNDASH_VERSION' ) && $has_pro ) {
 			if ( isset( $condition['on'] ) ) {
 				if ( $visibility ) {
@@ -223,8 +263,37 @@ class Block_Conditions {
 	}
 
 	/**
+	 * Check URL parameters
+	 * Returns true if URL matches the parameters from the condition.
+	 *
+	 * @param array $condition Condition.
+	 *
+	 * @access public
+	 */
+	public function has_query_string( $condition ) {
+		$url = home_url( add_query_arg( null, null ) );
+
+		$url_components = wp_parse_url( $url );
+
+		if ( ! isset( $url_components['query'] ) ) {
+			return false;
+		}
+
+		$query_string = preg_replace( '/\s/', '', $condition['query_string'] );
+
+		parse_str( $url_components['query'], $params );
+		parse_str( $query_string, $cond_params );
+
+		if ( 'any' === $condition['match'] ) {
+			return count( array_intersect( $cond_params, $params ) ) > 0;
+		}
+
+		return array_intersect( $cond_params, $params ) === $cond_params;
+	}
+
+	/**
 	 * Check current user's role.
-	 * 
+	 *
 	 * @param array $roles Selected user roles.
 	 *
 	 * @since  1.7.0
@@ -234,7 +303,7 @@ class Block_Conditions {
 		$user = wp_get_current_user();
 
 		$user_roles = (array) $user->roles;
-	
+
 		foreach ( (array) $roles as $role ) {
 			if ( in_array( $role, $user_roles ) ) {
 				return true;
@@ -246,7 +315,7 @@ class Block_Conditions {
 
 	/**
 	 * Check current user's role.
-	 * 
+	 *
 	 * @param array $authors Selected user roles.
 	 *
 	 * @since  1.7.0
@@ -265,8 +334,40 @@ class Block_Conditions {
 	}
 
 	/**
+	 * Check post type.
+	 *
+	 * @param array $types Selected post types.
+	 *
+	 * @access public
+	 */
+	public function is_type( $types ) {
+		$type = get_post_type();
+		return in_array( $type, $types );
+	}
+
+	/**
+	 * Check post category.
+	 *
+	 * @param array $categories Selected post categories.
+	 *
+	 * @access public
+	 */
+	public function has_category( $categories ) {
+		$used = get_the_category();
+
+		$used_categories = array_map(
+			function ( $category ) {
+				return $category->slug;
+			},
+			$used
+		);
+
+		return array_intersect( $categories, $used_categories ) === $categories;
+	}
+
+	/**
 	 * Check meta compare.
-	 * 
+	 *
 	 * @param array $condition Condition.
 	 *
 	 * @since  1.7.0
@@ -305,7 +406,7 @@ class Block_Conditions {
 
 	/**
 	 * Check date range.
-	 * 
+	 *
 	 * @param array $condition Condition.
 	 *
 	 * @since  1.7.0
@@ -336,7 +437,7 @@ class Block_Conditions {
 
 	/**
 	 * Check recurring days.
-	 * 
+	 *
 	 * @param array $days Days of Week.
 	 *
 	 * @since  1.7.0
@@ -355,7 +456,7 @@ class Block_Conditions {
 
 	/**
 	 * Check recurring days.
-	 * 
+	 *
 	 * @param array $condition Condition.
 	 *
 	 * @since  1.7.0
@@ -455,6 +556,24 @@ class Block_Conditions {
 		$total = \WC()->cart->total;
 
 		if ( floatval( $value ) < floatval( $total ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check based on WooCommerce total spent.
+	 *
+	 * @param array $value Total Money Spent.
+	 *
+	 * @since  2.0.0
+	 * @access public
+	 */
+	public function has_total_spent( $value ) {
+		$total = wc_get_customer_total_spent( get_current_user_id() );
+
+		if ( floatval( $value ) < $total ) {
 			return true;
 		}
 

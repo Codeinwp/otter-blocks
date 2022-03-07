@@ -29,10 +29,7 @@ class Posts_Grid_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-
-		if (
-			! 'valid' === apply_filters( 'product_neve_license_status', false )
-		) {
+		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) ) {
 			self::$should_render_custom_meta = false;
 		}
 
@@ -66,7 +63,6 @@ class Posts_Grid_Block {
 				)
 			);
 		};
-
 
 		$recent_posts = ( isset( $attributes['postTypes'] ) && 0 < count( $attributes['postTypes'] ) ) ? array_merge( ...array_map( $get_custom_post_types_posts, $attributes['postTypes'] ) ) : wp_get_recent_posts(
 			apply_filters(
@@ -193,11 +189,10 @@ class Posts_Grid_Block {
 						}
 
 						$list_items_markup .= '</div>';
-
 					}
 				}
 
-				if ( self::$should_render_custom_meta && str_starts_with( $element, 'custom_' ) ) {
+				if ( self::$should_render_custom_meta && substr( $element, 0, 7 ) === 'custom_' ) {
 					if ( isset( $attributes['customMetas'] ) ) {
 						$custom_meta_field = null;
 						foreach ( $attributes['customMetas'] as $meta_field ) {
@@ -206,7 +201,6 @@ class Posts_Grid_Block {
 								break;
 							}
 						}
-
 
 						if (
 							(
@@ -310,7 +304,6 @@ class Posts_Grid_Block {
 	 * @return string
 	 */
 	protected function render_featured_post( $post, $attributes ) {
-
 		if ( ! isset( $post ) ) {
 			return '';
 		}
@@ -410,7 +403,7 @@ class Posts_Grid_Block {
 				}
 			}
 
-			if ( self::$should_render_custom_meta && str_starts_with( $element, 'custom_' ) ) {
+			if ( self::$should_render_custom_meta && substr( $element, 0, 7 ) === 'custom_' ) {
 				if ( isset( $attributes['customMetas'] ) ) {
 					$custom_meta_field = null;
 					foreach ( $attributes['customMetas'] as $meta_field ) {
