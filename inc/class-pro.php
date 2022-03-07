@@ -40,7 +40,7 @@ class Pro {
 	 * @return  bool
 	 */
 	public static function is_pro() {
-		return class_exists( '\ThemeIsle\Otter_Pro\Main' ) && defined( 'OTTER_PRO_VERSION' );
+		return class_exists( '\ThemeIsle\OtterPro\Main' ) && defined( 'OTTER_PRO_VERSION' );
 	}
 
 

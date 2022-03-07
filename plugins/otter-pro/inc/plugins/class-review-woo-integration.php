@@ -2,10 +2,10 @@
 /**
  * Review Block WooCommerce Integration.
  *
- * @package ThemeIsle\Otter_Pro\Plugins
+ * @package ThemeIsle\OtterPro\Plugins
  */
 
-namespace ThemeIsle\Otter_Pro\Plugins;
+namespace ThemeIsle\OtterPro\Plugins;
 
 /**
  * Class Review_Woo_Integration

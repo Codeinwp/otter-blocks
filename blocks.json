@@ -156,10 +156,10 @@
 		}
 	},
 	"review-comparison": {
-		"block": "blocks/blocks/review-comparison/block.json",
+		"block": "pro/blocks/review-comparison/block.json",
 		"assets": {
-			"review-comparison/editor.css": "blocks/blocks/review-comparison/editor.scss",
-			"review-comparison/style.css": "blocks/blocks/review-comparison/style.scss"
+			"review-comparison/editor.css": "pro/blocks/review-comparison/editor.scss",
+			"review-comparison/style.css": "pro/blocks/review-comparison/style.scss"
 		}
 	},
 	"advanced-columns": {

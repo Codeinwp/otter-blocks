@@ -2,10 +2,10 @@
 /**
  * Add_To_Cart_Button_Block
  *
- * @package ThemeIsle\GutenbergBlocks\Render
+ * @package ThemeIsle\OtterPro\Render
  */
 
-namespace ThemeIsle\GutenbergBlocks\Render;
+namespace ThemeIsle\OtterPro\Render;
 
 /**
  * Class Add_To_Cart_Button_Block

@@ -5,7 +5,7 @@
  * @package ThemeIsle\GutenbergBlocks\Server
  */
 
-namespace ThemeIsle\GutenbergBlocks\Server;
+namespace ThemeIsle\OtterPro\Server;
 
 /**
  * Class Filter_Blocks_Server

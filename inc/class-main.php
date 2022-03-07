@@ -65,7 +65,6 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Plugins\Options_Settings',
 			'\ThemeIsle\GutenbergBlocks\Render\Masonry_Variant',
 			'\ThemeIsle\GutenbergBlocks\Server\Dashboard_Server',
-			'\ThemeIsle\GutenbergBlocks\Server\Filter_Blocks_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Plugin_Card_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Template_Library_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Form_Server',

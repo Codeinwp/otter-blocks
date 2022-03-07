@@ -82,7 +82,6 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Popup_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Slider_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Review_CSS',
-			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Review_Comparison_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Tabs_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Woo_Comparison_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Posts_CSS',

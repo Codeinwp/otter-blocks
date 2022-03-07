@@ -34,16 +34,17 @@ import metadata from './block.json';
 import Placeholder from './placeholder.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import { blockInit } from '../../helpers/block-utility.js';
-import reviewMetadata from '../review/block.json';
-import {
+
+const {
 	StarFilled,
 	StarHalf
-} from '../../helpers/icons.js';
+} = window.otterUtils.icons;
+
+const { blockInit } = window.otterUtils;
 
 const { attributes: defaultAttributes } = metadata;
 
-const { attributes: defaultReviewAttributes } = reviewMetadata;
+const { defaultReviewAttributes } = window.themeisleGutenberg;
 
 let tableImages = [];
 let tableName = [];

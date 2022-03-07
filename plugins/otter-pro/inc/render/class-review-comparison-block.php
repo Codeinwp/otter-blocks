@@ -2,10 +2,10 @@
 /**
  * Review block
  *
- * @package ThemeIsle\GutenbergBlocks\Render
+ * @package ThemeIsle\OtterPro\Render
  */
 
-namespace ThemeIsle\GutenbergBlocks\Render;
+namespace ThemeIsle\OtterPro\Render;
 
 use ThemeIsle\GutenbergBlocks\Render\Review_Block;
 
@@ -24,7 +24,7 @@ class Review_Comparison_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) || ! isset( $attributes['reviews'] ) ) {
+		if ( ! isset( $attributes['reviews'] ) ) {
 			return;
 		}
 

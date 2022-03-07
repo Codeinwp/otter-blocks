@@ -5,7 +5,7 @@
  * @package ThemeIsle
  */
 
-namespace ThemeIsle\Otter_Pro;
+namespace ThemeIsle\OtterPro;
 
 /**
  * Class Main
@@ -31,9 +31,9 @@ class Main {
 			define( 'OTTER_PRO_VERSION', OTTER_BLOCKS_VERSION );
 		}
 
-		add_filter( 'otter_blocks_autoloader', array( $this, 'autoload_classes' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
+		add_filter( 'otter_blocks_autoloader', array( $this, 'autoload_classes' ) );
 		add_filter( 'otter_blocks_register_blocks', array( $this, 'register_blocks' ) );
 		add_filter( 'otter_blocks_register_dynamic_blocks', array( $this, 'register_dynamic_blocks' ) );
 		add_filter( 'otter_blocks_register_css', array( $this, 'register_blocks_css' ) );
@@ -49,8 +49,9 @@ class Main {
 	 */
 	public function autoload_classes( $classnames ) {
 		$classes = array(
-			'\ThemeIsle\Otter_Pro\Plugins\Review_Woo_Integration',
-			'\ThemeIsle\Otter_Pro\Plugins\WooCommerce_Builder',
+			'\ThemeIsle\OtterPro\Plugins\Review_Woo_Integration',
+			'\ThemeIsle\OtterPro\Plugins\WooCommerce_Builder',
+			'\ThemeIsle\OtterPro\Server\Filter_Blocks_Server',
 		);
 
 		$classnames = array_merge( $classnames, $classes );
@@ -96,18 +97,19 @@ class Main {
 	 */
 	public function register_dynamic_blocks( $dynamic_blocks ) {
 		$blocks = array(
-			'add-to-cart-button'        => '\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
-			'product-add-to-cart'       => '\ThemeIsle\Otter_Pro\Render\Product_Add_To_Cart_Block',
-			'product-images'            => '\ThemeIsle\Otter_Pro\Render\Product_Images_Block',
-			'product-meta'              => '\ThemeIsle\Otter_Pro\Render\Product_Meta_Block',
-			'product-price'             => '\ThemeIsle\Otter_Pro\Render\Product_Price_Block',
-			'product-rating'            => '\ThemeIsle\Otter_Pro\Render\Product_Rating_Block',
-			'product-related-products'  => '\ThemeIsle\Otter_Pro\Render\Product_Related_Products_Block',
-			'product-short-description' => '\ThemeIsle\Otter_Pro\Render\Product_Short_Description_Block',
-			'product-stock'             => '\ThemeIsle\Otter_Pro\Render\Product_Stock_Block',
-			'product-tabs'              => '\ThemeIsle\Otter_Pro\Render\Product_Tabs_Block',
-			'product-title'             => '\ThemeIsle\Otter_Pro\Render\Product_Title_Block',
-			'product-upsells'           => '\ThemeIsle\Otter_Pro\Render\Product_Upsells_Block',
+			'add-to-cart-button'        => '\ThemeIsle\OtterPro\Render\Add_To_Cart_Button_Block',
+			'review-comparison'         => '\ThemeIsle\OtterPro\Render\Review_Comparison_Block',
+			'product-add-to-cart'       => '\ThemeIsle\OtterPro\Render\Product_Add_To_Cart_Block',
+			'product-images'            => '\ThemeIsle\OtterPro\Render\Product_Images_Block',
+			'product-meta'              => '\ThemeIsle\OtterPro\Render\Product_Meta_Block',
+			'product-price'             => '\ThemeIsle\OtterPro\Render\Product_Price_Block',
+			'product-rating'            => '\ThemeIsle\OtterPro\Render\Product_Rating_Block',
+			'product-related-products'  => '\ThemeIsle\OtterPro\Render\Product_Related_Products_Block',
+			'product-short-description' => '\ThemeIsle\OtterPro\Render\Product_Short_Description_Block',
+			'product-stock'             => '\ThemeIsle\OtterPro\Render\Product_Stock_Block',
+			'product-tabs'              => '\ThemeIsle\OtterPro\Render\Product_Tabs_Block',
+			'product-title'             => '\ThemeIsle\OtterPro\Render\Product_Title_Block',
+			'product-upsells'           => '\ThemeIsle\OtterPro\Render\Product_Upsells_Block',
 		);
 
 		$dynamic_blocks = array_merge( $dynamic_blocks, $blocks );
@@ -127,6 +129,7 @@ class Main {
 		$pro_blocks = array(
 			'\ThemeIsle\OtterPro\CSS\Blocks\Business_Hours_CSS',
 			'\ThemeIsle\OtterPro\CSS\Blocks\Business_Hours_Item_CSS',
+			'\ThemeIsle\OtterPro\CSS\Blocks\Review_Comparison_CSS',
 		);
 
 		$blocks = array_merge( $blocks, $pro_blocks );

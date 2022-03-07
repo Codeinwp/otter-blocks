@@ -12,7 +12,12 @@ import metadata from './block.json';
 import { faIcon as icon } from '../../helpers/icons.js';
 import edit from './edit.js';
 
-const { name } = metadata;
+const {
+	name,
+	attributes: defaultReviewAttributes
+} = metadata;
+
+window.themeisleGutenberg.defaultReviewAttributes = defaultReviewAttributes;
 
 registerBlockType( name, {
 	...metadata,

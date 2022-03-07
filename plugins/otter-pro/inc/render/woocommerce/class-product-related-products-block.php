@@ -2,10 +2,10 @@
 /**
  * Product_Related_Products_Block
  *
- * @package ThemeIsle\Otter_Pro\Render
+ * @package ThemeIsle\OtterPro\Render
  */
 
-namespace ThemeIsle\Otter_Pro\Render;
+namespace ThemeIsle\OtterPro\Render;
 
 /**
  * Class Product_Related_Products_Block
