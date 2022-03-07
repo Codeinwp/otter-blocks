@@ -13,7 +13,7 @@ import {
 } from '@wordpress/components';
 
 import {
-	ColorPalette,
+	__experimentalColorGradientControl as ColorGradientControl,
 	ContrastChecker,
 	InspectorControls
 } from '@wordpress/block-editor';
@@ -29,11 +29,12 @@ import {
  * Internal dependencies
  */
 const IconPickerControl = lazy( () => import( '../../components/icon-picker-control/index.js' ) );
-import ColorBaseControl from '../../components/color-base-control/index.js';
+import SyncControl from '../../components/sync-control/index.js';
 
 const Inspector = ({
 	attributes,
-	setAttributes
+	setAttributes,
+	getValue
 }) => {
 	const [ hover, setHover ] = useState( false );
 
@@ -77,32 +78,50 @@ const Inspector = ({
 				title={ __( 'Icon Sizes', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<RangeControl
-					label={ __( 'Icon Size', 'otter-blocks' ) }
-					value={ attributes.fontSize || '' }
-					initialPosition={ 16 }
-					onChange={ e => setAttributes({ fontSize: e }) }
-					min={ 12 }
-					max={ 140 }
-				/>
+				<SyncControl
+					field="fontSize"
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Icon Size', 'otter-blocks' ) }
+						value={ getValue( 'fontSize' ) || '' }
+						initialPosition={ 16 }
+						onChange={ e => setAttributes({ fontSize: e }) }
+						min={ 12 }
+						max={ 140 }
+					/>
+				</SyncControl>
 
-				<RangeControl
-					label={ __( 'Padding', 'otter-blocks' ) }
-					value={ attributes.padding || '' }
-					initialPosition={ 5 }
-					onChange={ e => setAttributes({ padding: e }) }
-					min={ 0 }
-					max={ 100 }
-				/>
+				<SyncControl
+					field="padding"
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Padding', 'otter-blocks' ) }
+						value={ getValue( 'padding' ) || '' }
+						initialPosition={ 5 }
+						onChange={ e => setAttributes({ padding: e }) }
+						min={ 0 }
+						max={ 100 }
+					/>
+				</SyncControl>
 
-				<RangeControl
-					label={ __( 'Margin', 'otter-blocks' ) }
-					value={ attributes.margin || '' }
-					initialPosition={ 5 }
-					onChange={ e => setAttributes({ margin: e }) }
-					min={ 0 }
-					max={ 100 }
-				/>
+				<SyncControl
+					field="margin"
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Margin', 'otter-blocks' ) }
+						value={ getValue( 'margin' ) || '' }
+						initialPosition={ 5 }
+						onChange={ e => setAttributes({ margin: e }) }
+						min={ 0 }
+						max={ 100 }
+					/>
+				</SyncControl>
 			</PanelBody>
 
 			<PanelBody
@@ -131,86 +150,80 @@ const Inspector = ({
 
 				{ hover ? (
 					<Fragment>
-						<ColorBaseControl
-							label={ __( 'Hover Background', 'otter-blocks' ) }
-							colorValue={ attributes.backgroundColorHover }
+						<SyncControl
+							field="backgroundColorHover"
+							isSynced={ attributes.isSynced }
+							setAttributes={ setAttributes }
 						>
-							<ColorPalette
+							<ColorGradientControl
 								label={ __( 'Hover Background', 'otter-blocks' ) }
-								value={ attributes.backgroundColorHover }
-								onChange={ e => setAttributes({ backgroundColorHover: e }) }
+								colorValue={ getValue( 'backgroundColorHover' ) }
+								onColorChange={ e => setAttributes({ backgroundColorHover: e }) }
 							/>
-						</ColorBaseControl>
+						</SyncControl>
 
-						<ColorBaseControl
-							label={ __( 'Hover Icon', 'otter-blocks' ) }
-							colorValue={ attributes.textColorHover }
+						<SyncControl
+							field="textColorHover"
+							isSynced={ attributes.isSynced }
+							setAttributes={ setAttributes }
 						>
-							<ColorPalette
+							<ColorGradientControl
 								label={ __( 'Hover Icon', 'otter-blocks' ) }
-								value={ attributes.textColorHover }
-								onChange={ e => setAttributes({ textColorHover: e }) }
+								colorValue={ getValue( 'textColorHover' ) }
+								onColorChange={ e => setAttributes({ textColorHover: e }) }
 							/>
-						</ColorBaseControl>
-
-						<ColorBaseControl
-							label={ __( 'Hover Border', 'otter-blocks' ) }
-							colorValue={ attributes.borderColorHover }
-						>
-							<ColorPalette
-								label={ __( 'Hover Border', 'otter-blocks' ) }
-								value={ attributes.borderColorHover }
-								onChange={ e => setAttributes({ borderColorHover: e }) }
-							/>
-						</ColorBaseControl>
+						</SyncControl>
 
 						<ContrastChecker
 							{ ...{
-								textColor: attributes.textColorHover,
-								backgroundColor: attributes.backgroundColorHover
+								textColor: getValue( 'textColorHover' ),
+								backgroundColor: getValue( 'backgroundColorHover' )
 							} }
+						/>
+
+						<ColorGradientControl
+							label={ __( 'Hover Border', 'otter-blocks' ) }
+							colorValue={ attributes.borderColorHover }
+							onColorChange={ e => setAttributes({ borderColorHover: e }) }
 						/>
 					</Fragment>
 				) : (
 					<Fragment>
-						<ColorBaseControl
-							label={ __( 'Background', 'otter-blocks' ) }
-							colorValue={ attributes.backgroundColor }
+						<SyncControl
+							field="backgroundColor"
+							isSynced={ attributes.isSynced }
+							setAttributes={ setAttributes }
 						>
-							<ColorPalette
+							<ColorGradientControl
 								label={ __( 'Background', 'otter-blocks' ) }
-								value={ attributes.backgroundColor }
-								onChange={ e => setAttributes({ backgroundColor: e }) }
+								colorValue={ getValue( 'backgroundColor' ) }
+								onColorChange={ e => setAttributes({ backgroundColor: e }) }
 							/>
-						</ColorBaseControl>
+						</SyncControl>
 
-						<ColorBaseControl
-							label={ __( 'Icon', 'otter-blocks' ) }
-							colorValue={ attributes.textColor }
+						<SyncControl
+							field="textColor"
+							isSynced={ attributes.isSynced }
+							setAttributes={ setAttributes }
 						>
-							<ColorPalette
+							<ColorGradientControl
 								label={ __( 'Icon', 'otter-blocks' ) }
-								value={ attributes.textColor }
-								onChange={ e => setAttributes({ textColor: e }) }
+								colorValue={ getValue( 'textColor' ) }
+								onColorChange={ e => setAttributes({ textColor: e }) }
 							/>
-						</ColorBaseControl>
-
-						<ColorBaseControl
-							label={ __( 'Border', 'otter-blocks' ) }
-							colorValue={ attributes.borderColor }
-						>
-							<ColorPalette
-								label={ __( 'Border', 'otter-blocks' ) }
-								value={ attributes.borderColor }
-								onChange={ e => setAttributes({ borderColor: e }) }
-							/>
-						</ColorBaseControl>
+						</SyncControl>
 
 						<ContrastChecker
 							{ ...{
-								textColor: attributes.textColor,
-								backgroundColor: attributes.backgroundColor
+								textColor: getValue( 'textColor' ),
+								backgroundColor: getValue( 'backgroundColor' )
 							} }
+						/>
+
+						<ColorGradientControl
+							label={ __( 'Border', 'otter-blocks' ) }
+							colorValue={ attributes.borderColor }
+							onColorChange={ e => setAttributes({ borderColor: e }) }
 						/>
 					</Fragment>
 				) }

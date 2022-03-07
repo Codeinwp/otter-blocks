@@ -12,6 +12,11 @@ const init = () => {
 
 	sliders.forEach( slider => {
 		const track = slider.querySelector( '.glide__slides' );
+
+		if ( ! Boolean( track.childElementCount ) ) {
+			return false;
+		}
+
 		const options = omit({ ...slider.dataset }, [ 'autoplay', 'height', 'hideArrows' ]);
 		const autoplay = 'false' === slider.dataset.autoplay ? false : ( 'true' === slider.dataset.autoplay ? 2000 : slider.dataset.autoplay );
 		const hideArrows = 'true' === slider.dataset.hideArrows ? true : false;

@@ -87,6 +87,7 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Review_Comparison_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Tabs_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Woo_Comparison_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Posts_CSS',
 		);
 	}
 
@@ -290,6 +291,26 @@ class Base_CSS {
 
 			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
 				$style .= $this->cycle_through_static_blocks( $block['innerBlocks'] );
+			}
+		}
+
+		return $style;
+	}
+
+	/**
+	 * Cycle thorugh Global Styles
+	 *
+	 * @return string Style.
+	 * @since   2.0.0
+	 * @access  public
+	 */
+	public function cycle_through_global_styles() {
+		$style = '';
+		foreach ( self::$blocks_classes as $classname ) {
+			$path = new $classname();
+
+			if ( method_exists( $path, 'render_global_css' ) ) {
+				$style .= $path->render_global_css();
 			}
 		}
 

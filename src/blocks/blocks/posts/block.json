@@ -8,6 +8,9 @@
 	"keywords": [ "posts", "grid", "news" ],
 	"textdomain": "otter-blocks",
 	"attributes": {
+		"id": {
+			"type": "string"
+		},
 		"style": {
 			"type": "string",
 			"default": "grid"
@@ -23,16 +26,22 @@
 		"template": {
 			"type": "array",
 			"default": [
-			"category",
-			"title",
-			"meta",
-			"description"
+				"category",
+				"title",
+				"meta",
+				"description"
 			]
+		},
+		"customMetas": {
+			"type": "array",
+			"items": {
+				"type": "object"
+			}
 		},
 		"categories": {
 			"type": "array",
 			"items": {
-			"type": "object"
+				"type": "object"
 			}
 		},
 		"postsToShow": {
@@ -94,6 +103,55 @@
 		"displayAuthor": {
 			"type": "boolean",
 			"default": true
+		},
+		"displayComments": {
+			"type": "boolean",
+			"default": true
+		},
+		"displayPostCategory": {
+			"type": "boolean",
+			"default": false
+		},
+		"displayReadMoreLink": {
+			"type": "boolean",
+			"default": false
+		},
+		"cropImage": {
+			"type": "boolean",
+			"default": false
+		},
+		"customTitleFontSize": {
+			"type": "number"
+		},
+		"customTitleFontSizeTable": {
+			"type": "number"
+		},
+		"customTitleFontSizeMobile": {
+			"type": "number"
+		},
+		"customDescriptionFontSize": {
+			"type": "number"
+		},
+		"customDescriptionFontSizeTablet": {
+			"type": "number"
+		},
+		"customDescriptionFontSizeMobile": {
+			"type": "number"
+		},
+		"borderRadius": {
+			"type": "number"
+		},
+		"textAlign": {
+			"type": "string"
+		},
+		"verticalAlign": {
+			"type": "string"
+		},
+		"enableFeaturedPost": {
+			"type": "boolean"
+		},
+		"imageWidth": {
+			"type": "number"
 		}
 	},
 	"supports": {

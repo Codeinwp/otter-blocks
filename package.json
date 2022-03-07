@@ -5,14 +5,16 @@
 	"scripts": {
 		"build": "wp-scripts build && grunt build",
 		"grunt": "grunt build",
-		"start": "npm-run-all --parallel dev:*",
+		"start": "rm -rf build && npm-run-all --parallel dev:*",
 		"dev:webpack": "wp-scripts start --watch",
 		"dev:grunt": "grunt watch",
+		"build-dev": "NODE_ENV=development wp-scripts build && grunt build",
 		"lint": "wp-scripts lint-js ./src",
 		"format": "wp-scripts lint-js ./src --fix",
 		"packages-update": "wp-scripts packages-update",
 		"release": "semantic-release",
-		"dist": "bash bin/dist.sh"
+		"dist": "bash bin/dist.sh",
+		"dist-dev": "bash bin/dist.sh development"
 	},
 	"repository": {
 		"type": "git",

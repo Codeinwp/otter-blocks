@@ -290,6 +290,9 @@
 		"columnsHTMLTag": {
 			"type": "string",
 			"default": "div"
+		},
+		"isSynced": {
+			"type": "array"
 		}
 	},
 	"supports": {

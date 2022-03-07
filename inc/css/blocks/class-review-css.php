@@ -40,17 +40,73 @@ class Review_CSS extends Base_CSS {
 					array(
 						'property' => '--backgroundColor',
 						'value'    => 'backgroundColor',
+						'hasSync'  => 'reviewBackgroundColor',
 					),
 					array(
 						'property' => '--primaryColor',
 						'value'    => 'primaryColor',
+						'hasSync'  => 'reviewPrimaryColor',
 					),
 					array(
 						'property' => '--textColor',
 						'value'    => 'textColor',
+						'hasSync'  => 'reviewTextColor',
 					),
 					array(
 						'property' => '--buttonTextColor',
+						'value'    => 'buttonTextColor',
+						'hasSync'  => 'reviewButtonTextColor',
+					),
+				),
+			)
+		);
+
+		$style = $css->generate();
+
+		return $style;
+	}
+
+	/**
+	 * Generate Review Global CSS
+	 *
+	 * @return string
+	 * @since   2.0.0
+	 * @access  public
+	 */
+	public function render_global_css() {
+		$defaults = get_option( 'themeisle_blocks_settings_global_defaults' );
+		$block    = $this->library_prefix . '/' . $this->block_prefix;
+
+		if ( empty( $defaults ) ) {
+			return;
+		}
+
+		$defaults = json_decode( $defaults, true );
+
+		$block = array(
+			'attrs' => $defaults[ $block ],
+		);
+
+		$css = new CSS_Utility( $block );
+
+		$css->add_item(
+			array(
+				'selector'   => '.wp-block-themeisle-blocks-review',
+				'properties' => array(
+					array(
+						'property' => '--reviewBackgroundColor',
+						'value'    => 'backgroundColor',
+					),
+					array(
+						'property' => '--reviewPrimaryColor',
+						'value'    => 'primaryColor',
+					),
+					array(
+						'property' => '--reviewTextColor',
+						'value'    => 'textColor',
+					),
+					array(
+						'property' => '--reviewButtonTextColor',
 						'value'    => 'buttonTextColor',
 					),
 				),

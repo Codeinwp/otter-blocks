@@ -14,6 +14,7 @@ import {
 } from '@wordpress/components';
 
 import {
+	Fragment,
 	useState,
 	useEffect
 } from '@wordpress/element';
@@ -24,41 +25,6 @@ const FILTER_OPTIONS = {
 	scope: 'o-sticky-scope',
 	behaviour: 'o-sticky-bhvr',
 	usage: 'o-sticky-use'
-};
-
-/**
- * Get the container for the given element
- * @param {HTMLDivElement} elem The sticky element
- * @return {HTMLDivElement} The parent container. Return `body` as default
- */
-const getStickyContainer = ( elem, scope ) => {
-	let parent = elem?.parentElement;
-	const sections = [];
-	while ( parent ) {
-		if (
-			(
-				parent.classList.contains( 'wp-block-themeisle-blocks-advanced-column' ) ||
-				parent.classList.contains( 'wp-block-group' ) ||
-				parent.classList.contains( 'wp-block-column' )
-			) &&
-			'o-sticky-scope-parent' === scope
-		) {
-			return parent;
-		}
-		if (
-			parent.classList.contains( 'wp-block-themeisle-blocks-advanced-columns' ) ||
-			parent.classList.contains( 'wp-block-group' ) ||
-			parent.classList.contains( 'wp-block-columns' )
-		) {
-			if ( 'o-sticky-scope-section' === scope ) {
-				return parent;
-			} else if ( 'o-sticky-scope-main-area' === scope ) {
-				sections.push( parent );
-			}
-		}
-		parent = parent.parentElement;
-	}
-	return 'o-sticky-scope-main-area' === scope ? sections.pop() : document.body;
 };
 
 const Edit = ({
@@ -72,7 +38,7 @@ const Edit = ({
 	} ]);
 
 	/*
-s		E.g:
+		E.g:
 			Position -> 'o-sticky-pos-top'
 			Top Offset -> 'o-sticky-offset--40' where 40 will be value (it will be extracted by the frontend script)
 
@@ -83,6 +49,7 @@ s		E.g:
 	const limit = attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-scope' ) ).pop() || 'o-sticky-scope-main-area';
 	const behaviour = attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-bhvr' ) ).pop() || 'o-sticky-bhvr-keep';
 	const useOnMobile = Boolean( attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-use-mobile' ) ).pop() || false );
+	const hasPro = window?.themeisleGutenberg?.hasNeveSupport?.hasNevePro && window?.themeisleGutenberg?.hasNeveSupport?.isBoosterActive;
 
 	const addOption = ( option, filterOption = FILTER_OPTIONS.position ) => {
 		const classes = new Set( attributes?.className?.split( ' ' )?.filter( c =>  ! c.includes( filterOption ) ) || []);
@@ -103,7 +70,7 @@ s		E.g:
 
 	useEffect( () => {
 		if ( clientId ) {
-			const block = document.querySelector( `#block-${clientId}` );
+			const block = document.querySelector( `#block-${ clientId }` );
 			if ( block ) {
 				let parent = block?.parentElement;
 				const containers = [];
@@ -117,7 +84,9 @@ s		E.g:
 						)
 					) {
 						containers.push( 'parent' );
-					} if (
+					}
+
+					if (
 						(
 							parent.classList.contains( 'wp-block-themeisle-blocks-advanced-columns' ) ||
 							parent.classList.contains( 'wp-block-group' ) ||
@@ -135,6 +104,7 @@ s		E.g:
 						label: __( 'Top Level Block', 'otter-blocks' ),
 						value: 'o-sticky-scope-main-area'
 					});
+
 					if ( 1 < containers.filter( x => 'section' === x ) ) {
 						options.push({
 							label: __( 'Section', 'otter-blocks' ),
@@ -157,10 +127,8 @@ s		E.g:
 
 				setContainerOptions( options );
 			}
-
 		}
 	}, [ clientId ]);
-
 
 	return (
 		<InspectorControls>
@@ -176,72 +144,89 @@ s		E.g:
 					onChange={ value => addOption( value, FILTER_OPTIONS.scope ) }
 				/>
 
-				<SelectControl
-					label={ __( 'Position', 'otter-blocks' ) }
-					help={ __( 'Position of the block in relation to the screen.', 'otter-blocks' ) }
-					value={ position }
-					options={ [
-						{
-							label: __( 'Top', 'otter-blocks' ),
-							value: 'o-sticky-pos-top'
-						},
-						{
-							label: __( 'Bottom', 'otter-blocks' ),
-							value: 'o-sticky-pos-bottom'
-						}
-					] }
-					onChange={ value => addOption(  value, FILTER_OPTIONS.position ) }
-				/>
+				{ window?.themeisleGutenberg?.hasNeveSupport?.hasNeve && (
+					<Fragment>
+						{ ! hasPro && (
+							<ExternalLink
+								href={ window?.themeisleGutenberg?.hasNeveSupport?.hasNevePro ? window.themeisleGutenberg.hasNeveSupport.optionsPage : 'https://themeisle.com/themes/neve/' }
+								target="_blank"
+							>
+								{ __( 'Enable more options with Neve Pro\'s Block Editor Booster.', 'otter-blocks' ) }
+							</ExternalLink>
+						) }
 
-				<RangeControl
-					label={ __( 'Offset', 'otter-blocks' ) }
-					help={ __( 'Distance from the block to the screen.', 'otter-blocks' ) }
-					value={ getOffsetValue( ) }
-					min={ 0 }
-					max={ 500 }
-					onChange={ value => addOption( `o-sticky-offset-${ value }`, FILTER_OPTIONS.offset ) }
-				/>
+						<SelectControl
+							label={ __( 'Position', 'otter-blocks' ) }
+							help={ __( 'Position of the block in relation to the screen.', 'otter-blocks' ) }
+							disabled={ ! hasPro }
+							value={ position }
+							options={ [
+								{
+									label: __( 'Top', 'otter-blocks' ),
+									value: 'o-sticky-pos-top'
+								},
+								{
+									label: __( 'Bottom', 'otter-blocks' ),
+									value: 'o-sticky-pos-bottom'
+								}
+							] }
+							onChange={ value => addOption( value, FILTER_OPTIONS.position ) }
+						/>
 
-				<SelectControl
-					label={ __( 'Behaviour', 'otter-blocks' ) }
-					help={ __( 'Behaviour when multiple sticky blocks with the same movement limit collide.', 'otter-blocks' ) }
-					value={ behaviour }
-					options={ [
-						{
-							label: __( 'Collapse', 'otter-blocks' ),
-							value: 'o-sticky-bhvr-keep'
-						},
-						{
-							label: __( 'Fade', 'otter-blocks' ),
-							value: 'o-sticky-bhvr-hide'
-						},
-						{
-							label: __( 'Stack', 'otter-blocks' ),
-							value: 'o-sticky-bhvr-stack'
-						}
-					] }
-					onChange={ value => addOption(  value, FILTER_OPTIONS.behaviour ) }
-				/>
+						<RangeControl
+							label={ __( 'Offset', 'otter-blocks' ) }
+							help={ __( 'Distance from the block to the screen.', 'otter-blocks' ) }
+							disabled={ ! hasPro }
+							value={ getOffsetValue( ) }
+							min={ 0 }
+							max={ 500 }
+							onChange={ value => addOption( `o-sticky-offset-${ value }`, FILTER_OPTIONS.offset ) }
+						/>
 
-				{ 'o-sticky-bhvr-stack'  === behaviour && (
-					<div
-						style={ {
-							backgroundColor: '#fdf8e6',
-							borderRadius: '5px',
-							padding: '10px',
-							textAlign: 'justify'
-						} }
-					>
-						{ __( 'The block will stack with other sticky elements with the same \'Stick To\' container, and Stack option in Behaviour. It works better with \'Stick to\' as Top Level Block or Screen.', 'otter-blocks' ) }
-					</div>
+						<SelectControl
+							label={ __( 'Behaviour', 'otter-blocks' ) }
+							help={ __( 'Behaviour when multiple sticky blocks with the same movement limit collide.', 'otter-blocks' ) }
+							disabled={ ! hasPro }
+							value={ behaviour }
+							options={ [
+								{
+									label: __( 'Collapse', 'otter-blocks' ),
+									value: 'o-sticky-bhvr-keep'
+								},
+								{
+									label: __( 'Fade', 'otter-blocks' ),
+									value: 'o-sticky-bhvr-hide'
+								},
+								{
+									label: __( 'Stack', 'otter-blocks' ),
+									value: 'o-sticky-bhvr-stack'
+								}
+							] }
+							onChange={ value => addOption( value, FILTER_OPTIONS.behaviour ) }
+						/>
+
+						{ 'o-sticky-bhvr-stack' === behaviour && (
+							<div
+								style={ {
+									backgroundColor: '#fdf8e6',
+									borderRadius: '5px',
+									padding: '10px',
+									textAlign: 'justify'
+								} }
+							>
+								{ __( 'The block will stack with other sticky elements with the same \'Stick To\' container, and Stack option in Behaviour. It works better with \'Stick to\' as Top Level Block or Screen.', 'otter-blocks' ) }
+							</div>
+						) }
+
+						<ToggleControl
+							label={ __( 'Enable on Mobile', 'otter-blocks' ) }
+							help={ __( 'Make the sticky mode active for mobile users.' ) }
+							disabled={ ! hasPro }
+							checked={ useOnMobile }
+							onChange={ () => addOption( 'o-sticky-use-mobile', FILTER_OPTIONS.usage ) }
+						/>
+					</Fragment>
 				) }
-
-				<ToggleControl
-					label={ __( 'Enable on Mobile', 'otter-blocks' ) }
-					help={ __( 'Make the sticky mode active for mobile users.' ) }
-					checked={ useOnMobile }
-					onChange={ () => addOption( 'o-sticky-use-mobile', FILTER_OPTIONS.usage ) }
-				/>
 
 				{
 
@@ -249,8 +234,8 @@ s		E.g:
 				}
 
 				<ExternalLink
-					target='_blank'
-					rel='noopener noreferrer'
+					target="_blank"
+					rel="noopener noreferrer"
 					href="https://docs.themeisle.com/article/1478-otter-blocks-documentation"
 				>
 					{ __( 'Learn more about Sticky', 'otter-blocks' ) }

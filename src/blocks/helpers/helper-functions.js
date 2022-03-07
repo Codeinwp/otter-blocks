@@ -261,3 +261,53 @@ export const getTimezone = () => {
 export const isNullObject = obj => {
 	return ! Object.keys( obj ).some( k => null !== obj[ k ]);
 };
+
+/*
+ +-------------------------------- CSS Utility functions --------------------------------+
+*/
+
+/**
+ * Format the value based on the given unit.
+ * @param {string} value
+ * @param {string} unit
+ * @returns {string|undefined}
+ */
+export const _unit = ( value, unit ) => ( value ? value + unit : undefined );
+
+/**
+ * Format the value into a `px` unit.
+ * @param {string} value The value.
+ * @returns {string|undefined}
+ */
+export const _px = value => _unit( value, 'px' );
+
+/**
+ * Format the value into a `em` unit.
+ * @param {string} value The value.
+ * @returns {string|undefined}
+ */
+export const _em = value => _unit( value, 'em' );
+
+/**
+ * Format the value into a `%` unit.
+ * @param {string} value The value.
+ * @returns {string|undefined}
+ */
+export const _percent = value => _unit( value, '%' );
+
+const verticalMapping = {
+	'top': 'flex-start',
+	'left': 'flex-start',
+	'center': 'center',
+	'bottom': 'flex-end',
+	'right': 'flex-end'
+};
+
+/**
+ * Get the CSS value for the given value position.
+ * @param {string} value The position type.
+ * @returns {string|undefined}
+ */
+export const _align = value =>{
+	return verticalMapping[value];
+};

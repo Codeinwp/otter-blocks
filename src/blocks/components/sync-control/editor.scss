@@ -1,0 +1,20 @@
+.otter-sync-control {
+	border: 1px solid #ccc;
+	padding: 5px 10px 8px 10px;
+	margin-bottom: 10px;
+	border-radius: 5px;
+
+	legend {
+		.components-toggle-control {
+			margin: 12px 6px;
+		}
+	}
+
+	>.components-disabled {
+		opacity: 0.5;
+	}
+
+	.components-base-control {
+		margin-top: 0;
+	}
+}

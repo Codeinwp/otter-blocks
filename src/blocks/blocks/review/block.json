@@ -93,6 +93,9 @@
 		},
 		"buttonTextColor": {
 			"type": "string"
+		},
+		"isSynced": {
+			"type": "array"
 		}
 	},
 	"styles": [

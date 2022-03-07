@@ -45,11 +45,15 @@ import {
 	close,
 	StarFilled
 } from '../../helpers/icons.js';
-import { blockInit } from '../../helpers/block-utility.js';
+import {
+	blockInit,
+	getDefaultValueByField
+} from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
+	name,
 	attributes,
 	setAttributes,
 	clientId,
@@ -61,6 +65,8 @@ const Edit = ({
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
+
+	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
 	const overallRatings = ( attributes.features.reduce( ( accumulator, feature ) => accumulator + feature.rating, 0 ) / attributes.features.length ).toFixed( 1 );
 
@@ -112,10 +118,10 @@ const Edit = ({
 	};
 
 	const styles = css`
-		--backgroundColor: ${ attributes.backgroundColor };
-		--primaryColor: ${ attributes.primaryColor };
-		--textColor: ${ attributes.textColor };
-		--buttonTextColor: ${ attributes.buttonTextColor };
+		--backgroundColor: ${ getValue( 'backgroundColor' ) };
+		--primaryColor: ${ getValue( 'primaryColor' ) };
+		--textColor: ${ getValue( 'textColor' ) };
+		--buttonTextColor: ${ getValue( 'buttonTextColor' ) };
 	`;
 
 	const isPlaceholder = ( 'object' === typeof status && null !== status && status.isError ) || 'isLoading' === status;
@@ -132,6 +138,7 @@ const Edit = ({
 				<Inspector
 					attributes={ attributes }
 					setAttributes={ setAttributes }
+					getValue={ getValue }
 					productAttributes={ productAttributes }
 				/>
 
@@ -148,6 +155,7 @@ const Edit = ({
 				<Inspector
 					attributes={ attributes }
 					setAttributes={ setAttributes }
+					getValue={ getValue }
 					productAttributes={ productAttributes }
 				/>
 
@@ -165,6 +173,7 @@ const Edit = ({
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
+				getValue={ getValue }
 				productAttributes={ productAttributes }
 			/>
 

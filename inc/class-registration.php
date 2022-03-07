@@ -197,6 +197,10 @@ class Registration {
 				unset( $asset_file['dependencies'][ array_search( 'wp-editor', $asset_file['dependencies'] ) ] );
 				unset( $asset_file['dependencies'][ array_search( 'wp-edit-post', $asset_file['dependencies'] ) ] );
 			}
+
+			if ( class_exists( 'WooCommerce' ) ) {
+				array_push( $asset_file['dependencies'], 'wc-blocks-data-store', 'wc-price-format' );
+			}
 		}
 
 		wp_register_script( 'otter-vendor', OTTER_BLOCKS_URL . 'build/blocks/vendor.js', array( 'react', 'react-dom' ), $asset_file['version'], true );
@@ -239,6 +243,7 @@ class Registration {
 				'updatePath'          => admin_url( 'update-core.php' ),
 				'optionsPath'         => admin_url( 'options-general.php?page=otter' ),
 				'mapsAPI'             => $api,
+				'globalDefaults'      => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
 				'themeDefaults'       => Main::get_global_defaults(),
 				'imageSizes'          => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
 				'themeMods'           => array(
@@ -267,6 +272,7 @@ class Registration {
 				'isBlockEditor'       => 'post' === $current_screen->base,
 				'useOldMacyContainer' => version_compare( get_bloginfo( 'version' ), '5.8.10', '<=' ),
 				'postTypes'           => get_post_types( [ 'public' => true ] ),
+				'rootUrl'             => get_site_url(),
 			)
 		);
 
