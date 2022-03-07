@@ -101,7 +101,6 @@
 		align-items: center;
 
 		img {
-			max-width: 100%;
 			width: var(--imgWidth);
 			border-radius: 5px;
 			border-radius: var(--imgBorderRadius);
@@ -177,6 +176,12 @@
 			}
 		}
 
+	}
+}
+
+@media ( max-width: 960px ) {
+	.o-posts-grid-post-image img {
+		width: min(var(--imgWidth), 100%);
 	}
 }
 
