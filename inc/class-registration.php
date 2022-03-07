@@ -567,16 +567,16 @@ class Registration {
 	 */
 	public function register_blocks() {
 		$dynamic_blocks = array(
-			'about-author'       => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
-			'form-nonce'         => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
-			'google-map'         => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
-			'leaflet-map'        => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
-			'plugin-cards'       => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
-			'posts-grid'         => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
-			'review'             => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
-			'review-comparison'  => '\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
-			'sharing-icons'      => '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
-			'woo-comparison'     => '\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
+			'about-author'      => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
+			'form-nonce'        => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
+			'google-map'        => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
+			'leaflet-map'       => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
+			'plugin-cards'      => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
+			'posts-grid'        => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
+			'review'            => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
+			'review-comparison' => '\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
+			'sharing-icons'     => '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
+			'woo-comparison'    => '\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
 		);
 
 		$dynamic_blocks = apply_filters( 'otter_blocks_register_dynamic_blocks', $dynamic_blocks );
