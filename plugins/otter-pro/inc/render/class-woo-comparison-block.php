@@ -2,10 +2,10 @@
 /**
  * Woo_Comparison_Block
  *
- * @package ThemeIsle\GutenbergBlocks\Render
+ * @package ThemeIsle\OtterPro\Render
  */
 
-namespace ThemeIsle\GutenbergBlocks\Render;
+namespace ThemeIsle\OtterPro\Render;
 
 /**
  * Class Woo_Comparison_Block

@@ -17,7 +17,7 @@ const LayoutBuilder = ({
 		setAttributes({ fields });
 	};
 
-	let template = JSON.parse( window.themeisleGutenberg.themeMods.defaultFields );
+	let template = JSON.parse( window.otterPro.themeMods.defaultFields );
 	template = template.filter( item => ! JSON.parse( attributes.fields ).includes( item ) );
 
 	const toggleFields = value => {
@@ -33,9 +33,9 @@ const LayoutBuilder = ({
 	};
 
 	return (
-		<div className="otter-blocks-sortable">
+		<div className="o-sortable">
 			<SortableList
-				template={ window.themeisleGutenberg.themeMods.defaultFields }
+				template={ window.otterPro.themeMods.defaultFields }
 				fields={ JSON.parse( attributes.fields ) }
 				toggleFields={ toggleFields }
 				onSortEnd={ onSortEnd }

@@ -206,9 +206,9 @@
 		"block": "blocks/blocks/tabs/item/block.json"
 	},
 	"woo-comparison": {
-		"block": "blocks/blocks/woo-comparison/block.json",
+		"block": "pro/blocks/woo-comparison/block.json",
 		"assets": {
-			"woo-comparison/editor.css": "blocks/blocks/woo-comparison/editor.scss"
+			"woo-comparison/editor.css": "pro/blocks/woo-comparison/editor.scss"
 		}
 	},
 	"product-add-to-cart": {

@@ -14,12 +14,13 @@ import { Placeholder } from '@wordpress/components';
  */
 import metadata from './block.json';
 import attributes from './attributes.js';
-import { faIcon as icon } from '../../helpers/icons.js';
 import edit from './edit.js';
+
+const { faIcon: icon } = window.otterUtils.icons;
 
 const { name } = metadata;
 
-if ( Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive ) && Boolean( window.themeisleGutenberg.hasWooCommerce ) && Boolean( window.themeisleGutenberg.hasNeveSupport.wooComparison ) ) {
+if ( Boolean( window.otterPro.hasWooCommerce ) && Boolean( window.otterPro.hasNeveSupport.wooComparison ) ) {
 	registerBlockType( name, {
 		...metadata,
 		title: __( 'WooCommerce Comparison Table', 'otter-blocks' ),

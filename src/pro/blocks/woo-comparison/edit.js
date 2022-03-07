@@ -30,7 +30,8 @@ import defaultAttributes from './attributes.js';
 import Placeholder from './placeholder.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import { blockInit } from '../../helpers/block-utility.js';
+
+const { blockInit } = window.otterUtils;
 
 const Edit = ({
 	attributes,

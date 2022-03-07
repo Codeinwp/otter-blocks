@@ -26,7 +26,7 @@ import { Button } from '@wordpress/components';
 
 const DragHandle = SortableHandle( () => {
 	return (
-		<div className="otter-blocks-sortable-handle" tabIndex="0">
+		<div className="o-sortable-handle" tabIndex="0">
 			<span></span>
 		</div>
 	);
@@ -53,13 +53,13 @@ export const SortableItem = ({
 	return (
 		<div
 			className={ classnames(
-				'otter-blocks-sortable-item-area',
-				`otter-blocks-sortable-item-area-${ value }`
+				'o-sortable-item-area',
+				`o-sortable-item-area-${ value }`
 			) }
 		>
 			<div
 				className={ classnames(
-					'otter-blocks-sortable-item',
+					'o-sortable-item',
 					{
 						'hidden': hidden
 					}
@@ -67,7 +67,7 @@ export const SortableItem = ({
 			>
 				<DragHandle />
 
-				<div className="otter-blocks-sortable-label">
+				<div className="o-sortable-label">
 					{ label }
 				</div>
 
@@ -75,7 +75,7 @@ export const SortableItem = ({
 					icon={ icon }
 					label={ message }
 					showTooltip={ true }
-					className="otter-blocks-sortable-button"
+					className="o-sortable-button"
 					onClick={ () =>	toggleFields( value ) }
 				/>
 			</div>

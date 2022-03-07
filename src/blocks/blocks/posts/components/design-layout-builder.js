@@ -51,7 +51,7 @@ const LayoutBuilder = ({
 		<Fragment>
 			<div
 				className={ classnames(
-					'otter-blocks-sortable',
+					'o-sortable',
 					attributes.style
 				) }
 			>
