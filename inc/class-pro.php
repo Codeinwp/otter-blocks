@@ -40,7 +40,7 @@ class Pro {
 	 * @return  bool
 	 */
 	public static function is_pro() {
-		return class_exists( '\ThemeIsle\Otter_Pro\Main' );
+		return class_exists( '\ThemeIsle\Otter_Pro\Main' ) && defined( 'OTTER_PRO_VERSION' );
 	}
 
 
@@ -87,7 +87,7 @@ class Pro {
 		<div class="clear">
 			<p><?php _e( 'Unlock the full power of WooCommerce Builder with Otter Pro.', 'otter-blocks' ); ?></p>
 
-			<a href="<?php echo self::get_url(); ?>" target="_blank" class="button button-primary">
+			<a href="<?php echo esc_url( self::get_url() ); ?>" target="_blank" class="button button-primary">
 				<?php _e( 'Get Otter Pro', 'otter-blocks' ); ?>
 			</a>
 		</div>

@@ -23,11 +23,12 @@ class Main {
 	 * Initialize the class
 	 */
 	public function init() {
-		if ( ! defined( 'OTTER_PRO_URL' ) ) {
+		if ( ! defined( 'OTTER_PRO_VERSION' ) ) {
 			define( 'OTTER_PRO_URL', OTTER_BLOCKS_URL . 'plugins/otter-pro/' );
 			define( 'OTTER_PRO_PATH', OTTER_BLOCKS_PATH . '/plugins/otter-pro/' );
 			define( 'OTTER_PRO_BUILD_URL', OTTER_BLOCKS_URL . 'build/pro/' );
 			define( 'OTTER_PRO_BUILD_PATH', OTTER_BLOCKS_PATH . '/build/pro/' );
+			define( 'OTTER_PRO_VERSION', OTTER_BLOCKS_VERSION );
 		}
 
 		add_action( 'otter_blocks_autoloader', array( $this, 'autoload_classes' ) );
