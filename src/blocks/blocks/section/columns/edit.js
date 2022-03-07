@@ -76,6 +76,7 @@ const Edit = ({
 
 	const {
 		sectionBlock,
+		isViewportAvailable,
 		isPreviewDesktop,
 		isPreviewTablet,
 		isPreviewMobile,
@@ -93,14 +94,15 @@ const Edit = ({
 			getDefaultBlockVariation
 		} = select( 'core/blocks' );
 
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
 
 		return {
 			sectionBlock: getBlock( clientId ),
 			children: getBlock( clientId )?.innerBlocks || [],
-			isPreviewDesktop: 'Desktop' === __experimentalGetPreviewDeviceType(),
-			isPreviewTablet: 'Tablet' === __experimentalGetPreviewDeviceType(),
-			isPreviewMobile: 'Mobile' === __experimentalGetPreviewDeviceType(),
+			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
+			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
+			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
+			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false,
 			blockType: getBlockType( name ),
 			defaultVariation: getDefaultBlockVariation( name, 'block' ),
 			variations: getBlockVariations( name, 'block' ).filter( ({ isDefault }) => ! isDefault )
@@ -160,7 +162,7 @@ const Edit = ({
 
 	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
 
-	if ( ! isMobile ) {
+	if ( isViewportAvailable && ! isMobile ) {
 		isDesktop = isPreviewDesktop;
 		isTablet = isPreviewTablet;
 		isMobile = isPreviewMobile;

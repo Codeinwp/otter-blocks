@@ -48,6 +48,7 @@ const getConfiguration = ( elem ) => {
 /**
  * Start the count animation.
  * @param {HTMLDivElement} elem The HTML element.
+ * @return {Function} Start the typing animation.
  */
 const initTyping = ( elem ) => {
 	const text = elem?.innerHTML || '';
@@ -77,22 +78,22 @@ const initTyping = ( elem ) => {
 	typingPlaceholder.innerHTML = text.slice( 0, 0 );
 	fillPlaceholder.innerHTML = text.slice( 0 );
 
+	return () => {
+		setTimeout( () => {
+			start( ( i ) => {
+				typingPlaceholder.innerHTML = text.slice( 0, i );
+				if ( i < len ) {
+					fillPlaceholder.innerHTML = text.slice( i );
+				}
+				if ( len >= steps ) {
+					stop();
+				}
+			}, () => {
+				elem.innerHTML = originalContent;
+			});
 
-	setTimeout( () => {
-		start( ( i ) => {
-			typingPlaceholder.innerHTML = text.slice( 0, i );
-			if ( i < len ) {
-				fillPlaceholder.innerHTML = text.slice( i );
-			}
-			if ( len >= steps ) {
-				stop();
-			}
-		}, () => {
-			elem.innerHTML = originalContent;
-		});
-
-	}, config?.delay || 0 );
-
+		}, config?.delay || 0 );
+	};
 };
 
 domReady( () => {
@@ -105,11 +106,12 @@ domReady( () => {
 	setTimeout( () => {
 		const anims = document.querySelectorAll( 'o-anim-typing' );
 		anims.forEach( ( elem ) => {
+			const startTyping = initTyping( elem );
 			const observer = new IntersectionObserver( ( entries ) => {
 				entries.forEach( entry => {
 					if ( entry.isIntersecting && 0 < entry.intersectionRect.height ) {
 						observer.unobserve( elem );
-						initTyping( elem );
+						startTyping();
 					}
 				});
 			}, options );

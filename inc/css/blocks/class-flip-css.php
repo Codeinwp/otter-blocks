@@ -215,7 +215,7 @@ class Flip_CSS extends Base_CSS {
 							),
 						),
 						'condition'      => function( $attrs ) {
-							return isset( $attrs['boxShadow'] ) && ( ! isset( $attrs['isInverted'] ) || ( isset( $attrs['isInverted'] ) && false === $attrs['isInverted'] ) );
+							return isset( $attrs['boxShadow'] );
 						},
 					),
 					array(

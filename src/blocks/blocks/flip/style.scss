@@ -39,13 +39,16 @@
 
 	.o-flip-inner {
 		position: relative;
-		width: var( --width );
+		width:var( --width );
 		height: var( --height );
-
 		text-align: center;
 		transition: transform 0.8s;
 		transform-style: preserve-3d;
 		background-size: cover;
+
+		@media ( max-width: 960px ) {
+			width: min(var( --width ), 100%);
+		}
 	}
 
 	.o-flip-front, .o-flip-back {
@@ -99,13 +102,18 @@
 		justify-content: var( --backVerticalAlign );
 	}
 
-	&.invert {
+	.invert {
 		.o-flip-front {
 			transform: var( --flip-anim );
+			box-shadow: var( --boxShadow );
 		}
 
 		.o-flip-back {
 			transform: unset;
+			box-shadow: unset;
+			&:hover {
+				box-shadow: var( --boxShadow );
+			}
 		}
 	}
 }
