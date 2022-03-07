@@ -35,9 +35,11 @@ const Inspector = ({
 	attributes,
 	setAttributes
 }) => {
-	const getView = useSelect( ( select ) => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
-		return __experimentalGetPreviewDeviceType();
+	const getView = useSelect( select => {
+		const { getView } = select( 'themeisle-gutenberg/data' );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+
+		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
 	}, []);
 
 	const excludeComponent = ( value, componentName ) => {

@@ -74,16 +74,18 @@ const Edit = ({
 	 * Determine the platform
 	 */
 	const {
+		isViewportAvailable,
 		isPreviewDesktop,
 		isPreviewTablet,
 		isPreviewMobile
 	} = useSelect( select => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
 
 		return {
-			isPreviewDesktop: 'Desktop' === __experimentalGetPreviewDeviceType(),
-			isPreviewTablet: 'Tablet' === __experimentalGetPreviewDeviceType(),
-			isPreviewMobile: 'Mobile' === __experimentalGetPreviewDeviceType()
+			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
+			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
+			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
+			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
 		};
 	}, []);
 
@@ -101,7 +103,7 @@ const Edit = ({
 
 	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
 
-	if ( ! isMobile ) {
+	if ( isViewportAvailable && ! isMobile ) {
 		isDesktop = isPreviewDesktop;
 		isTablet = isPreviewTablet;
 		isMobile = isPreviewMobile;
