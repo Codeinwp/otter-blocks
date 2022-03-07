@@ -27,14 +27,14 @@
 		}
 	},
 	"business-hours": {
-		"block": "blocks/blocks/business-hours/block.json",
+		"block": "pro/blocks/business-hours/block.json",
 		"assets": {
-			"business-hours/editor.css": "blocks/blocks/business-hours/editor.scss",
-			"business-hours/style.css": "blocks/blocks/business-hours/style.scss"
+			"business-hours/editor.css": "pro/blocks/business-hours/editor.scss",
+			"business-hours/style.css": "pro/blocks/business-hours/style.scss"
 		}
 	},
 	"business-hours-item": {
-		"block": "blocks/blocks/business-hours/item/block.json"
+		"block": "pro/blocks/business-hours/item/block.json"
 	},
 	"button-group": {
 		"block": "blocks/blocks/button-group/group/block.json",

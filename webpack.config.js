@@ -141,6 +141,7 @@ module.exports = [
 				'./src/blocks/index.js',
 				'./src/blocks/plugins/registerPlugin.js',
 				'./src/blocks/components/index.js',
+				'./src/blocks/helpers/index.js',
 				...glob.sync( './src/blocks/blocks/**/index.js' )
 			],
 			'leaflet-map': './src/blocks/frontend/leaflet-map/index.js',

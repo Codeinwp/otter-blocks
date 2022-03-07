@@ -255,4 +255,3 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 	});
 };
 
-import { useDispatch, useSelect } from '@wordpress/data';

@@ -17,8 +17,9 @@ import {
  * Internal dependencies
  */
 import metadata from './block.json';
-import { blockInit } from '../../../helpers/block-utility.js';
 import Inspector from './inspector.js';
+
+const { blockInit } = window.otterUtils;
 
 const { attributes: defaultAttributes } = metadata;
 

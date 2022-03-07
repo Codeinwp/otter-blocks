@@ -31,11 +31,12 @@ class Main {
 			define( 'OTTER_PRO_VERSION', OTTER_BLOCKS_VERSION );
 		}
 
-		add_action( 'otter_blocks_autoloader', array( $this, 'autoload_classes' ) );
+		add_filter( 'otter_blocks_autoloader', array( $this, 'autoload_classes' ) );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
-		add_action( 'otter_blocks_register_blocks', array( $this, 'register_blocks' ) );
-		add_action( 'otter_blocks_register_dynamic_blocks', array( $this, 'register_dynamic_blocks' ) );
+		add_filter( 'otter_blocks_register_blocks', array( $this, 'register_blocks' ) );
+		add_filter( 'otter_blocks_register_dynamic_blocks', array( $this, 'register_dynamic_blocks' ) );
+		add_filter( 'otter_blocks_register_css', array( $this, 'register_blocks_css' ) );
 	}
 
 	/**
@@ -55,6 +56,82 @@ class Main {
 		$classnames = array_merge( $classnames, $classes );
 
 		return $classnames;
+	}
+
+	/**
+	 * Register Blocks.
+	 *
+	 * @param string $blocks Blocks List.
+	 * 
+	 * @since   2.0.1
+	 * @access  public
+	 */
+	public function register_blocks( $blocks ) {
+		$pro_blocks = array(
+			'product-add-to-cart',
+			'product-images',
+			'product-meta',
+			'product-price',
+			'product-rating',
+			'product-related-products',
+			'product-short-description',
+			'product-stock',
+			'product-tabs',
+			'product-title',
+			'product-upsells',
+		);
+
+		$blocks = array_merge( $blocks, $pro_blocks );
+
+		return $blocks;
+	}
+
+	/**
+	 * Register Dynamic Blocks.
+	 *
+	 * @param string $dynamic_blocks Dynamic Blocks.
+	 * 
+	 * @since   2.0.1
+	 * @access  public
+	 */
+	public function register_dynamic_blocks( $dynamic_blocks ) {
+		$blocks = array(
+			'add-to-cart-button'        => '\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
+			'product-add-to-cart'       => '\ThemeIsle\Otter_Pro\Render\Product_Add_To_Cart_Block',
+			'product-images'            => '\ThemeIsle\Otter_Pro\Render\Product_Images_Block',
+			'product-meta'              => '\ThemeIsle\Otter_Pro\Render\Product_Meta_Block',
+			'product-price'             => '\ThemeIsle\Otter_Pro\Render\Product_Price_Block',
+			'product-rating'            => '\ThemeIsle\Otter_Pro\Render\Product_Rating_Block',
+			'product-related-products'  => '\ThemeIsle\Otter_Pro\Render\Product_Related_Products_Block',
+			'product-short-description' => '\ThemeIsle\Otter_Pro\Render\Product_Short_Description_Block',
+			'product-stock'             => '\ThemeIsle\Otter_Pro\Render\Product_Stock_Block',
+			'product-tabs'              => '\ThemeIsle\Otter_Pro\Render\Product_Tabs_Block',
+			'product-title'             => '\ThemeIsle\Otter_Pro\Render\Product_Title_Block',
+			'product-upsells'           => '\ThemeIsle\Otter_Pro\Render\Product_Upsells_Block',
+		);
+
+		$dynamic_blocks = array_merge( $dynamic_blocks, $blocks );
+
+		return $dynamic_blocks;
+	}
+
+	/**
+	 * Register Blocks CSS.
+	 *
+	 * @param string $blocks Blocks List.
+	 * 
+	 * @since   2.0.1
+	 * @access  public
+	 */
+	public function register_blocks_css( $blocks ) {
+		$pro_blocks = array(
+			'\ThemeIsle\OtterPro\CSS\Blocks\Business_Hours_CSS',
+			'\ThemeIsle\OtterPro\CSS\Blocks\Business_Hours_Item_CSS',
+		);
+
+		$blocks = array_merge( $blocks, $pro_blocks );
+
+		return $blocks;
 	}
 
 	/**
@@ -115,63 +192,6 @@ class Main {
 
 		$asset_file = include OTTER_PRO_BUILD_PATH . 'blocks.asset.php';
 		wp_enqueue_style( 'otter-pro', OTTER_PRO_BUILD_URL . 'blocks.css', [], $asset_file['version'] );
-	}
-
-	/**
-	 * Register Dynamic Blocks.
-	 *
-	 * @param string $dynamic_blocks Dynamic Blocks.
-	 * 
-	 * @since   2.0.1
-	 * @access  public
-	 */
-	public function register_dynamic_blocks( $dynamic_blocks ) {
-		$blocks = array(
-			'add-to-cart-button'        => '\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
-			'product-add-to-cart'       => '\ThemeIsle\Otter_Pro\Render\Product_Add_To_Cart_Block',
-			'product-images'            => '\ThemeIsle\Otter_Pro\Render\Product_Images_Block',
-			'product-meta'              => '\ThemeIsle\Otter_Pro\Render\Product_Meta_Block',
-			'product-price'             => '\ThemeIsle\Otter_Pro\Render\Product_Price_Block',
-			'product-rating'            => '\ThemeIsle\Otter_Pro\Render\Product_Rating_Block',
-			'product-related-products'  => '\ThemeIsle\Otter_Pro\Render\Product_Related_Products_Block',
-			'product-short-description' => '\ThemeIsle\Otter_Pro\Render\Product_Short_Description_Block',
-			'product-stock'             => '\ThemeIsle\Otter_Pro\Render\Product_Stock_Block',
-			'product-tabs'              => '\ThemeIsle\Otter_Pro\Render\Product_Tabs_Block',
-			'product-title'             => '\ThemeIsle\Otter_Pro\Render\Product_Title_Block',
-			'product-upsells'           => '\ThemeIsle\Otter_Pro\Render\Product_Upsells_Block',
-		);
-
-		$dynamic_blocks = array_merge( $dynamic_blocks, $blocks );
-
-		return $dynamic_blocks;
-	}
-
-	/**
-	 * Register Blocks.
-	 *
-	 * @param string $blocks Blocks List.
-	 * 
-	 * @since   2.0.1
-	 * @access  public
-	 */
-	public function register_blocks( $blocks ) {
-		$pro_blocks = array(
-			'product-add-to-cart',
-			'product-images',
-			'product-meta',
-			'product-price',
-			'product-rating',
-			'product-related-products',
-			'product-short-description',
-			'product-stock',
-			'product-tabs',
-			'product-title',
-			'product-upsells',
-		);
-
-		$blocks = array_merge( $blocks, $pro_blocks );
-
-		return $blocks;
 	}
 
 	/**
