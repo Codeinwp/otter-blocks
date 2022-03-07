@@ -405,17 +405,22 @@ const Edit = ({
 			{
 				value: 'postType',
 				label: __( 'Post Type', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on post type.' )
+				help: __( 'The selected block will be visible if post becomes to one of the selected post types.' )
 			},
 			{
 				value: 'postCategory',
 				label: __( 'Post Category', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on post category.' )
+				help: __( 'The selected block will be visible based on selected post categories.' )
 			},
 			{
 				value: 'postMeta',
 				label: __( 'Post Meta', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on post meta condition.' )
+			},
+			{
+				value: 'queryString',
+				label: __( 'Query String', 'otter-blocks' ),
+				help: __( 'The condition will be met if the URL contains specified parameters.' )
 			},
 			{
 				value: 'dateRange',
@@ -456,11 +461,6 @@ const Edit = ({
 				value: 'learnDashCourseStatus',
 				label: __( 'Course Status', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on user\'s LearnDash course status.' )
-			},
-			{
-				value: 'queryString',
-				label: __( 'Query String', 'otter-blocks' ),
-				help: __( 'The condition will be met if the URL contains the specified parameters.' )
 			}
 		];
 
@@ -774,7 +774,7 @@ const Edit = ({
 												<TextareaControl
 													label={ __( 'Query String', 'otter-blocks' ) }
 													help={ __( 'Write a key-value pair for each parameter, one per line.', 'otter-blocks' ) }
-													placeholder='eg. utm_source=facebook'
+													placeholder="eg. utm_source=facebook"
 													value={ i.query_string }
 													onChange={ e => changeValue( e.replaceAll( '\n', '&' ), index, n, 'query_string' ) }
 												/>
