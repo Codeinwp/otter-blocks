@@ -39,13 +39,16 @@
 
 	.o-flip-inner {
 		position: relative;
-		width: var( --width );
+		width:var( --width );
 		height: var( --height );
-
 		text-align: center;
 		transition: transform 0.8s;
 		transform-style: preserve-3d;
 		background-size: cover;
+
+		@media ( max-width: 960px ) {
+			width: min(var( --width ), 100%);
+		}
 	}
 
 	.o-flip-front, .o-flip-back {
