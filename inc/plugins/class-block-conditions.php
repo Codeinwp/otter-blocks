@@ -480,7 +480,7 @@ class Block_Conditions {
 	 * @access public
 	 */
 	public function has_total_spent( $value ) {
-		$total = ( new \WC_Customer() )->get_total_spent();
+		$total = wc_get_customer_total_spent( get_current_user_id() );
 
 		if ( floatval( $value ) < $total ) {
 			return true;
