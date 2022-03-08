@@ -1,3 +1,27 @@
+#### [Version 2.0.0](https://github.com/Codeinwp/otter-blocks/compare/v1.7.5...v2.0.0) (2022-03-08)
+
+- Add Flip Block
+- Add Block Conditions Extension
+- Add Count Animation Extension
+- Add Typing Animation Extension
+- Add Sticky Block Extension
+- Add Global Defaults Sync
+- Add Pricing Section Block
+- Upgrade to Block Registration API V2
+- Simplify Section's Sizing Controls
+- Allow Image/SVG Icons in Icon List
+- Allow reset in Section Max Width
+- Posts Block Revamp
+- Update animate.css to latest version
+- Improve Web Vitals
+- Use CSS Variables in generated CSS
+- Reduce SCSS nesting
+- Remove unnecessary post types from Posts block
+- Fix empty slider freezing the website
+- Fix Widgets screen crashing if used alongside WooCommerce
+- Fix fatal error when FS mode isn't set to direct
+- Fix Overlay background not working in Section Block
+
 ##### [Version 1.7.5](https://github.com/Codeinwp/otter-blocks/compare/v1.7.4...v1.7.5) (2022-02-07)
 
 - Increase Section's Max Width
