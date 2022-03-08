@@ -1,6 +1,6 @@
 {
 	"name": "otter-blocks",
-	"version": "1.7.5",
+	"version": "2.0.0",
 	"description": "Gutenberg Blocks and Template Library by Otter",
 	"scripts": {
 		"build": "wp-scripts build && grunt build",

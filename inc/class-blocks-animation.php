@@ -51,7 +51,7 @@ class Blocks_Animation {
 
 		wp_set_script_translations( 'otter-animation', 'otter-blocks' );
 
-		$asset_file = include OTTER_BLOCKS_PATH . '/build/animation/anim-count.asset.php';
+		$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/anim-count.asset.php';
 		wp_enqueue_script(
 			'otter-count',
 			BLOCKS_ANIMATION_URL . 'build/animation/anim-count.js',
@@ -110,7 +110,7 @@ class Blocks_Animation {
 
 		wp_script_add_data( 'otter-animation-frontend', 'async', true );
 
-		$asset_file = include OTTER_BLOCKS_PATH . '/build/animation/anim-count.asset.php';
+		$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/anim-count.asset.php';
 		wp_enqueue_script(
 			'otter-count',
 			BLOCKS_ANIMATION_URL . 'build/animation/anim-count.js',
@@ -121,7 +121,7 @@ class Blocks_Animation {
 
 		wp_script_add_data( 'otter-count', 'defer', true );
 
-		$asset_file = include OTTER_BLOCKS_PATH . '/build/animation/anim-typing.asset.php';
+		$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/anim-typing.asset.php';
 		wp_enqueue_script(
 			'otter-typing',
 			BLOCKS_ANIMATION_URL . 'build/animation/anim-typing.js',
