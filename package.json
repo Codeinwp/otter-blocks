@@ -1,6 +1,6 @@
 {
 	"name": "otter-blocks",
-	"version": "1.7.5",
+	"version": "2.0.0",
 	"description": "Gutenberg Blocks and Template Library by Otter",
 	"scripts": {
 		"build": "wp-scripts build && grunt build",
@@ -66,5 +66,8 @@
 		"replace-in-file": "^6.3.1",
 		"semantic-release": "^19.0.2",
 		"semantic-release-slack-bot": "^3.5.2"
+	},
+	"optionalDependencies": {
+		"fsevents": "^2.3.2"
 	}
 }

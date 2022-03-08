@@ -1,5 +1,5 @@
 # Gutenberg Blocks and Template Library by Otter #
-**Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/)  
+**Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/)  
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder  
 **Requires at least:** 5.6  
 **Tested up to:** 5.9  
@@ -51,6 +51,7 @@ It has:
 - Plugin Card Block
 - Pricing Section
 - Review Block
+- Flip Block
 
 # STUNNING WEB PAGES WITH DRAG AND DROP EFFICIENCY #
 
@@ -101,6 +102,33 @@ Help your site shine with design options built to enhance your brand. Every bloc
 3. Posts Block
 
 ## Changelog ##
+
+#### [Version 2.0.0](https://github.com/Codeinwp/otter-blocks/compare/v1.7.5...v2.0.0) (2022-03-08)
+
+- Add Flip Block
+- Add Block Conditions Extension
+- Add Count Animation Extension
+- Add Typing Animation Extension
+- Add Sticky Block Extension
+- Add Global Defaults Sync
+- Add Pricing Section Block
+- Upgrade to Block Registration API V2
+- Simplify Section's Sizing Controls
+- Allow Image/SVG Icons in Icon List
+- Allow reset in Section Max Width
+- Posts Block Revamp
+- Update animate.css to latest version
+- Improve Web Vitals
+- Use CSS Variables in generated CSS
+- Reduce SCSS nesting
+- Remove unnecessary post types from Posts block
+- Fix empty slider freezing the website
+- Fix Widgets screen crashing if used alongside WooCommerce
+- Fix fatal error when FS mode isn't set to direct
+- Fix Overlay background not working in Section Block
+
+
+
 
 ##### [Version 1.7.5](https://github.com/Codeinwp/otter-blocks/compare/v1.7.4...v1.7.5) (2022-02-07)
 
