@@ -1,0 +1,117 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/review",
+	"title": "Product Review",
+	"category": "themeisle-blocks",
+	"description": "Turn your posts into smart reviews with ratings and generate leads with a performing review block.",
+	"keywords": [ "product", "review", "stars" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"title": {
+			"type": "string"
+		},
+		"currency": {
+			"type": "string",
+			"default": "USD"
+		},
+		"price": {
+			"type": "number"
+		},
+		"discounted": {
+			"type": "number"
+		},
+		"image": {
+			"type": "object"
+		},
+		"description": {
+			"type": "string"
+		},
+		"features": {
+			"type": "array",
+			"default": [
+			{
+				"title": "Stability",
+				"rating": 9
+			},
+			{
+				"title": "Ease of Use",
+				"rating": 4
+			},
+			{
+				"title": "Look & Feel",
+				"rating": 9
+			},
+			{
+				"title": "Price",
+				"rating": 7
+			}
+			]
+		},
+		"pros": {
+			"type": "array",
+			"default": [
+			"Easy to use",
+			"Good price",
+			"Sturdy build and ergonomics"
+			]
+		},
+		"cons": {
+			"type": "array",
+			"default": [
+			"Incompatible with old versions",
+			"Hard to assemble",
+			"Bad color combination"
+			]
+		},
+		"links": {
+			"type": "array",
+			"default": [
+			{
+				"label": "Buy on Amazon",
+				"href": "",
+				"isSponsored": false
+			},
+			{
+				"label": "Buy on eBay",
+				"href": "",
+				"isSponsored": false
+			}
+			]
+		},
+		"primaryColor": {
+			"type": "string"
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"textColor": {
+			"type": "string"
+		},
+		"buttonTextColor": {
+			"type": "string"
+		},
+		"isSynced": {
+			"type": "array"
+		}
+	},
+	"styles": [
+		{
+			"name": "default",
+			"label": "Default",
+			"isDefault": true
+		},
+		{
+			"name": "single-column",
+			"label": "Single Column"
+		}
+	],
+	"supports": {
+		"html": false
+	},
+	"editorStyle": "otter-review-editor",
+	"style": "otter-review-style"
+}

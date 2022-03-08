@@ -14,7 +14,7 @@ const Notices = () => {
 	const { removeNotice } = useDispatch( 'core/notices' );
 
 	return (
-		<div className="library-modal-error">
+		<div className="o-library-modal-error">
 			{ notices.map( notice => (
 				<Notice
 					key={ notice.id }

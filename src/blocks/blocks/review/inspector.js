@@ -6,9 +6,9 @@ import { pick } from 'lodash';
 import { __ } from '@wordpress/i18n';
 
 import {
+	__experimentalColorGradientControl as ColorGradientControl,
 	ContrastChecker,
 	InspectorControls,
-	PanelColorSettings,
 	MediaPlaceholder
 } from '@wordpress/block-editor';
 
@@ -25,6 +25,11 @@ import {
 
 import { useState, Fragment } from '@wordpress/element';
 
+/**
+ * Internal dependencies
+ */
+import SyncControl from '../../components/sync-control/index.js';
+
 const PanelItem = ({
 	title,
 	remove,
@@ -33,10 +38,10 @@ const PanelItem = ({
 	const [ isOpen, setOpen ] = useState( false );
 
 	return (
-		<div className="wp-block-themeisle-blocks-review__inspector_panel_item">
-			<div className="wp-block-themeisle-blocks-review__inspector_panel_item__header">
+		<div className="o-review__inspector_panel_item">
+			<div className="o-review__inspector_panel_item__header">
 				<Button
-					className="wp-block-themeisle-blocks-review__inspector_panel_item__title"
+					className="o-review__inspector_panel_item__title"
 					onClick={ () => setOpen( ! isOpen ) }
 				>
 					{ title }
@@ -46,13 +51,13 @@ const PanelItem = ({
 					icon="no-alt"
 					label={ __( 'Remove', 'otter-blocks' ) }
 					showTooltip={ true }
-					className="wp-block-themeisle-blocks-review__inspector_panel_item__arrow"
+					className="o-review__inspector_panel_item__arrow"
 					onClick={ remove }
 				/>
 			</div>
 
 			{ isOpen && (
-				<div className="wp-block-themeisle-blocks-review__inspector_panel_item__content">
+				<div className="o-review__inspector_panel_item__content">
 					{ children }
 				</div>
 			) }
@@ -63,6 +68,7 @@ const PanelItem = ({
 const Inspector = ({
 	attributes,
 	setAttributes,
+	getValue,
 	productAttributes
 }) => {
 	const addFeature = () => {
@@ -159,7 +165,7 @@ const Inspector = ({
 						<Notice
 							status="warning"
 							isDismissible={ false }
-							className="otter-html-anchor-control-notice"
+							className="o-html-anchor-control-notice"
 						>
 							{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
 						</Notice>
@@ -219,7 +225,7 @@ const Inspector = ({
 					/>
 				) : (
 					<BaseControl
-						className="wp-block-themeisle-blocks-review__inspector_image"
+						className="o-review__inspector_image"
 					>
 						<img
 							src={ productAttributes?.image?.url || attributes.image.url }
@@ -266,7 +272,7 @@ const Inspector = ({
 
 				<Button
 					isSecondary
-					className="wp-block-themeisle-blocks-review__inspector_add"
+					className="o-review__inspector_add"
 					onClick={ addFeature }
 				>
 					{ __( 'Add Feature', 'otter-blocks' ) }
@@ -295,7 +301,7 @@ const Inspector = ({
 
 				<Button
 					isSecondary
-					className="wp-block-themeisle-blocks-review__inspector_add"
+					className="o-review__inspector_add"
 					onClick={ addPro }
 				>
 					{ __( 'Add Item', 'otter-blocks' ) }
@@ -324,7 +330,7 @@ const Inspector = ({
 
 				<Button
 					isSecondary
-					className="wp-block-themeisle-blocks-review__inspector_add"
+					className="o-review__inspector_add"
 					onClick={ addCon }
 				>
 					{ __( 'Add Item', 'otter-blocks' ) }
@@ -340,7 +346,7 @@ const Inspector = ({
 						<Notice
 							status="warning"
 							isDismissible={ false }
-							className="otter-html-anchor-control-notice"
+							className="o-html-anchor-control-notice"
 						>
 							{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
 						</Notice>
@@ -411,7 +417,7 @@ const Inspector = ({
 
 							<Button
 								isSecondary
-								className="wp-block-themeisle-blocks-review__inspector_add"
+								className="o-review__inspector_add"
 								onClick={ addLinks }
 							>
 								{ __( 'Add Links', 'otter-blocks' ) }
@@ -419,43 +425,67 @@ const Inspector = ({
 						</Fragment>
 					)
 				}
-
 			</PanelBody>
 
-			<PanelColorSettings
+			<PanelBody
 				title={ __( 'Color', 'otter-blocks' ) }
 				initialOpen={ false }
-				colorSettings={ [
-					{
-						value: attributes.primaryColor,
-						onChange: value => setAttributes({ primaryColor: value }),
-						label: __( 'Primary', 'otter-blocks' )
-					},
-					{
-						value: attributes.backgroundColor,
-						onChange: value => setAttributes({ backgroundColor: value }),
-						label: __( 'Background', 'otter-blocks' )
-					},
-					{
-						value: attributes.textColor,
-						onChange: value => setAttributes({ textColor: value }),
-						label: __( 'Text', 'otter-blocks' )
-					},
-					{
-						value: attributes.buttonTextColor,
-						onChange: value => setAttributes({ buttonTextColor: value }),
-						label: __( 'Button Text', 'otter-blocks' )
-					}
-				] }
 			>
+				<SyncControl
+					field="primaryColor"
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<ColorGradientControl
+						label={ __( 'Primary', 'otter-blocks' ) }
+						colorValue={ getValue( 'primaryColor' ) }
+						onColorChange={ e => setAttributes({ primaryColor: e }) }
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field="backgroundColor"
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<ColorGradientControl
+						label={ __( 'Background', 'otter-blocks' ) }
+						colorValue={ getValue( 'backgroundColor' ) }
+						onColorChange={ e => setAttributes({ backgroundColor: e }) }
+					/>
+				</SyncControl>
 
 				<ContrastChecker
 					{ ...{
-						textColor: attributes.primaryColor,
-						backgroundColor: attributes.backgroundColor
+						textColor: getValue( 'primaryColor' ),
+						backgroundColor: getValue( 'backgroundColor' )
 					} }
 				/>
-			</PanelColorSettings>
+
+				<SyncControl
+					field="textColor"
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<ColorGradientControl
+						label={ __( 'Text', 'otter-blocks' ) }
+						colorValue={ getValue( 'textColor' ) }
+						onColorChange={ e => setAttributes({ textColor: e }) }
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field="buttonTextColor"
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<ColorGradientControl
+						label={ __( 'Button Text', 'otter-blocks' ) }
+						colorValue={ getValue( 'buttonTextColor' ) }
+						onColorChange={ e => setAttributes({ buttonTextColor: e }) }
+					/>
+				</SyncControl>
+			</PanelBody>
 
 			{ ( Boolean( window.themeisleGutenberg.hasNeveSupport.hasNeve ) && ! Boolean( window.themeisleGutenberg.hasNeveSupport.hasNevePro ) ) && (
 				<PanelBody

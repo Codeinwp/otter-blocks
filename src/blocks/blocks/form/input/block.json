@@ -1,0 +1,35 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/form-input",
+	"title": "Text Field",
+	"category": "themeisle-blocks",
+	"description": "Display a contact form for your clients.",
+	"keywords": [ "input", "text", "email" ],
+	"parent": [ "themeisle-blocks/form" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"type": {
+			"type": "string",
+			"default": "text"
+		},
+		"label": {
+			"type": "string"
+		},
+		"placeholder": {
+			"type": "string"
+		},
+		"isRequired": {
+			"type": "boolean"
+		},
+		"mappedName": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"align": [ "wide", "full" ]
+	}
+}

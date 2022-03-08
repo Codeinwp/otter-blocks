@@ -6,7 +6,10 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -14,8 +17,7 @@ import { InnerBlocks } from '@wordpress/block-editor';
 import Separators from '../components/separators/index.js';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
 	const Tag = attributes.columnsHTMLTag;
 
@@ -24,7 +26,6 @@ const Save = ({
 	const mobileLayout = attributes.hideMobile ? '' : `has-mobile-${ attributes.layoutMobile }-layout`;
 
 	const classes = classnames(
-		className,
 		`has-${ attributes.columns }-columns`,
 		desktopLayout,
 		tabletLayout,
@@ -34,15 +35,16 @@ const Save = ({
 		{ 'hide-in-mobile': attributes.hideMobile },
 		{ 'has-reverse-columns-tablet': ( attributes.reverseColumnsTablet && ! attributes.hideTablet && 'collapsedRows' === attributes.layoutTablet ) },
 		{ 'has-reverse-columns-mobile': ( attributes.reverseColumnsMobile && ! attributes.hideMobile && 'collapsedRows' === attributes.layoutMobile ) },
-		`has-${ attributes.columnsGap }-gap`,
 		`has-vertical-${ attributes.verticalAlign }`
 	);
 
+	const blockProps = useBlockProps.save({
+		id: attributes.id,
+		className: classes
+	});
+
 	return (
-		<Tag
-			className={ classes }
-			id={ attributes.id }
-		>
+		<Tag { ...blockProps }>
 			<div className="wp-block-themeisle-blocks-advanced-columns-overlay"></div>
 
 			<Separators

@@ -3,13 +3,18 @@
 	"version": "1.7.5",
 	"description": "Gutenberg Blocks and Template Library by Otter",
 	"scripts": {
-		"build": "wp-scripts build",
-		"start": "wp-scripts start --watch",
+		"build": "wp-scripts build && grunt build",
+		"grunt": "grunt build",
+		"start": "rm -rf build && npm-run-all --parallel dev:*",
+		"dev:webpack": "wp-scripts start --watch",
+		"dev:grunt": "grunt watch",
+		"build-dev": "NODE_ENV=development wp-scripts build && grunt build",
 		"lint": "wp-scripts lint-js ./src",
 		"format": "wp-scripts lint-js ./src --fix",
 		"packages-update": "wp-scripts packages-update",
 		"release": "semantic-release",
-		"dist": "bash bin/dist.sh"
+		"dist": "bash bin/dist.sh",
+		"dist-dev": "bash bin/dist.sh development"
 	},
 	"repository": {
 		"type": "git",
@@ -51,9 +56,13 @@
 		"@wordpress/scripts": "^19.2.2",
 		"conventional-changelog-simple-preset": "^1.0.20",
 		"eslint-config-wordpress": "^2.0.0",
+		"filemanager-webpack-plugin": "^6.1.7",
 		"grunt": "^1.4.0",
+		"grunt-contrib-sass": "^2.0.0",
+		"grunt-contrib-watch": "^1.1.0",
 		"grunt-version": "^2.0.0",
 		"grunt-wp-readme-to-markdown": "^2.0.1",
+		"npm-run-all": "^4.1.5",
 		"replace-in-file": "^6.3.1",
 		"semantic-release": "^19.0.2",
 		"semantic-release-slack-bot": "^3.5.2"

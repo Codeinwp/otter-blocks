@@ -65,7 +65,7 @@
 		}
 	}
 
-	&.has-label {
+	&:not( .is-style-icons ) {
 		i {
 			border-right: 1px solid rgba( 255, 255, 255, 0.5 );
 			margin-right: 10px;

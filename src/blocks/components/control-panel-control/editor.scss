@@ -1,4 +1,4 @@
-.otter-control-panel-control {
+.o-control-panel-control {
 	padding: 10px 0;
 
 	.components-base-control__title {
@@ -15,8 +15,6 @@
 				display: flex;
 
 				button {
-					border: 1px solid #555d66;
-
 					&.is-tertiary {
 						border: none;
 						box-shadow: none;

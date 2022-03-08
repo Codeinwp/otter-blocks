@@ -47,7 +47,7 @@ const TemplatesList = ({
 
 	if ( preview ) {
 		return (
-			<div className="library-modal-preview">
+			<div className="o-library-modal-preview">
 				<BlockPreview
 					blocks={ selectedTemplateContent }
 					viewportWidth={ viewportWidth }
@@ -58,14 +58,14 @@ const TemplatesList = ({
 
 	if ( isLoading ) {
 		return (
-			<div className="library-modal-loader">
+			<div className="o-library-modal-loader">
 				<Spinner />
 			</div>
 		);
 	}
 
 	return (
-		<div className="library-modal-content">
+		<div className="o-library-modal-content">
 			{ data.map( i => {
 				if (
 					( i.template_url ) &&
@@ -86,9 +86,9 @@ const TemplatesList = ({
 
 			<div
 				aria-label={ __( 'Coming Soon', 'otter-blocks' ) }
-				className="library-modal-content__item"
+				className="o-library-modal-content__item"
 			>
-				<div className="library-modal-content__preview">
+				<div className="o-library-modal-content__preview">
 					<img src={ 'https://raw.githubusercontent.com/Codeinwp/gutenberg-templates/master/assets/images/coming-soon.jpg' } />
 				</div>
 			</div>

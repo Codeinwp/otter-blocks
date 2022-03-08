@@ -1,6 +1,8 @@
 /**
  * WordPress dependencies
  */
+import { useBlockProps } from '@wordpress/block-editor';
+
 import { Disabled } from '@wordpress/components';
 
 import { Fragment } from '@wordpress/element';
@@ -16,6 +18,8 @@ const Edit = ({
 	attributes,
 	setAttributes
 }) => {
+	const blockProps = useBlockProps();
+
 	return (
 		<Fragment>
 			<Controls
@@ -23,12 +27,14 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<Disabled>
-				<ServerSideRender
-					block="themeisle-blocks/sharing-icons"
-					attributes={ { ...attributes } }
-				/>
-			</Disabled>
+			<div { ...blockProps }>
+				<Disabled>
+					<ServerSideRender
+						block="themeisle-blocks/sharing-icons"
+						attributes={ { ...attributes } }
+					/>
+				</Disabled>
+			</div>
 		</Fragment>
 	);
 };

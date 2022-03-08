@@ -1,7 +1,9 @@
 /**
  * Internal dependencies
  */
-import attributes from './attributes.js';
+import metadata from './block.json';
+
+const { attributes } = metadata;
 
 const deprecated = [ {
 	attributes: {

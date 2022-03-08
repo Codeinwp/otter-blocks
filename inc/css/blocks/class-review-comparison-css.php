@@ -36,7 +36,7 @@ class Review_Comparison_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .otter-review-comparison__buttons a',
+				'selector'   => ' .o-review-comparison_buttons a',
 				'properties' => array(
 					array(
 						'property' => 'color',

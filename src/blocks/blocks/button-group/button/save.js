@@ -6,7 +6,10 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies.
  */
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -14,19 +17,17 @@ import { RichText } from '@wordpress/block-editor';
 import themeIsleIcons from './../../../helpers/themeisle-icons';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
+	const blockProps = useBlockProps.save({
+		id: attributes.id,
+		className: 'wp-block-button'
+	});
+
 	return (
-		<div
-			id={ attributes.id }
-			className={ classnames(
-				className,
-				'wp-block-button'
-			) }
-		>
+		<div { ...blockProps }>
 			<a
 				href={ attributes.link }
 				target={ attributes.newTab ? '_blank' : '_self' }

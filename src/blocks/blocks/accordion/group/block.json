@@ -1,0 +1,38 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/accordion",
+    "title": "Accordion",
+	"category": "themeisle-blocks",
+    "description": "Vertically collapsing accordions perfect for displaying your FAQs.",
+    "keywords": [ "accordions", "collapse", "faq" ],
+	"textdomain": "otter-blocks",
+    "attributes": {
+        "id": {
+            "type": "string"
+        },
+        "gap": {
+            "type": "string"
+        },
+        "titleColor": {
+            "type": "string"
+        },
+        "titleBackground": {
+            "type": "string"
+        },
+        "contentBackground": {
+            "type": "string"
+        },
+        "borderColor": {
+            "type": "string"
+        },
+		"isSynced": {
+			"type": "array"
+		}
+    },
+	"supports": {
+		"html": false
+	},
+	"editorStyle": "otter-accordion-editor",
+	"style": "otter-accordion-style"
+}

@@ -1,6 +1,13 @@
+/** @jsx jsx */
+
 /**
  * External dependencies
  */
+import {
+	css,
+	jsx
+} from '@emotion/react';
+
 import {
 	closeSmall,
 	external
@@ -11,7 +18,10 @@ import {
  */
 import { __ } from '@wordpress/i18n';
 
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import { Button } from '@wordpress/components';
 
@@ -24,14 +34,15 @@ import {
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import Inspector from './inspector.js';
-import defaultAttributes from './attributes.js';
-import { blockInit } from '../../helpers/block-utility.js';
+import { blockInit } from '../../helpers/block-utility';
+
+const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId
 }) => {
 	useEffect( () => {
@@ -41,19 +52,18 @@ const Edit = ({
 
 	const [ isEditing, setEditing ] = useState( false );
 
-	const style = {
-		content: {
-			minWidth: attributes.minWidth,
-			background: attributes.backgroundColor
-		},
-		close: {
-			color: attributes.closeColor
-		},
-		overlay: {
-			background: attributes.overlayColor,
-			opacity: ( attributes.overlayOpacity || 75 ) / 100
-		}
-	};
+	const styles = css`
+		--minWidth: ${ attributes.minWidth ? attributes.minWidth + 'px' : '400px' };
+		--backgroundColor: ${ attributes.backgroundColor };
+		--closeColor: ${ attributes.closeColor };
+		--overlayColor: ${ attributes.overlayColor };
+		--overlayOpacity: ${ attributes.overlayOpacity ? attributes.overlayOpacity / 100 : 1 };
+	`;
+
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		css: styles
+	});
 
 	return (
 		<Fragment>
@@ -62,10 +72,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={ className }
-			>
+			<div { ...blockProps }>
 				<Button
 					isPrimary
 					icon={ external }
@@ -79,19 +86,14 @@ const Edit = ({
 						<div
 							role="presentation"
 							className="otter-popup__modal_wrap_overlay"
-							style={ style.overlay }
 							onClick={ () => setEditing( false ) }
 						/>
 
-						<div
-							className="otter-popup__modal_content"
-							style={ style.content }
-						>
+						<div className="otter-popup__modal_content">
 							{ attributes.showClose && (
 								<div className="otter-popup__modal_header">
 									<Button
 										icon={ closeSmall }
-										style={ style.close }
 										onClick={ () => setEditing( false ) }
 									/>
 								</div>

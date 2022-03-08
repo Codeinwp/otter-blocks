@@ -1,14 +1,24 @@
+/** @jsx jsx */
+
 /**
  * External dependencies
  */
 import classnames from 'classnames';
+
+import {
+	css,
+	jsx
+} from '@emotion/react';
 
 /**
  * WordPress dependencies
  */
 import { ResizableBox } from '@wordpress/components';
 
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import {
 	Fragment,
@@ -20,14 +30,15 @@ import {
 /**
  * Internal dependencies
  */
-import defaultAttributes from './attributes.js';
+import metadata from './block.json';
 import { blockInit } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const ProgressBar = ({
 	attributes,
 	setAttributes,
-	className,
 	isSelected,
 	clientId,
 	toggleSelection
@@ -100,6 +111,24 @@ const ProgressBar = ({
 		}
 	};
 
+	const styles = css`
+		--titleColor: ${ attributes.titleColor };
+		--percentageColor: ${ attributes.percentageColor };
+		--percentageColorOuter: ${ attributes.percentageColor };
+		--percentageColorTooltip: ${ attributes.percentageColor };
+		--percentageColorAppend: ${ attributes.percentageColor };
+		--backgroundColor: ${ attributes.backgroundColor };
+		--borderRadius: ${ undefined !== attributes.borderRadius ? attributes.borderRadius : 5 }px;
+		--height: ${ undefined !== attributes.height ? attributes.height : 30 }px;
+		--barBackground: ${ attributes.barBackgroundColor };
+	`;
+
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		className: classnames({ 'has-tooltip': 'tooltip' === attributes.percentagePosition }),
+		css: styles
+	});
+
 	return (
 		<Fragment>
 			<Inspector
@@ -110,10 +139,7 @@ const ProgressBar = ({
 				setHeightMode={ setHeightMode }
 			/>
 
-			<div
-				className={ classnames( className, { 'has-tooltip': 'tooltip' === attributes.percentagePosition }) }
-				id={ attributes.id }
-			>
+			<div { ...blockProps }>
 				{ ( 'outer' === attributes.titleStyle || 'outer' === attributes.percentagePosition ) && (
 					<div className="wp-block-themeisle-blocks-progress-bar__outer">
 						{ 'outer' === attributes.titleStyle && (
@@ -122,16 +148,12 @@ const ProgressBar = ({
 								allowedFormats={ [] }
 								className="wp-block-themeisle-blocks-progress-bar__outer__title"
 								value={ attributes.title }
-								style={ { color: attributes.titleColor } }
 								onChange={ e => setAttributes({ title: e }) }
 							/>
 						) }
 
 						{ 'outer' === attributes.percentagePosition && showPercentage && (
-							<div
-								className="wp-block-themeisle-blocks-progress-bar__progress wp-block-themeisle-blocks-progress-bar__outer__value"
-								style={ { color: attributes.percentageColor } }
-							>
+							<div className="wp-block-themeisle-blocks-progress-bar__progress wp-block-themeisle-blocks-progress-bar__outer__value">
 								{ `${ attributes.percentage }%` }
 							</div>
 						)}
@@ -160,36 +182,18 @@ const ProgressBar = ({
 					} }
 				>
 
-					<div
-						className="wp-block-themeisle-blocks-progress-bar__area"
-						style={ {
-							background: attributes.backgroundColor,
-							borderRadius: `${ attributes.borderRadius }px`,
-							height: `${ attributes.height }px`
-						} }
-					>
+					<div className="wp-block-themeisle-blocks-progress-bar__area">
 						{ ( 'default' === attributes.titleStyle || 'highlight' === attributes.titleStyle ) && (
 							<div
 								className={ classnames(
 									'wp-block-themeisle-blocks-progress-bar__area__title',
 									{ 'highlight': 'highlight' === attributes.titleStyle }
 								) }
-								style={ {
-									fontSize: `${ attributes.height * fontRatio }px`,
-									background: 'highlight' === attributes.titleStyle && attributes.barBackgroundColor,
-									borderRadius: `${ attributes.borderRadius }px 0px 0px ${ attributes.borderRadius }px`,
-									height: `${ attributes.height }px`
-								} }
 							>
 								<RichText
 									tagName="span"
 									allowedFormats={ [] }
 									value={ attributes.title }
-									style={ {
-										height: `${ attributes.height }px`,
-										color: attributes.titleColor,
-										borderRadius: `${ attributes.borderRadius }px 0px 0px ${ attributes.borderRadius }px`
-									} }
 									onChange={ e => setAttributes({ title: e }) }
 								/>
 							</div>
@@ -198,47 +202,21 @@ const ProgressBar = ({
 						<div
 							className="wp-block-themeisle-blocks-progress-bar__area__bar show"
 							ref={ barRef }
-							style={ {
-								background: attributes.barBackgroundColor,
-								borderRadius: `${ attributes.borderRadius }px`,
-								height: `${ attributes.height }px`
-							} }
 						>
 							{ 'tooltip' === attributes.percentagePosition && showPercentage && (
-								<span
-									className="wp-block-themeisle-blocks-progress-bar__area__tooltip show"
-									style={ { color: attributes.percentageColor } }
-								>
+								<span className="wp-block-themeisle-blocks-progress-bar__area__tooltip show">
 									{ `${ attributes.percentage }%` }
 									<span className="wp-block-themeisle-blocks-progress-bar__area__arrow"></span>
 								</span>
 							)}
 
 							{ 'append' === attributes.percentagePosition && showPercentage && (
-								<div
-									className="wp-block-themeisle-blocks-progress-bar__progress__append show"
-									style={ {
-										fontSize: `${ attributes.height * fontRatio }px`,
-										height: `${ attributes.height }px`,
-										color: attributes.percentageColor
-									} }
-								>
-									{ `${ attributes.percentage }%` }
-								</div>
+								<div className="wp-block-themeisle-blocks-progress-bar__progress__append show">{ `${ attributes.percentage }%` }</div>
 							)}
 						</div>
 
 						{ 'default' === attributes.percentagePosition && showPercentage && (
-							<div
-								className="wp-block-themeisle-blocks-progress-bar__progress"
-								style={ {
-									fontSize: `${ attributes.height * fontRatio }px`,
-									height: `${ attributes.height }px`,
-									color: attributes.percentageColor
-								} }
-							>
-								{ `${ attributes.percentage }%` }
-							</div>
+							<div className="wp-block-themeisle-blocks-progress-bar__progress">{ `${ attributes.percentage }%` }</div>
 						)}
 					</div>
 				</ResizableBox>

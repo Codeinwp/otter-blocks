@@ -1,9 +1,64 @@
-
 import { without } from 'lodash';
 
 import { sprintf } from '@wordpress/i18n';
 
 import { __experimentalGetSettings } from '@wordpress/date';
+
+// Post types to exclude
+const excludedTypes = [
+	'wp_template',
+	'wp_template_part',
+	'wp_navigation',
+	'nav_menu_item',
+	'wp_block',
+	'attachment',
+	'sfwd-certificates',
+	'e-landing-page',
+	'piotnetforms-book',
+	'piotnetforms',
+	'piotnetforms-data',
+	'jet-menu',
+	'jet-popup',
+	'adsforwp-groups',
+	'pgc_simply_gallery',
+	'editor-story',
+	'pafe-form-booking',
+	'sfwd-assignment',
+	'sfwd-essays',
+	'pafe-formabandonment',
+	'frm_display',
+	'sfwd-transactions',
+	'jet-engine',
+	'jet-theme-core',
+	'reply',
+	'jet_options_preset',
+	'tutor_assignments',
+	'brizy_template',
+	'jet-smart-filters',
+	'pafe-fonts',
+	'pafe-form-database',
+	'ct_content_block',
+	'adsforwp',
+	'iamport_payment',
+	'tribe_events',
+	'mec_esb',
+	'elementor_library',
+	'testimonial',
+	'zion_template',
+	'popup',
+	'jet-engine-booking',
+	'tutor_quiz',
+	'piotnetforms-aban',
+	'forum',
+	'topic',
+	'sfwd-quiz',
+	'mec-events',
+	'jet-woo-builder',
+	'neve_custom_layouts',
+	'feedzy_imports',
+	'neve_cart_notices',
+	'visualizer'
+];
 
 // HTML to Plaintext
 export const unescapeHTML = value => {
@@ -96,13 +151,16 @@ export const easeInOutSine = ( x ) => {
 	return -( Math.cos( Math.PI * x ) - 1 ) / 2;
 };
 
+export const easeOutQuad = ( x ) => {
+	return 1 - ( 1 - x ) * ( 1 - x );
+};
+
 export const getCustomPostTypeSlugs = async() => {
-	const dataTypes = await ( new window.wp.api.collections.Types() ).fetch();
+	const dataTypes = window.themeisleGutenberg.postTypes;
 
 	if ( dataTypes ) {
-		const allExistingSlugs = Object.keys( dataTypes ).filter( type => dataTypes[type]?.slug ).map( type => dataTypes[type].slug );
-
-		return without( allExistingSlugs, 'attachment', 'wp_block' );
+		const allExistingSlugs = Object.keys( dataTypes );
+		return without( allExistingSlugs, ...excludedTypes );
 	}
 
 	return undefined;
@@ -197,4 +255,59 @@ export const getTimezone = () => {
 	const absmin   = Math.abs( offset );
 	const timezone = sprintf( '%s%02d:%02d', sign, absmin / 60, absmin % 60 );
 	return timezone;
+};
+
+// Check if object has only null values.
+export const isNullObject = obj => {
+	return ! Object.keys( obj ).some( k => null !== obj[ k ]);
+};
+
+/*
+ +-------------------------------- CSS Utility functions --------------------------------+
+*/
+
+/**
+ * Format the value based on the given unit.
+ * @param {string} value
+ * @param {string} unit
+ * @returns {string|undefined}
+ */
+export const _unit = ( value, unit ) => ( value ? value + unit : undefined );
+
+/**
+ * Format the value into a `px` unit.
+ * @param {string} value The value.
+ * @returns {string|undefined}
+ */
+export const _px = value => _unit( value, 'px' );
+
+/**
+ * Format the value into a `em` unit.
+ * @param {string} value The value.
+ * @returns {string|undefined}
+ */
+export const _em = value => _unit( value, 'em' );
+
+/**
+ * Format the value into a `%` unit.
+ * @param {string} value The value.
+ * @returns {string|undefined}
+ */
+export const _percent = value => _unit( value, '%' );
+
+const verticalMapping = {
+	'top': 'flex-start',
+	'left': 'flex-start',
+	'center': 'center',
+	'bottom': 'flex-end',
+	'right': 'flex-end'
+};
+
+/**
+ * Get the CSS value for the given value position.
+ * @param {string} value The position type.
+ * @returns {string|undefined}
+ */
+export const _align = value =>{
+	return verticalMapping[value];
 };

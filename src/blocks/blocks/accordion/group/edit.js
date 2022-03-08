@@ -13,7 +13,10 @@ import {
 /**
  * WordPress dependencies.
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import {
 	Fragment,
@@ -23,15 +26,19 @@ import {
 /**
  * Internal dependencies
  */
-import defaultAttributes from './attributes.js';
-
+import metadata from './block.json';
 import Inspector from './inspector.js';
-import { blockInit } from '../../../helpers/block-utility.js';
+import {
+	blockInit,
+	getDefaultValueByField
+} from '../../../helpers/block-utility.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
+	name,
 	attributes,
 	setAttributes,
-	className,
 	clientId,
 	isSelected
 }) => {
@@ -40,40 +47,32 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
+	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
+
 	const styles = css`
-		&.wp-block-themeisle-blocks-accordion .wp-block-themeisle-blocks-accordion-item .wp-block-themeisle-blocks-accordion-item__title {
-			color: ${ attributes.titleColor };
-			background: ${ attributes.titleBackground };
-			border-color: ${ attributes.borderColor };
-		}
-
-		&.wp-block-themeisle-blocks-accordion .wp-block-themeisle-blocks-accordion-item .wp-block-themeisle-blocks-accordion-item__title svg {
-			fill: ${ attributes.titleColor };
-		}
-
-		&.wp-block-themeisle-blocks-accordion .wp-block-themeisle-blocks-accordion-item .wp-block-themeisle-blocks-accordion-item__content {
-			background: ${ attributes.contentBackground };
-			border-color: ${ attributes.borderColor };
-		}
+		--titleColor: ${ getValue( 'titleColor' ) };
+		--titleBackground: ${ getValue( 'titleBackground' ) };
+		--borderColor: ${ getValue( 'borderColor' ) };
+		--contentBackground: ${ getValue( 'contentBackground' ) };
 	`;
+
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		className: classnames({
+			[ `is-${ attributes.gap }-gap` ]: attributes.gap
+		}),
+		css: styles
+	});
 
 	return (
 		<Fragment>
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
+				getValue={ getValue }
 			/>
 
-			<div
-				id={ attributes.id }
-				className={ classnames(
-					className,
-					{
-						[ `is-${ attributes.gap }-gap` ]: attributes.gap
-					}
-				) }
-				css={ styles }
-			>
+			<div { ...blockProps }>
 				<InnerBlocks
 					allowedBlocks={ [ 'themeisle-blocks/accordion-item' ] }
 					template={ [ [ 'themeisle-blocks/accordion-item' ] ] }

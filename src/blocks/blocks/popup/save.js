@@ -3,32 +3,31 @@
  */
 import { closeSmall } from '@wordpress/icons';
 
-import classnames from 'classnames';
-
 /**
  * WordPress dependencies
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
+	const blockProps = useBlockProps.save({
+		id: attributes.id,
+		className: 'is-front',
+		'data-open': attributes.trigger,
+		'data-dismiss': attributes.recurringClose ? attributes.recurringTime : '',
+		'data-time': ( undefined === attributes.trigger || 'onLoad' === attributes.trigger ) ? ( attributes.wait || 0 ) : '',
+		'data-anchor': 'onClick' === attributes.trigger ? attributes.anchor : '',
+		'data-offset': 'onScroll' === attributes.trigger ? attributes.scroll : '',
+		'data-outside': attributes.outsideClose ? attributes.outsideClose : '',
+		'data-anchorclose': attributes.anchorClose ? attributes.closeAnchor : ''
+	});
+
 	return (
-		<div
-			className={ classnames(
-				className,
-				'is-front'
-			) }
-			id={ attributes.id }
-			data-open={ attributes.trigger }
-			data-dismiss={ attributes.recurringClose ? attributes.recurringTime : '' }
-			data-time={ ( undefined === attributes.trigger || 'onLoad' === attributes.trigger ) ? ( attributes.wait || 0 ) : '' }
-			data-anchor={ 'onClick' === attributes.trigger ? attributes.anchor : '' }
-			data-offset={ 'onScroll' === attributes.trigger ? attributes.scroll : '' }
-			data-outside={ attributes.outsideClose ? attributes.outsideClose : '' }
-			data-anchorclose={ attributes.anchorClose ? attributes.closeAnchor : '' }
-		>
+		<div { ...blockProps }>
 			<div className="otter-popup__modal_wrap">
 				<div
 					role="presentation"

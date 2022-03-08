@@ -1,7 +1,6 @@
 /**
  * External dependencies
  */
-import classnames from 'classnames';
 import hexToRgba from 'hex-rgba';
 import GoogleFontLoader from 'react-google-font-loader';
 
@@ -14,7 +13,10 @@ import { omitBy } from 'lodash';
 
 import { createBlock } from '@wordpress/blocks';
 
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 import { useViewportMatch } from '@wordpress/compose';
 
@@ -28,15 +30,16 @@ import {
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import { blockInit } from '../../helpers/block-utility.js';
-import defaultAttributes from './attributes.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId,
 	mergeBlocks,
 	insertBlocksAfter,
@@ -48,7 +51,7 @@ const Edit = ({
 		isPreviewTablet,
 		isPreviewMobile
 	} = useSelect( select => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
 
 		return {
 			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
@@ -87,11 +90,9 @@ const Edit = ({
 		setAttributes({ content: value });
 	};
 
-
 	let fontSizeStyle, stylesheet, textShadowStyle;
 
 	if ( isDesktop ) {
-
 		fontSizeStyle = {
 			fontSize: attributes.fontSize ? `${ attributes.fontSize }px` : undefined
 		};
@@ -158,10 +159,15 @@ const Edit = ({
 		...textShadowStyle
 	}, x => x?.includes?.( 'undefined' ) );
 
+	const blockProps = useBlockProps({
+		id: attributes.id,
+		style
+	});
+
 	return (
 		<Fragment>
 			<style>
-				{ `.${ attributes.id } mark, .${ attributes.id } .highlight {
+				{ `#${ attributes.id } mark, #${ attributes.id } .highlight {
 						color: ${ attributes.highlightColor };
 						background: ${ attributes.highlightBackground };
 					}` }
@@ -186,15 +192,11 @@ const Edit = ({
 
 			<RichText
 				identifier="content"
-				className={ classnames(
-					attributes.id,
-					className
-				) }
 				value={ attributes.content }
 				placeholder={ __( 'Write heading…', 'otter-blocks' ) }
 				tagName={ attributes.tag }
 				formattingControls={ [ 'bold', 'italic', 'link', 'strikethrough', 'highlight' ] }
-				allowedFormats={ [ 'core/bold', 'core/italic', 'core/link', 'core/strikethrough', 'themeisle-blocks/highlight' ] }
+				allowedFormats={ [ 'core/bold', 'core/italic', 'core/link', 'core/strikethrough', 'themeisle-blocks/highlight', 'themeisle-blocks/count-animation', 'themeisle-blocks/typing-animation' ] }
 				onMerge={ mergeBlocks }
 				onSplit={
 					insertBlocksAfter ?
@@ -208,8 +210,8 @@ const Edit = ({
 						undefined
 				}
 				onRemove={ () => onReplace([]) }
-				style={ style }
 				onChange={ changeContent }
+				{ ...blockProps }
 			/>
 		</Fragment>
 	);

@@ -43,7 +43,7 @@ class Core_Image_Plugin_CSS extends Base_CSS {
 		$style = '';
 
 
-		$re = '/<figure.*id="([^"]*?)".*>/m';
+		$re = '/<[figure\/div].*id="([^"]*?)".*>/m';
 		preg_match_all( $re, $block['innerHTML'], $matches, PREG_SET_ORDER, 0 );
 
 		if ( ! isset( $matches[0] ) || ! isset( $matches[0][1] ) ) {

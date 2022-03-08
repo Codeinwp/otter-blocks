@@ -6,7 +6,10 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies
  */
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 /**
  * Internal dependencies
@@ -14,26 +17,23 @@ import { RichText } from '@wordpress/block-editor';
 import { SliderControlsBullets } from './components/slider-controls.js';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
 	const autoplay = attributes.autoplay ? ( 2 !== attributes.delay ? attributes.delay * 1000 : attributes.autoplay ) : attributes.autoplay;
 
+	const blockProps = useBlockProps.save({
+		id: attributes.id,
+		className: 'glide',
+		'data-per-view': attributes.perView,
+		'data-gap': attributes.gap,
+		'data-peek': attributes.peek,
+		'data-autoplay': autoplay,
+		'data-height': `${ attributes.height }px`,
+		'data-hide-arrows': attributes.hideArrows
+	});
+
 	return (
-		<div
-			id={ attributes.id }
-			className={ classnames(
-				'wp-block-themeisle-blocks-slider',
-				'glide',
-				className
-			) }
-			data-per-view={ attributes.perView }
-			data-gap={ attributes.gap }
-			data-peek={ attributes.peek }
-			data-autoplay={ autoplay }
-			data-height={ `${ attributes.height }px` }
-			data-hide-arrows={ attributes.hideArrows }
-		>
+		<div { ...blockProps }>
 			<div className="glide__track" data-glide-el="track">
 				<div className="glide__slides">
 					{ attributes.images.map( image => {

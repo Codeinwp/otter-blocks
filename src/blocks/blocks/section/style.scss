@@ -1,4 +1,11 @@
+@import './components/separators/style';
+
 .wp-block-themeisle-blocks-advanced-columns {
+	--columnsWidth: initial;
+	--horizontalAlign: unset;
+
+	justify-content: var( --horizontalAlign );
+
 	.wp-themeisle-block-overlay,
 	.wp-block-themeisle-blocks-advanced-columns-overlay {
 		position: absolute;
@@ -88,6 +95,7 @@
 			display: flex;
 			flex-basis: 100%;
 			word-break: keep-all;
+			max-width: var( --columnsWidth );
 
 			.wp-block-themeisle-blocks-advanced-column {
 				position: relative;
@@ -275,6 +283,7 @@
 			display: flex;
 			flex-basis: 100%;
 			word-break: keep-all;
+			max-width: var( --columnsWidth );
 
 			.wp-block-themeisle-blocks-advanced-column {
 				position: relative;

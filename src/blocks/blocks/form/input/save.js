@@ -3,14 +3,18 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
+	const blockProps = useBlockProps.save();
+
 	return (
-		<div className={ className } >
+		<div { ...blockProps }>
 			<label
 				htmlFor={ attributes.id }
 				className="otter-form-input-label"

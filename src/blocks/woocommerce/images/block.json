@@ -1,0 +1,10 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/product-images",
+	"title": "Product Images",
+	"category": "themeisle-woocommerce-blocks",
+	"description": "Display images of your WooCommerce product.",
+	"keywords": [ "woocommerce", "products", "images" ],
+	"textdomain": "otter-blocks"
+}

@@ -20,7 +20,6 @@ import { Fragment } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import './editor.scss';
 import ResponsiveControl from '../../../../components/responsive-control/index.js';
 import { cols112, cols12, cols121, cols131, cols21, cols211, cols2Equal, cols2Grid, cols3Equal, cols3Grid, cols4Equal, cols5Equal, cols6Equal, colsCollapsed, colsFull, rowsCollapsed } from '../../../../helpers/icons';
 
@@ -32,9 +31,9 @@ const LayoutControl = ({
 	layoutMobile,
 	columns
 }) => {
-	const getView = useSelect( ( select ) => {
+	const getView = useSelect( select => {
 		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
 
 		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
 	}, []);
@@ -230,7 +229,7 @@ const LayoutControl = ({
 									) }
 									onClick={ () => onClick( 'collapsedRows' ) }
 								>
-									{ colsCollapsed() }
+									{ rowsCollapsed() }
 								</Button>
 							</Tooltip>
 						</Fragment>

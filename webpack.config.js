@@ -2,6 +2,18 @@ const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const glob = require( 'glob' );
 const path = require( 'path' );
+const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
+const blocks = require( './blocks.json' );
+
+const blockFiles = Object.keys( blocks ).filter( block => blocks[ block ].block !== undefined )
+	.map( block => {
+		return {
+			source: `src/blocks/${ blocks[ block ].block }`,
+			destination: `build/blocks/${ block }/`
+		};
+	});
+
+const folders = Object.keys( blocks ).map( block => `build/blocks/${ block }` );
 
 module.exports = [
 	{
@@ -25,7 +37,9 @@ module.exports = [
 		mode: NODE_ENV,
 		entry: {
 			index: './src/animation/index.js',
-			frontend: './src/animation/frontend.js'
+			frontend: './src/animation/frontend.js',
+			'anim-count': './src/animation/frontend/count/index.js',
+			'anim-typing': './src/animation/frontend/typing/index.js'
 		},
 		output: {
 			path: path.resolve( __dirname, './build/animation' )
@@ -70,6 +84,9 @@ module.exports = [
 				'./src/blocks/plugins/registerPlugin.js',
 				...glob.sync( './src/blocks/blocks/**/index.js' )
 			],
+			woocommerce: [
+				...glob.sync( './src/blocks/woocommerce/**/index.js' )
+			],
 			'leaflet-map': './src/blocks/frontend/leaflet-map/index.js',
 			maps: './src/blocks/frontend/google-map/index.js',
 			slider: './src/blocks/frontend/slider/index.js',
@@ -80,7 +97,8 @@ module.exports = [
 			masonry: './src/blocks/frontend/masonry/index.js',
 			form: './src/blocks/frontend/form/index.js',
 			countdown: './src/blocks/frontend/countdown/index.js',
-			popup: './src/blocks/frontend/popup/index.js'
+			popup: './src/blocks/frontend/popup/index.js',
+			sticky: './src/blocks/frontend/sticky/index.js'
 		},
 		output: {
 			path: path.resolve( __dirname, './build/blocks' ),
@@ -100,14 +118,20 @@ module.exports = [
 						name: 'editor',
 						test: /editor\.scss$/,
 						chunks: 'all'
-					},
-					frontendStyles: {
-						name: 'style',
-						test: /style\.scss$/,
-						chunks: 'all'
 					}
 				}
 			}
-		}
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new FileManagerPlugin({
+				events: {
+					onEnd: {
+						mkdir: folders,
+						copy: blockFiles
+					}
+				}
+			})
+		]
 	}
 ];

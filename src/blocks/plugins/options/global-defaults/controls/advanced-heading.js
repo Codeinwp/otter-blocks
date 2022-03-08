@@ -3,7 +3,9 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { ColorPalette } from '@wordpress/block-editor';
+import {
+	__experimentalColorGradientControl as ColorGradientControl
+} from '@wordpress/block-editor';
 
 import {
 	PanelBody,
@@ -18,7 +20,6 @@ import { Fragment } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import ColorBaseControl from '../../../../components/color-base-control/index.js';
 import GoogleFontsControl from '../../../../components/google-fonts-control/index.js';
 import ResponsiveControl from '../../../../components/responsive-control/index.js';
 import SizingControl from '../../../../components/sizing-control/index.js';
@@ -29,10 +30,8 @@ const AdvancedHeading = ({
 	changeConfig
 }) => {
 	const getView = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : { __experimentalGetPreviewDeviceType: undefined };
-
-		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' );
+		return __experimentalGetPreviewDeviceType();
 	}, []);
 
 	let getFontSize = () => {
@@ -392,15 +391,11 @@ const AdvancedHeading = ({
 					onChange={ value => changeConfig( blockName, { tag: value }) }
 				/>
 
-				<ColorBaseControl
+				<ColorGradientControl
 					label={ __( 'Heading Color', 'otter-blocks' ) }
 					colorValue={ defaults.headingColor }
-				>
-					<ColorPalette
-						value={ defaults.headingColor }
-						onChange={ value => changeConfig( blockName, { headingColor: value }) }
-					/>
-				</ColorBaseControl>
+					onColorChange={ value => changeConfig( blockName, { headingColor: value }) }
+				/>
 
 				<hr />
 

@@ -36,18 +36,17 @@ class Countdown_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area.is-main-component',
 				'properties' => array(
 					array(
-						'property' => 'background-color',
+						'property' => '--backgroundColor',
 						'value'    => 'backgroundColor',
 					),
 					array(
-						'property' => 'border-color',
+						'property' => '--borderColor',
 						'value'    => 'borderColor',
 					),
 					array(
-						'property'  => 'border-radius',
+						'property'  => '--borderRadius',
 						'value'     => 'borderRadius',
 						'unit'      => 'px',
 						'default'   => 0,
@@ -56,7 +55,7 @@ class Countdown_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property'       => 'border-radius',
+						'property'       => '--borderRadius',
 						'pattern'        => 'top-left top-right bottom-right bottom-left',
 						'pattern_values' => array(
 							'top-left'     => array(
@@ -84,145 +83,94 @@ class Countdown_CSS extends Base_CSS {
 							return isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'];
 						},
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( min-width: 961px )',
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area.is-main-component',
-				'properties' => array(
 					array(
-						'property' => 'width',
+						'property' => '--width',
 						'value'    => 'width',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => 'border-width',
-						'value'    => 'borderWidth',
-						'unit'     => 'px',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( min-width: 600px ) and ( max-width: 960px )',
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area.is-main-component',
-				'properties' => array(
-					array(
-						'property' => 'width',
+						'property' => '--widthTablet',
 						'value'    => 'widthTablet',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => 'border-width',
-						'value'    => 'borderWidthTablet',
-						'unit'     => 'px',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( max-width: 600px )',
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area.is-main-component',
-				'properties' => array(
-					array(
-						'property' => 'width',
+						'property' => '--widthMobile',
 						'value'    => 'widthMobile',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => 'border-width',
-						'value'    => 'borderWidthMobile',
-						'unit'     => 'px',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( min-width: 961px )',
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area',
-				'properties' => array(
-					array(
-						'property' => 'height',
+						'property' => '--height',
 						'value'    => 'height',
 						'unit'     => 'px',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( min-width: 600px ) and ( max-width: 960px )',
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area',
-				'properties' => array(
 					array(
-						'property' => 'height',
+						'property' => '--heightTablet',
 						'value'    => 'heightTablet',
 						'unit'     => 'px',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( max-width: 600px )',
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area',
-				'properties' => array(
 					array(
-						'property' => 'height',
+						'property' => '--heightMobile',
 						'value'    => 'heightMobile',
 						'unit'     => 'px',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( min-width: 961px )',
-				'selector'   => ' .otter-countdown__container .otter-countdown__display',
-				'properties' => array(
+					array(
+						'property' => '--borderWidth',
+						'value'    => 'borderWidth',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--borderWidthTablet',
+						'value'    => 'borderWidthTablet',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--borderWidthMobile',
+						'value'    => 'borderWidthMobile',
+						'unit'     => 'px',
+					),
 					array(
 						'property' => 'gap',
 						'value'    => 'gap',
 						'unit'     => 'px',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( min-width: 600px ) and ( max-width: 960px )',
-				'selector'   => ' .otter-countdown__container .otter-countdown__display',
-				'properties' => array(
 					array(
 						'property' => 'gap',
 						'value'    => 'gapTablet',
 						'unit'     => 'px',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( max-width: 600px )',
-				'selector'   => ' .otter-countdown__container .otter-countdown__display',
-				'properties' => array(
 					array(
 						'property' => 'gap',
 						'value'    => 'gapMobile',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--valueFontSize',
+						'value'    => 'valueFontSize',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--valueFontSizeTablet',
+						'value'    => 'valueFontSizeTablet',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--valueFontSizeMobile',
+						'value'    => 'valueFontSizeMobile',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--labelFontSize',
+						'value'    => 'labelFontSize',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--labelFontSizeTablet',
+						'value'    => 'labelFontSizeTablet',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--labelFontSizeMobile',
+						'value'    => 'labelFontSizeMobile',
 						'unit'     => 'px',
 					),
 				),
@@ -243,95 +191,11 @@ class Countdown_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'query'      => '@media ( min-width: 961px )',
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area .otter-countdown__value',
-				'properties' => array(
-					array(
-						'property' => 'font-size',
-						'value'    => 'valueFontSize',
-						'unit'     => 'px',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( min-width: 600px ) and ( max-width: 960px )',
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area .otter-countdown__value',
-				'properties' => array(
-					array(
-						'property' => 'font-size',
-						'value'    => 'valueFontSizeTablet',
-						'unit'     => 'px',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( max-width: 600px )',
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area .otter-countdown__value',
-				'properties' => array(
-					array(
-						'property' => 'font-size',
-						'value'    => 'valueFontSizeMobile',
-						'unit'     => 'px',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
 				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area .otter-countdown__label',
 				'properties' => array(
 					array(
 						'property' => 'color',
 						'value'    => 'labelColor',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( min-width: 961px )',
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area .otter-countdown__label',
-				'properties' => array(
-					array(
-						'property' => 'font-size',
-						'value'    => 'labelFontSize',
-						'unit'     => 'px',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( min-width: 600px ) and ( max-width: 960px )',
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area .otter-countdown__label',
-				'properties' => array(
-					array(
-						'property' => 'font-size',
-						'value'    => 'labelFontSizeTablet',
-						'unit'     => 'px',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( max-width: 600px )',
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area .otter-countdown__label',
-				'properties' => array(
-					array(
-						'property' => 'font-size',
-						'value'    => 'labelFontSizeMobile',
-						'unit'     => 'px',
 					),
 				),
 			)

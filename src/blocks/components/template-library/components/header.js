@@ -63,29 +63,29 @@ const Header = ({
 	const options = getOptions();
 
 	return (
-		<div className="library-modal-control-panel">
-			<div className="library-modal-header">
-				<div className="library-modal-header-logo">
+		<div className="o-library-modal-control-panel">
+			<div className="o-library-modal-header">
+				<div className="o-library-modal-header-logo">
 					{ preview ? (
 						<Button
-							className="library-modal-header-tabs-button back-to-library"
+							className="o-library-modal-header-tabs-button back-to-library"
 							aria-label={ __( 'Back to Library', 'otter-blocks' ) }
 							onClick={ () => setPreview( false ) }
 						>
 							<Dashicon icon="arrow-left-alt" /> { __( 'Back to Library', 'otter-blocks' ) }
 						</Button>
 					) :
-						<div className="library-modal-header-tabs-button">
+						<div className="o-library-modal-header-tabs-button">
 							<Icon icon={ otterIcon } />
 						</div>
 					}
 				</div>
 
 				{ ! preview && (
-					<div className="library-modal-header-tabs">
+					<div className="o-library-modal-header-tabs">
 						<Button
 							className={ classnames(
-								'library-modal-header-tabs-button',
+								'o-library-modal-header-tabs-button',
 								{ 'is-selected': 'block' === tab }
 							) }
 							onClick={ () => changeTab( 'block' ) }
@@ -96,7 +96,7 @@ const Header = ({
 
 						<Button
 							className={ classnames(
-								'library-modal-header-tabs-button',
+								'o-library-modal-header-tabs-button',
 								{ 'is-selected': 'template' === tab }
 							) }
 							onClick={ () => changeTab( 'template' ) }
@@ -107,10 +107,10 @@ const Header = ({
 					</div>
 				) }
 
-				<div className="library-modal-header-actions">
+				<div className="o-library-modal-header-actions">
 					{ preview && (
 						<Button
-							className="library-modal-header-tabs-button insert-button"
+							className="o-library-modal-header-tabs-button insert-button"
 							onClick={ () => importTemplate( selectedTemplate.template_url ) }
 							tabIndex="0"
 						>
@@ -121,7 +121,7 @@ const Header = ({
 
 					<Tooltip text={ __( 'Close', 'otter-blocks' ) }>
 						<Button
-							className="library-modal-header-tabs-button"
+							className="o-library-modal-header-tabs-button"
 							aria-label={ __( 'Close settings', 'otter-blocks' ) }
 							onClick={ close }
 						>
@@ -132,9 +132,9 @@ const Header = ({
 			</div>
 
 			{ ! preview && (
-				<div className="library-modal-actions">
+				<div className="o-library-modal-actions">
 					<SelectControl
-						className="library-modal-category-control"
+						className="o-library-modal-category-control"
 						value={ 'all' === selectedCategory ? 'all' : selectedCategory }
 						onChange={ selectCategory }
 						options={ options }
@@ -144,7 +144,7 @@ const Header = ({
 						type="text"
 						value={ search || '' }
 						placeholder={ __( 'Search', 'otter-blocks' ) }
-						className="library-modal-search-control"
+						className="o-library-modal-search-control"
 						onChange={ changeSearch }
 					/>
 				</div>
