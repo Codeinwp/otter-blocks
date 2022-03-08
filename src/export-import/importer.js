@@ -7,6 +7,8 @@ import apiFetch from '@wordpress/api-fetch';
 
 import { parse } from '@wordpress/blocks';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import {
 	DropZone,
 	FormFileUpload,
@@ -121,37 +123,43 @@ const BlocksImporter = ({
 		fileReader.readAsText( fileTobeRead );
 	};
 
+	const blockProps = useBlockProps();
+
 	if ( isLoading ) {
 		return (
-			<Placeholder>
-				<Spinner />
-			</Placeholder>
+			<div { ...blockProps }>
+				<Placeholder>
+					<Spinner />
+				</Placeholder>
+			</div>
 		);
 	}
 
 	return (
-		<Placeholder
-			label={ __( 'Import Blocks from JSON', 'otter-blocks' ) }
-			instructions={ __(
-				'Upload JSON file from your device.',
-				'otter-blocks'
-			) }
-			icon="category"
-			notices={ noticeUI }
-		>
-			<FormFileUpload
-				accept="text/json"
-				onChange={ ( e ) => uploadImport( e.target.files ) }
-				isSecondary
+		<div { ...blockProps }>
+			<Placeholder
+				label={ __( 'Import Blocks from JSON', 'otter-blocks' ) }
+				instructions={ __(
+					'Upload JSON file from your device.',
+					'otter-blocks'
+				) }
+				icon="category"
+				notices={ noticeUI }
 			>
-				{ __( 'Upload' ) }
-			</FormFileUpload>
+				<FormFileUpload
+					accept="text/json"
+					onChange={ ( e ) => uploadImport( e.target.files ) }
+					isSecondary
+				>
+					{ __( 'Upload' ) }
+				</FormFileUpload>
 
-			<DropZone
-				label={ __( 'Import from JSON', 'otter-blocks' ) }
-				onFilesDrop={ uploadImport }
-			/>
-		</Placeholder>
+				<DropZone
+					label={ __( 'Import from JSON', 'otter-blocks' ) }
+					onFilesDrop={ uploadImport }
+				/>
+			</Placeholder>
+		</div>
 	);
 };
 

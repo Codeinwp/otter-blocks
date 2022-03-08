@@ -1,12 +1,10 @@
-@import 'style.scss';
+@import 'style';
 
 .wp-block-themeisle-blocks-form {
-	.otter-form__container {
-		.wp-block-themeisle-blocks-form-input {
-			.otter-form-input {
-				padding: 10px 5px;
-				margin-bottom: 0;
-			}
+	.wp-block-themeisle-blocks-form-input {
+		.otter-form-input {
+			padding: 10px 5px;
+			margin-bottom: 0;
 		}
 	}
 

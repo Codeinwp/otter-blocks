@@ -1,0 +1,57 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/icon-list",
+	"title": "Icon List",
+	"category": "themeisle-blocks",
+	"description": "Display an icon list in a beautiful layout.",
+	"keywords": [ "icon", "list", "items" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"defaultLibrary": {
+			"type": "string",
+			"default": "fontawesome"
+		},
+		"defaultIconPrefix": {
+			"type": "string",
+			"default": "fas"
+		},
+		"defaultIcon": {
+			"type": "string",
+			"default": "angle-right"
+		},
+		"defaultContentColor": {
+			"type": "string"
+		},
+		"defaultIconColor": {
+			"type": "string"
+		},
+		"defaultSize": {
+			"type": "number",
+			"default": 20
+		},
+		"gap": {
+			"type": "number",
+			"default": 5
+		},
+		"horizontalAlign": {
+			"type": "string"
+		}
+	},
+	"styles": [
+		{
+			"name": "vertical",
+			"label": "Vertical",
+			"isDefault": true
+		},
+		{
+			"name": "horizontal",
+			"label": "Horizontal"
+		}
+	],
+	"editorStyle": "otter-icon-list-editor",
+	"style": "otter-icon-list-style"
+}

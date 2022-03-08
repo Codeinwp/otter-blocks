@@ -38,7 +38,7 @@ export const addGlobalDefaults = ( attributes, setAttributes, name, defaultAttri
 		const defaultGlobalAttrs = { ...window.themeisleGutenberg.globalDefaults[name] };
 
 		const attrs = Object.keys( defaultGlobalAttrs )
-			.filter( attr => attributes[ attr ] === defaultAttributes[ attr ]?.default ) // Keep only the properties with the default value.
+			.filter( attr => isEqual( attributes[ attr ], defaultAttributes[ attr ]?.default ) ) // Keep only the properties with the default value.
 			// Build an attribute object with the properties that are gone take the Global Defaults values.
 			.reduce( ( attrs, attr ) => {
 				attrs[ attr ] = defaultGlobalAttrs[ attr ];
@@ -46,6 +46,36 @@ export const addGlobalDefaults = ( attributes, setAttributes, name, defaultAttri
 			}, {});
 		setAttributes({ ...attrs });
 	}
+};
+
+/**
+ * Utiliy function for getting the default value of the attribute.
+ *
+ * @param {string}   name              The block's name provided by WordPress
+ * @param {string}   field             Name of the value to be returned
+ * @param {Object}   defaultAttributes The default attributes of the block.
+ */
+export const getDefaultValue = ( name, field, defaultAttributes ) => {
+	const blockDefaults = window.themeisleGutenberg.globalDefaults?.[name];
+	const value = blockDefaults?.[field] ? blockDefaults?.[field] : defaultAttributes[field]?.default;
+
+	return value;
+};
+
+/**
+ * Utiliy function for getting the default value of the attribute by value.
+ *
+ * @param {string}   name              The block's name provided by WordPress
+ * @param {string}   field             Name of the value to be returned
+ * @param {Object}   defaultAttributes The default attributes of the block.
+ * @param {Object}   attributes        The attributes of the block.
+ */
+export const getDefaultValueByField = ({ name, field, defaultAttributes, attributes }) => {
+	if ( attributes.isSynced?.includes( field ) ) {
+		return getDefaultValue( name, field, defaultAttributes );
+	}
+
+	return attributes[field];
 };
 
 /**
@@ -224,3 +254,5 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 		...extractBlockData( clientId )
 	});
 };
+
+import { useDispatch, useSelect } from '@wordpress/data';

@@ -5,18 +5,19 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	InnerBlocks,
-	RichText
+	RichText,
+	useBlockProps
 } from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
+	const blockProps = useBlockProps.save({
+		'data-title': attributes.title
+	});
+
 	return (
-		<div
-			className={ className }
-			data-title={ attributes.title }
-		>
+		<div { ...blockProps }>
 			<RichText.Content
 				tagName="div"
 				className="wp-block-themeisle-blocks-tabs-item__header"

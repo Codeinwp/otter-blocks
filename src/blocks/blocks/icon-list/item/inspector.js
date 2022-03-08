@@ -29,6 +29,10 @@ const Inspector = ({
 	setAttributes
 }) => {
 	const changeIcon = value => {
+		if ( 'image' === attributes.library && value?.url ) {
+			return setAttributes({ icon: value.url });
+		}
+
 		if ( 'object' === typeof value ) {
 			setAttributes({
 				icon: value.name,
@@ -68,6 +72,7 @@ const Inspector = ({
 						icon={ attributes.icon }
 						changeLibrary={ changeLibrary }
 						onChange={ changeIcon }
+						allowImage
 					/>
 				</Suspense>
 
@@ -77,11 +82,13 @@ const Inspector = ({
 					onColorChange={ onDefaultContentColorChange }
 				/>
 
-				<ColorGradientControl
-					label={ __( 'Icon Color', 'otter-blocks' ) }
-					colorValue={ attributes.iconColor }
-					onColorChange={ onDefaultIconColorChange }
-				/>
+				{ 'image' !== attributes.library && (
+					<ColorGradientControl
+						label={ __( 'Icon Color', 'otter-blocks' ) }
+						colorValue={ attributes.iconColor }
+						onColorChange={ onDefaultIconColorChange }
+					/>
+				) }
 			</PanelBody>
 		</InspectorControls>
 	);

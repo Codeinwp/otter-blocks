@@ -1,0 +1,19 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/form-nonce",
+	"title": "Nonce Field",
+	"category": "themeisle-blocks",
+	"description": "Protect the form from CSRF.",
+	"keywords": [ "protection", "csrf", "field" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"formId": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"align": [ "wide", "full" ],
+		"inserter": false
+	}
+}

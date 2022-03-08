@@ -156,33 +156,6 @@ export const barcodeIcon = () => {
 	);
 };
 
-export const topIcon = () => {
-	return (
-		<SVG className="wp-block-themeisle-icon-buttom-group-custom-icon" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-			<Path d="M17.294,17.287l-14.588,0l0,-14.574l14.588,0c0,4.858 0,9.716 0,14.574Zm-13.738,-0.85l12.888,0l0,-12.874l-12.888,0c0,4.291 0,8.583 0,12.874Z" />
-			<rect x="4.489" y="4.744" width="11.022" height="2.512"></rect>
-		</SVG>
-	);
-};
-
-export const middleIcon = () => {
-	return (
-		<SVG className="wp-block-themeisle-icon-buttom-group-custom-icon" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-			<Path d="M17.294,17.287l-14.588,0l0,-14.574l14.588,0c0,4.858 0,9.716 0,14.574Zm-13.738,-0.85l12.888,0l0,-12.874l-12.888,0c0,4.291 0,8.583 0,12.874Z" />
-			<rect y="8.744" width="11.022" x="4.489" height="2.512"></rect>
-		</SVG>
-	);
-};
-
-export const bottomIcon = () => {
-	return (
-		<SVG className="wp-block-themeisle-icon-buttom-group-custom-icon" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-			<Path d="M17.294,17.287l-14.588,0l0,-14.574l14.588,0c0,4.858 0,9.716 0,14.574Zm-13.738,-0.85l12.888,0l0,-12.874l-12.888,0c0,4.291 0,8.583 0,12.874Z" />
-			<rect x="4.489" y="12.802" width="11.022" height="2.512"></rect>
-		</SVG>
-	);
-};
-
 export const checkIcon = (
 	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 		<Path d="M9 18.6L3.5 13l1-1L9 16.4l9.5-9.9 1 1z" />
@@ -453,3 +426,21 @@ export const cols3Grid = ( props ) => {
 		</SVG>
 	);
 };
+
+export const alignBottom = (
+	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+		<Path d="M15 4H9v11h6V4zM4 18.5V20h16v-1.5H4z" />
+	</SVG>
+);
+
+export const alignCenter = (
+	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+		<Path d="M20 11h-5V4H9v7H4v1.5h5V20h6v-7.5h5z" />
+	</SVG>
+);
+
+export const alignTop = (
+	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+		<Path d="M9 20h6V9H9v11zM4 4v1.5h16V4H4z" />
+	</SVG>
+);

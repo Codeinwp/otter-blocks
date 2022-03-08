@@ -79,7 +79,7 @@ const GoogleFontsControl = ({
 	const id = `inspector-google-fonts-control-${ instanceId }`;
 
 	return (
-		<div className="otter-gfont-control">
+		<div className="o-gfont-control">
 			<BaseControl
 				label={ label }
 				id={ id }
@@ -138,11 +138,11 @@ const GoogleFontsControl = ({
 						/>
 					) : (
 						<Dropdown
-							contentClassName="otter-gfont-popover"
+							contentClassName="o-gfont-popover"
 							position="bottom center"
 							renderToggle={ ({ isOpen, onToggle }) => (
 								<Button
-									className="otter-gfont-button"
+									className="o-gfont-button"
 									id={ id }
 									onClick={ onToggle }
 									aria-expanded={ isOpen }

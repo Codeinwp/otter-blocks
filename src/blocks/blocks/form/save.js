@@ -8,30 +8,29 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
 	const hasIntegrationActive = attributes.provider && attributes.apiKey && attributes.listId;
 
+	const blockProps = useBlockProps.save({
+		id: attributes.id,
+		className: classnames({
+			'is-subscription': hasIntegrationActive && 'subscribe' === attributes.action,
+			'can-submit-and-subscribe': hasIntegrationActive && 'submit-subscribe' === attributes.action,
+			'has-captcha': attributes.hasCaptcha
+		}),
+		'data-email-subject': attributes.subject,
+		'data-option-name': attributes.optionName
+	});
+
 	return (
-		<div
-			id={ attributes.id }
-			className={
-				classnames(
-					className,
-					{
-						'is-subscription': hasIntegrationActive && 'subscribe' === attributes.action,
-						'can-submit-and-subscribe': hasIntegrationActive && 'submit-subscribe' === attributes.action,
-						'has-captcha': attributes.hasCaptcha
-					}
-				)
-			}
-			data-email-subject={ attributes.subject }
-			data-option-name={ attributes.optionName }
-		>
+		<div { ...blockProps }>
 			<div className="otter-form__container">
 				<InnerBlocks.Content />
 

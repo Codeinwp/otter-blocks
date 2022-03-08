@@ -10,6 +10,8 @@ import { __ } from '@wordpress/i18n';
 
 import { max } from 'lodash';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import { ResizableBox } from '@wordpress/components';
 
 import {
@@ -19,17 +21,21 @@ import {
 	useState
 } from '@wordpress/element';
 
+/**
+ * Internal dependencies
+ */
+import metadata from './block.json';
 import Placeholder from './placeholder.js';
 import Inspector from './inspector.js';
 import Slide from './components/Slide.js';
 import SliderControls from './components/slider-controls.js';
-import defaultAttributes from './attributes.js';
 import { blockInit } from '../../helpers/block-utility.js';
+
+const { attributes: defaultAttributes } = metadata;
 
 const Edit = ({
 	attributes,
 	setAttributes,
-	className,
 	clientId,
 	isSelected,
 	toggleSelection
@@ -47,7 +53,7 @@ const Edit = ({
 		}
 
 		return () => {
-			if ( attributes.images.length ) {
+			if ( attributes.images.length && null !== sliderRef.current ) {
 				sliderRef.current.destroy();
 			}
 		};
@@ -59,8 +65,9 @@ const Edit = ({
 
 			if ( null !== sliderRef.current ) {
 				sliderRef.current.destroy();
-				initSlider();
 			}
+
+			initSlider();
 		}
 	}, [ isSelected, attributes.align ]);
 
@@ -71,12 +78,11 @@ const Edit = ({
 	}, [ attributes.images ]);
 
 	const sliderRef = useRef( null );
-	const instanceIdRef = useRef( null );
 
 	const [ selectedImage, setSelectedImage ] = useState( null );
 
 	const initSlider = () => {
-		sliderRef.current = new window.Glide( `#${ attributes.id || instanceIdRef.current }`, {
+		sliderRef.current = new window.Glide( `#${ attributes.id }`, {
 			type: 'carousel',
 			keyboard: false,
 			perView: attributes.perView,
@@ -126,16 +132,20 @@ const Edit = ({
 		}
 	};
 
+	const blockProps = useBlockProps();
+
 	if ( Array.isArray( attributes.images ) && ! attributes.images.length ) {
 		return (
-			<Placeholder
-				labels={ {
-					title: __( 'Slider', 'otter-blocks' ),
-					instructions: __( 'Drag images, upload new ones or select files from your library.', 'otter-blocks' )
-				} }
-				icon="images-alt2"
-				onSelectImages={ onSelectImages }
-			/>
+			<div { ...blockProps }>
+				<Placeholder
+					labels={ {
+						title: __( 'Slider', 'otter-blocks' ),
+						instructions: __( 'Drag images, upload new ones or select files from your library.', 'otter-blocks' )
+					} }
+					icon="images-alt2"
+					onSelectImages={ onSelectImages }
+				/>
+			</div>
 		);
 	}
 
@@ -149,79 +159,77 @@ const Edit = ({
 				onSelectImages={ onSelectImages }
 			/>
 
-			<ResizableBox
-				size={ {
-					height: attributes.height
-				} }
-				enable={ {
-					top: false,
-					right: false,
-					bottom: true,
-					left: false
-				} }
-				minHeight={ 100 }
-				maxHeight={ 1400 }
-				onResizeStart={ () => {
-					toggleSelection( false );
-				} }
-				onResizeStop={ ( event, direction, elt, delta ) => {
-					setAttributes({
-						height: parseInt( attributes.height + delta.height, 10 )
-					});
-					toggleSelection( true );
-				} }
-				className={ classnames(
-					'wp-block-themeisle-blocks-slider-resizer',
-					{ 'is-focused': isSelected }
-				) }
-			>
-				<div
-					id={ attributes.id }
+			<div { ...blockProps }>
+				<ResizableBox
+					size={ {
+						height: attributes.height
+					} }
+					enable={ {
+						top: false,
+						right: false,
+						bottom: true,
+						left: false
+					} }
+					minHeight={ 100 }
+					maxHeight={ 1400 }
+					onResizeStart={ () => {
+						toggleSelection( false );
+					} }
+					onResizeStop={ ( event, direction, elt, delta ) => {
+						setAttributes({
+							height: parseInt( attributes.height + delta.height, 10 )
+						});
+						toggleSelection( true );
+					} }
 					className={ classnames(
-						'wp-block-themeisle-blocks-slider',
-						'glide',
-						className
+						'wp-block-themeisle-blocks-slider-resizer',
+						{ 'is-focused': isSelected }
 					) }
 				>
-					<div className="glide__track" data-glide-el="track">
-						<div
-							className="glide__slides"
-							style={ {
-								height: `${ attributes.height }px`
-							} }
-						>
-							{ attributes.images.map( ( image, index ) => (
-								<Slide
-									key={ image.url }
-									images={ attributes.images }
-									image={ image }
-									index={ index }
-									isFirstItem={ 0 === index }
-									isLastItem={ ( index + 1 ) === attributes.images.length }
-									isSelected={ isSelected && image.id === selectedImage }
-									setAttributes={ setAttributes }
-									setSelectedImage={ setSelectedImage }
-								/>
-							) ) }
+					<div
+						id={ attributes.id }
+						className="glide"
+					>
+						<div className="glide__track" data-glide-el="track">
+							<div
+								className="glide__slides"
+								style={ {
+									height: `${ attributes.height }px`
+								} }
+							>
+								{ attributes.images.map( ( image, index ) => (
+									<Slide
+										key={ image.url }
+										images={ attributes.images }
+										image={ image }
+										index={ index }
+										isFirstItem={ 0 === index }
+										isLastItem={ ( index + 1 ) === attributes.images.length }
+										isSelected={ isSelected && image.id === selectedImage }
+										setAttributes={ setAttributes }
+										setSelectedImage={ setSelectedImage }
+									/>
+								) ) }
+							</div>
+
+							<SliderControls attributes={ attributes } />
 						</div>
-
-						<SliderControls attributes={ attributes } />
 					</div>
-				</div>
-			</ResizableBox>
+				</ResizableBox>
 
-			{ isSelected && (
-				<Placeholder
-					labels={ {
-						title: '',
-						instructions: ''
-					} }
-					icon={ null }
-					onSelectImages={ onSelectImages }
-					isAppender={ true }
-					value={ attributes.images }
-				/>
-			) }
+				{ isSelected && (
+					<Placeholder
+						labels={ {
+							title: '',
+							instructions: ''
+						} }
+						icon={ null }
+						onSelectImages={ onSelectImages }
+						isAppender={ true }
+						value={ attributes.images }
+					/>
+				) }
+			</div>
 		</Fragment>
 	);
 };

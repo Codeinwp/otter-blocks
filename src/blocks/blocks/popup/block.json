@@ -1,0 +1,67 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/popup",
+	"title": "Popup",
+	"category": "themeisle-blocks",
+	"description": "Display your content in beautiful popup with many customization options.",
+	"keywords": [ "popup", "modal", "lightbox" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"minWidth": {
+			"type": "number"
+		},
+		"trigger": {
+			"type": "string"
+		},
+		"wait": {
+			"type": "number"
+		},
+		"anchor": {
+			"type": "string"
+		},
+		"scroll": {
+			"type": "number"
+		},
+		"showClose": {
+			"type": "boolean",
+			"default": true
+		},
+		"outsideClose": {
+			"type": "boolean",
+			"default": true
+		},
+		"anchorClose": {
+			"type": "boolean",
+			"default": false
+		},
+		"closeAnchor": {
+			"type": "string"
+		},
+		"recurringClose": {
+			"type": "boolean",
+			"default": false
+		},
+		"recurringTime": {
+			"type": "number"
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"closeColor": {
+			"type": "string"
+		},
+		"overlayColor": {
+			"type": "string"
+		},
+		"overlayOpacity": {
+			"type": "number"
+		}
+	},
+	"editorStyle": "otter-popup-editor",
+	"style": "otter-popup-style",
+	"script": "otter-popup"
+}

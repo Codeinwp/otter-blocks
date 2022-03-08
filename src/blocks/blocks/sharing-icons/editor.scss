@@ -1,15 +1,33 @@
 @import 'style';
 
+.wp-block[data-align="left"] {
+	.wp-block-themeisle-blocks-sharing-icons {
+		text-align: left;
+	}
+}
+
+.wp-block[data-align="center"] {
+	.wp-block-themeisle-blocks-sharing-icons {
+		text-align: center;
+	}
+}
+
+.wp-block[data-align="right"] {
+	.wp-block-themeisle-blocks-sharing-icons {
+		text-align: right;
+	}
+}
+
 .wp-block-themeisle-toolbar {
 	&.is-active {
 
-		.otter-toolbar-icon {
+		.o-toolbar-icon {
 			color: #fff;
 			background: #555d66;
 		}
 	}
 
-	.otter-toolbar-icon {
+	.o-toolbar-icon {
 		width: 20px;
 		height: 20px;
 		padding: 5px;

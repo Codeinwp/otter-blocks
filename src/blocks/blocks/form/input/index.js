@@ -8,26 +8,23 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import { inputIcon as icon } from '../../../helpers/icons.js';
-import attributes from './attributes.js';
 import edit from './edit.js';
 import save from './save.js';
 
-registerBlockType( 'themeisle-blocks/form-input', {
+const { name } = metadata;
+
+registerBlockType( name, {
+	...metadata,
 	title: __( 'Text Field', 'otter-blocks' ),
 	description: __( 'Display a contact form for your clients.', 'otter-blocks' ),
 	icon,
-	parent: [ 'themeisle-blocks/form' ],
-	category: 'themeisle-blocks',
 	keywords: [
 		'input',
 		'text',
 		'email'
 	],
-	attributes,
-	supports: {
-		align: [ 'wide', 'full' ]
-	},
 	variations: [
 		{
 			name: 'themeisle-blocks/form-input-email',

@@ -9,7 +9,8 @@ import {
 	RangeControl,
 	TextControl,
 	BaseControl,
-	SelectControl
+	SelectControl,
+	ToggleControl
 } from '@wordpress/components';
 
 import { InspectorControls } from '@wordpress/block-editor';
@@ -19,8 +20,9 @@ import { useSelect } from '@wordpress/data';
 /**
  * Internal dependencies
  */
-import LayoutBuilder from './components/layout-builder.js';
+import LayoutBuilder from './components/design-layout-builder.js';
 import { StyleSwitcherInspectorControl } from '../../components/style-switcher-control/index.js';
+import ToogleGroupControl from '../../components/toogle-group-control/index.js';
 import { convertToTitleCase } from '../../helpers/helper-functions.js';
 
 const Inspector = ({
@@ -90,85 +92,6 @@ const Inspector = ({
 		setAttributes({ columns: value });
 	};
 
-	const getFields = field => {
-		if ( 'image' === field ) {
-			return attributes.displayFeaturedImage;
-		}
-		if ( 'imageBoxShadow' === field ) {
-			return attributes.imageBoxShadow;
-		}
-
-		if ( 'category' === field ) {
-			return attributes.displayCategory;
-		}
-
-		if ( 'title' === field ) {
-			return attributes.displayTitle;
-		}
-
-		if ( 'meta' === field ) {
-			return attributes.displayMeta;
-		}
-
-		if ( 'description' === field ) {
-			return attributes.displayDescription;
-		}
-
-		if ( 'date' === field ) {
-			return attributes.displayDate;
-		}
-
-		if ( 'author' === field ) {
-			return attributes.displayAuthor;
-		}
-	};
-
-	const toggleFields = field => {
-		if ( 'image' === field ) {
-			setAttributes({ displayFeaturedImage: ! attributes.displayFeaturedImage });
-		}
-
-		if ( 'imageBoxShadow' === field ) {
-			setAttributes({ imageBoxShadow: ! attributes.imageBoxShadow });
-		}
-
-		if ( 'category' === field ) {
-			setAttributes({ displayCategory: ! attributes.displayCategory });
-		}
-
-		if ( 'title' === field ) {
-			setAttributes({ displayTitle: ! attributes.displayTitle });
-		}
-
-		if ( 'meta' === field ) {
-			setAttributes({ displayMeta: ! attributes.displayMeta });
-		}
-
-		if ( 'description' === field ) {
-			setAttributes({ displayDescription: ! attributes.displayDescription });
-		}
-
-		if ( 'date' === field ) {
-			setAttributes({ displayDate: ! attributes.displayDate });
-		}
-
-		if ( 'author' === field ) {
-			setAttributes({ displayAuthor: ! attributes.displayAuthor });
-		}
-	};
-
-	const changeImageSize = value => {
-		setAttributes({ imageSize: value });
-	};
-
-	const changeTitleTag = value => {
-		setAttributes({ titleTag: value });
-	};
-
-	const changeExcerptLength = value => {
-		setAttributes({ excerptLength: value });
-	};
-
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -195,6 +118,7 @@ const Inspector = ({
 
 			<PanelBody
 				title={ __( 'Post Types', 'otter-blocks' ) }
+				initialOpen={ false }
 			>
 				<BaseControl>
 					{ __( 'Select the types of the post. If none is selected, the default WordPress post will be displayed.', 'otter-blocks' ) }
@@ -244,6 +168,39 @@ const Inspector = ({
 					min={ 0 }
 					onChange={ value => setAttributes({ offset: Number( value ) }) }
 				/>
+
+				<ToggleControl
+					label={ __( 'Enable featured post', 'otter-blocks' ) }
+					checked={ attributes.enableFeaturedPost }
+					onChange={ enableFeaturedPost => setAttributes({ enableFeaturedPost })}
+				/>
+
+				<BaseControl
+					label={ __( 'Text alignment', 'otter-blocks' ) }
+				>
+					<ToogleGroupControl
+						value={ attributes.textAlign }
+						options={[
+							{
+								icon: 'editor-alignleft',
+								label: __( 'Left', 'otter-blocks' ),
+								value: 'left'
+							},
+							{
+								icon: 'editor-aligncenter',
+								label: __( 'Center', 'otter-blocks' ),
+								value: 'center'
+							},
+							{
+								icon: 'editor-alignright',
+								label: __( 'Right', 'otter-blocks' ),
+								value: 'right'
+							}
+						]}
+						onChange={ textAlign => setAttributes({ textAlign }) }
+						showBottomLabels
+					/>
+				</BaseControl>
 			</PanelBody>
 
 			<PanelBody
@@ -252,21 +209,7 @@ const Inspector = ({
 			>
 				<LayoutBuilder
 					attributes={ attributes }
-					getFields={ getFields }
-					toggleFields={ toggleFields }
 					setAttributes={ setAttributes }
-					imageSize={ {
-						value: attributes.imageSize,
-						onChange: changeImageSize
-					} }
-					titleTag={ {
-						value: attributes.titleTag,
-						onChange: changeTitleTag
-					} }
-					excerptLimit={ {
-						value: attributes.excerptLength,
-						onChange: changeExcerptLength
-					} }
 				/>
 			</PanelBody>
 		</InspectorControls>

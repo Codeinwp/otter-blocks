@@ -46,12 +46,12 @@ const HTMLAnchorControl = ({
 			<BaseControl
 				label={ __( 'HTML Anchor', 'otter-blocks' ) }
 				help={ __( 'Anchors lets you link directly to a section on a page.', 'otter-blocks' ) }
-				id={ `otter-html-anchor-control-${ instanceId }` }
+				id={ `o-html-anchor-control-${ instanceId }` }
 			>
-				<div className="otter-html-anchor-control">
+				<div className="o-html-anchor-control">
 					<input
 						type="text"
-						className="otter-html-anchor-control-input"
+						className="o-html-anchor-control-input"
 						readOnly={ isEditing ? false : 'readonly' }
 						value={ isEditing ? ID : value }
 						onChange={ e => setID( e.target.value ) }
@@ -64,7 +64,7 @@ const HTMLAnchorControl = ({
 						showTooltip={ true }
 						disabled={ isInvalid ? true : false }
 						className={ classnames(
-							'otter-html-anchor-control-button',
+							'o-html-anchor-control-button',
 							{ 'is-saved': ! isEditing }
 						) }
 						onClick={ () => {
@@ -83,7 +83,7 @@ const HTMLAnchorControl = ({
 				<Notice
 					status="warning"
 					isDismissible={ false }
-					className="otter-html-anchor-control-notice"
+					className="o-html-anchor-control-notice"
 				>
 					{ __( 'This ID has already been used in this page. Please consider using a different ID to avoid conflict.', 'otter-blocks' ) }
 				</Notice>

@@ -88,7 +88,7 @@ const LinkControlToolbar = ({
 						title={ __( 'Link', 'otter-blocks' ) }
 						shortcut={ displayShortcut.primary( 'k' ) }
 						onClick={ openLinkControl }
-						className="otter-toolbar-icon"
+						className="o-toolbar-icon"
 					/>
 				) }
 
@@ -100,7 +100,7 @@ const LinkControlToolbar = ({
 						shortcut={ displayShortcut.primaryShift( 'k' ) }
 						onClick={ unlinkButton }
 						isActive={ true }
-						className="otter-toolbar-icon"
+						className="o-toolbar-icon"
 					/>
 				) }
 			</ToolbarGroup>

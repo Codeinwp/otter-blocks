@@ -1,0 +1,10 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/product-tabs",
+	"title": "Product Tabs",
+	"category": "themeisle-woocommerce-blocks",
+	"description": "Display the tabs for your WooCommerce product.",
+	"keywords": [ "woocommerce", "products", "tabs" ],
+	"textdomain": "otter-blocks"
+}

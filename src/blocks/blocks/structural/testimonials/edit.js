@@ -3,7 +3,10 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 const TEMPLATE = [
 	[ 'core/image', {
@@ -38,9 +41,11 @@ const TEMPLATE = [
 	} ]
 ];
 
-const Edit = ({ className }) => {
+const Edit = () => {
+	const blockProps = useBlockProps();
+
 	return (
-		<div className={ className } >
+		<div { ...blockProps }>
 			<InnerBlocks
 				template={ TEMPLATE }
 			/>

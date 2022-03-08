@@ -14,7 +14,8 @@ const Thumbnail = ({
 	id,
 	link,
 	alt,
-	size
+	size,
+	imgStyle
 }) => {
 	const {
 		featuredImage,
@@ -34,7 +35,7 @@ const Thumbnail = ({
 			featuredImage,
 			altText: image && image.alt_text ? image.alt_text : alt
 		};
-	}, [ size ]);
+	}, [ size, id ]);
 
 
 	if ( null === featuredImage ) {
@@ -42,9 +43,9 @@ const Thumbnail = ({
 	}
 
 	return (
-		<div className="wp-block-themeisle-blocks-posts-grid-post-image">
+		<div className="o-posts-grid-post-image">
 			<a href={ link }>
-				{ featuredImage ? <img src={ featuredImage } size={ size } alt={ altText } data-id={ id } /> : <Placeholder><Spinner/></Placeholder> }
+				{ featuredImage ? <img src={ featuredImage } size={ size } alt={ altText } data-id={ id } style={ imgStyle } /> : <Placeholder><Spinner/></Placeholder> }
 			</a>
 		</div>
 	);

@@ -7,30 +7,10 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
-use ThemeIsle\GutenbergBlocks\Base_Block;
-
 /**
  * Class About_Author_Block
  */
-class About_Author_Block extends Base_Block {
-
-	/**
-	 * Every block needs a slug, so we need to define one and assign it to the `$this->block_slug` property
-	 *
-	 * @return mixed
-	 */
-	protected function set_block_slug() {
-		$this->block_slug = 'about-author';
-	}
-
-	/**
-	 * Set the attributes required on the server side.
-	 *
-	 * @return mixed
-	 */
-	protected function set_attributes() {
-		$this->attributes = array();
-	}
+class About_Author_Block {
 
 	/**
 	 * Block render function for server-side.
@@ -41,7 +21,7 @@ class About_Author_Block extends Base_Block {
 	 * @param array $attributes Block attrs.
 	 * @return mixed|string
 	 */
-	protected function render( $attributes ) {
+	public function render( $attributes ) {
 		$img_markup = sprintf(
 			'<a href="%1$s"><img src="%2$s" class="author-image" /></a>',
 			esc_url( get_author_posts_url( get_the_author_meta( 'ID' ) ) ),
@@ -58,19 +38,12 @@ class About_Author_Block extends Base_Block {
 			esc_html( wp_strip_all_tags( get_the_author_meta( 'description' ) ) )
 		);
 
-		$class = 'wp-block-themeisle-blocks-about-author';
-
-		if ( isset( $attributes['className'] ) ) {
-			$class .= ' ' . esc_attr( $attributes['className'] );
-		}
-
 		return sprintf(
-			'<section class="%1$s"><div class="wp-block-themeisle-author-image">%2$s</div><div class="wp-block-themeisle-author-data">%3$s%4$s</div></section>',
-			esc_attr( $class ),
+			'<section %1$s><div class="o-author-image">%2$s</div><div class="o-author-data">%3$s%4$s</div></section>',
+			$wrapper_attributes = get_block_wrapper_attributes(),
 			$img_markup,
 			$title_markup,
 			$content_markup
 		);
-
 	}
 }

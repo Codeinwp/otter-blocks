@@ -1,5 +1,5 @@
 # Gutenberg Blocks and Template Library by Otter #
-**Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/)  
+**Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/)  
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder  
 **Requires at least:** 5.6  
 **Tested up to:** 5.9  
@@ -24,27 +24,34 @@ It has:
 
 - Section Block
 - Advanced Heading Block
+- Add to Cart Block
 - Button Group Block
+- Business Hours
 - Slider Block
 - Accordion Block
 - Tabs Block
 - Google Maps Block
+- Maps Block
 - Countdown Block
 - Contact Form Block
 - Masonry Gallery Block
-- Post Grid Block
+- Posts Block
 - Product Review Block
 - Service Block
 - Pricing Block
 - Testimonial Block
 - About Author Block
 - Icon Block
+- Icon List Block
 - Lottie Animation Block
 - Progress Bar Block
 - Popup Block
 - Circular Progress Block
 - Sharing Icons Block
 - Plugin Card Block
+- Pricing Section
+- Review Block
+- Flip Block
 
 # STUNNING WEB PAGES WITH DRAG AND DROP EFFICIENCY #
 

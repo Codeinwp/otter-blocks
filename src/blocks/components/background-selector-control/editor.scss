@@ -1,0 +1,48 @@
+.o-background-selector-control {
+	margin: 0 0 1.5em 0;
+
+	.components-base-control__title {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 20px;
+
+		label {
+			padding: 5px 0;
+		}
+
+		.linking-controls {
+			display: flex;
+
+			button {
+				width: 25px;
+				height: 28px;
+				border: 1px solid #555d66;
+
+				svg {
+					width: 20px;
+				}
+
+				&.is-primary {
+					z-index: 0;
+
+					svg {
+						fill: #fff;
+					}
+
+					&:hover {
+						background: #007eb1;
+						border-color: #006a95 #00648c #00648c;
+						box-shadow: inset 0 -1px 0 #00648c;
+						color: #fff;
+						text-decoration: none;
+						text-shadow: 0 -1px 1px #005d82,1px 0 1px #005d82,0 1px 1px #005d82,-1px 0 1px #005d82;
+					}
+				}
+
+				.dashicon {
+					margin: 2px;
+				}
+			}
+		}
+	}
+}

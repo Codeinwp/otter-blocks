@@ -6,22 +6,23 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies.
  */
-import { InnerBlocks } from '@wordpress/block-editor';
+import {
+	InnerBlocks,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
+	const blockProps = useBlockProps.save({
+		id: attributes.id,
+		className: classnames({
+			[ `is-${ attributes.gap }-gap` ]: attributes.gap
+		})
+	});
+
 	return (
-		<div
-			id={ attributes.id }
-			className={ classnames(
-				className,
-				{
-					[ `is-${ attributes.gap }-gap` ]: attributes.gap
-				}
-			) }
-		>
+		<div { ...blockProps }>
 			<InnerBlocks.Content />
 		</div>
 	);

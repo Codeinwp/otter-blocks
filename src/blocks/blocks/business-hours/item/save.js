@@ -1,17 +1,20 @@
 /**
  * WordPress dependencies
  */
-import { RichText } from '@wordpress/block-editor';
+import {
+	RichText,
+	useBlockProps
+} from '@wordpress/block-editor';
 
 const Save = ({
-	attributes,
-	className
+	attributes
 }) => {
+	const blockProps = useBlockProps.save({
+		id: attributes.id
+	});
+
 	return (
-		<div
-			className={ className }
-			id={ attributes.id }
-		>
+		<div { ...blockProps }>
 			<div className="otter-business-hour-item__label">
 				<RichText.Content
 					value={ attributes.label }

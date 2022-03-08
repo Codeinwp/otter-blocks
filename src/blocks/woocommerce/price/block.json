@@ -1,0 +1,10 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/product-price",
+	"title": "Product Price",
+	"category": "themeisle-woocommerce-blocks",
+	"description": "Display the price of your WooCommerce product.",
+	"keywords": [ "woocommerce", "products", "price" ],
+	"textdomain": "otter-blocks"
+}

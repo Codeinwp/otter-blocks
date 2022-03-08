@@ -53,7 +53,8 @@ class Block_Frontend extends Base_CSS {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_google_fonts' ), 19 );
 		add_action( 'wp_head', array( $this, 'enqueue_google_fonts_backward' ), 19 );
 		add_filter( 'get_the_excerpt', array( $this, 'get_excerpt_end' ), 20 );
-		add_filter( 'wp_footer', array( $this, 'enqueue_widgets_css' ) );
+		add_action( 'wp_footer', array( $this, 'enqueue_widgets_css' ) );
+		add_action( 'wp_footer', array( $this, 'enqueue_global_styles' ) );
 	}
 
 	/**
@@ -102,7 +103,7 @@ class Block_Frontend extends Base_CSS {
 		$post_id    = $post_id ? $post_id : get_the_ID();
 		$fonts_list = get_post_meta( $post_id, '_themeisle_gutenberg_block_fonts', true );
 		$content    = get_post_field( 'post_content', $post_id );
-		$blocks     = $this->parse_blocks( $content );
+		$blocks     = parse_blocks( $content );
 
 		if ( is_array( $blocks ) || ! empty( $blocks ) ) {
 			$this->enqueue_reusable_fonts( $blocks );
@@ -250,7 +251,9 @@ class Block_Frontend extends Base_CSS {
 		}
 
 		if ( ! CSS_Handler::has_css_file( $post_id ) ) {
-			CSS_Handler::generate_css_file( $post_id );
+			if ( CSS_Handler::is_writable() ) {
+				CSS_Handler::generate_css_file( $post_id );
+			}
 
 			add_action(
 				$location,
@@ -268,7 +271,7 @@ class Block_Frontend extends Base_CSS {
 
 		$content = get_post_field( 'post_content', $post_id );
 
-		$blocks = $this->parse_blocks( $content );
+		$blocks = parse_blocks( $content );
 
 		if ( is_array( $blocks ) || ! empty( $blocks ) ) {
 			$this->enqueue_reusable_styles( $blocks, $footer );
@@ -379,7 +382,7 @@ class Block_Frontend extends Base_CSS {
 
 			$content = get_post_field( 'post_content', $post_id );
 
-			$blocks = $this->parse_blocks( $content );
+			$blocks = parse_blocks( $content );
 
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 				return $style;
@@ -438,7 +441,7 @@ class Block_Frontend extends Base_CSS {
 				$content = get_post_field( 'post_content', $post_id );
 			}
 
-			$blocks = $this->parse_blocks( $content );
+			$blocks = parse_blocks( $content );
 
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 				return '';
@@ -511,7 +514,9 @@ class Block_Frontend extends Base_CSS {
 		}
 
 		if ( ! CSS_Handler::has_css_file( 'widgets' ) ) {
-			CSS_Handler::save_widgets_styles();
+			if ( CSS_Handler::is_writable() ) {
+				CSS_Handler::save_widgets_styles();
+			}
 
 			$css = get_option( 'themeisle_blocks_widgets_css' );
 
@@ -533,6 +538,26 @@ class Block_Frontend extends Base_CSS {
 		$file_url = CSS_Handler::get_css_url( 'widgets' );
 
 		return wp_enqueue_style( 'otter-widgets', $file_url, array( 'otter-blocks' ), THEMEISLE_BLOCKS_VERSION );
+	}
+
+	/**
+	 * Enqueue global defaults
+	 *
+	 * @since   2.0.0
+	 * @access  public
+	 */
+	public function enqueue_global_styles() {
+		$css = $this->cycle_through_global_styles();
+
+		if ( empty( $css ) ) {
+			return;
+		}
+
+		$style  = "\n" . '<style type="text/css" media="all">' . "\n";
+		$style .= $css;
+		$style .= "\n" . '</style>' . "\n";
+
+		echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
