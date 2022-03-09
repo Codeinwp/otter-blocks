@@ -40,7 +40,7 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 			</Fragment>
 		);
 	};
-}, 'withMasonryExtension' );
+}, 'withConditions' );
 
 const withConditionsIndicator = createHigherOrderComponent( BlockListBlock => {
 	return ( props ) => {
@@ -55,7 +55,7 @@ const withConditionsIndicator = createHigherOrderComponent( BlockListBlock => {
 			/>
 		);
 	};
-}, 'withMasonryExtension' );
+}, 'withConditionsIndicator' );
 
 addFilter( 'blocks.registerBlockType', 'themeisle-gutenberg/conditions-register', addAttribute );
 addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/conditions-inspector', withConditions );

@@ -1,11 +1,21 @@
 /**
+ * External dependencies.
+ */
+
+import deepmerge from 'deepmerge';
+
+/**
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
 
-import deepmerge from 'deepmerge';
-
 import { addFilter } from '@wordpress/hooks';
+
+/**
+ * Internal dependencies.
+ */
+
+import Edit from './edit.js';
 
 const applyProConditions = conditions => {
 	const proConditions = {
@@ -116,7 +126,7 @@ const applyProConditions = conditions => {
 	return conditions;
 };
 
-const applyProDefaults = ({ attrs, value }) => {
+const applyProDefaults = ( attrs, value ) => {
 	if ( 'postMeta' === value ) {
 		attrs.visibility = true;
 	}
@@ -149,5 +159,27 @@ const applyProDefaults = ({ attrs, value }) => {
 	return attrs;
 };
 
+const BlockConditions = (
+	el,
+	groupIndex,
+	itemIndex,
+	item,
+	conditions,
+	setAttributes,
+	changeValue
+) => {
+	return (
+		<Edit
+			groupIndex={ groupIndex }
+			itemIndex={ itemIndex }
+			item={ item }
+			conditions={ conditions }
+			setAttributes={ setAttributes }
+			changeValue={ changeValue }
+		/>
+	);
+};
+
 addFilter( 'otter.blockConditions.conditions', 'themeisle-gutenberg/block-conditions-list', applyProConditions );
 addFilter( 'otter.blockConditions.defaults', 'themeisle-gutenberg/block-conditions-defaults', applyProDefaults );
+addFilter( 'otter.blockConditions.controls', 'themeisle-gutenberg/block-conditions-controls', BlockConditions );
