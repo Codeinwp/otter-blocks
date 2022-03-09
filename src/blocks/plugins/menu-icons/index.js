@@ -52,8 +52,4 @@ const withBlockControls = createHigherOrderComponent( BlockEdit => {
 	};
 }, 'withInspectorControl' );
 
-addFilter(
-	'editor.BlockEdit',
-	'themeisle-menu-icons/with-blocks-controls',
-	withBlockControls
-);
+addFilter( 'editor.BlockEdit', 'themeisle-menu-icons/with-blocks-controls', withBlockControls );

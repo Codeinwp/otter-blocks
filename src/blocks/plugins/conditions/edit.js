@@ -41,6 +41,8 @@ import {
 	useState
 } from '@wordpress/element';
 
+import { applyFilters } from '@wordpress/hooks';
+
 import { decodeEntities } from '@wordpress/html-entities';
 
 /**
@@ -48,9 +50,7 @@ import { decodeEntities } from '@wordpress/html-entities';
  */
 import PanelTab from '../../components/panel-tab/index.js';
 
-const isBoosterActive = Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive );
-const isNeve = Boolean( window.themeisleGutenberg.hasNeveSupport.hasNeve );
-const isNevePro = Boolean( window.themeisleGutenberg.hasNeveSupport.hasNevePro );
+const hasPro = Boolean( window.themeisleGutenberg.hasPro );
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 
 const Edit = ({
@@ -85,7 +85,7 @@ const Edit = ({
 	const [ courseGroupsStatus, setCourseGroupsStatus ] = useState( 'loading' );
 
 	useEffect( () => {
-		if ( Boolean( window.themeisleGutenberg.hasLearnDash ) && isBoosterActive ) {
+		if ( Boolean( window.themeisleGutenberg.hasLearnDash ) && hasPro ) {
 			( async() => {
 				setCoursesStatus( 'loading' );
 				setCourseGroupsStatus( 'loading' );
@@ -159,7 +159,7 @@ const Edit = ({
 		let productsStatus = 'loading';
 		let categoriesStatus = 'loading';
 
-		if ( Boolean( window.themeisleGutenberg.hasWooCommerce ) && isBoosterActive ) {
+		if ( Boolean( window.themeisleGutenberg.hasWooCommerce ) && hasPro ) {
 			const { COLLECTIONS_STORE_KEY } = window.wc.wcBlocksData;
 
 			// eslint-disable-next-line camelcase
@@ -239,35 +239,10 @@ const Edit = ({
 	const changeCondition = ( value, index, key ) => {
 		const otterConditions = [ ...attributes.otterConditions ];
 
-		const attrs = {};
+		const attrs = applyFilters( 'otter.blockConditions.defaults', {}, value );
 
-		if ( 'userRoles' === value || 'postAuthor' === value || 'postMeta' === value ) {
+		if ( 'userRoles' === value || 'postAuthor' === value ) {
 			attrs.visibility = true;
-		}
-
-		if ( 'postMeta' === value ) {
-			// eslint-disable-next-line camelcase
-			attrs.meta_compare = 'is_true';
-		}
-
-		if ( 'queryString' === value ) {
-			attrs.match = 'any';
-		}
-
-		if ( 'wooProductsInCart' == value ) {
-			attrs.on = 'products';
-		}
-
-		if ( 'wooTotalCartValue' === value || 'wooTotalSpent' === value ) {
-			attrs.compare = 'greater_than';
-		}
-
-		if ( 'learnDashPurchaseHistory' == value ) {
-			attrs.on = 'courses';
-		}
-
-		if ( 'learnDashCourseStatus' == value ) {
-			attrs.status = 'not_started';
 		}
 
 		if ( 'none' === value ) {
@@ -374,104 +349,155 @@ const Edit = ({
 		setAttributes({ otterConditions });
 	};
 
+	let conditions = {
+		'users': {
+			label: __( 'Users', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'loggedInUser',
+					label: __( 'Logged In Users', 'otter-blocks' ),
+					help: __( 'The selected block will only be visible to logged-in users.' )
+				},
+				{
+					value: 'loggedOutUser',
+					label: __( 'Logged Out Users', 'otter-blocks' ),
+					help: __( 'The selected block will only be visible to logged-out users.' )
+				},
+				{
+					value: 'userRoles',
+					label: __( 'User Roles', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on user roles.' ),
+					toogleVisibility: true
+				}
+			]
+		},
+		'posts': {
+			label: __( 'Posts', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'postAuthor',
+					label: __( 'Post Author', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on post author.' ),
+					toogleVisibility: true
+				},
+				{
+					value: 'postType',
+					label: __( 'Post Type', 'otter-blocks' ),
+					help: __( 'The selected block will be visible if post becomes to one of the selected post types.' ),
+					toogleVisibility: true
+				},
+				{
+					value: 'postCategory',
+					label: __( 'Post Category', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on selected post categories.' ),
+					toogleVisibility: true
+				},
+				{
+					value: 'postMeta',
+					label: __( 'Post Meta', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on post meta condition.' ),
+					isDisabled: true
+				}
+			]
+		},
+		'url': {
+			label: __( 'URL', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'queryString',
+					label: __( 'Query String', 'otter-blocks' ),
+					help: __( 'The condition will be met if the URL contains specified parameters.' ),
+					isDisabled: true
+				}
+			]
+		},
+		'dateAndTime': {
+			label: __( 'Date & Time', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'dateRange',
+					label: __( 'Date Range', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on the date range. Timezone is used based on your WordPress settings.' ),
+					isDisabled: true
+				},
+				{
+					value: 'dateRecurring',
+					label: __( 'Date Recurring', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on the selected days. Timezone is used based on your WordPress settings.' ),
+					isDisabled: true
+				},
+				{
+					value: 'timeRecurring',
+					label: __( 'Time Recurring', 'otter-blocks' ),
+					help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.' ),
+					isDisabled: true
+				}
+			]
+		},
+		'woocommerce': {
+			label: __( 'WooCommerce', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'wooProductsInCart',
+					label: __( 'Products in Cart', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on the products added to WooCommerce cart.' ),
+					isDisabled: true
+				},
+				{
+					value: 'wooTotalCartValue',
+					label: __( 'Total Cart Value', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on the total value of WooCommerce cart.' ),
+					isDisabled: true
+				},
+				{
+					value: 'wooPurchaseHistory',
+					label: __( 'Purchase History', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on user\'s WooCommerce purchase history.' ),
+					isDisabled: true
+				},
+				{
+					value: 'wooTotalSpent',
+					label: __( 'Total Spent', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on how much the user spent during lifetime.' ),
+					isDisabled: true
+				}
+			]
+		},
+		'learndash': {
+			label: __( 'LearnDash', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'learnDashPurchaseHistory',
+					label: __( 'Purchase History', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on user\'s LearnDash purchase history.' ),
+					isDisabled: true
+				},
+				{
+					value: 'learnDashCourseStatus',
+					label: __( 'Course Status', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on user\'s LearnDash course status.' ),
+					isDisabled: true
+				}
+			]
+		}
+	};
+
+	conditions = applyFilters( 'otter.blockConditions.conditions', conditions );
+
 	const getConditions = () => {
-		const conditions = [
+		const flatConditions = [
 			{
 				value: 'none',
 				label: __( 'Select a condition', 'otter-blocks' ),
 				help: __( 'Select a condition to control the visibility of your block.', 'otter-blocks' )
 			},
-			{
-				value: 'loggedInUser',
-				label: __( 'Logged In Users', 'otter-blocks' ),
-				help: __( 'The selected block will only be visible to logged-in users.' )
-			},
-			{
-				value: 'loggedOutUser',
-				label: __( 'Logged Out Users', 'otter-blocks' ),
-				help: __( 'The selected block will only be visible to logged-out users.' )
-			},
-			{
-				value: 'userRoles',
-				label: __( 'User Roles', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on user roles.' )
-			},
-			{
-				value: 'postAuthor',
-				label: __( 'Post Author', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on post author.' )
-			},
-			{
-				value: 'postType',
-				label: __( 'Post Type', 'otter-blocks' ),
-				help: __( 'The selected block will be visible if post becomes to one of the selected post types.' )
-			},
-			{
-				value: 'postCategory',
-				label: __( 'Post Category', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on selected post categories.' )
-			},
-			{
-				value: 'postMeta',
-				label: __( 'Post Meta', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on post meta condition.' )
-			},
-			{
-				value: 'queryString',
-				label: __( 'Query String', 'otter-blocks' ),
-				help: __( 'The condition will be met if the URL contains specified parameters.' )
-			},
-			{
-				value: 'dateRange',
-				label: __( 'Date Range', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on the date range. Timezone is used based on your WordPress settings.' )
-			},
-			{
-				value: 'dateRecurring',
-				label: __( 'Date Recurring', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on the selected days. Timezone is used based on your WordPress settings.' )
-			},
-			{
-				value: 'timeRecurring',
-				label: __( 'Time Recurring', 'otter-blocks' ),
-				help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.' )
-			},
-			{
-				value: 'wooProductsInCart',
-				label: __( 'Products in Cart', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on the products added to WooCommerce cart.' )
-			},
-			{
-				value: 'wooTotalCartValue',
-				label: __( 'Total Cart Value', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on the total value of WooCommerce cart.' )
-			},
-			{
-				value: 'wooPurchaseHistory',
-				label: __( 'Purchase History', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on user\'s WooCommerce purchase history.' )
-			},
-			{
-				value: 'wooTotalSpent',
-				label: __( 'Total Spent', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on how much the user spent during lifetime.' )
-			},
-			{
-				value: 'learnDashPurchaseHistory',
-				label: __( 'Purchase History', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on user\'s LearnDash purchase history.' )
-			},
-			{
-				value: 'learnDashCourseStatus',
-				label: __( 'Course Status', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on user\'s LearnDash course status.' )
-			}
+			...Object.keys( conditions ).map( i => conditions[i].conditions ).flat()
 		];
 
-		return conditions;
+		return flatConditions;
 	};
 
-	const customVisibility = [ 'userRoles', 'postAuthor', 'postMeta', 'postType', 'postCategory', 'wooProductsInCart', 'wooPurchaseHistory', 'learnDashPurchaseHistory', 'learnDashCourseStatus', 'queryString' ];
+	const toogleVisibility = getConditions().filter( i => i.toogleVisibility )?.map( i => i.value );
 
 	const week = [
 		{
@@ -587,22 +613,14 @@ const Edit = ({
 			>
 				<p>{ __( 'Control the visibility of your blocks based on the following conditions.', 'otter-blocks' ) }</p>
 
-				{ ( isNeve && ! isBoosterActive ) && (
+				{ ( ! hasPro ) && (
 					<Fragment>
-						<p>{ __( 'Unlock the full power of Block Conditions with Neve Pro\'s Block Editor Booster. ', 'otter-blocks' ) }</p>
+						<p>{ __( 'Unlock the full power of Block Conditions with Otter Pro. ', 'otter-blocks' ) }</p>
 
 						<p>
-							{ ! isNevePro && (
-								<ExternalLink href="https://themeisle.com/themes/neve/pricing">
-									{ __( 'Get Neve Pro.', 'otter-blocks' ) }
-								</ExternalLink>
-							) }
-
-							{ isNevePro && (
-								<ExternalLink href={ window.themeisleGutenberg.hasNeveSupport.optionsPage }>
-									{ __( 'Enable Block Editor Booster.', 'otter-blocks' ) }
-								</ExternalLink>
-							) }
+							<ExternalLink href={ window.themeisleGutenberg.upgradeLink }>
+								{ __( 'Get Otter Pro.', 'otter-blocks' ) }
+							</ExternalLink>
 						</p>
 					</Fragment>
 				) }
@@ -620,7 +638,7 @@ const Edit = ({
 									<Fragment key={ `${ index }-${ i }` }>
 										<BaseControl
 											label={ __( 'Condition', 'otter-blocks' ) }
-											help={ getConditions().find( condition => condition.value === ( i.type || 'none' ) ).help }
+											help={ getConditions().find( condition => condition.value === ( i.type || 'none' ) )?.help }
 											id={ `o-conditions-${ index }-${ n }` }
 										>
 											<select
@@ -631,53 +649,13 @@ const Edit = ({
 											>
 												<option value="none">{ __( 'Select a condition', 'otter-blocks' ) }</option>
 
-												<optgroup label={ __( 'Users', 'otter-blocks' ) }>
-													<option value="loggedInUser">{ __( 'Logged In Users', 'otter-blocks' ) }</option>
-													<option value="loggedOutUser">{ __( 'Logged Out Users', 'otter-blocks' ) }</option>
-													<option value="userRoles">{ __( 'User Roles', 'otter-blocks' ) }</option>
-												</optgroup>
-
-												<optgroup label={ __( 'Posts', 'otter-blocks' ) }>
-													<option value="postAuthor">{ __( 'Post Author', 'otter-blocks' ) }</option>
-													<option value="postCategory">{ __( 'Post Category', 'otter-blocks' ) }</option>
-
-													{ ( isBoosterActive || isNeve ) && (
-														<Fragment>
-															<option value="postType">{ __( 'Post Type', 'otter-blocks' ) }</option>
-															<option value="postMeta" disabled={ ! isBoosterActive }>{ __( 'Post Meta', 'otter-blocks' ) }</option>
-														</Fragment>
-													) }
-												</optgroup>
-
-												{ ( isBoosterActive || isNeve ) && (
-													<optgroup label={ __( 'URL', 'otter-blocks' ) }>
-														<option value="queryString" disabled={ ! isBoosterActive }>{ __( 'Query String', 'otter-blocks' ) }</option>
-													</optgroup>
-												) }
-
-												{ ( isBoosterActive || isNeve ) && (
-													<optgroup label={ __( 'Date & Time', 'otter-blocks' ) }>
-														<option value="dateRange" disabled={ ! isBoosterActive }>{ __( 'Date Range', 'otter-blocks' ) }</option>
-														<option value="dateRecurring" disabled={ ! isBoosterActive }>{ __( 'Date Recurring', 'otter-blocks' ) }</option>
-														<option value="timeRecurring" disabled={ ! isBoosterActive }>{ __( 'Time Recurring', 'otter-blocks' ) }</option>
-													</optgroup>
-												) }
-
-												{ ( Boolean( window.themeisleGutenberg.hasWooCommerce ) && ( isBoosterActive || isNeve ) ) && (
-													<optgroup label={ __( 'WooCommerce', 'otter-blocks' ) }>
-														<option value="wooProductsInCart" disabled={ ! isBoosterActive }>{ __( 'Products in Cart', 'otter-blocks' ) }</option>
-														<option value="wooTotalCartValue" disabled={ ! isBoosterActive }>{ __( 'Total Cart Value', 'otter-blocks' ) }</option>
-														<option value="wooPurchaseHistory" disabled={ ! isBoosterActive }>{ __( 'Purchase History', 'otter-blocks' ) }</option>
-														<option value="wooTotalSpent" disabled={ ! isBoosterActive }>{ __( 'Total Spent', 'otter-blocks' ) }</option>
-													</optgroup>
-												) }
-
-												{ ( Boolean( window.themeisleGutenberg.hasLearnDash ) && ( isBoosterActive || isNeve ) ) && (
-													<optgroup label={ __( 'LearnDash', 'otter-blocks' ) }>
-														<option value="learnDashPurchaseHistory" disabled={ ! isBoosterActive }>{ __( 'Purchase History', 'otter-blocks' ) }</option>
-														<option value="learnDashCourseStatus" disabled={ ! isBoosterActive }>{ __( 'Course Status', 'otter-blocks' ) }</option>
-													</optgroup>
-												) }
+												{ Object.keys( conditions ).map( i => {
+													return (
+														<optgroup label={ conditions[i].label }>
+															{ conditions[i].conditions.map( o => <option value={ o.value } disabled={ o?.isDisabled }>{ o.label }</option> ) }
+														</optgroup>
+													);
+												}) }
 											</select>
 										</BaseControl>
 
@@ -1164,7 +1142,7 @@ const Edit = ({
 											</Fragment>
 										) }
 
-										{ customVisibility.includes( i.type ) && (
+										{ toogleVisibility.includes( i.type ) && (
 											<SelectControl
 												label={ __( 'If condition is true, the block should be:', 'otter-blocks' ) }
 												options={ [

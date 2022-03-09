@@ -41,6 +41,7 @@
 		"array-move": "^3.0.1",
 		"classnames": "^2.3.1",
 		"currency-symbol-map": "^5.0.1",
+		"deepmerge": "^4.2.2",
 		"dom-scroll-into-view": "^2.0.1",
 		"hex-rgba": "^1.0.2",
 		"react-google-font-loader": "1.0.5",

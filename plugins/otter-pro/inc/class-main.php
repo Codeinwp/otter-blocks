@@ -49,6 +49,7 @@ class Main {
 	 */
 	public function autoload_classes( $classnames ) {
 		$classes = array(
+			'\ThemeIsle\OtterPro\Plugins\Block_Conditions',
 			'\ThemeIsle\OtterPro\Plugins\Review_Woo_Integration',
 			'\ThemeIsle\OtterPro\Plugins\WooCommerce_Builder',
 			'\ThemeIsle\OtterPro\Server\Filter_Blocks_Server',
@@ -171,6 +172,7 @@ class Main {
 			'otterPro',
 			array(
 				'hasWooCommerce' => class_exists( 'WooCommerce' ),
+				'hasLearnDash'   => defined( 'LEARNDASH_VERSION' ),
 				'themeMods'      => array(
 					'listingType'   => get_theme_mod( 'neve_comparison_table_product_listing_type', 'column' ),
 					'altRow'        => get_theme_mod( 'neve_comparison_table_enable_alternating_row_bg_color', false ),
