@@ -52,6 +52,11 @@ import {
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Review component
+ * @param {import('./type').ReviewProps} props
+ * @returns
+ */
 const Edit = ({
 	name,
 	attributes,

@@ -32,6 +32,11 @@ import {
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Icons Component
+ * @param {import('./types').IconsProps} props
+ * @returns
+ */
 const Edit = ({
 	name,
 	attributes,
