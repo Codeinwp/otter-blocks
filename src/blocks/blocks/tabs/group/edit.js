@@ -91,7 +91,7 @@ const Edit = ({
 	useEffect( () => {
 		if ( 0 < children?.length ) {
 			if ( '' === activeTab || 0 === children?.filter( block => block.clientId === activeTab ).length ) {
-				toggleActiveTab( children[0].clientId );
+				toggleActiveTab( attributes.defaultOpened ? attributes.defaultOpened : children[0].clientId );
 			}
 		}
 	}, [ activeTab, children ]);
@@ -187,6 +187,8 @@ const Edit = ({
 		id: attributes.id,
 		css: styles
 	});
+
+	console.log( attributes );
 
 	return (
 		<Fragment>
