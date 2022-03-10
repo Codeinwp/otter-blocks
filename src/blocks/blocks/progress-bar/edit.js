@@ -33,6 +33,7 @@ import {
 import metadata from './block.json';
 import { blockInit } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
+import { setCSSVars } from '../../helpers/full-site-editing/css-utility';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -47,6 +48,8 @@ const ProgressBar = ({
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
+
+	const blockRef = useRef( null );
 
 	const [ showPercentage, setShowPercentage ] = useState( false );
 
@@ -78,6 +81,20 @@ const ProgressBar = ({
 			}
 		);
 	}, [ attributes.percentage, attributes.duration ]);
+
+	useEffect( () => {
+		setCSSVars( blockRef.current, {
+			'--titleColor': attributes.titleColor,
+			'--percentageColor': attributes.percentageColor,
+			'--percentageColorOuter': attributes.percentageColor,
+			'--percentageColorTooltip': attributes.percentageColor,
+			'--percentageColorAppend': attributes.percentageColor,
+			'--backgroundColor': attributes.backgroundColor,
+			'--borderRadius': ( undefined !== attributes.borderRadius ? attributes.borderRadius : 5 ) + 'px',
+			'--height': ( undefined !== attributes.height ? attributes.height : 30 ) + 'px',
+			'--barBackground': attributes.barBackgroundColor
+		});
+	}, [ blockRef.current, attributes ]);
 
 	const fontRatio = 0.65;
 
@@ -111,24 +128,9 @@ const ProgressBar = ({
 		}
 	};
 
-	const styles = css`
-		--titleColor: ${ attributes.titleColor };
-		--percentageColor: ${ attributes.percentageColor };
-		--percentageColorOuter: ${ attributes.percentageColor };
-		--percentageColorTooltip: ${ attributes.percentageColor };
-		--percentageColorAppend: ${ attributes.percentageColor };
-		--backgroundColor: ${ attributes.backgroundColor };
-		--borderRadius: ${ undefined !== attributes.borderRadius ? attributes.borderRadius : 5 }px;
-		--height: ${ undefined !== attributes.height ? attributes.height : 30 }px;
-		--barBackground: ${ attributes.barBackgroundColor };
-	`;
-
-	console.log( styles );
-
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		className: classnames({ 'has-tooltip': 'tooltip' === attributes.percentagePosition }),
-		css: styles
+		className: classnames({ 'has-tooltip': 'tooltip' === attributes.percentagePosition })
 	});
 
 	return (
@@ -184,7 +186,7 @@ const ProgressBar = ({
 					} }
 				>
 
-					<div className="wp-block-themeisle-blocks-progress-bar__area">
+					<div ref={blockRef} className="wp-block-themeisle-blocks-progress-bar__area">
 						{ ( 'default' === attributes.titleStyle || 'highlight' === attributes.titleStyle ) && (
 							<div
 								className={ classnames(
