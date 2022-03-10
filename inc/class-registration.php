@@ -374,10 +374,25 @@ class Registration {
 
 		$this->enqueue_block_styles( $post );
 
+		if ( has_block( 'core/block', $post ) ) {
+			$blocks = parse_blocks( $content );
+			$blocks = array_filter(
+				$blocks,
+				function( $block ) {
+					return 'core/block' === $block['blockName'] && isset( $block['attrs']['ref'] );
+				}
+			);
+
+			foreach ( $blocks as $block ) {
+				$this->enqueue_dependencies( $block['attrs']['ref'] );
+			}
+		}
+
 		// On AMP context, we don't load JS files.
 		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
 			return;
 		}
+
 		if ( ! self::$scripts_loaded['circle-counter'] && has_block( 'themeisle-blocks/circle-counter', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/circle-counter.asset.php';
 			wp_register_script( 'otter-circle-counter', OTTER_BLOCKS_URL . 'build/blocks/circle-counter.js', $asset_file['dependencies'], $asset_file['version'], true );
