@@ -466,7 +466,7 @@ class Block_Frontend extends Base_CSS {
 			$css = $this->cycle_through_blocks( $blocks );
 		}
 
-		return $template_css . $css;
+		return $css;
 	}
 
 	/**
