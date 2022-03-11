@@ -7,6 +7,11 @@ export type BlockProps<T> = {
 	toggleSelection: (value: boolean) => void
 }
 
+export interface InspectorProps<T> {
+	attributes: T
+	setAttributes: ( attributes: Partial<T> ) => void
+}
+
 export type ImagePosition = {
 	x: number,
 	y: number
@@ -17,3 +22,15 @@ export type MediaImageProps = {
 	url: string,
 	alt: string
 }
+
+export type MarginType = {
+	top: string
+	right: string
+	bottom: string
+	left: string
+}
+
+export type PaddingType = MarginType
+
+export type BorderType = MarginType
+

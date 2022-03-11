@@ -25,6 +25,11 @@ import { StyleSwitcherInspectorControl } from '../../components/style-switcher-c
 import ToogleGroupControl from '../../components/toogle-group-control/index.js';
 import { convertToTitleCase } from '../../helpers/helper-functions.js';
 
+/**
+ *
+ * @param {import('../popup/types.js').PopupInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes,

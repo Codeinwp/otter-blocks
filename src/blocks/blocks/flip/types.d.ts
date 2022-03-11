@@ -1,4 +1,4 @@
-import { BlockProps, ImagePosition, MediaImageProps } from "../../helpers/blocks"
+import { BlockProps, ImagePosition, InspectorProps, MediaImageProps } from "../../helpers/blocks"
 
 type Attributes = {
 	id: string
@@ -48,3 +48,4 @@ type Attributes = {
 }
 
 export type FlipProps = BlockProps<Attributes>
+export interface FlipInspectorProps extends InspectorProps<Attributes> {}

@@ -33,6 +33,11 @@ import { blockInit } from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Slider component
+ * @param {import('./types').SliderProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

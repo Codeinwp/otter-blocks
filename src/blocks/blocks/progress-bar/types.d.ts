@@ -1,4 +1,4 @@
-import { BlockProps } from "../../helpers/blocks"
+import { BlockProps, InspectorProps } from "../../helpers/blocks"
 
 type Attributes = {
 	id: string
@@ -15,6 +15,5 @@ type Attributes = {
 	percentageColor: string
 }
 
-
-
 export type ProgressBarProps = BlockProps<Attributes>
+export interface ProgressBarInspectorProps extends InspectorProps<Attributes> {}

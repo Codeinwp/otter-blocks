@@ -1,4 +1,4 @@
-import { BlockProps, MediaImageProps } from "../../helpers/blocks"
+import { BlockProps, InspectorProps, MediaImageProps } from "../../helpers/blocks"
 
 type Attributes = {
 	id: string
@@ -20,3 +20,4 @@ type Attributes = {
 }
 
 export type ReviewProps = BlockProps<Attributes>
+export interface ReviewInspectorProps extends InspectorProps<Attributes> {}

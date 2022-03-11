@@ -29,6 +29,11 @@ import { Fragment } from '@wordpress/element';
 import ControlPanelControl from '../../components/control-panel-control/index.js';
 import BackgroundSelectorControl from '../../components/background-selector-control/index.js';
 
+/**
+ *
+ * @param {import('./types.js').FlipInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes

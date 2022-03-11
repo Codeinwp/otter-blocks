@@ -1,4 +1,4 @@
-import { BlockProps } from "../../helpers/blocks"
+import { BlockProps, InspectorProps } from "../../helpers/blocks"
 
 type Attributes = {
 	id: string
@@ -13,3 +13,4 @@ type Attributes = {
 }
 
 export type FormProps = BlockProps<Attributes>
+export interface FormInspectorProps extends InspectorProps<Attributes> {}

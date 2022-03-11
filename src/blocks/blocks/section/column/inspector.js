@@ -41,6 +41,11 @@ import ControlPanelControl from '../../../components/control-panel-control/index
 import SyncControl from '../../../components/sync-control/index.js';
 import { isNullObject } from '../../../helpers/helper-functions.js';
 
+/**
+ *
+ * @param {import('./types.js').SectionColumnInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes,

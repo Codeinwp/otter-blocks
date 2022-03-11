@@ -31,6 +31,11 @@ import {
 const IconPickerControl = lazy( () => import( '../../components/icon-picker-control/index.js' ) );
 import SyncControl from '../../components/sync-control/index.js';
 
+/**
+ *
+ * @param {import('./types.js').IconInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes,
