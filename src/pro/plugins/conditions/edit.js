@@ -31,11 +31,7 @@ import {
 	__experimentalGetSettings
 } from '@wordpress/date';
 
-import {
-	Fragment,
-	useEffect,
-	useState
-} from '@wordpress/element';
+import { Fragment } from '@wordpress/element';
 
 import { decodeEntities } from '@wordpress/html-entities';
 
@@ -142,54 +138,24 @@ const Edit = ({
 	setAttributes,
 	changeValue
 }) => {
-	const [ courses, setCourses ] = useState([]);
-	const [ coursesStatus, setCoursesStatus ] = useState( 'loading' );
-	const [ courseGroups, setCourseGroups ] = useState([]);
-	const [ courseGroupsStatus, setCourseGroupsStatus ] = useState( 'loading' );
-
-	useEffect( () => {
-		if ( Boolean( window.otterPro.hasLearnDash ) ) {
-			( async() => {
-				setCoursesStatus( 'loading' );
-				setCourseGroupsStatus( 'loading' );
-
-				try {
-					const data = await apiFetch({ path: 'ldlms/v2/sfwd-courses' });
-					const items = data.map( datum => ({
-						value: datum.id,
-						label: datum.title.rendered
-					}) );
-					setCourses( items );
-					setCoursesStatus( 'loaded' );
-				} catch ( error ) {
-					setCoursesStatus( 'error' );
-				}
-
-				try {
-					const data = await apiFetch({ path: 'ldlms/v2/groups' });
-					const items = data.map( datum => ({
-						value: datum.id,
-						label: datum.title.rendered
-					}) );
-					setCourseGroups( items );
-					setCourseGroupsStatus( 'loaded' );
-				} catch ( error ) {
-					setCourseGroupsStatus( 'error' );
-				}
-			})();
-		}
-	}, []);
-
 	const {
 		products,
 		categories,
 		productsStatus,
-		categoriesStatus
+		categoriesStatus,
+		courses,
+		coursesStatus,
+		courseGroups,
+		courseGroupsStatus
 	} = useSelect( select => {
 		let products = [];
 		let categories = [];
 		let productsStatus = 'loading';
 		let categoriesStatus = 'loading';
+		let courses = [];
+		let courseGroups = [];
+		let coursesStatus = 'loading';
+		let courseGroupsStatus = 'loading';
 
 		if ( Boolean( window.otterPro.hasWooCommerce ) ) {
 			const { COLLECTIONS_STORE_KEY } = window.wc.wcBlocksData;
@@ -231,11 +197,29 @@ const Edit = ({
 			}
 		}
 
+		if ( Boolean( window.otterPro.hasLearnDash ) ) {
+			courses = select( 'otter-pro' ).getCourses();
+
+			if ( ! isEmpty( courses ) ) {
+				coursesStatus = 'loaded';
+			}
+
+			courseGroups = select( 'otter-pro' ).getGroups();
+
+			if ( ! isEmpty( courseGroups ) ) {
+				courseGroupsStatus = 'loaded';
+			}
+		}
+
 		return {
 			products,
 			categories,
 			productsStatus,
-			categoriesStatus
+			categoriesStatus,
+			courses,
+			coursesStatus,
+			courseGroups,
+			courseGroupsStatus
 		};
 	}, []);
 
