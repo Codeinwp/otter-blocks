@@ -37,8 +37,7 @@ const Edit = ({
 	const contentRef = useRef( null );
 
 	const {
-		parentClientId,
-		isFirstBlock
+		parentClientId
 	} = useSelect( select => {
 		const {
 			getBlock,
@@ -49,8 +48,7 @@ const Edit = ({
 		const parentBlock = getBlock( parentClientId );
 
 		return {
-			parentClientId: parentBlock.clientId,
-			isFirstBlock: clientId === parentBlock.innerBlocks[0].clientId
+			parentClientId: parentBlock.clientId
 		};
 	});
 
@@ -91,7 +89,7 @@ const Edit = ({
 					className={ classnames(
 						'wp-block-themeisle-blocks-tabs-item__header',
 						{
-							'active': isFirstBlock
+							'active': attributes.defaultOpen ? attributes.defaultOpen : false
 						}
 					) }
 					tagName="div"
