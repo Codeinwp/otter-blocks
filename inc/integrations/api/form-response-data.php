@@ -17,7 +17,7 @@ class Form_Data_Response {
 	 *
 	 * @var array
 	 */
-	protected $response = array();
+	protected array $response = array();
 
 	/**
 	 * Constructor.
