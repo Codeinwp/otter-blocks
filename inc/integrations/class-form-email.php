@@ -51,8 +51,6 @@ class Form_Email
 			<tr>
 				<th colspan="2">
 					<?php
-
-					// TODO: find why this is called 2 times
 					do_action('otter_form_email_head', $email_data);
 					?>
 
@@ -61,8 +59,6 @@ class Form_Email
 			</thead>
 			<tbody>
 			<?php
-
-			// TODO: find why this is called 2 times
 			do_action('otter_form_email_body', $email_data);
 			?>
 			</tbody>
