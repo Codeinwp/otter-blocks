@@ -9,6 +9,7 @@ namespace ThemeIsle\GutenbergBlocks\Server;
 
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
+use ThemeIsle\GutenbergBlocks\Integration\Form_Email;
 use ThemeIsle\GutenbergBlocks\Integration\Mailchimp_Integration;
 use ThemeIsle\GutenbergBlocks\Integration\Sendinblue_Integration;
 
@@ -38,11 +39,19 @@ class Form_Server {
 	 */
 	public $version = 'v1';
 
+
 	/**
 	 * Initialize the class
 	 */
 	public function init() {
-		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_action('rest_api_init', array( $this, 'register_routes' ) );
+		add_filter('otter_form_validation', array( $this, 'check_form_conditions' ));
+		add_filter('otter_form_captcha_validation', array( $this, 'check_form_captcha' ));
+		add_filter('otter_form_options', array( $this, 'get_form_option_settings' ));
+
+		do_action( 'otter_register_form_provider', array( 'default' =>  array( $this, 'send_default_email') ) );
+		do_action( 'otter_register_form_provider', array( 'sendinblue' => array( $this, 'subscribe_to_sendinblue' ) ));
+		do_action( 'otter_register_form_provider', array( 'mailchimp' =>  array( $this, 'subscribe_to_mailchimp' ) ) );
 	}
 
 	/**
@@ -91,13 +100,7 @@ class Form_Server {
 		$data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
 		$res  = new Form_Data_Response();
 
-		if ( ! $this->has_requiered_data( $data ) ) {
-			$res->set_error( __( 'Invalid request!', 'otter-blocks' ) );
-			$res->add_reason( __( 'Essential data is missing!', 'otter-blocks' ) );
-			return $res->build_response();
-		}
-
-		$reasons = $this->check_form_conditions( $data );
+		$reasons = apply_filters('otter_form_validation', $data);
 
 		if ( 0 < count( $reasons ) ) {
 			$res->set_error( __( 'Invalid request!', 'otter-blocks' ) );
@@ -106,22 +109,14 @@ class Form_Server {
 		}
 
 		if ( $data->is_set( 'token' ) ) {
-			$secret = get_option( 'themeisle_google_captcha_api_secret_key' );
-			$resp   = wp_remote_post(
-				'https://www.google.com/recaptcha/api/siteverify',
-				array(
-					'body'    => 'secret=' . $secret . '&response=' . $data->get( 'token' ),
-					'headers' => [
-						'Content-Type' => 'application/x-www-form-urlencoded',
-					],
-				)
-			);
-			$result = json_decode( $resp['body'], true );
+
+			$result = apply_filters( 'otter_form_captcha_validation', $data );
 			if ( false == $result['success'] ) {
 				$res->set_error( __( 'The reCaptha was invalid!', 'otter-blocks' ) );
 				return $res->build_response();
 			}
 		}
+
 
 		$integration = $this->get_form_option_settings( $data->get( 'formOption' ) );
 
@@ -132,36 +127,45 @@ class Form_Server {
 			if ( 'subscribe' === $data->get( 'action' ) ) {
 				switch ( $integration['provider'] ) {
 					case 'mailchimp':
-						return $this->subscribe_to_mailchimp( $data, $res );
+						return $this->subscribe_to_mailchimp( $data );
 					case 'sendinblue':
-						return $this->subscribe_to_sendinblue( $data, $res );
+						return $this->subscribe_to_sendinblue( $data );
 				}
 			} elseif ( 'submit-subscribe' === $data->get( 'action' ) && $data->get( 'consent' ) ) {
 				switch ( $integration['provider'] ) {
 					case 'mailchimp':
-						$this->subscribe_to_mailchimp( $data, $res );
+						$this->subscribe_to_mailchimp( $data );
 						break;
 					case 'sendinblue':
-						$this->subscribe_to_sendinblue( $data, $res );
+						$this->subscribe_to_sendinblue( $data );
 						break;
 				}
 			}
 		}
 
-		return $this->send_email( $data, $res );
+		$provider_action = apply_filters('otter_select_form_provider', $integration);
+		$provider_response = $provider_action($data);
+
+		if( $data->field_has( 'action', array( 'subscribe', 'submit-subscribe' )) && 'submit-subscribe' === $data->get( 'action' ) ) {
+
+			return $this->send_default_email($data);
+		}
+
+		return $provider_response;
 	}
+
 
 	/**
 	 * Send Email using SMTP
 	 *
 	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request  $data Data from request body.
-	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response $res The response.
 	 * @return mixed|\WP_REST_Response
 	 */
-	private function send_email( $data, $res ) {
-
+	private function send_default_email($data ) {
+		$res = new Form_Data_Response();
 		$email_subject = $data->is_set( 'emailSubject' ) ? $data->get( 'emailSubject' ) : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
-		$email_body    = $this->prepare_body( $data->get( 'data' ) );
+
+		$email_body    = Form_Email::instance()->build_email($data);
 
 		// Sent the form date to the admin site as a default behaviour.
 		$to = sanitize_email( get_site_option( 'admin_email' ) );
@@ -172,7 +176,7 @@ class Form_Server {
 			$form_emails = get_option( 'themeisle_blocks_form_emails' );
 
 			foreach ( $form_emails as $form ) {
-				if ( $form['form'] === $option_name ) {
+				if ( $form['form'] === $option_name && isset( $form['email'] )) {
 					$to = sanitize_email( $form['email'] );
 				}
 			}
@@ -191,68 +195,6 @@ class Form_Server {
 		}
 	}
 
-	/**
-	 * Body template preparation
-	 *
-	 * @param array $data Data from the forms.
-	 *
-	 * @return string
-	 */
-	private function prepare_body( $data ) {
-		ob_start(); ?>
-		<!doctype html>
-		<html xmlns="http://www.w3.org/1999/xhtml">
-		<head>
-			<meta http-equiv="Content-Type" content="text/html;" charset="utf-8"/>
-			<!-- view port meta tag -->
-			<meta name="viewport" content="width=device-width, initial-scale=1">
-			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-			<title><?php esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ); ?></title>
-		</head>
-		<body>
-		<table>
-			<thead>
-			<tr>
-				<th colspan="2">
-					<h3>
-						<?php esc_html_e( 'Content Form submission from ', 'otter-blocks' ); ?>
-						<a href="<?php echo esc_url( get_site_url() ); ?>"><?php bloginfo( 'name' ); ?></a>
-					</h3>
-					<hr/>
-				</th>
-			</tr>
-			</thead>
-			<tbody>
-			<?php
-			foreach ( $data as $input ) {
-				?>
-				<tr>
-					<td>
-						<strong><?php echo esc_html( $input['label'] ); ?>: </strong>
-						<?php echo esc_html( $input['value'] ); ?>
-					</td>
-
-				</tr>
-				<?php
-			}
-
-			?>
-			</tbody>
-			<tfoot>
-			<tr>
-				<td>
-					<hr/>
-					<?php esc_html_e( 'You received this email because your email address is set in the content form settings on ', 'otter-blocks' ); ?>
-					<a href="<?php echo esc_url( get_site_url() ); ?>"><?php bloginfo( 'name' ); ?></a>
-				</td>
-			</tr>
-			</tfoot>
-		</table>
-		</body>
-		</html>
-		<?php
-		return ob_get_clean();
-	}
 
 	/**
 	 * Get data about the given provider
@@ -329,11 +271,10 @@ class Form_Server {
 	 * Add a new subscriber to Mailchimp
 	 *
 	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request  $data Data from request body.
-	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response $res The response.
 	 * @return mixed|\WP_REST_Response
 	 */
-	private function subscribe_to_mailchimp( $data, $res ) {
-
+	public function subscribe_to_mailchimp( $data ) {
+		$res = new Form_Data_Response();
 		// Get the first email from form.
 		$email = '';
 		foreach ( $data->get( 'data' ) as $input_field ) {
@@ -375,11 +316,11 @@ class Form_Server {
 	 * Add a new subscriber to Sendinblue
 	 *
 	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request  $data Data from request body.
-	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response $res The response.
 	 * @return mixed|\WP_REST_Response
 	 */
-	private function subscribe_to_sendinblue( $data, $res ) {
+	public function subscribe_to_sendinblue( $data ) {
 
+		$res = new Form_Data_Response();
 		// Get the first email from form.
 		$email = '';
 		foreach ( $data->get( 'data' ) as $input_field ) {
@@ -439,19 +380,26 @@ class Form_Server {
 			)
 		) && wp_verify_nonce( $data->get( 'nonceValue' ), 'form-verification' );
 	}
+
 	/**
 	 * Check if the data request has the data needed by form: captha, integrations.
 	 *
-	 * @access private
+	 * @access public
 	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request $data Data from the request.
 	 *
 	 * @return array
 	 */
-	private function check_form_conditions( $data ) {
-		$integration       = $this->get_form_option_settings( $data->get( 'formOption' ) );
+	public function check_form_conditions( $data ) {
+
 		$reasons           = array();
+		if ( ! $this->has_requiered_data( $data ) ) {
+			$reasons += array( __( 'Essential data is missing!', 'otter-blocks' ) );
+			return $reasons;
+		}
+
+		$integration       = $this->get_form_option_settings( $data->get( 'formOption' ) );
 		$has_captcha       = false;
-		$has_creditentials = false;
+		$has_credentials   = false;
 
 		if ( isset( $integration['hasCaptcha'] ) ) {
 			$has_captcha = $integration['hasCaptcha'];
@@ -466,15 +414,37 @@ class Form_Server {
 		if ( isset( $integration['apiKey'] ) && '' !== $integration['apiKey'] &&
 			isset( $integration['listId'] ) && '' !== $integration['listId']
 		) {
-			$has_creditentials = true;
+			$has_credentials = true;
 		}
 
-		if ( ! $has_creditentials && $integration['provider'] ) {
+		if ( ! $has_credentials && $integration['provider'] ) {
 			$reasons += array(
 				__( 'Provider settings are missing!', 'otter-blocks' ),
 			);
 		}
 		return $reasons;
+	}
+
+	/**
+	 * Check if the data request has the data needed by form: captha, integrations.
+	 *
+	 * @access public
+	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request $data Data from the request.
+	 *
+	 * @return array
+	 */
+	public function check_form_captcha( $data ) {
+		$secret = get_option( 'themeisle_google_captcha_api_secret_key' );
+		$resp   = wp_remote_post(
+			'https://www.google.com/recaptcha/api/siteverify',
+			array(
+				'body'    => 'secret=' . $secret . '&response=' . $data->get( 'token' ),
+				'headers' => [
+					'Content-Type' => 'application/x-www-form-urlencoded',
+				],
+			)
+		);
+		return json_decode( $resp['body'], true );
 	}
 
 	/**
