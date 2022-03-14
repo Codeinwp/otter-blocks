@@ -10,32 +10,17 @@ import {
 import {
 	PanelBody,
 	Button,
-	TextControl,
-	ToggleControl
+	TextControl
 } from '@wordpress/components';
 
-import { useState } from '@wordpress/element';
-
 const Inspector = ({
-	clientId,
 	setAttributes,
-	selectParent,
-	parentClientId
+	selectParent
 }) => {
-	const getBlock = wp.data.select( 'core/block-editor' ).getBlock;
-	const parentBlock = getBlock( parentClientId );
-
-	const [ isDefault, setIsDefault ] = useState( parentBlock.attributes.defaultOpened === clientId );
-
 	const onTitleChange = ( value ) => {
 		setAttributes({
 			title: value
 		});
-	};
-
-	const makeDefault = ( value ) => {
-		setIsDefault( value );
-		wp.data.dispatch( 'core/editor' ).updateBlockAttributes( parentClientId, { defaultOpened: clientId });
 	};
 
 	return (
@@ -55,11 +40,6 @@ const Inspector = ({
 					label={ __( 'Title', 'otter-blocks' ) }
 					placeholder={ __( 'Insert a title', 'otter-blocks' ) }
 					onChange={ onTitleChange } />
-
-				<ToggleControl
-					label={ __( 'Default opened tab', 'otter-blocks' ) }
-					checked={ isDefault }
-					onChange={ makeDefault } />
 			</PanelBody>
 		</InspectorControls>
 	);

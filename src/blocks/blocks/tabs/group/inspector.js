@@ -14,8 +14,6 @@ import {
 	PanelColorSettings
 } from '@wordpress/block-editor';
 
-import { useEffect } from '@wordpress/element';
-
 import {
 	Button,
 	PanelBody,

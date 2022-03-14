@@ -38,7 +38,7 @@ const Edit = ({
 
 	const {
 		parentClientId,
-		isDefaultOpened
+		isFirstBlock
 	} = useSelect( select => {
 		const {
 			getBlock,
@@ -50,7 +50,7 @@ const Edit = ({
 
 		return {
 			parentClientId: parentBlock.clientId,
-			isDefaultOpened: clientId === parentBlock.defaultOpened
+			isFirstBlock: clientId === parentBlock.innerBlocks[0].clientId
 		};
 	});
 
@@ -79,11 +79,8 @@ const Edit = ({
 	return (
 		<Fragment>
 			<Inspector
-				clientId={ clientId }
-				attributes={attributes}
 				setAttributes={ setAttributes }
 				selectParent={ () => selectBlock( parentClientId ) }
-				parentClientId={ parentClientId }
 			/>
 
 			<div { ...blockProps }>
@@ -94,7 +91,7 @@ const Edit = ({
 					className={ classnames(
 						'wp-block-themeisle-blocks-tabs-item__header',
 						{
-							'active': isDefaultOpened
+							'active': isFirstBlock
 						}
 					) }
 					tagName="div"
