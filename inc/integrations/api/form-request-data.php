@@ -20,6 +20,13 @@ class Form_Data_Request {
 	protected $data = array();
 
 	/**
+	 * Integration Data.
+	 *
+	 * @var array
+	 */
+	protected $form_options = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @access  public
@@ -27,6 +34,10 @@ class Form_Data_Request {
 	 */
 	public function __construct( $request_data ) {
 		$this->data = $this->sanitize_request_data( $request_data );
+	}
+
+	public function set_form_options( $form_options) {
+		$this->form_options = $form_options;
 	}
 
 	/**
@@ -128,5 +139,9 @@ class Form_Data_Request {
 			);
 		}
 		return $data;
+	}
+
+	public function get_form_inputs() {
+		return $this->data['data'];
 	}
 }
