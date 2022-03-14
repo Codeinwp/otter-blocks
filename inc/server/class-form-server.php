@@ -173,6 +173,68 @@ class Form_Server {
 		}
 	}
 
+	/**
+	 * Body template preparation
+	 *
+	 * @param array $data Data from the forms.
+	 *
+	 * @return string
+	 */
+	private function prepare_body( $data ) {
+		ob_start(); ?>
+		<!doctype html>
+		<html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<meta http-equiv="Content-Type" content="text/html;" charset="utf-8"/>
+			<!-- view port meta tag -->
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+			<title><?php esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ); ?></title>
+		</head>
+		<body>
+		<table>
+			<thead>
+			<tr>
+				<th colspan="2">
+					<h3>
+						<?php esc_html_e( 'Content Form submission from ', 'otter-blocks' ); ?>
+						<a href="<?php echo esc_url( get_site_url() ); ?>"><?php bloginfo( 'name' ); ?></a>
+					</h3>
+					<hr/>
+				</th>
+			</tr>
+			</thead>
+			<tbody>
+			<?php
+			foreach ( $data as $input ) {
+				?>
+				<tr>
+					<td>
+						<strong><?php echo esc_html( $input['label'] ); ?>: </strong>
+						<?php echo esc_html( $input['value'] ); ?>
+					</td>
+
+				</tr>
+				<?php
+			}
+
+			?>
+			</tbody>
+			<tfoot>
+			<tr>
+				<td>
+					<hr/>
+					<?php esc_html_e( 'You received this email because your email address is set in the content form settings on ', 'otter-blocks' ); ?>
+					<a href="<?php echo esc_url( get_site_url() ); ?>"><?php bloginfo( 'name' ); ?></a>
+				</td>
+			</tr>
+			</tfoot>
+		</table>
+		</body>
+		</html>
+		<?php
+		return ob_get_clean();
+	}
 
 	/**
 	 * Get data about the given provider
