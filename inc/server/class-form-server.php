@@ -191,11 +191,9 @@ class Form_Server {
 			$service = null;
 			switch ( $data->get( 'provider' ) ) {
 				case 'mailchimp':
-					// TODO: find why it gives an error on initialization
 					$service = new Mailchimp_Integration();
 					break;
 				case 'sendinblue':
-					// TODO: find why it gives an error on initialization
 					$service = new Sendinblue_Integration();
 					break;
 				default:
@@ -206,12 +204,14 @@ class Form_Server {
 				$valid_api_key = $service::validate_api_key( $data->get( 'apiKey' ) );
 				if ( $valid_api_key['valid'] ) {
 					$service->set_api_key( $data->get('apiKey') );
-					return $service->get_provider_data( $data );
+					$res->set_response( $service->get_provider_data( $data ) );
 				} else {
 					$res->set_error( $valid_api_key['reason'] );
 				}
 			}
 		} catch (\Exception $e) {
+			$res->set_error($e->getMessage());
+		} catch (\Throwable $e) {
 			$res->set_error($e->getMessage());
 		} finally {
 			return $res->build_response();

@@ -1,5 +1,7 @@
 <?php
 
+namespace ThemeIsle\GutenbergBlocks\Integration;
+
 interface FormSubscribeServiceInterface
 {
 	public function subscribe( $email );
