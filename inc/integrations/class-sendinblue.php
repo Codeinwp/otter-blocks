@@ -7,7 +7,6 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
-use FormSubscribeServiceInterface;
 
 /**
  * Class Plugin_Card_Server

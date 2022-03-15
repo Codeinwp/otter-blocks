@@ -120,4 +120,9 @@ class Form_Data_Response {
 	public function get_reasons() {
 		return $this->response['reasons'];
 	}
+
+	public function set_response( $response ) {
+		$this->response = $response;
+		return $this;
+	}
 }
