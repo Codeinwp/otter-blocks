@@ -40,8 +40,6 @@ const Inspector = ({
 	moveTab
 }) => {
 
-	console.log( children );
-
 	const [ defaultTab, setDefaultTab ] = useState( children[0]?.clientId );
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
 	const { getBlock } = useSelect( 'core/block-editor' );
