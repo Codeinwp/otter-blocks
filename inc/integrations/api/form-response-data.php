@@ -40,6 +40,7 @@ class Form_Data_Response {
 		if ( isset( $provider ) ) {
 			$this->response['provider'] = $provider;
 		}
+		return $this;
 	}
 
 	/**
@@ -48,16 +49,18 @@ class Form_Data_Response {
 	 * @param string $reason Error reason.
 	 */
 	public function add_reason( $reason ) {
-		array_push( $this->response['reasons'], $reason );
+		$this->response['reasons'][] = $reason;
+		return $this;
 	}
 
 	/**
 	 * Set error reason.
 	 *
-	 * @param string $reasons Error reason.
+	 * @param string[] $reasons Error reason.
 	 */
 	public function set_reasons( $reasons ) {
 		$this->response['reasons'] = $reasons;
+		return $this;
 	}
 
 	/**
@@ -85,6 +88,7 @@ class Form_Data_Response {
 	 */
 	public function mark_as_succes() {
 		$this->response['success'] = true;
+		return $this;
 	}
 
 	/**
@@ -96,6 +100,7 @@ class Form_Data_Response {
 		$this->response['success'] = $other->is_success();
 		$this->set_reasons( $other->get_reasons() );
 		$this->set_error( $other->get_error() );
+		return $this;
 	}
 
 	/**

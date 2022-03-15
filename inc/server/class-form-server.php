@@ -10,6 +10,7 @@ namespace ThemeIsle\GutenbergBlocks\Server;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Email;
+use ThemeIsle\GutenbergBlocks\Integration\Integration_Data;
 use ThemeIsle\GutenbergBlocks\Integration\Mailchimp_Integration;
 use ThemeIsle\GutenbergBlocks\Integration\Sendinblue_Integration;
 
@@ -50,8 +51,10 @@ class Form_Server {
 		add_filter('otter_form_options', array( $this, 'get_form_option_settings' ));
 
 		do_action( 'otter_register_form_provider', array( 'default' =>  array( $this, 'send_default_email') ) );
-		do_action( 'otter_register_form_provider', array( 'sendinblue' => array( $this, 'subscribe_to_sendinblue' ) ));
-		do_action( 'otter_register_form_provider', array( 'mailchimp' =>  array( $this, 'subscribe_to_mailchimp' ) ) );
+
+		// Register 3rd party mail providers
+		do_action( 'otter_register_form_provider', array( 'sendinblue' => array( $this, 'subscribe_to_service' ) ));
+		do_action( 'otter_register_form_provider', array( 'mailchimp' =>  array( $this, 'subscribe_to_service' ) ) );
 	}
 
 	/**
@@ -112,7 +115,7 @@ class Form_Server {
 
 			$result = apply_filters( 'otter_form_captcha_validation', $data );
 			if ( false == $result['success'] ) {
-				$res->set_error( __( 'The reCaptha was invalid!', 'otter-blocks' ) );
+				$res->set_error( __( 'The reCaptcha was invalid!', 'otter-blocks' ) );
 				return $res->build_response();
 			}
 		}
@@ -120,34 +123,10 @@ class Form_Server {
 
 		$integration = $this->get_form_option_settings( $data->get( 'formOption' ) );
 
-		if (
-			isset( $integration['provider'], $integration['listId'], $integration['action'] ) &&
-			$data->field_has( 'action', array( 'subscribe', 'submit-subscribe' ) )
-		) {
-			if ( 'subscribe' === $data->get( 'action' ) ) {
-				switch ( $integration['provider'] ) {
-					case 'mailchimp':
-						return $this->subscribe_to_mailchimp( $data );
-					case 'sendinblue':
-						return $this->subscribe_to_sendinblue( $data );
-				}
-			} elseif ( 'submit-subscribe' === $data->get( 'action' ) && $data->get( 'consent' ) ) {
-				switch ( $integration['provider'] ) {
-					case 'mailchimp':
-						$this->subscribe_to_mailchimp( $data );
-						break;
-					case 'sendinblue':
-						$this->subscribe_to_sendinblue( $data );
-						break;
-				}
-			}
-		}
-
 		$provider_action = apply_filters('otter_select_form_provider', $integration);
 		$provider_response = $provider_action($data);
 
 		if( $data->field_has( 'action', array( 'subscribe', 'submit-subscribe' )) && 'submit-subscribe' === $data->get( 'action' ) ) {
-
 			return $this->send_default_email($data);
 		}
 
@@ -207,128 +186,42 @@ class Form_Server {
 
 		$data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
 
-		switch ( $data->get( 'provider' ) ) {
-			case 'mailchimp':
-				return $this->get_mailchimp_data( $data );
-			case 'sendinblue':
-				return $this->get_sendinblue_data( $data );
-			default:
-				$res->set_error( __( 'Invalid request! Provider is missing.', 'otter-blocks' ) );
-		}
 
-		return $res->build_response();
-	}
-
-	/**
-	 * Get general information from Mailchimp
-	 *
-	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Reques $data Search request data.
-	 *
-	 * @return mixed|\WP_REST_Response
-	 *
-	 * @see https://mailchimp.com/developer/marketing/api/list-members/
-	 */
-	public function get_mailchimp_data( $data ) {
-		$res = new Form_Data_Response();
-
-		$valid_api_key = Mailchimp_Integration::validate_api_key( $data->get( 'apiKey' ) );
-
-		if ( $valid_api_key['valid'] ) {
-			$integ = new Mailchimp_Integration( $data->get( 'apiKey' ) );
-			return $integ->get_lists();
-		} else {
-			$res->set_error( $valid_api_key['reason'], 'mailchimp' );
-		}
-
-		return $res->build_response();
-	}
-
-	/**
-	 * Get general information from Sendinblue
-	 *
-	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Reques $data Search request data.
-	 *
-	 * @return mixed|\WP_REST_Response
-	 *
-	 * @see https://developers.sendinblue.com/reference/getlists-1
-	 */
-	public function get_sendinblue_data( $data ) {
-		$res = new Form_Data_Response();
-
-		$valid_api_key = Sendinblue_Integration::validate_api_key( $data->get( 'apiKey' ) );
-
-		if ( $valid_api_key['valid'] ) {
-			$integ = new Sendinblue_Integration( $data->get( 'apiKey' ) );
-			return $integ->get_lists();
-		} else {
-			$res->set_error( $valid_api_key['reason'], 'sendinblue' );
-		}
-
-		return $res->build_response();
-	}
-
-	/**
-	 * Add a new subscriber to Mailchimp
-	 *
-	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request  $data Data from request body.
-	 * @return mixed|\WP_REST_Response
-	 */
-	public function subscribe_to_mailchimp( $data ) {
-		$res = new Form_Data_Response();
-		// Get the first email from form.
-		$email = '';
-		foreach ( $data->get( 'data' ) as $input_field ) {
-			if ( 'email' == $input_field['type'] ) {
-				$email = $input_field['value'];
-				break;
+		try {
+			$service = null;
+			switch ( $data->get( 'provider' ) ) {
+				case 'mailchimp':
+					// TODO: find why it gives an error on initialization
+					$service = new Mailchimp_Integration();
+					break;
+				case 'sendinblue':
+					// TODO: find why it gives an error on initialization
+					$service = new Sendinblue_Integration();
+					break;
+				default:
+					$res->set_error( __( 'Invalid request! Provider is missing.', 'otter-blocks' ) );
 			}
-		}
 
-		if ( '' === $email ) {
-			$res->set_error( 'No email provided!' );
+			if( isset($service) ) {
+				$valid_api_key = $service::validate_api_key( $data->get( 'apiKey' ) );
+				if ( $valid_api_key['valid'] ) {
+					$service->set_api_key( $data->get('apiKey') );
+					return $service->get_provider_data( $data );
+				} else {
+					$res->set_error( $valid_api_key['reason'] );
+				}
+			}
+		} catch (\Exception $e) {
+			$res->set_error($e->getMessage());
+		} finally {
 			return $res->build_response();
 		}
-
-		$integration = $this->get_form_option_settings( $data->get( 'formOption' ) );
-
-		if (
-			isset( $integration['apiKey'], $integration['listId'] ) &&
-			'' !== $integration['apiKey'] &&
-			'' !== $integration['listId']
-		) {
-			$api_key = $integration['apiKey'];
-			$list_id = $integration['listId'];
-
-			$valid_api_key = Mailchimp_Integration::validate_api_key( $api_key );
-
-			if ( $valid_api_key['valid'] ) {
-				$mailchimp = new Mailchimp_Integration( $api_key );
-				$res->copy( $mailchimp->subscribe( $list_id, $email ) );
-			} else {
-				$res->set_error( $valid_api_key['reason'] );
-			}
-		}
-
-		return $res->build_response();
 	}
 
-	/**
-	 * Add a new subscriber to Sendinblue
-	 *
-	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request  $data Data from request body.
-	 * @return mixed|\WP_REST_Response
-	 */
-	public function subscribe_to_sendinblue( $data ) {
-
+	public function subscribe_to_service( $data ) {
 		$res = new Form_Data_Response();
 		// Get the first email from form.
-		$email = '';
-		foreach ( $data->get( 'data' ) as $input_field ) {
-			if ( 'email' == $input_field['type'] ) {
-				$email = $input_field['value'];
-				break;
-			}
-		}
+		$email = $this->get_email_from_form_input($data);
 
 		if ( '' === $email ) {
 			$res->set_error( 'No email provided!' );
@@ -336,27 +229,32 @@ class Form_Server {
 		}
 
 		// Get the api credentials from the Form block.
-		$api_key = '';
-		$list_id = '';
+		$integration =  Integration_Data::get_integration_data_from_form_settings( $data->get( 'formOption' ) );
 
-		$integration = $this->get_form_option_settings( $data->get( 'formOption' ) );
+		$issues = $integration->check_data();
 
 		if (
-			isset( $integration['apiKey'], $integration['listId'] ) &&
-			'' !== $integration['apiKey'] &&
-			'' !== $integration['listId']
+			count($issues) == 0
 		) {
-			$api_key = $integration['apiKey'];
-			$list_id = $integration['listId'];
+			$service = null;
+			switch ($integration->has_provider()) {
+				case 'mailchimp':
+					$service = (new Mailchimp_Integration())->extract_data_from_integration($integration);
+					break;
+				case 'sendinblue':
+					$service = (new Sendinblue_Integration())->extract_data_from_integration($integration);
+					break;
+			}
 
-			$valid_api_key = Sendinblue_Integration::validate_api_key( $api_key );
+			$valid_api_key = $service::validate_api_key( $integration->get_api_key() );
 
 			if ( $valid_api_key['valid'] ) {
-				$sendinblue = new Sendinblue_Integration( $api_key );
-				$res->copy( $sendinblue->subscribe( $list_id, $email ) );
+				$res->copy( $service->subscribe( $email ) );
 			} else {
 				$res->set_error( $valid_api_key['reason'] );
 			}
+		} else {
+			$res->set_reasons($issues);
 		}
 
 		return $res->build_response();
@@ -397,27 +295,15 @@ class Form_Server {
 			return $reasons;
 		}
 
-		$integration       = $this->get_form_option_settings( $data->get( 'formOption' ) );
-		$has_captcha       = false;
-		$has_credentials   = false;
+		$integration =  Integration_Data::get_integration_data_from_form_settings( $data->get( 'formOption' ) );
 
-		if ( isset( $integration['hasCaptcha'] ) ) {
-			$has_captcha = $integration['hasCaptcha'];
-		}
-
-		if ( $has_captcha && ( ! $data->is_set( 'token' ) || '' === $data['token'] ) ) {
+		if ( $integration->form_has_captcha() && ( ! $data->is_set( 'token' ) || '' === $data['token'] ) ) {
 			$reasons += array(
 				__( 'Token is missing!', 'otter-blocks' ),
 			);
 		}
 
-		if ( isset( $integration['apiKey'] ) && '' !== $integration['apiKey'] &&
-			isset( $integration['listId'] ) && '' !== $integration['listId']
-		) {
-			$has_credentials = true;
-		}
-
-		if ( ! $has_credentials && $integration['provider'] ) {
+		if ( ! $integration->has_credentials() && $integration->has_provider() ) {
 			$reasons += array(
 				__( 'Provider settings are missing!', 'otter-blocks' ),
 			);
@@ -474,7 +360,7 @@ class Form_Server {
 	 * @static
 	 * @since 1.0.0
 	 * @access public
-	 * @return Plugin_Card_Server
+	 * @return Form_Server
 	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
@@ -510,5 +396,19 @@ class Form_Server {
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
 		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+	}
+
+	/**
+	 * @param Form_Data_Request $data
+	 * @return mixed|string
+	 */
+	private function get_email_from_form_input(Form_Data_Request $data)
+	{
+		foreach ($data->get('data') as $input_field) {
+			if ('email' == $input_field['type']) {
+				return $input_field['value'];
+			}
+		}
+		return '';
 	}
 }
