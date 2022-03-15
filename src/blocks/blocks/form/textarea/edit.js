@@ -22,6 +22,11 @@ import Inspector from './inspector.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Form Textarea component
+ * @param {import('./types').FormTextareaProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

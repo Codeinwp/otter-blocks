@@ -17,6 +17,11 @@ import {
 	TextControl
 } from '@wordpress/components';
 
+/**
+ *
+ * @param {import('./types').ProgressBarInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes,

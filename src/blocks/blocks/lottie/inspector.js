@@ -15,6 +15,11 @@ import {
 
 import { Fragment } from '@wordpress/element';
 
+/**
+ *
+ * @param {import('./types').LottieInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes,

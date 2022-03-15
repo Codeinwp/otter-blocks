@@ -34,6 +34,11 @@ import { blockInit } from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Google Map component
+ * @param {import('./type').GoogleMapProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

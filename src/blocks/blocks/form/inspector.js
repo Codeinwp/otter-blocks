@@ -29,6 +29,11 @@ import {
  */
 import { getListIdOptionFrom } from './integrations.js';
 
+/**
+ *
+ * @param {import('./type.js').FormInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes
