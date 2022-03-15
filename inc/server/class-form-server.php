@@ -48,12 +48,11 @@ class Form_Server {
 		add_action('rest_api_init', array( $this, 'register_routes' ) );
 		add_filter('otter_form_validation', array( $this, 'check_form_conditions' ));
 		add_filter('otter_form_captcha_validation', array( $this, 'check_form_captcha' ));
+		add_filter('otter_form_options', array( $this, 'get_form_option_settings' ));
 
 		do_action( 'otter_register_form_provider', array( 'default' =>  array( $this, 'send_default_email') ) );
-
-		// Register 3rd party mail providers
-		do_action( 'otter_register_form_provider', array( 'sendinblue' => array( $this, 'subscribe_to_service' ) ));
-		do_action( 'otter_register_form_provider', array( 'mailchimp' =>  array( $this, 'subscribe_to_service' ) ) );
+		do_action( 'otter_register_form_provider', array( 'sendinblue' => array( $this, 'subscribe_to_sendinblue' ) ));
+		do_action( 'otter_register_form_provider', array( 'mailchimp' =>  array( $this, 'subscribe_to_mailchimp' ) ) );
 	}
 
 	/**
@@ -114,7 +113,7 @@ class Form_Server {
 
 			$result = apply_filters( 'otter_form_captcha_validation', $data );
 			if ( false == $result['success'] ) {
-				$res->set_error( __( 'The reCaptcha was invalid!', 'otter-blocks' ) );
+				$res->set_error( __( 'The reCaptha was invalid!', 'otter-blocks' ) );
 				return $res->build_response();
 			}
 		}
@@ -126,6 +125,7 @@ class Form_Server {
 		$provider_response = $provider_action($data);
 
 		if( $data->field_has( 'action', array( 'subscribe', 'submit-subscribe' )) && 'submit-subscribe' === $data->get( 'action' ) ) {
+
 			return $this->send_default_email($data);
 		}
 
@@ -165,76 +165,14 @@ class Form_Server {
 		try {
 			// phpcs:ignore
 			wp_mail( $to, $email_subject, $email_body, $headers );
-			$res->mark_as_success();
-		} catch (\Exception  $e ) {
+			$res->mark_as_succes();
+		} catch ( \Exception $e ) {
 			$res->set_error( $e->getMessage() );
 		} finally {
 			return $res->build_response();
 		}
 	}
 
-	/**
-	 * Body template preparation
-	 *
-	 * @param array $data Data from the forms.
-	 *
-	 * @return string
-	 */
-	private function prepare_body( $data ) {
-		ob_start(); ?>
-		<!doctype html>
-		<html xmlns="http://www.w3.org/1999/xhtml">
-		<head>
-			<meta http-equiv="Content-Type" content="text/html;" charset="utf-8"/>
-			<!-- view port meta tag -->
-			<meta name="viewport" content="width=device-width, initial-scale=1">
-			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-			<title><?php esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ); ?></title>
-		</head>
-		<body>
-		<table>
-			<thead>
-			<tr>
-				<th colspan="2">
-					<h3>
-						<?php esc_html_e( 'Content Form submission from ', 'otter-blocks' ); ?>
-						<a href="<?php echo esc_url( get_site_url() ); ?>"><?php bloginfo( 'name' ); ?></a>
-					</h3>
-					<hr/>
-				</th>
-			</tr>
-			</thead>
-			<tbody>
-			<?php
-			foreach ( $data as $input ) {
-				?>
-				<tr>
-					<td>
-						<strong><?php echo esc_html( $input['label'] ); ?>: </strong>
-						<?php echo esc_html( $input['value'] ); ?>
-					</td>
-
-				</tr>
-				<?php
-			}
-
-			?>
-			</tbody>
-			<tfoot>
-			<tr>
-				<td>
-					<hr/>
-					<?php esc_html_e( 'You received this email because your email address is set in the content form settings on ', 'otter-blocks' ); ?>
-					<a href="<?php echo esc_url( get_site_url() ); ?>"><?php bloginfo( 'name' ); ?></a>
-				</td>
-			</tr>
-			</tfoot>
-		</table>
-		</body>
-		</html>
-		<?php
-		return ob_get_clean();
-	}
 
 	/**
 	 * Get data about the given provider
@@ -276,10 +214,23 @@ class Form_Server {
 		}
 	}
 
-	public function subscribe_to_service( $data ) {
+	/**
+	 * Add a new subscriber to Sendinblue
+	 *
+	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request  $data Data from request body.
+	 * @return mixed|\WP_REST_Response
+	 */
+	public function subscribe_to_sendinblue( $data ) {
+
 		$res = new Form_Data_Response();
 		// Get the first email from form.
-		$email = $this->get_email_from_form_input($data);
+		$email = '';
+		foreach ( $data->get( 'data' ) as $input_field ) {
+			if ( 'email' == $input_field['type'] ) {
+				$email = $input_field['value'];
+				break;
+			}
+		}
 
 		if ( '' === $email ) {
 			$res->set_error( 'No email provided!' );
@@ -357,15 +308,27 @@ class Form_Server {
 			return $reasons;
 		}
 
-		$integration =  Integration_Data::get_integration_data_from_form_settings( $data->get( 'formOption' ) );
+		$integration       = $this->get_form_option_settings( $data->get( 'formOption' ) );
+		$has_captcha       = false;
+		$has_credentials   = false;
 
-		if ( $integration->form_has_captcha() && ( ! $data->is_set( 'token' ) || '' === $data['token'] ) ) {
+		if ( isset( $integration['hasCaptcha'] ) ) {
+			$has_captcha = $integration['hasCaptcha'];
+		}
+
+		if ( $has_captcha && ( ! $data->is_set( 'token' ) || '' === $data['token'] ) ) {
 			$reasons += array(
 				__( 'Token is missing!', 'otter-blocks' ),
 			);
 		}
 
-		if ( ! $integration->has_credentials() && $integration->has_provider() ) {
+		if ( isset( $integration['apiKey'] ) && '' !== $integration['apiKey'] &&
+			isset( $integration['listId'] ) && '' !== $integration['listId']
+		) {
+			$has_credentials = true;
+		}
+
+		if ( ! $has_credentials && $integration['provider'] ) {
 			$reasons += array(
 				__( 'Provider settings are missing!', 'otter-blocks' ),
 			);
@@ -396,13 +359,33 @@ class Form_Server {
 	}
 
 	/**
+	 * Get form settings from options.
+	 *
+	 * @param string $form_option The name of the option.
+	 * @return array Form settings
+	 */
+	private function get_form_option_settings( $form_option ) {
+		$option_name = sanitize_text_field( $form_option );
+		$form_emails = get_option( 'themeisle_blocks_form_emails' );
+
+		foreach ( $form_emails as $form ) {
+			if ( $form['form'] === $option_name ) {
+				if ( isset( $form['integration'] ) ) {
+					return $form['integration'];
+				}
+			}
+		}
+		return array();
+	}
+
+	/**
 	 * The instance method for the static class.
 	 * Defines and returns the instance of the static class.
 	 *
 	 * @static
 	 * @since 1.0.0
 	 * @access public
-	 * @return Form_Server
+	 * @return Plugin_Card_Server
 	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
@@ -438,19 +421,5 @@ class Form_Server {
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
 		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
-	}
-
-	/**
-	 * @param Form_Data_Request $data
-	 * @return mixed|string
-	 */
-	private function get_email_from_form_input(Form_Data_Request $data)
-	{
-		foreach ($data->get('data') as $input_field) {
-			if ('email' == $input_field['type']) {
-				return $input_field['value'];
-			}
-		}
-		return '';
 	}
 }
