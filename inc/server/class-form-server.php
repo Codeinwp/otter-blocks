@@ -209,6 +209,8 @@ class Form_Server {
 			}
 		} catch (\Exception $e) {
 			$res->set_error($e->getMessage());
+		} catch (\Throwable $e) {
+			$res->set_error($e->getMessage());
 		} finally {
 			return $res->build_response();
 		}
