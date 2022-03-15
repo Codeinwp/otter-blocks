@@ -53,7 +53,6 @@ class Form_Email
 					<?php
 					do_action('otter_form_email_head', $email_data);
 					?>
-
 				</th>
 			</tr>
 			</thead>

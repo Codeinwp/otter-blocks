@@ -7,10 +7,12 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
+use FormSubscribeServiceInterface;
+
 /**
  * Class Plugin_Card_Server
  */
-class Mailchimp_Integration {
+class Mailchimp_Integration implements FormSubscribeServiceInterface {
 
 	/**
 	 * The API Key of the service.
@@ -19,6 +21,8 @@ class Mailchimp_Integration {
 	 */
 	protected $api_key = '';
 
+	protected $list_id = '';
+
 	/**
 	 * The server name of the service.
 	 *
@@ -26,14 +30,24 @@ class Mailchimp_Integration {
 	 */
 	protected $server_name = '';
 
+
+
+	public function __construct() {
+
+	}
+
 	/**
 	 * Constructor.
 	 *
 	 * @access  public
-	 * @param string $api_key The API Key.
+	 * @param Integration_Data|null $integration The integration data.
 	 */
-	public function __construct( $api_key ) {
-		$this->set_api_key( $api_key );
+	public function extract_data_from_integration($integration) {
+		if( isset($integration) ) {
+			$this->set_api_key( $integration->get_api_key() );
+			$this->set_list_id($integration->get_list_id());
+		}
+		return $this;
 	}
 
 	/**
@@ -80,15 +94,14 @@ class Mailchimp_Integration {
 	/**
 	 * Add a new subscriber to Mailchimp.
 	 *
-	 * @param string $list_id Contact list id.
 	 * @param string $email The client email.
-	 * @return \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response
+	 * @return Form_Data_Response
 	 */
-	public function subscribe( $list_id, $email ) {
+	public function subscribe( $email ) {
 		$res         = new Form_Data_Response();
-		$user_status = $this->get_new_user_status_mailchimp( $list_id );
+		$user_status = $this->get_new_user_status_mailchimp( $this->list_id );
 
-		$url       = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $list_id . '/members/' . md5( strtolower( $email ) );
+		$url       = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $this->list_id . '/members/' . md5( strtolower( $email ) );
 		$form_data = array(
 			'email_address' => $email,
 			'status'        => $user_status,
@@ -128,6 +141,12 @@ class Mailchimp_Integration {
 		$this->api_key     = $api_key;
 		$key_info          = explode( '-', $api_key );
 		$this->server_name = $key_info[1];
+		return $this;
+	}
+
+	public function set_list_id( $list_id ) {
+		$this->list_id = $list_id;
+		return $this;
 	}
 
 	/**
@@ -187,5 +206,11 @@ class Mailchimp_Integration {
 		}
 
 		return array_key_exists( 'double_optin', $body ) && true === $body['double_optin'] ? 'pending' : 'subscribed';
+	}
+
+	public function get_provider_data($data)
+	{
+		// TODO: Implement get_provider_data() method.
+		return $this->get_lists();
 	}
 }
