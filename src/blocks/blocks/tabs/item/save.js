@@ -13,7 +13,8 @@ const Save = ({
 	attributes
 }) => {
 	const blockProps = useBlockProps.save({
-		'data-title': attributes.title
+		'data-title': attributes.title,
+		'data-default-open': attributes.defaultOpen
 	});
 
 	return (

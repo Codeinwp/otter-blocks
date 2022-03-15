@@ -19,7 +19,7 @@ domReady( () => {
 			headerItem.classList.add( 'wp-block-themeisle-blocks-tabs__header_item' );
 			const content = item.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__content' );
 
-			if ( 0 === index ) {
+			if ( 'true' === item.dataset.defaultOpen ) {
 				headerItem.classList.add( 'active' );
 				content.classList.add( 'active' );
 			}

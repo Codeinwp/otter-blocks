@@ -11,6 +11,9 @@
 	"attributes": {
 		"title": {
 			"type": "string"
+		},
+		"defaultOpen": {
+			"type": "boolean"
 		}
 	}
 }
