@@ -7,10 +7,12 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
+use FormSubscribeServiceInterface;
+
 /**
  * Class Plugin_Card_Server
  */
-class Sendinblue_Integration {
+class Sendinblue_Integration implements FormSubscribeServiceInterface {
 
 	/**
 	 * The API Key of the service.
@@ -19,14 +21,25 @@ class Sendinblue_Integration {
 	 */
 	protected $api_key = '';
 
+	protected $list_id = '';
+
+
+	public function __construct( ) {
+
+	}
+
 	/**
 	 * Constructor.
 	 *
 	 * @access  public
-	 * @param string $api_key The API Key.
+	 * @param Integration_Data|null $integration The integration data.
 	 */
-	public function __construct( $api_key ) {
-		$this->set_api_key( $api_key );
+	public function extract_data_from_integration($integration) {
+		if( isset($integration) ) {
+			$this->set_api_key( $integration->get_api_key() );
+			$this->set_list_id($integration->get_list_id());
+		}
+		return $this;
 	}
 
 	/**
@@ -73,17 +86,16 @@ class Sendinblue_Integration {
 	/**
 	 * Add a new subscriber to Mailchimp
 	 *
-	 * @param string $list_id Contact list id.
 	 * @param string $email The client email.
 	 *
 	 * @return \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response
 	 */
-	public function subscribe( $list_id, $email ) {
+	public function subscribe(  $email ) {
 		$res       = new Form_Data_Response();
 		$url       = 'https://api.sendinblue.com/v3/contacts';
 		$form_data = array(
 			'email'            => $email,
-			'listIds'          => array( (int) $list_id ),
+			'listIds'          => array( (int) $this->list_id ),
 			'emailBlacklisted' => false,
 			'smsBlacklisted'   => false,
 		);
@@ -128,6 +140,8 @@ class Sendinblue_Integration {
 		}
 
 		$this->api_key = $api_key;
+
+		return $this;
 	}
 
 	/**
@@ -151,5 +165,17 @@ class Sendinblue_Integration {
 			'valid'  => true,
 			'reason' => '',
 		);
+	}
+
+	private function set_list_id(string $list_id)
+	{
+		$this->list_id = $list_id;
+		return $this;
+	}
+
+	public function get_provider_data($data)
+	{
+		// TODO: Implement get_provider_data() method.
+		return $this->get_lists();
 	}
 }
