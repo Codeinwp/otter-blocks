@@ -94,7 +94,7 @@ class Form_Settings_Data
 				if ( isset( $form['integration'] ) ) {
 					$integration->extract_integration_data($form['integration'] );
 				}
-				$this->set_meta($form);
+				$integration->set_meta($form);
 			}
 		}
 		return $integration;
