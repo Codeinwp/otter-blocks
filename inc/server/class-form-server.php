@@ -45,13 +45,27 @@ class Form_Server {
 	 * Initialize the class
 	 */
 	public function init() {
+        /**
+         * Register the REST API endpoints.
+         */
 		add_action('rest_api_init', array( $this, 'register_routes' ) );
+
+        /**
+         * Add filter for validation the form data.
+         */
 		add_filter('otter_form_validation', array( $this, 'check_form_conditions' ));
+
+        /**
+         * Add filter for captcha validation.
+         */
 		add_filter('otter_form_captcha_validation', array( $this, 'check_form_captcha' ));
 
+        /**
+         * Register an email provider that can be used to send emails or subscribe to a service.
+         */
 		do_action( 'otter_register_form_provider', array( 'default' =>  array( $this, 'send_default_email') ) );
 
-		// Register 3rd party mail providers
+		// Register 3rd party mail providers.
 		do_action( 'otter_register_form_provider', array( 'sendinblue' => array( $this, 'subscribe_to_service' ) ));
 		do_action( 'otter_register_form_provider', array( 'mailchimp' =>  array( $this, 'subscribe_to_service' ) ) );
 	}

@@ -34,7 +34,14 @@ class Form_Email
      * @return void
      */
 	public function init() {
+        /**
+         * Add action that render the email's header.
+         */
 		add_action('otter_form_email_head', array($this, 'build_head'));
+
+        /**
+         * Add action that render the email's body.
+         */
 		add_action('otter_form_email_body', array($this, 'build_body'));
 	}
 
