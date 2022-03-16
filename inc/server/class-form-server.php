@@ -10,7 +10,7 @@ namespace ThemeIsle\GutenbergBlocks\Server;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Email;
-use ThemeIsle\GutenbergBlocks\Integration\Integration_Data;
+use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
 use ThemeIsle\GutenbergBlocks\Integration\Mailchimp_Integration;
 use ThemeIsle\GutenbergBlocks\Integration\Sendinblue_Integration;
 
@@ -134,7 +134,7 @@ class Form_Server {
 		}
 
 
-		$integration = Integration_Data::get_integration_data_from_form_settings( $data->get( 'formOption' ) );
+		$integration = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
 
 		$provider_action = apply_filters('otter_select_form_provider', $integration);
 		$provider_response = $provider_action($data);
@@ -153,7 +153,7 @@ class Form_Server {
 	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request  $data Data from request body.
 	 * @return mixed|\WP_REST_Response
 	 */
-	private function send_default_email($data ) {
+	private function send_default_email( $data ) {
 		$res = new Form_Data_Response();
 		$email_subject = $data->is_set( 'emailSubject' ) ? $data->get( 'emailSubject' ) : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
 
@@ -183,6 +183,8 @@ class Form_Server {
 		} catch (\Exception  $e ) {
 			$res->set_error( $e->getMessage() );
 		} finally {
+            $integration = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
+            $res->add_value( array( 'redirectLink' => $integration->get_redirect_link() ) );
 			return $res->build_response();
 		}
 	}
@@ -240,7 +242,7 @@ class Form_Server {
 
         try {
             // Get the api credentials from the Form block.
-            $integration =  Integration_Data::get_integration_data_from_form_settings( $data->get( 'formOption' ) );
+            $integration =  Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
 
             $issues = $integration->check_data();
 
@@ -261,6 +263,7 @@ class Form_Server {
 
                 if ( $valid_api_key['valid'] ) {
                     $res->copy( $service->subscribe( $email ) );
+                    $res->add_value( array( 'redirectLink' => $integration->get_redirect_link() ) );
                 } else {
                     $res->set_error( $valid_api_key['reason'] );
                 }
@@ -309,7 +312,7 @@ class Form_Server {
 			return $reasons;
 		}
 
-		$integration =  Integration_Data::get_integration_data_from_form_settings( $data->get( 'formOption' ) );
+		$integration =  Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
 
 		if ( $integration->form_has_captcha() && ( ! $data->is_set( 'token' ) || '' === $data['token'] ) ) {
 			$reasons += array(

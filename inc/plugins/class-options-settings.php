@@ -263,6 +263,9 @@ class Options_Settings {
 								'email'       => array(
 									'type' => 'string',
 								),
+								'redirectLink' => array(
+									'type' => 'string'
+								),
 								'integration' => array(
 									'type'       => 'object',
 									'properties' => array(

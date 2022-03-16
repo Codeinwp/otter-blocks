@@ -149,6 +149,39 @@ const Inspector = ({
 		});
 	};
 
+	/**
+	 * Save redirect link in the Otter options.
+	 */
+	const saveRedirectLink = () => {
+		const model = new window.wp.api.models.Settings({
+			// eslint-disable-next-line camelcase
+			themeisle_google_captcha_api_site_key: googleCaptchaAPISiteKey,
+			// eslint-disable-next-line camelcase
+			themeisle_google_captcha_api_secret_key: googleCaptchaAPISecretKey
+		});
+
+		model.save().then( response => {
+			let saved = false;
+
+			if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
+				saved = true;
+			}
+
+			setAPISaved( saved );
+			setGoogleCaptchaAPISecretKey( '' );
+			setGoogleCaptchaAPISiteKey( '' );
+
+			createNotice(
+				'info',
+				__( 'API Keys have been saved.', 'otter-blocks' ),
+				{
+					isDismissible: true,
+					type: 'snackbar'
+				}
+			);
+		});
+	};
+
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -163,11 +196,27 @@ const Inspector = ({
 				/>
 
 				<TextControl
+					label={ __( 'Submit Button Label', 'otter-blocks' ) }
+					placeholder={ __( 'Submit', 'otter-blocks' ) }
+					value={ attributes.submitLabel }
+					onChange={ submitLabel => setAttributes({ submitLabel }) }
+					help={ __( 'Set the label for the submit button.', 'otter-blocks' ) }
+				/>
+
+				<TextControl
 					label={ __( 'Email To', 'otter-blocks' ) }
 					placeholder={ __( 'Default is to admin site', 'otter-blocks' ) }
 					value={ email }
 					onChange={ email => setEmail( email ) }
 					help={ __( 'Send form data to another email. (Admin is default).', 'otter-blocks' ) }
+				/>
+
+				<TextControl
+					label={ __( 'Redirect To', 'otter-blocks' ) }
+					placeholder={ __( 'Insert a link..', 'otter-blocks' ) }
+					value={ attributes.redirectLink }
+					onChange={ redirectLink => setEmail( redirectLink ) }
+					help={ __( 'Redirect the user to another page when submit is succesful.', 'otter-blocks' ) }
 				/>
 
 				<Button

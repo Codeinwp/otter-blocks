@@ -10,6 +10,7 @@ import { registerBlockType } from '@wordpress/blocks';
  */
 import metadata from './block.json';
 import { contactIcon as icon } from '../../helpers/icons.js';
+import deprecated from './deprecated.js';
 import edit from './edit.js';
 import save from './save.js';
 
@@ -27,6 +28,7 @@ registerBlockType( name, {
 	],
 	edit,
 	save,
+	deprecated,
 	variations: [
 		{
 			name: 'themeisle-blocks/form-contact',

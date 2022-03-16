@@ -17,7 +17,7 @@ class Form_Data_Response {
 	 *
 	 * @var array
 	 */
-	protected array $response = array();
+	protected $response = array();
 
 	/**
 	 * Constructor.
@@ -121,8 +121,23 @@ class Form_Data_Response {
 		return $this->response['reasons'];
 	}
 
+    /**
+     * Set the response.
+     * @param array $response
+     * @return $this
+     */
 	public function set_response( $response ) {
 		$this->response = $response;
 		return $this;
 	}
+
+    /**
+     * Add new data to the response.
+     * @param array $value
+     * @return $this
+     */
+    public function add_value( $value ) {
+        $this->response[] = $value;
+        return $this;
+    }
 }

@@ -149,7 +149,7 @@ const Edit = ({
 	 * Save the captcha option in settings.
 	 */
 	useEffect( () => {
-		if ( attributes.hasCaptcha !== undefined ) {
+		if ( attributes.hasCaptcha !== undefined || attributes.redirectLink !== undefined ) {
 			settingsRef?.current?.fetch().done( res => {
 				const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 				let isMissing = true;
@@ -160,7 +160,11 @@ const Edit = ({
 						if ( emails[index].hasCaptcha !== attributes.hasCaptcha ) {
 							hasChanged = true;
 						}
+						if ( emails[index].redirectLink !== attributes.redirectLink ) {
+							hasChanged = true;
+						}
 						emails[index].hasCaptcha = attributes.hasCaptcha;
+						emails[index].redirectLink = attributes.redirectLink;
 						isMissing = false;
 					}
 				});
@@ -168,7 +172,8 @@ const Edit = ({
 				if ( isMissing ) {
 					emails.push({
 						form: attributes.optionName,
-						hasCaptcha: attributes.hasCaptcha
+						hasCaptcha: attributes.hasCaptcha,
+						redirectLink: attributes.redirectLink
 					});
 				}
 
@@ -191,7 +196,7 @@ const Edit = ({
 				}
 			});
 		}
-	}, [ attributes.hasCaptcha, settingsRef.current ]);
+	}, [ attributes.hasCaptcha,  attributes.redirectLink, settingsRef.current ]);
 
 	/**
 	 * Check if the API Keys are set.
@@ -325,7 +330,7 @@ const Edit = ({
 			<div { ...blockProps }>
 				{
 					( hasInnerBlocks ) ? (
-						<div className="otter-form__container">
+						<form className="otter-form__container">
 							<InnerBlocks
 							/>
 
@@ -346,10 +351,10 @@ const Edit = ({
 
 							<div className="wp-block-button">
 								<button className="wp-block-button__link">
-									{ hasIntegrationActive && 'subscribe' === attributes.action ? __( 'Subscribe', 'otter-blocks' ) : __( 'Submit', 'otter-blocks' ) }
+									{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
 								</button>
 							</div>
-						</div>
+						</form>
 					) : (
 						<VariationPicker
 							icon={ get( blockType, [ 'icon', 'src' ]) }
