@@ -7,6 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\Server;
 
+use finfo;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Email;
@@ -136,7 +137,12 @@ class Form_Server {
 
 		$integration = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
 
-		$provider_action = apply_filters('otter_select_form_provider', $integration);
+		try {
+			$provider_action = apply_filters('otter_select_form_provider', $integration->get_meta()['integration']);
+		} catch (\Throwable $e) {
+
+		}
+
 		$provider_response = $provider_action($data);
 
 		if( $data->field_has( 'action', array( 'subscribe', 'submit-subscribe' )) && 'submit-subscribe' === $data->get( 'action' ) ) {
@@ -312,20 +318,26 @@ class Form_Server {
 			return $reasons;
 		}
 
-		$integration =  Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
+        try {
+            $integration = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
 
-		if ( $integration->form_has_captcha() && ( ! $data->is_set( 'token' ) || '' === $data['token'] ) ) {
-			$reasons += array(
-				__( 'Token is missing!', 'otter-blocks' ),
-			);
+            if ( $integration->form_has_captcha() && ( ! $data->is_set( 'token' ) || '' === $data['token'] ) ) {
+                $reasons += array(
+                    __( 'Token is missing!', 'otter-blocks' ),
+                );
+            }
+
+            if ( ! $integration->has_credentials() && $integration->has_provider() ) {
+                $reasons += array(
+                    __( 'Provider settings are missing!', 'otter-blocks' ),
+                );
+            }
+        } catch (\Throwable $e) {
+			$reasons[] = $e->getMessage();
+        } finally {
+			return $reasons;
 		}
 
-		if ( ! $integration->has_credentials() && $integration->has_provider() ) {
-			$reasons += array(
-				__( 'Provider settings are missing!', 'otter-blocks' ),
-			);
-		}
-		return $reasons;
 	}
 
 	/**
