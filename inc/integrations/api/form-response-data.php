@@ -86,7 +86,7 @@ class Form_Data_Response {
 	/**
 	 * Mark response as success.
 	 */
-	public function mark_as_succes() {
+	public function mark_as_success() {
 		$this->response['success'] = true;
 		return $this;
 	}

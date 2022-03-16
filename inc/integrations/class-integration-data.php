@@ -4,12 +4,12 @@ namespace ThemeIsle\GutenbergBlocks\Integration;
 
 class Integration_Data
 {
-	private string $provider = '';
-	private string $api_key = '';
-	private string $list_id = '';
-	private string $action = '';
-	private bool $has_captcha = false;
-	private array $meta = array();
+	private $provider = '';
+	private $api_key = '';
+	private $list_id = '';
+	private $action = '';
+	private $has_captcha = false;
+	private $meta = array();
 
 	public function __construct($integration_data)
 	{
@@ -22,9 +22,14 @@ class Integration_Data
 		$this->set_meta($integration_data);
 	}
 
+    /**
+     * Extract the settings from 3rd party integration.
+     * @param array $integration_data
+     * @return void
+     */
 	public function extract_integration_data($integration_data) {
-		if( isset( $integration_data['apiKei'] ) ) {
-			$this->set_api_key( $integration_data['apiKei'] );
+		if( isset( $integration_data['apiKey'] ) ) {
+			$this->set_api_key( $integration_data['apiKey'] );
 		}
 
 		if(isset($integration_data['listId'])) {
@@ -44,68 +49,117 @@ class Integration_Data
 		}
 	}
 
+    /**
+     * Set the provider.
+     * @param string $provider
+     * @return $this
+     */
 	public function set_provider($provider) {
 		$this->provider = $provider;
 		return $this;
 	}
 
+    /**
+     * Set the API Key.
+     * @param $api_key
+     * @return $this
+     */
 	public function set_api_key($api_key) {
 		$this->api_key = $api_key;
 		return $this;
 	}
 
+    /**
+     * Set the list id.
+     * @param string $list_id
+     * @return $this
+     */
 	public function set_list_id($list_id) {
 		$this->list_id = $list_id;
 		return $this;
 	}
 
+    /**
+     * Set the action.
+     * @param string $action
+     * @return $this
+     */
 	public function set_action($action) {
 		$this->action = $action;
 		return $this;
 	}
 
+    /**
+     * Set the mate.
+     * @param string $meta
+     * @return $this
+     */
 	public function set_meta($meta) {
 		$this->meta = $meta;
 		return $this;
 	}
 
-	public function has_credentials(): bool
+    /**
+     * Set if the form has captcha.
+     * @param bool $has_captcha
+     * @return Integration_Data
+     */
+    public function set_captcha( $has_captcha )
+    {
+        $this->has_captcha = $has_captcha;
+        return $this;
+    }
+
+    /**
+     * Check if it has the API Key and the list id set.
+     * @return bool.
+     */
+	public function has_credentials()
 	{
 		return $this->has_api_key() && $this->has_list_id();
 	}
 
-	public function has_provider(): bool
+    /**
+     * Check if it has the provider set.
+     * @return bool
+     */
+	public function has_provider()
 	{
 		return isset($this->provider) && '' !== $this->provider;
 	}
 
-	public function has_api_key(): bool
+    /**
+     * Check if it has the API Key set.
+     * @return bool
+     */
+	public function has_api_key()
 	{
 		return isset($this->api_key) && '' !== $this->api_key;
 	}
 
-	public function has_list_id(): bool
+    /**
+     * Check if it has the list id set.
+     * @return bool
+     */
+	public function has_list_id()
 	{
 		return isset($this->list_id) && '' !== $this->list_id;
 	}
 
-	public function has_action(): bool
+    /**
+     * Check if it has the action set.
+     * @return bool
+     */
+	public function has_action()
 	{
 		return isset($this->action) && '' !== $this->action;
 	}
 
-	/**
-	 * @param bool $has_captcha
-	 * @return Integration_Data
-	 */
-	public function set_captcha(bool $has_captcha): Integration_Data
-	{
-		$this->has_captcha = $has_captcha;
-		return $this;
-	}
-
-
-	public function check_data(): array
+    /**
+     * Check if it has the necessary data set.
+     * @return string[] The issues about the missing settings.
+     */
+	public function check_data()
 	{
 		$issues = array( );
 
@@ -124,6 +178,11 @@ class Integration_Data
 		return $issues;
 	}
 
+    /**
+     * Get the 3rd party integration settings from WP options given the form option ID.
+     * @param string $form_option The ID of the form.
+     * @return Integration_Data
+     */
 	public static function get_integration_data_from_form_settings( $form_option ) {
 		$option_name = sanitize_text_field( $form_option );
 		$form_emails = get_option( 'themeisle_blocks_form_emails' );
@@ -142,40 +201,56 @@ class Integration_Data
 		return $integration;
 	}
 
-
+    /**
+     * Get the provider.
+     * @return string
+     */
 	public function get_provider()
 	{
 		return $this->provider;
 	}
 
-
+    /**
+     * Get the API Key.
+     * @return string
+     */
 	public function get_api_key()
 	{
 		return $this->api_key;
 	}
 
-
+    /**
+     * Get the list ID.
+     * @return string
+     */
 	public function get_list_id()
 	{
 		return $this->list_id;
 	}
 
-
+    /**
+     * Get the action.
+     * @return string
+     */
 	public function get_action()
 	{
 		return $this->action;
 	}
 
-
-	public function get_meta(): array
+    /**
+     * Get the meta.
+     * @return array
+     */
+	public function get_meta()
 	{
 		return $this->meta;
 	}
 
 	/**
+     * Get the captcha.
 	 * @return bool
 	 */
-	public function form_has_captcha(): bool
+	public function form_has_captcha()
 	{
 		return $this->has_captcha;
 	}

@@ -48,7 +48,6 @@ class Form_Server {
 		add_action('rest_api_init', array( $this, 'register_routes' ) );
 		add_filter('otter_form_validation', array( $this, 'check_form_conditions' ));
 		add_filter('otter_form_captcha_validation', array( $this, 'check_form_captcha' ));
-		add_filter('otter_form_options', array( $this, 'get_form_option_settings' ));
 
 		do_action( 'otter_register_form_provider', array( 'default' =>  array( $this, 'send_default_email') ) );
 
@@ -121,7 +120,7 @@ class Form_Server {
 		}
 
 
-		$integration = $this->get_form_option_settings( $data->get( 'formOption' ) );
+		$integration = Integration_Data::get_integration_data_from_form_settings( $data->get( 'formOption' ) );
 
 		$provider_action = apply_filters('otter_select_form_provider', $integration);
 		$provider_response = $provider_action($data);
@@ -166,8 +165,8 @@ class Form_Server {
 		try {
 			// phpcs:ignore
 			wp_mail( $to, $email_subject, $email_body, $headers );
-			$res->mark_as_succes();
-		} catch ( \Exception $e ) {
+			$res->mark_as_success();
+		} catch (\Exception  $e ) {
 			$res->set_error( $e->getMessage() );
 		} finally {
 			return $res->build_response();
@@ -185,7 +184,6 @@ class Form_Server {
 		$res = new Form_Data_Response();
 
 		$data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
-
 
 		try {
 			$service = null;
@@ -211,8 +209,6 @@ class Form_Server {
 			}
 		} catch (\Exception $e) {
 			$res->set_error($e->getMessage());
-		} catch (\Throwable $e) {
-			$res->set_error($e->getMessage());
 		} finally {
 			return $res->build_response();
 		}
@@ -228,36 +224,40 @@ class Form_Server {
 			return $res->build_response();
 		}
 
-		// Get the api credentials from the Form block.
-		$integration =  Integration_Data::get_integration_data_from_form_settings( $data->get( 'formOption' ) );
+        try {
+            // Get the api credentials from the Form block.
+            $integration =  Integration_Data::get_integration_data_from_form_settings( $data->get( 'formOption' ) );
 
-		$issues = $integration->check_data();
+            $issues = $integration->check_data();
 
-		if (
-			count($issues) == 0
-		) {
-			$service = null;
-			switch ($integration->has_provider()) {
-				case 'mailchimp':
-					$service = (new Mailchimp_Integration())->extract_data_from_integration($integration);
-					break;
-				case 'sendinblue':
-					$service = (new Sendinblue_Integration())->extract_data_from_integration($integration);
-					break;
-			}
+            if (
+                count($issues) == 0
+            ) {
+                $service = null;
+                switch ($integration->get_provider()) {
+                    case 'mailchimp':
+                        $service = (new Mailchimp_Integration())->extract_data_from_integration($integration);
+                        break;
+                    case 'sendinblue':
+                        $service = (new Sendinblue_Integration())->extract_data_from_integration($integration);
+                        break;
+                }
 
-			$valid_api_key = $service::validate_api_key( $integration->get_api_key() );
+                $valid_api_key = $service::validate_api_key( $integration->get_api_key() );
 
-			if ( $valid_api_key['valid'] ) {
-				$res->copy( $service->subscribe( $email ) );
-			} else {
-				$res->set_error( $valid_api_key['reason'] );
-			}
-		} else {
-			$res->set_reasons($issues);
-		}
-
-		return $res->build_response();
+                if ( $valid_api_key['valid'] ) {
+                    $res->copy( $service->subscribe( $email ) );
+                } else {
+                    $res->set_error( $valid_api_key['reason'] );
+                }
+            } else {
+                $res->set_reasons($issues);
+            }
+        } catch (\Exception $e) {
+            $res->set_error( __('Server error!') );
+        } finally {
+            return $res->build_response();
+        }
 	}
 
 	/**
@@ -331,26 +331,6 @@ class Form_Server {
 			)
 		);
 		return json_decode( $resp['body'], true );
-	}
-
-	/**
-	 * Get form settings from options.
-	 *
-	 * @param string $form_option The name of the option.
-	 * @return array Form settings
-	 */
-	private function get_form_option_settings( $form_option ) {
-		$option_name = sanitize_text_field( $form_option );
-		$form_emails = get_option( 'themeisle_blocks_form_emails' );
-
-		foreach ( $form_emails as $form ) {
-			if ( $form['form'] === $option_name ) {
-				if ( isset( $form['integration'] ) ) {
-					return $form['integration'];
-				}
-			}
-		}
-		return array();
 	}
 
 	/**

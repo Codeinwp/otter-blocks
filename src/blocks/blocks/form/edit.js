@@ -271,6 +271,7 @@ const Edit = ({
 					emails[index].integration.apiKey = attributes.apiKey;
 					emails[index].integration.listId = attributes.listId;
 					emails[index].integration.action = attributes.action;
+					console.log( emails );
 				}
 			});
 

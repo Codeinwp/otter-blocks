@@ -19,6 +19,11 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 */
 	protected $api_key = '';
 
+    /**
+     * The list id.
+     *
+     * @var string
+     */
 	protected $list_id = '';
 
 	/**
@@ -118,7 +123,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
 			$res->set_error( ! empty( $body['detail'] ) && 'null' !== $body['detail'] ? $body['detail'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'mailchimp' );
 		} else {
-			$res->mark_as_succes();
+			$res->mark_as_success();
 		}
 
 		return $res;
@@ -142,6 +147,11 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		return $this;
 	}
 
+    /**
+     * Set the list id.
+     * @param string $list_id
+     * @return $this
+     */
 	public function set_list_id( $list_id ) {
 		$this->list_id = $list_id;
 		return $this;
@@ -206,6 +216,11 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		return array_key_exists( 'double_optin', $body ) && true === $body['double_optin'] ? 'pending' : 'subscribed';
 	}
 
+    /**
+     * Get the data from the provider.
+     * @param Form_Data_Request $data
+     * @return false[]|mixed
+     */
 	public function get_provider_data($data)
 	{
 		// TODO: Implement get_provider_data() method.
