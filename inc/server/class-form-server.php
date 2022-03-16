@@ -48,7 +48,6 @@ class Form_Server {
 		add_action('rest_api_init', array( $this, 'register_routes' ) );
 		add_filter('otter_form_validation', array( $this, 'check_form_conditions' ));
 		add_filter('otter_form_captcha_validation', array( $this, 'check_form_captcha' ));
-		add_filter('otter_form_options', array( $this, 'get_form_option_settings' ));
 
 		do_action( 'otter_register_form_provider', array( 'default' =>  array( $this, 'send_default_email') ) );
 		do_action( 'otter_register_form_provider', array( 'sendinblue' => array( $this, 'subscribe_to_sendinblue' ) ));
@@ -165,8 +164,8 @@ class Form_Server {
 		try {
 			// phpcs:ignore
 			wp_mail( $to, $email_subject, $email_body, $headers );
-			$res->mark_as_succes();
-		} catch ( \Exception $e ) {
+			$res->mark_as_success();
+		} catch (\Exception  $e ) {
 			$res->set_error( $e->getMessage() );
 		} finally {
 			return $res->build_response();
@@ -208,8 +207,6 @@ class Form_Server {
 				}
 			}
 		} catch (\Exception $e) {
-			$res->set_error($e->getMessage());
-		} catch (\Throwable $e) {
 			$res->set_error($e->getMessage());
 		} finally {
 			return $res->build_response();
@@ -358,26 +355,6 @@ class Form_Server {
 			)
 		);
 		return json_decode( $resp['body'], true );
-	}
-
-	/**
-	 * Get form settings from options.
-	 *
-	 * @param string $form_option The name of the option.
-	 * @return array Form settings
-	 */
-	private function get_form_option_settings( $form_option ) {
-		$option_name = sanitize_text_field( $form_option );
-		$form_emails = get_option( 'themeisle_blocks_form_emails' );
-
-		foreach ( $form_emails as $form ) {
-			if ( $form['form'] === $option_name ) {
-				if ( isset( $form['integration'] ) ) {
-					return $form['integration'];
-				}
-			}
-		}
-		return array();
 	}
 
 	/**
