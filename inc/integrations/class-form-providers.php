@@ -10,6 +10,10 @@ class Form_Providers
 	 * @var Form_Providers
 	 */
 	public static $instance = null;
+
+    /**
+     * @var array List of provider and their actions when a form is submitted.
+     */
 	public $providers = array();
 
 	/**
@@ -35,7 +39,14 @@ class Form_Providers
      * @return void
      */
 	public function init() {
+        /**
+         * Add action that register a provider and his actions when a form is submitted.
+         */
 		add_action('otter_register_form_provider', array($this, 'register_provider'));
+
+        /**
+         * Add a filter that select the provider from the form integration settings.
+         */
 		add_filter('otter_select_form_provider', array($this, 'select_provider'));
 	}
 
