@@ -65,7 +65,7 @@ const Edit = ({
 		return getBlock( clientId ).innerBlocks;
 	});
 
-	const [ activeTab, setActiveTab ] = useState( children.find( c => true === c.attributes?.defaultOpen )?.clientId );
+	const [ activeTab, setActiveTab ] = useState( children.find( c => c.attributes.defaultOpen )?.clientId );
 
 	const {
 		insertBlock,

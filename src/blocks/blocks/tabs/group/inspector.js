@@ -40,7 +40,7 @@ const Inspector = ({
 	moveTab
 }) => {
 
-	const [ defaultTab, setDefaultTab ] = useState( children.find( c => true === c.attributes?.defaultOpen )?.clientId );
+	const [ defaultTab, setDefaultTab ] = useState( children.find( c => c.attributes.defaultOpen )?.clientId );
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
 	const { getBlock } = useSelect( 'core/block-editor' );
 
