@@ -36,7 +36,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 * Constructor.
 	 *
 	 * @access  public
-	 * @param Integration_Data|null $integration The integration data.
+	 * @param Form_Settings_Data|null $integration The integration data.
 	 */
 	public function extract_data_from_integration($integration) {
 		if( isset($integration) ) {

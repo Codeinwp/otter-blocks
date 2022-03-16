@@ -31,15 +31,15 @@ const Save = ({
 
 	return (
 		<div { ...blockProps }>
-			<div className="otter-form__container">
+			<form className="otter-form__container">
 				<InnerBlocks.Content />
 
 				<div className="wp-block-button">
 					<button className="wp-block-button__link">
-						{ 'subscribe' === attributes.action ? __( 'Subscribe', 'otter-blocks' ) : __( 'Submit', 'otter-blocks' ) }
+						{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
 					</button>
 				</div>
-			</div>
+			</form>
 		</div>
 	);
 };

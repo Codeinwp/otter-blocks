@@ -36,6 +36,15 @@
 		"action": {
 			"type": "string",
 			"default": "subscribe"
+		},
+		"submitLabel": {
+			"type": "string"
+		},
+		"sendUserEmail": {
+			"type": "boolean"
+		},
+		"redirectLink": {
+			"type": "string"
 		}
 	},
 	"supports": {

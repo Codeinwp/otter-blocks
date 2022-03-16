@@ -10,7 +10,7 @@ namespace ThemeIsle\GutenbergBlocks\Server;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Email;
-use ThemeIsle\GutenbergBlocks\Integration\Integration_Data;
+use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
 use ThemeIsle\GutenbergBlocks\Integration\Mailchimp_Integration;
 use ThemeIsle\GutenbergBlocks\Integration\Sendinblue_Integration;
 
@@ -45,13 +45,29 @@ class Form_Server {
 	 * Initialize the class
 	 */
 	public function init() {
+        /**
+         * Register the REST API endpoints.
+         */
 		add_action('rest_api_init', array( $this, 'register_routes' ) );
+
+        /**
+         * Add filter for validation the form data.
+         */
 		add_filter('otter_form_validation', array( $this, 'check_form_conditions' ));
+
+        /**
+         * Add filter for captcha validation.
+         */
 		add_filter('otter_form_captcha_validation', array( $this, 'check_form_captcha' ));
 
+        /**
+         * Register an email provider that can be used to send emails or subscribe to a service.
+         */
 		do_action( 'otter_register_form_provider', array( 'default' =>  array( $this, 'send_default_email') ) );
-		do_action( 'otter_register_form_provider', array( 'sendinblue' => array( $this, 'subscribe_to_sendinblue' ) ));
-		do_action( 'otter_register_form_provider', array( 'mailchimp' =>  array( $this, 'subscribe_to_mailchimp' ) ) );
+
+		// Register 3rd party mail providers.
+		do_action( 'otter_register_form_provider', array( 'sendinblue' => array( $this, 'subscribe_to_service' ) ));
+		do_action( 'otter_register_form_provider', array( 'mailchimp' =>  array( $this, 'subscribe_to_service' ) ) );
 	}
 
 	/**
@@ -112,19 +128,18 @@ class Form_Server {
 
 			$result = apply_filters( 'otter_form_captcha_validation', $data );
 			if ( false == $result['success'] ) {
-				$res->set_error( __( 'The reCaptha was invalid!', 'otter-blocks' ) );
+				$res->set_error( __( 'The reCaptcha was invalid!', 'otter-blocks' ) );
 				return $res->build_response();
 			}
 		}
 
 
-		$integration = Integration_Data::get_integration_data_from_form_settings( $data->get( 'formOption' ) );
+		$integration = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
 
 		$provider_action = apply_filters('otter_select_form_provider', $integration);
 		$provider_response = $provider_action($data);
 
 		if( $data->field_has( 'action', array( 'subscribe', 'submit-subscribe' )) && 'submit-subscribe' === $data->get( 'action' ) ) {
-
 			return $this->send_default_email($data);
 		}
 
@@ -138,7 +153,7 @@ class Form_Server {
 	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request  $data Data from request body.
 	 * @return mixed|\WP_REST_Response
 	 */
-	private function send_default_email($data ) {
+	private function send_default_email( $data ) {
 		$res = new Form_Data_Response();
 		$email_subject = $data->is_set( 'emailSubject' ) ? $data->get( 'emailSubject' ) : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
 
@@ -168,6 +183,8 @@ class Form_Server {
 		} catch (\Exception  $e ) {
 			$res->set_error( $e->getMessage() );
 		} finally {
+            $integration = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
+            $res->add_value( array( 'redirectLink' => $integration->get_redirect_link() ) );
 			return $res->build_response();
 		}
 	}
@@ -213,23 +230,10 @@ class Form_Server {
 		}
 	}
 
-	/**
-	 * Add a new subscriber to Sendinblue
-	 *
-	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request  $data Data from request body.
-	 * @return mixed|\WP_REST_Response
-	 */
-	public function subscribe_to_sendinblue( $data ) {
-
+	public function subscribe_to_service( $data ) {
 		$res = new Form_Data_Response();
 		// Get the first email from form.
-		$email = '';
-		foreach ( $data->get( 'data' ) as $input_field ) {
-			if ( 'email' == $input_field['type'] ) {
-				$email = $input_field['value'];
-				break;
-			}
-		}
+		$email = $this->get_email_from_form_input($data);
 
 		if ( '' === $email ) {
 			$res->set_error( 'No email provided!' );
@@ -238,7 +242,7 @@ class Form_Server {
 
         try {
             // Get the api credentials from the Form block.
-            $integration =  Integration_Data::get_integration_data_from_form_settings( $data->get( 'formOption' ) );
+            $integration =  Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
 
             $issues = $integration->check_data();
 
@@ -259,6 +263,7 @@ class Form_Server {
 
                 if ( $valid_api_key['valid'] ) {
                     $res->copy( $service->subscribe( $email ) );
+                    $res->add_value( array( 'redirectLink' => $integration->get_redirect_link() ) );
                 } else {
                     $res->set_error( $valid_api_key['reason'] );
                 }
@@ -307,27 +312,15 @@ class Form_Server {
 			return $reasons;
 		}
 
-		$integration       = $this->get_form_option_settings( $data->get( 'formOption' ) );
-		$has_captcha       = false;
-		$has_credentials   = false;
+		$integration =  Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
 
-		if ( isset( $integration['hasCaptcha'] ) ) {
-			$has_captcha = $integration['hasCaptcha'];
-		}
-
-		if ( $has_captcha && ( ! $data->is_set( 'token' ) || '' === $data['token'] ) ) {
+		if ( $integration->form_has_captcha() && ( ! $data->is_set( 'token' ) || '' === $data['token'] ) ) {
 			$reasons += array(
 				__( 'Token is missing!', 'otter-blocks' ),
 			);
 		}
 
-		if ( isset( $integration['apiKey'] ) && '' !== $integration['apiKey'] &&
-			isset( $integration['listId'] ) && '' !== $integration['listId']
-		) {
-			$has_credentials = true;
-		}
-
-		if ( ! $has_credentials && $integration['provider'] ) {
+		if ( ! $integration->has_credentials() && $integration->has_provider() ) {
 			$reasons += array(
 				__( 'Provider settings are missing!', 'otter-blocks' ),
 			);
@@ -364,7 +357,7 @@ class Form_Server {
 	 * @static
 	 * @since 1.0.0
 	 * @access public
-	 * @return Plugin_Card_Server
+	 * @return Form_Server
 	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
@@ -400,5 +393,19 @@ class Form_Server {
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
 		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+	}
+
+	/**
+	 * @param Form_Data_Request $data
+	 * @return mixed|string
+	 */
+	private function get_email_from_form_input(Form_Data_Request $data)
+	{
+		foreach ($data->get('data') as $input_field) {
+			if ('email' == $input_field['type']) {
+				return $input_field['value'];
+			}
+		}
+		return '';
 	}
 }

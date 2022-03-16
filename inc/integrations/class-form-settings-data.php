@@ -2,7 +2,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
-class Integration_Data
+class Form_Settings_Data
 {
 	private $provider = '';
 	private $api_key = '';
@@ -10,6 +10,7 @@ class Integration_Data
 	private $action = '';
 	private $has_captcha = false;
 	private $meta = array();
+    private $redirect_link = '';
 
 	public function __construct($integration_data)
 	{
@@ -50,112 +51,6 @@ class Integration_Data
 	}
 
     /**
-     * Set the provider.
-     * @param string $provider
-     * @return $this
-     */
-	public function set_provider($provider) {
-		$this->provider = $provider;
-		return $this;
-	}
-
-    /**
-     * Set the API Key.
-     * @param $api_key
-     * @return $this
-     */
-	public function set_api_key($api_key) {
-		$this->api_key = $api_key;
-		return $this;
-	}
-
-    /**
-     * Set the list id.
-     * @param string $list_id
-     * @return $this
-     */
-	public function set_list_id($list_id) {
-		$this->list_id = $list_id;
-		return $this;
-	}
-
-    /**
-     * Set the action.
-     * @param string $action
-     * @return $this
-     */
-	public function set_action($action) {
-		$this->action = $action;
-		return $this;
-	}
-
-    /**
-     * Set the mate.
-     * @param string $meta
-     * @return $this
-     */
-	public function set_meta($meta) {
-		$this->meta = $meta;
-		return $this;
-	}
-
-    /**
-     * Set if the form has captcha.
-     * @param bool $has_captcha
-     * @return Integration_Data
-     */
-    public function set_captcha( $has_captcha )
-    {
-        $this->has_captcha = $has_captcha;
-        return $this;
-    }
-
-    /**
-     * Check if it has the API Key and the list id set.
-     * @return bool.
-     */
-	public function has_credentials()
-	{
-		return $this->has_api_key() && $this->has_list_id();
-	}
-
-    /**
-     * Check if it has the provider set.
-     * @return bool
-     */
-	public function has_provider()
-	{
-		return isset($this->provider) && '' !== $this->provider;
-	}
-
-    /**
-     * Check if it has the API Key set.
-     * @return bool
-     */
-	public function has_api_key()
-	{
-		return isset($this->api_key) && '' !== $this->api_key;
-	}
-
-    /**
-     * Check if it has the list id set.
-     * @return bool
-     */
-	public function has_list_id()
-	{
-		return isset($this->list_id) && '' !== $this->list_id;
-	}
-
-    /**
-     * Check if it has the action set.
-     * @return bool
-     */
-	public function has_action()
-	{
-		return isset($this->action) && '' !== $this->action;
-	}
-
-    /**
      * Check if it has the necessary data set.
      * @return string[] The issues about the missing settings.
      */
@@ -181,18 +76,21 @@ class Integration_Data
     /**
      * Get the 3rd party integration settings from WP options given the form option ID.
      * @param string $form_option The ID of the form.
-     * @return Integration_Data
+     * @return Form_Settings_Data
      */
-	public static function get_integration_data_from_form_settings( $form_option ) {
+	public static function get_form_setting_from_wordpress_options($form_option ) {
 		$option_name = sanitize_text_field( $form_option );
 		$form_emails = get_option( 'themeisle_blocks_form_emails' );
-		$integration = new Integration_Data(array());
+		$integration = new Form_Settings_Data(array());
 		foreach ( $form_emails as $form ) {
 			if ( $form['form'] === $option_name ) {
 
 				if( isset( $form['hasCaptcha'] ) ) {
 					$integration->set_captcha($form['hasCaptcha']);
 				}
+                if( isset( $form['redirectLink'] ) ) {
+                    $integration->set_redirect_link($form['redirectLink']);
+                }
 				if ( isset( $form['integration'] ) ) {
 					$integration->extract_integration_data($form['integration'] );
 				}
@@ -200,6 +98,123 @@ class Integration_Data
 		}
 		return $integration;
 	}
+
+    /**
+     * Set the provider.
+     * @param string $provider
+     * @return $this
+     */
+    public function set_provider($provider) {
+        $this->provider = $provider;
+        return $this;
+    }
+
+    /**
+     * Set the API Key.
+     * @param $api_key
+     * @return $this
+     */
+    public function set_api_key($api_key) {
+        $this->api_key = $api_key;
+        return $this;
+    }
+
+    /**
+     * Set the list id.
+     * @param string $list_id
+     * @return $this
+     */
+    public function set_list_id($list_id) {
+        $this->list_id = $list_id;
+        return $this;
+    }
+
+    /**
+     * Set the action.
+     * @param string $action
+     * @return $this
+     */
+    public function set_action($action) {
+        $this->action = $action;
+        return $this;
+    }
+
+    /**
+     * Set the mate.
+     * @param string $meta
+     * @return $this
+     */
+    public function set_meta($meta) {
+        $this->meta = $meta;
+        return $this;
+    }
+
+    /**
+     * Set if the form has captcha.
+     * @param bool $has_captcha
+     * @return Form_Settings_Data
+     */
+    public function set_captcha( $has_captcha )
+    {
+        $this->has_captcha = $has_captcha;
+        return $this;
+    }
+
+    /**
+     * Check if it has the API Key and the list id set.
+     * @return bool.
+     */
+    public function has_credentials()
+    {
+        return $this->has_api_key() && $this->has_list_id();
+    }
+
+    /**
+     * Check if it has the provider set.
+     * @return bool
+     */
+    public function has_provider()
+    {
+        return isset($this->provider) && '' !== $this->provider;
+    }
+
+    /**
+     * Check if it has the API Key set.
+     * @return bool
+     */
+    public function has_api_key()
+    {
+        return isset($this->api_key) && '' !== $this->api_key;
+    }
+
+    /**
+     * Check if it has the list id set.
+     * @return bool
+     */
+    public function has_list_id()
+    {
+        return isset($this->list_id) && '' !== $this->list_id;
+    }
+
+    /**
+     * Check if it has the action set.
+     * @return bool
+     */
+    public function has_action()
+    {
+        return isset($this->action) && '' !== $this->action;
+    }
+
+    /**
+     * Set the redirect link.
+     * @param string $redirect_link
+     * @return Form_Settings_Data
+     */
+    public function set_redirect_link($redirect_link)
+    {
+        $this->redirect_link = $redirect_link;
+        return $this;
+    }
 
     /**
      * Get the provider.
@@ -254,5 +269,14 @@ class Integration_Data
 	{
 		return $this->has_captcha;
 	}
+
+    /**
+     * Gte the redirect link.
+     * @return string
+     */
+    public function get_redirect_link()
+    {
+        return $this->redirect_link;
+    }
 
 }

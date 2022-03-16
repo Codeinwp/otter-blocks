@@ -10,6 +10,9 @@ type Attributes = {
 	apiKey: string
 	listId: string
 	action: string
+	submitLabel: string
+	sendUserEmail: boolean
+	redirectLink: string
 }
 
 export type FormProps = BlockProps<Attributes>
