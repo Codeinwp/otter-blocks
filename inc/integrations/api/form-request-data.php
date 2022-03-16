@@ -141,6 +141,10 @@ class Form_Data_Request {
 		return $data;
 	}
 
+    /**
+     * Get the form input data.
+     * @return mixed Form input data.
+     */
 	public function get_form_inputs() {
 		return $this->data['data'];
 	}

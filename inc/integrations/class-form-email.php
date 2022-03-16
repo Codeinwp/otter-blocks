@@ -29,11 +29,20 @@ class Form_Email
 		return self::$instance;
 	}
 
+    /**
+     * Add email rendering actions.
+     * @return void
+     */
 	public function init() {
 		add_action('otter_form_email_head', array($this, 'build_head'));
 		add_action('otter_form_email_body', array($this, 'build_body'));
 	}
 
+    /**
+     * Create the email content.
+     * @param $email_data
+     * @return false|string
+     */
 	public function build_email($email_data ) {
 		ob_start(); ?>
 		<!doctype html>
@@ -77,6 +86,10 @@ class Form_Email
 		return ob_get_clean();
 	}
 
+    /**
+     * Create the content for the email header.
+     * @return void
+     */
 	public function build_head() {
 		ob_start(); ?>
 		<h3>
@@ -88,6 +101,11 @@ class Form_Email
 		echo ob_get_clean();
 	}
 
+    /**
+     * Create the content for the email body.
+     * @param array $email_data
+     * @return void
+     */
 	public function build_body( $email_data ) {
 		$emailFormContent = $email_data->get_form_inputs();
 		ob_start(); ?>
