@@ -224,6 +224,10 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 
 		$defaults = json_decode( $defaults, true );
 
+		if ( ! isset( $defaults[ $block ] ) ) {
+			return;
+		}
+
 		$block = array(
 			'attrs' => $defaults[ $block ],
 		);
