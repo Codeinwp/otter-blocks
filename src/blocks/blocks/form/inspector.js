@@ -215,7 +215,7 @@ const Inspector = ({
 					label={ __( 'Redirect To', 'otter-blocks' ) }
 					placeholder={ __( 'Insert a link..', 'otter-blocks' ) }
 					value={ attributes.redirectLink }
-					onChange={ redirectLink => setEmail( redirectLink ) }
+					onChange={ redirectLink =>  setAttributes({ redirectLink })  }
 					help={ __( 'Redirect the user to another page when submit is succesful.', 'otter-blocks' ) }
 				/>
 
