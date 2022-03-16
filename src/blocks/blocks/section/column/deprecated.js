@@ -6,7 +6,10 @@ import hexToRgba from 'hex-rgba';
 /**
  * WordPress dependencies
  */
-import { omit } from 'lodash';
+import {
+	isUndefined,
+	omit
+} from 'lodash';
 
 import { InnerBlocks } from '@wordpress/block-editor';
 
@@ -634,99 +637,99 @@ const deprecated = [ {
 		let backgroundPosition = {};
 
 		if ( 'unlinked' === oldAttributes.paddingType ) {
-			padding.top = oldAttributes.paddingTop ? oldAttributes.paddingTop + 'px' : '20px';
-			padding.bottom = oldAttributes.paddingBottom ? oldAttributes.paddingBottom + 'px' : '20px';
-			padding.left = oldAttributes.paddingLeft ? oldAttributes.paddingLeft + 'px' : '20px';
-			padding.right = oldAttributes.paddingRight ? oldAttributes.paddingRight + 'px' : '20px';
+			padding.top = ! isUndefined( oldAttributes.paddingTop ) ? oldAttributes.paddingTop + 'px' : '20px';
+			padding.bottom = ! isUndefined( oldAttributes.paddingBottom ) ? oldAttributes.paddingBottom + 'px' : '20px';
+			padding.left = ! isUndefined( oldAttributes.paddingLeft ) ? oldAttributes.paddingLeft + 'px' : '20px';
+			padding.right = ! isUndefined( oldAttributes.paddingRight ) ? oldAttributes.paddingRight + 'px' : '20px';
 		} else {
-			padding.top = oldAttributes.padding ? oldAttributes.padding + 'px' : '20px';
-			padding.bottom = oldAttributes.padding ? oldAttributes.padding + 'px' : '20px';
-			padding.left = oldAttributes.padding ? oldAttributes.padding + 'px' : '20px';
-			padding.right = oldAttributes.padding ? oldAttributes.padding + 'px' : '20px';
+			padding.top = ! isUndefined( oldAttributes.padding ) ? oldAttributes.padding + 'px' : '20px';
+			padding.bottom = ! isUndefined( oldAttributes.padding ) ? oldAttributes.padding + 'px' : '20px';
+			padding.left = ! isUndefined( oldAttributes.padding ) ? oldAttributes.padding + 'px' : '20px';
+			padding.right = ! isUndefined( oldAttributes.padding ) ? oldAttributes.padding + 'px' : '20px';
 		}
 
 		if ( 'unlinked' === oldAttributes.paddingTypeTablet ) {
-			paddingTablet.top = oldAttributes.paddingTopTablet ? oldAttributes.paddingTopTablet + 'px' : null;
-			paddingTablet.bottom = oldAttributes.paddingBottomTablet ? oldAttributes.paddingBottomTablet + 'px' : null;
-			paddingTablet.left = oldAttributes.paddingLeftTablet ? oldAttributes.paddingLeftTablet + 'px' : null;
-			paddingTablet.right = oldAttributes.paddingRightTablet ? oldAttributes.paddingRightTablet + 'px' : null;
+			paddingTablet.top = ! isUndefined( oldAttributes.paddingTopTablet ) ? oldAttributes.paddingTopTablet + 'px' : null;
+			paddingTablet.bottom = ! isUndefined( oldAttributes.paddingBottomTablet ) ? oldAttributes.paddingBottomTablet + 'px' : null;
+			paddingTablet.left = ! isUndefined( oldAttributes.paddingLeftTablet ) ? oldAttributes.paddingLeftTablet + 'px' : null;
+			paddingTablet.right = ! isUndefined( oldAttributes.paddingRightTablet ) ? oldAttributes.paddingRightTablet + 'px' : null;
 		} else {
-			paddingTablet.top = oldAttributes.paddingTablet ? oldAttributes.paddingTablet + 'px' : null;
-			paddingTablet.bottom = oldAttributes.paddingTablet ? oldAttributes.paddingTablet + 'px' : null;
-			paddingTablet.left = oldAttributes.paddingTablet ? oldAttributes.paddingTablet + 'px' : null;
-			paddingTablet.right = oldAttributes.paddingTablet ? oldAttributes.paddingTablet + 'px' : null;
+			paddingTablet.top = ! isUndefined( oldAttributes.paddingTablet ) ? oldAttributes.paddingTablet + 'px' : null;
+			paddingTablet.bottom = ! isUndefined( oldAttributes.paddingTablet ) ? oldAttributes.paddingTablet + 'px' : null;
+			paddingTablet.left = ! isUndefined( oldAttributes.paddingTablet ) ? oldAttributes.paddingTablet + 'px' : null;
+			paddingTablet.right = ! isUndefined( oldAttributes.paddingTablet ) ? oldAttributes.paddingTablet + 'px' : null;
 		}
 
 		if ( 'unlinked' === oldAttributes.paddingTypeMobile ) {
-			paddingMobile.top = oldAttributes.paddingMobileTop ? oldAttributes.paddingMobileTop + 'px' : null;
-			paddingMobile.bottom = oldAttributes.paddingMobileBottom ? oldAttributes.paddingMobileBottom + 'px' : null;
-			paddingMobile.left = oldAttributes.paddingMobileLeft ? oldAttributes.paddingMobileLeft + 'px' : null;
-			paddingMobile.right = oldAttributes.paddingMobileRight ? oldAttributes.paddingMobileRight + 'px' : null;
+			paddingMobile.top = ! isUndefined( oldAttributes.paddingMobileTop ) ? oldAttributes.paddingMobileTop + 'px' : null;
+			paddingMobile.bottom = ! isUndefined( oldAttributes.paddingMobileBottom ) ? oldAttributes.paddingMobileBottom + 'px' : null;
+			paddingMobile.left = ! isUndefined( oldAttributes.paddingMobileLeft ) ? oldAttributes.paddingMobileLeft + 'px' : null;
+			paddingMobile.right = ! isUndefined( oldAttributes.paddingMobileRight ) ? oldAttributes.paddingMobileRight + 'px' : null;
 		} else {
-			paddingMobile.top = oldAttributes.paddingMobile ? oldAttributes.paddingMobile + 'px' : null;
-			paddingMobile.bottom = oldAttributes.paddingMobile ? oldAttributes.paddingMobile + 'px' : null;
-			paddingMobile.left = oldAttributes.paddingMobile ? oldAttributes.paddingMobile + 'px' : null;
-			paddingMobile.right = oldAttributes.paddingMobile ? oldAttributes.paddingMobile + 'px' : null;
+			paddingMobile.top = ! isUndefined( oldAttributes.paddingMobile ) ? oldAttributes.paddingMobile + 'px' : null;
+			paddingMobile.bottom = ! isUndefined( oldAttributes.paddingMobile ) ? oldAttributes.paddingMobile + 'px' : null;
+			paddingMobile.left = ! isUndefined( oldAttributes.paddingMobile ) ? oldAttributes.paddingMobile + 'px' : null;
+			paddingMobile.right = ! isUndefined( oldAttributes.paddingMobile ) ? oldAttributes.paddingMobile + 'px' : null;
 		}
 
 		if ( 'linked' === oldAttributes.marginType ) {
-			margin.top = oldAttributes.margin ? oldAttributes.margin + 'px' : '20px';
-			margin.bottom = oldAttributes.margin ? oldAttributes.margin + 'px' : '20px';
-			margin.left = oldAttributes.margin ? oldAttributes.margin + 'px' : '20px';
-			margin.right = oldAttributes.margin ? oldAttributes.margin + 'px' : '20px';
+			margin.top = ! isUndefined( oldAttributes.margin ) ? oldAttributes.margin + 'px' : '20px';
+			margin.bottom = ! isUndefined( oldAttributes.margin ) ? oldAttributes.margin + 'px' : '20px';
+			margin.left = ! isUndefined( oldAttributes.margin ) ? oldAttributes.margin + 'px' : '20px';
+			margin.right = ! isUndefined( oldAttributes.margin ) ? oldAttributes.margin + 'px' : '20px';
 		} else {
-			margin.top = oldAttributes.marginTop ? oldAttributes.marginTop + 'px' : '20px';
-			margin.bottom = oldAttributes.marginBottom ? oldAttributes.marginBottom + 'px' : '20px';
-			margin.left = oldAttributes.marginLeft ? oldAttributes.marginLeft + 'px' : '20px';
-			margin.right = oldAttributes.marginRight ? oldAttributes.marginRight + 'px' : '20px';
+			margin.top = ! isUndefined( oldAttributes.marginTop ) ? oldAttributes.marginTop + 'px' : '20px';
+			margin.bottom = ! isUndefined( oldAttributes.marginBottom ) ? oldAttributes.marginBottom + 'px' : '20px';
+			margin.left = ! isUndefined( oldAttributes.marginLeft ) ? oldAttributes.marginLeft + 'px' : '20px';
+			margin.right = ! isUndefined( oldAttributes.marginRight ) ? oldAttributes.marginRight + 'px' : '20px';
 		}
 
 		if ( 'linked' === oldAttributes.marginTypeTablet ) {
-			marginTablet.top = oldAttributes.marginTablet ? oldAttributes.marginTablet + 'px' : null;
-			marginTablet.bottom = oldAttributes.marginTablet ? oldAttributes.marginTablet + 'px' : null;
-			marginTablet.left = oldAttributes.marginTablet ? oldAttributes.marginTablet + 'px' : null;
-			marginTablet.right = oldAttributes.marginTablet ? oldAttributes.marginTablet + 'px' : null;
+			marginTablet.top = ! isUndefined( oldAttributes.marginTablet ) ? oldAttributes.marginTablet + 'px' : null;
+			marginTablet.bottom = ! isUndefined( oldAttributes.marginTablet ) ? oldAttributes.marginTablet + 'px' : null;
+			marginTablet.left = ! isUndefined( oldAttributes.marginTablet ) ? oldAttributes.marginTablet + 'px' : null;
+			marginTablet.right = ! isUndefined( oldAttributes.marginTablet ) ? oldAttributes.marginTablet + 'px' : null;
 		} else {
-			marginTablet.top = oldAttributes.marginTopTablet ? oldAttributes.marginTopTablet + 'px' : null;
-			marginTablet.bottom = oldAttributes.marginBottomTablet ? oldAttributes.marginBottomTablet + 'px' : null;
-			marginTablet.left = oldAttributes.marginLeftTablet ? oldAttributes.marginLeftTablet + 'px' : null;
-			marginTablet.right = oldAttributes.marginRightTablet ? oldAttributes.marginRightTablet + 'px' : null;
+			marginTablet.top = ! isUndefined( oldAttributes.marginTopTablet ) ? oldAttributes.marginTopTablet + 'px' : null;
+			marginTablet.bottom = ! isUndefined( oldAttributes.marginBottomTablet ) ? oldAttributes.marginBottomTablet + 'px' : null;
+			marginTablet.left = ! isUndefined( oldAttributes.marginLeftTablet ) ? oldAttributes.marginLeftTablet + 'px' : null;
+			marginTablet.right = ! isUndefined( oldAttributes.marginRightTablet ) ? oldAttributes.marginRightTablet + 'px' : null;
 		}
 
 		if ( 'linked' === oldAttributes.marginTypeMobile ) {
-			marginMobile.top = oldAttributes.marginMobile ? oldAttributes.marginMobile + 'px' : null;
-			marginMobile.bottom = oldAttributes.marginMobile ? oldAttributes.marginMobile + 'px' : null;
-			marginMobile.left = oldAttributes.marginMobile ? oldAttributes.marginMobile + 'px' : null;
-			marginMobile.right = oldAttributes.marginMobile ? oldAttributes.marginMobile + 'px' : null;
+			marginMobile.top = ! isUndefined( oldAttributes.marginMobile ) ? oldAttributes.marginMobile + 'px' : null;
+			marginMobile.bottom = ! isUndefined( oldAttributes.marginMobile ) ? oldAttributes.marginMobile + 'px' : null;
+			marginMobile.left = ! isUndefined( oldAttributes.marginMobile ) ? oldAttributes.marginMobile + 'px' : null;
+			marginMobile.right = ! isUndefined( oldAttributes.marginMobile ) ? oldAttributes.marginMobile + 'px' : null;
 		} else {
-			marginMobile.top = oldAttributes.marginTopMobile ? oldAttributes.marginTopMobile + 'px' : null;
-			marginMobile.bottom = oldAttributes.marginBottomMobile ? oldAttributes.marginBottomMobile + 'px' : null;
-			marginMobile.left = oldAttributes.marginLeftMobile ? oldAttributes.marginLeftMobile + 'px' : null;
-			marginMobile.right = oldAttributes.marginRightMobile ? oldAttributes.marginRightMobile + 'px' : null;
+			marginMobile.top = ! isUndefined( oldAttributes.marginTopMobile ) ? oldAttributes.marginTopMobile + 'px' : null;
+			marginMobile.bottom = ! isUndefined( oldAttributes.marginBottomMobile ) ? oldAttributes.marginBottomMobile + 'px' : null;
+			marginMobile.left = ! isUndefined( oldAttributes.marginLeftMobile ) ? oldAttributes.marginLeftMobile + 'px' : null;
+			marginMobile.right = ! isUndefined( oldAttributes.marginRightMobile ) ? oldAttributes.marginRightMobile + 'px' : null;
 		}
 
 		if ( 'unlinked' === oldAttributes.borderType ) {
-			border.top = oldAttributes.borderTop ? oldAttributes.borderTop + 'px' : null;
-			border.bottom = oldAttributes.borderBottom ? oldAttributes.borderBottom + 'px' : null;
-			border.left = oldAttributes.borderLeft ? oldAttributes.borderLeft + 'px' : null;
-			border.right = oldAttributes.borderRight ? oldAttributes.borderRight + 'px' : null;
+			border.top = ! isUndefined( oldAttributes.borderTop ) ? oldAttributes.borderTop + 'px' : null;
+			border.bottom = ! isUndefined( oldAttributes.borderBottom ) ? oldAttributes.borderBottom + 'px' : null;
+			border.left = ! isUndefined( oldAttributes.borderLeft ) ? oldAttributes.borderLeft + 'px' : null;
+			border.right = ! isUndefined( oldAttributes.borderRight ) ? oldAttributes.borderRight + 'px' : null;
 		} else {
-			border.top = oldAttributes.border ? oldAttributes.border + 'px' : null;
-			border.bottom = oldAttributes.border ? oldAttributes.border + 'px' : null;
-			border.left = oldAttributes.border ? oldAttributes.border + 'px' : null;
-			border.right = oldAttributes.border ? oldAttributes.border + 'px' : null;
+			border.top = ! isUndefined( oldAttributes.border ) ? oldAttributes.border + 'px' : null;
+			border.bottom = ! isUndefined( oldAttributes.border ) ? oldAttributes.border + 'px' : null;
+			border.left = ! isUndefined( oldAttributes.border ) ? oldAttributes.border + 'px' : null;
+			border.right = ! isUndefined( oldAttributes.border ) ? oldAttributes.border + 'px' : null;
 		}
 
 		if ( 'unlinked' === oldAttributes.borderRadiusType ) {
-			borderRadius.top = oldAttributes.borderRadiusTop ? oldAttributes.borderRadiusTop + 'px' : null;
-			borderRadius.bottom = oldAttributes.borderRadiusBottom ? oldAttributes.borderRadiusBottom + 'px' : null;
-			borderRadius.left = oldAttributes.borderRadiusLeft ? oldAttributes.borderRadiusLeft + 'px' : null;
-			borderRadius.right = oldAttributes.borderRadiusRight ? oldAttributes.borderRadiusRight + 'px' : null;
+			borderRadius.top = ! isUndefined( oldAttributes.borderRadiusTop ) ? oldAttributes.borderRadiusTop + 'px' : null;
+			borderRadius.bottom = ! isUndefined( oldAttributes.borderRadiusBottom ) ? oldAttributes.borderRadiusBottom + 'px' : null;
+			borderRadius.left = ! isUndefined( oldAttributes.borderRadiusLeft ) ? oldAttributes.borderRadiusLeft + 'px' : null;
+			borderRadius.right = ! isUndefined( oldAttributes.borderRadiusRight ) ? oldAttributes.borderRadiusRight + 'px' : null;
 		} else {
-			borderRadius.top = oldAttributes.borderRadius ? oldAttributes.borderRadius + 'px' : null;
-			borderRadius.bottom = oldAttributes.borderRadius ? oldAttributes.borderRadius + 'px' : null;
-			borderRadius.left = oldAttributes.borderRadius ? oldAttributes.borderRadius + 'px' : null;
-			borderRadius.right = oldAttributes.borderRadius ? oldAttributes.borderRadius + 'px' : null;
+			borderRadius.top = ! isUndefined( oldAttributes.borderRadius ) ? oldAttributes.borderRadius + 'px' : null;
+			borderRadius.bottom = ! isUndefined( oldAttributes.borderRadius ) ? oldAttributes.borderRadius + 'px' : null;
+			borderRadius.left = ! isUndefined( oldAttributes.borderRadius ) ? oldAttributes.borderRadius + 'px' : null;
+			borderRadius.right = ! isUndefined( oldAttributes.borderRadius ) ? oldAttributes.borderRadius + 'px' : null;
 		}
 
 		if ( undefined !== oldAttributes.backgroundImageURL && undefined !== oldAttributes.backgroundImageID ) {
@@ -888,7 +891,7 @@ const deprecated = [ {
 			'borderRadiusLeft'
 		];
 
-		const isEligible = oldAttributes.some( attr => attributes[ attr ] && 'number' === typeof attributes[ attr ]) || ( undefined !== attributes.backgroundImageURL && undefined !== attributes.backgroundImageID ) || ( undefined !== attributes.backgroundPosition && 'object' !== typeof attributes.backgroundPosition );
+		const isEligible = oldAttributes.some( attr => ! isUndefined( attributes[ attr ]) && 'number' === typeof attributes[ attr ]) || ( undefined !== attributes.backgroundImageURL && undefined !== attributes.backgroundImageID ) || ( undefined !== attributes.backgroundPosition && 'object' !== typeof attributes.backgroundPosition );
 
 		return isEligible;
 	},
