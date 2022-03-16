@@ -40,7 +40,7 @@ const Inspector = ({
 	moveTab
 }) => {
 
-	const [ defaultTab, setDefaultTab ] = useState( children[0]?.clientId );
+	const [ defaultTab, setDefaultTab ] = useState( children.find( c => true === c.attributes?.defaultOpen )?.clientId );
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
 	const { getBlock } = useSelect( 'core/block-editor' );
 
@@ -103,7 +103,7 @@ const Inspector = ({
 	};
 
 	const tabOptions = children.map( ( c, index ) => {
-		return { label: `${index + 1}. ${c.attributes.title}`, value: c.clientId };
+		return { label: `${ index + 1 }. ${ c.attributes.title || __( 'Untitled Tab', 'otter-blocks' ) }`, value: c.clientId };
 	});
 
 	return (
@@ -132,7 +132,7 @@ const Inspector = ({
 				</Button>
 
 				<SelectControl
-					label={ __( 'Initial open tab', 'otter-blocks' ) }
+					label={ __( 'Initial Tab', 'otter-blocks' ) }
 					value={ defaultTab }
 					options={ tabOptions }
 					onChange={ onTabSelect }

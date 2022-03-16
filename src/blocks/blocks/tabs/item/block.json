@@ -13,7 +13,8 @@
 			"type": "string"
 		},
 		"defaultOpen": {
-			"type": "boolean"
+			"type": "boolean",
+			"default": false
 		}
 	}
 }
