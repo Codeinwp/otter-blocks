@@ -20,6 +20,11 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 */
 	protected $api_key = '';
 
+    /**
+     * The list id.
+     *
+     * @var string
+     */
 	protected $list_id = '';
 
 
@@ -119,7 +124,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 				$res->set_error( $body['message'], 'sendinblue' );
 			}
 		} else {
-			$res->mark_as_succes();
+			$res->mark_as_success();
 		}
 
 		return $res;
@@ -166,12 +171,22 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 		);
 	}
 
+    /**
+     * Set the list id.
+     * @param string $list_id
+     * @return $this
+     */
 	private function set_list_id(string $list_id)
 	{
 		$this->list_id = $list_id;
 		return $this;
 	}
 
+    /**
+     * Get the data from the provider.
+     * @param Form_Data_Request $data
+     * @return false[]|mixed
+     */
 	public function get_provider_data($data)
 	{
 		// TODO: Implement get_provider_data() method.
