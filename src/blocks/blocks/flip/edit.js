@@ -39,6 +39,11 @@ import { blockInit } from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Flip component
+ * @param {import('./types').FlipProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

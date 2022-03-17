@@ -67,6 +67,11 @@ const ALLOWED_ACF_TYPES = [
 	'password'
 ];
 
+/**
+ * Posts component
+ * @param {import('./types').PostProps} param0
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

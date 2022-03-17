@@ -14,6 +14,11 @@ import ServerSideRender from '@wordpress/server-side-render';
  */
 import Controls from './controls.js';
 
+/**
+ * Sharing Icon component
+ * @param {import('./types.js').SharingIconsProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes

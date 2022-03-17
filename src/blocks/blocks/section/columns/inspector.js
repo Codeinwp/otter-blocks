@@ -47,6 +47,11 @@ import SyncControl from '../../../components/sync-control/index.js';
 import { isNullObject } from '../../../helpers/helper-functions.js';
 import ToogleGroupControl from '../../../components/toogle-group-control/index.js';
 
+/**
+ *
+ * @param {import('../column/types.js').SectionColumnInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes,

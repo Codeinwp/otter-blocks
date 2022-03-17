@@ -37,6 +37,11 @@ import Inspector from './inspector.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Advanced Heading component
+ * @param {import('./types').AdvancedHeadingProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

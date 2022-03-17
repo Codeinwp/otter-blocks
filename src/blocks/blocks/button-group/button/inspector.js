@@ -31,6 +31,11 @@ import {
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
 const IconPickerControl = lazy( () => import( '../../../components/icon-picker-control/index.js' ) );
 
+/**
+ *
+ * @param {import('./types.js').ButtonGroupButtonInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes

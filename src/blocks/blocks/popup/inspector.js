@@ -20,6 +20,11 @@ import {
 
 import { Fragment } from '@wordpress/element';
 
+/**
+ *
+ * @param {import('./types').PopupInspectorProps} props
+ * @returns
+ */
 const ProFeatures = ({
 	attributes,
 	setAttributes

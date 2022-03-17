@@ -22,6 +22,11 @@ import Inspector from './inspector.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Form Input component
+ * @param {import('./types').FormInputProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,
