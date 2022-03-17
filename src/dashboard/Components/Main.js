@@ -40,10 +40,11 @@ import ButtonControl from './ButtonControl.js';
 
 const Main = () => {
 	useEffect( () => {
+		let isMounted = true;
 		api.loadPromise.then( () => {
 			settingsRef.current = new api.models.Settings();
 
-			if ( false === isAPILoaded ) {
+			if ( false === isAPILoaded && isMounted ) {
 				settingsRef.current.fetch().then( response => {
 					setCSSModule( Boolean( response.themeisle_blocks_settings_css_module ) );
 					setBlocksAnimation( Boolean( response.themeisle_blocks_settings_blocks_animation ) );
@@ -58,9 +59,12 @@ const Main = () => {
 			}
 		});
 
-		if ( ! Boolean( window.otterObj.stylesExist ) ) {
+		if ( ! Boolean( window.otterObj.stylesExist ) && isMounted ) {
 			setRegeneratedDisabled( true );
 		}
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	const [ isAPILoaded, setAPILoaded ] = useState( false );

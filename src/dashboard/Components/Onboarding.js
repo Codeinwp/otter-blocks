@@ -19,7 +19,7 @@ import {
 
 import {
 	Fragment,
-	useEffect,
+	useEffect, useMemo,
 	useRef,
 	useState
 } from '@wordpress/element';
@@ -76,7 +76,7 @@ const Onboarding = () => {
 		}
 	];
 
-	const skipTour = debounce( status => {
+	const skipTour = useMemo( () => debounce( status => {
 		if ( isOpen ) {
 			setOpen( false );
 		}
@@ -99,7 +99,7 @@ const Onboarding = () => {
 		save.error( ( response ) => {
 			console.warning( response.responseJSON.message );
 		});
-	}, 1000 );
+	}, 1000 ), [ status ] );
 
 	return (
 		<Fragment>

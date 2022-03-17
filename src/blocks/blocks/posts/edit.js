@@ -129,8 +129,9 @@ const Edit = ({
 		if ( ! window.acf ) {
 			return;
 		}
+		let isMounted = true;
 		apiFetch({ path: 'otter/v1/acf-fields' }).then( resp => {
-			if ( resp?.success ) {
+			if ( resp?.success && isMounted ) {
 				setAcfData( resp?.groups );
 				setAcfFieldDict(
 					resp?.groups
@@ -150,6 +151,9 @@ const Edit = ({
 				);
 			}
 		});
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	const fontSizeStyle = css`

@@ -40,6 +40,7 @@ const AnimationType = {
 	typing: 'typing',
 	default: 'default'
 };
+import { memo } from '@wordpress/element'
 
 function AnimationControls({
 	clientId,
@@ -332,4 +333,5 @@ function AnimationControls({
 	);
 }
 
-export default AnimationControls;
+//export default AnimationControls;
+export default memo( AnimationControls )

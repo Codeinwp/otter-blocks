@@ -4,7 +4,8 @@
  */
 import hexToRgba from 'hex-rgba';
 
-window.hexToRgba = hexToRgba;
+// I don't see the reason for having this attached to the window object
+//window.hexToRgba = hexToRgba;
 
 import {
 	css,

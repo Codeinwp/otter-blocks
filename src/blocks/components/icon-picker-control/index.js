@@ -281,11 +281,12 @@ const IconPickerControl = ({
 							/>
 
 							<div className="components-popover__items">
-								{ selectedIcons.map( i => {
+								{ selectedIcons.map( ( i, index ) => {
 									if ( 'fontawesome' === library && ( ! search || i.search.some( ( o ) => o.toLowerCase().match( search.toLowerCase() ) ) ) ) {
 										return (
 											<FontAwesomeIconsList
 												i={ i }
+												key={ index }
 												icon={ icon }
 												prefix={ prefix }
 												onToggle={ () => {
@@ -303,6 +304,7 @@ const IconPickerControl = ({
 										return (
 											<ThemeIsleIconsList
 												i={ i }
+												key={ index }
 												onToggle={ onToggle }
 											/>
 										);

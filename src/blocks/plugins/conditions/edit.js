@@ -38,6 +38,8 @@ import { useSelect } from '@wordpress/data';
 import {
 	Fragment,
 	useEffect,
+	useMemo,
+	memo,
 	useState
 } from '@wordpress/element';
 
@@ -58,7 +60,7 @@ const Edit = ({
 	setAttributes
 }) => {
 	useEffect( () => {
-		return () => {
+		//return () => {
 			if ( ! Boolean( attributes?.otterConditions?.length ) ) {
 				return;
 			}
@@ -76,7 +78,7 @@ const Edit = ({
 			}
 
 			setAttributes({ otterConditions });
-		};
+		//};
 	}, []);
 
 	const [ courses, setCourses ] = useState([]);
@@ -85,36 +87,42 @@ const Edit = ({
 	const [ courseGroupsStatus, setCourseGroupsStatus ] = useState( 'loading' );
 
 	useEffect( () => {
+		let isMounted = true;
 		if ( Boolean( window.themeisleGutenberg.hasLearnDash ) && isBoosterActive ) {
 			( async() => {
-				setCoursesStatus( 'loading' );
-				setCourseGroupsStatus( 'loading' );
+				if ( isMounted ) {
+					setCoursesStatus( 'loading' );
+					setCourseGroupsStatus( 'loading' );
 
-				try {
-					const data = await apiFetch({ path: 'ldlms/v2/sfwd-courses' });
-					const items = data.map( datum => ({
-						value: datum.id,
-						label: datum.title.rendered
-					}) );
-					setCourses( items );
-					setCoursesStatus( 'loaded' );
-				} catch ( error ) {
-					setCoursesStatus( 'error' );
-				}
+					try {
+						const data = await apiFetch({ path: 'ldlms/v2/sfwd-courses' });
+						const items = data.map( datum => ({
+							value: datum.id,
+							label: datum.title.rendered
+						}) );
+						setCourses( items );
+						setCoursesStatus( 'loaded' );
+					} catch ( error ) {
+						setCoursesStatus( 'error' );
+					}
 
-				try {
-					const data = await apiFetch({ path: 'ldlms/v2/groups' });
-					const items = data.map( datum => ({
-						value: datum.id,
-						label: datum.title.rendered
-					}) );
-					setCourseGroups( items );
-					setCourseGroupsStatus( 'loaded' );
-				} catch ( error ) {
-					setCourseGroupsStatus( 'error' );
+					try {
+						const data = await apiFetch({ path: 'ldlms/v2/groups' });
+						const items = data.map( datum => ({
+							value: datum.id,
+							label: datum.title.rendered
+						}) );
+						setCourseGroups( items );
+						setCourseGroupsStatus( 'loaded' );
+					} catch ( error ) {
+						setCourseGroupsStatus( 'error' );
+					}
 				}
 			})();
 		}
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	const { postAuthors } = useSelect( select => {
@@ -1224,4 +1232,5 @@ const Edit = ({
 	);
 };
 
-export default Edit;
+//export default Edit;
+export default memo( Edit );
