@@ -71,7 +71,8 @@ const Edit = ({
 		insertBlock,
 		removeBlock,
 		selectBlock,
-		moveBlockToPosition
+		moveBlockToPosition,
+		updateBlockAttributes
 	} = useDispatch( 'core/block-editor' );
 
 	const toggleActiveTab = blockId => {
@@ -81,6 +82,7 @@ const Edit = ({
 				blockContent?.classList.toggle( 'active', block.clientId === blockId );
 			});
 
+			updateBlockAttributes( blockId, { defaultOpen: true });
 			setActiveTab( blockId );
 		}
 	};
