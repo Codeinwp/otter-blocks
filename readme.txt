@@ -24,7 +24,7 @@ New to the Gutenberg Blocks ecosystem? Checkout our article on [Gutenberg Explai
 
 - Anyone looking to bring out the best features of the new Gutenberg Editor with useful and easy to use Gutenberg blocks.
 - Anyone thinking of moving away from traditional page builders like Elementor and Divi Builder in favor of the new Gutenberg Block Editor.
-- Anyone trying to build quick Gutenberg pages with pre-made custom templates.
+- Anyone trying to build quick Gutenberg pages in record time.
 - Anyone trying to hide/show Gutenberg blocks based on conditions like user logged in/out status.
 - Anyone trying to add animations to Gutenberg blocks.
 
@@ -47,18 +47,6 @@ Every block has customization support to help you style your site according to y
 - Animation at the click of a button.
 - Typography controls from spacing to font choice.
 
-### A WordPress Gutenberg Templates Plugin
-
-Need some inspiration? Take advantage of Otter’s library of templates made entirely from blocks! Quickly import premade page layouts with the click of a button and edit every aspect to your heart's desire.
-
-With over 50 different templates available, you can build a professional site quickly and efficiently.
-
-The template library provides a range of different elements in a variety of styles to help you build awesome looking pages.
-
-All of your website’s most important areas are covered; headers, testimonials, pricing tables, content and more.
-
-From headers with images, to headers with features, content with images, to about sections with video. Otter has a template to match your vision, just add the content and you’ll be set. 
-
 ### A WordPress Gutenberg Block Conditions Plugin
 
 Want to show certain blocks only when a user is Logged in or Logged Out? How about if they’re a customer of your store versus an editor for your blog or any other user role? With the Gutenberg Block Conditions feature available in Otter, it’s possible. Upgrade to the PRO version of Otter to unleash the power of more block conditions such as:
@@ -79,6 +67,10 @@ WOW your website visitors with amazing animations that can be added to any block
 ### A WordPress Gutenberg Popup Plugin
 
 Popups are one of the oldest lead capturing and notice conveying techniques on the web. With the Gutenberg Popup Block available in Otter, you can create popups made from any other block available in Gutenberg! Fine-tune your popup by setting when they should appear and how they can be closed.
+
+### Global Defaults for Otter's Blocks
+
+Tired of always having to set the same options every time you add a block to the page? With Otter, you can set the default configuration for some of the most commonly used blocks like the Section Block, Icon Block, Advanced Heading and more.
 
 ## Blocks Available in Otter
 
