@@ -13,6 +13,13 @@ type Attributes = {
 	submitLabel: string
 	sendUserEmail: boolean
 	redirectLink: string
+	inputPadding: number
+	labelColor: string
+	inputBorderRadius: number
+	inputBorderColor: string
+	inputBorderWidth: number
+	inputWidth: number
+	submitMessage: string
 }
 
 export type FormProps = BlockProps<Attributes>

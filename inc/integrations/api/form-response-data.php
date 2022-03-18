@@ -78,7 +78,7 @@ class Form_Data_Response {
 	 * @return mixed|\WP_REST_Response
 	 */
 	public function build_response() {
-		// TODO: We can to addiditon operation when returning the response.
+		// TODO: We can to addition operation when returning the response.
 		return rest_ensure_response( $this->response );
 	}
 
@@ -133,11 +133,11 @@ class Form_Data_Response {
 
     /**
      * Add new data to the response.
-     * @param array $value
+     * @param array $values
      * @return $this
      */
-    public function add_value( $value ) {
-        $this->response[] = $value;
+    public function add_values( $values ) {
+        $this->response = array_merge($this->response, $values);
         return $this;
     }
 }

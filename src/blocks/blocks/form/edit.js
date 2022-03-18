@@ -149,7 +149,7 @@ const Edit = ({
 	 * Save the captcha option in settings.
 	 */
 	useEffect( () => {
-		if ( attributes.hasCaptcha !== undefined || attributes.redirectLink !== undefined ) {
+		if ( attributes.hasCaptcha !== undefined ) {
 			settingsRef?.current?.fetch().done( res => {
 				const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 				let isMissing = true;
@@ -160,11 +160,7 @@ const Edit = ({
 						if ( emails[index].hasCaptcha !== attributes.hasCaptcha ) {
 							hasChanged = true;
 						}
-						if ( emails[index].redirectLink !== attributes.redirectLink ) {
-							hasChanged = true;
-						}
 						emails[index].hasCaptcha = attributes.hasCaptcha;
-						emails[index].redirectLink = attributes.redirectLink;
 						isMissing = false;
 					}
 				});
@@ -172,8 +168,7 @@ const Edit = ({
 				if ( isMissing ) {
 					emails.push({
 						form: attributes.optionName,
-						hasCaptcha: attributes.hasCaptcha,
-						redirectLink: attributes.redirectLink
+						hasCaptcha: attributes.hasCaptcha
 					});
 				}
 
@@ -314,11 +309,30 @@ const Edit = ({
 		});
 	}, [ attributes.optionName, attributes.provider, attributes.apiKey, attributes.listId, attributes.action, settingsRef.current ]);
 
-	const hasIntegrationActive = attributes.provider && attributes.apiKey && attributes.listId;
 
 	const blockProps = useBlockProps({
 		id: attributes.id
 	});
+
+	const blockRef = useRef( null );
+
+	useEffect( () => {
+		const px = x => x ? x + 'px' : x;
+		const per = x => x ? x + '%' : x;
+
+		/**
+		 * TODO: Refactor this based on #748
+		 */
+
+		if ( blockRef.current ) {
+			blockRef.current?.style?.setProperty( '--padding', px( attributes.inputPadding ) );
+			blockRef.current?.style?.setProperty( '--borderRadius', px( attributes.inputBorderRadius ) );
+			blockRef.current?.style?.setProperty( '--borderWidth', px( attributes.inputBorderWidth ) );
+			blockRef.current?.style?.setProperty( '--borderColor', attributes.borderColor );
+			blockRef.current?.style?.setProperty( '--labelColor', attributes.labelColor );
+			blockRef.current?.style?.setProperty( '--inputWidth', per( attributes.inputWidth ) );
+		}
+	}, [ blockRef.current, attributes ]);
 
 	return (
 		<Fragment>
@@ -330,7 +344,7 @@ const Edit = ({
 			<div { ...blockProps }>
 				{
 					( hasInnerBlocks ) ? (
-						<form className="otter-form__container">
+						<form ref={blockRef} className="otter-form__container">
 							<InnerBlocks
 							/>
 

@@ -22,9 +22,9 @@ class Form_Data_Request {
 	/**
 	 * Integration Data.
 	 *
-	 * @var array
+	 * @var Form_Settings_Data
 	 */
-	protected $form_options = array();
+	protected $form_options = null;
 
 	/**
 	 * Constructor.
@@ -34,8 +34,13 @@ class Form_Data_Request {
 	 */
 	public function __construct( $request_data ) {
 		$this->data = $this->sanitize_request_data( $request_data );
+        $this->form_options = new Form_Settings_Data( array() );
 	}
 
+    /**
+     * @param Form_Settings_Data $form_options
+     * @return void
+     */
 	public function set_form_options( $form_options) {
 		$this->form_options = $form_options;
 	}
@@ -128,6 +133,12 @@ class Form_Data_Request {
 		if ( isset( $data['token'] ) ) {
 			$data['token'] = sanitize_text_field( $data['token'] );
 		}
+        if ( isset( $data['titleSubject'] ) ) {
+            $data['titleSubject'] = sanitize_text_field( $data['titleSubject'] );
+        }
+        if ( isset( $data['submitMessage'] ) ) {
+            $data['submitMessage'] = sanitize_text_field( $data['submitMessage'] );
+        }
 		if ( isset( $data['data'] ) ) {
 			$data['data'] = array_map(
 				function( $input ) {
@@ -148,4 +159,11 @@ class Form_Data_Request {
 	public function get_form_inputs() {
 		return $this->data['data'];
 	}
+
+    /**
+     * @return Form_Settings_Data|null
+     */
+    public function get_form_options() {
+        return $this->form_options;
+    }
 }

@@ -11,6 +11,8 @@ class Form_Settings_Data
 	private $has_captcha = false;
 	private $meta = array();
     private $redirect_link = '';
+	private $title_subject = '';
+	private $submit_message = '';
 
 	public function __construct($integration_data)
 	{
@@ -90,6 +92,12 @@ class Form_Settings_Data
 				}
                 if( isset( $form['redirectLink'] ) ) {
                     $integration->set_redirect_link($form['redirectLink']);
+                }
+				if( isset( $form['titleSubject'] ) ) {
+                    $integration->set_title_subject($form['titleSubject']);
+                }
+				if( isset( $form['submitMessage'] ) ) {
+                    $integration->set_submit_message($form['submitMessage']);
                 }
 				if ( isset( $form['integration'] ) ) {
 					$integration->extract_integration_data($form['integration'] );
@@ -206,6 +214,24 @@ class Form_Settings_Data
         return isset($this->action) && '' !== $this->action;
     }
 
+	/**
+     * Check if it has the title_subject set.
+     * @return bool
+     */
+    public function has_title_subject()
+    {
+        return isset($this->title_subject) && '' !== $this->title_subject;
+    }
+
+	/**
+     * Check if it has the submit_message set.
+     * @return bool
+     */
+    public function has_submit_message()
+    {
+        return isset($this->submit_message) && '' !== $this->submit_message;
+    }
+
     /**
      * Set the redirect link.
      * @param string $redirect_link
@@ -214,6 +240,28 @@ class Form_Settings_Data
     public function set_redirect_link($redirect_link)
     {
         $this->redirect_link = $redirect_link;
+        return $this;
+    }
+
+	 /**
+     * Set the title subject.
+     * @param string $title_subject
+     * @return Form_Settings_Data
+     */
+    public function set_title_subject($title_subject)
+    {
+        $this->title_subject = $title_subject;
+        return $this;
+    }
+
+	 /**
+     * Set the submit message.
+     * @param string $submit_message
+     * @return Form_Settings_Data
+     */
+    public function set_submit_message($submit_message)
+    {
+        $this->submit_message = $submit_message;
         return $this;
     }
 
@@ -272,7 +320,7 @@ class Form_Settings_Data
 	}
 
     /**
-     * Gte the redirect link.
+     * Get the redirect link.
      * @return string
      */
     public function get_redirect_link()
@@ -280,4 +328,28 @@ class Form_Settings_Data
         return $this->redirect_link;
     }
 
+	/**
+     * Get the title subject.
+     * @return string
+     */
+    public function get_title_subject()
+    {
+        return $this->title_subject;
+    }
+
+	/**
+     * Get the submit message.
+     * @return string
+     */
+    public function get_submit_message()
+    {
+        return $this->submit_message;
+    }
+
+    public function get_submit_data() {
+        return array(
+            'redirectLink' => $this->get_api_key(),
+            'submitMessage'=> $this->get_submit_message()
+        );
+    }
 }

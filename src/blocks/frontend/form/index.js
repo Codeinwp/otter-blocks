@@ -22,7 +22,7 @@ const TIME_UNTIL_REMOVE = 10_000;
  */
 const collectAndSendInputFormData = ( form, btn ) => {
 	const id = form?.id;
-	const data = {};
+	const formData = {};
 
 	/** @type {Array.<HTMLDivElement>} */
 	const elemsWithError = [];
@@ -99,60 +99,71 @@ const collectAndSendInputFormData = ( form, btn ) => {
 
 		btn.disabled = false;
 	} else {
-		data.data = formFieldsData;
+		formData.data = formFieldsData;
 
 		if ( '' !== form?.dataset?.emailSubject ) {
-			data.emailSubject = form?.dataset?.emailSubject;
+			formData.emailSubject = form?.dataset?.emailSubject;
 		}
 
 		if ( form?.dataset?.optionName ) {
-			data.formOption = form?.dataset?.optionName;
+			formData.formOption = form?.dataset?.optionName;
 		}
 
 		if ( form?.classList?.contains( 'has-captcha' ) && id && window.themeisleGutenberg?.tokens?.[ id ].token ) {
-			data.token = window.themeisleGutenberg?.tokens?.[ id ].token;
+			formData.token = window.themeisleGutenberg?.tokens?.[ id ].token;
 		}
 
 		if ( form?.id ) {
-			data.formId = form?.id;
+			formData.formId = form?.id;
 		}
 
 		if ( nonceFieldValue ) {
-			data.nonceValue = nonceFieldValue;
+			formData.nonceValue = nonceFieldValue;
 		}
 
-		data.postUrl = window.location.href;
+		formData.postUrl = window.location.href;
 
-		msgAnchor?.classList.add( 'loading' );
 		if ( form?.id ) {
-			data.formId = form?.id;
+			formData.formId = form?.id;
 		}
 
 		if ( form.classList.contains( 'is-subscription' ) ) {
-			data.action = 'subscribe';
+			formData.action = 'subscribe';
 		}
 
 		if ( form.classList.contains( 'can-submit-and-subscribe' ) ) {
-			data.action = 'submit-subscribe';
-			data.consent = form.querySelector( '.otter-form-consent input' )?.checked || false;
+			formData.action = 'submit-subscribe';
+			formData.consent = form.querySelector( '.otter-form-consent input' )?.checked || false;
 		}
 
-		data.postUrl = window.location.href;
+		formData.postUrl = window.location.href;
 
 		msgAnchor?.classList.add( 'loading' );
 
 		apiFetch({
 			path: 'otter/v1/forms',
 			method: 'POST',
-			data
-		}).then( ( res ) => {
+			data: formData
+		}).then( ( response ) => {
+
+			/**
+			 * @type {import('./types.js').IFormResponse}
+			 */
+			const res = response;
 			msgAnchor?.classList.remove( 'loading' );
 			const msg = document.createElement( 'div' );
 			msg.classList.add( 'otter-form-server-response' );
 
 			if ( res?.success ) {
-				msg.innerHTML = __( 'Success', 'otter-blocks' );
+				msg.innerHTML = res?.submitMessage ? res.submitMessage :  __( 'Success', 'otter-blocks' );
 				msg.classList.add( 'success' );
+				console.log( res );
+
+				setTimeout( () => {
+					if ( res?.redirectLink ) {
+						window.location.replace( res.redirectLink );
+					}
+				}, 1000 );
 			} else {
 				msg.classList.add( 'error' );
 
