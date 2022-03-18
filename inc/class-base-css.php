@@ -79,6 +79,8 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Font_Awesome_Icons_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Icon_List_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Icon_List_Item_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_Input_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Flip_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Progress_Bar_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Popup_CSS',

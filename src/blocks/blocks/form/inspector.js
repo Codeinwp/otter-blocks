@@ -5,11 +5,12 @@ import { __ } from '@wordpress/i18n';
 
 import api from '@wordpress/api';
 
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
 
 import {
 	Button,
 	PanelBody,
+	RangeControl,
 	SelectControl,
 	Spinner,
 	TextControl,
@@ -97,7 +98,7 @@ const Inspector = ({
 		}
 	}, [ attributes.provider, attributes.apiKey ]);
 
-	const saveEmail = () => {
+	const saveFormOptions = () => {
 		( new api.models.Settings() ).fetch().done( res => {
 			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 			let isMissing = true;
@@ -109,6 +110,18 @@ const Inspector = ({
 						emails[index].email = email; // update the value
 						hasUpdated = true;
 					}
+					if ( emails[index].redirectLink !== attributes.redirectLink ) {
+						emails[index].redirectLink = attributes.redirectLink; // update the value
+						hasUpdated = true;
+					}
+					if ( emails[index].titleSubject !== attributes.subject ) {
+						emails[index].titleSubject = attributes.titleSubject; // update the value
+						hasUpdated = true;
+					}
+					if ( emails[index].submitMessage !== attributes.submitMessage ) {
+						emails[index].submitMessage = attributes.submitMessage; // update the value
+						hasUpdated = true;
+					}
 					isMissing = false;
 				}
 			});
@@ -116,7 +129,10 @@ const Inspector = ({
 			if ( isMissing ) {
 				emails.push({
 					form: attributes.optionName,
-					email
+					email,
+					redirectLink: attributes.redirectLink,
+					titleSubject: attributes.subject,
+					submitMessage: attributes.submitMessage
 				});
 			}
 
@@ -136,7 +152,7 @@ const Inspector = ({
 
 							createNotice(
 								'info',
-								__( 'Email has been saved!', 'otter-blocks' ),
+								__( 'Form Options has been saved!', 'otter-blocks' ),
 								{
 									isDismissible: true,
 									type: 'snackbar'
@@ -149,58 +165,17 @@ const Inspector = ({
 		});
 	};
 
-	/**
-	 * Save redirect link in the Otter options.
-	 */
-	const saveRedirectLink = () => {
-		const model = new window.wp.api.models.Settings({
-			// eslint-disable-next-line camelcase
-			themeisle_google_captcha_api_site_key: googleCaptchaAPISiteKey,
-			// eslint-disable-next-line camelcase
-			themeisle_google_captcha_api_secret_key: googleCaptchaAPISecretKey
-		});
-
-		model.save().then( response => {
-			let saved = false;
-
-			if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
-				saved = true;
-			}
-
-			setAPISaved( saved );
-			setGoogleCaptchaAPISecretKey( '' );
-			setGoogleCaptchaAPISiteKey( '' );
-
-			createNotice(
-				'info',
-				__( 'API Keys have been saved.', 'otter-blocks' ),
-				{
-					isDismissible: true,
-					type: 'snackbar'
-				}
-			);
-		});
-	};
-
 	return (
 		<InspectorControls>
 			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
+				title={ __( 'Form Options', 'otter-blocks' ) }
 			>
 				<TextControl
 					label={ __( 'Email Subject', 'otter-blocks' ) }
 					placeholder={ __( 'A new submission', 'otter-blocks' ) }
 					value={ attributes.subject }
 					onChange={ subject => setAttributes({ subject }) }
-					help={ __( 'Customize the email title send by this form.', 'otter-blocks' ) }
-				/>
-
-				<TextControl
-					label={ __( 'Submit Button Label', 'otter-blocks' ) }
-					placeholder={ __( 'Submit', 'otter-blocks' ) }
-					value={ attributes.submitLabel }
-					onChange={ submitLabel => setAttributes({ submitLabel }) }
-					help={ __( 'Set the label for the submit button.', 'otter-blocks' ) }
+					help={ __( 'Customize the title of the email that you are gonna receive after a user submit the form.', 'otter-blocks' ) }
 				/>
 
 				<TextControl
@@ -208,7 +183,15 @@ const Inspector = ({
 					placeholder={ __( 'Default is to admin site', 'otter-blocks' ) }
 					value={ email }
 					onChange={ email => setEmail( email ) }
-					help={ __( 'Send form data to another email. (Admin is default).', 'otter-blocks' ) }
+					help={ __( 'Send the form\'s data to another email. (Admin\'s email is default).', 'otter-blocks' ) }
+				/>
+
+				<TextControl
+					label={ __( 'Submit Message', 'otter-blocks' ) }
+					placeholder={ __( 'Success', 'otter-blocks' ) }
+					value={ attributes.submitMessage }
+					onChange={ submitMessage =>  setAttributes({ submitMessage })  }
+					help={ __( 'Show this message after the form was succesfuly submited.', 'otter-blocks' ) }
 				/>
 
 				<TextControl
@@ -221,7 +204,7 @@ const Inspector = ({
 
 				<Button
 					isPrimary
-					onClick={ saveEmail }
+					onClick={ saveFormOptions }
 					disabled={ email === savedEmail }
 				>
 					<Fragment>
@@ -235,6 +218,20 @@ const Inspector = ({
 						}
 					</Fragment>
 				</Button>
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Settings', 'otter-blocks' ) }
+			>
+
+				<TextControl
+					label={ __( 'Submit Button Label', 'otter-blocks' ) }
+					placeholder={ __( 'Submit', 'otter-blocks' ) }
+					value={ attributes.submitLabel }
+					onChange={ submitLabel => setAttributes({ submitLabel }) }
+					help={ __( 'Set the label for the submit button.', 'otter-blocks' ) }
+				/>
+
 
 				<ToggleControl
 					label={ __( 'Add captcha checkbox', 'otter-blocks' ) }
@@ -249,7 +246,79 @@ const Inspector = ({
 					)
 				}
 
+				<RangeControl
+					label={ __( 'Input Padding', 'otter-blocks' ) }
+					value={ attributes.inputPadding }
+					onChange={ inputPadding => setAttributes({ inputPadding }) }
+					allowReset
+					min={0}
+					max={50}
+				/>
+
+				<SelectControl
+					label={ __( 'Input Width', 'otter-blocks' ) }
+					value={ attributes.inputWidth }
+					onChange={ inputWidth => setAttributes({ inputWidth }) }
+					options={[
+						{
+							label: __( 'Default', '' ),
+							value: ''
+						},
+						{
+							label: '33%',
+							value: 33
+						},
+						{
+							label: '50%',
+							value: 50
+						},
+						{
+							label: '75%',
+							value: 75
+						},
+						{
+							label: '100%',
+							value: 100
+						}
+					]}
+				/>
+
+				<RangeControl
+					label={ __( 'Border Radius', 'otter-blocks' ) }
+					value={ attributes.inputBorderRadius }
+					onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
+					allowReset
+					min={0}
+					max={50}
+				/>
+
+				<RangeControl
+					label={ __( 'Border Width', 'otter-blocks' ) }
+					value={ attributes.inputBorderWidth }
+					onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
+					allowReset
+					min={0}
+					max={50}
+				/>
 			</PanelBody>
+
+			<PanelColorSettings
+				title={ __( 'Color', 'otter-blocks' ) }
+				initialOpen={ false }
+				colorSettings={ [
+					{
+						value: attributes.labelColor,
+						onChange: labelColor => setAttributes({ labelColor }),
+						label: __( 'Label Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.inputBorderColor,
+						onChange: inputBorderColor => setAttributes({ inputBorderColor }),
+						label: __( 'Border Color', 'otter-blocks' )
+					}
+				] }
+			/>
+
 
 			<PanelBody
 				title={ __( 'Integration', 'otter-blocks' ) }

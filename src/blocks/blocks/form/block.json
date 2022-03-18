@@ -45,6 +45,27 @@
 		},
 		"redirectLink": {
 			"type": "string"
+		},
+		"inputPadding": {
+			"type": "number"
+		},
+		"labelColor": {
+			"type": "string"
+		},
+		"inputBorderRadius": {
+			"type": "number"
+		},
+		"inputBorderColor": {
+			"type": "string"
+		},
+		"inputBorderWidth": {
+			"type": "number"
+		},
+		"submitMessage": {
+			"type": "string"
+		},
+		"inputWidth": {
+			"type": "number"
 		}
 	},
 	"supports": {

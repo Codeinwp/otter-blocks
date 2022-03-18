@@ -10,7 +10,8 @@ import {
 
 import {
 	Fragment,
-	useEffect
+	useEffect,
+	useRef
 } from '@wordpress/element';
 
 /**
@@ -39,6 +40,25 @@ const Edit = ({
 
 	const blockProps = useBlockProps();
 
+	const labelRef = useRef( null );
+	const inputRef = useRef( null );
+
+
+	useEffect( () => {
+		const per = x => x ? x + '%' : x;
+
+		/**
+		 * TODO: Refactor this based on #748
+		 */
+
+		if ( inputRef.current ) {
+			inputRef.current?.style?.setProperty( '--inputWidth', per( attributes.inputWidth ) );
+		}
+		if ( labelRef.current ) {
+			labelRef.current?.style?.setProperty( '--labelColor', per( attributes.labelColor ) );
+		}
+	}, [ inputRef.current, labelRef.current, attributes ]);
+
 	return (
 		<Fragment>
 			<Inspector
@@ -48,6 +68,7 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				<label
+					ref={labelRef}
 					htmlFor={ attributes.id }
 					className="otter-form-input-label"
 				>
@@ -65,6 +86,7 @@ const Edit = ({
 				</label>
 
 				<input
+					ref={inputRef}
 					type={ attributes.type }
 					placeholder={ attributes.placeholder }
 					name={ attributes.id }

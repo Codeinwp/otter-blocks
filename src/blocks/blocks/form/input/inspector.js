@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
 
 import {
 	PanelBody,
@@ -63,7 +63,51 @@ const Inspector = ({
 					checked={ attributes.isRequired }
 					onChange={ isRequired => setAttributes({ isRequired }) }
 				/>
+
+				<SelectControl
+					label={ __( 'Input Width', 'otter-blocks' ) }
+					value={ attributes.inputWidth }
+					onChange={ inputWidth => setAttributes({ inputWidth }) }
+					options={[
+						{
+							label: __( 'Default', '' ),
+							value: ''
+						},
+						{
+							label: '33%',
+							value: 33
+						},
+						{
+							label: '50%',
+							value: 50
+						},
+						{
+							label: '75%',
+							value: 75
+						},
+						{
+							label: '100%',
+							value: 100
+						}
+					]}
+				/>
 			</PanelBody>
+			<PanelColorSettings
+				title={ __( 'Color', 'otter-blocks' ) }
+				initialOpen={ false }
+				colorSettings={ [
+					{
+						value: attributes.labelColor,
+						onChange: labelColor => setAttributes({ labelColor }),
+						label: __( 'Label Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.inputBorderColor,
+						onChange: inputBorderColor => setAttributes({ inputBorderColor }),
+						label: __( 'Border Color', 'otter-blocks' )
+					}
+				] }
+			/>
 		</InspectorControls>
 	);
 };

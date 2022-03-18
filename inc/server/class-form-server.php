@@ -135,13 +135,11 @@ class Form_Server {
 		}
 
 
-		$integration = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
+		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
+        $data->set_form_options($form_options);
 
-		try {
-			$provider_action = apply_filters('otter_select_form_provider', $integration->get_meta()['integration']);
-		} catch (\Throwable $e) {
 
-		}
+        $provider_action = apply_filters('otter_select_form_provider', $form_options->get_meta()['integration']);
 
 		$provider_response = $provider_action($data);
 
@@ -156,12 +154,14 @@ class Form_Server {
 	/**
 	 * Send Email using SMTP
 	 *
-	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request  $data Data from request body.
+	 * @param Form_Data_Request $data Data from request body.
 	 * @return mixed|\WP_REST_Response
 	 */
 	private function send_default_email( $data ) {
 		$res = new Form_Data_Response();
-		$email_subject = $data->is_set( 'emailSubject' ) ? $data->get( 'emailSubject' ) : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
+
+        $form_options = $data->get_form_options();
+		$email_subject = isset($form_options) && $form_options->has_title_subject() ? $form_options->get_title_subject() : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
 
 		$email_body    = Form_Email::instance()->build_email($data);
 
@@ -189,8 +189,8 @@ class Form_Server {
 		} catch (\Exception  $e ) {
 			$res->set_error( $e->getMessage() );
 		} finally {
-            $integration = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
-            $res->add_value( array( 'redirectLink' => $integration->get_redirect_link() ) );
+            $form_options = $data->get_form_options();
+            $res->add_values( $form_options->get_submit_data() );
 			return $res->build_response();
 		}
 	}
@@ -236,6 +236,10 @@ class Form_Server {
 		}
 	}
 
+    /**
+     * @param Form_Data_Request $data
+     * @return mixed|\WP_REST_Response
+     */
 	public function subscribe_to_service( $data ) {
 		$res = new Form_Data_Response();
 		// Get the first email from form.
@@ -248,28 +252,28 @@ class Form_Server {
 
         try {
             // Get the api credentials from the Form block.
-            $integration =  Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
+            $form_options = $data->get_form_options();
 
-            $issues = $integration->check_data();
+            $issues = $form_options->check_data();
 
             if (
                 count($issues) == 0
             ) {
                 $service = null;
-                switch ($integration->get_provider()) {
+                switch ($form_options->get_provider()) {
                     case 'mailchimp':
-                        $service = (new Mailchimp_Integration())->extract_data_from_integration($integration);
+                        $service = (new Mailchimp_Integration())->extract_data_from_integration($form_options);
                         break;
                     case 'sendinblue':
-                        $service = (new Sendinblue_Integration())->extract_data_from_integration($integration);
+                        $service = (new Sendinblue_Integration())->extract_data_from_integration($form_options);
                         break;
                 }
 
-                $valid_api_key = $service::validate_api_key( $integration->get_api_key() );
+                $valid_api_key = $service::validate_api_key( $form_options->get_api_key() );
 
                 if ( $valid_api_key['valid'] ) {
                     $res->copy( $service->subscribe( $email ) );
-                    $res->add_value( array( 'redirectLink' => $integration->get_redirect_link() ) );
+                    $res->add_values( $form_options->get_submit_data() );
                 } else {
                     $res->set_error( $valid_api_key['reason'] );
                 }
@@ -287,7 +291,7 @@ class Form_Server {
 	 * Check for requiered data.
 	 *
 	 * @access private
-	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request $data Data from the request.
+	 * @param Form_Data_Request $data Data from the request.
 	 *
 	 * @return boolean
 	 */
@@ -306,7 +310,7 @@ class Form_Server {
 	 * Check if the data request has the data needed by form: captha, integrations.
 	 *
 	 * @access public
-	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request $data Data from the request.
+	 * @param Form_Data_Request $data Data from the request.
 	 *
 	 * @return array
 	 */
@@ -319,20 +323,20 @@ class Form_Server {
 		}
 
         try {
-            $integration = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
+            $form_options = $data->get_form_options();
 
-            if ( $integration->form_has_captcha() && ( ! $data->is_set( 'token' ) || '' === $data['token'] ) ) {
+            if ( $form_options->form_has_captcha() && ( ! $data->is_set( 'token' ) || '' === $data['token'] ) ) {
                 $reasons += array(
                     __( 'Token is missing!', 'otter-blocks' ),
                 );
             }
 
-            if ( ! $integration->has_credentials() && $integration->has_provider() ) {
+            if ( ! $form_options->has_credentials() && $form_options->has_provider() ) {
                 $reasons += array(
                     __( 'Provider settings are missing!', 'otter-blocks' ),
                 );
             }
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
 			$reasons[] = $e->getMessage();
         } finally {
 			return $reasons;
@@ -344,7 +348,7 @@ class Form_Server {
 	 * Check if the data request has the data needed by form: captha, integrations.
 	 *
 	 * @access public
-	 * @param \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request $data Data from the request.
+	 * @param Form_Data_Request $data Data from the request.
 	 *
 	 * @return array
 	 */

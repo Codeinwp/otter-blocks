@@ -1,4 +1,11 @@
 .wp-block-themeisle-blocks-form {
+	--padding: 5px;
+	--borderRadius: inherit;
+	--borderColor: inherit;
+	--borderWidth: inherit;
+	--labelColor: inherit;
+	--inputWidth: 100%;
+
 	.otter-form-consent {
 		label {
 			margin-left: 10px;
@@ -44,59 +51,64 @@
 	}
 
 	.loading {
-		animation: blink 3s ease-in-out infinite both;
+		animation: blink 1s ease-in-out infinite alternate;
 	}
 
 	@keyframes blink {
-		0%,
-		50%,
-		100% {
-		  opacity: 1;
-		}
-		25%,
-		75% {
-		  opacity: 0.5;
-		}
-	  }
-}
-
-.wp-block-themeisle-blocks-form-input {
-	display: flex;
-	flex-direction: column;
-
-	.otter-form-input-label {
-		width: 100%;
-		font-weight: bold;
-
-		.required {
-			font-size: 14px;
-			margin-left: 5px;
-			color: #28303d;
-			font-weight: normal;
+		to {
+			opacity: 0;
 		}
 	}
 
-	.otter-form-input {
-		width: 100%;
-		margin-bottom: 1.5em;
-	}
-}
+	.wp-block-themeisle-blocks-form-input {
+		display: flex;
+		flex-direction: column;
 
-.wp-block-themeisle-blocks-form-textarea {
-	.otter-form-textarea-label {
-		width: 100%;
-		font-weight: bold;
+		.otter-form-input-label {
+			width: 100%;
+			font-weight: bold;
+			color: var(--labelColor);
 
-		.required {
-			font-size: 14px;
-			margin-left: 5px;
-			color: #28303d;
+			.required {
+				font-size: 14px;
+				margin-left: 5px;
+				font-weight: normal;
+				opacity: 0.7;
+			}
+		}
+
+		.otter-form-input {
+			width: var(--inputWidth);
+			margin-bottom: 1.5em;
+			padding: var(--padding);
+			border-radius: var(--borderRadius);
+			border-width: var(--borderWidth);
+			border-color: var(--borderColor);
 		}
 	}
 
-	.otter-form-textarea-input {
-		width: 100%;
-		height: 200px;
-		margin-bottom: 1.5em;
+	.wp-block-themeisle-blocks-form-textarea {
+		.otter-form-textarea-label {
+			width: 100%;
+			font-weight: bold;
+			color: var(--labelColor);
+
+			.required {
+				font-size: 14px;
+				margin-left: 5px;
+				font-weight: normal;
+				opacity: 0.7;
+			}
+		}
+
+		.otter-form-textarea-input {
+			width: 100%;
+			height: 200px;
+			margin-bottom: 1.5em;
+			padding: var(--padding);
+			border-radius: var(--borderRadius);
+			border-width: var(--borderWidth);
+			border-color: var(--borderColor);
+		}
 	}
 }

@@ -25,7 +25,6 @@ const Save = ({
 			'can-submit-and-subscribe': hasIntegrationActive && 'submit-subscribe' === attributes.action,
 			'has-captcha': attributes.hasCaptcha
 		}),
-		'data-email-subject': attributes.subject,
 		'data-option-name': attributes.optionName
 	});
 

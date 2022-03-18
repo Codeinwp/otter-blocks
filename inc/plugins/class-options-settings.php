@@ -242,6 +242,15 @@ class Options_Settings {
 							if ( isset( $item['email'] ) ) {
 								$item['email'] = sanitize_text_field( $item['email'] );
 							}
+							if ( isset( $item['redirectLink'] ) ) {
+								$item['redirectLink'] = sanitize_text_field( $item['redirectLink'] );
+							}
+							if ( isset( $item['titleSubject'] ) ) {
+								$item['titleSubject'] = sanitize_text_field( $item['titleSubject'] );
+							}
+							if ( isset( $item['submitMessage'] ) ) {
+								$item['submitMessage'] = sanitize_text_field( $item['submitMessage'] );
+							}
 							if ( isset( $item['integration']['provider'] ) ) {
 								$item['integration']['provider'] = sanitize_text_field( $item['integration']['provider'] );
 							}
@@ -275,6 +284,12 @@ class Options_Settings {
 									'type' => 'string',
 								),
 								'redirectLink' => array(
+									'type' => 'string'
+								),
+								'titleSubject' => array(
+									'type' => 'string'
+								),
+								'submitMessage' => array(
 									'type' => 'string'
 								),
 								'integration' => array(
