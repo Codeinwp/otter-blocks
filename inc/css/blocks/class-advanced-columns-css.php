@@ -1019,59 +1019,29 @@ class Advanced_Columns_CSS extends Base_CSS {
 		$border         = array();
 		$border_radius  = array();
 
-		/* GW if ( isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'] ) {
+		if ( isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'] && ! isset( $attrs['padding'] ) ) {
 			$padding['top']    = isset( $attrs['paddingTop'] ) ? $attrs['paddingTop'] . 'px' : '20px';
 			$padding['bottom'] = isset( $attrs['paddingBottom'] ) ? $attrs['paddingBottom'] . 'px' : '20px';
 			$padding['left']   = isset( $attrs['paddingLeft'] ) ? $attrs['paddingLeft'] . 'px' : '20px';
 			$padding['right']  = isset( $attrs['paddingRight'] ) ? $attrs['paddingRight'] . 'px' : '20px';
-		} elseif ( isset( $attrs['padding'] ) && ! is_array( $attrs['padding'] ) ) {
+		} elseif ( isset( $attrs['padding'] ) && ! is_array( $attrs['padding'] ) && ! isset( $attrs['paddingType'] ) ) {
 			$padding['top']    = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
 			$padding['bottom'] = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
 			$padding['left']   = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
 			$padding['right']  = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
-		} */
-
-		error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: CHECK $attrs[paddingType] = [' . $attrs['paddingType'] . ']',true));
-	    error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: CHECK isset( $attrs[paddingType] ) = [' . isset( $attrs['paddingType'] ) . ']',true));
-		error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: CHECK $attrs[paddingTop] = [' . $attrs['paddingTop'] . ']',true));
-        error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: CHECK $attrs[paddingRight] = [' . $attrs['paddingRight'] . ']',true));
-        error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: CHECK $attrs[paddingBottom] = [' . $attrs['paddingBottom'] . ']',true));
-        error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: CHECK $attrs[paddingLeft] = [' . $attrs['paddingLeft'] . ']',true));
-        error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: CHECK $attrs[padding] = [' . $attrs['padding'] . ']',true));
-        error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: CHECK isset( $attrs[padding] ) = [' . isset( $attrs['padding'] ) . ']',true));
-
-		if ( isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'] && ( ! isset( $attrs['padding'] ) ) ) {
-		    error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: PADDING CONDITION 1.' ,true)); //GW MOST COMMON!!!!
-		    $padding['top']   = isset( $attrs['paddingTop'] ) ? $attrs['paddingTop'] . 'px' : '20px';
-		    $padding['bottom']   = isset( $attrs['paddingBottom'] ) ? $attrs['paddingBottom'] . 'px' : '20px';
-		    $padding['left']   = isset( $attrs['paddingLeft'] ) ? $attrs['paddingLeft'] . 'px' : '20px';
-		    $padding['right']   = isset( $attrs['paddingRight'] ) ? $attrs['paddingRight'] . 'px' : '20px';
-		} elseif ( isset( $attrs['padding'] ) && ! is_array( $attrs['padding'] ) && ( ! isset( $attrs['paddingType'] ) ) ) {
-		    error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: PADDING CONDITION 2.' ,true)); //GW VERY RARE!!!!
-		    $padding['top']   = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
-		    $padding['bottom']   = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
-		    $padding['left']   = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
-		    $padding['right']   = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
 		} else {
-			error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: PADDING CONDITION 3.' ,true)); //GW VERY RARE!!!!
-		    $padding['top'] = isset( $attrs['paddingTop'] ) ? $attrs['paddingTop'] . 'px' : '20px';
-		    $padding['bottom'] = isset( $attrs['paddingBottom'] ) ? $attrs['paddingBottom'] . 'px' : '20px';
-		    $padding['left'] = isset( $attrs['paddingLeft'] ) ? $attrs['paddingLeft'] . 'px' : '20px';
-		    $padding['right'] = isset( $attrs['paddingRight'] ) ? $attrs['paddingRight'] . 'px' : '20px';
-		    //GW Override true values to match v1.75 behavior. 3/15/2022 - 10:09 AM
+			$padding['top']    = isset( $attrs['paddingTop'] ) ? $attrs['paddingTop'] . 'px' : '20px';
+			$padding['bottom'] = isset( $attrs['paddingBottom'] ) ? $attrs['paddingBottom'] . 'px' : '20px';
+			$padding['left']   = isset( $attrs['paddingLeft'] ) ? $attrs['paddingLeft'] . 'px' : '20px';
+			$padding['right']  = isset( $attrs['paddingRight'] ) ? $attrs['paddingRight'] . 'px' : '20px';
+
 			if ( ! isset( $attrs['paddingTop'] ) || ! isset( $attrs['paddingBottom'] ) || ! isset( $attrs['paddingLeft'] ) || ! isset( $attrs['paddingRight'] ) ) {
-			    error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: PADDING CONDITION 3 OVERRIDE.' ,true)); //GW EXTREMELY RARE!!!!
-			    $padding['top'] = '20px';
-			    $padding['bottom'] = '20px';
-			    $padding['left'] = '20px';
-			    $padding['right'] = '20px';
+				$padding['top']    = '20px';
+				$padding['bottom'] = '20px';
+				$padding['left']   = '20px';
+				$padding['right']  = '20px';
 			}
 		}
-
-		error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: RESULT $padding[top] = [' . $padding['top'] . ']',true));
-		error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: RESULT $padding[right] = [' . $padding['right'] . ']',true));
-		error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: RESULT $padding[bottom] = [' . $padding['bottom'] . ']',true));
-		error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: RESULT $padding[left] = [' . $padding['left'] . ']',true));
 
 		if ( isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'] ) {
 			if ( isset( $attrs['paddingTopTablet'] ) ) {
@@ -1141,49 +1111,21 @@ class Advanced_Columns_CSS extends Base_CSS {
 			}
 		}
 
-		/* GW if ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] ) {
+		if ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] && ! isset( $attrs['margin'] ) ) {
 			$margin['top']    = isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : '20px';
 			$margin['bottom'] = isset( $attrs['marginBottom'] ) ? $attrs['marginBottom'] . 'px' : '20px';
-		} elseif ( isset( $attrs['margin'] ) && ! is_array( $attrs['margin'] ) ) {
-			$margin['top']    = isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : '20px';
-			$margin['bottom'] = isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : '20px';
-		} */
-
-		error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: CHECK $attrs[marginType] = [' . $attrs['marginType'] . ']',true));
-		error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: CHECK isset( $attrs[marginType] ) = [' . isset( $attrs['marginType'] ) . ']',true));
-        error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: CHECK $attrs[marginTop] = [' . $attrs['marginTop'] . ']',true));
-        error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: CHECK $attrs[marginBottom] = [' . $attrs['marginBottom']. ']' ,true));
-        error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: CHECK $attrs[margin] = [' . $attrs['margin']. ']' ,true));
-        error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: CHECK isset( $attrs[margin] ) = [' . isset( $attrs['margin'] ) . ']',true));
-
-		if ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] && ( ! isset( $attrs['margin'] ) ) ) {
-			error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: MARGIN CONDITION 1.' ,true)); //GW NOT USED!
-			$margin['top']   = isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : '20px';
-			$margin['bottom'] = isset( $attrs['marginBottom'] ) ? $attrs['marginBottom'] . 'px' : '20px';
-		} elseif ( isset( $attrs['margin'] ) && ! is_array( $attrs['margin'] ) && ( ! isset( $attrs['marginType'] ) ) ) {
-			error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: MARGIN CONDITION 2.' ,true)); //GW NOT USED!
-            //GW Show preference for anything from the marginType group.
-			$margin['top'] = isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : (isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : '20px');
-			$margin['bottom'] = isset( $attrs['marginBottom'] ) ? $attrs['marginBottom'] . 'px' : (isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : '20px');
+		} elseif ( isset( $attrs['margin'] ) && ! is_array( $attrs['margin'] ) && ! isset( $attrs['marginType'] ) ) {
+			$margin['top']    = isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : ( ( isset( $attrs['margin'] ) && is_numeric( $attrs['margin'] ) ) ? $attrs['margin'] . 'px' : '20px' );
+			$margin['bottom'] = isset( $attrs['marginBottom'] ) ? $attrs['marginBottom'] . 'px' : ( ( isset( $attrs['margin'] ) && is_numeric( $attrs['margin'] ) ) ? $attrs['margin'] . 'px' : '20px' );
 		} else {
-			error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: MARGIN CONDITION 3 PATTERN ONLY.' ,true));
-		    //GW PREV $margin['top'] = isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : '20px';
-		    //GW PREV $margin['bottom'] = isset( $attrs['marginBottom'] ) ? $attrs['marginBottom'] . 'px' : '20px';
-
 			if ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] ) {
-				error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: MARGIN CONDITION 3 PATTERN 1 - prefer margin!!! ',true)); //GW Used and much less common than pattern 2. NOT USED IN ADVANCED-COLUMNS
-				$margin['top'] = isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : ( isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : '20px' );
+				$margin['top']    = isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : ( isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : '20px' );
 				$margin['bottom'] = isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : ( isset( $attrs['marginBottom'] ) ? $attrs['marginBottom'] . 'px' : '20px' );
 			} else {
-				//GW Need to handle: marginType not set, margin is set but marginTop, etc is preferred.
-				error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: MARGIN CONDITION 3 PATTERN 2 - prefer marginTop, etc.!!! ',true)); //GW Used and much common than pattern 1.
-				$margin['top'] = isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : (isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : '20px');
-				$margin['bottom'] = isset( $attrs['marginBottom'] ) ? $attrs['marginBottom'] . 'px' : (isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : '20px');
+				$margin['top']    = isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : ( ( isset( $attrs['margin'] ) && is_numeric( $attrs['margin'] ) ) ? $attrs['margin'] . 'px' : '20px' );
+				$margin['bottom'] = isset( $attrs['marginBottom'] ) ? $attrs['marginBottom'] . 'px' : ( ( isset( $attrs['margin'] ) && is_numeric( $attrs['margin'] ) ) ? $attrs['margin'] . 'px' : '20px' );
 			}
 		}
-
-		error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: RESULT $margin[top] = ' . $margin['top'],true));
-		error_log(print_r('class-advanced-columns-css.php.merge_old_attributes: RESULT $margin[bottom] = ' . $margin['bottom'],true));
 
 		if ( isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'] ) {
 			if ( isset( $attrs['marginTopTablet'] ) ) {
