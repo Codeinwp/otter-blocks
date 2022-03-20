@@ -119,8 +119,6 @@ const Inspector = ({
 					/>
 				) }
 
-				{/* { ! Boolean( window.themeisleGutenberg.hasPro ) && <Controls /> } */}
-
 				{ applyFilters( 'otter.popupBlock.controls', <Controls />, attributes, setAttributes ) }
 			</PanelBody>
 

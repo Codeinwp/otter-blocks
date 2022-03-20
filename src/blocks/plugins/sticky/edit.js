@@ -56,7 +56,7 @@ const Edit = ({
 		if ( option ) {
 			classes.add( option );
 		}
-		setAttributes({ className: Array.from( classes ).join( ' ' ), hasCustomCSS: true });
+		setAttributes({ className: Array.from( classes ).join( ' ' ) });
 	};
 
 	const getOffsetValue = () => {
@@ -148,10 +148,10 @@ const Edit = ({
 					<Fragment>
 						{ ! hasPro && (
 							<ExternalLink
-								href={ window?.themeisleGutenberg?.hasNeveSupport?.hasNevePro ? window.themeisleGutenberg.hasNeveSupport.optionsPage : 'https://themeisle.com/themes/neve/' }
+								href={ window.themeisleGutenberg.upgradeLink }
 								target="_blank"
 							>
-								{ __( 'Enable more options with Neve Pro\'s Block Editor Booster.', 'otter-blocks' ) }
+								{ __( 'Enable more options with Otter Pro.', 'otter-blocks' ) }
 							</ExternalLink>
 						) }
 
