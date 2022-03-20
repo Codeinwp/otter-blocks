@@ -16,7 +16,7 @@ import { InnerBlocks } from '@wordpress/block-editor';
 /**
  * Internal dependencies
  */
-import { isNullObject } from '../../../helpers/helper-functions.js';
+import { isUndefinedObject } from '../../../helpers/helper-functions.js';
 
 const attributes = {
 	id: {
@@ -828,16 +828,16 @@ const deprecated = [ {
 					'borderRadiusLeft'
 				]
 			),
-			...( ! isNullObject( padding ) && { padding }),
-			...( ! isNullObject( paddingTablet ) && { paddingTablet }),
-			...( ! isNullObject( paddingMobile ) && { paddingMobile }),
-			...( ! isNullObject( margin ) && { margin }),
-			...( ! isNullObject( marginTablet ) && { marginTablet }),
-			...( ! isNullObject( marginMobile ) && { marginMobile }),
-			...( ! isNullObject( border ) && { border }),
-			...( ! isNullObject( borderRadius ) && { borderRadius }),
-			...( ! isNullObject( backgroundImage ) && { backgroundImage }),
-			...( ! isNullObject( backgroundPosition ) && { backgroundPosition })
+			...( ! isUndefinedObject( padding ) && { padding }),
+			...( ! isUndefinedObject( paddingTablet ) && { paddingTablet }),
+			...( ! isUndefinedObject( paddingMobile ) && { paddingMobile }),
+			...( ! isUndefinedObject( margin ) && { margin }),
+			...( ! isUndefinedObject( marginTablet ) && { marginTablet }),
+			...( ! isUndefinedObject( marginMobile ) && { marginMobile }),
+			...( ! isUndefinedObject( border ) && { border }),
+			...( ! isUndefinedObject( borderRadius ) && { borderRadius }),
+			...( ! isUndefinedObject( backgroundImage ) && { backgroundImage }),
+			...( ! isUndefinedObject( backgroundPosition ) && { backgroundPosition })
 		};
 
 		return {

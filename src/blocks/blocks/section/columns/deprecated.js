@@ -22,7 +22,7 @@ import {
 /**
  * Internal dependencies
  */
-import { isNullObject } from '../../../helpers/helper-functions.js';
+import { isUndefinedObject } from '../../../helpers/helper-functions.js';
 
 const attributes = {
 	align: {
@@ -1809,18 +1809,18 @@ const deprecated = [ {
 					'borderRadiusLeft'
 				]
 			),
-			...( ! isNullObject( padding ) && { padding }),
-			...( ! isNullObject( paddingTablet ) && { paddingTablet }),
-			...( ! isNullObject( paddingMobile ) && { paddingMobile }),
-			...( ! isNullObject( margin ) && { margin }),
-			...( ! isNullObject( marginTablet ) && { marginTablet }),
-			...( ! isNullObject( marginMobile ) && { marginMobile }),
-			...( ! isNullObject( border ) && { border }),
-			...( ! isNullObject( borderRadius ) && { borderRadius }),
-			...( ! isNullObject( backgroundImage ) && { backgroundImage }),
-			...( ! isNullObject( backgroundPosition ) && { backgroundPosition }),
-			...( ! isNullObject( backgroundOverlayImage ) && { backgroundOverlayImage }),
-			...( ! isNullObject( backgroundOverlayPosition ) && { backgroundOverlayPosition })
+			...( ! isUndefinedObject( padding ) && { padding }),
+			...( ! isUndefinedObject( paddingTablet ) && { paddingTablet }),
+			...( ! isUndefinedObject( paddingMobile ) && { paddingMobile }),
+			...( ! isUndefinedObject( margin ) && { margin }),
+			...( ! isUndefinedObject( marginTablet ) && { marginTablet }),
+			...( ! isUndefinedObject( marginMobile ) && { marginMobile }),
+			...( ! isUndefinedObject( border ) && { border }),
+			...( ! isUndefinedObject( borderRadius ) && { borderRadius }),
+			...( ! isUndefinedObject( backgroundImage ) && { backgroundImage }),
+			...( ! isUndefinedObject( backgroundPosition ) && { backgroundPosition }),
+			...( ! isUndefinedObject( backgroundOverlayImage ) && { backgroundOverlayImage }),
+			...( ! isUndefinedObject( backgroundOverlayPosition ) && { backgroundOverlayPosition })
 		};
 
 		return {

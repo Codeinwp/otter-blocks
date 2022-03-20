@@ -260,9 +260,10 @@ export const getTimezone = () => {
 };
 
 // Check if object has only null values.
-export const isNullObject = obj => {
-	return ! Object.keys( obj ).some( k => null !== obj[ k ]);
-};
+export const isNullObject = obj => ! Object.keys( obj ).some( k => null !== obj[ k ]);
+
+// Check if object has only undefined values.
+export const isUndefinedObject = obj => Object.values( obj ).every( l => l === undefined );
 
 /*
  +-------------------------------- CSS Utility functions --------------------------------+
