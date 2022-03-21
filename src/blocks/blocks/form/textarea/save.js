@@ -26,7 +26,7 @@ const Save = ({
 				/>
 
 				{ attributes.isRequired && (
-					<span className="required">{ __( '(required)', 'otter-blocks' ) }</span>
+					<span className="required">*</span>
 				) }
 			</label>
 

@@ -142,8 +142,8 @@ class Form_Data_Request {
 		if ( isset( $data['data'] ) ) {
 			$data['data'] = array_map(
 				function( $input ) {
-					$input['label'] = sanitize_text_field( 'label' );
-					$input['input'] = sanitize_text_field( 'input' );
+					$input['label'] = sanitize_text_field( $input['label'] );
+					$input['input'] = sanitize_text_field( $input['input'] );
 					return $input;
 				},
 				$data['data']

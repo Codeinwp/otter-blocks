@@ -63,7 +63,7 @@ const Inspector = ({
 
 	useEffect( () => {
 		if ( attributes.apiKey && attributes.provider ) {
-			getListIdOptionFrom( attributes.provider, attributes.apiKey,
+			getListIdOptionFrom( attributes.provider, attributes.apiKey, 'listId',
 				options => {
 					options.splice( 0, 0, { label: __( 'None', 'otter-blocks' ), value: '' });
 					setListIDOptions( options );
@@ -96,7 +96,7 @@ const Inspector = ({
 				}
 			);
 		}
-	}, [ attributes.provider, attributes.apiKey ]);
+	}, [ attributes.apiKey ]);
 
 	const saveFormOptions = () => {
 		( new api.models.Settings() ).fetch().done( res => {
@@ -114,8 +114,8 @@ const Inspector = ({
 						emails[index].redirectLink = attributes.redirectLink; // update the value
 						hasUpdated = true;
 					}
-					if ( emails[index].titleSubject !== attributes.subject ) {
-						emails[index].titleSubject = attributes.titleSubject; // update the value
+					if ( emails[index].emailSubject !== attributes.subject ) {
+						emails[index].emailSubject = attributes.emailSubject; // update the value
 						hasUpdated = true;
 					}
 					if ( emails[index].submitMessage !== attributes.submitMessage ) {
@@ -131,7 +131,7 @@ const Inspector = ({
 					form: attributes.optionName,
 					email,
 					redirectLink: attributes.redirectLink,
-					titleSubject: attributes.subject,
+					emailSubject: attributes.subject,
 					submitMessage: attributes.submitMessage
 				});
 			}

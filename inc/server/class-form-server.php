@@ -7,7 +7,6 @@
 
 namespace ThemeIsle\GutenbergBlocks\Server;
 
-use finfo;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Email;
@@ -139,7 +138,7 @@ class Form_Server {
         $data->set_form_options($form_options);
 
 
-        $provider_action = apply_filters('otter_select_form_provider', $form_options->get_meta()['integration']);
+        $provider_action = apply_filters('otter_select_form_provider', $data);
 
 		$provider_response = $provider_action($data);
 
@@ -161,7 +160,7 @@ class Form_Server {
 		$res = new Form_Data_Response();
 
         $form_options = $data->get_form_options();
-		$email_subject = isset($form_options) && $form_options->has_title_subject() ? $form_options->get_title_subject() : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
+		$email_subject = isset($form_options) && $form_options->has_email_subject() ? $form_options->get_email_subject() : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
 
 		$email_body    = Form_Email::instance()->build_email($data);
 
@@ -328,12 +327,6 @@ class Form_Server {
             if ( $form_options->form_has_captcha() && ( ! $data->is_set( 'token' ) || '' === $data['token'] ) ) {
                 $reasons += array(
                     __( 'Token is missing!', 'otter-blocks' ),
-                );
-            }
-
-            if ( ! $form_options->has_credentials() && $form_options->has_provider() ) {
-                $reasons += array(
-                    __( 'Provider settings are missing!', 'otter-blocks' ),
                 );
             }
         } catch (\Exception $e) {

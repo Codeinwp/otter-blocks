@@ -45,13 +45,15 @@ const collectAndSendInputFormData = ( form, btn ) => {
 
 		if ( label && valueElem?.value ) {
 			formFieldsData.push({
-				label,
+				label: label,
 				value: valueElem?.value,
 				type: valueElem?.type,
-				checked
+				checked: checked
 			});
 		}
 	});
+
+	console.log( formFieldsData );
 
 	const query = `.protection #${ form.id || '' }_nonce_field`;
 	const nonceFieldValue = form.querySelector( query )?.value;

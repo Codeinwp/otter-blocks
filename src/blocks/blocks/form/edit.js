@@ -149,8 +149,11 @@ const Edit = ({
 	 * Save the captcha option in settings.
 	 */
 	useEffect( () => {
+		let controller = new AbortController();
 		if ( attributes.hasCaptcha !== undefined ) {
-			settingsRef?.current?.fetch().done( res => {
+			settingsRef?.current?.fetch({ signal: controller.signal }).done( res => {
+				controller = null;
+
 				const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 				let isMissing = true;
 				let hasChanged = false;
@@ -191,15 +194,18 @@ const Edit = ({
 				}
 			});
 		}
+		return () => controller?.abort();
 	}, [ attributes.hasCaptcha,  attributes.redirectLink, settingsRef.current ]);
 
 	/**
 	 * Check if the API Keys are set.
 	 */
 	useEffect( () => {
+		let controller = new AbortController();
 		const getAPIData = async() => {
 			if ( ! isAPILoaded ) {
-				settingsRef?.current?.fetch().then( response => {
+				settingsRef?.current?.fetch({ signal: controller.signal }).then( response => {
+					controller = null;
 					setAPILoaded( true );
 
 					if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
@@ -212,6 +218,8 @@ const Edit = ({
 		if ( areSettingsAvailable && attributes.hasCaptcha && ! isAPISaved ) {
 			getAPIData();
 		}
+
+		return () => controller?.abort();
 	}, [ areSettingsAvailable, isAPILoaded, isAPISaved, attributes.hasCaptcha ]);
 
 	/**
@@ -251,7 +259,9 @@ const Edit = ({
 	 * Save integration data.
 	 */
 	useEffect( () => {
-		settingsRef?.current?.fetch().done( res => {
+		let controller = new AbortController();
+		settingsRef?.current?.fetch({ signal: controller.signal }).done( res => {
+			controller = null;
 			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 			let isMissing = true;
 			let hasUpdated = false;
@@ -267,11 +277,10 @@ const Edit = ({
 					isMissing = false;
 					hasUpdatedNotice = attributes.apiKey && ( emails[index].integration.listId !== attributes.listId || emails[index].integration.action !== attributes.action );
 
-					emails[index].integration.provider = attributes.provider; // update the value
+					emails[index].integration.provider = attributes.provider;
 					emails[index].integration.apiKey = attributes.apiKey;
 					emails[index].integration.listId = attributes.listId;
 					emails[index].integration.action = attributes.action;
-					console.log( emails );
 				}
 			});
 
@@ -307,6 +316,8 @@ const Edit = ({
 				});
 			}
 		});
+
+		return () => controller?.abort();
 	}, [ attributes.optionName, attributes.provider, attributes.apiKey, attributes.listId, attributes.action, settingsRef.current ]);
 
 

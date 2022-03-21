@@ -275,7 +275,7 @@ class Options_Settings {
 								'redirectLink' => array(
 									'type' => 'string'
 								),
-								'titleSubject' => array(
+								'emailSubject' => array(
 									'type' => 'string'
 								),
 								'submitMessage' => array(

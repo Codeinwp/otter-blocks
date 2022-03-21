@@ -11,7 +11,7 @@ class Form_Settings_Data
 	private $has_captcha = false;
 	private $meta = array();
     private $redirect_link = '';
-	private $title_subject = '';
+	private $email_subject = '';
 	private $submit_message = '';
 
 	public function __construct($integration_data)
@@ -93,8 +93,8 @@ class Form_Settings_Data
                 if( isset( $form['redirectLink'] ) ) {
                     $integration->set_redirect_link($form['redirectLink']);
                 }
-				if( isset( $form['titleSubject'] ) ) {
-                    $integration->set_title_subject($form['titleSubject']);
+				if( isset( $form['emailSubject'] ) ) {
+                    $integration->set_email_subject($form['emailSubject']);
                 }
 				if( isset( $form['submitMessage'] ) ) {
                     $integration->set_submit_message($form['submitMessage']);
@@ -215,12 +215,12 @@ class Form_Settings_Data
     }
 
 	/**
-     * Check if it has the title_subject set.
+     * Check if it has the email_subject set.
      * @return bool
      */
-    public function has_title_subject()
+    public function has_email_subject()
     {
-        return isset($this->title_subject) && '' !== $this->title_subject;
+        return isset($this->email_subject) && '' !== $this->email_subject;
     }
 
 	/**
@@ -244,13 +244,13 @@ class Form_Settings_Data
     }
 
 	 /**
-     * Set the title subject.
-     * @param string $title_subject
+     * Set the email subject.
+     * @param string $email_subject
      * @return Form_Settings_Data
      */
-    public function set_title_subject($title_subject)
+    public function set_email_subject($email_subject)
     {
-        $this->title_subject = $title_subject;
+        $this->email_subject = $email_subject;
         return $this;
     }
 
@@ -329,12 +329,12 @@ class Form_Settings_Data
     }
 
 	/**
-     * Get the title subject.
+     * Get the email subject.
      * @return string
      */
-    public function get_title_subject()
+    public function get_email_subject()
     {
-        return $this->title_subject;
+        return $this->email_subject;
     }
 
 	/**

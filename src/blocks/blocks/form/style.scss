@@ -5,6 +5,7 @@
 	--borderWidth: inherit;
 	--labelColor: inherit;
 	--inputWidth: 100%;
+	--requiredColor: red;
 
 	.otter-form-consent {
 		label {
@@ -70,10 +71,7 @@
 			color: var(--labelColor);
 
 			.required {
-				font-size: 14px;
-				margin-left: 5px;
-				font-weight: normal;
-				opacity: 0.7;
+				color: var(--requiredColor);
 			}
 		}
 
@@ -94,10 +92,7 @@
 			color: var(--labelColor);
 
 			.required {
-				font-size: 14px;
-				margin-left: 5px;
-				font-weight: normal;
-				opacity: 0.7;
+				color: var(--requiredColor);
 			}
 		}
 
