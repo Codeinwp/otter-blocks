@@ -92,7 +92,7 @@ const Edit = ({
 			getBlock
 		} = select( 'core/block-editor' );
 		return getBlock( clientId ).innerBlocks;
-	});
+	}, []);
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );

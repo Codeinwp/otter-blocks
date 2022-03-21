@@ -137,7 +137,7 @@ const Edit = ({
 		return {
 			postAuthors
 		};
-	});
+	}, []);
 
 	let { postCategories } = useSelect( select => {
 		const { getEntityRecords } = select( 'core' );
@@ -153,7 +153,7 @@ const Edit = ({
 		return {
 			postCategories
 		};
-	});
+	}, []);
 
 	const {
 		products,

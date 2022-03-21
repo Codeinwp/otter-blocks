@@ -21,7 +21,7 @@ const Edit = ({
 		return {
 			parent: parentBlock
 		};
-	});
+	}, []);
 
 	useEffect( () => {
 		if ( parent ) {

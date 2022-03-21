@@ -36,7 +36,7 @@ const Library = ({
 	clientId,
 	close
 }) => {
-	const block = useSelect( select => select( 'core/block-editor' ).getBlock( clientId ) );
+	const block = useSelect( select => select( 'core/block-editor' ).getBlock( clientId ), [ clientId ]);
 
 	const { replaceBlocks } = useDispatch( 'core/block-editor' );
 	const { createNotice } = useDispatch( 'core/notices' );

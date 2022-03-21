@@ -52,7 +52,7 @@ const Edit = ({
 			parentClientId: parentBlock.clientId,
 			isFirstBlock: clientId === parentBlock.innerBlocks[0].clientId
 		};
-	});
+	}, []);
 
 	const { selectBlock } = useDispatch( 'core/block-editor' );
 

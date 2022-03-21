@@ -65,7 +65,7 @@ const Edit = ({
 	const children = useSelect( select => {
 		const { getBlock } = select( 'core/block-editor' );
 		return getBlock( clientId ).innerBlocks;
-	});
+	}, []);
 
 	const {
 		insertBlock,
