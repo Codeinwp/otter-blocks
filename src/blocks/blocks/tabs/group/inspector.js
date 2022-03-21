@@ -21,7 +21,7 @@ import {
 	SelectControl
 } from '@wordpress/components';
 
-import { useState } from '@wordpress/element';
+import { useState, useEffect } from '@wordpress/element';
 
 import { useSelect, useDispatch } from '@wordpress/data';
 
@@ -43,6 +43,10 @@ const Inspector = ({
 	const [ defaultTab, setDefaultTab ] = useState( children.find( c => true === c.attributes.defaultOpen )?.clientId );
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
 	const { getBlock } = useSelect( 'core/block-editor' );
+
+	useEffect( () => {
+		setDefaultTab( children.find( c => true === c.attributes.defaultOpen )?.clientId );
+	}, [ children ]);
 
 	const deleteWrapper = ( tabId ) => {
 		const tab = getBlock( tabId );
