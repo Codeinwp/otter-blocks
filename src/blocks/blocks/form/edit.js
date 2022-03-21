@@ -29,7 +29,8 @@ import {
 	Fragment,
 	useState,
 	useEffect,
-	useRef
+	useRef,
+	createContext
 } from '@wordpress/element';
 
 /**
@@ -39,8 +40,12 @@ import metadata from './block.json';
 import { blockInit } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
+import { getListIdOptionFrom } from './integrations';
+import { key } from '@wordpress/icons/build-types';
 
 const { attributes: defaultAttributes } = metadata;
+
+export const FormContext = createContext();
 
 /**
  * Form component
@@ -57,6 +62,14 @@ const Edit = ({
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
 	const [ isAPILoaded, setAPILoaded ] = useState( false );
 	const [ isAPISaved, setAPISaved ] = useState( false );
+
+	const [ apiKey, setApiKey ] = useState( '' );
+	const [ fetchApiKeyStatus, setFetchApiKeyStatus ] = useState( 'loading' );
+	const [ email, setEmail ] = useState( '' );
+	const [ savedEmail, setSavedEmail ] = useState( '' );
+	const [ isEmailLoaded, setEmailLoading ] = useState( true );
+	const [ listIDOptions, setListIDOptions ] = useState([ { label: __( 'None', 'otter-blocks' ), value: '' } ]);
+	const [ fetchListIdStatus, setFetchListIdStatus ] = useState( 'loading' );
 
 	const settingsRef = useRef( null );
 	const [ areSettingsAvailable, setSettingsStatus ] = useState( false );
@@ -146,6 +159,36 @@ const Edit = ({
 	}, []);
 
 	/**
+	 * Load Email and ApiKey from server.
+	 */
+	useEffect( () => {
+		const t = setTimeout( () => {
+			setFetchApiKeyStatus( 'loaded' );
+		}, 3000 );
+
+		if ( attributes.optionName ) {
+			api.loadPromise.then( () => {
+				( new api.models.Settings() ).fetch().done( res => {
+					res.themeisle_blocks_form_emails?.filter( ({ form }) => form === attributes.optionName )?.forEach( item => {
+						console.log( item );
+						setEmail( item?.email );
+						setApiKey( item?.integration?.apiKey );
+						setEmailLoading( true );
+						setSavedEmail( item?.email );
+						setFetchApiKeyStatus( 'loaded' );
+						clearTimeout( t );
+					});
+				});
+			});
+		}
+
+		return () => {
+			clearTimeout( t );
+		};
+	}, [ attributes.optionName ]);
+
+
+	/**
 	 * Save the captcha option in settings.
 	 */
 	useEffect( () => {
@@ -225,7 +268,7 @@ const Edit = ({
 	/**
 	 * Save API Keys in the Otter options.
 	 */
-	const saveAPIKey = () => {
+	const saveCaptchaAPIKey = () => {
 		const model = new window.wp.api.models.Settings({
 			// eslint-disable-next-line camelcase
 			themeisle_google_captcha_api_site_key: googleCaptchaAPISiteKey,
@@ -273,12 +316,11 @@ const Edit = ({
 						emails[index].integration = {};
 					}
 
-					hasUpdated = emails[index].integration.provider !== attributes.provider || emails[ index ].integration.apiKey !== attributes.apiKey || emails[index].integration.listId !== attributes.listId || emails[index].integration.action !== attributes.action;
+					hasUpdated = emails[index].integration.provider !== attributes.provider || emails[index].integration.listId !== attributes.listId || emails[index].integration.action !== attributes.action;
 					isMissing = false;
-					hasUpdatedNotice = attributes.apiKey && ( emails[index].integration.listId !== attributes.listId || emails[index].integration.action !== attributes.action );
+					hasUpdatedNotice =  ( emails[index].integration.listId !== attributes.listId || emails[index].integration.action !== attributes.action );
 
 					emails[index].integration.provider = attributes.provider;
-					emails[index].integration.apiKey = attributes.apiKey;
 					emails[index].integration.listId = attributes.listId;
 					emails[index].integration.action = attributes.action;
 				}
@@ -289,7 +331,6 @@ const Edit = ({
 					form: attributes.optionName,
 					integration: {
 						provider: attributes.provider,
-						apiKey: attributes.apiKey,
 						listId: attributes.listId,
 						action: attributes.action
 					}
@@ -318,7 +359,165 @@ const Edit = ({
 		});
 
 		return () => controller?.abort();
-	}, [ attributes.optionName, attributes.provider, attributes.apiKey, attributes.listId, attributes.action, settingsRef.current ]);
+	}, [ attributes.optionName, attributes.provider, apiKey, attributes.listId, attributes.action, settingsRef.current ]);
+
+	useEffect( () => {
+		if ( apiKey && attributes.provider ) {
+			getListIdOptionFrom( attributes.provider, apiKey, 'listId',
+				options => {
+					options.splice( 0, 0, { label: __( 'None', 'otter-blocks' ), value: '' });
+					setListIDOptions( options );
+					setFetchListIdStatus( 'ready' );
+
+					const isCurrentOptionValid = 1 === options.map( ({ value }) => value ).filter( value => value === attributes.listId ).length;
+					if ( attributes.listId && ! isCurrentOptionValid ) {
+						createNotice(
+							'error',
+							__( 'The current contact list is invalid! Please choose a new contact list.', 'otter-blocks' ),
+							{
+								isDismissible: true,
+								type: 'snackbar'
+							}
+						);
+					}
+				},
+				err => {
+					createNotice(
+						'error',
+						err?.error,
+						{
+							isDismissible: true,
+							type: 'snackbar',
+							id: 'themeisle-form-server-error'
+						}
+					);
+
+					setFetchListIdStatus( 'error' );
+				}
+			);
+		}
+	}, [ apiKey ]);
+
+	const saveFormOptions = () => {
+		( new api.models.Settings() ).fetch().done( res => {
+			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
+			let isMissing = true;
+			let hasUpdated = false;
+
+			emails?.forEach( ({ form }, index ) => {
+				if ( form === attributes.optionName ) {
+					if ( emails[index].email !== email ) {
+						emails[index].email = email; // update the value
+						hasUpdated = true;
+					}
+					if ( emails[index].redirectLink !== attributes.redirectLink ) {
+						emails[index].redirectLink = attributes.redirectLink; // update the value
+						hasUpdated = true;
+					}
+					if ( emails[index].emailSubject !== attributes.subject ) {
+						emails[index].emailSubject = attributes.emailSubject; // update the value
+						hasUpdated = true;
+					}
+					if ( emails[index].submitMessage !== attributes.submitMessage ) {
+						emails[index].submitMessage = attributes.submitMessage; // update the value
+						hasUpdated = true;
+					}
+					isMissing = false;
+				}
+			});
+
+			if ( isMissing ) {
+				emails.push({
+					form: attributes.optionName,
+					email,
+					redirectLink: attributes.redirectLink,
+					emailSubject: attributes.subject,
+					submitMessage: attributes.submitMessage
+				});
+			}
+
+			if ( isMissing || hasUpdated ) {
+				const model = new api.models.Settings({
+					// eslint-disable-next-line camelcase
+					themeisle_blocks_form_emails: emails
+				});
+
+				setEmailLoading( false );
+
+				model.save().then( response => {
+					response.themeisle_blocks_form_emails?.filter( ({ form }) => form === attributes.optionName ).forEach( item => {
+						{
+							setEmailLoading( true );
+							setSavedEmail( item?.email );
+
+							createNotice(
+								'info',
+								__( 'Form Options has been saved!', 'otter-blocks' ),
+								{
+									isDismissible: true,
+									type: 'snackbar'
+								}
+							);
+						}
+					});
+				});
+			}
+		});
+	};
+
+	const saveIntegrationApiKey = ( apiKey ) => {
+		settingsRef?.current?.fetch().done( res => {
+			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
+			let isMissing = true;
+			let hasUpdated = false;
+			let hasUpdatedNotice = false;
+
+			emails?.forEach( ({ form }, index ) => {
+				if ( form === attributes.optionName ) {
+					if ( ! emails[index]?.integration ) {
+						emails[index].integration = {};
+					}
+
+					hasUpdated = emails[index].integration.apiKey !== apiKey;
+					hasUpdatedNotice = emails[index].integration.apiKey !== apiKey;
+
+					emails[index].integration.apiKey = attributes.apiKey;
+				}
+			});
+
+			if ( isMissing ) {
+				emails.push({
+					form: attributes.optionName,
+					integration: {
+						provider: attributes.provider,
+						apiKey: apiKey,
+						listId: attributes.listId,
+						action: attributes.action
+					}
+				});
+			}
+
+			if ( isMissing || hasUpdated ) {
+				const model = new api.models.Settings({
+					// eslint-disable-next-line camelcase
+					themeisle_blocks_form_emails: emails
+				});
+
+				model.save().then( () => {
+					if ( hasUpdatedNotice ) {
+						createNotice(
+							'info',
+							__( 'The API Key has been saved.', 'otter-blocks' ),
+							{
+								isDismissible: true,
+								type: 'snackbar'
+							}
+						);
+					}
+				});
+			}
+		});
+	};
 
 
 	const blockProps = useBlockProps({
@@ -345,62 +544,84 @@ const Edit = ({
 		}
 	}, [ blockRef.current, attributes ]);
 
+	useEffect( () => {
+		console.log( apiKey );
+	}, [ apiKey ]);
+
 	return (
 		<Fragment>
-			<Inspector
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-			/>
+			<FormContext.Provider
+				value={{
+					savedEmail,
+					apiKey,
+					setApiKey,
+					isEmailLoaded,
+					listIDOptions,
+					setListIDOptions,
+					fetchListIdStatus,
+					setFetchListIdStatus,
+					saveFormOptions,
+					email,
+					setEmail,
+					saveIntegrationApiKey,
+					fetchApiKeyStatus
+				}}
+			>
+				<Inspector
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+				/>
 
-			<div { ...blockProps }>
-				{
-					( hasInnerBlocks ) ? (
-						<form ref={blockRef} className="otter-form__container">
-							<InnerBlocks
-							/>
+				<div { ...blockProps }>
+					{
+						( hasInnerBlocks ) ? (
+							<form ref={blockRef} className="otter-form__container">
+								<InnerBlocks
+								/>
 
-							{
-								attributes.hasCaptcha && ( ! isAPILoaded || ! isAPISaved ) && (
-									<Placeholder
-										className="otter-form-captcha"
-										isAPILoaded={ isAPILoaded }
-										isAPISaved={ isAPISaved }
-										saveAPIKey={ saveAPIKey }
-										siteKey={ googleCaptchaAPISiteKey }
-										secretKey={ googleCaptchaAPISecretKey }
-										setSiteKey={ setGoogleCaptchaAPISiteKey }
-										setSecretKey={ setGoogleCaptchaAPISecretKey }
-									/>
-								)
-							}
-
-							<div className="wp-block-button">
-								<button className="wp-block-button__link">
-									{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
-								</button>
-							</div>
-						</form>
-					) : (
-						<VariationPicker
-							icon={ get( blockType, [ 'icon', 'src' ]) }
-							label={ get( blockType, [ 'title' ]) }
-							variations={ variations }
-							onSelect={ ( nextVariation = defaultVariation ) => {
-								if ( nextVariation ) {
-									replaceInnerBlocks(
-										clientId,
-										createBlocksFromInnerBlocksTemplate(
-											nextVariation.innerBlocks
-										),
-										true
-									);
+								{
+									attributes.hasCaptcha && ( ! isAPILoaded || ! isAPISaved ) && (
+										<Placeholder
+											className="otter-form-captcha"
+											isAPILoaded={ isAPILoaded }
+											isAPISaved={ isAPISaved }
+											saveAPIKey={ saveCaptchaAPIKey }
+											siteKey={ googleCaptchaAPISiteKey }
+											secretKey={ googleCaptchaAPISecretKey }
+											setSiteKey={ setGoogleCaptchaAPISiteKey }
+											setSecretKey={ setGoogleCaptchaAPISecretKey }
+										/>
+									)
 								}
-							} }
-							allowSkip
-						/>
-					)
-				}
-			</div>
+
+								<div className="wp-block-button">
+									<button className="wp-block-button__link">
+										{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
+									</button>
+								</div>
+							</form>
+						) : (
+							<VariationPicker
+								icon={ get( blockType, [ 'icon', 'src' ]) }
+								label={ get( blockType, [ 'title' ]) }
+								variations={ variations }
+								onSelect={ ( nextVariation = defaultVariation ) => {
+									if ( nextVariation ) {
+										replaceInnerBlocks(
+											clientId,
+											createBlocksFromInnerBlocksTemplate(
+												nextVariation.innerBlocks
+											),
+											true
+										);
+									}
+								} }
+								allowSkip
+							/>
+						)
+					}
+				</div>
+			</FormContext.Provider>
 		</Fragment>
 	);
 };

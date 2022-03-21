@@ -22,13 +22,15 @@ import { dispatch } from '@wordpress/data';
 import {
 	Fragment,
 	useState,
-	useEffect
+	useEffect,
+	useContext
 } from '@wordpress/element';
 
 /**
  * Internal dependencies.
  */
 import { getListIdOptionFrom } from './integrations.js';
+import { FormContext } from './edit.js';
 
 /**
  *
@@ -39,131 +41,22 @@ const Inspector = ({
 	attributes,
 	setAttributes
 }) => {
-	const { createNotice } = dispatch( 'core/notices' );
 
-	const [ savedEmail, setSavedEmail ] = useState( '' );
-	const [ email, setEmail ] = useState( '' );
-	const [ isEmailLoaded, setEmailLoading ] = useState( true );
-	const [ listIDOptions, setListIDOptions ] = useState([ { label: __( 'None', 'otter-blocks' ), value: '' } ]);
-	const [ fetchListIdStatus, setFetchListIdStatus ] = useState( 'loading' );
-
-	useEffect( () => {
-		if ( attributes.optionName ) {
-			api.loadPromise.then( () => {
-				( new api.models.Settings() ).fetch().done( res => {
-					res.themeisle_blocks_form_emails?.filter( ({ form }) => form === attributes.optionName )?.forEach( item => {
-						setEmail( item?.email );
-						setEmailLoading( true );
-						setSavedEmail( item?.email );
-					});
-				});
-			});
-		}
-	}, [ attributes.optionName ]);
-
-	useEffect( () => {
-		if ( attributes.apiKey && attributes.provider ) {
-			getListIdOptionFrom( attributes.provider, attributes.apiKey, 'listId',
-				options => {
-					options.splice( 0, 0, { label: __( 'None', 'otter-blocks' ), value: '' });
-					setListIDOptions( options );
-					setFetchListIdStatus( 'ready' );
-
-					const isCurrentOptionValid = 1 === options.map( ({ value }) => value ).filter( value => value === attributes.listId ).length;
-					if ( attributes.listId && ! isCurrentOptionValid ) {
-						createNotice(
-							'error',
-							__( 'The current contact list is invalid! Please choose a new contact list.', 'otter-blocks' ),
-							{
-								isDismissible: true,
-								type: 'snackbar'
-							}
-						);
-					}
-				},
-				err => {
-					createNotice(
-						'error',
-						err?.error,
-						{
-							isDismissible: true,
-							type: 'snackbar',
-							id: 'themeisle-form-server-error'
-						}
-					);
-
-					setFetchListIdStatus( 'error' );
-				}
-			);
-		}
-	}, [ attributes.apiKey ]);
-
-	const saveFormOptions = () => {
-		( new api.models.Settings() ).fetch().done( res => {
-			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
-			let isMissing = true;
-			let hasUpdated = false;
-
-			emails?.forEach( ({ form }, index ) => {
-				if ( form === attributes.optionName ) {
-					if ( emails[index].email !== email ) {
-						emails[index].email = email; // update the value
-						hasUpdated = true;
-					}
-					if ( emails[index].redirectLink !== attributes.redirectLink ) {
-						emails[index].redirectLink = attributes.redirectLink; // update the value
-						hasUpdated = true;
-					}
-					if ( emails[index].emailSubject !== attributes.subject ) {
-						emails[index].emailSubject = attributes.emailSubject; // update the value
-						hasUpdated = true;
-					}
-					if ( emails[index].submitMessage !== attributes.submitMessage ) {
-						emails[index].submitMessage = attributes.submitMessage; // update the value
-						hasUpdated = true;
-					}
-					isMissing = false;
-				}
-			});
-
-			if ( isMissing ) {
-				emails.push({
-					form: attributes.optionName,
-					email,
-					redirectLink: attributes.redirectLink,
-					emailSubject: attributes.subject,
-					submitMessage: attributes.submitMessage
-				});
-			}
-
-			if ( isMissing || hasUpdated ) {
-				const model = new api.models.Settings({
-					// eslint-disable-next-line camelcase
-					themeisle_blocks_form_emails: emails
-				});
-
-				setEmailLoading( false );
-
-				model.save().then( response => {
-					response.themeisle_blocks_form_emails?.filter( ({ form }) => form === attributes.optionName ).forEach( item => {
-						{
-							setEmailLoading( true );
-							setSavedEmail( item?.email );
-
-							createNotice(
-								'info',
-								__( 'Form Options has been saved!', 'otter-blocks' ),
-								{
-									isDismissible: true,
-									type: 'snackbar'
-								}
-							);
-						}
-					});
-				});
-			}
-		});
-	};
+	const {
+		isEmailLoaded,
+		listIDOptions,
+		setListIDOptions,
+		fetchListIdStatus,
+		setFetchListIdStatus,
+		savedEmail,
+		saveFormOptions,
+		email,
+		setEmail,
+		apiKey,
+		setApiKey,
+		saveIntegrationApiKey,
+		fetchApiKeyStatus
+	} = useContext( FormContext );
 
 	return (
 		<InspectorControls>
@@ -346,19 +239,34 @@ const Inspector = ({
 				{
 					attributes.provider && (
 						<Fragment>
-							<TextControl
-								label={ __( 'API Key', 'otter-blocks' ) }
-								help={ __( 'You can find the key in the provider\'s website', 'otter-blocks' ) }
-								value={ attributes.apiKey }
-								onChange={ apiKey => {
-									setFetchListIdStatus( 'loading' );
-									setListIDOptions([]);
-									setAttributes({ apiKey, listId: '' });
-								}}
-							/>
+							{
+								'loading' === fetchApiKeyStatus ?
+									(
+										<Fragment>
+											<Spinner />
+											{ __( 'Fetching the API Key from the database.', 'otter-blocks' ) }
+										</Fragment>
+									) : (
+										<TextControl
+											label={ __( 'API Key', 'otter-blocks' ) }
+											help={ __( 'You can find the key in the provider\'s website', 'otter-blocks' ) }
+											value={ apiKey ? `*************************${apiKey.slice( -8 )}` : '' }
+											onChange={ apiKey => {
+												setFetchListIdStatus( 'loading' );
+												setListIDOptions([]);
+												setApiKey( apiKey );
+												setAttributes({
+													listId: ''
+												});
+												saveIntegrationApiKey( apiKey );
+											}}
+										/>
+									)
+							}
+
 
 							{
-								attributes.apiKey && 2 > listIDOptions.length && 'loading' === fetchListIdStatus && (
+								apiKey && 2 > listIDOptions.length && 'loading' === fetchListIdStatus && (
 									<Fragment>
 										<Spinner />
 										{ __( 'Fetching data from provider.', 'otter-blocks' ) }
@@ -366,7 +274,7 @@ const Inspector = ({
 								)
 							}
 							{
-								attributes.apiKey && 'ready' === fetchListIdStatus && (
+								apiKey && 'ready' === fetchListIdStatus && (
 									<Fragment>
 										<SelectControl
 											label={ __( 'Contact List', 'otter-blocks' ) }

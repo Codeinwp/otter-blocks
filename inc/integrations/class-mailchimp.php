@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
+use Prophecy\Doubler\Generator\Node\ReturnTypeNode;
+
 /**
  * Class Plugin_Card_Server
  */
@@ -73,7 +75,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 			),
 		);
 
-		$response = wp_remote_post( $url, $args );
+		$response = wp_remote_get( $url, $args );
 		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
@@ -226,4 +228,19 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		// TODO: Implement get_provider_data() method.
 		return $this->get_lists();
 	}
+
+    public function check_credential_status()
+    {
+        // TODO: Implement check_credential_status() method.
+        $url  = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists';
+        $args = array(
+            'method'  => 'GET',
+            'headers' => array(
+                'Authorization' => 'Basic ' . base64_encode( 'user:' . $this->api_key ),
+            ),
+        );
+
+        $response = wp_remote_get( $url, $args );
+        return ! is_wp_error( $response );
+    }
 }

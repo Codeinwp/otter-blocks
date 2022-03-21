@@ -66,7 +66,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
             ),
         );
 
-        $response = wp_remote_post( $url, $args );
+        $response = wp_remote_get( $url, $args );
         $body     = json_decode( wp_remote_retrieve_body( $response ), true );
 
         if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
@@ -196,4 +196,19 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
         }
 		return $this->get_lists();
 	}
+
+    public function check_credential_status()
+    {
+        // TODO: Implement check_credential_status() method.
+        $url      = 'https://api.sendinblue.com/v3/contacts/lists';
+        $args = array(
+            'method'  => 'GET',
+            'headers' => array(
+                'api-key' => $this->api_key,
+            ),
+        );
+
+        $response = wp_remote_get( $url, $args );
+        return ! is_wp_error( $response );
+    }
 }

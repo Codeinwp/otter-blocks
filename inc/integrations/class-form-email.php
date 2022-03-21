@@ -7,7 +7,7 @@ class Form_Email
 	/**
 	 * The main instance var.
 	 *
-	 * @var Form_Providers
+	 * @var Form_Email
 	 */
 	public static $instance = null;
 
@@ -50,7 +50,7 @@ class Form_Email
      * @param $email_data
      * @return false|string
      */
-	public function build_email($email_data ) {
+	public function build_email( $email_data ) {
 		ob_start(); ?>
 		<!doctype html>
 		<html xmlns="http://www.w3.org/1999/xhtml">
@@ -62,31 +62,10 @@ class Form_Email
 			<title><?php esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ); ?></title>
 		</head>
 		<body>
-		<table>
-			<thead>
-			<tr>
-				<th colspan="2">
-					<?php
-					do_action('otter_form_email_head', $email_data);
-					?>
-				</th>
-			</tr>
-			</thead>
-			<tbody>
-			<?php
-			do_action('otter_form_email_body', $email_data);
-			?>
-			</tbody>
-			<tfoot>
-			<tr>
-				<td>
-					<hr/>
-					<?php esc_html_e( 'You received this email because your email address is set in the content form settings on ', 'otter-blocks' ); ?>
-					<a href="<?php echo esc_url( get_site_url() ); ?>"><?php bloginfo( 'name' ); ?></a>
-				</td>
-			</tr>
-			</tfoot>
-		</table>
+        <?php
+        do_action('otter_form_email_head', $email_data);
+        do_action('otter_form_email_body', $email_data);
+        ?>
 		</body>
 		</html>
 		<?php
@@ -116,6 +95,8 @@ class Form_Email
 	public function build_body( $email_data ) {
 		$emailFormContent = $email_data->get_form_inputs();
 		ob_start(); ?>
+        <table>
+        <tbody>
 		<?php
 		foreach ($emailFormContent as $input ) {
 			?>
@@ -129,9 +110,50 @@ class Form_Email
 			<?php
 		}
 		?>
+        </tbody>
+            <tfoot>
+            <tr>
+                <td>
+                    <hr/>
+                    <?php esc_html_e( 'You received this email because your email address is set in the content form settings on ', 'otter-blocks' ); ?>
+                    <a href="<?php echo esc_url( get_site_url() ); ?>"><?php bloginfo( 'name' ); ?></a>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
 		<?php
 		echo ob_get_clean();
 	}
+
+    public function build_error_email( $error, $email_data ) {
+        ob_start(); ?>
+        <!doctype html>
+        <html xmlns="http://www.w3.org/1999/xhtml">
+        <head>
+            <meta http-equiv="Content-Type" content="text/html;" charset="utf-8"/>
+            <!-- view port meta tag -->
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+            <title><?php esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ); ?></title>
+        </head>
+        <body>
+        <h3><?php esc_html__( 'An error has occurred when a user submitted the form.', 'otter-blocks' ) ?></h3>
+        <div style="background-color: #AAAAAA;padding: 10px;">
+            <span style="color: red;"> <?php esc_html__( 'Error: ', 'otter-blocks' ) ?> </span> <?php esc_html__( $error, 'otter-blocks' ) ?>
+        </div>
+        <div>
+            <h3> <?php esc_html__( 'Submitted form content', 'otter-blocks' ) ?> </h3>
+            <div style="padding: 10px; border: 1px dashed black;">
+                <?php
+                do_action('otter_form_email_body', $email_data);
+                ?>
+            </div>
+        </div>
+        </body>
+        </html>
+        <?php
+        return ob_get_clean();
+    }
 
 
 	/**
