@@ -16,7 +16,7 @@ import {
 const Save = ({
 	attributes
 }) => {
-	const hasIntegrationActive = attributes.provider && attributes.apiKey && attributes.listId;
+	const hasIntegrationActive = attributes.provider && attributes.listId;
 
 	const blockProps = useBlockProps.save({
 		id: attributes.id,

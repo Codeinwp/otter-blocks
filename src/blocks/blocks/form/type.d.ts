@@ -7,7 +7,6 @@ type Attributes = {
 	optionName: string
 	hasCaptcha: boolean
 	provider: string
-	apiKey: string
 	listId: string
 	action: string
 	submitLabel: string

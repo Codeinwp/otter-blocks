@@ -194,6 +194,17 @@ class Form_Server {
 		}
 	}
 
+    private static function function_send_error_email( $error, $form_data ) {
+
+        $email_subject = ( __( 'An error with the Form blocks has occurred on  ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
+        $email_body    = Form_Email::instance()->build_error_email($error, $form_data);
+        // Sent the form date to the admin site as a default behaviour.
+        $to = sanitize_email( get_site_option( 'admin_email' ) );
+        $headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . esc_url( get_site_url() ) );
+        // phpcs:ignore
+        wp_mail( $to, $email_subject, $email_body, $headers );
+    }
+
 
 	/**
 	 * Get data about the given provider
@@ -287,14 +298,14 @@ class Form_Server {
 	}
 
 	/**
-	 * Check for requiered data.
+	 * Check for required data.
 	 *
 	 * @access private
 	 * @param Form_Data_Request $data Data from the request.
 	 *
 	 * @return boolean
 	 */
-	private function has_requiered_data( $data ) {
+	private function has_required_data($data ) {
 		return $data->are_fields_set(
 			array(
 				'nonceValue',
@@ -316,7 +327,7 @@ class Form_Server {
 	public function check_form_conditions( $data ) {
 
 		$reasons           = array();
-		if ( ! $this->has_requiered_data( $data ) ) {
+		if ( ! $this->has_required_data( $data ) ) {
 			$reasons += array( __( 'Essential data is missing!', 'otter-blocks' ) );
 			return $reasons;
 		}

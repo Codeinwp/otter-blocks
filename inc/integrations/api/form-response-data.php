@@ -140,4 +140,11 @@ class Form_Data_Response {
         $this->response = array_merge($this->response, $values);
         return $this;
     }
+
+    /** Check if the response has an error.
+     * @return bool
+     */
+    public function has_error() {
+        return isset($this->response['error']);
+    }
 }

@@ -27,9 +27,6 @@
 			"type": "string",
 			"default": ""
 		},
-		"apiKey": {
-			"type": "string"
-		},
 		"listId": {
 			"type": "string"
 		},
