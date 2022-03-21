@@ -1470,7 +1470,7 @@ msgstr ""
 
 #: build/dashboard/index.js:1
 #: src/blocks/components/google-fonts-control/index.js:213
-msgid "Font Width"
+msgid "Font Weight"
 msgstr ""
 
 #: build/dashboard/index.js:1
