@@ -59,32 +59,32 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 		);
 
 		$url      = 'https://api.sendinblue.com/v3/contacts/lists';
-			$args = array(
-				'method'  => 'GET',
-				'headers' => array(
-					'api-key' => $this->api_key,
-				),
-			);
+        $args = array(
+            'method'  => 'GET',
+            'headers' => array(
+                'api-key' => $this->api_key,
+            ),
+        );
 
-			$response = wp_remote_post( $url, $args );
-			$body     = json_decode( wp_remote_retrieve_body( $response ), true );
+        $response = wp_remote_post( $url, $args );
+        $body     = json_decode( wp_remote_retrieve_body( $response ), true );
 
-			if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-				$return['error'] = ! empty( $body['detail'] ) && 'null' !== $body['detail'] ? $body['detail'] : __( 'Provider settings are invalid! Please check your API Key and the contact list in the form.', 'otter-blocks' );
-			} else {
-				$return['success'] = true;
-				$return['list_id'] = array_map(
-					function( $item ) {
-						return array(
-							'id'   => $item['id'],
-							'name' => $item['name'],
-						);
-					},
-					$body['lists']
-				);
-			}
+        if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+            $return['error'] = ! empty( $body['detail'] ) && 'null' !== $body['detail'] ? $body['detail'] : __( 'Provider settings are invalid! Please check your API Key and the contact list in the form.', 'otter-blocks' );
+        } else {
+            $return['success'] = true;
+            $return['list_id'] = array_map(
+                function( $item ) {
+                    return array(
+                        'id'   => $item['id'],
+                        'name' => $item['name'],
+                    );
+                },
+                $body['lists']
+            );
+        }
 
-			return $return;
+        return $return;
 	}
 
 	/**
@@ -140,7 +140,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 		$valid_api_key = $this::validate_api_key( $api_key );
 
 		if ( ! $valid_api_key['valid'] ) {
-			return;
+			return $this;
 		}
 
 		$this->api_key = $api_key;
@@ -176,7 +176,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
      * @param string $list_id
      * @return $this
      */
-	private function set_list_id(string $list_id)
+	private function set_list_id($list_id)
 	{
 		$this->list_id = $list_id;
 		return $this;
@@ -189,7 +189,11 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
      */
 	public function get_provider_data($data)
 	{
-		// TODO: Implement get_provider_data() method.
+        if( $data->is_set( 'action' ) ) {
+            if ($data->get('action') == 'listId') {
+                return $this->get_lists();
+            }
+        }
 		return $this->get_lists();
 	}
 }

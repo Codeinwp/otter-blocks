@@ -61,15 +61,16 @@ class Form_Providers
 
     /**
      * Select the provider based on the form integration settings.
-     * @param $form_integration
+     * @param Form_Data_Request $form_request
      * @return mixed
      */
-	public function select_provider( $form_integration ) {
-		if( !isset($form_integration['action']) || !isset($form_integration['provider']) || !isset( $this->providers[$form_integration['provider']] ) ) {
-			return $this->providers['default'];
-		}
+	public function select_provider($form_request) {
+		$form_options = $form_request->get_form_options();
+        if( $form_options->has_provider() && $form_options->has_credentials() ) {
+            return $this->providers[$form_options->get_provider()];
+        }
 
-		return $this->providers[$form_integration['provider']];
+        return $this->providers['default'];
 	}
 
 	/**

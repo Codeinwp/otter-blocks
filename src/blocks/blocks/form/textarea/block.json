@@ -23,6 +23,12 @@
 		},
 		"mappedName": {
 			"type": "string"
+		},
+		"labelColor": {
+			"type": "string"
+		},
+		"inputWidth": {
+			"type": "number"
 		}
 	},
 	"supports": {
