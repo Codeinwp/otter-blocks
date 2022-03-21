@@ -11,7 +11,7 @@ import { omit } from 'lodash';
 
 import { InnerBlocks } from '@wordpress/block-editor';
 
-import { useMemo, memo } from '@wordpress/element';
+import { memo } from '@wordpress/element';
 
 import {
 	SVG,

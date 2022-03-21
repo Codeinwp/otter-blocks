@@ -1,8 +1,9 @@
 /**
  * WordPress dependencies
  */
-import { useCallback } from '@wordpress/element';
 import { debounce } from 'lodash';
+
+import { useCallback } from '@wordpress/element';
 
 import { MediaPlaceholder } from '@wordpress/block-editor';
 

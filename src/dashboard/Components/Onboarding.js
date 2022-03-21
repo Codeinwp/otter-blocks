@@ -19,7 +19,8 @@ import {
 
 import {
 	Fragment,
-	useEffect, useMemo,
+	useEffect,
+	useMemo,
 	useRef,
 	useState
 } from '@wordpress/element';

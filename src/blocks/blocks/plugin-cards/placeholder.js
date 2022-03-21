@@ -49,6 +49,7 @@ const BlockPlaceholder = ({
 
 	useEffect( () => {
 		let timeoutID = null;
+
 		if ( null !== selectedSuggestion && ! scrollingIntoView ) {
 			scrollingIntoView = true;
 
@@ -61,8 +62,8 @@ const BlockPlaceholder = ({
 			timeoutID = setTimeout( () => {
 				scrollingIntoView = false;
 			}, 100 );
-
 		}
+
 		return () => {
 			clearTimeout( timeoutID );
 		};

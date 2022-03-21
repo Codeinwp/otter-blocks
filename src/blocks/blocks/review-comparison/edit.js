@@ -65,6 +65,7 @@ const Edit = ({
 
 	useEffect( () => {
 		let isMounted = true;
+
 		( async() => {
 			if ( isMounted ) {
 				try {
@@ -78,6 +79,7 @@ const Edit = ({
 				}
 			}
 		})();
+
 		return () => {
 			isMounted = false;
 		};

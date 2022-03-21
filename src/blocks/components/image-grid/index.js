@@ -8,12 +8,13 @@ import {
 	MediaUploadCheck
 } from '@wordpress/block-editor';
 
+import { useMemo } from '@wordpress/element';
+
 /**
  * Internal dependencies
  */
 import './editor.scss';
 import GridList from './GridList.js';
-import {useMemo} from '@wordpress/element';
 
 const ImageGrid = ({
 	attributes,

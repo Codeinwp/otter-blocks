@@ -60,6 +60,7 @@ const Edit = ({
 
 	useEffect( () => {
 		let isMounted = true;
+
 		window.wp.api.loadPromise.then( () => {
 			const settings = new window.wp.api.models.Settings();
 
@@ -71,6 +72,7 @@ const Edit = ({
 				}
 			});
 		});
+
 		return () => {
 			isMounted = false;
 		};

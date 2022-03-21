@@ -60,6 +60,7 @@ const ProgressBar = ({
 
 	useEffect( () => {
 		let timeoutID = null;
+
 		if ( ! barRef.current ) {
 			return;
 		}
@@ -78,6 +79,7 @@ const ProgressBar = ({
 				fill: 'forwards'
 			}
 		);
+
 		return () => {
 			clearTimeout( timeoutID );
 		};

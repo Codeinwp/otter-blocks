@@ -51,6 +51,7 @@ const GoogleFontsControl = ({
 
 	useEffect( () => {
 		let isMounted = true;
+
 		fetch( 'https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyClGdkPJ1BvgLOol5JAkQY4Mv2lkLYu00k' )
 			.then( blob => blob.json() )
 			.then( data => {
@@ -73,6 +74,7 @@ const GoogleFontsControl = ({
 					}
 				}
 			});
+
 		return () => {
 			isMounted = false;
 		};

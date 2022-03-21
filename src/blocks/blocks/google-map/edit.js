@@ -48,6 +48,7 @@ const Edit = ({
 
 	useEffect( () => {
 		let isMounted = true;
+
 		const setApi = async() => {
 			await window.wp.api.loadPromise.then( () => {
 				settingsRef.current = new window.wp.api.models.Settings();
@@ -85,6 +86,7 @@ const Edit = ({
 		linkRef.current.async = true;
 		linkRef.current.defer = true;
 		linkRef.current.id = 'themeisle-google-map-api-loading';
+
 		return () => {
 			isMounted = false;
 		};

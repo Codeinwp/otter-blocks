@@ -41,6 +41,7 @@ import ButtonControl from './ButtonControl.js';
 const Main = () => {
 	useEffect( () => {
 		let isMounted = true;
+
 		api.loadPromise.then( () => {
 			settingsRef.current = new api.models.Settings();
 
@@ -62,6 +63,7 @@ const Main = () => {
 		if ( ! Boolean( window.otterObj.stylesExist ) && isMounted ) {
 			setRegeneratedDisabled( true );
 		}
+
 		return () => {
 			isMounted = false;
 		};

@@ -135,12 +135,15 @@ const Edit = ({
 	 */
 	useEffect( () => {
 		let isMounted = true;
+
 		api.loadPromise.then( () => {
 			settingsRef.current = new api.models.Settings();
+
 			if ( isMounted ) {
 				setSettingsStatus( true );
 			}
 		});
+
 		return () => {
 			isMounted = false;
 		};
@@ -199,6 +202,7 @@ const Edit = ({
 	 */
 	useEffect( () => {
 		let isMounted = true;
+
 		const getAPIData = async() => {
 			if ( ! isAPILoaded ) {
 				settingsRef?.current?.fetch().then( response => {
@@ -214,6 +218,7 @@ const Edit = ({
 		if ( areSettingsAvailable && attributes.hasCaptcha && ! isAPISaved ) {
 			getAPIData();
 		}
+
 		return () => {
 			isMounted = false;
 		};

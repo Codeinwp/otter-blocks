@@ -64,6 +64,7 @@ const Inspector = ({
 
 	useEffect( () => {
 		let isMounted = true;
+
 		if ( attributes.apiKey && attributes.provider ) {
 			getListIdOptionFrom( attributes.provider, attributes.apiKey,
 				options => {
@@ -95,12 +96,14 @@ const Inspector = ({
 							id: 'themeisle-form-server-error'
 						}
 					);
+
 					if ( isMounted ) {
 						setFetchListIdStatus( 'error' );
 					}
 				}
 			);
 		}
+
 		return () => {
 			isMounted = false;
 		};

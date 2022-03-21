@@ -95,6 +95,7 @@ const CircularProgressBarBlock = ({
 		}, step );
 
 		changeInterval( interv );
+
 		return () => {
 			clearInterval( interv );
 		};

@@ -43,6 +43,7 @@ const Library = ({
 
 	useEffect( () => {
 		let isMounted = true;
+
 		const fetchData = async() => {
 			if ( isMounted ) {
 				if ( ! Boolean( window.themeisleGutenberg.isCompatible ) ) {
@@ -107,6 +108,7 @@ const Library = ({
 		};
 
 		fetchData();
+
 		return () => {
 			isMounted = false;
 		};

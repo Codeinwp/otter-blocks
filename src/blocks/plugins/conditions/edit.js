@@ -38,7 +38,6 @@ import { useSelect } from '@wordpress/data';
 import {
 	Fragment,
 	useEffect,
-	useMemo,
 	memo,
 	useState
 } from '@wordpress/element';
@@ -60,8 +59,6 @@ const Edit = ({
 	setAttributes
 }) => {
 	useEffect( () => {
-
-		//return () => {
 		if ( ! Boolean( attributes?.otterConditions?.length ) ) {
 			return;
 		}
@@ -79,8 +76,6 @@ const Edit = ({
 		}
 
 		setAttributes({ otterConditions });
-
-		//};
 	}, []);
 
 	const [ courses, setCourses ] = useState([]);
@@ -90,6 +85,7 @@ const Edit = ({
 
 	useEffect( () => {
 		let isMounted = true;
+
 		if ( Boolean( window.themeisleGutenberg.hasLearnDash ) && isBoosterActive ) {
 			( async() => {
 				if ( isMounted ) {
@@ -122,6 +118,7 @@ const Edit = ({
 				}
 			})();
 		}
+
 		return () => {
 			isMounted = false;
 		};
@@ -1234,5 +1231,4 @@ const Edit = ({
 	);
 };
 
-//export default Edit;
 export default memo( Edit );

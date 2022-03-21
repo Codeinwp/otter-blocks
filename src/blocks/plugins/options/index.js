@@ -43,6 +43,7 @@ const Options = () => {
 
 	useEffect( () => {
 		let isMounted = true;
+
 		const fetchData = async() => {
 			const data = await apiFetch({ path: 'wp/v2/users/me?context=edit' });
 
@@ -79,6 +80,7 @@ const Options = () => {
 		};
 
 		fetchData();
+
 		return () => {
 			isMounted = false;
 		};
