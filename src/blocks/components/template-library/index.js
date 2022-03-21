@@ -44,7 +44,7 @@ const Library = ({
 	useEffect( () => {
 		let isMounted = true;
 		const fetchData = async() => {
-			if(isMounted ){
+			if ( isMounted ) {
 				if ( ! Boolean( window.themeisleGutenberg.isCompatible ) ) {
 					createNotice(
 						'warning',

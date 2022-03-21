@@ -13,13 +13,13 @@ import {
  */
 import './editor.scss';
 import GridList from './GridList.js';
-import {useMemo} from "@wordpress/element";
+import {useMemo} from '@wordpress/element';
 
 const ImageGrid = ({
 	attributes,
 	onSelectImages
 }) => {
-	const selectImages = useMemo( () => debounce( onSelectImages, 250 ), [] );
+	const selectImages = useMemo( () => debounce( onSelectImages, 250 ), []);
 
 	return (
 		<MediaUploadCheck>

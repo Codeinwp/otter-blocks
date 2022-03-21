@@ -1026,7 +1026,7 @@ const deprecated = [ {
 				/>
 			</Tag>
 		);
-	} )
+	})
 }, {
 	attributes,
 
@@ -1220,7 +1220,7 @@ const deprecated = [ {
 				/>
 			</Tag>
 		);
-	} )
+	})
 }, {
 	attributes: {
 		...attributes,
@@ -1340,7 +1340,7 @@ const deprecated = [ {
 				/>
 			</Tag>
 		);
-	} )
+	})
 }, {
 	attributes: {
 		...attributes,
@@ -1515,7 +1515,7 @@ const deprecated = [ {
 				/>
 			</Tag>
 		);
-	} )
+	})
 }, {
 	attributes: {
 		...omit(
@@ -1925,7 +1925,7 @@ const deprecated = [ {
 				/>
 			</Tag>
 		);
-	} )
+	})
 } ];
 
 export default deprecated;

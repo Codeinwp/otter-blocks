@@ -99,7 +99,7 @@ const Onboarding = () => {
 		save.error( ( response ) => {
 			console.warning( response.responseJSON.message );
 		});
-	}, 1000 ), [ status ] );
+	}, 1000 ), [ status ]);
 
 	return (
 		<Fragment>

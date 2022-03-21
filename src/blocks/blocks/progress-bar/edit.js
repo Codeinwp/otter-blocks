@@ -59,7 +59,7 @@ const ProgressBar = ({
 	const barRef = useRef( null );
 
 	useEffect( () => {
-		let timeoutID = null
+		let timeoutID = null;
 		if ( ! barRef.current ) {
 			return;
 		}

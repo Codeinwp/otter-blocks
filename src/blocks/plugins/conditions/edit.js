@@ -60,24 +60,26 @@ const Edit = ({
 	setAttributes
 }) => {
 	useEffect( () => {
+
 		//return () => {
-			if ( ! Boolean( attributes?.otterConditions?.length ) ) {
-				return;
+		if ( ! Boolean( attributes?.otterConditions?.length ) ) {
+			return;
+		}
+
+		let otterConditions = [ ...attributes.otterConditions ];
+
+		otterConditions.forEach( ( i, n ) => {
+			if ( isEmpty( i ) ) {
+				otterConditions.splice( n, 1 );
 			}
+		});
 
-			let otterConditions = [ ...attributes.otterConditions ];
+		if ( ! Boolean( otterConditions.length ) ) {
+			otterConditions = undefined;
+		}
 
-			otterConditions.forEach( ( i, n ) => {
-				if ( isEmpty( i ) ) {
-					otterConditions.splice( n, 1 );
-				}
-			});
+		setAttributes({ otterConditions });
 
-			if ( ! Boolean( otterConditions.length ) ) {
-				otterConditions = undefined;
-			}
-
-			setAttributes({ otterConditions });
 		//};
 	}, []);
 

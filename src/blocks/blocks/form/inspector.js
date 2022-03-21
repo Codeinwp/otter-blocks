@@ -47,7 +47,7 @@ const Inspector = ({
 			api.loadPromise.then( () => {
 				( new api.models.Settings() ).fetch().done( res => {
 					res.themeisle_blocks_form_emails?.filter( ({ form }) => form === attributes.optionName )?.forEach( item => {
-						if(isMounted ){
+						if ( isMounted ) {
 							setEmail( item?.email );
 							setEmailLoading( true );
 							setSavedEmail( item?.email );
@@ -68,7 +68,7 @@ const Inspector = ({
 			getListIdOptionFrom( attributes.provider, attributes.apiKey,
 				options => {
 					options.splice( 0, 0, { label: __( 'None', 'otter-blocks' ), value: '' });
-					if(isMounted ){
+					if ( isMounted ) {
 						setListIDOptions( options );
 						setFetchListIdStatus( 'ready' );
 					}
@@ -95,7 +95,7 @@ const Inspector = ({
 							id: 'themeisle-form-server-error'
 						}
 					);
-					if(isMounted ){
+					if ( isMounted ) {
 						setFetchListIdStatus( 'error' );
 					}
 				}

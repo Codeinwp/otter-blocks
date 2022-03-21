@@ -13,7 +13,7 @@ const BlockPlaceholder = ({
 	value = {},
 	onSelectImages
 }) => {
-	const selectImages = useCallback( () => debounce( onSelectImages, 250 ), [] );
+	const selectImages = useCallback( () => debounce( onSelectImages, 250 ), []);
 
 	return (
 		<MediaPlaceholder

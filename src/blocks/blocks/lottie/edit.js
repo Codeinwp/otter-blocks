@@ -65,7 +65,7 @@ const Edit = ({
 
 			settings.fetch().then( response => {
 				if ( response.themeisle_allow_json_upload ) {
-					if(isMounted ){
+					if ( isMounted ) {
 						setJSONAllowed( response.themeisle_allow_json_upload );
 					}
 				}

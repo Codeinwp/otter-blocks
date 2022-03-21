@@ -137,7 +137,7 @@ const Edit = ({
 		let isMounted = true;
 		api.loadPromise.then( () => {
 			settingsRef.current = new api.models.Settings();
-			if(isMounted ){
+			if ( isMounted ) {
 				setSettingsStatus( true );
 			}
 		});

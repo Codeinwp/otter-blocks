@@ -64,8 +64,8 @@ const BlockPlaceholder = ({
 
 		}
 		return () => {
-			clearTimeout(timeoutID)
-		}
+			clearTimeout( timeoutID );
+		};
 	}, [ selectedSuggestion ]);
 
 	const bindSuggestionNode = index => {
