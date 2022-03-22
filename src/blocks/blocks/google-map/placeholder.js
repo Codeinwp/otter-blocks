@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -13,6 +18,7 @@ import {
 
 const BlockPlaceholder = ({
 	api,
+	error,
 	isAPILoaded,
 	isAPISaved,
 	isSaving,
@@ -40,7 +46,8 @@ const BlockPlaceholder = ({
 						type="text"
 						placeholder={ __( 'Google Maps API Key', 'otter-blocks' ) }
 						value={ api }
-						className="components-placeholder__input"
+						className={ classnames( 'components-placeholder__input', { 'is-invalid': error }) }
+						help={ error && __( 'The API key could not be validated!', 'otter-blocks' ) }
 						onChange={ changeAPI }
 					/>
 
@@ -49,7 +56,7 @@ const BlockPlaceholder = ({
 						type="submit"
 						onClick={ saveAPIKey }
 						isBusy={ isSaving }
-						disabled={ '' === api }
+						disabled={ '' === api || error }
 					>
 						{ __( 'Save', 'otter-blocks' ) }
 					</Button>

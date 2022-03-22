@@ -84,6 +84,7 @@ const Edit = ({
 		// eslint-disable-next-line camelcase
 		window.gm_authFailure = function() {
 			setAPISaved( false );
+			setErrorState( true );
 		};
 
 		linkRef.current = document.createElement( 'script' );
@@ -127,6 +128,7 @@ const Edit = ({
 	const [ isModalOpen, setModalOpen ] = useState( false );
 	const [ isAdvanced, setAdvanced ] = useState( false );
 	const [ selectedMarker, setSelectedMarker ] = useState({});
+	const [ errorState, setErrorState ] = useState( false );
 
 	const enqueueScript = api => {
 		if ( ! window.isMapLoaded ) {
@@ -449,9 +451,13 @@ const Edit = ({
 			<div { ...blockProps }>
 				<Placeholder
 					api={ api }
+					error={ errorState }
 					isAPILoaded={ isAPILoaded }
 					isAPISaved={ isAPISaved }
-					changeAPI={ setAPI }
+					changeAPI={ ( key ) => {
+						setAPI( key );
+						setErrorState( false );
+					} }
 					saveAPIKey={ saveAPIKey }
 				/>
 			</div>
