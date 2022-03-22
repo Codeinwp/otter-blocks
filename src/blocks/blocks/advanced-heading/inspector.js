@@ -39,6 +39,11 @@ import SizingControl from '../../components/sizing-control/index.js';
 import HTMLAnchorControl from '../../components/html-anchor-control/index.js';
 import ClearButton from '../../components/clear-button/index.js';
 
+/**
+ *
+ * @param {import('./types.js').AdvancedHeadingInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes

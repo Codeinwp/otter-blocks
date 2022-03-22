@@ -20,6 +20,11 @@ import { Fragment } from '@wordpress/element';
  */
 import ImageGrid from './../../components/image-grid/index.js';
 
+/**
+ *
+ * @param {import('./types.js').SliderInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes,

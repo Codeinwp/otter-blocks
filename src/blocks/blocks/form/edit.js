@@ -42,6 +42,11 @@ import Placeholder from './placeholder.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Form component
+ * @param {import('./type').FormProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

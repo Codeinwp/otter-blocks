@@ -29,6 +29,11 @@ import { blockInit } from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Lottie component
+ * @param {import('./types').LottieProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

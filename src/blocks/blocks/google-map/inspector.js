@@ -21,6 +21,11 @@ import { useRef } from '@wordpress/element';
 import { StyleSwitcherInspectorControl } from '../../components/style-switcher-control/index.js';
 import MarkerWrapper from './components/marker-wrapper.js';
 
+/**
+ *
+ * @param {import('./type.js').GoogleMapInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes,

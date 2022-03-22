@@ -19,6 +19,11 @@ import ServerSideRender from '@wordpress/server-side-render';
  */
 const { SelectProducts } = window.otterComponents;
 
+/**
+ * Add To Card Button component
+ * @param {import('./types.js').AddToCartButtonProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes
