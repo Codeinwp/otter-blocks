@@ -221,8 +221,13 @@ const Edit = ({
 	};
 
 	const removeGroup = n => {
-		const otterConditions = [ ...attributes.otterConditions ];
+		let otterConditions = [ ...attributes.otterConditions ];
 		otterConditions.splice( n, 1 );
+
+		if ( ! Boolean( otterConditions.length ) ) {
+			otterConditions = undefined;
+		}
+
 		setAttributes({ otterConditions });
 	};
 
