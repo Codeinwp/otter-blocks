@@ -14,6 +14,11 @@ import {
 	RangeControl
 } from '@wordpress/components';
 
+/**
+ *
+ * @param {import('./types').BusinessHoursInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes

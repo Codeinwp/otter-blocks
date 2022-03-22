@@ -40,6 +40,11 @@ import { blockInit } from '../../helpers/block-utility';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Popup component
+ * @param {import('./types').PopupPros} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

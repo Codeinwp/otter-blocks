@@ -20,6 +20,11 @@ import {
  */
 import LayoutBuilder from './components/layout-builder.js';
 
+/**
+ *
+ * @param {import('./types.js').WooComparisonInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes

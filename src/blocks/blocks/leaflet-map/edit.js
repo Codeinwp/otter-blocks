@@ -43,6 +43,11 @@ export const ActionType = {
 	INIT: 'INIT'
 };
 
+/**
+ * Leaflet Map component
+ * @param {import('./type').LeafletMapProps} props
+ * @returns
+ */
 const Edit = ({
 	clientId,
 	attributes,

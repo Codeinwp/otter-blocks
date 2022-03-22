@@ -19,6 +19,11 @@ import {
  */
 import SyncControl from '../../../components/sync-control/index.js';
 
+/**
+ *
+ * @param {import('./types.js').AccordionGroupInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes,

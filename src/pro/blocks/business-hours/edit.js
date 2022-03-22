@@ -35,6 +35,11 @@ const { blockInit } = window.otterUtils;
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Business Hours component
+ * @param {import('./types').BusinessHoursProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

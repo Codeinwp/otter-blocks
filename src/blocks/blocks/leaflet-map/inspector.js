@@ -27,6 +27,11 @@ import { getLocation } from './utility';
 
 import MarkerWrapper from './components/marker-wrapper.js';
 
+/**
+ *
+ * @param {import('./type').LeafletMapInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes,

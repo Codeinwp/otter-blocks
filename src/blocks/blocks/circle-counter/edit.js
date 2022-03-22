@@ -41,6 +41,11 @@ const { attributes: defaultAttributes } = metadata;
 
 const px = value => value ? `${ value }px` : value;
 
+/**
+ *
+ * @param {import('./types').CircleCounterPros} param0
+ * @returns
+ */
 const CircularProgressBarBlock = ({
 	clientId,
 	attributes,
@@ -48,6 +53,7 @@ const CircularProgressBarBlock = ({
 	isSelected,
 	toggleSelection
 }) => {
+
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );

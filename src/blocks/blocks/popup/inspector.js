@@ -21,6 +21,11 @@ import { Fragment } from '@wordpress/element';
 
 import { applyFilters } from '@wordpress/hooks';
 
+/**
+ *
+ * @param {import('./types').PopupInspectorProps} props
+ * @returns
+ */
 const ProFeatures = () => {
 	return (
 		<Fragment>

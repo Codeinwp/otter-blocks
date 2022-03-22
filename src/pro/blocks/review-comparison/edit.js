@@ -54,6 +54,11 @@ let tableDescription = [];
 let tableStatistics = [];
 let tableLinks = [];
 
+/**
+ * Review Comparison component
+ * @param {import('./types').ReviewComparisionProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

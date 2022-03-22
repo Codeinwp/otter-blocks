@@ -33,6 +33,11 @@ import Inspector from './inspector.js';
 
 const { blockInit } = window.otterUtils;
 
+/**
+ * Woo Comparison component
+ * @param {import('./types.js').WooComparisonProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

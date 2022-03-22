@@ -39,6 +39,11 @@ import { blockInit } from '../../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Icon List Item component
+ * @param {import('./types').IconListItemProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

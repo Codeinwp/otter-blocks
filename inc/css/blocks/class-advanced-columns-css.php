@@ -1019,16 +1019,28 @@ class Advanced_Columns_CSS extends Base_CSS {
 		$border         = array();
 		$border_radius  = array();
 
-		if ( isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'] ) {
+		if ( isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'] && ! isset( $attrs['padding'] ) ) {
 			$padding['top']    = isset( $attrs['paddingTop'] ) ? $attrs['paddingTop'] . 'px' : '20px';
 			$padding['bottom'] = isset( $attrs['paddingBottom'] ) ? $attrs['paddingBottom'] . 'px' : '20px';
 			$padding['left']   = isset( $attrs['paddingLeft'] ) ? $attrs['paddingLeft'] . 'px' : '20px';
 			$padding['right']  = isset( $attrs['paddingRight'] ) ? $attrs['paddingRight'] . 'px' : '20px';
-		} elseif ( isset( $attrs['padding'] ) && ! is_array( $attrs['padding'] ) ) {
+		} elseif ( isset( $attrs['padding'] ) && ! is_array( $attrs['padding'] ) && ! isset( $attrs['paddingType'] ) ) {
 			$padding['top']    = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
 			$padding['bottom'] = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
 			$padding['left']   = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
 			$padding['right']  = isset( $attrs['padding'] ) ? $attrs['padding'] . 'px' : '20px';
+		} else {
+			$padding['top']    = isset( $attrs['paddingTop'] ) ? $attrs['paddingTop'] . 'px' : '20px';
+			$padding['bottom'] = isset( $attrs['paddingBottom'] ) ? $attrs['paddingBottom'] . 'px' : '20px';
+			$padding['left']   = isset( $attrs['paddingLeft'] ) ? $attrs['paddingLeft'] . 'px' : '20px';
+			$padding['right']  = isset( $attrs['paddingRight'] ) ? $attrs['paddingRight'] . 'px' : '20px';
+
+			if ( ! isset( $attrs['paddingTop'] ) || ! isset( $attrs['paddingBottom'] ) || ! isset( $attrs['paddingLeft'] ) || ! isset( $attrs['paddingRight'] ) ) {
+				$padding['top']    = '20px';
+				$padding['bottom'] = '20px';
+				$padding['left']   = '20px';
+				$padding['right']  = '20px';
+			}
 		}
 
 		if ( isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'] ) {
@@ -1099,12 +1111,20 @@ class Advanced_Columns_CSS extends Base_CSS {
 			}
 		}
 
-		if ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] ) {
+		if ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] && ! isset( $attrs['margin'] ) ) {
 			$margin['top']    = isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : '20px';
 			$margin['bottom'] = isset( $attrs['marginBottom'] ) ? $attrs['marginBottom'] . 'px' : '20px';
-		} elseif ( isset( $attrs['margin'] ) && ! is_array( $attrs['margin'] ) ) {
-			$margin['top']    = isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : '20px';
-			$margin['bottom'] = isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : '20px';
+		} elseif ( isset( $attrs['margin'] ) && ! is_array( $attrs['margin'] ) && ! isset( $attrs['marginType'] ) ) {
+			$margin['top']    = isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : ( ( isset( $attrs['margin'] ) && is_numeric( $attrs['margin'] ) ) ? $attrs['margin'] . 'px' : '20px' );
+			$margin['bottom'] = isset( $attrs['marginBottom'] ) ? $attrs['marginBottom'] . 'px' : ( ( isset( $attrs['margin'] ) && is_numeric( $attrs['margin'] ) ) ? $attrs['margin'] . 'px' : '20px' );
+		} else {
+			if ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] ) {
+				$margin['top']    = isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : ( isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : '20px' );
+				$margin['bottom'] = isset( $attrs['margin'] ) ? $attrs['margin'] . 'px' : ( isset( $attrs['marginBottom'] ) ? $attrs['marginBottom'] . 'px' : '20px' );
+			} else {
+				$margin['top']    = isset( $attrs['marginTop'] ) ? $attrs['marginTop'] . 'px' : ( ( isset( $attrs['margin'] ) && is_numeric( $attrs['margin'] ) ) ? $attrs['margin'] . 'px' : '20px' );
+				$margin['bottom'] = isset( $attrs['marginBottom'] ) ? $attrs['marginBottom'] . 'px' : ( ( isset( $attrs['margin'] ) && is_numeric( $attrs['margin'] ) ) ? $attrs['margin'] . 'px' : '20px' );
+			}
 		}
 
 		if ( isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'] ) {
@@ -1247,6 +1267,10 @@ class Advanced_Columns_CSS extends Base_CSS {
 		}
 
 		$defaults = json_decode( $defaults, true );
+
+		if ( ! isset( $defaults[ $block ] ) ) {
+			return;
+		}
 
 		$block = array(
 			'attrs' => $defaults[ $block ],
