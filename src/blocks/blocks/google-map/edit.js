@@ -81,6 +81,10 @@ const Edit = ({
 
 		window.isMapLoaded = window.isMapLoaded || false;
 		window[ `removeMarker_${ clientId.substr( 0, 8 ) }` ] = removeMarker;
+		// eslint-disable-next-line camelcase
+		window.gm_authFailure = function() {
+			setAPISaved( false );
+		};
 
 		linkRef.current = document.createElement( 'script' );
 		linkRef.current.type = 'text/javascript';
