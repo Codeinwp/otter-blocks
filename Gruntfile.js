@@ -61,7 +61,8 @@ module.exports = function( grunt ) {
 					'otter-blocks.php',
 					'plugins/blocks-animation/blocks-animation.php',
 					'plugins/blocks-css/blocks-css.php',
-					'plugins/blocks-export-import/blocks-export-imports.php'
+					'plugins/blocks-export-import/blocks-export-imports.php',
+					'plugins/otter-pro/otter-pro.php'
 				]
 			},
 			php: {
@@ -77,6 +78,13 @@ module.exports = function( grunt ) {
 					flags: ''
 				},
 				src: [ 'inc/class-main.php' ]
+			},
+			pro: {
+				options: {
+					prefix: 'OTTER_PRO_VERSION\', \'',
+					flags: ''
+				},
+				src: [ 'plugins/otter-pro/otter-pro.php' ]
 			}
 		},
 		wp_readme_to_markdown: {

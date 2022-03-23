@@ -78,3 +78,36 @@ do
 
   cd -
 done
+
+BUILD_NAME="otter-pro"
+export BUILD_NAME
+
+if [ ! -z "$1" ] && [ $1 == 'development' ]; then
+  DIST_FOLDER="$BUILD_NAME-dev"
+else
+  DIST_FOLDER=$BUILD_NAME
+fi
+
+echo "BUILD_NAME=$BUILD_NAME"
+
+cd plugins/$BUILD_NAME
+
+rsync -rc --exclude-from ".distignore" "./" "../../dist/$DIST_FOLDER"
+
+cd ../..
+
+if [ ! -d "dist/$DIST_FOLDER/build" ]; then
+  mkdir "dist/$DIST_FOLDER/build"
+fi
+
+cp build/pro dist/$DIST_FOLDER -r
+
+cd dist
+
+mv $DIST_FOLDER/pro $DIST_FOLDER/build/pro
+
+zip -r "../artifact/$DIST_FOLDER" "./$DIST_FOLDER/" -x "*.wordpress-org*"
+
+echo "BUILD GENERATED: $BUILD_NAME"
+
+cd -

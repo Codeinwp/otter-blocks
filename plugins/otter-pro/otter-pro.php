@@ -29,3 +29,17 @@ define( 'OTTER_PRO_PATH', dirname( __FILE__ ) );
 define( 'OTTER_PRO_BUILD_URL', plugins_url( '/', __FILE__ ) . 'build/' );
 define( 'OTTER_PRO_BUILD_PATH', dirname( __FILE__ ) . '/build/' );
 define( 'OTTER_PRO_VERSION', '1.7.5' );
+
+add_action(
+	'plugins_loaded',
+	function () {
+		// call this only if Gutenberg is active.
+		if ( function_exists( 'register_block_type' ) ) {
+			require_once dirname( __FILE__ ) . '/inc/class-main.php';
+
+			if ( class_exists( '\ThemeIsle\OtterPro\MainBlocks_Export_Import' ) ) {
+				\ThemeIsle\OtterPro\Main::instance();
+			}
+		}
+	}
+);
