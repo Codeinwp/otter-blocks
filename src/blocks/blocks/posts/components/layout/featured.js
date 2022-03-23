@@ -8,13 +8,19 @@ import classNames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
+import { applyFilters } from '@wordpress/hooks';
+
 /**
  * Internal dependencies
  */
 
 import Thumbnail from './thumbnail.js';
-import { PostsCustomMeta, PostsDescription, PostsMeta, PostsTitle } from './index.js';
 
+import {
+	PostsDescription,
+	PostsMeta,
+	PostsTitle
+} from './index.js';
 
 const FeaturedPost = ({
 	post,
@@ -25,14 +31,6 @@ const FeaturedPost = ({
 	if ( ! post  ) {
 		return '';
 	}
-
-	const getTemplateType = template => {
-		if ( template?.startsWith( 'custom_' ) ) {
-			return 'custom';
-		}
-
-		return template;
-	};
 
 	return (
 		<div className={ classNames( 'o-featured-post', { 'has-shadow': attributes.imageBoxShadow }) }>
@@ -46,20 +44,18 @@ const FeaturedPost = ({
 					}}
 				/>
 			) }
+
 			<div className="o-posts-grid-post-body">
 				{ attributes.template.map( element => {
-					switch ( getTemplateType( element ) ) {
+					switch ( element ) {
 					case 'title':
 						return <PostsTitle attributes={ attributes } element={ element } post={ post } />;
 					case 'meta':
 						return <PostsMeta attributes={ attributes } element={ element } post={ post } author={ author } category={ category } />;
 					case 'description':
 						return <PostsDescription attributes={ attributes } element={ element } post={ post } />;
-					case 'custom':
-						const customFieldData = attributes.customMetas?.filter( ({ id }) => id === element )?.pop();
-						return <PostsCustomMeta customFieldData={ customFieldData } />;
 					default:
-						return '';
+						return applyFilters( 'otter.postsBlock.templateLoop', '', element, attributes );
 					}
 				}) }
 			</div>

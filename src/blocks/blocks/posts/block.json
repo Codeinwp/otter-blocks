@@ -32,12 +32,6 @@
 				"description"
 			]
 		},
-		"customMetas": {
-			"type": "array",
-			"items": {
-				"type": "object"
-			}
-		},
 		"categories": {
 			"type": "array",
 			"items": {

@@ -11,17 +11,13 @@ import {
 	sprintf
 } from '@wordpress/i18n';
 
-import {
-	Fragment,
-	useContext
-} from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
  */
 import Thumbnail from './thumbnail.js';
 import { unescapeHTML, formatDate } from '../../../../helpers/helper-functions.js';
-import { CustomMetasContext } from '../../edit.js';
 
 const Layout = ({
 	attributes,
@@ -29,14 +25,6 @@ const Layout = ({
 	categoriesList,
 	authors
 }) => {
-	const getTemplateType = template => {
-		if ( template?.startsWith( 'custom_' ) ) {
-			return 'custom';
-		}
-
-		return template;
-	};
-
 	return (
 		<div
 			className={
@@ -89,20 +77,17 @@ const Layout = ({
 									) }
 								>
 									{ attributes.template.map( element => {
-										switch ( getTemplateType( element ) ) {
+										switch ( element ) {
 										case 'category':
-											return <PostsCategory attributes={attributes} element={element} category={category} categoriesList={categoriesList}/>;
+											return <PostsCategory attributes={ attributes } element={ element } category={ category } categoriesList={ categoriesList }/>;
 										case 'title':
-											return <PostsTitle attributes={attributes} element={element} post={post} />;
+											return <PostsTitle attributes={ attributes } element={ element } post={ post } />;
 										case 'meta':
-											return <PostsMeta attributes={attributes} element={element} post={post} author={author} category={category} />;
+											return <PostsMeta attributes={attributes} element={ element } post={ post } author={ author } category={ category } />;
 										case 'description':
-											return <PostsDescription attributes={attributes} element={element} post={post} />;
-										case 'custom':
-											const customFieldData = attributes.customMetas?.filter( ({ id }) => id === element )?.pop();
-											return <PostsCustomMeta customFieldData={customFieldData} />;
+											return <PostsDescription attributes={attributes} element={ element } post={ post } />;
 										default:
-											return '';
+											return applyFilters( 'otter.postsBlock.templateLoop', '', element, attributes );
 										}
 									}) }
 								</div>
@@ -188,21 +173,5 @@ export const PostsDescription = ({attributes,  element, post }) => {
 	}
 	return '';
 };
-
-export const PostsCustomMeta = ({ customFieldData }) => {
-	if ( ! customFieldData || ( ! customFieldData.display ) || ( ! window?.themeisleGutenberg?.hasNeveSupport?.hasNevePro ) ) {
-		return <Fragment></Fragment>;
-	}
-
-	const { acfFieldDict } = useContext( CustomMetasContext );
-	const meta = acfFieldDict[ customFieldData.field ];
-
-	return (
-		<div className="o-posts-custom-field">
-			{ ( meta?.prepend || '' ) + ( meta?.value ? meta.value : ( meta?.default_value || '' ) ) + ( meta?.append || '' ) }
-		</div>
-	);
-};
-
 
 export default Layout;

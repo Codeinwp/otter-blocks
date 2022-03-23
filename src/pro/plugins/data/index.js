@@ -1,26 +1,40 @@
 /**
  * WordPress dependencies
  */
+import { pick } from 'lodash';
+
 import apiFetch from '@wordpress/api-fetch';
 
-import { createReduxStore, register } from '@wordpress/data';
+import {
+	createReduxStore,
+	register
+} from '@wordpress/data';
 
 const DEFAULT_STATE = {
-	courses: [],
-	groups: []
+	acfGroups: [],
+	acfFields: {},
+	learndDashCourses: [],
+	learndDashGroups: []
 };
 
 const actions = {
 	setCourses( courses ) {
 		return {
-			type: 'SET_COURSES',
+			type: 'SET_LEARNDASH_COURSES',
 			courses
 		};
 	},
 	setGroups( groups ) {
 		return {
-			type: 'SET_GROUPS',
+			type: 'SET_LEARNDASH_GROUPS',
 			groups
+		};
+	},
+	setACFData( groups, fields ) {
+		return {
+			type: 'SET_ACF_DATA',
+			groups,
+			fields
 		};
 	},
 	fetchFromAPI( path ) {
@@ -33,17 +47,25 @@ const actions = {
 
 const store = createReduxStore( 'otter-pro', {
 	reducer( state = DEFAULT_STATE, action ) {
-		if ( 'SET_COURSES' === action.type ) {
+		if ( 'SET_LEARNDASH_COURSES' === action.type ) {
 			return {
 				...state,
-				courses: action.courses
+				learndDashCourses: action.courses
 			};
 		}
 
-		if ( 'SET_GROUPS' === action.type ) {
+		if ( 'SET_LEARNDASH_GROUPS' === action.type ) {
 			return {
 				...state,
-				groups: action.groups
+				learndDashGroups: action.groups
+			};
+		}
+
+		if ( 'SET_ACF_DATA' === action.type ) {
+			return {
+				...state,
+				acfGroups: action.groups,
+				acfFields: action.fields
 			};
 		}
 
@@ -51,11 +73,17 @@ const store = createReduxStore( 'otter-pro', {
 	},
 
 	selectors: {
-		getCourses( state ) {
-			return state.courses;
+		getLearnDashCourses( state ) {
+			return state.learndDashCourses;
 		},
-		getGroups( state ) {
-			return state.groups;
+		getLearnDashGroups( state ) {
+			return state.learndDashGroups;
+		},
+		getACFData( state ) {
+			return {
+				groups: state.acfGroups,
+				fields: state.acfFields
+			};
 		}
 	},
 
@@ -66,7 +94,11 @@ const store = createReduxStore( 'otter-pro', {
 	},
 
 	resolvers: {
-		*getCourses() {
+		*getLearnDashCourses() {
+			if ( ! Boolean( window.otterPro.hasLearnDash ) ) {
+				return;
+			}
+
 			const data = yield actions.fetchFromAPI( 'ldlms/v2/sfwd-courses' );
 
 			const courses = data.map( datum => ({
@@ -77,7 +109,11 @@ const store = createReduxStore( 'otter-pro', {
 			return actions.setCourses( courses );
 		},
 
-		*getGroups() {
+		*getLearnDashGroups() {
+			if ( ! Boolean( window.otterPro.hasLearnDash ) ) {
+				return;
+			}
+
 			const data = yield actions.fetchFromAPI( 'ldlms/v2/groups' );
 
 			const groups = data.map( datum => ({
@@ -86,6 +122,36 @@ const store = createReduxStore( 'otter-pro', {
 			}) );
 
 			return actions.setGroups( groups );
+		},
+
+		*getACFData() {
+			if ( ! window.acf ) {
+				return;
+			}
+
+			const data = yield actions.fetchFromAPI( 'otter/v1/acf-fields' );
+
+			if ( data?.success ) {
+				const groups = data.groups;
+				const fields = groups
+					?.map( ({ fields, data }) => {
+						return fields.map( field => {
+							field.urlLocation = `${ window.themeisleGutenberg?.rootUrl || '' }/wp-admin/post.php?post=${ data.ID }&action=edit`;
+							return field;
+						});
+					})
+					.flat()
+					.reduce( ( acc, field ) => {
+						if ( field.key && field.label ) {
+							acc[ field.key ] = pick( field, [ 'label', 'type', 'prepend', 'append', 'default_value', 'value', 'urlLocation' ]);
+						}
+						return acc;
+					}, {});
+
+				return actions.setACFData( groups, fields );
+			}
+
+			return actions.setACFData([], {});
 		}
 	}
 });

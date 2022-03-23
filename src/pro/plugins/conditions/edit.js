@@ -198,13 +198,13 @@ const Edit = ({
 		}
 
 		if ( Boolean( window.otterPro.hasLearnDash ) ) {
-			courses = select( 'otter-pro' ).getCourses();
+			courses = select( 'otter-pro' ).getLearnDashCourses();
 
 			if ( ! isEmpty( courses ) ) {
 				coursesStatus = 'loaded';
 			}
 
-			courseGroups = select( 'otter-pro' ).getGroups();
+			courseGroups = select( 'otter-pro' ).getLearnDashGroups();
 
 			if ( ! isEmpty( courseGroups ) ) {
 				courseGroupsStatus = 'loaded';
