@@ -42,6 +42,7 @@ const Edit = ({
 
 	const labelRef = useRef( null );
 	const inputRef = useRef( null );
+	const helpRef = useRef( null );
 
 
 	useEffect( () => {
@@ -55,7 +56,10 @@ const Edit = ({
 			inputRef.current?.style?.setProperty( '--inputWidth', per( attributes.inputWidth ) );
 		}
 		if ( labelRef.current ) {
-			labelRef.current?.style?.setProperty( '--labelColor', per( attributes.labelColor ) );
+			labelRef.current?.style?.setProperty( '--labelColor',  attributes.labelColor || null );
+		}
+		if ( helpRef.current ) {
+			helpRef.current?.style?.setProperty( '--labelColor', attributes.labelColor || null );
 		}
 	}, [ inputRef.current, labelRef.current, attributes ]);
 
@@ -69,7 +73,7 @@ const Edit = ({
 			<div { ...blockProps }>
 				<label
 					ref={labelRef}
-					htmlFor={ attributes.id }
+					htmlFor={ attributes.id ? attributes.id + '-input' : '' }
 					className="otter-form-textarea-label"
 				>
 					<RichText
@@ -89,13 +93,23 @@ const Edit = ({
 					ref={inputRef}
 					placeholder={ attributes.placeholder }
 					name={ attributes.id }
-					id={ attributes.id }
+					id={ attributes.id ? attributes.id + '-input' : '' }
 					required={ attributes.isRequired }
 					disabled
 					rows={ 10 }
 					className="otter-form-textarea-input components-textarea-control__input"
 				>
 				</textarea>
+				{
+					attributes.helpText && (
+						<span
+							className="o-form-help"
+							ref={helpRef}
+						>
+							{attributes.helpText}
+						</span>
+					)
+				}
 			</div>
 		</Fragment>
 	);

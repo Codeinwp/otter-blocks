@@ -1,9 +1,7 @@
 import {
-	InnerBlocks,
-	useBlockProps
+	useBlockProps,
+	RichText
 } from '@wordpress/block-editor';
-
-import classnames from 'classnames';
 
 import { __ } from '@wordpress/i18n';
 

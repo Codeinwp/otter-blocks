@@ -19,6 +19,9 @@ type Attributes = {
 	inputBorderWidth: number
 	inputWidth: number
 	submitMessage: string
+	submitMessageColor: string
+	submitBackgroundColor: string
+	submitColor: string
 }
 
 export type FormProps = BlockProps<Attributes>

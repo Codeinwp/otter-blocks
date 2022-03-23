@@ -43,6 +43,7 @@ class Form_Input_CSS extends Base_CSS {
 					array(
 						'property' => '--inputWidth',
 						'value'    => 'inputWidth',
+						'unit'     => '%'
 					)
 				),
 			)

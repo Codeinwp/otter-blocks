@@ -61,8 +61,20 @@ class Form_CSS extends Base_CSS {
 					array(
 						'property' => '--inputWidth',
 						'value'    => 'inputWidth',
-						'unit'     => 'px'
-					)
+						'unit'     => '%'
+					),
+					array(
+						'property' => '--submitBackground',
+						'value'    => 'submitBackgroundColor',
+					),
+					array(
+						'property' => '--submitColor',
+						'value'    => 'submitColor',
+					),
+					array(
+						'property' => '--submitMsgColor',
+						'value'    => 'submitMessageColor',
+					),
 				),
 			)
 		);

@@ -63,6 +63,15 @@
 		},
 		"inputWidth": {
 			"type": "number"
+		},
+		"submitMessageColor": {
+			"type": "string"
+		},
+		"submitBackgroundColor": {
+			"type": "string"
+		},
+		"submitColor": {
+			"type": "string"
 		}
 	},
 	"supports": {

@@ -34,7 +34,7 @@ const Save = ({
 				<InnerBlocks.Content />
 
 				<div className="wp-block-button">
-					<button className="wp-block-button__link">
+					<button className="wp-block-button__link" type='submit'>
 						{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
 					</button>
 				</div>
