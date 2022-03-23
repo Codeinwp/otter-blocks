@@ -7,8 +7,6 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
-use Prophecy\Doubler\Generator\Node\ReturnTypeNode;
-
 /**
  * Class Plugin_Card_Server
  */

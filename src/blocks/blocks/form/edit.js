@@ -41,11 +41,9 @@ import { blockInit } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 import { getListIdOptionFrom } from './integrations';
-import { key } from '@wordpress/icons/build-types';
-
 const { attributes: defaultAttributes } = metadata;
 
-export const FormContext = createContext();
+export const FormContext = createContext({});
 
 /**
  * Form component
@@ -245,7 +243,7 @@ const Edit = ({
 	 */
 	useEffect( () => {
 		let controller = new AbortController();
-		const getAPIData = async() => {
+		const getAPIData = () => {
 			if ( ! isAPILoaded ) {
 				settingsRef?.current?.fetch({ signal: controller.signal }).then( response => {
 					controller = null;
@@ -415,7 +413,7 @@ const Edit = ({
 						hasUpdated = true;
 					}
 					if ( emails[index].emailSubject !== attributes.subject ) {
-						emails[index].emailSubject = attributes.emailSubject; // update the value
+						emails[index].emailSubject = attributes.subject; // update the value
 						hasUpdated = true;
 					}
 					if ( emails[index].submitMessage !== attributes.submitMessage ) {
@@ -481,7 +479,7 @@ const Edit = ({
 					hasUpdated = emails[index].integration.apiKey !== apiKey;
 					hasUpdatedNotice = emails[index].integration.apiKey !== apiKey;
 
-					emails[index].integration.apiKey = attributes.apiKey;
+					emails[index].integration.apiKey = apiKey;
 				}
 			});
 
@@ -538,7 +536,7 @@ const Edit = ({
 			blockRef.current?.style?.setProperty( '--padding', px( attributes.inputPadding ) );
 			blockRef.current?.style?.setProperty( '--borderRadius', px( attributes.inputBorderRadius ) );
 			blockRef.current?.style?.setProperty( '--borderWidth', px( attributes.inputBorderWidth ) );
-			blockRef.current?.style?.setProperty( '--borderColor', attributes.borderColor );
+			blockRef.current?.style?.setProperty( '--borderColor', attributes.inputBorderColor );
 			blockRef.current?.style?.setProperty( '--labelColor', attributes.labelColor );
 			blockRef.current?.style?.setProperty( '--inputWidth', per( attributes.inputWidth ) );
 		}
