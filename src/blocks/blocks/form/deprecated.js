@@ -47,7 +47,7 @@ const deprecated = [ {
 	save: ({
 		attributes
 	}) => {
-		const hasIntegrationActive = attributes.provider && attributes.provider && apiKey && attributes.listId;apiKey && attributes.listId;
+		const hasIntegrationActive = attributes.provider && attributes.apiKey && attributes.listId;
 
 		const blockProps = useBlockProps.save({
 			id: attributes.id,
