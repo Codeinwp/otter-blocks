@@ -32,6 +32,12 @@ const Inspector = ({
 					onChange={ placeholder => setAttributes({ placeholder }) }
 				/>
 
+				<TextControl
+					label={ __( 'Help Text', 'otter-blocks' ) }
+					value={ attributes.helpText }
+					onChange={ helpText => setAttributes({ helpText }) }
+				/>
+
 				<ToggleControl
 					label={ __( 'Is this field required?', 'otter-blocks' ) }
 					help={ __( 'If true, the input field must be filled out before submitting the form.', 'otter-blocks' ) }

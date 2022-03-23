@@ -525,8 +525,8 @@ const Edit = ({
 	const blockRef = useRef( null );
 
 	useEffect( () => {
-		const px = x => x ? x + 'px' : x;
-		const per = x => x ? x + '%' : x;
+		const px = x => x ? x + 'px' : null;
+		const per = x => x ? x + '%' : null;
 
 		/**
 		 * TODO: Refactor this based on #748
@@ -536,9 +536,12 @@ const Edit = ({
 			blockRef.current?.style?.setProperty( '--padding', px( attributes.inputPadding ) );
 			blockRef.current?.style?.setProperty( '--borderRadius', px( attributes.inputBorderRadius ) );
 			blockRef.current?.style?.setProperty( '--borderWidth', px( attributes.inputBorderWidth ) );
-			blockRef.current?.style?.setProperty( '--borderColor', attributes.inputBorderColor );
-			blockRef.current?.style?.setProperty( '--labelColor', attributes.labelColor );
+			blockRef.current?.style?.setProperty( '--borderColor', attributes.inputBorderColor || null );
+			blockRef.current?.style?.setProperty( '--labelColor', attributes.labelColor || null );
 			blockRef.current?.style?.setProperty( '--inputWidth', per( attributes.inputWidth ) );
+			blockRef.current?.style?.setProperty( '--submitBackground', attributes.submitBackgroundColor || null );
+			blockRef.current?.style?.setProperty( '--submitColor', attributes.submitColor || null );
+			blockRef.current?.style?.setProperty( '--submitMsgColor', attributes.submitMessageColor || null );
 		}
 	}, [ blockRef.current, attributes ]);
 
@@ -592,10 +595,13 @@ const Edit = ({
 									)
 								}
 
-								<div className="wp-block-button">
-									<button className="wp-block-button__link">
+								<div className="wp-block-button has-submit-msg">
+									<button className="wp-block-button__link" type='submit' disabled>
 										{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
 									</button>
+									<div className="o-form-server-response success">
+										{ attributes.submitMessage || __( 'Success', 'otter-blocks' ) }
+									</div>
 								</div>
 							</form>
 						) : (

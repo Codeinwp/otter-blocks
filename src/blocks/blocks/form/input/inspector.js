@@ -12,6 +12,12 @@ import {
 	ToggleControl
 } from '@wordpress/components';
 
+/**
+ *
+ * @param {import('./types').FormInputProps} props
+ * @returns {JSX.Element}
+ * @constructor
+ */
 const Inspector = ({
 	attributes,
 	setAttributes
@@ -53,8 +59,14 @@ const Inspector = ({
 
 				<TextControl
 					label={ __( 'Placeholder', 'otter-blocks' ) }
-					value={ attributes.placeholer }
+					value={ attributes.placeholder }
 					onChange={ placeholder => setAttributes({ placeholder }) }
+				/>
+
+				<TextControl
+					label={ __( 'Help Text', 'otter-blocks' ) }
+					value={ attributes.helpText }
+					onChange={ helpText => setAttributes({ helpText }) }
 				/>
 
 				<ToggleControl
@@ -100,11 +112,6 @@ const Inspector = ({
 						value: attributes.labelColor,
 						onChange: labelColor => setAttributes({ labelColor }),
 						label: __( 'Label Color', 'otter-blocks' )
-					},
-					{
-						value: attributes.inputBorderColor,
-						onChange: inputBorderColor => setAttributes({ inputBorderColor }),
-						label: __( 'Border Color', 'otter-blocks' )
 					}
 				] }
 			/>

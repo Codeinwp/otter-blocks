@@ -208,6 +208,21 @@ const Inspector = ({
 						value: attributes.inputBorderColor,
 						onChange: inputBorderColor => setAttributes({ inputBorderColor }),
 						label: __( 'Border Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.submitColor,
+						onChange: submitColor => setAttributes({ submitColor }),
+						label: __( 'Submit Text Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.submitBackgroundColor,
+						onChange: submitBackgroundColor => setAttributes({ submitBackgroundColor }),
+						label: __( 'Submit Background Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.submitMessageColor,
+						onChange: submitMessageColor => setAttributes({ submitMessageColor }),
+						label: __( 'Succeful Submit Message Color', 'otter-blocks' )
 					}
 				] }
 			/>

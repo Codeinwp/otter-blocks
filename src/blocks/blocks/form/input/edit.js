@@ -42,10 +42,11 @@ const Edit = ({
 
 	const labelRef = useRef( null );
 	const inputRef = useRef( null );
+	const helpRef = useRef( null );
 
 
 	useEffect( () => {
-		const per = x => x ? x + '%' : x;
+		const per = x => x ? x + '%' : null;
 
 		/**
 		 * TODO: Refactor this based on #748
@@ -55,9 +56,12 @@ const Edit = ({
 			inputRef.current?.style?.setProperty( '--inputWidth', per( attributes.inputWidth ) );
 		}
 		if ( labelRef.current ) {
-			labelRef.current?.style?.setProperty( '--labelColor', per( attributes.labelColor ) );
+			labelRef.current?.style?.setProperty( '--labelColor', attributes.labelColor || null );
 		}
-	}, [ inputRef.current, labelRef.current, attributes ]);
+		if ( helpRef.current ) {
+			helpRef.current?.style?.setProperty( '--labelColor', attributes.labelColor || null );
+		}
+	}, [ inputRef.current, labelRef.current, helpRef.current, attributes.labelColor, attributes.inputWidth ]);
 
 	return (
 		<Fragment>
@@ -95,6 +99,16 @@ const Edit = ({
 					disabled
 					className="otter-form-input components-text-control__input"
 				/>
+				{
+					attributes.helpText && (
+						<span
+							className="o-form-help"
+							ref={helpRef}
+						>
+							{attributes.helpText}
+						</span>
+					)
+				}
 			</div>
 		</Fragment>
 	);

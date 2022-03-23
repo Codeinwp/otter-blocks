@@ -154,7 +154,7 @@ const collectAndSendInputFormData = ( form, btn ) => {
 			const res = response;
 			msgAnchor?.classList.remove( 'loading' );
 			const msg = document.createElement( 'div' );
-			msg.classList.add( 'otter-form-server-response' );
+			msg.classList.add( 'o-form-server-response' );
 
 			if ( res?.success ) {
 				msg.innerHTML = res?.submitMessage ? res.submitMessage :  __( 'Success', 'otter-blocks' );

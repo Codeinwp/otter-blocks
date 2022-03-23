@@ -29,6 +29,9 @@
 		},
 		"inputWidth": {
 			"type": "number"
+		},
+		"helpText": {
+			"type": "string"
 		}
 	},
 	"supports": {
