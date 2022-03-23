@@ -47,7 +47,7 @@ const BlockPlaceholder = ({
 						placeholder={ __( 'Google Maps API Key', 'otter-blocks' ) }
 						value={ api }
 						className={ classnames( 'components-placeholder__input', { 'is-invalid': error }) }
-						help={ error && __( 'The API key could not be validated!', 'otter-blocks' ) }
+						help={ error && __( 'The API key could not be validated.', 'otter-blocks' ) }
 						onChange={ changeAPI }
 					/>
 
