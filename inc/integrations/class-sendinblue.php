@@ -184,13 +184,13 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 
     /**
      * Get the data from the provider.
-     * @param Form_Data_Request $data
+     * @param Form_Data_Request $request
      * @return false[]|mixed
      */
-	public function get_provider_data($data)
+	public function get_information_from_provider($request)
 	{
-        if( $data->is_set( 'action' ) ) {
-            if ($data->get('action') == 'listId') {
+        if( $request->is_set( 'action' ) ) {
+            if ($request->get('action') == 'listId') {
                 return $this->get_lists();
             }
         }

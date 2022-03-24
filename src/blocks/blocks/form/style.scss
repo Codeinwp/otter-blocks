@@ -6,8 +6,9 @@
 	--labelColor: inherit;
 	--inputWidth: 100%;
 	--requiredColor: red;
-	--submitBackground: var(--wp--preset--color--primary);
-	--submitColor: var(--wp--preset--color--background);
+	--submitBackground: var(--wp-admin-theme-color);
+	--submitBackgroundHover: var(--wp-admin-theme-color-darker-10);
+	--submitColor: white;
 	--submitMsgColor: green;
 
 	.otter-form-consent {
@@ -22,9 +23,16 @@
 
 	.wp-block-button {
 		margin-top: 1.5em;
-		.wp-block-button__link {
+		.wp-block-button__link, .o-form-submit {
+			font-size: 1.5rem;
+			height: auto;
+			padding: 10px 20px;
 			color: var(--submitColor);
 			background-color: var(--submitBackground);
+
+			&:hover {
+				background-color: var(--submitBackgroundHover);
+			}
 		}
 	}
 

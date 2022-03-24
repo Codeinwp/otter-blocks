@@ -68,6 +68,10 @@ class Form_CSS extends Base_CSS {
 						'value'    => 'submitBackgroundColor',
 					),
 					array(
+						'property' => '--submitBackgroundHover',
+						'value'    => 'submitBackgroundColorHover',
+					),
+					array(
 						'property' => '--submitColor',
 						'value'    => 'submitColor',
 					),

@@ -7,6 +7,10 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
+use WP_Error;
+use WP_HTTP_Response;
+use WP_REST_Response;
+
 /**
  * Class Form_Data_Response
  */
@@ -75,7 +79,7 @@ class Form_Data_Response {
 	/**
 	 * Build form response.
 	 *
-	 * @return mixed|\WP_REST_Response
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	public function build_response() {
 		// TODO: We can to addition operation when returning the response.

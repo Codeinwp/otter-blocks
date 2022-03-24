@@ -218,10 +218,10 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 
     /**
      * Get the data from the provider.
-     * @param Form_Data_Request $data
+     * @param Form_Data_Request $request
      * @return false[]|mixed
      */
-	public function get_provider_data($data)
+	public function get_information_from_provider($request)
 	{
 		// TODO: Implement get_provider_data() method.
 		return $this->get_lists();

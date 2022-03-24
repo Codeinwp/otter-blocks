@@ -10,9 +10,15 @@ namespace ThemeIsle\GutenbergBlocks\Server;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Email;
+use ThemeIsle\GutenbergBlocks\Integration\Form_Providers;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
 use ThemeIsle\GutenbergBlocks\Integration\Mailchimp_Integration;
 use ThemeIsle\GutenbergBlocks\Integration\Sendinblue_Integration;
+use WP_Error;
+use WP_HTTP_Response;
+use WP_REST_Request;
+use WP_REST_Response;
+use WP_REST_Server;
 
 /**
  * Class Plugin_Card_Server
@@ -51,7 +57,7 @@ class Form_Server {
 		add_action('rest_api_init', array( $this, 'register_routes' ) );
 
         /**
-         * Add filter for validation the form data.
+         * Add filter for validating the form data.
          */
 		add_filter('otter_form_validation', array( $this, 'check_form_conditions' ));
 
@@ -61,13 +67,44 @@ class Form_Server {
 		add_filter('otter_form_captcha_validation', array( $this, 'check_form_captcha' ));
 
         /**
-         * Register an email provider that can be used to send emails or subscribe to a service.
+         * Register email providers that can be used to send emails or subscribe to a service.
          */
-		do_action( 'otter_register_form_provider', array( 'default' =>  array( $this, 'send_default_email') ) );
+		$defaultProvider = array(
+			'frontend' => array(
+				'submit' => array( $this, 'send_default_email'),
+			),
+			'editor' => array(
+				'listId' => array( $this, 'get_integration_data' ),
+			)
+		);
 
-		// Register 3rd party mail providers.
-		do_action( 'otter_register_form_provider', array( 'sendinblue' => array( $this, 'subscribe_to_service' ) ));
-		do_action( 'otter_register_form_provider', array( 'mailchimp' =>  array( $this, 'subscribe_to_service' ) ) );
+		// Register 3rd party email providers.
+		$sendinblueProvider = array(
+			'frontend' => array(
+				'submit' => array( $this, 'subscribe_to_service' ),
+			),
+			'editor' => array(
+				'listId' => array( $this, 'get_integration_data' ),
+			)
+		);
+		$mailchimpProvider = array(
+			'frontend' => array(
+				'submit' => array( $this, 'subscribe_to_service' ),
+			),
+			'editor' => array(
+				'listId' => array( $this, 'get_integration_data' ),
+			)
+		);
+
+		do_action(
+			'otter_register_form_providers',
+			array(
+				'default' =>  $defaultProvider,
+				'sendinblue' =>  $sendinblueProvider,
+				'mailchimp' =>  $mailchimpProvider
+			)
+		);
+
 	}
 
 	/**
@@ -77,11 +114,11 @@ class Form_Server {
 		$namespace = $this->namespace . $this->version;
 		register_rest_route(
 			$namespace,
-			'/forms',
+			'/form/frontend',
 			array(
 				array(
-					'methods'             => \WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'submit_form' ),
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'frontend'),
 					'permission_callback' => function () {
 						return __return_true();
 					},
@@ -90,11 +127,11 @@ class Form_Server {
 		);
 		register_rest_route(
 			$namespace,
-			'/integration',
+			'/form/editor',
 			array(
 				array(
-					'methods'             => \WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'get_integration_data' ),
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'editor'),
 					'permission_callback' => function () {
 						return current_user_can( 'edit_posts' );
 					},
@@ -103,19 +140,45 @@ class Form_Server {
 		);
 	}
 
+	/**
+	 * Get information from the provider services.
+	 * @param WP_REST_Request $request The API request.
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 */
+	public function editor($request ) {
+		$data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
+		$res  = new Form_Data_Response();
+
+		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
+		$data->set_form_options($form_options);
+
+		// Select the handler functions based on the provider.
+		$provider_handlers = Form_Providers::$instance->get_provider_handlers($data->get_payload_field('provider'), 'editor');
+
+		if( $provider_handlers && Form_Providers::provider_has_handler($provider_handlers, $data->get('handler')) ) {
+			// Send the data to the provider.
+			return $provider_handlers[$data->get('handler')]($data);
+		} else {
+			$res->set_error( __( 'The email service provider was not registered!', 'otter-blocks' ) );
+		}
+
+		return $res->build_response();
+	}
+
 
 	/**
 	 * Handle the request from the form block
 	 *
-	 * @param mixed $request Form request.
+	 * @param WP_REST_Request $request Form request.
 	 *
-	 * @return mixed|\WP_REST_Response
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
-	public function submit_form( $request ) {
+	public function frontend( $request ) {
 
 		$data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
 		$res  = new Form_Data_Response();
 
+		// Check is the request is OK.
 		$reasons = apply_filters('otter_form_validation', $data);
 
 		if ( 0 < count( $reasons ) ) {
@@ -124,8 +187,8 @@ class Form_Server {
 			return $res->build_response();
 		}
 
-		if ( $data->is_set( 'token' ) ) {
-
+		// Verify the reCaptcha token.
+		if ( $data->payload_has_field( 'token' ) ) {
 			$result = apply_filters( 'otter_form_captcha_validation', $data );
 			if ( false == $result['success'] ) {
 				$res->set_error( __( 'The reCaptcha was invalid!', 'otter-blocks' ) );
@@ -137,16 +200,24 @@ class Form_Server {
 		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
         $data->set_form_options($form_options);
 
+		// Select the submit function based on the provider.
+        $provider_handlers = apply_filters('otter_select_form_provider', $data);
 
-        $provider_action = apply_filters('otter_select_form_provider', $data);
+		if( $provider_handlers && Form_Providers::provider_has_handler($provider_handlers, $data->get('handler')) ) {
+			// Send the data to the provider.
+			$provider_response = $provider_handlers[$data->get('handler')]($data);
 
-		$provider_response = $provider_action($data);
+			// Send also an email to the form editor/owner if he has opt-in for it.
+			if( 'submit-subscribe' === $form_options->get_action() ) {
+				$this->send_default_email($data);
+			}
 
-		if( $data->field_has( 'action', array( 'subscribe', 'submit-subscribe' )) && 'submit-subscribe' === $data->get( 'action' ) ) {
-			return $this->send_default_email($data);
+			return $provider_response;
+		} else {
+			$res->set_error( __( 'The email service provider was not registered!', 'otter-blocks' ) );
 		}
 
-		return $provider_response;
+		return $res->build_response();
 	}
 
 
@@ -154,7 +225,7 @@ class Form_Server {
 	 * Send Email using SMTP
 	 *
 	 * @param Form_Data_Request $data Data from request body.
-	 * @return mixed|\WP_REST_Response
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	private function send_default_email( $data ) {
 		$res = new Form_Data_Response();
@@ -194,7 +265,7 @@ class Form_Server {
 		}
 	}
 
-    private static function function_send_error_email( $error, $form_data ) {
+    private static function send_error_email( $error, $form_data ) {
 
         $email_subject = ( __( 'An error with the Form blocks has occurred on  ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
         $email_body    = Form_Email::instance()->build_error_email($error, $form_data);
@@ -207,19 +278,17 @@ class Form_Server {
 
 
 	/**
-	 * Get data about the given provider
+	 * Get data from the given provider
 	 *
-	 * @param \WP_REST_Request $request Search request.
-	 * @return mixed|\WP_REST_Response
+	 * @param Form_Data_Request $form_request Search request.
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
-	public function get_integration_data( $request ) {
+	public function get_integration_data($form_request ) {
 		$res = new Form_Data_Response();
-
-		$data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
 
 		try {
 			$service = null;
-			switch ( $data->get( 'provider' ) ) {
+			switch ( $form_request->get_payload_field( 'provider' ) ) {
 				case 'mailchimp':
 					$service = new Mailchimp_Integration();
 					break;
@@ -231,10 +300,10 @@ class Form_Server {
 			}
 
 			if( isset($service) ) {
-				$valid_api_key = $service::validate_api_key( $data->get( 'apiKey' ) );
+				$valid_api_key = $service::validate_api_key( $form_request->get_payload_field( 'apiKey' ) );
 				if ( $valid_api_key['valid'] ) {
-					$service->set_api_key( $data->get('apiKey') );
-					$res->set_response( $service->get_provider_data( $data ) );
+					$service->set_api_key( $form_request->get_payload_field('apiKey') );
+					$res->set_response( $service->get_information_from_provider( $form_request ) );
 				} else {
 					$res->set_error( $valid_api_key['reason'] );
 				}
@@ -248,8 +317,8 @@ class Form_Server {
 
     /**
      * @param Form_Data_Request $data
-     * @return mixed|\WP_REST_Response
-     */
+     * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 */
 	public function subscribe_to_service( $data ) {
 		$res = new Form_Data_Response();
 		// Get the first email from form.
@@ -283,6 +352,8 @@ class Form_Server {
 
                 if ( $valid_api_key['valid'] ) {
                     $res->copy( $service->subscribe( $email ) );
+
+					// Add additional data like: redirect link when the request is successful
                     $res->add_values( $form_options->get_submit_data() );
                 } else {
                     $res->set_error( $valid_api_key['reason'] );
@@ -306,14 +377,22 @@ class Form_Server {
 	 * @return boolean
 	 */
 	private function has_required_data($data ) {
-		return $data->are_fields_set(
-			array(
-				'nonceValue',
-				'postUrl',
-				'formId',
-				'formOptions',
+		return (
+			$data->are_fields_set(
+				array(
+					'handler',
+					'payload'
+				)
 			)
-		) && wp_verify_nonce( $data->get( 'nonceValue' ), 'form-verification' );
+			&& $data->payload_has_fields(
+				array(
+					'nonceValue',
+					'postUrl',
+					'formId',
+					'formOptions',
+				)
+			)
+		) && wp_verify_nonce( $data->get_payload_field( 'nonceValue' ), 'form-verification' );
 	}
 
 	/**
@@ -335,7 +414,7 @@ class Form_Server {
         try {
             $form_options = $data->get_form_options();
 
-            if ( $form_options->form_has_captcha() && ( ! $data->is_set( 'token' ) || '' === $data['token'] ) ) {
+            if ( $form_options->form_has_captcha() && ( ! $data->payload_has_field( 'token' ) || '' === $data->get_payload_field('token') ) ) {
                 $reasons += array(
                     __( 'Token is missing!', 'otter-blocks' ),
                 );

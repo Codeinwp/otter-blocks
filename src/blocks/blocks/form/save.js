@@ -21,7 +21,6 @@ const Save = ({
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
 		className: classnames({
-			'is-subscription': hasIntegrationActive && 'subscribe' === attributes.action,
 			'can-submit-and-subscribe': hasIntegrationActive && 'submit-subscribe' === attributes.action,
 			'has-captcha': attributes.hasCaptcha
 		}),
@@ -34,7 +33,11 @@ const Save = ({
 				<InnerBlocks.Content />
 
 				<div className="wp-block-button">
-					<button className="wp-block-button__link" type='submit'>
+					<button
+						className='components-button o-form-submit'
+						type='submit'
+						isPrimary
+					>
 						{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
 					</button>
 				</div>

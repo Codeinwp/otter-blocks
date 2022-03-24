@@ -40,7 +40,7 @@ import metadata from './block.json';
 import { blockInit } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
-import { getListIdOptionFrom } from './integrations';
+import { Button } from '@wordpress/components';
 const { attributes: defaultAttributes } = metadata;
 
 export const FormContext = createContext({});
@@ -360,40 +360,61 @@ const Edit = ({
 	}, [ attributes.optionName, attributes.provider, apiKey, attributes.listId, attributes.action, settingsRef.current ]);
 
 	useEffect( () => {
+		let controller = new AbortController();
 		if ( apiKey && attributes.provider ) {
-			getListIdOptionFrom( attributes.provider, apiKey, 'listId',
-				options => {
-					options.splice( 0, 0, { label: __( 'None', 'otter-blocks' ), value: '' });
-					setListIDOptions( options );
-					setFetchListIdStatus( 'ready' );
-
-					const isCurrentOptionValid = 1 === options.map( ({ value }) => value ).filter( value => value === attributes.listId ).length;
-					if ( attributes.listId && ! isCurrentOptionValid ) {
-						createNotice(
-							'error',
-							__( 'The current contact list is invalid! Please choose a new contact list.', 'otter-blocks' ),
-							{
-								isDismissible: true,
-								type: 'snackbar'
-							}
-						);
+			window.wp.apiFetch({
+				path: 'otter/v1/form/editor',
+				method: 'POST',
+				data: {
+					handler: 'listId',
+					payload: {
+						provider: attributes.provider,
+						apiKey,
+						action: attributes.action
 					}
 				},
-				err => {
-					createNotice(
-						'error',
-						err?.error,
-						{
-							isDismissible: true,
-							type: 'snackbar',
-							id: 'themeisle-form-server-error'
-						}
-					);
+				signal: controller.signal
+			}).then(
+				res => {
+					controller = null;
+					if ( res?.success ) {
+						const options = res?.list_id?.map( item => {
+							return {
+								label: item.name,
+								value: item.id?.toString()
+							};
+						}) || [];
+						options.splice( 0, 0, { label: __( 'None', 'otter-blocks' ), value: '' });
+						setListIDOptions( options );
+						setFetchListIdStatus( 'ready' );
 
-					setFetchListIdStatus( 'error' );
-				}
-			);
+						const isCurrentOptionValid = 1 === options.map( ({ value }) => value ).filter( value => value === attributes.listId ).length;
+						if ( attributes.listId && ! isCurrentOptionValid ) {
+							createNotice(
+								'error',
+								__( 'The current contact list is invalid! Please choose a new contact list.', 'otter-blocks' ),
+								{
+									isDismissible: true,
+									type: 'snackbar'
+								}
+							);
+						}
+					} else {
+						createNotice(
+							'error',
+							res?.error,
+							{
+								isDismissible: true,
+								type: 'snackbar',
+								id: 'themeisle-form-server-error'
+							}
+						);
+
+						setFetchListIdStatus( 'error' );
+					}
+				});
 		}
+		return () => controller?.abort();
 	}, [ apiKey ]);
 
 	const saveFormOptions = () => {
@@ -540,6 +561,7 @@ const Edit = ({
 			blockRef.current?.style?.setProperty( '--labelColor', attributes.labelColor || null );
 			blockRef.current?.style?.setProperty( '--inputWidth', per( attributes.inputWidth ) );
 			blockRef.current?.style?.setProperty( '--submitBackground', attributes.submitBackgroundColor || null );
+			blockRef.current?.style?.setProperty( '--submitBackgroundHover', attributes.submitBackgroundColorHover || null );
 			blockRef.current?.style?.setProperty( '--submitColor', attributes.submitColor || null );
 			blockRef.current?.style?.setProperty( '--submitMsgColor', attributes.submitMessageColor || null );
 		}
@@ -596,9 +618,13 @@ const Edit = ({
 								}
 
 								<div className="wp-block-button has-submit-msg">
-									<button className="wp-block-button__link" type='submit' disabled>
+									<button
+										className='components-button o-form-submit'
+										type='submit'
+									>
 										{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
 									</button>
+
 									<div className="o-form-server-response success">
 										{ attributes.submitMessage || __( 'Success', 'otter-blocks' ) }
 									</div>
