@@ -87,7 +87,7 @@ const Edit = ({
 				</Button>
 
 				{ isEditing && (
-					<div className="otter-popup__modal_wrap">
+					<div className="otter-popup__modal_wrap animated fadeIn fast">
 						<div
 							role="presentation"
 							className="otter-popup__modal_wrap_overlay"
