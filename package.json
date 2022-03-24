@@ -3,12 +3,17 @@
 	"version": "2.0.1",
 	"description": "Gutenberg Blocks and Template Library by Otter",
 	"scripts": {
-		"build": "wp-scripts build && grunt build",
-		"grunt": "grunt build",
+		"build": "npm-run-all --parallel prod:*",
+		"prod:lite": "wp-scripts build --config webpack.config.js",
+		"prod:pro": "wp-scripts build --config webpack.config.pro.js",
+		"prod:grunt": "grunt build",
+
 		"start": "rm -rf build && npm-run-all --parallel dev:*",
-		"dev:webpack": "wp-scripts start --watch",
-		"dev:grunt": "grunt watch",
-		"build-dev": "NODE_ENV=development wp-scripts build && grunt build",
+		"dev:lite": "wp-scripts start --watch --config webpack.config.js",
+		"dev:pro": "wp-scripts start --watch --config webpack.config.pro.js",
+		"dev:grunt": "grunt build",
+
+		"build-dev": "NODE_ENV=development npm run build",
 		"lint": "wp-scripts lint-js ./src",
 		"format": "wp-scripts lint-js ./src --fix",
 		"packages-update": "wp-scripts packages-update",
