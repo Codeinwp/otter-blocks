@@ -88,6 +88,17 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_block_conditions',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Blocks Conditions module allows to hide/display blocks to your users based on selected conditions.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'otter_blocks_logger_flag',
 			array(
 				'type'         => 'string',
