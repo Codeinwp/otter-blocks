@@ -454,6 +454,7 @@ const Edit = ({
 					error={ errorState }
 					isAPILoaded={ isAPILoaded }
 					isAPISaved={ isAPISaved }
+					isSaving={ isSaving }
 					changeAPI={ ( key ) => {
 						setAPI( key );
 						setErrorState( false );

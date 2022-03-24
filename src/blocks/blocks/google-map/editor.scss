@@ -25,18 +25,21 @@
 			min-height: 36px;
 		}
 
-		#inspector-text-control-1__help {
-			font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif;
-			font-size: 13px;
-			font-style: italic;
-			margin-bottom: 15px;
-		}
-
 		&.is-invalid {
 			input[type="text"] {
 				border-color: var(--wp--preset--color--vivid-red);
 				box-shadow: 0 0 0 1px var(--wp--preset--color--vivid-red);
 				outline: 2px solid transparent;
+			}
+		}
+	}
+
+	.components-placeholder__fieldset {
+		.components-placeholder__learn-more {
+			p {
+				font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Oxygen-Sans,Ubuntu,Cantarell,Helvetica Neue,sans-serif;
+				font-size: 13px;
+				margin-bottom: 5px;
 			}
 		}
 	}
