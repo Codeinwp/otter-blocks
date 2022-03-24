@@ -22,7 +22,7 @@ const TIME_UNTIL_REMOVE = 10_000;
  */
 const collectAndSendInputFormData = ( form, btn ) => {
 	const id = form?.id;
-	const formData = {};
+	const payload = {};
 
 	/** @type {Array.<HTMLDivElement>} */
 	const elemsWithError = [];
@@ -101,51 +101,54 @@ const collectAndSendInputFormData = ( form, btn ) => {
 
 		btn.disabled = false;
 	} else {
-		formData.data = formFieldsData;
+		payload.formInputsData = formFieldsData;
 
 		if ( '' !== form?.dataset?.emailSubject ) {
-			formData.emailSubject = form?.dataset?.emailSubject;
+			payload.emailSubject = form?.dataset?.emailSubject;
 		}
 
 		if ( form?.dataset?.optionName ) {
-			formData.formOption = form?.dataset?.optionName;
+			payload.formOption = form?.dataset?.optionName;
 		}
 
 		if ( form?.classList?.contains( 'has-captcha' ) && id && window.themeisleGutenberg?.tokens?.[ id ].token ) {
-			formData.token = window.themeisleGutenberg?.tokens?.[ id ].token;
+			payload.token = window.themeisleGutenberg?.tokens?.[ id ].token;
 		}
 
 		if ( form?.id ) {
-			formData.formId = form?.id;
+			payload.formId = form?.id;
 		}
 
 		if ( nonceFieldValue ) {
-			formData.nonceValue = nonceFieldValue;
+			payload.nonceValue = nonceFieldValue;
 		}
 
-		formData.postUrl = window.location.href;
+		payload.postUrl = window.location.href;
 
 		if ( form?.id ) {
-			formData.formId = form?.id;
+			payload.formId = form?.id;
 		}
 
 		if ( form.classList.contains( 'is-subscription' ) ) {
-			formData.action = 'subscribe';
+			payload.action = 'subscribe';
 		}
 
 		if ( form.classList.contains( 'can-submit-and-subscribe' ) ) {
-			formData.action = 'submit-subscribe';
-			formData.consent = form.querySelector( '.otter-form-consent input' )?.checked || false;
+			payload.action = 'submit-subscribe';
+			payload.consent = form.querySelector( '.otter-form-consent input' )?.checked || false;
 		}
 
-		formData.postUrl = window.location.href;
+		payload.postUrl = window.location.href;
 
 		msgAnchor?.classList.add( 'loading' );
 
 		apiFetch({
-			path: 'otter/v1/forms',
+			path: 'otter/v1/form/frontend',
 			method: 'POST',
-			data: formData
+			data: {
+				handler: 'submit',
+				payload
+			}
 		}).then( ( response ) => {
 
 			/**
@@ -253,7 +256,7 @@ const renderConsentCheckbox = ( form ) => {
 	input.id = 'consent';
 
 	const label = document.createElement( 'label' );
-	label.innerHTML = __( 'I consent to my name and email to be collected.', 'otter-blocks' );
+	label.innerHTML = __( 'I consent that my name and email to be collected.', 'otter-blocks' );
 	label.htmlFor = 'consent';
 
 	inputContainer.appendChild( input );

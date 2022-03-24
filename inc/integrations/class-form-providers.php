@@ -2,6 +2,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
+use Exception;
+
 class Form_Providers
 {
 	/**
@@ -42,35 +44,59 @@ class Form_Providers
         /**
          * Add action that register a provider and his actions when a form is submitted.
          */
-		add_action('otter_register_form_provider', array($this, 'register_provider'));
+		add_action('otter_register_form_providers', array($this, 'register_providers'));
 
         /**
          * Add a filter that select the provider from the form integration settings.
          */
-		add_filter('otter_select_form_provider', array($this, 'select_provider'));
+		add_filter('otter_select_form_provider', array($this, 'select_provider_from_form_options'));
 	}
 
-    /**
-     * Register an email provider.
-     * @param array $provider
-     * @return void
-     */
-	public function register_provider( $provider ) {
-		$this->providers += $provider;
+	/**
+	 * Register an email provider.
+	 * @param array $new_providers
+	 * @return void
+	 * @throws Exception
+	 */
+	public function register_providers($new_providers ) {
+		foreach ($new_providers as $name => $handlers) {
+			if( array_key_exists($name, $this->providers) ) {
+				throw new Exception('Provider ' . $name . ' is already registered.');
+			}
+		}
+
+		$this->providers = array_merge_recursive($this->providers, $new_providers);
 	}
 
     /**
      * Select the provider based on the form integration settings.
      * @param Form_Data_Request $form_request
-     * @return mixed
-     */
-	public function select_provider($form_request) {
+     * @return array|bool
+	 */
+	public function select_provider_from_form_options($form_request) {
 		$form_options = $form_request->get_form_options();
         if( $form_options->has_provider() && $form_options->has_credentials() ) {
-            return $this->providers[$form_options->get_provider()];
+            return $this->get_provider_handlers($form_options->get_provider());
         }
 
-        return $this->providers['default'];
+        return $this->get_provider_handlers();
+	}
+
+	/**
+	 * Get the provider.
+	 * @param string $provider_name
+	 * @param string $scope
+	 * @return array|bool
+	 */
+	public function get_provider_handlers($provider_name = 'default' , $scope = 'frontend' ) {
+		if( array_key_exists($provider_name, $this->providers) ) {
+			return $this->providers[$provider_name][$scope];
+		}
+		return false;
+	}
+
+	public static function provider_has_handler( $provider, $handler ) {
+		return array_key_exists($handler, $provider);
 	}
 
 	/**

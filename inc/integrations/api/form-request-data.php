@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
+use ArrayAccess;
+
 /**
  * Class Form_Data_Request
  */
@@ -17,7 +19,7 @@ class Form_Data_Request {
 	 *
 	 * @var array
 	 */
-	protected $data = array();
+	protected $request_data = array();
 
 	/**
 	 * Integration Data.
@@ -33,7 +35,7 @@ class Form_Data_Request {
 	 * @param array $request_data Request Data.
 	 */
 	public function __construct( $request_data ) {
-		$this->data = $this->sanitize_request_data( $request_data );
+		$this->request_data = $this->sanitize_request_data( $request_data );
         $this->form_options = new Form_Settings_Data( array() );
 	}
 
@@ -52,7 +54,19 @@ class Form_Data_Request {
 	 * @return mixed
 	 */
 	public function get( $field_name ) {
-		return $this->is_set( $field_name ) ? $this->data[ $field_name ] : null;
+		return $this->is_set( $field_name ) ? $this->request_data[ $field_name ] : null;
+	}
+
+	public function get_payload_field($field_name ) {
+		return $this->payload_has_field( $field_name ) ? $this->request_data['payload'][$field_name] : null;
+	}
+
+	public function payload_has_field($field_name ) {
+		return $this->has_payload() && isset($this->request_data['payload'][$field_name]);
+	}
+
+	public function has_payload() {
+		return isset($this->request_data['payload']);
 	}
 
 	/**
@@ -63,7 +77,7 @@ class Form_Data_Request {
 	 */
 	public function is_set( $field_name ) {
 		// TODO: we can do a more refined verification like checking for empty strings or arrays.
-		return isset( $this->data[ $field_name ] );
+		return isset( $this->request_data[ $field_name ] );
 	}
 
 	/**
@@ -89,6 +103,37 @@ class Form_Data_Request {
 	}
 
 	/**
+	 * Check if the given fields are set.
+	 *
+	 * @param array $fields_name The name of the fields.
+	 * @return boolean
+	 */
+	public function are_payload_fields_set( $fields_name ) {
+		return 0 < count(
+				array_filter(
+					array_map(
+						function( $field_name ) {
+							return $this->is_set( $field_name );
+						},
+						$fields_name
+					),
+					function( $is_set ) {
+						return $is_set;
+					}
+				)
+			);
+	}
+
+	public function payload_has_fields( $fields_name ) {
+		foreach ($fields_name as $field_name) {
+			if( !$this->payload_has_field($field_name) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Check if the field has one of the given values.
 	 *
 	 * @param string $field_name The name of the field.
@@ -99,6 +144,10 @@ class Form_Data_Request {
 		return in_array( $this->get( $field_name ), $values, true );
 	}
 
+	public function payload_field_has( $field_name, $values ) {
+		return in_array( $this->get_payload_field( $field_name ), $values, true );
+	}
+
 	/**
 	 * Sanitize the request data.
 	 *
@@ -106,50 +155,23 @@ class Form_Data_Request {
 	 * @return array Sanitized field data.
 	 */
 	public static function sanitize_request_data( $data ) {
-		if ( isset( $data['postUrl'] ) ) {
-			$data['postUrl'] = sanitize_text_field( $data['postUrl'] );
+		return self::sanitize_array_map_deep($data);
+	}
+
+	public static function sanitize_array_map_deep($array)
+	{
+		$new = array();
+		if (is_array($array) || $array instanceof ArrayAccess) {
+			foreach ($array as $key => $val) {
+				if (is_array($val)) {
+					$new[$key] = self::sanitize_array_map_deep($val);
+				} else {
+					$new[$key] = sanitize_text_field($array[$key]);
+				}
+			}
 		}
-		if ( isset( $data['nonceValue'] ) ) {
-			$data['nonceValue'] = sanitize_text_field( $data['nonceValue'] );
-		}
-		if ( isset( $data['formId'] ) ) {
-			$data['formId'] = sanitize_text_field( $data['formId'] );
-		}
-		if ( isset( $data['formOption'] ) ) {
-			$data['formOption'] = sanitize_text_field( $data['formOption'] );
-		}
-		if ( isset( $data['apiKey'] ) ) {
-			$data['apiKey'] = sanitize_text_field( $data['apiKey'] );
-		}
-		if ( isset( $data['provider'] ) ) {
-			$data['provider'] = sanitize_text_field( $data['provider'] );
-		}
-		if ( isset( $data['emailSubject'] ) ) {
-			$data['emailSubject'] = sanitize_text_field( $data['emailSubject'] );
-		}
-		if ( isset( $data['action'] ) ) {
-			$data['action'] = sanitize_text_field( $data['action'] );
-		}
-		if ( isset( $data['token'] ) ) {
-			$data['token'] = sanitize_text_field( $data['token'] );
-		}
-        if ( isset( $data['titleSubject'] ) ) {
-            $data['titleSubject'] = sanitize_text_field( $data['titleSubject'] );
-        }
-        if ( isset( $data['submitMessage'] ) ) {
-            $data['submitMessage'] = sanitize_text_field( $data['submitMessage'] );
-        }
-		if ( isset( $data['data'] ) ) {
-			$data['data'] = array_map(
-				function( $input ) {
-					$input['label'] = sanitize_text_field( $input['label'] );
-					$input['input'] = sanitize_text_field( $input['input'] );
-					return $input;
-				},
-				$data['data']
-			);
-		}
-		return $data;
+		else $new = sanitize_text_field($array);
+		return $new;
 	}
 
     /**
@@ -157,7 +179,7 @@ class Form_Data_Request {
      * @return mixed Form input data.
      */
 	public function get_form_inputs() {
-		return $this->data['data'];
+		return $this->get_payload_field('formInputsData');
 	}
 
     /**

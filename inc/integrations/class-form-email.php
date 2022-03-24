@@ -89,7 +89,7 @@ class Form_Email
 
     /**
      * Create the content for the email body.
-     * @param array $email_data
+     * @param Form_Data_Request $email_data
      * @return void
      */
 	public function build_body( $email_data ) {

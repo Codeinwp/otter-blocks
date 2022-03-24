@@ -29,7 +29,6 @@ import {
 /**
  * Internal dependencies.
  */
-import { getListIdOptionFrom } from './integrations.js';
 import { FormContext } from './edit.js';
 
 /**
@@ -220,9 +219,14 @@ const Inspector = ({
 						label: __( 'Submit Background Color', 'otter-blocks' )
 					},
 					{
+						value: attributes.submitBackgroundColorHover,
+						onChange: submitBackgroundColorHover => setAttributes({ submitBackgroundColorHover }),
+						label: __( 'Submit Background Color on Hover', 'otter-blocks' )
+					},
+					{
 						value: attributes.submitMessageColor,
 						onChange: submitMessageColor => setAttributes({ submitMessageColor }),
-						label: __( 'Succeful Submit Message Color', 'otter-blocks' )
+						label: __( 'Successful Submit Message Color', 'otter-blocks' )
 					}
 				] }
 			/>
@@ -304,7 +308,7 @@ const Inspector = ({
 														label={ __( 'Action', 'otter-blocks' ) }
 														value={ attributes.action }
 														options={ [
-															{ label: __( 'None', 'otter-blocks' ), value: '' },
+															{ label: __( 'Default', 'otter-blocks' ), value: '' },
 															{ label: __( 'Subscribe', 'otter-blocks' ), value: 'subscribe' },
 															{ label: __( 'Submit & Subscribe', 'otter-blocks' ), value: 'submit-subscribe' }
 														] }

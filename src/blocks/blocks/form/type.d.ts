@@ -21,6 +21,7 @@ type Attributes = {
 	submitMessage: string
 	submitMessageColor: string
 	submitBackgroundColor: string
+	submitBackgroundColorHover: string
 	submitColor: string
 }
 

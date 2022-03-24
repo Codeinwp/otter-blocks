@@ -70,6 +70,9 @@
 		"submitBackgroundColor": {
 			"type": "string"
 		},
+		"submitBackgroundColorHover": {
+			"type": "string"
+		},
 		"submitColor": {
 			"type": "string"
 		}
