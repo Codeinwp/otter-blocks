@@ -142,6 +142,11 @@ const collectAndSendInputFormData = ( form, btn ) => {
 
 		msgAnchor?.classList.add( 'loading' );
 
+		console.log({
+			handler: 'submit',
+			payload
+		});
+
 		apiFetch({
 			path: 'otter/v1/form/frontend',
 			method: 'POST',
@@ -227,13 +232,25 @@ domReady( () => {
 		}
 
 		const sendBtn = form.querySelector( 'button' );
-		sendBtn?.addEventListener( 'click', ( event ) => {
-			if ( ! sendBtn.disabled ) {
+		if ( form.querySelector( 'button[type="submit"]' ) ) {
+			form?.addEventListener( 'submit', ( event ) => {
 				event.preventDefault();
-				sendBtn.disabled = true;
-				collectAndSendInputFormData( form, sendBtn );
-			}
-		});
+				if ( ! sendBtn.disabled ) {
+					sendBtn.disabled = true;
+					collectAndSendInputFormData( form, sendBtn );
+				}
+			}, false );
+		} else {
+
+			// legacy
+			sendBtn?.addEventListener( 'click', ( event ) => {
+				event.preventDefault();
+				if ( ! sendBtn.disabled ) {
+					sendBtn.disabled = true;
+					collectAndSendInputFormData( form, sendBtn );
+				}
+			}, false );
+		}
 	});
 });
 

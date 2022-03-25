@@ -29,6 +29,8 @@
 			padding: 10px 20px;
 			color: var(--submitColor);
 			background-color: var(--submitBackground);
+			border: 0px;
+			transition: background-color 0.15s linear;
 
 			&:hover {
 				background-color: var(--submitBackgroundHover);

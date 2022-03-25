@@ -87,19 +87,12 @@ class Form_Data_Request {
 	 * @return boolean
 	 */
 	public function are_fields_set( $fields_name ) {
-		return 0 < count(
-			array_filter(
-				array_map(
-					function( $field_name ) {
-						return $this->is_set( $field_name );
-					},
-					$fields_name
-				),
-				function( $is_set ) {
-					return $is_set;
-				}
-			)
-		);
+		foreach ($fields_name as $field_name) {
+			if( !isset($this->request_data[$field_name]) ) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -109,19 +102,12 @@ class Form_Data_Request {
 	 * @return boolean
 	 */
 	public function are_payload_fields_set( $fields_name ) {
-		return 0 < count(
-				array_filter(
-					array_map(
-						function( $field_name ) {
-							return $this->is_set( $field_name );
-						},
-						$fields_name
-					),
-					function( $is_set ) {
-						return $is_set;
-					}
-				)
-			);
+		foreach ($fields_name as $field_name) {
+			if( !isset($this->request_data['payload'][$field_name]) || $this->request_data['payload'][$field_name] == '' ) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public function payload_has_fields( $fields_name ) {
