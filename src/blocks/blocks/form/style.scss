@@ -23,7 +23,8 @@
 
 	.wp-block-button {
 		margin-top: 1.5em;
-		.wp-block-button__link, .o-form-submit {
+		.wp-block-button__link,
+		.o-form-submit {
 			font-size: 1.5rem;
 			height: auto;
 			padding: 10px 20px;
@@ -46,7 +47,7 @@
 		margin-left: 10px;
 
 		&.success {
-			color: var(--submitMsgColor)
+			color: var(--submitMsgColor);
 		}
 
 		&.error {
@@ -62,6 +63,32 @@
 		}
 	}
 
+	@keyframes spinner {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	.spinner {
+		position: relative;
+		padding: 2rem;
+		&:before {
+			content: "";
+			box-sizing: border-box;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 20px;
+			height: 20px;
+			margin-top: -10px;
+			margin-left: -10px;
+			border-radius: 50%;
+			border-top: 2px solid var(--submitColor);
+			border-right: 2px solid transparent;
+			animation: spinner 0.6s linear infinite;
+		}
+	}
+
 	.has-submit-msg {
 		display: flex;
 		align-items: baseline;
@@ -70,6 +97,9 @@
 
 	.loading {
 		animation: blink 1s ease-in-out infinite alternate;
+		.o-form-submit {
+			padding-right: 0px;
+		}
 	}
 
 	@keyframes blink {
@@ -124,7 +154,8 @@
 		}
 	}
 
-	.wp-block-themeisle-blocks-form-input, .wp-block-themeisle-blocks-form-textarea {
+	.wp-block-themeisle-blocks-form-input,
+	.wp-block-themeisle-blocks-form-textarea {
 		.o-form-help {
 			opacity: 0.8;
 			color: var(--labelColor);
