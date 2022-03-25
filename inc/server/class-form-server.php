@@ -384,12 +384,12 @@ class Form_Server {
 					'payload'
 				)
 			)
-			&& $data->payload_has_fields(
+			&& $data->are_payload_fields_set(
 				array(
 					'nonceValue',
 					'postUrl',
 					'formId',
-					'formOptions',
+					'formOption',
 				)
 			)
 		) && wp_verify_nonce( $data->get_payload_field( 'nonceValue' ), 'form-verification' );
