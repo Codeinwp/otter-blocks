@@ -312,10 +312,12 @@ class Registration {
 		if ( is_singular() ) {
 			$this->enqueue_dependencies();
 		} else {
-			$posts = wp_list_pluck( $wp_query->posts, 'ID' );
-
-			foreach ( $posts as $post ) {
-				$this->enqueue_dependencies( $post );
+			if ( 0 < count( $wp_query->posts ) ) {
+				$posts = wp_list_pluck( $wp_query->posts, 'ID' );
+	
+				foreach ( $posts as $post ) {
+					$this->enqueue_dependencies( $post );
+				}
 			}
 		}
 
