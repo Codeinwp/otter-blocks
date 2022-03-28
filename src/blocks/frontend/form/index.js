@@ -86,6 +86,10 @@ const collectAndSendInputFormData = ( form, btn ) => {
 	};
 
 	if ( 0 < elemsWithError.length || ( form?.classList?.contains( 'has-captcha' ) && id && ! window.themeisleGutenberg?.tokens[id].token ) ) {
+
+		/**
+		 * Validata the form inputs data.
+		 */
 		elemsWithError.forEach( input => {
 			input?.reportValidity();
 		});
@@ -175,10 +179,10 @@ const collectAndSendInputFormData = ( form, btn ) => {
 				msg.classList.add( 'error' );
 
 				// TODO: Write pattern to display a more useful error message.
-				if ( res?.error.includes( 'invalid' ) || res?.error.includes( 'fake' ) ) { // mailchimp
+				if ( res?.provider && res?.error.includes( 'invalid' ) || res?.error.includes( 'fake' ) ) { // mailchimp
 					msg.classList.add( 'warning' );
 					msg.innerHTML = __( '⚠ The email address does not look correct!', 'otter-blocks' );
-				} else if ( res?.error.includes( 'duplicate' ) || res?.error.includes( 'already' ) ) { // sendinblue
+				} else if ( res?.provider && res?.error.includes( 'duplicate' ) || res?.error.includes( 'already' ) ) { // sendinblue
 					msg.classList.add( 'info' );
 					msg.innerHTML = __( '🛈 The email was already registered!', 'otter-blocks' );
 				} else {

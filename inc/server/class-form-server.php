@@ -7,6 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\Server;
 
+use Exception;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Email;
@@ -256,7 +257,7 @@ class Form_Server {
 			// phpcs:ignore
 			wp_mail( $to, $email_subject, $email_body, $headers );
 			$res->mark_as_success();
-		} catch (\Exception  $e ) {
+		} catch (Exception  $e ) {
 			$res->set_error( $e->getMessage() );
 		} finally {
             $form_options = $data->get_form_options();
@@ -308,7 +309,7 @@ class Form_Server {
 					$res->set_error( $valid_api_key['reason'] );
 				}
 			}
-		} catch (\Exception $e) {
+		} catch (Exception $e) {
 			$res->set_error($e->getMessage());
 		} finally {
 			return $res->build_response();
@@ -361,7 +362,7 @@ class Form_Server {
             } else {
                 $res->set_reasons($issues);
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $res->set_error( __('Server error!') );
         } finally {
             return $res->build_response();
@@ -377,7 +378,7 @@ class Form_Server {
 	 * @return boolean
 	 */
 	private function has_required_data($data ) {
-		return (
+		return
 			$data->are_fields_set(
 				array(
 					'handler',
@@ -392,7 +393,7 @@ class Form_Server {
 					'formOption',
 				)
 			)
-		) && wp_verify_nonce( $data->get_payload_field( 'nonceValue' ), 'form-verification' );
+			&& wp_verify_nonce( $data->get_payload_field( 'nonceValue' ), 'form-verification' );
 	}
 
 	/**
@@ -419,12 +420,11 @@ class Form_Server {
                     __( 'Token is missing!', 'otter-blocks' ),
                 );
             }
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
 			$reasons[] = $e->getMessage();
         } finally {
 			return $reasons;
 		}
-
 	}
 
 	/**
