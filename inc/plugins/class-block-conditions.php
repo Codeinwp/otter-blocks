@@ -23,8 +23,10 @@ class Block_Conditions {
 	 * Initialize the class
 	 */
 	public function init() {
-		add_action( 'render_block', array( $this, 'render_blocks' ), 999, 2 );
-		add_action( 'wp_loaded', array( $this, 'add_attributes_to_blocks' ), 999 );
+		if ( get_option( 'themeisle_blocks_settings_block_conditions', true ) ) {
+			add_action( 'render_block', array( $this, 'render_blocks' ), 999, 2 );
+			add_action( 'wp_loaded', array( $this, 'add_attributes_to_blocks' ), 999 );
+		}
 	}
 
 	/**

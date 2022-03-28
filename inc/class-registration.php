@@ -273,6 +273,9 @@ class Registration {
 				'useOldMacyContainer' => version_compare( get_bloginfo( 'version' ), '5.8.10', '<=' ),
 				'postTypes'           => get_post_types( [ 'public' => true ] ),
 				'rootUrl'             => get_site_url(),
+				'hasModule'           => array(
+					'blockConditions' => get_option( 'themeisle_blocks_settings_block_conditions', true ),
+				),
 			)
 		);
 
