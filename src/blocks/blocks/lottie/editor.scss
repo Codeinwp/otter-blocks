@@ -6,6 +6,14 @@
 	}
 }
 
+.wp-block[data-align="center"] {
+	lottie-player {
+		display: block;
+		text-align: center;
+		margin: 0 auto;
+	}
+}
+
 .wp-block-themeisle-blocks-lottie-modal {
 	.components-modal__frame {
 		width: 360px;
