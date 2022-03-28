@@ -69,7 +69,7 @@ const Inspector = ({
 					help={ __( 'Animation trigger. This will only work on the front-end.', 'otter-blocks' ) }
 					value={ attributes.trigger }
 					options={ [
-						{ label: __( 'None', 'otter-blocks' ), value: 'none' },
+						{ label: __( 'Autoplay', 'otter-blocks' ), value: 'none' },
 						{ label: __( 'Scroll', 'otter-blocks' ), value: 'scroll' },
 						{ label: __( 'Hover', 'otter-blocks' ), value: 'hover' },
 						{ label: __( 'Click', 'otter-blocks' ), value: 'click' }
