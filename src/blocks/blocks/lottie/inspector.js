@@ -55,7 +55,7 @@ const Inspector = ({
 	};
 
 	const onChangeWidth = value => {
-		setAttributes({ width: Number( value ) });
+		setAttributes({ width: value });
 	};
 
 	return (
@@ -120,6 +120,7 @@ const Inspector = ({
 					help={ __( 'Container width in pixels.', 'otter-blocks' ) }
 					value={ attributes.width }
 					onChange={ onChangeWidth }
+					allowReset
 					min={ 100 }
 					max={ 1000 }
 				/>
