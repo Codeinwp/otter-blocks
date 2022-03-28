@@ -28,7 +28,7 @@ const init = () => {
 
 		const observer = new IntersectionObserver( entries => {
 			entries.forEach( entry => {
-				if( entry.isIntersecting && entry.intersectionRect.height >= 0) {
+				if ( entry.isIntersecting && 0 <= entry.intersectionRect.height ) {
 					const options = omit({ ...slider.dataset }, [ 'autoplay', 'height', 'hideArrows' ]);
 					const autoplay = 'false' === slider.dataset.autoplay ? false : ( 'true' === slider.dataset.autoplay ? 2000 : slider.dataset.autoplay );
 					const hideArrows = 'true' === slider.dataset.hideArrows;
@@ -58,13 +58,13 @@ const init = () => {
 						track.style.height = slider.dataset.height;
 					}
 
-					observer.unobserve(slider);
+					observer.unobserve( slider );
 				}
-			}, options);
+			}, options );
 
-		})
+		});
 
-		observer.observe(slider);
+		observer.observe( slider );
 	});
 };
 

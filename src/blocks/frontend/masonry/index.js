@@ -17,46 +17,46 @@ domReady( () => {
 		const checker = setInterval( () => {
 			const container = gallery.querySelector( '.wp-block-gallery' );
 
-			if (window?.Macy) {
+			if ( window?.Macy ) {
 				const targetContainer = gallery.querySelector( '.blocks-gallery-grid' ) || container;
 
 				const observer = new IntersectionObserver( entries => {
 					entries.forEach( entry => {
-						if (entry.isIntersecting && 0 <= entry.intersectionRect.height) {
+						if ( entry.isIntersecting && 0 <= entry.intersectionRect.height ) {
 							const pattern = /columns-(\d)/;
 
 							const margin = gallery.dataset.margin !== undefined ? Number( gallery.dataset.margin ) : 10;
 
 							let columns = Array.from( container.classList ).find( className => {
 								const res = pattern.exec( className );
-								if (null !== res) {
+								if ( null !== res ) {
 									return true;
 								}
-							} );
+							});
 
 							columns = pattern.exec( columns );
-							columns = columns ? Number( columns[1] ) : 3;
+							columns = columns ? Number( columns[1]) : 3;
 
 							container.removeAttribute( 'class' );
 
-							console.log("Initiate")
+							console.log( 'Initiate' );
 
-							window.Macy( {
+							window.Macy({
 								container: targetContainer,
 								trueOrder: false,
 								waitForImages: false,
 								margin,
 								columns
-							} );
+							});
 
 							observer.unobserve( targetContainer );
 						}
-					} );
+					});
 				}, options );
 
 				observer.observe( targetContainer );
 				clearInterval( checker );
 			}
 		}, 1_500 );
-	} );
-} );
+	});
+});
