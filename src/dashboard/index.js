@@ -1,9 +1,4 @@
 /**
- * External dependencies.
- */
-import ReactNotification from 'react-notifications-component';
-
-/**
  * WordPress dependencies.
  */
 import {
@@ -15,16 +10,17 @@ import {
  * Internal dependencies.
  */
 import './style.scss';
-import Onboarding from './Components/Onboarding.js';
-import Header from './Components/Header.js';
-import Main from './Components/Main.js';
-import Footer from './Components/Footer.js';
+import Onboarding from './components/Onboarding.js';
+import Notices from './components/Notices';
+import Header from './components/Header.js';
+import Main from './components/Main.js';
+import Footer from './components/Footer.js';
 
 const App = () => {
 	return (
 		<Fragment>
 			{ Boolean( window.otterObj.showTour ) && <Onboarding /> }
-			<ReactNotification />
+			<Notices />
 			<Header />
 			<Main />
 			<Footer />

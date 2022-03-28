@@ -1,17 +1,9 @@
 /**
- * External dependencies.
- */
-import { store } from 'react-notifications-component';
-import 'react-notifications-component/dist/theme.css';
-
-/**
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
 
 import apiFetch from '@wordpress/api-fetch';
-
-import api from '@wordpress/api';
 
 import {
 	BaseControl,
@@ -26,10 +18,11 @@ import {
 	TextControl
 } from '@wordpress/components';
 
+import { dispatch } from '@wordpress/data';
+
 import {
 	Fragment,
 	useEffect,
-	useRef,
 	useState
 } from '@wordpress/element';
 
@@ -38,150 +31,51 @@ import {
  */
 import ButtonControl from './ButtonControl.js';
 
+import useSettings from './../hooks/settings.js';
+
 const Main = () => {
 	useEffect( () => {
-		api.loadPromise.then( () => {
-			settingsRef.current = new api.models.Settings();
-
-			if ( false === isAPILoaded ) {
-				settingsRef.current.fetch().then( response => {
-					setCSSModule( Boolean( response.themeisle_blocks_settings_css_module ) );
-					setBlocksAnimation( Boolean( response.themeisle_blocks_settings_blocks_animation ) );
-					setDefaultSection( Boolean( response.themeisle_blocks_settings_default_block ) );
-					setGoogleMapsAPI( response.themeisle_google_map_block_api_key );
-					setLoggingData( response.otter_blocks_logger_flag );
-					setJSONSVGUploads( Boolean( response.themeisle_allow_json_upload ) );
-					setAPILoaded( true );
-					setGoogleCaptchaAPISiteKey( response.themeisle_google_captcha_api_site_key );
-					setGoogleCaptchaAPISecretKey( response.themeisle_google_captcha_api_secret_key );
-				});
-			}
-		});
-
 		if ( ! Boolean( window.otterObj.stylesExist ) ) {
 			setRegeneratedDisabled( true );
 		}
 	}, []);
 
-	const [ isAPILoaded, setAPILoaded ] = useState( false );
-	const [ isAPISaving, setAPISaving ] = useState( false );
-	const [ notification, setNotification ] = useState( null );
-	const [ cssModule, setCSSModule ] = useState( false );
-	const [ blocksAnimation, setBlocksAnimation ] = useState( false );
-	const [ isDefaultSection, setDefaultSection ] = useState( true );
+	const [ getOption, updateOption, status ] = useSettings();
+
+	const { createNotice } = dispatch( 'core/notices' );
+
+	useEffect( () => {
+		setGoogleMapsAPI( getOption( 'themeisle_google_map_block_api_key' ) );
+	}, [ getOption( 'themeisle_google_map_block_api_key' ) ]);
+
+	useEffect( () => {
+		setGoogleCaptchaAPISiteKey( getOption( 'themeisle_google_captcha_api_site_key' ) );
+		setGoogleCaptchaAPISecretKey( getOption( 'themeisle_google_captcha_api_secret_key' ) );
+	}, [ getOption( 'themeisle_google_captcha_api_site_key' ), getOption( 'themeisle_google_captcha_api_secret_key' ) ]);
+
 	const [ googleMapsAPI, setGoogleMapsAPI ] = useState( '' );
-	const [ isLoggingData, setLoggingData ] = useState( 'no' );
-	const [ allowJSONSVGUploads, setJSONSVGUploads ] = useState( false );
-	const [ isOpen, setOpen ] = useState( false );
 	const [ isRegeneratedDisabled, setRegeneratedDisabled ] = useState( false );
+	const [ isOpen, setOpen ] = useState( false );
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
 
-	const settingsRef = useRef( null );
-
-	const changeOptions = ( option, state, value ) => {
-		setAPISaving( true );
-
-		addNotification( __( 'Updating settings…', 'otter-blocks' ), 'info' );
-
-		const model = new api.models.Settings({
-			// eslint-disable-next-line camelcase
-			[option]: value
-		});
-
-		const save = model.save();
-
-		save.success( ( response, status ) => {
-			store.removeNotification( notification );
-
-			if ( 'success' === status ) {
-				setOptions( state, response[option]);
-
-				setTimeout( () => {
-					addNotification( __( 'Settings saved.', 'otter-blocks' ), 'success' );
-					setAPISaving( false );
-				}, 800 );
-			}
-
-			if ( 'error' === status ) {
-				setTimeout( () => {
-					addNotification( __( 'An unknown error occurred.', 'otter-blocks' ), 'danger' );
-					setAPISaving( false );
-				}, 800 );
-			}
-
-			settingsRef.current.fetch();
-		});
-
-		save.error( ( response ) => {
-			store.removeNotification( notification );
-
-			setTimeout( () => {
-				addNotification( response.responseJSON.message ? response.responseJSON.message : __( 'An unknown error occurred.', 'otter-blocks' ), 'danger' );
-				setAPISaving( false );
-			}, 800 );
-		});
-	};
-
-	const setOptions = ( option, value ) => {
-		switch ( option ) {
-		case 'cssModule':
-			setCSSModule( value );
-			break;
-		case 'blocksAnimation':
-			setBlocksAnimation( value );
-			break;
-		case 'isDefaultSection':
-			setDefaultSection( value );
-			break;
-		case 'googleMapsAPI':
-			setGoogleMapsAPI( value );
-			break;
-		case 'isLoggingData':
-			setLoggingData( value );
-			break;
-		case 'allowJSONSVGUploads':
-			setJSONSVGUploads( value );
-			break;
-		case 'googleCaptchaAPISiteKey':
-			setGoogleCaptchaAPISiteKey( value );
-			break;
-		case 'googleCaptchaAPISecretKey':
-			setGoogleCaptchaAPISecretKey( value );
-			break;
-		}
-	};
-
 	const regenerateStyles = async() => {
-		setAPISaving( true );
 		const data = await apiFetch({ path: 'otter/v1/regenerate', method: 'DELETE' });
-		addNotification( data.data.message, data.success ? 'success' : 'danger' );
+
+		createNotice(
+			data.success ? 'success' : 'error',
+			data.data.message,
+			{
+				isDismissible: true,
+				type: 'snackbar'
+			}
+		);
+
 		setRegeneratedDisabled( true );
-		setAPISaving( false );
 		setOpen( false );
 	};
 
-	const addNotification = ( message, type ) => {
-		const notification = store.addNotification({
-			message,
-			type,
-			insert: 'top',
-			container: 'bottom-left',
-			isMobile: true,
-			dismiss: {
-				duration: 2000,
-				showIcon: true
-			},
-			dismissable: {
-				click: true,
-				touch: true
-			}
-		});
-
-		setNotification( notification );
-	};
-
-	if ( ! isAPILoaded ) {
+	if ( 'loading' === status ) {
 		return (
 			<Placeholder>
 				<Spinner />
@@ -200,8 +94,9 @@ const Main = () => {
 							<ToggleControl
 								label={ __( 'Enable Custom CSS Module', 'otter-blocks' ) }
 								help={ __( 'Custom CSS module allows to add custom CSS to each block in Block Editor.', 'otter-blocks' ) }
-								checked={ cssModule }
-								onChange={ () => changeOptions( 'themeisle_blocks_settings_css_module', 'cssModule', ! cssModule ) }
+								checked={ Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ) }
+								disabled={ 'saving' === status }
+								onChange={ () => updateOption( 'themeisle_blocks_settings_css_module', ! Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ) ) }
 							/>
 						</PanelRow>
 
@@ -209,8 +104,9 @@ const Main = () => {
 							<ToggleControl
 								label={ __( 'Enable Blocks Animation Module', 'otter-blocks' ) }
 								help={ __( 'Blocks Animation module allows to add CSS animations to each block in Block Editor.', 'otter-blocks' ) }
-								checked={ blocksAnimation }
-								onChange={ () => changeOptions( 'themeisle_blocks_settings_blocks_animation', 'blocksAnimation', ! blocksAnimation ) }
+								checked={ Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ) }
+								disabled={ 'saving' === status }
+								onChange={ () => updateOption( 'themeisle_blocks_settings_blocks_animation', ! Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ) ) }
 							/>
 						</PanelRow>
 					</PanelBody>
@@ -224,8 +120,9 @@ const Main = () => {
 							<ToggleControl
 								label={ __( 'Make Section your default block for Pages', 'otter-blocks' ) }
 								help={ __( 'Everytime you create a new page, Section block will be appended there by default.', 'otter-blocks' ) }
-								checked={ isDefaultSection }
-								onChange={ () => changeOptions( 'themeisle_blocks_settings_default_block', 'isDefaultSection', ! isDefaultSection ) }
+								checked={ Boolean( getOption( 'themeisle_blocks_settings_default_block' ) ) }
+								disabled={ 'saving' === status }
+								onChange={ () => updateOption( 'themeisle_blocks_settings_default_block', ! Boolean( getOption( 'themeisle_blocks_settings_default_block' ) ) ) }
 							/>
 						</PanelRow>
 					</PanelBody>
@@ -247,15 +144,15 @@ const Main = () => {
 									id="otter-options-google-map-api"
 									value={ googleMapsAPI }
 									placeholder={ __( 'Google Maps API Key', 'otter-blocks' ) }
-									disabled={ isAPISaving }
+									disabled={ 'saving' === status }
 									onChange={ e => setGoogleMapsAPI( e.target.value ) }
 								/>
 
 								<div className="otter-button-group">
 									<Button
 										isPrimary
-										disabled={ isAPISaving }
-										onClick={ () => changeOptions( 'themeisle_google_map_block_api_key', 'googleMapsAPI', googleMapsAPI ) }
+										disabled={ 'saving' === status }
+										onClick={ () => updateOption( 'themeisle_google_map_block_api_key', googleMapsAPI ) }
 									>
 										{ __( 'Save', 'otter-blocks' ) }
 									</Button>
@@ -282,7 +179,7 @@ const Main = () => {
 									label={ __( 'Site Key', 'otter-blocks' ) }
 									value={ googleCaptchaAPISiteKey }
 									placeholder={ __( 'Site Key', 'otter-blocks' ) }
-									disabled={ isAPISaving }
+									disabled={ 'saving' === status }
 									onChange={ value => setGoogleCaptchaAPISiteKey( value ) }
 								/>
 
@@ -291,17 +188,17 @@ const Main = () => {
 									label={ __( 'Secret Key', 'otter-blocks' ) }
 									value={ googleCaptchaAPISecretKey }
 									placeholder={ __( 'Secret Key', 'otter-blocks' ) }
-									disabled={ isAPISaving }
+									disabled={ 'saving' === status }
 									onChange={ value => setGoogleCaptchaAPISecretKey( value ) }
 								/>
 
 								<div className="otter-button-group">
 									<Button
 										isPrimary
-										disabled={ isAPISaving }
+										disabled={ 'saving' === status }
 										onClick={ () => {
-											changeOptions( 'themeisle_google_captcha_api_site_key', 'googleCaptchaAPISiteKey', googleCaptchaAPISiteKey );
-											changeOptions( 'themeisle_google_captcha_api_secret_key', 'googleCaptchaAPISecretKey', googleCaptchaAPISecretKey );
+											updateOption( 'themeisle_google_captcha_api_site_key', googleCaptchaAPISiteKey );
+											updateOption( 'themeisle_google_captcha_api_secret_key', googleCaptchaAPISecretKey );
 										} }
 									>
 										{ __( 'Save', 'otter-blocks' ) }
@@ -327,8 +224,9 @@ const Main = () => {
 							<ToggleControl
 								label={ __( 'Anonymous Data Tracking.', 'otter-blocks' ) }
 								help={ __( 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.', 'otter-blocks' ) }
-								checked={ 'yes' === isLoggingData ? true : false }
-								onChange={ () => changeOptions( 'otter_blocks_logger_flag', 'isLoggingData', ( 'yes' === isLoggingData ? 'no' : 'yes' ) ) }
+								checked={ 'yes' === getOption( 'otter_blocks_logger_flag' ) ? true : false }
+								disabled={ 'saving' === status }
+								onChange={ () => updateOption( 'otter_blocks_logger_flag', ( 'yes' === getOption( 'otter_blocks_logger_flag' ) ? 'no' : 'yes' ) ) }
 							/>
 						</PanelRow>
 
@@ -336,8 +234,9 @@ const Main = () => {
 							<ToggleControl
 								label={ __( 'Allow JSON & SVG Uploads.', 'otter-blocks' ) }
 								help={ __( 'This option allows JSON & SVG files to be uploaded to the media library to use in Lottie Block. Only enable this option if you want to use custom JSON uploads in Lottie Block or using SVG as image source.', 'otter-blocks' ) }
-								checked={ allowJSONSVGUploads }
-								onChange={ () => changeOptions( 'themeisle_allow_json_upload', 'allowJSONSVGUploads', ! allowJSONSVGUploads ) }
+								checked={ Boolean( getOption( 'themeisle_allow_json_upload' ) ) }
+								disabled={ 'saving' === status }
+								onChange={ () => updateOption( 'themeisle_allow_json_upload', ! Boolean( getOption( 'themeisle_allow_json_upload' ) ) ) }
 							/>
 						</PanelRow>
 
@@ -409,8 +308,8 @@ const Main = () => {
 
 						<Button
 							isPrimary
-							disabled={ isAPISaving }
-							isBusy={ isAPISaving }
+							disabled={ 'saving' === status }
+							isBusy={ 'saving' === status }
 							onClick={ regenerateStyles }
 						>
 							{ __( 'Confirm', 'otter-blocks' ) }
