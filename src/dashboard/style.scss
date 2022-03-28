@@ -38,7 +38,7 @@
 		.otter-container {
 			margin: 0 auto;
 			max-width: 100%;
-			max-width: 750px; // 930
+			max-width: 930px; // 930
 
 			.otter-logo {
 				display: flex;
@@ -61,9 +61,12 @@
 	}
 
 	.otter-main {
+		display: grid;
+		grid-template-columns: 2fr 1fr;
+		gap: 25px;
 		margin-left: auto;
 		margin-right: auto;
-		max-width: 750px;
+		max-width: 930px;
 
 		.components-panel__body {
 			margin: 25px 0;
@@ -233,11 +236,6 @@
 }
 
 .otter-button-control {
-	display: flex;
-	flex: 1;
-	justify-content: space-between;
-	align-items: center;
-
 	.components-base-control_labels {
 		.components-base-control__label {
 			font-weight: 600;
@@ -355,6 +353,10 @@
 					justify-content: center;
 				}
 			}
+		}
+
+		.otter-main {
+			grid-template-columns: auto;
 		}
 
 		.otter-info {
