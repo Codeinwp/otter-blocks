@@ -564,6 +564,8 @@ const Edit = ({
 			blockRef.current?.style?.setProperty( '--submitBackgroundHover', attributes.submitBackgroundColorHover || null );
 			blockRef.current?.style?.setProperty( '--submitColor', attributes.submitColor || null );
 			blockRef.current?.style?.setProperty( '--submitMsgColor', attributes.submitMessageColor || null );
+			blockRef.current?.style?.setProperty( '--inputGap', px( attributes.inputGap ) );
+			blockRef.current?.style?.setProperty( '--inputsGap', px( attributes.inputsGap ) );
 		}
 	}, [ blockRef.current, attributes ]);
 

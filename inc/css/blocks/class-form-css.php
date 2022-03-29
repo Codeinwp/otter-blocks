@@ -79,6 +79,16 @@ class Form_CSS extends Base_CSS {
 						'property' => '--submitMsgColor',
 						'value'    => 'submitMessageColor',
 					),
+					array(
+						'property' => '--inputsGap',
+						'value'    => 'inputsGap',
+						'unit'     => 'px'
+					),
+					array(
+						'property' => '--inputGap',
+						'value'    => 'inputGap',
+						'unit'     => 'px'
+					),
 				),
 			)
 		);

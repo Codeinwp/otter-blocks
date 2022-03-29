@@ -8,7 +8,8 @@ import { InspectorControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
 	TextControl,
-	ToggleControl
+	ToggleControl,
+	SelectControl
 } from '@wordpress/components';
 
 const Inspector = ({
@@ -43,6 +44,34 @@ const Inspector = ({
 					help={ __( 'If true, the input field must be filled out before submitting the form.', 'otter-blocks' ) }
 					checked={ attributes.isRequired }
 					onChange={ isRequired => setAttributes({ isRequired }) }
+				/>
+
+				<SelectControl
+					label={ __( 'Input Width', 'otter-blocks' ) }
+					value={ attributes.inputWidth }
+					onChange={ inputWidth => setAttributes({ inputWidth }) }
+					options={[
+						{
+							label: __( 'Default', '' ),
+							value: ''
+						},
+						{
+							label: '33%',
+							value: 33
+						},
+						{
+							label: '50%',
+							value: 50
+						},
+						{
+							label: '75%',
+							value: 75
+						},
+						{
+							label: '100%',
+							value: 100
+						}
+					]}
 				/>
 			</PanelBody>
 		</InspectorControls>

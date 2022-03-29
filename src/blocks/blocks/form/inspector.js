@@ -176,6 +176,24 @@ const Inspector = ({
 				/>
 
 				<RangeControl
+					label={ __( 'Input Gap', 'otter-blocks' ) }
+					value={ attributes.inputGap }
+					onChange={ inputGap => setAttributes({ inputGap }) }
+					allowReset
+					min={0}
+					max={50}
+				/>
+
+				<RangeControl
+					label={ __( 'Fields Gap', 'otter-blocks' ) }
+					value={ attributes.inputsGap }
+					onChange={ inputsGap => setAttributes({ inputsGap }) }
+					allowReset
+					min={0}
+					max={50}
+				/>
+
+				<RangeControl
 					label={ __( 'Border Radius', 'otter-blocks' ) }
 					value={ attributes.inputBorderRadius }
 					onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
