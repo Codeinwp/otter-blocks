@@ -65,6 +65,11 @@ const PanelItem = ({
 	);
 };
 
+/**
+ *
+ * @param {import('./type.js').ReviewInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes,

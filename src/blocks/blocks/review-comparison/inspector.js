@@ -9,6 +9,11 @@ import {
 	PanelColorSettings
 } from '@wordpress/block-editor';
 
+/**
+ *
+ * @param {import('./types').ReviewComparisionInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes

@@ -25,6 +25,11 @@ import {
  */
 const IconPickerControl = lazy( () => import( '../../components/icon-picker-control/index.js' ) );
 
+/**
+ *
+ * @param {import('./types.js').IconsListInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes

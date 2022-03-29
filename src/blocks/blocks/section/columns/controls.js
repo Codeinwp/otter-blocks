@@ -12,11 +12,7 @@ const Controls = ({
 }) => {
 	const changeVerticalAlign = value => {
 		if ( attributes.verticalAlign === value ) {
-			setAttributes({ verticalAlign: 'unset' });
-		} else if ( 'top' === value ) {
-			setAttributes({ verticalAlign: 'flex-start' });
-		} else if ( 'bottom' === value ) {
-			setAttributes({ verticalAlign: 'flex-end' });
+			return setAttributes({ verticalAlign: 'unset' });
 		}
 
 		return setAttributes({ verticalAlign: value });
@@ -28,6 +24,7 @@ const Controls = ({
 		} else if ( 'flex-end' === attributes.verticalAlign ) {
 			return 'bottom';
 		}
+
 		return attributes.verticalAlign;
 	};
 

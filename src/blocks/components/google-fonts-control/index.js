@@ -210,7 +210,7 @@ const GoogleFontsControl = ({
 
 			{ variants && (
 				<SelectControl
-					label={ __( 'Font Width', 'otter-blocks' ) }
+					label={ __( 'Font Weight', 'otter-blocks' ) }
 					value={ valueVariant || 'regular' }
 					options={ variants }
 					onChange={ onChangeFontVariant }

@@ -187,6 +187,16 @@ We're here to help. Feel free to open a new thread on the [Support Forum](https:
 
 == Changelog ==
 
+##### [Version 2.0.1](https://github.com/Codeinwp/otter-blocks/compare/v2.0.0...v2.0.1) (2022-03-10)
+
+- Fix styles not loaded for Reusable Blocks
+- Fix Accordion block not centering on Twenty Twenty
+- Disable Block Animations for [@media](https://github.com/media) print
+- Fix use of undefined constant OTTER_BLOCKS_PATH in Blocks Animation
+
+
+
+
 #### [Version 2.0.0](https://github.com/Codeinwp/otter-blocks/compare/v1.7.5...v2.0.0) (2022-03-08)
 
 - Add Flip Block

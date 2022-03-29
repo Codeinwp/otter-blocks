@@ -36,6 +36,11 @@ import Inspector from './inspector.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Progress Bar Block
+ * @param {import('./types').ProgressBarProps} props
+ * @returns
+ */
 const ProgressBar = ({
 	attributes,
 	setAttributes,
@@ -43,6 +48,7 @@ const ProgressBar = ({
 	clientId,
 	toggleSelection
 }) => {
+
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
