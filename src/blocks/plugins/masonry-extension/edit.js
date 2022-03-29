@@ -57,17 +57,17 @@ const Edit = ({
 			});
 
 			const targetContainer = useOldContainer.current ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }`;
-			const container = document.querySelector(targetContainer);
+			const container = document.querySelector( targetContainer );
 			initObserver.current = new IntersectionObserver( entries => {
 				entries.forEach( entry => {
-					if( entry.isIntersecting && entry.intersectionRect.height >= 0) {
+					if ( entry.isIntersecting && 0 <= entry.intersectionRect.height ) {
 						initMasonry();
-						initObserver.current?.unobserve(container);
+						initObserver.current?.unobserve( container );
 					}
-				})
-			}, options);
+				});
+			}, options );
 
-			initObserver.current?.observe(container);
+			initObserver.current?.observe( container );
 		}
 		return () => {
 			deleteMasonry();

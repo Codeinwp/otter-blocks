@@ -39,8 +39,6 @@ domReady( () => {
 
 							container.removeAttribute( 'class' );
 
-							console.log( 'Initiate' );
-
 							window.Macy({
 								container: targetContainer,
 								trueOrder: false,
