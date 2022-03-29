@@ -12,11 +12,11 @@ Otter is a dynamic collection of page building blocks and templates for the Word
 
 == Description ==
 
-Otter is a Gutenberg Blocks pagebuilder plugin that adds extra functionality to the WordPress Block Editor (also known as Gutenberg) for a better page building experience without the need for traditional page builders like Elementor and Divi.
+Otter is a Gutenberg Blocks page builder plugin that adds extra functionality to the WordPress Block Editor (also known as Gutenberg) for a better page building experience without the need for traditional page builders like Elementor and Divi.
 
 Otter Blocks Plugin not only adds extra custom blocks for Gutenberg, but it also adds extra functionality such as Custom CSS, Animations and Visibility Conditions to default or third party blocks present on your website. 
 
-The Custom CSS block feature makes it possible to directly alter the CSS properties of any Gutenberg block on the page, while the Animation feature makes it quick and easy to add animations to any block to enhance the appeal of your different page blocks and sections. The Visibility Conditions feature by Otter allows you to set which conditions should be met for your chosen blocks to be displayed on the page.
+The Custom CSS block feature makes it possible to directly customize the CSS properties of any Gutenberg block on the page, while the Animation feature makes it quick and easy to add animations to any block to enhance the appeal of your different page blocks and sections. With the Visibility Conditions feature by Otter, you can set which conditions should be met for your chosen blocks to be displayed on the page.
 
 New to the Gutenberg Blocks ecosystem? Checkout our article on [Gutenberg Explained.](https://themeisle.com/blog/gutenberg-blocks-explained/)
 
