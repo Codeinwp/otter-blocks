@@ -22,12 +22,12 @@ domReady( () => {
 			headerItem.classList.add( 'wp-block-themeisle-blocks-tabs__header_item' );
 			const content = item.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__content' );
 
-			if ( 'true' === item.dataset.defaultOpen && !openedTab ) {
+			if ( 'true' === item.dataset.defaultOpen && ! openedTab ) {
 				headerItem.classList.add( 'active' );
 				content.classList.add( 'active' );
 				openedTab = true;
 			} else {
-				closedTabs.push( {headerItem, content} )
+				closedTabs.push({headerItem, content});
 			}
 
 			headerItem.innerHTML = item.dataset.title || __( 'Untitled Tab' );
@@ -76,7 +76,7 @@ domReady( () => {
 	/**
 	 * If no tab is set to open, open the first closed tab.
 	 */
-	if( !openedTab ) {
+	if ( ! openedTab ) {
 		closedTabs?.[0]?.headerItem.classList.add( 'active' );
 		closedTabs?.[0]?.content.classList.add( 'active' );
 	}
