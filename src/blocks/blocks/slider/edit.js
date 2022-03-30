@@ -63,26 +63,30 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	useEffect( () => {
-		const container = document.querySelector(`#${ attributes.id }`);
-		initObserver.current = new IntersectionObserver((entries) => {
-			entries.forEach( entry => {
-				if( entry.isIntersecting && 0 <= entry.intersectionRect.height ) {
-					if ( attributes.images.length ) {
-						initSlider();
-						initObserver.current?.unobserve(container);
+		const container = document.querySelector( `#${ attributes.id }` );
+
+		if ( container ) {
+			initObserver.current = new IntersectionObserver( ( entries ) => {
+				entries.forEach( entry => {
+					if ( entry.isIntersecting && 0 <= entry.intersectionRect.height ) {
+						if ( attributes.images.length ) {
+							initSlider();
+							initObserver.current?.unobserve( container );
+						}
 					}
+				});
+			}, options );
+
+			initObserver.current?.observe( container );
+
+			return () => {
+				if ( attributes.images.length && null !== sliderRef.current ) {
+					sliderRef.current.destroy();
 				}
-			})
-		}, options);
+			};
+		}
 
-		initObserver.current?.observe(container);
-
-		return () => {
-			if ( attributes.images.length && null !== sliderRef.current ) {
-				sliderRef.current.destroy();
-			}
-		};
-	}, []);
+	}, [ attributes.id ]);
 
 	useEffect( () => {
 		if ( attributes.images.length ) {
