@@ -81,6 +81,9 @@
 		},
 		"inputsGap": {
 			"type": "number"
+		},
+		"isSynced": {
+			"type": "array"
 		}
 	},
 	"supports": {
