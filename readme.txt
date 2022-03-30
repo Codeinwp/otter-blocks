@@ -163,10 +163,12 @@ Create a beautifully styled Business Hours table and fine-tune it's settings unt
 We're constantly adding new Gutenberg Blocks to Otter to assist in your website page building. Feel free to tell us what we’re missing on our [Support Forum](https://wordpress.org/support/plugin/otter-blocks/)! Some other blocks include:
 
 - Progress Bar Gutenberg Block [FREE]
-- Circular Progress Gutenber Block [FREE]
+- Circular Progress Gutenberg Block [FREE]
+- Flip Card Gutenberg Block [FREE]
 - Popup Gutenberg Block [FREE]
 - Sharing Icons Gutenberg Block [FREE]
 - Plugin Card Gutenberg Block [FREE]
+- Subscribe Form Gutenberg Block [FREE]
 
 ### Support
 
