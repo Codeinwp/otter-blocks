@@ -12,6 +12,7 @@ type Attributes = {
 	speed: number
 	direction: boolean
 	width: number
+	widthUnit: string
 }
 
 export type LottieProps = BlockProps<Attributes>

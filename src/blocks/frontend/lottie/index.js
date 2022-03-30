@@ -74,7 +74,7 @@ domReady( () => {
 		});
 
 		if ( animation.getAttribute( 'width' ) ) {
-			animation.style.width = `${ animation.getAttribute( 'width' ) }px`;
+			animation.style.width = animation.getAttribute( 'width' );
 			animation.style.height = 'auto';
 		}
 	});

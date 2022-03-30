@@ -16,6 +16,11 @@ import {
 import { Fragment } from '@wordpress/element';
 
 /**
+ * Internal dependencies
+ */
+import ResponsiveRange from './components/responsive-range';
+
+/**
  *
  * @param {import('./types').LottieInspectorProps} props
  * @returns
@@ -25,6 +30,17 @@ const Inspector = ({
 	setAttributes,
 	playerRef
 }) => {
+	const widthUnitLimits = {
+		'%': {
+			min: 0,
+			max: 100
+		},
+		'px': {
+			min: 10,
+			max: 1000
+		}
+	};
+
 	const onChangeTrigger = value => {
 		setAttributes({ trigger: value });
 	};
@@ -55,7 +71,28 @@ const Inspector = ({
 	};
 
 	const onChangeWidth = value => {
+		if ( value === undefined ) {
+			setAttributes({ width: 100, widthUnit: '%' });
+			return;
+		}
+
 		setAttributes({ width: value });
+	};
+
+	const onChangeWidthUnit = ( newUnit ) => {
+		if ( attributes.widthUnit === newUnit ) {
+			return;
+		}
+
+		if ( attributes.width > widthUnitLimits[newUnit].max ) {
+			setAttributes({ width: widthUnitLimits[newUnit].max });
+		}
+
+		if ( attributes.width < widthUnitLimits[newUnit].min ) {
+			setAttributes({ width: widthUnitLimits[newUnit].min });
+		}
+
+		setAttributes({ widthUnit: newUnit });
 	};
 
 	return (
@@ -115,14 +152,16 @@ const Inspector = ({
 					</Fragment>
 				) }
 
-				<RangeControl
+				<ResponsiveRange
 					label={ __( 'Width', 'otter-blocks' ) }
 					help={ __( 'Container width in pixels.', 'otter-blocks' ) }
 					value={ attributes.width }
+					units={ Object.keys( widthUnitLimits ) }
+					activeUnit={ attributes.widthUnit }
 					onChange={ onChangeWidth }
-					allowReset
-					min={ 100 }
-					max={ 1000 }
+					onUnitChange={ onChangeWidthUnit }
+					min={ widthUnitLimits[attributes.widthUnit ? attributes.widthUnit : 'px'].min }
+					max={ widthUnitLimits[attributes.widthUnit ? attributes.widthUnit : 'px'].max }
 				/>
 			</PanelBody>
 		</InspectorControls>

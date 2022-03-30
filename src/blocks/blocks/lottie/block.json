@@ -36,6 +36,9 @@
 		},
 		"width": {
 			"type": "number"
+		},
+		"widthUnit": {
+			"type": "string"
 		}
 	},
 	"supports": {

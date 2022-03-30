@@ -46,7 +46,7 @@ const LottiePlayer = ({
 			speed={ attributes.speed }
 			direction={ attributes.direction ? -1 : 1 }
 			style={ {
-				width: attributes.width,
+				width: `${ attributes.width }${ attributes.widthUnit }`,
 				height: 'auto'
 			} }
 			mode="normal"
