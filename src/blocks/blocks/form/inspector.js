@@ -156,69 +156,65 @@ const Inspector = ({
 					/>
 				</SyncControl>
 
-				<SelectControl
-					label={ __( 'Input Width', 'otter-blocks' ) }
-					value={ attributes.inputWidth }
-					onChange={ inputWidth => setAttributes({ inputWidth }) }
-					options={[
-						{
-							label: __( 'Default', '' ),
-							value: ''
-						},
-						{
-							label: '33%',
-							value: 33
-						},
-						{
-							label: '50%',
-							value: 50
-						},
-						{
-							label: '75%',
-							value: 75
-						},
-						{
-							label: '100%',
-							value: 100
-						}
-					]}
-				/>
+				<SyncControl
+					field={ 'inputGap' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Input Gap', 'otter-blocks' ) }
+						value={ attributes.inputGap }
+						onChange={ inputGap => setAttributes({ inputGap }) }
+						allowReset
+						min={0}
+						max={50}
+					/>
+				</SyncControl>
 
-				<RangeControl
-					label={ __( 'Input Gap', 'otter-blocks' ) }
-					value={ attributes.inputGap }
-					onChange={ inputGap => setAttributes({ inputGap }) }
-					allowReset
-					min={0}
-					max={50}
-				/>
+				<SyncControl
+					field={ 'inputsGap' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Fields Gap', 'otter-blocks' ) }
+						value={ attributes.inputsGap }
+						onChange={ inputsGap => setAttributes({ inputsGap }) }
+						allowReset
+						min={0}
+						max={50}
+					/>
+				</SyncControl>
 
-				<RangeControl
-					label={ __( 'Fields Gap', 'otter-blocks' ) }
-					value={ attributes.inputsGap }
-					onChange={ inputsGap => setAttributes({ inputsGap }) }
-					allowReset
-					min={0}
-					max={50}
-				/>
+				<SyncControl
+					field={ 'inputsBorderRadius' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Border Radius', 'otter-blocks' ) }
+						value={ attributes.inputBorderRadius }
+						onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
+						allowReset
+						min={0}
+						max={50}
+					/>
+				</SyncControl>
 
-				<RangeControl
-					label={ __( 'Border Radius', 'otter-blocks' ) }
-					value={ attributes.inputBorderRadius }
-					onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
-					allowReset
-					min={0}
-					max={50}
-				/>
-
-				<RangeControl
-					label={ __( 'Border Width', 'otter-blocks' ) }
-					value={ attributes.inputBorderWidth }
-					onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
-					allowReset
-					min={0}
-					max={50}
-				/>
+				<SyncControl
+					field={ 'inputsBorderWidth' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Border Width', 'otter-blocks' ) }
+						value={ attributes.inputBorderWidth }
+						onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
+						allowReset
+						min={0}
+						max={50}
+					/>
+				</SyncControl>
 			</PanelBody>
 
 			<PanelColorSettings
