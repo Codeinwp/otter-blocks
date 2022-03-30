@@ -23,8 +23,8 @@ type Attributes = {
 	submitBackgroundColor: string
 	submitBackgroundColorHover: string
 	submitColor: string
-	inputGap: string
-	inputsGap: string
+	inputGap: number
+	inputsGap: number
 }
 
 export type FormProps = BlockProps<Attributes>

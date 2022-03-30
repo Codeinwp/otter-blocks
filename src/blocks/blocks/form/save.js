@@ -34,7 +34,7 @@ const Save = ({
 
 				<div className="wp-block-button">
 					<button
-						className='components-button o-form-submit'
+						className='wp-block-button__link'
 						type='submit'
 						isPrimary
 					>
