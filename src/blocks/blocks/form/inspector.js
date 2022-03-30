@@ -14,7 +14,8 @@ import {
 	SelectControl,
 	Spinner,
 	TextControl,
-	ToggleControl
+	ToggleControl,
+	__experimentalBoxControl as BoxControl
 } from '@wordpress/components';
 
 import { dispatch } from '@wordpress/data';
@@ -30,6 +31,7 @@ import {
  * Internal dependencies.
  */
 import { FormContext } from './edit.js';
+import SyncControl from '../../components/sync-control';
 
 /**
  *
@@ -138,14 +140,21 @@ const Inspector = ({
 					)
 				}
 
-				<RangeControl
-					label={ __( 'Input Padding', 'otter-blocks' ) }
-					value={ attributes.inputPadding }
-					onChange={ inputPadding => setAttributes({ inputPadding }) }
-					allowReset
-					min={0}
-					max={50}
-				/>
+				<SyncControl
+					field={ 'inputPadding' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<BoxControl
+						label={ __( 'Padding', 'otter-blocks' ) }
+						values={ attributes.inputPadding }
+						inputProps={ {
+							min: 0,
+							max: 500
+						} }
+						onChange={ inputPadding => setAttributes({ inputPadding }) }
+					/>
+				</SyncControl>
 
 				<SelectControl
 					label={ __( 'Input Width', 'otter-blocks' ) }

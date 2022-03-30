@@ -1,5 +1,5 @@
 .wp-block-themeisle-blocks-form {
-	--padding: 5px;
+	--padding: 5px 10px;
 	--borderRadius: inherit;
 	--borderColor: inherit;
 	--borderWidth: inherit;
@@ -10,7 +10,7 @@
 	--submitBackgroundHover: inherit;
 	--submitColor: white;
 	--submitMsgColor: green;
-	--inputsGap: 5px;
+	--inputsGap: 10px;
 	--inputGap: 5px;
 
 	.otter-form-consent {
@@ -115,10 +115,12 @@
 		}
 	}
 
-	.wp-block-themeisle-blocks-form-input {
+	.wp-block-themeisle-blocks-form-input, .wp-block-themeisle-blocks-form-textarea {
 		display: flex;
 		flex-direction: column;
+		width: 100%;
 		gap: var(--inputGap);
+		margin: 0px;
 
 		.otter-form-input-label {
 			width: 100%;
@@ -132,7 +134,6 @@
 
 		.otter-form-input {
 			width: var(--inputWidth);
-			margin-bottom: 10px;
 			padding: var(--padding);
 			border-radius: var(--borderRadius);
 			border-width: var(--borderWidth);
@@ -141,28 +142,8 @@
 	}
 
 	.wp-block-themeisle-blocks-form-textarea {
-		display: flex;
-		flex-direction: column;
-		gap: var(--inputGap);
-
-		.otter-form-textarea-label {
-			width: 100%;
-			font-weight: bold;
-			color: var(--labelColor);
-
-			.required {
-				color: var(--requiredColor);
-			}
-		}
-
 		.otter-form-textarea-input {
-			width: var(--inputWidth);
 			height: 200px;
-			margin-bottom: 10px;
-			padding: var(--padding);
-			border-radius: var(--borderRadius);
-			border-width: var(--borderWidth);
-			border-color: var(--borderColor);
 		}
 	}
 
