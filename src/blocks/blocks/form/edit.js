@@ -548,13 +548,16 @@ const Edit = ({
 	useEffect( () => {
 		const px = x => x ? x + 'px' : null;
 		const per = x => x ? x + '%' : null;
+		const padding = x => x ? x.top + ' ' + x.right + ' ' + x.bottom + ' ' + x.left : null;
+
+		console.log(padding( attributes.inputPadding ));
 
 		/**
 		 * TODO: Refactor this based on #748
 		 */
 
 		if ( blockRef.current ) {
-			blockRef.current?.style?.setProperty( '--padding', px( attributes.inputPadding ) );
+			blockRef.current?.style?.setProperty( '--padding', padding( attributes.inputPadding ) );
 			blockRef.current?.style?.setProperty( '--borderRadius', px( attributes.inputBorderRadius ) );
 			blockRef.current?.style?.setProperty( '--borderWidth', px( attributes.inputBorderWidth ) );
 			blockRef.current?.style?.setProperty( '--borderColor', attributes.inputBorderColor || null );

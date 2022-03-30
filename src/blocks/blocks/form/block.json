@@ -44,7 +44,7 @@
 			"type": "string"
 		},
 		"inputPadding": {
-			"type": "number"
+			"type": "object"
 		},
 		"labelColor": {
 			"type": "string"

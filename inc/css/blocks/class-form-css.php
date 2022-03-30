@@ -56,7 +56,15 @@ class Form_CSS extends Base_CSS {
 					array(
 						'property' => '--padding',
 						'value'    => 'inputPadding',
-						'unit'     => 'px'
+						'format'    => function( $value, $attrs ) {
+                            return $value['top'] . ' ' . $value['right'] . ' ' . $value['bottom'] . ' ' . $value['left'];
+                        },
+                        'condition' => function( $attrs ) {
+                            return ( isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['top'] )
+                            && isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['right'] )
+                            && isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['bottom'] )
+                            && isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['left'] ) );
+                        }
 					),
 					array(
 						'property' => '--inputWidth',

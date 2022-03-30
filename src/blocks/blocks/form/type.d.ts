@@ -12,7 +12,12 @@ type Attributes = {
 	submitLabel: string
 	sendUserEmail: boolean
 	redirectLink: string
-	inputPadding: number
+	inputPadding: {
+		top: string
+		right: string
+		bottom: string
+		left: string
+	}
 	labelColor: string
 	inputBorderRadius: number
 	inputBorderColor: string
