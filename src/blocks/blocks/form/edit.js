@@ -267,7 +267,7 @@ const Edit = ({
 	 * Save API Keys in the Otter options.
 	 */
 	const saveCaptchaAPIKey = () => {
-		const model = new window.wp.api.models.Settings({
+		const model = new api.models.Settings({
 			// eslint-disable-next-line camelcase
 			themeisle_google_captcha_api_site_key: googleCaptchaAPISiteKey,
 			// eslint-disable-next-line camelcase
@@ -621,7 +621,7 @@ const Edit = ({
 
 								<div className="wp-block-button has-submit-msg">
 									<button
-										className='components-button o-form-submit'
+										className='wp-block-button__link'
 										type='submit'
 									>
 										{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }

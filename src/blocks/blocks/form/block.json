@@ -77,10 +77,10 @@
 			"type": "string"
 		},
 		"inputGap": {
-			"type": "string"
+			"type": "number"
 		},
 		"inputsGap": {
-			"type": "string"
+			"type": "number"
 		}
 	},
 	"supports": {
