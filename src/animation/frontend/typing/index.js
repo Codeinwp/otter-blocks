@@ -14,7 +14,7 @@ const speedConfig = {
 	'o-typing-slower': 0.4,
 	'o-typing-slow': 0.25,
 	'o-typing-fast': 0.05,
-	'o-typing-fastest': 0.01
+	'o-typing-faster': 0.01
 };
 
 /**
