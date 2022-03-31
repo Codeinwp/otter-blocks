@@ -23,6 +23,7 @@ import './masonry-extension/index.js';
 import './image-extension/index.js';
 import './menu-icons/index.js';
 import './sticky/index.js';
+import './dynamic-content/index.js';
 
 const icon = <Icon icon={ otterIcon } />;
 

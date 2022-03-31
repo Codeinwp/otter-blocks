@@ -3,3 +3,46 @@
 		margin-right: 4px;
 	}
 }
+
+.o-dynamic {
+	&:disabled {
+		opacity: 1;
+
+		.o-dynamic-list-item {
+			display: block;
+			font-weight: 600;
+		}
+	}
+
+	.o-dynamic-list-item {
+		display: list-item;
+		list-style-type: disc;
+		list-style-position: inside;
+	}
+}
+
+.o-dynamic-modal {
+	.components-modal__content {
+		padding: 0;
+		margin: 0;
+		overflow-y: hidden;
+		overflow-y: scroll;
+
+		&::before {
+			min-height: 60px;
+			margin-bottom: 0;
+		}
+	}
+
+	.components-modal__header {
+		background: #ffffff;
+		padding: 0 24px;
+		margin: 0;
+	}
+}
+
+.o-dynamic-popover {
+	.components-popover__content {
+		width: 300px;
+	}
+}
