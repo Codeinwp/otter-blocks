@@ -75,34 +75,6 @@ const Inspector = ({
 					checked={ attributes.isRequired }
 					onChange={ isRequired => setAttributes({ isRequired }) }
 				/>
-
-				<SelectControl
-					label={ __( 'Input Width', 'otter-blocks' ) }
-					value={ attributes.inputWidth }
-					onChange={ inputWidth => setAttributes({ inputWidth }) }
-					options={[
-						{
-							label: __( 'Default', '' ),
-							value: ''
-						},
-						{
-							label: '33%',
-							value: 33
-						},
-						{
-							label: '50%',
-							value: 50
-						},
-						{
-							label: '75%',
-							value: 75
-						},
-						{
-							label: '100%',
-							value: 100
-						}
-					]}
-				/>
 			</PanelBody>
 			<PanelColorSettings
 				title={ __( 'Color', 'otter-blocks' ) }
