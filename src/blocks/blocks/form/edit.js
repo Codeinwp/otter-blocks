@@ -577,6 +577,8 @@ const Edit = ({
 			blockRef.current?.style?.setProperty( '--submitMsgColor', attributes.submitMessageColor || null );
 			blockRef.current?.style?.setProperty( '--inputGap', px( attributes.inputGap ) );
 			blockRef.current?.style?.setProperty( '--inputsGap', px( attributes.inputsGap ) );
+			blockRef.current?.style?.setProperty( '--labelFontSize', px( attributes.labelFontSize ) );
+			blockRef.current?.style?.setProperty( '--submitFontSize', px( attributes.submitFontSize ) );
 		}
 	}, [ blockRef.current, attributes ]);
 

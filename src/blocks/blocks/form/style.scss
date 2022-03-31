@@ -10,6 +10,67 @@
 	--submitMsgColor: green;
 	--inputsGap: 10px;
 	--inputGap: 5px;
+	--labelFontSize: var(--bodyFontSize);
+	--submitFontSize: var(--btnFs,var(--bodyFontSize));
+
+	.otter-form__container {
+		display: flex;
+		flex-direction: column;
+		gap: var(--inputsGap);
+	}
+
+
+	.wp-block-themeisle-blocks-form-input, .wp-block-themeisle-blocks-form-textarea {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		gap: var(--inputGap);
+		margin: 0px;
+
+		.otter-form-input-label, .otter-form-textarea-label {
+			width: 100%;
+			font-weight: bold;
+			color: var(--labelColor);
+			font-size: var(--labelFontSize);
+
+			.required {
+				color: var(--requiredColor);
+			}
+		}
+
+		.otter-form-input {
+			width: var(--inputWidth);
+			padding: var(--padding);
+			border-radius: var(--borderRadius);
+			border-width: var(--borderWidth);
+			border-color: var(--borderColor);
+		}
+
+		.o-form-help {
+			opacity: 0.8;
+			color: var(--labelColor);
+			margin-bottom: 12px;
+			font-size: medium;
+		}
+	}
+
+	.wp-block-themeisle-blocks-form-textarea {
+		.otter-form-textarea-input {
+			height: 200px;
+		}
+	}
+
+	.wp-block-button {
+		margin-top: 1.5em;
+		.wp-block-button__link {
+			font-size: var(--submitFontSize);
+			height: auto;
+			padding: 10px 20px;
+			color: var(--submitColor);
+			border: 0px;
+			transition: background-color 0.15s linear;
+		}
+	}
 
 	.otter-form-consent {
 		label {
@@ -21,23 +82,6 @@
 		}
 	}
 
-	.otter-form__container {
-		display: flex;
-		flex-direction: column;
-		gap: var(--inputsGap);
-	}
-
-	.wp-block-button {
-		margin-top: 1.5em;
-		.wp-block-button__link {
-			font-size: 1.5rem;
-			height: auto;
-			padding: 10px 20px;
-			color: var(--submitColor);
-			border: 0px;
-			transition: background-color 0.15s linear;
-		}
-	}
 
 	.o-form-server-response {
 		text-align: left;
@@ -93,60 +137,5 @@
 		display: flex;
 		align-items: baseline;
 		flex-direction: row;
-	}
-
-	.loading {
-		animation: blink 1s ease-in-out infinite alternate;
-		.wp-block-button__link {
-			padding-right: 0px;
-		}
-	}
-
-	@keyframes blink {
-		to {
-			opacity: 0;
-		}
-	}
-
-	.wp-block-themeisle-blocks-form-input, .wp-block-themeisle-blocks-form-textarea {
-		display: flex;
-		flex-direction: column;
-		width: 100%;
-		gap: var(--inputGap);
-		margin: 0px;
-
-		.otter-form-input-label {
-			width: 100%;
-			font-weight: bold;
-			color: var(--labelColor);
-
-			.required {
-				color: var(--requiredColor);
-			}
-		}
-
-		.otter-form-input {
-			width: var(--inputWidth);
-			padding: var(--padding);
-			border-radius: var(--borderRadius);
-			border-width: var(--borderWidth);
-			border-color: var(--borderColor);
-		}
-	}
-
-	.wp-block-themeisle-blocks-form-textarea {
-		.otter-form-textarea-input {
-			height: 200px;
-		}
-	}
-
-	.wp-block-themeisle-blocks-form-input,
-	.wp-block-themeisle-blocks-form-textarea {
-		.o-form-help {
-			opacity: 0.8;
-			color: var(--labelColor);
-			margin-bottom: 12px;
-			font-size: medium;
-		}
 	}
 }
