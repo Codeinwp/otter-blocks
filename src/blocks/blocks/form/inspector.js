@@ -215,6 +215,36 @@ const Inspector = ({
 						max={50}
 					/>
 				</SyncControl>
+
+				<SyncControl
+					field={ 'labelFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Label Font Size', 'otter-blocks' ) }
+						value={ attributes.labelFontSize }
+						onChange={ labelFontSize => setAttributes({ labelFontSize }) }
+						allowReset
+						min={0}
+						max={50}
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field={ 'submitFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Button Font Size', 'otter-blocks' ) }
+						value={ attributes.submitFontSize }
+						onChange={ submitFontSize => setAttributes({ submitFontSize }) }
+						allowReset
+						min={0}
+						max={50}
+					/>
+				</SyncControl>
 			</PanelBody>
 
 			<PanelColorSettings

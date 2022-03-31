@@ -82,6 +82,12 @@
 		"inputsGap": {
 			"type": "number"
 		},
+		"labelFontSize": {
+			"type": "number"
+		},
+		"submitFontSize": {
+			"type": "number"
+		},
 		"isSynced": {
 			"type": "array"
 		}

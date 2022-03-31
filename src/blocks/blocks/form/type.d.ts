@@ -19,6 +19,7 @@ type Attributes = {
 		left: string
 	}
 	labelColor: string
+	labelFontSize: number
 	inputBorderRadius: number
 	inputBorderColor: string
 	inputBorderWidth: number
@@ -27,6 +28,7 @@ type Attributes = {
 	submitMessageColor: string
 	submitBackgroundColor: string
 	submitBackgroundColorHover: string
+	submitFontSize: number
 	submitColor: string
 	inputGap: number
 	inputsGap: number

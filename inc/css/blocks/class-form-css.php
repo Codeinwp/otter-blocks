@@ -97,6 +97,16 @@ class Form_CSS extends Base_CSS {
 						'value'    => 'inputGap',
 						'unit'     => 'px'
 					),
+					array(
+						'property' => '--labelFontSize',
+						'value'    => 'labelFontSize',
+						'unit'     => 'px'
+					),
+					array(
+						'property' => '--submitFontSize',
+						'value'    => 'submitFontSize',
+						'unit'     => 'px'
+					),
 				),
 			)
 		);
