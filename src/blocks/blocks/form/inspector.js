@@ -9,6 +9,7 @@ import { InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
 
 import {
 	Button,
+	ExternalLink,
 	PanelBody,
 	RangeControl,
 	SelectControl,
@@ -81,20 +82,40 @@ const Inspector = ({
 				/>
 
 				<TextControl
-					label={ __( 'Submit Message', 'otter-blocks' ) }
-					placeholder={ __( 'Success', 'otter-blocks' ) }
-					value={ attributes.submitMessage }
-					onChange={ submitMessage =>  setAttributes({ submitMessage })  }
-					help={ __( 'Show this message after the form was succesfuly submited.', 'otter-blocks' ) }
-				/>
-
-				<TextControl
 					label={ __( 'Redirect To', 'otter-blocks' ) }
 					placeholder={ __( 'Insert a link..', 'otter-blocks' ) }
 					value={ attributes.redirectLink }
 					onChange={ redirectLink =>  setAttributes({ redirectLink })  }
 					help={ __( 'Redirect the user to another page when submit is succesful.', 'otter-blocks' ) }
 				/>
+
+
+				<ToggleControl
+					label={ __( 'Add captcha checkbox', 'otter-blocks' ) }
+					checked={ attributes.hasCaptcha }
+					onChange={ hasCaptcha => setAttributes({ hasCaptcha }) }
+					help={ __( 'Add Google reCaptcha V2 for protection againts bots. You will need an API Key.', 'otter-blocks' ) }
+				/>
+
+				{
+					attributes.hasCaptcha && (
+						<div
+							style={{
+								display: 'flow-root',
+								margin: '10px 0px'
+							}}
+						>
+							{__( 'You can change the reCaptcha API Keys in Settings > Otter. ', 'otter-blocks' )}
+							<ExternalLink
+								href={ 'https://www.google.com/recaptcha/about/' }
+								target="_blank"
+
+							>
+								{ __( 'Learn more about reCaptcha.', 'otter-blocks' ) }
+							</ExternalLink>
+						</div>
+					)
+				}
 
 				<Button
 					isPrimary
@@ -115,9 +136,9 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
+				title={ __( 'Submit Button', 'otter-blocks' ) }
+				initialOpen={ false }
 			>
-
 				<TextControl
 					label={ __( 'Submit Button Label', 'otter-blocks' ) }
 					placeholder={ __( 'Submit', 'otter-blocks' ) }
@@ -127,18 +148,33 @@ const Inspector = ({
 				/>
 
 
-				<ToggleControl
-					label={ __( 'Add captcha checkbox', 'otter-blocks' ) }
-					checked={ attributes.hasCaptcha }
-					onChange={ hasCaptcha => setAttributes({ hasCaptcha }) }
-					help={ __( 'Add Google reCaptcha V2 for protection againts bots.', 'otter-blocks' ) }
-				/>
+				<SyncControl
+					field={ 'submitFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Button Font Size', 'otter-blocks' ) }
+						value={ attributes.submitFontSize }
+						onChange={ submitFontSize => setAttributes({ submitFontSize }) }
+						allowReset
+						min={0}
+						max={50}
+					/>
+				</SyncControl>
 
-				{
-					attributes.hasCaptcha && (
-						__( 'You can change the API Keys in Settings > Otter', 'otter-blocks' )
-					)
-				}
+				<TextControl
+					label={ __( 'Submit Success Message', 'otter-blocks' ) }
+					placeholder={ __( 'Success', 'otter-blocks' ) }
+					value={ attributes.submitMessage }
+					onChange={ submitMessage =>  setAttributes({ submitMessage })  }
+					help={ __( 'Show this message after the form was succesfuly submited.', 'otter-blocks' ) }
+				/>
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Settings', 'otter-blocks' ) }
+			>
 
 				<SyncControl
 					field={ 'inputPadding' }
@@ -231,20 +267,7 @@ const Inspector = ({
 					/>
 				</SyncControl>
 
-				<SyncControl
-					field={ 'submitFontSize' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Button Font Size', 'otter-blocks' ) }
-						value={ attributes.submitFontSize }
-						onChange={ submitFontSize => setAttributes({ submitFontSize }) }
-						allowReset
-						min={0}
-						max={50}
-					/>
-				</SyncControl>
+
 			</PanelBody>
 
 			<PanelColorSettings

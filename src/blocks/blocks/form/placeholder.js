@@ -45,8 +45,9 @@ const BlockPlaceholder = ({
 				label={ __( 'Google reCaptcha', 'otter-blocks' ) }
 				instructions={ __( 'A Google reCaptcha V2 API keys are required, please enter one below.', 'otter-blocks' ) }
 				className={ className }
+
 			>
-				<div className="components-placeholder__actions">
+				<div className="components-placeholder__actions" style={{ width: '100%' }}>
 					<TextControl
 						type="text"
 						label={ __( 'Site Key', 'otter-blocks' ) }
@@ -74,7 +75,7 @@ const BlockPlaceholder = ({
 					</Button>
 				</div>
 
-				<div className="components-placeholder__learn-more">
+				<div className="components-placeholder__learn-more" style={{ margin: '10px 0px' }}>
 					{ __( 'You need to activate reCaptcha API.', 'otter-blocks' ) } <ExternalLink href="http://www.google.com/recaptcha/admin">{ __( 'Need an API key? Get one here.', 'otter-blocks' ) }</ExternalLink>
 				</div>
 			</Placeholder>
