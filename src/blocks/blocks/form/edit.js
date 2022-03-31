@@ -1,3 +1,15 @@
+/** @jsx jsx */
+
+/**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+import {
+	css,
+	jsx
+} from '@emotion/react';
+
 /**
  * WordPress dependencies
  */
@@ -550,8 +562,6 @@ const Edit = ({
 		const per = x => x ? x + '%' : null;
 		const padding = x => x ? x.top + ' ' + x.right + ' ' + x.bottom + ' ' + x.left : null;
 
-		console.log(padding( attributes.inputPadding ));
-
 		/**
 		 * TODO: Refactor this based on #748
 		 */
@@ -563,8 +573,6 @@ const Edit = ({
 			blockRef.current?.style?.setProperty( '--borderColor', attributes.inputBorderColor || null );
 			blockRef.current?.style?.setProperty( '--labelColor', attributes.labelColor || null );
 			blockRef.current?.style?.setProperty( '--inputWidth', per( attributes.inputWidth ) );
-			blockRef.current?.style?.setProperty( '--submitBackground', attributes.submitBackgroundColor || null );
-			blockRef.current?.style?.setProperty( '--submitBackgroundHover', attributes.submitBackgroundColorHover || null );
 			blockRef.current?.style?.setProperty( '--submitColor', attributes.submitColor || null );
 			blockRef.current?.style?.setProperty( '--submitMsgColor', attributes.submitMessageColor || null );
 			blockRef.current?.style?.setProperty( '--inputGap', px( attributes.inputGap ) );
@@ -626,6 +634,13 @@ const Edit = ({
 									<button
 										className='wp-block-button__link'
 										type='submit'
+										css={
+											css`
+											${ attributes.submitBackgroundColor && `background-color: ${attributes.submitBackgroundColor};` }
+											&:hover {
+												${ attributes.submitBackgroundColorHover && `background-color: ${attributes.submitBackgroundColorHover};` }
+											}`
+										}
 									>
 										{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
 									</button>
