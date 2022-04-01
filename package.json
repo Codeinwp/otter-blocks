@@ -58,7 +58,7 @@
 		"@wordpress/block-editor": "^8.3.0",
 		"@wordpress/components": "^19.6.0",
 		"@wordpress/compose": "^5.2.0",
-		"@wordpress/data": "^6.4.0",
+		"@wordpress/data": "^6.5.0",
 		"@wordpress/element": "^4.2.0",
 		"@wordpress/scripts": "^19.2.2",
 		"conventional-changelog-simple-preset": "^1.0.20",
