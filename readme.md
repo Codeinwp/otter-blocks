@@ -1,5 +1,5 @@
-# Gutenberg Blocks and Template Library by Otter #
-**Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/)  
+# Otter - Page Builder Blocks & Extensions for Gutenberg #
+**Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/), [uriahs-victor](https://profiles.wordpress.org/uriahs-victor/)  
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder  
 **Requires at least:** 5.6  
 **Tested up to:** 5.9  
@@ -8,7 +8,7 @@
 **License:** GPLv3  
 **License URI:** https://www.gnu.org/licenses/gpl-3.0.en.html  
 
-Otter is a dynamic collection of page building blocks and templates for the WordPress block editor. Create beautiful and attracting posts, pages, and landing pages with Gutenberg Blocks and Template Library by Otter. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
+Otter is a dynamic collection of page building blocks and templates for the WordPress block editor. Create beautiful and attractive posts, pages, and landing pages with Otter - Page Builder Blocks & Extensions for Gutenberg. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
 
 ## Description ##
 
@@ -18,7 +18,7 @@ The growing list of page building blocks covers all of the elements you need to 
 
 With a lightweight approach, Otter enhances WordPress site building without impacting site speed. With Otter, you can truly harness the potential of the new WordPress era.
 
-https://www.youtube.com/watch?v=ypIeTgvYeRE
+https://www.youtube.com/watch?v=WcS2Vi4IOYw
 
 It has:
 
