@@ -57,6 +57,8 @@ const withConditionsIndicator = createHigherOrderComponent( BlockListBlock => {
 	};
 }, 'withConditionsIndicator' );
 
-addFilter( 'blocks.registerBlockType', 'themeisle-gutenberg/conditions-register', addAttribute );
-addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/conditions-inspector', withConditions );
-addFilter( 'editor.BlockListBlock', 'block-visibility/contextual-indicators', withConditionsIndicator );
+if ( Boolean( window.themeisleGutenberg.hasModule.blockConditions ) ) {
+	addFilter( 'blocks.registerBlockType', 'themeisle-gutenberg/conditions-register', addAttribute );
+	addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/conditions-inspector', withConditions );
+	addFilter( 'editor.BlockListBlock', 'block-visibility/contextual-indicators', withConditionsIndicator );
+}

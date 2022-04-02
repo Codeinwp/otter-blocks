@@ -90,6 +90,7 @@
 		}
 	}
 
+	&.has-vertical-flex-start,
 	&.has-vertical-top {
 		align-items: flex-start;
 
@@ -106,6 +107,7 @@
 		}
 	}
 
+	&.has-vertical-flex-end,
 	&.has-vertical-bottom {
 		align-items: flex-end;
 

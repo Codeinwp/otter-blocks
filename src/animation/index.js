@@ -24,6 +24,8 @@ import AnimationControls from './editor.js';
 import './count/index.js';
 import './typing/index.js';
 
+const excludedBlocks = [ 'themeisle-blocks/popup' ];
+
 const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 	return ( props ) => {
 		const hasCustomClassName = hasBlockSupport(
@@ -32,7 +34,7 @@ const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 			true
 		);
 
-		if ( hasCustomClassName && props.isSelected ) {
+		if ( hasCustomClassName && props.isSelected && ! excludedBlocks.includes( props.name ) ) {
 			return (
 				<Fragment>
 					<BlockEdit { ...props } />
