@@ -110,6 +110,16 @@ const Main = () => {
 									onChange={ () => updateOption( 'themeisle_blocks_settings_blocks_animation', ! Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ) ) }
 								/>
 							</PanelRow>
+
+							<PanelRow>
+								<ToggleControl
+									label={ __( 'Enable Block Condition Module', 'otter-blocks' ) }
+									help={ __( 'Blocks Conditions module allows to hide/display blocks to your users based on selected conditions.', 'otter-blocks' ) }
+									checked={ Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ) }
+									disabled={ 'saving' === status }
+									onChange={ () => updateOption( 'themeisle_blocks_settings_block_conditions', ! Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ) ) }
+								/>
+							</PanelRow>
 						</PanelBody>
 					</div>
 
