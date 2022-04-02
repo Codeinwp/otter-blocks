@@ -8,7 +8,7 @@ Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 
-Otter is a dynamic collection of page building blocks and templates for the WordPress Gutenberg Block Editor. Create beautiful and attracting posts, pages, and landing pages with Gutenberg Blocks and Template Library by Otter. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
+Otter is a dynamic collection of page building blocks and templates for the WordPress Gutenberg Block Editor. Create beautiful and attractive posts, pages, and landing pages with Otter - Page Builder Blocks & Extensions for Gutenberg. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
 
 == Description ==
 
@@ -29,7 +29,7 @@ New to the Gutenberg Blocks ecosystem? Checkout our article on [Gutenberg Explai
 - Anyone trying to add animations to Gutenberg blocks.
 
 #### Checkout a quick overview of Otter:
-https://www.youtube.com/watch?v=ypIeTgvYeRE
+https://www.youtube.com/watch?v=WcS2Vi4IOYw
 
 ## How Can Otter’s Gutenberg Blocks Help Me?
 
