@@ -26,15 +26,6 @@
 		background-color: #ffffff;
 		box-shadow: 0 1px 0 rgba(213,213,213,0.5),0 1px 2px #eee;
 
-		&.onboarding {
-
-			.otter-container {
-				.otter-logo {
-					justify-content: center;
-				}
-			}
-		}
-
 		.otter-container {
 			margin: 0 auto;
 			max-width: 100%;
@@ -191,10 +182,6 @@
 
 			.otter-info {
 				padding: 0 10px 10px;
-				background-image: url( '../../assets/images/logo-alt.png' );
-				background-size: 100px;
-				background-repeat: no-repeat;	
-				background-position: bottom right;
 
 				h2 {
 					font-weight: 300;
@@ -248,34 +235,6 @@
 	}
 }
 
-.otter-onboarding-modal {
-	max-width: 350px;
-
-	.components-modal__header {
-		text-align: center;
-
-		h1 {
-			width: 100%;
-		}
-	}
-
-	.otter-onboarding-modal-content {
-		text-align: center;
-		margin: 10px 0 15px;
-	}
-
-	.otter-onboarding-modal-action {
-		text-align: center;
-		margin: 10px 0;
-
-		.components-button {
-			padding: 2px 20px;
-			font-size: 14px;
-			margin-right: 10px;
-		}
-	}
-}
-
 .otter-button-control {
 	.components-base-control_labels {
 		.components-base-control__label {
@@ -313,75 +272,12 @@
 	background-color: rgba(0, 0, 0, 0.5);
 }
 
-.react-joyride__tooltip {
-	font-size: 13px !important;
-
-	> div {
-		text-align: left !important;
-	}
-
-	div {
-		&:nth-of-type( 2 ) {
-			margin-top: 5px !important;
-		}
-	}
-
-	button {
-		text-decoration: underline;
-	}
-}
-
-.react-joyride__beacon {
-	span {
-		&:first-child {
-			background-color: #00739c !important;
-		}
-
-		&:last-child {
-			background-color: rgba(26, 129, 165, 0.4) !important;
-			border: 2px solid #00739c !important;
-		}
-	}
-}
-
-.react-joyride__tooltip {
-	button {
-		&[data-action="primary"] {
-			background: #0085ba !important;
-			border-color: #006a95 #00648c #00648c !important;
-			box-shadow: inset 0 -1px 0 #00648c !important;
-			color: #fff !important;
-			text-decoration: none !important;
-			text-shadow: 0 -1px 1px #005d82,1px 0 1px #005d82,0 1px 1px #005d82,-1px 0 1px #005d82 !important;
-			padding: 2px 20px !important;
-			height: auto !important;
-			line-height: 28px !important;
-			font-size: 14px !important;
-		}
-
-		&[data-action="back"] {
-			color: #23282d !important;
-			font-size: 14px !important;
-		}
-	}
-}
-
 .components-editor-notices__snackbar {
 	position: fixed;
 	right: 0;
 	bottom: 40px;
 	padding-left: 16px;
 	padding-right: 16px;
-}
-
-@media ( min-width: 782px ) {
-
-	.react-joyride__spotlight,
-	.__floater,
-	.__floater__open,
-	.react-joyride__beacon {
-		margin-top: -32px;
-	}
 }
 
 @media ( max-width: 782px ) {
@@ -404,24 +300,7 @@
 			background-image: none !important;
 		}
 	}
-
-	.react-joyride__spotlight,
-	.__floater,
-	.__floater__open,
-	.react-joyride__beacon {
-		margin-top: -44px;
-	}
 }
-
-@media ( max-width: 600px ) {
-	.react-joyride__spotlight,
-	.__floater,
-	.__floater__open,
-	.react-joyride__beacon {
-		margin-top: 0;
-	}
-}
-
 
 .branch-5-2,
 .branch-5-3 {
@@ -441,7 +320,7 @@
 						}
 					}
 				}
-	
+
 				.otter-info {
 					.otter-info-button-group {
 						.is-default,
@@ -450,14 +329,6 @@
 						}
 					}
 				}
-			}
-		}
-	}
-	
-	.otter-onboarding-modal {
-		.otter-onboarding-modal-action {
-			.components-button {
-				height: auto;
 			}
 		}
 	}

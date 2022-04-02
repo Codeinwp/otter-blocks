@@ -8,8 +8,6 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
-import { useState } from '@wordpress/element';
-
 const NAVIGATION_ITEMS = [
 	{
 		slug: 'dashboard',
@@ -25,12 +23,13 @@ const NAVIGATION_ITEMS = [
 	}
 ];
 
-const Headers = () => {
-	const [ isActive, setActive ] = useState( 'dashboard' );
-
+const Headers = ({
+	isActive,
+	setActive
+}) => {
 	return (
 		<header className="otter-header">
-			<div className="otter-container otter-step-one">
+			<div className="otter-container">
 				<div className="otter-logo">
 					<img
 						src={ window.otterObj.assetsPath + 'images/logo.png' }
