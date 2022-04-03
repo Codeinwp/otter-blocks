@@ -29,7 +29,7 @@
 		.otter-container {
 			margin: 0 auto;
 			max-width: 100%;
-			max-width: 930px; // 930
+			max-width: 930px;
 
 			.otter-logo {
 				display: flex;
@@ -48,6 +48,10 @@
 					margin-left: 10px;
 					padding: 2px 7px;
 				}
+
+				@media ( max-width: 960px ) {
+					justify-content: center;
+				}
 			}
 
 			.otter-navigation {
@@ -60,11 +64,17 @@
 				padding-top: 25px;
 				text-decoration: none;
 
+				@media ( max-width: 960px ) {
+					flex-direction: column;
+					justify-content: center;
+				}
+
 				button {
 					display: inline-flex;
 					background: none;
 					margin: 0;
 					border: 0;
+					cursor: pointer;
 
 					&.is-active {
 						border-bottom: 4px solid #1E7DB2;
@@ -72,6 +82,11 @@
 						span {
 							color: #282828;
 							cursor: default;
+						}
+
+						@media ( max-width: 960px ) {
+							border-bottom: 0;
+							border-left: 4px solid #1E7DB2;
 						}
 					}
 
@@ -85,6 +100,15 @@
 						letter-spacing: 0px;
 						text-decoration: none;
 						cursor: pointer;
+
+						@media ( max-width: 960px ) {
+							padding: 10px;
+						}
+					}
+
+					@media ( max-width: 960px ) {
+						width: 100%;
+						justify-content: center;
 					}
 				}
 			}
@@ -98,6 +122,10 @@
 		margin-left: auto;
 		margin-right: auto;
 		max-width: 930px;
+
+		@media ( max-width: 960px ) {
+			grid-template-columns: auto;
+		}
 
 		.components-panel__body {
 			margin: 25px 0;
@@ -184,12 +212,23 @@
 				padding: 0 10px 10px;
 
 				h2 {
-					font-weight: 300;
-					margin-bottom: 10px;
+					font-weight: 400;
+					margin-bottom: 25px;
 				}
 
 				p {
 					margin: 0 0 1.5em 0;
+				}
+
+				.otter-info-links {
+					li {
+						margin-bottom: 15px;
+					}
+
+					a {
+						color: #1E1E1E;
+						text-decoration: none;
+					}
 				}
 			
 				.otter-info-button-group {
@@ -278,58 +317,4 @@
 	bottom: 40px;
 	padding-left: 16px;
 	padding-right: 16px;
-}
-
-@media ( max-width: 782px ) {
-	#otter {
-		.otter-header {
-
-			.otter-container {
-
-				.otter-logo {
-					justify-content: center;
-				}
-			}
-		}
-
-		.otter-main {
-			grid-template-columns: auto;
-		}
-
-		.otter-info {
-			background-image: none !important;
-		}
-	}
-}
-
-.branch-5-2,
-.branch-5-3 {
-	#otter {
-		.otter-main {
-			.components-panel__body {
-				.components-panel__row {
-					.components-base-control {
-						&.otter-button-field {
-							.components-base-control__field {
-								.otter-button-field-button-group {
-									.is-primary {
-										height: auto;
-									}
-								}
-							}
-						}
-					}
-				}
-
-				.otter-info {
-					.otter-info-button-group {
-						.is-default,
-						.is-secondary {
-							height: auto;
-						}
-					}
-				}
-			}
-		}
-	}
 }

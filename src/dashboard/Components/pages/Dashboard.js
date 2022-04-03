@@ -7,7 +7,6 @@ import apiFetch from '@wordpress/api-fetch';
 
 import {
 	Button,
-	ExternalLink,
 	Modal,
 	PanelBody,
 	PanelRow,
@@ -126,14 +125,6 @@ const Dashboard = ({
 						disabled={ 'saving' === status }
 						onChange={ () => updateOption( 'otter_blocks_logger_flag', ( 'yes' === getOption( 'otter_blocks_logger_flag' ) ? 'no' : 'yes' ) ) }
 					/>
-				</PanelRow>
-
-				<PanelRow>
-					<div>
-						{ __( 'Let us know how we can improve. Vote on existing ideas or suggest new ones.', 'otter-blocks' ) }
-						{ ' ' }
-						<ExternalLink href="https://otter.nolt.io/">{ __( 'Give feedback!', 'otter-blocks' ) }</ExternalLink>
-					</div>
 				</PanelRow>
 			</PanelBody>
 

@@ -4,7 +4,6 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	Button,
 	PanelBody,
 	Placeholder,
 	Spinner
@@ -20,11 +19,13 @@ import {
  * Internal dependencies.
  */
 import useSettings from './../hooks/settings.js';
+import Sidebar from './Sidebar.js';
 import Dashboard from './pages/Dashboard.js';
 import Integrations from './pages/Integrations.js';
 
 const Main = ({
-	currentTab
+	currentTab,
+	setTab
 }) => {
 	const [ getOption, updateOption, status ] = useSettings();
 
@@ -41,32 +42,6 @@ const Main = ({
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
 
-	const LeftContent = () => {
-		switch ( currentTab ) {
-		case 'integrations':
-			return (
-				<Integrations
-					status={ status }
-					updateOption={ updateOption }
-					googleMapsAPI={ googleMapsAPI }
-					setGoogleMapsAPI={ setGoogleMapsAPI }
-					googleCaptchaAPISiteKey={ googleCaptchaAPISiteKey }
-					setGoogleCaptchaAPISiteKey={ setGoogleCaptchaAPISiteKey }
-					googleCaptchaAPISecretKey={ googleCaptchaAPISecretKey }
-					setGoogleCaptchaAPISecretKey={ setGoogleCaptchaAPISecretKey }
-				/>
-			);
-		default:
-			return (
-				<Dashboard
-					status={ status }
-					getOption={ getOption }
-					updateOption={ updateOption }
-				/>
-			);
-		}
-	};
-
 	if ( 'loading' === status ) {
 		return (
 			<Placeholder>
@@ -75,40 +50,52 @@ const Main = ({
 		);
 	}
 
+	const Content = () => {
+		switch ( currentTab ) {
+		case 'integrations':
+			return (
+				<Fragment>
+					<div className="otter-left">
+						<Integrations
+							status={ status }
+							updateOption={ updateOption }
+							googleMapsAPI={ googleMapsAPI }
+							setGoogleMapsAPI={ setGoogleMapsAPI }
+							googleCaptchaAPISiteKey={ googleCaptchaAPISiteKey }
+							setGoogleCaptchaAPISiteKey={ setGoogleCaptchaAPISiteKey }
+							googleCaptchaAPISecretKey={ googleCaptchaAPISecretKey }
+							setGoogleCaptchaAPISecretKey={ setGoogleCaptchaAPISecretKey }
+						/>
+					</div>
+
+					<div className="otter-right">
+						<Sidebar setTab={ setTab }/>
+					</div>
+				</Fragment>
+			);
+		default:
+			return (
+				<Fragment>
+					<div className="otter-left">
+						<Dashboard
+							status={ status }
+							getOption={ getOption }
+							updateOption={ updateOption }
+						/>
+					</div>
+
+					<div className="otter-right">
+						<Sidebar setTab={ setTab }/>
+					</div>
+				</Fragment>
+			);
+		}
+	};
+
 	return (
 		<Fragment>
 			<div className="otter-main">
-				<div className="otter-left">
-					<LeftContent/>
-				</div>
-
-				<div className="otter-right">
-					<PanelBody>
-						<div className="otter-info">
-							<h2>{ __( 'Got a question for us?', 'otter-blocks' ) }</h2>
-
-							<p>{ __( 'We would love to help you out if you need any help with Otter.', 'otter-blocks' ) }</p>
-
-							<div className="otter-info-button-group">
-								<Button
-									isSecondary
-									target="_blank"
-									href="https://wordpress.org/support/plugin/otter-blocks"
-								>
-									{ __( 'Ask a question', 'otter-blocks' ) }
-								</Button>
-
-								<Button
-									isSecondary
-									target="_blank"
-									href="https://wordpress.org/support/plugin/otter-blocks/reviews/#new-post"
-								>
-									{ __( 'Leave a review', 'otter-blocks' ) }
-								</Button>
-							</div>
-						</div>
-					</PanelBody>
-				</div>
+				<Content />
 			</div>
 		</Fragment>
 	);

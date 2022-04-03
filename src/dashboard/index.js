@@ -28,7 +28,10 @@ const App = () => {
 				setActive={ setTab }
 			/>
 
-			<Main currentTab={ currentTab } />
+			<Main
+				currentTab={ currentTab }
+				setTab={ setTab }
+			/>
 
 			<Footer />
 		</Fragment>

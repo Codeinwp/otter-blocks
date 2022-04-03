@@ -6,7 +6,10 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies.
  */
-import { __ } from '@wordpress/i18n';
+import {
+	__,
+	sprintf
+} from '@wordpress/i18n';
 
 const NAVIGATION_ITEMS = [
 	{
@@ -18,7 +21,7 @@ const NAVIGATION_ITEMS = [
 		label: __( 'Integrations', 'otter-blocks' )
 	},
 	{
-		slug: 'upsells',
+		slug: 'upsell',
 		label: __( 'Free vs PRO', 'otter-blocks' )
 	}
 ];
@@ -37,7 +40,7 @@ const Headers = ({
 					/>
 
 					<abbr
-						title={ `Version: ${ window.otterObj.version }` }
+						title={ sprintf( __( 'Version: %s', 'otter-blocks' ), window.otterObj.version ) }
 						className="version"
 					>
 						{ window.otterObj.version }
