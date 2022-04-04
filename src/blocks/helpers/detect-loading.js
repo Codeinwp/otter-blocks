@@ -47,6 +47,12 @@ export const detectLoading = ( onLoaded, plugins, timeLimit = 50 ) => {
 
 const detectLottieLoading = ( onLoaded ) => {
 	const lottiePlayers = document.querySelectorAll( 'lottie-player' );
+
+	if ( 0 == lottiePlayers.length ) {
+		onLoaded?.();
+		return;
+	}
+
 	const totalPlayers = lottiePlayers.length;
 	const loaded = Array( lottiePlayers.length ).fill( 0 );
 	const totalLoaded = () => loaded.reduce( ( acc, x ) => acc + x, 0 );
