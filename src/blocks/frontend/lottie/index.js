@@ -74,8 +74,14 @@ domReady( () => {
 		});
 
 		if ( animation.getAttribute( 'width' ) ) {
-			animation.style.width = animation.getAttribute( 'width' );
 			animation.style.height = 'auto';
+
+			const width = animation.getAttribute( 'width' );
+			if ( '%' === width.slice( -1 ) ) {
+				animation.style.maxWidth = animation.getAttribute( 'width' );
+			} else {
+				animation.style.width = animation.getAttribute( 'width' );
+			}
 		}
 	});
 });

@@ -47,7 +47,8 @@ const LottiePlayer = ({
 			background={ attributes.bgColor || attributes.bgGradient }
 			direction={ attributes.direction ? -1 : 1 }
 			style={ {
-				width: `${ attributes.width }${ attributes.widthUnit ? attributes.widthUnit : 'px' }`,
+				width: ( '%' !== attributes.widthUnit ) ? `${ attributes.width }${ attributes.widthUnit }` : false,
+				maxWidth: ( 'px' === attributes.widthUnit ) ? `${ attributes.width }%` : false,
 				height: 'auto'
 			} }
 			mode="normal"
