@@ -3,7 +3,10 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { InspectorControls } from '@wordpress/block-editor';
+import {
+	__experimentalColorGradientControl as ColorGradientControl,
+	InspectorControls
+} from '@wordpress/block-editor';
 
 import {
 	PanelBody,
@@ -168,6 +171,18 @@ const Inspector = ({
 					help={ __( 'Describe the purpose of this animation on the page.', 'otter-blocks' ) }
 					value={ attributes.ariaLabel }
 					onChange={ value => setAttributes({ ariaLabel: value })}
+				/>
+			</PanelBody>
+			<PanelBody
+				title={ __( 'Background', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<ColorGradientControl
+					colorValue={ attributes.bgColor }
+					gradientValue={ attributes.bgGradient }
+					onColorChange={ newValue => setAttributes({ bgColor: newValue }) }
+					onGradientChange={ newValue => setAttributes({ bgGradient: newValue }) }
+					className="otter-lottie-background-control"
 				/>
 			</PanelBody>
 		</InspectorControls>

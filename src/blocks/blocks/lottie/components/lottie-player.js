@@ -44,6 +44,7 @@ const LottiePlayer = ({
 			autoplay
 			count={ attributes.count }
 			speed={ attributes.speed }
+			background={ attributes.bgColor || attributes.bgGradient }
 			direction={ attributes.direction ? -1 : 1 }
 			style={ {
 				width: `${ attributes.width }${ attributes.widthUnit ? attributes.widthUnit : 'px' }`,

@@ -43,6 +43,12 @@
 		"ariaLabel": {
 			"type": "string",
 			"default": ""
+		},
+		"bgColor": {
+			"type": "string"
+		},
+		"bgGradient": {
+			"type": "string"
 		}
 	},
 	"supports": {
