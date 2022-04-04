@@ -13,6 +13,7 @@ type Attributes = {
 	direction: boolean
 	width: number
 	widthUnit: string
+	ariaLabel: string
 }
 
 export type LottieProps = BlockProps<Attributes>

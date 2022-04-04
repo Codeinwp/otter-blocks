@@ -32,6 +32,7 @@ const Save = ({
 			trigger={ attributes.trigger }
 			data-loop={ attributes.loop }
 			mode="normal"
+			{ ...( attributes.ariaLabel && { 'aria-label': attributes.ariaLabel }) }
 			{ ...blockProps }
 		>
 		</lottie-player>

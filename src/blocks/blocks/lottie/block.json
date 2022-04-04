@@ -39,6 +39,10 @@
 		},
 		"widthUnit": {
 			"type": "string"
+		},
+		"ariaLabel": {
+			"type": "string",
+			"default": ""
 		}
 	},
 	"supports": {

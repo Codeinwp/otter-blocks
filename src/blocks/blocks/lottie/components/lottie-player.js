@@ -50,6 +50,7 @@ const LottiePlayer = ({
 				height: 'auto'
 			} }
 			mode="normal"
+			{ ...( attributes.ariaLabel && { 'aria-label': attributes.ariaLabel }) }
 		>
 		</lottie-player>
 	);

@@ -154,7 +154,7 @@ const Inspector = ({
 
 				<ResponsiveRange
 					label={ __( 'Width', 'otter-blocks' ) }
-					help={ __( 'Container width in pixels.', 'otter-blocks' ) }
+					help={ __( 'Container width in percentage or pixels.', 'otter-blocks' ) }
 					value={ attributes.width }
 					units={ Object.keys( widthUnitLimits ) }
 					activeUnit={ attributes.widthUnit }
@@ -162,6 +162,12 @@ const Inspector = ({
 					onUnitChange={ onChangeWidthUnit }
 					min={ widthUnitLimits[attributes.widthUnit ? attributes.widthUnit : 'px'].min }
 					max={ widthUnitLimits[attributes.widthUnit ? attributes.widthUnit : 'px'].max }
+				/>
+				<TextControl
+					label={ __( 'Aria Label', 'otter-blocks' ) }
+					help={ __( 'Describe the purpose of this animation on the page.', 'otter-blocks' ) }
+					value={ attributes.ariaLabel }
+					onChange={ value => setAttributes({ ariaLabel: value })}
 				/>
 			</PanelBody>
 		</InspectorControls>
