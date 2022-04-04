@@ -13,13 +13,13 @@ export const detectLoading = ( onLoaded, plugins, timeLimit = 50 ) => {
 	}
 
 	// TODO: remove after QA approval
-	console.log( '[Detection] Initiate detection with plugins: ' + plugins.join( ', ' ) );
+	console.log( '%c [Detection] Initiate detection with plugins: ' + plugins.join( ', ' ), 'color: violet;' );
 
 	const triggerWhenLimitExpire = setTimeout( () => {
 		if ( trigger ) {
 
 			// TODO: remove after QA approval
-			console.log( `[Detection] Trigger function: the limit of ${timeLimit}s has expired` );
+			console.log( `%c [Detection] Trigger function: the limit of ${timeLimit}s has expired`, 'color: orange;' );
 			onLoaded?.();
 		}
 	}, timeLimit * 1000 );
@@ -67,13 +67,11 @@ const detectLottieLoading = ( onLoaded ) => {
 
 				// TODO: remove after QA approval
 				console.log( '[Detection - Lottie] Shadow Root Change' );
+				clearInterval( inter );
 
 				if ( totalLoaded() >= totalPlayers ) {
 					if ( trigger ) {
 						trigger = false;
-
-						clearInterval( inter );
-
 						onLoaded?.();
 					}
 
