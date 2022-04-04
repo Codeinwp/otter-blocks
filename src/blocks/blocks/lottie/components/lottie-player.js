@@ -48,7 +48,7 @@ const LottiePlayer = ({
 			direction={ attributes.direction ? -1 : 1 }
 			style={ {
 				width: ( '%' !== attributes.widthUnit ) ? `${ attributes.width }${ attributes.widthUnit }` : false,
-				maxWidth: ( 'px' === attributes.widthUnit ) ? `${ attributes.width }%` : false,
+				maxWidth: ( '%' === attributes.widthUnit ) ? `${ attributes.width }%` : false,
 				height: 'auto'
 			} }
 			mode="normal"
