@@ -1,3 +1,4 @@
+
 /**
  *
  * @param {Function} onLoaded
@@ -61,30 +62,34 @@ const detectLottieLoading = ( onLoaded ) => {
 	const events = [ 'load', 'loop', 'ready', 'complete', 'loop', 'rendered', 'error' ];
 	lottiePlayers.forEach( ( player, index ) => {
 
-		const inter = setInterval( () => {
-			if ( 0 < player?.shadowRoot?.childElementCount ) {
+		let checkingTime = 150;
+
+		const checkHTML = () => {
+			if ( player?.shadowRoot?.querySelector( 'svg' ) || player?.shadowRoot?.querySelector( '.error' ) ) {
 				loaded[index] = 1;
 
 				// TODO: remove after QA approval
 				console.log( '[Detection - Lottie] Shadow Root Change' );
-				clearInterval( inter );
-
 				if ( totalLoaded() >= totalPlayers ) {
 					if ( trigger ) {
 						trigger = false;
 						onLoaded?.();
 					}
-
 				}
+			} else {
+				checkingTime += checkingTime * ( 0.5 + Math.random() );
+				setTimeout( checkHTML, checkingTime );
 			}
-		}, 300 );
+		};
+
+		const inter = setTimeout( checkHTML, checkingTime );
 
 		events.forEach( eventName => {
 			const listener = () => {
 				loaded[index] = 1;
 
 				player.removeEventListener( eventName, listener );
-				clearInterval( inter );
+				clearTimeout( inter );
 
 				// TODO: remove after QA approval
 				console.log( '[Detection - Lottie] ' + eventName );
