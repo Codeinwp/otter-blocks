@@ -273,7 +273,7 @@ const Inspector = ({
 					setAttributes={ setAttributes }
 				>
 					<RangeControl
-						label={ __( 'Label Font Size', 'otter-blocks' ) }
+						label={ __( 'Submit Button Font Size', 'otter-blocks' ) }
 						value={ attributes.submitFontSize }
 						onChange={ submitFontSize => setAttributes({ submitFontSize }) }
 						allowReset
