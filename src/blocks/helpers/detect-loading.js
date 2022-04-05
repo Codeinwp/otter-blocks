@@ -1,8 +1,9 @@
 
 /**
- *
- * @param {Function} onLoaded
- * @param {string[]} plugins
+ * Trigger a function after loading the elements mentioned in the plugins.
+ * @param {Function} onLoaded The callbackfunction.
+ * @param {string[]} plugins The plugins.
+ * @param {number} timeLimit The time limit to do the detection.
  */
 export const detectLoading = ( onLoaded, plugins, timeLimit = 50 ) => {
 	let loaded = 0;
@@ -13,14 +14,8 @@ export const detectLoading = ( onLoaded, plugins, timeLimit = 50 ) => {
 		return;
 	}
 
-	// TODO: remove after QA approval
-	console.log( '%c [Detection] Initiate detection with plugins: ' + plugins.join( ', ' ), 'color: violet;' );
-
 	const triggerWhenLimitExpire = setTimeout( () => {
 		if ( trigger ) {
-
-			// TODO: remove after QA approval
-			console.log( `%c [Detection] Trigger function: the limit of ${timeLimit}s has expired`, 'color: orange;' );
 			onLoaded?.();
 		}
 	}, timeLimit * 1000 );
@@ -28,9 +23,6 @@ export const detectLoading = ( onLoaded, plugins, timeLimit = 50 ) => {
 	const load = () => {
 		loaded += 1;
 		if ( loaded >= plugins.length && trigger ) {
-
-			// TODO: remove after QA approval
-			console.log( '%c [Detection] Trigger function: all plugins loaded', 'color: green;' );
 			trigger = false;
 			clearTimeout( triggerWhenLimitExpire );
 			onLoaded?.();
@@ -68,8 +60,6 @@ const detectLottieLoading = ( onLoaded ) => {
 			if ( player?.shadowRoot?.querySelector( 'svg' ) || player?.shadowRoot?.querySelector( '.error' ) ) {
 				loaded[index] = 1;
 
-				// TODO: remove after QA approval
-				console.log( '[Detection - Lottie] Shadow Root Change' );
 				if ( totalLoaded() >= totalPlayers ) {
 					if ( trigger ) {
 						trigger = false;
@@ -90,9 +80,6 @@ const detectLottieLoading = ( onLoaded ) => {
 
 				player.removeEventListener( eventName, listener );
 				clearTimeout( inter );
-
-				// TODO: remove after QA approval
-				console.log( '[Detection - Lottie] ' + eventName );
 
 				if ( totalLoaded() >= totalPlayers ) {
 					if ( trigger ) {
