@@ -182,7 +182,7 @@ const Inspector = ({
 					setAttributes={ setAttributes }
 				>
 					<BoxControl
-						label={ __( 'Padding', 'otter-blocks' ) }
+						label={ __( 'Input Padding', 'otter-blocks' ) }
 						values={ attributes.inputPadding }
 						inputProps={ {
 							min: 0,
@@ -261,6 +261,21 @@ const Inspector = ({
 						label={ __( 'Label Font Size', 'otter-blocks' ) }
 						value={ attributes.labelFontSize }
 						onChange={ labelFontSize => setAttributes({ labelFontSize }) }
+						allowReset
+						min={0}
+						max={50}
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field={ 'submitFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Label Font Size', 'otter-blocks' ) }
+						value={ attributes.submitFontSize }
+						onChange={ submitFontSize => setAttributes({ submitFontSize }) }
 						allowReset
 						min={0}
 						max={50}
