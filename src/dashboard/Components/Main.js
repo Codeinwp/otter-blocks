@@ -4,7 +4,6 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	PanelBody,
 	Placeholder,
 	Spinner
 } from '@wordpress/components';
@@ -21,6 +20,7 @@ import {
 import useSettings from './../hooks/settings.js';
 import Sidebar from './Sidebar.js';
 import Dashboard from './pages/Dashboard.js';
+import Upsell from './pages/Upsell.js';
 import Integrations from './pages/Integrations.js';
 
 const Main = ({
@@ -73,6 +73,10 @@ const Main = ({
 					</div>
 				</Fragment>
 			);
+		case 'upsell':
+			return (
+				<Upsell />
+			);
 		default:
 			return (
 				<Fragment>
@@ -94,7 +98,7 @@ const Main = ({
 
 	return (
 		<Fragment>
-			<div className="otter-main">
+			<div className={ `otter-main is-${ currentTab}`}>
 				<Content />
 			</div>
 		</Fragment>

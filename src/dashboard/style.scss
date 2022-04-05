@@ -123,6 +123,10 @@
 		margin-right: auto;
 		max-width: 930px;
 
+		&.is-upsell {
+			grid-template-columns: auto;
+		}
+
 		@media ( max-width: 960px ) {
 			grid-template-columns: auto;
 		}
@@ -211,9 +215,12 @@
 			.otter-info {
 				padding: 0 10px 10px;
 
-				h2 {
+				h3 {
 					font-weight: 400;
+					margin-top: 1em;
+					margin-right: 0px;
 					margin-bottom: 25px;
+					margin-left: 0px;
 				}
 
 				p {
@@ -242,6 +249,76 @@
 						&:not(:last-child) {
 							margin-right: 15px;
 						}
+					}
+				}
+			}
+		}
+
+		.otter-upsell {
+			.upsell-title {
+				padding: 20px 0 0;
+
+				h2 {
+					font-weight: 500;
+					font-size: 28px;
+					line-height: normal;
+				}
+			}
+
+			.upsell-table {
+				padding: 0;
+				margin: 30px 0;
+				list-style: none;
+
+				li {
+					background: #FFFFFF;
+					margin: 0 !important;
+					display: grid;
+					grid-template-columns: 5fr 1fr 1fr;
+					border-bottom: 1px solid #D9D9D9;
+
+					&:nth-child(2n+1) {
+						background: #F6F6F6;
+					}
+				}
+
+				.t-head {
+					padding: 20px 0;
+					color: #30436e;
+					font-size: 25px;
+				}
+
+				.t-row {
+					border-left: 1px solid #D9D9D9;
+					border-right: 1px solid #D9D9D9;
+
+					.c {
+						border-left: 1px solid #D9D9D9;
+					}
+				}
+
+				.c {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					color: #757575;
+				}
+
+				.content {
+					padding: 20px 40px;
+					color: #757575;
+				}
+
+				.h-wrap {
+					display: flex;
+					align-items: center;
+					margin-bottom: 10px;
+
+					h4 {
+						color: #313233;
+						margin: 10px 0;
+						font-size: 24px;
+						font-weight: 500;
 					}
 				}
 			}
