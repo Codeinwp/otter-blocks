@@ -9,6 +9,7 @@ import { InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
 
 import {
 	Button,
+	Dropdown,
 	ExternalLink,
 	PanelBody,
 	RangeControl,
@@ -147,7 +148,6 @@ const Inspector = ({
 					help={ __( 'Set the label for the submit button.', 'otter-blocks' ) }
 				/>
 
-
 				<SyncControl
 					field={ 'submitFontSize' }
 					isSynced={ attributes.isSynced }
@@ -169,6 +169,26 @@ const Inspector = ({
 					value={ attributes.submitMessage }
 					onChange={ submitMessage =>  setAttributes({ submitMessage })  }
 					help={ __( 'Show this message after the form was succesfuly submited.', 'otter-blocks' ) }
+				/>
+
+				<SelectControl
+					label={ __( 'Submit Style', 'otter-blocks' ) }
+					value={ attributes.submitStyle }
+					options={[
+						{
+							label: 'Default',
+							value: ''
+						},
+						{
+							label: 'Right',
+							value: 'right'
+						},
+						{
+							label: 'Full',
+							value: 'full'
+						}
+					]}
+					onChange={ submitStyle => setAttributes({ submitStyle}) }
 				/>
 			</PanelBody>
 

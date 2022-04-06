@@ -29,21 +29,6 @@ registerBlockType( name, {
 	edit,
 	save,
 	deprecated,
-	styles: [
-		{
-			name: 'default',
-			label: __( 'Default', 'otter-blocks' ),
-			isDefault: true
-		},
-		{
-			name: 'left',
-			label: __( 'Left', 'otter-blocks' )
-		},
-		{
-			name: 'full',
-			label: __( 'Full', 'otter-blocks' )
-		}
-	],
 	variations: [
 		{
 			name: 'themeisle-blocks/form-contact',

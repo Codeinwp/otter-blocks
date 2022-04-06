@@ -32,7 +32,13 @@ const Save = ({
 			<form className="otter-form__container">
 				<InnerBlocks.Content />
 
-				<div className="wp-block-button">
+				<div className={
+					classnames(
+						'wp-block-button',
+						{ 'right': 'right' === attributes.submitStyle },
+						{ 'full': 'full' === attributes.submitStyle }
+					)}
+				>
 					<button
 						className='wp-block-button__link'
 						type='submit'

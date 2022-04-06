@@ -88,6 +88,9 @@
 		"submitFontSize": {
 			"type": "number"
 		},
+		"submitStyle": {
+			"type": "string"
+		},
 		"isSynced": {
 			"type": "array"
 		}
