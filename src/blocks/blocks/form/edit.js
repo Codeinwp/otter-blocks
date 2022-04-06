@@ -632,7 +632,14 @@ const Edit = ({
 									)
 								}
 
-								<div className="wp-block-button has-submit-msg">
+								<div
+									className={
+										classnames(
+											'wp-block-button has-submit-msg',
+											{ 'right': 'right' === attributes.submitStyle },
+											{ 'full': 'full' === attributes.submitStyle }
+										)}
+								>
 									<button
 										className='wp-block-button__link'
 										type='submit'

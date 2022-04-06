@@ -35,6 +35,19 @@
 				border: 0px;
 				transition: background-color 0.15s linear;
 			}
+
+			&.right {
+				flex-direction: row-reverse;
+			}
+
+			&.full {
+				flex-direction: column;
+				align-items: center;
+
+				.wp-block-button__link {
+					width: 100%;
+				}
+			}
 		}
 	}
 
@@ -76,23 +89,6 @@
 	.wp-block-themeisle-blocks-form-textarea {
 		.otter-form-textarea-input {
 			height: 200px;
-		}
-	}
-
-	&.is-style-left {
-		.wp-block-button {
-			flex-direction: row-reverse;
-		}
-	}
-
-	&.is-style-full {
-		.wp-block-button {
-			flex-direction: column;
-			align-items: center;
-
-			.wp-block-button__link {
-				width: 100%;
-			}
 		}
 	}
 
