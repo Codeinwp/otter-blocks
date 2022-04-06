@@ -13,6 +13,7 @@ class Form_Settings_Data
     private $redirect_link = '';
 	private $email_subject = '';
 	private $submit_message = '';
+	private $from_name = '';
 
 	public function __construct($integration_data)
 	{
@@ -99,6 +100,9 @@ class Form_Settings_Data
 				if( isset( $form['submitMessage'] ) ) {
                     $integration->set_submit_message($form['submitMessage']);
                 }
+				if( isset( $form['fromName'] ) ) {
+					$integration->set_from_name($form['fromName']);
+				}
 				if ( isset( $form['integration'] ) ) {
 					$integration->extract_integration_data($form['integration'] );
 				}
@@ -232,6 +236,15 @@ class Form_Settings_Data
         return isset($this->submit_message) && '' !== $this->submit_message;
     }
 
+	/**
+	 * Check if it has the submit_message set.
+	 * @return bool
+	 */
+	public function has_from_name()
+	{
+		return isset($this->from_name) && '' !== $this->from_name;
+	}
+
     /**
      * Set the redirect link.
      * @param string $redirect_link
@@ -352,4 +365,24 @@ class Form_Settings_Data
             'submitMessage'=> $this->get_submit_message()
         );
     }
+
+	/**
+	 * @return string
+	 */
+	public function get_from_name() {
+		return $this->from_name;
+	}
+
+	/**
+	 * @param string $from_name
+	 *
+	 * @return Form_Settings_Data
+	 */
+	public function set_from_name( $from_name ) {
+		$this->from_name = $from_name;
+
+		return $this;
+	}
+
+
 }

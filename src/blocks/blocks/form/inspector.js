@@ -15,6 +15,7 @@ import {
 	RangeControl,
 	SelectControl,
 	Spinner,
+	Dashicon,
 	TextControl,
 	ToggleControl,
 	__experimentalBoxControl as BoxControl
@@ -28,6 +29,8 @@ import {
 	useEffect,
 	useContext
 } from '@wordpress/element';
+
+import classnames from 'classnames';
 
 /**
  * Internal dependencies.
@@ -58,252 +61,415 @@ const Inspector = ({
 		apiKey,
 		setApiKey,
 		saveIntegrationApiKey,
-		fetchApiKeyStatus
+		fetchApiKeyStatus,
+		savedIntegration,
+		saveIntegration
 	} = useContext( FormContext );
+
+	const [ tab, setTab ] = useState( 'general' );
 
 	return (
 		<InspectorControls>
-			<PanelBody
-				title={ __( 'Form Options', 'otter-blocks' ) }
-			>
-				<TextControl
-					label={ __( 'Email Subject', 'otter-blocks' ) }
-					placeholder={ __( 'A new submission', 'otter-blocks' ) }
-					value={ attributes.subject }
-					onChange={ subject => setAttributes({ subject }) }
-					help={ __( 'Customize the title of the email that you are gonna receive after a user submit the form.', 'otter-blocks' ) }
-				/>
-
-				<TextControl
-					label={ __( 'Email To', 'otter-blocks' ) }
-					placeholder={ __( 'Default is to admin site', 'otter-blocks' ) }
-					value={ email }
-					onChange={ email => setEmail( email ) }
-					help={ __( 'Send the form\'s data to another email. (Admin\'s email is default).', 'otter-blocks' ) }
-				/>
-
-				<TextControl
-					label={ __( 'Redirect To', 'otter-blocks' ) }
-					placeholder={ __( 'Insert a link..', 'otter-blocks' ) }
-					value={ attributes.redirectLink }
-					onChange={ redirectLink =>  setAttributes({ redirectLink })  }
-					help={ __( 'Redirect the user to another page when submit is succesful.', 'otter-blocks' ) }
-				/>
-
-
-				<ToggleControl
-					label={ __( 'Add captcha checkbox', 'otter-blocks' ) }
-					checked={ attributes.hasCaptcha }
-					onChange={ hasCaptcha => setAttributes({ hasCaptcha }) }
-					help={ __( 'Add Google reCaptcha V2 for protection againts bots. You will need an API Key.', 'otter-blocks' ) }
-				/>
-
-				{
-					attributes.hasCaptcha && (
-						<div
-							style={{
-								display: 'flow-root',
-								margin: '10px 0px'
-							}}
-						>
-							{__( 'You can change the reCaptcha API Keys in Settings > Otter. ', 'otter-blocks' )}
-							<ExternalLink
-								href={ 'https://www.google.com/recaptcha/about/' }
-								target="_blank"
-
-							>
-								{ __( 'Learn more about reCaptcha.', 'otter-blocks' ) }
-							</ExternalLink>
-						</div>
-					)
-				}
+			<PanelBody className="o-heading-header-panel">
+				<Button
+					className={ classnames(
+						'header-tab',
+						{ 'is-selected': 'general' === tab }
+					) }
+					onClick={ () => setTab( 'general' ) }
+				>
+					<span>
+						<Dashicon icon="admin-customizer"/>
+						{ __( 'General', 'otter-blocks' ) }
+					</span>
+				</Button>
 
 				<Button
-					isPrimary
-					onClick={ saveFormOptions }
-					disabled={ email === savedEmail }
+					className={ classnames(
+						'header-tab',
+						{ 'is-selected': 'advanced' === tab }
+					) }
+					onClick={ () => setTab( 'advanced' ) }
 				>
-					<Fragment>
-						{
-							! isEmailLoaded && (
-								<Spinner />
-							)
-						}
-						{
-							__( 'Save', 'otter-blocks' )
-						}
-					</Fragment>
+					<span>
+						<Dashicon icon="admin-generic"/>
+						{ __( 'Advanced', 'otter-blocks' ) }
+					</span>
 				</Button>
 			</PanelBody>
 
-			<PanelBody
-				title={ __( 'Submit Button', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				<TextControl
-					label={ __( 'Submit Button Label', 'otter-blocks' ) }
-					placeholder={ __( 'Submit', 'otter-blocks' ) }
-					value={ attributes.submitLabel }
-					onChange={ submitLabel => setAttributes({ submitLabel }) }
-					help={ __( 'Set the label for the submit button.', 'otter-blocks' ) }
-				/>
+			{
+				'general' === tab && (
+					<Fragment>
+						<PanelBody
+							title={ __( 'Submit Button', 'otter-blocks' ) }
+							initialOpen={ true }
+						>
+							<TextControl
+								label={ __( 'Submit Button Label', 'otter-blocks' ) }
+								placeholder={ __( 'Submit', 'otter-blocks' ) }
+								value={ attributes.submitLabel }
+								onChange={ submitLabel => setAttributes({ submitLabel }) }
+								help={ __( 'Set the label for the submit button.', 'otter-blocks' ) }
+							/>
 
-				<SyncControl
-					field={ 'submitFontSize' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Button Font Size', 'otter-blocks' ) }
-						value={ attributes.submitFontSize }
-						onChange={ submitFontSize => setAttributes({ submitFontSize }) }
-						allowReset
-						min={0}
-						max={50}
-					/>
-				</SyncControl>
+							<SyncControl
+								field={ 'submitFontSize' }
+								isSynced={ attributes.isSynced }
+								setAttributes={ setAttributes }
+							>
+								<RangeControl
+									label={ __( 'Button Font Size', 'otter-blocks' ) }
+									value={ attributes.submitFontSize }
+									onChange={ submitFontSize => setAttributes({ submitFontSize }) }
+									allowReset
+									min={0}
+									max={50}
+								/>
+							</SyncControl>
 
-				<TextControl
-					label={ __( 'Submit Success Message', 'otter-blocks' ) }
-					placeholder={ __( 'Success', 'otter-blocks' ) }
-					value={ attributes.submitMessage }
-					onChange={ submitMessage =>  setAttributes({ submitMessage })  }
-					help={ __( 'Show this message after the form was succesfuly submited.', 'otter-blocks' ) }
-				/>
+							<TextControl
+								label={ __( 'Submit Success Message', 'otter-blocks' ) }
+								placeholder={ __( 'Success', 'otter-blocks' ) }
+								value={ attributes.submitMessage }
+								onChange={ submitMessage =>  setAttributes({ submitMessage })  }
+								help={ __( 'Show this message after the form was succesfuly submited.', 'otter-blocks' ) }
+							/>
 
-				<SelectControl
-					label={ __( 'Submit Style', 'otter-blocks' ) }
-					value={ attributes.submitStyle }
-					options={[
-						{
-							label: 'Default',
-							value: ''
-						},
-						{
-							label: 'Right',
-							value: 'right'
-						},
-						{
-							label: 'Full',
-							value: 'full'
-						}
-					]}
-					onChange={ submitStyle => setAttributes({ submitStyle}) }
-				/>
-			</PanelBody>
+							<SelectControl
+								label={ __( 'Submit Style', 'otter-blocks' ) }
+								value={ attributes.submitStyle }
+								options={[
+									{
+										label: 'Default',
+										value: ''
+									},
+									{
+										label: 'Right',
+										value: 'right'
+									},
+									{
+										label: 'Full',
+										value: 'full'
+									}
+								]}
+								onChange={ submitStyle => setAttributes({ submitStyle}) }
+							/>
+						</PanelBody>
 
-			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
-			>
+						<PanelBody
+							title={ __( 'Settings', 'otter-blocks' ) }
+						>
 
-				<SyncControl
-					field={ 'inputPadding' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<BoxControl
-						label={ __( 'Input Padding', 'otter-blocks' ) }
-						values={ attributes.inputPadding }
-						inputProps={ {
-							min: 0,
-							max: 500
-						} }
-						onChange={ inputPadding => setAttributes({ inputPadding }) }
-					/>
-				</SyncControl>
+							<SyncControl
+								field={ 'inputPadding' }
+								isSynced={ attributes.isSynced }
+								setAttributes={ setAttributes }
+							>
+								<BoxControl
+									label={ __( 'Input Padding', 'otter-blocks' ) }
+									values={ attributes.inputPadding }
+									inputProps={ {
+										min: 0,
+										max: 500
+									} }
+									onChange={ inputPadding => setAttributes({ inputPadding }) }
+								/>
+							</SyncControl>
 
-				<SyncControl
-					field={ 'inputGap' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Input Gap', 'otter-blocks' ) }
-						value={ attributes.inputGap }
-						onChange={ inputGap => setAttributes({ inputGap }) }
-						allowReset
-						min={0}
-						max={50}
-					/>
-				</SyncControl>
+							<SyncControl
+								field={ 'inputGap' }
+								isSynced={ attributes.isSynced }
+								setAttributes={ setAttributes }
+							>
+								<RangeControl
+									label={ __( 'Input Gap', 'otter-blocks' ) }
+									value={ attributes.inputGap }
+									onChange={ inputGap => setAttributes({ inputGap }) }
+									allowReset
+									min={0}
+									max={50}
+								/>
+							</SyncControl>
 
-				<SyncControl
-					field={ 'inputsGap' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Fields Gap', 'otter-blocks' ) }
-						value={ attributes.inputsGap }
-						onChange={ inputsGap => setAttributes({ inputsGap }) }
-						allowReset
-						min={0}
-						max={50}
-					/>
-				</SyncControl>
+							<SyncControl
+								field={ 'inputsGap' }
+								isSynced={ attributes.isSynced }
+								setAttributes={ setAttributes }
+							>
+								<RangeControl
+									label={ __( 'Fields Gap', 'otter-blocks' ) }
+									value={ attributes.inputsGap }
+									onChange={ inputsGap => setAttributes({ inputsGap }) }
+									allowReset
+									min={0}
+									max={50}
+								/>
+							</SyncControl>
 
-				<SyncControl
-					field={ 'inputsBorderRadius' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Border Radius', 'otter-blocks' ) }
-						value={ attributes.inputBorderRadius }
-						onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
-						allowReset
-						min={0}
-						max={50}
-					/>
-				</SyncControl>
+							<SyncControl
+								field={ 'inputsBorderRadius' }
+								isSynced={ attributes.isSynced }
+								setAttributes={ setAttributes }
+							>
+								<RangeControl
+									label={ __( 'Border Radius', 'otter-blocks' ) }
+									value={ attributes.inputBorderRadius }
+									onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
+									allowReset
+									min={0}
+									max={50}
+								/>
+							</SyncControl>
 
-				<SyncControl
-					field={ 'inputsBorderWidth' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Border Width', 'otter-blocks' ) }
-						value={ attributes.inputBorderWidth }
-						onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
-						allowReset
-						min={0}
-						max={50}
-					/>
-				</SyncControl>
+							<SyncControl
+								field={ 'inputsBorderWidth' }
+								isSynced={ attributes.isSynced }
+								setAttributes={ setAttributes }
+							>
+								<RangeControl
+									label={ __( 'Border Width', 'otter-blocks' ) }
+									value={ attributes.inputBorderWidth }
+									onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
+									allowReset
+									min={0}
+									max={50}
+								/>
+							</SyncControl>
 
-				<SyncControl
-					field={ 'labelFontSize' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Label Font Size', 'otter-blocks' ) }
-						value={ attributes.labelFontSize }
-						onChange={ labelFontSize => setAttributes({ labelFontSize }) }
-						allowReset
-						min={0}
-						max={50}
-					/>
-				</SyncControl>
+							<SyncControl
+								field={ 'labelFontSize' }
+								isSynced={ attributes.isSynced }
+								setAttributes={ setAttributes }
+							>
+								<RangeControl
+									label={ __( 'Label Font Size', 'otter-blocks' ) }
+									value={ attributes.labelFontSize }
+									onChange={ labelFontSize => setAttributes({ labelFontSize }) }
+									allowReset
+									min={0}
+									max={50}
+								/>
+							</SyncControl>
 
-				<SyncControl
-					field={ 'submitFontSize' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Submit Button Font Size', 'otter-blocks' ) }
-						value={ attributes.submitFontSize }
-						onChange={ submitFontSize => setAttributes({ submitFontSize }) }
-						allowReset
-						min={0}
-						max={50}
-					/>
-				</SyncControl>
+							<SyncControl
+								field={ 'submitFontSize' }
+								isSynced={ attributes.isSynced }
+								setAttributes={ setAttributes }
+							>
+								<RangeControl
+									label={ __( 'Submit Button Font Size', 'otter-blocks' ) }
+									value={ attributes.submitFontSize }
+									onChange={ submitFontSize => setAttributes({ submitFontSize }) }
+									allowReset
+									min={0}
+									max={50}
+								/>
+							</SyncControl>
 
 
-			</PanelBody>
+						</PanelBody>
+					</Fragment>
+				)
+			}
+
+			{
+				'advanced' === tab && (
+					<Fragment>
+						<PanelBody
+							title={ __( 'Form Options', 'otter-blocks' ) }
+						>
+							<TextControl
+								label={ __( 'Email Subject', 'otter-blocks' ) }
+								placeholder={ __( 'A new submission', 'otter-blocks' ) }
+								value={ attributes.subject }
+								onChange={ subject => setAttributes({ subject }) }
+								help={ __( 'Customize the title of the email that you are gonna receive after a user submit the form.', 'otter-blocks' ) }
+							/>
+
+							<TextControl
+								label={ __( 'From Name', 'otter-blocks' ) }
+								value={ attributes.fromName }
+								onChange={ fromName => setAttributes({ fromName }) }
+								help={ __( 'Set the name of the sender.', 'otter-blocks' ) }
+							/>
+
+							<TextControl
+								label={ __( 'Email To', 'otter-blocks' ) }
+								placeholder={ __( 'Default is to admin site', 'otter-blocks' ) }
+								value={ email }
+								onChange={ email => setEmail( email ) }
+								help={ __( 'Send the form\'s data to another email. (Admin\'s email is default).', 'otter-blocks' ) }
+							/>
+
+							<TextControl
+								label={ __( 'Redirect To', 'otter-blocks' ) }
+								placeholder={ __( 'Insert a link..', 'otter-blocks' ) }
+								value={ attributes.redirectLink }
+								onChange={ redirectLink =>  setAttributes({ redirectLink })  }
+								help={ __( 'Redirect the user to another page when submit is succesful.', 'otter-blocks' ) }
+							/>
+
+							<Button
+								isPrimary
+								onClick={ saveFormOptions }
+							>
+								<Fragment>
+									{
+										! isEmailLoaded && (
+											<Spinner />
+										)
+									}
+									{
+										__( 'Save Options', 'otter-blocks' )
+									}
+								</Fragment>
+							</Button>
+
+							<ToggleControl
+								label={ __( 'Add captcha checkbox', 'otter-blocks' ) }
+								checked={ attributes.hasCaptcha }
+								onChange={ hasCaptcha => setAttributes({ hasCaptcha }) }
+								help={ __( 'Add Google reCaptcha V2 for protection againts bots. You will need an API Key.', 'otter-blocks' ) }
+							/>
+
+							{
+								attributes.hasCaptcha && (
+									<div
+										style={{
+											display: 'flow-root',
+											margin: '10px 0px'
+										}}
+									>
+										{__( 'You can change the reCaptcha API Keys in Settings > Otter. ', 'otter-blocks' )}
+										<ExternalLink
+											href={ 'https://www.google.com/recaptcha/about/' }
+											target="_blank"
+
+										>
+											{ __( 'Learn more about reCaptcha.', 'otter-blocks' ) }
+										</ExternalLink>
+									</div>
+								)
+							}
+						</PanelBody>
+
+						<PanelBody
+							title={ __( 'Integration', 'otter-blocks' ) }
+							initialOpen={ true }
+						>
+							{
+								__( 'Add your client email to a Digital Marketing provider.', 'otter-blocks' )
+							}
+							<br /> <br />
+							<b> { __( 'You need to have at least one email field in your form. For multiple email fields, only the first will be used.', 'otter-blocks' ) } </b>
+
+							<SelectControl
+								label={ __( 'Provider', 'otter-blocks' ) }
+								value={ attributes.provider }
+								options={ [
+									{ label: __( 'None', 'otter-blocks' ), value: '' },
+									{ label: __( 'Mailchimp', 'otter-blocks' ), value: 'mailchimp' },
+									{ label: __( 'Sendinblue', 'otter-blocks' ), value: 'sendinblue' }
+								] }
+								onChange={ provider => {
+									setAttributes({ provider, apiKey: '', listId: '' });
+								} }
+							/>
+
+							{
+								attributes.provider && (
+									<Fragment>
+										{
+											'loading' === fetchApiKeyStatus ?
+												(
+													<Fragment>
+														<Spinner />
+														{ __( 'Fetching the API Key from the database.', 'otter-blocks' ) }
+													</Fragment>
+												) : (
+													<TextControl
+														label={ __( 'API Key', 'otter-blocks' ) }
+														help={ __( 'You can find the key in the provider\'s website', 'otter-blocks' ) }
+														value={ apiKey ? `*************************${apiKey.slice( -8 )}` : '' }
+														onChange={ apiKey => {
+															setFetchListIdStatus( 'loading' );
+															setListIDOptions([]);
+															setApiKey( apiKey );
+															setAttributes({
+																listId: ''
+															});
+															saveIntegrationApiKey( apiKey );
+														}}
+													/>
+												)
+										}
+
+
+										{
+											apiKey && 2 > listIDOptions.length && 'loading' === fetchListIdStatus && (
+												<Fragment>
+													<Spinner />
+													{ __( 'Fetching data from provider.', 'otter-blocks' ) }
+												</Fragment>
+											)
+										}
+										{
+											apiKey && 'ready' === fetchListIdStatus && (
+												<Fragment>
+													<SelectControl
+														label={ __( 'Contact List', 'otter-blocks' ) }
+														value={ attributes.listId }
+														options={ listIDOptions }
+														onChange={ listId => setAttributes({ listId }) }
+													/>
+													{
+														2 <= listIDOptions?.length && attributes.listId && (
+															<Fragment>
+																<SelectControl
+																	label={ __( 'Action', 'otter-blocks' ) }
+																	value={ attributes.action }
+																	options={ [
+																		{ label: __( 'Default', 'otter-blocks' ), value: '' },
+																		{ label: __( 'Subscribe', 'otter-blocks' ), value: 'subscribe' },
+																		{ label: __( 'Submit & Subscribe', 'otter-blocks' ), value: 'submit-subscribe' }
+																	] }
+																	onChange={ action => setAttributes({ action }) }
+																/>
+																{
+																	'submit-subscribe' === attributes.action && (
+																		__( 'This action will add the client to the contact list and send a separata email with the form data to administrator or to the email mentioned in \'Form to\' field. A checkbox for data-sharing consent with third-party will be added on form.', 'otter-blocks' )
+																	)
+																}
+																<Button
+																	isPrimary
+																	onClick={ saveIntegration }
+																>
+																	<Fragment>
+																		{
+																			! savedIntegration && (
+																				<Spinner />
+																			)
+																		}
+																		{
+																			__( 'Save', 'otter-blocks' )
+																		}
+																	</Fragment>
+																</Button>
+															</Fragment>
+														)
+													}
+												</Fragment>
+											)
+										}
+									</Fragment>
+								)
+							}
+						</PanelBody>
+					</Fragment>
+				)
+			}
+
 
 			<PanelColorSettings
 				title={ __( 'Color', 'otter-blocks' ) }
@@ -343,103 +509,6 @@ const Inspector = ({
 			/>
 
 
-			<PanelBody
-				title={ __( 'Integration', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				{
-					__( 'Add your client email to a Digital Marketing provider.', 'otter-blocks' )
-				}
-				<br /> <br />
-				<b> { __( 'You need to have at least one email field in your form. For multiple email fields, only the first will be used.', 'otter-blocks' ) } </b>
-
-				<SelectControl
-					label={ __( 'Provider', 'otter-blocks' ) }
-					value={ attributes.provider }
-					options={ [
-						{ label: __( 'None', 'otter-blocks' ), value: '' },
-						{ label: __( 'Mailchimp', 'otter-blocks' ), value: 'mailchimp' },
-						{ label: __( 'Sendinblue', 'otter-blocks' ), value: 'sendinblue' }
-					] }
-					onChange={ provider => {
-						setAttributes({ provider, apiKey: '', listId: '' });
-					} }
-				/>
-
-				{
-					attributes.provider && (
-						<Fragment>
-							{
-								'loading' === fetchApiKeyStatus ?
-									(
-										<Fragment>
-											<Spinner />
-											{ __( 'Fetching the API Key from the database.', 'otter-blocks' ) }
-										</Fragment>
-									) : (
-										<TextControl
-											label={ __( 'API Key', 'otter-blocks' ) }
-											help={ __( 'You can find the key in the provider\'s website', 'otter-blocks' ) }
-											value={ apiKey ? `*************************${apiKey.slice( -8 )}` : '' }
-											onChange={ apiKey => {
-												setFetchListIdStatus( 'loading' );
-												setListIDOptions([]);
-												setApiKey( apiKey );
-												setAttributes({
-													listId: ''
-												});
-												saveIntegrationApiKey( apiKey );
-											}}
-										/>
-									)
-							}
-
-
-							{
-								apiKey && 2 > listIDOptions.length && 'loading' === fetchListIdStatus && (
-									<Fragment>
-										<Spinner />
-										{ __( 'Fetching data from provider.', 'otter-blocks' ) }
-									</Fragment>
-								)
-							}
-							{
-								apiKey && 'ready' === fetchListIdStatus && (
-									<Fragment>
-										<SelectControl
-											label={ __( 'Contact List', 'otter-blocks' ) }
-											value={ attributes.listId }
-											options={ listIDOptions }
-											onChange={ listId => setAttributes({ listId }) }
-										/>
-										{
-											2 <= listIDOptions?.length && attributes.listId && (
-												<Fragment>
-													<SelectControl
-														label={ __( 'Action', 'otter-blocks' ) }
-														value={ attributes.action }
-														options={ [
-															{ label: __( 'Default', 'otter-blocks' ), value: '' },
-															{ label: __( 'Subscribe', 'otter-blocks' ), value: 'subscribe' },
-															{ label: __( 'Submit & Subscribe', 'otter-blocks' ), value: 'submit-subscribe' }
-														] }
-														onChange={ action => setAttributes({ action }) }
-													/>
-													{
-														'submit-subscribe' === attributes.action && (
-															__( 'This action will add the client to the contact list and send a separata email with the form data to administrator or to the email mentioned in \'Form to\' field. A checkbox for data-sharing consent with third-party will be added on form.', 'otter-blocks' )
-														)
-													}
-												</Fragment>
-											)
-										}
-									</Fragment>
-								)
-							}
-						</Fragment>
-					)
-				}
-			</PanelBody>
 		</InspectorControls>
 	);
 };

@@ -237,6 +237,9 @@ class Options_Settings {
 							if ( isset( $item['titleSubject'] ) ) {
 								$item['titleSubject'] = sanitize_text_field( $item['titleSubject'] );
 							}
+							if ( isset( $item['fromName'] ) ) {
+								$item['fromName'] = sanitize_text_field( $item['fromName'] );
+							}
 							if ( isset( $item['submitMessage'] ) ) {
 								$item['submitMessage'] = sanitize_text_field( $item['submitMessage'] );
 							}
@@ -270,6 +273,9 @@ class Options_Settings {
 									'type' => array( 'boolean', 'number', 'string' ),
 								),
 								'email'       => array(
+									'type' => 'string',
+								),
+								'fromName'       => array(
 									'type' => 'string',
 								),
 								'redirectLink' => array(
