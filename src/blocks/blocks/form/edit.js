@@ -52,7 +52,6 @@ import metadata from './block.json';
 import { blockInit } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
-import { Button } from '@wordpress/components';
 const { attributes: defaultAttributes } = metadata;
 
 export const FormContext = createContext({});
@@ -75,9 +74,13 @@ const Edit = ({
 
 	const [ apiKey, setApiKey ] = useState( '' );
 	const [ fetchApiKeyStatus, setFetchApiKeyStatus ] = useState( 'loading' );
+
 	const [ email, setEmail ] = useState( '' );
-	const [ savedEmail, setSavedEmail ] = useState( '' );
+	const [ savedEmail, setSavedEmail ] = useState( true );
 	const [ isEmailLoaded, setEmailLoading ] = useState( true );
+
+	const [ savedIntegration, setSavedIntegration ] = useState( true );
+
 	const [ listIDOptions, setListIDOptions ] = useState([ { label: __( 'None', 'otter-blocks' ), value: '' } ]);
 	const [ fetchListIdStatus, setFetchListIdStatus ] = useState( 'loading' );
 
@@ -311,10 +314,9 @@ const Edit = ({
 	/**
 	 * Save integration data.
 	 */
-	useEffect( () => {
-		let controller = new AbortController();
-		settingsRef?.current?.fetch({ signal: controller.signal }).done( res => {
-			controller = null;
+	const saveIntegration = () => {
+		setSavedIntegration( false );
+		( new api.models.Settings() )?.fetch().done( res => {
 			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 			let isMissing = true;
 			let hasUpdated = false;
@@ -354,6 +356,7 @@ const Edit = ({
 				});
 
 				model.save().then( () => {
+					setSavedIntegration( true );
 					if ( hasUpdatedNotice ) {
 						createNotice(
 							'info',
@@ -366,10 +369,10 @@ const Edit = ({
 					}
 				});
 			}
+		}).catch( () => {
+			setSavedIntegration( true );
 		});
-
-		return () => controller?.abort();
-	}, [ attributes.optionName, attributes.provider, apiKey, attributes.listId, attributes.action, settingsRef.current ]);
+	};
 
 	useEffect( () => {
 		let controller = new AbortController();
@@ -430,6 +433,7 @@ const Edit = ({
 	}, [ apiKey ]);
 
 	const saveFormOptions = () => {
+		setSavedEmail( false );
 		( new api.models.Settings() ).fetch().done( res => {
 			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 			let isMissing = true;
@@ -453,6 +457,10 @@ const Edit = ({
 						emails[index].submitMessage = attributes.submitMessage; // update the value
 						hasUpdated = true;
 					}
+					if ( emails[index].fromName !== attributes.fromName ) {
+						emails[index].fromName = attributes.fromName; // update the value
+						hasUpdated = true;
+					}
 					isMissing = false;
 				}
 			});
@@ -461,6 +469,7 @@ const Edit = ({
 				emails.push({
 					form: attributes.optionName,
 					email,
+					fromName: attributes.fromName,
 					redirectLink: attributes.redirectLink,
 					emailSubject: attributes.subject,
 					submitMessage: attributes.submitMessage
@@ -476,6 +485,7 @@ const Edit = ({
 				setEmailLoading( false );
 
 				model.save().then( response => {
+					setSavedEmail( true );
 					response.themeisle_blocks_form_emails?.filter( ({ form }) => form === attributes.optionName ).forEach( item => {
 						{
 							setEmailLoading( true );
@@ -493,7 +503,7 @@ const Edit = ({
 					});
 				});
 			}
-		});
+		}).catch( () => setSavedEmail( true ) );
 	};
 
 	const saveIntegrationApiKey = ( apiKey ) => {
@@ -582,10 +592,6 @@ const Edit = ({
 		}
 	}, [ blockRef.current, attributes ]);
 
-	useEffect( () => {
-		console.log( apiKey );
-	}, [ apiKey ]);
-
 	return (
 		<Fragment>
 			<FormContext.Provider
@@ -602,7 +608,9 @@ const Edit = ({
 					email,
 					setEmail,
 					saveIntegrationApiKey,
-					fetchApiKeyStatus
+					fetchApiKeyStatus,
+					savedIntegration,
+					saveIntegration
 				}}
 			>
 				<Inspector

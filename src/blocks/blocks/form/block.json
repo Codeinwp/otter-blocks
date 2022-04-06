@@ -17,6 +17,9 @@
 		"emailTo": {
 			"type": "string"
 		},
+		"fromName": {
+			"type": "string"
+		},
 		"optionName": {
 			"type": "string"
 		},

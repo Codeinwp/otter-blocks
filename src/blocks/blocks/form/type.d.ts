@@ -33,6 +33,7 @@ type Attributes = {
 	inputGap: number
 	inputsGap: number
 	submitStyle: string
+	fromName: string
 }
 
 export type FormProps = BlockProps<Attributes>

@@ -251,7 +251,7 @@ class Form_Server {
 			}
 		}
 
-		$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . esc_url( get_site_url() ) );
+		$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . ( $form_options->has_from_name() ? sanitize_text_field( $form_options->get_from_name() ) : esc_url( get_site_url() ) ));
 
 		try {
 			// phpcs:ignore
