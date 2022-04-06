@@ -38,6 +38,8 @@ const BlockPlaceholder = ({
 		);
 	}
 
+	const mask = secretKey && 0 < secretKey?.length - 13 ? Array( secretKey.length - 13  ).fill( '*' ).join( '' ) + secretKey.slice( -13 ) : secretKey;
+
 	if ( ! isAPISaved ) {
 		return (
 			<Placeholder
@@ -59,7 +61,7 @@ const BlockPlaceholder = ({
 					<TextControl
 						type="text"
 						label={ __( 'Secret Key', 'otter-blocks' ) }
-						value={ secretKey }
+						value={ mask }
 						className="components-placeholder__input"
 						onChange={ setSecretKey }
 					/>
