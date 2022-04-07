@@ -178,10 +178,10 @@ const Inspector = ({
 				initialOpen={ false }
 			>
 				<ColorGradientControl
-					colorValue={ attributes.bgColor }
-					gradientValue={ attributes.bgGradient }
-					onColorChange={ newValue => setAttributes({ bgColor: newValue }) }
-					onGradientChange={ newValue => setAttributes({ bgGradient: newValue }) }
+					colorValue={ attributes.backgroundColor }
+					gradientValue={ attributes.backgroundGradient }
+					onColorChange={ newValue => setAttributes({ backgroundColor: newValue }) }
+					onGradientChange={ newValue => setAttributes({ backgroundGradient: newValue }) }
 					className="otter-lottie-background-control"
 				/>
 			</PanelBody>

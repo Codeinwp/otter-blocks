@@ -14,8 +14,8 @@ type Attributes = {
 	width: number
 	widthUnit: string
 	ariaLabel: string
-	bgColor: string
-	bgGradient: string
+	backgroundColor: string
+	backgroundGradient: string
 }
 
 export type LottieProps = BlockProps<Attributes>

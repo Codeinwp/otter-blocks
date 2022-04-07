@@ -44,10 +44,10 @@
 			"type": "string",
 			"default": ""
 		},
-		"bgColor": {
+		"backgroundColor": {
 			"type": "string"
 		},
-		"bgGradient": {
+		"backgroundGradient": {
 			"type": "string"
 		}
 	},

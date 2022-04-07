@@ -16,7 +16,7 @@ const Save = ({
 		return (
 			<lottie-player
 				trigger={ attributes.trigger }
-				background={ attributes.bgColor || attributes.bgGradient }
+				background={ attributes.backgroundColor || attributes.backgroundGradient }
 				{ ...( attributes.ariaLabel && { 'aria-label': attributes.ariaLabel }) }
 				{ ...blockProps }
 			>
@@ -34,7 +34,7 @@ const Save = ({
 			trigger={ attributes.trigger }
 			data-loop={ attributes.loop }
 			mode="normal"
-			background={ attributes.bgColor || attributes.bgGradient }
+			background={ attributes.backgroundColor || attributes.backgroundGradient }
 			{ ...( attributes.ariaLabel && { 'aria-label': attributes.ariaLabel }) }
 			{ ...blockProps }
 		>
