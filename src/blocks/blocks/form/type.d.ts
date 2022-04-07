@@ -26,6 +26,7 @@ type Attributes = {
 	inputWidth: number
 	submitMessage: string
 	submitMessageColor: string
+	submitMessageErrorColor: string
 	submitBackgroundColor: string
 	submitBackgroundColorHover: string
 	submitFontSize: number

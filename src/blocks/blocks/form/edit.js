@@ -584,7 +584,6 @@ const Edit = ({
 			blockRef.current?.style?.setProperty( '--labelColor', attributes.labelColor || null );
 			blockRef.current?.style?.setProperty( '--inputWidth', per( attributes.inputWidth ) );
 			blockRef.current?.style?.setProperty( '--submitColor', attributes.submitColor || null );
-			blockRef.current?.style?.setProperty( '--submitMsgColor', attributes.submitMessageColor || null );
 			blockRef.current?.style?.setProperty( '--inputGap', px( attributes.inputGap ) );
 			blockRef.current?.style?.setProperty( '--inputsGap', px( attributes.inputsGap ) );
 			blockRef.current?.style?.setProperty( '--labelFontSize', px( attributes.labelFontSize ) );
@@ -662,8 +661,13 @@ const Edit = ({
 										{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
 									</button>
 
-									<div className="o-form-server-response success">
-										{ attributes.submitMessage || __( 'Success', 'otter-blocks' ) }
+									<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+										<div className='o-form-server-response o-success' style={{ color: attributes.submitMessageColor }}>
+											{ attributes.submitMessage || __( 'Success', 'otter-blocks' ) }
+										</div>
+										<div className='o-form-server-response o-error' style={{ color: attributes.submitMessageErrorColor, margin: '0px' }}>
+											{ __( 'Error. Please try again.', 'otter-blocks' ) }
+										</div>
 									</div>
 								</div>
 							</form>

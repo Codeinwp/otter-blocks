@@ -8,6 +8,7 @@
 	--requiredColor: red;
 	--submitColor: white;
 	--submitMsgColor: green;
+	--submitErrorColor: red;
 	--inputsGap: 10px;
 	--inputGap: 5px;
 	--labelFontSize: var(--bodyFontSize);
@@ -110,19 +111,19 @@
 		border-radius: 10%;
 		margin-left: 10px;
 
-		&.success {
+		&.o-success {
 			color: var(--submitMsgColor);
 		}
 
-		&.error {
-			color: red;
+		&.o-error {
+			color: var(--submitErrorColor);
 		}
 
-		&.info {
+		&.o-info {
 			color: rgb(79, 123, 204);
 		}
 
-		&.warning {
+		&.o-warning {
 			color: rgb(255, 196, 0);
 		}
 	}
