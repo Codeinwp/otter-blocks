@@ -14,15 +14,18 @@ import {
 const NAVIGATION_ITEMS = [
 	{
 		slug: 'dashboard',
-		label: __( 'Dashboard', 'otter-blocks' )
+		label: __( 'Dashboard', 'otter-blocks' ),
+		visibility: true
 	},
 	{
 		slug: 'integrations',
-		label: __( 'Integrations', 'otter-blocks' )
+		label: __( 'Integrations', 'otter-blocks' ),
+		visibility: true
 	},
 	{
 		slug: 'upsell',
-		label: __( 'Free vs PRO', 'otter-blocks' )
+		label: __( 'Free vs PRO', 'otter-blocks' ),
+		visibility: ! Boolean( window.otterObj.hasPro )
 	}
 ];
 
@@ -48,7 +51,7 @@ const Headers = ({
 				</div>
 
 				<nav className="otter-navigation">
-					{ NAVIGATION_ITEMS.map( item => (
+					{ NAVIGATION_ITEMS.map( item => item.visibility && (
 						<button
 							className={ classnames(
 								{ 'is-active': item.slug === isActive }

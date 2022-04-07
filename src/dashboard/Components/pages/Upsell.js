@@ -48,9 +48,12 @@ const Upsell = () => {
 					<div className="c">{ __( 'Pro', 'otter-blocks' ) }</div>
 				</li>
 
-				{ FEATURES.map( feature => {
+				{ FEATURES.map( ( feature, i ) => {
 					return (
-						<li className="t-row">
+						<li
+							key={ i }
+							className="t-row"
+						>
 							<div className="content">
 								<div className="h-wrap">
 									<h4>{ feature.label }</h4>

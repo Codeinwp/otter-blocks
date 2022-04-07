@@ -2,7 +2,7 @@
 /**
  * Filter blocks server logic.
  *
- * @package ThemeIsle\GutenbergBlocks\Server
+ * @package ThemeIsle\OtterPro\Server
  */
 
 namespace ThemeIsle\OtterPro\Server;

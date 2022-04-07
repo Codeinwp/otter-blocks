@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Plugins;
 
+use ThemeIsle\GutenbergBlocks\Pro;
+
 /**
  * Class Dashboard
  */
@@ -90,6 +92,9 @@ class Dashboard {
 				'version'     => OTTER_BLOCKS_VERSION,
 				'assetsPath'  => OTTER_BLOCKS_URL . 'assets/',
 				'stylesExist' => is_dir( $basedir ),
+				'hasPro'      => Pro::is_pro(),
+				'upgradeLink' => Pro::get_url(),
+				'docsLink'    => Pro::get_docs_url(),
 			)
 		);
 	}

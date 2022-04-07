@@ -144,6 +144,32 @@
 				}
 			}
 
+			input[type="text"],
+			input[type="password"] {
+				border: 1px solid #b7c9d9;
+				border-radius: 3px;
+				font-size: 14px;
+				padding: 9px 15px;
+				width: 100%;
+				box-shadow: none;
+				height: 40px;
+				margin: 0 0 10px 0;
+				color: #444;
+
+				&:disabled {
+					background: #f6f6f6;
+					border-color: #eeeeee;
+					color: #bbbbbb;
+				}
+
+				&:focus {
+					border-color: #00a0d2;
+					box-shadow: 0 0 0 1px #00a0d2;
+					outline: 2px solid transparent;
+					outline-offset: -2px;
+				}
+			}
+
 			.components-panel__row {
 				padding: 10px;
 				margin: 0;
@@ -169,31 +195,6 @@
 							.components-base-control__label {
 								font-weight: 600;
 								margin-bottom: 10px;
-							}
-
-							input {
-								border: 1px solid #b7c9d9;
-								border-radius: 3px;
-								font-size: 14px;
-								padding: 9px 15px;
-								width: 100%;
-								box-shadow: none;
-								height: 40px;
-								margin: 0 0 10px 0;
-								color: #444;
-
-								&:disabled {
-									background: #f6f6f6;
-									border-color: #eeeeee;
-									color: #bbbbbb;
-								}
-
-								&:focus {
-									border-color: #00a0d2;
-									box-shadow: 0 0 0 1px #00a0d2;
-									outline: 2px solid transparent;
-									outline-offset: -2px;
-								}
 							}
 
 							.otter-button-group {
@@ -240,6 +241,14 @@
 			
 				.otter-info-button-group {
 					display: flex;
+
+					&.is-single {
+						display: grid;
+					}
+
+					.components-button {
+						justify-content: center;
+					}
 
 					.is-default,
 					.is-secondary {
@@ -390,7 +399,6 @@
 
 .components-editor-notices__snackbar {
 	position: fixed;
-	right: 0;
 	bottom: 40px;
 	padding-left: 16px;
 	padding-right: 16px;

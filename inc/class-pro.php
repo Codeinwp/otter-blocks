@@ -45,7 +45,7 @@ class Pro {
 
 
 	/**
-	 * Check Otter Pro URL
+	 * Get Otter Pro URL
 	 * 
 	 * @since   2.0.0
 	 * @access  public
@@ -53,6 +53,18 @@ class Pro {
 	 */
 	public static function get_url() {
 		return 'https://themeisle.com/plugins/otter-blocks';
+	}
+
+
+	/**
+	 * Get Otter Docs URL
+	 * 
+	 * @since   2.0.0
+	 * @access  public
+	 * @return  string
+	 */
+	public static function get_docs_url() {
+		return 'https://docs.themeisle.com/article/1478-otter-blocks-documentation';
 	}
 
 	/**
