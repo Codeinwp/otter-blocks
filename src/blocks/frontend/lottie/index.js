@@ -15,6 +15,10 @@ domReady( () => {
 			}
 		}
 
+		if ( Boolean( animation.__count ) ) {
+			animation.__count = animation.__count - 1;
+		}
+
 		if ( -1 === animation.__direction && 'true' === animation.dataset.loop ) {
 			animation.setLooping( true );
 
