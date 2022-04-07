@@ -70,6 +70,9 @@
 		"submitMessageColor": {
 			"type": "string"
 		},
+		"submitMessageErrorColor": {
+			"type": "string"
+		},
 		"submitBackgroundColor": {
 			"type": "string"
 		},

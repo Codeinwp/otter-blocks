@@ -102,7 +102,7 @@ const Inspector = ({
 				'general' === tab && (
 					<Fragment>
 						<PanelBody
-							title={ __( 'Submit Button', 'otter-blocks' ) }
+							title={ __( 'Settings', 'otter-blocks' ) }
 							initialOpen={ true }
 						>
 							<TextControl
@@ -155,10 +155,25 @@ const Inspector = ({
 								]}
 								onChange={ submitStyle => setAttributes({ submitStyle}) }
 							/>
+
+							<SyncControl
+								field={ 'inputsGap' }
+								isSynced={ attributes.isSynced }
+								setAttributes={ setAttributes }
+							>
+								<RangeControl
+									label={ __( 'Fields Gap', 'otter-blocks' ) }
+									value={ attributes.inputsGap || 10 }
+									onChange={ inputsGap => setAttributes({ inputsGap }) }
+									allowReset
+									min={0}
+									max={50}
+								/>
+							</SyncControl>
 						</PanelBody>
 
 						<PanelBody
-							title={ __( 'Settings', 'otter-blocks' ) }
+							title={ __( 'Input Styling', 'otter-blocks' ) }
 						>
 
 							<SyncControl
@@ -184,7 +199,7 @@ const Inspector = ({
 							>
 								<RangeControl
 									label={ __( 'Input Gap', 'otter-blocks' ) }
-									value={ attributes.inputGap }
+									value={ attributes.inputGap || 5}
 									onChange={ inputGap => setAttributes({ inputGap }) }
 									allowReset
 									min={0}
@@ -192,20 +207,6 @@ const Inspector = ({
 								/>
 							</SyncControl>
 
-							<SyncControl
-								field={ 'inputsGap' }
-								isSynced={ attributes.isSynced }
-								setAttributes={ setAttributes }
-							>
-								<RangeControl
-									label={ __( 'Fields Gap', 'otter-blocks' ) }
-									value={ attributes.inputsGap }
-									onChange={ inputsGap => setAttributes({ inputsGap }) }
-									allowReset
-									min={0}
-									max={50}
-								/>
-							</SyncControl>
 
 							<SyncControl
 								field={ 'inputsBorderRadius' }
@@ -267,8 +268,48 @@ const Inspector = ({
 								/>
 							</SyncControl>
 
-
 						</PanelBody>
+						<PanelColorSettings
+							title={ __( 'Color', 'otter-blocks' ) }
+							initialOpen={ false }
+							colorSettings={ [
+								{
+									value: attributes.labelColor,
+									onChange: labelColor => setAttributes({ labelColor }),
+									label: __( 'Label Color', 'otter-blocks' )
+								},
+								{
+									value: attributes.inputBorderColor,
+									onChange: inputBorderColor => setAttributes({ inputBorderColor }),
+									label: __( 'Border Color', 'otter-blocks' )
+								},
+								{
+									value: attributes.submitColor,
+									onChange: submitColor => setAttributes({ submitColor }),
+									label: __( 'Submit Text Color', 'otter-blocks' )
+								},
+								{
+									value: attributes.submitBackgroundColor,
+									onChange: submitBackgroundColor => setAttributes({ submitBackgroundColor }),
+									label: __( 'Button Background Color', 'otter-blocks' )
+								},
+								{
+									value: attributes.submitBackgroundColorHover,
+									onChange: submitBackgroundColorHover => setAttributes({ submitBackgroundColorHover }),
+									label: __( 'Button Background Color on Hover', 'otter-blocks' )
+								},
+								{
+									value: attributes.submitMessageColor,
+									onChange: submitMessageColor => setAttributes({ submitMessageColor }),
+									label: __( 'Successful Message Color', 'otter-blocks' )
+								},
+								{
+									value: attributes.submitMessageErrorColor,
+									onChange: submitMessageErrorColor => setAttributes({ submitMessageErrorColor }),
+									label: __( 'Error Message Color', 'otter-blocks' )
+								}
+							] }
+						/>
 					</Fragment>
 				)
 			}
@@ -469,44 +510,6 @@ const Inspector = ({
 					</Fragment>
 				)
 			}
-
-
-			<PanelColorSettings
-				title={ __( 'Color', 'otter-blocks' ) }
-				initialOpen={ false }
-				colorSettings={ [
-					{
-						value: attributes.labelColor,
-						onChange: labelColor => setAttributes({ labelColor }),
-						label: __( 'Label Color', 'otter-blocks' )
-					},
-					{
-						value: attributes.inputBorderColor,
-						onChange: inputBorderColor => setAttributes({ inputBorderColor }),
-						label: __( 'Border Color', 'otter-blocks' )
-					},
-					{
-						value: attributes.submitColor,
-						onChange: submitColor => setAttributes({ submitColor }),
-						label: __( 'Submit Text Color', 'otter-blocks' )
-					},
-					{
-						value: attributes.submitBackgroundColor,
-						onChange: submitBackgroundColor => setAttributes({ submitBackgroundColor }),
-						label: __( 'Submit Background Color', 'otter-blocks' )
-					},
-					{
-						value: attributes.submitBackgroundColorHover,
-						onChange: submitBackgroundColorHover => setAttributes({ submitBackgroundColorHover }),
-						label: __( 'Submit Background Color on Hover', 'otter-blocks' )
-					},
-					{
-						value: attributes.submitMessageColor,
-						onChange: submitMessageColor => setAttributes({ submitMessageColor }),
-						label: __( 'Successful Submit Message Color', 'otter-blocks' )
-					}
-				] }
-			/>
 
 
 		</InspectorControls>

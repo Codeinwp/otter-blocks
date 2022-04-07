@@ -102,7 +102,7 @@ const collectAndSendInputFormData = ( form, btn ) => {
 			} else {
 				msg.innerHTML = __( '⚠ Please check the captcha.', 'otter-blocks' );
 			}
-			msg.classList.add( 'warning' );
+			msg.classList.add( 'o-warning' );
 			addThenRemoveMsg( msg );
 		}
 
@@ -167,7 +167,7 @@ const collectAndSendInputFormData = ( form, btn ) => {
 
 			if ( res?.success ) {
 				msg.innerHTML = res?.submitMessage ? res.submitMessage :  __( 'Success', 'otter-blocks' );
-				msg.classList.add( 'success' );
+				msg.classList.add( 'o-success' );
 				cleanInputs( form );
 
 				setTimeout( () => {
@@ -176,11 +176,11 @@ const collectAndSendInputFormData = ( form, btn ) => {
 					}
 				}, 1000 );
 			} else {
-				msg.classList.add( 'error' );
+				msg.classList.add( 'o-error' );
 
 				// TODO: Write pattern to display a more useful error message.
 				if ( res?.provider && res?.error.includes( 'invalid' ) || res?.error.includes( 'fake' ) ) { // mailchimp
-					msg.classList.add( 'warning' );
+					msg.classList.add( 'o-warning' );
 					msg.innerHTML = __( '⚠ The email address does not look correct!', 'otter-blocks' );
 				} else if ( res?.provider && res?.error.includes( 'duplicate' ) || res?.error.includes( 'already' ) ) { // sendinblue
 					msg.classList.add( 'info' );

@@ -88,6 +88,10 @@ class Form_CSS extends Base_CSS {
 						'value'    => 'submitMessageColor',
 					),
 					array(
+						'property' => '--submitErrorColor',
+						'value'    => 'submitMessageErrorColor',
+					),
+					array(
 						'property' => '--inputsGap',
 						'value'    => 'inputsGap',
 						'unit'     => 'px'
