@@ -106,6 +106,8 @@ class Form_Server {
 			)
 		);
 
+		add_action( 'otter_form_before_submit', array( $this, 'before_submit' ));
+		add_action( 'otter_form_after_submit', array( $this, 'after_submit' ) );
 	}
 
 	/**
@@ -176,11 +178,11 @@ class Form_Server {
 	 */
 	public function frontend( $request ) {
 
-		$data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
+		$form_data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
 		$res  = new Form_Data_Response();
 
 		// Check is the request is OK.
-		$reasons = apply_filters('otter_form_validation', $data);
+		$reasons = apply_filters('otter_form_validation', $form_data);
 
 		if ( 0 < count( $reasons ) ) {
 			$res->set_error( __( 'Invalid request!', 'otter-blocks' ) );
@@ -189,8 +191,8 @@ class Form_Server {
 		}
 
 		// Verify the reCaptcha token.
-		if ( $data->payload_has_field( 'token' ) ) {
-			$result = apply_filters( 'otter_form_captcha_validation', $data );
+		if ( $form_data->payload_has_field( 'token' ) ) {
+			$result = apply_filters( 'otter_form_captcha_validation', $form_data );
 			if ( false == $result['success'] ) {
 				$res->set_error( __( 'The reCaptcha was invalid!', 'otter-blocks' ) );
 				return $res->build_response();
@@ -198,20 +200,20 @@ class Form_Server {
 		}
 
 
-		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
-        $data->set_form_options($form_options);
+		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get( 'formOption' ) );
+        $form_data->set_form_options($form_options);
 
 		// Select the submit function based on the provider.
-        $provider_handlers = apply_filters('otter_select_form_provider', $data);
+        $provider_handlers = apply_filters('otter_select_form_provider', $form_data);
 
-		if( $provider_handlers && Form_Providers::provider_has_handler($provider_handlers, $data->get('handler')) ) {
-			// Send the data to the provider.
-			$provider_response = $provider_handlers[$data->get('handler')]($data);
+		if( $provider_handlers && Form_Providers::provider_has_handler($provider_handlers, $form_data->get('handler')) ) {
 
-			// Send also an email to the form editor/owner if he has opt-in for it.
-			if( 'submit-subscribe' === $form_options->get_action() ) {
-				$this->send_default_email($data);
-			}
+			do_action('otter_form_before_submit', $form_data);
+
+			// Send the data to the provider handler.
+			$provider_response = $provider_handlers[$form_data->get('handler')]($form_data);
+
+			do_action( 'otter_form_after_submit', $form_data);
 
 			return $provider_response;
 		} else {
@@ -263,6 +265,29 @@ class Form_Server {
             $form_options = $data->get_form_options();
             $res->add_values( $form_options->get_submit_data() );
 			return $res->build_response();
+		}
+	}
+
+	/**
+	 * Make additional changes before using the main handler function for submitting
+	 * @param Form_Data_Request $form_data
+	 * @return Form_Data_Request
+	 */
+	private function before_submit( $form_data ) {
+
+		// It may be useful in the future. Kept for reference.
+		return $form_data;
+	}
+
+	/**
+	 * Process the extra actions after calling the main handler function for submitting.
+	 * @param Form_Data_Request $form_data
+	 * @return void
+	 */
+	private function after_submit( $form_data ) {
+		// Send also an email to the form editor/owner if he has opt-in for it.
+		if( 'submit-subscribe' === $form_data->get_form_options()->get_action() ) {
+			$this->send_default_email($form_data);
 		}
 	}
 
