@@ -11,10 +11,10 @@ import {
  * Internal dependencies.
  */
 import './style.scss';
-import Notices from './components/Notices.js';
-import Header from './components/Header.js';
-import Main from './components/Main.js';
-import Footer from './components/Footer.js';
+import Notices from './Components/Notices.js';
+import Header from './Components/Header.js';
+import Main from './Components/Main.js';
+import Footer from './Components/Footer.js';
 
 const App = () => {
 	const [ currentTab, setTab ] = useState( 'dashboard' );

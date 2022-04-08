@@ -24,7 +24,7 @@ import {
 /**
  * Internal dependencies.
  */
-import ButtonControl from './../ButtonControl.js';
+import ButtonControl from '../ButtonControl.js';
 
 const Dashboard = ({
 	status,
