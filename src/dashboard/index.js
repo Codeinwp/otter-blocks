@@ -11,7 +11,7 @@ import {
  * Internal dependencies.
  */
 import './style.scss';
-import Notices from './components/Notices';
+import Notices from './components/Notices.js';
 import Header from './components/Header.js';
 import Main from './components/Main.js';
 import Footer from './components/Footer.js';
