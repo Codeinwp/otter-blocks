@@ -620,7 +620,11 @@ const Edit = ({
 				<div { ...blockProps }>
 					{
 						( hasInnerBlocks ) ? (
-							<form ref={blockRef} className="otter-form__container">
+							<form
+								ref={blockRef}
+								className="otter-form__container"
+								onSubmit={ () => false }
+							>
 								<InnerBlocks
 								/>
 
@@ -650,6 +654,7 @@ const Edit = ({
 									<button
 										className='wp-block-button__link'
 										type='submit'
+										disabled
 										css={
 											css`
 											${ attributes.submitBackgroundColor && `background-color: ${attributes.submitBackgroundColor};` }
