@@ -28,33 +28,19 @@ import Infobox from './Infobox.js';
 const Sidebar = ({
 	setTab
 }) => {
-	const [ isLoading, setLoading ] = useState([]);
+	const [ isLoading, setLoading ] = useState( false );
 
-	const [ license, setLicense ] = useState([]);
+	const [ license, setLicense ] = useState( window.otterObj?.license );
 
 	const [ licenseKey, setLicenseKey ] = useState( '' );
 
 	const { createNotice } = dispatch( 'core/notices' );
 
 	useEffect( () => {
-		setLoading( true );
-		apiFetch({ path: 'otter/v1/get_license' }).then(
-			res => {
-				setLoading( false );
-
-				if ( res?.success ) {
-					setLicense( res );
-
-					if ( res.key ) {
-						setLicenseKey( res.key );
-					}
-				}
-			}
-		).catch( err => {
-			setLoading( false );
-			console.log( err );
-		});
-	}, []);
+		if ( license.key ) {
+			setLicenseKey( license.key );
+		}
+	}, [ license ]);
 
 	const onSaveLicense = ( data ) => {
 		setLoading( true );
@@ -116,7 +102,9 @@ const Sidebar = ({
 					</div>
 
 					{ isValid && (
-						<p>{ sprintf( __( 'Valid - Expires %s', 'otter-blocks' ), format( 'F Y', license.expires ) ) }</p>
+						<div className="otter-license-footer">
+							<p>{ sprintf( __( 'Valid - Expires %s', 'otter-blocks' ), format( 'F Y', license.expires ) ) }</p>
+						</div>
 					)}
 				</Infobox>
 			) : (

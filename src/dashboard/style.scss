@@ -144,6 +144,16 @@
 				}
 			}
 
+			.otter-license-footer {
+				align-items: center;
+				display: flex;
+				margin-top: 20px;
+	
+				p {
+					margin: 0;
+				}
+			}
+
 			input[type="text"],
 			input[type="password"] {
 				border: 1px solid #b7c9d9;

@@ -88,13 +88,16 @@ class Dashboard {
 		wp_localize_script(
 			'otter-blocks-scripts',
 			'otterObj',
-			array(
-				'version'     => OTTER_BLOCKS_VERSION,
-				'assetsPath'  => OTTER_BLOCKS_URL . 'assets/',
-				'stylesExist' => is_dir( $basedir ),
-				'hasPro'      => Pro::is_pro(),
-				'upgradeLink' => Pro::get_url(),
-				'docsLink'    => Pro::get_docs_url(),
+			apply_filters(
+				'otter_dashboard_data',
+				array(
+					'version'     => OTTER_BLOCKS_VERSION,
+					'assetsPath'  => OTTER_BLOCKS_URL . 'assets/',
+					'stylesExist' => is_dir( $basedir ),
+					'hasPro'      => Pro::is_pro(),
+					'upgradeLink' => Pro::get_url(),
+					'docsLink'    => Pro::get_docs_url(),
+				)
 			)
 		);
 	}

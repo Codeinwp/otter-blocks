@@ -38,6 +38,20 @@ class Dashboard_Server {
 	 */
 	public function init() {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_filter( 'otter_dashboard_data', array( $this, 'apply_dashboard_data' ) );
+	}
+
+	public function apply_dashboard_data( $data ) {
+		return array_merge(
+			$data,
+			array(
+				'license'      => [
+					'key'        => apply_filters( 'product_neve_license_key', 'free' ),
+					'valid'      => apply_filters( 'product_neve_license_status', false ),
+					'expiration' => $this->get_license_expiration_date(),
+				],
+			)
+		);
 	}
 
 	/**
@@ -73,20 +87,6 @@ class Dashboard_Server {
 							},
 						),
 					),
-					'permission_callback' => function () {
-						return current_user_can( 'manage_options' );
-					},
-				),
-			)
-		);
-
-		register_rest_route(
-			$namespace,
-			'/get_license',
-			array(
-				array(
-					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'get_license_data' ),
 					'permission_callback' => function () {
 						return current_user_can( 'manage_options' );
 					},
