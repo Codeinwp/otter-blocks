@@ -71,12 +71,12 @@ const Inspector = ({
 
 	// TODO: see what is the problem with the checking
 	const formOptionsChanged = (
-		attributes.emailTo !== savedData?.email
-		|| attributes.subject !== savedData?.emailSubject
-		|| attributes.redirectLink !== savedData?.redirectLink
-		|| attributes.fromName !== savedData?.fromName
-		|| attributes.submitMessage !== savedData?.submitMessage
-		|| attributes.hasCaptcha !== savedData?.hasCaptcha
+		attributes.emailTo !== savedData?.email ||
+		attributes.subject !== savedData?.emailSubject ||
+		attributes.redirectLink !== savedData?.redirectLink ||
+		attributes.fromName !== savedData?.fromName ||
+		attributes.submitMessage !== savedData?.submitMessage ||
+		attributes.hasCaptcha !== savedData?.hasCaptcha
 	);
 
 	return (
