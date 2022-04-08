@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies.
  */
- import {
+import {
 	__,
 	sprintf
 } from '@wordpress/i18n';
@@ -67,41 +67,41 @@ const LicenseField = () => {
 	const isValid = 'valid' === license?.valid || 'valid' === license?.license;
 
 	return (
-        <Infobox
-            title={ __( 'Otter Pro License', 'otter-blocks' ) }
-        >
-            <p>{ __( 'Enter your license from ThemeIsle purchase history in order to get plugin updates.', 'otter-blocks' ) }</p>
+		<Infobox
+			title={ __( 'Otter Pro License', 'otter-blocks' ) }
+		>
+			<p>{ __( 'Enter your license from ThemeIsle purchase history in order to get plugin updates.', 'otter-blocks' ) }</p>
 
-            <input
-                type="password"
-                value={ licenseKey }
-                placeholder={ __( 'Enter license key', 'otter-blocks' ) }
-                disabled={ isLoading || isValid }
-                onChange={ e => setLicenseKey( e.target.value ) }
-            />
+			<input
+				type="password"
+				value={ licenseKey }
+				placeholder={ __( 'Enter license key', 'otter-blocks' ) }
+				disabled={ isLoading || isValid }
+				onChange={ e => setLicenseKey( e.target.value ) }
+			/>
 
-            <div className="otter-info-button-group is-single">
-                <Button
-                    variant={ isValid ? 'secondary' : 'primary' }
-                    isPrimary={ ! isValid }
-                    isSecondary={ isValid }
-                    isBusy={ isLoading }
-                    disabled={ isLoading }
-                    onClick={ () => onSaveLicense({
-                        action: isValid ? 'deactivate' : 'activate',
-                        key: licenseKey
-                    }) }
-                >
-                    { isValid ? __( 'Deactivate', 'otter-blocks' ) : __( 'Activate', 'otter-blocks' ) }
-                </Button>
-            </div>
+			<div className="otter-info-button-group is-single">
+				<Button
+					variant={ isValid ? 'secondary' : 'primary' }
+					isPrimary={ ! isValid }
+					isSecondary={ isValid }
+					isBusy={ isLoading }
+					disabled={ isLoading }
+					onClick={ () => onSaveLicense({
+						action: isValid ? 'deactivate' : 'activate',
+						key: licenseKey
+					}) }
+				>
+					{ isValid ? __( 'Deactivate', 'otter-blocks' ) : __( 'Activate', 'otter-blocks' ) }
+				</Button>
+			</div>
 
-            { isValid && (
-                <div className="otter-license-footer">
-                    <p>{ sprintf( __( 'Valid - Expires %s', 'otter-blocks' ), format( 'F Y', license.expires ) ) }</p>
-                </div>
-            )}
-        </Infobox>
+			{ isValid && (
+				<div className="otter-license-footer">
+					<p>{ sprintf( __( 'Valid - Expires %s', 'otter-blocks' ), format( 'F Y', license.expires ) ) }</p>
+				</div>
+			)}
+		</Infobox>
 	);
 };
 
