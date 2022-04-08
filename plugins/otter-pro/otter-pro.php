@@ -4,18 +4,18 @@
  *
  * @package OtterBlocks
  *
- * Plugin Name:       Pro Extension for Otter
- * Plugin URI:        https://themeisle.com/plugins/otter-blocks
- * Description:       Create beautiful and attracting posts, pages, and landing pages with Gutenberg Blocks and Template Library by Otter. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
- * Version:           1.7.5
- * Author:            ThemeIsle
- * Author URI:        https://themeisle.com
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       otter-pro
- * Domain Path:       /languages
- * WordPress Available:  yes
- * Requires License:    no
+ * Plugin Name:          Pro Extension for Otter
+ * Plugin URI:           https://themeisle.com/plugins/otter-blocks
+ * Description:          Create beautiful and attracting posts, pages, and landing pages with Gutenberg Blocks and Template Library by Otter. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
+ * Version:              1.7.5
+ * Author:               ThemeIsle
+ * Author URI:           https://themeisle.com
+ * License:              GPL-2.0+
+ * License URI:          http://www.gnu.org/licenses/gpl-2.0.txt
+ * Text Domain:          otter-pro
+ * Domain Path:          /languages
+ * WordPress Available:  no
+ * Requires License:     yes
  */
 
 // If this file is called directly, abort.
@@ -29,6 +29,15 @@ define( 'OTTER_PRO_PATH', dirname( __FILE__ ) );
 define( 'OTTER_PRO_BUILD_URL', plugins_url( '/', __FILE__ ) . 'build/' );
 define( 'OTTER_PRO_BUILD_PATH', dirname( __FILE__ ) . '/build/' );
 define( 'OTTER_PRO_VERSION', '1.7.5' );
+
+add_filter(
+	'themeisle_sdk_products',
+	function ( $products ) {
+		$products[] = __FILE__;
+
+		return $products;
+	}
+);
 
 add_action(
 	'plugins_loaded',
