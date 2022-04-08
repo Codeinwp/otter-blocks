@@ -37,12 +37,12 @@ class Form_Email
         /**
          * Add action that render the email's header.
          */
-		add_action('otter_form_email_head', array($this, 'build_head'));
+		add_filter('otter_form_email_head', array($this, 'build_head'));
 
         /**
          * Add action that render the email's body.
          */
-		add_action('otter_form_email_body', array($this, 'build_body'));
+		add_filter('otter_form_email_body', array($this, 'build_body'));
 	}
 
     /**
@@ -63,8 +63,8 @@ class Form_Email
 		</head>
 		<body>
         <?php
-        do_action('otter_form_email_head', $email_data);
-        do_action('otter_form_email_body', $email_data);
+        apply_filters('otter_form_email_head', $email_data);
+        apply_filters('otter_form_email_body', $email_data);
         ?>
 		</body>
 		</html>
