@@ -41,6 +41,16 @@ class Dashboard_Server {
 		add_filter( 'otter_dashboard_data', array( $this, 'apply_dashboard_data' ) );
 	}
 
+
+	/**
+	 * Apply Dashboard Data
+	 *
+	 * Apply additional data to localized filter.
+	 *
+	 * @param array $data Localized Data.
+	 * @since 2.0.1
+	 * @return array
+	 */
 	public function apply_dashboard_data( $data ) {
 		return array_merge(
 			$data,
