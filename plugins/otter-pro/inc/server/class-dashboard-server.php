@@ -45,7 +45,7 @@ class Dashboard_Server {
 		return array_merge(
 			$data,
 			array(
-				'license'      => [
+				'license' => [
 					'key'        => apply_filters( 'product_neve_license_key', 'free' ),
 					'valid'      => apply_filters( 'product_neve_license_status', false ),
 					'expiration' => $this->get_license_expiration_date(),
@@ -135,7 +135,7 @@ class Dashboard_Server {
 					'key'        => apply_filters( 'product_neve_license_key', 'free' ),
 					'valid'      => apply_filters( 'product_neve_license_status', false ),
 					'expiration' => $this->get_license_expiration_date(),
-                ),
+				),
 			)
 		);
 	}
