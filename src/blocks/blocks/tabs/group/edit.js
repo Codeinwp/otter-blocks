@@ -63,7 +63,7 @@ const Edit = ({
 	const children = useSelect( select => {
 		const { getBlock } = select( 'core/block-editor' );
 		return getBlock( clientId ).innerBlocks;
-	});
+	}, []);
 
 	const [ activeTab, setActiveTab ] = useState( children.find( c => true === c.attributes.defaultOpen )?.clientId );
 

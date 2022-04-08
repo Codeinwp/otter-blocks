@@ -101,6 +101,10 @@ const CircularProgressBarBlock = ({
 		}, step );
 
 		changeInterval( interv );
+
+		return () => {
+			clearInterval( interv );
+		};
 	}, [ attributes.duration ]);
 
 	useEffect( () => {
@@ -112,6 +116,9 @@ const CircularProgressBarBlock = ({
 		valueRef.current.innerHTML = attributes.percentage + '%';
 
 		clearInterval( interval );
+		return () => {
+			clearInterval( interval );
+		};
 	}, [ attributes.percentage, attributes.height ]);
 
 	const onHeightChange = value => {

@@ -65,13 +65,15 @@ const ProgressBar = ({
 	const barRef = useRef( null );
 
 	useEffect( () => {
+		let timeoutID = null;
+
 		if ( ! barRef.current ) {
 			return;
 		}
 
 		setShowPercentage( false );
 
-		setTimeout( () => setShowPercentage( true ), attributes.duration * 1000 );
+		timeoutID = setTimeout( () => setShowPercentage( true ), attributes.duration * 1000 );
 
 		barRef.current.animate(
 			{
@@ -83,6 +85,10 @@ const ProgressBar = ({
 				fill: 'forwards'
 			}
 		);
+
+		return () => {
+			clearTimeout( timeoutID );
+		};
 	}, [ attributes.percentage, attributes.duration ]);
 
 	const fontRatio = 0.65;
