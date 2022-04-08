@@ -1,4 +1,5 @@
 import domReady from '@wordpress/dom-ready';
+import { detectLoading } from '../../helpers/detect-loading';
 import { easeOutQuad } from '../../helpers/helper-functions';
 
 const createObserver = () => {
@@ -439,15 +440,19 @@ domReady( () => {
 	const elems = document.querySelectorAll( '.o-sticky' );
 	const observer = createObserver();
 
-	elems.forEach( ( elem ) => {
-		const config = getConfigOptions( elem );
-		const container = getStickyContainer( elem, config.scope );
+	detectLoading( () => {
+		elems.forEach( ( elem ) => {
+			const config = getConfigOptions( elem );
+			const container = getStickyContainer( elem, config.scope );
 
-		makeElementSticky(
-			elem,
-			config,
-			container,
-			observer
-		);
-	});
+			makeElementSticky(
+				elem,
+				config,
+				container,
+				observer
+			);
+		});
+	}, [ 'lottie' ]);
+
+
 });
