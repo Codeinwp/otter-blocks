@@ -140,7 +140,7 @@ class Dashboard_Server {
 		return new \WP_REST_Response(
 			array(
 				'success' => true,
-				'message' => $fields['action'] === 'activate' ? __( 'Activated.', 'otter-blocks' ) : __( 'Deactivated', 'otter-blocks' ),
+				'message' => 'activate' === $fields['action'] ? __( 'Activated.', 'otter-blocks' ) : __( 'Deactivated', 'otter-blocks' ),
 				'license' => array(
 					'key'        => apply_filters( 'product_neve_license_key', 'free' ),
 					'valid'      => apply_filters( 'product_neve_license_status', false ),
