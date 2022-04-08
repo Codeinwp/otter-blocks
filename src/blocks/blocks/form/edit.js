@@ -72,6 +72,8 @@ const Edit = ({
 	const [ isAPILoaded, setAPILoaded ] = useState( false );
 	const [ isAPISaved, setAPISaved ] = useState( false );
 
+	const [ savedData, setSavedData ] = useState( {} );
+
 	const [ apiKey, setApiKey ] = useState( '' );
 	const [ fetchApiKeyStatus, setFetchApiKeyStatus ] = useState( 'loading' );
 
@@ -172,6 +174,18 @@ const Edit = ({
 	}, []);
 
 	/**
+	 *
+	 * @param {Array} forms
+	 */
+	const extractDataFromWpOptions = forms => {
+		const currentForm = forms.filter(({ form }) => form === attributes.optionName).pop();
+		if( currentForm ) {
+			console.log(currentForm)
+			setSavedData( currentForm );
+		}
+	}
+
+	/**
 	 * Load Email and ApiKey from server.
 	 */
 	useEffect( () => {
@@ -182,12 +196,9 @@ const Edit = ({
 		if ( attributes.optionName ) {
 			api.loadPromise.then( () => {
 				( new api.models.Settings() ).fetch().done( res => {
+					extractDataFromWpOptions(res.themeisle_blocks_form_emails);
 					res.themeisle_blocks_form_emails?.filter( ({ form }) => form === attributes.optionName )?.forEach( item => {
-						console.log( item );
-						setEmail( item?.email );
-						setApiKey( item?.integration?.apiKey );
 						setEmailLoading( true );
-						setSavedEmail( item?.email );
 						setFetchApiKeyStatus( 'loaded' );
 						clearTimeout( t );
 					});
@@ -299,6 +310,7 @@ const Edit = ({
 			setAPISaved( saved );
 			setGoogleCaptchaAPISecretKey( '' );
 			setGoogleCaptchaAPISiteKey( '' );
+			extractDataFromWpOptions(response.themeisle_blocks_form_emails);
 
 			createNotice(
 				'info',
@@ -316,7 +328,7 @@ const Edit = ({
 	 */
 	const saveIntegration = () => {
 		setSavedIntegration( false );
-		( new api.models.Settings() )?.fetch().done( res => {
+		(new api.models.Settings())?.fetch().done( res => {
 			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 			let isMissing = true;
 			let hasUpdated = false;
@@ -355,7 +367,8 @@ const Edit = ({
 					themeisle_blocks_form_emails: emails
 				});
 
-				model.save().then( () => {
+				model.save().then( response => {
+					extractDataFromWpOptions(response.themeisle_blocks_form_emails)
 					setSavedIntegration( true );
 					if ( hasUpdatedNotice ) {
 						createNotice(
@@ -461,6 +474,10 @@ const Edit = ({
 						emails[index].fromName = attributes.fromName; // update the value
 						hasUpdated = true;
 					}
+					if ( emails[index].hasCaptcha !== attributes.hasCaptcha ) {
+						emails[index].hasCaptcha = attributes.hasCaptcha;
+						hasUpdated = true;
+					}
 					isMissing = false;
 				}
 			});
@@ -486,10 +503,10 @@ const Edit = ({
 
 				model.save().then( response => {
 					setSavedEmail( true );
+					extractDataFromWpOptions(response.themeisle_blocks_form_emails);
 					response.themeisle_blocks_form_emails?.filter( ({ form }) => form === attributes.optionName ).forEach( item => {
 						{
 							setEmailLoading( true );
-							setSavedEmail( item?.email );
 
 							createNotice(
 								'info',
@@ -544,7 +561,8 @@ const Edit = ({
 					themeisle_blocks_form_emails: emails
 				});
 
-				model.save().then( () => {
+				model.save().then( response => {
+					extractDataFromWpOptions(response.themeisle_blocks_form_emails)
 					if ( hasUpdatedNotice ) {
 						createNotice(
 							'info',
@@ -609,7 +627,8 @@ const Edit = ({
 					saveIntegrationApiKey,
 					fetchApiKeyStatus,
 					savedIntegration,
-					saveIntegration
+					saveIntegration,
+					savedData
 				}}
 			>
 				<Inspector

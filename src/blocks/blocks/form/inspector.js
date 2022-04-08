@@ -63,10 +63,21 @@ const Inspector = ({
 		saveIntegrationApiKey,
 		fetchApiKeyStatus,
 		savedIntegration,
-		saveIntegration
+		saveIntegration,
+		savedData
 	} = useContext( FormContext );
 
 	const [ tab, setTab ] = useState( 'general' );
+
+	// TODO: see what is the problem with the checking
+	const formOptionsChanged = (
+		attributes.emailTo !== savedData?.email
+		|| attributes.subject !== savedData?.emailSubject
+		|| attributes.redirectLink !== savedData?.redirectLink
+		|| attributes.fromName !== savedData?.fromName
+		|| attributes.submitMessage !== savedData?.submitMessage
+		|| attributes.hasCaptcha !== savedData?.hasCaptcha
+	);
 
 	return (
 		<InspectorControls>
@@ -351,22 +362,6 @@ const Inspector = ({
 								help={ __( 'Redirect the user to another page when submit is succesful.', 'otter-blocks' ) }
 							/>
 
-							<Button
-								isPrimary
-								onClick={ saveFormOptions }
-							>
-								<Fragment>
-									{
-										! isEmailLoaded && (
-											<Spinner />
-										)
-									}
-									{
-										__( 'Save Options', 'otter-blocks' )
-									}
-								</Fragment>
-							</Button>
-
 							<ToggleControl
 								label={ __( 'Add captcha checkbox', 'otter-blocks' ) }
 								checked={ attributes.hasCaptcha }
@@ -393,6 +388,32 @@ const Inspector = ({
 									</div>
 								)
 							}
+
+							<Button
+								isPrimary
+								onClick={ saveFormOptions }
+								help={ __( '[WIP] Do not forget to save the options ', 'otter-blocks' ) }
+							>
+								<Fragment>
+									{
+										! isEmailLoaded && (
+											<Spinner />
+										)
+									}
+									{
+										__( 'Save Options', 'otter-blocks' )
+									}
+								</Fragment>
+							</Button>
+
+							{
+								formOptionsChanged && (
+									<div style={{ marginTop: '8px', borderLeft: '3px solid red', paddingLeft: '10px' }}>
+										{ __( 'Do not forget to save the options.', 'otter-blocks' ) }
+									</div>
+								)
+							}
+
 						</PanelBody>
 
 						<PanelBody
