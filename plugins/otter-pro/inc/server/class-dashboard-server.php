@@ -56,8 +56,8 @@ class Dashboard_Server {
 			$data,
 			array(
 				'license' => [
-					'key'        => apply_filters( 'product_otter_pro_license_key', 'free' ),
-					'valid'      => apply_filters( 'product_otter_pro_license_status', false ),
+					'key'        => apply_filters( 'product_otter_license_key', 'free' ),
+					'valid'      => apply_filters( 'product_otter_license_status', false ),
 					'expiration' => $this->get_license_expiration_date(),
 				],
 			)
@@ -126,7 +126,7 @@ class Dashboard_Server {
 			);
 		}
 
-		$response = apply_filters( 'themeisle_sdk_license_process_otter_pro', $fields['key'], $fields['action'] );
+		$response = apply_filters( 'themeisle_sdk_license_process_otter', $fields['key'], $fields['action'] );
 
 		if ( is_wp_error( $response ) ) {
 			return new \WP_REST_Response(
@@ -142,8 +142,8 @@ class Dashboard_Server {
 				'success' => true,
 				'message' => 'activate' === $fields['action'] ? __( 'Activated.', 'otter-blocks' ) : __( 'Deactivated', 'otter-blocks' ),
 				'license' => array(
-					'key'        => apply_filters( 'product_otter_pro_license_key', 'free' ),
-					'valid'      => apply_filters( 'product_otter_pro_license_status', false ),
+					'key'        => apply_filters( 'product_otter_license_key', 'free' ),
+					'valid'      => apply_filters( 'product_otter_license_status', false ),
 					'expiration' => $this->get_license_expiration_date(),
 				),
 			)
@@ -174,7 +174,7 @@ class Dashboard_Server {
 	 * @return bool|\stdClass
 	 */
 	public function get_license_data() {
-		return get_option( 'otter_pro_license_data' );
+		return get_option( 'otter_license_data' );
 	}
 
 	/**

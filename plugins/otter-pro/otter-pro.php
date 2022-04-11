@@ -4,7 +4,7 @@
  *
  * @package OtterBlocks
  *
- * Plugin Name:          Pro Extension for Otter
+ * Plugin Name:          Otter Pro
  * Plugin URI:           https://themeisle.com/plugins/otter-blocks
  * Description:          Create beautiful and attracting posts, pages, and landing pages with Gutenberg Blocks and Template Library by Otter. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
  * Version:              1.7.5
@@ -39,6 +39,17 @@ add_filter(
 	}
 );
 
+add_filter( 'themesle_sdk_namespace_' . __FILE__, 'otter_pro_load_namespace' );
+
+/**
+ * Define cli namespace for sdk.
+ *
+ * @return string CLI namespace.
+ */
+function otter_pro_load_namespace() {
+	return 'otter';
+}
+
 add_action(
 	'plugins_loaded',
 	function () {
@@ -46,7 +57,7 @@ add_action(
 		if ( function_exists( 'register_block_type' ) ) {
 			require_once dirname( __FILE__ ) . '/inc/class-main.php';
 
-			if ( class_exists( '\ThemeIsle\OtterPro\MainBlocks_Export_Import' ) ) {
+			if ( class_exists( '\ThemeIsle\OtterPro\Main' ) ) {
 				\ThemeIsle\OtterPro\Main::instance();
 			}
 		}
