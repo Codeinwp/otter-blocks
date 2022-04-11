@@ -34,7 +34,7 @@ const LicenseField = () => {
 	const { createNotice } = dispatch( 'core/notices' );
 
 	useEffect( () => {
-		if ( license.key ) {
+		if ( license.key && 'free' !== license.key ) {
 			setLicenseKey( license.key );
 		}
 	}, [ license ]);
@@ -53,9 +53,12 @@ const LicenseField = () => {
 					}
 				);
 
-				if ( res?.success && res.license ) {
+				if ( res?.success && res.license && 'free' !== res.license.key ) {
 					setLicense( res.license );
 					setLicenseKey( res.license.key );
+				} else {
+					setLicense({});
+					setLicenseKey( '' );
 				}
 			}
 		).catch( err => {
