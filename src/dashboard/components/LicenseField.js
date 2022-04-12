@@ -8,11 +8,13 @@ import {
 
 import apiFetch from '@wordpress/api-fetch';
 
-import { Button } from '@wordpress/components';
+import {
+	Button,
+	ExternalLink,
+	Icon
+} from '@wordpress/components';
 
 import { dispatch } from '@wordpress/data';
-
-import { format } from '@wordpress/date';
 
 import {
 	useEffect,
@@ -34,7 +36,7 @@ const LicenseField = () => {
 	const { createNotice } = dispatch( 'core/notices' );
 
 	useEffect( () => {
-		if ( license.key && 'free' !== license.key ) {
+		if ( license.key && ( 'valid' === license.valid || 'active_expired' === license.valid ) ) {
 			setLicenseKey( license.key );
 		}
 	}, [ license ]);
@@ -101,7 +103,18 @@ const LicenseField = () => {
 
 			{ isValid && (
 				<div className="otter-license-footer">
-					<p>{ sprintf( __( 'Valid - Expires %s', 'otter-blocks' ), format( 'F Y', license.expires ) ) }</p>
+					<p>
+						<Icon icon="yes" />
+						{ sprintf( __( 'Valid - Expires %s', 'otter-blocks' ), license.expiration ) }
+					</p>
+				</div>
+			)}
+
+			{ 'active_expired' === license?.valid && (
+				<div className="otter-license-footer is-expired">
+					<p>{ __( 'License Key has expired. In order to continue receiving support and software updates you must renew your license key.', 'otter-blocks' ) }</p>
+
+					<p><ExternalLink href={ `${ window.otterObj.storeURL }?license=${ licenseKey }` }>{ __( 'Renew License', 'otter-blocks' ) }</ExternalLink></p>
 				</div>
 			)}
 		</Infobox>

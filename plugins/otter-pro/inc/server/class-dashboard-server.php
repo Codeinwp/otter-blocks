@@ -55,11 +55,12 @@ class Dashboard_Server {
 		return array_merge(
 			$data,
 			array(
-				'license' => [
+				'license'  => array(
 					'key'        => apply_filters( 'product_otter_license_key', 'free' ),
 					'valid'      => apply_filters( 'product_otter_license_status', false ),
 					'expiration' => $this->get_license_expiration_date(),
-				],
+				),
+				'storeURL' => 'https://store.themeisle.com/'
 			)
 		);
 	}
@@ -174,7 +175,7 @@ class Dashboard_Server {
 	 * @return bool|\stdClass
 	 */
 	public function get_license_data() {
-		return get_option( 'otter_license_data' );
+		return get_option( 'otter_pro_license_data' );
 	}
 
 	/**

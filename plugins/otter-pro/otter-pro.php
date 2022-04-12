@@ -39,16 +39,21 @@ add_filter(
 	}
 );
 
-add_filter( 'themesle_sdk_namespace_' . __FILE__, 'otter_pro_load_namespace' );
+add_filter(
+	'themesle_sdk_namespace_' . __FILE__,
+	function () {
+		return 'otter';
+	}
+);
 
-/**
- * Define cli namespace for sdk.
- *
- * @return string CLI namespace.
- */
-function otter_pro_load_namespace() {
-	return 'otter';
-}
+add_filter(
+	'otter_pro_lc_no_valid_string',
+	function ( $message ) {
+		return str_replace( '<a href="%s">', '<a href="' . admin_url( 'options-general.php?page=otter' ) . '">', $message );
+	}
+);
+
+add_filter( 'otter_pro_hide_license_field', '__return_true' );
 
 add_action(
 	'plugins_loaded',
