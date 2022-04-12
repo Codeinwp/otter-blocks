@@ -35,7 +35,7 @@
 			"default": false
 		},
 		"width": {
-			"type": "string"
+			"type": [ "string" , "number" ]
 		},
 		"ariaLabel": {
 			"type": "string",
