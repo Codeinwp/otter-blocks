@@ -100,7 +100,7 @@ const isInReusableBlock = ( clientId ) => {
  * Generate an Id based on the client id of the block. If the new id is also already used, create a new one using the `uuid`.
  * This might problem of duplicated new ids can be observed in the `Template Library` of the `Section` block when using Neve
  * Reference: https://github.com/Codeinwp/neve/blob/master/gutenberg/blocks/blog/template.json
- * The created block will share the same client Id at the beggining, after refresh a new will be generated and thus the problem will fix itself
+ * The created block will share the same client Id at the beginning, after refresh a new will be generated and thus the problem will fix itself
  * by creating new id based on the new uniq `clientId`
  *
  * @param {string}       idPrefix The prefix used for generating the block id
@@ -213,6 +213,7 @@ export const addBlockId = ( args ) => {
 const getBlock = select( 'core/block-editor' ).getBlock;
 const getBlockParents = select( 'core/block-editor' ).getBlockParents;
 const updateBlockAttributes = dispatch( 'core/block-editor' ).updateBlockAttributes;
+const getSelectedBlockClientId = select( 'core/block-editor' ).getSelectedBlockClientId;
 
 /**
  * Create the function that behaves like `setAttributes` using the client id
@@ -265,7 +266,7 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 	return addBlockId({
 		clientId,
 		defaultAttributes,
-		setAttributes: ! isInReusableBlock( clientId ) ? updateAttrs( clientId ) : () => null,
+		setAttributes: (! isInReusableBlock( clientId ) || getSelectedBlockClientId() === clientId ) ? updateAttrs( clientId ) : () => null,
 		...extractBlockData( clientId )
 	});
 };
