@@ -88,13 +88,12 @@ const localIDs = {};
 
 /**
  * Check if the ID is inside a reusable block.
- * @param {string} id
+ * @param {string} clientId
  * @returns {boolean}
  */
 const isInReusableBlock = ( clientId ) => {
 	return getBlockParents( clientId )
-		?.map( id => getBlock( id ) )
-		?.some( block => block?.attributes?.ref );
+		?.some( id => getBlock( id )?.attributes?.ref );
 };
 
 /**
@@ -169,7 +168,7 @@ export const addBlockId = ( args ) => {
 	}
 
 	// Initialize with an empty array the id list for the given block
-	localIDs[name] ??= new Set();
+	localIDs[name] ??= new Set()
 
 	// Check if the ID is already used. EXCLUDE the one that come from reusable blocks.
 	const idIsAlreadyUsed = attributes.id && localIDs[name].has( attributes.id );
