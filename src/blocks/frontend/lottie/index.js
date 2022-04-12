@@ -81,10 +81,10 @@ domReady( () => {
 			animation.style.height = 'auto';
 
 			const width = animation.getAttribute( 'width' );
-			if ( '%' === width.slice( -1 ) ) {
-				animation.style.maxWidth = animation.getAttribute( 'width' );
+			if ( '%' === width.toString().slice( -1 ) ) {
+				animation.style.maxWidth = width;
 			} else {
-				animation.style.width = animation.getAttribute( 'width' );
+				animation.style.width = ( 'px' !== width.toString().slice( -2 ) ) ? `${width}px` : width;
 			}
 		}
 	});

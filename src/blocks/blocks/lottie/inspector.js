@@ -132,7 +132,7 @@ const Inspector = ({
 					isUnitSelectTabbable
 					isResetValueOnUnitChange
 					__unstableInputWidth="50%"
-					value={ attributes.width }
+					value={ Number.isInteger( attributes.width ) ? `${attributes.width}px` : attributes.width }
 					units={ [
 						{
 							value: '%',
