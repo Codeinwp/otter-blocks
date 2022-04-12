@@ -24,7 +24,6 @@ import Inspector from './inspector.js';
 import Controls from './controls.js';
 import LottiePlayer from './components/lottie-player.js';
 import { blockInit } from '../../helpers/block-utility.js';
-import { __ } from '@wordpress/i18n';
 
 const { attributes: defaultAttributes } = metadata;
 

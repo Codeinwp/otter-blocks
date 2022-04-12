@@ -19,40 +19,6 @@
 	}
 }
 
-.otter-responsive-range-control {
-	position: relative;
-
-	.units {
-		display: flex;
-		position: absolute;
-		right: 0;
-		top: 0;
-
-		button.components-button {
-			border: none;
-			color: #555D66FF;
-			text-transform: uppercase;
-			font-weight: 600;
-			font-size: 10px;
-			background: none;
-			padding: 2px 3px;
-			line-height: 10px;
-			height: auto;
-			border-radius: 2px;
-			min-width: 20px;
-			margin-left: 3px;
-			text-align: center;
-			display: flex;
-			justify-content: center;
-
-			&.active {
-				background: #555D66FF;
-				color: #fff;
-			}
-		}
-	}
-}
-
 .wp-block-themeisle-blocks-lottie-modal {
 	.components-modal__frame {
 		width: 360px;

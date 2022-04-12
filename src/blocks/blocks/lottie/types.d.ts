@@ -11,8 +11,7 @@ type Attributes = {
 	count: number
 	speed: number
 	direction: boolean
-	width: number
-	widthUnit: string
+	width: number | string
 	ariaLabel: string
 	backgroundColor: string
 	backgroundGradient: string
