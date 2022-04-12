@@ -5,7 +5,7 @@
  * @package ThemeIsle\OtterPro\Render
  */
 
-namespace ThemeIsle\OtterPro\Render;
+namespace ThemeIsle\OtterPro\Render\WooCommerce;
 
 /**
  * Class Product_Short_Description_Block

@@ -30,6 +30,11 @@ define( 'OTTER_PRO_BUILD_URL', plugins_url( '/', __FILE__ ) . 'build/' );
 define( 'OTTER_PRO_BUILD_PATH', dirname( __FILE__ ) . '/build/' );
 define( 'OTTER_PRO_VERSION', '1.7.5' );
 
+require_once dirname( __FILE__ ) . '/autoloader.php';
+$autoloader = new \ThemeIsle\GutenbergBlocks\Autoloader();
+$autoloader->add_namespace( '\ThemeIsle\OtterPro', dirname( __FILE__ ) . '/inc/' );
+$autoloader->register();
+
 add_filter(
 	'themeisle_sdk_products',
 	function ( $products ) {
@@ -40,7 +45,7 @@ add_filter(
 );
 
 add_filter(
-	'themesle_sdk_namespace_' . __FILE__,
+	'themesle_sdk_namespace_' . md5( __FILE__ ),
 	function () {
 		return 'otter';
 	}

@@ -13,6 +13,7 @@ phpcs.xml
 blocks.json
 docker-compose.yml
 webpack.config.js
+webpack.config.pro.js
 CONTRIBUTING.md
 package.json
 composer.json
@@ -21,6 +22,7 @@ package-lock.json
 themeisle-hash.json
 npm-debug.log
 development.php
+tsconfig.json
 /grunt
 /node_modules
 /logs
