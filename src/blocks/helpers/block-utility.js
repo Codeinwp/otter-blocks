@@ -3,7 +3,6 @@
  */
 import { v4 as uuidv4 } from 'uuid';
 
-import { parse } from '@wordpress/blocks';
 
 /**
  * WordPress dependencies.
@@ -88,25 +87,14 @@ export const getDefaultValueByField = ({ name, field, defaultAttributes, attribu
 const localIDs = {};
 
 /**
- * An object that keeps tracks of the ID that inside of the reusable blocks.
- * @type {Object.<string, boolean>}
- */
-const reusableBlocksChecked = {};
-
-/**
  * Check if the ID is inside a reusable block.
  * @param {string} id
  * @returns {boolean}
  */
-const isReusableBlock = ( id ) => {
-	if ( reusableBlocksChecked[id] === undefined ) {
-		reusableBlocksChecked[id] = Boolean( 0 < select( 'core/block-editor' )
-			?.getSettings()
-			?.__experimentalReusableBlocks
-			?.filter( x => x?.content?.raw?.includes( id ) )
-			?.length );
-	}
-	return reusableBlocksChecked[id];
+const isInReusableBlock = ( clientId ) => {
+	return getBlockParents(clientId)
+		?.map( id => getBlock(id))
+		?.some( block => block?.attributes?.ref )
 };
 
 /**
@@ -184,7 +172,7 @@ export const addBlockId = ( args ) => {
 	localIDs[name] ??= new Set();
 
 	// Check if the ID is already used. EXCLUDE the one that come from reusable blocks.
-	const idIsAlreadyUsed = attributes.id && ! isReusableBlock( attributes?.id ) && localIDs[name].has( attributes.id );
+	const idIsAlreadyUsed = attributes.id && localIDs[name].has( attributes.id );
 
 	if ( attributes.id === undefined || idIsAlreadyUsed ) {
 
@@ -224,6 +212,7 @@ export const addBlockId = ( args ) => {
 };
 
 const getBlock = select( 'core/block-editor' ).getBlock;
+const getBlockParents = select( 'core/block-editor' ).getBlockParents;
 const updateBlockAttributes = dispatch( 'core/block-editor' ).updateBlockAttributes;
 
 /**
@@ -277,7 +266,7 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 	return addBlockId({
 		clientId,
 		defaultAttributes,
-		setAttributes: updateAttrs( clientId ),
+		setAttributes: ! isInReusableBlock(clientId) ? updateAttrs( clientId ) : () => null,
 		...extractBlockData( clientId )
 	});
 };
