@@ -35,9 +35,6 @@
 			"default": false
 		},
 		"width": {
-			"type": "number"
-		},
-		"widthUnit": {
 			"type": "string"
 		},
 		"ariaLabel": {

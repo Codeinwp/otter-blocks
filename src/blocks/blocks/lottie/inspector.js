@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
+	__experimentalUnitControl as UnitControl,
 	InspectorControls
 } from '@wordpress/block-editor';
 
@@ -19,11 +20,6 @@ import {
 import { Fragment } from '@wordpress/element';
 
 /**
- * Internal dependencies
- */
-import ResponsiveRange from './components/responsive-range';
-
-/**
  *
  * @param {import('./types').LottieInspectorProps} props
  * @returns
@@ -33,17 +29,6 @@ const Inspector = ({
 	setAttributes,
 	playerRef
 }) => {
-	const widthUnitLimits = {
-		'%': {
-			min: 0,
-			max: 100
-		},
-		'px': {
-			min: 10,
-			max: 1000
-		}
-	};
-
 	const onChangeTrigger = value => {
 		setAttributes({ trigger: value });
 	};
@@ -74,28 +59,14 @@ const Inspector = ({
 	};
 
 	const onChangeWidth = value => {
-		if ( value === undefined ) {
-			setAttributes({ width: 100, widthUnit: '%' });
-			return;
+		const valueNumber = parseInt( value.slice( 0, -1 ) );
+		const unit = value.slice( -1 );
+
+		if ( 100 < valueNumber && '%' === unit ) {
+			value = '100%';
 		}
 
 		setAttributes({ width: value });
-	};
-
-	const onChangeWidthUnit = ( newUnit ) => {
-		if ( attributes.widthUnit === newUnit ) {
-			return;
-		}
-
-		if ( attributes.width > widthUnitLimits[newUnit].max ) {
-			setAttributes({ width: widthUnitLimits[newUnit].max });
-		}
-
-		if ( attributes.width < widthUnitLimits[newUnit].min ) {
-			setAttributes({ width: widthUnitLimits[newUnit].min });
-		}
-
-		setAttributes({ widthUnit: newUnit });
 	};
 
 	return (
@@ -155,22 +126,25 @@ const Inspector = ({
 					</Fragment>
 				) }
 
-				<ResponsiveRange
-					label={ __( 'Width', 'otter-blocks' ) }
-					help={ __( 'Container width in percentage or pixels.', 'otter-blocks' ) }
-					value={ attributes.width }
-					units={ Object.keys( widthUnitLimits ) }
-					activeUnit={ attributes.widthUnit }
+				<UnitControl
 					onChange={ onChangeWidth }
-					onUnitChange={ onChangeWidthUnit }
-					min={ widthUnitLimits[attributes.widthUnit ? attributes.widthUnit : 'px'].min }
-					max={ widthUnitLimits[attributes.widthUnit ? attributes.widthUnit : 'px'].max }
-				/>
-				<TextControl
-					label={ __( 'Aria Label', 'otter-blocks' ) }
-					help={ __( 'Describe the purpose of this animation on the page.', 'otter-blocks' ) }
-					value={ attributes.ariaLabel }
-					onChange={ value => setAttributes({ ariaLabel: value })}
+					label={ __( 'Width', 'otter-blocks' ) }
+					isUnitSelectTabbable
+					isResetValueOnUnitChange
+					__unstableInputWidth="50%"
+					value={ attributes.width }
+					units={ [
+						{
+							value: '%',
+							label: '%',
+							default: 100
+						},
+						{
+							value: 'px',
+							label: 'px',
+							default: 300
+						}
+					] }
 				/>
 			</PanelBody>
 			<PanelBody

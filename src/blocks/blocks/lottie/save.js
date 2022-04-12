@@ -9,7 +9,7 @@ const Save = ({
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
 		src: attributes.file ? attributes.file.url : '',
-		width: attributes.widthUnit === undefined ? attributes.width : `${ attributes.width }${ attributes.widthUnit }`
+		width: attributes.width
 	});
 
 	if ( 'scroll' === attributes.trigger ) {
