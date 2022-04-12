@@ -39,6 +39,15 @@ import { FormContext } from './edit.js';
 import SyncControl from '../../components/sync-control';
 
 /**
+ * Small utility function for checking if a list of variable pair are different.
+ * @param {array} list
+ * @return {boolean}
+ */
+const isChanged = list => {
+	return Boolean( 0 < list.filter( x => x?.[0] && x?.[1] && x[0] !== x[1]).length );
+};
+
+/**
  *
  * @param {import('./type.js').FormInspectorProps} props
  * @returns
@@ -70,13 +79,15 @@ const Inspector = ({
 	const [ tab, setTab ] = useState( 'general' );
 
 	// TODO: see what is the problem with the checking
-	const formOptionsChanged = (
-		attributes.emailTo !== savedData?.email ||
-		attributes.subject !== savedData?.emailSubject ||
-		attributes.redirectLink !== savedData?.redirectLink ||
-		attributes.fromName !== savedData?.fromName ||
-		attributes.submitMessage !== savedData?.submitMessage ||
-		attributes.hasCaptcha !== savedData?.hasCaptcha
+	const formOptionsChanged = isChanged(
+		[
+			[ attributes.emailTo, savedData?.email ],
+			[ attributes.subject, savedData?.emailSubject ],
+			[ attributes.redirectLink, savedData?.redirectLink ],
+			[ attributes.fromName, savedData?.fromName ],
+			[ attributes.submitMessage, savedData?.submitMessage ],
+			[ attributes.hasCaptcha, savedData?.hasCaptcha ]
+		]
 	);
 
 	return (
@@ -401,7 +412,7 @@ const Inspector = ({
 										)
 									}
 									{
-										__( 'Save Options', 'otter-blocks' )
+										__( 'Apply Options', 'otter-blocks' )
 									}
 								</Fragment>
 							</Button>
@@ -409,7 +420,7 @@ const Inspector = ({
 							{
 								formOptionsChanged && (
 									<div style={{ marginTop: '8px', borderLeft: '3px solid red', paddingLeft: '10px' }}>
-										{ __( 'Do not forget to save the options.', 'otter-blocks' ) }
+										{ __( 'You have made some modifications. Do not forget to save the options.', 'otter-blocks' ) }
 									</div>
 								)
 							}
