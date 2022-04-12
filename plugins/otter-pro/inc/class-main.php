@@ -50,6 +50,7 @@ class Main {
 	public function autoload_classes( $classnames ) {
 		$classes = array(
 			'\ThemeIsle\OtterPro\Plugins\Block_Conditions',
+			'\ThemeIsle\OtterPro\Plugins\License',
 			'\ThemeIsle\OtterPro\Plugins\Review_Woo_Integration',
 			'\ThemeIsle\OtterPro\Plugins\WooCommerce_Builder',
 			'\ThemeIsle\OtterPro\Server\Filter_Blocks_Server',

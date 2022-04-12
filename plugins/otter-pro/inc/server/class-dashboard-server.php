@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\OtterPro\Server;
 
+use ThemeIsle\OtterPro\Plugins\License;
+
 /**
  * Class Dashboard_Server
  */
@@ -41,7 +43,6 @@ class Dashboard_Server {
 		add_filter( 'otter_dashboard_data', array( $this, 'apply_dashboard_data' ) );
 	}
 
-
 	/**
 	 * Apply Dashboard Data
 	 *
@@ -58,9 +59,9 @@ class Dashboard_Server {
 				'license'  => array(
 					'key'        => apply_filters( 'product_otter_license_key', 'free' ),
 					'valid'      => apply_filters( 'product_otter_license_status', false ),
-					'expiration' => $this->get_license_expiration_date(),
+					'expiration' => License::get_license_expiration_date(),
 				),
-				'storeURL' => 'https://store.themeisle.com/'
+				'storeURL' => 'https://store.themeisle.com/',
 			)
 		);
 	}
@@ -145,37 +146,10 @@ class Dashboard_Server {
 				'license' => array(
 					'key'        => apply_filters( 'product_otter_license_key', 'free' ),
 					'valid'      => apply_filters( 'product_otter_license_status', false ),
-					'expiration' => $this->get_license_expiration_date(),
+					'expiration' => License::get_license_expiration_date(),
 				),
 			)
 		);
-	}
-
-	/**
-	 * Get the license expiration date.
-	 *
-	 * @param string $format format of the date.
-	 * @return false|string
-	 */
-	public function get_license_expiration_date( $format = 'F Y' ) {
-		$data = $this->get_license_data();
-
-		if ( isset( $data->expires ) ) {
-			$parsed = date_parse( $data->expires );
-			$time   = mktime( $parsed['hour'], $parsed['minute'], $parsed['second'], $parsed['month'], $parsed['day'], $parsed['year'] );
-			return gmdate( $format, $time );
-		}
-
-		return false;
-	}
-
-	/**
-	 * Get the license data.
-	 *
-	 * @return bool|\stdClass
-	 */
-	public function get_license_data() {
-		return get_option( 'otter_pro_license_data' );
 	}
 
 	/**
