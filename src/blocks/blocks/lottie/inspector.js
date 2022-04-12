@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
-	__experimentalUnitControl as UnitControl,
+	__experimentalUnitControl as UnitControl, InspectorAdvancedControls,
 	InspectorControls
 } from '@wordpress/block-editor';
 
@@ -70,96 +70,106 @@ const Inspector = ({
 	};
 
 	return (
-		<InspectorControls>
-			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
-				initialOpen={ true }
-			>
-				<SelectControl
-					label={ __( 'Trigger', 'otter-blocks' ) }
-					help={ __( 'Animation trigger. This will only work on the front-end.', 'otter-blocks' ) }
-					value={ attributes.trigger }
-					options={ [
-						{ label: __( 'Autoplay', 'otter-blocks' ), value: 'none' },
-						{ label: __( 'Scroll', 'otter-blocks' ), value: 'scroll' },
-						{ label: __( 'Hover', 'otter-blocks' ), value: 'hover' },
-						{ label: __( 'Click', 'otter-blocks' ), value: 'click' }
-					] }
-					onChange={ onChangeTrigger }
-				/>
+		<Fragment>
+			<InspectorControls>
+				<PanelBody
+					title={ __( 'Settings', 'otter-blocks' ) }
+					initialOpen={ true }
+				>
+					<SelectControl
+						label={ __( 'Trigger', 'otter-blocks' ) }
+						help={ __( 'Animation trigger. This will only work on the front-end.', 'otter-blocks' ) }
+						value={ attributes.trigger }
+						options={ [
+							{ label: __( 'Autoplay', 'otter-blocks' ), value: 'none' },
+							{ label: __( 'Scroll', 'otter-blocks' ), value: 'scroll' },
+							{ label: __( 'Hover', 'otter-blocks' ), value: 'hover' },
+							{ label: __( 'Click', 'otter-blocks' ), value: 'click' }
+						] }
+						onChange={ onChangeTrigger }
+					/>
 
-				{ 'scroll' !== attributes.trigger && (
-					<Fragment>
-						<ToggleControl
-							label={ __( 'Loop', 'otter-blocks' ) }
-							help={ __( 'Whether to loop animation.', 'otter-blocks' ) }
-							checked={ attributes.loop }
-							onChange={ toggleLoop }
-						/>
-
-						{ attributes.loop && (
-							<TextControl
-								label={ __( 'Numbers of loops', 'otter-blocks' ) }
-								help={ __( 'Number of times to loop animation.', 'otter-blocks' ) }
-								type="number"
-								value={ attributes.count }
-								onChange={ onChangeLoopCount }
+					{ 'scroll' !== attributes.trigger && (
+						<Fragment>
+							<ToggleControl
+								label={ __( 'Loop', 'otter-blocks' ) }
+								help={ __( 'Whether to loop animation.', 'otter-blocks' ) }
+								checked={ attributes.loop }
+								onChange={ toggleLoop }
 							/>
-						) }
 
-						<RangeControl
-							label={ __( 'Speed', 'otter-blocks' ) }
-							help={ __( 'Animation speed.', 'otter-blocks' ) }
-							value={ attributes.speed }
-							onChange={ onChangeSpeed }
-							step={ 0.1 }
-							min={ 0.1 }
-							max={ 5 }
-						/>
+							{ attributes.loop && (
+								<TextControl
+									label={ __( 'Numbers of loops', 'otter-blocks' ) }
+									help={ __( 'Number of times to loop animation.', 'otter-blocks' ) }
+									type="number"
+									value={ attributes.count }
+									onChange={ onChangeLoopCount }
+								/>
+							) }
 
-						<ToggleControl
-							label={ __( 'Reverse', 'otter-blocks' ) }
-							help={ __( 'Direction of animation.', 'otter-blocks' ) }
-							checked={ attributes.direction }
-							onChange={ toggleDirection }
-						/>
-					</Fragment>
-				) }
+							<RangeControl
+								label={ __( 'Speed', 'otter-blocks' ) }
+								help={ __( 'Animation speed.', 'otter-blocks' ) }
+								value={ attributes.speed }
+								onChange={ onChangeSpeed }
+								step={ 0.1 }
+								min={ 0.1 }
+								max={ 5 }
+							/>
 
-				<UnitControl
-					onChange={ onChangeWidth }
-					label={ __( 'Width', 'otter-blocks' ) }
-					isUnitSelectTabbable
-					isResetValueOnUnitChange
-					__unstableInputWidth="50%"
-					value={ Number.isInteger( attributes.width ) ? `${attributes.width}px` : attributes.width }
-					units={ [
-						{
-							value: '%',
-							label: '%',
-							default: 100
-						},
-						{
-							value: 'px',
-							label: 'px',
-							default: 300
-						}
-					] }
+							<ToggleControl
+								label={ __( 'Reverse', 'otter-blocks' ) }
+								help={ __( 'Direction of animation.', 'otter-blocks' ) }
+								checked={ attributes.direction }
+								onChange={ toggleDirection }
+							/>
+						</Fragment>
+					) }
+
+					<UnitControl
+						onChange={ onChangeWidth }
+						label={ __( 'Width', 'otter-blocks' ) }
+						isUnitSelectTabbable
+						isResetValueOnUnitChange
+						__unstableInputWidth="50%"
+						value={ Number.isInteger( attributes.width ) ? `${attributes.width}px` : attributes.width }
+						units={ [
+							{
+								value: '%',
+								label: '%',
+								default: 100
+							},
+							{
+								value: 'px',
+								label: 'px',
+								default: 300
+							}
+						] }
+					/>
+				</PanelBody>
+				<PanelBody
+					title={ __( 'Background', 'otter-blocks' ) }
+					initialOpen={ false }
+				>
+					<ColorGradientControl
+						colorValue={ attributes.backgroundColor }
+						gradientValue={ attributes.backgroundGradient }
+						onColorChange={ newValue => setAttributes({ backgroundColor: newValue }) }
+						onGradientChange={ newValue => setAttributes({ backgroundGradient: newValue }) }
+						className="otter-lottie-background-control"
+					/>
+				</PanelBody>
+			</InspectorControls>
+			<InspectorAdvancedControls>
+				<TextControl
+					label={ __( 'Aria Label', 'otter-blocks' ) }
+					help={ __( 'Describe the purpose of this animation on the page.', 'otter-blocks' ) }
+					value={ attributes.ariaLabel }
+					onChange={ value => setAttributes({ ariaLabel: value })}
 				/>
-			</PanelBody>
-			<PanelBody
-				title={ __( 'Background', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				<ColorGradientControl
-					colorValue={ attributes.backgroundColor }
-					gradientValue={ attributes.backgroundGradient }
-					onColorChange={ newValue => setAttributes({ backgroundColor: newValue }) }
-					onGradientChange={ newValue => setAttributes({ backgroundGradient: newValue }) }
-					className="otter-lottie-background-control"
-				/>
-			</PanelBody>
-		</InspectorControls>
+			</InspectorAdvancedControls>
+		</Fragment>
 	);
 };
 
