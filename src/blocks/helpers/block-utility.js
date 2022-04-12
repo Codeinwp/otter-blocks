@@ -92,9 +92,9 @@ const localIDs = {};
  * @returns {boolean}
  */
 const isInReusableBlock = ( clientId ) => {
-	return getBlockParents(clientId)
-		?.map( id => getBlock(id))
-		?.some( block => block?.attributes?.ref )
+	return getBlockParents( clientId )
+		?.map( id => getBlock( id ) )
+		?.some( block => block?.attributes?.ref );
 };
 
 /**
@@ -266,7 +266,7 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 	return addBlockId({
 		clientId,
 		defaultAttributes,
-		setAttributes: ! isInReusableBlock(clientId) ? updateAttrs( clientId ) : () => null,
+		setAttributes: ! isInReusableBlock( clientId ) ? updateAttrs( clientId ) : () => null,
 		...extractBlockData( clientId )
 	});
 };
