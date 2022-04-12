@@ -168,7 +168,7 @@ export const addBlockId = ( args ) => {
 	}
 
 	// Initialize with an empty array the id list for the given block
-	localIDs[name] ??= new Set()
+	localIDs[name] ??= new Set();
 
 	// Check if the ID is already used. EXCLUDE the one that come from reusable blocks.
 	const idIsAlreadyUsed = attributes.id && localIDs[name].has( attributes.id );
@@ -266,7 +266,7 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 	return addBlockId({
 		clientId,
 		defaultAttributes,
-		setAttributes: (! isInReusableBlock( clientId ) || getSelectedBlockClientId() === clientId ) ? updateAttrs( clientId ) : () => null,
+		setAttributes: ( ! isInReusableBlock( clientId ) || getSelectedBlockClientId() === clientId ) ? updateAttrs( clientId ) : () => null,
 		...extractBlockData( clientId )
 	});
 };
