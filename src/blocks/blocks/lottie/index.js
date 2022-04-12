@@ -60,6 +60,6 @@ const lottieAdvancedControls = createHigherOrderComponent( BlockEdit => {
 
 addFilter(
 	'editor.BlockEdit',
-	'awp/cover-advanced-control',
+	'themeisle-blocks/lottie',
 	lottieAdvancedControls
 );
