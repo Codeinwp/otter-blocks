@@ -89,8 +89,8 @@ const Inspector = ({
 
 	const formIntegrationChanged = isChanged([
 		[ attributes.provider, savedData?.integration?.provider ],
+		[ attributes.listId, savedData?.integration?.listId ],
 		[ attributes.action, savedData?.integration?.action ],
-
 	])
 
 	return (
@@ -532,6 +532,14 @@ const Inspector = ({
 																		}
 																	</Fragment>
 																</Button>
+
+																{
+																	formIntegrationChanged && (
+																		<div style={{ marginTop: '8px', borderLeft: '3px solid red', paddingLeft: '10px' }}>
+																			{ __( 'You have made some modifications. Do not forget to save the options.', 'otter-blocks' ) }
+																		</div>
+																	)
+																}
 															</Fragment>
 														)
 													}
