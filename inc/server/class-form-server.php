@@ -152,7 +152,7 @@ class Form_Server {
 		$data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
 		$res  = new Form_Data_Response();
 
-		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get( 'formOption' ) );
+		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get_payload_field( 'formOption' ) );
 		$data->set_form_options($form_options);
 
 		// Select the handler functions based on the provider.
@@ -177,7 +177,6 @@ class Form_Server {
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	public function frontend( $request ) {
-
 		$form_data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
 		$res  = new Form_Data_Response();
 
@@ -200,7 +199,7 @@ class Form_Server {
 		}
 
 
-		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get( 'formOption' ) );
+		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_payload_field( 'formOption' ) );
         $form_data->set_form_options($form_options);
 
 		// Select the submit function based on the provider.
@@ -230,7 +229,7 @@ class Form_Server {
 	 * @param Form_Data_Request $data Data from request body.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
-	private function send_default_email( $data ) {
+	public function send_default_email( $data ) {
 		$res = new Form_Data_Response();
 
         $form_options = $data->get_form_options();
@@ -273,7 +272,7 @@ class Form_Server {
 	 * @param Form_Data_Request $form_data
 	 * @return Form_Data_Request
 	 */
-	private function before_submit( $form_data ) {
+	public function before_submit( $form_data ) {
 
 		// It may be useful in the future. Kept for reference.
 		return $form_data;
@@ -284,14 +283,14 @@ class Form_Server {
 	 * @param Form_Data_Request $form_data
 	 * @return void
 	 */
-	private function after_submit( $form_data ) {
+	public function after_submit( $form_data ) {
 		// Send also an email to the form editor/owner if he has opt-in for it.
 		if( 'submit-subscribe' === $form_data->get_form_options()->get_action() ) {
 			$this->send_default_email($form_data);
 		}
 	}
 
-    private static function send_error_email( $error, $form_data ) {
+    public static function send_error_email( $error, $form_data ) {
 
         $email_subject = ( __( 'An error with the Form blocks has occurred on  ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
         $email_body    = Form_Email::instance()->build_error_email($error, $form_data);
@@ -402,7 +401,7 @@ class Form_Server {
 	 *
 	 * @return boolean
 	 */
-	private function has_required_data($data ) {
+	public function has_required_data($data ) {
 		return
 			$data->are_fields_set(
 				array(
@@ -525,7 +524,7 @@ class Form_Server {
 	 */
 	private function get_email_from_form_input(Form_Data_Request $data)
 	{
-		foreach ($data->get('data') as $input_field) {
+		foreach ($data->get_payload_field('formInputsData') as $input_field) {
 			if ('email' == $input_field['type']) {
 				return $input_field['value'];
 			}

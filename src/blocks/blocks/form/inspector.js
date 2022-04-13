@@ -449,7 +449,8 @@ const Inspector = ({
 									{ label: __( 'Sendinblue', 'otter-blocks' ), value: 'sendinblue' }
 								] }
 								onChange={ provider => {
-									setAttributes({ provider, apiKey: '', listId: '' });
+									setAttributes({ provider, listId: '' });
+									setApiKey( '' );
 								} }
 							/>
 
@@ -491,6 +492,19 @@ const Inspector = ({
 											)
 										}
 										{
+											apiKey && 'error' === fetchListIdStatus && (
+												<Fragment>
+													{ __( 'Invalid API Key. Please check your API Key in the provider\'s Dashboard.', 'otter-blocks' ) }
+													<ExternalLink
+														target="_blank"
+														href={ 'sendinblue' === attributes.provider ? 'https://account.sendinblue.com/advanced/api' : 'https://us5.admin.mailchimp.com/account/api/'}
+													>
+														Go to Dashboard.
+													</ExternalLink>
+												</Fragment>
+											)
+										}
+										{
 											apiKey && 'ready' === fetchListIdStatus && (
 												<Fragment>
 													<SelectControl
@@ -499,6 +513,13 @@ const Inspector = ({
 														options={ listIDOptions }
 														onChange={ listId => setAttributes({ listId }) }
 													/>
+													{
+														1 >= listIDOptions?.length && (
+															<p>
+																{ __( 'No Contact list found. Please create a list in your provider interface or check if the API key is correct.', 'otter-blocks' ) }
+															</p>
+														)
+													}
 													{
 														2 <= listIDOptions?.length && attributes.listId && (
 															<Fragment>

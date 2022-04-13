@@ -81,7 +81,7 @@ class Form_Settings_Data
      * @param string $form_option The ID of the form.
      * @return Form_Settings_Data
      */
-	public static function get_form_setting_from_wordpress_options($form_option ) {
+	public static function get_form_setting_from_wordpress_options( $form_option ) {
 		$option_name = sanitize_text_field( $form_option );
 		$form_emails = get_option( 'themeisle_blocks_form_emails' );
 		$integration = new Form_Settings_Data(array());

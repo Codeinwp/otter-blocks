@@ -201,6 +201,9 @@ const Edit = ({
 					res.themeisle_blocks_form_emails?.filter( ({ form }) => form === attributes.optionName )?.forEach( item => {
 						setEmailLoading( true );
 						setFetchApiKeyStatus( 'loaded' );
+						if ( item?.integration?.provider ) {
+							setAttributes({ provider: item?.integration?.provider });
+						}
 						clearTimeout( t );
 					});
 				});
