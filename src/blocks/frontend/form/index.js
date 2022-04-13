@@ -172,7 +172,10 @@ const collectAndSendInputFormData = ( form, btn ) => {
 
 				setTimeout( () => {
 					if ( res?.redirectLink ) {
-						window.location.replace( res.redirectLink );
+						let a = document.createElement( 'a' );
+						a.target = '_blank';
+						a.href = res.redirectLink;
+						a.click();
 					}
 				}, 1000 );
 			} else {

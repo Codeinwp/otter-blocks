@@ -232,7 +232,6 @@ const Inspector = ({
 								/>
 							</SyncControl>
 
-
 							<SyncControl
 								field={ 'inputsBorderRadius' }
 								isSynced={ attributes.isSynced }
@@ -370,11 +369,23 @@ const Inspector = ({
 
 							<TextControl
 								label={ __( 'Redirect To', 'otter-blocks' ) }
-								placeholder={ __( 'Insert a link..', 'otter-blocks' ) }
+								type="url"
+								placeholder={ __( 'https://example.com', 'otter-blocks' ) }
 								value={ attributes.redirectLink }
-								onChange={ redirectLink =>  setAttributes({ redirectLink })  }
-								help={ __( 'Redirect the user to another page when submit is succesful.', 'otter-blocks' ) }
+								onChange={ redirectLink => setAttributes({redirectLink})  }
+								help={ __( 'Redirect the user to another page when submit is successful.', 'otter-blocks' ) }
 							/>
+
+							{
+								attributes.redirectLink && (
+									<ExternalLink
+										href={attributes.redirectLink}
+									>
+										{__( 'Preview Redirect link.', 'otter-blocks' )}
+									</ExternalLink>
+								)
+							}
+
 
 							<ToggleControl
 								label={ __( 'Add captcha checkbox', 'otter-blocks' ) }
