@@ -79,19 +79,19 @@ const Inspector = ({
 	const [ tab, setTab ] = useState( 'general' );
 
 	const formOptionsChanged = isChanged([
-			[ attributes.emailTo, savedData?.email ],
-			[ attributes.subject, savedData?.emailSubject ],
-			[ attributes.redirectLink, savedData?.redirectLink ],
-			[ attributes.fromName, savedData?.fromName ],
-			[ attributes.submitMessage, savedData?.submitMessage ],
-			[ attributes.hasCaptcha, savedData?.hasCaptcha ]
+		[ attributes.emailTo, savedData?.email ],
+		[ attributes.subject, savedData?.emailSubject ],
+		[ attributes.redirectLink, savedData?.redirectLink ],
+		[ attributes.fromName, savedData?.fromName ],
+		[ attributes.submitMessage, savedData?.submitMessage ],
+		[ attributes.hasCaptcha, savedData?.hasCaptcha ]
 	]);
 
 	const formIntegrationChanged = isChanged([
 		[ attributes.provider, savedData?.integration?.provider ],
 		[ attributes.listId, savedData?.integration?.listId ],
-		[ attributes.action, savedData?.integration?.action ],
-	])
+		[ attributes.action, savedData?.integration?.action ]
+	]);
 
 	return (
 		<InspectorControls>
