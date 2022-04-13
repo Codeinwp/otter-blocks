@@ -44,7 +44,7 @@ import SyncControl from '../../components/sync-control';
  * @return {boolean}
  */
 const isChanged = list => {
-	return Boolean( 0 < list.filter( x => x?.[0] && x?.[1] && x[0] !== x[1]).length );
+	return Boolean( 0 < list.filter( x => x?.[1] && x[0] !== x[1]).length );
 };
 
 /**
