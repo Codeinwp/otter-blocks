@@ -174,13 +174,12 @@ const Edit = ({
 	}, []);
 
 	/**
-	 *
+	 * Get the data from the WP Options for the current form.
 	 * @param {Array} forms
 	 */
 	const extractDataFromWpOptions = forms => {
-		const currentForm = forms.filter( ({ form }) => form === attributes.optionName ).pop();
+		const currentForm = forms?.filter( ({ form }) => form === attributes.optionName ).pop();
 		if ( currentForm ) {
-			console.log( currentForm );
 			setSavedData( currentForm );
 		}
 	};
@@ -189,13 +188,15 @@ const Edit = ({
 	 * Load Email and ApiKey from server.
 	 */
 	useEffect( () => {
+		let controller = new AbortController();
 		const t = setTimeout( () => {
 			setFetchApiKeyStatus( 'loaded' );
 		}, 3000 );
 
 		if ( attributes.optionName ) {
 			api.loadPromise.then( () => {
-				( new api.models.Settings() ).fetch().done( res => {
+				( new api.models.Settings() ).fetch({ signal: controller.signal }).done( res => {
+					controller = null;
 					extractDataFromWpOptions( res.themeisle_blocks_form_emails );
 					res.themeisle_blocks_form_emails?.filter( ({ form }) => form === attributes.optionName )?.forEach( item => {
 						setEmailLoading( true );
@@ -207,6 +208,7 @@ const Edit = ({
 		}
 
 		return () => {
+			controller?.abort();
 			clearTimeout( t );
 		};
 	}, [ attributes.optionName ]);
