@@ -361,7 +361,7 @@ class Form_Settings_Data
 
     public function get_submit_data() {
         return array(
-            'redirectLink' => $this->get_api_key(),
+            'redirectLink' => $this->get_redirect_link(),
             'submitMessage'=> $this->get_submit_message()
         );
     }
