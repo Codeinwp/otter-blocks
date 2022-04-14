@@ -5,7 +5,8 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
-	__experimentalUnitControl as UnitControl, InspectorAdvancedControls,
+	__experimentalUnitControl as UnitControl,
+	InspectorAdvancedControls,
 	InspectorControls
 } from '@wordpress/block-editor';
 
@@ -148,6 +149,7 @@ const Inspector = ({
 						] }
 					/>
 				</PanelBody>
+
 				<PanelBody
 					title={ __( 'Background', 'otter-blocks' ) }
 					initialOpen={ false }
@@ -161,6 +163,7 @@ const Inspector = ({
 					/>
 				</PanelBody>
 			</InspectorControls>
+
 			<InspectorAdvancedControls>
 				<TextControl
 					label={ __( 'Aria Label', 'otter-blocks' ) }
