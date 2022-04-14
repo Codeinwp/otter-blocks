@@ -94,7 +94,7 @@ class Dashboard {
 					'version'     => OTTER_BLOCKS_VERSION,
 					'assetsPath'  => OTTER_BLOCKS_URL . 'assets/',
 					'stylesExist' => is_dir( $basedir ),
-					'hasPro'      => Pro::is_pro(),
+					'hasPro'      => Pro::is_pro_installed(),
 					'upgradeLink' => Pro::get_url(),
 					'docsLink'    => Pro::get_docs_url(),
 				)

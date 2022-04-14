@@ -15,12 +15,21 @@ import { Placeholder } from '@wordpress/components';
 import metadata from './block.json';
 import attributes from './attributes.js';
 import edit from './edit.js';
+import Inactive from '../../components/inactive/index.js';
 
 const { faIcon: icon } = window.otterUtils.icons;
 
 const { name } = metadata;
 
 if ( Boolean( window.otterPro.hasWooCommerce ) && Boolean( window.otterPro.hasNeveSupport.wooComparison ) ) {
+	if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) ) {
+		edit = () => <Inactive
+			icon={ icon }
+			label={ metadata.title }
+			blockProps={ useBlockProps() }
+		/>;
+	}
+
 	registerBlockType( name, {
 		...metadata,
 		title: __( 'WooCommerce Comparison Table', 'otter-blocks' ),
@@ -32,6 +41,9 @@ if ( Boolean( window.otterPro.hasWooCommerce ) && Boolean( window.otterPro.hasNe
 			'table'
 		],
 		attributes,
+		supports: {
+			inserter: Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired )
+		},
 		edit,
 		save: () => null
 	});

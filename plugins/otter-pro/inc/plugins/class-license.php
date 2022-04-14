@@ -30,7 +30,7 @@ class License {
 	 */
 	public function inherit_license_from_neve() {
 		$should_inherit = ! get_option( 'otter_pro_inherited_autoactivate', false );
-		if ( $should_inherit && false === $this->has_active_license() && 'valid' === apply_filters( 'product_neve_license_status', false ) ) {
+		if ( $should_inherit && false === self::has_active_license() && 'valid' === apply_filters( 'product_neve_license_status', false ) ) {
 			$neve_license = apply_filters( 'product_neve_license_key', 'free' );
 			apply_filters( 'themeisle_sdk_license_process_otter', $neve_license, 'activate' );
 			update_option( 'otter_pro_inherited_autoactivate', true );
@@ -42,7 +42,7 @@ class License {
 	 *
 	 * @return true
 	 */
-	public function has_active_license() {
+	public static function has_active_license() {
 		$status = self::get_license_data();
 
 		if ( ! $status ) {
@@ -54,6 +54,29 @@ class License {
 		}
 
 		if ( 'not_active' === $status->license || 'invalid' === $status->license ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Check if license is expired.
+	 *
+	 * @return true
+	 */
+	public static function has_expired_license() {
+		$status = self::get_license_data();
+
+		if ( ! $status ) {
+			return false;
+		}
+
+		if ( ! isset( $status->license ) ) {
+			return false;
+		}
+
+		if ( 'active_expired' !== $status->license ) {
 			return false;
 		}
 

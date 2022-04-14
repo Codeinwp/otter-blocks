@@ -5,6 +5,8 @@ import { __ } from '@wordpress/i18n';
 
 import { registerBlockType } from '@wordpress/blocks';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
 import { store as icon } from '@wordpress/icons';
 
 /**
@@ -12,8 +14,17 @@ import { store as icon } from '@wordpress/icons';
  */
 import metadata from './block.json';
 import edit from './edit.js';
+import Inactive from '../../components/inactive/index.js';
 
 const { name } = metadata;
+
+if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) ) {
+	edit = () => <Inactive
+		icon={ icon }
+		label={ metadata.title }
+		blockProps={ useBlockProps() }
+	/>;
+}
 
 if ( Boolean( window.otterPro.hasWooCommerce ) ) {
 	registerBlockType( name, {
@@ -26,6 +37,9 @@ if ( Boolean( window.otterPro.hasWooCommerce ) ) {
 			'products',
 			'title'
 		],
+		supports: {
+			inserter: Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired )
+		},
 		edit,
 		save: () => null
 	});

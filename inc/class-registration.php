@@ -231,7 +231,7 @@ class Registration {
 			'themeisleGutenberg',
 			array(
 				'isCompatible'        => Main::is_compatible(),
-				'hasPro'              => Pro::is_pro(),
+				'hasPro'              => Pro::is_pro_installed(),
 				'upgradeLink'         => Pro::get_url(),
 				'assetsPath'          => OTTER_BLOCKS_URL . 'assets',
 				'updatePath'          => admin_url( 'update-core.php' ),
@@ -248,8 +248,6 @@ class Registration {
 				'hasNeveSupport'      => array(
 					'hasNeve'         => defined( 'NEVE_VERSION' ),
 					'hasNevePro'      => defined( 'NEVE_VERSION' ) && 'valid' === apply_filters( 'product_neve_license_status', false ),
-					'isBoosterActive' => 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ),
-					'optionsPage'     => admin_url( 'themes.php?page=neve-welcome' ),
 				),
 				'isBlockEditor'       => 'post' === $current_screen->base,
 				'useOldMacyContainer' => version_compare( get_bloginfo( 'version' ), '5.8.10', '<=' ),

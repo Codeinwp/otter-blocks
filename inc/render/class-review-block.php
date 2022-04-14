@@ -24,7 +24,7 @@ class Review_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		if ( isset( $attributes['product'] ) && intval( $attributes['product'] ) >= 0 && Pro::is_pro() && class_exists( 'WooCommerce' ) ) {
+		if ( isset( $attributes['product'] ) && intval( $attributes['product'] ) >= 0 && Pro::is_pro_installed() && class_exists( 'WooCommerce' ) ) {
 			$attributes = apply_filters( 'otter_blocks_review_block_woocommerce', $attributes );
 		}
 

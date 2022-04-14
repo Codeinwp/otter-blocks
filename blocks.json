@@ -17,6 +17,7 @@
 		"block": "blocks/blocks/accordion/item/block.json"
 	},
 	"add-to-cart-button": {
+		"isPro": true,
 		"block": "pro/blocks/add-to-cart-button/block.json"
 	},
 	"advanced-heading": {
@@ -27,6 +28,7 @@
 		}
 	},
 	"business-hours": {
+		"isPro": true,
 		"block": "pro/blocks/business-hours/block.json",
 		"assets": {
 			"business-hours/editor.css": "pro/blocks/business-hours/editor.scss",
@@ -34,6 +36,7 @@
 		}
 	},
 	"business-hours-item": {
+		"isPro": true,
 		"block": "pro/blocks/business-hours/item/block.json"
 	},
 	"button-group": {
@@ -156,6 +159,7 @@
 		}
 	},
 	"review-comparison": {
+		"isPro": true,
 		"block": "pro/blocks/review-comparison/block.json",
 		"assets": {
 			"review-comparison/editor.css": "pro/blocks/review-comparison/editor.scss",
@@ -206,6 +210,7 @@
 		"block": "blocks/blocks/tabs/item/block.json"
 	},
 	"woo-comparison": {
+		"isPro": true,
 		"block": "pro/blocks/woo-comparison/block.json",
 		"assets": {
 			"woo-comparison/editor.css": "pro/blocks/woo-comparison/editor.scss"

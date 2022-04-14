@@ -15,8 +15,19 @@ import { store as icon } from '@wordpress/icons';
  * Internal dependencies
  */
 import metadata from './block.json';
+import Inactive from '../../components/inactive/index.js';
 
 const { name } = metadata;
+
+if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) ) {
+	edit = () => <Inactive
+		icon={ icon }
+		label={ metadata.title }
+		blockProps={ useBlockProps() }
+	/>;
+} else {
+	edit = () => <div { ...useBlockProps() }><Placeholder>{ __( 'Related products will be displayed here on the product page.', 'otter-blocks' ) }</Placeholder></div>;
+}
 
 if ( Boolean( window.otterPro.hasWooCommerce ) ) {
 	registerBlockType( name, {
@@ -29,7 +40,10 @@ if ( Boolean( window.otterPro.hasWooCommerce ) ) {
 			'products',
 			'related products'
 		],
-		edit: () => <div { ...useBlockProps() }><Placeholder>{ __( 'Related products will be displayed here on the product page.', 'otter-blocks' ) }</Placeholder></div>,
+		supports: {
+			inserter: Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired )
+		},
+		edit,
 		save: () => null
 	});
 }

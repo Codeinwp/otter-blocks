@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\OtterPro;
 
+use ThemeIsle\OtterPro\Plugins\License;
+
 /**
  * Class Main
  */
@@ -174,6 +176,8 @@ class Main {
 			'otter-pro',
 			'otterPro',
 			array(
+				'isActive'       => License::has_active_license(),
+				'isExpired'      => License::has_expired_license(),
 				'hasWooCommerce' => class_exists( 'WooCommerce' ),
 				'hasLearnDash'   => defined( 'LEARNDASH_VERSION' ),
 				'themeMods'      => array(

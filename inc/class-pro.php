@@ -25,7 +25,7 @@ class Pro {
 	 * @access  public
 	 */
 	public function init() {
-		if ( self::is_pro() ) {
+		if ( self::is_pro_active() ) {
 			return;
 		}
 
@@ -39,10 +39,20 @@ class Pro {
 	 * @access  public
 	 * @return  bool
 	 */
-	public static function is_pro() {
+	public static function is_pro_installed() {
 		return class_exists( '\ThemeIsle\OtterPro\Main' ) && defined( 'OTTER_PRO_VERSION' );
 	}
 
+	/**
+	 * Check if Otter Pro is active
+	 * 
+	 * @since   2.0.0
+	 * @access  public
+	 * @return  bool
+	 */
+	public static function is_pro_active() {
+		return self::is_pro_installed() && 'valid' === apply_filters( 'product_otter_license_status', false );
+	}
 
 	/**
 	 * Get Otter Pro URL
@@ -95,12 +105,25 @@ class Pro {
 	 * @access  public
 	 */
 	public function render_metabox_upsell( $post_type ) {
+		if ( ! self::is_pro_installed() ) {
+			?>
+			<div class="clear">
+				<p><?php _e( 'Unlock the full power of WooCommerce Builder with Otter Pro.', 'otter-blocks' ); ?></p>
+
+				<a href="<?php echo esc_url( self::get_url() ); ?>" target="_blank" class="button button-primary">
+					<?php _e( 'Get Otter Pro', 'otter-blocks' ); ?>
+				</a>
+			</div>
+			<?php
+			return;
+		}
+
 		?>
 		<div class="clear">
-			<p><?php _e( 'Unlock the full power of WooCommerce Builder with Otter Pro.', 'otter-blocks' ); ?></p>
+			<p><?php _e( 'Unlock the full power of WooCommerce Builder by activating Otter Pro license.', 'otter-blocks' ); ?></p>
 
-			<a href="<?php echo esc_url( self::get_url() ); ?>" target="_blank" class="button button-primary">
-				<?php _e( 'Get Otter Pro', 'otter-blocks' ); ?>
+			<a href="<?php echo esc_url( admin_url( 'options-general.php?page=otter' ) ); ?>" target="_blank" class="button button-primary">
+				<?php _e( 'Activate License', 'otter-blocks' ); ?>
 			</a>
 		</div>
 		<?php

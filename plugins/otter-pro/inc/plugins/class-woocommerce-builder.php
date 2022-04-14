@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\OtterPro\Plugins;
 
+use ThemeIsle\OtterPro\Plugins\License;
+
 /**
  * Class WooCommerce_Builder
  */
@@ -39,6 +41,13 @@ class WooCommerce_Builder {
 	 * @access  public
 	 */
 	public function register_metabox( $post_type ) {
+		$woo_builder_enabled = get_post_meta( get_the_ID(), '_themeisle_gutenberg_woo_builder', true );
+		$should_appear       = ( License::has_active_license() && ! License::has_expired_license() ) || boolval( $woo_builder_enabled );
+
+		if ( ! $should_appear ) {
+			return;
+		}
+
 		add_meta_box(
 			'otter_woo_builder',
 			__( 'WooCommerce Builder by Otter', 'otter-blocks' ),
