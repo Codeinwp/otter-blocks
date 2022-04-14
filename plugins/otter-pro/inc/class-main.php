@@ -51,6 +51,7 @@ class Main {
 		$classes = array(
 			'\ThemeIsle\OtterPro\Plugins\Block_Conditions',
 			'\ThemeIsle\OtterPro\Plugins\License',
+			'\ThemeIsle\OtterPro\Plugins\Options_Settings',
 			'\ThemeIsle\OtterPro\Plugins\Review_Woo_Integration',
 			'\ThemeIsle\OtterPro\Plugins\WooCommerce_Builder',
 			'\ThemeIsle\OtterPro\Server\Filter_Blocks_Server',

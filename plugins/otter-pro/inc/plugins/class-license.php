@@ -21,7 +21,21 @@ class License {
 	/**
 	 * Initialize the class
 	 */
-	public function init() {}
+	public function init() {
+		add_action( 'admin_init', array( $this, 'inherit_license_from_neve' ) );
+	}
+
+	/**
+	 * Inherit license from Neve
+	 */
+	public function inherit_license_from_neve() {
+		$should_inherit = ! get_option( 'otter_pro_inherited_autoactivate', false );
+		if ( $should_inherit && false === $this->has_active_license() && 'valid' === apply_filters( 'product_neve_license_status', false ) ) {
+			$neve_license = apply_filters( 'product_neve_license_key', 'free' );
+			apply_filters( 'themeisle_sdk_license_process_otter', $neve_license, 'activate' );
+			update_option( 'otter_pro_inherited_autoactivate', true );
+		}
+	}
 
 	/**
 	 * Get active license.
