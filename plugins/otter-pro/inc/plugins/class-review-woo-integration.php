@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\OtterPro\Plugins;
 
+use ThemeIsle\OtterPro\Plugins\License;
+
 /**
  * Class Review_Woo_Integration
  */
@@ -23,7 +25,9 @@ class Review_Woo_Integration {
 	 * Initialize the class
 	 */
 	public function init() {
-		add_filter( 'otter_blocks_review_block_woocommerce', array( $this, 'apply_woo_data' ), 1 );
+		if ( License::has_active_license() ) {
+			add_filter( 'otter_blocks_review_block_woocommerce', array( $this, 'apply_woo_data' ), 1 );
+		}
 	}
 
 	/**

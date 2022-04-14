@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\OtterPro\Plugins;
 
+use ThemeIsle\OtterPro\Plugins\License;
+
 /**
  * Class Block_Conditions
  */
@@ -23,7 +25,9 @@ class Block_Conditions {
 	 * Initialize the class
 	 */
 	public function init() {
-		add_filter( 'otter_blocks_evaluate_condition', array( $this, 'evaluate_condition' ), 10, 3 );
+		if ( License::has_active_license() ) {
+			add_filter( 'otter_blocks_evaluate_condition', array( $this, 'evaluate_condition' ), 10, 3 );
+		}
 	}
 
 	/**

@@ -582,12 +582,9 @@ class Registration {
 			'about-author',
 			'accordion',
 			'accordion-item',
-			'add-to-cart-button',
 			'advanced-column',
 			'advanced-columns',
 			'advanced-heading',
-			'business-hours',
-			'business-hours-item',
 			'button',
 			'button-group',
 			'circle-counter',
@@ -609,14 +606,12 @@ class Registration {
 			'pricing',
 			'progress-bar',
 			'review',
-			'review-comparison',
 			'service',
 			'sharing-icons',
 			'slider',
 			'tabs',
 			'tabs-item',
 			'testimonials',
-			'woo-comparison',
 		);
 
 		self::$blocks = apply_filters( 'otter_blocks_register_blocks', self::$blocks );

@@ -34,11 +34,14 @@ class Main {
 		}
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
-		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
 		add_filter( 'otter_blocks_autoloader', array( $this, 'autoload_classes' ) );
-		add_filter( 'otter_blocks_register_blocks', array( $this, 'register_blocks' ) );
-		add_filter( 'otter_blocks_register_dynamic_blocks', array( $this, 'register_dynamic_blocks' ) );
-		add_filter( 'otter_blocks_register_css', array( $this, 'register_blocks_css' ) );
+
+		if ( License::has_active_license() ) {
+			add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
+			add_filter( 'otter_blocks_register_blocks', array( $this, 'register_blocks' ) );
+			add_filter( 'otter_blocks_register_dynamic_blocks', array( $this, 'register_dynamic_blocks' ) );
+			add_filter( 'otter_blocks_register_css', array( $this, 'register_blocks_css' ) );
+		}
 	}
 
 	/**
@@ -75,6 +78,9 @@ class Main {
 	 */
 	public function register_blocks( $blocks ) {
 		$pro_blocks = array(
+			'add-to-cart-button',
+			'business-hours',
+			'business-hours-item',
 			'product-add-to-cart',
 			'product-images',
 			'product-meta',
@@ -86,6 +92,8 @@ class Main {
 			'product-tabs',
 			'product-title',
 			'product-upsells',
+			'review-comparison',
+			'woo-comparison',
 		);
 
 		$blocks = array_merge( $blocks, $pro_blocks );
@@ -104,7 +112,6 @@ class Main {
 	public function register_dynamic_blocks( $dynamic_blocks ) {
 		$blocks = array(
 			'add-to-cart-button'        => '\ThemeIsle\OtterPro\Render\Add_To_Cart_Button_Block',
-			'review-comparison'         => '\ThemeIsle\OtterPro\Render\Review_Comparison_Block',
 			'product-add-to-cart'       => '\ThemeIsle\OtterPro\Render\WooCommerce\Product_Add_To_Cart_Block',
 			'product-images'            => '\ThemeIsle\OtterPro\Render\WooCommerce\Product_Images_Block',
 			'product-meta'              => '\ThemeIsle\OtterPro\Render\WooCommerce\Product_Meta_Block',
@@ -116,6 +123,7 @@ class Main {
 			'product-tabs'              => '\ThemeIsle\OtterPro\Render\WooCommerce\Product_Tabs_Block',
 			'product-title'             => '\ThemeIsle\OtterPro\Render\WooCommerce\Product_Title_Block',
 			'product-upsells'           => '\ThemeIsle\OtterPro\Render\WooCommerce\Product_Upsells_Block',
+			'review-comparison'         => '\ThemeIsle\OtterPro\Render\Review_Comparison_Block',
 			'woo-comparison'            => '\ThemeIsle\OtterPro\Render\Woo_Comparison_Block',
 		);
 
