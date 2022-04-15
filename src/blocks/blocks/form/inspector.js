@@ -187,7 +187,7 @@ const Inspector = ({
 								setAttributes={ setAttributes }
 							>
 								<RangeControl
-									label={ __( 'Fields Gap', 'otter-blocks' ) }
+									label={ __( 'Fields Spacing', 'otter-blocks' ) }
 									value={ attributes.inputsGap || 10 }
 									onChange={ inputsGap => setAttributes({ inputsGap }) }
 									allowReset
@@ -223,7 +223,7 @@ const Inspector = ({
 								setAttributes={ setAttributes }
 							>
 								<RangeControl
-									label={ __( 'Input Gap', 'otter-blocks' ) }
+									label={ __( 'Label Spacing', 'otter-blocks' ) }
 									value={ attributes.inputGap || 5}
 									onChange={ inputGap => setAttributes({ inputGap }) }
 									allowReset
