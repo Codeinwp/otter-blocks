@@ -56,7 +56,7 @@ const Edit = ({
 	toggleSelection
 }) => {
 	useEffect( () => {
-		const unsubscribe = blockInit( clientId, defaultAttributes )
+		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
@@ -336,6 +336,7 @@ const Edit = ({
 
 	useEffect( () => {
 		if ( markersStore ) {
+
 			// setAttributes({ markers: markersStore.map( ({ markerProps }) => markerProps ) });
 
 			markersStore.forEach( marker => {
@@ -359,7 +360,7 @@ const Edit = ({
 			});
 
 
-			if( attributes.markers.length !== markersStore.length && map ) {
+			if ( attributes.markers.length !== markersStore.length && map ) {
 				setAttributes({ markers: markersStore.map( ({ markerProps }) => markerProps ) });
 			}
 		}
