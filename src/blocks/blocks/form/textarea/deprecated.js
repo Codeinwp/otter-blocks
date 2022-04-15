@@ -43,11 +43,11 @@ const deprecated = [ {
 			<div { ...blockProps }>
 				<label
 					htmlFor={ attributes.id }
-					className="otter-form-input-label"
+					className="otter-form-textarea-label"
 				>
 					<RichText.Content
 						value={ attributes.label }
-						className="otter-form-input-label__label"
+						className="otter-form-textarea-label__label"
 						tagName="span"
 					/>
 
@@ -56,14 +56,15 @@ const deprecated = [ {
 					) }
 				</label>
 
-				<input
-					type={ attributes.type }
+				<textarea
 					name={ attributes.mappedName }
 					id={ attributes.id }
 					required={ attributes.isRequired }
 					placeholder={ attributes.placeholder }
-					className="otter-form-input"
-				/>
+					rows={ 10 }
+					className="otter-form-textarea-input"
+				>
+			</textarea>
 			</div>
 		);
 	}
