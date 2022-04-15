@@ -29,7 +29,7 @@ const Inspector = ({
 
 				<TextControl
 					label={ __( 'Placeholder', 'otter-blocks' ) }
-					value={ attributes.placeholer }
+					value={ attributes.placeholder }
 					onChange={ placeholder => setAttributes({ placeholder }) }
 				/>
 
