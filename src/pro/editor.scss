@@ -4,3 +4,18 @@
 	float: none !important;
 	display: inline-block;
 }
+
+.o-expired-notice {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #F3F3F3;
+	border-radius: 4px;
+	padding: 10px 20px;
+	margin: 10px 0;
+
+    svg {
+        width: 18px;
+        height: 18px;
+    }
+}

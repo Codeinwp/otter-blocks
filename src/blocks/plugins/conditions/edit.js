@@ -478,6 +478,8 @@ const Edit = ({
 				>
 					{ __( 'Add Rule Group', 'otter-blocks' ) }
 				</Button>
+
+				{ applyFilters( 'otter.blockConditions.notices', '' ) }
 			</PanelBody>
 		</InspectorControls>
 	);

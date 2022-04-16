@@ -13,6 +13,11 @@ import { Fragment } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
+/**
+ * Internal dependencies.
+ */
+import LicenseNotice from '../../components/license-notice/index.js';
+
 const applyTriggerOptions = () => {
 	return [
 		{
@@ -21,15 +26,18 @@ const applyTriggerOptions = () => {
 		},
 		{
 			label: __( 'On Anchor Click', 'otter-blocks' ),
-			value: 'onClick'
+			value: 'onClick',
+			disabled: ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) )
 		},
 		{
 			label: __( 'On Scroll', 'otter-blocks' ),
-			value: 'onScroll'
+			value: 'onScroll',
+			disabled: ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) )
 		},
 		{
 			label: __( 'On Exit', 'otter-blocks' ),
-			value: 'onExit'
+			value: 'onExit',
+			disabled: ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) )
 		}
 	];
 };
@@ -39,6 +47,19 @@ const PopupControls = (
 	attributes,
 	setAttributes
 ) => {
+	if ( ! Boolean( window.otterPro.isActive ) ) {
+		return (
+			<Fragment>
+				{ Controls }
+
+				<LicenseNotice
+					notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
+					instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Popup Block.', 'otter-blocks' ) }
+				/>
+			</Fragment>
+		);
+	}
+
 	return (
 		<Fragment>
 			{ 'onClick' === attributes.trigger && (
@@ -47,6 +68,13 @@ const PopupControls = (
 					help={ __( 'You can use this anchor as an anchor link anywhere on the page to open the popup.', 'otter-blocks' ) }
 					value={ attributes.anchor }
 					onChange={ value => setAttributes({ anchor: value.replace( /[^a-zA-Z]/g, '' ) }) }
+				/>
+			) }
+
+			{ ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) ) && (
+				<LicenseNotice
+					notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
+					instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Popup Block.', 'otter-blocks' ) }
 				/>
 			) }
 

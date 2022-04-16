@@ -13,12 +13,26 @@ import { Fragment } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
+/**
+ * Internal dependencies.
+ */
+import LicenseNotice from '../../components/license-notice/index.js';
+
 const StickyControls = (
 	Controls,
 	attributes,
 	FILTER_OPTIONS,
 	addOption
 ) => {
+	if ( ! Boolean( window.otterPro.isActive ) ) {
+		return (
+			<LicenseNotice
+				notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
+				instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Sticky Extension.', 'otter-blocks' ) }
+			/>
+		);
+	}
+
 	const position = attributes?.className?.includes( 'o-sticky-pos-bottom' ) ? 'o-sticky-pos-bottom' : 'o-sticky-pos-top';
 	const behaviour = attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-bhvr' ) ).pop() || 'o-sticky-bhvr-keep';
 	const useOnMobile = Boolean( attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-use-mobile' ) ).pop() || false );
@@ -34,6 +48,13 @@ const StickyControls = (
 
 	return (
 		<Fragment>
+			{ ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) ) && (
+				<LicenseNotice
+					notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
+					instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Sticky Extension.', 'otter-blocks' ) }
+				/>
+			) }
+
 			<SelectControl
 				label={ __( 'Position', 'otter-blocks' ) }
 				help={ __( 'Position of the block in relation to the screen.', 'otter-blocks' ) }

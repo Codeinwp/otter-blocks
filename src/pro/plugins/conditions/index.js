@@ -14,8 +14,8 @@ import { addFilter } from '@wordpress/hooks';
 /**
  * Internal dependencies.
  */
-
 import Edit from './edit.js';
+import LicenseNotice from '../../components/license-notice/index.js';
 
 const applyProConditions = conditions => {
 	const proConditions = {
@@ -180,6 +180,32 @@ const BlockConditions = (
 	);
 };
 
-addFilter( 'otter.blockConditions.conditions', 'themeisle-gutenberg/block-conditions-list', applyProConditions );
-addFilter( 'otter.blockConditions.defaults', 'themeisle-gutenberg/block-conditions-defaults', applyProDefaults );
+const LicenseNotices = el => {
+	if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) ) {
+		return (
+			<LicenseNotice
+				notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
+				instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Block Conditions.', 'otter-blocks' ) }
+			/>
+		);
+	}
+
+	if ( ! Boolean( window.otterPro.isActive ) ) {
+		return (
+			<LicenseNotice
+				notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
+				instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Block Conditions.', 'otter-blocks' ) }
+			/>
+		);
+	}
+
+	return el;
+};
+
+if ( ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) ) {
+	addFilter( 'otter.blockConditions.conditions', 'themeisle-gutenberg/block-conditions-list', applyProConditions );
+	addFilter( 'otter.blockConditions.defaults', 'themeisle-gutenberg/block-conditions-defaults', applyProDefaults );
+}
+
 addFilter( 'otter.blockConditions.controls', 'themeisle-gutenberg/block-conditions-controls', BlockConditions );
+addFilter( 'otter.blockConditions.notices', 'themeisle-gutenberg/block-conditions-notices', LicenseNotices );
