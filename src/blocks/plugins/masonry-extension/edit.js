@@ -38,9 +38,7 @@ const Edit = ({
 	const useOldContainer = useRef( Boolean( parseInt( window.themeisleGutenberg?.useOldMacyContainer || '0' ) ) );
 
 	const imagesNumber = useSelect( select => {
-		const {
-			getBlock
-		} = select( 'core/block-editor' );
+		const { getBlock } = select( 'core/block-editor' );
 		return getBlock( props.clientId ).innerBlocks?.length;
 	});
 

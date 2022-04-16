@@ -6,7 +6,8 @@ import { __ } from '@wordpress/i18n';
 import {
 	Fragment,
 	useEffect,
-	useRef
+	useRef,
+	memo
 } from '@wordpress/element';
 
 const CSSEditor = ({
@@ -123,4 +124,4 @@ const CSSEditor = ({
 	);
 };
 
-export default CSSEditor;
+export default memo( CSSEditor );

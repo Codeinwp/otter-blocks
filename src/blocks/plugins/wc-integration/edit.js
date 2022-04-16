@@ -56,7 +56,7 @@ const Edit = ({
 			results,
 			status
 		};
-	});
+	}, []);
 
 	return (
 		<Fragment>

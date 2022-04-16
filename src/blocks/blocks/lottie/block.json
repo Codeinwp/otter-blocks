@@ -35,7 +35,17 @@
 			"default": false
 		},
 		"width": {
-			"type": "number"
+			"type": [ "string" , "number" ]
+		},
+		"ariaLabel": {
+			"type": "string",
+			"default": ""
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"backgroundGradient": {
+			"type": "string"
 		}
 	},
 	"supports": {

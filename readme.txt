@@ -1,5 +1,5 @@
-=== Gutenberg Blocks and Template Library by Otter ===
-Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1, arinat
+=== Otter - Page Builder Blocks & Extensions for Gutenberg ===
+Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1, arinat, uriahs-victor
 Tags: gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder
 Requires at least: 5.6
 Tested up to: 5.9
@@ -8,98 +8,184 @@ Stable tag: trunk
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.en.html
 
-Otter is a dynamic collection of page building blocks and templates for the WordPress block editor. Create beautiful and attracting posts, pages, and landing pages with Gutenberg Blocks and Template Library by Otter. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
+Otter is a dynamic collection of page building blocks and templates for the WordPress Gutenberg Block Editor. Create beautiful and attractive posts, pages, and landing pages with Otter - Page Builder Blocks & Extensions for Gutenberg. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages in Gutenberg.
 
 == Description ==
 
-Otter is a dynamic collection of page building blocks and templates for the WordPress block editor.
+Otter is a Gutenberg Blocks page builder plugin that adds extra functionality to the WordPress Block Editor (also known as Gutenberg) for a better page building experience without the need for traditional page builders like Elementor and Divi.
 
-The growing list of page building blocks covers all of the elements you need to build your WordPress site. Combine the blocks with Otter to build stunning pages and posts with the simplicity of  designing.
+Otter Blocks Plugin not only adds extra custom blocks for Gutenberg, but it also adds extra functionality such as Custom CSS, Animations and Visibility Conditions to default or third party blocks present on your website. 
 
-With a lightweight approach, Otter enhances WordPress site building without impacting site speed. With Otter, you can truly harness the potential of the new WordPress era.
+The Custom CSS block feature makes it possible to directly customize the CSS properties of any Gutenberg block on the page, while the Animation feature makes it quick and easy to add animations to any block to enhance the appeal of your different page blocks and sections. With the Visibility Conditions feature by Otter, you can set which conditions should be met for your chosen blocks to be displayed on the page.
 
-https://www.youtube.com/watch?v=ypIeTgvYeRE
+New to the Gutenberg Blocks ecosystem? Checkout our article on [Gutenberg Explained.](https://themeisle.com/blog/gutenberg-blocks-explained/)
 
-It has:
+## Who is Otter For?
 
-- Section Block
-- Advanced Heading Block
-- Add to Cart Block
-- Button Group Block
-- Business Hours
-- Slider Block
-- Accordion Block
-- Tabs Block
-- Google Maps Block
-- Maps Block
-- Countdown Block
-- Contact Form Block
-- Masonry Gallery Block
-- Posts Block
-- Product Review Block
-- Service Block
-- Pricing Block
-- Testimonial Block
-- About Author Block
-- Icon Block
-- Icon List Block
-- Lottie Animation Block
-- Progress Bar Block
-- Popup Block
-- Circular Progress Block
-- Sharing Icons Block
-- Plugin Card Block
-- Pricing Section
-- Review Block
-- Flip Block
+- Anyone looking to bring out the best features of the new Gutenberg Editor with useful and easy to use Gutenberg blocks.
+- Anyone thinking of moving away from traditional page builders like Elementor and Divi Builder in favor of the new Gutenberg Block Editor.
+- Anyone trying to build quick Gutenberg pages in record time.
+- Anyone trying to hide/show Gutenberg blocks based on conditions like user logged in/out status.
+- Anyone trying to add animations to Gutenberg blocks.
 
-=== STUNNING WEB PAGES WITH DRAG AND DROP EFFICIENCY ===
+#### Checkout a quick overview of Otter:
+https://www.youtube.com/watch?v=WcS2Vi4IOYw
 
-Otter can be used to build everything from a personal blog to an international store without losing the personal touch. Otter’s famous ease-of-use transforms basic blocks into expressive layouts in seconds:
+## How Can Otter’s Gutenberg Blocks Help Me?
 
-=== DO IT YOUR WAY WITH SECTION BLOCKS ===
+### A WordPress Gutenberg Blocks Plugin
 
-With Otter’s Section Block you will be able to create innovative layouts that improve readability with enhanced visual appeal. The Section Block lets you create interesting layouts that help emphasis your content.
+Otter adds 23+ amazing and useful blocks to make page building in Gutenberg a breeze! 
 
-You can create your own layouts or select one of Otter’s layouts and templates. Each of the layouts has been professionally designed to provide a range of visually pleasing sections like About, Headers, Pricing, Testimonials.
-
-You can take advantage of the responsive controls to increase padding and margins or drop elements to create visual experiences perfect for mobile, tablet, or desktop.
-
-=== TEMPLATE LIBRARY ===
-
-Unleash your inner designer with Otter’s template library. With over 50 different templates you can build a professional site quickly and efficiently.
-
-The template library provides a range of different elements in a variety of styles to help you build great pages.
-
-All of your website’s most important areas are covered; headers, testimonials, pricing tables, content and more.
-
-From headers with images to headers with features, from content with images to about sections with video. Otter has a template to match your vision, just add the content and you’ll be set.
-
-=== REDESIGNED GOOGLE MAPS BLOCK ===
-
-Otter’s integration with the WordPress Block Editor allows you to see your changes live from the backend. Innovative blocks like the Google Maps block help you customise the experience right down to the color and description of the markers, search for places by name or coordinates, add and remove map controls, or change the size and style of the maps with a few clicks.
-
-=== CSS ON EVERY BLOCK ===
-
-Otter’s commitment to user centred building includes a unique block-by-block CSS extension that makes it easy for you to add CSS to your blocks. The additional CSS area is integrated into the backend to make targeting your blocks easier. You can add media queries, change colours, and add borders all in one easy to follow area.
-
-=== CUSTOMIZE EVERY BLOCK ===
-
-More than layouts and sections, you need advanced customisation options to give you control over style and appearance. With Otter, you’ve got it all.
+More than just blocks, you need advanced customisation options to give you control over style and appearance. With Otter, you’ve got it all.
 
 Create mobile-friendly designs with Otter’s built-in responsive settings. Each block can be tweaked to provide a consistent experience for mobile, tablet, and desktop.
 
-Help your site shine with design options built to enhance your brand. Every block has customization support to help you style your site according to your vision:
+Every block has customization support to help you style your site according to your vision:
 
 - Color controls for primary, accents, and backgrounds.
 - Animation at the click of a button.
 - Typography controls from spacing to font choice.
 
+### A WordPress Gutenberg Block Conditions Plugin
+
+Want to show certain blocks only when a user is Logged in or Logged Out? How about if they’re a customer of your store versus an editor for your blog or any other user role? With the Gutenberg Block Conditions feature available in Otter, it’s possible. Upgrade to the PRO version of Otter to unleash the power of more block conditions such as:
+
+- URL Query String 
+- Date Range
+- Day of the Week
+- Time of the Day
+- WooCommerce Products in Cart
+- WooCommerce Total Spent
+- WooCommerce Cart Total
+- And more
+
+### A WordPress Gutenberg Blocks Animation Plugin
+
+WOW your website visitors with amazing animations that can be added to any block on the page. With over 50+ animations available to choose from; Otter makes it possible to add some extra flare to any post or page on your website
+
+### A WordPress Gutenberg Popup Plugin
+
+Popups are one of the oldest lead capturing and notice conveying techniques on the web. With the Gutenberg Popup Block available in Otter, you can create popups made from any other block available in Gutenberg! Fine-tune your popup by setting when they should appear and how they can be closed.
+
+### Global Defaults for Otter's Blocks
+
+Tired of always having to set the same options every time you add a block to the page? With Otter, you can set the default configuration for some of the most commonly used blocks like the Section Block, Icon Block, Advanced Heading and more.
+
+## Blocks Available in Otter
+
+#### Section Gutenberg Block [FREE]
+
+A column block on steroids! This block allows you to create a section with up to 6 columns that can each have a custom background color, image or gradient. Use this block's responsive features to set the padding and margin for desktop, tablet and mobile displays. 
+
+#### Advanced Heading Gutenberg Block [FREE]
+
+The heading block you didn't know you needed. This Otter block has all the functionality of the default heading block with a few other capabilities like the ability to change the font, highlight parts of the text and more.
+
+#### Button Group Gutenberg Block [FREE]
+
+Create multiple buttons quick and easily and show them vertically or horizontally based on the device the page is being viewed on.
+
+#### Slider Gutenberg Block [FREE]
+
+Use this Gutenberg block to create image sliders on any Gutenberg page. Settings include slider height, delay, slides per page, autoplay and more.
+
+#### Accordion Gutenberg Block [FREE]
+
+Use this block to create vertically stacked lists of content that can be revealed or hidden with the click of a button; more commonly known as Accordions.
+
+#### Tabs Gutenberg Block [FREE]
+
+Use this block to create horizontally stacked lists of content that can be revealed or hidden with the click of a button; more commonly known as Tabs. 
+
+#### Maps Gutenberg Block [FREE]
+
+Choose between either an Open Street Map or Google Maps block and create markers for your points of interest for your website visitors. Our Maps block helps you customize the map experience right down to the color and description of the markers, search for places by name or coordinates, add and remove map controls, or change the size and style of the maps with a few clicks.
+
+#### Countdown Gutenberg Block [FREE]
+
+Counting down to a big event? Show it by making use of these Gutenberg blocks. Count down from Days, Hours, Minutes or Seconds.
+
+#### Contact Form Gutenberg Block [FREE]
+
+Quickly and easily insert a contact form anywhere on the page. Optionally, turn the form into a lead generating machine by integrating it with Sendinblue or Mailchimp.
+
+#### Masonry Gallery Gutenberg Block [FREE]
+
+Add some pizzazz to your gallery by making it a Masonry layout Gallery instead.  
+
+#### Posts Gutenberg Block [FREE]
+
+Use this block to insert items from posts, pages and custom post types into the current page being edited.
+
+#### Product Review Gutenberg Block [FREE]
+
+Blogging about a product you love? Or maybe you run a review website? Use this block to create a review table for the item and list its features, pros and cons as well as optional buy links.
+
+#### Service Gutenberg Block [FREE]
+
+Use this block to list your business services with an optional button to lead to more details.
+
+#### Pricing & Pricing Section Gutenberg Block [FREE]
+
+Use this block to quickly create beautiful pricing tables for your services/products. 
+
+#### Testimonial Gutenberg Block [FREE]
+
+Display your customer reviews on any post or page using Otter's Gutenberg Testimonial Block.
+
+#### About Author Gutenberg Block [FREE]
+
+The About Author Gutenberg block allows editors to add their bio at the end of the blog posts that they publish. 
+
+#### Icon Gutenberg Block [FREE]
+
+Display any icon from Font Awesome or our own list of custom icons anywhere on the page. Change colors, add borders and couple with other blocks to enhance the look of your page.
+
+#### Icon List Gutenberg Block [FREE]
+
+Supercharge boring point lists by using custom icons as the pointers.
+
+#### Lottie Animation Gutenberg Block [FREE]
+
+Have you heard about Lottie? Awesome! With Otter's Lottie Animation Gutenberg Block, you can display Lottie animations anywhere in Gutenberg.
+
+#### Add to Cart Gutenberg Block [PRO]
+
+Drop an Add to cart button block for any WooCommerce product anywhere on the post or page that you're editing.
+
+#### Business Hours Gutenberg Block [PRO]
+
+Create a beautifully styled Business Hours table and fine-tune it's settings until it's perfect.
+
+---
+
+We're constantly adding new Gutenberg Blocks to Otter to assist in your website page building. Feel free to tell us what we’re missing on our [Support Forum](https://wordpress.org/support/plugin/otter-blocks/)! Some other blocks include:
+
+- Progress Bar Gutenberg Block [FREE]
+- Circular Progress Gutenberg Block [FREE]
+- Flip Card Gutenberg Block [FREE]
+- Popup Gutenberg Block [FREE]
+- Sharing Icons Gutenberg Block [FREE]
+- Plugin Card Gutenberg Block [FREE]
+- Subscribe Form Gutenberg Block [FREE]
+
+### Support
+
+We're here to help. Feel free to open a new thread on the [Support Forum](https://wordpress.org/support/plugin/otter-blocks/).
+
+### Useful Resources
+
+- Read more about WordPress on our [blog](https://themeisle.com/blog/).
+- Take a look at our other plugins see [here](https://themeisle.com/wordpress-plugins/).
+
 == Screenshots ==
 
-1. Section Block
-2. Google Map Block
+1. Gutenberg Block Animations
+2. Visibility Condition Rules
 3. Posts Block
+4. Google Map Block
+5. Section Block
 
 == Changelog ==
 
