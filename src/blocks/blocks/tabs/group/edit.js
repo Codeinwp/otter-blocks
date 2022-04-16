@@ -81,8 +81,6 @@ const Edit = ({
 				const blockContent = contentRef.current.querySelector( `#block-${ block.clientId } .wp-block-themeisle-blocks-tabs-item__content` );
 				blockContent?.classList.toggle( 'active', block.clientId === blockId );
 			});
-
-			updateBlockAttributes( blockId, { defaultOpen: true });
 			setActiveTab( blockId );
 		}
 	};

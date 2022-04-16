@@ -20,6 +20,7 @@ composer.lock
 package-lock.json
 themeisle-hash.json
 npm-debug.log
+tsconfig.json
 /grunt
 /node_modules
 /logs

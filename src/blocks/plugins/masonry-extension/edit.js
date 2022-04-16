@@ -19,6 +19,12 @@ import {
 
 import { useSelect } from '@wordpress/data';
 
+const options = {
+	root: null,
+	rootMargin: '0px',
+	threshold: [ 0.0 ]
+};
+
 const Edit = ({
 	props,
 	children
@@ -26,6 +32,7 @@ const Edit = ({
 
 	const macy = useRef( null );
 	const observer = useRef( null );
+	const initObserver = useRef( null );
 
 	// TODO: Remove this when we no longer support WP 5.8
 	const useOldContainer = useRef( Boolean( parseInt( window.themeisleGutenberg?.useOldMacyContainer || '0' ) ) );
@@ -38,7 +45,7 @@ const Edit = ({
 	useEffect( () => {
 		if ( props.attributes.isMasonry && 0 < imagesNumber ) {
 			useOldContainer.current = Boolean( parseInt( window.themeisleGutenberg?.useOldMacyContainer || '0' ) );
-			initMasonry();
+
 			observer.current = new MutationObserver( mutations => {
 				mutations.forEach( mutation => {
 					if ( 'childList' === mutation.type ) {
@@ -46,6 +53,19 @@ const Edit = ({
 					}
 				});
 			});
+
+			const targetContainer = useOldContainer.current ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }`;
+			const container = document.querySelector( targetContainer );
+			initObserver.current = new IntersectionObserver( entries => {
+				entries.forEach( entry => {
+					if ( entry.isIntersecting && 0 <= entry.intersectionRect.height ) {
+						initMasonry();
+						initObserver.current?.unobserve( container );
+					}
+				});
+			}, options );
+
+			initObserver.current?.observe( container );
 		}
 		return () => {
 			deleteMasonry();
@@ -56,7 +76,7 @@ const Edit = ({
 		if ( props.attributes.isMasonry && ( 0 < imagesNumber ||  useOldContainer.current )  ) {
 			initMasonry();
 		}
-	}, [ props.attributes, imagesNumber, useOldContainer.current ]);
+	}, [ props.attributes.isMasonry, imagesNumber, useOldContainer.current ]);
 
 
 	const initMasonry = () => {
@@ -68,8 +88,10 @@ const Edit = ({
 				return;
 			}
 
+			const targetContainer = useOldContainer.current ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }`;
+
 			macy.current = window.Macy({
-				container: useOldContainer.current ? `#block-${ props.clientId } .blocks-gallery-grid` : `#block-${ props.clientId }`,
+				container: targetContainer,
 				trueOrder: false,
 				waitForImages: false,
 				margin: props.attributes.margin !== undefined ? props.attributes.margin : 10,
