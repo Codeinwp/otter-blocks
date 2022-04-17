@@ -68,7 +68,6 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Server\Plugin_Card_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Template_Library_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Form_Server',
-			'\ThemeIsle\GutenbergBlocks\Server\Posts_ACF_Server',
 		);
 
 		$classnames = apply_filters( 'otter_blocks_autoloader', $classnames );

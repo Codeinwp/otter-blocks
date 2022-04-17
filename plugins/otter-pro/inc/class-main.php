@@ -57,10 +57,12 @@ class Main {
 			'\ThemeIsle\OtterPro\Plugins\Block_Conditions',
 			'\ThemeIsle\OtterPro\Plugins\License',
 			'\ThemeIsle\OtterPro\Plugins\Options_Settings',
+			'\ThemeIsle\OtterPro\Plugins\Posts_ACF_Integration',
 			'\ThemeIsle\OtterPro\Plugins\Review_Woo_Integration',
 			'\ThemeIsle\OtterPro\Plugins\WooCommerce_Builder',
-			'\ThemeIsle\OtterPro\Server\Filter_Blocks_Server',
 			'\ThemeIsle\OtterPro\Server\Dashboard_Server',
+			'\ThemeIsle\OtterPro\Server\Filter_Blocks_Server',
+			'\ThemeIsle\OtterPro\Server\Posts_ACF_Server',
 		);
 
 		$classnames = array_merge( $classnames, $classes );

@@ -29,6 +29,11 @@ import { Fragment } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
+/**
+ * Internal dependencies.
+ */
+import LicenseNotice from '../../components/license-notice/index.js';
+
 const ALLOWED_ACF_TYPES = [
 	'text',
 	'textarea',
@@ -83,38 +88,55 @@ const AddFields = (
 	};
 
 	return (
-		<Button
-			variant="secondary"
-			isSecondary
-			className="o-conditions__add"
-			onClick={ () => {
-				let id = uuidv4().slice( 0, 8 );
+		<Fragment>
+			<Button
+				variant="secondary"
+				isSecondary
+				className="o-conditions__add"
+				disabled={ ! Boolean( window.otterPro.isActive ) || Boolean( window.otterPro.isExpired ) }
+				onClick={ () => {
+					let id = uuidv4().slice( 0, 8 );
 
-				while ( 0 < attributes?.customMetas?.some( ({ otherId }) => otherId === id )  ) {
-					id = uuidv4().slice( 0, 8 );
-				}
+					while ( 0 < attributes?.customMetas?.some( ({ otherId }) => otherId === id )  ) {
+						id = uuidv4().slice( 0, 8 );
+					}
 
-				id = `custom_${ id }`;
+					id = `custom_${ id }`;
 
-				const newMeta = {
-					id,
-					field: '',
-					display: true
-				};
+					const newMeta = {
+						id,
+						field: '',
+						display: true
+					};
 
-				const {
-					template,
-					customMetas
-				} = filterDeadCustomTemplates();
+					const {
+						template,
+						customMetas
+					} = filterDeadCustomTemplates();
 
-				setAttributes({
-					template: [ ...template, id ],
-					customMetas: customMetas ? [ ...customMetas, newMeta ] : [ newMeta ]
-				});
-			} }
-		>
-			{ __( 'Add Meta Field', 'otter-blocks' ) }
-		</Button>
+					setAttributes({
+						template: [ ...template, id ],
+						customMetas: customMetas ? [ ...customMetas, newMeta ] : [ newMeta ]
+					});
+				} }
+			>
+				{ __( 'Add Meta Field', 'otter-blocks' ) }
+			</Button>
+
+			{ Boolean( window.otterPro.isExpired ) && (
+				<LicenseNotice
+					notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
+					instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Posts Block.', 'otter-blocks' ) }
+				/>
+			) }
+
+			{ ! Boolean( window.otterPro.isActive ) && (
+				<LicenseNotice
+					notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
+					instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Posts Block.', 'otter-blocks' ) }
+				/>
+			) }
+		</Fragment>
 	);
 };
 
@@ -188,6 +210,14 @@ const Controls = (
 		});
 	};
 
+	if ( ! Boolean( window.otterPro.isActive ) ) {
+		return (
+			<LicenseNotice
+				notice={ __( 'You need to activate Otter Pro to edit this field.', 'otter-blocks' ) }
+			/>
+		);
+	}
+
 	return (
 		<Fragment>
 			{ ! isEmpty( groups ) && (
@@ -198,6 +228,7 @@ const Controls = (
 						value={ fields[ customMeta.field ] ? customMeta.field : 'none' }
 						onChange={ event => setAttributesCustomMeta({ field: event.target.value  }) }
 						className="components-select-control__input"
+						disabled={ Boolean( window.otterPro.isExpired ) }
 					>
 						<option value="none">{ __( 'Select a field', 'otter-blocks' ) }</option>
 
@@ -300,7 +331,10 @@ const changeTabLabel = (
 };
 
 addFilter( 'blocks.registerBlockType', 'themeisle-gutenberg/posts-acf-extension-attributes', addAttribute );
-addFilter( 'otter.postsBlock.sortableContainer', 'themeisle-gutenberg/posts-acf-extension-add-button', AddFields );
-addFilter( 'otter.postsBlock.templateLoop', 'themeisle-gutenberg/posts-acf-extension-add-button', TemplateLoop );
-addFilter( 'otter.postsBlock.controls', 'themeisle-gutenberg/posts-acf-extension-controls', Controls );
 addFilter( 'otter.postsBlock.panelLabel', 'themeisle-gutenberg/posts-acf-extension-tab-label', changeTabLabel );
+addFilter( 'otter.postsBlock.sortableContainer', 'themeisle-gutenberg/posts-acf-extension-add-button', AddFields );
+addFilter( 'otter.postsBlock.controls', 'themeisle-gutenberg/posts-acf-extension-controls', Controls );
+
+if ( Boolean( window.otterPro.isActive ) ) {
+	addFilter( 'otter.postsBlock.templateLoop', 'themeisle-gutenberg/posts-acf-extension-template-loop', TemplateLoop );
+}

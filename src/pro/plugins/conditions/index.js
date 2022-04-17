@@ -181,7 +181,7 @@ const BlockConditions = (
 };
 
 const LicenseNotices = el => {
-	if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) ) {
+	if ( Boolean( window.otterPro.isExpired ) ) {
 		return (
 			<LicenseNotice
 				notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }

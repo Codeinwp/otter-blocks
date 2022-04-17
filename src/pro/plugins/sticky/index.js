@@ -48,7 +48,7 @@ const StickyControls = (
 
 	return (
 		<Fragment>
-			{ ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) ) && (
+			{ Boolean( window.otterPro.isExpired ) && (
 				<LicenseNotice
 					notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
 					instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Sticky Extension.', 'otter-blocks' ) }

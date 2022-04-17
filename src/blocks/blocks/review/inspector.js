@@ -487,7 +487,7 @@ const Inspector = ({
 				</SyncControl>
 			</PanelBody>
 
-			{ ( Boolean( window.themeisleGutenberg.hasNeveSupport.hasPro ) ) && (
+			{ ( Boolean( window.themeisleGutenberg.hasPro ) ) && (
 				<PanelBody
 					title={ __( 'More Features', 'otter-blocks' ) }
 					initialOpen={ false }

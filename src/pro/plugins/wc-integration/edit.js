@@ -17,6 +17,7 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies.
  */
 import { extractProductData } from './utility.js';
+import LicenseNotice from '../../components/license-notice/index.js';
 
 const { SelectProducts } = window.otterComponents;
 
@@ -28,7 +29,7 @@ const Edit = ({
 		let status = 'isLoading';
 		let results = {};
 
-		if ( props.attributes.product ) {
+		if ( props.attributes.product && Boolean( window.otterPro.isActive ) ) {
 			const { COLLECTIONS_STORE_KEY } = window.wc.wcBlocksData;
 
 			const error = select( COLLECTIONS_STORE_KEY ).getCollectionError( '/wc/store', 'products', {}, [ props.attributes.product ]);
@@ -76,8 +77,23 @@ const Edit = ({
 					<SelectProducts
 						label={ __( 'Select Product', 'otter-blocks' ) }
 						value={ props.attributes.product }
+						disabled={ ! Boolean( window.otterPro.isActive ) || Boolean( window.otterPro.isExpired ) }
 						onChange={ product => props.setAttributes({ product: 0 === product ? undefined : product }) }
 					/>
+
+					{ Boolean( window.otterPro.isExpired ) && (
+						<LicenseNotice
+							notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
+							instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Review Block.', 'otter-blocks' ) }
+						/>
+					) }
+
+					{ ! Boolean( window.otterPro.isActive ) && (
+						<LicenseNotice
+							notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
+							instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Review Block.', 'otter-blocks' ) }
+						/>
+					) }
 				</PanelBody>
 			</InspectorControls>
 		</Fragment>

@@ -243,12 +243,6 @@ class Registration {
 				'isWPVIP'             => function_exists( 'is_wpcom_vip' ),
 				'canTrack'            => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
 				'userRoles'           => $wp_roles->roles,
-				'hasWooCommerce'      => class_exists( 'WooCommerce' ),
-				'hasLearnDash'        => defined( 'LEARNDASH_VERSION' ),
-				'hasNeveSupport'      => array(
-					'hasNeve'         => defined( 'NEVE_VERSION' ),
-					'hasNevePro'      => defined( 'NEVE_VERSION' ) && 'valid' === apply_filters( 'product_neve_license_status', false ),
-				),
 				'isBlockEditor'       => 'post' === $current_screen->base,
 				'useOldMacyContainer' => version_compare( get_bloginfo( 'version' ), '5.8.10', '<=' ),
 				'postTypes'           => get_post_types( [ 'public' => true ] ),

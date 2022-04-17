@@ -2,10 +2,10 @@
 /**
  * Card server logic.
  *
- * @package ThemeIsle\GutenbergBlocks\Server
+ * @package ThemeIsle\OtterPro\Server
  */
 
-namespace ThemeIsle\GutenbergBlocks\Server;
+namespace ThemeIsle\OtterPro\Server;
 
 /**
  * Class Posts_ACF_Server
