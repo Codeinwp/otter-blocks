@@ -1,10 +1,13 @@
 .wp-block-themeisle-blocks-sharing-icons {
+	display: flex;
+	gap: var(--itemsGap);
+	margin: 10px 0;
+
 	.social-icon {
 		background: #999999;
 		color: #ffffff;
 		font-size: 14px;
 		position: relative;
-		margin: 10px 5px 10px 0;;
 		padding: 12px;
 		border: none;
 		border-radius: 3px;

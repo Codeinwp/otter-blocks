@@ -8,6 +8,9 @@
 	"keywords": [ "social media", "sharing", "icons" ],
 	"textdomain": "otter-blocks",
 	"attributes": {
+		"id": {
+			"type": "string"
+		},
 		"facebook": {
 			"type": "boolean",
 			"default": true
@@ -31,6 +34,10 @@
 		"reddit": {
 			"type": "boolean",
 			"default": false
+		},
+		"gap" : {
+			"type": "string",
+			"default": "5px"
 		}
 	},
 	"styles": [
