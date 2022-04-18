@@ -270,7 +270,7 @@ class Form_Server {
 
 	/**
 	 * Make additional changes before using the main handler function for submitting.
-	 * @param Form_Data_Request $form_data
+	 * @param Form_Data_Request $form_data The form request data.
 	 */
 	public function before_submit( $form_data ) {
 		if( $form_data->payload_has_field('consent')
@@ -282,7 +282,7 @@ class Form_Server {
 
 	/**
 	 * Process the extra actions after calling the main handler function for submitting.
-	 * @param Form_Data_Request $form_data
+	 * @param Form_Data_Request $form_data The form request data.
 	 * @return void
 	 */
 	public function after_submit( $form_data ) {
@@ -297,8 +297,14 @@ class Form_Server {
 
 	}
 
+	/**
+	 * @param string $error The error message.
+	 * @param Form_Data_Request $form_data The form request data.
+	 * @return void
+	 */
     public static function send_error_email( $error, $form_data ) {
 
+		// TODO: use this signal errors, like: the integration api key is no longer valid.
         $email_subject = ( __( 'An error with the Form blocks has occurred on  ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
         $email_body    = Form_Email::instance()->build_error_email($error, $form_data);
         // Sent the form date to the admin site as a default behaviour.

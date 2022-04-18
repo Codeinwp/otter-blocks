@@ -223,13 +223,14 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
      */
 	public function get_information_from_provider($request)
 	{
-		// TODO: Implement get_provider_data() method.
 		return $this->get_lists();
 	}
 
+	/**
+	 * @return bool
+	 */
     public function check_credential_status()
     {
-        // TODO: Implement check_credential_status() method.
         $url  = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists';
         $args = array(
             'method'  => 'GET',

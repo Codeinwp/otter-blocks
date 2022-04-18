@@ -64,18 +64,33 @@ class Form_Data_Request {
 		return $this->is_set( $field_name ) ? $this->request_data[ $field_name ] : null;
 	}
 
+	/**
+	 * @param $field_name
+	 * @return mixed|null
+	 */
 	public function get_payload_field($field_name ) {
 		return $this->payload_has_field( $field_name ) ? $this->request_data['payload'][$field_name] : null;
 	}
 
+	/**
+	 * @param $field_name
+	 * @return bool
+	 */
 	public function payload_has_field($field_name ) {
 		return $this->has_payload() && isset($this->request_data['payload'][$field_name]);
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function has_payload() {
 		return isset($this->request_data['payload']);
 	}
 
+	/**
+	 * @param $provider
+	 * @return void
+	 */
 	public function change_provider( $provider ) {
 		$this->changed_provider = $provider;
 	}
@@ -121,6 +136,10 @@ class Form_Data_Request {
 		return true;
 	}
 
+	/**
+	 * @param $fields_name
+	 * @return bool
+	 */
 	public function payload_has_fields( $fields_name ) {
 		foreach ($fields_name as $field_name) {
 			if( !$this->payload_has_field($field_name) ) {
@@ -141,6 +160,11 @@ class Form_Data_Request {
 		return in_array( $this->get( $field_name ), $values, true );
 	}
 
+	/**
+	 * @param $field_name
+	 * @param $values
+	 * @return bool
+	 */
 	public function payload_field_has( $field_name, $values ) {
 		return in_array( $this->get_payload_field( $field_name ), $values, true );
 	}
@@ -155,6 +179,10 @@ class Form_Data_Request {
 		return self::sanitize_array_map_deep($data);
 	}
 
+	/**
+	 * @param $array
+	 * @return array|string
+	 */
 	public static function sanitize_array_map_deep($array)
 	{
 		$new = array();

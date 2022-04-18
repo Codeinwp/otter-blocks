@@ -117,7 +117,7 @@ class Form_Data_Response {
 	}
 
 	/**
-	 * Get errror reasons.
+	 * Get error reasons.
 	 *
 	 * @return string
 	 */
@@ -127,7 +127,7 @@ class Form_Data_Response {
 
     /**
      * Set the response.
-     * @param array $response
+     * @param array $response Get the response.
      * @return $this
      */
 	public function set_response( $response ) {
@@ -137,7 +137,7 @@ class Form_Data_Response {
 
     /**
      * Add new data to the response.
-     * @param array $values
+     * @param array $values The new data.
      * @return $this
      */
     public function add_values( $values ) {

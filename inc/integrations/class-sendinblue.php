@@ -197,9 +197,11 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 		return $this->get_lists();
 	}
 
+	/**
+	 * @return bool
+	 */
     public function check_credential_status()
     {
-        // TODO: Implement check_credential_status() method.
         $url      = 'https://api.sendinblue.com/v3/contacts/lists';
         $args = array(
             'method'  => 'GET',

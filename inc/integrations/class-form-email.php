@@ -47,10 +47,10 @@ class Form_Email
 
     /**
      * Create the email content.
-     * @param $email_data
+     * @param $form_data The form request data.
      * @return false|string
      */
-	public function build_email( $email_data ) {
+	public function build_email( $form_data ) {
 		ob_start(); ?>
 		<!doctype html>
 		<html xmlns="http://www.w3.org/1999/xhtml">
@@ -63,8 +63,8 @@ class Form_Email
 		</head>
 		<body>
         <?php
-        apply_filters('otter_form_email_head', $email_data);
-        apply_filters('otter_form_email_body', $email_data);
+        apply_filters('otter_form_email_head', $form_data);
+        apply_filters('otter_form_email_body', $form_data);
         ?>
 		</body>
 		</html>
@@ -89,11 +89,11 @@ class Form_Email
 
     /**
      * Create the content for the email body.
-     * @param Form_Data_Request $email_data
+     * @param Form_Data_Request $form_data The form request data.
      * @return void
      */
-	public function build_body( $email_data ) {
-		$emailFormContent = $email_data->get_form_inputs();
+	public function build_body($form_data ) {
+		$emailFormContent = $form_data->get_form_inputs();
 		ob_start(); ?>
         <table>
         <tbody>
@@ -125,7 +125,12 @@ class Form_Email
 		echo ob_get_clean();
 	}
 
-    public function build_error_email( $error, $email_data ) {
+	/**
+	 * @param string $error The error message.
+	 * @param Form_Data_Request $form_data The form request data.
+	 * @return false|string
+	 */
+    public function build_error_email( $error, $form_data ) {
         ob_start(); ?>
         <!doctype html>
         <html xmlns="http://www.w3.org/1999/xhtml">
@@ -145,7 +150,7 @@ class Form_Email
             <h3> <?php esc_html__( 'Submitted form content', 'otter-blocks' ) ?> </h3>
             <div style="padding: 10px; border: 1px dashed black;">
                 <?php
-                do_action('otter_form_email_body', $email_data);
+                do_action('otter_form_email_body', $form_data);
                 ?>
             </div>
         </div>

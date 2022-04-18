@@ -95,6 +95,11 @@ class Form_Providers
 		return false;
 	}
 
+	/**
+	 * @param $provider
+	 * @param $handler
+	 * @return bool
+	 */
 	public static function provider_has_handler( $provider, $handler ) {
 		return array_key_exists($handler, $provider);
 	}
