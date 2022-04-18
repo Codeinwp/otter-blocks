@@ -44,12 +44,15 @@ const LottiePlayer = ({
 			autoplay
 			count={ attributes.count }
 			speed={ attributes.speed }
+			background={ attributes.backgroundColor || attributes.backgroundGradient }
 			direction={ attributes.direction ? -1 : 1 }
 			style={ {
-				width: attributes.width,
+				width: ( attributes.width && '%' !== attributes.width.toString().slice( -1 ) ) ? `${ attributes.width }px` : false,
+				maxWidth: ( attributes.width && '%' === attributes.width.toString().slice( -1 ) ) ? `${ attributes.width }` : false,
 				height: 'auto'
 			} }
 			mode="normal"
+			{ ...( attributes.ariaLabel && { 'aria-label': attributes.ariaLabel }) }
 		>
 		</lottie-player>
 	);

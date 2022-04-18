@@ -61,6 +61,7 @@
 		"@wordpress/components": "^19.6.0",
 		"@wordpress/compose": "^5.2.0",
 		"@wordpress/data": "^6.4.0",
+		"@wordpress/dom-ready": "^3.5.0",
 		"@wordpress/element": "^4.2.0",
 		"@wordpress/i18n": "^4.5.0",
 		"@wordpress/scripts": "^19.2.2",

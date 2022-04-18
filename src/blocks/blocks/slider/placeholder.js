@@ -3,6 +3,8 @@
  */
 import { debounce } from 'lodash';
 
+import { useCallback } from '@wordpress/element';
+
 import { MediaPlaceholder } from '@wordpress/block-editor';
 
 const BlockPlaceholder = ({
@@ -12,7 +14,7 @@ const BlockPlaceholder = ({
 	value = {},
 	onSelectImages
 }) => {
-	const selectImages = debounce( onSelectImages, 250 );
+	const selectImages = useCallback( () => debounce( onSelectImages, 250 ), []);
 
 	return (
 		<MediaPlaceholder

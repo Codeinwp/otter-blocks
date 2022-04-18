@@ -300,7 +300,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 		if ( stickyPosition ) {
 
 			// Make de element sticky
-			elem.classList.add( 'is-sticky' );
+			elem.classList.add( 'o-is-sticky' );
 			elem.style.left = elemLeftPositionInPage + 'px';
 			elem.style.width = width + 'px';
 			elem.style.position = 'fixed';
@@ -343,7 +343,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 		} else {
 
 			// Clean up the sticky option from the element when is not active
-			elem.classList.remove( 'is-sticky' );
+			elem.classList.remove( 'o-is-sticky' );
 			elem.style.top = '';
 			elem.style.left = '';
 			elem.style.transform = '';
