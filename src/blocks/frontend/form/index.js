@@ -276,7 +276,7 @@ domReady( () => {
 
 	forms.forEach( ( form ) => {
 		if ( form.classList.contains( 'can-submit-and-subscribe' ) ) {
-			console.log("Consent")
+			console.log( 'Consent' );
 			renderConsentCheckbox( form );
 		}
 

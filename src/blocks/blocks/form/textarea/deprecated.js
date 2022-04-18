@@ -64,7 +64,7 @@ const deprecated = [ {
 					rows={ 10 }
 					className="otter-form-textarea-input"
 				>
-			</textarea>
+				</textarea>
 			</div>
 		);
 	}
