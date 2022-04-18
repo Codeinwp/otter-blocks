@@ -145,6 +145,8 @@ class Form_Email
         <h3><?php esc_html__( 'An error has occurred when a user submitted the form.', 'otter-blocks' ) ?></h3>
         <div style="background-color: #AAAAAA;padding: 10px;">
             <span style="color: red;"> <?php esc_html__( 'Error: ', 'otter-blocks' ) ?> </span> <?php esc_html__( $error, 'otter-blocks' ) ?>
+			<br/>
+			<p> <?php esc_html__( 'Please check your Form credential from the email provider.', 'otter-blocks' ) ?></p>
         </div>
         <div>
             <h3> <?php esc_html__( 'Submitted form content', 'otter-blocks' ) ?> </h3>

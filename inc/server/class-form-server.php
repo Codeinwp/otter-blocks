@@ -211,6 +211,11 @@ class Form_Server {
 			// Send the data to the provider handler.
 			$provider_response = $provider_handlers[$form_data->get('handler')]($form_data);
 
+			// Handle the case when the credential are no longer valid.
+			if( method_exists($provider_response, 'is_credential_error') && $provider_response->is_credential_error() ) {
+				self::send_error_email( $provider_response->get_error(), $form_data );
+			}
+
 			do_action( 'otter_form_after_submit', $form_data);
 
 			return $provider_response;
@@ -298,13 +303,13 @@ class Form_Server {
 	}
 
 	/**
+	 * Send an email about error, like: the integration api key is no longer valid.
+	 *
 	 * @param string $error The error message.
 	 * @param Form_Data_Request $form_data The form request data.
 	 * @return void
 	 */
     public static function send_error_email( $error, $form_data ) {
-
-		// TODO: use this signal errors, like: the integration api key is no longer valid.
         $email_subject = ( __( 'An error with the Form blocks has occurred on  ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
         $email_body    = Form_Email::instance()->build_error_email($error, $form_data);
         // Sent the form date to the admin site as a default behaviour.

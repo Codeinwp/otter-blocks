@@ -24,6 +24,11 @@ class Form_Data_Response {
 	protected $response = array();
 
 	/**
+	 * Mark if the error is related to api key issues.
+	 */
+	protected $is_credential_error = false;
+
+	/**
 	 * Constructor.
 	 *
 	 * @access public
@@ -151,4 +156,22 @@ class Form_Data_Response {
     public function has_error() {
         return isset($this->response['error']);
     }
+
+	/**
+	 * @return bool
+	 */
+	public function is_credential_error()
+	{
+		return $this->is_credential_error;
+	}
+
+	/**
+	 * @param bool $is_credential_error
+	 * @return Form_Data_Response
+	 */
+	public function set_is_credential_error($is_credential_error)
+	{
+		$this->is_credential_error = $is_credential_error;
+		return $this;
+	}
 }
