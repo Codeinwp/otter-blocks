@@ -225,7 +225,7 @@ class Form_Server {
 
 
 	/**
-	 * Send Email using SMTP
+	 * Send Email using SMTP.
 	 *
 	 * @param Form_Data_Request $data Data from request body.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
@@ -269,9 +269,8 @@ class Form_Server {
 	}
 
 	/**
-	 * Make additional changes before using the main handler function for submitting
+	 * Make additional changes before using the main handler function for submitting.
 	 * @param Form_Data_Request $form_data
-	 * @return Form_Data_Request
 	 */
 	public function before_submit( $form_data ) {
 		if( $form_data->payload_has_field('consent')
@@ -386,7 +385,7 @@ class Form_Server {
                 if ( $valid_api_key['valid'] ) {
                     $res->copy( $service->subscribe( $email ) );
 
-					// Add additional data like: redirect link when the request is successful
+					// Add additional data like: redirect link when the request is successful.
                     $res->add_values( $form_options->get_submit_data() );
                 } else {
                     $res->set_error( $valid_api_key['reason'] );
@@ -404,7 +403,6 @@ class Form_Server {
 	/**
 	 * Check for required data.
 	 *
-	 * @access private
 	 * @param Form_Data_Request $data Data from the request.
 	 *
 	 * @return boolean
