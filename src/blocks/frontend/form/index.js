@@ -242,6 +242,33 @@ const cleanInputs = ( form ) => {
 	});
 };
 
+/**
+ * Render a checkbox for consent
+ *
+ * @param {HTMLDivElement} form
+ */
+const renderConsentCheckbox = ( form ) => {
+	const container = form.querySelector( '.otter-form__container' );
+	const button = form.querySelector( '.wp-block-button' );
+
+	const inputContainer = document.createElement( 'div' );
+	inputContainer.classList.add( 'otter-form-consent' );
+	container.insertBefore( inputContainer, button );
+
+	const input = document.createElement( 'input' );
+	input.type = 'checkbox';
+	input.name = 'o-consent';
+	input.id = 'o-consent';
+
+	const label = document.createElement( 'label' );
+	label.innerHTML = __( 'I consent that my name and email to be collected.', 'otter-blocks' );
+	label.htmlFor = 'o-consent';
+
+	inputContainer.appendChild( input );
+	inputContainer.appendChild( label );
+};
+
+
 domReady( () => {
 	const forms = document.querySelectorAll( '.wp-block-themeisle-blocks-form' );
 
@@ -249,6 +276,7 @@ domReady( () => {
 
 	forms.forEach( ( form ) => {
 		if ( form.classList.contains( 'can-submit-and-subscribe' ) ) {
+			console.log("Consent")
 			renderConsentCheckbox( form );
 		}
 
@@ -275,29 +303,3 @@ domReady( () => {
 		}
 	});
 });
-
-/**
- * Render a checkbox for consent
- *
- * @param {HTMLDivElement} form
- */
-const renderConsentCheckbox = ( form ) => {
-	const container = form.querySelector( '.otter-form__container' );
-	const button = form.querySelector( '.wp-block-button' );
-
-	const inputContainer = document.createElement( 'div' );
-	inputContainer.classList.add( 'otter-form-consent' );
-	container.insertBefore( inputContainer, button );
-
-	const input = document.createElement( 'input' );
-	input.type = 'checkbox';
-	input.name = 'consent';
-	input.id = 'consent';
-
-	const label = document.createElement( 'label' );
-	label.innerHTML = __( 'I consent that my name and email to be collected.', 'otter-blocks' );
-	label.htmlFor = 'consent';
-
-	inputContainer.appendChild( input );
-	inputContainer.appendChild( label );
-};

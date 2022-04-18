@@ -29,6 +29,13 @@ class Form_Data_Request {
 	protected $form_options = null;
 
 	/**
+	 * Var indicate the use of another provider.
+	 *
+	 * @var bool|string
+	 */
+	protected $changed_provider = false;
+
+	/**
 	 * Constructor.
 	 *
 	 * @access  public
@@ -67,6 +74,10 @@ class Form_Data_Request {
 
 	public function has_payload() {
 		return isset($this->request_data['payload']);
+	}
+
+	public function change_provider( $provider ) {
+		$this->changed_provider = $provider;
 	}
 
 	/**

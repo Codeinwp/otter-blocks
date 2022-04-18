@@ -192,7 +192,7 @@ class Form_Server {
 		// Verify the reCaptcha token.
 		if ( $form_data->payload_has_field( 'token' ) ) {
 			$result = apply_filters( 'otter_form_captcha_validation', $form_data );
-			if ( false == $result['success'] ) {
+			if (!$result['success']) {
 				$res->set_error( __( 'The reCaptcha was invalid!', 'otter-blocks' ) );
 				return $res->build_response();
 			}
@@ -202,12 +202,11 @@ class Form_Server {
 		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_payload_field( 'formOption' ) );
         $form_data->set_form_options($form_options);
 
+		do_action('otter_form_before_submit', $form_data);
 		// Select the submit function based on the provider.
         $provider_handlers = apply_filters('otter_select_form_provider', $form_data);
 
 		if( $provider_handlers && Form_Providers::provider_has_handler($provider_handlers, $form_data->get('handler')) ) {
-
-			do_action('otter_form_before_submit', $form_data);
 
 			// Send the data to the provider handler.
 			$provider_response = $provider_handlers[$form_data->get('handler')]($form_data);
@@ -218,6 +217,8 @@ class Form_Server {
 		} else {
 			$res->set_error( __( 'The email service provider was not registered!', 'otter-blocks' ) );
 		}
+
+		do_action( 'otter_form_after_submit', $form_data);
 
 		return $res->build_response();
 	}
@@ -273,9 +274,11 @@ class Form_Server {
 	 * @return Form_Data_Request
 	 */
 	public function before_submit( $form_data ) {
-
-		// It may be useful in the future. Kept for reference.
-		return $form_data;
+		if( $form_data->payload_has_field('consent')
+			&& ! $form_data->get_payload_field('consent')
+		) {
+			$form_data->change_provider('default');
+		}
 	}
 
 	/**
@@ -285,9 +288,14 @@ class Form_Server {
 	 */
 	public function after_submit( $form_data ) {
 		// Send also an email to the form editor/owner if he has opt-in for it.
-		if( 'submit-subscribe' === $form_data->get_form_options()->get_action() ) {
+		if(
+			'submit-subscribe' === $form_data->get_form_options()->get_action()
+			&& $form_data->payload_has_field('consent')
+			&& $form_data->get_payload_field('consent') === true
+		) {
 			$this->send_default_email($form_data);
 		}
+
 	}
 
     public static function send_error_email( $error, $form_data ) {

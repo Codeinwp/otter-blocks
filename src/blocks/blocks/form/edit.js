@@ -178,10 +178,7 @@ const Edit = ({
 	 * @param {Array} forms
 	 */
 	const extractDataFromWpOptions = forms => {
-		const currentForm = forms?.filter( ({ form }) => form === attributes.optionName ).pop();
-		if ( currentForm ) {
-			setSavedData( currentForm );
-		}
+		return forms?.filter( ({ form }) => form === attributes.optionName ).pop()
 	};
 
 	/**
@@ -197,15 +194,18 @@ const Edit = ({
 			api.loadPromise.then( () => {
 				( new api.models.Settings() ).fetch({ signal: controller.signal }).done( res => {
 					controller = null;
-					extractDataFromWpOptions( res.themeisle_blocks_form_emails );
-					res.themeisle_blocks_form_emails?.filter( ({ form }) => form === attributes.optionName )?.forEach( item => {
+					const formData = extractDataFromWpOptions( res.themeisle_blocks_form_emails );
+					if( formData ) {
 						setEmailLoading( true );
 						setFetchApiKeyStatus( 'loaded' );
-						if ( item?.integration?.provider ) {
-							setAttributes({ provider: item?.integration?.provider });
+						setApiKey(formData?.integration?.apiKey)
+						if ( formData?.integration?.provider ) {
+							setAttributes({ provider: formData?.integration?.provider });
+							setSavedData( formData );
 						}
-						clearTimeout( t );
-					});
+
+					}
+					clearTimeout( t );
 				});
 			});
 		}
@@ -315,11 +315,9 @@ const Edit = ({
 			setAPISaved( saved );
 			setGoogleCaptchaAPISecretKey( '' );
 			setGoogleCaptchaAPISiteKey( '' );
-			extractDataFromWpOptions( response.themeisle_blocks_form_emails );
-
 			createNotice(
 				'info',
-				__( 'API Keys have been saved.', 'otter-blocks' ),
+				__( 'Google reCaptcha API Keys have been saved.', 'otter-blocks' ),
 				{
 					isDismissible: true,
 					type: 'snackbar'
@@ -373,7 +371,6 @@ const Edit = ({
 				});
 
 				model.save().then( response => {
-					extractDataFromWpOptions( response.themeisle_blocks_form_emails );
 					setSavedIntegration( true );
 					if ( hasUpdatedNotice ) {
 						createNotice(
@@ -666,6 +663,15 @@ const Edit = ({
 										/>
 									)
 								}
+
+								{ 'submit-subscribe' === attributes.action && (
+									<div className="otter-form-consent">
+										<input id="o-consent" name="o-consent" type="checkbox" />
+										<label htmlFor="o-consent">
+											{ __( 'I consent that my name and email to be collected.', 'otter-blocks' ) }
+										</label>
+									</div>
+								) }
 
 								<div
 									className={
