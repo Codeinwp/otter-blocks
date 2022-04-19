@@ -130,6 +130,14 @@ const Inspector = ({
 							title={ __( 'Settings', 'otter-blocks' ) }
 							initialOpen={ true }
 						>
+							{
+								__( 'Make sure to have an email provider.', 'otter-blocks' )
+							}
+							<ExternalLink
+								href={'https://www.wpbeginner.com/plugins/how-to-set-up-wp-mail-smtp-with-any-host-ultimate-guide/'}
+							>
+								{ __( 'Learn more.', 'otter-blocks' ) }
+							</ExternalLink>
 							<TextControl
 								label={ __( 'Submit Button Label', 'otter-blocks' ) }
 								placeholder={ __( 'Submit', 'otter-blocks' ) }
