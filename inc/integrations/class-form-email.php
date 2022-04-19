@@ -43,6 +43,11 @@ class Form_Email
          * Add action that render the email's body.
          */
 		add_filter('otter_form_email_body', array($this, 'build_body'));
+
+		/**
+		 * Add action that render the email's body for errors.
+		 */
+		add_filter('otter_form_email_body_error', array($this, 'build_error_body'), 1, 2);
 	}
 
     /**
@@ -74,7 +79,6 @@ class Form_Email
 
     /**
      * Create the content for the email header.
-     * @return void
      */
 	public function build_head() {
 		ob_start(); ?>
@@ -84,13 +88,12 @@ class Form_Email
 		</h3>
 		<hr/>
 		<?php
-		echo ob_get_clean();
+		return ob_get_clean();
 	}
 
     /**
      * Create the content for the email body.
      * @param Form_Data_Request $form_data The form request data.
-     * @return void
      */
 	public function build_body($form_data ) {
 		$emailFormContent = $form_data->get_form_inputs();
@@ -122,7 +125,7 @@ class Form_Email
             </tfoot>
         </table>
 		<?php
-		echo ob_get_clean();
+		return ob_get_clean();
 	}
 
 	/**
@@ -142,17 +145,14 @@ class Form_Email
             <title><?php esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ); ?></title>
         </head>
         <body>
-        <h3><?php esc_html__( 'An error has occurred when a user submitted the form.', 'otter-blocks' ) ?></h3>
-        <div style="background-color: #AAAAAA;padding: 10px;">
-            <span style="color: red;"> <?php esc_html__( 'Error: ', 'otter-blocks' ) ?> </span> <?php esc_html__( $error, 'otter-blocks' ) ?>
-			<br/>
-			<p> <?php esc_html__( 'Please check your Form credential from the email provider.', 'otter-blocks' ) ?></p>
-        </div>
+		<?php
+		apply_filters('otter_form_email_body_error', $error, $form_data);
+		?>
         <div>
             <h3> <?php esc_html__( 'Submitted form content', 'otter-blocks' ) ?> </h3>
             <div style="padding: 10px; border: 1px dashed black;">
                 <?php
-                do_action('otter_form_email_body', $form_data);
+				apply_filters('otter_form_email_body', $form_data);
                 ?>
             </div>
         </div>
@@ -161,6 +161,24 @@ class Form_Email
         <?php
         return ob_get_clean();
     }
+
+	/**
+	 * @param string $error The error message.
+	 * @param Form_Data_Request $form_data The form request data.
+	 * @return false|string
+	 */
+	public function build_error_body( $error, $form_data ) {
+		ob_start();  ?>
+		<h3><?php esc_html__( 'An error has occurred when a user submitted the form.', 'otter-blocks' ) ?></h3>
+		<div style="padding: 10px;">
+			<span style="color: red;"> <?php esc_html__( 'Error: ', 'otter-blocks' ) ?> </span>
+			<?php esc_html__( $error, 'otter-blocks' ) ?>
+			<br/>
+			<p> <?php esc_html__( 'Please check your Form credential from the email provider.', 'otter-blocks' ) ?></p>
+		</div>
+		<?php
+		return ob_get_clean();
+	}
 
 
 	/**

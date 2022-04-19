@@ -211,11 +211,6 @@ class Form_Server {
 			// Send the data to the provider handler.
 			$provider_response = $provider_handlers[$form_data->get('handler')]($form_data);
 
-			// Handle the case when the credential are no longer valid.
-			if( method_exists($provider_response, 'is_credential_error') && $provider_response->is_credential_error() ) {
-				self::send_error_email( $provider_response->get_error(), $form_data );
-			}
-
 			do_action( 'otter_form_after_submit', $form_data);
 
 			return $provider_response;
@@ -359,13 +354,13 @@ class Form_Server {
 	}
 
     /**
-     * @param Form_Data_Request $data
+     * @param Form_Data_Request $form_data
      * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
-	public function subscribe_to_service( $data ) {
+	public function subscribe_to_service($form_data ) {
 		$res = new Form_Data_Response();
 		// Get the first email from form.
-		$email = $this->get_email_from_form_input($data);
+		$email = $this->get_email_from_form_input($form_data);
 
 		if ( '' === $email ) {
 			$res->set_error( 'No email provided!' );
@@ -374,7 +369,7 @@ class Form_Server {
 
         try {
             // Get the api credentials from the Form block.
-            $form_options = $data->get_form_options();
+            $form_options = $form_data->get_form_options();
 
             $issues = $form_options->check_data();
 
@@ -407,6 +402,10 @@ class Form_Server {
         } catch (Exception $e) {
             $res->set_error( __('Server error!') );
         } finally {
+			// Handle the case when the credential are no longer valid.
+			if( $res->is_credential_error() ) {
+				self::send_error_email( $res->get_error(), $form_data );
+			}
             return $res->build_response();
         }
 	}
