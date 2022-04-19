@@ -261,7 +261,7 @@ const renderConsentCheckbox = ( form ) => {
 	input.id = 'o-consent';
 
 	const label = document.createElement( 'label' );
-	label.innerHTML = __( 'I consent that my name and email to be collected.', 'otter-blocks' );
+	label.innerHTML = __( 'I have read and agreed the privacy statement.', 'otter-blocks' );
 	label.htmlFor = 'o-consent';
 
 	inputContainer.appendChild( input );

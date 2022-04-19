@@ -668,7 +668,7 @@ const Edit = ({
 									<div className="otter-form-consent">
 										<input id="o-consent" name="o-consent" type="checkbox" />
 										<label htmlFor="o-consent">
-											{ __( 'I consent that my name and email to be collected.', 'otter-blocks' ) }
+											{ __( 'I have read and agreed the privacy statement.', 'otter-blocks' ) }
 										</label>
 									</div>
 								) }
