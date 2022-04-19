@@ -9,6 +9,7 @@ type Attributes = {
 	tumblr: boolean
 	reddit: boolean
 	gap: string
+	borderRadius: string
 }
 
 export type SharingIconsProps = BlockProps<Attributes>

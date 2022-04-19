@@ -41,6 +41,7 @@ const Edit = ({
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 	const styles = css`
 		--itemsGap: ${ getValue( 'gap' ) };
+		--borderRadius: ${ getValue( 'borderRadius' ) };
 	`;
 
 	const blockProps = useBlockProps({

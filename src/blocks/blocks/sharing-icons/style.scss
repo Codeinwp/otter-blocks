@@ -9,7 +9,7 @@
 		position: relative;
 		padding: 12px;
 		border: none;
-		border-radius: 3px;
+		border-radius: var(--borderRadius, 0);
 		white-space: normal;
 		letter-spacing: 0;
 		display: inline-block;

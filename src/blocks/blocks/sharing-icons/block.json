@@ -38,6 +38,10 @@
 		"gap" : {
 			"type": "string",
 			"default": "5px"
+		},
+		"borderRadius": {
+			"type": "string",
+			"default": "3px"
 		}
 	},
 	"styles": [

@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { Fragment, useState } from '@wordpress/element';
+import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { PanelBody, RangeControl } from '@wordpress/components';
 import { InspectorControls } from '@wordpress/block-editor';
@@ -15,17 +15,20 @@ const Inspector = ({
 	attributes,
 	setAttributes
 }) => {
-	const [ gap, setGap ] = useState( parseInt( attributes.gap.split( 'px' )[0]) );
-
-	const onChangeGap = value => {
+	const onChangeValue = ( value, name ) => {
+		let newAttributes = {};
 		if ( value === undefined ) {
-			setGap( parseInt( metadata.attributes.gap.default.split( 'px' )[0]) );
-			setAttributes({ gap: metadata.attributes.gap.default });
+			newAttributes[name] = metadata.attributes[name].default;
+			setAttributes( newAttributes );
 			return;
 		}
 
-		setGap( value );
-		setAttributes({ gap: `${value}px` });
+		newAttributes[name] = `${ value }px`;
+		setAttributes( newAttributes );
+	};
+
+	const extractNumber = value => {
+		return parseInt( value.match( /\d+/g )[0]);
 	};
 
 	return <Fragment>
@@ -34,11 +37,18 @@ const Inspector = ({
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>
 				<RangeControl
-					label={ __( 'Items gap (px)', 'otter-blocks' ) }
-					value={ gap }
-					onChange={ onChangeGap }
+					label={ __( 'Items Gap', 'otter-blocks' ) }
+					value={ extractNumber( attributes.gap ) }
+					onChange={ value => onChangeValue( value, 'gap' ) }
 					allowReset
 					max={ 20 }
+				/>
+				<RangeControl
+					label={ __( 'Icons Border Badius', 'otter-blocks' ) }
+					value={ extractNumber( attributes.borderRadius ) }
+					onChange={ value => onChangeValue( value, 'borderRadius' ) }
+					allowReset
+					max={ 100 }
 				/>
 			</PanelBody>
 		</InspectorControls>

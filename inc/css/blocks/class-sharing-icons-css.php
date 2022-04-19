@@ -38,49 +38,10 @@ class Sharing_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--itemsGap',
 						'value'    => 'gap',
-						'hasSync'  => 'sharingItemsGap',
 					),
-				),
-			)
-		);
-
-		return $css->generate();
-	}
-
-	/**
-	 * Generate Sharing Icons Global CSS
-	 *
-	 * @return string
-	 * @since   2.0.0
-	 * @access  public
-	 */
-	public function render_global_css() {
-		$defaults = get_option( 'themeisle_blocks_settings_global_defaults' );
-		$block    = $this->library_prefix . '/' . $this->block_prefix;
-
-		if ( empty( $defaults ) ) {
-			return;
-		}
-
-		$defaults = json_decode( $defaults, true );
-
-		if ( ! isset( $defaults[ $block ] ) ) {
-			return;
-		}
-
-		$block = array(
-			'attrs' => $defaults[ $block ],
-		);
-
-		$css = new CSS_Utility( $block );
-
-		$css->add_item(
-			array(
-				'selector'   => '.wp-block-themeisle-blocks-sharing-icons',
-				'properties' => array(
 					array(
-						'property' => '--sharingItemsGap',
-						'value'    => 'gap',
+						'property' => '--borderRadius',
+						'value'    => 'borderRadius',
 					),
 				),
 			)
