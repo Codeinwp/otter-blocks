@@ -367,6 +367,16 @@ class Form_Server {
 			return $res->build_response();
 		}
 
+		if(
+			'submit-subscribe' === $form_data->get_form_options()->get_action()
+			&& $form_data->payload_has_field('consent')
+			&& ! $form_data->get_payload_field('consent')
+		) {
+			// TODO: should the consent be mandatory?
+			$res->set_error( 'No consent to subscribe!' );
+			return $res->build_response();
+		}
+
         try {
             // Get the api credentials from the Form block.
             $form_options = $form_data->get_form_options();

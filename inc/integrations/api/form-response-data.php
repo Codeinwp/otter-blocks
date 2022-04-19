@@ -26,7 +26,7 @@ class Form_Data_Response {
 	/**
 	 * Mark if the error is related to api key issues.
 	 */
-	protected $is_credential_error = true;
+	protected $is_credential_error = true; // TODO: set to false after solving the rendering issue
 
 	/**
 	 * Constructor.
