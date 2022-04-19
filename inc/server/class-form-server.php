@@ -108,6 +108,8 @@ class Form_Server {
 
 		add_action( 'otter_form_before_submit', array( $this, 'before_submit' ));
 		add_action( 'otter_form_after_submit', array( $this, 'after_submit' ) );
+		add_filter( 'otter_form_email_build_body', array( $this, 'build_email_content') );
+		add_filter( 'otter_form_email_build_body_error', array( $this, 'build_email_error_content'), 1, 2 );
 	}
 
 	/**
@@ -227,23 +229,24 @@ class Form_Server {
 	/**
 	 * Send Email using SMTP.
 	 *
-	 * @param Form_Data_Request $data Data from request body.
+	 * @param Form_Data_Request $form_data Data from request body.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
-	public function send_default_email( $data ) {
+	public function send_default_email($form_data ) {
 		$res = new Form_Data_Response();
 
-        $form_options = $data->get_form_options();
+        $form_options  = $form_data->get_form_options();
 		$email_subject = isset($form_options) && $form_options->has_email_subject() ? $form_options->get_email_subject() : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
 
-		$email_body    = Form_Email::instance()->build_email($data);
+		$email_message  = Form_Email::instance()->build_email($form_data);
+		$email_body     = apply_filters( 'otter_form_email_build_body', $email_message );
 
 		// Sent the form date to the admin site as a default behaviour.
 		$to = sanitize_email( get_site_option( 'admin_email' ) );
 
 		// Check if we need to send it to another user email.
-		if ( $data->is_set( 'formOption' ) ) {
-			$option_name = $data->is_set( 'formOption' );
+		if ( $form_data->is_set( 'formOption' ) ) {
+			$option_name = $form_data->is_set( 'formOption' );
 			$form_emails = get_option( 'themeisle_blocks_form_emails' );
 
 			foreach ( $form_emails as $form ) {
@@ -262,7 +265,7 @@ class Form_Server {
 		} catch (Exception  $e ) {
 			$res->set_error( $e->getMessage() );
 		} finally {
-            $form_options = $data->get_form_options();
+            $form_options = $form_data->get_form_options();
             $res->add_values( $form_options->get_submit_data() );
 			return $res->build_response();
 		}
@@ -306,7 +309,8 @@ class Form_Server {
 	 */
     public static function send_error_email( $error, $form_data ) {
         $email_subject = ( __( 'An error with the Form blocks has occurred on  ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
-        $email_body    = Form_Email::instance()->build_error_email($error, $form_data);
+        $email_message = Form_Email::instance()->build_error_email($error, $form_data);
+		$email_body    = apply_filters( 'otter_form_email_build_body_error', $error, $email_message );
         // Sent the form date to the admin site as a default behaviour.
         $to = sanitize_email( get_site_option( 'admin_email' ) );
         $headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . esc_url( get_site_url() ) );
@@ -414,7 +418,7 @@ class Form_Server {
         } finally {
 			// Handle the case when the credential are no longer valid.
 			if( $res->is_credential_error() ) {
-				self::send_error_email( $res->get_error(), $form_data );
+				self::send_error_email( "error", $form_data );
 			}
             return $res->build_response();
         }
@@ -515,6 +519,23 @@ class Form_Server {
 		}
 
 		return self::$instance;
+	}
+
+	/**
+	 * @param string $content
+	 * @return string
+	 */
+	public function build_email_content( $content ) {
+		return $content;
+	}
+
+	/**
+	 * @param string $error
+	 * @param string $content
+	 * @return string
+	 */
+	public function build_email_error_content( $error, $content ) {
+		return $content;
 	}
 
 	/**

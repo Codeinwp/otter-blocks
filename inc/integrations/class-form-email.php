@@ -37,17 +37,17 @@ class Form_Email
         /**
          * Add action that render the email's header.
          */
-		add_filter('otter_form_email_head', array($this, 'build_head'));
+		add_action('otter_form_email_render_head', array($this, 'build_head'));
 
         /**
          * Add action that render the email's body.
          */
-		add_filter('otter_form_email_body', array($this, 'build_body'));
+		add_action('otter_form_email_render_body', array($this, 'build_body'));
 
 		/**
 		 * Add action that render the email's body for errors.
 		 */
-		add_filter('otter_form_email_body_error', array($this, 'build_error_body'), 1, 2);
+		add_action('otter_form_email_render_body_error', array($this, 'build_error_body'));
 	}
 
     /**
@@ -68,8 +68,8 @@ class Form_Email
 		</head>
 		<body>
         <?php
-        apply_filters('otter_form_email_head', $form_data);
-        apply_filters('otter_form_email_body', $form_data);
+        do_action('otter_form_email_render_head', $form_data);
+		do_action('otter_form_email_render_body', $form_data);
         ?>
 		</body>
 		</html>
@@ -88,7 +88,7 @@ class Form_Email
 		</h3>
 		<hr/>
 		<?php
-		return ob_get_clean();
+		echo ob_get_clean();
 	}
 
     /**
@@ -125,7 +125,7 @@ class Form_Email
             </tfoot>
         </table>
 		<?php
-		return ob_get_clean();
+		echo ob_get_clean();
 	}
 
 	/**
@@ -142,17 +142,17 @@ class Form_Email
             <!-- view port meta tag -->
             <meta name="viewport" content="width=device-width, initial-scale=1">
             <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-            <title><?php esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ); ?></title>
+            <title><?php echo esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ); ?></title>
         </head>
         <body>
 		<?php
-		apply_filters('otter_form_email_body_error', $error, $form_data);
+		do_action('otter_form_email_render_body_error', $error);
 		?>
         <div>
-            <h3> <?php esc_html__( 'Submitted form content', 'otter-blocks' ) ?> </h3>
+            <h3> <?php esc_html_e( 'Submitted form content', 'otter-blocks' ) ?> </h3>
             <div style="padding: 10px; border: 1px dashed black;">
                 <?php
-				apply_filters('otter_form_email_body', $form_data);
+				do_action('otter_form_email_render_body', $form_data);
                 ?>
             </div>
         </div>
@@ -164,20 +164,18 @@ class Form_Email
 
 	/**
 	 * @param string $error The error message.
-	 * @param Form_Data_Request $form_data The form request data.
-	 * @return false|string
 	 */
-	public function build_error_body( $error, $form_data ) {
+	public function build_error_body( $error ) {
 		ob_start();  ?>
-		<h3><?php esc_html__( 'An error has occurred when a user submitted the form.', 'otter-blocks' ) ?></h3>
+		<h3><?php esc_html_e( 'An error has occurred when a user submitted the form.', 'otter-blocks' ) ?></h3>
 		<div style="padding: 10px;">
-			<span style="color: red;"> <?php esc_html__( 'Error: ', 'otter-blocks' ) ?> </span>
-			<?php esc_html__( $error, 'otter-blocks' ) ?>
+			<span style="color: red;"> <?php esc_html_e( 'Error: ', 'otter-blocks' ) ?> </span>
+			<?php echo esc_html( $error ) ?>
 			<br/>
-			<p> <?php esc_html__( 'Please check your Form credential from the email provider.', 'otter-blocks' ) ?></p>
+			<p> <?php esc_html_e( 'Please check your Form credential from the email provider.', 'otter-blocks' ) ?></p>
 		</div>
 		<?php
-		return ob_get_clean();
+		echo ob_get_clean();
 	}
 
 
