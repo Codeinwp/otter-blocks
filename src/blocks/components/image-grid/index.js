@@ -8,8 +8,6 @@ import {
 	MediaUploadCheck
 } from '@wordpress/block-editor';
 
-import { useCallback } from '@wordpress/element';
-
 /**
  * Internal dependencies
  */
@@ -20,7 +18,7 @@ const ImageGrid = ({
 	attributes,
 	onSelectImages
 }) => {
-	const selectImages = useCallback( () => debounce( onSelectImages, 250 ), []);
+	const selectImages =  debounce( onSelectImages, 250 );
 
 	return (
 		<MediaUploadCheck>

@@ -39,7 +39,6 @@ const options = {
 	threshold: [ 0.0 ]
 };
 
-
 /**
  * Slider component
  * @param {import('./types').SliderProps} props
