@@ -120,7 +120,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 
 			$res->set_error( ! empty( $body['message'] ) && 'null' !== $body['message'] ? $body['message'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'sendinblue' );
 
-			if ( isset( $body['code'] ) && 'unauthorized' === $body['code'] ) {
+			if ( isset( $body['code'] ) ) {
 				$res->set_error( $body['message'], 'sendinblue' )->set_is_credential_error($this->is_credential_error($body['code']));
 			}
 		} else {
@@ -219,6 +219,6 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 * @return bool
 	 */
 	private function is_credential_error( $response_code ) {
-		return in_array( $response_code, array( 'unauthorized', 'reseller_permission_denied', 'not_enough_credits', 'account_under_validation', permission_denied));
+		return in_array( $response_code, array( 'unauthorized', 'reseller_permission_denied', 'not_enough_credits', 'account_under_validation', 'permission_denied' ));
 	}
 }

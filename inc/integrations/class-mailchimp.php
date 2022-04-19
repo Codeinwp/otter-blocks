@@ -121,7 +121,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-			$res->set_error( ! empty( $body['detail'] ) && 'null' !== $body['detail'] ? $body['detail'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'mailchimp' );
+			$res->set_error( ! empty( $body['detail'] ) && 'null' !== $body['detail'] ? $body['detail'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'mailchimp' )->set_is_credential_error($this->is_credential_error($body['status']));;
 		} else {
 			$res->mark_as_success();
 		}
@@ -242,4 +242,12 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
         $response = wp_remote_get( $url, $args );
         return ! is_wp_error( $response );
     }
+
+	/**
+	 * @param int $response_code The response code.
+	 * @return bool
+	 */
+	private function is_credential_error( $response_code ) {
+		return in_array( $response_code, array( 401, 403, 404, 500 ));
+	}
 }
