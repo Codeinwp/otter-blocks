@@ -336,9 +336,6 @@ const Edit = ({
 
 	useEffect( () => {
 		if ( markersStore ) {
-
-			// setAttributes({ markers: markersStore.map( ({ markerProps }) => markerProps ) });
-
 			markersStore.forEach( marker => {
 				if ( ! map.hasLayer( marker ) ) {
 					map.addLayer( marker );
