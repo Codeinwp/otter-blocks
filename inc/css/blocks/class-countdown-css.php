@@ -129,17 +129,17 @@ class Countdown_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property' => 'gap',
+						'property' => '--gap',
 						'value'    => 'gap',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => 'gap',
+						'property' => '--gapTablet',
 						'value'    => 'gapTablet',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => 'gap',
+						'property' => '--gapMobile',
 						'value'    => 'gapMobile',
 						'unit'     => 'px',
 					),
