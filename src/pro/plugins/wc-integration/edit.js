@@ -57,7 +57,7 @@ const Edit = ({
 			results,
 			status
 		};
-	});
+	}, [ props.attributes.product ]);
 
 	return (
 		<Fragment>
