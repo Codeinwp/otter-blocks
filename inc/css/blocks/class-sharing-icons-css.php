@@ -8,7 +8,6 @@
 namespace Themeisle\GutenbergBlocks\CSS\Blocks;
 
 use ThemeIsle\GutenbergBlocks\Base_CSS;
-
 use ThemeIsle\GutenbergBlocks\CSS\CSS_Utility;
 
 /**
@@ -24,11 +23,10 @@ class Sharing_Icons_CSS extends Base_CSS {
 	public $block_prefix = 'sharing-icons';
 
 	/**
-	 * Generate Review CSS
+	 * Generate Sharing Icons CSS
 	 *
 	 * @param mixed $block Block data.
 	 * @return string
-	 * @since   1.3.0
 	 * @access  public
 	 */
 	public function render_css( $block ) {
@@ -40,7 +38,7 @@ class Sharing_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--itemsGap',
 						'value'    => 'gap',
-						'hasSync'  => 'sharingItemsGap'
+						'hasSync'  => 'sharingItemsGap',
 					),
 				),
 			)
@@ -50,7 +48,7 @@ class Sharing_Icons_CSS extends Base_CSS {
 	}
 
 	/**
-	 * Generate Accordion Global CSS
+	 * Generate Sharing Icons Global CSS
 	 *
 	 * @return string
 	 * @since   2.0.0

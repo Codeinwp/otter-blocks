@@ -1,10 +1,9 @@
 .wp-block-themeisle-blocks-sharing-icons {
 	display: flex;
-	gap: var(--itemsGap);
+	gap: var(--itemsGap, 5px);
 	margin: 10px 0;
 
 	.social-icon {
-		background: #999999;
 		color: #ffffff;
 		font-size: 14px;
 		position: relative;
@@ -18,7 +17,7 @@
 		vertical-align: middle;
 		touch-action: manipulation;
 		cursor: pointer;
-		background-image: none;
+		background: #999999 none;
 		line-height: 20px;
 
 		&.is-facebook {
