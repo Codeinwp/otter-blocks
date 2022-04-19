@@ -43,6 +43,10 @@ class Sharing_Icons_CSS extends Base_CSS {
 						'property' => '--borderRadius',
 						'value'    => 'borderRadius',
 					),
+					array(
+						'property' => '--textDeco',
+						'value'    => 'textDeco',
+					),
 				),
 			)
 		);

@@ -20,6 +20,8 @@
 		background: #999999 none;
 		line-height: 20px;
 
+		text-decoration: var(--textDeco, underline);
+
 		&.is-facebook {
 			background-color: #3b5998;
 			border-color: #3b5998;

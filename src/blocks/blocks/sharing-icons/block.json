@@ -42,6 +42,10 @@
 		"borderRadius": {
 			"type": "string",
 			"default": "3px"
+		},
+		"textDeco": {
+			"type": "string",
+			"default": "underline"
 		}
 	},
 	"styles": [

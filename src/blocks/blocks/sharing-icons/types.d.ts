@@ -10,6 +10,7 @@ type Attributes = {
 	reddit: boolean
 	gap: string
 	borderRadius: string
+	textDeco: string
 }
 
 export type SharingIconsProps = BlockProps<Attributes>

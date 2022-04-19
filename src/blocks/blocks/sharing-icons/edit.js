@@ -42,6 +42,7 @@ const Edit = ({
 	const styles = css`
 		--itemsGap: ${ getValue( 'gap' ) };
 		--borderRadius: ${ getValue( 'borderRadius' ) };
+		--textDeco: ${ getValue( 'textDeco' ) };
 	`;
 
 	const blockProps = useBlockProps({
