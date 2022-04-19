@@ -4,4 +4,6 @@ export interface IFormResponse {
 	reasons?: string[]
 	error?: string
 	error_source?: string
+	submitMessage: string
+	provider: string
 }

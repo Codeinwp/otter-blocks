@@ -376,8 +376,7 @@ class Form_Server {
 			&& $form_data->payload_has_field('consent')
 			&& ! $form_data->get_payload_field('consent')
 		) {
-			// TODO: should the consent be mandatory?
-			$res->set_error( 'No consent to subscribe!' );
+			$res->mark_as_success();
 			return $res->build_response();
 		}
 
