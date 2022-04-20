@@ -148,7 +148,7 @@ const Inspector = ({
 								{ __( 'Send Test Email', 'otter-blocks' )  }
 							</Button>
 							<TextControl
-								label={ __( 'Submit Button Label', 'otter-blocks' ) }
+								label={ __( 'Button Label', 'otter-blocks' ) }
 								placeholder={ __( 'Submit', 'otter-blocks' ) }
 								value={ attributes.submitLabel }
 								onChange={ submitLabel => setAttributes({ submitLabel }) }
@@ -179,7 +179,7 @@ const Inspector = ({
 							/>
 
 							<SelectControl
-								label={ __( 'Submit Style', 'otter-blocks' ) }
+								label={ __( 'Button Style', 'otter-blocks' ) }
 								value={ attributes.submitStyle }
 								options={[
 									{
