@@ -58,41 +58,37 @@ const Inspector = ({
 }) => {
 
 	const {
-		isEmailLoaded,
 		listIDOptions,
 		setListIDOptions,
-		fetchListIdStatus,
-		setFetchListIdStatus,
-		savedEmail,
 		saveFormOptions,
 		email,
 		setEmail,
 		apiKey,
 		setApiKey,
 		saveIntegrationApiKey,
-		fetchApiKeyStatus,
-		savedIntegration,
 		saveIntegration,
-		savedData,
-		sendTestEmail
+		savedFormOptions,
+		sendTestEmail,
+		loadingState
 	} = useContext( FormContext );
 
 	const [ tab, setTab ] = useState( 'general' );
-
 	const formOptionsChanged = isChanged([
-		[ attributes.emailTo, savedData?.email ],
-		[ attributes.subject, savedData?.emailSubject ],
-		[ attributes.redirectLink, savedData?.redirectLink ],
-		[ attributes.fromName, savedData?.fromName ],
-		[ attributes.submitMessage, savedData?.submitMessage ],
-		[ attributes.hasCaptcha, savedData?.hasCaptcha ]
+		[ attributes.emailTo, savedFormOptions?.email ],
+		[ attributes.subject, savedFormOptions?.emailSubject ],
+		[ attributes.redirectLink, savedFormOptions?.redirectLink ],
+		[ attributes.fromName, savedFormOptions?.fromName ],
+		[ attributes.submitMessage, savedFormOptions?.submitMessage ],
+		[ attributes.hasCaptcha, savedFormOptions?.hasCaptcha ]
 	]);
 
 	const formIntegrationChanged = isChanged([
-		[ attributes.provider, savedData?.integration?.provider ],
-		[ attributes.listId, savedData?.integration?.listId ],
-		[ attributes.action, savedData?.integration?.action ]
+		[ attributes.provider, savedFormOptions?.integration?.provider ],
+		[ attributes.listId, savedFormOptions?.integration?.listId ],
+		[ attributes.action, savedFormOptions?.integration?.action ]
 	]);
+	console.log( loadingState, formOptionsChanged, formIntegrationChanged );
+
 
 	return (
 		<InspectorControls>
@@ -442,7 +438,7 @@ const Inspector = ({
 							>
 								<Fragment>
 									{
-										! isEmailLoaded && (
+										'saving' === loadingState?.formOptions && (
 											<Spinner />
 										)
 									}
@@ -453,9 +449,16 @@ const Inspector = ({
 							</Button>
 
 							{
-								formOptionsChanged && (
+								'done' === loadingState?.formOptions && formOptionsChanged && (
 									<div style={{ marginTop: '8px', borderLeft: '3px solid red', paddingLeft: '10px' }}>
 										{ __( 'You have made some modifications. Do not forget to save the options.', 'otter-blocks' ) }
+									</div>
+								)
+							}
+							{
+								'error' === loadingState?.formOptions && (
+									<div style={{ marginTop: '8px', borderLeft: '3px solid red', paddingLeft: '10px' }}>
+										{ __( 'An error has occurred while saving. Please try again.', 'otter-blocks' ) }
 									</div>
 								)
 							}
@@ -490,7 +493,7 @@ const Inspector = ({
 								attributes.provider && (
 									<Fragment>
 										{
-											'loading' === fetchApiKeyStatus ?
+											'loading' === loadingState?.apiKey ?
 												(
 													<Fragment>
 														<Spinner />
@@ -502,7 +505,6 @@ const Inspector = ({
 														help={ __( 'You can find the key in the provider\'s website', 'otter-blocks' ) }
 														value={ apiKey ? `*************************${apiKey.slice( -8 )}` : '' }
 														onChange={ apiKey => {
-															setFetchListIdStatus( 'loading' );
 															setListIDOptions([]);
 															setApiKey( apiKey );
 															setAttributes({
@@ -514,7 +516,7 @@ const Inspector = ({
 												)
 										}
 										{
-											apiKey && 2 > listIDOptions.length && 'loading' === fetchListIdStatus && (
+											apiKey && 2 > listIDOptions.length && 'loading' === loadingState?.listId && (
 												<Fragment>
 													<Spinner />
 													{ __( 'Fetching data from provider.', 'otter-blocks' ) }
@@ -522,11 +524,12 @@ const Inspector = ({
 											)
 										}
 										{
-											apiKey && 'error' === fetchListIdStatus && (
+											apiKey && 'error' === loadingState?.listId && (
 												<Fragment>
 													{ __( 'Invalid API Key. Please check your API Key in the provider\'s Dashboard.', 'otter-blocks' ) }
 													<ExternalLink
 														target="_blank"
+														style={{ marginLeft: '3px' }}
 														href={ 'sendinblue' === attributes.provider ? 'https://account.sendinblue.com/advanced/api' : 'https://us5.admin.mailchimp.com/account/api/'}
 													>
 														Go to Dashboard.
@@ -535,7 +538,14 @@ const Inspector = ({
 											)
 										}
 										{
-											apiKey && 'ready' === fetchListIdStatus && (
+											apiKey && 'timeout' === loadingState?.listId && (
+												<p>
+													{ __( 'Could no connect to the server. Please try again.', 'otter-blocks' ) }
+												</p>
+											)
+										}
+										{
+											apiKey && 'done' === loadingState?.listId && (
 												<Fragment>
 													<SelectControl
 														label={ __( 'Contact List', 'otter-blocks' ) }
@@ -572,29 +582,7 @@ const Inspector = ({
 																		</div>
 																	)
 																}
-																<Button
-																	isPrimary
-																	onClick={ saveIntegration }
-																>
-																	<Fragment>
-																		{
-																			! savedIntegration && (
-																				<Spinner />
-																			)
-																		}
-																		{
-																			__( 'Save', 'otter-blocks' )
-																		}
-																	</Fragment>
-																</Button>
 
-																{
-																	formIntegrationChanged && (
-																		<div style={{ marginTop: '8px', borderLeft: '3px solid red', paddingLeft: '10px' }}>
-																			{ __( 'You have made some modifications. Do not forget to save the options.', 'otter-blocks' ) }
-																		</div>
-																	)
-																}
 															</Fragment>
 														)
 													}
@@ -602,6 +590,36 @@ const Inspector = ({
 											)
 										}
 									</Fragment>
+								)
+							}
+							<Button
+								isPrimary
+								onClick={ saveIntegration }
+							>
+								<Fragment>
+									{
+										'saving' === loadingState?.formIntegration && (
+											<Spinner />
+										)
+									}
+									{
+										__( 'Save', 'otter-blocks' )
+									}
+								</Fragment>
+							</Button>
+
+							{
+								'done' === loadingState?.formIntegration && formIntegrationChanged && (
+									<div style={{ marginTop: '8px', borderLeft: '3px solid red', paddingLeft: '10px' }}>
+										{ __( 'You have made some modifications. Do not forget to save the options.', 'otter-blocks' ) }
+									</div>
+								)
+							}
+							{
+								'error' === loadingState?.formIntegration && (
+									<div style={{ marginTop: '8px', borderLeft: '3px solid red', paddingLeft: '10px' }}>
+										{ __( 'An error has occurred while saving. Please try again.', 'otter-blocks' ) }
+									</div>
 								)
 							}
 						</PanelBody>

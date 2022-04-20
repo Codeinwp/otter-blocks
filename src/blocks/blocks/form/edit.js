@@ -69,25 +69,24 @@ const Edit = ({
 }) => {
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
-	const [ isAPILoaded, setAPILoaded ] = useState( false );
-	const [ isAPISaved, setAPISaved ] = useState( false );
 
-	const [ savedData, setSavedData ] = useState({});
+	const [ loadingState, setLoadingState ] = useState({
+		formOptions: 'done',
+		formIntegration: 'done',
+		listId: 'loading',
+		apiKey: 'loading',
+		captcha: 'init'
+	});
+	const setLoading = l => {
+		setLoadingState( loading => ({ ...loading, ...l }) );
+	};
 
 	const [ apiKey, setApiKey ] = useState( '' );
-	const [ fetchApiKeyStatus, setFetchApiKeyStatus ] = useState( 'loading' );
 
 	const [ email, setEmail ] = useState( '' );
-	const [ savedEmail, setSavedEmail ] = useState( true );
-	const [ isEmailLoaded, setEmailLoading ] = useState( true );
-
-	const [ savedIntegration, setSavedIntegration ] = useState( true );
+	const [ savedFormOptions, setSavedFormOptions ] = useState( true );
 
 	const [ listIDOptions, setListIDOptions ] = useState([ { label: __( 'None', 'otter-blocks' ), value: '' } ]);
-	const [ fetchListIdStatus, setFetchListIdStatus ] = useState( 'loading' );
-
-	const settingsRef = useRef( null );
-	const [ areSettingsAvailable, setSettingsStatus ] = useState( false );
 
 	const {
 		insertBlock,
@@ -164,16 +163,6 @@ const Edit = ({
 	}, [ children ]);
 
 	/**
-	 * Load settings.
-	 */
-	useEffect( () => {
-		api.loadPromise.then( () => {
-			settingsRef.current = new api.models.Settings();
-			setSettingsStatus( true );
-		});
-	}, []);
-
-	/**
 	 * Get the data from the WP Options for the current form.
 	 * @param {Array} forms
 	 */
@@ -187,7 +176,7 @@ const Edit = ({
 	useEffect( () => {
 		let controller = new AbortController();
 		const t = setTimeout( () => {
-			setFetchApiKeyStatus( 'loaded' );
+			setLoading({apiKey: 'done'});
 		}, 3000 );
 
 		if ( attributes.optionName ) {
@@ -196,14 +185,15 @@ const Edit = ({
 					controller = null;
 					const formData = extractDataFromWpOptions( res.themeisle_blocks_form_emails );
 					if ( formData ) {
-						setEmailLoading( true );
-						setFetchApiKeyStatus( 'loaded' );
 						setApiKey( formData?.integration?.apiKey );
+						setSavedFormOptions( formData );
 						if ( formData?.integration?.provider ) {
 							setAttributes({ provider: formData?.integration?.provider });
-							setSavedData( formData );
 						}
-
+						setLoading({
+							apiKey: 'done',
+							formOptions: 'done'
+						});
 					}
 					clearTimeout( t );
 				});
@@ -223,7 +213,7 @@ const Edit = ({
 	useEffect( () => {
 		let controller = new AbortController();
 		if ( attributes.hasCaptcha !== undefined ) {
-			settingsRef?.current?.fetch({ signal: controller.signal }).done( res => {
+			( new api.models.Settings() )?.current?.fetch({ signal: controller.signal }).done( res => {
 				controller = null;
 
 				const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
@@ -267,37 +257,42 @@ const Edit = ({
 			});
 		}
 		return () => controller?.abort();
-	}, [ attributes.hasCaptcha,  attributes.redirectLink, settingsRef.current ]);
+	}, [ attributes.hasCaptcha,  attributes.redirectLink ]);
 
 	/**
 	 * Check if the API Keys are set.
 	 */
 	useEffect( () => {
 		let controller = new AbortController();
-		const getAPIData = () => {
-			if ( ! isAPILoaded ) {
-				settingsRef?.current?.fetch({ signal: controller.signal }).then( response => {
-					controller = null;
-					setAPILoaded( true );
+		const getCaptchaAPIData = () => {
+			setLoading({ captcha: 'loading'});
+			( new api.models.Settings() )?.fetch({ signal: controller.signal }).then( response => {
+				controller = null;
 
-					if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
-						setAPISaved( true );
-					}
-				});
-			}
+				if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
+					setLoading({ captcha: 'done'});
+				} else {
+					setLoading({ captcha: 'missing'});
+				}
+			}).catch( e => {
+				console.error( e );
+				setLoading({ captcha: 'error' });
+			});
+
 		};
 
-		if ( areSettingsAvailable && attributes.hasCaptcha && ! isAPISaved ) {
-			getAPIData();
+		if ( attributes.hasCaptcha && 'init' === loadingState?.captcha ) {
+			getCaptchaAPIData();
 		}
 
 		return () => controller?.abort();
-	}, [ areSettingsAvailable, isAPILoaded, isAPISaved, attributes.hasCaptcha ]);
+	}, [ loadingState, attributes.hasCaptcha ]);
 
 	/**
 	 * Save API Keys in the Otter options.
 	 */
 	const saveCaptchaAPIKey = () => {
+		setLoading({ captcha: 'loading' });
 		const model = new api.models.Settings({
 			// eslint-disable-next-line camelcase
 			themeisle_google_captcha_api_site_key: googleCaptchaAPISiteKey,
@@ -306,13 +301,13 @@ const Edit = ({
 		});
 
 		model.save().then( response => {
-			let saved = false;
 
 			if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
-				saved = true;
+				setLoading({ captcha: 'done' });
+			} else {
+				setLoading({ captcha: 'missing' });
 			}
 
-			setAPISaved( saved );
 			setGoogleCaptchaAPISecretKey( '' );
 			setGoogleCaptchaAPISiteKey( '' );
 			createNotice(
@@ -322,7 +317,13 @@ const Edit = ({
 					isDismissible: true,
 					type: 'snackbar'
 				}
-			);
+			).catch( e => {
+				console.error( e );
+				setLoading({ captcha: 'error' });
+			});
+		}).catch( e => {
+			console.error( e );
+			setLoading({ captcha: 'error' });
 		});
 	};
 
@@ -330,7 +331,7 @@ const Edit = ({
 	 * Save integration data.
 	 */
 	const saveIntegration = () => {
-		setSavedIntegration( false );
+		setLoading({ formIntegration: 'saving' });
 		( new api.models.Settings() )?.fetch().done( res => {
 			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 			let isMissing = true;
@@ -371,7 +372,7 @@ const Edit = ({
 				});
 
 				model.save().then( response => {
-					setSavedIntegration( true );
+					setLoading({ formIntegration: 'done' });
 					if ( hasUpdatedNotice ) {
 						createNotice(
 							'info',
@@ -382,17 +383,22 @@ const Edit = ({
 							}
 						);
 					}
+				}).catch( e => {
+					console.error( e );
+					setLoading({ formIntegration: 'error' });
 				});
 			}
 		}).catch( () => {
-			setSavedIntegration( true );
+			setLoading({ formIntegration: 'error' });
 		});
 	};
 
 	useEffect( () => {
 		let controller = new AbortController();
+		const t = setTimeout( () => setLoading({ listId: 'timeout' }), 6_000 );
+		setLoading({ listId: 'loading' });
 		if ( apiKey && attributes.provider ) {
-			window.wp.apiFetch({
+			window.wp?.apiFetch({
 				path: 'otter/v1/form/editor',
 				method: 'POST',
 				data: {
@@ -407,6 +413,7 @@ const Edit = ({
 			}).then(
 				res => {
 					controller = null;
+					clearTimeout( t );
 					if ( res?.success ) {
 						const options = res?.list_id?.map( item => {
 							return {
@@ -416,7 +423,7 @@ const Edit = ({
 						}) || [];
 						options.splice( 0, 0, { label: __( 'None', 'otter-blocks' ), value: '' });
 						setListIDOptions( options );
-						setFetchListIdStatus( 'ready' );
+						setLoading({ listId: 'done' });
 
 						const isCurrentOptionValid = 1 === options.map( ({ value }) => value ).filter( value => value === attributes.listId ).length;
 						if ( attributes.listId && ! isCurrentOptionValid ) {
@@ -440,15 +447,21 @@ const Edit = ({
 							}
 						);
 
-						setFetchListIdStatus( 'error' );
+						setLoading({ listId: 'error' });
 					}
-				});
+				}).catch( e => {
+				console.error( e );
+				setLoading({ listId: 'error' });
+			});
 		}
-		return () => controller?.abort();
+		return () => {
+			controller?.abort();
+			clearTimeout( t );
+		};
 	}, [ apiKey ]);
 
 	const saveFormOptions = () => {
-		setSavedEmail( false );
+		setLoading({ formOptions: 'saving' });
 		( new api.models.Settings() ).fetch().done( res => {
 			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 			let isMissing = true;
@@ -501,32 +514,30 @@ const Edit = ({
 					themeisle_blocks_form_emails: emails
 				});
 
-				setEmailLoading( false );
-
 				model.save().then( response => {
-					setSavedEmail( true );
-					extractDataFromWpOptions( response.themeisle_blocks_form_emails );
-					response.themeisle_blocks_form_emails?.filter( ({ form }) => form === attributes.optionName ).forEach( item => {
-						{
-							setEmailLoading( true );
-
-							createNotice(
-								'info',
-								__( 'Form Options has been saved!', 'otter-blocks' ),
-								{
-									isDismissible: true,
-									type: 'snackbar'
-								}
-							);
-						}
-					});
+					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
+					if ( formOptions ) {
+						setSavedFormOptions( formOptions );
+						setLoading({ formOptions: 'done' });
+						createNotice(
+							'info',
+							__( 'Form Options has been saved!', 'otter-blocks' ),
+							{
+								isDismissible: true,
+								type: 'snackbar'
+							}
+						);
+					} else {
+						setLoading({ formOptions: 'error' });
+					}
 				});
 			}
-		}).catch( () => setSavedEmail( true ) );
+		}).catch( () => setLoading({ formOptions: 'error' }) );
 	};
 
 	const saveIntegrationApiKey = ( apiKey ) => {
-		settingsRef?.current?.fetch().done( res => {
+		setLoading({ apiKey: 'saving' });
+		( new api.models.Settings() )?.fetch().done( res => {
 			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 			let isMissing = true;
 			let hasUpdated = false;
@@ -564,7 +575,11 @@ const Edit = ({
 				});
 
 				model.save().then( response => {
-					extractDataFromWpOptions( response.themeisle_blocks_form_emails );
+
+					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
+					if ( formOptions ) {
+						setSavedFormOptions( formOptions );
+					}
 					if ( hasUpdatedNotice ) {
 						createNotice(
 							'info',
@@ -575,9 +590,16 @@ const Edit = ({
 							}
 						);
 					}
+					setLoading({ apiKey: 'done' });
+				}).catch( ( e ) => {
+					console.error( e );
+					setLoading({ apiKey: 'error' });
 				});
 			}
-		});
+		}).catch( ( e ) => {
+			console.error( e );
+			setLoading({ apiKey: 'error' });
+		});;
 	};
 
 	const sendTestEmail = () => {
@@ -591,7 +613,6 @@ const Edit = ({
 				}
 			}
 		}).then( res => {
-			console.log( res );
 			if ( res?.success ) {
 				createNotice(
 					'info',
@@ -659,23 +680,18 @@ const Edit = ({
 		<Fragment>
 			<FormContext.Provider
 				value={{
-					savedEmail,
+					savedFormOptions,
 					apiKey,
 					setApiKey,
-					isEmailLoaded,
 					listIDOptions,
 					setListIDOptions,
-					fetchListIdStatus,
-					setFetchListIdStatus,
 					saveFormOptions,
 					email,
 					setEmail,
 					saveIntegrationApiKey,
-					fetchApiKeyStatus,
-					savedIntegration,
 					saveIntegration,
-					savedData,
-					sendTestEmail
+					sendTestEmail,
+					loadingState
 				}}
 			>
 				<Inspector
@@ -695,11 +711,10 @@ const Edit = ({
 								/>
 
 								{
-									attributes.hasCaptcha && ( ! isAPILoaded || ! isAPISaved ) && (
+									attributes.hasCaptcha && 'done' !== loadingState?.captcha && (
 										<Placeholder
 											className="otter-form-captcha"
-											isAPILoaded={ isAPILoaded }
-											isAPISaved={ isAPISaved }
+											loadingState={ loadingState }
 											saveAPIKey={ saveCaptchaAPIKey }
 											siteKey={ googleCaptchaAPISiteKey }
 											secretKey={ googleCaptchaAPISecretKey }
