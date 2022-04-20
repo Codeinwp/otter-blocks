@@ -73,7 +73,8 @@ const Inspector = ({
 		fetchApiKeyStatus,
 		savedIntegration,
 		saveIntegration,
-		savedData
+		savedData,
+		sendTestEmail
 	} = useContext( FormContext );
 
 	const [ tab, setTab ] = useState( 'general' );
@@ -138,6 +139,14 @@ const Inspector = ({
 							>
 								{ __( 'Learn more.', 'otter-blocks' ) }
 							</ExternalLink>
+							<Button
+								variant="primary"
+								isPrimary
+								style={{ marginTop: '8px'}}
+								onClick={ sendTestEmail }
+							>
+								{ __( 'Send Test Email', 'otter-blocks' )  }
+							</Button>
 							<TextControl
 								label={ __( 'Submit Button Label', 'otter-blocks' ) }
 								placeholder={ __( 'Submit', 'otter-blocks' ) }

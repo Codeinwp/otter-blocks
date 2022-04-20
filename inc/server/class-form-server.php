@@ -75,7 +75,8 @@ class Form_Server {
 				'submit' => array( $this, 'send_default_email'),
 			),
 			'editor' => array(
-				'listId' => array( $this, 'get_integration_data' ),
+				'listId'    => array( $this, 'get_integration_data' ),
+				'testEmail' => array( $this, 'send_test_email' )
 			)
 		);
 
@@ -318,6 +319,28 @@ class Form_Server {
         wp_mail( $to, $email_subject, $email_body, $headers );
     }
 
+	/**
+	 * Send a test email.
+	 *
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 */
+	public static function send_test_email() {
+		$res = new Form_Data_Response();
+		try {
+			$email_subject = ( __( 'Test email for Otter Form from ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
+			$email_body    = Form_Email::instance()->build_test_email();
+			// Sent the form date to the admin site as a default behaviour.
+			$to = sanitize_email( get_site_option( 'admin_email' ) );
+			$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . esc_url( get_site_url() ) );
+			// phpcs:ignore
+			wp_mail( $to, $email_subject, $email_body, $headers );
+			$res->mark_as_success();
+		} catch (Exception  $e ) {
+			$res->set_error( $e->getMessage() );
+		} finally {
+			return $res->build_response();
+		}
+	}
 
 	/**
 	 * Get data from the given provider

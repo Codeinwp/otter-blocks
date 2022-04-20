@@ -580,6 +580,50 @@ const Edit = ({
 		});
 	};
 
+	const sendTestEmail = () => {
+		wp?.apiFetch({
+			path: 'otter/v1/form/editor',
+			method: 'POST',
+			data: {
+				handler: 'testEmail',
+				payload: {
+					provider: 'default',
+				}
+			}
+		}).then( res => {
+			console.log(res)
+			if( res?.success ) {
+				createNotice(
+					'info',
+					__( 'The test email has been send. Check your emails for confirmation.', 'otter-blocks' ),
+					{
+						isDismissible: true,
+						type: 'snackbar'
+					}
+				);
+			} else {
+				createNotice(
+					'error',
+					__( 'An error has occurred: ', 'otter-blocks' ) + (res?.error || __( 'unknown', 'otter-blocks' )),
+					{
+						isDismissible: true,
+						type: 'snackbar'
+					}
+				);
+			}
+		} ).catch( error => {
+			console.error(error);
+			createNotice(
+				'error',
+				error?.message,
+				{
+					isDismissible: true,
+					type: 'snackbar'
+				}
+			);
+		})
+	}
+
 
 	const blockProps = useBlockProps({
 		id: attributes.id
@@ -630,7 +674,8 @@ const Edit = ({
 					fetchApiKeyStatus,
 					savedIntegration,
 					saveIntegration,
-					savedData
+					savedData,
+					sendTestEmail
 				}}
 			>
 				<Inspector

@@ -178,6 +178,27 @@ class Form_Email
 		echo ob_get_clean();
 	}
 
+	public function build_test_email() {
+		ob_start(); ?>
+		<!doctype html>
+		<html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<meta http-equiv="Content-Type" content="text/html;" charset="utf-8"/>
+			<!-- view port meta tag -->
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+			<title><?php echo esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ); ?></title>
+		</head>
+		<body>
+		<?php
+			esc_html_e( 'This a test email. If you receive this email, your SMTP set-up is working for sending emails via Form Block.' );
+		?>
+		</body>
+		</html>
+		<?php
+		return ob_get_clean();
+	}
+
 
 	/**
 	 * Throw error on object clone
