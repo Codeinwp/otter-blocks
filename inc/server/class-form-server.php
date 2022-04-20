@@ -251,7 +251,7 @@ class Form_Server {
 			$form_emails = get_option( 'themeisle_blocks_form_emails' );
 
 			foreach ( $form_emails as $form ) {
-				if ( $form['form'] === $option_name && isset( $form['email'] )) {
+				if ( $form['form'] === $option_name && isset( $form['email'] ) && $form['email'] !== '' ) {
 					$to = sanitize_email( $form['email'] );
 				}
 			}
@@ -265,6 +265,7 @@ class Form_Server {
 			$res->mark_as_success();
 		} catch (Exception  $e ) {
 			$res->set_error( $e->getMessage() );
+			$this->send_error_email($e->getMessage(), $form_data);
 		} finally {
             $form_options = $form_data->get_form_options();
             $res->add_values( $form_options->get_submit_data() );
