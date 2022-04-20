@@ -587,12 +587,12 @@ const Edit = ({
 			data: {
 				handler: 'testEmail',
 				payload: {
-					provider: 'default',
+					provider: 'default'
 				}
 			}
 		}).then( res => {
-			console.log(res)
-			if( res?.success ) {
+			console.log( res );
+			if ( res?.success ) {
 				createNotice(
 					'info',
 					__( 'The test email has been send. Check your emails for confirmation.', 'otter-blocks' ),
@@ -604,15 +604,15 @@ const Edit = ({
 			} else {
 				createNotice(
 					'error',
-					__( 'An error has occurred: ', 'otter-blocks' ) + (res?.error || __( 'unknown', 'otter-blocks' )),
+					__( 'An error has occurred: ', 'otter-blocks' ) + ( res?.error || __( 'unknown', 'otter-blocks' ) ),
 					{
 						isDismissible: true,
 						type: 'snackbar'
 					}
 				);
 			}
-		} ).catch( error => {
-			console.error(error);
+		}).catch( error => {
+			console.error( error );
 			createNotice(
 				'error',
 				error?.message,
@@ -621,8 +621,8 @@ const Edit = ({
 					type: 'snackbar'
 				}
 			);
-		})
-	}
+		});
+	};
 
 
 	const blockProps = useBlockProps({
