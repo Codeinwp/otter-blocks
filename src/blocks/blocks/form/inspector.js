@@ -131,14 +131,18 @@ const Inspector = ({
 							title={ __( 'Settings', 'otter-blocks' ) }
 							initialOpen={ true }
 						>
-							{
-								__( 'Make sure to have an email provider.', 'otter-blocks' )
-							}
+							<span>
+								{
+									__( 'Make sure to have an email provider set-up.', 'otter-blocks' )
+								}
+							</span>
 							<ExternalLink
 								href={'https://www.wpbeginner.com/plugins/how-to-set-up-wp-mail-smtp-with-any-host-ultimate-guide/'}
+								style={{ marginLeft: '3px' }}
 							>
 								{ __( 'Learn more.', 'otter-blocks' ) }
 							</ExternalLink>
+							<br/>
 							<Button
 								variant="primary"
 								isPrimary
