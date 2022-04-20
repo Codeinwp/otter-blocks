@@ -549,7 +549,6 @@ const Edit = ({
 			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 			let isMissing = true;
 			let hasUpdated = false;
-			let hasUpdatedNotice = false;
 
 			emails?.forEach( ({ form }, index ) => {
 				if ( form === attributes.optionName ) {
