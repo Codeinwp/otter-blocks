@@ -38,6 +38,7 @@ import classnames from 'classnames';
 import { FormContext } from './edit.js';
 import SyncControl from '../../components/sync-control';
 
+
 /**
  * Small utility function for checking if a list of variable pair are different.
  * @param {array} list
@@ -73,6 +74,7 @@ const Inspector = ({
 	} = useContext( FormContext );
 
 	const [ tab, setTab ] = useState( 'general' );
+
 	const formOptionsChanged = isChanged([
 		[ attributes.emailTo, savedFormOptions?.email ],
 		[ attributes.subject, savedFormOptions?.emailSubject ],
@@ -87,8 +89,6 @@ const Inspector = ({
 		[ attributes.listId, savedFormOptions?.integration?.listId ],
 		[ attributes.action, savedFormOptions?.integration?.action ]
 	]);
-	console.log( loadingState, formOptionsChanged, formIntegrationChanged );
-
 
 	return (
 		<InspectorControls>
@@ -175,7 +175,7 @@ const Inspector = ({
 								placeholder={ __( 'Success', 'otter-blocks' ) }
 								value={ attributes.submitMessage }
 								onChange={ submitMessage =>  setAttributes({ submitMessage })  }
-								help={ __( 'Show this message after the form was succesfuly submited.', 'otter-blocks' ) }
+								help={ __( 'Show this message after the form was successfully submitted.', 'otter-blocks' ) }
 							/>
 
 							<SelectControl

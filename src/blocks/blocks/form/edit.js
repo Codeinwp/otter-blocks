@@ -73,7 +73,7 @@ const Edit = ({
 	const [ loadingState, setLoadingState ] = useState({
 		formOptions: 'done',
 		formIntegration: 'done',
-		listId: 'loading',
+		listId: 'init',
 		apiKey: 'loading',
 		captcha: 'init'
 	});
@@ -336,7 +336,6 @@ const Edit = ({
 			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 			let isMissing = true;
 			let hasUpdated = false;
-			let hasUpdatedNotice = false;
 
 			emails?.forEach( ({ form }, index ) => {
 				if ( form === attributes.optionName ) {
@@ -346,8 +345,6 @@ const Edit = ({
 
 					hasUpdated = emails[index].integration.provider !== attributes.provider || emails[index].integration.listId !== attributes.listId || emails[index].integration.action !== attributes.action;
 					isMissing = false;
-					hasUpdatedNotice =  ( emails[index].integration.listId !== attributes.listId || emails[index].integration.action !== attributes.action );
-
 					emails[index].integration.provider = attributes.provider;
 					emails[index].integration.listId = attributes.listId;
 					emails[index].integration.action = attributes.action;
@@ -372,8 +369,13 @@ const Edit = ({
 				});
 
 				model.save().then( response => {
+					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
+					if ( formOptions ) {
+						console.log( formOptions );
+						setSavedFormOptions( formOptions );
+					}
 					setLoading({ formIntegration: 'done' });
-					if ( hasUpdatedNotice ) {
+					if ( hasUpdated ) {
 						createNotice(
 							'info',
 							__( 'Integration details have been saved.', 'otter-blocks' ),
@@ -387,6 +389,8 @@ const Edit = ({
 					console.error( e );
 					setLoading({ formIntegration: 'error' });
 				});
+			} else {
+				setLoading({ formIntegration: 'done' });
 			}
 		}).catch( () => {
 			setLoading({ formIntegration: 'error' });
@@ -395,9 +399,10 @@ const Edit = ({
 
 	useEffect( () => {
 		let controller = new AbortController();
-		const t = setTimeout( () => setLoading({ listId: 'timeout' }), 6_000 );
-		setLoading({ listId: 'loading' });
+		let t;
 		if ( apiKey && attributes.provider ) {
+			t = setTimeout( () => setLoading({ listId: 'timeout' }), 6_000 );
+			setLoading({ listId: 'loading' });
 			window.wp?.apiFetch({
 				path: 'otter/v1/form/editor',
 				method: 'POST',
@@ -458,7 +463,7 @@ const Edit = ({
 			controller?.abort();
 			clearTimeout( t );
 		};
-	}, [ apiKey ]);
+	}, [ apiKey, attributes.provider ]);
 
 	const saveFormOptions = () => {
 		setLoading({ formOptions: 'saving' });
@@ -517,6 +522,7 @@ const Edit = ({
 				model.save().then( response => {
 					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
 					if ( formOptions ) {
+						console.log( formOptions );
 						setSavedFormOptions( formOptions );
 						setLoading({ formOptions: 'done' });
 						createNotice(
@@ -531,6 +537,8 @@ const Edit = ({
 						setLoading({ formOptions: 'error' });
 					}
 				});
+			} else {
+				setLoading({ formOptions: 'done' });
 			}
 		}).catch( () => setLoading({ formOptions: 'error' }) );
 	};
@@ -548,10 +556,7 @@ const Edit = ({
 					if ( ! emails[index]?.integration ) {
 						emails[index].integration = {};
 					}
-
 					hasUpdated = emails[index].integration.apiKey !== apiKey;
-					hasUpdatedNotice = emails[index].integration.apiKey !== apiKey;
-
 					emails[index].integration.apiKey = apiKey;
 				}
 			});
@@ -580,21 +585,23 @@ const Edit = ({
 					if ( formOptions ) {
 						setSavedFormOptions( formOptions );
 					}
-					if ( hasUpdatedNotice ) {
-						createNotice(
-							'info',
-							__( 'The API Key has been saved.', 'otter-blocks' ),
-							{
-								isDismissible: true,
-								type: 'snackbar'
-							}
-						);
-					}
+
+					createNotice(
+						'info',
+						__( 'The API Key has been saved.', 'otter-blocks' ),
+						{
+							isDismissible: true,
+							type: 'snackbar'
+						}
+					);
+
 					setLoading({ apiKey: 'done' });
 				}).catch( ( e ) => {
 					console.error( e );
 					setLoading({ apiKey: 'error' });
 				});
+			} else {
+				setLoading({ apiKey: 'done' });
 			}
 		}).catch( ( e ) => {
 			console.error( e );
