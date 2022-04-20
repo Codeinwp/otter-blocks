@@ -371,7 +371,6 @@ const Edit = ({
 				model.save().then( response => {
 					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
 					if ( formOptions ) {
-						console.log( formOptions );
 						setSavedFormOptions( formOptions );
 					}
 					setLoading({ formIntegration: 'done' });

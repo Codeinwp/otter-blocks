@@ -76,7 +76,7 @@ const Inspector = ({
 	const [ tab, setTab ] = useState( 'general' );
 
 	const formOptionsChanged = isChanged([
-		[ attributes.emailTo, savedFormOptions?.email ],
+		[ email, savedFormOptions?.email ],
 		[ attributes.subject, savedFormOptions?.emailSubject ],
 		[ attributes.redirectLink, savedFormOptions?.redirectLink ],
 		[ attributes.fromName, savedFormOptions?.fromName ],

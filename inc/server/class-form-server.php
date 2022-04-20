@@ -246,8 +246,8 @@ class Form_Server {
 		$to = sanitize_email( get_site_option( 'admin_email' ) );
 
 		// Check if we need to send it to another user email.
-		if ( $form_data->is_set( 'formOption' ) ) {
-			$option_name = $form_data->is_set( 'formOption' );
+		if ( $form_data->payload_has_field( 'formOption' ) ) {
+			$option_name = $form_data->get_payload_field( 'formOption' );
 			$form_emails = get_option( 'themeisle_blocks_form_emails' );
 
 			foreach ( $form_emails as $form ) {
