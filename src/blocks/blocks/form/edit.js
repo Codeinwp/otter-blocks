@@ -74,16 +74,30 @@ const Edit = ({
 		formOptions: 'done',
 		formIntegration: 'done',
 		listId: 'init',
-		apiKey: 'loading',
 		captcha: 'init'
 	});
 	const setLoading = l => {
 		setLoadingState( loading => ({ ...loading, ...l }) );
 	};
 
-	const [ apiKey, setApiKey ] = useState( '' );
+	const [ formOptions, setFormOptions ] = useState({
+		provider: undefined,
+		redirectLink: undefined,
+		fromName: undefined,
+		emailTo: undefined,
+		subject: undefined,
+		email: undefined,
+		listId: undefined,
+		action: undefined,
+		hasCaptcha: undefined,
+		submitMessage: undefined,
+		apiKey: undefined
+	});
 
-	const [ email, setEmail ] = useState( '' );
+	const setFormOption = option => {
+		setFormOptions( options => ({...options, ...option}) );
+	};
+
 	const [ savedFormOptions, setSavedFormOptions ] = useState( true );
 
 	const [ listIDOptions, setListIDOptions ] = useState([ { label: __( 'None', 'otter-blocks' ), value: '' } ]);
@@ -171,6 +185,25 @@ const Edit = ({
 	};
 
 	/**
+	 * Parse the WP Option data.
+	 * @param wpOptions
+	 */
+	const parseDataFormOptions = wpOptions => {
+		setFormOptions({
+			emailTo: wpOptions?.email,
+			fromName: wpOptions?.fromName,
+			redirectLink: wpOptions?.redirectLink,
+			subject: wpOptions?.emailSubject,
+			submitMessage: wpOptions?.submitMessage,
+			provider: wpOptions?.integration?.provider,
+			apiKey: wpOptions?.integration?.apiKey,
+			listId: wpOptions?.integration?.listId,
+			action: wpOptions?.integration?.action,
+			hasCaptcha: wpOptions?.hasCaptcha
+		});
+	};
+
+	/**
 	 * Load Email and ApiKey from server.
 	 */
 	useEffect( () => {
@@ -185,11 +218,8 @@ const Edit = ({
 					controller = null;
 					const formData = extractDataFromWpOptions( res.themeisle_blocks_form_emails );
 					if ( formData ) {
-						setApiKey( formData?.integration?.apiKey );
+						parseDataFormOptions( formData );
 						setSavedFormOptions( formData );
-						if ( formData?.integration?.provider ) {
-							setAttributes({ provider: formData?.integration?.provider });
-						}
 						setLoading({
 							apiKey: 'done',
 							formOptions: 'done'
@@ -212,7 +242,7 @@ const Edit = ({
 	 */
 	useEffect( () => {
 		let controller = new AbortController();
-		if ( attributes.hasCaptcha !== undefined ) {
+		if ( formOptions.hasCaptcha !== undefined && attributes.optionName ) {
 			( new api.models.Settings() )?.current?.fetch({ signal: controller.signal }).done( res => {
 				controller = null;
 
@@ -222,10 +252,10 @@ const Edit = ({
 
 				emails?.forEach( ({ form }, index ) => {
 					if ( form === attributes.optionName ) {
-						if ( emails[index].hasCaptcha !== attributes.hasCaptcha ) {
+						if ( emails[index].hasCaptcha !== formOptions.hasCaptcha ) {
 							hasChanged = true;
 						}
-						emails[index].hasCaptcha = attributes.hasCaptcha;
+						emails[index].hasCaptcha = formOptions.hasCaptcha;
 						isMissing = false;
 					}
 				});
@@ -233,7 +263,7 @@ const Edit = ({
 				if ( isMissing ) {
 					emails.push({
 						form: attributes.optionName,
-						hasCaptcha: attributes.hasCaptcha
+						hasCaptcha: formOptions.hasCaptcha
 					});
 				}
 
@@ -257,10 +287,10 @@ const Edit = ({
 			});
 		}
 		return () => controller?.abort();
-	}, [ attributes.hasCaptcha,  attributes.redirectLink ]);
+	}, [ formOptions.hasCaptcha, attributes.optionName ]);
 
 	/**
-	 * Check if the API Keys are set.
+	 * Check if the reCaptcha API Keys are set.
 	 */
 	useEffect( () => {
 		let controller = new AbortController();
@@ -281,12 +311,12 @@ const Edit = ({
 
 		};
 
-		if ( attributes.hasCaptcha && 'init' === loadingState?.captcha ) {
+		if ( formOptions.hasCaptcha && 'init' === loadingState?.captcha ) {
 			getCaptchaAPIData();
 		}
 
 		return () => controller?.abort();
-	}, [ loadingState, attributes.hasCaptcha ]);
+	}, [ loadingState, formOptions.hasCaptcha ]);
 
 	/**
 	 * Save API Keys in the Otter options.
@@ -343,21 +373,22 @@ const Edit = ({
 						emails[index].integration = {};
 					}
 
-					hasUpdated = emails[index].integration.provider !== attributes.provider || emails[index].integration.listId !== attributes.listId || emails[index].integration.action !== attributes.action;
+					hasUpdated = emails[index].integration.provider !== formOptions.provider || emails[index].integration.listId !== formOptions.listId || emails[index].integration.action !== formOptions.action;
 					isMissing = false;
-					emails[index].integration.provider = attributes.provider;
-					emails[index].integration.listId = attributes.listId;
-					emails[index].integration.action = attributes.action;
+					emails[index].integration.provider = formOptions.provider;
+					emails[index].integration.listId = formOptions.listId;
+					emails[index].integration.action = formOptions.action;
 				}
 			});
 
 			if ( isMissing ) {
 				emails.push({
-					form: attributes.optionName,
+					form: formOptions.optionName,
 					integration: {
-						provider: attributes.provider,
-						listId: attributes.listId,
-						action: attributes.action
+						provider: formOptions.provider,
+						apiKey: formOptions.apiKey,
+						listId: formOptions.listId,
+						action: formOptions.action
 					}
 				});
 			}
@@ -371,6 +402,7 @@ const Edit = ({
 				model.save().then( response => {
 					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
 					if ( formOptions ) {
+						parseDataFormOptions( formOptions );
 						setSavedFormOptions( formOptions );
 					}
 					setLoading({ formIntegration: 'done' });
@@ -399,7 +431,7 @@ const Edit = ({
 	useEffect( () => {
 		let controller = new AbortController();
 		let t;
-		if ( apiKey && attributes.provider ) {
+		if ( formOptions.apiKey && formOptions.provider ) {
 			t = setTimeout( () => setLoading({ listId: 'timeout' }), 6_000 );
 			setLoading({ listId: 'loading' });
 			window.wp?.apiFetch({
@@ -408,9 +440,9 @@ const Edit = ({
 				data: {
 					handler: 'listId',
 					payload: {
-						provider: attributes.provider,
-						apiKey,
-						action: attributes.action
+						provider: formOptions.provider,
+						apiKey: formOptions.apiKey,
+						action: formOptions.action
 					}
 				},
 				signal: controller.signal
@@ -429,8 +461,8 @@ const Edit = ({
 						setListIDOptions( options );
 						setLoading({ listId: 'done' });
 
-						const isCurrentOptionValid = 1 === options.map( ({ value }) => value ).filter( value => value === attributes.listId ).length;
-						if ( attributes.listId && ! isCurrentOptionValid ) {
+						const isCurrentOptionValid = 1 === options.map( ({ value }) => value ).filter( value => value === formOptions.listId ).length;
+						if ( formOptions.listId && ! isCurrentOptionValid ) {
 							createNotice(
 								'error',
 								__( 'The current contact list is invalid! Please choose a new contact list.', 'otter-blocks' ),
@@ -462,9 +494,9 @@ const Edit = ({
 			controller?.abort();
 			clearTimeout( t );
 		};
-	}, [ apiKey, attributes.provider ]);
+	}, [ formOptions.apiKey, formOptions.provider ]);
 
-	const saveFormOptions = () => {
+	const saveFormEmailOptions = () => {
 		setLoading({ formOptions: 'saving' });
 		( new api.models.Settings() ).fetch().done( res => {
 			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
@@ -473,28 +505,28 @@ const Edit = ({
 
 			emails?.forEach( ({ form }, index ) => {
 				if ( form === attributes.optionName ) {
-					if ( emails[index].email !== email ) {
-						emails[index].email = email; // update the value
+					if ( emails[index].email !== formOptions.emailTo ) {
+						emails[index].email = formOptions.emailTo; // update the value
 						hasUpdated = true;
 					}
-					if ( emails[index].redirectLink !== attributes.redirectLink ) {
-						emails[index].redirectLink = attributes.redirectLink; // update the value
+					if ( emails[index].redirectLink !== formOptions.redirectLink ) {
+						emails[index].redirectLink = formOptions.redirectLink; // update the value
 						hasUpdated = true;
 					}
-					if ( emails[index].emailSubject !== attributes.subject ) {
-						emails[index].emailSubject = attributes.subject; // update the value
+					if ( emails[index].emailSubject !== formOptions.subject ) {
+						emails[index].emailSubject = formOptions.subject; // update the value
 						hasUpdated = true;
 					}
-					if ( emails[index].submitMessage !== attributes.submitMessage ) {
-						emails[index].submitMessage = attributes.submitMessage; // update the value
+					if ( emails[index].submitMessage !== formOptions.submitMessage ) {
+						emails[index].submitMessage = formOptions.submitMessage; // update the value
 						hasUpdated = true;
 					}
-					if ( emails[index].fromName !== attributes.fromName ) {
-						emails[index].fromName = attributes.fromName; // update the value
+					if ( emails[index].fromName !== formOptions.fromName ) {
+						emails[index].fromName = formOptions.fromName; // update the value
 						hasUpdated = true;
 					}
-					if ( emails[index].hasCaptcha !== attributes.hasCaptcha ) {
-						emails[index].hasCaptcha = attributes.hasCaptcha;
+					if ( emails[index].hasCaptcha !== formOptions.hasCaptcha ) {
+						emails[index].hasCaptcha = formOptions.hasCaptcha;
 						hasUpdated = true;
 					}
 					isMissing = false;
@@ -504,11 +536,11 @@ const Edit = ({
 			if ( isMissing ) {
 				emails.push({
 					form: attributes.optionName,
-					email,
-					fromName: attributes.fromName,
-					redirectLink: attributes.redirectLink,
-					emailSubject: attributes.subject,
-					submitMessage: attributes.submitMessage
+					email: formOptions.emailTo,
+					fromName: formOptions.fromName,
+					redirectLink: formOptions.redirectLink,
+					emailSubject: formOptions.subject,
+					submitMessage: formOptions.submitMessage
 				});
 			}
 
@@ -520,8 +552,9 @@ const Edit = ({
 
 				model.save().then( response => {
 					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
+					console.log( formOptions, response.themeisle_blocks_form_emails );
 					if ( formOptions ) {
-						console.log( formOptions );
+						parseDataFormOptions( formOptions );
 						setSavedFormOptions( formOptions );
 						setLoading({ formOptions: 'done' });
 						createNotice(
@@ -540,71 +573,6 @@ const Edit = ({
 				setLoading({ formOptions: 'done' });
 			}
 		}).catch( () => setLoading({ formOptions: 'error' }) );
-	};
-
-	const saveIntegrationApiKey = ( apiKey ) => {
-		setLoading({ apiKey: 'saving' });
-		( new api.models.Settings() )?.fetch().done( res => {
-			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
-			let isMissing = true;
-			let hasUpdated = false;
-
-			emails?.forEach( ({ form }, index ) => {
-				if ( form === attributes.optionName ) {
-					if ( ! emails[index]?.integration ) {
-						emails[index].integration = {};
-					}
-					hasUpdated = emails[index].integration.apiKey !== apiKey;
-					emails[index].integration.apiKey = apiKey;
-				}
-			});
-
-			if ( isMissing ) {
-				emails.push({
-					form: attributes.optionName,
-					integration: {
-						provider: attributes.provider,
-						apiKey: apiKey,
-						listId: attributes.listId,
-						action: attributes.action
-					}
-				});
-			}
-
-			if ( isMissing || hasUpdated ) {
-				const model = new api.models.Settings({
-					// eslint-disable-next-line camelcase
-					themeisle_blocks_form_emails: emails
-				});
-
-				model.save().then( response => {
-
-					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
-					if ( formOptions ) {
-						setSavedFormOptions( formOptions );
-					}
-
-					createNotice(
-						'info',
-						__( 'The API Key has been saved.', 'otter-blocks' ),
-						{
-							isDismissible: true,
-							type: 'snackbar'
-						}
-					);
-
-					setLoading({ apiKey: 'done' });
-				}).catch( ( e ) => {
-					console.error( e );
-					setLoading({ apiKey: 'error' });
-				});
-			} else {
-				setLoading({ apiKey: 'done' });
-			}
-		}).catch( ( e ) => {
-			console.error( e );
-			setLoading({ apiKey: 'error' });
-		});;
 	};
 
 	const sendTestEmail = () => {
@@ -686,14 +654,11 @@ const Edit = ({
 			<FormContext.Provider
 				value={{
 					savedFormOptions,
-					apiKey,
-					setApiKey,
 					listIDOptions,
 					setListIDOptions,
-					saveFormOptions,
-					email,
-					setEmail,
-					saveIntegrationApiKey,
+					saveFormEmailOptions,
+					formOptions,
+					setFormOption,
 					saveIntegration,
 					sendTestEmail,
 					loadingState

@@ -236,30 +236,30 @@ class Form_Server {
 	public function send_default_email($form_data ) {
 		$res = new Form_Data_Response();
 
-        $form_options  = $form_data->get_form_options();
-		$email_subject = isset($form_options) && $form_options->has_email_subject() ? $form_options->get_email_subject() : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
+		try {
+			$form_options  = $form_data->get_form_options();
+			$email_subject = isset($form_options) && $form_options->has_email_subject() ? $form_options->get_email_subject() : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
 
-		$email_message  = Form_Email::instance()->build_email($form_data);
-		$email_body     = apply_filters( 'otter_form_email_build_body', $email_message );
+			$email_message  = Form_Email::instance()->build_email($form_data);
+			$email_body     = apply_filters( 'otter_form_email_build_body', $email_message );
 
-		// Sent the form date to the admin site as a default behaviour.
-		$to = sanitize_email( get_site_option( 'admin_email' ) );
+			// Sent the form date to the admin site as a default behaviour.
+			$to = sanitize_email( get_site_option( 'admin_email' ) );
 
-		// Check if we need to send it to another user email.
-		if ( $form_data->payload_has_field( 'formOption' ) ) {
-			$option_name = $form_data->get_payload_field( 'formOption' );
-			$form_emails = get_option( 'themeisle_blocks_form_emails' );
+			// Check if we need to send it to another user email.
+			if ( $form_data->payload_has_field( 'formOption' ) ) {
+				$option_name = $form_data->get_payload_field( 'formOption' );
+				$form_emails = get_option( 'themeisle_blocks_form_emails' );
 
-			foreach ( $form_emails as $form ) {
-				if ( $form['form'] === $option_name && isset( $form['email'] ) && $form['email'] !== '' ) {
-					$to = sanitize_email( $form['email'] );
+				foreach ( $form_emails as $form ) {
+					if ( $form['form'] === $option_name && isset( $form['email'] ) && $form['email'] !== '' ) {
+						$to = sanitize_email( $form['email'] );
+					}
 				}
 			}
-		}
 
-		$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . ( $form_options->has_from_name() ? sanitize_text_field( $form_options->get_from_name() ) : esc_url( get_site_url() ) ));
+			$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . ( $form_options->has_from_name() ? sanitize_text_field( $form_options->get_from_name() ) : esc_url( get_site_url() ) ));
 
-		try {
 			// phpcs:ignore
 			wp_mail( $to, $email_subject, $email_body, $headers );
 			$res->mark_as_success();

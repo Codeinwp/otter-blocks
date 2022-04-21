@@ -38,6 +38,11 @@ import classnames from 'classnames';
 import { FormContext } from './edit.js';
 import SyncControl from '../../components/sync-control';
 
+const compare = x => {
+
+	// console.log(x, x[0] !== x[1]); TODO: remove after testing
+	return x?.[1] && x[0] !== x[1];
+};
 
 /**
  * Small utility function for checking if a list of variable pair are different.
@@ -45,7 +50,7 @@ import SyncControl from '../../components/sync-control';
  * @return {boolean}
  */
 const isChanged = list => {
-	return Boolean( 0 < list.filter( x => x?.[1] && x[0] !== x[1]).length );
+	return Boolean( 0 < list.filter( compare ).length );
 };
 
 /**
@@ -61,33 +66,30 @@ const Inspector = ({
 	const {
 		listIDOptions,
 		setListIDOptions,
-		saveFormOptions,
-		email,
-		setEmail,
-		apiKey,
-		setApiKey,
-		saveIntegrationApiKey,
+		saveFormEmailOptions,
 		saveIntegration,
 		savedFormOptions,
 		sendTestEmail,
-		loadingState
+		loadingState,
+		formOptions,
+		setFormOption
 	} = useContext( FormContext );
 
 	const [ tab, setTab ] = useState( 'general' );
 
 	const formOptionsChanged = isChanged([
-		[ email, savedFormOptions?.email ],
-		[ attributes.subject, savedFormOptions?.emailSubject ],
-		[ attributes.redirectLink, savedFormOptions?.redirectLink ],
-		[ attributes.fromName, savedFormOptions?.fromName ],
-		[ attributes.submitMessage, savedFormOptions?.submitMessage ],
-		[ attributes.hasCaptcha, savedFormOptions?.hasCaptcha ]
+		[ formOptions.emailTo, savedFormOptions?.email ],
+		[ formOptions.subject, savedFormOptions?.emailSubject ],
+		[ formOptions.redirectLink, savedFormOptions?.redirectLink ],
+		[ formOptions.fromName, savedFormOptions?.fromName ],
+		[ formOptions.submitMessage, savedFormOptions?.submitMessage ],
+		[ formOptions.hasCaptcha, savedFormOptions?.hasCaptcha ]
 	]);
 
 	const formIntegrationChanged = isChanged([
-		[ attributes.provider, savedFormOptions?.integration?.provider ],
-		[ attributes.listId, savedFormOptions?.integration?.listId ],
-		[ attributes.action, savedFormOptions?.integration?.action ]
+		[ formOptions.provider, savedFormOptions?.integration?.provider ],
+		[ formOptions.listId, savedFormOptions?.integration?.listId ],
+		[ formOptions.action, savedFormOptions?.integration?.action ]
 	]);
 
 	return (
@@ -364,23 +366,24 @@ const Inspector = ({
 							<TextControl
 								label={ __( 'Email Subject', 'otter-blocks' ) }
 								placeholder={ __( 'A new submission', 'otter-blocks' ) }
-								value={ attributes.subject }
-								onChange={ subject => setAttributes({ subject }) }
+								value={ formOptions.subject }
+								onChange={ subject => setFormOption({ subject }) }
 								help={ __( 'Customize the title of the email that you are gonna receive after a user submit the form.', 'otter-blocks' ) }
 							/>
 
 							<TextControl
 								label={ __( 'From Name', 'otter-blocks' ) }
-								value={ attributes.fromName }
-								onChange={ fromName => setAttributes({ fromName }) }
+								value={ formOptions.fromName }
+								onChange={ fromName => setFormOption({ fromName }) }
 								help={ __( 'Set the name of the sender.', 'otter-blocks' ) }
 							/>
 
 							<TextControl
 								label={ __( 'Email To', 'otter-blocks' ) }
 								placeholder={ __( 'Default is to admin site', 'otter-blocks' ) }
-								value={ email }
-								onChange={ email => setEmail( email ) }
+								type="email"
+								value={ formOptions.emailTo }
+								onChange={ emailTo => setFormOption({emailTo}) }
 								help={ __( 'Send the form\'s data to another email. (Admin\'s email is default).', 'otter-blocks' ) }
 							/>
 
@@ -388,15 +391,15 @@ const Inspector = ({
 								label={ __( 'Redirect To', 'otter-blocks' ) }
 								type="url"
 								placeholder={ __( 'https://example.com', 'otter-blocks' ) }
-								value={ attributes.redirectLink }
-								onChange={ redirectLink => setAttributes({redirectLink})  }
+								value={ formOptions.redirectLink }
+								onChange={ redirectLink => setFormOption({redirectLink})  }
 								help={ __( 'Redirect the user to another page when submit is successful.', 'otter-blocks' ) }
 							/>
 
 							{
-								attributes.redirectLink && (
+								formOptions.redirectLink && (
 									<ExternalLink
-										href={attributes.redirectLink}
+										href={formOptions.redirectLink}
 									>
 										{__( 'Preview Redirect link.', 'otter-blocks' )}
 									</ExternalLink>
@@ -406,13 +409,13 @@ const Inspector = ({
 
 							<ToggleControl
 								label={ __( 'Add captcha checkbox', 'otter-blocks' ) }
-								checked={ attributes.hasCaptcha }
-								onChange={ hasCaptcha => setAttributes({ hasCaptcha }) }
+								checked={ formOptions.hasCaptcha }
+								onChange={ hasCaptcha => setFormOption({ hasCaptcha }) }
 								help={ __( 'Add Google reCaptcha V2 for protection againts bots. You will need an API Key.', 'otter-blocks' ) }
 							/>
 
 							{
-								attributes.hasCaptcha && (
+								formOptions.hasCaptcha && (
 									<div
 										style={{
 											display: 'flow-root',
@@ -433,7 +436,7 @@ const Inspector = ({
 
 							<Button
 								isPrimary
-								onClick={ saveFormOptions }
+								onClick={ saveFormEmailOptions }
 								help={ __( '[WIP] Do not forget to save the options ', 'otter-blocks' ) }
 							>
 								<Fragment>
@@ -477,46 +480,38 @@ const Inspector = ({
 
 							<SelectControl
 								label={ __( 'Provider', 'otter-blocks' ) }
-								value={ attributes.provider }
+								value={ formOptions.provider }
 								options={ [
 									{ label: __( 'None', 'otter-blocks' ), value: '' },
 									{ label: __( 'Mailchimp', 'otter-blocks' ), value: 'mailchimp' },
 									{ label: __( 'Sendinblue', 'otter-blocks' ), value: 'sendinblue' }
 								] }
 								onChange={ provider => {
-									setAttributes({ provider, listId: '' });
-									setApiKey( '' );
+									setFormOption({ provider, listId: '', apiKey: '' });
 								} }
 							/>
 
 							{
-								attributes.provider && (
+								formOptions.provider && (
 									<Fragment>
 										{
-											'loading' === loadingState?.apiKey ?
-												(
-													<Fragment>
-														<Spinner />
-														{ __( 'Fetching the API Key from the database.', 'otter-blocks' ) }
-													</Fragment>
-												) : (
-													<TextControl
-														label={ __( 'API Key', 'otter-blocks' ) }
-														help={ __( 'You can find the key in the provider\'s website', 'otter-blocks' ) }
-														value={ apiKey ? `*************************${apiKey.slice( -8 )}` : '' }
-														onChange={ apiKey => {
-															setListIDOptions([]);
-															setApiKey( apiKey );
-															setAttributes({
-																listId: ''
-															});
-															saveIntegrationApiKey( apiKey );
-														}}
-													/>
-												)
+
+											<TextControl
+												label={ __( 'API Key', 'otter-blocks' ) }
+												help={ __( 'You can find the key in the provider\'s website', 'otter-blocks' ) }
+												value={ formOptions.apiKey ? `*************************${formOptions.apiKey.slice( -8 )}` : '' }
+												onChange={ apiKey => {
+													setListIDOptions([]);
+													setFormOption({
+														listId: '',
+														apiKey
+													});
+												}}
+											/>
+
 										}
 										{
-											apiKey && 2 > listIDOptions.length && 'loading' === loadingState?.listId && (
+											formOptions.apiKey && 2 > listIDOptions.length && 'loading' === loadingState?.listId && (
 												<Fragment>
 													<Spinner />
 													{ __( 'Fetching data from provider.', 'otter-blocks' ) }
@@ -524,13 +519,13 @@ const Inspector = ({
 											)
 										}
 										{
-											apiKey && 'error' === loadingState?.listId && (
+											formOptions.apiKey && 'error' === loadingState?.listId && (
 												<Fragment>
 													{ __( 'Invalid API Key. Please check your API Key in the provider\'s Dashboard.', 'otter-blocks' ) }
 													<ExternalLink
 														target="_blank"
 														style={{ marginLeft: '3px' }}
-														href={ 'sendinblue' === attributes.provider ? 'https://account.sendinblue.com/advanced/api' : 'https://us5.admin.mailchimp.com/account/api/'}
+														href={ 'sendinblue' === formOptions.provider ? 'https://account.sendinblue.com/advanced/api' : 'https://us5.admin.mailchimp.com/account/api/'}
 													>
 														Go to Dashboard.
 													</ExternalLink>
@@ -538,20 +533,20 @@ const Inspector = ({
 											)
 										}
 										{
-											apiKey && 'timeout' === loadingState?.listId && (
+											formOptions.apiKey && 'timeout' === loadingState?.listId && (
 												<p>
 													{ __( 'Could no connect to the server. Please try again.', 'otter-blocks' ) }
 												</p>
 											)
 										}
 										{
-											apiKey && 'done' === loadingState?.listId && (
+											formOptions.apiKey && 'done' === loadingState?.listId && (
 												<Fragment>
 													<SelectControl
 														label={ __( 'Contact List', 'otter-blocks' ) }
-														value={ attributes.listId }
+														value={ formOptions.listId }
 														options={ listIDOptions }
-														onChange={ listId => setAttributes({ listId }) }
+														onChange={ listId => setFormOption({ listId }) }
 													/>
 													{
 														1 >= listIDOptions?.length && (
@@ -561,20 +556,20 @@ const Inspector = ({
 														)
 													}
 													{
-														2 <= listIDOptions?.length && attributes.listId && (
+														2 <= listIDOptions?.length && formOptions.listId && (
 															<Fragment>
 																<SelectControl
 																	label={ __( 'Action', 'otter-blocks' ) }
-																	value={ attributes.action }
+																	value={ formOptions.action }
 																	options={ [
 																		{ label: __( 'Default', 'otter-blocks' ), value: '' },
 																		{ label: __( 'Subscribe', 'otter-blocks' ), value: 'subscribe' },
 																		{ label: __( 'Submit & Subscribe', 'otter-blocks' ), value: 'submit-subscribe' }
 																	] }
-																	onChange={ action => setAttributes({ action }) }
+																	onChange={ action => setFormOption({ action }) }
 																/>
 																{
-																	'submit-subscribe' === attributes.action && (
+																	'submit-subscribe' === formOptions.action && (
 																		<div style={{ marginBottom: '10px' }}>
 																			{
 																				__( 'This action will add the client to the contact list and send a separata email with the form data to administrator or to the email mentioned in \'Form to\' field. A checkbox for data-sharing consent with third-party will be added on form.', 'otter-blocks' )
