@@ -252,7 +252,7 @@ class Form_Server {
 				$form_emails = get_option( 'themeisle_blocks_form_emails' );
 
 				foreach ( $form_emails as $form ) {
-					if ( $form['form'] === $option_name && isset( $form['email'] ) && $form['email'] !== '' ) {
+					if ( isset( $form['form'] ) && $form['form'] === $option_name && isset( $form['email'] ) && $form['email'] !== '' ) {
 						$to = sanitize_email( $form['email'] );
 					}
 				}
@@ -438,6 +438,7 @@ class Form_Server {
             }
         } catch (Exception $e) {
             $res->set_error( __('Server error!') );
+			$this->send_error_email($e->getMessage(), $form_data);
         } finally {
 			// Handle the case when the credential are no longer valid.
 			if( $res->is_credential_error() ) {

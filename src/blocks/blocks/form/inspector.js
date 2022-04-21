@@ -172,14 +172,6 @@ const Inspector = ({
 								/>
 							</SyncControl>
 
-							<TextControl
-								label={ __( 'Submit Success Message', 'otter-blocks' ) }
-								placeholder={ __( 'Success', 'otter-blocks' ) }
-								value={ attributes.submitMessage }
-								onChange={ submitMessage =>  setAttributes({ submitMessage })  }
-								help={ __( 'Show this message after the form was successfully submitted.', 'otter-blocks' ) }
-							/>
-
 							<SelectControl
 								label={ __( 'Button Style', 'otter-blocks' ) }
 								value={ attributes.submitStyle }
@@ -375,7 +367,7 @@ const Inspector = ({
 								label={ __( 'From Name', 'otter-blocks' ) }
 								value={ formOptions.fromName }
 								onChange={ fromName => setFormOption({ fromName }) }
-								help={ __( 'Set the name of the sender.', 'otter-blocks' ) }
+								help={ __( 'Set the name of the sender. Some SMTP plugins might override this value.', 'otter-blocks' ) }
 							/>
 
 							<TextControl
@@ -385,6 +377,14 @@ const Inspector = ({
 								value={ formOptions.emailTo }
 								onChange={ emailTo => setFormOption({emailTo}) }
 								help={ __( 'Send the form\'s data to another email. (Admin\'s email is default).', 'otter-blocks' ) }
+							/>
+
+							<TextControl
+								label={ __( 'Submit Success Message', 'otter-blocks' ) }
+								placeholder={ __( 'Success', 'otter-blocks' ) }
+								value={ formOptions.submitMessage }
+								onChange={ submitMessage =>  setFormOption({ submitMessage })  }
+								help={ __( 'Show this message after the form was successfully submitted.', 'otter-blocks' ) }
 							/>
 
 							<TextControl

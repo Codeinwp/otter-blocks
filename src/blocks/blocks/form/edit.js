@@ -681,7 +681,7 @@ const Edit = ({
 								/>
 
 								{
-									attributes.hasCaptcha && 'done' !== loadingState?.captcha && (
+									formOptions.hasCaptcha && 'done' !== loadingState?.captcha && (
 										<Placeholder
 											className="otter-form-captcha"
 											loadingState={ loadingState }
@@ -694,7 +694,7 @@ const Edit = ({
 									)
 								}
 
-								{ 'submit-subscribe' === attributes.action && (
+								{ 'submit-subscribe' === formOptions.action && (
 									<div className="otter-form-consent">
 										<input id="o-consent" name="o-consent" type="checkbox" />
 										<label htmlFor="o-consent">
@@ -728,7 +728,7 @@ const Edit = ({
 
 									<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 										<div className='o-form-server-response o-success' style={{ color: attributes.submitMessageColor }}>
-											{ attributes.submitMessage || __( 'Success', 'otter-blocks' ) }
+											{ formOptions.submitMessage || __( 'Success', 'otter-blocks' ) }
 										</div>
 										<div className='o-form-server-response o-error' style={{ color: attributes.submitMessageErrorColor, margin: '0px' }}>
 											{ __( 'Error. Please try again.', 'otter-blocks' ) }
