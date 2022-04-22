@@ -40,13 +40,16 @@ import ButtonControl from './ButtonControl.js';
 
 const Main = () => {
 	useEffect( () => {
+		let isMounted = true;
+
 		api.loadPromise.then( () => {
 			settingsRef.current = new api.models.Settings();
 
-			if ( false === isAPILoaded ) {
+			if ( false === isAPILoaded && isMounted ) {
 				settingsRef.current.fetch().then( response => {
 					setCSSModule( Boolean( response.themeisle_blocks_settings_css_module ) );
 					setBlocksAnimation( Boolean( response.themeisle_blocks_settings_blocks_animation ) );
+					setBlockConditions( Boolean( response.themeisle_blocks_settings_block_conditions ) );
 					setDefaultSection( Boolean( response.themeisle_blocks_settings_default_block ) );
 					setGoogleMapsAPI( response.themeisle_google_map_block_api_key );
 					setLoggingData( response.otter_blocks_logger_flag );
@@ -58,9 +61,13 @@ const Main = () => {
 			}
 		});
 
-		if ( ! Boolean( window.otterObj.stylesExist ) ) {
+		if ( ! Boolean( window.otterObj.stylesExist ) && isMounted ) {
 			setRegeneratedDisabled( true );
 		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	const [ isAPILoaded, setAPILoaded ] = useState( false );
@@ -68,6 +75,7 @@ const Main = () => {
 	const [ notification, setNotification ] = useState( null );
 	const [ cssModule, setCSSModule ] = useState( false );
 	const [ blocksAnimation, setBlocksAnimation ] = useState( false );
+	const [ blockConditions, setBlockConditions ] = useState( false );
 	const [ isDefaultSection, setDefaultSection ] = useState( true );
 	const [ googleMapsAPI, setGoogleMapsAPI ] = useState( '' );
 	const [ isLoggingData, setLoggingData ] = useState( 'no' );
@@ -130,6 +138,9 @@ const Main = () => {
 			break;
 		case 'blocksAnimation':
 			setBlocksAnimation( value );
+			break;
+		case 'blockConditions':
+			setBlockConditions( value );
 			break;
 		case 'isDefaultSection':
 			setDefaultSection( value );
@@ -211,6 +222,15 @@ const Main = () => {
 								help={ __( 'Blocks Animation module allows to add CSS animations to each block in Block Editor.', 'otter-blocks' ) }
 								checked={ blocksAnimation }
 								onChange={ () => changeOptions( 'themeisle_blocks_settings_blocks_animation', 'blocksAnimation', ! blocksAnimation ) }
+							/>
+						</PanelRow>
+
+						<PanelRow>
+							<ToggleControl
+								label={ __( 'Enable Block Condition Module', 'otter-blocks' ) }
+								help={ __( 'Blocks Conditions module allows to hide/display blocks to your users based on selected conditions.', 'otter-blocks' ) }
+								checked={ blockConditions }
+								onChange={ () => changeOptions( 'themeisle_blocks_settings_block_conditions', 'blockConditions', ! blockConditions ) }
 							/>
 						</PanelRow>
 					</PanelBody>

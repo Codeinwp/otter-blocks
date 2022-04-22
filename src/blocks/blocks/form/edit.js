@@ -42,6 +42,11 @@ import Placeholder from './placeholder.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Form component
+ * @param {import('./type').FormProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,
@@ -92,7 +97,7 @@ const Edit = ({
 			getBlock
 		} = select( 'core/block-editor' );
 		return getBlock( clientId ).innerBlocks;
-	});
+	}, []);
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -134,10 +139,19 @@ const Edit = ({
 	 * Load settings.
 	 */
 	useEffect( () => {
+		let isMounted = true;
+
 		api.loadPromise.then( () => {
 			settingsRef.current = new api.models.Settings();
-			setSettingsStatus( true );
+
+			if ( isMounted ) {
+				setSettingsStatus( true );
+			}
 		});
+
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	/**
@@ -192,12 +206,14 @@ const Edit = ({
 	 * Check if the API Keys are set.
 	 */
 	useEffect( () => {
+		let isMounted = true;
+
 		const getAPIData = async() => {
 			if ( ! isAPILoaded ) {
 				settingsRef?.current?.fetch().then( response => {
 					setAPILoaded( true );
 
-					if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
+					if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key && isMounted ) {
 						setAPISaved( true );
 					}
 				});
@@ -207,6 +223,10 @@ const Edit = ({
 		if ( areSettingsAvailable && attributes.hasCaptcha && ! isAPISaved ) {
 			getAPIData();
 		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [ areSettingsAvailable, isAPILoaded, isAPISaved, attributes.hasCaptcha ]);
 
 	/**

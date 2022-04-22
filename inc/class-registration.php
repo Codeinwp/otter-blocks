@@ -204,14 +204,13 @@ class Registration {
 		}
 
 		wp_register_script( 'otter-vendor', OTTER_BLOCKS_URL . 'build/blocks/vendor.js', array( 'react', 'react-dom' ), $asset_file['version'], true );
-		wp_register_script( 'macy', OTTER_BLOCKS_URL . 'assets/macy/macy.js', [], $asset_file['version'], true );
 
 		wp_enqueue_script(
 			'otter-blocks',
 			OTTER_BLOCKS_URL . 'build/blocks/blocks.js',
 			array_merge(
 				$asset_file['dependencies'],
-				array( 'otter-vendor', 'glidejs', 'lottie-player', 'macy' )
+				array( 'otter-vendor', 'glidejs', 'lottie-player' )
 			),
 			$asset_file['version'],
 			true
@@ -273,6 +272,9 @@ class Registration {
 				'useOldMacyContainer' => version_compare( get_bloginfo( 'version' ), '5.8.10', '<=' ),
 				'postTypes'           => get_post_types( [ 'public' => true ] ),
 				'rootUrl'             => get_site_url(),
+				'hasModule'           => array(
+					'blockConditions' => get_option( 'themeisle_blocks_settings_block_conditions', true ),
+				),
 			)
 		);
 
@@ -312,10 +314,12 @@ class Registration {
 		if ( is_singular() ) {
 			$this->enqueue_dependencies();
 		} else {
-			$posts = wp_list_pluck( $wp_query->posts, 'ID' );
-
-			foreach ( $posts as $post ) {
-				$this->enqueue_dependencies( $post );
+			if ( 0 < count( $wp_query->posts ) ) {
+				$posts = wp_list_pluck( $wp_query->posts, 'ID' );
+	
+				foreach ( $posts as $post ) {
+					$this->enqueue_dependencies( $post );
+				}
 			}
 		}
 

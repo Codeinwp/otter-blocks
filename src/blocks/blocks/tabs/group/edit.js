@@ -60,18 +60,19 @@ const Edit = ({
 
 	const contentRef = useRef( null );
 
-	const [ activeTab, setActiveTab ] = useState( '' );
-
 	const children = useSelect( select => {
 		const { getBlock } = select( 'core/block-editor' );
 		return getBlock( clientId ).innerBlocks;
-	});
+	}, []);
+
+	const [ activeTab, setActiveTab ] = useState( children.find( c => true === c.attributes.defaultOpen )?.clientId );
 
 	const {
 		insertBlock,
 		removeBlock,
 		selectBlock,
-		moveBlockToPosition
+		moveBlockToPosition,
+		updateBlockAttributes
 	} = useDispatch( 'core/block-editor' );
 
 	const toggleActiveTab = blockId => {
@@ -80,17 +81,20 @@ const Edit = ({
 				const blockContent = contentRef.current.querySelector( `#block-${ block.clientId } .wp-block-themeisle-blocks-tabs-item__content` );
 				blockContent?.classList.toggle( 'active', block.clientId === blockId );
 			});
-
 			setActiveTab( blockId );
 		}
 	};
+
+	useEffect( () => {
+		toggleActiveTab( activeTab );
+	}, []);
 
 	/**
 	 * Activate the first tab when no tabs are selected.
 	 */
 	useEffect( () => {
 		if ( 0 < children?.length ) {
-			if ( '' === activeTab || 0 === children?.filter( block => block.clientId === activeTab ).length ) {
+			if ( undefined === activeTab || ! children?.some( block => block.clientId === activeTab ) ) {
 				toggleActiveTab( children[0].clientId );
 			}
 		}
@@ -103,21 +107,21 @@ const Edit = ({
 	 */
 	const selectTab = ( blockId ) => {
 		if ( 0 < children?.length ) {
-			const block = children.filter( block => block.clientId === blockId )[0];
+			const block = children.find( block => block.clientId === blockId );
 			selectBlock( block.clientId );
 		}
 	};
 
 	const moveTab = ( blockId, position ) => {
-		const blockClienId = children.filter( block => block.clientId === blockId )[0]?.clientId;
-		if ( blockClienId ) {
-			moveBlockToPosition( blockClienId, clientId, clientId, position );
+		const blockClientId = children.find( block => block.clientId === blockId )?.clientId;
+		if ( blockClientId ) {
+			moveBlockToPosition( blockClientId, clientId, clientId, position );
 		}
 	};
 
 	const deleteTab = ( blockId ) => {
 		if ( 0 < children?.length ) {
-			const block = children.filter( block => block.clientId === blockId )[0];
+			const block = children.find( block => block.clientId === blockId );
 			removeBlock( block.clientId, false );
 			if ( activeTab === blockId ) {
 				setActiveTab( '' );

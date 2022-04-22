@@ -38,6 +38,11 @@ import { blockInit } from '../../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Button Group Props
+ * @param {import('./types').ButtonGroupProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

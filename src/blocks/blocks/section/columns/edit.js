@@ -61,6 +61,11 @@ import Library from '../../../components/template-library/index.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ *
+ * @param {import('./types').SectionProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

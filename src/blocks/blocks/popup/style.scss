@@ -36,6 +36,10 @@ $base-index: 9999 !default;
 		display: flex;
 		align-items: center;
 		justify-content: center;
+
+		animation-duration: .8s;
+		animation-name: popupFadeIn;
+		animation-fill-mode: both;
 	}
 
 	.otter-popup__modal_content {
@@ -91,5 +95,14 @@ $base-index: 9999 !default;
 				outline: none;
 			}
 		}
+	}
+}
+
+@-webkit-keyframes popupFadeIn {
+	0% {
+		opacity:0
+	}
+	to {
+		opacity:1
 	}
 }

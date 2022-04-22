@@ -32,6 +32,11 @@ import Controls from './controls.js';
 import Inspector from './inspector.js';
 import { blockInit } from '../../helpers/block-utility.js';
 
+/**
+ * Woo Comparison component
+ * @param {import('./types.js').WooComparisonProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

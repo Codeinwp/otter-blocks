@@ -17,8 +17,13 @@ import {
 import {
 	Button,
 	PanelBody,
-	RangeControl
+	RangeControl,
+	SelectControl
 } from '@wordpress/components';
+
+import { useState, useEffect } from '@wordpress/element';
+
+import { useSelect, useDispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies.
@@ -34,6 +39,26 @@ const Inspector = ({
 	addTab,
 	moveTab
 }) => {
+
+	const [ defaultTab, setDefaultTab ] = useState( children.find( c => true === c.attributes.defaultOpen )?.clientId );
+	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
+	const { getBlock } = useSelect( 'core/block-editor' );
+
+	useEffect( () => {
+		setDefaultTab( children.find( c => true === c.attributes.defaultOpen )?.clientId );
+	}, [ children ]);
+
+	const deleteWrapper = ( tabId ) => {
+		const tab = getBlock( tabId );
+
+		// fallback to first tab
+		if ( true === tab.attributes.defaultOpen ) {
+			updateBlockAttributes( children[0].clientId, { defaultOpen: true });
+		}
+
+		deleteTab( tabId );
+	};
+
 	const TabsList = SortableContainer( ({ items }) => {
 		return (
 			<div>
@@ -43,7 +68,7 @@ const Inspector = ({
 							key={ tab.clientId }
 							tab={ tab }
 							index={ index }
-							deleteTab={ deleteTab }
+							deleteTab={ deleteWrapper }
 							selectTab={ selectTab }
 						/>
 					);
@@ -72,6 +97,19 @@ const Inspector = ({
 		setAttributes({ activeTitleColor: value });
 	};
 
+	const onTabSelect = tabId => {
+		children.forEach( ( child, i ) => {
+			updateBlockAttributes( children[i].clientId, { defaultOpen: false });
+		});
+
+		updateBlockAttributes( tabId, { defaultOpen: true });
+		setDefaultTab( tabId );
+	};
+
+	const tabOptions = children.map( ( c, index ) => {
+		return { label: `${ index + 1 }. ${ c.attributes.title || __( 'Untitled Tab', 'otter-blocks' ) }`, value: c.clientId };
+	});
+
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -96,6 +134,13 @@ const Inspector = ({
 				>
 					{ __( 'Add Tab', 'otter-blocks' ) }
 				</Button>
+
+				<SelectControl
+					label={ __( 'Initial Tab', 'otter-blocks' ) }
+					value={ defaultTab }
+					options={ tabOptions }
+					onChange={ onTabSelect }
+				/>
 			</PanelBody>
 
 			<PanelBody

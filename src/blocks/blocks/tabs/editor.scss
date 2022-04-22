@@ -138,7 +138,6 @@
             margin-top: 10px;
 
             &.active {
-                color: var( --activeTitleColor );
                 background: var( --tabColor );
                 display: block;
             }
@@ -151,8 +150,7 @@
     border: 1px solid #d5dadf;
     margin: 10px 0;
     background-color: white;
-    display: flex;
-    flex-direction: row;
+	flex-direction: row;
     justify-content: center;
     align-items: center;
 
@@ -185,8 +183,7 @@
         overflow: hidden;
         flex-basis: 80%;
         padding: 9px 10px;
-        overflow: hidden;
-        text-overflow: ellipsis;
+		text-overflow: ellipsis;
         white-space: nowrap;
 
         &:hover {

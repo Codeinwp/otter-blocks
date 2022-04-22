@@ -36,7 +36,7 @@ const BlocksExporter = () => {
 					getMultiSelectedBlocks(),
 			count: getSelectedBlockCount()
 		};
-	});
+	}, []);
 
 	const { createNotice } = useDispatch( 'core/notices' );
 

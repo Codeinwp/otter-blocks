@@ -31,6 +31,11 @@ import {
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import SizingControl from '../../components/sizing-control/index.js';
 
+/**
+ *
+ * @param {import('./types.js').CountdownInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes

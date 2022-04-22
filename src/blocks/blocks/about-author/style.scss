@@ -3,7 +3,6 @@ section {
 		border: 0;
 		margin-bottom: 30px;
 		border-radius: 6px;
-		color: rgba(0,0,0,.87);
 		width: 100%;
 		position: relative;
 		display: flex;
@@ -21,20 +20,26 @@ section {
 				height: auto;
 				box-shadow: 0 16px 38px -12px rgba(0, 0, 0, 0.56), 0 4px 25px 0 rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2);
 				border-radius: 50%;
-	
+
 				&:hover {
 					opacity: 0.8;
 				}
 			}
 		}
-	
+
 		.o-author-data {
 			width: 83.33333333%;
 			float: left;
 			margin: 0 15px;
-	
+			align-self: center;
+
+			h4 {
+				margin: 0;
+			}
+
 			p {
 				font-size: 14px;
+				margin: 15px 0;
 			}
 		}
 

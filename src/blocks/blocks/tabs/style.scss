@@ -17,7 +17,6 @@
 	.wp-block-themeisle-blocks-tabs__header_item {
 		padding: 5px 10px;
 		white-space: nowrap;
-		border-color: inherit;
 		cursor: pointer;
 		border-color: transparent;
 		border-style: solid;
@@ -65,28 +64,30 @@
 	}
 
 	.wp-block-themeisle-blocks-tabs-item {
+		display: flex;
+
 		&:not(:last-child) {
 			.wp-block-themeisle-blocks-tabs-item__header {
 				border-bottom-style: none;
 			}
-	
+
 			@media (max-width: 800px) {
 				.wp-block-themeisle-blocks-tabs-item__content {
 					border-bottom-style: none;
 				}
 			}
 		}
-	
+
 		.wp-block-themeisle-blocks-tabs-item__header {
 			width: 100%;
 			border: var( --borderWidth ) solid var( --borderColor );
 			padding: 5px 10px;
 			cursor: pointer;
-	
+
 			@media (min-width: 800px) {
 				display: none;
 			}
-	
+
 			&.active {
 				color: var( --activeTitleColor );
 				background: var( --tabColor );
@@ -96,18 +97,16 @@
 
 		.wp-block-themeisle-blocks-tabs-item__content {
 			border: var( --borderWidth ) solid var( --borderColor );
-			border-top: 0px;
 			width: 100%;
 			padding: 10px;
 			display: none;
-			border-top: 0px;
-	
+			border-top: 0;
+
 			&.active {
-				color: var( --activeTitleColor );
 				background: var( --tabColor );
 				display: block;
 			}
-	
+
 			&.hidden {
 				display: none;
 			}
@@ -116,7 +115,7 @@
 		&> :first-child {
 			.wp-block-themeisle-blocks-tabs-item__content {
 				display: block;
-	
+
 				&.hidden {
 					display: none;
 				}

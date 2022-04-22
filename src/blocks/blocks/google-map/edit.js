@@ -34,6 +34,11 @@ import { blockInit } from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Google Map component
+ * @param {import('./type').GoogleMapProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,
@@ -47,6 +52,8 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	useEffect( () => {
+		let isMounted = true;
+
 		const setApi = async() => {
 			await window.wp.api.loadPromise.then( () => {
 				settingsRef.current = new window.wp.api.models.Settings();
@@ -55,16 +62,18 @@ const Edit = ({
 			if ( false === Boolean( window.themeisleGutenberg.mapsAPI ) ) {
 				if ( ! isAPILoaded ) {
 					settingsRef.current.fetch().then( ( response ) => {
-						setAPI( response.themeisle_google_map_block_api_key );
-						setAPILoaded( true );
+						if ( isMounted ) {
+							setAPI( response.themeisle_google_map_block_api_key );
+							setAPILoaded( true );
 
-						if ( '' !== response.themeisle_google_map_block_api_key ) {
-							setAPISaved( true );
-							enqueueScript( response.themeisle_google_map_block_api_key );
+							if ( '' !== response.themeisle_google_map_block_api_key ) {
+								setAPISaved( true );
+								enqueueScript( response.themeisle_google_map_block_api_key );
+							}
 						}
 					});
 				}
-			} else if ( ! isAPILoaded ) {
+			} else if ( ! isAPILoaded && isMounted ) {
 				setAPI( window.themeisleGutenberg.mapsAPI );
 				setAPILoaded( true );
 				setAPISaved( true );
@@ -76,12 +85,21 @@ const Edit = ({
 
 		window.isMapLoaded = window.isMapLoaded || false;
 		window[ `removeMarker_${ clientId.substr( 0, 8 ) }` ] = removeMarker;
+		// eslint-disable-next-line camelcase
+		window.gm_authFailure = function() {
+			setAPISaved( false );
+			setErrorState( true );
+		};
 
 		linkRef.current = document.createElement( 'script' );
 		linkRef.current.type = 'text/javascript';
 		linkRef.current.async = true;
 		linkRef.current.defer = true;
 		linkRef.current.id = 'themeisle-google-map-api-loading';
+
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	useEffect( () => {
@@ -118,6 +136,7 @@ const Edit = ({
 	const [ isModalOpen, setModalOpen ] = useState( false );
 	const [ isAdvanced, setAdvanced ] = useState( false );
 	const [ selectedMarker, setSelectedMarker ] = useState({});
+	const [ errorState, setErrorState ] = useState( false );
 
 	const enqueueScript = api => {
 		if ( ! window.isMapLoaded ) {
@@ -440,9 +459,14 @@ const Edit = ({
 			<div { ...blockProps }>
 				<Placeholder
 					api={ api }
+					error={ errorState }
 					isAPILoaded={ isAPILoaded }
 					isAPISaved={ isAPISaved }
-					changeAPI={ setAPI }
+					isSaving={ isSaving }
+					changeAPI={ ( key ) => {
+						setAPI( key );
+						setErrorState( false );
+					} }
 					saveAPIKey={ saveAPIKey }
 				/>
 			</div>

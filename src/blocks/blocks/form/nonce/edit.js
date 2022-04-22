@@ -5,6 +5,11 @@ import { useSelect } from '@wordpress/data';
 
 import { useEffect } from '@wordpress/element';
 
+/**
+ * Form Nonce component
+ * @param {import('./types').FormNonceProps} props
+ * @returns
+ */
 const Edit = ({
 	setAttributes,
 	clientId
@@ -21,7 +26,7 @@ const Edit = ({
 		return {
 			parent: parentBlock
 		};
-	});
+	}, []);
 
 	useEffect( () => {
 		if ( parent ) {

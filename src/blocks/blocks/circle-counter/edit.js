@@ -41,6 +41,11 @@ const { attributes: defaultAttributes } = metadata;
 
 const px = value => value ? `${ value }px` : value;
 
+/**
+ *
+ * @param {import('./types').CircleCounterPros} param0
+ * @returns
+ */
 const CircularProgressBarBlock = ({
 	clientId,
 	attributes,
@@ -48,6 +53,7 @@ const CircularProgressBarBlock = ({
 	isSelected,
 	toggleSelection
 }) => {
+
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
@@ -95,6 +101,10 @@ const CircularProgressBarBlock = ({
 		}, step );
 
 		changeInterval( interv );
+
+		return () => {
+			clearInterval( interv );
+		};
 	}, [ attributes.duration ]);
 
 	useEffect( () => {
@@ -106,6 +116,9 @@ const CircularProgressBarBlock = ({
 		valueRef.current.innerHTML = attributes.percentage + '%';
 
 		clearInterval( interval );
+		return () => {
+			clearInterval( interval );
+		};
 	}, [ attributes.percentage, attributes.height ]);
 
 	const onHeightChange = value => {
