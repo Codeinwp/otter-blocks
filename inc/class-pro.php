@@ -139,15 +139,15 @@ class Pro {
 	 * @access  public
 	 */
 	public function old_neve_notice() {
-		$plugin_name = __( 'Block Editor Booster', 'neve' );
-		$message     = __( 'You need to make sure Neve & Neve Pro Addons are updated to the latest version to continue using Block Editor Booster.', 'neve' );
+		$plugin_name = __( 'Block Editor Booster', 'otter-blocks' );
+		$message     = __( 'You need to make sure Neve & Neve Pro Addons are updated to the latest version to continue using Block Editor Booster.', 'otter-blocks' );
 
 		printf(
 			'<div class="error"><p><b>%1$s</b> %2$s <a href="%3$s">%4$s</a></p></div>',
 			esc_html( $plugin_name ),
 			esc_html( $message ),
 			esc_url( admin_url( 'update-core.php' ) ),
-			esc_html__( 'Update', 'neve' )
+			esc_html__( 'Update', 'otter-blocks' )
 		);
 	}
 
