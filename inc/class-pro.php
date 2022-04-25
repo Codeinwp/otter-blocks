@@ -25,6 +25,10 @@ class Pro {
 	 * @access  public
 	 */
 	public function init() {
+		if ( 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ) && ! ( defined( 'NEVE_PRO_HIDE_UPDATE_NOTICE' ) && true === NEVE_PRO_HIDE_UPDATE_NOTICE ) ) {
+			add_action( 'admin_notices', array( $this, 'old_neve_notice' ) );
+		}
+
 		if ( self::is_pro_active() ) {
 			return;
 		}
@@ -35,7 +39,7 @@ class Pro {
 	/**
 	 * Check if Otter Pro is available
 	 * 
-	 * @since   2.0.0
+	 * @since   2.0.3
 	 * @access  public
 	 * @return  bool
 	 */
@@ -46,7 +50,7 @@ class Pro {
 	/**
 	 * Check if Otter Pro is active
 	 * 
-	 * @since   2.0.0
+	 * @since   2.0.3
 	 * @access  public
 	 * @return  bool
 	 */
@@ -57,7 +61,7 @@ class Pro {
 	/**
 	 * Get Otter Pro URL
 	 * 
-	 * @since   2.0.0
+	 * @since   2.0.3
 	 * @access  public
 	 * @return  string
 	 */
@@ -65,11 +69,10 @@ class Pro {
 		return 'https://themeisle.com/plugins/otter-blocks';
 	}
 
-
 	/**
 	 * Get Otter Docs URL
 	 * 
-	 * @since   2.0.0
+	 * @since   2.0.3
 	 * @access  public
 	 * @return  string
 	 */
@@ -82,7 +85,7 @@ class Pro {
 	 * 
 	 * @param string $post_type Post type.
 	 *
-	 * @since   2.0.0
+	 * @since   2.0.3
 	 * @access  public
 	 */
 	public function register_metabox( $post_type ) {
@@ -101,7 +104,7 @@ class Pro {
 	 * 
 	 * @param string $post_type Post type.
 	 * 
-	 * @since   2.0.0
+	 * @since   2.0.3
 	 * @access  public
 	 */
 	public function render_metabox_upsell( $post_type ) {
@@ -130,12 +133,31 @@ class Pro {
 	}
 
 	/**
+	 * Notice displayed if using old version of Neve.
+	 *
+	 * @since   2.0.3
+	 * @access  public
+	 */
+	public function old_neve_notice() {
+		$plugin_name = __( 'Block Editor Booster', 'neve' );
+		$message     = __( 'You need to make sure Neve & Neve Pro Addons are updated to the latest version to continue using Block Editor Booster.', 'neve' );
+
+		printf(
+			'<div class="error"><p><b>%1$s</b> %2$s <a href="%3$s">%4$s</a></p></div>',
+			esc_html( $plugin_name ),
+			esc_html( $message ),
+			esc_url( admin_url( 'update-core.php' ) ),
+			esc_html__( 'Update', 'neve' )
+		);
+	}
+
+	/**
 	 * Singleton method.
 	 *
 	 * @static
 	 *
 	 * @return  GutenbergBlocks
-	 * @since   1.0.0
+	 * @since   2.0.3
 	 * @access  public
 	 */
 	public static function instance() {
@@ -155,7 +177,7 @@ class Pro {
 	 *
 	 * @access  public
 	 * @return  void
-	 * @since   1.0.0
+	 * @since   2.0.3
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
@@ -167,7 +189,7 @@ class Pro {
 	 *
 	 * @access  public
 	 * @return  void
-	 * @since   1.0.0
+	 * @since   2.0.3
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
