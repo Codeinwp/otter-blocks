@@ -28,7 +28,7 @@ define( 'OTTER_PRO_URL', plugins_url( '/', __FILE__ ) );
 define( 'OTTER_PRO_PATH', dirname( __FILE__ ) );
 define( 'OTTER_PRO_BUILD_URL', plugins_url( '/', __FILE__ ) . 'build/pro/' );
 define( 'OTTER_PRO_BUILD_PATH', dirname( __FILE__ ) . '/build/pro/' );
-define( 'OTTER_PRO_VERSION', '1.7.5' );
+define( 'OTTER_PRO_VERSION', '2.0.2' );
 
 require_once dirname( __FILE__ ) . '/autoloader.php';
 $autoloader = new \ThemeIsle\GutenbergBlocks\Autoloader();
