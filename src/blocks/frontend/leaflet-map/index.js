@@ -41,11 +41,10 @@ const createMarker = ( markerProps ) => {
 	return markerMap;
 };
 
-const createLeafletMap = ( containerId, attributes ) => {
-	const container = document.querySelector( `#${ containerId }` );
+const createLeafletMap = ( container, attributes ) => {
 
 	if ( ! container ) {
-		console.warn( `The placeholder for the leaflet map block with id: ${ containerId } does not exist!` );
+		console.warn( `The placeholder for the leaflet map block with id: ${ container } does not exist!` );
 		return;
 	}
 
@@ -92,11 +91,20 @@ domReady( () => {
 				return;
 			}
 
-			window.themeisleLeafletMaps.forEach( block => {
-				createLeafletMap( block.container, block.attributes );
-			});
-
 			clearInterval( checker );
+
+			const idAttrMapping = Array.from( window.themeisleLeafletMaps )
+				.reduce( ( acc, x ) => {
+					acc[x.container] = x.attributes;
+					return acc;
+				}, {});
+
+			document.querySelectorAll( '.wp-block-themeisle-blocks-leaflet-map' )
+				.forEach( mapElem => {
+					if ( idAttrMapping[mapElem.id] !== undefined ) {
+						createLeafletMap( mapElem, idAttrMapping[mapElem.id]);
+					}
+				});
 		},
 		2_000
 	);

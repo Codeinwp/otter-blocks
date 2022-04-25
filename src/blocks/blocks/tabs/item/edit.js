@@ -50,7 +50,7 @@ const Edit = ({
 		return {
 			parentClientId: parentBlock.clientId
 		};
-	});
+	}, []);
 
 	const { selectBlock } = useDispatch( 'core/block-editor' );
 

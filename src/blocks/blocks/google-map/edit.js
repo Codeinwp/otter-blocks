@@ -52,6 +52,8 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	useEffect( () => {
+		let isMounted = true;
+
 		const setApi = async() => {
 			await window.wp.api.loadPromise.then( () => {
 				settingsRef.current = new window.wp.api.models.Settings();
@@ -60,16 +62,18 @@ const Edit = ({
 			if ( false === Boolean( window.themeisleGutenberg.mapsAPI ) ) {
 				if ( ! isAPILoaded ) {
 					settingsRef.current.fetch().then( ( response ) => {
-						setAPI( response.themeisle_google_map_block_api_key );
-						setAPILoaded( true );
+						if ( isMounted ) {
+							setAPI( response.themeisle_google_map_block_api_key );
+							setAPILoaded( true );
 
-						if ( '' !== response.themeisle_google_map_block_api_key ) {
-							setAPISaved( true );
-							enqueueScript( response.themeisle_google_map_block_api_key );
+							if ( '' !== response.themeisle_google_map_block_api_key ) {
+								setAPISaved( true );
+								enqueueScript( response.themeisle_google_map_block_api_key );
+							}
 						}
 					});
 				}
-			} else if ( ! isAPILoaded ) {
+			} else if ( ! isAPILoaded && isMounted ) {
 				setAPI( window.themeisleGutenberg.mapsAPI );
 				setAPILoaded( true );
 				setAPISaved( true );
@@ -92,6 +96,10 @@ const Edit = ({
 		linkRef.current.async = true;
 		linkRef.current.defer = true;
 		linkRef.current.id = 'themeisle-google-map-api-loading';
+
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	useEffect( () => {

@@ -1,6 +1,6 @@
 {
 	"name": "otter-blocks",
-	"version": "2.0.1",
+	"version": "2.0.2",
 	"description": "Gutenberg Blocks and Template Library by Otter",
 	"scripts": {
 		"build": "npm-run-all --parallel prod:*",
@@ -61,6 +61,7 @@
 		"@wordpress/components": "^19.6.0",
 		"@wordpress/compose": "^5.2.0",
 		"@wordpress/data": "^6.4.0",
+		"@wordpress/dom-ready": "^3.5.0",
 		"@wordpress/element": "^4.2.0",
 		"@wordpress/scripts": "^19.2.2",
 		"conventional-changelog-simple-preset": "^1.0.20",

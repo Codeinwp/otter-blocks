@@ -186,7 +186,7 @@
 }
 
 @media ( min-width: 600px ) and ( max-width: 960px ) {
-	.o-posts-grid {
+	[class*='o-posts-grid'] {
 		&.is-grid {
 			.o-posts-grid-post-blog {
 				min-width: 33%;
@@ -196,8 +196,7 @@
 }
 
 @media ( max-width: 600px ) {
-	.o-posts-grid {
-
+	[class*='o-posts-grid'] {
 		&.is-grid {
 			.o-posts-grid-post-blog {
 				min-width: 100%;

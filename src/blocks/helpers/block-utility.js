@@ -3,6 +3,7 @@
  */
 import { v4 as uuidv4 } from 'uuid';
 
+
 /**
  * WordPress dependencies.
  */
@@ -86,10 +87,20 @@ export const getDefaultValueByField = ({ name, field, defaultAttributes, attribu
 const localIDs = {};
 
 /**
+ * Check if the ID is inside a reusable block.
+ * @param {string} clientId
+ * @returns {boolean}
+ */
+const isInReusableBlock = ( clientId ) => {
+	return getBlockParents( clientId )
+		?.some( id => getBlock( id )?.attributes?.ref );
+};
+
+/**
  * Generate an Id based on the client id of the block. If the new id is also already used, create a new one using the `uuid`.
  * This might problem of duplicated new ids can be observed in the `Template Library` of the `Section` block when using Neve
  * Reference: https://github.com/Codeinwp/neve/blob/master/gutenberg/blocks/blog/template.json
- * The created block will share the same client Id at the beggining, after refresh a new will be generated and thus the problem will fix itself
+ * The created block will share the same client Id at the beginning, after refresh a new will be generated and thus the problem will fix itself
  * by creating new id based on the new uniq `clientId`
  *
  * @param {string}       idPrefix The prefix used for generating the block id
@@ -98,11 +109,12 @@ const localIDs = {};
  * @returns An uniq id instance
  */
 const generateUniqIdInstance = ( idPrefix, clientId, idsList ) => {
-	const instanceId = `${ idPrefix }${ clientId.substr( 0, 8 ) }`;
+
+	const instanceId = `${ idPrefix }${ clientId.slice( 0, 8 ) }`;
 	if ( idsList.has( instanceId ) ) {
-		let newInstanceId = `${ idPrefix }${ uuidv4().substr( 0, 8 ) }`;
+		let newInstanceId = `${ idPrefix }${ uuidv4().slice( 0, 8 ) }`;
 		while ( idsList.has( newInstanceId ) ) {
-			newInstanceId = `${ idPrefix }${ uuidv4().substr( 0, 8 ) }`;
+			newInstanceId = `${ idPrefix }${ uuidv4().slice( 0, 8 ) }`;
 		}
 		return newInstanceId;
 	}
@@ -147,7 +159,7 @@ export const addBlockId = ( args ) => {
 	 *
 	 * @type {Array.<string>}
 	 */
-	const blockIDs = window.themeisleGutenberg.blockIDs;
+	const blockIDs = window.themeisleGutenberg.blockIDs || [];
 
 	if ( attributes === undefined || setAttributes === undefined ) {
 		return ( savedId ) => {
@@ -158,27 +170,35 @@ export const addBlockId = ( args ) => {
 	// Initialize with an empty array the id list for the given block
 	localIDs[name] ??= new Set();
 
-	// Auto-generate idPrefix if not provided
-	const prefix = idPrefix || generatePrefix( name );
+	// Check if the ID is already used. EXCLUDE the one that come from reusable blocks.
+	const idIsAlreadyUsed = Boolean( attributes.id && localIDs[name].has( attributes.id ) );
 
-	const instanceId = generateUniqIdInstance( prefix, clientId, localIDs[name]);
-	const idIsAlreadyUsed = attributes.id && localIDs[name].has( attributes.id );
+	if ( attributes.id === undefined || idIsAlreadyUsed ) {
 
-	if ( attributes.id === undefined ) {
+		// Auto-generate idPrefix if not provided
+		const prefix = idPrefix || generatePrefix( name );
+		const instanceId = generateUniqIdInstance( prefix, clientId, localIDs[name]);
 
-		// If the id is undefined, then the block is newly created, and so we need to apply the Global Defaults
-		addGlobalDefaults( attributes, setAttributes, name, defaultAttributes );
+		if ( attributes.id === undefined ) {
 
-		// Save the id in all methods
-		setAttributes({ id: instanceId });
-		localIDs[name].add( instanceId );
-		blockIDs.push( instanceId );
-	} else if ( idIsAlreadyUsed ) {
+			// If the id is undefined, then the block is newly created, and so we need to apply the Global Defaults
+			addGlobalDefaults( attributes, setAttributes, name, defaultAttributes );
 
-		// The block must be a copy and its is already used
-		// Generate a new one and save it to `localIDs` to keep track of it in local mode.
-		setAttributes({ id: instanceId });
-		localIDs[name].add( instanceId );
+			// Save the id in all methods
+			localIDs[name].add( instanceId );
+			blockIDs.push( instanceId );
+			setAttributes({ id: instanceId });
+
+		} else if ( idIsAlreadyUsed ) {
+
+			// The block must be a copy and its is already used
+			// Generate a new one and save it to `localIDs` to keep track of it in local mode.
+			localIDs[name].add( instanceId );
+			setAttributes({ id: instanceId });
+		}
+		return ( savedId ) => {
+			localIDs[name].delete( instanceId || savedId );
+		};
 	} else {
 
 		// No conflicts, save the current id only to keep track of it both in local and global mode.
@@ -186,19 +206,15 @@ export const addBlockId = ( args ) => {
 		blockIDs.push( attributes.id );
 	}
 
-	const deleteBlockIdFromRegister = ( savedId ) => {
-		if ( attributes.id !== undefined && ! idIsAlreadyUsed ) {
-			localIDs[name].delete( attributes?.id || savedId );
-		} else {
-			localIDs[name].delete( instanceId || savedId );
-		}
+	return ( savedId ) => {
+		localIDs[name].delete( attributes?.id || savedId );
 	};
-
-	return deleteBlockIdFromRegister;
 };
 
 const getBlock = select( 'core/block-editor' ).getBlock;
+const getBlockParents = select( 'core/block-editor' ).getBlockParents;
 const updateBlockAttributes = dispatch( 'core/block-editor' ).updateBlockAttributes;
+const getSelectedBlockClientId = select( 'core/block-editor' ).getSelectedBlockClientId;
 
 /**
  * Create the function that behaves like `setAttributes` using the client id
@@ -230,6 +246,7 @@ const extractBlockData = ( clientId ) => {
 	return { attributes: block?.attributes, name: block?.name };
 };
 
+
 /**
  * Generate the id attribute for the given block.
  * This function is a simple wrapper around {@link addBlockId}
@@ -250,8 +267,7 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 	return addBlockId({
 		clientId,
 		defaultAttributes,
-		setAttributes: updateAttrs( clientId ),
+		setAttributes: ( ! isInReusableBlock( clientId ) || getSelectedBlockClientId() === clientId ) ? updateAttrs( clientId ) : undefined,
 		...extractBlockData( clientId )
 	});
 };
-

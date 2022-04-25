@@ -10,6 +10,12 @@ const SliderArrows = '<div class="glide__arrows" data-glide-el="controls"><butto
 const init = () => {
 	const sliders = document.querySelectorAll( '.wp-block-themeisle-blocks-slider' );
 
+	const options = {
+		root: null,
+		rootMargin: '0px',
+		threshold: [ 0.0 ]
+	};
+
 	sliders.forEach( slider => {
 		const track = slider.querySelector( '.glide__slides' );
 
@@ -17,36 +23,48 @@ const init = () => {
 			return false;
 		}
 
-		const options = omit({ ...slider.dataset }, [ 'autoplay', 'height', 'hideArrows' ]);
-		const autoplay = 'false' === slider.dataset.autoplay ? false : ( 'true' === slider.dataset.autoplay ? 2000 : slider.dataset.autoplay );
-		const hideArrows = 'true' === slider.dataset.hideArrows ? true : false;
-
-		if ( ! hideArrows ) {
-			const el = document.createElement( 'div' );
-			el.innerHTML = SliderArrows;
-			slider.appendChild( el.firstElementChild );
-		}
 
 		Object.keys( options ).map( option => options[option] = Number( options[option]) );
 
-		new window.Glide( `#${ slider.id }`, {
-			type: 'carousel',
-			keyboard: true,
-			autoplay,
-			hoverpause: true,
-			...options,
-			breakpoints: {
-				800: {
-					perView: 1,
-					peek: 0,
-					gap: 0
-				}
-			}
-		}).mount();
+		const observer = new IntersectionObserver( entries => {
+			entries.forEach( entry => {
+				if ( entry.isIntersecting && 0 <= entry.intersectionRect.height ) {
+					const options = omit({ ...slider.dataset }, [ 'autoplay', 'height', 'hideArrows' ]);
+					const autoplay = 'false' === slider.dataset.autoplay ? false : ( 'true' === slider.dataset.autoplay ? 2000 : slider.dataset.autoplay );
+					const hideArrows = 'true' === slider.dataset.hideArrows;
 
-		if ( track ) {
-			track.style.height = slider.dataset.height;
-		}
+					if ( ! hideArrows ) {
+						const el = document.createElement( 'div' );
+						el.innerHTML = SliderArrows;
+						slider.appendChild( el.firstElementChild );
+					}
+
+					new window.Glide( `#${ slider.id }`, {
+						type: 'carousel',
+						keyboard: true,
+						autoplay,
+						hoverpause: true,
+						...options,
+						breakpoints: {
+							800: {
+								perView: 1,
+								peek: 0,
+								gap: 0
+							}
+						}
+					}).mount();
+
+					if ( track ) {
+						track.style.height = slider.dataset.height;
+					}
+
+					observer.unobserve( slider );
+				}
+			}, options );
+
+		});
+
+		observer.observe( slider );
 	});
 };
 

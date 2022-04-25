@@ -63,7 +63,7 @@ const Edit = ({
 	const children = useSelect( select => {
 		const { getBlock } = select( 'core/block-editor' );
 		return getBlock( clientId ).innerBlocks;
-	});
+	}, []);
 
 	const [ activeTab, setActiveTab ] = useState( children.find( c => true === c.attributes.defaultOpen )?.clientId );
 
@@ -81,8 +81,6 @@ const Edit = ({
 				const blockContent = contentRef.current.querySelector( `#block-${ block.clientId } .wp-block-themeisle-blocks-tabs-item__content` );
 				blockContent?.classList.toggle( 'active', block.clientId === blockId );
 			});
-
-			updateBlockAttributes( blockId, { defaultOpen: true });
 			setActiveTab( blockId );
 		}
 	};

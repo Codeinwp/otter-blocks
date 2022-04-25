@@ -134,23 +134,3 @@
 		}
 	}
 }
-
-@media ( min-width: 600px ) and ( max-width: 960px ) {
-	.wp-block-themeisle-blocks-posts-grid {
-		.is-grid {
-			.wp-block-themeisle-blocks-posts-grid-post-blog {
-				min-width: 33%;
-			}
-		}
-	}
-}
-
-@media ( max-width: 600px ) {
-	.wp-block-themeisle-blocks-posts-grid {
-		.is-grid {
-			.wp-block-themeisle-blocks-posts-grid-post-blog {
-				min-width: 100%;
-			}
-		}
-	}
-}

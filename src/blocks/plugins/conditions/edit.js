@@ -20,6 +20,7 @@ import { useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
+	memo,
 	useEffect
 } from '@wordpress/element';
 
@@ -38,25 +39,23 @@ const Edit = ({
 	setAttributes
 }) => {
 	useEffect( () => {
-		return () => {
-			if ( ! Boolean( attributes?.otterConditions?.length ) ) {
-				return;
+		if ( ! Boolean( attributes?.otterConditions?.length ) ) {
+			return;
+		}
+
+		let otterConditions = [ ...attributes.otterConditions ];
+
+		otterConditions.forEach( ( i, n ) => {
+			if ( isEmpty( i ) ) {
+				otterConditions.splice( n, 1 );
 			}
+		});
 
-			let otterConditions = [ ...attributes.otterConditions ];
+		if ( ! Boolean( otterConditions.length ) ) {
+			otterConditions = undefined;
+		}
 
-			otterConditions.forEach( ( i, n ) => {
-				if ( isEmpty( i ) ) {
-					otterConditions.splice( n, 1 );
-				}
-			});
-
-			if ( ! Boolean( otterConditions.length ) ) {
-				otterConditions = undefined;
-			}
-
-			setAttributes({ otterConditions });
-		};
+		setAttributes({ otterConditions });
 	}, []);
 
 	const { postAuthors } = useSelect( select => {
@@ -72,7 +71,7 @@ const Edit = ({
 		return {
 			postAuthors
 		};
-	});
+	}, []);
 
 	let { postCategories } = useSelect( select => {
 		const { getEntityRecords } = select( 'core' );
@@ -88,7 +87,7 @@ const Edit = ({
 		return {
 			postCategories
 		};
-	});
+	}, []);
 
 	const addGroup = () => {
 		const otterConditions = [ ...( attributes.otterConditions || []) ];
@@ -97,8 +96,13 @@ const Edit = ({
 	};
 
 	const removeGroup = n => {
-		const otterConditions = [ ...attributes.otterConditions ];
+		let otterConditions = [ ...attributes.otterConditions ];
 		otterConditions.splice( n, 1 );
+
+		if ( ! Boolean( otterConditions.length ) ) {
+			otterConditions = undefined;
+		}
+
 		setAttributes({ otterConditions });
 	};
 
@@ -485,4 +489,4 @@ const Edit = ({
 	);
 };
 
-export default Edit;
+export default memo( Edit );

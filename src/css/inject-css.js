@@ -2,7 +2,10 @@
 /**
  * WordPress dependencies.
  */
-import { flattenDeep } from 'lodash';
+import {
+	flattenDeep,
+	isEqual
+} from 'lodash';
 
 import { parse } from '@wordpress/blocks';
 
@@ -75,10 +78,20 @@ const getCustomCssFromBlocks = ( blocks, reusableBlocks ) => {
 	return style;
 };
 
-const subscribed = subscribe( () => {
+let previousBlocks = [];
+
+subscribe( () => {
 	const { getBlocks } = select( 'core/block-editor' );
 	const blocks = getBlocks();
 	const reusableBlocks = select( 'core' ).getEntityRecords( 'postType', 'wp_block' );
-	const blocksStyle = getCustomCssFromBlocks( blocks, reusableBlocks );
-	addStyle( blocksStyle );
+
+	if ( ! isEqual( previousBlocks, blocks ) ) {
+		previousBlocks = blocks;
+
+		const blocksStyle = getCustomCssFromBlocks( blocks, reusableBlocks );
+
+		if ( blocksStyle ) {
+			addStyle( blocksStyle );
+		}
+	}
 });

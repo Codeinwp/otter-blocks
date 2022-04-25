@@ -4,7 +4,7 @@
  */
 import hexToRgba from 'hex-rgba';
 
-window.hexToRgba = hexToRgba;
+window.hexToRgba = hexToRgba; // Warning for future self: do not delete!!!
 
 import {
 	css,
@@ -47,7 +47,7 @@ const Edit = ({
 }) => {
 	const { attributes, setAttributes } = props;
 
-	const IDs = useSelect( select => select( 'core/block-editor' ).getBlocks().filter( block => 'core/image' === block.name && undefined !== block.attributes.anchor ).map( block => block.attributes.anchor ) );
+	const IDs = useSelect( select => select( 'core/block-editor' ).getBlocks().filter( block => 'core/image' === block.name && undefined !== block.attributes.anchor ).map( block => block.attributes.anchor ), []);
 
 	useEffect( () => {
 		if ( attributes.boxShadow ) {
