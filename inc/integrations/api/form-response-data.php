@@ -150,7 +150,8 @@ class Form_Data_Response {
         return $this;
     }
 
-    /** Check if the response has an error.
+    /**
+	 * Check if the response has an error.
      * @return bool
      */
     public function has_error() {

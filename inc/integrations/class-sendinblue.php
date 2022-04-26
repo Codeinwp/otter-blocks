@@ -173,7 +173,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 
     /**
      * Set the list id.
-     * @param string $list_id
+     * @param string $list_id The list id.
      * @return $this
      */
 	private function set_list_id($list_id)
@@ -198,25 +198,11 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	}
 
 	/**
-	 * @return bool
-	 */
-    public function check_credential_status()
-    {
-        $url      = 'https://api.sendinblue.com/v3/contacts/lists';
-        $args = array(
-            'method'  => 'GET',
-            'headers' => array(
-                'api-key' => $this->api_key,
-            ),
-        );
-
-        $response = wp_remote_get( $url, $args );
-        return ! is_wp_error( $response );
-    }
-
-	/**
+	 * Check if the response is caused by invalid credential.
 	 * @param string $response_code The response code.
 	 * @return bool
+	 *
+	 * @see https://developers.sendinblue.com/docs/how-it-works#error-codes
 	 */
 	private function is_credential_error( $response_code ) {
 		return in_array( $response_code, array( 'unauthorized', 'reseller_permission_denied', 'not_enough_credits', 'account_under_validation', 'permission_denied' ));

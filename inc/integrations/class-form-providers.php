@@ -54,7 +54,7 @@ class Form_Providers
 
 	/**
 	 * Register an email provider.
-	 * @param array $new_providers
+	 * @param array $new_providers The new provider.
 	 * @return void
 	 * @throws Exception
 	 */
@@ -70,7 +70,7 @@ class Form_Providers
 
     /**
      * Select the provider based on the form integration settings.
-     * @param Form_Data_Request $form_request
+     * @param Form_Data_Request $form_request The form request.
      * @return array|bool
 	 */
 	public function select_provider_from_form_options($form_request) {
@@ -84,8 +84,8 @@ class Form_Providers
 
 	/**
 	 * Get the provider.
-	 * @param string $provider_name
-	 * @param string $scope
+	 * @param string $provider_name The name of the provider.
+	 * @param string $scope The scope.
 	 * @return array|bool
 	 */
 	public function get_provider_handlers($provider_name = 'default' , $scope = 'frontend' ) {
@@ -96,8 +96,8 @@ class Form_Providers
 	}
 
 	/**
-	 * @param $provider
-	 * @param $handler
+	 * @param $provider The name of the provider.
+	 * @param $handler The name of the handler.
 	 * @return bool
 	 */
 	public static function provider_has_handler( $provider, $handler ) {

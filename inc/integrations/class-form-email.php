@@ -163,6 +163,7 @@ class Form_Email
     }
 
 	/**
+	 * Build the body for error messages.
 	 * @param string $error The error message.
 	 */
 	public function build_error_body( $error ) {
@@ -178,6 +179,10 @@ class Form_Email
 		echo ob_get_clean();
 	}
 
+	/**
+	 * Build the body for the test email.
+	 * @return false|string
+	 */
 	public function build_test_email() {
 		ob_start(); ?>
 		<!doctype html>

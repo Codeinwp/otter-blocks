@@ -149,7 +149,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 
     /**
      * Set the list id.
-     * @param string $list_id
+     * @param string $list_id The list id.
      * @return $this
      */
 	public function set_list_id( $list_id ) {
@@ -162,7 +162,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 *
 	 * @param string $api_key The API Key of the provider.
 	 * @return array[
-	 *  'validate' => booleand,
+	 *  'validate' => boolean,
 	 *  'reason' => string
 	 * ]
 	 */
@@ -217,35 +217,25 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	}
 
     /**
-     * Get the data from the provider.
+     * Get the data from the provider, like: contact list.
      * @param Form_Data_Request $request
      * @return false[]|mixed
      */
 	public function get_information_from_provider($request)
 	{
+		if( $request->is_set( 'action' ) ) {
+			if ($request->get('action') == 'listId') {
+				return $this->get_lists();
+			}
+		}
 		return $this->get_lists();
 	}
 
 	/**
-	 * @return bool
-	 */
-    public function check_credential_status()
-    {
-        $url  = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists';
-        $args = array(
-            'method'  => 'GET',
-            'headers' => array(
-                'Authorization' => 'Basic ' . base64_encode( 'user:' . $this->api_key ),
-            ),
-        );
-
-        $response = wp_remote_get( $url, $args );
-        return ! is_wp_error( $response );
-    }
-
-	/**
+	 * Check if the response is caused by invalid credential.
 	 * @param int $response_code The response code.
 	 * @return bool
+	 * @see https://mailchimp.com/developer/marketing/docs/errors/
 	 */
 	private function is_credential_error( $response_code ) {
 		return in_array( $response_code, array( 401, 403, 404, 500 ));

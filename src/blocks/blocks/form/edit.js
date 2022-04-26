@@ -216,12 +216,10 @@ const Edit = ({
 
 
 		if ( attributes.optionName ) {
-			console.log( 'Hello' );
 			api.loadPromise.then( () => {
 				( new api.models.Settings() ).fetch({ signal: controller.signal }).done( res => {
 					controller = null;
 					const formData = extractDataFromWpOptions( res.themeisle_blocks_form_emails );
-					console.log( 'Hello 1', formData );
 					if ( formData ) {
 						parseDataFormOptions( formData );
 						setSavedFormOptions( formData );
@@ -250,30 +248,18 @@ const Edit = ({
 
 			emails?.forEach( ({ form }, index ) => {
 				if ( form === attributes.optionName ) {
-					if ( emails[index].email !== formOptions.emailTo ) {
-						emails[index].email = formOptions.emailTo; // update the value
-						hasUpdated = true;
-					}
-					if ( emails[index].redirectLink !== formOptions.redirectLink ) {
-						emails[index].redirectLink = formOptions.redirectLink; // update the value
-						hasUpdated = true;
-					}
-					if ( emails[index].emailSubject !== formOptions.subject ) {
-						emails[index].emailSubject = formOptions.subject; // update the value
-						hasUpdated = true;
-					}
-					if ( emails[index].submitMessage !== formOptions.submitMessage ) {
-						emails[index].submitMessage = formOptions.submitMessage; // update the value
-						hasUpdated = true;
-					}
-					if ( emails[index].fromName !== formOptions.fromName ) {
-						emails[index].fromName = formOptions.fromName; // update the value
-						hasUpdated = true;
-					}
-					if ( emails[index].hasCaptcha !== formOptions.hasCaptcha ) {
-						emails[index].hasCaptcha = formOptions.hasCaptcha;
-						hasUpdated = true;
-					}
+					hasUpdated = (
+						emails[index].email !== formOptions.emailTo ||
+						emails[index].redirectLink !== formOptions.redirectLink ||
+						emails[index].emailSubject !== formOptions.subject ||
+						emails[index].submitMessage !== formOptions.submitMessage ||
+						emails[index].fromName !== formOptions.fromName
+					);
+					emails[index].email = formOptions.emailTo; // update the value
+					emails[index].redirectLink = formOptions.redirectLink; // update the value
+					emails[index].emailSubject = formOptions.subject; // update the value
+					emails[index].submitMessage = formOptions.submitMessage; // update the value
+					emails[index].fromName = formOptions.fromName; // update the value
 					isMissing = false;
 				}
 			});
@@ -297,7 +283,6 @@ const Edit = ({
 
 				model.save().then( response => {
 					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
-					console.log( formOptions, response.themeisle_blocks_form_emails );
 					if ( formOptions ) {
 						parseDataFormOptions( formOptions );
 						setSavedFormOptions( formOptions );
@@ -336,7 +321,12 @@ const Edit = ({
 						emails[index].integration = {};
 					}
 
-					hasUpdated = emails[index].integration.provider !== formOptions.provider || emails[index].integration.listId !== formOptions.listId || emails[index].integration.action !== formOptions.action || emails[index].integration.apiKey !== formOptions.apiKey;
+					hasUpdated = (
+						emails[index].integration.provider !== formOptions.provider ||
+						emails[index].integration.listId !== formOptions.listId ||
+						emails[index].integration.action !== formOptions.action ||
+						emails[index].integration.apiKey !== formOptions.apiKey
+					);
 					isMissing = false;
 					emails[index].integration.provider = formOptions.provider;
 					emails[index].integration.apiKey = formOptions.apiKey;

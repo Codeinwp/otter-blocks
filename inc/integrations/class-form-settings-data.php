@@ -359,6 +359,10 @@ class Form_Settings_Data
         return $this->submit_message;
     }
 
+	/**
+	 * Get the OnSuccess submit data: redirectLink, submitMessage.
+	 * @return array
+	 */
     public function get_submit_data() {
         return array(
             'redirectLink' => $this->get_redirect_link(),
@@ -367,6 +371,7 @@ class Form_Settings_Data
     }
 
 	/**
+	 * Get the name of the sender.
 	 * @return string
 	 */
 	public function get_from_name() {
@@ -374,7 +379,8 @@ class Form_Settings_Data
 	}
 
 	/**
-	 * @param string $from_name
+	 * Set the name of the sender.
+	 * @param string $from_name The name of the sender.
 	 *
 	 * @return Form_Settings_Data
 	 */
