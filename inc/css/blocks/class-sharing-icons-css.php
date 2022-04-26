@@ -36,7 +36,7 @@ class Sharing_Icons_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--itemsGap',
+						'property' => '--iconsGap',
 						'value'    => 'gap',
 					),
 					array(
@@ -54,7 +54,7 @@ class Sharing_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--textColor',
 						'value'    => 'textColor',
-					)
+					),
 				),
 			)
 		);

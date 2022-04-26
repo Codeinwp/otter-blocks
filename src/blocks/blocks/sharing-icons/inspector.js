@@ -52,7 +52,7 @@ const Inspector = ({
 					value={ extractNumber( attributes.gap ) }
 					onChange={ value => onChangePixelValue( value, 'gap' ) }
 					allowReset
-					max={ 20 }
+					max={ 100 }
 				/>
 				<RangeControl
 					label={ __( 'Icons Border Badius', 'otter-blocks' ) }

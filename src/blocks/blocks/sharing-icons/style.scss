@@ -1,6 +1,6 @@
 .wp-block-themeisle-blocks-sharing-icons {
 	display: flex;
-	gap: var(--itemsGap, 5px);
+	gap: var(--iconsGap, 5px);
 	margin: 10px 0;
 
 	.social-icon {
@@ -8,7 +8,7 @@
 		position: relative;
 		padding: 12px;
 		border: none;
-		border-radius: var(--borderRadius, 0);
+		border-radius: var(--borderRadius, 3px);
 		white-space: normal;
 		letter-spacing: 0;
 		display: inline-block;
