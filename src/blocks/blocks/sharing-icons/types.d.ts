@@ -11,6 +11,8 @@ type Attributes = {
 	gap: string
 	borderRadius: string
 	textDeco: string
+	backgroundColor: string
+	textColor: string
 }
 
 export type SharingIconsProps = BlockProps<Attributes>

@@ -46,6 +46,12 @@
 		"textDeco": {
 			"type": "string",
 			"default": "underline"
+		},
+		"backgroundColor" : {
+			"type": "string"
+		},
+		"textColor" : {
+			"type": "string"
 		}
 	},
 	"styles": [

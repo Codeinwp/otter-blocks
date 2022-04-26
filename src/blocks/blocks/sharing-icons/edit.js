@@ -43,6 +43,8 @@ const Edit = ({
 		--itemsGap: ${ getValue( 'gap' ) };
 		--borderRadius: ${ getValue( 'borderRadius' ) };
 		--textDeco: ${ getValue( 'textDeco' ) };
+		--iconsBgColor: ${ getValue( 'backgroundColor' ) };
+		--textColor: ${ getValue( 'textColor' ) };
 	`;
 
 	const blockProps = useBlockProps({

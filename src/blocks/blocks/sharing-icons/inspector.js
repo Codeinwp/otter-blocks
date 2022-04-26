@@ -3,7 +3,10 @@
  */
 import { Fragment } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { InspectorControls } from '@wordpress/block-editor';
+import {
+	InspectorControls,
+	PanelColorSettings
+} from '@wordpress/block-editor';
 import {
 	PanelBody,
 	RangeControl,
@@ -64,6 +67,23 @@ const Inspector = ({
 					onChange={ onChangeTextDeco }
 				/>
 			</PanelBody>
+			<PanelColorSettings
+				title={ __( 'Color Settings' ) }
+				colorSettings={ [
+					{
+						value: attributes.backgroundColor,
+						onChange: ( value ) => setAttributes({ backgroundColor: value }),
+						label: __( 'Background Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.textColor,
+						onChange: ( value ) => setAttributes({ textColor: value }),
+						label: __( 'Text Color', 'otter-blocks' )
+					}
+				] }
+			>
+				<p><i> { __( 'The colors will be set for all icons.', 'otter-blocks' ) } </i></p>
+			</PanelColorSettings>
 		</InspectorControls>
 	</Fragment>;
 };

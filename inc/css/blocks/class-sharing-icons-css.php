@@ -47,6 +47,14 @@ class Sharing_Icons_CSS extends Base_CSS {
 						'property' => '--textDeco',
 						'value'    => 'textDeco',
 					),
+					array(
+						'property' => '--iconsBgColor',
+						'value'    => 'backgroundColor',
+					),
+					array(
+						'property' => '--textColor',
+						'value'    => 'textColor',
+					)
 				),
 			)
 		);

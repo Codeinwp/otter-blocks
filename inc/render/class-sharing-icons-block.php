@@ -83,7 +83,7 @@ class Sharing_Icons_Block {
 		foreach ( $social_attributes as $key => $icon ) {
 			if ( 'className' !== $key && 1 == $attributes[ $key ] ) {
 				$html .= '<a class="social-icon is-' . esc_html( $key ) . '" href="' . esc_url( $icon['url'] ) . '" target="_blank">';
-				$html .= '<i class="fab fa-' . esc_html( $icon['icon'] ) . '"></i>';
+				$html .= '<i class="fab fa-' . esc_html( $icon['icon'] ) . '"></i><span class="v-line"></span>';
 				if ( strpos( $wrapper_attributes, 'is-style-icons' ) === false ) {
 					$html .= esc_html( $icon['label'] );
 				}
