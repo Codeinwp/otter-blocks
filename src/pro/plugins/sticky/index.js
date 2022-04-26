@@ -13,10 +13,7 @@ import { Fragment } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
-/**
- * Internal dependencies.
- */
-import LicenseNotice from '../../components/license-notice/index.js';
+const { Notice } = window.otterComponents;
 
 const StickyControls = (
 	Controls,
@@ -26,7 +23,7 @@ const StickyControls = (
 ) => {
 	if ( ! Boolean( window.otterPro.isActive ) ) {
 		return (
-			<LicenseNotice
+			<Notice
 				notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
 				instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Sticky Extension.', 'otter-blocks' ) }
 			/>
@@ -49,7 +46,7 @@ const StickyControls = (
 	return (
 		<Fragment>
 			{ Boolean( window.otterPro.isExpired ) && (
-				<LicenseNotice
+				<Notice
 					notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
 					instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Sticky Extension.', 'otter-blocks' ) }
 				/>

@@ -30,6 +30,7 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import PanelTab from '../../components/panel-tab/index.js';
+import Notice from '../../components/notice/index.js';
 
 const hasPro = Boolean( window.themeisleGutenberg.hasPro );
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
@@ -333,6 +334,10 @@ const Edit = ({
 				title={ __( 'Visibility Conditions', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
+				<Notice
+					notice={<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Disable in Otter Settings', 'otter-blocks' ) }</ExternalLink> }
+				/>
+
 				<p>{ __( 'Control the visibility of your blocks based on the following conditions.', 'otter-blocks' ) }</p>
 
 				{ ( ! hasPro ) && (

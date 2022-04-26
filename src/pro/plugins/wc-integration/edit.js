@@ -17,9 +17,11 @@ import { useSelect } from '@wordpress/data';
  * Internal dependencies.
  */
 import { extractProductData } from './utility.js';
-import LicenseNotice from '../../components/license-notice/index.js';
 
-const { SelectProducts } = window.otterComponents;
+const {
+	Notice,
+	SelectProducts
+} = window.otterComponents;
 
 const Edit = ({
 	BlockEdit,
@@ -82,14 +84,14 @@ const Edit = ({
 					/>
 
 					{ Boolean( window.otterPro.isExpired ) && (
-						<LicenseNotice
+						<Notice
 							notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
 							instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Review Block.', 'otter-blocks' ) }
 						/>
 					) }
 
 					{ ! Boolean( window.otterPro.isActive ) && (
-						<LicenseNotice
+						<Notice
 							notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
 							instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Review Block.', 'otter-blocks' ) }
 						/>

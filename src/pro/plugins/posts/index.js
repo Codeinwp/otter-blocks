@@ -29,10 +29,7 @@ import { Fragment } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
-/**
- * Internal dependencies.
- */
-import LicenseNotice from '../../components/license-notice/index.js';
+const { Notice } = window.otterComponents;
 
 const ALLOWED_ACF_TYPES = [
 	'text',
@@ -124,14 +121,14 @@ const AddFields = (
 			</Button>
 
 			{ Boolean( window.otterPro.isExpired ) && (
-				<LicenseNotice
+				<Notice
 					notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
 					instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Posts Block.', 'otter-blocks' ) }
 				/>
 			) }
 
 			{ ! Boolean( window.otterPro.isActive ) && (
-				<LicenseNotice
+				<Notice
 					notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
 					instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Posts Block.', 'otter-blocks' ) }
 				/>
@@ -212,7 +209,7 @@ const Controls = (
 
 	if ( ! Boolean( window.otterPro.isActive ) ) {
 		return (
-			<LicenseNotice
+			<Notice
 				notice={ __( 'You need to activate Otter Pro to edit this field.', 'otter-blocks' ) }
 			/>
 		);

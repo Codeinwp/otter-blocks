@@ -5,12 +5,17 @@ import { Tooltip } from '@wordpress/components';
 
 import { info } from '@wordpress/icons';
 
-const LicenseNotice = ({
+/**
+ * Internal dependencies
+ */
+import './editor.scss';
+
+const Notice = ({
 	notice,
 	instructions
 }) => {
 	return (
-		<div className="o-expired-notice">
+		<div className="o-notice">
 			{ notice }
 
 			{ instructions && (
@@ -25,4 +30,4 @@ const LicenseNotice = ({
 	);
 };
 
-export default LicenseNotice;
+export default Notice;

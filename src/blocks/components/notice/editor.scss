@@ -1,0 +1,23 @@
+.o-notice {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #F3F3F3;
+	border-radius: 4px;
+	padding: 10px 20px;
+	margin: 10px 0;
+
+	.components-external-link {
+		display: flex;
+		flex-direction: row-reverse;
+
+		svg {
+			margin: 0 5px 0 0;
+		}
+	}
+
+    svg {
+        width: 18px;
+        height: 18px;
+    }
+}
