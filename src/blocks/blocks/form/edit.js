@@ -331,9 +331,10 @@ const Edit = ({
 						emails[index].integration = {};
 					}
 
-					hasUpdated = emails[index].integration.provider !== formOptions.provider || emails[index].integration.listId !== formOptions.listId || emails[index].integration.action !== formOptions.action;
+					hasUpdated = emails[index].integration.provider !== formOptions.provider || emails[index].integration.listId !== formOptions.listId || emails[index].integration.action !== formOptions.action || emails[index].integration.apiKey !== formOptions.apiKey;
 					isMissing = false;
 					emails[index].integration.provider = formOptions.provider;
+					emails[index].integration.apiKey = formOptions.apiKey;
 					emails[index].integration.listId = formOptions.listId;
 					emails[index].integration.action = formOptions.action;
 				}

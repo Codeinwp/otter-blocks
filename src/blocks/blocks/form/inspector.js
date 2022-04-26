@@ -400,6 +400,7 @@ const Inspector = ({
 								formOptions.redirectLink && (
 									<ExternalLink
 										href={formOptions.redirectLink}
+										style={{ marginBottom: '10px', display: 'block'}}
 									>
 										{__( 'Preview Redirect link.', 'otter-blocks' )}
 									</ExternalLink>
@@ -498,6 +499,35 @@ const Inspector = ({
 								formOptions.provider && (
 									<Fragment>
 										{
+											! formOptions.apiKey && (
+												<Fragment>
+													{
+														'mailchimp' === formOptions?.provider && (
+															<ExternalLink
+																href={'https://us5.admin.mailchimp.com/account/api/'}
+																style={{ marginBottom: '10px', display: 'block'}}
+																target="_blank"
+															>
+																{__( 'Guide to generate the API Key.', 'otter-blocks' )}
+															</ExternalLink>
+														)
+													}
+													{
+														'sendinblue' === formOptions?.provider && (
+															<ExternalLink
+																href={'https://help.sendinblue.com/hc/en-us/articles/209467485-What-s-an-API-key-and-how-can-I-get-mine-'}
+																style={{ marginBottom: '10px', display: 'block'}}
+																target="_blank"
+															>
+																{__( 'Guide to generate the API Key.', 'otter-blocks' )}
+															</ExternalLink>
+														)
+													}
+												</Fragment>
+
+											)
+										}
+										{
 
 											<TextControl
 												label={ __( 'API Key', 'otter-blocks' ) }
@@ -513,6 +543,7 @@ const Inspector = ({
 											/>
 
 										}
+
 										{
 											formOptions.apiKey && 2 > listIDOptions.length && 'loading' === loadingState?.listId && (
 												<Fragment>
@@ -527,7 +558,7 @@ const Inspector = ({
 													{ __( 'Invalid API Key. Please check your API Key in the provider\'s Dashboard.', 'otter-blocks' ) }
 													<ExternalLink
 														target="_blank"
-														style={{ marginLeft: '3px' }}
+														style={{ marginBottom: '10px', display: 'block'}}
 														href={ 'sendinblue' === formOptions.provider ? 'https://account.sendinblue.com/advanced/api' : 'https://us5.admin.mailchimp.com/account/api/'}
 													>
 														Go to Dashboard.
