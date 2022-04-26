@@ -31,7 +31,7 @@ define( 'OTTER_PRO_BUILD_PATH', dirname( __FILE__ ) . '/build/pro/' );
 define( 'OTTER_PRO_VERSION', '2.0.2' );
 
 require_once dirname( __FILE__ ) . '/autoloader.php';
-$autoloader = new \ThemeIsle\GutenbergBlocks\Autoloader();
+$autoloader = new \ThemeIsle\OtterPro\Autoloader();
 $autoloader->add_namespace( '\ThemeIsle\OtterPro', dirname( __FILE__ ) . '/inc/' );
 $autoloader->register();
 
