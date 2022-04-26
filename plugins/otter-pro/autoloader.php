@@ -1,16 +1,16 @@
 <?php
 /**
- * Gutenberg Blocks Autoloader
+ * Otter ProAutoloader
  *
  * @package Gutenberg Blocks
  */
 
-namespace ThemeIsle\GutenbergBlocks;
+namespace ThemeIsle\OtterPro;
 
 /**
  * Class Autoloader
  *
- * @package ThemeIsle\GutenbergBlocks
+ * @package ThemeIsle\OtterPro
  */
 class Autoloader {
 	/**
