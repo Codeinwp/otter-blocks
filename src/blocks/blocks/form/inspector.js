@@ -406,34 +406,6 @@ const Inspector = ({
 								)
 							}
 
-
-							<ToggleControl
-								label={ __( 'Add captcha checkbox', 'otter-blocks' ) }
-								checked={ formOptions.hasCaptcha }
-								onChange={ hasCaptcha => setFormOption({ hasCaptcha }) }
-								help={ __( 'Add Google reCaptcha V2 for protection againts bots. You will need an API Key.', 'otter-blocks' ) }
-							/>
-
-							{
-								formOptions.hasCaptcha && (
-									<div
-										style={{
-											display: 'flow-root',
-											margin: '10px 0px'
-										}}
-									>
-										{__( 'You can change the reCaptcha API Keys in Settings > Otter. ', 'otter-blocks' )}
-										<ExternalLink
-											href={ 'https://www.google.com/recaptcha/about/' }
-											target="_blank"
-
-										>
-											{ __( 'Learn more about reCaptcha.', 'otter-blocks' ) }
-										</ExternalLink>
-									</div>
-								)
-							}
-
 							<Button
 								isPrimary
 								onClick={ saveFormEmailOptions }
@@ -466,6 +438,37 @@ const Inspector = ({
 								)
 							}
 
+						</PanelBody>
+
+						<PanelBody
+							title={ __( 'Bot Protection', 'otter-blocks' ) }
+						>
+							<ToggleControl
+								label={ __( 'Add captcha checkbox', 'otter-blocks' ) }
+								checked={ attributes.hasCaptcha }
+								onChange={ hasCaptcha => setAttributes({ hasCaptcha }) }
+								help={ __( 'Add Google reCaptcha V2 for protection againts bots. You will need an API Key.', 'otter-blocks' ) }
+							/>
+
+							{
+								formOptions.hasCaptcha && (
+									<div
+										style={{
+											display: 'flow-root',
+											margin: '10px 0px'
+										}}
+									>
+										{__( 'You can change the reCaptcha API Keys in Settings > Otter. ', 'otter-blocks' )}
+										<ExternalLink
+											href={ 'https://www.google.com/recaptcha/about/' }
+											target="_blank"
+
+										>
+											{ __( 'Learn more about reCaptcha.', 'otter-blocks' ) }
+										</ExternalLink>
+									</div>
+								)
+							}
 						</PanelBody>
 
 						<PanelBody

@@ -16,12 +16,11 @@ import {
 const Save = ({
 	attributes
 }) => {
-	const hasIntegrationActive = attributes.provider && attributes.listId;
 
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
 		className: classnames({
-			'can-submit-and-subscribe': hasIntegrationActive && 'submit-subscribe' === attributes.action,
+			'can-submit-and-subscribe': 'submit-subscribe' === attributes.action,
 			'has-captcha': attributes.hasCaptcha
 		}),
 		'data-option-name': attributes.optionName

@@ -204,7 +204,7 @@ const Edit = ({
 	};
 
 	/**
-	 * Load Email and ApiKey from server.
+	 * Load data from the server.
 	 */
 	useEffect( () => {
 		let controller = new AbortController();
@@ -236,125 +236,83 @@ const Edit = ({
 		};
 	}, [ attributes.optionName ]);
 
+	const saveFormEmailOptions = () => {
+		setLoading({ formOptions: 'saving' });
+		( new api.models.Settings() ).fetch().done( res => {
+			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
+			let isMissing = true;
+			let hasUpdated = false;
 
-	/**
-	 * Save the captcha option in settings.
-	 */
-	useEffect( () => {
-		let controller = new AbortController();
-		if ( formOptions.hasCaptcha !== undefined && attributes.optionName ) {
-			( new api.models.Settings() )?.current?.fetch({ signal: controller.signal }).done( res => {
-				controller = null;
-
-				const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
-				let isMissing = true;
-				let hasChanged = false;
-
-				emails?.forEach( ({ form }, index ) => {
-					if ( form === attributes.optionName ) {
-						if ( emails[index].hasCaptcha !== formOptions.hasCaptcha ) {
-							hasChanged = true;
-						}
-						emails[index].hasCaptcha = formOptions.hasCaptcha;
-						isMissing = false;
+			emails?.forEach( ({ form }, index ) => {
+				if ( form === attributes.optionName ) {
+					if ( emails[index].email !== formOptions.emailTo ) {
+						emails[index].email = formOptions.emailTo; // update the value
+						hasUpdated = true;
 					}
+					if ( emails[index].redirectLink !== formOptions.redirectLink ) {
+						emails[index].redirectLink = formOptions.redirectLink; // update the value
+						hasUpdated = true;
+					}
+					if ( emails[index].emailSubject !== formOptions.subject ) {
+						emails[index].emailSubject = formOptions.subject; // update the value
+						hasUpdated = true;
+					}
+					if ( emails[index].submitMessage !== formOptions.submitMessage ) {
+						emails[index].submitMessage = formOptions.submitMessage; // update the value
+						hasUpdated = true;
+					}
+					if ( emails[index].fromName !== formOptions.fromName ) {
+						emails[index].fromName = formOptions.fromName; // update the value
+						hasUpdated = true;
+					}
+					if ( emails[index].hasCaptcha !== formOptions.hasCaptcha ) {
+						emails[index].hasCaptcha = formOptions.hasCaptcha;
+						hasUpdated = true;
+					}
+					isMissing = false;
+				}
+			});
+
+			if ( isMissing ) {
+				emails.push({
+					form: attributes.optionName,
+					email: formOptions.emailTo,
+					fromName: formOptions.fromName,
+					redirectLink: formOptions.redirectLink,
+					emailSubject: formOptions.subject,
+					submitMessage: formOptions.submitMessage
 				});
-
-				if ( isMissing ) {
-					emails.push({
-						form: attributes.optionName,
-						hasCaptcha: formOptions.hasCaptcha
-					});
-				}
-
-				if ( isMissing || hasChanged ) {
-					const model = new api.models.Settings({
-						// eslint-disable-next-line camelcase
-						themeisle_blocks_form_emails: emails
-					});
-
-					model.save();
-
-					createNotice(
-						'info',
-						__( 'Form preference has been saved.', 'otter-blocks' ),
-						{
-							isDismissible: true,
-							type: 'snackbar'
-						}
-					);
-				}
-			});
-		}
-		return () => controller?.abort();
-	}, [ formOptions.hasCaptcha, attributes.optionName ]);
-
-	/**
-	 * Check if the reCaptcha API Keys are set.
-	 */
-	useEffect( () => {
-		let controller = new AbortController();
-		const getCaptchaAPIData = () => {
-			setLoading({ captcha: 'loading'});
-			( new api.models.Settings() )?.fetch({ signal: controller.signal }).then( response => {
-				controller = null;
-
-				if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
-					setLoading({ captcha: 'done'});
-				} else {
-					setLoading({ captcha: 'missing'});
-				}
-			}).catch( e => {
-				console.error( e );
-				setLoading({ captcha: 'error' });
-			});
-
-		};
-
-		if ( formOptions.hasCaptcha && 'init' === loadingState?.captcha ) {
-			getCaptchaAPIData();
-		}
-
-		return () => controller?.abort();
-	}, [ loadingState, formOptions.hasCaptcha ]);
-
-	/**
-	 * Save API Keys in the Otter options.
-	 */
-	const saveCaptchaAPIKey = () => {
-		setLoading({ captcha: 'loading' });
-		const model = new api.models.Settings({
-			// eslint-disable-next-line camelcase
-			themeisle_google_captcha_api_site_key: googleCaptchaAPISiteKey,
-			// eslint-disable-next-line camelcase
-			themeisle_google_captcha_api_secret_key: googleCaptchaAPISecretKey
-		});
-
-		model.save().then( response => {
-
-			if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
-				setLoading({ captcha: 'done' });
-			} else {
-				setLoading({ captcha: 'missing' });
 			}
 
-			setGoogleCaptchaAPISecretKey( '' );
-			setGoogleCaptchaAPISiteKey( '' );
-			createNotice(
-				'info',
-				__( 'Google reCaptcha API Keys have been saved.', 'otter-blocks' ),
-				{
-					isDismissible: true,
-					type: 'snackbar'
-				}
-			).catch( e => {
-				console.error( e );
-				setLoading({ captcha: 'error' });
-			});
-		}).catch( e => {
-			console.error( e );
-			setLoading({ captcha: 'error' });
-		});
+			if ( isMissing || hasUpdated ) {
+				const model = new api.models.Settings({
+					// eslint-disable-next-line camelcase
+					themeisle_blocks_form_emails: emails
+				});
+
+				model.save().then( response => {
+					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
+					console.log( formOptions, response.themeisle_blocks_form_emails );
+					if ( formOptions ) {
+						parseDataFormOptions( formOptions );
+						setSavedFormOptions( formOptions );
+						setLoading({ formOptions: 'done' });
+						createNotice(
+							'info',
+							__( 'Form Options has been saved!', 'otter-blocks' ),
+							{
+								isDismissible: true,
+								type: 'snackbar'
+							}
+						);
+					} else {
+						setLoading({ formOptions: 'error' });
+					}
+				});
+			} else {
+				setLoading({ formOptions: 'done' });
+			}
+		}).catch( () => setLoading({ formOptions: 'error' }) );
 	};
 
 	/**
@@ -404,6 +362,9 @@ const Edit = ({
 					if ( formOptions ) {
 						parseDataFormOptions( formOptions );
 						setSavedFormOptions( formOptions );
+						setAttributes({
+							action: formOptions?.integration?.action
+						});
 					}
 					setLoading({ formIntegration: 'done' });
 					if ( hasUpdated ) {
@@ -496,84 +457,6 @@ const Edit = ({
 		};
 	}, [ formOptions.apiKey, formOptions.provider ]);
 
-	const saveFormEmailOptions = () => {
-		setLoading({ formOptions: 'saving' });
-		( new api.models.Settings() ).fetch().done( res => {
-			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
-			let isMissing = true;
-			let hasUpdated = false;
-
-			emails?.forEach( ({ form }, index ) => {
-				if ( form === attributes.optionName ) {
-					if ( emails[index].email !== formOptions.emailTo ) {
-						emails[index].email = formOptions.emailTo; // update the value
-						hasUpdated = true;
-					}
-					if ( emails[index].redirectLink !== formOptions.redirectLink ) {
-						emails[index].redirectLink = formOptions.redirectLink; // update the value
-						hasUpdated = true;
-					}
-					if ( emails[index].emailSubject !== formOptions.subject ) {
-						emails[index].emailSubject = formOptions.subject; // update the value
-						hasUpdated = true;
-					}
-					if ( emails[index].submitMessage !== formOptions.submitMessage ) {
-						emails[index].submitMessage = formOptions.submitMessage; // update the value
-						hasUpdated = true;
-					}
-					if ( emails[index].fromName !== formOptions.fromName ) {
-						emails[index].fromName = formOptions.fromName; // update the value
-						hasUpdated = true;
-					}
-					if ( emails[index].hasCaptcha !== formOptions.hasCaptcha ) {
-						emails[index].hasCaptcha = formOptions.hasCaptcha;
-						hasUpdated = true;
-					}
-					isMissing = false;
-				}
-			});
-
-			if ( isMissing ) {
-				emails.push({
-					form: attributes.optionName,
-					email: formOptions.emailTo,
-					fromName: formOptions.fromName,
-					redirectLink: formOptions.redirectLink,
-					emailSubject: formOptions.subject,
-					submitMessage: formOptions.submitMessage
-				});
-			}
-
-			if ( isMissing || hasUpdated ) {
-				const model = new api.models.Settings({
-					// eslint-disable-next-line camelcase
-					themeisle_blocks_form_emails: emails
-				});
-
-				model.save().then( response => {
-					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
-					console.log( formOptions, response.themeisle_blocks_form_emails );
-					if ( formOptions ) {
-						parseDataFormOptions( formOptions );
-						setSavedFormOptions( formOptions );
-						setLoading({ formOptions: 'done' });
-						createNotice(
-							'info',
-							__( 'Form Options has been saved!', 'otter-blocks' ),
-							{
-								isDismissible: true,
-								type: 'snackbar'
-							}
-						);
-					} else {
-						setLoading({ formOptions: 'error' });
-					}
-				});
-			} else {
-				setLoading({ formOptions: 'done' });
-			}
-		}).catch( () => setLoading({ formOptions: 'error' }) );
-	};
 
 	const sendTestEmail = () => {
 		wp?.apiFetch({
@@ -618,6 +501,125 @@ const Edit = ({
 		});
 	};
 
+	/**
+	 * Save the captcha option in settings.
+	 */
+	useEffect( () => {
+		let controller = new AbortController();
+		if ( attributes.hasCaptcha !== undefined && attributes.optionName ) {
+			( new api.models.Settings() )?.current?.fetch({ signal: controller.signal }).done( res => {
+				controller = null;
+
+				const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
+				let isMissing = true;
+				let hasChanged = false;
+
+				emails?.forEach( ({ form }, index ) => {
+					if ( form === attributes.optionName ) {
+						if ( emails[index].hasCaptcha !== attributes.hasCaptcha ) {
+							hasChanged = true;
+						}
+						emails[index].hasCaptcha = attributes.hasCaptcha;
+						isMissing = false;
+					}
+				});
+
+				if ( isMissing ) {
+					emails.push({
+						form: attributes.optionName,
+						hasCaptcha: attributes.hasCaptcha
+					});
+				}
+
+				if ( isMissing || hasChanged ) {
+					const model = new api.models.Settings({
+						// eslint-disable-next-line camelcase
+						themeisle_blocks_form_emails: emails
+					});
+
+					model.save();
+
+					createNotice(
+						'info',
+						__( 'Form preference has been saved.', 'otter-blocks' ),
+						{
+							isDismissible: true,
+							type: 'snackbar'
+						}
+					);
+				}
+			});
+		}
+		return () => controller?.abort();
+	}, [ attributes.hasCaptcha, attributes.optionName ]);
+
+	/**
+	 * Check if the reCaptcha API Keys are set.
+	 */
+	useEffect( () => {
+		let controller = new AbortController();
+		const getCaptchaAPIData = () => {
+			setLoading({ captcha: 'loading'});
+			( new api.models.Settings() )?.fetch({ signal: controller.signal }).then( response => {
+				controller = null;
+
+				if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
+					setLoading({ captcha: 'done'});
+				} else {
+					setLoading({ captcha: 'missing'});
+				}
+			}).catch( e => {
+				console.error( e );
+				setLoading({ captcha: 'error' });
+			});
+
+		};
+
+		if ( formOptions.hasCaptcha && 'init' === loadingState?.captcha ) {
+			getCaptchaAPIData();
+		}
+
+		return () => controller?.abort();
+	}, [ loadingState, formOptions.hasCaptcha ]);
+
+	/**
+	 * Save API Keys in the Otter options.
+	 */
+	const saveCaptchaAPIKey = () => {
+		setLoading({ captcha: 'loading' });
+		const model = new api.models.Settings({
+			// eslint-disable-next-line camelcase
+			themeisle_google_captcha_api_site_key: googleCaptchaAPISiteKey,
+			// eslint-disable-next-line camelcase
+			themeisle_google_captcha_api_secret_key: googleCaptchaAPISecretKey
+		});
+
+		model.save().then( response => {
+
+			if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
+				setLoading({ captcha: 'done' });
+			} else {
+				setLoading({ captcha: 'missing' });
+			}
+
+			setGoogleCaptchaAPISecretKey( '' );
+			setGoogleCaptchaAPISiteKey( '' );
+			createNotice(
+				'info',
+				__( 'Google reCaptcha API Keys have been saved.', 'otter-blocks' ),
+				{
+					isDismissible: true,
+					type: 'snackbar'
+				}
+			).catch( e => {
+				console.error( e );
+				setLoading({ captcha: 'error' });
+			});
+		}).catch( e => {
+			console.error( e );
+			setLoading({ captcha: 'error' });
+		});
+	};
 
 	const blockProps = useBlockProps({
 		id: attributes.id
@@ -681,7 +683,7 @@ const Edit = ({
 								/>
 
 								{
-									formOptions.hasCaptcha && 'done' !== loadingState?.captcha && (
+									attributes.hasCaptcha && 'done' !== loadingState?.captcha && (
 										<Placeholder
 											className="otter-form-captcha"
 											loadingState={ loadingState }
@@ -694,7 +696,7 @@ const Edit = ({
 									)
 								}
 
-								{ 'submit-subscribe' === formOptions.action && (
+								{ 'submit-subscribe' === attributes.action && (
 									<div className="otter-form-consent">
 										<input id="o-consent" name="o-consent" type="checkbox" />
 										<label htmlFor="o-consent">

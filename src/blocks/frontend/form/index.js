@@ -184,10 +184,10 @@ const collectAndSendInputFormData = ( form, btn ) => {
 				// TODO: Write pattern to display a more useful error message.
 				if ( res?.provider && res?.error.includes( 'invalid' ) || res?.error.includes( 'fake' ) ) { // mailchimp
 					msg.classList.add( 'o-warning' );
-					msg.innerHTML = __( '⚠ The email address does not look correct!', 'otter-blocks' );
+					msg.innerHTML = __( 'The email address is invalid!', 'otter-blocks' );
 				} else if ( res?.provider && res?.error.includes( 'duplicate' ) || res?.error.includes( 'already' ) ) { // sendinblue
 					msg.classList.add( 'info' );
-					msg.innerHTML = __( '🛈 The email was already registered!', 'otter-blocks' );
+					msg.innerHTML = __( 'The email was already registered!', 'otter-blocks' );
 				} else {
 					msg.innerHTML = __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' );
 				}
