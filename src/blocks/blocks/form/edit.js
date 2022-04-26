@@ -181,6 +181,7 @@ const Edit = ({
 	 * @param {Array} forms
 	 */
 	const extractDataFromWpOptions = forms => {
+		console.log( forms, attributes.optionName );
 		return forms?.filter( ({ form }) => form === attributes.optionName ).pop();
 	};
 
@@ -189,6 +190,7 @@ const Edit = ({
 	 * @param wpOptions
 	 */
 	const parseDataFormOptions = wpOptions => {
+		console.log( wpOptions );
 		setFormOptions({
 			emailTo: wpOptions?.email,
 			fromName: wpOptions?.fromName,
@@ -212,11 +214,14 @@ const Edit = ({
 			setLoading({apiKey: 'done'});
 		}, 3000 );
 
+
 		if ( attributes.optionName ) {
+			console.log( 'Hello' );
 			api.loadPromise.then( () => {
 				( new api.models.Settings() ).fetch({ signal: controller.signal }).done( res => {
 					controller = null;
 					const formData = extractDataFromWpOptions( res.themeisle_blocks_form_emails );
+					console.log( 'Hello 1', formData );
 					if ( formData ) {
 						parseDataFormOptions( formData );
 						setSavedFormOptions( formData );
@@ -342,7 +347,7 @@ const Edit = ({
 
 			if ( isMissing ) {
 				emails.push({
-					form: formOptions.optionName,
+					form: attributes.optionName,
 					integration: {
 						provider: formOptions.provider,
 						apiKey: formOptions.apiKey,

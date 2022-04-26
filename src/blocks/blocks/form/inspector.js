@@ -549,6 +549,7 @@ const Inspector = ({
 												<Fragment>
 													<Spinner />
 													{ __( 'Fetching data from provider.', 'otter-blocks' ) }
+													<br /><br/>
 												</Fragment>
 											)
 										}
