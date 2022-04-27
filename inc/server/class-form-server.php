@@ -227,8 +227,6 @@ class Form_Server {
 		} catch ( Exception $e ) {
 			$res->set_error( $e->getMessage() );
 			$this->send_error_email($e->getMessage(), $form_data);
-		} finally {
-			return $res->build_response();
 		}
 	}
 

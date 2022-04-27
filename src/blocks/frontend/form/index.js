@@ -171,7 +171,7 @@ const collectAndSendInputFormData = ( form, btn ) => {
 				cleanInputs( form );
 
 				setTimeout( () => {
-					if ( res?.redirectLink ) {
+					if ( '' !== res?.redirectLink ) {
 						let a = document.createElement( 'a' );
 						a.target = '_blank';
 						a.href = res.redirectLink;
@@ -182,10 +182,10 @@ const collectAndSendInputFormData = ( form, btn ) => {
 				msg.classList.add( 'o-error' );
 
 				// TODO: Write pattern to display a more useful error message.
-				if ( res?.provider && res?.error.includes( 'invalid' ) || res?.error.includes( 'fake' ) ) { // mailchimp
+				if ( res?.provider && res?.error?.includes( 'invalid' ) || res?.error?.includes( 'fake' ) ) { // mailchimp
 					msg.classList.add( 'o-warning' );
 					msg.innerHTML = __( 'The email address is invalid!', 'otter-blocks' );
-				} else if ( res?.provider && res?.error.includes( 'duplicate' ) || res?.error.includes( 'already' ) ) { // sendinblue
+				} else if ( res?.provider && res?.error?.includes( 'duplicate' ) || res?.error?.includes( 'already' ) ) { // sendinblue
 					msg.classList.add( 'info' );
 					msg.innerHTML = __( 'The email was already registered!', 'otter-blocks' );
 				} else {

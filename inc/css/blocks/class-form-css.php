@@ -52,6 +52,7 @@ class Form_CSS extends Base_CSS {
 					array(
 						'property' => '--borderWidth',
 						'value'    => 'inputBorderWidth',
+						'unit'     => 'px'
 					),
 					array(
 						'property' => '--padding',

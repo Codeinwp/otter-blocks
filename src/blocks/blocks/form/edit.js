@@ -563,6 +563,8 @@ const Edit = ({
 					setLoading({ captcha: 'done'});
 				} else {
 					setLoading({ captcha: 'missing'});
+					setGoogleCaptchaAPISiteKey( response.themeisle_google_captcha_api_site_key );
+					setGoogleCaptchaAPISecretKey( response.themeisle_google_captcha_api_secret_key );
 				}
 			}).catch( e => {
 				console.error( e );
@@ -571,12 +573,12 @@ const Edit = ({
 
 		};
 
-		if ( formOptions.hasCaptcha && 'init' === loadingState?.captcha ) {
+		if ( attributes.hasCaptcha && 'init' === loadingState?.captcha ) {
 			getCaptchaAPIData();
 		}
 
 		return () => controller?.abort();
-	}, [ loadingState, formOptions.hasCaptcha ]);
+	}, [ loadingState.captcha, attributes.hasCaptcha ]);
 
 	/**
 	 * Save API Keys in the Otter options.
