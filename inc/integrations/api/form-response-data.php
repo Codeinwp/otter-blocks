@@ -132,7 +132,7 @@ class Form_Data_Response {
 
     /**
      * Set the response.
-     * @param array $response Get the response.
+     * @param array $response The response.
      * @return $this
      */
 	public function set_response( $response ) {

@@ -382,7 +382,9 @@ class Form_Server {
 	}
 
     /**
-     * @param Form_Data_Request $form_data
+	 * Subscribe the user to a service.
+	 *
+     * @param Form_Data_Request $form_data The form data.
      * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	public function subscribe_to_service($form_data ) {
@@ -484,13 +486,13 @@ class Form_Server {
 	 */
 	public function check_form_conditions( $data ) {
 
-		$reasons           = array();
-		if ( ! $this->has_required_data( $data ) ) {
-			$reasons += array( __( 'Essential data is missing!', 'otter-blocks' ) );
-			return $reasons;
-		}
+		$reasons = array();
+		try {
+			if ( ! $this->has_required_data( $data ) ) {
+				$reasons += array( __( 'Essential data is missing!', 'otter-blocks' ) );
+				return $reasons;
+			}
 
-        try {
             $form_options = $data->get_form_options();
 
             if ( $form_options->form_has_captcha() && ( ! $data->payload_has_field( 'token' ) || '' === $data->get_payload_field('token') ) ) {
@@ -518,7 +520,7 @@ class Form_Server {
 		$resp   = wp_remote_post(
 			'https://www.google.com/recaptcha/api/siteverify',
 			array(
-				'body'    => 'secret=' . $secret . '&response=' . $data->get( 'token' ),
+				'body'    => 'secret=' . $secret . '&response=' . $data->get_payload_field( 'token' ),
 				'headers' => [
 					'Content-Type' => 'application/x-www-form-urlencoded',
 				],

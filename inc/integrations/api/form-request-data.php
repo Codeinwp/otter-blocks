@@ -47,6 +47,8 @@ class Form_Data_Request {
 	}
 
     /**
+	 * Set the form options.
+	 *
      * @param Form_Settings_Data $form_options
      * @return void
      */
@@ -55,7 +57,7 @@ class Form_Data_Request {
 	}
 
 	/**
-	 * Get the value of the field.
+	 * Get the value of the field from the request.
 	 *
 	 * @param string $field_name The name of the field.
 	 * @return mixed
@@ -65,7 +67,9 @@ class Form_Data_Request {
 	}
 
 	/**
-	 * @param $field_name
+	 * Get the field value.
+	 *
+	 * @param $field_name The name of the field.
 	 * @return mixed|null
 	 */
 	public function get_payload_field($field_name ) {
@@ -73,7 +77,9 @@ class Form_Data_Request {
 	}
 
 	/**
-	 * @param $field_name
+	 * Check if the payload has the field.
+	 *
+	 * @param $field_name The name of the field.
 	 * @return bool
 	 */
 	public function payload_has_field($field_name ) {
@@ -81,6 +87,8 @@ class Form_Data_Request {
 	}
 
 	/**
+	 * Check if the payload is set.
+	 *
 	 * @return bool
 	 */
 	public function has_payload() {
@@ -88,7 +96,9 @@ class Form_Data_Request {
 	}
 
 	/**
-	 * @param $provider
+	 * Change the provider.
+	 *
+	 * @param $provider The new provider.
 	 * @return void
 	 */
 	public function change_provider( $provider ) {
@@ -137,7 +147,9 @@ class Form_Data_Request {
 	}
 
 	/**
-	 * @param $fields_name
+	 * Check if the payload has the given fields.
+	 *
+	 * @param array $fields_name The name of the fields.
 	 * @return bool
 	 */
 	public function payload_has_fields( $fields_name ) {
@@ -161,8 +173,10 @@ class Form_Data_Request {
 	}
 
 	/**
-	 * @param $field_name
-	 * @param $values
+	 * Check if a field has the given values.
+	 *
+	 * @param string $field_name The field name.
+	 * @param array $values The values.
 	 * @return bool
 	 */
 	public function payload_field_has( $field_name, $values ) {
@@ -180,7 +194,9 @@ class Form_Data_Request {
 	}
 
 	/**
-	 * @param $array
+	 * Sanitize the given array.
+	 *
+	 * @param array $array The array with the values.
 	 * @return array|string
 	 */
 	public static function sanitize_array_map_deep($array)
@@ -201,6 +217,7 @@ class Form_Data_Request {
 
     /**
      * Get the form input data.
+	 *
      * @return mixed Form input data.
      */
 	public function get_form_inputs() {
@@ -208,6 +225,8 @@ class Form_Data_Request {
 	}
 
     /**
+	 * Get the form options.
+	 *
      * @return Form_Settings_Data|null
      */
     public function get_form_options() {
