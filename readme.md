@@ -1,4 +1,4 @@
-# Gutenberg Blocks and Template Library Page Builder by Otter #
+# Otter - Page Builder Blocks & Extensions for Gutenberg #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/), [uriahs-victor](https://profiles.wordpress.org/uriahs-victor/)  
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder  
 **Requires at least:** 5.6  
@@ -188,6 +188,28 @@ We're here to help. Feel free to open a new thread on the [Support Forum](https:
 5. Section Block
 
 ## Changelog ##
+
+##### [Version 2.0.2](https://github.com/Codeinwp/otter-blocks/compare/v2.0.1...v2.0.2) (2022-04-22)
+
+- Improvements in Lottie Animations Block
+- Improvements in About Author Block
+- Fix Section Margin/Padding values not migration properly
+- Fix Global Defaults causing PHP errors
+- Add option to choose default tab in Tabs Block
+- Remove “out” animations from Animation Module
+- Fix vertical alignment not working in Section
+- Add some API validation in Google Maps
+- Add default animation to Popup block
+- Option to toggle Block Conditions module off
+- Performance improvements
+- Fix sticky module conflict with third party themes
+- Add web support to Section background
+- Fix Posts Block responsive issues
+- Fix Tabs and Masonry Blocks breaking in certain conditions
+- Fix infinite loop while generating block IDs when used inside Reusable blocks
+
+
+
 
 ##### [Version 2.0.1](https://github.com/Codeinwp/otter-blocks/compare/v2.0.0...v2.0.1) (2022-03-10)
 
