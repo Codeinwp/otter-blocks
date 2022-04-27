@@ -7,12 +7,6 @@ jobs:
   tag:
     name: Deploy to WordPress.org
     runs-on: ubuntu-latest
-    env:
-      SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
-      SSH_KEY: ${{ secrets.SSH_KEY }}
-      SSH_PORT: ${{ secrets.SSH_PORT }}
-      SSH_HOST: ${{ secrets.SSH_HOST }}
-      SSH_PATH: ${{ secrets.SSH_PATH }}
     steps:
       - uses: actions/checkout@master
       - name: Get the version
@@ -31,9 +25,6 @@ jobs:
         run: npm run build
       - name: Build zip
         run: npm run dist
-      - name: Deploy to server
-        run: |
-          rsync -rc --exclude-from="$GITHUB_WORKSPACE/.distignore" -e "ssh -i $HOME/.ssh/key -o StrictHostKeyChecking=no -p $SSH_PORT" "$GITHUB_WORKSPACE/" $SSH_USERNAME@$SSH_HOST:$SSH_PATH
       - name: Upload Latest Version to S3
         uses: jakejarvis/s3-sync-action@master
         with:
