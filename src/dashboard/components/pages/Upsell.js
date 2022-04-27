@@ -3,6 +3,8 @@
  */
 import { __ } from '@wordpress/i18n';
 
+import { Button } from '@wordpress/components';
+
 const FEATURES = [
 	{
 		label: __( 'Visibility Conditions Extension', 'otter-blocks' ),
@@ -67,6 +69,12 @@ const Upsell = () => {
 					);
 				})}
 			</ul>
+
+			<Button
+				variant="primary"
+			>
+				{ __( 'View all Otter Pro features', 'otter-blocks' ) }
+			</Button>
 		</div>
 	);
 };
