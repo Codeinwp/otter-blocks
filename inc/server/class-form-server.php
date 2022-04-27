@@ -148,6 +148,7 @@ class Form_Server {
 
 	/**
 	 * Get information from the provider services.
+	 *
 	 * @param WP_REST_Request $request The API request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
@@ -176,54 +177,59 @@ class Form_Server {
 	 * Handle the request from the form block
 	 *
 	 * @param WP_REST_Request $request Form request.
-	 *
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	public function frontend( $request ) {
-		$form_data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
 		$res  = new Form_Data_Response();
+		$form_data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
 
-		// Check is the request is OK.
-		$reasons = apply_filters('otter_form_validation', $form_data);
+		try {
 
-		if ( 0 < count( $reasons ) ) {
-			$res->set_error( __( 'Invalid request!', 'otter-blocks' ) );
-			$res->set_reasons( $reasons );
-			return $res->build_response();
-		}
+			// Check is the request is OK.
+			$reasons = apply_filters('otter_form_validation', $form_data);
 
-		// Verify the reCaptcha token.
-		if ( $form_data->payload_has_field( 'token' ) ) {
-			$result = apply_filters( 'otter_form_captcha_validation', $form_data );
-			if (!$result['success']) {
-				$res->set_error( __( 'The reCaptcha was invalid!', 'otter-blocks' ) );
+			if ( 0 < count( $reasons ) ) {
+				$res->set_error( __( 'Invalid request!', 'otter-blocks' ) );
+				$res->set_reasons( $reasons );
 				return $res->build_response();
 			}
-		}
+
+			// Verify the reCaptcha token.
+			if ( $form_data->payload_has_field( 'token' ) ) {
+				$result = apply_filters( 'otter_form_captcha_validation', $form_data );
+				if (!$result['success']) {
+					$res->set_error( __( 'The reCaptcha was invalid!', 'otter-blocks' ) );
+					return $res->build_response();
+				}
+			}
 
 
-		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_payload_field( 'formOption' ) );
-        $form_data->set_form_options($form_options);
+			$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_payload_field( 'formOption' ) );
+			$form_data->set_form_options($form_options);
 
-		do_action('otter_form_before_submit', $form_data);
-		// Select the submit function based on the provider.
-        $provider_handlers = apply_filters('otter_select_form_provider', $form_data);
+			do_action('otter_form_before_submit', $form_data);
+			// Select the submit function based on the provider.
+			$provider_handlers = apply_filters('otter_select_form_provider', $form_data);
 
-		if( $provider_handlers && Form_Providers::provider_has_handler($provider_handlers, $form_data->get('handler')) ) {
+			if( $provider_handlers && Form_Providers::provider_has_handler($provider_handlers, $form_data->get('handler')) ) {
 
-			// Send the data to the provider handler.
-			$provider_response = $provider_handlers[$form_data->get('handler')]($form_data);
+				// Send the data to the provider handler.
+				$provider_response = $provider_handlers[$form_data->get('handler')]($form_data);
+
+				do_action( 'otter_form_after_submit', $form_data);
+
+				return $provider_response;
+			} else {
+				$res->set_error( __( 'The email service provider was not registered!', 'otter-blocks' ) );
+			}
 
 			do_action( 'otter_form_after_submit', $form_data);
-
-			return $provider_response;
-		} else {
-			$res->set_error( __( 'The email service provider was not registered!', 'otter-blocks' ) );
+		} catch ( Exception $e ) {
+			$res->set_error( $e->getMessage() );
+			$this->send_error_email($e->getMessage(), $form_data);
+		} finally {
+			return $res->build_response();
 		}
-
-		do_action( 'otter_form_after_submit', $form_data);
-
-		return $res->build_response();
 	}
 
 
@@ -275,11 +281,18 @@ class Form_Server {
 
 	/**
 	 * Make additional changes before using the main handler function for submitting.
+	 *
 	 * @param Form_Data_Request $form_data The form request data.
 	 */
 	public function before_submit( $form_data ) {
-		if( $form_data->payload_has_field('consent')
-			&& ! $form_data->get_payload_field('consent')
+
+		// If there is no consent, change the service to send only an email.
+		if(
+			'submit-subscribe' === $form_data->get_form_options()->get_action() &&
+			(
+				! $form_data->payload_has_field('consent') ||
+				! $form_data->get_payload_field('consent')
+			)
 		) {
 			$form_data->change_provider('default');
 		}
@@ -287,19 +300,20 @@ class Form_Server {
 
 	/**
 	 * Process the extra actions after calling the main handler function for submitting.
+	 *
 	 * @param Form_Data_Request $form_data The form request data.
 	 * @return void
 	 */
 	public function after_submit( $form_data ) {
-		// Send also an email to the form editor/owner if he has opt-in for it.
+
+		// Send also an email to the form editor/owner with the data alongside the subscription.
 		if(
-			'submit-subscribe' === $form_data->get_form_options()->get_action()
-			&& $form_data->payload_has_field('consent')
-			&& $form_data->get_payload_field('consent') === true
+			'submit-subscribe' === $form_data->get_form_options()->get_action() &&
+			$form_data->payload_has_field('provider') &&
+			'default' !==  $form_data->get_payload_field('provider')
 		) {
 			$this->send_default_email($form_data);
 		}
-
 	}
 
 	/**
@@ -389,24 +403,26 @@ class Form_Server {
 	 */
 	public function subscribe_to_service($form_data ) {
 		$res = new Form_Data_Response();
-		// Get the first email from form.
-		$email = $this->get_email_from_form_input($form_data);
 
-		if ( '' === $email ) {
-			$res->set_error( 'No email provided!' );
-			return $res->build_response();
-		}
+		try {
 
-		if(
-			'submit-subscribe' === $form_data->get_form_options()->get_action()
-			&& $form_data->payload_has_field('consent')
-			&& ! $form_data->get_payload_field('consent')
-		) {
-			$res->mark_as_success();
-			return $res->build_response();
-		}
+			// Get the first email from form.
+			$email = $this->get_email_from_form_input($form_data);
 
-        try {
+			if ( '' === $email ) {
+				$res->set_error( 'No email provided!' );
+				return $res->build_response();
+			}
+
+			if(
+				'submit-subscribe' === $form_data->get_form_options()->get_action() &&
+				$form_data->payload_has_field('consent') &&
+				! $form_data->get_payload_field('consent')
+			) {
+				$res->mark_as_success();
+				return $res->build_response();
+			}
+
             // Get the api credentials from the Form block.
             $form_options = $form_data->get_form_options();
 
@@ -464,16 +480,16 @@ class Form_Server {
 					'handler',
 					'payload'
 				)
-			)
-			&& $data->are_payload_fields_set(
+			) &&
+			$data->are_payload_fields_set(
 				array(
 					'nonceValue',
 					'postUrl',
 					'formId',
 					'formOption',
 				)
-			)
-			&& wp_verify_nonce( $data->get_payload_field( 'nonceValue' ), 'form-verification' );
+			) &&
+			wp_verify_nonce( $data->get_payload_field( 'nonceValue' ), 'form-verification' );
 	}
 
 	/**
@@ -495,7 +511,13 @@ class Form_Server {
 
             $form_options = $data->get_form_options();
 
-            if ( $form_options->form_has_captcha() && ( ! $data->payload_has_field( 'token' ) || '' === $data->get_payload_field('token') ) ) {
+            if (
+				$form_options->form_has_captcha() &&
+				(
+					! $data->payload_has_field( 'token' ) ||
+					'' === $data->get_payload_field('token')
+				)
+			) {
                 $reasons += array(
                     __( 'Token is missing!', 'otter-blocks' ),
                 );
@@ -592,14 +614,19 @@ class Form_Server {
 	}
 
 	/**
+	 * Get the first email from the input's form.
+	 *
 	 * @param Form_Data_Request $data
 	 * @return mixed|string
 	 */
 	private function get_email_from_form_input(Form_Data_Request $data)
 	{
-		foreach ($data->get_payload_field('formInputsData') as $input_field) {
-			if ('email' == $input_field['type']) {
-				return $input_field['value'];
+		$inputs = $data->get_payload_field('formInputsData');
+		if( is_array( $inputs ) ) {
+			foreach ($data->get_payload_field('formInputsData') as $input_field) {
+				if ('email' == $input_field['type']) {
+					return $input_field['value'];
+				}
 			}
 		}
 		return '';
