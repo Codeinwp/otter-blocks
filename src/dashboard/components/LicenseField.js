@@ -78,8 +78,8 @@ const LicenseField = () => {
 			<p>{ __( 'Enter your license from ThemeIsle purchase history in order to get plugin updates.', 'otter-blocks' ) }</p>
 
 			<input
-				type="password"
-				value={ licenseKey }
+				type="text"
+				value={ isValid ? '******************************' + licenseKey.slice( -5 ) : licenseKey }
 				placeholder={ __( 'Enter license key', 'otter-blocks' ) }
 				disabled={ isLoading || isValid }
 				onChange={ e => setLicenseKey( e.target.value ) }

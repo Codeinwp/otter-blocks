@@ -27,6 +27,7 @@ define( 'OTTER_BLOCKS_BASEFILE', __FILE__ );
 define( 'OTTER_BLOCKS_URL', plugins_url( '/', __FILE__ ) );
 define( 'OTTER_BLOCKS_PATH', dirname( __FILE__ ) );
 define( 'OTTER_BLOCKS_VERSION', '2.0.2' );
+define( 'OTTER_BLOCKS_PRO_SUPPORT', true );
 
 $vendor_file = OTTER_BLOCKS_PATH . '/vendor/autoload.php';
 

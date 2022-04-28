@@ -25,7 +25,7 @@ import {
  *
  * @see https://github.com/WordPress/gutenberg/blob/trunk/packages/editor/src/components/editor-snackbars/index.js
  * @author  Hardeep Asrani <hardeepasrani@gmail.com>
- * @version 1.0
+ * @version 1.1
  *
  */
 const useSettings = () => {
@@ -34,16 +34,18 @@ const useSettings = () => {
 	const [ settings, setSettings ] = useState({});
 	const [ status, setStatus ] = useState( 'loading' );
 
-	const getSettings = async() => {
-		try {
-			const settings = new api.models.Settings();
-			const response = await settings.fetch();
-			setSettings( response );
-		} catch ( error ) {
-			setStatus( 'error' );
-		} finally {
-			setStatus( 'loaded' );
-		}
+	const getSettings = () => {
+		api.loadPromise.then( async() => {
+			try {
+				const settings = new api.models.Settings();
+				const response = await settings.fetch();
+				setSettings( response );
+			} catch ( error ) {
+				setStatus( 'error' );
+			} finally {
+				setStatus( 'loaded' );
+			}
+		});
 	};
 
 	useEffect( () => {
