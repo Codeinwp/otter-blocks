@@ -73,20 +73,6 @@ module.exports = [
 	},
 	{
 
-		// Leaflet
-		...defaultConfig,
-		stats: 'minimal',
-		mode: NODE_ENV,
-		entry: {
-			'leaflet-gesture-handling': './assets/leaflet/leaflet-gesture-handling.js'
-		},
-		output: {
-			path: path.resolve( __dirname, './build/assets' ),
-			filename: '[name].min.js',
-		}
-	},
-	{
-
 		// OTTER BLOCKS
 		...defaultConfig,
 		stats: 'minimal',
