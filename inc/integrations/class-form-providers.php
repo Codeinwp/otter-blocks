@@ -96,8 +96,8 @@ class Form_Providers
 	}
 
 	/**
-	 * @param $provider The name of the provider.
-	 * @param $handler The name of the handler.
+	 * @param array $provider The name of the provider.
+	 * @param string $handler The name of the handler.
 	 * @return bool
 	 */
 	public static function provider_has_handler( $provider, $handler ) {

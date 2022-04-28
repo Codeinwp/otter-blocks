@@ -131,6 +131,15 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	}
 
 	/**
+	 * Test the subscription by registering a random generated email.
+	 *
+	 * @return Form_Data_Response
+	 */
+	public function test_subscription() {
+		return $this->subscribe( Form_Utils::generate_test_email() );
+	}
+
+	/**
 	 * Set the API Key
 	 *
 	 * @param string $api_key The API Key of the provider.

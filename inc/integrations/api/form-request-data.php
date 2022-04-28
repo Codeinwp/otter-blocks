@@ -69,7 +69,7 @@ class Form_Data_Request {
 	/**
 	 * Get the field value.
 	 *
-	 * @param $field_name The name of the field.
+	 * @param string $field_name The name of the field.
 	 * @return mixed|null
 	 */
 	public function get_payload_field($field_name ) {
@@ -79,7 +79,7 @@ class Form_Data_Request {
 	/**
 	 * Check if the payload has the field.
 	 *
-	 * @param $field_name The name of the field.
+	 * @param string $field_name The name of the field.
 	 * @return bool
 	 */
 	public function payload_has_field($field_name ) {

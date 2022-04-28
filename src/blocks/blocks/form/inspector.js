@@ -72,7 +72,8 @@ const Inspector = ({
 		sendTestEmail,
 		loadingState,
 		formOptions,
-		setFormOption
+		setFormOption,
+		testService
 	} = useContext( FormContext );
 
 	const [ tab, setTab ] = useState( 'general' );
@@ -606,26 +607,63 @@ const Inspector = ({
 									</Fragment>
 								)
 							}
-							<Button
-								isPrimary
-								onClick={ saveIntegration }
+							<div
+								style={{
+									display: 'flex',
+									flexDirection: 'row',
+									gap: '10px'
+								}}
 							>
-								<Fragment>
-									{
-										'saving' === loadingState?.formIntegration && (
-											<Spinner />
-										)
-									}
-									{
-										__( 'Save', 'otter-blocks' )
-									}
-								</Fragment>
-							</Button>
+								<Button
+									isPrimary
+									variant="primary"
+									onClick={ saveIntegration }
+								>
+									<Fragment>
+										{
+											'saving' === loadingState?.formIntegration && (
+												<Spinner />
+											)
+										}
+										{
+											__( 'Save', 'otter-blocks' )
+										}
+									</Fragment>
+								</Button>
+								{
+									attributes.optionName && savedFormOptions?.integration?.provider && savedFormOptions?.integration?.apiKey && savedFormOptions?.integration?.listId && (
+										<Button
+											isSecondary
+											variant="secondary"
+											onClick={ testService }
+										>
+											<Fragment>
+												{
+													'loading' === loadingState?.serviceTesting && (
+														<Spinner />
+													)
+												}
+												{
+													__( 'Test Service', 'otter-blocks' )
+												}
+											</Fragment>
+										</Button>
+									)
+								}
+							</div>
+
 
 							{
 								'done' === loadingState?.formIntegration && formIntegrationChanged && (
 									<div style={{ marginTop: '8px', borderLeft: '3px solid red', paddingLeft: '10px' }}>
 										{ __( 'You have made some modifications. Do not forget to save the options.', 'otter-blocks' ) }
+									</div>
+								)
+							}
+							{
+								'done' === loadingState?.serviceTesting && (
+									<div style={{ marginTop: '8px', borderLeft: '3px solid orange', paddingLeft: '10px' }}>
+										{ __( 'Remember to delete the test email from your provider\'s contact list.', 'otter-blocks' ) }
 									</div>
 								)
 							}

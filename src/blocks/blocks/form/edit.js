@@ -74,7 +74,8 @@ const Edit = ({
 		formOptions: 'done',
 		formIntegration: 'done',
 		listId: 'init',
-		captcha: 'init'
+		captcha: 'init',
+		serviceTesting: 'init'
 	});
 	const setLoading = l => {
 		setLoadingState( loading => ({ ...loading, ...l }) );
@@ -310,6 +311,7 @@ const Edit = ({
 	 */
 	const saveIntegration = () => {
 		setLoading({ formIntegration: 'saving' });
+		console.log( formOptions );
 		( new api.models.Settings() )?.fetch().done( res => {
 			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 			let isMissing = true;
@@ -322,10 +324,10 @@ const Edit = ({
 					}
 
 					hasUpdated = (
-						emails[index].integration.provider !== formOptions.provider ||
-						emails[index].integration.listId !== formOptions.listId ||
-						emails[index].integration.action !== formOptions.action ||
-						emails[index].integration.apiKey !== formOptions.apiKey
+						emails[index].integration?.provider !== formOptions.provider ||
+						emails[index].integration?.listId !== formOptions.listId ||
+						emails[index].integration?.action !== formOptions.action ||
+						emails[index].integration?.apiKey !== formOptions.apiKey
 					);
 					isMissing = false;
 					emails[index].integration.provider = formOptions.provider;
@@ -354,6 +356,7 @@ const Edit = ({
 				});
 
 				model.save().then( response => {
+					console.log( response.themeisle_blocks_form_emails );
 					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
 					if ( formOptions ) {
 						parseDataFormOptions( formOptions );
@@ -494,6 +497,62 @@ const Edit = ({
 					type: 'snackbar'
 				}
 			);
+		});
+	};
+
+	const testService = () => {
+		setLoading({
+			testService: 'loading'
+		});
+		wp?.apiFetch({
+			path: 'otter/v1/form/editor',
+			method: 'POST',
+			data: {
+				handler: 'testEmail',
+				payload: {
+					formOption: attributes.optionName
+				}
+			}
+		}).then( res => {
+			if ( res?.success ) {
+				createNotice(
+					'info',
+					__( 'The test email has been send. Check your provider for confirmation.', 'otter-blocks' ),
+					{
+						isDismissible: true,
+						type: 'snackbar'
+					}
+				);
+				setLoading({
+					testService: 'done'
+				});
+			} else {
+				createNotice(
+					'error',
+					__( 'An error has occurred: ', 'otter-blocks' ) + ( res?.error || __( 'unknown', 'otter-blocks' ) + __( '. Check your provider for confirmation.', 'otter-blocks' ) ),
+					{
+						isDismissible: true,
+						type: 'snackbar'
+					}
+				);
+				setLoading({
+					testService: 'error'
+				});
+			}
+
+		}).catch( error => {
+			console.error( error );
+			createNotice(
+				'error',
+				error?.message,
+				{
+					isDismissible: true,
+					type: 'snackbar'
+				}
+			);
+			setLoading({
+				testService: 'error'
+			});
 		});
 	};
 
@@ -661,7 +720,8 @@ const Edit = ({
 					setFormOption,
 					saveIntegration,
 					sendTestEmail,
-					loadingState
+					loadingState,
+					testService
 				}}
 			>
 				<Inspector

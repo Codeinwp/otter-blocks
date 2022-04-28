@@ -87,6 +87,7 @@ class Form_Server {
 			),
 			'editor' => array(
 				'listId' => array( $this, 'get_integration_data' ),
+				'testEmail' => array( $this, 'test_subscription_service' )
 			)
 		);
 		$mailchimpProvider = array(
@@ -95,6 +96,7 @@ class Form_Server {
 			),
 			'editor' => array(
 				'listId' => array( $this, 'get_integration_data' ),
+				'testEmail' => array( $this, 'test_subscription_service' )
 			)
 		);
 
@@ -160,7 +162,11 @@ class Form_Server {
 		$data->set_form_options($form_options);
 
 		// Select the handler functions based on the provider.
-		$provider_handlers = Form_Providers::$instance->get_provider_handlers($data->get_payload_field('provider'), 'editor');
+		$provider = $form_options->get_provider();
+		if( $data->payload_has_field('provider') ) {
+			$provider = $data->get_payload_field('provider');
+		}
+		$provider_handlers = Form_Providers::$instance->get_provider_handlers( $provider, 'editor');
 
 		if( $provider_handlers && Form_Providers::provider_has_handler($provider_handlers, $data->get('handler')) ) {
 			// Send the data to the provider.
@@ -355,6 +361,8 @@ class Form_Server {
 		}
 	}
 
+
+
 	/**
 	 * Get data from the given provider
 	 *
@@ -382,6 +390,49 @@ class Form_Server {
 				if ( $valid_api_key['valid'] ) {
 					$service->set_api_key( $form_request->get_payload_field('apiKey') );
 					$res->set_response( $service->get_information_from_provider( $form_request ) );
+				} else {
+					$res->set_error( $valid_api_key['reason'] );
+				}
+			}
+		} catch (Exception $e) {
+			$res->set_error($e->getMessage());
+		} finally {
+			return $res->build_response();
+		}
+	}
+
+	/**
+	 * Test the subscription service.
+	 *
+	 * @param Form_Data_Request $form_request The test request.
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 */
+	public function test_subscription_service( $form_request ) {
+		$res = new Form_Data_Response();
+		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_request->get_payload_field( 'formOption' ) );
+
+		try {
+			$service = null;
+			switch ( $form_options->get_provider() ) {
+				case 'mailchimp':
+					$service = new Mailchimp_Integration();
+					break;
+				case 'sendinblue':
+					$service = new Sendinblue_Integration();
+					break;
+				default:
+					$res->set_error( __( 'Invalid request! Provider is missing.', 'otter-blocks' ) );
+			}
+
+			if( isset($service) ) {
+				$valid_api_key = $service::validate_api_key( $form_options->get_api_key() );
+				if ( $valid_api_key['valid'] ) {
+					if( $form_options->has_list_id() ) {
+						$service->set_api_key( $form_options->get_api_key() )->set_list_id($form_options->get_list_id());
+						$res = $service->test_subscription();
+					} else {
+						$res->set_error( __( 'Contact list ID is missing!', 'otter-blocks' ));
+					}
 				} else {
 					$res->set_error( $valid_api_key['reason'] );
 				}
