@@ -86,14 +86,14 @@ if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
 	);
 }
 
-if ( ! defined( 'OTTER_BLOCKS_PRO_SUPPORT' ) ) {
+if ( defined( 'OTTER_BLOCKS_VERSION' ) && ! defined( 'OTTER_BLOCKS_PRO_SUPPORT' ) ) {
 	add_action(
 		'admin_notices',
 		function() {
 			$message = __( 'You need to update Otter – Page Builder Blocks & Extensions for Gutenberg to the latest version to use Otter Pro.', 'otter-blocks' );
 
 			printf(
-				'<div class="error">%1$s</p></div>',
+				'<div class="error"><p>%1$s</p></div>',
 				esc_html( $message )
 			);
 		} 
