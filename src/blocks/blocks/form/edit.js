@@ -524,7 +524,7 @@ const Edit = ({
 					}
 				);
 				setLoading({
-					testService: 'done'
+					serviceTesting: 'done'
 				});
 			} else {
 				createNotice(
@@ -536,7 +536,7 @@ const Edit = ({
 					}
 				);
 				setLoading({
-					testService: 'error'
+					serviceTesting: 'error'
 				});
 			}
 
