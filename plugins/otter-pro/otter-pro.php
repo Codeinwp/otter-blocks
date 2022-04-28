@@ -60,11 +60,45 @@ add_filter(
 
 add_filter( 'otter_pro_hide_license_field', '__return_true' );
 
+if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
+	add_action( 'admin_notices', function() {
+		$message = __( 'You need to install Otter – Page Builder Blocks & Extensions for Gutenberg plugin to use Otter Pro.', 'otter-blocks' );
+		$link    = wp_nonce_url(
+			add_query_arg(
+				array(
+					'action' => 'install-plugin',
+					'plugin' => 'otter-blocks',
+				),
+				admin_url( 'update.php' )
+			),
+			'install-plugin_otter-blocks'
+		);
+
+		printf(
+			'<div class="error"><p>%1$s <a href="%2$s">%3$s</a></p></div>',
+			esc_html( $message ),
+			esc_url( $link ),
+			esc_html__( 'Install', 'otter-blocks' )
+		);
+	} );
+}
+
+if ( ! defined( 'OTTER_BLOCKS_PRO_SUPPORT' ) ) {
+	add_action( 'admin_notices', function() {
+		$message = __( 'You need to update Otter – Page Builder Blocks & Extensions for Gutenberg to the latest version to use Otter Pro.', 'otter-blocks' );
+
+		printf(
+			'<div class="error">%1$s</p></div>',
+			esc_html( $message ),
+		);
+	} );
+}
+
 add_action(
 	'plugins_loaded',
 	function () {
 		// call this only if Gutenberg is active.
-		if ( function_exists( 'register_block_type' ) ) {
+		if ( function_exists( 'register_block_type' ) && defined( 'OTTER_BLOCKS_VERSION' ) && defined( 'OTTER_BLOCKS_PRO_SUPPORT' ) ) {
 			require_once dirname( __FILE__ ) . '/inc/class-main.php';
 
 			if ( class_exists( '\ThemeIsle\OtterPro\Main' ) ) {
