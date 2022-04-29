@@ -56,12 +56,14 @@ class Dashboard_Server {
 		return array_merge(
 			$data,
 			array(
-				'license'  => array(
+				'license'            => array(
 					'key'        => apply_filters( 'product_otter_license_key', 'free' ),
 					'valid'      => apply_filters( 'product_otter_license_status', false ),
 					'expiration' => License::get_license_expiration_date(),
 				),
-				'storeURL' => 'https://store.themeisle.com/',
+				'hasNevePro'         => defined( 'NEVE_PRO_VERSION' ),
+				'storeURL'           => 'https://store.themeisle.com/',
+				'purchaseHistoryURL' => 'https://store.themeisle.com/purchase-history',
 			)
 		);
 	}

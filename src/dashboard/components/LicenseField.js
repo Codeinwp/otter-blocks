@@ -77,6 +77,10 @@ const LicenseField = () => {
 		>
 			<p>{ __( 'Enter your license from ThemeIsle purchase history in order to get plugin updates.', 'otter-blocks' ) }</p>
 
+			{ Boolean( window.otterObj.hasNevePro ) && (
+				<p>{ __( 'Neve Pro license can also be used to activate Otter Pro.', 'otter-blocks' ) }</p>
+			) }
+
 			<input
 				type="text"
 				value={ isValid ? '******************************' + licenseKey.slice( -5 ) : licenseKey }
@@ -117,6 +121,8 @@ const LicenseField = () => {
 					<p><ExternalLink href={ `${ window.otterObj.storeURL }?license=${ licenseKey }` }>{ __( 'Renew License', 'otter-blocks' ) }</ExternalLink></p>
 				</div>
 			)}
+
+			{ ! isValid && <p className="otter-license-purchase-history"><ExternalLink href={ window.otterObj.purchaseHistoryURL }>{ __( 'Get license from Purchase History', 'otter-blocks' ) }</ExternalLink></p> }
 		</Infobox>
 	);
 };
