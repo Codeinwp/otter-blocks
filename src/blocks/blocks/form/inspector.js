@@ -340,6 +340,15 @@ const Inspector = ({
 						<PanelBody
 							title={ __( 'Form Options', 'otter-blocks' ) }
 						>
+							{
+								'loading' === loadingState?.formOptions && (
+									<div style={{ marginTop: '8px', borderLeft: '3px solid orange', paddingLeft: '10px', display: 'flex', flexDirection: 'row' }}>
+										<Spinner />
+										{ __( 'Fetching data from server. Please wait.', 'otter-blocks' ) }
+									</div>
+								)
+							}
+
 							<TextControl
 								label={ __( 'Email Subject', 'otter-blocks' ) }
 								placeholder={ __( 'A new submission', 'otter-blocks' ) }
@@ -404,7 +413,7 @@ const Inspector = ({
 										)
 									}
 									{
-										__( 'Apply Options', 'otter-blocks' )
+										'saving' === loadingState?.formOptions ? __( 'Saving', 'otter-blocks' ) : __( 'Apply Options', 'otter-blocks' )
 									}
 								</Fragment>
 							</Button>
@@ -465,6 +474,14 @@ const Inspector = ({
 								__( 'Add your client email to a Digital Marketing provider.', 'otter-blocks' )
 							}
 							<br /> <br />
+							{
+								'loading' === loadingState?.formIntegration && (
+									<div style={{ marginTop: '8px', borderLeft: '3px solid orange', paddingLeft: '10px', display: 'flex', flexDirection: 'row' }}>
+										<Spinner />
+										{ __( 'Fetching data from server. Please wait.', 'otter-blocks' ) }
+									</div>
+								)
+							}
 							<b> { __( 'You need to have at least one email field in your form. For multiple email fields, only the first will be used.', 'otter-blocks' ) } </b>
 
 							<SelectControl
@@ -626,7 +643,7 @@ const Inspector = ({
 											)
 										}
 										{
-											__( 'Save', 'otter-blocks' )
+											'saving' === loadingState?.formIntegration ? __( 'Saving', 'otter-blocks' ) : __( 'Save', 'otter-blocks' )
 										}
 									</Fragment>
 								</Button>

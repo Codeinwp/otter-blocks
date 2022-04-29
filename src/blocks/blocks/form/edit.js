@@ -212,12 +212,13 @@ const Edit = ({
 	useEffect( () => {
 		let controller = new AbortController();
 		const t = setTimeout( () => {
-			setLoading({apiKey: 'done'});
+			setLoading({formOptions: 'done', formIntegration: 'done'});
 		}, 3000 );
 
 
 		if ( attributes.optionName ) {
 			api.loadPromise.then( () => {
+				setLoading({ formOptions: 'loading', formIntegration: 'loading'});
 				( new api.models.Settings() ).fetch({ signal: controller.signal }).done( res => {
 					controller = null;
 					const formData = extractDataFromWpOptions( res.themeisle_blocks_form_emails );
@@ -225,10 +226,16 @@ const Edit = ({
 						parseDataFormOptions( formData );
 						setSavedFormOptions( formData );
 						setLoading({
-							apiKey: 'done',
+							formIntegration: 'done',
 							formOptions: 'done'
 						});
 					}
+					clearTimeout( t );
+				}).catch( () => {
+					setLoading({
+						formIntegration: 'done',
+						formOptions: 'done'
+					});
 					clearTimeout( t );
 				});
 			});
