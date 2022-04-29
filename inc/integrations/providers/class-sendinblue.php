@@ -27,13 +27,15 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
      */
 	protected $list_id = '';
 
-
+	/**
+	 * The default constructor.
+	 */
 	public function __construct( ) {
 
 	}
 
 	/**
-	 * Constructor.
+	 * Extract the API Key and the contact list.
 	 *
 	 * @access  public
 	 * @param Form_Settings_Data|null $integration The integration data.
@@ -92,7 +94,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 *
 	 * @param string $email The client email.
 	 *
-	 * @return \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response
+	 * @return Form_Data_Response
 	 */
 	public function subscribe(  $email ) {
 		$res       = new Form_Data_Response();
@@ -162,7 +164,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 *
 	 * @param string $api_key The API Key of the provider.
 	 * @return array[
-	 *  'validate' => booleand,
+	 *  'validate' => boolean,
 	 *  'reason' => string
 	 * ]
 	 */
@@ -182,6 +184,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 
     /**
      * Set the list id.
+	 *
      * @param string $list_id The list id.
      * @return $this
      */
@@ -193,7 +196,8 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 
     /**
      * Get the data from the provider.
-     * @param Form_Data_Request $request
+	 *
+     * @param Form_Data_Request $request The request.
      * @return false[]|mixed
      */
 	public function get_information_from_provider($request)
@@ -208,6 +212,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 
 	/**
 	 * Check if the response is caused by invalid credential.
+	 *
 	 * @param string $response_code The response code.
 	 * @return bool
 	 *

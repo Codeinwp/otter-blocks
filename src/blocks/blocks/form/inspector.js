@@ -3,13 +3,10 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import api from '@wordpress/api';
-
 import { InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
 
 import {
 	Button,
-	Dropdown,
 	ExternalLink,
 	PanelBody,
 	RangeControl,
@@ -21,12 +18,9 @@ import {
 	__experimentalBoxControl as BoxControl
 } from '@wordpress/components';
 
-import { dispatch } from '@wordpress/data';
-
 import {
 	Fragment,
 	useState,
-	useEffect,
 	useContext
 } from '@wordpress/element';
 

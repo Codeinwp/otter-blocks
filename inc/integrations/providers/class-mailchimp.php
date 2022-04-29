@@ -34,13 +34,15 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	protected $server_name = '';
 
 
-
+	/**
+	 * The default constructor.
+	 */
 	public function __construct() {
 
 	}
 
 	/**
-	 * Constructor.
+	 * Extract the API Key and the contact list.
 	 *
 	 * @access  public
 	 * @param Form_Settings_Data|null $integration The integration data.
@@ -228,7 +230,8 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 
     /**
      * Get the data from the provider, like: contact list.
-     * @param Form_Data_Request $request
+	 *
+     * @param Form_Data_Request $request The request.
      * @return false[]|mixed
      */
 	public function get_information_from_provider($request)
@@ -243,6 +246,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 
 	/**
 	 * Check if the response is caused by invalid credential.
+	 *
 	 * @param int $response_code The response code.
 	 * @return bool
 	 * @see https://mailchimp.com/developer/marketing/docs/errors/

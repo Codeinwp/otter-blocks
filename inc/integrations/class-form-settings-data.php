@@ -4,17 +4,61 @@ namespace ThemeIsle\GutenbergBlocks\Integration;
 
 class Form_Settings_Data
 {
+	/**
+	 * @var string The name of the provider.
+	 */
 	private $provider = '';
+
+	/**
+	 * @var string The API Key.
+	 */
 	private $api_key = '';
+
+	/**
+	 * @var string The contact list ID.
+	 */
 	private $list_id = '';
+
+	/**
+	 * @var string The name of the action.
+	 */
 	private $action = '';
+
+	/**
+	 * @var bool The form has reCaptcha.
+	 */
 	private $has_captcha = false;
+
+	/**
+	 * @var array The metadata.
+	 */
 	private $meta = array();
+
+	/**
+	 * @var string The redirect link.
+	 */
     private $redirect_link = '';
+
+	/**
+	 * @var string The subject of the email.
+	 */
 	private $email_subject = '';
+
+	/**
+	 * @var string The message when submit is successful.
+	 */
 	private $submit_message = '';
+
+	/**
+	 * @var string The name of the sender.
+	 */
 	private $from_name = '';
 
+	/**
+	 * The default constructor.
+	 *
+	 * @param array $integration_data The integration data.
+	 */
 	public function __construct($integration_data)
 	{
 
@@ -28,7 +72,8 @@ class Form_Settings_Data
 
     /**
      * Extract the settings from 3rd party integration.
-     * @param array $integration_data
+	 *
+     * @param array $integration_data The integration data.
      * @return void
      */
 	public function extract_integration_data($integration_data) {
@@ -55,6 +100,7 @@ class Form_Settings_Data
 
     /**
      * Check if it has the necessary data set.
+	 *
      * @return string[] The issues about the missing settings.
      */
 	public function check_data()
@@ -78,6 +124,7 @@ class Form_Settings_Data
 
     /**
      * Get the 3rd party integration settings from WP options given the form option ID.
+	 *
      * @param string $form_option The ID of the form.
      * @return Form_Settings_Data
      */
@@ -114,7 +161,8 @@ class Form_Settings_Data
 
     /**
      * Set the provider.
-     * @param string $provider
+	 *
+     * @param string $provider The name of the provider.
      * @return $this
      */
     public function set_provider($provider) {
@@ -124,7 +172,8 @@ class Form_Settings_Data
 
     /**
      * Set the API Key.
-     * @param $api_key
+	 *
+     * @param $api_key The API Key.
      * @return $this
      */
     public function set_api_key($api_key) {
@@ -134,7 +183,8 @@ class Form_Settings_Data
 
     /**
      * Set the list id.
-     * @param string $list_id
+	 *
+     * @param string $list_id The contact list ID.
      * @return $this
      */
     public function set_list_id($list_id) {
@@ -144,7 +194,8 @@ class Form_Settings_Data
 
     /**
      * Set the action.
-     * @param string $action
+	 *
+     * @param string $action The name of the action.
      * @return $this
      */
     public function set_action($action) {
@@ -153,8 +204,9 @@ class Form_Settings_Data
     }
 
     /**
-     * Set the mate.
-     * @param string $meta
+     * Set the meta.
+     * @param string $meta The metadata.
+	 *
      * @return $this
      */
     public function set_meta($meta) {
@@ -164,7 +216,8 @@ class Form_Settings_Data
 
     /**
      * Set if the form has captcha.
-     * @param bool $has_captcha
+	 *
+     * @param bool $has_captcha The value of the flag.
      * @return Form_Settings_Data
      */
     public function set_captcha( $has_captcha )
@@ -175,6 +228,7 @@ class Form_Settings_Data
 
     /**
      * Check if it has the API Key and the list id set.
+	 *
      * @return bool.
      */
     public function has_credentials()
@@ -184,6 +238,7 @@ class Form_Settings_Data
 
     /**
      * Check if it has the provider set.
+	 *
      * @return bool
      */
     public function has_provider()
@@ -193,6 +248,7 @@ class Form_Settings_Data
 
     /**
      * Check if it has the API Key set.
+	 *
      * @return bool
      */
     public function has_api_key()
@@ -202,6 +258,7 @@ class Form_Settings_Data
 
     /**
      * Check if it has the list id set.
+	 *
      * @return bool
      */
     public function has_list_id()
@@ -211,6 +268,7 @@ class Form_Settings_Data
 
     /**
      * Check if it has the action set.
+	 *
      * @return bool
      */
     public function has_action()
@@ -220,6 +278,7 @@ class Form_Settings_Data
 
 	/**
      * Check if it has the email_subject set.
+	 *
      * @return bool
      */
     public function has_email_subject()
@@ -229,6 +288,7 @@ class Form_Settings_Data
 
 	/**
      * Check if it has the submit_message set.
+	 *
      * @return bool
      */
     public function has_submit_message()
@@ -238,6 +298,7 @@ class Form_Settings_Data
 
 	/**
 	 * Check if it has the submit_message set.
+	 *
 	 * @return bool
 	 */
 	public function has_from_name()
@@ -247,7 +308,8 @@ class Form_Settings_Data
 
     /**
      * Set the redirect link.
-     * @param string $redirect_link
+	 *
+     * @param string $redirect_link The redirect link.
      * @return Form_Settings_Data
      */
     public function set_redirect_link($redirect_link)
@@ -258,7 +320,8 @@ class Form_Settings_Data
 
 	 /**
      * Set the email subject.
-     * @param string $email_subject
+	  *
+     * @param string $email_subject The email subject.
      * @return Form_Settings_Data
      */
     public function set_email_subject($email_subject)
@@ -268,8 +331,9 @@ class Form_Settings_Data
     }
 
 	 /**
-     * Set the submit message.
-     * @param string $submit_message
+     * Set the message on submit.
+	  *
+     * @param string $submit_message The message.
      * @return Form_Settings_Data
      */
     public function set_submit_message($submit_message)
@@ -280,6 +344,7 @@ class Form_Settings_Data
 
     /**
      * Get the provider.
+	 *
      * @return string
      */
 	public function get_provider()
@@ -289,6 +354,7 @@ class Form_Settings_Data
 
     /**
      * Get the API Key.
+	 *
      * @return string
      */
 	public function get_api_key()
@@ -298,6 +364,7 @@ class Form_Settings_Data
 
     /**
      * Get the list ID.
+	 *
      * @return string
      */
 	public function get_list_id()
@@ -307,6 +374,7 @@ class Form_Settings_Data
 
     /**
      * Get the action.
+	 *
      * @return string
      */
 	public function get_action()
@@ -316,6 +384,7 @@ class Form_Settings_Data
 
     /**
      * Get the meta.
+	 *
      * @return array
      */
 	public function get_meta()
@@ -325,6 +394,7 @@ class Form_Settings_Data
 
 	/**
      * Get the captcha.
+	 *
 	 * @return bool
 	 */
 	public function form_has_captcha()
@@ -334,6 +404,7 @@ class Form_Settings_Data
 
     /**
      * Get the redirect link.
+	 *
      * @return string
      */
     public function get_redirect_link()
@@ -343,6 +414,7 @@ class Form_Settings_Data
 
 	/**
      * Get the email subject.
+	 *
      * @return string
      */
     public function get_email_subject()
@@ -351,7 +423,8 @@ class Form_Settings_Data
     }
 
 	/**
-     * Get the submit message.
+     * Get the message for submit.
+	 *
      * @return string
      */
     public function get_submit_message()
@@ -361,6 +434,7 @@ class Form_Settings_Data
 
 	/**
 	 * Get the OnSuccess submit data: redirectLink, submitMessage.
+	 *
 	 * @return array
 	 */
     public function get_submit_data() {
@@ -372,6 +446,7 @@ class Form_Settings_Data
 
 	/**
 	 * Get the name of the sender.
+	 *
 	 * @return string
 	 */
 	public function get_from_name() {
@@ -380,6 +455,7 @@ class Form_Settings_Data
 
 	/**
 	 * Set the name of the sender.
+	 *
 	 * @param string $from_name The name of the sender.
 	 *
 	 * @return Form_Settings_Data
@@ -389,6 +465,4 @@ class Form_Settings_Data
 
 		return $this;
 	}
-
-
 }

@@ -25,6 +25,8 @@ class Form_Data_Response {
 
 	/**
 	 * Mark if the error is related to api key issues.
+	 *
+	 * @var boolean
 	 */
 	protected $is_credential_error = false;
 
@@ -94,6 +96,8 @@ class Form_Data_Response {
 
 	/**
 	 * Mark response as success.
+	 *
+	 * @return $this
 	 */
 	public function mark_as_success() {
 		$this->response['success'] = true;
@@ -104,6 +108,7 @@ class Form_Data_Response {
 	 * Copy response.
 	 *
 	 * @param object $other Response data.
+	 * @return $this
 	 */
 	public function copy( $other ) {
 		$this->response['success'] = $other->is_success();
@@ -132,6 +137,7 @@ class Form_Data_Response {
 
     /**
      * Set the response.
+	 *
      * @param array $response The response.
      * @return $this
      */
@@ -142,6 +148,7 @@ class Form_Data_Response {
 
     /**
      * Add new data to the response.
+	 *
      * @param array $values The new data.
      * @return $this
      */
@@ -152,6 +159,7 @@ class Form_Data_Response {
 
     /**
 	 * Check if the response has an error.
+	 *
      * @return bool
      */
     public function has_error() {
@@ -159,6 +167,8 @@ class Form_Data_Response {
     }
 
 	/**
+	 * Check if the error is caused by invalid credentials.
+	 *
 	 * @return bool
 	 */
 	public function is_credential_error()
@@ -167,8 +177,10 @@ class Form_Data_Response {
 	}
 
 	/**
+	 * Mark that the error is caused by invalid credentials.
+	 *
 	 * @param bool $is_credential_error
-	 * @return Form_Data_Response
+	 * @return $this
 	 */
 	public function set_is_credential_error($is_credential_error)
 	{
