@@ -79,7 +79,7 @@ class Sharing_Icons_Block {
 
 		$wrapper_attributes = get_block_wrapper_attributes( $attributes['id'] ? [ 'id' => $attributes['id'] ] : [] );
 
-		$html = '<div ' . $wrapper_attributes . '>';
+		$html = '<div ' . $wrapper_attributes . '><div class="social-icons-wrap">';
 		foreach ( $social_attributes as $key => $icon ) {
 			if ( 'className' !== $key && 1 == $attributes[ $key ] ) {
 				$html .= '<a class="social-icon is-' . esc_html( $key ) . '" href="' . esc_url( $icon['url'] ) . '" target="_blank">';
@@ -90,7 +90,7 @@ class Sharing_Icons_Block {
 				$html .= '</a>';
 			}
 		}
-		$html .= '</div>';
+		$html .= '</div></div>';
 		return $html;
 	}
 }
