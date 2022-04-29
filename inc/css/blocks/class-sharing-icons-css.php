@@ -38,10 +38,12 @@ class Sharing_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--iconsGap',
 						'value'    => 'gap',
+						'unit'     => 'px',
 					),
 					array(
 						'property' => '--borderRadius',
 						'value'    => 'borderRadius',
+						'unit'     => 'px',
 					),
 					array(
 						'property' => '--textDeco',

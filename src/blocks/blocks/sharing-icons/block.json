@@ -36,12 +36,12 @@
 			"default": false
 		},
 		"gap" : {
-			"type": "string",
-			"default": "5px"
+			"type": "number",
+			"default": 5
 		},
 		"borderRadius": {
-			"type": "string",
-			"default": "3px"
+			"type": "number",
+			"default": 3
 		},
 		"textDeco": {
 			"type": "string",

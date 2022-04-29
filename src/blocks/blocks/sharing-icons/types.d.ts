@@ -8,8 +8,8 @@ type Attributes = {
 	pinterest: boolean
 	tumblr: boolean
 	reddit: boolean
-	gap: string
-	borderRadius: string
+	gap: number
+	borderRadius: number
 	textDeco: string
 	backgroundColor: string
 	textColor: string

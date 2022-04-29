@@ -30,16 +30,12 @@ const Inspector = ({
 			return;
 		}
 
-		newAttributes[name] = `${ value }px`;
+		newAttributes[name] = value;
 		setAttributes( newAttributes );
 	};
 
 	const onChangeTextDeco = value => {
 		setAttributes({ textDeco: ( value ? 'none' : 'underline' ) });
-	};
-
-	const extractNumber = value => {
-		return parseInt( value.match( /\d+/g )[0]);
 	};
 
 	return <Fragment>
@@ -49,14 +45,14 @@ const Inspector = ({
 			>
 				<RangeControl
 					label={ __( 'Items Gap', 'otter-blocks' ) }
-					value={ extractNumber( attributes.gap ) }
+					value={ attributes.gap }
 					onChange={ value => onChangePixelValue( value, 'gap' ) }
 					allowReset
 					max={ 100 }
 				/>
 				<RangeControl
 					label={ __( 'Icons Border Badius', 'otter-blocks' ) }
-					value={ extractNumber( attributes.borderRadius ) }
+					value={ attributes.borderRadius }
 					onChange={ value => onChangePixelValue( value, 'borderRadius' ) }
 					allowReset
 					max={ 100 }

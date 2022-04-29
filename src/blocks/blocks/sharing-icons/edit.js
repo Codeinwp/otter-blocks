@@ -40,8 +40,8 @@ const Edit = ({
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 	const styles = css`
-		--iconsGap: ${ getValue( 'gap' ) };
-		--borderRadius: ${ getValue( 'borderRadius' ) };
+		--iconsGap: ${ getValue( 'gap' ) }px;
+		--borderRadius: ${ getValue( 'borderRadius' ) }px;
 		--textDeco: ${ getValue( 'textDeco' ) };
 		--iconsBgColor: ${ getValue( 'backgroundColor' ) };
 		--textColor: ${ getValue( 'textColor' ) };
