@@ -509,7 +509,7 @@ const Edit = ({
 
 	const testService = () => {
 		setLoading({
-			testService: 'loading'
+			serviceTesting: 'loading'
 		});
 		wp?.apiFetch({
 			path: 'otter/v1/form/editor',
@@ -524,7 +524,7 @@ const Edit = ({
 			if ( res?.success ) {
 				createNotice(
 					'info',
-					__( 'The test email has been send. Check your provider for confirmation.', 'otter-blocks' ),
+					__( 'A test email has been registered to your contact list. Check your provider for confirmation.', 'otter-blocks' ),
 					{
 						isDismissible: true,
 						type: 'snackbar'
