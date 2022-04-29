@@ -1,5 +1,11 @@
 @import './components/separators/style';
 
+html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[lang="zh-Hant"] {
+	.wp-block-themeisle-blocks-advanced-columns .innerblocks-wrap {
+		word-break: normal;
+	}
+}
+
 .wp-block-themeisle-blocks-advanced-columns {
 	--columnsWidth: initial;
 	--horizontalAlign: unset;
