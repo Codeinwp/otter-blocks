@@ -53,7 +53,7 @@
 		"@semantic-release/changelog": "^6.0.1",
 		"@semantic-release/exec": "^6.0.3",
 		"@semantic-release/git": "^10.0.1",
-		"@types/wordpress__block-editor": "^6.0.5",
+		"@types/wordpress__block-editor": "^7.0.0",
 		"@types/wordpress__components": "^19.3.0",
 		"@wordpress/block-editor": "^8.3.0",
 		"@wordpress/components": "^19.6.0",
