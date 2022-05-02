@@ -58,7 +58,7 @@ const Edit = ({
 	const [ isEditing, setEditing ] = useState( false );
 
 	const styles = css`
-		--minWidth: ${ ( attributes.minWidth ? attributes.minWidth : defaultAttributes.minWidth.default ) + 'px' };
+		--minWidth: ${ attributes.minWidth ? attributes.minWidth + 'px' : '400px' };
 		--maxWidth: ${ ( attributes.maxWidth ? attributes.maxWidth + 'px' : undefined ) };
 		--backgroundColor: ${ attributes.backgroundColor };
 		--closeColor: ${ attributes.closeColor };

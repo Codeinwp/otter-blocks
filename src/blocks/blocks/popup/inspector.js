@@ -203,7 +203,7 @@ const Inspector = ({
 					max={ 1000 }
 					value={ attributes.minWidth }
 					allowReset
-					resetFallbackValue={ defaultAttributes.minWidth.default }
+					resetFallbackValue={ 400 }
 					onChange={ value => setAttributes({ minWidth: Number( value ) }) }
 				/>
 
