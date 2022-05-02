@@ -2,10 +2,12 @@ name: Build Size Analyzer
 
 on:
   pull_request:
+    types: [ opened, synchronize, ready_for_review ]
 
 jobs:
   build-base:
     name: Build base
+    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
     runs-on: ubuntu-latest
     steps:
       - name: Check out source files
@@ -38,6 +40,7 @@ jobs:
 
   build-pr:
     name: Build PR
+    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
     runs-on: ubuntu-latest
     steps:
       - name: Check out source files
