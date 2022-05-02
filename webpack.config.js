@@ -102,7 +102,7 @@ module.exports = [
 				...glob.sync( './src/blocks/woocommerce/**/index.js' )
 			],
 			'leaflet-map': './src/blocks/frontend/leaflet-map/index.js',
-			'leaflet-gesture-handling': './assets/leaflet/leaflet-gesture-handling.js',
+			'leaflet-gesture-handling': './src/blocks/frontend/leaflet-map/leaflet-gesture-handling.js',
 			maps: './src/blocks/frontend/google-map/index.js',
 			slider: './src/blocks/frontend/slider/index.js',
 			'progress-bar': './src/blocks/frontend/progress-bar/index.js',
