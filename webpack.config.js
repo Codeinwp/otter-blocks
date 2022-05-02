@@ -71,20 +71,20 @@ module.exports = [
 			path: path.resolve( __dirname, './build/export-import' )
 		}
 	},
-	{
-
-		// Leaflet
-		...defaultConfig,
-		stats: 'minimal',
-		mode: NODE_ENV,
-		entry: {
-			'leaflet-gesture-handling': './assets/leaflet/leaflet-gesture-handling.js'
-		},
-		output: {
-			path: path.resolve( __dirname, './build/assets' ),
-			filename: '[name].min.js',
-		}
-	},
+	// {
+	//
+	// 	// Leaflet
+	// 	...defaultConfig,
+	// 	stats: 'minimal',
+	// 	mode: NODE_ENV,
+	// 	entry: {
+	// 		'leaflet-gesture-handling': './assets/leaflet/leaflet-gesture-handling.js'
+	// 	},
+	// 	output: {
+	// 		path: path.resolve( __dirname, './build/assets' ),
+	// 		filename: '[name].min.js',
+	// 	}
+	// },
 	{
 
 		// OTTER BLOCKS
@@ -102,6 +102,7 @@ module.exports = [
 				...glob.sync( './src/blocks/woocommerce/**/index.js' )
 			],
 			'leaflet-map': './src/blocks/frontend/leaflet-map/index.js',
+			'leaflet-gesture-handling': './assets/leaflet/leaflet-gesture-handling.js',
 			maps: './src/blocks/frontend/google-map/index.js',
 			slider: './src/blocks/frontend/slider/index.js',
 			'progress-bar': './src/blocks/frontend/progress-bar/index.js',
