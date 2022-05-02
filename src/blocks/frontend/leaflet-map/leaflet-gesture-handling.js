@@ -2,7 +2,7 @@
 * * Leaflet Gesture Handling **
 * * Version 1.1.8
 */
-import LanguageContent from "../../../../assets/leaflet/language-content";
+import LanguageContent from "./language-content";
 
 export var GestureHandling = null;
 
