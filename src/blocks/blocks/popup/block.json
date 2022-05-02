@@ -12,6 +12,10 @@
 			"type": "string"
 		},
 		"minWidth": {
+			"type": "number",
+			"default": 400
+		},
+		"maxWidth": {
 			"type": "number"
 		},
 		"trigger": {

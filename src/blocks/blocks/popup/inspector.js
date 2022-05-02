@@ -21,6 +21,13 @@ import {
 import { Fragment } from '@wordpress/element';
 
 /**
+ * Internal dependencies
+ */
+import metadata from './block.json';
+
+const { attributes: defaultAttributes } = metadata;
+
+/**
  *
  * @param {import('./types').PopupInspectorProps} props
  * @returns
@@ -195,7 +202,18 @@ const Inspector = ({
 					min={ 100 }
 					max={ 1000 }
 					value={ attributes.minWidth }
+					allowReset
+					resetFallbackValue={ defaultAttributes.minWidth.default }
 					onChange={ value => setAttributes({ minWidth: Number( value ) }) }
+				/>
+
+				<RangeControl
+					label={ __( 'Maximum Width', 'otter-blocks' ) }
+					min={ 100 }
+					max={ 1000 }
+					value={ attributes.maxWidth }
+					allowReset
+					onChange={ value => setAttributes({ maxWidth: Number( value ) }) }
 				/>
 
 				<ColorGradientControl
