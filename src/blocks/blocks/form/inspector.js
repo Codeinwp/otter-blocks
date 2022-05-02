@@ -336,9 +336,9 @@ const Inspector = ({
 						>
 							{
 								'loading' === loadingState?.formOptions && (
-									<div style={{ marginTop: '8px', borderLeft: '3px solid orange', paddingLeft: '10px', display: 'flex', flexDirection: 'row' }}>
+									<div style={{ marginTop: '8px', borderLeft: '3px solid orange', paddingLeft: '10px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 										<Spinner />
-										{ __( 'Fetching data from server. Please wait.', 'otter-blocks' ) }
+										{ __( 'Loading the options. Please wait.', 'otter-blocks' ) }
 									</div>
 								)
 							}
@@ -399,15 +399,11 @@ const Inspector = ({
 								isPrimary
 								onClick={ saveFormEmailOptions }
 								help={ __( '[WIP] Do not forget to save the options ', 'otter-blocks' ) }
+								isBusy={ 'saving' === loadingState?.formOptions }
 							>
 								<Fragment>
 									{
-										'saving' === loadingState?.formOptions && (
-											<Spinner />
-										)
-									}
-									{
-										'saving' === loadingState?.formOptions ? __( 'Saving', 'otter-blocks' ) : __( 'Apply Options', 'otter-blocks' )
+										'saving' === loadingState?.formOptions ? __( 'Saving...', 'otter-blocks' ) : __( 'Apply Options', 'otter-blocks' )
 									}
 								</Fragment>
 							</Button>
@@ -470,7 +466,7 @@ const Inspector = ({
 							<br /> <br />
 							{
 								'loading' === loadingState?.formIntegration && (
-									<div style={{ marginTop: '8px', borderLeft: '3px solid orange', paddingLeft: '10px', display: 'flex', flexDirection: 'row' }}>
+									<div style={{ marginTop: '8px', borderLeft: '3px solid orange', paddingLeft: '10px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 										<Spinner />
 										{ __( 'Fetching data from server. Please wait.', 'otter-blocks' ) }
 									</div>
@@ -544,7 +540,7 @@ const Inspector = ({
 											formOptions.apiKey && 2 > listIDOptions.length && 'loading' === loadingState?.listId && (
 												<Fragment>
 													<Spinner />
-													{ __( 'Fetching data from provider.', 'otter-blocks' ) }
+													{ __( 'Loading the options.', 'otter-blocks' ) }
 													<br /><br/>
 												</Fragment>
 											)
@@ -629,13 +625,9 @@ const Inspector = ({
 									isPrimary
 									variant="primary"
 									onClick={ saveIntegration }
+									isBusy={'saving' === loadingState?.formIntegration }
 								>
 									<Fragment>
-										{
-											'saving' === loadingState?.formIntegration && (
-												<Spinner />
-											)
-										}
 										{
 											'saving' === loadingState?.formIntegration ? __( 'Saving', 'otter-blocks' ) : __( 'Save', 'otter-blocks' )
 										}
@@ -647,13 +639,9 @@ const Inspector = ({
 											isSecondary
 											variant="secondary"
 											onClick={ testService }
+											isBusy={ 'saving' === loadingState?.serviceTesting }
 										>
 											<Fragment>
-												{
-													'loading' === loadingState?.serviceTesting && (
-														<Spinner />
-													)
-												}
 												{
 													__( 'Test Service', 'otter-blocks' )
 												}

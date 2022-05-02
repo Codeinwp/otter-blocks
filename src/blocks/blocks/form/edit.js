@@ -182,7 +182,6 @@ const Edit = ({
 	 * @param {Array} forms
 	 */
 	const extractDataFromWpOptions = forms => {
-		console.log( forms, attributes.optionName );
 		return forms?.filter( ({ form }) => form === attributes.optionName ).pop();
 	};
 
@@ -191,7 +190,6 @@ const Edit = ({
 	 * @param wpOptions
 	 */
 	const parseDataFormOptions = wpOptions => {
-		console.log( wpOptions );
 		setFormOptions({
 			emailTo: wpOptions?.email,
 			fromName: wpOptions?.fromName,
@@ -318,7 +316,6 @@ const Edit = ({
 	 */
 	const saveIntegration = () => {
 		setLoading({ formIntegration: 'saving' });
-		console.log( formOptions );
 		( new api.models.Settings() )?.fetch().done( res => {
 			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
 			let isMissing = true;
@@ -452,7 +449,8 @@ const Edit = ({
 
 						setLoading({ listId: 'error' });
 					}
-				}).catch( e => {
+				}
+			).catch( e => {
 				console.error( e );
 				setLoading({ listId: 'error' });
 			});
