@@ -9,6 +9,7 @@
 		"dev:webpack": "wp-scripts start --watch",
 		"dev:grunt": "grunt watch",
 		"build-dev": "NODE_ENV=development wp-scripts build && grunt build",
+		"analyzer": "NODE_ANALYZER=true wp-scripts build && grunt build",
 		"lint": "wp-scripts lint-js ./src",
 		"format": "wp-scripts lint-js ./src --fix",
 		"packages-update": "wp-scripts packages-update",

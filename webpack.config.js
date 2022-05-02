@@ -1,5 +1,7 @@
+const BundleAnalyzerPlugin = require( 'webpack-bundle-analyzer' ).BundleAnalyzerPlugin;
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const NODE_ENV = process.env.NODE_ENV || 'development';
+const ANALYZER = 'true' === process.env.NODE_ANALYZER ? true : false;
 const glob = require( 'glob' );
 const path = require( 'path' );
 const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
@@ -27,7 +29,14 @@ module.exports = [
 		},
 		output: {
 			path: path.resolve( __dirname, './build/dashboard' )
-		}
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
+				generateStatsFile: ANALYZER
+			})
+		]
 	},
 	{
 
@@ -43,7 +52,14 @@ module.exports = [
 		},
 		output: {
 			path: path.resolve( __dirname, './build/animation' )
-		}
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
+				generateStatsFile: ANALYZER
+			})
+		]
 	},
 	{
 
@@ -56,7 +72,14 @@ module.exports = [
 		},
 		output: {
 			path: path.resolve( __dirname, './build/css' )
-		}
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
+				generateStatsFile: ANALYZER
+			})
+		]
 	},
 	{
 
@@ -69,7 +92,14 @@ module.exports = [
 		},
 		output: {
 			path: path.resolve( __dirname, './build/export-import' )
-		}
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
+				generateStatsFile: ANALYZER
+			})
+		]
 	},
 	{
 
@@ -132,6 +162,10 @@ module.exports = [
 						copy: blockFiles
 					}
 				}
+			}),
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
+				generateStatsFile: ANALYZER
 			})
 		]
 	}
