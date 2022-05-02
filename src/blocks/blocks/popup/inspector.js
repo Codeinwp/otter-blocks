@@ -21,13 +21,6 @@ import {
 import { Fragment } from '@wordpress/element';
 
 /**
- * Internal dependencies
- */
-import metadata from './block.json';
-
-const { attributes: defaultAttributes } = metadata;
-
-/**
  *
  * @param {import('./types').PopupInspectorProps} props
  * @returns
