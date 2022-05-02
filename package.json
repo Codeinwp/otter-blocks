@@ -12,6 +12,7 @@
 		"dev:pro": "wp-scripts start --watch --config webpack.config.pro.js",
 		"dev:grunt": "grunt build",
 		"build-dev": "NODE_ENV=development npm run build",
+		"analyzer": "NODE_ANALYZER=true npm run build",
 		"lint": "wp-scripts lint-js ./src",
 		"format": "wp-scripts lint-js ./src --fix",
 		"packages-update": "wp-scripts packages-update",
