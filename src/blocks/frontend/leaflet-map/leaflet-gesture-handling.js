@@ -2,13 +2,13 @@
 * * Leaflet Gesture Handling **
 * * Version 1.1.8
 */
-import LanguageContent from "./language-content";
+import LanguageContent from './language-content.js';
 
 export var GestureHandling = null;
 
-const t = setInterval(() => {
-	if('L' in window) {
-		clearInterval(t);
+const t = setInterval( () => {
+	if ( 'L' in window ) {
+		clearInterval( t );
 
 		L.Map.mergeOptions({
 			gestureHandlingOptions: {
@@ -17,11 +17,11 @@ const t = setInterval(() => {
 			}
 		});
 
-		var draggingMap = false;
+		let draggingMap = false;
 
 		GestureHandling = L.Handler.extend({
 			addHooks: function() {
-				this._handleTouch = this._handleTouch.bind(this);
+				this._handleTouch = this._handleTouch.bind( this );
 
 				this._setupPluginOptions();
 				this._setLanguageContent();
@@ -29,63 +29,63 @@ const t = setInterval(() => {
 
 				//Uses native event listeners instead of L.DomEvent due to issues with Android touch events
 				//turning into pointer events
-				this._map._container.addEventListener("touchstart", this._handleTouch);
-				this._map._container.addEventListener("touchmove", this._handleTouch);
-				this._map._container.addEventListener("touchend", this._handleTouch);
-				this._map._container.addEventListener("touchcancel", this._handleTouch);
-				this._map._container.addEventListener("click", this._handleTouch);
+				this._map._container.addEventListener( 'touchstart', this._handleTouch );
+				this._map._container.addEventListener( 'touchmove', this._handleTouch );
+				this._map._container.addEventListener( 'touchend', this._handleTouch );
+				this._map._container.addEventListener( 'touchcancel', this._handleTouch );
+				this._map._container.addEventListener( 'click', this._handleTouch );
 
 				L.DomEvent.on(
 					this._map._container,
-					"wheel",
+					'wheel',
 					this._handleScroll,
 					this
 				);
-				L.DomEvent.on(this._map, "mouseover", this._handleMouseOver, this);
-				L.DomEvent.on(this._map, "mouseout", this._handleMouseOut, this);
+				L.DomEvent.on( this._map, 'mouseover', this._handleMouseOver, this );
+				L.DomEvent.on( this._map, 'mouseout', this._handleMouseOut, this );
 
 				// Listen to these events so will not disable dragging if the user moves the mouse out the boundary of the map container whilst actively dragging the map.
-				L.DomEvent.on(this._map, "movestart", this._handleDragging, this);
-				L.DomEvent.on(this._map, "move", this._handleDragging, this);
-				L.DomEvent.on(this._map, "moveend", this._handleDragging, this);
+				L.DomEvent.on( this._map, 'movestart', this._handleDragging, this );
+				L.DomEvent.on( this._map, 'move', this._handleDragging, this );
+				L.DomEvent.on( this._map, 'moveend', this._handleDragging, this );
 			},
 
 			removeHooks: function() {
 				this._enableInteractions();
 
 				this._map._container.removeEventListener(
-					"touchstart",
+					'touchstart',
 					this._handleTouch
 				);
 				this._map._container.removeEventListener(
-					"touchmove",
+					'touchmove',
 					this._handleTouch
 				);
-				this._map._container.removeEventListener("touchend", this._handleTouch);
+				this._map._container.removeEventListener( 'touchend', this._handleTouch );
 				this._map._container.removeEventListener(
-					"touchcancel",
+					'touchcancel',
 					this._handleTouch
 				);
-				this._map._container.removeEventListener("click", this._handleTouch);
+				this._map._container.removeEventListener( 'click', this._handleTouch );
 
 				L.DomEvent.off(
 					this._map._container,
-					"wheel",
+					'wheel',
 					this._handleScroll,
 					this
 				);
-				L.DomEvent.off(this._map, "mouseover", this._handleMouseOver, this);
-				L.DomEvent.off(this._map, "mouseout", this._handleMouseOut, this);
+				L.DomEvent.off( this._map, 'mouseover', this._handleMouseOver, this );
+				L.DomEvent.off( this._map, 'mouseout', this._handleMouseOut, this );
 
-				L.DomEvent.off(this._map, "movestart", this._handleDragging, this);
-				L.DomEvent.off(this._map, "move", this._handleDragging, this);
-				L.DomEvent.off(this._map, "moveend", this._handleDragging, this);
+				L.DomEvent.off( this._map, 'movestart', this._handleDragging, this );
+				L.DomEvent.off( this._map, 'move', this._handleDragging, this );
+				L.DomEvent.off( this._map, 'moveend', this._handleDragging, this );
 			},
 
-			_handleDragging: function(e) {
-				if (e.type === "movestart" || e.type === "move") {
+			_handleDragging: function( e ) {
+				if ( 'movestart' === e.type || 'move' === e.type ) {
 					draggingMap = true;
-				} else if (e.type === "moveend") {
+				} else if ( 'moveend' === e.type ) {
 					draggingMap = false;
 				}
 			},
@@ -93,7 +93,7 @@ const t = setInterval(() => {
 			_disableInteractions: function() {
 				this._map.dragging.disable();
 				this._map.scrollWheelZoom.disable();
-				if (this._map.tap) {
+				if ( this._map.tap ) {
 					this._map.tap.disable();
 				}
 			},
@@ -101,20 +101,22 @@ const t = setInterval(() => {
 			_enableInteractions: function() {
 				this._map.dragging.enable();
 				this._map.scrollWheelZoom.enable();
-				if (this._map.tap) {
+				if ( this._map.tap ) {
 					this._map.tap.enable();
 				}
 			},
 
 			_setupPluginOptions: function() {
+
 				//For backwards compatibility, merge gestureHandlingText into the new options object
-				if (this._map.options.gestureHandlingText) {
+				if ( this._map.options.gestureHandlingText ) {
 					this._map.options.gestureHandlingOptions.text = this._map.options.gestureHandlingText;
 				}
 			},
 
 			_setLanguageContent: function() {
 				var languageContent;
+
 				//If user has supplied custom language, use that
 				if (
 					this._map.options.gestureHandlingOptions &&
@@ -125,31 +127,33 @@ const t = setInterval(() => {
 				) {
 					languageContent = this._map.options.gestureHandlingOptions.text;
 				} else {
+
 					//Otherwise auto set it from the language files
 
 					//Determine their language e.g fr or en-US
-					var lang = this._getUserLanguage();
+					let lang = this._getUserLanguage();
 
 					//If we couldn't find it default to en
-					if (!lang) {
-						lang = "en";
+					if ( ! lang ) {
+						lang = 'en';
 					}
 
 					//Lookup the appropriate language content
-					if (LanguageContent[lang]) {
+					if ( LanguageContent[lang]) {
 						languageContent = LanguageContent[lang];
 					}
 
 					//If no result, try searching by the first part only. e.g en-US just use en.
-					if (!languageContent && lang.indexOf("-") !== -1) {
-						lang = lang.split("-")[0];
+					if ( ! languageContent && -1 !== lang.indexOf( '-' ) ) {
+						lang = lang.split( '-' )[0];
 						languageContent = LanguageContent[lang];
 					}
 
-					if (!languageContent) {
+					if ( ! languageContent ) {
+
 						// If still nothing, default to English
 						// console.log("No lang found for", lang);
-						lang = "en";
+						lang = 'en';
 						languageContent = LanguageContent[lang];
 					}
 				}
@@ -158,138 +162,140 @@ const t = setInterval(() => {
 				// languageContent = LanguageContent["bg"];
 
 				//Check if they're on a mac for display of command instead of ctrl
-				var mac = false;
-				if (navigator.platform.toUpperCase().indexOf("MAC") >= 0) {
+				let mac = false;
+				if ( 0 <= navigator.platform.toUpperCase().indexOf( 'MAC' ) ) {
 					mac = true;
 				}
 
-				var scrollContent = languageContent.scroll;
-				if (mac) {
+				let scrollContent = languageContent.scroll;
+				if ( mac ) {
 					scrollContent = languageContent.scrollMac;
 				}
 
 				this._map._container.setAttribute(
-					"data-gesture-handling-touch-content",
+					'data-gesture-handling-touch-content',
 					languageContent.touch
 				);
 				this._map._container.setAttribute(
-					"data-gesture-handling-scroll-content",
+					'data-gesture-handling-scroll-content',
 					scrollContent
 				);
 			},
 
 			_getUserLanguage: function() {
-				var lang = navigator.languages
-					? navigator.languages[0]
-					: navigator.language || navigator.userLanguage;
+				var lang = navigator.languages ?
+					navigator.languages[0] :
+					navigator.language || navigator.userLanguage;
 				return lang;
 			},
 
-			_handleTouch: function(e) {
+			_handleTouch: function( e ) {
+
 				//Disregard touch events on the minimap if present
 				var ignoreList = [
-					"leaflet-control-minimap",
-					"leaflet-interactive",
-					"leaflet-popup-content",
-					"leaflet-popup-content-wrapper",
-					"leaflet-popup-close-button",
-					"leaflet-control-zoom-in",
-					"leaflet-control-zoom-out"
+					'leaflet-control-minimap',
+					'leaflet-interactive',
+					'leaflet-popup-content',
+					'leaflet-popup-content-wrapper',
+					'leaflet-popup-close-button',
+					'leaflet-control-zoom-in',
+					'leaflet-control-zoom-out'
 				];
 
 				var ignoreElement = false;
-				for (var i = 0; i < ignoreList.length; i++) {
-					if (L.DomUtil.hasClass(e.target, ignoreList[i])) {
+				for ( let i = 0; i < ignoreList.length; i++ ) {
+					if ( L.DomUtil.hasClass( e.target, ignoreList[i]) ) {
 						ignoreElement = true;
 					}
 				}
 
-				if (ignoreElement) {
+				if ( ignoreElement ) {
 					if (
-						L.DomUtil.hasClass(e.target, "leaflet-interactive") &&
-						e.type === "touchmove" &&
-						e.touches.length === 1
+						L.DomUtil.hasClass( e.target, 'leaflet-interactive' ) &&
+						'touchmove' === e.type &&
+						1 === e.touches.length
 					) {
-						L.DomUtil.addClass(this._map._container,
-							"leaflet-gesture-handling-touch-warning"
+						L.DomUtil.addClass( this._map._container,
+							'leaflet-gesture-handling-touch-warning'
 						);
 						this._disableInteractions();
 					} else {
-						L.DomUtil.removeClass(this._map._container,
-							"leaflet-gesture-handling-touch-warning"
+						L.DomUtil.removeClass( this._map._container,
+							'leaflet-gesture-handling-touch-warning'
 						);
 					}
 					return;
 				}
+
 				// screenLog(e.type+' '+e.touches.length);
-				if (e.type !== "touchmove" && e.type !== "touchstart") {
-					L.DomUtil.removeClass(this._map._container,
-						"leaflet-gesture-handling-touch-warning"
+				if ( 'touchmove' !== e.type && 'touchstart' !== e.type ) {
+					L.DomUtil.removeClass( this._map._container,
+						'leaflet-gesture-handling-touch-warning'
 					);
 					return;
 				}
-				if (e.touches.length === 1) {
-					L.DomUtil.addClass(this._map._container,
-						"leaflet-gesture-handling-touch-warning"
+				if ( 1 === e.touches.length ) {
+					L.DomUtil.addClass( this._map._container,
+						'leaflet-gesture-handling-touch-warning'
 					);
 					this._disableInteractions();
 				} else {
 					e.preventDefault();
 					this._enableInteractions();
-					L.DomUtil.removeClass(this._map._container,
-						"leaflet-gesture-handling-touch-warning"
+					L.DomUtil.removeClass( this._map._container,
+						'leaflet-gesture-handling-touch-warning'
 					);
 				}
 			},
 
 			_isScrolling: false,
 
-			_handleScroll: function(e) {
-				if (e.metaKey || e.ctrlKey) {
+			_handleScroll: function( e ) {
+				if ( e.metaKey || e.ctrlKey ) {
 					e.preventDefault();
-					L.DomUtil.removeClass(this._map._container,
-						"leaflet-gesture-handling-scroll-warning"
+					L.DomUtil.removeClass( this._map._container,
+						'leaflet-gesture-handling-scroll-warning'
 					);
 					this._map.scrollWheelZoom.enable();
 				} else {
-					L.DomUtil.addClass(this._map._container,
-						"leaflet-gesture-handling-scroll-warning"
+					L.DomUtil.addClass( this._map._container,
+						'leaflet-gesture-handling-scroll-warning'
 					);
 					this._map.scrollWheelZoom.disable();
 
-					clearTimeout(this._isScrolling);
+					clearTimeout( this._isScrolling );
 
 					// Set a timeout to run after scrolling ends
-					this._isScrolling = setTimeout(function() {
+					this._isScrolling = setTimeout( function() {
+
 						// Run the callback
 						var warnings = document.getElementsByClassName(
-							"leaflet-gesture-handling-scroll-warning"
+							'leaflet-gesture-handling-scroll-warning'
 						);
-						for (var i = 0; i < warnings.length; i++) {
-							L.DomUtil.removeClass(warnings[i],
-								"leaflet-gesture-handling-scroll-warning"
+						for ( let i = 0; i < warnings.length; i++ ) {
+							L.DomUtil.removeClass( warnings[i],
+								'leaflet-gesture-handling-scroll-warning'
 							);
 						}
-					}, this._map.options.gestureHandlingOptions.duration);
+					}, this._map.options.gestureHandlingOptions.duration );
 				}
 			},
 
-			_handleMouseOver: function(e) {
+			_handleMouseOver: function( e ) {
 				this._enableInteractions();
 			},
 
-			_handleMouseOut: function(e) {
-				if (!draggingMap) {
+			_handleMouseOut: function( e ) {
+				if ( ! draggingMap ) {
 					this._disableInteractions();
 				}
 			}
 
 		});
 
-		L.Map.addInitHook("addHandler", "gestureHandling", GestureHandling);
+		L.Map.addInitHook( 'addHandler', 'gestureHandling', GestureHandling );
 	}
-}, 700)
-
+}, 700 );
 
 
 export default GestureHandling;
