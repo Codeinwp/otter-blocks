@@ -9,6 +9,7 @@ namespace ThemeIsle\GutenbergBlocks\Integration;
 
 /**
  * Class Plugin_Card_Server
+ * @since 2.0.3
  */
 class Mailchimp_Integration implements FormSubscribeServiceInterface {
 
@@ -45,12 +46,13 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * Extract the API Key and the contact list.
 	 *
 	 * @access  public
-	 * @param Form_Settings_Data|null $integration The integration data.
+	 * @param Form_Settings_Data|null $wp_options_form The integration data.
+	 * @since 2.0.3
 	 */
-	public function extract_data_from_integration($integration) {
-		if( isset($integration) ) {
-			$this->set_api_key( $integration->get_api_key() );
-			$this->set_list_id($integration->get_list_id());
+	public function extract_data_from_integration($wp_options_form) {
+		if( isset($wp_options_form) ) {
+			$this->set_api_key( $wp_options_form->get_api_key() );
+			$this->set_list_id($wp_options_form->get_list_id());
 		}
 		return $this;
 	}
@@ -61,6 +63,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * @return mixed
 	 *
 	 * @see https://mailchimp.com/developer/marketing/api/list-members/
+	 * @since 2.0.3
 	 */
 	public function get_lists() {
 		$return = array(
@@ -101,6 +104,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 *
 	 * @param string $email The client email.
 	 * @return Form_Data_Response
+	 * @since 2.0.3
 	 */
 	public function subscribe( $email ) {
 		$res         = new Form_Data_Response();
@@ -135,6 +139,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * Test the subscription by registering a random generated email.
 	 *
 	 * @return Form_Data_Response
+	 * @since 2.0.3
 	 */
 	public function test_subscription() {
 
@@ -145,6 +150,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * Set the API Key.
 	 *
 	 * @param string $api_key The API Key of the provider.
+	 * @since 2.0.3
 	 */
 	public function set_api_key( $api_key ) {
 		$valid_api_key = $this::validate_api_key( $api_key );
@@ -163,6 +169,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
      * Set the list id.
      * @param string $list_id The list id.
      * @return $this
+	 * @since 2.0.3
      */
 	public function set_list_id( $list_id ) {
 		$this->list_id = $list_id;
@@ -177,6 +184,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 *  'validate' => boolean,
 	 *  'reason' => string
 	 * ]
+	 * @since 2.0.3
 	 */
 	public static function validate_api_key( $api_key ) {
 		if ( ! isset( $api_key ) || '' === $api_key ) {
@@ -208,6 +216,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * @return string
 	 *
 	 * @see https://github.com/Codeinwp/themeisle-content-forms/blob/master/includes/widgets-public/newsletter_public.php#L181
+	 * @since 2.0.3
 	 */
 	private function get_new_user_status_mailchimp( $list_id ) {
 		$url  = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists/' . $list_id;
@@ -233,6 +242,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 *
      * @param Form_Data_Request $request The request.
      * @return false[]|mixed
+	 * @since 2.0.3
      */
 	public function get_information_from_provider($request)
 	{
@@ -250,6 +260,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * @param int $response_code The response code.
 	 * @return bool
 	 * @see https://mailchimp.com/developer/marketing/docs/errors/
+	 * @since 2.0.3
 	 */
 	private function is_credential_error( $response_code ) {
 		return in_array( $response_code, array( 401, 403, 404, 500 ));

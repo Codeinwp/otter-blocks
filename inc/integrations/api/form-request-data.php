@@ -40,6 +40,7 @@ class Form_Data_Request {
 	 *
 	 * @access  public
 	 * @param array $request_data Request Data.
+	 * @since 2.0.3
 	 */
 	public function __construct( $request_data ) {
 		$this->request_data = $this->sanitize_request_data( $request_data );
@@ -51,6 +52,7 @@ class Form_Data_Request {
 	 *
      * @param Form_Settings_Data $form_options
      * @return void
+	 * @since 2.0.3
      */
 	public function set_form_options( $form_options) {
 		$this->form_options = $form_options;
@@ -61,6 +63,7 @@ class Form_Data_Request {
 	 *
 	 * @param string $field_name The name of the field.
 	 * @return mixed
+	 * @since 2.0.3
 	 */
 	public function get( $field_name ) {
 		return $this->is_set( $field_name ) ? $this->request_data[ $field_name ] : null;
@@ -71,6 +74,7 @@ class Form_Data_Request {
 	 *
 	 * @param string $field_name The name of the field.
 	 * @return mixed|null
+	 * @since 2.0.3
 	 */
 	public function get_payload_field($field_name ) {
 		return $this->payload_has_field( $field_name ) ? $this->request_data['payload'][$field_name] : null;
@@ -81,6 +85,7 @@ class Form_Data_Request {
 	 *
 	 * @param string $field_name The name of the field.
 	 * @return bool
+	 * @since 2.0.3
 	 */
 	public function payload_has_field($field_name ) {
 		return $this->has_payload() && isset($this->request_data['payload'][$field_name]);
@@ -90,6 +95,7 @@ class Form_Data_Request {
 	 * Check if the payload is set.
 	 *
 	 * @return bool
+	 * @since 2.0.3
 	 */
 	public function has_payload() {
 		return isset($this->request_data['payload']);
@@ -100,6 +106,7 @@ class Form_Data_Request {
 	 *
 	 * @param $provider The new provider.
 	 * @return void
+	 * @since 2.0.3
 	 */
 	public function change_provider( $provider ) {
 		$this->changed_provider = $provider;
@@ -110,6 +117,7 @@ class Form_Data_Request {
 	 *
 	 * @param string $field_name The name of the field.
 	 * @return boolean
+	 * @since 2.0.3
 	 */
 	public function is_set( $field_name ) {
 		// TODO: we can do a more refined verification like checking for empty strings or arrays.
@@ -121,6 +129,7 @@ class Form_Data_Request {
 	 *
 	 * @param array $fields_name The name of the fields.
 	 * @return boolean
+	 * @since 2.0.3
 	 */
 	public function are_fields_set( $fields_name ) {
 		foreach ($fields_name as $field_name) {
@@ -136,6 +145,7 @@ class Form_Data_Request {
 	 *
 	 * @param array $fields_name The name of the fields.
 	 * @return boolean
+	 * @since 2.0.3
 	 */
 	public function are_payload_fields_set( $fields_name ) {
 		foreach ($fields_name as $field_name) {
@@ -151,6 +161,7 @@ class Form_Data_Request {
 	 *
 	 * @param array $fields_name The name of the fields.
 	 * @return bool
+	 * @since 2.0.3
 	 */
 	public function payload_has_fields( $fields_name ) {
 		foreach ($fields_name as $field_name) {
@@ -167,6 +178,7 @@ class Form_Data_Request {
 	 * @param string $field_name The name of the field.
 	 * @param array  $values The desired values of the field.
 	 * @return boolean
+	 * @since 2.0.3
 	 */
 	public function field_has( $field_name, $values ) {
 		return in_array( $this->get( $field_name ), $values, true );
@@ -178,6 +190,7 @@ class Form_Data_Request {
 	 * @param string $field_name The field name.
 	 * @param array $values The values.
 	 * @return bool
+	 * @since 2.0.3
 	 */
 	public function payload_field_has( $field_name, $values ) {
 		return in_array( $this->get_payload_field( $field_name ), $values, true );
@@ -188,6 +201,7 @@ class Form_Data_Request {
 	 *
 	 * @param array $data The data from the request.
 	 * @return array Sanitized field data.
+	 * @since 2.0.3
 	 */
 	public static function sanitize_request_data( $data ) {
 		return self::sanitize_array_map_deep($data);
@@ -198,6 +212,7 @@ class Form_Data_Request {
 	 *
 	 * @param array $array The array with the values.
 	 * @return array|string
+	 * @since 2.0.3
 	 */
 	public static function sanitize_array_map_deep($array)
 	{
@@ -219,6 +234,7 @@ class Form_Data_Request {
      * Get the form input data.
 	 *
      * @return mixed Form input data.
+	 * @since 2.0.3
      */
 	public function get_form_inputs() {
 		return $this->get_payload_field('formInputsData');
@@ -228,6 +244,7 @@ class Form_Data_Request {
 	 * Get the form options.
 	 *
      * @return Form_Settings_Data|null
+	 * @since 2.0.3
      */
     public function get_form_options() {
         return $this->form_options;

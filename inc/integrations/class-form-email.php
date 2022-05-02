@@ -2,6 +2,10 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
+/**
+ * Form Email
+ * @since 2.0.3
+ */
 class Form_Email
 {
 	/**
@@ -32,6 +36,7 @@ class Form_Email
     /**
      * Add email rendering actions.
      * @return void
+	 * @since 2.0.3
      */
 	public function init() {
         /**
@@ -54,6 +59,7 @@ class Form_Email
      * Create the email content.
      * @param $form_data The form request data.
      * @return false|string
+	 * @since 2.0.3
      */
 	public function build_email( $form_data ) {
 		ob_start(); ?>
@@ -79,6 +85,7 @@ class Form_Email
 
     /**
      * Create the content for the email header.
+	 * @since 2.0.3
      */
 	public function build_head() {
 		ob_start(); ?>
@@ -94,6 +101,7 @@ class Form_Email
     /**
      * Create the content for the email body.
      * @param Form_Data_Request $form_data The form request data.
+	 * @since 2.0.3
      */
 	public function build_body($form_data ) {
 		$emailFormContent = $form_data->get_form_inputs();
@@ -132,6 +140,7 @@ class Form_Email
 	 * @param string $error The error message.
 	 * @param Form_Data_Request $form_data The form request data.
 	 * @return false|string
+	 * @since 2.0.3
 	 */
     public function build_error_email( $error, $form_data ) {
         ob_start(); ?>
@@ -165,6 +174,7 @@ class Form_Email
 	/**
 	 * Build the body for error messages.
 	 * @param string $error The error message.
+	 * @since 2.0.3
 	 */
 	public function build_error_body( $error ) {
 		ob_start();  ?>
@@ -182,6 +192,7 @@ class Form_Email
 	/**
 	 * Build the body for the test email.
 	 * @return false|string
+	 * @since 2.0.3
 	 */
 	public function build_test_email() {
 		ob_start(); ?>

@@ -4,6 +4,10 @@ namespace ThemeIsle\GutenbergBlocks\Integration;
 
 use Exception;
 
+/**
+ * From Providers
+ * @since 2.0.3
+ */
 class Form_Providers
 {
 	/**
@@ -39,6 +43,7 @@ class Form_Providers
     /**
      * Add action and filters.
      * @return void
+	 * @since 2.0.3
      */
 	public function init() {
         /**
@@ -57,6 +62,7 @@ class Form_Providers
 	 * @param array $new_providers The new provider.
 	 * @return void
 	 * @throws Exception
+	 * @since 2.0.3
 	 */
 	public function register_providers($new_providers ) {
 		foreach ($new_providers as $name => $handlers) {
@@ -72,6 +78,7 @@ class Form_Providers
      * Select the provider based on the form integration settings.
      * @param Form_Data_Request $form_request The form request.
      * @return array|bool
+	 * @since 2.0.3
 	 */
 	public function select_provider_from_form_options($form_request) {
 		$form_options = $form_request->get_form_options();
@@ -87,6 +94,7 @@ class Form_Providers
 	 * @param string $provider_name The name of the provider.
 	 * @param string $scope The scope.
 	 * @return array|bool
+	 * @since 2.0.3
 	 */
 	public function get_provider_handlers($provider_name = 'default' , $scope = 'frontend' ) {
 		if( array_key_exists($provider_name, $this->providers) ) {

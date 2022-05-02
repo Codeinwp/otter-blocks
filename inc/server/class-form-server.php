@@ -23,6 +23,8 @@ use WP_REST_Server;
 
 /**
  * Class Plugin_Card_Server
+ *
+ * @since 2.0.0
  */
 class Form_Server {
 
@@ -50,6 +52,8 @@ class Form_Server {
 
 	/**
 	 * Initialize the class
+	 *
+	 * @since 2.0.0
 	 */
 	public function init() {
         /**
@@ -117,6 +121,8 @@ class Form_Server {
 
 	/**
 	 * Register REST API route
+	 *
+	 * @since 2.0.0
 	 */
 	public function register_routes() {
 		$namespace = $this->namespace . $this->version;
@@ -153,6 +159,7 @@ class Form_Server {
 	 *
 	 * @param WP_REST_Request $request The API request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 * @since 2.0.3
 	 */
 	public function editor($request ) {
 		$data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
@@ -184,6 +191,7 @@ class Form_Server {
 	 *
 	 * @param WP_REST_Request $request Form request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 * @since 2.0.3
 	 */
 	public function frontend( $request ) {
 		$res  = new Form_Data_Response();
@@ -242,6 +250,7 @@ class Form_Server {
 	 *
 	 * @param Form_Data_Request $form_data Data from request body.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 * @since 2.0.3
 	 */
 	public function send_default_email($form_data ) {
 		$res = new Form_Data_Response();
@@ -287,6 +296,7 @@ class Form_Server {
 	 * Make additional changes before using the main handler function for submitting.
 	 *
 	 * @param Form_Data_Request $form_data The form request data.
+	 * @since 2.0.3
 	 */
 	public function before_submit( $form_data ) {
 
@@ -307,6 +317,7 @@ class Form_Server {
 	 *
 	 * @param Form_Data_Request $form_data The form request data.
 	 * @return void
+	 * @since 2.0.3
 	 */
 	public function after_submit( $form_data ) {
 
@@ -326,6 +337,7 @@ class Form_Server {
 	 * @param string $error The error message.
 	 * @param Form_Data_Request $form_data The form request data.
 	 * @return void
+	 * @since 2.0.3
 	 */
     public static function send_error_email( $error, $form_data ) {
         $email_subject = ( __( 'An error with the Form blocks has occurred on  ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
@@ -342,6 +354,7 @@ class Form_Server {
 	 * Send a test email.
 	 *
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 * @since 2.0.3
 	 */
 	public static function send_test_email() {
 		$res = new Form_Data_Response();
@@ -368,6 +381,7 @@ class Form_Server {
 	 *
 	 * @param Form_Data_Request $form_request Search request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 * @since 2.0.3
 	 */
 	public function get_integration_data($form_request ) {
 		$res = new Form_Data_Response();
@@ -406,6 +420,7 @@ class Form_Server {
 	 *
 	 * @param Form_Data_Request $form_request The test request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 * @since 2.0.3
 	 */
 	public function test_subscription_service( $form_request ) {
 		$res = new Form_Data_Response();
@@ -449,6 +464,7 @@ class Form_Server {
 	 *
      * @param Form_Data_Request $form_data The form data.
      * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 * @since 2.0.3
 	 */
 	public function subscribe_to_service($form_data ) {
 		$res = new Form_Data_Response();
@@ -473,30 +489,30 @@ class Form_Server {
 			}
 
             // Get the api credentials from the Form block.
-            $form_options = $form_data->get_form_options();
+            $wp_options_form = $form_data->get_form_options();
 
-            $issues = $form_options->check_data();
+            $issues = $wp_options_form->check_data();
 
             if (
                 count($issues) == 0
             ) {
                 $service = null;
-                switch ($form_options->get_provider()) {
+                switch ($wp_options_form->get_provider()) {
                     case 'mailchimp':
-                        $service = (new Mailchimp_Integration())->extract_data_from_integration($form_options);
+                        $service = (new Mailchimp_Integration())->extract_data_from_integration($wp_options_form);
                         break;
                     case 'sendinblue':
-                        $service = (new Sendinblue_Integration())->extract_data_from_integration($form_options);
+                        $service = (new Sendinblue_Integration())->extract_data_from_integration($wp_options_form);
                         break;
                 }
 
-                $valid_api_key = $service::validate_api_key( $form_options->get_api_key() );
+                $valid_api_key = $service::validate_api_key( $wp_options_form->get_api_key() );
 
                 if ( $valid_api_key['valid'] ) {
                     $res->copy( $service->subscribe( $email ) );
 
 					// Add additional data like: redirect link when the request is successful.
-                    $res->add_values( $form_options->get_submit_data() );
+                    $res->add_values( $wp_options_form->get_submit_data() );
                 } else {
                     $res->set_error( $valid_api_key['reason'] );
                 }
@@ -521,6 +537,7 @@ class Form_Server {
 	 * @param Form_Data_Request $data Data from the request.
 	 *
 	 * @return boolean
+	 * @since 2.0.0
 	 */
 	public function has_required_data($data ) {
 		return
@@ -545,26 +562,27 @@ class Form_Server {
 	 * Check if the data request has the data needed by form: captha, integrations.
 	 *
 	 * @access public
-	 * @param Form_Data_Request $data Data from the request.
+	 * @param Form_Data_Request $form_data Data from the request.
 	 *
 	 * @return array
+	 * @since 2.0.0
 	 */
-	public function check_form_conditions( $data ) {
+	public function check_form_conditions($form_data ) {
 
 		$reasons = array();
 		try {
-			if ( ! $this->has_required_data( $data ) ) {
+			if ( ! $this->has_required_data( $form_data ) ) {
 				$reasons += array( __( 'Essential data is missing!', 'otter-blocks' ) );
 				return $reasons;
 			}
 
-            $form_options = $data->get_form_options();
+            $form_options = $form_data->get_form_options();
 
             if (
 				$form_options->form_has_captcha() &&
 				(
-					! $data->payload_has_field( 'token' ) ||
-					'' === $data->get_payload_field('token')
+					! $form_data->payload_has_field( 'token' ) ||
+					'' === $form_data->get_payload_field('token')
 				)
 			) {
                 $reasons += array(
@@ -582,16 +600,17 @@ class Form_Server {
 	 * Check if the data request has the data needed by form: captha, integrations.
 	 *
 	 * @access public
-	 * @param Form_Data_Request $data Data from the request.
+	 * @param Form_Data_Request $form_data Data from the request.
 	 *
 	 * @return array
+	 * @since 2.0.0
 	 */
-	public function check_form_captcha( $data ) {
+	public function check_form_captcha($form_data ) {
 		$secret = get_option( 'themeisle_google_captcha_api_secret_key' );
 		$resp   = wp_remote_post(
 			'https://www.google.com/recaptcha/api/siteverify',
 			array(
-				'body'    => 'secret=' . $secret . '&response=' . $data->get_payload_field( 'token' ),
+				'body'    => 'secret=' . $secret . '&response=' . $form_data->get_payload_field( 'token' ),
 				'headers' => [
 					'Content-Type' => 'application/x-www-form-urlencoded',
 				],
@@ -619,17 +638,23 @@ class Form_Server {
 	}
 
 	/**
-	 * @param string $content
+	 * Filter for the content of the email.
+	 *
+	 * @param string $content The content.
 	 * @return string
+	 * @since 2.0.3
 	 */
 	public function build_email_content( $content ) {
 		return $content;
 	}
 
 	/**
-	 * @param string $error
-	 * @param string $content
+	 * Filter for the content of the email for errors.
+	 *
+	 * @param string $error The error message.
+	 * @param string $content The content.
 	 * @return string
+	 * @sincee 2.0.3
 	 */
 	public function build_email_error_content( $error, $content ) {
 		return $content;
@@ -642,8 +667,8 @@ class Form_Server {
 	 * object therefore, we don't want the object to be cloned.
 	 *
 	 * @access public
-	 * @since 1.0.0
 	 * @return void
+	 * @since 2.0.0
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
@@ -654,8 +679,8 @@ class Form_Server {
 	 * Disable unserializing of the class
 	 *
 	 * @access public
-	 * @since 1.0.0
 	 * @return void
+	 * @since 2.0.0
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
@@ -667,6 +692,7 @@ class Form_Server {
 	 *
 	 * @param Form_Data_Request $data
 	 * @return mixed|string
+	 * @since 2.0.3
 	 */
 	private function get_email_from_form_input(Form_Data_Request $data)
 	{

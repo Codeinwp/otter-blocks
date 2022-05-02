@@ -180,7 +180,7 @@ class Form_Data_Response {
 	 * Mark that the error is caused by invalid credentials.
 	 *
 	 * @param bool $is_credential_error
-	 * @return $this
+	 * @return $thisß
 	 */
 	public function set_is_credential_error($is_credential_error)
 	{

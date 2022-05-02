@@ -10,6 +10,7 @@ namespace ThemeIsle\GutenbergBlocks\Integration;
 
 /**
  * Class Plugin_Card_Server
+ * @since 2.0.3
  */
 class Sendinblue_Integration implements FormSubscribeServiceInterface {
 
@@ -38,12 +39,12 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 * Extract the API Key and the contact list.
 	 *
 	 * @access  public
-	 * @param Form_Settings_Data|null $integration The integration data.
+	 * @param Form_Settings_Data|null $wp_options_form The integration data.
 	 */
-	public function extract_data_from_integration($integration) {
-		if( isset($integration) ) {
-			$this->set_api_key( $integration->get_api_key() );
-			$this->set_list_id($integration->get_list_id());
+	public function extract_data_from_integration($wp_options_form) {
+		if( isset($wp_options_form) ) {
+			$this->set_api_key( $wp_options_form->get_api_key() );
+			$this->set_list_id($wp_options_form->get_list_id());
 		}
 		return $this;
 	}
@@ -145,6 +146,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 * Set the API Key
 	 *
 	 * @param string $api_key The API Key of the provider.
+	 * @since 2.0.3
 	 */
 	public function set_api_key( $api_key ) {
 
@@ -167,6 +169,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 *  'validate' => boolean,
 	 *  'reason' => string
 	 * ]
+	 * @since 2.0.3
 	 */
 	public static function validate_api_key( $api_key ) {
 		if ( ! isset( $api_key ) || '' === $api_key ) {
@@ -187,6 +190,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 *
      * @param string $list_id The list id.
      * @return $this
+	 * @since 2.0.3
      */
 	private function set_list_id($list_id)
 	{
@@ -199,6 +203,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 *
      * @param Form_Data_Request $request The request.
      * @return false[]|mixed
+	 * @since 2.0.3
      */
 	public function get_information_from_provider($request)
 	{
@@ -217,6 +222,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 * @return bool
 	 *
 	 * @see https://developers.sendinblue.com/docs/how-it-works#error-codes
+	 * @since 2.0.3
 	 */
 	private function is_credential_error( $response_code ) {
 		return in_array( $response_code, array( 'unauthorized', 'reseller_permission_denied', 'not_enough_credits', 'account_under_validation', 'permission_denied' ));

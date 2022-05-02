@@ -2,8 +2,18 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
+/**
+ * Form Utils
+ * @since 2.0.3
+ */
 class Form_Utils
 {
+	/**
+	 * Generate a random email address.
+	 *
+	 * @return string
+	 * @since 2.0.3
+	 */
 	public static function generate_test_email() {
 		srand(floor(time() / (60*60*24)));
 
