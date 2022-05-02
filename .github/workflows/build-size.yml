@@ -96,6 +96,24 @@ jobs:
         with:
           base_path: './base/blocks/stats.json'
           pr_path: './pr/blocks/stats.json'
+      - name: Get CSS diff
+        id: get-css-diff
+        uses: NejcZdovc/bundle-size-diff@v1
+        with:
+          base_path: './base/css/stats.json'
+          pr_path: './pr/css/stats.json'
+      - name: Get Dashboard diff
+        id: get-dashboard-diff
+        uses: NejcZdovc/bundle-size-diff@v1
+        with:
+          base_path: './base/dashboard/stats.json'
+          pr_path: './pr/dashboard/stats.json'
+      - name: Get Export Import diff
+        id: get-export-import-diff
+        uses: NejcZdovc/bundle-size-diff@v1
+        with:
+          base_path: './base/export-import/stats.json'
+          pr_path: './pr/export-import/stats.json'
       - name: Comment
         uses: NejcZdovc/comment-pr@v1
         with:
@@ -110,3 +128,15 @@ jobs:
           NEW_BLOCKS: ${{ steps.get-blocks-diff.outputs.pr_file_string }}
           DIFF_BLOCKS: ${{ steps.get-blocks-diff.outputs.diff_file_string }}
           DIFF_PERCENT_BLOCKS: ${{ steps.get-blocks-diff.outputs.percent }}
+          OLD_CSS: ${{ steps.get-css-diff.outputs.base_file_string }}
+          NEW_CSS: ${{ steps.get-css-diff.outputs.pr_file_string }}
+          DIFF_CSS: ${{ steps.get-css-diff.outputs.diff_file_string }}
+          DIFF_PERCENT_CSS: ${{ steps.get-css-diff.outputs.percent }}
+          OLD_DASHBOARD: ${{ steps.get-dashboard-diff.outputs.base_file_string }}
+          NEW_DASHBOARD: ${{ steps.get-dashboard-diff.outputs.pr_file_string }}
+          DIFF_DASHBOARD: ${{ steps.get-dashboard-diff.outputs.diff_file_string }}
+          DIFF_PERCENT_DASHBOARD: ${{ steps.get-dashboard-diff.outputs.percent }}
+          OLD_EXPORT_IMPORT: ${{ steps.get-export-import-diff.outputs.base_file_string }}
+          NEW_EXPORT_IMPORT: ${{ steps.get-export-import-diff.outputs.pr_file_string }}
+          DIFF_EXPORT_IMPORT: ${{ steps.get-export-import-diff.outputs.diff_file_string }}
+          DIFF_PERCENT_EXPORT_IMPORT: ${{ steps.get-export-import-diff.outputs.percent }}
