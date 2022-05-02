@@ -117,6 +117,12 @@ jobs:
         with:
           base_path: './base/export-import/stats.json'
           pr_path: './pr/export-import/stats.json'
+      - name: Get Pro diff
+        id: get-pro-diff
+        uses: NejcZdovc/bundle-size-diff@v1
+        with:
+          base_path: './base/pro/stats.json'
+          pr_path: './pr/pro/stats.json'
       - name: Comment
         uses: NejcZdovc/comment-pr@v1
         with:
@@ -143,3 +149,7 @@ jobs:
           NEW_EXPORT_IMPORT: ${{ steps.get-export-import-diff.outputs.pr_file_string }}
           DIFF_EXPORT_IMPORT: ${{ steps.get-export-import-diff.outputs.diff_file_string }}
           DIFF_PERCENT_EXPORT_IMPORT: ${{ steps.get-export-import-diff.outputs.percent }}
+          OLD_PRO: ${{ steps.get-pro-diff.outputs.base_file_string }}
+          NEW_PRO: ${{ steps.get-pro-diff.outputs.pr_file_string }}
+          DIFF_PRO: ${{ steps.get-pro-diff.outputs.diff_file_string }}
+          DIFF_PERCENT_PRO: ${{ steps.get-pro-diff.outputs.percent }}
