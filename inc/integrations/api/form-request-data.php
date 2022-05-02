@@ -11,6 +11,7 @@ use ArrayAccess;
 
 /**
  * Class Form_Data_Request
+ * @since 2.0.0
  */
 class Form_Data_Request {
 
@@ -18,6 +19,7 @@ class Form_Data_Request {
 	 * Request Data.
 	 *
 	 * @var array
+	 * @since 2.0.0
 	 */
 	protected $request_data = array();
 
@@ -25,6 +27,7 @@ class Form_Data_Request {
 	 * Integration Data.
 	 *
 	 * @var Form_Settings_Data
+	 * @since 2.0.0
 	 */
 	protected $form_options = null;
 
@@ -32,6 +35,7 @@ class Form_Data_Request {
 	 * Var indicate the use of another provider.
 	 *
 	 * @var bool|string
+	 * @since 2.0.3
 	 */
 	protected $changed_provider = false;
 
@@ -117,7 +121,7 @@ class Form_Data_Request {
 	 *
 	 * @param string $field_name The name of the field.
 	 * @return boolean
-	 * @since 2.0.3
+	 * @since 2.0.0
 	 */
 	public function is_set( $field_name ) {
 		// TODO: we can do a more refined verification like checking for empty strings or arrays.
@@ -129,7 +133,7 @@ class Form_Data_Request {
 	 *
 	 * @param array $fields_name The name of the fields.
 	 * @return boolean
-	 * @since 2.0.3
+	 * @since 2.0.0
 	 */
 	public function are_fields_set( $fields_name ) {
 		foreach ($fields_name as $field_name) {
@@ -178,7 +182,7 @@ class Form_Data_Request {
 	 * @param string $field_name The name of the field.
 	 * @param array  $values The desired values of the field.
 	 * @return boolean
-	 * @since 2.0.3
+	 * @since 2.0.0
 	 */
 	public function field_has( $field_name, $values ) {
 		return in_array( $this->get( $field_name ), $values, true );
@@ -201,7 +205,7 @@ class Form_Data_Request {
 	 *
 	 * @param array $data The data from the request.
 	 * @return array Sanitized field data.
-	 * @since 2.0.3
+	 * @since 2.0.0
 	 */
 	public static function sanitize_request_data( $data ) {
 		return self::sanitize_array_map_deep($data);
@@ -234,7 +238,7 @@ class Form_Data_Request {
      * Get the form input data.
 	 *
      * @return mixed Form input data.
-	 * @since 2.0.3
+	 * @since 2.0.0
      */
 	public function get_form_inputs() {
 		return $this->get_payload_field('formInputsData');
@@ -244,7 +248,7 @@ class Form_Data_Request {
 	 * Get the form options.
 	 *
      * @return Form_Settings_Data|null
-	 * @since 2.0.3
+	 * @since 2.0.0
      */
     public function get_form_options() {
         return $this->form_options;

@@ -32,6 +32,7 @@ class Form_Server {
 	 * The main instance var.
 	 *
 	 * @var Form_Server
+	 * @since 2.0.0
 	 */
 	public static $instance = null;
 
@@ -39,6 +40,7 @@ class Form_Server {
 	 * Rest route namespace.
 	 *
 	 * @var Form_Server
+	 * @since 2.0.0
 	 */
 	public $namespace = 'otter/';
 
@@ -46,6 +48,7 @@ class Form_Server {
 	 * Rest route version.
 	 *
 	 * @var Form_Server
+	 * @since 2.0.0
 	 */
 	public $version = 'v1';
 

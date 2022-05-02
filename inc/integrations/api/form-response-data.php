@@ -13,11 +13,13 @@ use WP_REST_Response;
 
 /**
  * Class Form_Data_Response
+ * @since 2.0.0
  */
 class Form_Data_Response {
 
 	/**
 	 * Response Data.
+	 * @since 2.0.0
 	 *
 	 * @var array
 	 */
@@ -27,6 +29,7 @@ class Form_Data_Response {
 	 * Mark if the error is related to api key issues.
 	 *
 	 * @var boolean
+	 * @since 2.0.3
 	 */
 	protected $is_credential_error = false;
 
@@ -34,6 +37,7 @@ class Form_Data_Response {
 	 * Constructor.
 	 *
 	 * @access public
+	 * @since 2.0.0
 	 */
 	public function __construct() {
 		$this->response['success'] = false;
@@ -45,6 +49,7 @@ class Form_Data_Response {
 	 *
 	 * @param string $err_msg Error message.
 	 * @param string $provider Service provider.
+	 * @since 2.0.0
 	 */
 	public function set_error( $err_msg, $provider = null ) {
 		$this->response['error'] = $err_msg;
@@ -58,6 +63,7 @@ class Form_Data_Response {
 	 * Add error reason.
 	 *
 	 * @param string $reason Error reason.
+	 * @since 2.0.0
 	 */
 	public function add_reason( $reason ) {
 		$this->response['reasons'][] = $reason;
@@ -68,6 +74,7 @@ class Form_Data_Response {
 	 * Set error reason.
 	 *
 	 * @param string[] $reasons Error reason.
+	 * @since 2.0.0
 	 */
 	public function set_reasons( $reasons ) {
 		$this->response['reasons'] = $reasons;
@@ -78,6 +85,7 @@ class Form_Data_Response {
 	 * Check if success.
 	 *
 	 * @return string
+	 * @since 2.0.0
 	 */
 	public function is_success() {
 		return $this->response['success'];
@@ -87,6 +95,7 @@ class Form_Data_Response {
 	 * Build form response.
 	 *
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 * @since 2.0.3
 	 */
 	public function build_response() {
 		// TODO: We can to addition operation when returning the response.
@@ -98,6 +107,7 @@ class Form_Data_Response {
 	 * Mark response as success.
 	 *
 	 * @return $this
+	 * @since 2.0.0
 	 */
 	public function mark_as_success() {
 		$this->response['success'] = true;
@@ -109,6 +119,7 @@ class Form_Data_Response {
 	 *
 	 * @param object $other Response data.
 	 * @return $this
+	 * @since 2.0.0
 	 */
 	public function copy( $other ) {
 		$this->response['success'] = $other->is_success();
@@ -121,6 +132,7 @@ class Form_Data_Response {
 	 * Get error message.
 	 *
 	 * @return string
+	 * @since 2.0.0
 	 */
 	public function get_error() {
 		return $this->response['error'];
@@ -130,6 +142,7 @@ class Form_Data_Response {
 	 * Get error reasons.
 	 *
 	 * @return string
+	 * @since 2.0.0
 	 */
 	public function get_reasons() {
 		return $this->response['reasons'];
@@ -140,6 +153,7 @@ class Form_Data_Response {
 	 *
      * @param array $response The response.
      * @return $this
+	 * @since 2.0.0
      */
 	public function set_response( $response ) {
 		$this->response = $response;
@@ -151,6 +165,7 @@ class Form_Data_Response {
 	 *
      * @param array $values The new data.
      * @return $this
+	 * @since 2.0.0
      */
     public function add_values( $values ) {
         $this->response = array_merge($this->response, $values);
@@ -161,6 +176,7 @@ class Form_Data_Response {
 	 * Check if the response has an error.
 	 *
      * @return bool
+	 * @since 2.0.0
      */
     public function has_error() {
         return isset($this->response['error']);
@@ -170,6 +186,7 @@ class Form_Data_Response {
 	 * Check if the error is caused by invalid credentials.
 	 *
 	 * @return bool
+	 * @since 2.0.3
 	 */
 	public function is_credential_error()
 	{
@@ -180,7 +197,8 @@ class Form_Data_Response {
 	 * Mark that the error is caused by invalid credentials.
 	 *
 	 * @param bool $is_credential_error
-	 * @return $thisß
+	 * @return $this
+	 * @since 2.0.3
 	 */
 	public function set_is_credential_error($is_credential_error)
 	{
