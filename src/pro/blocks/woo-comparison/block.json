@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/woo-comparison",
 	"title": "WooCommerce Comparison Table",
 	"category": "themeisle-blocks",
-	"description": "A way to compare different WooCommerce products made on the website.",
+	"description": "A way to compare different WooCommerce products made on the website. Powered by Otter.",
 	"keywords": [ "woocommerce", "comparison", "table" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

@@ -29,7 +29,7 @@ if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExp
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Review Comparison Table', 'otter-blocks' ),
-	description: __( 'A way to compare different product reviews made on the website.', 'otter-blocks' ),
+	description: __( 'A way to compare different product reviews made on the website. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'product',

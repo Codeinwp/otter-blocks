@@ -29,7 +29,7 @@ if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExp
 registerBlockType( name, {
 	title: __( 'Add to Cart Button', 'otter-blocks' ),
 	...metadata,
-	description: __( 'Display an Add to Cart button for your WooCommerce products.', 'otter-blocks' ),
+	description: __( 'Display an Add to Cart button for your WooCommerce products. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'woocommerce',

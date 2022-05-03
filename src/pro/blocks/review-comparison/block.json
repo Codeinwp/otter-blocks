@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/review-comparison",
 	"title": "Review Comparison Table",
 	"category": "themeisle-blocks",
-	"description": "A way to compare different product reviews made on the website.",
+	"description": "A way to compare different product reviews made on the website. Powered by Otter.",
 	"keywords": [ "product", "review", "comparison" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

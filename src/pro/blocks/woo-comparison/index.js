@@ -33,7 +33,7 @@ if ( Boolean( window.otterPro.hasWooCommerce ) && Boolean( window.otterPro.hasNe
 	registerBlockType( name, {
 		...metadata,
 		title: __( 'WooCommerce Comparison Table', 'otter-blocks' ),
-		description: __( 'A way to compare different WooCommerce products made on the website.', 'otter-blocks' ),
+		description: __( 'A way to compare different WooCommerce products made on the website. Powered by Otter.', 'otter-blocks' ),
 		icon,
 		keywords: [
 			'woocommerce',
@@ -51,7 +51,7 @@ if ( Boolean( window.otterPro.hasWooCommerce ) && Boolean( window.otterPro.hasNe
 	registerBlockType( name, {
 		...metadata,
 		title: __( 'WooCommerce Comparison Table', 'otter-blocks' ),
-		description: __( 'A way to compare different WooCommerce products made on the website.', 'otter-blocks' ),
+		description: __( 'A way to compare different WooCommerce products made on the website. Powered by Otter.', 'otter-blocks' ),
 		icon,
 		keywords: [
 			'woocommerce',

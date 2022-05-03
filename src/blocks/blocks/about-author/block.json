@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/about-author",
 	"title": "About Author",
 	"category": "themeisle-blocks",
-	"description": "About Author block is the easiest way to add a author bio below your posts.",
+	"description": "About Author block is the easiest way to add a author bio below your posts. Powered by Otter.",
 	"keywords": [ "about", "author", "profile" ],
 	"textdomain": "otter-blocks",
 	"supports": {

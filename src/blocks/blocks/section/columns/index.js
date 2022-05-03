@@ -20,7 +20,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Section', 'otter-blocks' ),
-	description: __( 'Add a Section block that displays content in multiple columns, then add whatever content blocks you’d like.', 'otter-blocks' ),
+	description: __( 'Add a Section block that displays content in multiple columns, then add whatever content blocks you’d like. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'advanced columns',

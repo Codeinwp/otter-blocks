@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/popup",
 	"title": "Popup",
 	"category": "themeisle-blocks",
-	"description": "Display your content in beautiful popup with many customization options.",
+	"description": "Display your content in beautiful popup with many customization options. Powered by Otter.",
 	"keywords": [ "popup", "modal", "lightbox" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

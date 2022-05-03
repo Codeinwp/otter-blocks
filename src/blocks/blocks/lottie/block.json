@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/lottie",
 	"title": "Lottie Animation",
 	"category": "themeisle-blocks",
-	"description": "Add Lottie animations to your WordPress.",
+	"description": "Add Lottie animations to your WordPress. Powered by Otter.",
 	"keywords": [ "media", "lottie", "animation" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

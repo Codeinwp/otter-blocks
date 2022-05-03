@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/business-hours",
 	"title": "Business Hours",
 	"category": "themeisle-blocks",
-	"description": "Display your business schedule on your website.",
+	"description": "Display your business schedule on your website. Powered by Otter.",
 	"keywords": [ "business", "schedule", "time" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

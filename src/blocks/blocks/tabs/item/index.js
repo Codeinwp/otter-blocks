@@ -22,7 +22,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Tab Item', 'otter-blocks' ),
-	description: __( 'Organize and allow navigation between groups of content with Tabs block.', 'otter-blocks' ),
+	description: __( 'Organize and allow navigation between groups of content with Tabs block. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'media',

@@ -30,7 +30,7 @@ if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExp
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Business Hours', 'otter-blocks' ),
-	description: __( 'Display your business schedule on your website.', 'otter-blocks' ),
+	description: __( 'Display your business schedule on your website. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'business',

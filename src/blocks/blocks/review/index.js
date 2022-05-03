@@ -22,7 +22,7 @@ window.themeisleGutenberg.defaultReviewAttributes = defaultReviewAttributes;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Product Review', 'otter-blocks' ),
-	description: __( 'Turn your posts into smart reviews with ratings and generate leads with a performing review block.', 'otter-blocks' ),
+	description: __( 'Turn your posts into smart reviews with ratings and generate leads with a performing review block. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'product',

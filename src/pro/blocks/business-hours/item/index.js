@@ -19,7 +19,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Business Hours Item', 'otter-blocks' ),
-	description: __( 'Item used by Business Hours block to display the time.', 'otter-blocks' ),
+	description: __( 'Item used by Business Hours block to display the time. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	parent: [ 'themeisle-blocks/business-hours' ],
 	category: 'themeisle-blocks',

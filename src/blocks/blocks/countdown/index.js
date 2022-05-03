@@ -22,7 +22,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Countdown', 'otter-blocks' ),
-	description: __( 'Set a countdown for a date.', 'otter-blocks' ),
+	description: __( 'Set a countdown for a date. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'countdown',
