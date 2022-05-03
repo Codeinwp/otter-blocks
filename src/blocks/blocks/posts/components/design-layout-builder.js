@@ -23,6 +23,7 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies
  */
 import { SortableItem, SortableList } from './sortable.js';
+import Notice from '../../../components/notice/index.js';
 
 const ProFeatures = () => {
 	return (
@@ -39,12 +40,10 @@ const ProFeatures = () => {
 
 			<br />
 
-			<ExternalLink
-				href={ window.themeisleGutenberg.upgradeLink }
-				target="_blank"
-			>
-				{__( 'Enable ACF fields with Otter Pro.', 'otter-blocks' )}
-			</ExternalLink>
+			<Notice
+				notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Unlock more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+				variant="upsell"
+			/>
 		</Fragment>
 	);
 };

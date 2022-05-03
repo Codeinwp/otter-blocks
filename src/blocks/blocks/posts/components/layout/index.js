@@ -57,7 +57,7 @@ const Layout = ({
 							key={ post.link }
 							className="o-posts-grid-post-blog o-posts-grid-post-plain"
 						>
-							<div className={classnames( 'o-posts-grid-post' )}>
+							<div className={ classnames( 'o-posts-grid-post' ) }>
 								{ ( 0 !== post.featured_media && attributes.displayFeaturedImage ) && (
 									<Thumbnail
 										id={ post.featured_media }
@@ -79,13 +79,13 @@ const Layout = ({
 									{ attributes.template.map( element => {
 										switch ( element ) {
 										case 'category':
-											return <PostsCategory attributes={ attributes } element={ element } category={ category } categoriesList={ categoriesList }/>;
+											return <PostsCategory key={ element } attributes={ attributes } element={ element } category={ category } categoriesList={ categoriesList }/>;
 										case 'title':
-											return <PostsTitle attributes={ attributes } element={ element } post={ post } />;
+											return <PostsTitle key={ element } attributes={ attributes } element={ element } post={ post } />;
 										case 'meta':
-											return <PostsMeta attributes={attributes} element={ element } post={ post } author={ author } category={ category } />;
+											return <PostsMeta key={ element } attributes={attributes} element={ element } post={ post } author={ author } category={ category } />;
 										case 'description':
-											return <PostsDescription attributes={attributes} element={ element } post={ post } />;
+											return <PostsDescription key={ element } attributes={attributes} element={ element } post={ post } />;
 										default:
 											return applyFilters( 'otter.postsBlock.templateLoop', '', element, attributes );
 										}

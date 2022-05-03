@@ -12,10 +12,11 @@ import './editor.scss';
 
 const Notice = ({
 	notice,
+	variant = 'default',
 	instructions
 }) => {
 	return (
-		<div className="o-notice">
+		<div className={ `o-notice is-${ variant }` }>
 			{ notice }
 
 			{ instructions && (

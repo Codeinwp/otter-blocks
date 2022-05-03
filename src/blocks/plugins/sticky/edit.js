@@ -21,6 +21,11 @@ import {
 
 import { applyFilters } from '@wordpress/hooks';
 
+/**
+ * Internal dependencies.
+ */
+import Notice from '../../components/notice/index.js';
+
 const FILTER_OPTIONS = {
 	position: 'o-sticky-pos',
 	offset: 'o-sticky-offset',
@@ -32,12 +37,10 @@ const FILTER_OPTIONS = {
 const ProFeatures = () => {
 	return (
 		<Fragment>
-			<ExternalLink
-				href={ window.themeisleGutenberg.upgradeLink }
-				target="_blank"
-			>
-				{ __( 'Enable more options with Otter Pro.', 'otter-blocks' ) }
-			</ExternalLink>
+			<Notice
+				notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Unlock more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+				variant="upsell"
+			/>
 
 			<SelectControl
 				label={ __( 'Position', 'otter-blocks' ) }

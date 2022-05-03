@@ -29,6 +29,7 @@ import { useState, Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import SyncControl from '../../components/sync-control/index.js';
+import Upsell from '../../components/notice/index.js';
 
 const PanelItem = ({
 	title,
@@ -253,6 +254,7 @@ const Inspector = ({
 			>
 				{ 0 < attributes.features.length && attributes.features.map( ( feature, index ) => (
 					<PanelItem
+						key={ index }
 						title={ feature.title || __( 'Feature', 'otter-blocks' ) }
 						remove={ () => removeFeature( index ) }
 					>
@@ -389,6 +391,7 @@ const Inspector = ({
 					<Fragment>
 						{ 0 < attributes.links.length && attributes.links.map( ( link, index ) => (
 							<PanelItem
+								key={ index }
 								title={ link.label || __( 'Link', 'otter-blocks' ) }
 								remove={ () => removeLinks( index ) }
 							>
@@ -487,16 +490,15 @@ const Inspector = ({
 				</SyncControl>
 			</PanelBody>
 
-			{ ( Boolean( window.themeisleGutenberg.hasPro ) ) && (
+			{ ( ! Boolean( window.themeisleGutenberg.hasPro ) ) && (
 				<PanelBody
 					title={ __( 'More Features', 'otter-blocks' ) }
 					initialOpen={ false }
 				>
-					<p>{ __( 'Build comparison tables for reviews, synchronize review data with WooCommerce products and more with Otter Pro. ', 'otter-blocks' ) }</p>
-
-					<ExternalLink href={ window.themeisleGutenberg.upgradeLink }>
-						{ __( 'Get Otter Pro. ', 'otter-blocks' ) }
-					</ExternalLink>
+					<Upsell
+						notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Unlock more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+						variant="upsell"
+					/>
 				</PanelBody>
 			) }
 		</InspectorControls>

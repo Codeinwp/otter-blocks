@@ -5,7 +5,10 @@ import { __ } from '@wordpress/i18n';
 
 import { hasBlockSupport } from '@wordpress/blocks';
 
-import { PanelBody } from '@wordpress/components';
+import {
+	ExternalLink,
+	PanelBody
+} from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
@@ -43,6 +46,12 @@ const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 							title={ __( 'Animations', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
+							{ ( window.otterComponents && window.themeisleGutenberg ) && (
+								<window.otterComponents.Notice
+									notice={ <ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Disable in Otter Settings', 'otter-blocks' ) }</ExternalLink> }
+								/>
+							) }
+
 							<AnimationControls
 								clientId={ props.clientId }
 								setAttributes={ props.setAttributes }

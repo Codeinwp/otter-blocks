@@ -7,9 +7,15 @@
 	padding: 10px 20px;
 	margin: 10px 0;
 
+	&.is-upsell {
+		background: #ED6F57;
+	}
+
 	.components-external-link {
 		display: flex;
 		flex-direction: row-reverse;
+		color: white;
+		text-decoration: unset;
 
 		svg {
 			margin: 0 5px 0 0;

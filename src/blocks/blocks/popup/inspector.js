@@ -22,6 +22,11 @@ import { Fragment } from '@wordpress/element';
 import { applyFilters } from '@wordpress/hooks';
 
 /**
+ * Internal dependencies.
+ */
+import Notice from '../../components/notice/index.js';
+
+/**
  *
  * @param {import('./types').PopupInspectorProps} props
  * @returns
@@ -43,11 +48,10 @@ const ProFeatures = () => {
 				/>
 			</Disabled>
 
-			<p>{ __( 'Extend Popup block functionalities with more options in Otter Pro.', 'otter-blocks' ) }</p>
-
-			<ExternalLink href={ window.themeisleGutenberg.upgradeLink }>
-				{ __( 'Get Otter Pro', 'otter-blocks' ) }
-			</ExternalLink>
+			<Notice
+				notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Unlock more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+				variant="upsell"
+			/>
 		</Fragment>
 	);
 };
@@ -62,17 +66,17 @@ const Inspector = ({
 			value: 'onLoad'
 		},
 		{
-			label: __( 'On Anchor Click', 'otter-blocks' ),
+			label: __( 'On Anchor Click (Pro)', 'otter-blocks' ),
 			value: 'onClick',
 			disabled: true
 		},
 		{
-			label: __( 'On Scroll', 'otter-blocks' ),
+			label: __( 'On Scroll (Pro)', 'otter-blocks' ),
 			value: 'onScroll',
 			disabled: true
 		},
 		{
-			label: __( 'On Exit', 'otter-blocks' ),
+			label: __( 'On Exit (Pro)', 'otter-blocks' ),
 			value: 'onExit',
 			disabled: true
 		}

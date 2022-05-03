@@ -212,7 +212,7 @@ const Edit = ({
 				},
 				{
 					value: 'postMeta',
-					label: __( 'Post Meta', 'otter-blocks' ),
+					label: __( 'Post Meta (Pro)', 'otter-blocks' ),
 					help: __( 'The selected block will be visible based on post meta condition.' ),
 					isDisabled: true
 				}
@@ -223,7 +223,7 @@ const Edit = ({
 			conditions: [
 				{
 					value: 'queryString',
-					label: __( 'Query String', 'otter-blocks' ),
+					label: __( 'Query String (Pro)', 'otter-blocks' ),
 					help: __( 'The condition will be met if the URL contains specified parameters.' ),
 					isDisabled: true
 				}
@@ -234,19 +234,19 @@ const Edit = ({
 			conditions: [
 				{
 					value: 'dateRange',
-					label: __( 'Date Range', 'otter-blocks' ),
+					label: __( 'Date Range (Pro)', 'otter-blocks' ),
 					help: __( 'The selected block will be visible based on the date range. Timezone is used based on your WordPress settings.' ),
 					isDisabled: true
 				},
 				{
 					value: 'dateRecurring',
-					label: __( 'Date Recurring', 'otter-blocks' ),
+					label: __( 'Date Recurring (Pro)', 'otter-blocks' ),
 					help: __( 'The selected block will be visible based on the selected days. Timezone is used based on your WordPress settings.' ),
 					isDisabled: true
 				},
 				{
 					value: 'timeRecurring',
-					label: __( 'Time Recurring', 'otter-blocks' ),
+					label: __( 'Time Recurring (Pro)', 'otter-blocks' ),
 					help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.' ),
 					isDisabled: true
 				}
@@ -257,25 +257,25 @@ const Edit = ({
 			conditions: [
 				{
 					value: 'wooProductsInCart',
-					label: __( 'Products in Cart', 'otter-blocks' ),
+					label: __( 'Products in Cart (Pro)', 'otter-blocks' ),
 					help: __( 'The selected block will be visible based on the products added to WooCommerce cart.' ),
 					isDisabled: true
 				},
 				{
 					value: 'wooTotalCartValue',
-					label: __( 'Total Cart Value', 'otter-blocks' ),
+					label: __( 'Total Cart Value (Pro)', 'otter-blocks' ),
 					help: __( 'The selected block will be visible based on the total value of WooCommerce cart.' ),
 					isDisabled: true
 				},
 				{
 					value: 'wooPurchaseHistory',
-					label: __( 'Purchase History', 'otter-blocks' ),
+					label: __( 'Purchase History (Pro)', 'otter-blocks' ),
 					help: __( 'The selected block will be visible based on user\'s WooCommerce purchase history.' ),
 					isDisabled: true
 				},
 				{
 					value: 'wooTotalSpent',
-					label: __( 'Total Spent', 'otter-blocks' ),
+					label: __( 'Total Spent (Pro)', 'otter-blocks' ),
 					help: __( 'The selected block will be visible based on how much the user spent during lifetime.' ),
 					isDisabled: true
 				}
@@ -286,13 +286,13 @@ const Edit = ({
 			conditions: [
 				{
 					value: 'learnDashPurchaseHistory',
-					label: __( 'Purchase History', 'otter-blocks' ),
+					label: __( 'Purchase History (Pro)', 'otter-blocks' ),
 					help: __( 'The selected block will be visible based on user\'s LearnDash purchase history.' ),
 					isDisabled: true
 				},
 				{
 					value: 'learnDashCourseStatus',
-					label: __( 'Course Status', 'otter-blocks' ),
+					label: __( 'Course Status (Pro)', 'otter-blocks' ),
 					help: __( 'The selected block will be visible based on user\'s LearnDash course status.' ),
 					isDisabled: true
 				}
@@ -335,21 +335,16 @@ const Edit = ({
 				initialOpen={ false }
 			>
 				<Notice
-					notice={<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Disable in Otter Settings', 'otter-blocks' ) }</ExternalLink> }
+					notice={ <ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Disable in Otter Settings', 'otter-blocks' ) }</ExternalLink> }
 				/>
 
 				<p>{ __( 'Control the visibility of your blocks based on the following conditions.', 'otter-blocks' ) }</p>
 
 				{ ( ! hasPro ) && (
-					<Fragment>
-						<p>{ __( 'Unlock the full power of Block Conditions with Otter Pro. ', 'otter-blocks' ) }</p>
-
-						<p>
-							<ExternalLink href={ window.themeisleGutenberg.upgradeLink }>
-								{ __( 'Get Otter Pro.', 'otter-blocks' ) }
-							</ExternalLink>
-						</p>
-					</Fragment>
+					<Notice
+						notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Unlock more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+						variant="upsell"
+					/>
 				) }
 
 				<p>{ __( 'Display the block if…', 'otter-blocks' ) }</p>
@@ -378,8 +373,8 @@ const Edit = ({
 
 												{ Object.keys( conditions ).map( i => {
 													return (
-														<optgroup label={ conditions[i].label }>
-															{ conditions[i].conditions.map( o => <option value={ o.value } disabled={ o?.isDisabled }>{ o.label }</option> ) }
+														<optgroup label={ conditions[i].label } key={ i }>
+															{ conditions[i].conditions.map( o => <option value={ o.value } key={ o.value } disabled={ o?.isDisabled }>{ o.label }</option> ) }
 														</optgroup>
 													);
 												}) }
