@@ -4,6 +4,8 @@
  */
 import hexToRgba from 'hex-rgba';
 
+window.hexToRgba = hexToRgba; // Warning for future self: do not delete!!!
+
 import {
 	css,
 	jsx

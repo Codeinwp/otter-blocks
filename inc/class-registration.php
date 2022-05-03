@@ -164,7 +164,7 @@ class Registration {
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/leaflet-map.asset.php';
 		wp_register_script( 'leaflet', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'leaflet', 'async', true );
-		wp_register_script( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet-gesture-handling.min.js', array( 'leaflet' ), $asset_file['version'], true );
+		wp_register_script( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'build/blocks/leaflet-gesture-handling.js', array( 'leaflet' ), $asset_file['version'], true );
 		wp_script_add_data( 'leaflet-gesture-handling', 'defer', true );
 		wp_register_style( 'leaflet', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet.css', [], $asset_file['version'] );
 		wp_register_style( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet-gesture-handling.min.css', [], $asset_file['version'] );
@@ -204,14 +204,13 @@ class Registration {
 		}
 
 		wp_register_script( 'otter-vendor', OTTER_BLOCKS_URL . 'build/blocks/vendor.js', array( 'react', 'react-dom' ), $asset_file['version'], true );
-		wp_register_script( 'macy', OTTER_BLOCKS_URL . 'assets/macy/macy.js', [], $asset_file['version'], true );
 
 		wp_enqueue_script(
 			'otter-blocks',
 			OTTER_BLOCKS_URL . 'build/blocks/blocks.js',
 			array_merge(
 				$asset_file['dependencies'],
-				array( 'otter-vendor', 'glidejs', 'lottie-player', 'macy' )
+				array( 'otter-vendor', 'glidejs', 'lottie-player' )
 			),
 			$asset_file['version'],
 			true
@@ -317,7 +316,7 @@ class Registration {
 		} else {
 			if ( 0 < count( $wp_query->posts ) ) {
 				$posts = wp_list_pluck( $wp_query->posts, 'ID' );
-	
+
 				foreach ( $posts as $post ) {
 					$this->enqueue_dependencies( $post );
 				}
