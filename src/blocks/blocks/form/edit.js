@@ -780,11 +780,12 @@ const Edit = ({
 										className='wp-block-button__link'
 										type='submit'
 										disabled
+
 										css={
 											css`
-											${ attributes.submitBackgroundColor && `background-color: ${attributes.submitBackgroundColor};` }
+											${ attributes.submitBackgroundColor && `background-color: ${attributes.submitBackgroundColor} !important;` }
 											&:hover {
-												${ attributes.submitBackgroundColorHover && `background-color: ${attributes.submitBackgroundColorHover};` }
+												${ attributes.submitBackgroundColorHover && `background-color: ${attributes.submitBackgroundColorHover} !important;` }
 											}`
 										}
 									>

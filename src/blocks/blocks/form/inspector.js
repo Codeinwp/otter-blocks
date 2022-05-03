@@ -126,7 +126,7 @@ const Inspector = ({
 						>
 							<span>
 								{
-									__( 'Make sure to have an email provider set-up.', 'otter-blocks' )
+									__( 'Make sure your SMTP plugin is set up.', 'otter-blocks' )
 								}
 							</span>
 							<ExternalLink
@@ -338,7 +338,7 @@ const Inspector = ({
 								'loading' === loadingState?.formOptions && (
 									<div style={{ marginTop: '8px', borderLeft: '3px solid orange', paddingLeft: '10px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 										<Spinner />
-										{ __( 'Loading the options. Please wait.', 'otter-blocks' ) }
+										{ __( 'Loading the options. Please wait...', 'otter-blocks' ) }
 									</div>
 								)
 							}

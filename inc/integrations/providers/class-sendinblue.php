@@ -192,7 +192,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
      * @return $this
 	 * @since 2.0.3
      */
-	private function set_list_id($list_id)
+	public function set_list_id($list_id)
 	{
 		$this->list_id = $list_id;
 		return $this;

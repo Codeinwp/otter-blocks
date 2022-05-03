@@ -41,7 +41,6 @@ const Save = ({
 					<button
 						className='wp-block-button__link'
 						type='submit'
-						isPrimary
 					>
 						{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
 					</button>
