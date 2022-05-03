@@ -61,7 +61,7 @@
 		"@wordpress/compose": "^5.5.0",
 		"@wordpress/data": "^6.4.0",
 		"@wordpress/dom-ready": "^3.7.0",
-		"@wordpress/element": "^4.2.0",
+		"@wordpress/element": "^4.5.0",
 		"@wordpress/scripts": "^22.5.0",
 		"conventional-changelog-simple-preset": "^1.0.20",
 		"eslint-config-wordpress": "^2.0.0",
