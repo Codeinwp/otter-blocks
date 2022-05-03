@@ -1,4 +1,4 @@
-import domReady from '@wordpress/dom-ready';
+import {domReady} from '../../helpers/frontend-helper-functions.js';
 
 /**
  * Internal dependencies

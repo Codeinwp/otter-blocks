@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import domReady from '@wordpress/dom-ready';
+import {domReady} from '../../utils';
 
 const MAX_PARENT_SEARCH = 3;
 

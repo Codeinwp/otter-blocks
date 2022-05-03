@@ -1,9 +1,9 @@
 /**
  * WordPress dependencies
  */
-import { omit } from 'lodash';
+import { omit } from '../../helpers/frontend-helper-functions';
 
-import domReady from '@wordpress/dom-ready';
+import {domReady} from '../../helpers/frontend-helper-functions.js';
 
 const SliderArrows = '<div class="glide__arrows" data-glide-el="controls"><button class="glide__arrow glide__arrow--left" data-glide-dir="<"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewbox="0 0 100 100" role="img" aria-hidden="true"><path d="M 10,50 L 60,100 L 70,90 L 30,50  L 70,10 L 60,0 Z"></path></svg></button><button class="glide__arrow glide__arrow--right" data-glide-dir="&gt;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewbox="0 0 100 100" role="img" aria-hidden="true"><path d="M 10,50 L 60,100 L 70,90 L 30,50  L 70,10 L 60,0 Z"></path></svg></button></div>';
 

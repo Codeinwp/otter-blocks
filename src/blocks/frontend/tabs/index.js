@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import domReady from '@wordpress/dom-ready';
+import {domReady} from '../../helpers/frontend-helper-functions.js';
 
 domReady( () => {
 	const tabs = document.querySelectorAll( '.wp-block-themeisle-blocks-tabs' );

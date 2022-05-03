@@ -1,17 +1,76 @@
 /**
  * WordPress dependencies
  */
-import domReady from '@wordpress/dom-ready';
-
 import moment from 'moment';
+import { sprintf, __ } from '@wordpress/i18n';
+import { __experimentalGetSettings } from '@wordpress/date';
+
+
+import {domReady} from '../../helpers/frontend-helper-functions.js';
+
+// Time constants
+const _MS_PER_SECONDS = 1000;
+const _MS_PER_MINUTES = _MS_PER_SECONDS * 60;
+const _MS_PER_HOURS = _MS_PER_MINUTES * 60;
+const _MS_PER_DAY = _MS_PER_HOURS * 24;
 
 /**
- * Internal dependencies
+ * Get the time interval from the unix time
+ *
+ * @param {number} unixTime Time as UNIX
+ * @param {Object} settings Options to keep a components or/and allow negative time
+ * @returns An object with the values for days, hours, minutes, seconds
  */
-import {
-	getIntervalFromUnix,
-	getTimezone
-} from '../../helpers/helper-functions.js';
+export const getIntervalFromUnix = ( unixTime, settings ) => {
+	unixTime = unixTime ? unixTime : 0; // Check for null/undefined
+
+	const days = Math.floor( unixTime / _MS_PER_DAY );
+	const hours = Math.floor( unixTime / _MS_PER_HOURS % 24 );
+	const minutes = Math.floor( unixTime / _MS_PER_MINUTES % 60 );
+	const seconds = Math.floor( unixTime / _MS_PER_SECONDS % 60 );
+
+	const time = [
+		{
+			tag: 'day',
+			name: 1 < days ? __( 'Days', 'otter-blocks' ) : __( 'Day', 'otter-blocks' ),
+			value: days
+		},
+		{
+			tag: 'hour',
+			name: 1 < hours ? __( 'Hours', 'otter-blocks' ) : __( 'Hour', 'otter-blocks' ),
+			value: hours
+		},
+		{
+			tag: 'minute',
+			name: 1 < minutes ? __( 'Minutes', 'otter-blocks' ) : __( 'Minute', 'otter-blocks' ),
+			value: minutes
+		},
+		{
+			tag: 'second',
+			name: 1 < seconds ? __( 'Seconds', 'otter-blocks' ) : __( 'Second', 'otter-blocks' ),
+			value: seconds
+		}
+	]
+		.filter( ({ tag }) => ! settings?.exclude?.includes( tag ) )
+		.map( obj => {
+			if ( ! settings?.keepNeg ) {
+				obj.value = Math.max( 0, obj.value );
+			}
+			return obj;
+		});
+
+	return time;
+};
+
+// Get site's timezone.
+export const getTimezone = () => {
+	const settings = __experimentalGetSettings();
+	const offset   = 60 * settings.timezone.offset;
+	const sign     = 0 > offset ? '-' : '+';
+	const absmin   = Math.abs( offset );
+	const timezone = sprintf( '%s%02d:%02d', sign, absmin / 60, absmin % 60 );
+	return timezone;
+};
 
 /**
  * Get an object with the update function for every component

@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 
 import apiFetch from '@wordpress/api-fetch';
 
-import domReady from '@wordpress/dom-ready';
+import {domReady} from '../../helpers/frontend-helper-functions.js';
 
 /**
  * Internal dependencies.
