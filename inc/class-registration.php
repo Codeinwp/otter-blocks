@@ -428,9 +428,9 @@ class Registration {
 						'hour'    => __( 'Hour', 'otter-blocks' ),
 						'hours'   => __( 'Hours', 'otter-blocks' ),
 						'day'     => __( 'Day', 'otter-blocks' ),
-						'days'    => __( 'Days', 'otter-blocks' )
+						'days'    => __( 'Days', 'otter-blocks' ),
 					),
-					'timezone' => $tz_offset
+					'timezone' => $tz_offset,
 				)
 			);
 		}
