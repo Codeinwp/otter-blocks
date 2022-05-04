@@ -1,7 +1,7 @@
 /**
- * WordPress dependencies
+ * Internal dependencies
  */
-import {domReady} from '../../helpers/frontend-helper-functions.js';
+import { domReady } from '../../helpers/frontend-helper-functions.js';
 
 domReady( () => {
 	const galleries = document.getElementsByClassName( 'otter-masonry' );

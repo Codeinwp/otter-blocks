@@ -1,9 +1,7 @@
 /**
- * WordPress dependencies
+ * Internal dependencies
  */
-import { __ } from '@wordpress/i18n';
-
-import {domReady} from '../../helpers/frontend-helper-functions.js';
+import { domReady } from '../../helpers/frontend-helper-functions.js';
 
 domReady( () => {
 	const tabs = document.querySelectorAll( '.wp-block-themeisle-blocks-tabs' );
@@ -30,7 +28,7 @@ domReady( () => {
 				closedTabs.push({headerItem, content});
 			}
 
-			headerItem.innerHTML = item.dataset.title || __( 'Untitled Tab' );
+			headerItem.innerHTML = item.dataset.title || 'Untitled Tab';
 			headerItem.tabIndex = 0;
 
 			const headerMobile = item.querySelector( '.wp-block-themeisle-blocks-tabs-item__header' );

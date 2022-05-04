@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import {domReady} from '../../helpers/frontend-helper-functions.js';
+import { domReady } from '../../helpers/frontend-helper-functions.js';
 
 domReady( () => {
 	const animations = document.querySelectorAll( '.wp-block-themeisle-blocks-lottie' );

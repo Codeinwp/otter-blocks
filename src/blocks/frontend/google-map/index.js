@@ -1,8 +1,8 @@
-import {domReady} from '../../helpers/frontend-helper-functions.js';
-
 /**
  * Internal dependencies
  */
+import { domReady } from '../../helpers/frontend-helper-functions.js';
+
 import styles from './styles.js';
 
 const initMapScript = () => {

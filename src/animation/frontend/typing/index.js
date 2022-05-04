@@ -1,7 +1,10 @@
 /**
- * WordPress dependencies
+ * Internal dependencies
  */
-import { makeInterval, domReady } from '../../utils';
+import {
+	domReady,
+	makeInterval
+} from '../../utils.js';
 
 const MAX_PARENT_SEARCH = 3;
 

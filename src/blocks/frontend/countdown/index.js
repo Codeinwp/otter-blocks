@@ -5,8 +5,10 @@ import moment from 'moment';
 import { sprintf, __ } from '@wordpress/i18n';
 import { __experimentalGetSettings } from '@wordpress/date';
 
-
-import {domReady} from '../../helpers/frontend-helper-functions.js';
+/**
+ * Internal dependencies
+ */
+import { domReady } from '../../helpers/frontend-helper-functions.js';
 
 // Time constants
 const _MS_PER_SECONDS = 1000;

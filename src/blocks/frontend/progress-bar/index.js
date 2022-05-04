@@ -1,12 +1,11 @@
 /**
- * WordPress dependencies
- */
-import {domReady} from '../../helpers/frontend-helper-functions.js';
-
-/**
  * Internal dependencies
  */
-import { range, linear } from '../../helpers/frontend-helper-functions.js';
+import {
+	domReady,
+	range,
+	linear
+} from '../../helpers/frontend-helper-functions.js';
 
 domReady( () => {
 	const progressBars = document.querySelectorAll( '.wp-block-themeisle-blocks-progress-bar' );
