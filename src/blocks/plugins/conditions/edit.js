@@ -38,6 +38,7 @@ import { useSelect } from '@wordpress/data';
 import {
 	Fragment,
 	useEffect,
+	memo,
 	useState
 } from '@wordpress/element';
 
@@ -58,25 +59,23 @@ const Edit = ({
 	setAttributes
 }) => {
 	useEffect( () => {
-		return () => {
-			if ( ! Boolean( attributes?.otterConditions?.length ) ) {
-				return;
+		if ( ! Boolean( attributes?.otterConditions?.length ) ) {
+			return;
+		}
+
+		let otterConditions = [ ...attributes.otterConditions ];
+
+		otterConditions.forEach( ( i, n ) => {
+			if ( isEmpty( i ) ) {
+				otterConditions.splice( n, 1 );
 			}
+		});
 
-			let otterConditions = [ ...attributes.otterConditions ];
+		if ( ! Boolean( otterConditions.length ) ) {
+			otterConditions = undefined;
+		}
 
-			otterConditions.forEach( ( i, n ) => {
-				if ( isEmpty( i ) ) {
-					otterConditions.splice( n, 1 );
-				}
-			});
-
-			if ( ! Boolean( otterConditions.length ) ) {
-				otterConditions = undefined;
-			}
-
-			setAttributes({ otterConditions });
-		};
+		setAttributes({ otterConditions });
 	}, []);
 
 	const [ courses, setCourses ] = useState([]);
@@ -85,36 +84,44 @@ const Edit = ({
 	const [ courseGroupsStatus, setCourseGroupsStatus ] = useState( 'loading' );
 
 	useEffect( () => {
+		let isMounted = true;
+
 		if ( Boolean( window.themeisleGutenberg.hasLearnDash ) && isBoosterActive ) {
 			( async() => {
-				setCoursesStatus( 'loading' );
-				setCourseGroupsStatus( 'loading' );
+				if ( isMounted ) {
+					setCoursesStatus( 'loading' );
+					setCourseGroupsStatus( 'loading' );
 
-				try {
-					const data = await apiFetch({ path: 'ldlms/v2/sfwd-courses' });
-					const items = data.map( datum => ({
-						value: datum.id,
-						label: datum.title.rendered
-					}) );
-					setCourses( items );
-					setCoursesStatus( 'loaded' );
-				} catch ( error ) {
-					setCoursesStatus( 'error' );
-				}
+					try {
+						const data = await apiFetch({ path: 'ldlms/v2/sfwd-courses' });
+						const items = data.map( datum => ({
+							value: datum.id,
+							label: datum.title.rendered
+						}) );
+						setCourses( items );
+						setCoursesStatus( 'loaded' );
+					} catch ( error ) {
+						setCoursesStatus( 'error' );
+					}
 
-				try {
-					const data = await apiFetch({ path: 'ldlms/v2/groups' });
-					const items = data.map( datum => ({
-						value: datum.id,
-						label: datum.title.rendered
-					}) );
-					setCourseGroups( items );
-					setCourseGroupsStatus( 'loaded' );
-				} catch ( error ) {
-					setCourseGroupsStatus( 'error' );
+					try {
+						const data = await apiFetch({ path: 'ldlms/v2/groups' });
+						const items = data.map( datum => ({
+							value: datum.id,
+							label: datum.title.rendered
+						}) );
+						setCourseGroups( items );
+						setCourseGroupsStatus( 'loaded' );
+					} catch ( error ) {
+						setCourseGroupsStatus( 'error' );
+					}
 				}
 			})();
 		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	const { postAuthors } = useSelect( select => {
@@ -130,7 +137,7 @@ const Edit = ({
 		return {
 			postAuthors
 		};
-	});
+	}, []);
 
 	let { postCategories } = useSelect( select => {
 		const { getEntityRecords } = select( 'core' );
@@ -146,7 +153,7 @@ const Edit = ({
 		return {
 			postCategories
 		};
-	});
+	}, []);
 
 	const {
 		products,
@@ -214,8 +221,13 @@ const Edit = ({
 	};
 
 	const removeGroup = n => {
-		const otterConditions = [ ...attributes.otterConditions ];
+		let otterConditions = [ ...attributes.otterConditions ];
 		otterConditions.splice( n, 1 );
+
+		if ( ! Boolean( otterConditions.length ) ) {
+			otterConditions = undefined;
+		}
+
 		setAttributes({ otterConditions });
 	};
 
@@ -1224,4 +1236,4 @@ const Edit = ({
 	);
 };
 
-export default Edit;
+export default memo( Edit );

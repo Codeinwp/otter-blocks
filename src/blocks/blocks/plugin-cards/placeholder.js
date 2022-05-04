@@ -48,6 +48,8 @@ const BlockPlaceholder = ({
 	const [ selectedSuggestion, setSelectedSuggestion ] = useState( null );
 
 	useEffect( () => {
+		let timeoutID = null;
+
 		if ( null !== selectedSuggestion && ! scrollingIntoView ) {
 			scrollingIntoView = true;
 
@@ -57,10 +59,14 @@ const BlockPlaceholder = ({
 
 			suggestionNodes[ selectedSuggestion ].focus();
 
-			setTimeout( () => {
+			timeoutID = setTimeout( () => {
 				scrollingIntoView = false;
 			}, 100 );
 		}
+
+		return () => {
+			clearTimeout( timeoutID );
+		};
 	}, [ selectedSuggestion ]);
 
 	const bindSuggestionNode = index => {

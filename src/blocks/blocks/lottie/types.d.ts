@@ -11,7 +11,10 @@ type Attributes = {
 	count: number
 	speed: number
 	direction: boolean
-	width: number
+	width: number | string
+	ariaLabel: string
+	backgroundColor: string
+	backgroundGradient: string
 }
 
 export type LottieProps = BlockProps<Attributes>

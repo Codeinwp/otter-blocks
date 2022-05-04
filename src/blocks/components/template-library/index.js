@@ -36,74 +36,82 @@ const Library = ({
 	clientId,
 	close
 }) => {
-	const block = useSelect( select => select( 'core/block-editor' ).getBlock( clientId ) );
+	const block = useSelect( select => select( 'core/block-editor' ).getBlock( clientId ), [ clientId ]);
 
 	const { replaceBlocks } = useDispatch( 'core/block-editor' );
 	const { createNotice } = useDispatch( 'core/notices' );
 
 	useEffect( () => {
+		let isMounted = true;
+
 		const fetchData = async() => {
-			if ( ! Boolean( window.themeisleGutenberg.isCompatible ) ) {
-				createNotice(
-					'warning',
-					__( 'You are using an older version of Otter. Use the latest version of Otter to have maximum compatibility with Template Library.', 'otter-blocks' ),
-					{
-						context: 'themeisle-blocks/notices/template-library',
-						id: 'compatibility-warning',
-						isDismissible: false,
-						actions: [
-							{
-								label: __( 'Update Now', 'otter-blocks' ),
-								url: window.themeisleGutenberg.updatePath
+			if ( isMounted ) {
+				if ( ! Boolean( window.themeisleGutenberg.isCompatible ) ) {
+					createNotice(
+						'warning',
+						__( 'You are using an older version of Otter. Use the latest version of Otter to have maximum compatibility with Template Library.', 'otter-blocks' ),
+						{
+							context: 'themeisle-blocks/notices/template-library',
+							id: 'compatibility-warning',
+							isDismissible: false,
+							actions: [
+								{
+									label: __( 'Update Now', 'otter-blocks' ),
+									url: window.themeisleGutenberg.updatePath
+								}
+							]
+						}
+					);
+				}
+
+				try {
+					const data = await apiFetch({ path: 'otter/v1/templates' });
+
+					let blocksCategories = [];
+					let templateCategories = [];
+
+					data.forEach( i => {
+						if ( i.categories && i.template_url ) {
+							if ( 'block' === i.type ) {
+								i.categories.forEach( o => {
+									blocksCategories.push( o );
+								});
 							}
-						]
-					}
-				);
-			}
 
-			try {
-				const data = await apiFetch({ path: 'otter/v1/templates' });
-
-				let blocksCategories = [];
-				let templateCategories = [];
-
-				data.forEach( i => {
-					if ( i.categories && i.template_url ) {
-						if ( 'block' === i.type ) {
-							i.categories.forEach( o => {
-								blocksCategories.push( o );
-							});
+							if ( 'template' === i.type ) {
+								i.categories.forEach( o => {
+									templateCategories.push( o );
+								});
+							}
 						}
+					});
 
-						if ( 'template' === i.type ) {
-							i.categories.forEach( o => {
-								templateCategories.push( o );
-							});
+					blocksCategories = blocksCategories.filter( ( item, i, ar ) => ar.indexOf( item ) === i ).sort();
+					templateCategories = templateCategories.filter( ( item, i, ar ) => ar.indexOf( item ) === i ).sort();
+
+					setBlocksCategories( blocksCategories );
+					setTemplateCategories( templateCategories );
+					setData( data );
+				} catch ( error ) {
+					createNotice(
+						'error',
+						__( 'There seems to be an error. Please try again.', 'otter-blocks' ),
+						{
+							context: 'themeisle-blocks/notices/template-library',
+							isDismissible: true
 						}
-					}
-				});
+					);
+				}
 
-				blocksCategories = blocksCategories.filter( ( item, i, ar ) => ar.indexOf( item ) === i ).sort();
-				templateCategories = templateCategories.filter( ( item, i, ar ) => ar.indexOf( item ) === i ).sort();
-
-				setBlocksCategories( blocksCategories );
-				setTemplateCategories( templateCategories );
-				setData( data );
-			} catch ( error ) {
-				createNotice(
-					'error',
-					__( 'There seems to be an error. Please try again.', 'otter-blocks' ),
-					{
-						context: 'themeisle-blocks/notices/template-library',
-						isDismissible: true
-					}
-				);
+				setLoading( false );
 			}
-
-			setLoading( false );
 		};
 
 		fetchData();
+
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	const [ tab, setTab ] = useState( 'block' );

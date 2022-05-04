@@ -14,6 +14,8 @@ import {
 
 import { InnerBlocks } from '@wordpress/block-editor';
 
+import { memo } from '@wordpress/element';
+
 import {
 	SVG,
 	Path

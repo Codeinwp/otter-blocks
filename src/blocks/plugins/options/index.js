@@ -42,10 +42,12 @@ const Options = () => {
 	const { createNotice } = useDispatch( 'core/notices' );
 
 	useEffect( () => {
+		let isMounted = true;
+
 		const fetchData = async() => {
 			const data = await apiFetch({ path: 'wp/v2/users/me?context=edit' });
 
-			if ( data.capabilities.manage_options ) {
+			if ( data.capabilities.manage_options && isMounted ) {
 				setCanUser( true );
 
 				await window.wp.api.loadPromise.then( () => {
@@ -78,6 +80,10 @@ const Options = () => {
 		};
 
 		fetchData();
+
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	const [ canUser, setCanUser ] = useState( false );

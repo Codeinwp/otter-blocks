@@ -1,4 +1,5 @@
 import domReady from '@wordpress/dom-ready';
+import { detectLoading } from '../../helpers/detect-loading';
 import { easeOutQuad } from '../../helpers/helper-functions';
 
 const createObserver = () => {
@@ -299,7 +300,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 		if ( stickyPosition ) {
 
 			// Make de element sticky
-			elem.classList.add( 'is-sticky' );
+			elem.classList.add( 'o-is-sticky' );
 			elem.style.left = elemLeftPositionInPage + 'px';
 			elem.style.width = width + 'px';
 			elem.style.position = 'fixed';
@@ -342,7 +343,7 @@ const makeElementSticky = ( selector, config, containerSelector, observer ) => {
 		} else {
 
 			// Clean up the sticky option from the element when is not active
-			elem.classList.remove( 'is-sticky' );
+			elem.classList.remove( 'o-is-sticky' );
 			elem.style.top = '';
 			elem.style.left = '';
 			elem.style.transform = '';
@@ -439,15 +440,19 @@ domReady( () => {
 	const elems = document.querySelectorAll( '.o-sticky' );
 	const observer = createObserver();
 
-	elems.forEach( ( elem ) => {
-		const config = getConfigOptions( elem );
-		const container = getStickyContainer( elem, config.scope );
+	detectLoading( () => {
+		elems.forEach( ( elem ) => {
+			const config = getConfigOptions( elem );
+			const container = getStickyContainer( elem, config.scope );
 
-		makeElementSticky(
-			elem,
-			config,
-			container,
-			observer
-		);
-	});
+			makeElementSticky(
+				elem,
+				config,
+				container,
+				observer
+			);
+		});
+	}, [ 'lottie' ]);
+
+
 });
