@@ -1,7 +1,6 @@
 /**
  * WordPress dependencies
  */
-import omit from 'lodash/omit';
 
 import {domReady} from '../../helpers/frontend-helper-functions.js';
 
@@ -29,7 +28,6 @@ const init = () => {
 		const observer = new IntersectionObserver( entries => {
 			entries.forEach( entry => {
 				if ( entry.isIntersecting && 0 <= entry.intersectionRect.height ) {
-					const options = omit({ ...slider.dataset }, [ 'autoplay', 'height', 'hideArrows' ]);
 					const autoplay = 'false' === slider.dataset.autoplay ? false : ( 'true' === slider.dataset.autoplay ? 2000 : slider.dataset.autoplay );
 					const hideArrows = 'true' === slider.dataset.hideArrows;
 
@@ -40,11 +38,11 @@ const init = () => {
 					}
 
 					new window.Glide( `#${ slider.id }`, {
+						...slider.dataset,
 						type: 'carousel',
 						keyboard: true,
 						autoplay,
 						hoverpause: true,
-						...options,
 						breakpoints: {
 							800: {
 								perView: 1,
@@ -67,6 +65,7 @@ const init = () => {
 		observer.observe( slider );
 	});
 };
+
 
 domReady( () => {
 	const t = setInterval( () => {
