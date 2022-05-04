@@ -36,16 +36,10 @@
 			"default": false
 		},
 		"gap" : {
-			"type": "number",
-			"default": 5
+			"type": "number"
 		},
 		"borderRadius": {
-			"type": "number",
-			"default": 3
-		},
-		"textDeco": {
-			"type": "string",
-			"default": "underline"
+			"type": "number"
 		},
 		"backgroundColor" : {
 			"type": "string"

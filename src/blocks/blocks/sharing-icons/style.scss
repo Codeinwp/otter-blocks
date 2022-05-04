@@ -31,8 +31,7 @@
 		touch-action: manipulation;
 		line-height: 20px;
 		margin: 10px 0;
-
-		text-decoration: var(--textDeco, underline);
+		text-decoration: none;
 
 		&.is-facebook {
 			background-color: var(--iconsBgColor, #3b5998);

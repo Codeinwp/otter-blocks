@@ -42,7 +42,6 @@ const Edit = ({
 	const styles = css`
 		--iconsGap: ${ getValue( 'gap' ) }px;
 		--borderRadius: ${ getValue( 'borderRadius' ) }px;
-		--textDeco: ${ getValue( 'textDeco' ) };
 		--iconsBgColor: ${ getValue( 'backgroundColor' ) };
 		--textColor: ${ getValue( 'textColor' ) };
 	`;

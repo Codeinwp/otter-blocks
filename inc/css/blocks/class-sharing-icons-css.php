@@ -11,7 +11,7 @@ use ThemeIsle\GutenbergBlocks\Base_CSS;
 use ThemeIsle\GutenbergBlocks\CSS\CSS_Utility;
 
 /**
- * Class Review_CSS
+ * Class Sharing_Icons_CSS
  */
 class Sharing_Icons_CSS extends Base_CSS {
 
@@ -44,10 +44,6 @@ class Sharing_Icons_CSS extends Base_CSS {
 						'property' => '--borderRadius',
 						'value'    => 'borderRadius',
 						'unit'     => 'px',
-					),
-					array(
-						'property' => '--textDeco',
-						'value'    => 'textDeco',
 					),
 					array(
 						'property' => '--iconsBgColor',
