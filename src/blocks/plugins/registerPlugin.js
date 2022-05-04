@@ -13,6 +13,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import './editor.scss';
 import { otterIcon } from '../helpers/icons.js';
 import Options from './options/index.js';
+
 import './conditions/index.js';
 import './css-handler/index.js';
 import './data/index.js';

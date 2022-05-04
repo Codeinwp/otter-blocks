@@ -53,7 +53,7 @@ const ResponsiveControl = ({
 		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
 
 		return __experimentalGetPreviewDeviceType && ! isMobile ? __experimentalGetPreviewDeviceType() : getView();
-	});
+	}, []);
 
 	const { updateView } = useDispatch( 'themeisle-gutenberg/data' );
 	const { __experimentalSetPreviewDeviceType } = useDispatch( 'core/edit-post' ) ? useDispatch( 'core/edit-post' ) : false;

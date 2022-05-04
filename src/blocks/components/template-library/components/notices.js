@@ -9,7 +9,7 @@ import {
 } from '@wordpress/data';
 
 const Notices = () => {
-	const notices = useSelect( select => select( 'core/notices' ).getNotices( 'themeisle-blocks/notices/template-library' ) );
+	const notices = useSelect( select => select( 'core/notices' ).getNotices( 'themeisle-blocks/notices/template-library' ), []);
 
 	const { removeNotice } = useDispatch( 'core/notices' );
 

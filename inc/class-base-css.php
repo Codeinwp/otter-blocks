@@ -351,7 +351,7 @@ class Base_CSS {
 	 * @access  public
 	 */
 	public function is_image_url( $url ) {
-		return is_string( $url ) && preg_match( '/\.(jpeg|jpg|png|gif|svg|bmp|ico|tiff)$/i', $url );
+		return is_string( $url ) && preg_match( '/\.(jpeg|jpg|png|gif|svg|bmp|ico|tiff|webp)$/i', $url );
 	}
 
 	/**

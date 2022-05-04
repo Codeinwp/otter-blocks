@@ -41,6 +41,8 @@ const AnimationType = {
 	default: 'default'
 };
 
+import { memo } from '@wordpress/element';
+
 function AnimationControls({
 	clientId,
 	attributes,
@@ -332,4 +334,4 @@ function AnimationControls({
 	);
 }
 
-export default AnimationControls;
+export default memo( AnimationControls );
