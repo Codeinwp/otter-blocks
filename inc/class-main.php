@@ -63,6 +63,7 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\CSS\CSS_Handler',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Block_Conditions',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Dashboard',
+			'\ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Options_Settings',
 			'\ThemeIsle\GutenbergBlocks\Plugins\WooCommerce_Builder',
 			'\ThemeIsle\GutenbergBlocks\Render\Masonry_Variant',

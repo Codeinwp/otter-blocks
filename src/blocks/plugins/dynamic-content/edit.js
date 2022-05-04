@@ -60,12 +60,14 @@ const Fields = ({
 			<PanelBody>
 				<BaseControl
 					label={ __( 'Data Type', 'otter-blocks' ) }
+					id="o-dynamic-select"
 				>
 					<select
 						value={ attributes.type || '' }
 						onChange={ e => changeAttributes({
 							type: e.target.value
 						}) }
+						id="o-dynamic-select"
 						className="components-select-control__input"
 					>
 						<option value="none">{ __( 'Select an option', 'otter-blocks' ) }</option>
