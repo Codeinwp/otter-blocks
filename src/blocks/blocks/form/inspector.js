@@ -15,6 +15,7 @@ import {
 	Dashicon,
 	TextControl,
 	ToggleControl,
+	TextareaControl,
 	__experimentalBoxControl as BoxControl
 } from '@wordpress/components';
 
@@ -367,7 +368,7 @@ const Inspector = ({
 								help={ __( 'Send the form\'s data to another email. (Admin\'s email is default).', 'otter-blocks' ) }
 							/>
 
-							<TextControl
+							<TextareaControl
 								label={ __( 'Submit Success Message', 'otter-blocks' ) }
 								placeholder={ __( 'Success', 'otter-blocks' ) }
 								value={ formOptions.submitMessage }
