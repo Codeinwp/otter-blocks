@@ -124,17 +124,3 @@ export const domReady = ( callback ) => {
 	// DOMContentLoaded has not fired yet, delay callback until then.
 	document.addEventListener( 'DOMContentLoaded', callback );
 };
-
-/**
- * Omit some keys from a flat object.
- *
- * @param string[] keys The name of the keys.
- * @param Object obj The object.
- * @returns {{[p: string]: unknown}}
- */
-export const omit = ( obj, keys ) =>
-	Object.fromEntries(
-		Object.entries( obj )
-			.filter( ([ k ]) => ! keys.includes( k ) )
-	);
-

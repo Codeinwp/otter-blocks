@@ -1,7 +1,7 @@
 /**
  * WordPress dependencies
  */
-import { omit } from '../../helpers/frontend-helper-functions';
+import omit from 'lodash/omit';
 
 import {domReady} from '../../helpers/frontend-helper-functions.js';
 
