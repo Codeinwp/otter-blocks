@@ -3,8 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import apiFetch from '@wordpress/api-fetch';
-
 import domReady from '@wordpress/dom-ready';
 
 /**
@@ -146,83 +144,92 @@ const collectAndSendInputFormData = ( form, btn ) => {
 
 		msgAnchor?.classList.add( 'loading' );
 
-		apiFetch({
-			path: 'otter/v1/form/frontend',
+		const formURlEndpoint = ( window?.themeisleGutenbergForm?.root || ( window.location.origin + '/wp-json/' ) ) + 'otter/v1/form/frontend';
+
+		fetch( formURlEndpoint, {
 			method: 'POST',
-			data: {
+			headers: {
+				'Content-Type': 'application/json',
+				Accept: 'application/json, */*;q=0.1',
+				'X-WP-Nonce': window?.themeisleGutenbergForm?.nonce
+			},
+			credentials: 'include',
+			body: JSON.stringify({
 				handler: 'submit',
 				payload
-			}
-		}).then( ( response ) => {
+			})
+		})
+			.then( r => r.json() )
+			.then( ( response ) => {
 
-			/**
+				/**
 			 * @type {import('./types.js').IFormResponse}
 			 */
-			const res = response;
+				const res = response;
 
-			// Update submit message.
-			msgAnchor?.classList.remove( 'loading' );
-			const msg = document.createElement( 'div' );
-			msg.classList.add( 'o-form-server-response' );
+				// Update submit message.
+				msgAnchor?.classList.remove( 'loading' );
+				const msg = document.createElement( 'div' );
+				msg.classList.add( 'o-form-server-response' );
 
-			if ( res?.success ) {
-				msg.innerHTML = res?.submitMessage ? res.submitMessage :  __( 'Success', 'otter-blocks' );
-				msg.classList.add( 'o-success' );
-				cleanInputs( form );
+				if ( res?.success ) {
+					msg.innerHTML = res?.submitMessage ? res.submitMessage :  __( 'Success', 'otter-blocks' );
+					msg.classList.add( 'o-success' );
+					cleanInputs( form );
 
-				setTimeout( () => {
-					if ( '' !== res?.redirectLink ) {
-						let a = document.createElement( 'a' );
-						a.target = '_blank';
-						a.href = res.redirectLink;
-						a.click();
-					}
-				}, 1000 );
-			} else {
-				msg.classList.add( 'o-error' );
-
-				// TODO: Write pattern to display a more useful error message.
-				if ( res?.provider && res?.error?.includes( 'invalid' ) || res?.error?.includes( 'fake' ) ) { // mailchimp
-					msg.classList.add( 'o-warning' );
-					msg.innerHTML = __( 'The email address is invalid!', 'otter-blocks' );
-				} else if ( res?.provider && res?.error?.includes( 'duplicate' ) || res?.error?.includes( 'already' ) ) { // sendinblue
-					msg.classList.add( 'info' );
-					msg.innerHTML = __( 'The email was already registered!', 'otter-blocks' );
+					setTimeout( () => {
+						if ( '' !== res?.redirectLink ) {
+							let a = document.createElement( 'a' );
+							a.target = '_blank';
+							a.href = res.redirectLink;
+							a.click();
+						}
+					}, 1000 );
 				} else {
-					msg.innerHTML = __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' );
+					msg.classList.add( 'o-error' );
+
+					// TODO: Write pattern to display a more useful error message.
+					if ( res?.provider && res?.error?.includes( 'invalid' ) || res?.error?.includes( 'fake' ) ) { // mailchimp
+						msg.classList.add( 'o-warning' );
+						msg.innerHTML = __( 'The email address is invalid!', 'otter-blocks' );
+					} else if ( res?.provider && res?.error?.includes( 'duplicate' ) || res?.error?.includes( 'already' ) ) { // sendinblue
+						msg.classList.add( 'info' );
+						msg.innerHTML = __( 'The email was already registered!', 'otter-blocks' );
+					} else {
+						msg.innerHTML = __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' );
+					}
+
+					// eslint-disable-next-line no-console
+					console.error( res?.error, res?.reasons );
 				}
 
-				// eslint-disable-next-line no-console
-				console.error( res?.error, res?.reasons );
-			}
-
-			/**
+				/**
 			 * Reset the form.
 			 */
-			addThenRemoveMsg( msg );
-			if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
-				window.themeisleGutenberg?.tokens?.[ id ].reset();
-			}
-			btn.disabled = false;
-			btn.removeChild( spinner );
-		})?.catch( ( error ) => {
-			msgAnchor?.classList.remove( 'loading' );
+				addThenRemoveMsg( msg );
+				if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
+					window.themeisleGutenberg?.tokens?.[ id ].reset();
+				}
+				btn.disabled = false;
+				btn.removeChild( spinner );
+			})?.catch( ( error ) => {
+				msgAnchor?.classList.remove( 'loading' );
 
-			// eslint-disable-next-line no-console
-			console.error( error );
+				// eslint-disable-next-line no-console
+				console.error( error );
 
-			const msg = document.createElement( 'div' );
-			msg.classList.add( 'otter-form-server-response' );
-			msg.innerHTML = __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' );
-			msg.classList.add( 'error' );
+				const msg = document.createElement( 'div' );
+				msg.classList.add( 'otter-form-server-response' );
+				msg.innerHTML = __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' );
+				msg.classList.add( 'error' );
 
-			addThenRemoveMsg( msg );
-			if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
-				window.themeisleGutenberg?.tokens?.[ id ].reset();
-			}
-			btn.disabled = false;
-			btn.removeChild( spinner );
-		});
+				addThenRemoveMsg( msg );
+				if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
+					window.themeisleGutenberg?.tokens?.[ id ].reset();
+				}
+				btn.disabled = false;
+				btn.removeChild( spinner );
+			});
 	}
 };
 

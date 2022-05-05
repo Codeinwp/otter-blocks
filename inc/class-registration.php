@@ -419,6 +419,8 @@ class Registration {
 				'themeisleGutenbergForm',
 				array(
 					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
+					'root' => esc_url_raw( rest_url() ),
+    				'nonce' => wp_create_nonce( 'wp_rest' )
 				)
 			);
 		}
