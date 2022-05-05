@@ -543,22 +543,25 @@ class Form_Server {
 	 * @since 2.0.0
 	 */
 	public function has_required_data($data ) {
-		return
-			$data->are_fields_set(
-				array(
-					'handler',
-					'payload'
-				)
-			) &&
-			$data->are_payload_fields_set(
-				array(
-					'nonceValue',
-					'postUrl',
-					'formId',
-					'formOption',
-				)
-			) &&
-			wp_verify_nonce( $data->get_payload_field( 'nonceValue' ), 'form-verification' );
+		$mainFieldsSet = $data->are_fields_set(
+			array(
+				'handler',
+				'payload'
+			)
+		);
+
+		$requiredPayloadFields = $data->are_payload_fields_set(
+			array(
+				'nonceValue',
+				'postUrl',
+				'formId',
+				'formOption',
+			)
+		);
+
+		$isNonceValid = wp_verify_nonce( $data->get_payload_field( 'nonceValue' ), 'form-verification' );
+
+		return $mainFieldsSet && $requiredPayloadFields && $isNonceValid;
 	}
 
 	/**
