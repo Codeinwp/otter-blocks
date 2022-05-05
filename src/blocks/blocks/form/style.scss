@@ -11,7 +11,7 @@
 	--submitErrorColor: red;
 	--inputsGap: 10px;
 	--inputGap: 5px;
-	--labelFontSize: var(--bodyFontSize);
+	--labelFontSize: var(--bodyFontSize, 1.3rem);
 	--submitFontSize: var(--btnFs,var(--bodyFontSize));
 
 	.otter-form__container {

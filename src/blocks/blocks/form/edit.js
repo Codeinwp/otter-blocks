@@ -690,8 +690,8 @@ const Edit = ({
 	const blockRef = useRef( null );
 
 	useEffect( () => {
-		const px = x => x ? x + 'px' : null;
-		const per = x => x ? x + '%' : null;
+		const px = x => x !== undefined ? x + 'px' : null;
+		const per = x => x !== undefined ? x + '%' : null;
 		const padding = x => x ? x.top + ' ' + x.right + ' ' + x.bottom + ' ' + x.left : null;
 
 		/**
