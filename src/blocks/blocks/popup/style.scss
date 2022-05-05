@@ -47,8 +47,8 @@ $base-index: 9999 !default;
 		z-index: $base-index + 1;
 		background-color: var( --backgroundColor );
 		min-width: var( --minWidth );
+		max-width: var( --maxWidth );
 		padding: 20px;
-		max-width: 100%;
 
 		@media ( max-width: 600px ) {
 			min-width: 100%;
@@ -81,7 +81,6 @@ $base-index: 9999 !default;
 			height: auto !important;
 			display: flex;
 			align-items: center;
-			height: auto;
 			padding: 0 !important;
 			border: none;
 			cursor: pointer;
