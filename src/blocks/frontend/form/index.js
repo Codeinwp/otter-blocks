@@ -1,31 +1,25 @@
 /**
  * WordPress dependencies.
  */
-import { __ } from '@wordpress/i18n';
-
 import domReady from '@wordpress/dom-ready';
 
 /**
  * Internal dependencies.
  */
-import { addCaptchaOnPage } from './captcha.js';
-
-const TIME_UNTIL_REMOVE = 10_000;
+import {addCaptchaOnPage} from './captcha.js';
+import DisplayFormMessage from './message';
 
 /**
- * Send the date from the form to the server
+ * Get the fields with their value from the form.
  *
- * @param {HTMLDivElement}    form The element that contains all the inputs
- * @param {HTMLButtonElement} btn  The submit button
+ * @param {HTMLDivElement} form The form.
+ * @returns
  */
-const collectAndSendInputFormData = ( form, btn ) => {
-	const id = form?.id;
-	const payload = {};
+const extractFormFields = form => {
 
 	/** @type {Array.<HTMLDivElement>} */
 	const elemsWithError = [];
-
-	const formFieldsData = [ { label: __( 'Form submission from', 'otter-blocks' ), value: window.location.href } ];
+	const formFieldsData = [ { label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href } ];
 
 	const inputs = form?.querySelectorAll( '.otter-form__container .wp-block-themeisle-blocks-form-input' );
 	const textarea = form?.querySelectorAll( '.otter-form__container .wp-block-themeisle-blocks-form-textarea' );
@@ -51,64 +45,64 @@ const collectAndSendInputFormData = ( form, btn ) => {
 		}
 	});
 
+	return {formFieldsData, elemsWithError};
+};
 
-	const query = `.protection #${ form.id || '' }_nonce_field`;
-	const nonceFieldValue = form.querySelector( query )?.value;
+/**
+ * Get the nonce value from the form.
+ * @param {HTMLDivElement} form The form.
+ * @returns {string}
+ */
+function extractNonceValue( form ) {
+	const query = `.protection #${form.id || ''}_nonce_field`;
+	return form.querySelector( query )?.value;
+}
 
-	const msgAnchor = form.querySelector( '.wp-block-button' );
-	msgAnchor?.classList.add( 'has-submit-msg' );
+/**
+ * Send the date from the form to the server
+ *
+ * @param {HTMLDivElement}    form The element that contains all the inputs
+ * @param {HTMLButtonElement}  btn  The submit button
+ * @param {DisplayFormMessage} displayMsg The display message utility
+ */
+const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
+	const id = form?.id;
+	const payload = {};
+
+	// Get the data from the form fields.
+	const {formFieldsData, elemsWithError} = extractFormFields( form );
+	const nonceFieldValue = extractNonceValue( form );
+	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
+	const hasInvalidToken = id && window.themeisleGutenberg?.tokens[id].token;
+
 
 	const spinner = document.createElement( 'span' );
 	spinner.classList.add( 'spinner' );
 	btn.appendChild( spinner );
 
 	/**
-	 * Add the message to the anchor element then removed after a fixed time
-	 *
-	 * @param {HTMLDivElement} msg The message container
+	 * Validate the form inputs data.
 	 */
-	const addThenRemoveMsg = ( msg ) => {
+	elemsWithError.forEach( input => {
+		input?.reportValidity();
+	});
 
-		// Remove old messages
-		msgAnchor.querySelectorAll( '.otter-form-server-response' ).forEach( _msg => msgAnchor.removeChild( _msg ) );
+	if ( hasCaptcha && hasInvalidToken ) {
+		const msg = ! window.hasOwnProperty( 'grecaptcha' ) ?
+			'captcha-not-loaded' :
+			'check-captcha';
+		displayMsg.pullMsg(
+			msg,
+			'error'
+		).show();
+	}
 
-		// Add the new message to the page
-		msgAnchor.appendChild( msg );
-
-		// Delete it after a fixed time
-		setTimeout( () => {
-			if ( msg && msgAnchor === msg.parentNode ) {
-				msgAnchor.removeChild( msg );
-			}
-		}, TIME_UNTIL_REMOVE );
-	};
-
-	if ( 0 < elemsWithError.length || ( form?.classList?.contains( 'has-captcha' ) && id && ! window.themeisleGutenberg?.tokens[id].token ) ) {
-
-		/**
-		 * Validata the form inputs data.
-		 */
-		elemsWithError.forEach( input => {
-			input?.reportValidity();
-		});
-
-		if ( form?.classList?.contains( 'has-captcha' ) && id && ! window.themeisleGutenberg?.tokens[id].token ) {
-			const msg = document.createElement( 'div' );
-			msg.classList.add( 'otter-form-server-response' );
-			if ( ! window.hasOwnProperty( 'grecaptcha' ) ) {
-				msg.innerHTML = __( '⚠ Captcha is not loaded. Please check your browser plugins to allow the Google reCaptcha.', 'otter-blocks' );
-			} else {
-				msg.innerHTML = __( '⚠ Please check the captcha.', 'otter-blocks' );
-			}
-			msg.classList.add( 'o-warning' );
-			addThenRemoveMsg( msg );
-		}
-
+	if ( 0 < elemsWithError.length || ( hasCaptcha && hasInvalidToken ) ) {
 		btn.disabled = false;
 		btn.removeChild( spinner );
 	} else {
 		payload.formInputsData = formFieldsData;
-		if ( form?.classList?.contains( 'has-captcha' ) && id && window.themeisleGutenberg?.tokens?.[ id ].token ) {
+		if ( ! hasInvalidToken ) {
 			payload.token = window.themeisleGutenberg?.tokens?.[ id ].token;
 		}
 
@@ -142,8 +136,6 @@ const collectAndSendInputFormData = ( form, btn ) => {
 			payload.consent = form.querySelector( '.otter-form-consent input' )?.checked || false;
 		}
 
-		msgAnchor?.classList.add( 'loading' );
-
 		const formURlEndpoint = ( window?.themeisleGutenbergForm?.root || ( window.location.origin + '/wp-json/' ) ) + 'otter/v1/form/frontend';
 
 		fetch( formURlEndpoint, {
@@ -163,18 +155,14 @@ const collectAndSendInputFormData = ( form, btn ) => {
 			.then( ( response ) => {
 
 				/**
-			 * @type {import('./types.js').IFormResponse}
-			 */
+				 * @type {import('./types.js').IFormResponse}
+				 */
 				const res = response;
 
-				// Update submit message.
-				msgAnchor?.classList.remove( 'loading' );
-				const msg = document.createElement( 'div' );
-				msg.classList.add( 'o-form-server-response' );
-
 				if ( res?.success ) {
-					msg.innerHTML = res?.submitMessage ? res.submitMessage :  __( 'Success', 'otter-blocks' );
-					msg.classList.add( 'o-success' );
+					const msg = res?.submitMessage ? res.submitMessage :  'Success';
+					displayMsg.setMsg( msg ).show();
+
 					cleanInputs( form );
 
 					setTimeout( () => {
@@ -186,44 +174,36 @@ const collectAndSendInputFormData = ( form, btn ) => {
 						}
 					}, 1000 );
 				} else {
-					msg.classList.add( 'o-error' );
+					let msg = '';
 
 					// TODO: Write pattern to display a more useful error message.
 					if ( res?.provider && res?.error?.includes( 'invalid' ) || res?.error?.includes( 'fake' ) ) { // mailchimp
-						msg.classList.add( 'o-warning' );
-						msg.innerHTML = __( 'The email address is invalid!', 'otter-blocks' );
+						msg = 'invalid-email';
 					} else if ( res?.provider && res?.error?.includes( 'duplicate' ) || res?.error?.includes( 'already' ) ) { // sendinblue
-						msg.classList.add( 'info' );
-						msg.innerHTML = __( 'The email was already registered!', 'otter-blocks' );
+						msg = 'already-registered';
 					} else {
-						msg.innerHTML = __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' );
+						msg = 'try-again';
 					}
+
+					displayMsg.pullMsg( msg, 'error' ).show();
 
 					// eslint-disable-next-line no-console
 					console.error( res?.error, res?.reasons );
 				}
 
 				/**
-			 * Reset the form.
-			 */
-				addThenRemoveMsg( msg );
+				 * Reset the form.
+				 */
+
 				if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
 					window.themeisleGutenberg?.tokens?.[ id ].reset();
 				}
 				btn.disabled = false;
 				btn.removeChild( spinner );
 			})?.catch( ( error ) => {
-				msgAnchor?.classList.remove( 'loading' );
-
-				// eslint-disable-next-line no-console
 				console.error( error );
+				displayMsg.setMsg( 'try-again', 'error' ).show();
 
-				const msg = document.createElement( 'div' );
-				msg.classList.add( 'otter-form-server-response' );
-				msg.innerHTML = __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' );
-				msg.classList.add( 'error' );
-
-				addThenRemoveMsg( msg );
 				if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
 					window.themeisleGutenberg?.tokens?.[ id ].reset();
 				}
@@ -235,7 +215,7 @@ const collectAndSendInputFormData = ( form, btn ) => {
 
 /**
  * Reset all the input fields.
- * @param {HTMLFormElement} form
+ * @param {HTMLDivElement} form
  */
 const cleanInputs = ( form ) => {
 	const inputs = form?.querySelectorAll( '.otter-form__container .wp-block-themeisle-blocks-form-input' );
@@ -268,7 +248,7 @@ const renderConsentCheckbox = ( form ) => {
 	input.id = 'o-consent';
 
 	const label = document.createElement( 'label' );
-	label.innerHTML = __( 'I have read and agreed the privacy statement.', 'otter-blocks' );
+	label.innerHTML = window?.themeisleGutenbergForm?.messages.privacy || 'I have read and agreed the privacy statement.';
 	label.htmlFor = 'o-consent';
 
 	inputContainer.appendChild( input );
@@ -283,18 +263,18 @@ domReady( () => {
 
 	forms.forEach( ( form ) => {
 		if ( form.classList.contains( 'can-submit-and-subscribe' ) ) {
-			console.log( 'Consent' );
 			renderConsentCheckbox( form );
 		}
 
 		const sendBtn = form.querySelector( 'button' );
+		const displayMsg = new DisplayFormMessage( form );
 
 		if ( form.querySelector( 'button[type="submit"]' ) ) {
 			form?.addEventListener( 'submit', ( event ) => {
 				event.preventDefault();
 				if ( ! sendBtn.disabled ) {
 					sendBtn.disabled = true;
-					collectAndSendInputFormData( form, sendBtn );
+					collectAndSendInputFormData( form, sendBtn, displayMsg );
 				}
 			}, false );
 		} else {
@@ -304,7 +284,7 @@ domReady( () => {
 				event.preventDefault();
 				if ( ! sendBtn.disabled ) {
 					sendBtn.disabled = true;
-					collectAndSendInputFormData( form, sendBtn );
+					collectAndSendInputFormData( form, sendBtn, displayMsg );
 				}
 			}, false );
 		}

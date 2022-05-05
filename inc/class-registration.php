@@ -420,7 +420,16 @@ class Registration {
 				array(
 					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
 					'root' => esc_url_raw( rest_url() ),
-    				'nonce' => wp_create_nonce( 'wp_rest' )
+    				'nonce' => wp_create_nonce( 'wp_rest' ),
+					'messages' => array(
+						'submission' => __( 'Form submission from', 'otter-blocks' ),
+						'captcha-not-loaded' => __( 'Captcha is not loaded. Please check your browser plugins to allow the Google reCaptcha.', 'otter-blocks' ),
+						'check-captcha' => __( 'Please check the captcha.', 'otter-blocks' ),
+						'invalid-email' => __( 'The email address is invalid!', 'otter-blocks' ),
+						'already-registered' => __( 'The email was already registered!', 'otter-blocks' ),
+						'try-again' => __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' ),
+						'privacy' => __( 'I have read and agreed the privacy statement.', 'otter-blocks' ),
+					)
 				)
 			);
 		}
