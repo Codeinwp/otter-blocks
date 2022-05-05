@@ -38,32 +38,9 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		$re = '/<\s*o-dynamic[^>]*>(.*?)<\s*\/\s*o-dynamic>/';
+		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|\w+=["\'][^"\'<>]+["\']))*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
 
-		preg_match_all( $re, $content, $matches, PREG_SET_ORDER, 0 );
-
-		$tags = array_map(
-			function( $match ) {
-				return $match[0];
-			},
-			$matches 
-		);
-
-		$re_attrs = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|\w+=["\'][^"\'<>]+["\']))+/';
-
-		$changes = array();
-
-		foreach ( $tags as $tag ) {
-			preg_match_all( $re_attrs, $tag, $matches, PREG_SET_ORDER, 0 );
-			$matches = $matches[0];
-
-			$data            = $this->apply_data( $matches );
-			$changes[ $tag ] = $data;
-		}
-
-		$content = strtr( $content, $changes );
-
-		return $content;
+		return preg_replace_callback( $re, array( $this, 'apply_data' ), $content );
 	}
 
 	/**
@@ -75,7 +52,11 @@ class Dynamic_Content {
 	 */
 	public function apply_data( $data ) {
 		if ( ! isset( $data['type'] ) ) {
-			return true;
+			if ( isset( $data['default'] ) ) {
+				return $data['default'];
+			}
+
+			return $data[0];
 		}
 
 		if ( 'postTitle' === $data['type'] ) {
