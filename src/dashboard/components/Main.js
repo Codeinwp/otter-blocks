@@ -54,24 +54,18 @@ const Main = ({
 		switch ( currentTab ) {
 		case 'integrations':
 			return (
-				<Fragment>
-					<div className="otter-left">
-						<Integrations
-							status={ status }
-							updateOption={ updateOption }
-							googleMapsAPI={ googleMapsAPI }
-							setGoogleMapsAPI={ setGoogleMapsAPI }
-							googleCaptchaAPISiteKey={ googleCaptchaAPISiteKey }
-							setGoogleCaptchaAPISiteKey={ setGoogleCaptchaAPISiteKey }
-							googleCaptchaAPISecretKey={ googleCaptchaAPISecretKey }
-							setGoogleCaptchaAPISecretKey={ setGoogleCaptchaAPISecretKey }
-						/>
-					</div>
-
-					<div className="otter-right">
-						<Sidebar setTab={ setTab }/>
-					</div>
-				</Fragment>
+				<div className="otter-left">
+					<Integrations
+						status={ status }
+						updateOption={ updateOption }
+						googleMapsAPI={ googleMapsAPI }
+						setGoogleMapsAPI={ setGoogleMapsAPI }
+						googleCaptchaAPISiteKey={ googleCaptchaAPISiteKey }
+						setGoogleCaptchaAPISiteKey={ setGoogleCaptchaAPISiteKey }
+						googleCaptchaAPISecretKey={ googleCaptchaAPISecretKey }
+						setGoogleCaptchaAPISecretKey={ setGoogleCaptchaAPISecretKey }
+					/>
+				</div>
 			);
 		case 'upsell':
 			return (
@@ -79,19 +73,13 @@ const Main = ({
 			);
 		default:
 			return (
-				<Fragment>
-					<div className="otter-left">
-						<Dashboard
-							status={ status }
-							getOption={ getOption }
-							updateOption={ updateOption }
-						/>
-					</div>
-
-					<div className="otter-right">
-						<Sidebar setTab={ setTab }/>
-					</div>
-				</Fragment>
+				<div className="otter-left">
+					<Dashboard
+						status={ status }
+						getOption={ getOption }
+						updateOption={ updateOption }
+					/>
+				</div>
 			);
 		}
 	};
@@ -100,6 +88,12 @@ const Main = ({
 		<Fragment>
 			<div className={ `otter-main is-${ currentTab}`}>
 				<Content />
+
+				{ 'upsell' !== currentTab && (
+					<div className="otter-right">
+						<Sidebar setTab={ setTab }/>
+					</div>
+				) }
 			</div>
 		</Fragment>
 	);
