@@ -17,12 +17,16 @@ const options = [
 		isDisabled: true
 	},
 	{
-		label: __( 'ID', 'otter-blocks' ),
+		label: __( 'Post ID', 'otter-blocks' ),
 		value: 'postID'
 	},
 	{
-		label: __( 'Title', 'otter-blocks' ),
+		label: __( 'Post Title', 'otter-blocks' ),
 		value: 'postTitle'
+	},
+	{
+		label: __( 'Post Excerpt', 'otter-blocks' ),
+		value: 'postExcerpt'
 	}
 ];
 

@@ -38,7 +38,7 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|\w+=["\'][^"\'<>]+["\']))*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
+		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_data' ), $content );
 	}
@@ -51,21 +51,71 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function apply_data( $data ) {
-		if ( ! isset( $data['type'] ) ) {
-			if ( isset( $data['default'] ) ) {
-				return $data['default'];
-			}
+		$value = $this->get_data( $data );
 
-			return $data[0];
+		if ( isset( $data['before'] ) || isset( $data['after'] ) ) {
+			return $this->apply_formatting( $value, $data );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Apply formatting.
+	 *
+	 * @param string $value Dynamic value.
+	 * @param array $data Dynamic request.
+	 *
+	 * @return string
+	 */
+	public function apply_formatting( $value, $data ) {
+		if ( isset( $data['before'] ) ) {
+			$value = esc_html( $data['before'] ) . $value;
+		}
+
+		if ( isset( $data['after'] ) ) {
+			$value = $value . esc_html( $data['after'] );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Get dynamic data.
+	 *
+	 * @param array $data Dynamic request.
+	 *
+	 * @return string
+	 */
+	public function get_data( $data ) {
+		if ( ! isset( $data['type'] ) && isset( $data['default'] ) ) {
+			return $data['default'];
+		}
+
+		if ( 'postID' === $data['type'] ) {
+			return get_the_id();
 		}
 
 		if ( 'postTitle' === $data['type'] ) {
 			return get_the_title();
 		}
 
-		if ( 'postID' === $data['type'] ) {
-			return get_the_id();
+		if ( 'postExcerpt' === $data['type'] ) {
+			$post    = get_post();
+			$excerpt = $post->post_excerpt;
+
+			if ( empty( $excerpt ) ) {
+				return $data['default'];
+			}
+
+			if ( isset( $data['length'] ) && ! empty( $data['length'] ) ) {
+				$excerpt = substr( $excerpt, 0, intval( $data['length'] ) ) . '…';
+			}
+
+			return sanitize_text_field( $excerpt );
 		}
+
+		return $data[0];
 	}
 
 	/**

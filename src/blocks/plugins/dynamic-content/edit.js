@@ -8,138 +8,22 @@ import { globe } from '@wordpress/icons';
  */
 import { __ } from '@wordpress/i18n';
 
-import { isEmpty } from 'lodash';
-
 import { RichTextToolbarButton } from '@wordpress/block-editor';
 
-import {
-	BaseControl,
-	Button,
-	Modal,
-	PanelBody,
-	Popover
-} from '@wordpress/components';
+import { Modal } from '@wordpress/components';
 
 import {
 	Fragment,
 	useState
 } from '@wordpress/element';
 
-import { applyFormat, toggleFormat } from '@wordpress/rich-text';
+import { toggleFormat } from '@wordpress/rich-text';
 
 /**
  * Internal dependencies.
  */
-import './autocompleter.js';
-
-const name = 'themeisle-blocks/dynamic-value';
-
-const options = {
-	'posts': {
-		label: __( 'Posts', 'otter-blocks' ),
-		options: [
-			{
-				label: __( 'Post ID', 'otter-blocks' ),
-				value: 'postID'
-			},
-			{
-				label: __( 'Post Title', 'otter-blocks' ),
-				value: 'postTitle'
-			}
-		]
-	}
-};
-
-const Fields = ({
-	attributes,
-	changeAttributes,
-	onChange
-}) => {
-	return (
-		<Fragment>
-			<PanelBody>
-				<BaseControl
-					label={ __( 'Data Type', 'otter-blocks' ) }
-					id="o-dynamic-select"
-				>
-					<select
-						value={ attributes.type || '' }
-						onChange={ e => changeAttributes({
-							type: e.target.value
-						}) }
-						id="o-dynamic-select"
-						className="components-select-control__input"
-					>
-						<option value="none">{ __( 'Select an option', 'otter-blocks' ) }</option>
-
-						{ Object.keys( options ).map( i => {
-							return (
-								<optgroup key={ i } label={ options[i].label }>
-									{ options[i].options.map( o => <option key={ o.value } value={ o.value }>{ o.label }</option> ) }
-								</optgroup>
-							);
-						}) }
-					</select>
-				</BaseControl>
-			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Advanced', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-			</PanelBody>
-
-			<PanelBody>
-				<Button
-					isPrimary
-					variant="primary"
-					disabled={ isEmpty( attributes ) }
-					onClick={ onChange }
-				>
-					{ __( 'Apply', 'otter-blocks' ) }
-				</Button>
-			</PanelBody>
-		</Fragment>
-	);
-};
-
-const InlineControls = ({
-	value,
-	activeAttributes,
-	onChange
-}) => {
-	const [ attributes, setAttributes ] = useState({ ...activeAttributes });
-
-	const changeAttributes = ( obj ) => {
-		const attrs = { ...attributes };
-
-		setAttributes({
-			...attrs,
-			...obj
-		});
-	};
-
-	return (
-		<Popover
-			position="bottom center"
-			focusOnMount={ false }
-			className="o-dynamic-popover"
-		>
-			<Fields
-				attributes={ attributes }
-				changeAttributes={ changeAttributes }
-				onChange={ () => {
-					onChange(
-						applyFormat( value, {
-							type: name,
-							attributes
-						})
-					);
-				} }
-			/>
-		</Popover>
-	);
-};
+import Fields from './components/fields.js';
+import InlineControls from './components/inline-controls';
 
 const Edit = ({
 	isActive,
@@ -151,21 +35,26 @@ const Edit = ({
 
 	const [ attributes, setAttributes ] = useState({});
 
-	const changeAttributes = ( obj ) => {
-		const attrs = { ...attributes };
+	const changeAttributes = obj => {
+		let attrs = { ...attributes };
 
-		setAttributes({
-			...attrs,
-			...obj
+		Object.keys( obj ).forEach( o => {
+			attrs[ o ] = obj[ o ];
 		});
+
+		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v ) ) );
+
+		setAttributes({ ...attrs });
 	};
 
 	const onApply = () => {
+		const attrs = Object.fromEntries( Object.entries( attributes ).filter( ([ _, v ]) => ( null !== v && '' !== v ) ) );
+
 		onChange(
 			toggleFormat( value,
 				{
-					type: name,
-					attributes
+					type: 'themeisle-blocks/dynamic-value',
+					attributes: attrs
 				}
 			)
 		);
@@ -190,6 +79,7 @@ const Edit = ({
 					onRequestClose={ () => setOpen( false ) }
 				>
 					<Fields
+						activeAttributes={ activeAttributes }
 						attributes={ attributes }
 						changeAttributes={ changeAttributes }
 						onChange={ onApply }
