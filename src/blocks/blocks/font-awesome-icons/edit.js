@@ -56,11 +56,11 @@ const Edit = ({
 	const styles = css`
 		--align: ${ attributes.align };
 		--borderColor: ${ attributes.borderColor };
-		${ attributes.borderSize && `--borderSize: ${ attributes.borderSize }px;` }
-		${ attributes.borderRadius && `--borderRadius: ${ attributes.borderRadius }%;` }
-		${ attributes.margin && `--margin: ${ getValue( 'margin' ) }px;` }
-		${ attributes.padding && `--padding: ${ getValue( 'padding' ) }px;` }
-		${ attributes.fontSize && `--fontSize: ${ getValue( 'fontSize' ) }px;` }
+		${ attributes.borderSize !== undefined && `--borderSize: ${ attributes.borderSize }px;` }
+		${ attributes.borderRadius !== undefined && `--borderRadius: ${ attributes.borderRadius }%;` }
+		${ attributes.margin !== undefined && `--margin: ${ getValue( 'margin' ) }px;` }
+		${ attributes.padding !== undefined && `--padding: ${ getValue( 'padding' ) }px;` }
+		${ attributes.fontSize !== undefined && `--fontSize: ${ getValue( 'fontSize' ) }px;` }
 
 		.wp-block-themeisle-blocks-font-awesome-icons-container {
 			color: ${ getValue( 'textColor' ) };
