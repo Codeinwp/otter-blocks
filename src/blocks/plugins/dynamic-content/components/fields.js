@@ -11,11 +11,15 @@ import {
 import {
 	BaseControl,
 	Button,
+	ExternalLink,
+	SelectControl,
 	TextControl,
 	PanelBody
 } from '@wordpress/components';
 
 import { Fragment } from '@wordpress/element';
+
+import moment from 'moment';
 
 const options = {
 	'posts': {
@@ -32,9 +36,25 @@ const options = {
 			{
 				label: __( 'Post Excerpt', 'otter-blocks' ),
 				value: 'postExcerpt'
+			},
+			{
+				label: __( 'Post Date', 'otter-blocks' ),
+				value: 'postDate'
 			}
 		]
 	}
+};
+
+const hasSettingsPanel = [
+	'postExcerpt',
+	'postDate'
+];
+
+const dateFormats = {
+	'F j, Y': moment().format( 'MMMM d, Y' ),
+	'Y-m-d': moment().format( 'Y-m-d' ),
+	'm/d/Y': moment().format( 'm/d/Y' ),
+	'd/m/Y': moment().format( 'd/m/Y' )
 };
 
 const Fields = ({
@@ -71,17 +91,81 @@ const Fields = ({
 				</BaseControl>
 			</PanelBody>
 
-			{ 'postExcerpt' === attributes.type && (
+			{ hasSettingsPanel.includes( attributes.type ) && (
 				<PanelBody
 					title={ __( 'Settings', 'otter-blocks' ) }
 					initialOpen={ false }
 				>
-					<TextControl
-						label={ __( 'Excerpt Length', 'otter-blocks' ) }
-						type="number"
-						value={ attributes.length || '' }
-						onChange={ length => changeAttributes({ length }) }
-					/>
+					{ 'postExcerpt' === attributes.type && (
+						<TextControl
+							label={ __( 'Excerpt Length', 'otter-blocks' ) }
+							type="number"
+							value={ attributes.length || '' }
+							onChange={ length => changeAttributes({ length }) }
+						/>
+					) }
+
+					{ 'postDate' === attributes.type && (
+						<Fragment>
+							<SelectControl
+								label={ __( 'Type', 'otter-blocks' ) }
+								value={ attributes.dateType || 'published' }
+								options={ [
+									{
+										label: __( 'Post Published', 'otter-blocks' ),
+										value: 'published'
+									},
+									{
+										label: __( 'Post Modified', 'otter-blocks' ),
+										value: 'modified'
+									}
+								] }
+								onChange={ dateType => changeAttributes({ dateType }) }
+							/>
+
+							<SelectControl
+								label={ __( 'Format', 'otter-blocks' ) }
+								value={ attributes.dateFormat || 'default' }
+								options={ [
+									{
+										label: __( 'Default', 'otter-blocks' ),
+										value: 'default'
+									},
+									{
+										label: dateFormats[ 'F j, Y'],
+										value: 'F j, Y'
+									},
+									{
+										label: dateFormats[ 'Y-m-d'],
+										value: 'Y-m-d'
+									},
+									{
+										label: dateFormats[ 'm/d/Y'],
+										value: 'm/d/Y'
+									},
+									{
+										label: dateFormats[ 'd/m/Y'],
+										value: 'd/m/Y'
+									},
+									{
+										label: __( 'Custom', 'otter-blocks' ),
+										value: 'custom'
+									}
+								] }
+								onChange={ dateFormat => changeAttributes({ dateFormat }) }
+							/>
+
+							{ 'custom' === attributes.dateFormat && (
+								<TextControl
+									label={ __( 'Custom Format', 'otter-blocks' ) }
+									instructions={ <ExternalLink target="_blank" href="https://wordpress.org/support/article/formatting-date-and-time/">{ __( 'Formatting Date and Time in WordPress', 'otter-blocks' ) }</ExternalLink> }
+									type="text"
+									value={ attributes.dateCustom || '' }
+									onChange={ dateCustom => changeAttributes({ dateCustom }) }
+								/>
+							) }
+						</Fragment>
+					) }
 				</PanelBody>
 			) }
 

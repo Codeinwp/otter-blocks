@@ -38,7 +38,7 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
+		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_data' ), $content );
 	}
@@ -101,21 +101,63 @@ class Dynamic_Content {
 		}
 
 		if ( 'postExcerpt' === $data['type'] ) {
-			$post    = get_post();
-			$excerpt = $post->post_excerpt; // Here we don't use get_the_excerpt() function as it causes an infinite loop.
+			return $this->get_excerpt( $data );
+		}
 
-			if ( empty( $excerpt ) ) {
-				return $data['default'];
-			}
-
-			if ( isset( $data['length'] ) && ! empty( $data['length'] ) ) {
-				$excerpt = substr( $excerpt, 0, intval( $data['length'] ) ) . '…';
-			}
-
-			return sanitize_text_field( $excerpt );
+		if ( 'postDate' === $data['type'] ) {
+			return $this->get_date( $data );
 		}
 
 		return $data[0];
+	}
+
+	/**
+	 * Get Excerpt.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_excerpt( $data ) {
+		$post    = get_post();
+		$excerpt = $post->post_excerpt; // Here we don't use get_the_excerpt() function as it causes an infinite loop.
+
+		if ( empty( $excerpt ) ) {
+			return $data['default'];
+		}
+
+		if ( isset( $data['length'] ) && ! empty( $data['length'] ) ) {
+			$excerpt = substr( $excerpt, 0, intval( $data['length'] ) ) . '…';
+		}
+
+		return sanitize_text_field( $excerpt );
+	}
+
+	/**
+	 * Get Date.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_date( $data ) {
+		$format = '';
+
+		if ( isset( $data['dateFormat'] ) && 'default' !== $data['dateFormat'] && 'custom' !== $data['dateFormat'] ) {
+			$format = $data['dateFormat'];
+		}
+
+		if ( isset( $data['dateCustom'] ) && isset( $data['dateFormat'] ) && 'custom' === $data['dateFormat'] ) {
+			$format = $data['dateCustom'];
+		}
+
+		if ( isset( $data['dateType'] ) && 'modified' === $data['dateType'] ) {
+			$date = get_the_modified_date( $format );
+		} else {
+			$date = get_the_date( $format );
+		}
+
+		return $date;
 	}
 
 	/**

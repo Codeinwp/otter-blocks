@@ -27,6 +27,10 @@ const options = [
 	{
 		label: __( 'Post Excerpt', 'otter-blocks' ),
 		value: 'postExcerpt'
+	},
+	{
+		label: __( 'Post Date', 'otter-blocks' ),
+		value: 'postDate'
 	}
 ];
 
