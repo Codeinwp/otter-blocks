@@ -64,7 +64,7 @@ class Dynamic_Content {
 	 * Apply formatting.
 	 *
 	 * @param string $value Dynamic value.
-	 * @param array $data Dynamic request.
+	 * @param array  $data Dynamic request.
 	 *
 	 * @return string
 	 */
