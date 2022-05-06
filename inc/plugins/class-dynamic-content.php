@@ -102,7 +102,7 @@ class Dynamic_Content {
 
 		if ( 'postExcerpt' === $data['type'] ) {
 			$post    = get_post();
-			$excerpt = $post->post_excerpt;
+			$excerpt = $post->post_excerpt; // Here we don't use get_the_excerpt() function as it causes an infinite loop.
 
 			if ( empty( $excerpt ) ) {
 				return $data['default'];
