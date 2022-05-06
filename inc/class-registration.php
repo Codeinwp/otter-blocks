@@ -274,7 +274,7 @@ class Registration {
 		if ( is_singular() ) {
 			$this->enqueue_dependencies();
 		} else {
-			if ( 0 < count( $wp_query->posts ) ) {
+			if ( ! is_null( $wp_query->posts ) && 0 < count( $wp_query->posts ) ) {
 				$posts = wp_list_pluck( $wp_query->posts, 'ID' );
 
 				foreach ( $posts as $post ) {
