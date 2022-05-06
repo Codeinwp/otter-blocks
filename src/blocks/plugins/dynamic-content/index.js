@@ -23,7 +23,10 @@ registerFormatType( 'themeisle-blocks/dynamic-value', {
 		length: 'data-length',
 		dateType: 'data-date-type',
 		dateFormat: 'data-date-format',
-		dateCustom: 'data-date-custom'
+		dateCustom: 'data-date-custom',
+		timeType: 'data-time-type',
+		timeFormat: 'data-time-format',
+		timeCustom: 'data-time-custom'
 	},
 	edit
 });

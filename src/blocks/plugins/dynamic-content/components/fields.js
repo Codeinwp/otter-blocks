@@ -40,6 +40,10 @@ const options = {
 			{
 				label: __( 'Post Date', 'otter-blocks' ),
 				value: 'postDate'
+			},
+			{
+				label: __( 'Post Time', 'otter-blocks' ),
+				value: 'postTime'
 			}
 		]
 	}
@@ -47,7 +51,8 @@ const options = {
 
 const hasSettingsPanel = [
 	'postExcerpt',
-	'postDate'
+	'postDate',
+	'postTime'
 ];
 
 const dateFormats = {
@@ -55,6 +60,12 @@ const dateFormats = {
 	'Y-m-d': moment().format( 'Y-m-d' ),
 	'm/d/Y': moment().format( 'm/d/Y' ),
 	'd/m/Y': moment().format( 'd/m/Y' )
+};
+
+const timeFormats = {
+	'g:i a': moment().format( 'h:m a' ),
+	'g:i A': moment().format( 'h:m A' ),
+	'H:i': moment().format( 'HH:m' )
 };
 
 const Fields = ({
@@ -130,22 +141,10 @@ const Fields = ({
 										label: __( 'Default', 'otter-blocks' ),
 										value: 'default'
 									},
-									{
-										label: dateFormats[ 'F j, Y'],
-										value: 'F j, Y'
-									},
-									{
-										label: dateFormats[ 'Y-m-d'],
-										value: 'Y-m-d'
-									},
-									{
-										label: dateFormats[ 'm/d/Y'],
-										value: 'm/d/Y'
-									},
-									{
-										label: dateFormats[ 'd/m/Y'],
-										value: 'd/m/Y'
-									},
+									...Object.keys( dateFormats ).map( key => ({
+										label: dateFormats[ key ],
+										value: key
+									}) ),
 									{
 										label: __( 'Custom', 'otter-blocks' ),
 										value: 'custom'
@@ -161,6 +160,56 @@ const Fields = ({
 									type="text"
 									value={ attributes.dateCustom || '' }
 									onChange={ dateCustom => changeAttributes({ dateCustom }) }
+								/>
+							) }
+						</Fragment>
+					) }
+
+					{ 'postTime' === attributes.type && (
+						<Fragment>
+							<SelectControl
+								label={ __( 'Type', 'otter-blocks' ) }
+								value={ attributes.timeType || 'published' }
+								options={ [
+									{
+										label: __( 'Post Published', 'otter-blocks' ),
+										value: 'published'
+									},
+									{
+										label: __( 'Post Modified', 'otter-blocks' ),
+										value: 'modified'
+									}
+								] }
+								onChange={ timeType => changeAttributes({ timeType }) }
+							/>
+
+							<SelectControl
+								label={ __( 'Format', 'otter-blocks' ) }
+								value={ attributes.timeFormat || 'default' }
+								options={ [
+									{
+										label: __( 'Default', 'otter-blocks' ),
+										value: 'default'
+									},
+									...Object.keys( timeFormats ).map( key => ({
+										label: timeFormats[ key ],
+										value: key
+									}) ),
+									{
+										label: __( 'Custom', 'otter-blocks' ),
+										value: 'custom'
+									}
+								] }
+								onChange={ timeFormat => changeAttributes({ timeFormat }) }
+							/>
+
+							{ 'custom' === attributes.timeFormat && (
+								<TextControl
+									label={ __( 'Custom Format', 'otter-blocks' ) }
+									instructions={ <ExternalLink target="_blank" href="https://wordpress.org/support/article/formatting-date-and-time/">{ __( 'Formatting Date and Time in WordPress', 'otter-blocks' ) }</ExternalLink> }
+									type="text"
+									value={ attributes.timeCustom || '' }
+									onChange={ timeCustom => changeAttributes({ timeCustom }) }
 								/>
 							) }
 						</Fragment>

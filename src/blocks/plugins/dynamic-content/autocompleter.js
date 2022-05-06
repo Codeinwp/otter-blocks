@@ -31,6 +31,10 @@ const options = [
 	{
 		label: __( 'Post Date', 'otter-blocks' ),
 		value: 'postDate'
+	},
+	{
+		label: __( 'Post Time', 'otter-blocks' ),
+		value: 'postTime'
 	}
 ];
 

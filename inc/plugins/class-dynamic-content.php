@@ -38,7 +38,7 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
+		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_data' ), $content );
 	}
@@ -108,6 +108,10 @@ class Dynamic_Content {
 			return $this->get_date( $data );
 		}
 
+		if ( 'postTime' === $data['type'] ) {
+			return $this->get_time( $data );
+		}
+
 		return $data[0];
 	}
 
@@ -158,6 +162,33 @@ class Dynamic_Content {
 		}
 
 		return $date;
+	}
+
+	/**
+	 * Get Time.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_time( $data ) {
+		$format = '';
+
+		if ( isset( $data['timeFormat'] ) && 'default' !== $data['timeFormat'] && 'custom' !== $data['timeFormat'] ) {
+			$format = $data['timeFormat'];
+		}
+
+		if ( isset( $data['timeCustom'] ) && isset( $data['timeFormat'] ) && 'custom' === $data['timeFormat'] ) {
+			$format = $data['timeCustom'];
+		}
+
+		if ( isset( $data['timeType'] ) && 'modified' === $data['timeType'] ) {
+			$time = get_the_modified_time( $format );
+		} else {
+			$time = get_the_time( $format );
+		}
+
+		return $time;
 	}
 
 	/**
