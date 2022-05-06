@@ -61,7 +61,8 @@ const Fields = ({
 	activeAttributes,
 	attributes,
 	changeAttributes,
-	onChange
+	onChange,
+	changeType
 }) => {
 	return (
 		<Fragment>
@@ -72,9 +73,7 @@ const Fields = ({
 				>
 					<select
 						value={ attributes.type || '' }
-						onChange={ e => changeAttributes({
-							type: e.target.value
-						}) }
+						onChange={ e => changeType( e.target.value ) }
 						id="o-dynamic-select"
 						className="components-select-control__input"
 					>

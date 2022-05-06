@@ -23,7 +23,7 @@ import { toggleFormat } from '@wordpress/rich-text';
  * Internal dependencies.
  */
 import Fields from './components/fields.js';
-import InlineControls from './components/inline-controls';
+import InlineControls from './components/inline-controls.js';
 
 const Edit = ({
 	isActive,
@@ -45,6 +45,10 @@ const Edit = ({
 		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v ) ) );
 
 		setAttributes({ ...attrs });
+	};
+
+	const changeType = type => {
+		setAttributes({ type });
 	};
 
 	const onApply = () => {
@@ -82,6 +86,7 @@ const Edit = ({
 						activeAttributes={ activeAttributes }
 						attributes={ attributes }
 						changeAttributes={ changeAttributes }
+						changeType={ changeType }
 						onChange={ onApply }
 					/>
 				</Modal>

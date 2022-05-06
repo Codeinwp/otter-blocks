@@ -35,6 +35,10 @@ const InlineControls = ({
 		setAttributes({ ...attrs });
 	};
 
+	const changeType = type => {
+		setAttributes({ type });
+	};
+
 	return (
 		<Popover
 			position="bottom center"
@@ -45,6 +49,7 @@ const InlineControls = ({
 				activeAttributes={ activeAttributes }
 				attributes={ attributes }
 				changeAttributes={ changeAttributes }
+				changeType={ changeType }
 				onChange={ () => {
 					const attrs = Object.fromEntries( Object.entries( attributes ).filter( ([ _, v ]) => ( null !== v && '' !== v ) ) );
 
