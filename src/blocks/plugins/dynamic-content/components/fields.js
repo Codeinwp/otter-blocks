@@ -54,6 +54,19 @@ const options = {
 				value: 'postMeta'
 			}
 		]
+	},
+	'site': {
+		label: __( 'Site', 'otter-blocks' ),
+		options: [
+			{
+				label: __( 'Site Title', 'otter-blocks' ),
+				value: 'siteTitle'
+			},
+			{
+				label: __( 'Site Tagline', 'otter-blocks' ),
+				value: 'siteTagline'
+			}
+		]
 	}
 };
 

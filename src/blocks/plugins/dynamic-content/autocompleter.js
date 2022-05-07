@@ -43,6 +43,19 @@ const options = [
 	{
 		label: __( 'Post Custom Field', 'otter-blocks' ),
 		value: 'postMeta'
+	},
+	{
+		label: __( 'Site', 'otter-blocks' ),
+		value: 'site',
+		isDisabled: true
+	},
+	{
+		label: __( 'Site Title', 'otter-blocks' ),
+		value: 'siteTitle'
+	},
+	{
+		label: __( 'Site Tagline', 'otter-blocks' ),
+		value: 'siteTagline'
 	}
 ];
 

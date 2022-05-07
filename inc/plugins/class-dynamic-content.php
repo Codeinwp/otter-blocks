@@ -120,6 +120,14 @@ class Dynamic_Content {
 			return $this->get_post_meta( $data );
 		}
 
+		if ( 'siteTitle' === $data['type'] ) {
+			return get_bloginfo( 'name' );
+		}
+
+		if ( 'siteTagline' === $data['type'] ) {
+			return get_bloginfo( 'description' );
+		}
+
 		return $data[0];
 	}
 
