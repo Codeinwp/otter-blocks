@@ -44,6 +44,14 @@ const options = {
 			{
 				label: __( 'Post Time', 'otter-blocks' ),
 				value: 'postTime'
+			},
+			{
+				label: __( 'Post Terms', 'otter-blocks' ),
+				value: 'postTerms'
+			},
+			{
+				label: __( 'Post Custom Field', 'otter-blocks' ),
+				value: 'postMeta'
 			}
 		]
 	}
@@ -52,7 +60,9 @@ const options = {
 const hasSettingsPanel = [
 	'postExcerpt',
 	'postDate',
-	'postTime'
+	'postTime',
+	'postTerms',
+	'postMeta'
 ];
 
 const dateFormats = {
@@ -213,6 +223,42 @@ const Fields = ({
 								/>
 							) }
 						</Fragment>
+					) }
+
+					{ 'postTerms' === attributes.type && (
+						<Fragment>
+							<SelectControl
+								label={ __( 'Type', 'otter-blocks' ) }
+								value={ attributes.termType || 'categories' }
+								options={ [
+									{
+										label: __( 'Categories', 'otter-blocks' ),
+										value: 'categories'
+									},
+									{
+										label: __( 'Tags', 'otter-blocks' ),
+										value: 'tags'
+									}
+								] }
+								onChange={ termType => changeAttributes({ termType }) }
+							/>
+
+							<TextControl
+								label={ __( 'Separator', 'otter-blocks' ) }
+								type="text"
+								value={ attributes.termSeparator || ', ' }
+								onChange={ termSeparator => changeAttributes({ termSeparator }) }
+							/>
+						</Fragment>
+					) }
+
+					{ 'postMeta' === attributes.type && (
+						<TextControl
+							label={ __( 'Meta Key', 'otter-blocks' ) }
+							type="text"
+							value={ attributes.metaKey || '' }
+							onChange={ metaKey => changeAttributes({ metaKey }) }
+						/>
 					) }
 				</PanelBody>
 			) }

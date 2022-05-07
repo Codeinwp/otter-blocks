@@ -35,6 +35,14 @@ const options = [
 	{
 		label: __( 'Post Time', 'otter-blocks' ),
 		value: 'postTime'
+	},
+	{
+		label: __( 'Post Terms', 'otter-blocks' ),
+		value: 'postTerms'
+	},
+	{
+		label: __( 'Post Custom Field', 'otter-blocks' ),
+		value: 'postMeta'
 	}
 ];
 

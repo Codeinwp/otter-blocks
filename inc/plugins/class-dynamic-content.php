@@ -38,7 +38,7 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
+		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|data-term-type=["\'](?P<termType>[^"\'<>]+)["\']|data-term-separator=["\'](?P<termSeparator>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_data' ), $content );
 	}
@@ -89,7 +89,7 @@ class Dynamic_Content {
 	 */
 	public function get_data( $data ) {
 		if ( ! isset( $data['type'] ) && isset( $data['default'] ) ) {
-			return $data['default'];
+			return esc_html( $data['default'] );
 		}
 
 		if ( 'postID' === $data['type'] ) {
@@ -110,6 +110,14 @@ class Dynamic_Content {
 
 		if ( 'postTime' === $data['type'] ) {
 			return $this->get_time( $data );
+		}
+
+		if ( 'postTerms' === $data['type'] ) {
+			return $this->get_terms( $data );
+		}
+
+		if ( 'postMeta' === $data['type'] ) {
+			return $this->get_post_meta( $data );
 		}
 
 		return $data[0];
@@ -148,11 +156,11 @@ class Dynamic_Content {
 		$format = '';
 
 		if ( isset( $data['dateFormat'] ) && 'default' !== $data['dateFormat'] && 'custom' !== $data['dateFormat'] ) {
-			$format = $data['dateFormat'];
+			$format = esc_html( $data['dateFormat'] );
 		}
 
 		if ( isset( $data['dateCustom'] ) && isset( $data['dateFormat'] ) && 'custom' === $data['dateFormat'] ) {
-			$format = $data['dateCustom'];
+			$format = esc_html( $data['dateCustom'] );
 		}
 
 		if ( isset( $data['dateType'] ) && 'modified' === $data['dateType'] ) {
@@ -175,11 +183,11 @@ class Dynamic_Content {
 		$format = '';
 
 		if ( isset( $data['timeFormat'] ) && 'default' !== $data['timeFormat'] && 'custom' !== $data['timeFormat'] ) {
-			$format = $data['timeFormat'];
+			$format = esc_html( $data['timeFormat'] );
 		}
 
 		if ( isset( $data['timeCustom'] ) && isset( $data['timeFormat'] ) && 'custom' === $data['timeFormat'] ) {
-			$format = $data['timeCustom'];
+			$format = esc_html( $data['timeCustom'] );
 		}
 
 		if ( isset( $data['timeType'] ) && 'modified' === $data['timeType'] ) {
@@ -189,6 +197,49 @@ class Dynamic_Content {
 		}
 
 		return $time;
+	}
+
+	/**
+	 * Get Terms.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_terms( $data ) {
+		$terms     = '';
+		$separator = ', ';
+
+		if ( isset( $data['termSeparator'] ) && ! empty( $data['termSeparator'] ) ) {
+			$separator = esc_html( $data['termSeparator'] );
+		}
+
+		if ( isset( $data['termType'] ) && 'tags' === $data['termType'] ) {
+			$terms = get_the_tag_list( '', $separator );
+		} else {
+			$terms = get_the_category_list( $separator );
+		}
+
+		return $terms;
+	}
+
+	/**
+	 * Get Terms.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_post_meta( $data ) {
+		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
+		$id      = get_the_ID();
+		$meta    = get_post_meta( $id, esc_html( $data['metaKey'] ), true );
+
+		if ( empty( $meta ) || ! is_string( $meta ) ) {
+			$meta = $default;
+		}
+
+		return esc_html( $meta );
 	}
 
 	/**

@@ -26,7 +26,10 @@ registerFormatType( 'themeisle-blocks/dynamic-value', {
 		dateCustom: 'data-date-custom',
 		timeType: 'data-time-type',
 		timeFormat: 'data-time-format',
-		timeCustom: 'data-time-custom'
+		timeCustom: 'data-time-custom',
+		termType: 'data-term-type',
+		termSeparator: 'data-term-separator',
+		metaKey: 'data-meta-key'
 	},
 	edit
 });
