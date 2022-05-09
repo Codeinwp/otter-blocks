@@ -67,6 +67,23 @@ const options = {
 				value: 'siteTagline'
 			}
 		]
+	},
+	'author': {
+		label: __( 'Author', 'otter-blocks' ),
+		options: [
+			{
+				label: __( 'Author Name', 'otter-blocks' ),
+				value: 'authorName'
+			},
+			{
+				label: __( 'Author Description', 'otter-blocks' ),
+				value: 'authorDescription'
+			},
+			{
+				label: __( 'Author Meta', 'otter-blocks' ),
+				value: 'authorMeta'
+			}
+		]
 	}
 };
 
@@ -75,7 +92,8 @@ const hasSettingsPanel = [
 	'postDate',
 	'postTime',
 	'postTerms',
-	'postMeta'
+	'postMeta',
+	'authorMeta'
 ];
 
 const dateFormats = {
@@ -265,7 +283,7 @@ const Fields = ({
 						</Fragment>
 					) }
 
-					{ 'postMeta' === attributes.type && (
+					{ ( 'postMeta' === attributes.type || 'authorMeta' === attributes.type ) && (
 						<TextControl
 							label={ __( 'Meta Key', 'otter-blocks' ) }
 							type="text"

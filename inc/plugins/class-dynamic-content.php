@@ -128,6 +128,18 @@ class Dynamic_Content {
 			return get_bloginfo( 'description' );
 		}
 
+		if ( 'authorName' === $data['type'] ) {
+			return get_the_author_meta( 'display_name' );
+		}
+
+		if ( 'authorDescription' === $data['type'] ) {
+			return get_the_author_meta( 'description' );
+		}
+
+		if ( 'authorMeta' === $data['type'] ) {
+			return $this->get_author_meta( $data );
+		}
+
 		return $data[0];
 	}
 
@@ -232,7 +244,7 @@ class Dynamic_Content {
 	}
 
 	/**
-	 * Get Terms.
+	 * Get Post Meta.
 	 *
 	 * @param array $data Dynamic Data.
 	 *
@@ -242,6 +254,24 @@ class Dynamic_Content {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
 		$id      = get_the_ID();
 		$meta    = get_post_meta( $id, esc_html( $data['metaKey'] ), true );
+
+		if ( empty( $meta ) || ! is_string( $meta ) ) {
+			$meta = $default;
+		}
+
+		return esc_html( $meta );
+	}
+
+	/**
+	 * Get Author Meta.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_author_meta( $data ) {
+		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
+		$meta    = get_the_author_meta( esc_html( $data['metaKey'] ) );
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;

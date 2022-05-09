@@ -56,6 +56,23 @@ const options = [
 	{
 		label: __( 'Site Tagline', 'otter-blocks' ),
 		value: 'siteTagline'
+	},
+	{
+		label: __( 'Author', 'otter-blocks' ),
+		value: 'author',
+		isDisabled: true
+	},
+	{
+		label: __( 'Author Name', 'otter-blocks' ),
+		value: 'authorName'
+	},
+	{
+		label: __( 'Author Description', 'otter-blocks' ),
+		value: 'authorDescription'
+	},
+	{
+		label: __( 'Author Meta', 'otter-blocks' ),
+		value: 'authorMeta'
 	}
 ];
 
