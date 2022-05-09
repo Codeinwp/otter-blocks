@@ -333,6 +333,7 @@ const Edit = ({
 			<PanelBody
 				title={ __( 'Visibility Conditions', 'otter-blocks' ) }
 				initialOpen={ false }
+				className="o-is-new"
 			>
 				<Notice
 					notice={ <ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Disable in Otter Settings', 'otter-blocks' ) }</ExternalLink> }

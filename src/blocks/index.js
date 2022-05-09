@@ -8,7 +8,7 @@ import { updateCategory } from '@wordpress/blocks';
  */
 import './style.scss';
 import './editor.scss';
-import { otterIcon as icon } from './helpers/icons.js';
+import { otterIconColored as icon } from './helpers/icons.js';
 
 updateCategory( 'themeisle-blocks', { icon });
 updateCategory( 'themeisle-woocommerce-blocks', { icon });

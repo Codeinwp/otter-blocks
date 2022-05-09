@@ -5,17 +5,17 @@
 }
 
 .otter-masonry {
-    .blocks-gallery-grid {
-        .blocks-gallery-item {
-            img {
-                width: 100%;
-            }
-        }
-    }
+	.blocks-gallery-grid {
+		.blocks-gallery-item {
+			img {
+				width: 100%;
+			}
+		}
+	}
 }
 
 [id^="inspector-box-control"] {
-    max-width: none !important;
+	max-width: none !important;
 }
 
 .o-notice {
@@ -27,8 +27,51 @@
 	padding: 10px 20px;
 	margin: 10px 0;
 
-    svg {
-        width: 18px;
-        height: 18px;
-    }
+	&.is-upsell {
+		background: #ED6F57;
+
+		.components-external-link {
+			color: white;
+		}
+	}
+
+	.components-external-link {
+		display: flex;
+		flex-direction: row-reverse;
+		text-decoration: unset;
+
+		svg {
+			margin: 0 5px 0 0;
+		}
+	}
+
+	svg {
+		width: 18px;
+		height: 18px;
+	}
+}
+
+.o-is-new {
+	&.components-panel__body {
+		.components-panel__body-title {
+			.components-button {
+				display: flex;
+				flex-direction: row-reverse;
+				justify-content: flex-end;
+			}
+
+			span::after {
+				content: "New";
+				text-transform: uppercase;
+				margin-left: 5px;
+				background: #1E7DB3;
+				color: #fff;
+				padding: 4px 6px;
+				border-radius: 2px;
+				font-size: 8px;
+				position: relative;
+				top: -1px;
+			}
+		}
+	}
 }

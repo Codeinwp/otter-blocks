@@ -45,6 +45,7 @@ const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 						<PanelBody
 							title={ __( 'Animations', 'otter-blocks' ) }
 							initialOpen={ false }
+							className="o-is-new"
 						>
 							{ ( window.otterComponents && window.themeisleGutenberg ) && (
 								<window.otterComponents.Notice

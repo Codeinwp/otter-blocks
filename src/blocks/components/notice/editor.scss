@@ -9,12 +9,15 @@
 
 	&.is-upsell {
 		background: #ED6F57;
+
+		.components-external-link {
+			color: white;
+		}
 	}
 
 	.components-external-link {
 		display: flex;
 		flex-direction: row-reverse;
-		color: white;
 		text-decoration: unset;
 
 		svg {
