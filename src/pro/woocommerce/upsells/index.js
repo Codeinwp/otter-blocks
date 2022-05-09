@@ -19,6 +19,8 @@ import Inactive from '../../components/inactive/index.js';
 
 const { name } = metadata;
 
+let edit;
+
 if ( ! ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) ) {
 	edit = () => <Inactive
 		icon={ icon }
