@@ -65,7 +65,6 @@ const Edit = ({
 		.wp-block-themeisle-blocks-font-awesome-icons-container {
 			color: ${ getValue( 'textColor' ) };
 			background-color: ${ getValue( 'backgroundColor' ) };
-			${ ( 'themeisle-icons' === attributes.library && getValue( 'padding' ) ) && `padding: ${ getValue( 'padding' ) }px;` }
 		}
 
 		.wp-block-themeisle-blocks-font-awesome-icons-container:hover {
