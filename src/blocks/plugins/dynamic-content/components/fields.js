@@ -84,6 +84,23 @@ const options = {
 				value: 'authorMeta'
 			}
 		]
+	},
+	'loggedInUser': {
+		label: __( 'Logged-in User', 'otter-blocks' ),
+		options: [
+			{
+				label: __( 'Logged-in User Name', 'otter-blocks' ),
+				value: 'loggedInUserName'
+			},
+			{
+				label: __( 'Logged-in User Description', 'otter-blocks' ),
+				value: 'loggedInUserDescription'
+			},
+			{
+				label: __( 'Logged-in User Meta', 'otter-blocks' ),
+				value: 'loggedInUserMeta'
+			}
+		]
 	}
 };
 
@@ -93,7 +110,8 @@ const hasSettingsPanel = [
 	'postTime',
 	'postTerms',
 	'postMeta',
-	'authorMeta'
+	'authorMeta',
+	'loggedInUserMeta'
 ];
 
 const dateFormats = {
@@ -283,7 +301,7 @@ const Fields = ({
 						</Fragment>
 					) }
 
-					{ ( 'postMeta' === attributes.type || 'authorMeta' === attributes.type ) && (
+					{ ([ 'postMeta', 'authorMeta', 'loggedInUserMeta' ].includes( attributes.type ) ) && (
 						<TextControl
 							label={ __( 'Meta Key', 'otter-blocks' ) }
 							type="text"

@@ -73,6 +73,23 @@ const options = [
 	{
 		label: __( 'Author Meta', 'otter-blocks' ),
 		value: 'authorMeta'
+	},
+	{
+		label: __( 'Logged-in User', 'otter-blocks' ),
+		value: 'loggedInUser',
+		isDisabled: true
+	},
+	{
+		label: __( 'Logged-in User Name', 'otter-blocks' ),
+		value: 'loggedInUserName'
+	},
+	{
+		label: __( 'Logged-in User Description', 'otter-blocks' ),
+		value: 'loggedInUserDescription'
+	},
+	{
+		label: __( 'Logged-in User Meta', 'otter-blocks' ),
+		value: 'loggedInUserMeta'
 	}
 ];
 

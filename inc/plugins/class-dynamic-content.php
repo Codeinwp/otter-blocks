@@ -140,6 +140,18 @@ class Dynamic_Content {
 			return $this->get_author_meta( $data );
 		}
 
+		if ( 'loggedInUserName' === $data['type'] ) {
+			return $this->get_loggedin_name( $data );
+		}
+
+		if ( 'loggedInUserDescription' === $data['type'] ) {
+			return $this->get_loggedin_description( $data );
+		}
+
+		if ( 'loggedInUserMeta' === $data['type'] ) {
+			return $this->get_loggedin_meta( $data );
+		}
+
 		return $data[0];
 	}
 
@@ -272,6 +284,67 @@ class Dynamic_Content {
 	public function get_author_meta( $data ) {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
 		$meta    = get_the_author_meta( esc_html( $data['metaKey'] ) );
+
+		if ( empty( $meta ) || ! is_string( $meta ) ) {
+			$meta = $default;
+		}
+
+		return esc_html( $meta );
+	}
+
+	/**
+	 * Get Logged-in User Name.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_loggedin_name( $data ) {
+		$user_id = get_current_user_id();
+		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
+		$user    = get_userdata( $user_id );
+
+		if ( false === $user ) {
+			$display_name = $default;
+		} else {
+			$display_name  = $user->display_name;
+		}
+
+		return esc_html( $display_name );
+	}
+
+	/**
+	 * Get Logged-in User Description.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_loggedin_description( $data ) {
+		$user_id = get_current_user_id();
+		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
+		$user    = get_userdata( $user_id );
+
+		if ( false === $user ) {
+			$description = $default;
+		} else {
+			$description  = $user->description;
+		}
+
+		return esc_html( $description );
+	}
+
+	/**
+	 * Get Logged-in User Description.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_loggedin_meta( $data ) {
+		$user_id = get_current_user_id();
+		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
+		$meta    = get_user_meta( $user_id, esc_html( $data['metaKey'] ), true );
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;
