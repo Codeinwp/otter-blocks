@@ -3,8 +3,8 @@
 	--borderColor: #000;
 	--borderSize: unset;
 	--borderRadius: 0%;
-	--margin: 0;
-	--padding: 0;
+	--margin: 0px;
+	--padding: 0px;
 	--fontSize: 16px;
 
 	text-align: var( --align );
@@ -19,8 +19,8 @@
 		text-align: center;
 		align-items: center;
 
-		width: calc( var(--fontSize) * 2 + var( --padding ));
-		height: calc( var(--fontSize) * 2 + var( --padding ));
+		width: calc( var(--fontSize) * 1.5 + var( --padding ));
+		height: calc( var(--fontSize) * 1.5 + var( --padding ));
 
 		svg {
 			width: var( --fontSize );
