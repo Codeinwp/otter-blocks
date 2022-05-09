@@ -307,7 +307,7 @@ class Dynamic_Content {
 		if ( false === $user ) {
 			$display_name = $default;
 		} else {
-			$display_name  = $user->display_name;
+			$display_name = $user->display_name;
 		}
 
 		return esc_html( $display_name );
@@ -328,7 +328,7 @@ class Dynamic_Content {
 		if ( false === $user ) {
 			$description = $default;
 		} else {
-			$description  = $user->description;
+			$description = $user->description;
 		}
 
 		return esc_html( $description );
