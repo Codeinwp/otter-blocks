@@ -843,7 +843,7 @@ const deprecated = [ {
 		html: false
 	},
 
-	save: memo( ({
+	save: ({
 		attributes,
 		className
 	}) => {
@@ -1029,7 +1029,7 @@ const deprecated = [ {
 				/>
 			</Tag>
 		);
-	})
+	}
 }, {
 	attributes,
 
@@ -1038,7 +1038,7 @@ const deprecated = [ {
 		html: false
 	},
 
-	save: memo( ({
+	save: ({
 		attributes,
 		className
 	}) => {
@@ -1223,7 +1223,7 @@ const deprecated = [ {
 				/>
 			</Tag>
 		);
-	})
+	}
 }, {
 	attributes: {
 		...attributes,
@@ -1290,7 +1290,7 @@ const deprecated = [ {
 		html: false
 	},
 
-	save: memo( ({
+	save: ({
 		attributes,
 		className
 	}) => {
@@ -1343,7 +1343,7 @@ const deprecated = [ {
 				/>
 			</Tag>
 		);
-	})
+	}
 }, {
 	attributes: {
 		...attributes,
@@ -1465,7 +1465,7 @@ const deprecated = [ {
 
 	isEligible: attributes => ( 'gradient' === attributes.backgroundType && undefined !== attributes.backgroundGradientFirstColor ) || ( 'gradient' === attributes.backgroundOverlayType && undefined !== attributes.backgroundOverlayGradientFirstColor ),
 
-	save: memo( ({
+	save: ({
 		attributes,
 		className
 	}) => {
@@ -1518,7 +1518,7 @@ const deprecated = [ {
 				/>
 			</Tag>
 		);
-	})
+	}
 }, {
 	attributes: {
 		...omit(
@@ -1875,7 +1875,7 @@ const deprecated = [ {
 		return isEligible;
 	},
 
-	save: memo( ({
+	save: ({
 		attributes,
 		className
 	}) => {
@@ -1928,7 +1928,7 @@ const deprecated = [ {
 				/>
 			</Tag>
 		);
-	})
+	}
 } ];
 
 export default deprecated;

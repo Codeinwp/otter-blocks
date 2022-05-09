@@ -195,7 +195,17 @@ const Inspector = ({
 					min={ 100 }
 					max={ 1000 }
 					value={ attributes.minWidth }
+					allowReset
 					onChange={ value => setAttributes({ minWidth: Number( value ) }) }
+				/>
+
+				<RangeControl
+					label={ __( 'Maximum Width', 'otter-blocks' ) }
+					min={ 100 }
+					max={ 1000 }
+					value={ attributes.maxWidth }
+					allowReset
+					onChange={ value => setAttributes({ maxWidth: Number( value ) }) }
 				/>
 
 				<ColorGradientControl
