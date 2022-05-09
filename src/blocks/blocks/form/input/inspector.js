@@ -70,8 +70,8 @@ const Inspector = ({
 				/>
 
 				<ToggleControl
-					label={ __( 'Is this field required?', 'otter-blocks' ) }
-					help={ __( 'If true, the input field must be filled out before submitting the form.', 'otter-blocks' ) }
+					label={ __( 'Required', 'otter-blocks' ) }
+					help={ __( 'If enabled, the input field must be filled out before submitting the form.', 'otter-blocks' ) }
 					checked={ attributes.isRequired }
 					onChange={ isRequired => setAttributes({ isRequired }) }
 				/>

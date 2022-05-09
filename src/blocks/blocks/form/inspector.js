@@ -127,7 +127,7 @@ const Inspector = ({
 						>
 							<span>
 								{
-									__( 'Make sure your SMTP plugin is set up.', 'otter-blocks' )
+									__( 'In order for the Form to work properly, make sure your SMTP plugin is set up.', 'otter-blocks' )
 								}
 							</span>
 							<ExternalLink
@@ -349,7 +349,7 @@ const Inspector = ({
 								placeholder={ __( 'A new submission', 'otter-blocks' ) }
 								value={ formOptions.subject }
 								onChange={ subject => setFormOption({ subject }) }
-								help={ __( 'Customize the title of the email that you are gonna receive after a user submit the form.', 'otter-blocks' ) }
+								help={ __( 'Customize the title of the email that you are gonna receive after a user submits the form.', 'otter-blocks' ) }
 							/>
 
 							<TextControl
