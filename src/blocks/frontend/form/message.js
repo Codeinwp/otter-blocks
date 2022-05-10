@@ -46,7 +46,7 @@ class DisplayFormMessage {
 	 * @param {'error'|'warning'|'success'} type
 	 * @returns {DisplayFormMessage}
 	 */
-	setMsg( msg, type ) {
+	setMsg( msg, type= '' ) {
 		this.msgElem.innerHTML = msg;
 		this.clean();
 		switch ( type ) {
@@ -64,7 +64,7 @@ class DisplayFormMessage {
 
 	/**
 	 * Show the message for a limited amount of time.
-	 * @param {number} durationMS
+	 * @param {number?} durationMS
 	 */
 	show( durationMS ) {
 		clearTimeout( this.visibilityTimeout );

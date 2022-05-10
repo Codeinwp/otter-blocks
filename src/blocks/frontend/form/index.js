@@ -174,18 +174,18 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 						}
 					}, 1000 );
 				} else {
-					let msg = '';
+					let errorMsgSlug = '';
 
 					// TODO: Write pattern to display a more useful error message.
 					if ( res?.provider && res?.error?.includes( 'invalid' ) || res?.error?.includes( 'fake' ) ) { // mailchimp
-						msg = 'invalid-email';
+						errorMsgSlug = 'invalid-email';
 					} else if ( res?.provider && res?.error?.includes( 'duplicate' ) || res?.error?.includes( 'already' ) ) { // sendinblue
-						msg = 'already-registered';
+						errorMsgSlug = 'already-registered';
 					} else {
-						msg = 'try-again';
+						errorMsgSlug = 'try-again';
 					}
 
-					displayMsg.pullMsg( msg, 'error' ).show();
+					displayMsg.pullMsg( errorMsgSlug, 'error' ).show();
 
 					// eslint-disable-next-line no-console
 					console.error( res?.error, res?.reasons );
@@ -248,7 +248,7 @@ const renderConsentCheckbox = ( form ) => {
 	input.id = 'o-consent';
 
 	const label = document.createElement( 'label' );
-	label.innerHTML = window?.themeisleGutenbergForm?.messages.privacy || 'I have read and agreed the privacy statement.';
+	label.innerHTML = window?.themeisleGutenbergForm?.messages?.privacy || 'I have read and agreed the privacy statement.';
 	label.htmlFor = 'o-consent';
 
 	inputContainer.appendChild( input );
