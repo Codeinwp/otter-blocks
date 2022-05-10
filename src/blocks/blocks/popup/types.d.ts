@@ -3,6 +3,7 @@ import { BlockProps, InspectorProps } from "../../helpers/blocks"
 type Attributes = {
 	id: string
 	minWidth: number
+	maxWidth: number
 	trigger: string
 	wait: number
 	anchor: string

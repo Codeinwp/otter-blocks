@@ -43,6 +43,11 @@ class Popup_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
+						'property' => '--maxWidth',
+						'value'    => 'maxWidth',
+						'unit'     => 'px',
+					),
+					array(
 						'property' => '--backgroundColor',
 						'value'    => 'backgroundColor',
 					),
