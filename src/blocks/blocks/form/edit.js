@@ -223,11 +223,11 @@ const Edit = ({
 					if ( formData ) {
 						parseDataFormOptions( formData );
 						setSavedFormOptions( formData );
-						setLoading({
-							formIntegration: 'done',
-							formOptions: 'done'
-						});
 					}
+					setLoading({
+						formIntegration: 'done',
+						formOptions: 'done'
+					});
 					clearTimeout( t );
 				}).catch( () => {
 					setLoading({
