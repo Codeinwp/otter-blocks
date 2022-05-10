@@ -337,7 +337,7 @@ const Inspector = ({
 						>
 							{
 								'loading' === loadingState?.formOptions && (
-									<div style={{ marginTop: '8px', borderLeft: '3px solid orange', paddingLeft: '10px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+									<div className="o-fetch-msg">
 										<Spinner />
 										{ __( 'Loading the options. Please wait...', 'otter-blocks' ) }
 									</div>
@@ -411,14 +411,14 @@ const Inspector = ({
 
 							{
 								'done' === loadingState?.formOptions && formOptionsChanged && (
-									<div style={{ marginTop: '8px', borderLeft: '3px solid red', paddingLeft: '10px' }}>
+									<div className="o-fetch-msg">
 										{ __( 'You have made some modifications. Do not forget to save the options.', 'otter-blocks' ) }
 									</div>
 								)
 							}
 							{
 								'error' === loadingState?.formOptions && (
-									<div style={{ marginTop: '8px', borderLeft: '3px solid red', paddingLeft: '10px' }}>
+									<div className="o-fetch-msg o-error">
 										{ __( 'An error has occurred while saving. Please try again.', 'otter-blocks' ) }
 									</div>
 								)
@@ -467,7 +467,7 @@ const Inspector = ({
 							<br /> <br />
 							{
 								'loading' === loadingState?.formIntegration && (
-									<div style={{ marginTop: '8px', borderLeft: '3px solid orange', paddingLeft: '10px', display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+									<div className="o-fetch-msg">
 										<Spinner />
 										{ __( 'Fetching data from server. Please wait.', 'otter-blocks' ) }
 									</div>
@@ -655,21 +655,21 @@ const Inspector = ({
 
 							{
 								'done' === loadingState?.formIntegration && formIntegrationChanged && (
-									<div style={{ marginTop: '8px', borderLeft: '3px solid red', paddingLeft: '10px' }}>
+									<div className="o-fetch-msg">
 										{ __( 'You have made some modifications. Do not forget to save the options.', 'otter-blocks' ) }
 									</div>
 								)
 							}
 							{
 								'done' === loadingState?.serviceTesting && (
-									<div style={{ marginTop: '8px', borderLeft: '3px solid orange', paddingLeft: '10px' }}>
+									<div className="o-fetch-msg">
 										{ __( 'Remember to delete the test email from your provider\'s contact list.', 'otter-blocks' ) }
 									</div>
 								)
 							}
 							{
 								'error' === loadingState?.formIntegration && (
-									<div style={{ marginTop: '8px', borderLeft: '3px solid red', paddingLeft: '10px' }}>
+									<div className="o-fetch-msg o-error">
 										{ __( 'An error has occurred while saving. Please try again.', 'otter-blocks' ) }
 									</div>
 								)

@@ -19,6 +19,19 @@
 	}
 
 	.otter-form-captcha {
-		margin: 10px 0px;
+		margin: 10px 0;
+	}
+}
+
+.o-fetch-msg {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin: 8px 0;
+	border-left: 3px solid orange;
+	padding-left: 18px;
+
+	&.o-error {
+		border-color: red;
 	}
 }
