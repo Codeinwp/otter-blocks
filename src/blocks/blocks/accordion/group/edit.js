@@ -35,6 +35,11 @@ import {
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Accordion Group component
+ * @param {import('./types').AccordionGroupProps} props
+ * @returns
+ */
 const Edit = ({
 	name,
 	attributes,

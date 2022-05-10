@@ -4,6 +4,8 @@ import { sprintf } from '@wordpress/i18n';
 
 import { __experimentalGetSettings } from '@wordpress/date';
 
+import { __ } from '@wordpress/i18n';
+
 // Post types to exclude
 const excludedTypes = [
 	'wp_template',
@@ -217,22 +219,22 @@ export const getIntervalFromUnix = ( unixTime, settings ) => {
 	const time = [
 		{
 			tag: 'day',
-			name: 1 < days ? 'Days' : 'Day',
+			name: 1 < days ? __( 'Days', 'otter-blocks' ) : __( 'Day', 'otter-blocks' ),
 			value: days
 		},
 		{
 			tag: 'hour',
-			name: 1 < hours ? 'Hours' : 'Hour',
+			name: 1 < hours ? __( 'Hours', 'otter-blocks' ) : __( 'Hour', 'otter-blocks' ),
 			value: hours
 		},
 		{
 			tag: 'minute',
-			name: 1 < minutes ? 'Minutes' : 'Minute',
+			name: 1 < minutes ? __( 'Minutes', 'otter-blocks' ) : __( 'Minute', 'otter-blocks' ),
 			value: minutes
 		},
 		{
 			tag: 'second',
-			name: 1 < seconds ? 'Seconds' : 'Second',
+			name: 1 < seconds ? __( 'Seconds', 'otter-blocks' ) : __( 'Second', 'otter-blocks' ),
 			value: seconds
 		}
 	]
@@ -258,9 +260,10 @@ export const getTimezone = () => {
 };
 
 // Check if object has only null values.
-export const isNullObject = obj => {
-	return ! Object.keys( obj ).some( k => null !== obj[ k ]);
-};
+export const isNullObject = obj => ! Object.keys( obj ).some( k => null !== obj[ k ]);
+
+// Check if object has only undefined values.
+export const isUndefinedObject = obj => Object.values( obj ).every( l => l === undefined );
 
 /*
  +-------------------------------- CSS Utility functions --------------------------------+

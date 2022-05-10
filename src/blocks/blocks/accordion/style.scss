@@ -4,7 +4,7 @@
 	--borderColor: #d5dadf;
 	--contentBackground: #ffffff;
 
-	margin: 20px 0;
+	margin: 20px auto;
 
 	.wp-block-themeisle-blocks-accordion-item {
 		.wp-block-themeisle-blocks-accordion-item__title {
@@ -56,7 +56,7 @@
 		}
 
 		&[open] {
-			.wp-block-themeisle-blocks-accordion-item__title {
+			> .wp-block-themeisle-blocks-accordion-item__title {
 				> div {
 					&::after {
 						transform: rotate(225deg) translate(0%, -45%);

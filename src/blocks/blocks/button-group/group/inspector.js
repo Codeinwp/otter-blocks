@@ -17,6 +17,11 @@ import {
 import GoogleFontsControl from '../../../components/google-fonts-control/index.js';
 import SizingControl from '../../../components/sizing-control/index.js';
 
+/**
+ *
+ * @param {import('./types.js').ButtonGroupInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes

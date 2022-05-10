@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\CSS;
 
+use ThemeIsle\GutenbergBlocks\Registration;
+
 use ThemeIsle\GutenbergBlocks\Base_CSS;
 
 use WP_REST_Request;
@@ -54,6 +56,7 @@ class Block_Frontend extends Base_CSS {
 		add_action( 'wp_head', array( $this, 'enqueue_google_fonts_backward' ), 19 );
 		add_filter( 'get_the_excerpt', array( $this, 'get_excerpt_end' ), 20 );
 		add_action( 'wp_footer', array( $this, 'enqueue_widgets_css' ) );
+		add_action( 'wp_head', array( $this, 'enqueue_assets' ) );
 		add_action( 'wp_footer', array( $this, 'enqueue_global_styles' ) );
 	}
 
@@ -574,6 +577,24 @@ class Block_Frontend extends Base_CSS {
 		$style .= "\n" . '</style>' . "\n";
 
 		echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+	}
+
+	/**
+	 * Filter to let third-party products hook Otter styles.
+	 *
+	 * @since   2.0.1
+	 * @access  public
+	 */
+	public function enqueue_assets() {
+		$posts = apply_filters( 'themeisle_gutenberg_blocks_enqueue_assets', array() );
+
+		if ( 0 < count( $posts ) ) {
+			foreach ( $posts as $post ) {
+				$class = Registration::instance();
+				$class->enqueue_dependencies( $post );
+				$this->enqueue_styles( $post, true );
+			}
+		}
 	}
 
 	/**

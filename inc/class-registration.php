@@ -164,7 +164,7 @@ class Registration {
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/leaflet-map.asset.php';
 		wp_register_script( 'leaflet', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'leaflet', 'async', true );
-		wp_register_script( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet-gesture-handling.min.js', array( 'leaflet' ), $asset_file['version'], true );
+		wp_register_script( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'build/blocks/leaflet-gesture-handling.js', array( 'leaflet' ), $asset_file['version'], true );
 		wp_script_add_data( 'leaflet-gesture-handling', 'defer', true );
 		wp_register_style( 'leaflet', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet.css', [], $asset_file['version'] );
 		wp_register_style( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet-gesture-handling.min.css', [], $asset_file['version'] );
@@ -204,14 +204,13 @@ class Registration {
 		}
 
 		wp_register_script( 'otter-vendor', OTTER_BLOCKS_URL . 'build/blocks/vendor.js', array( 'react', 'react-dom' ), $asset_file['version'], true );
-		wp_register_script( 'macy', OTTER_BLOCKS_URL . 'assets/macy/macy.js', [], $asset_file['version'], true );
 
 		wp_enqueue_script(
 			'otter-blocks',
 			OTTER_BLOCKS_URL . 'build/blocks/blocks.js',
 			array_merge(
 				$asset_file['dependencies'],
-				array( 'otter-vendor', 'glidejs', 'lottie-player', 'macy' )
+				array( 'otter-vendor', 'glidejs', 'lottie-player' )
 			),
 			$asset_file['version'],
 			true
@@ -273,6 +272,9 @@ class Registration {
 				'useOldMacyContainer' => version_compare( get_bloginfo( 'version' ), '5.8.10', '<=' ),
 				'postTypes'           => get_post_types( [ 'public' => true ] ),
 				'rootUrl'             => get_site_url(),
+				'hasModule'           => array(
+					'blockConditions' => get_option( 'themeisle_blocks_settings_block_conditions', true ),
+				),
 			)
 		);
 
@@ -312,10 +314,12 @@ class Registration {
 		if ( is_singular() ) {
 			$this->enqueue_dependencies();
 		} else {
-			$posts = wp_list_pluck( $wp_query->posts, 'ID' );
+			if ( ! is_null( $wp_query->posts ) && 0 < count( $wp_query->posts ) ) {
+				$posts = wp_list_pluck( $wp_query->posts, 'ID' );
 
-			foreach ( $posts as $post ) {
-				$this->enqueue_dependencies( $post );
+				foreach ( $posts as $post ) {
+					$this->enqueue_dependencies( $post );
+				}
 			}
 		}
 
@@ -374,10 +378,25 @@ class Registration {
 
 		$this->enqueue_block_styles( $post );
 
+		if ( has_block( 'core/block', $post ) ) {
+			$blocks = parse_blocks( $content );
+			$blocks = array_filter(
+				$blocks,
+				function( $block ) {
+					return 'core/block' === $block['blockName'] && isset( $block['attrs']['ref'] );
+				}
+			);
+
+			foreach ( $blocks as $block ) {
+				$this->enqueue_dependencies( $block['attrs']['ref'] );
+			}
+		}
+
 		// On AMP context, we don't load JS files.
 		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
 			return;
 		}
+
 		if ( ! self::$scripts_loaded['circle-counter'] && has_block( 'themeisle-blocks/circle-counter', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/circle-counter.asset.php';
 			wp_register_script( 'otter-circle-counter', OTTER_BLOCKS_URL . 'build/blocks/circle-counter.js', $asset_file['dependencies'], $asset_file['version'], true );

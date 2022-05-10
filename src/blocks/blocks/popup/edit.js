@@ -40,6 +40,11 @@ import { blockInit } from '../../helpers/block-utility';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Popup component
+ * @param {import('./types').PopupPros} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,
@@ -54,6 +59,7 @@ const Edit = ({
 
 	const styles = css`
 		--minWidth: ${ attributes.minWidth ? attributes.minWidth + 'px' : '400px' };
+		--maxWidth: ${ attributes.maxWidth ? attributes.maxWidth + 'px' : undefined };
 		--backgroundColor: ${ attributes.backgroundColor };
 		--closeColor: ${ attributes.closeColor };
 		--overlayColor: ${ attributes.overlayColor };

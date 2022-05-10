@@ -15,6 +15,10 @@ domReady( () => {
 			}
 		}
 
+		if ( Boolean( animation.__count ) ) {
+			animation.__count = animation.__count - 1;
+		}
+
 		if ( -1 === animation.__direction && 'true' === animation.dataset.loop ) {
 			animation.setLooping( true );
 
@@ -74,8 +78,14 @@ domReady( () => {
 		});
 
 		if ( animation.getAttribute( 'width' ) ) {
-			animation.style.width = `${ animation.getAttribute( 'width' ) }px`;
 			animation.style.height = 'auto';
+
+			const width = animation.getAttribute( 'width' );
+			if ( '%' === width.toString().slice( -1 ) ) {
+				animation.style.maxWidth = width;
+			} else {
+				animation.style.width = ( 'px' !== width.toString().slice( -2 ) ) ? `${width}px` : width;
+			}
 		}
 	});
 });

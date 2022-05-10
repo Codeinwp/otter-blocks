@@ -28,6 +28,11 @@ import Inspector from './inspector.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Icon List component
+ * @param {import('./types').IconListProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,

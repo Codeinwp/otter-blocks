@@ -43,6 +43,11 @@ export const ActionType = {
 	INIT: 'INIT'
 };
 
+/**
+ * Leaflet Map component
+ * @param {import('./type').LeafletMapProps} props
+ * @returns
+ */
 const Edit = ({
 	clientId,
 	attributes,
@@ -156,7 +161,7 @@ const Edit = ({
 	 * To avoid this, we will use a dispatch function that doesn't need to know the updated state;
 	 * he will send the data and let the reducer manipulate it using the current states.
 	 */
-	const [ markersStore, dispatch ] = useReducer( markerReducer, []);
+	const [ markersStore, dispatch ] = useReducer( markerReducer, [], () => []);
 	const createMap = () => {
 		if ( ! mapRef.current && ! window.L ) {
 			return;
@@ -331,8 +336,6 @@ const Edit = ({
 
 	useEffect( () => {
 		if ( markersStore ) {
-			setAttributes({ markers: markersStore.map( ({ markerProps }) => markerProps ) });
-
 			markersStore.forEach( marker => {
 				if ( ! map.hasLayer( marker ) ) {
 					map.addLayer( marker );
@@ -352,8 +355,13 @@ const Edit = ({
 				marker.unbindPopup();
 				marker.bindPopup( createPopupContent( markerProps, dispatch ) );
 			});
+
+
+			if ( attributes.markers.length !== markersStore.length && map ) {
+				setAttributes({ markers: markersStore.map( ({ markerProps }) => markerProps ) });
+			}
 		}
-	}, [ markersStore ]);
+	}, [ markersStore, map, attributes.markers ]);
 
 	const blockProps = useBlockProps();
 

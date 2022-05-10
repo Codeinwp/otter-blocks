@@ -33,6 +33,17 @@ import { blockInit } from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+const options = {
+	root: null,
+	rootMargin: '0px',
+	threshold: [ 0.0 ]
+};
+
+/**
+ * Slider component
+ * @param {import('./types').SliderProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,
@@ -40,6 +51,9 @@ const Edit = ({
 	isSelected,
 	toggleSelection
 }) => {
+
+	const initObserver = useRef( null );
+
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => {
@@ -48,16 +62,30 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	useEffect( () => {
-		if ( attributes.images.length ) {
-			initSlider();
+		const container = document.querySelector( `#${ attributes.id }` );
+
+		if ( container ) {
+			initObserver.current = new IntersectionObserver( ( entries ) => {
+				entries.forEach( entry => {
+					if ( entry.isIntersecting && 0 <= entry.intersectionRect.height ) {
+						if ( attributes.images.length ) {
+							initSlider();
+							initObserver.current?.unobserve( container );
+						}
+					}
+				});
+			}, options );
+
+			initObserver.current?.observe( container );
+
+			return () => {
+				if ( attributes.images.length && null !== sliderRef.current ) {
+					sliderRef.current.destroy();
+				}
+			};
 		}
 
-		return () => {
-			if ( attributes.images.length && null !== sliderRef.current ) {
-				sliderRef.current.destroy();
-			}
-		};
-	}, []);
+	}, [ attributes.id ]);
 
 	useEffect( () => {
 		if ( attributes.images.length ) {

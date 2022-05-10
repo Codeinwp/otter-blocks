@@ -16,6 +16,11 @@ import {
 	SelectControl
 } from '@wordpress/components';
 
+/**
+ *
+ * @param {import('./types').CircleCounterInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes,

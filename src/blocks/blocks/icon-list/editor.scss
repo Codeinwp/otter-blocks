@@ -44,6 +44,7 @@
 		}
 
 		svg {
+			min-width: var( --fontSize );
 			width: var( --fontSize );
 		}
 

@@ -37,6 +37,11 @@ import { setCSSVars } from '../../helpers/full-site-editing/css-utility';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ * Progress Bar Block
+ * @param {import('./types').ProgressBarProps} props
+ * @returns
+ */
 const ProgressBar = ({
 	attributes,
 	setAttributes,
@@ -44,6 +49,7 @@ const ProgressBar = ({
 	clientId,
 	toggleSelection
 }) => {
+
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
@@ -62,13 +68,15 @@ const ProgressBar = ({
 	const barRef = useRef( null );
 
 	useEffect( () => {
+		let timeoutID = null;
+
 		if ( ! barRef.current ) {
 			return;
 		}
 
 		setShowPercentage( false );
 
-		setTimeout( () => setShowPercentage( true ), attributes.duration * 1000 );
+		timeoutID = setTimeout( () => setShowPercentage( true ), attributes.duration * 1000 );
 
 		barRef.current.animate(
 			{
@@ -80,6 +88,10 @@ const ProgressBar = ({
 				fill: 'forwards'
 			}
 		);
+
+		return () => {
+			clearTimeout( timeoutID );
+		};
 	}, [ attributes.percentage, attributes.duration ]);
 
 	useEffect( () => {

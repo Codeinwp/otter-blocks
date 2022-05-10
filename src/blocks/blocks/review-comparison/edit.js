@@ -53,6 +53,11 @@ let tableDescription = [];
 let tableStatistics = [];
 let tableLinks = [];
 
+/**
+ * Review Comparison component
+ * @param {import('./types').ReviewComparisionProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,
@@ -64,17 +69,25 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	useEffect( () => {
+		let isMounted = true;
+
 		( async() => {
-			try {
-				setStatus( 'loading' );
-				const data = await apiFetch({ path: 'otter/v1/filter_blocks?block=themeisle-blocks/review' });
-				setData( data );
-				setStatus( 'loaded' );
-				setEditing( ! Boolean( attributes.reviews.length ) );
-			} catch ( error ) {
-				setStatus( 'error' );
+			if ( isMounted ) {
+				try {
+					setStatus( 'loading' );
+					const data = await apiFetch({ path: 'otter/v1/filter_blocks?block=themeisle-blocks/review' });
+					setData( data );
+					setStatus( 'loaded' );
+					setEditing( ! Boolean( attributes.reviews.length ) );
+				} catch ( error ) {
+					setStatus( 'error' );
+				}
 			}
 		})();
+
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	const [ data, setData ] = useState([]);

@@ -25,22 +25,6 @@ export const animationsList = [
 		value: 'backInUp'
 	},
 	{
-		label: __( 'Back Out Down', 'otter-blocks' ),
-		value: 'backOutDown'
-	},
-	{
-		label: __( 'Back Out Left', 'otter-blocks' ),
-		value: 'backOutLeft'
-	},
-	{
-		label: __( 'Back Out Right', 'otter-blocks' ),
-		value: 'backOutRight'
-	},
-	{
-		label: __( 'Back Out Up', 'otter-blocks' ),
-		value: 'backOutUp'
-	},
-	{
 		label: __( 'Bounce', 'otter-blocks' ),
 		value: 'bounce'
 	},
@@ -63,26 +47,6 @@ export const animationsList = [
 	{
 		label: __( 'Bounce In Up', 'otter-blocks' ),
 		value: 'bounceInUp'
-	},
-	{
-		label: __( 'Bounce Out', 'otter-blocks' ),
-		value: 'bounceOut'
-	},
-	{
-		label: __( 'Bounce Out Down', 'otter-blocks' ),
-		value: 'bounceOutDown'
-	},
-	{
-		label: __( 'Bounce Out Left', 'otter-blocks' ),
-		value: 'bounceOutLeft'
-	},
-	{
-		label: __( 'Bounce Out Right', 'otter-blocks' ),
-		value: 'bounceOutRight'
-	},
-	{
-		label: __( 'Bounce Out Up', 'otter-blocks' ),
-		value: 'bounceOutUp'
 	},
 	{
 		label: __( 'Fade In', 'otter-blocks' ),
@@ -133,58 +97,6 @@ export const animationsList = [
 		value: 'fadeInBottomRight'
 	},
 	{
-		label: __( 'Fade Out', 'otter-blocks' ),
-		value: 'fadeOut'
-	},
-	{
-		label: __( 'Fade Out Down', 'otter-blocks' ),
-		value: 'fadeOutDown'
-	},
-	{
-		label: __( 'Fade Out Down Big', 'otter-blocks' ),
-		value: 'fadeOutDownBig'
-	},
-	{
-		label: __( 'Fade Out Left', 'otter-blocks' ),
-		value: 'fadeOutLeft'
-	},
-	{
-		label: __( 'Fade Out Left Big', 'otter-blocks' ),
-		value: 'fadeOutLeftBig'
-	},
-	{
-		label: __( 'Fade Out Right', 'otter-blocks' ),
-		value: 'fadeOutRight'
-	},
-	{
-		label: __( 'Fade Out Right Big', 'otter-blocks' ),
-		value: 'fadeOutRightBig'
-	},
-	{
-		label: __( 'Fade Out Up', 'otter-blocks' ),
-		value: 'fadeOutUp'
-	},
-	{
-		label: __( 'Fade Out Up Big', 'otter-blocks' ),
-		value: 'fadeOutUpBig'
-	},
-	{
-		label: __( 'Fade Out Top Left', 'otter-blocks' ),
-		value: 'fadeOutTopLeft'
-	},
-	{
-		label: __( 'Fade Out Top Right', 'otter-blocks' ),
-		value: 'fadeOutTopRight'
-	},
-	{
-		label: __( 'Fade Out Bottom Right', 'otter-blocks' ),
-		value: 'fadeOutBottomRight'
-	},
-	{
-		label: __( 'Fade Out Bottom Left', 'otter-blocks' ),
-		value: 'fadeOutBottomLeft'
-	},
-	{
 		label: __( 'Flip', 'otter-blocks' ),
 		value: 'flip'
 	},
@@ -195,14 +107,6 @@ export const animationsList = [
 	{
 		label: __( 'Flip In Y', 'otter-blocks' ),
 		value: 'flipInY'
-	},
-	{
-		label: __( 'Flip Out X', 'otter-blocks' ),
-		value: 'flipOutX'
-	},
-	{
-		label: __( 'Flip Out Y', 'otter-blocks' ),
-		value: 'flipOutY'
 	},
 	{
 		label: __( 'Rotate In', 'otter-blocks' ),
@@ -225,26 +129,6 @@ export const animationsList = [
 		value: 'rotateInUpRight'
 	},
 	{
-		label: __( 'Rotate Out', 'otter-blocks' ),
-		value: 'rotateOut'
-	},
-	{
-		label: __( 'Rotate Out Down Left', 'otter-blocks' ),
-		value: 'rotateOutDownLeft'
-	},
-	{
-		label: __( 'Rotate Out Down Right', 'otter-blocks' ),
-		value: 'rotateOutDownRight'
-	},
-	{
-		label: __( 'Rotate Out Up Left', 'otter-blocks' ),
-		value: 'rotateOutUpLeft'
-	},
-	{
-		label: __( 'Rotate Out Up Right', 'otter-blocks' ),
-		value: 'rotateOutUpRight'
-	},
-	{
 		label: __( 'Slide In Down', 'otter-blocks' ),
 		value: 'slideInDown'
 	},
@@ -259,22 +143,6 @@ export const animationsList = [
 	{
 		label: __( 'Slide In Up', 'otter-blocks' ),
 		value: 'slideInUp'
-	},
-	{
-		label: __( 'Slide Out Down', 'otter-blocks' ),
-		value: 'slideOutDown'
-	},
-	{
-		label: __( 'Slide Out Left', 'otter-blocks' ),
-		value: 'slideOutLeft'
-	},
-	{
-		label: __( 'Slide Out Right', 'otter-blocks' ),
-		value: 'slideOutRight'
-	},
-	{
-		label: __( 'Slide Out Up', 'otter-blocks' ),
-		value: 'slideOutUp'
 	},
 	{
 		label: __( 'Zoom In', 'otter-blocks' ),
@@ -297,32 +165,8 @@ export const animationsList = [
 		value: 'zoomInUp'
 	},
 	{
-		label: __( 'Zoom Out', 'otter-blocks' ),
-		value: 'zoomOut'
-	},
-	{
-		label: __( 'Zoom Out Down', 'otter-blocks' ),
-		value: 'zoomOutDown'
-	},
-	{
-		label: __( 'Zoom Out Left', 'otter-blocks' ),
-		value: 'zoomOutLeft'
-	},
-	{
-		label: __( 'Zoom Out Right', 'otter-blocks' ),
-		value: 'zoomOutRight'
-	},
-	{
-		label: __( 'Zoom Out Up', 'otter-blocks' ),
-		value: 'zoomOutUp'
-	},
-	{
 		label: __( 'Roll In', 'otter-blocks' ),
 		value: 'rollIn'
-	},
-	{
-		label: __( 'Roll Out', 'otter-blocks' ),
-		value: 'rollOut'
 	},
 	{
 		label: __( 'Light Speed In Right', 'otter-blocks' ),
@@ -331,14 +175,6 @@ export const animationsList = [
 	{
 		label: __( 'Light Speed In Left', 'otter-blocks' ),
 		value: 'lightSpeedInLeft'
-	},
-	{
-		label: __( 'Light Speed Out Right', 'otter-blocks' ),
-		value: 'lightSpeedOutRight'
-	},
-	{
-		label: __( 'Light Speed Out Left', 'otter-blocks' ),
-		value: 'lightSpeedOutLeft'
 	},
 	{
 		label: __( 'Flash', 'otter-blocks' ),

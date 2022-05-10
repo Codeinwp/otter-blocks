@@ -7,7 +7,6 @@ import { video as icon } from '@wordpress/icons';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-
 import { registerBlockType } from '@wordpress/blocks';
 
 /**

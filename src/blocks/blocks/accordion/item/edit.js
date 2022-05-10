@@ -26,6 +26,11 @@ import {
  */
 import Inspector from './inspector.js';
 
+/**
+ * Accordion Item component
+ * @param {import('./types.js').AccordionItemProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes

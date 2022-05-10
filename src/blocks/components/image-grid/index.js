@@ -18,7 +18,7 @@ const ImageGrid = ({
 	attributes,
 	onSelectImages
 }) => {
-	const selectImages = debounce( onSelectImages, 250 );
+	const selectImages =  debounce( onSelectImages, 250 );
 
 	return (
 		<MediaUploadCheck>

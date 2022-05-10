@@ -29,6 +29,11 @@ import {
  */
 import { getListIdOptionFrom } from './integrations.js';
 
+/**
+ *
+ * @param {import('./type.js').FormInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes
@@ -42,26 +47,37 @@ const Inspector = ({
 	const [ fetchListIdStatus, setFetchListIdStatus ] = useState( 'loading' );
 
 	useEffect( () => {
+		let isMounted = true;
 		if ( attributes.optionName ) {
 			api.loadPromise.then( () => {
 				( new api.models.Settings() ).fetch().done( res => {
 					res.themeisle_blocks_form_emails?.filter( ({ form }) => form === attributes.optionName )?.forEach( item => {
-						setEmail( item?.email );
-						setEmailLoading( true );
-						setSavedEmail( item?.email );
+						if ( isMounted ) {
+							setEmail( item?.email );
+							setEmailLoading( true );
+							setSavedEmail( item?.email );
+						}
 					});
 				});
 			});
 		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [ attributes.optionName ]);
 
 	useEffect( () => {
+		let isMounted = true;
+
 		if ( attributes.apiKey && attributes.provider ) {
 			getListIdOptionFrom( attributes.provider, attributes.apiKey,
 				options => {
 					options.splice( 0, 0, { label: __( 'None', 'otter-blocks' ), value: '' });
-					setListIDOptions( options );
-					setFetchListIdStatus( 'ready' );
+					if ( isMounted ) {
+						setListIDOptions( options );
+						setFetchListIdStatus( 'ready' );
+					}
 
 					const isCurrentOptionValid = 1 === options.map( ({ value }) => value ).filter( value => value === attributes.listId ).length;
 					if ( attributes.listId && ! isCurrentOptionValid ) {
@@ -86,10 +102,16 @@ const Inspector = ({
 						}
 					);
 
-					setFetchListIdStatus( 'error' );
+					if ( isMounted ) {
+						setFetchListIdStatus( 'error' );
+					}
 				}
 			);
 		}
+
+		return () => {
+			isMounted = false;
+		};
 	}, [ attributes.provider, attributes.apiKey ]);
 
 	const saveEmail = () => {

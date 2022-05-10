@@ -1,3 +1,29 @@
+##### [Version 2.0.2](https://github.com/Codeinwp/otter-blocks/compare/v2.0.1...v2.0.2) (2022-04-22)
+
+- Improvements in Lottie Animations Block
+- Improvements in About Author Block
+- Fix Section Margin/Padding values not migration properly
+- Fix Global Defaults causing PHP errors
+- Add option to choose default tab in Tabs Block
+- Remove “out” animations from Animation Module
+- Fix vertical alignment not working in Section
+- Add some API validation in Google Maps
+- Add default animation to Popup block
+- Option to toggle Block Conditions module off
+- Performance improvements
+- Fix sticky module conflict with third party themes
+- Add web support to Section background
+- Fix Posts Block responsive issues
+- Fix Tabs and Masonry Blocks breaking in certain conditions
+- Fix infinite loop while generating block IDs when used inside Reusable blocks
+
+##### [Version 2.0.1](https://github.com/Codeinwp/otter-blocks/compare/v2.0.0...v2.0.1) (2022-03-10)
+
+- Fix styles not loaded for Reusable Blocks
+- Fix Accordion block not centering on Twenty Twenty
+- Disable Block Animations for [@media](https://github.com/media) print
+- Fix use of undefined constant OTTER_BLOCKS_PATH in Blocks Animation
+
 #### [Version 2.0.0](https://github.com/Codeinwp/otter-blocks/compare/v1.7.5...v2.0.0) (2022-03-08)
 
 - Add Flip Block

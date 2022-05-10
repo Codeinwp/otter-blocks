@@ -50,26 +50,34 @@ const GoogleFontsControl = ({
 	const instanceId = useInstanceId( GoogleFontsControl );
 
 	useEffect( () => {
+		let isMounted = true;
+
 		fetch( 'https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyClGdkPJ1BvgLOol5JAkQY4Mv2lkLYu00k' )
 			.then( blob => blob.json() )
 			.then( data => {
-				setFonts( data.items );
-				if ( value ) {
-					data.items.find( i => {
-						if ( value === i.family ) {
-							const variants = ( i.variants )
-								.filter( o => false === o.includes( 'italic' ) )
-								.map( o => {
-									return o = {
-										'label': startCase( toLower( o ) ),
-										'value': o
-									};
-								});
-							return setVariants( variants );
-						}
-					});
+				if ( isMounted ) {
+					setFonts( data.items );
+					if ( value ) {
+						data.items.find( i => {
+							if ( value === i.family ) {
+								const variants = ( i.variants )
+									.filter( o => false === o.includes( 'italic' ) )
+									.map( o => {
+										return o = {
+											'label': startCase( toLower( o ) ),
+											'value': o
+										};
+									});
+								return setVariants( variants );
+							}
+						});
+					}
 				}
 			});
+
+		return () => {
+			isMounted = false;
+		};
 	}, []);
 
 	const [ fonts, setFonts ] = useState( null );
@@ -210,7 +218,7 @@ const GoogleFontsControl = ({
 
 			{ variants && (
 				<SelectControl
-					label={ __( 'Font Width', 'otter-blocks' ) }
+					label={ __( 'Font Weight', 'otter-blocks' ) }
 					value={ valueVariant || 'regular' }
 					options={ variants }
 					onChange={ onChangeFontVariant }
