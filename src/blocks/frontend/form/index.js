@@ -5,11 +5,11 @@ import { __ } from '@wordpress/i18n';
 
 import apiFetch from '@wordpress/api-fetch';
 
-import domReady from '@wordpress/dom-ready';
-
 /**
  * Internal dependencies.
  */
+import { domReady } from '../../helpers/frontend-helper-functions.js';
+
 import { addCaptchaOnPage } from './captcha.js';
 
 const TIME_UNTIL_REMOVE = 10_000;
