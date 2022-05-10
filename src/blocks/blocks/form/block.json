@@ -52,6 +52,9 @@
 		"labelColor": {
 			"type": "string"
 		},
+		"inputRequiredColor": {
+			"type": "string"
+		},
 		"inputBorderRadius": {
 			"type": "number"
 		},

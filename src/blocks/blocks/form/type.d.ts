@@ -24,6 +24,7 @@ type Attributes = {
 	inputBorderColor: string
 	inputBorderWidth: number
 	inputWidth: number
+	inputRequiredColor: string
 	submitMessage: string
 	submitMessageColor: string
 	submitMessageErrorColor: string

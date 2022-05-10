@@ -322,6 +322,11 @@ const Inspector = ({
 									value: attributes.submitMessageErrorColor,
 									onChange: submitMessageErrorColor => setAttributes({ submitMessageErrorColor }),
 									label: __( 'Error Message Color', 'otter-blocks' )
+								},
+								{
+									value: attributes.inputRequiredColor,
+									onChange: inputRequiredColor => setAttributes({ inputRequiredColor }),
+									label: __( 'Label Required Color', 'otter-blocks' )
 								}
 							] }
 						/>

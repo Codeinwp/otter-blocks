@@ -12,7 +12,7 @@
 	--inputsGap: 10px;
 	--inputGap: 5px;
 	--labelFontSize: var(--bodyFontSize, 1.3rem);
-	--submitFontSize: var(--btnFs,var(--bodyFontSize));
+	--submitFontSize: var(--btnFs, var(--bodyFontSize, 1.3rem));
 
 	.otter-form__container {
 		display: flex;

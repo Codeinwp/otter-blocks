@@ -706,6 +706,7 @@ const Edit = ({
 			blockRef.current?.style?.setProperty( '--labelColor', attributes.labelColor || null );
 			blockRef.current?.style?.setProperty( '--inputWidth', per( attributes.inputWidth ) );
 			blockRef.current?.style?.setProperty( '--submitColor', attributes.submitColor || null );
+			blockRef.current?.style?.setProperty( '--requiredColor', attributes.inputRequiredColor || null );
 			blockRef.current?.style?.setProperty( '--inputGap', px( attributes.inputGap ) );
 			blockRef.current?.style?.setProperty( '--inputsGap', px( attributes.inputsGap ) );
 			blockRef.current?.style?.setProperty( '--labelFontSize', px( attributes.labelFontSize ) );
