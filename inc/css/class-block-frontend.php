@@ -356,15 +356,22 @@ class Block_Frontend extends Base_CSS {
 			$templates = get_block_templates();
 			$template_css = '';
 
-			// TODO: find a way to get only the template for the current post.
+			// TODO: find a way to get the blocks from the header & footer.
 			foreach ( $templates as $template ) {
-				$template->content = _remove_theme_attribute_in_block_template_content( $template->content );
+				if( $template->type === 'wp_template' || $template->type === 'wp_template_part' ) {
+					if(
+						(isset($template->wp_id) && $template->wp_id === $post_id) ||
+						(isset($template->post_types) && 0 < count( array_intersect( $template->post_types, array( 'post', 'page' ) ) ))
+					) {
+						//$template->content = _remove_theme_attribute_in_block_template_content( $template->content );
+						$blocks = parse_blocks( $template->content );
+						if ( ! is_array( $blocks ) || empty( $blocks ) ) {
+							continue;
+						}
+						$template_css .= $this->cycle_through_blocks( $blocks );
+					}
 
-				$blocks = parse_blocks( $template->content );
-				if ( ! is_array( $blocks ) || empty( $blocks ) ) {
-					continue;
 				}
-				$template_css .= $this->cycle_through_blocks( $blocks );
 			}
 
 			$css .= $template_css;
