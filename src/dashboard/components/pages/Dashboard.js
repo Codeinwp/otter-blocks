@@ -109,16 +109,6 @@ const Dashboard = ({
 
 				<PanelRow>
 					<ToggleControl
-						label={ __( 'Allow JSON & SVG Uploads.', 'otter-blocks' ) }
-						help={ __( 'This option allows JSON & SVG files to be uploaded to the media library to use in Lottie Block. Only enable this option if you want to use custom JSON uploads in Lottie Block or using SVG as image source.', 'otter-blocks' ) }
-						checked={ Boolean( getOption( 'themeisle_allow_json_upload' ) ) }
-						disabled={ 'saving' === status }
-						onChange={ () => updateOption( 'themeisle_allow_json_upload', ! Boolean( getOption( 'themeisle_allow_json_upload' ) ) ) }
-					/>
-				</PanelRow>
-
-				<PanelRow>
-					<ToggleControl
 						label={ __( 'Anonymous Data Tracking.', 'otter-blocks' ) }
 						help={ __( 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.', 'otter-blocks' ) }
 						checked={ 'yes' === getOption( 'otter_blocks_logger_flag' ) ? true : false }

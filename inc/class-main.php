@@ -43,6 +43,11 @@ class Main {
 		add_action( 'init', array( $this, 'autoload_classes' ), 9 );
 		add_filter( 'script_loader_tag', array( $this, 'filter_script_loader_tag' ), 10, 2 );
 		add_filter( 'safe_style_css', array( $this, 'used_css_properties' ), 99 );
+
+		if ( ! function_exists( 'is_wpcom_vip' ) ) {
+			add_filter( 'upload_mimes', array( $this, 'allow_json_svg' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
+			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg' ), 75, 4 );
+		}
 	}
 
 	/**
@@ -202,6 +207,50 @@ class Main {
 		$list = array_merge( $props, $attr );
 
 		return $list;
+	}
+
+	/**
+	 * Allow JSON uploads
+	 *
+	 * @param array $mimes Supported mimes.
+	 *
+	 * @return array
+	 * @since  1.5.7
+	 * @access public
+	 */
+	public function allow_json_svg( $mimes ) {
+		$mimes['json'] = 'application/json';
+		$mimes['svg']  = 'image/svg+xml';
+		return $mimes;
+	}
+
+	/**
+	 * Allow JSON uploads
+	 *
+	 * @param null $data File data.
+	 * @param null $file File object.
+	 * @param null $filename File name.
+	 * @param null $mimes Supported mimes.
+	 *
+	 * @return array
+	 * @since  1.5.7
+	 * @access public
+	 */
+	public function fix_mime_type_json_svg( $data = null, $file = null, $filename = null, $mimes = null ) {
+		$ext = isset( $data['ext'] ) ? $data['ext'] : '';
+		if ( 1 > strlen( $ext ) ) {
+			$exploded = explode( '.', $filename );
+			$ext      = strtolower( end( $exploded ) );
+		}
+		if ( 'json' === $ext ) {
+			$data['type'] = 'application/json';
+			$data['ext']  = 'json';
+		}
+		if ( 'svg' === $ext ) {
+			$data['type'] = 'image/svg+xml';
+			$data['ext']  = 'svg';
+		}
+		return $data;
 	}
 
 	/**
