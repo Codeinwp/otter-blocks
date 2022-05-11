@@ -1,6 +1,5 @@
 name: Test PHP
 
-
 on: [pull_request]
 
 jobs:

@@ -1,6 +1,5 @@
 name: Test JS
 
-
 on: [pull_request]
 
 jobs:

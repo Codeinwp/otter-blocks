@@ -1,0 +1,36 @@
+name: Slash Command Dispatch
+on:
+  issue_comment:
+    types: [ created ]
+jobs:
+  slashCommandDispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      # Basic configuration
+      - name: Slash Command Dispatch
+        id: scd
+        uses: peter-evans/slash-command-dispatch@v3
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          commands: |
+            create-build-url
+          issue-type: pull-request
+          dispatch-type: workflow
+
+      - name: Add reaction
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.BOT_TOKEN }}
+          repository: ${{ github.event.inputs.repository }}
+          comment-id: ${{ github.event.inputs.comment-id }}
+          reaction-type: hooray
+
+      - name: Edit comment with error message
+        if: steps.scd.outputs.error-message
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ github.event.comment.id }}
+          body: |
+            > ${{ steps.scd.outputs.error-message }}

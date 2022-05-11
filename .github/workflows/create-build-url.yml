@@ -1,10 +1,12 @@
 name: Build and publish the ZIP build file
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [ opened, synchronize, ready_for_review ]
     branches-ignore:
       - "update_dependencies"
+  
 jobs:
   dev-zip:
     name: Build ZIP and upload to s3

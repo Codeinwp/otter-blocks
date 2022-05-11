@@ -1,6 +1,5 @@
 name: Sync assets with wordpress.org
 
-
 on:
   push:
     branches:
