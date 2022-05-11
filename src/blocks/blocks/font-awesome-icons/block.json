@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/font-awesome-icons",
 	"title": "Icon",
 	"category": "themeisle-blocks",
-	"description": "Add icons from Font Awesome or ThemeIsle Icons library to your website.",
+	"description": "Add icons from Font Awesome or ThemeIsle Icons library to your website. Powered by Otter.",
 	"keywords": [ "font awesome", "dashicons", "icons" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

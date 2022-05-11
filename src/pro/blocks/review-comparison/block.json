@@ -1,0 +1,30 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/review-comparison",
+	"title": "Review Comparison Table",
+	"category": "themeisle-blocks",
+	"description": "A way to compare different product reviews made on the website. Powered by Otter.",
+	"keywords": [ "product", "review", "comparison" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"reviews": {
+			"type": "array",
+			"default": []
+		},
+		"buttonColor": {
+			"type": "string"
+		},
+		"buttonText": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"html": false
+	},
+	"editorStyle": "otter-review-comparison-editor",
+	"style": "otter-review-comparison-style"
+}

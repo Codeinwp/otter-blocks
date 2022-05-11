@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Plugins;
 
+use ThemeIsle\GutenbergBlocks\Pro;
+
 /**
  * Class Dashboard
  */
@@ -62,7 +64,6 @@ class Dashboard {
 	 * @access  public
 	 */
 	public function enqueue_options_assets() {
-		$tour          = get_option( 'themeisle_blocks_settings_tour' );
 		$wp_upload_dir = wp_upload_dir( null, false );
 		$basedir       = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/';
 		$asset_file    = include OTTER_BLOCKS_PATH . '/build/dashboard/index.asset.php';
@@ -71,13 +72,6 @@ class Dashboard {
 			'otter-blocks-styles',
 			OTTER_BLOCKS_URL . 'build/dashboard/style-index.css',
 			array( 'wp-components' ),
-			$asset_file['version']
-		);
-
-		wp_enqueue_style(
-			'otter-blocks-assets',
-			OTTER_BLOCKS_URL . 'build/dashboard/index.css',
-			array(),
 			$asset_file['version']
 		);
 
@@ -94,11 +88,16 @@ class Dashboard {
 		wp_localize_script(
 			'otter-blocks-scripts',
 			'otterObj',
-			array(
-				'version'     => OTTER_BLOCKS_VERSION,
-				'assetsPath'  => OTTER_BLOCKS_URL . 'assets/',
-				'showTour'    => $tour,
-				'stylesExist' => is_dir( $basedir ),
+			apply_filters(
+				'otter_dashboard_data',
+				array(
+					'version'     => OTTER_BLOCKS_VERSION,
+					'assetsPath'  => OTTER_BLOCKS_URL . 'assets/',
+					'stylesExist' => is_dir( $basedir ),
+					'hasPro'      => Pro::is_pro_installed(),
+					'upgradeLink' => Pro::get_url(),
+					'docsLink'    => Pro::get_docs_url(),
+				)
 			)
 		);
 	}
@@ -119,10 +118,6 @@ class Dashboard {
 		}
 
 		if ( is_network_admin() || isset( $_GET['activate-multi'] ) ) { // phpcs:ignore WordPress.VIP.SuperGlobalInputUsage.AccessDetected,WordPress.Security.NonceVerification.NoNonceVerification
-			return;
-		}
-
-		if ( ! get_option( 'themeisle_blocks_settings_tour' ) ) {
 			return;
 		}
 

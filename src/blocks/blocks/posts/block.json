@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/posts-grid",
 	"title": "Posts",
 	"category": "themeisle-blocks",
-	"description": "Display a list of your most recent posts in a beautiful layout.",
+	"description": "Display a list of your most recent posts in a beautiful layout. Powered by Otter.",
 	"keywords": [ "posts", "grid", "news" ],
 	"textdomain": "otter-blocks",
 	"attributes": {
@@ -31,12 +31,6 @@
 				"meta",
 				"description"
 			]
-		},
-		"customMetas": {
-			"type": "array",
-			"items": {
-				"type": "object"
-			}
 		},
 		"categories": {
 			"type": "array",

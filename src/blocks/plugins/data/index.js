@@ -1,13 +1,14 @@
 /**
  * WordPress dependencies
  */
-import { registerStore } from '@wordpress/data';
+
+import { createReduxStore, register } from '@wordpress/data';
 
 const DEFAULT_STATE = {
 	viewType: 'Desktop'
 };
 
-registerStore( 'themeisle-gutenberg/data', {
+const store = createReduxStore( 'themeisle-gutenberg/data', {
 	reducer( state = DEFAULT_STATE, action ) {
 		if ( 'UPDATE_VIEW' === action.type ) {
 			return {
@@ -33,3 +34,5 @@ registerStore( 'themeisle-gutenberg/data', {
 		}
 	}
 });
+
+register( store );

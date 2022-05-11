@@ -54,25 +54,23 @@ class Main {
 	public function autoload_classes() {
 		load_plugin_textdomain( 'otter-blocks', false, basename( OTTER_BLOCKS_PATH ) . '/languages' );
 
-		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Registration' ) ) {
-			\ThemeIsle\GutenbergBlocks\Registration::instance();
-		}
-
 		$classnames = array(
+			'\ThemeIsle\GutenbergBlocks\Registration',
+			'\ThemeIsle\GutenbergBlocks\Pro',
+			'\ThemeIsle\GutenbergBlocks\Blocks_Export_Import',
 			'\ThemeIsle\GutenbergBlocks\CSS\Block_Frontend',
 			'\ThemeIsle\GutenbergBlocks\CSS\CSS_Handler',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Block_Conditions',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Dashboard',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Options_Settings',
-			'\ThemeIsle\GutenbergBlocks\Plugins\WooCommerce_Builder',
 			'\ThemeIsle\GutenbergBlocks\Render\Masonry_Variant',
 			'\ThemeIsle\GutenbergBlocks\Server\Dashboard_Server',
-			'\ThemeIsle\GutenbergBlocks\Server\Filter_Blocks_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Plugin_Card_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Template_Library_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Form_Server',
-			'\ThemeIsle\GutenbergBlocks\Server\Posts_ACF_Server',
 		);
+
+		$classnames = apply_filters( 'otter_blocks_autoloader', $classnames );
 
 		foreach ( $classnames as $classname ) {
 			$classname = new $classname();
@@ -88,10 +86,6 @@ class Main {
 
 		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Animation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {
 			\ThemeIsle\GutenbergBlocks\Blocks_Animation::instance();
-		}
-
-		if ( class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Export_Import' ) ) {
-			\ThemeIsle\GutenbergBlocks\Blocks_Export_Import::instance();
 		}
 	}
 

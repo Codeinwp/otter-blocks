@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/slider",
 	"title": "Slider",
 	"category": "themeisle-blocks",
-	"description": "Minimal image slider to showcase beautiful images.",
+	"description": "Minimal image slider to showcase beautiful images. Powered by Otter.",
 	"keywords": [ "slider", "gallery", "carousel" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

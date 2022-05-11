@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/flip",
 	"title": "Flip Card",
 	"category": "themeisle-blocks",
-	"description": "Make a card with a flip effect.",
+	"description": "Make a card with a flip effect. Powered by Otter.",
 	"keywords": [ "flip card", "container", "animation" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

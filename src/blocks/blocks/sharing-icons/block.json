@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/sharing-icons",
 	"title": "Sharing Icons",
 	"category": "themeisle-blocks",
-	"description": "Share buttons for your website visitors to share content on any social sharing service.",
+	"description": "Share buttons for your website visitors to share content on any social sharing service. Powered by Otter.",
 	"keywords": [ "social media", "sharing", "icons" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

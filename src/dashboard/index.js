@@ -1,32 +1,38 @@
 /**
- * External dependencies.
- */
-import ReactNotification from 'react-notifications-component';
-
-/**
  * WordPress dependencies.
  */
 import {
 	render,
-	Fragment
+	Fragment,
+	useState
 } from '@wordpress/element';
 
 /**
  * Internal dependencies.
  */
 import './style.scss';
-import Onboarding from './Components/Onboarding.js';
-import Header from './Components/Header.js';
-import Main from './Components/Main.js';
-import Footer from './Components/Footer.js';
+import Notices from './components/Notices.js';
+import Header from './components/Header.js';
+import Main from './components/Main.js';
+import Footer from './components/Footer.js';
 
 const App = () => {
+	const [ currentTab, setTab ] = useState( 'dashboard' );
+
 	return (
 		<Fragment>
-			{ Boolean( window.otterObj.showTour ) && <Onboarding /> }
-			<ReactNotification />
-			<Header />
-			<Main />
+			<Notices />
+
+			<Header
+				isActive={ currentTab }
+				setActive={ setTab }
+			/>
+
+			<Main
+				currentTab={ currentTab }
+				setTab={ setTab }
+			/>
+
 			<Footer />
 		</Fragment>
 	);

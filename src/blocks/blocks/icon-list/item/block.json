@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/icon-list-item",
 	"title": "Icon List Item",
 	"category": "themeisle-blocks",
-	"description": "Display an item for the icon list.",
+	"description": "Display an item for the icon list. Powered by Otter.",
 	"keywords": [ "icon", "list", "items" ],
 	"parent": [ "themeisle-blocks/icon-list" ],
 	"textdomain": "otter-blocks",

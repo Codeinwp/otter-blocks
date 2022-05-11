@@ -8,6 +8,10 @@ import {
 	ToggleControl
 } from '@wordpress/components';
 
+import { useDispatch } from '@wordpress/data';
+
+import { Fragment } from '@wordpress/element';
+
 /**
  * Internal dependencies.
  */
@@ -19,6 +23,8 @@ const SyncControl = ({
 	setAttributes,
 	children
 }) => {
+	const { enableComplementaryArea } = useDispatch( 'core/interface' );
+
 	const isActive = isSynced?.includes( field );
 
 	const toggleSync = () => {
@@ -43,13 +49,21 @@ const SyncControl = ({
 	};
 
 	return (
-		<fieldset className="otter-sync-control">
+		<fieldset className="o-sync-control">
 			<legend>
 				<ToggleControl
-					label={ __( 'Sync with Globals', 'otter-blocks' ) }
+					label={ <Fragment>{ __( 'Sync with', 'otter-blocks' ) }</Fragment> }
 					checked={ isActive }
 					onChange={ toggleSync }
 				/>
+
+				<span
+					tabIndex="0"
+					className="clickable"
+					onClick={ () => enableComplementaryArea( 'core/edit-post', 'themeisle-blocks/otter-options' ) }
+				>
+					{ __( 'Globals', 'otter-blocks' ) }
+				</span>
 			</legend>
 
 			{ isActive ? <Disabled>{ children }</Disabled> : children }

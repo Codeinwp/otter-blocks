@@ -7,15 +7,15 @@ const path = require( 'path' );
 const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
 const blocks = require( './blocks.json' );
 
-const blockFiles = Object.keys( blocks ).filter( block => blocks[ block ].block !== undefined )
+const blockFiles = Object.keys( blocks ).filter( block => blocks[ block ].block !== undefined && true !== blocks[ block ]?.isPro )
 	.map( block => {
 		return {
-			source: `src/blocks/${ blocks[ block ].block }`,
+			source: `src/${ blocks[ block ].block }`,
 			destination: `build/blocks/${ block }/`
 		};
 	});
 
-const folders = Object.keys( blocks ).map( block => `build/blocks/${ block }` );
+const blockFolders = Object.keys( blocks ).filter( block => true !== blocks[ block ]?.isPro ).map( block => `build/blocks/${ block }` );
 
 module.exports = [
 	{
@@ -112,10 +112,9 @@ module.exports = [
 			blocks: [
 				'./src/blocks/index.js',
 				'./src/blocks/plugins/registerPlugin.js',
+				'./src/blocks/components/index.js',
+				'./src/blocks/helpers/index.js',
 				...glob.sync( './src/blocks/blocks/**/index.js' )
-			],
-			woocommerce: [
-				...glob.sync( './src/blocks/woocommerce/**/index.js' )
 			],
 			'leaflet-map': './src/blocks/frontend/leaflet-map/index.js',
 			'leaflet-gesture-handling': './src/blocks/frontend/leaflet-map/leaflet-gesture-handling.js',
@@ -158,10 +157,12 @@ module.exports = [
 			new FileManagerPlugin({
 				events: {
 					onEnd: {
-						mkdir: folders,
+						mkdir: blockFolders,
 						copy: blockFiles
 					}
-				}
+				},
+				runOnceInWatchMode: false,
+				runTasksInSeries: true
 			}),
 			new BundleAnalyzerPlugin({
 				analyzerMode: 'disabled',

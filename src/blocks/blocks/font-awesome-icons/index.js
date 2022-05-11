@@ -19,7 +19,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Icon', 'otter-blocks' ),
-	description: __( 'Add icons from Font Awesome or ThemeIsle Icons library to your website.', 'otter-blocks' ),
+	description: __( 'Add icons from Font Awesome or ThemeIsle Icons library to your website. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'font awesome',

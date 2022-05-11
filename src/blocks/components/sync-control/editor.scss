@@ -1,12 +1,26 @@
-.otter-sync-control {
+.o-sync-control {
 	border: 1px solid #ccc;
 	padding: 5px 10px 8px 10px;
 	margin-bottom: 10px;
 	border-radius: 5px;
 
 	legend {
+		display: flex;
+		align-items: center;
+
 		.components-toggle-control {
 			margin: 12px 6px;
+
+			.components-base-control__field {
+				margin-bottom: 0;
+			}
+		}
+
+		span {
+			&.clickable {
+				cursor: pointer;
+				text-decoration: underline;
+			}
 		}
 	}
 

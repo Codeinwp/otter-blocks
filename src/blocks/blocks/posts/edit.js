@@ -14,11 +14,8 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	isUndefined,
-	pickBy,
-	pick
+	pickBy
 } from 'lodash';
-
-import apiFetch from '@wordpress/api-fetch';
 
 import {
 	Disabled,
@@ -36,8 +33,7 @@ import {
 import {
 	Fragment,
 	useEffect,
-	useState,
-	createContext
+	useState
 } from '@wordpress/element';
 
 /**
@@ -55,18 +51,6 @@ import { StyleSwitcherBlockControl } from '../../components/style-switcher-contr
 
 const { attributes: defaultAttributes } = metadata;
 
-export const CustomMetasContext = createContext({});
-
-const ALLOWED_ACF_TYPES = [
-	'text',
-	'textarea',
-	'range',
-	'number',
-	'url',
-	'email',
-	'password'
-];
-
 /**
  * Posts component
  * @param {import('./types').PostProps} param0
@@ -83,9 +67,6 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const [ slugs, setSlugs ] = useState([]);
-
-	const [ acfData, setAcfData ] = useState([]);
-	const [ acfFieldDict, setAcfFieldDict ] = useState({});
 
 	const {
 		posts,
@@ -129,40 +110,6 @@ const Edit = ({
 	useEffect( () => {
 		dispatch( 'otter-store' ).setPostsSlugs( slugs );
 	}, [ slugs ]);
-
-	useEffect( () => {
-		if ( ! window.acf ) {
-			return;
-		}
-
-		let isMounted = true;
-
-		apiFetch({ path: 'otter/v1/acf-fields' }).then( resp => {
-			if ( resp?.success && isMounted ) {
-				setAcfData( resp?.groups );
-				setAcfFieldDict(
-					resp?.groups
-						?.map( ({ fields, data }) => {
-							return fields.map( field => {
-								field.urlLocation = `${ window.themeisleGutenberg?.rootUrl || '' }/wp-admin/post.php?post=${ data.ID }&action=edit`;
-								return field;
-							});
-						})
-						.flat()
-						.reduce( ( acc, field ) => {
-							if ( field.key && field.label ) {
-								acc[ field.key ] = pick( field, [ 'label', 'type', 'prepend', 'append', 'default_value', 'value', 'urlLocation' ]);
-							}
-							return acc;
-						}, {})
-				);
-			}
-		});
-
-		return () => {
-			isMounted = false;
-		};
-	}, []);
 
 	const fontSizeStyle = css`
 		${ attributes.imageWidth && `--imgWidth: ${ attributes.imageWidth }px;` }
@@ -233,57 +180,55 @@ const Edit = ({
 
 	return (
 		<Fragment>
-			<CustomMetasContext.Provider value={{ acfData, acfFieldDict, ALLOWED_ACF_TYPES }}>
-				<StyleSwitcherBlockControl
-					label={ __( 'Block Styles', 'otter-blocks' ) }
-					value={ attributes.style }
-					options={ [
-						{
-							label: __( 'Grid', 'otter-blocks' ),
-							value: 'grid',
-							image: window.themeisleGutenberg.assetsPath + '/icons/posts-grid.jpg'
-						},
-						{
-							label: __( 'List', 'otter-blocks' ),
-							value: 'list',
-							image: window.themeisleGutenberg.assetsPath + '/icons/posts-list.jpg'
-						}
-					] }
-					onChange={ changeStyle }
-				/>
+			<StyleSwitcherBlockControl
+				label={ __( 'Block Styles', 'otter-blocks' ) }
+				value={ attributes.style }
+				options={ [
+					{
+						label: __( 'Grid', 'otter-blocks' ),
+						value: 'grid',
+						image: window.themeisleGutenberg.assetsPath + '/icons/posts-grid.jpg'
+					},
+					{
+						label: __( 'List', 'otter-blocks' ),
+						value: 'list',
+						image: window.themeisleGutenberg.assetsPath + '/icons/posts-list.jpg'
+					}
+				] }
+				onChange={ changeStyle }
+			/>
 
-				<Inspector
-					attributes={ attributes }
-					setAttributes={ setAttributes }
-					changeStyle={ changeStyle }
-					categoriesList={ categoriesList }
-					posts={posts}
-				/>
+			<Inspector
+				attributes={ attributes }
+				setAttributes={ setAttributes }
+				changeStyle={ changeStyle }
+				categoriesList={ categoriesList }
+				posts={posts}
+			/>
 
-				<Controls
-					attributes={ attributes }
-					setAttributes={ setAttributes }
-				/>
+			<Controls
+				attributes={ attributes }
+				setAttributes={ setAttributes }
+			/>
 
-				<div { ...blockProps } css={ fontSizeStyle }>
-					<Disabled>
-						{ attributes.enableFeaturedPost && (
-							<FeaturedPost
-								attributes={ attributes }
-								post={ posts?.[0] }
-								category={ categoriesList[0] }
-								author={ authors[0] }
-							/>
-						) }
-						<Layout
+			<div { ...blockProps } css={ fontSizeStyle }>
+				<Disabled>
+					{ attributes.enableFeaturedPost && (
+						<FeaturedPost
 							attributes={ attributes }
-							posts={ posts }
-							categoriesList={ categoriesList }
-							authors={ authors }
+							post={ posts?.[0] }
+							category={ categoriesList[0] }
+							author={ authors[0] }
 						/>
-					</Disabled>
-				</div>
-			</CustomMetasContext.Provider>
+					) }
+					<Layout
+						attributes={ attributes }
+						posts={ posts }
+						categoriesList={ categoriesList }
+						authors={ authors }
+					/>
+				</Disabled>
+			</div>
 		</Fragment>
 	);
 };
