@@ -1,9 +1,7 @@
 /**
- * WordPress dependencies
+ * Internal dependencies
  */
-import { __ } from '@wordpress/i18n';
-
-import domReady from '@wordpress/dom-ready';
+import { domReady } from '../../helpers/frontend-helper-functions.js';
 
 const createPopupContent = ( markerProps ) => {
 
@@ -58,9 +56,9 @@ const createLeafletMap = ( container, attributes ) => {
 		gestureHandling: true,
 		gestureHandlingOptions: {
 			text: {
-				touch: __( 'Use two fingers to move the map', 'otter-blocks' ),
-				scroll: __( 'Use ctrl + scroll to zoom the map', 'otter-blocks' ),
-				scrollMac: __( 'Use \u2318 + scroll to zoom the map', 'otter-blocks' )
+				touch: 'Use two fingers to move the map',
+				scroll: 'Use ctrl + scroll to zoom the map',
+				scrollMac: 'Use \u2318 + scroll to zoom the map'
 			}
 		}
 	});

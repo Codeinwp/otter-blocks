@@ -368,7 +368,33 @@ class Registration {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/countdown.asset.php';
 			wp_register_script( 'otter-countdown', OTTER_BLOCKS_URL . 'build/blocks/countdown.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-countdown', 'defer', true );
-			self::$scripts_loaded['countdown'] = true;
+      self::$scripts_loaded['countdown'] = true;
+
+			$offset    = (float) get_option( 'gmt_offset' );
+			$hours     = (int) $offset;
+			$minutes   = ( $offset - $hours );
+			$sign      = ( $offset < 0 ) ? '-' : '+';
+			$abs_hour  = abs( $hours );
+			$abs_mins  = abs( $minutes * 60 );
+			$tz_offset = sprintf( '%s%02d:%02d', $sign, $abs_hour, $abs_mins );
+
+			wp_localize_script(
+				'otter-countdown',
+				'themeisleGutenbergCountdown',
+				array(
+					'i18n'     => array(
+						'second'  => __( 'Second', 'otter-blocks' ),
+						'seconds' => __( 'Seconds', 'otter-blocks' ),
+						'minute'  => __( 'Minute', 'otter-blocks' ),
+						'minutes' => __( 'Minutes', 'otter-blocks' ),
+						'hour'    => __( 'Hour', 'otter-blocks' ),
+						'hours'   => __( 'Hours', 'otter-blocks' ),
+						'day'     => __( 'Day', 'otter-blocks' ),
+						'days'    => __( 'Days', 'otter-blocks' ),
+					),
+					'timezone' => $tz_offset,
+				)
+			);
 		}
 
 		if ( ! self::$scripts_loaded['form'] && has_block( 'themeisle-blocks/form', $post ) ) {

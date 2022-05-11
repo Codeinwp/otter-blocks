@@ -31,8 +31,7 @@
 			"type": "string"
 		},
 		"headingColor": {
-			"type": "string",
-			"default": "#000000"
+			"type": "string"
 		},
 		"highlightColor": {
 			"type": "string"

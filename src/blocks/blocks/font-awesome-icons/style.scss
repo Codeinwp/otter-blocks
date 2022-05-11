@@ -3,8 +3,8 @@
 	--borderColor: #000;
 	--borderSize: unset;
 	--borderRadius: 0%;
-	--margin: 0;
-	--padding: 0;
+	--margin: 0px;
+	--padding: 0px;
 	--fontSize: 16px;
 
 	text-align: var( --align );
@@ -15,7 +15,12 @@
 		border: var( --borderSize ) solid var( --borderColor );
 		border-radius: var( --borderRadius );
 		margin: var( --margin );
-		width: auto;
+
+		text-align: center;
+		align-items: center;
+
+		width: calc( var(--fontSize) * 1.5 + var( --padding ));
+		height: calc( var(--fontSize) * 1.5 + var( --padding ));
 
 		svg {
 			width: var( --fontSize );
@@ -24,8 +29,6 @@
 
 		i {
 			width: 100%;
-			border-radius: var( --borderRadius );
-			padding: var( --padding );
 		}
 	}
 }
