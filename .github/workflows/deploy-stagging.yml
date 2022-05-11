@@ -19,14 +19,14 @@ jobs:
       - name: Get Composer Cache Directory
         id: composer-cache
         run: |
-        echo "::set-output name=dir::$(composer config cache-files-dir)"
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
       - name: Configure Composer cache
         uses: actions/cache@v1
         with:
-        path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-composer-
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
       - name: Install composer deps
         run: composer install --no-dev --prefer-dist --no-progress --no-suggest
       - name: Install npm deps
@@ -38,8 +38,8 @@ jobs:
       - name: Run deploy
         uses: pagely/action-deploy@v1
         with:
-        PAGELY_DEPLOY_DEST: "/httpdocs/wp-content/plugins/otter-blocks"
-        PAGELY_INTEGRATION_SECRET: ${{secrets.PAGELY_INTEGRATION_SECRET}}
-        PAGELY_INTEGRATION_ID: ${{secrets.PAGELY_INTEGRATION_ID}}
-        PAGELY_APP_ID: ${{secrets.PAGELY_APP_ID_STAGING}}
-        PAGELY_WORKING_DIR: ${{github.workspace}}/dist/otter-blocks
+          PAGELY_DEPLOY_DEST: "/httpdocs/wp-content/plugins/otter-blocks"
+          PAGELY_INTEGRATION_SECRET: ${{secrets.PAGELY_INTEGRATION_SECRET}}
+          PAGELY_INTEGRATION_ID: ${{secrets.PAGELY_INTEGRATION_ID}}
+          PAGELY_APP_ID: ${{secrets.PAGELY_APP_ID_STAGING}}
+          PAGELY_WORKING_DIR: ${{github.workspace}}/dist/otter-blocks
