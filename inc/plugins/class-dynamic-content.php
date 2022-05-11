@@ -346,9 +346,9 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_loggedin_email( $data ) {
-		$current_user = wp_get_current_user();
+		$user    = wp_get_current_user();
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$email   = $current_user->user_email;;
+		$email   = $current_user->user_email;
 
 		if ( empty( $email ) ) {
 			$email = $default;
