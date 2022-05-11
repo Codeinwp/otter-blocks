@@ -12,28 +12,40 @@
 			"type": "string"
 		},
 		"facebook": {
-			"type": "boolean",
-			"default": true
+			"type": "object",
+			"default": {
+				"active": true
+			}
 		},
 		"twitter": {
-			"type": "boolean",
-			"default": true
+			"type": "object",
+			"default": {
+				"active": true
+			}
 		},
 		"linkedin": {
-			"type": "boolean",
-			"default": true
+			"type": "object",
+			"default": {
+				"active": true
+			}
 		},
 		"pinterest": {
-			"type": "boolean",
-			"default": false
+			"type": "object",
+			"default": {
+				"active": false
+			}
 		},
 		"tumblr": {
-			"type": "boolean",
-			"default": false
+			"type": "object",
+			"default": {
+				"active": false
+			}
 		},
 		"reddit": {
-			"type": "boolean",
-			"default": false
+			"type": "object",
+			"default": {
+				"active": false
+			}
 		},
 		"gap" : {
 			"type": "number"

@@ -17,6 +17,7 @@ import Controls from './controls.js';
 import Inspector from './inspector';
 import { blockInit, getDefaultValueByField } from '../../helpers/block-utility';
 import metadata from './block.json';
+import socialList from './services.js';
 
 import { css, jsx } from '@emotion/react';
 
@@ -39,11 +40,22 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
+
+	const individualCSS = Object.keys( socialList ).reduce(( acc, icon ) => {
+		const iconAttrs = getValue( icon );
+		return `${ acc }
+		.is-${ icon } {
+			--iconBgColor: ${ iconAttrs.backgroundColor ?? 'unset' };
+			--textColor: ${ iconAttrs.textColor ?? 'unset' };
+		}`;
+	}, '' )
+
+	const gapValue = getValue( 'gap' );
+	const borderRadiusValue = getValue( 'borderRadius' );
 	const styles = css`
-		--iconsGap: ${ getValue( 'gap' ) }px;
-		--borderRadius: ${ getValue( 'borderRadius' ) }px;
-		--iconsBgColor: ${ getValue( 'backgroundColor' ) };
-		--textColor: ${ getValue( 'textColor' ) };
+		--iconsGap: ${ gapValue ? gapValue + 'px' : '' };
+		--borderRadius: ${ borderRadiusValue ? borderRadiusValue + 'px' : '' };
+		${ individualCSS }
 	`;
 
 	const blockProps = useBlockProps({
@@ -56,11 +68,13 @@ const Edit = ({
 			<Controls
 				attributes={ attributes }
 				setAttributes={ setAttributes }
+				socialList={ socialList }
 			/>
 
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
+				socialList={ socialList }
 			/>
 
 			<div { ...blockProps }>

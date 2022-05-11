@@ -17,7 +17,7 @@ class Sharing_Icons_Block {
 	 *
 	 * @return array
 	 */
-	public function get_social_profiles() {
+	public static function get_social_profiles() {
 		$social_attributes = array(
 			'facebook'  => array(
 				'label' => esc_html__( 'Facebook', 'otter-blocks' ),
@@ -81,7 +81,7 @@ class Sharing_Icons_Block {
 
 		$html = '<div ' . $wrapper_attributes . '><div class="social-icons-wrap">';
 		foreach ( $social_attributes as $key => $icon ) {
-			if ( 'className' !== $key && 1 == $attributes[ $key ] ) {
+			if ( 'className' !== $key && true === filter_var( $attributes[ $key ]['active'], FILTER_VALIDATE_BOOLEAN ) ) {
 				$html .= '<a class="social-icon is-' . esc_html( $key ) . '" href="' . esc_url( $icon['url'] ) . '" target="_blank">';
 				$html .= '<i class="fab fa-' . esc_html( $icon['icon'] ) . '"></i><span class="v-line"></span>';
 				if ( strpos( $wrapper_attributes, 'is-style-icons' ) === false ) {

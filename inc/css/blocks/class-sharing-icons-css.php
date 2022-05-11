@@ -9,6 +9,7 @@ namespace Themeisle\GutenbergBlocks\CSS\Blocks;
 
 use ThemeIsle\GutenbergBlocks\Base_CSS;
 use ThemeIsle\GutenbergBlocks\CSS\CSS_Utility;
+use ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block;
 
 /**
  * Class Sharing_Icons_CSS
@@ -31,6 +32,38 @@ class Sharing_Icons_CSS extends Base_CSS {
 	 */
 	public function render_css( $block ) {
 		$css = new CSS_Utility( $block );
+		$social_profiles = Sharing_Icons_Block::get_social_profiles();
+
+		// add individual icons css
+		foreach ( $social_profiles as $icon => $attrs ) {
+			$css->add_item(
+				array(
+					'selector'   => ' .is-' . $icon,
+					'properties' => array(
+						array(
+							'property'  => '--iconBgColor',
+							'value'     => $icon,
+							'format'    => function( $value, $attrs ) {
+								return $value['backgroundColor'] ;
+							},
+							'condition' => function( $attrs ) use ( $icon ) {
+								return isset( $attrs[ $icon ]['backgroundColor'] );
+							},
+						),
+						array(
+							'property' => '--textColor',
+							'value'    => $icon,
+							'format'   => function( $value, $attrs ) {
+								return $value['textColor'];
+							},
+							'condition' => function( $attrs ) use ( $icon ) {
+								return isset( $attrs[ $icon ]['textColor'] );
+							},
+						)
+					)
+				)
+			);
+		}
 
 		$css->add_item(
 			array(
@@ -44,14 +77,6 @@ class Sharing_Icons_CSS extends Base_CSS {
 						'property' => '--borderRadius',
 						'value'    => 'borderRadius',
 						'unit'     => 'px',
-					),
-					array(
-						'property' => '--iconsBgColor',
-						'value'    => 'backgroundColor',
-					),
-					array(
-						'property' => '--textColor',
-						'value'    => 'textColor',
 					),
 				),
 			)

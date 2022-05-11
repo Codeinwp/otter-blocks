@@ -2,10 +2,10 @@
  * WordPress dependencies
  */
 import { Fragment } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import {
 	InspectorControls,
-	PanelColorSettings
+	PanelColorSettings,
 } from '@wordpress/block-editor';
 import {
 	PanelBody,
@@ -14,8 +14,16 @@ import {
 
 const Inspector = ({
 	attributes,
-	setAttributes
+	setAttributes,
+	socialList
 }) => {
+	const onIconChange = ( value, item, field ) => {
+		const newValue = attributes[item];
+		newValue[field] = value;
+
+		setAttributes({ [ item ]: { ...newValue } });
+	}
+
 	return <Fragment>
 		<InspectorControls>
 			<PanelBody
@@ -38,20 +46,30 @@ const Inspector = ({
 			</PanelBody>
 			<PanelColorSettings
 				title={ __( 'Color Settings' ) }
-				colorSettings={ [
-					{
-						value: attributes.backgroundColor,
-						onChange: ( value ) => setAttributes({ backgroundColor: value }),
-						label: __( 'Background Color', 'otter-blocks' )
-					},
-					{
-						value: attributes.textColor,
-						onChange: ( value ) => setAttributes({ textColor: value }),
-						label: __( 'Text Color', 'otter-blocks' )
-					}
-				] }
+				colorSettings={
+					Object.keys( socialList ).reduce(( acc, icon ) => {
+						if ( ! attributes[icon].active ) {
+							return acc;
+						}
+
+						return [ ...acc,
+							{
+								value: attributes[icon].backgroundColor,
+								onChange: value => onIconChange( value, icon, 'backgroundColor' ),
+								/* translators: %s Social Website */
+								label: sprintf( __(' %s Background Color', 'otter-blocks'), socialList[icon].label )
+							},
+							{
+								value: attributes[icon].textColor,
+								onChange: value => onIconChange( value, icon, 'textColor' ),
+								/* translators: %s Social Website */
+								label: sprintf( __(' %s Text Color', 'otter-blocks'), socialList[icon].label )
+							}
+						]
+					}, [])
+				}
+				className='ott-color-controls'
 			>
-				<p><i> { __( 'The colors will be set for all icons.', 'otter-blocks' ) } </i></p>
 			</PanelColorSettings>
 		</InspectorControls>
 	</Fragment>;

@@ -22,23 +22,25 @@ import {
 /**
  * Internal dependencies
  */
-import socialList from './services.js';
 import SocialIcons from './icons.js';
 
-const Controls = ({ attributes, setAttributes }) => {
+const Controls = ({ attributes, setAttributes, socialList }) => {
 	const toggleIcons = ( item ) => {
-		setAttributes({ [ item ]: ! attributes[ item ] });
+		let newValue = attributes[ item ];
+		newValue.active = ! newValue.active;
+
+		setAttributes({ [ item ]: { ...newValue } });
 	};
 
 	return (
 		<BlockControls>
 			<ToolbarGroup>
 				{ Object.keys( socialList ).map( ( item ) => {
-					const prop = attributes[ item ];
+					const prop = attributes[ item ].active;
 
 					return (
 						<Tooltip
-							key={ item.label }
+							key={ item }
 
 							/* translators: %s Social Website */
 							text={ sprintf( __( 'Display %s', 'otter-blocks' ), socialList[ item ].label ) }
