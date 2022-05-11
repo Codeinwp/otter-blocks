@@ -12,6 +12,7 @@ import {
 	BaseControl,
 	Button,
 	ExternalLink,
+	FormTokenField,
 	SelectControl,
 	TextControl,
 	PanelBody
@@ -125,6 +126,40 @@ const timeFormats = {
 	'g:i a': moment().format( 'h:m a' ),
 	'g:i A': moment().format( 'h:m A' ),
 	'H:i': moment().format( 'HH:m' )
+};
+
+const autocompleteData = {
+	postMeta: [],
+	authorMeta: [
+		'admin_color',
+		'aim',
+		'comment_shortcuts',
+		'description',
+		'display_name',
+		'first_name',
+		'ID',
+		'jabber',
+		'last_name',
+		'nickname',
+		'plugins_last_view',
+		'plugins_per_page',
+		'rich_editing',
+		'syntax_highlighting',
+		'user_activation_key',
+		'user_description',
+		'user_email',
+		'user_firstname',
+		'user_lastname',
+		'user_level',
+		'user_login',
+		'user_nicename',
+		'user_pass',
+		'user_registered',
+		'user_status',
+		'user_url',
+		'yim'
+	],
+	loggedInUserMeta: []
 };
 
 const Fields = ({
@@ -302,12 +337,18 @@ const Fields = ({
 					) }
 
 					{ ([ 'postMeta', 'authorMeta', 'loggedInUserMeta' ].includes( attributes.type ) ) && (
-						<TextControl
-							label={ __( 'Meta Key', 'otter-blocks' ) }
-							type="text"
-							value={ attributes.metaKey || '' }
-							onChange={ metaKey => changeAttributes({ metaKey }) }
-						/>
+						<Fragment>
+							<FormTokenField
+								label={ __( 'Meta', 'otter-blocks' ) }
+								value={ attributes.metaKey ? [ attributes.metaKey ] : [] }
+								maxLength={ 1 }
+								suggestions={ autocompleteData[ attributes.type ] }
+								onChange={ metaKey => changeAttributes({ metaKey: metaKey[0] }) }
+								__experimentalShowHowTo={ false }
+							/>
+
+							<p>{ __( 'Press Enter key to select the value.', 'otter-blocks' ) }</p>
+						</Fragment>
 					) }
 				</PanelBody>
 			) }

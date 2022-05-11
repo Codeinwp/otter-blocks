@@ -50,4 +50,9 @@ o-dynamic {
 	.components-panel__body-toggle {
 		padding: 16px 48px 16px 16px;
 	}
+
+	.components-form-token-field__token-text {
+		display: flex;
+		align-items: center;
+	}
 }
