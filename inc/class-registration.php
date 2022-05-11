@@ -368,7 +368,7 @@ class Registration {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/countdown.asset.php';
 			wp_register_script( 'otter-countdown', OTTER_BLOCKS_URL . 'build/blocks/countdown.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-countdown', 'defer', true );
-      self::$scripts_loaded['countdown'] = true;
+			self::$scripts_loaded['countdown'] = true;
 
 			$offset    = (float) get_option( 'gmt_offset' );
 			$hours     = (int) $offset;
