@@ -350,31 +350,10 @@ class Block_Frontend extends Base_CSS {
 	 */
 	public function get_post_css( $post_id = '' ) {
 		$post_id = $post_id ? $post_id : get_the_ID();
-		if ( function_exists( 'has_blocks' ) && has_blocks( $post_id ) ) {
+		if ( function_exists( 'has_blocks' ) && function_exists('get_block_templates') && has_blocks( $post_id ) ) {
 			$css = $this->get_page_css_meta( $post_id );
 
-			$templates = get_block_templates();
-			$template_css = '';
-
-			// TODO: find a way to get the blocks from the header & footer.
-			foreach ( $templates as $template ) {
-				if( $template->type === 'wp_template' || $template->type === 'wp_template_part' ) {
-					if(
-						(isset($template->wp_id) && $template->wp_id === $post_id) ||
-						(isset($template->post_types) && 0 < count( array_intersect( $template->post_types, array( 'post', 'page' ) ) ))
-					) {
-						//$template->content = _remove_theme_attribute_in_block_template_content( $template->content );
-						$blocks = parse_blocks( $template->content );
-						if ( ! is_array( $blocks ) || empty( $blocks ) ) {
-							continue;
-						}
-						$template_css .= $this->cycle_through_blocks( $blocks );
-					}
-
-				}
-			}
-
-			$css .= $template_css;
+			$css .= $this->get_block_templates_css( $post_id );
 
 			if ( empty( $css ) || is_preview() ) {
 				$css = $this->get_page_css_inline( $post_id );
@@ -390,6 +369,40 @@ class Block_Frontend extends Base_CSS {
 
 			echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 		}
+	}
+
+	/**
+	 * Get the block CSS from templates in FSE.
+	 *
+	 * @param int|\WP_Post $post_id
+	 * @return string
+	 * @since 2.0.3
+	 */
+	public function get_block_templates_css($post_id ) {
+		$template_css = '';
+
+		if ( ! function_exists( 'has_blocks' ) || ! function_exists('get_block_templates') ) {
+			return $template_css;
+		}
+
+		// Get the templates for the given post.
+		$templates = get_block_templates( array( 'wp_id' => $post_id ), get_post_type( $post_id ) );
+
+		// Get templates part like footer and header for the given post.
+		$template_parts = get_block_templates( array( 'wp_id' => $post_id ), 'wp_template_part');
+
+		$templates_page = array_merge($templates, $template_parts);
+
+		foreach ( $templates_page as $template ) {
+			//$template->content = _remove_theme_attribute_in_block_template_content( $template->content );
+			$blocks = parse_blocks( $template->content );
+			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
+				continue;
+			}
+			$template_css .= $this->cycle_through_blocks( $blocks );
+		}
+
+		return $template_css;
 	}
 
 	/**
