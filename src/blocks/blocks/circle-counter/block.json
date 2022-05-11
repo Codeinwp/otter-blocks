@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/circle-counter",
 	"title": "Circle Counter",
 	"category": "themeisle-blocks",
-	"description": "Show your progress with a beautiful Circle Counter block.",
+	"description": "Show your progress with a beautiful Circle Counter block. Powered by Otter.",
 	"keywords": [ "progress", "circle", "counter" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

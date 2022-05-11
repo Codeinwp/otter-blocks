@@ -69,6 +69,7 @@ const ToogleGroupControl = ({
 			{ options?.map( option => {
 				return (
 					<div
+						key={ option?.value }
 						className="o-toggle-option"
 						style={ style?.option }
 					>

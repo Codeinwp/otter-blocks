@@ -9,7 +9,10 @@ import { hasBlockSupport } from '@wordpress/blocks';
 
 import { InspectorControls } from '@wordpress/block-editor';
 
-import { PanelBody } from '@wordpress/components';
+import {
+	ExternalLink,
+	PanelBody
+} from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
@@ -57,6 +60,12 @@ const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 							title={ __( 'Custom CSS', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
+							{ ( window.otterComponents && window.themeisleGutenberg ) && (
+								<window.otterComponents.Notice
+									notice={ <ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Disable in Otter Settings', 'otter-blocks' ) }</ExternalLink> }
+								/>
+							) }
+
 							<CSSEditor
 								clientId={ props.clientId }
 								setAttributes={ props.setAttributes }

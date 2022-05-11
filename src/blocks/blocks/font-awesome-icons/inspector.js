@@ -90,7 +90,7 @@ const Inspector = ({
 				>
 					<RangeControl
 						label={ __( 'Icon Size', 'otter-blocks' ) }
-						value={ getValue( 'fontSize' ) || '' }
+						value={ getValue( 'fontSize' ) }
 						initialPosition={ 16 }
 						onChange={ e => setAttributes({ fontSize: e }) }
 						min={ 12 }
@@ -105,7 +105,7 @@ const Inspector = ({
 				>
 					<RangeControl
 						label={ __( 'Padding', 'otter-blocks' ) }
-						value={ getValue( 'padding' ) || '' }
+						value={ getValue( 'padding' ) }
 						initialPosition={ 5 }
 						onChange={ e => setAttributes({ padding: e }) }
 						min={ 0 }
@@ -120,7 +120,7 @@ const Inspector = ({
 				>
 					<RangeControl
 						label={ __( 'Margin', 'otter-blocks' ) }
-						value={ getValue( 'margin' ) || '' }
+						value={ getValue( 'margin' ) }
 						initialPosition={ 5 }
 						onChange={ e => setAttributes({ margin: e }) }
 						min={ 0 }

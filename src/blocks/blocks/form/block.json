@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/form",
 	"title": "Form",
 	"category": "themeisle-blocks",
-	"description": "Display a form for your clients.",
+	"description": "Display a form for your clients. Powered by Otter.",
 	"keywords": [ "business", "form", "email" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

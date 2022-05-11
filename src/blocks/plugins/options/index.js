@@ -165,7 +165,7 @@ const Options = () => {
 		<Fragment>
 			{ ( canUser ) && (
 				<PluginSidebarMoreMenuItem
-					target="wp-block-themeisle-blocks-options"
+					target="otter-options"
 				>
 					{ __( 'Otter Options', 'otter-blocks' ) }
 				</PluginSidebarMoreMenuItem>
@@ -173,7 +173,7 @@ const Options = () => {
 
 			<PluginSidebar
 				title={ __( 'Otter Options', 'otter-blocks' ) }
-				name="wp-block-themeisle-blocks-options"
+				name="otter-options"
 			>
 				<PanelBody className="o-options-general">
 					<ToggleControl

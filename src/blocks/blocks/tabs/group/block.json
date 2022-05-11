@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/tabs",
 	"title": "Tabs",
 	"category": "themeisle-blocks",
-	"description": "Organize and allow navigation between groups of content with Tabs block.",
+	"description": "Organize and allow navigation between groups of content with Tabs block. Powered by Otter.",
 	"keywords": [ "media", "tabs", "select" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

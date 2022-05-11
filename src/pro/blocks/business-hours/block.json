@@ -1,0 +1,61 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/business-hours",
+	"title": "Business Hours",
+	"category": "themeisle-blocks",
+	"description": "Display your business schedule on your website. Powered by Otter.",
+	"keywords": [ "business", "schedule", "time" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"title": {
+			"type": "string"
+		},
+		"titleAlignment": {
+			"type": "string"
+		},
+		"titleFontSize": {
+			"type": "number"
+		},
+		"titleColor": {
+			"type": "string"
+		},
+		"itemsFontSize": {
+			"type": "number"
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"gap": {
+			"type": "number"
+		},
+		"borderWidth": {
+			"type": "number"
+		},
+		"borderColor": {
+			"type": "string"
+		},
+		"borderRadius": {
+			"type": "number"
+		}
+	},
+	"supports": {
+		"align": [ "wide", "full" ]
+	},
+	"styles": [
+		{
+			"name": "default",
+			"label": "Default",
+			"isDefault": true
+		},
+		{
+			"name": "black-white",
+			"label": "Black & White"
+		}
+	],
+	"editorStyle": "otter-business-hours-editor",
+	"style": "otter-business-hours-style"
+}

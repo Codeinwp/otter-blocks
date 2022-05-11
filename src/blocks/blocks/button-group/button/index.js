@@ -18,7 +18,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Button', 'otter-blocks' ),
-	description: __( 'Prompt visitors to take action with a button group.', 'otter-blocks' ),
+	description: __( 'Prompt visitors to take action with a button group. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'button',

@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/button",
 	"title": "Button",
 	"category": "themeisle-blocks",
-	"description": "Prompt visitors to take action with a button group.",
+	"description": "Prompt visitors to take action with a button group. Powered by Otter.",
 	"keywords": [ "button", "buttons", "button group" ],
 	"parent": [ "themeisle-blocks/button-group" ],
 	"textdomain": "otter-blocks",

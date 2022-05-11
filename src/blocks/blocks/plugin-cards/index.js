@@ -17,7 +17,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Plugin Card', 'otter-blocks' ),
-	description: __( 'Plugin Card block lets you display plugins data in your blog posts.', 'otter-blocks' ),
+	description: __( 'Plugin Card block lets you display plugins data in your blog posts. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'plugin',

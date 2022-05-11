@@ -22,7 +22,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Popup', 'otter-blocks' ),
-	description: __( 'Display your content in beautiful popup with many customization options.', 'otter-blocks' ),
+	description: __( 'Display your content in beautiful popup with many customization options. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'popup',

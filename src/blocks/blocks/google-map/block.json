@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/google-map",
 	"title": "Google Maps",
 	"category": "themeisle-blocks",
-	"description": "Display Google Maps on your website with Google Map block.",
+	"description": "Display Google Maps on your website with Google Map block. Powered by Otter.",
 	"keywords": [ "map", "google", "orbitfox" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

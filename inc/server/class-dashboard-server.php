@@ -155,7 +155,7 @@ class Dashboard_Server {
 	 * @static
 	 * @since 1.7.0
 	 * @access public
-	 * @return Filter_Blocks_Server
+	 * @return Dashboard_Server
 	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
