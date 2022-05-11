@@ -15,7 +15,7 @@ jobs:
         with:
           token: ${{ secrets.BOT_TOKEN }}
           commands: |
-            create-build-url
+            create-build
           issue-type: pull-request
           dispatch-type: workflow
 
