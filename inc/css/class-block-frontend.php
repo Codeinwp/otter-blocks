@@ -206,6 +206,7 @@ class Block_Frontend extends Base_CSS {
 				$post_id = get_the_ID();
 
 				if ( $this->has_excerpt || $id === $post_id ) {
+					$this->enqueue_styles( $post_id, true ); // TODO: this allow FSE pages to render CSS -- not sure what are the side effect by allowing this to run here???
 					return $content;
 				}
 
@@ -386,7 +387,7 @@ class Block_Frontend extends Base_CSS {
 		}
 
 		// Get the templates for the given post.
-		$templates = get_block_templates( array( 'wp_id' => $post_id ), get_post_type( $post_id ) );
+		$templates = get_block_templates( array( 'wp_id' => $post_id ) );
 
 		// Get templates part like footer and header for the given post.
 		$template_parts = get_block_templates( array( 'wp_id' => $post_id ), 'wp_template_part');
