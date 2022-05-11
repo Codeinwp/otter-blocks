@@ -13,16 +13,19 @@ jobs:
         id: scd
         uses: peter-evans/slash-command-dispatch@v3
         with:
-          token: ${{ secrets.BOT_TOKEN }}
+          token: ${{ secrets.PAT }}
           commands: |
             create-build-url
           issue-type: pull-request
           dispatch-type: workflow
+          static-args: |
+            repository=${{ github.repository }}
+            comment-id=${{ github.event.comment.id }}
 
       - name: Add reaction
         uses: peter-evans/create-or-update-comment@v2
         with:
-          token: ${{ secrets.BOT_TOKEN }}
+          token: ${{ secrets.PAT }}
           repository: ${{ github.event.inputs.repository }}
           comment-id: ${{ github.event.inputs.comment-id }}
           reaction-type: hooray
