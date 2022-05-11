@@ -202,7 +202,7 @@ class Main {
 					'defaultFields' => $default_fields,
 				),
 				'hasNeveSupport' => array(
-					'wooComparison' => class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options' ) ? \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options::is_module_activated() : false,
+					'wooComparison' => class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options' ) ? true === boolval( \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options::is_module_activated() ) : false,
 				),
 				'rootUrl'        => get_site_url(),
 			)
