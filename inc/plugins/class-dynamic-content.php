@@ -148,6 +148,10 @@ class Dynamic_Content {
 			return $this->get_loggedin_description( $data );
 		}
 
+		if ( 'loggedInUserEmail' === $data['type'] ) {
+			return $this->get_loggedin_email( $data );
+		}
+
 		if ( 'loggedInUserMeta' === $data['type'] ) {
 			return $this->get_loggedin_meta( $data );
 		}
@@ -332,6 +336,25 @@ class Dynamic_Content {
 		}
 
 		return esc_html( $description );
+	}
+
+	/**
+	 * Get Logged-in User Email.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_loggedin_email( $data ) {
+		$current_user = wp_get_current_user();
+		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
+		$email   = $current_user->user_email;;
+
+		if ( empty( $email ) ) {
+			$email = $default;
+		}
+
+		return esc_html( $email );
 	}
 
 	/**

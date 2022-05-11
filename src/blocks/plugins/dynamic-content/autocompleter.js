@@ -10,93 +10,28 @@ import { __ } from '@wordpress/i18n';
 
 import { addFilter } from '@wordpress/hooks';
 
-const options = [
-	{
-		label: __( 'Post', 'otter-blocks' ),
-		value: 'post',
-		isDisabled: true
-	},
-	{
-		label: __( 'Post ID', 'otter-blocks' ),
-		value: 'postID'
-	},
-	{
-		label: __( 'Post Title', 'otter-blocks' ),
-		value: 'postTitle'
-	},
-	{
-		label: __( 'Post Excerpt', 'otter-blocks' ),
-		value: 'postExcerpt'
-	},
-	{
-		label: __( 'Post Date', 'otter-blocks' ),
-		value: 'postDate'
-	},
-	{
-		label: __( 'Post Time', 'otter-blocks' ),
-		value: 'postTime'
-	},
-	{
-		label: __( 'Post Terms', 'otter-blocks' ),
-		value: 'postTerms'
-	},
-	{
-		label: __( 'Post Custom Field', 'otter-blocks' ),
-		value: 'postMeta'
-	},
-	{
-		label: __( 'Site', 'otter-blocks' ),
-		value: 'site',
-		isDisabled: true
-	},
-	{
-		label: __( 'Site Title', 'otter-blocks' ),
-		value: 'siteTitle'
-	},
-	{
-		label: __( 'Site Tagline', 'otter-blocks' ),
-		value: 'siteTagline'
-	},
-	{
-		label: __( 'Author', 'otter-blocks' ),
-		value: 'author',
-		isDisabled: true
-	},
-	{
-		label: __( 'Author Name', 'otter-blocks' ),
-		value: 'authorName'
-	},
-	{
-		label: __( 'Author Description', 'otter-blocks' ),
-		value: 'authorDescription'
-	},
-	{
-		label: __( 'Author Meta', 'otter-blocks' ),
-		value: 'authorMeta'
-	},
-	{
-		label: __( 'Logged-in User', 'otter-blocks' ),
-		value: 'loggedInUser',
-		isDisabled: true
-	},
-	{
-		label: __( 'Logged-in User Name', 'otter-blocks' ),
-		value: 'loggedInUserName'
-	},
-	{
-		label: __( 'Logged-in User Description', 'otter-blocks' ),
-		value: 'loggedInUserDescription'
-	},
-	{
-		label: __( 'Logged-in User Meta', 'otter-blocks' ),
-		value: 'loggedInUserMeta'
-	}
-];
+/**
+ * Internal dependencies.
+ */
+import options from './options.js';
+
+const autocompleteOptions = [];
+
+Object.keys( options ).forEach( option => {
+	autocompleteOptions.push(
+		{
+			label: options[option].label,
+			value: option,
+			isDisabled: true
+		},
+		...options[option].options
+	);
+});
 
 const dynamicValue = {
 	name: 'dynamic-value',
 	triggerPrefix: '%',
-	options: options,
+	options: autocompleteOptions,
 	className: 'o-dynamic',
 	getOptionKeywords({ label, value }) {
 		const words = value.split( /\s+/ );

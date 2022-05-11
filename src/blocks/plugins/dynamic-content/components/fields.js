@@ -22,88 +22,10 @@ import { Fragment } from '@wordpress/element';
 
 import moment from 'moment';
 
-const options = {
-	'posts': {
-		label: __( 'Posts', 'otter-blocks' ),
-		options: [
-			{
-				label: __( 'Post ID', 'otter-blocks' ),
-				value: 'postID'
-			},
-			{
-				label: __( 'Post Title', 'otter-blocks' ),
-				value: 'postTitle'
-			},
-			{
-				label: __( 'Post Excerpt', 'otter-blocks' ),
-				value: 'postExcerpt'
-			},
-			{
-				label: __( 'Post Date', 'otter-blocks' ),
-				value: 'postDate'
-			},
-			{
-				label: __( 'Post Time', 'otter-blocks' ),
-				value: 'postTime'
-			},
-			{
-				label: __( 'Post Terms', 'otter-blocks' ),
-				value: 'postTerms'
-			},
-			{
-				label: __( 'Post Custom Field', 'otter-blocks' ),
-				value: 'postMeta'
-			}
-		]
-	},
-	'site': {
-		label: __( 'Site', 'otter-blocks' ),
-		options: [
-			{
-				label: __( 'Site Title', 'otter-blocks' ),
-				value: 'siteTitle'
-			},
-			{
-				label: __( 'Site Tagline', 'otter-blocks' ),
-				value: 'siteTagline'
-			}
-		]
-	},
-	'author': {
-		label: __( 'Author', 'otter-blocks' ),
-		options: [
-			{
-				label: __( 'Author Name', 'otter-blocks' ),
-				value: 'authorName'
-			},
-			{
-				label: __( 'Author Description', 'otter-blocks' ),
-				value: 'authorDescription'
-			},
-			{
-				label: __( 'Author Meta', 'otter-blocks' ),
-				value: 'authorMeta'
-			}
-		]
-	},
-	'loggedInUser': {
-		label: __( 'Logged-in User', 'otter-blocks' ),
-		options: [
-			{
-				label: __( 'Logged-in User Name', 'otter-blocks' ),
-				value: 'loggedInUserName'
-			},
-			{
-				label: __( 'Logged-in User Description', 'otter-blocks' ),
-				value: 'loggedInUserDescription'
-			},
-			{
-				label: __( 'Logged-in User Meta', 'otter-blocks' ),
-				value: 'loggedInUserMeta'
-			}
-		]
-	}
-};
+/**
+ * Internal dependencies.
+ */
+import options from './../options.js';
 
 const hasSettingsPanel = [
 	'postExcerpt',
@@ -131,35 +53,26 @@ const timeFormats = {
 const autocompleteData = {
 	postMeta: [],
 	authorMeta: [
-		'admin_color',
-		'aim',
-		'comment_shortcuts',
 		'description',
 		'display_name',
 		'first_name',
-		'ID',
-		'jabber',
 		'last_name',
 		'nickname',
-		'plugins_last_view',
-		'plugins_per_page',
-		'rich_editing',
-		'syntax_highlighting',
-		'user_activation_key',
-		'user_description',
 		'user_email',
-		'user_firstname',
-		'user_lastname',
 		'user_level',
 		'user_login',
 		'user_nicename',
-		'user_pass',
 		'user_registered',
 		'user_status',
-		'user_url',
-		'yim'
+		'user_url'
 	],
-	loggedInUserMeta: []
+	loggedInUserMeta: [
+		'description',
+		'first_name',
+		'ID',
+		'last_name',
+		'nickname'
+	]
 };
 
 const Fields = ({
@@ -344,10 +257,11 @@ const Fields = ({
 								maxLength={ 1 }
 								suggestions={ autocompleteData[ attributes.type ] }
 								onChange={ metaKey => changeAttributes({ metaKey: metaKey[0] }) }
+								__experimentalExpandOnFocus={ true }
 								__experimentalShowHowTo={ false }
 							/>
 
-							<p>{ __( 'Press Enter key to select the value.', 'otter-blocks' ) }</p>
+							<p>{ __( 'Type your own or select a pre-defined value. Press Enter to confirm.', 'otter-blocks' ) }</p>
 						</Fragment>
 					) }
 				</PanelBody>
