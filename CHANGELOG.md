@@ -1,3 +1,13 @@
+##### [Version 2.0.3](https://github.com/Codeinwp/otter-blocks/compare/v2.0.2...v2.0.3) (2022-05-12)
+
+- Add Otter Pro support
+- Reduce front-end JS dependencies
+- Enabled SVG/JSON upload by default
+- Add max-width option for Popup Block
+- Update Leaflet to latest version
+- Fix section related issue with used with Media & Text Block
+- Fix word-breaks for Chinese charactersDevelopment
+
 ##### [Version 2.0.2](https://github.com/Codeinwp/otter-blocks/compare/v2.0.1...v2.0.2) (2022-04-22)
 
 - Improvements in Lottie Animations Block
