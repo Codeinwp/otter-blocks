@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/accordion-item",
     "title": "Accordion Item",
 	"category": "themeisle-blocks",
-    "description": "Vertically collapsing accordions perfect for displaying your FAQs.",
+    "description": "Vertically collapsing accordions perfect for displaying your FAQs. Powered by Otter.",
     "keywords": [ "accordions", "collapse", "faq" ],
     "parent": [ "themeisle-blocks/accordion" ],
 	"textdomain": "otter-blocks",

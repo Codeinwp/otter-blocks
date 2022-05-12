@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/advanced-columns",
 	"title": "Section",
 	"category": "themeisle-blocks",
-	"description": "Add a Section block that displays content in multiple columns, then add whatever content blocks you’d like.",
+	"description": "Add a Section block that displays content in multiple columns, then add whatever content blocks you’d like. Powered by Otter.",
 	"keywords": [ "advanced columns", "layout", "section" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

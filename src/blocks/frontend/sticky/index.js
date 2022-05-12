@@ -1,6 +1,12 @@
-import domReady from '@wordpress/dom-ready';
-import { detectLoading } from '../../helpers/detect-loading';
-import { easeOutQuad } from '../../helpers/helper-functions';
+/**
+ * Internal dependencies.
+ */
+import { detectLoading } from '../../helpers/detect-loading.js';
+
+import {
+	domReady,
+	easeOutQuad
+} from '../../helpers/frontend-helper-functions.js';
 
 const createObserver = () => {
 	const blocks = {};

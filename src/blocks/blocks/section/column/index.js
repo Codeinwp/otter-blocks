@@ -19,7 +19,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Section Column', 'otter-blocks' ),
-	description: __( 'A single column within a Section block.', 'otter-blocks' ),
+	description: __( 'A single column within a Section block. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	deprecated,
 	edit,

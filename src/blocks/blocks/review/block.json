@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/review",
 	"title": "Product Review",
 	"category": "themeisle-blocks",
-	"description": "Turn your posts into smart reviews with ratings and generate leads with a performing review block.",
+	"description": "Turn your posts into smart reviews with ratings and generate leads with a performing review block. Powered by Otter.",
 	"keywords": [ "product", "review", "stars" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

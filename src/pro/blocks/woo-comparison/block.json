@@ -1,0 +1,47 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/woo-comparison",
+	"title": "WooCommerce Comparison Table",
+	"category": "themeisle-blocks",
+	"description": "A way to compare different WooCommerce products made on the website. Powered by Otter.",
+	"keywords": [ "woocommerce", "comparison", "table" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"products": {
+			"type": "array",
+			"default": []
+		},
+		"listingType": {
+			"type": "string"
+		},
+		"altRow": {
+			"type": "boolean"
+		},
+		"fields": {
+			"type": "string"
+		},
+		"rowColor": {
+			"type": "string"
+		},
+		"headerColor": {
+			"type": "string"
+		},
+		"textColor": {
+			"type": "string"
+		},
+		"borderColor": {
+			"type": "string"
+		},
+		"altRowColor": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"html": false
+	},
+	"editorStyle": "otter-woo-comparison-editor"
+}

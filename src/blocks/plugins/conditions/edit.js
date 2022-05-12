@@ -1,57 +1,38 @@
 /**
  * WordPress dependencies.
  */
-import {
-	__,
-	sprintf
-} from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 
 import { isEmpty } from 'lodash';
-
-import apiFetch from '@wordpress/api-fetch';
 
 import { InspectorControls } from '@wordpress/block-editor';
 
 import {
 	BaseControl,
 	Button,
-	CheckboxControl,
-	DateTimePicker,
-	Dropdown,
 	ExternalLink,
 	FormTokenField,
 	PanelBody,
-	Placeholder,
-	SelectControl,
-	Spinner,
-	TextControl,
-	TextareaControl
+	SelectControl
 } from '@wordpress/components';
-
-import {
-	format,
-	__experimentalGetSettings
-} from '@wordpress/date';
 
 import { useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
-	useEffect,
 	memo,
-	useState
+	useEffect
 } from '@wordpress/element';
 
-import { decodeEntities } from '@wordpress/html-entities';
+import { applyFilters } from '@wordpress/hooks';
 
 /**
  * Internal dependencies.
  */
 import PanelTab from '../../components/panel-tab/index.js';
+import Notice from '../../components/notice/index.js';
 
-const isBoosterActive = Boolean( window.themeisleGutenberg.hasNeveSupport.isBoosterActive );
-const isNeve = Boolean( window.themeisleGutenberg.hasNeveSupport.hasNeve );
-const isNevePro = Boolean( window.themeisleGutenberg.hasNeveSupport.hasNevePro );
+const hasPro = Boolean( window.themeisleGutenberg.hasPro );
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 
 const Edit = ({
@@ -76,52 +57,6 @@ const Edit = ({
 		}
 
 		setAttributes({ otterConditions });
-	}, []);
-
-	const [ courses, setCourses ] = useState([]);
-	const [ coursesStatus, setCoursesStatus ] = useState( 'loading' );
-	const [ courseGroups, setCourseGroups ] = useState([]);
-	const [ courseGroupsStatus, setCourseGroupsStatus ] = useState( 'loading' );
-
-	useEffect( () => {
-		let isMounted = true;
-
-		if ( Boolean( window.themeisleGutenberg.hasLearnDash ) && isBoosterActive ) {
-			( async() => {
-				if ( isMounted ) {
-					setCoursesStatus( 'loading' );
-					setCourseGroupsStatus( 'loading' );
-
-					try {
-						const data = await apiFetch({ path: 'ldlms/v2/sfwd-courses' });
-						const items = data.map( datum => ({
-							value: datum.id,
-							label: datum.title.rendered
-						}) );
-						setCourses( items );
-						setCoursesStatus( 'loaded' );
-					} catch ( error ) {
-						setCoursesStatus( 'error' );
-					}
-
-					try {
-						const data = await apiFetch({ path: 'ldlms/v2/groups' });
-						const items = data.map( datum => ({
-							value: datum.id,
-							label: datum.title.rendered
-						}) );
-						setCourseGroups( items );
-						setCourseGroupsStatus( 'loaded' );
-					} catch ( error ) {
-						setCourseGroupsStatus( 'error' );
-					}
-				}
-			})();
-		}
-
-		return () => {
-			isMounted = false;
-		};
 	}, []);
 
 	const { postAuthors } = useSelect( select => {
@@ -152,65 +87,6 @@ const Edit = ({
 
 		return {
 			postCategories
-		};
-	}, []);
-
-	const {
-		products,
-		categories,
-		productsStatus,
-		categoriesStatus
-	} = useSelect( select => {
-		let products = [];
-		let categories = [];
-		let productsStatus = 'loading';
-		let categoriesStatus = 'loading';
-
-		if ( Boolean( window.themeisleGutenberg.hasWooCommerce ) && isBoosterActive ) {
-			const { COLLECTIONS_STORE_KEY } = window.wc.wcBlocksData;
-
-			// eslint-disable-next-line camelcase
-			const productsError = select( COLLECTIONS_STORE_KEY ).getCollectionError( '/wc/store', 'products', { per_page: 100 });
-
-			if ( productsError ) {
-				productsStatus = 'error';
-			} else {
-				// eslint-disable-next-line camelcase
-				products = select( COLLECTIONS_STORE_KEY ).getCollection( '/wc/store', 'products', { per_page: 100 });
-
-				if ( ! isEmpty( products ) ) {
-					productsStatus = 'loaded';
-
-					products = products.map( result => ({
-						value: result.id,
-						label: decodeEntities( result.name )
-					}) );
-				}
-			}
-
-			const categoriesError = select( COLLECTIONS_STORE_KEY ).getCollectionError( '/wc/store', 'products/categories' );
-
-			if ( categoriesError ) {
-				categoriesStatus = 'error';
-			} else {
-				categories = select( COLLECTIONS_STORE_KEY ).getCollection( '/wc/store', 'products/categories' );
-
-				if ( ! isEmpty( categories ) ) {
-					categoriesStatus = 'loaded';
-
-					categories = categories.map( result => ({
-						value: result.id,
-						label: decodeEntities( result.name )
-					}) );
-				}
-			}
-		}
-
-		return {
-			products,
-			categories,
-			productsStatus,
-			categoriesStatus
 		};
 	}, []);
 
@@ -251,35 +127,10 @@ const Edit = ({
 	const changeCondition = ( value, index, key ) => {
 		const otterConditions = [ ...attributes.otterConditions ];
 
-		const attrs = {};
+		const attrs = applyFilters( 'otter.blockConditions.defaults', {}, value );
 
-		if ( 'userRoles' === value || 'postAuthor' === value || 'postMeta' === value ) {
+		if ( 'userRoles' === value || 'postAuthor' === value ) {
 			attrs.visibility = true;
-		}
-
-		if ( 'postMeta' === value ) {
-			// eslint-disable-next-line camelcase
-			attrs.meta_compare = 'is_true';
-		}
-
-		if ( 'queryString' === value ) {
-			attrs.match = 'any';
-		}
-
-		if ( 'wooProductsInCart' == value ) {
-			attrs.on = 'products';
-		}
-
-		if ( 'wooTotalCartValue' === value || 'wooTotalSpent' === value ) {
-			attrs.compare = 'greater_than';
-		}
-
-		if ( 'learnDashPurchaseHistory' == value ) {
-			attrs.on = 'courses';
-		}
-
-		if ( 'learnDashCourseStatus' == value ) {
-			attrs.status = 'not_started';
 		}
 
 		if ( 'none' === value ) {
@@ -300,58 +151,6 @@ const Edit = ({
 		setAttributes({ otterConditions });
 	};
 
-	const changeProducts = ( values, index, key ) => {
-		const regex = /^([^.]+)/;
-
-		values.forEach( ( value, key ) => {
-			const m = regex.exec( value );
-			null !== m ? values[ key ] = Number( m[0]) : value;
-		});
-
-		const otterConditions = [ ...attributes.otterConditions ];
-		otterConditions[ index ][ key ].products = values;
-		setAttributes({ otterConditions });
-	};
-
-	const changeCategories = ( values, index, key ) => {
-		const regex = /^([^.]+)/;
-
-		values.forEach( ( value, key ) => {
-			const m = regex.exec( value );
-			null !== m ? values[ key ] = Number( m[0]) : value;
-		});
-
-		const otterConditions = [ ...attributes.otterConditions ];
-		otterConditions[ index ][ key ].categories = values;
-		setAttributes({ otterConditions });
-	};
-
-	const changeCourses = ( values, index, key ) => {
-		const regex = /^([^.]+)/;
-
-		values.forEach( ( value, key ) => {
-			const m = regex.exec( value );
-			null !== m ? values[ key ] = Number( m[0]) : value;
-		});
-
-		const otterConditions = [ ...attributes.otterConditions ];
-		otterConditions[ index ][ key ].courses = values;
-		setAttributes({ otterConditions });
-	};
-
-	const changeGroups = ( values, index, key ) => {
-		const regex = /^([^.]+)/;
-
-		values.forEach( ( value, key ) => {
-			const m = regex.exec( value );
-			null !== m ? values[ key ] = Number( m[0]) : value;
-		});
-
-		const otterConditions = [ ...attributes.otterConditions ];
-		otterConditions[ index ][ key ].groups = values;
-		setAttributes({ otterConditions });
-	};
-
 	const changeVisibility = ( value, index, key ) => {
 		const otterConditions = [ ...attributes.otterConditions ];
 		otterConditions[ index ][ key ].visibility = 'true' === value ? true : false;
@@ -368,153 +167,155 @@ const Edit = ({
 		setAttributes({ otterConditions });
 	};
 
-	const changeDays = ( value, index, key ) => {
-		const otterConditions = [ ...attributes.otterConditions ];
-
-		if ( ! otterConditions[ index ][ key ].days ) {
-			otterConditions[ index ][ key ].days = [];
+	let conditions = {
+		'users': {
+			label: __( 'Users', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'loggedInUser',
+					label: __( 'Logged In Users', 'otter-blocks' ),
+					help: __( 'The selected block will only be visible to logged-in users.' )
+				},
+				{
+					value: 'loggedOutUser',
+					label: __( 'Logged Out Users', 'otter-blocks' ),
+					help: __( 'The selected block will only be visible to logged-out users.' )
+				},
+				{
+					value: 'userRoles',
+					label: __( 'User Roles', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on user roles.' ),
+					toogleVisibility: true
+				}
+			]
+		},
+		'posts': {
+			label: __( 'Posts', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'postAuthor',
+					label: __( 'Post Author', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on post author.' ),
+					toogleVisibility: true
+				},
+				{
+					value: 'postType',
+					label: __( 'Post Type', 'otter-blocks' ),
+					help: __( 'The selected block will be visible if post becomes to one of the selected post types.' ),
+					toogleVisibility: true
+				},
+				{
+					value: 'postCategory',
+					label: __( 'Post Category', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on selected post categories.' ),
+					toogleVisibility: true
+				},
+				{
+					value: 'postMeta',
+					label: __( 'Post Meta (Pro)', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on post meta condition.' ),
+					isDisabled: true
+				}
+			]
+		},
+		'url': {
+			label: __( 'URL', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'queryString',
+					label: __( 'Query String (Pro)', 'otter-blocks' ),
+					help: __( 'The condition will be met if the URL contains specified parameters.' ),
+					isDisabled: true
+				}
+			]
+		},
+		'dateAndTime': {
+			label: __( 'Date & Time', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'dateRange',
+					label: __( 'Date Range (Pro)', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on the date range. Timezone is used based on your WordPress settings.' ),
+					isDisabled: true
+				},
+				{
+					value: 'dateRecurring',
+					label: __( 'Date Recurring (Pro)', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on the selected days. Timezone is used based on your WordPress settings.' ),
+					isDisabled: true
+				},
+				{
+					value: 'timeRecurring',
+					label: __( 'Time Recurring (Pro)', 'otter-blocks' ),
+					help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.' ),
+					isDisabled: true
+				}
+			]
+		},
+		'woocommerce': {
+			label: __( 'WooCommerce', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'wooProductsInCart',
+					label: __( 'Products in Cart (Pro)', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on the products added to WooCommerce cart.' ),
+					isDisabled: true
+				},
+				{
+					value: 'wooTotalCartValue',
+					label: __( 'Total Cart Value (Pro)', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on the total value of WooCommerce cart.' ),
+					isDisabled: true
+				},
+				{
+					value: 'wooPurchaseHistory',
+					label: __( 'Purchase History (Pro)', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on user\'s WooCommerce purchase history.' ),
+					isDisabled: true
+				},
+				{
+					value: 'wooTotalSpent',
+					label: __( 'Total Spent (Pro)', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on how much the user spent during lifetime.' ),
+					isDisabled: true
+				}
+			]
+		},
+		'learndash': {
+			label: __( 'LearnDash', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'learnDashPurchaseHistory',
+					label: __( 'Purchase History (Pro)', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on user\'s LearnDash purchase history.' ),
+					isDisabled: true
+				},
+				{
+					value: 'learnDashCourseStatus',
+					label: __( 'Course Status (Pro)', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on user\'s LearnDash course status.' ),
+					isDisabled: true
+				}
+			]
 		}
-
-		const hasDay = otterConditions[ index ][ key ].days.indexOf( value );
-
-		if ( -1 !== hasDay ) {
-			otterConditions[ index ][ key ].days.splice( hasDay, 1 );
-		} else {
-			otterConditions[ index ][ key ].days.push( value );
-		}
-
-		setAttributes({ otterConditions });
 	};
 
+	conditions = applyFilters( 'otter.blockConditions.conditions', conditions );
+
 	const getConditions = () => {
-		const conditions = [
+		const flatConditions = [
 			{
 				value: 'none',
 				label: __( 'Select a condition', 'otter-blocks' ),
 				help: __( 'Select a condition to control the visibility of your block.', 'otter-blocks' )
 			},
-			{
-				value: 'loggedInUser',
-				label: __( 'Logged In Users', 'otter-blocks' ),
-				help: __( 'The selected block will only be visible to logged-in users.' )
-			},
-			{
-				value: 'loggedOutUser',
-				label: __( 'Logged Out Users', 'otter-blocks' ),
-				help: __( 'The selected block will only be visible to logged-out users.' )
-			},
-			{
-				value: 'userRoles',
-				label: __( 'User Roles', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on user roles.' )
-			},
-			{
-				value: 'postAuthor',
-				label: __( 'Post Author', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on post author.' )
-			},
-			{
-				value: 'postType',
-				label: __( 'Post Type', 'otter-blocks' ),
-				help: __( 'The selected block will be visible if post becomes to one of the selected post types.' )
-			},
-			{
-				value: 'postCategory',
-				label: __( 'Post Category', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on selected post categories.' )
-			},
-			{
-				value: 'postMeta',
-				label: __( 'Post Meta', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on post meta condition.' )
-			},
-			{
-				value: 'queryString',
-				label: __( 'Query String', 'otter-blocks' ),
-				help: __( 'The condition will be met if the URL contains specified parameters.' )
-			},
-			{
-				value: 'dateRange',
-				label: __( 'Date Range', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on the date range. Timezone is used based on your WordPress settings.' )
-			},
-			{
-				value: 'dateRecurring',
-				label: __( 'Date Recurring', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on the selected days. Timezone is used based on your WordPress settings.' )
-			},
-			{
-				value: 'timeRecurring',
-				label: __( 'Time Recurring', 'otter-blocks' ),
-				help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.' )
-			},
-			{
-				value: 'wooProductsInCart',
-				label: __( 'Products in Cart', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on the products added to WooCommerce cart.' )
-			},
-			{
-				value: 'wooTotalCartValue',
-				label: __( 'Total Cart Value', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on the total value of WooCommerce cart.' )
-			},
-			{
-				value: 'wooPurchaseHistory',
-				label: __( 'Purchase History', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on user\'s WooCommerce purchase history.' )
-			},
-			{
-				value: 'wooTotalSpent',
-				label: __( 'Total Spent', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on how much the user spent during lifetime.' )
-			},
-			{
-				value: 'learnDashPurchaseHistory',
-				label: __( 'Purchase History', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on user\'s LearnDash purchase history.' )
-			},
-			{
-				value: 'learnDashCourseStatus',
-				label: __( 'Course Status', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on user\'s LearnDash course status.' )
-			}
+			...Object.keys( conditions ).map( i => conditions[i].conditions ).flat()
 		];
 
-		return conditions;
+		return flatConditions;
 	};
 
-	const customVisibility = [ 'userRoles', 'postAuthor', 'postMeta', 'postType', 'postCategory', 'wooProductsInCart', 'wooPurchaseHistory', 'learnDashPurchaseHistory', 'learnDashCourseStatus', 'queryString' ];
-
-	const week = [
-		{
-			value: 'monday',
-			label: __( 'Monday', 'otter-blocks' )
-		},
-		{
-			value: 'tuesday',
-			label: __( 'Tuesday', 'otter-blocks' )
-		},
-		{
-			value: 'wednesday',
-			label: __( 'Wednesday', 'otter-blocks' )
-		},
-		{
-			value: 'thursday',
-			label: __( 'Thursday', 'otter-blocks' )
-		},
-		{
-			value: 'friday',
-			label: __( 'Friday', 'otter-blocks' )
-		},
-		{
-			value: 'saturday',
-			label: __( 'Saturday', 'otter-blocks' )
-		},
-		{
-			value: 'sunday',
-			label: __( 'Sunday', 'otter-blocks' )
-		}
-	];
+	const toogleVisibility = getConditions().filter( i => i.toogleVisibility )?.map( i => i.value );
 
 	const Separator = ({ label }) => {
 		return (
@@ -527,96 +328,24 @@ const Edit = ({
 		);
 	};
 
-	const DateRange = ({
-		label,
-		id,
-		value,
-		onChange
-	}) => {
-		const settings = __experimentalGetSettings();
-
-		return (
-			<BaseControl
-				label={ label }
-				id={ id }
-			>
-				<Dropdown
-					position="bottom left"
-					renderToggle={ ({ onToggle, isOpen }) => (
-						<>
-							<Button
-								id={ id }
-								onClick={ onToggle }
-								isSecondary
-								aria-expanded={ isOpen }
-							>
-								{ value ? format( settings.formats.datetime, value ) : __( 'Select Date', 'otter-blocks' ) }
-							</Button>
-						</>
-					) }
-					renderContent={ () => (
-						<DateTimePicker
-							currentDate={ value }
-							onChange={ onChange }
-						/>
-					) }
-				/>
-			</BaseControl>
-		);
-	};
-
-	const Multiselect = ({
-		label,
-		items,
-		values,
-		onChange
-	}) => {
-		return (
-			<FormTokenField
-				label={ label }
-				value={ ( values && 'object' === typeof values ) ? values.map( id => {
-					const obj = items.find( item => Number( id ) === Number( item.value ) );
-					return `${ obj.value }. ${ obj.label }`;
-				}) : undefined }
-				suggestions={ items.map( item => `${ item.value }. ${ item.label }` ) }
-				onChange={ onChange }
-				__experimentalExpandOnFocus={ true }
-				__experimentalValidateInput={ value => {
-					const regex = /^([^.]+)/;
-					const m = regex.exec( value );
-					null !== m ? value = Number( m[0]) : value;
-					return undefined !== items.find( item => Number( value ) === Number( item.value ) );
-				} }
-			/>
-		);
-	};
-
 	return (
 		<InspectorControls>
 			<PanelBody
 				title={ __( 'Visibility Conditions', 'otter-blocks' ) }
 				initialOpen={ false }
+				className="o-is-new"
 			>
+				<Notice
+					notice={ <ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Disable in Otter Settings', 'otter-blocks' ) }</ExternalLink> }
+				/>
+
 				<p>{ __( 'Control the visibility of your blocks based on the following conditions.', 'otter-blocks' ) }</p>
 
-				{ ( isNeve && ! isBoosterActive ) && (
-					<Fragment>
-						<p>{ __( 'Unlock the full power of Block Conditions with Neve Pro\'s Block Editor Booster. ', 'otter-blocks' ) }</p>
-
-						<p>
-							{ ! isNevePro && (
-								<ExternalLink href="https://themeisle.com/themes/neve/pricing">
-									{ __( 'Get Neve Pro.', 'otter-blocks' ) }
-								</ExternalLink>
-							) }
-
-							{ isNevePro && (
-								<ExternalLink href={ window.themeisleGutenberg.hasNeveSupport.optionsPage }>
-									{ __( 'Enable Block Editor Booster.', 'otter-blocks' ) }
-								</ExternalLink>
-							) }
-						</p>
-					</Fragment>
+				{ ( ! hasPro ) && (
+					<Notice
+						notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Unlock more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+						variant="upsell"
+					/>
 				) }
 
 				<p>{ __( 'Display the block if…', 'otter-blocks' ) }</p>
@@ -632,7 +361,7 @@ const Edit = ({
 									<Fragment key={ `${ index }-${ i }` }>
 										<BaseControl
 											label={ __( 'Condition', 'otter-blocks' ) }
-											help={ getConditions().find( condition => condition.value === ( i.type || 'none' ) ).help }
+											help={ getConditions().find( condition => condition.value === ( i.type || 'none' ) )?.help }
 											id={ `o-conditions-${ index }-${ n }` }
 										>
 											<select
@@ -643,53 +372,13 @@ const Edit = ({
 											>
 												<option value="none">{ __( 'Select a condition', 'otter-blocks' ) }</option>
 
-												<optgroup label={ __( 'Users', 'otter-blocks' ) }>
-													<option value="loggedInUser">{ __( 'Logged In Users', 'otter-blocks' ) }</option>
-													<option value="loggedOutUser">{ __( 'Logged Out Users', 'otter-blocks' ) }</option>
-													<option value="userRoles">{ __( 'User Roles', 'otter-blocks' ) }</option>
-												</optgroup>
-
-												<optgroup label={ __( 'Posts', 'otter-blocks' ) }>
-													<option value="postAuthor">{ __( 'Post Author', 'otter-blocks' ) }</option>
-													<option value="postCategory">{ __( 'Post Category', 'otter-blocks' ) }</option>
-
-													{ ( isBoosterActive || isNeve ) && (
-														<Fragment>
-															<option value="postType">{ __( 'Post Type', 'otter-blocks' ) }</option>
-															<option value="postMeta" disabled={ ! isBoosterActive }>{ __( 'Post Meta', 'otter-blocks' ) }</option>
-														</Fragment>
-													) }
-												</optgroup>
-
-												{ ( isBoosterActive || isNeve ) && (
-													<optgroup label={ __( 'URL', 'otter-blocks' ) }>
-														<option value="queryString" disabled={ ! isBoosterActive }>{ __( 'Query String', 'otter-blocks' ) }</option>
-													</optgroup>
-												) }
-
-												{ ( isBoosterActive || isNeve ) && (
-													<optgroup label={ __( 'Date & Time', 'otter-blocks' ) }>
-														<option value="dateRange" disabled={ ! isBoosterActive }>{ __( 'Date Range', 'otter-blocks' ) }</option>
-														<option value="dateRecurring" disabled={ ! isBoosterActive }>{ __( 'Date Recurring', 'otter-blocks' ) }</option>
-														<option value="timeRecurring" disabled={ ! isBoosterActive }>{ __( 'Time Recurring', 'otter-blocks' ) }</option>
-													</optgroup>
-												) }
-
-												{ ( Boolean( window.themeisleGutenberg.hasWooCommerce ) && ( isBoosterActive || isNeve ) ) && (
-													<optgroup label={ __( 'WooCommerce', 'otter-blocks' ) }>
-														<option value="wooProductsInCart" disabled={ ! isBoosterActive }>{ __( 'Products in Cart', 'otter-blocks' ) }</option>
-														<option value="wooTotalCartValue" disabled={ ! isBoosterActive }>{ __( 'Total Cart Value', 'otter-blocks' ) }</option>
-														<option value="wooPurchaseHistory" disabled={ ! isBoosterActive }>{ __( 'Purchase History', 'otter-blocks' ) }</option>
-														<option value="wooTotalSpent" disabled={ ! isBoosterActive }>{ __( 'Total Spent', 'otter-blocks' ) }</option>
-													</optgroup>
-												) }
-
-												{ ( Boolean( window.themeisleGutenberg.hasLearnDash ) && ( isBoosterActive || isNeve ) ) && (
-													<optgroup label={ __( 'LearnDash', 'otter-blocks' ) }>
-														<option value="learnDashPurchaseHistory" disabled={ ! isBoosterActive }>{ __( 'Purchase History', 'otter-blocks' ) }</option>
-														<option value="learnDashCourseStatus" disabled={ ! isBoosterActive }>{ __( 'Course Status', 'otter-blocks' ) }</option>
-													</optgroup>
-												) }
+												{ Object.keys( conditions ).map( i => {
+													return (
+														<optgroup label={ conditions[i].label } key={ i }>
+															{ conditions[i].conditions.map( o => <option value={ o.value } key={ o.value } disabled={ o?.isDisabled }>{ o.label }</option> ) }
+														</optgroup>
+													);
+												}) }
 											</select>
 										</BaseControl>
 
@@ -737,446 +426,9 @@ const Edit = ({
 											/>
 										) }
 
-										{ 'postMeta' === i.type && (
-											<Fragment>
-												<TextControl
-													label={ __( 'Meta Key', 'otter-blocks' ) }
-													help={ __( 'Key of the meta you want to compare.', 'otter-blocks' ) }
-													placeholder={ __( '_meta_key', 'otter-blocks' ) }
-													value={ i.meta_key }
-													onChange={ e => changeValue( e, index, n, 'meta_key' ) }
-												/>
+										{ applyFilters( 'otter.blockConditions.controls', '', index, n, i, attributes.otterConditions, setAttributes, changeValue ) }
 
-												<SelectControl
-													label={ __( 'Compare Operator', 'otter-blocks' ) }
-													options={ [
-														{
-															value: 'is_true',
-															label: __( 'Is True', 'otter-blocks' )
-														},
-														{
-															value: 'is_false',
-															label: __( 'Is False', 'otter-blocks' )
-														},
-														{
-															value: 'is_empty',
-															label: __( 'Is Empty', 'otter-blocks' )
-														},
-														{
-															value: 'if_equals',
-															label: __( 'If Equals', 'otter-blocks' )
-														},
-														{
-															value: 'if_contains',
-															label: __( 'If Contains', 'otter-blocks' )
-														}
-													] }
-													value={ i.meta_compare }
-													onChange={ e => changeValue( e, index, n, 'meta_compare' ) }
-												/>
-
-												{ ( 'if_equals' === i.meta_compare || 'if_contains' === i.meta_compare ) && (
-													<TextControl
-														label={ __( 'Meta Value', 'otter-blocks' ) }
-														help={ __( 'Value of the meta to compare.', 'otter-blocks' ) }
-														value={ i.meta_value }
-														onChange={ e => changeValue( e, index, n, 'meta_value' ) }
-													/>
-												) }
-											</Fragment>
-										) }
-
-										{ 'queryString' === i.type && (
-											<Fragment>
-												<TextareaControl
-													label={ __( 'Query String', 'otter-blocks' ) }
-													help={ __( 'Write a key-value pair for each parameter, one per line.', 'otter-blocks' ) }
-													placeholder="eg. utm_source=facebook"
-													value={ i.query_string }
-													onChange={ e => changeValue( e.replaceAll( '\n', '&' ), index, n, 'query_string' ) }
-												/>
-
-												<SelectControl
-													label={ __( 'Match if URL contains', 'otter-blocks' ) }
-													options={ [
-														{
-															value: 'any',
-															label: __( 'Any of the parameters', 'otter-blocks' )
-														},
-														{
-															value: 'all',
-															label: __( 'All the parameters', 'otter-blocks' )
-														}
-													] }
-													value={ i.compare }
-													onChange={ e => changeValue( e, index, n, 'match' ) }
-												/>
-											</Fragment>
-										) }
-
-										{ 'dateRange' === i.type && (
-											<Fragment>
-												<DateRange
-													label={ __( 'Start Date', 'otter-blocks' ) }
-													id={ `o-conditions-date-start${ index }-${ n }` }
-													value={ i.start_date }
-													onChange={ e => changeValue( e, index, n, 'start_date' ) }
-												/>
-
-												<DateRange
-													label={ __( 'End Date (Optional)', 'otter-blocks' ) }
-													id={ `o-conditions-date-end${ index }-${ n }` }
-													value={ i.end_date }
-													onChange={ e => changeValue( e, index, n, 'end_date' ) }
-												/>
-											</Fragment>
-										) }
-
-										{ 'dateRecurring' === i.type && (
-											<BaseControl
-												label={ __( 'Recurring Days', 'otter-blocks' ) }
-												help={ __( 'You can use this in combination with other Date Time conditions to make more complex conditions.', 'otter-blocks' ) }
-											>
-												{ week.map( ({ label, value }) => (
-													<CheckboxControl
-														key={ label }
-														label={ label }
-														checked={ i.days && i.days.includes( value ) }
-														onChange={ () => changeDays( value, index, n ) }
-													/>
-												) ) }
-											</BaseControl>
-										) }
-
-										{ 'timeRecurring' === i.type && (
-											<Fragment>
-												<BaseControl
-													label={ __( 'Start Time', 'otter-blocks' ) }
-												>
-													<div className="o-conditions">
-														<input
-															aria-label={ __( 'Hours', 'otter-blocks' ) }
-															className="components-datetime__time-field-hours-input"
-															type="number"
-															step="1"
-															min="0"
-															max="23"
-															value={ i.start_time ? i.start_time.split( ':' )[0] : '' }
-															onChange={ e => {
-																const value = e.target.value;
-
-																if ( 0 > value || 23 < value ) {
-																	return;
-																}
-
-																let time = i.start_time || '00:00';
-																time = time.split( ':' );
-																time[0] = `00${ value }`.slice( -2 );
-																time = time.join( ':' );
-																changeValue( time, index, n, 'start_time' );
-															} }
-														/>
-
-														{ ' : ' }
-
-														<input
-															aria-label={ __( 'Minutes', 'otter-blocks' ) }
-															className="components-datetime__time-field-hours-input"
-															type="number"
-															step="1"
-															min="0"
-															max="59"
-															value={ i.start_time ? i.start_time.split( ':' )[1] : '' }
-															onChange={ e => {
-																const value = e.target.value;
-
-																if ( 0 > value || 59 < value ) {
-																	return;
-																}
-
-																let time = i.start_time || '00:00';
-																time = time.split( ':' );
-																time[1] = `00${ value }`.slice( -2 );
-																time = time.join( ':' );
-																changeValue( time, index, n, 'start_time' );
-															} }
-														/>
-
-														<Button
-															isSecondary
-															isSmall
-															disabled={ ! i.start_time }
-															onClick={ () => {
-																const otterConditions = [ ...attributes.otterConditions ];
-																delete otterConditions[ index ][ n ].start_time;
-																setAttributes({ otterConditions });
-															} }
-														>
-															{ __( 'Reset', 'otter-blocks' ) }
-														</Button>
-													</div>
-												</BaseControl>
-
-												<BaseControl
-													label={ __( 'End Time', 'otter-blocks' ) }
-												>
-													<div className="o-conditions">
-														<input
-															aria-label={ __( 'Hours', 'otter-blocks' ) }
-															className="components-datetime__time-field-hours-input"
-															type="number"
-															step="1"
-															min="0"
-															max="23"
-															value={ i.end_time ? i.end_time.split( ':' )[0] : '' }
-															onChange={ e => {
-																const value = e.target.value;
-
-																if ( 0 > value || 23 < value ) {
-																	return;
-																}
-
-																let time = i.end_time || '00:00';
-																time = time.split( ':' );
-																time[0] = `00${ value }`.slice( -2 );
-																time = time.join( ':' );
-																changeValue( time, index, n, 'end_time' );
-															} }
-														/>
-
-														{ ' : ' }
-
-														<input
-															aria-label={ __( 'Minutes', 'otter-blocks' ) }
-															className="components-datetime__time-field-hours-input"
-															type="number"
-															step="1"
-															min="0"
-															max="59"
-															value={ i.end_time ? i.end_time.split( ':' )[1] : '' }
-															onChange={ e => {
-																const value = e.target.value;
-
-																if ( 0 > value || 59 < value ) {
-																	return;
-																}
-
-																let time = i.end_time || '00:00';
-																time = time.split( ':' );
-																time[1] = `00${ value }`.slice( -2 );
-																time = time.join( ':' );
-																changeValue( time, index, n, 'end_time' );
-															} }
-														/>
-
-														<Button
-															isSecondary
-															isSmall
-															disabled={ ! i.end_time }
-															onClick={ () => {
-																const otterConditions = [ ...attributes.otterConditions ];
-																delete otterConditions[ index ][ n ].end_time;
-																setAttributes({ otterConditions });
-															} }
-														>
-															{ __( 'Reset', 'otter-blocks' ) }
-														</Button>
-													</div>
-												</BaseControl>
-											</Fragment>
-										) }
-
-										{ 'wooProductsInCart' === i.type && (
-											<Fragment>
-												<SelectControl
-													label={ __( 'Based on', 'otter-blocks' ) }
-													options={ [
-														{
-															value: 'products',
-															label: __( 'Products', 'otter-blocks' )
-														},
-														{
-															value: 'categories',
-															label: __( 'Categories', 'otter-blocks' )
-														}
-													] }
-													value={ i.on }
-													onChange={ e => changeValue( e, index, n, 'on' ) }
-												/>
-
-												{ 'products' === i.on && (
-													<Fragment>
-														{ 'loaded' === productsStatus && (
-															<Multiselect
-																label={ __( 'Products', 'otter-blocks' ) }
-																items={ products }
-																values={ i.products }
-																onChange={ values => changeProducts( values, index, n ) }
-															/>
-														) }
-
-														{ 'loading' === productsStatus && <Placeholder><Spinner /></Placeholder> }
-													</Fragment>
-												) }
-
-												{ 'categories' === i.on && (
-													<Fragment>
-														{ 'loaded' === categoriesStatus && (
-															<Multiselect
-																label={ __( 'Categories', 'otter-blocks' ) }
-																items={ categories }
-																values={ i.categories }
-																onChange={ values => changeCategories( values, index, n ) }
-															/>
-														) }
-
-														{ 'loading' === categoriesStatus && <Placeholder><Spinner /></Placeholder> }
-													</Fragment>
-												) }
-											</Fragment>
-										) }
-
-										{ 'wooTotalCartValue' === i.type && (
-											<TextControl
-												label={ __( 'Total Cart Value', 'otter-blocks' ) }
-												help={ sprintf( __( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-blocks' ), window.wcSettings.currency.code ) }
-												placeholder={ 9.99 }
-												value={ i.value }
-												onChange={ e => changeValue( e.replace( /[^0-9.]/g, '' ), index, n, 'value' ) }
-											/>
-										) }
-
-										{ 'wooTotalSpent' === i.type && (
-											<TextControl
-												label={ __( 'Total Money Spent', 'otter-blocks' ) }
-												help={ sprintf( __( 'The currency will be based on your WooCommerce settings. Currently it is set to %s.', 'otter-blocks' ), window.wcSettings.currency.code ) }
-												placeholder={ 9.99 }
-												value={ i.value }
-												onChange={ e => changeValue( e.replace( /[^0-9.]/g, '' ), index, n, 'value' ) }
-											/>
-										) }
-
-										{ ( 'wooTotalCartValue' === i.type || 'wooTotalSpent' === i.type ) && (
-											<SelectControl
-												label={ __( 'Compare Operator', 'otter-blocks' ) }
-												options={ [
-													{
-														value: 'greater_than',
-														label: __( 'Greater Than (>)', 'otter-blocks' )
-													},
-													{
-														value: 'less_than',
-														label: __( 'Less Than (<)', 'otter-blocks' )
-													}
-												] }
-												value={ i.compare }
-												onChange={ e => changeValue( e, index, n, 'compare' ) }
-											/>
-										) }
-
-										{ 'wooPurchaseHistory' === i.type && (
-											<Fragment>
-												{ 'loaded' === productsStatus && (
-													<Multiselect
-														label={ __( 'Products', 'otter-blocks' ) }
-														items={ products }
-														values={ i.products }
-														onChange={ values => changeProducts( values, index, n ) }
-													/>
-												) }
-
-												{ 'loading' === productsStatus && <Placeholder><Spinner /></Placeholder> }
-											</Fragment>
-										) }
-
-										{ 'learnDashPurchaseHistory' === i.type && (
-											<Fragment>
-												<SelectControl
-													label={ __( 'Based on', 'otter-blocks' ) }
-													options={ [
-														{
-															value: 'courses',
-															label: __( 'Courses', 'otter-blocks' )
-														},
-														{
-															value: 'groups',
-															label: __( 'Groups', 'otter-blocks' )
-														}
-													] }
-													value={ i.on }
-													onChange={ e => changeValue( e, index, n, 'on' ) }
-												/>
-
-												{ 'courses' === i.on && (
-													<Fragment>
-														{ 'loaded' === coursesStatus && (
-															<Multiselect
-																label={ __( 'Courses', 'otter-blocks' ) }
-																items={ courses }
-																values={ i.courses }
-																onChange={ values => changeCourses( values, index, n ) }
-															/>
-														) }
-
-														{ 'loading' === coursesStatus && <Placeholder><Spinner /></Placeholder> }
-													</Fragment>
-												) }
-
-												{ 'groups' === i.on && (
-													<Fragment>
-														{ 'loaded' === courseGroupsStatus && (
-															<Multiselect
-																label={ __( 'Groups', 'otter-blocks' ) }
-																items={ courseGroups }
-																values={ i.groups }
-																onChange={ values => changeGroups( values, index, n ) }
-															/>
-														) }
-
-														{ 'loading' === courseGroupsStatus && <Placeholder><Spinner /></Placeholder> }
-													</Fragment>
-												) }
-											</Fragment>
-										) }
-
-										{ 'learnDashCourseStatus' === i.type && (
-											<Fragment>
-												{ 'loaded' === coursesStatus && (
-													<Fragment>
-														<SelectControl
-															label={ __( 'Course', 'otter-blocks' ) }
-															options={ courses }
-															value={ i.course }
-															onChange={ e => changeValue( Number( e ), index, n, 'course' ) }
-														/>
-
-														<SelectControl
-															label={ __( 'Status', 'otter-blocks' ) }
-															options={ [
-																{
-																	value: 'not_started',
-																	label: __( 'Not Started', 'otter-blocks' )
-																},
-																{
-																	value: 'in_progress',
-																	label: __( 'In Progress', 'otter-blocks' )
-																},
-																{
-																	value: 'completed',
-																	label: __( 'Completed', 'otter-blocks' )
-																}
-															] }
-															value={ i.status }
-															onChange={ e => changeValue( e, index, n, 'status' ) }
-														/>
-													</Fragment>
-												) }
-
-												{ 'loading' === coursesStatus && <Placeholder><Spinner /></Placeholder> }
-											</Fragment>
-										) }
-
-										{ customVisibility.includes( i.type ) && (
+										{ toogleVisibility.includes( i.type ) && (
 											<SelectControl
 												label={ __( 'If condition is true, the block should be:', 'otter-blocks' ) }
 												options={ [
@@ -1231,6 +483,8 @@ const Edit = ({
 				>
 					{ __( 'Add Rule Group', 'otter-blocks' ) }
 				</Button>
+
+				{ applyFilters( 'otter.blockConditions.notices', '' ) }
 			</PanelBody>
 		</InspectorControls>
 	);

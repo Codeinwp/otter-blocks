@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/advanced-column",
 	"title": "Section Column",
 	"category": "themeisle-blocks",
-	"description": "A single column within a Section block.",
+	"description": "A single column within a Section block. Powered by Otter.",
 	"parent": [ "themeisle-blocks/advanced-columns" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

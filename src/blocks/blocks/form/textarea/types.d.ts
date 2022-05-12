@@ -1,4 +1,4 @@
-import { BlockProps } from "../../../helpers/blocks"
+import { BlockProps } from '../../../helpers/blocks'
 
 type Attributes = {
 	id: string

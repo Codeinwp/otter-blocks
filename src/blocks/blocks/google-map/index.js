@@ -18,7 +18,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Google Maps', 'otter-blocks' ),
-	description: __( 'Display Google Maps on your website with Google Map block.', 'otter-blocks' ),
+	description: __( 'Display Google Maps on your website with Google Map block. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'map',

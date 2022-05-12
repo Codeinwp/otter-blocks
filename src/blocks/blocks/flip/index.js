@@ -22,7 +22,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Flip Card', 'otter-blocks' ),
-	description: __( 'Make a card with a flip effect.', 'otter-blocks' ),
+	description: __( 'Make a card with a flip effect. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'flip card',

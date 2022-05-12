@@ -103,7 +103,7 @@ class Template_Library_Server {
 			return false;
 		}
 
-		$templates_list = array(
+		$templates = array(
 			array(
 				'title'          => __( 'Header with Features', 'otter-blocks' ),
 				'type'           => 'block',
@@ -565,7 +565,7 @@ class Template_Library_Server {
 			),
 		);
 
-		$templates = apply_filters( 'themeisle_gutenberg_templates', $templates_list );
+		$templates = apply_filters( 'themeisle_gutenberg_templates', $templates );
 
 		return rest_ensure_response( $templates );
 	}

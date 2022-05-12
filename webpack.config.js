@@ -1,19 +1,21 @@
+const BundleAnalyzerPlugin = require( 'webpack-bundle-analyzer' ).BundleAnalyzerPlugin;
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const NODE_ENV = process.env.NODE_ENV || 'development';
+const ANALYZER = 'true' === process.env.NODE_ANALYZER ? true : false;
 const glob = require( 'glob' );
 const path = require( 'path' );
 const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
 const blocks = require( './blocks.json' );
 
-const blockFiles = Object.keys( blocks ).filter( block => blocks[ block ].block !== undefined )
+const blockFiles = Object.keys( blocks ).filter( block => blocks[ block ].block !== undefined && true !== blocks[ block ]?.isPro )
 	.map( block => {
 		return {
-			source: `src/blocks/${ blocks[ block ].block }`,
+			source: `src/${ blocks[ block ].block }`,
 			destination: `build/blocks/${ block }/`
 		};
 	});
 
-const folders = Object.keys( blocks ).map( block => `build/blocks/${ block }` );
+const blockFolders = Object.keys( blocks ).filter( block => true !== blocks[ block ]?.isPro ).map( block => `build/blocks/${ block }` );
 
 module.exports = [
 	{
@@ -27,7 +29,14 @@ module.exports = [
 		},
 		output: {
 			path: path.resolve( __dirname, './build/dashboard' )
-		}
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
+				generateStatsFile: ANALYZER
+			})
+		]
 	},
 	{
 
@@ -43,7 +52,14 @@ module.exports = [
 		},
 		output: {
 			path: path.resolve( __dirname, './build/animation' )
-		}
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
+				generateStatsFile: ANALYZER
+			})
+		]
 	},
 	{
 
@@ -56,7 +72,14 @@ module.exports = [
 		},
 		output: {
 			path: path.resolve( __dirname, './build/css' )
-		}
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
+				generateStatsFile: ANALYZER
+			})
+		]
 	},
 	{
 
@@ -69,25 +92,32 @@ module.exports = [
 		},
 		output: {
 			path: path.resolve( __dirname, './build/export-import' )
-		}
+		},
+		plugins: [
+			...defaultConfig.plugins,
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
+				generateStatsFile: ANALYZER
+			})
+		]
 	},
 	{
 
 		// OTTER BLOCKS
 		...defaultConfig,
 		stats: 'minimal',
-		devtool: 'development' === NODE_ENV ? 'eval-source-map' : undefined,
+		devtool: 'development' === NODE_ENV ? 'inline-source-map' : undefined,
 		mode: NODE_ENV,
 		entry: {
 			blocks: [
 				'./src/blocks/index.js',
 				'./src/blocks/plugins/registerPlugin.js',
+				'./src/blocks/components/index.js',
+				'./src/blocks/helpers/index.js',
 				...glob.sync( './src/blocks/blocks/**/index.js' )
 			],
-			woocommerce: [
-				...glob.sync( './src/blocks/woocommerce/**/index.js' )
-			],
 			'leaflet-map': './src/blocks/frontend/leaflet-map/index.js',
+			'leaflet-gesture-handling': './src/blocks/frontend/leaflet-map/leaflet-gesture-handling.js',
 			maps: './src/blocks/frontend/google-map/index.js',
 			slider: './src/blocks/frontend/slider/index.js',
 			'progress-bar': './src/blocks/frontend/progress-bar/index.js',
@@ -127,10 +157,16 @@ module.exports = [
 			new FileManagerPlugin({
 				events: {
 					onEnd: {
-						mkdir: folders,
+						mkdir: blockFolders,
 						copy: blockFiles
 					}
-				}
+				},
+				runOnceInWatchMode: false,
+				runTasksInSeries: true
+			}),
+			new BundleAnalyzerPlugin({
+				analyzerMode: 'disabled',
+				generateStatsFile: ANALYZER
 			})
 		]
 	}
