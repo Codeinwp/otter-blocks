@@ -37,3 +37,4 @@ tsconfig.json
 /artifact
 /plugins
 /docs
+/build/pro/
