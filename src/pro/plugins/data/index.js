@@ -5,10 +5,7 @@ import { pick } from 'lodash';
 
 import apiFetch from '@wordpress/api-fetch';
 
-import {
-	createReduxStore,
-	register
-} from '@wordpress/data';
+import { registerStore } from '@wordpress/data';
 
 const DEFAULT_STATE = {
 	acfGroups: [],
@@ -45,7 +42,7 @@ const actions = {
 	}
 };
 
-const store = createReduxStore( 'otter-pro', {
+registerStore( 'otter-pro', {
 	reducer( state = DEFAULT_STATE, action ) {
 		if ( 'SET_LEARNDASH_COURSES' === action.type ) {
 			return {
@@ -155,5 +152,3 @@ const store = createReduxStore( 'otter-pro', {
 		}
 	}
 });
-
-register( store );
