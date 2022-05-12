@@ -12,37 +12,37 @@
 			"type": "string"
 		},
 		"facebook": {
-			"type": "object",
+			"type": [ "object", "boolean" ],
 			"default": {
 				"active": true
 			}
 		},
 		"twitter": {
-			"type": "object",
+			"type": [ "object", "boolean" ],
 			"default": {
 				"active": true
 			}
 		},
 		"linkedin": {
-			"type": "object",
+			"type": [ "object", "boolean" ],
 			"default": {
 				"active": true
 			}
 		},
 		"pinterest": {
-			"type": "object",
+			"type": [ "object", "boolean" ],
 			"default": {
 				"active": false
 			}
 		},
 		"tumblr": {
-			"type": "object",
+			"type": [ "object", "boolean" ],
 			"default": {
 				"active": false
 			}
 		},
 		"reddit": {
-			"type": "object",
+			"type": [ "object", "boolean" ],
 			"default": {
 				"active": false
 			}

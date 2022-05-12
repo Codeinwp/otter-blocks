@@ -36,7 +36,7 @@ const Controls = ({ attributes, setAttributes, socialList }) => {
 		<BlockControls>
 			<ToolbarGroup>
 				{ Object.keys( socialList ).map( ( item ) => {
-					const prop = attributes[ item ].active;
+					const prop = attributes[ item ].active ?? attributes[ item ];
 
 					return (
 						<Tooltip

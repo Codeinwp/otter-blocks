@@ -2,12 +2,12 @@ import { BlockProps, InspectorProps } from "../../helpers/blocks"
 
 type Attributes = {
 	id: string
-	facebook: object
-	twitter: object
-	linkedin: object
-	pinterest: object
-	tumblr: object
-	reddit: object
+	facebook: object | boolean
+	twitter: object | boolean
+	linkedin: object | boolean
+	pinterest: object | boolean
+	tumblr: object | boolean
+	reddit: object | boolean
 	gap: number
 	borderRadius: number
 	textDeco: string

@@ -48,7 +48,7 @@ const Inspector = ({
 				title={ __( 'Color Settings' ) }
 				colorSettings={
 					Object.keys( socialList ).reduce(( acc, icon ) => {
-						if ( ! attributes[icon].active ) {
+						if ( ! ( attributes[icon].active ?? attributes[icon] ) ) {
 							return acc;
 						}
 
