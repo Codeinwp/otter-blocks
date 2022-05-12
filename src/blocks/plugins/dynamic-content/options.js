@@ -87,6 +87,19 @@ const options = {
 				value: 'loggedInUserMeta'
 			}
 		]
+	},
+	'misc': {
+		label: __( 'Miscellaneous', 'otter-blocks' ),
+		options: [
+			{
+				label: __( 'Current Date', 'otter-blocks' ),
+				value: 'date'
+			},
+			{
+				label: __( 'Current Time', 'otter-blocks' ),
+				value: 'time'
+			}
+		]
 	}
 };
 

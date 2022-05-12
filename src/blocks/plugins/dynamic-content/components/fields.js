@@ -34,7 +34,9 @@ const hasSettingsPanel = [
 	'postTerms',
 	'postMeta',
 	'authorMeta',
-	'loggedInUserMeta'
+	'loggedInUserMeta',
+	'date',
+	'time'
 ];
 
 const dateFormats = {
@@ -122,23 +124,25 @@ const Fields = ({
 						/>
 					) }
 
-					{ 'postDate' === attributes.type && (
+					{ [ 'postDate', 'date' ].includes( attributes.type ) && (
 						<Fragment>
-							<SelectControl
-								label={ __( 'Type', 'otter-blocks' ) }
-								value={ attributes.dateType || 'published' }
-								options={ [
-									{
-										label: __( 'Post Published', 'otter-blocks' ),
-										value: 'published'
-									},
-									{
-										label: __( 'Post Modified', 'otter-blocks' ),
-										value: 'modified'
-									}
-								] }
-								onChange={ dateType => changeAttributes({ dateType }) }
-							/>
+							{ 'postDate' === attributes.type && (
+								<SelectControl
+									label={ __( 'Type', 'otter-blocks' ) }
+									value={ attributes.dateType || 'published' }
+									options={ [
+										{
+											label: __( 'Post Published', 'otter-blocks' ),
+											value: 'published'
+										},
+										{
+											label: __( 'Post Modified', 'otter-blocks' ),
+											value: 'modified'
+										}
+									] }
+									onChange={ dateType => changeAttributes({ dateType }) }
+								/>
+							) }
 
 							<SelectControl
 								label={ __( 'Format', 'otter-blocks' ) }
@@ -163,7 +167,7 @@ const Fields = ({
 							{ 'custom' === attributes.dateFormat && (
 								<TextControl
 									label={ __( 'Custom Format', 'otter-blocks' ) }
-									instructions={ <ExternalLink target="_blank" href="https://wordpress.org/support/article/formatting-date-and-time/">{ __( 'Formatting Date and Time in WordPress', 'otter-blocks' ) }</ExternalLink> }
+									help={ <ExternalLink target="_blank" href="https://wordpress.org/support/article/formatting-date-and-time/">{ __( 'Formatting Date and Time in WordPress', 'otter-blocks' ) }</ExternalLink> }
 									type="text"
 									value={ attributes.dateCustom || '' }
 									onChange={ dateCustom => changeAttributes({ dateCustom }) }
@@ -172,23 +176,25 @@ const Fields = ({
 						</Fragment>
 					) }
 
-					{ 'postTime' === attributes.type && (
+					{ [ 'postTime', 'time' ].includes( attributes.type ) && (
 						<Fragment>
-							<SelectControl
-								label={ __( 'Type', 'otter-blocks' ) }
-								value={ attributes.timeType || 'published' }
-								options={ [
-									{
-										label: __( 'Post Published', 'otter-blocks' ),
-										value: 'published'
-									},
-									{
-										label: __( 'Post Modified', 'otter-blocks' ),
-										value: 'modified'
-									}
-								] }
-								onChange={ timeType => changeAttributes({ timeType }) }
-							/>
+							{ 'postTime' === attributes.type && (
+								<SelectControl
+									label={ __( 'Type', 'otter-blocks' ) }
+									value={ attributes.timeType || 'published' }
+									options={ [
+										{
+											label: __( 'Post Published', 'otter-blocks' ),
+											value: 'published'
+										},
+										{
+											label: __( 'Post Modified', 'otter-blocks' ),
+											value: 'modified'
+										}
+									] }
+									onChange={ timeType => changeAttributes({ timeType }) }
+								/>
+							) }
 
 							<SelectControl
 								label={ __( 'Format', 'otter-blocks' ) }
@@ -213,7 +219,7 @@ const Fields = ({
 							{ 'custom' === attributes.timeFormat && (
 								<TextControl
 									label={ __( 'Custom Format', 'otter-blocks' ) }
-									instructions={ <ExternalLink target="_blank" href="https://wordpress.org/support/article/formatting-date-and-time/">{ __( 'Formatting Date and Time in WordPress', 'otter-blocks' ) }</ExternalLink> }
+									help={ <ExternalLink target="_blank" href="https://wordpress.org/support/article/formatting-date-and-time/">{ __( 'Formatting Date and Time in WordPress', 'otter-blocks' ) }</ExternalLink> }
 									type="text"
 									value={ attributes.timeCustom || '' }
 									onChange={ timeCustom => changeAttributes({ timeCustom }) }
