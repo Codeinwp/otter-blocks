@@ -6,6 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import {
 	InspectorControls,
 	PanelColorSettings,
+	ContrastChecker
 } from '@wordpress/block-editor';
 import {
 	PanelBody,
@@ -46,6 +47,8 @@ const Inspector = ({
 			</PanelBody>
 			<PanelColorSettings
 				title={ __( 'Color Settings' ) }
+				className='ott-color-controls'
+				initialOpen={ false }
 				colorSettings={
 					Object.keys( socialList ).reduce(( acc, icon ) => {
 						if ( ! ( attributes[icon].active ?? attributes[icon] ) ) {
@@ -56,6 +59,7 @@ const Inspector = ({
 							{
 								value: attributes[icon].backgroundColor,
 								onChange: value => onIconChange( value, icon, 'backgroundColor' ),
+								onGradientChange: value => onIconChange( value, icon, 'backgroundColor' ),
 								/* translators: %s Social Website */
 								label: sprintf( __(' %s Background Color', 'otter-blocks'), socialList[icon].label )
 							},
@@ -68,8 +72,19 @@ const Inspector = ({
 						]
 					}, [])
 				}
-				className='ott-color-controls'
 			>
+				{ Object.keys( socialList ).map((icon) => {
+					if ( ! ( attributes[icon].active ?? attributes[icon] ) ) {
+						return null;
+					}
+
+					return (
+						<ContrastChecker
+							backgroundColor={ attributes[icon].backgroundColor }
+							textColor={ attributes[icon].textColor }
+						/>
+					);
+				}) }
 			</PanelColorSettings>
 		</InspectorControls>
 	</Fragment>;
