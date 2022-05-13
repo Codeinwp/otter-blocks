@@ -245,6 +245,8 @@ class Form_Server {
 			$res->set_error( $e->getMessage() );
 			$this->send_error_email($e->getMessage(), $form_data);
 		}
+
+		return $res->build_response();
 	}
 
 
@@ -327,8 +329,8 @@ class Form_Server {
 		// Send also an email to the form editor/owner with the data alongside the subscription.
 		if(
 			'submit-subscribe' === $form_data->get_form_options()->get_action() &&
-			$form_data->payload_has_field('provider') &&
-			'default' !==  $form_data->get_payload_field('provider')
+			$form_data->get_form_options()->has_provider() &&
+			'default' !==  $form_data->get_form_options()->get_provider()
 		) {
 			$this->send_default_email($form_data);
 		}
