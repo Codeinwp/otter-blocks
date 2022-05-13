@@ -85,8 +85,6 @@ const Main = () => {
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
 
-	const googleCaptchaAPISecretKeyMask = googleCaptchaAPISecretKey && 0 < googleCaptchaAPISecretKey?.length - 13 ? Array( googleCaptchaAPISecretKey.length - 13  ).fill( '*' ).join( '' ) + googleCaptchaAPISecretKey.slice( -13 ) : googleCaptchaAPISecretKey;
-
 	const settingsRef = useRef( null );
 
 	const changeOptions = ( option, state, value ) => {
@@ -311,7 +309,7 @@ const Main = () => {
 								<TextControl
 									type="password"
 									label={ __( 'Secret Key', 'otter-blocks' ) }
-									value={ googleCaptchaAPISecretKeyMask }
+									value={ googleCaptchaAPISecretKey }
 									placeholder={ __( 'Secret Key', 'otter-blocks' ) }
 									disabled={ isAPISaving }
 									onChange={ value => setGoogleCaptchaAPISecretKey( value ) }
