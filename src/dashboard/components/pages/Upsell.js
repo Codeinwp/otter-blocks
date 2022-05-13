@@ -72,6 +72,8 @@ const Upsell = () => {
 
 			<Button
 				variant="primary"
+				href={ window.otterObj.upgradeLink }
+				target="_blank"
 			>
 				{ __( 'View all Otter Pro features', 'otter-blocks' ) }
 			</Button>
