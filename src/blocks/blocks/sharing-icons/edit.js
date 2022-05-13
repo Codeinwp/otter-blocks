@@ -41,14 +41,14 @@ const Edit = ({
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
-	const individualCSS = Object.keys( socialList ).reduce(( acc, icon ) => {
+	const individualCSS = Object.keys( socialList ).reduce( ( acc, icon ) => {
 		const iconAttrs = getValue( icon );
 		return `${ acc }
 		.is-${ icon } {
 			--iconBgColor: ${ iconAttrs.backgroundColor ?? 'unset' };
 			--textColor: ${ iconAttrs.textColor ?? 'unset' };
 		}`;
-	}, '' )
+	}, '' );
 
 	const gapValue = getValue( 'gap' );
 	const borderRadiusValue = getValue( 'borderRadius' );

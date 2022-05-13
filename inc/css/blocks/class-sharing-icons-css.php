@@ -31,10 +31,9 @@ class Sharing_Icons_CSS extends Base_CSS {
 	 * @access  public
 	 */
 	public function render_css( $block ) {
-		$css = new CSS_Utility( $block );
+		$css             = new CSS_Utility( $block );
 		$social_profiles = Sharing_Icons_Block::get_social_profiles();
 
-		// add individual icons css
 		foreach ( $social_profiles as $icon => $attrs ) {
 			$css->add_item(
 				array(
@@ -44,23 +43,23 @@ class Sharing_Icons_CSS extends Base_CSS {
 							'property'  => '--iconBgColor',
 							'value'     => $icon,
 							'format'    => function( $value, $attrs ) {
-								return $value['backgroundColor'] ;
+								return $value['backgroundColor'];
 							},
 							'condition' => function( $attrs ) use ( $icon ) {
 								return isset( $attrs[ $icon ]['backgroundColor'] );
 							},
 						),
 						array(
-							'property' => '--textColor',
-							'value'    => $icon,
-							'format'   => function( $value, $attrs ) {
+							'property'  => '--textColor',
+							'value'     => $icon,
+							'format'    => function( $value, $attrs ) {
 								return $value['textColor'];
 							},
 							'condition' => function( $attrs ) use ( $icon ) {
 								return isset( $attrs[ $icon ]['textColor'] );
 							},
-						)
-					)
+						),
+					),
 				)
 			);
 		}

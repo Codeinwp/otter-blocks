@@ -23,7 +23,7 @@ const Inspector = ({
 		newValue[field] = value;
 
 		setAttributes({ [ item ]: { ...newValue } });
-	}
+	};
 
 	return <Fragment>
 		<InspectorControls>
@@ -50,8 +50,8 @@ const Inspector = ({
 				className='ott-color-controls'
 				initialOpen={ false }
 				colorSettings={
-					Object.keys( socialList ).reduce(( acc, icon ) => {
-						if ( ! ( attributes[icon].active ?? attributes[icon] ) ) {
+					Object.keys( socialList ).reduce( ( acc, icon ) => {
+						if ( ! ( attributes[icon].active ?? attributes[icon]) ) {
 							return acc;
 						}
 
@@ -60,21 +60,23 @@ const Inspector = ({
 								value: attributes[icon].backgroundColor,
 								onChange: value => onIconChange( value, icon, 'backgroundColor' ),
 								onGradientChange: value => onIconChange( value, icon, 'backgroundColor' ),
+
 								/* translators: %s Social Website */
-								label: sprintf( __(' %s Background Color', 'otter-blocks'), socialList[icon].label )
+								label: sprintf( __( ' %s Background Color', 'otter-blocks' ), socialList[icon].label )
 							},
 							{
 								value: attributes[icon].textColor,
 								onChange: value => onIconChange( value, icon, 'textColor' ),
+
 								/* translators: %s Social Website */
-								label: sprintf( __(' %s Text Color', 'otter-blocks'), socialList[icon].label )
+								label: sprintf( __( ' %s Text Color', 'otter-blocks' ), socialList[icon].label )
 							}
-						]
+						];
 					}, [])
 				}
 			>
-				{ Object.keys( socialList ).map((icon) => {
-					if ( ! ( attributes[icon].active ?? attributes[icon] ) ) {
+				{ Object.keys( socialList ).map( ( icon ) => {
+					if ( ! ( attributes[icon].active ?? attributes[icon]) ) {
 						return null;
 					}
 

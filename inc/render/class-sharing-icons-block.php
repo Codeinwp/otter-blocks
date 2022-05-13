@@ -59,8 +59,15 @@ class Sharing_Icons_Block {
 		return $social_attributes;
 	}
 
+	/**
+	 * Checks if an icon is active and should be visible
+	 *
+	 * @param array $icon Icon to check.
+	 *
+	 * @return bool
+	 */
 	private function is_active( $icon ) {
-		return ( ( isset( $icon['active'] ) && true === filter_var( $icon['active'], FILTER_VALIDATE_BOOLEAN ) ) || 1 == $icon);
+		return ( ( isset( $icon['active'] ) && true === filter_var( $icon['active'], FILTER_VALIDATE_BOOLEAN ) ) || 1 == $icon );
 	}
 
 	/**
