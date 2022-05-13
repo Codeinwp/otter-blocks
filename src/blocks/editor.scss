@@ -29,6 +29,7 @@
 
 	&.is-upsell {
 		background: #ED6F57;
+		font-size: 12px;
 
 		.components-external-link {
 			color: white;
@@ -73,5 +74,21 @@
 				top: -1px;
 			}
 		}
+	}
+}
+
+.o-is-powered {
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	text-align: right;
+	font-size: 10px;
+	text-transform: uppercase;
+	margin-top: 10px;
+
+	svg {
+		margin-left: 10px;
+		width: 14px;
+		height: 14px;
 	}
 }
