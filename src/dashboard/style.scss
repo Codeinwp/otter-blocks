@@ -21,6 +21,14 @@
 }
 
 #otter {
+	.components-button {
+		&.is-primary {
+			--wp-admin-theme-color: #ed6f57;
+			--wp-admin-theme-color-darker-20: #d5654f;
+			--wp-admin-theme-color-darker-10: #dd6851;
+		}
+	}
+
 	.otter-header {
 		padding: 20px 10px 0 10px;
 		background-color: #ffffff;
@@ -135,6 +143,7 @@
 			margin: 25px 0;
 			background: #fff;
 			border: 1px solid #e2e4e7;
+			border-radius: 10px;
 
 			.components-panel__body-toggle {
 				border-bottom: 1px solid #d6e2ed;
@@ -235,7 +244,7 @@
 								align-items: center;
 								margin: 2px 0 15px;
 
-								.is-primary {
+								.is-secondary {
 									padding: 2px 20px;
 									font-size: 14px;
 									margin-right: 10px;
