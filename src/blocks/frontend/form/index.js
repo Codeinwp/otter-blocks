@@ -202,7 +202,7 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 				btn.removeChild( spinner );
 			})?.catch( ( error ) => {
 				console.error( error );
-				displayMsg.setMsg( 'try-again', 'error' ).show();
+				displayMsg.pullMsg( 'try-again', 'error' ).show();
 
 				if ( window.themeisleGutenberg?.tokens?.[ id ].reset ) {
 					window.themeisleGutenberg?.tokens?.[ id ].reset();
