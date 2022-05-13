@@ -82,6 +82,7 @@
 			border-radius: var(--borderRadius);
 			border-width: var(--borderWidth);
 			border-color: var(--borderColor);
+			border-style: solid;
 		}
 
 		.o-form-help {
@@ -95,6 +96,7 @@
 	.wp-block-themeisle-blocks-form-textarea {
 		.otter-form-textarea-input {
 			height: 200px;
+			border-style: solid;
 		}
 	}
 
