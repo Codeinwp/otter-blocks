@@ -7,32 +7,32 @@ import { Button } from '@wordpress/components';
 
 const FEATURES = [
 	{
-		label: __( 'Visibility Conditions Extension', 'otter-blocks' ),
-		description: __( 'Get more conditions in the Visibility Conditions module including WooCommerce & LearnDash conditions.', 'otter-blocks' )
+		label: __( 'Premium Blocks', 'otter-blocks' ),
+		description: __( 'Enhance your website’s design with powerful Pro Blocks, like the Add to Cart Block, Business Hours Block and more blocks are coming soon.', 'otter-blocks' )
 	},
 	{
-		label: __( 'WooCommerce Builder', 'otter-blocks' ),
-		description: __( 'Build custom WooCommerce product pages using the Block Editor with the WooCommerce Builder in Otter Pro.', 'otter-blocks' )
+		label: __( 'WooCommerce Builder Blocks', 'otter-blocks' ),
+		description: __( 'Build custom Single Product Pages using WooCommerce Builder Blocks by Otter. All the new features from Otter Pro are designed to maximize your conversion rate.', 'otter-blocks' )
 	},
 	{
-		label: __( 'ACF Extension for Posts Block', 'otter-blocks' ),
-		description: __( 'Fetch and display ACF fields in Posts Block with the Advanced Custom Fields Extension', 'otter-blocks' )
+		label: __( 'More Sticky Options for Blocks', 'otter-blocks' ),
+		description: __( 'Block Sticky feature allows you to keep any block always visible while the customer is scrolling the page, improving the e-commerce User Experience on your site.', 'otter-blocks' )
 	},
 	{
-		label: __( 'Sticky & Popup Extension', 'otter-blocks' ),
-		description: __( 'Get even more options in Otter\' Sticky feature and Popup Block to customize your website even more ways.', 'otter-blocks' )
+		label: __( 'Review Comparison Table', 'otter-blocks' ),
+		description: __( 'Allows you to display and compare a selection of product reviews made on the website.', 'otter-blocks' )
 	},
 	{
-		label: __( 'Comparison Table for Review Block', 'otter-blocks' ),
-		description: __( 'A beautiful way to compare different product reviews made on your website.', 'otter-blocks' )
+		label: __( 'More Block Visibility Conditions', 'otter-blocks' ),
+		description: __( 'The Visibility Conditions feature by Otter allows you to set which conditions should be met for your chosen blocks to be displayed on the page. Otter Pro adds 6 more Visibility Conditions.', 'otter-blocks' )
 	},
 	{
-		label: __( 'Sync Review Block with WooCommerce', 'otter-blocks' ),
-		description: __( 'Sync your product reviews with WooCommece so you don\'t have to update the product details manually in two places.', 'otter-blocks' )
+		label: __( 'Sync Product Reviews', 'otter-blocks' ),
+		description: __( 'When using the Product Review Block, this feature allows you to automatically sync the reviews and details of a WooCommerce product.', 'otter-blocks' )
 	},
 	{
-		label: __( 'Business Hours Block', 'otter-blocks' ),
-		description: __( 'Create and Display your business schedule on your website. Choose between 2 styles, and customize it with the advanced features, making it look the way you want.', 'otter-blocks' )
+		label: __( 'Fast and Friendly Support', 'otter-blocks' ),
+		description: __( 'On average, Otter Pro user get a reply in five hours or less.', 'otter-blocks' )
 	}
 ];
 
