@@ -62,7 +62,12 @@ const excludedTypes = [
 	'visualizer'
 ];
 
-// HTML to Plaintext
+/**
+ * HTML to Plaintext
+ *
+ * @param {HTMLElement} value
+ * @returns {*}
+ */
 export const unescapeHTML = value => {
 	const htmlNode = document.createElement( 'div' );
 	htmlNode.innerHTML = value;
@@ -72,7 +77,12 @@ export const unescapeHTML = value => {
 	return htmlNode.textContent;
 };
 
-// Format Date
+/**
+ * Format the date.
+ *
+ * @param {Date} date
+ * @returns {string}
+ */
 export const formatDate = date => {
 	const monthNames = [
 		'January', 'February', 'March',
@@ -88,75 +98,11 @@ export const formatDate = date => {
 	return day + ' ' + monthNames[monthIndex] + ', ' + year;
 };
 
-// Create a list with numbers from interval [start, end]
-export const range = ( start, end, step ) => {
-	const range = [];
-	const typeofStart = typeof start;
-	const typeofEnd = typeof end;
-
-	if ( 0 === step ) {
-		throw TypeError( 'Step cannot be zero.' );
-	}
-
-	if ( undefined === typeofStart || undefined === typeofEnd ) {
-		throw TypeError( 'Must pass start and end arguments.' );
-	} else if ( typeofStart !== typeofEnd ) {
-		throw TypeError( 'Start and end arguments must be of same type.' );
-	}
-
-	if ( undefined === typeof step ) {
-		step = 1;
-	}
-
-	if ( end < start ) {
-		step = -step;
-	}
-
-	if ( 'number' === typeofStart ) {
-		while ( 0 < step ? end >= start : end <= start ) {
-			range.push( start );
-			start += step;
-		}
-	} else if ( 'string' === typeofStart ) {
-		if ( 1 !== start.length || 1 !== end.length ) {
-			throw TypeError( 'Only strings with one character are supported.' );
-		}
-
-		start = start.charCodeAt( 0 );
-		end = end.charCodeAt( 0 );
-
-		while ( 0 < step ? end >= start : end <= start ) {
-			range.push( String.fromCharCode( start ) );
-			start += step;
-		}
-	} else {
-		throw TypeError( 'Only string and number types are supported' );
-	}
-
-	return range;
-};
-
-// Easing functions for animation
-export const linear = ( x ) => {
-	return x;
-};
-
-export const easeInSine = ( x ) => {
-	return 1 - Math.cos( ( x * Math.PI ) / 2 );
-};
-
-export const easeOutSine = ( x ) => {
-	return Math.sin( ( x * Math.PI ) / 2 );
-};
-
-export const easeInOutSine = ( x ) => {
-	return -( Math.cos( Math.PI * x ) - 1 ) / 2;
-};
-
-export const easeOutQuad = ( x ) => {
-	return 1 - ( 1 - x ) * ( 1 - x );
-};
-
+/**
+ * Get the custom post types from the post.
+ *
+ * @returns {Promise<undefined|*>}
+ */
 export const getCustomPostTypeSlugs = async() => {
 	const dataTypes = window.themeisleGutenberg.postTypes;
 
@@ -168,6 +114,12 @@ export const getCustomPostTypeSlugs = async() => {
 	return undefined;
 };
 
+/**
+ * Convert a word to title case.
+ *
+ * @param {string} word
+ * @returns {string}
+ */
 export const convertToTitleCase = ( word ) => {
 	if ( 'string' === typeof word || word instanceof String ) {
 		return word[0].toUpperCase() + word.slice( 1 );
@@ -249,7 +201,11 @@ export const getIntervalFromUnix = ( unixTime, settings ) => {
 	return time;
 };
 
-// Get site's timezone.
+/**
+ * Get site's timezone.
+ *
+ * @returns {*}
+ */
 export const getTimezone = () => {
 	const settings = __experimentalGetSettings();
 	const offset   = 60 * settings.timezone.offset;
@@ -259,10 +215,20 @@ export const getTimezone = () => {
 	return timezone;
 };
 
-// Check if object has only null values.
+/**
+ * Check if object has only null values.
+ *
+ * @param obj
+ * @returns {boolean}
+ */
 export const isNullObject = obj => ! Object.keys( obj ).some( k => null !== obj[ k ]);
 
-// Check if object has only undefined values.
+/**
+ * Check if object has only undefined values.
+ *
+ * @param obj
+ * @returns {this is unknown[]}
+ */
 export const isUndefinedObject = obj => Object.values( obj ).every( l => l === undefined );
 
 /*
@@ -271,6 +237,7 @@ export const isUndefinedObject = obj => Object.values( obj ).every( l => l === u
 
 /**
  * Format the value based on the given unit.
+ *
  * @param {string} value
  * @param {string} unit
  * @returns {string|undefined}
@@ -279,6 +246,7 @@ export const _unit = ( value, unit ) => ( value ? value + unit : undefined );
 
 /**
  * Format the value into a `px` unit.
+ *
  * @param {string} value The value.
  * @returns {string|undefined}
  */
@@ -286,6 +254,7 @@ export const _px = value => _unit( value, 'px' );
 
 /**
  * Format the value into a `em` unit.
+ *
  * @param {string} value The value.
  * @returns {string|undefined}
  */
@@ -293,6 +262,7 @@ export const _em = value => _unit( value, 'em' );
 
 /**
  * Format the value into a `%` unit.
+ *
  * @param {string} value The value.
  * @returns {string|undefined}
  */
@@ -308,6 +278,7 @@ const verticalMapping = {
 
 /**
  * Get the CSS value for the given value position.
+ *
  * @param {string} value The position type.
  * @returns {string|undefined}
  */

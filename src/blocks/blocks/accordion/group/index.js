@@ -18,7 +18,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Accordion', 'otter-blocks' ),
-	description: __( 'Vertically collapsing accordions perfect for displaying your FAQs.', 'otter-blocks' ),
+	description: __( 'Vertically collapsing accordions perfect for displaying your FAQs. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'accordions',

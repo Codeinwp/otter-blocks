@@ -1,4 +1,4 @@
-import { BlockProps, InspectorProps } from "../../helpers/blocks"
+import { BlockProps, InspectorProps } from '../../helpers/blocks'
 
 type Attributes = {
 	id: string
@@ -6,7 +6,6 @@ type Attributes = {
 	postTypes: string[]
 	columns: number
 	template: string[]
-	customMetas: {id: string, field: string, display: true}[]
 	categories: string[]
 	postsToShow: number
 	order: number

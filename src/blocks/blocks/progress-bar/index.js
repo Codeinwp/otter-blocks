@@ -18,7 +18,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Progress Bar', 'otter-blocks' ),
-	description: __( 'Show your progress with a beautiful Progress Bar block.', 'otter-blocks' ),
+	description: __( 'Show your progress with a beautiful Progress Bar block. Powered by Otter.', 'otter-blocks' ),
 	icon: 'minus',
 	keywords: [
 		'progress',

@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { closeSmall } from '@wordpress/icons';
-
-/**
  * WordPress dependencies
  */
 import {

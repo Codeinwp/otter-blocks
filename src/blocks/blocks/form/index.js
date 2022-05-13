@@ -19,7 +19,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Form', 'otter-blocks' ),
-	description: __( 'Display a form for your clients.', 'otter-blocks' ),
+	description: __( 'Display a form for your clients. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'business',

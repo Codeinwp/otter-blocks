@@ -21,7 +21,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Lottie Animation', 'otter-blocks' ),
-	description: __( 'Add Lottie animations to your WordPress.', 'otter-blocks' ),
+	description: __( 'Add Lottie animations to your WordPress. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'media',

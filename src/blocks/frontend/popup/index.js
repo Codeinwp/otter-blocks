@@ -1,11 +1,8 @@
 /**
- * WordPress dependencies
- */
-import domReady from '@wordpress/dom-ready';
-
-/**
  * Internal dependencies
  */
+import { domReady } from '../../helpers/frontend-helper-functions.js';
+
 import Popup from './popup.js';
 
 domReady( () => {

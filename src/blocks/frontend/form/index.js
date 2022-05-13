@@ -1,13 +1,9 @@
 /**
- * WordPress dependencies.
- */
-import domReady from '@wordpress/dom-ready';
-
-/**
  * Internal dependencies.
  */
 import {addCaptchaOnPage} from './captcha.js';
 import DisplayFormMessage from './message';
+import {domReady} from "../../helpers/frontend-helper-functions";
 
 /**
  * Get the fields with their value from the form.

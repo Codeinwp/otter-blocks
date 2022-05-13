@@ -1,7 +1,7 @@
 
 /**
  * Trigger a function after loading the elements mentioned in the plugins.
- * @param {Function} onLoaded The callbackfunction.
+ * @param {Function} onLoaded The callback function.
  * @param {string[]} plugins The plugins.
  * @param {number} timeLimit The time limit to do the detection.
  */

@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+
 import { registerStore } from '@wordpress/data';
 
 const DEFAULT_STATE = {
