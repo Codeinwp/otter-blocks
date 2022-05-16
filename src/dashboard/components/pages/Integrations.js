@@ -47,7 +47,8 @@ const Integrations = ({
 
 						<div className="otter-button-group">
 							<Button
-								isPrimary
+								variant="secondary"
+								isSecondary
 								disabled={ 'saving' === status }
 								onClick={ () => updateOption( 'themeisle_google_map_block_api_key', googleMapsAPI ) }
 							>
@@ -93,7 +94,8 @@ const Integrations = ({
 
 						<div className="otter-button-group">
 							<Button
-								isPrimary
+								variant="secondary"
+								isSecondary
 								disabled={ 'saving' === status }
 								onClick={ () => {
 									updateOption( 'themeisle_google_captcha_api_site_key', googleCaptchaAPISiteKey );

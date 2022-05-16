@@ -13,6 +13,7 @@ import apiFetch from '@wordpress/api-fetch';
 
 import {
 	PanelBody,
+	PanelRow,
 	Snackbar,
 	ToggleControl
 } from '@wordpress/components';
@@ -37,6 +38,7 @@ import {
 import './editor.scss';
 import GlobalDefaults from './global-defaults/index.js';
 import defaultsAttrs from './global-defaults/defaults.js';
+import useSettings from '../../helpers/use-settings.js';
 
 const Options = () => {
 	const { createNotice } = useDispatch( 'core/notices' );
@@ -56,7 +58,6 @@ const Options = () => {
 
 				if ( false === isAPILoaded ) {
 					settingsRef.current.fetch().then( response => {
-						setDefault( Boolean( response.themeisle_blocks_settings_default_block ) );
 						if ( '' !== response.themeisle_blocks_settings_global_defaults ) {
 							let defaults = cloneDeep( defaultsAttrs );
 							if ( 'object' === typeof window.themeisleGutenberg.themeDefaults ) {
@@ -89,9 +90,10 @@ const Options = () => {
 	const [ canUser, setCanUser ] = useState( false );
 	const [ isAPILoaded, setAPILoaded ] = useState( false );
 	const [ blockDefaults, setBlockDefaults ] = useState({});
-	const [ isDefault, setDefault ] = useState( false );
 
 	const settingsRef = useRef( null );
+
+	const [ getOption, updateOption, status ] = useSettings();
 
 	const dispatchNotice = value => {
 		if ( ! Snackbar ) {
@@ -106,18 +108,6 @@ const Options = () => {
 				type: 'snackbar'
 			}
 		);
-	};
-
-	const changeOptions = () => {
-		const model = new window.wp.api.models.Settings({
-			// eslint-disable-next-line camelcase
-			themeisle_blocks_settings_default_block: ! Boolean( isDefault )
-		});
-
-		model.save().then( response => {
-			setDefault( Boolean( response.themeisle_blocks_settings_default_block ) );
-			dispatchNotice( __( 'Option updated.', 'otter-blocks' ) );
-		});
 	};
 
 	const changeConfig = ( block, object ) => {
@@ -161,6 +151,8 @@ const Options = () => {
 		});
 	};
 
+	const successMessage = __( 'Settings saved. Refresh to see the changes.', 'otter-blocks' );
+
 	return (
 		<Fragment>
 			{ ( canUser ) && (
@@ -176,11 +168,41 @@ const Options = () => {
 				name="otter-options"
 			>
 				<PanelBody className="o-options-general">
-					<ToggleControl
-						label={ __( 'Make Section block your default block for Pages?', 'otter-blocks' ) }
-						checked={ isDefault }
-						onChange={ changeOptions }
-					/>
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Enable Custom CSS Module', 'otter-blocks' ) }
+							checked={ Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ) }
+							disabled={ 'saving' === status }
+							onChange={ () => updateOption( 'themeisle_blocks_settings_css_module', ! Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ), successMessage ) }
+						/>
+					</PanelRow>
+
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Enable Blocks Animation Module', 'otter-blocks' ) }
+							checked={ Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ) }
+							disabled={ 'saving' === status }
+							onChange={ () => updateOption( 'themeisle_blocks_settings_blocks_animation', ! Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ), successMessage ) }
+						/>
+					</PanelRow>
+
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Enable Block Condition Module', 'otter-blocks' ) }
+							checked={ Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ) }
+							disabled={ 'saving' === status }
+							onChange={ () => updateOption( 'themeisle_blocks_settings_block_conditions', ! Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ), successMessage ) }
+						/>
+					</PanelRow>
+
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Make Section your default block for Pages', 'otter-blocks' ) }
+							checked={ Boolean( getOption( 'themeisle_blocks_settings_default_block' ) ) }
+							disabled={ 'saving' === status }
+							onChange={ () => updateOption( 'themeisle_blocks_settings_default_block', ! Boolean( getOption( 'themeisle_blocks_settings_default_block' ) ), successMessage ) }
+						/>
+					</PanelRow>
 				</PanelBody>
 
 				<GlobalDefaults
