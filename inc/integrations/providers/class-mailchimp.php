@@ -9,6 +9,7 @@ namespace ThemeIsle\GutenbergBlocks\Integration;
 
 /**
  * Class Plugin_Card_Server
+ *
  * @since 2.0.3
  */
 class Mailchimp_Integration implements FormSubscribeServiceInterface {
@@ -20,11 +21,11 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 */
 	protected $api_key = '';
 
-    /**
-     * The list id.
-     *
-     * @var string
-     */
+	/**
+	 * The list id.
+	 *
+	 * @var string
+	 */
 	protected $list_id = '';
 
 	/**
@@ -49,10 +50,10 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * @param Form_Settings_Data|null $wp_options_form The integration data.
 	 * @since 2.0.3
 	 */
-	public function extract_data_from_integration($wp_options_form) {
-		if( isset($wp_options_form) ) {
+	public function extract_data_from_integration( $wp_options_form ) {
+		if ( isset( $wp_options_form ) ) {
 			$this->set_api_key( $wp_options_form->get_api_key() );
-			$this->set_list_id($wp_options_form->get_list_id());
+			$this->set_list_id( $wp_options_form->get_list_id() );
 		}
 		return $this;
 	}
@@ -127,7 +128,8 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-			$res->set_error( ! empty( $body['detail'] ) && 'null' !== $body['detail'] ? $body['detail'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'mailchimp' )->set_is_credential_error($this->is_credential_error($body['status']));;
+			$res->set_error( ! empty( $body['detail'] ) && 'null' !== $body['detail'] ? $body['detail'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'mailchimp' )->set_is_credential_error( $this->is_credential_error( $body['status'] ) );
+
 		} else {
 			$res->mark_as_success();
 		}
@@ -165,12 +167,13 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		return $this;
 	}
 
-    /**
-     * Set the list id.
-     * @param string $list_id The list id.
-     * @return $this
+	/**
+	 * Set the list id.
+	 *
+	 * @param string $list_id The list id.
+	 * @return $this
 	 * @since 2.0.3
-     */
+	 */
 	public function set_list_id( $list_id ) {
 		$this->list_id = $list_id;
 		return $this;
@@ -237,17 +240,16 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		return array_key_exists( 'double_optin', $body ) && true === $body['double_optin'] ? 'pending' : 'subscribed';
 	}
 
-    /**
-     * Get the data from the provider, like: contact list.
+	/**
+	 * Get the data from the provider, like: contact list.
 	 *
-     * @param Form_Data_Request $request The request.
-     * @return false[]|mixed
+	 * @param Form_Data_Request $request The request.
+	 * @return false[]|mixed
 	 * @since 2.0.3
-     */
-	public function get_information_from_provider($request)
-	{
-		if( $request->is_set( 'action' ) ) {
-			if ($request->get('action') == 'listId') {
+	 */
+	public function get_information_from_provider( $request ) {
+		if ( $request->is_set( 'action' ) ) {
+			if ( $request->get( 'action' ) == 'listId' ) {
 				return $this->get_lists();
 			}
 		}
@@ -263,6 +265,6 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * @since 2.0.3
 	 */
 	private function is_credential_error( $response_code ) {
-		return in_array( $response_code, array( 401, 403, 404, 500 ));
+		return in_array( $response_code, array( 401, 403, 404, 500 ) );
 	}
 }

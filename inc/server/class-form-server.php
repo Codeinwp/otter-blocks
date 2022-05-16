@@ -59,32 +59,32 @@ class Form_Server {
 	 * @since 2.0.0
 	 */
 	public function init() {
-        /**
-         * Register the REST API endpoints.
-         */
-		add_action('rest_api_init', array( $this, 'register_routes' ) );
+		/**
+		 * Register the REST API endpoints.
+		 */
+		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 
-        /**
-         * Add filter for validating the form data.
-         */
-		add_filter('otter_form_validation', array( $this, 'check_form_conditions' ));
+		/**
+		 * Add filter for validating the form data.
+		 */
+		add_filter( 'otter_form_validation', array( $this, 'check_form_conditions' ) );
 
-        /**
-         * Add filter for captcha validation.
-         */
-		add_filter('otter_form_captcha_validation', array( $this, 'check_form_captcha' ));
+		/**
+		 * Add filter for captcha validation.
+		 */
+		add_filter( 'otter_form_captcha_validation', array( $this, 'check_form_captcha' ) );
 
-        /**
-         * Register email providers that can be used to send emails or subscribe to a service.
-         */
+		/**
+		 * Register email providers that can be used to send emails or subscribe to a service.
+		 */
 		$defaultProvider = array(
 			'frontend' => array(
-				'submit' => array( $this, 'send_default_email'),
+				'submit' => array( $this, 'send_default_email' ),
 			),
-			'editor' => array(
+			'editor'   => array(
 				'listId'    => array( $this, 'get_integration_data' ),
-				'testEmail' => array( $this, 'send_test_email' )
-			)
+				'testEmail' => array( $this, 'send_test_email' ),
+			),
 		);
 
 		// Register 3rd party email providers.
@@ -92,34 +92,34 @@ class Form_Server {
 			'frontend' => array(
 				'submit' => array( $this, 'subscribe_to_service' ),
 			),
-			'editor' => array(
-				'listId' => array( $this, 'get_integration_data' ),
-				'testEmail' => array( $this, 'test_subscription_service' )
-			)
+			'editor'   => array(
+				'listId'    => array( $this, 'get_integration_data' ),
+				'testEmail' => array( $this, 'test_subscription_service' ),
+			),
 		);
-		$mailchimpProvider = array(
+		$mailchimpProvider  = array(
 			'frontend' => array(
 				'submit' => array( $this, 'subscribe_to_service' ),
 			),
-			'editor' => array(
-				'listId' => array( $this, 'get_integration_data' ),
-				'testEmail' => array( $this, 'test_subscription_service' )
-			)
+			'editor'   => array(
+				'listId'    => array( $this, 'get_integration_data' ),
+				'testEmail' => array( $this, 'test_subscription_service' ),
+			),
 		);
 
 		do_action(
 			'otter_register_form_providers',
 			array(
-				'default' =>  $defaultProvider,
-				'sendinblue' =>  $sendinblueProvider,
-				'mailchimp' =>  $mailchimpProvider
+				'default'    => $defaultProvider,
+				'sendinblue' => $sendinblueProvider,
+				'mailchimp'  => $mailchimpProvider,
 			)
 		);
 
-		add_action( 'otter_form_before_submit', array( $this, 'before_submit' ));
+		add_action( 'otter_form_before_submit', array( $this, 'before_submit' ) );
 		add_action( 'otter_form_after_submit', array( $this, 'after_submit' ) );
-		add_filter( 'otter_form_email_build_body', array( $this, 'build_email_content') );
-		add_filter( 'otter_form_email_build_body_error', array( $this, 'build_email_error_content'), 1, 2 );
+		add_filter( 'otter_form_email_build_body', array( $this, 'build_email_content' ) );
+		add_filter( 'otter_form_email_build_body_error', array( $this, 'build_email_error_content' ), 1, 2 );
 	}
 
 	/**
@@ -135,7 +135,7 @@ class Form_Server {
 			array(
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'frontend'),
+					'callback'            => array( $this, 'frontend' ),
 					'permission_callback' => function () {
 						return __return_true();
 					},
@@ -148,7 +148,7 @@ class Form_Server {
 			array(
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
-					'callback'            => array( $this, 'editor'),
+					'callback'            => array( $this, 'editor' ),
 					'permission_callback' => function () {
 						return current_user_can( 'edit_posts' );
 					},
@@ -164,23 +164,23 @@ class Form_Server {
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 * @since 2.0.3
 	 */
-	public function editor($request ) {
+	public function editor( $request ) {
 		$data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
 		$res  = new Form_Data_Response();
 
 		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $data->get_payload_field( 'formOption' ) );
-		$data->set_form_options($form_options);
+		$data->set_form_options( $form_options );
 
 		// Select the handler functions based on the provider.
 		$provider = $form_options->get_provider();
-		if( $data->payload_has_field('provider') ) {
-			$provider = $data->get_payload_field('provider');
+		if ( $data->payload_has_field( 'provider' ) ) {
+			$provider = $data->get_payload_field( 'provider' );
 		}
-		$provider_handlers = Form_Providers::$instance->get_provider_handlers( $provider, 'editor');
+		$provider_handlers = Form_Providers::$instance->get_provider_handlers( $provider, 'editor' );
 
-		if( $provider_handlers && Form_Providers::provider_has_handler($provider_handlers, $data->get('handler')) ) {
+		if ( $provider_handlers && Form_Providers::provider_has_handler( $provider_handlers, $data->get( 'handler' ) ) ) {
 			// Send the data to the provider.
-			return $provider_handlers[$data->get('handler')]($data);
+			return $provider_handlers[ $data->get( 'handler' ) ]( $data );
 		} else {
 			$res->set_error( __( 'The email service provider was not registered!', 'otter-blocks' ) );
 		}
@@ -197,13 +197,13 @@ class Form_Server {
 	 * @since 2.0.3
 	 */
 	public function frontend( $request ) {
-		$res  = new Form_Data_Response();
+		$res       = new Form_Data_Response();
 		$form_data = new Form_Data_Request( json_decode( $request->get_body(), true ) );
 
 		try {
 
 			// Check is the request is OK.
-			$reasons = apply_filters('otter_form_validation', $form_data);
+			$reasons = apply_filters( 'otter_form_validation', $form_data );
 
 			if ( 0 < count( $reasons ) ) {
 				$res->set_error( __( 'Invalid request!', 'otter-blocks' ) );
@@ -214,7 +214,7 @@ class Form_Server {
 			// Verify the reCaptcha token.
 			if ( $form_data->payload_has_field( 'token' ) ) {
 				$result = apply_filters( 'otter_form_captcha_validation', $form_data );
-				if (!$result['success']) {
+				if ( ! $result['success'] ) {
 					$res->set_error( __( 'The reCaptcha was invalid!', 'otter-blocks' ) );
 					return $res->build_response();
 				}
@@ -222,28 +222,28 @@ class Form_Server {
 
 
 			$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_payload_field( 'formOption' ) );
-			$form_data->set_form_options($form_options);
+			$form_data->set_form_options( $form_options );
 
-			do_action('otter_form_before_submit', $form_data);
+			do_action( 'otter_form_before_submit', $form_data );
 			// Select the submit function based on the provider.
-			$provider_handlers = apply_filters('otter_select_form_provider', $form_data);
+			$provider_handlers = apply_filters( 'otter_select_form_provider', $form_data );
 
-			if( $provider_handlers && Form_Providers::provider_has_handler($provider_handlers, $form_data->get('handler')) ) {
+			if ( $provider_handlers && Form_Providers::provider_has_handler( $provider_handlers, $form_data->get( 'handler' ) ) ) {
 
 				// Send the data to the provider handler.
-				$provider_response = $provider_handlers[$form_data->get('handler')]($form_data);
+				$provider_response = $provider_handlers[ $form_data->get( 'handler' ) ]( $form_data );
 
-				do_action( 'otter_form_after_submit', $form_data);
+				do_action( 'otter_form_after_submit', $form_data );
 
 				return $provider_response;
 			} else {
 				$res->set_error( __( 'The email service provider was not registered!', 'otter-blocks' ) );
 			}
 
-			do_action( 'otter_form_after_submit', $form_data);
+			do_action( 'otter_form_after_submit', $form_data );
 		} catch ( Exception $e ) {
 			$res->set_error( $e->getMessage() );
-			$this->send_error_email($e->getMessage(), $form_data);
+			$this->send_error_email( $e->getMessage(), $form_data );
 		}
 
 		return $res->build_response();
@@ -257,15 +257,15 @@ class Form_Server {
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 * @since 2.0.3
 	 */
-	public function send_default_email($form_data ) {
+	public function send_default_email( $form_data ) {
 		$res = new Form_Data_Response();
 
 		try {
 			$form_options  = $form_data->get_form_options();
-			$email_subject = isset($form_options) && $form_options->has_email_subject() ? $form_options->get_email_subject() : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
+			$email_subject = isset( $form_options ) && $form_options->has_email_subject() ? $form_options->get_email_subject() : ( __( 'A new form submission on ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
 
-			$email_message  = Form_Email::instance()->build_email($form_data);
-			$email_body     = apply_filters( 'otter_form_email_build_body', $email_message );
+			$email_message = Form_Email::instance()->build_email( $form_data );
+			$email_body    = apply_filters( 'otter_form_email_build_body', $email_message );
 
 			// Sent the form date to the admin site as a default behaviour.
 			$to = sanitize_email( get_site_option( 'admin_email' ) );
@@ -282,17 +282,17 @@ class Form_Server {
 				}
 			}
 
-			$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . ( $form_options->has_from_name() ? sanitize_text_field( $form_options->get_from_name() ) : esc_url( get_site_url() ) ));
+			$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . ( $form_options->has_from_name() ? sanitize_text_field( $form_options->get_from_name() ) : esc_url( get_site_url() ) ) );
 
 			// phpcs:ignore
 			wp_mail( $to, $email_subject, $email_body, $headers );
 			$res->mark_as_success();
-		} catch (Exception  $e ) {
+		} catch ( Exception  $e ) {
 			$res->set_error( $e->getMessage() );
-			$this->send_error_email($e->getMessage(), $form_data);
+			$this->send_error_email( $e->getMessage(), $form_data );
 		} finally {
-            $form_options = $form_data->get_form_options();
-            $res->add_values( $form_options->get_submit_data() );
+			$form_options = $form_data->get_form_options();
+			$res->add_values( $form_options->get_submit_data() );
 			return $res->build_response();
 		}
 	}
@@ -306,14 +306,14 @@ class Form_Server {
 	public function before_submit( $form_data ) {
 
 		// If there is no consent, change the service to send only an email.
-		if(
+		if (
 			'submit-subscribe' === $form_data->get_form_options()->get_action() &&
 			(
-				! $form_data->payload_has_field('consent') ||
-				! $form_data->get_payload_field('consent')
+				! $form_data->payload_has_field( 'consent' ) ||
+				! $form_data->get_payload_field( 'consent' )
 			)
 		) {
-			$form_data->change_provider('default');
+			$form_data->change_provider( 'default' );
 		}
 	}
 
@@ -327,33 +327,33 @@ class Form_Server {
 	public function after_submit( $form_data ) {
 
 		// Send also an email to the form editor/owner with the data alongside the subscription.
-		if(
+		if (
 			'submit-subscribe' === $form_data->get_form_options()->get_action() &&
 			$form_data->get_form_options()->has_provider() &&
-			'default' !==  $form_data->get_form_options()->get_provider()
+			'default' !== $form_data->get_form_options()->get_provider()
 		) {
-			$this->send_default_email($form_data);
+			$this->send_default_email( $form_data );
 		}
 	}
 
 	/**
 	 * Send an email about error, like: the integration api key is no longer valid.
 	 *
-	 * @param string $error The error message.
+	 * @param string            $error The error message.
 	 * @param Form_Data_Request $form_data The form request data.
 	 * @return void
 	 * @since 2.0.3
 	 */
-    public static function send_error_email( $error, $form_data ) {
-        $email_subject = ( __( 'An error with the Form blocks has occurred on  ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
-        $email_message = Form_Email::instance()->build_error_email($error, $form_data);
+	public static function send_error_email( $error, $form_data ) {
+		$email_subject = ( __( 'An error with the Form blocks has occurred on  ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
+		$email_message = Form_Email::instance()->build_error_email( $error, $form_data );
 		$email_body    = apply_filters( 'otter_form_email_build_body_error', $error, $email_message );
-        // Sent the form date to the admin site as a default behaviour.
-        $to = sanitize_email( get_site_option( 'admin_email' ) );
-        $headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . esc_url( get_site_url() ) );
+		// Sent the form date to the admin site as a default behaviour.
+		$to      = sanitize_email( get_site_option( 'admin_email' ) );
+		$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . esc_url( get_site_url() ) );
         // phpcs:ignore
         wp_mail( $to, $email_subject, $email_body, $headers );
-    }
+	}
 
 	/**
 	 * Send a test email.
@@ -367,12 +367,12 @@ class Form_Server {
 			$email_subject = ( __( 'Test email for Otter Form from ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
 			$email_body    = Form_Email::instance()->build_test_email();
 			// Sent the form date to the admin site as a default behaviour.
-			$to = sanitize_email( get_site_option( 'admin_email' ) );
+			$to      = sanitize_email( get_site_option( 'admin_email' ) );
 			$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . esc_url( get_site_url() ) );
 			// phpcs:ignore
 			wp_mail( $to, $email_subject, $email_body, $headers );
 			$res->mark_as_success();
-		} catch (Exception  $e ) {
+		} catch ( Exception  $e ) {
 			$res->set_error( $e->getMessage() );
 		} finally {
 			return $res->build_response();
@@ -388,7 +388,7 @@ class Form_Server {
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 * @since 2.0.3
 	 */
-	public function get_integration_data($form_request ) {
+	public function get_integration_data( $form_request ) {
 		$res = new Form_Data_Response();
 
 		try {
@@ -404,17 +404,17 @@ class Form_Server {
 					$res->set_error( __( 'Invalid request! Provider is missing.', 'otter-blocks' ) );
 			}
 
-			if( isset($service) ) {
+			if ( isset( $service ) ) {
 				$valid_api_key = $service::validate_api_key( $form_request->get_payload_field( 'apiKey' ) );
 				if ( $valid_api_key['valid'] ) {
-					$service->set_api_key( $form_request->get_payload_field('apiKey') );
+					$service->set_api_key( $form_request->get_payload_field( 'apiKey' ) );
 					$res->set_response( $service->get_information_from_provider( $form_request ) );
 				} else {
 					$res->set_error( $valid_api_key['reason'] );
 				}
 			}
-		} catch (Exception $e) {
-			$res->set_error($e->getMessage());
+		} catch ( Exception $e ) {
+			$res->set_error( $e->getMessage() );
 		} finally {
 			return $res->build_response();
 		}
@@ -428,7 +428,7 @@ class Form_Server {
 	 * @since 2.0.3
 	 */
 	public function test_subscription_service( $form_request ) {
-		$res = new Form_Data_Response();
+		$res          = new Form_Data_Response();
 		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_request->get_payload_field( 'formOption' ) );
 
 		try {
@@ -444,96 +444,96 @@ class Form_Server {
 					$res->set_error( __( 'Invalid request! Provider is missing.', 'otter-blocks' ) );
 			}
 
-			if( isset($service) ) {
+			if ( isset( $service ) ) {
 				$valid_api_key = $service::validate_api_key( $form_options->get_api_key() );
 				if ( $valid_api_key['valid'] ) {
-					if( $form_options->has_list_id() ) {
-						$service->set_api_key( $form_options->get_api_key() )->set_list_id($form_options->get_list_id());
+					if ( $form_options->has_list_id() ) {
+						$service->set_api_key( $form_options->get_api_key() )->set_list_id( $form_options->get_list_id() );
 						$res = $service->test_subscription();
 					} else {
-						$res->set_error( __( 'Contact list ID is missing!', 'otter-blocks' ));
+						$res->set_error( __( 'Contact list ID is missing!', 'otter-blocks' ) );
 					}
 				} else {
 					$res->set_error( $valid_api_key['reason'] );
 				}
 			}
-		} catch (Exception $e) {
-			$res->set_error($e->getMessage());
+		} catch ( Exception $e ) {
+			$res->set_error( $e->getMessage() );
 		} finally {
 			return $res->build_response();
 		}
 	}
 
-    /**
+	/**
 	 * Subscribe the user to a service.
 	 *
-     * @param Form_Data_Request $form_data The form data.
-     * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 * @param Form_Data_Request $form_data The form data.
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 * @since 2.0.3
 	 */
-	public function subscribe_to_service($form_data ) {
+	public function subscribe_to_service( $form_data ) {
 		$res = new Form_Data_Response();
 
 		try {
 
 			// Get the first email from form.
-			$email = $this->get_email_from_form_input($form_data);
+			$email = $this->get_email_from_form_input( $form_data );
 
 			if ( '' === $email ) {
 				$res->set_error( 'No email provided!' );
 				return $res->build_response();
 			}
 
-			if(
+			if (
 				'submit-subscribe' === $form_data->get_form_options()->get_action() &&
-				$form_data->payload_has_field('consent') &&
-				! $form_data->get_payload_field('consent')
+				$form_data->payload_has_field( 'consent' ) &&
+				! $form_data->get_payload_field( 'consent' )
 			) {
 				$res->mark_as_success();
 				return $res->build_response();
 			}
 
-            // Get the api credentials from the Form block.
-            $wp_options_form = $form_data->get_form_options();
+			// Get the api credentials from the Form block.
+			$wp_options_form = $form_data->get_form_options();
 
-            $issues = $wp_options_form->check_data();
+			$issues = $wp_options_form->check_data();
 
-            if (
-                count($issues) == 0
-            ) {
-                $service = null;
-                switch ($wp_options_form->get_provider()) {
-                    case 'mailchimp':
-                        $service = (new Mailchimp_Integration())->extract_data_from_integration($wp_options_form);
-                        break;
-                    case 'sendinblue':
-                        $service = (new Sendinblue_Integration())->extract_data_from_integration($wp_options_form);
-                        break;
-                }
+			if (
+				count( $issues ) == 0
+			) {
+				$service = null;
+				switch ( $wp_options_form->get_provider() ) {
+					case 'mailchimp':
+						$service = ( new Mailchimp_Integration() )->extract_data_from_integration( $wp_options_form );
+						break;
+					case 'sendinblue':
+						$service = ( new Sendinblue_Integration() )->extract_data_from_integration( $wp_options_form );
+						break;
+				}
 
-                $valid_api_key = $service::validate_api_key( $wp_options_form->get_api_key() );
+				$valid_api_key = $service::validate_api_key( $wp_options_form->get_api_key() );
 
-                if ( $valid_api_key['valid'] ) {
-                    $res->copy( $service->subscribe( $email ) );
+				if ( $valid_api_key['valid'] ) {
+					$res->copy( $service->subscribe( $email ) );
 
 					// Add additional data like: redirect link when the request is successful.
-                    $res->add_values( $wp_options_form->get_submit_data() );
-                } else {
-                    $res->set_error( $valid_api_key['reason'] );
-                }
-            } else {
-                $res->set_reasons($issues);
-            }
-        } catch (Exception $e) {
-            $res->set_error( __('Server error!') );
-			$this->send_error_email($e->getMessage(), $form_data);
-        } finally {
-			// Handle the case when the credential are no longer valid.
-			if( $res->is_credential_error() ) {
-				self::send_error_email( "error", $form_data );
+					$res->add_values( $wp_options_form->get_submit_data() );
+				} else {
+					$res->set_error( $valid_api_key['reason'] );
+				}
+			} else {
+				$res->set_reasons( $issues );
 			}
-            return $res->build_response();
-        }
+		} catch ( Exception $e ) {
+			$res->set_error( __( 'Server error!' ) );
+			$this->send_error_email( $e->getMessage(), $form_data );
+		} finally {
+			// Handle the case when the credential are no longer valid.
+			if ( $res->is_credential_error() ) {
+				self::send_error_email( 'error', $form_data );
+			}
+			return $res->build_response();
+		}
 	}
 
 	/**
@@ -544,11 +544,11 @@ class Form_Server {
 	 * @return boolean
 	 * @since 2.0.0
 	 */
-	public function has_required_data($data ) {
+	public function has_required_data( $data ) {
 		$mainFieldsSet = $data->are_fields_set(
 			array(
 				'handler',
-				'payload'
+				'payload',
 			)
 		);
 
@@ -575,7 +575,7 @@ class Form_Server {
 	 * @return array
 	 * @since 2.0.0
 	 */
-	public function check_form_conditions($form_data ) {
+	public function check_form_conditions( $form_data ) {
 
 		$reasons = array();
 		try {
@@ -584,22 +584,22 @@ class Form_Server {
 				return $reasons;
 			}
 
-            $form_options = $form_data->get_form_options();
+			$form_options = $form_data->get_form_options();
 
-            if (
+			if (
 				$form_options->form_has_captcha() &&
 				(
 					! $form_data->payload_has_field( 'token' ) ||
-					'' === $form_data->get_payload_field('token')
+					'' === $form_data->get_payload_field( 'token' )
 				)
 			) {
-                $reasons += array(
-                    __( 'Token is missing!', 'otter-blocks' ),
-                );
-            }
-        } catch (Exception $e) {
+				$reasons += array(
+					__( 'Token is missing!', 'otter-blocks' ),
+				);
+			}
+		} catch ( Exception $e ) {
 			$reasons[] = $e->getMessage();
-        } finally {
+		} finally {
 			return $reasons;
 		}
 	}
@@ -613,7 +613,7 @@ class Form_Server {
 	 * @return array
 	 * @since 2.0.0
 	 */
-	public function check_form_captcha($form_data ) {
+	public function check_form_captcha( $form_data ) {
 		$secret = get_option( 'themeisle_google_captcha_api_secret_key' );
 		$resp   = wp_remote_post(
 			'https://www.google.com/recaptcha/api/siteverify',
@@ -702,12 +702,11 @@ class Form_Server {
 	 * @return mixed|string
 	 * @since 2.0.3
 	 */
-	private function get_email_from_form_input(Form_Data_Request $data)
-	{
-		$inputs = $data->get_payload_field('formInputsData');
-		if( is_array( $inputs ) ) {
-			foreach ($data->get_payload_field('formInputsData') as $input_field) {
-				if ('email' == $input_field['type']) {
+	private function get_email_from_form_input( Form_Data_Request $data ) {
+		$inputs = $data->get_payload_field( 'formInputsData' );
+		if ( is_array( $inputs ) ) {
+			foreach ( $data->get_payload_field( 'formInputsData' ) as $input_field ) {
+				if ( 'email' == $input_field['type'] ) {
 					return $input_field['value'];
 				}
 			}

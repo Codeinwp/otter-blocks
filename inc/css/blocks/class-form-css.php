@@ -15,7 +15,7 @@ use ThemeIsle\GutenbergBlocks\CSS\CSS_Utility;
  * Class Form_CSS
  */
 class Form_CSS extends Base_CSS {
-/**
+	/**
 	 * The namespace under which the blocks are registered.
 	 *
 	 * @var string
@@ -43,7 +43,7 @@ class Form_CSS extends Base_CSS {
 					array(
 						'property' => '--borderRadius',
 						'value'    => 'inputBorderRadius',
-						'unit'     => 'px'
+						'unit'     => 'px',
 					),
 					array(
 						'property' => '--borderColor',
@@ -52,25 +52,25 @@ class Form_CSS extends Base_CSS {
 					array(
 						'property' => '--borderWidth',
 						'value'    => 'inputBorderWidth',
-						'unit'     => 'px'
+						'unit'     => 'px',
 					),
 					array(
-						'property' => '--padding',
-						'value'    => 'inputPadding',
+						'property'  => '--padding',
+						'value'     => 'inputPadding',
 						'format'    => function( $value, $attrs ) {
-                            return $value['top'] . ' ' . $value['right'] . ' ' . $value['bottom'] . ' ' . $value['left'];
-                        },
-                        'condition' => function( $attrs ) {
-                            return ( isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['top'] )
-                            && isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['right'] )
-                            && isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['bottom'] )
-                            && isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['left'] ) );
-                        }
+							return $value['top'] . ' ' . $value['right'] . ' ' . $value['bottom'] . ' ' . $value['left'];
+						},
+						'condition' => function( $attrs ) {
+							return ( isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['top'] )
+							&& isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['right'] )
+							&& isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['bottom'] )
+							&& isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['left'] ) );
+						},
 					),
 					array(
 						'property' => '--inputWidth',
 						'value'    => 'inputWidth',
-						'unit'     => '%'
+						'unit'     => '%',
 					),
 					array(
 						'property' => '--submitBackground',
@@ -95,22 +95,22 @@ class Form_CSS extends Base_CSS {
 					array(
 						'property' => '--inputsGap',
 						'value'    => 'inputsGap',
-						'unit'     => 'px'
+						'unit'     => 'px',
 					),
 					array(
 						'property' => '--inputGap',
 						'value'    => 'inputGap',
-						'unit'     => 'px'
+						'unit'     => 'px',
 					),
 					array(
 						'property' => '--labelFontSize',
 						'value'    => 'labelFontSize',
-						'unit'     => 'px'
+						'unit'     => 'px',
 					),
 					array(
 						'property' => '--submitFontSize',
 						'value'    => 'submitFontSize',
-						'unit'     => 'px'
+						'unit'     => 'px',
 					),
 				),
 			)
@@ -118,7 +118,7 @@ class Form_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector' => ' .wp-block-button__link',
+				'selector'   => ' .wp-block-button__link',
 				'properties' => array(
 					array(
 						'property' => 'background-color',
@@ -130,7 +130,7 @@ class Form_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector' => ' .wp-block-button__link:hover',
+				'selector'   => ' .wp-block-button__link:hover',
 				'properties' => array(
 					array(
 						'property' => 'background-color',

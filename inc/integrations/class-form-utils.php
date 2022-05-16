@@ -4,10 +4,11 @@ namespace ThemeIsle\GutenbergBlocks\Integration;
 
 /**
  * Form Utils
+ *
  * @since 2.0.3
  */
-class Form_Utils
-{
+class Form_Utils {
+
 	/**
 	 * Generate a random email address.
 	 *
@@ -33,9 +34,9 @@ class Form_Utils
 			'seven',
 			'eight',
 			'nine',
-			'ten'
+			'ten',
 		);
 
-		return 'Otter-Form-successfully-connected.delete-on-confirmation' . '.' . $words[ rand(0, count($words)) ] . '.' . $words[ rand(0, count($words)) ] . '.' . $words[ rand(2, count($words)) - 1 ] . '@otter-blocks.com';
+		return 'Otter-Form-successfully-connected.delete-on-confirmation' . '.' . $words[ rand( 0, count( $words ) ) ] . '.' . $words[ rand( 0, count( $words ) ) ] . '.' . $words[ rand( 2, count( $words ) ) - 1 ] . '@otter-blocks.com';
 	}
 }

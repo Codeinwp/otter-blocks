@@ -13,12 +13,14 @@ use WP_REST_Response;
 
 /**
  * Class Form_Data_Response
+ *
  * @since 2.0.0
  */
 class Form_Data_Response {
 
 	/**
 	 * Response Data.
+	 *
 	 * @since 2.0.0
 	 *
 	 * @var array
@@ -148,39 +150,39 @@ class Form_Data_Response {
 		return $this->response['reasons'];
 	}
 
-    /**
-     * Set the response.
+	/**
+	 * Set the response.
 	 *
-     * @param array $response The response.
-     * @return $this
+	 * @param array $response The response.
+	 * @return $this
 	 * @since 2.0.0
-     */
+	 */
 	public function set_response( $response ) {
 		$this->response = $response;
 		return $this;
 	}
 
-    /**
-     * Add new data to the response.
+	/**
+	 * Add new data to the response.
 	 *
-     * @param array $values The new data.
-     * @return $this
+	 * @param array $values The new data.
+	 * @return $this
 	 * @since 2.0.0
-     */
-    public function add_values( $values ) {
-        $this->response = array_merge($this->response, $values);
-        return $this;
-    }
+	 */
+	public function add_values( $values ) {
+		$this->response = array_merge( $this->response, $values );
+		return $this;
+	}
 
-    /**
+	/**
 	 * Check if the response has an error.
 	 *
-     * @return bool
+	 * @return bool
 	 * @since 2.0.0
-     */
-    public function has_error() {
-        return isset($this->response['error']);
-    }
+	 */
+	public function has_error() {
+		return isset( $this->response['error'] );
+	}
 
 	/**
 	 * Check if the error is caused by invalid credentials.
@@ -188,9 +190,8 @@ class Form_Data_Response {
 	 * @return bool
 	 * @since 2.0.3
 	 */
-	public function is_credential_error()
-	{
-		return $this->is_credential_error;
+	public function is_credential_error() {
+		 return $this->is_credential_error;
 	}
 
 	/**
@@ -200,8 +201,7 @@ class Form_Data_Response {
 	 * @return $this
 	 * @since 2.0.3
 	 */
-	public function set_is_credential_error($is_credential_error)
-	{
+	public function set_is_credential_error( $is_credential_error ) {
 		$this->is_credential_error = $is_credential_error;
 		return $this;
 	}

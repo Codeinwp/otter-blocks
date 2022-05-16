@@ -4,10 +4,11 @@ namespace ThemeIsle\GutenbergBlocks\Integration;
 
 /**
  * An interface for defining Providers that can add the email address to a contact list.
+ *
  * @since 2.0.3
  */
-interface FormSubscribeServiceInterface
-{
+interface FormSubscribeServiceInterface {
+
 	/**
 	 * Add the email to a contact list.
 	 *

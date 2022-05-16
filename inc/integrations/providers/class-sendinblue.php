@@ -7,9 +7,9 @@
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
-
 /**
  * Class Plugin_Card_Server
+ *
  * @since 2.0.3
  */
 class Sendinblue_Integration implements FormSubscribeServiceInterface {
@@ -21,17 +21,17 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 */
 	protected $api_key = '';
 
-    /**
-     * The list id.
-     *
-     * @var string
-     */
+	/**
+	 * The list id.
+	 *
+	 * @var string
+	 */
 	protected $list_id = '';
 
 	/**
 	 * The default constructor.
 	 */
-	public function __construct( ) {
+	public function __construct() {
 
 	}
 
@@ -41,10 +41,10 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 * @access  public
 	 * @param Form_Settings_Data|null $wp_options_form The integration data.
 	 */
-	public function extract_data_from_integration($wp_options_form) {
-		if( isset($wp_options_form) ) {
+	public function extract_data_from_integration( $wp_options_form ) {
+		if ( isset( $wp_options_form ) ) {
 			$this->set_api_key( $wp_options_form->get_api_key() );
-			$this->set_list_id($wp_options_form->get_list_id());
+			$this->set_list_id( $wp_options_form->get_list_id() );
 		}
 		return $this;
 	}
@@ -61,33 +61,33 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 			'success' => false,
 		);
 
-		$url      = 'https://api.sendinblue.com/v3/contacts/lists';
-        $args = array(
-            'method'  => 'GET',
-            'headers' => array(
-                'api-key' => $this->api_key,
-            ),
-        );
+		$url  = 'https://api.sendinblue.com/v3/contacts/lists';
+		$args = array(
+			'method'  => 'GET',
+			'headers' => array(
+				'api-key' => $this->api_key,
+			),
+		);
 
-        $response = wp_remote_get( $url, $args );
-        $body     = json_decode( wp_remote_retrieve_body( $response ), true );
+		$response = wp_remote_get( $url, $args );
+		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
 
-        if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
-            $return['error'] = ! empty( $body['detail'] ) && 'null' !== $body['detail'] ? $body['detail'] : __( 'Provider settings are invalid! Please check your API Key and the contact list in the form.', 'otter-blocks' );
-        } else {
-            $return['success'] = true;
-            $return['list_id'] = array_map(
-                function( $item ) {
-                    return array(
-                        'id'   => $item['id'],
-                        'name' => $item['name'],
-                    );
-                },
-                $body['lists']
-            );
-        }
+		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			$return['error'] = ! empty( $body['detail'] ) && 'null' !== $body['detail'] ? $body['detail'] : __( 'Provider settings are invalid! Please check your API Key and the contact list in the form.', 'otter-blocks' );
+		} else {
+			$return['success'] = true;
+			$return['list_id'] = array_map(
+				function( $item ) {
+					return array(
+						'id'   => $item['id'],
+						'name' => $item['name'],
+					);
+				},
+				$body['lists']
+			);
+		}
 
-        return $return;
+		return $return;
 	}
 
 	/**
@@ -97,7 +97,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 *
 	 * @return Form_Data_Response
 	 */
-	public function subscribe(  $email ) {
+	public function subscribe( $email ) {
 		$res       = new Form_Data_Response();
 		$url       = 'https://api.sendinblue.com/v3/contacts';
 		$form_data = array(
@@ -124,7 +124,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 			$res->set_error( ! empty( $body['message'] ) && 'null' !== $body['message'] ? $body['message'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'sendinblue' );
 
 			if ( isset( $body['code'] ) ) {
-				$res->set_error( $body['message'], 'sendinblue' )->set_is_credential_error($this->is_credential_error($body['code']));
+				$res->set_error( $body['message'], 'sendinblue' )->set_is_credential_error( $this->is_credential_error( $body['code'] ) );
 			}
 		} else {
 			$res->mark_as_success();
@@ -185,33 +185,31 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 		);
 	}
 
-    /**
-     * Set the list id.
+	/**
+	 * Set the list id.
 	 *
-     * @param string $list_id The list id.
-     * @return $this
+	 * @param string $list_id The list id.
+	 * @return $this
 	 * @since 2.0.3
-     */
-	public function set_list_id($list_id)
-	{
+	 */
+	public function set_list_id( $list_id ) {
 		$this->list_id = $list_id;
 		return $this;
 	}
 
-    /**
-     * Get the data from the provider.
+	/**
+	 * Get the data from the provider.
 	 *
-     * @param Form_Data_Request $request The request.
-     * @return false[]|mixed
+	 * @param Form_Data_Request $request The request.
+	 * @return false[]|mixed
 	 * @since 2.0.3
-     */
-	public function get_information_from_provider($request)
-	{
-        if( $request->is_set( 'action' ) ) {
-            if ($request->get('action') == 'listId') {
-                return $this->get_lists();
-            }
-        }
+	 */
+	public function get_information_from_provider( $request ) {
+		if ( $request->is_set( 'action' ) ) {
+			if ( $request->get( 'action' ) == 'listId' ) {
+				return $this->get_lists();
+			}
+		}
 		return $this->get_lists();
 	}
 
@@ -225,6 +223,6 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 * @since 2.0.3
 	 */
 	private function is_credential_error( $response_code ) {
-		return in_array( $response_code, array( 'unauthorized', 'reseller_permission_denied', 'not_enough_credits', 'account_under_validation', 'permission_denied' ));
+		return in_array( $response_code, array( 'unauthorized', 'reseller_permission_denied', 'not_enough_credits', 'account_under_validation', 'permission_denied' ) );
 	}
 }

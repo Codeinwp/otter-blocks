@@ -11,6 +11,7 @@ use ArrayAccess;
 
 /**
  * Class Form_Data_Request
+ *
  * @since 2.0.0
  */
 class Form_Data_Request {
@@ -48,17 +49,17 @@ class Form_Data_Request {
 	 */
 	public function __construct( $request_data ) {
 		$this->request_data = $this->sanitize_request_data( $request_data );
-        $this->form_options = new Form_Settings_Data( array() );
+		$this->form_options = new Form_Settings_Data( array() );
 	}
 
-    /**
+	/**
 	 * Set the form options.
 	 *
-     * @param Form_Settings_Data $form_options
-     * @return void
+	 * @param Form_Settings_Data $form_options
+	 * @return void
 	 * @since 2.0.3
-     */
-	public function set_form_options( $form_options) {
+	 */
+	public function set_form_options( $form_options ) {
 		$this->form_options = $form_options;
 	}
 
@@ -80,8 +81,8 @@ class Form_Data_Request {
 	 * @return mixed|null
 	 * @since 2.0.3
 	 */
-	public function get_payload_field($field_name ) {
-		return $this->payload_has_field( $field_name ) ? $this->request_data['payload'][$field_name] : null;
+	public function get_payload_field( $field_name ) {
+		return $this->payload_has_field( $field_name ) ? $this->request_data['payload'][ $field_name ] : null;
 	}
 
 	/**
@@ -91,8 +92,8 @@ class Form_Data_Request {
 	 * @return bool
 	 * @since 2.0.3
 	 */
-	public function payload_has_field($field_name ) {
-		return $this->has_payload() && isset($this->request_data['payload'][$field_name]);
+	public function payload_has_field( $field_name ) {
+		return $this->has_payload() && isset( $this->request_data['payload'][ $field_name ] );
 	}
 
 	/**
@@ -102,7 +103,7 @@ class Form_Data_Request {
 	 * @since 2.0.3
 	 */
 	public function has_payload() {
-		return isset($this->request_data['payload']);
+		return isset( $this->request_data['payload'] );
 	}
 
 	/**
@@ -136,8 +137,8 @@ class Form_Data_Request {
 	 * @since 2.0.0
 	 */
 	public function are_fields_set( $fields_name ) {
-		foreach ($fields_name as $field_name) {
-			if( !isset($this->request_data[$field_name]) ) {
+		foreach ( $fields_name as $field_name ) {
+			if ( ! isset( $this->request_data[ $field_name ] ) ) {
 				return false;
 			}
 		}
@@ -152,8 +153,8 @@ class Form_Data_Request {
 	 * @since 2.0.3
 	 */
 	public function are_payload_fields_set( $fields_name ) {
-		foreach ($fields_name as $field_name) {
-			if( !isset($this->request_data['payload'][$field_name]) || $this->request_data['payload'][$field_name] == '' ) {
+		foreach ( $fields_name as $field_name ) {
+			if ( ! isset( $this->request_data['payload'][ $field_name ] ) || $this->request_data['payload'][ $field_name ] == '' ) {
 				return false;
 			}
 		}
@@ -168,8 +169,8 @@ class Form_Data_Request {
 	 * @since 2.0.3
 	 */
 	public function payload_has_fields( $fields_name ) {
-		foreach ($fields_name as $field_name) {
-			if( !$this->payload_has_field($field_name) ) {
+		foreach ( $fields_name as $field_name ) {
+			if ( ! $this->payload_has_field( $field_name ) ) {
 				return false;
 			}
 		}
@@ -192,7 +193,7 @@ class Form_Data_Request {
 	 * Check if a field has the given values.
 	 *
 	 * @param string $field_name The field name.
-	 * @param array $values The values.
+	 * @param array  $values The values.
 	 * @return bool
 	 * @since 2.0.3
 	 */
@@ -208,7 +209,7 @@ class Form_Data_Request {
 	 * @since 2.0.0
 	 */
 	public static function sanitize_request_data( $data ) {
-		return self::sanitize_array_map_deep($data);
+		return self::sanitize_array_map_deep( $data );
 	}
 
 	/**
@@ -218,39 +219,39 @@ class Form_Data_Request {
 	 * @return array|string
 	 * @since 2.0.3
 	 */
-	public static function sanitize_array_map_deep($array)
-	{
+	public static function sanitize_array_map_deep( $array ) {
 		$new = array();
-		if (is_array($array) || $array instanceof ArrayAccess) {
-			foreach ($array as $key => $val) {
-				if (is_array($val)) {
-					$new[$key] = self::sanitize_array_map_deep($val);
+		if ( is_array( $array ) || $array instanceof ArrayAccess ) {
+			foreach ( $array as $key => $val ) {
+				if ( is_array( $val ) ) {
+					$new[ $key ] = self::sanitize_array_map_deep( $val );
 				} else {
-					$new[$key] = sanitize_text_field($array[$key]);
+					$new[ $key ] = sanitize_text_field( $array[ $key ] );
 				}
 			}
+		} else {
+			$new = sanitize_text_field( $array );
 		}
-		else $new = sanitize_text_field($array);
 		return $new;
 	}
 
-    /**
-     * Get the form input data.
+	/**
+	 * Get the form input data.
 	 *
-     * @return mixed Form input data.
+	 * @return mixed Form input data.
 	 * @since 2.0.0
-     */
+	 */
 	public function get_form_inputs() {
-		return $this->get_payload_field('formInputsData');
+		return $this->get_payload_field( 'formInputsData' );
 	}
 
-    /**
+	/**
 	 * Get the form options.
 	 *
-     * @return Form_Settings_Data|null
+	 * @return Form_Settings_Data|null
 	 * @since 2.0.0
-     */
-    public function get_form_options() {
-        return $this->form_options;
-    }
+	 */
+	public function get_form_options() {
+		return $this->form_options;
+	}
 }

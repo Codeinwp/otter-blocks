@@ -15,7 +15,7 @@ use ThemeIsle\GutenbergBlocks\CSS\CSS_Utility;
  * Class Form_Textarea_CSS
  */
 class Form_Textarea_CSS extends Base_CSS {
-/**
+	/**
 	 * The namespace under which the blocks are registered.
 	 *
 	 * @var string
@@ -43,7 +43,7 @@ class Form_Textarea_CSS extends Base_CSS {
 					array(
 						'property' => '--inputWidth',
 						'value'    => 'inputWidth',
-					)
+					),
 				),
 			)
 		);

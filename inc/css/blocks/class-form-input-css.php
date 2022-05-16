@@ -15,7 +15,7 @@ use ThemeIsle\GutenbergBlocks\CSS\CSS_Utility;
  * Class Form_Input_CSS
  */
 class Form_Input_CSS extends Base_CSS {
-/**
+	/**
 	 * The namespace under which the blocks are registered.
 	 *
 	 * @var string
@@ -43,8 +43,8 @@ class Form_Input_CSS extends Base_CSS {
 					array(
 						'property' => '--inputWidth',
 						'value'    => 'inputWidth',
-						'unit'     => '%'
-					)
+						'unit'     => '%',
+					),
 				),
 			)
 		);

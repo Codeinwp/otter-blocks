@@ -247,28 +247,28 @@ class Options_Settings {
 						'items' => array(
 							'type'       => 'object',
 							'properties' => array(
-								'form'        => array(
+								'form'          => array(
 									'type' => 'string',
 								),
-								'hasCaptcha'  => array(
+								'hasCaptcha'    => array(
 									'type' => array( 'boolean', 'number', 'string' ),
 								),
-								'email'       => array(
+								'email'         => array(
 									'type' => 'string',
 								),
-								'fromName'       => array(
+								'fromName'      => array(
 									'type' => 'string',
 								),
-								'redirectLink' => array(
-									'type' => 'string'
+								'redirectLink'  => array(
+									'type' => 'string',
 								),
-								'emailSubject' => array(
-									'type' => 'string'
+								'emailSubject'  => array(
+									'type' => 'string',
 								),
 								'submitMessage' => array(
-									'type' => 'string'
+									'type' => 'string',
 								),
-								'integration' => array(
+								'integration'   => array(
 									'type'       => 'object',
 									'properties' => array(
 										'provider' => array(
