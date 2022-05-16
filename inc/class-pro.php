@@ -81,6 +81,31 @@ class Pro {
 	}
 
 	/**
+	 * Check if we show Upsell notification or not
+	 * 
+	 * @since   2.0.4
+	 * @access  public
+	 * @return  bool
+	 */
+	public static function should_show_upsell() {
+		$show_upsell = false;
+
+		$installed     = get_option( 'otter_blocks_install' );
+		$notifications = get_option( 'themeisle_blocks_settings_notifications', '' );
+		$notifications = json_decode( $notifications, true );
+
+		if( ! empty( $installed ) && $installed < strtotime( '-7 days' ) ) {
+			$show_upsell = true;
+		}
+
+		if ( isset( $notifications['editor_upsell'] ) && true === boolval( $notifications['editor_upsell'] ) ) {
+			$show_upsell = false;
+		}
+
+		return $show_upsell;
+	}
+
+	/**
 	 * Register Metabox
 	 * 
 	 * @param string $post_type Post type.

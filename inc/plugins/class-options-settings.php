@@ -268,6 +268,18 @@ class Options_Settings {
 				'default'           => array(),
 			)
 		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_notifications',
+			array(
+				'type'              => 'string',
+				'description'       => __( 'Notifications Logs.', 'otter-blocks' ),
+				'sanitize_callback' => 'sanitize_text_field',
+				'show_in_rest'      => true,
+				'default'           => '',
+			)
+		);
 	}
 
 	/**
