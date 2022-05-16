@@ -91,10 +91,9 @@ class Pro {
 		$show_upsell = false;
 
 		$installed     = get_option( 'otter_blocks_install' );
-		$notifications = get_option( 'themeisle_blocks_settings_notifications', '' );
-		$notifications = json_decode( $notifications, true );
+		$notifications = get_option( 'themeisle_blocks_settings_notifications', array() );
 
-		if( ! empty( $installed ) && $installed < strtotime( '-7 days' ) ) {
+		if ( ! empty( $installed ) && $installed < strtotime( '-7 days' ) ) {
 			$show_upsell = true;
 		}
 

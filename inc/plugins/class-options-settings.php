@@ -273,11 +273,32 @@ class Options_Settings {
 			'themeisle_blocks_settings',
 			'themeisle_blocks_settings_notifications',
 			array(
-				'type'              => 'string',
+				'type'              => 'object',
 				'description'       => __( 'Notifications Logs.', 'otter-blocks' ),
-				'sanitize_callback' => 'sanitize_text_field',
-				'show_in_rest'      => true,
-				'default'           => '',
+				'sanitize_callback' => function ( $array ) {
+					return array_map(
+						function ( $item ) {
+							if ( isset( $item['editor_upsell'] ) ) {
+								$item['editor_upsell'] = boolval( $item['editor_upsell'] );
+							}
+							return $item;
+						},
+						$array
+					);
+				},
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'editor_upsell' => array(
+								'type' => array( 'boolean', 'number', 'string' ),
+							),
+						),
+					),
+				),
+				'default'           => array(
+					'editor_upsell' => false,
+				),
 			)
 		);
 	}

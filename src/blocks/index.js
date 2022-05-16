@@ -57,7 +57,7 @@ if ( Boolean( window.themeisleGutenberg.should_show_upsell ) ) {
 
 				const model = new window.wp.api.models.Settings({
 					// eslint-disable-next-line camelcase
-					themeisle_blocks_settings_notifications: JSON.stringify( notificiations )
+					themeisle_blocks_settings_notifications: notificiations
 				});
 
 				await model.save().then( () => {
