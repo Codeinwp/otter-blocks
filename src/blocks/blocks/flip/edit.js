@@ -68,24 +68,24 @@ const Edit = ({
 	};
 
 	const styles = css`
-		${ attributes.width && `--width: ${ attributes.width }px;` }
-		${ attributes.height && `--height: ${ attributes.height }px;` }
-		${ attributes.borderWidth && `--borderWidth: ${ attributes.borderWidth }px;` }
+		${ attributes.width !== undefined && `--width: ${ attributes.width }px;` }
+		${ attributes.height !== undefined && `--height: ${ attributes.height }px;` }
+		${ attributes.borderWidth !== undefined && `--borderWidth: ${ attributes.borderWidth }px;` }
 		--borderColor: ${ attributes.borderColor };
-		${ attributes.borderRadius && `--borderRadius: ${ attributes.borderRadius }px;` }
+		${ attributes.borderRadius !== undefined && `--borderRadius: ${ attributes.borderRadius }px;` }
 		${ ( 'color' === attributes.frontBackgroundType && attributes.frontBackgroundColor ) && `--frontBackground: ${ attributes.frontBackgroundColor };` }
 		${ ( 'gradient' === attributes.frontBackgroundType && attributes.frontBackgroundGradient ) && `--frontBackground: ${ attributes.frontBackgroundGradient };` }
 		${ ( 'image' === attributes.frontBackgroundType && attributes.frontBackgroundImage?.url ) && `--frontBackground: url( ${ attributes.frontBackgroundImage?.url } ) ${ attributes.frontBackgroundRepeat || 'repeat' } ${ attributes.frontBackgroundAttachment || 'scroll' } ${ Math.round( attributes.frontBackgroundPosition?.x * 100 ) || 50 }% ${ Math.round( attributes.frontBackgroundPosition?.y * 100 ) || 50 }%/${ attributes.frontBackgroundSize || 'auto' };` }
 		${ ( 'color' === attributes.backBackgroundType && attributes.backBackgroundColor ) && `--backBackground: ${ attributes.backBackgroundColor };` }
 		${ ( 'gradient' === attributes.backBackgroundType && attributes.backBackgroundGradient ) && `--backBackground: ${ attributes.backBackgroundGradient };` }
 		${ ( 'image' === attributes.backBackgroundType && attributes.backBackgroundImage?.url ) && `--backBackground: url( ${ attributes.backBackgroundImage?.url } ) ${ attributes.backBackgroundRepeat || 'repeat' } ${ attributes.backBackgroundAttachment || 'scroll' } ${ Math.round( attributes.backBackgroundPosition?.x * 100 ) || 50 }% ${ Math.round( attributes.backBackgroundPosition?.y * 100 ) || 50 }%/${ attributes.backBackgroundSize || 'auto' };` }
-		${ attributes.padding && `--padding: ${ attributes.padding }px;` }
+		${ attributes.padding !== undefined && `--padding: ${ attributes.padding }px;` }
 		${ attributes.boxShadow && `--boxShadow: ${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ getShadowColor() };` }
 		--frontVerticalAlign: ${ attributes.frontVerticalAlign };
 		--frontHorizontalAlign: ${ attributes.frontHorizontalAlign };
 		--backVerticalAlign: ${ attributes.backVerticalAlign };
-		${ attributes.frontMediaWidth && `--frontMediaWidth: ${ attributes.frontMediaWidth }px;` }
-		${ attributes.frontMediaHeight && `--frontMediaHeight: ${ attributes.frontMediaHeight }px;` }
+		${ attributes.frontMediaWidth !== undefined && `--frontMediaWidth: ${ attributes.frontMediaWidth }px;` }
+		${ attributes.frontMediaHeight !== undefined && `--frontMediaHeight: ${ attributes.frontMediaHeight }px;` }
 
 		.o-flip-inner {
 			transform: ${ isFliped ? 'var( --flip-anim )' : 'unset' };

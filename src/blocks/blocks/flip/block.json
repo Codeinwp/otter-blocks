@@ -34,7 +34,7 @@
 			"type": "number"
 		},
 		"borderWidth": {
-			"type": "string"
+			"type": "number"
 		},
 		"borderColor": {
 			"type": "string"
