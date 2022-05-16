@@ -189,6 +189,15 @@ We're here to help. Feel free to open a new thread on the [Support Forum](https:
 
 == Changelog ==
 
+##### [Version 2.0.4](https://github.com/Codeinwp/otter-blocks/compare/v2.0.3...v2.0.4) (2022-05-16)
+
+- Fix slider breaks and throws errors when swiping on desktop
+- Flip Card border error
+- Otter Pro related UI changes
+
+
+
+
 ##### [Version 2.0.3](https://github.com/Codeinwp/otter-blocks/compare/v2.0.2...v2.0.3) (2022-05-12)
 
 - Add Otter Pro support
