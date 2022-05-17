@@ -29,13 +29,14 @@ import moment from 'moment';
  * Internal dependencies
  */
 import metadata from './block.json';
-import { blockInit } from '../../helpers/block-utility';
+import {blockInit, cleanCSS, useCSSNode} from '../../helpers/block-utility';
 import Inspector from './inspector.js';
 import {
 	getIntervalFromUnix,
 	getTimezone
 } from '../../helpers/helper-functions.js';
 import DisplayTime from './components/display-time.js';
+import classnames from 'classnames';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -44,7 +45,8 @@ const px = value => value ? `${ value }px` : value;
 const Edit = ({
 	attributes,
 	setAttributes,
-	clientId
+	clientId,
+	className
 }) => {
 	const [ unixTime, setUnixTime ] = useState( 0 );
 
@@ -176,23 +178,29 @@ const Edit = ({
 	// Add `border-radius` for all the platforms
 	const borderRadius = 'linked' === attributes.borderRadiusType ? attributes.borderRadius + '%' : `${ attributes.borderRadiusTopLeft }% ${ attributes.borderRadiusTopRight }% ${ attributes.borderRadiusBottomRight }% ${ attributes.borderRadiusBottomLeft }%`;
 
-	const styles = css`
-		--backgroundColor: ${ attributes.backgroundColor };
-		--borderColor: ${ attributes.borderColor };
-		--borderRadius: ${ borderRadius };
+	const inlineStyles = cleanCSS([
+		[ '--backgroundColor', attributes.backgroundColor ],
+		[ '--borderColor', attributes.borderColor ],
+		[ '--borderRadius', attributes.borderRadius ]
+	]);
 
-		.otter-countdown__display-area .otter-countdown__value {
-			color: ${ attributes.valueColor };
-		}
+	const [ cssNodeName, setCSS ] = useCSSNode([]);
+	useEffect( ()=>{
+		setCSS([
+			`.otter-countdown__display-area .otter-countdown__value {
+				color: ${ attributes.valueColor };
+			}`,
+			`.otter-countdown__display-area .otter-countdown__label {
+				color: ${ attributes.labelColor };
+			}`
+		]);
+	}, [ attributes.valueColor, attributes.labelColor ]);
 
-		.otter-countdown__display-area .otter-countdown__label {
-			color: ${ attributes.labelColor };
-		}
-	`;
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		css: styles
+		className: cssNodeName,
+		style: inlineStyles
 	});
 
 	return (

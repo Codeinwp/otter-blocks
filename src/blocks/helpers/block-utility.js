@@ -3,7 +3,6 @@
  */
 import { v4 as uuidv4 } from 'uuid';
 
-
 /**
  * WordPress dependencies.
  */
@@ -18,6 +17,7 @@ import {
  * Internal dependencies.
  */
 import globalDefaultsBlocksAttrs from '../plugins/options/global-defaults/defaults.js';
+import {useEffect, useMemo, useRef, useState} from '@wordpress/element';
 
 /**
  * Initiate the global id tracker with an empty list if it is the case.
@@ -270,4 +270,50 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 		setAttributes: ( ! isInReusableBlock( clientId ) || getSelectedBlockClientId() === clientId ) ? updateAttrs( clientId ) : undefined,
 		...extractBlockData( clientId )
 	});
+};
+
+/**
+ * Clean CSS list
+ * @param {array} props
+ */
+export const cleanCSS = props => {
+	return props?.reduce( ( acc, x ) => {
+		if ( x[0] && x[1]) {
+			acc[x[0]] = x[1] + ( x[2] || '' );
+		}
+		return acc;
+	}, {});
+};
+
+/**
+ * Create a Style node.
+ * @param {string[]} css
+ * @returns {[string, Dispatch<SetStateAction<string[]>>]}
+ */
+export const useCSSNode = css => {
+	const [ cssClassName, setCssClassName ] = useState( null );
+	const [ cssList, setCSS ] = useState( css || []);
+	const node = useRef( null );
+
+	useEffect( () => {
+		node.current = document.createElement( 'style' );
+		node.current.type = 'text/css';
+
+		const anchor = parent.document.querySelector( 'iframe' )?.contentWindow.document.head || document.head;
+		anchor?.appendChild( node.current );
+
+		setCssClassName( 'otter-' + uuidv4() );
+		return () => {
+			anchor?.removeChild( node.current );
+		};
+	}, []);
+
+	useEffect( () => {
+		if ( node.current && cssClassName && cssList !== undefined ) {
+			node.current.textContent = cssList?.map( x => ( `.${cssClassName} ${x}` ) ).join( '\n' ) || '';
+			console.count( 'use' );
+		}
+	}, [ cssList, cssClassName, node.current ]);
+
+	return [ cssClassName, setCSS ];
 };

@@ -31,7 +31,7 @@ import {
  * Internal dependencies
  */
 import metadata from './block.json';
-import { blockInit } from '../../helpers/block-utility.js';
+import {blockInit, cleanCSS} from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import { setCSSVars } from '../../helpers/full-site-editing/css-utility';
 
@@ -94,21 +94,17 @@ const ProgressBar = ({
 		};
 	}, [ attributes.percentage, attributes.duration ]);
 
-	useEffect( () => {
-		setCSSVars( blockRef.current, {
-			'--titleColor': attributes.titleColor,
-			'--percentageColor': attributes.percentageColor,
-			'--percentageColorOuter': attributes.percentageColor,
-			'--percentageColorTooltip': attributes.percentageColor,
-			'--percentageColorAppend': attributes.percentageColor,
-			'--backgroundColor': attributes.backgroundColor,
-			'--borderRadius': ( undefined !== attributes.borderRadius ? attributes.borderRadius : 5 ) + 'px',
-			'--height': ( undefined !== attributes.height ? attributes.height : 30 ) + 'px',
-			'--barBackground': attributes.barBackgroundColor
-		});
-	}, [ blockRef.current, attributes ]);
-
-	const fontRatio = 0.65;
+	const style = cleanCSS([
+		[ '--titleColor', attributes.titleColor ],
+		[ '--percentageColor', attributes.percentageColor ],
+		[ '--percentageColorOuter', attributes.percentageColor ],
+		[ '--percentageColorTooltip', attributes.percentageColor ],
+		[ '--percentageColorAppend', attributes.percentageColor ],
+		[ '--backgroundColor', attributes.backgroundColor ],
+		[ '--borderRadius', attributes.borderRadius, 'px' ],
+		[ '--height', attributes.height, 'px' ],
+		[ '--barBackground', attributes.percentageColor ]
+	]);
 
 	const onHeightChange = value => {
 		if ( 30 > value ) {
@@ -142,7 +138,8 @@ const ProgressBar = ({
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		className: classnames({ 'has-tooltip': 'tooltip' === attributes.percentagePosition })
+		className: classnames({ 'has-tooltip': 'tooltip' === attributes.percentagePosition }),
+		style: style
 	});
 
 	return (
