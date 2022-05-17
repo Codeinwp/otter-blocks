@@ -19,7 +19,7 @@ const Inspector = ({
 	socialList
 }) => {
 	const onIconChange = ( value, item, field ) => {
-		const newValue = attributes[item];
+		const newValue = { ...attributes[item] };
 		newValue[field] = value;
 
 		setAttributes({ [ item ]: { ...newValue } });
@@ -84,6 +84,7 @@ const Inspector = ({
 						<ContrastChecker
 							backgroundColor={ attributes[icon].backgroundColor }
 							textColor={ attributes[icon].textColor }
+							key={ icon }
 						/>
 					);
 				}) }

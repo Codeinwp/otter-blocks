@@ -81,7 +81,7 @@ const Edit = ({
 				<Disabled>
 					<ServerSideRender
 						block="themeisle-blocks/sharing-icons"
-						attributes={ { ...attributes } }
+						attributes={ attributes }
 					/>
 				</Disabled>
 			</div>
