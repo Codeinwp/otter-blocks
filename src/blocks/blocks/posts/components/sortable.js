@@ -325,7 +325,7 @@ export const SortableItem = ({
 								label={ __( 'Excerpt Limit', 'otter-blocks' ) }
 								type="number"
 								value={ attributes.excerptLength }
-								onChange={ excerptLength => setAttributes({ excerptLength }) }
+								onChange={ value => setAttributes({ excerptLength: Number( value ) }) }
 							/>
 
 							<ToggleControl
