@@ -18,7 +18,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Pricing', 'otter-blocks' ),
-	description: __( 'Pricing tables are a critical part in showcasing your services, prices and overall offerings.', 'otter-blocks' ),
+	description: __( 'Pricing tables are a critical part in showcasing your services, prices and overall offerings. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'pricing',

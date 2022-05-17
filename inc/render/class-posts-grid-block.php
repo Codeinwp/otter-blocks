@@ -13,13 +13,6 @@ namespace ThemeIsle\GutenbergBlocks\Render;
 class Posts_Grid_Block {
 
 	/**
-	 * Flag to mark that we can render the table.
-	 *
-	 * @var bool $$should_render_custom_meta Should we render the table?
-	 */
-	public static $should_render_custom_meta = true;
-
-	/**
 	 * Block render function for server-side.
 	 *
 	 * This method will pe passed to the render_callback parameter and it will output
@@ -29,10 +22,6 @@ class Posts_Grid_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		if ( ! 'valid' === apply_filters( 'product_neve_license_status', false ) ) {
-			self::$should_render_custom_meta = false;
-		}
-
 		$categories = 0;
 
 		if ( isset( $attributes['categories'] ) ) {
@@ -192,46 +181,7 @@ class Posts_Grid_Block {
 					}
 				}
 
-				if ( self::$should_render_custom_meta && substr( $element, 0, 7 ) === 'custom_' ) {
-					if ( isset( $attributes['customMetas'] ) ) {
-						$custom_meta_field = null;
-						foreach ( $attributes['customMetas'] as $meta_field ) {
-							if ( $meta_field['id'] === $element ) {
-								$custom_meta_field = $meta_field;
-								break;
-							}
-						}
-
-						if (
-							(
-								! isset( $custom_meta_field['display'] )
-								|| true === $custom_meta_field['display']
-							)
-							&& isset( $custom_meta_field['field'] )
-							&& function_exists( 'get_field_object' )
-						) {
-
-							$field = get_field_object( $custom_meta_field['field'], $id );
-							if ( isset( $field ) ) {
-								$list_items_markup .= '<div class="o-posts-custom-field">';
-								if ( isset( $field['prepend'] ) ) {
-									$list_items_markup .= esc_html( $field['prepend'] );
-								}
-
-								if ( isset( $field['value'] ) ) {
-									$list_items_markup .= esc_html( $field['value'] );
-								} elseif ( isset( $field['default_value'] ) ) {
-									$list_items_markup .= esc_html( $field['default_value'] );
-								}
-
-								if ( isset( $field['append'] ) ) {
-									$list_items_markup .= esc_html( $field['append'] );
-								}
-								$list_items_markup .= '</div>';
-							}
-						}
-					}
-				}
+				$list_items_markup .= apply_filters( 'otter_blocks_posts_fields', '', $attributes, $id, $element );
 			}
 
 			$list_items_markup .= '</div></div></div>';
@@ -403,46 +353,7 @@ class Posts_Grid_Block {
 				}
 			}
 
-			if ( self::$should_render_custom_meta && substr( $element, 0, 7 ) === 'custom_' ) {
-				if ( isset( $attributes['customMetas'] ) ) {
-					$custom_meta_field = null;
-					foreach ( $attributes['customMetas'] as $meta_field ) {
-						if ( $meta_field['id'] === $element ) {
-							$custom_meta_field = $meta_field;
-							break;
-						}
-					}
-
-					if (
-						(
-							! isset( $custom_meta_field['display'] )
-							|| true === $custom_meta_field['display']
-						)
-						&& isset( $custom_meta_field['field'] )
-						&& function_exists( 'get_field_object' )
-					) {
-
-						$field = get_field_object( $custom_meta_field['field'], $id );
-						if ( isset( $field ) ) {
-							$html .= '<div class="o-posts-custom-field">';
-							if ( isset( $field['prepend'] ) ) {
-								$html .= esc_html( $field['prepend'] );
-							}
-
-							if ( isset( $field['value'] ) ) {
-								$html .= esc_html( $field['value'] );
-							} elseif ( isset( $field['default_value'] ) ) {
-								$html .= esc_html( $field['default_value'] );
-							}
-
-							if ( isset( $field['append'] ) ) {
-								$html .= esc_html( $field['append'] );
-							}
-							$html .= '</div>';
-						}
-					}
-				}
-			}
+			$html .= apply_filters( 'otter_blocks_posts_fields', '', $attributes, $id, $element );
 		}
 		$html .= '</div>';
 		return sprintf( '<div class="o-featured-post">%1$s</div>', $html );

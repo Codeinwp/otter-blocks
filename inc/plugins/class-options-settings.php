@@ -26,13 +26,6 @@ class Options_Settings {
 		add_action( 'init', array( $this, 'register_settings' ), 99 );
 		add_action( 'init', array( $this, 'default_block' ), 99 );
 		add_action( 'init', array( $this, 'register_meta' ), 19 );
-
-		$allow_json_svg = get_option( 'themeisle_allow_json_upload' );
-
-		if ( isset( $allow_json_svg ) && true === (bool) $allow_json_svg && ! function_exists( 'is_wpcom_vip' ) ) {
-			add_filter( 'upload_mimes', array( $this, 'allow_json_svg' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
-			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg' ), 75, 4 );
-		}
 	}
 
 	/**
@@ -48,17 +41,6 @@ class Options_Settings {
 			array(
 				'type'         => 'boolean',
 				'description'  => __( 'Redirect on new install.', 'otter-blocks' ),
-				'show_in_rest' => true,
-				'default'      => true,
-			)
-		);
-
-		register_setting(
-			'themeisle_blocks_settings',
-			'themeisle_blocks_settings_tour',
-			array(
-				'type'         => 'boolean',
-				'description'  => __( 'Show tour for Otter.', 'otter-blocks' ),
 				'show_in_rest' => true,
 				'default'      => true,
 			)
@@ -217,18 +199,6 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
-			'themeisle_allow_json_upload',
-			array(
-				'type'              => 'boolean',
-				'description'       => __( 'Allow JSON & SVG Uploads to Media Library.', 'otter-blocks' ),
-				'sanitize_callback' => 'rest_sanitize_boolean',
-				'show_in_rest'      => true,
-				'default'           => false,
-			)
-		);
-
-		register_setting(
-			'themeisle_blocks_settings',
 			'themeisle_blocks_form_emails',
 			array(
 				'type'              => 'array',
@@ -298,6 +268,39 @@ class Options_Settings {
 				'default'           => array(),
 			)
 		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_notifications',
+			array(
+				'type'              => 'object',
+				'description'       => __( 'Notifications Logs.', 'otter-blocks' ),
+				'sanitize_callback' => function ( $array ) {
+					return array_map(
+						function ( $item ) {
+							if ( isset( $item['editor_upsell'] ) ) {
+								$item['editor_upsell'] = boolval( $item['editor_upsell'] );
+							}
+							return $item;
+						},
+						$array
+					);
+				},
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'       => 'object',
+						'properties' => array(
+							'editor_upsell' => array(
+								'type' => array( 'boolean', 'number', 'string' ),
+							),
+						),
+					),
+				),
+				'default'           => array(
+					'editor_upsell' => false,
+				),
+			)
+		);
 	}
 
 	/**
@@ -349,50 +352,6 @@ class Options_Settings {
 		$post_type_object->template = array(
 			array( 'themeisle-blocks/advanced-columns', $attributes ),
 		);
-	}
-
-	/**
-	 * Allow JSON uploads
-	 *
-	 * @param array $mimes Supported mimes.
-	 *
-	 * @return array
-	 * @since  1.5.7
-	 * @access public
-	 */
-	public function allow_json_svg( $mimes ) {
-		$mimes['json'] = 'application/json';
-		$mimes['svg']  = 'image/svg+xml';
-		return $mimes;
-	}
-
-	/**
-	 * Allow JSON uploads
-	 *
-	 * @param null $data File data.
-	 * @param null $file File object.
-	 * @param null $filename File name.
-	 * @param null $mimes Supported mimes.
-	 *
-	 * @return array
-	 * @since  1.5.7
-	 * @access public
-	 */
-	public function fix_mime_type_json_svg( $data = null, $file = null, $filename = null, $mimes = null ) {
-		$ext = isset( $data['ext'] ) ? $data['ext'] : '';
-		if ( 1 > strlen( $ext ) ) {
-			$exploded = explode( '.', $filename );
-			$ext      = strtolower( end( $exploded ) );
-		}
-		if ( 'json' === $ext ) {
-			$data['type'] = 'application/json';
-			$data['ext']  = 'json';
-		}
-		if ( 'svg' === $ext ) {
-			$data['type'] = 'image/svg+xml';
-			$data['ext']  = 'svg';
-		}
-		return $data;
 	}
 
 	/**

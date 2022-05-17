@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/advanced-heading",
 	"title": "Advanced Heading",
 	"category": "themeisle-blocks",
-	"description": "Advanced Heading gives a spin to editor's Heading block with much needed customization options.",
+	"description": "Advanced Heading gives a spin to editor's Heading block with much needed customization options. Powered by Otter.",
 	"keywords": [ "heading", "title", "advanced heading" ],
 	"textdomain": "otter-blocks",
 	"attributes": {
@@ -31,8 +31,7 @@
 			"type": "string"
 		},
 		"headingColor": {
-			"type": "string",
-			"default": "#000000"
+			"type": "string"
 		},
 		"highlightColor": {
 			"type": "string"

@@ -69,8 +69,6 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Advanced_Column_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Advanced_Columns_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Advanced_Heading_CSS',
-			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Business_Hours_CSS',
-			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Business_Hours_Item_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Button_Group_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Button_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Circle_Counter_CSS',
@@ -84,12 +82,12 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Popup_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Slider_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Review_CSS',
-			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Review_Comparison_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Tabs_CSS',
-			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Woo_Comparison_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Posts_CSS',
 			'\Themeisle\GutenbergBlocks\CSS\Blocks\Sharing_Icons_CSS',
 		);
+
+		self::$blocks_classes = apply_filters( 'otter_blocks_register_css', self::$blocks_classes );
 	}
 
 	/**
@@ -284,7 +282,7 @@ class Base_CSS {
 				}
 			}
 
-			$custom_css = apply_filters( 'themeisle_gutenberg_blocks_css', $block );
+			$custom_css = apply_filters( 'otter_blocks_css', $block );
 
 			if ( is_string( $custom_css ) ) {
 				$style .= $custom_css;

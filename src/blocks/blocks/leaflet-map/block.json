@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/leaflet-map",
 	"title": "Maps",
 	"category": "themeisle-blocks",
-	"description": "Display Open Street Maps on your website with Maps block.",
+	"description": "Display Open Street Maps on your website with Maps block. Powered by Otter.",
 	"keywords": [ "map", "opeenstreetmap", "location" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

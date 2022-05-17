@@ -61,28 +61,6 @@ const Edit = ({
 		setEditing( false );
 	};
 
-	useEffect( () => {
-		let isMounted = true;
-
-		window.wp.api.loadPromise.then( () => {
-			const settings = new window.wp.api.models.Settings();
-
-			settings.fetch().then( response => {
-				if ( response.themeisle_allow_json_upload ) {
-					if ( isMounted ) {
-						setJSONAllowed( response.themeisle_allow_json_upload );
-					}
-				}
-			});
-		});
-
-		return () => {
-			isMounted = false;
-		};
-	}, []);
-
-	const [ isJSONAllowed, setJSONAllowed ] = useState( false );
-
 	const blockProps = useBlockProps();
 
 	return (
@@ -107,7 +85,6 @@ const Edit = ({
 					<Placeholder
 						value={ attributes.file }
 						onChange={ onChangeFile }
-						isJSONAllowed={ isJSONAllowed }
 						attributes={ attributes }
 					/>
 				) }

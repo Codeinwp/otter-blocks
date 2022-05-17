@@ -4,7 +4,7 @@
 	"name": "themeisle-blocks/countdown",
 	"title": "Countdown",
 	"category": "themeisle-blocks",
-	"description": "Set a countdown for a date.",
+	"description": "Set a countdown for a date. Powered by Otter.",
 	"keywords": [ "countdown", "time", "counter" ],
 	"textdomain": "otter-blocks",
 	"attributes": {

@@ -23,7 +23,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Circle Counter', 'otter-blocks' ),
-	description: __( 'Show your progress with a beautiful Circle Counter block.', 'otter-blocks' ),
+	description: __( 'Show your progress with a beautiful Circle Counter block. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'progress',
