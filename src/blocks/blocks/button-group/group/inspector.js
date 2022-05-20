@@ -6,16 +6,28 @@ import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 
 import {
+	ButtonGroup,
+	Button,
 	PanelBody,
 	RangeControl,
 	SelectControl
 } from '@wordpress/components';
+
+import {
+	alignNone,
+	positionCenter,
+	positionLeft,
+	positionRight,
+	stretchFullWidth
+} from '@wordpress/icons';
 
 /**
  * Internal dependencies
  */
 import GoogleFontsControl from '../../../components/google-fonts-control/index.js';
 import SizingControl from '../../../components/sizing-control/index.js';
+import ResponsiveControl from "../../../components/responsive-control";
+import { useSelect } from "@wordpress/data";
 
 /**
  *
@@ -24,7 +36,8 @@ import SizingControl from '../../../components/sizing-control/index.js';
  */
 const Inspector = ({
 	attributes,
-	setAttributes
+	setAttributes,
+	currentDevice
 }) => {
 	const changeFontFamily = value => {
 		if ( ! value ) {
@@ -51,6 +64,45 @@ const Inspector = ({
 			setAttributes({ paddingLeftRight: value });
 		}
 	};
+
+	const onAlignmentChange = value => {
+		const newValue = {
+			desktop: attributes.align.desktop,
+			tablet: attributes.align.tablet,
+			mobile: attributes.align.mobile
+		}
+
+		newValue[ currentDevice ] = value;
+		setAttributes({ align: newValue });
+	};
+
+	const alignmentOptions = [
+		{
+			value: 'none',
+			icon: alignNone,
+			label: __( 'None', 'otter-blocks' ),
+		},
+		{
+			value: 'left',
+			icon: positionLeft,
+			label: __( 'Align left', 'otter-blocks' ),
+		},
+		{
+			value: 'center',
+			icon: positionCenter,
+			label: __( 'Align center', 'otter-blocks' ),
+		},
+		{
+			value: 'right',
+			icon: positionRight,
+			label: __( 'Align right', 'otter-blocks' ),
+		},
+		{
+			value: 'full',
+			icon: stretchFullWidth,
+			label: __( 'Full width', 'otter-blocks' ),
+		}
+	]
 
 	return (
 		<InspectorControls>
@@ -105,6 +157,22 @@ const Inspector = ({
 					] }
 					onChange={ e => setAttributes({ collapse: e }) }
 				/>
+				<ResponsiveControl label={ __( 'Alignment', 'otter-blocks' ) }>
+					<ButtonGroup>
+						{ alignmentOptions.map( option => {
+							return(
+								<Button
+									key={ option.value }
+									icon={ option.icon }
+									title={ option.label }
+									isPrimary={ option.value === ( attributes.align[ currentDevice ] ?? 'none' ) }
+									showTooltip
+									onClick={ () => onAlignmentChange( option.value ) }
+								/>
+							);
+						}) }
+					</ButtonGroup>
+				</ResponsiveControl>
 			</PanelBody>
 
 			<PanelBody

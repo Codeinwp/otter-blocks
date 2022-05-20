@@ -20,10 +20,7 @@ const Save = ({
 		id: attributes.id,
 		className: classnames(
 			collapseClass,
-			'wp-block-buttons',
-			{
-				[ `align-${ attributes.align }` ]: attributes.align
-			}
+			'wp-block-buttons'
 		)
 	});
 

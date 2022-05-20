@@ -1,5 +1,6 @@
 .wp-block-themeisle-blocks-button-group {
 	display: flex;
+	justify-content: var(--alignment);
 
 	&.align-left {
 		justify-content: flex-start;

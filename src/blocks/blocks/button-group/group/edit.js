@@ -64,6 +64,13 @@ const Edit = ({
 		};
 	}, []);
 
+	const currentDevice = useSelect( select => {
+		const { getView } = select( 'themeisle-gutenberg/data' );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+
+		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType().toLowerCase() : getView().toLowerCase();
+	}, []);
+
 	const isLarger = useViewportMatch( 'large', '>=' );
 
 	const isLarge = useViewportMatch( 'large', '<=' );
@@ -89,16 +96,23 @@ const Edit = ({
 		isMobile = isPreviewMobile;
 	}
 
+	const justifyContent = {
+		left: 'flex-start',
+		center: 'center',
+		right: 'flex-end',
+		undefined: 'unset'
+	}
+
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames(
 			'wp-block-buttons',
 			{
-				[ `align-${ attributes.align }` ]: attributes.align,
 				'collapse': ( 'collapse-desktop' === attributes.collapse && ( isDesktop || isTablet || isMobile ) ) || ( 'collapse-tablet' === attributes.collapse && ( isTablet || isMobile ) ) || ( 'collapse-mobile' === attributes.collapse && isMobile )
 			}
 		),
 		css: css`
+		--alignment: ${ justifyContent[ attributes.align[ currentDevice ] ] };
 		.block-editor-block-list__layout {
 			gap: ${ attributes.spacing }px;
 		}
@@ -122,6 +136,7 @@ const Edit = ({
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
+				currentDevice={ currentDevice }
 			/>
 
 			<div { ...blockProps }>
