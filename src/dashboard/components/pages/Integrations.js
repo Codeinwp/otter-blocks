@@ -9,7 +9,8 @@ import {
 	ExternalLink,
 	PanelBody,
 	PanelRow,
-	TextControl
+	TextControl,
+	ToggleControl
 } from '@wordpress/components';
 
 import { Fragment } from '@wordpress/element';
@@ -112,6 +113,20 @@ const Integrations = ({
 							</ExternalLink>
 						</div>
 					</BaseControl>
+				</PanelRow>
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Fonts Module', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<PanelRow>
+					<ToggleControl
+						label={ __( 'Save Google Fonts Offline', 'otter-blocks' ) }
+						help={ __( 'Enable this option to save Google Fonts offline to make your website faster', 'otter-blocks' ) }
+						checked={ false }
+						disabled={ false }
+					/>
 				</PanelRow>
 			</PanelBody>
 		</Fragment>

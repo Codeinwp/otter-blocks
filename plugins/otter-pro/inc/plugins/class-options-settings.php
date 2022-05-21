@@ -43,6 +43,17 @@ class Options_Settings {
 				'default'      => false,
 			)
 		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'otter_offload_fonts',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Store Google Fonts Offline.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => false,
+			)
+		);
 	}
 
 	/**
