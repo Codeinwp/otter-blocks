@@ -33,7 +33,8 @@ module.exports = [
 			],
 			woocommerce: [
 				...glob.sync( './src/pro/woocommerce/**/index.js' )
-			]
+			],
+			dashboard: './src/pro/dashboard/index.js'
 		},
 		output: {
 			path: path.resolve( __dirname, './build/pro' ),

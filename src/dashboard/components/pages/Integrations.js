@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import {
 	BaseControl,
 	Button,
+	Disabled,
 	ExternalLink,
 	PanelBody,
 	PanelRow,
@@ -14,6 +15,8 @@ import {
 } from '@wordpress/components';
 
 import { Fragment } from '@wordpress/element';
+
+import { applyFilters } from '@wordpress/hooks';
 
 const Integrations = ({
 	status,
@@ -25,6 +28,29 @@ const Integrations = ({
 	googleCaptchaAPISecretKey,
 	setGoogleCaptchaAPISecretKey
 }) => {
+	let ProModules = () => {
+		return (
+			<PanelBody
+				title={ __( 'Fonts Module', 'otter-blocks' ) }
+				initialOpen={ false }
+				className="is-pro"
+			>
+				<Disabled>
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Save Google Fonts Offline', 'otter-blocks' ) }
+							help={ __( 'Enable this option to save Google Fonts offline to make your website faster', 'otter-blocks' ) }
+							checked={ false }
+							disabled={ true }
+						/>
+					</PanelRow>
+				</Disabled>
+			</PanelBody>
+		);
+	};
+
+	ProModules = applyFilters( 'otter.dashboard.integrations', <ProModules /> );
+
 	return (
 		<Fragment>
 			<PanelBody
@@ -116,19 +142,7 @@ const Integrations = ({
 				</PanelRow>
 			</PanelBody>
 
-			<PanelBody
-				title={ __( 'Fonts Module', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				<PanelRow>
-					<ToggleControl
-						label={ __( 'Save Google Fonts Offline', 'otter-blocks' ) }
-						help={ __( 'Enable this option to save Google Fonts offline to make your website faster', 'otter-blocks' ) }
-						checked={ false }
-						disabled={ false }
-					/>
-				</PanelRow>
-			</PanelBody>
+			{ ProModules }
 		</Fragment>
 	);
 };
