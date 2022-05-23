@@ -6,7 +6,10 @@ import { useBlockProps } from '@wordpress/block-editor';
 
 import { Disabled } from '@wordpress/components';
 
-import { Fragment, useEffect } from '@wordpress/element';
+import {
+	Fragment,
+	useEffect
+} from '@wordpress/element';
 
 import ServerSideRender from '@wordpress/server-side-render';
 

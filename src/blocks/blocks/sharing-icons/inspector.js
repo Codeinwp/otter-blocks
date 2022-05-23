@@ -1,13 +1,17 @@
 /**
  * WordPress dependencies
  */
-import { Fragment } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import {
+	__,
+	sprintf
+} from '@wordpress/i18n';
+
 import {
 	InspectorControls,
 	PanelColorSettings,
 	ContrastChecker
 } from '@wordpress/block-editor';
+
 import {
 	PanelBody,
 	RangeControl
@@ -25,7 +29,7 @@ const Inspector = ({
 		setAttributes({ [ item ]: { ...newValue } });
 	};
 
-	return <Fragment>
+	return (
 		<InspectorControls>
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
@@ -45,6 +49,7 @@ const Inspector = ({
 					max={ 100 }
 				/>
 			</PanelBody>
+
 			<PanelColorSettings
 				title={ __( 'Color Settings' ) }
 				className='ott-color-controls'
@@ -90,7 +95,7 @@ const Inspector = ({
 				}) }
 			</PanelColorSettings>
 		</InspectorControls>
-	</Fragment>;
+	);
 };
 
 export default Inspector;

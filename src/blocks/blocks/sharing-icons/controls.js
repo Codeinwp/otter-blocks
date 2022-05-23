@@ -24,7 +24,11 @@ import {
  */
 import SocialIcons from './icons.js';
 
-const Controls = ({ attributes, setAttributes, socialList }) => {
+const Controls = ({
+	attributes,
+	setAttributes,
+	socialList
+}) => {
 	const toggleIcons = ( item ) => {
 		const newValue = { ...attributes[ item ] };
 		newValue.active = ! newValue.active;
