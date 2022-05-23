@@ -88,7 +88,7 @@ class Sharing_Icons_Block {
 			$class .= ' align' . esc_attr( $attributes['align'] );
 		}
 
-		$wrapper_attributes = get_block_wrapper_attributes( $attributes['id'] ? [ 'id' => $attributes['id'] ] : [] );
+		$wrapper_attributes = get_block_wrapper_attributes( isset( $attributes['id'] ) ? [ 'id' => $attributes['id'] ] : [] );
 
 		$html = '<div ' . $wrapper_attributes . '><div class="social-icons-wrap">';
 		foreach ( $social_attributes as $key => $icon ) {
