@@ -125,26 +125,6 @@ const Inspector = ({
 							title={ __( 'Settings', 'otter-blocks' ) }
 							initialOpen={ true }
 						>
-							<span>
-								{
-									__( 'In order for the Form to work properly, make sure your SMTP plugin is set up.', 'otter-blocks' )
-								}
-							</span>
-							<ExternalLink
-								href={'https://www.wpbeginner.com/plugins/how-to-set-up-wp-mail-smtp-with-any-host-ultimate-guide/'}
-								style={{ marginLeft: '3px' }}
-							>
-								{ __( 'Learn more.', 'otter-blocks' ) }
-							</ExternalLink>
-							<br/>
-							<Button
-								variant="primary"
-								isPrimary
-								style={{ marginTop: '8px'}}
-								onClick={ sendTestEmail }
-							>
-								{ __( 'Send Test Email', 'otter-blocks' )  }
-							</Button>
 							<TextControl
 								label={ __( 'Button Label', 'otter-blocks' ) }
 								placeholder={ __( 'Submit', 'otter-blocks' ) }
@@ -291,45 +271,70 @@ const Inspector = ({
 								{
 									value: attributes.labelColor,
 									onChange: labelColor => setAttributes({ labelColor }),
-									label: __( 'Label Color', 'otter-blocks' )
+									label: __( 'Label', 'otter-blocks' )
 								},
 								{
 									value: attributes.inputBorderColor,
 									onChange: inputBorderColor => setAttributes({ inputBorderColor }),
-									label: __( 'Border Color', 'otter-blocks' )
+									label: __( 'Border', 'otter-blocks' )
 								},
 								{
 									value: attributes.submitColor,
 									onChange: submitColor => setAttributes({ submitColor }),
-									label: __( 'Submit Text Color', 'otter-blocks' )
+									label: __( 'Submit Text', 'otter-blocks' )
 								},
 								{
 									value: attributes.submitBackgroundColor,
 									onChange: submitBackgroundColor => setAttributes({ submitBackgroundColor }),
-									label: __( 'Button Background Color', 'otter-blocks' )
+									label: __( 'Button Background', 'otter-blocks' )
 								},
 								{
 									value: attributes.submitBackgroundColorHover,
 									onChange: submitBackgroundColorHover => setAttributes({ submitBackgroundColorHover }),
-									label: __( 'Button Background Color on Hover', 'otter-blocks' )
+									label: __( 'Button Background on Hover', 'otter-blocks' )
 								},
 								{
 									value: attributes.submitMessageColor,
 									onChange: submitMessageColor => setAttributes({ submitMessageColor }),
-									label: __( 'Successful Message Color', 'otter-blocks' )
+									label: __( 'Successful Message', 'otter-blocks' )
 								},
 								{
 									value: attributes.submitMessageErrorColor,
 									onChange: submitMessageErrorColor => setAttributes({ submitMessageErrorColor }),
-									label: __( 'Error Message Color', 'otter-blocks' )
+									label: __( 'Error Message', 'otter-blocks' )
 								},
 								{
 									value: attributes.inputRequiredColor,
 									onChange: inputRequiredColor => setAttributes({ inputRequiredColor }),
-									label: __( 'Label Required Color', 'otter-blocks' )
+									label: __( 'Label Required', 'otter-blocks' )
 								}
 							] }
 						/>
+						<PanelBody
+							title={ __( 'Test Email', 'otter-blocks' ) }
+							initialOpen={true}
+						>
+							<span>
+								{
+									__( 'In order for the Form to work properly, make sure your SMTP plugin is set up.', 'otter-blocks' )
+								}
+							</span>
+							<ExternalLink
+								href={'https://www.wpbeginner.com/plugins/how-to-set-up-wp-mail-smtp-with-any-host-ultimate-guide/'}
+								style={{ marginLeft: '3px' }}
+							>
+								{ __( 'Learn more.', 'otter-blocks' ) }
+							</ExternalLink>
+							<br/>
+							<Button
+								variant="primary"
+								isPrimary
+								style={{ marginTop: '8px'}}
+								onClick={ sendTestEmail }
+							>
+								{ __( 'Send Test Email', 'otter-blocks' )  }
+							</Button>
+						</PanelBody>
 					</Fragment>
 				)
 			}
