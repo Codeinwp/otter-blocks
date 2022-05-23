@@ -1,12 +1,18 @@
 import { BlockProps, InspectorProps } from '../../helpers/blocks'
 
 type Attributes = {
-	facebook: boolean
-	twitter: boolean
-	linkedin: boolean
-	pinterest: boolean
-	tumblr: boolean
-	reddit: boolean
+	id: string
+	facebook: object | boolean
+	twitter: object | boolean
+	linkedin: object | boolean
+	pinterest: object | boolean
+	tumblr: object | boolean
+	reddit: object | boolean
+	gap: number
+	borderRadius: number
+	textDeco: string
+	backgroundColor: string
+	textColor: string
 }
 
 export type SharingIconsProps = BlockProps<Attributes>
