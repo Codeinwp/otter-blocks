@@ -96,7 +96,7 @@ const Edit = ({
 	}
 
 	const alignClasses = [ 'desktop', 'tablet', 'mobile' ].reduce( ( acc, device ) => {
-		if ( 'none' !== attributes.align[ device ]) {
+		if ( 'none' !== attributes.align[ device ] && undefined !== attributes.align[ device ]) {
 			acc.push( `align-${ attributes.align[ device ] }-${ device }` );
 		}
 
@@ -108,6 +108,7 @@ const Edit = ({
 		className: classnames(
 			'wp-block-buttons',
 			{
+				[ `align-${ attributes.align }` ]: 'string' === typeof attributes.align,
 				'collapse': ( 'collapse-desktop' === attributes.collapse && ( isDesktop || isTablet || isMobile ) ) || ( 'collapse-tablet' === attributes.collapse && ( isTablet || isMobile ) ) || ( 'collapse-mobile' === attributes.collapse && isMobile )
 			},
 			...alignClasses

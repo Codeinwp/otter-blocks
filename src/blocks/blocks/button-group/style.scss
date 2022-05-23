@@ -5,15 +5,15 @@
 		flex-direction: column;
 	}
 
-	&.align-left-desktop {
+	&.align-left-desktop, &.align-left {
 		justify-content: flex-start;
 	}
 
-	&.align-center-desktop {
+	&.align-center-desktop, &.align-center {
 		justify-content: center;
 	}
 
-	&.align-right-desktop{
+	&.align-right-desktop, &.align-right {
 		justify-content: flex-end;
 	}
 }
