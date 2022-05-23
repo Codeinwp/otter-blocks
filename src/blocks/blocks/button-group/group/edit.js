@@ -96,12 +96,12 @@ const Edit = ({
 	}
 
 	const alignClasses = [ 'desktop', 'tablet', 'mobile' ].reduce( ( acc, device ) => {
-		if ( 'none' !== attributes.align[ device ] ) {
+		if ( 'none' !== attributes.align[ device ]) {
 			acc.push( `align-${ attributes.align[ device ] }-${ device }` );
 		}
 
 		return acc;
-	}, [] );
+	}, []);
 
 	const blockProps = useBlockProps({
 		id: attributes.id,

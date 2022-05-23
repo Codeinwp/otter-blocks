@@ -156,7 +156,10 @@ const Inspector = ({
 					] }
 					onChange={ e => setAttributes({ collapse: e }) }
 				/>
-				<ResponsiveControl label={ __( 'Alignment', 'otter-blocks' ) }>
+				<ResponsiveControl
+					label={ __( 'Alignment', 'otter-blocks' ) }
+					className="buttons-alignment-control"
+				>
 					<ButtonGroup>
 						{ alignmentOptions.map( option => {
 							return(
