@@ -38,11 +38,11 @@ const Inspector = ({
 					max={ 100 }
 				/>
 				<RangeControl
-					label={ __( 'Icons Border Badius', 'otter-blocks' ) }
+					label={ __( 'Icons Border Radius', 'otter-blocks' ) }
 					value={ attributes.borderRadius }
 					onChange={ value => setAttributes({ borderRadius: value })}
 					allowReset
-					max={ 100 }
+					max={ 50 }
 				/>
 			</PanelBody>
 			<PanelColorSettings
