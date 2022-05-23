@@ -72,7 +72,7 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				<label
-					ref={labelRef}
+					ref={ labelRef }
 					htmlFor={ attributes.id ? attributes.id + '-input' : '' }
 					className="otter-form-textarea-label"
 				>
@@ -104,9 +104,9 @@ const Edit = ({
 					attributes.helpText && (
 						<span
 							className="o-form-help"
-							ref={helpRef}
+							ref={ helpRef }
 						>
-							{attributes.helpText}
+							{ attributes.helpText }
 						</span>
 					)
 				}

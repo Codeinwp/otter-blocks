@@ -33,8 +33,8 @@ const Form = ({
 					value={ defaults.submitFontSize }
 					onChange={ submitFontSize => setDefaults({ submitFontSize }) }
 					allowReset
-					min={0}
-					max={50}
+					min={ 0 }
+					max={ 50 }
 				/>
 
 				<RangeControl
@@ -42,8 +42,8 @@ const Form = ({
 					value={ defaults.inputsGap || 10 }
 					onChange={ inputsGap => setDefaults({ inputsGap }) }
 					allowReset
-					min={0}
-					max={50}
+					min={ 0 }
+					max={ 50 }
 				/>
 
 				<BoxControl
@@ -61,8 +61,8 @@ const Form = ({
 					value={ defaults.inputGap || 5}
 					onChange={ inputGap => setDefaults({ inputGap }) }
 					allowReset
-					min={0}
-					max={50}
+					min={ 0 }
+					max={ 50 }
 				/>
 
 				<RangeControl
@@ -70,8 +70,8 @@ const Form = ({
 					value={ defaults.inputBorderWidth }
 					onChange={ inputBorderWidth => setDefaults({ inputBorderWidth }) }
 					allowReset
-					min={0}
-					max={50}
+					min={ 0 }
+					max={ 50 }
 				/>
 
 				<RangeControl
@@ -79,8 +79,8 @@ const Form = ({
 					value={ defaults.labelFontSize }
 					onChange={ labelFontSize => setDefaults({ labelFontSize }) }
 					allowReset
-					min={0}
-					max={50}
+					min={ 0 }
+					max={ 50 }
 				/>
 			</PanelBody>
 

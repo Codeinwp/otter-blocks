@@ -1,11 +1,17 @@
+/**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
+ * WordPress dependencies
+ */
+import { __ } from '@wordpress/i18n';
+
 import {
 	InnerBlocks,
 	useBlockProps
 } from '@wordpress/block-editor';
-
-import classnames from 'classnames';
-
-import { __ } from '@wordpress/i18n';
 
 const deprecated = [ {
 	attributes: {

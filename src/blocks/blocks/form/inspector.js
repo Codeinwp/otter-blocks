@@ -3,7 +3,10 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
+import {
+	InspectorControls,
+	PanelColorSettings
+} from '@wordpress/block-editor';
 
 import {
 	Button,
@@ -12,7 +15,6 @@ import {
 	RangeControl,
 	SelectControl,
 	Spinner,
-	Dashicon,
 	TextControl,
 	ToggleControl,
 	TextareaControl,
@@ -24,8 +26,6 @@ import {
 	useState,
 	useContext
 } from '@wordpress/element';
-
-import classnames from 'classnames';
 
 /**
  * Internal dependencies.
@@ -57,7 +57,6 @@ const Inspector = ({
 	attributes,
 	setAttributes
 }) => {
-
 	const {
 		listIDOptions,
 		setListIDOptions,
@@ -70,8 +69,6 @@ const Inspector = ({
 		setFormOption,
 		testService
 	} = useContext( FormContext );
-
-	const [ tab, setTab ] = useState( 'general' );
 
 	const formOptionsChanged = isChanged([
 		[ formOptions.emailTo, savedFormOptions?.email ],
@@ -90,7 +87,6 @@ const Inspector = ({
 
 	return (
 		<InspectorControls>
-
 			<PanelBody
 				title={ __( 'Button', 'otter-blocks' ) }
 				initialOpen={ false }
@@ -113,8 +109,8 @@ const Inspector = ({
 						value={ attributes.submitFontSize }
 						onChange={ submitFontSize => setAttributes({ submitFontSize }) }
 						allowReset
-						min={0}
-						max={50}
+						min={ 0 }
+						max={ 50 }
 					/>
 				</SyncControl>
 
@@ -155,8 +151,8 @@ const Inspector = ({
 						value={ attributes.inputsGap || 10 }
 						onChange={ inputsGap => setAttributes({ inputsGap }) }
 						allowReset
-						min={0}
-						max={50}
+						min={ 0 }
+						max={ 50 }
 					/>
 				</SyncControl>
 
@@ -186,8 +182,8 @@ const Inspector = ({
 						value={ attributes.inputGap || 5}
 						onChange={ inputGap => setAttributes({ inputGap }) }
 						allowReset
-						min={0}
-						max={50}
+						min={ 0 }
+						max={ 50 }
 					/>
 				</SyncControl>
 
@@ -201,8 +197,8 @@ const Inspector = ({
 						value={ attributes.inputBorderRadius }
 						onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
 						allowReset
-						min={0}
-						max={50}
+						min={ 0 }
+						max={ 50 }
 					/>
 				</SyncControl>
 
@@ -216,8 +212,8 @@ const Inspector = ({
 						value={ attributes.inputBorderWidth }
 						onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
 						allowReset
-						min={0}
-						max={50}
+						min={ 0 }
+						max={ 50 }
 					/>
 				</SyncControl>
 
@@ -231,8 +227,8 @@ const Inspector = ({
 						value={ attributes.labelFontSize }
 						onChange={ labelFontSize => setAttributes({ labelFontSize }) }
 						allowReset
-						min={0}
-						max={50}
+						min={ 0 }
+						max={ 50 }
 					/>
 				</SyncControl>
 			</PanelBody>
@@ -292,7 +288,7 @@ const Inspector = ({
 					}
 				</span>
 				<ExternalLink
-					href={'https://www.wpbeginner.com/plugins/how-to-set-up-wp-mail-smtp-with-any-host-ultimate-guide/'}
+					href="https://www.wpbeginner.com/plugins/how-to-set-up-wp-mail-smtp-with-any-host-ultimate-guide/"
 					style={{ marginLeft: '3px' }}
 				>
 					{ __( 'Learn more.', 'otter-blocks' ) }
@@ -369,7 +365,7 @@ const Inspector = ({
 							href={formOptions.redirectLink}
 							style={{ marginBottom: '10px', display: 'block'}}
 						>
-							{__( 'Preview Redirect link.', 'otter-blocks' )}
+							{ __( 'Preview Redirect link.', 'otter-blocks' ) }
 						</ExternalLink>
 					)
 				}
@@ -423,7 +419,7 @@ const Inspector = ({
 								margin: '10px 0px'
 							}}
 						>
-							{__( 'You can change the reCaptcha API Keys in Settings > Otter. ', 'otter-blocks' )}
+							{ __( 'You can change the reCaptcha API Keys in Settings > Otter. ', 'otter-blocks' ) }
 							<ExternalLink
 								href={ 'https://www.google.com/recaptcha/about/' }
 								target="_blank"
@@ -476,22 +472,22 @@ const Inspector = ({
 										{
 											'mailchimp' === formOptions?.provider && (
 												<ExternalLink
-													href={'https://us5.admin.mailchimp.com/account/api/'}
+													href="https://us5.admin.mailchimp.com/account/api/"
 													style={{ marginBottom: '10px', display: 'block'}}
 													target="_blank"
 												>
-													{__( 'Guide to generate the API Key.', 'otter-blocks' )}
+													{ __( 'Guide to generate the API Key.', 'otter-blocks' ) }
 												</ExternalLink>
 											)
 										}
 										{
 											'sendinblue' === formOptions?.provider && (
 												<ExternalLink
-													href={'https://help.sendinblue.com/hc/en-us/articles/209467485-What-s-an-API-key-and-how-can-I-get-mine-'}
+													href="https://help.sendinblue.com/hc/en-us/articles/209467485-What-s-an-API-key-and-how-can-I-get-mine-"
 													style={{ marginBottom: '10px', display: 'block'}}
 													target="_blank"
 												>
-													{__( 'Guide to generate the API Key.', 'otter-blocks' )}
+													{ __( 'Guide to generate the API Key.', 'otter-blocks' ) }
 												</ExternalLink>
 											)
 										}
@@ -534,7 +530,7 @@ const Inspector = ({
 											style={{ marginBottom: '10px', display: 'block'}}
 											href={ 'sendinblue' === formOptions.provider ? 'https://account.sendinblue.com/advanced/api' : 'https://us5.admin.mailchimp.com/account/api/'}
 										>
-														Go to Dashboard.
+											{ __( 'Go to Dashboard.', 'otter-blocks' ) }
 										</ExternalLink>
 									</Fragment>
 								)
@@ -605,13 +601,9 @@ const Inspector = ({
 						isPrimary
 						variant="primary"
 						onClick={ saveIntegration }
-						isBusy={'saving' === loadingState?.formIntegration }
+						isBusy={ 'saving' === loadingState?.formIntegration }
 					>
-						<Fragment>
-							{
-								'saving' === loadingState?.formIntegration ? __( 'Saving', 'otter-blocks' ) : __( 'Save', 'otter-blocks' )
-							}
-						</Fragment>
+						{ 'saving' === loadingState?.formIntegration ? __( 'Saving', 'otter-blocks' ) : __( 'Save', 'otter-blocks' ) }
 					</Button>
 					{
 						attributes.optionName && savedFormOptions?.integration?.provider && savedFormOptions?.integration?.apiKey && savedFormOptions?.integration?.listId && (
@@ -621,11 +613,7 @@ const Inspector = ({
 								onClick={ testService }
 								isBusy={ 'saving' === loadingState?.serviceTesting }
 							>
-								<Fragment>
-									{
-										__( 'Test Service', 'otter-blocks' )
-									}
-								</Fragment>
+								{ __( 'Test Service', 'otter-blocks' ) }
 							</Button>
 						)
 					}
@@ -654,8 +642,6 @@ const Inspector = ({
 					)
 				}
 			</PanelBody>
-
-
 		</InspectorControls>
 	);
 };

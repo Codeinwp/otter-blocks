@@ -5,6 +5,8 @@
  */
 import classnames from 'classnames';
 
+import { get } from 'lodash';
+
 import {
 	css,
 	jsx
@@ -15,9 +17,9 @@ import {
  */
 import { __ } from '@wordpress/i18n';
 
-import { get } from 'lodash';
-
 import api from '@wordpress/api';
+
+import apiFetch from '@wordpress/api-fetch';
 
 import {
 	__experimentalBlockVariationPicker as VariationPicker,
@@ -295,7 +297,7 @@ const Edit = ({
 						setLoading({ formOptions: 'done' });
 						createNotice(
 							'info',
-							__( 'Form Options has been saved!', 'otter-blocks' ),
+							__( 'Form options have been saved.', 'otter-blocks' ),
 							{
 								isDismissible: true,
 								type: 'snackbar'
@@ -398,7 +400,7 @@ const Edit = ({
 		if ( formOptions.apiKey && formOptions.provider ) {
 			t = setTimeout( () => setLoading({ listId: 'timeout' }), 6_000 );
 			setLoading({ listId: 'loading' });
-			window.wp?.apiFetch({
+			apiFetch({
 				path: 'otter/v1/form/editor',
 				method: 'POST',
 				data: {
@@ -429,7 +431,7 @@ const Edit = ({
 						if ( formOptions.listId && ! isCurrentOptionValid ) {
 							createNotice(
 								'error',
-								__( 'The current contact list is invalid! Please choose a new contact list.', 'otter-blocks' ),
+								__( 'The current contact list is invalid. Please choose a new contact list.', 'otter-blocks' ),
 								{
 									isDismissible: true,
 									type: 'snackbar'
@@ -463,7 +465,7 @@ const Edit = ({
 
 
 	const sendTestEmail = () => {
-		wp?.apiFetch({
+		apiFetch({
 			path: 'otter/v1/form/editor',
 			method: 'POST',
 			data: {
@@ -509,7 +511,7 @@ const Edit = ({
 		setLoading({
 			serviceTesting: 'loading'
 		});
-		wp?.apiFetch({
+		apiFetch({
 			path: 'otter/v1/form/editor',
 			method: 'POST',
 			data: {
@@ -601,7 +603,7 @@ const Edit = ({
 
 					createNotice(
 						'info',
-						__( 'Form preference has been saved.', 'otter-blocks' ),
+						__( 'Form preferences have been saved.', 'otter-blocks' ),
 						{
 							isDismissible: true,
 							type: 'snackbar'

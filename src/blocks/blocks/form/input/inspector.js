@@ -3,12 +3,15 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
+import {
+	InspectorControls,
+	PanelColorSettings
+} from '@wordpress/block-editor';
 
 import {
 	PanelBody,
-	TextControl,
 	SelectControl,
+	TextControl,
 	ToggleControl
 } from '@wordpress/components';
 

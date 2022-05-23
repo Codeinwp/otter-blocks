@@ -46,7 +46,7 @@ const Save = ({
 					<span
 						className="o-form-help"
 					>
-						{attributes.helpText}
+						{ attributes.helpText }
 					</span>
 				)
 			}
