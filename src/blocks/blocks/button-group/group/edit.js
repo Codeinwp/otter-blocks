@@ -32,7 +32,6 @@ import {
  * Internal dependencies
  */
 import metadata from './block.json';
-import Controls from './controls.js';
 import Inspector from './inspector.js';
 import { blockInit } from '../../../helpers/block-utility.js';
 
@@ -96,12 +95,13 @@ const Edit = ({
 		isMobile = isPreviewMobile;
 	}
 
-	const justifyContent = {
-		left: 'flex-start',
-		center: 'center',
-		right: 'flex-end',
-		undefined: 'unset'
-	}
+	const alignClasses = [ 'desktop', 'tablet', 'mobile' ].reduce( ( acc, device ) => {
+		if ( 'none' !== attributes.align[ device ] ) {
+			acc.push( `align-${ attributes.align[ device ] }-${ device }` );
+		}
+
+		return acc;
+	}, [] );
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
@@ -109,10 +109,10 @@ const Edit = ({
 			'wp-block-buttons',
 			{
 				'collapse': ( 'collapse-desktop' === attributes.collapse && ( isDesktop || isTablet || isMobile ) ) || ( 'collapse-tablet' === attributes.collapse && ( isTablet || isMobile ) ) || ( 'collapse-mobile' === attributes.collapse && isMobile )
-			}
+			},
+			...alignClasses
 		),
 		css: css`
-		--alignment: ${ justifyContent[ attributes.align[ currentDevice ] ] };
 		.block-editor-block-list__layout {
 			gap: ${ attributes.spacing }px;
 		}
@@ -127,11 +127,6 @@ const Edit = ({
 					weights: attributes.fontVariant && [ `${ attributes.fontVariant + ( 'italic' === attributes.fontStyle ? ':i' : '' ) }` ]
 				} ] } />
 			) }
-
-			<Controls
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-			/>
 
 			<Inspector
 				attributes={ attributes }

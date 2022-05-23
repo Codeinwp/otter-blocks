@@ -1,21 +1,20 @@
 .wp-block-themeisle-blocks-button-group {
 	display: flex;
-	justify-content: var(--alignment);
-
-	&.align-left {
-		justify-content: flex-start;
-	}
-
-	&.align-center {
-		justify-content: center;
-	}
-
-	&.align-right {
-		justify-content: flex-end;
-	}
 
 	&.collapse-desktop {
 		flex-direction: column;
+	}
+
+	&.align-left-desktop {
+		justify-content: flex-start;
+	}
+
+	&.align-center-desktop {
+		justify-content: center;
+	}
+
+	&.align-right-desktop{
+		justify-content: flex-end;
 	}
 }
 
@@ -54,6 +53,18 @@
 		&.collapse-tablet {
 			flex-direction: column;
 		}
+
+		&.align-left-tablet {
+			justify-content: flex-start;
+		}
+
+		&.align-center-tablet {
+			justify-content: center;
+		}
+
+		&.align-right-tablet {
+			justify-content: flex-end;
+		}
 	}
 }
 
@@ -61,6 +72,18 @@
 	.wp-block-themeisle-blocks-button-group {
 		&.collapse-mobile {
 			flex-direction: column;
+		}
+
+		&.align-left-mobile {
+			justify-content: flex-start;
+		}
+
+		&.align-center-mobile {
+			justify-content: center;
+		}
+
+		&.align-right-mobile {
+			justify-content: flex-end;
 		}
 	}
 }

@@ -27,7 +27,6 @@ import {
 import GoogleFontsControl from '../../../components/google-fonts-control/index.js';
 import SizingControl from '../../../components/sizing-control/index.js';
 import ResponsiveControl from "../../../components/responsive-control";
-import { useSelect } from "@wordpress/data";
 
 /**
  *
@@ -80,27 +79,27 @@ const Inspector = ({
 		{
 			value: 'none',
 			icon: alignNone,
-			label: __( 'None', 'otter-blocks' ),
+			label: __( 'None', 'otter-blocks' )
 		},
 		{
 			value: 'left',
 			icon: positionLeft,
-			label: __( 'Align left', 'otter-blocks' ),
+			label: __( 'Align left', 'otter-blocks' )
 		},
 		{
 			value: 'center',
 			icon: positionCenter,
-			label: __( 'Align center', 'otter-blocks' ),
+			label: __( 'Align center', 'otter-blocks' )
 		},
 		{
 			value: 'right',
 			icon: positionRight,
-			label: __( 'Align right', 'otter-blocks' ),
+			label: __( 'Align right', 'otter-blocks' )
 		},
 		{
 			value: 'full',
 			icon: stretchFullWidth,
-			label: __( 'Full width', 'otter-blocks' ),
+			label: __( 'Full width', 'otter-blocks' )
 		}
 	]
 
