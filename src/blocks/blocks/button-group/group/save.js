@@ -16,12 +16,12 @@ const Save = ({
 }) => {
 	const collapseClass = 'collapse-none' !== attributes.collapse ? attributes.collapse : '';
 	const alignClasses = [ 'desktop', 'tablet', 'mobile' ].reduce( ( acc, device ) => {
-		if ( attributes.align[ device ] !== 'none' ) {
+		if ( 'none' !== attributes.align[ device ]) {
 			acc.push( `align-${ attributes.align[ device ] }-${ device }` );
 		}
 
 		return acc;
-	}, [] );
+	}, []);
 
 	const blockProps = useBlockProps.save({
 		id: attributes.id,

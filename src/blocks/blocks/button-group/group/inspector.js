@@ -26,7 +26,7 @@ import {
  */
 import GoogleFontsControl from '../../../components/google-fonts-control/index.js';
 import SizingControl from '../../../components/sizing-control/index.js';
-import ResponsiveControl from "../../../components/responsive-control";
+import ResponsiveControl from '../../../components/responsive-control';
 
 /**
  *
@@ -69,7 +69,7 @@ const Inspector = ({
 			desktop: attributes.align.desktop,
 			tablet: attributes.align.tablet,
 			mobile: attributes.align.mobile
-		}
+		};
 
 		newValue[ currentDevice ] = value;
 		setAttributes({ align: newValue });
@@ -101,7 +101,7 @@ const Inspector = ({
 			icon: stretchFullWidth,
 			label: __( 'Full width', 'otter-blocks' )
 		}
-	]
+	];
 
 	return (
 		<InspectorControls>
@@ -162,7 +162,7 @@ const Inspector = ({
 				>
 					<ButtonGroup>
 						{ alignmentOptions.map( option => {
-							return(
+							return (
 								<Button
 									key={ option.value }
 									icon={ option.icon }
