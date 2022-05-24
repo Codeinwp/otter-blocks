@@ -34,6 +34,14 @@ const options = {
 			{
 				label: __( 'Post Custom Field', 'otter-blocks' ),
 				value: 'postMeta'
+			},
+			{
+				label: __( 'Post Type', 'otter-blocks' ),
+				value: 'postType'
+			},
+			{
+				label: __( 'Post Status', 'otter-blocks' ),
+				value: 'postStatus'
 			}
 		]
 	},
@@ -91,6 +99,14 @@ const options = {
 	'misc': {
 		label: __( 'Miscellaneous', 'otter-blocks' ),
 		options: [
+			{
+				label: __( 'Archive Title', 'otter-blocks' ),
+				value: 'archiveTitle'
+			},
+			{
+				label: __( 'Archive Description', 'otter-blocks' ),
+				value: 'archiveDescription'
+			},
 			{
 				label: __( 'Current Date', 'otter-blocks' ),
 				value: 'date'

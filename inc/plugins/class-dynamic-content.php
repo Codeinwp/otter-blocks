@@ -120,6 +120,14 @@ class Dynamic_Content {
 			return $this->get_post_meta( $data );
 		}
 
+		if ( 'postType' === $data['type'] ) {
+			return get_post_type();
+		}
+
+		if ( 'postStatus' === $data['type'] ) {
+			return get_post_status();
+		}
+
 		if ( 'siteTitle' === $data['type'] ) {
 			return get_bloginfo( 'name' );
 		}
@@ -154,6 +162,22 @@ class Dynamic_Content {
 
 		if ( 'loggedInUserMeta' === $data['type'] ) {
 			return $this->get_loggedin_meta( $data );
+		}
+
+		if ( 'archiveTitle' === $data['type'] ) {
+			return get_the_archive_title();
+		}
+
+		if ( 'archiveDescription' === $data['type'] ) {
+			return $this->get_archive_description( $data );
+		}
+
+		if ( 'date' === $data['type'] ) {
+			return $this->get_current_date( $data );
+		}
+
+		if ( 'time' === $data['type'] ) {
+			return $this->get_current_time( $data );
 		}
 
 		return $data[0];
@@ -374,6 +398,70 @@ class Dynamic_Content {
 		}
 
 		return esc_html( $meta );
+	}
+
+	/**
+	 * Get Archive Description.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_archive_description( $data ) {
+		$description = get_the_archive_description();
+
+		if ( empty( $description ) ) {
+			$default     = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
+			$description = $default;
+		}
+
+		return $description;
+	}
+
+	/**
+	 * Get Current Date.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_current_date( $data ) {
+		$format = get_option( 'date_format' );
+
+		if ( isset( $data['dateFormat'] ) && ! empty( $data['dateFormat'] ) && 'default' !== $data['dateFormat'] && 'custom' !== $data['dateFormat'] ) {
+			$format = esc_html( $data['dateFormat'] );
+		}
+
+		if ( isset( $data['dateCustom'] ) && ! empty( $data['dateCustom'] ) && isset( $data['dateFormat'] ) && 'custom' === $data['dateFormat'] ) {
+			$format = esc_html( $data['dateCustom'] );
+		}
+
+		$date = date( $format );
+
+		return $date;
+	}
+
+	/**
+	 * Get Current Date.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_current_time( $data ) {
+		$format = get_option( 'time_format' );
+
+		if ( isset( $data['timeFormat'] ) && ! empty( $data['timeFormat'] ) && 'default' !== $data['timeFormat'] && 'custom' !== $data['timeFormat'] ) {
+			$format = esc_html( $data['timeFormat'] );
+		}
+
+		if ( isset( $data['timeCustom'] ) && ! empty( $data['timeCustom'] ) && isset( $data['timeFormat'] ) && 'custom' === $data['timeFormat'] ) {
+			$format = esc_html( $data['timeCustom'] );
+		}
+
+		$time = date( $format );
+
+		return $time;
 	}
 
 	/**
