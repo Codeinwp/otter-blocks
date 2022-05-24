@@ -136,8 +136,18 @@ class Form_Server {
 				array(
 					'methods'             => WP_REST_Server::CREATABLE,
 					'callback'            => array( $this, 'frontend' ),
-					'permission_callback' => function () {
-						return __return_true();
+					'permission_callback' => function ( $request ) {
+						$nonces = $request->get_header_as_array( 'X-WP-Nonce' );
+						if(
+							isset( $nonces )
+						) {
+							foreach ( $nonces as $nonce ) {
+								if( wp_verify_nonce( $nonce, 'wp_rest' ) ) {
+									return __return_true();
+								}
+							}
+						}
+						return __return_false();
 					},
 				),
 			)
