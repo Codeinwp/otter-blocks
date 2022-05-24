@@ -149,6 +149,8 @@ class Form_Email {
 	}
 
 	/**
+	 * Build the error email.
+	 *
 	 * @param string            $error The error message.
 	 * @param Form_Data_Request $form_data The form request data.
 	 * @return false|string

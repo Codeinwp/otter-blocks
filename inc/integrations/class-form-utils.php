@@ -42,6 +42,9 @@ class Form_Utils {
 			'ten',
 		);
 
-		return 'Otter-Form-successfully-connected.delete-on-confirmation' . '.' . $words[ rand( 0, count( $words ) ) ] . '.' . $words[ rand( 0, count( $words ) ) ] . '.' . $words[ rand( 2, count( $words ) ) - 1 ] . '@otter-blocks.com';
+		$name_1 = $words[ wp_rand( 0, count( $words ) ) ];
+		$name_2 = $words[ wp_rand( 2, count( $words ) ) - 1 ];
+
+		return "Otter-Form-successfully-connected.delete-on-confirmation.$name_1.$name_2@otter-blocks.com";
 	}
 }
