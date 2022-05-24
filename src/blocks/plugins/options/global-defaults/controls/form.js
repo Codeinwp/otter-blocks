@@ -10,7 +10,7 @@ import {
 import {
 	PanelBody,
 	RangeControl,
-	__experimentalBoxControl as BoxControl
+	__experimentalBoxControl as BoxControl, FontSizePicker
 } from '@wordpress/components';
 
 import { Fragment } from '@wordpress/element';
@@ -25,65 +25,6 @@ const Form = ({
 
 	return (
 		<Fragment>
-			<PanelBody
-				title={ __( 'Setting', 'otter-blocks' )}
-			>
-				<RangeControl
-					label={ __( 'Button Font Size', 'otter-blocks' ) }
-					value={ defaults.submitFontSize }
-					onChange={ submitFontSize => setDefaults({ submitFontSize }) }
-					allowReset
-					min={0}
-					max={50}
-				/>
-
-				<RangeControl
-					label={ __( 'Fields Spacing', 'otter-blocks' ) }
-					value={ defaults.inputsGap || 10 }
-					onChange={ inputsGap => setDefaults({ inputsGap }) }
-					allowReset
-					min={0}
-					max={50}
-				/>
-
-				<BoxControl
-					label={ __( 'Input Padding', 'otter-blocks' ) }
-					values={ defaults.inputPadding }
-					inputProps={ {
-						min: 0,
-						max: 500
-					} }
-					onChange={ inputPadding => setDefaults({ inputPadding }) }
-				/>
-
-				<RangeControl
-					label={ __( 'Label Spacing', 'otter-blocks' ) }
-					value={ defaults.inputGap || 5}
-					onChange={ inputGap => setDefaults({ inputGap }) }
-					allowReset
-					min={0}
-					max={50}
-				/>
-
-				<RangeControl
-					label={ __( 'Border Width', 'otter-blocks' ) }
-					value={ defaults.inputBorderWidth }
-					onChange={ inputBorderWidth => setDefaults({ inputBorderWidth }) }
-					allowReset
-					min={0}
-					max={50}
-				/>
-
-				<RangeControl
-					label={ __( 'Label Font Size', 'otter-blocks' ) }
-					value={ defaults.labelFontSize }
-					onChange={ labelFontSize => setDefaults({ labelFontSize }) }
-					allowReset
-					min={0}
-					max={50}
-				/>
-			</PanelBody>
-
 			<PanelColorSettings
 				title={ __( 'Color', 'otter-blocks' ) }
 				initialOpen={ false }
@@ -126,6 +67,110 @@ const Form = ({
 				] }
 			>
 			</PanelColorSettings>
+
+			<PanelBody
+				title={ __( 'Label Styling', 'otter-blocks' )}
+				initialOpen={false}
+			>
+
+				<RangeControl
+					label={ __( 'Spacing', 'otter-blocks' ) }
+					value={ defaults.inputGap}
+					onChange={ inputGap => setDefaults({ inputGap }) }
+					allowReset
+					min={0}
+					max={50}
+					initialPosition={5}
+				/>
+
+				<FontSizePicker
+					label={ __( 'Font Size', 'otter-blocks' ) }
+					fontSizes={[
+						{
+							name: 'Small',
+							size: 12,
+							slug: 'small'
+						},
+						{
+							name: 'Normal',
+							size: 16,
+							slug: 'normal'
+						},
+						{
+							name: 'Big',
+							size: 26,
+							slug: 'big'
+						}
+					]}
+					withReset
+					value={defaults.labelFontSize}
+					onChange={ labelFontSize =>  setDefaults({labelFontSize}) }
+				/>
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Input Styling', 'otter-blocks' )}
+				initialOpen={false}
+			>
+
+				<RangeControl
+					label={ __( 'Spacing', 'otter-blocks' ) }
+					value={ defaults.inputsGap }
+					onChange={ inputsGap => setDefaults({ inputsGap }) }
+					allowReset
+					min={0}
+					max={50}
+					initialPosition={10}
+				/>
+
+				<BoxControl
+					label={ __( 'Input Padding', 'otter-blocks' ) }
+					values={ defaults.inputPadding }
+					inputProps={ {
+						min: 0,
+						max: 500
+					} }
+					onChange={ inputPadding => setDefaults({ inputPadding }) }
+				/>
+
+				<RangeControl
+					label={ __( 'Border Width', 'otter-blocks' ) }
+					value={ defaults.inputBorderWidth }
+					onChange={ inputBorderWidth => setDefaults({ inputBorderWidth }) }
+					allowReset
+					min={0}
+					max={50}
+				/>
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Button', 'otter-blocks' )}
+				initialOpen={false}
+			>
+				<FontSizePicker
+					label={ __( 'Font Size', 'otter-blocks' ) }
+					fontSizes={[
+						{
+							name: 'Small',
+							size: 12,
+							slug: 'small'
+						},
+						{
+							name: 'Normal',
+							size: 16,
+							slug: 'normal'
+						},
+						{
+							name: 'Big',
+							size: 26,
+							slug: 'big'
+						}
+					]}
+					withReset
+					value={defaults.submitFontSize}
+					onChange={ submitFontSize => setDefaults({ submitFontSize }) }
+				/>
+			</PanelBody>
 		</Fragment>
 	);
 };

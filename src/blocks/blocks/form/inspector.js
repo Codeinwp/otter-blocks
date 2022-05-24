@@ -16,7 +16,8 @@ import {
 	TextControl,
 	ToggleControl,
 	TextareaControl,
-	__experimentalBoxControl as BoxControl
+	__experimentalBoxControl as BoxControl,
+	FontSizePicker
 } from '@wordpress/components';
 
 import {
@@ -71,8 +72,6 @@ const Inspector = ({
 		testService
 	} = useContext( FormContext );
 
-	const [ tab, setTab ] = useState( 'general' );
-
 	const formOptionsChanged = isChanged([
 		[ formOptions.emailTo, savedFormOptions?.email ],
 		[ formOptions.subject, savedFormOptions?.emailSubject ],
@@ -91,151 +90,6 @@ const Inspector = ({
 	return (
 		<InspectorControls>
 
-			<PanelBody
-				title={ __( 'Button', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				<TextControl
-					label={ __( 'Label', 'otter-blocks' ) }
-					placeholder={ __( 'Submit', 'otter-blocks' ) }
-					value={ attributes.submitLabel }
-					onChange={ submitLabel => setAttributes({ submitLabel }) }
-					help={ __( 'Set the label for the submit button.', 'otter-blocks' ) }
-				/>
-
-				<SyncControl
-					field={ 'submitFontSize' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Font Size', 'otter-blocks' ) }
-						value={ attributes.submitFontSize }
-						onChange={ submitFontSize => setAttributes({ submitFontSize }) }
-						allowReset
-						min={0}
-						max={50}
-					/>
-				</SyncControl>
-
-				<SelectControl
-					label={ __( 'Style', 'otter-blocks' ) }
-					value={ attributes.submitStyle }
-					options={[
-						{
-							label: 'Default',
-							value: ''
-						},
-						{
-							label: 'Right',
-							value: 'right'
-						},
-						{
-							label: 'Full',
-							value: 'full'
-						}
-					]}
-					onChange={ submitStyle => setAttributes({ submitStyle}) }
-				/>
-
-
-			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Input Styling', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				<SyncControl
-					field={ 'inputsGap' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Fields Spacing', 'otter-blocks' ) }
-						value={ attributes.inputsGap || 10 }
-						onChange={ inputsGap => setAttributes({ inputsGap }) }
-						allowReset
-						min={0}
-						max={50}
-					/>
-				</SyncControl>
-
-				<SyncControl
-					field={ 'inputPadding' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<BoxControl
-						label={ __( 'Input Padding', 'otter-blocks' ) }
-						values={ attributes.inputPadding }
-						inputProps={ {
-							min: 0,
-							max: 500
-						} }
-						onChange={ inputPadding => setAttributes({ inputPadding }) }
-					/>
-				</SyncControl>
-
-				<SyncControl
-					field={ 'inputGap' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Label Spacing', 'otter-blocks' ) }
-						value={ attributes.inputGap || 5}
-						onChange={ inputGap => setAttributes({ inputGap }) }
-						allowReset
-						min={0}
-						max={50}
-					/>
-				</SyncControl>
-
-				<SyncControl
-					field={ 'inputsBorderRadius' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Border Radius', 'otter-blocks' ) }
-						value={ attributes.inputBorderRadius }
-						onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
-						allowReset
-						min={0}
-						max={50}
-					/>
-				</SyncControl>
-
-				<SyncControl
-					field={ 'inputsBorderWidth' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Border Width', 'otter-blocks' ) }
-						value={ attributes.inputBorderWidth }
-						onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
-						allowReset
-						min={0}
-						max={50}
-					/>
-				</SyncControl>
-
-				<SyncControl
-					field={ 'labelFontSize' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Label Font Size', 'otter-blocks' ) }
-						value={ attributes.labelFontSize }
-						onChange={ labelFontSize => setAttributes({ labelFontSize }) }
-						allowReset
-						min={0}
-						max={50}
-					/>
-				</SyncControl>
-			</PanelBody>
 			<PanelColorSettings
 				title={ __( 'Color', 'otter-blocks' ) }
 				initialOpen={ false }
@@ -282,30 +136,189 @@ const Inspector = ({
 					}
 				] }
 			/>
+
 			<PanelBody
-				title={ __( 'Test Email', 'otter-blocks' ) }
+				title={ __( 'Label Styling', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<span>
-					{
-						__( 'In order for the Form to work properly, make sure your SMTP plugin is set up.', 'otter-blocks' )
-					}
-				</span>
-				<ExternalLink
-					href={'https://www.wpbeginner.com/plugins/how-to-set-up-wp-mail-smtp-with-any-host-ultimate-guide/'}
-					style={{ marginLeft: '3px' }}
+				<SyncControl
+					field={ 'inputGap' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
 				>
-					{ __( 'Learn more.', 'otter-blocks' ) }
-				</ExternalLink>
-				<br/>
-				<Button
-					variant="primary"
-					isPrimary
-					style={{ marginTop: '8px'}}
-					onClick={ sendTestEmail }
+					<RangeControl
+						label={ __( 'Spacing', 'otter-blocks' ) }
+						value={ attributes.inputGap }
+						onChange={ inputGap => setAttributes({ inputGap }) }
+						allowReset
+						min={0}
+						max={50}
+						initialPositino={5}
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field={ 'labelFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
 				>
-					{ __( 'Send Test Email', 'otter-blocks' )  }
-				</Button>
+					<FontSizePicker
+						label={ __( 'Font Size', 'otter-blocks' ) }
+						fontSizes={[
+							{
+								name: 'Small',
+								size: 12,
+								slug: 'small'
+							},
+							{
+								name: 'Normal',
+								size: 16,
+								slug: 'normal'
+							},
+							{
+								name: 'Big',
+								size: 26,
+								slug: 'big'
+							}
+						]}
+						withReset
+						value={attributes.labelFontSize}
+						onChange={ labelFontSize =>  setAttributes({labelFontSize}) }
+					/>
+				</SyncControl>
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Input Styling', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<SyncControl
+					field={ 'inputsGap' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Fields Spacing', 'otter-blocks' ) }
+						value={ attributes.inputsGap }
+						onChange={ inputsGap => setAttributes({ inputsGap }) }
+						allowReset
+						min={0}
+						max={50}
+						initialPosition={10}
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field={ 'inputPadding' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<BoxControl
+						label={ __( 'Input Padding', 'otter-blocks' ) }
+						values={ attributes.inputPadding }
+						inputProps={ {
+							min: 0,
+							max: 500
+						} }
+						onChange={ inputPadding => setAttributes({ inputPadding }) }
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field={ 'inputsBorderRadius' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Border Radius', 'otter-blocks' ) }
+						value={ attributes.inputBorderRadius }
+						onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
+						allowReset
+						min={0}
+						max={50}
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field={ 'inputsBorderWidth' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Border Width', 'otter-blocks' ) }
+						value={ attributes.inputBorderWidth }
+						onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
+						allowReset
+						min={0}
+						max={50}
+					/>
+				</SyncControl>
+
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Button', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<TextControl
+					label={ __( 'Label', 'otter-blocks' ) }
+					placeholder={ __( 'Submit', 'otter-blocks' ) }
+					value={ attributes.submitLabel }
+					onChange={ submitLabel => setAttributes({ submitLabel }) }
+					help={ __( 'Set the label for the submit button.', 'otter-blocks' ) }
+				/>
+
+				<SyncControl
+					field={ 'submitFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<FontSizePicker
+						label={ __( 'Font Size', 'otter-blocks' ) }
+						fontSizes={[
+							{
+								name: 'Small',
+								size: 18,
+								slug: 'small'
+							},
+							{
+								name: 'Normal',
+								size: 24,
+								slug: 'normal'
+							},
+							{
+								name: 'Big',
+								size: 32,
+								slug: 'big'
+							}
+						]}
+						withReset
+						value={attributes.submitFontSize}
+						onChange={submitFontSize =>  setAttributes({ submitFontSize }) }
+					/>
+				</SyncControl>
+
+				<SelectControl
+					label={ __( 'Style', 'otter-blocks' ) }
+					value={ attributes.submitStyle }
+					options={[
+						{
+							label: 'Default',
+							value: ''
+						},
+						{
+							label: 'Right',
+							value: 'right'
+						},
+						{
+							label: 'Full',
+							value: 'full'
+						}
+					]}
+					onChange={ submitStyle => setAttributes({ submitStyle}) }
+				/>
+
+
 			</PanelBody>
 
 
@@ -405,6 +418,32 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelBody
+				title={ __( 'Test Email', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<span>
+					{
+						__( 'In order for the Form to work properly, make sure your SMTP plugin is set up.', 'otter-blocks' )
+					}
+				</span>
+				<ExternalLink
+					href={'https://www.wpbeginner.com/plugins/how-to-set-up-wp-mail-smtp-with-any-host-ultimate-guide/'}
+					style={{ marginLeft: '3px' }}
+				>
+					{ __( 'Learn more.', 'otter-blocks' ) }
+				</ExternalLink>
+				<br/>
+				<Button
+					variant="primary"
+					isPrimary
+					style={{ marginTop: '8px'}}
+					onClick={ sendTestEmail }
+				>
+					{ __( 'Send Test Email', 'otter-blocks' )  }
+				</Button>
+			</PanelBody>
+
+			<PanelBody
 				title={ __( 'Bot Protection', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
@@ -437,7 +476,7 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Integration', 'otter-blocks' ) }
+				title={ __( 'Marketing Integration', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
 				{
