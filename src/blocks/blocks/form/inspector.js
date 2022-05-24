@@ -35,8 +35,6 @@ import { FormContext } from './edit.js';
 import SyncControl from '../../components/sync-control';
 
 const compare = x => {
-
-	// console.log(x, x[0] !== x[1]); TODO: remove after testing
 	return x?.[1] && x[0] !== x[1];
 };
 

@@ -362,7 +362,6 @@ const Edit = ({
 				});
 
 				model.save().then( response => {
-					console.log( response.themeisle_blocks_form_emails );
 					const formOptions = extractDataFromWpOptions( response.themeisle_blocks_form_emails );
 					if ( formOptions ) {
 						parseDataFormOptions( formOptions );
