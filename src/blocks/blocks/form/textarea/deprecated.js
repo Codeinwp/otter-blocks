@@ -1,11 +1,12 @@
-import {
-	RichText,
-	useBlockProps
-} from '@wordpress/block-editor';
-
-import classnames from 'classnames';
-
+/**
+ * WordPress dependencies
+ */
 import { __ } from '@wordpress/i18n';
+
+import {
+	useBlockProps,
+	RichText
+} from '@wordpress/block-editor';
 
 const deprecated = [ {
 	attributes: {
@@ -16,16 +17,16 @@ const deprecated = [ {
 			type: 'string',
 			default: 'text'
 		},
-		'label': {
+		label: {
 			'type': 'string'
 		},
-		'placeholder': {
+		placeholder: {
 			'type': 'string'
 		},
-		'isRequired': {
+		isRequired: {
 			'type': 'boolean'
 		},
-		'mappedName': {
+		mappedName: {
 			'type': 'string'
 		}
 	},

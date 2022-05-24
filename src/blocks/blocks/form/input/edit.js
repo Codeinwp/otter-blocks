@@ -72,7 +72,7 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				<label
-					ref={labelRef}
+					ref={ labelRef }
 					htmlFor={ attributes.id }
 					className="otter-form-input-label"
 				>
@@ -103,9 +103,9 @@ const Edit = ({
 					attributes.helpText && (
 						<span
 							className="o-form-help"
-							ref={helpRef}
+							ref={ helpRef }
 						>
-							{attributes.helpText}
+							{ attributes.helpText }
 						</span>
 					)
 				}
