@@ -191,13 +191,13 @@ class Form_Data_Response {
 	 * @since 2.0.3
 	 */
 	public function is_credential_error() {
-		 return $this->is_credential_error;
+		return $this->is_credential_error;
 	}
 
 	/**
 	 * Mark that the error is caused by invalid credentials.
 	 *
-	 * @param bool $is_credential_error
+	 * @param bool $is_credential_error Is credential error.
 	 * @return $this
 	 * @since 2.0.3
 	 */

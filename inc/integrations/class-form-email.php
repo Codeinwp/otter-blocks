@@ -65,8 +65,8 @@ class Form_Email {
 	/**
 	 * Create the email content.
 	 *
-	 * @param $form_data The form request data.
-	 * @return false|string
+	 * @param Form_Data_Request $form_data The form request data.
+	 * @return string
 	 * @since 2.0.3
 	 */
 	public function build_email( $form_data ) {
@@ -115,13 +115,13 @@ class Form_Email {
 	 * @since 2.0.3
 	 */
 	public function build_body( $form_data ) {
-		$emailFormContent = $form_data->get_form_inputs();
+		$email_form_content = $form_data->get_form_inputs();
 		ob_start();
 		?>
 		<table>
 		<tbody>
 		<?php
-		foreach ( $emailFormContent as $input ) {
+		foreach ( $email_form_content as $input ) {
 			?>
 			<tr>
 				<td>
@@ -164,7 +164,7 @@ class Form_Email {
 			<!-- view port meta tag -->
 			<meta name="viewport" content="width=device-width, initial-scale=1">
 			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-			<title><?php echo esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ); ?></title>
+			<title><?php echo esc_html( esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ) ); ?></title>
 		</head>
 		<body>
 		<?php
@@ -220,11 +220,11 @@ class Form_Email {
 			<!-- view port meta tag -->
 			<meta name="viewport" content="width=device-width, initial-scale=1">
 			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-			<title><?php echo esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ); ?></title>
+			<title><?php echo esc_html( esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ) ); ?></title>
 		</head>
 		<body>
 		<?php
-			esc_html_e( 'This a test email. If you receive this email, your SMTP set-up is working for sending emails via Form Block.' );
+			esc_html_e( 'This a test email. If you receive this email, your SMTP set-up is working for sending emails via Form Block.', 'otter-blocks' );
 		?>
 		</body>
 		</html>

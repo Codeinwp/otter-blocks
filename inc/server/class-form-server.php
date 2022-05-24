@@ -138,9 +138,7 @@ class Form_Server {
 					'callback'            => array( $this, 'frontend' ),
 					'permission_callback' => function ( $request ) {
 						$nonces = $request->get_header_as_array( 'X-WP-Nonce' );
-						if(
-							isset( $nonces )
-						) {
+						if( isset( $nonces ) ) {
 							foreach ( $nonces as $nonce ) {
 								if( wp_verify_nonce( $nonce, 'wp_rest' ) ) {
 									return __return_true();
@@ -535,7 +533,7 @@ class Form_Server {
 				$res->set_reasons( $issues );
 			}
 		} catch ( Exception $e ) {
-			$res->set_error( __( 'Server error!' ) );
+			$res->set_error( __( 'Server error!', 'otter-blocks' ) );
 			$this->send_error_email( $e->getMessage(), $form_data );
 		} finally {
 			// Handle the case when the credential are no longer valid.

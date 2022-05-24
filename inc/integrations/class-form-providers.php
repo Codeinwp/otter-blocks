@@ -24,7 +24,9 @@ class Form_Providers {
 	public static $instance = null;
 
 	/**
-	 * @var array List of provider and their actions when a form is submitted.
+	 * List of provider and their actions when a form is submitted.
+	 *
+	 * @var array
 	 */
 	public $providers = array();
 
@@ -114,6 +116,8 @@ class Form_Providers {
 	}
 
 	/**
+	 * Check if provider has handler.
+	 *
 	 * @param array  $provider The name of the provider.
 	 * @param string $handler The name of the handler.
 	 * @return bool

@@ -205,7 +205,7 @@ class Form_Settings_Data {
 	/**
 	 * Set the API Key.
 	 *
-	 * @param $api_key The API Key.
+	 * @param string $api_key The API Key.
 	 * @return $this
 	 * @since 2.0.3
 	 */
@@ -241,7 +241,7 @@ class Form_Settings_Data {
 	/**
 	 * Set the meta.
 	 *
-	 * @param string $meta The metadata.
+	 * @param array $meta The metadata.
 	 *
 	 * @return $this
 	 * @since 2.0.3

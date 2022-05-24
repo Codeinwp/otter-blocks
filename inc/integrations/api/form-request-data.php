@@ -55,7 +55,7 @@ class Form_Data_Request {
 	/**
 	 * Set the form options.
 	 *
-	 * @param Form_Settings_Data $form_options
+	 * @param Form_Settings_Data $form_options The form option.
 	 * @return void
 	 * @since 2.0.3
 	 */
@@ -109,7 +109,7 @@ class Form_Data_Request {
 	/**
 	 * Change the provider.
 	 *
-	 * @param $provider The new provider.
+	 * @param string $provider The new provider.
 	 * @return void
 	 * @since 2.0.3
 	 */
@@ -154,7 +154,7 @@ class Form_Data_Request {
 	 */
 	public function are_payload_fields_set( $fields_name ) {
 		foreach ( $fields_name as $field_name ) {
-			if ( ! isset( $this->request_data['payload'][ $field_name ] ) || $this->request_data['payload'][ $field_name ] == '' ) {
+			if ( ! isset( $this->request_data['payload'][ $field_name ] ) || '' === $this->request_data['payload'][ $field_name ] ) {
 				return false;
 			}
 		}
