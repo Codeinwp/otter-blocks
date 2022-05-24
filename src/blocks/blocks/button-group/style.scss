@@ -16,6 +16,15 @@
 	&.align-right-desktop, &.align-right {
 		justify-content: flex-end;
 	}
+
+	&.align-full-desktop {
+		.wp-block-button {
+			flex: 1;
+			.wp-block-button__link {
+				width: 100%;
+			}
+		}
+	}
 }
 
 .wp-block-themeisle-blocks-button {
@@ -65,6 +74,15 @@
 		&.align-right-tablet {
 			justify-content: flex-end;
 		}
+
+		&.align-full-tablet {
+			.wp-block-button {
+				flex: 1;
+				.wp-block-button__link {
+					width: 100%;
+				}
+			}
+		}
 	}
 }
 
@@ -84,6 +102,15 @@
 
 		&.align-right-mobile {
 			justify-content: flex-end;
+		}
+
+		&.align-full-tablet {
+			.wp-block-button {
+				flex: 1;
+				.wp-block-button__link {
+					width: 100%;
+				}
+			}
 		}
 	}
 }

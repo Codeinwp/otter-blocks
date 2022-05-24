@@ -76,3 +76,9 @@
 .buttons-alignment-control .components-button-group .components-button.has-icon {
 	padding: 6px 12px;
 }
+
+.wp-block-themeisle-blocks-button-group.align-full-desktop {
+	.block-editor-inner-blocks {
+		flex: 1;
+	}
+}
