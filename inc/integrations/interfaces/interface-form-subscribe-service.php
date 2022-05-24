@@ -1,4 +1,9 @@
 <?php
+/**
+ * Interface for Form Subscribe service.
+ *
+ * @package ThemeIsle
+ */
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 

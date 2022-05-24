@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class for Form Email.
+ *
+ * @package ThemeIsle
+ */
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
@@ -83,7 +88,7 @@ class Form_Email {
 		</body>
 		</html>
 		<?php
-		return ob_get_clean();
+		return esc_html( ob_get_clean() );
 	}
 
 	/**
@@ -92,7 +97,7 @@ class Form_Email {
 	 * @since 2.0.3
 	 */
 	public function build_head() {
-		ob_start(); 
+		ob_start();
 		?>
 		<h3>
 			<?php esc_html_e( 'Content Form submission from ', 'otter-blocks' ); ?>
@@ -100,7 +105,7 @@ class Form_Email {
 		</h3>
 		<hr/>
 		<?php
-		echo ob_get_clean();
+		echo esc_html( ob_get_clean() );
 	}
 
 	/**
@@ -111,7 +116,7 @@ class Form_Email {
 	 */
 	public function build_body( $form_data ) {
 		$emailFormContent = $form_data->get_form_inputs();
-		ob_start(); 
+		ob_start();
 		?>
 		<table>
 		<tbody>
@@ -140,7 +145,7 @@ class Form_Email {
 			</tfoot>
 		</table>
 		<?php
-		echo ob_get_clean();
+		echo esc_html( ob_get_clean() );
 	}
 
 	/**
@@ -150,7 +155,7 @@ class Form_Email {
 	 * @since 2.0.3
 	 */
 	public function build_error_email( $error, $form_data ) {
-		ob_start(); 
+		ob_start();
 		?>
 		<!doctype html>
 		<html xmlns="http://www.w3.org/1999/xhtml">
@@ -176,7 +181,7 @@ class Form_Email {
 		</body>
 		</html>
 		<?php
-		return ob_get_clean();
+		return esc_html( ob_get_clean() );
 	}
 
 	/**
@@ -186,7 +191,7 @@ class Form_Email {
 	 * @since 2.0.3
 	 */
 	public function build_error_body( $error ) {
-		ob_start();  
+		ob_start();
 		?>
 		<h3><?php esc_html_e( 'An error has occurred when a user submitted the form.', 'otter-blocks' ); ?></h3>
 		<div style="padding: 10px;">
@@ -196,7 +201,7 @@ class Form_Email {
 			<p> <?php esc_html_e( 'Please check your Form credential from the email provider.', 'otter-blocks' ); ?></p>
 		</div>
 		<?php
-		echo ob_get_clean();
+		echo esc_html( ob_get_clean() );
 	}
 
 	/**
@@ -206,7 +211,7 @@ class Form_Email {
 	 * @since 2.0.3
 	 */
 	public function build_test_email() {
-		ob_start(); 
+		ob_start();
 		?>
 		<!doctype html>
 		<html xmlns="http://www.w3.org/1999/xhtml">
@@ -224,7 +229,7 @@ class Form_Email {
 		</body>
 		</html>
 		<?php
-		return ob_get_clean();
+		return esc_html( ob_get_clean() );
 	}
 
 

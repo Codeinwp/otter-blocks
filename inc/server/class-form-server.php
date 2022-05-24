@@ -77,7 +77,7 @@ class Form_Server {
 		/**
 		 * Register email providers that can be used to send emails or subscribe to a service.
 		 */
-		$defaultProvider = array(
+		$default_provider = array(
 			'frontend' => array(
 				'submit' => array( $this, 'send_default_email' ),
 			),
@@ -88,7 +88,7 @@ class Form_Server {
 		);
 
 		// Register 3rd party email providers.
-		$sendinblueProvider = array(
+		$sendinblue_provider = array(
 			'frontend' => array(
 				'submit' => array( $this, 'subscribe_to_service' ),
 			),
@@ -97,7 +97,7 @@ class Form_Server {
 				'testEmail' => array( $this, 'test_subscription_service' ),
 			),
 		);
-		$mailchimpProvider  = array(
+		$mailchimp_provider  = array(
 			'frontend' => array(
 				'submit' => array( $this, 'subscribe_to_service' ),
 			),
@@ -110,9 +110,9 @@ class Form_Server {
 		do_action(
 			'otter_register_form_providers',
 			array(
-				'default'    => $defaultProvider,
-				'sendinblue' => $sendinblueProvider,
-				'mailchimp'  => $mailchimpProvider,
+				'default'    => $default_provider,
+				'sendinblue' => $sendinblue_provider,
+				'mailchimp'  => $mailchimp_provider,
 			)
 		);
 
@@ -286,7 +286,7 @@ class Form_Server {
 				$form_emails = get_option( 'themeisle_blocks_form_emails' );
 
 				foreach ( $form_emails as $form ) {
-					if ( isset( $form['form'] ) && $form['form'] === $option_name && isset( $form['email'] ) && $form['email'] !== '' ) {
+					if ( isset( $form['form'] ) && $form['form'] === $option_name && isset( $form['email'] ) && '' !== $form['email'] ) {
 						$to = sanitize_email( $form['email'] );
 					}
 				}
@@ -555,14 +555,14 @@ class Form_Server {
 	 * @since 2.0.0
 	 */
 	public function has_required_data( $data ) {
-		$mainFieldsSet = $data->are_fields_set(
+		$main_fields_set = $data->are_fields_set(
 			array(
 				'handler',
 				'payload',
 			)
 		);
 
-		$requiredPayloadFields = $data->are_payload_fields_set(
+		$required_payload_fields = $data->are_payload_fields_set(
 			array(
 				'nonceValue',
 				'postUrl',
@@ -571,9 +571,9 @@ class Form_Server {
 			)
 		);
 
-		$isNonceValid = wp_verify_nonce( $data->get_payload_field( 'nonceValue' ), 'form-verification' );
+		$is_nonce_valid = wp_verify_nonce( $data->get_payload_field( 'nonceValue' ), 'form-verification' );
 
-		return $mainFieldsSet && $requiredPayloadFields && $isNonceValid;
+		return $main_fields_set && $required_payload_fields && $is_nonce_valid;
 	}
 
 	/**
@@ -679,6 +679,25 @@ class Form_Server {
 	}
 
 	/**
+	 * Get the first email from the input's form.
+	 *
+	 * @param Form_Data_Request $data The form data.
+	 * @return mixed|string
+	 * @since 2.0.3
+	 */
+	private function get_email_from_form_input( Form_Data_Request $data ) {
+		$inputs = $data->get_payload_field( 'formInputsData' );
+		if ( is_array( $inputs ) ) {
+			foreach ( $data->get_payload_field( 'formInputsData' ) as $input_field ) {
+				if ( 'email' == $input_field['type'] ) {
+					return $input_field['value'];
+				}
+			}
+		}
+		return '';
+	}
+
+	/**
 	 * Throw error on object clone
 	 *
 	 * The whole idea of the singleton design pattern is that there is a single
@@ -703,24 +722,5 @@ class Form_Server {
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
 		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
-	}
-
-	/**
-	 * Get the first email from the input's form.
-	 *
-	 * @param Form_Data_Request $data
-	 * @return mixed|string
-	 * @since 2.0.3
-	 */
-	private function get_email_from_form_input( Form_Data_Request $data ) {
-		$inputs = $data->get_payload_field( 'formInputsData' );
-		if ( is_array( $inputs ) ) {
-			foreach ( $data->get_payload_field( 'formInputsData' ) as $input_field ) {
-				if ( 'email' == $input_field['type'] ) {
-					return $input_field['value'];
-				}
-			}
-		}
-		return '';
 	}
 }

@@ -69,7 +69,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 			),
 		);
 
-		$response = wp_remote_get( $url, $args );
+		$response = wp_remote_get( $url, $args ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
 		$body     = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {

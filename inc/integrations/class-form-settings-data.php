@@ -1,4 +1,9 @@
 <?php
+/**
+ * Class for Form Settings.
+ *
+ * @package ThemeIsle
+ */
 
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
@@ -10,52 +15,72 @@ namespace ThemeIsle\GutenbergBlocks\Integration;
 class Form_Settings_Data {
 
 	/**
-	 * @var string The name of the provider.
+	 * The name of the provider.
+	 *
+	 * @var string
 	 */
 	private $provider = '';
 
 	/**
-	 * @var string The API Key.
+	 * The API Key.
+	 *
+	 * @var string
 	 */
 	private $api_key = '';
 
 	/**
-	 * @var string The contact list ID.
+	 * The contact list ID.
+	 *
+	 * @var string
 	 */
 	private $list_id = '';
 
 	/**
-	 * @var string The name of the action.
+	 * The name of the action.
+	 *
+	 * @var string
 	 */
 	private $action = '';
 
 	/**
-	 * @var bool The form has reCaptcha.
+	 * The form has reCaptcha.
+	 *
+	 * @var bool
 	 */
 	private $has_captcha = false;
 
 	/**
-	 * @var array The metadata.
+	 * The metadata.
+	 *
+	 * @var array
 	 */
 	private $meta = array();
 
 	/**
-	 * @var string The redirect link.
+	 * The redirect link.
+	 *
+	 * @var string
 	 */
 	private $redirect_link = '';
 
 	/**
-	 * @var string The subject of the email.
+	 * The subject of the email.
+	 *
+	 * @var string
 	 */
 	private $email_subject = '';
 
 	/**
-	 * @var string The message when submit is successful.
+	 * The message when submit is successful.
+	 *
+	 * @var string
 	 */
 	private $submit_message = '';
 
 	/**
-	 * @var string The name of the sender.
+	 * The name of the sender.
+	 *
+	 * @var string
 	 */
 	private $from_name = '';
 
