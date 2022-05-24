@@ -5,10 +5,6 @@ Closes #.
 ### Summary
 <!-- Please describe the changes you made. -->
 
-### Will affect visual aspect of the product
-<!-- It includes visual changes? -->
-YES/NO
-
 ### Screenshots <!-- if applicable -->
 
 ----
@@ -22,4 +18,14 @@ YES/NO
 new QueryQA().select('blocks').run()
 ```
 -->
+
+---- 
+
+### Checklist before the final review
+
+- [ ] It is at least compatible with the minimum WordPress version.
+- [ ] It loads additional script in frontend only if it is required.
+- [ ] Does not impact the [Core Web Vitals](https://web.dev/vitals/).
+- [ ] In case of deprecation, old blocks are safely migrated.
+- [ ] It is usable in Widgets and FSE.
 
