@@ -41,11 +41,6 @@ class Main {
 			add_filter( 'otter_blocks_register_blocks', array( $this, 'register_blocks' ) );
 			add_filter( 'otter_blocks_register_dynamic_blocks', array( $this, 'register_dynamic_blocks' ) );
 			add_filter( 'otter_blocks_register_css', array( $this, 'register_blocks_css' ) );
-
-			if ( true === boolval( get_option( 'otter_offload_fonts', true ) ) ) {
-				add_filter( 'otter_blocks_google_fonts_url', array( $this, 'register_webfont_loader' ) );
-			}
-
 			add_action( 'admin_print_scripts-settings_page_otter', array( $this, 'enqueue_options_assets' ) );
 		}
 	}
@@ -61,6 +56,7 @@ class Main {
 	public function autoload_classes( $classnames ) {
 		$classes = array(
 			'\ThemeIsle\OtterPro\Plugins\Block_Conditions',
+			'\ThemeIsle\OtterPro\Plugins\Fonts_Module',
 			'\ThemeIsle\OtterPro\Plugins\License',
 			'\ThemeIsle\OtterPro\Plugins\Options_Settings',
 			'\ThemeIsle\OtterPro\Plugins\Posts_ACF_Integration',
@@ -159,21 +155,6 @@ class Main {
 		$blocks = array_merge( $blocks, $pro_blocks );
 
 		return $blocks;
-	}
-
-	/**
-	 * Register Webfont Loader.
-	 *
-	 * @param string $fonts_url Google Fonts URL.
-	 * 
-	 * @since   2.0.4
-	 * @access  public
-	 */
-	public function register_webfont_loader( $fonts_url ) {
-		$vendor_file = trailingslashit( OTTER_BLOCKS_PATH ) . 'vendor/wptt/webfont-loader/wptt-webfont-loader.php';
-		require_once $vendor_file;
-		$fonts_url = wptt_get_webfont_url( esc_url_raw( $fonts_url ) );
-		return $fonts_url;
 	}
 
 	/**

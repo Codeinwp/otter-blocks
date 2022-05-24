@@ -51,7 +51,7 @@ class Options_Settings {
 				'type'         => 'boolean',
 				'description'  => __( 'Store Google Fonts Offline.', 'otter-blocks' ),
 				'show_in_rest' => true,
-				'default'      => false,
+				'default'      => true === boolval( get_option( 'nv_pro_enable_local_fonts', false ) ) ? true : false,
 			)
 		);
 	}
