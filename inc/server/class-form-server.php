@@ -65,16 +65,6 @@ class Form_Server {
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 
 		/**
-		 * Add filter for validating the form data.
-		 */
-		add_filter( 'otter_form_validation', array( $this, 'check_form_conditions' ) );
-
-		/**
-		 * Add filter for captcha validation.
-		 */
-		add_filter( 'otter_form_captcha_validation', array( $this, 'check_form_captcha' ) );
-
-		/**
 		 * Register email providers that can be used to send emails or subscribe to a service.
 		 */
 		$default_provider = array(
@@ -211,7 +201,7 @@ class Form_Server {
 		try {
 
 			// Check is the request is OK.
-			$reasons = apply_filters( 'otter_form_validation', $form_data );
+			$reasons = $this->check_form_conditions( $form_data );
 
 			if ( 0 < count( $reasons ) ) {
 				$res->set_error( __( 'Invalid request!', 'otter-blocks' ) );
@@ -221,7 +211,7 @@ class Form_Server {
 
 			// Verify the reCaptcha token.
 			if ( $form_data->payload_has_field( 'token' ) ) {
-				$result = apply_filters( 'otter_form_captcha_validation', $form_data );
+				$result = $this->check_form_conditions( $form_data );
 				if ( ! $result['success'] ) {
 					$res->set_error( __( 'The reCaptcha was invalid!', 'otter-blocks' ) );
 					return $res->build_response();

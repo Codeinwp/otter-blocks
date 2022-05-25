@@ -153,7 +153,7 @@ class Form_Email {
 	 *
 	 * @param string            $error The error message.
 	 * @param Form_Data_Request $form_data The form request data.
-	 * @return false|string
+	 * @return string
 	 * @since 2.0.3
 	 */
 	public function build_error_email( $error, $form_data ) {

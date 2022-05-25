@@ -162,7 +162,7 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 					cleanInputs( form );
 
 					setTimeout( () => {
-						if ( '' !== res?.redirectLink ) {
+						if ( 0 < res?.redirectLink?.length ) {
 							let a = document.createElement( 'a' );
 							a.target = '_blank';
 							a.href = res.redirectLink;
