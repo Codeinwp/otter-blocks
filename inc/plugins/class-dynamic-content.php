@@ -104,22 +104,6 @@ class Dynamic_Content {
 			return $this->get_excerpt( $data );
 		}
 
-		if ( 'postDate' === $data['type'] ) {
-			return $this->get_date( $data );
-		}
-
-		if ( 'postTime' === $data['type'] ) {
-			return $this->get_time( $data );
-		}
-
-		if ( 'postTerms' === $data['type'] ) {
-			return $this->get_terms( $data );
-		}
-
-		if ( 'postMeta' === $data['type'] ) {
-			return $this->get_post_meta( $data );
-		}
-
 		if ( 'postType' === $data['type'] ) {
 			return get_post_type();
 		}
@@ -144,10 +128,6 @@ class Dynamic_Content {
 			return get_the_author_meta( 'description' );
 		}
 
-		if ( 'authorMeta' === $data['type'] ) {
-			return $this->get_author_meta( $data );
-		}
-
 		if ( 'loggedInUserName' === $data['type'] ) {
 			return $this->get_loggedin_name( $data );
 		}
@@ -158,10 +138,6 @@ class Dynamic_Content {
 
 		if ( 'loggedInUserEmail' === $data['type'] ) {
 			return $this->get_loggedin_email( $data );
-		}
-
-		if ( 'loggedInUserMeta' === $data['type'] ) {
-			return $this->get_loggedin_meta( $data );
 		}
 
 		if ( 'archiveTitle' === $data['type'] ) {
@@ -180,7 +156,7 @@ class Dynamic_Content {
 			return $this->get_current_time( $data );
 		}
 
-		return $data[0];
+		return apply_filters( 'otter_blocks_evaluate_dynamic_content', $data[0], $data );
 	}
 
 	/**
@@ -203,121 +179,6 @@ class Dynamic_Content {
 		}
 
 		return sanitize_text_field( $excerpt );
-	}
-
-	/**
-	 * Get Date.
-	 *
-	 * @param array $data Dynamic Data.
-	 *
-	 * @return string
-	 */
-	public function get_date( $data ) {
-		$format = '';
-
-		if ( isset( $data['dateFormat'] ) && 'default' !== $data['dateFormat'] && 'custom' !== $data['dateFormat'] ) {
-			$format = esc_html( $data['dateFormat'] );
-		}
-
-		if ( isset( $data['dateCustom'] ) && isset( $data['dateFormat'] ) && 'custom' === $data['dateFormat'] ) {
-			$format = esc_html( $data['dateCustom'] );
-		}
-
-		if ( isset( $data['dateType'] ) && 'modified' === $data['dateType'] ) {
-			$date = get_the_modified_date( $format );
-		} else {
-			$date = get_the_date( $format );
-		}
-
-		return $date;
-	}
-
-	/**
-	 * Get Time.
-	 *
-	 * @param array $data Dynamic Data.
-	 *
-	 * @return string
-	 */
-	public function get_time( $data ) {
-		$format = '';
-
-		if ( isset( $data['timeFormat'] ) && 'default' !== $data['timeFormat'] && 'custom' !== $data['timeFormat'] ) {
-			$format = esc_html( $data['timeFormat'] );
-		}
-
-		if ( isset( $data['timeCustom'] ) && isset( $data['timeFormat'] ) && 'custom' === $data['timeFormat'] ) {
-			$format = esc_html( $data['timeCustom'] );
-		}
-
-		if ( isset( $data['timeType'] ) && 'modified' === $data['timeType'] ) {
-			$time = get_the_modified_time( $format );
-		} else {
-			$time = get_the_time( $format );
-		}
-
-		return $time;
-	}
-
-	/**
-	 * Get Terms.
-	 *
-	 * @param array $data Dynamic Data.
-	 *
-	 * @return string
-	 */
-	public function get_terms( $data ) {
-		$terms     = '';
-		$separator = ', ';
-
-		if ( isset( $data['termSeparator'] ) && ! empty( $data['termSeparator'] ) ) {
-			$separator = esc_html( $data['termSeparator'] );
-		}
-
-		if ( isset( $data['termType'] ) && 'tags' === $data['termType'] ) {
-			$terms = get_the_tag_list( '', $separator );
-		} else {
-			$terms = get_the_category_list( $separator );
-		}
-
-		return $terms;
-	}
-
-	/**
-	 * Get Post Meta.
-	 *
-	 * @param array $data Dynamic Data.
-	 *
-	 * @return string
-	 */
-	public function get_post_meta( $data ) {
-		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$id      = get_the_ID();
-		$meta    = get_post_meta( $id, esc_html( $data['metaKey'] ), true );
-
-		if ( empty( $meta ) || ! is_string( $meta ) ) {
-			$meta = $default;
-		}
-
-		return esc_html( $meta );
-	}
-
-	/**
-	 * Get Author Meta.
-	 *
-	 * @param array $data Dynamic Data.
-	 *
-	 * @return string
-	 */
-	public function get_author_meta( $data ) {
-		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$meta    = get_the_author_meta( esc_html( $data['metaKey'] ) );
-
-		if ( empty( $meta ) || ! is_string( $meta ) ) {
-			$meta = $default;
-		}
-
-		return esc_html( $meta );
 	}
 
 	/**
@@ -379,25 +240,6 @@ class Dynamic_Content {
 		}
 
 		return esc_html( $email );
-	}
-
-	/**
-	 * Get Logged-in User Description.
-	 *
-	 * @param array $data Dynamic Data.
-	 *
-	 * @return string
-	 */
-	public function get_loggedin_meta( $data ) {
-		$user_id = get_current_user_id();
-		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$meta    = get_user_meta( $user_id, esc_html( $data['metaKey'] ), true );
-
-		if ( empty( $meta ) || ! is_string( $meta ) ) {
-			$meta = $default;
-		}
-
-		return esc_html( $meta );
 	}
 
 	/**

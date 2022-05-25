@@ -12,13 +12,14 @@ import {
 	BaseControl,
 	Button,
 	ExternalLink,
-	FormTokenField,
 	SelectControl,
 	TextControl,
 	PanelBody
 } from '@wordpress/components';
 
 import { Fragment } from '@wordpress/element';
+
+import { applyFilters } from '@wordpress/hooks';
 
 import moment from 'moment';
 
@@ -27,14 +28,8 @@ import moment from 'moment';
  */
 import options from './../options.js';
 
-const hasSettingsPanel = [
+let hasSettingsPanel = [
 	'postExcerpt',
-	'postDate',
-	'postTime',
-	'postTerms',
-	'postMeta',
-	'authorMeta',
-	'loggedInUserMeta',
 	'date',
 	'time'
 ];
@@ -52,31 +47,6 @@ const timeFormats = {
 	'H:i': moment().format( 'HH:m' )
 };
 
-const autocompleteData = {
-	postMeta: [],
-	authorMeta: [
-		'description',
-		'display_name',
-		'first_name',
-		'last_name',
-		'nickname',
-		'user_email',
-		'user_level',
-		'user_login',
-		'user_nicename',
-		'user_registered',
-		'user_status',
-		'user_url'
-	],
-	loggedInUserMeta: [
-		'description',
-		'first_name',
-		'ID',
-		'last_name',
-		'nickname'
-	]
-};
-
 const Fields = ({
 	activeAttributes,
 	attributes,
@@ -84,6 +54,10 @@ const Fields = ({
 	onChange,
 	changeType
 }) => {
+	hasSettingsPanel = applyFilters( 'otter.dynamicContent.hasSettingsPanel', hasSettingsPanel );
+
+	const dynamicOptions = applyFilters( 'otter.dynamicContent.options', options );
+
 	return (
 		<Fragment>
 			<PanelBody>
@@ -99,10 +73,10 @@ const Fields = ({
 					>
 						<option value="none">{ __( 'Select an option', 'otter-blocks' ) }</option>
 
-						{ Object.keys( options ).map( i => {
+						{ Object.keys( dynamicOptions ).map( i => {
 							return (
-								<optgroup key={ i } label={ options[i].label }>
-									{ options[i].options.map( o => <option key={ o.value } value={ o.value }>{ o.label }</option> ) }
+								<optgroup key={ i } label={ dynamicOptions[i].label }>
+									{ dynamicOptions[i].options.map( o => <option key={ o.value } value={ o.value } disabled={ o?.isDisabled }>{ o.label } { o?.isDisabled && __( '(Pro)', 'otter-blocks' ) }</option> ) }
 								</optgroup>
 							);
 						}) }
@@ -124,26 +98,8 @@ const Fields = ({
 						/>
 					) }
 
-					{ [ 'postDate', 'date' ].includes( attributes.type ) && (
+					{ [ 'date' ].includes( attributes.type ) && (
 						<Fragment>
-							{ 'postDate' === attributes.type && (
-								<SelectControl
-									label={ __( 'Type', 'otter-blocks' ) }
-									value={ attributes.dateType || 'published' }
-									options={ [
-										{
-											label: __( 'Post Published', 'otter-blocks' ),
-											value: 'published'
-										},
-										{
-											label: __( 'Post Modified', 'otter-blocks' ),
-											value: 'modified'
-										}
-									] }
-									onChange={ dateType => changeAttributes({ dateType }) }
-								/>
-							) }
-
 							<SelectControl
 								label={ __( 'Format', 'otter-blocks' ) }
 								value={ attributes.dateFormat || 'default' }
@@ -176,26 +132,8 @@ const Fields = ({
 						</Fragment>
 					) }
 
-					{ [ 'postTime', 'time' ].includes( attributes.type ) && (
+					{ [ 'time' ].includes( attributes.type ) && (
 						<Fragment>
-							{ 'postTime' === attributes.type && (
-								<SelectControl
-									label={ __( 'Type', 'otter-blocks' ) }
-									value={ attributes.timeType || 'published' }
-									options={ [
-										{
-											label: __( 'Post Published', 'otter-blocks' ),
-											value: 'published'
-										},
-										{
-											label: __( 'Post Modified', 'otter-blocks' ),
-											value: 'modified'
-										}
-									] }
-									onChange={ timeType => changeAttributes({ timeType }) }
-								/>
-							) }
-
 							<SelectControl
 								label={ __( 'Format', 'otter-blocks' ) }
 								value={ attributes.timeFormat || 'default' }
@@ -228,48 +166,7 @@ const Fields = ({
 						</Fragment>
 					) }
 
-					{ 'postTerms' === attributes.type && (
-						<Fragment>
-							<SelectControl
-								label={ __( 'Type', 'otter-blocks' ) }
-								value={ attributes.termType || 'categories' }
-								options={ [
-									{
-										label: __( 'Categories', 'otter-blocks' ),
-										value: 'categories'
-									},
-									{
-										label: __( 'Tags', 'otter-blocks' ),
-										value: 'tags'
-									}
-								] }
-								onChange={ termType => changeAttributes({ termType }) }
-							/>
-
-							<TextControl
-								label={ __( 'Separator', 'otter-blocks' ) }
-								type="text"
-								value={ attributes.termSeparator || ', ' }
-								onChange={ termSeparator => changeAttributes({ termSeparator }) }
-							/>
-						</Fragment>
-					) }
-
-					{ ([ 'postMeta', 'authorMeta', 'loggedInUserMeta' ].includes( attributes.type ) ) && (
-						<Fragment>
-							<FormTokenField
-								label={ __( 'Meta', 'otter-blocks' ) }
-								value={ attributes.metaKey ? [ attributes.metaKey ] : [] }
-								maxLength={ 1 }
-								suggestions={ autocompleteData[ attributes.type ] }
-								onChange={ metaKey => changeAttributes({ metaKey: metaKey[0] }) }
-								__experimentalExpandOnFocus={ true }
-								__experimentalShowHowTo={ false }
-							/>
-
-							<p>{ __( 'Type your own or select a pre-defined value. Press Enter to confirm.', 'otter-blocks' ) }</p>
-						</Fragment>
-					) }
+					{ applyFilters( 'otter.dynamicContent.controls', '', attributes, changeAttributes ) }
 				</PanelBody>
 			) }
 

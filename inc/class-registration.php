@@ -231,6 +231,7 @@ class Registration {
 			array(
 				'isCompatible'        => Main::is_compatible(),
 				'hasPro'              => Pro::is_pro_installed(),
+				'isProActive'         => Pro::is_pro_active(),
 				'upgradeLink'         => Pro::get_url(),
 				'assetsPath'          => OTTER_BLOCKS_URL . 'assets',
 				'updatePath'          => admin_url( 'update-core.php' ),

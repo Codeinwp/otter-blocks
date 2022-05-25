@@ -21,19 +21,23 @@ const options = {
 			},
 			{
 				label: __( 'Post Date', 'otter-blocks' ),
-				value: 'postDate'
+				value: 'postDate',
+				isDisabled: ! Boolean( window.themeisleGutenberg.isProActive )
 			},
 			{
 				label: __( 'Post Time', 'otter-blocks' ),
-				value: 'postTime'
+				value: 'postTime',
+				isDisabled: ! Boolean( window.themeisleGutenberg.isProActive )
 			},
 			{
 				label: __( 'Post Terms', 'otter-blocks' ),
-				value: 'postTerms'
+				value: 'postTerms',
+				isDisabled: ! Boolean( window.themeisleGutenberg.isProActive )
 			},
 			{
 				label: __( 'Post Custom Field', 'otter-blocks' ),
-				value: 'postMeta'
+				value: 'postMeta',
+				isDisabled: ! Boolean( window.themeisleGutenberg.isProActive )
 			},
 			{
 				label: __( 'Post Type', 'otter-blocks' ),
@@ -71,7 +75,8 @@ const options = {
 			},
 			{
 				label: __( 'Author Meta', 'otter-blocks' ),
-				value: 'authorMeta'
+				value: 'authorMeta',
+				isDisabled: ! Boolean( window.themeisleGutenberg.isProActive )
 			}
 		]
 	},
@@ -92,7 +97,8 @@ const options = {
 			},
 			{
 				label: __( 'Logged-in User Meta', 'otter-blocks' ),
-				value: 'loggedInUserMeta'
+				value: 'loggedInUserMeta',
+				isDisabled: ! Boolean( window.themeisleGutenberg.isProActive )
 			}
 		]
 	},

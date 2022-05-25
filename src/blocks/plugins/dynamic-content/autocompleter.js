@@ -17,16 +17,7 @@ import options from './options.js';
 
 const autocompleteOptions = [];
 
-Object.keys( options ).forEach( option => {
-	autocompleteOptions.push(
-		{
-			label: options[option].label,
-			value: option,
-			isDisabled: true
-		},
-		...options[option].options
-	);
-});
+Object.keys( options ).forEach( option => autocompleteOptions.push( ...options[option].options ) );
 
 const dynamicValue = {
 	name: 'dynamic-value',
