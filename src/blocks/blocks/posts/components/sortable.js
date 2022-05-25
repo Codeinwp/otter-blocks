@@ -379,7 +379,7 @@ export const SortableList = SortableContainer( ({
 		<div>
 			{ attributes?.template
 				?.filter( template => {
-					if ( template?.startsWith( 'custom_' ) && ( window?.acf === undefined ) ) {
+					if ( template?.startsWith( 'custom_' ) && ( window?.acf === undefined || ( ! window.themeisleGutenberg?.hasPro ) ) ) {
 						return false;
 					}
 					return true;
