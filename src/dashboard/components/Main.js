@@ -9,9 +9,7 @@ import {
 } from '@wordpress/components';
 
 import {
-	Fragment,
-	useEffect,
-	useState
+	Fragment
 } from '@wordpress/element';
 
 /**
@@ -29,19 +27,6 @@ const Main = ({
 }) => {
 	const [ getOption, updateOption, status ] = useSettings();
 
-	useEffect( () => {
-		setGoogleMapsAPI( getOption( 'themeisle_google_map_block_api_key' ) );
-	}, [ getOption( 'themeisle_google_map_block_api_key' ) ]);
-
-	useEffect( () => {
-		setGoogleCaptchaAPISiteKey( getOption( 'themeisle_google_captcha_api_site_key' ) );
-		setGoogleCaptchaAPISecretKey( getOption( 'themeisle_google_captcha_api_secret_key' ) );
-	}, [ getOption( 'themeisle_google_captcha_api_site_key' ), getOption( 'themeisle_google_captcha_api_secret_key' ) ]);
-
-	const [ googleMapsAPI, setGoogleMapsAPI ] = useState( '' );
-	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
-	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
-
 	if ( 'loading' === status ) {
 		return (
 			<Placeholder>
@@ -55,16 +40,7 @@ const Main = ({
 		case 'integrations':
 			return (
 				<div className="otter-left">
-					<Integrations
-						status={ status }
-						updateOption={ updateOption }
-						googleMapsAPI={ googleMapsAPI }
-						setGoogleMapsAPI={ setGoogleMapsAPI }
-						googleCaptchaAPISiteKey={ googleCaptchaAPISiteKey }
-						setGoogleCaptchaAPISiteKey={ setGoogleCaptchaAPISiteKey }
-						googleCaptchaAPISecretKey={ googleCaptchaAPISecretKey }
-						setGoogleCaptchaAPISecretKey={ setGoogleCaptchaAPISecretKey }
-					/>
+					<Integrations/>
 				</div>
 			);
 		case 'upsell':

@@ -21,7 +21,7 @@ const App = () => {
 
 	return (
 		<Fragment>
-			<Notices />
+			{ undefined !== wp.notices.store && <Notices />}
 
 			<Header
 				isActive={ currentTab }

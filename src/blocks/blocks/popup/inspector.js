@@ -49,7 +49,7 @@ const ProFeatures = () => {
 			</Disabled>
 
 			<Notice
-				notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Unlock more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+				notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
 				variant="upsell"
 			/>
 		</Fragment>

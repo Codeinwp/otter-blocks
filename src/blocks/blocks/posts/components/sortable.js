@@ -325,7 +325,7 @@ export const SortableItem = ({
 								label={ __( 'Excerpt Limit', 'otter-blocks' ) }
 								type="number"
 								value={ attributes.excerptLength }
-								onChange={ excerptLength => setAttributes({ excerptLength }) }
+								onChange={ value => setAttributes({ excerptLength: Number( value ) }) }
 							/>
 
 							<ToggleControl
@@ -379,7 +379,7 @@ export const SortableList = SortableContainer( ({
 		<div>
 			{ attributes?.template
 				?.filter( template => {
-					if ( template?.startsWith( 'custom_' ) && ( window?.acf === undefined || ( ! window.themeisleGutenberghasPro ) ) ) {
+					if ( template?.startsWith( 'custom_' ) && ( window?.acf === undefined || ( ! window.themeisleGutenberg?.hasPro ) ) ) {
 						return false;
 					}
 					return true;

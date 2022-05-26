@@ -26,7 +26,8 @@ const savePostMeta = debounce( async() => {
 		__( 'Saving CSS…', 'otter-blocks' ),
 		{
 			isDismissible: true,
-			type: 'snackbar'
+			type: 'snackbar',
+			id: 'saving-css'
 		}
 	);
 
@@ -37,7 +38,8 @@ const savePostMeta = debounce( async() => {
 		__( 'CSS saved.', 'otter-blocks' ),
 		{
 			isDismissible: true,
-			type: 'snackbar'
+			type: 'snackbar',
+			id: 'saving-css'
 		}
 	);
 
@@ -50,7 +52,8 @@ const saveWidgets = debounce( async() => {
 		__( 'Saving CSS…', 'otter-blocks' ),
 		{
 			isDismissible: true,
-			type: 'snackbar'
+			type: 'snackbar',
+			id: 'saving-css'
 		}
 	);
 
@@ -61,7 +64,8 @@ const saveWidgets = debounce( async() => {
 		__( 'CSS saved.', 'otter-blocks' ),
 		{
 			isDismissible: true,
-			type: 'snackbar'
+			type: 'snackbar',
+			id: 'saving-css'
 		}
 	);
 
