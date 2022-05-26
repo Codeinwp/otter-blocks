@@ -23,7 +23,7 @@ declare global {
 				}
 			}
 			isBlockEditor: boolean
-			useOldMacyContainer: boolean
+			isLegacyPre59: boolean
 			postTypes: {
 				page: string
 				post: string
