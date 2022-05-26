@@ -18,7 +18,7 @@ const Save = ({
 	});
 
 	return (
-		<p { ...blockProps }>
+		<div { ...blockProps }>
 			<span className="wp-block-themeisle-blocks-font-awesome-icons-container">
 				{ ( attributes.link ) ? (
 					<a
@@ -37,7 +37,7 @@ const Save = ({
 						<i className={ `${ attributes.prefix } fa-${ attributes.icon }` }></i>
 				) }
 			</span>
-		</p>
+		</div>
 	);
 };
 
