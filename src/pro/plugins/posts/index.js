@@ -23,7 +23,7 @@ import {
 	TextControl
 } from '@wordpress/components';
 
-import { useSelect } from '@wordpress/data';
+import { select, useSelect } from '@wordpress/data';
 
 import { Fragment } from '@wordpress/element';
 
@@ -183,17 +183,10 @@ const Controls = (
 	customMeta,
 	setAttributesCustomMeta
 ) => {
-	const { groups, fields } = useSelect( select => {
-		const {
-			groups,
-			fields
-		} = select( 'otter-pro' ).getACFData();
-
-		return {
-			groups,
-			fields
-		};
-	}, []);
+	const {
+		groups,
+		fields
+	} = select( 'otter-pro' ).getACFData();
 
 	if ( ! ( isCustomMeta && customMeta ) ) {
 		return el;
