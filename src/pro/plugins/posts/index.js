@@ -23,7 +23,10 @@ import {
 	TextControl
 } from '@wordpress/components';
 
-import { select, useSelect } from '@wordpress/data';
+import {
+	select,
+	useSelect
+} from '@wordpress/data';
 
 import { Fragment } from '@wordpress/element';
 
