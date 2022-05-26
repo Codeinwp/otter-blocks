@@ -355,25 +355,25 @@ class Form_Settings_Data {
 		return $this;
 	}
 
-	 /**
-	  * Set the email subject.
-	  *
-	  * @param string $email_subject The email subject.
-	  * @return Form_Settings_Data
-	  * @since 2.0.3
-	  */
+	/**
+	 * Set the email subject.
+	 *
+	 * @param string $email_subject The email subject.
+	 * @return Form_Settings_Data
+	 * @since 2.0.3
+	 */
 	public function set_email_subject( $email_subject ) {
 		$this->email_subject = $email_subject;
 		return $this;
 	}
 
-	 /**
-	  * Set the message on submit.
-	  *
-	  * @param string $submit_message The message.
-	  * @return Form_Settings_Data
-	  * @since 2.0.3
-	  */
+	/**
+	 * Set the message on submit.
+	 *
+	 * @param string $submit_message The message.
+	 * @return Form_Settings_Data
+	 * @since 2.0.3
+	 */
 	public function set_submit_message( $submit_message ) {
 		$this->submit_message = $submit_message;
 		return $this;
@@ -396,7 +396,7 @@ class Form_Settings_Data {
 	 * @since 2.0.3
 	 */
 	public function get_api_key() {
-		 return $this->api_key;
+		return $this->api_key;
 	}
 
 	/**
@@ -406,7 +406,7 @@ class Form_Settings_Data {
 	 * @since 2.0.3
 	 */
 	public function get_list_id() {
-		 return $this->list_id;
+		return $this->list_id;
 	}
 
 	/**

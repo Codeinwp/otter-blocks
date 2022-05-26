@@ -71,7 +71,7 @@ class Form_Providers {
 	 *
 	 * @param array $new_providers The new provider.
 	 * @return void
-	 * @throws Exception
+	 * @throws Exception Provider is already registered.
 	 * @since 2.0.3
 	 */
 	public function register_providers( $new_providers ) {
