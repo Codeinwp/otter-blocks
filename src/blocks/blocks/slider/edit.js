@@ -53,6 +53,7 @@ const Edit = ({
 }) => {
 
 	const initObserver = useRef( null );
+	const sliderRef = useRef( null );
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -93,19 +94,19 @@ const Edit = ({
 
 			if ( null !== sliderRef.current ) {
 				sliderRef.current.destroy();
-			}
 
-			initSlider();
+				if ( attributes.id ) {
+					initSlider();
+				}
+			}
 		}
-	}, [ isSelected, attributes.align ]);
+	}, [ isSelected, attributes.id, sliderRef.current ]);
 
 	useEffect( () => {
 		if ( attributes.images.length && attributes.perView > attributes.images.length ) {
 			changePerView( max([ Math.round( attributes.images.length / 2 ), 1 ]) );
 		}
 	}, [ attributes.images ]);
-
-	const sliderRef = useRef( null );
 
 	const [ selectedImage, setSelectedImage ] = useState( null );
 
