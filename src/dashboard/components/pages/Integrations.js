@@ -12,18 +12,33 @@ import {
 	TextControl
 } from '@wordpress/components';
 
-import { Fragment } from '@wordpress/element';
+import {
+	Fragment,
+	useEffect,
+	useState
+} from '@wordpress/element';
 
-const Integrations = ({
-	status,
-	updateOption,
-	googleMapsAPI,
-	setGoogleMapsAPI,
-	googleCaptchaAPISiteKey,
-	setGoogleCaptchaAPISiteKey,
-	googleCaptchaAPISecretKey,
-	setGoogleCaptchaAPISecretKey
-}) => {
+/**
+ * Internal dependencies.
+ */
+import useSettings from '../../hooks/settings.js';
+
+const Integrations = () => {
+	const [ getOption, updateOption, status ] = useSettings();
+
+	useEffect( () => {
+		setGoogleMapsAPI( getOption( 'themeisle_google_map_block_api_key' ) );
+	}, [ getOption( 'themeisle_google_map_block_api_key' ) ]);
+
+	useEffect( () => {
+		setGoogleCaptchaAPISiteKey( getOption( 'themeisle_google_captcha_api_site_key' ) );
+		setGoogleCaptchaAPISecretKey( getOption( 'themeisle_google_captcha_api_secret_key' ) );
+	}, [ getOption( 'themeisle_google_captcha_api_site_key' ), getOption( 'themeisle_google_captcha_api_secret_key' ) ]);
+
+	const [ googleMapsAPI, setGoogleMapsAPI ] = useState( '' );
+	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
+	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
+
 	return (
 		<Fragment>
 			<PanelBody
