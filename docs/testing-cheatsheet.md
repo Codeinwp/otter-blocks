@@ -1,5 +1,7 @@
 # Testing Cheatsheet
 
+Testing extension [Query Engine](https://github.com/Codeinwp/otter-blocks-qa-templates)
+
 ## Console Snippets
 
 ### Insert all blocks
