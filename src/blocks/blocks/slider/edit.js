@@ -100,7 +100,7 @@ const Edit = ({
 				}
 			}
 		}
-	}, [ isSelected, attributes.id, sliderRef.current ]);
+	}, [ isSelected, attributes.id, sliderRef.current, attributes.images ]);
 
 	useEffect( () => {
 		if ( attributes.images.length && attributes.perView > attributes.images.length ) {
