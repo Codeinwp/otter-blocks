@@ -5,10 +5,7 @@ import { __ } from '@wordpress/i18n';
 
 import { hasBlockSupport } from '@wordpress/blocks';
 
-import {
-	ExternalLink,
-	PanelBody
-} from '@wordpress/components';
+import { PanelBody } from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
@@ -16,7 +13,10 @@ import { InspectorControls } from '@wordpress/block-editor';
 
 import { Fragment } from '@wordpress/element';
 
-import { addFilter } from '@wordpress/hooks';
+import {
+	addFilter,
+	applyFilters
+} from '@wordpress/hooks';
 
 /**
   * Internal dependencies.
@@ -47,17 +47,13 @@ const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 							initialOpen={ false }
 							className="o-is-new"
 						>
-							{ ( window.otterComponents && window.themeisleGutenberg ) && (
-								<window.otterComponents.Notice
-									notice={ <ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Disable in Otter Settings', 'otter-blocks' ) }</ExternalLink> }
-								/>
-							) }
-
 							<AnimationControls
 								clientId={ props.clientId }
 								setAttributes={ props.setAttributes }
 								attributes={ props.attributes }
 							/>
+
+							{ applyFilters( 'otter.poweredBy', '' ) }
 						</PanelBody>
 					</InspectorControls>
 				</Fragment>

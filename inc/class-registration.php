@@ -232,6 +232,7 @@ class Registration {
 				'isCompatible'        => Main::is_compatible(),
 				'hasPro'              => Pro::is_pro_installed(),
 				'upgradeLink'         => Pro::get_url(),
+				'should_show_upsell'  => Pro::should_show_upsell(),
 				'assetsPath'          => OTTER_BLOCKS_URL . 'assets',
 				'updatePath'          => admin_url( 'update-core.php' ),
 				'optionsPath'         => admin_url( 'options-general.php?page=otter' ),

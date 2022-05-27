@@ -66,7 +66,7 @@ class Pro {
 	 * @return  string
 	 */
 	public static function get_url() {
-		return 'https://themeisle.com/plugins/otter-blocks';
+		return 'https://bit.ly/otter-upgrade';
 	}
 
 	/**
@@ -77,7 +77,31 @@ class Pro {
 	 * @return  string
 	 */
 	public static function get_docs_url() {
-		return 'https://docs.themeisle.com/article/1478-otter-blocks-documentation';
+		return 'https://bit.ly/otter-docs';
+	}
+
+	/**
+	 * Check if we show Upsell notification or not
+	 * 
+	 * @since   2.0.4
+	 * @access  public
+	 * @return  bool
+	 */
+	public static function should_show_upsell() {
+		$show_upsell = false;
+
+		$installed     = get_option( 'otter_blocks_install' );
+		$notifications = get_option( 'themeisle_blocks_settings_notifications', array() );
+
+		if ( ! empty( $installed ) && $installed < strtotime( '-7 days' ) ) {
+			$show_upsell = true;
+		}
+
+		if ( isset( $notifications['editor_upsell'] ) && true === boolval( $notifications['editor_upsell'] ) ) {
+			$show_upsell = false;
+		}
+
+		return $show_upsell;
 	}
 
 	/**

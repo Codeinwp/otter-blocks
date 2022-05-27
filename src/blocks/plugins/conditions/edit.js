@@ -335,15 +335,11 @@ const Edit = ({
 				initialOpen={ false }
 				className="o-is-new"
 			>
-				<Notice
-					notice={ <ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Disable in Otter Settings', 'otter-blocks' ) }</ExternalLink> }
-				/>
-
 				<p>{ __( 'Control the visibility of your blocks based on the following conditions.', 'otter-blocks' ) }</p>
 
 				{ ( ! hasPro ) && (
 					<Notice
-						notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Unlock more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+						notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
 						variant="upsell"
 					/>
 				) }
@@ -485,6 +481,8 @@ const Edit = ({
 				</Button>
 
 				{ applyFilters( 'otter.blockConditions.notices', '' ) }
+
+				{ applyFilters( 'otter.poweredBy', '' ) }
 			</PanelBody>
 		</InspectorControls>
 	);
