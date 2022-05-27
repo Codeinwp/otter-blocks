@@ -69,7 +69,7 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 	const {formFieldsData, elemsWithError} = extractFormFields( form );
 	const nonceFieldValue = extractNonceValue( form );
 	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
-	const hasInvalidToken = id && window.themeisleGutenberg?.tokens[id].token;
+	const hasValidToken = id && window.themeisleGutenberg?.tokens[id].token;
 
 
 	const spinner = document.createElement( 'span' );
@@ -83,7 +83,7 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 		input?.reportValidity();
 	});
 
-	if ( hasCaptcha && hasInvalidToken ) {
+	if ( hasCaptcha && ! hasValidToken ) {
 		const msg = ! window.hasOwnProperty( 'grecaptcha' ) ?
 			'captcha-not-loaded' :
 			'check-captcha';
@@ -93,12 +93,12 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 		).show();
 	}
 
-	if ( 0 < elemsWithError.length || ( hasCaptcha && hasInvalidToken ) ) {
+	if ( 0 < elemsWithError.length || ( hasCaptcha && ! hasValidToken ) ) {
 		btn.disabled = false;
 		btn.removeChild( spinner );
 	} else {
 		payload.formInputsData = formFieldsData;
-		if ( ! hasInvalidToken ) {
+		if ( hasValidToken ) {
 			payload.token = window.themeisleGutenberg?.tokens?.[ id ].token;
 		}
 
