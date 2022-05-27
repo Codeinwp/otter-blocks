@@ -67,7 +67,8 @@ const Inspector = ({
 		loadingState,
 		formOptions,
 		setFormOption,
-		testService
+		testService,
+		hasEmailField
 	} = useContext( FormContext );
 
 	const formOptionsChanged = isChanged([
@@ -685,6 +686,13 @@ const Inspector = ({
 					'done' === loadingState?.serviceTesting && (
 						<div className="o-fetch-msg">
 							{ __( 'Remember to delete the test email from your provider\'s contact list.', 'otter-blocks' ) }
+						</div>
+					)
+				}
+				{
+					( 'done' === loadingState?.formIntegration && ! hasEmailField ) && (
+						<div className="o-fetch-msg o-error">
+							{ __( 'Please add a Text Field with Email as type in your form for email registration.', 'otter-blocks' ) }
 						</div>
 					)
 				}

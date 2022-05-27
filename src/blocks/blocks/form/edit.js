@@ -136,11 +136,15 @@ const Edit = ({
 		[ name ]
 	);
 
-	const children = useSelect( select => {
+	const { children, hasEmailField } = useSelect( select => {
 		const {
 			getBlock
 		} = select( 'core/block-editor' );
-		return getBlock( clientId ).innerBlocks;
+		const children = getBlock( clientId ).innerBlocks;
+		return {
+			children,
+			hasEmailField: children?.some( b => ( 'email' === b?.attributes?.type ) )
+		};
 	});
 
 	useEffect( () => {
@@ -729,7 +733,8 @@ const Edit = ({
 					saveIntegration,
 					sendTestEmail,
 					loadingState,
-					testService
+					testService,
+					hasEmailField
 				}}
 			>
 				<Inspector
