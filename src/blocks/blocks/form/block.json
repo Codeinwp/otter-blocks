@@ -52,6 +52,9 @@
 		"labelColor": {
 			"type": "string"
 		},
+		"helpLabelColor": {
+			"type": "string"
+		},
 		"inputRequiredColor": {
 			"type": "string"
 		},

@@ -85,6 +85,10 @@ class Form_CSS extends Base_CSS {
 						'value'    => 'submitColor',
 					),
 					array(
+						'property' => '--helpLabelColor',
+						'value'    => 'helpLabelColor',
+					),
+					array(
 						'property' => '--submitMsgColor',
 						'value'    => 'submitMessageColor',
 					),

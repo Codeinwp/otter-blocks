@@ -19,6 +19,7 @@ type Attributes = {
 		left: string
 	}
 	labelColor: string
+	helpLabelColor: string
 	labelFontSize: number
 	inputBorderRadius: number
 	inputBorderColor: string

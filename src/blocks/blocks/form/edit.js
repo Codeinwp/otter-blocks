@@ -712,6 +712,7 @@ const Edit = ({
 			blockRef.current?.style?.setProperty( '--inputsGap', px( attributes.inputsGap ) );
 			blockRef.current?.style?.setProperty( '--labelFontSize', px( attributes.labelFontSize ) );
 			blockRef.current?.style?.setProperty( '--submitFontSize', px( attributes.submitFontSize ) );
+			blockRef.current?.style?.setProperty( '--helpLabelColor', attributes.helpLabelColor );
 		}
 	}, [ blockRef.current, attributes ]);
 

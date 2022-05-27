@@ -4,6 +4,7 @@
 	--borderColor: inherit;
 	--borderWidth: inherit;
 	--labelColor: inherit;
+	--helpLabelColor: inherit;
 	--inputWidth: 100%;
 	--requiredColor: red;
 	--submitColor: white;
@@ -87,7 +88,7 @@
 
 		.o-form-help {
 			opacity: 0.8;
-			color: var(--labelColor);
+			color: var(--helpLabelColor);
 			margin-bottom: 12px;
 			font-size: 13px;
 		}

@@ -98,6 +98,11 @@ const Inspector = ({
 						label: __( 'Label', 'otter-blocks' )
 					},
 					{
+						value: attributes.helpLabelColor,
+						onChange: helpLabelColor => setAttributes({ helpLabelColor }),
+						label: __( 'Help Label', 'otter-blocks' )
+					},
+					{
 						value: attributes.inputBorderColor,
 						onChange: inputBorderColor => setAttributes({ inputBorderColor }),
 						label: __( 'Border', 'otter-blocks' )
