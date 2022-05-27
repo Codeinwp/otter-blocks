@@ -44,7 +44,13 @@ domReady( () => {
 								trueOrder: false,
 								waitForImages: false,
 								margin,
-								columns
+								columns,
+								breakAt: {
+									1200: Math.min( columns, 4 ),
+									840: Math.min( columns, 3 ),
+									740: Math.min( columns, 2 ),
+									640: Math.min( columns, 1 )
+								}
 							});
 
 							observer.unobserve( targetContainer );
