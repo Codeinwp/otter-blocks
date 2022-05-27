@@ -690,7 +690,7 @@ const Inspector = ({
 					)
 				}
 				{
-					( 'done' === loadingState?.formIntegration && ! hasEmailField ) && (
+					( 'done' === loadingState?.formIntegration && formOptions?.apiKey && formOptions?.listId && ! hasEmailField ) && (
 						<div className="o-fetch-msg o-error">
 							{ __( 'Please add a Text Field with Email as type in your form for email registration.', 'otter-blocks' ) }
 						</div>
