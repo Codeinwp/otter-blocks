@@ -15,6 +15,8 @@ import { addFilter } from '@wordpress/hooks';
  */
 import Edit from './edit.js';
 
+const { Notice } = window.otterComponents;
+
 const applyProContent = options => {
 	const proOptions = {
 		'posts': {
@@ -99,9 +101,35 @@ const DynamicContent = (
 	);
 };
 
+const Notices = el => {
+	if ( Boolean( window.otterPro.isExpired ) ) {
+		return (
+			<Notice
+				notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
+				instructions={ __( 'You need to renew your Otter Pro license in order to continue using Pro features of Dynamic Content.', 'otter-blocks' ) }
+			/>
+		);
+	}
+
+	if ( ! Boolean( window.otterPro.isActive ) ) {
+		return (
+			<Notice
+				notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
+				instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Dynamic Content.', 'otter-blocks' ) }
+			/>
+		);
+	}
+
+	return el;
+};
+
+addFilter( 'otter.blockConditions.notices', 'themeisle-gutenberg/block-conditions-notices', Notices );
+
+
 if ( ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) ) {
 	addFilter( 'otter.dynamicContent.options', 'themeisle-gutenberg/dynamic-content-list', applyProContent );
 	addFilter( 'otter.dynamicContent.hasSettingsPanel', 'themeisle-gutenberg/dynamic-content-settings-panel', applySettingsPanel );
 }
 
 addFilter( 'otter.dynamicContent.controls', 'themeisle-gutenberg/dynamic-content-controls', DynamicContent );
+addFilter( 'otter.dynamicContent.notices', 'themeisle-gutenberg/dynamic-content-notices', Notices );

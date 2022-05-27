@@ -28,6 +28,8 @@ import moment from 'moment';
  */
 import options from './../options.js';
 
+import Notice from './../../../components/notice/index.js';
+
 let hasSettingsPanel = [
 	'postExcerpt',
 	'date',
@@ -82,6 +84,15 @@ const Fields = ({
 						}) }
 					</select>
 				</BaseControl>
+
+				{ ( ! Boolean( window.themeisleGutenberg.hasPro ) ) && (
+					<Notice
+						notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Unlock more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+						variant="upsell"
+					/>
+				) }
+
+				{ applyFilters( 'otter.dynamicContent.notices', '' ) }
 			</PanelBody>
 
 			{ hasSettingsPanel.includes( attributes.type ) && (
