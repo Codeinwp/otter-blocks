@@ -67,6 +67,7 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 
 	// Get the data from the form fields.
 	const {formFieldsData, elemsWithError} = extractFormFields( form );
+	const formIsEmpty = 2 > formFieldsData?.length;
 	const nonceFieldValue = extractNonceValue( form );
 	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
 	const hasValidToken = id && window.themeisleGutenberg?.tokens[id].token;
@@ -75,6 +76,12 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 	const spinner = document.createElement( 'span' );
 	spinner.classList.add( 'spinner' );
 	btn.appendChild( spinner );
+
+	if ( formIsEmpty ) {
+		btn.disabled = false;
+		btn.removeChild( spinner );
+		return;
+	}
 
 	/**
 	 * Validate the form inputs data.
