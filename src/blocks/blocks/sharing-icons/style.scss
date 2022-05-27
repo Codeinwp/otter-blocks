@@ -1,57 +1,66 @@
 .wp-block-themeisle-blocks-sharing-icons {
+	&[class*="align"] {
+		float: unset;
+	}
+
+	&.aligncenter .social-icons-wrap {
+		justify-content: center;
+	}
+
+	&.alignleft .social-icons-wrap {
+		justify-content: flex-start;
+	}
+
+	&.alignright .social-icons-wrap {
+		justify-content: flex-end;
+	}
+
+	.social-icons-wrap {
+		display: flex;
+		column-gap: var(--iconsGap, 5px);
+		flex-wrap: wrap;
+	}
+
 	.social-icon {
-		background: #999999;
-		color: #ffffff;
 		font-size: 14px;
-		position: relative;
-		margin: 10px 5px 10px 0;;
 		padding: 12px;
-		border: none;
-		border-radius: 3px;
-		white-space: normal;
-		letter-spacing: 0;
+		border-radius: var(--borderRadius, 3px);
+		white-space: nowrap;
 		display: inline-block;
 		text-align: center;
-		vertical-align: middle;
 		touch-action: manipulation;
-		cursor: pointer;
-		background-image: none;
 		line-height: 20px;
+		margin: 10px 0;
+		text-decoration: none;
 
 		&.is-facebook {
-			background-color: #3b5998;
-			border-color: #3b5998;
-			color: #ffffff;
+			background-color: var(--iconBgColor, #3b5998);
+			color: var(--textColor, #fff);
 		}
 
 		&.is-twitter {
-			background-color: #55acee;
-			border-color: #55acee;
-			color: #ffffff;
+			background-color: var(--iconBgColor, #55acee);
+			color: var(--textColor, #fff);
 		}
 
 		&.is-linkedin {
-			background-color: #0976b4;
-			border-color: #0976b4;
-			color: #ffffff;
+			background-color: var(--iconBgColor, #0976b4);
+			color: var(--textColor, #fff);
 		}
 
 		&.is-pinterest {
-			background-color: #cc2127;
-			border-color: #cc2127;
-			color: #ffffff;
+			background-color: var(--iconBgColor, #cc2127);
+			color: var(--textColor, #fff);
 		}
 
 		&.is-tumblr {
-			background-color: #35465c;
-			border-color: #35465c;
-			color: #ffffff;
+			background-color: var(--iconBgColor, #35465c);
+			color: var(--textColor, #fff);
 		}
 
 		&.is-reddit {
-			background-color: #ff4500;
-			border-color: #ff4500;
-			color: #ffffff;
+			background-color: var(--iconBgColor, #ff4500);
+			color: var(--textColor, #fff);
 		}
 
 		&:hover {
@@ -60,16 +69,20 @@
 
 		i {
 			min-width: 20px;
-			color: #ffffff;
 			font-size: 16px;
+			color: var(--textColor, #fff);
 		}
 	}
 
 	&:not( .is-style-icons ) {
-		i {
-			border-right: 1px solid rgba( 255, 255, 255, 0.5 );
-			margin-right: 10px;
-			padding-right: 10px;
+		.v-line {
+			width: 1px;
+			height: 20px;
+			background-color: var(--textColor, #fff);
+			opacity: .5;
+			display: inline-block;
+			vertical-align: top;
+			margin: 0 10px;
 		}
 	}
 }
