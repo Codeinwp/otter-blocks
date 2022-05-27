@@ -478,7 +478,8 @@ class Form_Server {
 			$email = $this->get_email_from_form_input( $form_data );
 
 			if ( '' === $email ) {
-				$res->set_error( 'No email provided!' );
+				self::send_error_email( __( 'Marketing Integration is active, but there is no Email field in the form. Please check your Form block settings in the page.', 'otter-blocks' ), $form_data );
+				$res->mark_as_success();
 				return $res->build_response();
 			}
 
