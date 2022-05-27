@@ -422,7 +422,7 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Test Email', 'otter-blocks' ) }
+				title={ __( 'Test SMTP', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
 				<span>
