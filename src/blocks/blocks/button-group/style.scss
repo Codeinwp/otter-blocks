@@ -1,3 +1,18 @@
+@mixin align-full {
+	.wp-block-button {
+		flex: 1;
+		.wp-block-button__link {
+			width: 100%;
+		}
+	}
+}
+
+@mixin not-align-full {
+	.wp-block-button {
+		flex: unset;
+	}
+}
+
 .wp-block-themeisle-blocks-button-group {
 	display: flex;
 
@@ -18,11 +33,60 @@
 	}
 
 	&.align-full-desktop {
-		.wp-block-button {
-			flex: 1;
-			.wp-block-button__link {
-				width: 100%;
-			}
+		@include align-full;
+	}
+}
+
+@media ( max-width: 960px ) {
+	.wp-block-themeisle-blocks-button-group {
+		&.collapse-tablet {
+			flex-direction: column;
+		}
+
+		&.align-left-tablet {
+			justify-content: flex-start;
+			@include not-align-full;
+		}
+
+		&.align-center-tablet {
+			justify-content: center;
+			@include not-align-full;
+		}
+
+		&.align-right-tablet {
+			justify-content: flex-end;
+			@include not-align-full;
+		}
+
+		&.align-full-tablet {
+			@include align-full;
+		}
+	}
+}
+
+@media ( max-width: 600px ) {
+	.wp-block-themeisle-blocks-button-group {
+		&.collapse-mobile {
+			flex-direction: column;
+		}
+
+		&.align-left-mobile {
+			justify-content: flex-start;
+			@include not-align-full;
+		}
+
+		&.align-center-mobile {
+			justify-content: center;
+			@include not-align-full;
+		}
+
+		&.align-right-mobile {
+			justify-content: flex-end;
+			@include not-align-full;
+		}
+
+		&.align-full-mobile {
+			@include align-full;
 		}
 	}
 }
@@ -53,64 +117,6 @@
 
 		&.margin-right {
 			margin-right: 10px;
-		}
-	}
-}
-
-@media ( max-width: 960px ) {
-	.wp-block-themeisle-blocks-button-group {
-		&.collapse-tablet {
-			flex-direction: column;
-		}
-
-		&.align-left-tablet {
-			justify-content: flex-start;
-		}
-
-		&.align-center-tablet {
-			justify-content: center;
-		}
-
-		&.align-right-tablet {
-			justify-content: flex-end;
-		}
-
-		&.align-full-tablet {
-			.wp-block-button {
-				flex: 1;
-				.wp-block-button__link {
-					width: 100%;
-				}
-			}
-		}
-	}
-}
-
-@media ( max-width: 600px ) {
-	.wp-block-themeisle-blocks-button-group {
-		&.collapse-mobile {
-			flex-direction: column;
-		}
-
-		&.align-left-mobile {
-			justify-content: flex-start;
-		}
-
-		&.align-center-mobile {
-			justify-content: center;
-		}
-
-		&.align-right-mobile {
-			justify-content: flex-end;
-		}
-
-		&.align-full-tablet {
-			.wp-block-button {
-				flex: 1;
-				.wp-block-button__link {
-					width: 100%;
-				}
-			}
 		}
 	}
 }

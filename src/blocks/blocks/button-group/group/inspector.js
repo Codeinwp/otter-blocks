@@ -10,7 +10,9 @@ import {
 	Button,
 	PanelBody,
 	RangeControl,
-	SelectControl
+	SelectControl,
+	Toolbar,
+	ToolbarButton
 } from '@wordpress/components';
 
 import {
@@ -160,10 +162,10 @@ const Inspector = ({
 					label={ __( 'Alignment', 'otter-blocks' ) }
 					className="buttons-alignment-control"
 				>
-					<ButtonGroup>
+					<Toolbar label="Options">
 						{ alignmentOptions.map( option => {
 							return (
-								<Button
+								<ToolbarButton
 									key={ option.value }
 									icon={ option.icon }
 									title={ option.label }
@@ -173,7 +175,7 @@ const Inspector = ({
 								/>
 							);
 						}) }
-					</ButtonGroup>
+					</Toolbar>
 				</ResponsiveControl>
 			</PanelBody>
 
