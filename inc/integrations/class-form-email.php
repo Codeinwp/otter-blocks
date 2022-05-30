@@ -49,17 +49,17 @@ class Form_Email {
 		/**
 		 * Add action that render the email's header.
 		 */
-		add_action( 'otter_form_email_render_head', array( $this, 'build_head' ) );
+		add_filter( 'otter_form_email_render_head', array( $this, 'build_head' ) );
 
 		/**
-		 * Add action that render the email's body.
+		 * add_filter() that render the email's body.
 		 */
-		add_action( 'otter_form_email_render_body', array( $this, 'build_body' ) );
+		add_filter( 'otter_form_email_render_body', array( $this, 'build_body' ) );
 
 		/**
-		 * Add action that render the email's body for errors.
+		 * add_filter() that render the email's body for errors.
 		 */
-		add_action( 'otter_form_email_render_body_error', array( $this, 'build_error_body' ) );
+		add_filter( 'otter_form_email_render_body_error', array( $this, 'build_error_body' ) );
 	}
 
 	/**
@@ -70,25 +70,21 @@ class Form_Email {
 	 * @since 2.0.3
 	 */
 	public function build_email( $form_data ) {
-		ob_start(); ?>
+		return sprintf("
 		<!doctype html>
-		<html xmlns="http://www.w3.org/1999/xhtml">
+		<html xmlns=\"http://www.w3.org/1999/xhtml\">
 		<head>
-			<meta http-equiv="Content-Type" content="text/html;" charset="utf-8"/>
+			<meta http-equiv=\"Content-Type\" content=\"text/html;\" charset=\"utf-8\"/>
 			<!-- view port meta tag -->
-			<meta name="viewport" content="width=device-width, initial-scale=1">
-			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-			<title><?php esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ); ?></title>
+			<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+			<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"/>
+			<title>%s%s</title>
 		</head>
 		<body>
-		<?php
-		do_action( 'otter_form_email_render_head', $form_data );
-		do_action( 'otter_form_email_render_body', $form_data );
-		?>
+		%s
+		%s
 		</body>
-		</html>
-		<?php
-		return esc_html( ob_get_clean() );
+		</html>", esc_html__('Mail From: ', 'otter-blocks'), sanitize_email(get_site_option('admin_email')), apply_filters('otter_form_email_render_head', $form_data), apply_filters('otter_form_email_render_body', $form_data));
 	}
 
 	/**
@@ -97,55 +93,41 @@ class Form_Email {
 	 * @since 2.0.3
 	 */
 	public function build_head() {
-		ob_start();
-		?>
-		<h3>
-			<?php esc_html_e( 'Content Form submission from ', 'otter-blocks' ); ?>
-			<a href="<?php echo esc_url( get_site_url() ); ?>"><?php bloginfo( 'name' ); ?></a>
+		return sprintf("
+		<h3>%s<a href=\"%s\">%s</a>
 		</h3>
-		<hr/>
-		<?php
-		echo esc_html( ob_get_clean() );
+		<hr/>", esc_html(translate( 'Content Form submission from ', 'otter-blocks' ) ), esc_url(get_site_url()), get_bloginfo( 'name', 'display' ) );
 	}
 
 	/**
 	 * Create the content for the email body.
 	 *
 	 * @param Form_Data_Request $form_data The form request data.
+	 * @return string
 	 * @since 2.0.3
 	 */
 	public function build_body( $form_data ) {
 		$email_form_content = $form_data->get_form_inputs();
-		ob_start();
-		?>
+		$content = '';
+		foreach ( $email_form_content as $input ) {
+			$content .= sprintf("<tr><td><strong>%s</strong>%s</td></tr>", $input['label'], $input['value']);
+		}
+		return "
 		<table>
 		<tbody>
-		<?php
-		foreach ( $email_form_content as $input ) {
-			?>
-			<tr>
-				<td>
-					<strong><?php echo esc_html( $input['label'] ); ?>: </strong>
-					<?php echo esc_html( $input['value'] ); ?>
-				</td>
-
-			</tr>
-			<?php
-		}
-		?>
+		$content
 		</tbody>
 			<tfoot>
 			<tr>
 				<td>
-					<hr/>
-					<?php esc_html_e( 'You received this email because your email address is set in the content form settings on ', 'otter-blocks' ); ?>
-					<a href="<?php echo esc_url( get_site_url() ); ?>"><?php bloginfo( 'name' ); ?></a>
+					<hr/>" .
+					esc_html( translate( 'You received this email because your email address is set in the content form settings on ', 'otter-blocks' ) ) .
+					"<a href=\"" . esc_url(get_site_url()) . "\">" . get_bloginfo( 'name', 'display' ) . "</a>
 				</td>
 			</tr>
-			</tfoot>
+		</tfoot>
 		</table>
-		<?php
-		echo esc_html( ob_get_clean() );
+		";
 	}
 
 	/**
@@ -157,33 +139,28 @@ class Form_Email {
 	 * @since 2.0.3
 	 */
 	public function build_error_email( $error, $form_data ) {
-		ob_start();
-		?>
+		return "
 		<!doctype html>
-		<html xmlns="http://www.w3.org/1999/xhtml">
+		<html xmlns=\"http://www.w3.org/1999/xhtml\">
 		<head>
-			<meta http-equiv="Content-Type" content="text/html;" charset="utf-8"/>
+			<meta http-equiv=\"Content-Type\" content=\"text/html;\" charset=\"utf-8\"/>
 			<!-- view port meta tag -->
-			<meta name="viewport" content="width=device-width, initial-scale=1">
-			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-			<title><?php echo esc_html( esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ) ); ?></title>
+			<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+			<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"/>
+			<title>"
+			. esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ) .
+			"</title>
 		</head>
-		<body>
-		<?php
-		do_action( 'otter_form_email_render_body_error', $error );
-		?>
-		<div>
+		<body>"
+			. apply_filters( 'otter_form_email_render_body_error', $error ) .
+		"<div>
 			<h3> <?php esc_html_e( 'Submitted form content', 'otter-blocks' ); ?> </h3>
-			<div style="padding: 10px; border: 1px dashed black;">
-				<?php
-				do_action( 'otter_form_email_render_body', $form_data );
-				?>
-			</div>
+			<div style=\"padding: 10px; border: 1px dashed black;\">"
+			. apply_filters( 'otter_form_email_render_body', $form_data ) .
+			"</div>
 		</div>
 		</body>
-		</html>
-		<?php
-		return esc_html( ob_get_clean() );
+		</html>";
 	}
 
 	/**
@@ -193,45 +170,35 @@ class Form_Email {
 	 * @since 2.0.3
 	 */
 	public function build_error_body( $error ) {
-		ob_start();
-		?>
-		<h3><?php esc_html_e( 'An error has occurred when a user submitted the form.', 'otter-blocks' ); ?></h3>
-		<div style="padding: 10px;">
-			<span style="color: red;"> <?php esc_html_e( 'Error: ', 'otter-blocks' ); ?> </span>
-			<?php echo esc_html( $error ); ?>
-			<br/>
-			<p> <?php esc_html_e( 'Please check your Form credential from the email provider.', 'otter-blocks' ); ?></p>
-		</div>
-		<?php
-		echo esc_html( ob_get_clean() );
+		return sprintf("
+		<h3>%s</h3>
+		<div style=\"padding: 10px;\">
+			<span style=\"color: red;\">%s</span>%s<br/>
+			<p>%s</p>
+		</div>", esc_html( translate('An error has occurred when a user submitted the form.', 'otter-blocks') ), esc_html( translate( 'Error: ', 'otter-blocks') ), esc_html($error), esc_html( translate( 'Please check your Form credential from the email provider.', 'otter-blocks')));
 	}
 
 	/**
 	 * Build the body for the test email.
 	 *
-	 * @return false|string
+	 * @return string
 	 * @since 2.0.3
 	 */
 	public function build_test_email() {
-		ob_start();
-		?>
+		return sprintf("
 		<!doctype html>
-		<html xmlns="http://www.w3.org/1999/xhtml">
+		<html xmlns=\"http://www.w3.org/1999/xhtml\">
 		<head>
-			<meta http-equiv="Content-Type" content="text/html;" charset="utf-8"/>
+			<meta http-equiv=\"Content-Type\" content=\"text/html;\" charset=\"utf-8\"/>
 			<!-- view port meta tag -->
-			<meta name="viewport" content="width=device-width, initial-scale=1">
-			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-			<title><?php echo esc_html( esc_html__( 'Mail From: ', 'otter-blocks' ) . sanitize_email( get_site_option( 'admin_email' ) ) ); ?></title>
+			<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
+			<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"/>
+			<title>%s%s</title>
 		</head>
-		<body>
-		<?php
-			esc_html_e( 'This a test email. If you receive this email, your SMTP set-up is working for sending emails via Form Block.', 'otter-blocks' );
-		?>
+		<body>%s
 		</body>
 		</html>
-		<?php
-		return esc_html( ob_get_clean() );
+		", esc_html__('Mail From: ', 'otter-blocks'), sanitize_email(get_site_option('admin_email')), esc_html( translate( 'This a test email. If you receive this email, your SMTP set-up is working for sending emails via Form Block.', 'otter-blocks') ) );
 	}
 
 
