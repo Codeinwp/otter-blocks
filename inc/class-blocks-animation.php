@@ -91,7 +91,7 @@ class Blocks_Animation {
 			return $block_content;
 		}
 
-		if( strpos( $block_content, 'animated' ) && ! self::$scripts_loaded['animation'] ) {
+		if( ! self::$scripts_loaded['animation'] && strpos( $block_content, 'animated' )) {
 			$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/frontend.asset.php';
 
 			wp_enqueue_style(
@@ -112,7 +112,7 @@ class Blocks_Animation {
 			self::$scripts_loaded['animation'] = true;
 		}
 
-		if( strpos( $block_content, 'o-anim-count' ) && ! self::$scripts_loaded['count'] ) {
+		if( ! self::$scripts_loaded['count'] && strpos( $block_content, 'o-anim-count' )) {
 			$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/anim-count.asset.php';
 			wp_enqueue_script(
 				'otter-count',
@@ -126,7 +126,7 @@ class Blocks_Animation {
 			self::$scripts_loaded['count'] = true;
 		}
 
-		if( strpos( $block_content, 'o-anim-typing' ) && ! self::$scripts_loaded['typing'] ) {
+		if( ! self::$scripts_loaded['typing'] && strpos( $block_content, 'o-anim-typing' )) {
 			$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/anim-typing.asset.php';
 			wp_enqueue_script(
 				'otter-typing',

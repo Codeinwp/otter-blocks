@@ -799,7 +799,7 @@ class Registration {
 			return $block_content;
 		}
 
-		if( strpos( $block_content, 'o-sticky' ) && ! self::$scripts_loaded['sticky'] ) {
+		if( ! self::$scripts_loaded['sticky'] && strpos( $block_content, 'o-sticky' )) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/sticky.asset.php';
 			wp_enqueue_script(
 				'otter-sticky',
