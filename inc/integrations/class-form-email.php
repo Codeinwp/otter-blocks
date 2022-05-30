@@ -47,17 +47,17 @@ class Form_Email {
 	 */
 	public function init() {
 		/**
-		 * Add action that render the email's header.
+		 * Add filter that render the email's header.
 		 */
 		add_filter( 'otter_form_email_render_head', array( $this, 'build_head' ) );
 
 		/**
-		 * add_filter() that render the email's body.
+		 * Add filter that render the email's body.
 		 */
 		add_filter( 'otter_form_email_render_body', array( $this, 'build_body' ) );
 
 		/**
-		 * add_filter() that render the email's body for errors.
+		 * Add filter that render the email's body for errors.
 		 */
 		add_filter( 'otter_form_email_render_body_error', array( $this, 'build_error_body' ) );
 	}
@@ -93,10 +93,10 @@ class Form_Email {
 	 * @since 2.0.3
 	 */
 	public function build_head() {
-		return sprintf("
-		<h3>%s<a href=\"%s\">%s</a>
+		return sprintf('
+		<h3>%s <a href=\"%s\">%s</a>
 		</h3>
-		<hr/>", esc_html(translate( 'Content Form submission from ', 'otter-blocks' ) ), esc_url(get_site_url()), get_bloginfo( 'name', 'display' ) );
+		<hr/>', esc_html(__( 'Content Form submission from ', 'otter-blocks' ) ), esc_url(get_site_url()), get_bloginfo( 'name', 'display' ) );
 	}
 
 	/**
@@ -110,7 +110,7 @@ class Form_Email {
 		$email_form_content = $form_data->get_form_inputs();
 		$content = '';
 		foreach ( $email_form_content as $input ) {
-			$content .= sprintf("<tr><td><strong>%s</strong>%s</td></tr>", $input['label'], $input['value']);
+			$content .= sprintf("<tr><td><strong>%s:</strong> %s</td></tr>", $input['label'], $input['value']);
 		}
 		return "
 		<table>
@@ -121,7 +121,7 @@ class Form_Email {
 			<tr>
 				<td>
 					<hr/>" .
-					esc_html( translate( 'You received this email because your email address is set in the content form settings on ', 'otter-blocks' ) ) .
+					esc_html( __( 'You received this email because your email address is set in the content form settings on ', 'otter-blocks' ) ) .
 					"<a href=\"" . esc_url(get_site_url()) . "\">" . get_bloginfo( 'name', 'display' ) . "</a>
 				</td>
 			</tr>
@@ -175,7 +175,7 @@ class Form_Email {
 		<div style=\"padding: 10px;\">
 			<span style=\"color: red;\">%s</span>%s<br/>
 			<p>%s</p>
-		</div>", esc_html( translate('An error has occurred when a user submitted the form.', 'otter-blocks') ), esc_html( translate( 'Error: ', 'otter-blocks') ), esc_html($error), esc_html( translate( 'Please check your Form credential from the email provider.', 'otter-blocks')));
+		</div>", esc_html( __('An error has occurred when a user submitted the form.', 'otter-blocks') ), esc_html( __( 'Error: ', 'otter-blocks') ), esc_html($error), esc_html( __( 'Please check your Form credential from the email provider.', 'otter-blocks')));
 	}
 
 	/**
@@ -198,7 +198,7 @@ class Form_Email {
 		<body>%s
 		</body>
 		</html>
-		", esc_html__('Mail From: ', 'otter-blocks'), sanitize_email(get_site_option('admin_email')), esc_html( translate( 'This a test email. If you receive this email, your SMTP set-up is working for sending emails via Form Block.', 'otter-blocks') ) );
+		", esc_html__('Mail From: ', 'otter-blocks'), sanitize_email(get_site_option('admin_email')), esc_html( __( 'This a test email. If you receive this email, your SMTP set-up is working for sending emails via Form Block.', 'otter-blocks') ) );
 	}
 
 
