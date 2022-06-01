@@ -58,7 +58,7 @@
 		"@semantic-release/git": "^10.0.1",
 		"@types/wordpress__block-editor": "^7.0.0",
 		"@types/wordpress__components": "^19.3.2",
-		"@wordpress/block-editor": "^8.6.0",
+		"@wordpress/block-editor": "^9.2.0",
 		"@wordpress/components": "^19.9.0",
 		"@wordpress/compose": "^5.5.0",
 		"@wordpress/data": "^6.7.0",
