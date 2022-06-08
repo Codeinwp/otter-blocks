@@ -1,6 +1,7 @@
 @mixin align-full {
 	.wp-block-button {
 		flex: 1;
+
 		.wp-block-button__link {
 			width: 100%;
 		}
@@ -13,80 +14,58 @@
 	}
 }
 
-.wp-block-themeisle-blocks-button-group {
-	display: flex;
+$device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
+@each $device, $media-query in $device-map {
+	@if ($device == 'desktop') {
+		.wp-block-themeisle-blocks-button-group {
+			display: flex;
 
-	&.collapse-desktop {
-		flex-direction: column;
-	}
+			&.collapse-#{$device} {
+				flex-direction: column;
+			}
 
-	&.align-left-desktop, &.align-left {
-		justify-content: flex-start;
-	}
+			&.align-left-#{$device}, &.align-left {
+				justify-content: flex-start;
+			}
 
-	&.align-center-desktop, &.align-center {
-		justify-content: center;
-	}
+			&.align-center-#{$device}, &.align-center {
+				justify-content: center;
+			}
 
-	&.align-right-desktop, &.align-right {
-		justify-content: flex-end;
-	}
+			&.align-right-#{$device}, &.align-right {
+				justify-content: flex-end;
+			}
 
-	&.align-full-desktop {
-		@include align-full;
-	}
-}
-
-@media ( max-width: 960px ) {
-	.wp-block-themeisle-blocks-button-group {
-		&.collapse-tablet {
-			flex-direction: column;
+			&.align-full-#{$device} {
+				@include align-full;
+			}
 		}
+	} @else {
+		@media (max-width: #{$media-query}) {
+			.wp-block-themeisle-blocks-button-group {
+				&.collapse-#{$device} {
+					flex-direction: column;
+				}
 
-		&.align-left-tablet {
-			justify-content: flex-start;
-			@include not-align-full;
-		}
+				&.align-left-#{$device} {
+					justify-content: flex-start;
+					@include not-align-full;
+				}
 
-		&.align-center-tablet {
-			justify-content: center;
-			@include not-align-full;
-		}
+				&.align-center-#{$device} {
+					justify-content: center;
+					@include not-align-full;
+				}
 
-		&.align-right-tablet {
-			justify-content: flex-end;
-			@include not-align-full;
-		}
+				&.align-right-#{$device} {
+					justify-content: flex-end;
+					@include not-align-full;
+				}
 
-		&.align-full-tablet {
-			@include align-full;
-		}
-	}
-}
-
-@media ( max-width: 600px ) {
-	.wp-block-themeisle-blocks-button-group {
-		&.collapse-mobile {
-			flex-direction: column;
-		}
-
-		&.align-left-mobile {
-			justify-content: flex-start;
-			@include not-align-full;
-		}
-
-		&.align-center-mobile {
-			justify-content: center;
-			@include not-align-full;
-		}
-
-		&.align-right-mobile {
-			justify-content: flex-end;
-			@include not-align-full;
-		}
-
-		&.align-full-mobile {
-			@include align-full;
+				&.align-full-#{$device} {
+					@include align-full;
+				}
+			}
 		}
 	}
 }
