@@ -15,7 +15,7 @@ import {
 	RangeControl,
 	Placeholder,
 	SelectControl,
-	Spinner
+	Spinner, Panel
 } from '@wordpress/components';
 
 import {
@@ -24,6 +24,8 @@ import {
 	Suspense,
 	useState
 } from '@wordpress/element';
+
+import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -48,6 +50,10 @@ const Inspector = ({
 			icon: undefined,
 			prefix: 'fab'
 		});
+	};
+
+	const changeType = type => {
+		setAttributes({ type: type });
 	};
 
 	const changeIcon = value => {
@@ -86,8 +92,42 @@ const Inspector = ({
 		);
 	};
 
+	const buttonTypes = {
+		default: {
+			label: __( 'Default', 'otter-blocks' )
+		},
+		primary: {
+			label: __( 'Primary', 'otter-blocks' )
+		},
+		secondary: {
+			label: __( 'Secondary', 'otter-blocks' )
+		}
+	};
+
 	return (
 		<InspectorControls>
+			<PanelBody
+				title={ __( 'Types', 'otter-blocks' ) }
+			>
+				<div className="block-editor-block-styles__variants">
+					{ Object.keys( buttonTypes ).map( type => {
+						return (
+							<Button
+								className={ classnames(
+									'block-editor-block-styles__item',
+									{ 'is-active': attributes.type === type }
+								) }
+								isSecondary
+								key={ type }
+								label={ type }
+								onClick={ () => changeType( type ) }
+							>
+								{ buttonTypes[type].label }
+							</Button>
+						);
+					}) }
+				</div>
+			</PanelBody>
 			<PanelBody
 				title={ __( 'Color', 'otter-blocks' ) }
 			>
