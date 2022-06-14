@@ -280,11 +280,13 @@ class Form_Server {
 				}
 			}
 
-			$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . ( $form_options->has_from_name() ? sanitize_text_field( $form_options->get_from_name() ) : esc_url( get_site_url() ) ) );
+			$headers = array( 'Content-Type: text/html', 'From: ' . ( $form_options->has_from_name() ? sanitize_text_field( $form_options->get_from_name() ) : get_bloginfo( 'name', 'display' ) ) . '<' . $to . '>' );
 
 			// phpcs:ignore
-			wp_mail( $to, $email_subject, $email_body, $headers );
-			$res->mark_as_success();
+			$res->set_success( wp_mail( $to, $email_subject, $email_body, $headers ) );
+			if( ! $res->is_success() ) {
+				$res->set_error( __( 'Email could not be send.', 'otter-blocks' ) );
+			}
 		} catch ( Exception  $e ) {
 			$res->set_error( $e->getMessage() );
 			$this->send_error_email( $e->getMessage(), $form_data );

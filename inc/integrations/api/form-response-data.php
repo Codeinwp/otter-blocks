@@ -117,6 +117,18 @@ class Form_Data_Response {
 	}
 
 	/**
+	 * Set the success.
+	 *
+	 * @param boolean $value The value.
+	 * @return $this
+	 * @since 2.0.0
+	 */
+	public function set_success( $value ) {
+		$this->response['success'] = $value;
+		return $this;
+	}
+
+	/**
 	 * Copy response.
 	 *
 	 * @param object $other Response data.
