@@ -284,7 +284,7 @@ class Form_Server {
 
 			// phpcs:ignore
 			$res->set_success( wp_mail( $to, $email_subject, $email_body, $headers ) );
-			if( ! $res->is_success() ) {
+			if ( ! $res->is_success() ) {
 				$res->set_error( __( 'Email could not be send.', 'otter-blocks' ) );
 			}
 		} catch ( Exception  $e ) {
@@ -368,8 +368,8 @@ class Form_Server {
 			$email_subject = ( __( 'Test email for Otter Form from ', 'otter-blocks' ) . get_bloginfo( 'name', 'display' ) );
 			$email_body    = Form_Email::instance()->build_test_email( $form_data );
 			// Sent the form date to the admin site as a default behaviour.
-			$to            = sanitize_email( get_site_option( 'admin_email' ) );
-			if( $form_data->payload_has_field( 'to' ) && '' !== $form_data->get_payload_field( 'to' )) {
+			$to = sanitize_email( get_site_option( 'admin_email' ) );
+			if ( $form_data->payload_has_field( 'to' ) && '' !== $form_data->get_payload_field( 'to' ) ) {
 				$to = $form_data->get_payload_field( 'to' );
 			}
 			$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . get_bloginfo( 'name', 'display' ) . '<' . $to . '>' );
