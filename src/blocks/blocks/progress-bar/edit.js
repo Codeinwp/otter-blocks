@@ -94,17 +94,17 @@ const ProgressBar = ({
 		};
 	}, [ attributes.percentage, attributes.duration ]);
 
-	const style = cleanCSS([
-		[ '--titleColor', attributes.titleColor ],
-		[ '--percentageColor', attributes.percentageColor ],
-		[ '--percentageColorOuter', attributes.percentageColor ],
-		[ '--percentageColorTooltip', attributes.percentageColor ],
-		[ '--percentageColorAppend', attributes.percentageColor ],
-		[ '--backgroundColor', attributes.backgroundColor ],
-		[ '--borderRadius', attributes.borderRadius, 'px' ],
-		[ '--height', attributes.height, 'px' ],
-		[ '--barBackground', attributes.percentageColor ]
-	]);
+	const styles = {
+		'--titleColor': attributes.titleColor,
+		'--percentageColor': attributes.percentageColor,
+		'--percentageColorOuter': attributes.percentageColor,
+		'--percentageColorTooltip': attributes.percentageColor,
+		'--percentageColorAppend': attributes.percentageColor,
+		'--backgroundColor': attributes.backgroundColor,
+		'--borderRadius': attributes.borderRadius !== undefined && ( attributes.borderRadius + 'px' ),
+		'--height': attributes.height !== undefined && ( attributes.height + 'px' ),
+		'--barBackground': attributes.percentageColor
+	};
 
 	const onHeightChange = value => {
 		if ( 30 > value ) {
@@ -139,7 +139,7 @@ const ProgressBar = ({
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames({ 'has-tooltip': 'tooltip' === attributes.percentagePosition }),
-		style: style
+		style: styles
 	});
 
 	return (
