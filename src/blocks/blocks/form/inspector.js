@@ -622,7 +622,7 @@ const Inspector = ({
 														'submit-subscribe' === formOptions.action && (
 															<div style={{ marginBottom: '10px' }}>
 																{
-																	__( 'This action will add the client to the contact list and send a separata email with the form data to administrator or to the email mentioned in \'Form to\' field. A checkbox for data-sharing consent with third-party will be added on form.', 'otter-blocks' )
+																	__( 'This action will add the client to the contact list and send a separate email with the form data to administrator or to the email mentioned in \'Form to\' field. A checkbox for data-sharing consent with third-party will be added on form.', 'otter-blocks' )
 																}
 															</div>
 														)
