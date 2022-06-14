@@ -42,9 +42,7 @@ const Save = ({
 			/>
 			{
 				attributes.helpText && (
-					<span
-						className="o-form-help"
-					>
+					<span className="o-form-help">
 						{ attributes.helpText }
 					</span>
 				)

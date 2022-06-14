@@ -70,7 +70,7 @@ const Form = ({
 
 			<PanelBody
 				title={ __( 'Label Styling', 'otter-blocks' )}
-				initialOpen={false}
+				initialOpen={ false }
 			>
 
 				<RangeControl
@@ -78,33 +78,33 @@ const Form = ({
 					value={ defaults.inputGap}
 					onChange={ inputGap => setDefaults({ inputGap }) }
 					allowReset
-					min={0}
-					max={50}
-					initialPosition={5}
+					min={ 0 }
+					max={ 50 }
+					initialPosition={ 5 }
 				/>
 
 				<FontSizePicker
 					label={ __( 'Font Size', 'otter-blocks' ) }
 					fontSizes={[
 						{
-							name: 'Small',
+							name: __( 'Small', 'otter-blocks' ),
 							size: 12,
 							slug: 'small'
 						},
 						{
-							name: 'Normal',
+							name: __( 'Normal', 'otter-blocks' ),
 							size: 16,
 							slug: 'normal'
 						},
 						{
-							name: 'Big',
+							name: __( 'Big', 'otter-blocks' ),
 							size: 26,
 							slug: 'big'
 						}
 					]}
 					withReset
-					value={defaults.labelFontSize}
-					onChange={ labelFontSize =>  setDefaults({labelFontSize}) }
+					value={ defaults.labelFontSize }
+					onChange={ labelFontSize =>  setDefaults({ labelFontSize }) }
 				/>
 			</PanelBody>
 
@@ -118,9 +118,9 @@ const Form = ({
 					value={ defaults.inputsGap }
 					onChange={ inputsGap => setDefaults({ inputsGap }) }
 					allowReset
-					min={0}
-					max={50}
-					initialPosition={10}
+					min={ 0 }
+					max={ 50 }
+					initialPosition={ 10 }
 				/>
 
 				<BoxControl
@@ -138,36 +138,36 @@ const Form = ({
 					value={ defaults.inputBorderWidth }
 					onChange={ inputBorderWidth => setDefaults({ inputBorderWidth }) }
 					allowReset
-					min={0}
-					max={50}
+					min={ 0 }
+					max={ 50 }
 				/>
 			</PanelBody>
 
 			<PanelBody
 				title={ __( 'Button', 'otter-blocks' )}
-				initialOpen={false}
+				initialOpen={ false }
 			>
 				<FontSizePicker
 					label={ __( 'Font Size', 'otter-blocks' ) }
 					fontSizes={[
 						{
-							name: 'Small',
+							name: __( 'Small', 'otter-blocks' ),
 							size: 12,
 							slug: 'small'
 						},
 						{
-							name: 'Normal',
+							name: __( 'Normal', 'otter-blocks' ),
 							size: 16,
 							slug: 'normal'
 						},
 						{
-							name: 'Big',
+							name: __( 'Big', 'otter-blocks' ),
 							size: 26,
 							slug: 'big'
 						}
 					]}
 					withReset
-					value={defaults.submitFontSize}
+					value={ defaults.submitFontSize }
 					onChange={ submitFontSize => setDefaults({ submitFontSize }) }
 				/>
 			</PanelBody>

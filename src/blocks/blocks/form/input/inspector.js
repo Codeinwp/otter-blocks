@@ -79,6 +79,7 @@ const Inspector = ({
 					onChange={ isRequired => setAttributes({ isRequired }) }
 				/>
 			</PanelBody>
+
 			<PanelColorSettings
 				title={ __( 'Color', 'otter-blocks' ) }
 				initialOpen={ false }

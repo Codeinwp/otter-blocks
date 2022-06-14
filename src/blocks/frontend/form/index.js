@@ -1,9 +1,9 @@
 /**
  * Internal dependencies.
  */
-import {addCaptchaOnPage} from './captcha.js';
-import DisplayFormMessage from './message';
-import {domReady} from '../../helpers/frontend-helper-functions';
+import { addCaptchaOnPage } from './captcha.js';
+import DisplayFormMessage from './message.js';
+import { domReady } from '../../helpers/frontend-helper-functions.js';
 
 /**
  * Get the fields with their value from the form.

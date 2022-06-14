@@ -8,8 +8,7 @@ import { InspectorControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
 	TextControl,
-	ToggleControl,
-	SelectControl
+	ToggleControl
 } from '@wordpress/components';
 
 const Inspector = ({

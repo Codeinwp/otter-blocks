@@ -3,7 +3,10 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { InspectorControls, PanelColorSettings } from '@wordpress/block-editor';
+import {
+	InspectorControls,
+	PanelColorSettings
+} from '@wordpress/block-editor';
 
 import {
 	Button,
@@ -12,7 +15,6 @@ import {
 	RangeControl,
 	SelectControl,
 	Spinner,
-	Dashicon,
 	TextControl,
 	ToggleControl,
 	TextareaControl,
@@ -22,11 +24,8 @@ import {
 
 import {
 	Fragment,
-	useState,
 	useContext
 } from '@wordpress/element';
-
-import classnames from 'classnames';
 
 /**
  * Internal dependencies.
@@ -155,9 +154,9 @@ const Inspector = ({
 						value={ attributes.inputGap }
 						onChange={ inputGap => setAttributes({ inputGap }) }
 						allowReset
-						min={0}
-						max={50}
-						initialPositino={5}
+						min={ 0 }
+						max={ 50 }
+						initialPositino={ 5 }
 					/>
 				</SyncControl>
 
@@ -170,24 +169,24 @@ const Inspector = ({
 						label={ __( 'Font Size', 'otter-blocks' ) }
 						fontSizes={[
 							{
-								name: 'Small',
+								name: __( 'Small', 'otter-blocks' ),
 								size: 12,
 								slug: 'small'
 							},
 							{
-								name: 'Normal',
+								name: __( 'Normal', 'otter-blocks' ),
 								size: 16,
 								slug: 'normal'
 							},
 							{
-								name: 'Big',
+								name: __( 'Big', 'otter-blocks' ),
 								size: 26,
 								slug: 'big'
 							}
 						]}
 						withReset
 						value={attributes.labelFontSize}
-						onChange={ labelFontSize =>  setAttributes({labelFontSize}) }
+						onChange={ labelFontSize =>  setAttributes({ labelFontSize }) }
 					/>
 				</SyncControl>
 			</PanelBody>
@@ -206,9 +205,9 @@ const Inspector = ({
 						value={ attributes.inputsGap }
 						onChange={ inputsGap => setAttributes({ inputsGap }) }
 						allowReset
-						min={0}
-						max={50}
-						initialPosition={10}
+						min={ 0 }
+						max={ 50 }
+						initialPosition={ 10 }
 					/>
 				</SyncControl>
 
@@ -238,8 +237,8 @@ const Inspector = ({
 						value={ attributes.inputBorderRadius }
 						onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
 						allowReset
-						min={0}
-						max={50}
+						min={ 0 }
+						max={ 50 }
 					/>
 				</SyncControl>
 
@@ -253,8 +252,8 @@ const Inspector = ({
 						value={ attributes.inputBorderWidth }
 						onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
 						allowReset
-						min={0}
-						max={50}
+						min={ 0 }
+						max={ 50 }
 					/>
 				</SyncControl>
 
@@ -281,24 +280,24 @@ const Inspector = ({
 						label={ __( 'Font Size', 'otter-blocks' ) }
 						fontSizes={[
 							{
-								name: 'Small',
+								name: __( 'Small', 'otter-blocks' ),
 								size: 18,
 								slug: 'small'
 							},
 							{
-								name: 'Normal',
+								name: __( 'Normal', 'otter-blocks' ),
 								size: 24,
 								slug: 'normal'
 							},
 							{
-								name: 'Big',
+								name: __( 'Big', 'otter-blocks' ),
 								size: 32,
 								slug: 'big'
 							}
 						]}
 						withReset
-						value={attributes.submitFontSize}
-						onChange={submitFontSize =>  setAttributes({ submitFontSize }) }
+						value={ attributes.submitFontSize }
+						onChange={ submitFontSize =>  setAttributes({ submitFontSize }) }
 					/>
 				</SyncControl>
 
@@ -321,10 +320,7 @@ const Inspector = ({
 					]}
 					onChange={ submitStyle => setAttributes({ submitStyle}) }
 				/>
-
-
 			</PanelBody>
-
 
 			<PanelBody
 				title={ __( 'Form Options', 'otter-blocks' ) }
@@ -383,10 +379,13 @@ const Inspector = ({
 				{
 					formOptions.redirectLink && (
 						<ExternalLink
-							href={formOptions.redirectLink}
-							style={{ marginBottom: '10px', display: 'block'}}
+							href={ formOptions.redirectLink }
+							style={ {
+								marginBottom: '10px',
+								display: 'block'
+							} }
 						>
-							{__( 'Preview Redirect link.', 'otter-blocks' )}
+							{ __( 'Preview Redirect link.', 'otter-blocks' ) }
 						</ExternalLink>
 					)
 				}
@@ -397,27 +396,20 @@ const Inspector = ({
 					help={ __( '[WIP] Do not forget to save the options ', 'otter-blocks' ) }
 					isBusy={ 'saving' === loadingState?.formOptions }
 				>
-					<Fragment>
-						{
-							'saving' === loadingState?.formOptions ? __( 'Saving...', 'otter-blocks' ) : __( 'Apply Options', 'otter-blocks' )
-						}
-					</Fragment>
+					{ 'saving' === loadingState?.formOptions ? __( 'Saving...', 'otter-blocks' ) : __( 'Apply Options', 'otter-blocks' ) }
 				</Button>
 
-				{
-					'done' === loadingState?.formOptions && formOptionsChanged && (
-						<div className="o-fetch-msg">
-							{ __( 'You have made some modifications. Do not forget to save the options.', 'otter-blocks' ) }
-						</div>
-					)
-				}
-				{
-					'error' === loadingState?.formOptions && (
-						<div className="o-fetch-msg o-error">
-							{ __( 'An error has occurred while saving. Please try again.', 'otter-blocks' ) }
-						</div>
-					)
-				}
+				{ 'done' === loadingState?.formOptions && formOptionsChanged && (
+					<div className="o-fetch-msg">
+						{ __( 'You have made some modifications. Do not forget to save the options.', 'otter-blocks' ) }
+					</div>
+				) }
+
+				{ 'error' === loadingState?.formOptions && (
+					<div className="o-fetch-msg o-error">
+						{ __( 'An error has occurred while saving. Please try again.', 'otter-blocks' ) }
+					</div>
+				) }
 
 			</PanelBody>
 
@@ -425,18 +417,17 @@ const Inspector = ({
 				title={ __( 'Test SMTP', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<span>
-					{
-						__( 'In order for the Form to work properly, make sure your SMTP server is set up. The test email will be send to the address from the field Email To on Form Options.', 'otter-blocks' )
-					}
-				</span>
+				<span>{ __( 'In order for the Form to work properly, make sure your SMTP server is set up. The test email will be send to the address from the field Email To on Form Options.', 'otter-blocks' ) }</span>
+
 				<ExternalLink
-					href={'https://www.wpbeginner.com/wp-tutorials/how-to-use-smtp-server-to-send-wordpress-emails/'}
+					href="https://www.wpbeginner.com/wp-tutorials/how-to-use-smtp-server-to-send-wordpress-emails/"
 					style={{ marginLeft: '3px' }}
 				>
 					{ __( 'Learn more.', 'otter-blocks' ) }
 				</ExternalLink>
+
 				<br/>
+
 				<Button
 					variant="primary"
 					isPrimary
@@ -466,9 +457,9 @@ const Inspector = ({
 								margin: '10px 0px'
 							}}
 						>
-							{__( 'You can change the reCaptcha API Keys in Settings > Otter. ', 'otter-blocks' )}
+							{ __( 'You can change the reCaptcha API Keys in Settings > Otter. ', 'otter-blocks' ) }
 							<ExternalLink
-								href={ 'https://www.google.com/recaptcha/about/' }
+								href="https://www.google.com/recaptcha/about/"
 								target="_blank"
 
 							>
@@ -483,9 +474,7 @@ const Inspector = ({
 				title={ __( 'Marketing Integration', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				{
-					__( 'Add your client email to a Digital Marketing provider.', 'otter-blocks' )
-				}
+				{ __( 'Add your client email to a Digital Marketing provider.', 'otter-blocks' ) }
 				<br /> <br />
 				{
 					'loading' === loadingState?.formIntegration && (
@@ -495,7 +484,7 @@ const Inspector = ({
 						</div>
 					)
 				}
-				<b> { __( 'You need to have at least one email field in your form. For multiple email fields, only the first will be used.', 'otter-blocks' ) } </b>
+				<b>{ __( 'You need to have at least one email field in your form. For multiple email fields, only the first will be used.', 'otter-blocks' ) }</b>
 
 				<SelectControl
 					label={ __( 'Provider', 'otter-blocks' ) }
@@ -513,82 +502,73 @@ const Inspector = ({
 				{
 					formOptions.provider && (
 						<Fragment>
-							{
-								! formOptions.apiKey && (
-									<Fragment>
-										{
-											'mailchimp' === formOptions?.provider && (
-												<ExternalLink
-													href={'https://us5.admin.mailchimp.com/account/api/'}
-													style={{ marginBottom: '10px', display: 'block'}}
-													target="_blank"
-												>
-													{__( 'Guide to generate the API Key.', 'otter-blocks' )}
-												</ExternalLink>
-											)
-										}
-										{
-											'sendinblue' === formOptions?.provider && (
-												<ExternalLink
-													href={'https://help.sendinblue.com/hc/en-us/articles/209467485-What-s-an-API-key-and-how-can-I-get-mine-'}
-													style={{ marginBottom: '10px', display: 'block'}}
-													target="_blank"
-												>
-													{__( 'Guide to generate the API Key.', 'otter-blocks' )}
-												</ExternalLink>
-											)
-										}
-									</Fragment>
+							{ ! formOptions.apiKey && (
+								<Fragment>
+									{
+										'mailchimp' === formOptions?.provider && (
+											<ExternalLink
+												href="https://us5.admin.mailchimp.com/account/api/"
+												style={{ marginBottom: '10px', display: 'block'}}
+												target="_blank"
+											>
+												{ __( 'Guide to generate the API Key.', 'otter-blocks' ) }
+											</ExternalLink>
+										)
+									}
+									{
+										'sendinblue' === formOptions?.provider && (
+											<ExternalLink
+												href="https://help.sendinblue.com/hc/en-us/articles/209467485-What-s-an-API-key-and-how-can-I-get-mine-"
+												style={{ marginBottom: '10px', display: 'block'}}
+												target="_blank"
+											>
+												{ __( 'Guide to generate the API Key.', 'otter-blocks' ) }
+											</ExternalLink>
+										)
+									}
+								</Fragment>
 
-								)
-							}
-							{
+							) }
 
-								<TextControl
-									label={ __( 'API Key', 'otter-blocks' ) }
-									help={ __( 'You can find the key in the provider\'s website', 'otter-blocks' ) }
-									value={ formOptions.apiKey ? `*************************${formOptions.apiKey.slice( -8 )}` : '' }
-									onChange={ apiKey => {
-										setListIDOptions([]);
-										setFormOption({
-											listId: '',
-											apiKey
-										});
-									}}
-								/>
+							<TextControl
+								label={ __( 'API Key', 'otter-blocks' ) }
+								help={ __( 'You can find the key in the provider\'s website', 'otter-blocks' ) }
+								value={ formOptions.apiKey ? `*************************${formOptions.apiKey.slice( -8 )}` : '' }
+								onChange={ apiKey => {
+									setListIDOptions([]);
+									setFormOption({
+										listId: '',
+										apiKey
+									});
+								}}
+							/>
 
-							}
+							{ formOptions.apiKey && 2 > listIDOptions.length && 'loading' === loadingState?.listId && (
+								<Fragment>
+									<Spinner />
+									{ __( 'Loading the options.', 'otter-blocks' ) }
+									<br /><br/>
+								</Fragment>
+							) }
 
-							{
-								formOptions.apiKey && 2 > listIDOptions.length && 'loading' === loadingState?.listId && (
-									<Fragment>
-										<Spinner />
-										{ __( 'Loading the options.', 'otter-blocks' ) }
-										<br /><br/>
-									</Fragment>
-								)
-							}
-							{
-								formOptions.apiKey && 'error' === loadingState?.listId && (
-									<Fragment>
-										{ __( 'Invalid API Key. Please check your API Key in the provider\'s Dashboard.', 'otter-blocks' ) }
-										<ExternalLink
-											target="_blank"
-											style={{ marginBottom: '10px', display: 'block'}}
-											href={ 'sendinblue' === formOptions.provider ? 'https://account.sendinblue.com/advanced/api' : 'https://us5.admin.mailchimp.com/account/api/'}
-										>
-														Go to Dashboard.
-										</ExternalLink>
-									</Fragment>
-								)
-							}
-							{
-								formOptions.apiKey && 'timeout' === loadingState?.listId && (
-									<p>
-										{ __( 'Could no connect to the server. Please try again.', 'otter-blocks' ) }
-									</p>
-								)
-							}
+							{ formOptions.apiKey && 'error' === loadingState?.listId && (
+								<Fragment>
+									{ __( 'Invalid API Key. Please check your API Key in the provider\'s Dashboard.', 'otter-blocks' ) }
+
+									<ExternalLink
+										target="_blank"
+										style={{ marginBottom: '10px', display: 'block'}}
+										href={ 'sendinblue' === formOptions.provider ? 'https://account.sendinblue.com/advanced/api' : 'https://us5.admin.mailchimp.com/account/api/' }
+									>
+										{ __( 'Go to Dashboard.', 'otter-blocks' ) }
+									</ExternalLink>
+								</Fragment>
+							) }
+
+							{ formOptions.apiKey && 'timeout' === loadingState?.listId && (
+								<p>{ __( 'Could no connect to the server. Please try again.', 'otter-blocks' ) }</p>
+							) }
+
 							{
 								formOptions.apiKey && 'done' === loadingState?.listId && (
 									<Fragment>
@@ -637,6 +617,7 @@ const Inspector = ({
 						</Fragment>
 					)
 				}
+
 				<div
 					style={{
 						display: 'flex',
@@ -650,11 +631,7 @@ const Inspector = ({
 						onClick={ saveIntegration }
 						isBusy={'saving' === loadingState?.formIntegration }
 					>
-						<Fragment>
-							{
-								'saving' === loadingState?.formIntegration ? __( 'Saving', 'otter-blocks' ) : __( 'Save', 'otter-blocks' )
-							}
-						</Fragment>
+						{ 'saving' === loadingState?.formIntegration ? __( 'Saving', 'otter-blocks' ) : __( 'Save', 'otter-blocks' ) }
 					</Button>
 					{
 						attributes.optionName && savedFormOptions?.integration?.provider && savedFormOptions?.integration?.apiKey && savedFormOptions?.integration?.listId && (
@@ -675,37 +652,30 @@ const Inspector = ({
 				</div>
 
 
-				{
-					'done' === loadingState?.formIntegration && formIntegrationChanged && (
-						<div className="o-fetch-msg">
-							{ __( 'You have made some modifications. Do not forget to save the options.', 'otter-blocks' ) }
-						</div>
-					)
-				}
-				{
-					'done' === loadingState?.serviceTesting && (
-						<div className="o-fetch-msg">
-							{ __( 'Remember to delete the test email from your provider\'s contact list.', 'otter-blocks' ) }
-						</div>
-					)
-				}
-				{
-					( 'done' === loadingState?.formIntegration && formOptions?.apiKey && formOptions?.listId && ! hasEmailField ) && (
-						<div className="o-fetch-msg o-error">
-							{ __( 'Please add a Text Field with Email as type in your form for email registration.', 'otter-blocks' ) }
-						</div>
-					)
-				}
-				{
-					'error' === loadingState?.formIntegration && (
-						<div className="o-fetch-msg o-error">
-							{ __( 'An error has occurred while saving. Please try again.', 'otter-blocks' ) }
-						</div>
-					)
-				}
+				{ 'done' === loadingState?.formIntegration && formIntegrationChanged && (
+					<div className="o-fetch-msg">
+						{ __( 'You have made some modifications. Do not forget to save the options.', 'otter-blocks' ) }
+					</div>
+				) }
+
+				{ 'done' === loadingState?.serviceTesting && (
+					<div className="o-fetch-msg">
+						{ __( 'Remember to delete the test email from your provider\'s contact list.', 'otter-blocks' ) }
+					</div>
+				) }
+
+				{ 	( 'done' === loadingState?.formIntegration && formOptions?.apiKey && formOptions?.listId && ! hasEmailField ) && (
+					<div className="o-fetch-msg o-error">
+						{ __( 'Please add a Text Field with Email as type in your form for email registration.', 'otter-blocks' ) }
+					</div>
+				) }
+
+				{ 'error' === loadingState?.formIntegration && (
+					<div className="o-fetch-msg o-error">
+						{ __( 'An error has occurred while saving. Please try again.', 'otter-blocks' ) }
+					</div>
+				) }
 			</PanelBody>
-
-
 		</InspectorControls>
 	);
 };
