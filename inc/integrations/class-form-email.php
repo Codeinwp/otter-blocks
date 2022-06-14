@@ -181,10 +181,11 @@ class Form_Email {
 	/**
 	 * Build the body for the test email.
 	 *
+	 * @param Form_Data_Request $form_data The form request data.
 	 * @return string
 	 * @since 2.0.3
 	 */
-	public function build_test_email() {
+	public function build_test_email( $form_data ) {
 		return sprintf("
 		<!doctype html>
 		<html xmlns=\"http://www.w3.org/1999/xhtml\">
@@ -195,10 +196,13 @@ class Form_Email {
 			<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\"/>
 			<title>%s%s</title>
 		</head>
-		<body>%s
+		<body>
+		%s
+		<br><br>
+		Location: <a href='%s'>link</a>.
 		</body>
 		</html>
-		", esc_html__('Mail From: ', 'otter-blocks'), sanitize_email(get_site_option('admin_email')), esc_html( __( 'This a test email. If you receive this email, your SMTP set-up is working for sending emails via Form Block.', 'otter-blocks') ) );
+		", esc_html__('Mail From: ', 'otter-blocks'), sanitize_email(get_site_option('admin_email')), esc_html( __( 'This a test email. If you receive this email, your SMTP set-up is working for sending emails via Form Block.', 'otter-blocks') ), $form_data->get_payload_field( 'site' ) );
 	}
 
 

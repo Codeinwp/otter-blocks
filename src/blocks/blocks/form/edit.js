@@ -475,7 +475,8 @@ const Edit = ({
 				handler: 'testEmail',
 				payload: {
 					provider: 'default',
-					to: formOptions?.emailTo
+					to: formOptions?.emailTo,
+					site: window.location.href
 				}
 			}
 		}).then( res => {

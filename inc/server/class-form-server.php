@@ -358,19 +358,19 @@ class Form_Server {
 	/**
 	 * Send a test email.
 	 *
-	 * @param Form_Data_Request $form_request The test request.
+	 * @param Form_Data_Request $form_data The test request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 * @since 2.0.3
 	 */
-	public static function send_test_email( $form_request ) {
+	public static function send_test_email( $form_data ) {
 		$res = new Form_Data_Response();
 		try {
 			$email_subject = ( __( 'Test email for Otter Form from ', 'otter-blocks' ) . get_bloginfo( 'name', 'display' ) );
-			$email_body    = Form_Email::instance()->build_test_email();
+			$email_body    = Form_Email::instance()->build_test_email( $form_data );
 			// Sent the form date to the admin site as a default behaviour.
 			$to            = sanitize_email( get_site_option( 'admin_email' ) );
-			if( $form_request->payload_has_field( 'to' ) && '' !== $form_request->get_payload_field( 'to' )) {
-				$to = $form_request->get_payload_field( 'to' );
+			if( $form_data->payload_has_field( 'to' ) && '' !== $form_data->get_payload_field( 'to' )) {
+				$to = $form_data->get_payload_field( 'to' );
 			}
 			$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . get_bloginfo( 'name', 'display' ) . '<' . $to . '>' );
 			// phpcs:ignore
@@ -387,16 +387,16 @@ class Form_Server {
 	/**
 	 * Get data from the given provider
 	 *
-	 * @param Form_Data_Request $form_request Search request.
+	 * @param Form_Data_Request $form_data Search request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 * @since 2.0.3
 	 */
-	public function get_integration_data( $form_request ) {
+	public function get_integration_data( $form_data ) {
 		$res = new Form_Data_Response();
 
 		try {
 			$service = null;
-			switch ( $form_request->get_payload_field( 'provider' ) ) {
+			switch ( $form_data->get_payload_field( 'provider' ) ) {
 				case 'mailchimp':
 					$service = new Mailchimp_Integration();
 					break;
@@ -408,10 +408,10 @@ class Form_Server {
 			}
 
 			if ( isset( $service ) ) {
-				$valid_api_key = $service::validate_api_key( $form_request->get_payload_field( 'apiKey' ) );
+				$valid_api_key = $service::validate_api_key( $form_data->get_payload_field( 'apiKey' ) );
 				if ( $valid_api_key['valid'] ) {
-					$service->set_api_key( $form_request->get_payload_field( 'apiKey' ) );
-					$res->set_response( $service->get_information_from_provider( $form_request ) );
+					$service->set_api_key( $form_data->get_payload_field( 'apiKey' ) );
+					$res->set_response( $service->get_information_from_provider( $form_data ) );
 				} else {
 					$res->set_error( $valid_api_key['reason'] );
 				}
@@ -426,13 +426,13 @@ class Form_Server {
 	/**
 	 * Test the subscription service.
 	 *
-	 * @param Form_Data_Request $form_request The test request.
+	 * @param Form_Data_Request $form_data The test request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 * @since 2.0.3
 	 */
-	public function test_subscription_service( $form_request ) {
+	public function test_subscription_service( $form_data ) {
 		$res          = new Form_Data_Response();
-		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_request->get_payload_field( 'formOption' ) );
+		$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_payload_field( 'formOption' ) );
 
 		try {
 			$service = null;
