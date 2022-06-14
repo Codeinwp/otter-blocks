@@ -1,5 +1,108 @@
 .wp-block-themeisle-blocks-form {
+	--padding: 5px 10px;
+	--borderRadius: inherit;
+	--borderColor: inherit;
+	--borderWidth: inherit;
+	--labelColor: inherit;
+	--helpLabelColor: inherit;
+	--inputWidth: 100%;
+	--requiredColor: red;
+	--submitColor: white;
+	--submitMsgColor: green;
+	--submitErrorColor: red;
+	--inputsGap: 10px;
+	--inputGap: 5px;
+	--labelFontSize: var(--bodyFontSize, 1.3rem);
+	--submitFontSize: var(--btnFs, var(--bodyFontSize, 1.3rem));
+
+	.otter-form__container {
+		display: flex;
+		flex-direction: column;
+		gap: var(--inputsGap);
+
+		p {
+			margin-bottom: 10px;
+		}
+
+		.wp-block-button {
+			display: flex;
+			align-items: baseline;
+			flex-direction: row;
+
+			.wp-block-button__link {
+				font-size: var(--submitFontSize);
+				text-align: center;
+				height: auto;
+				padding: 10px 20px;
+				color: var(--submitColor);
+				border: 0px;
+				transition: background-color 0.15s linear;
+			}
+
+			&.right {
+				flex-direction: row-reverse;
+			}
+
+			&.full {
+				flex-direction: column;
+				align-items: center;
+
+				.wp-block-button__link {
+					width: 100%;
+				}
+			}
+
+			@media (max-width: 640px) {
+				flex-direction: column;
+			}
+		}
+	}
+
+
+	.wp-block-themeisle-blocks-form-input, .wp-block-themeisle-blocks-form-textarea {
+		display: flex;
+		flex-direction: column;
+		width: 100%;
+		gap: var(--inputGap);
+		margin: 0px;
+
+		.otter-form-input-label, .otter-form-textarea-label {
+			width: 100%;
+			font-weight: bold;
+			color: var(--labelColor);
+			font-size: var(--labelFontSize);
+
+			.required {
+				color: var(--requiredColor);
+			}
+		}
+
+		.otter-form-input,.otter-form-textarea-input {
+			width: var(--inputWidth);
+			padding: var(--padding);
+			border-radius: var(--borderRadius);
+			border-width: var(--borderWidth);
+			border-color: var(--borderColor);
+			border-style: solid;
+		}
+
+		.o-form-help {
+			opacity: 0.8;
+			color: var(--helpLabelColor);
+			margin-bottom: 12px;
+			font-size: 13px;
+		}
+	}
+
+	.wp-block-themeisle-blocks-form-textarea {
+		.otter-form-textarea-input {
+			height: 200px;
+			border-style: solid;
+		}
+	}
+
 	.otter-form-consent {
+		margin-left: 5px;
 		label {
 			margin-left: 10px;
 		}
@@ -9,94 +112,54 @@
 		}
 	}
 
-	.wp-block-button {
-		margin-top: 1.5em;
-	}
 
-	.otter-form-server-response {
+	.o-form-server-response {
 		text-align: left;
 		padding: 1rem;
 		font-size: 1.2rem;
 		border-radius: 10%;
 		margin-left: 10px;
 
-		&.success {
-			color: green;
+		&.o-success {
+			color: var(--submitMsgColor);
 		}
 
-		&.error {
-			color: red;
+		&.o-error {
+			color: var(--submitErrorColor);
 		}
 
-		&.info {
+		&.o-info {
 			color: rgb(79, 123, 204);
 		}
 
-		&.warning {
+		&.o-warning {
 			color: rgb(255, 196, 0);
 		}
 	}
 
-	.has-submit-msg {
-		display: flex;
-		align-items: baseline;
-		flex-direction: row;
-	}
-
-	.loading {
-		animation: blink 3s ease-in-out infinite both;
-	}
-
-	@keyframes blink {
-		0%,
-		50%,
-		100% {
-		  opacity: 1;
-		}
-		25%,
-		75% {
-		  opacity: 0.5;
-		}
-	  }
-}
-
-.wp-block-themeisle-blocks-form-input {
-	display: flex;
-	flex-direction: column;
-
-	.otter-form-input-label {
-		width: 100%;
-		font-weight: bold;
-
-		.required {
-			font-size: 14px;
-			margin-left: 5px;
-			color: #28303d;
-			font-weight: normal;
+	@keyframes spinner {
+		to {
+			transform: rotate(360deg);
 		}
 	}
 
-	.otter-form-input {
-		width: 100%;
-		margin-bottom: 1.5em;
-	}
-}
-
-.wp-block-themeisle-blocks-form-textarea {
-	.otter-form-textarea-label {
-		width: 100%;
-		font-weight: bold;
-
-		.required {
-			font-size: 14px;
-			margin-left: 5px;
-			color: #28303d;
+	.spinner {
+		position: relative;
+		padding: 2rem;
+		&:before {
+			content: "";
+			box-sizing: border-box;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 20px;
+			height: 20px;
+			margin-top: -10px;
+			margin-left: -10px;
+			border-radius: 50%;
+			border-top: 2px solid var(--submitColor);
+			border-right: 2px solid transparent;
+			animation: spinner 0.6s linear infinite;
 		}
-	}
-
-	.otter-form-textarea-input {
-		width: 100%;
-		height: 200px;
-		margin-bottom: 1.5em;
 	}
 }
