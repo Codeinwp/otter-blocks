@@ -427,11 +427,11 @@ const Inspector = ({
 			>
 				<span>
 					{
-						__( 'In order for the Form to work properly, make sure your SMTP plugin is set up.', 'otter-blocks' )
+						__( 'In order for the Form to work properly, make sure your SMTP server is set up. The test email will be send to the address from the field Email To on Form Options.', 'otter-blocks' )
 					}
 				</span>
 				<ExternalLink
-					href={'https://www.wpbeginner.com/plugins/how-to-set-up-wp-mail-smtp-with-any-host-ultimate-guide/'}
+					href={'https://www.wpbeginner.com/wp-tutorials/how-to-use-smtp-server-to-send-wordpress-emails/'}
 					style={{ marginLeft: '3px' }}
 				>
 					{ __( 'Learn more.', 'otter-blocks' ) }

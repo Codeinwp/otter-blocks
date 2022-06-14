@@ -358,20 +358,23 @@ class Form_Server {
 	/**
 	 * Send a test email.
 	 *
+	 * @param Form_Data_Request $form_request The test request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 * @since 2.0.3
 	 */
-	public static function send_test_email() {
+	public static function send_test_email( $form_request ) {
 		$res = new Form_Data_Response();
 		try {
-			$email_subject = ( __( 'Test email for Otter Form from ', 'otter-blocks' ) . get_bloginfo( 'name' ) );
+			$email_subject = ( __( 'Test email for Otter Form from ', 'otter-blocks' ) . get_bloginfo( 'name', 'display' ) );
 			$email_body    = Form_Email::instance()->build_test_email();
 			// Sent the form date to the admin site as a default behaviour.
-			$to      = sanitize_email( get_site_option( 'admin_email' ) );
-			$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . esc_url( get_site_url() ) );
+			$to            = sanitize_email( get_site_option( 'admin_email' ) );
+			if( $form_request->payload_has_field( 'to' ) && '' !== $form_request->get_payload_field( 'to' )) {
+				$to = $form_request->get_payload_field( 'to' );
+			}
+			$headers = array( 'Content-Type: text/html; charset=UTF-8', 'From: ' . get_bloginfo( 'name', 'display' ) . '<' . $to . '>' );
 			// phpcs:ignore
-			wp_mail( $to, $email_subject, $email_body, $headers );
-			$res->mark_as_success();
+			$res->set_success( wp_mail( $to, $email_subject, $email_body, $headers ) );
 		} catch ( Exception  $e ) {
 			$res->set_error( $e->getMessage() );
 		} finally {
