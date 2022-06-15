@@ -1,13 +1,3 @@
-/** @jsx jsx */
-
-/**
- * External dependencies.
- */
-import {
-	css,
-	jsx
-} from '@emotion/react';
-
 /**
  * WordPress dependencies
  */
@@ -176,23 +166,8 @@ const Edit = ({
 	// Add `border-radius` for all the platforms
 	const borderRadius = 'linked' === attributes.borderRadiusType ? attributes.borderRadius + '%' : `${ attributes.borderRadiusTopLeft }% ${ attributes.borderRadiusTopRight }% ${ attributes.borderRadiusBottomRight }% ${ attributes.borderRadiusBottomLeft }%`;
 
-	const styles = css`
-		--backgroundColor: ${ attributes.backgroundColor };
-		--borderColor: ${ attributes.borderColor };
-		--borderRadius: ${ borderRadius };
-
-		.otter-countdown__display-area .otter-countdown__value {
-			color: ${ attributes.valueColor };
-		}
-
-		.otter-countdown__display-area .otter-countdown__label {
-			color: ${ attributes.labelColor };
-		}
-	`;
-
 	const blockProps = useBlockProps({
-		id: attributes.id,
-		css: styles
+		id: attributes.id
 	});
 
 	return (

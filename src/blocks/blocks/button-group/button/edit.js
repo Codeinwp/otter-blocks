@@ -1,12 +1,6 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
-import {
-	css,
-	jsx
-} from '@emotion/react';
 import classnames from 'classnames';
 import hexToRgba from 'hex-rgba';
 
@@ -109,19 +103,6 @@ const Edit = ({
 		...buttonStyle
 	};
 
-	const hoverStyles = css`
-		&:hover {
-			color: ${ attributes.hoverColor } !important;
-			background: ${ attributes.hoverBackground || attributes.hoverBackgroundGradient } !important;
-			border-color: ${ attributes.hoverBorder } !important;
-			${ attributes.boxShadow && `box-shadow: ${ attributes.hoverBoxShadowHorizontal }px ${ attributes.hoverBoxShadowVertical }px ${ attributes.hoverBoxShadowBlur }px ${ attributes.hoverBoxShadowSpread }px ${ hexToRgba( ( attributes.hoverBoxShadowColor ? attributes.hoverBoxShadowColor : '#000000' ), attributes.hoverBoxShadowColorOpacity ) } !important;` }
-		}
-
-		&:hover svg {
-			fill: ${ attributes.hoverColor } !important;
-		}
-	`;
-
 	const iconStyles = {
 		fill: attributes.color,
 		width: parentAttributes.fontSize && `${ parentAttributes.fontSize }px`
@@ -153,7 +134,6 @@ const Edit = ({
 					<div
 						className="wp-block-button__link"
 						style={ styles }
-						css={ hoverStyles }
 					>
 						{ ( 'left' === attributes.iconType || 'only' === attributes.iconType ) && (
 							'themeisle-icons' === attributes.library && attributes.icon ? (
@@ -206,7 +186,6 @@ const Edit = ({
 						withoutInteractiveFormatting
 						className="wp-block-button__link"
 						style={ styles }
-						css={ hoverStyles }
 					/>
 				) }
 			</div>

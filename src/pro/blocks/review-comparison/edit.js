@@ -1,13 +1,6 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
-import {
-	css,
-	jsx
-} from '@emotion/react';
-
 import classnames from 'classnames';
 
 import getSymbolFromCurrency from 'currency-symbol-map';
@@ -94,13 +87,6 @@ const Edit = ({
 	const [ data, setData ] = useState([]);
 	const [ status, setStatus ] = useState( 'loading' );
 	const [ isEditing, setEditing ] = useState( true );
-
-	const styles = css`
-		.o-review-comparison_buttons span {
-			background: ${ attributes.buttonColor } !important;
-			color: ${ attributes.buttonText } !important;
-		}
-	`;
 
 	useEffect( () => {
 		tableImages = [];
@@ -254,7 +240,7 @@ const Edit = ({
 						{ tableStatistics }
 					</tr>
 
-					<tr css={ styles }>
+					<tr>
 						<th>{ __( 'Buy this product', 'otter-blocks' ) }</th>
 						{ tableLinks }
 					</tr>

@@ -1,15 +1,9 @@
-/** @jsx jsx */
 /**
  * External dependencies.
  */
 import hexToRgba from 'hex-rgba';
 
 window.hexToRgba = hexToRgba; // Warning for future self: do not delete!!!
-
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -105,16 +99,10 @@ const Edit = ({
 		return hexToRgba( '#000000', attributes.boxShadowColorOpacity !== undefined ? ( attributes.boxShadowColorOpacity || 0.00001 ) : 1 );
 	};
 
-	const style = css`
-		img {
-			box-shadow: ${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ getShadowColor() }
-		}
-	`;
-
 	return (
 		<Fragment>
 			{ attributes.boxShadow ? (
-				<BlockEdit { ...props } css={ style } />
+				<BlockEdit { ...props } />
 			) : (
 				<BlockEdit { ...props } />
 			) }

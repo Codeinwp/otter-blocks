@@ -1,15 +1,9 @@
-/** @jsx jsx */
 /**
  * External dependencies
  */
 import { plus } from '@wordpress/icons';
 
 import classnames from 'classnames';
-
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies.
@@ -135,24 +129,6 @@ const Edit = ({
 	};
 
 	/**
-	 * ------------ Tab Dynamic CSS ------------
-	 */
-
-	const styles = css`
-		--borderWidth: ${ undefined !== attributes.borderWidth ? attributes.borderWidth : 3 }px;
-		--borderColor: ${ attributes.borderColor };
-		--activeTitleColor: ${ attributes.activeTitleColor };
-		--tabColor: ${ attributes.tabColor };
-	`;
-
-	const tabHeaderStyle = css`
-		display: flex;
-		width: 30px;
-		height: 30px;
-		align-items: center;
-	`;
-
-	/**
 	 * ------------ Tab Components ------------
 	 */
 	const TabHeader = ({
@@ -178,7 +154,6 @@ const Edit = ({
 		return (
 			<div className="wp-block-themeisle-blocks-tabs__header_item">
 				<div
-					css={ tabHeaderStyle }
 					onClick={ addTab }
 				>
 					<Icon icon={ plus } />
@@ -188,8 +163,7 @@ const Edit = ({
 	};
 
 	const blockProps = useBlockProps({
-		id: attributes.id,
-		css: styles
+		id: attributes.id
 	});
 
 	return (

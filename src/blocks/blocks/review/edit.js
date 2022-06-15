@@ -1,13 +1,6 @@
-/** @jsx jsx */
-
 /**
  * External dependencies.
  */
-import {
-	css,
-	jsx
-} from '@emotion/react';
-
 import classnames from 'classnames';
 
 import getSymbolFromCurrency from 'currency-symbol-map';
@@ -122,19 +115,11 @@ const Edit = ({
 		setAttributes({ links });
 	};
 
-	const styles = css`
-		--backgroundColor: ${ getValue( 'backgroundColor' ) };
-		--primaryColor: ${ getValue( 'primaryColor' ) };
-		--textColor: ${ getValue( 'textColor' ) };
-		--buttonTextColor: ${ getValue( 'buttonTextColor' ) };
-	`;
-
 	const isPlaceholder = ( 'object' === typeof status && null !== status && status.isError ) || 'isLoading' === status;
 
 	let blockProps = useBlockProps({
 		id: attributes.id,
-		className: isPlaceholder && 'is-placeholder',
-		css: styles
+		className: isPlaceholder && 'is-placeholder'
 	});
 
 	if ( 'isLoading' === status ) {

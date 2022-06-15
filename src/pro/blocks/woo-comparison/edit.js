@@ -1,13 +1,3 @@
-/** @jsx jsx */
-
-/**
- * External dependencies
- */
-import {
-	css,
-	jsx
-} from '@emotion/react';
-
 /**
  * WordPress dependencies
  */
@@ -56,16 +46,6 @@ const Edit = ({
 
 	const [ isEditing, setEditing ] = useState( true );
 
-	const styles = css`
-		.nv-ct-comparison-table-content {
-			--bgColor: ${ attributes.rowColor };
-			--headerColor: ${ attributes.headerColor };
-			--color: ${ attributes.textColor };
-			--borderColor: ${ attributes.borderColor };
-			${ Boolean( attributes.altRow ) && `--alternateBg: ${ attributes.altRowColor };` }
-		}
-	`;
-
 	const blockProps = useBlockProps();
 
 	if ( isEditing ) {
@@ -90,9 +70,7 @@ const Edit = ({
 			/>
 
 			<div { ...blockProps }>
-				<Disabled
-					css={ styles }
-				>
+				<Disabled>
 					<ServerSideRender
 						block="themeisle-blocks/woo-comparison"
 						attributes={ { ...attributes } }

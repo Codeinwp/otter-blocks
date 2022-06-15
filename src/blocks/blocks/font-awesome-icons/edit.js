@@ -1,15 +1,5 @@
-/** @jsx jsx */
-
 /**
- * External dependencies.
- */
-import {
-	css,
-	jsx
-} from '@emotion/react';
-
-/**
- * WordPress dependencies...
+ * WordPress dependencies.
  */
 import { useBlockProps } from '@wordpress/block-editor';
 
@@ -53,46 +43,8 @@ const Edit = ({
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
-	const styles = css`
-		--align: ${ attributes.align };
-		--borderColor: ${ attributes.borderColor };
-		${ attributes.borderSize !== undefined && `--borderSize: ${ attributes.borderSize }px;` }
-		${ attributes.borderRadius !== undefined && `--borderRadius: ${ attributes.borderRadius }%;` }
-		${ attributes.margin !== undefined && `--margin: ${ getValue( 'margin' ) }px;` }
-		${ attributes.padding !== undefined && `--padding: ${ getValue( 'padding' ) }px;` }
-		${ attributes.fontSize !== undefined && `--fontSize: ${ getValue( 'fontSize' ) }px;` }
-
-		.wp-block-themeisle-blocks-font-awesome-icons-container {
-			color: ${ getValue( 'textColor' ) };
-			background-color: ${ getValue( 'backgroundColor' ) };
-		}
-
-		.wp-block-themeisle-blocks-font-awesome-icons-container:hover {
-			color: ${ getValue( 'textColorHover' ) };
-			background-color: ${ getValue( 'backgroundColorHover' ) };
-			border-color: ${ attributes.borderColorHover };
-		}
-
-		.wp-block-themeisle-blocks-font-awesome-icons-container a {
-			color: ${ getValue( 'textColor' ) };
-		}
-
-		.wp-block-themeisle-blocks-font-awesome-icons-container i {
-			${ getValue( 'fontSize' ) && `font-size: ${ getValue( 'fontSize' ) }px;` }
-		}
-
-		.wp-block-themeisle-blocks-font-awesome-icons-container svg {
-			fill: ${ getValue( 'textColor' ) };
-		}
-
-		.wp-block-themeisle-blocks-font-awesome-icons-container:hover svg {
-			fill: ${ getValue( 'textColorHover' ) };
-		}
-	`;
-
 	const blockProps = useBlockProps({
-		id: attributes.id,
-		css: styles
+		id: attributes.id
 	});
 
 	return (

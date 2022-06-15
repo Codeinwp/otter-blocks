@@ -1,5 +1,3 @@
-/** @jsx jsx */
-
 /**
  * WordPress dependencies.
  */
@@ -12,11 +10,6 @@ import {
 	Fragment,
 	useEffect
 } from '@wordpress/element';
-
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * Internal dependencies
@@ -43,15 +36,8 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
-	const styles = css`
-		--horizontalAlign: ${ attributes.horizontalAlign };
-		${ attributes.gap && `--gap: ${ attributes.gap }px;` }
-		${ attributes.defaultSize && `--fontSize: ${ attributes.defaultSize }px;` }
-	`;
-
 	const blockProps = useBlockProps({
-		id: attributes.id,
-		css: styles
+		id: attributes.id
 	});
 
 	return (

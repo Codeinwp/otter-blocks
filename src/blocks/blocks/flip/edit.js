@@ -1,14 +1,7 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
 import classnames from 'classnames';
-
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies.
@@ -67,48 +60,12 @@ const Edit = ({
 		return hexToRgba( '#000000', attributes.boxShadowColorOpacity !== undefined ? ( attributes.boxShadowColorOpacity || 0.00001 ) : 1 );
 	};
 
-	const styles = css`
-		${ attributes.width !== undefined && `--width: ${ attributes.width }px;` }
-		${ attributes.height !== undefined && `--height: ${ attributes.height }px;` }
-		${ attributes.borderWidth !== undefined && `--borderWidth: ${ attributes.borderWidth }px;` }
-		--borderColor: ${ attributes.borderColor };
-		${ attributes.borderRadius !== undefined && `--borderRadius: ${ attributes.borderRadius }px;` }
-		${ ( 'color' === attributes.frontBackgroundType && attributes.frontBackgroundColor ) && `--frontBackground: ${ attributes.frontBackgroundColor };` }
-		${ ( 'gradient' === attributes.frontBackgroundType && attributes.frontBackgroundGradient ) && `--frontBackground: ${ attributes.frontBackgroundGradient };` }
-		${ ( 'image' === attributes.frontBackgroundType && attributes.frontBackgroundImage?.url ) && `--frontBackground: url( ${ attributes.frontBackgroundImage?.url } ) ${ attributes.frontBackgroundRepeat || 'repeat' } ${ attributes.frontBackgroundAttachment || 'scroll' } ${ Math.round( attributes.frontBackgroundPosition?.x * 100 ) || 50 }% ${ Math.round( attributes.frontBackgroundPosition?.y * 100 ) || 50 }%/${ attributes.frontBackgroundSize || 'auto' };` }
-		${ ( 'color' === attributes.backBackgroundType && attributes.backBackgroundColor ) && `--backBackground: ${ attributes.backBackgroundColor };` }
-		${ ( 'gradient' === attributes.backBackgroundType && attributes.backBackgroundGradient ) && `--backBackground: ${ attributes.backBackgroundGradient };` }
-		${ ( 'image' === attributes.backBackgroundType && attributes.backBackgroundImage?.url ) && `--backBackground: url( ${ attributes.backBackgroundImage?.url } ) ${ attributes.backBackgroundRepeat || 'repeat' } ${ attributes.backBackgroundAttachment || 'scroll' } ${ Math.round( attributes.backBackgroundPosition?.x * 100 ) || 50 }% ${ Math.round( attributes.backBackgroundPosition?.y * 100 ) || 50 }%/${ attributes.backBackgroundSize || 'auto' };` }
-		${ attributes.padding !== undefined && `--padding: ${ attributes.padding }px;` }
-		${ attributes.boxShadow && `--boxShadow: ${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ getShadowColor() };` }
-		--frontVerticalAlign: ${ attributes.frontVerticalAlign };
-		--frontHorizontalAlign: ${ attributes.frontHorizontalAlign };
-		--backVerticalAlign: ${ attributes.backVerticalAlign };
-		${ attributes.frontMediaWidth !== undefined && `--frontMediaWidth: ${ attributes.frontMediaWidth }px;` }
-		${ attributes.frontMediaHeight !== undefined && `--frontMediaHeight: ${ attributes.frontMediaHeight }px;` }
-
-		.o-flip-inner {
-			transform: ${ isFliped ? 'var( --flip-anim )' : 'unset' };
-		}
-
-		.o-flip-front .o-flip-content h3 {
-			color: ${ attributes.titleColor };
-			${ attributes.titleFontSize && `font-size: ${ attributes.titleFontSize }px;` }
-		}
-
-		.o-flip-front .o-flip-content p {
-			color: ${ attributes.descriptionColor };
-			${ attributes.descriptionFontSize && `font-size: ${ attributes.descriptionFontSize }px;` }
-		}
-	`;
-
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames({
 			'flipX': 'flipX' === attributes.animType,
 			'flipY': 'flipY' === attributes.animType
-		}),
-		css: styles
+		})
 	});
 
 	return (

@@ -1,16 +1,9 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
 import classnames from 'classnames';
 
 import { get } from 'lodash';
-
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies
@@ -790,14 +783,6 @@ const Edit = ({
 										className='wp-block-button__link'
 										type='submit'
 										disabled
-
-										css={
-											css`
-											${ attributes.submitBackgroundColor && `background-color: ${attributes.submitBackgroundColor} !important;` }
-											&:hover {
-												${ attributes.submitBackgroundColorHover && `background-color: ${attributes.submitBackgroundColorHover} !important;` }
-											}`
-										}
 									>
 										{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
 									</button>

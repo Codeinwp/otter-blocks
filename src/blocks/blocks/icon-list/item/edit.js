@@ -1,12 +1,6 @@
-/** @jsx jsx */
 /**
  * External dependencies
  */
-import {
-	css,
-	jsx
-} from '@emotion/react';
-
 import classnames from 'classnames';
 
 /**
@@ -109,14 +103,7 @@ const Edit = ({
 		setAttributes({ content: value });
 	};
 
-	const styles = css`
-		--contentColor: ${ attributes.contentColor || parentAttributes.defaultContentColor };
-		--iconColor: ${ attributes.iconColor || parentAttributes.defaultIconColor };
-	`;
-
-	const blockProps = useBlockProps({
-		css: styles
-	});
+	const blockProps = useBlockProps();
 
 	return (
 		<Fragment>

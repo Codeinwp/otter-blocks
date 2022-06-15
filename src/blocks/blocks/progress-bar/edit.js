@@ -1,14 +1,7 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
 import classnames from 'classnames';
-
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies
@@ -123,22 +116,9 @@ const ProgressBar = ({
 		}
 	};
 
-	const styles = css`
-		--titleColor: ${ attributes.titleColor };
-		--percentageColor: ${ attributes.percentageColor };
-		--percentageColorOuter: ${ attributes.percentageColor };
-		--percentageColorTooltip: ${ attributes.percentageColor };
-		--percentageColorAppend: ${ attributes.percentageColor };
-		--backgroundColor: ${ attributes.backgroundColor };
-		--borderRadius: ${ undefined !== attributes.borderRadius ? attributes.borderRadius : 5 }px;
-		--height: ${ undefined !== attributes.height ? attributes.height : 30 }px;
-		--barBackground: ${ attributes.barBackgroundColor };
-	`;
-
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		className: classnames({ 'has-tooltip': 'tooltip' === attributes.percentagePosition }),
-		css: styles
+		className: classnames({ 'has-tooltip': 'tooltip' === attributes.percentagePosition })
 	});
 
 	return (

@@ -1,12 +1,3 @@
-/** @jsx jsx */
-/**
- * External dependencies
- */
-import {
-	css,
-	jsx
-} from '@emotion/react';
-
 /**
  * WordPress dependencies
  */
@@ -111,28 +102,6 @@ const Edit = ({
 		dispatch( 'otter-store' ).setPostsSlugs( slugs );
 	}, [ slugs ]);
 
-	const fontSizeStyle = css`
-		${ attributes.imageWidth && `--imgWidth: ${ attributes.imageWidth }px;` }
-		${ attributes.borderRadius && `--imgBorderRadius: ${ attributes.borderRadius }px;` }
-		--vertAlign: ${_align( attributes.verticalAlign )};
-		--textAlign: ${ attributes.textAlign };
-
-		@media ( min-width: 960px ) {
-			${ attributes.customTitleFontSize && `--titleTextSize: ${ attributes.customTitleFontSize }px;` }
-			${ attributes.customDescriptionFontSize && `--descriptionTextSize: ${ attributes.customDescriptionFontSize }px;` }
-		}
-
-		@media ( min-width: 600px ) and ( max-width: 960px ) {
-			${ attributes.customTitleFontSizeTablet && `--titleTextSize: ${ attributes.customTitleFontSizeTablet }px;` }
-			${ attributes.customDescriptionFontSizeTablet && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeTablet }px;` }
-		}
-
-		@media ( max-width: 600px ) {
-			${ attributes.customTitleFontSizeMobile && `--titleTextSize: ${ attributes.customTitleFontSizeMobile }px;` }
-			${ attributes.customDescriptionFontSizeMobile && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeMobile }px;` }
-		}
-	`;
-
 	const blockProps = useBlockProps();
 
 	if ( ! posts || ! categoriesList || ! authors ) {
@@ -211,7 +180,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div { ...blockProps } css={ fontSizeStyle }>
+			<div { ...blockProps }>
 				<Disabled>
 					{ attributes.enableFeaturedPost && (
 						<FeaturedPost
