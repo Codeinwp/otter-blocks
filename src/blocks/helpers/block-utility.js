@@ -291,31 +291,31 @@ export const cleanCSS = props => {
  * @returns {[string,((value: (((prevState: (string[]|*[])) => (string[]|*[])) | string[] | *[])) => void)]}
  */
 export const useCSSNode = options => {
-	const [ cssList, setCSS ] = useState( []);
+	const [ cssList, setCSS ] = useState([]);
 	const [ settings, setSettings ] = useState({
 		node: null,
 		cssNodeName: ''
-	})
+	});
 
 	useEffect( () => {
 
 		let anchor;
 		const n = document.createElement( 'style' );
 		n.type = 'text/css';
-		n.setAttribute('data-generator', 'otter-blocks')
+		n.setAttribute( 'data-generator', 'otter-blocks' );
 
-		setTimeout(() => {
+		setTimeout( () => {
 			anchor = parent.document.querySelector( 'iframe[name="editor-canvas"]' )?.contentWindow.document.head || document.head;
 			anchor?.appendChild( n );
-		}, 500)
+		}, 500 );
 
 		setSettings({
 			node: n,
 			cssNodeName: options?.selector ?? `o-node-${uuidv4()}`
-		})
+		});
 
 		return () => {
-			console.log('Clean')
+			console.log( 'Clean' );
 			anchor?.removeChild( n );
 		};
 	}, [ ]);
