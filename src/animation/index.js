@@ -13,7 +13,10 @@ import { InspectorControls } from '@wordpress/block-editor';
 
 import { Fragment } from '@wordpress/element';
 
-import { addFilter } from '@wordpress/hooks';
+import {
+	addFilter,
+	applyFilters
+} from '@wordpress/hooks';
 
 /**
   * Internal dependencies.
@@ -42,12 +45,15 @@ const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 						<PanelBody
 							title={ __( 'Animations', 'otter-blocks' ) }
 							initialOpen={ false }
+							className="o-is-new"
 						>
 							<AnimationControls
 								clientId={ props.clientId }
 								setAttributes={ props.setAttributes }
 								attributes={ props.attributes }
 							/>
+
+							{ applyFilters( 'otter.poweredBy', '' ) }
 						</PanelBody>
 					</InspectorControls>
 				</Fragment>
@@ -58,8 +64,4 @@ const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 	};
 }, 'withInspectorControl' );
 
-addFilter(
-	'editor.BlockEdit',
-	'themeisle-custom-css/with-inspector-controls',
-	withInspectorControls
-);
+addFilter( 'editor.BlockEdit', 'themeisle-custom-css/with-inspector-controls', withInspectorControls );

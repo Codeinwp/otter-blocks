@@ -19,8 +19,7 @@ import {
 
 import {
 	startCase,
-	toLower,
-	isEmpty
+	toLower
 } from 'lodash';
 
 import {
@@ -28,24 +27,22 @@ import {
 	TextControl,
 	SelectControl,
 	ToggleControl,
-	RangeControl,
-	BaseControl,
-	ExternalLink
+	RangeControl
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
-	useState,
-	useContext
+	useState
 } from '@wordpress/element';
+
+import { applyFilters } from '@wordpress/hooks';
 
 /**
  * Internal dependencies
  */
-import ResponsiveControl from '../../../components/responsive-control';
-import { CustomMetasContext } from '../edit';
+import ResponsiveControl from '../../../components/responsive-control/index.js';
 
 const DragHandle = SortableHandle( () => {
 	return (
@@ -72,7 +69,7 @@ export const SortableItem = ({
 	const [ isOpen, setOpen ] = useState( false );
 
 	const isCustomMeta = template?.startsWith( 'custom_' );
-	const customMeta = attributes?.customMetas?.filter( ({id}) =>  id === template )?.pop();
+	const customMeta = attributes?.customMetas?.filter( ({ id }) =>  id === template )?.pop();
 
 	const templateLookUp = {
 		image: attributes.displayFeaturedImage,
@@ -83,8 +80,8 @@ export const SortableItem = ({
 	};
 
 	const toggleField = fieldName => {
-		const field = fieldMapping[fieldName] || fieldName;
-		setAttributes({ [field]: ! attributes[field] });
+		const field = fieldMapping[ fieldName ] || fieldName;
+		setAttributes({ [field]: ! attributes[ field ] });
 	};
 
 	const getView = useSelect( select => {
@@ -152,17 +149,7 @@ export const SortableItem = ({
 		});
 	};
 
-	const deleteCustomField = () => {
-		setAttributes({
-			template: attributes.template?.filter( template => template !== customMeta?.id ),
-			customMetas: attributes.customMetas?.filter( currentMeta =>
-				currentMeta?.id !== customMeta?.id )
-		});
-	};
-
-	const { acfData, acfFieldDict, ALLOWED_ACF_TYPES } = useContext( CustomMetasContext );
-
-	const label = ! isCustomMeta ? startCase( toLower( template ) ) :  startCase( toLower( acfFieldDict[ customMeta.field ]?.label || 'Custom Type' ) );
+	const label = ! isCustomMeta ? startCase( toLower( template ) ) : applyFilters( 'otter.postsBlock.panelLabel', '', customMeta );
 	const canEdit = templateLookUp[ template ] || customMeta?.display;
 	const icon = canEdit ? 'visibility' : 'hidden';
 
@@ -338,7 +325,7 @@ export const SortableItem = ({
 								label={ __( 'Excerpt Limit', 'otter-blocks' ) }
 								type="number"
 								value={ attributes.excerptLength }
-								onChange={ excerptLength => setAttributes({ excerptLength }) }
+								onChange={ value => setAttributes({ excerptLength: Number( value ) }) }
 							/>
 
 							<ToggleControl
@@ -361,102 +348,7 @@ export const SortableItem = ({
 						</Fragment>
 					) }
 
-					{ isCustomMeta && customMeta && (
-						<Fragment>
-							{ ! isEmpty( acfData ) && (
-								<BaseControl
-									label={ __( 'Fields', 'otter-blocks' ) }
-								>
-									<select
-										value={ acfFieldDict[ customMeta.field ] ? customMeta.field : 'none' }
-										onChange={ event => setAttributesCustomMeta({ field: event.target.value  }) }
-										className="components-select-control__input"
-									>
-										<option value="none">{ __( 'Select a field', 'otter-blocks' ) }</option>
-
-										{ acfData.map( group => {
-											return (
-												<optgroup
-													label={ group?.data?.title }
-												>
-													{ group?.fields
-														?.filter( ({ key, label, type }) => key && label &&  ALLOWED_ACF_TYPES.includes( type ) )
-														.map( ({ key, label }) => (
-															<option value={ key }>
-																{ label }
-															</option>
-														) ) }
-												</optgroup>
-											);
-										}) }
-									</select>
-								</BaseControl>
-							) }
-
-							{ ( ! isEmpty( acfFieldDict ) ) && acfFieldDict[ customMeta.field ] && (
-								<Fragment>
-									{ ( acfFieldDict[ customMeta.field ][ 'default_value' ]) && (
-										<TextControl
-											label={ __( 'Default Value', 'otter-blocks' ) }
-											value={ acfFieldDict[ customMeta.field ][ 'default_value' ]  }
-											disabled
-										/>
-									) }
-
-									{ ( acfFieldDict[ customMeta.field ].prepend ) && (
-										<TextControl
-											label={ __( 'Before', 'otter-blocks' ) }
-											value={  acfFieldDict[ customMeta.field ].prepend }
-											disabled
-										/>
-									) }
-
-									{ ( acfFieldDict[ customMeta.field ].append  ) && (
-										<TextControl
-											label={ __( 'After', 'otter-blocks' ) }
-											value={ acfFieldDict[ customMeta.field ].append }
-											disabled
-										/>
-									) }
-
-								</Fragment>
-							) }
-
-							{ acfFieldDict[ customMeta.field ]?.urlLocation && (
-								<Fragment>
-									<ExternalLink
-										href={ acfFieldDict[ customMeta.field ]?.urlLocation }
-										target='_blank'
-									>
-										{ __( 'Edit in ACF', 'otter-blocks' ) }
-									</ExternalLink>
-									<br/>
-								</Fragment>
-
-							) }
-
-							{ isEmpty( acfData ) ? (
-								<ExternalLink
-									href={ `${ window.themeisleGutenberg?.rootUrl || '' }/wp-admin/edit.php?post_type=acf-field-group` }
-									target='_blank'
-								>
-									{ __( 'There are no ACF fields. You can use this option after you add some.', 'otter-blocks' ) }
-								</ExternalLink>
-							) : ! acfFieldDict[ customMeta.field ] &&  (
-								__( 'The selected field does not longer exists. Please select another field.', 'otter-blocks' )
-							) }
-
-							<Button
-								onClick={ deleteCustomField }
-								variant="secondary"
-								isSecondary
-								isDestructive
-								className="o-conditions__add"
-							>
-								{ __( 'Delete', 'otter-blocks' ) }
-							</Button>
-						</Fragment>
-					) }
+					{ applyFilters( 'otter.postsBlock.controls', '', attributes, setAttributes, isCustomMeta, customMeta, setAttributesCustomMeta ) }
 				</div>
 			) }
 		</div>
@@ -487,7 +379,7 @@ export const SortableList = SortableContainer( ({
 		<div>
 			{ attributes?.template
 				?.filter( template => {
-					if ( template?.startsWith( 'custom_' ) && ( window?.acf === undefined || ( ! window?.themeisleGutenberg?.hasNeveSupport?.hasNevePro ) ) ) {
+					if ( template?.startsWith( 'custom_' ) && ( window?.acf === undefined || ( ! window.themeisleGutenberg?.hasPro ) ) ) {
 						return false;
 					}
 					return true;

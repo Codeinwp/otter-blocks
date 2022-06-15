@@ -21,7 +21,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Advanced Heading', 'otter-blocks' ),
-	description: __( 'Advanced Heading gives a spin to editor\'s Heading block with much needed customization options.', 'otter-blocks' ),
+	description: __( 'Advanced Heading gives a spin to editor\'s Heading block with much needed customization options. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'heading',

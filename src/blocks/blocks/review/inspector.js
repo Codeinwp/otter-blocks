@@ -29,6 +29,7 @@ import { useState, Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import SyncControl from '../../components/sync-control/index.js';
+import Upsell from '../../components/notice/index.js';
 
 const PanelItem = ({
 	title,
@@ -165,17 +166,16 @@ const Inspector = ({
 			<PanelBody
 				title={ __( 'Product Details', 'otter-blocks' ) }
 			>
-				{
-					attributes.product && (
-						<Notice
-							status="warning"
-							isDismissible={ false }
-							className="o-html-anchor-control-notice"
-						>
-							{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
-						</Notice>
-					)
-				}
+				{ attributes.product && (
+					<Notice
+						status="warning"
+						isDismissible={ false }
+						className="o-html-anchor-control-notice"
+					>
+						{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
+					</Notice>
+				) }
+
 				<TextControl
 					label={ __( 'Product Name', 'otter-blocks' ) }
 					type="text"
@@ -254,6 +254,7 @@ const Inspector = ({
 			>
 				{ 0 < attributes.features.length && attributes.features.map( ( feature, index ) => (
 					<PanelItem
+						key={ index }
 						title={ feature.title || __( 'Feature', 'otter-blocks' ) }
 						remove={ () => removeFeature( index ) }
 					>
@@ -346,17 +347,15 @@ const Inspector = ({
 				title={ __( 'Links', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				{
-					attributes.product && (
-						<Notice
-							status="warning"
-							isDismissible={ false }
-							className="o-html-anchor-control-notice"
-						>
-							{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
-						</Notice>
-					)
-				}
+				{ attributes.product && (
+					<Notice
+						status="warning"
+						isDismissible={ false }
+						className="o-html-anchor-control-notice"
+					>
+						{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
+					</Notice>
+				) }
 
 				{ 0 < productAttributes?.links?.length && productAttributes?.links?.map( ( link, index ) => (
 					<PanelItem
@@ -388,48 +387,47 @@ const Inspector = ({
 					</PanelItem>
 				) ) }
 
-				{
-					! ( 0 < productAttributes?.links?.length ) && (
-						<Fragment>
-							{ 0 < attributes.links.length && attributes.links.map( ( link, index ) => (
-								<PanelItem
-									title={ link.label || __( 'Link', 'otter-blocks' ) }
-									remove={ () => removeLinks( index ) }
-								>
-									<TextControl
-										label={ __( 'Label', 'otter-blocks' ) }
-										type="text"
-										placeholder={ __( 'Button label', 'otter-blocks' ) }
-										value={ link.label }
-										onChange={ label => changeLinks( index, { label }) }
-									/>
-
-									<TextControl
-										label={ __( 'Link', 'otter-blocks' ) }
-										type="url"
-										placeholder={ 'https://…' }
-										value={ link.href }
-										onChange={ href => changeLinks( index, { href }) }
-									/>
-
-									<ToggleControl
-										label={ __( 'Is this Sponsored?', 'otter-blocks' ) }
-										checked={ link.isSponsored }
-										onChange={ () => changeLinks( index, { isSponsored: ! link.isSponsored }) }
-									/>
-								</PanelItem>
-							) ) }
-
-							<Button
-								isSecondary
-								className="o-review__inspector_add"
-								onClick={ addLinks }
+				{ ! ( 0 < productAttributes?.links?.length ) && (
+					<Fragment>
+						{ 0 < attributes.links.length && attributes.links.map( ( link, index ) => (
+							<PanelItem
+								key={ index }
+								title={ link.label || __( 'Link', 'otter-blocks' ) }
+								remove={ () => removeLinks( index ) }
 							>
-								{ __( 'Add Links', 'otter-blocks' ) }
-							</Button>
-						</Fragment>
-					)
-				}
+								<TextControl
+									label={ __( 'Label', 'otter-blocks' ) }
+									type="text"
+									placeholder={ __( 'Button label', 'otter-blocks' ) }
+									value={ link.label }
+									onChange={ label => changeLinks( index, { label }) }
+								/>
+
+								<TextControl
+									label={ __( 'Link', 'otter-blocks' ) }
+									type="url"
+									placeholder={ 'https://…' }
+									value={ link.href }
+									onChange={ href => changeLinks( index, { href }) }
+								/>
+
+								<ToggleControl
+									label={ __( 'Is this Sponsored?', 'otter-blocks' ) }
+									checked={ link.isSponsored }
+									onChange={ () => changeLinks( index, { isSponsored: ! link.isSponsored }) }
+								/>
+							</PanelItem>
+						) ) }
+
+						<Button
+							isSecondary
+							className="o-review__inspector_add"
+							onClick={ addLinks }
+						>
+							{ __( 'Add Links', 'otter-blocks' ) }
+						</Button>
+					</Fragment>
+				) }
 			</PanelBody>
 
 			<PanelBody
@@ -492,16 +490,15 @@ const Inspector = ({
 				</SyncControl>
 			</PanelBody>
 
-			{ ( Boolean( window.themeisleGutenberg.hasNeveSupport.hasNeve ) && ! Boolean( window.themeisleGutenberg.hasNeveSupport.hasNevePro ) ) && (
+			{ ( ! Boolean( window.themeisleGutenberg.hasPro ) ) && (
 				<PanelBody
 					title={ __( 'More Features', 'otter-blocks' ) }
 					initialOpen={ false }
 				>
-					<p>{ __( 'Build comparison tables for reviews, synchronize review data with WooCommerce products and more with Neve Pro. ', 'otter-blocks' ) }</p>
-
-					<ExternalLink href="https://themeisle.com/themes/neve/pricing">
-						{ __( 'Get Neve Pro. ', 'otter-blocks' ) }
-					</ExternalLink>
+					<Upsell
+						notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+						variant="upsell"
+					/>
 				</PanelBody>
 			) }
 		</InspectorControls>

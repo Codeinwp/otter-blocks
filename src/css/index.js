@@ -17,7 +17,10 @@ import { select } from '@wordpress/data';
 
 import { Fragment } from '@wordpress/element';
 
-import { addFilter } from '@wordpress/hooks';
+import {
+	addFilter,
+	applyFilters
+} from '@wordpress/hooks';
 
 /**
  * Internal dependencies.
@@ -62,6 +65,8 @@ const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 								setAttributes={ props.setAttributes }
 								attributes={ props.attributes }
 							/>
+
+							{ applyFilters( 'otter.poweredBy', '' ) }
 						</PanelBody>
 					</InspectorControls>
 				</Fragment>

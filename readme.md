@@ -2,7 +2,7 @@
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/), [uriahs-victor](https://profiles.wordpress.org/uriahs-victor/)  
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder  
 **Requires at least:** 5.6  
-**Tested up to:** 5.9  
+**Tested up to:** 6.0  
 **Requires PHP:** 5.4  
 **Stable tag:** trunk  
 **License:** GPLv3  
@@ -188,6 +188,43 @@ We're here to help. Feel free to open a new thread on the [Support Forum](https:
 5. Section Block
 
 ## Changelog ##
+
+##### [Version 2.0.5](https://github.com/Codeinwp/otter-blocks/compare/v2.0.4...v2.0.5) (2022-05-27)
+
+- Fix CSS notifications appearing multiple times
+- Fix excerptLength not being persistent in Posts Block
+- Sharing Icons Block Revamp
+- Fix ACF extension for Posts not working
+- Fix Icon Block style inheritance issue
+- Fix Dashboard integration fields losing focus on each keypress
+- Fix Accordion title going outside the container
+- Improve Masonry Block responsiveness
+- Improve Product Review Comparison Block placeholder text
+
+
+
+
+##### [Version 2.0.4](https://github.com/Codeinwp/otter-blocks/compare/v2.0.3...v2.0.4) (2022-05-16)
+
+- Fix slider breaks and throws errors when swiping on desktop
+- Flip Card border error
+- Otter Pro related UI changes
+
+
+
+
+##### [Version 2.0.3](https://github.com/Codeinwp/otter-blocks/compare/v2.0.2...v2.0.3) (2022-05-12)
+
+- Add Otter Pro support
+- Reduce front-end JS dependencies
+- Enabled SVG/JSON upload by default
+- Add max-width option for Popup Block
+- Update Leaflet to latest version
+- Fix section related issue with used with Media & Text Block
+- Fix word-breaks for Chinese charactersDevelopment
+
+
+
 
 ##### [Version 2.0.2](https://github.com/Codeinwp/otter-blocks/compare/v2.0.1...v2.0.2) (2022-04-22)
 

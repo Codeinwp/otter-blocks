@@ -21,28 +21,28 @@
 }
 
 #otter {
+	.components-button {
+		&.is-primary {
+			--wp-admin-theme-color: #ed6f57;
+			--wp-admin-theme-color-darker-20: #d5654f;
+			--wp-admin-theme-color-darker-10: #dd6851;
+		}
+	}
+
 	.otter-header {
-		padding: 20px 10px;
+		padding: 20px 10px 0 10px;
 		background-color: #ffffff;
 		box-shadow: 0 1px 0 rgba(213,213,213,0.5),0 1px 2px #eee;
-
-		&.onboarding {
-
-			.otter-container {
-				.otter-logo {
-					justify-content: center;
-				}
-			}
-		}
 
 		.otter-container {
 			margin: 0 auto;
 			max-width: 100%;
-			max-width: 750px; // 930
+			max-width: 930px;
 
 			.otter-logo {
 				display: flex;
 				align-items: center;
+				justify-content: space-between;
 
 				img {
 					max-width: 200px;
@@ -56,25 +56,159 @@
 					margin-left: 10px;
 					padding: 2px 7px;
 				}
+
+				@media ( max-width: 960px ) {
+					justify-content: center;
+				}
+			}
+
+			.otter-navigation {
+				display: flex;
+				flex-wrap: wrap;
+				font-size: 15px;
+				font-weight: 600;
+				line-height: 1.5;
+				list-style: none;
+				padding-top: 25px;
+				text-decoration: none;
+
+				@media ( max-width: 960px ) {
+					flex-direction: column;
+					justify-content: center;
+				}
+
+				button {
+					display: inline-flex;
+					background: none;
+					margin: 0;
+					border: 0;
+					cursor: pointer;
+
+					&.is-active {
+						border-bottom: 4px solid #1E7DB2;
+
+						span {
+							color: #282828;
+							cursor: default;
+						}
+
+						@media ( max-width: 960px ) {
+							border-bottom: 0;
+							border-left: 4px solid #1E7DB2;
+						}
+					}
+
+					span {
+						color: #868686;
+						padding: 0px 16px 16px 16px;
+						font-family: Helvetica Neue,Helvetica,Arial,Lucida Grande,sans-serif;
+						font-size: 21px;
+						font-weight: 400;
+						line-height: 25px;
+						letter-spacing: 0px;
+						text-decoration: none;
+						cursor: pointer;
+
+						@media ( max-width: 960px ) {
+							padding: 10px;
+						}
+					}
+
+					@media ( max-width: 960px ) {
+						width: 100%;
+						justify-content: center;
+					}
+				}
 			}
 		}
 	}
 
 	.otter-main {
+		display: grid;
+		grid-template-columns: 2fr 1fr;
+		gap: 25px;
 		margin-left: auto;
 		margin-right: auto;
-		max-width: 750px;
+		max-width: 930px;
+
+		&.is-upsell {
+			grid-template-columns: auto;
+		}
+
+		@media ( max-width: 960px ) {
+			grid-template-columns: auto;
+		}
 
 		.components-panel__body {
 			margin: 25px 0;
 			background: #fff;
 			border: 1px solid #e2e4e7;
+			border-radius: 10px;
 
 			.components-panel__body-toggle {
 				border-bottom: 1px solid #d6e2ed;
 
 				&:hover {
 					border-bottom: 1px solid #d6e2ed !important;
+				}
+			}
+
+			.otter-info {
+				.otter-license-footer {
+					align-items: center;
+					display: flex;
+					margin-top: 20px;
+					gap: 10px;
+
+					&.is-expired {
+						flex-direction: column;
+						align-items: flex-start;
+					}
+
+					.dashicon {
+						margin-right: 10px;
+						align-items: center;
+						border-radius: 50%;
+						color: #fff;
+						display: inline-flex;
+						justify-content: center;
+						padding: 2px;
+						background: #6eb77a;;
+					}
+
+					p {
+						margin: 0;
+					}
+				}
+
+				.otter-license-purchase-history {
+					margin: 10px 0 0 0;
+				}
+			}
+
+			input[type="text"],
+			input[type="password"] {
+				border: 1px solid #b7c9d9;
+				border-radius: 3px;
+				font-size: 14px;
+				padding: 9px 15px;
+				width: 100%;
+				box-shadow: none;
+				height: 40px;
+				margin: 0 0 10px 0;
+				color: #444;
+
+				&:disabled {
+					background: #f6f6f6;
+					border-color: #eeeeee;
+					color: #bbbbbb;
+				}
+
+				&:focus {
+					border-color: #00a0d2;
+					box-shadow: 0 0 0 1px #00a0d2;
+					outline: 2px solid transparent;
+					outline-offset: -2px;
 				}
 			}
 
@@ -105,37 +239,12 @@
 								margin-bottom: 10px;
 							}
 
-							input {
-								border: 1px solid #b7c9d9;
-								border-radius: 3px;
-								font-size: 14px;
-								padding: 9px 15px;
-								width: 100%;
-								box-shadow: none;
-								height: 40px;
-								margin: 0 0 10px 0;
-								color: #444;
-
-								&:disabled {
-									background: #f6f6f6;
-									border-color: #eeeeee;
-									color: #bbbbbb;
-								}
-
-								&:focus {
-									border-color: #00a0d2;
-									box-shadow: 0 0 0 1px #00a0d2;
-									outline: 2px solid transparent;
-									outline-offset: -2px;
-								}
-							}
-
 							.otter-button-group {
 								display: flex;
 								align-items: center;
 								margin: 2px 0 15px;
 
-								.is-primary {
+								.is-secondary {
 									padding: 2px 20px;
 									font-size: 14px;
 									margin-right: 10px;
@@ -148,22 +257,40 @@
 
 			.otter-info {
 				padding: 0 10px 10px;
-				background-image: url( '../../assets/images/logo-alt.png' );
-				background-size: 100px;
-				background-repeat: no-repeat;	
-				background-position: bottom right;
 
-				h2 {
-					font-weight: 300;
-					margin-bottom: 10px;
+				h3 {
+					font-weight: 400;
+					margin-top: 1em;
+					margin-right: 0px;
+					margin-bottom: 25px;
+					margin-left: 0px;
 				}
 
 				p {
 					margin: 0 0 1.5em 0;
 				}
+
+				.otter-info-links {
+					li {
+						margin-bottom: 15px;
+					}
+
+					a {
+						color: #1E1E1E;
+						text-decoration: none;
+					}
+				}
 			
 				.otter-info-button-group {
 					display: flex;
+
+					&.is-single {
+						display: grid;
+					}
+
+					.components-button {
+						justify-content: center;
+					}
 
 					.is-default,
 					.is-secondary {
@@ -175,6 +302,83 @@
 						}
 					}
 				}
+			}
+		}
+
+		.otter-upsell {
+			.upsell-title {
+				padding: 20px 0 0;
+
+				h2 {
+					font-weight: 500;
+					font-size: 28px;
+					line-height: normal;
+				}
+			}
+
+			.upsell-table {
+				padding: 0;
+				margin: 30px 0;
+				list-style: none;
+
+				li {
+					background: #FFFFFF;
+					margin: 0 !important;
+					display: grid;
+					grid-template-columns: 5fr 1fr 1fr;
+					border-bottom: 1px solid #D9D9D9;
+
+					&:nth-child(2n+1) {
+						background: #F6F6F6;
+					}
+				}
+
+				.t-head {
+					padding: 20px 0;
+					color: #30436e;
+					font-size: 25px;
+				}
+
+				.t-row {
+					border-left: 1px solid #D9D9D9;
+					border-right: 1px solid #D9D9D9;
+
+					.c {
+						border-left: 1px solid #D9D9D9;
+					}
+				}
+
+				.c {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					color: #757575;
+				}
+
+				.content {
+					padding: 20px 40px;
+					color: #757575;
+				}
+
+				.h-wrap {
+					display: flex;
+					align-items: center;
+					margin-bottom: 10px;
+
+					h4 {
+						color: #313233;
+						margin: 10px 0;
+						font-size: 24px;
+						font-weight: 500;
+					}
+				}
+			}
+
+			.components-button {
+				width: 100%;
+				justify-content: center;
+				font-size: 1.2em;
+				padding: 30px;
 			}
 		}
 	}
@@ -197,6 +401,7 @@
 		background: #f6f6f6;
 		margin-top: 25vh;
 		margin-bottom: 25vh;
+		box-shadow: none;
 
 		.components-placeholder__fieldset {
 			justify-content: center;
@@ -204,40 +409,7 @@
 	}
 }
 
-.otter-onboarding-modal {
-	max-width: 350px;
-
-	.components-modal__header {
-		text-align: center;
-
-		h1 {
-			width: 100%;
-		}
-	}
-
-	.otter-onboarding-modal-content {
-		text-align: center;
-		margin: 10px 0 15px;
-	}
-
-	.otter-onboarding-modal-action {
-		text-align: center;
-		margin: 10px 0;
-
-		.components-button {
-			padding: 2px 20px;
-			font-size: 14px;
-			margin-right: 10px;
-		}
-	}
-}
-
 .otter-button-control {
-	display: flex;
-	flex: 1;
-	justify-content: space-between;
-	align-items: center;
-
 	.components-base-control_labels {
 		.components-base-control__label {
 			font-weight: 600;
@@ -274,150 +446,9 @@
 	background-color: rgba(0, 0, 0, 0.5);
 }
 
-.react-joyride__tooltip {
-	font-size: 13px !important;
-
-	> div {
-		text-align: left !important;
-	}
-
-	div {
-		&:nth-of-type( 2 ) {
-			margin-top: 5px !important;
-		}
-	}
-
-	button {
-		text-decoration: underline;
-	}
-}
-
-.react-joyride__beacon {
-	span {
-		&:first-child {
-			background-color: #00739c !important;
-		}
-
-		&:last-child {
-			background-color: rgba(26, 129, 165, 0.4) !important;
-			border: 2px solid #00739c !important;
-		}
-	}
-}
-
-.react-joyride__tooltip {
-	button {
-		&[data-action="primary"] {
-			background: #0085ba !important;
-			border-color: #006a95 #00648c #00648c !important;
-			box-shadow: inset 0 -1px 0 #00648c !important;
-			color: #fff !important;
-			text-decoration: none !important;
-			text-shadow: 0 -1px 1px #005d82,1px 0 1px #005d82,0 1px 1px #005d82,-1px 0 1px #005d82 !important;
-			padding: 2px 20px !important;
-			height: auto !important;
-			line-height: 28px !important;
-			font-size: 14px !important;
-		}
-
-		&[data-action="back"] {
-			color: #23282d !important;
-			font-size: 14px !important;
-		}
-	}
-}
-
-.react-notification-root {
-	.notification-container-bottom-left {
-		bottom: 40px;
-	}
-
-	.notification-container-mobile-bottom {
-		bottom: 60px;
-	}
-}
-
-@media ( min-width: 782px ) {
-
-	.react-joyride__spotlight,
-	.__floater,
-	.__floater__open,
-	.react-joyride__beacon {
-		margin-top: -32px;
-	}
-}
-
-@media ( max-width: 782px ) {
-	#otter {
-		.otter-header {
-
-			.otter-container {
-
-				.otter-logo {
-					justify-content: center;
-				}
-			}
-		}
-
-		.otter-info {
-			background-image: none !important;
-		}
-	}
-
-	.react-joyride__spotlight,
-	.__floater,
-	.__floater__open,
-	.react-joyride__beacon {
-		margin-top: -44px;
-	}
-}
-
-@media ( max-width: 600px ) {
-	.react-joyride__spotlight,
-	.__floater,
-	.__floater__open,
-	.react-joyride__beacon {
-		margin-top: 0;
-	}
-}
-
-
-.branch-5-2,
-.branch-5-3 {
-	#otter {
-		.otter-main {
-			.components-panel__body {
-				.components-panel__row {
-					.components-base-control {
-						&.otter-button-field {
-							.components-base-control__field {
-								.otter-button-field-button-group {
-									.is-primary {
-										height: auto;
-									}
-								}
-							}
-						}
-					}
-				}
-	
-				.otter-info {
-					.otter-info-button-group {
-						.is-default,
-						.is-secondary {
-							height: auto;
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	.otter-onboarding-modal {
-		.otter-onboarding-modal-action {
-			.components-button {
-				height: auto;
-			}
-		}
-	}
+.components-editor-notices__snackbar {
+	position: fixed;
+	bottom: 40px;
+	padding-left: 16px;
+	padding-right: 16px;
 }

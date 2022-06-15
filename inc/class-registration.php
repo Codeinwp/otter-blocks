@@ -7,7 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks;
 
-use ThemeIsle\GutenbergBlocks\Main;
+use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro;
 
 /**
  * Class Registration.
@@ -50,7 +50,6 @@ class Registration {
 		'slider'         => false,
 		'tabs'           => false,
 		'popup'          => false,
-		'product-image'  => false,
 		'progress-bar'   => false,
 	);
 
@@ -226,18 +225,14 @@ class Registration {
 
 		global $wp_roles;
 
-		$default_fields = array();
-
-		if ( class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Fields' ) ) {
-			$fields         = new \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Fields();
-			$default_fields = wp_json_encode( array_keys( ( $fields->get_fields() ) ) );
-		}
-
 		wp_localize_script(
 			'otter-blocks',
 			'themeisleGutenberg',
 			array(
 				'isCompatible'        => Main::is_compatible(),
+				'hasPro'              => Pro::is_pro_installed(),
+				'upgradeLink'         => Pro::get_url(),
+				'should_show_upsell'  => Pro::should_show_upsell(),
 				'assetsPath'          => OTTER_BLOCKS_URL . 'assets',
 				'updatePath'          => admin_url( 'update-core.php' ),
 				'optionsPath'         => admin_url( 'options-general.php?page=otter' ),
@@ -245,29 +240,9 @@ class Registration {
 				'globalDefaults'      => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
 				'themeDefaults'       => Main::get_global_defaults(),
 				'imageSizes'          => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
-				'themeMods'           => array(
-					'listingType'   => get_theme_mod( 'neve_comparison_table_product_listing_type', 'column' ),
-					'altRow'        => get_theme_mod( 'neve_comparison_table_enable_alternating_row_bg_color', false ),
-					'fields'        => get_theme_mod( 'neve_comparison_table_fields', $default_fields ),
-					'rowColor'      => get_theme_mod( 'neve_comparison_table_rows_background_color', 'var(--nv-site-bg)' ),
-					'headerColor'   => get_theme_mod( 'neve_comparison_table_header_text_color', 'var(--nv-text-color)' ),
-					'textColor'     => get_theme_mod( 'neve_comparison_table_text_color', 'var(--nv-text-color)' ),
-					'borderColor'   => get_theme_mod( 'neve_comparison_table_borders_color', '#BDC7CB' ),
-					'altRowColor'   => get_theme_mod( 'neve_comparison_table_alternate_row_bg_color', 'var(--nv-light-bg)' ),
-					'defaultFields' => $default_fields,
-				),
 				'isWPVIP'             => function_exists( 'is_wpcom_vip' ),
 				'canTrack'            => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
 				'userRoles'           => $wp_roles->roles,
-				'hasWooCommerce'      => class_exists( 'WooCommerce' ),
-				'hasLearnDash'        => defined( 'LEARNDASH_VERSION' ),
-				'hasNeveSupport'      => array(
-					'hasNeve'         => defined( 'NEVE_VERSION' ),
-					'hasNevePro'      => defined( 'NEVE_VERSION' ) && 'valid' === apply_filters( 'product_neve_license_status', false ),
-					'isBoosterActive' => 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ),
-					'wooComparison'   => class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options' ) ? \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options::is_module_activated() : false,
-					'optionsPage'     => admin_url( 'themes.php?page=neve-welcome' ),
-				),
 				'isBlockEditor'       => 'post' === $current_screen->base,
 				'useOldMacyContainer' => version_compare( get_bloginfo( 'version' ), '5.8.10', '<=' ),
 				'postTypes'           => get_post_types( [ 'public' => true ] ),
@@ -279,20 +254,6 @@ class Registration {
 		);
 
 		wp_enqueue_style( 'otter-editor', OTTER_BLOCKS_URL . 'build/blocks/editor.css', array( 'wp-edit-blocks', 'font-awesome-5', 'font-awesome-4-shims' ), $asset_file['version'] );
-
-		global $pagenow;
-
-		if ( class_exists( 'WooCommerce' ) && defined( 'NEVE_VERSION' ) && 'valid' === apply_filters( 'product_neve_license_status', false ) && true === apply_filters( 'neve_has_block_editor_module', false ) && ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && ( ( isset( $_GET['post'] ) && 'product' === get_post_type( sanitize_text_field( $_GET['post'] ) ) ) || ( isset( $_GET['post_type'] ) && 'product' === sanitize_text_field( $_GET['post_type'] ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/woocommerce.asset.php';
-
-			wp_enqueue_script(
-				'otter-blocks-woocommerce',
-				OTTER_BLOCKS_URL . 'build/blocks/woocommerce.js',
-				$asset_file['dependencies'],
-				$asset_file['version'],
-				true
-			);
-		}
 	}
 
 	/**
@@ -401,12 +362,14 @@ class Registration {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/circle-counter.asset.php';
 			wp_register_script( 'otter-circle-counter', OTTER_BLOCKS_URL . 'build/blocks/circle-counter.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-circle-counter', 'defer', true );
+			self::$scripts_loaded['circle-counter'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['countdown'] && has_block( 'themeisle-blocks/countdown', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/countdown.asset.php';
 			wp_register_script( 'otter-countdown', OTTER_BLOCKS_URL . 'build/blocks/countdown.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-countdown', 'defer', true );
+			self::$scripts_loaded['countdown'] = true;
 
 			$offset    = (float) get_option( 'gmt_offset' );
 			$hours     = (int) $offset;
@@ -447,6 +410,8 @@ class Registration {
 					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
 				)
 			);
+
+			self::$scripts_loaded['form'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['google-map'] && has_block( 'themeisle-blocks/google-map', $post ) ) {
@@ -459,6 +424,7 @@ class Registration {
 				wp_script_add_data( 'otter-google-map', 'defer', true );
 				wp_register_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . esc_attr( $apikey ) . '&libraries=places&callback=initMapScript', array( 'otter-google-map' ), '', true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
 				wp_script_add_data( 'google-maps', 'defer', true );
+				self::$scripts_loaded['google-map'] = true;
 			}
 		}
 
@@ -477,6 +443,7 @@ class Registration {
 			);
 
 			wp_script_add_data( 'otter-leaflet', 'defer', true );
+			self::$scripts_loaded['leaflet-map'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['lottie'] && has_block( 'themeisle-blocks/lottie', $post ) ) {
@@ -496,6 +463,7 @@ class Registration {
 			);
 
 			wp_script_add_data( 'otter-lottie', 'defer', true );
+			self::$scripts_loaded['lottie'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['slider'] && has_block( 'themeisle-blocks/slider', $post ) ) {
@@ -513,12 +481,14 @@ class Registration {
 			);
 
 			wp_script_add_data( 'otter-slider', 'async', true );
+			self::$scripts_loaded['slider'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['tabs'] && has_block( 'themeisle-blocks/tabs', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/tabs.asset.php';
 			wp_register_script( 'otter-tabs', OTTER_BLOCKS_URL . 'build/blocks/tabs.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-tabs', 'defer', true );
+			self::$scripts_loaded['tabs'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['popup'] && has_block( 'themeisle-blocks/popup', $post ) ) {
@@ -533,16 +503,15 @@ class Registration {
 					'isPreview' => is_preview(),
 				)
 			);
+
+			self::$scripts_loaded['popup'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['progress-bar'] && has_block( 'themeisle-blocks/progress-bar', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/progress-bar.asset.php';
 			wp_register_script( 'otter-progress-bar', OTTER_BLOCKS_URL . 'build/blocks/progress-bar.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-progress-bar', 'defer', true );
-		}
-
-		if ( ! self::$scripts_loaded['product-image'] && has_block( 'themeisle-blocks/product-image', $post ) ) {
-			wp_enqueue_script( 'wc-single-product' );
+			self::$scripts_loaded['progress-bar'] = true;
 		}
 
 		// DEBUG
@@ -590,9 +559,16 @@ class Registration {
 				continue;
 			}
 
-			$block_path    = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
+			$block_path = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
+			$style      = OTTER_BLOCKS_URL . 'build/blocks/' . $block . '/style.css';
+
+			if ( ! file_exists( $block_path ) && defined( 'OTTER_PRO_BUILD_PATH' ) ) {
+				$block_path = OTTER_PRO_BUILD_PATH . $block;
+				$style      = OTTER_PRO_BUILD_URL . $block . '/style.css';
+			}
+
 			$metadata_file = trailingslashit( $block_path ) . 'block.json';
-			$style         = trailingslashit( $block_path ) . 'style.css';
+			$style_path    = trailingslashit( $block_path ) . 'style.css';
 
 			$metadata = $this->get_metadata( $metadata_file );
 
@@ -608,10 +584,10 @@ class Registration {
 				$deps = self::$block_dependencies[ $block ];
 			}
 
-			if ( file_exists( $style ) && ! empty( $metadata['style'] ) ) {
+			if ( file_exists( $style_path ) && ! empty( $metadata['style'] ) ) {
 				wp_register_style(
 					$metadata['style'],
-					OTTER_BLOCKS_URL . 'build/blocks/' . $block . '/style.css',
+					$style,
 					$deps,
 					$asset_file['version']
 				);
@@ -629,40 +605,25 @@ class Registration {
 	 */
 	public function register_blocks() {
 		$dynamic_blocks = array(
-			'about-author'              => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
-			'add-to-cart-button'        => '\ThemeIsle\GutenbergBlocks\Render\Add_To_Cart_Button_Block',
-			'form-nonce'                => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
-			'google-map'                => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
-			'leaflet-map'               => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
-			'plugin-cards'              => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
-			'posts-grid'                => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
-			'review'                    => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
-			'review-comparison'         => '\ThemeIsle\GutenbergBlocks\Render\Review_Comparison_Block',
-			'sharing-icons'             => '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
-			'woo-comparison'            => '\ThemeIsle\GutenbergBlocks\Render\Woo_Comparison_Block',
-			'product-add-to-cart'       => '\ThemeIsle\GutenbergBlocks\Render\Product_Add_To_Cart_Block',
-			'product-images'            => '\ThemeIsle\GutenbergBlocks\Render\Product_Images_Block',
-			'product-meta'              => '\ThemeIsle\GutenbergBlocks\Render\Product_Meta_Block',
-			'product-price'             => '\ThemeIsle\GutenbergBlocks\Render\Product_Price_Block',
-			'product-rating'            => '\ThemeIsle\GutenbergBlocks\Render\Product_Rating_Block',
-			'product-related-products'  => '\ThemeIsle\GutenbergBlocks\Render\Product_Related_Products_Block',
-			'product-short-description' => '\ThemeIsle\GutenbergBlocks\Render\Product_Short_Description_Block',
-			'product-stock'             => '\ThemeIsle\GutenbergBlocks\Render\Product_Stock_Block',
-			'product-tabs'              => '\ThemeIsle\GutenbergBlocks\Render\Product_Tabs_Block',
-			'product-title'             => '\ThemeIsle\GutenbergBlocks\Render\Product_Title_Block',
-			'product-upsells'           => '\ThemeIsle\GutenbergBlocks\Render\Product_Upsells_Block',
+			'about-author'  => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
+			'form-nonce'    => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
+			'google-map'    => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
+			'leaflet-map'   => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
+			'plugin-cards'  => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
+			'posts-grid'    => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
+			'review'        => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
+			'sharing-icons' => '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
 		);
+
+		$dynamic_blocks = apply_filters( 'otter_blocks_register_dynamic_blocks', $dynamic_blocks );
 
 		self::$blocks = array(
 			'about-author',
 			'accordion',
 			'accordion-item',
-			'add-to-cart-button',
 			'advanced-column',
 			'advanced-columns',
 			'advanced-heading',
-			'business-hours',
-			'business-hours-item',
 			'button',
 			'button-group',
 			'circle-counter',
@@ -682,28 +643,17 @@ class Registration {
 			'popup',
 			'posts-grid',
 			'pricing',
-			'product-add-to-cart',
-			'product-images',
-			'product-meta',
-			'product-price',
-			'product-rating',
-			'product-related-products',
-			'product-short-description',
-			'product-stock',
-			'product-tabs',
-			'product-title',
-			'product-upsells',
 			'progress-bar',
 			'review',
-			'review-comparison',
 			'service',
 			'sharing-icons',
 			'slider',
 			'tabs',
 			'tabs-item',
 			'testimonials',
-			'woo-comparison',
 		);
+
+		self::$blocks = apply_filters( 'otter_blocks_register_blocks', self::$blocks );
 
 		self::$block_dependencies = array(
 			'leaflet-map' => array( 'leaflet', 'leaflet-gesture-handling' ),
@@ -711,9 +661,16 @@ class Registration {
 		);
 
 		foreach ( self::$blocks as $block ) {
-			$block_path    = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
-			$metadata_file = trailingslashit( $block_path ) . 'block.json';
-			$editor_style  = trailingslashit( $block_path ) . 'editor.css';
+			$block_path   = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
+			$editor_style = OTTER_BLOCKS_URL . 'build/blocks/' . $block . '/editor.css';
+
+			if ( ! file_exists( $block_path ) && defined( 'OTTER_PRO_BUILD_PATH' ) ) {
+				$block_path   = OTTER_PRO_BUILD_PATH . $block;
+				$editor_style = OTTER_PRO_BUILD_URL . $block . '/editor.css';
+			}
+
+			$metadata_file     = trailingslashit( $block_path ) . 'block.json';
+			$editor_style_path = trailingslashit( $block_path ) . 'editor.css';
 
 			$metadata = $this->get_metadata( $metadata_file );
 
@@ -729,10 +686,10 @@ class Registration {
 				$deps = self::$block_dependencies[ $block ];
 			}
 
-			if ( file_exists( $editor_style ) && ! empty( $metadata['editorStyle'] ) ) {
+			if ( file_exists( $editor_style_path ) && ! empty( $metadata['editorStyle'] ) ) {
 				wp_register_style(
 					$metadata['editorStyle'],
-					OTTER_BLOCKS_URL . 'build/blocks/' . $block . '/editor.css',
+					$editor_style,
 					$deps,
 					$asset_file['version']
 				);

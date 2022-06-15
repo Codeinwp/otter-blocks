@@ -18,7 +18,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Maps', 'otter-blocks' ),
-	description: __( 'Display Open Street Maps on your website with Maps block.', 'otter-blocks' ),
+	description: __( 'Display Open Street Maps on your website with Maps block. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'map',

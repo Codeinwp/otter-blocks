@@ -17,8 +17,12 @@ module.exports = function( grunt ) {
 	Object.keys( blocks ).filter( block => blocks[ block ].assets !== undefined )
 		.forEach( block => {
 			Object.keys( blocks[ block ].assets ).forEach( s => {
-				sassFiles[ `build/blocks/${ s }` ] = `src/blocks/${ blocks[ block ].assets[ s ] }`;
-				sourceFiles.push( `src/blocks/${ blocks[ block ].assets[ s ] }` );
+				if ( blocks[ block ]?.isPro ) {
+					sassFiles[ `build/pro/${ s }` ] = `src/${ blocks[ block ].assets[ s ] }`;
+				} else {
+					sassFiles[ `build/blocks/${ s }` ] = `src/${ blocks[ block ].assets[ s ] }`;
+				}
+				sourceFiles.push( `src/${ blocks[ block ].assets[ s ] }` );
 			});
 		});
 
@@ -57,7 +61,8 @@ module.exports = function( grunt ) {
 					'otter-blocks.php',
 					'plugins/blocks-animation/blocks-animation.php',
 					'plugins/blocks-css/blocks-css.php',
-					'plugins/blocks-export-import/blocks-export-imports.php'
+					'plugins/blocks-export-import/blocks-export-imports.php',
+					'plugins/otter-pro/otter-pro.php'
 				]
 			},
 			php: {
@@ -73,6 +78,13 @@ module.exports = function( grunt ) {
 					flags: ''
 				},
 				src: [ 'inc/class-main.php' ]
+			},
+			pro: {
+				options: {
+					prefix: 'OTTER_PRO_VERSION\', \'',
+					flags: ''
+				},
+				src: [ 'plugins/otter-pro/otter-pro.php' ]
 			}
 		},
 		wp_readme_to_markdown: {

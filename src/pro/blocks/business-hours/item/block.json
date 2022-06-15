@@ -1,0 +1,34 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/business-hours-item",
+	"title": "Business Hours Item",
+	"category": "themeisle-blocks",
+	"description": "Item used by Business Hours block to display the time. Powered by Otter.",
+	"keywords": [ "business", "schedule", "time" ],
+	"parent": [ "themeisle-blocks/business-hours" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"label": {
+			"type": "string"
+		},
+		"time": {
+			"type": "string"
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"labelColor": {
+			"type": "string"
+		},
+		"timeColor": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"align": [ "wide", "full" ]
+	}
+}

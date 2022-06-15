@@ -18,7 +18,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Icon List', 'otter-blocks' ),
-	description: __( 'Display an icon list in a beautiful layout.', 'otter-blocks' ),
+	description: __( 'Display an icon list in a beautiful layout. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'icon',

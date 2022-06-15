@@ -17,7 +17,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Sharing Icons', 'otter-blocks' ),
-	description: __( 'Share buttons for your website visitors to share content on any social sharing service.', 'otter-blocks' ),
+	description: __( 'Share buttons for your website visitors to share content on any social sharing service. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'social media',

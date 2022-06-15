@@ -17,7 +17,7 @@ const { name } = metadata;
 registerBlockType( name, {
 	...metadata,
 	title: __( 'About Author', 'otter-blocks' ),
-	description: __( 'About Author block is the easiest way to add a author bio below your posts.', 'otter-blocks' ),
+	description: __( 'About Author block is the easiest way to add a author bio below your posts. Powered by Otter.', 'otter-blocks' ),
 	icon,
 	keywords: [
 		'about',
