@@ -287,33 +287,45 @@ export const cleanCSS = props => {
 
 /**
  * Create a Style node.
- * @param {string[]} css
- * @returns {[string, Dispatch<SetStateAction<string[]>>]}
+ * @param {OtterNodeCSSOptions?} options
+ * @returns {[string,((value: (((prevState: (string[]|*[])) => (string[]|*[])) | string[] | *[])) => void)]}
  */
-export const useCSSNode = css => {
-	const [ cssClassName, setCssClassName ] = useState( null );
-	const [ cssList, setCSS ] = useState( css || []);
-	const node = useRef( null );
+export const useCSSNode = options => {
+	const [ cssList, setCSS ] = useState( []);
+	const [ settings, setSettings ] = useState({
+		node: null,
+		cssNodeName: ''
+	})
 
 	useEffect( () => {
-		node.current = document.createElement( 'style' );
-		node.current.type = 'text/css';
 
-		const anchor = parent.document.querySelector( 'iframe' )?.contentWindow.document.head || document.head;
-		anchor?.appendChild( node.current );
+		let anchor;
+		const n = document.createElement( 'style' );
+		n.type = 'text/css';
+		n.setAttribute('data-generator', 'otter-blocks')
 
-		setCssClassName( 'otter-' + uuidv4() );
+		setTimeout(() => {
+			anchor = parent.document.querySelector( 'iframe[name="editor-canvas"]' )?.contentWindow.document.head || document.head;
+			anchor?.appendChild( n );
+		}, 500)
+
+		setSettings({
+			node: n,
+			cssNodeName: options?.selector ?? `o-node-${uuidv4()}`
+		})
+
 		return () => {
-			anchor?.removeChild( node.current );
+			console.log('Clean')
+			anchor?.removeChild( n );
 		};
-	}, []);
+	}, [ ]);
 
 	useEffect( () => {
-		if ( node.current && cssClassName && cssList !== undefined ) {
-			node.current.textContent = cssList?.map( x => ( `.${cssClassName} ${x}` ) ).join( '\n' ) || '';
-			console.count( 'use' );
+		if ( settings.node && settings.cssNodeName && cssList !== undefined ) {
+			settings.node.textContent = cssList?.map( x => ( `.${settings.cssNodeName} ${x}` ) ).join( '\n' ) || '';
+			console.count( `CSSNodeCall: ${settings.cssNodeName}` );
 		}
-	}, [ cssList, cssClassName, node.current ]);
+	}, [ cssList, settings.node, settings.cssNodeName ]);
 
-	return [ cssClassName, setCSS ];
+	return [ settings.cssNodeName, setCSS ];
 };

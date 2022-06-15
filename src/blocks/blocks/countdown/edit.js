@@ -178,13 +178,13 @@ const Edit = ({
 	// Add `border-radius` for all the platforms
 	const borderRadius = 'linked' === attributes.borderRadiusType ? attributes.borderRadius + '%' : `${ attributes.borderRadiusTopLeft }% ${ attributes.borderRadiusTopRight }% ${ attributes.borderRadiusBottomRight }% ${ attributes.borderRadiusBottomLeft }%`;
 
-	const inlineStyles = cleanCSS([
-		[ '--backgroundColor', attributes.backgroundColor ],
-		[ '--borderColor', attributes.borderColor ],
-		[ '--borderRadius', attributes.borderRadius ]
-	]);
+	const inlineStyles = {
+		'--backgroundColor': attributes.backgroundColor,
+		'--borderColor': attributes.borderColor,
+		'--borderRadius': borderRadius
+	};
 
-	const [ cssNodeName, setCSS ] = useCSSNode([]);
+	const [ cssNodeName, setCSS ] = useCSSNode();
 	useEffect( ()=>{
 		setCSS([
 			`.otter-countdown__display-area .otter-countdown__value {

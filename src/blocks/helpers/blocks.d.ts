@@ -33,3 +33,7 @@ export type MarginType = {
 export type PaddingType = MarginType
 
 export type BorderType = MarginType
+
+export type OtterNodeCSSOptions = {
+	selector: string
+}
