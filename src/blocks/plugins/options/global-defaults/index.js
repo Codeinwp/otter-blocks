@@ -21,6 +21,7 @@ import FontAwesomeIcons from './controls/font-awesome-icons.js';
 import SectionColumns from './controls/section-columns.js';
 import SectionColumn from './controls/section-column.js';
 import ReviewControl from './controls/review.js';
+import Form from './controls/form';
 
 const GlobalDefaults = ({
 	isAPILoaded,
@@ -61,6 +62,10 @@ const GlobalDefaults = ({
 		{
 			name: 'themeisle-blocks/advanced-column',
 			control: SectionColumn
+		},
+		{
+			name: 'themeisle-blocks/form',
+			control: Form
 		}
 	];
 

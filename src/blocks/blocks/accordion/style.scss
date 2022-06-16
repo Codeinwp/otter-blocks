@@ -15,6 +15,11 @@
 			cursor: pointer;
 			user-select: none;
 
+			display: grid;
+			grid-template-columns: auto min-content;
+			align-items: center;
+			padding: 18px 24px;
+
 			svg {
 				width: 24px;
 				height: 24px;
@@ -24,27 +29,24 @@
 				filter: brightness( 0.95 );
 			}
 
+			> div {
+
+			}
+
 			&::-webkit-details-marker,
 			&::marker {
 				display: none;
 			}
 
-			> div {
-				display: grid;
-				grid-template-columns: max-content auto min-content;
-				align-items: center;
-				padding: 18px 24px;
-
-				&::after {
-					content: '';
-					justify-self: end;
-					align-self: center;
-					border-right: 2px solid var( --borderColor );
-					border-bottom: 2px solid var( --borderColor );
-					width: 8px;
-					height: 8px;
-					transform: rotate(45deg) translate(-25%, 0%);
-				}
+			&::after {
+				content: '';
+				justify-self: end;
+				align-self: center;
+				border-right: 2px solid var( --borderColor );
+				border-bottom: 2px solid var( --borderColor );
+				width: 8px;
+				height: 8px;
+				transform: rotate(45deg) translate(-25%, 0%);
 			}
 		}
 
@@ -57,10 +59,8 @@
 
 		&[open] {
 			> .wp-block-themeisle-blocks-accordion-item__title {
-				> div {
-					&::after {
-						transform: rotate(225deg) translate(0%, -45%);
-					}
+				&::after {
+					transform: rotate(225deg) translate(0%, -45%);
 				}
 			}
 		}
