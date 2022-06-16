@@ -229,27 +229,27 @@ class Registration {
 			'otter-blocks',
 			'themeisleGutenberg',
 			array(
-				'isCompatible'        => Main::is_compatible(),
-				'hasPro'              => Pro::is_pro_installed(),
-				'upgradeLink'         => Pro::get_url(),
-				'should_show_upsell'  => Pro::should_show_upsell(),
-				'assetsPath'          => OTTER_BLOCKS_URL . 'assets',
-				'updatePath'          => admin_url( 'update-core.php' ),
-				'optionsPath'         => admin_url( 'options-general.php?page=otter' ),
-				'mapsAPI'             => $api,
-				'globalDefaults'      => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
-				'themeDefaults'       => Main::get_global_defaults(),
-				'imageSizes'          => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
-				'isWPVIP'             => function_exists( 'is_wpcom_vip' ),
-				'canTrack'            => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
-				'userRoles'           => $wp_roles->roles,
-				'isBlockEditor'       => 'post' === $current_screen->base,
-				'postTypes'           => get_post_types( [ 'public' => true ] ),
-				'rootUrl'             => get_site_url(),
-				'hasModule'           => array(
+				'isCompatible'       => Main::is_compatible(),
+				'hasPro'             => Pro::is_pro_installed(),
+				'upgradeLink'        => Pro::get_url(),
+				'should_show_upsell' => Pro::should_show_upsell(),
+				'assetsPath'         => OTTER_BLOCKS_URL . 'assets',
+				'updatePath'         => admin_url( 'update-core.php' ),
+				'optionsPath'        => admin_url( 'options-general.php?page=otter' ),
+				'mapsAPI'            => $api,
+				'globalDefaults'     => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
+				'themeDefaults'      => Main::get_global_defaults(),
+				'imageSizes'         => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
+				'isWPVIP'            => function_exists( 'is_wpcom_vip' ),
+				'canTrack'           => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
+				'userRoles'          => $wp_roles->roles,
+				'isBlockEditor'      => 'post' === $current_screen->base,
+				'postTypes'          => get_post_types( [ 'public' => true ] ),
+				'rootUrl'            => get_site_url(),
+				'hasModule'          => array(
 					'blockConditions' => get_option( 'themeisle_blocks_settings_block_conditions', true ),
 				),
-				'isLegacyPre59'       => version_compare( get_bloginfo( 'version' ), '5.8.22', '<=' ),
+				'isLegacyPre59'      => version_compare( get_bloginfo( 'version' ), '5.8.22', '<=' ),
 			)
 		);
 
