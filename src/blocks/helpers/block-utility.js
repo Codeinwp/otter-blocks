@@ -272,18 +272,6 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 	});
 };
 
-/**
- * Clean CSS list
- * @param {array} props
- */
-export const cleanCSS = props => {
-	return props?.reduce( ( acc, x ) => {
-		if ( x[0] && x[1]) {
-			acc[x[0]] = x[1] + ( x[2] || '' );
-		}
-		return acc;
-	}, {});
-};
 
 /**
  * Create a Style node.

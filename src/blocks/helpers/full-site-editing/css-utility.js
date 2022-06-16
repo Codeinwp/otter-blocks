@@ -1,11 +1,4 @@
 
-export const setCSSVars = ( blockRef, css ) => {
-	Object.keys( css )?.map( cssVar => {
-		blockRef?.style?.setProperty( cssVar, css[cssVar]);
-	});
-};
-
-
 // LEGACY: ONLY FOR REFERENCE
 // export const injectCSSinIframe = () => {
 // 	let emotionCSS = [];

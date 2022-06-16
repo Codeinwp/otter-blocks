@@ -31,9 +31,8 @@ import {
  * Internal dependencies
  */
 import metadata from './block.json';
-import {blockInit, cleanCSS} from '../../helpers/block-utility.js';
+import {blockInit} from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
-import { setCSSVars } from '../../helpers/full-site-editing/css-utility';
 
 const { attributes: defaultAttributes } = metadata;
 
