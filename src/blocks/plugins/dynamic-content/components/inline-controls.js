@@ -7,7 +7,10 @@ import { Popover } from '@wordpress/components';
 
 import { useState } from '@wordpress/element';
 
-import { applyFormat } from '@wordpress/rich-text';
+import {
+	applyFormat,
+	toggleFormat
+} from '@wordpress/rich-text';
 
 /**
  * Internal dependencies.
@@ -19,6 +22,7 @@ const name = 'themeisle-blocks/dynamic-value';
 const InlineControls = ({
 	value,
 	activeAttributes,
+	contentRef,
 	onChange
 }) => {
 	const [ attributes, setAttributes ] = useState({ ...activeAttributes });
@@ -39,9 +43,13 @@ const InlineControls = ({
 		setAttributes({ type });
 	};
 
+	const anchorRect = contentRef.current.getBoundingClientRect();
+
 	return (
 		<Popover
-			position="bottom center"
+			position="bottom-center"
+			noArrow={ false }
+			anchorRect={ anchorRect }
 			focusOnMount={ false }
 			className="o-dynamic-popover"
 		>
@@ -50,11 +58,22 @@ const InlineControls = ({
 				attributes={ attributes }
 				changeAttributes={ changeAttributes }
 				changeType={ changeType }
+				isInline={ true }
 				onChange={ () => {
 					const attrs = Object.fromEntries( Object.entries( attributes ).filter( ([ _, v ]) => ( null !== v && '' !== v ) ) );
 
 					onChange(
 						applyFormat( value, {
+							type: name,
+							attributes: attrs
+						})
+					);
+				} }
+				onRemove={ () => {
+					const attrs = Object.fromEntries( Object.entries( attributes ).filter( ([ _, v ]) => ( null !== v && '' !== v ) ) );
+
+					onChange(
+						toggleFormat( value, {
 							type: name,
 							attributes: attrs
 						})

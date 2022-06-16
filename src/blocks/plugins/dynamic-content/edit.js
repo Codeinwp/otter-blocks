@@ -29,7 +29,8 @@ const Edit = ({
 	isActive,
 	value,
 	onChange,
-	activeAttributes
+	activeAttributes,
+	contentRef
 }) => {
 	const [ isOpen, setOpen ] = useState( false );
 
@@ -72,7 +73,7 @@ const Edit = ({
 				icon={ globe }
 				title={ __( 'Dynamic Value', 'otter-blocks' ) }
 				onClick={ () => setOpen( true ) }
-				isDisabled={ isActive }
+				isDisabled={ isActive || '' === value.text.substring( value.start, value.end ) }
 				isActive={ isActive }
 			/>
 
@@ -96,6 +97,7 @@ const Edit = ({
 				<InlineControls
 					value={ value }
 					activeAttributes={ activeAttributes }
+					contentRef={ contentRef }
 					onChange={ onChange }
 				/>
 			) }

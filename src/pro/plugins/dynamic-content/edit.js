@@ -10,23 +10,12 @@ import {
 	TextControl
 } from '@wordpress/components';
 
-import { useSelect } from '@wordpress/data';
-
 import { Fragment } from '@wordpress/element';
 
 const Edit = ({
 	attributes,
 	changeAttributes
 }) => {
-	const { fields } = useSelect( select => {
-
-		const { fields } = select( 'otter-pro' ).getACFData();
-
-		return {
-			fields
-		};
-	}, []);
-
 	const dateFormats = {
 		'F j, Y': moment().format( 'MMMM d, Y' ),
 		'Y-m-d': moment().format( 'Y-m-d' ),
@@ -41,7 +30,7 @@ const Edit = ({
 	};
 
 	const autocompleteData = {
-		postMeta: Object.keys( fields ),
+		postMeta: [],
 		authorMeta: [
 			'description',
 			'display_name',
@@ -202,7 +191,7 @@ const Edit = ({
 						maxLength={ 1 }
 						suggestions={ autocompleteData[ attributes.type ] }
 						onChange={ metaKey => changeAttributes({ metaKey: metaKey[0] }) }
-						__experimentalExpandOnFocus={ true }
+						__experimentalExpandOnFocus={ attributes.metaKey ? false : true }
 						__experimentalShowHowTo={ false }
 					/>
 

@@ -11,6 +11,7 @@ import {
 import {
 	BaseControl,
 	Button,
+	ButtonGroup,
 	ExternalLink,
 	SelectControl,
 	TextControl,
@@ -53,8 +54,10 @@ const Fields = ({
 	activeAttributes,
 	attributes,
 	changeAttributes,
+	isInline = false,
 	onChange,
-	changeType
+	changeType,
+	onRemove
 }) => {
 	hasSettingsPanel = applyFilters( 'otter.dynamicContent.hasSettingsPanel', hasSettingsPanel );
 
@@ -201,14 +204,26 @@ const Fields = ({
 			</PanelBody>
 
 			<PanelBody>
-				<Button
-					isPrimary
-					variant="primary"
-					disabled={ isEmpty( attributes ) || isEqual( attributes, activeAttributes ) }
-					onClick={ onChange }
-				>
-					{ __( 'Apply', 'otter-blocks' ) }
-				</Button>
+				<ButtonGroup>
+					<Button
+						isPrimary
+						variant="primary"
+						disabled={ isEmpty( attributes ) || isEqual( attributes, activeAttributes ) }
+						onClick={ onChange }
+					>
+						{ __( 'Apply', 'otter-blocks' ) }
+					</Button>
+
+					{ isInline && (
+						<Button
+							isDestructive
+							variant="tertiary"
+							onClick={ onRemove }
+						>
+							{ __( 'Delete', 'otter-blocks' ) }
+						</Button>
+					) }
+				</ButtonGroup>
 			</PanelBody>
 		</Fragment>
 	);

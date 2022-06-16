@@ -38,6 +38,7 @@ o-dynamic {
 		margin: 0;
 		overflow-y: hidden;
 		overflow-y: scroll;
+		max-width: 360px;
 
 		&::before {
 			min-height: 60px;
