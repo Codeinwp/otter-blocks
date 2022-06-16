@@ -25,9 +25,9 @@ class Blocks_Animation {
 	 * @var array
 	 */
 	public static $scripts_loaded = array(
-		'animation'  => false,
-		'count'      => false,
-		'typing'     => false,
+		'animation' => false,
+		'count'     => false,
+		'typing'    => false,
 	);
 
 
@@ -91,7 +91,7 @@ class Blocks_Animation {
 			return $block_content;
 		}
 
-		if( ! self::$scripts_loaded['animation'] && strpos( $block_content, 'animated' )) {
+		if ( ! self::$scripts_loaded['animation'] && strpos( $block_content, 'animated' ) ) {
 			$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/frontend.asset.php';
 
 			wp_enqueue_style(
@@ -112,7 +112,7 @@ class Blocks_Animation {
 			self::$scripts_loaded['animation'] = true;
 		}
 
-		if( ! self::$scripts_loaded['count'] && strpos( $block_content, 'o-anim-count' )) {
+		if ( ! self::$scripts_loaded['count'] && strpos( $block_content, 'o-anim-count' ) ) {
 			$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/anim-count.asset.php';
 			wp_enqueue_script(
 				'otter-count',
@@ -126,7 +126,7 @@ class Blocks_Animation {
 			self::$scripts_loaded['count'] = true;
 		}
 
-		if( ! self::$scripts_loaded['typing'] && strpos( $block_content, 'o-anim-typing' )) {
+		if ( ! self::$scripts_loaded['typing'] && strpos( $block_content, 'o-anim-typing' ) ) {
 			$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/anim-typing.asset.php';
 			wp_enqueue_script(
 				'otter-typing',

@@ -51,7 +51,7 @@ class Registration {
 		'tabs'           => false,
 		'popup'          => false,
 		'progress-bar'   => false,
-		'sticky'         => false
+		'sticky'         => false,
 	);
 
 	/**
@@ -83,7 +83,7 @@ class Registration {
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_assets' ), 1 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) ); // Don't change the priority or else Blocks CSS will stop working.
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
-		add_filter( 'render_block', array( $this, 'load_sticky'), 900, 2 );
+		add_filter( 'render_block', array( $this, 'load_sticky' ), 900, 2 );
 
 		add_action(
 			'get_footer',
@@ -799,7 +799,7 @@ class Registration {
 			return $block_content;
 		}
 
-		if( ! self::$scripts_loaded['sticky'] && strpos( $block_content, 'o-sticky' )) {
+		if ( ! self::$scripts_loaded['sticky'] && strpos( $block_content, 'o-sticky' ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/sticky.asset.php';
 			wp_enqueue_script(
 				'otter-sticky',
