@@ -1,14 +1,7 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
 import classnames from 'classnames';
-
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies
@@ -31,7 +24,7 @@ import {
  * Internal dependencies
  */
 import metadata from './block.json';
-import {blockInit} from '../../helpers/block-utility.js';
+import { blockInit } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 
 const { attributes: defaultAttributes } = metadata;
@@ -102,7 +95,7 @@ const ProgressBar = ({
 		'--backgroundColor': attributes.backgroundColor,
 		'--borderRadius': attributes.borderRadius !== undefined && ( attributes.borderRadius + 'px' ),
 		'--height': attributes.height !== undefined && ( attributes.height + 'px' ),
-		'--barBackground': attributes.percentageColor
+		'--barBackground': attributes.barBackgroundColor
 	};
 
 	const onHeightChange = value => {
@@ -194,7 +187,10 @@ const ProgressBar = ({
 					} }
 				>
 
-					<div ref={blockRef} className="wp-block-themeisle-blocks-progress-bar__area">
+					<div
+						ref={ blockRef }
+						className="wp-block-themeisle-blocks-progress-bar__area"
+					>
 						{ ( 'default' === attributes.titleStyle || 'highlight' === attributes.titleStyle ) && (
 							<div
 								className={ classnames(

@@ -344,14 +344,14 @@ class Block_Frontend extends Base_CSS {
 	/**
 	 * Get Post CSS
 	 *
-	 * @param string $post_id Post id.
+	 * @param int $post_id Post id.
 	 *
 	 * @since   1.3.0
 	 * @access  public
 	 */
 	public function get_post_css( $post_id = '' ) {
 		$post_id = $post_id ? $post_id : get_the_ID();
-		if ( function_exists( 'has_blocks' ) && function_exists('get_block_templates') && has_blocks( $post_id ) ) {
+		if ( function_exists( 'has_blocks' ) && function_exists( 'get_block_templates' ) && has_blocks( $post_id ) ) {
 			$css = $this->get_page_css_meta( $post_id );
 
 			$css .= $this->get_block_templates_css( $post_id );
@@ -375,14 +375,14 @@ class Block_Frontend extends Base_CSS {
 	/**
 	 * Get the block CSS from templates in FSE.
 	 *
-	 * @param int|\WP_Post $post_id
+	 * @param int|\WP_Post $post_id Post id.
 	 * @return string
 	 * @since 2.0.3
 	 */
-	public function get_block_templates_css($post_id ) {
+	public function get_block_templates_css( $post_id ) {
 		$template_css = '';
 
-		if ( ! function_exists( 'has_blocks' ) || ! function_exists('get_block_templates') ) {
+		if ( ! function_exists( 'has_blocks' ) || ! function_exists( 'get_block_templates' ) ) {
 			return $template_css;
 		}
 
@@ -390,12 +390,11 @@ class Block_Frontend extends Base_CSS {
 		$templates = get_block_templates( array( 'wp_id' => $post_id ) );
 
 		// Get templates part like footer and header for the given post.
-		$template_parts = get_block_templates( array( 'wp_id' => $post_id ), 'wp_template_part');
+		$template_parts = get_block_templates( array( 'wp_id' => $post_id ), 'wp_template_part' );
 
-		$templates_page = array_merge($templates, $template_parts);
+		$templates_page = array_merge( $templates, $template_parts );
 
 		foreach ( $templates_page as $template ) {
-			//$template->content = _remove_theme_attribute_in_block_template_content( $template->content );
 			$blocks = parse_blocks( $template->content );
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 				continue;
