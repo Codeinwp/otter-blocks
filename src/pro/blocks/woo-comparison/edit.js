@@ -1,12 +1,6 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies
@@ -30,6 +24,7 @@ import defaultAttributes from './attributes.js';
 import Placeholder from './placeholder.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
+import {useCSSNode} from '../../../blocks/helpers/block-utility';
 
 const { blockInit } = window.otterUtils;
 
@@ -56,15 +51,18 @@ const Edit = ({
 
 	const [ isEditing, setEditing ] = useState( true );
 
-	const styles = css`
-		.nv-ct-comparison-table-content {
-			--bgColor: ${ attributes.rowColor };
-			--headerColor: ${ attributes.headerColor };
-			--color: ${ attributes.textColor };
-			--borderColor: ${ attributes.borderColor };
-			${ Boolean( attributes.altRow ) && `--alternateBg: ${ attributes.altRowColor };` }
-		}
-	`;
+	const [ cssNodeName, setNodeCSS ] = useCSSNode();
+	useEffect( () => {
+		setNodeCSS([
+			`.nv-ct-comparison-table-content {
+				--bgColor: ${ attributes.rowColor };
+				--headerColor: ${ attributes.headerColor };
+				--color: ${ attributes.textColor };
+				--borderColor: ${ attributes.borderColor };
+				${ Boolean( attributes.altRow ) && `--alternateBg: ${ attributes.altRowColor };` }
+			}`
+		]);
+	}, [ attributes.rowColor, attributes.headerColor, attributes.textColor, attributes.borderColor, attributes.altRow, attributes.altRowColor ]);
 
 	const blockProps = useBlockProps();
 
@@ -91,7 +89,7 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				<Disabled
-					css={ styles }
+					className={cssNodeName}
 				>
 					<ServerSideRender
 						block="themeisle-blocks/woo-comparison"

@@ -1,15 +1,9 @@
-/** @jsx jsx */
 /**
  * External dependencies.
  */
 import hexToRgba from 'hex-rgba';
 
 window.hexToRgba = hexToRgba; // Warning for future self: do not delete!!!
-
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 import { v4 as uuidv4 } from 'uuid';
 
@@ -40,6 +34,7 @@ import {
  * Internal dependencies.
  */
 import ControlPanelControl from '../../components/control-panel-control/index.js';
+import {useCSSNode} from '../../helpers/block-utility';
 
 const Edit = ({
 	BlockEdit,
@@ -105,16 +100,21 @@ const Edit = ({
 		return hexToRgba( '#000000', attributes.boxShadowColorOpacity !== undefined ? ( attributes.boxShadowColorOpacity || 0.00001 ) : 1 );
 	};
 
-	const style = css`
-		img {
-			box-shadow: ${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ getShadowColor() }
-		}
-	`;
+	const [ cssNodeName, setNodeCSS ] = useCSSNode();
+	useEffect( () => {
+		setNodeCSS([
+			`img {
+				box-shadow: ${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ getShadowColor() }
+			}
+			` ]);
+	}, [ attributes.boxShadowHorizontal, attributes.boxShadowVertical, attributes.boxShadowBlur, attributes.boxShadowColor, attributes.boxShadowColorOpacity ]);
+
+	props.className += ` ${cssNodeName};`;
 
 	return (
 		<Fragment>
 			{ attributes.boxShadow ? (
-				<BlockEdit { ...props } css={ style } />
+				<BlockEdit { ...props } />
 			) : (
 				<BlockEdit { ...props } />
 			) }

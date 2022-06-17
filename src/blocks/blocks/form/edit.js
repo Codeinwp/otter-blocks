@@ -7,11 +7,6 @@ import classnames from 'classnames';
 
 import { get } from 'lodash';
 
-import {
-	css,
-	jsx
-} from '@emotion/react';
-
 /**
  * WordPress dependencies
  */

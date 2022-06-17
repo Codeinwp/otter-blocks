@@ -3,10 +3,6 @@
 /**
  * External dependencies.
  */
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies...

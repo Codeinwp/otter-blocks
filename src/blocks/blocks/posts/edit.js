@@ -1,11 +1,6 @@
-/** @jsx jsx */
 /**
  * External dependencies
  */
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies
@@ -110,23 +105,6 @@ const Edit = ({
 	useEffect( () => {
 		dispatch( 'otter-store' ).setPostsSlugs( slugs );
 	}, [ slugs ]);
-
-	const fontSizeStyle = css`
-		@media ( min-width: 960px ) {
-			${ attributes.customTitleFontSize && `--titleTextSize: ${ attributes.customTitleFontSize }px;` }
-			${ attributes.customDescriptionFontSize && `--descriptionTextSize: ${ attributes.customDescriptionFontSize }px;` }
-		}
-
-		@media ( min-width: 600px ) and ( max-width: 960px ) {
-			${ attributes.customTitleFontSizeTablet && `--titleTextSize: ${ attributes.customTitleFontSizeTablet }px;` }
-			${ attributes.customDescriptionFontSizeTablet && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeTablet }px;` }
-		}
-
-		@media ( max-width: 600px ) {
-			${ attributes.customTitleFontSizeMobile && `--titleTextSize: ${ attributes.customTitleFontSizeMobile }px;` }
-			${ attributes.customDescriptionFontSizeMobile && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeMobile }px;` }
-		}
-	`;
 
 	const inlineStyles = {
 		'--imgWidth': `${ attributes.imageWidth }px`,

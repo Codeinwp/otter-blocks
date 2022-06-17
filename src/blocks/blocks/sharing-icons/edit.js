@@ -1,4 +1,3 @@
-/** @jsx jsx */;
 /**
  * WordPress dependencies
  */
@@ -21,8 +20,6 @@ import Inspector from './inspector';
 import {blockInit, getDefaultValueByField, useCSSNode} from '../../helpers/block-utility';
 import metadata from './block.json';
 import socialList from './services.js';
-
-import { css, jsx } from '@emotion/react';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -55,11 +52,7 @@ const Edit = ({
 
 	const gapValue = getValue( 'gap' );
 	const borderRadiusValue = getValue( 'borderRadius' );
-	const styles = css`
-		--iconsGap: ${ gapValue ? gapValue + 'px' : '' };
-		--borderRadius: ${ borderRadiusValue ? borderRadiusValue + 'px' : '' };
-		${ individualCSS }
-	`;
+
 
 	const inlineStyles = {
 		'--iconsGap': gapValue ? gapValue + 'px' : '',
