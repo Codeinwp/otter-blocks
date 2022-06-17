@@ -2,10 +2,11 @@ const BundleAnalyzerPlugin = require( 'webpack-bundle-analyzer' ).BundleAnalyzer
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const ANALYZER = 'true' === process.env.NODE_ANALYZER ? true : false;
-const glob = require( 'glob' );
 const path = require( 'path' );
 const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
 const blocks = require( './blocks.json' );
+
+defaultConfig.plugins.splice( 1, 1 ); // We need to remove Core's Copy Files plugin.
 
 const blockFilesPro = Object.keys( blocks ).filter( block => blocks[ block ].block !== undefined && true === blocks[ block ]?.isPro )
 	.map( block => {
@@ -28,12 +29,10 @@ module.exports = [
 		entry: {
 			blocks: [
 				'./src/pro/index.js',
-				'./src/pro/plugins/index.js',
-				...glob.sync( './src/pro/blocks/**/index.js' )
+				'./src/pro/blocks/index.js',
+				'./src/pro/plugins/index.js'
 			],
-			woocommerce: [
-				...glob.sync( './src/pro/woocommerce/**/index.js' )
-			]
+			woocommerce: './src/pro/woocommerce/index.js'
 		},
 		output: {
 			path: path.resolve( __dirname, './build/pro' ),
@@ -60,9 +59,7 @@ module.exports = [
 						mkdir: blockFoldersPro,
 						copy: blockFilesPro
 					}
-				},
-				runOnceInWatchMode: false,
-				runTasksInSeries: true
+				}
 			}),
 			new BundleAnalyzerPlugin({
 				analyzerMode: 'disabled',
