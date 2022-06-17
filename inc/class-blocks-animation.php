@@ -53,6 +53,20 @@ class Blocks_Animation {
 	public function enqueue_editor_assets() {
 		$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/index.asset.php';
 
+		wp_enqueue_style(
+			'animate-css',
+			BLOCKS_ANIMATION_URL . 'assets/animate/animate.compact.css',
+			array(),
+			$asset_file['version']
+		);
+
+		wp_enqueue_style(
+			'otter-animation',
+			BLOCKS_ANIMATION_URL . 'build/animation/index.css',
+			array(),
+			$asset_file['version']
+		);
+
 		wp_enqueue_script(
 			'otter-animation',
 			BLOCKS_ANIMATION_URL . 'build/animation/index.js',
@@ -73,6 +87,16 @@ class Blocks_Animation {
 		);
 
 		wp_script_add_data( 'otter-count', 'defer', true );
+
+		wp_enqueue_script(
+			'otter-typing',
+			BLOCKS_ANIMATION_URL . 'build/animation/anim-typing.js',
+			$asset_file['dependencies'],
+			$asset_file['version'],
+			true
+		);
+
+		wp_script_add_data( 'otter-typing', 'defer', true );
 	}
 
 
