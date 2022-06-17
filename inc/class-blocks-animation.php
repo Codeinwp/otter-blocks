@@ -30,6 +30,12 @@ class Blocks_Animation {
 		'typing'    => false,
 	);
 
+	/**
+	 * Allow to load in frontend.
+	 *
+	 * @var bool
+	 */
+	public static $can_load_frontend = true;
 
 	/**
 	 * Initialize the class
@@ -41,6 +47,7 @@ class Blocks_Animation {
 		}
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
+		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_frontend_assets' ) );
 		add_filter( 'render_block', array( $this, 'frontend_load' ), 800, 2 );
 	}
 
@@ -99,7 +106,21 @@ class Blocks_Animation {
 		wp_script_add_data( 'otter-typing', 'defer', true );
 	}
 
+	/**
+	 * Load Gutenberg assets.
+	 *
+	 * @since   1.0.0
+	 * @access  public
+	 */
+	public function enqueue_block_frontend_assets() {
+		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+			self::$can_load_frontend = false;
+		}
 
+		if ( is_singular() && strpos( get_the_content( null, false, $post ), '<!-- wp:' ) === false ) {
+			self::$can_load_frontend = false;
+		}
+	}
 
 	/**
 	 * Load assets in frontend.
@@ -111,7 +132,7 @@ class Blocks_Animation {
 	 */
 	public function frontend_load( $block_content, $block ) {
 
-		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+		if ( ! self::$can_load_frontend ) {
 			return $block_content;
 		}
 
