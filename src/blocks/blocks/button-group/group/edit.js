@@ -1,15 +1,8 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
 import classnames from 'classnames';
 import GoogleFontLoader from 'react-google-font-loader';
-
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies.
@@ -34,7 +27,7 @@ import {
 import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import { blockInit } from '../../../helpers/block-utility.js';
+import {blockInit, useCSSNode} from '../../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -89,20 +82,25 @@ const Edit = ({
 		isMobile = isPreviewMobile;
 	}
 
+	const [ cssNodeName, setNodeCSS ] = useCSSNode();
+	useEffect( () => {
+		setNodeCSS([
+			`block-editor-block-list__layout {
+				gap: ${ attributes.spacing }px;
+			}`
+		]);
+	}, [ attributes.spacing ]);
+
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames(
 			'wp-block-buttons',
+			cssNodeName,
 			{
 				[ `align-${ attributes.align }` ]: attributes.align,
 				'collapse': ( 'collapse-desktop' === attributes.collapse && ( isDesktop || isTablet || isMobile ) ) || ( 'collapse-tablet' === attributes.collapse && ( isTablet || isMobile ) ) || ( 'collapse-mobile' === attributes.collapse && isMobile )
 			}
-		),
-		css: css`
-		.block-editor-block-list__layout {
-			gap: ${ attributes.spacing }px;
-		}
-		`
+		)
 	});
 
 	return (

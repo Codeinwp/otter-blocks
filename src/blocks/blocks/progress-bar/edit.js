@@ -86,7 +86,7 @@ const ProgressBar = ({
 		};
 	}, [ attributes.percentage, attributes.duration ]);
 
-	const styles = {
+	const inlineStyles = {
 		'--titleColor': attributes.titleColor,
 		'--percentageColor': attributes.percentageColor,
 		'--percentageColorOuter': attributes.percentageColor,
@@ -131,7 +131,7 @@ const ProgressBar = ({
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames({ 'has-tooltip': 'tooltip' === attributes.percentagePosition }),
-		style: styles
+		style: inlineStyles
 	});
 
 	return (

@@ -1,12 +1,6 @@
-/** @jsx jsx */
-
 /**
  * External dependencies.
  */
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies
@@ -29,7 +23,7 @@ import moment from 'moment';
  * Internal dependencies
  */
 import metadata from './block.json';
-import {blockInit, cleanCSS, useCSSNode} from '../../helpers/block-utility';
+import {blockInit, useCSSNode} from '../../helpers/block-utility';
 import Inspector from './inspector.js';
 import {
 	getIntervalFromUnix,

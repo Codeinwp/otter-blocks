@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 /**
  * WordPress dependencies.
  */
-import { isEqual } from 'lodash';
+import {isEqual, zip} from 'lodash';
 
 import {
 	dispatch,
@@ -275,15 +275,31 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 
 /**
  * Create a Style node.
+ *
  * @param {OtterNodeCSSOptions?} options
- * @returns {[string,((value: (((prevState: (string[]|*[])) => (string[]|*[])) | string[] | *[])) => void)]}
+ * @returns {[string, Function]}
  */
 export const useCSSNode = options => {
-	const [ cssList, setCSS ] = useState([]);
+	const [ cssList, setCSSProps ] = useState({
+		css: [],
+		media: []
+	});
 	const [ settings, setSettings ] = useState({
 		node: null,
 		cssNodeName: ''
 	});
+
+	/**
+	 *
+	 * @param {string}[] css
+	 * @param {string}[] media
+	 */
+	const setCSS = ( css = [], media = []) => {
+		setCSSProps({
+			css,
+			media
+		});
+	};
 
 	useEffect( () => {
 
@@ -309,11 +325,22 @@ export const useCSSNode = options => {
 	}, [ ]);
 
 	useEffect( () => {
-		if ( settings.node && settings.cssNodeName && cssList !== undefined ) {
-			settings.node.textContent = cssList?.map( x => ( `.${settings.cssNodeName} ${x}` ) ).join( '\n' ) || '';
+		if ( settings.node && settings.cssNodeName && cssList.media !== undefined ) {
+			const text =  zip( cssList.css, cssList.media )
+				.map( x => {
+					const [ css, media ] = x;
+					if ( media ) {
+						return `${media} { \n\t .${settings.cssNodeName} ${css} }`;
+					}
+					return `.${settings.cssNodeName} ${css}`;
+				})
+				.join( '\n' ) || '';
+			console.log( text );
+			settings.node.textContent = text;
+
 			console.count( `CSSNodeCall: ${settings.cssNodeName}` );
 		}
-	}, [ cssList, settings.node, settings.cssNodeName ]);
+	}, [ cssList.css, cssList.media, settings.node, settings.cssNodeName ]);
 
-	return [ settings.cssNodeName, setCSS ];
+	return [ settings.cssNodeName, setCSS, setSettings ];
 };
