@@ -13,6 +13,9 @@ import { contactIcon as icon } from '../../helpers/icons.js';
 import deprecated from './deprecated.js';
 import edit from './edit.js';
 import save from './save.js';
+import './input/index.js';
+import './nonce/index.js';
+import './textarea/index.js';
 
 const { name } = metadata;
 
