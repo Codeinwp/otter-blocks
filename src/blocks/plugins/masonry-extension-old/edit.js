@@ -35,7 +35,7 @@ const Edit = ({
 	const initObserver = useRef( null );
 
 	// TODO: Remove this when we no longer support WP 5.8
-	const useOldContainer = useRef( Boolean( parseInt( window.themeisleGutenberg?.useOldMacyContainer || '0' ) ) );
+	const useOldContainer = useRef( Boolean( window.themeisleGutenberg?.isLegacyPre59  ) );
 
 	const imagesNumber = useSelect( select => {
 		const { getBlock } = select( 'core/block-editor' );
@@ -44,7 +44,7 @@ const Edit = ({
 
 	useEffect( () => {
 		if ( props.attributes.isMasonry && 0 < imagesNumber ) {
-			useOldContainer.current = Boolean( parseInt( window.themeisleGutenberg?.useOldMacyContainer || '0' ) );
+			useOldContainer.current = Boolean( window.themeisleGutenberg?.isLegacyPre59  );
 
 			observer.current = new MutationObserver( mutations => {
 				mutations.forEach( mutation => {

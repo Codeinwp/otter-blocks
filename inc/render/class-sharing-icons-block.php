@@ -17,7 +17,7 @@ class Sharing_Icons_Block {
 	 *
 	 * @return array
 	 */
-	public function get_social_profiles() {
+	public static function get_social_profiles() {
 		$social_attributes = array(
 			'facebook'  => array(
 				'label' => esc_html__( 'Facebook', 'otter-blocks' ),
@@ -60,6 +60,17 @@ class Sharing_Icons_Block {
 	}
 
 	/**
+	 * Checks if an icon is active and should be visible
+	 *
+	 * @param array $icon Icon to check.
+	 *
+	 * @return bool
+	 */
+	private function is_active( $icon ) {
+		return ( ( isset( $icon['active'] ) && true === filter_var( $icon['active'], FILTER_VALIDATE_BOOLEAN ) ) || 1 == $icon );
+	}
+
+	/**
 	 * Block render function for server-side.
 	 *
 	 * This method will pe passed to the render_callback parameter and it will output
@@ -77,20 +88,20 @@ class Sharing_Icons_Block {
 			$class .= ' align' . esc_attr( $attributes['align'] );
 		}
 
-		$wrapper_attributes = get_block_wrapper_attributes();
+		$wrapper_attributes = get_block_wrapper_attributes( isset( $attributes['id'] ) ? [ 'id' => $attributes['id'] ] : [] );
 
-		$html = '<div ' . $wrapper_attributes . '>';
+		$html = '<div ' . $wrapper_attributes . '><div class="social-icons-wrap">';
 		foreach ( $social_attributes as $key => $icon ) {
-			if ( 'className' !== $key && 1 == $attributes[ $key ] ) {
+			if ( 'className' !== $key && $this->is_active( $attributes[ $key ] ) ) {
 				$html .= '<a class="social-icon is-' . esc_html( $key ) . '" href="' . esc_url( $icon['url'] ) . '" target="_blank">';
-				$html .= '<i class="fab fa-' . esc_html( $icon['icon'] ) . '"></i>';
+				$html .= '<i class="fab fa-' . esc_html( $icon['icon'] ) . '"></i><span class="v-line"></span>';
 				if ( strpos( $wrapper_attributes, 'is-style-icons' ) === false ) {
 					$html .= esc_html( $icon['label'] );
 				}
 				$html .= '</a>';
 			}
 		}
-		$html .= '</div>';
+		$html .= '</div></div>';
 		return $html;
 	}
 }

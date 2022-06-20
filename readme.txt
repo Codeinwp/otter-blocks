@@ -2,7 +2,7 @@
 Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1, arinat, uriahs-victor
 Tags: gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder
 Requires at least: 5.6
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 5.4
 Stable tag: trunk
 License: GPLv3
@@ -188,6 +188,21 @@ We're here to help. Feel free to open a new thread on the [Support Forum](https:
 5. Section Block
 
 == Changelog ==
+
+##### [Version 2.0.5](https://github.com/Codeinwp/otter-blocks/compare/v2.0.4...v2.0.5) (2022-05-27)
+
+- Fix CSS notifications appearing multiple times
+- Fix excerptLength not being persistent in Posts Block
+- Sharing Icons Block Revamp
+- Fix ACF extension for Posts not working
+- Fix Icon Block style inheritance issue
+- Fix Dashboard integration fields losing focus on each keypress
+- Fix Accordion title going outside the container
+- Improve Masonry Block responsiveness
+- Improve Product Review Comparison Block placeholder text
+
+
+
 
 ##### [Version 2.0.4](https://github.com/Codeinwp/otter-blocks/compare/v2.0.3...v2.0.4) (2022-05-16)
 

@@ -79,7 +79,7 @@ const BlockPlaceholder = ({
 	return (
 		<Placeholder
 			label={ __( 'Product Review Comparison', 'otter-blocks' ) }
-			instructions={ __( 'Display a selection of product reviews in a comparison table.', 'otter-blocks' ) }
+			instructions={ __( 'Display a selection of product reviews in a comparison table. You need to have some pre-existing reviews to use this block.', 'otter-blocks' ) }
 			icon={ blockTable }
 			isColumnLayout={ true }
 			className="o-review-comparison__placeholder"

@@ -109,11 +109,11 @@ const Edit = ({
 				getValue={ getValue }
 			/>
 
-			<p { ...blockProps }>
+			<div { ...blockProps }>
 				<span className="wp-block-themeisle-blocks-font-awesome-icons-container">
 					{ 'themeisle-icons' === attributes.library ? <Icon/> : <i className={ `${ attributes.prefix } fa-${ attributes.icon }` }></i> }
 				</span>
-			</p>
+			</div>
 		</Fragment>
 	);
 };

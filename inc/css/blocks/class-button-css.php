@@ -203,10 +203,10 @@ class Button_CSS extends Base_CSS {
 	/**
 	 * Gets the default value of the property if the button is primary or secondary.
 	 *
-	 * @param array $attrs Block attributes.
+	 * @param array  $attrs Block attributes.
 	 * @param string $property Property name.
-	 * @param string $primary_val Value for primary button
-	 * @param string $secondary_val Value for secondary button
+	 * @param string $primary_val Value for primary button.
+	 * @param string $secondary_val Value for secondary button.
 	 *
 	 * @return null | string
 	 */
@@ -215,6 +215,6 @@ class Button_CSS extends Base_CSS {
 			return null;
 		}
 
-		return $attrs['type'] === 'primary' ? $primary_val : $secondary_val;
+		return 'primary' === $attrs['type'] ? $primary_val : $secondary_val;
 	}
 }

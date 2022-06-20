@@ -77,6 +77,9 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Font_Awesome_Icons_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Icon_List_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Icon_List_Item_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_Input_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_Textarea_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Flip_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Progress_Bar_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Popup_CSS',
@@ -84,6 +87,7 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Review_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Tabs_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Posts_CSS',
+			'\Themeisle\GutenbergBlocks\CSS\Blocks\Sharing_Icons_CSS',
 		);
 
 		self::$blocks_classes = apply_filters( 'otter_blocks_register_css', self::$blocks_classes );

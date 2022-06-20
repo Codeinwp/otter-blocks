@@ -35,13 +35,24 @@ const transforms = {
 		{
 			type: 'block',
 			blocks: [ 'core/gallery' ],
-			transform: ({ images, align }) => {
+			transform: ({ images, align }, innerBlocks ) => {
+				if ( window.themeisleGutenberg?.isLegacyPre59 ) {
+					return createBlock( 'themeisle-blocks/slider', {
+						images: images.map( ({ id, url, alt, caption }) => ({
+							id,
+							url,
+							alt,
+							caption
+						}) ),
+						align
+					});
+				}
 				return createBlock( 'themeisle-blocks/slider', {
-					images: images.map( ({ id, url, alt, caption }) => ({
-						id,
-						url,
-						alt,
-						caption
+					images: innerBlocks.map( ({ attributes }) => ({
+						id: attributes.id,
+						url: attributes.url,
+						alt: attributes.alt,
+						caption: attributes.caption
 					}) ),
 					align
 				});
@@ -70,15 +81,31 @@ const transforms = {
 			type: 'block',
 			blocks: [ 'core/gallery' ],
 			transform: ({ images, align }) => {
-				return createBlock( 'core/gallery', {
-					images: images.map( ({ id, url, alt, caption }) => ({
-						id,
-						url,
-						alt,
-						caption
-					}) ),
-					align
-				});
+				if ( window.themeisleGutenberg?.isLegacyPre59 ) {
+					return createBlock( 'core/gallery', {
+						images: images.map( ({ id, url, alt, caption }) => ({
+							id,
+							url,
+							alt,
+							caption
+						}) ),
+						align
+					});
+				}
+				return createBlock(
+					'core/gallery',
+					{ align },
+					images.map( ({ id, url, alt, caption }) => createBlock(
+						'core/image',
+						{
+							id,
+							url,
+							alt,
+							caption,
+							align
+						}
+					) )
+				);
 			}
 		}
 	]

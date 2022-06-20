@@ -229,28 +229,28 @@ class Registration {
 			'otter-blocks',
 			'themeisleGutenberg',
 			array(
-				'hasNeve'             => defined( 'NEVE_VERSION' ),
-				'isCompatible'        => Main::is_compatible(),
-				'hasPro'              => Pro::is_pro_installed(),
-				'upgradeLink'         => Pro::get_url(),
-				'should_show_upsell'  => Pro::should_show_upsell(),
-				'assetsPath'          => OTTER_BLOCKS_URL . 'assets',
-				'updatePath'          => admin_url( 'update-core.php' ),
-				'optionsPath'         => admin_url( 'options-general.php?page=otter' ),
-				'mapsAPI'             => $api,
-				'globalDefaults'      => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
-				'themeDefaults'       => Main::get_global_defaults(),
-				'imageSizes'          => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
-				'isWPVIP'             => function_exists( 'is_wpcom_vip' ),
-				'canTrack'            => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
-				'userRoles'           => $wp_roles->roles,
-				'isBlockEditor'       => 'post' === $current_screen->base,
-				'useOldMacyContainer' => version_compare( get_bloginfo( 'version' ), '5.8.10', '<=' ),
-				'postTypes'           => get_post_types( [ 'public' => true ] ),
-				'rootUrl'             => get_site_url(),
-				'hasModule'           => array(
+				'hasNeve'            => defined( 'NEVE_VERSION' ),
+				'isCompatible'       => Main::is_compatible(),
+				'hasPro'             => Pro::is_pro_installed(),
+				'upgradeLink'        => Pro::get_url(),
+				'should_show_upsell' => Pro::should_show_upsell(),
+				'assetsPath'         => OTTER_BLOCKS_URL . 'assets',
+				'updatePath'         => admin_url( 'update-core.php' ),
+				'optionsPath'        => admin_url( 'options-general.php?page=otter' ),
+				'mapsAPI'            => $api,
+				'globalDefaults'     => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
+				'themeDefaults'      => Main::get_global_defaults(),
+				'imageSizes'         => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
+				'isWPVIP'            => function_exists( 'is_wpcom_vip' ),
+				'canTrack'           => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
+				'userRoles'          => $wp_roles->roles,
+				'isBlockEditor'      => 'post' === $current_screen->base,
+				'postTypes'          => get_post_types( [ 'public' => true ] ),
+				'rootUrl'            => get_site_url(),
+				'hasModule'          => array(
 					'blockConditions' => get_option( 'themeisle_blocks_settings_block_conditions', true ),
 				),
+				'isLegacyPre59'      => version_compare( get_bloginfo( 'version' ), '5.8.22', '<=' ),
 			)
 		);
 
@@ -409,6 +409,17 @@ class Registration {
 				'themeisleGutenbergForm',
 				array(
 					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
+					'root'               => esc_url_raw( rest_url() ),
+					'nonce'              => wp_create_nonce( 'wp_rest' ),
+					'messages'           => array(
+						'submission'         => __( 'Form submission from', 'otter-blocks' ),
+						'captcha-not-loaded' => __( 'Captcha is not loaded. Please check your browser plugins to allow the Google reCaptcha.', 'otter-blocks' ),
+						'check-captcha'      => __( 'Please check the captcha.', 'otter-blocks' ),
+						'invalid-email'      => __( 'The email address is invalid!', 'otter-blocks' ),
+						'already-registered' => __( 'The email was already registered!', 'otter-blocks' ),
+						'try-again'          => __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' ),
+						'privacy'            => __( 'I have read and agreed the privacy statement.', 'otter-blocks' ),
+					),
 				)
 			);
 

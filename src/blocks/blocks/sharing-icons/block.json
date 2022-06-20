@@ -8,29 +8,56 @@
 	"keywords": [ "social media", "sharing", "icons" ],
 	"textdomain": "otter-blocks",
 	"attributes": {
+		"id": {
+			"type": "string"
+		},
 		"facebook": {
-			"type": "boolean",
-			"default": true
+			"type": [ "object", "boolean" ],
+			"default": {
+				"active": true
+			}
 		},
 		"twitter": {
-			"type": "boolean",
-			"default": true
+			"type": [ "object", "boolean" ],
+			"default": {
+				"active": true
+			}
 		},
 		"linkedin": {
-			"type": "boolean",
-			"default": true
+			"type": [ "object", "boolean" ],
+			"default": {
+				"active": true
+			}
 		},
 		"pinterest": {
-			"type": "boolean",
-			"default": false
+			"type": [ "object", "boolean" ],
+			"default": {
+				"active": false
+			}
 		},
 		"tumblr": {
-			"type": "boolean",
-			"default": false
+			"type": [ "object", "boolean" ],
+			"default": {
+				"active": false
+			}
 		},
 		"reddit": {
-			"type": "boolean",
-			"default": false
+			"type": [ "object", "boolean" ],
+			"default": {
+				"active": false
+			}
+		},
+		"gap" : {
+			"type": "number"
+		},
+		"borderRadius": {
+			"type": "number"
+		},
+		"backgroundColor" : {
+			"type": "string"
+		},
+		"textColor" : {
+			"type": "string"
 		}
 	},
 	"styles": [
