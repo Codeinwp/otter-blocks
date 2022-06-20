@@ -76,6 +76,10 @@
 	box-shadow: none;
 }
 
+.block-editor-block-styles__item.is-secondary:hover .block-editor-block-styles__item-text {
+	color: rgb(30, 30, 30);
+}
+
 .editor-styles-wrapper {
 	.wp-block-button__link {
 		svg {
@@ -85,7 +89,7 @@
 	}
 }
 
-.components-accessible-toolbar {
+.buttons-alignment-toolbar.components-accessible-toolbar {
 	border: 0;
 
 	.components-button:focus::before {

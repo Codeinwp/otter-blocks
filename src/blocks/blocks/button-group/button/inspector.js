@@ -106,28 +106,31 @@ const Inspector = ({
 
 	return (
 		<InspectorControls>
-			<PanelBody
-				title={ __( 'Types', 'otter-blocks' ) }
-			>
-				<div className="block-editor-block-styles__variants">
-					{ Object.keys( buttonTypes ).map( type => {
-						return (
-							<Button
-								className={ classnames(
-									'block-editor-block-styles__item',
-									{ 'is-active': attributes.type === type }
-								) }
-								isSecondary
-								key={ type }
-								label={ type }
-								onClick={ () => changeType( type ) }
-							>
-								{ buttonTypes[type].label }
-							</Button>
-						);
-					}) }
-				</div>
-			</PanelBody>
+			{ window.themeisleGutenberg.hasNeve &&
+				<PanelBody
+					title={ __( 'Types', 'otter-blocks' ) }
+				>
+					<p className="components-base-control__help">{ __( 'This will set the colors for the button as specified in the customizer.', 'otter-blocks' ) }</p>
+					<div className="block-editor-block-styles__variants">
+						{ Object.keys( buttonTypes ).map( type => {
+							return (
+								<Button
+									className={ classnames(
+										'block-editor-block-styles__item',
+										{ 'is-active': attributes.type === type || ( attributes.type === undefined && 'default' === type ) }
+									) }
+									isSecondary
+									key={ type }
+									label={ type }
+									onClick={ () => changeType( type ) }
+								>
+									<span className='block-editor-block-styles__item-text'>{ buttonTypes[type].label }</span>
+								</Button>
+							);
+						}) }
+					</div>
+				</PanelBody>
+			}
 			<PanelBody
 				title={ __( 'Color', 'otter-blocks' ) }
 			>

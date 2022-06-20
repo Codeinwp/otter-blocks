@@ -162,7 +162,10 @@ const Inspector = ({
 					label={ __( 'Alignment', 'otter-blocks' ) }
 					className="buttons-alignment-control"
 				>
-					<Toolbar label="Options">
+					<Toolbar
+						label="Options"
+						className="buttons-alignment-toolbar"
+					>
 						{ alignmentOptions.map( option => {
 							return (
 								<ToolbarButton

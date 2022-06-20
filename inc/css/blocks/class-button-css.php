@@ -55,10 +55,12 @@ class Button_CSS extends Base_CSS {
 					array(
 						'property' => 'color',
 						'value'    => 'color',
+						'default'  => $this->get_default_value( $block['attrs'], 'color', 'var(--primarybtncolor)', 'var(--secondarybtncolor)' ),
 					),
 					array(
 						'property' => 'background',
 						'value'    => 'background',
+						'default'  => $this->get_default_value( $block['attrs'], 'background', 'var(--primarybtnbg)', 'var(--secondarybtnbg)' ),
 					),
 					array(
 						'property' => 'background',
@@ -86,7 +88,8 @@ class Button_CSS extends Base_CSS {
 					array(
 						'property' => 'border-radius',
 						'value'    => 'borderRadius',
-						'unit'     => 'px',
+						'unit'     => isset( $block['attrs']['borderRadius'] ) ? 'px' : '',
+						'default'  => $this->get_default_value( $block['attrs'], 'borderRadius', 'var(--primarybtnborderradius)', 'var(--secondarybtnborderradius)' ),
 					),
 					array(
 						'property'       => 'box-shadow',
@@ -136,10 +139,12 @@ class Button_CSS extends Base_CSS {
 					array(
 						'property' => 'color',
 						'value'    => 'hoverColor',
+						'default'  => $this->get_default_value( $block['attrs'], 'hoverColor', 'var(--primarybtnhovercolor)', 'var(--secondarybtnhovercolor)' ),
 					),
 					array(
 						'property' => 'background',
 						'value'    => 'hoverBackground',
+						'default'  => $this->get_default_value( $block['attrs'], 'hoverBackground', 'var(--primarybtnhoverbg)', 'var(--secondarybtnhoverbg)' ),
 					),
 					array(
 						'property' => 'background',
@@ -193,5 +198,23 @@ class Button_CSS extends Base_CSS {
 		$style = $css->generate();
 
 		return $style;
+	}
+
+	/**
+	 * Gets the default value of the property if the button is primary or secondary.
+	 *
+	 * @param array $attrs Block attributes.
+	 * @param string $property Property name.
+	 * @param string $primary_val Value for primary button
+	 * @param string $secondary_val Value for secondary button
+	 *
+	 * @return null | string
+	 */
+	private function get_default_value( $attrs, $property, $primary_val, $secondary_val ) {
+		if ( isset( $attrs[ $property ] ) || ! isset( $attrs['type'] ) || 'default' === $attrs['type'] ) {
+			return null;
+		}
+
+		return $attrs['type'] === 'primary' ? $primary_val : $secondary_val;
 	}
 }
