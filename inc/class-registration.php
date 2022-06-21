@@ -51,6 +51,7 @@ class Registration {
 		'tabs'           => false,
 		'popup'          => false,
 		'progress-bar'   => false,
+		'sticky'         => false,
 	);
 
 	/**
@@ -59,6 +60,13 @@ class Registration {
 	 * @var array
 	 */
 	public static $styles_loaded = array();
+
+	/**
+	 * Allow to load in frontend.
+	 *
+	 * @var bool
+	 */
+	public static $can_load_frontend = true;
 
 	/**
 	 * Flag to mark that the  FA has been loaded.
@@ -82,6 +90,7 @@ class Registration {
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_assets' ), 1 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) ); // Don't change the priority or else Blocks CSS will stop working.
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
+		add_filter( 'render_block', array( $this, 'load_sticky' ), 900, 2 );
 
 		add_action(
 			'get_footer',
@@ -334,6 +343,7 @@ class Registration {
 		}
 
 		if ( strpos( $content, '<!-- wp:' ) === false ) {
+			self::$can_load_frontend = false;
 			return false;
 		}
 
@@ -355,6 +365,7 @@ class Registration {
 
 		// On AMP context, we don't load JS files.
 		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+			self::$can_load_frontend = false;
 			return;
 		}
 
@@ -525,17 +536,6 @@ class Registration {
 			self::$scripts_loaded['progress-bar'] = true;
 		}
 
-		// DEBUG
-		// TODO: load this only when a block has a sticky block.
-		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/sticky.asset.php';
-		wp_enqueue_script(
-			'otter-sticky',
-			OTTER_BLOCKS_URL . 'build/blocks/sticky.js',
-			$asset_file['dependencies'],
-			$asset_file['version'],
-			true
-		);
-		wp_script_add_data( 'otter-sticky', 'defer', true );
 	}
 
 	/**
@@ -800,6 +800,36 @@ class Registration {
 
 				return $block_content;
 			}
+		}
+
+		return $block_content;
+	}
+
+	/**
+	 * Load assets in frontend.
+	 *
+	 * @param string $block_content Content of block.
+	 * @param array  $block Block Attributes.
+	 * @return string
+	 * @since 2.0.5
+	 */
+	public function load_sticky( $block_content, $block ) {
+
+		if ( ! self::$can_load_frontend ) {
+			return $block_content;
+		}
+
+		if ( ! self::$scripts_loaded['sticky'] && strpos( $block_content, 'o-sticky' ) ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/sticky.asset.php';
+			wp_enqueue_script(
+				'otter-sticky',
+				OTTER_BLOCKS_URL . 'build/blocks/sticky.js',
+				$asset_file['dependencies'],
+				$asset_file['version'],
+				true
+			);
+			wp_script_add_data( 'otter-sticky', 'defer', true );
+			self::$scripts_loaded['sticky'] = true;
 		}
 
 		return $block_content;
