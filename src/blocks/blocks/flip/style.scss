@@ -18,8 +18,15 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
+	width: max-content;
+	margin-left: auto;
+	margin-right: auto;
 
 	perspective: 1000px; /* Remove this if you don't want the 3D effect */
+
+	&[class^="block-editor"] {
+		width: auto;
+	}
 
 	&.flipX {
 		--flip-anim: rotateX(180deg);
