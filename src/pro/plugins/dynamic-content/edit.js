@@ -9,6 +9,7 @@ import {
 	BaseControl,
 	ExternalLink,
 	FormTokenField,
+	Placeholder,
 	SelectControl,
 	Spinner,
 	TextControl
@@ -241,7 +242,7 @@ const Edit = ({
 										);
 									}) }
 								</select>
-							) : <Spinner /> }
+							) : <Placeholder><Spinner /></Placeholder> }
 						</BaseControl>
 					) }
 
