@@ -117,6 +117,8 @@ class Blocks_Animation {
 			self::$can_load_frontend = false;
 		}
 
+		global $post;
+
 		if ( is_singular() && strpos( get_the_content( null, false, $post ), '<!-- wp:' ) === false ) {
 			self::$can_load_frontend = false;
 		}
