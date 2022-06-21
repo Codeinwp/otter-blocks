@@ -23,7 +23,12 @@ class Dynamic_Content {
 	 * Initialize the class
 	 */
 	public function init() {
-		add_action( 'the_content', array( $this, 'apply_dynamic_content' ) );
+		add_filter( 'the_content', array( $this, 'apply_dynamic_content' ) );
+		add_filter( 'widget_block_content', array( $this, 'apply_dynamic_content' ), 0, 1 );
+
+		if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
+			add_filter( 'get_block_templates', array( $this, 'apply_dynamic_content_fse' ), 0, 1 );
+		}
 	}
 
 	/**
@@ -41,6 +46,22 @@ class Dynamic_Content {
 		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|data-term-type=["\'](?P<termType>[^"\'<>]+)["\']|data-term-separator=["\'](?P<termSeparator>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_data' ), $content );
+	}
+
+
+	/**
+	 * Filter Block Templates.
+	 *
+	 * @param array $block_template Block template.
+	 *
+	 * @return array
+	 */
+	public function apply_dynamic_content_fse( $block_template ) {
+		foreach ( $block_template as $template ) {
+			$template->content = $this->apply_dynamic_content( $template->content );
+		}
+
+		return $block_template;
 	}
 
 	/**
