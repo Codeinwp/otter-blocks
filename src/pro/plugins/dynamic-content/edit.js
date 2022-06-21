@@ -3,19 +3,43 @@
  */
 import { __ } from '@wordpress/i18n';
 
+import { isEmpty } from 'lodash';
+
 import {
+	BaseControl,
 	ExternalLink,
 	FormTokenField,
 	SelectControl,
+	Spinner,
 	TextControl
 } from '@wordpress/components';
 
+import { useSelect } from '@wordpress/data';
+
 import { Fragment } from '@wordpress/element';
+
+const ALLOWED_ACF_TYPES = [
+	'text',
+	'textarea',
+	'range',
+	'number',
+	'url',
+	'email',
+	'password'
+];
 
 const Edit = ({
 	attributes,
 	changeAttributes
 }) => {
+	const { groups } = useSelect( select => {
+		const { groups } = select( 'otter-pro' ).getACFData();
+
+		return {
+			groups
+		};
+	}, []);
+
 	const dateFormats = {
 		'F j, Y': moment().format( 'MMMM d, Y' ),
 		'Y-m-d': moment().format( 'Y-m-d' ),
@@ -185,8 +209,44 @@ const Edit = ({
 
 			{ ([ 'postMeta', 'authorMeta', 'loggedInUserMeta' ].includes( attributes.type ) ) && (
 				<Fragment>
+					{ 'postMeta' === attributes.type && (
+						<BaseControl
+							label={ __( 'Meta Key', 'otter-blocks' ) }
+						>
+							{ ! isEmpty( groups ) ? (
+								<select
+									value={ attributes.metaKey || 'none' }
+									onChange={ event => changeAttributes({ metaKey: event.target.value  }) }
+									className="components-select-control__input"
+								>
+									<option value="none">{ __( 'Select a field', 'otter-blocks' ) }</option>
+
+									{ groups.map( group => {
+										return (
+											<optgroup
+												key={ group?.data?.key }
+												label={ group?.data?.title }
+											>
+												{ group?.fields
+													?.filter( ({ key, label, type }) => key && label &&  ALLOWED_ACF_TYPES.includes( type ) )
+													.map( ({ key, _name, label }) => (
+														<option
+															key={ key }
+															value={ _name }
+														>
+															{ label }
+														</option>
+													) ) }
+											</optgroup>
+										);
+									}) }
+								</select>
+							) : <Spinner /> }
+						</BaseControl>
+					) }
+
 					<FormTokenField
-						label={ __( 'Meta', 'otter-blocks' ) }
+						label={ __( 'Custom Meta Key', 'otter-blocks' ) }
 						value={ attributes.metaKey ? [ attributes.metaKey ] : [] }
 						maxLength={ 1 }
 						suggestions={ autocompleteData[ attributes.type ] }
