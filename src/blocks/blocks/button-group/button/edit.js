@@ -103,7 +103,7 @@ const Edit = ({
 	const styles = {
 		color: attributes.color || ( 'primary' === attributes.type ? 'var(--primarybtncolor)' : ( 'secondary' === attributes.type ? 'var(--secondarybtncolor)' : undefined ) ),
 		background: attributes.background || attributes.backgroundGradient || ( 'primary' === attributes.type ? 'var(--primarybtnbg)' : ( 'secondary' === attributes.type ? 'var(--secondarybtnbg)' : undefined ) ),
-		border: `${ attributes.borderSize }px solid ${ attributes.border }`,
+		border: `${ attributes.borderSize ? attributes.borderSize + 'px' : '' } solid ${ attributes.border ? attributes.border : '' }`,
 		borderRadius: attributes.borderRadius || ( 'primary' === attributes.type ? 'var(--primarybtnborderradius)' : ( 'secondary' === attributes.type ? 'var(--secondarybtnborderradius)' : undefined ) ),
 		...boxShadowStyle,
 		...buttonStyle
