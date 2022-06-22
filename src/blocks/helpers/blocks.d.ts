@@ -1,3 +1,5 @@
+import {Dispatch, SetStateAction} from 'react';
+
 export type BlockProps<T> = {
 	attributes: T
 	setAttributes: ( attributes: Partial<T> ) => void
@@ -37,3 +39,11 @@ export type BorderType = MarginType
 export type OtterNodeCSSOptions = {
 	selector: string
 }
+
+export type OtterSetNodeCSS = (css: string[], media: string[]) => void;
+
+export type OtterNodeCSSReturn = [
+	string,
+	OtterSetNodeCSS,
+	Dispatch<SetStateAction<{node: HTMLStyleElement | null , cssNodeName: string}>>
+]

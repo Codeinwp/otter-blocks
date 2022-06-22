@@ -274,10 +274,10 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 
 
 /**
- * Create a Style node.
+ * Create a Style node for handling `head` Node change when working in a Tablet, Mobile mode or in FSE Editor.
  *
- * @param {OtterNodeCSSOptions?} options
- * @returns {[string, Function]}
+ * @param {OtterNodeCSSOptions?} options The options.
+ * @returns {OtterNodeCSSReturn} The name of the node and function handler.
  */
 export const useCSSNode = options => {
 	const [ cssList, setCSSProps ] = useState({
@@ -290,11 +290,45 @@ export const useCSSNode = options => {
 	});
 
 	/**
+	 *	Set CSS of the node.
 	 *
-	 * @param {string}[] css
-	 * @param {string}[] media
+	 * The `css` and `media` have a 1-1 relationship.
+	 *
+	 * @param {string[]} css A list with CSS code.
+	 * @param {string[]} media A list CSS media options. One for each CSS item.
+	 *
+	 * @example Simple usage.
+	 *
+	 * setNodeCSS([
+	 * 			`.o-review-comparison_buttons span {
+	 * 				background: ${ attributes.buttonColor } !important;
+	 * 				color: ${ attributes.buttonText } !important;
+	 * 			}`
+	 * ]);
+	 *
+	 * @example CSS with Media.
+	 * setNodeCSS([
+	 * 			`{
+	 * 				${ attributes.customTitleFontSize && `--titleTextSize: ${ attributes.customTitleFontSize }px;` }
+	 * 				${ attributes.customDescriptionFontSize && `--descriptionTextSize: ${ attributes.customDescriptionFontSize }px;` }
+	 * 			}`,
+	 * 			`{
+	 * 				${ attributes.customTitleFontSizeTablet && `--titleTextSize: ${ attributes.customTitleFontSizeTablet }px;` }
+	 * 				${ attributes.customDescriptionFontSizeTablet && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeTablet }px;` }
+	 * 			}`,
+	 * 			`{
+	 * 				${ attributes.customTitleFontSizeMobile && `--titleTextSize: ${ attributes.customTitleFontSizeMobile }px;` }
+	 * 				${ attributes.customDescriptionFontSizeMobile && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeMobile }px;` }
+	 * 			}`
+	 * 		], [
+	 * 			'@media ( min-width: 960px )',
+	 * 			'@media ( min-width: 600px ) and ( max-width: 960px )',
+	 * 			'@media ( max-width: 600px )'
+	 * 		]
+	 * );
+	 *
 	 */
-	const setCSS = ( css = [], media = []) => {
+	const setNodeCSS = ( css = [], media = []) => {
 		setCSSProps({
 			css,
 			media
@@ -304,11 +338,15 @@ export const useCSSNode = options => {
 	useEffect( () => {
 
 		let anchor;
+
+		// Create the CSS node.
 		const n = document.createElement( 'style' );
 		n.type = 'text/css';
 		n.setAttribute( 'data-generator', 'otter-blocks' );
 
 		setTimeout( () => {
+
+			// A small delay for the iFrame to properly initialize.
 			anchor = parent.document.querySelector( 'iframe[name="editor-canvas"]' )?.contentWindow.document.head || document.head;
 			anchor?.appendChild( n );
 		}, 500 );
@@ -319,13 +357,15 @@ export const useCSSNode = options => {
 		});
 
 		return () => {
-			console.log( 'Clean' );
+			console.log( 'Clean' ); // Remove after final testing.
 			anchor?.removeChild( n );
 		};
 	}, [ ]);
 
 	useEffect( () => {
 		if ( settings.node && settings.cssNodeName && cssList.media !== undefined ) {
+
+			// Create the CSS text by combining the list of CSS items with their media..
 			const text =  zip( cssList.css, cssList.media )
 				.map( x => {
 					const [ css, media ] = x;
@@ -335,12 +375,13 @@ export const useCSSNode = options => {
 					return `.${settings.cssNodeName} ${css}`;
 				})
 				.join( '\n' ) || '';
-			console.log( text );
 			settings.node.textContent = text;
 
+			// Remove after final testing.
+			console.log( text );
 			console.count( `CSSNodeCall: ${settings.cssNodeName}` );
 		}
 	}, [ cssList.css, cssList.media, settings.node, settings.cssNodeName ]);
 
-	return [ settings.cssNodeName, setCSS, setSettings ];
+	return [ settings.cssNodeName, setNodeCSS, setSettings ];
 };
