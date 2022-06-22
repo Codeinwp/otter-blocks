@@ -5,7 +5,10 @@ import { __ } from '@wordpress/i18n';
 
 import { Popover } from '@wordpress/components';
 
-import { useState } from '@wordpress/element';
+import {
+	useEffect,
+	useState
+} from '@wordpress/element';
 
 import {
 	applyFormat,
@@ -26,6 +29,10 @@ const InlineControls = ({
 	onChange
 }) => {
 	const [ attributes, setAttributes ] = useState({ ...activeAttributes });
+
+	useEffect( () => {
+		setAttributes({ ...activeAttributes });
+	}, [ activeAttributes ]);
 
 	const changeAttributes = obj => {
 		let attrs = { ...attributes };
