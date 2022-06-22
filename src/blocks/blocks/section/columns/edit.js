@@ -152,8 +152,6 @@ const Edit = ({
 				updateColumnsWidth( 1, 'equal' );
 			}
 
-			console.count( 'Update' );
-
 			setAttributes({
 				columns: children.length
 			});
