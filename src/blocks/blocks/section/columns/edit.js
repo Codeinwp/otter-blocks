@@ -143,6 +143,17 @@ const Edit = ({
 
 	useEffect( () => {
 		if ( attributes.columns !== children.length ) {
+
+			if ( 6 >= children.length ) {
+				updateColumnsWidth( children.length, 'equal' );
+			} else if ( 6 < children.length ) {
+				updateColumnsWidth( 6, 'equal' );
+			} else if ( 1 >= children.length ) {
+				updateColumnsWidth( 1, 'equal' );
+			}
+
+			console.count( 'Update' );
+
 			setAttributes({
 				columns: children.length
 			});
