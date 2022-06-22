@@ -55,6 +55,7 @@ class Main {
 	public function autoload_classes( $classnames ) {
 		$classes = array(
 			'\ThemeIsle\OtterPro\Plugins\Block_Conditions',
+			'\ThemeIsle\OtterPro\Plugins\Dynamic_Content',
 			'\ThemeIsle\OtterPro\Plugins\License',
 			'\ThemeIsle\OtterPro\Plugins\Options_Settings',
 			'\ThemeIsle\OtterPro\Plugins\Posts_ACF_Integration',

@@ -240,6 +240,7 @@ class Registration {
 			array(
 				'isCompatible'       => Main::is_compatible(),
 				'hasPro'             => Pro::is_pro_installed(),
+				'isProActive'        => Pro::is_pro_active(),
 				'upgradeLink'        => Pro::get_url(),
 				'should_show_upsell' => Pro::should_show_upsell(),
 				'assetsPath'         => OTTER_BLOCKS_URL . 'assets',
