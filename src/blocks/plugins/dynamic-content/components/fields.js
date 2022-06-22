@@ -224,6 +224,8 @@ const Fields = ({
 						</Button>
 					) }
 				</ButtonGroup>
+
+				{ applyFilters( 'otter.poweredBy', '' ) }
 			</PanelBody>
 		</Fragment>
 	);
