@@ -94,7 +94,9 @@ const Edit = ({
 		action: undefined,
 		hasCaptcha: undefined,
 		submitMessage: undefined,
-		apiKey: undefined
+		apiKey: undefined,
+		cc: undefined,
+		bcc: undefined
 	});
 
 	const setFormOption = option => {
@@ -201,6 +203,8 @@ const Edit = ({
 			fromName: wpOptions?.fromName,
 			redirectLink: wpOptions?.redirectLink,
 			subject: wpOptions?.emailSubject,
+			cc: wpOptions?.cc,
+			bcc: wpOptions?.bcc,
 			submitMessage: wpOptions?.submitMessage,
 			provider: wpOptions?.integration?.provider,
 			apiKey: wpOptions?.integration?.apiKey,
@@ -265,13 +269,19 @@ const Edit = ({
 						emails[index].redirectLink !== formOptions.redirectLink ||
 						emails[index].emailSubject !== formOptions.subject ||
 						emails[index].submitMessage !== formOptions.submitMessage ||
-						emails[index].fromName !== formOptions.fromName
+						emails[index].fromName !== formOptions.fromName ||
+						emails[index].cc !== formOptions.cc ||
+						emails[index].bcc !== formOptions.bcc
 					);
-					emails[index].email = formOptions.emailTo; // update the value
-					emails[index].redirectLink = formOptions.redirectLink; // update the value
-					emails[index].emailSubject = formOptions.subject; // update the value
-					emails[index].submitMessage = formOptions.submitMessage; // update the value
-					emails[index].fromName = formOptions.fromName; // update the value
+
+					// Update the values
+					emails[index].email = formOptions.emailTo;
+					emails[index].redirectLink = formOptions.redirectLink;
+					emails[index].emailSubject = formOptions.subject;
+					emails[index].submitMessage = formOptions.submitMessage;
+					emails[index].fromName = formOptions.fromName;
+					emails[index].cc = formOptions.cc;
+					emails[index].bcc = formOptions.bcc;
 					isMissing = false;
 				}
 			});
@@ -283,7 +293,9 @@ const Edit = ({
 					fromName: formOptions.fromName,
 					redirectLink: formOptions.redirectLink,
 					emailSubject: formOptions.subject,
-					submitMessage: formOptions.submitMessage
+					submitMessage: formOptions.submitMessage,
+					cc: formOptions.cc,
+					bcc: formOptions.bcc
 				});
 			}
 
@@ -298,6 +310,7 @@ const Edit = ({
 					if ( formOptions ) {
 						parseDataFormOptions( formOptions );
 						setSavedFormOptions( formOptions );
+						console.log( formOptions );
 						setLoading({ formOptions: 'done' });
 						createNotice(
 							'info',

@@ -221,6 +221,12 @@ class Options_Settings {
 							if ( isset( $item['fromName'] ) ) {
 								$item['fromName'] = sanitize_text_field( $item['fromName'] );
 							}
+							if ( isset( $item['cc'] ) ) {
+								$item['cc'] = sanitize_text_field( $item['cc'] );
+							}
+							if ( isset( $item['bcc'] ) ) {
+								$item['bcc'] = sanitize_text_field( $item['bcc'] );
+							}
 							if ( isset( $item['submitMessage'] ) ) {
 								$item['submitMessage'] = sanitize_text_field( $item['submitMessage'] );
 							}
@@ -267,6 +273,12 @@ class Options_Settings {
 								),
 								'submitMessage' => array(
 									'type' => 'string',
+								),
+								'cc'           => array(
+									'type' => 'string'
+								),
+								'bcc'          => array(
+									'type' => 'string'
 								),
 								'integration'   => array(
 									'type'       => 'object',

@@ -76,6 +76,8 @@ const Inspector = ({
 		[ formOptions.redirectLink, savedFormOptions?.redirectLink ],
 		[ formOptions.fromName, savedFormOptions?.fromName ],
 		[ formOptions.submitMessage, savedFormOptions?.submitMessage ],
+		[ formOptions.cc, savedFormOptions?.cc ],
+		[ formOptions.bcc, savedFormOptions?.bcc ],
 		[ formOptions.hasCaptcha, savedFormOptions?.hasCaptcha ]
 	]);
 
@@ -357,6 +359,24 @@ const Inspector = ({
 					value={ formOptions.emailTo }
 					onChange={ emailTo => setFormOption({emailTo}) }
 					help={ __( 'Send the form\'s data to another email. (Admin\'s email is default).', 'otter-blocks' ) }
+				/>
+
+				<TextControl
+					label={ __( 'Cc', 'otter-blocks' ) }
+					placeholder={ __( 'Send copies to', 'otter-blocks' ) }
+					type="text"
+					value={ formOptions.cc }
+					onChange={ cc => setFormOption({cc}) }
+					help={ __( 'Add emails separated by commas: example1@otter.com, example2@otter.com.', 'otter-blocks' ) }
+				/>
+
+				<TextControl
+					label={ __( 'Bcc', 'otter-blocks' ) }
+					placeholder={ __( 'Send copies to', 'otter-blocks' ) }
+					type="text"
+					value={ formOptions.bcc }
+					onChange={ bcc => setFormOption({bcc}) }
+					help={ __( 'Add emails separated by commas: example1@otter.com, example2@otter.com.', 'otter-blocks' ) }
 				/>
 
 				<TextareaControl
