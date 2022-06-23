@@ -281,7 +281,7 @@ class Registration {
 	 */
 	public static function get_inline_block_styles() {
 		self::$inline_css_loaded = true;
-		$css = file_get_contents( OTTER_BLOCKS_PATH . '/build/blocks/blocks.css' );
+		$css                     = file_get_contents( OTTER_BLOCKS_PATH . '/build/blocks/blocks.css' );
 		return $css;
 	}
 
