@@ -8,7 +8,8 @@ const defaultsAttrs = {
 	'themeisle-blocks/accordion': {},
 	'themeisle-blocks/review': {
 		features: []
-	}
+	},
+	'themeisle-blocks/form': {}
 };
 
 export default defaultsAttrs;

@@ -27,6 +27,15 @@
 		},
 		"mappedName": {
 			"type": "string"
+		},
+		"labelColor": {
+			"type": "string"
+		},
+		"inputWidth": {
+			"type": "number"
+		},
+		"helpText": {
+			"type": "string"
 		}
 	},
 	"supports": {

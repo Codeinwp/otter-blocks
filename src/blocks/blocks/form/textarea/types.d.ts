@@ -6,6 +6,9 @@ type Attributes = {
 	placeholder: string
 	isRequired: boolean
 	mappedName: string
+	labelColor: string
+	inputWidth: number
+	helpText: string
 }
 
 export type FormTextareaProps = BlockProps<Attributes>
