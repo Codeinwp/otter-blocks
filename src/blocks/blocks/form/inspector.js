@@ -46,6 +46,29 @@ const isChanged = list => {
 	return Boolean( 0 < list.filter( compare ).length );
 };
 
+const defaultFontSizes = [
+	{
+		name: __( 'Small', 'otter-blocks' ),
+		size: 14,
+		slug: 'small'
+	},
+	{
+		name: __( 'Medium', 'otter-blocks' ),
+		size: 16,
+		slug: 'medium'
+	},
+	{
+		name: __( 'Large', 'otter-blocks' ),
+		size: 16,
+		slug: 'large'
+	},
+	{
+		name: __( 'XL', 'otter-blocks' ),
+		size: 20,
+		slug: 'xl'
+	}
+];
+
 /**
  *
  * @param {import('./type.js').FormInspectorProps} props
@@ -174,64 +197,33 @@ const Inspector = ({
 				>
 					<FontSizePicker
 						label={ __( 'Font Size', 'otter-blocks' ) }
-						fontSizes={[
-							{
-								name: __( 'Small', 'otter-blocks' ),
-								size: 12,
-								slug: 'small'
-							},
-							{
-								name: __( 'Normal', 'otter-blocks' ),
-								size: 16,
-								slug: 'normal'
-							},
-							{
-								name: __( 'Big', 'otter-blocks' ),
-								size: 26,
-								slug: 'big'
-							}
-						]}
+						fontSizes={defaultFontSizes}
 						withReset
 						value={attributes.labelFontSize}
 						onChange={ labelFontSize =>  setAttributes({ labelFontSize }) }
 					/>
 				</SyncControl>
 
-				<SyncControl
-					field={ 'messageFontSize' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<FontSizePicker
-						label={ __( 'Font Size', 'otter-blocks' ) }
-						fontSizes={[
-							{
-								name: __( 'Small', 'otter-blocks' ),
-								size: 12,
-								slug: 'small'
-							},
-							{
-								name: __( 'Normal', 'otter-blocks' ),
-								size: 16,
-								slug: 'normal'
-							},
-							{
-								name: __( 'Big', 'otter-blocks' ),
-								size: 26,
-								slug: 'big'
-							}
-						]}
-						withReset
-						value={attributes.messageFontSize}
-						onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
-					/>
-				</SyncControl>
 			</PanelBody>
 
 			<PanelBody
 				title={ __( 'Input Styling', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
+				<SyncControl
+					field={ 'inputFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<FontSizePicker
+						label={ __( 'Input Font Size', 'otter-blocks' ) }
+						fontSizes={defaultFontSizes}
+						withReset
+						value={attributes.inputFontSize}
+						onChange={ inputFontSize =>  setAttributes({ inputFontSize }) }
+					/>
+				</SyncControl>
+
 				<SyncControl
 					field={ 'inputsGap' }
 					isSynced={ attributes.isSynced }
@@ -294,6 +286,20 @@ const Inspector = ({
 					/>
 				</SyncControl>
 
+				<SyncControl
+					field={ 'helpFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<h2>{__( 'Help Text Font Size', 'otter-blocks' )}</h2>
+					<FontSizePicker
+						label={ __( 'Help Font Size', 'otter-blocks' ) }
+						fontSizes={defaultFontSizes}
+						withReset
+						value={attributes.helpFontSize}
+						onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
+					/>
+				</SyncControl>
 			</PanelBody>
 
 			<PanelBody
@@ -315,23 +321,7 @@ const Inspector = ({
 				>
 					<FontSizePicker
 						label={ __( 'Font Size', 'otter-blocks' ) }
-						fontSizes={[
-							{
-								name: __( 'Small', 'otter-blocks' ),
-								size: 18,
-								slug: 'small'
-							},
-							{
-								name: __( 'Normal', 'otter-blocks' ),
-								size: 24,
-								slug: 'normal'
-							},
-							{
-								name: __( 'Big', 'otter-blocks' ),
-								size: 32,
-								slug: 'big'
-							}
-						]}
+						fontSizes={defaultFontSizes}
 						withReset
 						value={ attributes.submitFontSize }
 						onChange={ submitFontSize =>  setAttributes({ submitFontSize }) }
@@ -357,6 +347,21 @@ const Inspector = ({
 					]}
 					onChange={ submitStyle => setAttributes({ submitStyle}) }
 				/>
+
+				<SyncControl
+					field={ 'messageFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<h2>{__( 'Message Font Size', 'otter-blocks' )}</h2>
+					<FontSizePicker
+						label={ __( 'Message Font Size', 'otter-blocks' ) }
+						fontSizes={defaultFontSizes}
+						withReset
+						value={attributes.messageFontSize}
+						onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
+					/>
+				</SyncControl>
 			</PanelBody>
 
 			<PanelBody

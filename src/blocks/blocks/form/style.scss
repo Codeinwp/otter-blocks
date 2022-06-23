@@ -16,6 +16,8 @@
 	--messageFontSize: var(--bodyFontSize, inherit);
 	--submitFontSize: var(--btnFs, var(--bodyFontSize, inherit));
 	--inputColor: initial;
+	--inputFontSize: 1em;
+	--helpFontSize: 13px;
 
 	.otter-form__container {
 		display: flex;
@@ -87,14 +89,14 @@
 			border-width: var(--borderWidth);
 			border-color: var(--borderColor);
 			border-style: solid;
-			font-size: inherit;
+			font-size: var(--inputFontSize);
 		}
 
 		.o-form-help {
 			opacity: 0.8;
 			color: var(--helpLabelColor);
 			margin-bottom: 12px;
-			font-size: 13px;
+			font-size: var(--helpFontSize);
 		}
 	}
 

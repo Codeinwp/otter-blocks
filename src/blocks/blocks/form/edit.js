@@ -705,6 +705,8 @@ const Edit = ({
 
 	const inlineStyles = {
 		'--messageFontSize': attributes.messageFontSize !== undefined && `${ attributes.messageFontSize }px`,
+		'--inputFontSize': attributes.inputFontSize !== undefined && `${ attributes.inputFontSize }px`,
+		'--helpFontSize': attributes.helpFontSize !== undefined && `${ attributes.helpFontSize }px`,
 		'--inputColor': attributes.inputColor
 	};
 

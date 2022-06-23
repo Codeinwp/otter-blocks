@@ -122,6 +122,16 @@ class Form_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
+						'property' => '--inputFontSize',
+						'value'    => 'inputFontSize',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--helpFontSize',
+						'value'    => 'helpFontSize',
+						'unit'     => 'px',
+					),
+					array(
 						'property' => '--inputColor',
 						'value'    => 'inputColor',
 					),

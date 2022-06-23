@@ -106,6 +106,12 @@
 		"messageFontSize": {
 			"type": "number"
 		},
+		"helpFontSize": {
+			"type": "number"
+		},
+		"inputFontSize": {
+			"type": "number"
+		},
 		"submitStyle": {
 			"type": "string"
 		},
