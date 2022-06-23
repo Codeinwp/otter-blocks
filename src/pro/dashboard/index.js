@@ -26,8 +26,8 @@ const Integrations = props => {
 		>
 			<PanelRow>
 				<ToggleControl
-					label={ __( 'Save Google Fonts Offline', 'otter-blocks' ) }
-					help={ __( 'Enable this option to save Google Fonts offline to make your website faster', 'otter-blocks' ) }
+					label={ __( 'Save Google Fonts Locally', 'otter-blocks' ) }
+					help={ __( 'Enable this option to save Google Fonts locally to make your website faster', 'otter-blocks' ) }
 					checked={ Boolean( getOption( 'otter_offload_fonts' ) ) }
 					disabled={ 'saving' === status }
 					onChange={ () => updateOption( 'otter_offload_fonts', ! Boolean( getOption( 'otter_offload_fonts' ) ) ) }

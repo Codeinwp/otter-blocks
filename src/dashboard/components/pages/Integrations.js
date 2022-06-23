@@ -47,14 +47,13 @@ const Integrations = () => {
 		return (
 			<PanelBody
 				title={ __( 'Fonts Module', 'otter-blocks' ) }
-				initialOpen={ false }
 				className="is-pro"
 			>
 				<Disabled>
 					<PanelRow>
 						<ToggleControl
-							label={ __( 'Save Google Fonts Offline', 'otter-blocks' ) }
-							help={ __( 'Enable this option to save Google Fonts offline to make your website faster', 'otter-blocks' ) }
+							label={ __( 'Save Google Fonts Locally', 'otter-blocks' ) }
+							help={ __( 'Enable this option to save Google Fonts locally to make your website faster', 'otter-blocks' ) }
 							checked={ false }
 							disabled={ true }
 						/>
@@ -107,8 +106,11 @@ const Integrations = () => {
 				</PanelRow>
 			</PanelBody>
 
+			{  ProModules }
+
 			<PanelBody
 				title={ __( 'Google reCaptcha API', 'otter-blocks' ) }
+				initialOpen={ false }
 			>
 				<PanelRow>
 					<BaseControl
@@ -156,8 +158,6 @@ const Integrations = () => {
 					</BaseControl>
 				</PanelRow>
 			</PanelBody>
-
-			{ ProModules }
 		</Fragment>
 	);
 };
