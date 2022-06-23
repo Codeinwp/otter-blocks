@@ -238,7 +238,7 @@ class Main {
 
 		wp_enqueue_script(
 			'otter-dashboard-scripts',
-			OTTER_BLOCKS_URL . 'build/pro/dashboard.js',
+			OTTER_PRO_BUILD_URL . 'dashboard.js',
 			array_merge(
 				$asset_file['dependencies'],
 				array( 'otter-blocks-scripts' )
