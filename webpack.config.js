@@ -2,10 +2,11 @@ const BundleAnalyzerPlugin = require( 'webpack-bundle-analyzer' ).BundleAnalyzer
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const ANALYZER = 'true' === process.env.NODE_ANALYZER ? true : false;
-const glob = require( 'glob' );
 const path = require( 'path' );
 const FileManagerPlugin = require( 'filemanager-webpack-plugin' );
 const blocks = require( './blocks.json' );
+
+defaultConfig.plugins.splice( 1, 1 ); // We need to remove Core's Copy Files plugin.
 
 const blockFiles = Object.keys( blocks ).filter( block => blocks[ block ].block !== undefined && true !== blocks[ block ]?.isPro )
 	.map( block => {
@@ -111,10 +112,10 @@ module.exports = [
 		entry: {
 			blocks: [
 				'./src/blocks/index.js',
-				'./src/blocks/plugins/registerPlugin.js',
+				'./src/blocks/blocks/index.js',
 				'./src/blocks/components/index.js',
 				'./src/blocks/helpers/index.js',
-				...glob.sync( './src/blocks/blocks/**/index.js' )
+				'./src/blocks/plugins/registerPlugin.js'
 			],
 			'leaflet-map': './src/blocks/frontend/leaflet-map/index.js',
 			'leaflet-gesture-handling': './src/blocks/frontend/leaflet-map/leaflet-gesture-handling.js',
@@ -160,9 +161,7 @@ module.exports = [
 						mkdir: blockFolders,
 						copy: blockFiles
 					}
-				},
-				runOnceInWatchMode: false,
-				runTasksInSeries: true
+				}
 			}),
 			new BundleAnalyzerPlugin({
 				analyzerMode: 'disabled',

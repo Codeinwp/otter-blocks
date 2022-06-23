@@ -8,8 +8,6 @@ import {
 
 import { isEmpty } from 'lodash';
 
-import apiFetch from '@wordpress/api-fetch';
-
 import {
 	BaseControl,
 	Button,

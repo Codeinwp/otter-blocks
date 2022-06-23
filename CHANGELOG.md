@@ -1,3 +1,15 @@
+##### [Version 2.0.5](https://github.com/Codeinwp/otter-blocks/compare/v2.0.4...v2.0.5) (2022-05-27)
+
+- Fix CSS notifications appearing multiple times
+- Fix excerptLength not being persistent in Posts Block
+- Sharing Icons Block Revamp
+- Fix ACF extension for Posts not working
+- Fix Icon Block style inheritance issue
+- Fix Dashboard integration fields losing focus on each keypress
+- Fix Accordion title going outside the container
+- Improve Masonry Block responsiveness
+- Improve Product Review Comparison Block placeholder text
+
 ##### [Version 2.0.4](https://github.com/Codeinwp/otter-blocks/compare/v2.0.3...v2.0.4) (2022-05-16)
 
 - Fix slider breaks and throws errors when swiping on desktop
