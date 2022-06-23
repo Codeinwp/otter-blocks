@@ -116,6 +116,11 @@ class Form_CSS extends Base_CSS {
 						'value'    => 'submitFontSize',
 						'unit'     => 'px',
 					),
+					array(
+						'property' => '--messageFontSize',
+						'value'    => 'messageFontSize',
+						'unit'     => 'px',
+					),
 				),
 			)
 		);

@@ -191,6 +191,36 @@ const Inspector = ({
 						onChange={ labelFontSize =>  setAttributes({ labelFontSize }) }
 					/>
 				</SyncControl>
+
+				<SyncControl
+					field={ 'messageFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<FontSizePicker
+						label={ __( 'Font Size', 'otter-blocks' ) }
+						fontSizes={[
+							{
+								name: __( 'Small', 'otter-blocks' ),
+								size: 12,
+								slug: 'small'
+							},
+							{
+								name: __( 'Normal', 'otter-blocks' ),
+								size: 16,
+								slug: 'normal'
+							},
+							{
+								name: __( 'Big', 'otter-blocks' ),
+								size: 26,
+								slug: 'big'
+							}
+						]}
+						withReset
+						value={attributes.messageFontSize}
+						onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
+					/>
+				</SyncControl>
 			</PanelBody>
 
 			<PanelBody

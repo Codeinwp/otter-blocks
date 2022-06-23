@@ -703,8 +703,13 @@ const Edit = ({
 		});
 	};
 
+	const inlineStyles = {
+		'--messageFontSize': attributes.messageFontSize !== undefined && `${ attributes.messageFontSize }px`
+	}
+
 	const blockProps = useBlockProps({
-		id: attributes.id
+		id: attributes.id,
+		style: inlineStyles
 	});
 
 	const blockRef = useRef( null );

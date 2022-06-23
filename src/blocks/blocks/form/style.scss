@@ -13,6 +13,7 @@
 	--inputsGap: 10px;
 	--inputGap: 5px;
 	--labelFontSize: var(--bodyFontSize, 1.3rem);
+	--messageFontSize: var(--bodyFontSize, inherit);
 	--submitFontSize: var(--btnFs, var(--bodyFontSize, 1.3rem));
 
 	.otter-form__container {
@@ -116,7 +117,7 @@
 	.o-form-server-response {
 		text-align: left;
 		padding: 1rem;
-		font-size: 1.2rem;
+		font-size: var(--messageFontSize);
 		border-radius: 10%;
 		margin-left: 10px;
 
