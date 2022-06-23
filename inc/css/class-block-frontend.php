@@ -300,6 +300,13 @@ class Block_Frontend extends Base_CSS {
 			return;
 		}
 
+		add_action(
+			'enqueue_block_assets',
+			function() {
+				Registration::enqueue_otter_style();
+			}
+		);
+
 		if ( $footer ) {
 			add_action(
 				'wp_footer',
@@ -355,6 +362,10 @@ class Block_Frontend extends Base_CSS {
 
 			if ( empty( $css ) || is_preview() ) {
 				$css = $this->get_page_css_inline( $post_id );
+			}
+
+			if ( ! Registration::$inline_css_loaded ) {
+				$css .= Registration::get_inline_block_styles();
 			}
 
 			if ( empty( $css ) ) {

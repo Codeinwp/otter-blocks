@@ -55,6 +55,13 @@ class Registration {
 	);
 
 	/**
+	 * Flag to mark that Otter CSS has loaded.
+	 *
+	 * @var bool
+	 */
+	public static $inline_css_loaded = false;
+
+	/**
 	 * Flag to mark that the styles which have loaded.
 	 *
 	 * @var array
@@ -267,6 +274,31 @@ class Registration {
 	}
 
 	/**
+	 * Get inline Otter Styles.
+	 *
+	 * @since   2.0.7
+	 * @access  public
+	 */
+	public static function get_inline_block_styles() {
+		self::$inline_css_loaded = true;
+		$css = file_get_contents( OTTER_BLOCKS_PATH . '/build/blocks/blocks.css' );
+		return $css;
+	}
+
+	/**
+	 * Enqueue Otter Styles.
+	 *
+	 * @since   2.0.7
+	 * @access  public
+	 */
+	public static function enqueue_otter_style() {
+		if ( ! self::$inline_css_loaded ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+			wp_enqueue_style( 'otter-blocks', OTTER_BLOCKS_URL . 'build/blocks/blocks.css', [], $asset_file['version'] );
+		}
+	}
+
+	/**
 	 * Load frontend assets for our blocks.
 	 *
 	 * @since   2.0.0
@@ -278,9 +310,6 @@ class Registration {
 		if ( is_admin() ) {
 			return;
 		}
-
-		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
-		wp_enqueue_style( 'otter-blocks', OTTER_BLOCKS_URL . 'build/blocks/blocks.css', [], $asset_file['version'] );
 
 		if ( is_singular() ) {
 			$this->enqueue_dependencies();
