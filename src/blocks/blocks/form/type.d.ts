@@ -34,6 +34,7 @@ type Attributes = {
 	submitFontSize: number
 	submitColor: string
 	inputGap: number
+	inputColor: string
 	inputsGap: number
 	submitStyle: string
 	fromName: string

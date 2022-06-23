@@ -138,6 +138,11 @@ const Inspector = ({
 						value: attributes.inputRequiredColor,
 						onChange: inputRequiredColor => setAttributes({ inputRequiredColor }),
 						label: __( 'Label Required', 'otter-blocks' )
+					},
+					{
+						value: attributes.inputColor,
+						onChange: inputColor => setAttributes({ inputColor }),
+						label: __( 'Input', 'otter-blocks' )
 					}
 				] }
 			/>

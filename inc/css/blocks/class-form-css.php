@@ -121,6 +121,10 @@ class Form_CSS extends Base_CSS {
 						'value'    => 'messageFontSize',
 						'unit'     => 'px',
 					),
+					array(
+						'property' => '--inputColor',
+						'value'    => 'inputColor',
+					),
 				),
 			)
 		);

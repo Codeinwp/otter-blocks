@@ -1,8 +1,8 @@
 .wp-block-themeisle-blocks-form {
 	--padding: 5px 10px;
-	--borderRadius: inherit;
+	--borderRadius: 4px;
 	--borderColor: inherit;
-	--borderWidth: inherit;
+	--borderWidth: 1px;
 	--labelColor: inherit;
 	--helpLabelColor: inherit;
 	--inputWidth: 100%;
@@ -11,10 +11,11 @@
 	--submitMsgColor: green;
 	--submitErrorColor: red;
 	--inputsGap: 10px;
-	--inputGap: 5px;
-	--labelFontSize: var(--bodyFontSize, 1.3rem);
+	--inputGap: 16px;
+	--labelFontSize: var(--bodyFontSize, inherit);
 	--messageFontSize: var(--bodyFontSize, inherit);
-	--submitFontSize: var(--btnFs, var(--bodyFontSize, 1.3rem));
+	--submitFontSize: var(--btnFs, var(--bodyFontSize, inherit));
+	--inputColor: initial;
 
 	.otter-form__container {
 		display: flex;
@@ -79,12 +80,14 @@
 		}
 
 		.otter-form-input,.otter-form-textarea-input {
+			color: var(--inputColor);
 			width: var(--inputWidth);
 			padding: var(--padding);
 			border-radius: var(--borderRadius);
 			border-width: var(--borderWidth);
 			border-color: var(--borderColor);
 			border-style: solid;
+			font-size: inherit;
 		}
 
 		.o-form-help {
