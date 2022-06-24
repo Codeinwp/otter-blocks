@@ -260,6 +260,7 @@ class Registration {
 					'blockConditions' => get_option( 'themeisle_blocks_settings_block_conditions', true ),
 				),
 				'isLegacyPre59'      => version_compare( get_bloginfo( 'version' ), '5.8.22', '<=' ),
+				'isAncestorTypeAvailable'      => version_compare( get_bloginfo( 'version' ), '5.9.22', '>=' ),
 			)
 		);
 
