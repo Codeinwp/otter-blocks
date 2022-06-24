@@ -64,7 +64,7 @@ const defaultFontSizes = [
 	},
 	{
 		name: __( 'XL', 'otter-blocks' ),
-		size: '1.125',
+		size: '1.25em',
 		slug: 'xl'
 	}
 ];

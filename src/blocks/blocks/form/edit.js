@@ -704,9 +704,9 @@ const Edit = ({
 	};
 
 	const inlineStyles = {
-		'--messageFontSize': attributes.messageFontSize !== undefined && `${ attributes.messageFontSize }px`,
-		'--inputFontSize': attributes.inputFontSize !== undefined && `${ attributes.inputFontSize }px`,
-		'--helpFontSize': attributes.helpFontSize !== undefined && `${ attributes.helpFontSize }px`,
+		'--messageFontSize': attributes.messageFontSize !== undefined && attributes.messageFontSize,
+		'--inputFontSize': attributes.inputFontSize !== undefined && attributes.inputFontSize,
+		'--helpFontSize': attributes.helpFontSize !== undefined && attributes.helpFontSize,
 		'--inputColor': attributes.inputColor
 	};
 
