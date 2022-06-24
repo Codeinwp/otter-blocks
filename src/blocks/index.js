@@ -73,8 +73,10 @@ if ( Boolean( window.themeisleGutenberg.should_show_upsell ) ) {
 			},
 			actions: [
 				{
-					url: window.themeisleGutenberg.upgradeLink,
-					label: __( 'Tell me more!', 'otter-blocks' )
+					label: __( 'Tell me more!', 'otter-blocks' ),
+					variant: 'link',
+					noDefaultClasses: true,
+					onClick: () => window.open( window.themeisleGutenberg.upgradeLink, '_blank' )
 				}
 			]
 		}
