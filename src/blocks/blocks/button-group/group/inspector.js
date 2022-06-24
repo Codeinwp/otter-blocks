@@ -3,25 +3,13 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorControls, BlockAlignmentToolbar } from '@wordpress/block-editor';
 
 import {
-	ButtonGroup,
-	Button,
 	PanelBody,
 	RangeControl,
-	SelectControl,
-	Toolbar,
-	ToolbarButton
+	SelectControl
 } from '@wordpress/components';
-
-import {
-	alignNone,
-	positionCenter,
-	positionLeft,
-	positionRight,
-	stretchFullWidth
-} from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -76,34 +64,6 @@ const Inspector = ({
 		newValue[ currentDevice ] = value;
 		setAttributes({ align: newValue });
 	};
-
-	const alignmentOptions = [
-		{
-			value: 'none',
-			icon: alignNone,
-			label: __( 'None', 'otter-blocks' )
-		},
-		{
-			value: 'left',
-			icon: positionLeft,
-			label: __( 'Align left', 'otter-blocks' )
-		},
-		{
-			value: 'center',
-			icon: positionCenter,
-			label: __( 'Align center', 'otter-blocks' )
-		},
-		{
-			value: 'right',
-			icon: positionRight,
-			label: __( 'Align right', 'otter-blocks' )
-		},
-		{
-			value: 'full',
-			icon: stretchFullWidth,
-			label: __( 'Full width', 'otter-blocks' )
-		}
-	];
 
 	return (
 		<InspectorControls>
@@ -162,23 +122,14 @@ const Inspector = ({
 					label={ __( 'Alignment', 'otter-blocks' ) }
 					className="buttons-alignment-control"
 				>
-					<Toolbar
-						label="Options"
-						className="buttons-alignment-toolbar"
-					>
-						{ alignmentOptions.map( option => {
-							return (
-								<ToolbarButton
-									key={ option.value }
-									icon={ option.icon }
-									title={ option.label }
-									isPrimary={ option.value === ( attributes.align[ currentDevice ] ?? 'none' ) }
-									showTooltip
-									onClick={ () => onAlignmentChange( option.value ) }
-								/>
-							);
-						}) }
-					</Toolbar>
+					<BlockAlignmentToolbar
+						value={ attributes.align[ currentDevice ] }
+						isCollapsed={ false }
+						controls={ [ 'left', 'center', 'right', 'full' ] }
+						onChange={ value => {
+							onAlignmentChange( value );
+						} }
+					/>
 				</ResponsiveControl>
 			</PanelBody>
 
