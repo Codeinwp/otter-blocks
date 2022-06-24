@@ -63,7 +63,7 @@ if ( Boolean( window.themeisleGutenberg.should_show_upsell ) ) {
 				await model.save().then( () => {
 					createNotice(
 						'info',
-						__( 'No problem! Enjoy using Otter!.', 'otter-blocks' ),
+						__( 'No problem! Enjoy using Otter!', 'otter-blocks' ),
 						{
 							isDismissible: true,
 							type: 'snackbar'
