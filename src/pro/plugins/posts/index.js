@@ -228,12 +228,16 @@ const Controls = (
 						{ groups.map( group => {
 							return (
 								<optgroup
+									key={ group?.data?.key }
 									label={ group?.data?.title }
 								>
 									{ group?.fields
 										?.filter( ({ key, label, type }) => key && label &&  ALLOWED_ACF_TYPES.includes( type ) )
 										.map( ({ key, label }) => (
-											<option value={ key }>
+											<option
+												key={ key }
+												value={ key }
+											>
 												{ label }
 											</option>
 										) ) }
