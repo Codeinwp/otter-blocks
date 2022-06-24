@@ -49,22 +49,22 @@ const isChanged = list => {
 const defaultFontSizes = [
 	{
 		name: __( 'Small', 'otter-blocks' ),
-		size: 14,
+		size: '0.875em',
 		slug: 'small'
 	},
 	{
 		name: __( 'Medium', 'otter-blocks' ),
-		size: 16,
+		size: '1em',
 		slug: 'medium'
 	},
 	{
 		name: __( 'Large', 'otter-blocks' ),
-		size: 18,
+		size: '1.125em',
 		slug: 'large'
 	},
 	{
 		name: __( 'XL', 'otter-blocks' ),
-		size: 20,
+		size: '1.125',
 		slug: 'xl'
 	}
 ];

@@ -98,19 +98,19 @@
 			"type": "number"
 		},
 		"labelFontSize": {
-			"type": "number"
+			"type": "string"
 		},
 		"submitFontSize": {
-			"type": "number"
+			"type": "string"
 		},
 		"messageFontSize": {
-			"type": "number"
+			"type": "string"
 		},
 		"helpFontSize": {
-			"type": "number"
+			"type": "string"
 		},
 		"inputFontSize": {
-			"type": "number"
+			"type": "string"
 		},
 		"submitStyle": {
 			"type": "string"
