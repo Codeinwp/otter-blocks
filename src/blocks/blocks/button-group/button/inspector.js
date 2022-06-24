@@ -15,7 +15,7 @@ import {
 	RangeControl,
 	Placeholder,
 	SelectControl,
-	Spinner, Panel
+	Spinner
 } from '@wordpress/components';
 
 import {
@@ -24,8 +24,6 @@ import {
 	Suspense,
 	useState
 } from '@wordpress/element';
-
-import classnames from 'classnames';
 
 /**
  * Internal dependencies
@@ -50,10 +48,6 @@ const Inspector = ({
 			icon: undefined,
 			prefix: 'fab'
 		});
-	};
-
-	const changeType = type => {
-		setAttributes({ type: type });
 	};
 
 	const changeIcon = value => {
@@ -92,45 +86,8 @@ const Inspector = ({
 		);
 	};
 
-	const buttonTypes = {
-		default: {
-			label: __( 'Default', 'otter-blocks' )
-		},
-		primary: {
-			label: __( 'Primary', 'otter-blocks' )
-		},
-		secondary: {
-			label: __( 'Secondary', 'otter-blocks' )
-		}
-	};
-
 	return (
 		<InspectorControls>
-			{ window.themeisleGutenberg.hasNeve &&
-				<PanelBody
-					title={ __( 'Types', 'otter-blocks' ) }
-				>
-					<p className="components-base-control__help">{ __( 'This will set the colors for the button as specified in the customizer.', 'otter-blocks' ) }</p>
-					<div className="block-editor-block-styles__variants">
-						{ Object.keys( buttonTypes ).map( type => {
-							return (
-								<Button
-									className={ classnames(
-										'block-editor-block-styles__item',
-										{ 'is-active': attributes.type === type || ( attributes.type === undefined && 'default' === type ) }
-									) }
-									isSecondary
-									key={ type }
-									label={ type }
-									onClick={ () => changeType( type ) }
-								>
-									<span className='block-editor-block-styles__item-text'>{ buttonTypes[type].label }</span>
-								</Button>
-							);
-						}) }
-					</div>
-				</PanelBody>
-			}
 			<PanelBody
 				title={ __( 'Color', 'otter-blocks' ) }
 			>

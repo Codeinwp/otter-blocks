@@ -101,18 +101,18 @@ const Edit = ({
 	}
 
 	const styles = {
-		color: attributes.color || ( 'primary' === attributes.type ? 'var(--primarybtncolor)' : ( 'secondary' === attributes.type ? 'var(--secondarybtncolor)' : undefined ) ),
-		background: attributes.background || attributes.backgroundGradient || ( 'primary' === attributes.type ? 'var(--primarybtnbg)' : ( 'secondary' === attributes.type ? 'var(--secondarybtnbg)' : undefined ) ),
-		border: `${ attributes.borderSize ? attributes.borderSize + 'px' : '' } solid ${ attributes.border ? attributes.border : '' }`,
-		borderRadius: attributes.borderRadius || ( 'primary' === attributes.type ? 'var(--primarybtnborderradius)' : ( 'secondary' === attributes.type ? 'var(--secondarybtnborderradius)' : undefined ) ),
+		color: attributes.color,
+		background: attributes.background || attributes.backgroundGradient,
+		border: `${ attributes.borderSize }px solid ${ attributes.border }`,
+		borderRadius: attributes.borderRadius,
 		...boxShadowStyle,
 		...buttonStyle
 	};
 
 	const hoverStyles = css`
 		&:hover {
-			color: ${ attributes.hoverColor || ( 'primary' === attributes.type ? 'var(--primarybtnhovercolor)' : ( 'secondary' === attributes.type ? 'var(--secondarybtnhovercolor)' : undefined ) ) } !important;
-			background: ${ attributes.hoverBackground || attributes.hoverBackgroundGradient || ( 'primary' === attributes.type ? 'var(--primarybtnhoverbg)' : ( 'secondary' === attributes.type ? 'var(--secondarybtnhoverbg)' : undefined ) ) } !important;
+			color: ${ attributes.hoverColor } !important;
+			background: ${ attributes.hoverBackground || attributes.hoverBackgroundGradient } !important;
 			border-color: ${ attributes.hoverBorder } !important;
 			${ attributes.boxShadow && `box-shadow: ${ attributes.hoverBoxShadowHorizontal }px ${ attributes.hoverBoxShadowVertical }px ${ attributes.hoverBoxShadowBlur }px ${ attributes.hoverBoxShadowSpread }px ${ hexToRgba( ( attributes.hoverBoxShadowColor ? attributes.hoverBoxShadowColor : '#000000' ), attributes.hoverBoxShadowColorOpacity ) } !important;` }
 		}

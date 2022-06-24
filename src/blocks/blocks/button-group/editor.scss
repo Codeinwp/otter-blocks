@@ -76,10 +76,6 @@
 	box-shadow: none;
 }
 
-.block-editor-block-styles__item.is-secondary:hover .block-editor-block-styles__item-text {
-	color: #1e1e1e;
-}
-
 .editor-styles-wrapper {
 	.wp-block-button__link {
 		svg {
@@ -91,14 +87,6 @@
 
 .buttons-alignment-control .components-toolbar {
 	border: none;
-}
-
-.buttons-alignment-toolbar.components-accessible-toolbar {
-	border: 0;
-
-	.components-button:focus::before {
-		box-shadow: none;
-	}
 }
 
 .align-full-desktop {

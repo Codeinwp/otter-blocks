@@ -32,7 +32,6 @@ type Attributes = {
   library: string
   prefix: string
   icon: string
-  type: string
 }
 
 export type ButtonGroupButtonProps = BlockProps<Attributes>
