@@ -59,7 +59,7 @@ const defaultFontSizes = [
 	},
 	{
 		name: __( 'Large', 'otter-blocks' ),
-		size: 16,
+		size: 18,
 		slug: 'large'
 	},
 	{

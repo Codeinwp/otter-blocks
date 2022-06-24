@@ -16,8 +16,8 @@ import deprecated from './deprecated.js';
 
 const { name } = metadata;
 
-if( ! window.themeisleGutenberg.isAncestorTypeAvailable ) {
-	metadata['parent'] = [ "themeisle-blocks/form" ];
+if ( ! window.themeisleGutenberg.isAncestorTypeAvailable ) {
+	metadata.parent = [ 'themeisle-blocks/form' ];
 }
 
 registerBlockType( name, {
