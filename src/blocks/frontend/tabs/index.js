@@ -6,14 +6,14 @@ import { domReady } from '../../helpers/frontend-helper-functions.js';
 domReady( () => {
 	const tabs = document.querySelectorAll( '.wp-block-themeisle-blocks-tabs' );
 
-	let openedTab = false;
-	const closedTabs = [];
-
 	tabs.forEach( tab => {
 		const items = Array.from( tab.querySelectorAll( ':scope > .wp-block-themeisle-blocks-tabs__content > .wp-block-themeisle-blocks-tabs-item' ) );
 		const header = document.createElement( 'div' );
 		header.classList.add( 'wp-block-themeisle-blocks-tabs__header' );
 		tab.prepend( header );
+
+		let openedTab = false;
+		const closedTabs = [];
 
 		items.forEach( ( item, index ) => {
 			const headerItem = document.createElement( 'div' );
@@ -28,7 +28,7 @@ domReady( () => {
 				closedTabs.push({headerItem, content});
 			}
 
-			headerItem.innerHTML = item.dataset.title || 'Untitled Tab';
+			headerItem.innerHTML = item.dataset.title || `Tab ${ index + 1 }`;
 			headerItem.tabIndex = 0;
 
 			const headerMobile = item.querySelector( '.wp-block-themeisle-blocks-tabs-item__header' );
@@ -69,13 +69,13 @@ domReady( () => {
 
 			header.appendChild( headerItem );
 		});
-	});
 
-	/**
-	 * If no tab is set to open, open the first closed tab.
-	 */
-	if ( ! openedTab ) {
-		closedTabs?.[0]?.headerItem.classList.add( 'active' );
-		closedTabs?.[0]?.content.classList.add( 'active' );
-	}
+		/**
+		 * If no tab is set to open, open the first closed tab.
+		 */
+		if ( ! openedTab ) {
+			closedTabs?.[0]?.headerItem.classList.add( 'active' );
+			closedTabs?.[0]?.content.classList.add( 'active' );
+		}
+	});
 });
