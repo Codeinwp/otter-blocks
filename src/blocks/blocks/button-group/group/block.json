@@ -12,12 +12,7 @@
 			"type": "string"
 		},
 		"align": {
-			"type": [ "string", "object" ],
-			"default": {
-				"desktop": "none",
-				"tablet": "none",
-				"mobile": "none"
-			}
+			"type": [ "string", "object" ]
 		},
 		"spacing": {
 			"type": "number",

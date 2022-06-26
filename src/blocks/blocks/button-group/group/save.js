@@ -16,7 +16,7 @@ const Save = ({
 }) => {
 	const collapseClass = 'collapse-none' !== attributes.collapse ? attributes.collapse : '';
 	const alignClasses = [ 'desktop', 'tablet', 'mobile' ].reduce( ( acc, device ) => {
-		if ( 'none' !== attributes.align[ device ] && undefined !== attributes.align[ device ]) {
+		if ( attributes.align[ device ]) {
 			acc.push( `align-${ attributes.align[ device ] }-${ device }` );
 		}
 
