@@ -109,27 +109,22 @@ class Form_CSS extends Base_CSS {
 					array(
 						'property' => '--labelFontSize',
 						'value'    => 'labelFontSize',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => '--submitFontSize',
 						'value'    => 'submitFontSize',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => '--messageFontSize',
 						'value'    => 'messageFontSize',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => '--inputFontSize',
 						'value'    => 'inputFontSize',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => '--helpFontSize',
 						'value'    => 'helpFontSize',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => '--inputColor',
