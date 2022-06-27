@@ -123,7 +123,7 @@ const Inspector = ({
 					className="buttons-alignment-control"
 				>
 					<BlockAlignmentToolbar
-						value={ attributes.align[ currentDevice ] }
+						value={ attributes.align ? attributes.align[ currentDevice ] : undefined }
 						isCollapsed={ false }
 						controls={ [ 'left', 'center', 'right', 'full' ] }
 						onChange={ value => {
