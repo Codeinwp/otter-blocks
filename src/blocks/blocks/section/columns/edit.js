@@ -57,7 +57,6 @@ import {
 	blockInit,
 	getDefaultValueByField
 } from '../../../helpers/block-utility.js';
-import Library from '../../../components/template-library/index.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -366,14 +365,11 @@ const Edit = ({
 		{ 'has-viewport-mobile': isMobile }
 	);
 
-	// +-------------------------------- Template Library --------------------------------+
-	const [ isLibraryOpen, setIsLibraryOpen ] = useState( false );
-
 	const blockProps = attributes.columns ? useBlockProps({
 		id: attributes.id,
 		className: classes,
 		style
-	}) : useBlockProps();;
+	}) : useBlockProps();
 
 	if ( ! attributes.columns ) {
 		return (
@@ -399,23 +395,6 @@ const Edit = ({
 						} }
 						allowSkip
 					/>
-					<Tooltip text={ __( 'Open Template Library', 'otter-blocks' ) } >
-						<Button
-							isPrimary
-							className="wp-block-themeisle-template-library"
-							onClick={ () => setIsLibraryOpen( true ) }
-						>
-							<Dashicon icon="category"/>
-							{ __( 'Template Library', 'otter-blocks' ) }
-						</Button>
-
-						{ isLibraryOpen && (
-							<Library
-								clientId={ clientId }
-								close={ () => setIsLibraryOpen( false ) }
-							/>
-						) }
-					</Tooltip>
 				</Placeholder>
 			</div>
 		);
