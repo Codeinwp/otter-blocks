@@ -114,7 +114,7 @@ const Inspector = ({
 		<InspectorControls>
 
 			<PanelColorSettings
-				title={ __( 'Color', 'otter-blocks' ) }
+				title={ __( 'Form Color', 'otter-blocks' ) }
 				initialOpen={ false }
 				colorSettings={ [
 					{
@@ -132,6 +132,23 @@ const Inspector = ({
 						onChange: inputBorderColor => setAttributes({ inputBorderColor }),
 						label: __( 'Border', 'otter-blocks' )
 					},
+					{
+						value: attributes.inputRequiredColor,
+						onChange: inputRequiredColor => setAttributes({ inputRequiredColor }),
+						label: __( 'Label Required', 'otter-blocks' )
+					},
+					{
+						value: attributes.inputColor,
+						onChange: inputColor => setAttributes({ inputColor }),
+						label: __( 'Input', 'otter-blocks' )
+					},
+				] }
+			/>
+
+			<PanelColorSettings
+				title={ __( 'Button Color', 'otter-blocks' ) }
+				initialOpen={ false }
+				colorSettings={ [
 					{
 						value: attributes.submitColor,
 						onChange: submitColor => setAttributes({ submitColor }),
@@ -156,16 +173,6 @@ const Inspector = ({
 						value: attributes.submitMessageErrorColor,
 						onChange: submitMessageErrorColor => setAttributes({ submitMessageErrorColor }),
 						label: __( 'Error Message', 'otter-blocks' )
-					},
-					{
-						value: attributes.inputRequiredColor,
-						onChange: inputRequiredColor => setAttributes({ inputRequiredColor }),
-						label: __( 'Label Required', 'otter-blocks' )
-					},
-					{
-						value: attributes.inputColor,
-						onChange: inputColor => setAttributes({ inputColor }),
-						label: __( 'Input', 'otter-blocks' )
 					}
 				] }
 			/>
