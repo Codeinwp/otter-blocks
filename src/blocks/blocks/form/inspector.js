@@ -337,7 +337,7 @@ const Inspector = ({
 				</SyncControl>
 
 				<SelectControl
-					label={ __( 'Style', 'otter-blocks' ) }
+					label={ __( 'Alignment', 'otter-blocks' ) }
 					value={ attributes.submitStyle }
 					options={[
 						{
