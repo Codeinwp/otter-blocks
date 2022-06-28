@@ -6,10 +6,12 @@ import { __ } from '@wordpress/i18n';
 import {
 	BaseControl,
 	Button,
+	Disabled,
 	ExternalLink,
 	PanelBody,
 	PanelRow,
-	TextControl
+	TextControl,
+	ToggleControl
 } from '@wordpress/components';
 
 import {
@@ -17,6 +19,8 @@ import {
 	useEffect,
 	useState
 } from '@wordpress/element';
+
+import { applyFilters } from '@wordpress/hooks';
 
 /**
  * Internal dependencies.
@@ -38,6 +42,28 @@ const Integrations = () => {
 	const [ googleMapsAPI, setGoogleMapsAPI ] = useState( '' );
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
+
+	let ProModules = () => {
+		return (
+			<PanelBody
+				title={ __( 'Fonts Module', 'otter-blocks' ) }
+				className="is-pro"
+			>
+				<Disabled>
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Save Google Fonts Locally', 'otter-blocks' ) }
+							help={ __( 'Enable this option to save Google Fonts locally to make your website faster', 'otter-blocks' ) }
+							checked={ false }
+							disabled={ true }
+						/>
+					</PanelRow>
+				</Disabled>
+			</PanelBody>
+		);
+	};
+
+	ProModules = applyFilters( 'otter.dashboard.integrations', <ProModules /> );
 
 	return (
 		<Fragment>
@@ -80,8 +106,11 @@ const Integrations = () => {
 				</PanelRow>
 			</PanelBody>
 
+			{  ProModules }
+
 			<PanelBody
 				title={ __( 'Google reCaptcha API', 'otter-blocks' ) }
+				initialOpen={ false }
 			>
 				<PanelRow>
 					<BaseControl

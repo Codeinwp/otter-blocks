@@ -170,7 +170,7 @@ const Options = () => {
 				<PanelBody className="o-options-general">
 					<PanelRow>
 						<ToggleControl
-							label={ __( 'Enable Custom CSS Module', 'otter-blocks' ) }
+							label={ __( 'Enable Custom CSS', 'otter-blocks' ) }
 							checked={ Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ) }
 							disabled={ 'saving' === status }
 							onChange={ () => updateOption( 'themeisle_blocks_settings_css_module', ! Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ), successMessage ) }
@@ -179,7 +179,7 @@ const Options = () => {
 
 					<PanelRow>
 						<ToggleControl
-							label={ __( 'Enable Blocks Animation Module', 'otter-blocks' ) }
+							label={ __( 'Enable Blocks Animation', 'otter-blocks' ) }
 							checked={ Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ) }
 							disabled={ 'saving' === status }
 							onChange={ () => updateOption( 'themeisle_blocks_settings_blocks_animation', ! Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ), successMessage ) }
@@ -188,7 +188,7 @@ const Options = () => {
 
 					<PanelRow>
 						<ToggleControl
-							label={ __( 'Enable Block Condition Module', 'otter-blocks' ) }
+							label={ __( 'Enable Visibility Conditions', 'otter-blocks' ) }
 							checked={ Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ) }
 							disabled={ 'saving' === status }
 							onChange={ () => updateOption( 'themeisle_blocks_settings_block_conditions', ! Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ), successMessage ) }

@@ -52,6 +52,7 @@
 	"require": {
 		"codeinwp/themeisle-sdk": "^3.1",
 		"masterminds/html5": "^2.7",
-		"tubalmartin/cssmin": "^4.1"
+		"tubalmartin/cssmin": "^4.1",
+		"wptt/webfont-loader": "^1.1"
 	}
 }

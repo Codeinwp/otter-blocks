@@ -50,7 +50,7 @@ class Leaflet_Map_Block {
 				'id'    => $id,
 				'class' => $class,
 				'style' => $style,
-			) 
+			)
 		);
 
 		// Load the attributes in the page and make a placeholder to render the map.

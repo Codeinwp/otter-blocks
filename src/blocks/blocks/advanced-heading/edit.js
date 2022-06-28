@@ -11,7 +11,10 @@ import { __ } from '@wordpress/i18n';
 
 import { omitBy } from 'lodash';
 
-import { createBlock } from '@wordpress/blocks';
+import {
+	createBlock,
+	getDefaultBlockName
+} from '@wordpress/blocks';
 
 import {
 	RichText,
@@ -47,7 +50,6 @@ const Edit = ({
 	setAttributes,
 	clientId,
 	mergeBlocks,
-	insertBlocksAfter,
 	onReplace
 }) => {
 	const {
@@ -203,17 +205,27 @@ const Edit = ({
 				formattingControls={ [ 'bold', 'italic', 'link', 'strikethrough', 'highlight' ] }
 				allowedFormats={ [ 'core/bold', 'core/italic', 'core/link', 'core/strikethrough', 'themeisle-blocks/highlight', 'themeisle-blocks/count-animation', 'themeisle-blocks/typing-animation' ] }
 				onMerge={ mergeBlocks }
-				onSplit={
-					insertBlocksAfter ?
-						( before, after, ...blocks ) => {
-							setAttributes({ content: before });
-							insertBlocksAfter([
-								...blocks,
-								createBlock( 'core/paragraph', { content: after })
-							]);
-						} :
-						undefined
-				}
+				onSplit={ ( value, isOriginal ) => {
+					let block;
+
+					if ( isOriginal || value ) {
+						block = createBlock( 'themeisle-blocks/advanced-heading', {
+							...attributes,
+							content: value
+						});
+					} else {
+						block = createBlock(
+							getDefaultBlockName() ?? 'themeisle-blocks/advanced-heading'
+						);
+					}
+
+					if ( isOriginal ) {
+						block.clientId = clientId;
+					}
+
+					return block;
+				} }
+				onReplace={ onReplace }
 				onRemove={ () => onReplace([]) }
 				onChange={ changeContent }
 				{ ...blockProps }

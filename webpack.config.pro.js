@@ -32,6 +32,7 @@ module.exports = [
 				'./src/pro/blocks/index.js',
 				'./src/pro/plugins/index.js'
 			],
+			dashboard: './src/pro/dashboard/index.js',
 			woocommerce: './src/pro/woocommerce/index.js'
 		},
 		output: {
