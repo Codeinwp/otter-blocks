@@ -55,11 +55,11 @@ const Inspector = ({
 	};
 
 	const onAlignmentChange = value => {
-		const newValue = {
+		const newValue = attributes.align ? {
 			desktop: attributes.align.desktop,
 			tablet: attributes.align.tablet,
 			mobile: attributes.align.mobile
-		};
+		} : {};
 
 		newValue[ currentDevice ] = value;
 		setAttributes({ align: newValue });
