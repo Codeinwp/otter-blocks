@@ -274,11 +274,11 @@ class Options_Settings {
 								'submitMessage' => array(
 									'type' => 'string',
 								),
-								'cc'           => array(
-									'type' => 'string'
+								'cc'            => array(
+									'type' => 'string',
 								),
-								'bcc'          => array(
-									'type' => 'string'
+								'bcc'           => array(
+									'type' => 'string',
 								),
 								'integration'   => array(
 									'type'       => 'object',

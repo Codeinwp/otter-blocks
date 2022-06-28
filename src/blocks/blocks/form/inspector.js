@@ -206,7 +206,7 @@ const Inspector = ({
 						label={ __( 'Font Size', 'otter-blocks' ) }
 						fontSizes={defaultFontSizes}
 						withReset
-						value={attributes.labelFontSize}
+						value={ attributes.labelFontSize }
 						onChange={ labelFontSize =>  setAttributes({ labelFontSize }) }
 					/>
 				</SyncControl>
@@ -226,7 +226,7 @@ const Inspector = ({
 						label={ __( 'Input Font Size', 'otter-blocks' ) }
 						fontSizes={defaultFontSizes}
 						withReset
-						value={attributes.inputFontSize}
+						value={ attributes.inputFontSize }
 						onChange={ inputFontSize =>  setAttributes({ inputFontSize }) }
 					/>
 				</SyncControl>
@@ -299,11 +299,12 @@ const Inspector = ({
 					setAttributes={ setAttributes }
 				>
 					<h2>{__( 'Help Text Font Size', 'otter-blocks' )}</h2>
+
 					<FontSizePicker
 						label={ __( 'Help Font Size', 'otter-blocks' ) }
 						fontSizes={defaultFontSizes}
 						withReset
-						value={attributes.helpFontSize}
+						value={ attributes.helpFontSize }
 						onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
 					/>
 				</SyncControl>
@@ -361,11 +362,12 @@ const Inspector = ({
 					setAttributes={ setAttributes }
 				>
 					<h2>{__( 'Message Font Size', 'otter-blocks' )}</h2>
+
 					<FontSizePicker
 						label={ __( 'Message Font Size', 'otter-blocks' ) }
-						fontSizes={defaultFontSizes}
+						fontSizes={ defaultFontSizes }
 						withReset
-						value={attributes.messageFontSize}
+						value={ attributes.messageFontSize }
 						onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
 					/>
 				</SyncControl>

@@ -84,8 +84,18 @@ class Form_Settings_Data {
 	 */
 	private $from_name = '';
 
+	/**
+	 * The CC recipients.
+	 *
+	 * @var string
+	 */
 	private $cc = '';
 
+	/**
+	 * The BCC recipients.
+	 *
+	 * @var string
+	 */
 	private $bcc = '';
 
 	/**
@@ -521,19 +531,17 @@ class Form_Settings_Data {
 	 *
 	 * @return string
 	 */
-	public function get_cc()
-	{
+	public function get_cc() {
 		return $this->cc;
 	}
 
 	/**
 	 * Set the email cc.
 	 *
-	 * @param string $cc
+	 * @param string $cc The email cc.
 	 * @return Form_Settings_Data
 	 */
-	public function set_cc($cc)
-	{
+	public function set_cc( $cc ) {
 		$this->cc = $cc;
 		return $this;
 	}
@@ -543,19 +551,17 @@ class Form_Settings_Data {
 	 *
 	 * @return string
 	 */
-	public function get_bcc()
-	{
+	public function get_bcc() {
 		return $this->bcc;
 	}
 
 	/**
 	 * Set the email bcc.
 	 *
-	 * @param string $bcc
+	 * @param string $bcc The email bcc.
 	 * @return Form_Settings_Data
 	 */
-	public function set_bcc($bcc)
-	{
+	public function set_bcc( $bcc ) {
 		$this->bcc = $bcc;
 		return $this;
 	}
