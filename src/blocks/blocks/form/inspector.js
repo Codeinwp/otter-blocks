@@ -141,7 +141,7 @@ const Inspector = ({
 						value: attributes.inputColor,
 						onChange: inputColor => setAttributes({ inputColor }),
 						label: __( 'Input', 'otter-blocks' )
-					},
+					}
 				] }
 			/>
 
