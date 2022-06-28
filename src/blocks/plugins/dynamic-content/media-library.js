@@ -106,14 +106,9 @@ jQuery( document ).ready( function( $ ) {
 		return (
 			<button onClick={ () => {
 				const state = activeModal.state();
-				console.log( state );
-
-				state.trigger(
-					'update',
-					state.attributes.selection
-				);
-				activeModal.close();
-			} }>Hello world!</button>
+				const selection = state.get( 'selection' );
+				selection.add({ url: 'http://www2.cnrs.fr/sites/communique/image/mona_unvarnish_web_image.jpg' });
+			} }>Select Image!</button>
 		);
 	};
 
