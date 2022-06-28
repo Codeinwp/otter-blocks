@@ -1,5 +1,3 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
