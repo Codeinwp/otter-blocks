@@ -25,13 +25,6 @@ import {
 	useBlockProps
 } from '@wordpress/block-editor';
 
-import {
-	Button,
-	Dashicon,
-	Placeholder,
-	Tooltip
-} from '@wordpress/components';
-
 import { useViewportMatch } from '@wordpress/compose';
 
 import {
@@ -374,28 +367,24 @@ const Edit = ({
 	if ( ! attributes.columns ) {
 		return (
 			<div { ...blockProps }>
-				<Placeholder
+				<VariationPicker
 					label={ __( 'Section', 'otter-blocks' )  }
 					instructions={ __( 'Select a layout to start with, or make one yourself.', 'otter-blocks' ) }
-					className="o-section-layout-picker"
-				>
-					<VariationPicker
-						variations={ variations }
-						onSelect={ ( nextVariation = defaultVariation ) => {
-							if ( nextVariation ) {
-								replaceInnerBlocks(
-									clientId,
-									createBlocksFromInnerBlocksTemplate(
-										nextVariation.innerBlocks
-									),
-									true
-								);
-								setAttributes( nextVariation.attributes );
-							}
-						} }
-						allowSkip
-					/>
-				</Placeholder>
+					variations={ variations }
+					onSelect={ ( nextVariation = defaultVariation ) => {
+						if ( nextVariation ) {
+							replaceInnerBlocks(
+								clientId,
+								createBlocksFromInnerBlocksTemplate(
+									nextVariation.innerBlocks
+								),
+								true
+							);
+							setAttributes( nextVariation.attributes );
+						}
+					} }
+					allowSkip
+				/>
 			</div>
 		);
 	}
