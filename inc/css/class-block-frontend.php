@@ -196,14 +196,15 @@ class Block_Frontend extends Base_CSS {
 
 		if ( is_singular() ) {
 			// Enqueue main post attached style.
+            $style_enqueued = true;
 			$this->enqueue_styles();
 		}
 
 		if( function_exists( 'get_block_templates' ) ) {
 			// Get the templates for the given post.
-			$templates = get_block_templates( array( 'wp_id' => $id ) );
+			$templates = get_block_templates( array( ), 'wp_template_part' );
 
-			if( count( $templates ) > 0 ) {
+			if( 0 < count( $templates ) &&  ! $style_enqueued ) {
 				$style_enqueued = true;
 				$this->enqueue_styles( $id, true );
 			}
@@ -248,10 +249,6 @@ class Block_Frontend extends Base_CSS {
 			return;
 		}
 
-		if ( ! has_blocks( $post_id ) ) {
-			return;
-		}
-
 		if ( $footer ) {
 			$location = 'wp_footer';
 		}
@@ -286,13 +283,17 @@ class Block_Frontend extends Base_CSS {
 
 		$file_name = basename( $file_url );
 
-		$content = get_post_field( 'post_content', $post_id );
+        if ( has_blocks( $post_id ) ) {
+            $content = get_post_field( 'post_content', $post_id );
 
-		$blocks = parse_blocks( $content );
+            $blocks = parse_blocks( $content );
 
-		if ( is_array( $blocks ) || ! empty( $blocks ) ) {
-			$this->enqueue_reusable_styles( $blocks, $footer );
-		}
+            if ( is_array( $blocks ) || ! empty( $blocks ) ) {
+                $this->enqueue_reusable_styles( $blocks, $footer );
+            }
+        }
+
+
 
 		$total_inline_limit = 20000;
 		$total_inline_limit = apply_filters( 'styles_inline_size_limit', 20000 );
@@ -364,25 +365,28 @@ class Block_Frontend extends Base_CSS {
 	 */
 	public function get_post_css( $post_id = '' ) {
 		$post_id = $post_id ? $post_id : get_the_ID();
+        $css = '';
+
 		if ( function_exists( 'has_blocks' ) && has_blocks( $post_id ) ) {
-			$css = $this->get_page_css_meta( $post_id );
+            $css = $this->get_page_css_meta($post_id);
 
-			if ( empty( $css ) || is_preview() ) {
-				$css = $this->get_page_css_inline( $post_id );
-			}
+            if (empty($css) || is_preview()) {
+                $css = $this->get_page_css_inline($post_id);
+            }
+        }
 
-			$css .= $this->get_block_templates_css( $post_id );
+        $css .= $this->get_block_templates_css( $post_id );
 
-			if ( empty( $css ) ) {
-				return;
-			}
+        if ( empty( $css ) ) {
+            return;
+        }
 
-			$style  = "\n" . '<style type="text/css" media="all">' . "\n";
-			$style .= $css;
-			$style .= "\n" . '</style>' . "\n";
+        $style  = "\n" . '<style type="text/css" media="all" data-otter="inline">' . "\n";
+        $style .= $css;
+        $style .= "\n" . '</style>' . "\n";
 
-			echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-		}
+        echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+
 	}
 
 	/**
@@ -395,7 +399,7 @@ class Block_Frontend extends Base_CSS {
 	public function get_block_templates_css( $post_id ) {
 		$template_css = '';
 
-		if ( ! function_exists( 'has_blocks' ) || ! function_exists( 'get_block_templates' ) ) {
+		if ( ! function_exists( 'get_block_templates' ) ) {
 			return $template_css;
 		}
 
