@@ -354,11 +354,11 @@ class Block_Frontend extends Base_CSS {
 		if ( function_exists( 'has_blocks' ) && function_exists( 'get_block_templates' ) && has_blocks( $post_id ) ) {
 			$css = $this->get_page_css_meta( $post_id );
 
-			$css .= $this->get_block_templates_css( $post_id );
-
 			if ( empty( $css ) || is_preview() ) {
 				$css = $this->get_page_css_inline( $post_id );
 			}
+
+			$css .= $this->get_block_templates_css( $post_id );
 
 			if ( empty( $css ) ) {
 				return;
