@@ -188,7 +188,7 @@ const Inspector = ({
 				>
 					<RangeControl
 						label={ __( 'Spacing', 'otter-blocks' ) }
-						value={ attributes.inputGap }
+						value={ attributes.inputGap ?? 16 }
 						onChange={ inputGap => setAttributes({ inputGap }) }
 						allowReset
 						min={ 0 }
@@ -238,7 +238,7 @@ const Inspector = ({
 				>
 					<RangeControl
 						label={ __( 'Fields Spacing', 'otter-blocks' ) }
-						value={ attributes.inputsGap }
+						value={ attributes.inputsGap ?? 10}
 						onChange={ inputsGap => setAttributes({ inputsGap }) }
 						allowReset
 						min={ 0 }
@@ -254,7 +254,7 @@ const Inspector = ({
 				>
 					<BoxControl
 						label={ __( 'Input Padding', 'otter-blocks' ) }
-						values={ attributes.inputPadding }
+						values={ attributes.inputPadding ?? {'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px'} }
 						inputProps={ {
 							min: 0,
 							max: 500
@@ -270,7 +270,7 @@ const Inspector = ({
 				>
 					<RangeControl
 						label={ __( 'Border Radius', 'otter-blocks' ) }
-						value={ attributes.inputBorderRadius }
+						value={ attributes.inputBorderRadius ?? 4 }
 						onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
 						allowReset
 						min={ 0 }
@@ -285,7 +285,7 @@ const Inspector = ({
 				>
 					<RangeControl
 						label={ __( 'Border Width', 'otter-blocks' ) }
-						value={ attributes.inputBorderWidth }
+						value={ attributes.inputBorderWidth ?? 1 }
 						onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
 						allowReset
 						min={ 0 }
