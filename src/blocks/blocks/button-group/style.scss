@@ -14,6 +14,27 @@
 	}
 }
 
+@mixin align-left($device) {
+	justify-content: flex-start;
+	&.collapse-#{$device} {
+		align-items: start;
+	}
+}
+
+@mixin align-center($device) {
+	justify-content: center;
+	&.collapse-#{$device} {
+		align-items: center;
+	}
+}
+
+@mixin align-right($device) {
+	justify-content: flex-end;
+	&.collapse-#{$device} {
+		align-items: end;
+	}
+}
+
 $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 @each $device, $media-query in $device-map {
 	@if ($device == 'desktop') {
@@ -25,15 +46,15 @@ $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 			}
 
 			&.align-left-#{$device}, &.align-left {
-				justify-content: flex-start;
+				@include align-left($device);
 			}
 
 			&.align-center-#{$device}, &.align-center {
-				justify-content: center;
+				@include align-center($device);
 			}
 
 			&.align-right-#{$device}, &.align-right {
-				justify-content: flex-end;
+				@include align-right($device);
 			}
 
 			&.align-full-#{$device} {
@@ -48,18 +69,18 @@ $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 				}
 
 				&.align-left-#{$device} {
-					justify-content: flex-start;
 					@include not-align-full;
+					@include align-left($device);
 				}
 
 				&.align-center-#{$device} {
-					justify-content: center;
 					@include not-align-full;
+					@include align-center($device);
 				}
 
 				&.align-right-#{$device} {
-					justify-content: flex-end;
 					@include not-align-full;
+					@include align-right($device);
 				}
 
 				&.align-full-#{$device} {
