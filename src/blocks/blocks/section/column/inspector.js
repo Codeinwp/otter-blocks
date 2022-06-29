@@ -348,7 +348,6 @@ const Inspector = ({
 									label: '%'
 								}
 							] }
-							id="otter-border-raduis-box"
 							onChange={ changeBorderRadius }
 						/>
 

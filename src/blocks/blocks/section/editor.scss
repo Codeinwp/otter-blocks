@@ -1,5 +1,4 @@
 @import './components/layout-control/editor';
-@import './components/onboarding/editor';
 @import './components/separators/editor';
 
 html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[lang="zh-Hant"] {
@@ -255,26 +254,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	}
 }
 
-.o-section-layout-picker {
-	.components-placeholder.components-placeholder {
-		padding: unset;
-		box-shadow: unset;
-		justify-content: unset;
-		height: max-content;
-		min-height: unset;
-		margin-bottom: 10px;
-
-		.components-placeholder__label {
-			display: none;
-		}
-
-		.components-placeholder__instructions {
-			display: none;
-		}
-	}
-}
-
-#otter-border-raduis-box {
+#o-border-raduis-box {
 	>.component-box-control__header-control-wrapper {
 		>.components-flex-item {
 			&:first-child {

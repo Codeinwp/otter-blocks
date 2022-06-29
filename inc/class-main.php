@@ -72,7 +72,6 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Render\Masonry_Variant',
 			'\ThemeIsle\GutenbergBlocks\Server\Dashboard_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Plugin_Card_Server',
-			'\ThemeIsle\GutenbergBlocks\Server\Template_Library_Server',
 			'\ThemeIsle\GutenbergBlocks\Integration\Form_Providers',
 			'\ThemeIsle\GutenbergBlocks\Integration\Form_Email',
 			'\ThemeIsle\GutenbergBlocks\Server\Form_Server',
