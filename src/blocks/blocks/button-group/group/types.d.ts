@@ -2,7 +2,7 @@ import { BlockProps, InspectorProps } from '../../../helpers/blocks'
 
 type Attributes = {
 	id: string
-	align: string
+	align: string | object
 	spacing: number
 	paddingTopBottom: number
 	paddingLeftRight: number

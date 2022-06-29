@@ -12,7 +12,7 @@
 			"type": "string"
 		},
 		"align": {
-			"type": "string"
+			"type": [ "string", "object" ]
 		},
 		"spacing": {
 			"type": "number",

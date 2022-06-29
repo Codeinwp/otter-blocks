@@ -32,7 +32,6 @@ import {
  * Internal dependencies
  */
 import metadata from './block.json';
-import Controls from './controls.js';
 import Inspector from './inspector.js';
 import { blockInit } from '../../../helpers/block-utility.js';
 
@@ -64,6 +63,13 @@ const Edit = ({
 		};
 	}, []);
 
+	const currentDevice = useSelect( select => {
+		const { getView } = select( 'themeisle-gutenberg/data' );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+
+		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType().toLowerCase() : getView().toLowerCase();
+	}, []);
+
 	const isLarger = useViewportMatch( 'large', '>=' );
 
 	const isLarge = useViewportMatch( 'large', '<=' );
@@ -89,14 +95,23 @@ const Edit = ({
 		isMobile = isPreviewMobile;
 	}
 
+	const alignClasses = [ 'desktop', 'tablet', 'mobile' ].reduce( ( acc, device ) => {
+		if ( attributes.align && attributes.align[ device ]) {
+			acc.push( `align-${ attributes.align[ device ] }-${ device }` );
+		}
+
+		return acc;
+	}, []);
+
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames(
 			'wp-block-buttons',
 			{
-				[ `align-${ attributes.align }` ]: attributes.align,
+				[ `align-${ attributes.align }` ]: 'string' === typeof attributes.align,
 				'collapse': ( 'collapse-desktop' === attributes.collapse && ( isDesktop || isTablet || isMobile ) ) || ( 'collapse-tablet' === attributes.collapse && ( isTablet || isMobile ) ) || ( 'collapse-mobile' === attributes.collapse && isMobile )
-			}
+			},
+			...alignClasses
 		),
 		css: css`
 		.block-editor-block-list__layout {
@@ -114,14 +129,10 @@ const Edit = ({
 				} ] } />
 			) }
 
-			<Controls
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-			/>
-
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
+				currentDevice={ currentDevice }
 			/>
 
 			<div { ...blockProps }>
