@@ -25,13 +25,6 @@ import {
 	useBlockProps
 } from '@wordpress/block-editor';
 
-import {
-	Button,
-	Dashicon,
-	Placeholder,
-	Tooltip
-} from '@wordpress/components';
-
 import { useViewportMatch } from '@wordpress/compose';
 
 import {
@@ -57,7 +50,6 @@ import {
 	blockInit,
 	getDefaultValueByField
 } from '../../../helpers/block-utility.js';
-import Library from '../../../components/template-library/index.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -366,57 +358,33 @@ const Edit = ({
 		{ 'has-viewport-mobile': isMobile }
 	);
 
-	// +-------------------------------- Template Library --------------------------------+
-	const [ isLibraryOpen, setIsLibraryOpen ] = useState( false );
-
 	const blockProps = attributes.columns ? useBlockProps({
 		id: attributes.id,
 		className: classes,
 		style
-	}) : useBlockProps();;
+	}) : useBlockProps();
 
 	if ( ! attributes.columns ) {
 		return (
 			<div { ...blockProps }>
-				<Placeholder
+				<VariationPicker
 					label={ __( 'Section', 'otter-blocks' )  }
 					instructions={ __( 'Select a layout to start with, or make one yourself.', 'otter-blocks' ) }
-					className="o-section-layout-picker"
-				>
-					<VariationPicker
-						variations={ variations }
-						onSelect={ ( nextVariation = defaultVariation ) => {
-							if ( nextVariation ) {
-								replaceInnerBlocks(
-									clientId,
-									createBlocksFromInnerBlocksTemplate(
-										nextVariation.innerBlocks
-									),
-									true
-								);
-								setAttributes( nextVariation.attributes );
-							}
-						} }
-						allowSkip
-					/>
-					<Tooltip text={ __( 'Open Template Library', 'otter-blocks' ) } >
-						<Button
-							isPrimary
-							className="wp-block-themeisle-template-library"
-							onClick={ () => setIsLibraryOpen( true ) }
-						>
-							<Dashicon icon="category"/>
-							{ __( 'Template Library', 'otter-blocks' ) }
-						</Button>
-
-						{ isLibraryOpen && (
-							<Library
-								clientId={ clientId }
-								close={ () => setIsLibraryOpen( false ) }
-							/>
-						) }
-					</Tooltip>
-				</Placeholder>
+					variations={ variations }
+					onSelect={ ( nextVariation = defaultVariation ) => {
+						if ( nextVariation ) {
+							replaceInnerBlocks(
+								clientId,
+								createBlocksFromInnerBlocksTemplate(
+									nextVariation.innerBlocks
+								),
+								true
+							);
+							setAttributes( nextVariation.attributes );
+						}
+					} }
+					allowSkip
+				/>
 			</div>
 		);
 	}

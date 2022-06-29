@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { InspectorControls } from '@wordpress/block-editor';
+import { InspectorControls, BlockAlignmentToolbar } from '@wordpress/block-editor';
 
 import {
 	PanelBody,
@@ -16,6 +16,7 @@ import {
  */
 import GoogleFontsControl from '../../../components/google-fonts-control/index.js';
 import SizingControl from '../../../components/sizing-control/index.js';
+import ResponsiveControl from '../../../components/responsive-control';
 
 /**
  *
@@ -24,7 +25,8 @@ import SizingControl from '../../../components/sizing-control/index.js';
  */
 const Inspector = ({
 	attributes,
-	setAttributes
+	setAttributes,
+	currentDevice
 }) => {
 	const changeFontFamily = value => {
 		if ( ! value ) {
@@ -50,6 +52,17 @@ const Inspector = ({
 		if ( 'right' === type || 'left' === type ) {
 			setAttributes({ paddingLeftRight: value });
 		}
+	};
+
+	const onAlignmentChange = value => {
+		const newValue = attributes.align ? {
+			desktop: attributes.align.desktop,
+			tablet: attributes.align.tablet,
+			mobile: attributes.align.mobile
+		} : {};
+
+		newValue[ currentDevice ] = value;
+		setAttributes({ align: newValue });
 	};
 
 	return (
@@ -105,6 +118,19 @@ const Inspector = ({
 					] }
 					onChange={ e => setAttributes({ collapse: e }) }
 				/>
+				<ResponsiveControl
+					label={ __( 'Alignment', 'otter-blocks' ) }
+					className="buttons-alignment-control"
+				>
+					<BlockAlignmentToolbar
+						value={ attributes.align ? attributes.align[ currentDevice ] : undefined }
+						isCollapsed={ false }
+						controls={ [ 'left', 'center', 'right', 'full' ] }
+						onChange={ value => {
+							onAlignmentChange( value );
+						} }
+					/>
+				</ResponsiveControl>
 			</PanelBody>
 
 			<PanelBody

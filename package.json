@@ -1,7 +1,7 @@
 {
 	"name": "otter-blocks",
 	"version": "2.0.5",
-	"description": "Gutenberg Blocks and Template Library by Otter",
+	"description": "Otter – Page Builder Blocks & Extensions for Gutenberg",
 	"scripts": {
 		"build": "npm-run-all --parallel prod:*",
 		"prod:lite": "wp-scripts build --config webpack.config.js",
