@@ -191,26 +191,39 @@ class Block_Frontend extends Base_CSS {
 	 * @access  public
 	 */
 	public function render_post_css() {
-		$id = 0;
+		$id = get_the_ID();
+		$style_enqueued = false;
 
 		if ( is_singular() ) {
 			// Enqueue main post attached style.
-			$id = get_the_ID();
 			$this->enqueue_styles();
 		}
+
+		if( function_exists( 'get_block_templates' ) ) {
+			// Get the templates for the given post.
+			$templates = get_block_templates( array( 'wp_id' => $id ) );
+
+			if( count( $templates ) > 0 ) {
+				$style_enqueued = true;
+				$this->enqueue_styles( $id, true );
+			}
+		}
+
+
 
 		// Enqueue styles for other posts that display the_content, if any.
 		add_filter(
 			'the_content',
-			function ( $content ) use ( $id ) {
+			function ( $content ) use ( $id, $style_enqueued ) {
 				$post_id = get_the_ID();
 
 				if ( $this->has_excerpt || $id === $post_id ) {
-					$this->enqueue_styles( $post_id, true ); // TODO: this allow FSE pages to render CSS -- not sure what are the side effect by allowing this to run here???
 					return $content;
 				}
 
-				$this->enqueue_styles( $post_id, true );
+				if( ! $style_enqueued ) {
+					$this->enqueue_styles( $post_id, true );
+				}
 				$this->enqueue_google_fonts( $post_id );
 
 				return $content;
@@ -351,7 +364,7 @@ class Block_Frontend extends Base_CSS {
 	 */
 	public function get_post_css( $post_id = '' ) {
 		$post_id = $post_id ? $post_id : get_the_ID();
-		if ( function_exists( 'has_blocks' ) && function_exists( 'get_block_templates' ) && has_blocks( $post_id ) ) {
+		if ( function_exists( 'has_blocks' ) && has_blocks( $post_id ) ) {
 			$css = $this->get_page_css_meta( $post_id );
 
 			if ( empty( $css ) || is_preview() ) {
