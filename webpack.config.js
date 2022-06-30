@@ -161,7 +161,9 @@ module.exports = [
 						mkdir: blockFolders,
 						copy: blockFiles
 					}
-				}
+				},
+				runOnceInWatchMode: false,
+				runTasksInSeries: true
 			}),
 			new BundleAnalyzerPlugin({
 				analyzerMode: 'disabled',
