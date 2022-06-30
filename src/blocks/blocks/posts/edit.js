@@ -203,7 +203,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 				changeStyle={ changeStyle }
 				categoriesList={ categoriesList }
-				posts={posts}
+				posts={ posts }
 			/>
 
 			<Controls

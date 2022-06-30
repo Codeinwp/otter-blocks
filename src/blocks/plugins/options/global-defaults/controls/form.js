@@ -140,7 +140,7 @@ const Form = ({
 				>
 					<FontSizePicker
 						label={ __( 'Font Size', 'otter-blocks' ) }
-						fontSizes={defaultFontSizes}
+						fontSizes={ defaultFontSizes }
 						withReset
 						value={ attributes.labelFontSize }
 						onChange={ labelFontSize =>  setAttributes({ labelFontSize }) }
@@ -160,7 +160,7 @@ const Form = ({
 				>
 					<FontSizePicker
 						label={ __( 'Input Font Size', 'otter-blocks' ) }
-						fontSizes={defaultFontSizes}
+						fontSizes={ defaultFontSizes }
 						withReset
 						value={ attributes.inputFontSize }
 						onChange={ inputFontSize =>  setAttributes({ inputFontSize }) }
@@ -238,7 +238,7 @@ const Form = ({
 
 					<FontSizePicker
 						label={ __( 'Help Font Size', 'otter-blocks' ) }
-						fontSizes={defaultFontSizes}
+						fontSizes={ defaultFontSizes }
 						withReset
 						value={ attributes.helpFontSize }
 						onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
@@ -265,7 +265,7 @@ const Form = ({
 				>
 					<FontSizePicker
 						label={ __( 'Font Size', 'otter-blocks' ) }
-						fontSizes={defaultFontSizes}
+						fontSizes={ defaultFontSizes }
 						withReset
 						value={ attributes.submitFontSize }
 						onChange={ submitFontSize =>  setAttributes({ submitFontSize }) }

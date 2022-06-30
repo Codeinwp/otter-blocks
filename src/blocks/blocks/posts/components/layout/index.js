@@ -83,9 +83,9 @@ const Layout = ({
 										case 'title':
 											return <PostsTitle key={ element } attributes={ attributes } element={ element } post={ post } />;
 										case 'meta':
-											return <PostsMeta key={ element } attributes={attributes} element={ element } post={ post } author={ author } category={ category } />;
+											return <PostsMeta key={ element } attributes={ attributes } element={ element } post={ post } author={ author } category={ category } />;
 										case 'description':
-											return <PostsDescription key={ element } attributes={attributes} element={ element } post={ post } />;
+											return <PostsDescription key={ element } attributes={ attributes } element={ element } post={ post } />;
 										default:
 											return applyFilters( 'otter.postsBlock.templateLoop', '', element, attributes );
 										}

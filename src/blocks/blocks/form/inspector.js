@@ -204,7 +204,7 @@ const Inspector = ({
 				>
 					<FontSizePicker
 						label={ __( 'Font Size', 'otter-blocks' ) }
-						fontSizes={defaultFontSizes}
+						fontSizes={ defaultFontSizes }
 						withReset
 						value={ attributes.labelFontSize }
 						onChange={ labelFontSize =>  setAttributes({ labelFontSize }) }
@@ -224,7 +224,7 @@ const Inspector = ({
 				>
 					<FontSizePicker
 						label={ __( 'Input Font Size', 'otter-blocks' ) }
-						fontSizes={defaultFontSizes}
+						fontSizes={ defaultFontSizes }
 						withReset
 						value={ attributes.inputFontSize }
 						onChange={ inputFontSize =>  setAttributes({ inputFontSize }) }
@@ -302,7 +302,7 @@ const Inspector = ({
 
 					<FontSizePicker
 						label={ __( 'Help Font Size', 'otter-blocks' ) }
-						fontSizes={defaultFontSizes}
+						fontSizes={ defaultFontSizes }
 						withReset
 						value={ attributes.helpFontSize }
 						onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
@@ -329,7 +329,7 @@ const Inspector = ({
 				>
 					<FontSizePicker
 						label={ __( 'Font Size', 'otter-blocks' ) }
-						fontSizes={defaultFontSizes}
+						fontSizes={ defaultFontSizes }
 						withReset
 						value={ attributes.submitFontSize }
 						onChange={ submitFontSize =>  setAttributes({ submitFontSize }) }

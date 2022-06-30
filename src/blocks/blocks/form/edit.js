@@ -310,7 +310,6 @@ const Edit = ({
 					if ( formOptions ) {
 						parseDataFormOptions( formOptions );
 						setSavedFormOptions( formOptions );
-						console.log( formOptions );
 						setLoading({ formOptions: 'done' });
 						createNotice(
 							'info',
@@ -782,7 +781,7 @@ const Edit = ({
 					{
 						( hasInnerBlocks ) ? (
 							<form
-								ref={blockRef}
+								ref={ blockRef }
 								className="otter-form__container"
 								onSubmit={ () => false }
 							>
