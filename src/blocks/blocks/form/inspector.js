@@ -46,6 +46,29 @@ const isChanged = list => {
 	return Boolean( 0 < list.filter( compare ).length );
 };
 
+const defaultFontSizes = [
+	{
+		name: __( 'Small', 'otter-blocks' ),
+		size: '0.875em',
+		slug: 'small'
+	},
+	{
+		name: __( 'Medium', 'otter-blocks' ),
+		size: '1em',
+		slug: 'medium'
+	},
+	{
+		name: __( 'Large', 'otter-blocks' ),
+		size: '1.125em',
+		slug: 'large'
+	},
+	{
+		name: __( 'XL', 'otter-blocks' ),
+		size: '1.25em',
+		slug: 'xl'
+	}
+];
+
 /**
  *
  * @param {import('./type.js').FormInspectorProps} props
@@ -76,6 +99,8 @@ const Inspector = ({
 		[ formOptions.redirectLink, savedFormOptions?.redirectLink ],
 		[ formOptions.fromName, savedFormOptions?.fromName ],
 		[ formOptions.submitMessage, savedFormOptions?.submitMessage ],
+		[ formOptions.cc, savedFormOptions?.cc ],
+		[ formOptions.bcc, savedFormOptions?.bcc ],
 		[ formOptions.hasCaptcha, savedFormOptions?.hasCaptcha ]
 	]);
 
@@ -89,7 +114,7 @@ const Inspector = ({
 		<InspectorControls>
 
 			<PanelColorSettings
-				title={ __( 'Color', 'otter-blocks' ) }
+				title={ __( 'Form Color', 'otter-blocks' ) }
 				initialOpen={ false }
 				colorSettings={ [
 					{
@@ -107,6 +132,23 @@ const Inspector = ({
 						onChange: inputBorderColor => setAttributes({ inputBorderColor }),
 						label: __( 'Border', 'otter-blocks' )
 					},
+					{
+						value: attributes.inputRequiredColor,
+						onChange: inputRequiredColor => setAttributes({ inputRequiredColor }),
+						label: __( 'Label Required', 'otter-blocks' )
+					},
+					{
+						value: attributes.inputColor,
+						onChange: inputColor => setAttributes({ inputColor }),
+						label: __( 'Input', 'otter-blocks' )
+					}
+				] }
+			/>
+
+			<PanelColorSettings
+				title={ __( 'Button Color', 'otter-blocks' ) }
+				initialOpen={ false }
+				colorSettings={ [
 					{
 						value: attributes.submitColor,
 						onChange: submitColor => setAttributes({ submitColor }),
@@ -131,11 +173,6 @@ const Inspector = ({
 						value: attributes.submitMessageErrorColor,
 						onChange: submitMessageErrorColor => setAttributes({ submitMessageErrorColor }),
 						label: __( 'Error Message', 'otter-blocks' )
-					},
-					{
-						value: attributes.inputRequiredColor,
-						onChange: inputRequiredColor => setAttributes({ inputRequiredColor }),
-						label: __( 'Label Required', 'otter-blocks' )
 					}
 				] }
 			/>
@@ -151,7 +188,7 @@ const Inspector = ({
 				>
 					<RangeControl
 						label={ __( 'Spacing', 'otter-blocks' ) }
-						value={ attributes.inputGap }
+						value={ attributes.inputGap ?? 16 }
 						onChange={ inputGap => setAttributes({ inputGap }) }
 						allowReset
 						min={ 0 }
@@ -167,28 +204,13 @@ const Inspector = ({
 				>
 					<FontSizePicker
 						label={ __( 'Font Size', 'otter-blocks' ) }
-						fontSizes={[
-							{
-								name: __( 'Small', 'otter-blocks' ),
-								size: 12,
-								slug: 'small'
-							},
-							{
-								name: __( 'Normal', 'otter-blocks' ),
-								size: 16,
-								slug: 'normal'
-							},
-							{
-								name: __( 'Big', 'otter-blocks' ),
-								size: 26,
-								slug: 'big'
-							}
-						]}
+						fontSizes={ defaultFontSizes }
 						withReset
-						value={attributes.labelFontSize}
+						value={ attributes.labelFontSize }
 						onChange={ labelFontSize =>  setAttributes({ labelFontSize }) }
 					/>
 				</SyncControl>
+
 			</PanelBody>
 
 			<PanelBody
@@ -196,13 +218,27 @@ const Inspector = ({
 				initialOpen={ false }
 			>
 				<SyncControl
+					field={ 'inputFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<FontSizePicker
+						label={ __( 'Input Font Size', 'otter-blocks' ) }
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.inputFontSize }
+						onChange={ inputFontSize =>  setAttributes({ inputFontSize }) }
+					/>
+				</SyncControl>
+
+				<SyncControl
 					field={ 'inputsGap' }
 					isSynced={ attributes.isSynced }
 					setAttributes={ setAttributes }
 				>
 					<RangeControl
 						label={ __( 'Fields Spacing', 'otter-blocks' ) }
-						value={ attributes.inputsGap }
+						value={ attributes.inputsGap ?? 10}
 						onChange={ inputsGap => setAttributes({ inputsGap }) }
 						allowReset
 						min={ 0 }
@@ -218,7 +254,7 @@ const Inspector = ({
 				>
 					<BoxControl
 						label={ __( 'Input Padding', 'otter-blocks' ) }
-						values={ attributes.inputPadding }
+						values={ attributes.inputPadding ?? {'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px'} }
 						inputProps={ {
 							min: 0,
 							max: 500
@@ -234,7 +270,7 @@ const Inspector = ({
 				>
 					<RangeControl
 						label={ __( 'Border Radius', 'otter-blocks' ) }
-						value={ attributes.inputBorderRadius }
+						value={ attributes.inputBorderRadius ?? 4 }
 						onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
 						allowReset
 						min={ 0 }
@@ -249,7 +285,7 @@ const Inspector = ({
 				>
 					<RangeControl
 						label={ __( 'Border Width', 'otter-blocks' ) }
-						value={ attributes.inputBorderWidth }
+						value={ attributes.inputBorderWidth ?? 1 }
 						onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
 						allowReset
 						min={ 0 }
@@ -257,6 +293,21 @@ const Inspector = ({
 					/>
 				</SyncControl>
 
+				<SyncControl
+					field={ 'helpFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<h2>{__( 'Help Text Font Size', 'otter-blocks' )}</h2>
+
+					<FontSizePicker
+						label={ __( 'Help Font Size', 'otter-blocks' ) }
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.helpFontSize }
+						onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
+					/>
+				</SyncControl>
 			</PanelBody>
 
 			<PanelBody
@@ -278,23 +329,7 @@ const Inspector = ({
 				>
 					<FontSizePicker
 						label={ __( 'Font Size', 'otter-blocks' ) }
-						fontSizes={[
-							{
-								name: __( 'Small', 'otter-blocks' ),
-								size: 18,
-								slug: 'small'
-							},
-							{
-								name: __( 'Normal', 'otter-blocks' ),
-								size: 24,
-								slug: 'normal'
-							},
-							{
-								name: __( 'Big', 'otter-blocks' ),
-								size: 32,
-								slug: 'big'
-							}
-						]}
+						fontSizes={ defaultFontSizes }
 						withReset
 						value={ attributes.submitFontSize }
 						onChange={ submitFontSize =>  setAttributes({ submitFontSize }) }
@@ -302,7 +337,7 @@ const Inspector = ({
 				</SyncControl>
 
 				<SelectControl
-					label={ __( 'Style', 'otter-blocks' ) }
+					label={ __( 'Alignment', 'otter-blocks' ) }
 					value={ attributes.submitStyle }
 					options={[
 						{
@@ -320,6 +355,22 @@ const Inspector = ({
 					]}
 					onChange={ submitStyle => setAttributes({ submitStyle}) }
 				/>
+
+				<SyncControl
+					field={ 'messageFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<h2>{__( 'Message Font Size', 'otter-blocks' )}</h2>
+
+					<FontSizePicker
+						label={ __( 'Message Font Size', 'otter-blocks' ) }
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.messageFontSize }
+						onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
+					/>
+				</SyncControl>
 			</PanelBody>
 
 			<PanelBody
@@ -357,6 +408,24 @@ const Inspector = ({
 					value={ formOptions.emailTo }
 					onChange={ emailTo => setFormOption({emailTo}) }
 					help={ __( 'Send the form\'s data to another email. (Admin\'s email is default).', 'otter-blocks' ) }
+				/>
+
+				<TextControl
+					label={ __( 'Cc', 'otter-blocks' ) }
+					placeholder={ __( 'Send copies to', 'otter-blocks' ) }
+					type="text"
+					value={ formOptions.cc }
+					onChange={ cc => setFormOption({cc}) }
+					help={ __( 'Add emails separated by commas: example1@otter.com, example2@otter.com.', 'otter-blocks' ) }
+				/>
+
+				<TextControl
+					label={ __( 'Bcc', 'otter-blocks' ) }
+					placeholder={ __( 'Send copies to', 'otter-blocks' ) }
+					type="text"
+					value={ formOptions.bcc }
+					onChange={ bcc => setFormOption({bcc}) }
+					help={ __( 'Add emails separated by commas: example1@otter.com, example2@otter.com.', 'otter-blocks' ) }
 				/>
 
 				<TextareaControl

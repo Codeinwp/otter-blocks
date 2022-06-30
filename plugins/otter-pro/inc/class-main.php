@@ -41,6 +41,7 @@ class Main {
 			add_filter( 'otter_blocks_register_blocks', array( $this, 'register_blocks' ) );
 			add_filter( 'otter_blocks_register_dynamic_blocks', array( $this, 'register_dynamic_blocks' ) );
 			add_filter( 'otter_blocks_register_css', array( $this, 'register_blocks_css' ) );
+			add_action( 'admin_print_scripts-settings_page_otter', array( $this, 'enqueue_options_assets' ) );
 		}
 	}
 
@@ -55,6 +56,8 @@ class Main {
 	public function autoload_classes( $classnames ) {
 		$classes = array(
 			'\ThemeIsle\OtterPro\Plugins\Block_Conditions',
+			'\ThemeIsle\OtterPro\Plugins\Dynamic_Content',
+			'\ThemeIsle\OtterPro\Plugins\Fonts_Module',
 			'\ThemeIsle\OtterPro\Plugins\License',
 			'\ThemeIsle\OtterPro\Plugins\Options_Settings',
 			'\ThemeIsle\OtterPro\Plugins\Posts_ACF_Integration',
@@ -223,6 +226,27 @@ class Main {
 				true
 			);
 		}
+	}
+
+	/**
+	 * Load assets for option page.
+	 *
+	 * @since   2.0.5
+	 * @access  public
+	 */
+	public function enqueue_options_assets() {
+		$asset_file = include OTTER_PRO_BUILD_PATH . 'dashboard.asset.php';
+
+		wp_enqueue_script(
+			'otter-dashboard-scripts',
+			OTTER_PRO_BUILD_URL . 'dashboard.js',
+			array_merge(
+				$asset_file['dependencies'],
+				array( 'otter-blocks-scripts' )
+			),
+			$asset_file['version'],
+			true
+		);
 	}
 
 	/**

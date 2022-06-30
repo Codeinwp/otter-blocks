@@ -23,7 +23,7 @@ declare global {
 				}
 			}
 			isBlockEditor: boolean
-			useOldMacyContainer: boolean
+			isLegacyPre59: boolean
 			postTypes: {
 				page: string
 				post: string
@@ -34,6 +34,7 @@ declare global {
 				blocksConditions: boolean
 			}
 			blocksIDs: string[]
+			isAncestorTypeAvailable: boolean
 		}
 		otterPro?: {
 			isActive: boolean

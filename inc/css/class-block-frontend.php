@@ -118,22 +118,11 @@ class Block_Frontend extends Base_CSS {
 			return;
 		}
 
-		$fonts = array();
-
 		if ( count( $fonts_list ) > 0 ) {
-			foreach ( $fonts_list as $font ) {
-				if ( empty( $font['fontfamily'] ) ) {
-					continue;
-				}
-				$item = str_replace( ' ', '+', $font['fontfamily'] );
-				if ( count( $font['fontvariant'] ) > 0 ) {
-					$item .= ':' . implode( ',', $font['fontvariant'] );
-				}
-				array_push( $fonts, $item );
-			}
+			$fonts = $this->get_fonts( $fonts_list );
 
-			if ( count( $fonts ) > 0 ) {
-				wp_enqueue_style( 'otter-google-fonts-' . $post_id, '//fonts.googleapis.com/css?family=' . implode( '|', $fonts ), [], THEMEISLE_BLOCKS_VERSION );
+			if ( count( $fonts['fonts'] ) > 0 ) {
+				wp_enqueue_style( 'otter-google-fonts-' . $post_id, $fonts['url'], [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			}
 		}
 	}
@@ -149,19 +138,59 @@ class Block_Frontend extends Base_CSS {
 			return;
 		}
 
+		if ( count( self::$google_fonts ) > 0 ) {
+			$fonts = $this->get_fonts( self::$google_fonts );
+
+			if ( count( $fonts['fonts'] ) > 0 ) {
+				wp_enqueue_style( 'otter-google-fonts', $fonts['url'], [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			}
+		}
+	}
+
+	/**
+	 * Method to Get Fonts URL.
+	 *
+	 * @param array $fonts_list Fonts List.
+	 *
+	 * @since   2.0.5
+	 * @access  public
+	 */
+	public function get_fonts( $fonts_list = array() ) {
 		$fonts = array();
 
-		if ( count( self::$google_fonts ) > 0 ) {
-			foreach ( self::$google_fonts as $font ) {
-				$item = str_replace( ' ', '+', $font['fontfamily'] );
-				if ( count( $font['fontvariant'] ) > 0 ) {
-					$item .= ':' . implode( ',', $font['fontvariant'] );
-				}
-				array_push( $fonts, $item );
+		foreach ( $fonts_list as $font ) {
+			if ( empty( $font['fontfamily'] ) ) {
+				continue;
 			}
 
-			wp_enqueue_style( 'otter-google-fonts', '//fonts.googleapis.com/css?family=' . implode( '|', $fonts ), [], THEMEISLE_BLOCKS_VERSION );
+			$item = str_replace( ' ', '+', $font['fontfamily'] );
+			if ( count( $font['fontvariant'] ) > 0 ) {
+				foreach ( $font['fontvariant'] as $key => $value ) {
+					if ( 'normal' === $value ) {
+						$font['fontvariant'][ $key ] = 400;
+					}
+				}
+				$item .= ':wght@' . implode( ';', $font['fontvariant'] );
+			}
+			array_push( $fonts, $item );
 		}
+
+		$fonts_url = add_query_arg(
+			array(
+				'family'  => implode( '&family=', $fonts ),
+				'display' => 'swap',
+			),
+			'https://fonts.googleapis.com/css2' 
+		);
+
+		$fonts_url = apply_filters( 'otter_blocks_google_fonts_url', $fonts_url );
+
+		$obj = array(
+			'fonts' => $fonts,
+			'url'   => esc_url_raw( $fonts_url ),
+		);
+
+		return $obj;
 	}
 
 	/**
@@ -550,22 +579,12 @@ class Block_Frontend extends Base_CSS {
 		}
 
 		$fonts_list = get_option( 'themeisle_blocks_widgets_fonts', array() );
-		$fonts      = array();
 
 		if ( count( $fonts_list ) > 0 ) {
-			foreach ( $fonts_list as $font ) {
-				if ( empty( $font['fontfamily'] ) ) {
-					continue;
-				}
-				$item = str_replace( ' ', '+', $font['fontfamily'] );
-				if ( count( $font['fontvariant'] ) > 0 ) {
-					$item .= ':' . implode( ',', $font['fontvariant'] );
-				}
-				array_push( $fonts, $item );
-			}
+			$fonts = $this->get_fonts( $fonts_list );
 
-			if ( count( $fonts ) > 0 ) {
-				wp_enqueue_style( 'otter-widgets-fonts', '//fonts.googleapis.com/css?family=' . implode( '|', $fonts ), [], THEMEISLE_BLOCKS_VERSION );
+			if ( count( $fonts['fonts'] ) > 0 ) {
+				wp_enqueue_style( 'otter-widgets-fonts', $fonts['url'], [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
 			}
 		}
 

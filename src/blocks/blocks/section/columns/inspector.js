@@ -70,8 +70,6 @@ const Inspector = ({
 
 	const [ tab, setTab ] = useState( 'layout' );
 
-	const [ hasColumnsChanged, setColumnsChanged ] = useState( false );
-
 	const changeColumns = value => {
 		if ( 6 >= value ) {
 			setAttributes({
@@ -98,24 +96,7 @@ const Inspector = ({
 		}
 
 		changeColumnsNumbers( value );
-		setColumnsChanged( true );
 	};
-
-	useEffect( () => {
-		if ( ! hasColumnsChanged ) {
-			return;
-		}
-
-		if ( 6 >= attributes.columns ) {
-			updateColumnsWidth( attributes.columns, 'equal' );
-		} else if ( 6 < attributes.columns ) {
-			updateColumnsWidth( 6, 'equal' );
-		} else if ( 1 >= attributes.columns ) {
-			updateColumnsWidth( 1, 'equal' );
-		}
-
-		setColumnsChanged( false );
-	}, [ attributes.columns ]);
 
 	const changeLayout = value => {
 		switch ( getView ) {
@@ -846,7 +827,7 @@ const Inspector = ({
 										label: '%'
 									}
 								] }
-								id="otter-border-raduis-box"
+								id="o-border-raduis-box"
 								onChange={ changeBorderRadius }
 							/>
 

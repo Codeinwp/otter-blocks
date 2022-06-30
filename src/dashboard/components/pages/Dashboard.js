@@ -85,7 +85,7 @@ const Dashboard = ({
 
 				<PanelRow>
 					<ToggleControl
-						label={ __( 'Enable Block Condition Module', 'otter-blocks' ) }
+						label={ __( 'Enable Visibility Condition Module', 'otter-blocks' ) }
 						help={ __( 'Blocks Conditions module allows to hide/display blocks to your users based on selected conditions.', 'otter-blocks' ) }
 						checked={ Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ) }
 						disabled={ 'saving' === status }

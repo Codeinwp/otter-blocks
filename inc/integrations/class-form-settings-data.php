@@ -85,6 +85,20 @@ class Form_Settings_Data {
 	private $from_name = '';
 
 	/**
+	 * The CC recipients.
+	 *
+	 * @var string
+	 */
+	private $cc = '';
+
+	/**
+	 * The BCC recipients.
+	 *
+	 * @var string
+	 */
+	private $bcc = '';
+
+	/**
 	 * The default constructor.
 	 *
 	 * @param array $integration_data The integration data.
@@ -180,6 +194,12 @@ class Form_Settings_Data {
 				}
 				if ( isset( $form['fromName'] ) ) {
 					$integration->set_from_name( $form['fromName'] );
+				}
+				if ( isset( $form['cc'] ) ) {
+					$integration->set_cc( $form['cc'] );
+				}
+				if ( isset( $form['bcc'] ) ) {
+					$integration->set_bcc( $form['bcc'] );
 				}
 				if ( isset( $form['integration'] ) ) {
 					$integration->extract_integration_data( $form['integration'] );
@@ -503,6 +523,46 @@ class Form_Settings_Data {
 	public function set_from_name( $from_name ) {
 		$this->from_name = $from_name;
 
+		return $this;
+	}
+
+	/**
+	 * Get the email cc.
+	 *
+	 * @return string
+	 */
+	public function get_cc() {
+		return $this->cc;
+	}
+
+	/**
+	 * Set the email cc.
+	 *
+	 * @param string $cc The email cc.
+	 * @return Form_Settings_Data
+	 */
+	public function set_cc( $cc ) {
+		$this->cc = $cc;
+		return $this;
+	}
+
+	/**
+	 * Get the email bcc.
+	 *
+	 * @return string
+	 */
+	public function get_bcc() {
+		return $this->bcc;
+	}
+
+	/**
+	 * Set the email bcc.
+	 *
+	 * @param string $bcc The email bcc.
+	 * @return Form_Settings_Data
+	 */
+	public function set_bcc( $bcc ) {
+		$this->bcc = $bcc;
 		return $this;
 	}
 }

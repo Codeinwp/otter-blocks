@@ -48,7 +48,7 @@ const Edit = ({
 					<SelectProducts
 						label={ __( 'Select Product', 'otter-blocks' ) }
 						hideLabelFromVision
-						value={ attributes.product }
+						value={ attributes.product || '' }
 						onChange={ product => setAttributes({ product: Number( product ) }) }
 					/>
 				</Placeholder>

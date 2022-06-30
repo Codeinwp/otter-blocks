@@ -88,7 +88,9 @@ const Edit = ({
 		action: undefined,
 		hasCaptcha: undefined,
 		submitMessage: undefined,
-		apiKey: undefined
+		apiKey: undefined,
+		cc: undefined,
+		bcc: undefined
 	});
 
 	const setFormOption = option => {
@@ -195,6 +197,8 @@ const Edit = ({
 			fromName: wpOptions?.fromName,
 			redirectLink: wpOptions?.redirectLink,
 			subject: wpOptions?.emailSubject,
+			cc: wpOptions?.cc,
+			bcc: wpOptions?.bcc,
 			submitMessage: wpOptions?.submitMessage,
 			provider: wpOptions?.integration?.provider,
 			apiKey: wpOptions?.integration?.apiKey,
@@ -259,13 +263,19 @@ const Edit = ({
 						emails[index].redirectLink !== formOptions.redirectLink ||
 						emails[index].emailSubject !== formOptions.subject ||
 						emails[index].submitMessage !== formOptions.submitMessage ||
-						emails[index].fromName !== formOptions.fromName
+						emails[index].fromName !== formOptions.fromName ||
+						emails[index].cc !== formOptions.cc ||
+						emails[index].bcc !== formOptions.bcc
 					);
-					emails[index].email = formOptions.emailTo; // update the value
-					emails[index].redirectLink = formOptions.redirectLink; // update the value
-					emails[index].emailSubject = formOptions.subject; // update the value
-					emails[index].submitMessage = formOptions.submitMessage; // update the value
-					emails[index].fromName = formOptions.fromName; // update the value
+
+					// Update the values
+					emails[index].email = formOptions.emailTo;
+					emails[index].redirectLink = formOptions.redirectLink;
+					emails[index].emailSubject = formOptions.subject;
+					emails[index].submitMessage = formOptions.submitMessage;
+					emails[index].fromName = formOptions.fromName;
+					emails[index].cc = formOptions.cc;
+					emails[index].bcc = formOptions.bcc;
 					isMissing = false;
 				}
 			});
@@ -277,7 +287,9 @@ const Edit = ({
 					fromName: formOptions.fromName,
 					redirectLink: formOptions.redirectLink,
 					emailSubject: formOptions.subject,
-					submitMessage: formOptions.submitMessage
+					submitMessage: formOptions.submitMessage,
+					cc: formOptions.cc,
+					bcc: formOptions.bcc
 				});
 			}
 
@@ -568,48 +580,52 @@ const Edit = ({
 	useEffect( () => {
 		let controller = new AbortController();
 		if ( attributes.hasCaptcha !== undefined && attributes.optionName ) {
-			( new api.models.Settings() )?.current?.fetch({ signal: controller.signal }).done( res => {
-				controller = null;
+			try {
+				( new api.models.Settings() )?.current?.fetch({ signal: controller.signal }).done( res => {
+					controller = null;
 
-				const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
-				let isMissing = true;
-				let hasChanged = false;
+					const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
+					let isMissing = true;
+					let hasChanged = false;
 
-				emails?.forEach( ({ form }, index ) => {
-					if ( form === attributes.optionName ) {
-						if ( emails[index].hasCaptcha !== attributes.hasCaptcha ) {
-							hasChanged = true;
+					emails?.forEach( ({ form }, index ) => {
+						if ( form === attributes.optionName ) {
+							if ( emails[index].hasCaptcha !== attributes.hasCaptcha ) {
+								hasChanged = true;
+							}
+							emails[index].hasCaptcha = attributes.hasCaptcha;
+							isMissing = false;
 						}
-						emails[index].hasCaptcha = attributes.hasCaptcha;
-						isMissing = false;
+					});
+
+					if ( isMissing ) {
+						emails.push({
+							form: attributes.optionName,
+							hasCaptcha: attributes.hasCaptcha
+						});
+					}
+
+					if ( isMissing || hasChanged ) {
+						const model = new api.models.Settings({
+							// eslint-disable-next-line camelcase
+							themeisle_blocks_form_emails: emails
+						});
+
+						model.save();
+
+						createNotice(
+							'info',
+							__( 'Form preferences have been saved.', 'otter-blocks' ),
+							{
+								isDismissible: true,
+								type: 'snackbar'
+							}
+						);
 					}
 				});
-
-				if ( isMissing ) {
-					emails.push({
-						form: attributes.optionName,
-						hasCaptcha: attributes.hasCaptcha
-					});
-				}
-
-				if ( isMissing || hasChanged ) {
-					const model = new api.models.Settings({
-						// eslint-disable-next-line camelcase
-						themeisle_blocks_form_emails: emails
-					});
-
-					model.save();
-
-					createNotice(
-						'info',
-						__( 'Form preferences have been saved.', 'otter-blocks' ),
-						{
-							isDismissible: true,
-							type: 'snackbar'
-						}
-					);
-				}
-			});
+			} catch ( e ) {
+				console.warn( e.message );
+			}
 		}
 		return () => controller?.abort();
 	}, [ attributes.hasCaptcha, attributes.optionName ]);
@@ -621,21 +637,25 @@ const Edit = ({
 		let controller = new AbortController();
 		const getCaptchaAPIData = () => {
 			setLoading({ captcha: 'loading'});
-			( new api.models.Settings() )?.fetch({ signal: controller.signal }).then( response => {
-				controller = null;
+			try {
+				( new api.models.Settings() )?.fetch({ signal: controller.signal }).then( response => {
+					controller = null;
 
-				if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
-					setLoading({ captcha: 'done'});
-				} else {
-					setLoading({ captcha: 'missing'});
-					setGoogleCaptchaAPISiteKey( response.themeisle_google_captcha_api_site_key );
-					setGoogleCaptchaAPISecretKey( response.themeisle_google_captcha_api_secret_key );
-				}
-			}).catch( e => {
-				console.error( e );
+					if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
+						setLoading({ captcha: 'done'});
+					} else {
+						setLoading({ captcha: 'missing'});
+						setGoogleCaptchaAPISiteKey( response.themeisle_google_captcha_api_site_key );
+						setGoogleCaptchaAPISecretKey( response.themeisle_google_captcha_api_secret_key );
+					}
+				}).catch( e => {
+					console.error( e );
+					setLoading({ captcha: 'error' });
+				});
+			} catch ( e ) {
+				console.warn( e.message );
 				setLoading({ captcha: 'error' });
-			});
-
+			}
 		};
 
 		if ( attributes.hasCaptcha && 'init' === loadingState?.captcha ) {
@@ -650,42 +670,50 @@ const Edit = ({
 	 */
 	const saveCaptchaAPIKey = () => {
 		setLoading({ captcha: 'loading' });
-		const model = new api.models.Settings({
-			// eslint-disable-next-line camelcase
-			themeisle_google_captcha_api_site_key: googleCaptchaAPISiteKey,
-			// eslint-disable-next-line camelcase
-			themeisle_google_captcha_api_secret_key: googleCaptchaAPISecretKey
-		});
+		try {
+			const model = new api.models.Settings({
+				// eslint-disable-next-line camelcase
+				themeisle_google_captcha_api_site_key: googleCaptchaAPISiteKey,
+				// eslint-disable-next-line camelcase
+				themeisle_google_captcha_api_secret_key: googleCaptchaAPISecretKey
+			});
 
-		model.save().then( response => {
+			model?.save?.()?.then( response => {
 
-			if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
-				setLoading({ captcha: 'done' });
-			} else {
-				setLoading({ captcha: 'missing' });
-			}
-
-			setGoogleCaptchaAPISecretKey( '' );
-			setGoogleCaptchaAPISiteKey( '' );
-			createNotice(
-				'info',
-				__( 'Google reCaptcha API Keys have been saved.', 'otter-blocks' ),
-				{
-					isDismissible: true,
-					type: 'snackbar'
+				if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
+					setLoading({ captcha: 'done' });
+				} else {
+					setLoading({ captcha: 'missing' });
 				}
-			).catch( e => {
+
+				setGoogleCaptchaAPISecretKey( '' );
+				setGoogleCaptchaAPISiteKey( '' );
+				createNotice(
+					'info',
+					__( 'Google reCaptcha API Keys have been saved.', 'otter-blocks' ),
+					{
+						isDismissible: true,
+						type: 'snackbar'
+					}
+				).catch( e => {
+					console.error( e );
+					setLoading({ captcha: 'error' });
+				});
+			})?.catch( e => {
 				console.error( e );
 				setLoading({ captcha: 'error' });
 			});
-		}).catch( e => {
-			console.error( e );
+		} catch ( e ) {
+			console.warn( e.message );
 			setLoading({ captcha: 'error' });
-		});
+		}
 	};
 
-
 	const inlineStyles = {
+		'--messageFontSize': attributes.messageFontSize !== undefined && attributes.messageFontSize,
+		'--inputFontSize': attributes.inputFontSize !== undefined && attributes.inputFontSize,
+		'--helpFontSize': attributes.helpFontSize !== undefined && attributes.helpFontSize,
+		'--inputColor': attributes.inputColor,
 		'--padding': padding( attributes.inputPadding ),
 		'--borderRadius': attributes.inputBorderRadius !== undefined && ( attributes.inputBorderRadius + 'px' ),
 		'--borderWidth': attributes.inputBorderWidth !== undefined && ( attributes.inputBorderWidth + 'px' ),

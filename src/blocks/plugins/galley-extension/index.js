@@ -60,7 +60,7 @@ const withGalleryExtension = createHigherOrderComponent( BlockEdit => {
 }, 'withGalleryExtension' );
 
 domReady( () => {
-	const useOldContainer = Boolean( parseInt( window.themeisleGutenberg?.useOldMacyContainer || '0' ) );
+	const useOldContainer = Boolean( window.themeisleGutenberg?.isLegacyPre59 );
 	if ( useOldContainer ) {
 		addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/gallery-extension', withGalleryExtension );
 	}

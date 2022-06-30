@@ -97,7 +97,7 @@ const Inspector = ({
 					onChange={ onDefaultSizeChange }
 					min={ 0 }
 					max={ 60 }
-					allowReset={true}
+					allowReset={ true }
 				/>
 
 				<RangeControl

@@ -256,7 +256,7 @@ const extractBlockData = ( clientId ) => {
  * @return {Function} A function that clean up the id from the internal list tracking
  * @example
  * import defaultAttributes from './attributes'
- * const Block = ({ cliendId }) => {
+ * const Block = ({ clientId }) => {
  * 		useEffect(() => {
  * 			const unsubscribe = blockInit(clientId, defaultAttributes);
  * 			return () => unsubscribe( attributes.id );
