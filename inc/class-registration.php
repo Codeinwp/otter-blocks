@@ -343,7 +343,7 @@ class Registration {
 			$content = get_the_content( null, false, $post );
 		}
 
-		if ( ! function_exists( 'get_block_templates' ) ) {
+		if ( function_exists( 'get_block_templates' ) ) {
 			$templates_parts = get_block_templates( array( 'wp_id' => $post ), 'wp_template_part' );
 			foreach ($templates_parts as $templates_part) {
 				if( isset( $templates_part->content ) ) {
