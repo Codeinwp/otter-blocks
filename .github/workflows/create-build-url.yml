@@ -35,6 +35,8 @@ jobs:
         run: npm run build
       - name: Create zip
         run: npm run dist
+      - name: Remove build folder
+        run: rm -rf build
       - name: Build dev files
         run: npm run build-dev
       - name: Create zip
