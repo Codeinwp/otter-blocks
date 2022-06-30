@@ -7,12 +7,6 @@
 		}
 	}
 
-	.block-editor-block-list__layout {
-		display: flex;
-		flex-direction: column;
-		gap: var(--inputsGap);
-	}
-
 	.components-placeholder__label > svg {
 		width: 32px;
 		height: 32px;
@@ -20,6 +14,16 @@
 
 	.otter-form-captcha {
 		margin: 10px 0;
+	}
+
+	.otter-form__container > .block-editor-inner-blocks > .block-editor-block-list__layout {
+		display: flex;
+		flex-direction: column;
+		gap: var(--inputsGap);
+
+		&> div {
+			width: 100%;
+		}
 	}
 }
 

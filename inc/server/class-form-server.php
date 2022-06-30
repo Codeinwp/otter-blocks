@@ -280,7 +280,23 @@ class Form_Server {
 				}
 			}
 
-			$headers = array( 'Content-Type: text/html', 'From: ' . ( $form_options->has_from_name() ? sanitize_text_field( $form_options->get_from_name() ) : get_bloginfo( 'name', 'display' ) ) . '<' . $to . '>' );
+			$headers = array( 'Content-Type: text/html', 'From: ' . ( $form_options->has_from_name() ? sanitize_text_field( $form_options->get_from_name() ) : get_bloginfo( 'name', 'display' ) ) . ' <' . $to . '>' );
+
+			if ( ! empty( $form_options->get_cc() ) ) {
+				$arr = explode( ',', $form_options->get_cc() );
+
+				foreach ( $arr as $cc ) {
+					$headers[] = 'Cc: ' . trim( $cc );
+				}
+			}
+
+			if ( ! empty( $form_options->get_bcc() ) ) {
+				$arr = explode( ',', $form_options->get_bcc() );
+
+				foreach ( $arr as $cc ) {
+					$headers[] = 'Bcc: ' . trim( $cc );
+				}
+			}
 
 			// phpcs:ignore
 			$res->set_success( wp_mail( $to, $email_subject, $email_body, $headers ) );

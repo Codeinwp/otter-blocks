@@ -65,6 +65,7 @@ const Edit = ({
 	const [ isAddingToLocationActive, setActiveAddingToLocation ] = useState( false );
 	const [ openMarker, setOpenMarker ] = useState( null );
 
+
 	const createMarker = ( markerProps, dispatch ) => {
 		if ( window.L && map && dispatch && markerProps ) {
 			markerProps.id ??= uuidv4();
