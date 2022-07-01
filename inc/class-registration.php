@@ -51,6 +51,7 @@ class Registration {
 		'tabs'           => false,
 		'popup'          => false,
 		'progress-bar'   => false,
+		'sticky'         => false,
 	);
 
 	/**
@@ -59,6 +60,13 @@ class Registration {
 	 * @var array
 	 */
 	public static $styles_loaded = array();
+
+	/**
+	 * Allow to load in frontend.
+	 *
+	 * @var bool
+	 */
+	public static $can_load_frontend = true;
 
 	/**
 	 * Flag to mark that the  FA has been loaded.
@@ -82,6 +90,7 @@ class Registration {
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_assets' ), 1 );
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) ); // Don't change the priority or else Blocks CSS will stop working.
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
+		add_filter( 'render_block', array( $this, 'load_sticky' ), 900, 2 );
 
 		add_action(
 			'get_footer',
@@ -229,27 +238,30 @@ class Registration {
 			'otter-blocks',
 			'themeisleGutenberg',
 			array(
-				'isCompatible'        => Main::is_compatible(),
-				'hasPro'              => Pro::is_pro_installed(),
-				'upgradeLink'         => Pro::get_url(),
-				'should_show_upsell'  => Pro::should_show_upsell(),
-				'assetsPath'          => OTTER_BLOCKS_URL . 'assets',
-				'updatePath'          => admin_url( 'update-core.php' ),
-				'optionsPath'         => admin_url( 'options-general.php?page=otter' ),
-				'mapsAPI'             => $api,
-				'globalDefaults'      => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
-				'themeDefaults'       => Main::get_global_defaults(),
-				'imageSizes'          => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
-				'isWPVIP'             => function_exists( 'is_wpcom_vip' ),
-				'canTrack'            => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
-				'userRoles'           => $wp_roles->roles,
-				'isBlockEditor'       => 'post' === $current_screen->base,
-				'useOldMacyContainer' => version_compare( get_bloginfo( 'version' ), '5.8.10', '<=' ),
-				'postTypes'           => get_post_types( [ 'public' => true ] ),
-				'rootUrl'             => get_site_url(),
-				'hasModule'           => array(
+				'hasNeve'                 => defined( 'NEVE_VERSION' ),
+				'isCompatible'            => Main::is_compatible(),
+				'hasPro'                  => Pro::is_pro_installed(),
+				'isProActive'             => Pro::is_pro_active(),
+				'upgradeLink'             => Pro::get_url(),
+				'should_show_upsell'      => Pro::should_show_upsell(),
+				'assetsPath'              => OTTER_BLOCKS_URL . 'assets',
+				'updatePath'              => admin_url( 'update-core.php' ),
+				'optionsPath'             => admin_url( 'options-general.php?page=otter' ),
+				'mapsAPI'                 => $api,
+				'globalDefaults'          => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
+				'themeDefaults'           => Main::get_global_defaults(),
+				'imageSizes'              => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
+				'isWPVIP'                 => function_exists( 'is_wpcom_vip' ),
+				'canTrack'                => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
+				'userRoles'               => $wp_roles->roles,
+				'isBlockEditor'           => 'post' === $current_screen->base,
+				'postTypes'               => get_post_types( [ 'public' => true ] ),
+				'rootUrl'                 => get_site_url(),
+				'hasModule'               => array(
 					'blockConditions' => get_option( 'themeisle_blocks_settings_block_conditions', true ),
 				),
+				'isLegacyPre59'           => version_compare( get_bloginfo( 'version' ), '5.8.22', '<=' ),
+				'isAncestorTypeAvailable' => version_compare( get_bloginfo( 'version' ), '5.9.22', '>=' ),
 			)
 		);
 
@@ -334,6 +346,7 @@ class Registration {
 		}
 
 		if ( strpos( $content, '<!-- wp:' ) === false ) {
+			self::$can_load_frontend = false;
 			return false;
 		}
 
@@ -355,6 +368,7 @@ class Registration {
 
 		// On AMP context, we don't load JS files.
 		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+			self::$can_load_frontend = false;
 			return;
 		}
 
@@ -408,6 +422,17 @@ class Registration {
 				'themeisleGutenbergForm',
 				array(
 					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
+					'root'               => esc_url_raw( rest_url() ),
+					'nonce'              => wp_create_nonce( 'wp_rest' ),
+					'messages'           => array(
+						'submission'         => __( 'Form submission from', 'otter-blocks' ),
+						'captcha-not-loaded' => __( 'Captcha is not loaded. Please check your browser plugins to allow the Google reCaptcha.', 'otter-blocks' ),
+						'check-captcha'      => __( 'Please check the captcha.', 'otter-blocks' ),
+						'invalid-email'      => __( 'The email address is invalid!', 'otter-blocks' ),
+						'already-registered' => __( 'The email was already registered!', 'otter-blocks' ),
+						'try-again'          => __( 'Error. Something is wrong with the server! Try again later.', 'otter-blocks' ),
+						'privacy'            => __( 'I have read and agreed the privacy statement.', 'otter-blocks' ),
+					),
 				)
 			);
 
@@ -514,17 +539,6 @@ class Registration {
 			self::$scripts_loaded['progress-bar'] = true;
 		}
 
-		// DEBUG
-		// TODO: load this only when a block has a sticky block.
-		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/sticky.asset.php';
-		wp_enqueue_script(
-			'otter-sticky',
-			OTTER_BLOCKS_URL . 'build/blocks/sticky.js',
-			$asset_file['dependencies'],
-			$asset_file['version'],
-			true
-		);
-		wp_script_add_data( 'otter-sticky', 'defer', true );
 	}
 
 	/**
@@ -789,6 +803,36 @@ class Registration {
 
 				return $block_content;
 			}
+		}
+
+		return $block_content;
+	}
+
+	/**
+	 * Load assets in frontend.
+	 *
+	 * @param string $block_content Content of block.
+	 * @param array  $block Block Attributes.
+	 * @return string
+	 * @since 2.0.5
+	 */
+	public function load_sticky( $block_content, $block ) {
+
+		if ( ! self::$can_load_frontend ) {
+			return $block_content;
+		}
+
+		if ( ! self::$scripts_loaded['sticky'] && strpos( $block_content, 'o-sticky' ) ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/sticky.asset.php';
+			wp_enqueue_script(
+				'otter-sticky',
+				OTTER_BLOCKS_URL . 'build/blocks/sticky.js',
+				$asset_file['dependencies'],
+				$asset_file['version'],
+				true
+			);
+			wp_script_add_data( 'otter-sticky', 'defer', true );
+			self::$scripts_loaded['sticky'] = true;
 		}
 
 		return $block_content;

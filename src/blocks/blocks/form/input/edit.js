@@ -10,7 +10,8 @@ import {
 
 import {
 	Fragment,
-	useEffect
+	useEffect,
+	useRef
 } from '@wordpress/element';
 
 /**
@@ -39,6 +40,29 @@ const Edit = ({
 
 	const blockProps = useBlockProps();
 
+	const labelRef = useRef( null );
+	const inputRef = useRef( null );
+	const helpRef = useRef( null );
+
+
+	useEffect( () => {
+		const per = x => x ? x + '%' : null;
+
+		/**
+		 * TODO: Refactor this based on #748
+		 */
+
+		if ( inputRef.current ) {
+			inputRef.current?.style?.setProperty( '--inputWidth', per( attributes.inputWidth ) );
+		}
+		if ( labelRef.current ) {
+			labelRef.current?.style?.setProperty( '--labelColor', attributes.labelColor || null );
+		}
+		if ( helpRef.current ) {
+			helpRef.current?.style?.setProperty( '--labelColor', attributes.labelColor || null );
+		}
+	}, [ inputRef.current, labelRef.current, helpRef.current, attributes.labelColor, attributes.inputWidth ]);
+
 	return (
 		<Fragment>
 			<Inspector
@@ -48,6 +72,7 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				<label
+					ref={ labelRef }
 					htmlFor={ attributes.id }
 					className="otter-form-input-label"
 				>
@@ -60,11 +85,12 @@ const Edit = ({
 					/>
 
 					{ attributes.isRequired && (
-						<span className="required">{ __( '(required)', 'otter-blocks' ) }</span>
+						<span className="required">*</span>
 					) }
 				</label>
 
 				<input
+					ref={ inputRef }
 					type={ attributes.type }
 					placeholder={ attributes.placeholder }
 					name={ attributes.id }
@@ -73,6 +99,16 @@ const Edit = ({
 					disabled
 					className="otter-form-input components-text-control__input"
 				/>
+				{
+					attributes.helpText && (
+						<span
+							className="o-form-help"
+							ref={ helpRef }
+						>
+							{ attributes.helpText }
+						</span>
+					)
+				}
 			</div>
 		</Fragment>
 	);

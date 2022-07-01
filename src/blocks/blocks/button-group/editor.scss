@@ -1,5 +1,17 @@
 @import 'style';
 
+@mixin align-full {
+	.block-editor-inner-blocks {
+		width: 100%;
+	}
+}
+
+@mixin not-align-full {
+	.block-editor-inner-blocks {
+		width: auto;
+	}
+}
+
 .wp-block-themeisle-blocks-button-group {
 	&.collapse {
 		.block-editor-block-list__layout {
@@ -70,5 +82,49 @@
 			fill: currentColor;
 			width: 16px;
 		}
+	}
+}
+
+.buttons-alignment-control .components-toolbar {
+	border: none;
+}
+
+.align-full-desktop {
+	@include align-full;
+}
+
+@media ( max-width: 960px ) {
+	.align-left-tablet {
+		@include not-align-full;
+	}
+
+	.align-center-tablet {
+		@include not-align-full;
+	}
+
+	.align-right-tablet {
+		@include not-align-full;
+	}
+
+	.align-full-tablet {
+		@include align-full;
+	}
+}
+
+@media ( max-width: 600px ) {
+	.align-left-mobile {
+		@include not-align-full;
+	}
+
+	.align-center-mobile {
+		@include not-align-full;
+	}
+
+	.align-right-mobile {
+		@include not-align-full;
+	}
+
+	.align-full-mobile {
+		@include align-full;
 	}
 }

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a431060fd5ed3234533b384d74ec8ead",
+    "content-hash": "2b8472df1527b4d7252c67556e51d142",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
@@ -171,6 +171,51 @@
                 "source": "https://github.com/tubalmartin/YUI-CSS-compressor-PHP-port"
             },
             "time": "2018-01-15T15:26:51+00:00"
+        },
+        {
+            "name": "wptt/webfont-loader",
+            "version": "v1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/WPTT/webfont-loader.git",
+                "reference": "7243420fec7f202a9355485b8533bd99a7654941"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/WPTT/webfont-loader/zipball/7243420fec7f202a9355485b8533bd99a7654941",
+                "reference": "7243420fec7f202a9355485b8533bd99a7654941",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "composer/installers": "~1.0",
+                "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
+                "php-parallel-lint/php-parallel-lint": "^1.2",
+                "wptrt/wpthemereview": "^0.2.1"
+            },
+            "type": "package",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/WPTT/font-loader/graphs/contributors"
+                }
+            ],
+            "description": "Locally host webfonts.",
+            "homepage": "https://github.com/WPTT/font-loader",
+            "keywords": [
+                "wordpress"
+            ],
+            "support": {
+                "issues": "https://github.com/WPTT/font-loader/issues",
+                "source": "https://github.com/WPTT/font-loader"
+            },
+            "time": "2020-10-03T12:29:50+00:00"
         }
     ],
     "packages-dev": [

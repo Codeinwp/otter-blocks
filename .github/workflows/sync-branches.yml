@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - 'master'
-      - 'development'
 jobs:
   sync-branch:
     runs-on: ubuntu-latest
@@ -20,12 +19,4 @@ jobs:
           type: now
           from_branch: master
           target_branch: development
-          github_token: ${{ secrets.BOT_TOKEN }}
-      - name: Merge development -> otter-pro
-        if: ${{ steps.retrieve-branch-name.outputs.branch_name == 'development' }}
-        uses: Codeinwp/merge-branch@master
-        with:
-          type: now
-          from_branch: development
-          target_branch: otter-pro
           github_token: ${{ secrets.BOT_TOKEN }}

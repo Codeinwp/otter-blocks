@@ -1,0 +1,73 @@
+.o-dynamic {
+	&:disabled {
+		.o-dynamic-list-item {
+			opacity: 0.5;
+
+			&::after {
+				content: "Pro";
+				text-transform: uppercase;
+				margin-left: 5px;
+				background: #1E7DB3;
+				color: #fff;
+				padding: 4px 6px;
+				border-radius: 2px;
+				font-size: 8px;
+				position: relative;
+				top: -1px;
+			}
+		}
+	}
+
+	.o-dynamic-list-item {
+		display: list-item;
+		list-style-type: disc;
+		list-style-position: inside;
+	}
+}
+
+o-dynamic {
+	color: #ED6F57;
+	background: rgba(237, 111, 87, 0.1);
+	padding: 2px 5px;
+	border-radius: 8px;
+}
+
+.o-dynamic-modal {
+	.components-modal__content {
+		padding: 0;
+		margin: 0;
+		overflow-y: hidden;
+		overflow-y: scroll;
+		max-width: 360px;
+
+		&::before {
+			min-height: 60px;
+			margin-bottom: 0;
+		}
+	}
+
+	.components-modal__header {
+		background: #ffffff;
+		padding: 0 24px;
+		margin: 0;
+	}
+}
+
+.o-dynamic-popover {
+	.components-popover__content {
+		width: 300px;
+	}
+
+	.components-panel__body-toggle {
+		padding: 16px 48px 16px 16px;
+	}
+
+	.components-form-token-field__token-text {
+		display: flex;
+		align-items: center;
+	}
+
+	.o-notice {
+		margin: 10px 0 0 0;
+	}
+}

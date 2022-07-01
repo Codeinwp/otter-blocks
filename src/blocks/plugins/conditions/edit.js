@@ -337,13 +337,6 @@ const Edit = ({
 			>
 				<p>{ __( 'Control the visibility of your blocks based on the following conditions.', 'otter-blocks' ) }</p>
 
-				{ ( ! hasPro ) && (
-					<Notice
-						notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
-						variant="upsell"
-					/>
-				) }
-
 				<p>{ __( 'Display the block if…', 'otter-blocks' ) }</p>
 
 				{ attributes.otterConditions && attributes.otterConditions.map( ( group, index ) => {
@@ -481,6 +474,13 @@ const Edit = ({
 				</Button>
 
 				{ applyFilters( 'otter.blockConditions.notices', '' ) }
+
+				{ ( ! hasPro ) && (
+					<Notice
+						notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+						variant="upsell"
+					/>
+				) }
 
 				{ applyFilters( 'otter.poweredBy', '' ) }
 			</PanelBody>

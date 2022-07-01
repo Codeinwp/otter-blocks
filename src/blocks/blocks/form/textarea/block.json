@@ -6,7 +6,7 @@
 	"category": "themeisle-blocks",
 	"description": "Display a contact form for your clients.",
 	"keywords": [ "textarea", "message", "input" ],
-	"parent": [ "themeisle-blocks/form" ],
+	"ancestor": [ "themeisle-blocks/form" ],
 	"textdomain": "otter-blocks",
 	"attributes": {
 		"id": {
@@ -22,6 +22,15 @@
 			"type": "boolean"
 		},
 		"mappedName": {
+			"type": "string"
+		},
+		"labelColor": {
+			"type": "string"
+		},
+		"inputWidth": {
+			"type": "number"
+		},
+		"helpText": {
 			"type": "string"
 		}
 	},

@@ -212,6 +212,24 @@ class Options_Settings {
 							if ( isset( $item['email'] ) ) {
 								$item['email'] = sanitize_text_field( $item['email'] );
 							}
+							if ( isset( $item['redirectLink'] ) ) {
+								$item['redirectLink'] = sanitize_text_field( $item['redirectLink'] );
+							}
+							if ( isset( $item['titleSubject'] ) ) {
+								$item['titleSubject'] = sanitize_text_field( $item['titleSubject'] );
+							}
+							if ( isset( $item['fromName'] ) ) {
+								$item['fromName'] = sanitize_text_field( $item['fromName'] );
+							}
+							if ( isset( $item['cc'] ) ) {
+								$item['cc'] = sanitize_text_field( $item['cc'] );
+							}
+							if ( isset( $item['bcc'] ) ) {
+								$item['bcc'] = sanitize_text_field( $item['bcc'] );
+							}
+							if ( isset( $item['submitMessage'] ) ) {
+								$item['submitMessage'] = sanitize_text_field( $item['submitMessage'] );
+							}
 							if ( isset( $item['integration']['provider'] ) ) {
 								$item['integration']['provider'] = sanitize_text_field( $item['integration']['provider'] );
 							}
@@ -235,16 +253,34 @@ class Options_Settings {
 						'items' => array(
 							'type'       => 'object',
 							'properties' => array(
-								'form'        => array(
+								'form'          => array(
 									'type' => 'string',
 								),
-								'hasCaptcha'  => array(
+								'hasCaptcha'    => array(
 									'type' => array( 'boolean', 'number', 'string' ),
 								),
-								'email'       => array(
+								'email'         => array(
 									'type' => 'string',
 								),
-								'integration' => array(
+								'fromName'      => array(
+									'type' => 'string',
+								),
+								'redirectLink'  => array(
+									'type' => 'string',
+								),
+								'emailSubject'  => array(
+									'type' => 'string',
+								),
+								'submitMessage' => array(
+									'type' => 'string',
+								),
+								'cc'            => array(
+									'type' => 'string',
+								),
+								'bcc'           => array(
+									'type' => 'string',
+								),
+								'integration'   => array(
 									'type'       => 'object',
 									'properties' => array(
 										'provider' => array(

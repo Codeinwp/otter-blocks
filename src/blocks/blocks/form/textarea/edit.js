@@ -10,7 +10,8 @@ import {
 
 import {
 	Fragment,
-	useEffect
+	useEffect,
+	useRef
 } from '@wordpress/element';
 
 /**
@@ -39,6 +40,29 @@ const Edit = ({
 
 	const blockProps = useBlockProps();
 
+	const labelRef = useRef( null );
+	const inputRef = useRef( null );
+	const helpRef = useRef( null );
+
+
+	useEffect( () => {
+		const per = x => x ? x + '%' : x;
+
+		/**
+		 * TODO: Refactor this based on #748
+		 */
+
+		if ( inputRef.current ) {
+			inputRef.current?.style?.setProperty( '--inputWidth', per( attributes.inputWidth ) );
+		}
+		if ( labelRef.current ) {
+			labelRef.current?.style?.setProperty( '--labelColor',  attributes.labelColor || null );
+		}
+		if ( helpRef.current ) {
+			helpRef.current?.style?.setProperty( '--labelColor', attributes.labelColor || null );
+		}
+	}, [ inputRef.current, labelRef.current, attributes ]);
+
 	return (
 		<Fragment>
 			<Inspector
@@ -48,7 +72,8 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				<label
-					htmlFor={ attributes.id }
+					ref={ labelRef }
+					htmlFor={ attributes.id ? attributes.id + '-input' : '' }
 					className="otter-form-textarea-label"
 				>
 					<RichText
@@ -60,20 +85,31 @@ const Edit = ({
 					/>
 
 					{ attributes.isRequired && (
-						<span className="required">{ __( '(required)', 'otter-blocks' ) }</span>
+						<span className="required">*</span>
 					) }
 				</label>
 
 				<textarea
+					ref={ inputRef }
 					placeholder={ attributes.placeholder }
 					name={ attributes.id }
-					id={ attributes.id }
+					id={ attributes.id ? attributes.id + '-input' : '' }
 					required={ attributes.isRequired }
 					disabled
 					rows={ 10 }
 					className="otter-form-textarea-input components-textarea-control__input"
 				>
 				</textarea>
+				{
+					attributes.helpText && (
+						<span
+							className="o-form-help"
+							ref={ helpRef }
+						>
+							{ attributes.helpText }
+						</span>
+					)
+				}
 			</div>
 		</Fragment>
 	);

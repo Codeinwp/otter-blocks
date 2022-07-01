@@ -3,7 +3,6 @@
 .wp-block-themeisle-blocks-form {
 	.wp-block-themeisle-blocks-form-input {
 		.otter-form-input {
-			padding: 10px 5px;
 			margin-bottom: 0;
 		}
 	}
@@ -14,6 +13,29 @@
 	}
 
 	.otter-form-captcha {
-		margin: 10px 0px;
+		margin: 10px 0;
+	}
+
+	.otter-form__container > .block-editor-inner-blocks > .block-editor-block-list__layout {
+		display: flex;
+		flex-direction: column;
+		gap: var(--inputsGap);
+
+		&> div {
+			width: 100%;
+		}
+	}
+}
+
+.o-fetch-msg {
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	margin: 8px 0;
+	border-left: 3px solid orange;
+	padding-left: 18px;
+
+	&.o-error {
+		border-color: red;
 	}
 }

@@ -3,31 +3,71 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import api from '@wordpress/api';
-
-import { InspectorControls } from '@wordpress/block-editor';
+import {
+	InspectorControls,
+	PanelColorSettings
+} from '@wordpress/block-editor';
 
 import {
 	Button,
+	ExternalLink,
 	PanelBody,
+	RangeControl,
 	SelectControl,
 	Spinner,
 	TextControl,
-	ToggleControl
+	ToggleControl,
+	TextareaControl,
+	__experimentalBoxControl as BoxControl,
+	FontSizePicker
 } from '@wordpress/components';
-
-import { dispatch } from '@wordpress/data';
 
 import {
 	Fragment,
-	useState,
-	useEffect
+	useContext
 } from '@wordpress/element';
 
 /**
  * Internal dependencies.
  */
-import { getListIdOptionFrom } from './integrations.js';
+import { FormContext } from './edit.js';
+import SyncControl from '../../components/sync-control';
+
+const compare = x => {
+	return x?.[1] && x[0] !== x[1];
+};
+
+/**
+ * Small utility function for checking if a list of variable pair are different.
+ * @param {array} list
+ * @return {boolean}
+ */
+const isChanged = list => {
+	return Boolean( 0 < list.filter( compare ).length );
+};
+
+const defaultFontSizes = [
+	{
+		name: __( 'Small', 'otter-blocks' ),
+		size: '0.875em',
+		slug: 'small'
+	},
+	{
+		name: __( 'Medium', 'otter-blocks' ),
+		size: '1em',
+		slug: 'medium'
+	},
+	{
+		name: __( 'Large', 'otter-blocks' ),
+		size: '1.125em',
+		slug: 'large'
+	},
+	{
+		name: __( 'XL', 'otter-blocks' ),
+		size: '1.25em',
+		slug: 'xl'
+	}
+];
 
 /**
  *
@@ -38,259 +78,605 @@ const Inspector = ({
 	attributes,
 	setAttributes
 }) => {
-	const { createNotice } = dispatch( 'core/notices' );
 
-	const [ savedEmail, setSavedEmail ] = useState( '' );
-	const [ email, setEmail ] = useState( '' );
-	const [ isEmailLoaded, setEmailLoading ] = useState( true );
-	const [ listIDOptions, setListIDOptions ] = useState([ { label: __( 'None', 'otter-blocks' ), value: '' } ]);
-	const [ fetchListIdStatus, setFetchListIdStatus ] = useState( 'loading' );
+	const {
+		listIDOptions,
+		setListIDOptions,
+		saveFormEmailOptions,
+		saveIntegration,
+		savedFormOptions,
+		sendTestEmail,
+		loadingState,
+		formOptions,
+		setFormOption,
+		testService,
+		hasEmailField
+	} = useContext( FormContext );
 
-	useEffect( () => {
-		let isMounted = true;
-		if ( attributes.optionName ) {
-			api.loadPromise.then( () => {
-				( new api.models.Settings() ).fetch().done( res => {
-					res.themeisle_blocks_form_emails?.filter( ({ form }) => form === attributes.optionName )?.forEach( item => {
-						if ( isMounted ) {
-							setEmail( item?.email );
-							setEmailLoading( true );
-							setSavedEmail( item?.email );
-						}
-					});
-				});
-			});
-		}
+	const formOptionsChanged = isChanged([
+		[ formOptions.emailTo, savedFormOptions?.email ],
+		[ formOptions.subject, savedFormOptions?.emailSubject ],
+		[ formOptions.redirectLink, savedFormOptions?.redirectLink ],
+		[ formOptions.fromName, savedFormOptions?.fromName ],
+		[ formOptions.submitMessage, savedFormOptions?.submitMessage ],
+		[ formOptions.cc, savedFormOptions?.cc ],
+		[ formOptions.bcc, savedFormOptions?.bcc ],
+		[ formOptions.hasCaptcha, savedFormOptions?.hasCaptcha ]
+	]);
 
-		return () => {
-			isMounted = false;
-		};
-	}, [ attributes.optionName ]);
-
-	useEffect( () => {
-		let isMounted = true;
-
-		if ( attributes.apiKey && attributes.provider ) {
-			getListIdOptionFrom( attributes.provider, attributes.apiKey,
-				options => {
-					options.splice( 0, 0, { label: __( 'None', 'otter-blocks' ), value: '' });
-					if ( isMounted ) {
-						setListIDOptions( options );
-						setFetchListIdStatus( 'ready' );
-					}
-
-					const isCurrentOptionValid = 1 === options.map( ({ value }) => value ).filter( value => value === attributes.listId ).length;
-					if ( attributes.listId && ! isCurrentOptionValid ) {
-						createNotice(
-							'error',
-							__( 'The current contact list is invalid! Please choose a new contact list.', 'otter-blocks' ),
-							{
-								isDismissible: true,
-								type: 'snackbar'
-							}
-						);
-					}
-				},
-				err => {
-					createNotice(
-						'error',
-						err?.error,
-						{
-							isDismissible: true,
-							type: 'snackbar',
-							id: 'themeisle-form-server-error'
-						}
-					);
-
-					if ( isMounted ) {
-						setFetchListIdStatus( 'error' );
-					}
-				}
-			);
-		}
-
-		return () => {
-			isMounted = false;
-		};
-	}, [ attributes.provider, attributes.apiKey ]);
-
-	const saveEmail = () => {
-		( new api.models.Settings() ).fetch().done( res => {
-			const emails = res.themeisle_blocks_form_emails ? res.themeisle_blocks_form_emails : [];
-			let isMissing = true;
-			let hasUpdated = false;
-
-			emails?.forEach( ({ form }, index ) => {
-				if ( form === attributes.optionName ) {
-					if ( emails[index].email !== email ) {
-						emails[index].email = email; // update the value
-						hasUpdated = true;
-					}
-					isMissing = false;
-				}
-			});
-
-			if ( isMissing ) {
-				emails.push({
-					form: attributes.optionName,
-					email
-				});
-			}
-
-			if ( isMissing || hasUpdated ) {
-				const model = new api.models.Settings({
-					// eslint-disable-next-line camelcase
-					themeisle_blocks_form_emails: emails
-				});
-
-				setEmailLoading( false );
-
-				model.save().then( response => {
-					response.themeisle_blocks_form_emails?.filter( ({ form }) => form === attributes.optionName ).forEach( item => {
-						{
-							setEmailLoading( true );
-							setSavedEmail( item?.email );
-
-							createNotice(
-								'info',
-								__( 'Email has been saved!', 'otter-blocks' ),
-								{
-									isDismissible: true,
-									type: 'snackbar'
-								}
-							);
-						}
-					});
-				});
-			}
-		});
-	};
+	const formIntegrationChanged = isChanged([
+		[ formOptions.provider, savedFormOptions?.integration?.provider ],
+		[ formOptions.listId, savedFormOptions?.integration?.listId ],
+		[ formOptions.action, savedFormOptions?.integration?.action ]
+	]);
 
 	return (
 		<InspectorControls>
+
+			<PanelColorSettings
+				title={ __( 'Form Color', 'otter-blocks' ) }
+				initialOpen={ false }
+				colorSettings={ [
+					{
+						value: attributes.labelColor,
+						onChange: labelColor => setAttributes({ labelColor }),
+						label: __( 'Label', 'otter-blocks' )
+					},
+					{
+						value: attributes.helpLabelColor,
+						onChange: helpLabelColor => setAttributes({ helpLabelColor }),
+						label: __( 'Help Label', 'otter-blocks' )
+					},
+					{
+						value: attributes.inputBorderColor,
+						onChange: inputBorderColor => setAttributes({ inputBorderColor }),
+						label: __( 'Border', 'otter-blocks' )
+					},
+					{
+						value: attributes.inputRequiredColor,
+						onChange: inputRequiredColor => setAttributes({ inputRequiredColor }),
+						label: __( 'Label Required', 'otter-blocks' )
+					},
+					{
+						value: attributes.inputColor,
+						onChange: inputColor => setAttributes({ inputColor }),
+						label: __( 'Input', 'otter-blocks' )
+					}
+				] }
+			/>
+
+			<PanelColorSettings
+				title={ __( 'Button Color', 'otter-blocks' ) }
+				initialOpen={ false }
+				colorSettings={ [
+					{
+						value: attributes.submitColor,
+						onChange: submitColor => setAttributes({ submitColor }),
+						label: __( 'Submit Text', 'otter-blocks' )
+					},
+					{
+						value: attributes.submitBackgroundColor,
+						onChange: submitBackgroundColor => setAttributes({ submitBackgroundColor }),
+						label: __( 'Button Background', 'otter-blocks' )
+					},
+					{
+						value: attributes.submitBackgroundColorHover,
+						onChange: submitBackgroundColorHover => setAttributes({ submitBackgroundColorHover }),
+						label: __( 'Button Background on Hover', 'otter-blocks' )
+					},
+					{
+						value: attributes.submitMessageColor,
+						onChange: submitMessageColor => setAttributes({ submitMessageColor }),
+						label: __( 'Successful Message', 'otter-blocks' )
+					},
+					{
+						value: attributes.submitMessageErrorColor,
+						onChange: submitMessageErrorColor => setAttributes({ submitMessageErrorColor }),
+						label: __( 'Error Message', 'otter-blocks' )
+					}
+				] }
+			/>
+
 			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
+				title={ __( 'Label Styling', 'otter-blocks' ) }
+				initialOpen={ false }
 			>
+				<SyncControl
+					field={ 'inputGap' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Spacing', 'otter-blocks' ) }
+						value={ attributes.inputGap ?? 16 }
+						onChange={ inputGap => setAttributes({ inputGap }) }
+						allowReset
+						min={ 0 }
+						max={ 50 }
+						initialPositino={ 5 }
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field={ 'labelFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<FontSizePicker
+						label={ __( 'Font Size', 'otter-blocks' ) }
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.labelFontSize }
+						onChange={ labelFontSize =>  setAttributes({ labelFontSize }) }
+					/>
+				</SyncControl>
+
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Input Styling', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<SyncControl
+					field={ 'inputFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<FontSizePicker
+						label={ __( 'Input Font Size', 'otter-blocks' ) }
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.inputFontSize }
+						onChange={ inputFontSize =>  setAttributes({ inputFontSize }) }
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field={ 'inputsGap' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Fields Spacing', 'otter-blocks' ) }
+						value={ attributes.inputsGap ?? 10}
+						onChange={ inputsGap => setAttributes({ inputsGap }) }
+						allowReset
+						min={ 0 }
+						max={ 50 }
+						initialPosition={ 10 }
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field={ 'inputPadding' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<BoxControl
+						label={ __( 'Input Padding', 'otter-blocks' ) }
+						values={ attributes.inputPadding ?? {'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px'} }
+						inputProps={ {
+							min: 0,
+							max: 500
+						} }
+						onChange={ inputPadding => setAttributes({ inputPadding }) }
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field={ 'inputsBorderRadius' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Border Radius', 'otter-blocks' ) }
+						value={ attributes.inputBorderRadius ?? 4 }
+						onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
+						allowReset
+						min={ 0 }
+						max={ 50 }
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field={ 'inputsBorderWidth' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Border Width', 'otter-blocks' ) }
+						value={ attributes.inputBorderWidth ?? 1 }
+						onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
+						allowReset
+						min={ 0 }
+						max={ 50 }
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field={ 'helpFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<h2>{__( 'Help Text Font Size', 'otter-blocks' )}</h2>
+
+					<FontSizePicker
+						label={ __( 'Help Font Size', 'otter-blocks' ) }
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.helpFontSize }
+						onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
+					/>
+				</SyncControl>
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Button', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<TextControl
+					label={ __( 'Label', 'otter-blocks' ) }
+					placeholder={ __( 'Submit', 'otter-blocks' ) }
+					value={ attributes.submitLabel }
+					onChange={ submitLabel => setAttributes({ submitLabel }) }
+					help={ __( 'Set the label for the submit button.', 'otter-blocks' ) }
+				/>
+
+				<SyncControl
+					field={ 'submitFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<FontSizePicker
+						label={ __( 'Font Size', 'otter-blocks' ) }
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.submitFontSize }
+						onChange={ submitFontSize =>  setAttributes({ submitFontSize }) }
+					/>
+				</SyncControl>
+
+				<SelectControl
+					label={ __( 'Alignment', 'otter-blocks' ) }
+					value={ attributes.submitStyle }
+					options={[
+						{
+							label: 'Default',
+							value: ''
+						},
+						{
+							label: 'Right',
+							value: 'right'
+						},
+						{
+							label: 'Full',
+							value: 'full'
+						}
+					]}
+					onChange={ submitStyle => setAttributes({ submitStyle}) }
+				/>
+
+				<SyncControl
+					field={ 'messageFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<h2>{__( 'Message Font Size', 'otter-blocks' )}</h2>
+
+					<FontSizePicker
+						label={ __( 'Message Font Size', 'otter-blocks' ) }
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.messageFontSize }
+						onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
+					/>
+				</SyncControl>
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Form Options', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				{
+					'loading' === loadingState?.formOptions && (
+						<div className="o-fetch-msg">
+							<Spinner />
+							{ __( 'Loading the options. Please wait...', 'otter-blocks' ) }
+						</div>
+					)
+				}
+
 				<TextControl
 					label={ __( 'Email Subject', 'otter-blocks' ) }
 					placeholder={ __( 'A new submission', 'otter-blocks' ) }
-					value={ attributes.subject }
-					onChange={ subject => setAttributes({ subject }) }
-					help={ __( 'Customize the email title send by this form.', 'otter-blocks' ) }
+					value={ formOptions.subject }
+					onChange={ subject => setFormOption({ subject }) }
+					help={ __( 'Customize the title of the email that you are gonna receive after a user submits the form.', 'otter-blocks' ) }
+				/>
+
+				<TextControl
+					label={ __( 'From Name', 'otter-blocks' ) }
+					value={ formOptions.fromName }
+					onChange={ fromName => setFormOption({ fromName }) }
+					help={ __( 'Set the name of the sender. Some SMTP plugins might override this value.', 'otter-blocks' ) }
 				/>
 
 				<TextControl
 					label={ __( 'Email To', 'otter-blocks' ) }
 					placeholder={ __( 'Default is to admin site', 'otter-blocks' ) }
-					value={ email }
-					onChange={ email => setEmail( email ) }
-					help={ __( 'Send form data to another email. (Admin is default).', 'otter-blocks' ) }
+					type="email"
+					value={ formOptions.emailTo }
+					onChange={ emailTo => setFormOption({emailTo}) }
+					help={ __( 'Send the form\'s data to another email. (Admin\'s email is default).', 'otter-blocks' ) }
 				/>
 
-				<Button
-					isPrimary
-					onClick={ saveEmail }
-					disabled={ email === savedEmail }
-				>
-					<Fragment>
-						{
-							! isEmailLoaded && (
-								<Spinner />
-							)
-						}
-						{
-							__( 'Save', 'otter-blocks' )
-						}
-					</Fragment>
-				</Button>
+				<TextControl
+					label={ __( 'Cc', 'otter-blocks' ) }
+					placeholder={ __( 'Send copies to', 'otter-blocks' ) }
+					type="text"
+					value={ formOptions.cc }
+					onChange={ cc => setFormOption({cc}) }
+					help={ __( 'Add emails separated by commas: example1@otter.com, example2@otter.com.', 'otter-blocks' ) }
+				/>
 
-				<ToggleControl
-					label={ __( 'Add captcha checkbox', 'otter-blocks' ) }
-					checked={ attributes.hasCaptcha }
-					onChange={ hasCaptcha => setAttributes({ hasCaptcha }) }
-					help={ __( 'Add Google reCaptcha V2 for protection againts bots.', 'otter-blocks' ) }
+				<TextControl
+					label={ __( 'Bcc', 'otter-blocks' ) }
+					placeholder={ __( 'Send copies to', 'otter-blocks' ) }
+					type="text"
+					value={ formOptions.bcc }
+					onChange={ bcc => setFormOption({bcc}) }
+					help={ __( 'Add emails separated by commas: example1@otter.com, example2@otter.com.', 'otter-blocks' ) }
+				/>
+
+				<TextareaControl
+					label={ __( 'Submit Success Message', 'otter-blocks' ) }
+					placeholder={ __( 'Success', 'otter-blocks' ) }
+					value={ formOptions.submitMessage }
+					onChange={ submitMessage =>  setFormOption({ submitMessage })  }
+					help={ __( 'Show this message after the form was successfully submitted.', 'otter-blocks' ) }
+				/>
+
+				<TextControl
+					label={ __( 'Redirect To', 'otter-blocks' ) }
+					type="url"
+					placeholder={ __( 'https://example.com', 'otter-blocks' ) }
+					value={ formOptions.redirectLink }
+					onChange={ redirectLink => setFormOption({redirectLink})  }
+					help={ __( 'Redirect the user to another page when submit is successful.', 'otter-blocks' ) }
 				/>
 
 				{
-					attributes.hasCaptcha && (
-						__( 'You can change the API Keys in Settings > Otter', 'otter-blocks' )
+					formOptions.redirectLink && (
+						<ExternalLink
+							href={ formOptions.redirectLink }
+							style={ {
+								marginBottom: '10px',
+								display: 'block'
+							} }
+						>
+							{ __( 'Preview Redirect link.', 'otter-blocks' ) }
+						</ExternalLink>
 					)
 				}
+
+				<Button
+					isPrimary
+					onClick={ saveFormEmailOptions }
+					help={ __( '[WIP] Do not forget to save the options ', 'otter-blocks' ) }
+					isBusy={ 'saving' === loadingState?.formOptions }
+				>
+					{ 'saving' === loadingState?.formOptions ? __( 'Saving...', 'otter-blocks' ) : __( 'Apply Options', 'otter-blocks' ) }
+				</Button>
+
+				{ 'done' === loadingState?.formOptions && formOptionsChanged && (
+					<div className="o-fetch-msg">
+						{ __( 'You have made some modifications. Do not forget to save the options.', 'otter-blocks' ) }
+					</div>
+				) }
+
+				{ 'error' === loadingState?.formOptions && (
+					<div className="o-fetch-msg o-error">
+						{ __( 'An error has occurred while saving. Please try again.', 'otter-blocks' ) }
+					</div>
+				) }
 
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Integration', 'otter-blocks' ) }
+				title={ __( 'Test SMTP', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
+				<span>{ __( 'In order for the Form to work properly, make sure your SMTP server is set up. The test email will be send to the address from the field Email To on Form Options.', 'otter-blocks' ) }</span>
+
+				<ExternalLink
+					href="https://www.wpbeginner.com/wp-tutorials/how-to-use-smtp-server-to-send-wordpress-emails/"
+					style={{ marginLeft: '3px' }}
+				>
+					{ __( 'Learn more.', 'otter-blocks' ) }
+				</ExternalLink>
+
+				<br/>
+
+				<Button
+					variant="primary"
+					isPrimary
+					style={{ marginTop: '8px'}}
+					onClick={ sendTestEmail }
+				>
+					{ __( 'Send Test Email', 'otter-blocks' )  }
+				</Button>
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Bot Protection', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<ToggleControl
+					label={ __( 'Add captcha checkbox', 'otter-blocks' ) }
+					checked={ attributes.hasCaptcha }
+					onChange={ hasCaptcha => setAttributes({ hasCaptcha }) }
+					help={ __( 'Add Google reCaptcha V2 for protection againts bots. You will need an API Key.', 'otter-blocks' ) }
+				/>
+
 				{
-					__( 'Add your client email to a Digital Marketing provider.', 'otter-blocks' )
+					formOptions.hasCaptcha && (
+						<div
+							style={{
+								display: 'flow-root',
+								margin: '10px 0px'
+							}}
+						>
+							{ __( 'You can change the reCaptcha API Keys in Settings > Otter. ', 'otter-blocks' ) }
+							<ExternalLink
+								href="https://www.google.com/recaptcha/about/"
+								target="_blank"
+
+							>
+								{ __( 'Learn more about reCaptcha.', 'otter-blocks' ) }
+							</ExternalLink>
+						</div>
+					)
 				}
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Marketing Integration', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				{ __( 'Add your client email to a Digital Marketing provider.', 'otter-blocks' ) }
 				<br /> <br />
-				<b> { __( 'You need to have at least one email field in your form. For multiple email fields, only the first will be used.', 'otter-blocks' ) } </b>
+				{
+					'loading' === loadingState?.formIntegration && (
+						<div className="o-fetch-msg">
+							<Spinner />
+							{ __( 'Fetching data from server. Please wait.', 'otter-blocks' ) }
+						</div>
+					)
+				}
+				<b>{ __( 'You need to have at least one email field in your form. For multiple email fields, only the first will be used.', 'otter-blocks' ) }</b>
 
 				<SelectControl
 					label={ __( 'Provider', 'otter-blocks' ) }
-					value={ attributes.provider }
+					value={ formOptions.provider }
 					options={ [
 						{ label: __( 'None', 'otter-blocks' ), value: '' },
 						{ label: __( 'Mailchimp', 'otter-blocks' ), value: 'mailchimp' },
 						{ label: __( 'Sendinblue', 'otter-blocks' ), value: 'sendinblue' }
 					] }
 					onChange={ provider => {
-						setAttributes({ provider, apiKey: '', listId: '' });
+						setFormOption({ provider, listId: '', apiKey: '' });
 					} }
 				/>
 
 				{
-					attributes.provider && (
+					formOptions.provider && (
 						<Fragment>
+							{ ! formOptions.apiKey && (
+								<Fragment>
+									{
+										'mailchimp' === formOptions?.provider && (
+											<ExternalLink
+												href="https://us5.admin.mailchimp.com/account/api/"
+												style={{ marginBottom: '10px', display: 'block'}}
+												target="_blank"
+											>
+												{ __( 'Guide to generate the API Key.', 'otter-blocks' ) }
+											</ExternalLink>
+										)
+									}
+									{
+										'sendinblue' === formOptions?.provider && (
+											<ExternalLink
+												href="https://help.sendinblue.com/hc/en-us/articles/209467485-What-s-an-API-key-and-how-can-I-get-mine-"
+												style={{ marginBottom: '10px', display: 'block'}}
+												target="_blank"
+											>
+												{ __( 'Guide to generate the API Key.', 'otter-blocks' ) }
+											</ExternalLink>
+										)
+									}
+								</Fragment>
+
+							) }
+
 							<TextControl
 								label={ __( 'API Key', 'otter-blocks' ) }
 								help={ __( 'You can find the key in the provider\'s website', 'otter-blocks' ) }
-								value={ attributes.apiKey }
+								value={ formOptions.apiKey ? `*************************${formOptions.apiKey.slice( -8 )}` : '' }
 								onChange={ apiKey => {
-									setFetchListIdStatus( 'loading' );
 									setListIDOptions([]);
-									setAttributes({ apiKey, listId: '' });
+									setFormOption({
+										listId: '',
+										apiKey
+									});
 								}}
 							/>
 
+							{ formOptions.apiKey && 2 > listIDOptions.length && 'loading' === loadingState?.listId && (
+								<Fragment>
+									<Spinner />
+									{ __( 'Loading the options.', 'otter-blocks' ) }
+									<br /><br/>
+								</Fragment>
+							) }
+
+							{ formOptions.apiKey && 'error' === loadingState?.listId && (
+								<Fragment>
+									{ __( 'Invalid API Key. Please check your API Key in the provider\'s Dashboard.', 'otter-blocks' ) }
+
+									<ExternalLink
+										target="_blank"
+										style={{ marginBottom: '10px', display: 'block'}}
+										href={ 'sendinblue' === formOptions.provider ? 'https://account.sendinblue.com/advanced/api' : 'https://us5.admin.mailchimp.com/account/api/' }
+									>
+										{ __( 'Go to Dashboard.', 'otter-blocks' ) }
+									</ExternalLink>
+								</Fragment>
+							) }
+
+							{ formOptions.apiKey && 'timeout' === loadingState?.listId && (
+								<p>{ __( 'Could no connect to the server. Please try again.', 'otter-blocks' ) }</p>
+							) }
+
 							{
-								attributes.apiKey && 2 > listIDOptions.length && 'loading' === fetchListIdStatus && (
-									<Fragment>
-										<Spinner />
-										{ __( 'Fetching data from provider.', 'otter-blocks' ) }
-									</Fragment>
-								)
-							}
-							{
-								attributes.apiKey && 'ready' === fetchListIdStatus && (
+								formOptions.apiKey && 'done' === loadingState?.listId && (
 									<Fragment>
 										<SelectControl
 											label={ __( 'Contact List', 'otter-blocks' ) }
-											value={ attributes.listId }
+											value={ formOptions.listId }
 											options={ listIDOptions }
-											onChange={ listId => setAttributes({ listId }) }
+											onChange={ listId => setFormOption({ listId }) }
 										/>
 										{
-											2 <= listIDOptions?.length && attributes.listId && (
+											1 >= listIDOptions?.length && (
+												<p>
+													{ __( 'No Contact list found. Please create a list in your provider interface or check if the API key is correct.', 'otter-blocks' ) }
+												</p>
+											)
+										}
+										{
+											2 <= listIDOptions?.length && formOptions.listId && (
 												<Fragment>
 													<SelectControl
 														label={ __( 'Action', 'otter-blocks' ) }
-														value={ attributes.action }
+														value={ formOptions.action }
 														options={ [
-															{ label: __( 'None', 'otter-blocks' ), value: '' },
+															{ label: __( 'Default', 'otter-blocks' ), value: '' },
 															{ label: __( 'Subscribe', 'otter-blocks' ), value: 'subscribe' },
 															{ label: __( 'Submit & Subscribe', 'otter-blocks' ), value: 'submit-subscribe' }
 														] }
-														onChange={ action => setAttributes({ action }) }
+														onChange={ action => setFormOption({ action }) }
 													/>
 													{
-														'submit-subscribe' === attributes.action && (
-															__( 'This action will add the client to the contact list and send a separata email with the form data to administrator or to the email mentioned in \'Form to\' field. A checkbox for data-sharing consent with third-party will be added on form.', 'otter-blocks' )
+														'submit-subscribe' === formOptions.action && (
+															<div style={{ marginBottom: '10px' }}>
+																{
+																	__( 'This action will add the client to the contact list and send a separate email with the form data to administrator or to the email mentioned in \'Form to\' field. A checkbox for data-sharing consent with third-party will be added on form.', 'otter-blocks' )
+																}
+															</div>
 														)
 													}
+
 												</Fragment>
 											)
 										}
@@ -300,6 +686,64 @@ const Inspector = ({
 						</Fragment>
 					)
 				}
+
+				<div
+					style={{
+						display: 'flex',
+						flexDirection: 'row',
+						gap: '10px'
+					}}
+				>
+					<Button
+						isPrimary
+						variant="primary"
+						onClick={ saveIntegration }
+						isBusy={'saving' === loadingState?.formIntegration }
+					>
+						{ 'saving' === loadingState?.formIntegration ? __( 'Saving', 'otter-blocks' ) : __( 'Save', 'otter-blocks' ) }
+					</Button>
+					{
+						attributes.optionName && savedFormOptions?.integration?.provider && savedFormOptions?.integration?.apiKey && savedFormOptions?.integration?.listId && (
+							<Button
+								isSecondary
+								variant="secondary"
+								onClick={ testService }
+								isBusy={ 'saving' === loadingState?.serviceTesting }
+							>
+								<Fragment>
+									{
+										__( 'Test Service', 'otter-blocks' )
+									}
+								</Fragment>
+							</Button>
+						)
+					}
+				</div>
+
+
+				{ 'done' === loadingState?.formIntegration && formIntegrationChanged && (
+					<div className="o-fetch-msg">
+						{ __( 'You have made some modifications. Do not forget to save the options.', 'otter-blocks' ) }
+					</div>
+				) }
+
+				{ 'done' === loadingState?.serviceTesting && (
+					<div className="o-fetch-msg">
+						{ __( 'Remember to delete the test email from your provider\'s contact list.', 'otter-blocks' ) }
+					</div>
+				) }
+
+				{ 	( 'done' === loadingState?.formIntegration && formOptions?.apiKey && formOptions?.listId && ! hasEmailField ) && (
+					<div className="o-fetch-msg o-error">
+						{ __( 'Please add a Text Field with Email as type in your form for email registration.', 'otter-blocks' ) }
+					</div>
+				) }
+
+				{ 'error' === loadingState?.formIntegration && (
+					<div className="o-fetch-msg o-error">
+						{ __( 'An error has occurred while saving. Please try again.', 'otter-blocks' ) }
+					</div>
+				) }
 			</PanelBody>
 		</InspectorControls>
 	);

@@ -17,6 +17,9 @@
 		"emailTo": {
 			"type": "string"
 		},
+		"fromName": {
+			"type": "string"
+		},
 		"optionName": {
 			"type": "string"
 		},
@@ -27,15 +30,93 @@
 			"type": "string",
 			"default": ""
 		},
-		"apiKey": {
-			"type": "string"
-		},
 		"listId": {
 			"type": "string"
 		},
 		"action": {
 			"type": "string",
 			"default": "subscribe"
+		},
+		"submitLabel": {
+			"type": "string"
+		},
+		"sendUserEmail": {
+			"type": "boolean"
+		},
+		"redirectLink": {
+			"type": "string"
+		},
+		"inputPadding": {
+			"type": "object"
+		},
+		"labelColor": {
+			"type": "string"
+		},
+		"helpLabelColor": {
+			"type": "string"
+		},
+		"inputRequiredColor": {
+			"type": "string"
+		},
+		"inputBorderRadius": {
+			"type": "number"
+		},
+		"inputBorderColor": {
+			"type": "string"
+		},
+		"inputBorderWidth": {
+			"type": "number"
+		},
+		"submitMessage": {
+			"type": "string"
+		},
+		"inputWidth": {
+			"type": "number"
+		},
+		"submitMessageColor": {
+			"type": "string"
+		},
+		"submitMessageErrorColor": {
+			"type": "string"
+		},
+		"submitBackgroundColor": {
+			"type": "string"
+		},
+		"submitBackgroundColorHover": {
+			"type": "string"
+		},
+		"submitColor": {
+			"type": "string"
+		},
+		"inputGap": {
+			"type": "number"
+		},
+		"inputColor": {
+			"type": "string"
+		},
+		"inputsGap": {
+			"type": "number"
+		},
+		"labelFontSize": {
+			"type": "string"
+		},
+		"submitFontSize": {
+			"type": "string"
+		},
+		"messageFontSize": {
+			"type": "string"
+		},
+		"helpFontSize": {
+			"type": "string"
+		},
+		"inputFontSize": {
+			"type": "string"
+		},
+		"submitStyle": {
+			"type": "string"
+		},
+		"isSynced": {
+			"type": "array"
 		}
 	},
 	"supports": {

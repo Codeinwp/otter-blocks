@@ -16,6 +16,7 @@ import metadata from './block.json';
 import edit from './edit.js';
 import save from './save.js';
 import Inactive from '../../components/inactive/index.js';
+import './item/index.js';
 
 const { name } = metadata;
 
