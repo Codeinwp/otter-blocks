@@ -80,8 +80,6 @@ const Edit = ({
 
 			initObserver.current?.observe( container );
 		}
-		console.log( initObserver.current, container );
-
 
 		return () => {
 			if ( attributes?.images?.length ) {
@@ -141,6 +139,7 @@ const Edit = ({
 
 		if ( Boolean( iframe ) ) {
 			if ( ! Boolean( iframe.contentDocument?.querySelector( '#glidejs-js' ) ) ) {
+
 				// Load the JS file into the iframe.
 				const original = document.querySelector( '#glidejs-js' );
 				const n = iframe.contentWindow.document.createElement( 'script' );
