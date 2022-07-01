@@ -11,7 +11,7 @@ import { registerFormatType } from '@wordpress/rich-text';
 import './editor.scss';
 import './autocompleter.js';
 import edit from './edit.js';
-import './media-library.js';
+import './media/media-library.js';
 
 registerFormatType( 'themeisle-blocks/dynamic-value', {
 	title: __( 'Dynamic Value', 'otter-blocks' ),

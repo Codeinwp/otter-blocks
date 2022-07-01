@@ -1,10 +1,16 @@
-const { render } = wp.element;
+/**
+ * WordPress dependencies.
+ */
+import { __ } from '@wordpress/i18n';
 
-// Just some code to get me started.
+import {
+	Fragment,
+	render
+} from '@wordpress/element';
 
 // Global vars
 let activeFrameId = '';
-let activeFrame = '';
+let activeFrame = false;
 let activeModal = '';
 
 jQuery( document ).ready( function( $ ) {
@@ -22,7 +28,7 @@ jQuery( document ).ready( function( $ ) {
 			oldMediaFrame.prototype.browseRouter.apply( this, arguments );
 			routerView.set({
 				otterDynamicContent: {
-					text: 'Dynamic Content',
+					text: __( 'Dynamic Content', 'otter-blocks' ),
 					priority: 60
 				}
 			});
@@ -60,27 +66,25 @@ jQuery( document ).ready( function( $ ) {
 		}
 	});
 
-	// Render otter Images
+	// Render Otter Tab
 	const otterImagesMediaTab = () => {
-		const html = createWrapperHTML(); // Create HTML wrapper
+		const html = createWrapperHTML();
 
 		if ( ! activeFrame ) {
-			return false; // Exit if not a frame.
+			return false;
 		}
 
-		const modal = activeFrame.querySelector( '.media-frame-content' ); // Get all media modals
+		const modal = activeFrame.querySelector( '.media-frame-content' );
 		if ( ! modal ) {
-			return false; // Exit if not modal.
+			return false;
 		}
 
-		modal.innerHTML = ''; // Clear any existing modals.
-		modal.appendChild( html ); // Append otter Images to modal.
+		modal.innerHTML = '';
+		modal.appendChild( html );
 
-		const element = modal.querySelector(
-			'#otter-media-router-' + activeFrameId
-		);
+		const element = modal.querySelector( '#otter-media-router-' + activeFrameId );
 		if ( ! element ) {
-			return false; // Exit if not element.
+			return false;
 		}
 
 		renderPhotoList( element );
@@ -88,10 +92,10 @@ jQuery( document ).ready( function( $ ) {
 
 	const createWrapperHTML = () => {
 		const wrapper = document.createElement( 'div' );
-		wrapper.classList.add( 'otter-img-container' );
+		wrapper.classList.add( 'o-media-container' );
 
 		const container = document.createElement( 'div' );
-		container.classList.add( 'otter-wrapper' );
+		container.classList.add( 'media-frame-content', 'o-media-wrapper' );
 
 		const frame = document.createElement( 'div' );
 		frame.setAttribute( 'id', 'otter-media-router-' + activeFrameId );
@@ -102,19 +106,47 @@ jQuery( document ).ready( function( $ ) {
 		return wrapper;
 	};
 
-	const PhotoList = () => {
+	const DynamicImage = () => {
 		return (
-			<button onClick={ () => {
-				const state = activeModal.state();
-				const selection = state.get( 'selection' );
-				selection.add({ url: 'http://www2.cnrs.fr/sites/communique/image/mona_unvarnish_web_image.jpg' });
-			} }>Select Image!</button>
+			<Fragment>
+				<div className="attachments-browser">
+					<ul className="o-media-list">
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+						<li className="o-media-item"></li>
+					</ul>
+					<button onClick={ () => {
+						const state = activeModal.state();
+						const selection = state.get( 'selection' );
+						selection.add({ url: 'http://www2.cnrs.fr/sites/communique/image/mona_unvarnish_web_image.jpg' });
+					} }>Select Image!</button>
+				</div>
+
+				<div className="media-sidebar"></div>
+			</Fragment>
 		);
 	};
 
 	const renderPhotoList = element => {
 		render(
-			<PhotoList/>,
+			<DynamicImage/>,
 			element
 		);
 	};
