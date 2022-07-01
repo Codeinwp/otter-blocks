@@ -28,8 +28,23 @@
         },
 		"isSynced": {
 			"type": "array"
+		},
+		"fontFamily": {
+			"type": "string"
+		},
+		"fontVariant": {
+			"type": "string"
+		},
+		"fontStyle": {
+			"type": "string"
+		},
+		"textTransform": {
+			"type": "string"
+		},
+		"letterSpacing": {
+			"type": "string"
 		}
-    },
+	},
 	"supports": {
 		"html": false
 	},

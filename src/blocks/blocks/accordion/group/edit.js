@@ -4,6 +4,7 @@
  * External dependencies
  */
 import classnames from 'classnames';
+import GoogleFontLoader from 'react-google-font-loader';
 
 import {
 	css,
@@ -59,6 +60,11 @@ const Edit = ({
 		--titleBackground: ${ getValue( 'titleBackground' ) };
 		--borderColor: ${ getValue( 'borderColor' ) };
 		--contentBackground: ${ getValue( 'contentBackground' ) };
+		--fontFamily: ${ getValue( 'fontFamily' ) };
+		--fontVariant: ${ getValue( 'fontVariant' ) };
+		--fontStyle: ${ getValue( 'fontStyle' ) };
+		--textTransform: ${ getValue( 'textTransform' ) };
+		--letterSpacing: ${ getValue( 'letterSpacing' ) ? getValue( 'letterSpacing' ) + 'px' : undefined };
 	`;
 
 	const blockProps = useBlockProps({
@@ -71,6 +77,13 @@ const Edit = ({
 
 	return (
 		<Fragment>
+			{ attributes.fontFamily && (
+				<GoogleFontLoader fonts={ [ {
+					font: attributes.fontFamily,
+					weights: attributes.fontVariant && [ `${ attributes.fontVariant + ( 'italic' === attributes.fontStyle ? ':i' : '' ) }` ]
+				} ] } />
+			) }
+
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }

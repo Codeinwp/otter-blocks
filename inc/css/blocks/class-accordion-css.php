@@ -32,6 +32,10 @@ class Accordion_CSS extends Base_CSS {
 	 * @access  public
 	 */
 	public function render_css( $block ) {
+		if ( isset( $block['attrs']['id'] ) ) {
+			$this->get_google_fonts( $block['attrs'] );
+		}
+
 		$css = new CSS_Utility( $block );
 
 		$css->add_item(
@@ -56,6 +60,27 @@ class Accordion_CSS extends Base_CSS {
 						'property' => '--contentBackground',
 						'value'    => 'contentBackground',
 						'hasSync'  => 'accordionContentBackground',
+					),
+					array(
+						'property' => '--fontFamily',
+						'value'    => 'fontFamily',
+					),
+					array(
+						'property' => '--fontVariant',
+						'value'    => 'fontVariant',
+					),
+					array(
+						'property' => '--fontStyle',
+						'value'    => 'fontStyle',
+					),
+					array(
+						'property' => '--textTransform',
+						'value'    => 'textTransform',
+					),
+					array(
+						'property' => '--letterSpacing',
+						'value'    => 'letterSpacing',
+						'unit'     => 'px',
 					),
 				),
 			)

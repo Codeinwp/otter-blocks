@@ -8,6 +8,11 @@ type Attributes = {
 	contentBackground: string
 	borderColor: string
 	isSynced: string
+	fontFamily: string
+	fontVariant: string
+	fontStyle: string
+	textTransform: string
+	letterSpacing: number
 }
 
 export type AccordionGroupProps = BlockProps<Attributes>

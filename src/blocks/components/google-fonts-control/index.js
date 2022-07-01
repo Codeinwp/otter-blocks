@@ -181,6 +181,7 @@ const GoogleFontsControl = ({
 											if ( ! search || i.family.toLowerCase().includes( search.toLowerCase() ) ) {
 												return (
 													<MenuItem
+														key={ i.family.toLowerCase() }
 														className={ classnames(
 															{ 'is-selected': ( i.family === value ) }
 														) }

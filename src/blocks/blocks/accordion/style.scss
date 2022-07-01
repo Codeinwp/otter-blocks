@@ -11,6 +11,13 @@
 			color: var( --titleColor );
 			background: var( --titleBackground );
 			border: 1px solid var( --borderColor );
+
+			font-style: var(--fontStyle);
+			font-weight: var(--fontVariant);
+			font-family: var(--fontFamily);
+			text-transform: var( --textTransform );
+			letter-spacing: var( --letterSpacing );
+
 			list-style: none;
 			cursor: pointer;
 			user-select: none;
@@ -27,10 +34,6 @@
 
 			&:hover {
 				filter: brightness( 0.95 );
-			}
-
-			> div {
-
 			}
 
 			&::-webkit-details-marker,

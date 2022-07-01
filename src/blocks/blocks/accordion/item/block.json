@@ -18,12 +18,6 @@
         }
     },
 	"supports": {
-		"reusable": false,
-		"typography": {
-			"fontSize": true,
-			"__experimentalDefaultControls": {
-				"fontSize": true
-			}
-		}
+		"reusable": false
 	}
 }
