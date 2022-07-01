@@ -405,6 +405,12 @@ export const copyScriptAssetToIframe = ( assetSelectorId, callback ) => {
 			callback?.();
 		} else {
 			const original = document.querySelector( assetSelectorId );
+
+			if ( ! Boolean( original ) ) {
+				console.warn( `Selector: ${ assetSelectorId } is invalid.` );
+				return;
+			}
+
 			const n = iframe.contentWindow.document.createElement( 'script' );
 			n.onload = callback;
 			n.id = original.id;
