@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 /**
  * WordPress dependencies.
  */
-import {isEqual, zip} from 'lodash';
+import {isEmpty, isEqual, zip} from 'lodash';
 
 import {
 	dispatch,
@@ -384,4 +384,33 @@ export const useCSSNode = options => {
 	}, [ cssList.css, cssList.media, settings.node, settings.cssNodeName ]);
 
 	return [ settings.cssNodeName, setNodeCSS, setSettings ];
+};
+
+/**
+ * Get the iframe of the editor. Use in FSE or Mobile/Tablet Preview for Page/Post.
+ */
+export const getEditorIframe = () => ( document.querySelector( 'iframe[name^="editor-canvas"]' ) );
+
+/**
+ * Copy the JS node asset from main document to the iframe.
+ *
+ * @param {string} assetSelectorId The id of the asset.
+ * @param {Function} callback The callback.
+ */
+export const copyScriptAssetToIframe = ( assetSelectorId, callback ) => {
+	const iframe = getEditorIframe();
+	callback ??= () => {};
+	if ( Boolean( iframe ) ) {
+		if ( Boolean( iframe?.contentWindow?.document.querySelector( assetSelectorId ) ) ) {
+			callback?.();
+		} else {
+			const original = document.querySelector( assetSelectorId );
+			const n = iframe.contentWindow.document.createElement( 'script' );
+			n.onload = callback;
+			n.id = original.id;
+			n.type = 'text/javascript';
+			iframe.contentWindow.document?.head.appendChild( n );
+			n.src = original.src;
+		}
+	}
 };
