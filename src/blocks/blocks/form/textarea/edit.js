@@ -90,7 +90,7 @@ const Edit = ({
 				</label>
 
 				<textarea
-					ref={inputRef}
+					ref={ inputRef }
 					placeholder={ attributes.placeholder }
 					name={ attributes.id }
 					id={ attributes.id ? attributes.id + '-input' : '' }

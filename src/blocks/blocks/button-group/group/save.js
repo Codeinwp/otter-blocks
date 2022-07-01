@@ -15,6 +15,13 @@ const Save = ({
 	attributes
 }) => {
 	const collapseClass = 'collapse-none' !== attributes.collapse ? attributes.collapse : '';
+	const alignClasses = [ 'desktop', 'tablet', 'mobile' ].reduce( ( acc, device ) => {
+		if ( attributes.align && attributes.align[ device ]) {
+			acc.push( `align-${ attributes.align[ device ] }-${ device }` );
+		}
+
+		return acc;
+	}, []);
 
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
@@ -22,8 +29,9 @@ const Save = ({
 			collapseClass,
 			'wp-block-buttons',
 			{
-				[ `align-${ attributes.align }` ]: attributes.align
-			}
+				[ `align-${ attributes.align }` ]: 'string' === typeof attributes.align
+			},
+			...alignClasses
 		)
 	});
 

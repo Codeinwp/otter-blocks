@@ -90,7 +90,7 @@ const Edit = ({
 				</label>
 
 				<input
-					ref={inputRef}
+					ref={ inputRef }
 					type={ attributes.type }
 					placeholder={ attributes.placeholder }
 					name={ attributes.id }

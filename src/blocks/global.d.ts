@@ -34,6 +34,7 @@ declare global {
 				blocksConditions: boolean
 			}
 			blocksIDs: string[]
+			isAncestorTypeAvailable: boolean
 		}
 		otterPro?: {
 			isActive: boolean

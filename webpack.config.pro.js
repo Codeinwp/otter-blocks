@@ -60,7 +60,9 @@ module.exports = [
 						mkdir: blockFoldersPro,
 						copy: blockFilesPro
 					}
-				}
+				},
+				runOnceInWatchMode: false,
+				runTasksInSeries: true
 			}),
 			new BundleAnalyzerPlugin({
 				analyzerMode: 'disabled',
