@@ -182,7 +182,7 @@ const Edit = ({
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		css: inlineStyles
+		style: inlineStyles
 	});
 
 	return (

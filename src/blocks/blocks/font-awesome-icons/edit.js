@@ -54,7 +54,7 @@ const Edit = ({
 		'--borderRadius': attributes.borderRadius !== undefined && `${ attributes.borderRadius }%`,
 		'--margin':	attributes.margin !== undefined && `${ getValue( 'margin' ) }px`,
 		'--padding': attributes.padding !== undefined && `${ getValue( 'padding' ) }px`,
-		'--fontSize': attributes.fontSize !== undefined && `--fontSize: ${ getValue( 'fontSize' ) }px`
+		'--fontSize': attributes.fontSize !== undefined && `${ getValue( 'fontSize' ) }px`
 	};
 
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();

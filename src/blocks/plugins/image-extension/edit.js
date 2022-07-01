@@ -109,14 +109,13 @@ const Edit = ({
 			` ]);
 	}, [ attributes.boxShadowHorizontal, attributes.boxShadowVertical, attributes.boxShadowBlur, attributes.boxShadowColor, attributes.boxShadowColorOpacity ]);
 
-	props.className += ` ${cssNodeName};`;
 
 	return (
 		<Fragment>
 			{ attributes.boxShadow ? (
-				<BlockEdit { ...props } />
+				<BlockEdit {...props } className={ props.className + ` ${cssNodeName};` } />
 			) : (
-				<BlockEdit { ...props } />
+				<BlockEdit {...props } className={ props.className + ` ${cssNodeName};` } />
 			) }
 
 			<InspectorControls>
