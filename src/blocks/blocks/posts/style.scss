@@ -82,7 +82,6 @@
 		width: 100%;
 		position: relative;
 		margin-bottom: 30px;
-		padding: 10px 20px;
 		display: inline-block;
 		border: 0;
 		position: relative;
@@ -90,6 +89,7 @@
 		background-clip: border-box;
 
 		.o-posts-grid-post {
+			padding: 10px 20px;
 			margin-bottom: 10px;
 		}
 	}
