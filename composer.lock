@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2b8472df1527b4d7252c67556e51d142",
+    "content-hash": "f64b6cbffd5da90c359fafb3b08b5659",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
@@ -174,16 +174,16 @@
         },
         {
             "name": "wptt/webfont-loader",
-            "version": "v1.1.1",
+            "version": "v1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/WPTT/webfont-loader.git",
-                "reference": "7243420fec7f202a9355485b8533bd99a7654941"
+                "reference": "780e564bf0554c419ef447c2b5b768b497ecee40"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/WPTT/webfont-loader/zipball/7243420fec7f202a9355485b8533bd99a7654941",
-                "reference": "7243420fec7f202a9355485b8533bd99a7654941",
+                "url": "https://api.github.com/repos/WPTT/webfont-loader/zipball/780e564bf0554c419ef447c2b5b768b497ecee40",
+                "reference": "780e564bf0554c419ef447c2b5b768b497ecee40",
                 "shasum": ""
             },
             "require": {
@@ -215,7 +215,7 @@
                 "issues": "https://github.com/WPTT/font-loader/issues",
                 "source": "https://github.com/WPTT/font-loader"
             },
-            "time": "2020-10-03T12:29:50+00:00"
+            "time": "2022-06-17T10:41:00+00:00"
         }
     ],
     "packages-dev": [
