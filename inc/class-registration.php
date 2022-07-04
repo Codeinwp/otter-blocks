@@ -336,19 +336,27 @@ class Registration {
 		}
 
 		if ( function_exists( 'get_block_templates' ) ) {
-			$templates_parts = get_block_templates( array( 'wp_id' => $post ), 'wp_template_part' );
+			global $_wp_current_template_content;
+
+			$slugs = array();
+			$template_blocks = parse_blocks( $_wp_current_template_content );
+			foreach ($template_blocks as $template_block) {
+				if( 'core/template-part' === $template_block['blockName'] ) {
+					$slugs[] = $template_block['attrs']['slug'];
+				}
+			}
+
+			$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
 			foreach ($templates_parts as $templates_part) {
-				if( isset( $templates_part->content ) ) {
+				if( isset( $templates_part->content ) && in_array( $templates_part->slug, $slugs ) ) {
 					$content .= $templates_part->content;
 				}
 			}
-			$templates_parts = get_block_templates( array( 'wp_id' => $post ) );
-			foreach ($templates_parts as $templates_part) {
-				if( isset( $templates_part->content ) ) {
-					$content .= $templates_part->content;
-				}
-			}
+
+			$content .= $_wp_current_template_content;
+
 		}
+
 
 		$post = $content;
 
