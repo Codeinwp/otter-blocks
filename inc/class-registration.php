@@ -165,17 +165,11 @@ class Registration {
 	 * @access public
 	 */
 	public function enqueue_assets() {
-		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
-		wp_register_style( 'font-awesome-5', OTTER_BLOCKS_URL . 'assets/fontawesome/css/all.min.css', [], $asset_file['version'] );
-		wp_register_style( 'font-awesome-4-shims', OTTER_BLOCKS_URL . 'assets/fontawesome/css/v4-shims.min.css', [], $asset_file['version'] );
-
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/leaflet-map.asset.php';
 		wp_register_script( 'leaflet', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'leaflet', 'async', true );
 		wp_register_script( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'build/blocks/leaflet-gesture-handling.js', array( 'leaflet' ), $asset_file['version'], true );
 		wp_script_add_data( 'leaflet-gesture-handling', 'defer', true );
-		wp_register_style( 'leaflet', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet.css', [], $asset_file['version'] );
-		wp_register_style( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet-gesture-handling.min.css', [], $asset_file['version'] );
 
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
 		wp_register_script( 'lottie-player', OTTER_BLOCKS_URL . 'assets/lottie/lottie-player.min.js', [], $asset_file['version'], true );
@@ -184,8 +178,6 @@ class Registration {
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/slider.asset.php';
 		wp_register_script( 'glidejs', OTTER_BLOCKS_URL . 'assets/glide/glide.min.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'glidejs', 'async', true );
-		wp_register_style( 'glidejs-core', OTTER_BLOCKS_URL . 'assets/glide/glide.core.min.css', [], $asset_file['version'] );
-		wp_register_style( 'glidejs-theme', OTTER_BLOCKS_URL . 'assets/glide/glide.theme.min.css', [], $asset_file['version'] );
 	}
 
 
@@ -676,10 +668,7 @@ class Registration {
 
 		self::$blocks = apply_filters( 'otter_blocks_register_blocks', self::$blocks );
 
-		self::$block_dependencies = array(
-			'leaflet-map' => array( 'leaflet', 'leaflet-gesture-handling' ),
-			'slider'      => array( 'glidejs-core', 'glidejs-theme' ),
-		);
+		self::$block_dependencies = array();
 
 		foreach ( self::$blocks as $block ) {
 			$block_path   = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;
