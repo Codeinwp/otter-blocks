@@ -38,50 +38,72 @@ class Accordion_CSS extends Base_CSS {
 
 		$css = new CSS_Utility( $block );
 
+		$border_variables = array();
+		foreach ( [ 'header', 'content' ] as $type ) {
+			foreach ( [ 'top', 'right', 'bottom', 'left' ] as $position ) {
+				foreach ( [ 'width', 'style', 'color' ] as $property ) {
+					array_push( $border_variables,
+						array(
+							'property' => '--' . $type[0] . 'Border' . strtoupper( $position[0] ) . strtoupper( $property[0] ),
+							'value'    => $type . 'Border',
+							'format'   => function( $value ) use ( $property, $position ) {
+								return isset( $value[ $position ] ) ?
+									$value[ $position ][ $property ] :
+									$value[ $property ];
+							}
+						)
+					);
+				}
+			}
+		};
+
 		$css->add_item(
 			array(
-				'properties' => array(
+				'properties' => array_merge(
 					array(
-						'property' => '--titleColor',
-						'value'    => 'titleColor',
-						'hasSync'  => 'accordionTitleColor',
+						array(
+							'property' => '--titleColor',
+							'value'    => 'titleColor',
+							'hasSync'  => 'accordionTitleColor',
+						),
+						array(
+							'property' => '--titleBackground',
+							'value'    => 'titleBackground',
+							'hasSync'  => 'accordionTitleBackground',
+						),
+						array(
+							'property' => '--borderColor',
+							'value'    => 'borderColor',
+							'hasSync'  => 'accordionBorderColor',
+						),
+						array(
+							'property' => '--contentBackground',
+							'value'    => 'contentBackground',
+							'hasSync'  => 'accordionContentBackground',
+						),
+						array(
+							'property' => '--fontFamily',
+							'value'    => 'fontFamily',
+						),
+						array(
+							'property' => '--fontVariant',
+							'value'    => 'fontVariant',
+						),
+						array(
+							'property' => '--fontStyle',
+							'value'    => 'fontStyle',
+						),
+						array(
+							'property' => '--textTransform',
+							'value'    => 'textTransform',
+						),
+						array(
+							'property' => '--letterSpacing',
+							'value'    => 'letterSpacing',
+							'unit'     => 'px',
+						),
 					),
-					array(
-						'property' => '--titleBackground',
-						'value'    => 'titleBackground',
-						'hasSync'  => 'accordionTitleBackground',
-					),
-					array(
-						'property' => '--borderColor',
-						'value'    => 'borderColor',
-						'hasSync'  => 'accordionBorderColor',
-					),
-					array(
-						'property' => '--contentBackground',
-						'value'    => 'contentBackground',
-						'hasSync'  => 'accordionContentBackground',
-					),
-					array(
-						'property' => '--fontFamily',
-						'value'    => 'fontFamily',
-					),
-					array(
-						'property' => '--fontVariant',
-						'value'    => 'fontVariant',
-					),
-					array(
-						'property' => '--fontStyle',
-						'value'    => 'fontStyle',
-					),
-					array(
-						'property' => '--textTransform',
-						'value'    => 'textTransform',
-					),
-					array(
-						'property' => '--letterSpacing',
-						'value'    => 'letterSpacing',
-						'unit'     => 'px',
-					),
+					$border_variables
 				),
 			)
 		);

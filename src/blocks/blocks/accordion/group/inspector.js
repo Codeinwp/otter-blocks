@@ -12,7 +12,8 @@ import {
 import {
 	PanelBody,
 	SelectControl,
-	RangeControl
+	RangeControl,
+	__experimentalBorderBoxControl as BorderBoxControl
 } from '@wordpress/components';
 
 /**
@@ -62,6 +63,16 @@ const Inspector = ({
 						{ label: __( 'Wider (20px)', 'otter-blocks' ), value: 'wider' }
 					] }
 					onChange={ e => setAttributes({ gap: e }) }
+				/>
+				<BorderBoxControl
+					label={ __( 'Header Borders', 'otter-blocks' ) }
+					value={ attributes.headerBorder }
+					onChange={ headerBorder => setAttributes({ headerBorder }) }
+				/>
+				<BorderBoxControl
+					label={ __( 'Content Borders', 'otter-blocks' ) }
+					value={ attributes.contentBorder }
+					onChange={ contentBorder => setAttributes({ contentBorder }) }
 				/>
 			</PanelBody>
 
@@ -113,20 +124,21 @@ const Inspector = ({
 				</SyncControl>
 
 
-				<SyncControl
-					field="borderColor"
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<ColorGradientControl
-						label={ __( 'Border Color', 'otter-blocks' ) }
-						colorValue={ attributes.borderColor }
-						onColorChange={ e => setAttributes({ borderColor: e }) }
-					/>
-				</SyncControl>
+				{/*<SyncControl*/}
+				{/*	field="borderColor"*/}
+				{/*	isSynced={ attributes.isSynced }*/}
+				{/*	setAttributes={ setAttributes }*/}
+				{/*>*/}
+				{/*	<ColorGradientControl*/}
+				{/*		label={ __( 'Border Color', 'otter-blocks' ) }*/}
+				{/*		colorValue={ attributes.borderColor }*/}
+				{/*		onColorChange={ e => setAttributes({ borderColor: e }) }*/}
+				{/*	/>*/}
+				{/*</SyncControl>*/}
 			</PanelBody>
 			<PanelBody
 				title={ __( 'Title Typography', 'otter-blocks' ) }
+				initialOpen={ false }
 			>
 				<GoogleFontsControl
 					label={ __( 'Font Family', 'otter-blocks' ) }

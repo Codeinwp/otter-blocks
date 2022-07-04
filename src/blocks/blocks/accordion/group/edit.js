@@ -55,16 +55,55 @@ const Edit = ({
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
+	const headerBorder = getValue( 'headerBorder' );
+	const contentBorder = getValue( 'contentBorder' );
+
+	const getBorderValue = ( type, position, property ) => {
+		const border = 'header' === type ?
+			headerBorder :
+			( 'content' === type ?
+				contentBorder :
+				undefined );
+
+		if ( ! border ) {
+			return '';
+		}
+
+		// for backward compatibility purposes
+		if ( 'color' === property ) {
+			return border[position] ?
+				border[position].color :
+				border.color || getValue( 'borderColor' );
+		}
+
+		return border[position] && border[position][property] ? border[position][property] : border[property];
+	};
+
+	const getBorder = ( type ) => {
+		let borderStyle = '';
+
+		[ 'Top', 'Right', 'Bottom', 'Left' ].forEach( position => {
+			[ 'Width', 'Style', 'Color' ].forEach( prop => {
+				const varName = `${type.slice( 0, 1 )}Border${position.slice( 0, 1 )}${prop.slice( 0, 1 )}`;
+				borderStyle = borderStyle +
+					`--${ varName }: ${ getBorderValue( type, position.toLowerCase(), prop.toLowerCase() ) || ''  };`;
+			});
+		});
+
+		return borderStyle;
+	};
+
 	const styles = css`
 		--titleColor: ${ getValue( 'titleColor' ) };
 		--titleBackground: ${ getValue( 'titleBackground' ) };
-		--borderColor: ${ getValue( 'borderColor' ) };
 		--contentBackground: ${ getValue( 'contentBackground' ) };
 		--fontFamily: ${ getValue( 'fontFamily' ) };
 		--fontVariant: ${ getValue( 'fontVariant' ) };
 		--fontStyle: ${ getValue( 'fontStyle' ) };
 		--textTransform: ${ getValue( 'textTransform' ) };
 		--letterSpacing: ${ getValue( 'letterSpacing' ) ? getValue( 'letterSpacing' ) + 'px' : undefined };
+		${ getBorder( 'header' ) }
+		${ getBorder( 'content' ) }
 	`;
 
 	const blockProps = useBlockProps({

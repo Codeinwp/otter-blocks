@@ -1,7 +1,6 @@
 .wp-block-themeisle-blocks-accordion {
 	--titleColor: #1e1e1e;
 	--titleBackground: #ffffff;
-	--borderColor: #d5dadf;
 	--contentBackground: #ffffff;
 
 	margin: 20px auto;
@@ -10,11 +9,15 @@
 		.wp-block-themeisle-blocks-accordion-item__title {
 			color: var( --titleColor );
 			background: var( --titleBackground );
-			border: 1px solid var( --borderColor );
 
-			font-style: var(--fontStyle);
-			font-weight: var(--fontVariant);
-			font-family: var(--fontFamily);
+			border-top: var( --hBorderTW, 1px) var( --hBorderTS, solid) var( --hBorderTC, #d5dadf );
+			border-right: var( --hBorderRW, 1px) var( --hBorderRS, solid) var( --hBorderRC, #d5dadf );
+			border-bottom: var( --hBorderBW, 1px) var( --hBorderBS, solid) var( --hBorderBC, #d5dadf );
+			border-left: var( --hBorderLW, 1px) var( --hBorderLS, solid) var( --hBorderLC, #d5dadf );
+
+			font-style: var( --fontStyle );
+			font-weight: var( --fontVariant );
+			font-family: var( --fontFamily );
 			text-transform: var( --textTransform );
 			letter-spacing: var( --letterSpacing );
 
@@ -45,8 +48,8 @@
 				content: '';
 				justify-self: end;
 				align-self: center;
-				border-right: 2px solid var( --borderColor );
-				border-bottom: 2px solid var( --borderColor );
+				border-right: 2px solid currentColor;
+				border-bottom: 2px solid currentColor;
 				width: 8px;
 				height: 8px;
 				transform: rotate(45deg) translate(-25%, 0%);
@@ -55,8 +58,10 @@
 
 		.wp-block-themeisle-blocks-accordion-item__content {
 			background: var( --contentBackground );
-			border: 1px solid var( --borderColor );
-			border-top: none;
+			border-top: var( --cBorderTW ) var( --cBorderTS, none ) var( --cBorderTC );
+			border-right: var( --cBorderRW, 1px) var( --cBorderRS, solid) var( --cBorderRC, #d5dadf );
+			border-bottom: var( --cBorderBW, 1px) var( --cBorderBS, solid) var( --cBorderBC, #d5dadf );
+			border-left: var( --cBorderLW, 1px) var( --cBorderLS, solid) var( --cBorderLC, #d5dadf );
 			padding: 18px 24px;
 		}
 
