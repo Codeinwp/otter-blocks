@@ -1,3 +1,7 @@
+##### [Version 2.0.7](https://github.com/Codeinwp/otter-blocks/compare/v2.0.6...v2.0.7) (2022-07-04)
+
+- Fix Google Fonts not loading in certain cases
+
 ##### [Version 2.0.6](https://github.com/Codeinwp/otter-blocks/compare/v2.0.5...v2.0.6) (2022-07-01)
 
 - Redesigned Form Block with new styling and options
