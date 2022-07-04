@@ -1,15 +1,8 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
 import classnames from 'classnames';
 import GoogleFontLoader from 'react-google-font-loader';
-
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies.
@@ -79,39 +72,35 @@ const Edit = ({
 		return border[position] && border[position][property] ? border[position][property] : border[property];
 	};
 
-	const getBorder = ( type ) => {
-		let borderStyle = '';
-
-		[ 'Top', 'Right', 'Bottom', 'Left' ].forEach( position => {
-			[ 'Width', 'Style', 'Color' ].forEach( prop => {
-				const varName = `${type.slice( 0, 1 )}Border${position.slice( 0, 1 )}${prop.slice( 0, 1 )}`;
-				borderStyle = borderStyle +
-					`--${ varName }: ${ getBorderValue( type, position.toLowerCase(), prop.toLowerCase() ) || ''  };`;
-			});
-		});
-
-		return borderStyle;
+	const inlineStyles = {
+		'--titleColor': getValue( 'titleColor' ),
+		'--titleBackground': getValue( 'titleBackground' ),
+		'--contentBackground': getValue( 'contentBackground' ),
+		'--fontFamily': getValue( 'fontFamily' ),
+		'--fontVariant': getValue( 'fontVariant' ),
+		'--fontStyle': getValue( 'fontStyle' ),
+		'--textTransform': getValue( 'textTransform' ),
+		'--letterSpacing': getValue( 'letterSpacing' ) ? getValue( 'letterSpacing' ) + 'px' : undefined
 	};
 
-	const styles = css`
-		--titleColor: ${ getValue( 'titleColor' ) };
-		--titleBackground: ${ getValue( 'titleBackground' ) };
-		--contentBackground: ${ getValue( 'contentBackground' ) };
-		--fontFamily: ${ getValue( 'fontFamily' ) };
-		--fontVariant: ${ getValue( 'fontVariant' ) };
-		--fontStyle: ${ getValue( 'fontStyle' ) };
-		--textTransform: ${ getValue( 'textTransform' ) };
-		--letterSpacing: ${ getValue( 'letterSpacing' ) ? getValue( 'letterSpacing' ) + 'px' : undefined };
-		${ getBorder( 'header' ) }
-		${ getBorder( 'content' ) }
-	`;
+	const addBorderStyle = ( type ) => {
+		[ 'Top', 'Right', 'Bottom', 'Left' ].forEach( position => {
+			[ 'Width', 'Style', 'Color' ].forEach( prop => {
+				const varName = `--${type.slice( 0, 1 )}Border${position.slice( 0, 1 )}${prop.slice( 0, 1 )}`;
+				inlineStyles[varName] = getBorderValue( type, position.toLowerCase(), prop.toLowerCase() ) || '';
+			});
+		});
+	};
+
+	addBorderStyle( 'header' );
+	addBorderStyle( 'content' );
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames({
 			[ `is-${ attributes.gap }-gap` ]: attributes.gap
 		}),
-		css: styles
+		style: inlineStyles
 	});
 
 	return (
