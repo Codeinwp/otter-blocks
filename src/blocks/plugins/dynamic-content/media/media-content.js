@@ -8,56 +8,99 @@ import classNames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
-import { Fragment } from '@wordpress/element';
+import {
+	Fragment,
+	useState
+} from '@wordpress/element';
+
+const contentTypes = [
+	{
+		type: 'featuredImage',
+		label: __( 'Featured Image', 'otter-blocks' )
+	},
+	{
+		type: 'authorImage',
+		label: __( 'Author Image', 'otter-blocks' )
+	},
+	{
+		type: 'loggedInUserImage',
+		label: __( 'Logged-in User Avatar', 'otter-blocks' )
+	},
+	{
+		type: 'productImage',
+		label: __( 'WooCommerce Product Image', 'otter-blocks' )
+	},
+	{
+		type: 'postMetaImage',
+		label: __( 'Post Meta', 'otter-blocks' )
+	}
+];
 
 const MediaItem = ({
 	url,
-	value,
-	onSelectImage
+	label,
+	selected,
+	onSelect
 }) => {
-	const isSelected = url === value;
-	console.log( url, value );
+	const isSelected = url === selected;
 
 	return (
 		<li
 			tabIndex="0"
 			className={ classNames( 'o-media-item', {
-				'selected': url === value
+				'selected': isSelected
 			}) }
-			onClick={ () => onSelectImage( url ) }
+			onClick={ () => onSelect( url ) }
+			title={ label }
 		>
 			{ isSelected && (
-				<button type="button" className="check" tabIndex="-1"><span className="media-modal-icon"></span><span className="screen-reader-text">{ __( 'Deselect', 'otter-blocks' ) }</span></button>
+				<button
+					type="button"
+					className="check"
+					tabIndex="-1"
+					onClick={ () => onSelect( url ) }
+				>
+					<span className="media-modal-icon"></span>
+					<span className="screen-reader-text">{ __( 'Deselect', 'otter-blocks' ) }</span>
+				</button>
 			) }
 		</li>
 	);
 };
 
 const MediaContent = ({
-	value,
+	state,
 	onSelectImage
 }) => {
+	const selection = state.get( 'selection' );
+
+	const [ selected, setSelected ] = useState( selection?._single?.attributes?.url );
+
+	const onSelect = value => {
+		if ( selected !== value ) {
+			setSelected( value );
+		} else {
+			setSelected( false );
+		}
+
+		return onSelectImage( value );
+	};
+
 	return (
 		<Fragment>
 			<div className="attachments-browser">
 				<ul className="o-media-list">
-					<MediaItem
-						url={ 'http://www2.cnrs.fr/sites/communique/image/mona_unvarnish_web_image.jpg' }
-						value={ value() }
-						onSelectImage={ onSelectImage }
-					/>
-
-					<MediaItem
-						url={ 'http://www2.cnrs.fr/sites/communique/image/mona_unvarnish_web_image1.jpg' }
-						value={ value() }
-						onSelectImage={ onSelectImage }
-					/>
-
-					<MediaItem
-						url={ 'http://www2.cnrs.fr/sites/communique/image/mona_unvarnish_web_image2.jpg' }
-						value={ value() }
-						onSelectImage={ onSelectImage }
-					/>
+					{ contentTypes.map( ({ type, label }) => {
+						return (
+							<MediaItem
+								key={ type }
+								label={ label }
+								url={ 'http://localhost:8888/wp-json/otter/v1/dynamic?type=' + type }
+								selected={ selected }
+								onSelect={ onSelect }
+							/>
+						);
+					}) }
 				</ul>
 			</div>
 

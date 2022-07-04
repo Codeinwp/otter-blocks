@@ -110,10 +110,10 @@ jQuery( document ).ready( function( $ ) {
 	};
 
 	const renderPhotoList = element => {
-		const onSelectImage = url => {
-			const state = activeModal.state();
-			const selection = state.get( 'selection' );
+		const state = activeModal.state();
+		const selection = state.get( 'selection' );
 
+		const onSelectImage = url => {
 			if ( selection?._single?.attributes?.url === url ) {
 				return selection.reset();
 			}
@@ -121,15 +121,9 @@ jQuery( document ).ready( function( $ ) {
 			selection.add({ url });
 		};
 
-		const getValue = () => {
-			const state = activeModal.state();
-			const selection = state.get( 'selection' );
-			return selection?._single?.attributes?.url;
-		};
-
 		render(
 			<MediaContent
-				value={ getValue }
+				state={ state }
 				onSelectImage={ onSelectImage }
 			/>,
 			element
@@ -153,9 +147,14 @@ jQuery( document ).ready( function( $ ) {
 		'click',
 		'.media-router button.media-menu-item',
 		function() {
+			if ( ! activeFrame ) {
+				return;
+			}
+
 			const selectedTab = activeFrame.querySelector(
 				'.media-router button.media-menu-item.active'
 			);
+
 			if ( selectedTab && 'menu-item-otterDynamicContent' === selectedTab.id ) {
 				otterImagesMediaTab();
 			}
