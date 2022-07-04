@@ -122,19 +122,6 @@ const Inspector = ({
 						onColorChange={ e => setAttributes({ contentBackground: e }) }
 					/>
 				</SyncControl>
-
-
-				{/*<SyncControl*/}
-				{/*	field="borderColor"*/}
-				{/*	isSynced={ attributes.isSynced }*/}
-				{/*	setAttributes={ setAttributes }*/}
-				{/*>*/}
-				{/*	<ColorGradientControl*/}
-				{/*		label={ __( 'Border Color', 'otter-blocks' ) }*/}
-				{/*		colorValue={ attributes.borderColor }*/}
-				{/*		onColorChange={ e => setAttributes({ borderColor: e }) }*/}
-				{/*	/>*/}
-				{/*</SyncControl>*/}
 			</PanelBody>
 			<PanelBody
 				title={ __( 'Title Typography', 'otter-blocks' ) }

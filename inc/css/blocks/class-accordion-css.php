@@ -42,7 +42,8 @@ class Accordion_CSS extends Base_CSS {
 		foreach ( [ 'header', 'content' ] as $type ) {
 			foreach ( [ 'top', 'right', 'bottom', 'left' ] as $position ) {
 				foreach ( [ 'width', 'style', 'color' ] as $property ) {
-					array_push( $border_variables,
+					array_push(
+						$border_variables,
 						array(
 							'property' => '--' . $type[0] . 'Border' . strtoupper( $position[0] ) . strtoupper( $property[0] ),
 							'value'    => $type . 'Border',
@@ -50,7 +51,7 @@ class Accordion_CSS extends Base_CSS {
 								return isset( $value[ $position ] ) ?
 									$value[ $position ][ $property ] :
 									$value[ $property ];
-							}
+							},
 						)
 					);
 				}
