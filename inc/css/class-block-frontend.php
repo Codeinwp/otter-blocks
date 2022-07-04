@@ -170,6 +170,9 @@ class Block_Frontend extends Base_CSS {
 						$font['fontvariant'][ $key ] = 400;
 					}
 				}
+
+				sort( $font['fontvariant'] );
+
 				$item .= ':wght@' . implode( ';', $font['fontvariant'] );
 			}
 			array_push( $fonts, $item );
