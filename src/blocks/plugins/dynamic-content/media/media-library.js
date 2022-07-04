@@ -3,10 +3,12 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import {
-	Fragment,
-	render
-} from '@wordpress/element';
+import { render } from '@wordpress/element';
+
+/**
+ * Internal dependencies.
+ */
+import MediaContent from './media-content.js';
 
 // Global vars
 let activeFrameId = '';
@@ -59,6 +61,7 @@ jQuery( document ).ready( function( $ ) {
 			}
 
 			activeModal = this;
+			window.omodal = this;
 		},
 
 		getFrame( id ) {
@@ -106,47 +109,29 @@ jQuery( document ).ready( function( $ ) {
 		return wrapper;
 	};
 
-	const DynamicImage = () => {
-		return (
-			<Fragment>
-				<div className="attachments-browser">
-					<ul className="o-media-list">
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-						<li className="o-media-item"></li>
-					</ul>
-					<button onClick={ () => {
-						const state = activeModal.state();
-						const selection = state.get( 'selection' );
-						selection.add({ url: 'http://www2.cnrs.fr/sites/communique/image/mona_unvarnish_web_image.jpg' });
-					} }>Select Image!</button>
-				</div>
-
-				<div className="media-sidebar"></div>
-			</Fragment>
-		);
-	};
-
 	const renderPhotoList = element => {
+		const onSelectImage = url => {
+			const state = activeModal.state();
+			const selection = state.get( 'selection' );
+
+			if ( selection?._single?.attributes?.url === url ) {
+				return selection.reset();
+			}
+
+			selection.add({ url });
+		};
+
+		const getValue = () => {
+			const state = activeModal.state();
+			const selection = state.get( 'selection' );
+			return selection?._single?.attributes?.url;
+		};
+
 		render(
-			<DynamicImage/>,
+			<MediaContent
+				value={ getValue }
+				onSelectImage={ onSelectImage }
+			/>,
 			element
 		);
 	};
