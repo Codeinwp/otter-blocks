@@ -180,7 +180,7 @@ class Block_Frontend extends Base_CSS {
 				'family'  => implode( '&family=', $fonts ),
 				'display' => 'swap',
 			),
-			'https://fonts.googleapis.com/css2' 
+			'https://fonts.googleapis.com/css2'
 		);
 
 		$fonts_url = apply_filters( 'otter_blocks_google_fonts_url', $fonts_url );
@@ -432,23 +432,28 @@ class Block_Frontend extends Base_CSS {
 			return $template_css;
 		}
 
-		// Get the templates for the given post.
-		$templates = get_block_templates( array( 'wp_id' => $post_id ) );
+		global $_wp_current_template_content;
 
-		// Get templates part like footer and header for the given post.
-		$template_parts = get_block_templates( array( 'wp_id' => $post_id ), 'wp_template_part' );
-
-		$templates_page = array_merge( $templates, $template_parts );
-
-		foreach ( $templates_page as $template ) {
-			$blocks = parse_blocks( $template->content );
-			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
-				continue;
+		$slugs = array();
+		$template_blocks = parse_blocks( $_wp_current_template_content );
+		foreach ($template_blocks as $template_block) {
+			if( 'core/template-part' === $template_block['blockName'] ) {
+				$slugs[] = $template_block['attrs']['slug'];
 			}
-			$template_css .= $this->cycle_through_blocks( $blocks );
 		}
 
-		return $template_css;
+		$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
+		foreach ($templates_parts as $templates_part) {
+			if( isset( $templates_part->content ) && in_array( $templates_part->slug, $slugs ) ) {
+				$blocks = parse_blocks( $templates_part->content );
+				if ( ! is_array( $blocks ) || empty( $blocks ) ) {
+					continue;
+				}
+				$template_css .= $this->cycle_through_blocks( $blocks );
+			}
+		}
+
+		return $template_css . $this->cycle_through_blocks( $_wp_current_template_content );
 	}
 
 	/**
