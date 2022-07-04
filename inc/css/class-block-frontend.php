@@ -404,7 +404,7 @@ class Block_Frontend extends Base_CSS {
             }
         }
 
-        $css .= $this->get_block_templates_css( $post_id );
+        $css .= $this->get_block_templates_css();
 
         if ( empty( $css ) ) {
             return;
@@ -421,14 +421,13 @@ class Block_Frontend extends Base_CSS {
 	/**
 	 * Get the block CSS from templates in FSE.
 	 *
-	 * @param int|\WP_Post $post_id Post id.
 	 * @return string
 	 * @since 2.0.3
 	 */
-	public function get_block_templates_css( $post_id ) {
+	public function get_block_templates_css() {
 		$template_css = '';
 
-		if ( ! function_exists( 'get_block_templates' ) ) {
+		if ( ! function_exists( 'get_block_templates' ) && current_theme_supports( 'block-templates' ) ) {
 			return $template_css;
 		}
 
