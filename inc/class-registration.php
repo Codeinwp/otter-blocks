@@ -342,6 +342,12 @@ class Registration {
 					$content .= $templates_part->content;
 				}
 			}
+			$templates_parts = get_block_templates( array( 'wp_id' => $post ) );
+			foreach ($templates_parts as $templates_part) {
+				if( isset( $templates_part->content ) ) {
+					$content .= $templates_part->content;
+				}
+			}
 		}
 
 		$post = $content;
