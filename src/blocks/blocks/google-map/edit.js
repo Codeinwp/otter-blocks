@@ -30,7 +30,7 @@ import { StyleSwitcherBlockControl } from '../../components/style-switcher-contr
 import MarkerModal from './components/marker-modal.js';
 import Map from './components/map.js';
 import styles from './components/styles.js';
-import { blockInit } from '../../helpers/block-utility.js';
+import {blockInit, getEditorIframe} from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -158,7 +158,8 @@ const Edit = ({
 	};
 
 	const initMap = () => {
-		mapRef.current = new window.google.maps.Map( document.getElementById( attributes.id ), {
+		const editor = getEditorIframe()?.contentWindow?.document ?? document;
+		mapRef.current = new window.google.maps.Map( editor.getElementById( attributes.id ), {
 			center: {
 				lat: Number( attributes.latitude ) || 41.4036299,
 				lng: Number( attributes.longitude ) || 2.1743558000000576
