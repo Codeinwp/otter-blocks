@@ -220,20 +220,20 @@ class Block_Frontend extends Base_CSS {
 	 * @access  public
 	 */
 	public function render_post_css() {
-		$id = get_the_ID();
+		$id             = get_the_ID();
 		$style_enqueued = false;
 
 		if ( is_singular() ) {
 			// Enqueue main post attached style.
-            $style_enqueued = true;
+			$style_enqueued = true;
 			$this->enqueue_styles();
 		}
 
-		if( function_exists( 'get_block_templates' ) ) {
+		if ( function_exists( 'get_block_templates' ) ) {
 			// Get the templates for the given post.
-			$templates = get_block_templates( array( ), 'wp_template_part' );
+			$templates = get_block_templates( array(), 'wp_template_part' );
 
-			if( 0 < count( $templates ) &&  ! $style_enqueued ) {
+			if ( 0 < count( $templates ) && ! $style_enqueued ) {
 				$style_enqueued = true;
 				$this->enqueue_styles( $id, true );
 			}
@@ -251,7 +251,7 @@ class Block_Frontend extends Base_CSS {
 					return $content;
 				}
 
-				if( ! $style_enqueued ) {
+				if ( ! $style_enqueued ) {
 					$this->enqueue_styles( $post_id, true );
 				}
 				$this->enqueue_google_fonts( $post_id );
@@ -312,15 +312,15 @@ class Block_Frontend extends Base_CSS {
 
 		$file_name = basename( $file_url );
 
-        if ( has_blocks( $post_id ) ) {
-            $content = get_post_field( 'post_content', $post_id );
+		if ( has_blocks( $post_id ) ) {
+			$content = get_post_field( 'post_content', $post_id );
 
-            $blocks = parse_blocks( $content );
+			$blocks = parse_blocks( $content );
 
-            if ( is_array( $blocks ) || ! empty( $blocks ) ) {
-                $this->enqueue_reusable_styles( $blocks, $footer );
-            }
-        }
+			if ( is_array( $blocks ) || ! empty( $blocks ) ) {
+				$this->enqueue_reusable_styles( $blocks, $footer );
+			}
+		}
 
 
 
@@ -394,27 +394,27 @@ class Block_Frontend extends Base_CSS {
 	 */
 	public function get_post_css( $post_id = '' ) {
 		$post_id = $post_id ? $post_id : get_the_ID();
-        $css = '';
+		$css     = '';
 
 		if ( function_exists( 'has_blocks' ) && has_blocks( $post_id ) ) {
-            $css = $this->get_page_css_meta($post_id);
+			$css = $this->get_page_css_meta( $post_id );
 
-            if (empty($css) || is_preview()) {
-                $css = $this->get_page_css_inline($post_id);
-            }
-        }
+			if ( empty( $css ) || is_preview() ) {
+				$css = $this->get_page_css_inline( $post_id );
+			}
+		}
 
-        $css .= $this->get_block_templates_css();
+		$css .= $this->get_block_templates_css();
 
-        if ( empty( $css ) ) {
-            return;
-        }
+		if ( empty( $css ) ) {
+			return;
+		}
 
-        $style  = "\n" . '<style type="text/css" media="all" data-otter="inline">' . "\n";
-        $style .= $css;
-        $style .= "\n" . '</style>' . "\n";
+		$style  = "\n" . '<style type="text/css" media="all" data-otter="inline">' . "\n";
+		$style .= $css;
+		$style .= "\n" . '</style>' . "\n";
 
-        echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 
 	}
 
@@ -440,17 +440,17 @@ class Block_Frontend extends Base_CSS {
 
 		global $_wp_current_template_content;
 
-		$slugs = array();
+		$slugs           = array();
 		$template_blocks = parse_blocks( $_wp_current_template_content );
-		foreach ($template_blocks as $template_block) {
-			if( 'core/template-part' === $template_block['blockName'] ) {
+		foreach ( $template_blocks as $template_block ) {
+			if ( 'core/template-part' === $template_block['blockName'] ) {
 				$slugs[] = $template_block['attrs']['slug'];
 			}
 		}
 
 		$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
-		foreach ($templates_parts as $templates_part) {
-			if( isset( $templates_part->content ) && in_array( $templates_part->slug, $slugs ) ) {
+		foreach ( $templates_parts as $templates_part ) {
+			if ( isset( $templates_part->content ) && in_array( $templates_part->slug, $slugs ) ) {
 				$blocks = parse_blocks( $templates_part->content );
 				if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 					continue;
