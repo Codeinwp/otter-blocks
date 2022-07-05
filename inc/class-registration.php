@@ -340,10 +340,34 @@ class Registration {
 				}
 			}
 
-			$post = $content;
-		} else {
+		} else if( 0 < get_queried_object_id() ) {
 			$content = get_the_content( null, false, $post );
 		}
+
+		if (
+			function_exists( 'get_block_templates' ) &&
+			function_exists( 'wp_is_block_theme' ) &&
+			wp_is_block_theme() &&
+			current_theme_supports( 'block-templates' )
+		) {
+			global $_wp_current_template_content;
+			$slugs = array();
+			$template_blocks = parse_blocks( $_wp_current_template_content );
+			foreach ($template_blocks as $template_block) {
+				if( 'core/template-part' === $template_block['blockName'] ) {
+					$slugs[] = $template_block['attrs']['slug'];
+				}
+			}
+			$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
+			foreach ($templates_parts as $templates_part) {
+				if( isset( $templates_part->content ) && in_array( $templates_part->slug, $slugs ) ) {
+					$content .= $templates_part->content;
+				}
+			}
+			$content .= $_wp_current_template_content;
+		}
+
+		$post = $content;
 
 		if ( strpos( $content, '<!-- wp:' ) === false ) {
 			self::$can_load_frontend = false;

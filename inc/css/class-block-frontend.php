@@ -183,7 +183,7 @@ class Block_Frontend extends Base_CSS {
 				'family'  => implode( '&family=', $fonts ),
 				'display' => 'swap',
 			),
-			'https://fonts.googleapis.com/css2' 
+			'https://fonts.googleapis.com/css2'
 		);
 
 		$fonts_url = apply_filters( 'otter_blocks_google_fonts_url', $fonts_url );
@@ -266,7 +266,7 @@ class Block_Frontend extends Base_CSS {
 			return;
 		}
 
-		if ( ! has_blocks( $post_id ) ) {
+		if ( ! has_blocks( $post_id ) && 0 < get_queried_object_id() ) {
 			return;
 		}
 
@@ -382,12 +382,18 @@ class Block_Frontend extends Base_CSS {
 	 */
 	public function get_post_css( $post_id = '' ) {
 		$post_id = $post_id ? $post_id : get_the_ID();
-		if ( function_exists( 'has_blocks' ) && has_blocks( $post_id ) ) {
-			$css = $this->get_page_css_meta( $post_id );
+		if ( function_exists( 'has_blocks' ) ) {
+			$css = '';
 
-			if ( empty( $css ) || is_preview() ) {
-				$css = $this->get_page_css_inline( $post_id );
+			if( has_blocks( $post_id ) && 0 < get_queried_object_id() ) {
+				$css = $this->get_page_css_meta( $post_id );
+
+				if ( empty( $css ) || is_preview() ) {
+					$css = $this->get_page_css_inline( $post_id );
+				}
 			}
+
+			$css .= $this->get_block_templates_css();
 
 			if ( empty( $css ) ) {
 				return;
@@ -486,6 +492,47 @@ class Block_Frontend extends Base_CSS {
 		}
 
 		return $css;
+	}
+
+	/**
+	 * Get the block CSS from templates in FSE.
+	 *
+	 * @return string
+	 * @since 2.0.3
+	 */
+	public function get_block_templates_css() {
+		$template_css = '';
+
+		if (
+			! (
+				function_exists( 'get_block_templates' ) &&
+				current_theme_supports( 'block-templates' ) &&
+				function_exists( 'wp_is_block_theme' ) &&
+				wp_is_block_theme()
+			)
+		) {
+			return $template_css;
+		}
+
+		global $_wp_current_template_content;
+		$slugs           = array();
+		$template_blocks = parse_blocks( $_wp_current_template_content );
+		foreach ( $template_blocks as $template_block ) {
+			if ( 'core/template-part' === $template_block['blockName'] ) {
+				$slugs[] = $template_block['attrs']['slug'];
+			}
+		}
+		$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
+		foreach ( $templates_parts as $templates_part ) {
+			if ( isset( $templates_part->content ) && in_array( $templates_part->slug, $slugs ) ) {
+				$blocks = parse_blocks( $templates_part->content );
+				if ( ! is_array( $blocks ) || empty( $blocks ) ) {
+					continue;
+				}
+				$template_css .= $this->cycle_through_blocks( $blocks );
+			}
+		}
+		return $template_css . $this->cycle_through_blocks( $_wp_current_template_content );
 	}
 
 	/**
