@@ -52,6 +52,10 @@ class Accordion_CSS extends Base_CSS {
 									$value[ $position ][ $property ] :
 									$value[ $property ];
 							},
+							'condition' => function( $attrs ) use ( $position, $property, $type ) {
+								return isset( $attrs[ $type . 'Border' ] ) &&
+								       ( isset( $attrs[ $type . 'Border' ][ $position ] ) && isset( $attrs[ $type . 'Border' ][ $position ][ $property ] ) || isset( $attrs[ $type . 'Border' ][ $property ] ) );
+							},
 						)
 					);
 				}
