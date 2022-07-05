@@ -29,7 +29,11 @@ import Placeholder from './placeholder.js';
 import Inspector from './inspector.js';
 import Slide from './components/Slide.js';
 import SliderControls from './components/slider-controls.js';
-import {blockInit, copyScriptAssetToIframe, getEditorIframe} from '../../helpers/block-utility.js';
+import {
+	blockInit,
+	copyScriptAssetToIframe,
+	getEditorIframe
+} from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 

@@ -360,7 +360,6 @@ export const useCSSNode = options => {
 		});
 
 		return () => {
-			console.log( 'Clean' ); // Remove after final testing.
 			anchor?.removeChild( n );
 		};
 	}, [ ]);
@@ -379,10 +378,6 @@ export const useCSSNode = options => {
 				})
 				.join( '\n' ) || '';
 			settings.node.textContent = text;
-
-			// Remove after final testing.
-			console.log( text );
-			console.count( `CSSNodeCall: ${settings.cssNodeName}` );
 		}
 	}, [ cssList.css, cssList.media, settings.node, settings.cssNodeName ]);
 
