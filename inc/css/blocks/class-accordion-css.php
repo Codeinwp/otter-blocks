@@ -45,16 +45,16 @@ class Accordion_CSS extends Base_CSS {
 					array_push(
 						$border_variables,
 						array(
-							'property' => '--' . $type[0] . 'Border' . strtoupper( $position[0] ) . strtoupper( $property[0] ),
-							'value'    => $type . 'Border',
-							'format'   => function( $value ) use ( $property, $position ) {
+							'property'  => '--' . $type[0] . 'Border' . strtoupper( $position[0] ) . strtoupper( $property[0] ),
+							'value'     => $type . 'Border',
+							'format'    => function( $value ) use ( $property, $position ) {
 								return isset( $value[ $position ] ) ?
 									$value[ $position ][ $property ] :
 									$value[ $property ];
 							},
 							'condition' => function( $attrs ) use ( $position, $property, $type ) {
 								return isset( $attrs[ $type . 'Border' ] ) &&
-								       ( isset( $attrs[ $type . 'Border' ][ $position ] ) && isset( $attrs[ $type . 'Border' ][ $position ][ $property ] ) || isset( $attrs[ $type . 'Border' ][ $property ] ) );
+									( isset( $attrs[ $type . 'Border' ][ $position ] ) && isset( $attrs[ $type . 'Border' ][ $position ][ $property ] ) || isset( $attrs[ $type . 'Border' ][ $property ] ) );
 							},
 						)
 					);
