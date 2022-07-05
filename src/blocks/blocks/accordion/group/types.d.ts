@@ -11,6 +11,7 @@ type Attributes = {
 	fontVariant: string
 	fontStyle: string
 	textTransform: string
+	fontSize: number
 	letterSpacing: number
 	headerBorder: object
 	contentBorder: object

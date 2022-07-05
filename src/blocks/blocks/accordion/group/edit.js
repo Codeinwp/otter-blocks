@@ -80,7 +80,8 @@ const Edit = ({
 		'--fontVariant': getValue( 'fontVariant' ),
 		'--fontStyle': getValue( 'fontStyle' ),
 		'--textTransform': getValue( 'textTransform' ),
-		'--letterSpacing': getValue( 'letterSpacing' ) ? getValue( 'letterSpacing' ) + 'px' : undefined
+		'--letterSpacing': getValue( 'letterSpacing' ) ? getValue( 'letterSpacing' ) + 'px' : undefined,
+		'--fontSize': getValue( 'fontSize' ) ? getValue( 'fontSize' ) + 'px' : undefined
 	};
 
 	const addBorderStyle = ( type ) => {

@@ -13,6 +13,7 @@ import {
 	PanelBody,
 	SelectControl,
 	RangeControl,
+	FontSizePicker,
 	__experimentalBorderBoxControl as BorderBoxControl
 } from '@wordpress/components';
 
@@ -127,6 +128,33 @@ const Inspector = ({
 				title={ __( 'Title Typography', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
+				<FontSizePicker
+					value={ attributes.fontSize }
+					fontSizes={ [
+						{
+							name: __( 'Small' ),
+							slug: 'small',
+							size: 17
+						},
+						{
+							name: __( 'Medium' ),
+							slug: 'medium',
+							size: 22
+						},
+						{
+							name: __( 'Large' ),
+							slug: 'large',
+							size: 36
+						},
+						{
+							name: __( 'Extra Large' ),
+							slug: 'extra-large',
+							size: 42
+						}
+					] }
+					onChange={ fontSize => setAttributes({ fontSize }) }
+				/>
+
 				<GoogleFontsControl
 					label={ __( 'Font Family', 'otter-blocks' ) }
 					value={ attributes.fontFamily }

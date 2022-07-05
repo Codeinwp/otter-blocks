@@ -107,6 +107,11 @@ class Accordion_CSS extends Base_CSS {
 							'value'    => 'letterSpacing',
 							'unit'     => 'px',
 						),
+						array(
+							'property' => '--fontSize',
+							'value'    => 'fontSize',
+							'unit'     => 'px',
+						),
 					),
 					$border_variables
 				),

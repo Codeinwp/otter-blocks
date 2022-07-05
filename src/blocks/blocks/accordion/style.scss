@@ -20,6 +20,7 @@
 			font-family: var( --fontFamily );
 			text-transform: var( --textTransform );
 			letter-spacing: var( --letterSpacing );
+			font-size: var( --fontSize, 22px );
 
 			list-style: none;
 			cursor: pointer;

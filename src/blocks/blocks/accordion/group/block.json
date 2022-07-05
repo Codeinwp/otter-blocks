@@ -38,6 +38,9 @@
 		"textTransform": {
 			"type": "string"
 		},
+		"fontSize": {
+			"type": "number"
+		},
 		"letterSpacing": {
 			"type": "string"
 		},
