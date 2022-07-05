@@ -653,8 +653,8 @@ class Registration {
 		$this->enqueue_assets();
 
 		self::$block_dependencies = array(
-			'leaflet-map'        => array( 'leaflet', 'leaflet-gesture-handling' ),
-			'slider'             => array( 'glidejs-core', 'glidejs-theme' ),
+			'leaflet-map' => array( 'leaflet', 'leaflet-gesture-handling' ),
+			'slider'      => array( 'glidejs-core', 'glidejs-theme' ),
 		);
 
 		$local_dependencies = array_merge(
