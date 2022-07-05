@@ -170,6 +170,9 @@ class Block_Frontend extends Base_CSS {
 						$font['fontvariant'][ $key ] = 400;
 					}
 				}
+
+				sort( $font['fontvariant'] );
+
 				$item .= ':wght@' . implode( ';', $font['fontvariant'] );
 			}
 			array_push( $fonts, $item );
@@ -180,7 +183,7 @@ class Block_Frontend extends Base_CSS {
 				'family'  => implode( '&family=', $fonts ),
 				'display' => 'swap',
 			),
-			'https://fonts.googleapis.com/css2'
+			'https://fonts.googleapis.com/css2' 
 		);
 
 		$fonts_url = apply_filters( 'otter_blocks_google_fonts_url', $fonts_url );
@@ -220,40 +223,25 @@ class Block_Frontend extends Base_CSS {
 	 * @access  public
 	 */
 	public function render_post_css() {
-		$id             = get_the_ID();
-		$style_enqueued = false;
+		$id = 0;
 
 		if ( is_singular() ) {
 			// Enqueue main post attached style.
-			$style_enqueued = true;
+			$id = get_the_ID();
 			$this->enqueue_styles();
 		}
-
-		if ( function_exists( 'get_block_templates' ) ) {
-			// Get the templates for the given post.
-			$templates = get_block_templates( array(), 'wp_template_part' );
-
-			if ( 0 < count( $templates ) && ! $style_enqueued ) {
-				$style_enqueued = true;
-				$this->enqueue_styles( $id, true );
-			}
-		}
-
-
 
 		// Enqueue styles for other posts that display the_content, if any.
 		add_filter(
 			'the_content',
-			function ( $content ) use ( $id, $style_enqueued ) {
+			function ( $content ) use ( $id ) {
 				$post_id = get_the_ID();
 
 				if ( $this->has_excerpt || $id === $post_id ) {
 					return $content;
 				}
 
-				if ( ! $style_enqueued ) {
-					$this->enqueue_styles( $post_id, true );
-				}
+				$this->enqueue_styles( $post_id, true );
 				$this->enqueue_google_fonts( $post_id );
 
 				return $content;
@@ -275,6 +263,10 @@ class Block_Frontend extends Base_CSS {
 		$location = 'wp_head';
 
 		if ( ! function_exists( 'has_blocks' ) ) {
+			return;
+		}
+
+		if ( ! has_blocks( $post_id ) ) {
 			return;
 		}
 
@@ -312,17 +304,13 @@ class Block_Frontend extends Base_CSS {
 
 		$file_name = basename( $file_url );
 
-		if ( has_blocks( $post_id ) ) {
-			$content = get_post_field( 'post_content', $post_id );
+		$content = get_post_field( 'post_content', $post_id );
 
-			$blocks = parse_blocks( $content );
+		$blocks = parse_blocks( $content );
 
-			if ( is_array( $blocks ) || ! empty( $blocks ) ) {
-				$this->enqueue_reusable_styles( $blocks, $footer );
-			}
+		if ( is_array( $blocks ) || ! empty( $blocks ) ) {
+			$this->enqueue_reusable_styles( $blocks, $footer );
 		}
-
-
 
 		$total_inline_limit = 20000;
 		$total_inline_limit = apply_filters( 'styles_inline_size_limit', 20000 );
@@ -387,72 +375,30 @@ class Block_Frontend extends Base_CSS {
 	/**
 	 * Get Post CSS
 	 *
-	 * @param int $post_id Post id.
+	 * @param string $post_id Post id.
 	 *
 	 * @since   1.3.0
 	 * @access  public
 	 */
 	public function get_post_css( $post_id = '' ) {
 		$post_id = $post_id ? $post_id : get_the_ID();
-		$css     = '';
-
 		if ( function_exists( 'has_blocks' ) && has_blocks( $post_id ) ) {
 			$css = $this->get_page_css_meta( $post_id );
 
 			if ( empty( $css ) || is_preview() ) {
 				$css = $this->get_page_css_inline( $post_id );
 			}
-		}
 
-		$css .= $this->get_block_templates_css();
-
-		if ( empty( $css ) ) {
-			return;
-		}
-
-		$style  = "\n" . '<style type="text/css" media="all" data-otter="inline">' . "\n";
-		$style .= $css;
-		$style .= "\n" . '</style>' . "\n";
-
-		echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-
-	}
-
-	/**
-	 * Get the block CSS from templates in FSE.
-	 *
-	 * @return string
-	 * @since 2.0.3
-	 */
-	public function get_block_templates_css() {
-		$template_css = '';
-
-		if ( ! function_exists( 'get_block_templates' ) && current_theme_supports( 'block-templates' ) ) {
-			return $template_css;
-		}
-
-		global $_wp_current_template_content;
-
-		$slugs           = array();
-		$template_blocks = parse_blocks( $_wp_current_template_content );
-		foreach ( $template_blocks as $template_block ) {
-			if ( 'core/template-part' === $template_block['blockName'] ) {
-				$slugs[] = $template_block['attrs']['slug'];
+			if ( empty( $css ) ) {
+				return;
 			}
-		}
 
-		$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
-		foreach ( $templates_parts as $templates_part ) {
-			if ( isset( $templates_part->content ) && in_array( $templates_part->slug, $slugs ) ) {
-				$blocks = parse_blocks( $templates_part->content );
-				if ( ! is_array( $blocks ) || empty( $blocks ) ) {
-					continue;
-				}
-				$template_css .= $this->cycle_through_blocks( $blocks );
-			}
-		}
+			$style  = "\n" . '<style type="text/css" media="all">' . "\n";
+			$style .= $css;
+			$style .= "\n" . '</style>' . "\n";
 
-		return $template_css . $this->cycle_through_blocks( $_wp_current_template_content );
+			echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+		}
 	}
 
 	/**

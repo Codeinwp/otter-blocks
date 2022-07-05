@@ -44,7 +44,10 @@ import {
  * Internal dependencies
  */
 import metadata from './block.json';
-import {blockInit, useCSSNode} from '../../helpers/block-utility.js';
+import {
+	blockInit,
+	useCSSNode
+} from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 const { attributes: defaultAttributes } = metadata;

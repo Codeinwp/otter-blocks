@@ -6,7 +6,10 @@ import { v4 as uuidv4 } from 'uuid';
 /**
  * WordPress dependencies.
  */
-import {isEmpty, isEqual, zip} from 'lodash';
+import {
+	isEqual,
+	zip
+} from 'lodash';
 
 import {
 	dispatch,

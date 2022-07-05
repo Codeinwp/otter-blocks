@@ -24,7 +24,7 @@ import {
 import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import {useCSSNode} from '../../../blocks/helpers/block-utility';
+import { useCSSNode } from '../../../blocks/helpers/block-utility';
 
 const { blockInit } = window.otterUtils;
 

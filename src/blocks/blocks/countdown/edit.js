@@ -23,14 +23,16 @@ import moment from 'moment';
  * Internal dependencies
  */
 import metadata from './block.json';
-import {blockInit, useCSSNode} from '../../helpers/block-utility';
+import {
+	blockInit,
+	useCSSNode
+} from '../../helpers/block-utility';
 import Inspector from './inspector.js';
 import {
 	getIntervalFromUnix,
 	getTimezone
 } from '../../helpers/helper-functions.js';
 import DisplayTime from './components/display-time.js';
-import classnames from 'classnames';
 
 const { attributes: defaultAttributes } = metadata;
 

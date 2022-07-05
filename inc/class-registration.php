@@ -165,11 +165,17 @@ class Registration {
 	 * @access public
 	 */
 	public function enqueue_assets() {
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+		wp_register_style( 'font-awesome-5', OTTER_BLOCKS_URL . 'assets/fontawesome/css/all.min.css', [], $asset_file['version'] );
+		wp_register_style( 'font-awesome-4-shims', OTTER_BLOCKS_URL . 'assets/fontawesome/css/v4-shims.min.css', [], $asset_file['version'] );
+
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/leaflet-map.asset.php';
 		wp_register_script( 'leaflet', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'leaflet', 'async', true );
 		wp_register_script( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'build/blocks/leaflet-gesture-handling.js', array( 'leaflet' ), $asset_file['version'], true );
 		wp_script_add_data( 'leaflet-gesture-handling', 'defer', true );
+		wp_register_style( 'leaflet', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet.css', [], $asset_file['version'] );
+		wp_register_style( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet-gesture-handling.min.css', [], $asset_file['version'] );
 
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
 		wp_register_script( 'lottie-player', OTTER_BLOCKS_URL . 'assets/lottie/lottie-player.min.js', [], $asset_file['version'], true );
@@ -178,6 +184,8 @@ class Registration {
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/slider.asset.php';
 		wp_register_script( 'glidejs', OTTER_BLOCKS_URL . 'assets/glide/glide.min.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'glidejs', 'async', true );
+		wp_register_style( 'glidejs-core', OTTER_BLOCKS_URL . 'assets/glide/glide.core.min.css', [], $asset_file['version'] );
+		wp_register_style( 'glidejs-theme', OTTER_BLOCKS_URL . 'assets/glide/glide.theme.min.css', [], $asset_file['version'] );
 	}
 
 
@@ -331,34 +339,11 @@ class Registration {
 					$content .= $widget['content'];
 				}
 			}
+
+			$post = $content;
 		} else {
 			$content = get_the_content( null, false, $post );
 		}
-
-		if ( function_exists( 'get_block_templates' ) && current_theme_supports( 'block-templates' ) ) {
-			global $_wp_current_template_content;
-
-			$slugs           = array();
-			$template_blocks = parse_blocks( $_wp_current_template_content );
-			foreach ( $template_blocks as $template_block ) {
-				if ( 'core/template-part' === $template_block['blockName'] ) {
-					$slugs[] = $template_block['attrs']['slug'];
-				}
-			}
-
-			$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
-			foreach ( $templates_parts as $templates_part ) {
-				if ( isset( $templates_part->content ) && in_array( $templates_part->slug, $slugs ) ) {
-					$content .= $templates_part->content;
-				}
-			}
-
-			$content .= $_wp_current_template_content;
-
-		}
-
-
-		$post = $content;
 
 		if ( strpos( $content, '<!-- wp:' ) === false ) {
 			self::$can_load_frontend = false;
@@ -564,25 +549,8 @@ class Registration {
 	 * @access  public
 	 */
 	public function enqueue_block_styles( $post ) {
-		$template_parts_content = '';
-
-		if ( function_exists( 'get_block_templates' ) ) {
-			$template_parts = get_block_templates( array( 'wp_id' => get_the_ID() ), 'wp_template_part' );
-			foreach ( $template_parts as $template_part ) {
-				if ( isset( $template_part->content ) ) {
-					$template_parts_content .= $template_part->content;
-				}
-			}
-		}
-
 		foreach ( self::$blocks as $block ) {
-			if (
-				in_array( $block, self::$styles_loaded )
-				|| (
-					! has_block( 'themeisle-blocks/' . $block, $post )
-					&& ! has_block( 'themeisle-blocks/' . $block, $template_parts_content )
-				)
-			) {
+			if ( in_array( $block, self::$styles_loaded ) || ! has_block( 'themeisle-blocks/' . $block, $post ) ) {
 				continue;
 			}
 
@@ -682,7 +650,10 @@ class Registration {
 
 		self::$blocks = apply_filters( 'otter_blocks_register_blocks', self::$blocks );
 
-		self::$block_dependencies = array();
+		self::$block_dependencies = array(
+			'leaflet-map' => array( 'leaflet', 'leaflet-gesture-handling' ),
+			'slider'      => array( 'glidejs-core', 'glidejs-theme' ),
+		);
 
 		foreach ( self::$blocks as $block ) {
 			$block_path   = OTTER_BLOCKS_PATH . '/build/blocks/' . $block;

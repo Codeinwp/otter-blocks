@@ -30,7 +30,10 @@ import { StyleSwitcherBlockControl } from '../../components/style-switcher-contr
 import MarkerModal from './components/marker-modal.js';
 import Map from './components/map.js';
 import styles from './components/styles.js';
-import {blockInit, getEditorIframe} from '../../helpers/block-utility.js';
+import {
+	blockInit,
+	getEditorIframe
+} from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 

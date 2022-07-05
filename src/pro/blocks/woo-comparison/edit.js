@@ -24,7 +24,7 @@ import defaultAttributes from './attributes.js';
 import Placeholder from './placeholder.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import {useCSSNode} from '../../../blocks/helpers/block-utility';
+import { useCSSNode } from '../../../blocks/helpers/block-utility';
 
 const { blockInit } = window.otterUtils;
 
@@ -89,7 +89,7 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				<Disabled
-					className={cssNodeName}
+					className={ cssNodeName }
 				>
 					<ServerSideRender
 						block="themeisle-blocks/woo-comparison"

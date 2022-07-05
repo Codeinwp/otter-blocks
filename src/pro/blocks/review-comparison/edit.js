@@ -28,7 +28,7 @@ import metadata from './block.json';
 import Placeholder from './placeholder.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import {useCSSNode} from '../../../blocks/helpers/block-utility';
+import { useCSSNode } from '../../../blocks/helpers/block-utility';
 
 const {
 	StarFilled,
@@ -252,7 +252,7 @@ const Edit = ({
 						{ tableStatistics }
 					</tr>
 
-					<tr className={cssNodeName}>
+					<tr className={ cssNodeName }>
 						<th>{ __( 'Buy this product', 'otter-blocks' ) }</th>
 						{ tableLinks }
 					</tr>

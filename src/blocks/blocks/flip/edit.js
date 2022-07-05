@@ -29,8 +29,11 @@ import {
 import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import {blockInit, useCSSNode} from '../../helpers/block-utility.js';
-import {getChoice} from '../../helpers/helper-functions';
+import {
+	blockInit,
+	useCSSNode
+} from '../../helpers/block-utility.js';
+import { getChoice } from '../../helpers/helper-functions.js';
 
 const { attributes: defaultAttributes } = metadata;
 

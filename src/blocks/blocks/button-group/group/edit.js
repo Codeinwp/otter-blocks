@@ -26,7 +26,10 @@ import {
  */
 import metadata from './block.json';
 import Inspector from './inspector.js';
-import {blockInit, useCSSNode} from '../../../helpers/block-utility.js';
+import {
+	blockInit,
+	useCSSNode
+} from '../../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 

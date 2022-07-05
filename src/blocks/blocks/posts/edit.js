@@ -37,7 +37,10 @@ import {
 import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import {blockInit, useCSSNode} from '../../helpers/block-utility.js';
+import {
+	blockInit,
+	useCSSNode
+} from '../../helpers/block-utility.js';
 import Layout from './components/layout/index.js';
 import { _align, getCustomPostTypeSlugs } from '../../helpers/helper-functions.js';
 import '../../components/store/index.js';

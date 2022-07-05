@@ -27,8 +27,12 @@ import {
  * Internal dependencies
  */
 import metadata from './block.json';
-import Inspector from './inspector';
-import {blockInit, copyScriptAssetToIframe, getEditorIframe} from '../../helpers/block-utility';
+import Inspector from './inspector.js';
+import {
+	blockInit,
+	copyScriptAssetToIframe,
+	getEditorIframe
+} from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 

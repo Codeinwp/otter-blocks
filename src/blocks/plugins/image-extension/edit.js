@@ -34,7 +34,7 @@ import {
  * Internal dependencies.
  */
 import ControlPanelControl from '../../components/control-panel-control/index.js';
-import {useCSSNode} from '../../helpers/block-utility';
+import { useCSSNode } from '../../helpers/block-utility';
 
 const Edit = ({
 	BlockEdit,

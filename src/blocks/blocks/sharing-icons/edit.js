@@ -16,8 +16,12 @@ import ServerSideRender from '@wordpress/server-side-render';
  * Internal dependencies
  */
 import Controls from './controls.js';
-import Inspector from './inspector';
-import {blockInit, getDefaultValueByField, useCSSNode} from '../../helpers/block-utility';
+import Inspector from './inspector.js';
+import {
+	blockInit,
+	getDefaultValueByField,
+	useCSSNode
+} from '../../helpers/block-utility.js';
 import metadata from './block.json';
 import socialList from './services.js';
 

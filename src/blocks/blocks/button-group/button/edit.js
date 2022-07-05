@@ -30,7 +30,10 @@ import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import themeIsleIcons from './../../../helpers/themeisle-icons';
-import {blockInit, useCSSNode} from '../../../helpers/block-utility.js';
+import {
+	blockInit,
+	useCSSNode
+} from '../../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
