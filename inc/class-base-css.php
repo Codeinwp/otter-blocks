@@ -275,7 +275,7 @@ class Base_CSS {
 	public function cycle_through_static_blocks( $blocks ) {
 		$style = '';
 
-		if( ! is_array( $blocks ) ) {
+		if ( ! is_array( $blocks ) ) {
 			return $style;
 		}
 
@@ -336,7 +336,7 @@ class Base_CSS {
 	public function cycle_through_reusable_blocks( $blocks ) {
 		$style = '';
 
-		if( ! is_array( $blocks ) ) {
+		if ( ! is_array( $blocks ) ) {
 			return $style;
 		}
 
