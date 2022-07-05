@@ -653,13 +653,19 @@ class Registration {
 		$this->enqueue_assets();
 
 		self::$block_dependencies = array(
-			'button-group'       => array( 'font-awesome-5', 'font-awesome-4-shims' ),
-			'font-awesome-icons' => array( 'font-awesome-5', 'font-awesome-4-shims' ),
-			'icon-list-item'     => array( 'leaflet', 'leaflet-gesture-handling' ),
 			'leaflet-map'        => array( 'leaflet', 'leaflet-gesture-handling' ),
-			'plugin-cards'       => array( 'font-awesome-5', 'font-awesome-4-shims' ),
-			'sharing-icons'      => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 			'slider'             => array( 'glidejs-core', 'glidejs-theme' ),
+		);
+
+		$local_dependencies = array_merge(
+			self::$block_dependencies,
+			array(
+				'button-group'       => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+				'font-awesome-icons' => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+				'icon-list-item'     => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+				'plugin-cards'       => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+				'sharing-icons'      => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+			)
 		);
 
 		foreach ( self::$blocks as $block ) {
@@ -684,8 +690,8 @@ class Registration {
 
 			$deps = array();
 
-			if ( isset( self::$block_dependencies[ $block ] ) ) {
-				$deps = self::$block_dependencies[ $block ];
+			if ( isset( $local_dependencies[ $block ] ) ) {
+				$deps = $local_dependencies[ $block ];
 			}
 
 			if ( file_exists( $editor_style_path ) && ! empty( $metadata['editorStyle'] ) ) {
