@@ -134,7 +134,7 @@ const Edit = ({
 
 
 	const inlineStyles = {
-		'--borderWidth': undefined !== attributes.borderWidth ? attributes.borderWidth : 0,
+		'--borderWidth': undefined !== attributes.borderWidth ? attributes.borderWidth + 'px' : '3px',
 		'--borderColor': attributes.borderColor,
 		'--activeTitleColor': attributes.activeTitleColor,
 		'--tabColor': attributes.tabColor
