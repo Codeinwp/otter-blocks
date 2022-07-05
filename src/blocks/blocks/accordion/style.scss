@@ -29,7 +29,7 @@
 			display: grid;
 			grid-template-columns: auto min-content;
 			align-items: center;
-			padding: 18px 24px;
+			padding: var( --hPaddingTop, 18px ) var( --hPaddingRight, 24px ) var( --hPaddingBottom, 18px ) var( --hPaddingLeft, 24px );
 
 			svg {
 				width: 24px;
@@ -63,7 +63,7 @@
 			border-right: var( --cBorderRW, 1px) var( --cBorderRS, solid) var( --cBorderRC, #d5dadf );
 			border-bottom: var( --cBorderBW, 1px) var( --cBorderBS, solid) var( --cBorderBC, #d5dadf );
 			border-left: var( --cBorderLW, 1px) var( --cBorderLS, solid) var( --cBorderLC, #d5dadf );
-			padding: 18px 24px;
+			padding: var( --cPaddingTop, 18px ) var( --cPaddingRight, 24px ) var( --cPaddingBottom, 18px ) var( --cPaddingLeft, 24px );
 		}
 
 		&[open] {

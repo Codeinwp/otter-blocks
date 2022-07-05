@@ -60,6 +60,25 @@ class Accordion_CSS extends Base_CSS {
 					);
 				}
 			}
+		}
+
+		$padding_variables = array();
+		foreach ( [ 'header', 'content' ] as $type ) {
+			foreach ( [ 'top', 'right', 'bottom', 'left' ] as $position ) {
+				array_push(
+					$padding_variables,
+					array(
+						'property'  => '--' . $type[0] . 'Padding' . ucwords( $position ),
+						'value'     => $type . 'Padding',
+						'format'    => function( $value ) use ( $position ) {
+							return $value[ $position ];
+						},
+						'condition' => function( $attrs ) use ( $position, $type ) {
+							return isset( $attrs[ $type . 'Padding' ] ) && isset( $attrs[ $type . 'Padding' ][ $position ] );
+						},
+					)
+				);
+			}
 		};
 
 		$css->add_item(
@@ -113,7 +132,8 @@ class Accordion_CSS extends Base_CSS {
 							'unit'     => 'px',
 						),
 					),
-					$border_variables
+					$border_variables,
+					$padding_variables
 				),
 			)
 		);

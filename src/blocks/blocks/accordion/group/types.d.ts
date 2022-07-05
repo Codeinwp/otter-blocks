@@ -15,6 +15,8 @@ type Attributes = {
 	letterSpacing: number
 	headerBorder: object
 	contentBorder: object
+	headerPadding: object
+	contentPadding: object
 }
 
 export type AccordionGroupProps = BlockProps<Attributes>

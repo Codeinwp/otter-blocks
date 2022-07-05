@@ -19,7 +19,7 @@
 			border-bottom: var( --hBorderBW, 1px) var( --hBorderBS, solid) var( --hBorderBC, #d5dadf );
 			border-left: var( --hBorderLW, 1px) var( --hBorderLS, solid) var( --hBorderLC, #d5dadf );
 
-			padding: 18px 24px;
+			padding: var( --hPaddingTop, 18px ) var( --hPaddingRight, 24px ) var( --hPaddingBottom, 18px ) var( --hPaddingLeft, 24px );
 			cursor: pointer;
 
 			font-style: var( --fontStyle );
@@ -52,7 +52,7 @@
 			border-bottom: var( --cBorderBW, 1px) var( --cBorderBS, solid) var( --cBorderBC, #d5dadf );
 			border-left: var( --cBorderLW, 1px) var( --cBorderLS, solid) var( --cBorderLC, #d5dadf );
 
-			padding: 18px 24px;
+			padding: var( --cPaddingTop, 18px ) var( --cPaddingRight, 24px ) var( --cPaddingBottom, 18px ) var( --cPaddingLeft, 24px );
 		}
 
 		&:not([ data-align="full"] ) {

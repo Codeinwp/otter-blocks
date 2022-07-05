@@ -14,6 +14,7 @@ import {
 	SelectControl,
 	RangeControl,
 	FontSizePicker,
+	__experimentalBoxControl as BoxControl,
 	__experimentalBorderBoxControl as BorderBoxControl
 } from '@wordpress/components';
 
@@ -65,6 +66,10 @@ const Inspector = ({
 					] }
 					onChange={ e => setAttributes({ gap: e }) }
 				/>
+			</PanelBody>
+			<PanelBody
+				title={ __( 'Borders', 'otter-blocks' ) }
+			>
 				<BorderBoxControl
 					label={ __( 'Header Borders', 'otter-blocks' ) }
 					value={ attributes.headerBorder }
@@ -74,6 +79,22 @@ const Inspector = ({
 					label={ __( 'Content Borders', 'otter-blocks' ) }
 					value={ attributes.contentBorder }
 					onChange={ contentBorder => setAttributes({ contentBorder }) }
+				/>
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Spacing', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<BoxControl
+					label={ __( 'Header Padding', 'otter-blocks' ) }
+					values={ attributes.headerPadding }
+					onChange={ headerPadding => setAttributes({ headerPadding }) }
+				/>
+				<BoxControl
+					label={ __( 'Content Padding', 'otter-blocks' ) }
+					values={ attributes.contentPadding }
+					onChange={ contentPadding => setAttributes({ contentPadding }) }
 				/>
 			</PanelBody>
 
@@ -132,22 +153,22 @@ const Inspector = ({
 					value={ attributes.fontSize }
 					fontSizes={ [
 						{
-							name: __( 'Small' ),
+							name: __( 'Small', 'otter-blocks' ),
 							slug: 'small',
 							size: 17
 						},
 						{
-							name: __( 'Medium' ),
+							name: __( 'Medium', 'otter-blocks' ),
 							slug: 'medium',
 							size: 22
 						},
 						{
-							name: __( 'Large' ),
+							name: __( 'Large', 'otter-blocks' ),
 							slug: 'large',
 							size: 36
 						},
 						{
-							name: __( 'Extra Large' ),
+							name: __( 'Extra Large', 'otter-blocks' ),
 							slug: 'extra-large',
 							size: 42
 						}

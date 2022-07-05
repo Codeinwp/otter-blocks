@@ -93,8 +93,22 @@ const Edit = ({
 		});
 	};
 
+	const addPaddingStyle = ( type ) => {
+		const padding = 'header' === type ? attributes.headerPadding : ( 'content' === type ? attributes.contentPadding : null );
+		if ( ! padding ) {
+			return;
+		}
+
+		[ 'Top', 'Right', 'Bottom', 'Left' ].forEach( position => {
+			const varName = `--${type.slice( 0, 1 )}Padding${position}`;
+			inlineStyles[varName] = padding[ position.toLowerCase() ];
+		});
+	};
+
 	addBorderStyle( 'header' );
 	addBorderStyle( 'content' );
+	addPaddingStyle( 'header' );
+	addPaddingStyle( 'content' );
 
 	const blockProps = useBlockProps({
 		id: attributes.id,

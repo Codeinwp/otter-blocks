@@ -49,6 +49,12 @@
 		},
 		"contentBorder": {
 			"type": "object"
+		},
+		"headerPadding": {
+			"type": "object"
+		},
+		"contentPadding": {
+			"type": "object"
 		}
 	},
 	"supports": {
