@@ -427,7 +427,14 @@ class Block_Frontend extends Base_CSS {
 	public function get_block_templates_css() {
 		$template_css = '';
 
-		if ( ! function_exists( 'get_block_templates' ) && current_theme_supports( 'block-templates' ) ) {
+		if (
+			! (
+				function_exists( 'get_block_templates' ) &&
+				current_theme_supports( 'block-templates' ) &&
+				function_exists( 'wp_is_block_theme' ) &&
+				wp_is_block_theme()
+			)
+		) {
 			return $template_css;
 		}
 

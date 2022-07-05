@@ -335,7 +335,12 @@ class Registration {
 			$content = get_the_content( null, false, $post );
 		}
 
-		if ( function_exists( 'get_block_templates' ) && current_theme_supports( 'block-templates' ) ) {
+		if (
+			function_exists( 'get_block_templates' ) &&
+			current_theme_supports( 'block-templates' ) &&
+			function_exists( 'wp_is_block_theme' ) &&
+			wp_is_block_theme()
+		) {
 			global $_wp_current_template_content;
 
 			$slugs = array();
