@@ -650,9 +650,16 @@ class Registration {
 
 		self::$blocks = apply_filters( 'otter_blocks_register_blocks', self::$blocks );
 
+		$this->enqueue_assets();
+
 		self::$block_dependencies = array(
-			'leaflet-map' => array( 'leaflet', 'leaflet-gesture-handling' ),
-			'slider'      => array( 'glidejs-core', 'glidejs-theme' ),
+			'button-group'       => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+			'font-awesome-icons' => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+			'icon-list-item'     => array( 'leaflet', 'leaflet-gesture-handling' ),
+			'leaflet-map'        => array( 'leaflet', 'leaflet-gesture-handling' ),
+			'plugin-cards'       => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+			'sharing-icons'      => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+			'slider'             => array( 'glidejs-core', 'glidejs-theme' ),
 		);
 
 		foreach ( self::$blocks as $block ) {
