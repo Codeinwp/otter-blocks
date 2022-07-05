@@ -26,6 +26,7 @@ import {
 	blockInit,
 	getDefaultValueByField
 } from '../../../helpers/block-utility.js';
+import Controls from './controls';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -126,6 +127,12 @@ const Edit = ({
 					weights: attributes.fontVariant && [ `${ attributes.fontVariant + ( 'italic' === attributes.fontStyle ? ':i' : '' ) }` ]
 				} ] } />
 			) }
+
+			<Controls
+				clientId={ clientId }
+				attributes={ attributes }
+				setAttributes={ setAttributes }
+			/>
 
 			<Inspector
 				attributes={ attributes }

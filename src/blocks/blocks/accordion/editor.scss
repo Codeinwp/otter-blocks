@@ -33,6 +33,10 @@
 				cursor: text;
 			}
 
+			> {
+				margin-bottom: 0;
+			}
+
 			svg {
 				fill: var( --titleColor );
 				width: 24px;

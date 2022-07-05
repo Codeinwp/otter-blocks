@@ -67,7 +67,7 @@ const Edit = ({
 
 							setAttributes({ title: value });
 						} }
-						tagName="span"
+						tagName={ attributes.tag || 'div' }
 					/>
 
 					<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 24 }/>

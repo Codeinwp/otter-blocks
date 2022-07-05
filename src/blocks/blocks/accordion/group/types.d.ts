@@ -17,6 +17,7 @@ type Attributes = {
 	contentBorder: object
 	headerPadding: object
 	contentPadding: object
+	tag: string
 }
 
 export type AccordionGroupProps = BlockProps<Attributes>

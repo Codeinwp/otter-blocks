@@ -36,6 +36,10 @@
 				height: 24px;
 			}
 
+			> {
+				margin-bottom: 0;
+			}
+
 			&:hover {
 				filter: brightness( 0.95 );
 			}
