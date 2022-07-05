@@ -8,6 +8,8 @@ import classNames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
+import { useSelect } from '@wordpress/data';
+
 import {
 	Fragment,
 	useState
@@ -74,6 +76,14 @@ const MediaContent = ({
 }) => {
 	const selection = state.get( 'selection' );
 
+	const { getCurrentPostId } = useSelect( select => {
+		const getCurrentPostId = select( 'core/editor' ).getCurrentPostId();
+
+		return {
+			getCurrentPostId
+		};
+	}, []);
+
 	const [ selected, setSelected ] = useState( selection?._single?.attributes?.url );
 
 	const onSelect = value => {
@@ -95,7 +105,7 @@ const MediaContent = ({
 							<MediaItem
 								key={ type }
 								label={ label }
-								url={ 'http://localhost:8888/wp-json/otter/v1/dynamic?type=' + type }
+								url={ 'http://localhost:8888/wp-json/otter/v1/dynamic?type=' + type + '&id=' + getCurrentPostId }
 								selected={ selected }
 								onSelect={ onSelect }
 							/>

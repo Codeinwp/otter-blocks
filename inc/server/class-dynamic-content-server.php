@@ -56,13 +56,20 @@ class Dynamic_Content_Server {
 					'args'                => array(
 						'type' => array(
 							'type'        => 'string',
-							'required'    => false,
+							'required'    => true,
 							'description' => __( 'Image Type.', 'otter-blocks' ),
+						),
+						'id'   => array(
+							'type'              => 'integer',
+							'required'          => true,
+							'description'       => __( 'ID of the Post.', 'otter-blocks' ),
+							'validate_callback' => function ( $param, $request, $key ) {
+								return is_numeric( $param );
+							},
 						),
 					),
 					'permission_callback' => function () {
-                        return true;
-						return current_user_can( 'edit_posts' );
+						return true;
 					},
 				),
 			)
@@ -70,31 +77,30 @@ class Dynamic_Content_Server {
 	}
 
 	/**
-	 * Search WordPress Plugin
+	 * Get Dynamic Image
 	 *
-	 * Search WordPress plugin using WordPress.org API.
+	 * Get dynamic image from WordPress.
 	 *
-	 * @param mixed $request Search request.
+	 * @param mixed $request Request arguments.
 	 *
 	 * @return mixed|\WP_REST_Response
 	 */
 	public function get( $request ) {
-		if ( ! current_user_can( 'edit_posts' ) ) {
-			// return false;
+		$type = $request->get_param( 'type' );
+		$id   = $request->get_param( 'id' );
+		$path = OTTER_BLOCKS_PATH . '/assets/images/placeholder.png';
+
+		if ( 'featuredImage' === $type ) {
+			$image = get_post_thumbnail_id( $id );
+			if ( $image ) {
+				$path  = wp_get_original_image_path( $image );
+			}
 		}
 
-		$return = array(
-			'success' => false,
-			'data'    => esc_html__( 'Something went wrong', 'otter-blocks' ),
-		);
-
-		$search = $request->get_param( 'type' );
-
-        $pic  = '/var/www/html/wp-content/uploads/2022/07/dummy-images-400x400-1.png';
-        $size = getimagesize( $pic );
+        $size = getimagesize( $path );
 
         header( 'Content-type: '.$size['mime'] );
-        return readfile( $pic );
+        return readfile( $path );
 	}
 
 	/**
