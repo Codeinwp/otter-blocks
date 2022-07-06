@@ -62,6 +62,12 @@ class Accordion_CSS extends Base_CSS {
 			}
 		}
 
+		$border = array(
+			'property'       => 'box-shadow',
+			'pattern'        => 'horizontal vertical blur spread color',
+			'pattern_values' => $border_variables,
+		);
+
 		$padding_variables = array();
 		foreach ( [ 'header', 'content' ] as $type ) {
 			foreach ( [ 'top', 'right', 'bottom', 'left' ] as $position ) {
@@ -159,8 +165,8 @@ class Accordion_CSS extends Base_CSS {
 									'value'   => 'boxShadowColor',
 									'default' => '#000',
 									'format'  => function( $value, $attrs ) {
-										$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 ) / 100;
-										return $this->hex2rgba( $value, $opacity );
+										$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 );
+										return ( strpos( $value, '#' ) !== false && $opacity < 100 ) ? $this->hex2rgba( $value, $opacity / 100 ) : $value;
 									},
 								),
 							),

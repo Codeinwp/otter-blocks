@@ -297,11 +297,15 @@ export const getChoice = arr => {
 	return r?.[1] ?? r?.[0];
 };
 
-export const hex2rgba = ( hex, alpha = 100 ) => {
-	if ( ! hex ) {
-		hex = '#000000';
+export const hex2rgba = ( color, alpha = 100 ) => {
+	if ( ! color ) {
+		color = '#000000';
 	}
 
-	const [ r, g, b ] = hex.match( /\w\w/g ).map( x => parseInt( x, 16 ) );
+	if ( 6 < color.length ) {
+		return color;
+	}
+
+	const [ r, g, b ] = color.match( /\w\w/g ).map( x => parseInt( x, 16 ) );
 	return `rgba(${r},${g},${b},${alpha / 100})`;
 };

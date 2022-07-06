@@ -36,7 +36,6 @@ const BoxShadowControl = ({
 					label={ __( 'Shadow Color', 'otter-blocks' ) }
 					colorValue={ attributes.boxShadowColor }
 					onColorChange={ e => setAttributes({ boxShadowColor: e }) }
-					colors={[]}
 				/>
 
 				<RangeControl
