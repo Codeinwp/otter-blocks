@@ -7,9 +7,6 @@
 
 namespace ThemeIsle\GutenbergBlocks;
 
-use PHPStan\Type\VoidType;
-use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro;
-
 /**
  * Class Registration.
  */
