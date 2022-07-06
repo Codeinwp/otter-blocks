@@ -159,7 +159,7 @@ class Accordion_CSS extends Base_CSS {
 									'value'   => 'boxShadowColor',
 									'default' => '#000',
 									'format'  => function( $value, $attrs ) {
-										$opacity = ( $attrs['boxShadowColorOpacity'] ?? 50 ) / 100;
+										$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 ) / 100;
 										return $this->hex2rgba( $value, $opacity );
 									},
 								),
