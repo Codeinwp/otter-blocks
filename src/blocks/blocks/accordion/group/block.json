@@ -88,6 +88,10 @@
 		"boxShadowVertical": {
 			"type": "number",
 			"default": 0
+		},
+		"iconFirst": {
+			"type": "boolean",
+			"default": false
 		}
 	},
 	"supports": {

@@ -25,7 +25,8 @@ type Attributes = {
 	boxShadowBlur: number,
 	boxShadowSpread: number,
 	boxShadowHorizontal: number,
-	boxShadowVertical: number
+	boxShadowVertical: number,
+	iconFirst: boolean
 }
 
 export type AccordionGroupProps = BlockProps<Attributes>

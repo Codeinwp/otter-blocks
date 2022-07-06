@@ -35,10 +35,6 @@
 				cursor: text;
 			}
 
-			> {
-				margin-bottom: 0;
-			}
-
 			svg {
 				fill: var( --titleColor );
 				width: 24px;
@@ -122,5 +118,11 @@
 				}
 			}
 		}
+	}
+
+	&.icon-first .wp-block-themeisle-blocks-accordion-item__title {
+		flex-direction: row-reverse;
+		justify-content: flex-end;
+		gap: var( --hPaddingLeft, 24px );
 	}
 }

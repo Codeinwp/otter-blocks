@@ -74,6 +74,11 @@ const Inspector = ({
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>
 				<ToggleControl
+					label={ __( 'Place icon before text', 'otter-blocks' ) }
+					checked={ attributes.iconFirst }
+					onChange={ iconFirst => setAttributes({ iconFirst }) }
+				/>
+				<ToggleControl
 					label={ __( 'Always open items', 'otter-blocks' ) }
 					help={ __( 'If an item is opened, it will not close when other items open', 'otter-blocks' ) }
 					checked={ attributes.alwaysOpen }

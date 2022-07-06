@@ -18,7 +18,8 @@ const Save = ({
 		id: attributes.id,
 		className: classnames({
 			[ `is-${ attributes.gap }-gap` ]: attributes.gap,
-			exclusive: false === attributes.alwaysOpen
+			exclusive: false === attributes.alwaysOpen,
+			'icon-first': attributes.iconFirst
 		})
 	});
 
