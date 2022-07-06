@@ -1,12 +1,6 @@
-/** @jsx jsx */
-
 /**
  * External dependencies.
  */
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies
@@ -136,13 +130,14 @@ const CircularProgressBarBlock = ({
 		setAttributes({ title: value });
 	};
 
-	const styles = css`
-		--fontSizeTitle: ${ px( attributes.fontSizeTitle ) };
-	`;
+
+	const inlineStyles = {
+		'--fontSizeTitle': px( attributes.fontSizeTitle )
+	};
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		css: styles
+		style: inlineStyles
 	});
 
 	return (
