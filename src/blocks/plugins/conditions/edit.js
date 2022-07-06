@@ -172,18 +172,14 @@ const defaultConditionsKeys = Object.keys( defaultConditions );
 
 const getPostData = () => {
 	const { getUsers, getEntityRecords } = select( 'core' );
-	const authors = getUsers({ who: 'authors' });
+	const authors = getUsers({ 'who': 'authors' });
 	const categories = getEntityRecords( 'taxonomy', 'category', { 'per_page': 100 });
-
-	console.count( 'Get Post data.' ); // TODO: remove after final review
 
 	return {
 		postAuthors: authors && Boolean( authors.length ) ? authors.map( author => author.username ) : [],
 		postCategories: categories && Boolean( categories.length ) ? categories.map( category => category.slug ) : []
 	};
 };
-
-const { postAuthors, postCategories} = getPostData();
 
 const Separator = ({ label }) => {
 	return (
@@ -204,6 +200,12 @@ const Edit = ({
 	const [ conditions, setConditions ] = useState({});
 	const [ flatConditions, setFlatConditions ] = useState([]);
 	const [ toggleVisibility, setToggleVisibility ] = useState([]);
+	const [ postData, setPostData ] = useState({});
+
+	useEffect( () => {
+		setPostData( getPostData() );
+		console.count( 'Get Post Data' ); // TODO: remove after final review
+	}, []);
 
 	useEffect( () => {
 		if ( ! Boolean( attributes?.otterConditions?.length ) ) {
@@ -373,10 +375,10 @@ const Edit = ({
 											<FormTokenField
 												label={ __( 'Post Authors', 'otter-blocks' ) }
 												value={ i.authors }
-												suggestions={ postAuthors }
+												suggestions={ postData?.postAuthors }
 												onChange={ authors => changeArrayValue( authors, index, n, 'authors' ) }
 												__experimentalExpandOnFocus={ true }
-												__experimentalValidateInput={ newValue => postAuthors.includes( newValue ) }
+												__experimentalValidateInput={ newValue => postData?.postAuthors.includes( newValue ) }
 											/>
 										) }
 
@@ -384,10 +386,10 @@ const Edit = ({
 											<FormTokenField
 												label={ __( 'Post Category', 'otter-blocks' ) }
 												value={ i.categories }
-												suggestions={ postCategories }
+												suggestions={ postData?.postCategories }
 												onChange={ categories => changeArrayValue( categories, index, n, 'categories' ) }
 												__experimentalExpandOnFocus={ true }
-												__experimentalValidateInput={ newValue => postCategories.includes( newValue ) }
+												__experimentalValidateInput={ newValue => postData?.postCategories.includes( newValue ) }
 											/>
 										) }
 
