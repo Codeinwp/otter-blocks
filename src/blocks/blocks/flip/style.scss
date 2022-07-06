@@ -15,12 +15,14 @@
 	--frontMediaHeight: 150px;
 
 	--flip-anim: unset;
+
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	width: max-content;
 	margin-left: auto;
 	margin-right: auto;
+	width: var(--width);
+	height: var(--height);
 
 	perspective: 1000px; /* Remove this if you don't want the 3D effect */
 
@@ -46,8 +48,8 @@
 
 	.o-flip-inner {
 		position: relative;
-		width:var( --width );
-		height: var( --height );
+		width: 100%;
+		height: 100%;
 		text-align: center;
 		transition: transform 0.8s;
 		transform-style: preserve-3d;
@@ -71,6 +73,7 @@
 		background-size: inherit;
 		border: var( --borderWidth ) solid var( --borderColor );
 		border-radius: var( --borderRadius );
+		box-sizing: border-box;
 	}
 
 	.o-flip-front {
