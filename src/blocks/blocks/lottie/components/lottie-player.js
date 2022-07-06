@@ -4,29 +4,27 @@
 import { isEmpty } from 'lodash';
 
 import { useEffect } from '@wordpress/element';
+import {copyScriptAssetToIframe, getEditorIframe} from '../../../helpers/block-utility';
 
 const LottiePlayer = ({
 	attributes,
-	isSelected,
 	playerRef
 }) => {
 	useEffect( () => {
-		if ( ! isEmpty( attributes.file ) && attributes.loop && null !== playerRef.current ) {
-			playerRef.current.addEventListener( 'complete', initLoop );
+		const iframe = getEditorIframe();
+
+		if ( Boolean( iframe ) ) {
+			copyScriptAssetToIframe( '#lottie-player-js', () => {
+				if ( ! isEmpty( attributes.file ) && attributes.loop && null !== playerRef.current ) {
+					playerRef.current.addEventListener( 'complete', initLoop );
+				}
+			});
+		} else {
+			if ( ! isEmpty( attributes.file ) && attributes.loop && null !== playerRef.current ) {
+				playerRef.current.addEventListener( 'complete', initLoop );
+			}
 		}
 	}, []);
-
-	useEffect( () => {
-		if ( isSelected ) {
-			playerRef.current.play();
-
-			if ( attributes.direction ) {
-				playerRef.current.seek( '100%' );
-			}
-		} else {
-			playerRef.current.stop();
-		}
-	}, [ isSelected ]);
 
 	const initLoop = () => {
 		if ( playerRef.current ) {

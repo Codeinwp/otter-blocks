@@ -1,12 +1,6 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 import {
 	closeSmall,
@@ -57,18 +51,18 @@ const Edit = ({
 
 	const [ isEditing, setEditing ] = useState( false );
 
-	const styles = css`
-		--minWidth: ${ attributes.minWidth ? attributes.minWidth + 'px' : '400px' };
-		--maxWidth: ${ attributes.maxWidth ? attributes.maxWidth + 'px' : undefined };
-		--backgroundColor: ${ attributes.backgroundColor };
-		--closeColor: ${ attributes.closeColor };
-		--overlayColor: ${ attributes.overlayColor };
-		--overlayOpacity: ${ attributes.overlayOpacity ? attributes.overlayOpacity / 100 : 1 };
-	`;
+	const inlineStyles = {
+		'--minWidth': attributes.minWidth ? attributes.minWidth + 'px' : '400px',
+		'--maxWidth': attributes.maxWidth ? attributes.maxWidth + 'px' : undefined,
+		'--backgroundColor': attributes.backgroundColor,
+		'--closeColor': attributes.closeColor,
+		'--overlayColor': attributes.overlayColor,
+		'--overlayOpacity': attributes.overlayOpacity ? attributes.overlayOpacity / 100 : 1
+	};
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		css: styles
+		style: inlineStyles
 	});
 
 	return (

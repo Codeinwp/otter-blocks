@@ -1,12 +1,6 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies
@@ -30,6 +24,7 @@ import {
 import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
+import { useCSSNode } from '../../../blocks/helpers/block-utility';
 
 const { blockInit } = window.otterUtils;
 
@@ -64,22 +59,24 @@ const Edit = ({
 		}
 	};
 
-	const contentCSS = css`
-		.otter-business-hour__container .otter-business-hour__content .wp-block-themeisle-blocks-business-hours-item {
-			font-size: ${ attributes.itemsFontSize }px;
-			padding-top: ${ attributes.gap }px;
-			padding-bottom: ${ attributes.gap }px;
-		}
-
-		.otter-business-hour__container .otter-business-hour__content .block-editor-block-list__block:last-child .wp-block-themeisle-blocks-business-hours-item {
-			border-radius: 0 0 ${ attributes.borderRadius || 0 }px ${ attributes.borderRadius || 0 }px;
-		}
-	`;
+	const [ cssNodeName, setNodeCSS ] = useCSSNode();
+	useEffect( () => {
+		setNodeCSS([
+			`.otter-business-hour__container .otter-business-hour__content .wp-block-themeisle-blocks-business-hours-item {
+				font-size: ${ attributes.itemsFontSize }px;
+				padding-top: ${ attributes.gap }px;
+				padding-bottom: ${ attributes.gap }px;
+			}`,
+			`.otter-business-hour__container .otter-business-hour__content .block-editor-block-list__block:last-child .wp-block-themeisle-blocks-business-hours-item {
+				border-radius: 0 0 ${ attributes.borderRadius || 0 }px ${ attributes.borderRadius || 0 }px;
+			}`
+		]);
+	}, [ attributes.itemsFontSize, attributes.gap, attributes.borderRadius ]);
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		style: style.container,
-		css: contentCSS
+		className: cssNodeName
 	});
 
 	return (

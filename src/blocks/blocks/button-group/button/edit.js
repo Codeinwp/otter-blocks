@@ -1,12 +1,8 @@
-/** @jsx jsx */
 
 /**
  * External dependencies
  */
-import {
-	css,
-	jsx
-} from '@emotion/react';
+
 import classnames from 'classnames';
 import hexToRgba from 'hex-rgba';
 
@@ -34,7 +30,10 @@ import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import themeIsleIcons from './../../../helpers/themeisle-icons';
-import { blockInit } from '../../../helpers/block-utility.js';
+import {
+	blockInit,
+	useCSSNode
+} from '../../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -109,19 +108,6 @@ const Edit = ({
 		...buttonStyle
 	};
 
-	const hoverStyles = css`
-		&:hover {
-			color: ${ attributes.hoverColor } !important;
-			background: ${ attributes.hoverBackground || attributes.hoverBackgroundGradient } !important;
-			border-color: ${ attributes.hoverBorder } !important;
-			${ attributes.boxShadow && `box-shadow: ${ attributes.hoverBoxShadowHorizontal }px ${ attributes.hoverBoxShadowVertical }px ${ attributes.hoverBoxShadowBlur }px ${ attributes.hoverBoxShadowSpread }px ${ hexToRgba( ( attributes.hoverBoxShadowColor ? attributes.hoverBoxShadowColor : '#000000' ), attributes.hoverBoxShadowColorOpacity ) } !important;` }
-		}
-
-		&:hover svg {
-			fill: ${ attributes.hoverColor } !important;
-		}
-	`;
-
 	const iconStyles = {
 		fill: attributes.color,
 		width: parentAttributes.fontSize && `${ parentAttributes.fontSize }px`
@@ -129,9 +115,24 @@ const Edit = ({
 
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
+	const [ cssNodeName, setCSSNode ] = useCSSNode();
+	useEffect( () => {
+		setCSSNode([
+			`.wp-block-button__link:hover {
+				color: ${ attributes.hoverColor } !important;
+				background: ${ attributes.hoverBackground || attributes.hoverBackgroundGradient } !important;
+				border-color: ${ attributes.hoverBorder } !important;
+				${ attributes.boxShadow && `box-shadow: ${ attributes.hoverBoxShadowHorizontal }px ${ attributes.hoverBoxShadowVertical }px ${ attributes.hoverBoxShadowBlur }px ${ attributes.hoverBoxShadowSpread }px ${ hexToRgba( ( attributes.hoverBoxShadowColor ? attributes.hoverBoxShadowColor : '#000000' ), attributes.hoverBoxShadowColorOpacity ) } !important;` }
+			}`,
+			`.wp-block-button__link:hover svg {
+				fill: ${ attributes.hoverColor } !important;
+			}`
+		]);
+	}, [ attributes.hoverColor, attributes.hoverBackground, attributes.hoverBackgroundGradient, attributes.hoverBorder, attributes.hoverColor, attributes.boxShadow, attributes.hoverBoxShadowHorizontal, attributes.hoverBoxShadowBlur, attributes.hoverBoxShadowSpread, attributes.hoverBoxShadowColor, attributes.hoverBoxShadowColorOpacity ]);
+
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		className: 'wp-block-button',
+		className: classnames( 'wp-block-button', cssNodeName ),
 		style: buttonStyleParent
 	});
 
@@ -206,7 +207,6 @@ const Edit = ({
 						withoutInteractiveFormatting
 						className="wp-block-button__link"
 						style={ styles }
-						css={ hoverStyles }
 					/>
 				) }
 			</div>
