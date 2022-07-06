@@ -28,6 +28,7 @@ import {
 	blockInit,
 	getDefaultValueByField
 } from '../../../helpers/block-utility.js';
+import { hex2rgba } from '../../../helpers/helper-functions';
 import Controls from './controls';
 
 const { attributes: defaultAttributes } = metadata;
@@ -88,7 +89,13 @@ const Edit = ({
 		'--fontStyle': getValue( 'fontStyle' ),
 		'--textTransform': getValue( 'textTransform' ),
 		'--letterSpacing': getValue( 'letterSpacing' ) ? getValue( 'letterSpacing' ) + 'px' : undefined,
-		'--fontSize': getValue( 'fontSize' ) ? getValue( 'fontSize' ) + 'px' : undefined
+		'--fontSize': getValue( 'fontSize' ) ? getValue( 'fontSize' ) + 'px' : undefined,
+		'--boxShadow': getValue( 'boxShadow' ) &&
+			getValue( 'boxShadowHorizontal' ) + 'px ' +
+			getValue( 'boxShadowVertical' ) + 'px ' +
+			getValue( 'boxShadowBlur' ) + 'px ' +
+			getValue( 'boxShadowSpread' ) + 'px ' +
+			hex2rgba( getValue( 'boxShadowColor' ), getValue( 'boxShadowColorOpacity' ) )
 	};
 
 	const addBorderStyle = ( type ) => {

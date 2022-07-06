@@ -6,6 +6,7 @@
 	margin: 20px auto;
 
 	.wp-block-themeisle-blocks-accordion-item {
+		box-shadow: var( --boxShadow );
 		.wp-block-themeisle-blocks-accordion-item__title {
 			color: var( --titleColor );
 			background: var( --titleBackground );

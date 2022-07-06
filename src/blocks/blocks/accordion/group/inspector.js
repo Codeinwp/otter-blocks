@@ -27,6 +27,7 @@ import { select, dispatch } from '@wordpress/data';
 import SyncControl from '../../../components/sync-control/index.js';
 import GoogleFontsControl from '../../../components/google-fonts-control';
 import ClearButton from '../../../components/clear-button';
+import BoxShadowControl from '../../../components/box-shadow-control';
 
 /**
  *
@@ -122,9 +123,14 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Color', 'otter-blocks' ) }
+				title={ __( 'Styling', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
+				<BoxShadowControl
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+				/>
+
 				<SyncControl
 					field="titleColor"
 					isSynced={ attributes.isSynced }

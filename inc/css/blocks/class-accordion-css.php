@@ -131,6 +131,43 @@ class Accordion_CSS extends Base_CSS {
 							'value'    => 'fontSize',
 							'unit'     => 'px',
 						),
+						array(
+							'property'       => '--boxShadow',
+							'pattern'        => 'horizontal vertical blur spread color',
+							'pattern_values' => array(
+								'horizontal' => array(
+									'value'   => 'boxShadowHorizontal',
+									'unit'    => 'px',
+									'default' => 0,
+								),
+								'vertical'   => array(
+									'value'   => 'boxShadowVertical',
+									'unit'    => 'px',
+									'default' => 0,
+								),
+								'blur'       => array(
+									'value'   => 'boxShadowBlur',
+									'unit'    => 'px',
+									'default' => 5,
+								),
+								'spread'     => array(
+									'value'   => 'boxShadowSpread',
+									'unit'    => 'px',
+									'default' => 1,
+								),
+								'color'      => array(
+									'value'   => 'boxShadowColor',
+									'default' => '#000',
+									'format'  => function( $value, $attrs ) {
+										$opacity = ( $attrs['boxShadowColorOpacity'] ?? 50 ) / 100;
+										return $this->hex2rgba( $value, $opacity );
+									},
+								),
+							),
+							'condition'      => function( $attrs ) {
+								return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow'];
+							},
+						),
 					),
 					$border_variables,
 					$padding_variables
