@@ -224,10 +224,16 @@ class Block_Frontend extends Base_CSS {
 	 */
 	public function render_post_css() {
 		$id = 0;
+		$styles_loaded = false;
 
 		if ( is_singular() ) {
 			// Enqueue main post attached style.
 			$id = get_the_ID();
+			$this->enqueue_styles();
+			$styles_loaded = true;
+		}
+
+		if( 0 === get_queried_object_id() && ! $styles_loaded ) {
 			$this->enqueue_styles();
 		}
 
@@ -266,7 +272,7 @@ class Block_Frontend extends Base_CSS {
 			return;
 		}
 
-		if ( ! has_blocks( $post_id ) && 0 < get_queried_object_id() ) {
+		if ( ! has_blocks( $post_id ) ) {
 			return;
 		}
 
@@ -532,7 +538,7 @@ class Block_Frontend extends Base_CSS {
 				$template_css .= $this->cycle_through_blocks( $blocks );
 			}
 		}
-		return $template_css . $this->cycle_through_blocks( $_wp_current_template_content );
+		return $template_css . $this->cycle_through_blocks( $template_blocks );
 	}
 
 	/**

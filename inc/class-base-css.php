@@ -275,10 +275,6 @@ class Base_CSS {
 	public function cycle_through_static_blocks( $blocks ) {
 		$style = '';
 
-		if ( ! is_array( $blocks ) ) {
-			return $style;
-		}
-
 		foreach ( $blocks as $block ) {
 			foreach ( self::$blocks_classes as $classname ) {
 				$path = new $classname();
@@ -335,10 +331,6 @@ class Base_CSS {
 	 */
 	public function cycle_through_reusable_blocks( $blocks ) {
 		$style = '';
-
-		if ( ! is_array( $blocks ) ) {
-			return $style;
-		}
 
 		foreach ( $blocks as $block ) {
 			if ( 'core/block' === $block['blockName'] && ! empty( $block['attrs']['ref'] ) ) {
