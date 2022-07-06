@@ -32,6 +32,7 @@ import Inspector from './inspector.js';
  * @returns
  */
 const Edit = ({
+	clientId,
 	attributes,
 	setAttributes
 }) => {
@@ -48,6 +49,7 @@ const Edit = ({
 	return (
 		<Fragment>
 			<Inspector
+				clientId={ clientId }
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 			/>

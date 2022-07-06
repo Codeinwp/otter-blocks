@@ -18,6 +18,7 @@ type Attributes = {
 	headerPadding: object
 	contentPadding: object
 	tag: string
+	alwaysOpen: boolean
 }
 
 export type AccordionGroupProps = BlockProps<Attributes>

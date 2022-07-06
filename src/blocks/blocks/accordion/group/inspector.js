@@ -14,9 +14,12 @@ import {
 	SelectControl,
 	RangeControl,
 	FontSizePicker,
+	ToggleControl,
 	__experimentalBoxControl as BoxControl,
 	__experimentalBorderBoxControl as BorderBoxControl
 } from '@wordpress/components';
+
+import { select, dispatch } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -31,6 +34,7 @@ import ClearButton from '../../../components/clear-button';
  * @returns
  */
 const Inspector = ({
+	clientId,
 	attributes,
 	setAttributes,
 	getValue
@@ -50,11 +54,30 @@ const Inspector = ({
 		}
 	};
 
+	const onAlwaysOpenToggle = alwaysOpen => {
+		setAttributes({ alwaysOpen });
+
+		if ( true === alwaysOpen ) {
+			return;
+		}
+
+		const children = select( 'core/block-editor' ).getBlocksByClientId( clientId )[0].innerBlocks;
+		children.forEach( child => {
+			dispatch( 'core/block-editor' ).updateBlockAttributes( child.clientId, { initialOpen: false });
+		});
+	};
+
 	return (
 		<InspectorControls>
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>
+				<ToggleControl
+					label={ __( 'Always open items', 'otter-blocks' ) }
+					help={ __( 'If an item is opened, it will not close when other items open', 'otter-blocks' ) }
+					checked={ attributes.alwaysOpen }
+					onChange={ onAlwaysOpenToggle }
+				/>
 				<SelectControl
 					label={ __( 'Gap', 'otter-blocks' ) }
 					value={ attributes.gap }

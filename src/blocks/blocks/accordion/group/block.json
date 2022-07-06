@@ -58,11 +58,15 @@
 		},
 		"tag": {
 			"type": "string"
+		},
+		"alwaysOpen": {
+			"type": "boolean"
 		}
 	},
 	"supports": {
 		"html": false
 	},
 	"editorStyle": "otter-accordion-editor",
-	"style": "otter-accordion-style"
+	"style": "otter-accordion-style",
+	"script": "otter-accordion"
 }

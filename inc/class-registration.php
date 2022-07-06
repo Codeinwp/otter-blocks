@@ -7,6 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks;
 
+use PHPStan\Type\VoidType;
 use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro;
 
 /**
@@ -52,6 +53,7 @@ class Registration {
 		'popup'          => false,
 		'progress-bar'   => false,
 		'sticky'         => false,
+		'accordion'      => false,
 	);
 
 	/**
@@ -327,6 +329,7 @@ class Registration {
 	 * @since   2.0.0
 	 * @param null $post Current post.
 	 * @access  public
+	 * @return boolean | void
 	 */
 	public function enqueue_dependencies( $post = null ) {
 		$content = '';
@@ -539,6 +542,12 @@ class Registration {
 			self::$scripts_loaded['progress-bar'] = true;
 		}
 
+		if ( ! self::$scripts_loaded['accordion'] && has_block( 'themeisle-blocks/accordion', $post ) ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/accordion.asset.php';
+			wp_register_script( 'otter-accordion', OTTER_BLOCKS_URL . 'build/blocks/accordion.js', $asset_file['dependencies'], $asset_file['version'], true );
+			wp_script_add_data( 'otter-accordion', 'defer', true );
+			self::$scripts_loaded['accordion'] = true;
+		}
 	}
 
 	/**

@@ -17,6 +17,8 @@ import {
 	useEffect
 } from '@wordpress/element';
 
+import { select } from '@wordpress/data';
+
 /**
  * Internal dependencies
  */
@@ -47,16 +49,20 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
-	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
+	// Make it true for old users if they have more than one accordion item
+	// with initiallyOpen === true, and false by default otherwise
+	if ( attributes.alwaysOpen === undefined ) {
+		const children = select( 'core/block-editor' ).getBlocksByClientId( clientId )[0].innerBlocks;
+		setAttributes({ alwaysOpen: 1 < children.filter( child => true === child.attributes.initialOpen ).length });
+	}
 
-	const headerBorder = getValue( 'headerBorder' );
-	const contentBorder = getValue( 'contentBorder' );
+	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
 	const getBorderValue = ( type, position, property ) => {
 		const border = 'header' === type ?
-			headerBorder :
+			getValue( 'headerBorder' ) :
 			( 'content' === type ?
-				contentBorder :
+				getValue( 'contentBorder' ) :
 				undefined );
 
 		if ( ! border ) {
@@ -135,6 +141,7 @@ const Edit = ({
 			/>
 
 			<Inspector
+				clientId={ clientId }
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 				getValue={ getValue }
