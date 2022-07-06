@@ -198,8 +198,6 @@ domReady( () => {
 					});
 				}, options );
 				observer.observe( elem );
-			} else {
-				console.log( elem );
 			}
 		});
 	}, 300 );

@@ -61,6 +61,18 @@ const Edit = ({
 		setEditing( false );
 	};
 
+	useEffect( () => {
+		if ( isSelected ) {
+			playerRef.current?.play?.();
+
+			if ( attributes.direction ) {
+				playerRef.current?.seek?.( '100%' );
+			}
+		} else {
+			playerRef.current?.stop?.();
+		}
+	}, [ isSelected ]);
+
 	const blockProps = useBlockProps();
 
 	return (

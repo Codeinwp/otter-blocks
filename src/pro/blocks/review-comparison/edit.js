@@ -1,12 +1,6 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 import classnames from 'classnames';
 
@@ -34,6 +28,7 @@ import metadata from './block.json';
 import Placeholder from './placeholder.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
+import { useCSSNode } from '../../../blocks/helpers/block-utility';
 
 const {
 	StarFilled,
@@ -95,12 +90,15 @@ const Edit = ({
 	const [ status, setStatus ] = useState( 'loading' );
 	const [ isEditing, setEditing ] = useState( true );
 
-	const styles = css`
-		.o-review-comparison_buttons span {
-			background: ${ attributes.buttonColor } !important;
-			color: ${ attributes.buttonText } !important;
-		}
-	`;
+	const [ cssNodeName, setNodeCSS ] = useCSSNode();
+	useEffect( () => {
+		setNodeCSS([
+			`.o-review-comparison_buttons span {
+				background: ${ attributes.buttonColor } !important;
+				color: ${ attributes.buttonText } !important;
+			}`
+		]);
+	}, [ attributes.buttonColor, attributes.buttonText ]);
 
 	useEffect( () => {
 		tableImages = [];
@@ -254,7 +252,7 @@ const Edit = ({
 						{ tableStatistics }
 					</tr>
 
-					<tr css={ styles }>
+					<tr className={ cssNodeName }>
 						<th>{ __( 'Buy this product', 'otter-blocks' ) }</th>
 						{ tableLinks }
 					</tr>

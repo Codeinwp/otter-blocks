@@ -112,7 +112,6 @@
         }
 
         .wp-block-themeisle-blocks-tabs-item__header {
-            width: 100%;
             border: var( --borderWidth ) solid var( --borderColor );
             padding: 5px 10px;
             cursor: pointer;
@@ -131,7 +130,6 @@
         .wp-block-themeisle-blocks-tabs-item__content {
             border: var( --borderWidth ) solid var( --borderColor );
             border-top: 0px;
-            width: 100%;
             padding: 10px;
             display: none;
             border-top: 0px;

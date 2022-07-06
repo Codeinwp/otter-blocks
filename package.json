@@ -1,6 +1,6 @@
 {
 	"name": "otter-blocks",
-	"version": "2.0.6",
+	"version": "2.0.7",
 	"description": "Otter – Page Builder Blocks & Extensions for Gutenberg",
 	"scripts": {
 		"build": "npm-run-all --parallel prod:*",
@@ -40,8 +40,7 @@
 		"lasttranslator": "Themeisle Translate Team <friends@themeisle.com>"
 	},
 	"dependencies": {
-		"@emotion/react": "^11.7.1",
-		"@wordpress/icons": "^8.3.0",
+		"@wordpress/icons": "^9.3.0",
 		"array-move": "^3.0.1",
 		"classnames": "^2.3.1",
 		"currency-symbol-map": "^5.0.1",
@@ -57,13 +56,13 @@
 		"@semantic-release/exec": "^6.0.3",
 		"@semantic-release/git": "^10.0.1",
 		"@types/wordpress__block-editor": "^7.0.0",
-		"@types/wordpress__components": "^19.3.2",
-		"@wordpress/block-editor": "^8.6.0",
-		"@wordpress/components": "^19.9.0",
-		"@wordpress/compose": "^5.5.0",
-		"@wordpress/data": "^6.7.0",
-		"@wordpress/dom-ready": "^3.7.0",
-		"@wordpress/element": "^4.5.0",
+		"@types/wordpress__components": "^19.10.0",
+		"@wordpress/block-editor": "^9.4.0",
+		"@wordpress/components": "^19.14.0",
+		"@wordpress/compose": "^5.10.0",
+		"@wordpress/data": "^6.12.0",
+		"@wordpress/dom-ready": "^3.12.0",
+		"@wordpress/element": "^4.10.0",
 		"@wordpress/scripts": "^22.5.0",
 		"conventional-changelog-simple-preset": "^1.0.20",
 		"eslint-config-wordpress": "^2.0.0",
@@ -78,7 +77,7 @@
 		"replace-in-file": "^6.3.1",
 		"semantic-release": "^19.0.3",
 		"semantic-release-slack-bot": "^3.5.2",
-		"typescript": "^4.6.4"
+		"typescript": "^4.7.4"
 	},
 	"optionalDependencies": {
 		"fsevents": "^2.3.2"

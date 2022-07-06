@@ -1,16 +1,9 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
 import classnames from 'classnames';
 
 import { get } from 'lodash';
-
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies
@@ -51,12 +44,16 @@ import {
  * Internal dependencies
  */
 import metadata from './block.json';
-import { blockInit } from '../../helpers/block-utility.js';
+import {
+	blockInit,
+	useCSSNode
+} from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 const { attributes: defaultAttributes } = metadata;
 
 export const FormContext = createContext({});
+const padding = x => x ? x.top + ' ' + x.right + ' ' + x.bottom + ' ' + x.left : null;
 
 /**
  * Form component
@@ -719,41 +716,39 @@ const Edit = ({
 		'--messageFontSize': attributes.messageFontSize !== undefined && attributes.messageFontSize,
 		'--inputFontSize': attributes.inputFontSize !== undefined && attributes.inputFontSize,
 		'--helpFontSize': attributes.helpFontSize !== undefined && attributes.helpFontSize,
-		'--inputColor': attributes.inputColor
+		'--inputColor': attributes.inputColor,
+		'--padding': padding( attributes.inputPadding ),
+		'--borderRadius': attributes.inputBorderRadius !== undefined && ( attributes.inputBorderRadius + 'px' ),
+		'--borderWidth': attributes.inputBorderWidth !== undefined && ( attributes.inputBorderWidth + 'px' ),
+		'--borderColor': attributes.inputBorderColor,
+		'--labelColor': attributes.labelColor,
+		'--inputWidth': attributes.inputWidth !== undefined && ( attributes.inputWidth + '%' ),
+		'--submitColor': attributes.submitColor,
+		'--requiredColor': attributes.inputRequiredColor,
+		'--inputGap': attributes.inputGap !== undefined && ( attributes.inputGap + 'px' ),
+		'--inputsGap': attributes.inputsGap !== undefined && ( attributes.inputsGap + 'px' ),
+		'--labelFontSize': attributes.labelFontSize !== undefined && ( attributes.labelFontSize + 'px' ),
+		'--submitFontSize': attributes.submitFontSize !== undefined && ( attributes.submitFontSize + 'px' ),
+		'--helpLabelColor': attributes.helpLabelColor
 	};
+
+	const [ cssNodeName, setCSS ] = useCSSNode();
+	useEffect( ()=>{
+		setCSS([
+			`.otter-form__container .wp-block-button__link {
+				background-color: ${attributes.submitBackgroundColor}
+			}`,
+			`.otter-form__container .wp-block-button__link:hover {
+				${ attributes.submitBackgroundColorHover && `background-color: ${attributes.submitBackgroundColorHover}` }
+			}`
+		]);
+	}, [ attributes.submitBackgroundColor, attributes.submitBackgroundColorHover ]);
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		style: inlineStyles
+		style: inlineStyles,
+		className: cssNodeName
 	});
-
-	const blockRef = useRef( null );
-
-	useEffect( () => {
-		const px = x => x !== undefined ? x + 'px' : null;
-		const per = x => x !== undefined ? x + '%' : null;
-		const padding = x => x ? x.top + ' ' + x.right + ' ' + x.bottom + ' ' + x.left : null;
-
-		/**
-		 * TODO: Refactor this based on #748
-		 */
-
-		if ( blockRef.current ) {
-			blockRef.current?.style?.setProperty( '--padding', padding( attributes.inputPadding ) );
-			blockRef.current?.style?.setProperty( '--borderRadius', px( attributes.inputBorderRadius ) );
-			blockRef.current?.style?.setProperty( '--borderWidth', px( attributes.inputBorderWidth ) );
-			blockRef.current?.style?.setProperty( '--borderColor', attributes.inputBorderColor || null );
-			blockRef.current?.style?.setProperty( '--labelColor', attributes.labelColor || null );
-			blockRef.current?.style?.setProperty( '--inputWidth', per( attributes.inputWidth ) );
-			blockRef.current?.style?.setProperty( '--submitColor', attributes.submitColor || null );
-			blockRef.current?.style?.setProperty( '--requiredColor', attributes.inputRequiredColor || null );
-			blockRef.current?.style?.setProperty( '--inputGap', px( attributes.inputGap ) );
-			blockRef.current?.style?.setProperty( '--inputsGap', px( attributes.inputsGap ) );
-			blockRef.current?.style?.setProperty( '--labelFontSize', attributes.labelFontSize );
-			blockRef.current?.style?.setProperty( '--submitFontSize', attributes.submitFontSize );
-			blockRef.current?.style?.setProperty( '--helpLabelColor', attributes.helpLabelColor );
-		}
-	}, [ blockRef.current, attributes ]);
 
 	return (
 		<Fragment>
@@ -781,7 +776,6 @@ const Edit = ({
 					{
 						( hasInnerBlocks ) ? (
 							<form
-								ref={ blockRef }
 								className="otter-form__container"
 								onSubmit={ () => false }
 							>
@@ -823,14 +817,6 @@ const Edit = ({
 										className='wp-block-button__link'
 										type='submit'
 										disabled
-
-										css={
-											css`
-											${ attributes.submitBackgroundColor && `background-color: ${attributes.submitBackgroundColor} !important;` }
-											&:hover {
-												${ attributes.submitBackgroundColorHover && `background-color: ${attributes.submitBackgroundColorHover} !important;` }
-											}`
-										}
 									>
 										{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
 									</button>

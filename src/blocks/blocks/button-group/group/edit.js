@@ -1,15 +1,8 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
 import classnames from 'classnames';
 import GoogleFontLoader from 'react-google-font-loader';
-
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies.
@@ -33,7 +26,10 @@ import {
  */
 import metadata from './block.json';
 import Inspector from './inspector.js';
-import { blockInit } from '../../../helpers/block-utility.js';
+import {
+	blockInit,
+	useCSSNode
+} from '../../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -95,6 +91,15 @@ const Edit = ({
 		isMobile = isPreviewMobile;
 	}
 
+	const [ cssNodeName, setNodeCSS ] = useCSSNode();
+	useEffect( () => {
+		setNodeCSS([
+			`block-editor-block-list__layout {
+				gap: ${ attributes.spacing }px;
+			}`
+		]);
+	}, [ attributes.spacing ]);
+
 	const alignClasses = [ 'desktop', 'tablet', 'mobile' ].reduce( ( acc, device ) => {
 		if ( attributes.align && attributes.align[ device ]) {
 			acc.push( `align-${ attributes.align[ device ] }-${ device }` );
@@ -107,17 +112,13 @@ const Edit = ({
 		id: attributes.id,
 		className: classnames(
 			'wp-block-buttons',
+			cssNodeName,
 			{
 				[ `align-${ attributes.align }` ]: 'string' === typeof attributes.align,
 				'collapse': ( 'collapse-desktop' === attributes.collapse && ( isDesktop || isTablet || isMobile ) ) || ( 'collapse-tablet' === attributes.collapse && ( isTablet || isMobile ) ) || ( 'collapse-mobile' === attributes.collapse && isMobile )
 			},
 			...alignClasses
-		),
-		css: css`
-		.block-editor-block-list__layout {
-			gap: ${ attributes.spacing }px;
-		}
-		`
+		)
 	});
 
 	return (
