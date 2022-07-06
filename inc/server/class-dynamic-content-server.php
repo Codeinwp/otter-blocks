@@ -55,9 +55,13 @@ class Dynamic_Content_Server {
 					'callback'            => array( $this, 'get' ),
 					'args'                => array(
 						'type' => array(
-							'type'        => 'string',
-							'required'    => true,
-							'description' => __( 'Image Type.', 'otter-blocks' ),
+							'type'              => 'string',
+							'required'          => true,
+							'description'       => __( 'Image Type.', 'otter-blocks' ),
+							'validate_callback' => function ( $param, $request, $key ) {
+								$allowed_types = array( 'featuredImage', 'authorImage', 'loggedInUserImage', 'productImage', 'postMetaImage' );
+								return in_array( $param, $allowed_types );
+							},
 						),
 						'id'   => array(
 							'type'              => 'integer',
@@ -94,6 +98,27 @@ class Dynamic_Content_Server {
 			$image = get_post_thumbnail_id( $id );
 			if ( $image ) {
 				$path  = wp_get_original_image_path( $image );
+			}
+		}
+
+		if ( 'authorImage' === $type ) {
+			$author = get_post_field( 'post_author', $id );
+			$path   = get_avatar_url( $author );
+		}
+
+		if ( 'loggedInUserImage' === $type ) {
+			$user = get_current_user_id();
+
+			if ( true === boolval( $user ) ) {
+				$path = get_avatar_url( $user );
+			}
+		}
+
+		if ( 'productImage' === $type ) {
+			$user = get_current_user_id();
+
+			if ( true === boolval( $user ) ) {
+				$path = get_avatar_url( $user );
 			}
 		}
 
