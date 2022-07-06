@@ -62,12 +62,6 @@ class Accordion_CSS extends Base_CSS {
 			}
 		}
 
-		$border = array(
-			'property'       => 'box-shadow',
-			'pattern'        => 'horizontal vertical blur spread color',
-			'pattern_values' => $border_variables,
-		);
-
 		$padding_variables = array();
 		foreach ( [ 'header', 'content' ] as $type ) {
 			foreach ( [ 'top', 'right', 'bottom', 'left' ] as $position ) {
@@ -177,6 +171,26 @@ class Accordion_CSS extends Base_CSS {
 					),
 					$border_variables,
 					$padding_variables
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .wp-block-themeisle-blocks-accordion-item[open]',
+				'properties' => array(
+					array(
+						'property' => '--titleColor',
+						'value'    => 'activeTitleColor',
+					),
+					array(
+						'property' => '--titleBackground',
+						'value'    => 'activeTitleBackground',
+					),
+					array(
+						'property' => '--contentBackground',
+						'value'    => 'activeContentBackground',
+					),
 				),
 			)
 		);

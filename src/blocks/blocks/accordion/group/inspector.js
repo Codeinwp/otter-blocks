@@ -96,20 +96,6 @@ const Inspector = ({
 					onChange={ e => setAttributes({ gap: e }) }
 				/>
 			</PanelBody>
-			<PanelBody
-				title={ __( 'Borders', 'otter-blocks' ) }
-			>
-				<BorderBoxControl
-					label={ __( 'Header Borders', 'otter-blocks' ) }
-					value={ attributes.headerBorder }
-					onChange={ headerBorder => setAttributes({ headerBorder }) }
-				/>
-				<BorderBoxControl
-					label={ __( 'Content Borders', 'otter-blocks' ) }
-					value={ attributes.contentBorder }
-					onChange={ contentBorder => setAttributes({ contentBorder }) }
-				/>
-			</PanelBody>
 
 			<PanelBody
 				title={ __( 'Spacing', 'otter-blocks' ) }
@@ -131,9 +117,15 @@ const Inspector = ({
 				title={ __( 'Styling', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<BoxShadowControl
-					attributes={ attributes }
-					setAttributes={ setAttributes }
+				<BorderBoxControl
+					label={ __( 'Header Borders', 'otter-blocks' ) }
+					value={ attributes.headerBorder }
+					onChange={ headerBorder => setAttributes({ headerBorder }) }
+				/>
+				<BorderBoxControl
+					label={ __( 'Content Borders', 'otter-blocks' ) }
+					value={ attributes.contentBorder }
+					onChange={ contentBorder => setAttributes({ contentBorder }) }
 				/>
 
 				<SyncControl
@@ -178,6 +170,40 @@ const Inspector = ({
 						onColorChange={ e => setAttributes({ contentBackground: e }) }
 					/>
 				</SyncControl>
+
+				<BoxShadowControl
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+				/>
+			</PanelBody>
+			<PanelBody
+				title={ __( 'Active Item Styling', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<ColorGradientControl
+					label={ __( 'Title', 'otter-blocks' ) }
+					colorValue={ attributes.activeTitleColor }
+					onColorChange={ activeTitleColor => setAttributes({ activeTitleColor }) }
+				/>
+
+				<ColorGradientControl
+					label={ __( 'Title Background', 'otter-blocks' ) }
+					colorValue={ attributes.activeTitleBackground }
+					onColorChange={ activeTitleBackground => setAttributes({ activeTitleBackground }) }
+				/>
+
+				<ContrastChecker
+					{ ...{
+						textColor: getValue( 'activeTitleColor' ),
+						backgroundColor: getValue( 'activeTitleBackground' )
+					} }
+				/>
+
+				<ColorGradientControl
+					label={ __( 'Content Background', 'otter-blocks' ) }
+					colorValue={ attributes.activeContentBackground }
+					onColorChange={ activeContentBackground => setAttributes({ activeContentBackground }) }
+				/>
 			</PanelBody>
 			<PanelBody
 				title={ __( 'Title Typography', 'otter-blocks' ) }

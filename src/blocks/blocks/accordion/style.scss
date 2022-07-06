@@ -108,6 +108,6 @@
 		display: flex;
 		flex-direction: row-reverse;
 		justify-content: flex-end;
-		gap: var( --hPaddingLeft, 24px );
+		gap: max( var(--hPaddingLeft, 24px), 10px );
 	}
 }

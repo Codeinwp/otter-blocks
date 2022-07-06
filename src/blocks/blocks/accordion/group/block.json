@@ -92,6 +92,15 @@
 		"iconFirst": {
 			"type": "boolean",
 			"default": false
+		},
+		"activeTitleColor": {
+			"type": "string"
+		},
+		"activeTitleBackground": {
+			"type": "string"
+		},
+		"activeContentBackground": {
+			"type": "string"
 		}
 	},
 	"supports": {
