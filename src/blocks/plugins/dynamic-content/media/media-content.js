@@ -39,11 +39,13 @@ const contentTypes = [
 ];
 
 const MediaItem = ({
-	url,
 	label,
+	type,
+	context,
 	selected,
 	onSelect
 }) => {
+	const url = themeisleGutenberg.restRoot + '/dynamic?type=' + type + '&context=' + context;
 	const isSelected = url === selected;
 
 	return (
@@ -105,7 +107,8 @@ const MediaContent = ({
 							<MediaItem
 								key={ type }
 								label={ label }
-								url={ 'http://localhost:8888/wp-json/otter/v1/dynamic?type=' + type + '&id=' + getCurrentPostId }
+								type={ type }
+								context={ getCurrentPostId }
 								selected={ selected }
 								onSelect={ onSelect }
 							/>

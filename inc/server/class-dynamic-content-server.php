@@ -54,7 +54,7 @@ class Dynamic_Content_Server {
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get' ),
 					'args'                => array(
-						'type' => array(
+						'type'    => array(
 							'type'              => 'string',
 							'required'          => true,
 							'description'       => __( 'Image Type.', 'otter-blocks' ),
@@ -63,10 +63,18 @@ class Dynamic_Content_Server {
 								return in_array( $param, $allowed_types );
 							},
 						),
-						'id'   => array(
+						'context' => array(
 							'type'              => 'integer',
 							'required'          => true,
-							'description'       => __( 'ID of the Post.', 'otter-blocks' ),
+							'description'       => __( 'ID of the post being edited.', 'otter-blocks' ),
+							'validate_callback' => function ( $param, $request, $key ) {
+								return is_numeric( $param );
+							},
+						),
+						'id'      => array(
+							'type'              => 'integer',
+							'required'          => true,
+							'description'       => __( 'ID of the Post that the image belongs.', 'otter-blocks' ),
 							'validate_callback' => function ( $param, $request, $key ) {
 								return is_numeric( $param );
 							},
@@ -91,18 +99,18 @@ class Dynamic_Content_Server {
 	 */
 	public function get( $request ) {
 		$type = $request->get_param( 'type' );
-		$id   = $request->get_param( 'id' );
+		$context   = $request->get_param( 'context' );
 		$path = OTTER_BLOCKS_PATH . '/assets/images/placeholder.png';
 
 		if ( 'featuredImage' === $type ) {
-			$image = get_post_thumbnail_id( $id );
+			$image = get_post_thumbnail_id( $context );
 			if ( $image ) {
 				$path  = wp_get_original_image_path( $image );
 			}
 		}
 
 		if ( 'authorImage' === $type ) {
-			$author = get_post_field( 'post_author', $id );
+			$author = get_post_field( 'post_author', $context );
 			$path   = get_avatar_url( $author );
 		}
 
