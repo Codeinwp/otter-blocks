@@ -13,10 +13,12 @@ import {
 	ExternalLink,
 	FormTokenField,
 	PanelBody,
-	SelectControl, Spinner
+	SelectControl,
+	Spinner,
+	Placeholder
 } from '@wordpress/components';
 
-import { select } from '@wordpress/data';
+import { select, useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
@@ -170,51 +172,56 @@ const defaultConditions = {
 };
 const defaultConditionsKeys = Object.keys( defaultConditions );
 
-const getPostData = () => {
-	let c = 0;
-	let t = null;
+const AuthorsFieldToken = ( props ) => {
+	const {
+		postAuthors,
+		isLoading
+	} = useSelect( select => {
+		const { getUsers, isResolving } = select( 'core' );
+		console.count( 'Update Authors' );
 
-	return {
-		retrieve: () => {
-			console.count( 'Try get the post data.' );
-			if ( 0 < c ) {
-				return undefined;
-			}
-			console.count( 'Initialize.' );
-			return new Promise( ( resolve ) => {
-				t = setInterval( () => {
-					try {
-						const {getUsers, getEntityRecords} = select( 'core' );
-						const authors = getUsers({'who': 'authors'});
-						const categories = getEntityRecords( 'taxonomy', 'category', {'per_page': 100});
+		return {
+			postAuthors: ( getUsers({ who: 'authors' }) ?? []).map( author => author.username ),
+			isLoading: isResolving( 'getUsers', [ { who: 'authors' } ])
+		};
+	}, [ ]);
 
-						if ( null !== authors && null !== categories ) {
-							resolve({
-								postAuthors: authors.map( author => author.username ),
-								postCategories: categories.map( category => category.slug )
-							});
-						} else if ( 10 < c ) {
-							resolve({
-								postAuthors: [],
-								postCategories: []
-							});
-						}
-						c++;
-					} catch ( e ) {
-						resolve({
-							postAuthors: [],
-							postCategories: []
-						});
-					}
-				}, 3000 );
-			});
-		},
-		clean: () => {
-			if ( t ) {
-				clearInterval( t );
-			}
-		}
-	};
+	return isLoading ? (
+		<Placeholder><Spinner /></Placeholder>
+	) : (
+		<FormTokenField
+			{...props}
+			suggestions={ postAuthors }
+			__experimentalExpandOnFocus={ true }
+			__experimentalValidateInput={ newValue => postAuthors.includes( newValue ) }
+		/>
+	);
+};
+
+const CategoriesFieldToken = ( props ) => {
+	const {
+		postCategories,
+		isLoading
+	} = useSelect( select => {
+		const { getEntityRecords, isResolving } = select( 'core' );
+		console.count( 'Update Categories' );
+
+		return {
+			postCategories: ( getEntityRecords( 'taxonomy', 'category', { 'per_page': 100 }) ?? []).map( category => category.slug ),
+			isLoading: isResolving( 'getEntityRecords', [ 'taxonomy', 'category', { 'per_page': 100 } ])
+		};
+	}, [ ]);
+
+	return isLoading ? (
+		<Placeholder><Spinner /></Placeholder>
+	) : (
+		<FormTokenField
+			{...props}
+			suggestions={ postCategories }
+			__experimentalExpandOnFocus={ true }
+			__experimentalValidateInput={ newValue => postCategories.includes( newValue ) }
+		/>
+	);
 };
 
 const Separator = ({ label }) => {
@@ -236,23 +243,6 @@ const Edit = ({
 	const [ conditions, setConditions ] = useState({});
 	const [ flatConditions, setFlatConditions ] = useState([]);
 	const [ toggleVisibility, setToggleVisibility ] = useState([]);
-	const [ postData, setPostData ] = useState({
-		postAuthors: null,
-		postCategories: null
-	});
-	const retrievePostData = useRef( getPostData() );
-
-	useEffect( () => {
-		const { retrieve, clean } = retrievePostData.current;
-
-		retrieve?.()?.then( data => {
-			console.count( 'Post Data Done' );
-			setPostData( data );
-		}).finally( () => clean?.() );
-		console.count( 'Get Post Data' );
-
-		return () => clean?.();
-	}, []);
 
 	useEffect( () => {
 		if ( ! Boolean( attributes?.otterConditions?.length ) ) {
@@ -419,37 +409,19 @@ const Edit = ({
 										) }
 
 										{ 'postAuthor' === i.type && (
-											null === postData?.postAuthors ?
-												(
-													<div style={{ display: 'flex', alignItems: 'flex-end' }}>
-														<Spinner></Spinner>
-														{ __( 'Retrieving Data', 'otter-blocks' ) }
-													</div>
-												) : ( <FormTokenField
-													label={ __( 'Post Authors', 'otter-blocks' ) }
-													value={ i.authors }
-													suggestions={ postData?.postAuthors }
-													onChange={ authors => changeArrayValue( authors, index, n, 'authors' ) }
-													__experimentalExpandOnFocus={ true }
-													__experimentalValidateInput={ newValue => postData?.postAuthors.includes( newValue ) }
-												/> )
+											<AuthorsFieldToken
+												label={ __( 'Post Author', 'otter-blocks' ) }
+												value={ i.authors }
+												onChange={ authors => changeArrayValue( authors, index, n, 'authors' ) }
+											/>
 										) }
 
 										{ 'postCategory' === i.type && (
-											null === postData?.postCategories ?
-												(
-													<div style={{ display: 'flex', alignItems: 'flex-end' }}>
-														<Spinner></Spinner>
-														{ __( 'Retrieving Data', 'otter-blocks' ) }
-													</div>
-												) : ( <FormTokenField
-													label={ __( 'Post Category', 'otter-blocks' ) }
-													value={ i.categories }
-													suggestions={ postData?.postCategories }
-													onChange={ categories => changeArrayValue( categories, index, n, 'categories' ) }
-													__experimentalExpandOnFocus={ true }
-													__experimentalValidateInput={ newValue => postData?.postCategories.includes( newValue ) }
-												/> )
+											<CategoriesFieldToken
+												label={ __( 'Post Category', 'otter-blocks' ) }
+												value={ i.categories }
+												onChange={ categories => changeArrayValue( categories, index, n, 'categories' ) }
+											/>
 										) }
 
 										{ 'postType' === i.type && (
