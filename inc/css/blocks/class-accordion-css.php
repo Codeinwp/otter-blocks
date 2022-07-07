@@ -172,7 +172,7 @@ class Accordion_CSS extends Base_CSS {
 									'default' => '#000',
 									'format'  => function( $value ) {
 										$opacity = $value['colorOpacity'];
-										$color   = $value['color'] ?? '#000000';
+										$color   = isset( $value['color'] ) ? $value['color'] : '#000000';
 										return ( strpos( $color, '#' ) !== false && $opacity < 100 ) ? $this->hex2rgba( $color, $opacity / 100 ) : $color;
 									},
 								),
