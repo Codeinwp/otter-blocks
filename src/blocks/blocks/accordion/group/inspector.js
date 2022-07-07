@@ -77,6 +77,15 @@ const Inspector = ({
 		});
 	};
 
+	const onTagChange = ( targetTag ) => {
+		const children = select( 'core/block-editor' ).getBlocksByClientId( clientId )[0].innerBlocks;
+		children.forEach( child => {
+			dispatch( 'core/block-editor' ).updateBlockAttributes( child.clientId, { tag: targetTag });
+		});
+
+		setAttributes({ tag: targetTag });
+	};
+
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -92,6 +101,20 @@ const Inspector = ({
 					help={ __( 'If an item is opened, it will not close when other items open', 'otter-blocks' ) }
 					checked={ attributes.alwaysOpen }
 					onChange={ onAlwaysOpenToggle }
+				/>
+				<SelectControl
+					label={ __( 'Title HTML tag', 'otter-blocks' ) }
+					value={ attributes.tag }
+					options={ [
+						{ label: __( 'Heading 1', 'otter-blocks' ), value: 'h1' },
+						{ label: __( 'Heading 2', 'otter-blocks' ), value: 'h2' },
+						{ label: __( 'Heading 3', 'otter-blocks' ), value: 'h3' },
+						{ label: __( 'Heading 4', 'otter-blocks' ), value: 'h4' },
+						{ label: __( 'Heading 5', 'otter-blocks' ), value: 'h5' },
+						{ label: __( 'Heading 6', 'otter-blocks' ), value: 'h6' },
+						{ label: __( 'Division', 'otter-blocks' ), value: 'div' }
+					] }
+					onChange={ onTagChange }
 				/>
 				<SelectControl
 					label={ __( 'Gap', 'otter-blocks' ) }
