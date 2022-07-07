@@ -18,12 +18,12 @@ import {
 	Placeholder
 } from '@wordpress/components';
 
-import { select, useSelect } from '@wordpress/data';
+import { useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
 	memo,
-	useEffect, useRef,
+	useEffect,
 	useState
 } from '@wordpress/element';
 
@@ -178,7 +178,6 @@ const AuthorsFieldToken = ( props ) => {
 		isLoading
 	} = useSelect( select => {
 		const { getUsers, isResolving } = select( 'core' );
-		console.count( 'Update Authors' );
 
 		return {
 			postAuthors: ( getUsers({ who: 'authors' }) ?? []).map( author => author.username ),
@@ -190,7 +189,7 @@ const AuthorsFieldToken = ( props ) => {
 		<Placeholder><Spinner /></Placeholder>
 	) : (
 		<FormTokenField
-			{...props}
+			{ ...props }
 			suggestions={ postAuthors }
 			__experimentalExpandOnFocus={ true }
 			__experimentalValidateInput={ newValue => postAuthors.includes( newValue ) }
@@ -204,7 +203,6 @@ const CategoriesFieldToken = ( props ) => {
 		isLoading
 	} = useSelect( select => {
 		const { getEntityRecords, isResolving } = select( 'core' );
-		console.count( 'Update Categories' );
 
 		return {
 			postCategories: ( getEntityRecords( 'taxonomy', 'category', { 'per_page': 100 }) ?? []).map( category => category.slug ),
@@ -216,7 +214,7 @@ const CategoriesFieldToken = ( props ) => {
 		<Placeholder><Spinner /></Placeholder>
 	) : (
 		<FormTokenField
-			{...props}
+			{ ...props }
 			suggestions={ postCategories }
 			__experimentalExpandOnFocus={ true }
 			__experimentalValidateInput={ newValue => postCategories.includes( newValue ) }
@@ -239,7 +237,6 @@ const Edit = ({
 	attributes,
 	setAttributes
 }) => {
-
 	const [ conditions, setConditions ] = useState({});
 	const [ flatConditions, setFlatConditions ] = useState([]);
 	const [ toggleVisibility, setToggleVisibility ] = useState([]);
@@ -255,8 +252,6 @@ const Edit = ({
 			otterConditions = undefined;
 		}
 
-		console.count( 'Init' ); // TODO: remove after final review
-
 		setAttributes({ otterConditions });
 	}, []);
 
@@ -269,8 +264,6 @@ const Edit = ({
 			label: __( 'Select a condition', 'otter-blocks' ),
 			help: __( 'Select a condition to control the visibility of your block.', 'otter-blocks' )
 		});
-
-		console.count( 'Update Conditions' ); // TODO: remove after final review
 
 		setConditions( c );
 		setFlatConditions( flat );
