@@ -19,13 +19,7 @@ type Attributes = {
 	contentPadding: object
 	tag: string
 	alwaysOpen: boolean
-	boxShadow: boolean,
-	boxShadowColor: string,
-	boxShadowColorOpacity: number,
-	boxShadowBlur: number,
-	boxShadowSpread: number,
-	boxShadowHorizontal: number,
-	boxShadowVertical: number,
+	boxShadow: object
 	iconFirst: boolean,
 	activeTitleColor: string
 	activeTitleBackground: string

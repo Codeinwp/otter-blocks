@@ -55,6 +55,15 @@ const Inspector = ({
 		}
 	};
 
+	const changeBoxShadow = data => {
+		const boxShadow = { ...attributes.boxShadow };
+		Object.entries( data ).map( ([ key, val ] = data ) => {
+			boxShadow[key] = val;
+		});
+
+		setAttributes({ boxShadow });
+	};
+
 	const onAlwaysOpenToggle = alwaysOpen => {
 		setAttributes({ alwaysOpen });
 
@@ -172,8 +181,8 @@ const Inspector = ({
 				</SyncControl>
 
 				<BoxShadowControl
-					attributes={ attributes }
-					setAttributes={ setAttributes }
+					boxShadow={ attributes.boxShadow }
+					onChange={ changeBoxShadow }
 				/>
 			</PanelBody>
 			<PanelBody

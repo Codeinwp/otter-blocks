@@ -80,6 +80,8 @@ const Edit = ({
 		return border[position] && border[position][property] ? border[position][property] : border[property];
 	};
 
+	const boxShadow = getValue( 'boxShadow' );
+
 	const inlineStyles = {
 		'--titleColor': getValue( 'titleColor' ),
 		'--titleBackground': getValue( 'titleBackground' ),
@@ -90,12 +92,7 @@ const Edit = ({
 		'--textTransform': getValue( 'textTransform' ),
 		'--letterSpacing': getValue( 'letterSpacing' ) ? getValue( 'letterSpacing' ) + 'px' : undefined,
 		'--fontSize': getValue( 'fontSize' ) ? getValue( 'fontSize' ) + 'px' : undefined,
-		'--boxShadow': getValue( 'boxShadow' ) &&
-			getValue( 'boxShadowHorizontal' ) + 'px ' +
-			getValue( 'boxShadowVertical' ) + 'px ' +
-			getValue( 'boxShadowBlur' ) + 'px ' +
-			getValue( 'boxShadowSpread' ) + 'px ' +
-			hex2rgba( getValue( 'boxShadowColor' ), getValue( 'boxShadowColorOpacity' ) )
+		'--boxShadow': boxShadow.active && `${boxShadow.horizontal}px ${boxShadow.vertical}px ${boxShadow.blur}px ${boxShadow.spread}px ${hex2rgba( boxShadow.color, boxShadow.colorOpacity )}`
 	};
 
 	const addBorderStyle = ( type ) => {

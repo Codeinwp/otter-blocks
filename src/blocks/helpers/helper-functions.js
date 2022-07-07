@@ -302,7 +302,7 @@ export const hex2rgba = ( color, alpha = 100 ) => {
 		color = '#000000';
 	}
 
-	if ( 6 < color.length ) {
+	if ( '#' !== color[0]) {
 		return color;
 	}
 

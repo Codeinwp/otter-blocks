@@ -136,36 +136,49 @@ class Accordion_CSS extends Base_CSS {
 							'pattern'        => 'horizontal vertical blur spread color',
 							'pattern_values' => array(
 								'horizontal' => array(
-									'value'   => 'boxShadowHorizontal',
+									'value'   => 'boxShadow',
 									'unit'    => 'px',
 									'default' => 0,
+									'format'  => function( $value ) {
+										return $value['horizontal'];
+									},
 								),
 								'vertical'   => array(
-									'value'   => 'boxShadowVertical',
+									'value'   => 'boxShadow',
 									'unit'    => 'px',
 									'default' => 0,
+									'format'  => function( $value ) {
+										return $value['vertical'];
+									},
 								),
 								'blur'       => array(
-									'value'   => 'boxShadowBlur',
+									'value'   => 'boxShadow',
 									'unit'    => 'px',
 									'default' => 5,
+									'format'  => function( $value ) {
+										return $value['blur'];
+									},
 								),
 								'spread'     => array(
-									'value'   => 'boxShadowSpread',
+									'value'   => 'boxShadow',
 									'unit'    => 'px',
 									'default' => 1,
+									'format'  => function( $value ) {
+										return $value['spread'];
+									},
 								),
 								'color'      => array(
-									'value'   => 'boxShadowColor',
+									'value'   => 'boxShadow',
 									'default' => '#000',
-									'format'  => function( $value, $attrs ) {
-										$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 );
-										return ( strpos( $value, '#' ) !== false && $opacity < 100 ) ? $this->hex2rgba( $value, $opacity / 100 ) : $value;
+									'format'  => function( $value ) {
+										$opacity = $value['colorOpacity'];
+										$color   = $value['color'] ?? '#000000';
+										return ( strpos( $color, '#' ) !== false && $opacity < 100 ) ? $this->hex2rgba( $color, $opacity / 100 ) : $color;
 									},
 								),
 							),
 							'condition'      => function( $attrs ) {
-								return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow'];
+								return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow']['active'];
 							},
 						),
 					),

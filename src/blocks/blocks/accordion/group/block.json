@@ -63,31 +63,15 @@
 			"type": "boolean"
 		},
 		"boxShadow": {
-			"type": "boolean",
-			"default": false
-		},
-		"boxShadowColor": {
-			"type": "string"
-		},
-		"boxShadowColorOpacity": {
-			"type": "number",
-			"default": 50
-		},
-		"boxShadowBlur": {
-			"type": "number",
-			"default": 5
-		},
-		"boxShadowSpread": {
-			"type": "number",
-			"default": 1
-		},
-		"boxShadowHorizontal": {
-			"type": "number",
-			"default": 0
-		},
-		"boxShadowVertical": {
-			"type": "number",
-			"default": 0
+			"type": "object",
+			"default": {
+				"active": false,
+				"colorOpacity": 50,
+				"blur": 5,
+				"spread": 1,
+				"horizontal": 0,
+				"vertical": 0
+			}
 		},
 		"iconFirst": {
 			"type": "boolean",

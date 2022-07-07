@@ -12,68 +12,70 @@ import { RangeControl } from '@wordpress/components';
 import ControlPanelControl from '../control-panel-control';
 
 const BoxShadowControl = ({
-	attributes,
-	setAttributes
+	boxShadow,
+	onChange
 }) => {
+	const defaultBoxShadow = {
+		active: false,
+		color: undefined,
+		colorOpacity: 50,
+		blur: 5,
+		spread: 1,
+		horizontal: 0,
+		vertical: 0
+	};
+
 	return (
 		<ControlPanelControl
 			label={ __( 'Box Shadow', 'otter-blocks' ) }
-			attributes={ attributes }
-			setAttributes={ setAttributes }
-			resetValues={ {
-				boxShadow: false,
-				boxShadowColor: undefined,
-				boxShadowColorOpacity: 50,
-				boxShadowBlur: 5,
-				boxShadowSpread: 1,
-				boxShadowHorizontal: 0,
-				boxShadowVertical: 0
-			} }
-			onClick={ () => setAttributes({ boxShadow: true }) }
+			attributes={ boxShadow }
+			setAttributes={ onChange }
+			resetValues={ defaultBoxShadow }
+			onClick={ () => onChange({ active: true }) }
 		>
 			<Fragment>
 				<ColorGradientControl
 					label={ __( 'Shadow Color', 'otter-blocks' ) }
-					colorValue={ attributes.boxShadowColor }
-					onColorChange={ e => setAttributes({ boxShadowColor: e }) }
+					colorValue={ boxShadow.color }
+					onColorChange={ color => onChange({ color }) }
 				/>
 
 				<RangeControl
 					label={ __( 'Opacity', 'otter-blocks' ) }
-					value={ attributes.boxShadowColorOpacity }
-					onChange={ e => setAttributes({ boxShadowColorOpacity: e }) }
+					value={ boxShadow.colorOpacity }
+					onChange={ colorOpacity => onChange({ colorOpacity }) }
 					min={ 0 }
 					max={ 100 }
 				/>
 
 				<RangeControl
 					label={ __( 'Blur', 'otter-blocks' ) }
-					value={ attributes.boxShadowBlur }
-					onChange={ e => setAttributes({ boxShadowBlur: e }) }
+					value={ boxShadow.blur }
+					onChange={ blur => onChange({ blur }) }
 					min={ 0 }
 					max={ 100 }
 				/>
 
 				<RangeControl
 					label={ __( 'Spread', 'otter-blocks' ) }
-					value={ attributes.boxShadowSpread }
-					onChange={ e => setAttributes({ boxShadowSpread: e }) }
+					value={ boxShadow.spread }
+					onChange={ spread => onChange({ spread }) }
 					min={ -100 }
 					max={ 100 }
 				/>
 
 				<RangeControl
 					label={ __( 'Horizontal', 'otter-blocks' ) }
-					value={ attributes.boxShadowHorizontal }
-					onChange={ e => setAttributes({ boxShadowHorizontal: e }) }
+					value={ boxShadow.horizontal }
+					onChange={ horizontal => onChange({ horizontal }) }
 					min={ -100 }
 					max={ 100 }
 				/>
 
 				<RangeControl
 					label={ __( 'Vertical', 'otter-blocks' ) }
-					value={ attributes.boxShadowVertical }
-					onChange={ e => setAttributes({ boxShadowVertical: e }) }
+					value={ boxShadow.vertical }
+					onChange={ vertical => onChange({ vertical }) }
 					min={ -100 }
 					max={ 100 }
 				/>
