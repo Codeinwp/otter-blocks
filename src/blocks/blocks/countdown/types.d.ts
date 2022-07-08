@@ -37,6 +37,7 @@ type Attributes = {
 	labelFontSizeTablet: number
 	labelFontSizeMobile: number
 	hasSeparators: boolean
+	alignment: 'flex-start' | 'center' | 'flex-end'
 }
 
 export type CountdownProps = BlockProps<Attributes>

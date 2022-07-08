@@ -121,6 +121,9 @@
 		},
 		"hasSeparators": {
 			"type": "boolean"
+		},
+		"alignment": {
+			"type": "string"
 		}
 	},
 	"supports": {

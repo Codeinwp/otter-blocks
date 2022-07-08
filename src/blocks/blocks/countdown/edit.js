@@ -144,7 +144,8 @@ const Edit = ({
 		'--valueFontSizeMobile': px( attributes.valueFontSizeMobile ),
 		'--labelFontSize': px( attributes.valueFontSize ),
 		'--labelFontSizeTablet': px( attributes.valueFontSizeTablet ),
-		'--labelFontSizeMobile': px( attributes.valueFontSizeMobile )
+		'--labelFontSizeMobile': px( attributes.valueFontSizeMobile ),
+		'--alignment': attributes.alignment
 	};
 
 	const [ cssNodeName, setCSS ] = useCSSNode();

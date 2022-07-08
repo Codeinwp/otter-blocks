@@ -16,7 +16,8 @@ import {
 	Dropdown,
 	Button,
 	DateTimePicker,
-	FontSizePicker
+	FontSizePicker,
+	SelectControl
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -277,6 +278,25 @@ const Inspector = ({
 					onChange={ hasSeparators => setAttributes({ hasSeparators }) }
 				/>
 
+				<SelectControl
+					label={__( 'Alignment', 'otter-blocks' )}
+					value={ attributes.alingment }
+					onChange={ alignment => setAttributes({ alignment })}
+					options={[
+						{
+							label:  __( 'Left', 'otter-blocks' ),
+							value: 'flex-start'
+						},
+						{
+							label:  __( 'Center', 'otter-blocks' ),
+							value: 'center'
+						},
+						{
+							label:  __( 'Right', 'otter-blocks' ),
+							value: 'flex-end'
+						},
+					]}
+				/>
 			</PanelBody>
 
 			<PanelBody
@@ -298,7 +318,7 @@ const Inspector = ({
 					label={ __( 'Items Spacing', 'otter-blocks' ) }
 				>
 					<RangeControl
-						value={ 'Mobile' === getView ? attributes.gapMobile : 'Tablet' === getView ? attributes.gapTablet : attributes.gap }
+						value={ ('Mobile' === getView ? attributes.gapMobile : 'Tablet' === getView ? attributes.gapTablet : attributes.gap) ?? 6 }
 						onChange={ onGapChange }
 						min={ 0 }
 						max={ 100 }
@@ -309,7 +329,7 @@ const Inspector = ({
 					label={ __( 'Items Height', 'otter-blocks' ) }
 				>
 					<RangeControl
-						value={ ( 'Mobile' === getView ? attributes.heightMobile : 'Tablet' === getView ? attributes.heightTablet : attributes.height ) ?? 70 }
+						value={ ( 'Mobile' === getView ? attributes.heightMobile : 'Tablet' === getView ? attributes.heightTablet : attributes.height ) ?? 100 }
 						onChange={ onHeightChange }
 						min={ 50 }
 						max={ 2400 }
@@ -386,8 +406,7 @@ const Inspector = ({
 					label={ __( 'Border Width', 'otter-blocks' ) }
 				>
 					<RangeControl
-
-						value={ 'Mobile' === getView ? attributes.borderWidthMobile : 'Tablet' === getView ? attributes.borderWidthTablet : attributes.borderWidth }
+						value={ ('Mobile' === getView ? attributes.borderWidthMobile : 'Tablet' === getView ? attributes.borderWidthTablet : attributes.borderWidth) ?? 2 }
 						onChange={ onBorderWidthChange }
 						min={ 0 }
 						max={ 50 }
@@ -426,8 +445,6 @@ const Inspector = ({
 					] }
 				/>
 			</PanelBody>
-
-
 		</InspectorControls>
 	);
 };
