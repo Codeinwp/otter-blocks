@@ -312,27 +312,25 @@ const Inspector = ({
 						min={ 100 }
 						max={ 2400 }
 					/>
-				</ResponsiveControl>
-
-				<ResponsiveControl
-					label={ __( 'Items Spacing', 'otter-blocks' ) }
-				>
-					<RangeControl
-						value={ ('Mobile' === getView ? attributes.gapMobile : 'Tablet' === getView ? attributes.gapTablet : attributes.gap) ?? 6 }
-						onChange={ onGapChange }
-						min={ 0 }
-						max={ 100 }
-					/>
-				</ResponsiveControl>
-
-				<ResponsiveControl
-					label={ __( 'Items Height', 'otter-blocks' ) }
+				</ResponsiveControl>\\<ResponsiveControl
+					label={ __( 'Height', 'otter-blocks' ) }
 				>
 					<RangeControl
 						value={ ( 'Mobile' === getView ? attributes.heightMobile : 'Tablet' === getView ? attributes.heightTablet : attributes.height ) ?? 100 }
 						onChange={ onHeightChange }
 						min={ 50 }
 						max={ 2400 }
+					/>
+				</ResponsiveControl>
+
+				<ResponsiveControl
+					label={ __( 'Space Between', 'otter-blocks' ) }
+				>
+					<RangeControl
+						value={ ('Mobile' === getView ? attributes.gapMobile : 'Tablet' === getView ? attributes.gapTablet : attributes.gap) ?? 6 }
+						onChange={ onGapChange }
+						min={ 0 }
+						max={ 100 }
 					/>
 				</ResponsiveControl>
 			</PanelBody>
