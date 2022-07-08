@@ -70,7 +70,7 @@
 		.wp-block-themeisle-blocks-accordion-item__content {
 			background: var( --contentBackground );
 
-			border-top: var( --cBorderTW, 0 ) var( --cBorderTS, solid ) var( --cBorderTC, #d5dadf );
+			border-top: none;
 			border-right: var( --cBorderRW, 1px) var( --cBorderRS, solid) var( --cBorderRC, #d5dadf );
 			border-bottom: var( --cBorderBW, 1px) var( --cBorderBS, solid) var( --cBorderBC, #d5dadf );
 			border-left: var( --cBorderLW, 1px) var( --cBorderLS, solid) var( --cBorderLC, #d5dadf );
@@ -146,4 +146,8 @@
 		justify-content: flex-end;
 		gap: var( --hPaddingLeft, 24px );
 	}
+}
+
+.accordion-border-control .components-range-control {
+	margin: 0 10px !important;
 }

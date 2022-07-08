@@ -170,11 +170,13 @@ const Inspector = ({
 					label={ __( 'Header Borders', 'otter-blocks' ) }
 					value={ attributes.headerBorder }
 					onChange={ headerBorder => setAttributes({ headerBorder }) }
+					className="accordion-border-control"
 				/>
 				<BorderBoxControl
 					label={ __( 'Content Borders', 'otter-blocks' ) }
 					value={ attributes.contentBorder }
 					onChange={ contentBorder => setAttributes({ contentBorder }) }
+					className="accordion-border-control"
 				/>
 
 				<SyncControl

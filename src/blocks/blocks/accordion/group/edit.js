@@ -107,6 +107,10 @@ const Edit = ({
 	const addBorderStyle = ( type ) => {
 		[ 'Top', 'Right', 'Bottom', 'Left' ].forEach( position => {
 			[ 'Width', 'Style', 'Color' ].forEach( prop => {
+				if ( 'content' === type && 'Top' === position ) {
+					return;
+				}
+
 				const varName = `--${type.slice( 0, 1 )}Border${position.slice( 0, 1 )}${prop.slice( 0, 1 )}`;
 				inlineStyles[varName] = getBorderValue( type, position.toLowerCase(), prop.toLowerCase() ) || '';
 			});

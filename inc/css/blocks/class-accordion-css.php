@@ -42,6 +42,10 @@ class Accordion_CSS extends Base_CSS {
 		foreach ( [ 'header', 'content' ] as $type ) {
 			foreach ( [ 'top', 'right', 'bottom', 'left' ] as $position ) {
 				foreach ( [ 'width', 'style', 'color' ] as $property ) {
+					if ( 'content' === $type && 'top' === $position ) {
+						continue;
+					}
+
 					array_push(
 						$border_variables,
 						array(
