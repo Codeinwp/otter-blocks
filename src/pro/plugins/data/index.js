@@ -107,9 +107,8 @@ registerStore( 'otter-pro', {
 			if ( ! Boolean( window.otterPro.hasLearnDash ) ) {
 				return;
 			}
-			console.log( 'Get Course' );
+
 			const data = yield actions.fetchFromAPI( 'ldlms/v2/sfwd-courses' );
-			console.log( 'Got the course' );
 
 			const courses = data.map( datum => ({
 				value: datum.id,
