@@ -15,9 +15,14 @@ import {
 	RangeControl,
 	FontSizePicker,
 	ToggleControl,
+	Placeholder,
+	Spinner,
 	__experimentalBoxControl as BoxControl,
 	__experimentalBorderBoxControl as BorderBoxControl
 } from '@wordpress/components';
+
+import { Suspense, lazy } from '@wordpress/element';
+
 
 import { select, dispatch } from '@wordpress/data';
 
@@ -28,6 +33,8 @@ import SyncControl from '../../../components/sync-control/index.js';
 import GoogleFontsControl from '../../../components/google-fonts-control';
 import ClearButton from '../../../components/clear-button';
 import BoxShadowControl from '../../../components/box-shadow-control';
+
+const IconPickerControl = lazy( () => import( '../../../components/icon-picker-control/index.js' ) );
 
 /**
  *
@@ -149,6 +156,16 @@ const Inspector = ({
 				title={ __( 'Styling', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
+				<Suspense fallback={<Placeholder><Spinner/></Placeholder>}>
+					<IconPickerControl
+						label={ __( 'Icon', 'otter-blocks' ) }
+						library="fontawesome"
+						prefix={ attributes.icon.prefix }
+						icon={ attributes.icon.name }
+						allowThemeisleIcons={ false }
+						onChange={ icon => setAttributes({ icon }) }
+					/>
+				</Suspense>
 				<BorderBoxControl
 					label={ __( 'Header Borders', 'otter-blocks' ) }
 					value={ attributes.headerBorder }
@@ -212,6 +229,16 @@ const Inspector = ({
 				title={ __( 'Active Item Styling', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
+				<Suspense fallback={<Placeholder><Spinner/></Placeholder>}>
+					<IconPickerControl
+						label={ __( 'Open Tab Icon', 'otter-blocks' ) }
+						library="fontawesome"
+						prefix={ attributes.openItemIcon.prefix }
+						icon={ attributes.openItemIcon.name }
+						allowThemeisleIcons={ false }
+						onChange={ openItemIcon => setAttributes({ openItemIcon }) }
+					/>
+				</Suspense>
 				<ColorGradientControl
 					label={ __( 'Title', 'otter-blocks' ) }
 					colorValue={ attributes.activeTitleColor }

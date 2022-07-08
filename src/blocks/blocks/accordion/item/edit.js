@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { chevronDown, chevronUp } from '@wordpress/icons';
+import classnames from 'classnames';
 
 /**
  * WordPress dependencies.
@@ -13,8 +13,6 @@ import {
 	RichText,
 	useBlockProps
 } from '@wordpress/block-editor';
-
-import { Icon } from '@wordpress/components';
 
 import {
 	Fragment,
@@ -54,7 +52,11 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div { ...useBlockProps() }>
+			<div
+				{ ...useBlockProps({
+					className: classnames({ 'is-open': isOpen })
+				})}
+			>
 				<div
 					className="wp-block-themeisle-blocks-accordion-item__title"
 					onClick={ toggle }
@@ -71,8 +73,6 @@ const Edit = ({
 						} }
 						tagName={ attributes.tag || 'div' }
 					/>
-
-					<Icon icon={ isOpen ? chevronUp : chevronDown } size={ 24 }/>
 				</div>
 
 				{ isOpen && (

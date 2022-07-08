@@ -85,6 +85,20 @@
 		},
 		"activeContentBackground": {
 			"type": "string"
+		},
+		"icon": {
+			"type": "object",
+			"default": {
+				"name": "angle-down",
+				"prefix": "fas"
+			}
+		},
+		"openItemIcon": {
+			"type": "object",
+			"default": {
+				"name": "angle-up",
+				"prefix": "fas"
+			}
 		}
 	},
 	"supports": {

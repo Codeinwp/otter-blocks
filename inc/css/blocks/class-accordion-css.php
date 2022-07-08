@@ -79,7 +79,7 @@ class Accordion_CSS extends Base_CSS {
 					)
 				);
 			}
-		};
+		}
 
 		$css->add_item(
 			array(
@@ -208,9 +208,96 @@ class Accordion_CSS extends Base_CSS {
 			)
 		);
 
+		$css = $this->add_icon( $css );
+
 		$style = $css->generate();
 
 		return $style;
+	}
+
+	/**
+	 * Adds the icon through CSS
+	 *
+	 * @param mixed $css The block CSS.
+	 *
+	 * @return mixed
+	 */
+	private function add_icon( $css ) {
+		$json     = file_get_contents( OTTER_BLOCKS_PATH . '/src/blocks/helpers/fa-icons.json' );
+		$fa_icons = json_decode( $json, true );
+
+		$prefix_to_family = array(
+			'fas' => 'Font Awesome 5 Free',
+			'far' => 'Font Awesome 5 Free',
+			'fal' => 'Font Awesome 5 Free',
+			'fab' => 'Font Awesome 5 Brands',
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .wp-block-themeisle-blocks-accordion-item__title::after',
+				'properties' => array(
+					array(
+						'property' => 'content',
+						'value'    => 'icon',
+						'default'  => '"\f107"',
+						'format'   => function( $value ) use ( $fa_icons ) {
+							return isset( $value['name'] ) ? '"\\' . $fa_icons[ $value['name'] ]['unicode'] . '"' : '"\f107"';
+						},
+					),
+					array(
+						'property' => 'font-weight',
+						'value'    => 'icon',
+						'default'  => 900,
+						'format'   => function( $value ) use ( $fa_icons ) {
+							return isset( $value['prefix'] ) && 'fas' !== $value['prefix'] ? 400 : 900;
+						},
+					),
+					array(
+						'property' => 'font-family',
+						'value'    => 'icon',
+						'default'  => 'Font Awesome 5 Free',
+						'format'   => function( $value ) use ( $prefix_to_family ) {
+							return isset( $value['prefix'] ) ? '"' . $prefix_to_family[ $value['prefix'] ] . '"' : '"Font Awesome 5 Free"';
+						},
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .wp-block-themeisle-blocks-accordion-item[open] > .wp-block-themeisle-blocks-accordion-item__title::after',
+				'properties' => array(
+					array(
+						'property' => 'content',
+						'value'    => 'openItemIcon',
+						'default'  => '"\f106"',
+						'format'   => function( $value ) use ( $fa_icons ) {
+							return isset( $value['name'] ) ? '"\\' . $fa_icons[ $value['name'] ]['unicode'] . '"' : '"\f106"';
+						},
+					),
+					array(
+						'property' => 'font-weight',
+						'value'    => 'openItemIcon',
+						'default'  => 900,
+						'format'   => function( $value ) use ( $fa_icons ) {
+							return isset( $value['prefix'] ) && 'fas' !== $value['prefix'] ? 400 : 900;
+						},
+					),
+					array(
+						'property' => 'font-family',
+						'value'    => 'openItemIcon',
+						'default'  => 'Font Awesome 5 Free',
+						'format'   => function( $value ) use ( $prefix_to_family ) {
+							return isset( $value['prefix'] ) ? '"' . $prefix_to_family[ $value['prefix'] ] . '"' : '"Font Awesome 5 Free"';
+						},
+					),
+				),
+			)
+		);
+
+		return $css;
 	}
 
 	/**

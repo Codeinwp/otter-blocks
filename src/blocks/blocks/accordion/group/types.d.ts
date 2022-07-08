@@ -24,6 +24,8 @@ type Attributes = {
 	activeTitleColor: string
 	activeTitleBackground: string
 	activeContentBackground: string
+	icon: object
+	openItemIcon: object
 }
 
 export type AccordionGroupProps = BlockProps<Attributes>

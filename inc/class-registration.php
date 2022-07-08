@@ -671,6 +671,7 @@ class Registration {
 				'icon-list-item'     => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 				'plugin-cards'       => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 				'sharing-icons'      => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+				'accordion'          => array( 'font-awesome-5', 'font-awesome-4-shims' ),
 			)
 		);
 
@@ -798,6 +799,11 @@ class Registration {
 
 				return $block_content;
 			}
+		}
+
+		if ( 'themeisle-blocks/accordion' === $block['blockName'] ) {
+			self::$is_fa_loaded = true;
+			return $block_content;
 		}
 
 		if ( 'themeisle-blocks/icon-list-item' === $block['blockName'] ) {

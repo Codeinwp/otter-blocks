@@ -26,11 +26,20 @@ import metadata from './block.json';
 import Inspector from './inspector.js';
 import {
 	blockInit,
-	getDefaultValueByField
+	getDefaultValueByField, useCSSNode
 } from '../../../helpers/block-utility.js';
 import { hex2rgba } from '../../../helpers/helper-functions';
 
+import faIcons from '../../../helpers/fa-icons.json';
+
 const { attributes: defaultAttributes } = metadata;
+
+const PREFIX_TO_FAMILY = {
+	fas: 'Font Awesome 5 Free',
+	far: 'Font Awesome 5 Free',
+	fal: 'Font Awesome 5 Free',
+	fab: 'Font Awesome 5 Brands'
+};
 
 /**
  * Accordion Group component
@@ -120,9 +129,33 @@ const Edit = ({
 	addPaddingStyle( 'header' );
 	addPaddingStyle( 'content' );
 
+	const [ cssNodeName, setNodeCSS ] = useCSSNode();
+	useEffect( () => {
+		const icon = getValue( 'icon' );
+		setNodeCSS([
+			`.wp-block-themeisle-blocks-accordion-item__title:after {
+				content: "\\${ faIcons[ icon.name ].unicode }" !important;
+				font-family: "${ PREFIX_TO_FAMILY[ icon.prefix ] }" !important;
+				font-weight: ${ 'fas' !== icon.prefix ? '400' : '900' }
+			}`
+		]);
+	}, [ attributes.icon ]);
+
+	useEffect( () => {
+		const icon = getValue( 'openItemIcon' );
+		setNodeCSS([
+			`.wp-block-themeisle-blocks-accordion-item__title[open]:after {
+				content: "\\${ faIcons[ icon.name ].unicode }" !important;
+				font-family: "${ PREFIX_TO_FAMILY[ icon.prefix ] }" !important;
+				font-weight: ${ 'fas' !== icon.prefix ? '400' : '900' }
+			}`
+		]);
+	}, [ attributes.openItemIcon ]);
+
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames({
+			[ cssNodeName ]: cssNodeName,
 			[ `is-${ attributes.gap }-gap` ]: attributes.gap,
 			'icon-first': attributes.iconFirst
 		}),

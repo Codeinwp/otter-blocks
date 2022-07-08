@@ -50,11 +50,6 @@
 				content: '';
 				justify-self: end;
 				align-self: center;
-				border-right: 2px solid currentColor;
-				border-bottom: 2px solid currentColor;
-				width: 8px;
-				height: 8px;
-				transform: rotate(45deg) translate(-25%, 0%);
 			}
 		}
 
@@ -65,14 +60,6 @@
 			border-bottom: var( --cBorderBW, 1px) var( --cBorderBS, solid) var( --cBorderBC, #d5dadf );
 			border-left: var( --cBorderLW, 1px) var( --cBorderLS, solid) var( --cBorderLC, #d5dadf );
 			padding: var( --cPaddingTop, 18px ) var( --cPaddingRight, 24px ) var( --cPaddingBottom, 18px ) var( --cPaddingLeft, 24px );
-		}
-
-		&[open] {
-			> .wp-block-themeisle-blocks-accordion-item__title {
-				&::after {
-					transform: rotate(225deg) translate(0%, -45%);
-				}
-			}
 		}
 	}
 
