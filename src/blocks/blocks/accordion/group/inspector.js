@@ -104,8 +104,8 @@ const Inspector = ({
 					onChange={ iconFirst => setAttributes({ iconFirst }) }
 				/>
 				<ToggleControl
-					label={ __( 'Always open items', 'otter-blocks' ) }
-					help={ __( 'If an item is opened, it will not close when other items open', 'otter-blocks' ) }
+					label={ __( 'Keep multiple items expanded', 'otter-blocks' ) }
+					help={ __( 'When enabled, multiple accordion items can be expanded at the same time', 'otter-blocks' ) }
 					checked={ attributes.alwaysOpen }
 					onChange={ onAlwaysOpenToggle }
 				/>

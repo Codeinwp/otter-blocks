@@ -50,16 +50,21 @@
 			}
 
 			&::after {
-				content: "\f107";
-				font-family: "Font Awesome 5 Free";
-				font-weight: 900;
 				justify-self: end;
 				align-self: center;
 			}
 		}
 
+		&:not(.is-open) .wp-block-themeisle-blocks-accordion-item__title:after {
+			content: "\f107";
+			font-family: "Font Awesome 5 Free";
+			font-weight: 900;
+		}
+
 		&.is-open .wp-block-themeisle-blocks-accordion-item__title:after {
 			content: "\f106";
+			font-family: "Font Awesome 5 Free";
+			font-weight: 900;
 		}
 
 		.wp-block-themeisle-blocks-accordion-item__content {

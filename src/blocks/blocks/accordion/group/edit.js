@@ -134,7 +134,7 @@ const Edit = ({
 	useEffect( () => {
 		const icon = getValue( 'icon' );
 		setNodeCSS([
-			`.wp-block-themeisle-blocks-accordion-item__title:after {
+			`.not(.is-open) .wp-block-themeisle-blocks-accordion-item__title:after {
 				content: "\\${ faIcons[ icon.name ].unicode }" !important;
 				font-family: "${ PREFIX_TO_FAMILY[ icon.prefix ] }" !important;
 				font-weight: ${ 'fas' !== icon.prefix ? '400' : '900' }
@@ -145,7 +145,7 @@ const Edit = ({
 	useEffect( () => {
 		const icon = getValue( 'openItemIcon' );
 		setNodeCSS([
-			`.wp-block-themeisle-blocks-accordion-item__title[open]:after {
+			`.is-open .wp-block-themeisle-blocks-accordion-item__title:after {
 				content: "\\${ faIcons[ icon.name ].unicode }" !important;
 				font-family: "${ PREFIX_TO_FAMILY[ icon.prefix ] }" !important;
 				font-weight: ${ 'fas' !== icon.prefix ? '400' : '900' }
