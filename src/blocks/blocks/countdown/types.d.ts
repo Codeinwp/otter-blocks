@@ -14,6 +14,9 @@ type Attributes = {
 	width: number
 	widthTablet: number
 	widthMobile: number
+	containerWidth: number
+	containerWidthTablet: number
+	containerWidthMobile: number
 	height: number
 	heightTablet: number
 	heightMobile: number

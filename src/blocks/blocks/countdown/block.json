@@ -47,6 +47,15 @@
 		"widthMobile": {
 			"type": "number"
 		},
+		"containerWidth": {
+			"type": "number"
+		},
+		"containerWidthTablet": {
+			"type": "number"
+		},
+		"containerWidthMobile": {
+			"type": "number"
+		},
 		"height": {
 			"type": "number"
 		},
@@ -93,22 +102,22 @@
 			"type": "string"
 		},
 		"valueFontSize": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"valueFontSizeTablet": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"valueFontSizeMobile": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"labelFontSize": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"labelFontSizeTablet": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"labelFontSizeMobile": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"hasSeparators": {
 			"type": "boolean"

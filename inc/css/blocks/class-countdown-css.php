@@ -85,16 +85,31 @@ class Countdown_CSS extends Base_CSS {
 					),
 					array(
 						'property' => '--width',
-						'value'    => 'width',
+						'value'    => 'containerWidth',
 						'unit'     => 'px',
 					),
 					array(
 						'property' => '--widthTablet',
-						'value'    => 'widthTablet',
+						'value'    => 'containerWidthTablet',
 						'unit'     => 'px',
 					),
 					array(
 						'property' => '--widthMobile',
+						'value'    => 'containerWidthMobile',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--boxWidth',
+						'value'    => 'width',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--boxWidthTablet',
+						'value'    => 'widthTablet',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--boxWidthMobile',
 						'value'    => 'widthMobile',
 						'unit'     => 'px',
 					),

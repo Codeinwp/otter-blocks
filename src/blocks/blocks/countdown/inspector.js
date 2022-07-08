@@ -15,7 +15,8 @@ import {
 	RangeControl,
 	Dropdown,
 	Button,
-	DateTimePicker
+	DateTimePicker,
+	FontSizePicker
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -30,6 +31,30 @@ import {
  */
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import SizingControl from '../../components/sizing-control/index.js';
+
+const defaultFontSizes = [
+	{
+		name: __( 'Small', 'otter-blocks' ),
+		size: '0.875em',
+		slug: 'small'
+	},
+	{
+		name: __( 'Medium', 'otter-blocks' ),
+		size: '1em',
+		slug: 'medium'
+	},
+	{
+		name: __( 'Large', 'otter-blocks' ),
+		size: '1.125em',
+		slug: 'large'
+	},
+	{
+		name: __( 'XL', 'otter-blocks' ),
+		size: '1.25em',
+		slug: 'xl'
+	}
+];
+
 
 /**
  *
@@ -85,13 +110,13 @@ const Inspector = ({
 
 	const onWidthChange = value => {
 		if ( 'Desktop' === getView ) {
-			setAttributes({ width: Number( value )});
+			setAttributes({ containerWidth: Number( value )});
 		}
 		if ( 'Tablet' === getView ) {
-			setAttributes({ widthTablet: Number( value )});
+			setAttributes({ containerWidthTablet: Number( value )});
 		}
 		if ( 'Mobile' === getView ) {
-			setAttributes({ widthMobile: Number( value )});
+			setAttributes({ containerWidthMobile: Number( value )});
 		}
 	};
 
@@ -109,25 +134,25 @@ const Inspector = ({
 
 	const onValueFontSizeChange = value => {
 		if ( 'Desktop' === getView ) {
-			setAttributes({ valueFontSize: Number( value ) });
+			setAttributes({ valueFontSize: value });
 		}
 		if ( 'Tablet' === getView ) {
-			setAttributes({ valueFontSizeTablet: Number( value )});
+			setAttributes({ valueFontSizeTablet: value });
 		}
 		if ( 'Mobile' === getView ) {
-			setAttributes({ valueFontSizeMobile: Number( value )});
+			setAttributes({ valueFontSizeMobile: value });
 		}
 	};
 
 	const onLabelFontSizeChange = value => {
 		if ( 'Desktop' === getView ) {
-			setAttributes({ labelFontSize: Number( value ) });
+			setAttributes({ labelFontSize: value });
 		}
 		if ( 'Tablet' === getView ) {
-			setAttributes({ labelFontSizeTablet: Number( value )});
+			setAttributes({ labelFontSizeTablet: value });
 		}
 		if ( 'Mobile' === getView ) {
-			setAttributes({ labelFontSizeMobile: Number( value )});
+			setAttributes({ labelFontSizeMobile: value });
 		}
 	};
 
@@ -252,8 +277,25 @@ const Inspector = ({
 					onChange={ hasSeparators => setAttributes({ hasSeparators }) }
 				/>
 
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Sizing', 'otter-blocks' ) }
+				initialOpen={false}
+			>
 				<ResponsiveControl
-					label={ __( 'Box Spacing', 'otter-blocks' ) }
+					label={ __( 'Width', 'otter-blocks' ) }
+				>
+					<RangeControl
+						value={ 'Mobile' === getView ? attributes.containerWidthMobile : 'Tablet' === getView ? attributes.containerWidthTablet : attributes.containerWidth }
+						onChange={ onWidthChange }
+						min={ 100 }
+						max={ 2400 }
+					/>
+				</ResponsiveControl>
+
+				<ResponsiveControl
+					label={ __( 'Items Spacing', 'otter-blocks' ) }
 				>
 					<RangeControl
 						value={ 'Mobile' === getView ? attributes.gapMobile : 'Tablet' === getView ? attributes.gapTablet : attributes.gap }
@@ -264,92 +306,42 @@ const Inspector = ({
 				</ResponsiveControl>
 
 				<ResponsiveControl
-					label={ __( 'Box Height', 'otter-blocks' ) }
+					label={ __( 'Items Height', 'otter-blocks' ) }
 				>
 					<RangeControl
-						value={ 'Mobile' === getView ? attributes.heightMobile : 'Tablet' === getView ? attributes.heightTablet : attributes.height }
+						value={ ( 'Mobile' === getView ? attributes.heightMobile : 'Tablet' === getView ? attributes.heightTablet : attributes.height ) ?? 70 }
 						onChange={ onHeightChange }
-						min={ 40 }
-						max={ 300 }
+						min={ 50 }
+						max={ 2400 }
 					/>
 				</ResponsiveControl>
+			</PanelBody>
 
-				<ResponsiveControl
-					label={ __( 'Box Width', 'otter-blocks' ) }
-				>
-					<RangeControl
-						value={ 'Mobile' === getView ? attributes.widthMobile : 'Tablet' === getView ? attributes.widthTablet : attributes.width }
-						onChange={ onWidthChange }
-						min={ 40 }
-						max={ 300 }
-					/>
-				</ResponsiveControl>
-
-				<ResponsiveControl
-					label={ __( 'Border Width', 'otter-blocks' ) }
-				>
-					<RangeControl
-
-						value={ 'Mobile' === getView ? attributes.borderWidthMobile : 'Tablet' === getView ? attributes.borderWidthTablet : attributes.borderWidth }
-						onChange={ onBorderWidthChange }
-						min={ 0 }
-						max={ 50 }
-					/>
-				</ResponsiveControl>
-
+			<PanelBody
+				title={ __( 'Typography', 'otter-blocks' ) }
+				initialOpen={false}
+			>
 				<ResponsiveControl
 					label={ __( 'Time Value Font Size', 'otter-blocks' ) }
 				>
-					<RangeControl
+					<FontSizePicker
+						fontSizes={ defaultFontSizes }
+						withReset
 						value={ 'Mobile' === getView ? attributes.valueFontSizeMobile : 'Tablet' === getView ? attributes.valueFontSizeTablet : attributes.valueFontSize }
 						onChange={ onValueFontSizeChange }
-						min={ 0 }
-						max={ 64 }
 					/>
 				</ResponsiveControl>
 
 				<ResponsiveControl
 					label={ __( 'Label Font Size', 'otter-blocks' ) }
 				>
-					<RangeControl
+					<FontSizePicker
+						fontSizes={ defaultFontSizes }
+						withReset
 						value={ 'Mobile' === getView ? attributes.labelFontSizeMobile : 'Tablet' === getView ? attributes.labelFontSizeTablet : attributes.labelFontSize }
 						onChange={ onLabelFontSizeChange }
-						min={ 0 }
-						max={ 64 }
 					/>
 				</ResponsiveControl>
-
-				<SizingControl
-					label={ __( 'Border Radius (%)', 'otter-blocks' ) }
-					type={ attributes.borderRadiusType }
-					min={ 0 }
-					max={ 100 }
-					changeType={ changeBorderRadiusType }
-					onChange={ changeBorderRadius }
-					options={ [
-						{
-							label: __( 'Top Left', 'otter-blocks' ),
-							type: 'top-left',
-							value: getBorderRadius( 'top-left' )
-						},
-						{
-							label: __( 'Top Right', 'otter-blocks' ),
-							type: 'top-right',
-							value: getBorderRadius( 'top-right' )
-						},
-						{
-							label: __( 'Bottom Right', 'otter-blocks' ),
-							type: 'bottom-right',
-							value: getBorderRadius( 'bottom-right' )
-						},
-						{
-							label: __( 'Bottom Left', 'otter-blocks' ),
-							type: 'bottom-left',
-							value: getBorderRadius( 'bottom-left' )
-						}
-					] }
-				/>
-
 			</PanelBody>
 
 			<PanelColorSettings
@@ -385,6 +377,57 @@ const Inspector = ({
 					} }
 				/>
 			</PanelColorSettings>
+
+			<PanelBody
+				title={ __( 'Border', 'otter-blocks' ) }
+				initialOpen={false}
+			>
+				<ResponsiveControl
+					label={ __( 'Border Width', 'otter-blocks' ) }
+				>
+					<RangeControl
+
+						value={ 'Mobile' === getView ? attributes.borderWidthMobile : 'Tablet' === getView ? attributes.borderWidthTablet : attributes.borderWidth }
+						onChange={ onBorderWidthChange }
+						min={ 0 }
+						max={ 50 }
+					/>
+				</ResponsiveControl>
+
+
+				<SizingControl
+					label={ __( 'Border Radius (%)', 'otter-blocks' ) }
+					type={ attributes.borderRadiusType }
+					min={ 0 }
+					max={ 100 }
+					changeType={ changeBorderRadiusType }
+					onChange={ changeBorderRadius }
+					options={ [
+						{
+							label: __( 'Top Left', 'otter-blocks' ),
+							type: 'top-left',
+							value: getBorderRadius( 'top-left' )
+						},
+						{
+							label: __( 'Top Right', 'otter-blocks' ),
+							type: 'top-right',
+							value: getBorderRadius( 'top-right' )
+						},
+						{
+							label: __( 'Bottom Right', 'otter-blocks' ),
+							type: 'bottom-right',
+							value: getBorderRadius( 'bottom-right' )
+						},
+						{
+							label: __( 'Bottom Left', 'otter-blocks' ),
+							type: 'bottom-left',
+							value: getBorderRadius( 'bottom-left' )
+						}
+					] }
+				/>
+			</PanelBody>
+
+
 		</InspectorControls>
 	);
 };

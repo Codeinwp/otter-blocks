@@ -33,11 +33,17 @@ import {
 	getTimezone
 } from '../../helpers/helper-functions.js';
 import DisplayTime from './components/display-time.js';
+import { at, isNumber } from 'lodash';
 
 const { attributes: defaultAttributes } = metadata;
 
-const px = value => value ? `${ value }px` : value;
+const px = value => isNumber( value ) ? `${ value }px` : value;
 
+/**
+ *
+ * @param {import('./types').CountdownProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,
@@ -107,69 +113,6 @@ const Edit = ({
 		isMobile = isPreviewMobile;
 	}
 
-	/**
-	 * Compute the components style based on the platform
-	 */
-	let stylesObj;
-
-	if ( isTablet ) {
-		stylesObj = {
-			value: {
-				fontSize: px( attributes?.valueFontSizeTablet )
-			},
-			label: {
-				fontSize: px( attributes?.labelFontSizeTablet )
-			},
-			display: {
-				gap: px( attributes.gapTablet )
-			},
-			allComponents: {
-				height: px( attributes?.heightTablet )
-			},
-			mainComponents: {
-				width: px( attributes?.widthTablet ),
-				borderWidth: px( attributes.borderWidthTablet )
-			}
-		};
-	} else if ( isMobile ) {
-		stylesObj = {
-			value: {
-				fontSize: px( attributes.valueFontSizeMobile )
-			},
-			label: {
-				fontSize: px( attributes.labelFontSizeMobile )
-			},
-			display: {
-				gap: px( attributes.gapMobile )
-			},
-			allComponents: {
-				height: px( attributes?.heightMobile )
-			},
-			mainComponents: {
-				width: px( attributes?.widthMobile ),
-				borderWidth: px( attributes.borderWidthMobile )
-			}
-		};
-	} else if ( isDesktop ) {
-		stylesObj = {
-			value: {
-				fontSize: px( attributes.valueFontSize )
-			},
-			label: {
-				fontSize: px( attributes.labelFontSize )
-			},
-			display: {
-				gap: px( attributes.gap )
-			},
-			allComponents: {
-				height: px( attributes.height )
-			},
-			mainComponents: {
-				width: px( attributes.width ),
-				borderWidth: px( attributes.borderWidth )
-			}
-		};
-	}
 
 	// Add `border-radius` for all the platforms
 	const borderRadius = 'linked' === attributes.borderRadiusType ? attributes.borderRadius + '%' : `${ attributes.borderRadiusTopLeft }% ${ attributes.borderRadiusTopRight }% ${ attributes.borderRadiusBottomRight }% ${ attributes.borderRadiusBottomLeft }%`;
@@ -177,7 +120,31 @@ const Edit = ({
 	const inlineStyles = {
 		'--backgroundColor': attributes.backgroundColor,
 		'--borderColor': attributes.borderColor,
-		'--borderRadius': borderRadius
+		'--borderRadius': borderRadius,
+		'--backgroundColor': attributes.backgroundColor,
+		'--borderColor': attributes.borderColor,
+		'--borderRadius': borderRadius,
+		'--boxWidth': px( attributes.width ), // legacy
+		'--boxWidthTablet': px( attributes.widthTablet ), // legacy
+		'--boxWidthMobile': px( attributes.widthMobile ), // legacy
+		'--width': px( attributes.containerWidth ),
+		'--widthTablet': px( attributes.containerWidthTablet ),
+		'--widthMobile': px( attributes.containerWidthMobile ),
+		'--height': px( attributes.height ),
+		'--heightTablet': px( attributes.heightTablet ),
+		'--heightMobile': px( attributes.heightMobile ),
+		'--borderWidth': px( attributes.borderWidth ),
+		'--borderWidthTablet': px( attributes.borderWidthTablet ),
+		'--borderWidthMobile': px( attributes.borderWidthMobile ),
+		'--gap': px( attributes.gap ),
+		'--gapTablet': px( attributes.gapTablet ),
+		'--gapMobile': px( attributes.gapMobile ),
+		'--valueFontSize': px( attributes.valueFontSize ),
+		'--valueFontSizeTablet': px( attributes.valueFontSizeTablet ),
+		'--valueFontSizeMobile': px( attributes.valueFontSizeMobile ),
+		'--labelFontSize': px( attributes.valueFontSize ),
+		'--labelFontSizeTablet': px( attributes.valueFontSizeTablet ),
+		'--labelFontSizeMobile': px( attributes.valueFontSizeMobile )
 	};
 
 	const [ cssNodeName, setCSS ] = useCSSNode();
@@ -209,7 +176,6 @@ const Edit = ({
 			<div { ...blockProps }>
 				<DisplayTime
 					time={ getIntervalFromUnix( unixTime, { exclude: attributes?.exclude }) }
-					styles={ stylesObj }
 					hasSeparators={ attributes.hasSeparators }
 				/>
 			</div>

@@ -2,12 +2,15 @@
 	--backgroundColor: transparent;
 	--borderColor: #000;
 	--borderRadius: 0;
-	--width: 70px;
-	--widthTablet: 70px;
-	--widthMobile: 70px;
-	--height: 70px;
-	--heightTablet: 70px;
-	--heightMobile: 70px;
+	--boxWidth: 100%;
+	--boxWidthTablet: 100%;
+	--boxWidthMobile: 100%;
+	--width: 100%;
+	--widthTablet: calc( 4 * var(--boxWidth));
+	--widthMobile: calc( 4 * var(--boxWidthTablet));
+	--height: 70;
+	--heightTablet: 70;
+	--heightMobile: 70;
 	--borderWidth: 2px;
 	--borderWidthTablet: 2px;
 	--borderWidthMobile: 2px;
@@ -20,24 +23,27 @@
 	--labelFontSize: 0.6rem;
 	--labelFontSizeTablet: 0.6rem;
 	--labelFontSizeMobile: 0.6rem;
+	--alignment: center;
 
 	.otter-countdown__container {
 		display: flex;
-		justify-content: center;
-		align-items: center;
+		justify-content: var(--alignment);
 	}
 
 	.otter-countdown__display {
 		display: flex;
 		flex-direction: row;
+		width: var(--width, 100%);
 		gap: var( --gap );
 
 		@media ( min-width: 600px ) and ( max-width: 960px ) {
 			gap: var( --gapTablet );
+			width: var(--widthTablet, 100%);
 		}
 
 		@media ( max-width: 600px ) {
 			gap: var( --gapMobile );
+			width: var(--widthMobile, 100%);
 		}
 	}
 
@@ -48,19 +54,18 @@
 		flex-direction: column;
 		background: var( --backgroundColor );
 		border: var( --borderWidth ) solid var( --borderColor );
-		width: max-content;
 		border-radius: var( --borderRadius );
-		width: var( --width );
 		height: var( --height );
+		box-sizing: border-box;
+		width: 100%;
+		
 
 		@media ( min-width: 600px ) and ( max-width: 960px ) {
-			width: var( --widthTablet );
 			height: var( --heightTablet );
 			border: var( --borderWidthTablet ) solid var( --borderColor );
 		}
 
 		@media ( max-width: 600px ) {
-			width: var( --widthMobile );
 			height: var( --heightMobile );
 			border: var( --borderWidthMobile ) solid var( --borderColor );
 		}
