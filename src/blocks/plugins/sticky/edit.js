@@ -202,7 +202,7 @@ const Edit = ({
 				title={ __( 'Sticky', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<p>{ __( 'Bind page elements with dynamic data from your website database.' ) }</p>
+				<p>{ __( 'Bind page elements with dynamic data from your website database.', 'otter-blocks' ) }</p>
 
 				<ExternalLink
 					target="_blank"
