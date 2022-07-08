@@ -34,7 +34,9 @@ import {
  * Internal dependencies
  */
 import './editor.scss';
-import data from '../../helpers/fa-icons.json';
+
+// @ts-ignore
+import data from '../../../../assets/fontawesome/fa-icons.json';
 import themeIsleIcons from './../../helpers/themeisle-icons.js';
 
 const FontAwesomeIconsList = ({

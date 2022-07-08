@@ -30,7 +30,8 @@ import {
 } from '../../../helpers/block-utility.js';
 import { hex2rgba } from '../../../helpers/helper-functions';
 
-import faIcons from '../../../helpers/fa-icons.json';
+// @ts-ignore
+import faIcons from '../../../../../assets/fontawesome/fa-icons.json';
 
 const { attributes: defaultAttributes } = metadata;
 
