@@ -36,7 +36,9 @@ const LicenseField = () => {
 	const { createNotice } = dispatch( 'core/notices' );
 
 	useEffect( () => {
-		if ( license.key && ( 'valid' === license.valid || 'active_expired' === license.valid ) ) {
+		const statuses = [ 'valid', 'active_expired' ];
+
+		if ( license.key && ( statuses.includes( license.valid ) ) ) {
 			setLicenseKey( license.key );
 		}
 	}, [ license ]);
