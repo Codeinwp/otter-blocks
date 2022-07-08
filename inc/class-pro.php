@@ -134,11 +134,32 @@ class Pro {
 	public function render_metabox_upsell( $post_type ) {
 		if ( ! self::is_pro_installed() ) {
 			?>
-			<div class="clear">
-				<p><?php _e( 'Unlock the full power of WooCommerce Builder with Otter Pro.', 'otter-blocks' ); ?></p>
+			<style type="text/css">
+				.o-upsell li {
+					display: flex;
+					align-items: center;
+				}
+
+				.o-upsell li::before {
+					content: "\f147";
+					font-family: 'Dashicons';
+					color: #2271B1;
+					font-size: 16px;
+					margin-right: 5px;
+				}
+			</style>
+			<div class="clear o-upsell">
+				<p><?php _e( 'Unlock the full power of WooCommerce Builder with Otter Pro:', 'otter-blocks' ); ?></p>
+
+				<ul>
+					<li><?php _e( 'WooCommerce Block Builder', 'otter-blocks' ); ?></li>
+					<li><?php _e( 'Add to Cart Block', 'otter-blocks' ); ?></li>
+					<li><?php _e( 'Review Comparison  Block', 'otter-blocks' ); ?></li>
+					<li><?php _e( 'Priority Support', 'otter-blocks' ); ?></li>
+				</ul>
 
 				<a href="<?php echo esc_url( self::get_url() ); ?>" target="_blank" class="button button-primary">
-					<?php _e( 'Get Otter Pro', 'otter-blocks' ); ?>
+					<?php _e( 'Discover Otter Pro', 'otter-blocks' ); ?>
 				</a>
 			</div>
 			<?php

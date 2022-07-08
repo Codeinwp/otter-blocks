@@ -7,34 +7,43 @@ import { Button } from '@wordpress/components';
 
 const FEATURES = [
 	{
+		label: __( 'More than 30 Custom Blocks', 'otter-blocks' ),
+		description: __( 'Harness the potential of the new WordPress era with the growing list of 30+ page building blocks, covering all the elements needed to build a website.', 'otter-blocks' ),
+		inFree: true
+	},
+	{
+		label: __( 'Extra Functionalities for all Blocks', 'otter-blocks' ),
+		description: __( 'Extra Functionalities for all Blocks', 'otter-blocks' ),
+		inFree: true
+	},
+	{
 		label: __( 'Premium Blocks', 'otter-blocks' ),
-		description: __( 'Enhance your website’s design with powerful Pro Blocks, like the Add to Cart Block, Business Hours Block and more blocks are coming soon.', 'otter-blocks' )
+		description: __( 'Enhance your website\'s design with powerful Pro Blocks, like the Add to Cart Block, Business Hours Block and more blocks are coming soon.', 'otter-blocks' )
 	},
 	{
-		label: __( 'WooCommerce Builder Blocks', 'otter-blocks' ),
-		description: __( 'Build custom Single Product Pages using WooCommerce Builder Blocks by Otter. All the new features from Otter Pro are designed to maximize your conversion rate.', 'otter-blocks' )
+		label: __( 'Visibility Condition & Sticky Blocks', 'otter-blocks' ),
+		description: __( 'The Visibility Conditions feature allows you to set which conditions should be met for your chosen blocks to be displayed on the page. While the Sticky feature lets you set a Block as sticky, so that it sticks to its parent. ', 'otter-blocks' )
 	},
 	{
-		label: __( 'More Sticky Options for Blocks', 'otter-blocks' ),
-		description: __( 'Block Sticky feature allows you to keep any block always visible while the customer is scrolling the page, improving the e-commerce User Experience on your site.', 'otter-blocks' )
+		label: __( 'Dynamic Values', 'otter-blocks' ),
+		description: __( 'Streamline your Workflow with Otter Dynamic Values, which allows you to bind certain elements in the editor - with the dynamic data from your website database.', 'otter-blocks' )
 	},
 	{
 		label: __( 'Review Comparison Table', 'otter-blocks' ),
 		description: __( 'Allows you to display and compare a selection of product reviews made on the website.', 'otter-blocks' )
 	},
 	{
-		label: __( 'More Block Visibility Conditions', 'otter-blocks' ),
-		description: __( 'The Visibility Conditions feature by Otter allows you to set which conditions should be met for your chosen blocks to be displayed on the page. Otter Pro adds 6 more Visibility Conditions.', 'otter-blocks' )
+		label: __( 'WooCommerce Builder Blocks', 'otter-blocks' ),
+		description: __( 'Build custom Single Product Pages using WooCommerce Builder Blocks by Otter. All the new features from Otter Pro are designed to maximize your conversion rate.', 'otter-blocks' )
 	},
 	{
-		label: __( 'Sync Product Reviews', 'otter-blocks' ),
-		description: __( 'When using the Product Review Block, this feature allows you to automatically sync the reviews and details of a WooCommerce product.', 'otter-blocks' )
-	},
-	{
-		label: __( 'Fast and Friendly Support', 'otter-blocks' ),
-		description: __( 'On average, Otter Pro user get a reply in five hours or less.', 'otter-blocks' )
+		label: __( 'Priority Support', 'otter-blocks' ),
+		description: __( 'Our Support Engineers are happy to help you get the best results from our products. On average, Otter Pro user get a reply in five hours or less.', 'otter-blocks' )
 	}
 ];
+
+const crossIcon = <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><path d="M22.5326 10.5767L17.2226 15.8867L22.5326 21.1967L20.4176 23.3117L15.1076 18.0167L9.81262 23.3117L7.68262 21.1817L12.9776 15.8867L7.68262 10.5917L9.81262 8.46167L15.1076 13.7567L20.4176 8.46167L22.5326 10.5767Z" fill="#FF7E65"></path></svg>;
+const checkIcon = <svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><path d="M22.9863 7.99243L12.7863 18.1924L8.58633 13.9924L6.48633 16.0924L12.7863 22.3924L25.0863 10.0924" fill="#5FBFD5"></path></svg>;
 
 const Upsell = () => {
 	return (
@@ -63,8 +72,8 @@ const Upsell = () => {
 								<p>{ feature.description}</p>
 							</div>
 
-							<div className="c"><svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><path d="M22.5326 10.5767L17.2226 15.8867L22.5326 21.1967L20.4176 23.3117L15.1076 18.0167L9.81262 23.3117L7.68262 21.1817L12.9776 15.8867L7.68262 10.5917L9.81262 8.46167L15.1076 13.7567L20.4176 8.46167L22.5326 10.5767Z" fill="#FF7E65"></path></svg></div>
-							<div className="c"><svg width="31" height="31" viewBox="0 0 31 31" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-hidden="true"><path d="M22.9863 7.99243L12.7863 18.1924L8.58633 13.9924L6.48633 16.0924L12.7863 22.3924L25.0863 10.0924" fill="#5FBFD5"></path></svg></div>
+							<div className="c">{ feature?.inFree ? checkIcon : crossIcon }</div>
+							<div className="c">{ checkIcon }</div>
 						</li>
 					);
 				})}
