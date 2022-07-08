@@ -131,32 +131,37 @@ const Multiselect = ({
 const ProductsMultiselect = ( props ) => {
 	const {
 		products,
-		productsStatus
+		isLoading
 	} = useSelect( select => {
 		if ( ! Boolean( window.otterPro.hasWooCommerce ) ) {
 			return {
 				products: [],
-				productsStatus: 'loading'
+				isLoading: false
 			};
 		}
 
 		const { COLLECTIONS_STORE_KEY } = window?.wc?.wcBlocksData;
+		const {
+			getCollection,
+			getCollectionError,
+			isResolving
+		} = select( COLLECTIONS_STORE_KEY );
 
 		// eslint-disable-next-line camelcase
-		const productsError = select( COLLECTIONS_STORE_KEY ).getCollectionError( '/wc/store', 'products', { per_page: 100 });
+		const productsError = getCollectionError?.( '/wc/store', 'products', { per_page: 100 });
 
-		const products = productsError ? [] : ( select( COLLECTIONS_STORE_KEY )?.getCollection( '/wc/store', 'products', { 'per_page': 100 }) ?? [])?.map( result => ({
+		const products = productsError ? [] : ( getCollection?.( '/wc/store', 'products', { 'per_page': 100 }) ?? [])?.map( result => ({
 			value: result.id,
 			label: decodeEntities( result.name )
 		}) );
 
 		return {
 			products,
-			productsStatus: ( productsError && 'error' ) || ( ! isEmpty( products ) && 'loaded' ) || 'loading'
+			isLoading: isResolving( 'getCollection', [ '/wc/store', 'products', { 'per_page': 100 } ])
 		};
 	}, []);
 
-	return 'loading' === productsStatus ? (
+	return isLoading ? (
 		<Placeholder><Spinner /></Placeholder>
 	) : (
 		<Multiselect
@@ -169,32 +174,37 @@ const ProductsMultiselect = ( props ) => {
 const CategoriesMultiselect = ( props ) => {
 	const {
 		categories,
-		categoriesStatus
+		isLoading
 	} = useSelect( select => {
 		if ( ! Boolean( window.otterPro.hasWooCommerce ) ) {
 			return {
 				categories: [],
-				categoriesStatus: 'loading'
+				isLoading: false
 			};
 		}
 
 		const { COLLECTIONS_STORE_KEY } = window?.wc?.wcBlocksData;
+		const {
+			getCollection,
+			getCollectionError,
+			isResolving
+		} = select( COLLECTIONS_STORE_KEY );
 
 		// eslint-disable-next-line camelcase
-		const categoriesError = select( COLLECTIONS_STORE_KEY ).getCollectionError( '/wc/store', 'products/categories' );
+		const categoriesError = getCollectionError( '/wc/store', 'products/categories' );
 
-		const categories = categoriesError ? [] : ( select( COLLECTIONS_STORE_KEY ).getCollection( '/wc/store', 'products/categories' ) ?? [])?.map( result => ({
+		const categories = categoriesError ? [] : ( getCollection( '/wc/store', 'products/categories' ) ?? [])?.map( result => ({
 			value: result.id,
 			label: decodeEntities( result.name )
 		}) );
 
 		return {
 			categories,
-			categoriesStatus: ( categoriesError && 'error' ) || ( ! isEmpty( categories ) && 'loaded' ) || 'loading'
+			isLoading: isResolving( 'getCollection', [ '/wc/store', 'products/categories' ])
 		};
 	}, []);
 
-	return 'loading' === categoriesStatus ? (
+	return isLoading ? (
 		<Placeholder><Spinner /></Placeholder>
 	) : (
 		<Multiselect
@@ -207,23 +217,23 @@ const CategoriesMultiselect = ( props ) => {
 const CoursesMultiselect = ( props ) => {
 	const {
 		courses,
-		coursesStatus
+		isLoading
 	} = useSelect( select => {
 		if ( ! Boolean( window.otterPro.hasLearnDash ) ) {
 			return {
 				courses: [],
-				cursesStatus: 'loading'
+				cursesStatus: false
 			};
 		}
 
 		const courses = select( 'otter-pro' )?.getLearnDashCourses() ?? [];
 		return {
 			courses,
-			coursesStatus: ! isEmpty( courses ) ? 'loaded' : 'loading'
+			isLoading: ! select( 'otter-pro' )?.isLearnDashCoursesLoaded()
 		};
 	}, []);
 
-	return 'loading' === coursesStatus ? (
+	return isLoading ? (
 		<Placeholder><Spinner /></Placeholder>
 	) : (
 		<Multiselect
@@ -236,25 +246,25 @@ const CoursesMultiselect = ( props ) => {
 const CoursesSelect = ( props ) => {
 	const {
 		courses,
-		coursesStatus
+		isLoading
 	} = useSelect( select => {
 		if ( ! Boolean( window.otterPro.hasLearnDash ) ) {
 			return {
 				courses: [],
-				cursesStatus: 'loading'
+				cursesStatus: false
 			};
 		}
 
 		const courses = select( 'otter-pro' )?.getLearnDashCourses() ?? [];
 		return {
 			courses,
-			coursesStatus: ! isEmpty( courses ) ? 'loaded' : 'loading'
+			isLoading: ! select( 'otter-pro' )?.isLearnDashCoursesLoaded()
 		};
 	}, []);
 
 	return (
 		<Fragment>
-			{ 'loaded' === coursesStatus && (
+			{ ! isLoading && (
 				<Fragment>
 					{ Boolean( courses.length ) ? (
 						<SelectControl
@@ -269,7 +279,7 @@ const CoursesSelect = ( props ) => {
 				</Fragment>
 			) }
 
-			{ 'loading' === coursesStatus && <Placeholder><Spinner /></Placeholder> }
+			{ isLoading && <Placeholder><Spinner /></Placeholder> }
 		</Fragment>
 	);
 };
@@ -286,14 +296,14 @@ const GroupsMultiselect = ( props ) => {
 			};
 		}
 
-		const groups = select( 'otter-pro' )?.getLearnDashGroups()() ?? [];
+		const groups = select( 'otter-pro' )?.getLearnDashGroups() ?? [];
 		return {
 			groups,
-			groupsStatus: ! isEmpty( groups ) ? 'loaded' : 'loading'
+			groupsStatus: ! select( 'otter-pro' )?.isLearnDashGroupsLoaded()
 		};
 	}, []);
 
-	return 'loading' === groupsStatus ? (
+	return groupsStatus ? (
 		<Placeholder><Spinner /></Placeholder>
 	) : (
 		<Multiselect
