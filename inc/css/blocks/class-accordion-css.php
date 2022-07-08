@@ -223,7 +223,7 @@ class Accordion_CSS extends Base_CSS {
 	 * @return mixed
 	 */
 	private function add_icon( $css ) {
-		$json     = file_get_contents( OTTER_BLOCKS_PATH . '/src/blocks/helpers/fa-icons.json' );
+		$json     = file_get_contents( OTTER_BLOCKS_PATH . '/assets/fontawesome/fa-icons.json' );
 		$fa_icons = json_decode( $json, true );
 
 		$prefix_to_family = array(
