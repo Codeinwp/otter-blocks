@@ -58,6 +58,9 @@ class Dynamic_Content_Server {
 							'type'              => 'string',
 							'required'          => true,
 							'description'       => __( 'Image Type.', 'otter-blocks' ),
+							'sanitize_callback' => function ( $param ) {
+								return (string) esc_attr( $param );
+							},
 							'validate_callback' => function ( $param, $request, $key ) {
 								$allowed_types = array( 'featuredImage', 'authorImage', 'loggedInUserImage', 'productImage', 'postMetaImage' );
 								return in_array( $param, $allowed_types );
@@ -67,6 +70,9 @@ class Dynamic_Content_Server {
 							'type'              => 'integer',
 							'required'          => true,
 							'description'       => __( 'ID of the post being edited.', 'otter-blocks' ),
+							'sanitize_callback' => function ( $param ) {
+								return intval( $param );
+							},
 							'validate_callback' => function ( $param, $request, $key ) {
 								return is_numeric( $param );
 							},
@@ -75,8 +81,22 @@ class Dynamic_Content_Server {
 							'type'              => 'integer',
 							'required'          => false,
 							'description'       => __( 'ID of the Post that the image belongs.', 'otter-blocks' ),
+							'sanitize_callback' => function ( $param ) {
+								return intval( $param );
+							},
 							'validate_callback' => function ( $param, $request, $key ) {
 								return is_numeric( $param );
+							},
+						),
+						'meta'    => array(
+							'type'              => 'string',
+							'required'          => false,
+							'description'       => __( 'Meta key.', 'otter-blocks' ),
+							'sanitize_callback' => function ( $param ) {
+								return esc_attr( $param );
+							},
+							'validate_callback' => function ( $param, $request, $key ) {
+								return is_string( $key );
 							},
 						),
 					),
@@ -101,7 +121,9 @@ class Dynamic_Content_Server {
 		$type    = $request->get_param( 'type' );
 		$context = $request->get_param( 'context' );
 		$id      = $request->get_param( 'id' );
+		$meta    = $request->get_param( 'meta' );
 		$path    = OTTER_BLOCKS_PATH . '/assets/images/placeholder.png';
+		$default = $path;
 
 		if ( 'featuredImage' === $type ) {
 			$image = get_post_thumbnail_id( $context );
@@ -138,10 +160,21 @@ class Dynamic_Content_Server {
 			}
 		}
 
-        $size = getimagesize( $path );
+		if ( 'postMetaImage' === $type && ! empty( $meta ) ) {
+			$value = get_post_meta( $context, $meta, true );
 
-        header( 'Content-type: '.$size['mime'] );
-        return readfile( $path );
+			if ( ! empty( $value ) ) {
+				$path = esc_url( $value );
+			}
+		}
+
+		if ( $size = @getimagesize( $path ) ) {
+			header( 'Content-type: '.$size['mime'] );
+			return readfile( $path );
+		}
+
+		header( 'Content-type: image/png' );
+		return readfile( $default );
 	}
 
 	/**

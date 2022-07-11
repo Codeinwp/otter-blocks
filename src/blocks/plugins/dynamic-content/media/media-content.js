@@ -8,6 +8,8 @@ import classNames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
+import { TextControl } from '@wordpress/components';
+
 import { useSelect } from '@wordpress/data';
 
 import {
@@ -40,8 +42,7 @@ const contentTypes = [
 	},
 	{
 		type: 'productImage',
-		label: __( 'WooCommerce Product Image', 'otter-blocks' ),
-		attributes: [ 'product' ]
+		label: __( 'WooCommerce Product Image', 'otter-blocks' )
 	},
 	{
 		type: 'postMetaImage',
@@ -100,6 +101,14 @@ const MediaSidebar = ({
 					label={ __( 'Select Product', 'otter-blocks' ) }
 					value={ attributes.id || '' }
 					onChange={ product => changeAttributes({ id: 0 === product ? undefined : product }) }
+				/>
+			) }
+
+			{ 'postMetaImage' === selected?.type && (
+				<TextControl
+					label={ __( 'Meta Key', 'otter-blocks' ) }
+					value={ attributes.meta || '' }
+					onChange={ meta => changeAttributes({ meta }) }
 				/>
 			) }
 		</Fragment>
