@@ -1,4 +1,4 @@
-import { BlockProps, InspectorProps } from '../../helpers/blocks'
+import { BlockProps, InspectorProps, PaddingType } from '../../helpers/blocks'
 
 type Attributes = {
 	id: string
@@ -38,6 +38,7 @@ type Attributes = {
 	labelFontSizeMobile: number
 	hasSeparators: boolean
 	alignment: 'flex-start' | 'center' | 'flex-end'
+	padding: PaddingType
 }
 
 export type CountdownProps = BlockProps<Attributes>

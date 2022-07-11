@@ -24,6 +24,7 @@
 	--labelFontSizeTablet: 0.6rem;
 	--labelFontSizeMobile: 0.6rem;
 	--alignment: center;
+	--padding: 0px;
 
 	.otter-countdown__container {
 		display: flex;
@@ -58,6 +59,7 @@
 		border-radius: var( --borderRadius );
 		box-sizing: border-box;
 		width: 100%;
+		padding: var(--padding);
 		
 
 		@media ( min-width: 600px ) and ( max-width: 960px ) {

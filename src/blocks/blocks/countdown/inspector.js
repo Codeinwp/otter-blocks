@@ -17,6 +17,7 @@ import {
 	Button,
 	DateTimePicker,
 	FontSizePicker,
+	__experimentalBoxControl as BoxControl,
 	SelectControl
 } from '@wordpress/components';
 
@@ -32,6 +33,7 @@ import {
  */
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import SizingControl from '../../components/sizing-control/index.js';
+import { mergeBoxDefaultValues, mergeBoxValues, removeBoxDefaultValues } from '../../helpers/helper-functions.js';
 
 const defaultFontSizes = [
 	{
@@ -441,6 +443,12 @@ const Inspector = ({
 							value: getBorderRadius( 'bottom-left' )
 						}
 					] }
+				/>
+
+				<BoxControl
+					label={ __( 'Content Padding', 'otter-blocks' ) }
+					values={ mergeBoxDefaultValues( attributes.padding, { left: '0px', right: '0px', bottom: '0px', top: '0px' }) }
+					onChange={ padding => setAttributes({ padding: removeBoxDefaultValues( padding, { left: '0px', right: '0px', bottom: '0px', top: '0px' }) }) }
 				/>
 			</PanelBody>
 		</InspectorControls>

@@ -124,6 +124,9 @@
 		},
 		"alignment": {
 			"type": "string"
+		},
+		"padding": {
+			"type": "object"
 		}
 	},
 	"supports": {

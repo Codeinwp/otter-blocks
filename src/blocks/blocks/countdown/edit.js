@@ -29,6 +29,7 @@ import {
 } from '../../helpers/block-utility';
 import Inspector from './inspector.js';
 import {
+	boxValues,
 	getIntervalFromUnix,
 	getTimezone
 } from '../../helpers/helper-functions.js';
@@ -145,7 +146,8 @@ const Edit = ({
 		'--labelFontSize': px( attributes.valueFontSize ),
 		'--labelFontSizeTablet': px( attributes.valueFontSizeTablet ),
 		'--labelFontSizeMobile': px( attributes.valueFontSizeMobile ),
-		'--alignment': attributes.alignment
+		'--alignment': attributes.alignment,
+		'--padding': boxValues( attributes.padding )
 	};
 
 	const [ cssNodeName, setCSS ] = useCSSNode();
