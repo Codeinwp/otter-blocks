@@ -128,6 +128,191 @@ const Multiselect = ({
 	);
 };
 
+const ProductsMultiselect = ( props ) => {
+	const {
+		products,
+		isLoading
+	} = useSelect( select => {
+		if ( ! Boolean( window.otterPro.hasWooCommerce ) ) {
+			return {
+				products: [],
+				isLoading: false
+			};
+		}
+
+		const { COLLECTIONS_STORE_KEY } = window?.wc?.wcBlocksData;
+		const {
+			getCollection,
+			getCollectionError,
+			isResolving
+		} = select( COLLECTIONS_STORE_KEY );
+
+		// eslint-disable-next-line camelcase
+		const productsError = getCollectionError?.( '/wc/store', 'products', { per_page: 100 });
+
+		const products = productsError ? [] : ( getCollection?.( '/wc/store', 'products', { 'per_page': 100 }) ?? [])?.map( result => ({
+			value: result.id,
+			label: decodeEntities( result.name )
+		}) );
+
+		return {
+			products,
+			isLoading: isResolving( 'getCollection', [ '/wc/store', 'products', { 'per_page': 100 } ])
+		};
+	}, []);
+
+	return isLoading ? (
+		<Placeholder><Spinner /></Placeholder>
+	) : (
+		<Multiselect
+			{...props}
+			items={ products }
+		/>
+	);
+};
+
+const CategoriesMultiselect = ( props ) => {
+	const {
+		categories,
+		isLoading
+	} = useSelect( select => {
+		if ( ! Boolean( window.otterPro.hasWooCommerce ) ) {
+			return {
+				categories: [],
+				isLoading: false
+			};
+		}
+
+		const { COLLECTIONS_STORE_KEY } = window?.wc?.wcBlocksData;
+		const {
+			getCollection,
+			getCollectionError,
+			isResolving
+		} = select( COLLECTIONS_STORE_KEY );
+
+		// eslint-disable-next-line camelcase
+		const categoriesError = getCollectionError( '/wc/store', 'products/categories' );
+
+		const categories = categoriesError ? [] : ( getCollection( '/wc/store', 'products/categories' ) ?? [])?.map( result => ({
+			value: result.id,
+			label: decodeEntities( result.name )
+		}) );
+
+		return {
+			categories,
+			isLoading: isResolving( 'getCollection', [ '/wc/store', 'products/categories' ])
+		};
+	}, []);
+
+	return isLoading ? (
+		<Placeholder><Spinner /></Placeholder>
+	) : (
+		<Multiselect
+			{...props}
+			items={ categories }
+		/>
+	);
+};
+
+const CoursesMultiselect = ( props ) => {
+	const {
+		courses,
+		isLoading
+	} = useSelect( select => {
+		if ( ! Boolean( window.otterPro.hasLearnDash ) ) {
+			return {
+				courses: [],
+				cursesStatus: false
+			};
+		}
+
+		const courses = select( 'otter-pro' )?.getLearnDashCourses() ?? [];
+		return {
+			courses,
+			isLoading: ! select( 'otter-pro' )?.isLearnDashCoursesLoaded()
+		};
+	}, []);
+
+	return isLoading ? (
+		<Placeholder><Spinner /></Placeholder>
+	) : (
+		<Multiselect
+			{...props}
+			items={ courses }
+		/>
+	);
+};
+
+const CoursesSelect = ( props ) => {
+	const {
+		courses,
+		isLoading
+	} = useSelect( select => {
+		if ( ! Boolean( window.otterPro.hasLearnDash ) ) {
+			return {
+				courses: [],
+				cursesStatus: false
+			};
+		}
+
+		const courses = select( 'otter-pro' )?.getLearnDashCourses() ?? [];
+		return {
+			courses,
+			isLoading: ! select( 'otter-pro' )?.isLearnDashCoursesLoaded()
+		};
+	}, []);
+
+	return (
+		<Fragment>
+			{ ! isLoading && (
+				<Fragment>
+					{ Boolean( courses.length ) ? (
+						<SelectControl
+							{ ...props }
+							options={ courses }
+						/>
+					) : (
+						<p>{ __( 'No courses available.', 'otter-blocks' ) }</p>
+					) }
+
+					{ props.children }
+				</Fragment>
+			) }
+
+			{ isLoading && <Placeholder><Spinner /></Placeholder> }
+		</Fragment>
+	);
+};
+
+const GroupsMultiselect = ( props ) => {
+	const {
+		groups,
+		groupsStatus
+	} = useSelect( select => {
+		if ( ! Boolean( window.otterPro.hasLearnDash ) ) {
+			return {
+				groups: [],
+				groupsStatus: 'loading'
+			};
+		}
+
+		const groups = select( 'otter-pro' )?.getLearnDashGroups() ?? [];
+		return {
+			groups,
+			groupsStatus: ! select( 'otter-pro' )?.isLearnDashGroupsLoaded()
+		};
+	}, []);
+
+	return groupsStatus ? (
+		<Placeholder><Spinner /></Placeholder>
+	) : (
+		<Multiselect
+			{...props}
+			items={ groups }
+		/>
+	);
+};
+
 const Edit = ({
 	groupIndex,
 	itemIndex,
@@ -136,90 +321,6 @@ const Edit = ({
 	setAttributes,
 	changeValue
 }) => {
-	const {
-		products,
-		categories,
-		productsStatus,
-		categoriesStatus,
-		courses,
-		coursesStatus,
-		courseGroups,
-		courseGroupsStatus
-	} = useSelect( select => {
-		let products = [];
-		let categories = [];
-		let productsStatus = 'loading';
-		let categoriesStatus = 'loading';
-		let courses = [];
-		let courseGroups = [];
-		let coursesStatus = 'loading';
-		let courseGroupsStatus = 'loading';
-
-		if ( Boolean( window.otterPro.hasWooCommerce ) ) {
-			const { COLLECTIONS_STORE_KEY } = window.wc.wcBlocksData;
-
-			// eslint-disable-next-line camelcase
-			const productsError = select( COLLECTIONS_STORE_KEY ).getCollectionError( '/wc/store', 'products', { per_page: 100 });
-
-			if ( productsError ) {
-				productsStatus = 'error';
-			} else {
-				// eslint-disable-next-line camelcase
-				products = select( COLLECTIONS_STORE_KEY ).getCollection( '/wc/store', 'products', { per_page: 100 });
-
-				if ( ! isEmpty( products ) ) {
-					productsStatus = 'loaded';
-
-					products = products.map( result => ({
-						value: result.id,
-						label: decodeEntities( result.name )
-					}) );
-				}
-			}
-
-			const categoriesError = select( COLLECTIONS_STORE_KEY ).getCollectionError( '/wc/store', 'products/categories' );
-
-			if ( categoriesError ) {
-				categoriesStatus = 'error';
-			} else {
-				categories = select( COLLECTIONS_STORE_KEY ).getCollection( '/wc/store', 'products/categories' );
-
-				if ( ! isEmpty( categories ) ) {
-					categoriesStatus = 'loaded';
-
-					categories = categories.map( result => ({
-						value: result.id,
-						label: decodeEntities( result.name )
-					}) );
-				}
-			}
-		}
-
-		if ( Boolean( window.otterPro.hasLearnDash ) ) {
-			courses = select( 'otter-pro' ).getLearnDashCourses();
-
-			if ( ! isEmpty( courses ) ) {
-				coursesStatus = 'loaded';
-			}
-
-			courseGroups = select( 'otter-pro' ).getLearnDashGroups();
-
-			if ( ! isEmpty( courseGroups ) ) {
-				courseGroupsStatus = 'loaded';
-			}
-		}
-
-		return {
-			products,
-			categories,
-			productsStatus,
-			categoriesStatus,
-			courses,
-			coursesStatus,
-			courseGroups,
-			courseGroupsStatus
-		};
-	}, []);
 
 	const changeDays = ( value, groupIndex, key ) => {
 		const otterConditions = [ ...conditions ];
@@ -562,31 +663,21 @@ const Edit = ({
 
 					{ 'products' === item.on && (
 						<Fragment>
-							{ 'loaded' === productsStatus && (
-								<Multiselect
-									label={ __( 'Products', 'otter-blocks' ) }
-									items={ products }
-									values={ item.products }
-									onChange={ values => changeProducts( values, groupIndex, itemIndex ) }
-								/>
-							) }
-
-							{ 'loading' === productsStatus && <Placeholder><Spinner /></Placeholder> }
+							<ProductsMultiselect
+								label={ __( 'Products', 'otter-blocks' ) }
+								values={ item.products }
+								onChange={ values => changeProducts( values, groupIndex, itemIndex ) }
+							/>
 						</Fragment>
 					) }
 
 					{ 'categories' === item.on && (
 						<Fragment>
-							{ 'loaded' === categoriesStatus && (
-								<Multiselect
-									label={ __( 'Categories', 'otter-blocks' ) }
-									items={ categories }
-									values={ item.categories }
-									onChange={ values => changeCategories( values, groupIndex, itemIndex ) }
-								/>
-							) }
-
-							{ 'loading' === categoriesStatus && <Placeholder><Spinner /></Placeholder> }
+							<CategoriesMultiselect
+								label={ __( 'Categories', 'otter-blocks' ) }
+								values={ item.categories }
+								onChange={ values => changeCategories( values, groupIndex, itemIndex ) }
+							/>
 						</Fragment>
 					) }
 				</Fragment>
@@ -632,16 +723,11 @@ const Edit = ({
 
 			{ 'wooPurchaseHistory' === item.type && (
 				<Fragment>
-					{ 'loaded' === productsStatus && (
-						<Multiselect
-							label={ __( 'Products', 'otter-blocks' ) }
-							items={ products }
-							values={ item.products }
-							onChange={ values => changeProducts( values, groupIndex, itemIndex ) }
-						/>
-					) }
-
-					{ 'loading' === productsStatus && <Placeholder><Spinner /></Placeholder> }
+					<ProductsMultiselect
+						label={ __( 'Products', 'otter-blocks' ) }
+						values={ item.products }
+						onChange={ values => changeProducts( values, groupIndex, itemIndex ) }
+					/>
 				</Fragment>
 			) }
 
@@ -665,31 +751,21 @@ const Edit = ({
 
 					{ 'courses' === item.on && (
 						<Fragment>
-							{ 'loaded' === coursesStatus && (
-								<Multiselect
-									label={ __( 'Courses', 'otter-blocks' ) }
-									items={ courses }
-									values={ item.courses }
-									onChange={ values => changeCourses( values, groupIndex, itemIndex ) }
-								/>
-							) }
-
-							{ 'loading' === coursesStatus && <Placeholder><Spinner /></Placeholder> }
+							<CoursesMultiselect
+								label={ __( 'Courses', 'otter-blocks' ) }
+								values={ item.courses }
+								onChange={ values => changeCourses( values, groupIndex, itemIndex ) }
+							/>
 						</Fragment>
 					) }
 
 					{ 'groups' === item.on && (
 						<Fragment>
-							{ 'loaded' === courseGroupsStatus && (
-								<Multiselect
-									label={ __( 'Groups', 'otter-blocks' ) }
-									items={ courseGroups }
-									values={ item.groups }
-									onChange={ values => changeGroups( values, groupIndex, itemIndex ) }
-								/>
-							) }
-
-							{ 'loading' === courseGroupsStatus && <Placeholder><Spinner /></Placeholder> }
+							<GroupsMultiselect
+								label={ __( 'Groups', 'otter-blocks' ) }
+								values={ item.groups }
+								onChange={ values => changeGroups( values, groupIndex, itemIndex ) }
+							/>
 						</Fragment>
 					) }
 				</Fragment>
@@ -697,42 +773,31 @@ const Edit = ({
 
 			{ 'learnDashCourseStatus' === item.type && (
 				<Fragment>
-					{ 'loaded' === coursesStatus && (
-						<Fragment>
-							{ Boolean( courses.length ) ? (
-								<SelectControl
-									label={ __( 'Course', 'otter-blocks' ) }
-									options={ courses }
-									value={ item.course }
-									onChange={ e => changeValue( Number( e ), groupIndex, itemIndex, 'course' ) }
-								/>
-							) : (
-								<p>{ __( 'No courses available.', 'otter-blocks' ) }</p>
-							) }
-
-							<SelectControl
-								label={ __( 'Status', 'otter-blocks' ) }
-								options={ [
-									{
-										value: 'not_started',
-										label: __( 'Not Started', 'otter-blocks' )
-									},
-									{
-										value: 'in_progress',
-										label: __( 'In Progress', 'otter-blocks' )
-									},
-									{
-										value: 'completed',
-										label: __( 'Completed', 'otter-blocks' )
-									}
-								] }
-								value={ item.status }
-								onChange={ e => changeValue( e, groupIndex, itemIndex, 'status' ) }
-							/>
-						</Fragment>
-					) }
-
-					{ 'loading' === coursesStatus && <Placeholder><Spinner /></Placeholder> }
+					<CoursesSelect
+						label={ __( 'Course', 'otter-blocks' ) }
+						value={ item.course }
+						onChange={ e => changeValue( Number( e ), groupIndex, itemIndex, 'course' ) }
+					>
+						<SelectControl
+							label={ __( 'Status', 'otter-blocks' ) }
+							options={ [
+								{
+									value: 'not_started',
+									label: __( 'Not Started', 'otter-blocks' )
+								},
+								{
+									value: 'in_progress',
+									label: __( 'In Progress', 'otter-blocks' )
+								},
+								{
+									value: 'completed',
+									label: __( 'Completed', 'otter-blocks' )
+								}
+							] }
+							value={ item.status }
+							onChange={ e => changeValue( e, groupIndex, itemIndex, 'status' ) }
+						/>
+					</CoursesSelect>
 				</Fragment>
 			) }
 		</Fragment>

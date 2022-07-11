@@ -11,20 +11,24 @@ const DEFAULT_STATE = {
 	acfGroups: [],
 	acfFields: {},
 	learndDashCourses: [],
-	learndDashGroups: []
+	learndDashGroups: [],
+	haveLoadedCourses: false,
+	haveLoadedGroups: false
 };
 
 const actions = {
 	setCourses( courses ) {
 		return {
 			type: 'SET_LEARNDASH_COURSES',
-			courses
+			courses,
+			haveLoadedCourses: true
 		};
 	},
 	setGroups( groups ) {
 		return {
 			type: 'SET_LEARNDASH_GROUPS',
-			groups
+			groups,
+			haveLoadedGroups: true
 		};
 	},
 	setACFData( groups, fields ) {
@@ -47,14 +51,16 @@ registerStore( 'otter-pro', {
 		if ( 'SET_LEARNDASH_COURSES' === action.type ) {
 			return {
 				...state,
-				learndDashCourses: action.courses
+				learndDashCourses: action.courses,
+				haveLoadedCourses: action.haveLoadedCourses
 			};
 		}
 
 		if ( 'SET_LEARNDASH_GROUPS' === action.type ) {
 			return {
 				...state,
-				learndDashGroups: action.groups
+				learndDashGroups: action.groups,
+				haveLoadedGroups: action.haveLoadedGroups
 			};
 		}
 
@@ -81,6 +87,12 @@ registerStore( 'otter-pro', {
 				groups: state.acfGroups,
 				fields: state.acfFields
 			};
+		},
+		isLearnDashCoursesLoaded( state ) {
+			return state.haveLoadedCourses;
+		},
+		isLearnDashGroupsLoaded( state ) {
+			return state.haveLoadedGroups;
 		}
 	},
 
