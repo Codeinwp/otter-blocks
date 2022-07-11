@@ -21,7 +21,7 @@ const FEATURES = [
 		description: __( 'Enhance your website\'s design with powerful Pro Blocks, like the Add to Cart Block, Business Hours Block and more blocks are coming soon.', 'otter-blocks' )
 	},
 	{
-		label: __( 'Visibility Condition & Sticky Blocks', 'otter-blocks' ),
+		label: __( 'Extend Visibility Condition & Sticky Blocks', 'otter-blocks' ),
 		description: __( 'The Visibility Conditions feature allows you to set which conditions should be met for your chosen blocks to be displayed on the page. While the Sticky feature lets you set a Block as sticky, so that it sticks to its parent. ', 'otter-blocks' )
 	},
 	{
@@ -38,7 +38,7 @@ const FEATURES = [
 	},
 	{
 		label: __( 'Priority Support', 'otter-blocks' ),
-		description: __( 'Our Support Engineers are happy to help you get the best results from our products. On average, Otter Pro user get a reply in five hours or less.', 'otter-blocks' )
+		description: __( 'Our Happiness Engineers are happy to help you get the best results from our products. On average, Otter Pro user get a reply in five hours or less.', 'otter-blocks' )
 	}
 ];
 
