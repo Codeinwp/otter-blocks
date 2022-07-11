@@ -1,3 +1,4 @@
+import { BoxBorder, BoxPadding, BoxShadow, IconData } from '../../../common'
 import { BlockProps, InspectorProps } from '../../../helpers/blocks'
 
 type Attributes = {
@@ -13,19 +14,19 @@ type Attributes = {
 	textTransform: string
 	fontSize: number
 	letterSpacing: number
-	headerBorder: object
-	contentBorder: object
-	headerPadding: object
-	contentPadding: object
+	headerBorder: BoxBorder
+	contentBorder: BoxBorder
+	headerPadding: BoxPadding
+	contentPadding: BoxPadding
 	tag: string
 	alwaysOpen: boolean
-	boxShadow: object
+	boxShadow: BoxShadow
 	iconFirst: boolean,
 	activeTitleColor: string
 	activeTitleBackground: string
 	activeContentBackground: string
-	icon: object
-	openItemIcon: object
+	icon: IconData
+	openItemIcon: IconData
 }
 
 export type AccordionGroupProps = BlockProps<Attributes>
