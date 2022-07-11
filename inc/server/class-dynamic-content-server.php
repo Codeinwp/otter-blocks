@@ -73,7 +73,7 @@ class Dynamic_Content_Server {
 						),
 						'id'      => array(
 							'type'              => 'integer',
-							'required'          => true,
+							'required'          => false,
 							'description'       => __( 'ID of the Post that the image belongs.', 'otter-blocks' ),
 							'validate_callback' => function ( $param, $request, $key ) {
 								return is_numeric( $param );
@@ -98,9 +98,10 @@ class Dynamic_Content_Server {
 	 * @return mixed|\WP_REST_Response
 	 */
 	public function get( $request ) {
-		$type = $request->get_param( 'type' );
-		$context   = $request->get_param( 'context' );
-		$path = OTTER_BLOCKS_PATH . '/assets/images/placeholder.png';
+		$type    = $request->get_param( 'type' );
+		$context = $request->get_param( 'context' );
+		$id      = $request->get_param( 'id' );
+		$path    = OTTER_BLOCKS_PATH . '/assets/images/placeholder.png';
 
 		if ( 'featuredImage' === $type ) {
 			$image = get_post_thumbnail_id( $context );
@@ -122,11 +123,18 @@ class Dynamic_Content_Server {
 			}
 		}
 
-		if ( 'productImage' === $type ) {
-			$user = get_current_user_id();
+		if ( 'productImage' === $type && ! empty( $id ) ) {
+			$product = wc_get_product( $id );
+			$image   = $product->get_image_id();
+			
+			if ( $image ) {
+				$path  = wp_get_original_image_path( $image );
+			} else {
+				$image = get_option( 'woocommerce_placeholder_image', 0 );
 
-			if ( true === boolval( $user ) ) {
-				$path = get_avatar_url( $user );
+				if ( $image ) {
+					$path  = wp_get_original_image_path( $image );
+				}
 			}
 		}
 

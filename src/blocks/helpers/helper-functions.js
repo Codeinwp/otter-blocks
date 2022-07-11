@@ -285,3 +285,29 @@ const verticalMapping = {
 export const _align = value =>{
 	return verticalMapping[value];
 };
+
+/**
+ * Get parameter from the URL.
+ */
+export const getObjectFromQueryString = queryString => {
+	if ( -1 < queryString.indexOf( '?' ) ) {
+		queryString = queryString.split( '?' )[1];
+	}
+
+	const pairs = queryString.split( '&' );
+	const result = {};
+
+	pairs.forEach( function( pair ) {
+		pair = pair.split( '=' );
+		if ( '' !== pair[0]) {
+			result[pair[0]] = decodeURIComponent( pair[1] || '' );
+		}
+	});
+
+	return result;
+};
+
+/**
+ * Object to Query String.
+ */
+export const getQueryStringFromObject = params => Object.keys( params ).map( key => key + '=' + params[key]).join( '&' );

@@ -12,8 +12,18 @@ import { useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
+	useEffect,
 	useState
 } from '@wordpress/element';
+
+/**
+ * Internal dependencies.
+ */
+import {
+	getObjectFromQueryString,
+	getQueryStringFromObject
+} from '../../../helpers/helper-functions.js';
+import SelectProducts from '../../../components/select-products-control/index.js';
 
 const contentTypes = [
 	{
@@ -30,7 +40,8 @@ const contentTypes = [
 	},
 	{
 		type: 'productImage',
-		label: __( 'WooCommerce Product Image', 'otter-blocks' )
+		label: __( 'WooCommerce Product Image', 'otter-blocks' ),
+		attributes: [ 'product' ]
 	},
 	{
 		type: 'postMetaImage',
@@ -45,7 +56,7 @@ const MediaItem = ({
 	selected,
 	onSelect
 }) => {
-	const url = themeisleGutenberg.restRoot + '/dynamic?type=' + type + '&context=' + context;
+	const url = window.themeisleGutenberg.restRoot + '/dynamic?type=' + type + '&context=' + context;
 	const isSelected = url === selected;
 
 	return (
@@ -72,6 +83,29 @@ const MediaItem = ({
 	);
 };
 
+const MediaSidebar = ({
+	attributes,
+	changeAttributes
+}) => {
+	const selected = contentTypes.find( ({ type }) => type === attributes.type );
+
+	return (
+		<Fragment>
+			<div className="attachment-details">
+				{ selected && <h2>{ selected?.label }</h2> }
+			</div>
+
+			{ 'productImage' === selected?.type && (
+				<SelectProducts
+					label={ __( 'Select Product', 'otter-blocks' ) }
+					value={ attributes.id || '' }
+					onChange={ product => changeAttributes({ id: 0 === product ? undefined : product }) }
+				/>
+			) }
+		</Fragment>
+	);
+};
+
 const MediaContent = ({
 	state,
 	onSelectImage
@@ -87,6 +121,29 @@ const MediaContent = ({
 	}, []);
 
 	const [ selected, setSelected ] = useState( selection?._single?.attributes?.url );
+
+	const [ attributes, setAttributes ] = useState({});
+
+	useEffect( () => {
+		const attrs = getObjectFromQueryString( selected || '' );
+		setAttributes( attrs );
+	}, [ selected ]);
+
+	const changeAttributes = obj => {
+		let attrs = { ...attributes };
+
+		Object.keys( obj ).forEach( o => {
+			attrs[ o ] = obj[ o ];
+		});
+
+		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v ) ) );
+
+		const url = window.themeisleGutenberg.restRoot + '/dynamic?' + getQueryStringFromObject( attrs );
+
+		onSelectImage( url );
+
+		setAttributes({ ...attrs });
+	};
 
 	const onSelect = value => {
 		if ( selected !== value ) {
@@ -117,7 +174,12 @@ const MediaContent = ({
 				</ul>
 			</div>
 
-			<div className="media-sidebar"></div>
+			<div className="media-sidebar">
+				<MediaSidebar
+					attributes={ attributes }
+					changeAttributes={ changeAttributes }
+				/>
+			</div>
 		</Fragment>
 	);
 };
