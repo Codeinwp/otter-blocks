@@ -33,7 +33,6 @@
 	.otter-countdown__display {
 		display: flex;
 		flex-direction: row;
-		flex-wrap: wrap;
 		width: var(--width, 100%);
 		height: var(--height);
 		gap: var( --gap );
