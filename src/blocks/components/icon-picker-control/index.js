@@ -84,7 +84,6 @@ const IconPickerControl = ({
 		Object.keys( data ).forEach( i => {
 			Object.keys( data[i].styles ).forEach( o => {
 				let prefix = '';
-				let terms = data[i].search.terms;
 
 				switch ( data[i].styles[o]) {
 				case 'brands':
@@ -100,17 +99,11 @@ const IconPickerControl = ({
 					prefix = 'fas';
 				}
 
-				terms.push(
-					i,
-					data[i].label
-				);
-
 				icons.push({
 					name: i,
 					unicode: data[i].unicode,
 					prefix,
-					label: data[i].label,
-					search: terms
+					label: data[i].label
 				});
 			});
 		});
@@ -190,7 +183,7 @@ const IconPickerControl = ({
 								value={ library }
 								options={ [
 									{ label: __( 'Font Awesome', 'otter-blocks' ), value: 'fontawesome' },
-									{ label: __( 'ThemeIsle Icons', 'otter-blocks' ), value: 'themeisle-icons' },
+									...( allowThemeisleIcons ? [ { label: __( 'ThemeIsle Icons', 'otter-blocks' ), value: 'themeisle-icons' } ] : []),
 									...( allowImage ? [ { label: __( 'Custom Image', 'otter-blocks' ), value: 'image' } ] : [])
 								] }
 								onChange={ changeLibrary }
@@ -287,7 +280,7 @@ const IconPickerControl = ({
 
 							<div className="components-popover__items">
 								{ selectedIcons.map( ( i, index ) => {
-									if ( 'fontawesome' === library && ( ! search || i.search.some( ( o ) => o.toLowerCase().match( search.toLowerCase() ) ) ) ) {
+									if ( 'fontawesome' === library && ( ! search || i.name.match( search.toLowerCase() ) || i.label.toLowerCase().match( search.toLowerCase() ) ) ) {
 										return (
 											<FontAwesomeIconsList
 												i={ i }
@@ -335,7 +328,6 @@ export const IconPickerToolbarControl = ({
 		Object.keys( data ).forEach( i => {
 			Object.keys( data[i].styles ).forEach( o => {
 				let prefix = '';
-				let terms = data[i].search.terms;
 
 				switch ( data[i].styles[o]) {
 				case 'brands':
@@ -351,17 +343,11 @@ export const IconPickerToolbarControl = ({
 					prefix = 'fas';
 				}
 
-				terms.push(
-					i,
-					data[i].label
-				);
-
 				icons.push({
 					name: i,
 					unicode: data[i].unicode,
 					prefix,
-					label: data[i].label,
-					search: terms
+					label: data[i].label
 				});
 			});
 		});
@@ -468,7 +454,7 @@ export const IconPickerToolbarControl = ({
 							) }
 
 							{ icons.map( i => {
-								if ( ! search || i.search.some( ( o ) => o.toLowerCase().match( search.toLowerCase() ) ) ) {
+								if ( ! search || i.name.match( search.toLowerCase() ) || i.label.toLowerCase().match( search.toLowerCase() ) ) {
 									return (
 										<FontAwesomeIconsList
 											i={ i }

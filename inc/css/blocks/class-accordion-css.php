@@ -239,30 +239,36 @@ class Accordion_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-accordion-item__title::after',
+				'selector'   => ' .wp-block-themeisle-blocks-accordion-item:not([open]) .wp-block-themeisle-blocks-accordion-item__title::after',
 				'properties' => array(
 					array(
-						'property' => 'content',
-						'value'    => 'icon',
-						'default'  => '"\f107"',
-						'format'   => function( $value ) use ( $fa_icons ) {
-							return isset( $value['name'] ) ? '"\\' . $fa_icons[ $value['name'] ]['unicode'] . '"' : '"\f107"';
+						'property'  => 'content',
+						'value'     => 'icon',
+						'format'    => function( $value ) use ( $fa_icons ) {
+							return '"\\' . $fa_icons[ $value['name'] ]['unicode'] . '"';
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['icon'] );
 						},
 					),
 					array(
-						'property' => 'font-weight',
-						'value'    => 'icon',
-						'default'  => 900,
-						'format'   => function( $value ) use ( $fa_icons ) {
-							return isset( $value['prefix'] ) && 'fas' !== $value['prefix'] ? 400 : 900;
+						'property'  => 'font-weight',
+						'value'     => 'icon',
+						'format'    => function( $value ) use ( $fa_icons ) {
+							return 'fas' !== $value['prefix'] ? 400 : 900;
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['icon'] );
 						},
 					),
 					array(
 						'property' => 'font-family',
 						'value'    => 'icon',
-						'default'  => 'Font Awesome 5 Free',
 						'format'   => function( $value ) use ( $prefix_to_family ) {
-							return isset( $value['prefix'] ) ? '"' . $prefix_to_family[ $value['prefix'] ] . '"' : '"Font Awesome 5 Free"';
+							return '"' . $prefix_to_family[ $value['prefix'] ] . '"';
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['icon'] );
 						},
 					),
 				),
@@ -271,30 +277,36 @@ class Accordion_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-accordion-item[open] > .wp-block-themeisle-blocks-accordion-item__title::after',
+				'selector'   => ' .wp-block-themeisle-blocks-accordion-item[open] .wp-block-themeisle-blocks-accordion-item__title::after',
 				'properties' => array(
 					array(
 						'property' => 'content',
 						'value'    => 'openItemIcon',
-						'default'  => '"\f106"',
 						'format'   => function( $value ) use ( $fa_icons ) {
-							return isset( $value['name'] ) ? '"\\' . $fa_icons[ $value['name'] ]['unicode'] . '"' : '"\f106"';
+							return '"\\' . $fa_icons[ $value['name'] ]['unicode'] . '"';
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['openItemIcon'] );
 						},
 					),
 					array(
 						'property' => 'font-weight',
 						'value'    => 'openItemIcon',
-						'default'  => 900,
 						'format'   => function( $value ) use ( $fa_icons ) {
-							return isset( $value['prefix'] ) && 'fas' !== $value['prefix'] ? 400 : 900;
+							return 'fas' !== $value['prefix'] ? 400 : 900;
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['openItemIcon'] );
 						},
 					),
 					array(
 						'property' => 'font-family',
 						'value'    => 'openItemIcon',
-						'default'  => 'Font Awesome 5 Free',
 						'format'   => function( $value ) use ( $prefix_to_family ) {
-							return isset( $value['prefix'] ) ? '"' . $prefix_to_family[ $value['prefix'] ] . '"' : '"Font Awesome 5 Free"';
+							return '"' . $prefix_to_family[ $value['prefix'] ] . '"';
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['openItemIcon'] );
 						},
 					),
 				),

@@ -45,12 +45,6 @@
 			&::marker {
 				display: none;
 			}
-
-			&::after {
-				content: '';
-				justify-self: end;
-				align-self: center;
-			}
 		}
 
 		.wp-block-themeisle-blocks-accordion-item__content {
@@ -96,5 +90,31 @@
 		flex-direction: row-reverse;
 		justify-content: flex-end;
 		gap: max( var(--hPaddingLeft, 24px), 10px );
+	}
+
+	&:not( .has-icon ) {
+		.wp-block-themeisle-blocks-accordion-item:not([open]) .wp-block-themeisle-blocks-accordion-item__title::after {
+			content: '';
+			justify-self: end;
+			align-self: center;
+			border-right: 2px solid currentColor;
+			border-bottom: 2px solid currentColor;
+			width: 8px;
+			height: 8px;
+			transform: rotate(45deg) translate(-25%, 0%);
+		}
+	}
+
+	&:not( .has-open-icon ) {
+		.wp-block-themeisle-blocks-accordion-item[open] .wp-block-themeisle-blocks-accordion-item__title::after {
+			content: '';
+			justify-self: end;
+			align-self: center;
+			border-right: 2px solid currentColor;
+			border-bottom: 2px solid currentColor;
+			width: 8px;
+			height: 8px;
+			transform: rotate(225deg) translate(0%, -45%);
+		}
 	}
 }

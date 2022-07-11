@@ -802,8 +802,10 @@ class Registration {
 		}
 
 		if ( 'themeisle-blocks/accordion' === $block['blockName'] ) {
-			self::$is_fa_loaded = true;
-			return $block_content;
+			if ( isset( $block['attrs']['icon'] ) || isset( $block['attrs']['openItemIcon'] ) ) {
+				self::$is_fa_loaded = true;
+				return $block_content;
+			}
 		}
 
 		if ( 'themeisle-blocks/icon-list-item' === $block['blockName'] ) {

@@ -105,14 +105,14 @@ const Edit = ({
 	};
 
 	const addBorderStyle = ( type ) => {
-		[ 'Top', 'Right', 'Bottom', 'Left' ].forEach( position => {
-			[ 'Width', 'Style', 'Color' ].forEach( prop => {
-				if ( 'content' === type && 'Top' === position ) {
+		[ 'top', 'right', 'bottom', 'left' ].forEach( position => {
+			[ 'width', 'style', 'color' ].forEach( prop => {
+				if ( 'content' === type && 'top' === position ) {
 					return;
 				}
 
-				const varName = `--${type.slice( 0, 1 )}Border${position.slice( 0, 1 )}${prop.slice( 0, 1 )}`;
-				inlineStyles[varName] = getBorderValue( type, position.toLowerCase(), prop.toLowerCase() ) || '';
+				const varName = `--${type.slice( 0, 1 )}Border${position.slice( 0, 1 ).toUpperCase()}${prop.slice( 0, 1 ).toUpperCase()}`;
+				inlineStyles[varName] = getBorderValue( type, position, prop ) || '';
 			});
 		});
 	};
@@ -137,32 +137,30 @@ const Edit = ({
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();
 	useEffect( () => {
 		const icon = getValue( 'icon' );
-		setNodeCSS([
-			`.not(.is-open) .wp-block-themeisle-blocks-accordion-item__title:after {
-				content: "\\${ faIcons[ icon.name ].unicode }" !important;
-				font-family: "${ PREFIX_TO_FAMILY[ icon.prefix ] }" !important;
-				font-weight: ${ 'fas' !== icon.prefix ? '400' : '900' }
-			}`
-		]);
-	}, [ attributes.icon ]);
+		const openIcon = getValue( 'openItemIcon' );
 
-	useEffect( () => {
-		const icon = getValue( 'openItemIcon' );
 		setNodeCSS([
-			`.is-open .wp-block-themeisle-blocks-accordion-item__title:after {
+			icon && `.wp-block-themeisle-blocks-accordion-item:not(.is-open) .wp-block-themeisle-blocks-accordion-item__title::after {
 				content: "\\${ faIcons[ icon.name ].unicode }" !important;
 				font-family: "${ PREFIX_TO_FAMILY[ icon.prefix ] }" !important;
 				font-weight: ${ 'fas' !== icon.prefix ? '400' : '900' }
+			}`,
+			openIcon && `.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__title::after {
+				content: "\\${ faIcons[ openIcon.name ].unicode }" !important;
+				font-family: "${ PREFIX_TO_FAMILY[ openIcon.prefix ] }" !important;
+				font-weight: ${ 'fas' !== openIcon.prefix ? '400' : '900' }
 			}`
 		]);
-	}, [ attributes.openItemIcon ]);
+	}, [ attributes.icon, attributes.openItemIcon ]);
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames({
 			[ cssNodeName ]: cssNodeName,
 			[ `is-${ attributes.gap }-gap` ]: attributes.gap,
-			'icon-first': attributes.iconFirst
+			'icon-first': attributes.iconFirst,
+			'has-icon': !! attributes.icon,
+			'has-open-icon': !! attributes.openItemIcon
 		}),
 		style: inlineStyles
 	});

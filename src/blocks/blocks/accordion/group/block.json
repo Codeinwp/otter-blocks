@@ -87,18 +87,10 @@
 			"type": "string"
 		},
 		"icon": {
-			"type": "object",
-			"default": {
-				"name": "angle-down",
-				"prefix": "fas"
-			}
+			"type": "object"
 		},
 		"openItemIcon": {
-			"type": "object",
-			"default": {
-				"name": "angle-up",
-				"prefix": "fas"
-			}
+			"type": "object"
 		}
 	},
 	"supports": {

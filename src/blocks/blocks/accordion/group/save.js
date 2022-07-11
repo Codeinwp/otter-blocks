@@ -19,7 +19,9 @@ const Save = ({
 		className: classnames({
 			[ `is-${ attributes.gap }-gap` ]: attributes.gap,
 			exclusive: false === attributes.alwaysOpen,
-			'icon-first': attributes.iconFirst
+			'icon-first': attributes.iconFirst,
+			'has-icon': !! attributes.icon,
+			'has-open-icon': !! attributes.openItemIcon
 		})
 	});
 
