@@ -245,7 +245,7 @@ class Accordion_CSS extends Base_CSS {
 						'property'  => 'content',
 						'value'     => 'icon',
 						'format'    => function( $value ) use ( $fa_icons ) {
-							return '"\\' . $fa_icons[ $value['name'] ]['unicode'] . '"';
+							return '"' . str_replace( 'f', '\\\f', $fa_icons[ $value['name'] ]['unicode'] ) . '"';
 						},
 						'condition' => function( $attrs ) {
 							return isset( $attrs['icon'] );
@@ -283,7 +283,7 @@ class Accordion_CSS extends Base_CSS {
 						'property'  => 'content',
 						'value'     => 'openItemIcon',
 						'format'    => function( $value ) use ( $fa_icons ) {
-							return '"\\' . $fa_icons[ $value['name'] ]['unicode'] . '"';
+							return '"' . str_replace( 'f', '\\\f', $fa_icons[ $value['name'] ]['unicode'] ) . '"';
 						},
 						'condition' => function( $attrs ) {
 							return isset( $attrs['openItemIcon'] );
