@@ -25,16 +25,16 @@ export type MediaImageProps = {
 	alt: string
 }
 
-export type MarginType = {
-	top: string
-	right: string
-	bottom: string
-	left: string
+export type BoxType = {
+	top?: string
+	right?: string
+	bottom?: string
+	left?: string
 }
 
-export type PaddingType = MarginType
-
-export type BorderType = MarginType
+export type MarginType = BoxType
+export type PaddingType = BoxType
+export type BorderType = BoxType
 
 export type OtterNodeCSSOptions = {
 	selector: string
