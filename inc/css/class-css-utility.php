@@ -228,11 +228,12 @@ class CSS_Utility {
 	 * @return string
 	 */
 	public static function box_values( $box, $box_default = array() ) {
-		$_box = array_merge( array(
-				'left' => '0px',
-				'right' => '0px',
-				'top' => '0px',
-				'bottom' => '0px'
+		$_box = array_merge(
+			array(
+				'left'   => '0px',
+				'right'  => '0px',
+				'top'    => '0px',
+				'bottom' => '0px',
 			),
 			$box_default,
 			$box

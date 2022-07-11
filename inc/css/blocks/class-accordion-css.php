@@ -262,9 +262,9 @@ class Accordion_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => 'font-family',
-						'value'    => 'icon',
-						'format'   => function( $value ) use ( $prefix_to_family ) {
+						'property'  => 'font-family',
+						'value'     => 'icon',
+						'format'    => function( $value ) use ( $prefix_to_family ) {
 							return '"' . $prefix_to_family[ $value['prefix'] ] . '"';
 						},
 						'condition' => function( $attrs ) {
@@ -280,9 +280,9 @@ class Accordion_CSS extends Base_CSS {
 				'selector'   => ' .wp-block-themeisle-blocks-accordion-item[open] .wp-block-themeisle-blocks-accordion-item__title::after',
 				'properties' => array(
 					array(
-						'property' => 'content',
-						'value'    => 'openItemIcon',
-						'format'   => function( $value ) use ( $fa_icons ) {
+						'property'  => 'content',
+						'value'     => 'openItemIcon',
+						'format'    => function( $value ) use ( $fa_icons ) {
 							return '"\\' . $fa_icons[ $value['name'] ]['unicode'] . '"';
 						},
 						'condition' => function( $attrs ) {
@@ -290,9 +290,9 @@ class Accordion_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => 'font-weight',
-						'value'    => 'openItemIcon',
-						'format'   => function( $value ) use ( $fa_icons ) {
+						'property'  => 'font-weight',
+						'value'     => 'openItemIcon',
+						'format'    => function( $value ) use ( $fa_icons ) {
 							return 'fas' !== $value['prefix'] ? 400 : 900;
 						},
 						'condition' => function( $attrs ) {
@@ -300,9 +300,9 @@ class Accordion_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => 'font-family',
-						'value'    => 'openItemIcon',
-						'format'   => function( $value ) use ( $prefix_to_family ) {
+						'property'  => 'font-family',
+						'value'     => 'openItemIcon',
+						'format'    => function( $value ) use ( $prefix_to_family ) {
 							return '"' . $prefix_to_family[ $value['prefix'] ] . '"';
 						},
 						'condition' => function( $attrs ) {
