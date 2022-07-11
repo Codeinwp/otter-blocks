@@ -21,7 +21,7 @@ const FEATURES = [
 		description: __( 'Enhance your website\'s design with powerful Pro Blocks, like the Add to Cart Block, Business Hours Block and more blocks are coming soon.', 'otter-blocks' )
 	},
 	{
-		label: __( 'Extend Visibility Condition & Sticky Blocks', 'otter-blocks' ),
+		label: __( 'Extended Visibility Conditions & Sticky Blocks functionality', 'otter-blocks' ),
 		description: __( 'The Visibility Conditions feature allows you to set which conditions should be met for your chosen blocks to be displayed on the page. While the Sticky feature lets you set a Block as sticky, so that it sticks to its parent. ', 'otter-blocks' )
 	},
 	{
@@ -35,6 +35,10 @@ const FEATURES = [
 	{
 		label: __( 'WooCommerce Builder Blocks', 'otter-blocks' ),
 		description: __( 'Build custom Single Product Pages using WooCommerce Builder Blocks by Otter. All the new features from Otter Pro are designed to maximize your conversion rate.', 'otter-blocks' )
+	},
+	{
+		label: __( 'Extended Popups', 'otter-blocks' ),
+		description: __( 'Display your content in beautiful popup with many customization options. Otter Pro extends the functionality of the popups in the free Otter version, with more advanced options.', 'otter-blocks' )
 	},
 	{
 		label: __( 'Priority Support', 'otter-blocks' ),
