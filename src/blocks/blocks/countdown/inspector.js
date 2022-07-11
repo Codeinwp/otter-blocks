@@ -284,17 +284,17 @@ const Inspector = ({
 					onChange={ alignment => setAttributes({ alignment })}
 					options={[
 						{
-							label:  __( 'Left', 'otter-blocks' ),
+							label: __( 'Left', 'otter-blocks' ),
 							value: 'flex-start'
 						},
 						{
-							label:  __( 'Center', 'otter-blocks' ),
+							label: __( 'Center', 'otter-blocks' ),
 							value: 'center'
 						},
 						{
-							label:  __( 'Right', 'otter-blocks' ),
+							label: __( 'Right', 'otter-blocks' ),
 							value: 'flex-end'
-						},
+						}
 					]}
 				/>
 			</PanelBody>
@@ -327,7 +327,7 @@ const Inspector = ({
 					label={ __( 'Space Between', 'otter-blocks' ) }
 				>
 					<RangeControl
-						value={ ('Mobile' === getView ? attributes.gapMobile : 'Tablet' === getView ? attributes.gapTablet : attributes.gap) ?? 6 }
+						value={ ( 'Mobile' === getView ? attributes.gapMobile : 'Tablet' === getView ? attributes.gapTablet : attributes.gap ) ?? 6 }
 						onChange={ onGapChange }
 						min={ 0 }
 						max={ 100 }
@@ -404,7 +404,7 @@ const Inspector = ({
 					label={ __( 'Border Width', 'otter-blocks' ) }
 				>
 					<RangeControl
-						value={ ('Mobile' === getView ? attributes.borderWidthMobile : 'Tablet' === getView ? attributes.borderWidthTablet : attributes.borderWidth) ?? 2 }
+						value={ ( 'Mobile' === getView ? attributes.borderWidthMobile : 'Tablet' === getView ? attributes.borderWidthTablet : attributes.borderWidth ) ?? 2 }
 						onChange={ onBorderWidthChange }
 						min={ 0 }
 						max={ 50 }
