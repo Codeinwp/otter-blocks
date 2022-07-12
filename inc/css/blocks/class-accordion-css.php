@@ -157,7 +157,7 @@ class Accordion_CSS extends Base_CSS {
 									'top'    => '1px',
 									'right'  => '1px',
 									'bottom' => '1px',
-									'left'   => '1px'
+									'left'   => '1px',
 								)
 							);
 						},
@@ -195,7 +195,7 @@ class Accordion_CSS extends Base_CSS {
 									'top'    => '18px',
 									'right'  => '24px',
 									'bottom' => '18px',
-									'left'   => '24px'
+									'left'   => '24px',
 								)
 							);
 						},
@@ -221,7 +221,7 @@ class Accordion_CSS extends Base_CSS {
 									'top'    => '0',
 									'right'  => '1px',
 									'bottom' => '1px',
-									'left'   => '1px'
+									'left'   => '1px',
 								)
 							);
 						},
@@ -259,7 +259,7 @@ class Accordion_CSS extends Base_CSS {
 									'top'    => '18px',
 									'right'  => '24px',
 									'bottom' => '18px',
-									'left'   => '24px'
+									'left'   => '24px',
 								)
 							);
 						},
