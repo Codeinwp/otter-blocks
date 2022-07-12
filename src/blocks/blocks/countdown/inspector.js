@@ -34,7 +34,7 @@ import {
  */
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import SizingControl from '../../components/sizing-control/index.js';
-import { mergeBoxDefaultValues, mergeBoxValues, removeBoxDefaultValues } from '../../helpers/helper-functions.js';
+import { mergeBoxDefaultValues, removeBoxDefaultValues, buildResponsiveSetAttributes, buildResponsiveGetAttributes } from '../../helpers/helper-functions.js';
 
 const defaultFontSizes = [
 	{
@@ -76,11 +76,18 @@ const Inspector = ({
 	attributes,
 	setAttributes
 }) => {
-	const getView = useSelect( select => {
+	const {
+		responsiveSetAttributes,
+		responsiveGetAttributes
+	} = useSelect( select => {
 		const { getView } = select( 'themeisle-gutenberg/data' );
 		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
 
-		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+		return {
+			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
+			responsiveGetAttributes: buildResponsiveGetAttributes( view )
+		};
 	}, []);
 
 	const excludeComponent = ( value, componentName ) => {
@@ -92,78 +99,6 @@ const Inspector = ({
 			setAttributes({
 				exclude: attributes?.exclude ? [ ...attributes?.exclude, componentName ] : [ componentName ]
 			});
-		}
-	};
-
-	const onGapChange = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ gap: Number( value )});
-		}
-		if ( 'Tablet' === getView ) {
-			setAttributes({ gapTablet: Number( value )});
-		}
-		if ( 'Mobile' === getView ) {
-			setAttributes({ gapMobile: Number( value )});
-		}
-	};
-
-	const onWidthChange = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ containerWidth: value });
-		}
-		if ( 'Tablet' === getView ) {
-			setAttributes({ containerWidthTablet: value });
-		}
-		if ( 'Mobile' === getView ) {
-			setAttributes({ containerWidthMobile: value });
-		}
-	};
-
-	const onHeightChange = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ height: Number( value )});
-		}
-		if ( 'Tablet' === getView ) {
-			setAttributes({ heightTablet: Number( value )});
-		}
-		if ( 'Mobile' === getView ) {
-			setAttributes({ heightMobile: Number( value )});
-		}
-	};
-
-	const onValueFontSizeChange = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ valueFontSize: value });
-		}
-		if ( 'Tablet' === getView ) {
-			setAttributes({ valueFontSizeTablet: value });
-		}
-		if ( 'Mobile' === getView ) {
-			setAttributes({ valueFontSizeMobile: value });
-		}
-	};
-
-	const onLabelFontSizeChange = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ labelFontSize: value });
-		}
-		if ( 'Tablet' === getView ) {
-			setAttributes({ labelFontSizeTablet: value });
-		}
-		if ( 'Mobile' === getView ) {
-			setAttributes({ labelFontSizeMobile: value });
-		}
-	};
-
-	const onBorderWidthChange = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ borderWidth: Number( value ) });
-		}
-		if ( 'Tablet' === getView ) {
-			setAttributes({ borderWidthTablet: Number( value )});
-		}
-		if ( 'Mobile' === getView ) {
-			setAttributes({ borderWidthMobile: Number( value )});
 		}
 	};
 
@@ -295,8 +230,8 @@ const Inspector = ({
 					label={ __( 'Width', 'otter-blocks' ) }
 				>
 					<UnitContol
-						value={ 'Mobile' === getView ? attributes.containerWidthMobile : 'Tablet' === getView ? attributes.containerWidthTablet : attributes.containerWidth ?? '100%' }
-						onChange={ onWidthChange }
+						value={ responsiveGetAttributes([ attributes.containerWidth, attributes.containerWidthTablet, attributes.containerWidthMobile ]) ?? 100 }
+						onChange={ value => responsiveSetAttributes( value, [ 'containerWidth', 'containerWidthTablet', 'containerWidthMobile' ]) }
 
 					/>
 				</ResponsiveControl>
@@ -304,8 +239,8 @@ const Inspector = ({
 					label={ __( 'Height', 'otter-blocks' ) }
 				>
 					<RangeControl
-						value={ ( 'Mobile' === getView ? attributes.heightMobile : 'Tablet' === getView ? attributes.heightTablet : attributes.height ) ?? 100 }
-						onChange={ onHeightChange }
+						value={ responsiveGetAttributes([ attributes.height, attributes.heightTablet, attributes.heightMobile ]) ?? 100 }
+						onChange={ value => responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]) }
 						min={ 50 }
 						max={ 2400 }
 					/>
@@ -315,8 +250,8 @@ const Inspector = ({
 					label={ __( 'Space Between', 'otter-blocks' ) }
 				>
 					<RangeControl
-						value={ ( 'Mobile' === getView ? attributes.gapMobile : 'Tablet' === getView ? attributes.gapTablet : attributes.gap ) ?? 6 }
-						onChange={ onGapChange }
+						value={ responsiveGetAttributes([ attributes.gap, attributes.gapTablet, attributes.gapMobile ]) ?? 6 }
+						onChange={ value => responsiveSetAttributes( value, [ 'gap', 'gapTablet', 'gapMobile' ]) }
 						min={ 0 }
 						max={ 100 }
 					/>
@@ -333,8 +268,8 @@ const Inspector = ({
 					<FontSizePicker
 						fontSizes={ defaultFontSizes }
 						withReset
-						value={ 'Mobile' === getView ? attributes.valueFontSizeMobile : 'Tablet' === getView ? attributes.valueFontSizeTablet : attributes.valueFontSize }
-						onChange={ onValueFontSizeChange }
+						value={ responsiveGetAttributes([ attributes.valueFontSize, attributes.valueFontSizeTablet, attributes.valueFontSizeMobile ]) }
+						onChange={ value => responsiveSetAttributes( value, [ 'valueFontSize', 'valueFontSizeTablet', 'valueFontSizeMobile' ]) }
 					/>
 				</ResponsiveControl>
 
@@ -344,8 +279,8 @@ const Inspector = ({
 					<FontSizePicker
 						fontSizes={ defaultFontSizes }
 						withReset
-						value={ 'Mobile' === getView ? attributes.labelFontSizeMobile : 'Tablet' === getView ? attributes.labelFontSizeTablet : attributes.labelFontSize }
-						onChange={ onLabelFontSizeChange }
+						value={ responsiveGetAttributes([ attributes.labelFontSize, attributes.labelFontSizeTablet, attributes.labelFontSizeMobile ]) }
+						onChange={ value => responsiveSetAttributes( value, [ 'labelFontSize', 'labelFontSizeTablet', 'labelFontSizeMobile' ]) }
 					/>
 				</ResponsiveControl>
 			</PanelBody>
@@ -397,8 +332,8 @@ const Inspector = ({
 					label={ __( 'Border Width', 'otter-blocks' ) }
 				>
 					<RangeControl
-						value={ ( 'Mobile' === getView ? attributes.borderWidthMobile : 'Tablet' === getView ? attributes.borderWidthTablet : attributes.borderWidth ) ?? 2 }
-						onChange={ onBorderWidthChange }
+						value={ responsiveGetAttributes([ attributes.borderWidth, attributes.borderWidthTablet, attributes.borderWidthMobile ]) ?? 2 }
+						onChange={ value => responsiveSetAttributes( value, [ 'borderWidth', 'borderWidthTablet', 'borderWidthMobile' ]) }
 						min={ 0 }
 						max={ 50 }
 					/>
@@ -436,11 +371,24 @@ const Inspector = ({
 					] }
 				/>
 
-				<BoxControl
+				<ResponsiveControl
 					label={ __( 'Padding', 'otter-blocks' ) }
-					values={ mergeBoxDefaultValues( attributes.padding, { left: '0px', right: '0px', bottom: '0px', top: '0px' }) }
-					onChange={ padding => setAttributes({ padding: removeBoxDefaultValues( padding, { left: '0px', right: '0px', bottom: '0px', top: '0px' }) }) }
-				/>
+				>
+
+					<BoxControl
+						values={
+							mergeBoxDefaultValues(
+								responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile ]),
+								{ left: '0px', right: '0px', bottom: '0px', top: '0px' }
+							)
+						}
+						onChange={ value => {
+							const cleaned = removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' });
+							responsiveSetAttributes( cleaned, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
+						} }
+					/>
+
+				</ResponsiveControl>
 			</PanelBody>
 		</InspectorControls>
 	);

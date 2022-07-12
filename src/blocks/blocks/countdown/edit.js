@@ -48,8 +48,7 @@ const px = value => isNumber( value ) ? `${ value }px` : value;
 const Edit = ({
 	attributes,
 	setAttributes,
-	clientId,
-	className
+	clientId
 }) => {
 	const [ unixTime, setUnixTime ] = useState( 0 );
 
@@ -75,45 +74,6 @@ const Edit = ({
 		};
 	}, [ attributes.date ]);
 
-	/**
-	 * Determine the platform
-	 */
-	const {
-		isViewportAvailable,
-		isPreviewDesktop,
-		isPreviewTablet,
-		isPreviewMobile
-	} = useSelect( select => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-
-		return {
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
-		};
-	}, []);
-
-	const isLarger = useViewportMatch( 'large', '>=' );
-
-	const isLarge = useViewportMatch( 'large', '<=' );
-
-	const isSmall = useViewportMatch( 'small', '>=' );
-
-	const isSmaller = useViewportMatch( 'small', '<=' );
-
-	let isDesktop = isLarger && ! isLarge && isSmall && ! isSmaller;
-
-	let isTablet = ! isLarger && ! isLarge && isSmall && ! isSmaller;
-
-	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
-
-	if ( isViewportAvailable && ! isMobile ) {
-		isDesktop = isPreviewDesktop;
-		isTablet = isPreviewTablet;
-		isMobile = isPreviewMobile;
-	}
-
 
 	// Add `border-radius` for all the platforms
 	const borderRadius = 'linked' === attributes.borderRadiusType ? attributes.borderRadius + '%' : `${ attributes.borderRadiusTopLeft }% ${ attributes.borderRadiusTopRight }% ${ attributes.borderRadiusBottomRight }% ${ attributes.borderRadiusBottomLeft }%`;
@@ -125,9 +85,6 @@ const Edit = ({
 		'--backgroundColor': attributes.backgroundColor,
 		'--borderColor': attributes.borderColor,
 		'--borderRadius': borderRadius,
-		'--boxWidth': px( attributes.width ), // legacy
-		'--boxWidthTablet': px( attributes.widthTablet ), // legacy
-		'--boxWidthMobile': px( attributes.widthMobile ), // legacy
 		'--width': attributes.containerWidth,
 		'--widthTablet': attributes.containerWidthTablet,
 		'--widthMobile': attributes.containerWidthMobile,
@@ -147,7 +104,9 @@ const Edit = ({
 		'--labelFontSizeTablet': px( attributes.labelFontSizeTablet ),
 		'--labelFontSizeMobile': px( attributes.labelFontSizeMobile ),
 		'--alignment': attributes.alignment,
-		'--padding': boxValues( attributes.padding )
+		'--padding': boxValues( attributes.padding ),
+		'--paddingTablet': boxValues( attributes.paddingTablet ),
+		'--paddingMobile': boxValues( attributes.paddingMobile )
 	};
 
 	const [ cssNodeName, setCSS ] = useCSSNode();

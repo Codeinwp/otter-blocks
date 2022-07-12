@@ -22,10 +22,12 @@
 	--labelFontSizeMobile: var(--labelFontSize);
 	--alignment: center;
 	--padding: 0px;
+	--paddingTablet: var(--padding);
+	--paddingMobile: var(--padding);
 
 	.otter-countdown__container {
 		display: flex;
-		justify-content: center var(--alignment);
+		justify-content: var(--alignment);
 	}
 
 	.otter-countdown__display {
@@ -57,16 +59,17 @@
 		box-sizing: border-box;
 		width: 100%;
 		padding: var(--padding);
-		
 
 		@media ( min-width: 600px ) and ( max-width: 960px ) {
 			height: var( --heightTablet );
 			border: var( --borderWidthTablet ) solid var( --borderColor );
+			padding: var(--paddingTablet);
 		}
 
 		@media ( max-width: 600px ) {
 			height: var( --heightMobile );
 			border: var( --borderWidthMobile ) solid var( --borderColor );
+			padding: var(--paddingMobile);
 		}
 
 		&[name="separator"] {

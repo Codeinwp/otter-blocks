@@ -130,6 +130,12 @@
 		},
 		"padding": {
 			"type": "object"
+		},
+		"paddingTablet": {
+			"type": "object"
+		},
+		"paddingMobile": {
+			"type": "object"
 		}
 	},
 	"supports": {

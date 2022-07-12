@@ -214,8 +214,35 @@ class Countdown_CSS extends Base_CSS {
 								)
 							);
 						},
-						'condition' => function( $attrs ) {
-							return isset( $attrs['padding'] );
+					),
+					array(
+						'property'  => '--paddingTablet',
+						'value'     => 'paddingTablet',
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left' => '0px',
+									'right' => '0px',
+									'top' => '0px',
+									'bottom' => '0px'
+								)
+							);
+						},
+					),
+					array(
+						'property'  => '--paddingMobile',
+						'value'     => 'paddingMobile',
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left' => '0px',
+									'right' => '0px',
+									'top' => '0px',
+									'bottom' => '0px'
+								)
+							);
 						},
 					),
 				),

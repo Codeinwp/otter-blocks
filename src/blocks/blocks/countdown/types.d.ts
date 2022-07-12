@@ -40,6 +40,8 @@ type Attributes = {
 	hasSeparators: boolean
 	alignment: 'flex-start' | 'center' | 'flex-end'
 	padding: PaddingType
+	paddingMobile: PaddingType
+	paddingTablet: PaddingType
 }
 
 export type CountdownProps = BlockProps<Attributes>
