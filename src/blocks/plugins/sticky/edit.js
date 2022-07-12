@@ -47,7 +47,7 @@ const ProFeatures = () => {
 						value: 'o-sticky-pos-top'
 					},
 					{
-						label: __( 'Bottom', 'otter-blocks' ),
+						label: __( 'Bottom (Pro)', 'otter-blocks' ),
 						value: 'o-sticky-pos-bottom',
 						disabled: true
 					}
@@ -71,16 +71,16 @@ const ProFeatures = () => {
 				value="o-sticky-bhvr-keep"
 				options={ [
 					{
-						label: __( 'Collapse', 'otter-blocks' ),
+						label: __( 'Collapse (Pro)', 'otter-blocks' ),
 						value: 'o-sticky-bhvr-keep'
 					},
 					{
-						label: __( 'Fade', 'otter-blocks' ),
+						label: __( 'Fade (Pro)', 'otter-blocks' ),
 						value: 'o-sticky-bhvr-hide',
 						disabled: true
 					},
 					{
-						label: __( 'Stack', 'otter-blocks' ),
+						label: __( 'Stack (Pro)', 'otter-blocks' ),
 						value: 'o-sticky-bhvr-stack',
 						disabled: true
 					}
