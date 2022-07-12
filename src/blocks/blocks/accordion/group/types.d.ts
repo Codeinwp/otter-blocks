@@ -1,4 +1,4 @@
-import { BoxBorder, BoxPadding, BoxShadow, IconData } from '../../../common'
+import { AdvancedBorder, BoxPadding, BoxShadow, IconData } from '../../../common'
 import { BlockProps, InspectorProps } from '../../../helpers/blocks'
 
 type Attributes = {
@@ -14,8 +14,8 @@ type Attributes = {
 	textTransform: string
 	fontSize: number
 	letterSpacing: number
-	headerBorder: BoxBorder
-	contentBorder: BoxBorder
+	headerBorder: AdvancedBorder
+	contentBorder: AdvancedBorder
 	headerPadding: BoxPadding
 	contentPadding: BoxPadding
 	tag: string

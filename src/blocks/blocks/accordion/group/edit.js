@@ -28,7 +28,10 @@ import {
 	blockInit,
 	getDefaultValueByField, useCSSNode
 } from '../../../helpers/block-utility.js';
-import { hex2rgba } from '../../../helpers/helper-functions';
+import {
+	boxValues,
+	hex2rgba
+} from '../../../helpers/helper-functions';
 
 // @ts-ignore
 import faIcons from '../../../../../assets/fontawesome/fa-icons.json';
@@ -68,28 +71,9 @@ const Edit = ({
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
-	const getBorderValue = ( type, position, property ) => {
-		const border = 'header' === type ?
-			getValue( 'headerBorder' ) :
-			( 'content' === type ?
-				getValue( 'contentBorder' ) :
-				undefined );
-
-		if ( ! border ) {
-			return '';
-		}
-
-		// for backward compatibility purposes
-		if ( 'color' === property ) {
-			return border[position] ?
-				border[position].color :
-				border.color || getValue( 'borderColor' );
-		}
-
-		return border[position] && border[position][property] ? border[position][property] : border[property];
-	};
-
 	const boxShadow = getValue( 'boxShadow' );
+	const headerBorder = getValue( 'headerBorder' );
+	const contentBorder = getValue( 'contentBorder' );
 
 	const inlineStyles = {
 		'--titleColor': getValue( 'titleColor' ),
@@ -101,38 +85,16 @@ const Edit = ({
 		'--textTransform': getValue( 'textTransform' ),
 		'--letterSpacing': getValue( 'letterSpacing' ) ? getValue( 'letterSpacing' ) + 'px' : undefined,
 		'--fontSize': getValue( 'fontSize' ) ? getValue( 'fontSize' ) + 'px' : undefined,
-		'--boxShadow': boxShadow.active && `${boxShadow.horizontal}px ${boxShadow.vertical}px ${boxShadow.blur}px ${boxShadow.spread}px ${hex2rgba( boxShadow.color, boxShadow.colorOpacity )}`
+		'--boxShadow': boxShadow.active && `${boxShadow.horizontal}px ${boxShadow.vertical}px ${boxShadow.blur}px ${boxShadow.spread}px ${hex2rgba( boxShadow.color, boxShadow.colorOpacity )}`,
+		'--headerPadding': getValue( 'headerPadding' ) && boxValues( getValue( 'headerPadding' ), { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
+		'--contentPadding': getValue( 'contentPadding' ) && boxValues( getValue( 'contentPadding' ), { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
+		'--headerBorderWidth': headerBorder?.width && boxValues( headerBorder.width, { top: '1px', right: '1px', bottom: '1px', left: '1px' }),
+		'--contentBorderWidth': contentBorder?.width && boxValues( contentBorder.width, { top: '0', right: '1px', bottom: '1px', left: '1px' }),
+		'--headerBorderColor': headerBorder.color,
+		'--contentBorderColor': contentBorder.color,
+		'--headerBorderStyle': headerBorder.style,
+		'--contentBorderStyle': contentBorder.style
 	};
-
-	const addBorderStyle = ( type ) => {
-		[ 'top', 'right', 'bottom', 'left' ].forEach( position => {
-			[ 'width', 'style', 'color' ].forEach( prop => {
-				if ( 'content' === type && 'top' === position ) {
-					return;
-				}
-
-				const varName = `--${type.slice( 0, 1 )}Border${position.slice( 0, 1 ).toUpperCase()}${prop.slice( 0, 1 ).toUpperCase()}`;
-				inlineStyles[varName] = getBorderValue( type, position, prop ) || '';
-			});
-		});
-	};
-
-	const addPaddingStyle = ( type ) => {
-		const padding = 'header' === type ? attributes.headerPadding : ( 'content' === type ? attributes.contentPadding : null );
-		if ( ! padding ) {
-			return;
-		}
-
-		[ 'Top', 'Right', 'Bottom', 'Left' ].forEach( position => {
-			const varName = `--${type.slice( 0, 1 )}Padding${position}`;
-			inlineStyles[varName] = padding[ position.toLowerCase() ];
-		});
-	};
-
-	addBorderStyle( 'header' );
-	addBorderStyle( 'content' );
-	addPaddingStyle( 'header' );
-	addPaddingStyle( 'content' );
 
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();
 	useEffect( () => {

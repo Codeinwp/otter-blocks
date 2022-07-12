@@ -6,7 +6,8 @@ import { __ } from '@wordpress/i18n';
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
 	ContrastChecker,
-	InspectorControls
+	InspectorControls,
+	PanelColorSettings
 } from '@wordpress/block-editor';
 
 import {
@@ -15,8 +16,7 @@ import {
 	RangeControl,
 	FontSizePicker,
 	ToggleControl,
-	__experimentalBoxControl as BoxControl,
-	__experimentalBorderBoxControl as BorderBoxControl
+	__experimentalBoxControl as BoxControl
 } from '@wordpress/components';
 
 import { select, dispatch } from '@wordpress/data';
@@ -85,6 +85,17 @@ const Inspector = ({
 		});
 
 		setAttributes({ tag: targetTag });
+	};
+
+	const onBorderChange = ( type, property, value ) => {
+		if ( ! [ 'header', 'content' ].includes( type ) ) {
+			return;
+		}
+
+		const border = ( 'header' === type ? attributes.headerBorder : attributes.contentBorder ) || {};
+
+		border[property] = 'object' === typeof value ? { ...border[property], ...value } : value;
+		setAttributes({ [ type + 'Border' ]: { ...border } });
 	};
 
 	return (
@@ -157,18 +168,6 @@ const Inspector = ({
 					icon={ attributes.icon?.name }
 					allowThemeisleIcons={ false }
 					onChange={ icon => setAttributes({ icon }) }
-				/>
-				<BorderBoxControl
-					label={ __( 'Header Borders', 'otter-blocks' ) }
-					value={ attributes.headerBorder }
-					onChange={ headerBorder => setAttributes({ headerBorder }) }
-					className="accordion-border-control"
-				/>
-				<BorderBoxControl
-					label={ __( 'Content Borders', 'otter-blocks' ) }
-					value={ attributes.contentBorder }
-					onChange={ contentBorder => setAttributes({ contentBorder }) }
-					className="accordion-border-control"
 				/>
 
 				<SyncControl
@@ -256,6 +255,58 @@ const Inspector = ({
 					onColorChange={ activeContentBackground => setAttributes({ activeContentBackground }) }
 				/>
 			</PanelBody>
+
+			<PanelColorSettings
+				title={ __( 'Borders', 'otter-blocks' ) }
+				initialOpen={ false }
+				colorSettings={ [
+					{
+						value: attributes.headerBorder?.color,
+						onChange: value => onBorderChange( 'header', 'color', value ),
+						label: __( 'Header Border Color', 'otter-blocks' )
+					},
+					{
+						value: attributes.contentBorder?.color,
+						onChange: value => onBorderChange( 'content', 'color', value ),
+						label: __( 'Content Border Color', 'otter-blocks' )
+					}
+				] }
+			>
+				<SelectControl
+					label={ __( 'Header Border Style', 'otter-blocks' ) }
+					labelPosition="left"
+					value={ attributes.headerBorder?.style }
+					options={[
+						{ label: __( 'Solid', 'otter-blocks' ), value: 'solid' },
+						{ label: __( 'Dashed', 'otter-blocks' ), value: 'dashed' },
+						{ label: __( 'Dotted', 'otter-blocks' ), value: 'dotted' }
+					]}
+					onChange={ value => onBorderChange( 'header', 'style', value ) }
+				/>
+				<BoxControl
+					label={ __( 'Header Border Width', 'otter-blocks' ) }
+					values={ attributes.headerBorder?.width || {} }
+					onChange={ value => onBorderChange( 'header', 'width', value ) }
+				/>
+				<SelectControl
+					label={ __( 'Content Border Style', 'otter-blocks' ) }
+					labelPosition="left"
+					value={ attributes.contentBorder?.style }
+					options={[
+						{ label: __( 'Solid', 'otter-blocks' ), value: 'solid' },
+						{ label: __( 'Dashed', 'otter-blocks' ), value: 'dashed' },
+						{ label: __( 'Dotted', 'otter-blocks' ), value: 'dotted' }
+					]}
+					onChange={ value => onBorderChange( 'content', 'style', value ) }
+				/>
+				<BoxControl
+					label={ __( 'Content Border Width', 'otter-blocks' ) }
+					values={ attributes.contentBorder?.width || {} }
+					sides={[ 'right', 'bottom', 'left' ]}
+					onChange={ value => onBorderChange( 'content', 'width', value ) }
+				/>
+			</PanelColorSettings>
+
 			<PanelBody
 				title={ __( 'Title Typography', 'otter-blocks' ) }
 				initialOpen={ false }

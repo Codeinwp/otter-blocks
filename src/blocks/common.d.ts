@@ -1,3 +1,5 @@
+import {BoxType} from "./helpers/blocks";
+
 export type BoxShadow = {
     color: string
     colorOpacity: number
@@ -12,6 +14,12 @@ export type BoxPadding = {
     right: string
     top: string
     bottom: string
+}
+
+export type AdvancedBorder = {
+	color: string
+	style: string
+	width: BoxType
 }
 
 export type BoxBorder = BoxPadding;

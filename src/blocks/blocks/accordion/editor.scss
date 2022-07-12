@@ -16,12 +16,11 @@
 			color: var( --titleColor );
 			background: var( --titleBackground );
 
-			border-top: var( --hBorderTW, 1px) var( --hBorderTS, solid) var( --hBorderTC, #d5dadf );
-			border-right: var( --hBorderRW, 1px) var( --hBorderRS, solid) var( --hBorderRC, #d5dadf );
-			border-bottom: var( --hBorderBW, 1px) var( --hBorderBS, solid) var( --hBorderBC, #d5dadf );
-			border-left: var( --hBorderLW, 1px) var( --hBorderLS, solid) var( --hBorderLC, #d5dadf );
+			border-width: var( --headerBorderWidth, 1px );
+			border-style: var( --headerBorderStyle, solid );
+			border-color: var( --headerBorderColor, #d5dadf );
 
-			padding: var( --hPaddingTop, 18px ) var( --hPaddingRight, 24px ) var( --hPaddingBottom, 18px ) var( --hPaddingLeft, 24px );
+			padding: var( --headerPadding );
 			cursor: pointer;
 
 			font-style: var( --fontStyle );
@@ -53,12 +52,11 @@
 		.wp-block-themeisle-blocks-accordion-item__content {
 			background: var( --contentBackground );
 
-			border-top: none;
-			border-right: var( --cBorderRW, 1px) var( --cBorderRS, solid) var( --cBorderRC, #d5dadf );
-			border-bottom: var( --cBorderBW, 1px) var( --cBorderBS, solid) var( --cBorderBC, #d5dadf );
-			border-left: var( --cBorderLW, 1px) var( --cBorderLS, solid) var( --cBorderLC, #d5dadf );
+			border-width: var( --contentBorderWidth, 0 1px 1px 1px );
+			border-style: var( --contentBorderStyle, solid );
+			border-color: var( --contentBorderColor, #d5dadf );
 
-			padding: var( --cPaddingTop, 18px ) var( --cPaddingRight, 24px ) var( --cPaddingBottom, 18px ) var( --cPaddingLeft, 24px );
+			padding: var( --contentPadding );
 		}
 
 		&:not([ data-align="full"] ) {

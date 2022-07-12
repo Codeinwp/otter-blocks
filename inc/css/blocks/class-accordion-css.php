@@ -38,53 +38,6 @@ class Accordion_CSS extends Base_CSS {
 
 		$css = new CSS_Utility( $block );
 
-		$border_variables = array();
-		foreach ( [ 'header', 'content' ] as $type ) {
-			foreach ( [ 'top', 'right', 'bottom', 'left' ] as $position ) {
-				foreach ( [ 'width', 'style', 'color' ] as $property ) {
-					if ( 'content' === $type && 'top' === $position ) {
-						continue;
-					}
-
-					array_push(
-						$border_variables,
-						array(
-							'property'  => '--' . $type[0] . 'Border' . strtoupper( $position[0] ) . strtoupper( $property[0] ),
-							'value'     => $type . 'Border',
-							'format'    => function( $value ) use ( $property, $position ) {
-								return isset( $value[ $position ] ) ?
-									$value[ $position ][ $property ] :
-									$value[ $property ];
-							},
-							'condition' => function( $attrs ) use ( $position, $property, $type ) {
-								return isset( $attrs[ $type . 'Border' ] ) &&
-									( isset( $attrs[ $type . 'Border' ][ $position ] ) && isset( $attrs[ $type . 'Border' ][ $position ][ $property ] ) || isset( $attrs[ $type . 'Border' ][ $property ] ) );
-							},
-						)
-					);
-				}
-			}
-		}
-
-		$padding_variables = array();
-		foreach ( [ 'header', 'content' ] as $type ) {
-			foreach ( [ 'top', 'right', 'bottom', 'left' ] as $position ) {
-				array_push(
-					$padding_variables,
-					array(
-						'property'  => '--' . $type[0] . 'Padding' . ucwords( $position ),
-						'value'     => $type . 'Padding',
-						'format'    => function( $value ) use ( $position ) {
-							return $value[ $position ];
-						},
-						'condition' => function( $attrs ) use ( $position, $type ) {
-							return isset( $attrs[ $type . 'Padding' ] ) && isset( $attrs[ $type . 'Padding' ][ $position ] );
-						},
-					)
-				);
-			}
-		}
-
 		$css->add_item(
 			array(
 				'properties' => array_merge(
@@ -185,9 +138,135 @@ class Accordion_CSS extends Base_CSS {
 								return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow']['active'];
 							},
 						),
+					)
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .wp-block-themeisle-blocks-accordion-item__title',
+				'properties' => array(
+					array(
+						'property'  => 'border-width',
+						'value'     => 'headerBorder',
+						'format'    => function( $value ) {
+							return CSS_Utility::box_values(
+								$value['width'],
+								array(
+									'top'    => '1px',
+									'right'  => '1px',
+									'bottom' => '1px',
+									'left'   => '1px'
+								)
+							);
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['headerBorder'] ) && isset( $attrs['headerBorder']['width'] );
+						},
 					),
-					$border_variables,
-					$padding_variables
+					array(
+						'property'  => 'border-style',
+						'value'     => 'headerBorder',
+						'format'    => function( $value ) {
+							return $value['style'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['headerBorder'] ) && isset( $attrs['headerBorder']['style'] );
+						},
+					),
+					array(
+						'property'  => 'border-color',
+						'value'     => 'headerBorder',
+						'format'    => function( $value ) {
+							return $value['color'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['headerBorder'] ) && isset( $attrs['headerBorder']['color'] );
+						},
+					),
+					array(
+						'property'  => 'padding',
+						'value'     => 'headerPadding',
+						'format'    => function( $value ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'top'    => '18px',
+									'right'  => '24px',
+									'bottom' => '18px',
+									'left'   => '24px'
+								)
+							);
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['headerPadding'] );
+						},
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .wp-block-themeisle-blocks-accordion-item__content',
+				'properties' => array(
+					array(
+						'property'  => 'border-width',
+						'value'     => 'contentBorder',
+						'format'    => function( $value ) {
+							return CSS_Utility::box_values(
+								$value['width'],
+								array(
+									'top'    => '0',
+									'right'  => '1px',
+									'bottom' => '1px',
+									'left'   => '1px'
+								)
+							);
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['contentBorder'] ) && isset( $attrs['contentBorder']['width'] );
+						},
+					),
+					array(
+						'property'  => 'border-style',
+						'value'     => 'contentBorder',
+						'format'    => function( $value ) {
+							return $value['style'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['contentBorder'] ) && isset( $attrs['contentBorder']['style'] );
+						},
+					),
+					array(
+						'property'  => 'border-color',
+						'value'     => 'contentBorder',
+						'format'    => function( $value ) {
+							return $value['color'];
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['contentBorder'] ) && isset( $attrs['contentBorder']['color'] );
+						},
+					),
+					array(
+						'property'  => 'padding',
+						'value'     => 'contentPadding',
+						'format'    => function( $value ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'top'    => '18px',
+									'right'  => '24px',
+									'bottom' => '18px',
+									'left'   => '24px'
+								)
+							);
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['contentPadding'] );
+						},
+					),
 				),
 			)
 		);
