@@ -143,9 +143,9 @@ const Edit = ({
 		'--valueFontSize': px( attributes.valueFontSize ),
 		'--valueFontSizeTablet': px( attributes.valueFontSizeTablet ),
 		'--valueFontSizeMobile': px( attributes.valueFontSizeMobile ),
-		'--labelFontSize': px( attributes.valueFontSize ),
-		'--labelFontSizeTablet': px( attributes.valueFontSizeTablet ),
-		'--labelFontSizeMobile': px( attributes.valueFontSizeMobile ),
+		'--labelFontSize': px( attributes.labelFontSize ),
+		'--labelFontSizeTablet': px( attributes.labelFontSizeTablet ),
+		'--labelFontSizeMobile': px( attributes.labelFontSizeMobile ),
 		'--alignment': attributes.alignment,
 		'--padding': boxValues( attributes.padding )
 	};
