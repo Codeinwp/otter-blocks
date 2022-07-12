@@ -332,3 +332,34 @@ export const mergeBoxDefaultValues = ( box, defaultBox ) => {
 		box
 	);
 };
+
+const mapViewToKey = {
+	'Desktop': 0,
+	'Tablet': 1,
+	'Mobile': 2
+};
+
+/**
+ * Build a responsive wrapper around `setAttributes`
+ *
+ * @param {Function} setAttributes The function that set the attributes.
+ * @param {'Desktop'|'Tablet'|'Mobile'} currentView The current view.
+ * @template T
+ * @returns {(value: T, keys: string[]) => void}
+ */
+export const buildResponsiveSetAttributes = ( setAttributes, currentView ) => {
+	return ( value, keys ) => {
+		setAttributes({ [keys[mapViewToKey[currentView] ?? 0]]: value });
+	};
+};
+
+/**
+ * Build a responsive wrapper around current view to choose a value.
+ *
+ * @param {'Desktop'|'Tablet'|'Mobile'} currentView
+ * @template T
+ * @returns { (values: T[]) => T}
+ */
+export const buildResponsiveGetAttributes = ( currentView ) => {
+	return values => ( values[mapViewToKey[currentView] ?? 0]);
+};
