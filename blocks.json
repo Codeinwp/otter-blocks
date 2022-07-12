@@ -211,10 +211,7 @@
 	},
 	"woo-comparison": {
 		"isPro": true,
-		"block": "pro/blocks/woo-comparison/block.json",
-		"assets": {
-			"woo-comparison/editor.css": "pro/blocks/woo-comparison/editor.scss"
-		}
+		"block": "pro/blocks/woo-comparison/block.json"
 	},
 	"product-add-to-cart": {
 		"isPro": true,
