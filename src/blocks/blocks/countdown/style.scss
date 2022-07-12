@@ -2,12 +2,9 @@
 	--backgroundColor: transparent;
 	--borderColor: #000;
 	--borderRadius: 0;
-	--boxWidth: 100%;
-	--boxWidthTablet: 100%;
-	--boxWidthMobile: 100%;
 	--width: 100%;
-	--widthTablet: calc( 4 * var(--boxWidth));
-	--widthMobile: calc( 4 * var(--boxWidthTablet));
+	--widthTablet: 100%;
+	--widthMobile: 100%;
 	--height: 100;
 	--heightTablet: 100;
 	--heightMobile: 100;
@@ -28,7 +25,7 @@
 
 	.otter-countdown__container {
 		display: flex;
-		justify-content: var(--alignment);
+		justify-content: center var(--alignment);
 	}
 
 	.otter-countdown__display {
@@ -74,9 +71,8 @@
 
 		&[name="separator"] {
 			.otter-countdown__label {
-				opacity: 0%;
+				display: none;
 			}
-
 			border: unset;
 			background-color: transparent;
 			width: max-content;

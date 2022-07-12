@@ -128,9 +128,9 @@ const Edit = ({
 		'--boxWidth': px( attributes.width ), // legacy
 		'--boxWidthTablet': px( attributes.widthTablet ), // legacy
 		'--boxWidthMobile': px( attributes.widthMobile ), // legacy
-		'--width': px( attributes.containerWidth ),
-		'--widthTablet': px( attributes.containerWidthTablet ),
-		'--widthMobile': px( attributes.containerWidthMobile ),
+		'--width': attributes.containerWidth,
+		'--widthTablet': attributes.containerWidthTablet,
+		'--widthMobile': attributes.containerWidthMobile,
 		'--height': px( attributes.height ),
 		'--heightTablet': px( attributes.heightTablet ),
 		'--heightMobile': px( attributes.heightMobile ),
@@ -158,9 +158,12 @@ const Edit = ({
 			}`,
 			`.otter-countdown__display-area .otter-countdown__label {
 				color: ${ attributes.labelColor };
+			}`,
+			`.otter-countdown__display-area[name="separator"] .otter-countdown__value {
+				color: ${ attributes.separatorColor };
 			}`
 		]);
-	}, [ attributes.valueColor, attributes.labelColor ]);
+	}, [ attributes.valueColor, attributes.labelColor, attributes.separatorColor ]);
 
 
 	const blockProps = useBlockProps({

@@ -29,6 +29,9 @@
 		"labelDistance": {
 			"type": "number"
 		},
+		"separatorColor": {
+			"type": "string"
+		},
 		"gap": {
 			"type": "number"
 		},
@@ -48,13 +51,13 @@
 			"type": "number"
 		},
 		"containerWidth": {
-			"type": "number"
+			"type": "string"
 		},
 		"containerWidthTablet": {
-			"type": "number"
+			"type": "string"
 		},
 		"containerWidthMobile": {
-			"type": "number"
+			"type": "string"
 		},
 		"height": {
 			"type": "number"

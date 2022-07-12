@@ -188,6 +188,24 @@ class Countdown_CSS extends Base_CSS {
 						'value'    => 'labelFontSizeMobile',
 						'unit'     => 'px',
 					),
+					array(
+						'property'  => '--padding',
+						'value'     => 'padding',
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left' => '0px',
+									'right' => '0px',
+									'top' => '0px',
+									'bottom' => '0px'
+								)
+							);
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['padding'] );
+						},
+					),
 				),
 			)
 		);
@@ -215,6 +233,19 @@ class Countdown_CSS extends Base_CSS {
 				),
 			)
 		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area[name="separator"] .otter-countdown__value',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'separatorColor',
+					),
+				),
+			)
+		);
+
 
 		$style = $css->generate();
 

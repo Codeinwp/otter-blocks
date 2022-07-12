@@ -7,6 +7,7 @@ type Attributes = {
 	backgroundColor: string
 	valueColor: string
 	labelColor: string
+	separatorColor: string
 	labelDistance: number
 	gap: number
 	gapTablet: number

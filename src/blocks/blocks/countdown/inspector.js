@@ -18,7 +18,8 @@ import {
 	DateTimePicker,
 	FontSizePicker,
 	__experimentalBoxControl as BoxControl,
-	SelectControl
+	SelectControl,
+	__experimentalUnitControl as UnitContol
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -58,6 +59,13 @@ const defaultFontSizes = [
 	}
 ];
 
+const borderRadiusDirection = {
+	'top-right': 'borderRadiusTopRight',
+	'top-left': 'borderRadiusTopLeft',
+	'bottom-left': 'borderRadiusBottomLeft',
+	'bottom-right': 'borderRadiusBottomRight'
+};
+
 
 /**
  *
@@ -87,18 +95,6 @@ const Inspector = ({
 		}
 	};
 
-	const onBackgroundColorChange = value => {
-		setAttributes({ backgroundColor: value });
-	};
-
-	const onLabelColorChange = value => {
-		setAttributes({ labelColor: value });
-	};
-
-	const onValueColorChange = value => {
-		setAttributes({ valueColor: value });
-	};
-
 	const onGapChange = value => {
 		if ( 'Desktop' === getView ) {
 			setAttributes({ gap: Number( value )});
@@ -113,13 +109,13 @@ const Inspector = ({
 
 	const onWidthChange = value => {
 		if ( 'Desktop' === getView ) {
-			setAttributes({ containerWidth: Number( value )});
+			setAttributes({ containerWidth: value });
 		}
 		if ( 'Tablet' === getView ) {
-			setAttributes({ containerWidthTablet: Number( value )});
+			setAttributes({ containerWidthTablet: value });
 		}
 		if ( 'Mobile' === getView ) {
-			setAttributes({ containerWidthMobile: Number( value )});
+			setAttributes({ containerWidthMobile: value });
 		}
 	};
 
@@ -171,10 +167,6 @@ const Inspector = ({
 		}
 	};
 
-	const onBorderColorChange = value => {
-		setAttributes({ borderColor: value });
-	};
-
 	const changeBorderRadiusType = value => {
 		setAttributes({ borderRadiusType: value });
 	};
@@ -201,12 +193,6 @@ const Inspector = ({
 		return value;
 	};
 
-	const borderRadiusDirection = {
-		'top-right': 'borderRadiusTopRight',
-		'top-left': 'borderRadiusTopLeft',
-		'bottom-left': 'borderRadiusBottomLeft',
-		'bottom-right': 'borderRadiusBottomRight'
-	};
 
 	const changeBorderRadius = ( type, value ) => {
 		if ( 'linked' === attributes.borderRadiusType ) {
@@ -308,13 +294,13 @@ const Inspector = ({
 				<ResponsiveControl
 					label={ __( 'Width', 'otter-blocks' ) }
 				>
-					<RangeControl
-						value={ 'Mobile' === getView ? attributes.containerWidthMobile : 'Tablet' === getView ? attributes.containerWidthTablet : attributes.containerWidth }
+					<UnitContol
+						value={ 'Mobile' === getView ? attributes.containerWidthMobile : 'Tablet' === getView ? attributes.containerWidthTablet : attributes.containerWidth ?? '100%' }
 						onChange={ onWidthChange }
-						min={ 100 }
-						max={ 2400 }
+
 					/>
-				</ResponsiveControl>\\<ResponsiveControl
+				</ResponsiveControl>
+				<ResponsiveControl
 					label={ __( 'Height', 'otter-blocks' ) }
 				>
 					<RangeControl
@@ -370,22 +356,27 @@ const Inspector = ({
 				colorSettings={ [
 					{
 						value: attributes.backgroundColor,
-						onChange: onBackgroundColorChange,
+						onChange: backgroundColor => setAttributes({ backgroundColor }),
 						label: __( 'Background', 'otter-blocks' )
 					},
 					{
 						value: attributes.labelColor,
-						onChange: onLabelColorChange,
+						onChange: labelColor => setAttributes({ labelColor }),
 						label: __( 'Label', 'otter-blocks' )
 					},
 					{
 						value: attributes.valueColor,
-						onChange: onValueColorChange,
+						onChange: valueColor => setAttributes({ valueColor }),
 						label: __( 'Value', 'otter-blocks' )
 					},
 					{
+						value: attributes.separatorColor,
+						onChange: separatorColor => setAttributes({ separatorColor }),
+						label: __( 'Separator', 'otter-blocks' )
+					},
+					{
 						value: attributes.borderColor,
-						onChange: onBorderColorChange,
+						onChange: borderColor => setAttributes({ borderColor }),
 						label: __( 'Border', 'otter-blocks' )
 					}
 				] }
@@ -446,7 +437,7 @@ const Inspector = ({
 				/>
 
 				<BoxControl
-					label={ __( 'Content Padding', 'otter-blocks' ) }
+					label={ __( 'Padding', 'otter-blocks' ) }
 					values={ mergeBoxDefaultValues( attributes.padding, { left: '0px', right: '0px', bottom: '0px', top: '0px' }) }
 					onChange={ padding => setAttributes({ padding: removeBoxDefaultValues( padding, { left: '0px', right: '0px', bottom: '0px', top: '0px' }) }) }
 				/>
