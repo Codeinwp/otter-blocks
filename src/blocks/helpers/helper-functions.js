@@ -1,4 +1,4 @@
-import { merge, omitBy, without } from 'lodash';
+import { isEmpty, merge, omitBy, without } from 'lodash';
 
 import { sprintf } from '@wordpress/i18n';
 
@@ -315,7 +315,8 @@ export const boxValues = ( box, defaultBox ) => {
  * @return {import('./blocks').BoxType}
  */
 export const removeBoxDefaultValues = ( box, defaultBox ) => {
-	return omitBy( box, ( value, key ) => value === defaultBox[key]);
+	const cleaned = omitBy( box, ( value, key ) => value === defaultBox[key]);
+	return isEmpty( cleaned ) ? undefined : cleaned;
 };
 
 /**
