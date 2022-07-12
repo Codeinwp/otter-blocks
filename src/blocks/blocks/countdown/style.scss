@@ -15,11 +15,11 @@
 	--gapTablet: 6px;
 	--gapMobile: 6px;
 	--valueFontSize: 1.5rem;
-	--valueFontSizeTablet: 1.5rem;
-	--valueFontSizeMobile: 1.5rem;
+	--valueFontSizeTablet: var(--valueFontSize);
+	--valueFontSizeMobile: var(--valueFontSize);
 	--labelFontSize: 0.6rem;
-	--labelFontSizeTablet: 0.6rem;
-	--labelFontSizeMobile: 0.6rem;
+	--labelFontSizeTablet: var(--labelFontSize);
+	--labelFontSizeMobile: var(--labelFontSize);
 	--alignment: center;
 	--padding: 0px;
 

@@ -161,32 +161,44 @@ class Countdown_CSS extends Base_CSS {
 					array(
 						'property' => '--valueFontSize',
 						'value'    => 'valueFontSize',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
 						'property' => '--valueFontSizeTablet',
 						'value'    => 'valueFontSizeTablet',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
 						'property' => '--valueFontSizeMobile',
 						'value'    => 'valueFontSizeMobile',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
 						'property' => '--labelFontSize',
 						'value'    => 'labelFontSize',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
 						'property' => '--labelFontSizeTablet',
 						'value'    => 'labelFontSizeTablet',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
 						'property' => '--labelFontSizeMobile',
 						'value'    => 'labelFontSizeMobile',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
 						'property'  => '--padding',
