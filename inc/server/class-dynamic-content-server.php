@@ -54,7 +54,7 @@ class Dynamic_Content_Server {
 					'methods'             => \WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'get' ),
 					'args'                => array(
-						'type'    => array(
+						'type'     => array(
 							'type'              => 'string',
 							'required'          => true,
 							'description'       => __( 'Image Type.', 'otter-blocks' ),
@@ -62,11 +62,11 @@ class Dynamic_Content_Server {
 								return (string) esc_attr( $param );
 							},
 							'validate_callback' => function ( $param, $request, $key ) {
-								$allowed_types = array( 'featuredImage', 'authorImage', 'loggedInUserImage', 'productImage', 'postMetaImage' );
+								$allowed_types = array( 'featuredImage', 'author', 'loggedInUser', 'logo', 'product', 'postMeta' );
 								return in_array( $param, $allowed_types );
 							},
 						),
-						'context' => array(
+						'context'  => array(
 							'type'              => 'integer',
 							'required'          => true,
 							'description'       => __( 'ID of the post being edited.', 'otter-blocks' ),
@@ -77,7 +77,7 @@ class Dynamic_Content_Server {
 								return is_numeric( $param );
 							},
 						),
-						'id'      => array(
+						'id'       => array(
 							'type'              => 'integer',
 							'required'          => false,
 							'description'       => __( 'ID of the Post that the image belongs.', 'otter-blocks' ),
@@ -88,7 +88,18 @@ class Dynamic_Content_Server {
 								return is_numeric( $param );
 							},
 						),
-						'meta'    => array(
+						'fallback' => array(
+							'type'              => 'string',
+							'required'          => false,
+							'description'       => __( 'Fallback image.', 'otter-blocks' ),
+							'sanitize_callback' => function ( $param ) {
+								return esc_attr( $param );
+							},
+							'validate_callback' => function ( $param, $request, $key ) {
+								return is_string( $key );
+							},
+						),
+						'meta'     => array(
 							'type'              => 'string',
 							'required'          => false,
 							'description'       => __( 'Meta key.', 'otter-blocks' ),
@@ -118,12 +129,18 @@ class Dynamic_Content_Server {
 	 * @return mixed|\WP_REST_Response
 	 */
 	public function get( $request ) {
-		$type    = $request->get_param( 'type' );
-		$context = $request->get_param( 'context' );
-		$id      = $request->get_param( 'id' );
-		$meta    = $request->get_param( 'meta' );
-		$path    = OTTER_BLOCKS_PATH . '/assets/images/placeholder.png';
-		$default = $path;
+		$type     = $request->get_param( 'type' );
+		$context  = $request->get_param( 'context' );
+		$id       = $request->get_param( 'id' );
+		$fallback = $request->get_param( 'fallback' );
+		$meta     = $request->get_param( 'meta' );
+		$path     = OTTER_BLOCKS_PATH . '/assets/images/placeholder.jpg';
+
+		if ( ! empty( $fallback ) && @getimagesize( $fallback ) ) {
+			$path = $fallback;
+		}
+
+		$default  = $path;
 
 		if ( 'featuredImage' === $type ) {
 			$image = get_post_thumbnail_id( $context );
@@ -132,12 +149,12 @@ class Dynamic_Content_Server {
 			}
 		}
 
-		if ( 'authorImage' === $type ) {
+		if ( 'author' === $type ) {
 			$author = get_post_field( 'post_author', $context );
 			$path   = get_avatar_url( $author );
 		}
 
-		if ( 'loggedInUserImage' === $type ) {
+		if ( 'loggedInUser' === $type ) {
 			$user = get_current_user_id();
 
 			if ( true === boolval( $user ) ) {
@@ -145,7 +162,15 @@ class Dynamic_Content_Server {
 			}
 		}
 
-		if ( 'productImage' === $type && ! empty( $id ) ) {
+		if ( 'logo' === $type ) {
+			$custom_logo_id = get_theme_mod( 'custom_logo' );
+ 
+			if ( $custom_logo_id ) {
+				$path  = wp_get_original_image_path( $custom_logo_id );
+			}
+		}
+
+		if ( 'product' === $type && ! empty( $id ) ) {
 			$product = wc_get_product( $id );
 			$image   = $product->get_image_id();
 			
@@ -160,7 +185,7 @@ class Dynamic_Content_Server {
 			}
 		}
 
-		if ( 'postMetaImage' === $type && ! empty( $meta ) ) {
+		if ( 'postMeta' === $type && ! empty( $meta ) ) {
 			$value = get_post_meta( $context, $meta, true );
 
 			if ( ! empty( $value ) ) {
@@ -173,7 +198,7 @@ class Dynamic_Content_Server {
 			return readfile( $path );
 		}
 
-		header( 'Content-type: image/png' );
+		header( 'Content-type: image/jpg' );
 		return readfile( $default );
 	}
 

@@ -30,45 +30,70 @@ import SelectProducts from '../../../components/select-products-control/index.js
 const contentTypes = [
 	{
 		type: 'featuredImage',
-		label: __( 'Featured Image', 'otter-blocks' )
+		label: __( 'Featured Image', 'otter-blocks' ),
+		icon: window.themeisleGutenberg.assetsPath + '/icons/featured.svg'
 	},
 	{
-		type: 'authorImage',
-		label: __( 'Author Image', 'otter-blocks' )
+		type: 'author',
+		label: __( 'Author Image', 'otter-blocks' ),
+		icon: window.themeisleGutenberg.assetsPath + '/icons/author.svg'
 	},
 	{
-		type: 'loggedInUserImage',
-		label: __( 'Logged-in User Avatar', 'otter-blocks' )
+		type: 'loggedInUser',
+		label: __( 'User Image', 'otter-blocks' ),
+		icon: window.themeisleGutenberg.assetsPath + '/icons/user.svg'
 	},
 	{
-		type: 'productImage',
-		label: __( 'WooCommerce Product Image', 'otter-blocks' )
+		type: 'logo',
+		label: __( 'Website Logo', 'otter-blocks' ),
+		icon: window.themeisleGutenberg.assetsPath + '/icons/logo.svg'
 	},
 	{
-		type: 'postMetaImage',
-		label: __( 'Post Meta', 'otter-blocks' )
+		type: 'postMeta',
+		label: __( 'Post Meta', 'otter-blocks' ),
+		icon: window.themeisleGutenberg.assetsPath + '/icons/meta.svg',
+		isPro: true
+	},
+	{
+		type: 'product',
+		label: __( 'Woo Product', 'otter-blocks' ),
+		icon: window.themeisleGutenberg.assetsPath + '/icons/woo.svg',
+		isPro: true
+	},
+	{
+		type: 'acf',
+		label: __( 'ACF Image', 'otter-blocks' ),
+		icon: window.themeisleGutenberg.assetsPath + '/icons/acf.svg',
+		isPro: true
 	}
 ];
 
 const MediaItem = ({
-	label,
-	type,
+	item,
 	context,
 	selected,
 	onSelect
 }) => {
-	const url = window.themeisleGutenberg.restRoot + '/dynamic?type=' + type + '&context=' + context;
+	const url = window.themeisleGutenberg.restRoot + '/dynamic?type=' + item.type + '&context=' + context;
 	const isSelected = url === selected;
 
 	return (
 		<li
 			tabIndex="0"
 			className={ classNames( 'o-media-item', {
-				'selected': isSelected
+				'selected': isSelected,
+				'is-pro': item?.isPro
 			}) }
 			onClick={ () => onSelect( url ) }
-			title={ label }
+			title={ item.label }
+			style={ {
+				backgroundImage: `url(' ${ item.icon } ')`
+			} }
 		>
+			<div className="o-media-item-title">{ item.label }</div>
+
+			{ item?.isPro && <span className="o-media-item-pro">{ __( 'Pro', 'otter-blocks' ) }</span>}
+
 			{ isSelected && (
 				<button
 					type="button"
@@ -96,7 +121,7 @@ const MediaSidebar = ({
 				{ selected && <h2>{ selected?.label }</h2> }
 			</div>
 
-			{ 'productImage' === selected?.type && (
+			{ 'product' === selected?.type && (
 				<SelectProducts
 					label={ __( 'Select Product', 'otter-blocks' ) }
 					value={ attributes.id || '' }
@@ -104,11 +129,19 @@ const MediaSidebar = ({
 				/>
 			) }
 
-			{ 'postMetaImage' === selected?.type && (
+			{ 'postMeta' === selected?.type && (
 				<TextControl
 					label={ __( 'Meta Key', 'otter-blocks' ) }
 					value={ attributes.meta || '' }
 					onChange={ meta => changeAttributes({ meta }) }
+				/>
+			) }
+
+			{ selected && (
+				<TextControl
+					label={ __( 'Fallback Image', 'otter-blocks' ) }
+					value={ attributes.fallback || '' }
+					onChange={ fallback => changeAttributes({ fallback }) }
 				/>
 			) }
 		</Fragment>
@@ -168,12 +201,11 @@ const MediaContent = ({
 		<Fragment>
 			<div className="attachments-browser">
 				<ul className="o-media-list">
-					{ contentTypes.map( ({ type, label }) => {
+					{ contentTypes.map( ( item ) => {
 						return (
 							<MediaItem
-								key={ type }
-								label={ label }
-								type={ type }
+								key={ item.type }
+								item={ item }
 								context={ getCurrentPostId }
 								selected={ selected }
 								onSelect={ onSelect }
