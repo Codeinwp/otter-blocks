@@ -357,10 +357,11 @@ export const buildResponsiveSetAttributes = ( setAttributes, currentView ) => {
 /**
  * Build a responsive wrapper around current view to choose a value.
  *
- * @param {'Desktop'|'Tablet'|'Mobile'} currentView
+ * @param {'Desktop'|'Tablet'|'Mobile'} currentView The current view.
+ * @param {'Desktop'|'Tablet'|'Mobile'} defaultView If the value of the current view is undefined or null, fallback to this view.
  * @template T
  * @returns { (values: T[]) => T}
  */
-export const buildResponsiveGetAttributes = ( currentView ) => {
-	return values => ( values[mapViewToKey[currentView] ?? 0]);
+export const buildResponsiveGetAttributes = ( currentView, defaultView = 'Desktop' ) => {
+	return values => ( values?.[mapViewToKey[currentView]] ?? values?.[mapViewToKey[defaultView]]);
 };
