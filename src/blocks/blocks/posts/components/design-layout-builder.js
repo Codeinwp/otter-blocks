@@ -37,7 +37,7 @@ const ProFeatures = () => {
 				disabled={ true }
 				onClick={ () => {} }
 			>
-				{ __( 'Add Meta Field', 'otter-blocks' ) }
+				{ __( 'Add Custom Field', 'otter-blocks' ) }
 			</Button>
 
 			<br />

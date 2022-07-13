@@ -120,7 +120,7 @@ const AddFields = (
 					});
 				} }
 			>
-				{ __( 'Add Meta Field', 'otter-blocks' ) }
+				{ __( 'Add Custom Field', 'otter-blocks' ) }
 			</Button>
 
 			{ Boolean( window.otterPro.isExpired ) && (

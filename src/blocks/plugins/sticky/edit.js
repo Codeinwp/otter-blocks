@@ -71,7 +71,7 @@ const ProFeatures = () => {
 				value="o-sticky-bhvr-keep"
 				options={ [
 					{
-						label: __( 'Collapse (Pro)', 'otter-blocks' ),
+						label: __( 'Collapse', 'otter-blocks' ),
 						value: 'o-sticky-bhvr-keep'
 					},
 					{
@@ -202,7 +202,7 @@ const Edit = ({
 				title={ __( 'Sticky', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<p>{ __( 'Bind page elements with dynamic data from your website database.', 'otter-blocks' ) }</p>
+				<p>{ __( 'Set any block as Sticky, so that it sticks to another element on the page.', 'otter-blocks' ) }</p>
 
 				<ExternalLink
 					target="_blank"

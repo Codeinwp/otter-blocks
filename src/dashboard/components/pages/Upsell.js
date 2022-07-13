@@ -13,7 +13,7 @@ const FEATURES = [
 	},
 	{
 		label: __( 'Extra Functionalities for all Blocks', 'otter-blocks' ),
-		description: __( 'Extra Functionalities for all Blocks', 'otter-blocks' ),
+		description: __( 'Otter Blocks adds extra functionality such as Custom CSS, Animations and Visibility Conditions to default or third party blocks present on your website.', 'otter-blocks' ),
 		inFree: true
 	},
 	{
