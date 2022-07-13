@@ -9,8 +9,8 @@
 	--heightTablet: 100;
 	--heightMobile: 100;
 	--borderWidth: 2px;
-	--borderWidthTablet: 2px;
-	--borderWidthMobile: 2px;
+	--borderWidthTablet: var(--borderWidth);
+	--borderWidthMobile: var(--borderWidth);
 	--gap: 6px;
 	--gapTablet: 6px;
 	--gapMobile: 6px;

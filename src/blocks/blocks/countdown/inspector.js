@@ -204,8 +204,12 @@ const Inspector = ({
 				<SelectControl
 					label={__( 'Alignment', 'otter-blocks' )}
 					value={ attributes.alingment }
-					onChange={ alignment => setAttributes({ alignment })}
+					onChange={ alignment => setAttributes({ alignment: alignment || undefined })}
 					options={[
+						{
+							label: __( 'Default', 'otter-blocks' ),
+							value: ''
+						},
 						{
 							label: __( 'Left', 'otter-blocks' ),
 							value: 'flex-start'
@@ -243,6 +247,7 @@ const Inspector = ({
 						onChange={ value => responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]) }
 						min={ 50 }
 						max={ 2400 }
+						allowReset
 					/>
 				</ResponsiveControl>
 
@@ -254,6 +259,7 @@ const Inspector = ({
 						onChange={ value => responsiveSetAttributes( value, [ 'gap', 'gapTablet', 'gapMobile' ]) }
 						min={ 0 }
 						max={ 100 }
+						allowReset
 					/>
 				</ResponsiveControl>
 			</PanelBody>
@@ -336,6 +342,7 @@ const Inspector = ({
 						onChange={ value => responsiveSetAttributes( value, [ 'borderWidth', 'borderWidthTablet', 'borderWidthMobile' ]) }
 						min={ 0 }
 						max={ 50 }
+						allowReset
 					/>
 				</ResponsiveControl>
 
