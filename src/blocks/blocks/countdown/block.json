@@ -71,6 +71,9 @@
 		"borderRadius": {
 			"type": "object"
 		},
+		"borderStyle": {
+			"type": "string"
+		},
 		"borderWidth": {
 			"type": "number"
 		},

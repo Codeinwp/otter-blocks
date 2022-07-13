@@ -205,24 +205,28 @@ const Inspector = ({
 
 				<SelectControl
 					label={__( 'Alignment', 'otter-blocks' )}
-					value={ attributes.alingment }
-					onChange={ alignment => setAttributes({ alignment: alignment || undefined })}
+					value={ attributes.borderStyle }
+					onChange={ borderStyle => setAttributes({ borderStyle: borderStyle || undefined })}
 					options={[
 						{
 							label: __( 'Default', 'otter-blocks' ),
 							value: ''
 						},
 						{
-							label: __( 'Left', 'otter-blocks' ),
-							value: 'flex-start'
+							label: __( 'None', 'otter-blocks' ),
+							value: 'unset'
 						},
 						{
-							label: __( 'Center', 'otter-blocks' ),
-							value: 'center'
+							label: __( 'Double', 'otter-blocks' ),
+							value: 'Double'
 						},
 						{
-							label: __( 'Right', 'otter-blocks' ),
-							value: 'flex-end'
+							label: __( 'Dotted', 'otter-blocks' ),
+							value: 'dotted'
+						},
+						{
+							label: __( 'Dashed', 'otter-blocks' ),
+							value: 'dotted'
 						}
 					]}
 				/>
@@ -264,6 +268,30 @@ const Inspector = ({
 						allowReset
 					/>
 				</ResponsiveControl>
+
+				<SelectControl
+					label={__( 'Position', 'otter-blocks' )}
+					value={ attributes.alingment }
+					onChange={ alignment => setAttributes({ alignment: alignment || undefined })}
+					options={[
+						{
+							label: __( 'Default', 'otter-blocks' ),
+							value: ''
+						},
+						{
+							label: __( 'Left', 'otter-blocks' ),
+							value: 'flex-start'
+						},
+						{
+							label: __( 'Center', 'otter-blocks' ),
+							value: 'center'
+						},
+						{
+							label: __( 'Right', 'otter-blocks' ),
+							value: 'flex-end'
+						}
+					]}
+				/>
 			</PanelBody>
 
 			<PanelBody
@@ -336,6 +364,34 @@ const Inspector = ({
 				title={ __( 'Border', 'otter-blocks' ) }
 				initialOpen={false}
 			>
+				<SelectControl
+					label={__( 'Type', 'otter-blocks' )}
+					value={ attributes.borderStyle }
+					onChange={ borderStyle => setAttributes({ borderStyle: borderStyle || undefined })}
+					options={[
+						{
+							label: __( 'Default', 'otter-blocks' ),
+							value: ''
+						},
+						{
+							label: __( 'None', 'otter-blocks' ),
+							value: 'unset'
+						},
+						{
+							label: __( 'Double', 'otter-blocks' ),
+							value: 'Double'
+						},
+						{
+							label: __( 'Dotted', 'otter-blocks' ),
+							value: 'dotted'
+						},
+						{
+							label: __( 'Dashed', 'otter-blocks' ),
+							value: 'dashed'
+						}
+					]}
+				/>
+
 				<ResponsiveControl
 					label={ __( 'Width', 'otter-blocks' ) }
 				>

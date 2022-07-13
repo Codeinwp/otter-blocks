@@ -8,6 +8,7 @@
 	--height: 100;
 	--heightTablet: 100;
 	--heightMobile: 100;
+	--borderStyle: solid;
 	--borderWidth: 2px;
 	--borderWidthTablet: var(--borderWidth);
 	--borderWidthMobile: var(--borderWidth);
@@ -54,7 +55,7 @@
 		align-items: center;
 		flex-direction: column;
 		background: var( --backgroundColor );
-		border: var( --borderWidth ) solid var( --borderColor );
+		border: var( --borderWidth ) var(--borderStyle) var( --borderColor );
 		border-radius: var( --borderRadius );
 		box-sizing: border-box;
 		width: 100%;
@@ -62,13 +63,13 @@
 
 		@media ( min-width: 600px ) and ( max-width: 960px ) {
 			height: var( --heightTablet );
-			border: var( --borderWidthTablet ) solid var( --borderColor );
+			border: var( --borderWidthTablet ) var(--borderStyle) var( --borderColor );
 			padding: var(--paddingTablet);
 		}
 
 		@media ( max-width: 600px ) {
 			height: var( --heightMobile );
-			border: var( --borderWidthMobile ) solid var( --borderColor );
+			border: var( --borderWidthMobile ) var(--borderStyle) var( --borderColor );
 			padding: var(--paddingMobile);
 		}
 

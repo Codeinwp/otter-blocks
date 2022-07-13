@@ -46,6 +46,10 @@ class Countdown_CSS extends Base_CSS {
 						'value'    => 'borderColor',
 					),
 					array(
+						'property' => '--borderStyle',
+						'value'    => 'borderStyle',
+					),
+					array(
 						'property'  => '--borderRadius',
 						'value'     => 'borderRadius',
 						'format'    => function( $value, $attrs ) {

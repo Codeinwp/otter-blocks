@@ -22,6 +22,7 @@ type Attributes = {
 	heightTablet: number
 	heightMobile: number
 	borderRadius: BoxType
+	borderStyle: string
 	borderWidth: number
 	borderWidthTablet: number
 	borderWidthMobile: number

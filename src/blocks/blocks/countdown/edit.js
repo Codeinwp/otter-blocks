@@ -78,6 +78,7 @@ const Edit = ({
 		'--backgroundColor': attributes.backgroundColor,
 		'--borderColor': attributes.borderColor,
 		'--borderRadius': boxValues( attributes.borderRadius ),
+		'--borderStyle': attributes.borderStyle,
 		'--backgroundColor': attributes.backgroundColor,
 		'--borderColor': attributes.borderColor,
 		'--width': attributes.containerWidth,
