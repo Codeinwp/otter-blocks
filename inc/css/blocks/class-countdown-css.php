@@ -140,6 +140,11 @@ class Countdown_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
+						'property' => '--alignment',
+						'value'    => 'alignment',
+						'unit'     => 'px',
+					),
+					array(
 						'property' => '--valueFontSize',
 						'value'    => 'valueFontSize',
 						'format'   => function( $value, $attrs ) {
