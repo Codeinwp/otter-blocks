@@ -240,7 +240,7 @@ const Inspector = ({
 					label={ __( 'Width', 'otter-blocks' ) }
 				>
 					<UnitContol
-						value={ responsiveGetAttributes([ attributes.containerWidth, attributes.containerWidthTablet, attributes.containerWidthMobile ]) ?? 100 }
+						value={ responsiveGetAttributes([ attributes.containerWidth, attributes.containerWidthTablet, attributes.containerWidthMobile ]) ?? '100%' }
 						onChange={ value => responsiveSetAttributes( value, [ 'containerWidth', 'containerWidthTablet', 'containerWidthMobile' ]) }
 
 					/>
@@ -370,7 +370,7 @@ const Inspector = ({
 					onChange={ borderStyle => setAttributes({ borderStyle: borderStyle || undefined })}
 					options={[
 						{
-							label: __( 'Default', 'otter-blocks' ),
+							label: __( 'Solid', 'otter-blocks' ),
 							value: ''
 						},
 						{
