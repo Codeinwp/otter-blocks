@@ -131,14 +131,6 @@ const Inspector = ({
 	};
 
 
-	const changeBorderRadius = ( type, value ) => {
-		if ( 'linked' === attributes.borderRadiusType ) {
-			setAttributes({ borderRadius: value });
-		} else {
-			setAttributes({ [borderRadiusDirection[type]]: value });
-		}
-	};
-
 	const settings = __experimentalGetSettings();
 
 	return (
@@ -203,33 +195,6 @@ const Inspector = ({
 					onChange={ hasSeparators => setAttributes({ hasSeparators }) }
 				/>
 
-				<SelectControl
-					label={__( 'Alignment', 'otter-blocks' )}
-					value={ attributes.borderStyle }
-					onChange={ borderStyle => setAttributes({ borderStyle: borderStyle || undefined })}
-					options={[
-						{
-							label: __( 'Default', 'otter-blocks' ),
-							value: ''
-						},
-						{
-							label: __( 'None', 'otter-blocks' ),
-							value: 'unset'
-						},
-						{
-							label: __( 'Double', 'otter-blocks' ),
-							value: 'Double'
-						},
-						{
-							label: __( 'Dotted', 'otter-blocks' ),
-							value: 'dotted'
-						},
-						{
-							label: __( 'Dashed', 'otter-blocks' ),
-							value: 'dotted'
-						}
-					]}
-				/>
 			</PanelBody>
 
 			<PanelBody
