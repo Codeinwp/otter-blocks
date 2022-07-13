@@ -48,39 +48,16 @@ class Countdown_CSS extends Base_CSS {
 					array(
 						'property'  => '--borderRadius',
 						'value'     => 'borderRadius',
-						'unit'      => 'px',
-						'default'   => 0,
-						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] );
-						},
-					),
-					array(
-						'property'       => '--borderRadius',
-						'pattern'        => 'top-left top-right bottom-right bottom-left',
-						'pattern_values' => array(
-							'top-left'     => array(
-								'value'   => 'borderRadiusTopLeft',
-								'unit'    => '%',
-								'default' => 0,
-							),
-							'top-right'    => array(
-								'value'   => 'borderRadiusTopRight',
-								'unit'    => '%',
-								'default' => 0,
-							),
-							'bottom-right' => array(
-								'value'   => 'borderRadiusBottomRight',
-								'unit'    => '%',
-								'default' => 0,
-							),
-							'bottom-left'  => array(
-								'value'   => 'borderRadiusBottomLeft',
-								'unit'    => '%',
-								'default' => 0,
-							),
-						),
-						'condition'      => function( $attrs ) {
-							return isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'];
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left' => '0px',
+									'right' => '0px',
+									'top' => '0px',
+									'bottom' => '0px'
+								)
+							);
 						},
 					),
 					array(

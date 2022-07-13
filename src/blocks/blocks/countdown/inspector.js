@@ -35,6 +35,7 @@ import {
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import SizingControl from '../../components/sizing-control/index.js';
 import { mergeBoxDefaultValues, removeBoxDefaultValues, buildResponsiveSetAttributes, buildResponsiveGetAttributes } from '../../helpers/helper-functions.js';
+import { isNumber } from 'lodash';
 
 const defaultFontSizes = [
 	{
@@ -66,6 +67,7 @@ const borderRadiusDirection = {
 	'bottom-right': 'borderRadiusBottomRight'
 };
 
+const optionalUnit = x => isNumber( x ) ? x + '%' : x;
 
 /**
  *
@@ -335,7 +337,7 @@ const Inspector = ({
 				initialOpen={false}
 			>
 				<ResponsiveControl
-					label={ __( 'Border Width', 'otter-blocks' ) }
+					label={ __( 'Width', 'otter-blocks' ) }
 				>
 					<RangeControl
 						value={ responsiveGetAttributes([ attributes.borderWidth, attributes.borderWidthTablet, attributes.borderWidthMobile ]) ?? 2 }
@@ -346,43 +348,28 @@ const Inspector = ({
 					/>
 				</ResponsiveControl>
 
-
-				<SizingControl
-					label={ __( 'Border Radius (%)', 'otter-blocks' ) }
-					type={ attributes.borderRadiusType }
-					min={ 0 }
-					max={ 100 }
-					changeType={ changeBorderRadiusType }
-					onChange={ changeBorderRadius }
-					options={ [
-						{
-							label: __( 'Top Left', 'otter-blocks' ),
-							type: 'top-left',
-							value: getBorderRadius( 'top-left' )
-						},
-						{
-							label: __( 'Top Right', 'otter-blocks' ),
-							type: 'top-right',
-							value: getBorderRadius( 'top-right' )
-						},
-						{
-							label: __( 'Bottom Right', 'otter-blocks' ),
-							type: 'bottom-right',
-							value: getBorderRadius( 'bottom-right' )
-						},
-						{
-							label: __( 'Bottom Left', 'otter-blocks' ),
-							type: 'bottom-left',
-							value: getBorderRadius( 'bottom-left' )
-						}
-					] }
+				<BoxControl
+					label={ __( 'Border Radius', 'otter-blocks' ) }
+					values={
+						mergeBoxDefaultValues(
+							attributes.borderRadius,
+							{ left: '0px', right: '0px', bottom: '0px', top: '0px' }
+						)
+					}
+					onChange={ value => {
+						const cleaned = removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' });
+						setAttributes({
+							borderRadius: cleaned
+						});
+					} }
+					id="o-border-raduis-box"
 				/>
 
 				<ResponsiveControl
 					label={ __( 'Padding', 'otter-blocks' ) }
 				>
-
 					<BoxControl
+						label=""
 						values={
 							mergeBoxDefaultValues(
 								responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile ]),

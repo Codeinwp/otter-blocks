@@ -69,28 +69,7 @@
 			"type": "number"
 		},
 		"borderRadius": {
-			"type": "number",
-			"default": 0
-		},
-		"borderRadiusType": {
-			"type": "string",
-			"default": "linked"
-		},
-		"borderRadiusTopRight": {
-			"type": "number",
-			"default": 0
-		},
-		"borderRadiusTopLeft": {
-			"type": "number",
-			"default": 0
-		},
-		"borderRadiusBottomRight": {
-			"type": "number",
-			"default": 0
-		},
-		"borderRadiusBottomLeft": {
-			"type": "number",
-			"default": 0
+			"type": "object"
 		},
 		"borderWidth": {
 			"type": "number"

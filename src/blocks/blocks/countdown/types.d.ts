@@ -1,4 +1,4 @@
-import { BlockProps, InspectorProps, PaddingType } from '../../helpers/blocks'
+import { BlockProps, BoxType, InspectorProps, PaddingType } from '../../helpers/blocks'
 
 type Attributes = {
 	id: string
@@ -21,12 +21,7 @@ type Attributes = {
 	height: number
 	heightTablet: number
 	heightMobile: number
-	borderRadius: number
-	borderRadiusType: string
-	borderRadiusTopRight: number
-	borderRadiusTopLeft: number
-	borderRadiusBottomRight: number
-	borderRadiusBottomLeft: number
+	borderRadius: BoxType
 	borderWidth: number
 	borderWidthTablet: number
 	borderWidthMobile: number

@@ -38,7 +38,7 @@ import { at, isNumber } from 'lodash';
 
 const { attributes: defaultAttributes } = metadata;
 
-const px = value => isNumber( value ) ? `${ value }px` : value;
+const optionalUnit = value => isNumber( value ) ? `${ value }px` : value;
 
 /**
  *
@@ -74,35 +74,30 @@ const Edit = ({
 		};
 	}, [ attributes.date ]);
 
-
-	// Add `border-radius` for all the platforms
-	const borderRadius = 'linked' === attributes.borderRadiusType ? attributes.borderRadius + '%' : `${ attributes.borderRadiusTopLeft }% ${ attributes.borderRadiusTopRight }% ${ attributes.borderRadiusBottomRight }% ${ attributes.borderRadiusBottomLeft }%`;
-
 	const inlineStyles = {
 		'--backgroundColor': attributes.backgroundColor,
 		'--borderColor': attributes.borderColor,
-		'--borderRadius': borderRadius,
+		'--borderRadius': boxValues( attributes.borderRadius ),
 		'--backgroundColor': attributes.backgroundColor,
 		'--borderColor': attributes.borderColor,
-		'--borderRadius': borderRadius,
 		'--width': attributes.containerWidth,
 		'--widthTablet': attributes.containerWidthTablet,
 		'--widthMobile': attributes.containerWidthMobile,
-		'--height': px( attributes.height ),
-		'--heightTablet': px( attributes.heightTablet ),
-		'--heightMobile': px( attributes.heightMobile ),
-		'--borderWidth': px( attributes.borderWidth ),
-		'--borderWidthTablet': px( attributes.borderWidthTablet ),
-		'--borderWidthMobile': px( attributes.borderWidthMobile ),
-		'--gap': px( attributes.gap ),
-		'--gapTablet': px( attributes.gapTablet ),
-		'--gapMobile': px( attributes.gapMobile ),
-		'--valueFontSize': px( attributes.valueFontSize ),
-		'--valueFontSizeTablet': px( attributes.valueFontSizeTablet ),
-		'--valueFontSizeMobile': px( attributes.valueFontSizeMobile ),
-		'--labelFontSize': px( attributes.labelFontSize ),
-		'--labelFontSizeTablet': px( attributes.labelFontSizeTablet ),
-		'--labelFontSizeMobile': px( attributes.labelFontSizeMobile ),
+		'--height': optionalUnit( attributes.height ),
+		'--heightTablet': optionalUnit( attributes.heightTablet ),
+		'--heightMobile': optionalUnit( attributes.heightMobile ),
+		'--borderWidth': optionalUnit( attributes.borderWidth ),
+		'--borderWidthTablet': optionalUnit( attributes.borderWidthTablet ),
+		'--borderWidthMobile': optionalUnit( attributes.borderWidthMobile ),
+		'--gap': optionalUnit( attributes.gap ),
+		'--gapTablet': optionalUnit( attributes.gapTablet ),
+		'--gapMobile': optionalUnit( attributes.gapMobile ),
+		'--valueFontSize': optionalUnit( attributes.valueFontSize ),
+		'--valueFontSizeTablet': optionalUnit( attributes.valueFontSizeTablet ),
+		'--valueFontSizeMobile': optionalUnit( attributes.valueFontSizeMobile ),
+		'--labelFontSize': optionalUnit( attributes.labelFontSize ),
+		'--labelFontSizeTablet': optionalUnit( attributes.labelFontSizeTablet ),
+		'--labelFontSizeMobile': optionalUnit( attributes.labelFontSizeMobile ),
 		'--alignment': attributes.alignment,
 		'--padding': boxValues( attributes.padding ),
 		'--paddingTablet': boxValues( attributes.paddingTablet ),
