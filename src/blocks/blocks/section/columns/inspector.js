@@ -131,9 +131,9 @@ const Inspector = ({
 		case 'Desktop':
 			return getValue( 'padding' );
 		case 'Tablet':
-			return getValue( 'paddingTablet' );
+			return getValue( 'paddingTablet' ) ?? getValue( 'padding' );
 		case 'Mobile':
-			return getValue( 'paddingMobile' );
+			return getValue( 'paddingMobile' ) ?? getValue( 'padding' );
 		default:
 			return undefined;
 		}
@@ -174,9 +174,9 @@ const Inspector = ({
 		case 'Desktop':
 			return getValue( 'margin' );
 		case 'Tablet':
-			return getValue( 'marginTablet' );
+			return getValue( 'marginTablet' ) ?? getValue( 'margin' );
 		case 'Mobile':
-			return getValue( 'marginMobile' );
+			return getValue( 'marginMobile' ) ?? getValue( 'margin' );
 		default:
 			return undefined;
 		}
@@ -222,9 +222,9 @@ const Inspector = ({
 		case 'Desktop':
 			return attributes.columnsHeightCustom;
 		case 'Tablet':
-			return attributes.columnsHeightCustomTablet;
+			return attributes.columnsHeightCustomTablet ?? attributes.columnsHeightCustom;
 		case 'Mobile':
-			return attributes.columnsHeightCustomMobile;
+			return attributes.columnsHeightCustomMobile ?? attributes.columnsHeightCustom;
 		default:
 			return undefined;
 		}
@@ -306,18 +306,18 @@ const Inspector = ({
 			case 'Desktop':
 				return attributes.dividerTopWidth ?? 100;
 			case 'Tablet':
-				return attributes.dividerTopWidthTablet ?? 100;
+				return attributes.dividerTopWidthTablet ?? attributes.dividerTopWidth ?? 100;
 			case 'Mobile':
-				return attributes.dividerTopWidthMobile ?? 100;
+				return attributes.dividerTopWidthMobile ?? attributes.dividerTopWidth ?? 100;
 			}
 		} else if ( 'bottom' == dividerViewType ) {
 			switch ( getView ) {
 			case 'Desktop':
 				return attributes.dividerBottomWidth ?? 100;
 			case 'Tablet':
-				return attributes.dividerBottomWidthTablet ?? 100;
+				return attributes.dividerBottomWidthTablet ?? attributes.dividerBottomWidth ?? 100;
 			case 'Mobile':
-				return attributes.dividerBottomWidthMobile ?? 100;
+				return attributes.dividerBottomWidthMobile ?? attributes.dividerBottomWidth ?? 100;
 			}
 		}
 
