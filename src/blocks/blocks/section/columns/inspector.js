@@ -304,20 +304,20 @@ const Inspector = ({
 		if ( 'top' == dividerViewType ) {
 			switch ( getView ) {
 			case 'Desktop':
-				return attributes.dividerTopWidth;
+				return attributes.dividerTopWidth ?? 100;
 			case 'Tablet':
-				return attributes.dividerTopWidthTablet;
+				return attributes.dividerTopWidthTablet ?? 100;
 			case 'Mobile':
-				return attributes.dividerTopWidthMobile;
+				return attributes.dividerTopWidthMobile ?? 100;
 			}
 		} else if ( 'bottom' == dividerViewType ) {
 			switch ( getView ) {
 			case 'Desktop':
-				return attributes.dividerBottomWidth;
+				return attributes.dividerBottomWidth ?? 100;
 			case 'Tablet':
-				return attributes.dividerBottomWidthTablet;
+				return attributes.dividerBottomWidthTablet ?? 100;
 			case 'Mobile':
-				return attributes.dividerBottomWidthMobile;
+				return attributes.dividerBottomWidthMobile ?? 100;
 			}
 		}
 

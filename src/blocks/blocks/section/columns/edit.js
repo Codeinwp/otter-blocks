@@ -181,7 +181,7 @@ const Edit = ({
 	const [ dividerViewType, setDividerViewType ] = useState( 'top' );
 
 	const getValueBasedOnScreenSize = ({ mobile, tablet, desktop }) => {
-		return ( isMobile && mobile ) || ( isTablet && tablet ) || ( isDesktop && desktop ) || undefined;
+		return (( isMobile && mobile ) || ( isTablet && tablet ) || desktop ) ?? desktop ?? 100;
 	};
 
 	const getDividerTopWidth = getValueBasedOnScreenSize({
