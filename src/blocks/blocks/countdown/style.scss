@@ -104,7 +104,7 @@
 	&:not(.ready) {
 		.otter-countdown__value {
 			animation: skeleton-loading 1.6s linear infinite alternate;
-			color: transparent;
+			color: transparent !important;
 			border-radius: 8px;
 		}
 	}
@@ -116,7 +116,7 @@
 		100% {
 		  background-color: hsl(200, 20%, 95%);
 		}
-	  }
+	}
 
 	.otter-countdown__label {
 		font-size: var( --labelFontSize );
