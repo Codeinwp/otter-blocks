@@ -53,7 +53,7 @@ const createLeafletMap = ( container, attributes ) => {
 	const map = window.L.map( container, {
 		zoomControl: attributes.zoomControl,
 		dragging: attributes.draggable,
-		gestureHandling: true,
+		gestureHandling: attributes.draggable,
 		gestureHandlingOptions: {
 			text: {
 				touch: 'Use two fingers to move the map',

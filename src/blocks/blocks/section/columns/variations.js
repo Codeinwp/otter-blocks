@@ -22,8 +22,7 @@ const variations = [
 		innerBlocks: [
 			[ 'themeisle-blocks/advanced-column', { columnWidth: '100' } ]
 		],
-		scope: [ 'block' ],
-		isDefault: true
+		scope: [ 'block' ]
 	},
 	{
 		name: 'themeisle-blocks/section-columns-equal',

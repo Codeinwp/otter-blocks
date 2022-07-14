@@ -66,6 +66,18 @@ const Fields = ({
 	return (
 		<Fragment>
 			<PanelBody>
+				<p>{ __( 'Bind page elements with dynamic data from your website database.', 'otter-blocks' ) }</p>
+
+				<ExternalLink
+					target="_blank"
+					rel="noopener noreferrer"
+					href="https://docs.themeisle.com/article/1478-otter-blocks-documentation#dynamicvalues"
+				>
+					{ __( 'Learn more about Dynamic Values', 'otter-blocks' ) }
+				</ExternalLink>
+
+				<br /><br />
+
 				<BaseControl
 					label={ __( 'Data Type', 'otter-blocks' ) }
 					id="o-dynamic-select"

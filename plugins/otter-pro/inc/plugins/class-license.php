@@ -53,7 +53,17 @@ class License {
 			return false;
 		}
 
-		if ( 'not_active' === $status->license || 'invalid' === $status->license ) {
+		$invalid_statuses = array(
+			'expired',
+			'revoked',
+			'missing',
+			'invalid',
+			'site_inactive',
+			'item_name_mismatch',
+			'no_activations_left',
+		);
+
+		if ( in_array( $status->license, $invalid_statuses ) ) {
 			return false;
 		}
 

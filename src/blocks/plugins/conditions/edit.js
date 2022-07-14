@@ -13,7 +13,9 @@ import {
 	ExternalLink,
 	FormTokenField,
 	PanelBody,
-	SelectControl
+	SelectControl,
+	Spinner,
+	Placeholder
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -21,7 +23,8 @@ import { useSelect } from '@wordpress/data';
 import {
 	Fragment,
 	memo,
-	useEffect
+	useEffect,
+	useState
 } from '@wordpress/element';
 
 import { applyFilters } from '@wordpress/hooks';
@@ -35,22 +38,215 @@ import Notice from '../../components/notice/index.js';
 const hasPro = Boolean( window.themeisleGutenberg.hasPro );
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 
+const defaultConditions = {
+	'users': {
+		label: __( 'Users', 'otter-blocks' ),
+		conditions: [
+			{
+				value: 'loggedInUser',
+				label: __( 'Logged In Users', 'otter-blocks' ),
+				help: __( 'The selected block will only be visible to logged-in users.' )
+			},
+			{
+				value: 'loggedOutUser',
+				label: __( 'Logged Out Users', 'otter-blocks' ),
+				help: __( 'The selected block will only be visible to logged-out users.' )
+			},
+			{
+				value: 'userRoles',
+				label: __( 'User Roles', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on user roles.' ),
+				toogleVisibility: true
+			}
+		]
+	},
+	'posts': {
+		label: __( 'Posts', 'otter-blocks' ),
+		conditions: [
+			{
+				value: 'postAuthor',
+				label: __( 'Post Author', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on post author.' ),
+				toogleVisibility: true
+			},
+			{
+				value: 'postType',
+				label: __( 'Post Type', 'otter-blocks' ),
+				help: __( 'The selected block will be visible if post becomes to one of the selected post types.' ),
+				toogleVisibility: true
+			},
+			{
+				value: 'postCategory',
+				label: __( 'Post Category', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on selected post categories.' ),
+				toogleVisibility: true
+			},
+			{
+				value: 'postMeta',
+				label: __( 'Post Meta (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on post meta condition.' ),
+				isDisabled: true
+			}
+		]
+	},
+	'url': {
+		label: __( 'URL', 'otter-blocks' ),
+		conditions: [
+			{
+				value: 'queryString',
+				label: __( 'Query String (Pro)', 'otter-blocks' ),
+				help: __( 'The condition will be met if the URL contains specified parameters.' ),
+				isDisabled: true
+			}
+		]
+	},
+	'dateAndTime': {
+		label: __( 'Date & Time', 'otter-blocks' ),
+		conditions: [
+			{
+				value: 'dateRange',
+				label: __( 'Date Range (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on the date range. Timezone is used based on your WordPress settings.' ),
+				isDisabled: true
+			},
+			{
+				value: 'dateRecurring',
+				label: __( 'Date Recurring (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on the selected days. Timezone is used based on your WordPress settings.' ),
+				isDisabled: true
+			},
+			{
+				value: 'timeRecurring',
+				label: __( 'Time Recurring (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.' ),
+				isDisabled: true
+			}
+		]
+	},
+	'woocommerce': {
+		label: __( 'WooCommerce', 'otter-blocks' ),
+		conditions: [
+			{
+				value: 'wooProductsInCart',
+				label: __( 'Products in Cart (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on the products added to WooCommerce cart.' ),
+				isDisabled: true
+			},
+			{
+				value: 'wooTotalCartValue',
+				label: __( 'Total Cart Value (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on the total value of WooCommerce cart.' ),
+				isDisabled: true
+			},
+			{
+				value: 'wooPurchaseHistory',
+				label: __( 'Purchase History (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on user\'s WooCommerce purchase history.' ),
+				isDisabled: true
+			},
+			{
+				value: 'wooTotalSpent',
+				label: __( 'Total Spent (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on how much the user spent during lifetime.' ),
+				isDisabled: true
+			}
+		]
+	},
+	'learndash': {
+		label: __( 'LearnDash', 'otter-blocks' ),
+		conditions: [
+			{
+				value: 'learnDashPurchaseHistory',
+				label: __( 'Purchase History (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on user\'s LearnDash purchase history.' ),
+				isDisabled: true
+			},
+			{
+				value: 'learnDashCourseStatus',
+				label: __( 'Course Status (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on user\'s LearnDash course status.' ),
+				isDisabled: true
+			}
+		]
+	}
+};
+const defaultConditionsKeys = Object.keys( defaultConditions );
+
+const AuthorsFieldToken = ( props ) => {
+	const {
+		postAuthors,
+		isLoading
+	} = useSelect( select => {
+		const { getUsers, isResolving } = select( 'core' );
+
+		return {
+			postAuthors: ( getUsers({ who: 'authors' }) ?? []).map( author => author.username ),
+			isLoading: isResolving( 'getUsers', [ { who: 'authors' } ])
+		};
+	}, [ ]);
+
+	return isLoading ? (
+		<Placeholder><Spinner /></Placeholder>
+	) : (
+		<FormTokenField
+			{ ...props }
+			suggestions={ postAuthors }
+			__experimentalExpandOnFocus={ true }
+			__experimentalValidateInput={ newValue => postAuthors.includes( newValue ) }
+		/>
+	);
+};
+
+const CategoriesFieldToken = ( props ) => {
+	const {
+		postCategories,
+		isLoading
+	} = useSelect( select => {
+		const { getEntityRecords, isResolving } = select( 'core' );
+
+		return {
+			postCategories: ( getEntityRecords( 'taxonomy', 'category', { 'per_page': 100 }) ?? []).map( category => category.slug ),
+			isLoading: isResolving( 'getEntityRecords', [ 'taxonomy', 'category', { 'per_page': 100 } ])
+		};
+	}, [ ]);
+
+	return isLoading ? (
+		<Placeholder><Spinner /></Placeholder>
+	) : (
+		<FormTokenField
+			{ ...props }
+			suggestions={ postCategories }
+			__experimentalExpandOnFocus={ true }
+			__experimentalValidateInput={ newValue => postCategories.includes( newValue ) }
+		/>
+	);
+};
+
+const Separator = ({ label }) => {
+	return (
+		<div className="o-conditions__operator-wrapper">
+			<div className="o-conditions__operator-line"></div>
+			<div className="o-conditions__operator-word">
+				<span>{ label }</span>
+			</div>
+		</div>
+	);
+};
+
 const Edit = ({
 	attributes,
 	setAttributes
 }) => {
+	const [ conditions, setConditions ] = useState({});
+	const [ flatConditions, setFlatConditions ] = useState([]);
+	const [ toggleVisibility, setToggleVisibility ] = useState([]);
+
 	useEffect( () => {
 		if ( ! Boolean( attributes?.otterConditions?.length ) ) {
 			return;
 		}
 
-		let otterConditions = [ ...attributes.otterConditions ];
-
-		otterConditions.forEach( ( i, n ) => {
-			if ( isEmpty( i ) ) {
-				otterConditions.splice( n, 1 );
-			}
-		});
+		let otterConditions = attributes.otterConditions?.filter( c => ! isEmpty( c ) );
 
 		if ( ! Boolean( otterConditions.length ) ) {
 			otterConditions = undefined;
@@ -59,36 +255,20 @@ const Edit = ({
 		setAttributes({ otterConditions });
 	}, []);
 
-	const { postAuthors } = useSelect( select => {
-		const { getUsers } = select( 'core' );
-		const authors = getUsers({ who: 'authors' });
+	useEffect( () => {
+		const c = applyFilters( 'otter.blockConditions.conditions', defaultConditions );
 
-		let postAuthors = [];
+		const flat = defaultConditionsKeys.map( i => c?.[i].conditions ).flat();
+		flat.splice( 0, 0, {
+			value: 'none',
+			label: __( 'Select a condition', 'otter-blocks' ),
+			help: __( 'Select a condition to control the visibility of your block.', 'otter-blocks' )
+		});
 
-		if ( authors && Boolean( authors.length ) ) {
-			postAuthors = authors.map( author => author.username );
-		}
-
-		return {
-			postAuthors
-		};
-	}, []);
-
-	let { postCategories } = useSelect( select => {
-		const { getEntityRecords } = select( 'core' );
-		// eslint-disable-next-line camelcase
-		const categories = getEntityRecords( 'taxonomy', 'category', { per_page: 100 });
-
-		let postCategories = [];
-
-		if ( categories && Boolean( categories.length ) ) {
-			postCategories = categories.map( category => category.slug );
-		}
-
-		return {
-			postCategories
-		};
-	}, []);
+		setConditions( c );
+		setFlatConditions( flat );
+		setToggleVisibility( flat.filter( i => i.toogleVisibility )?.map( i => i.value ) );
+	}, [ attributes.otterConditions ]);
 
 	const addGroup = () => {
 		const otterConditions = [ ...( attributes.otterConditions || []) ];
@@ -167,167 +347,6 @@ const Edit = ({
 		setAttributes({ otterConditions });
 	};
 
-	let conditions = {
-		'users': {
-			label: __( 'Users', 'otter-blocks' ),
-			conditions: [
-				{
-					value: 'loggedInUser',
-					label: __( 'Logged In Users', 'otter-blocks' ),
-					help: __( 'The selected block will only be visible to logged-in users.' )
-				},
-				{
-					value: 'loggedOutUser',
-					label: __( 'Logged Out Users', 'otter-blocks' ),
-					help: __( 'The selected block will only be visible to logged-out users.' )
-				},
-				{
-					value: 'userRoles',
-					label: __( 'User Roles', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on user roles.' ),
-					toogleVisibility: true
-				}
-			]
-		},
-		'posts': {
-			label: __( 'Posts', 'otter-blocks' ),
-			conditions: [
-				{
-					value: 'postAuthor',
-					label: __( 'Post Author', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on post author.' ),
-					toogleVisibility: true
-				},
-				{
-					value: 'postType',
-					label: __( 'Post Type', 'otter-blocks' ),
-					help: __( 'The selected block will be visible if post becomes to one of the selected post types.' ),
-					toogleVisibility: true
-				},
-				{
-					value: 'postCategory',
-					label: __( 'Post Category', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on selected post categories.' ),
-					toogleVisibility: true
-				},
-				{
-					value: 'postMeta',
-					label: __( 'Post Meta (Pro)', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on post meta condition.' ),
-					isDisabled: true
-				}
-			]
-		},
-		'url': {
-			label: __( 'URL', 'otter-blocks' ),
-			conditions: [
-				{
-					value: 'queryString',
-					label: __( 'Query String (Pro)', 'otter-blocks' ),
-					help: __( 'The condition will be met if the URL contains specified parameters.' ),
-					isDisabled: true
-				}
-			]
-		},
-		'dateAndTime': {
-			label: __( 'Date & Time', 'otter-blocks' ),
-			conditions: [
-				{
-					value: 'dateRange',
-					label: __( 'Date Range (Pro)', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on the date range. Timezone is used based on your WordPress settings.' ),
-					isDisabled: true
-				},
-				{
-					value: 'dateRecurring',
-					label: __( 'Date Recurring (Pro)', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on the selected days. Timezone is used based on your WordPress settings.' ),
-					isDisabled: true
-				},
-				{
-					value: 'timeRecurring',
-					label: __( 'Time Recurring (Pro)', 'otter-blocks' ),
-					help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.' ),
-					isDisabled: true
-				}
-			]
-		},
-		'woocommerce': {
-			label: __( 'WooCommerce', 'otter-blocks' ),
-			conditions: [
-				{
-					value: 'wooProductsInCart',
-					label: __( 'Products in Cart (Pro)', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on the products added to WooCommerce cart.' ),
-					isDisabled: true
-				},
-				{
-					value: 'wooTotalCartValue',
-					label: __( 'Total Cart Value (Pro)', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on the total value of WooCommerce cart.' ),
-					isDisabled: true
-				},
-				{
-					value: 'wooPurchaseHistory',
-					label: __( 'Purchase History (Pro)', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on user\'s WooCommerce purchase history.' ),
-					isDisabled: true
-				},
-				{
-					value: 'wooTotalSpent',
-					label: __( 'Total Spent (Pro)', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on how much the user spent during lifetime.' ),
-					isDisabled: true
-				}
-			]
-		},
-		'learndash': {
-			label: __( 'LearnDash', 'otter-blocks' ),
-			conditions: [
-				{
-					value: 'learnDashPurchaseHistory',
-					label: __( 'Purchase History (Pro)', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on user\'s LearnDash purchase history.' ),
-					isDisabled: true
-				},
-				{
-					value: 'learnDashCourseStatus',
-					label: __( 'Course Status (Pro)', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on user\'s LearnDash course status.' ),
-					isDisabled: true
-				}
-			]
-		}
-	};
-
-	conditions = applyFilters( 'otter.blockConditions.conditions', conditions );
-
-	const getConditions = () => {
-		const flatConditions = [
-			{
-				value: 'none',
-				label: __( 'Select a condition', 'otter-blocks' ),
-				help: __( 'Select a condition to control the visibility of your block.', 'otter-blocks' )
-			},
-			...Object.keys( conditions ).map( i => conditions[i].conditions ).flat()
-		];
-
-		return flatConditions;
-	};
-
-	const toogleVisibility = getConditions().filter( i => i.toogleVisibility )?.map( i => i.value );
-
-	const Separator = ({ label }) => {
-		return (
-			<div className="o-conditions__operator-wrapper">
-				<div className="o-conditions__operator-line"></div>
-				<div className="o-conditions__operator-word">
-					<span>{ label }</span>
-				</div>
-			</div>
-		);
-	};
-
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -347,10 +366,10 @@ const Edit = ({
 								onDelete={ () => removeGroup( index ) }
 							>
 								{ group && group.map( ( i, n ) => (
-									<Fragment key={ `${ index }-${ i }` }>
+									<Fragment key={ `${ index }_${ n }` }>
 										<BaseControl
 											label={ __( 'Condition', 'otter-blocks' ) }
-											help={ getConditions().find( condition => condition.value === ( i.type || 'none' ) )?.help }
+											help={ flatConditions.find( condition => condition.value === ( i.type || 'none' ) )?.help }
 											id={ `o-conditions-${ index }-${ n }` }
 										>
 											<select
@@ -383,24 +402,18 @@ const Edit = ({
 										) }
 
 										{ 'postAuthor' === i.type && (
-											<FormTokenField
-												label={ __( 'Post Authors', 'otter-blocks' ) }
+											<AuthorsFieldToken
+												label={ __( 'Post Author', 'otter-blocks' ) }
 												value={ i.authors }
-												suggestions={ postAuthors }
 												onChange={ authors => changeArrayValue( authors, index, n, 'authors' ) }
-												__experimentalExpandOnFocus={ true }
-												__experimentalValidateInput={ newValue => postAuthors.includes( newValue ) }
 											/>
 										) }
 
 										{ 'postCategory' === i.type && (
-											<FormTokenField
+											<CategoriesFieldToken
 												label={ __( 'Post Category', 'otter-blocks' ) }
 												value={ i.categories }
-												suggestions={ postCategories }
 												onChange={ categories => changeArrayValue( categories, index, n, 'categories' ) }
-												__experimentalExpandOnFocus={ true }
-												__experimentalValidateInput={ newValue => postCategories.includes( newValue ) }
 											/>
 										) }
 
@@ -417,7 +430,7 @@ const Edit = ({
 
 										{ applyFilters( 'otter.blockConditions.controls', '', index, n, i, attributes.otterConditions, setAttributes, changeValue ) }
 
-										{ toogleVisibility.includes( i.type ) && (
+										{ toggleVisibility.includes( i.type ) && (
 											<SelectControl
 												label={ __( 'If condition is true, the block should be:', 'otter-blocks' ) }
 												options={ [

@@ -92,9 +92,10 @@ const Edit = ({
 	}
 
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();
+
 	useEffect( () => {
 		setNodeCSS([
-			`block-editor-block-list__layout {
+			`.block-editor-block-list__layout {
 				gap: ${ attributes.spacing }px;
 			}`
 		]);
