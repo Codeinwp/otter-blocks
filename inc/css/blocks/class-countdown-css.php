@@ -113,17 +113,14 @@ class Countdown_CSS extends Base_CSS {
 					array(
 						'property' => '--width',
 						'value'    => 'containerWidth',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => '--widthTablet',
 						'value'    => 'containerWidthTablet',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => '--widthMobile',
 						'value'    => 'containerWidthMobile',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => '--boxWidth',

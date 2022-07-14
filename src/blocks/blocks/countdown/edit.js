@@ -35,6 +35,7 @@ import {
 } from '../../helpers/helper-functions.js';
 import DisplayTime from './components/display-time.js';
 import { at, isNumber } from 'lodash';
+import classNames from 'classnames';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -125,7 +126,7 @@ const Edit = ({
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		className: cssNodeName,
+		className: classNames( cssNodeName, 'ready' ),
 		style: inlineStyles
 	});
 
