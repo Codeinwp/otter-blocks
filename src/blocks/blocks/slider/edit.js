@@ -29,7 +29,11 @@ import Placeholder from './placeholder.js';
 import Inspector from './inspector.js';
 import Slide from './components/Slide.js';
 import SliderControls from './components/slider-controls.js';
-import { blockInit } from '../../helpers/block-utility.js';
+import {
+	blockInit,
+	copyScriptAssetToIframe,
+	getEditorIframe
+} from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -63,7 +67,8 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	useEffect( () => {
-		const container = document.querySelector( `#${ attributes.id }` );
+
+		const container = document.querySelector( `#${ attributes.id }` ) ?? document.querySelector( 'iframe[name^="editor-canvas"]' )?.contentDocument?.querySelector( `#${ attributes.id }` );
 
 		if ( container ) {
 			initObserver.current = new IntersectionObserver( ( entries ) => {
@@ -78,14 +83,13 @@ const Edit = ({
 			}, options );
 
 			initObserver.current?.observe( container );
-
-			return () => {
-				if ( attributes.images.length && null !== sliderRef.current ) {
-					sliderRef.current.destroy();
-				}
-			};
 		}
 
+		return () => {
+			if ( attributes?.images?.length ) {
+				sliderRef?.current?.destroy();
+			}
+		};
 	}, [ attributes.id ]);
 
 	useEffect( () => {
@@ -111,21 +115,57 @@ const Edit = ({
 	const [ selectedImage, setSelectedImage ] = useState( null );
 
 	const initSlider = () => {
-		sliderRef.current = new window.Glide( `#${ attributes.id }`, {
-			type: 'carousel',
-			keyboard: false,
-			perView: attributes.perView,
-			gap: attributes.gap,
-			peek: attributes.peek,
-			autoplay: false,
-			breakpoints: {
-				800: {
-					perView: 1,
-					peek: 0,
-					gap: 0
-				}
+		const iframe = getEditorIframe();
+		const container = document.querySelector( `#${ attributes.id }` ) ?? iframe?.contentDocument?.querySelector( `#${ attributes.id }` );
+
+		/**
+		 * Init the Slider inside the iframe.
+		 */
+		const initFrame = () => {
+			if ( iframe?.contentWindow?.Glide ) {
+				sliderRef.current = new iframe.contentWindow.Glide( container, {
+					type: 'carousel',
+					keyboard: false,
+					perView: attributes.perView,
+					gap: attributes.gap,
+					peek: attributes.peek,
+					autoplay: false,
+					breakpoints: {
+						800: {
+							perView: 1,
+							peek: 0,
+							gap: 0
+						}
+					}
+				}).mount();
 			}
-		}).mount();
+		};
+
+		if ( Boolean( iframe ) ) {
+			if ( ! Boolean( iframe.contentDocument?.querySelector( '#glidejs-js' ) ) ) {
+
+				// Load the JS file into the iframe.
+				copyScriptAssetToIframe( '#glidejs-js', initFrame );
+			} else {
+				initFrame();
+			}
+		} else {
+			sliderRef.current = new window.Glide( container, {
+				type: 'carousel',
+				keyboard: false,
+				perView: attributes.perView,
+				gap: attributes.gap,
+				peek: attributes.peek,
+				autoplay: false,
+				breakpoints: {
+					800: {
+						perView: 1,
+						peek: 0,
+						gap: 0
+					}
+				}
+			}).mount();
+		}
 	};
 
 	const onSelectImages = images => {

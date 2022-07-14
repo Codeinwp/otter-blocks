@@ -1,14 +1,7 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
 import classnames from 'classnames';
-
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies.
@@ -54,19 +47,19 @@ const Edit = ({
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
-	const styles = css`
-		--titleColor: ${ getValue( 'titleColor' ) };
-		--titleBackground: ${ getValue( 'titleBackground' ) };
-		--borderColor: ${ getValue( 'borderColor' ) };
-		--contentBackground: ${ getValue( 'contentBackground' ) };
-	`;
+	const inlineStyles = {
+		'--titleColor': getValue( 'titleColor' ),
+		'--titleBackground': getValue( 'titleBackground' ),
+		'--borderColor': getValue( 'borderColor' ),
+		'--contentBackground': getValue( 'contentBackground' )
+	};
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames({
 			[ `is-${ attributes.gap }-gap` ]: attributes.gap
 		}),
-		css: styles
+		style: inlineStyles
 	});
 
 	return (

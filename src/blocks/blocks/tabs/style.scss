@@ -66,6 +66,10 @@
 	.wp-block-themeisle-blocks-tabs-item {
 		display: flex;
 
+		@media ( max-width: 800px ) {
+			display: block;
+		}
+
 		&:not(:last-child) {
 			.wp-block-themeisle-blocks-tabs-item__header {
 				border-bottom-style: none;

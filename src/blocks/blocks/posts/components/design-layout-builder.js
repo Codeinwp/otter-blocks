@@ -28,6 +28,8 @@ import Notice from '../../../components/notice/index.js';
 const ProFeatures = () => {
 	return (
 		<Fragment>
+			<p>{ __( 'Add custom fields for the posts, using the ACF plugin & Otter Pro.', 'otter-blocks' ) }</p>
+
 			<Button
 				variant="secondary"
 				isSecondary
@@ -35,7 +37,7 @@ const ProFeatures = () => {
 				disabled={ true }
 				onClick={ () => {} }
 			>
-				{ __( 'Add Meta Field', 'otter-blocks' ) }
+				{ __( 'Add Custom Field', 'otter-blocks' ) }
 			</Button>
 
 			<br />

@@ -3,11 +3,13 @@
  */
 import { v4 as uuidv4 } from 'uuid';
 
-
 /**
  * WordPress dependencies.
  */
-import { isEqual } from 'lodash';
+import {
+	isEqual,
+	zip
+} from 'lodash';
 
 import {
 	dispatch,
@@ -18,6 +20,7 @@ import {
  * Internal dependencies.
  */
 import globalDefaultsBlocksAttrs from '../plugins/options/global-defaults/defaults.js';
+import {useEffect, useMemo, useRef, useState} from '@wordpress/element';
 
 /**
  * Initiate the global id tracker with an empty list if it is the case.
@@ -270,4 +273,148 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 		setAttributes: ( ! isInReusableBlock( clientId ) || getSelectedBlockClientId() === clientId ) ? updateAttrs( clientId ) : undefined,
 		...extractBlockData( clientId )
 	});
+};
+
+
+/**
+ * Create a Style node for handling `head` Node change when working in a Tablet, Mobile mode or in FSE Editor.
+ *
+ * @param {OtterNodeCSSOptions?} options The options.
+ * @returns {OtterNodeCSSReturn} The name of the node and function handler.
+ */
+export const useCSSNode = options => {
+	const [ cssList, setCSSProps ] = useState({
+		css: [],
+		media: []
+	});
+	const [ settings, setSettings ] = useState({
+		node: null,
+		cssNodeName: ''
+	});
+
+	/**
+	 *	Set CSS of the node.
+	 *
+	 * The `css` and `media` have a 1-1 relationship.
+	 *
+	 * @param {string[]} css A list with CSS code.
+	 * @param {string[]} media A list CSS media options. One for each CSS item.
+	 *
+	 * @example Simple usage.
+	 *
+	 * setNodeCSS([
+	 * 			`.o-review-comparison_buttons span {
+	 * 				background: ${ attributes.buttonColor } !important;
+	 * 				color: ${ attributes.buttonText } !important;
+	 * 			}`
+	 * ]);
+	 *
+	 * @example CSS with Media.
+	 * setNodeCSS([
+	 * 			`{
+	 * 				${ attributes.customTitleFontSize && `--titleTextSize: ${ attributes.customTitleFontSize }px;` }
+	 * 				${ attributes.customDescriptionFontSize && `--descriptionTextSize: ${ attributes.customDescriptionFontSize }px;` }
+	 * 			}`,
+	 * 			`{
+	 * 				${ attributes.customTitleFontSizeTablet && `--titleTextSize: ${ attributes.customTitleFontSizeTablet }px;` }
+	 * 				${ attributes.customDescriptionFontSizeTablet && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeTablet }px;` }
+	 * 			}`,
+	 * 			`{
+	 * 				${ attributes.customTitleFontSizeMobile && `--titleTextSize: ${ attributes.customTitleFontSizeMobile }px;` }
+	 * 				${ attributes.customDescriptionFontSizeMobile && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeMobile }px;` }
+	 * 			}`
+	 * 		], [
+	 * 			'@media ( min-width: 960px )',
+	 * 			'@media ( min-width: 600px ) and ( max-width: 960px )',
+	 * 			'@media ( max-width: 600px )'
+	 * 		]
+	 * );
+	 *
+	 */
+	const setNodeCSS = ( css = [], media = []) => {
+		setCSSProps({
+			css,
+			media
+		});
+	};
+
+	useEffect( () => {
+
+		let anchor;
+
+		// Create the CSS node.
+		const n = document.createElement( 'style' );
+		n.type = 'text/css';
+		n.setAttribute( 'data-generator', 'otter-blocks' );
+
+		setTimeout( () => {
+
+			// A small delay for the iFrame to properly initialize.
+			anchor = parent.document.querySelector( 'iframe[name="editor-canvas"]' )?.contentWindow.document.head || document.head;
+			anchor?.appendChild( n );
+		}, 500 );
+
+		setSettings({
+			node: n,
+			cssNodeName: options?.selector ?? `o-node-${uuidv4()}`
+		});
+
+		return () => {
+			anchor?.removeChild( n );
+		};
+	}, [ ]);
+
+	useEffect( () => {
+		if ( settings.node && settings.cssNodeName && cssList.media !== undefined ) {
+
+			// Create the CSS text by combining the list of CSS items with their media..
+			const text =  zip( cssList.css, cssList.media )
+				.map( x => {
+					const [ css, media ] = x;
+					if ( media ) {
+						return `${media} { \n\t .${settings.cssNodeName} ${css} }`;
+					}
+					return `.${settings.cssNodeName} ${css}`;
+				})
+				.join( '\n' ) || '';
+			settings.node.textContent = text;
+		}
+	}, [ cssList.css, cssList.media, settings.node, settings.cssNodeName ]);
+
+	return [ settings.cssNodeName, setNodeCSS, setSettings ];
+};
+
+/**
+ * Get the iframe of the editor. Use in FSE or Mobile/Tablet Preview for Page/Post.
+ */
+export const getEditorIframe = () => ( document.querySelector( 'iframe[name^="editor-canvas"]' ) );
+
+/**
+ * Copy the JS node asset from main document to the iframe.
+ *
+ * @param {string} assetSelectorId The id of the asset.
+ * @param {Function} callback The callback.
+ */
+export const copyScriptAssetToIframe = ( assetSelectorId, callback ) => {
+	const iframe = getEditorIframe();
+	callback ??= () => {};
+	if ( Boolean( iframe ) ) {
+		if ( Boolean( iframe?.contentWindow?.document.querySelector( assetSelectorId ) ) ) {
+			callback?.();
+		} else {
+			const original = document.querySelector( assetSelectorId );
+
+			if ( ! Boolean( original ) ) {
+				console.warn( `Selector: ${ assetSelectorId } is invalid.` );
+				return;
+			}
+
+			const n = iframe.contentWindow.document.createElement( 'script' );
+			n.onload = callback;
+			n.id = original.id;
+			n.type = 'text/javascript';
+			iframe.contentWindow.document?.head.appendChild( n );
+			n.src = original.src;
+		}
+	}
 };

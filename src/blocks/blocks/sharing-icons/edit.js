@@ -1,4 +1,3 @@
-/** @jsx jsx */;
 /**
  * WordPress dependencies
  */
@@ -16,13 +15,11 @@ import ServerSideRender from '@wordpress/server-side-render';
 /**
  * Internal dependencies
  */
-import Controls from './controls.js';
-import Inspector from './inspector';
-import { blockInit, getDefaultValueByField } from '../../helpers/block-utility';
 import metadata from './block.json';
+import Controls from './controls.js';
+import Inspector from './inspector.js';
 import socialList from './services.js';
-
-import { css, jsx } from '@emotion/react';
+import { blockInit } from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -32,7 +29,6 @@ const { attributes: defaultAttributes } = metadata;
  * @returns
  */
 const Edit = ({
-	name,
 	attributes,
 	setAttributes,
 	clientId
@@ -42,29 +38,7 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
-	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
-
-	const individualCSS = Object.keys( socialList ).reduce( ( acc, icon ) => {
-		const iconAttrs = getValue( icon );
-		return `${ acc }
-		.is-${ icon } {
-			--iconBgColor: ${ iconAttrs.backgroundColor ?? 'unset' };
-			--textColor: ${ iconAttrs.textColor ?? 'unset' };
-		}`;
-	}, '' );
-
-	const gapValue = getValue( 'gap' );
-	const borderRadiusValue = getValue( 'borderRadius' );
-	const styles = css`
-		--iconsGap: ${ gapValue ? gapValue + 'px' : '' };
-		--borderRadius: ${ borderRadiusValue ? borderRadiusValue + 'px' : '' };
-		${ individualCSS }
-	`;
-
-	const blockProps = useBlockProps({
-		id: attributes.id,
-		css: styles
-	});
+	const blockProps = useBlockProps();
 
 	return (
 		<Fragment>

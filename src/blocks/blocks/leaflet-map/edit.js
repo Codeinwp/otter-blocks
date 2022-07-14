@@ -27,8 +27,12 @@ import {
  * Internal dependencies
  */
 import metadata from './block.json';
-import Inspector from './inspector';
-import { blockInit } from '../../helpers/block-utility';
+import Inspector from './inspector.js';
+import {
+	blockInit,
+	copyScriptAssetToIframe,
+	getEditorIframe
+} from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -55,6 +59,8 @@ const Edit = ({
 	isSelected,
 	toggleSelection
 }) => {
+
+
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
@@ -164,15 +170,28 @@ const Edit = ({
 	 */
 	const [ markersStore, dispatch ] = useReducer( markerReducer, [], () => []);
 	const createMap = () => {
+
 		if ( ! mapRef.current && ! window.L ) {
 			return;
 		}
+
+		let L = window.L;
+
+		const iframe = getEditorIframe();
+		if ( Boolean( iframe ) ) {
+			L = iframe.contentWindow?.L;
+		}
+
+		if ( ! L ) {
+			return ;
+		}
+
 
 		// Create the map
 		mapRef.current.innerHTML = '';
 
 		// Reference for mobile dragging: https://gis.stackexchange.com/questions/200189/cant-continue-scrolling-on-mobile-devices-when-a-map-occupy-all-the-screen
-		const _map = window.L.map(
+		const _map = L.map(
 			mapRef.current,
 			{
 				gestureHandling: true,
@@ -186,8 +205,9 @@ const Edit = ({
 			}
 		);
 
+
 		// Add Open Street Map as source
-		window.L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		L.tileLayer( 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
 			subdomains: [ 'a', 'b', 'c' ]
 		}).addTo( _map );
@@ -222,15 +242,15 @@ const Edit = ({
 		 * Create the Add Marker button on the map
 		 * Reference: https://leafletjs.com/examples/extending/extending-3-controls.html
 		 */
-		window.L.Control.AddMarker = window.L.Control.extend({
+		L.Control.AddMarker = L.Control.extend({
 			onAdd: () => {
-				const button = window.L.DomUtil.create( 'button', 'wp-block-themeisle-blocks-leaflet-map-marker-button' );
-				const span = window.L.DomUtil.create( 'span', 'dashicons dashicons-sticky', button );
+				const button = L.DomUtil.create( 'button', 'wp-block-themeisle-blocks-leaflet-map-marker-button' );
+				const span = L.DomUtil.create( 'span', 'dashicons dashicons-sticky', button );
 
-				window.L.DomEvent.on( button, 'click', ( event ) => {
+				L.DomEvent.on( button, 'click', ( event ) => {
 
 					// Do not sent this event to the rest of the components
-					window.L.DomEvent.stopPropagation( event );
+					L.DomEvent.stopPropagation( event );
 					setActiveAddingToLocation( ! isAddingToLocationActive );
 				});
 
@@ -242,11 +262,11 @@ const Edit = ({
 			onRemove: () => { }
 		});
 
-		window.L.control.addmarker = ( opts ) => {
-			return new window.L.Control.AddMarker( opts );
+		L.control.addmarker = ( opts ) => {
+			return new L.Control.AddMarker( opts );
 		};
 
-		window.L.control.addmarker({ position: 'bottomleft' }).addTo( _map );
+		L.control.addmarker({ position: 'bottomleft' }).addTo( _map );
 
 		setMap( _map );
 
@@ -262,11 +282,19 @@ const Edit = ({
 	 * Initialize the map.
 	 */
 	useEffect( () => {
-		createMap();
+
+		if ( getEditorIframe() ) {
+			copyScriptAssetToIframe( '#leaflet-js', () => {
+				createMap();
+			});
+			copyScriptAssetToIframe( '#leaflet-gesture-handling-js', () => { });
+		} else {
+			createMap();
+		}
 	}, []);
 
 	/**
-	 * Triger the update size function the map when height is changed to prevent an incorrect display on the bottom of the map.
+	 * Trigger the update size function the map when height is changed to prevent an incorrect display on the bottom of the map.
 	 */
 	useEffect( () => {
 		if ( attributes.height && map ) {
