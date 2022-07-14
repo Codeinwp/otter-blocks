@@ -102,11 +102,15 @@
 	}
 
 	&:not(.ready) {
-		.otter-countdown__value {
-			animation: skeleton-loading 1.6s linear infinite alternate;
-			color: transparent !important;
-			border-radius: 8px;
+		.otter-countdown__display-area:not([name="separator"]) {
+
+			.otter-countdown__value {
+				animation: skeleton-loading 1.6s linear infinite alternate;
+				color: transparent !important;
+				border-radius: 8px;
+			}
 		}
+		
 	}
 
 	@keyframes skeleton-loading {
