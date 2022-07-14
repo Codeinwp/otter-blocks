@@ -189,6 +189,18 @@ We're here to help. Feel free to open a new thread on the [Support Forum](https:
 
 == Changelog ==
 
+##### [Version 2.0.8](https://github.com/Codeinwp/otter-blocks/compare/v2.0.7...v2.0.8) (2022-07-14)
+
+- Fip Block styling issue
+- Fix styles & scripts not loading in FSE & responsive mode in the editor
+- Fix editor slowness
+- Add single column option to Section
+- Fix Font Module failing in specific scenarios
+- Fix WooCommerce Product Select component keeps spinning when no products are available
+
+
+
+
 ##### [Version 2.0.7](https://github.com/Codeinwp/otter-blocks/compare/v2.0.6...v2.0.7) (2022-07-04)
 
 - Fix Google Fonts not loading in certain cases
