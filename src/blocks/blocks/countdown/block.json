@@ -110,6 +110,12 @@
 		"hasSeparators": {
 			"type": "boolean"
 		},
+		"valueFontWeight": {
+			"type": "string"
+		},
+		"labelFontWeight": {
+			"type": "string"
+		},
 		"alignment": {
 			"type": "string"
 		},

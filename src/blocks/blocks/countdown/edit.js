@@ -82,8 +82,8 @@ const Edit = ({
 		'--backgroundColor': attributes.backgroundColor,
 		'--borderColor': attributes.borderColor,
 		'--width': attributes.containerWidth,
-		'--widthTablet': attributes.containerWidthTablet,
-		'--widthMobile': attributes.containerWidthMobile,
+		'--widthTablet': attributes.containerWidthTablet ?? attributes.containerWidth,
+		'--widthMobile': attributes.containerWidthMobile ?? attributes.containerWidth,
 		'--height': optionalUnit( attributes.height ),
 		'--heightTablet': optionalUnit( attributes.heightTablet ),
 		'--heightMobile': optionalUnit( attributes.heightMobile ),
@@ -102,7 +102,9 @@ const Edit = ({
 		'--alignment': attributes.alignment,
 		'--padding': boxValues( attributes.padding ),
 		'--paddingTablet': boxValues( attributes.paddingTablet ),
-		'--paddingMobile': boxValues( attributes.paddingMobile )
+		'--paddingMobile': boxValues( attributes.paddingMobile ),
+		'--valueFontWeight': attributes.valueFontWeight,
+		'--labelFontWeight': attributes.labelFontWeight
 	};
 
 	const [ cssNodeName, setCSS ] = useCSSNode();

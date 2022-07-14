@@ -232,6 +232,14 @@ class Countdown_CSS extends Base_CSS {
 						},
 					),
 					array(
+						'property' => '--valueFontWeight',
+						'value'    => 'valueFontWeight',
+					),
+					array(
+						'property' => '--labelFontWeight',
+						'value'    => 'labelFontWeight',
+					),
+					array(
 						'property'  => '--padding',
 						'value'     => 'padding',
 						'format'    => function( $value, $attrs ) {

@@ -33,9 +33,7 @@ import {
  * Internal dependencies
  */
 import ResponsiveControl from '../../components/responsive-control/index.js';
-import SizingControl from '../../components/sizing-control/index.js';
 import { mergeBoxDefaultValues, removeBoxDefaultValues, buildResponsiveSetAttributes, buildResponsiveGetAttributes } from '../../helpers/helper-functions.js';
-import { isNumber } from 'lodash';
 
 const defaultFontSizes = [
 	{
@@ -60,14 +58,7 @@ const defaultFontSizes = [
 	}
 ];
 
-const borderRadiusDirection = {
-	'top-right': 'borderRadiusTopRight',
-	'top-left': 'borderRadiusTopLeft',
-	'bottom-left': 'borderRadiusBottomLeft',
-	'bottom-right': 'borderRadiusBottomRight'
-};
-
-const optionalUnit = x => isNumber( x ) ? x + '%' : x;
+const fontWeights = [ '', '100', '200', '300', '400', '500', '600', '700', '800', '900' ].map( x => ({ label: x ? x : 'Default', value: x}) );
 
 /**
  *
@@ -103,33 +94,6 @@ const Inspector = ({
 			});
 		}
 	};
-
-	const changeBorderRadiusType = value => {
-		setAttributes({ borderRadiusType: value });
-	};
-
-	const getBorderRadius = type => {
-		let value;
-
-		if ( 'top-right' === type ) {
-			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusTopRight;
-		}
-
-		if ( 'top-left' === type ) {
-			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusTopLeft;
-		}
-
-		if ( 'bottom-right' === type ) {
-			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusBottomRight;
-		}
-
-		if ( 'bottom-left' === type ) {
-			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusBottomLeft;
-		}
-
-		return value;
-	};
-
 
 	const settings = __experimentalGetSettings();
 
@@ -273,6 +237,13 @@ const Inspector = ({
 					/>
 				</ResponsiveControl>
 
+				<SelectControl
+					label={__( 'Time Value Font Weight', 'otter-blocks' )}
+					value={ attributes.valueFontWeight }
+					onChange={ valueFontWeight => setAttributes({ valueFontWeight: valueFontWeight || undefined })}
+					options={fontWeights}
+				/>
+
 				<ResponsiveControl
 					label={ __( 'Label Font Size', 'otter-blocks' ) }
 				>
@@ -283,6 +254,13 @@ const Inspector = ({
 						onChange={ value => responsiveSetAttributes( value, [ 'labelFontSize', 'labelFontSizeTablet', 'labelFontSizeMobile' ]) }
 					/>
 				</ResponsiveControl>
+
+				<SelectControl
+					label={__( 'Label Font Weight', 'otter-blocks' )}
+					value={ attributes.labelFontWeight }
+					onChange={ labelFontWeight => setAttributes({ labelFontWeight: labelFontWeight || undefined })}
+					options={fontWeights}
+				/>
 			</PanelBody>
 
 			<PanelColorSettings

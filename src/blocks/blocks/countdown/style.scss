@@ -3,8 +3,8 @@
 	--borderColor: #000;
 	--borderRadius: 0px;
 	--width: 100%;
-	--widthTablet: 100%;
-	--widthMobile: 100%;
+	--widthTablet: var(--width);
+	--widthMobile: var(--width);
 	--height: 100;
 	--heightTablet: 100;
 	--heightMobile: 100;
@@ -25,6 +25,8 @@
 	--padding: 0px;
 	--paddingTablet: var(--padding);
 	--paddingMobile: var(--padding);
+	--valueFontWeight: regular;
+	--labelFontWeight: regular;
 
 	.otter-countdown__container {
 		display: flex;
@@ -85,6 +87,7 @@
 
 	.otter-countdown__value {
 		font-size: var( --valueFontSize );
+		font-weight: var( --valueFontWeight );
 		line-height: 1.2;
 		text-align: center;
 		width: 100%;
@@ -100,6 +103,7 @@
 
 	.otter-countdown__label {
 		font-size: var( --labelFontSize );
+		font-weight: var( --labelFontWeight );
 		min-height: 1rem;
 		text-align: center;
 		width: 100%;
