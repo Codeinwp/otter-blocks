@@ -110,10 +110,12 @@ class Sharing_Icons_Block {
 			$css = $css->render_css(
 				array(
 					'attrs' => $attributes,
-				),
+				)
 			);
 
-			$html .= '<style type="text/css">' . $css . '</style>';
+			if ( ! empty( $css ) ) {
+				$html .= '<style type="text/css">' . $css . '</style>';
+			}
 		}
 
 		return $html;
