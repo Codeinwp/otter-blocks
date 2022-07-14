@@ -373,14 +373,14 @@ const Inspector = ({
 					label={ __( 'Border Radius', 'otter-blocks' ) }
 					values={
 						mergeBoxDefaultValues(
-							attributes.borderRadius,
+							attributes.borderRadiusBox,
 							{ left: '0px', right: '0px', bottom: '0px', top: '0px' }
 						)
 					}
 					onChange={ value => {
 						const cleaned = removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' });
 						setAttributes({
-							borderRadius: cleaned
+							borderRadiusBox: cleaned
 						});
 					} }
 					id="o-border-raduis-box"

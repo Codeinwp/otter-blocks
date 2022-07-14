@@ -50,10 +50,10 @@ const deprecated = [ {
 
 		const optionalUnit = x => isNumber( x ) ? x + '%' : x;
 
-		const borderRadius = 'linked' === attributes.borderRadiusType ?
+		const borderRadiusBox = 'linked' === attributes.borderRadiusType ?
 			{ left: optionalUnit( attributes.borderRadius ), right: optionalUnit( attributes.borderRadius ), bottom: optionalUnit( attributes.borderRadius ), top: optionalUnit( attributes.borderRadius ) } :
 			{ left: optionalUnit( attributes.borderRadiusBottomLeft ), right: optionalUnit( attributes.borderRadiusTopRight ), bottom: optionalUnit( attributes.borderRadiusBottomRight ), top: optionalUnit( attributes.borderRadiusTopLeft ) };
-		oldAttributes.borderRadius = borderRadius;
+		oldAttributes.borderRadiusBox = borderRadiusBox;
 
 		return omit( oldAttributes, [ 'borderRadiusBottomLeft', 'borderRadiusTopRight', 'borderRadiusBottomRight', 'borderRadiusTopLeft', 'borderRadiusType' ]);
 	},

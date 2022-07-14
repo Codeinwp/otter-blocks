@@ -21,7 +21,8 @@ type Attributes = {
 	height: number
 	heightTablet: number
 	heightMobile: number
-	borderRadius: BoxType
+	borderRadius: number | BoxType
+	borderRadiusBox: BoxType
 	borderStyle: string
 	borderWidth: number
 	borderWidthTablet: number

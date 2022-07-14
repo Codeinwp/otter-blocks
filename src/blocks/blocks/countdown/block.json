@@ -69,6 +69,9 @@
 			"type": "number"
 		},
 		"borderRadius": {
+			"type": ["number", "object"]
+		},
+		"borderRadiusBox": {
 			"type": "object"
 		},
 		"borderStyle": {

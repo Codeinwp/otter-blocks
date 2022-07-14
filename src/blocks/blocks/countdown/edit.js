@@ -77,7 +77,7 @@ const Edit = ({
 	const inlineStyles = {
 		'--backgroundColor': attributes.backgroundColor,
 		'--borderColor': attributes.borderColor,
-		'--borderRadius': boxValues( attributes.borderRadius ),
+		'--borderRadius': boxValues( attributes.borderRadiusBox ),
 		'--borderStyle': attributes.borderStyle,
 		'--backgroundColor': attributes.backgroundColor,
 		'--borderColor': attributes.borderColor,
