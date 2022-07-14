@@ -281,9 +281,6 @@ class Registration {
 			return;
 		}
 
-		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
-		wp_enqueue_style( 'otter-blocks', OTTER_BLOCKS_URL . 'build/blocks/blocks.css', [], $asset_file['version'] );
-
 		if ( is_singular() ) {
 			$this->enqueue_dependencies();
 		} else {
@@ -549,6 +546,8 @@ class Registration {
 	 * @access  public
 	 */
 	public function enqueue_block_styles( $post ) {
+		$otter_block_found = false;
+
 		foreach ( self::$blocks as $block ) {
 			if ( in_array( $block, self::$styles_loaded ) || ! has_block( 'themeisle-blocks/' . $block, $post ) ) {
 				continue;
@@ -580,6 +579,7 @@ class Registration {
 			}
 
 			if ( file_exists( $style_path ) && ! empty( $metadata['style'] ) ) {
+				$otter_block_found = true;
 				wp_register_style(
 					$metadata['style'],
 					$style,
@@ -589,6 +589,11 @@ class Registration {
 			}
 
 			array_push( self::$styles_loaded, $block );
+		}
+
+		if ( $otter_block_found ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
+			wp_enqueue_style( 'otter-blocks', OTTER_BLOCKS_URL . 'build/blocks/blocks.css', [], $asset_file['version'] );
 		}
 	}
 
