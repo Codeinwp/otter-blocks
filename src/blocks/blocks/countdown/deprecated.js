@@ -35,6 +35,9 @@ const deprecated = [ {
 		'borderRadiusType': {
 			'type': 'string',
 			'default': 'linked'
+		},
+		'borderRadius': {
+			'type': 'number'
 		}
 	},
 
