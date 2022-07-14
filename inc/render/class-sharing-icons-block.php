@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
+use Themeisle\GutenbergBlocks\CSS\Blocks\Sharing_Icons_CSS;
+
 /**
  * Class Sharing_Icons_Block
  */
@@ -102,6 +104,18 @@ class Sharing_Icons_Block {
 			}
 		}
 		$html .= '</div></div>';
+
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			$css = new Sharing_Icons_CSS();
+			$css = $css->render_css(
+				array(
+					'attrs' => $attributes,
+				),
+			);
+
+			$html .= '<style type="text/css">' . $css . '</style>';
+		}
+
 		return $html;
 	}
 }
