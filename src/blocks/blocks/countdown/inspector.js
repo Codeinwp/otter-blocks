@@ -198,7 +198,7 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Sizing', 'otter-blocks' ) }
+				title={ __( 'Dimensions & Spacing', 'otter-blocks' ) }
 				initialOpen={false}
 			>
 				<ResponsiveControl
@@ -207,7 +207,6 @@ const Inspector = ({
 					<UnitContol
 						value={ responsiveGetAttributes([ attributes.containerWidth, attributes.containerWidthTablet, attributes.containerWidthMobile ]) ?? '100%' }
 						onChange={ value => responsiveSetAttributes( value, [ 'containerWidth', 'containerWidthTablet', 'containerWidthMobile' ]) }
-
 					/>
 				</ResponsiveControl>
 				<ResponsiveControl
@@ -296,14 +295,14 @@ const Inspector = ({
 						label: __( 'Background', 'otter-blocks' )
 					},
 					{
+						value: attributes.valueColor,
+						onChange: valueColor => setAttributes({ valueColor }),
+						label: __( 'Time Value', 'otter-blocks' )
+					},
+					{
 						value: attributes.labelColor,
 						onChange: labelColor => setAttributes({ labelColor }),
 						label: __( 'Label', 'otter-blocks' )
-					},
-					{
-						value: attributes.valueColor,
-						onChange: valueColor => setAttributes({ valueColor }),
-						label: __( 'Value', 'otter-blocks' )
 					},
 					{
 						value: attributes.separatorColor,
@@ -335,12 +334,12 @@ const Inspector = ({
 					onChange={ borderStyle => setAttributes({ borderStyle: borderStyle || undefined })}
 					options={[
 						{
-							label: __( 'Solid', 'otter-blocks' ),
+							label: __( 'None', 'otter-blocks' ),
 							value: ''
 						},
 						{
-							label: __( 'None', 'otter-blocks' ),
-							value: 'unset'
+							label: __( 'Solid', 'otter-blocks' ),
+							value: 'solid'
 						},
 						{
 							label: __( 'Double', 'otter-blocks' ),
@@ -357,17 +356,22 @@ const Inspector = ({
 					]}
 				/>
 
-				<ResponsiveControl
-					label={ __( 'Width', 'otter-blocks' ) }
-				>
-					<RangeControl
-						value={ responsiveGetAttributes([ attributes.borderWidth, attributes.borderWidthTablet, attributes.borderWidthMobile ]) ?? 2 }
-						onChange={ value => responsiveSetAttributes( value, [ 'borderWidth', 'borderWidthTablet', 'borderWidthMobile' ]) }
-						min={ 0 }
-						max={ 50 }
-						allowReset
-					/>
-				</ResponsiveControl>
+				{
+					attributes.borderStyle && (
+						<ResponsiveControl
+							label={ __( 'Width', 'otter-blocks' ) }
+						>
+							<RangeControl
+								value={ responsiveGetAttributes([ attributes.borderWidth, attributes.borderWidthTablet, attributes.borderWidthMobile ]) ?? 2 }
+								onChange={ value => responsiveSetAttributes( value, [ 'borderWidth', 'borderWidthTablet', 'borderWidthMobile' ]) }
+								min={ 0 }
+								max={ 50 }
+								allowReset
+							/>
+						</ResponsiveControl>
+					)
+				}
+
 
 				<BoxControl
 					label={ __( 'Border Radius', 'otter-blocks' ) }
@@ -386,6 +390,10 @@ const Inspector = ({
 					id="o-border-raduis-box"
 				/>
 
+				{/*
+
+				// Release in future versions
+
 				<ResponsiveControl
 					label={ __( 'Padding', 'otter-blocks' ) }
 				>
@@ -403,7 +411,7 @@ const Inspector = ({
 						} }
 					/>
 
-				</ResponsiveControl>
+				</ResponsiveControl> */}
 			</PanelBody>
 		</InspectorControls>
 	);
