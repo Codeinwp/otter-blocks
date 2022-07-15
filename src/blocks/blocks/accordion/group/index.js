@@ -26,5 +26,27 @@ registerBlockType( name, {
 		'faq'
 	],
 	edit,
-	save
+	save,
+	example: {
+		attributes: {},
+		innerBlocks: [
+			{
+				name: 'themeisle-blocks/accordion-item',
+				attributes: {
+					initialOpen: true,
+					title: 'Lorem ipsum'
+				},
+				innerBlocks: [
+					{
+						name: 'core/paragraph',
+						attributes: {
+							customFontSize: 48,
+							content: 'Lorem ipsum dolor sit amet, eu liber saperet est. Recusabo volutpat has ne, sed dicit eruditi detraxit ut, modus ancillae mei eu.',
+							align: 'left'
+						}
+					}
+				]
+			}
+		]
+	}
 });

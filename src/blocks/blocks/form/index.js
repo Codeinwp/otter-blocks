@@ -16,6 +16,7 @@ import save from './save.js';
 import './input/index.js';
 import './nonce/index.js';
 import './textarea/index.js';
+import attributes from '../lottie/attributes';
 
 const { name } = metadata;
 
@@ -32,6 +33,40 @@ registerBlockType( name, {
 	edit,
 	save,
 	deprecated,
+	example: {
+		attributes: {},
+		innerBlocks: [
+			{
+				name: 'themeisle-blocks/form-input',
+				attributes: {
+					label: __( 'Name', 'otter-blocks' ),
+					type: 'text',
+					isRequired: true
+				}
+			},
+			{
+				name: 'themeisle-blocks/form-input',
+				attributes: {
+					label: __( 'Email', 'otter-blocks' ),
+					type: 'email',
+					isRequired: true
+				}
+			},
+			{
+				name: 'themeisle-blocks/form-textarea',
+				attributes: {
+					label: __( 'Message', 'otter-blocks' )
+				}
+			},
+			{
+				name: 'core/paragraph',
+				attributes: {
+					content: __( 'You agree to receive email communication from us by submitting this form and understand that your contact information will be stored with us.', 'otter-blocks' ),
+					fontSize: 'extra-small'
+				}
+			}
+		]
+	},
 	variations: [
 		{
 			name: 'themeisle-blocks/form-contact',

@@ -31,5 +31,10 @@ registerBlockType( name, {
 	deprecated,
 	transforms,
 	edit,
-	save
+	save,
+	example: {
+		attributes: {
+			content: 'Lorem ipsum dolor sit amet, eu liber saperet est.'
+		}
+	}
 });
