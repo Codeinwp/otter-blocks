@@ -27,6 +27,7 @@
 	--paddingMobile: var(--padding);
 	--valueFontWeight: regular;
 	--labelFontWeight: regular;
+	--direction-mobile: column;
 
 	.otter-countdown__container {
 		display: flex;
@@ -48,14 +49,15 @@
 		@media ( max-width: 600px ) {
 			gap: var( --gapMobile );
 			width: var(--widthMobile, 100%);
+			flex-direction: var(--direction-mobile);
 		}
 	}
 
 	.otter-countdown__display-area {
 		display: flex;
+		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		flex-direction: column;
 		background: var( --backgroundColor );
 		border: var( --borderWidth ) var(--borderStyle) var( --borderColor );
 		border-radius: var( --borderRadius );
@@ -82,6 +84,21 @@
 			border: unset;
 			background-color: transparent;
 			width: max-content;
+		}
+	}
+
+	@media ( max-width: 600px ) {
+		&.mobile-alignment {
+			.otter-countdown__display {
+				height: max-content;
+			}
+
+			.otter-countdown__display-area{
+				height: var(--height);
+				&[name="separator"] {
+					display: none;
+				}
+			}
 		}
 	}
 

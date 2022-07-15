@@ -41,6 +41,7 @@ type Attributes = {
 	paddingTablet: PaddingType
 	valueFontWeight: string
 	labelFontWeight: string
+	directionMobile: string
 }
 
 export type CountdownProps = BlockProps<Attributes>

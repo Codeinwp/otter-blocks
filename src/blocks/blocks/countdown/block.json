@@ -127,6 +127,9 @@
 		},
 		"paddingMobile": {
 			"type": "object"
+		},
+		"directionMobile": {
+			"type": "string"
 		}
 	},
 	"supports": {
