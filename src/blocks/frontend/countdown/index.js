@@ -123,6 +123,8 @@ domReady( () => {
 			const interval = setInterval( () => {
 				update( () => clearInterval( interval ) );
 			}, 500 );
+		} else {
+			countdown.classList.add( 'ready' );
 		}
 	});
 });
