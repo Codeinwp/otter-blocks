@@ -220,13 +220,6 @@ const Inspector = ({
 						}
 					]}
 				/>
-
-				<ToggleControl
-					label={__( 'Stack Verticaly on Mobile', 'otter-blocks' )}
-					checked={ Boolean( attributes.directionMobile ) }
-					onChange={ value => setAttributes({ directionMobile: value ? 'column' : undefined})}
-				/>
-
 			</PanelBody>
 
 			<PanelBody

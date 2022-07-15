@@ -105,8 +105,7 @@ const Edit = ({
 		'--paddingTablet': boxValues( attributes.paddingTablet ),
 		'--paddingMobile': boxValues( attributes.paddingMobile ),
 		'--valueFontWeight': attributes.valueFontWeight,
-		'--labelFontWeight': attributes.labelFontWeight,
-		'--direction-mobile': attributes.directionMobile
+		'--labelFontWeight': attributes.labelFontWeight
 	};
 
 	const [ cssNodeName, setCSS ] = useCSSNode();

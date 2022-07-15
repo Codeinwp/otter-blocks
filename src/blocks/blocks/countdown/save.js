@@ -17,7 +17,6 @@ import {
 	getIntervalFromUnix,
 	insertBetweenItems
 } from '../../helpers/helper-functions.js';
-import classNames from 'classnames';
 
 const DisplayTimeComponent = ({
 	name,
@@ -64,8 +63,7 @@ const Save = ({
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
-		'data-date': attributes.date,
-		className: classNames({ 'mobile-alignment': Boolean( attributes.directionMobile )})
+		'data-date': attributes.date
 	});
 
 	return (

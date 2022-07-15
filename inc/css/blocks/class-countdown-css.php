@@ -237,10 +237,6 @@ class Countdown_CSS extends Base_CSS {
 						'value'    => 'labelFontWeight',
 					),
 					array(
-						'property' => '--direction-mobile',
-						'value'    => 'directionMobile',
-					),
-					array(
 						'property'  => '--padding',
 						'value'     => 'padding',
 						'format'    => function( $value, $attrs ) {
