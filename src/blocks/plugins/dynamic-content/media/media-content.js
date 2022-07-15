@@ -69,13 +69,14 @@ const contentTypes = [
 ];
 
 const MediaItem = ({
+	uid,
 	item,
 	context,
 	selected,
 	onSelect
 }) => {
-	const url = window.themeisleGutenberg.restRoot + '/dynamic?type=' + item.type + '&context=' + context;
-	const isSelected = url === selected;
+	const url = window.themeisleGutenberg.restRoot + '/dynamic?type=' + item.type + '&context=' + context + '&uid=' + uid;
+	const isSelected = selected?.includes( `dynamic?type=${ item.type }` );
 
 	return (
 		<li
@@ -154,17 +155,35 @@ const MediaContent = ({
 }) => {
 	const selection = state.get( 'selection' );
 
-	const { getCurrentPostId } = useSelect( select => {
+	const {
+		getCurrentPostId,
+		getSelectedBlock
+	} = useSelect( select => {
 		const getCurrentPostId = select( 'core/editor' ).getCurrentPostId();
+		const getSelectedBlock = select( 'core/block-editor' ).getSelectedBlock();
 
 		return {
-			getCurrentPostId
+			getCurrentPostId,
+			getSelectedBlock
 		};
 	}, []);
 
 	const [ selected, setSelected ] = useState( selection?._single?.attributes?.url );
 
+	const [ uid, setUid ] = useState( Math.floor( Math.random() * 100000000 ) );
+
 	const [ attributes, setAttributes ] = useState({});
+
+	useEffect( () => {
+		if ( undefined !== window?.otterCurrentMediaProps?.value && 8 === String( window?.otterCurrentMediaProps?.value ).length ) {
+			setUid( window.otterCurrentMediaProps.value );
+
+			const blockAttrs = getSelectedBlock.attributes;
+			const obj = Object.keys( blockAttrs ).filter( i => 'string' === typeof blockAttrs[ i ] && blockAttrs[ i ]?.includes( 'otter/v1/dynamic' ) );
+			const target = obj.find( o => blockAttrs[ o ].includes( window.otterCurrentMediaProps.value ) );
+			onSelect( blockAttrs[ target ]);
+		}
+	}, []);
 
 	useEffect( () => {
 		const attrs = getObjectFromQueryString( selected || '' );
@@ -182,7 +201,10 @@ const MediaContent = ({
 
 		const url = window.themeisleGutenberg.restRoot + '/dynamic?' + getQueryStringFromObject( attrs );
 
-		onSelectImage( url );
+		onSelectImage({
+			id: uid,
+			url
+		});
 
 		setAttributes({ ...attrs });
 	};
@@ -193,8 +215,12 @@ const MediaContent = ({
 		} else {
 			setSelected( false );
 		}
+		console.log( value );
 
-		return onSelectImage( value );
+		return onSelectImage({
+			id: uid,
+			url: value
+		});
 	};
 
 	return (
@@ -205,6 +231,7 @@ const MediaContent = ({
 						return (
 							<MediaItem
 								key={ item.type }
+								uid={ uid }
 								item={ item }
 								context={ getCurrentPostId }
 								selected={ selected }

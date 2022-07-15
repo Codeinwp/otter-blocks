@@ -5,6 +5,10 @@ import { __ } from '@wordpress/i18n';
 
 import { render } from '@wordpress/element';
 
+import { addFilter } from '@wordpress/hooks';
+
+import { MediaUpload } from '@wordpress/media-utils';
+
 /**
  * Internal dependencies.
  */
@@ -14,6 +18,21 @@ import MediaContent from './media-content.js';
 let activeFrameId = '';
 let activeFrame = false;
 let activeModal = '';
+
+const replaceMediaUpload = InitialMediaUpload => {
+	return class OtterMediaUpload extends InitialMediaUpload {
+		constructor( props ) {
+			super( props );
+			window.otterCurrentMediaProps = props;
+		}
+	};
+};
+
+addFilter(
+	'editor.MediaUpload',
+	'themeisle-blocks/dynamic-content/media-library',
+	replaceMediaUpload
+);
 
 jQuery( document ).ready( function( $ ) {
 	var oldMediaFrame = wp.media.view.MediaFrame.Select;
@@ -113,12 +132,17 @@ jQuery( document ).ready( function( $ ) {
 		const state = activeModal.state();
 		const selection = state.get( 'selection' );
 
-		const onSelectImage = url => {
+		const onSelectImage = ({ id, url }) => {
 			if ( selection?._single?.attributes?.url === url ) {
 				return selection.reset();
 			}
 
-			selection.add({ url });
+			selection.add({
+				id,
+				url,
+				alt: '',
+				width: 500
+			});
 		};
 
 		render(

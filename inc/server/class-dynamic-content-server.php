@@ -66,6 +66,17 @@ class Dynamic_Content_Server {
 								return in_array( $param, $allowed_types );
 							},
 						),
+						'uid'      => array(
+							'type'              => 'integer',
+							'required'          => true,
+							'description'       => __( 'Unique ID.', 'otter-blocks' ),
+							'sanitize_callback' => function ( $param ) {
+								return intval( $param );
+							},
+							'validate_callback' => function ( $param, $request, $key ) {
+								return is_numeric( $param );
+							},
+						),
 						'context'  => array(
 							'type'              => 'integer',
 							'required'          => true,
