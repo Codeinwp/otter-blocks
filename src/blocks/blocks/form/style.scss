@@ -1,28 +1,28 @@
 .wp-block-themeisle-blocks-form {
 	--padding: 8px;
-	--borderRadius: 4px;
-	--borderColor: inherit;
-	--borderWidth: 1px;
-	--labelColor: inherit;
-	--helpLabelColor: inherit;
-	--inputWidth: 100%;
-	--requiredColor: red;
-	--submitColor: white;
-	--submitMsgColor: green;
-	--submitErrorColor: red;
-	--inputsGap: 10px;
-	--inputGap: 16px;
-	--labelFontSize: var(--bodyFontSize, inherit);
-	--messageFontSize: var(--bodyFontSize, inherit);
-	--submitFontSize: var(--btnFs, var(--bodyFontSize, inherit));
-	--inputColor: initial;
-	--inputFontSize: 1em;
-	--helpFontSize: 13px;
+	--border-radius: 4px;
+	--border-color: inherit;
+	--border-width: 1px;
+	--label-color: inherit;
+	--help-label-color: inherit;
+	--input-width: 100%;
+	--required-color: red;
+	--submit-color: white;
+	--submit-msg-color: green;
+	--submit-error-color: red;
+	--inputs-gap: 10px;
+	--input-gap: 16px;
+	--label-font-size: var(--bodyFontSize, inherit);
+	--message-font-size: var(--bodyFontSize, inherit);
+	--submit-font-size: var(--btnFs, var(--bodyFontSize, inherit));
+	--input-color: initial;
+	--input-font-size: 1em;
+	--help-font-size: 13px;
 
 	.otter-form__container {
 		display: flex;
 		flex-direction: column;
-		gap: var(--inputsGap);
+		gap: var(--inputs-gap);
 
 		p {
 			margin-bottom: 10px;
@@ -34,11 +34,11 @@
 			flex-direction: row;
 
 			.wp-block-button__link {
-				font-size: var(--submitFontSize);
+				font-size: var(--submit-font-size);
 				text-align: center;
 				height: auto;
 				padding: 10px 20px;
-				color: var(--submitColor);
+				color: var(--submit-color);
 				border: 0px;
 				transition: background-color 0.15s linear;
 			}
@@ -67,35 +67,35 @@
 		display: flex;
 		flex-direction: column;
 		width: 100%;
-		gap: var(--inputGap);
+		gap: var(--input-gap);
 		margin: 0px;
 
 		.otter-form-input-label, .otter-form-textarea-label {
 			width: 100%;
-			color: var(--labelColor);
-			font-size: var(--labelFontSize);
+			color: var(--label-color);
+			font-size: var(--label-font-size);
 
 			.required {
-				color: var(--requiredColor);
+				color: var(--required-color);
 			}
 		}
 
 		.otter-form-input,.otter-form-textarea-input {
-			color: var(--inputColor);
-			width: var(--inputWidth);
+			color: var(--input-color);
+			width: var(--input-width);
 			padding: var(--padding);
-			border-radius: var(--borderRadius);
-			border-width: var(--borderWidth);
-			border-color: var(--borderColor);
+			border-radius: var(--border-radius);
+			border-width: var(--border-width);
+			border-color: var(--border-color);
 			border-style: solid;
-			font-size: var(--inputFontSize);
+			font-size: var(--input-font-size);
 		}
 
 		.o-form-help {
 			opacity: 0.8;
-			color: var(--helpLabelColor);
+			color: var(--help-label-color);
 			margin-bottom: 12px;
-			font-size: var(--helpFontSize);
+			font-size: var(--help-font-size);
 		}
 	}
 
@@ -121,16 +121,16 @@
 	.o-form-server-response {
 		text-align: left;
 		padding: 1rem;
-		font-size: var(--messageFontSize);
+		font-size: var(--message-font-size);
 		border-radius: 10%;
 		margin-left: 10px;
 
 		&.o-success {
-			color: var(--submitMsgColor);
+			color: var(--submit-msg-color);
 		}
 
 		&.o-error {
-			color: var(--submitErrorColor);
+			color: var(--submit-error-color);
 		}
 
 		&.o-info {
@@ -162,7 +162,7 @@
 			margin-top: -10px;
 			margin-left: -10px;
 			border-radius: 50%;
-			border-top: 2px solid var(--submitColor);
+			border-top: 2px solid var(--submit-color);
 			border-right: 2px solid transparent;
 			animation: spinner 0.6s linear infinite;
 		}

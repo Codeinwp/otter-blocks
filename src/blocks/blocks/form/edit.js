@@ -713,23 +713,23 @@ const Edit = ({
 	};
 
 	const inlineStyles = {
-		'--messageFontSize': attributes.messageFontSize !== undefined && attributes.messageFontSize,
-		'--inputFontSize': attributes.inputFontSize !== undefined && attributes.inputFontSize,
-		'--helpFontSize': attributes.helpFontSize !== undefined && attributes.helpFontSize,
-		'--inputColor': attributes.inputColor,
+		'--message-font-size': attributes.messageFontSize !== undefined && attributes.messageFontSize,
+		'--input-font-size': attributes.inputFontSize !== undefined && attributes.inputFontSize,
+		'--help-font-size': attributes.helpFontSize !== undefined && attributes.helpFontSize,
+		'--input-color': attributes.inputColor,
 		'--padding': padding( attributes.inputPadding ),
-		'--borderRadius': attributes.inputBorderRadius !== undefined && ( attributes.inputBorderRadius + 'px' ),
-		'--borderWidth': attributes.inputBorderWidth !== undefined && ( attributes.inputBorderWidth + 'px' ),
-		'--borderColor': attributes.inputBorderColor,
-		'--labelColor': attributes.labelColor,
-		'--inputWidth': attributes.inputWidth !== undefined && ( attributes.inputWidth + '%' ),
-		'--submitColor': attributes.submitColor,
-		'--requiredColor': attributes.inputRequiredColor,
-		'--inputGap': attributes.inputGap !== undefined && ( attributes.inputGap + 'px' ),
-		'--inputsGap': attributes.inputsGap !== undefined && ( attributes.inputsGap + 'px' ),
-		'--labelFontSize': attributes.labelFontSize !== undefined && ( attributes.labelFontSize + 'px' ),
-		'--submitFontSize': attributes.submitFontSize !== undefined && ( attributes.submitFontSize + 'px' ),
-		'--helpLabelColor': attributes.helpLabelColor
+		'--border-radius': attributes.inputBorderRadius !== undefined && ( attributes.inputBorderRadius + 'px' ),
+		'--border-width': attributes.inputBorderWidth !== undefined && ( attributes.inputBorderWidth + 'px' ),
+		'--border-color': attributes.inputBorderColor,
+		'--label-color': attributes.labelColor,
+		'--input-width': attributes.inputWidth !== undefined && ( attributes.inputWidth + '%' ),
+		'--submit-color': attributes.submitColor,
+		'--required-color': attributes.inputRequiredColor,
+		'--input-gap': attributes.inputGap !== undefined && ( attributes.inputGap + 'px' ),
+		'--inputs-gap': attributes.inputsGap !== undefined && ( attributes.inputsGap + 'px' ),
+		'--label-font-size': attributes.labelFontSize !== undefined && ( attributes.labelFontSize + 'px' ),
+		'--submit-font-size': attributes.submitFontSize !== undefined && ( attributes.submitFontSize + 'px' ),
+		'--help-label-color': attributes.helpLabelColor
 	};
 
 	const [ cssNodeName, setCSS ] = useCSSNode();

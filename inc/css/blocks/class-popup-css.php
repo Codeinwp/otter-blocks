@@ -38,29 +38,29 @@ class Popup_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--minWidth',
+						'property' => '--min-width',
 						'value'    => 'minWidth',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--maxWidth',
+						'property' => '--max-width',
 						'value'    => 'maxWidth',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--backgroundColor',
+						'property' => '--background-color',
 						'value'    => 'backgroundColor',
 					),
 					array(
-						'property' => '--closeColor',
+						'property' => '--close-color',
 						'value'    => 'closeColor',
 					),
 					array(
-						'property' => '--overlayColor',
+						'property' => '--overlay-color',
 						'value'    => 'overlayColor',
 					),
 					array(
-						'property' => '--overlayOpacity',
+						'property' => '--overlay-opacity',
 						'value'    => 'overlayOpacity',
 						'format'   => function( $value ) {
 							return $value / 100;

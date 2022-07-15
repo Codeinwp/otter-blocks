@@ -38,22 +38,22 @@ class Accordion_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--titleColor',
+						'property' => '--title-color',
 						'value'    => 'titleColor',
 						'hasSync'  => 'accordionTitleColor',
 					),
 					array(
-						'property' => '--titleBackground',
+						'property' => '--title-background',
 						'value'    => 'titleBackground',
 						'hasSync'  => 'accordionTitleBackground',
 					),
 					array(
-						'property' => '--borderColor',
+						'property' => '--border-color',
 						'value'    => 'borderColor',
 						'hasSync'  => 'accordionBorderColor',
 					),
 					array(
-						'property' => '--contentBackground',
+						'property' => '--content-background',
 						'value'    => 'contentBackground',
 						'hasSync'  => 'accordionContentBackground',
 					),

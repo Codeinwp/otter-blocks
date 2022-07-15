@@ -43,7 +43,7 @@ class Woo_Comparison_CSS extends Base_CSS {
 						'value'    => 'rowColor',
 					),
 					array(
-						'property' => '--headerColor',
+						'property' => '--header-color',
 						'value'    => 'headerColor',
 					),
 					array(
@@ -51,7 +51,7 @@ class Woo_Comparison_CSS extends Base_CSS {
 						'value'    => 'textColor',
 					),
 					array(
-						'property' => '--borderColor',
+						'property' => '--border-color',
 						'value'    => 'borderColor',
 					),
 					array(

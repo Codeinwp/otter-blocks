@@ -154,7 +154,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'hasSync'   => 'sectionMarginBottom',
 					),
 					array(
-						'property' => '--columnsWidth',
+						'property' => '--columns-width',
 						'value'    => 'columnsWidth',
 						'unit'     => 'px',
 						'hasSync'  => 'sectionColumnsWidth',

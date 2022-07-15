@@ -38,20 +38,20 @@ class Tabs_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--borderWidth',
+						'property' => '--border-width',
 						'value'    => 'borderWidth',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--borderColor',
+						'property' => '--border-color',
 						'value'    => 'borderColor',
 					),
 					array(
-						'property' => '--activeTitleColor',
+						'property' => '--active-title-color',
 						'value'    => 'activeTitleColor',
 					),
 					array(
-						'property' => '--tabColor',
+						'property' => '--tab-color',
 						'value'    => 'tabColor',
 					),
 				),

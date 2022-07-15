@@ -51,7 +51,7 @@ class Circle_Counter_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--fontSizeTitle',
+						'property' => '--font-size-title',
 						'value'    => 'fontSizeTitle',
 						'unit'     => 'px',
 					),
@@ -61,7 +61,7 @@ class Circle_Counter_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--backgroundColor',
+						'property' => '--background-color',
 						'value'    => 'backgroundColor',
 						'format'   => function( $value, $attrs ) {
 							$percentage = isset( $attrs['percentage'] ) ? $attrs['percentage'] : 50;

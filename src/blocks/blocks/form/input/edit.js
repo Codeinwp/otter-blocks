@@ -53,13 +53,13 @@ const Edit = ({
 		 */
 
 		if ( inputRef.current ) {
-			inputRef.current?.style?.setProperty( '--inputWidth', per( attributes.inputWidth ) );
+			inputRef.current?.style?.setProperty( '--input-width', per( attributes.inputWidth ) );
 		}
 		if ( labelRef.current ) {
-			labelRef.current?.style?.setProperty( '--labelColor', attributes.labelColor || null );
+			labelRef.current?.style?.setProperty( '--label-color', attributes.labelColor || null );
 		}
 		if ( helpRef.current ) {
-			helpRef.current?.style?.setProperty( '--labelColor', attributes.labelColor || null );
+			helpRef.current?.style?.setProperty( '--label-color', attributes.labelColor || null );
 		}
 	}, [ inputRef.current, labelRef.current, helpRef.current, attributes.labelColor, attributes.inputWidth ]);
 

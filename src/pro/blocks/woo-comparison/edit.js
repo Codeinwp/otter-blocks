@@ -56,9 +56,9 @@ const Edit = ({
 		setNodeCSS([
 			`.nv-ct-comparison-table-content {
 				--bgColor: ${ attributes.rowColor };
-				--headerColor: ${ attributes.headerColor };
+				--header-color: ${ attributes.headerColor };
 				--color: ${ attributes.textColor };
-				--borderColor: ${ attributes.borderColor };
+				--border-color: ${ attributes.borderColor };
 				${ Boolean( attributes.altRow ) && `--alternateBg: ${ attributes.altRowColor };` }
 			}`
 		]);

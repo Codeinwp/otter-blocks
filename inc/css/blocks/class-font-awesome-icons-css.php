@@ -42,16 +42,16 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 						'value'    => 'align',
 					),
 					array(
-						'property' => '--borderColor',
+						'property' => '--border-color',
 						'value'    => 'borderColor',
 					),
 					array(
-						'property' => '--borderSize',
+						'property' => '--border-size',
 						'value'    => 'borderSize',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--borderRadius',
+						'property' => '--border-radius',
 						'value'    => 'borderRadius',
 						'unit'     => '%',
 					),
@@ -69,7 +69,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 						'hasSync'  => 'iconPadding',
 					),
 					array(
-						'property' => '--fontSize',
+						'property' => '--font-size',
 						'value'    => 'fontSize',
 						'unit'     => 'px',
 						'hasSync'  => 'iconFontSize',

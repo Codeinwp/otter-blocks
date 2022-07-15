@@ -38,22 +38,22 @@ class Review_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--backgroundColor',
+						'property' => '--background-color',
 						'value'    => 'backgroundColor',
 						'hasSync'  => 'reviewBackgroundColor',
 					),
 					array(
-						'property' => '--primaryColor',
+						'property' => '--primary-color',
 						'value'    => 'primaryColor',
 						'hasSync'  => 'reviewPrimaryColor',
 					),
 					array(
-						'property' => '--textColor',
+						'property' => '--text-color',
 						'value'    => 'textColor',
 						'hasSync'  => 'reviewTextColor',
 					),
 					array(
-						'property' => '--buttonTextColor',
+						'property' => '--button-text-color',
 						'value'    => 'buttonTextColor',
 						'hasSync'  => 'reviewButtonTextColor',
 					),

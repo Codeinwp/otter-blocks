@@ -117,10 +117,10 @@ const Edit = ({
 	};
 
 	const inlineStyles = {
-		'--backgroundColor': getValue( 'backgroundColor' ),
-		'--primaryColor': getValue( 'primaryColor' ),
-		'--textColor': getValue( 'textColor' ),
-		'--buttonTextColor': getValue( 'buttonTextColor' )
+		'--background-color': getValue( 'backgroundColor' ),
+		'--primary-color': getValue( 'primaryColor' ),
+		'--text-color': getValue( 'textColor' ),
+		'--button-text-color': getValue( 'buttonTextColor' )
 	};
 
 	const isPlaceholder = ( 'object' === typeof status && null !== status && status.isError ) || 'isLoading' === status;
