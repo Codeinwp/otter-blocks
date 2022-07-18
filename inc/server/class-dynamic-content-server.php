@@ -151,12 +151,12 @@ class Dynamic_Content_Server {
 			$path = $fallback;
 		}
 
-		$default  = $path;
+		$default = $path;
 
 		if ( 'featuredImage' === $type ) {
 			$image = get_post_thumbnail_id( $context );
 			if ( $image ) {
-				$path  = wp_get_original_image_path( $image );
+				$path = wp_get_original_image_path( $image );
 			}
 		}
 
@@ -177,7 +177,7 @@ class Dynamic_Content_Server {
 			$custom_logo_id = get_theme_mod( 'custom_logo' );
  
 			if ( $custom_logo_id ) {
-				$path  = wp_get_original_image_path( $custom_logo_id );
+				$path = wp_get_original_image_path( $custom_logo_id );
 			}
 		}
 
@@ -186,12 +186,12 @@ class Dynamic_Content_Server {
 			$image   = $product->get_image_id();
 			
 			if ( $image ) {
-				$path  = wp_get_original_image_path( $image );
+				$path = wp_get_original_image_path( $image );
 			} else {
 				$image = get_option( 'woocommerce_placeholder_image', 0 );
 
 				if ( $image ) {
-					$path  = wp_get_original_image_path( $image );
+					$path = wp_get_original_image_path( $image );
 				}
 			}
 		}
@@ -205,7 +205,7 @@ class Dynamic_Content_Server {
 		}
 
 		if ( $size = @getimagesize( $path ) ) {
-			header( 'Content-type: '.$size['mime'] );
+			header( 'Content-type: ' . $size['mime'] );
 			return readfile( $path );
 		}
 

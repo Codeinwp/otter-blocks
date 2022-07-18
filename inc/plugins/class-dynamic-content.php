@@ -24,6 +24,7 @@ class Dynamic_Content {
 	 */
 	public function init() {
 		add_filter( 'the_content', array( $this, 'apply_dynamic_content' ) );
+		add_filter( 'the_content', array( $this, 'apply_dynamic_images' ) );
 		add_filter( 'widget_block_content', array( $this, 'apply_dynamic_content' ), 0, 1 );
 
 		if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
@@ -32,7 +33,7 @@ class Dynamic_Content {
 	}
 
 	/**
-	 * Filter post content.
+	 * Filter post content for dynamic content.
 	 *
 	 * @param string $content Post content.
 	 *
@@ -48,6 +49,116 @@ class Dynamic_Content {
 		return preg_replace_callback( $re, array( $this, 'apply_data' ), $content );
 	}
 
+	/**
+	 * Filter post content for dynamic images.
+	 *
+	 * @param string $content Post content.
+	 *
+	 * @return string
+	 */
+	public function apply_dynamic_images( $content ) { 
+		if ( false === strpos( $content, 'otter/v1/dynamic' ) ) {
+			return $content;
+		}
+
+		$rest_url = get_rest_url( null, 'otter/v1' );
+		$rest_url = preg_replace( '/([^A-Za-z0-9\s_-])/', '\\\\$1', $rest_url );
+
+		$re = '/' . $rest_url . '\/dynamic\?.[^"]*/';
+
+		return preg_replace_callback( $re, array( $this, 'apply_images' ), $content );
+	}
+
+	/**
+	 * Apply dynamic data.
+	 *
+	 * @param array $data Dynamic request.
+	 *
+	 * @return string
+	 */
+	public function apply_images( $data ) {
+		if ( ! isset( $data[0] ) ) {
+			return $data;
+		}
+
+		$data  = self::query_string_to_array( $data[0] );
+		$value = $this->get_image( $data );
+
+		return $value;
+	}
+
+	/**
+	 * Apply dynamic image.
+	 *
+	 * @param array $data Query array.
+	 *
+	 * @return string
+	 */
+	public function get_image( $data ) {
+		$value = OTTER_BLOCKS_URL . 'assets/images/placeholder.jpg';
+
+		if ( isset( $data['fallback'] ) && ! empty( $data['fallback'] ) ) {
+			$value = esc_url( $data['fallback'] );
+		}
+
+		if ( ! isset( $data['type'] ) && empty( $data['type'] ) ) {
+			return $value;
+		}
+
+		if ( 'featuredImage' === $data['type'] ) {
+			$image = get_the_post_thumbnail_url( $data['context'] );
+
+			if ( $image ) {
+				$value = $image;
+			}
+		}
+
+		if ( 'author' === $data['type'] ) {
+			$author = get_post_field( 'post_author', $data['context'] );
+			$value  = get_avatar_url( $author );
+		}
+
+		if ( 'loggedInUser' === $data['type'] ) {
+			$user = get_current_user_id();
+
+			if ( true === boolval( $user ) ) {
+				$value = get_avatar_url( $user );
+			}
+		}
+
+		if ( 'logo' === $data['type'] ) {
+			$custom_logo_id = get_theme_mod( 'custom_logo' );
+ 
+			if ( $custom_logo_id ) {
+				$value = wp_get_attachment_image_url( $custom_logo_id, 'full' );
+			}
+		}
+
+		if ( 'product' === $data['type'] && isset( $data['id'] ) && ! empty( $data['id'] ) ) {
+			$product = wc_get_product( $data['id'] );
+			$image   = $product->get_image_id();
+			
+			if ( $image ) {
+				$value = wp_get_attachment_image_url( $image, 'full' );
+			} else {
+				$image = get_option( 'woocommerce_placeholder_image', 0 );
+
+				if ( $image ) {
+					$value = wp_get_attachment_image_url( $image, 'full' );
+				}
+			}
+		}
+
+		if ( 'postMeta' === $data['type'] && isset( $data['meta'] ) && ! empty( $data['meta'] ) ) {
+			$meta = get_post_meta( $data['context'], $data['meta'], true );
+
+			if ( ! empty( $meta ) ) {
+				$value = esc_url( $meta );
+			}
+		}
+
+		return $value;
+	}
 
 	/**
 	 * Filter Block Templates.
@@ -325,6 +436,33 @@ class Dynamic_Content {
 		$time = date( $format );
 
 		return $time;
+	}
+
+	/**
+	 * Convert Query String to Array.
+	 *
+	 * @param string $qry URL.
+	 *
+	 * @return array
+	 */
+	public static function query_string_to_array( $qry ) {
+		$result = array();
+
+		if ( strpos( $qry, '=' ) ) {
+			if ( strpos( $qry, '?' ) !== false ) {
+				$q   = wp_parse_url( $qry );
+				$qry = $q['query'];
+			}
+		} else {
+			return false;
+		}
+
+		foreach ( explode( '&amp;', $qry ) as $couple ) {
+			list ( $key, $val ) = explode( '=', $couple );
+			$result[ $key ]     = $val;
+		}
+
+		return empty( $result ) ? false : $result;
 	}
 
 	/**
