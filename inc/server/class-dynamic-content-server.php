@@ -147,7 +147,7 @@ class Dynamic_Content_Server {
 		$meta     = $request->get_param( 'meta' );
 		$path     = OTTER_BLOCKS_PATH . '/assets/images/placeholder.jpg';
 
-		if ( ! empty( $fallback ) && @getimagesize( $fallback ) ) {
+		if ( ! empty( $fallback ) && @getimagesize( $fallback ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 			$path = $fallback;
 		}
 
@@ -204,13 +204,13 @@ class Dynamic_Content_Server {
 			}
 		}
 
-		if ( $size = @getimagesize( $path ) ) {
+		if ( $size = @getimagesize( $path ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, Squiz.PHP.DisallowMultipleAssignments.FoundInControlStructure
 			header( 'Content-type: ' . $size['mime'] );
-			return readfile( $path );
+			return readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
 		}
 
 		header( 'Content-type: image/jpg' );
-		return readfile( $default );
+		return readfile( $default ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
 	}
 
 	/**
