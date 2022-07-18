@@ -72,11 +72,10 @@ const MediaItem = ({
 	uid,
 	item,
 	context,
-	selected,
+	isSelected,
 	onSelect
 }) => {
 	const url = window.themeisleGutenberg.restRoot + '/dynamic?type=' + item.type + '&context=' + context + '&uid=' + uid;
-	const isSelected = selected?.includes( `dynamic?type=${ item.type }` );
 
 	return (
 		<li
@@ -85,7 +84,7 @@ const MediaItem = ({
 				'selected': isSelected,
 				'is-pro': item?.isPro
 			}) }
-			onClick={ () => onSelect( url ) }
+			onClick={ () => onSelect( url, isSelected ) }
 			title={ item.label }
 			style={ {
 				backgroundImage: `url(' ${ item.icon } ')`
@@ -100,7 +99,7 @@ const MediaItem = ({
 					type="button"
 					className="check"
 					tabIndex="-1"
-					onClick={ () => onSelect( url ) }
+					onClick={ () => onSelect( url, true ) }
 				>
 					<span className="media-modal-icon"></span>
 					<span className="screen-reader-text">{ __( 'Deselect', 'otter-blocks' ) }</span>
@@ -170,18 +169,21 @@ const MediaContent = ({
 
 	const [ selected, setSelected ] = useState( selection?._single?.attributes?.url );
 
-	const [ uid, setUid ] = useState( Math.floor( Math.random() * 100000000 ) );
-
 	const [ attributes, setAttributes ] = useState({});
+
+	const [ uid, setUid ] = useState( Math.floor( Math.random() * 89999999 + 10000000 ) );
 
 	useEffect( () => {
 		if ( undefined !== window?.otterCurrentMediaProps?.value && 8 === String( window?.otterCurrentMediaProps?.value ).length ) {
-			setUid( window.otterCurrentMediaProps.value );
-
 			const blockAttrs = getSelectedBlock.attributes;
 			const obj = Object.keys( blockAttrs ).filter( i => 'string' === typeof blockAttrs[ i ] && blockAttrs[ i ]?.includes( 'otter/v1/dynamic' ) );
-			const target = obj.find( o => blockAttrs[ o ].includes( window.otterCurrentMediaProps.value ) );
-			onSelect( blockAttrs[ target ]);
+			const target = obj.find( o => blockAttrs[ o ]?.includes( window.otterCurrentMediaProps.value ) );
+
+			const attrs = getObjectFromQueryString( blockAttrs[ target ] || '' );
+			attrs.uid = uid;
+			const url = window.themeisleGutenberg.restRoot + '/dynamic?' + getQueryStringFromObject( attrs );
+			onSelect( url );
+			window.otterCurrentMediaProps = {};
 		}
 	}, []);
 
@@ -209,13 +211,12 @@ const MediaContent = ({
 		setAttributes({ ...attrs });
 	};
 
-	const onSelect = value => {
-		if ( selected !== value ) {
+	const onSelect = ( value, reset = false ) => {
+		if ( ! reset ) {
 			setSelected( value );
 		} else {
 			setSelected( false );
 		}
-		console.log( value );
 
 		return onSelectImage({
 			id: uid,
@@ -234,7 +235,7 @@ const MediaContent = ({
 								uid={ uid }
 								item={ item }
 								context={ getCurrentPostId }
-								selected={ selected }
+								isSelected={ selected ? selected?.includes( `dynamic?type=${ item.type }` ) : false }
 								onSelect={ onSelect }
 							/>
 						);
