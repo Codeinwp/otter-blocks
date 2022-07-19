@@ -47,7 +47,13 @@ const ACFImageSelect = ({
 		<SelectControl
 			label={ label }
 			value={ value }
-			options={ fields }
+			options={ [
+				{
+					label: __( 'Select a field', 'otter-blocks' ),
+					value: 'none'
+				},
+				...fields
+			] }
 			onChange={ onChange }
 		/>
 	);

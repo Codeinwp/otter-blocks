@@ -218,6 +218,14 @@ class Dynamic_Content {
 		$id      = $request->get_param( 'id' );
 		$meta    = $request->get_param( 'meta' );
 
+		if ( 'postMeta' === $type && ! empty( $meta ) ) {
+			$value = get_post_meta( $context, $meta, true );
+
+			if ( ! empty( $value ) ) {
+				$path = esc_url( $value );
+			}
+		}
+
 		if ( 'product' === $type && ! empty( $id ) ) {
 			$product = wc_get_product( $id );
 			$image   = $product->get_image_id();
@@ -233,11 +241,27 @@ class Dynamic_Content {
 			}
 		}
 
-		if ( 'postMeta' === $type && ! empty( $meta ) ) {
-			$value = get_post_meta( $context, $meta, true );
+		if ( 'acf' === $type && ! empty( $meta ) && class_exists( 'ACF' ) ) {
+			$field = get_field( $meta, $context );
 
-			if ( ! empty( $value ) ) {
-				$path = esc_url( $value );
+			if ( ! empty( $field ) ) {
+				if ( is_array( $field ) && isset( $field['ID'] ) ) {
+					$path = wp_get_original_image_path( $field['ID'] );
+				}
+
+				if ( is_string( $field ) ) {
+					$image = $this->get_image_id_from_url( $field );
+
+					if ( $image ) {
+						$path = wp_get_original_image_path( $image );
+					} else {
+						$path = $field;
+					}
+				}
+
+				if ( is_int( $field ) ) {
+					$path = wp_get_original_image_path( $field );
+				}
 			}
 		}
 
@@ -254,6 +278,14 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function evaluate_content_media_content( $value, $data ) {
+		if ( 'postMeta' === $data['type'] && isset( $data['meta'] ) && ! empty( $data['meta'] ) ) {
+			$meta = get_post_meta( $data['context'], $data['meta'], true );
+
+			if ( ! empty( $meta ) ) {
+				$value = esc_url( $meta );
+			}
+		}
+
 		if ( 'product' === $data['type'] && isset( $data['id'] ) && ! empty( $data['id'] ) ) {
 			$product = wc_get_product( $data['id'] );
 			$image   = $product->get_image_id();
@@ -269,15 +301,54 @@ class Dynamic_Content {
 			}
 		}
 
-		if ( 'postMeta' === $data['type'] && isset( $data['meta'] ) && ! empty( $data['meta'] ) ) {
-			$meta = get_post_meta( $data['context'], $data['meta'], true );
+		if ( 'acf' === $data['type'] && ! empty( $data['meta'] ) && class_exists( 'ACF' ) ) {
+			$field = get_field( $data['meta'], $data['context'] );
 
-			if ( ! empty( $meta ) ) {
-				$value = esc_url( $meta );
+			if ( ! empty( $field ) ) {
+				if ( is_array( $field ) && isset( $field['url'] ) ) {
+					$value = $field['url'];
+				}
+
+				if ( is_string( $field ) ) {
+					$value = $field;
+				}
+
+				if ( is_int( $field ) ) {
+					$value = wp_get_attachment_image_url( $field, 'full' );
+				}
 			}
 		}
 
 		return $value;
+	}
+
+	/**
+	 * Get image id from URL
+	 *
+	 * @param string $url Image URL.
+	 *
+	 * @since 2.0.9
+	 * @return int
+	 */
+	public function get_image_id_from_url( $url ) {
+		global $wpdb;
+
+		$transient_key = 'otter_image_id_from_url_' . esc_urL( $url );
+
+		$image = get_transient( $transient_key );
+
+		if ( false === $image ) {
+			$image = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE guid=%s;", $url ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		} else {
+			return $image;
+		}
+
+		if ( ! empty( $image ) ) {
+			set_transient( $transient_key, $image[0], DAY_IN_SECONDS );
+			return $image[0];
+		}
+
+		return false;
 	}
 
 	/**

@@ -62,7 +62,7 @@ class Dynamic_Content_Server {
 								return (string) esc_attr( $param );
 							},
 							'validate_callback' => function ( $param, $request, $key ) {
-								$allowed_types = array( 'featuredImage', 'author', 'loggedInUser', 'logo', 'product', 'postMeta' );
+								$allowed_types = array( 'featuredImage', 'author', 'loggedInUser', 'logo', 'postMeta', 'product', 'acf' );
 								return in_array( $param, $allowed_types );
 							},
 						),
