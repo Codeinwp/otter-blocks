@@ -28,5 +28,24 @@ registerBlockType( name, {
 	],
 	deprecated,
 	edit,
-	save
+	save,
+	example: {
+		attributes: {
+			spacing: 30
+		},
+		innerBlocks: [
+			{
+				name: 'themeisle-blocks/button',
+				attributes: {
+					text: 'Lorem 1'
+				}
+			},
+			{
+				name: 'themeisle-blocks/button',
+				attributes: {
+					text: 'Lorem 2'
+				}
+			}
+		]
+	}
 });
