@@ -8,7 +8,10 @@ import classNames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
-import { TextControl } from '@wordpress/components';
+import {
+	Button,
+	TextControl
+} from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
 
@@ -136,6 +139,22 @@ const MediaSidebar = ({
 					onChange={ fallback => changeAttributes({ fallback }) }
 				/>
 			) }
+
+			{ ! Boolean( window.themeisleGutenberg.hasPro ) && (
+				<div className="o-media-pro-upsell">
+					<img src={ window.themeisleGutenberg.assetsPath + '/images/logo-alt.png' } />
+					<div className="o-media-pro-upsell-title">{ __( 'Get more with Otter Pro', 'otter-blocks' ) }</div>
+					<div className="o-media-pro-upsell-description">{ __( 'Unlock the full power of Dynamic images with Otter Pro', 'otter-blocks' ) }</div>
+
+					<Button
+						isPrimary
+						target="_blank"
+						href={ window.themeisleGutenberg.upgradeLink }
+					>
+						{ __( 'Get Pro Now', 'otter-blocks' ) }
+					</Button>
+				</div>
+			) }
 		</Fragment>
 	);
 };
@@ -239,6 +258,8 @@ const MediaContent = ({
 						);
 					}) }
 				</ul>
+
+				{ applyFilters( 'otter.poweredBy', '' ) }
 			</div>
 
 			<div className="media-sidebar">
