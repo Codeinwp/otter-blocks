@@ -29,7 +29,7 @@ class Pro {
 			add_action( 'admin_notices', array( $this, 'old_neve_notice' ) );
 		}
 
-		add_filter( 'init', array( $this, 'init_upsells' ) );
+		add_action( 'init', array( $this, 'init_upsells' ) );
 	}
 
 	/**
@@ -39,19 +39,19 @@ class Pro {
 	 * 
 	 * @since   2.0.9
 	 * @access  public
-	 * @return  bool
 	 */
 	public function init_upsells() {
-		if ( ! self::is_pro_active() ) {
-			add_action( 'add_meta_boxes', array( $this, 'register_metabox' ) );
-			add_filter( 'cron_schedules', array( $this, 'add_cron_schedules' ) );
-			add_action( 'wp', array( $this, 'schedule_cron_events' ) );
-			add_action( 'otter_montly_scheduled_events', array( $this, 'reset_dashboard_notice' ) );
-			add_action( 'admin_init', array( $this, 'dismiss_dashboard_notice' ), 10 );
-			add_action( 'admin_init', array( $this, 'should_show_dashboard_upsell' ), 11 );
+		if ( self::is_pro_active() ) {
+			return;
 		}
-	}
 
+		add_action( 'add_meta_boxes', array( $this, 'register_metabox' ) );
+		add_filter( 'cron_schedules', array( $this, 'add_cron_schedules' ) );
+		add_action( 'wp', array( $this, 'schedule_cron_events' ) );
+		add_action( 'otter_montly_scheduled_events', array( $this, 'reset_dashboard_notice' ) );
+		add_action( 'admin_init', array( $this, 'dismiss_dashboard_notice' ), 10 );
+		add_action( 'admin_init', array( $this, 'should_show_dashboard_upsell' ), 11 );
+	}
 
 	/**
 	 * Check if Otter Pro is available
