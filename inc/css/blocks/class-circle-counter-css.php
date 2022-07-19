@@ -74,7 +74,7 @@ class Circle_Counter_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => '--progressColor',
+						'property' => '--progress-color',
 						'value'    => 'progressColor',
 						'format'   => function( $value, $attrs ) {
 							$percentage = isset( $attrs['percentage'] ) ? $attrs['percentage'] : 50;
@@ -98,7 +98,7 @@ class Circle_Counter_CSS extends Base_CSS {
 						),
 					),
 					array(
-						'property' => '--percentageStart',
+						'property' => '--percentage-start',
 						'value'    => 'percentage',
 						'default'  => 50,
 						'format'   => function( $value, $attrs ) {
@@ -110,7 +110,7 @@ class Circle_Counter_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => '--percentageEnd',
+						'property' => '--percentage-end',
 						'value'    => 'percentage',
 						'default'  => 50,
 						'format'   => function( $value, $attrs ) {

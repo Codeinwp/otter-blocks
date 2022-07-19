@@ -60,10 +60,10 @@ html {
 	&[amp] {
 		.wp-block-themeisle-blocks-circle-counter {
 			--background-color: #e3ecf4;
-			--progressColor: #3878ff;
+			--progress-color: #3878ff;
 			--border-radius: 100px 0px 0px 100px;
-			--percentageStart: rotate( 180deg );
-			--percentageEnd: rotate( 300deg );
+			--percentage-start: rotate( 180deg );
+			--percentage-end: rotate( 300deg );
 
 			.wp-block-themeisle-blocks-circle-counter-container {
 				width: var( --height );
@@ -97,15 +97,15 @@ html {
 				position: absolute;
 				top: 0;
 				left: 0;
-				border: 11px solid var( --progressColor );
+				border: 11px solid var( --progress-color );
 				border-radius: var( --border-radius );
 				border-right: 0;
 				transform-origin: right;
 				z-index: 100;
-				transform: var( --percentageStart );
+				transform: var( --percentage-start );
 
 				&:last-of-type {
-					transform: var( --percentageEnd );
+					transform: var( --percentage-end );
 				}
 			}
 
