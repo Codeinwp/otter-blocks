@@ -146,11 +146,11 @@ const MediaContent = ({
 		getCurrentPostId,
 		getSelectedBlock
 	} = useSelect( select => {
-		const getCurrentPostId = select( 'core/editor' ).getCurrentPostId();
+		const getCurrentPostId = select( 'core/editor' ) ? select( 'core/editor' ).getCurrentPostId() : 0;
 		const getSelectedBlock = select( 'core/block-editor' ).getSelectedBlock();
 
 		return {
-			getCurrentPostId,
+			getCurrentPostId: getCurrentPostId || 0,
 			getSelectedBlock
 		};
 	}, []);

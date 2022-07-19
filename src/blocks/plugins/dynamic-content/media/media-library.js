@@ -3,6 +3,8 @@
  */
 import { __ } from '@wordpress/i18n';
 
+import { select } from '@wordpress/data';
+
 import { render } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
@@ -33,7 +35,7 @@ addFilter(
 );
 
 jQuery( document ).ready( function( $ ) {
-	var oldMediaFrame = wp.media.view.MediaFrame.Select;
+	const oldMediaFrame = wp.media.view.MediaFrame.Select;
 
 	// Extending the current media library frame to add a new tab
 	wp.media.view.MediaFrame.Select = oldMediaFrame.extend({
@@ -45,12 +47,16 @@ jQuery( document ).ready( function( $ ) {
 		 */
 		browseRouter( routerView ) {
 			oldMediaFrame.prototype.browseRouter.apply( this, arguments );
-			routerView.set({
-				otterDynamicContent: {
-					text: __( 'Dynamic Content', 'otter-blocks' ),
-					priority: 60
-				}
-			});
+			const showDynamicMedia = select( 'core/block-editor' ).getSelectedBlock();
+
+			if ( showDynamicMedia ) {
+				routerView.set({
+					otterDynamicContent: {
+						text: __( 'Dynamic Content', 'otter-blocks' ),
+						priority: 60
+					}
+				});
+			}
 		},
 
 		/**
@@ -60,7 +66,11 @@ jQuery( document ).ready( function( $ ) {
 		 */
 		bindHandlers() {
 			oldMediaFrame.prototype.bindHandlers.apply( this, arguments );
-			this.on( 'content:create:otterDynamicContent', this.otterDynamicContent, this );
+			const showDynamicMedia = wp.data.select( 'core/block-editor' ).getSelectedBlock();
+
+			if ( showDynamicMedia ) {
+				this.on( 'content:create:otterDynamicContent', this.otterDynamicContent, this );
+			}
 		},
 
 		/**
@@ -156,9 +166,11 @@ jQuery( document ).ready( function( $ ) {
 		if ( ! activeFrame ) {
 			return false;
 		}
+
 		let selectedTab = activeFrame.querySelector(
 			'.media-router button.media-menu-item.active'
 		);
+
 		if ( selectedTab && 'menu-item-otterDynamicContent' === selectedTab.id ) {
 			otterImagesMediaTab();
 		}

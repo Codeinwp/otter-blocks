@@ -26,6 +26,7 @@ class Dynamic_Content {
 		add_filter( 'the_content', array( $this, 'apply_dynamic_content' ) );
 		add_filter( 'the_content', array( $this, 'apply_dynamic_images' ) );
 		add_filter( 'widget_block_content', array( $this, 'apply_dynamic_content' ), 0, 1 );
+		add_filter( 'widget_block_content', array( $this, 'apply_dynamic_images' ), 0, 1 );
 
 		if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
 			add_filter( 'get_block_templates', array( $this, 'apply_dynamic_content_fse' ), 0, 1 );
@@ -97,6 +98,11 @@ class Dynamic_Content {
 	public function get_image( $data ) {
 		$value = OTTER_BLOCKS_URL . 'assets/images/placeholder.jpg';
 
+		if ( 0 === $data['context'] || null === $data['context'] ) {
+			global $post;
+			$data['context'] = $post->ID;
+		}
+
 		if ( isset( $data['fallback'] ) && ! empty( $data['fallback'] ) ) {
 			$value = esc_url( $data['fallback'] );
 		}
@@ -149,6 +155,7 @@ class Dynamic_Content {
 	public function apply_dynamic_content_fse( $block_template ) {
 		foreach ( $block_template as $template ) {
 			$template->content = $this->apply_dynamic_content( $template->content );
+			$template->content = $this->apply_dynamic_images( $template->content );
 		}
 
 		return $block_template;
