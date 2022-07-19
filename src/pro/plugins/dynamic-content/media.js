@@ -17,6 +17,8 @@ import { Fragment } from '@wordpress/element';
 /**
  * Internal dependencies.
  */
+import ACFImageSelect from '../../components/acf-image-select/index.js';
+
 const { SelectProducts } = window.otterComponents;
 
 const applyProContent = options => {
@@ -52,8 +54,17 @@ const DynamicContent = (
 	attributes,
 	changeAttributes
 ) => {
+	console.log( 'acf' === attributes?.type );
 	return (
 		<Fragment>
+			{ 'postMeta' === attributes?.type && (
+				<TextControl
+					label={ __( 'Meta Key', 'otter-blocks' ) }
+					value={ attributes.meta || '' }
+					onChange={ meta => changeAttributes({ meta }) }
+				/>
+			) }
+
 			{ 'product' === attributes?.type && (
 				<SelectProducts
 					label={ __( 'Select Product', 'otter-blocks' ) }
@@ -62,9 +73,9 @@ const DynamicContent = (
 				/>
 			) }
 
-			{ 'postMeta' === attributes?.type && (
-				<TextControl
-					label={ __( 'Meta Key', 'otter-blocks' ) }
+			{ 'acf' === attributes?.type && (
+				<ACFImageSelect
+					label={ __( 'Select Field', 'otter-blocks' ) }
 					value={ attributes.meta || '' }
 					onChange={ meta => changeAttributes({ meta }) }
 				/>
