@@ -13,7 +13,7 @@ import {
 	getIntervalFromUnix,
 	insertBetweenItems
 } from '../../helpers/helper-functions.js';
-import { omit } from 'lodash';
+import { isEmpty, omit, isNumber, omitBy, pickBy } from 'lodash';
 
 const { attributes } = metadata;
 
@@ -50,15 +50,20 @@ const deprecated = [ {
 
 		const optionalUnit = x => isNumber( x ) ? x + '%' : x;
 
-		const borderRadiusBox = 'linked' === attributes.borderRadiusType ?
-			{ left: optionalUnit( attributes.borderRadius ), right: optionalUnit( attributes.borderRadius ), bottom: optionalUnit( attributes.borderRadius ), top: optionalUnit( attributes.borderRadius ) } :
-			{ left: optionalUnit( attributes.borderRadiusBottomLeft ), right: optionalUnit( attributes.borderRadiusTopRight ), bottom: optionalUnit( attributes.borderRadiusBottomRight ), top: optionalUnit( attributes.borderRadiusTopLeft ) };
-		oldAttributes.borderRadiusBox = borderRadiusBox;
+		const borderRadiusBox = pickBy( 'linked' === attributes?.borderRadiusType ?
+			{ left: optionalUnit( oldAttributes.borderRadius ), right: optionalUnit( oldAttributes.borderRadius ), bottom: optionalUnit( oldAttributes.borderRadius ), top: optionalUnit( oldAttributes.borderRadius ) } :
+			{ left: optionalUnit( oldAttributes.borderRadiusBottomLeft ), right: optionalUnit( oldAttributes.borderRadiusTopRight ), bottom: optionalUnit( oldAttributes.borderRadiusBottomRight ), top: optionalUnit( oldAttributes.borderRadiusTopLeft ) }, x => x );
+
+		if ( ! isEmpty( borderRadiusBox ) ) {
+			oldAttributes.borderRadiusBox = borderRadiusBox;
+		}
 
 		return omit( oldAttributes, [ 'borderRadiusBottomLeft', 'borderRadiusTopRight', 'borderRadiusBottomRight', 'borderRadiusTopLeft', 'borderRadiusType' ]);
 	},
 
-	isEligible: ({ borderRadius }) => borderRadius && 'number' === typeof borderRadius,
+	isEligible: ({ borderRadius, borderRadiusBottomLeft, borderRadiusBottomRight, borderRadiusTopLeft }) => {
+		return ( borderRadius && 'number' === typeof borderRadius ) || borderRadiusBottomLeft || borderRadiusBottomRight || borderRadiusTopLeft;
+	},
 
 	save: ({ attributes }) => {
 		const DisplayTimeComponent = ({
