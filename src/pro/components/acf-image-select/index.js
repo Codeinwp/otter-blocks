@@ -3,7 +3,11 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { SelectControl } from '@wordpress/components';
+import {
+	Placeholder,
+	SelectControl,
+	Spinner
+} from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
 
@@ -12,8 +16,9 @@ const ACFImageSelect = ({
 	value,
 	onChange
 }) => {
-	const { fields } = useSelect( select => {
+	const { fields, isLoaded } = useSelect( select => {
 		const { groups } = select( 'otter-pro' ).getACFData();
+		const isLoaded = select( 'otter-pro' ).isACFLoaded();
 
 		const fields = [];
 
@@ -29,9 +34,14 @@ const ACFImageSelect = ({
 		});
 
 		return {
-			fields
+			fields,
+			isLoaded
 		};
 	}, []);
+
+	if ( ! isLoaded ) {
+		return <Placeholder><Spinner /></Placeholder>;
+	}
 
 	return (
 		<SelectControl

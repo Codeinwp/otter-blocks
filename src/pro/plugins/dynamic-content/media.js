@@ -54,7 +54,6 @@ const DynamicContent = (
 	attributes,
 	changeAttributes
 ) => {
-	console.log( 'acf' === attributes?.type );
 	return (
 		<Fragment>
 			{ 'postMeta' === attributes?.type && (
