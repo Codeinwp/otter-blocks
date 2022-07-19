@@ -238,7 +238,6 @@ class Registration {
 			'otter-blocks',
 			'themeisleGutenberg',
 			array(
-				'hasNeve'                 => defined( 'NEVE_VERSION' ),
 				'isCompatible'            => Main::is_compatible(),
 				'hasPro'                  => Pro::is_pro_installed(),
 				'isProActive'             => Pro::is_pro_active(),
