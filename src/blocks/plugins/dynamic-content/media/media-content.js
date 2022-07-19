@@ -78,14 +78,16 @@ const MediaItem = ({
 }) => {
 	const url = window.themeisleGutenberg.restRoot + '/dynamic?type=' + item.type + '&context=' + context + '&uid=' + uid;
 
+	const isDisabled = ( undefined !== item?.isAvailable && ! item?.isAvailable );
+
 	return (
 		<li
 			tabIndex="0"
 			className={ classNames( 'o-media-item', {
 				'selected': isSelected,
-				'is-pro': item?.isPro
+				'is-disabled': item?.isPro || isDisabled
 			}) }
-			onClick={ () => item?.isPro ? null : onSelect( url, isSelected ) }
+			onClick={ () => isDisabled || item?.isPro ? null : onSelect( url, isSelected ) }
 			title={ item.label }
 			style={ {
 				backgroundImage: `url(' ${ item.icon } ')`
@@ -93,7 +95,9 @@ const MediaItem = ({
 		>
 			<div className="o-media-item-title">{ item.label }</div>
 
-			{ item?.isPro && <span className="o-media-item-pro">{ __( 'Pro', 'otter-blocks' ) }</span>}
+			{ item?.isPro && <span className="o-media-item-label">{ __( 'Pro', 'otter-blocks' ) }</span> }
+
+			{ isDisabled && <span className="o-media-item-label">{ __( 'Plugin not active', 'otter-blocks' ) }</span> }
 
 			{ isSelected && (
 				<button

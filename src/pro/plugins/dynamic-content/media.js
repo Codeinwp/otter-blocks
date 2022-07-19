@@ -29,12 +29,14 @@ const applyProContent = options => {
 		{
 			type: 'product',
 			label: __( 'Woo Product', 'otter-blocks' ),
-			icon: window.themeisleGutenberg.assetsPath + '/icons/woo.svg'
+			icon: window.themeisleGutenberg.assetsPath + '/icons/woo.svg',
+			isAvailable: Boolean( window.otterPro.hasWooCommerce )
 		},
 		{
 			type: 'acf',
 			label: __( 'ACF Image', 'otter-blocks' ),
-			icon: window.themeisleGutenberg.assetsPath + '/icons/acf.svg'
+			icon: window.themeisleGutenberg.assetsPath + '/icons/acf.svg',
+			isAvailable: Boolean( window.otterPro.hasACF )
 		}
 	];
 
