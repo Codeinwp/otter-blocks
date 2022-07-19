@@ -34,7 +34,17 @@ registerBlockType( name, {
 		{
 			name: 'outline',
 			label: __( 'Outline', 'otter-blocks' )
-		}
+		},
+		... window.themeisleGutenberg.hasNeve ? [
+			{
+				name: 'primary',
+				label: __( 'Primary', 'otter-blocks' )
+			},
+			{
+				name: 'secondary',
+				label: __( 'Secondary', 'otter-blocks' )
+			}
+		] : []
 	],
 	edit,
 	save

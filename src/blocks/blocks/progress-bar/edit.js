@@ -1,14 +1,7 @@
-/** @jsx jsx */
-
 /**
  * External dependencies
  */
 import classnames from 'classnames';
-
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies
@@ -54,6 +47,8 @@ const ProgressBar = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
+	const blockRef = useRef( null );
+
 	const [ showPercentage, setShowPercentage ] = useState( false );
 
 	const [ heightMode, setHeightMode ] = useState({
@@ -91,7 +86,17 @@ const ProgressBar = ({
 		};
 	}, [ attributes.percentage, attributes.duration ]);
 
-	const fontRatio = 0.65;
+	const inlineStyles = {
+		'--titleColor': attributes.titleColor,
+		'--percentageColor': attributes.percentageColor,
+		'--percentageColorOuter': attributes.percentageColor,
+		'--percentageColorTooltip': attributes.percentageColor,
+		'--percentageColorAppend': attributes.percentageColor,
+		'--backgroundColor': attributes.backgroundColor,
+		'--borderRadius': attributes.borderRadius !== undefined && ( attributes.borderRadius + 'px' ),
+		'--height': attributes.height !== undefined && ( attributes.height + 'px' ),
+		'--barBackground': attributes.barBackgroundColor
+	};
 
 	const onHeightChange = value => {
 		if ( 30 > value ) {
@@ -123,22 +128,10 @@ const ProgressBar = ({
 		}
 	};
 
-	const styles = css`
-		--titleColor: ${ attributes.titleColor };
-		--percentageColor: ${ attributes.percentageColor };
-		--percentageColorOuter: ${ attributes.percentageColor };
-		--percentageColorTooltip: ${ attributes.percentageColor };
-		--percentageColorAppend: ${ attributes.percentageColor };
-		--backgroundColor: ${ attributes.backgroundColor };
-		--borderRadius: ${ undefined !== attributes.borderRadius ? attributes.borderRadius : 5 }px;
-		--height: ${ undefined !== attributes.height ? attributes.height : 30 }px;
-		--barBackground: ${ attributes.barBackgroundColor };
-	`;
-
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames({ 'has-tooltip': 'tooltip' === attributes.percentagePosition }),
-		css: styles
+		style: inlineStyles
 	});
 
 	return (
@@ -194,7 +187,10 @@ const ProgressBar = ({
 					} }
 				>
 
-					<div className="wp-block-themeisle-blocks-progress-bar__area">
+					<div
+						ref={ blockRef }
+						className="wp-block-themeisle-blocks-progress-bar__area"
+					>
 						{ ( 'default' === attributes.titleStyle || 'highlight' === attributes.titleStyle ) && (
 							<div
 								className={ classnames(

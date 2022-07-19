@@ -166,10 +166,14 @@ class Block_Frontend extends Base_CSS {
 			$item = str_replace( ' ', '+', $font['fontfamily'] );
 			if ( count( $font['fontvariant'] ) > 0 ) {
 				foreach ( $font['fontvariant'] as $key => $value ) {
-					if ( 'normal' === $value ) {
+					if ( 'normal' === $value || 'regular' === $value ) {
 						$font['fontvariant'][ $key ] = 400;
 					}
 				}
+
+				sort( $font['fontvariant'] );
+				$font['fontvariant'] = array_unique( $font['fontvariant'] );
+
 				$item .= ':wght@' . implode( ';', $font['fontvariant'] );
 			}
 			array_push( $fonts, $item );

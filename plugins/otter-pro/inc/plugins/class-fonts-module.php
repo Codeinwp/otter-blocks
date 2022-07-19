@@ -26,7 +26,7 @@ class Fonts_Module {
 	 */
 	public function init() {
 		if ( License::has_active_license() ) {
-			if ( true === boolval( get_option( 'otter_offload_fonts', true ) ) ) {
+			if ( true === boolval( get_option( 'otter_offload_fonts', false ) ) ) {
 				add_filter( 'otter_blocks_google_fonts_url', array( $this, 'register_webfont_loader' ) );
 			}
 

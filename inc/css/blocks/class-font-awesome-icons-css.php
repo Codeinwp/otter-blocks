@@ -58,6 +58,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--margin',
 						'value'    => 'margin',
+						'default'  => 5,
 						'unit'     => 'px',
 						'hasSync'  => 'iconMargin',
 					),

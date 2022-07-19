@@ -1,8 +1,8 @@
-span {
-	&.wp-block-themeisle-blocks-advanced-heading {
-		display: block;
-	}
+span.wp-block-themeisle-blocks-advanced-heading {
+	display: block;
+}
 
+.wp-block-themeisle-blocks-advanced-heading {
 	&.highlight {
 		background-color: yellow;
 		color: black;

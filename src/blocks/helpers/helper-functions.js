@@ -311,3 +311,14 @@ export const getObjectFromQueryString = queryString => {
  * Object to Query String.
  */
 export const getQueryStringFromObject = params => Object.keys( params ).map( key => key + '=' + params[key]).join( '&' );
+
+/**
+ * Return the value of pair [condition, value] which has the first true condition.
+ *
+ * @param {([bool, any]|[any])[]} arr
+ * @returns {*}
+ */
+export const getChoice = arr => {
+	const r = arr?.filter( x => x?.[0])?.[0];
+	return r?.[1] ?? r?.[0];
+};

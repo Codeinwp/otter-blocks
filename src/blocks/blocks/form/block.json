@@ -91,14 +91,26 @@
 		"inputGap": {
 			"type": "number"
 		},
+		"inputColor": {
+			"type": "string"
+		},
 		"inputsGap": {
 			"type": "number"
 		},
 		"labelFontSize": {
-			"type": "number"
+			"type": "string"
 		},
 		"submitFontSize": {
-			"type": "number"
+			"type": "string"
+		},
+		"messageFontSize": {
+			"type": "string"
+		},
+		"helpFontSize": {
+			"type": "string"
+		},
+		"inputFontSize": {
+			"type": "string"
 		},
 		"submitStyle": {
 			"type": "string"

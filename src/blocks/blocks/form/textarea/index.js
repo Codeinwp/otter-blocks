@@ -16,6 +16,10 @@ import deprecated from './deprecated.js';
 
 const { name } = metadata;
 
+if ( ! window.themeisleGutenberg.isAncestorTypeAvailable ) {
+	metadata.parent = [ 'themeisle-blocks/form' ];
+}
+
 registerBlockType( name, {
 	...metadata,
 	title: __( 'Textarea Field', 'otter-blocks' ),

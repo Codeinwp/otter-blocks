@@ -23,10 +23,14 @@ const StickyControls = (
 ) => {
 	if ( ! Boolean( window.otterPro.isActive ) ) {
 		return (
-			<Notice
-				notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
-				instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Sticky Extension.', 'otter-blocks' ) }
-			/>
+			<Fragment>
+				{ Controls }
+
+				<Notice
+					notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
+					instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Sticky Extension.', 'otter-blocks' ) }
+				/>
+			</Fragment>
 		);
 	}
 

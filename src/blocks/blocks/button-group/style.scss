@@ -1,20 +1,93 @@
-.wp-block-themeisle-blocks-button-group {
-	display: flex;
+@mixin align-full {
+	.wp-block-button {
+		flex: 1;
 
-	&.align-left {
-		justify-content: flex-start;
+		.wp-block-button__link {
+			width: 100%;
+		}
 	}
+}
 
-	&.align-center {
-		justify-content: center;
+@mixin not-align-full {
+	.wp-block-button {
+		flex: unset;
 	}
+}
 
-	&.align-right {
-		justify-content: flex-end;
+@mixin align-left($device) {
+	justify-content: flex-start;
+	&.collapse-#{$device} {
+		align-items: start;
 	}
+}
 
-	&.collapse-desktop {
-		flex-direction: column;
+@mixin align-center($device) {
+	justify-content: center;
+	&.collapse-#{$device} {
+		align-items: center;
+	}
+}
+
+@mixin align-right($device) {
+	justify-content: flex-end;
+	&.collapse-#{$device} {
+		align-items: end;
+	}
+}
+
+$device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
+@each $device, $media-query in $device-map {
+	@if ($device == 'desktop') {
+		.wp-block-themeisle-blocks-button-group {
+			display: flex;
+
+			&.collapse-#{$device} {
+				flex-direction: column;
+			}
+
+			&.align-left-#{$device}, &.align-left {
+				@include align-left($device);
+			}
+
+			&.align-center-#{$device}, &.align-center {
+				@include align-center($device);
+			}
+
+			&.align-right-#{$device}, &.align-right {
+				@include align-right($device);
+			}
+
+			&.align-full-#{$device} {
+				@include align-full;
+			}
+		}
+	} @else {
+		@media (max-width: #{$media-query}) {
+			.wp-block-themeisle-blocks-button-group {
+				&.collapse-#{$device} {
+					flex-direction: column;
+				}
+
+				&.align-left-#{$device} {
+					@include not-align-full;
+					@include align-left($device);
+				}
+
+				&.align-center-#{$device} {
+					@include not-align-full;
+					@include align-center($device);
+				}
+
+				&.align-right-#{$device} {
+					@include not-align-full;
+					@include align-right($device);
+				}
+
+				&.align-full-#{$device} {
+					@include align-full;
+				}
+			}
+		}
 	}
 }
 
@@ -44,22 +117,6 @@
 
 		&.margin-right {
 			margin-right: 10px;
-		}
-	}
-}
-
-@media ( max-width: 960px ) {
-	.wp-block-themeisle-blocks-button-group {
-		&.collapse-tablet {
-			flex-direction: column;
-		}
-	}
-}
-
-@media ( max-width: 600px ) {
-	.wp-block-themeisle-blocks-button-group {
-		&.collapse-mobile {
-			flex-direction: column;
 		}
 	}
 }

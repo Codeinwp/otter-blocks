@@ -1,11 +1,6 @@
-/** @jsx jsx */
 /**
  * External dependencies
  */
-import {
-	css,
-	jsx
-} from '@emotion/react';
 
 /**
  * WordPress dependencies
@@ -42,7 +37,10 @@ import {
 import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import { blockInit } from '../../helpers/block-utility.js';
+import {
+	blockInit,
+	useCSSNode
+} from '../../helpers/block-utility.js';
 import Layout from './components/layout/index.js';
 import { _align, getCustomPostTypeSlugs } from '../../helpers/helper-functions.js';
 import '../../components/store/index.js';
@@ -111,29 +109,45 @@ const Edit = ({
 		dispatch( 'otter-store' ).setPostsSlugs( slugs );
 	}, [ slugs ]);
 
-	const fontSizeStyle = css`
-		${ attributes.imageWidth && `--imgWidth: ${ attributes.imageWidth }px;` }
-		${ attributes.borderRadius && `--imgBorderRadius: ${ attributes.borderRadius }px;` }
-		--vertAlign: ${_align( attributes.verticalAlign )};
-		--textAlign: ${ attributes.textAlign };
+	const inlineStyles = {
+		'--imgWidth': `${ attributes.imageWidth }px`,
+		'--imgBorderRadius': attributes.borderRadius && `${ attributes.borderRadius }px;`,
+		'--vertAlign': _align( attributes.verticalAlign ),
+		'--textAlign': attributes.textAlign
+	};
 
-		@media ( min-width: 960px ) {
-			${ attributes.customTitleFontSize && `--titleTextSize: ${ attributes.customTitleFontSize }px;` }
-			${ attributes.customDescriptionFontSize && `--descriptionTextSize: ${ attributes.customDescriptionFontSize }px;` }
-		}
+	const [ cssNodeName, setNodeCSS ] = useCSSNode();
+	useEffect( () => {
+		setNodeCSS([
+			`{
+				${ attributes.customTitleFontSize && `--titleTextSize: ${ attributes.customTitleFontSize }px;` }
+				${ attributes.customDescriptionFontSize && `--descriptionTextSize: ${ attributes.customDescriptionFontSize }px;` }
+			}`,
+			`{
+				${ attributes.customTitleFontSizeTablet && `--titleTextSize: ${ attributes.customTitleFontSizeTablet }px;` }
+				${ attributes.customDescriptionFontSizeTablet && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeTablet }px;` }
+			}`,
+			`{
+				${ attributes.customTitleFontSizeMobile && `--titleTextSize: ${ attributes.customTitleFontSizeMobile }px;` }
+				${ attributes.customDescriptionFontSizeMobile && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeMobile }px;` }
+			}`
+		], [
+			'@media ( min-width: 960px )',
+			'@media ( min-width: 600px ) and ( max-width: 960px )',
+			'@media ( max-width: 600px )'
+		]);
+	}, [
+		attributes.customTitleFontSize, attributes.customTitleFontSize,
+		attributes.customDescriptionFontSize, attributes.customDescriptionFontSize,
+		attributes.customTitleFontSizeTablet, attributes.customTitleFontSizeTablet,
+		attributes.customDescriptionFontSizeTablet, attributes.customDescriptionFontSizeTablet,
+		attributes.customTitleFontSizeMobile, attributes.customTitleFontSizeMobile,
+		attributes.customDescriptionFontSizeMobile, attributes.customDescriptionFontSizeMobile
+	]);
 
-		@media ( min-width: 600px ) and ( max-width: 960px ) {
-			${ attributes.customTitleFontSizeTablet && `--titleTextSize: ${ attributes.customTitleFontSizeTablet }px;` }
-			${ attributes.customDescriptionFontSizeTablet && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeTablet }px;` }
-		}
-
-		@media ( max-width: 600px ) {
-			${ attributes.customTitleFontSizeMobile && `--titleTextSize: ${ attributes.customTitleFontSizeMobile }px;` }
-			${ attributes.customDescriptionFontSizeMobile && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeMobile }px;` }
-		}
-	`;
-
-	const blockProps = useBlockProps();
+	const blockProps = useBlockProps({
+		className: cssNodeName
+	});
 
 	if ( ! posts || ! categoriesList || ! authors ) {
 		return (
@@ -203,7 +217,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 				changeStyle={ changeStyle }
 				categoriesList={ categoriesList }
-				posts={posts}
+				posts={ posts }
 			/>
 
 			<Controls
@@ -211,7 +225,7 @@ const Edit = ({
 				setAttributes={ setAttributes }
 			/>
 
-			<div { ...blockProps } css={ fontSizeStyle }>
+			<div { ...blockProps } style={ inlineStyles }>
 				<Disabled>
 					{ attributes.enableFeaturedPost && (
 						<FeaturedPost

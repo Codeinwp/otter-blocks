@@ -53,7 +53,7 @@ const createLeafletMap = ( container, attributes ) => {
 	const map = window.L.map( container, {
 		zoomControl: attributes.zoomControl,
 		dragging: attributes.draggable,
-		gestureHandling: true,
+		gestureHandling: attributes.draggable,
 		gestureHandlingOptions: {
 			text: {
 				touch: 'Use two fingers to move the map',
@@ -82,6 +82,12 @@ domReady( () => {
 		return;
 	}
 
+	document.querySelectorAll( '.wp-block-themeisle-blocks-leaflet-map' )
+		.forEach( mapElem => {
+			mapElem.style.margin = '20px 0';
+			mapElem.style.backgroundColor = '#ccc';
+		});
+
 	const checker = setInterval(
 		() => {
 			if ( ! window.L ) {
@@ -101,6 +107,8 @@ domReady( () => {
 				.forEach( mapElem => {
 					if ( idAttrMapping[mapElem.id] !== undefined ) {
 						createLeafletMap( mapElem, idAttrMapping[mapElem.id]);
+						mapElem.style.removeProperty( 'margin' );
+						mapElem.style.removeProperty( 'background-color' );
 					}
 				});
 		},

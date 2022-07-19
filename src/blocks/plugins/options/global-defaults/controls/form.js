@@ -10,166 +10,303 @@ import {
 import {
 	PanelBody,
 	RangeControl,
-	__experimentalBoxControl as BoxControl, FontSizePicker
+	__experimentalBoxControl as BoxControl, FontSizePicker, TextControl, SelectControl
 } from '@wordpress/components';
 
 import { Fragment } from '@wordpress/element';
+import SyncControl from '../../../../components/sync-control';
+
+const defaultFontSizes = [
+	{
+		name: __( 'Small', 'otter-blocks' ),
+		size: '0.875em',
+		slug: 'small'
+	},
+	{
+		name: __( 'Medium', 'otter-blocks' ),
+		size: '1em',
+		slug: 'medium'
+	},
+	{
+		name: __( 'Large', 'otter-blocks' ),
+		size: '1.125em',
+		slug: 'large'
+	},
+	{
+		name: __( 'XL', 'otter-blocks' ),
+		size: '1.25em',
+		slug: 'xl'
+	}
+];
 
 const Form = ({
 	blockName,
-	defaults,
+	defaults: attributes,
 	changeConfig
 }) => {
 
-	const setDefaults = x => changeConfig( blockName, x );
+	const setAttributes = x => changeConfig( blockName, x );
 
 	return (
 		<Fragment>
 			<PanelColorSettings
-				title={ __( 'Color', 'otter-blocks' ) }
+				title={ __( 'Form Color', 'otter-blocks' ) }
 				initialOpen={ false }
 				colorSettings={ [
 					{
-						value: defaults.labelColor,
-						onChange: labelColor => setDefaults({ labelColor }),
-						label: __( 'Label Color', 'otter-blocks' )
+						value: attributes.labelColor,
+						onChange: labelColor => setAttributes({ labelColor }),
+						label: __( 'Label', 'otter-blocks' )
 					},
 					{
-						value: defaults.inputBorderColor,
-						onChange: inputBorderColor => setDefaults({ inputBorderColor }),
-						label: __( 'Border Color', 'otter-blocks' )
+						value: attributes.helpLabelColor,
+						onChange: helpLabelColor => setAttributes({ helpLabelColor }),
+						label: __( 'Help Label', 'otter-blocks' )
 					},
 					{
-						value: defaults.submitColor,
-						onChange: submitColor => setDefaults({ submitColor }),
-						label: __( 'Submit Text Color', 'otter-blocks' )
+						value: attributes.inputBorderColor,
+						onChange: inputBorderColor => setAttributes({ inputBorderColor }),
+						label: __( 'Border', 'otter-blocks' )
 					},
 					{
-						value: defaults.submitBackgroundColor,
-						onChange: submitBackgroundColor => setDefaults({ submitBackgroundColor }),
-						label: __( 'Button Background Color', 'otter-blocks' )
+						value: attributes.inputRequiredColor,
+						onChange: inputRequiredColor => setAttributes({ inputRequiredColor }),
+						label: __( 'Label Required', 'otter-blocks' )
 					},
 					{
-						value: defaults.submitBackgroundColorHover,
-						onChange: submitBackgroundColorHover => setDefaults({ submitBackgroundColorHover }),
-						label: __( 'Button Background Color on Hover', 'otter-blocks' )
-					},
-					{
-						value: defaults.submitMessageColor,
-						onChange: submitMessageColor => setDefaults({ submitMessageColor }),
-						label: __( 'Successful Message Color', 'otter-blocks' )
-					},
-					{
-						value: defaults.submitMessageErrorColor,
-						onChange: submitMessageErrorColor => setDefaults({ submitMessageErrorColor }),
-						label: __( 'Error Message Color', 'otter-blocks' )
+						value: attributes.inputColor,
+						onChange: inputColor => setAttributes({ inputColor }),
+						label: __( 'Input', 'otter-blocks' )
 					}
 				] }
-			>
-			</PanelColorSettings>
+			/>
+
+			<PanelColorSettings
+				title={ __( 'Button Color', 'otter-blocks' ) }
+				initialOpen={ false }
+				colorSettings={ [
+					{
+						value: attributes.submitColor,
+						onChange: submitColor => setAttributes({ submitColor }),
+						label: __( 'Submit Text', 'otter-blocks' )
+					},
+					{
+						value: attributes.submitBackgroundColor,
+						onChange: submitBackgroundColor => setAttributes({ submitBackgroundColor }),
+						label: __( 'Button Background', 'otter-blocks' )
+					},
+					{
+						value: attributes.submitBackgroundColorHover,
+						onChange: submitBackgroundColorHover => setAttributes({ submitBackgroundColorHover }),
+						label: __( 'Button Background on Hover', 'otter-blocks' )
+					},
+					{
+						value: attributes.submitMessageColor,
+						onChange: submitMessageColor => setAttributes({ submitMessageColor }),
+						label: __( 'Successful Message', 'otter-blocks' )
+					},
+					{
+						value: attributes.submitMessageErrorColor,
+						onChange: submitMessageErrorColor => setAttributes({ submitMessageErrorColor }),
+						label: __( 'Error Message', 'otter-blocks' )
+					}
+				] }
+			/>
 
 			<PanelBody
-				title={ __( 'Label Styling', 'otter-blocks' )}
+				title={ __( 'Label Styling', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
+				<SyncControl
+					field={ 'inputGap' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Spacing', 'otter-blocks' ) }
+						value={ attributes.inputGap ?? 16 }
+						onChange={ inputGap => setAttributes({ inputGap }) }
+						allowReset
+						min={ 0 }
+						max={ 50 }
+						initialPositino={ 5 }
+					/>
+				</SyncControl>
 
-				<RangeControl
-					label={ __( 'Spacing', 'otter-blocks' ) }
-					value={ defaults.inputGap}
-					onChange={ inputGap => setDefaults({ inputGap }) }
-					allowReset
-					min={ 0 }
-					max={ 50 }
-					initialPosition={ 5 }
-				/>
+				<SyncControl
+					field={ 'labelFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<FontSizePicker
+						label={ __( 'Font Size', 'otter-blocks' ) }
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.labelFontSize }
+						onChange={ labelFontSize =>  setAttributes({ labelFontSize }) }
+					/>
+				</SyncControl>
 
-				<FontSizePicker
-					label={ __( 'Font Size', 'otter-blocks' ) }
-					fontSizes={[
-						{
-							name: __( 'Small', 'otter-blocks' ),
-							size: 12,
-							slug: 'small'
-						},
-						{
-							name: __( 'Normal', 'otter-blocks' ),
-							size: 16,
-							slug: 'normal'
-						},
-						{
-							name: __( 'Big', 'otter-blocks' ),
-							size: 26,
-							slug: 'big'
-						}
-					]}
-					withReset
-					value={ defaults.labelFontSize }
-					onChange={ labelFontSize =>  setDefaults({ labelFontSize }) }
-				/>
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Input Styling', 'otter-blocks' )}
-				initialOpen={false}
+				title={ __( 'Input Styling', 'otter-blocks' ) }
+				initialOpen={ false }
 			>
+				<SyncControl
+					field={ 'inputFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<FontSizePicker
+						label={ __( 'Input Font Size', 'otter-blocks' ) }
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.inputFontSize }
+						onChange={ inputFontSize =>  setAttributes({ inputFontSize }) }
+					/>
+				</SyncControl>
 
-				<RangeControl
-					label={ __( 'Spacing', 'otter-blocks' ) }
-					value={ defaults.inputsGap }
-					onChange={ inputsGap => setDefaults({ inputsGap }) }
-					allowReset
-					min={ 0 }
-					max={ 50 }
-					initialPosition={ 10 }
-				/>
+				<SyncControl
+					field={ 'inputsGap' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Fields Spacing', 'otter-blocks' ) }
+						value={ attributes.inputsGap ?? 10}
+						onChange={ inputsGap => setAttributes({ inputsGap }) }
+						allowReset
+						min={ 0 }
+						max={ 50 }
+						initialPosition={ 10 }
+					/>
+				</SyncControl>
 
-				<BoxControl
-					label={ __( 'Input Padding', 'otter-blocks' ) }
-					values={ defaults.inputPadding }
-					inputProps={ {
-						min: 0,
-						max: 500
-					} }
-					onChange={ inputPadding => setDefaults({ inputPadding }) }
-				/>
+				<SyncControl
+					field={ 'inputPadding' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<BoxControl
+						label={ __( 'Input Padding', 'otter-blocks' ) }
+						values={ attributes.inputPadding ?? {'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px'} }
+						inputProps={ {
+							min: 0,
+							max: 500
+						} }
+						onChange={ inputPadding => setAttributes({ inputPadding }) }
+					/>
+				</SyncControl>
 
-				<RangeControl
-					label={ __( 'Border Width', 'otter-blocks' ) }
-					value={ defaults.inputBorderWidth }
-					onChange={ inputBorderWidth => setDefaults({ inputBorderWidth }) }
-					allowReset
-					min={ 0 }
-					max={ 50 }
-				/>
+				<SyncControl
+					field={ 'inputsBorderRadius' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Border Radius', 'otter-blocks' ) }
+						value={ attributes.inputBorderRadius ?? 4 }
+						onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
+						allowReset
+						min={ 0 }
+						max={ 50 }
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field={ 'inputsBorderWidth' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<RangeControl
+						label={ __( 'Border Width', 'otter-blocks' ) }
+						value={ attributes.inputBorderWidth ?? 1 }
+						onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
+						allowReset
+						min={ 0 }
+						max={ 50 }
+					/>
+				</SyncControl>
+
+				<SyncControl
+					field={ 'helpFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<h2>{__( 'Help Text Font Size', 'otter-blocks' )}</h2>
+
+					<FontSizePicker
+						label={ __( 'Help Font Size', 'otter-blocks' ) }
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.helpFontSize }
+						onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
+					/>
+				</SyncControl>
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Button', 'otter-blocks' )}
+				title={ __( 'Button', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<FontSizePicker
-					label={ __( 'Font Size', 'otter-blocks' ) }
-					fontSizes={[
+				<TextControl
+					label={ __( 'Label', 'otter-blocks' ) }
+					placeholder={ __( 'Submit', 'otter-blocks' ) }
+					value={ attributes.submitLabel }
+					onChange={ submitLabel => setAttributes({ submitLabel }) }
+					help={ __( 'Set the label for the submit button.', 'otter-blocks' ) }
+				/>
+
+				<SyncControl
+					field={ 'submitFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<FontSizePicker
+						label={ __( 'Font Size', 'otter-blocks' ) }
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.submitFontSize }
+						onChange={ submitFontSize =>  setAttributes({ submitFontSize }) }
+					/>
+				</SyncControl>
+
+				<SelectControl
+					label={ __( 'Alignment', 'otter-blocks' ) }
+					value={ attributes.submitStyle }
+					options={[
 						{
-							name: __( 'Small', 'otter-blocks' ),
-							size: 12,
-							slug: 'small'
+							label: 'Default',
+							value: ''
 						},
 						{
-							name: __( 'Normal', 'otter-blocks' ),
-							size: 16,
-							slug: 'normal'
+							label: 'Right',
+							value: 'right'
 						},
 						{
-							name: __( 'Big', 'otter-blocks' ),
-							size: 26,
-							slug: 'big'
+							label: 'Full',
+							value: 'full'
 						}
 					]}
-					withReset
-					value={ defaults.submitFontSize }
-					onChange={ submitFontSize => setDefaults({ submitFontSize }) }
+					onChange={ submitStyle => setAttributes({ submitStyle}) }
 				/>
+
+				<SyncControl
+					field={ 'messageFontSize' }
+					isSynced={ attributes.isSynced }
+					setAttributes={ setAttributes }
+				>
+					<h2>{__( 'Message Font Size', 'otter-blocks' )}</h2>
+
+					<FontSizePicker
+						label={ __( 'Message Font Size', 'otter-blocks' ) }
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.messageFontSize }
+						onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
+					/>
+				</SyncControl>
 			</PanelBody>
 		</Fragment>
 	);

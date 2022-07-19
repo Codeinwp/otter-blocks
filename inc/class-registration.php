@@ -238,6 +238,7 @@ class Registration {
 			'otter-blocks',
 			'themeisleGutenberg',
 			array(
+				'hasNeve'                 => defined( 'NEVE_VERSION' ),
 				'isCompatible'            => Main::is_compatible(),
 				'hasPro'                  => Pro::is_pro_installed(),
 				'isProActive'             => Pro::is_pro_active(),
@@ -650,9 +651,22 @@ class Registration {
 
 		self::$blocks = apply_filters( 'otter_blocks_register_blocks', self::$blocks );
 
+		$this->enqueue_assets();
+
 		self::$block_dependencies = array(
 			'leaflet-map' => array( 'leaflet', 'leaflet-gesture-handling' ),
 			'slider'      => array( 'glidejs-core', 'glidejs-theme' ),
+		);
+
+		$local_dependencies = array_merge(
+			self::$block_dependencies,
+			array(
+				'button-group'       => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+				'font-awesome-icons' => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+				'icon-list-item'     => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+				'plugin-cards'       => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+				'sharing-icons'      => array( 'font-awesome-5', 'font-awesome-4-shims' ),
+			)
 		);
 
 		foreach ( self::$blocks as $block ) {
@@ -677,8 +691,8 @@ class Registration {
 
 			$deps = array();
 
-			if ( isset( self::$block_dependencies[ $block ] ) ) {
-				$deps = self::$block_dependencies[ $block ];
+			if ( isset( $local_dependencies[ $block ] ) ) {
+				$deps = $local_dependencies[ $block ];
 			}
 
 			if ( file_exists( $editor_style_path ) && ! empty( $metadata['editorStyle'] ) ) {
