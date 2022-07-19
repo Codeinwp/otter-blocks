@@ -96,7 +96,7 @@ const Inspector = ({
 		case 'Tablet':
 			return getValue( 'paddingTablet' ) ?? getValue( 'padding' );
 		case 'Mobile':
-			return getValue( 'paddingMobile' ) ?? getValue( 'padding' );
+			return getValue( 'paddingMobile' ) ?? getValue( 'paddingTablet' ) ?? getValue( 'padding' );
 		default:
 			return undefined;
 		}
@@ -139,7 +139,7 @@ const Inspector = ({
 		case 'Tablet':
 			return getValue( 'marginTablet' ) ?? getValue( 'margin' );
 		case 'Mobile':
-			return getValue( 'marginMobile' ) ?? getValue( 'margin' );
+			return getValue( 'marginMobile' ) ?? getValue( 'marginTablet' ) ?? getValue( 'margin' );
 		default:
 			return undefined;
 		}

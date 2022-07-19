@@ -133,7 +133,7 @@ const Inspector = ({
 		case 'Tablet':
 			return getValue( 'paddingTablet' ) ?? getValue( 'padding' );
 		case 'Mobile':
-			return getValue( 'paddingMobile' ) ?? getValue( 'padding' );
+			return getValue( 'paddingMobile' ) ?? getValue( 'paddingTablet' ) ?? getValue( 'padding' );
 		default:
 			return undefined;
 		}
@@ -176,7 +176,7 @@ const Inspector = ({
 		case 'Tablet':
 			return getValue( 'marginTablet' ) ?? getValue( 'margin' );
 		case 'Mobile':
-			return getValue( 'marginMobile' ) ?? getValue( 'margin' );
+			return getValue( 'marginMobile' ) ?? getValue( 'marginTablet' ) ?? getValue( 'margin' );
 		default:
 			return undefined;
 		}
@@ -224,7 +224,7 @@ const Inspector = ({
 		case 'Tablet':
 			return attributes.columnsHeightCustomTablet ?? attributes.columnsHeightCustom;
 		case 'Mobile':
-			return attributes.columnsHeightCustomMobile ?? attributes.columnsHeightCustom;
+			return attributes.columnsHeightCustomMobile ?? attributes.columnsHeightCustomTablet ?? attributes.columnsHeightCustom;
 		default:
 			return undefined;
 		}
@@ -308,7 +308,7 @@ const Inspector = ({
 			case 'Tablet':
 				return attributes.dividerTopWidthTablet ?? attributes.dividerTopWidth ?? 100;
 			case 'Mobile':
-				return attributes.dividerTopWidthMobile ?? attributes.dividerTopWidth ?? 100;
+				return attributes.dividerTopWidthMobile ?? attributes.dividerTopWidthTablet ?? attributes.dividerTopWidth ?? 100;
 			}
 		} else if ( 'bottom' == dividerViewType ) {
 			switch ( getView ) {
@@ -317,7 +317,7 @@ const Inspector = ({
 			case 'Tablet':
 				return attributes.dividerBottomWidthTablet ?? attributes.dividerBottomWidth ?? 100;
 			case 'Mobile':
-				return attributes.dividerBottomWidthMobile ?? attributes.dividerBottomWidth ?? 100;
+				return attributes.dividerBottomWidthMobile ?? attributes.dividerBottomWidthTablet ?? attributes.dividerBottomWidth ?? 100;
 			}
 		}
 

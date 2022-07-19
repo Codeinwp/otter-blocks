@@ -172,7 +172,7 @@ const Edit = ({
 	};
 
 
-	if ( isTablet ) {
+	if ( isTablet || isMobile ) {
 		const tabletStyle = pickBy({
 			paddingTop: getValue( 'paddingTablet' )?.top,
 			paddingRight: getValue( 'paddingTablet' )?.right,
@@ -197,6 +197,7 @@ const Edit = ({
 			marginBottom: getValue( 'marginMobile' )?.bottom,
 			marginLeft: getValue( 'marginMobile' )?.left
 		}, ( value ) => value );
+
 		stylesheet = merge( stylesheet, mobileStyle );
 	}
 

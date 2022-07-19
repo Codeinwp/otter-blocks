@@ -226,7 +226,7 @@ const Edit = ({
 	};
 
 
-	if ( isTablet ) {
+	if ( isTablet || isMobile ) {
 		const tabletStyle = pickBy({
 			paddingTop: getValue( 'paddingTablet' )?.top,
 			paddingRight: getValue( 'paddingTablet' )?.right,
