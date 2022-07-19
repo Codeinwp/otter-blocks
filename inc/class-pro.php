@@ -42,16 +42,14 @@ class Pro {
 	 * @return  bool
 	 */
 	public function init_upsells() {
-		if ( self::is_pro_active() ) {
-			return;
+		if ( ! self::is_pro_active() ) {
+			add_action( 'add_meta_boxes', array( $this, 'register_metabox' ) );
+			add_filter( 'cron_schedules', array( $this, 'add_cron_schedules' ) );
+			add_action( 'wp', array( $this, 'schedule_cron_events' ) );
+			add_action( 'otter_montly_scheduled_events', array( $this, 'reset_dashboard_notice' ) );
+			add_action( 'admin_init', array( $this, 'dismiss_dashboard_notice' ), 10 );
+			add_action( 'admin_init', array( $this, 'should_show_dashboard_upsell' ), 11 );
 		}
-
-		add_action( 'add_meta_boxes', array( $this, 'register_metabox' ) );
-		add_filter( 'cron_schedules', array( $this, 'add_cron_schedules' ) );
-		add_action( 'wp', array( $this, 'schedule_cron_events' ) );
-		add_action( 'otter_montly_scheduled_events', array( $this, 'reset_dashboard_notice' ) );
-		add_action( 'admin_init', array( $this, 'dismiss_dashboard_notice' ), 10 );
-		add_action( 'admin_init', array( $this, 'should_show_dashboard_upsell' ), 11 );
 	}
 
 
