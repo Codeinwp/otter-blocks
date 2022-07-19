@@ -27,6 +27,8 @@ class Dynamic_Content {
 	public function init() {
 		if ( License::has_active_license() ) {
 			add_filter( 'otter_blocks_evaluate_dynamic_content', array( $this, 'evaluate_content' ), 10, 2 );
+			add_filter( 'otter_blocks_evaluate_dynamic_content_media_server', array( $this, 'evaluate_content_media_server' ), 10, 2 );
+			add_filter( 'otter_blocks_evaluate_dynamic_content_media_content', array( $this, 'evaluate_content_media_content' ), 10, 2 );
 		}
 	}
 
@@ -199,6 +201,83 @@ class Dynamic_Content {
 		}
 
 		return esc_html( $meta );
+	}
+
+	/**
+	 * Evaluate dynamic media content
+	 *
+	 * @param string $path Current image path.
+	 * @param array  $request Request data.
+	 *
+	 * @since 2.0.9
+	 * @return string
+	 */
+	public function evaluate_content_media_server( $path, $request ) {
+		$type    = $request->get_param( 'type' );
+		$context = $request->get_param( 'context' );
+		$id      = $request->get_param( 'id' );
+		$meta    = $request->get_param( 'meta' );
+
+		if ( 'product' === $type && ! empty( $id ) ) {
+			$product = wc_get_product( $id );
+			$image   = $product->get_image_id();
+			
+			if ( $image ) {
+				$path = wp_get_original_image_path( $image );
+			} else {
+				$image = get_option( 'woocommerce_placeholder_image', 0 );
+
+				if ( $image ) {
+					$path = wp_get_original_image_path( $image );
+				}
+			}
+		}
+
+		if ( 'postMeta' === $type && ! empty( $meta ) ) {
+			$value = get_post_meta( $context, $meta, true );
+
+			if ( ! empty( $value ) ) {
+				$path = esc_url( $value );
+			}
+		}
+
+		return $path;
+	}
+
+	/**
+	 * Evaluate dynamic media content
+	 *
+	 * @param string $value Current image path.
+	 * @param array  $data Request data.
+	 *
+	 * @since 2.0.9
+	 * @return string
+	 */
+	public function evaluate_content_media_content( $value, $data ) {
+		if ( 'product' === $data['type'] && isset( $data['id'] ) && ! empty( $data['id'] ) ) {
+			$product = wc_get_product( $data['id'] );
+			$image   = $product->get_image_id();
+			
+			if ( $image ) {
+				$value = wp_get_attachment_image_url( $image, 'full' );
+			} else {
+				$image = get_option( 'woocommerce_placeholder_image', 0 );
+
+				if ( $image ) {
+					$value = wp_get_attachment_image_url( $image, 'full' );
+				}
+			}
+		}
+
+		if ( 'postMeta' === $data['type'] && isset( $data['meta'] ) && ! empty( $data['meta'] ) ) {
+			$meta = get_post_meta( $data['context'], $data['meta'], true );
+
+			if ( ! empty( $meta ) ) {
+				$value = esc_url( $meta );
+			}
+		}
+
+		return $value;
 	}
 
 	/**

@@ -18,6 +18,8 @@ import {
 	useState
 } from '@wordpress/element';
 
+import { applyFilters } from '@wordpress/hooks';
+
 /**
  * Internal dependencies.
  */
@@ -25,9 +27,8 @@ import {
 	getObjectFromQueryString,
 	getQueryStringFromObject
 } from '../../../helpers/helper-functions.js';
-import SelectProducts from '../../../components/select-products-control/index.js';
 
-const contentTypes = [
+const types = [
 	{
 		type: 'featuredImage',
 		label: __( 'Featured Image', 'otter-blocks' ),
@@ -84,7 +85,7 @@ const MediaItem = ({
 				'selected': isSelected,
 				'is-pro': item?.isPro
 			}) }
-			onClick={ () => onSelect( url, isSelected ) }
+			onClick={ () => item?.isPro ? null : onSelect( url, isSelected ) }
 			title={ item.label }
 			style={ {
 				backgroundImage: `url(' ${ item.icon } ')`
@@ -110,6 +111,7 @@ const MediaItem = ({
 };
 
 const MediaSidebar = ({
+	contentTypes,
 	attributes,
 	changeAttributes
 }) => {
@@ -121,21 +123,7 @@ const MediaSidebar = ({
 				{ selected && <h2>{ selected?.label }</h2> }
 			</div>
 
-			{ 'product' === selected?.type && (
-				<SelectProducts
-					label={ __( 'Select Product', 'otter-blocks' ) }
-					value={ attributes.id || '' }
-					onChange={ product => changeAttributes({ id: 0 === product ? undefined : product }) }
-				/>
-			) }
-
-			{ 'postMeta' === selected?.type && (
-				<TextControl
-					label={ __( 'Meta Key', 'otter-blocks' ) }
-					value={ attributes.meta || '' }
-					onChange={ meta => changeAttributes({ meta }) }
-				/>
-			) }
+			{ applyFilters( 'otter.dynamicContent.media.controls', '', attributes, changeAttributes ) }
 
 			{ selected && (
 				<TextControl
@@ -167,6 +155,8 @@ const MediaContent = ({
 		};
 	}, []);
 
+	const [ contentTypes, setContentTypes ] = useState([]);
+
 	const [ selected, setSelected ] = useState( selection?._single?.attributes?.url );
 
 	const [ attributes, setAttributes ] = useState({});
@@ -174,6 +164,10 @@ const MediaContent = ({
 	const [ uid, setUid ] = useState( Math.floor( Math.random() * 89999999 + 10000000 ) );
 
 	useEffect( () => {
+		const filteredTypes = applyFilters( 'otter.dynamicContent.media.options', types );
+
+		setContentTypes( filteredTypes );
+
 		if ( undefined !== window?.otterCurrentMediaProps?.value && 8 === String( window?.otterCurrentMediaProps?.value ).length ) {
 			const blockAttrs = getSelectedBlock.attributes;
 			const obj = Object.keys( blockAttrs ).filter( i => 'string' === typeof blockAttrs[ i ] && blockAttrs[ i ]?.includes( 'otter/v1/dynamic' ) );
@@ -245,6 +239,7 @@ const MediaContent = ({
 
 			<div className="media-sidebar">
 				<MediaSidebar
+					contentTypes={ contentTypes }
 					attributes={ attributes }
 					changeAttributes={ changeAttributes }
 				/>

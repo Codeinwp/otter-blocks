@@ -134,28 +134,7 @@ class Dynamic_Content {
 			}
 		}
 
-		if ( 'product' === $data['type'] && isset( $data['id'] ) && ! empty( $data['id'] ) ) {
-			$product = wc_get_product( $data['id'] );
-			$image   = $product->get_image_id();
-			
-			if ( $image ) {
-				$value = wp_get_attachment_image_url( $image, 'full' );
-			} else {
-				$image = get_option( 'woocommerce_placeholder_image', 0 );
-
-				if ( $image ) {
-					$value = wp_get_attachment_image_url( $image, 'full' );
-				}
-			}
-		}
-
-		if ( 'postMeta' === $data['type'] && isset( $data['meta'] ) && ! empty( $data['meta'] ) ) {
-			$meta = get_post_meta( $data['context'], $data['meta'], true );
-
-			if ( ! empty( $meta ) ) {
-				$value = esc_url( $meta );
-			}
-		}
+		$value = apply_filters( 'otter_blocks_evaluate_dynamic_content_media_content', $value, $data );
 
 		return $value;
 	}

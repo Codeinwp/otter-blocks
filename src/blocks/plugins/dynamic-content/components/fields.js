@@ -59,9 +59,9 @@ const Fields = ({
 	changeType,
 	onRemove
 }) => {
-	hasSettingsPanel = applyFilters( 'otter.dynamicContent.hasSettingsPanel', hasSettingsPanel );
+	hasSettingsPanel = applyFilters( 'otter.dynamicContent.text.hasSettingsPanel', hasSettingsPanel );
 
-	const dynamicOptions = applyFilters( 'otter.dynamicContent.options', options );
+	const dynamicOptions = applyFilters( 'otter.dynamicContent.text.options', options );
 
 	return (
 		<Fragment>
@@ -95,7 +95,7 @@ const Fields = ({
 					/>
 				) }
 
-				{ applyFilters( 'otter.dynamicContent.notices', '' ) }
+				{ applyFilters( 'otter.dynamicContent.text.notices', '' ) }
 			</PanelBody>
 
 			{ hasSettingsPanel.includes( attributes.type ) && (
@@ -180,7 +180,7 @@ const Fields = ({
 						</Fragment>
 					) }
 
-					{ applyFilters( 'otter.dynamicContent.controls', '', attributes, changeAttributes ) }
+					{ applyFilters( 'otter.dynamicContent.text.controls', '', attributes, changeAttributes ) }
 				</PanelBody>
 			) }
 

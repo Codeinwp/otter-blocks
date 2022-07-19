@@ -142,9 +142,7 @@ class Dynamic_Content_Server {
 	public function get( $request ) {
 		$type     = $request->get_param( 'type' );
 		$context  = $request->get_param( 'context' );
-		$id       = $request->get_param( 'id' );
 		$fallback = $request->get_param( 'fallback' );
-		$meta     = $request->get_param( 'meta' );
 		$path     = OTTER_BLOCKS_PATH . '/assets/images/placeholder.jpg';
 
 		if ( ! empty( $fallback ) && @getimagesize( $fallback ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
@@ -181,36 +179,23 @@ class Dynamic_Content_Server {
 			}
 		}
 
-		if ( 'product' === $type && ! empty( $id ) ) {
-			$product = wc_get_product( $id );
-			$image   = $product->get_image_id();
-			
-			if ( $image ) {
-				$path = wp_get_original_image_path( $image );
-			} else {
-				$image = get_option( 'woocommerce_placeholder_image', 0 );
-
-				if ( $image ) {
-					$path = wp_get_original_image_path( $image );
-				}
-			}
-		}
-
-		if ( 'postMeta' === $type && ! empty( $meta ) ) {
-			$value = get_post_meta( $context, $meta, true );
-
-			if ( ! empty( $value ) ) {
-				$path = esc_url( $value );
-			}
-		}
+		$path = apply_filters( 'otter_blocks_evaluate_dynamic_content_media_server', $path, $request );
 
 		if ( $size = @getimagesize( $path ) ) { // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, Squiz.PHP.DisallowMultipleAssignments.FoundInControlStructure
+			ob_start();
+				readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
+			$output = ob_get_contents();
+
 			header( 'Content-type: ' . $size['mime'] );
-			return readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
+			return $output;
 		}
 
-		header( 'Content-type: image/jpg' );
-		return readfile( $default ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
+		ob_start();
+			readfile( $path ); //phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_read_readfile
+		$output = ob_get_contents();
+
+		header( 'Content-type: ' . $size['mime'] );
+		return $output;
 	}
 
 	/**

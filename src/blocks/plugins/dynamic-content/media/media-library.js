@@ -7,8 +7,6 @@ import { render } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
-import { MediaUpload } from '@wordpress/media-utils';
-
 /**
  * Internal dependencies.
  */
