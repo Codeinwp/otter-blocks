@@ -96,7 +96,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['padding'] ) && isset( $attrs['padding']['top'] );
 						},
-						'hasSync'   => 'sectionPaddingTop',
+						'hasSync'   => 'section-padding-top',
 					),
 					array(
 						'property'  => 'padding-bottom',
@@ -1283,7 +1283,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 				'selector'   => '.wp-block-themeisle-blocks-advanced-columns',
 				'properties' => array(
 					array(
-						'property'  => '--sectionPaddingTop',
+						'property'  => '--section-padding-top',
 						'value'     => 'padding',
 						'format'    => function( $value, $attrs ) {
 							return $value['top'];
