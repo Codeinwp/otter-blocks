@@ -262,6 +262,7 @@ class Main {
 
 		$asset_file = include OTTER_PRO_BUILD_PATH . 'blocks.asset.php';
 		wp_enqueue_style( 'otter-pro', OTTER_PRO_BUILD_URL . 'blocks.css', [], $asset_file['version'] );
+		wp_style_add_data( 'otter-pro', 'path', OTTER_PRO_BUILD_PATH . 'blocks.css' );
 	}
 
 	/**

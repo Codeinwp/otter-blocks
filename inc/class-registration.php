@@ -174,8 +174,11 @@ class Registration {
 		wp_script_add_data( 'leaflet', 'async', true );
 		wp_register_script( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'build/blocks/leaflet-gesture-handling.js', array( 'leaflet' ), $asset_file['version'], true );
 		wp_script_add_data( 'leaflet-gesture-handling', 'defer', true );
+
 		wp_register_style( 'leaflet', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet.css', [], $asset_file['version'] );
+		wp_style_add_data( 'leaflet', 'path', OTTER_BLOCKS_PATH . '/assets/leaflet/leaflet.css' );
 		wp_register_style( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet-gesture-handling.min.css', [], $asset_file['version'] );
+		wp_style_add_data( 'leaflet-gesture-handling', 'path', OTTER_BLOCKS_PATH . '/assets/leaflet/leaflet-gesture-handling.min.css' );
 
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
 		wp_register_script( 'lottie-player', OTTER_BLOCKS_URL . 'assets/lottie/lottie-player.min.js', [], $asset_file['version'], true );
@@ -184,8 +187,11 @@ class Registration {
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/slider.asset.php';
 		wp_register_script( 'glidejs', OTTER_BLOCKS_URL . 'assets/glide/glide.min.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'glidejs', 'async', true );
+
 		wp_register_style( 'glidejs-core', OTTER_BLOCKS_URL . 'assets/glide/glide.core.min.css', [], $asset_file['version'] );
+		wp_style_add_data( 'glidejs-core', 'path', OTTER_BLOCKS_PATH . '/assets/glide/glide.core.min.css' );
 		wp_register_style( 'glidejs-theme', OTTER_BLOCKS_URL . 'assets/glide/glide.theme.min.css', [], $asset_file['version'] );
+		wp_style_add_data( 'glidejs-theme', 'path', OTTER_BLOCKS_PATH . '/assets/glide/glide.theme.min.css' );
 	}
 
 
@@ -283,6 +289,7 @@ class Registration {
 
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
 		wp_enqueue_style( 'otter-blocks', OTTER_BLOCKS_URL . 'build/blocks/blocks.css', [], $asset_file['version'] );
+		wp_style_add_data( 'otter-blocks', 'path', OTTER_BLOCKS_PATH . '/build/blocks/blocks.css' );
 
 		if ( is_singular() ) {
 			$this->enqueue_dependencies();
@@ -586,6 +593,8 @@ class Registration {
 					$deps,
 					$asset_file['version']
 				);
+
+				wp_style_add_data( $metadata['style'], 'path', $style_path );
 			}
 
 			array_push( self::$styles_loaded, $block );
