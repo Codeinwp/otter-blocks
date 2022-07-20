@@ -4,8 +4,7 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	registerBlockType,
-	parse
+	registerBlockType
 } from '@wordpress/blocks';
 
 /**
@@ -17,7 +16,6 @@ import deprecated from './deprecated.js';
 import edit from './edit.js';
 import save from './save.js';
 import variations from './variations.js';
-import pricing from '../../pricing-section/pricing.json';
 
 const { name } = metadata;
 
