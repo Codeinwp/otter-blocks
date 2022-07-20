@@ -224,7 +224,7 @@ class Block_Frontend extends Base_CSS {
 	 * @access  public
 	 */
 	public function render_post_css() {
-		$id = 0;
+		$id            = 0;
 		$styles_loaded = false;
 
 		if ( is_singular() ) {
@@ -234,7 +234,7 @@ class Block_Frontend extends Base_CSS {
 			$styles_loaded = true;
 		}
 
-		if( 0 === get_queried_object_id() && ! $styles_loaded ) {
+		if ( 0 === get_queried_object_id() && ! $styles_loaded ) {
 			$this->enqueue_styles();
 		}
 
@@ -392,7 +392,7 @@ class Block_Frontend extends Base_CSS {
 		if ( function_exists( 'has_blocks' ) ) {
 			$css = '';
 
-			if( has_blocks( $post_id ) && 0 < get_queried_object_id() ) {
+			if ( has_blocks( $post_id ) && 0 < get_queried_object_id() ) {
 				$css = $this->get_page_css_meta( $post_id );
 
 				if ( empty( $css ) || is_preview() ) {
