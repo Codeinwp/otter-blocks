@@ -718,7 +718,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'query'      => '@media ( min-width: 600px ) and ( max-width: 960px )',
+				'query'      => '@media ( max-width: 960px )',
 				'properties' => array(
 					array(
 						'property'  => 'padding-top',
@@ -800,7 +800,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'query'      => '@media ( min-width: 600px ) and ( max-width: 960px )',
+				'query'      => '@media ( max-width: 960px )',
 				'selector'   => ' .wp-block-themeisle-blocks-advanced-columns-separators.top svg',
 				'properties' => array(
 					array(
@@ -829,7 +829,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'query'      => '@media ( min-width: 600px ) and ( max-width: 960px )',
+				'query'      => '@media ( max-width: 960px )',
 				'selector'   => ' .wp-block-themeisle-blocks-advanced-columns-separators.bottom svg',
 				'properties' => array(
 					array(
