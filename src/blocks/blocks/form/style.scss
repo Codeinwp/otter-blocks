@@ -12,9 +12,9 @@
 	--submit-error-color: red;
 	--inputs-gap: 10px;
 	--input-gap: 16px;
-	--label-font-size: var(--bodyFontSize, inherit);
-	--message-font-size: var(--bodyFontSize, inherit);
-	--submit-font-size: var(--btnFs, var(--bodyFontSize, inherit));
+	--label-font-size: var(--bodyfontsize, inherit);
+	--message-font-size: var(--bodyfontsize, inherit);
+	--submit-font-size: var(--btnFs, var(--bodyfontsize, inherit));
 	--input-color: initial;
 	--input-font-size: 1em;
 	--help-font-size: 13px;
