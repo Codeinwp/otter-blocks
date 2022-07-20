@@ -31,7 +31,7 @@ registerBlockType( name, {
 	save,
 	example: {
 		attributes: {
-			spacing: 30
+			spacing: 20
 		},
 		innerBlocks: [
 			{
