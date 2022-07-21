@@ -34,7 +34,7 @@ registerBlockType( name, {
 	save,
 	example: {
 		attributes: {
-			content: 'Lorem ipsum dolor sit amet, eu liber saperet est.'
+			content: __( 'A heading with more customization options', 'otter-blocks' )
 		}
 	}
 });

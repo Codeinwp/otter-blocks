@@ -44,19 +44,19 @@ registerBlockType( name, {
 			{
 				name: 'themeisle-blocks/icon-list-item',
 				attributes: {
-					content: 'Lorem 1'
+					content: __( 'List Item 1', 'otter-blocks' )
 				}
 			},
 			{
 				name: 'themeisle-blocks/icon-list-item',
 				attributes: {
-					content: 'Lorem 2'
+					content: __( 'List Item 2', 'otter-blocks' )
 				}
 			},
 			{
 				name: 'themeisle-blocks/icon-list-item',
 				attributes: {
-					content: 'Lorem 3'
+					content: __( 'List Item 3', 'otter-blocks' )
 				}
 			}
 		]

@@ -34,7 +34,7 @@ registerBlockType( name, {
 				name: 'themeisle-blocks/accordion-item',
 				attributes: {
 					initialOpen: true,
-					title: 'Lorem ipsum'
+					title: __( 'Accordion Item', 'otter-blocks' )
 				},
 				innerBlocks: [
 					{

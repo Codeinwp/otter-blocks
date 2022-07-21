@@ -37,13 +37,13 @@ registerBlockType( name, {
 			{
 				name: 'themeisle-blocks/button',
 				attributes: {
-					text: 'Lorem 1'
+					text: __( 'Button 1', 'otter-blocks' )
 				}
 			},
 			{
 				name: 'themeisle-blocks/button',
 				attributes: {
-					text: 'Lorem 2'
+					text: __( 'Button 2', 'otter-blocks' )
 				}
 			}
 		]
