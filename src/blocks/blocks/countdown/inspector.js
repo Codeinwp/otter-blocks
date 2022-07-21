@@ -308,7 +308,7 @@ const Inspector = ({
 			>
 				<SelectControl
 					label={__( 'Type', 'otter-blocks' )}
-					value={ attributes.borderStyle ?? solid }
+					value={ attributes.borderStyle ?? 'solid' }
 					onChange={ borderStyle => setAttributes({ borderStyle: borderStyle || undefined })}
 					options={[
 						{
