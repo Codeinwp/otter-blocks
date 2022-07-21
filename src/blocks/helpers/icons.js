@@ -229,17 +229,11 @@ export const close = (
 export const colsFull = ( props ) => {
 	return (
 		<SVG
-			width="48"
-			height="48"
 			viewBox="0 0 48 48"
-			xmlns="http://www.w3.org/2000/svg"
+			xmlns="http://www.w3.org/1999/xlink"
 			{...props}
 		>
-			<Path
-				fillRule="evenodd"
-				clipRule="evenodd"
-				d="m39.0625 14h-30.0625v20.0938h30.0625zm-30.0625-2c-1.10457 0-2 .8954-2 2v20.0938c0 1.1045.89543 2 2 2h30.0625c1.1046 0 2-.8955 2-2v-20.0938c0-1.1046-.8954-2-2-2z"
-			/>
+			<Path d="M41.8,13.2V34.8H6.2V13.2H41.8M42,11H6a2,2,0,0,0-2,2V35a2,2,0,0,0,2,2H42a2,2,0,0,0,2-2V13a2,2,0,0,0-2-2Z"></Path>
 		</SVG>
 	);
 };

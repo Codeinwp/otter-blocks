@@ -38,11 +38,11 @@ class Icon_List_Item_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--contentColor',
+						'property' => '--content-color',
 						'value'    => 'contentColor',
 					),
 					array(
-						'property' => '--iconColor',
+						'property' => '--icon-color',
 						'value'    => 'iconColor',
 					),
 				),

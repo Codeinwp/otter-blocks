@@ -49,12 +49,12 @@ const Edit = ({
 
 	const inlineStyles = {
 		'--align': attributes.align,
-		'--borderColor': attributes.borderColor,
-		'--borderSize': attributes.borderSize !== undefined && `${attributes.borderSize }px`,
-		'--borderRadius': attributes.borderRadius !== undefined && `${ attributes.borderRadius }%`,
+		'--border-color': attributes.borderColor,
+		'--border-size': attributes.borderSize !== undefined && `${attributes.borderSize }px`,
+		'--border-radius': attributes.borderRadius !== undefined && `${ attributes.borderRadius }%`,
 		'--margin':	attributes.margin !== undefined && `${ getValue( 'margin' ) }px`,
 		'--padding': attributes.padding !== undefined && `${ getValue( 'padding' ) }px`,
-		'--fontSize': attributes.fontSize !== undefined && `${ getValue( 'fontSize' ) }px`
+		'--font-size': attributes.fontSize !== undefined && `${ getValue( 'fontSize' ) }px`
 	};
 
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();

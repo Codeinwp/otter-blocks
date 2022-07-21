@@ -40,7 +40,7 @@ class Sharing_Icons_CSS extends Base_CSS {
 					'selector'   => ' .is-' . $icon,
 					'properties' => array(
 						array(
-							'property'  => '--iconBgColor',
+							'property'  => '--icon-bg-color',
 							'value'     => $icon,
 							'format'    => function( $value, $attrs ) {
 								return $value['backgroundColor'];
@@ -50,7 +50,7 @@ class Sharing_Icons_CSS extends Base_CSS {
 							},
 						),
 						array(
-							'property'  => '--textColor',
+							'property'  => '--text-color',
 							'value'     => $icon,
 							'format'    => function( $value, $attrs ) {
 								return $value['textColor'];
@@ -68,12 +68,12 @@ class Sharing_Icons_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--iconsGap',
+						'property' => '--icons-gap',
 						'value'    => 'gap',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--borderRadius',
+						'property' => '--border-radius',
 						'value'    => 'borderRadius',
 						'unit'     => 'px',
 					),

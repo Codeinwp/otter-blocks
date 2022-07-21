@@ -45,43 +45,43 @@ class Progress_Bar_CSS extends Base_CSS {
 						'unit'     => '%',
 					),
 					array(
-						'property' => '--titleColor',
+						'property' => '--title-color',
 						'value'    => 'titleColor',
 					),
 					array(
-						'property'  => '--percentageColor',
+						'property'  => '--percentage-color',
 						'value'     => 'percentageColor',
 						'condition' => function( $attrs ) {
 							return ! isset( $attrs['percentagePosition'] );
 						},
 					),
 					array(
-						'property'  => '--percentageColorOuter',
+						'property'  => '--percentage-color-outer',
 						'value'     => 'percentageColor',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['percentagePosition'] ) && 'outer' === $attrs['percentagePosition'];
 						},
 					),
 					array(
-						'property'  => '--percentageColorTooltip',
+						'property'  => '--percentage-color-tooltip',
 						'value'     => 'percentageColor',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['percentagePosition'] ) && 'tooltip' === $attrs['percentagePosition'];
 						},
 					),
 					array(
-						'property'  => '--percentageColorAppend',
+						'property'  => '--percentage-color-append',
 						'value'     => 'percentageColor',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['percentagePosition'] ) && 'append' === $attrs['percentagePosition'];
 						},
 					),
 					array(
-						'property' => '--backgroundColor',
+						'property' => '--background-color',
 						'value'    => 'backgroundColor',
 					),
 					array(
-						'property' => '--borderRadius',
+						'property' => '--border-radius',
 						'value'    => 'borderRadius',
 						'unit'     => 'px',
 					),
@@ -91,7 +91,7 @@ class Progress_Bar_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--barBackground',
+						'property' => '--bar-background',
 						'value'    => 'barBackgroundColor',
 					),
 				),

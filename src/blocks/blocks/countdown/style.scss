@@ -1,32 +1,32 @@
 .wp-block-themeisle-blocks-countdown {
-	--backgroundColor: transparent;
-	--borderColor: #000;
-	--borderRadius: 0px;
+	--background-color: transparent;
+	--border-color: #000;
+	--border-radius: 0px;
 	--width: 100%;
-	--widthTablet: var(--width);
-	--widthMobile: var(--width);
+	--width-tablet: var(--width);
+	--width-mobile: var(--width);
 	--height: 100;
-	--heightTablet: 100;
-	--heightMobile: 100;
-	--borderStyle: none;
-	--borderWidth: 2px;
-	--borderWidthTablet: var(--borderWidth);
-	--borderWidthMobile: var(--borderWidth);
+	--height-tablet: 100;
+	--height-mobile: 100;
+	--border-style: none;
+	--border-width: 2px;
+	--border-width-tablet: var(--borderWidth);
+	--border-width-mobile: var(--borderWidth);
 	--gap: 6px;
-	--gapTablet: 6px;
-	--gapMobile: 6px;
-	--valueFontSize: 1.5rem;
-	--valueFontSizeTablet: var(--valueFontSize);
-	--valueFontSizeMobile: var(--valueFontSize);
-	--labelFontSize: 0.6rem;
-	--labelFontSizeTablet: var(--labelFontSize);
-	--labelFontSizeMobile: var(--labelFontSize);
+	--gap-tablet: 6px;
+	--gap-mobile: 6px;
+	--value-font-size: 1.5rem;
+	--value-font-size-tablet: var(--value-font-size);
+	--value-font-size-mobile: var(--value-font-size);
+	--label-font-size: 0.6rem;
+	--label-font-size-tablet: var(--labelFontSize);
+	--label-font-size-mobile: var(--labelFontSize);
 	--alignment: center;
 	--padding: 0px;
-	--paddingTablet: var(--padding);
-	--paddingMobile: var(--padding);
-	--valueFontWeight: regular;
-	--labelFontWeight: regular;
+	--padding-tablet: var(--padding);
+	--padding-mobile: var(--padding);
+	--value-font-weight: regular;
+	--label-font-weight: regular;
 
 	.otter-countdown__container {
 		display: flex;
@@ -41,13 +41,13 @@
 		gap: var( --gap );
 
 		@media ( min-width: 600px ) and ( max-width: 960px ) {
-			gap: var( --gapTablet );
-			width: var(--widthTablet, 100%);
+			gap: var( --gap-tablet );
+			width: var(--width-tablet, 100%);
 		}
 
 		@media ( max-width: 600px ) {
-			gap: var( --gapMobile );
-			width: var(--widthMobile, 100%);
+			gap: var( --gap-mobile );
+			width: var(--width-mobile, 100%);
 		}
 	}
 
@@ -56,23 +56,23 @@
 		justify-content: center;
 		align-items: center;
 		flex-direction: column;
-		background: var( --backgroundColor );
-		border: var( --borderWidth ) var(--borderStyle) var( --borderColor );
-		border-radius: var( --borderRadius );
+		background: var( --background-color );
+		border: var( --border-width ) var(--border-style) var( --border-color );
+		border-radius: var( --border-radius );
 		box-sizing: border-box;
 		width: 100%;
 		padding: var(--padding);
 
 		@media ( min-width: 600px ) and ( max-width: 960px ) {
 			height: var( --heightTablet );
-			border: var( --borderWidthTablet ) var(--borderStyle) var( --borderColor );
-			padding: var(--paddingTablet);
+			border: var( --borderWidthTablet ) var(--border-style) var( --borderColor );
+			padding: var(--padding-tablet);
 		}
 
 		@media ( max-width: 600px ) {
 			height: var( --heightMobile );
-			border: var( --borderWidthMobile ) var(--borderStyle) var( --borderColor );
-			padding: var(--paddingMobile);
+			border: var( --borderWidthMobile ) var(--border-style) var( --borderColor );
+			padding: var(--padding-mobile);
 		}
 
 		&[name="separator"] {
@@ -86,18 +86,18 @@
 	}
 
 	.otter-countdown__value {
-		font-size: var( --valueFontSize );
-		font-weight: var( --valueFontWeight );
+		font-size: var( --value-font-size );
+		font-weight: var( --value-font-weight );
 		line-height: 1.2;
 		text-align: center;
 		width: 100%;
 
 		@media ( min-width: 600px ) and ( max-width: 960px ) {
-			font-size: var( --valueFontSizeTablet );
+			font-size: var( --value-font-size-tablet );
 		}
 
 		@media ( max-width: 600px ) {
-			font-size: var( --valueFontSizeMobile );
+			font-size: var( --value-font-size-mobile );
 		}
 	}
 
@@ -124,18 +124,18 @@
 	}
 
 	.otter-countdown__label {
-		font-size: var( --labelFontSize );
-		font-weight: var( --labelFontWeight );
+		font-size: var( --label-font-size );
+		font-weight: var( --label-font-weight );
 		min-height: 1rem;
 		text-align: center;
 		width: 100%;
 
 		@media ( min-width: 600px ) and ( max-width: 960px ) {
-			font-size: var( --labelFontSizeTablet );
+			font-size: var( --label-font-size-tablet );
 		}
 
 		@media ( max-width: 600px ) {
-			font-size: var( --labelFontSizeMobile );
+			font-size: var( --label-font-size-mobile );
 		}
 	}
 }

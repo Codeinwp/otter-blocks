@@ -1,8 +1,8 @@
 .wp-block-themeisle-blocks-tabs {
-	--borderWidth: 3px;
-	--borderColor: #000;
-	--activeTitleColor: inherit;
-	--tabColor: transparent;
+	--border-width: 3px;
+	--border-color: #000;
+	--active-title-color: inherit;
+	--tab-color: transparent;
 
     border-color: black;
 
@@ -10,7 +10,7 @@
         display: flex;
         flex-direction: row;
         overflow: hidden;
-        border-color: var( --borderColor );
+        border-color: var( --border-color );
 
         @media ( max-width: 800px ) {
             display: none;
@@ -34,11 +34,11 @@
         }
 
         &.active {
-            color: var( --activeTitleColor );
-            background: var( --tabColor );
+            color: var( --active-title-color );
+            background: var( --tab-color );
             position: relative;
-            border-width: var( --borderWidth );
-            border-color: var( --borderColor );
+            border-width: var( --border-width );
+            border-color: var( --border-color );
             border-style: solid;
             border-bottom-style: none;
 
@@ -52,8 +52,8 @@
                 content: "";
                 position: absolute;
                 box-sizing: border-box;
-                border-width: var( --borderWidth );
-                border-color: var( --borderColor );
+                border-width: var( --border-width );
+                border-color: var( --border-color );
             }
 
             &::after {
@@ -66,8 +66,8 @@
                 content: "";
                 position: absolute;
                 box-sizing: border-box;
-                border-width: var( --borderWidth );
-                border-color: var( --borderColor );
+                border-width: var( --border-width );
+                border-color: var( --border-color );
             }
         }
     }
@@ -81,7 +81,7 @@
             background-color: inherit;
 
             .block-editor-block-list__layout {
-                border-color: var( --borderColor );
+                border-color: var( --border-color );
                 background-color: inherit;
 
                 div {
@@ -112,7 +112,7 @@
         }
 
         .wp-block-themeisle-blocks-tabs-item__header {
-            border: var( --borderWidth ) solid var( --borderColor );
+            border: var( --border-width ) solid var( --border-color );
             padding: 5px 10px;
             cursor: pointer;
 
@@ -121,14 +121,14 @@
             }
 
             &.active {
-                color: var( --activeTitleColor );
-                background: var( --tabColor );
+                color: var( --active-title-color );
+                background: var( --tab-color );
                 border-bottom-style: none;
             }
         }
 
         .wp-block-themeisle-blocks-tabs-item__content {
-            border: var( --borderWidth ) solid var( --borderColor );
+            border: var( --border-width ) solid var( --border-color );
             border-top: 0px;
             padding: 10px;
             display: none;
@@ -136,7 +136,7 @@
             margin-top: 10px;
 
             &.active {
-                background: var( --tabColor );
+                background: var( --tab-color );
                 display: block;
             }
         }

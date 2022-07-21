@@ -1,8 +1,8 @@
 .wp-block-themeisle-blocks-tabs {
-	--borderWidth: 3px;
-	--borderColor: #000;
-	--activeTitleColor: inherit;
-	--tabColor: transparent;
+	--border-width: 3px;
+	--border-color: #000;
+	--active-title-color: inherit;
+	--tab-color: transparent;
 
 	.wp-block-themeisle-blocks-tabs__header {
 		display: flex;
@@ -25,10 +25,10 @@
 		border-right-style: none;
 
 		&.active {
-			color: var( --activeTitleColor );
-			background: var( --tabColor );
-			border: var( --borderWidth ) solid;
-			border-color: var( --borderColor );
+			color: var( --active-title-color );
+			background: var( --tab-color );
+			border: var( --border-width ) solid;
+			border-color: var( --border-color );
 			border-bottom-style: none;
 			position: relative;
 
@@ -43,8 +43,8 @@
 				content: "";
 				position: absolute;
 				box-sizing: border-box;
-				border-width: var( --borderWidth );
-				border-color: var( --borderColor );
+				border-width: var( --border-width );
+				border-color: var( --border-color );
 			}
 
 			&::after {
@@ -57,8 +57,8 @@
 				content: "";
 				position: absolute;
 				box-sizing: border-box;
-				border-width: var( --borderWidth );
-				border-color: var( --borderColor );
+				border-width: var( --border-width );
+				border-color: var( --border-color );
 			}
 		}
 	}
@@ -84,7 +84,7 @@
 
 		.wp-block-themeisle-blocks-tabs-item__header {
 			width: 100%;
-			border: var( --borderWidth ) solid var( --borderColor );
+			border: var( --border-width ) solid var( --border-color );
 			padding: 5px 10px;
 			cursor: pointer;
 
@@ -93,21 +93,21 @@
 			}
 
 			&.active {
-				color: var( --activeTitleColor );
-				background: var( --tabColor );
+				color: var( --active-title-color );
+				background: var( --tab-color );
 				border-bottom-style: none;
 			}
 		}
 
 		.wp-block-themeisle-blocks-tabs-item__content {
-			border: var( --borderWidth ) solid var( --borderColor );
+			border: var( --border-width ) solid var( --border-color );
 			width: 100%;
 			padding: 10px;
 			display: none;
 			border-top: 0;
 
 			&.active {
-				background: var( --tabColor );
+				background: var( --tab-color );
 				display: block;
 			}
 
