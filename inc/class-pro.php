@@ -29,7 +29,7 @@ class Pro {
 			add_action( 'admin_notices', array( $this, 'old_neve_notice' ) );
 		}
 
-		add_filter( 'init', array( $this, 'init_upsells' ) );
+		add_action( 'init', array( $this, 'init_upsells' ) );
 	}
 
 	/**
