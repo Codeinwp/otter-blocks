@@ -77,21 +77,6 @@ class Countdown_CSS extends Base_CSS {
 						'value'    => 'containerWidthMobile',
 					),
 					array(
-						'property' => '--box-width',
-						'value'    => 'width',
-						'unit'     => 'px',
-					),
-					array(
-						'property' => '--box-width-tablet',
-						'value'    => 'widthTablet',
-						'unit'     => 'px',
-					),
-					array(
-						'property' => '--box-width-mobile',
-						'value'    => 'widthMobile',
-						'unit'     => 'px',
-					),
-					array(
 						'property' => '--height',
 						'value'    => 'height',
 						'unit'     => 'px',
