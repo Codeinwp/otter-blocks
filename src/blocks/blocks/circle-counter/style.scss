@@ -1,5 +1,5 @@
 .wp-block-themeisle-blocks-circle-counter {
-	--fontSizeTitle: 15px;
+	--font-size-title: 15px;
 	--height: 100px;
 
 	display: flex;
@@ -21,7 +21,7 @@
 	.wp-block-themeisle-blocks-circle-counter-title__value {
 		font-weight: bold;
 		text-align: center;
-		font-size: var( --fontSizeTitle );
+		font-size: var( --font-size-title );
 	}
 	
 	.wp-block-themeisle-blocks-circle-counter__bar {
@@ -59,11 +59,11 @@
 html {
 	&[amp] {
 		.wp-block-themeisle-blocks-circle-counter {
-			--backgroundColor: #e3ecf4;
-			--progressColor: #3878ff;
-			--borderRadius: 100px 0px 0px 100px;
-			--percentageStart: rotate( 180deg );
-			--percentageEnd: rotate( 300deg );
+			--background-color: #e3ecf4;
+			--progress-color: #3878ff;
+			--border-radius: 100px 0px 0px 100px;
+			--percentage-start: rotate( 180deg );
+			--percentage-end: rotate( 300deg );
 
 			.wp-block-themeisle-blocks-circle-counter-container {
 				width: var( --height );
@@ -82,7 +82,7 @@ html {
 				transform: rotate( 0);
 				width: 100%;
 				height: 100%;
-				border: 10px solid var( --backgroundColor );
+				border: 10px solid var( --background-color );
 				border-radius: 100%;
 				margin: 0;
 				position: relative;
@@ -97,15 +97,15 @@ html {
 				position: absolute;
 				top: 0;
 				left: 0;
-				border: 11px solid var( --progressColor );
-				border-radius: var( --borderRadius );
+				border: 11px solid var( --progress-color );
+				border-radius: var( --border-radius );
 				border-right: 0;
 				transform-origin: right;
 				z-index: 100;
-				transform: var( --percentageStart );
+				transform: var( --percentage-start );
 
 				&:last-of-type {
-					transform: var( --percentageEnd );
+					transform: var( --percentage-end );
 				}
 			}
 

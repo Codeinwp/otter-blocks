@@ -42,16 +42,16 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 						'value'    => 'align',
 					),
 					array(
-						'property' => '--borderColor',
+						'property' => '--border-color',
 						'value'    => 'borderColor',
 					),
 					array(
-						'property' => '--borderSize',
+						'property' => '--border-size',
 						'value'    => 'borderSize',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--borderRadius',
+						'property' => '--border-radius',
 						'value'    => 'borderRadius',
 						'unit'     => '%',
 					),
@@ -60,20 +60,20 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 						'value'    => 'margin',
 						'default'  => 5,
 						'unit'     => 'px',
-						'hasSync'  => 'iconMargin',
+						'hasSync'  => 'icon-margin',
 					),
 					array(
 						'property' => '--padding',
 						'value'    => 'padding',
 						'default'  => 5,
 						'unit'     => 'px',
-						'hasSync'  => 'iconPadding',
+						'hasSync'  => 'icon-padding',
 					),
 					array(
-						'property' => '--fontSize',
+						'property' => '--font-size',
 						'value'    => 'fontSize',
 						'unit'     => 'px',
-						'hasSync'  => 'iconFontSize',
+						'hasSync'  => 'icon-font-size',
 					),
 				),
 			)
@@ -89,7 +89,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					'value'    => 'padding',
 					'default'  => 5,
 					'unit'     => 'px',
-					'hasSync'  => 'iconPadding',
+					'hasSync'  => 'icon-padding',
 				),
 			);
 		}
@@ -102,12 +102,12 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 						array(
 							'property' => 'color',
 							'value'    => 'textColor',
-							'hasSync'  => 'iconTextColor',
+							'hasSync'  => 'icon-text-color',
 						),
 						array(
 							'property' => 'background',
 							'value'    => 'backgroundColor',
-							'hasSync'  => 'iconBackgroundColor',
+							'hasSync'  => 'icon-background-color',
 						),
 					),
 					$padding
@@ -125,12 +125,12 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return ! ( isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' ) );
 						},
-						'hasSync'   => 'iconTextColorHover',
+						'hasSync'   => 'icon-text-color-hover',
 					),
 					array(
 						'property' => 'background',
 						'value'    => 'backgroundColorHover',
-						'hasSync'  => 'iconBackgroundColorHover',
+						'hasSync'  => 'icon-background-color-hover',
 					),
 					array(
 						'property' => 'border-color',
@@ -151,7 +151,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return ! ( isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' ) );
 						},
-						'hasSync'   => 'iconTextColor',
+						'hasSync'   => 'icon-text-color',
 					),
 				),
 			)
@@ -165,7 +165,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 						'property' => 'font-size',
 						'value'    => 'fontSize',
 						'unit'     => 'px',
-						'hasSync'  => 'iconFontSize',
+						'hasSync'  => 'icon-font-size',
 					),
 				),
 			)
@@ -181,7 +181,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' );
 						},
-						'hasSync'   => 'iconTextColor',
+						'hasSync'   => 'icon-text-color',
 					),
 				),
 			)
@@ -197,7 +197,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['library'] ) && 'themeisle-icons' === $this->get_attr_value( $attrs['library'], 'fontawesome' );
 						},
-						'hasSync'   => 'iconTextColorHover',
+						'hasSync'   => 'icon-text-color-hover',
 					),
 				),
 			)
@@ -240,34 +240,34 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 				'selector'   => '.wp-block-themeisle-blocks-font-awesome-icons',
 				'properties' => array(
 					array(
-						'property' => '--iconFontSize',
+						'property' => '--icon-font-size',
 						'value'    => 'fontSize',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--iconMargin',
+						'property' => '--icon-margin',
 						'value'    => 'margin',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--iconPadding',
+						'property' => '--icon-padding',
 						'value'    => 'padding',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--iconTextColorHover',
+						'property' => '--icon-text-color-hover',
 						'value'    => 'textColorHover',
 					),
 					array(
-						'property' => '--iconBackgroundColorHover',
+						'property' => '--icon-background-color-hover',
 						'value'    => 'backgroundColorHover',
 					),
 					array(
-						'property' => '--iconTextColor',
+						'property' => '--icon-text-color',
 						'value'    => 'textColor',
 					),
 					array(
-						'property' => '--iconBackgroundColor',
+						'property' => '--icon-background-color',
 						'value'    => 'backgroundColor',
 					),
 				),

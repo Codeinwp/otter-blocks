@@ -38,15 +38,15 @@ class Countdown_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--backgroundColor',
+						'property' => '--background-color',
 						'value'    => 'backgroundColor',
 					),
 					array(
-						'property' => '--borderColor',
+						'property' => '--border-color',
 						'value'    => 'borderColor',
 					),
 					array(
-						'property'  => '--borderRadius',
+						'property'  => '--border-radius',
 						'value'     => 'borderRadius',
 						'unit'      => 'px',
 						'default'   => 0,
@@ -55,7 +55,7 @@ class Countdown_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property'       => '--borderRadius',
+						'property'       => '--border-radius',
 						'pattern'        => 'top-left top-right bottom-right bottom-left',
 						'pattern_values' => array(
 							'top-left'     => array(
@@ -89,12 +89,12 @@ class Countdown_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--widthTablet',
+						'property' => '--width-tablet',
 						'value'    => 'widthTablet',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--widthMobile',
+						'property' => '--width-mobile',
 						'value'    => 'widthMobile',
 						'unit'     => 'px',
 					),
@@ -104,27 +104,27 @@ class Countdown_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--heightTablet',
+						'property' => '--height-tablet',
 						'value'    => 'heightTablet',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--heightMobile',
+						'property' => '--height-mobile',
 						'value'    => 'heightMobile',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--borderWidth',
+						'property' => '--border-width',
 						'value'    => 'borderWidth',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--borderWidthTablet',
+						'property' => '--border-widthTablet',
 						'value'    => 'borderWidthTablet',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--borderWidthMobile',
+						'property' => '--border-widthMobile',
 						'value'    => 'borderWidthMobile',
 						'unit'     => 'px',
 					),
@@ -134,42 +134,42 @@ class Countdown_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--gapTablet',
+						'property' => '--gap-tablet',
 						'value'    => 'gapTablet',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--gapMobile',
+						'property' => '--gap-mobile',
 						'value'    => 'gapMobile',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--valueFontSize',
+						'property' => '--value-font-size',
 						'value'    => 'valueFontSize',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--valueFontSizeTablet',
+						'property' => '--value-font-size-tablet',
 						'value'    => 'valueFontSizeTablet',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--valueFontSizeMobile',
+						'property' => '--value-font-size-mobile',
 						'value'    => 'valueFontSizeMobile',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--labelFontSize',
+						'property' => '--label-font-size',
 						'value'    => 'labelFontSize',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--labelFontSizeTablet',
+						'property' => '--label-font-size-tablet',
 						'value'    => 'labelFontSizeTablet',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--labelFontSizeMobile',
+						'property' => '--label-font-size-mobile',
 						'value'    => 'labelFontSizeMobile',
 						'unit'     => 'px',
 					),

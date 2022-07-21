@@ -132,7 +132,7 @@ const CircularProgressBarBlock = ({
 
 
 	const inlineStyles = {
-		'--fontSizeTitle': px( attributes.fontSizeTitle )
+		'--font-size-title': px( attributes.fontSizeTitle )
 	};
 
 	const blockProps = useBlockProps({

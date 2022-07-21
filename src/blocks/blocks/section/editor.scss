@@ -8,14 +8,14 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 }
 
 .wp-block-themeisle-blocks-advanced-columns {
-	--columnsWidth: initial;
+	--columns-width: initial;
 	display: flex;
 
 	> .innerblocks-wrap {
 		flex-basis: 100%;
 		width: 100%;
 		word-break: keep-all;
-		max-width: var( --columnsWidth );
+		max-width: var( --columns-width );
 
 		> .block-editor-inner-blocks > .block-editor-block-list__layout {
 			display: flex;

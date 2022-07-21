@@ -175,9 +175,9 @@ const Edit = ({
 	const borderRadius = 'linked' === attributes.borderRadiusType ? attributes.borderRadius + '%' : `${ attributes.borderRadiusTopLeft }% ${ attributes.borderRadiusTopRight }% ${ attributes.borderRadiusBottomRight }% ${ attributes.borderRadiusBottomLeft }%`;
 
 	const inlineStyles = {
-		'--backgroundColor': attributes.backgroundColor,
-		'--borderColor': attributes.borderColor,
-		'--borderRadius': borderRadius
+		'--background-color': attributes.backgroundColor,
+		'--border-color': attributes.borderColor,
+		'--border-radius': borderRadius
 	};
 
 	const [ cssNodeName, setCSS ] = useCSSNode();

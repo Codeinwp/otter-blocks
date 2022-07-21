@@ -68,26 +68,26 @@ const Edit = ({
 	const inlineStyles = {
 		'--width': attributes.width !== undefined && `${ attributes.width }px`,
 		'--height': attributes.height !== undefined && `${ attributes.height }px`,
-		'--borderWidth': attributes.borderWidth !== undefined && `${ attributes.borderWidth }px`,
-		'--borderColor': attributes.borderColor,
-		'--borderRadius': attributes.borderRadius !== undefined && `${ attributes.borderRadius }px`,
-		'--frontBackground': getChoice([
+		'--border-width': attributes.borderWidth !== undefined && `${ attributes.borderWidth }px`,
+		'--border-color': attributes.borderColor,
+		'--border-radius': attributes.borderRadius !== undefined && `${ attributes.borderRadius }px`,
+		'--front-background': getChoice([
 			[ ( 'gradient' === attributes.frontBackgroundType && attributes.frontBackgroundGradient ), attributes.frontBackgroundGradient ],
 			[ ( 'image' === attributes.frontBackgroundType && attributes.frontBackgroundImage?.url ), `url( ${ attributes.frontBackgroundImage?.url } ) ${ attributes.frontBackgroundRepeat || 'repeat' } ${ attributes.frontBackgroundAttachment || 'scroll' } ${ Math.round( attributes.frontBackgroundPosition?.x * 100 ) || 50 }% ${ Math.round( attributes.frontBackgroundPosition?.y * 100 ) || 50 }%/${ attributes.frontBackgroundSize || 'auto' }` ],
 			[ attributes.frontBackgroundColor ]
 		]),
-		'--backBackground': getChoice([
+		'--back-background': getChoice([
 			[ ( 'gradient' === attributes.backBackgroundType && attributes.backBackgroundGradient ), attributes.backBackgroundGradient ],
 			[ ( 'image' === attributes.backBackgroundType && attributes.backBackgroundImage?.url ), `url( ${ attributes.backBackgroundImage?.url } ) ${ attributes.backBackgroundRepeat || 'repeat' } ${ attributes.backBackgroundAttachment || 'scroll' } ${ Math.round( attributes.backBackgroundPosition?.x * 100 ) || 50 }% ${ Math.round( attributes.backBackgroundPosition?.y * 100 ) || 50 }%/${ attributes.backBackgroundSize || 'auto' }` ],
 			[ attributes.backBackgroundColor ]
 		]),
 		'--padding': attributes.padding !== undefined && `${ attributes.padding }px`,
-		'--boxShadow': attributes.boxShadow && `${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ getShadowColor() }`,
-		'--frontVerticalAlign': attributes.frontVerticalAlign,
-		'--frontHorizontalAlign': attributes.frontHorizontalAlign,
-		'--backVerticalAlign': attributes.backVerticalAlign,
-		'--frontMediaWidth': attributes.frontMediaWidth !== undefined && `${ attributes.frontMediaWidth }px`,
-		'--frontMediaHeight': attributes.frontMediaHeight !== undefined && `${ attributes.frontMediaHeight }px`
+		'--box-shadow': attributes.boxShadow && `${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ getShadowColor() }`,
+		'--front-vertical-align': attributes.frontVerticalAlign,
+		'--front-horizontal-align': attributes.frontHorizontalAlign,
+		'--back-vertical-align': attributes.backVerticalAlign,
+		'--front-media-width': attributes.frontMediaWidth !== undefined && `${ attributes.frontMediaWidth }px`,
+		'--front-media-height': attributes.frontMediaHeight !== undefined && `${ attributes.frontMediaHeight }px`
 	};
 
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();
