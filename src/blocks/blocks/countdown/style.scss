@@ -4,27 +4,27 @@
 	--border-radius: 0px;
 	--width: 100%;
 	--width-tablet: var(--width);
-	--width-mobile: var(--width);
+	--width-mobile: var(--width-tablet);
 	--height: 100;
 	--height-tablet: 100;
 	--height-mobile: 100;
 	--border-style: none;
 	--border-width: 2px;
-	--border-width-tablet: var(--borderWidth);
-	--border-width-mobile: var(--borderWidth);
+	--border-width-tablet: var(--border-width);
+	--border-width-mobile: var(--border-width-tablet);
 	--gap: 6px;
 	--gap-tablet: 6px;
 	--gap-mobile: 6px;
 	--value-font-size: 1.5rem;
 	--value-font-size-tablet: var(--value-font-size);
-	--value-font-size-mobile: var(--value-font-size);
+	--value-font-size-mobile: var(--value-font-size-tablet);
 	--label-font-size: 0.6rem;
-	--label-font-size-tablet: var(--labelFontSize);
-	--label-font-size-mobile: var(--labelFontSize);
+	--label-font-size-tablet: var(--label-font-size);
+	--label-font-size-mobile: var(--label-font-size-tablet);
 	--alignment: center;
 	--padding: 0px;
 	--padding-tablet: var(--padding);
-	--padding-mobile: var(--padding);
+	--padding-mobile: var(--padding-tablet);
 	--value-font-weight: regular;
 	--label-font-weight: regular;
 
@@ -40,7 +40,7 @@
 		height: var(--height);
 		gap: var( --gap );
 
-		@media ( min-width: 600px ) and ( max-width: 960px ) {
+		@media ( max-width: 960px ) {
 			gap: var( --gap-tablet );
 			width: var(--width-tablet, 100%);
 		}
@@ -63,7 +63,7 @@
 		width: 100%;
 		padding: var(--padding);
 
-		@media ( min-width: 600px ) and ( max-width: 960px ) {
+		@media ( max-width: 960px ) {
 			height: var( --heightTablet );
 			border: var( --borderWidthTablet ) var(--border-style) var( --borderColor );
 			padding: var(--padding-tablet);
@@ -130,7 +130,7 @@
 		text-align: center;
 		width: 100%;
 
-		@media ( min-width: 600px ) and ( max-width: 960px ) {
+		@media ( max-width: 960px ) {
 			font-size: var( --label-font-size-tablet );
 		}
 

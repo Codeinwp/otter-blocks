@@ -359,9 +359,15 @@ export const buildResponsiveSetAttributes = ( setAttributes, currentView ) => {
  *
  * @param {'Desktop'|'Tablet'|'Mobile'} currentView The current view.
  * @param {'Desktop'|'Tablet'|'Mobile'} defaultView If the value of the current view is undefined or null, fallback to this view.
+ * @param {boolean} cascade Inherit from previous view. Mobile from Tablet, Tablet from Desktop.
  * @template T
  * @returns { (values: T[]) => T}
  */
-export const buildResponsiveGetAttributes = ( currentView, defaultView = 'Desktop' ) => {
-	return values => ( values?.[mapViewToKey[currentView]] ?? values?.[mapViewToKey[defaultView]]);
+export const buildResponsiveGetAttributes = ( currentView, defaultView = 'Desktop', cascade = true ) => {
+	return values => {
+		if ( cascade && ! values?.[mapViewToKey[currentView]] && currentView !== defaultView ) {
+			return values?.[mapViewToKey[currentView] - 1] ?? values?.[mapViewToKey[currentView] - 2];
+		}
+		return ( values?.[mapViewToKey[currentView]] ?? values?.[mapViewToKey[defaultView]]);
+	};
 };
