@@ -180,7 +180,7 @@ const Inspector = ({
 						value={ responsiveGetAttributes([ attributes.height, attributes.heightTablet, attributes.heightMobile ]) ?? 100 }
 						onChange={ value => responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]) }
 						min={ 50 }
-						max={ 2400 }
+						max={ 800 }
 						allowReset
 					/>
 				</ResponsiveControl>
