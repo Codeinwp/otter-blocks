@@ -3,8 +3,6 @@
 	--border-color: #000;
 	--border-radius: 0px;
 	--width: 100%;
-	--width-tablet: var(--width);
-	--width-mobile: var(--width-tablet);
 	--container-width: clamp(400px, var(--width) * 4, 100%);
 	--container-width-tablet: var(--container-width);
 	--container-width-mobile: var(--container-width-tablet);
