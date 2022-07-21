@@ -65,15 +65,15 @@ class Countdown_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => '--width',
+						'property' => '--container-width',
 						'value'    => 'containerWidth',
 					),
 					array(
-						'property' => '--width-tablet',
+						'property' => '--container-width-tablet',
 						'value'    => 'containerWidthTablet',
 					),
 					array(
-						'property' => '--width-mobile',
+						'property' => '--container-width-mobile',
 						'value'    => 'containerWidthMobile',
 					),
 					array(

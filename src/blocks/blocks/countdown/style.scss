@@ -5,6 +5,9 @@
 	--width: 100%;
 	--width-tablet: var(--width);
 	--width-mobile: var(--width-tablet);
+	--container-width: clamp(400px, var(--width) * 4, 100%);
+	--container-width-tablet: var(--container-width);
+	--container-width-mobile: var(--container-width-tablet);
 	--height: 100;
 	--height-tablet: 100;
 	--height-mobile: 100;
@@ -36,18 +39,18 @@
 	.otter-countdown__display {
 		display: flex;
 		flex-direction: row;
-		width: var(--width, 100%);
+		width: var(--container-width, 100%);
 		height: var(--height);
 		gap: var( --gap );
 
 		@media ( max-width: 960px ) {
 			gap: var( --gap-tablet );
-			width: var(--width-tablet, 100%);
+			width: var(--container-width-tablet, 100%);
 		}
 
 		@media ( max-width: 600px ) {
 			gap: var( --gap-mobile );
-			width: var(--width-mobile, 100%);
+			width: var(--container-width-mobile, 100%);
 		}
 	}
 
