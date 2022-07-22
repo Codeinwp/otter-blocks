@@ -62,10 +62,10 @@ class Form_CSS extends Base_CSS {
 							return CSS_Utility::box_values(
 								$value,
 								array(
-									'left' => '8px',
-									'right' => '8px',
-									'top' => '8px',
-									'bottom' => '8px'
+									'left'   => '8px',
+									'right'  => '8px',
+									'top'    => '8px',
+									'bottom' => '8px',
 								)
 							);
 						},

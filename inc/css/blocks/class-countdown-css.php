@@ -43,7 +43,7 @@ class Countdown_CSS extends Base_CSS {
 						'unit'      => '%',
 						'default'   => 0,
 						'condition' => function( $attrs ) {
-							return ( ! isset( $attrs['borderRadiusBox'] ) ) && ! ( isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] ) && isset( $attrs['borderRadius'] ) && is_numeric($attrs['borderRadius']);
+							return ( ! isset( $attrs['borderRadiusBox'] ) ) && ! ( isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] ) && isset( $attrs['borderRadius'] ) && is_numeric( $attrs['borderRadius'] );
 						},
 					),
 					array(
@@ -72,7 +72,7 @@ class Countdown_CSS extends Base_CSS {
 							),
 						),
 						'condition'      => function( $attrs ) {
-							return ( ! isset( $attrs['borderRadiusBox'] ) ) && isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] && isset($attrs['borderRadius']) && is_numeric($attrs['borderRadius']);
+							return ( ! isset( $attrs['borderRadiusBox'] ) ) && isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] && isset( $attrs['borderRadius'] ) && is_numeric( $attrs['borderRadius'] );
 						},
 					),
 					array(
@@ -88,16 +88,16 @@ class Countdown_CSS extends Base_CSS {
 						'value'    => 'borderStyle',
 					),
 					array(
-						'property'  => '--border-radius',
-						'value'     => 'borderRadiusBox',
-						'format'    => function( $value, $attrs ) {
+						'property' => '--border-radius',
+						'value'    => 'borderRadiusBox',
+						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
-									'left' => '0px',
-									'right' => '0px',
-									'top' => '0px',
-									'bottom' => '0px'
+									'left'   => '0px',
+									'right'  => '0px',
+									'top'    => '0px',
+									'bottom' => '0px',
 								)
 							);
 						},
@@ -214,46 +214,46 @@ class Countdown_CSS extends Base_CSS {
 						'value'    => 'labelFontWeight',
 					),
 					array(
-						'property'  => '--padding',
-						'value'     => 'padding',
-						'format'    => function( $value, $attrs ) {
+						'property' => '--padding',
+						'value'    => 'padding',
+						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
-									'left' => '0px',
-									'right' => '0px',
-									'top' => '0px',
-									'bottom' => '0px'
+									'left'   => '0px',
+									'right'  => '0px',
+									'top'    => '0px',
+									'bottom' => '0px',
 								)
 							);
 						},
 					),
 					array(
-						'property'  => '--padding-tablet',
-						'value'     => 'paddingTablet',
-						'format'    => function( $value, $attrs ) {
+						'property' => '--padding-tablet',
+						'value'    => 'paddingTablet',
+						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
-									'left' => '0px',
-									'right' => '0px',
-									'top' => '0px',
-									'bottom' => '0px'
+									'left'   => '0px',
+									'right'  => '0px',
+									'top'    => '0px',
+									'bottom' => '0px',
 								)
 							);
 						},
 					),
 					array(
-						'property'  => '--padding-mobile',
-						'value'     => 'paddingMobile',
-						'format'    => function( $value, $attrs ) {
+						'property' => '--padding-mobile',
+						'value'    => 'paddingMobile',
+						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
-									'left' => '0px',
-									'right' => '0px',
-									'top' => '0px',
-									'bottom' => '0px'
+									'left'   => '0px',
+									'right'  => '0px',
+									'top'    => '0px',
+									'bottom' => '0px',
 								)
 							);
 						},
