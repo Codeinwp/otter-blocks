@@ -270,7 +270,7 @@ class Countdown_CSS extends Base_CSS {
 						'unit'      => '%',
 						'default'   => 0,
 						'condition' => function( $attrs ) {
-							return ( ! isset( $attrs['borderRadiusBox'] ) ) && ! ( isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] ) && is_numeric($attrs['borderRadius']);
+							return ( ! isset( $attrs['borderRadiusBox'] ) ) && ! ( isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] ) && isset( $attrs['borderRadius'] ) && is_numeric($attrs['borderRadius']);
 						},
 					),
 					array(
