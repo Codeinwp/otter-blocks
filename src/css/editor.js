@@ -44,6 +44,7 @@ const CSSEditor = ({
 			gutters: [ 'CodeMirror-lint-markers' ],
 			styleActiveLine: true,
 			styleActiveSelected: true,
+			mode: 'css',
 			extraKeys: {
 				'Ctrl-Space': 'autocomplete',
 				'Alt-F': 'findPersistent',
