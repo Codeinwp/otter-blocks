@@ -127,6 +127,22 @@
 		},
 		"paddingMobile": {
 			"type": "object"
+		},
+		"borderRadiusTopRight": {
+			"type": "number"
+		},
+		"borderRadiusTopLeft": {
+			"type": "number"
+		},
+		"borderRadiusBottomRight": {
+			"type": "number"
+		},
+		"borderRadiusBottomLeft": {
+			"type": "number"
+		},
+		"borderRadiusType": {
+			"type": "string",
+			"default": "linked"
 		}
 	},
 	"supports": {

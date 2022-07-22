@@ -260,6 +260,52 @@ class Countdown_CSS extends Base_CSS {
 			)
 		);
 
+		// Legacy. Remove after they become irelevant.
+		$css->add_item(
+			array(
+				'properties' => array(
+					array(
+						'property'  => '--borderRadius',
+						'value'     => 'borderRadius',
+						'unit'      => '%',
+						'default'   => 0,
+						'condition' => function( $attrs ) {
+							return ! ( isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] ) && is_numeric($attrs['borderRadius']);
+						},
+					),
+					array(
+						'property'       => '--borderRadius',
+						'pattern'        => 'top-left top-right bottom-right bottom-left',
+						'pattern_values' => array(
+							'top-left'     => array(
+								'value'   => 'borderRadiusTopLeft',
+								'unit'    => '%',
+								'default' => 0,
+							),
+							'top-right'    => array(
+								'value'   => 'borderRadiusTopRight',
+								'unit'    => '%',
+								'default' => 0,
+							),
+							'bottom-right' => array(
+								'value'   => 'borderRadiusBottomRight',
+								'unit'    => '%',
+								'default' => 0,
+							),
+							'bottom-left'  => array(
+								'value'   => 'borderRadiusBottomLeft',
+								'unit'    => '%',
+								'default' => 0,
+							),
+						),
+						'condition'      => function( $attrs ) {
+							return !isset( $attrs['borderRadiusBox'] ) && isset( $attrs['borderRadiusType'] ) && 'unlinked' === $attrs['borderRadiusType'] && isset($attrs['borderRadius']) && is_numeric($attrs['borderRadius']);
+						},
+					),
+				),
+			),
+		); 
+
 
 		$style = $css->generate();
 

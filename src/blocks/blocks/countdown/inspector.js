@@ -360,9 +360,8 @@ const Inspector = ({
 						)
 					}
 					onChange={ value => {
-						const cleaned = removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' });
 						setAttributes({
-							borderRadiusBox: cleaned
+							borderRadiusBox: removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' })
 						});
 					} }
 					id="o-border-raduis-box"

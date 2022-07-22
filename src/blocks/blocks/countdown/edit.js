@@ -7,10 +7,6 @@
  */
 import { useBlockProps } from '@wordpress/block-editor';
 
-import { useViewportMatch } from '@wordpress/compose';
-
-import { useSelect } from '@wordpress/data';
-
 import {
 	Fragment,
 	useState,
@@ -34,12 +30,12 @@ import {
 	getTimezone
 } from '../../helpers/helper-functions.js';
 import DisplayTime from './components/display-time.js';
-import { at, isNumber } from 'lodash';
+import { isNumber, max } from 'lodash';
 import classNames from 'classnames';
 
 const { attributes: defaultAttributes } = metadata;
 
-const optionalUnit = value => isNumber( value ) ? `${ value }px` : value;
+const optionalUnit = ( value, unit = 'px' ) => isNumber( value ) ? `${ value }${unit}` : value;
 
 /**
  *
@@ -57,6 +53,26 @@ const Edit = ({
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
+
+	useEffect( () => {
+
+		/**
+		 * Migration to new attributes.
+		 */
+		if (
+			attributes.borderRadiusBox === undefined &&
+			( attributes.borderRadius || attributes.borderRadiusBottomLeft || attributes.borderRadiusTopRight || attributes.borderRadiusTopLeft || attributes.borderRadiusBottomRight )
+		) {
+
+			const borderRadiusBox = pickBy( 'linked' === attributes?.borderRadiusType ?
+				{ left: optionalUnit( attributes.borderRadius, '%' ), right: optionalUnit( attributes.borderRadius, '%' ), bottom: optionalUnit( attributes.borderRadius, '%' ), top: optionalUnit( attributes.borderRadius, '%' ) } :
+				{ left: optionalUnit( attributes.borderRadiusBottomLeft, '%' ), right: optionalUnit( attributes.borderRadiusTopRight, '%' ), bottom: optionalUnit( attributes.borderRadiusBottomRight, '%' ), top: optionalUnit( attributes.borderRadiusTopLeft, '%' ) }, x => x );
+
+			if ( ! isEmpty( borderRadiusBox ) ) {
+				setAttributes({ borderRadiusBox, borderRadius: undefined, borderRadiusBottomLeft: undefined, borderRadiusTopRight: undefined, borderRadiusBottomRight: undefined, borderRadiusTopLeft: undefined, borderRadiusType: undefined });
+			}
+		}
+	}, []);
 
 	/**
 	 * Update the time interval
@@ -81,8 +97,8 @@ const Edit = ({
 		'--background-color': attributes.backgroundColor,
 		'--border-color': attributes.borderColor,
 		'--container-width': attributes.containerWidth,
-		'--container-width-tablet': attributes.containerWidthTablet ?? attributes.containerWidth,
-		'--container-width-mobile': attributes.containerWidthMobile ?? attributes.containerWidth,
+		'--container-width-tablet': attributes.containerWidthTablet,
+		'--container-width-mobile': attributes.containerWidthMobile,
 		'--height': optionalUnit( attributes.height ),
 		'--height-tablet': optionalUnit( attributes.heightTablet ),
 		'--height-mobile': optionalUnit( attributes.heightMobile ),
