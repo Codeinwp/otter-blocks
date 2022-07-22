@@ -30,7 +30,7 @@ import {
 	getTimezone
 } from '../../helpers/helper-functions.js';
 import DisplayTime from './components/display-time.js';
-import { isNumber, max } from 'lodash';
+import { isNumber, max, pickBy } from 'lodash';
 import classNames from 'classnames';
 
 const { attributes: defaultAttributes } = metadata;
