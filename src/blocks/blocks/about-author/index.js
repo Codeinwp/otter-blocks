@@ -25,5 +25,6 @@ registerBlockType( name, {
 		'profile'
 	],
 	edit,
-	save: () => null
+	save: () => null,
+	example: {}
 });

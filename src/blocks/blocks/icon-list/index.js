@@ -38,5 +38,27 @@ registerBlockType( name, {
 		}
 	],
 	edit,
-	save
+	save,
+	example: {
+		innerBlocks: [
+			{
+				name: 'themeisle-blocks/icon-list-item',
+				attributes: {
+					content: __( 'List Item 1', 'otter-blocks' )
+				}
+			},
+			{
+				name: 'themeisle-blocks/icon-list-item',
+				attributes: {
+					content: __( 'List Item 2', 'otter-blocks' )
+				}
+			},
+			{
+				name: 'themeisle-blocks/icon-list-item',
+				attributes: {
+					content: __( 'List Item 3', 'otter-blocks' )
+				}
+			}
+		]
+	}
 });

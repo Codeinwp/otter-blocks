@@ -27,8 +27,7 @@ import {
 import metadata from './block.json';
 import Inspector from './inspector.js';
 import {
-	blockInit,
-	useCSSNode
+	blockInit
 } from '../../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
@@ -91,15 +90,10 @@ const Edit = ({
 		isMobile = isPreviewMobile;
 	}
 
-	const [ cssNodeName, setNodeCSS ] = useCSSNode();
 
-	useEffect( () => {
-		setNodeCSS([
-			`.block-editor-block-list__layout {
-				gap: ${ attributes.spacing }px;
-			}`
-		]);
-	}, [ attributes.spacing ]);
+	const inlineCSS = {
+		'--spacing': attributes.spacing && attributes.spacing + 'px'
+	};
 
 	const alignClasses = [ 'desktop', 'tablet', 'mobile' ].reduce( ( acc, device ) => {
 		if ( attributes.align && attributes.align[ device ]) {
@@ -113,13 +107,13 @@ const Edit = ({
 		id: attributes.id,
 		className: classnames(
 			'wp-block-buttons',
-			cssNodeName,
 			{
 				[ `align-${ attributes.align }` ]: 'string' === typeof attributes.align,
 				'collapse': ( 'collapse-desktop' === attributes.collapse && ( isDesktop || isTablet || isMobile ) ) || ( 'collapse-tablet' === attributes.collapse && ( isTablet || isMobile ) ) || ( 'collapse-mobile' === attributes.collapse && isMobile )
 			},
 			...alignClasses
-		)
+		),
+		style: inlineCSS
 	});
 
 	return (

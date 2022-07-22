@@ -30,5 +30,8 @@ registerBlockType( name, {
 		'animation'
 	],
 	edit,
-	save
+	save,
+	example: {
+		attributes: {}
+	}
 });

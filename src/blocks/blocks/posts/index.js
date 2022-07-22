@@ -27,5 +27,8 @@ registerBlockType( name, {
 	],
 	deprecated,
 	edit,
-	save: () => null
+	save: () => null,
+	example: {
+		attributes: {}
+	}
 });
