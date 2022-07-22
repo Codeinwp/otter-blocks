@@ -62,13 +62,6 @@ class Registration {
 	public static $styles_loaded = array();
 
 	/**
-	 * Allow to load in frontend.
-	 *
-	 * @var bool
-	 */
-	public static $can_load_frontend = true;
-
-	/**
 	 * Flag to mark that the  FA has been loaded.
 	 *
 	 * @var bool $is_fa_loaded Is FA loaded?
@@ -353,7 +346,6 @@ class Registration {
 		}
 
 		if ( strpos( $content, '<!-- wp:' ) === false ) {
-			self::$can_load_frontend = false;
 			return false;
 		}
 
@@ -375,7 +367,6 @@ class Registration {
 
 		// On AMP context, we don't load JS files.
 		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
-			self::$can_load_frontend = false;
 			return;
 		}
 
@@ -839,12 +830,11 @@ class Registration {
 	 * @since 2.0.5
 	 */
 	public function load_sticky( $block_content, $block ) {
-
-		if ( ! self::$can_load_frontend ) {
+		if ( ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) || self::$scripts_loaded['sticky'] ) {
 			return $block_content;
 		}
 
-		if ( ! self::$scripts_loaded['sticky'] && strpos( $block_content, 'o-sticky' ) ) {
+		if ( isset( $block['attrs']['className'] ) && false !== strpos( $block['attrs']['className'], 'o-sticky' ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/sticky.asset.php';
 			wp_enqueue_script(
 				'otter-sticky',
