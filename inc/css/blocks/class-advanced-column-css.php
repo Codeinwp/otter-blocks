@@ -451,7 +451,7 @@ class Advanced_Column_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'query'      => '@media ( min-width: 600px ) and ( max-width: 960px )',
+				'query'      => '@media ( max-width: 960px )',
 				'properties' => array(
 					array(
 						'property'  => 'padding-top',

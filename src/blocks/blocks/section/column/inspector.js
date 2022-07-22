@@ -8,7 +8,7 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
-import { pick } from 'lodash';
+import { merge, pick } from 'lodash';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
@@ -94,9 +94,9 @@ const Inspector = ({
 		case 'Desktop':
 			return getValue( 'padding' );
 		case 'Tablet':
-			return getValue( 'paddingTablet' );
+			return merge( getValue( 'padding' ), getValue( 'paddingTablet' ) );
 		case 'Mobile':
-			return getValue( 'paddingMobile' );
+			return merge( getValue( 'padding' ), getValue( 'paddingTablet' ), getValue( 'paddingMobile' ) );
 		default:
 			return undefined;
 		}
@@ -137,9 +137,9 @@ const Inspector = ({
 		case 'Desktop':
 			return getValue( 'margin' );
 		case 'Tablet':
-			return getValue( 'marginTablet' );
+			return merge( getValue( 'margin' ), getValue( 'marginTablet' ) );
 		case 'Mobile':
-			return getValue( 'marginMobile' );
+			return merge( getValue( 'margin' ), getValue( 'marginTablet' ), getValue( 'marginMobile' ) );
 		default:
 			return undefined;
 		}

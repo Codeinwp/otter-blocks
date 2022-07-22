@@ -204,28 +204,22 @@
 			"default": "#000000"
 		},
 		"dividerTopWidth": {
-			"type": "number",
-			"default": 100
+			"type": "number"
 		},
 		"dividerTopWidthTablet": {
-			"type": "number",
-			"default": 100
+			"type": "number"
 		},
 		"dividerTopWidthMobile": {
-			"type": "number",
-			"default": 100
+			"type": "number"
 		},
 		"dividerTopHeight": {
-			"type": "number",
-			"default": 100
+			"type": "number"
 		},
 		"dividerTopHeightTablet": {
-			"type": "number",
-			"default": 100
+			"type": "number"
 		},
 		"dividerTopHeightMobile": {
-			"type": "number",
-			"default": 100
+			"type": "number"
 		},
 		"dividerTopInvert": {
 			"type": "boolean",
@@ -240,28 +234,22 @@
 			"default": "#000000"
 		},
 		"dividerBottomWidth": {
-			"type": "number",
-			"default": 100
+			"type": "number"
 		},
 		"dividerBottomWidthTablet": {
-			"type": "number",
-			"default": 100
+			"type": "number"
 		},
 		"dividerBottomWidthMobile": {
-			"type": "number",
-			"default": 100
+			"type": "number"
 		},
 		"dividerBottomHeight": {
-			"type": "number",
-			"default": 100
+			"type": "number"
 		},
 		"dividerBottomHeightTablet": {
-			"type": "number",
-			"default": 100
+			"type": "number"
 		},
 		"dividerBottomHeightMobile": {
-			"type": "number",
-			"default": 100
+			"type": "number"
 		},
 		"dividerBottomInvert": {
 			"type": "boolean",
