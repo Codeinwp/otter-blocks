@@ -220,50 +220,6 @@ class Countdown_CSS extends Base_CSS {
 							);
 						},
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area .otter-countdown__value',
-				'properties' => array(
-					array(
-						'property' => 'color',
-						'value'    => 'valueColor',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area .otter-countdown__label',
-				'properties' => array(
-					array(
-						'property' => 'color',
-						'value'    => 'labelColor',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area[name="separator"] .otter-countdown__value',
-				'properties' => array(
-					array(
-						'property' => 'color',
-						'value'    => 'separatorColor',
-					),
-				),
-			)
-		);
-
-		// Legacy. Remove after they become irelevant.
-		$css->add_item(
-			array(
-				'properties' => array(
 					array(
 						'property'  => '--borderRadius',
 						'value'     => 'borderRadius',
@@ -303,9 +259,44 @@ class Countdown_CSS extends Base_CSS {
 						},
 					),
 				),
-			),
-		); 
+			)
+		);
 
+		$css->add_item(
+			array(
+				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area .otter-countdown__value',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'valueColor',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area .otter-countdown__label',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'labelColor',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area[name="separator"] .otter-countdown__value',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'separatorColor',
+					),
+				),
+			)
+		);
 
 		$style = $css->generate();
 
