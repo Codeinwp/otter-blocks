@@ -16,7 +16,6 @@ import save from './save.js';
 import './input/index.js';
 import './nonce/index.js';
 import './textarea/index.js';
-import attributes from '../lottie/attributes';
 
 const { name } = metadata;
 
