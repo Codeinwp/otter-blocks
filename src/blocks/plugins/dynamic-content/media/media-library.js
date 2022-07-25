@@ -149,6 +149,7 @@ jQuery( document ).ready( function( $ ) {
 				id,
 				url,
 				alt: '',
+				'media_type': 'image',
 				width: 500
 			});
 		};
