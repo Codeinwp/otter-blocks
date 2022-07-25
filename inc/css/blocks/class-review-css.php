@@ -38,24 +38,24 @@ class Review_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--backgroundColor',
+						'property' => '--background-color',
 						'value'    => 'backgroundColor',
-						'hasSync'  => 'reviewBackgroundColor',
+						'hasSync'  => 'review-background-color',
 					),
 					array(
-						'property' => '--primaryColor',
+						'property' => '--primary-color',
 						'value'    => 'primaryColor',
-						'hasSync'  => 'reviewPrimaryColor',
+						'hasSync'  => 'review-primary-color',
 					),
 					array(
-						'property' => '--textColor',
+						'property' => '--text-color',
 						'value'    => 'textColor',
-						'hasSync'  => 'reviewTextColor',
+						'hasSync'  => 'review-text-color',
 					),
 					array(
-						'property' => '--buttonTextColor',
+						'property' => '--button-text-color',
 						'value'    => 'buttonTextColor',
-						'hasSync'  => 'reviewButtonTextColor',
+						'hasSync'  => 'review-button-text-color',
 					),
 				),
 			)
@@ -98,19 +98,19 @@ class Review_CSS extends Base_CSS {
 				'selector'   => '.wp-block-themeisle-blocks-review',
 				'properties' => array(
 					array(
-						'property' => '--reviewBackgroundColor',
+						'property' => '--review-background-color',
 						'value'    => 'backgroundColor',
 					),
 					array(
-						'property' => '--reviewPrimaryColor',
+						'property' => '--review-primary-color',
 						'value'    => 'primaryColor',
 					),
 					array(
-						'property' => '--reviewTextColor',
+						'property' => '--review-text-color',
 						'value'    => 'textColor',
 					),
 					array(
-						'property' => '--reviewButtonTextColor',
+						'property' => '--review-button-text-color',
 						'value'    => 'buttonTextColor',
 					),
 				),

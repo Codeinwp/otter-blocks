@@ -28,7 +28,6 @@ module.exports = [
 		mode: NODE_ENV,
 		entry: {
 			blocks: [
-				'./src/pro/index.js',
 				'./src/pro/blocks/index.js',
 				'./src/pro/plugins/index.js'
 			],
@@ -39,18 +38,6 @@ module.exports = [
 			path: path.resolve( __dirname, './build/pro' ),
 			filename: '[name].js',
 			chunkFilename: 'chunk-[name].js'
-		},
-		optimization: {
-			...defaultConfig.optimization,
-			splitChunks: {
-				cacheGroups: {
-					editorStyles: {
-						name: 'editor',
-						test: /editor\.scss$/,
-						chunks: 'all'
-					}
-				}
-			}
 		},
 		plugins: [
 			...defaultConfig.plugins,

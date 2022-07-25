@@ -104,8 +104,8 @@ const Edit = ({
 	};
 
 	const inlineStyles = {
-		'--contentColor': attributes.contentColor ?? parentAttributes.defaultContentColor,
-		'--iconColor': attributes.iconColor ?? parentAttributes.defaultIconColor
+		'--content-color': attributes.contentColor ?? parentAttributes.defaultContentColor,
+		'--icon-color': attributes.iconColor ?? parentAttributes.defaultIconColor
 	};
 
 	const blockProps = useBlockProps({

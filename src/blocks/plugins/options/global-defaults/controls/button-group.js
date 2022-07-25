@@ -77,6 +77,7 @@ const ButtonGroupBlock = ({
 					label={ __( 'Group Spacing', 'otter-blocks' ) }
 					value={ defaults.spacing }
 					onChange={ value => changeConfig( blockName, { spacing: value }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 50 }
 				/>
@@ -104,6 +105,7 @@ const ButtonGroupBlock = ({
 					label={ __( 'Font Size', 'otter-blocks' ) }
 					value={ defaults.fontSize || '' }
 					onChange={ value => changeConfig( blockName, { fontSize: value }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 50 }
 				/>
@@ -128,6 +130,7 @@ const ButtonGroupBlock = ({
 					label={ __( 'Line Height', 'otter-blocks' ) }
 					value={ defaults.lineHeight || '' }
 					onChange={ value => changeConfig( blockName, { lineHeight: value }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 200 }
 				/>

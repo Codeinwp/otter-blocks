@@ -29,6 +29,19 @@ class Pro {
 			add_action( 'admin_notices', array( $this, 'old_neve_notice' ) );
 		}
 
+		add_action( 'init', array( $this, 'init_upsells' ) );
+	}
+
+	/**
+	 * Hook upsells
+	 * 
+	 * We do it here because the is_pro_active hook is not fired until the init function.
+	 * 
+	 * @since   2.0.9
+	 * @access  public
+	 * @return  bool
+	 */
+	public function init_upsells() {
 		if ( self::is_pro_active() ) {
 			return;
 		}
@@ -40,6 +53,7 @@ class Pro {
 		add_action( 'admin_init', array( $this, 'dismiss_dashboard_notice' ), 10 );
 		add_action( 'admin_init', array( $this, 'should_show_dashboard_upsell' ), 11 );
 	}
+
 
 	/**
 	 * Check if Otter Pro is available
@@ -254,7 +268,7 @@ class Pro {
 			esc_html( $message ),
 			esc_url( self::get_url() ),
 			esc_html__( 'Learn more', 'otter-blocks' ),
-			esc_url( wp_nonce_url( admin_url( '?otter-dismiss-dashboard-upsell' ), 'dismiss' ) ),
+			esc_url( wp_nonce_url( '?otter-dismiss-dashboard-upsell', 'dismiss' ) ),
 			esc_html__( 'Dismiss notice', 'otter-blocks' )
 		);
 	}

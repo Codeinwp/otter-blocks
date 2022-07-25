@@ -31,5 +31,10 @@ registerBlockType( name, {
 	deprecated,
 	transforms,
 	edit,
-	save
+	save,
+	example: {
+		attributes: {
+			content: __( 'A heading with more customization options', 'otter-blocks' )
+		}
+	}
 });

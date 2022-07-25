@@ -115,6 +115,7 @@ const Inspector = ({
 							help={ __( 'Slider height in pixels.', 'otter-blocks' ) }
 							value={ attributes.height }
 							onChange={ changeHeight }
+							step={ 0.1 }
 							min={ 100 }
 							max={ 1400 }
 						/>

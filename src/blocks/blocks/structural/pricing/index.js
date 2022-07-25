@@ -26,5 +26,8 @@ registerBlockType( name, {
 		'money'
 	],
 	edit,
-	save
+	save,
+	example: {
+		attributes: {}
+	}
 });

@@ -30,5 +30,8 @@ registerBlockType( name, {
 		'lightbox'
 	],
 	edit,
-	save
+	save,
+	example: {
+		attributes: {}
+	}
 });

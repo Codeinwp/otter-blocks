@@ -37,11 +37,11 @@ class Form_Input_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--labelColor',
+						'property' => '--label-color',
 						'value'    => 'labelColor',
 					),
 					array(
-						'property' => '--inputWidth',
+						'property' => '--input-width',
 						'value'    => 'inputWidth',
 						'unit'     => '%',
 					),

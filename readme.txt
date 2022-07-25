@@ -1,7 +1,7 @@
 === Otter - Page Builder Blocks & Extensions for Gutenberg ===
 Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1, arinat, uriahs-victor
 Tags: gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder
-Requires at least: 5.6
+Requires at least: 5.8
 Tested up to: 6.0
 Requires PHP: 5.4
 Stable tag: trunk
@@ -188,6 +188,18 @@ We're here to help. Feel free to open a new thread on the [Support Forum](https:
 5. Section Block
 
 == Changelog ==
+
+##### [Version 2.0.8](https://github.com/Codeinwp/otter-blocks/compare/v2.0.7...v2.0.8) (2022-07-14)
+
+- Fip Block styling issue
+- Fix styles & scripts not loading in FSE & responsive mode in the editor
+- Fix editor slowness
+- Add single column option to Section
+- Fix Font Module failing in specific scenarios
+- Fix WooCommerce Product Select component keeps spinning when no products are available
+
+
+
 
 ##### [Version 2.0.7](https://github.com/Codeinwp/otter-blocks/compare/v2.0.6...v2.0.7) (2022-07-04)
 

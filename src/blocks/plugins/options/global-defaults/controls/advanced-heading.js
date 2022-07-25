@@ -405,6 +405,7 @@ const AdvancedHeading = ({
 					<RangeControl
 						value={ getFontSize || '' }
 						onChange={ changeFontSize }
+						step={ 0.1 }
 						min={ 1 }
 						max={ 500 }
 					/>
@@ -433,6 +434,7 @@ const AdvancedHeading = ({
 					label={ __( 'Line Height', 'otter-blocks' ) }
 					value={ defaults.lineHeight || '' }
 					onChange={ value => changeConfig( blockName, { lineHeight: value }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 200 }
 				/>
@@ -443,6 +445,7 @@ const AdvancedHeading = ({
 					label={ __( 'Letter Spacing', 'otter-blocks' ) }
 					value={ defaults.letterSpacing || '' }
 					onChange={ value => changeConfig( blockName, { letterSpacing: value }) }
+					step={ 0.1 }
 					min={ -50 }
 					max={ 100 }
 				/>
