@@ -155,7 +155,7 @@ class Block_Conditions {
 	/**
 	 * Check meta compare.
 	 *
-	 * @param array $condition Condition.
+	 * @param array  $condition Condition.
 	 * @param string $type If it's a post or the user.
 	 *
 	 * @since  1.7.0
