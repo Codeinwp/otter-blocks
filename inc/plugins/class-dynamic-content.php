@@ -98,7 +98,7 @@ class Dynamic_Content {
 	public function get_image( $data ) {
 		$value = OTTER_BLOCKS_URL . 'assets/images/placeholder.jpg';
 
-		if ( 0 === $data['context'] || null === $data['context'] ) {
+		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] ) ) {
 			global $post;
 			$data['context'] = $post->ID;
 		}

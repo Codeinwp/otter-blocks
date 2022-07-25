@@ -79,7 +79,7 @@ const MediaItem = ({
 	isSelected,
 	onSelect
 }) => {
-	const url = window.themeisleGutenberg.restRoot + '/dynamic?type=' + item.type + '&context=' + context + '&uid=' + uid;
+	const url = window.themeisleGutenberg.restRoot + '/dynamic/?type=' + item.type + '&context=' + context + '&uid=' + uid;
 
 	const isDisabled = ( undefined !== item?.isAvailable && ! item?.isAvailable );
 
@@ -198,7 +198,7 @@ const MediaContent = ({
 
 			const attrs = getObjectFromQueryString( blockAttrs[ target ] || '' );
 			attrs.uid = uid;
-			const url = window.themeisleGutenberg.restRoot + '/dynamic?' + getQueryStringFromObject( attrs );
+			const url = window.themeisleGutenberg.restRoot + '/dynamic/?' + getQueryStringFromObject( attrs );
 			onSelect( url );
 			window.otterCurrentMediaProps = {};
 		}
@@ -218,7 +218,7 @@ const MediaContent = ({
 
 		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v ) ) );
 
-		const url = window.themeisleGutenberg.restRoot + '/dynamic?' + getQueryStringFromObject( attrs );
+		const url = window.themeisleGutenberg.restRoot + '/dynamic/?' + getQueryStringFromObject( attrs );
 
 		onSelectImage({
 			id: uid,
@@ -252,7 +252,7 @@ const MediaContent = ({
 								uid={ uid }
 								item={ item }
 								context={ getCurrentPostId }
-								isSelected={ selected ? selected?.includes( `dynamic?type=${ item.type }` ) : false }
+								isSelected={ selected ? selected?.includes( `dynamic/?type=${ item.type }` ) : false }
 								onSelect={ onSelect }
 							/>
 						);
