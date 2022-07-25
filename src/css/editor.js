@@ -55,6 +55,11 @@ const CSSEditor = ({
 		editorRef.current.on( 'change', () => {
 			const regex = new RegExp( 'selector', 'g' );
 			const generatedCSS = editorRef.current.getValue().replace( regex, `.${ classArRef.current }` );
+
+			if ( 0 < editor?.lint?.marked?.length ) {
+				return ;
+			}
+
 			customCSSRef.current = generatedCSS;
 
 			if ( ( 'selector {\n}\n' ).replace( /\s+/g, '' ) === customCSSRef.current.replace( /\s+/g, '' ) ) {
