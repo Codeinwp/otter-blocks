@@ -82,7 +82,7 @@ class Flip_CSS extends Base_CSS {
 							'imageURL'   => array(
 								'value'  => 'frontBackgroundImage',
 								'format' => function( $value, $attrs ) {
-									return $value['url'];
+									return apply_filters( 'otter_apply_dynamic_image', $value['url'] );
 								},
 							),
 							'repeat'     => array(
@@ -144,7 +144,7 @@ class Flip_CSS extends Base_CSS {
 							'imageURL'   => array(
 								'value'  => 'backBackgroundImage',
 								'format' => function( $value, $attrs ) {
-									return $value['url'];
+									return apply_filters( 'otter_apply_dynamic_image', $value['url'] );
 								},
 							),
 							'repeat'     => array(

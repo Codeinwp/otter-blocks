@@ -198,10 +198,10 @@ class Advanced_Column_CSS extends Base_CSS {
 								'default' => 'none',
 								'format'  => function( $value, $attrs ) {
 									if ( isset( $attrs['backgroundImageURL'] ) ) {
-										return $attrs['backgroundImageURL'];
+										return apply_filters( 'otter_apply_dynamic_image', $attrs['backgroundImageURL'] );
 									}
 
-									return $attrs['backgroundImage']['url'];
+									return apply_filters( 'otter_apply_dynamic_image', $attrs['backgroundImage']['url'] );
 								},
 							),
 							'repeat'     => array(

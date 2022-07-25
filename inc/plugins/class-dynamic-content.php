@@ -27,6 +27,7 @@ class Dynamic_Content {
 		add_filter( 'the_content', array( $this, 'apply_dynamic_images' ) );
 		add_filter( 'widget_block_content', array( $this, 'apply_dynamic_content' ), 0, 1 );
 		add_filter( 'widget_block_content', array( $this, 'apply_dynamic_images' ), 0, 1 );
+		add_filter( 'otter_apply_dynamic_image', array( $this, 'apply_dynamic_images' ) );
 
 		if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
 			add_filter( 'get_block_templates', array( $this, 'apply_dynamic_content_fse' ), 0, 1 );
