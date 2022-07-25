@@ -394,7 +394,7 @@ const Edit = ({
 
 	return (
 		<Fragment>
-			{ 'postMeta' === item.type && (
+			{ [ 'postMeta', 'loggedInUserMeta' ].includes( item.type ) && (
 				<Fragment>
 					<TextControl
 						label={ __( 'Meta Key', 'otter-blocks' ) }

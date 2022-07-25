@@ -57,6 +57,12 @@ const defaultConditions = {
 				label: __( 'User Roles', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on user roles.' ),
 				toogleVisibility: true
+			},
+			{
+				value: 'loggedInUserMeta',
+				label: __( 'Logged-in User Meta (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on meta of the logged-in user condition.' ),
+				isDisabled: true
 			}
 		]
 	},
