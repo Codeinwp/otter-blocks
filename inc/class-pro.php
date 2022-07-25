@@ -268,7 +268,7 @@ class Pro {
 			esc_html( $message ),
 			esc_url( self::get_url() ),
 			esc_html__( 'Learn more', 'otter-blocks' ),
-			esc_url( wp_nonce_url( admin_url( '?otter-dismiss-dashboard-upsell' ), 'dismiss' ) ),
+			esc_url( wp_nonce_url( '?otter-dismiss-dashboard-upsell', 'dismiss' ) ),
 			esc_html__( 'Dismiss notice', 'otter-blocks' )
 		);
 	}
