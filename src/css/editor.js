@@ -7,7 +7,8 @@ import {
 	Fragment,
 	useEffect,
 	useRef,
-	memo
+	memo,
+	useState
 } from '@wordpress/element';
 
 const CSSEditor = ({
@@ -15,6 +16,12 @@ const CSSEditor = ({
 	setAttributes,
 	clientId
 }) => {
+
+	const editorRef = useRef( null );
+	const customCSSRef = useRef( null );
+	const classArRef = useRef( null );
+	const [ errors, setErrors ] = useState([]);
+
 	useEffect( () => {
 		if ( attributes.customCSS ) {
 			if ( attributes.className ) {
@@ -52,12 +59,15 @@ const CSSEditor = ({
 			}
 		});
 
-		editorRef.current.on( 'change', () => {
+		editorRef.current.on( 'change', ( editor ) => {
 			const regex = new RegExp( 'selector', 'g' );
-			const generatedCSS = editorRef.current.getValue().replace( regex, `.${ classArRef.current }` );
+			const generatedCSS = editorRef.current.getValue().replace( regex, `.${classArRef.current}` );
 
-			if ( 0 < editor?.lint?.marked?.length ) {
-				return ;
+			const errors = editor?.state?.lint?.marked?.filter( ({ __annotation }) => 'error' === __annotation?.severity )?.map( ({ __annotation }) => __annotation?.message );
+
+			if ( 0 < errors?.length ) {
+				setErrors( errors );
+				return;
 			}
 
 			customCSSRef.current = generatedCSS;
@@ -93,39 +103,54 @@ const CSSEditor = ({
 
 			if ( ! classes.includes( 'ticss-' ) ) {
 				classes = classes.split( ' ' );
-				classes.push( `ticss-${ uniqueId }` );
+				classes.push( `ticss-${uniqueId}` );
 				classes = classes.join( ' ' );
 			}
 
 			classArRef.current = classes.split( ' ' );
 			classArRef.current = classArRef.current.find( i => i.includes( 'ticss' ) );
 		} else {
-			classes = `ticss-${ uniqueId }`;
+			classes = `ticss-${uniqueId}`;
 			classArRef.current = classes;
 		}
 
 		return classes;
 	};
 
-	const editorRef = useRef( null );
-	const customCSSRef = useRef( null );
-	const classArRef = useRef( null );
 
 	return (
 		<Fragment>
-			<p>{ __( 'Add your custom CSS.', 'otter-blocks' ) }</p>
+			<p>{__( 'Add your custom CSS.', 'otter-blocks' )}</p>
 
-			<div id="otter-css-editor" className="otter-css-editor"/>
+			<div id="otter-css-editor" className="otter-css-editor" />
 
-			<p>{ __( 'Use', 'otter-blocks' ) } <code>selector</code> { __( 'to target block wrapper.', 'otter-blocks' ) }</p>
+			{
+				0 < errors?.length && (
+					<div className='o-css-errors'>
+						<p>{__( 'Attention needed! There are some errors: ', 'otter-blocks' )}</p>
+						<ul style={{ marginTop: '0px' }}>
+							{
+								errors.map( ( e, i ) => {
+									return (
+										<li key={i} style={{ color: 'red' }}> {e} </li>
+									);
+								})
+							}
+						</ul>
+
+					</div>
+				)
+			}
+
+			<p>{__( 'Use', 'otter-blocks' )} <code>selector</code> {__( 'to target block wrapper.', 'otter-blocks' )}</p>
 			<br />
-			<p>{ __( 'Example:', 'otter-blocks' ) }</p>
+			<p>{__( 'Example:', 'otter-blocks' )}</p>
 
 			<pre className="otter-css-editor-help">
-				{ 'selector {\n    background: #000;\n}\n\nselector img {\n    border-radius: 100%;\n}'}
+				{'selector {\n    background: #000;\n}\n\nselector img {\n    border-radius: 100%;\n}'}
 			</pre>
 
-			<p>{ __( 'You can also use other CSS syntax here, such as media queries.', 'otter-blocks' ) }</p>
+			<p>{__( 'You can also use other CSS syntax here, such as media queries.', 'otter-blocks' )}</p>
 		</Fragment>
 	);
 };
