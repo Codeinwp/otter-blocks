@@ -100,10 +100,9 @@ class Dynamic_Content {
 		$value = OTTER_BLOCKS_URL . 'assets/images/placeholder.jpg';
 
 		global $post;
-		$current_post_id = $post->ID;
 
-		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] || ( is_singular() && $data['context'] !== $current_post_id ) ) ) {
-			$data['context'] = $current_post_id;
+		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] || ( is_singular() && $data['context'] !== $post->ID ) ) ) {
+			$data['context'] = $post->ID;
 		}
 
 		if ( isset( $data['fallback'] ) && ! empty( $data['fallback'] ) ) {
