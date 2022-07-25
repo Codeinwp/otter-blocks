@@ -18,30 +18,34 @@ const CSSEditor = ({
 }) => {
 
 	const editorRef = useRef( null );
-	const customCSSRef = useRef( null );
-	const classArRef = useRef( null );
 	const [ errors, setErrors ] = useState([]);
+	const [ customCSS, setCustomCSS ] = useState( null );
+	const [ editorValue, setEditorValue ] = useState( null );
+
+	const getClassName = () => {
+		const uniqueId = clientId.substr( 0, 8 );
+
+		if ( customCSS?.replace( /\s+/g, '' ) === ( 'selector {\n}\n' ).replace( /\s+/g, '' ) ) {
+			return attributes.className;
+		}
+
+		return  attributes.className ?
+			( ! attributes.className.includes( 'ticss-' ) ? [ ...attributes.className.split( ' ' ), `ticss-${uniqueId}` ].join( ' ' ) : attributes.className ) :
+			`ticss-${uniqueId}`;
+	};
+
 
 	useEffect( () => {
+		const classes = attributes.customCSS && attributes.className?.includes( 'ticss-' ) ? attributes.className.split( ' ' ).find( i => i.includes( 'ticss' ) ) : null;
+		let initialValue = 'selector {\n}\n';
+
 		if ( attributes.customCSS ) {
-			if ( attributes.className ) {
-				const classes = attributes.className;
-
-				if ( classes.includes( 'ticss-' ) ) {
-					classArRef.current = classes.split( ' ' );
-					classArRef.current = classArRef.current.find( i => i.includes( 'ticss' ) );
-				}
-			}
-
-			const regex = new RegExp( '.' + classArRef.current, 'g' );
-			const generatedCSS = ( attributes.customCSS ).replace( regex, 'selector' );
-			customCSSRef.current = generatedCSS;
-		} else {
-			customCSSRef.current = 'selector {\n}\n';
+			const regex = new RegExp( '.' + classes, 'g' );
+			initialValue = ( attributes.customCSS ).replace( regex, 'selector' );
 		}
 
 		editorRef.current = wp.CodeMirror( document.getElementById( 'otter-css-editor' ), {
-			value: customCSSRef.current,
+			value: initialValue,
 			autoCloseBrackets: true,
 			continueComments: true,
 			lineNumbers: true,
@@ -60,62 +64,36 @@ const CSSEditor = ({
 		});
 
 		editorRef.current.on( 'change', ( editor ) => {
-			const regex = new RegExp( 'selector', 'g' );
-			const generatedCSS = editorRef.current.getValue().replace( regex, `.${classArRef.current}` );
-
 			const errors = editor?.state?.lint?.marked?.filter( ({ __annotation }) => 'error' === __annotation?.severity )?.map( ({ __annotation }) => __annotation?.message );
-
 			if ( 0 < errors?.length ) {
 				setErrors( errors );
 				return;
 			}
 
-			customCSSRef.current = generatedCSS;
-
-			if ( ( 'selector {\n}\n' ).replace( /\s+/g, '' ) === customCSSRef.current.replace( /\s+/g, '' ) ) {
-				return setAttributes({ customCSS: null });
-			}
-
-			setAttributes({ customCSS: customCSSRef.current });
+			setEditorValue( editor?.getValue() );
 		});
 	}, []);
 
 	useEffect( () => {
-		let classes = getClassName();
+		const regex = new RegExp( 'selector', 'g' );
+		setCustomCSS( editorValue?.replace( regex, `.${getClassName()}` ) );
+	}, [ editorValue ]);
 
+	useEffect( () => {
+		if ( ( 'selector {\n}\n' ).replace( /\s+/g, '' ) === customCSS?.replace( /\s+/g, '' ) ) {
+			setAttributes({ customCSS: null });
+			return;
+		}
+
+		setAttributes({ customCSS });
+	}, [ customCSS ]);
+
+	useEffect( () => {
 		setAttributes({
 			hasCustomCSS: true,
-			className: classes
+			className: getClassName()
 		});
 	}, [ attributes ]);
-
-	const getClassName = () => {
-		let classes;
-
-		const uniqueId = clientId.substr( 0, 8 );
-
-		if ( null !== customCSSRef.current && ( 'selector {\n}\n' ).replace( /\s+/g, '' ) === customCSSRef.current.replace( /\s+/g, '' ) ) {
-			return attributes.className;
-		}
-
-		if ( attributes.className ) {
-			classes = attributes.className;
-
-			if ( ! classes.includes( 'ticss-' ) ) {
-				classes = classes.split( ' ' );
-				classes.push( `ticss-${uniqueId}` );
-				classes = classes.join( ' ' );
-			}
-
-			classArRef.current = classes.split( ' ' );
-			classArRef.current = classArRef.current.find( i => i.includes( 'ticss' ) );
-		} else {
-			classes = `ticss-${uniqueId}`;
-			classArRef.current = classes;
-		}
-
-		return classes;
-	};
 
 
 	return (
