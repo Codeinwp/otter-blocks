@@ -92,7 +92,6 @@ const Inspector = ({
 					onChange={ onDurationChange }
 					min={ 0 }
 					max={ 3 }
-					step={ 0.1 }
 				/>
 
 				<SelectControl

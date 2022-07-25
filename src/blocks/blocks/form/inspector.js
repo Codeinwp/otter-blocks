@@ -191,6 +191,7 @@ const Inspector = ({
 						value={ attributes.inputGap ?? 16 }
 						onChange={ inputGap => setAttributes({ inputGap }) }
 						allowReset
+						step={ 0.1 }
 						min={ 0 }
 						max={ 50 }
 						initialPositino={ 5 }
@@ -273,6 +274,7 @@ const Inspector = ({
 						value={ attributes.inputBorderRadius ?? 4 }
 						onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
 						allowReset
+						step={ 0.1 }
 						min={ 0 }
 						max={ 50 }
 					/>
@@ -288,6 +290,7 @@ const Inspector = ({
 						value={ attributes.inputBorderWidth ?? 1 }
 						onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
 						allowReset
+						step={ 0.1 }
 						min={ 0 }
 						max={ 50 }
 					/>

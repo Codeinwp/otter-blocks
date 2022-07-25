@@ -150,6 +150,7 @@ const Inspector = ({
 					help={ __( 'The height of the progress bar.', 'otter-blocks' ) }
 					value={ attributes.height }
 					onChange={ onHeightChange }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 100 }
 				/>
@@ -159,6 +160,7 @@ const Inspector = ({
 					help={ __( 'Round the corners of the progress bar.', 'otter-blocks' ) }
 					value={ attributes.borderRadius }
 					onChange={ onBorderRadiusChange }
+					step={ 0.1 }
 					initialPosition={ 5 }
 					min={ 0 }
 					max={ 35 }

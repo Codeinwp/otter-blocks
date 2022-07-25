@@ -575,6 +575,7 @@ const Inspector = ({
 									value={ getValue( 'columnsWidth' ) || '' }
 									allowReset
 									onChange={ changeColumnsWidth }
+									step={ 0.1 }
 									min={ 0 }
 									max={ 2400 }
 								/>
@@ -633,6 +634,7 @@ const Inspector = ({
 									<RangeControl
 										value={ getColumnsHeightCustom || '' }
 										onChange={ changeColumnsHeightCustom }
+										step={ 0.1 }
 										min={ 0 }
 										max={ 1000 }
 									/>
@@ -947,6 +949,7 @@ const Inspector = ({
 										<RangeControl
 											value={ getDividerWidth() }
 											onChange={ changeDividerWidth }
+											step={ 0.1 }
 											min={ 0 }
 											max={ 500 }
 										/>
@@ -958,6 +961,7 @@ const Inspector = ({
 										<RangeControl
 											value={ getDividerHeight() }
 											onChange={ changeDividerHeight }
+											step={ 0.1 }
 											min={ 0 }
 											max={ 500 }
 										/>

@@ -231,6 +231,7 @@ const Inspector = ({
 								label={ __( 'Column Width', 'otter-blocks' ) }
 								value={ Number( attributes.columnWidth ) }
 								onChange={ changeColumnWidth }
+								step={ 0.1 }
 								min={ 10 }
 								max={ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 10 }
 							/>

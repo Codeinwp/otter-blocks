@@ -152,6 +152,7 @@ const Inspector = ({
 					label={ __( 'Border Width', 'otter-blocks' ) }
 					value={ attributes.borderSize }
 					onChange={ e => setAttributes({ borderSize: e }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 10 }
 				/>
@@ -160,6 +161,7 @@ const Inspector = ({
 					label={ __( 'Border Radius', 'otter-blocks' ) }
 					value={ attributes.borderRadius }
 					onChange={ e => setAttributes({ borderRadius: e }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 100 }
 				/>

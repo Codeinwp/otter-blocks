@@ -40,6 +40,7 @@ const Inspector = ({
 					label={ __( 'Title Font Size', 'otter-blocks' ) }
 					value={ attributes.titleFontSize }
 					onChange={ value => setAttributes({ titleFontSize: Number( value ) }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 60 }
 				/>
@@ -48,6 +49,7 @@ const Inspector = ({
 					label={ __( 'Items Font Size', 'otter-blocks' ) }
 					value={ attributes.itemsFontSize }
 					onChange={ value => setAttributes({ itemsFontSize: Number( value ) }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 60 }
 				/>
@@ -56,6 +58,7 @@ const Inspector = ({
 					label={ __( 'Border Radius', 'otter-blocks' ) }
 					value={ attributes.borderRadius }
 					onChange={ value => setAttributes({ borderRadius: Number( value ) }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 60 }
 				/>
@@ -64,6 +67,7 @@ const Inspector = ({
 					label={ __( 'Border Width', 'otter-blocks' ) }
 					value={ attributes.borderWidth }
 					onChange={ value => setAttributes({ borderWidth: Number( value ) }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 120 }
 				/>
