@@ -28,6 +28,16 @@
         "semi": [
             "error",
             "always"
-        ]
+        ],
+        "prefer-destructuring": ["warn", {
+            "array": true,
+            "object": true
+          }, {
+            "enforceForRenamedProperties": false
+          }
+        ],
+        "array-bracket-spacing": ["warn", "always", { "arraysInArrays": false, "objectsInArrays": false }],
+        "key-spacing": ["warn", { "beforeColon": false, "afterColon": true }],
+        "object-curly-spacing": ["warn", "always", { "arraysInObjects": true, "objectsInObjects": false }],
     }
 }
