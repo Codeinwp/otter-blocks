@@ -65,7 +65,7 @@ class Dynamic_Content {
 		$rest_url = get_rest_url( null, 'otter/v1' );
 		$rest_url = preg_replace( '/([^A-Za-z0-9\s_-])/', '\\\\$1', $rest_url );
 
-		$re = '/' . $rest_url . '\/dynamic\?.[^"]*/';
+		$re = '/' . $rest_url . '\/dynamic\/?.[^"]*/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_images' ), $content );
 	}
@@ -98,9 +98,11 @@ class Dynamic_Content {
 	public function get_image( $data ) {
 		$value = OTTER_BLOCKS_URL . 'assets/images/placeholder.jpg';
 
-		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] ) ) {
-			global $post;
-			$data['context'] = $post->ID;
+		global $post;
+		$current_post_id = $post->ID;
+
+		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] || ( is_singular() && $data['context'] !== $current_post_id ) ) ) {
+			$data['context'] = $current_post_id;
 		}
 
 		if ( isset( $data['fallback'] ) && ! empty( $data['fallback'] ) ) {
@@ -436,6 +438,7 @@ class Dynamic_Content {
 
 		if ( strpos( $qry, '=' ) ) {
 			if ( strpos( $qry, '?' ) !== false ) {
+				$qry = str_replace( array( '&#038;', '&amp;' ), '&', $qry );
 				$q   = wp_parse_url( $qry );
 				$qry = $q['query'];
 			}
@@ -443,7 +446,7 @@ class Dynamic_Content {
 			return false;
 		}
 
-		foreach ( explode( '&amp;', $qry ) as $couple ) {
+		foreach ( explode( '&', $qry ) as $couple ) {
 			list ( $key, $val ) = explode( '=', $couple );
 			$result[ $key ]     = $val;
 		}
