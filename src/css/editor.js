@@ -76,9 +76,8 @@ const CSSEditor = ({
 			}
 		});
 
-		editorRef.current.on( 'changes', ( editor ) => {
+		editorRef.current.on( 'change', () => {
 			clearTimeout( inputTimeout );
-			checkInput( editor );
 			inputTimeout = setTimeout( () => {
 				console.count( 'timeout' ); // Remove after final review
 				checkInput( editorRef.current );
@@ -96,8 +95,9 @@ const CSSEditor = ({
 			setAttributes({ customCSS: null });
 			return;
 		}
-
-		setAttributes({ customCSS });
+		if ( customCSS ) {
+			setAttributes({ customCSS });
+		}
 	}, [ customCSS ]);
 
 	useEffect( () => {
