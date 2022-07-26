@@ -8,7 +8,7 @@ import {
 	RichText
 } from '@wordpress/block-editor';
 
-const deprecated = [ {
+const deprecated = [{
 	attributes: {
 		id: {
 			type: 'string'
@@ -68,6 +68,6 @@ const deprecated = [ {
 			</div>
 		);
 	}
-} ];
+}];
 
 export default deprecated;

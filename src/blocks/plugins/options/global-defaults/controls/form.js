@@ -192,7 +192,7 @@ const Form = ({
 				>
 					<BoxControl
 						label={ __( 'Input Padding', 'otter-blocks' ) }
-						values={ attributes.inputPadding ?? {'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px'} }
+						values={ attributes.inputPadding ?? { 'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px' } }
 						inputProps={ {
 							min: 0,
 							max: 500
@@ -293,7 +293,7 @@ const Form = ({
 							value: 'full'
 						}
 					]}
-					onChange={ submitStyle => setAttributes({ submitStyle}) }
+					onChange={ submitStyle => setAttributes({ submitStyle }) }
 				/>
 
 				<SyncControl

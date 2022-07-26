@@ -51,7 +51,7 @@ const SelectProducts = ({
 		return {
 			results,
 			status,
-			isLoading: select( COLLECTIONS_STORE_KEY ).isResolving( 'getCollection', [ '/wc/store', 'products', { per_page: 100 } ])
+			isLoading: select( COLLECTIONS_STORE_KEY ).isResolving( 'getCollection', [ '/wc/store', 'products', { per_page: 100 }])
 		};
 	}, []);
 

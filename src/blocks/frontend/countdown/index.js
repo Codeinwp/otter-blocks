@@ -109,7 +109,7 @@ domReady( () => {
 	const countdowns = document.querySelectorAll( '.wp-block-themeisle-blocks-countdown' );
 
 	countdowns.forEach( countdown => {
-		const date = countdown.dataset.date;
+		const { date } = countdown.dataset;
 
 		if ( date ) {
 			const update = updateTime( date, getComponentsUpdate( countdown ) );

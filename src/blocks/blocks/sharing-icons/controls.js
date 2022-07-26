@@ -33,7 +33,7 @@ const Controls = ({
 		const newValue = { ...attributes[ item ] };
 		newValue.active = ! newValue.active;
 
-		setAttributes({ [ item ]: { ...newValue } });
+		setAttributes({ [ item ]: { ...newValue }});
 	};
 
 	return (

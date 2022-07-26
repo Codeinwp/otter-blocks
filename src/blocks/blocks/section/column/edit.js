@@ -148,8 +148,8 @@ const Edit = ({
 
 	if ( attributes.columnWidth === undefined ) {
 		const index = parentBlock.innerBlocks.findIndex( i => i.clientId === clientId );
-		const columns = parentBlock.attributes.columns;
-		const layout = parentBlock.attributes.layout;
+		const { columns } = parentBlock.attributes;
+		const { layout } = parentBlock.attributes;
 		updateBlockAttributes( clientId, {
 			columnWidth: layouts[columns][layout][index]
 		});

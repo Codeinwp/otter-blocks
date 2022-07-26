@@ -305,8 +305,8 @@ const Edit = ({
 
 	const cycleMarkers = markers => {
 		markers.forEach( marker => {
-			const latitude = marker.latitude;
-			const longitude = marker.longitude;
+			const { latitude } = marker;
+			const { longitude } = marker;
 			const position = new window.google.maps.LatLng( latitude, longitude );
 
 			const mark = new window.google.maps.Marker({
