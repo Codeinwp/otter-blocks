@@ -103,7 +103,7 @@ const Inspector = ({
 					label={ __( 'Font Size Title', 'otter-blocks' ) }
 					help={ __( 'Change the font size of the title.', 'otter-blocks' ) }
 					value={ attributes.fontSizeTitle }
-					onChange={ fontSizeTitle => setAttributes({ fontSizeTitle}) }
+					onChange={ fontSizeTitle => setAttributes({ fontSizeTitle }) }
 					initialPosition={ 37 }
 					min={ 0 }
 					max={ 100 }

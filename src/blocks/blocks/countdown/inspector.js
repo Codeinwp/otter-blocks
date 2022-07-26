@@ -15,7 +15,11 @@ import {
 	RangeControl,
 	Dropdown,
 	Button,
-	DateTimePicker
+	DateTimePicker,
+	FontSizePicker,
+	__experimentalBoxControl as BoxControl,
+	SelectControl,
+	__experimentalUnitControl as UnitContol
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -29,7 +33,32 @@ import {
  * Internal dependencies
  */
 import ResponsiveControl from '../../components/responsive-control/index.js';
-import SizingControl from '../../components/sizing-control/index.js';
+import { mergeBoxDefaultValues, removeBoxDefaultValues, buildResponsiveSetAttributes, buildResponsiveGetAttributes } from '../../helpers/helper-functions.js';
+
+const defaultFontSizes = [
+	{
+		name: __( 'Small', 'otter-blocks' ),
+		size: '0.875em',
+		slug: 'small'
+	},
+	{
+		name: __( 'Medium', 'otter-blocks' ),
+		size: '1em',
+		slug: 'medium'
+	},
+	{
+		name: __( 'Large', 'otter-blocks' ),
+		size: '1.125em',
+		slug: 'large'
+	},
+	{
+		name: __( 'XL', 'otter-blocks' ),
+		size: '1.25em',
+		slug: 'xl'
+	}
+];
+
+const fontWeights = [ '', '100', '200', '300', '400', '500', '600', '700', '800', '900' ].map( x => ({ label: x ? x : 'Default', value: x }) );
 
 /**
  *
@@ -40,11 +69,18 @@ const Inspector = ({
 	attributes,
 	setAttributes
 }) => {
-	const getView = useSelect( select => {
+	const {
+		responsiveSetAttributes,
+		responsiveGetAttributes
+	} = useSelect( select => {
 		const { getView } = select( 'themeisle-gutenberg/data' );
 		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
 
-		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+		return {
+			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
+			responsiveGetAttributes: buildResponsiveGetAttributes( view )
+		};
 	}, []);
 
 	const excludeComponent = ( value, componentName ) => {
@@ -56,135 +92,6 @@ const Inspector = ({
 			setAttributes({
 				exclude: attributes?.exclude ? [ ...attributes?.exclude, componentName ] : [ componentName ]
 			});
-		}
-	};
-
-	const onBackgroundColorChange = value => {
-		setAttributes({ backgroundColor: value });
-	};
-
-	const onLabelColorChange = value => {
-		setAttributes({ labelColor: value });
-	};
-
-	const onValueColorChange = value => {
-		setAttributes({ valueColor: value });
-	};
-
-	const onGapChange = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ gap: Number( value ) });
-		}
-		if ( 'Tablet' === getView ) {
-			setAttributes({ gapTablet: Number( value ) });
-		}
-		if ( 'Mobile' === getView ) {
-			setAttributes({ gapMobile: Number( value ) });
-		}
-	};
-
-	const onWidthChange = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ width: Number( value ) });
-		}
-		if ( 'Tablet' === getView ) {
-			setAttributes({ widthTablet: Number( value ) });
-		}
-		if ( 'Mobile' === getView ) {
-			setAttributes({ widthMobile: Number( value ) });
-		}
-	};
-
-	const onHeightChange = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ height: Number( value ) });
-		}
-		if ( 'Tablet' === getView ) {
-			setAttributes({ heightTablet: Number( value ) });
-		}
-		if ( 'Mobile' === getView ) {
-			setAttributes({ heightMobile: Number( value ) });
-		}
-	};
-
-	const onValueFontSizeChange = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ valueFontSize: Number( value ) });
-		}
-		if ( 'Tablet' === getView ) {
-			setAttributes({ valueFontSizeTablet: Number( value ) });
-		}
-		if ( 'Mobile' === getView ) {
-			setAttributes({ valueFontSizeMobile: Number( value ) });
-		}
-	};
-
-	const onLabelFontSizeChange = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ labelFontSize: Number( value ) });
-		}
-		if ( 'Tablet' === getView ) {
-			setAttributes({ labelFontSizeTablet: Number( value ) });
-		}
-		if ( 'Mobile' === getView ) {
-			setAttributes({ labelFontSizeMobile: Number( value ) });
-		}
-	};
-
-	const onBorderWidthChange = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ borderWidth: Number( value ) });
-		}
-		if ( 'Tablet' === getView ) {
-			setAttributes({ borderWidthTablet: Number( value ) });
-		}
-		if ( 'Mobile' === getView ) {
-			setAttributes({ borderWidthMobile: Number( value ) });
-		}
-	};
-
-	const onBorderColorChange = value => {
-		setAttributes({ borderColor: value });
-	};
-
-	const changeBorderRadiusType = value => {
-		setAttributes({ borderRadiusType: value });
-	};
-
-	const getBorderRadius = type => {
-		let value;
-
-		if ( 'top-right' === type ) {
-			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusTopRight;
-		}
-
-		if ( 'top-left' === type ) {
-			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusTopLeft;
-		}
-
-		if ( 'bottom-right' === type ) {
-			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusBottomRight;
-		}
-
-		if ( 'bottom-left' === type ) {
-			value = 'linked' === attributes.borderRadiusType ? attributes.borderRadius : attributes.borderRadiusBottomLeft;
-		}
-
-		return value;
-	};
-
-	const borderRadiusDirection = {
-		'top-right': 'borderRadiusTopRight',
-		'top-left': 'borderRadiusTopLeft',
-		'bottom-left': 'borderRadiusBottomLeft',
-		'bottom-right': 'borderRadiusBottomRight'
-	};
-
-	const changeBorderRadius = ( type, value ) => {
-		if ( 'linked' === attributes.borderRadiusType ) {
-			setAttributes({ borderRadius: value });
-		} else {
-			setAttributes({ [borderRadiusDirection[type]]: value });
 		}
 	};
 
@@ -252,104 +159,108 @@ const Inspector = ({
 					onChange={ hasSeparators => setAttributes({ hasSeparators }) }
 				/>
 
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Dimensions & Spacing', 'otter-blocks' ) }
+				initialOpen={false}
+			>
 				<ResponsiveControl
-					label={ __( 'Box Spacing', 'otter-blocks' ) }
+					label={ __( 'Width', 'otter-blocks' ) }
+				>
+					<UnitContol
+						value={ responsiveGetAttributes([ attributes.containerWidth, attributes.containerWidthTablet, attributes.containerWidthMobile ]) ?? '100%' }
+						onChange={ value => responsiveSetAttributes( value, [ 'containerWidth', 'containerWidthTablet', 'containerWidthMobile' ]) }
+					/>
+				</ResponsiveControl>
+				<ResponsiveControl
+					label={ __( 'Height', 'otter-blocks' ) }
 				>
 					<RangeControl
-						value={ 'Mobile' === getView ? attributes.gapMobile : 'Tablet' === getView ? attributes.gapTablet : attributes.gap }
-						onChange={ onGapChange }
+						value={ responsiveGetAttributes([ attributes.height, attributes.heightTablet, attributes.heightMobile ]) ?? 100 }
+						onChange={ value => responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]) }
+						min={ 50 }
+						max={ 800 }
+						allowReset
+					/>
+				</ResponsiveControl>
+
+				<ResponsiveControl
+					label={ __( 'Space Between', 'otter-blocks' ) }
+				>
+					<RangeControl
+						value={ responsiveGetAttributes([ attributes.gap, attributes.gapTablet, attributes.gapMobile ]) ?? 6 }
+						onChange={ value => responsiveSetAttributes( value, [ 'gap', 'gapTablet', 'gapMobile' ]) }
 						min={ 0 }
 						max={ 100 }
+						allowReset
 					/>
 				</ResponsiveControl>
 
-				<ResponsiveControl
-					label={ __( 'Box Height', 'otter-blocks' ) }
-				>
-					<RangeControl
-						value={ 'Mobile' === getView ? attributes.heightMobile : 'Tablet' === getView ? attributes.heightTablet : attributes.height }
-						onChange={ onHeightChange }
-						min={ 40 }
-						max={ 300 }
-					/>
-				</ResponsiveControl>
+				<SelectControl
+					label={__( 'Position', 'otter-blocks' )}
+					value={ attributes.alingment }
+					onChange={ alignment => setAttributes({ alignment: alignment || undefined })}
+					options={[
+						{
+							label: __( 'Default', 'otter-blocks' ),
+							value: ''
+						},
+						{
+							label: __( 'Left', 'otter-blocks' ),
+							value: 'flex-start'
+						},
+						{
+							label: __( 'Center', 'otter-blocks' ),
+							value: 'center'
+						},
+						{
+							label: __( 'Right', 'otter-blocks' ),
+							value: 'flex-end'
+						}
+					]}
+				/>
+			</PanelBody>
 
-				<ResponsiveControl
-					label={ __( 'Box Width', 'otter-blocks' ) }
-				>
-					<RangeControl
-						value={ 'Mobile' === getView ? attributes.widthMobile : 'Tablet' === getView ? attributes.widthTablet : attributes.width }
-						onChange={ onWidthChange }
-						min={ 40 }
-						max={ 300 }
-					/>
-				</ResponsiveControl>
-
-				<ResponsiveControl
-					label={ __( 'Border Width', 'otter-blocks' ) }
-				>
-					<RangeControl
-
-						value={ 'Mobile' === getView ? attributes.borderWidthMobile : 'Tablet' === getView ? attributes.borderWidthTablet : attributes.borderWidth }
-						onChange={ onBorderWidthChange }
-						min={ 0 }
-						max={ 50 }
-					/>
-				</ResponsiveControl>
-
+			<PanelBody
+				title={ __( 'Typography', 'otter-blocks' ) }
+				initialOpen={false}
+			>
 				<ResponsiveControl
 					label={ __( 'Time Value Font Size', 'otter-blocks' ) }
 				>
-					<RangeControl
-						value={ 'Mobile' === getView ? attributes.valueFontSizeMobile : 'Tablet' === getView ? attributes.valueFontSizeTablet : attributes.valueFontSize }
-						onChange={ onValueFontSizeChange }
-						min={ 0 }
-						max={ 64 }
+					<FontSizePicker
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ responsiveGetAttributes([ attributes.valueFontSize, attributes.valueFontSizeTablet, attributes.valueFontSizeMobile ]) }
+						onChange={ value => responsiveSetAttributes( value, [ 'valueFontSize', 'valueFontSizeTablet', 'valueFontSizeMobile' ]) }
 					/>
 				</ResponsiveControl>
+
+				<SelectControl
+					label={__( 'Time Value Font Weight', 'otter-blocks' )}
+					value={ attributes.valueFontWeight }
+					onChange={ valueFontWeight => setAttributes({ valueFontWeight: valueFontWeight || undefined })}
+					options={fontWeights}
+				/>
 
 				<ResponsiveControl
 					label={ __( 'Label Font Size', 'otter-blocks' ) }
 				>
-					<RangeControl
-						value={ 'Mobile' === getView ? attributes.labelFontSizeMobile : 'Tablet' === getView ? attributes.labelFontSizeTablet : attributes.labelFontSize }
-						onChange={ onLabelFontSizeChange }
-						min={ 0 }
-						max={ 64 }
+					<FontSizePicker
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ responsiveGetAttributes([ attributes.labelFontSize, attributes.labelFontSizeTablet, attributes.labelFontSizeMobile ]) }
+						onChange={ value => responsiveSetAttributes( value, [ 'labelFontSize', 'labelFontSizeTablet', 'labelFontSizeMobile' ]) }
 					/>
 				</ResponsiveControl>
 
-				<SizingControl
-					label={ __( 'Border Radius (%)', 'otter-blocks' ) }
-					type={ attributes.borderRadiusType }
-					min={ 0 }
-					max={ 100 }
-					changeType={ changeBorderRadiusType }
-					onChange={ changeBorderRadius }
-					options={ [
-						{
-							label: __( 'Top Left', 'otter-blocks' ),
-							type: 'top-left',
-							value: getBorderRadius( 'top-left' )
-						},
-						{
-							label: __( 'Top Right', 'otter-blocks' ),
-							type: 'top-right',
-							value: getBorderRadius( 'top-right' )
-						},
-						{
-							label: __( 'Bottom Right', 'otter-blocks' ),
-							type: 'bottom-right',
-							value: getBorderRadius( 'bottom-right' )
-						},
-						{
-							label: __( 'Bottom Left', 'otter-blocks' ),
-							type: 'bottom-left',
-							value: getBorderRadius( 'bottom-left' )
-						}
-					] }
+				<SelectControl
+					label={__( 'Label Font Weight', 'otter-blocks' )}
+					value={ attributes.labelFontWeight }
+					onChange={ labelFontWeight => setAttributes({ labelFontWeight: labelFontWeight || undefined })}
+					options={fontWeights}
 				/>
-
 			</PanelBody>
 
 			<PanelColorSettings
@@ -358,22 +269,27 @@ const Inspector = ({
 				colorSettings={ [
 					{
 						value: attributes.backgroundColor,
-						onChange: onBackgroundColorChange,
+						onChange: backgroundColor => setAttributes({ backgroundColor }),
 						label: __( 'Background', 'otter-blocks' )
 					},
 					{
+						value: attributes.valueColor,
+						onChange: valueColor => setAttributes({ valueColor }),
+						label: __( 'Time Value', 'otter-blocks' )
+					},
+					{
 						value: attributes.labelColor,
-						onChange: onLabelColorChange,
+						onChange: labelColor => setAttributes({ labelColor }),
 						label: __( 'Label', 'otter-blocks' )
 					},
 					{
-						value: attributes.valueColor,
-						onChange: onValueColorChange,
-						label: __( 'Value', 'otter-blocks' )
+						value: attributes.separatorColor,
+						onChange: separatorColor => setAttributes({ separatorColor }),
+						label: __( 'Separator', 'otter-blocks' )
 					},
 					{
 						value: attributes.borderColor,
-						onChange: onBorderColorChange,
+						onChange: borderColor => setAttributes({ borderColor }),
 						label: __( 'Border', 'otter-blocks' )
 					}
 				] }
@@ -385,6 +301,95 @@ const Inspector = ({
 					} }
 				/>
 			</PanelColorSettings>
+
+			<PanelBody
+				title={ __( 'Border', 'otter-blocks' ) }
+				initialOpen={false}
+			>
+				<SelectControl
+					label={__( 'Type', 'otter-blocks' )}
+					value={ attributes.borderStyle ?? 'solid' }
+					onChange={ borderStyle => setAttributes({ borderStyle: borderStyle || undefined })}
+					options={[
+						{
+							label: __( 'None', 'otter-blocks' ),
+							value: ''
+						},
+						{
+							label: __( 'Solid', 'otter-blocks' ),
+							value: 'solid'
+						},
+						{
+							label: __( 'Double', 'otter-blocks' ),
+							value: 'Double'
+						},
+						{
+							label: __( 'Dotted', 'otter-blocks' ),
+							value: 'dotted'
+						},
+						{
+							label: __( 'Dashed', 'otter-blocks' ),
+							value: 'dashed'
+						}
+					]}
+				/>
+
+				{
+					attributes.borderStyle && (
+						<ResponsiveControl
+							label={ __( 'Width', 'otter-blocks' ) }
+						>
+							<RangeControl
+								value={ responsiveGetAttributes([ attributes.borderWidth, attributes.borderWidthTablet, attributes.borderWidthMobile ]) ?? 2 }
+								onChange={ value => responsiveSetAttributes( value, [ 'borderWidth', 'borderWidthTablet', 'borderWidthMobile' ]) }
+								min={ 0 }
+								max={ 50 }
+								allowReset
+							/>
+						</ResponsiveControl>
+					)
+				}
+
+
+				<BoxControl
+					label={ __( 'Border Radius', 'otter-blocks' ) }
+					values={
+						mergeBoxDefaultValues(
+							attributes.borderRadiusBox,
+							{ left: '0px', right: '0px', bottom: '0px', top: '0px' }
+						)
+					}
+					onChange={ value => {
+						setAttributes({
+							borderRadiusBox: removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' })
+						});
+					} }
+					id="o-border-raduis-box"
+				/>
+
+				{/*
+
+				// Release in future versions
+
+				<ResponsiveControl
+					label={ __( 'Padding', 'otter-blocks' ) }
+				>
+					<BoxControl
+						label=""
+						values={
+							mergeBoxDefaultValues(
+								responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile ]),
+								{ left: '0px', right: '0px', bottom: '0px', top: '0px' }
+							)
+						}
+						onChange={ value => {
+							const cleaned = removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' });
+							responsiveSetAttributes( cleaned, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
+						} }
+					/>
+
+				</ResponsiveControl> */}
+			</PanelBody>
 		</InspectorControls>
 	);
 };

@@ -1,4 +1,4 @@
-import { without } from 'lodash';
+import { isEmpty, merge, omitBy, without } from 'lodash';
 
 import { sprintf } from '@wordpress/i18n';
 
@@ -295,4 +295,79 @@ export const _align = value =>{
 export const getChoice = arr => {
 	const r = arr?.filter( x => x?.[0])?.[0];
 	return r?.[1] ?? r?.[0];
+};
+
+/**
+ * Return the values from a box type.
+ *
+ * @param {import('./blocks').BoxType} box
+ * @param {import('./blocks').BoxType} defaultBox
+ */
+export const boxValues = ( box, defaultBox ) => {
+	return `${ box?.top ?? defaultBox?.top ?? '0px' } ${ box?.right ?? defaultBox?.right ?? '0px' } ${ box?.bottom ?? defaultBox?.bottom ?? '0px' } ${ box?.left ?? defaultBox?.left ?? '0px' }`;
+};
+
+/**
+ * Remove the default values from Box object.
+ *
+ * @param {import('./blocks').BoxType} box
+ * @param {import('./blocks').BoxType} defaultBox
+ * @return {import('./blocks').BoxType}
+ */
+export const removeBoxDefaultValues = ( box, defaultBox ) => {
+	const cleaned = omitBy( box, ( value, key ) => value === defaultBox[key]);
+	return isEmpty( cleaned ) ? undefined : cleaned;
+};
+
+/**
+ * Merge the Box objects.
+ *
+ * @param {import('./blocks').BoxType} box
+ * @param {import('./blocks').BoxType} defaultBox
+ * @return {import('./blocks').BoxType}
+ */
+export const mergeBoxDefaultValues = ( box, defaultBox ) => {
+	return merge(
+		{ left: '0px', right: '0px', bottom: '0px', top: '0px' },
+		defaultBox,
+		box
+	);
+};
+
+const mapViewToKey = {
+	'Desktop': 0,
+	'Tablet': 1,
+	'Mobile': 2
+};
+
+/**
+ * Build a responsive wrapper around `setAttributes`
+ *
+ * @param {Function} setAttributes The function that set the attributes.
+ * @param {'Desktop'|'Tablet'|'Mobile'} currentView The current view.
+ * @template T
+ * @returns {(value: T, keys: string[]) => void}
+ */
+export const buildResponsiveSetAttributes = ( setAttributes, currentView ) => {
+	return ( value, keys ) => {
+		setAttributes({ [keys[mapViewToKey[currentView] ?? 0]]: value });
+	};
+};
+
+/**
+ * Build a responsive wrapper around current view to choose a value.
+ *
+ * @param {'Desktop'|'Tablet'|'Mobile'} currentView The current view.
+ * @param {'Desktop'|'Tablet'|'Mobile'} defaultView If the value of the current view is undefined or null, fallback to this view.
+ * @param {boolean} cascade Inherit from previous view. Mobile from Tablet, Tablet from Desktop.
+ * @template T
+ * @returns { (values: T[]) => T}
+ */
+export const buildResponsiveGetAttributes = ( currentView, defaultView = 'Desktop', cascade = true ) => {
+	return values => {
+		if ( cascade && ! values?.[mapViewToKey[currentView]] && currentView !== defaultView ) {
+			return values?.[mapViewToKey[currentView] - 1] ?? values?.[mapViewToKey[currentView] - 2];
+		}
+		return ( values?.[mapViewToKey[currentView]] ?? values?.[mapViewToKey[defaultView]]);
+	};
 };

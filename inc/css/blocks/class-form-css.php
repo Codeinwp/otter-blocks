@@ -7,6 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\CSS\Blocks;
 
+use PHP_CodeSniffer\Tokenizers\CSS;
 use ThemeIsle\GutenbergBlocks\Base_CSS;
 
 use ThemeIsle\GutenbergBlocks\CSS\CSS_Utility;
@@ -58,13 +59,18 @@ class Form_CSS extends Base_CSS {
 						'property'  => '--padding',
 						'value'     => 'inputPadding',
 						'format'    => function( $value, $attrs ) {
-							return $value['top'] . ' ' . $value['right'] . ' ' . $value['bottom'] . ' ' . $value['left'];
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left'   => '8px',
+									'right'  => '8px',
+									'top'    => '8px',
+									'bottom' => '8px',
+								)
+							);
 						},
 						'condition' => function( $attrs ) {
-							return ( isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['top'] )
-							&& isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['right'] )
-							&& isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['bottom'] )
-							&& isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['left'] ) );
+							return isset( $attrs['inputPadding'] );
 						},
 					),
 					array(
