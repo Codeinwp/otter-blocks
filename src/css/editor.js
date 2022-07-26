@@ -4,13 +4,17 @@
 import { __ } from '@wordpress/i18n';
 
 import {
+	Button,
+	Notice
+} from '@wordpress/components';
+
+import {
 	Fragment,
 	useEffect,
 	useRef,
 	memo,
 	useState
 } from '@wordpress/element';
-import { Button } from '@wordpress/components';
 
 let inputTimeout = null;
 
@@ -79,7 +83,6 @@ const CSSEditor = ({
 		editorRef.current.on( 'change', () => {
 			clearTimeout( inputTimeout );
 			inputTimeout = setTimeout( () => {
-				console.count( 'timeout' ); // Remove after final review
 				checkInput( editorRef.current );
 			}, 500 );
 		});
@@ -107,36 +110,42 @@ const CSSEditor = ({
 		});
 	}, [ attributes ]);
 
-
 	return (
 		<Fragment>
 			<p>{__( 'Add your custom CSS.', 'otter-blocks' )}</p>
 
 			<div id="otter-css-editor" className="otter-css-editor" />
 
-			{
-				0 < errors?.length && (
-					<div className='o-css-errors'>
-						<p>{__( 'Attention needed! There are some errors: ', 'otter-blocks' )}</p>
-						<ul style={{ marginTop: '0px' }}>
+			{ 0 < errors?.length && (
+				<div className='o-css-errors'>
+					<Notice
+						status="error"
+						isDismissible={ false }
+					>
+						{ __( 'Attention needed! We found following errors with your code:', 'otter-blocks' ) }
+					</Notice>
+
+					<pre>
+						<ul>
 							{
 								errors.map( ( e, i ) => {
 									return (
-										<li key={i} style={{ color: 'red' }}> {e} </li>
+										<li key={ i } >{ e }</li>
 									);
 								})
 							}
 						</ul>
-						<Button
-							variant='primary'
-							onClick={() => checkInput( editorRef, true )}
-							style={{ width: 'max-content', marginBottom: '20px'}}
-						>
-							{__( 'Apply CSS', 'otter-blocks' )}
-						</Button>
-					</div>
-				)
-			}
+					</pre>
+
+					<Button
+						variant='secondary'
+						onClick={() => checkInput( editorRef, true )}
+						style={{ width: 'max-content', marginBottom: '20px'}}
+					>
+						{ __( 'Override', 'otter-blocks' ) }
+					</Button>
+				</div>
+			) }
 
 			<p>{__( 'Use', 'otter-blocks' )} <code>selector</code> {__( 'to target block wrapper.', 'otter-blocks' )}</p>
 			<br />
