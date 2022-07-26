@@ -41,12 +41,22 @@ class Block_Conditions {
 	 * @return bool
 	 */
 	public function evaluate_condition( $bool, $condition, $visibility ) {
+		if ( 'loggedInUserMeta' === $condition['type'] ) {
+			if ( isset( $condition['meta_key'] ) ) {
+				if ( $visibility ) {
+					return $this->has_meta( $condition, 'user' );
+				} else {
+					return ! $this->has_meta( $condition, 'user' );
+				}
+			}
+		}
+
 		if ( 'postMeta' === $condition['type'] ) {
 			if ( isset( $condition['meta_key'] ) ) {
 				if ( $visibility ) {
-					return $this->has_meta( $condition );
+					return $this->has_meta( $condition, 'post' );
 				} else {
-					return ! $this->has_meta( $condition );
+					return ! $this->has_meta( $condition, 'post' );
 				}
 			}
 		}
@@ -145,18 +155,29 @@ class Block_Conditions {
 	/**
 	 * Check meta compare.
 	 *
-	 * @param array $condition Condition.
+	 * @param array  $condition Condition.
+	 * @param string $type If it's a post or the user.
 	 *
 	 * @since  1.7.0
 	 * @access public
 	 */
-	public function has_meta( $condition ) {
+	public function has_meta( $condition, $type = 'post' ) {
 		if ( ! isset( $condition['meta_key'] ) || ! isset( $condition['meta_compare'] ) ) {
 			return true;
 		}
 
-		$id   = get_the_ID();
-		$meta = get_post_meta( $id, $condition['meta_key'], true );
+		$id   = '';
+		$meta = '';
+
+		if ( 'post' === $type ) {
+			$id   = get_the_ID();
+			$meta = get_post_meta( $id, $condition['meta_key'], true );
+		}
+
+		if ( 'user' === $type ) {
+			$id   = get_current_user_id();
+			$meta = get_user_meta( $id, $condition['meta_key'], true );
+		}
 
 		if ( 'is_true' === $condition['meta_compare'] ) {
 			return true === boolval( $meta );
