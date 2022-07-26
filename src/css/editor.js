@@ -10,6 +10,9 @@ import {
 	memo,
 	useState
 } from '@wordpress/element';
+import { Button } from '@wordpress/components';
+
+let inputTimeout = null;
 
 const CSSEditor = ({
 	attributes,
@@ -32,6 +35,16 @@ const CSSEditor = ({
 		return  attributes.className ?
 			( ! attributes.className.includes( 'ticss-' ) ? [ ...attributes.className.split( ' ' ), `ticss-${uniqueId}` ].join( ' ' ) : attributes.className ) :
 			`ticss-${uniqueId}`;
+	};
+
+	const checkInput = ( editor, ignoreErrors = false ) => {
+		const editorErrors = editor?.state?.lint?.marked?.filter( ({ __annotation }) => 'error' === __annotation?.severity )?.map( ({ __annotation }) => __annotation?.message );
+
+		setErrors( editorErrors );
+		if ( ! ignoreErrors && 0 < editorErrors?.length ) {
+			return;
+		}
+		setEditorValue( editor?.getValue() );
 	};
 
 
@@ -63,14 +76,13 @@ const CSSEditor = ({
 			}
 		});
 
-		editorRef.current.on( 'change', ( editor ) => {
-			const errors = editor?.state?.lint?.marked?.filter( ({ __annotation }) => 'error' === __annotation?.severity )?.map( ({ __annotation }) => __annotation?.message );
-			if ( 0 < errors?.length ) {
-				setErrors( errors );
-				return;
-			}
-
-			setEditorValue( editor?.getValue() );
+		editorRef.current.on( 'changes', ( editor ) => {
+			clearTimeout( inputTimeout );
+			checkInput( editor );
+			inputTimeout = setTimeout( () => {
+				console.count( 'timeout' ); // Remove after final review
+				checkInput( editorRef.current );
+			}, 500 );
 		});
 	}, []);
 
@@ -115,7 +127,13 @@ const CSSEditor = ({
 								})
 							}
 						</ul>
-
+						<Button
+							variant='primary'
+							onClick={() => checkInput( editorRef, true )}
+							style={{ width: 'max-content', marginBottom: '20px'}}
+						>
+							{__( 'Apply CSS', 'otter-blocks' )}
+						</Button>
 					</div>
 				)
 			}
