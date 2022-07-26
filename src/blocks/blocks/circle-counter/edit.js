@@ -170,7 +170,7 @@ const CircularProgressBarBlock = ({
 					} }
 					showHandle={ isSelected }
 					onResizeStop={ ( event, direction, elt, delta ) => {
-						setAttributes({height: parseInt( attributes.height + delta.height, 10 )});
+						setAttributes({ height: parseInt( attributes.height + delta.height, 10 ) });
 						toggleSelection( true );
 					} }
 					onResizeStart={ () => {
