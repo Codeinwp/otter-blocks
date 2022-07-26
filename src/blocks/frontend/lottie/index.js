@@ -40,11 +40,11 @@ domReady( () => {
 				return window.LottieInteractivity.create({
 					mode: 'scroll',
 					player: `#${ animation.id }`,
-					actions: [ {
+					actions: [{
 						visibility: [ 0, 1 ],
 						type: 'seek',
 						frames: [ 0, animation.getLottie().totalFrames ]
-					} ]
+					}]
 				});
 			}
 

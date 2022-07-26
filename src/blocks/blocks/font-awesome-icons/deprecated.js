@@ -1,5 +1,5 @@
 import themeIsleIcons from '../../helpers/themeisle-icons';
-import {useBlockProps} from '@wordpress/block-editor';
+import { useBlockProps } from '@wordpress/block-editor';
 
 
 const attributes = {
@@ -347,6 +347,6 @@ const deprecated = [
 				</p>
 			);
 		}
-	} ];
+	}];
 
 export default deprecated;

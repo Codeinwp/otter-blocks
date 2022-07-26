@@ -73,37 +73,37 @@ const Inspector = ({
 
 	const onGapChange = value => {
 		if ( 'Desktop' === getView ) {
-			setAttributes({ gap: Number( value )});
+			setAttributes({ gap: Number( value ) });
 		}
 		if ( 'Tablet' === getView ) {
-			setAttributes({ gapTablet: Number( value )});
+			setAttributes({ gapTablet: Number( value ) });
 		}
 		if ( 'Mobile' === getView ) {
-			setAttributes({ gapMobile: Number( value )});
+			setAttributes({ gapMobile: Number( value ) });
 		}
 	};
 
 	const onWidthChange = value => {
 		if ( 'Desktop' === getView ) {
-			setAttributes({ width: Number( value )});
+			setAttributes({ width: Number( value ) });
 		}
 		if ( 'Tablet' === getView ) {
-			setAttributes({ widthTablet: Number( value )});
+			setAttributes({ widthTablet: Number( value ) });
 		}
 		if ( 'Mobile' === getView ) {
-			setAttributes({ widthMobile: Number( value )});
+			setAttributes({ widthMobile: Number( value ) });
 		}
 	};
 
 	const onHeightChange = value => {
 		if ( 'Desktop' === getView ) {
-			setAttributes({ height: Number( value )});
+			setAttributes({ height: Number( value ) });
 		}
 		if ( 'Tablet' === getView ) {
-			setAttributes({ heightTablet: Number( value )});
+			setAttributes({ heightTablet: Number( value ) });
 		}
 		if ( 'Mobile' === getView ) {
-			setAttributes({ heightMobile: Number( value )});
+			setAttributes({ heightMobile: Number( value ) });
 		}
 	};
 
@@ -112,10 +112,10 @@ const Inspector = ({
 			setAttributes({ valueFontSize: Number( value ) });
 		}
 		if ( 'Tablet' === getView ) {
-			setAttributes({ valueFontSizeTablet: Number( value )});
+			setAttributes({ valueFontSizeTablet: Number( value ) });
 		}
 		if ( 'Mobile' === getView ) {
-			setAttributes({ valueFontSizeMobile: Number( value )});
+			setAttributes({ valueFontSizeMobile: Number( value ) });
 		}
 	};
 
@@ -124,10 +124,10 @@ const Inspector = ({
 			setAttributes({ labelFontSize: Number( value ) });
 		}
 		if ( 'Tablet' === getView ) {
-			setAttributes({ labelFontSizeTablet: Number( value )});
+			setAttributes({ labelFontSizeTablet: Number( value ) });
 		}
 		if ( 'Mobile' === getView ) {
-			setAttributes({ labelFontSizeMobile: Number( value )});
+			setAttributes({ labelFontSizeMobile: Number( value ) });
 		}
 	};
 
@@ -136,10 +136,10 @@ const Inspector = ({
 			setAttributes({ borderWidth: Number( value ) });
 		}
 		if ( 'Tablet' === getView ) {
-			setAttributes({ borderWidthTablet: Number( value )});
+			setAttributes({ borderWidthTablet: Number( value ) });
 		}
 		if ( 'Mobile' === getView ) {
-			setAttributes({ borderWidthMobile: Number( value )});
+			setAttributes({ borderWidthMobile: Number( value ) });
 		}
 	};
 

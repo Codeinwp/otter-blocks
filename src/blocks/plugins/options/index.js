@@ -120,7 +120,7 @@ const Options = () => {
 
 	const resetConfig = block => {
 		const defaultValues = cloneDeep( blockDefaults );
-		const blockConfig = { ...defaultsAttrs[ block ]};
+		const blockConfig = { ...defaultsAttrs[ block ] };
 		defaultValues[ block ] = blockConfig;
 		setBlockDefaults( defaultValues );
 	};

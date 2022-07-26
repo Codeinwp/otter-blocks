@@ -26,7 +26,7 @@ const Inspector = ({
 		const newValue = { ...attributes[item] };
 		newValue[field] = value;
 
-		setAttributes({ [ item ]: { ...newValue } });
+		setAttributes({ [ item ]: { ...newValue }});
 	};
 
 	return (
