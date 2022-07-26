@@ -84,6 +84,7 @@ class Registration {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) ); // Don't change the priority or else Blocks CSS will stop working.
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
 		add_filter( 'render_block', array( $this, 'load_sticky' ), 900, 2 );
+		add_filter( 'render_block', [ $this, 'subscribe_fa' ], 900, 2 );
 
 		add_action(
 			'get_footer',
@@ -92,7 +93,8 @@ class Registration {
 					wp_enqueue_style( 'font-awesome-5' );
 					wp_enqueue_style( 'font-awesome-4-shims' );
 				}
-			}
+			},
+			9999
 		);
 	}
 
@@ -338,7 +340,7 @@ class Registration {
 				if ( is_array( $widget ) && isset( $widget['content'] ) ) {
 					$content .= $widget['content'];
 				}
-			}       
+			}
 		} elseif ( 0 < get_queried_object_id() ) {
 			$content = get_the_content( null, false, $post );
 		}
