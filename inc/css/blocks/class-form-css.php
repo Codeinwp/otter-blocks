@@ -7,9 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\CSS\Blocks;
 
-use PHP_CodeSniffer\Tokenizers\CSS;
-use ThemeIsle\GutenbergBlocks\Base_CSS;
 
+use ThemeIsle\GutenbergBlocks\Base_CSS;
 use ThemeIsle\GutenbergBlocks\CSS\CSS_Utility;
 
 /**
