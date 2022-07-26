@@ -156,7 +156,7 @@ export const PostsMeta = ({ attributes, element, post, author, category }) => {
 	return '';
 };
 
-export const PostsDescription = ({attributes,  element, post }) => {
+export const PostsDescription = ({ attributes,  element, post }) => {
 	if ( 0 < attributes.excerptLength && attributes.displayDescription ) {
 		return (
 			<div key={ element } className="o-posts-grid-post-description">

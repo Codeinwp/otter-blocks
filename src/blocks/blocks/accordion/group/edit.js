@@ -73,7 +73,7 @@ const Edit = ({
 			<div { ...blockProps }>
 				<InnerBlocks
 					allowedBlocks={ [ 'themeisle-blocks/accordion-item' ] }
-					template={ [ [ 'themeisle-blocks/accordion-item' ] ] }
+					template={ [[ 'themeisle-blocks/accordion-item' ]] }
 					renderAppender={ isSelected ? InnerBlocks.ButtonBlockAppender : '' }
 				/>
 			</div>

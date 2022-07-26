@@ -141,7 +141,7 @@ registerStore( 'otter-pro', {
 			const data = yield actions.fetchFromAPI( 'otter/v1/acf-fields' );
 
 			if ( data?.success ) {
-				const groups = data.groups;
+				const { groups } = data;
 				const fields = groups
 					?.map( ({ fields, data }) => {
 						return fields.map( field => {

@@ -127,6 +127,7 @@ const Form = ({
 						value={ attributes.inputGap ?? 16 }
 						onChange={ inputGap => setAttributes({ inputGap }) }
 						allowReset
+						step={ 0.1 }
 						min={ 0 }
 						max={ 50 }
 						initialPositino={ 5 }
@@ -177,6 +178,7 @@ const Form = ({
 						value={ attributes.inputsGap ?? 10}
 						onChange={ inputsGap => setAttributes({ inputsGap }) }
 						allowReset
+						step={ 0.1 }
 						min={ 0 }
 						max={ 50 }
 						initialPosition={ 10 }
@@ -190,7 +192,7 @@ const Form = ({
 				>
 					<BoxControl
 						label={ __( 'Input Padding', 'otter-blocks' ) }
-						values={ attributes.inputPadding ?? {'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px'} }
+						values={ attributes.inputPadding ?? { 'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px' } }
 						inputProps={ {
 							min: 0,
 							max: 500
@@ -209,6 +211,7 @@ const Form = ({
 						value={ attributes.inputBorderRadius ?? 4 }
 						onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
 						allowReset
+						step={ 0.1 }
 						min={ 0 }
 						max={ 50 }
 					/>
@@ -224,6 +227,7 @@ const Form = ({
 						value={ attributes.inputBorderWidth ?? 1 }
 						onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
 						allowReset
+						step={ 0.1 }
 						min={ 0 }
 						max={ 50 }
 					/>
@@ -289,7 +293,7 @@ const Form = ({
 							value: 'full'
 						}
 					]}
-					onChange={ submitStyle => setAttributes({ submitStyle}) }
+					onChange={ submitStyle => setAttributes({ submitStyle }) }
 				/>
 
 				<SyncControl

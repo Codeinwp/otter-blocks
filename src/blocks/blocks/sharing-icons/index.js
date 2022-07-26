@@ -29,5 +29,8 @@ registerBlockType( name, {
 		{ name: 'icons', label: __( 'Icons Only', 'otter-blocks' ) }
 	],
 	edit,
-	save: () => null
+	save: () => null,
+	example: {
+		attributes: {}
+	}
 });

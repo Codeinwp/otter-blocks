@@ -128,6 +128,7 @@ const Review = ({
 							label={ __( 'Rating', 'otter-blocks' ) }
 							value={ feature.rating }
 							onChange={ value => changeFeature( index, { rating: Number( value ) }) }
+							step={ 0.1 }
 							min={ 1 }
 							max={ 10 }
 						/>

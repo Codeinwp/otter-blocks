@@ -37,7 +37,6 @@ class Main {
 		add_filter( 'otter_blocks_autoloader', array( $this, 'autoload_classes' ) );
 
 		if ( License::has_active_license() ) {
-			add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
 			add_filter( 'otter_blocks_register_blocks', array( $this, 'register_blocks' ) );
 			add_filter( 'otter_blocks_register_dynamic_blocks', array( $this, 'register_dynamic_blocks' ) );
 			add_filter( 'otter_blocks_register_css', array( $this, 'register_blocks_css' ) );
@@ -211,8 +210,6 @@ class Main {
 			)
 		);
 
-		wp_enqueue_style( 'otter-pro-editor', OTTER_PRO_BUILD_URL . 'editor.css', array( 'wp-edit-blocks' ), $asset_file['version'] );
-
 		global $pagenow;
 
 		if ( class_exists( 'WooCommerce' ) && ( 'post.php' === $pagenow || 'post-new.php' === $pagenow ) && ( ( isset( $_GET['post'] ) && 'product' === get_post_type( sanitize_text_field( $_GET['post'] ) ) ) || ( isset( $_GET['post_type'] ) && 'product' === sanitize_text_field( $_GET['post_type'] ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
@@ -247,21 +244,6 @@ class Main {
 			$asset_file['version'],
 			true
 		);
-	}
-
-	/**
-	 * Load frontend assets for our blocks.
-	 *
-	 * @since   2.0.1
-	 * @access  public
-	 */
-	public function enqueue_block_assets() {
-		if ( is_admin() ) {
-			return;
-		}
-
-		$asset_file = include OTTER_PRO_BUILD_PATH . 'blocks.asset.php';
-		wp_enqueue_style( 'otter-pro', OTTER_PRO_BUILD_URL . 'blocks.css', [], $asset_file['version'] );
 	}
 
 	/**

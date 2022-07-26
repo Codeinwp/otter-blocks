@@ -27,5 +27,8 @@ registerBlockType( name, {
 		'features'
 	],
 	edit,
-	save
+	save,
+	example: {
+		attributes: {}
+	}
 });

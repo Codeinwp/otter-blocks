@@ -1,33 +1,66 @@
 {
-    "env": {
-        "browser": true,
-        "es2021": true
-    },
-    "extends": "wordpress",
-    "parserOptions": {
-        "ecmaFeatures": {
-            "jsx": true
-        },
-        "ecmaVersion": 2021,
-        "sourceType": "module"
-    },
-    "ignorePatterns": [ "node_modules", "assets", "**/*.d.ts" ],
-    "rules": {
-        "indent": [
-            "error",
-            "tab"
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "quotes": [
-            "error",
-            "single"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ]
-    }
+	"env": {
+		"browser": true,
+		"es2021": true
+	},
+	"extends": "wordpress",
+	"parserOptions": {
+		"ecmaFeatures": {
+			"jsx": true
+		},
+		"ecmaVersion": 2021,
+		"sourceType": "module"
+	},
+	"ignorePatterns": [ "node_modules", "assets", "**/*.d.ts" ],
+	"rules": {
+		"indent": [
+			"error",
+			"tab"
+		],
+		"linebreak-style": [
+			"error",
+			"unix"
+		],
+		"quotes": [
+			"error",
+			"single"
+		],
+		"semi": [
+			"error",
+			"always"
+		],
+		"prefer-destructuring": [
+			"warn",
+			{
+				"array": false,
+				"object": true
+			},
+			{
+				"enforceForRenamedProperties": false
+			}
+		],
+		"array-bracket-spacing": [
+			"warn",
+			"always",
+			{
+				"arraysInArrays": false,
+				"objectsInArrays": false
+			}
+		],
+		"key-spacing": [
+			"warn",
+			{
+				"beforeColon": false,
+				"afterColon": true
+			}
+		],
+		"object-curly-spacing": [
+			"warn",
+			"always",
+			{
+				"arraysInObjects": true,
+				"objectsInObjects": false
+			}
+		],
+	}
 }

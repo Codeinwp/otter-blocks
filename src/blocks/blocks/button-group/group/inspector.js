@@ -103,6 +103,7 @@ const Inspector = ({
 					label={ __( 'Spacing', 'otter-blocks' ) }
 					value={ attributes.spacing }
 					onChange={ e => setAttributes({ spacing: e }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 50 }
 				/>
@@ -141,6 +142,7 @@ const Inspector = ({
 					label={ __( 'Font Size', 'otter-blocks' ) }
 					value={ attributes.fontSize }
 					onChange={ e => setAttributes({ fontSize: e }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 50 }
 				/>
@@ -161,6 +163,7 @@ const Inspector = ({
 					label={ __( 'Line Height', 'otter-blocks' ) }
 					value={ attributes.lineHeight }
 					onChange={ e => setAttributes({ lineHeight: e }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 200 }
 				/>

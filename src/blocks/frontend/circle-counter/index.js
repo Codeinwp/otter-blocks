@@ -16,12 +16,12 @@ domReady( () => {
 			Dataset
 		*/
 		const duration = progressBar.dataset.duration * 1000;
-		const percentage = progressBar.dataset.percentage;
+		const { percentage } = progressBar.dataset;
 		const size = progressBar.dataset.height;
-		const strokeWidth = progressBar.dataset.strokeWidth;
+		const { strokeWidth } = progressBar.dataset;
 		const fontSize = progressBar.dataset.fontSizePercent;
-		const backgroundStroke = progressBar.dataset.backgroundStroke;
-		const progressStroke = progressBar.dataset.progressStroke;
+		const { backgroundStroke } = progressBar.dataset;
+		const { progressStroke } = progressBar.dataset;
 
 		const center = size / 2;
 		const radius = center - ( strokeWidth / 2 );

@@ -26,7 +26,7 @@ const Inspector = ({
 		const newValue = { ...attributes[item] };
 		newValue[field] = value;
 
-		setAttributes({ [ item ]: { ...newValue } });
+		setAttributes({ [ item ]: { ...newValue }});
 	};
 
 	return (
@@ -39,6 +39,7 @@ const Inspector = ({
 					value={ attributes.gap }
 					onChange={ value => setAttributes({ gap: value }) }
 					allowReset
+					step={ 0.1 }
 					max={ 100 }
 				/>
 				<RangeControl
@@ -46,6 +47,7 @@ const Inspector = ({
 					value={ attributes.borderRadius }
 					onChange={ value => setAttributes({ borderRadius: value })}
 					allowReset
+					step={ 0.1 }
 					max={ 50 }
 				/>
 			</PanelBody>

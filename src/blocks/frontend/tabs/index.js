@@ -25,7 +25,7 @@ domReady( () => {
 				content.classList.add( 'active' );
 				openedTab = true;
 			} else {
-				closedTabs.push({headerItem, content});
+				closedTabs.push({ headerItem, content });
 			}
 
 			headerItem.innerHTML = item.dataset.title || `Tab ${ index + 1 }`;

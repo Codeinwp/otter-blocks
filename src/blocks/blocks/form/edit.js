@@ -97,12 +97,12 @@ const Edit = ({
 	});
 
 	const setFormOption = option => {
-		setFormOptions( options => ({...options, ...option}) );
+		setFormOptions( options => ({ ...options, ...option }) );
 	};
 
 	const [ savedFormOptions, setSavedFormOptions ] = useState( true );
 
-	const [ listIDOptions, setListIDOptions ] = useState([ { label: __( 'None', 'otter-blocks' ), value: '' } ]);
+	const [ listIDOptions, setListIDOptions ] = useState([{ label: __( 'None', 'otter-blocks' ), value: '' }]);
 
 	const {
 		insertBlock,
@@ -217,13 +217,13 @@ const Edit = ({
 	useEffect( () => {
 		let controller = new AbortController();
 		const t = setTimeout( () => {
-			setLoading({formOptions: 'done', formIntegration: 'done'});
+			setLoading({ formOptions: 'done', formIntegration: 'done' });
 		}, 3000 );
 
 
 		if ( attributes.optionName ) {
 			api.loadPromise.then( () => {
-				setLoading({ formOptions: 'loading', formIntegration: 'loading'});
+				setLoading({ formOptions: 'loading', formIntegration: 'loading' });
 				( new api.models.Settings() ).fetch({ signal: controller.signal }).done( res => {
 					controller = null;
 					const formData = extractDataFromWpOptions( res.themeisle_blocks_form_emails );
@@ -639,15 +639,15 @@ const Edit = ({
 	useEffect( () => {
 		let controller = new AbortController();
 		const getCaptchaAPIData = () => {
-			setLoading({ captcha: 'loading'});
+			setLoading({ captcha: 'loading' });
 			try {
 				( new api.models.Settings() )?.fetch({ signal: controller.signal }).then( response => {
 					controller = null;
 
 					if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
-						setLoading({ captcha: 'done'});
+						setLoading({ captcha: 'done' });
 					} else {
-						setLoading({ captcha: 'missing'});
+						setLoading({ captcha: 'missing' });
 						setGoogleCaptchaAPISiteKey( response.themeisle_google_captcha_api_site_key );
 						setGoogleCaptchaAPISecretKey( response.themeisle_google_captcha_api_secret_key );
 					}

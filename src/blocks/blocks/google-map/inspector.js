@@ -77,14 +77,14 @@ const Inspector = ({
 	const changeLatitude = value => {
 		setAttributes({ latitude: value.toString() });
 		const latitude = Number( value );
-		const longitude = attributes.longitude;
+		const { longitude } = attributes;
 		const latLng = new window.google.maps.LatLng( latitude, longitude );
 		map.setCenter( latLng );
 	};
 
 	const changeLongitude = value => {
 		setAttributes({ longitude: value.toString() });
-		const latitude = attributes.latitude;
+		const { latitude } = attributes;
 		const longitude = Number( value );
 		const latLng = new window.google.maps.LatLng( latitude, longitude );
 		map.setCenter( latLng );

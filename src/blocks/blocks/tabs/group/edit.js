@@ -227,7 +227,7 @@ const Edit = ({
 				>
 					<InnerBlocks
 						allowedBlocks={ [ 'themeisle-blocks/tabs-item' ] }
-						template={ [ [ 'themeisle-blocks/tabs-item' ] ] }
+						template={ [[ 'themeisle-blocks/tabs-item' ]] }
 						orientation="horizontal"
 						renderAppender={ false }
 					/>

@@ -30,6 +30,11 @@ registerBlockType( name, {
 		'counter'
 	],
 	edit,
-	save
+	save,
+	example: {
+		attributes: {
+			date: '2024-07-15T15:03:00'
+		}
+	}
 });
 
