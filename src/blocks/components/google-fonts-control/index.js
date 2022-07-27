@@ -34,6 +34,33 @@ import {
 * Internal dependencies
 */
 import './editor.scss';
+import { getEditorIframe } from '../../helpers/block-utility';
+
+/**
+ * Load the font to the page using FontFace API.
+ * @param {string} fontName
+ * @param {string} variant
+ * @param {import('./types').GoogleFontItem[]} fonts
+ * @returns
+ */
+const loadFontToPage = async( fontName, variant = 'regular', fonts = []) => {
+
+	const doc = getEditorIframe()?.contentWindow?.document ?? document;
+
+	// Check if the font is already loaded.
+	if ( doc.fonts.check( `italic bold 16px ${fontName}` ) ) {
+		console.log( 'Font already loaded:', fontName ); // TODO: remove after rewiew
+		return;
+	}
+
+	const font = fonts.find( font => font.family === fontName );
+	if ( ! font ) {
+		return;
+	}
+	const fontFace = new FontFace( fontName, `url(${font.files[variant]})` );
+	await fontFace.load();
+	doc.fonts.add( fontFace );
+};
 
 const GoogleFontsControl = ({
 	label,
@@ -55,6 +82,7 @@ const GoogleFontsControl = ({
 		fetch( 'https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyClGdkPJ1BvgLOol5JAkQY4Mv2lkLYu00k' )
 			.then( blob => blob.json() )
 			.then( data => {
+				console.log( data );
 				if ( isMounted ) {
 					setFonts( data.items );
 					if ( value ) {
@@ -73,7 +101,7 @@ const GoogleFontsControl = ({
 						});
 					}
 				}
-			});
+			}).catch( e => console.log( e ) );
 
 		return () => {
 			isMounted = false;
@@ -111,6 +139,7 @@ const GoogleFontsControl = ({
 							] }
 							onChange={ e => {
 								let variants = [];
+								loadFontToPage( e, 'regular', fonts );
 
 								if ( '' === e ) {
 									variants = [
@@ -177,16 +206,18 @@ const GoogleFontsControl = ({
 											{ __( 'Default', 'otter-blocks' ) }
 										</MenuItem>
 
-										{ ( fonts ).map( i => {
+										{ ( fonts ).map( ( i, index ) => {
 											if ( ! search || i.family.toLowerCase().includes( search.toLowerCase() ) ) {
 												return (
 													<MenuItem
+														key={index}
 														className={ classnames(
 															{ 'is-selected': ( i.family === value ) }
 														) }
 														onClick={ () => {
 															onToggle();
 															onChangeFontFamily( i.family );
+															loadFontToPage( i.family, 'regular', fonts );
 
 															const variants = ( i.variants )
 																.filter( o => false === o.includes( 'italic' ) )
