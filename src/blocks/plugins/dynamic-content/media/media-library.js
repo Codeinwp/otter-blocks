@@ -51,8 +51,8 @@ jQuery( document ).ready( function( $ ) {
 
 			if ( showDynamicMedia ) {
 				routerView.set({
-					otterDynamicContent: {
-						text: __( 'Dynamic Content', 'otter-blocks' ),
+					otterDynamicImages: {
+						text: __( 'Dynamic Images', 'otter-blocks' ),
 						priority: 60
 					}
 				});
@@ -69,7 +69,7 @@ jQuery( document ).ready( function( $ ) {
 			const showDynamicMedia = wp.data.select( 'core/block-editor' ).getSelectedBlock();
 
 			if ( showDynamicMedia ) {
-				this.on( 'content:create:otterDynamicContent', this.otterDynamicContent, this );
+				this.on( 'content:create:otterDynamicImages', this.otterDynamicImages, this );
 			}
 		},
 
@@ -78,7 +78,7 @@ jQuery( document ).ready( function( $ ) {
 		 *
 		 * @param {wp.media.controller.Region} contentRegion
 		 */
-		otterDynamicContent() {
+		otterDynamicImages() {
 			const state = this.state();
 
 			// Get active frame
@@ -172,7 +172,7 @@ jQuery( document ).ready( function( $ ) {
 			'.media-router button.media-menu-item.active'
 		);
 
-		if ( selectedTab && 'menu-item-otterDynamicContent' === selectedTab.id ) {
+		if ( selectedTab && 'menu-item-otterDynamicImages' === selectedTab.id ) {
 			otterImagesMediaTab();
 		}
 	});
@@ -190,7 +190,7 @@ jQuery( document ).ready( function( $ ) {
 				'.media-router button.media-menu-item.active'
 			);
 
-			if ( selectedTab && 'menu-item-otterDynamicContent' === selectedTab.id ) {
+			if ( selectedTab && 'menu-item-otterDynamicImages' === selectedTab.id ) {
 				otterImagesMediaTab();
 			}
 		}
