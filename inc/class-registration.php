@@ -84,18 +84,6 @@ class Registration {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) ); // Don't change the priority or else Blocks CSS will stop working.
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
 		add_filter( 'render_block', array( $this, 'load_sticky' ), 900, 2 );
-		add_filter( 'render_block', [ $this, 'subscribe_fa' ], 900, 2 );
-
-		add_action(
-			'get_footer',
-			static function () {
-				if ( Registration::$is_fa_loaded ) {
-					wp_enqueue_style( 'font-awesome-5' );
-					wp_enqueue_style( 'font-awesome-4-shims' );
-				}
-			},
-			9999
-		);
 	}
 
 	/**
@@ -297,8 +285,6 @@ class Registration {
 				}
 			}
 		}
-
-		add_filter( 'render_block', [ $this, 'subscribe_fa' ], 10, 2 );
 
 		add_filter(
 			'the_content',
@@ -562,6 +548,16 @@ class Registration {
 			self::$scripts_loaded['progress-bar'] = true;
 		}
 
+		if ( ! self::$is_fa_loaded ) {
+			$blocks = parse_blocks( $post );
+			foreach ( $blocks as $block ) {
+				$this->subscribe_fa( $block );
+				if ( self::$is_fa_loaded ) {
+					break;
+				}
+			}       
+		}
+
 	}
 
 	/**
@@ -773,19 +769,11 @@ class Registration {
 	/**
 	 * Subscribe to FA enqueue.
 	 *
-	 * @param string $block_content Block content parsed.
-	 * @param array  $block Block details.
+	 * @param array $block Block details.
 	 *
-	 * @return mixed
+	 * @return void
 	 */
-	public function subscribe_fa( $block_content, $block ) {
-		if ( ! isset( $block['blockName'] ) ) {
-			return $block_content;
-		}
-
-		if ( self::$is_fa_loaded ) {
-			return $block_content;
-		}
+	public function subscribe_fa( $block ) {
 
 		// always load for those.
 		static $always_load = [
@@ -795,41 +783,27 @@ class Registration {
 
 		if ( isset( $always_load[ $block['blockName'] ] ) ) {
 			self::$is_fa_loaded = true;
-
-			return $block_content;
 		}
 
 		if ( 'themeisle-blocks/button' === $block['blockName'] ) {
-			if ( isset( $block['attrs']['library'] ) && 'themeisle-icons' === $block['attrs']['library'] ) {
-				return $block_content;
-			}
-
 			if ( isset( $block['attrs']['iconType'] ) ) {
 				self::$is_fa_loaded = true;
-
-				return $block_content;
 			}
 		}
 
 		if ( 'themeisle-blocks/font-awesome-icons' === $block['blockName'] ) {
 			if ( ! isset( $block['attrs']['library'] ) ) {
 				self::$is_fa_loaded = true;
-
-				return $block_content;
 			}
 		}
 
 		if ( 'themeisle-blocks/icon-list-item' === $block['blockName'] ) {
 			if ( ! isset( $block['attrs']['library'] ) ) {
 				self::$is_fa_loaded = true;
-
-				return $block_content;
 			}
 
 			if ( 'fontawesome' === $block['attrs']['library'] ) {
 				self::$is_fa_loaded = true;
-
-				return $block_content;
 			}
 		}
 
@@ -838,12 +812,13 @@ class Registration {
 		if ( $has_navigation_block && ( 'core/navigation-link' === $block['blockName'] || 'core/navigation-submenu' === $block['blockName'] ) ) {
 			if ( isset( $block['attrs']['className'] ) && strpos( $block['attrs']['className'], 'fa-' ) !== false ) {
 				self::$is_fa_loaded = true;
-
-				return $block_content;
 			}
 		}
 
-		return $block_content;
+		if ( self::$is_fa_loaded ) {
+			wp_enqueue_style( 'font-awesome-5' );
+			wp_enqueue_style( 'font-awesome-4-shims' );
+		}
 	}
 
 	/**
