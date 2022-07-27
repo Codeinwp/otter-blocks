@@ -255,7 +255,7 @@ const Inspector = ({
 				>
 					<BoxControl
 						label={ __( 'Input Padding', 'otter-blocks' ) }
-						values={ attributes.inputPadding ?? {'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px'} }
+						values={ attributes.inputPadding ?? { 'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px' } }
 						inputProps={ {
 							min: 0,
 							max: 500
@@ -356,7 +356,7 @@ const Inspector = ({
 							value: 'full'
 						}
 					]}
-					onChange={ submitStyle => setAttributes({ submitStyle}) }
+					onChange={ submitStyle => setAttributes({ submitStyle }) }
 				/>
 
 				<SyncControl
@@ -409,7 +409,7 @@ const Inspector = ({
 					placeholder={ __( 'Default is to admin site', 'otter-blocks' ) }
 					type="email"
 					value={ formOptions.emailTo }
-					onChange={ emailTo => setFormOption({emailTo}) }
+					onChange={ emailTo => setFormOption({ emailTo }) }
 					help={ __( 'Send the form\'s data to another email. (Admin\'s email is default).', 'otter-blocks' ) }
 				/>
 
@@ -418,7 +418,7 @@ const Inspector = ({
 					placeholder={ __( 'Send copies to', 'otter-blocks' ) }
 					type="text"
 					value={ formOptions.cc }
-					onChange={ cc => setFormOption({cc}) }
+					onChange={ cc => setFormOption({ cc }) }
 					help={ __( 'Add emails separated by commas: example1@otter.com, example2@otter.com.', 'otter-blocks' ) }
 				/>
 
@@ -427,7 +427,7 @@ const Inspector = ({
 					placeholder={ __( 'Send copies to', 'otter-blocks' ) }
 					type="text"
 					value={ formOptions.bcc }
-					onChange={ bcc => setFormOption({bcc}) }
+					onChange={ bcc => setFormOption({ bcc }) }
 					help={ __( 'Add emails separated by commas: example1@otter.com, example2@otter.com.', 'otter-blocks' ) }
 				/>
 
@@ -444,7 +444,7 @@ const Inspector = ({
 					type="url"
 					placeholder={ __( 'https://example.com', 'otter-blocks' ) }
 					value={ formOptions.redirectLink }
-					onChange={ redirectLink => setFormOption({redirectLink})  }
+					onChange={ redirectLink => setFormOption({ redirectLink })  }
 					help={ __( 'Redirect the user to another page when submit is successful.', 'otter-blocks' ) }
 				/>
 
@@ -503,7 +503,7 @@ const Inspector = ({
 				<Button
 					variant="primary"
 					isPrimary
-					style={{ marginTop: '8px'}}
+					style={{ marginTop: '8px' }}
 					onClick={ sendTestEmail }
 				>
 					{ __( 'Send Test Email', 'otter-blocks' )  }
@@ -580,7 +580,7 @@ const Inspector = ({
 										'mailchimp' === formOptions?.provider && (
 											<ExternalLink
 												href="https://us5.admin.mailchimp.com/account/api/"
-												style={{ marginBottom: '10px', display: 'block'}}
+												style={{ marginBottom: '10px', display: 'block' }}
 												target="_blank"
 											>
 												{ __( 'Guide to generate the API Key.', 'otter-blocks' ) }
@@ -591,7 +591,7 @@ const Inspector = ({
 										'sendinblue' === formOptions?.provider && (
 											<ExternalLink
 												href="https://help.sendinblue.com/hc/en-us/articles/209467485-What-s-an-API-key-and-how-can-I-get-mine-"
-												style={{ marginBottom: '10px', display: 'block'}}
+												style={{ marginBottom: '10px', display: 'block' }}
 												target="_blank"
 											>
 												{ __( 'Guide to generate the API Key.', 'otter-blocks' ) }
@@ -629,7 +629,7 @@ const Inspector = ({
 
 									<ExternalLink
 										target="_blank"
-										style={{ marginBottom: '10px', display: 'block'}}
+										style={{ marginBottom: '10px', display: 'block' }}
 										href={ 'sendinblue' === formOptions.provider ? 'https://account.sendinblue.com/advanced/api' : 'https://us5.admin.mailchimp.com/account/api/' }
 									>
 										{ __( 'Go to Dashboard.', 'otter-blocks' ) }

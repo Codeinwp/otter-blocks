@@ -64,7 +64,7 @@ const Edit = ({
 					allowedBlocks={ [ 'themeisle-blocks/icon-list-item' ] }
 					__experimentalMoverDirection="vertical"
 					orientation="vertical"
-					template={ [ [ 'themeisle-blocks/icon-list-item' ] ] }
+					template={ [[ 'themeisle-blocks/icon-list-item' ]] }
 					renderAppender={ InnerBlocks.DefaultAppender }
 				/>
 			</div>

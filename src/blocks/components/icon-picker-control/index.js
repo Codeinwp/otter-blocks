@@ -81,7 +81,7 @@ const IconPickerControl = ({
 		Object.keys( data ).forEach( i => {
 			Object.keys( data[i].styles ).forEach( o => {
 				let prefix = '';
-				let terms = data[i].search.terms;
+				let { terms } = data[i].search;
 
 				switch ( data[i].styles[o]) {
 				case 'brands':
@@ -187,7 +187,7 @@ const IconPickerControl = ({
 							options={ [
 								{ label: __( 'Font Awesome', 'otter-blocks' ), value: 'fontawesome' },
 								{ label: __( 'ThemeIsle Icons', 'otter-blocks' ), value: 'themeisle-icons' },
-								...( allowImage ? [ { label: __( 'Custom Image', 'otter-blocks' ), value: 'image' } ] : [])
+								...( allowImage ? [{ label: __( 'Custom Image', 'otter-blocks' ), value: 'image' }] : [])
 							] }
 							onChange={ changeLibrary }
 						/>
@@ -330,7 +330,7 @@ export const IconPickerToolbarControl = ({
 		Object.keys( data ).forEach( i => {
 			Object.keys( data[i].styles ).forEach( o => {
 				let prefix = '';
-				let terms = data[i].search.terms;
+				let { terms } = data[i].search;
 
 				switch ( data[i].styles[o]) {
 				case 'brands':

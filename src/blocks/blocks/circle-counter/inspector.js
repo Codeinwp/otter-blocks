@@ -23,8 +23,7 @@ import {
  */
 const Inspector = ({
 	attributes,
-	setAttributes,
-	onHeightChange
+	setAttributes
 }) => {
 	const onPercentageChange = value => {
 		if ( value === undefined ) {
@@ -34,22 +33,6 @@ const Inspector = ({
 		setAttributes({ percentage: value });
 	};
 
-	const selectTitleStyle = value => {
-		setAttributes({ titleStyle: value });
-	};
-
-	const onStrokeWidthChange = value => {
-		setAttributes({ strokeWidth: value });
-	};
-
-	const onBackgroundColorChange = value => {
-		setAttributes({ backgroundColor: value });
-	};
-
-	const onProgressColorChange = value => {
-		setAttributes({ progressColor: value });
-	};
-
 	const onDurationChange = value => {
 		if ( value === undefined ) {
 			return;
@@ -57,18 +40,6 @@ const Inspector = ({
 
 		value = clamp( value, 0, 3 );
 		setAttributes({ duration: value });
-	};
-
-	const onTitleColorChange = value => {
-		setAttributes({ titleColor: value });
-	};
-
-	const onFontSizePercentChange = value => {
-		setAttributes({ fontSizePercent: value });
-	};
-
-	const onFontSizeTitleChange = value => {
-		setAttributes({ fontSizeTitle: value });
 	};
 
 	return (
@@ -102,7 +73,7 @@ const Inspector = ({
 						{ label: __( 'Hide', 'otter-blocks' ), value: 'hide' },
 						{ label: __( 'Bottom', 'otter-blocks' ), value: 'bottom' }
 					] }
-					onChange={ selectTitleStyle }
+					onChange={ titleStyle => setAttributes({ titleStyle }) }
 				/>
 			</PanelBody>
 
@@ -113,7 +84,7 @@ const Inspector = ({
 					label={ __( 'Height', 'otter-blocks' ) }
 					help={ __( 'The height of the circle counter.', 'otter-blocks' ) }
 					value={ attributes.height }
-					onChange={ onHeightChange }
+					onChange={ height => setAttributes({ height }) }
 					min={ 0 }
 					max={ 240 }
 				/>
@@ -122,7 +93,7 @@ const Inspector = ({
 					label={ __( 'Circle Thickness', 'otter-blocks' ) }
 					help={ __( 'Change the thickness (stroke width) of the circle.', 'otter-blocks' ) }
 					value={ attributes.strokeWidth }
-					onChange={ onStrokeWidthChange }
+					onChange={ strokeWidth => setAttributes({ strokeWidth }) }
 					initialPosition={ 10 }
 					min={ 0 }
 					max={ 20 }
@@ -132,40 +103,40 @@ const Inspector = ({
 					label={ __( 'Font Size Title', 'otter-blocks' ) }
 					help={ __( 'Change the font size of the title.', 'otter-blocks' ) }
 					value={ attributes.fontSizeTitle }
-					onChange={ onFontSizeTitleChange }
+					onChange={ fontSizeTitle => setAttributes({ fontSizeTitle }) }
 					initialPosition={ 37 }
 					min={ 0 }
-					max={ Math.round( attributes.height * 0.60 ) }
+					max={ 100 }
 				/>
 
 				<RangeControl
 					label={ __( 'Font Size Percent', 'otter-blocks' ) }
 					help={ __( 'Change the font size of the inner text.', 'otter-blocks' ) }
 					value={ attributes.fontSizePercent }
-					onChange={ onFontSizePercentChange }
+					onChange={ fontSizePercent => setAttributes({ fontSizePercent }) }
 					initialPosition={ 27 }
 					min={ 0 }
-					max={ Math.round( attributes.height * 0.27 ) }
+					max={ 80 }
 				/>
 
 				{ ( 'hide' !== attributes.titleStyle ) && (
 					<ColorGradientControl
 						label={ __( 'Title Color', 'otter-blocks' ) }
 						colorValue={ attributes.titleColor }
-						onColorChange={ onTitleColorChange }
+						onColorChange={ titleColor => setAttributes({ titleColor }) }
 					/>
 				) }
 
 				<ColorGradientControl
 					label={ __( 'Progress Color', 'otter-blocks' ) }
 					colorValue={ attributes.progressColor }
-					onColorChange={ onProgressColorChange }
+					onColorChange={ progressColor => setAttributes({ progressColor }) }
 				/>
 
 				<ColorGradientControl
 					label={ __( 'Background Color', 'otter-blocks' ) }
 					colorValue={ attributes.backgroundColor }
-					onColorChange={ onBackgroundColorChange }
+					onColorChange={ backgroundColor => setAttributes({ backgroundColor }) }
 				/>
 			</PanelBody>
 		</InspectorControls>

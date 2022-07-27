@@ -7,3 +7,25 @@
 	background: #f7f7f7;
 	padding: 20px;
 }
+
+.o-css-errors {
+	display: flex;
+	flex-direction: column;
+
+	.span {
+		font-family: 'Courier New', Courier, monospace;
+	}
+
+	.components-notice {
+		&.is-error {
+			margin: 0;
+		}
+	}
+
+	pre {
+		overflow-x: scroll;
+		background: #f7f7f7;
+		border: 1px solid #e2e4e7;
+		padding: 5px;
+	}
+}

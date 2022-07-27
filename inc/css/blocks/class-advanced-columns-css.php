@@ -196,10 +196,10 @@ class Advanced_Columns_CSS extends Base_CSS {
 								'default' => 'none',
 								'format'  => function( $value, $attrs ) {
 									if ( isset( $attrs['backgroundImageURL'] ) ) {
-										return $attrs['backgroundImageURL'];
+										return apply_filters( 'otter_apply_dynamic_image', $attrs['backgroundImageURL'] );
 									}
 
-									return $attrs['backgroundImage']['url'];
+									return apply_filters( 'otter_apply_dynamic_image', $attrs['backgroundImage']['url'] );
 								},
 							),
 							'repeat'     => array(
@@ -459,10 +459,10 @@ class Advanced_Columns_CSS extends Base_CSS {
 								'default' => 'none',
 								'format'  => function( $value, $attrs ) {
 									if ( isset( $attrs['backgroundOverlayImageURL'] ) ) {
-										return $attrs['backgroundOverlayImageURL'];
+										return apply_filters( 'otter_apply_dynamic_image', $attrs['backgroundOverlayImageURL'] );
 									}
 
-									return $attrs['backgroundOverlayImage']['url'];
+									return apply_filters( 'otter_apply_dynamic_image', $attrs['backgroundOverlayImage']['url'] );
 								},
 							),
 							'repeat'     => array(

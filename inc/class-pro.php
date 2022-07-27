@@ -39,7 +39,6 @@ class Pro {
 	 * 
 	 * @since   2.0.9
 	 * @access  public
-	 * @return  bool
 	 */
 	public function init_upsells() {
 		if ( self::is_pro_active() ) {
@@ -53,7 +52,6 @@ class Pro {
 		add_action( 'admin_init', array( $this, 'dismiss_dashboard_notice' ), 10 );
 		add_action( 'admin_init', array( $this, 'should_show_dashboard_upsell' ), 11 );
 	}
-
 
 	/**
 	 * Check if Otter Pro is available

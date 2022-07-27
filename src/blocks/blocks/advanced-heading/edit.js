@@ -181,10 +181,10 @@ const Edit = ({
 			</style>
 
 			{ attributes.fontFamily && (
-				<GoogleFontLoader fonts={ [ {
+				<GoogleFontLoader fonts={ [{
 					font: attributes.fontFamily,
 					weights: attributes.fontVariant && [ `${ attributes.fontVariant + ( 'italic' === attributes.fontStyle ? ':i' : '' ) }` ]
-				} ] } />
+				}] } />
 			) }
 
 			<Controls

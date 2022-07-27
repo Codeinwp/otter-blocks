@@ -20,7 +20,7 @@ import {
  * Internal dependencies.
  */
 import globalDefaultsBlocksAttrs from '../plugins/options/global-defaults/defaults.js';
-import {useEffect, useMemo, useRef, useState} from '@wordpress/element';
+import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 
 /**
  * Initiate the global id tracker with an empty list if it is the case.
@@ -214,10 +214,10 @@ export const addBlockId = ( args ) => {
 	};
 };
 
-const getBlock = select( 'core/block-editor' ).getBlock;
-const getBlockParents = select( 'core/block-editor' ).getBlockParents;
-const updateBlockAttributes = dispatch( 'core/block-editor' ).updateBlockAttributes;
-const getSelectedBlockClientId = select( 'core/block-editor' ).getSelectedBlockClientId;
+const { getBlock } = select( 'core/block-editor' );
+const { getBlockParents } = select( 'core/block-editor' );
+const { updateBlockAttributes } = dispatch( 'core/block-editor' );
+const { getSelectedBlockClientId } = select( 'core/block-editor' );
 
 /**
  * Create the function that behaves like `setAttributes` using the client id

@@ -1,43 +1,54 @@
 .wp-block-themeisle-blocks-countdown {
 	--background-color: transparent;
 	--border-color: #000;
-	--border-radius: 0;
-	--width: 70px;
-	--width-tablet: 70px;
-	--width-mobile: 70px;
-	--height: 70px;
-	--height-tablet: 70px;
-	--height-mobile: 70px;
+	--border-radius: 0px;
+	--width: 100%;
+	--container-width: clamp(400px, var(--width) * 4, 100%);
+	--container-width-tablet: var(--container-width);
+	--container-width-mobile: var(--container-width-tablet);
+	--height: 100px;
+	--height-tablet: 100px;
+	--height-mobile: 100px;
+	--border-style: solid;
 	--border-width: 2px;
-	--border-widthTablet: 2px;
-	--border-widthMobile: 2px;
+	--border-width-tablet: var(--border-width);
+	--border-width-mobile: var(--border-width-tablet);
 	--gap: 6px;
 	--gap-tablet: 6px;
 	--gap-mobile: 6px;
 	--value-font-size: 1.5rem;
-	--value-font-size-tablet: 1.5rem;
-	--value-font-size-mobile: 1.5rem;
+	--value-font-size-tablet: var(--value-font-size);
+	--value-font-size-mobile: var(--value-font-size-tablet);
 	--label-font-size: 0.6rem;
-	--label-font-size-tablet: 0.6rem;
-	--label-font-size-mobile: 0.6rem;
+	--label-font-size-tablet: var(--label-font-size);
+	--label-font-size-mobile: var(--label-font-size-tablet);
+	--alignment: center;
+	--padding: 0px;
+	--padding-tablet: var(--padding);
+	--padding-mobile: var(--padding-tablet);
+	--value-font-weight: regular;
+	--label-font-weight: regular;
 
 	.otter-countdown__container {
 		display: flex;
-		justify-content: center;
-		align-items: center;
+		justify-content: var(--alignment);
 	}
 
 	.otter-countdown__display {
 		display: flex;
 		flex-direction: row;
+		width: var(--container-width, 100%);
+		height: var(--height);
 		gap: var( --gap );
 
-		@media ( min-width: 600px ) and ( max-width: 960px ) {
+		@media ( max-width: 960px ) {
 			gap: var( --gap-tablet );
+			width: var(--container-width-tablet, 100%);
 		}
 
 		@media ( max-width: 600px ) {
 			gap: var( --gap-mobile );
+			width: var(--container-width-mobile, 100%);
 		}
 	}
 
@@ -47,29 +58,28 @@
 		align-items: center;
 		flex-direction: column;
 		background: var( --background-color );
-		border: var( --border-width ) solid var( --border-color );
-		width: max-content;
+		border: var( --border-width ) var(--border-style) var( --border-color );
 		border-radius: var( --border-radius );
-		width: var( --width );
-		height: var( --height );
+		box-sizing: border-box;
+		width: 100%;
+		padding: var(--padding);
 
-		@media ( min-width: 600px ) and ( max-width: 960px ) {
-			width: var( --width-tablet );
-			height: var( --height-tablet );
-			border: var( --border-widthTablet ) solid var( --border-color );
+		@media ( max-width: 960px ) {
+			height: var( --heightTablet );
+			border: var( --borderWidthTablet ) var(--border-style) var( --borderColor );
+			padding: var(--padding-tablet);
 		}
 
 		@media ( max-width: 600px ) {
-			width: var( --width-mobile );
-			height: var( --height-mobile );
-			border: var( --border-widthMobile ) solid var( --border-color );
+			height: var( --heightMobile );
+			border: var( --borderWidthMobile ) var(--border-style) var( --borderColor );
+			padding: var(--padding-mobile);
 		}
 
 		&[name="separator"] {
 			.otter-countdown__label {
-				opacity: 0%;
+				display: none;
 			}
-
 			border: unset;
 			background-color: transparent;
 			width: max-content;
@@ -78,6 +88,7 @@
 
 	.otter-countdown__value {
 		font-size: var( --value-font-size );
+		font-weight: var( --value-font-weight );
 		line-height: 1.2;
 		text-align: center;
 		width: 100%;
@@ -91,13 +102,36 @@
 		}
 	}
 
+	&:not(.ready) {
+		.otter-countdown__display-area:not([name="separator"]) {
+
+			.otter-countdown__value {
+				animation: skeleton-loading 1.6s linear infinite alternate;
+				color: transparent !important;
+				border-radius: 8px;
+				width: 50%;
+			}
+		}
+		
+	}
+
+	@keyframes skeleton-loading {
+		0% {
+		  background-color: hsl(200, 20%, 80%);
+		}
+		100% {
+		  background-color: hsl(200, 20%, 95%);
+		}
+	}
+
 	.otter-countdown__label {
 		font-size: var( --label-font-size );
+		font-weight: var( --label-font-weight );
 		min-height: 1rem;
 		text-align: center;
 		width: 100%;
 
-		@media ( min-width: 600px ) and ( max-width: 960px ) {
+		@media ( max-width: 960px ) {
 			font-size: var( --label-font-size-tablet );
 		}
 

@@ -111,7 +111,7 @@ function AnimationControls({
 			hasTypingFormat = block.formats.some( format => true === format.some( format => 'themeisle-blocks/typing-animation' === format.type ) );
 		}
 
-		return { hasCountFormat, hasTypingFormat};
+		return { hasCountFormat, hasTypingFormat };
 	}, []);
 
 	const [ animation, setAnimation ] = useState( 'none' );

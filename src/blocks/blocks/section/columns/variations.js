@@ -20,7 +20,7 @@ const variations = [
 			layoutMobile: 'equal'
 		},
 		innerBlocks: [
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '100' } ]
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '100' }]
 		],
 		scope: [ 'block' ]
 	},
@@ -36,8 +36,8 @@ const variations = [
 			layoutMobile: 'equal'
 		},
 		innerBlocks: [
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '50' } ],
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '50' } ]
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '50' }],
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '50' }]
 		],
 		scope: [ 'block' ]
 	},
@@ -53,8 +53,8 @@ const variations = [
 			layoutMobile: 'equal'
 		},
 		innerBlocks: [
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '33.34' } ],
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '66.66' } ]
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '33.34' }],
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '66.66' }]
 		],
 		scope: [ 'block' ]
 	},
@@ -70,8 +70,8 @@ const variations = [
 			layoutMobile: 'equal'
 		},
 		innerBlocks: [
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '66.66' } ],
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '33.33' } ]
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '66.66' }],
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '33.33' }]
 		],
 		scope: [ 'block' ]
 	},
@@ -87,9 +87,9 @@ const variations = [
 			layoutMobile: 'equal'
 		},
 		innerBlocks: [
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '33.33' } ],
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '33.33' } ],
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '33.33' } ]
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '33.33' }],
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '33.33' }],
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '33.33' }]
 		],
 		scope: [ 'block' ]
 	},
@@ -105,9 +105,9 @@ const variations = [
 			layoutMobile: 'equal'
 		},
 		innerBlocks: [
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' } ],
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' } ],
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '50' } ]
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' }],
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' }],
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '50' }]
 		],
 		scope: [ 'block' ]
 	},
@@ -123,9 +123,9 @@ const variations = [
 			layoutMobile: 'equal'
 		},
 		innerBlocks: [
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '50' } ],
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' } ],
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' } ]
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '50' }],
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' }],
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' }]
 		],
 		scope: [ 'block' ]
 	},
@@ -141,10 +141,10 @@ const variations = [
 			layoutMobile: 'equal'
 		},
 		innerBlocks: [
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' } ],
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' } ],
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' } ],
-			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' } ]
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' }],
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' }],
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' }],
+			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' }]
 		],
 		scope: [ 'block' ]
 	}
