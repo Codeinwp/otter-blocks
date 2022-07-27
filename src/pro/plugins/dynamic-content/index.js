@@ -14,6 +14,7 @@ import { addFilter } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import Edit from './edit.js';
+import './media.js';
 
 const { Notice } = window.otterComponents;
 
@@ -127,9 +128,9 @@ addFilter( 'otter.blockConditions.notices', 'themeisle-gutenberg/block-condition
 
 
 if ( ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) ) {
-	addFilter( 'otter.dynamicContent.options', 'themeisle-gutenberg/dynamic-content-list', applyProContent );
-	addFilter( 'otter.dynamicContent.hasSettingsPanel', 'themeisle-gutenberg/dynamic-content-settings-panel', applySettingsPanel );
+	addFilter( 'otter.dynamicContent.text.options', 'themeisle-gutenberg/dynamic-content/text-list', applyProContent );
+	addFilter( 'otter.dynamicContent.text.hasSettingsPanel', 'themeisle-gutenberg/dynamic-content/text-settings-panel', applySettingsPanel );
 }
 
-addFilter( 'otter.dynamicContent.controls', 'themeisle-gutenberg/dynamic-content-controls', DynamicContent );
-addFilter( 'otter.dynamicContent.notices', 'themeisle-gutenberg/dynamic-content-notices', Notices );
+addFilter( 'otter.dynamicContent.text.controls', 'themeisle-gutenberg/dynamic-content/text-controls', DynamicContent );
+addFilter( 'otter.dynamicContent.text.notices', 'themeisle-gutenberg/dynamic-content/text-notices', Notices );

@@ -192,6 +192,7 @@ class Main {
 				'isExpired'      => License::has_expired_license(),
 				'hasWooCommerce' => class_exists( 'WooCommerce' ),
 				'hasLearnDash'   => defined( 'LEARNDASH_VERSION' ),
+				'hasACF'         => class_exists( 'ACF' ),
 				'themeMods'      => array(
 					'listingType'   => get_theme_mod( 'neve_comparison_table_product_listing_type', 'column' ),
 					'altRow'        => get_theme_mod( 'neve_comparison_table_enable_alternating_row_bg_color', false ),
