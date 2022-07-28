@@ -38,17 +38,19 @@ import { getEditorIframe } from '../../helpers/block-utility';
 
 /**
  * Load the font to the page using FontFace API.
- * @param {string} fontName
- * @param {string} variant
- * @param {import('./types').GoogleFontItem[]} fonts
- * @returns
+ *
+ * @param {string} fontName The name of the font to load.
+ * @param {string} variant The font variant to load.
+ * @param {import('./types').GoogleFontItem[]} fonts The font items.
+ * @returns {Promis<void>}
  */
+
 const loadFontToPage = async( fontName, variant = 'regular', fonts = []) => {
 
 	const doc = getEditorIframe()?.contentWindow?.document ?? document;
 
 	// Check if the font is already loaded.
-	if ( doc.fonts.check( `italic bold 16px ${fontName}` ) ) {
+	if ( doc.fonts.check( `italic bold 16px "${fontName}"` ) ) {
 		console.log( 'Font already loaded:', fontName ); // TODO: remove after rewiew
 		return;
 	}
@@ -82,7 +84,6 @@ const GoogleFontsControl = ({
 		fetch( 'https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyClGdkPJ1BvgLOol5JAkQY4Mv2lkLYu00k' )
 			.then( blob => blob.json() )
 			.then( data => {
-				console.log( data );
 				if ( isMounted ) {
 					setFonts( data.items );
 					if ( value ) {
