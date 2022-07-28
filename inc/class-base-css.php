@@ -371,6 +371,7 @@ class Base_CSS {
 				}
 		
 				$style .= $rule->render( $format );
+				continue;
 			}
 
 			/*
