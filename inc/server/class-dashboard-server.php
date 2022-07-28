@@ -52,7 +52,7 @@ class Dashboard_Server {
 			array(
 				array(
 					'methods'             => \WP_REST_Server::DELETABLE,
-					'callback'            => array( $this, 'regenerate_styles' ),
+					'callback'            => array( $this, 'rest_regenerate_styles' ),
 					'permission_callback' => function () {
 						return current_user_can( 'manage_options' );
 					},
@@ -62,15 +62,26 @@ class Dashboard_Server {
 	}
 
 	/**
-	 * Function to delete Otter generated styles.
+	 * Regenerate styles.
 	 *
-	 * @param \WP_REST_Request $request Rest request.
+	 * @param \WP_REST_Request $request The request.
+	 * 
+	 * @return \WP_REST_Response
+	 * @since   2.0.9
+	 * @access  public
+	 */
+	public function rest_regenerate_styles( \WP_REST_Request $request ) {
+		return self::regenerate_styles();
+	}
+
+	/**
+	 * Function to delete Otter generated styles.
 	 *
 	 * @return mixed
 	 * @since   1.5.3
 	 * @access  public
 	 */
-	public function regenerate_styles( \WP_REST_Request $request ) {
+	public static function regenerate_styles() {
 		global $wp_filesystem;
 
 		if ( ! current_user_can( 'edit_posts' ) ) {
@@ -105,7 +116,7 @@ class Dashboard_Server {
 			);
 		}
 
-		$this->delete_files( $basedir );
+		self::delete_files( $basedir );
 
 		delete_post_meta_by_key( '_themeisle_gutenberg_block_stylesheet' );
 		delete_post_meta_by_key( '_themeisle_gutenberg_block_styles' );
@@ -129,7 +140,7 @@ class Dashboard_Server {
 	 * @since   1.5.3
 	 * @access  public
 	 */
-	public function delete_files( $target ) {
+	public static function delete_files( $target ) {
 		global $wp_filesystem;
 
 		require_once ABSPATH . '/wp-admin/includes/file.php';
@@ -139,7 +150,7 @@ class Dashboard_Server {
 			$files = glob( $target . '*', GLOB_MARK );
 
 			foreach ( $files as $file ) {
-				$this->delete_files( $file );
+				self::delete_files( $file );
 			}
 
 			$wp_filesystem->delete( $target, true );

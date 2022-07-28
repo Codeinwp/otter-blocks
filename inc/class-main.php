@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks;
 
+use ThemeIsle\GutenbergBlocks\Server\Dashboard_Server;
+
 /**
  * Class Main
  */
@@ -43,6 +45,7 @@ class Main {
 		add_action( 'init', array( $this, 'autoload_classes' ), 9 );
 		add_filter( 'script_loader_tag', array( $this, 'filter_script_loader_tag' ), 10, 2 );
 		add_filter( 'safe_style_css', array( $this, 'used_css_properties' ), 99 );
+		add_action( 'plugins_loaded', array( $this, 'after_update_migration' ) );
 
 		if ( ! function_exists( 'is_wpcom_vip' ) ) {
 			add_filter( 'upload_mimes', array( $this, 'allow_json_svg' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
@@ -254,6 +257,24 @@ class Main {
 			$data['ext']  = 'svg';
 		}
 		return $data;
+	}
+
+
+	/**
+	 * After Update Migration
+	 *
+	 * @return bool
+	 * @since  2.0.9
+	 * @access public
+	 */
+	public function after_update_migration() {
+		$db_version = get_option( 'themeisle_blocks_db_version' );
+
+		if ( version_compare( $db_version, OTTER_BLOCKS_VERSION, '<' ) ) {
+			Dashboard_Server::regenerate_styles();
+		}
+
+		return update_option( 'themeisle_blocks_db_version', OTTER_BLOCKS_VERSION );
 	}
 
 	/**
