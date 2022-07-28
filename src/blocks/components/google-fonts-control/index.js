@@ -57,7 +57,7 @@ const loadFontToPage = async( fontName, variant = 'regular', fonts = []) => {
 	if ( ! font ) {
 		return;
 	}
-	const fontFace = new FontFace( fontName, `url(${font.files[variant]})` );
+	const fontFace = new FontFace( fontName, `url(${font.files[variant]?.replace( 'http://', 'https://' )})` );
 	await fontFace.load();
 	doc.fonts.add( fontFace );
 };
