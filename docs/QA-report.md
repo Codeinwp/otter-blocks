@@ -3,7 +3,15 @@
 
 The can be posted on the PR to have an evidence. Strongly recomended to use portions based on the PR (you can post the checklist for the Flip block if the PR is about the Flip block)
 
+## :warning: Preparations
+
+ - If you reuse an instance for testing and the page CSS is broken (all blocks on the page are missing their settings for style), go to Settings > Otter > Dashboard and Regenerated the style.
+ - Make sure to use the development version of the plugin, so that console errors can be human read.
+ - For blocks that are responsive (section, tabs, etc) make sure that they inherit the values: Desktop > Tablet > Mobile. If tablet values are not set, then it will inherit the values from the desktop. Same principle for mobile values, theiy will inherit the values from the tablet.
+
 ## Checklist Blocks
+
+A small checklist for not so obiously testing parts.
 
 - [ ] Accordion
   - [ ] Very long text in title
@@ -63,8 +71,6 @@ The can be posted on the PR to have an evidence. Strongly recomended to use port
 - [ ] Section
   - [ ] Pulling templates from Template Libary is working.
 - [ ] Pricing 
-- [ ] Woo Comparison
-- [ ] Add to cart
 - [ ] About Author
 - [ ] Group Button
 
