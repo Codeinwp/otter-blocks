@@ -32,7 +32,6 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Progress Bar Block
  * @param {import('./types').ProgressBarProps} props
- * @returns
  */
 const ProgressBar = ({
 	attributes,

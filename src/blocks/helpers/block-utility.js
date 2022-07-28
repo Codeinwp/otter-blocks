@@ -162,7 +162,7 @@ export const addBlockId = ( args ) => {
 	 *
 	 * @type {Array.<string>}
 	 */
-	const blockIDs = window.themeisleGutenberg.blockIDs || [];
+	const blockIDs = window.themeisleGutenberg?.blockIDs ?? [];
 
 	if ( attributes === undefined || setAttributes === undefined ) {
 		return ( savedId ) => {
