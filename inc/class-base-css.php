@@ -148,17 +148,6 @@ class Base_CSS {
 	}
 
 	/**
-	 * Get Google Fonts list.
-	 *
-	 * @return array
-	 * @access public
-	 * @since 2.0.8
-	 */
-	public static function get_google_fonts_list() {
-		return self::$google_fonts;
-	}
-
-	/**
 	 * Convert HEX to RGBA.
 	 *
 	 * @param string $color Color data.

@@ -556,17 +556,9 @@ class Registration {
 				if ( self::$is_fa_loaded ) {
 					break;
 				}
-			}
+			}       
 		}
 
-		$fonts_list = Base_CSS::get_google_fonts_list();
-		if ( count( $fonts_list ) > 0 ) {
-			$fonts = $this->get_fonts( $fonts_list );
-
-			if ( count( $fonts['fonts'] ) > 0 ) {
-				wp_enqueue_style( 'otter-google-fonts-' . get_the_ID(), $fonts['url'], [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
-			}
-		}
 	}
 
 	/**
