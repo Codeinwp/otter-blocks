@@ -126,7 +126,6 @@ class Blocks_Animation {
 	 * @since 2.0.5
 	 */
 	public function frontend_load( $block_content, $block ) {
-
 		if ( ! self::$can_load_frontend ) {
 			return $block_content;
 		}
