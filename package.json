@@ -22,7 +22,10 @@
 		"test:unit": "wp-scripts test-unit-js",
 		"test:unit:help": "wp-scripts test-unit-js --help",
 		"test:unit:watch": "wp-scripts test-unit-js --watch",
-		"test:unit:debug": "wp-scripts --inspect-brk test-unit-js --runInBand --no-cache"
+		"test:unit:debug": "wp-scripts --inspect-brk test-unit-js --runInBand --no-cache",
+		"test:e2e": "wp-scripts test-e2e",
+		"test:e2e:help": "wp-scripts test-e2e --help",
+		"test:e2e:debug": "wp-scripts --inspect-brk test-e2e --puppeteer-devtools"
 	},
 	"repository": {
 		"type": "git",
@@ -51,7 +54,6 @@
 		"deepmerge": "^4.2.2",
 		"dom-scroll-into-view": "^2.0.1",
 		"hex-rgba": "^1.0.2",
-		"react-google-font-loader": "1.1.0",
 		"react-sortable-hoc": "^2.0.0",
 		"uuid": "^8.3.2"
 	},
@@ -59,6 +61,10 @@
 		"@semantic-release/changelog": "^6.0.1",
 		"@semantic-release/exec": "^6.0.3",
 		"@semantic-release/git": "^10.0.1",
+		"@testing-library/dom": "^8.16.0",
+		"@testing-library/jest-dom": "^5.16.4",
+		"@testing-library/react": "^13.3.0",
+		"@testing-library/user-event": "^14.3.0",
 		"@types/enzyme": "^3.10.12",
 		"@types/jest": "^28.1.6",
 		"@types/wordpress__block-editor": "^7.0.0",
@@ -71,7 +77,6 @@
 		"@wordpress/element": "^4.10.0",
 		"@wordpress/scripts": "^22.5.0",
 		"conventional-changelog-simple-preset": "^1.0.20",
-		"enzyme": "^3.11.0",
 		"eslint-config-wordpress": "^2.0.0",
 		"filemanager-webpack-plugin": "^6.1.7",
 		"grunt": "^1.4.0",

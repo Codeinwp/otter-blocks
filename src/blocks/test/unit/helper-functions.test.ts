@@ -1,4 +1,4 @@
-import { boxValues } from '../../src/blocks/helpers/helper-functions.js';
+import { boxValues } from '../../helpers/helper-functions.js';
 
 describe('Helper Functions', () => {
 
