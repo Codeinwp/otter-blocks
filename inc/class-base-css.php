@@ -213,7 +213,9 @@ class Base_CSS {
 				return;
 			}
 
-			return $this->cycle_through_static_blocks( $blocks );
+			$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+
+			return $this->cycle_through_static_blocks( $blocks, $animations );
 		}
 	}
 
@@ -241,7 +243,9 @@ class Base_CSS {
 				return;
 			}
 
-			return $this->cycle_through_static_blocks( $blocks );
+			$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+
+			return $this->cycle_through_static_blocks( $blocks, $animations );
 		}
 	}
 
@@ -264,9 +268,10 @@ class Base_CSS {
 			return;
 		}
 
-		$blocks = parse_blocks( $reusable_block->post_content );
+		$blocks     = parse_blocks( $reusable_block->post_content );
+		$animations = boolval( preg_match( '/\banimated\b/', $content ) );
 
-		return $this->cycle_through_static_blocks( $blocks );
+		return $this->cycle_through_static_blocks( $blocks, $animations );
 	}
 
 	/**

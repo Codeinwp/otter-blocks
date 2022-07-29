@@ -484,7 +484,9 @@ class Block_Frontend extends Base_CSS {
 				return '';
 			}
 
-			$css = $this->cycle_through_blocks( $blocks );
+			$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+
+			$css = $this->cycle_through_blocks( $blocks, $animations );
 		}
 
 		return $css;
@@ -494,14 +496,15 @@ class Block_Frontend extends Base_CSS {
 	 * Cycle thorugh Blocks
 	 *
 	 * @param array $blocks List of blocks.
+	 * @param bool  $animations To check for animations or not.
 	 *
 	 * @return string Block styles.
 	 * @since   1.3.0
 	 * @access  public
 	 */
-	public function cycle_through_blocks( $blocks ) {
+	public function cycle_through_blocks( $blocks, $animations ) {
 		$style  = '';
-		$style .= $this->cycle_through_static_blocks( $blocks );
+		$style .= $this->cycle_through_static_blocks( $blocks, $animations );
 		$style .= $this->cycle_through_reusable_blocks( $blocks );
 
 		return $style;
