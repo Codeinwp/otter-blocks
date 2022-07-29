@@ -30,7 +30,7 @@ jobs:
             - name: Install composer deps
               run: composer install --no-dev --prefer-dist --no-progress --no-suggest
             - name: Install npm deps
-              run: npm ci
+              run: npm ci --legacy-peer-deps
             - name: Build files
               run: npm run build
             - name: Zip files

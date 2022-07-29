@@ -22,7 +22,7 @@ jobs:
       - name: Release new version
         id: release
         run: |
-          npm ci
+          npm ci --legacy-peer-deps
           npm run release
         env:
           CI: true

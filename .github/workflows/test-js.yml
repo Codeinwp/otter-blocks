@@ -21,7 +21,7 @@ jobs:
       - name: Lint js files
         run: |
           npm install -g npm
-          npm ci
+          npm ci --legacy-peer-deps
           npm run lint
         env:
           CI: true
