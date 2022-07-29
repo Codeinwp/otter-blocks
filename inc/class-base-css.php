@@ -308,7 +308,7 @@ class Base_CSS {
 			}
 		}
 
-		if ( true === $animations && class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Animation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) ) {
+		if ( true === $animations && class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Animation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) && get_option( 'themeisle_blocks_settings_optimize_animations_css', true ) ) {
 			$style .= $this->get_animation_css( $blocks );
 		}
 
