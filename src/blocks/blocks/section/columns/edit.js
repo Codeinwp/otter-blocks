@@ -11,7 +11,9 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	times,
-	isEmpty
+	isEmpty,
+	pickBy,
+	merge
 } from 'lodash';
 
 import {
@@ -179,7 +181,7 @@ const Edit = ({
 	const [ dividerViewType, setDividerViewType ] = useState( 'top' );
 
 	const getValueBasedOnScreenSize = ({ mobile, tablet, desktop }) => {
-		return ( isMobile && mobile ) || ( isTablet && tablet ) || ( isDesktop && desktop ) || undefined;
+		return ( ( isMobile && mobile ) || ( isTablet && tablet ) || desktop ) ?? desktop ?? 100;
 	};
 
 	const getDividerTopWidth = getValueBasedOnScreenSize({
@@ -210,22 +212,22 @@ const Edit = ({
 
 	const Tag = attributes.columnsHTMLTag;
 
-	let stylesheet, background, overlayBackground, borderStyle, borderRadiusStyle, boxShadowStyle;
+	let  background, overlayBackground, borderStyle, borderRadiusStyle, boxShadowStyle;
 
-	if ( isDesktop ) {
-		stylesheet = {
-			paddingTop: getValue( 'padding' ) && getValue( 'padding' ).top,
-			paddingRight: getValue( 'padding' ) && getValue( 'padding' ).right,
-			paddingBottom: getValue( 'padding' ) && getValue( 'padding' ).bottom,
-			paddingLeft: getValue( 'padding' ) && getValue( 'padding' ).left,
-			marginTop: getValue( 'margin' ) && getValue( 'margin' ).top,
-			marginBottom: getValue( 'margin' ) && getValue( 'margin' ).bottom,
-			minHeight: 'custom' === attributes.columnsHeight ? `${ attributes.columnsHeightCustom }px` : attributes.columnsHeight
-		};
-	}
 
-	if ( isTablet ) {
-		stylesheet = {
+	let	stylesheet = {
+		paddingTop: getValue( 'padding' ) && getValue( 'padding' ).top,
+		paddingRight: getValue( 'padding' ) && getValue( 'padding' ).right,
+		paddingBottom: getValue( 'padding' ) && getValue( 'padding' ).bottom,
+		paddingLeft: getValue( 'padding' ) && getValue( 'padding' ).left,
+		marginTop: getValue( 'margin' ) && getValue( 'margin' ).top,
+		marginBottom: getValue( 'margin' ) && getValue( 'margin' ).bottom,
+		minHeight: 'custom' === attributes.columnsHeight ? `${ attributes.columnsHeightCustom }px` : attributes.columnsHeight
+	};
+
+
+	if ( isTablet || isMobile ) {
+		const tabletStyle = pickBy({
 			paddingTop: getValue( 'paddingTablet' )?.top,
 			paddingRight: getValue( 'paddingTablet' )?.right,
 			paddingBottom: getValue( 'paddingTablet' )?.bottom,
@@ -233,11 +235,12 @@ const Edit = ({
 			marginTop: getValue( 'marginTablet' )?.top,
 			marginBottom: getValue( 'marginTablet' )?.bottom,
 			minHeight: 'custom' === attributes.columnsHeight ? `${ attributes.columnsHeightCustomTablet }px` : attributes.columnsHeight
-		};
+		}, ( value ) => value );
+		stylesheet = merge( stylesheet, tabletStyle );
 	}
 
 	if ( isMobile ) {
-		stylesheet = {
+		const mobileStyle = pickBy({
 			paddingTop: getValue( 'paddingMobile' )?.top,
 			paddingRight: getValue( 'paddingMobile' )?.right,
 			paddingBottom: getValue( 'paddingMobile' )?.bottom,
@@ -245,7 +248,8 @@ const Edit = ({
 			marginTop: getValue( 'marginMobile' )?.top,
 			marginBottom: getValue( 'marginMobile' )?.bottom,
 			minHeight: 'custom' === attributes.columnsHeight ? `${ attributes.columnsHeightCustomMobile }px` : attributes.columnsHeight
-		};
+		}, ( value ) => value );
+		stylesheet = merge( stylesheet, mobileStyle );
 	}
 
 	if ( 'color' === attributes.backgroundType ) {

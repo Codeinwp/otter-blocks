@@ -48,10 +48,10 @@ const Edit = ({
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
 	const inlineStyles = {
-		'--titleColor': getValue( 'titleColor' ),
-		'--titleBackground': getValue( 'titleBackground' ),
-		'--borderColor': getValue( 'borderColor' ),
-		'--contentBackground': getValue( 'contentBackground' )
+		'--title-color': getValue( 'titleColor' ),
+		'--title-background': getValue( 'titleBackground' ),
+		'--border-color': getValue( 'borderColor' ),
+		'--content-background': getValue( 'contentBackground' )
 	};
 
 	const blockProps = useBlockProps({
@@ -73,7 +73,7 @@ const Edit = ({
 			<div { ...blockProps }>
 				<InnerBlocks
 					allowedBlocks={ [ 'themeisle-blocks/accordion-item' ] }
-					template={ [ [ 'themeisle-blocks/accordion-item' ] ] }
+					template={ [[ 'themeisle-blocks/accordion-item' ]] }
 					renderAppender={ isSelected ? InnerBlocks.ButtonBlockAppender : '' }
 				/>
 			</div>

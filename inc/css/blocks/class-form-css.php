@@ -8,7 +8,6 @@
 namespace ThemeIsle\GutenbergBlocks\CSS\Blocks;
 
 use ThemeIsle\GutenbergBlocks\Base_CSS;
-
 use ThemeIsle\GutenbergBlocks\CSS\CSS_Utility;
 
 /**
@@ -37,20 +36,20 @@ class Form_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--labelColor',
+						'property' => '--label-color',
 						'value'    => 'labelColor',
 					),
 					array(
-						'property' => '--borderRadius',
+						'property' => '--border-radius',
 						'value'    => 'inputBorderRadius',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--borderColor',
+						'property' => '--border-color',
 						'value'    => 'inputBorderColor',
 					),
 					array(
-						'property' => '--borderWidth',
+						'property' => '--border-width',
 						'value'    => 'inputBorderWidth',
 						'unit'     => 'px',
 					),
@@ -58,76 +57,73 @@ class Form_CSS extends Base_CSS {
 						'property'  => '--padding',
 						'value'     => 'inputPadding',
 						'format'    => function( $value, $attrs ) {
-							return $value['top'] . ' ' . $value['right'] . ' ' . $value['bottom'] . ' ' . $value['left'];
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left'   => '8px',
+									'right'  => '8px',
+									'top'    => '8px',
+									'bottom' => '8px',
+								)
+							);
 						},
 						'condition' => function( $attrs ) {
-							return ( isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['top'] )
-							&& isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['right'] )
-							&& isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['bottom'] )
-							&& isset( $attrs['inputPadding'] ) && isset( $attrs['inputPadding']['left'] ) );
+							return isset( $attrs['inputPadding'] );
 						},
 					),
 					array(
-						'property' => '--inputWidth',
+						'property' => '--input-width',
 						'value'    => 'inputWidth',
 						'unit'     => '%',
 					),
 					array(
-						'property' => '--submitBackground',
-						'value'    => 'submitBackgroundColor',
-					),
-					array(
-						'property' => '--submitBackgroundHover',
-						'value'    => 'submitBackgroundColorHover',
-					),
-					array(
-						'property' => '--submitColor',
+						'property' => '--submit-color',
 						'value'    => 'submitColor',
 					),
 					array(
-						'property' => '--helpLabelColor',
+						'property' => '--help-label-color',
 						'value'    => 'helpLabelColor',
 					),
 					array(
-						'property' => '--submitMsgColor',
+						'property' => '--submit-msg-color',
 						'value'    => 'submitMessageColor',
 					),
 					array(
-						'property' => '--submitErrorColor',
+						'property' => '--submit-error-color',
 						'value'    => 'submitMessageErrorColor',
 					),
 					array(
-						'property' => '--inputsGap',
+						'property' => '--inputs-gap',
 						'value'    => 'inputsGap',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--inputGap',
+						'property' => '--input-gap',
 						'value'    => 'inputGap',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--labelFontSize',
+						'property' => '--label-font-size',
 						'value'    => 'labelFontSize',
 					),
 					array(
-						'property' => '--submitFontSize',
+						'property' => '--submit-font-size',
 						'value'    => 'submitFontSize',
 					),
 					array(
-						'property' => '--messageFontSize',
+						'property' => '--message-font-size',
 						'value'    => 'messageFontSize',
 					),
 					array(
-						'property' => '--inputFontSize',
+						'property' => '--input-font-size',
 						'value'    => 'inputFontSize',
 					),
 					array(
-						'property' => '--helpFontSize',
+						'property' => '--help-font-size',
 						'value'    => 'helpFontSize',
 					),
 					array(
-						'property' => '--inputColor',
+						'property' => '--input-color',
 						'value'    => 'inputColor',
 					),
 				),

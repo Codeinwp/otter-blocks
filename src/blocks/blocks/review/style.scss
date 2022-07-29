@@ -1,10 +1,10 @@
 .wp-block-themeisle-blocks-review {
-	--backgroundColor: transparent;
-	--primaryColor: #1357BD;
-	--textColor: inherit;
-	--buttonTextColor: #FFF;
+	--background-color: transparent;
+	--primary-color: #1357BD;
+	--text-color: inherit;
+	--button-text-color: #FFF;
 
-	background: var( --backgroundColor );
+	background: var( --background-color );
 	border: 1px #eaeaea solid;
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
@@ -14,12 +14,12 @@
 
 	.o-review__header {
 		padding: 20px 30px;
-		border-left: 10px solid var( --primaryColor );
+		border-left: 10px solid var( --primary-color );
 		grid-area: header;
 		overflow: hidden;
 
 		h3 {
-			color: var( --textColor );
+			color: var( --text-color );
 			font-size: 28px;
 			font-style: normal;
 			font-weight: 700;
@@ -61,7 +61,7 @@
 		}
 
 		span {
-			color: var( --textColor );
+			color: var( --text-color );
 			padding-left: 10px;
 			font-size: 13px;
 			min-width: 50px;
@@ -69,7 +69,7 @@
 	}
 
 	.o-review__header_price {
-		color: var( --textColor );
+		color: var( --text-color );
 
 		del {
 			color: #A2A2A2;
@@ -93,7 +93,7 @@
 		align-items: center;
 
 		p {
-			color: var( --textColor );
+			color: var( --text-color );
 		}
 
 		img {
@@ -132,7 +132,7 @@
 	}
 
 	.o-review__left_feature_title {
-		color: var( --textColor );
+		color: var( --text-color );
 		font-weight: 600;
 	}
 
@@ -159,7 +159,7 @@
 		}
 
 		span {
-			color: var( --textColor );
+			color: var( --text-color );
 			padding-left: 10px;
 			font-size: 13px;
 			word-break: keep-all;
@@ -177,7 +177,7 @@
 	.o-review__right_pros,
 	.o-review__right_cons {
 		h4 {
-			color: var( --textColor );
+			color: var( --text-color );
 		}
 	}
 
@@ -199,7 +199,7 @@
 		}
 
 		p {
-			color: var( --textColor );
+			color: var( --text-color );
 			margin: 0;
 		}
 	}
@@ -215,7 +215,7 @@
 	}
 
 	.o-review__footer_label {
-		color: var( --textColor );
+		color: var( --text-color );
 		font-weight: 600;
 	}
 
@@ -225,8 +225,8 @@
 
 		a,
 		span {
-			background: var( --primaryColor );
-			color: var( --buttonTextColor );
+			background: var( --primary-color );
+			color: var( --button-text-color );
 			padding: 12px 50px;
 			margin: 10px;
 			cursor: pointer;

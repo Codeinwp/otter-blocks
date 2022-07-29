@@ -115,16 +115,6 @@ const CircularProgressBarBlock = ({
 		};
 	}, [ attributes.percentage, attributes.height ]);
 
-	const onHeightChange = value => {
-		const innerTextFontSizeRatio = ( attributes.fontSizePercent || 27 ) / attributes.height;
-		const titleFontSizeRatio = ( attributes.fontSizeTitle || 37 ) / attributes.height;
-
-		setAttributes({
-			height: value,
-			fontSizePercent: Math.round( value * innerTextFontSizeRatio ),
-			fontSizeTitle: Math.round( value * titleFontSizeRatio )
-		});
-	};
 
 	const onTitleChange = value => {
 		setAttributes({ title: value });
@@ -132,7 +122,7 @@ const CircularProgressBarBlock = ({
 
 
 	const inlineStyles = {
-		'--fontSizeTitle': px( attributes.fontSizeTitle )
+		'--font-size-title': px( attributes.fontSizeTitle )
 	};
 
 	const blockProps = useBlockProps({
@@ -145,7 +135,6 @@ const CircularProgressBarBlock = ({
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				onHeightChange={ onHeightChange }
 			/>
 
 			<div { ...blockProps }>
@@ -157,7 +146,7 @@ const CircularProgressBarBlock = ({
 							className="wp-block-themeisle-blocks-circle-counter-title__value"
 							placeholder={ isSelected ? __( 'Write caption…', 'otter-blocks' ) : null }
 							value={ attributes.title }
-							onChange={ onTitleChange }
+							onChange={ title => setAttributes({ title }) }
 							multiline={ false }
 							style={ {
 								color: attributes.titleColor
@@ -181,7 +170,7 @@ const CircularProgressBarBlock = ({
 					} }
 					showHandle={ isSelected }
 					onResizeStop={ ( event, direction, elt, delta ) => {
-						onHeightChange( parseInt( attributes.height + delta.height, 10 ) );
+						setAttributes({ height: parseInt( attributes.height + delta.height, 10 ) });
 						toggleSelection( true );
 					} }
 					onResizeStart={ () => {
@@ -203,7 +192,7 @@ const CircularProgressBarBlock = ({
 							className="wp-block-themeisle-blocks-circle-counter-title__value"
 							placeholder={ isSelected ? __( 'Write caption…', 'otter-blocks' ) : null }
 							value={ attributes.title }
-							onChange={ onTitleChange }
+							onChange={ title => setAttributes({ title }) }
 							multiline={ false }
 							style={ {
 								color: attributes.titleColor

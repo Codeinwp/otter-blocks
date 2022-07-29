@@ -111,6 +111,7 @@ const ButtonBlock = ({
 					label={ __( 'Border Width', 'otter-blocks' ) }
 					value={ defaults.borderSize }
 					onChange={ value => changeConfig( blockName, { borderSize: value }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 10 }
 				/>
@@ -119,6 +120,7 @@ const ButtonBlock = ({
 					label={ __( 'Border Radius', 'otter-blocks' ) }
 					value={ defaults.borderRadius }
 					onChange={ value => changeConfig( blockName, { borderRadius: value }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 100 }
 				/>

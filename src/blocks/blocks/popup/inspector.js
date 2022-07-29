@@ -137,6 +137,7 @@ const Inspector = ({
 			>
 				<RangeControl
 					label={ __( 'Minimum Width', 'otter-blocks' ) }
+					step={ 0.1 }
 					min={ 100 }
 					max={ 1000 }
 					value={ attributes.minWidth }
@@ -146,6 +147,7 @@ const Inspector = ({
 
 				<RangeControl
 					label={ __( 'Maximum Width', 'otter-blocks' ) }
+					step={ 0.1 }
 					min={ 100 }
 					max={ 1000 }
 					value={ attributes.maxWidth }

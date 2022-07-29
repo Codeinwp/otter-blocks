@@ -245,6 +245,7 @@ export const SortableItem = ({
 								label={ __( 'Border Radius', 'otter-blocks' ) }
 								value={ attributes.borderRadius }
 								onChange={ borderRadius => setAttributes({ borderRadius }) }
+								step={ 0.1 }
 								min={ 0 }
 								max={ 50 }
 								allowReset
@@ -254,6 +255,7 @@ export const SortableItem = ({
 								label={ __( 'Image Width', 'otter-blocks' ) }
 								value={ attributes.imageWidth }
 								onChange={ imageWidth => setAttributes({ imageWidth }) }
+								step={ 0.1 }
 								min={ 0 }
 								max={ 500 }
 								allowReset
@@ -283,6 +285,7 @@ export const SortableItem = ({
 								<RangeControl
 									value={ getTitleFontSize() }
 									onChange={ changeTitleFontSize }
+									step={ 0.1 }
 									min={ 0 }
 									max={ 50 }
 									allowReset
@@ -340,6 +343,7 @@ export const SortableItem = ({
 								<RangeControl
 									value={ getDescriptionFontSize() }
 									onChange={ changeDescriptionFontSize }
+									step={ 0.1 }
 									min={ 0 }
 									max={ 50 }
 									allowReset

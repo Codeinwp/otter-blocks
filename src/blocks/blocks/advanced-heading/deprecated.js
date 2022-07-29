@@ -9,7 +9,7 @@ import hexToRgba from 'hex-rgba';
  */
 import { RichText } from '@wordpress/block-editor';
 
-const deprecated = [ {
+const deprecated = [{
 	attributes: {
 		id: {
 			type: 'string'
@@ -254,6 +254,6 @@ const deprecated = [ {
 			/>
 		);
 	}
-} ];
+}];
 
 export default deprecated;

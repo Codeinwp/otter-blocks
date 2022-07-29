@@ -15,7 +15,7 @@ const extractFormFields = form => {
 
 	/** @type {Array.<HTMLDivElement>} */
 	const elemsWithError = [];
-	const formFieldsData = [ { label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href } ];
+	const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href }];
 
 	const inputs = form?.querySelectorAll( '.otter-form__container .wp-block-themeisle-blocks-form-input' );
 	const textarea = form?.querySelectorAll( '.otter-form__container .wp-block-themeisle-blocks-form-textarea' );
@@ -41,7 +41,7 @@ const extractFormFields = form => {
 		}
 	});
 
-	return {formFieldsData, elemsWithError};
+	return { formFieldsData, elemsWithError };
 };
 
 /**
@@ -66,7 +66,7 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 	const payload = {};
 
 	// Get the data from the form fields.
-	const {formFieldsData, elemsWithError} = extractFormFields( form );
+	const { formFieldsData, elemsWithError } = extractFormFields( form );
 	const formIsEmpty = 2 > formFieldsData?.length;
 	const nonceFieldValue = extractNonceValue( form );
 	const hasCaptcha = form?.classList?.contains( 'has-captcha' );

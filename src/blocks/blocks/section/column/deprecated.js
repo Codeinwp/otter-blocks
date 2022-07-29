@@ -312,7 +312,7 @@ const attributes = {
 	}
 };
 
-const deprecated = [ {
+const deprecated = [{
 	attributes,
 
 	supports: {
@@ -911,6 +911,6 @@ const deprecated = [ {
 			</Tag>
 		);
 	}
-} ];
+}];
 
 export default deprecated;

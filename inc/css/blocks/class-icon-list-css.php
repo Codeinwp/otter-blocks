@@ -38,7 +38,7 @@ class Icon_List_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--horizontalAlign',
+						'property' => '--horizontal-align',
 						'value'    => 'horizontalAlign',
 					),
 					array(
@@ -47,15 +47,15 @@ class Icon_List_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--contentColor',
+						'property' => '--content-color',
 						'value'    => 'defaultContentColor',
 					),
 					array(
-						'property' => '--iconColor',
+						'property' => '--icon-color',
 						'value'    => 'defaultIconColor',
 					),
 					array(
-						'property' => '--fontSize',
+						'property' => '--font-size',
 						'value'    => 'defaultSize',
 						'unit'     => 'px',
 						'default'  => 20,

@@ -111,10 +111,10 @@ const Edit = ({
 	setAttributes,
 	clientId
 }) => {
-	const [ containerOptions, setContainerOptions ] = useState([ {
+	const [ containerOptions, setContainerOptions ] = useState([{
 		label: __( 'Screen', 'otter-blocks' ),
 		value: 'o-sticky-scope-screen'
-	} ]);
+	}]);
 
 	/*
 		E.g:

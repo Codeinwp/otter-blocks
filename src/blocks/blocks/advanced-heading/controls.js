@@ -162,8 +162,8 @@ const Controls = ({
 								label={ __( 'Line Height', 'otter-blocks' ) }
 								value={ attributes.lineHeight }
 								onChange={ lineHeight => setAttributes({ lineHeight }) }
-								min={ 0 }
 								step={ 0.1 }
+								min={ 0 }
 								max={ 3 }
 							/>
 
@@ -171,6 +171,7 @@ const Controls = ({
 								label={ __( 'Letter Spacing', 'otter-blocks' ) }
 								value={ attributes.letterSpacing }
 								onChange={ letterSpacing => setAttributes({ letterSpacing }) }
+								step={ 0.1 }
 								min={ -50 }
 								max={ 100 }
 							/>

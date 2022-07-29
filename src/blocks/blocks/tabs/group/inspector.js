@@ -150,6 +150,7 @@ const Inspector = ({
 					label={ __( 'Border Width', 'otter-blocks' ) }
 					value={ attributes.borderWidth }
 					onChange={ onBorderWidthChange }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 5 }
 				/>

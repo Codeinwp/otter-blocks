@@ -29,5 +29,14 @@ registerBlockType( name, {
 		'animation'
 	],
 	edit,
-	save
+	save,
+	example: {
+		viewportWidth: 1200,
+		attributes: {
+			id: 'wp-block-themeisle-blocks-lottie-2',
+			file: {
+				url: 'https://assets8.lottiefiles.com/packages/lf20_kd5rzej5.json'
+			}
+		}
+	}
 });

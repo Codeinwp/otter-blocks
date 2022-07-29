@@ -37,9 +37,9 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const inlineStyles = {
-		'--horizontalAlign': attributes.horizontalAlign,
+		'--horizontal-align': attributes.horizontalAlign,
 		'--gap': attributes.gap && `${ attributes.gap }px`,
-		'--fontSize': attributes.defaultSize && `${ attributes.defaultSize }px`
+		'--font-size': attributes.defaultSize && `${ attributes.defaultSize }px`
 	};
 
 	const blockProps = useBlockProps({
@@ -64,7 +64,7 @@ const Edit = ({
 					allowedBlocks={ [ 'themeisle-blocks/icon-list-item' ] }
 					__experimentalMoverDirection="vertical"
 					orientation="vertical"
-					template={ [ [ 'themeisle-blocks/icon-list-item' ] ] }
+					template={ [[ 'themeisle-blocks/icon-list-item' ]] }
 					renderAppender={ InnerBlocks.DefaultAppender }
 				/>
 			</div>

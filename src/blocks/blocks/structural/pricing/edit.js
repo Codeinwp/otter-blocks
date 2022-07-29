@@ -14,7 +14,7 @@ const TEMPLATE = [
 		align: 'center',
 		tag: 'h3',
 		fontSize: 24
-	} ],
+	}],
 	[ 'themeisle-blocks/advanced-heading', {
 		content: __( '$9.99', 'otter-blocks' ),
 		align: 'center',
@@ -22,39 +22,39 @@ const TEMPLATE = [
 		fontSize: 36,
 		fontFamily: 'Roboto Slab',
 		fontVariant: 'normal'
-	} ],
+	}],
 	[ 'themeisle-blocks/advanced-heading', {
 		content: __( 'Per Month', 'otter-blocks' ),
 		align: 'center',
 		tag: 'p',
 		fontSize: 12,
 		marginBottom: 0
-	} ],
+	}],
 	[ 'themeisle-blocks/advanced-heading', {
 		content: __( 'First Feature', 'otter-blocks' ),
 		align: 'center',
 		tag: 'p',
 		fontSize: 12,
 		marginBottom: 0
-	} ],
+	}],
 	[ 'themeisle-blocks/advanced-heading', {
 		content: __( 'Second Feature', 'otter-blocks' ),
 		align: 'center',
 		tag: 'p',
 		fontSize: 12,
 		marginBottom: 0
-	} ],
+	}],
 	[ 'themeisle-blocks/advanced-heading', {
 		content: __( 'Last Feature', 'otter-blocks' ),
 		align: 'center',
 		tag: 'p',
 		fontSize: 12,
 		marginBottom: 0
-	} ],
+	}],
 	[ 'themeisle-blocks/button-group', {
 		align: 'center',
 		buttons: 1,
-		data: [ {
+		data: [{
 			text: __( 'Buy Now', 'otter-blocks' ),
 			newTab: false,
 			color: '#ffffff',
@@ -77,8 +77,8 @@ const TEMPLATE = [
 			iconType: 'none',
 			paddingTopBottom: 12,
 			paddingLeftRight: 24
-		} ]
-	} ]
+		}]
+	}]
 ];
 
 const Edit = () => {

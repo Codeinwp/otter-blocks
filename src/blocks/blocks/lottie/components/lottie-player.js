@@ -4,7 +4,7 @@
 import { isEmpty } from 'lodash';
 
 import { useEffect } from '@wordpress/element';
-import {copyScriptAssetToIframe, getEditorIframe} from '../../../helpers/block-utility';
+import { copyScriptAssetToIframe, getEditorIframe } from '../../../helpers/block-utility';
 
 const LottiePlayer = ({
 	attributes,

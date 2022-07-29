@@ -7,10 +7,6 @@
  */
 import { useBlockProps } from '@wordpress/block-editor';
 
-import { useViewportMatch } from '@wordpress/compose';
-
-import { useSelect } from '@wordpress/data';
-
 import {
 	Fragment,
 	useState,
@@ -29,20 +25,27 @@ import {
 } from '../../helpers/block-utility';
 import Inspector from './inspector.js';
 import {
+	boxValues,
 	getIntervalFromUnix,
 	getTimezone
 } from '../../helpers/helper-functions.js';
 import DisplayTime from './components/display-time.js';
+import { isEmpty, isNumber, pickBy } from 'lodash';
+import classNames from 'classnames';
 
 const { attributes: defaultAttributes } = metadata;
 
-const px = value => value ? `${ value }px` : value;
+const optionalUnit = ( value, unit = 'px' ) => isNumber( value ) ? `${ value }${unit}` : value;
 
+/**
+ *
+ * @param {import('./types').CountdownProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,
-	clientId,
-	className
+	clientId
 }) => {
 	const [ unixTime, setUnixTime ] = useState( 0 );
 
@@ -50,6 +53,26 @@ const Edit = ({
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
+
+	useEffect( () => {
+
+		/**
+		 * Migration to new attributes.
+		 */
+		if (
+			attributes.borderRadiusBox === undefined &&
+			( attributes.borderRadius || attributes.borderRadiusBottomLeft || attributes.borderRadiusTopRight || attributes.borderRadiusTopLeft || attributes.borderRadiusBottomRight )
+		) {
+
+			const borderRadiusBox = pickBy( 'linked' === attributes?.borderRadiusType ?
+				{ left: optionalUnit( attributes.borderRadius, '%' ), right: optionalUnit( attributes.borderRadius, '%' ), bottom: optionalUnit( attributes.borderRadius, '%' ), top: optionalUnit( attributes.borderRadius, '%' ) } :
+				{ left: optionalUnit( attributes.borderRadiusBottomLeft, '%' ), right: optionalUnit( attributes.borderRadiusTopRight, '%' ), bottom: optionalUnit( attributes.borderRadiusBottomRight, '%' ), top: optionalUnit( attributes.borderRadiusTopLeft, '%' ) }, x => x );
+
+			if ( ! isEmpty( borderRadiusBox ) ) {
+				setAttributes({ borderRadiusBox, borderRadius: undefined, borderRadiusBottomLeft: undefined, borderRadiusTopRight: undefined, borderRadiusBottomRight: undefined, borderRadiusTopLeft: undefined, borderRadiusType: undefined });
+			}
+		}
+	}, []);
 
 	/**
 	 * Update the time interval
@@ -68,116 +91,35 @@ const Edit = ({
 		};
 	}, [ attributes.date ]);
 
-	/**
-	 * Determine the platform
-	 */
-	const {
-		isViewportAvailable,
-		isPreviewDesktop,
-		isPreviewTablet,
-		isPreviewMobile
-	} = useSelect( select => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-
-		return {
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
-		};
-	}, []);
-
-	const isLarger = useViewportMatch( 'large', '>=' );
-
-	const isLarge = useViewportMatch( 'large', '<=' );
-
-	const isSmall = useViewportMatch( 'small', '>=' );
-
-	const isSmaller = useViewportMatch( 'small', '<=' );
-
-	let isDesktop = isLarger && ! isLarge && isSmall && ! isSmaller;
-
-	let isTablet = ! isLarger && ! isLarge && isSmall && ! isSmaller;
-
-	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
-
-	if ( isViewportAvailable && ! isMobile ) {
-		isDesktop = isPreviewDesktop;
-		isTablet = isPreviewTablet;
-		isMobile = isPreviewMobile;
-	}
-
-	/**
-	 * Compute the components style based on the platform
-	 */
-	let stylesObj;
-
-	if ( isTablet ) {
-		stylesObj = {
-			value: {
-				fontSize: px( attributes?.valueFontSizeTablet )
-			},
-			label: {
-				fontSize: px( attributes?.labelFontSizeTablet )
-			},
-			display: {
-				gap: px( attributes.gapTablet )
-			},
-			allComponents: {
-				height: px( attributes?.heightTablet )
-			},
-			mainComponents: {
-				width: px( attributes?.widthTablet ),
-				borderWidth: px( attributes.borderWidthTablet )
-			}
-		};
-	} else if ( isMobile ) {
-		stylesObj = {
-			value: {
-				fontSize: px( attributes.valueFontSizeMobile )
-			},
-			label: {
-				fontSize: px( attributes.labelFontSizeMobile )
-			},
-			display: {
-				gap: px( attributes.gapMobile )
-			},
-			allComponents: {
-				height: px( attributes?.heightMobile )
-			},
-			mainComponents: {
-				width: px( attributes?.widthMobile ),
-				borderWidth: px( attributes.borderWidthMobile )
-			}
-		};
-	} else if ( isDesktop ) {
-		stylesObj = {
-			value: {
-				fontSize: px( attributes.valueFontSize )
-			},
-			label: {
-				fontSize: px( attributes.labelFontSize )
-			},
-			display: {
-				gap: px( attributes.gap )
-			},
-			allComponents: {
-				height: px( attributes.height )
-			},
-			mainComponents: {
-				width: px( attributes.width ),
-				borderWidth: px( attributes.borderWidth )
-			}
-		};
-	}
-
-	// Add `border-radius` for all the platforms
-	const borderRadius = 'linked' === attributes.borderRadiusType ? attributes.borderRadius + '%' : `${ attributes.borderRadiusTopLeft }% ${ attributes.borderRadiusTopRight }% ${ attributes.borderRadiusBottomRight }% ${ attributes.borderRadiusBottomLeft }%`;
-
 	const inlineStyles = {
-		'--backgroundColor': attributes.backgroundColor,
-		'--borderColor': attributes.borderColor,
-		'--borderRadius': borderRadius
+		'--border-radius': boxValues( attributes.borderRadiusBox ),
+		'--border-style': attributes.borderStyle,
+		'--background-color': attributes.backgroundColor,
+		'--border-color': attributes.borderColor,
+		'--container-width': attributes.containerWidth,
+		'--container-width-tablet': attributes.containerWidthTablet,
+		'--container-width-mobile': attributes.containerWidthMobile,
+		'--height': optionalUnit( attributes.height ),
+		'--height-tablet': optionalUnit( attributes.heightTablet ),
+		'--height-mobile': optionalUnit( attributes.heightMobile ),
+		'--border-width': optionalUnit( attributes.borderWidth ),
+		'--border-width-tablet': optionalUnit( attributes.borderWidthTablet ),
+		'--border-width-mobile': optionalUnit( attributes.borderWidthMobile ),
+		'--gap': optionalUnit( attributes.gap ),
+		'--gap-tablet': optionalUnit( attributes.gapTablet ),
+		'--gap-mobile': optionalUnit( attributes.gapMobile ),
+		'--value-font-size': optionalUnit( attributes.valueFontSize ),
+		'--value-font-size-tablet': optionalUnit( attributes.valueFontSizeTablet ),
+		'--value-font-size-mobile': optionalUnit( attributes.valueFontSizeMobile ),
+		'--label-font-size': optionalUnit( attributes.labelFontSize ),
+		'--label-font-size-tablet': optionalUnit( attributes.labelFontSizeTablet ),
+		'--label-font-size-mobile': optionalUnit( attributes.labelFontSizeMobile ),
+		'--alignment': attributes.alignment,
+		'--padding': boxValues( attributes.padding ),
+		'--padding-tablet': boxValues( attributes.paddingTablet ),
+		'--padding-mobile': boxValues( attributes.paddingMobile ),
+		'--value-font-weight': attributes.valueFontWeight,
+		'--label-font-weight': attributes.labelFontWeight
 	};
 
 	const [ cssNodeName, setCSS ] = useCSSNode();
@@ -188,14 +130,17 @@ const Edit = ({
 			}`,
 			`.otter-countdown__display-area .otter-countdown__label {
 				color: ${ attributes.labelColor };
+			}`,
+			`.otter-countdown__display-area[name="separator"] .otter-countdown__value {
+				color: ${ attributes.separatorColor };
 			}`
 		]);
-	}, [ attributes.valueColor, attributes.labelColor ]);
+	}, [ attributes.valueColor, attributes.labelColor, attributes.separatorColor ]);
 
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		className: cssNodeName,
+		className: classNames( cssNodeName, 'ready' ),
 		style: inlineStyles
 	});
 
@@ -209,7 +154,6 @@ const Edit = ({
 			<div { ...blockProps }>
 				<DisplayTime
 					time={ getIntervalFromUnix( unixTime, { exclude: attributes?.exclude }) }
-					styles={ stylesObj }
 					hasSeparators={ attributes.hasSeparators }
 				/>
 			</div>

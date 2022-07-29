@@ -219,4 +219,26 @@ class CSS_Utility {
 
 		return $style;
 	}
+
+	/**
+	 * Get the CSS string for padding, margin that comes from BoxControl.
+	 *
+	 * @param array $box The box.
+	 * @param array $box_default The default box.
+	 * @return string
+	 */
+	public static function box_values( $box, $box_default = array() ) {
+		$_box = array_merge(
+			array(
+				'left'   => '0px',
+				'right'  => '0px',
+				'top'    => '0px',
+				'bottom' => '0px',
+			),
+			$box_default,
+			$box
+		);
+
+		return $_box['top'] . ' ' . $_box['right'] . ' ' . $_box['bottom'] . ' ' . $_box['left'];
+	}
 }

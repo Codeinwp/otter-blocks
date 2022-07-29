@@ -99,7 +99,7 @@ const Edit = ({
 
 				<div className="wp-block-themeisle-blocks-tabs-item__content">
 					<InnerBlocks
-						template={ [ [ 'core/paragraph' ] ] } />
+						template={ [[ 'core/paragraph' ]] } />
 				</div>
 			</div>
 		</Fragment>

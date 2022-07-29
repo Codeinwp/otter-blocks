@@ -134,10 +134,10 @@ const Edit = ({
 
 
 	const inlineStyles = {
-		'--borderWidth': undefined !== attributes.borderWidth ? attributes.borderWidth + 'px' : '3px',
-		'--borderColor': attributes.borderColor,
-		'--activeTitleColor': attributes.activeTitleColor,
-		'--tabColor': attributes.tabColor
+		'--border-width': undefined !== attributes.borderWidth ? attributes.borderWidth + 'px' : '3px',
+		'--border-color': attributes.borderColor,
+		'--active-title-color': attributes.activeTitleColor,
+		'--tab-color': attributes.tabColor
 	};
 
 	/**
@@ -227,7 +227,7 @@ const Edit = ({
 				>
 					<InnerBlocks
 						allowedBlocks={ [ 'themeisle-blocks/tabs-item' ] }
-						template={ [ [ 'themeisle-blocks/tabs-item' ] ] }
+						template={ [[ 'themeisle-blocks/tabs-item' ]] }
 						orientation="horizontal"
 						renderAppender={ false }
 					/>

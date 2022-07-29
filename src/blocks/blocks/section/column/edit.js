@@ -6,7 +6,7 @@ import hexToRgba from 'hex-rgba';
 /**
  * WordPress dependencies
  */
-import { isEmpty } from 'lodash';
+import { isEmpty, merge, pickBy } from 'lodash';
 
 import {
 	InnerBlocks,
@@ -148,8 +148,8 @@ const Edit = ({
 
 	if ( attributes.columnWidth === undefined ) {
 		const index = parentBlock.innerBlocks.findIndex( i => i.clientId === clientId );
-		const columns = parentBlock.attributes.columns;
-		const layout = parentBlock.attributes.layout;
+		const { columns } = parentBlock.attributes;
+		const { layout } = parentBlock.attributes;
 		updateBlockAttributes( clientId, {
 			columnWidth: layouts[columns][layout][index]
 		});
@@ -157,23 +157,23 @@ const Edit = ({
 
 	const Tag = attributes.columnsHTMLTag;
 
-	let stylesheet, background, borderStyle, borderRadiusStyle, boxShadowStyle;
+	let background, borderStyle, borderRadiusStyle, boxShadowStyle;
 
-	if ( isDesktop ) {
-		stylesheet = {
-			paddingTop: getValue( 'padding' )?.top,
-			paddingRight: getValue( 'padding' )?.right,
-			paddingBottom: getValue( 'padding' )?.bottom,
-			paddingLeft: getValue( 'padding' )?.left,
-			marginTop: getValue( 'margin' )?.top,
-			marginRight: getValue( 'margin' )?.right,
-			marginBottom: getValue( 'margin' )?.bottom,
-			marginLeft: getValue( 'margin' )?.left
-		};
-	}
 
-	if ( isTablet ) {
-		stylesheet = {
+	let	stylesheet = {
+		paddingTop: getValue( 'padding' )?.top,
+		paddingRight: getValue( 'padding' )?.right,
+		paddingBottom: getValue( 'padding' )?.bottom,
+		paddingLeft: getValue( 'padding' )?.left,
+		marginTop: getValue( 'margin' )?.top,
+		marginRight: getValue( 'margin' )?.right,
+		marginBottom: getValue( 'margin' )?.bottom,
+		marginLeft: getValue( 'margin' )?.left
+	};
+
+
+	if ( isTablet || isMobile ) {
+		const tabletStyle = pickBy({
 			paddingTop: getValue( 'paddingTablet' )?.top,
 			paddingRight: getValue( 'paddingTablet' )?.right,
 			paddingBottom: getValue( 'paddingTablet' )?.bottom,
@@ -182,11 +182,12 @@ const Edit = ({
 			marginRight: getValue( 'marginTablet' )?.right,
 			marginBottom: getValue( 'marginTablet' )?.bottom,
 			marginLeft: getValue( 'marginTablet' )?.left
-		};
+		}, ( value ) => value );
+		stylesheet = merge( stylesheet, tabletStyle );
 	}
 
 	if ( isMobile ) {
-		stylesheet = {
+		const mobileStyle = pickBy({
 			paddingTop: getValue( 'paddingMobile' )?.top,
 			paddingRight: getValue( 'paddingMobile' )?.right,
 			paddingBottom: getValue( 'paddingMobile' )?.bottom,
@@ -195,7 +196,9 @@ const Edit = ({
 			marginRight: getValue( 'marginMobile' )?.right,
 			marginBottom: getValue( 'marginMobile' )?.bottom,
 			marginLeft: getValue( 'marginMobile' )?.left
-		};
+		}, ( value ) => value );
+
+		stylesheet = merge( stylesheet, mobileStyle );
 	}
 
 	if ( 'color' === attributes.backgroundType ) {

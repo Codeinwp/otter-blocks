@@ -1,9 +1,9 @@
 .wp-block-themeisle-blocks-icon-list {
-	--horizontalAlign: unset;
+	--horizontal-align: unset;
 	--gap: 5px;
-	--fontSize: 20px;
-	--contentColor: inherit;
-	--iconColor: inherit;
+	--font-size: 20px;
+	--content-color: inherit;
+	--icon-color: inherit;
 
 	display: flex;
 	flex-direction: column;
@@ -26,8 +26,8 @@
 		display: flex;
 		flex-direction: inherit;
 		flex-wrap: wrap;
-		align-items: var( --horizontalAlign );
-		justify-content: var( --horizontalAlign );
+		align-items: var( --horizontal-align );
+		justify-content: var( --horizontal-align );
 		gap: var( --gap );
 		width: 100%;
 	}
@@ -40,16 +40,16 @@
 		margin: 0;
 
 		i {
-			font-size: var( --fontSize );
+			font-size: var( --font-size );
 		}
 
 		svg {
-			min-width: var( --fontSize );
-			width: var( --fontSize );
+			min-width: var( --font-size );
+			width: var( --font-size );
 		}
 
 		img {
-			width: var( --fontSize );
+			width: var( --font-size );
 		}
 
 		p {
@@ -59,15 +59,15 @@
 
 	.wp-block-themeisle-blocks-icon-list-item-content,
 	.wp-block-themeisle-blocks-icon-list-item-content-custom {
-		color: var( --contentColor );
-		font-size: var( --fontSize );
+		color: var( --content-color );
+		font-size: var( --font-size );
 		flex-grow: 1;
 		margin: 0 10px;
 	}
 
 	.wp-block-themeisle-blocks-icon-list-item-icon,
 	.wp-block-themeisle-blocks-icon-list-item-icon-custom {
-		fill: var( --iconColor );
-		color: var( --iconColor );
+		fill: var( --icon-color );
+		color: var( --icon-color );
 	}
 }

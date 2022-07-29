@@ -35,7 +35,11 @@ const registerPricingVariation = () => {
 				icon: pricingIcon,
 				scope: 'inserter',
 				attributes: content[0].attributes,
-				innerBlocks: content[0].innerBlocks
+				innerBlocks: content[0].innerBlocks,
+				example: {
+					attributes: content[0].attributes,
+					innerBlocks: content[0].innerBlocks
+				}
 			});
 
 			clearInterval( checker );
