@@ -281,10 +281,6 @@ class Registration {
 			return;
 		}
 
-		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
-		wp_enqueue_style( 'otter-blocks', OTTER_BLOCKS_URL . 'build/blocks/blocks.css', [], $asset_file['version'] );
-		wp_style_add_data( 'otter-blocks', 'path', OTTER_BLOCKS_PATH . '/build/blocks/blocks.css' );
-
 		if ( is_singular() ) {
 			$this->enqueue_dependencies();
 		} else {
