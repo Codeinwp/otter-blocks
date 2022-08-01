@@ -7,10 +7,10 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 }
 
 .wp-block-themeisle-blocks-advanced-columns {
-	--columnsWidth: initial;
-	--horizontalAlign: unset;
+	--columns-width: initial;
+	--horizontal-align: unset;
 
-	justify-content: var( --horizontalAlign );
+	justify-content: var( --horizontal-align );
 
 	.wp-themeisle-block-overlay,
 	.wp-block-themeisle-blocks-advanced-columns-overlay {
@@ -22,7 +22,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	}
 
 	.wp-block-themeisle-blocks-advanced-column:only-child {
-		max-width: var( --columnsWidth );
+		max-width: var( --columns-width );
 	}
 
 	.wp-block-themeisle-blocks-advanced-column {
@@ -107,7 +107,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 			display: flex;
 			flex-basis: 100%;
 			word-break: keep-all;
-			max-width: var( --columnsWidth );
+			max-width: var( --columns-width );
 
 			.wp-block-themeisle-blocks-advanced-column {
 				position: relative;
@@ -295,7 +295,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 			display: flex;
 			flex-basis: 100%;
 			word-break: keep-all;
-			max-width: var( --columnsWidth );
+			max-width: var( --columns-width );
 
 			.wp-block-themeisle-blocks-advanced-column {
 				position: relative;

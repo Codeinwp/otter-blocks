@@ -6,5 +6,7 @@
 	"category": "themeisle-woocommerce-blocks",
 	"description": "Display images of your WooCommerce product.",
 	"keywords": [ "woocommerce", "products", "images" ],
-	"textdomain": "otter-blocks"
+	"textdomain": "otter-blocks",
+	"editorStyle": "otter-product-images-editor",
+	"style": "otter-product-images-style"
 }

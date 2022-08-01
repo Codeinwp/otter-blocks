@@ -169,6 +169,7 @@ const SectionColumns = ({
 					label={ __( 'Maximum Content Width', 'otter-blocks' ) }
 					value={ defaults.columnsWidth || '' }
 					onChange={ changeColumnsWidth }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 1200 }
 				/>

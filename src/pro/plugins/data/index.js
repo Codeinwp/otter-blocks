@@ -10,6 +10,7 @@ import { registerStore } from '@wordpress/data';
 const DEFAULT_STATE = {
 	acfGroups: [],
 	acfFields: {},
+	haveACFLoaded: false,
 	learndDashCourses: [],
 	learndDashGroups: [],
 	haveLoadedCourses: false,
@@ -31,11 +32,12 @@ const actions = {
 			haveLoadedGroups: true
 		};
 	},
-	setACFData( groups, fields ) {
+	setACFData( groups, fields, isLoaded ) {
 		return {
 			type: 'SET_ACF_DATA',
 			groups,
-			fields
+			fields,
+			haveACFLoaded: isLoaded
 		};
 	},
 	fetchFromAPI( path ) {
@@ -68,7 +70,8 @@ registerStore( 'otter-pro', {
 			return {
 				...state,
 				acfGroups: action.groups,
-				acfFields: action.fields
+				acfFields: action.fields,
+				haveACFLoaded: action.haveACFLoaded
 			};
 		}
 
@@ -87,6 +90,9 @@ registerStore( 'otter-pro', {
 				groups: state.acfGroups,
 				fields: state.acfFields
 			};
+		},
+		isACFLoaded( state ) {
+			return state.haveACFLoaded;
 		},
 		isLearnDashCoursesLoaded( state ) {
 			return state.haveLoadedCourses;
@@ -141,7 +147,7 @@ registerStore( 'otter-pro', {
 			const data = yield actions.fetchFromAPI( 'otter/v1/acf-fields' );
 
 			if ( data?.success ) {
-				const groups = data.groups;
+				const { groups } = data;
 				const fields = groups
 					?.map( ({ fields, data }) => {
 						return fields.map( field => {
@@ -157,10 +163,10 @@ registerStore( 'otter-pro', {
 						return acc;
 					}, {});
 
-				return actions.setACFData( groups, fields );
+				return actions.setACFData( groups, fields, true );
 			}
 
-			return actions.setACFData([], {});
+			return actions.setACFData([], {}, false );
 		}
 	}
 });

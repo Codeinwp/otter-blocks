@@ -1,16 +1,16 @@
 .wp-block-themeisle-blocks-accordion {
-	--titleColor: #1e1e1e;
-	--titleBackground: #ffffff;
-	--borderColor: #d5dadf;
-	--contentBackground: #ffffff;
+	--title-color: #1e1e1e;
+	--title-background: #ffffff;
+	--border-color: #d5dadf;
+	--content-background: #ffffff;
 
 	margin: 20px auto;
 
 	.wp-block-themeisle-blocks-accordion-item {
 		.wp-block-themeisle-blocks-accordion-item__title {
-			color: var( --titleColor );
-			background: var( --titleBackground );
-			border: 1px solid var( --borderColor );
+			color: var( --title-color );
+			background: var( --title-background );
+			border: 1px solid var( --border-color );
 			list-style: none;
 			cursor: pointer;
 			user-select: none;
@@ -42,8 +42,8 @@
 				content: '';
 				justify-self: end;
 				align-self: center;
-				border-right: 2px solid var( --borderColor );
-				border-bottom: 2px solid var( --borderColor );
+				border-right: 2px solid var( --border-color );
+				border-bottom: 2px solid var( --border-color );
 				width: 8px;
 				height: 8px;
 				transform: rotate(45deg) translate(-25%, 0%);
@@ -51,8 +51,8 @@
 		}
 
 		.wp-block-themeisle-blocks-accordion-item__content {
-			background: var( --contentBackground );
-			border: 1px solid var( --borderColor );
+			background: var( --content-background );
+			border: 1px solid var( --border-color );
 			border-top: none;
 			padding: 18px 24px;
 		}

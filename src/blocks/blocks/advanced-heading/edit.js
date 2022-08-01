@@ -174,17 +174,17 @@ const Edit = ({
 	return (
 		<Fragment>
 			<style>
-				{ `#${ attributes.id } mark, #${ attributes.id } .highlight {
+				{ `#block-${ clientId } mark, #block-${ clientId } .highlight {
 						color: ${ attributes.highlightColor };
 						background: ${ attributes.highlightBackground };
 					}` }
 			</style>
 
 			{ attributes.fontFamily && (
-				<GoogleFontLoader fonts={ [ {
+				<GoogleFontLoader fonts={ [{
 					font: attributes.fontFamily,
 					weights: attributes.fontVariant && [ `${ attributes.fontVariant + ( 'italic' === attributes.fontStyle ? ':i' : '' ) }` ]
-				} ] } />
+				}] } />
 			) }
 
 			<Controls

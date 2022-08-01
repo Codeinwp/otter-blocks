@@ -28,5 +28,10 @@ registerBlockType( name, {
 	],
 	deprecated,
 	edit,
-	save
+	save,
+	example: {
+		attributes: {
+			fontSize: 70
+		}
+	}
 });

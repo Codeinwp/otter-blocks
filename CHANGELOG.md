@@ -1,3 +1,31 @@
+##### [Version 2.0.9](https://github.com/Codeinwp/otter-blocks/compare/v2.0.8...v2.0.9) (2022-07-29)
+
+- Add Dynamic Image Module
+- Load CSS inline if possible to reduce page load time
+- Fix Dynamic Content not working in Query Loop
+- Countdown Block Improvements
+- Add notice in the Custom CSS editor when CSS has errors that can break the page
+- Add Logged-in user meta condition to Block Conditions module
+- Add AggregateRating to schema.org of Review Block
+- Fix the Sticky feature not working
+- Fix CSS inheritance in the editor
+- Fix default margin not working in Icon block
+- Fix Pro users seeing upsell message
+- Fix camelCase CSS variables
+- Fix Review Block only accepting absolute numbers
+- Remove Height automatic change on Circle Counter
+- Add Block Previews
+- Bump minimum compatibility to 5.8
+
+##### [Version 2.0.8](https://github.com/Codeinwp/otter-blocks/compare/v2.0.7...v2.0.8) (2022-07-14)
+
+- Fip Block styling issue
+- Fix styles & scripts not loading in FSE & responsive mode in the editor
+- Fix editor slowness
+- Add single column option to Section
+- Fix Font Module failing in specific scenarios
+- Fix WooCommerce Product Select component keeps spinning when no products are available
+
 ##### [Version 2.0.7](https://github.com/Codeinwp/otter-blocks/compare/v2.0.6...v2.0.7) (2022-07-04)
 
 - Fix Google Fonts not loading in certain cases

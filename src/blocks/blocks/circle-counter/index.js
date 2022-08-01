@@ -32,5 +32,10 @@ registerBlockType( name, {
 	],
 	transforms,
 	edit,
-	save
+	save,
+	example: {
+		attributes: {
+			title: 'Lorem ipsum'
+		}
+	}
 });

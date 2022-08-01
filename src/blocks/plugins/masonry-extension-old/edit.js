@@ -102,7 +102,7 @@ const Edit = ({
 			setTimeout( () => macy.current?.recalculate( true, true ), 300 );
 
 			observer.current?.disconnect();
-			observer.current?.observe( container, {childList: true});
+			observer.current?.observe( container, { childList: true });
 
 			if ( container?.style.height ) {
 				container.style.height = '';

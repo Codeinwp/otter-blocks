@@ -26,6 +26,7 @@ import {
 const name = 'themeisle-blocks/typing-animation';
 
 registerFormatType( name, {
+	name,
 	title: __( 'Typing Animation', 'otter-blocks' ),
 	tagName: 'o-anim-typing',
 	className: null,

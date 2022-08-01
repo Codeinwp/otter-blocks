@@ -28,5 +28,24 @@ registerBlockType( name, {
 	],
 	deprecated,
 	edit,
-	save
+	save,
+	example: {
+		attributes: {
+			spacing: 20
+		},
+		innerBlocks: [
+			{
+				name: 'themeisle-blocks/button',
+				attributes: {
+					text: __( 'Button 1', 'otter-blocks' )
+				}
+			},
+			{
+				name: 'themeisle-blocks/button',
+				attributes: {
+					text: __( 'Button 2', 'otter-blocks' )
+				}
+			}
+		]
+	}
 });

@@ -157,7 +157,7 @@ const ProductsMultiselect = ( props ) => {
 
 		return {
 			products,
-			isLoading: isResolving( 'getCollection', [ '/wc/store', 'products', { 'per_page': 100 } ])
+			isLoading: isResolving( 'getCollection', [ '/wc/store', 'products', { 'per_page': 100 }])
 		};
 	}, []);
 
@@ -394,7 +394,7 @@ const Edit = ({
 
 	return (
 		<Fragment>
-			{ 'postMeta' === item.type && (
+			{ [ 'postMeta', 'loggedInUserMeta' ].includes( item.type ) && (
 				<Fragment>
 					<TextControl
 						label={ __( 'Meta Key', 'otter-blocks' ) }
@@ -520,7 +520,7 @@ const Edit = ({
 								max="23"
 								value={ item.start_time ? item.start_time.split( ':' )[0] : '' }
 								onChange={ e => {
-									const value = e.target.value;
+									const { value } = e.target;
 
 									if ( 0 > value || 23 < value ) {
 										return;
@@ -545,7 +545,7 @@ const Edit = ({
 								max="59"
 								value={ item.start_time ? item.start_time.split( ':' )[1] : '' }
 								onChange={ e => {
-									const value = e.target.value;
+									const { value } = e.target;
 
 									if ( 0 > value || 59 < value ) {
 										return;
@@ -587,7 +587,7 @@ const Edit = ({
 								max="23"
 								value={ item.end_time ? item.end_time.split( ':' )[0] : '' }
 								onChange={ e => {
-									const value = e.target.value;
+									const { value } = e.target;
 
 									if ( 0 > value || 23 < value ) {
 										return;
@@ -612,7 +612,7 @@ const Edit = ({
 								max="59"
 								value={ item.end_time ? item.end_time.split( ':' )[1] : '' }
 								onChange={ e => {
-									const value = e.target.value;
+									const { value } = e.target;
 
 									if ( 0 > value || 59 < value ) {
 										return;

@@ -219,7 +219,11 @@
 	},
 	"product-images": {
 		"isPro": true,
-		"block": "pro/woocommerce/images/block.json"
+		"block": "pro/woocommerce/images/block.json",
+		"assets": {
+			"product-images/editor.css": "pro/woocommerce/images/editor.scss",
+			"product-images/style.css": "pro/woocommerce/images/style.scss"
+		}
 	},
 	"product-meta": {
 		"isPro": true,

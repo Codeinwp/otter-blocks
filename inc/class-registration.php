@@ -62,13 +62,6 @@ class Registration {
 	public static $styles_loaded = array();
 
 	/**
-	 * Allow to load in frontend.
-	 *
-	 * @var bool
-	 */
-	public static $can_load_frontend = true;
-
-	/**
 	 * Flag to mark that the  FA has been loaded.
 	 *
 	 * @var bool $is_fa_loaded Is FA loaded?
@@ -174,8 +167,11 @@ class Registration {
 		wp_script_add_data( 'leaflet', 'async', true );
 		wp_register_script( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'build/blocks/leaflet-gesture-handling.js', array( 'leaflet' ), $asset_file['version'], true );
 		wp_script_add_data( 'leaflet-gesture-handling', 'defer', true );
+
 		wp_register_style( 'leaflet', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet.css', [], $asset_file['version'] );
+		wp_style_add_data( 'leaflet', 'path', OTTER_BLOCKS_PATH . '/assets/leaflet/leaflet.css' );
 		wp_register_style( 'leaflet-gesture-handling', OTTER_BLOCKS_URL . 'assets/leaflet/leaflet-gesture-handling.min.css', [], $asset_file['version'] );
+		wp_style_add_data( 'leaflet-gesture-handling', 'path', OTTER_BLOCKS_PATH . '/assets/leaflet/leaflet-gesture-handling.min.css' );
 
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
 		wp_register_script( 'lottie-player', OTTER_BLOCKS_URL . 'assets/lottie/lottie-player.min.js', [], $asset_file['version'], true );
@@ -184,8 +180,11 @@ class Registration {
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/slider.asset.php';
 		wp_register_script( 'glidejs', OTTER_BLOCKS_URL . 'assets/glide/glide.min.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'glidejs', 'async', true );
+
 		wp_register_style( 'glidejs-core', OTTER_BLOCKS_URL . 'assets/glide/glide.core.min.css', [], $asset_file['version'] );
+		wp_style_add_data( 'glidejs-core', 'path', OTTER_BLOCKS_PATH . '/assets/glide/glide.core.min.css' );
 		wp_register_style( 'glidejs-theme', OTTER_BLOCKS_URL . 'assets/glide/glide.theme.min.css', [], $asset_file['version'] );
+		wp_style_add_data( 'glidejs-theme', 'path', OTTER_BLOCKS_PATH . '/assets/glide/glide.theme.min.css' );
 	}
 
 
@@ -257,6 +256,7 @@ class Registration {
 				'isBlockEditor'           => 'post' === $current_screen->base,
 				'postTypes'               => get_post_types( [ 'public' => true ] ),
 				'rootUrl'                 => get_site_url(),
+				'restRoot'                => get_rest_url( null, 'otter/v1' ),
 				'hasModule'               => array(
 					'blockConditions' => get_option( 'themeisle_blocks_settings_block_conditions', true ),
 				),
@@ -283,6 +283,7 @@ class Registration {
 
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
 		wp_enqueue_style( 'otter-blocks', OTTER_BLOCKS_URL . 'build/blocks/blocks.css', [], $asset_file['version'] );
+		wp_style_add_data( 'otter-blocks', 'path', OTTER_BLOCKS_PATH . '/build/blocks/blocks.css' );
 
 		if ( is_singular() ) {
 			$this->enqueue_dependencies();
@@ -346,7 +347,6 @@ class Registration {
 		}
 
 		if ( strpos( $content, '<!-- wp:' ) === false ) {
-			self::$can_load_frontend = false;
 			return false;
 		}
 
@@ -368,7 +368,6 @@ class Registration {
 
 		// On AMP context, we don't load JS files.
 		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
-			self::$can_load_frontend = false;
 			return;
 		}
 
@@ -586,6 +585,8 @@ class Registration {
 					$deps,
 					$asset_file['version']
 				);
+
+				wp_style_add_data( $metadata['style'], 'path', $style_path );
 			}
 
 			array_push( self::$styles_loaded, $block );
@@ -830,12 +831,11 @@ class Registration {
 	 * @since 2.0.5
 	 */
 	public function load_sticky( $block_content, $block ) {
-
-		if ( ! self::$can_load_frontend ) {
+		if ( ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) || self::$scripts_loaded['sticky'] ) {
 			return $block_content;
 		}
 
-		if ( ! self::$scripts_loaded['sticky'] && strpos( $block_content, 'o-sticky' ) ) {
+		if ( isset( $block['attrs']['className'] ) && false !== strpos( $block['attrs']['className'], 'o-sticky' ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/sticky.asset.php';
 			wp_enqueue_script(
 				'otter-sticky',

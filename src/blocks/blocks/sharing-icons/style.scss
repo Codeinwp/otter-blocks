@@ -17,14 +17,14 @@
 
 	.social-icons-wrap {
 		display: flex;
-		column-gap: var(--iconsGap, 5px);
+		column-gap: var(--icons-gap, 5px);
 		flex-wrap: wrap;
 	}
 
 	.social-icon {
 		font-size: 14px;
 		padding: 12px;
-		border-radius: var(--borderRadius, 3px);
+		border-radius: var(--border-radius, 3px);
 		white-space: nowrap;
 		display: inline-block;
 		text-align: center;
@@ -34,33 +34,33 @@
 		text-decoration: none;
 
 		&.is-facebook {
-			background-color: var(--iconBgColor, #3b5998);
-			color: var(--textColor, #fff);
+			background-color: var(--icon-bg-color, #3b5998);
+			color: var(--text-color, #fff);
 		}
 
 		&.is-twitter {
-			background-color: var(--iconBgColor, #55acee);
-			color: var(--textColor, #fff);
+			background-color: var(--icon-bg-color, #55acee);
+			color: var(--text-color, #fff);
 		}
 
 		&.is-linkedin {
-			background-color: var(--iconBgColor, #0976b4);
-			color: var(--textColor, #fff);
+			background-color: var(--icon-bg-color, #0976b4);
+			color: var(--text-color, #fff);
 		}
 
 		&.is-pinterest {
-			background-color: var(--iconBgColor, #cc2127);
-			color: var(--textColor, #fff);
+			background-color: var(--icon-bg-color, #cc2127);
+			color: var(--text-color, #fff);
 		}
 
 		&.is-tumblr {
-			background-color: var(--iconBgColor, #35465c);
-			color: var(--textColor, #fff);
+			background-color: var(--icon-bg-color, #35465c);
+			color: var(--text-color, #fff);
 		}
 
 		&.is-reddit {
-			background-color: var(--iconBgColor, #ff4500);
-			color: var(--textColor, #fff);
+			background-color: var(--icon-bg-color, #ff4500);
+			color: var(--text-color, #fff);
 		}
 
 		&:hover {
@@ -70,7 +70,7 @@
 		i {
 			min-width: 20px;
 			font-size: 16px;
-			color: var(--textColor, #fff);
+			color: var(--text-color, #fff);
 		}
 	}
 
@@ -78,7 +78,7 @@
 		.v-line {
 			width: 1px;
 			height: 20px;
-			background-color: var(--textColor, #fff);
+			background-color: var(--text-color, #fff);
 			opacity: .5;
 			display: inline-block;
 			vertical-align: top;

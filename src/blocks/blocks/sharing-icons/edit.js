@@ -15,15 +15,11 @@ import ServerSideRender from '@wordpress/server-side-render';
 /**
  * Internal dependencies
  */
+import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import {
-	blockInit,
-	getDefaultValueByField,
-	useCSSNode
-} from '../../helpers/block-utility.js';
-import metadata from './block.json';
 import socialList from './services.js';
+import { blockInit } from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -33,7 +29,6 @@ const { attributes: defaultAttributes } = metadata;
  * @returns
  */
 const Edit = ({
-	name,
 	attributes,
 	setAttributes,
 	clientId
@@ -43,36 +38,7 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
-	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
-
-	const individualCSS = Object.keys( socialList ).reduce( ( acc, icon ) => {
-		const iconAttrs = getValue( icon );
-		return `${ acc }
-		.is-${ icon } {
-			--iconBgColor: ${ iconAttrs.backgroundColor ?? 'unset' };
-			--textColor: ${ iconAttrs.textColor ?? 'unset' };
-		}`;
-	}, '' );
-
-	const gapValue = getValue( 'gap' );
-	const borderRadiusValue = getValue( 'borderRadius' );
-
-
-	const inlineStyles = {
-		'--iconsGap': gapValue ? gapValue + 'px' : '',
-		'--borderRadius': borderRadiusValue ? borderRadiusValue + 'px' : ''
-	};
-
-	const [ cssNodeName, setNodeCSS ] = useCSSNode();
-	useEffect( () => {
-		setNodeCSS([ individualCSS ]);
-	}, [ attributes.backgroundColor, attributes.textColor, attributes.facebook, attributes.pinterest, attributes.linkedin, attributes.reddit, attributes.tumblr, attributes.twitter ]);
-
-	const blockProps = useBlockProps({
-		id: attributes.id,
-		style: inlineStyles,
-		className: cssNodeName
-	});
+	const blockProps = useBlockProps();
 
 	return (
 		<Fragment>

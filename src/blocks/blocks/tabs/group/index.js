@@ -30,6 +30,13 @@ registerBlockType( name, {
 		'select'
 	],
 	edit,
-	save
+	save,
+	example: {
+		viewportWidth: 1000,
+		attributes: {},
+		innerBlocks: [
+
+		]
+	}
 });
 

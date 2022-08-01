@@ -27,6 +27,7 @@ import './editor.scss';
 const name = 'themeisle-blocks/count-animation';
 
 registerFormatType( name, {
+	name,
 	title: __( 'Count Animation', 'otter-blocks' ),
 	tagName: 'o-anim-count',
 	className: null,

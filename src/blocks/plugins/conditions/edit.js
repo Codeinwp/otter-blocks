@@ -57,6 +57,12 @@ const defaultConditions = {
 				label: __( 'User Roles', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on user roles.' ),
 				toogleVisibility: true
+			},
+			{
+				value: 'loggedInUserMeta',
+				label: __( 'Logged-in User Meta (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on meta of the logged-in user condition.' ),
+				isDisabled: true
 			}
 		]
 	},
@@ -181,7 +187,7 @@ const AuthorsFieldToken = ( props ) => {
 
 		return {
 			postAuthors: ( getUsers({ who: 'authors' }) ?? []).map( author => author.username ),
-			isLoading: isResolving( 'getUsers', [ { who: 'authors' } ])
+			isLoading: isResolving( 'getUsers', [{ who: 'authors' }])
 		};
 	}, [ ]);
 
@@ -206,7 +212,7 @@ const CategoriesFieldToken = ( props ) => {
 
 		return {
 			postCategories: ( getEntityRecords( 'taxonomy', 'category', { 'per_page': 100 }) ?? []).map( category => category.slug ),
-			isLoading: isResolving( 'getEntityRecords', [ 'taxonomy', 'category', { 'per_page': 100 } ])
+			isLoading: isResolving( 'getEntityRecords', [ 'taxonomy', 'category', { 'per_page': 100 }])
 		};
 	}, [ ]);
 
@@ -272,7 +278,7 @@ const Edit = ({
 
 	const addGroup = () => {
 		const otterConditions = [ ...( attributes.otterConditions || []) ];
-		otterConditions.push([ {} ]);
+		otterConditions.push([{}]);
 		setAttributes({ otterConditions });
 	};
 

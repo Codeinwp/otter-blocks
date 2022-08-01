@@ -11,8 +11,12 @@ import { registerFormatType } from '@wordpress/rich-text';
 import './editor.scss';
 import './autocompleter.js';
 import edit from './edit.js';
+import './media/media-library.js';
 
-registerFormatType( 'themeisle-blocks/dynamic-value', {
+const name = 'themeisle-blocks/dynamic-value';
+
+export const format = {
+	name,
 	title: __( 'Dynamic Value', 'otter-blocks' ),
 	tagName: 'o-dynamic',
 	className: null,
@@ -32,4 +36,6 @@ registerFormatType( 'themeisle-blocks/dynamic-value', {
 		metaKey: 'data-meta-key'
 	},
 	edit
-});
+};
+
+registerFormatType( name, format );

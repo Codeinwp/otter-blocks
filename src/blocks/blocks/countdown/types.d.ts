@@ -1,4 +1,26 @@
-import { BlockProps, InspectorProps } from '../../helpers/blocks'
+import { BlockProps, BoxType, InspectorProps, PaddingType } from '../../helpers/blocks'
+
+// Remove this in future version.
+type LegacyAttrs = {
+	/** @deprecated */
+	width: number
+	/** @deprecated */
+	widthTablet: number
+	/** @deprecated */
+	widthMobile: number
+	/** @deprecated */
+	borderRadius: number
+	/** @deprecated */
+	borderRadiusType: string
+	/** @deprecated */
+	borderRadiusTopRight: number
+	/** @deprecated */
+	borderRadiusTopLeft: number
+	/** @deprecated */
+	borderRadiusBottomRight: number
+	/** @deprecated */
+	borderRadiusBottomLeft: number
+}
 
 type Attributes = {
 	id: string
@@ -7,22 +29,19 @@ type Attributes = {
 	backgroundColor: string
 	valueColor: string
 	labelColor: string
+	separatorColor: string
 	labelDistance: number
 	gap: number
 	gapTablet: number
 	gapMobile: number
-	width: number
-	widthTablet: number
-	widthMobile: number
+	containerWidth: number
+	containerWidthTablet: number
+	containerWidthMobile: number
 	height: number
 	heightTablet: number
 	heightMobile: number
-	borderRadius: number
-	borderRadiusType: string
-	borderRadiusTopRight: number
-	borderRadiusTopLeft: number
-	borderRadiusBottomRight: number
-	borderRadiusBottomLeft: number
+	borderRadiusBox: BoxType
+	borderStyle: string
 	borderWidth: number
 	borderWidthTablet: number
 	borderWidthMobile: number
@@ -34,7 +53,13 @@ type Attributes = {
 	labelFontSizeTablet: number
 	labelFontSizeMobile: number
 	hasSeparators: boolean
-}
+	alignment: 'flex-start' | 'center' | 'flex-end'
+	padding: PaddingType
+	paddingMobile: PaddingType
+	paddingTablet: PaddingType
+	valueFontWeight: string
+	labelFontWeight: string
+} & LegacyAttrs;
 
 export type CountdownProps = BlockProps<Attributes>
 export interface CountdownInspectorProps extends InspectorProps<Attributes> {}
