@@ -337,7 +337,7 @@ class Block_Frontend extends Base_CSS {
 			add_action(
 				'wp_footer',
 				function () use ( $post_id, $file_name, $file_url, $file_path ) {
-					wp_enqueue_style( 'otter-' . $file_name, $file_url, array( 'otter-blocks' ), THEMEISLE_BLOCKS_VERSION );
+					wp_enqueue_style( 'otter-' . $file_name, $file_url, array( 'otter-blocks' ), OTTER_BLOCKS_VERSION );
 				}
 			);
 
@@ -347,7 +347,7 @@ class Block_Frontend extends Base_CSS {
 		add_action(
 			'wp_enqueue_scripts',
 			function () use ( $post_id, $file_name, $file_url, $file_path ) {
-				wp_enqueue_style( 'otter-' . $file_name, $file_url, array( 'otter-blocks' ), THEMEISLE_BLOCKS_VERSION );
+				wp_enqueue_style( 'otter-' . $file_name, $file_url, array( 'otter-blocks' ), OTTER_BLOCKS_VERSION );
 				wp_style_add_data( 'otter-' . $file_name, 'path', $file_path );
 			}
 		);
@@ -569,7 +569,7 @@ class Block_Frontend extends Base_CSS {
 		$file_name     = basename( $file_url );
 		$file_path     = $basedir . $file_name;
 
-		wp_enqueue_style( 'otter-widgets', $file_url, array( 'otter-blocks' ), THEMEISLE_BLOCKS_VERSION );
+		wp_enqueue_style( 'otter-widgets', $file_url, array( 'otter-blocks' ), OTTER_BLOCKS_VERSION );
 		wp_style_add_data( 'otter-widgets', 'path', $file_path );
 	}
 
