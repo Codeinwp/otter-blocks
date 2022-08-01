@@ -2,7 +2,7 @@
  * External dependencies
  */
 import hexToRgba from 'hex-rgba';
-import GoogleFontLoader from 'react-google-font-loader';
+import GoogleFontLoader from 'react-google-font';
 
 /**
  * WordPress dependencies.
