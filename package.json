@@ -25,7 +25,8 @@
 		"test:unit:debug": "wp-scripts --inspect-brk test-unit-js --runInBand --no-cache",
 		"test:e2e": "wp-scripts test-e2e",
 		"test:e2e:help": "wp-scripts test-e2e --help",
-		"test:e2e:debug": "wp-scripts --inspect-brk test-e2e --puppeteer-devtools"
+		"test:e2e:debug": "wp-scripts --inspect-brk test-e2e --puppeteer-devtools",
+		"wp-env": "wp-env"
 	},
 	"repository": {
 		"type": "git",
@@ -75,7 +76,9 @@
 		"@wordpress/compose": "^5.10.0",
 		"@wordpress/data": "^6.12.0",
 		"@wordpress/dom-ready": "^3.12.0",
+		"@wordpress/e2e-test-utils": "^7.10.0",
 		"@wordpress/element": "^4.10.0",
+		"@wordpress/env": "^5.0.0",
 		"@wordpress/scripts": "^22.5.0",
 		"conventional-changelog-simple-preset": "^1.0.20",
 		"eslint-config-wordpress": "^2.0.0",
