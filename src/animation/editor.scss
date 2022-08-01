@@ -124,14 +124,13 @@
 	content: '|';
 	color: #2E3D48;
 	animation: 1s blink step-end infinite;
-  }
+}
 
-  @keyframes blink {
+@keyframes blink {
 	from, to {
-	  color: transparent;
-	}
+      color: transparent;
+   }
 	50% {
-	  color: black;
-	}
-  }
-
+      color: black;
+   }
+}
