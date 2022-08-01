@@ -815,6 +815,10 @@ class Registration {
 			if ( isset( $block['attrs']['className'] ) && strpos( $block['attrs']['className'], 'fa-' ) !== false ) {
 				self::$is_fa_loaded = true;
 
+				// See the src/blocks/plugins/menu-icons/inline.css file for where this comes from.
+				$styles = '.fab.wp-block-navigation-item,.far.wp-block-navigation-item,.fas.wp-block-navigation-item{-moz-osx-font-smoothing:inherit;-webkit-font-smoothing:inherit;font-weight:inherit}.fab.wp-block-navigation-item:before,.far.wp-block-navigation-item:before,.fas.wp-block-navigation-item:before{font-family:Font Awesome\ 5 Free;margin-right:5px}.fab.wp-block-navigation-item:before,.far.wp-block-navigation-item:before{font-weight:400;padding-right:5px}.fas.wp-block-navigation-item:before{font-weight:900;padding-right:5px}.fab.wp-block-navigation-item:before{font-family:Font Awesome\ 5 Brands}';
+
+				wp_add_inline_style( 'font-awesome-5', $styles );
 				return $block_content;
 			}
 		}
