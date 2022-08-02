@@ -56,6 +56,7 @@ class Block_Frontend extends Base_CSS {
 		add_action( 'wp_head', array( $this, 'enqueue_google_fonts_backward' ), 19 );
 		add_filter( 'get_the_excerpt', array( $this, 'get_excerpt_end' ), 20 );
 		add_action( 'wp_footer', array( $this, 'enqueue_widgets_css' ) );
+		add_action( 'wp_footer', array( $this, 'enqueue_fse_css' ) );
 		add_action( 'wp_head', array( $this, 'enqueue_assets' ) );
 		add_action( 'wp_footer', array( $this, 'enqueue_global_styles' ) );
 	}
@@ -224,17 +225,11 @@ class Block_Frontend extends Base_CSS {
 	 * @access  public
 	 */
 	public function render_post_css() {
-		$id            = 0;
-		$styles_loaded = false;
+		$id = 0;
 
 		if ( is_singular() ) {
 			// Enqueue main post attached style.
 			$id = get_the_ID();
-			$this->enqueue_styles();
-			$styles_loaded = true;
-		}
-
-		if ( 0 === get_queried_object_id() && ! $styles_loaded ) {
 			$this->enqueue_styles();
 		}
 
@@ -371,18 +366,12 @@ class Block_Frontend extends Base_CSS {
 	 */
 	public function get_post_css( $post_id = '' ) {
 		$post_id = $post_id ? $post_id : get_the_ID();
-		if ( function_exists( 'has_blocks' ) ) {
-			$css = '';
+		if ( function_exists( 'has_blocks' ) && has_blocks( $post_id ) ) {
+			$css = $this->get_page_css_meta( $post_id );
 
-			if ( has_blocks( $post_id ) && 0 < get_queried_object_id() ) {
-				$css = $this->get_page_css_meta( $post_id );
-
-				if ( empty( $css ) || is_preview() ) {
-					$css = $this->get_page_css_inline( $post_id );
-				}
+			if ( empty( $css ) || is_preview() ) {
+				$css = $this->get_page_css_inline( $post_id );
 			}
-
-			$css .= $this->get_block_templates_css();
 
 			if ( empty( $css ) ) {
 				return;
@@ -486,47 +475,6 @@ class Block_Frontend extends Base_CSS {
 	}
 
 	/**
-	 * Get the block CSS from templates in FSE.
-	 *
-	 * @return string
-	 * @since 2.0.3
-	 */
-	public function get_block_templates_css() {
-		$template_css = '';
-
-		if (
-			! (
-				function_exists( 'get_block_templates' ) &&
-				current_theme_supports( 'block-templates' ) &&
-				function_exists( 'wp_is_block_theme' ) &&
-				wp_is_block_theme()
-			)
-		) {
-			return $template_css;
-		}
-
-		global $_wp_current_template_content;
-		$slugs           = array();
-		$template_blocks = parse_blocks( $_wp_current_template_content );
-		foreach ( $template_blocks as $template_block ) {
-			if ( 'core/template-part' === $template_block['blockName'] ) {
-				$slugs[] = $template_block['attrs']['slug'];
-			}
-		}
-		$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
-		foreach ( $templates_parts as $templates_part ) {
-			if ( isset( $templates_part->content ) && in_array( $templates_part->slug, $slugs ) ) {
-				$blocks = parse_blocks( $templates_part->content );
-				if ( ! is_array( $blocks ) || empty( $blocks ) ) {
-					continue;
-				}
-				$template_css .= $this->cycle_through_blocks( $blocks );
-			}
-		}
-		return $template_css . $this->cycle_through_blocks( $template_blocks );
-	}
-
-	/**
 	 * Cycle thorugh Blocks
 	 *
 	 * @param array $blocks List of blocks.
@@ -608,6 +556,69 @@ class Block_Frontend extends Base_CSS {
 
 		wp_enqueue_style( 'otter-widgets', $file_url, array(), OTTER_BLOCKS_VERSION );
 		wp_style_add_data( 'otter-widgets', 'path', $file_path );
+	}
+
+
+	/**
+	 * Enqueue FSE CSS file
+	 *
+	 * @since   2.0.10
+	 * @access  public
+	 */
+	public function enqueue_fse_css() {
+		if ( ! ( function_exists( 'get_block_templates' ) && function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() && current_theme_supports( 'block-templates' ) ) ) {
+			return;
+		}
+
+		global $_wp_current_template_content;
+
+		$content         = '';
+		$slugs           = array();
+		$template_blocks = parse_blocks( $_wp_current_template_content );
+
+		foreach ( $template_blocks as $template_block ) {
+			if ( 'core/template-part' === $template_block['blockName'] ) {
+				$slugs[] = $template_block['attrs']['slug'];
+			}
+		}
+
+		$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
+
+		foreach ( $templates_parts as $templates_part ) {
+			if ( isset( $templates_part->content ) && in_array( $templates_part->slug, $slugs ) ) {
+				$content .= $templates_part->content;
+			}
+		}
+
+		$content .= $_wp_current_template_content;
+
+		$blocks = parse_blocks( $content );
+
+		if ( ! is_array( $blocks ) || empty( $blocks ) ) {
+			return '';
+		}
+
+		$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+
+		$css = $this->cycle_through_blocks( $blocks, $animations );
+
+		if ( empty( $css ) ) {
+			return;
+		}
+
+		if ( count( self::$google_fonts ) > 0 ) {
+			$fonts = $this->get_fonts( self::$google_fonts );
+
+			if ( count( $fonts['fonts'] ) > 0 ) {
+				wp_enqueue_style( 'otter-google-fonts', $fonts['url'], [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			}
+		}
+
+		$style  = "\n" . '<style type="text/css" media="all">' . "\n";
+		$style .= $css;
+		$style .= "\n" . '</style>' . "\n";
+
+		echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
