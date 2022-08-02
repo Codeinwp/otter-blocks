@@ -270,8 +270,7 @@ class Main {
 	public function after_update_migration() {
 		$db_version = get_option( 'themeisle_blocks_db_version', 0 );
 
-		// We don't want to regenerate CSS everytime so only do it for versions where it's really needed.
-		if ( version_compare( $db_version, '2.0.10', '<' ) ) {
+		if ( version_compare( $db_version, OTTER_BLOCKS_VERSION, '<' ) ) {
 			Dashboard_Server::regenerate_styles();
 		}
 

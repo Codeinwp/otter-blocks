@@ -56,7 +56,7 @@ class Block_Frontend extends Base_CSS {
 		add_action( 'wp_head', array( $this, 'enqueue_google_fonts_backward' ), 19 );
 		add_filter( 'get_the_excerpt', array( $this, 'get_excerpt_end' ), 20 );
 		add_action( 'wp_footer', array( $this, 'enqueue_widgets_css' ) );
-		add_action( 'wp_footer', array( $this, 'enqueue_assets' ) );
+		add_action( 'wp_head', array( $this, 'enqueue_assets' ) );
 		add_action( 'wp_footer', array( $this, 'enqueue_global_styles' ) );
 	}
 
@@ -271,7 +271,7 @@ class Block_Frontend extends Base_CSS {
 
 		if ( is_preview() ) {
 			add_action(
-				$location,
+				'wp_footer',
 				function () use ( $post_id ) {
 					return $this->get_post_css( $post_id );
 				}
@@ -307,15 +307,30 @@ class Block_Frontend extends Base_CSS {
 			$this->enqueue_reusable_styles( $blocks );
 		}
 
+		$total_inline_limit = 20000;
+		$total_inline_limit = apply_filters( 'styles_inline_size_limit', 20000 );
+
 		$wp_upload_dir = wp_upload_dir( null, false );
 		$basedir       = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/';
 		$file_path     = $basedir . $file_name;
+		$file_size     = filesize( $file_path );
+
+		if ( $this->total_inline_size + $file_size < $total_inline_limit ) {
+			add_action(
+				'wp_footer',
+				function () use ( $post_id ) {
+					return $this->get_post_css( $post_id );
+				}
+			);
+
+			$this->total_inline_size += (int) $file_size;
+			return;
+		}
 
 		add_action(
 			'wp_footer',
 			function () use ( $file_name, $file_url, $file_path ) {
-				wp_enqueue_style( 'otter-' . $file_name, $file_url, array( 'otter-blocks' ), OTTER_BLOCKS_VERSION );
-				wp_style_add_data( 'otter-' . $file_name, 'path', $file_path );
+				wp_enqueue_style( 'otter-' . $file_name, $file_url, array(), OTTER_BLOCKS_VERSION );
 			}
 		);
 	}
@@ -538,7 +553,7 @@ class Block_Frontend extends Base_CSS {
 		$file_name     = basename( $file_url );
 		$file_path     = $basedir . $file_name;
 
-		wp_enqueue_style( 'otter-widgets', $file_url, array( 'otter-blocks' ), OTTER_BLOCKS_VERSION );
+		wp_enqueue_style( 'otter-widgets', $file_url, array(), OTTER_BLOCKS_VERSION );
 		wp_style_add_data( 'otter-widgets', 'path', $file_path );
 	}
 
