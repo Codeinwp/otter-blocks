@@ -446,8 +446,26 @@ domReady( () => {
 	const elems = document.querySelectorAll( '.o-sticky' );
 	const observer = createObserver();
 
+	let styles = `
+		.o-is-sticky {
+			position: fixed;
+			z-index: 9999;
+		}
+	`;
+
+	styles = styles.replace( /(\r\n|\n|\r|\t)/gm, '' );
+
+	let hasStyles = false;
+
 	detectLoading( () => {
 		elems.forEach( ( elem ) => {
+			if ( ! hasStyles ) {
+				const styleSheet = document.createElement( 'style' );
+				styleSheet.innerText = styles;
+				document.head.appendChild( styleSheet );
+				hasStyles = true;
+			}
+
 			const config = getConfigOptions( elem );
 			const container = getStickyContainer( elem, config.scope );
 

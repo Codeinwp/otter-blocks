@@ -23,15 +23,9 @@ class Dynamic_Content {
 	 * Initialize the class
 	 */
 	public function init() {
-		add_filter( 'the_content', array( $this, 'apply_dynamic_content' ) );
-		add_filter( 'the_content', array( $this, 'apply_dynamic_images' ) );
-		add_filter( 'widget_block_content', array( $this, 'apply_dynamic_content' ), 0, 1 );
-		add_filter( 'widget_block_content', array( $this, 'apply_dynamic_images' ), 0, 1 );
+		add_filter( 'render_block', array( $this, 'apply_dynamic_content' ) );
+		add_filter( 'render_block', array( $this, 'apply_dynamic_images' ) );
 		add_filter( 'otter_apply_dynamic_image', array( $this, 'apply_dynamic_images' ) );
-
-		if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() ) {
-			add_filter( 'get_block_templates', array( $this, 'apply_dynamic_content_fse' ), 0, 1 );
-		}
 	}
 
 	/**
@@ -145,22 +139,6 @@ class Dynamic_Content {
 		$value = apply_filters( 'otter_blocks_evaluate_dynamic_content_media_content', $value, $data );
 
 		return $value;
-	}
-
-	/**
-	 * Filter Block Templates.
-	 *
-	 * @param array $block_template Block template.
-	 *
-	 * @return array
-	 */
-	public function apply_dynamic_content_fse( $block_template ) {
-		foreach ( $block_template as $template ) {
-			$template->content = $this->apply_dynamic_content( $template->content );
-			$template->content = $this->apply_dynamic_images( $template->content );
-		}
-
-		return $block_template;
 	}
 
 	/**
