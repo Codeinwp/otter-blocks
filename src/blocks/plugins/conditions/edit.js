@@ -241,18 +241,35 @@ const Separator = ({ label }) => {
 
 const Edit = ({
 	attributes,
-	setAttributes
+	setAttributes: _setAttributes
 }) => {
+	const setAttributes = ( attributes ) => {
+
+		// window?.wp?.customize.state( 'saved' ).set( false );
+
+		for ( const [ key, value ] of Object.entries( wp.customize.dirtyValues() ) ) {
+			console.log( '[Dirty]', key, value?.raw_instance?.content );
+		}
+
+		_setAttributes({ ...attributes });
+	};
 	const [ conditions, setConditions ] = useState({});
 	const [ flatConditions, setFlatConditions ] = useState([]);
 	const [ toggleVisibility, setToggleVisibility ] = useState([]);
+
+	// TODO: remove after testing
+	useEffect( () => {
+		if ( attributes.otterConditions ) {
+			console.log( 'Attrs', attributes.otterConditions );
+		}
+	}, [ attributes.otterConditions ]);
 
 	useEffect( () => {
 		if ( ! Boolean( attributes?.otterConditions?.length ) ) {
 			return;
 		}
 
-		let otterConditions = attributes.otterConditions?.filter( c => ! isEmpty( c ) );
+		let otterConditions = [ ...attributes.otterConditions?.filter( c => ! isEmpty( c ) ) ];
 
 		if ( ! Boolean( otterConditions.length ) ) {
 			otterConditions = undefined;
