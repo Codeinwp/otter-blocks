@@ -101,15 +101,10 @@ export async function getLoadingDurations() {
 
 			// For client side metrics, consider the end of the response (the
 			// browser receives the HTML) as the start time (0).
-			firstPaint:
-                 paintTimings.find( ({ name }) => 'first-paint' === name )
-                 	.startTime - responseEnd,
+			firstPaint: paintTimings.find( ({ name }) => 'first-paint' === name ).startTime - responseEnd,
 			domContentLoaded: domContentLoadedEventEnd - responseEnd,
 			loaded: loadEventEnd - responseEnd,
-			firstContentfulPaint:
-                 paintTimings.find(
-                 	({ name }) => 'first-contentful-paint' === name
-                 ).startTime - responseEnd,
+			firstContentfulPaint: paintTimings.find( ({ name }) => 'first-contentful-paint' === name ).startTime - responseEnd,
 
 			// This is evaluated right after Puppeteer found the block selector.
 			firstBlock: performance.now() - responseEnd
