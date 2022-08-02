@@ -33,7 +33,7 @@ import {
 
 jest.setTimeout( 1000000 );
 
-describe( 'Post Editor Performance', () => {
+describe( 'Otter Block ID', () => {
 	const results = {
 		serverResponse: [],
 		firstPaint: [],
