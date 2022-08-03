@@ -15,8 +15,7 @@ import {
 	PanelBody,
 	SelectControl,
 	Spinner,
-	Placeholder,
-	Notice
+	Placeholder
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -34,6 +33,7 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import PanelTab from '../../components/panel-tab/index.js';
+import Notice from '../../components/notice/index.js';
 
 const hasPro = Boolean( window.themeisleGutenberg.hasPro );
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
@@ -539,24 +539,6 @@ const Edit = ({
 						variant="upsell"
 					/>
 				) }
-
-				{
-					window.wp.hasOwnProperty( 'customize' ) && (
-						<Notice
-							status="warning"
-							isDismissible={ false }
-						>
-							{ __( 'The changes in conditions might not be saved. Please use the Widgets screen to edit the conditions.', 'otter-blocks' ) }
-							<ExternalLink
-								href="/wp-admin/widgets.php"
-								target='_blank'
-								style={{ display: 'inline-block' }}
-							>
-								{ __( 'Go to Widgets', 'otter-blocks' ) }
-							</ExternalLink>
-						</Notice>
-					)
-				}
 
 				{ applyFilters( 'otter.poweredBy', '' ) }
 			</PanelBody>
