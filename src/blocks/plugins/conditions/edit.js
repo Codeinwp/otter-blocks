@@ -243,26 +243,48 @@ const Edit = ({
 	attributes,
 	setAttributes: _setAttributes
 }) => {
-	const setAttributes = ( attributes ) => {
 
-		// window?.wp?.customize.state( 'saved' ).set( false );
-
-		for ( const [ key, value ] of Object.entries( wp.customize.dirtyValues() ) ) {
-			console.log( '[Dirty]', key, value?.raw_instance?.content );
-		}
-
-		_setAttributes({ ...attributes });
-	};
+	const [ buffer, setBuffer ] = useState( null );
 	const [ conditions, setConditions ] = useState({});
 	const [ flatConditions, setFlatConditions ] = useState([]);
 	const [ toggleVisibility, setToggleVisibility ] = useState([]);
+
+	const setAttributes = ( attrs ) => {
+
+		if ( window.wp.hasOwnProperty( 'customize' ) && window.wp.customize ) {
+
+			/**
+			 * Customizer only use shallow comparision for checking the changes, thus conditions updates are not detected.
+			 * Trick: By changing the numbers of the conditions we trigger the update.
+			 * The buffer will revert the trick to the correct value.
+			 */
+			const otterConditions = [ ...( attrs.otterConditions || []), []];
+			_setAttributes({ otterConditions });
+			setBuffer( attrs );
+		} else {
+			_setAttributes( attrs );
+		}
+
+	};
 
 	// TODO: remove after testing
 	useEffect( () => {
 		if ( attributes.otterConditions ) {
 			console.log( 'Attrs', attributes.otterConditions );
 		}
+		for ( const [ key, value ] of Object.entries( wp.customize.dirtyValues() ) ) {
+			console.log( '[Dirty]', key, value?.raw_instance?.content );
+		}
 	}, [ attributes.otterConditions ]);
+
+	/**
+	 * Use an intermediary buffer to add the real attributes to the block.
+	 */
+	useEffect( () => {
+		if ( buffer &&  window.wp.hasOwnProperty( 'customize' ) && window.wp.customize ) {
+			_setAttributes( buffer );
+		}
+	}, [ buffer ]);
 
 	useEffect( () => {
 		if ( ! Boolean( attributes?.otterConditions?.length ) ) {
