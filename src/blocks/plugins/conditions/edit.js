@@ -267,16 +267,6 @@ const Edit = ({
 
 	};
 
-	// TODO: remove after testing
-	useEffect( () => {
-		if ( attributes.otterConditions ) {
-			console.log( 'Attrs', attributes.otterConditions );
-		}
-		for ( const [ key, value ] of Object.entries( wp.customize.dirtyValues() ) ) {
-			console.log( '[Dirty]', key, value?.raw_instance?.content );
-		}
-	}, [ attributes.otterConditions ]);
-
 	/**
 	 * Use an intermediary buffer to add the real attributes to the block.
 	 */
