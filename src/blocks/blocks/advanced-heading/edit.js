@@ -37,6 +37,7 @@ import metadata from './block.json';
 import { blockInit } from '../../helpers/block-utility.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
+import googleFontsLoader from '../../helpers/google-fonts';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -170,6 +171,12 @@ const Edit = ({
 		id: attributes.id,
 		style
 	});
+
+	useEffect( () => {
+		if ( attributes.fontFamily ) {
+			googleFontsLoader.loadFontToBrowser( attributes.fontFamily, attributes.fontVariant );
+		}
+	}, [ attributes.fontFamily ]);
 
 	return (
 		<Fragment>

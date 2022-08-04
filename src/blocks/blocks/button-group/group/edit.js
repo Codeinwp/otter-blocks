@@ -114,6 +114,12 @@ const Edit = ({
 		style: inlineCSS
 	});
 
+	useEffect( () => {
+		if ( attributes.fontFamily ) {
+			googleFontsLoader.loadFontToBrowser( attributes.fontFamily, attributes.fontVariant );
+		}
+	}, [ attributes.fontFamily ]);
+
 	return (
 		<Fragment>
 			{ attributes.fontFamily && (

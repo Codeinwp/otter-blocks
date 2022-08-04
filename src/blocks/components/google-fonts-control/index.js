@@ -34,35 +34,8 @@ import {
 * Internal dependencies
 */
 import './editor.scss';
-import { getEditorIframe } from '../../helpers/block-utility';
+import googleFontsLoader from '../../helpers/google-fonts';
 
-/**
- * Load the font to the page using FontFace API.
- *
- * @param {string} fontName The name of the font to load.
- * @param {string} variant The font variant to load.
- * @param {import('./types').GoogleFontItem[]} fonts The font items.
- * @returns {Promis<void>}
- */
-
-const loadFontToPage = async( fontName, variant = 'regular', fonts = []) => {
-
-	const doc = getEditorIframe()?.contentWindow?.document ?? document;
-
-	// Check if the font is already loaded.
-	if ( doc.fonts.check( `italic bold 16px "${fontName}"` ) ) {
-		console.log( 'Font already loaded:', fontName ); // TODO: remove after rewiew
-		return;
-	}
-
-	const font = fonts.find( font => font.family === fontName );
-	if ( ! font ) {
-		return;
-	}
-	const fontFace = new FontFace( fontName, `url(${font.files[variant]?.replace( 'http://', 'https://' )})` );
-	await fontFace.load();
-	doc.fonts.add( fontFace );
-};
 
 const GoogleFontsControl = ({
 	label,
@@ -79,34 +52,13 @@ const GoogleFontsControl = ({
 	const instanceId = useInstanceId( GoogleFontsControl );
 
 	useEffect( () => {
-		let isMounted = true;
-
-		fetch( 'https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyClGdkPJ1BvgLOol5JAkQY4Mv2lkLYu00k' )
-			.then( blob => blob.json() )
-			.then( data => {
-				if ( isMounted ) {
-					setFonts( data.items );
-					if ( value ) {
-						data.items.find( i => {
-							if ( value === i.family ) {
-								const variants = ( i.variants )
-									.filter( o => false === o.includes( 'italic' ) )
-									.map( o => {
-										return o = {
-											'label': startCase( toLower( o ) ),
-											'value': o
-										};
-									});
-								return setVariants( variants );
-							}
-						});
-					}
-				}
-			}).catch( e => console.log( e ) );
-
-		return () => {
-			isMounted = false;
-		};
+		googleFontsLoader.afterLoading().then( ( loader ) => {
+			console.log( loader );
+			setFonts( loader.fonts );
+			if ( value ) {
+				setVariants( loader.getVariants( value ) );
+			}
+		});
 	}, []);
 
 	const [ fonts, setFonts ] = useState( null );
@@ -218,7 +170,6 @@ const GoogleFontsControl = ({
 														onClick={ () => {
 															onToggle();
 															onChangeFontFamily( i.family );
-															loadFontToPage( i.family, 'regular', fonts );
 
 															const variants = ( i.variants )
 																.filter( o => false === o.includes( 'italic' ) )
