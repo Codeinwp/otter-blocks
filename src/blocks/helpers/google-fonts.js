@@ -19,6 +19,13 @@ class GoogleFontsLoader {
 
 		this.controller = new AbortController();
 		this.request = null;
+
+		this.node = document.createElement( 'style' );
+		this.node.type = 'text/css';
+		this.node.setAttribute( 'data-generator', 'otter-blocks-fonts-loader' );
+
+		this.usedFonts = [];
+		this.nodeAppended = false;
 	}
 
 	/**
@@ -67,16 +74,11 @@ class GoogleFontsLoader {
 	 *
 	 * @param {string} fontName The name of the font.
 	 * @param {string} variant The font variant.
-	 * @returns {Promise<string|Error|{font: string, fontFace: FontFace}}
+	 * @returns {Promise<Error|import('../components/google-fonts-control/types').GoogleFontItem}
 	 */
 	async loadFontToBrowser( fontName, variant = 'regular' ) {
 		if ( ! fontName ) {
 			return Error( 'Empty font name.' );
-		}
-		const doc = getEditorIframe()?.contentWindow?.document ?? document;
-
-		if ( GoogleFontsLoader.isFontLoadedInBrowser( fontName, doc ) ) {
-			return 'Already loaded: ' + fontName;
 		}
 
 		if ( 'none' === this.status || 'loading' === this.status ) {
@@ -89,27 +91,12 @@ class GoogleFontsLoader {
 			return Error( 'Font does not exists.' );
 		}
 
-		// @see https://developer.mozilla.org/en-US/docs/Web/API/FontFace/FontFace
-		const url = ( font.files[variant] ?? font.files?.regular )?.replace( 'http://', 'https://' );
-		const fontFace = new FontFace( fontName, `url(${url})` );
-		await fontFace.load();
-		doc.fonts.add( fontFace );
+		if ( ! this.usedFonts.find( ( _ ) => _.font.family === fontName && _.variant === variant ) ) {
+			this.usedFonts.push({ font, variant });
+			this.updateCSSNode();
+		}
 
-		return {
-			font,
-			fontFace
-		};
-	}
-
-	/**
-	 * Check if the font exists.
-	 *
-	 * @param {string} fontName The name of the font.
-	 * @param {Document} doc The document where the font is located.
-	 * @returns {boolean} Whether the font exists
-	 */
-	static isFontLoadedInBrowser( fontName, doc = document ) {
-		return doc.fonts.check( `italic bold 16px "${fontName}"` );
+		return font;
 	}
 
 	/**
@@ -149,6 +136,34 @@ class GoogleFontsLoader {
 			});
 		}
 		return this.request;
+	}
+
+	/**
+	 * Update the node CSS.
+	 */
+	updateCSSNode() {
+		if ( ! this.nodeAppended ) {
+			const doc = getEditorIframe()?.contentWindow?.document ?? document;
+			doc.head.appendChild( this.node );
+			this.nodeAppended = true;
+		}
+		this.node.innerHTML = this.renderCSSFont();
+	}
+
+	/**
+	 * Render the Font Face for every used font.
+	 */
+	renderCSSFont() {
+		return Array.from( this.usedFonts ).map( ({ font, variant }) => {
+			const url = ( font.files?.[variant] ?? font.files?.regular )?.replace( 'http://', 'https://' );
+			return `
+				@font-face {
+					font-family: "${font.family}";
+					src: url('${url}'); /* IE9 Compat Modes */
+					src: url('${url}')  format('truetype'), /* Safari, Android, iOS */
+				}
+			`;
+		}).join( '\n' );
 	}
 }
 

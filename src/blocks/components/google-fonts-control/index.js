@@ -53,7 +53,6 @@ const GoogleFontsControl = ({
 
 	useEffect( () => {
 		googleFontsLoader.afterLoading().then( ( loader ) => {
-			console.log( loader );
 			setFonts( loader.fonts );
 			if ( value ) {
 				setVariants( loader.getVariants( value ) );
