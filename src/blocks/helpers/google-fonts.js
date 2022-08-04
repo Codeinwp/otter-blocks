@@ -5,7 +5,14 @@ import {
 	toLower
 } from 'lodash';
 
+/**
+ * Class that request the fonts and loaded them into the browser.
+ */
 class GoogleFontsLoader {
+
+	/**
+	 * Initialize.
+	 */
 	constructor() {
 		this.fonts = [];
 		this.status = 'none';
@@ -14,15 +21,32 @@ class GoogleFontsLoader {
 		this.request = null;
 	}
 
+	/**
+	 * The the loader after is loaded.
+	 *
+	 * @returns {Promise<GoogleFontsLoader>}
+	 */
 	async afterLoading() {
 		await this.requestFonts();
 		return this;
 	}
 
+	/**
+	 * Get the font.
+	 *
+	 * @param {string} fontName The name of the font.
+	 * @returns {import('../components/google-fonts-control/types').GoogleFontItem}
+	 */
 	getFont( fontName ) {
 		return this.fonts.find( font => font.family === fontName );
 	}
 
+	/**
+	 * Get the variants of the font.
+	 *
+	 * @param {string} fontName The name of the font.
+	 * @returns {{label: string, value: string}[]}
+	 */
 	getVariants( fontName ) {
 		const font = this.getFont( fontName );
 		if ( font ) {
@@ -35,9 +59,16 @@ class GoogleFontsLoader {
 					};
 				});
 		}
-		return undefined;
+		return [];
 	}
 
+	/**
+	 * Load the font to brower document. Can inject to an iframe.
+	 *
+	 * @param {string} fontName The name of the font.
+	 * @param {string} variant The font variant.
+	 * @returns {Promise<string|Error|{font: string, fontFace: FontFace}}
+	 */
 	async loadFontToBrowser( fontName, variant = 'regular' ) {
 		if ( ! fontName ) {
 			return Error( 'Empty font name.' );
@@ -58,6 +89,7 @@ class GoogleFontsLoader {
 			return Error( 'Font does not exists.' );
 		}
 
+		// @see https://developer.mozilla.org/en-US/docs/Web/API/FontFace/FontFace
 		const url = ( font.files[variant] ?? font.files?.regular )?.replace( 'http://', 'https://' );
 		const fontFace = new FontFace( fontName, `url(${url})` );
 		await fontFace.load();
@@ -69,10 +101,23 @@ class GoogleFontsLoader {
 		};
 	}
 
+	/**
+	 * Check if the font exists.
+	 *
+	 * @param {string} fontName The name of the font.
+	 * @param {Document} doc The document where the font is located.
+	 * @returns {boolean} Whether the font exists
+	 */
 	static isFontLoadedInBrowser( fontName, doc = document ) {
 		return doc.fonts.check( `italic bold 16px "${fontName}"` );
 	}
 
+	/**
+	 * Make a request to get the font list.
+	 *
+	 * @param {boolen} force Force the request to trigger again.
+	 * @returns {Promise<import('../components/google-fonts-control/types').GoogleFontItem[] | Promise<import('../components/google-fonts-control/types').GoogleFontItem[]>>} Return the result or the request that is in pending.
+	 */
 	async requestFonts( force = false ) {
 		if ( 'done' === this.status ) {
 			return this.fonts;
