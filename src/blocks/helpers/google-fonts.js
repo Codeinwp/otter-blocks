@@ -59,10 +59,8 @@ class GoogleFontsLoader {
 		}
 
 		const url = ( font.files[variant] ?? font.files?.regular )?.replace( 'http://', 'https://' );
-		console.log( font, variant, url );
 		const fontFace = new FontFace( fontName, `url(${url})` );
 		await fontFace.load();
-		console.log( fontFace, font );
 		doc.fonts.add( fontFace );
 
 		return {
@@ -90,8 +88,6 @@ class GoogleFontsLoader {
 				if ( force ) {
 					this.controller.abort();
 				}
-
-				console.count( 'Create Google Font Request' );
 
 				fetch( 'https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyClGdkPJ1BvgLOol5JAkQY4Mv2lkLYu00k', {
 					signal: this.controller.signal

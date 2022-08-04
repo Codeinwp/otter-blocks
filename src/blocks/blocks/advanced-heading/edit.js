@@ -2,7 +2,6 @@
  * External dependencies
  */
 import hexToRgba from 'hex-rgba';
-import GoogleFontLoader from 'react-google-font-loader';
 
 /**
  * WordPress dependencies.
@@ -186,13 +185,6 @@ const Edit = ({
 						background: ${ attributes.highlightBackground };
 					}` }
 			</style>
-
-			{/* { attributes.fontFamily && (
-				<GoogleFontLoader fonts={ [{
-					font: attributes.fontFamily,
-					weights: attributes.fontVariant && [ `${ attributes.fontVariant + ( 'italic' === attributes.fontStyle ? ':i' : '' ) }` ]
-				}] } />
-			) } */}
 
 			<Controls
 				attributes={ attributes }
