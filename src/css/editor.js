@@ -140,7 +140,7 @@ const CSSEditor = ({
 					<Button
 						variant='secondary'
 						onClick={() => checkInput( editorRef, true )}
-						style={{ width: 'max-content', marginBottom: '20px'}}
+						style={{ width: 'max-content', marginBottom: '20px' }}
 					>
 						{ __( 'Override', 'otter-blocks' ) }
 					</Button>
