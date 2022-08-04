@@ -44,7 +44,7 @@ import ControlPanelControl from '../../../components/control-panel-control/index
 import HTMLAnchorControl from '../../../components/html-anchor-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
 import SyncControl from '../../../components/sync-control/index.js';
-import { isNullObject } from '../../../helpers/helper-functions.js';
+import { isNullObject, removeBoxDefaultValues } from '../../../helpers/helper-functions.js';
 import ToogleGroupControl from '../../../components/toogle-group-control/index.js';
 
 /**
@@ -186,8 +186,6 @@ const Inspector = ({
 		if ( isNullObject( value ) ) {
 			value = undefined;
 		}
-
-		console.log( value );
 
 		if ( 'object' === typeof value ) {
 			value = Object.fromEntries( Object.entries( value ).filter( ([ _, v ]) => null !== v ) );
