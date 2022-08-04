@@ -58,8 +58,11 @@ class GoogleFontsLoader {
 			return Error( 'Font does not exists.' );
 		}
 
-		const fontFace = new FontFace( fontName, `url(${font.files[variant]?.replace( 'http://', 'https://' )})` );
+		const url = ( font.files[variant] ?? font.files?.regular )?.replace( 'http://', 'https://' );
+		console.log( font, variant, url );
+		const fontFace = new FontFace( fontName, `url(${url})` );
 		await fontFace.load();
+		console.log( fontFace, font );
 		doc.fonts.add( fontFace );
 
 		return {

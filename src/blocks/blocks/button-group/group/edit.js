@@ -122,12 +122,12 @@ const Edit = ({
 
 	return (
 		<Fragment>
-			{ attributes.fontFamily && (
+			{/* { attributes.fontFamily && (
 				<GoogleFontLoader fonts={ [{
 					font: attributes.fontFamily,
 					weights: attributes.fontVariant && [ `${ attributes.fontVariant + ( 'italic' === attributes.fontStyle ? ':i' : '' ) }` ]
 				}] } />
-			) }
+			) } */}
 
 			<Inspector
 				attributes={ attributes }
