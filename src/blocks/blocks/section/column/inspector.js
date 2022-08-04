@@ -39,7 +39,10 @@ import ResponsiveControl from '../../../components/responsive-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
 import SyncControl from '../../../components/sync-control/index.js';
-import { isNullObject, removeBoxDefaultValues } from '../../../helpers/helper-functions.js';
+import {
+	isNullObject,
+	removeBoxDefaultValues
+} from '../../../helpers/helper-functions.js';
 
 /**
  *
@@ -90,7 +93,6 @@ const Inspector = ({
 	};
 
 	const getPadding = () => {
-		console.log({ getView });
 		switch ( getView ) {
 		case 'Desktop':
 			return getValue( 'padding' );

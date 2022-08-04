@@ -44,7 +44,10 @@ import ControlPanelControl from '../../../components/control-panel-control/index
 import HTMLAnchorControl from '../../../components/html-anchor-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
 import SyncControl from '../../../components/sync-control/index.js';
-import { isNullObject, removeBoxDefaultValues } from '../../../helpers/helper-functions.js';
+import {
+	isNullObject,
+	removeBoxDefaultValues
+} from '../../../helpers/helper-functions.js';
 import ToogleGroupControl from '../../../components/toogle-group-control/index.js';
 
 /**
