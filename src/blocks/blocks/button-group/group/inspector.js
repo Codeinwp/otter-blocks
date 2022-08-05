@@ -9,8 +9,8 @@ import {
 	PanelBody,
 	RangeControl,
 	SelectControl,
-	__experimentalToggleGroupControl as ToggleGroupControl,
-	__experimentalToggleGroupControlOptionIcon as ToggleGroupControlOptionIcon
+	ButtonGroup,
+	Button
 } from '@wordpress/components';
 
 import {
@@ -18,8 +18,11 @@ import {
 	positionLeft,
 	positionRight,
 	stretchFullWidth,
-	stretchWide,
-	alignNone
+	alignNone,
+	alignJustify,
+	alignLeft,
+	alignCenter,
+	alignRight
 } from '@wordpress/icons';
 
 /**
@@ -28,6 +31,7 @@ import {
 import GoogleFontsControl from '../../../components/google-fonts-control/index.js';
 import SizingControl from '../../../components/sizing-control/index.js';
 import ResponsiveControl from '../../../components/responsive-control';
+import ToogleGroupControl from '../../../components/toogle-group-control/index.js';
 
 /**
  *
@@ -134,8 +138,39 @@ const Inspector = ({
 					label={ __( 'Alignment', 'otter-blocks' ) }
 					className="buttons-alignment-control"
 				>
-
-					<ToggleGroupControl
+					<ToogleGroupControl
+						value={ attributes?.align?.[ currentDevice ] ?? 'none' }
+						options={[
+							{
+								icon: alignNone,
+								label: __( 'None', 'otter-blocks' ),
+								value: 'none'
+							},
+							{
+								icon: stretchFullWidth,
+								label: __( 'Full', 'otter-blocks' ),
+								value: 'full'
+							},
+							{
+								icon: alignLeft,
+								label: __( 'Left', 'otter-blocks' ),
+								value: 'left'
+							},
+							{
+								icon: alignCenter,
+								label: __( 'Center', 'otter-blocks' ),
+								value: 'center'
+							},
+							{
+								icon: alignRight,
+								label: __( 'Right', 'otter-blocks' ),
+								value: 'right'
+							}
+						]}
+						onChange={ onAlignmentChange }
+						hideLabels
+					/>
+					{/* <ToggleGroupControl
 						value={ attributes?.align?.[ currentDevice ] ?? 'none' }
 						onChange={ onAlignmentChange }
 						hideLabelFromVision
@@ -172,7 +207,7 @@ const Inspector = ({
 							showTooltip={ true }
 							aria-label={ __( 'Right', 'otter-blocks' ) }
 						/>
-					</ToggleGroupControl>
+					</ToggleGroupControl> */}
 				</ResponsiveControl>
 			</PanelBody>
 
