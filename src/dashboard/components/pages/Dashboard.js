@@ -119,6 +119,16 @@ const Dashboard = ({
 
 				<PanelRow>
 					<ToggleControl
+						label={ __( 'Enable Rich Schema', 'otter-blocks' ) }
+						help={ __( 'Control if you want to show rich schema in Product Review Block.', 'otter-blocks' ) }
+						checked={ Boolean( getOption( 'themeisle_blocks_settings_disable_review_schema' ) ) }
+						disabled={ 'saving' === status }
+						onChange={ () => updateOption( 'themeisle_blocks_settings_disable_review_schema', ! Boolean( getOption( 'themeisle_blocks_settings_disable_review_schema' ) ) ) }
+					/>
+				</PanelRow>
+
+				<PanelRow>
+					<ToggleControl
 						label={ __( 'Anonymous Data Tracking.', 'otter-blocks' ) }
 						help={ __( 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.', 'otter-blocks' ) }
 						checked={ 'yes' === getOption( 'otter_blocks_logger_flag' ) ? true : false }

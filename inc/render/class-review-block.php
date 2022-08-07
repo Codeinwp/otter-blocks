@@ -28,7 +28,7 @@ class Review_Block {
 			$attributes = apply_filters( 'otter_blocks_review_block_woocommerce', $attributes );
 		}
 
-		if ( isset( $attributes['title'] ) && ! empty( $attributes['title'] ) && isset( $attributes['features'] ) && count( $attributes['features'] ) > 0 ) {
+		if ( isset( $attributes['title'] ) && ! empty( $attributes['title'] ) && isset( $attributes['features'] ) && count( $attributes['features'] ) > 0 && get_option( 'themeisle_blocks_settings_disable_review_schema', true ) ) {
 			add_action(
 				'wp_footer',
 				function() use ( $attributes ) {
@@ -244,6 +244,50 @@ class Review_Block {
 				'name'  => get_the_author(),
 			),
 		);
+
+		if ( isset( $attributes['pros'] ) && count( $attributes['pros'] ) > 0 ) {
+			$count = 1;
+			$items = array();
+
+			foreach ( $attributes['pros'] as $pro ) {
+				$item = array(
+					'@type'    => 'ListItem',
+					'position' => $count,
+					'name'     => esc_html( $pro ),
+				);
+
+				$count++;
+
+				array_push( $items, $item );
+			}
+
+			$json['review']['positiveNotes'] = array(
+				'@type'           => 'ItemList',
+				'itemListElement' => $items,
+			);
+		}
+
+		if ( isset( $attributes['cons'] ) && count( $attributes['cons'] ) > 0 ) {
+			$count = 1;
+			$items = array();
+
+			foreach ( $attributes['cons'] as $con ) {
+				$item = array(
+					'@type'    => 'ListItem',
+					'position' => $count,
+					'name'     => esc_html( $con ),
+				);
+
+				$count++;
+
+				array_push( $items, $item );
+			}
+
+			$json['review']['negativeNotes'] = array(
+				'@type'           => 'ItemList',
+				'itemListElement' => $items,
+			);
+		}
 
 		if ( is_singular() && has_blocks( $post->post_content ) ) {
 			$review_blocks = array_filter(
