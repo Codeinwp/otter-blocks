@@ -44,7 +44,10 @@ import ControlPanelControl from '../../../components/control-panel-control/index
 import HTMLAnchorControl from '../../../components/html-anchor-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
 import SyncControl from '../../../components/sync-control/index.js';
-import { isNullObject } from '../../../helpers/helper-functions.js';
+import {
+	isNullObject,
+	removeBoxDefaultValues
+} from '../../../helpers/helper-functions.js';
 import ToogleGroupControl from '../../../components/toogle-group-control/index.js';
 
 /**
@@ -131,9 +134,9 @@ const Inspector = ({
 		case 'Desktop':
 			return getValue( 'padding' );
 		case 'Tablet':
-			return merge( getValue( 'padding' ), getValue( 'paddingTablet' ) );
+			return merge({ ...getValue( 'padding' ) }, getValue( 'paddingTablet' ) );
 		case 'Mobile':
-			return merge( getValue( 'padding' ), getValue( 'paddingTablet' ), getValue( 'paddingMobile' ) ) ;
+			return merge({ ...getValue( 'padding' ) }, getValue( 'paddingTablet' ), getValue( 'paddingMobile' ) ) ;
 		default:
 			return undefined;
 		}
@@ -148,9 +151,9 @@ const Inspector = ({
 		case 'Desktop':
 			return setAttributes({ padding: value });
 		case 'Tablet':
-			return setAttributes({ paddingTablet: value });
+			return setAttributes({ paddingTablet: removeBoxDefaultValues( value, attributes.padding ) });
 		case 'Mobile':
-			return setAttributes({ paddingMobile: value });
+			return setAttributes({ paddingMobile: removeBoxDefaultValues( value, { ...attributes.padding, ...attributes.paddingTablet }) });
 		default:
 			return undefined;
 		}
@@ -174,9 +177,9 @@ const Inspector = ({
 		case 'Desktop':
 			return getValue( 'margin' );
 		case 'Tablet':
-			return merge( getValue( 'margin' ), getValue( 'marginTablet' ) );
+			return merge({ ...getValue( 'margin' ) }, getValue( 'marginTablet' ) );
 		case 'Mobile':
-			return merge( getValue( 'margin' ), getValue( 'marginTablet' ), getValue( 'marginMobile' ) );
+			return merge({ ...getValue( 'margin' ) }, getValue( 'marginTablet' ), getValue( 'marginMobile' ) );
 		default:
 			return undefined;
 		}
@@ -187,8 +190,6 @@ const Inspector = ({
 			value = undefined;
 		}
 
-		console.log( value );
-
 		if ( 'object' === typeof value ) {
 			value = Object.fromEntries( Object.entries( value ).filter( ([ _, v ]) => null !== v ) );
 		}
@@ -197,9 +198,9 @@ const Inspector = ({
 		case 'Desktop':
 			return setAttributes({ margin: value });
 		case 'Tablet':
-			return setAttributes({ marginTablet: value });
+			return setAttributes({ marginTablet: removeBoxDefaultValues( value, attributes.margin ) });
 		case 'Mobile':
-			return setAttributes({ marginMobile: value });
+			return setAttributes({ marginMobile: removeBoxDefaultValues( value, { ...attributes.margin, ...attributes.marginTablet }) });
 		default:
 			return undefined;
 		}
