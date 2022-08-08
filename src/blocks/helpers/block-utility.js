@@ -276,11 +276,6 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 		idGenerationStatus[clientId] = 'free';
 	}
 
-	// TODO: remove after testing
-	if ( 'busy' === idGenerationStatus[clientId]) {
-		console.log( 'Block Id: ' + clientId + '. Another block with the same cliendID is already generating' );
-	}
-
 	return (
 		'busy' !== idGenerationStatus[clientId] &&
 		( ! isSharedBlock( clientId ) || getSelectedBlockClientId() === clientId )
