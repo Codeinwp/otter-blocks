@@ -1,0 +1,16 @@
+name: InstaWP WordPress Testing
+
+on:
+  pull_request:
+    types: [opened]
+
+jobs:
+  create-wp-for-testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: HardeepAsrani/otter-performance-testing@latest
+        with:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          INSTAWP_TOKEN: ${{ secrets.INSTAWP_TOKEN }}
+          INSTAWP_TEMPLATE_SLUG: otter-qa
+          ARTIFACT_URL: https://downloads.wordpress.org/plugin/otter-blocks.zip
