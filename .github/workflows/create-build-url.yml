@@ -107,3 +107,27 @@ jobs:
           comment-id: ${{ steps.find-comment.outputs.comment-id }}
           edit-mode: replace
           body: ${{ steps.get-comment-body.outputs.body }}
+
+  create-production-site:
+    if: ${{ github.head_ref && github.head_ref != null }}
+    runs-on: ubuntu-latest
+    needs: dev-zip
+    steps:
+      - uses: HardeepAsrani/otter-performance-testing@primary
+        with:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          INSTAWP_TOKEN: ${{ secrets.INSTAWP_TOKEN }}
+          INSTAWP_TEMPLATE_SLUG: otter-qa
+          ARTIFACT_URL: https://downloads.wordpress.org/plugin/otter-blocks.zip
+
+  create-development-site:
+    if: ${{ github.head_ref && github.head_ref != null }}
+    runs-on: ubuntu-latest
+    needs: dev-zip
+    steps:
+      - uses: HardeepAsrani/otter-performance-testing@primary
+        with:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          INSTAWP_TOKEN: ${{ secrets.INSTAWP_TOKEN }}
+          INSTAWP_TEMPLATE_SLUG: otter-qa
+          ARTIFACT_URL: https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/otter-blocks.zip
