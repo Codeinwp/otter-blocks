@@ -6,113 +6,113 @@ on:
     branches-ignore:
       - "update_dependencies"
 jobs:
-  dev-zip:
-    name: Build ZIP and upload to s3
-    if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
-    runs-on: ubuntu-latest
-    outputs:
-      branch-name: ${{ steps.retrieve-branch-name.outputs.branch_name }}
-      git-sha-8: ${{ steps.retrieve-git-sha-8.outputs.sha8 }}
-    steps:
-      - name: Check out source files
-        uses: actions/checkout@v2
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - name: Configure Composer cache
-        uses: actions/cache@v1
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-      - name: Install composer deps
-        run: composer install --no-dev --prefer-dist --no-progress --no-suggest
-      - name: Install npm deps
-        run: npm ci
-      - name: Build files
-        run: npm run build
-      - name: Create zip
-        run: npm run dist
-      - name: Remove build folder
-        run: rm -rf build
-      - name: Build dev files
-        run: npm run build-dev
-      - name: Create zip
-        run: npm run dist-dev
-      - name: Retrieve branch name
-        id: retrieve-branch-name
-        run: echo "::set-output name=branch_name::$(REF=${GITHUB_HEAD_REF:-$GITHUB_REF} && echo ${REF#refs/heads/} | sed 's/\//-/g')"
-      - name: Retrieve git SHA-8 string
-        id: retrieve-git-sha-8
-        run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
-      - name: Upload Latest Version to S3
-        uses: jakejarvis/s3-sync-action@master
-        with:
-          args: --acl public-read --follow-symlinks --delete
-        env:
-          AWS_S3_BUCKET: ${{ secrets.AWS_DEV_BUCKET }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.S3_AWS_KEY_ARTIFACTS }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_AWS_SECRET_ARTIFACTS }}
-          SOURCE_DIR: artifact/
-          DEST_DIR: ${{ github.event.pull_request.base.repo.name }}-${{ steps.retrieve-branch-name.outputs.branch_name }}-${{ steps.retrieve-git-sha-8.outputs.sha8 }}/
+  # dev-zip:
+  #   name: Build ZIP and upload to s3
+  #   if: github.event.pull_request.draft == false && github.event.pull_request.head.repo.full_name == github.event.pull_request.base.repo.full_name
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     branch-name: ${{ steps.retrieve-branch-name.outputs.branch_name }}
+  #     git-sha-8: ${{ steps.retrieve-git-sha-8.outputs.sha8 }}
+  #   steps:
+  #     - name: Check out source files
+  #       uses: actions/checkout@v2
+  #     - name: Get Composer Cache Directory
+  #       id: composer-cache
+  #       run: |
+  #         echo "::set-output name=dir::$(composer config cache-files-dir)"
+  #     - name: Configure Composer cache
+  #       uses: actions/cache@v1
+  #       with:
+  #         path: ${{ steps.composer-cache.outputs.dir }}
+  #         key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-composer-
+  #     - name: Install composer deps
+  #       run: composer install --no-dev --prefer-dist --no-progress --no-suggest
+  #     - name: Install npm deps
+  #       run: npm ci
+  #     - name: Build files
+  #       run: npm run build
+  #     - name: Create zip
+  #       run: npm run dist
+  #     - name: Remove build folder
+  #       run: rm -rf build
+  #     - name: Build dev files
+  #       run: npm run build-dev
+  #     - name: Create zip
+  #       run: npm run dist-dev
+  #     - name: Retrieve branch name
+  #       id: retrieve-branch-name
+  #       run: echo "::set-output name=branch_name::$(REF=${GITHUB_HEAD_REF:-$GITHUB_REF} && echo ${REF#refs/heads/} | sed 's/\//-/g')"
+  #     - name: Retrieve git SHA-8 string
+  #       id: retrieve-git-sha-8
+  #       run: echo "::set-output name=sha8::$(echo ${GITHUB_SHA} | cut -c1-8)"
+  #     - name: Upload Latest Version to S3
+  #       uses: jakejarvis/s3-sync-action@master
+  #       with:
+  #         args: --acl public-read --follow-symlinks --delete
+  #       env:
+  #         AWS_S3_BUCKET: ${{ secrets.AWS_DEV_BUCKET }}
+  #         AWS_ACCESS_KEY_ID: ${{ secrets.S3_AWS_KEY_ARTIFACTS }}
+  #         AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_AWS_SECRET_ARTIFACTS }}
+  #         SOURCE_DIR: artifact/
+  #         DEST_DIR: ${{ github.event.pull_request.base.repo.name }}-${{ steps.retrieve-branch-name.outputs.branch_name }}-${{ steps.retrieve-git-sha-8.outputs.sha8 }}/
 
-  comment-on-pr:
-    name: Comment on PR with links to plugin ZIPs
-    if: ${{ github.head_ref && github.head_ref != null }}
-    runs-on: ubuntu-latest
-    needs: dev-zip
-    env:
-      CI: true
-      GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
-    outputs:
-      pr_number: ${{ steps.get-pr-number.outputs.num }}
-      comment_body: ${{ steps.get-comment-body.outputs.body }}
-    steps:
-      - name: Get PR number
-        id: get-pr-number
-        run: echo "::set-output name=num::$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')"
+  # comment-on-pr:
+  #   name: Comment on PR with links to plugin ZIPs
+  #   if: ${{ github.head_ref && github.head_ref != null }}
+  #   runs-on: ubuntu-latest
+  #   needs: dev-zip
+  #   env:
+  #     CI: true
+  #     GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+  #   outputs:
+  #     pr_number: ${{ steps.get-pr-number.outputs.num }}
+  #     comment_body: ${{ steps.get-comment-body.outputs.body }}
+  #   steps:
+  #     - name: Get PR number
+  #       id: get-pr-number
+  #       run: echo "::set-output name=num::$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')"
 
-      - name: Check if a comment was already made
-        id: find-comment
-        uses: peter-evans/find-comment@v1
-        with:
-          issue-number: ${{ steps.get-pr-number.outputs.num }}
-          comment-author: github-actions[bot]
-          body-includes: Download Otter – Page Builder Blocks & Extensions for Gutenberg
+  #     - name: Check if a comment was already made
+  #       id: find-comment
+  #       uses: peter-evans/find-comment@v1
+  #       with:
+  #         issue-number: ${{ steps.get-pr-number.outputs.num }}
+  #         comment-author: github-actions[bot]
+  #         body-includes: Download Otter – Page Builder Blocks & Extensions for Gutenberg
 
-      - name: Get comment body
-        id: get-comment-body
-        run: |
-          body="Plugin build for ${{ github.event.pull_request.head.sha }} is ready :bellhop_bell:!
-          - Download Otter – Page Builder Blocks & Extensions for Gutenberg - [Production](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/otter-blocks.zip) ~ [Development](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/otter-blocks-dev.zip)
-          - Download Otter Pro - [Production](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/otter-pro.zip) ~ [Development](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/otter-pro-dev.zip)
-          - Download Blocks Animation - [Production](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/blocks-animation.zip) ~ [Development](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/blocks-animation-dev.zip)
-          - Download Blocks CSS - [Production](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/blocks-css.zip) ~ [Development](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/blocks-css-dev.zip)
-          - Download Blocks Export Import - [Production](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/blocks-export-import.zip) ~ [Development](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/blocks-export-import-dev.zip)"
-          body="${body//$'\n'/'%0A'}"
-          echo "::set-output name=body::$body"
-      - name: Create comment on PR with links to plugin builds
-        if: ${{ steps.find-comment.outputs.comment-id == '' }}
-        uses: peter-evans/create-or-update-comment@v1
-        with:
-          issue-number: ${{ steps.get-pr-number.outputs.num }}
-          body: ${{ steps.get-comment-body.outputs.body }}
+  #     - name: Get comment body
+  #       id: get-comment-body
+  #       run: |
+  #         body="Plugin build for ${{ github.event.pull_request.head.sha }} is ready :bellhop_bell:!
+  #         - Download Otter – Page Builder Blocks & Extensions for Gutenberg - [Production](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/otter-blocks.zip) ~ [Development](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/otter-blocks-dev.zip)
+  #         - Download Otter Pro - [Production](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/otter-pro.zip) ~ [Development](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/otter-pro-dev.zip)
+  #         - Download Blocks Animation - [Production](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/blocks-animation.zip) ~ [Development](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/blocks-animation-dev.zip)
+  #         - Download Blocks CSS - [Production](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/blocks-css.zip) ~ [Development](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/blocks-css-dev.zip)
+  #         - Download Blocks Export Import - [Production](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/blocks-export-import.zip) ~ [Development](https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/blocks-export-import-dev.zip)"
+  #         body="${body//$'\n'/'%0A'}"
+  #         echo "::set-output name=body::$body"
+  #     - name: Create comment on PR with links to plugin builds
+  #       if: ${{ steps.find-comment.outputs.comment-id == '' }}
+  #       uses: peter-evans/create-or-update-comment@v1
+  #       with:
+  #         issue-number: ${{ steps.get-pr-number.outputs.num }}
+  #         body: ${{ steps.get-comment-body.outputs.body }}
 
-      - name: Update comment on PR with links to plugin builds
-        if: ${{ steps.find-comment.outputs.comment-id != '' }}
-        uses: peter-evans/create-or-update-comment@v1
-        with:
-          comment-id: ${{ steps.find-comment.outputs.comment-id }}
-          edit-mode: replace
-          body: ${{ steps.get-comment-body.outputs.body }}
+  #     - name: Update comment on PR with links to plugin builds
+  #       if: ${{ steps.find-comment.outputs.comment-id != '' }}
+  #       uses: peter-evans/create-or-update-comment@v1
+  #       with:
+  #         comment-id: ${{ steps.find-comment.outputs.comment-id }}
+  #         edit-mode: replace
+  #         body: ${{ steps.get-comment-body.outputs.body }}
 
   run-tests:
     name: Run Performance Tests
     if: ${{ github.head_ref && github.head_ref != null }}
     runs-on: ubuntu-latest
-    needs: dev-zip
+    # needs: dev-zip
     steps:
       - name: Create Production Site
         id: create-production
@@ -124,32 +124,32 @@ jobs:
           REPO_ID: 46
           ARTIFACT_URL: https://downloads.wordpress.org/plugin/otter-blocks.zip
       - name: Run Tests on Production
-        id: production-tests
         uses: calibreapp/github-actions@main
         env:
           CALIBRE_API_TOKEN: ${{ secrets.CALIBRE_API_TOKEN }}
         with:
           command: test create ${{ steps.create-production.outputs.url }} --location=Sydney
       - name: Get result
-        id: create-development
+        id: production-tests
         run: echo "${{ steps.set-result.outputs.result }}"
-      - name: Create Development Site
-        uses: HardeepAsrani/otter-performance-testing@primary
-        with:
-          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
-          INSTAWP_TOKEN: ${{ secrets.INSTAWP_TOKEN }}
-          INSTAWP_TEMPLATE_SLUG: otter-qa
-          REPO_ID: 46
-          ARTIFACT_URL: https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/otter-blocks.zip
-      - name: Run Tests on Development
-        uses: calibreapp/github-actions@main
-        env:
-          CALIBRE_API_TOKEN: ${{ secrets.CALIBRE_API_TOKEN }}
-        with:
-          command: test create ${{ steps.create-development.outputs.url }} --location=Sydney
-      - name: Get result
-        id: development-tests
-        run: echo "${{ steps.set-result.outputs.result }}"
+      # - name: Create Development Site
+      #   id: create-development
+      #   uses: HardeepAsrani/otter-performance-testing@primary
+      #   with:
+      #     GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+      #     INSTAWP_TOKEN: ${{ secrets.INSTAWP_TOKEN }}
+      #     INSTAWP_TEMPLATE_SLUG: otter-qa
+      #     REPO_ID: 46
+      #     ARTIFACT_URL: https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/otter-blocks.zip
+      # - name: Run Tests on Development
+      #   uses: calibreapp/github-actions@main
+      #   env:
+      #     CALIBRE_API_TOKEN: ${{ secrets.CALIBRE_API_TOKEN }}
+      #   with:
+      #     command: test create ${{ steps.create-development.outputs.url }} --location=Sydney
+      # - name: Get result
+      #   id: development-tests
+      #   run: echo "${{ steps.set-result.outputs.result }}"
       - name: Comment Results
         uses: NejcZdovc/comment-pr@v1
         with:
@@ -159,10 +159,5 @@ jobs:
                         <summary>WordPress.org Version</summary>
                         ${{ steps.production-tests.outputs.result }}
                       </details>
-
-                      <details>
-                          <summary>Development Version</summary>
-                          ${{ steps.development-tests.outputs.result }}
-                      </details>"
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
