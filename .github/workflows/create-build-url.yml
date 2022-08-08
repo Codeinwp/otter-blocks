@@ -158,6 +158,6 @@ jobs:
                       <details>
                         <summary>WordPress.org Version</summary>
                         ${{ steps.production-tests.outputs.result }}
-                      </details>
+                      </details>"
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
