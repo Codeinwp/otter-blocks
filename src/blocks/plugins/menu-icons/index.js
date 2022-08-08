@@ -23,6 +23,7 @@ import { addFilter } from '@wordpress/hooks';
 /**
  * Internal dependencies.
  */
+import './style.scss';
 import './editor.scss';
 
 const IconPickerControl = lazy( () => import( '../../components/icon-picker-control/toolbar.js' ) );

@@ -105,38 +105,9 @@ domReady( () => {
 		threshold: [ 0.6 ]
 	};
 
-	let styles = `
-		.o-anim-typing-caret::after {
-			font-weight: 100;
-			content: '|';
-			color: #2E3D48;
-			animation: 1s blink step-end infinite;
-		}
-	
-		@keyframes blink {
-			from, to {
-			  color: transparent;
-		   }
-			50% {
-			  color: black;
-		   }
-		}
-	`;
-
-	styles = styles.replace( /(\r\n|\n|\r|\t)/gm, '' );
-
-	let hasStyles = false;
-
 	setTimeout( () => {
 		const anims = document.querySelectorAll( 'o-anim-typing' );
 		anims.forEach( ( elem ) => {
-			if ( ! hasStyles ) {
-				const styleSheet = document.createElement( 'style' );
-				styleSheet.innerText = styles;
-				document.head.appendChild( styleSheet );
-				hasStyles = true;
-			}
-
 			const startTyping = initTyping( elem );
 			const observer = new IntersectionObserver( ( entries ) => {
 				entries.forEach( entry => {

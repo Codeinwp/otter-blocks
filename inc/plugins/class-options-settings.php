@@ -81,17 +81,6 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
-			'themeisle_blocks_settings_optimize_animations_css',
-			array(
-				'type'         => 'boolean',
-				'description'  => __( 'Optimize Animations CSS.', 'otter-blocks' ),
-				'show_in_rest' => true,
-				'default'      => true,
-			)
-		);
-
-		register_setting(
-			'themeisle_blocks_settings',
 			'otter_blocks_logger_flag',
 			array(
 				'type'         => 'string',

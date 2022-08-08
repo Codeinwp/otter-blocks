@@ -109,16 +109,6 @@ const Dashboard = ({
 
 				<PanelRow>
 					<ToggleControl
-						label={ __( 'Optimize Animations CSS', 'otter-blocks' ) }
-						help={ __( 'Only load CSS for the animations that are used on the page. We recommend you to regenerate styles after you toggle this option.', 'otter-blocks' ) }
-						checked={ Boolean( getOption( 'themeisle_blocks_settings_optimize_animations_css' ) ) }
-						disabled={ 'saving' === status || ! Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ) }
-						onChange={ () => updateOption( 'themeisle_blocks_settings_optimize_animations_css', ! Boolean( getOption( 'themeisle_blocks_settings_optimize_animations_css' ) ) ) }
-					/>
-				</PanelRow>
-
-				<PanelRow>
-					<ToggleControl
 						label={ __( 'Anonymous Data Tracking.', 'otter-blocks' ) }
 						help={ __( 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.', 'otter-blocks' ) }
 						checked={ 'yes' === getOption( 'otter_blocks_logger_flag' ) ? true : false }

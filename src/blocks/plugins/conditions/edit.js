@@ -241,47 +241,18 @@ const Separator = ({ label }) => {
 
 const Edit = ({
 	attributes,
-	setAttributes: _setAttributes
+	setAttributes
 }) => {
-
-	const [ buffer, setBuffer ] = useState( null );
 	const [ conditions, setConditions ] = useState({});
 	const [ flatConditions, setFlatConditions ] = useState([]);
 	const [ toggleVisibility, setToggleVisibility ] = useState([]);
-
-	const setAttributes = ( attrs ) => {
-
-		if ( window.wp.hasOwnProperty( 'customize' ) && window.wp.customize ) {
-
-			/**
-			 * Customizer only use shallow comparision for checking the changes, thus conditions updates are not detected.
-			 * Trick: By changing the numbers of the conditions we trigger the update.
-			 * The buffer will revert the trick to the correct value.
-			 */
-			const otterConditions = [ ...( attrs.otterConditions || []), []];
-			_setAttributes({ otterConditions });
-			setBuffer( attrs );
-		} else {
-			_setAttributes( attrs );
-		}
-
-	};
-
-	/**
-	 * Use an intermediary buffer to add the real attributes to the block.
-	 */
-	useEffect( () => {
-		if ( buffer &&  window.wp.hasOwnProperty( 'customize' ) && window.wp.customize ) {
-			_setAttributes( buffer );
-		}
-	}, [ buffer ]);
 
 	useEffect( () => {
 		if ( ! Boolean( attributes?.otterConditions?.length ) ) {
 			return;
 		}
 
-		let otterConditions = [ ...attributes.otterConditions?.filter( c => ! isEmpty( c ) ) ];
+		let otterConditions = attributes.otterConditions?.filter( c => ! isEmpty( c ) );
 
 		if ( ! Boolean( otterConditions.length ) ) {
 			otterConditions = undefined;
