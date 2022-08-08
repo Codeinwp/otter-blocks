@@ -124,14 +124,14 @@ jobs:
           REPO_ID: 46
           ARTIFACT_URL: https://downloads.wordpress.org/plugin/otter-blocks.zip
       - name: Run Tests on Production
+        id: production-tests
         uses: calibreapp/github-actions@main
         env:
           CALIBRE_API_TOKEN: ${{ secrets.CALIBRE_API_TOKEN }}
         with:
           command: test create ${{ steps.create-production.outputs.url }} --location=Sydney
       - name: Get result
-        id: production-tests
-        run: echo "${{ steps.set-result.outputs.result }}"
+        run: echo "${{ steps.production-tests.outputs }}"
       # - name: Create Development Site
       #   id: create-development
       #   uses: HardeepAsrani/otter-performance-testing@primary
