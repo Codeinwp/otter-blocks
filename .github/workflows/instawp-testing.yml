@@ -2,7 +2,7 @@ name: InstaWP WordPress Testing
 
 on:
   pull_request:
-    types: [opened]
+    types: [ opened, synchronize, ready_for_review ]
 
 jobs:
   create-wp-for-testing:
