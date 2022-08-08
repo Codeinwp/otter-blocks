@@ -126,6 +126,7 @@ jobs:
       - name: Comment
         uses: NejcZdovc/comment-pr@v1
         with:
+          identifier: "BUNDLE_SIZE_RESULTS"
           file: 'comment.md'
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}

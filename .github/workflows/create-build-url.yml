@@ -108,7 +108,8 @@ jobs:
           edit-mode: replace
           body: ${{ steps.get-comment-body.outputs.body }}
 
-  create-site:
+  run-tests:
+    name: Run Performance Tests
     if: ${{ github.head_ref && github.head_ref != null }}
     runs-on: ubuntu-latest
     needs: dev-zip
@@ -130,9 +131,9 @@ jobs:
         with:
           command: test create ${{ steps.create-production.outputs.url }} --location=Sydney
       - name: Get result
+        id: create-development
         run: echo "${{ steps.set-result.outputs.result }}"
       - name: Create Development Site
-        id: create-development
         uses: HardeepAsrani/otter-performance-testing@primary
         with:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
@@ -141,17 +142,18 @@ jobs:
           REPO_ID: 46
           ARTIFACT_URL: https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/otter-blocks.zip
       - name: Run Tests on Development
-        id: development-tests
         uses: calibreapp/github-actions@main
         env:
           CALIBRE_API_TOKEN: ${{ secrets.CALIBRE_API_TOKEN }}
         with:
           command: test create ${{ steps.create-development.outputs.url }} --location=Sydney
       - name: Get result
+        id: development-tests
         run: echo "${{ steps.set-result.outputs.result }}"
       - name: Comment Results
         uses: NejcZdovc/comment-pr@v1
         with:
+          identifier: "CALIBRE_TEST_RESULTS"
           message: "## Calibre Test Results
                       <details>
                         <summary>WordPress.org Version</summary>
