@@ -128,7 +128,7 @@ describe( 'Post Editor Performance', () => {
 
 		// Measuring typing performance.
 		await insertBlock( 'Paragraph' );
-		let i = 20;
+		let i = 100;
 		await page.tracing.start({
 			path: traceFile,
 			screenshots: false,

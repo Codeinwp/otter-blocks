@@ -34,22 +34,6 @@ import {
 jest.setTimeout( 1000000 );
 
 describe( 'Otter Block ID', () => {
-	const results = {
-		serverResponse: [],
-		firstPaint: [],
-		domContentLoaded: [],
-		loaded: [],
-		firstContentfulPaint: [],
-		firstBlock: [],
-		type: [],
-		focus: [],
-		listViewOpen: [],
-		inserterOpen: [],
-		inserterHover: [],
-		inserterSearch: []
-	};
-	const traceFile = __dirname + '/trace.json';
-	let traceResults;
 
 	beforeAll( async() => {
 		const html = readFile(
@@ -73,15 +57,6 @@ describe( 'Otter Block ID', () => {
 		}, html );
 
 		await saveDraft();
-	});
-
-	afterAll( async() => {
-		const resultsFilename = basename( __filename, '.js' ) + '.results.json';
-		writeFileSync(
-			join( __dirname, resultsFilename ),
-			JSON.stringify( results, null, 2 )
-		);
-		deleteFile( traceFile );
 	});
 
 	beforeEach( async() => {
