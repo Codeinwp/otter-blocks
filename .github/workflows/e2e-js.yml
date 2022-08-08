@@ -54,7 +54,7 @@ jobs:
       # run the wp-env setup command (wp-env start)
       - name: setup wp env
         run: |
-          npm run wp-env
+          npm run wp-env start
 
       # create a folder for the screenshots, this folder will be uploaded as artifact
       - run: mkdir screenshots
