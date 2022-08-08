@@ -127,7 +127,7 @@ jobs:
         env:
           CALIBRE_API_TOKEN: ${{ secrets.CALIBRE_API_TOKEN }}
         with:
-          command: test create ${{ steps.create-production.outputs.site }} --location=Sydney
+          command: test create ${{ steps.create-production.outputs.url }} --location=Sydney
       - name: Get result
         run: echo "${{ steps.set-result.outputs.result }}"
       - name: Create Development Site
@@ -144,6 +144,6 @@ jobs:
         env:
           CALIBRE_API_TOKEN: ${{ secrets.CALIBRE_API_TOKEN }}
         with:
-          command: test create ${{ steps.create-development.outputs.site }} --location=Sydney
+          command: test create ${{ steps.create-development.outputs.url }} --location=Sydney
       - name: Get result
         run: echo "${{ steps.set-result.outputs.result }}"
