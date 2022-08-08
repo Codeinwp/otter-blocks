@@ -8,7 +8,7 @@ jobs:
   create-wp-for-testing:
     runs-on: ubuntu-latest
     steps:
-      - uses: HardeepAsrani/otter-performance-testing@latest
+      - uses: HardeepAsrani/otter-performance-testing@v1.1
         with:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
           INSTAWP_TOKEN: ${{ secrets.INSTAWP_TOKEN }}
