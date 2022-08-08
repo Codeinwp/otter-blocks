@@ -130,7 +130,10 @@ jobs:
       - name: Run Command
         id: production-tests
         run: |
-          output=$(calibre test create ${{ steps.create-production.outputs.url }} --location=Sydney)
+          script -c "calibre test create ${{ steps.create-production.outputs.url }} --location=Sydney --waitForTest=true" output.txt
+          FSBAK=$IFS
+          IFS=" "
+          output=`cat output.txt`
           echo "::set-output name=result::$output"
       # - name: Run Tests on Production
       #   id: production-tests
