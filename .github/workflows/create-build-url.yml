@@ -152,8 +152,15 @@ jobs:
       - name: Comment Results
         uses: NejcZdovc/comment-pr@v1
         with:
-          file: 'performance.md'
+          message: "## Calibre Test Results
+                      <details>
+                        <summary>WordPress.org Version</summary>
+                        ${{ steps.production-tests.outputs.result }}
+                      </details>
+
+                      <details>
+                          <summary>Development Version</summary>
+                          ${{ steps.development-tests.outputs.result }}
+                      </details>"
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
-          PRODUCTION: ${{ steps.production-tests.outputs.result }}
-          DEVELOPMENT: ${{ steps.development-tests.outputs.result }}
