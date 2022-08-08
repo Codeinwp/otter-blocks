@@ -46,7 +46,8 @@ describe( 'Post Editor Performance', () => {
 		listViewOpen: [],
 		inserterOpen: [],
 		inserterHover: [],
-		inserterSearch: []
+		inserterSearch: [],
+		typingSpeedAvg: -1
 	};
 	const traceFile = __dirname + '/trace.json';
 	let traceResults;
@@ -165,6 +166,7 @@ describe( 'Post Editor Performance', () => {
 		expect( 0 < results.type.length ).toBe( true );
 		const sum = results.type.reduce( ( s, x ) => s + x, 0 );
 		const avg = sum / results.type.length;
+		results.typingSpeedAvg = avg;
 		expect( 60 > avg ).toBe( true );
 	});
 
