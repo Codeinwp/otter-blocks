@@ -130,7 +130,7 @@ jobs:
       - name: Run Command
         id: production-tests
         run: |
-          script -c "calibre test create ${{ steps.create-production.outputs.url }} --location=Sydney --waitForTest=true" output.txt
+          script -c "calibre test create ${{ steps.create-production.outputs.url }} --location=Sydney" output.txt
           output=$( cat output.txt )
           echo "::set-output name=result::$output"
       - name: Get result
