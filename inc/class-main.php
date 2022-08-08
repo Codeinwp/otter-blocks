@@ -270,9 +270,7 @@ class Main {
 	public function after_update_migration() {
 		$db_version = get_option( 'themeisle_blocks_db_version', 0 );
 
-		// We don't want to regenerate block styles for every update,
-		// only if user is switching from an older version to 2.0.9 or above.
-		if ( version_compare( $db_version, '2.0.9', '<' ) ) {
+		if ( version_compare( $db_version, OTTER_BLOCKS_VERSION, '<' ) ) {
 			Dashboard_Server::regenerate_styles();
 		}
 
