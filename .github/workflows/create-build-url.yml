@@ -131,7 +131,8 @@ jobs:
         id: production-tests
         run: |
           script -c "calibre test create ${{ steps.create-production.outputs.url }} --location=Sydney --waitForTest=true" output.txt
-          echo "::set-output name=result::$(cat output.txt)"
+          output=$( cat output.txt )
+          echo "::set-output name=result::$output"
       - name: Get result
         run: echo "${{ steps.production-tests.outputs.result }}"
       - name: Comment Results
