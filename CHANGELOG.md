@@ -1,3 +1,8 @@
+##### [Version 2.0.10](https://github.com/Codeinwp/otter-blocks/compare/v2.0.9...v2.0.10) (2022-08-04)
+
+- Fix Section Spacing inheritance issue
+- Only load Animations on front-end which are being used
+
 ##### [Version 2.0.9](https://github.com/Codeinwp/otter-blocks/compare/v2.0.8...v2.0.9) (2022-07-29)
 
 - Add Dynamic Image Module

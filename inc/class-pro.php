@@ -107,6 +107,10 @@ class Pro {
 	public static function should_show_upsell() {
 		$show_upsell = false;
 
+		if ( defined( 'OTTER_PRO_VERSION' ) ) {
+			return $show_upsell;
+		}
+
 		$installed     = get_option( 'otter_blocks_install' );
 		$notifications = get_option( 'themeisle_blocks_settings_notifications', array() );
 
