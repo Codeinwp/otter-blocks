@@ -1,0 +1,63 @@
+name: Test e2e for JS
+
+on: [pull_request]
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # get and output the composer cache directory
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: |
+          echo "::set-output name=dir::$(composer config cache-files-dir)"
+
+      # setup the composer cache (vendor) with github actions cache and the cache dir defined in the previous step
+      - uses: actions/cache@v1
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-composer-
+
+      # run composer install
+      - name: Install composer
+        run: composer install --prefer-dist --no-progress --no-suggest
+
+      # setup the node cache (node_modules) with github actions cache
+      - name: Cache Node - npm
+        uses: actions/cache@v1
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-cache-
+
+      # run the ci equivalent of npm install
+      - name: npm ci
+        run: |
+          npm ci
+          
+          
+      - name: Make dev build
+        run: |
+          npm run build-dev
+
+      # run the wp-env setup command (wp-env start)
+      - name: setup wp env
+        run: |
+          npm run wp-env
+
+      # create a folder for the screenshots, this folder will be uploaded as artifact
+      - run: mkdir screenshots
+
+      # run the node.js puppeteer script (which takes the screenshots and controls chrome)
+      - run: npm run test:e2e

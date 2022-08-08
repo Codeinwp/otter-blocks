@@ -95,30 +95,34 @@ describe( 'Post Editor Performance', () => {
 		});
 	});
 
-	it( 'Loading', async() => {
+	// it( 'Loading', async() => {
 
-		// Measuring loading time.
-		let i = 5;
-		while ( i-- ) {
-			await page.reload();
-			await page.waitForSelector( '.wp-block' );
-			const {
-				serverResponse,
-				firstPaint,
-				domContentLoaded,
-				loaded,
-				firstContentfulPaint,
-				firstBlock
-			} = await getLoadingDurations();
+	// 	// Measuring loading time.
+	// 	let i = 5;
+	// 	while ( i-- ) {
+	// 		if ( await page.$( '.editor-post-save-draft' ) ) {
+	// 			await saveDraft();
+	// 		}
+	// 		await page.reload();
 
-			results.serverResponse.push( serverResponse );
-			results.firstPaint.push( firstPaint );
-			results.domContentLoaded.push( domContentLoaded );
-			results.loaded.push( loaded );
-			results.firstContentfulPaint.push( firstContentfulPaint );
-			results.firstBlock.push( firstBlock );
-		}
-	});
+	// 		await page.waitForSelector( '.wp-block' );
+	// 		const {
+	// 			serverResponse,
+	// 			firstPaint,
+	// 			domContentLoaded,
+	// 			loaded,
+	// 			firstContentfulPaint,
+	// 			firstBlock
+	// 		} = await getLoadingDurations();
+
+	// 		results.serverResponse.push( serverResponse );
+	// 		results.firstPaint.push( firstPaint );
+	// 		results.domContentLoaded.push( domContentLoaded );
+	// 		results.loaded.push( loaded );
+	// 		results.firstContentfulPaint.push( firstContentfulPaint );
+	// 		results.firstBlock.push( firstBlock );
+	// 	}
+	// });
 
 	it( 'Typing', async() => {
 
@@ -156,6 +160,12 @@ describe( 'Post Editor Performance', () => {
 				);
 			}
 		}
+		await saveDraft();
+
+		expect( 0 < results.type.length ).toBe( true );
+		const sum = results.type.reduce( ( s, x ) => s + x, 0 );
+		const avg = sum / results.type.length;
+		expect( 60 > avg ).toBe( true );
 	});
 
 	it( 'Selecting blocks', async() => {
@@ -188,6 +198,7 @@ describe( 'Post Editor Performance', () => {
 		traceResults = JSON.parse( readFile( traceFile ) );
 		const [ focusEvents ] = getSelectionEventDurations( traceResults );
 		results.focus = focusEvents;
+		await saveDraft();
 	});
 
 	it( 'Opening persistent list view', async() => {
