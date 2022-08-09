@@ -63,10 +63,16 @@ jobs:
 
       # run the node.js puppeteer script (which takes the screenshots and controls chrome)
       - run: npm run test:e2e
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: ./src/blocks/test/e2e/performance/performance.spec.results.json
+          retention-days: 1
       
   comment-on-pr:
       name: Comment on PR with results
-      if: ${{ github.head_ref && github.head_ref != null && setps.cache-performance.outputs.cache-hit == 'true' }}
+      if: ${{ github.head_ref && github.head_ref != null }}
       runs-on: ubuntu-latest
       needs: e2e
       env:
@@ -77,17 +83,11 @@ jobs:
         comment_body: ${{ steps.get-comment-body.outputs.body }}
       steps:
 
-        - name: Cache performance results
-          uses: actions/cache@v2
-          env:
-            cache-name: cache-performance
+        - uses: actions/checkout@v2
+
+        - uses: actions/download-artifact@v2
           with:
-            path: ./src/blocks/test/e2e/performance/performance.spec.results.json
-            key: ${{ runner.os }}-performance-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-            restore-keys: |
-              ${{ runner.os }}-performance-${{ env.cache-name }}-
-              ${{ runner.os }}-performance-
-              ${{ runner.os }}-
+            name: test-results
 
         - name: Get PR number
           id: get-pr-number
