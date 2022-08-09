@@ -77,7 +77,7 @@ const Edit = ({
 		setAttributes({
 			library: attributes.library || parentAttributes.defaultLibrary,
 			icon: attributes.icon || parentAttributes.defaultIcon,
-			iconPrefix: attributes.iconPrefix || parentAttributes.defaultIconPrefix
+			iconPrefix: attributes.iconPrefix || parentAttributes.defaultPrefix
 		});
 	}, [ hasParent, parentAttributes, attributes ]);
 
@@ -97,7 +97,7 @@ const Edit = ({
 
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
-	const iconClassName = `${ attributes.iconPrefix || parentAttributes.defaultIconPrefix } fa-${ attributes.icon || parentAttributes.defaultIcon }`;
+	const iconClassName = `${ attributes.iconPrefix || parentAttributes.defaultPrefix } fa-${ attributes.icon || parentAttributes.defaultIcon }`;
 
 	const changeContent = value => {
 		setAttributes({ content: value });
