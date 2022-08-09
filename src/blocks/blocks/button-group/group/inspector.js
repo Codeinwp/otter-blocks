@@ -3,14 +3,13 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { InspectorControls, BlockAlignmentToolbar } from '@wordpress/block-editor';
+import { InspectorControls } from '@wordpress/block-editor';
 
 import {
 	PanelBody,
 	RangeControl,
-	SelectControl,
-	ButtonGroup,
-	Button
+	SelectControl
+
 } from '@wordpress/components';
 
 import {
@@ -18,11 +17,7 @@ import {
 	positionLeft,
 	positionRight,
 	stretchFullWidth,
-	alignNone,
-	alignJustify,
-	alignLeft,
-	alignCenter,
-	alignRight
+	alignNone
 } from '@wordpress/icons';
 
 /**
@@ -152,62 +147,41 @@ const Inspector = ({
 								value: 'full'
 							},
 							{
-								icon: alignLeft,
+								icon: positionLeft,
 								label: __( 'Left', 'otter-blocks' ),
 								value: 'left'
 							},
 							{
-								icon: alignCenter,
+								icon: positionCenter,
 								label: __( 'Center', 'otter-blocks' ),
 								value: 'center'
 							},
 							{
-								icon: alignRight,
+								icon: positionRight,
 								label: __( 'Right', 'otter-blocks' ),
 								value: 'right'
 							}
 						]}
 						onChange={ onAlignmentChange }
 						hideLabels
+						style={{
+							button: {
+								color: 'black',
+								boxShadow: 'none',
+								borderRadius: '0px'
+							},
+							active: {
+								color: 'white',
+								backgroundColor: 'black',
+								boxShadow: 'none',
+								borderRadius: '0px'
+							},
+							group: {
+								marginLeft: '0px',
+								marginRight: '0px'
+							}
+						}}
 					/>
-					{/* <ToggleGroupControl
-						value={ attributes?.align?.[ currentDevice ] ?? 'none' }
-						onChange={ onAlignmentChange }
-						hideLabelFromVision
-						isBlock
-						isAdaptiveWidth
-					>
-						<ToggleGroupControlOptionIcon
-							value="none"
-							icon={alignNone}
-							showTooltip={ true }
-							aria-label={ __( 'None', 'otter-blocks' ) }
-						/>
-						<ToggleGroupControlOptionIcon
-							value="full"
-							icon={stretchFullWidth}
-							showTooltip={ true }
-							aria-label={ __( 'Full', 'otter-blocks' ) }
-						/>
-						<ToggleGroupControlOptionIcon
-							value="left"
-							icon={positionLeft}
-							showTooltip={ true }
-							aria-label={ __( 'Left', 'otter-blocks' ) }
-						/>
-						<ToggleGroupControlOptionIcon
-							value="center"
-							icon={positionCenter}
-							showTooltip={ true }
-							aria-label={ __( 'Center', 'otter-blocks' ) }
-						/>
-						<ToggleGroupControlOptionIcon
-							value="right"
-							icon={positionRight}
-							showTooltip={ true }
-							aria-label={ __( 'Right', 'otter-blocks' ) }
-						/>
-					</ToggleGroupControl> */}
 				</ResponsiveControl>
 			</PanelBody>
 
