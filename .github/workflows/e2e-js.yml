@@ -51,18 +51,9 @@ jobs:
 
       # run the node.js puppeteer script (which takes the screenshots and controls chrome)
       - run: npm run test:e2e
-
-      - name: Read the results
-        id: e2e-results
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: ./src/blocks/test/e2e/performance/performance.spec.results.json
-
-      - name: Make a comment
-        uses: NejcZdovc/comment-pr@v1
-        with:
-          message: "${{ steps.package.e2e-results.content }}"
-          identifier: "GITHUB_COMMENT_RESULTS_E2E"
-        env:
-          GITHUB_TOKEN: ${{secrets.BOT_TOKEN}}    
+      
+      - name: Print the results
+        run: |
+          jq '.summary' ./src/blocks/test/e2e/performance/performance.spec.results.json
+  
   

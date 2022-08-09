@@ -46,8 +46,7 @@ describe( 'Post Editor Performance', () => {
 		listViewOpen: [],
 		inserterOpen: [],
 		inserterHover: [],
-		inserterSearch: [],
-		typingSpeedAvg: -1
+		inserterSearch: []
 	};
 	const traceFile = __dirname + '/trace.json';
 	let traceResults;
@@ -77,6 +76,14 @@ describe( 'Post Editor Performance', () => {
 	});
 
 	afterAll( async() => {
+
+		const summary = Object.entries( results ).map( ([ key, value ]) => {
+			const sum = value.reduce( ( s, x ) => s + x, 0 );
+			const avg = sum / value.length;
+			return [ `${key}Avg`, avg ];
+		});
+		results.summary = Object.fromEntries( summary );
+
 		const resultsFilename = basename( __filename, '.js' ) + '.results.json';
 		writeFileSync(
 			join( __dirname, resultsFilename ),
@@ -129,7 +136,7 @@ describe( 'Post Editor Performance', () => {
 
 		// Measuring typing performance.
 		await insertBlock( 'Paragraph' );
-		let i = 100;
+		let i = 30;
 		await page.tracing.start({
 			path: traceFile,
 			screenshots: false,
@@ -166,7 +173,7 @@ describe( 'Post Editor Performance', () => {
 		expect( 0 < results.type.length ).toBe( true );
 		const sum = results.type.reduce( ( s, x ) => s + x, 0 );
 		const avg = sum / results.type.length;
-		results.typingSpeedAvg = avg;
+		results.summary.typingSpeedAvg = avg;
 		expect( 60 > avg ).toBe( true );
 	});
 
@@ -201,6 +208,10 @@ describe( 'Post Editor Performance', () => {
 		const [ focusEvents ] = getSelectionEventDurations( traceResults );
 		results.focus = focusEvents;
 		await saveDraft();
+
+		const sum = results.focus.reduce( ( s, x ) => s + x, 0 );
+		const avg = sum / results.focus.length;
+		results.summary.focusAvg = avg;
 	});
 
 	it( 'Opening persistent list view', async() => {
