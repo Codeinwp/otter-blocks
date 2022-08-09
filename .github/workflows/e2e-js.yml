@@ -64,6 +64,19 @@ jobs:
         pr_number: ${{ steps.get-pr-number.outputs.num }}
         comment_body: ${{ steps.get-comment-body.outputs.body }}
       steps:
+
+        - name: Cache performance results
+          uses: actions/cache@v2
+          env:
+            cache-name: cache-performance
+          with:
+            path: ./src/blocks/test/e2e/performance/performance.spec.results.json
+            key: ${{ runner.os }}-performance-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
+            restore-keys: |
+              ${{ runner.os }}-performance-${{ env.cache-name }}-
+              ${{ runner.os }}-performance-
+              ${{ runner.os }}-
+
         - name: Get PR number
           id: get-pr-number
           run: echo "::set-output name=num::$(echo $GITHUB_REF | awk 'BEGIN { FS = "/" } ; { print $3 }')"
