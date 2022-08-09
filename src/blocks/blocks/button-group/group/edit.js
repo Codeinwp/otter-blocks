@@ -2,7 +2,6 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import GoogleFontLoader from 'react-google-font';
 
 /**
  * WordPress dependencies.
@@ -114,15 +113,14 @@ const Edit = ({
 		style: inlineCSS
 	});
 
+	useEffect( () => {
+		if ( attributes.fontFamily ) {
+			googleFontsLoader.loadFontToBrowser( attributes.fontFamily, attributes.fontVariant );
+		}
+	}, [ attributes.fontFamily ]);
+
 	return (
 		<Fragment>
-			{ attributes.fontFamily && (
-				<GoogleFontLoader fonts={ [{
-					font: attributes.fontFamily,
-					weights: attributes.fontVariant && [ `${ attributes.fontVariant + ( 'italic' === attributes.fontStyle ? ':i' : '' ) }` ]
-				}] } />
-			) }
-
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }

@@ -15,7 +15,7 @@
 			"type": "string",
 			"default": "fontawesome"
 		},
-		"defaultIconPrefix": {
+		"defaultPrefix": {
 			"type": "string",
 			"default": "fas"
 		},

@@ -29,6 +29,8 @@
 	--value-font-weight: regular;
 	--label-font-weight: regular;
 
+	border-style: none;
+
 	.otter-countdown__container {
 		display: flex;
 		justify-content: var(--alignment);

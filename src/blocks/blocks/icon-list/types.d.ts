@@ -3,7 +3,7 @@ import { BlockProps, InspectorProps } from '../../helpers/blocks'
 type Attributes= {
 	id: string
 	defaultLibrary: string
-	defaultIconPrefix: string
+	defaultPrefix: string
 	defaultIcon: string
 	defaultContentColor: string
 	defaultIconColor: string
