@@ -2,7 +2,6 @@
  * External dependencies
  */
 import hexToRgba from 'hex-rgba';
-import GoogleFontLoader from 'react-google-font-loader';
 
 /**
  * WordPress dependencies.
@@ -37,6 +36,7 @@ import metadata from './block.json';
 import { blockInit } from '../../helpers/block-utility.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
+import googleFontsLoader from '../../helpers/google-fonts';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -171,6 +171,12 @@ const Edit = ({
 		style
 	});
 
+	useEffect( () => {
+		if ( attributes.fontFamily ) {
+			googleFontsLoader.loadFontToBrowser( attributes.fontFamily, attributes.fontVariant );
+		}
+	}, [ attributes.fontFamily ]);
+
 	return (
 		<Fragment>
 			<style>
@@ -179,13 +185,6 @@ const Edit = ({
 						background: ${ attributes.highlightBackground };
 					}` }
 			</style>
-
-			{ attributes.fontFamily && (
-				<GoogleFontLoader fonts={ [{
-					font: attributes.fontFamily,
-					weights: attributes.fontVariant && [ `${ attributes.fontVariant + ( 'italic' === attributes.fontStyle ? ':i' : '' ) }` ]
-				}] } />
-			) }
 
 			<Controls
 				attributes={ attributes }

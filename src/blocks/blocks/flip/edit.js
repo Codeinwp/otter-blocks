@@ -106,7 +106,7 @@ const Edit = ({
 				${ attributes.descriptionFontSize && `font-size: ${ attributes.descriptionFontSize }px;` }
 			}`
 		]);
-	}, [ isFliped, attributes.titleFontSize, attributes.descriptionFontSize ]);
+	}, [ isFliped, attributes.titleFontSize, attributes.descriptionFontSize, attributes.titleColor, attributes.descriptionColor ]);
 
 	const blockProps = useBlockProps({
 		id: attributes.id,

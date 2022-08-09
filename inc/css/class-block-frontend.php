@@ -56,6 +56,7 @@ class Block_Frontend extends Base_CSS {
 		add_action( 'wp_head', array( $this, 'enqueue_google_fonts_backward' ), 19 );
 		add_filter( 'get_the_excerpt', array( $this, 'get_excerpt_end' ), 20 );
 		add_action( 'wp_footer', array( $this, 'enqueue_widgets_css' ) );
+		add_action( 'wp_footer', array( $this, 'enqueue_fse_css' ) );
 		add_action( 'wp_head', array( $this, 'enqueue_assets' ) );
 		add_action( 'wp_footer', array( $this, 'enqueue_global_styles' ) );
 	}
@@ -184,7 +185,7 @@ class Block_Frontend extends Base_CSS {
 				'family'  => implode( '&family=', $fonts ),
 				'display' => 'swap',
 			),
-			'https://fonts.googleapis.com/css2' 
+			'https://fonts.googleapis.com/css2'
 		);
 
 		$fonts_url = apply_filters( 'otter_blocks_google_fonts_url', $fonts_url );
@@ -555,6 +556,69 @@ class Block_Frontend extends Base_CSS {
 
 		wp_enqueue_style( 'otter-widgets', $file_url, array(), OTTER_BLOCKS_VERSION );
 		wp_style_add_data( 'otter-widgets', 'path', $file_path );
+	}
+
+
+	/**
+	 * Enqueue FSE CSS file
+	 *
+	 * @since   2.0.10
+	 * @access  public
+	 */
+	public function enqueue_fse_css() {
+		if ( ! ( function_exists( 'get_block_templates' ) && function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() && current_theme_supports( 'block-templates' ) ) ) {
+			return;
+		}
+
+		global $_wp_current_template_content;
+
+		$content         = '';
+		$slugs           = array();
+		$template_blocks = parse_blocks( $_wp_current_template_content );
+
+		foreach ( $template_blocks as $template_block ) {
+			if ( 'core/template-part' === $template_block['blockName'] ) {
+				$slugs[] = $template_block['attrs']['slug'];
+			}
+		}
+
+		$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
+
+		foreach ( $templates_parts as $templates_part ) {
+			if ( isset( $templates_part->content ) && in_array( $templates_part->slug, $slugs ) ) {
+				$content .= $templates_part->content;
+			}
+		}
+
+		$content .= $_wp_current_template_content;
+
+		$blocks = parse_blocks( $content );
+
+		if ( ! is_array( $blocks ) || empty( $blocks ) ) {
+			return '';
+		}
+
+		$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+
+		$css = $this->cycle_through_blocks( $blocks, $animations );
+
+		if ( empty( $css ) ) {
+			return;
+		}
+
+		if ( count( self::$google_fonts ) > 0 ) {
+			$fonts = $this->get_fonts( self::$google_fonts );
+
+			if ( count( $fonts['fonts'] ) > 0 ) {
+				wp_enqueue_style( 'otter-google-fonts', $fonts['url'], [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			}
+		}
+
+		$style  = "\n" . '<style type="text/css" media="all">' . "\n";
+		$style .= $css;
+		$style .= "\n" . '</style>' . "\n";
+
+		echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
