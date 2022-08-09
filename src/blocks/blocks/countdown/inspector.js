@@ -309,11 +309,11 @@ const Inspector = ({
 				<SelectControl
 					label={__( 'Type', 'otter-blocks' )}
 					value={ attributes.borderStyle ?? 'solid' }
-					onChange={ borderStyle => setAttributes({ borderStyle: borderStyle || undefined })}
+					onChange={ borderStyle => setAttributes({ borderStyle: 'solid' === borderStyle ? undefined : borderStyle })}
 					options={[
 						{
 							label: __( 'None', 'otter-blocks' ),
-							value: ''
+							value: 'none'
 						},
 						{
 							label: __( 'Solid', 'otter-blocks' ),
@@ -321,7 +321,7 @@ const Inspector = ({
 						},
 						{
 							label: __( 'Double', 'otter-blocks' ),
-							value: 'Double'
+							value: 'double'
 						},
 						{
 							label: __( 'Dotted', 'otter-blocks' ),
@@ -335,7 +335,7 @@ const Inspector = ({
 				/>
 
 				{
-					attributes.borderStyle && (
+					'none' !== attributes.borderStyle && (
 						<ResponsiveControl
 							label={ __( 'Width', 'otter-blocks' ) }
 						>
