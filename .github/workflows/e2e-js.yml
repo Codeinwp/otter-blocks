@@ -61,7 +61,7 @@ jobs:
       - name: Make a comment
         uses: NejcZdovc/comment-pr@v1
         with:
-          message: "`${{ steps.package.outputs.content }}`"
+          message: "${{ steps.package.e2e-results.content }}"
           identifier: "GITHUB_COMMENT_RESULTS_E2E"
         env:
           GITHUB_TOKEN: ${{secrets.BOT_TOKEN}}    
