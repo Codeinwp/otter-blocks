@@ -77,7 +77,7 @@ describe( 'Post Editor Performance', () => {
 
 	afterAll( async() => {
 
-		const summary = Object.entries( results ).map( ([ key, value ]) => {
+		const summary = Object.entries( results ).filter( ([ _, value ]) => 0 < value.length ).map( ([ key, value ]) => {
 			const sum = value.reduce( ( s, x ) => s + x, 0 );
 			const avg = sum / value.length;
 			return [ `${key}Avg`, avg ];
@@ -173,160 +173,159 @@ describe( 'Post Editor Performance', () => {
 		expect( 0 < results.type.length ).toBe( true );
 		const sum = results.type.reduce( ( s, x ) => s + x, 0 );
 		const avg = sum / results.type.length;
-		results.summary.typingSpeedAvg = avg;
 		expect( 60 > avg ).toBe( true );
 	});
 
-	it( 'Selecting blocks', async() => {
+	// it( 'Selecting blocks', async() => {
 
-		// Measuring block selection performance.
-		await createNewPost();
-		await page.evaluate( () => {
-			const { createBlock } = window.wp.blocks;
-			const { dispatch } = window.wp.data;
-			const blocks = window.lodash
-				.times( 1000 )
-				.map( () => createBlock( 'core/paragraph' ) );
-			dispatch( 'core/block-editor' ).resetBlocks( blocks );
-		});
-		const paragraphs = await page.$$( '.wp-block' );
-		await page.tracing.start({
-			path: traceFile,
-			screenshots: false,
-			categories: [ 'devtools.timeline' ]
-		});
-		await paragraphs[ 0 ].click();
-		for ( let j = 1; 10 >= j; j++ ) {
+	// 	// Measuring block selection performance.
+	// 	await createNewPost();
+	// 	await page.evaluate( () => {
+	// 		const { createBlock } = window.wp.blocks;
+	// 		const { dispatch } = window.wp.data;
+	// 		const blocks = window.lodash
+	// 			.times( 1000 )
+	// 			.map( () => createBlock( 'core/paragraph' ) );
+	// 		dispatch( 'core/block-editor' ).resetBlocks( blocks );
+	// 	});
+	// 	const paragraphs = await page.$$( '.wp-block' );
+	// 	await page.tracing.start({
+	// 		path: traceFile,
+	// 		screenshots: false,
+	// 		categories: [ 'devtools.timeline' ]
+	// 	});
+	// 	await paragraphs[ 0 ].click();
+	// 	for ( let j = 1; 10 >= j; j++ ) {
 
-			// Wait for the browser to be idle before starting the monitoring.
-			// eslint-disable-next-line no-restricted-syntax
-			await page.waitForTimeout( 1000 );
-			await paragraphs[ j ].click();
-		}
-		await page.tracing.stop();
-		traceResults = JSON.parse( readFile( traceFile ) );
-		const [ focusEvents ] = getSelectionEventDurations( traceResults );
-		results.focus = focusEvents;
-		await saveDraft();
+	// 		// Wait for the browser to be idle before starting the monitoring.
+	// 		// eslint-disable-next-line no-restricted-syntax
+	// 		await page.waitForTimeout( 1000 );
+	// 		await paragraphs[ j ].click();
+	// 	}
+	// 	await page.tracing.stop();
+	// 	traceResults = JSON.parse( readFile( traceFile ) );
+	// 	const [ focusEvents ] = getSelectionEventDurations( traceResults );
+	// 	results.focus = focusEvents;
+	// 	await saveDraft();
 
-		const sum = results.focus.reduce( ( s, x ) => s + x, 0 );
-		const avg = sum / results.focus.length;
-		results.summary.focusAvg = avg;
-	});
+	// 	const sum = results.focus.reduce( ( s, x ) => s + x, 0 );
+	// 	const avg = sum / results.focus.length;
+	// 	results.summary.focusAvg = avg;
+	// });
 
-	it( 'Opening persistent list view', async() => {
+	// it( 'Opening persistent list view', async() => {
 
-		// Measure time to open inserter.
-		await page.waitForSelector( '.edit-post-layout' );
-		for ( let j = 0; 10 > j; j++ ) {
-			await page.tracing.start({
-				path: traceFile,
-				screenshots: false,
-				categories: [ 'devtools.timeline' ]
-			});
-			await openListView();
-			await page.tracing.stop();
-			traceResults = JSON.parse( readFile( traceFile ) );
-			const [ mouseClickEvents ] = getClickEventDurations( traceResults );
-			for ( let k = 0; k < mouseClickEvents.length; k++ ) {
-				results.listViewOpen.push( mouseClickEvents[ k ]);
-			}
-			await closeListView();
-		}
-	});
+	// 	// Measure time to open inserter.
+	// 	await page.waitForSelector( '.edit-post-layout' );
+	// 	for ( let j = 0; 10 > j; j++ ) {
+	// 		await page.tracing.start({
+	// 			path: traceFile,
+	// 			screenshots: false,
+	// 			categories: [ 'devtools.timeline' ]
+	// 		});
+	// 		await openListView();
+	// 		await page.tracing.stop();
+	// 		traceResults = JSON.parse( readFile( traceFile ) );
+	// 		const [ mouseClickEvents ] = getClickEventDurations( traceResults );
+	// 		for ( let k = 0; k < mouseClickEvents.length; k++ ) {
+	// 			results.listViewOpen.push( mouseClickEvents[ k ]);
+	// 		}
+	// 		await closeListView();
+	// 	}
+	// });
 
-	it( 'Opening the inserter', async() => {
+	// it( 'Opening the inserter', async() => {
 
-		// Measure time to open inserter.
-		await page.waitForSelector( '.edit-post-layout' );
-		for ( let j = 0; 10 > j; j++ ) {
-			await page.tracing.start({
-				path: traceFile,
-				screenshots: false,
-				categories: [ 'devtools.timeline' ]
-			});
-			await openGlobalBlockInserter();
-			await page.tracing.stop();
-			traceResults = JSON.parse( readFile( traceFile ) );
-			const [ mouseClickEvents ] = getClickEventDurations( traceResults );
-			for ( let k = 0; k < mouseClickEvents.length; k++ ) {
-				results.inserterOpen.push( mouseClickEvents[ k ]);
-			}
-			await closeGlobalBlockInserter();
-		}
-	});
+	// 	// Measure time to open inserter.
+	// 	await page.waitForSelector( '.edit-post-layout' );
+	// 	for ( let j = 0; 10 > j; j++ ) {
+	// 		await page.tracing.start({
+	// 			path: traceFile,
+	// 			screenshots: false,
+	// 			categories: [ 'devtools.timeline' ]
+	// 		});
+	// 		await openGlobalBlockInserter();
+	// 		await page.tracing.stop();
+	// 		traceResults = JSON.parse( readFile( traceFile ) );
+	// 		const [ mouseClickEvents ] = getClickEventDurations( traceResults );
+	// 		for ( let k = 0; k < mouseClickEvents.length; k++ ) {
+	// 			results.inserterOpen.push( mouseClickEvents[ k ]);
+	// 		}
+	// 		await closeGlobalBlockInserter();
+	// 	}
+	// });
 
-	it( 'Searching the inserter', async() => {
-		function sum( arr ) {
-			return arr.reduce( ( a, b ) => a + b, 0 );
-		}
+	// it( 'Searching the inserter', async() => {
+	// 	function sum( arr ) {
+	// 		return arr.reduce( ( a, b ) => a + b, 0 );
+	// 	}
 
-		// Measure time to search the inserter and get results.
-		await openGlobalBlockInserter();
-		for ( let j = 0; 10 > j; j++ ) {
+	// 	// Measure time to search the inserter and get results.
+	// 	await openGlobalBlockInserter();
+	// 	for ( let j = 0; 10 > j; j++ ) {
 
-			// Wait for the browser to be idle before starting the monitoring.
-			// eslint-disable-next-line no-restricted-syntax
-			await page.waitForTimeout( 500 );
-			await page.tracing.start({
-				path: traceFile,
-				screenshots: false,
-				categories: [ 'devtools.timeline' ]
-			});
-			await page.keyboard.type( 'p' );
-			await page.tracing.stop();
-			traceResults = JSON.parse( readFile( traceFile ) );
-			const [ keyDownEvents, keyPressEvents, keyUpEvents ] =
-				getTypingEventDurations( traceResults );
-			if (
-				keyDownEvents.length === keyPressEvents.length &&
-				keyPressEvents.length === keyUpEvents.length
-			) {
-				results.inserterSearch.push(
-					sum( keyDownEvents ) +
-						sum( keyPressEvents ) +
-						sum( keyUpEvents )
-				);
-			}
-			await page.keyboard.press( 'Backspace' );
-		}
-		await closeGlobalBlockInserter();
-	});
+	// 		// Wait for the browser to be idle before starting the monitoring.
+	// 		// eslint-disable-next-line no-restricted-syntax
+	// 		await page.waitForTimeout( 500 );
+	// 		await page.tracing.start({
+	// 			path: traceFile,
+	// 			screenshots: false,
+	// 			categories: [ 'devtools.timeline' ]
+	// 		});
+	// 		await page.keyboard.type( 'p' );
+	// 		await page.tracing.stop();
+	// 		traceResults = JSON.parse( readFile( traceFile ) );
+	// 		const [ keyDownEvents, keyPressEvents, keyUpEvents ] =
+	// 			getTypingEventDurations( traceResults );
+	// 		if (
+	// 			keyDownEvents.length === keyPressEvents.length &&
+	// 			keyPressEvents.length === keyUpEvents.length
+	// 		) {
+	// 			results.inserterSearch.push(
+	// 				sum( keyDownEvents ) +
+	// 					sum( keyPressEvents ) +
+	// 					sum( keyUpEvents )
+	// 			);
+	// 		}
+	// 		await page.keyboard.press( 'Backspace' );
+	// 	}
+	// 	await closeGlobalBlockInserter();
+	// });
 
-	it( 'Hovering Inserter Items', async() => {
+	// it( 'Hovering Inserter Items', async() => {
 
-		// Measure inserter hover performance.
-		const paragraphBlockItem =
-			'.block-editor-inserter__menu .editor-block-list-item-paragraph';
-		const headingBlockItem =
-			'.block-editor-inserter__menu .editor-block-list-item-heading';
-		await openGlobalBlockInserter();
-		await page.waitForSelector( paragraphBlockItem );
-		await page.hover( paragraphBlockItem );
-		await page.hover( headingBlockItem );
-		for ( let j = 0; 10 > j; j++ ) {
+	// 	// Measure inserter hover performance.
+	// 	const paragraphBlockItem =
+	// 		'.block-editor-inserter__menu .editor-block-list-item-paragraph';
+	// 	const headingBlockItem =
+	// 		'.block-editor-inserter__menu .editor-block-list-item-heading';
+	// 	await openGlobalBlockInserter();
+	// 	await page.waitForSelector( paragraphBlockItem );
+	// 	await page.hover( paragraphBlockItem );
+	// 	await page.hover( headingBlockItem );
+	// 	for ( let j = 0; 10 > j; j++ ) {
 
-			// Wait for the browser to be idle before starting the monitoring.
-			// eslint-disable-next-line no-restricted-syntax
-			await page.waitForTimeout( 200 );
-			await page.tracing.start({
-				path: traceFile,
-				screenshots: false,
-				categories: [ 'devtools.timeline' ]
-			});
-			await page.hover( paragraphBlockItem );
-			await page.hover( headingBlockItem );
-			await page.tracing.stop();
+	// 		// Wait for the browser to be idle before starting the monitoring.
+	// 		// eslint-disable-next-line no-restricted-syntax
+	// 		await page.waitForTimeout( 200 );
+	// 		await page.tracing.start({
+	// 			path: traceFile,
+	// 			screenshots: false,
+	// 			categories: [ 'devtools.timeline' ]
+	// 		});
+	// 		await page.hover( paragraphBlockItem );
+	// 		await page.hover( headingBlockItem );
+	// 		await page.tracing.stop();
 
-			traceResults = JSON.parse( readFile( traceFile ) );
-			const [ mouseOverEvents, mouseOutEvents ] =
-				getHoverEventDurations( traceResults );
-			for ( let k = 0; k < mouseOverEvents.length; k++ ) {
-				results.inserterHover.push(
-					mouseOverEvents[ k ] + mouseOutEvents[ k ]
-				);
-			}
-		}
-		await closeGlobalBlockInserter();
-	});
+	// 		traceResults = JSON.parse( readFile( traceFile ) );
+	// 		const [ mouseOverEvents, mouseOutEvents ] =
+	// 			getHoverEventDurations( traceResults );
+	// 		for ( let k = 0; k < mouseOverEvents.length; k++ ) {
+	// 			results.inserterHover.push(
+	// 				mouseOverEvents[ k ] + mouseOutEvents[ k ]
+	// 			);
+	// 		}
+	// 	}
+	// 	await closeGlobalBlockInserter();
+	// });
 });
