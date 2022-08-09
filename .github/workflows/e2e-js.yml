@@ -44,19 +44,7 @@ jobs:
       - name: Make dev build
         run: |
           npm run build-dev
-        
-      - name: Cache performance results
-        uses: actions/cache@v2
-        env:
-          cache-name: cache-performance
-        with:
-          path: ./src/blocks/test/e2e/performance/performance.spec.results.json
-          key: ${{ runner.os }}-performance-${{ env.cache-name }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-performance-${{ env.cache-name }}-
-            ${{ runner.os }}-performance-
-            ${{ runner.os }}-
-      
+
       - name: setup wp env
         run: |
           npm run wp-env start
@@ -64,11 +52,19 @@ jobs:
       # run the node.js puppeteer script (which takes the screenshots and controls chrome)
       - run: npm run test:e2e
 
-      - uses: actions/upload-artifact@v2
+      - name: Read the results
+        id: e2e-results
+        uses: juliangruber/read-file-action@v1
         with:
-          name: test-results
           path: ./src/blocks/test/e2e/performance/performance.spec.results.json
-          retention-days: 1
+
+      - name: Make a comment
+        uses: NejcZdovc/comment-pr@v1
+        with:
+          message: "{{ steps.package.outputs.content }}"
+          identifier: "GITHUB_COMMENT_RESULTS_E2E"
+        env:
+          GITHUB_TOKEN: ${{secrets.BOT_TOKEN}}    
       
   comment-on-pr:
       name: Comment on PR with results
@@ -104,7 +100,7 @@ jobs:
         - name: Get comment body
           id: get-comment-body
           run: |
-            body="Average typing speed in Page/Post: $( jq '.typingSpeedAvg' ./src/blocks/test/e2e/performance/performance.spec.results.json )ms (WP Post is aprox 53ms)"
+            body="Average typing speed in Page/Post: $( echo "${{ steps.package.outputs.content }}" | jq '.typingSpeedAvg' )ms (WP Post is aprox 53ms)"
             body="${body//$'\n'/'%0A'}"
             echo "::set-output name=body::$body"
         - name: Create comment on PR with links to plugin builds

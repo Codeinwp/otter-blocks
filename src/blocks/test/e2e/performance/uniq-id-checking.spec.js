@@ -1,34 +1,21 @@
 /**
  * External dependencies
  */
-import { basename, join } from 'path';
-import { writeFileSync } from 'fs';
+import { join } from 'path';
 
 /**
   * WordPress dependencies
   */
 import {
 	createNewPost,
-	saveDraft,
-	publishPost,
-	insertBlock,
-	openGlobalBlockInserter,
-	closeGlobalBlockInserter,
-	openListView,
-	closeListView
+	saveDraft
 } from '@wordpress/e2e-test-utils';
 
 /**
   * Internal dependencies
   */
 import {
-	readFile,
-	deleteFile,
-	getTypingEventDurations,
-	getClickEventDurations,
-	getHoverEventDurations,
-	getSelectionEventDurations,
-	getLoadingDurations
+	readFile
 } from './utils';
 
 jest.setTimeout( 1000000 );
