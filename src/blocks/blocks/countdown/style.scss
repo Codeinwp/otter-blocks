@@ -34,14 +34,25 @@
 	.otter-countdown__container {
 		display: flex;
 		justify-content: var(--alignment);
+		height: var(--height);
+
+		@media ( max-width: 960px ) {
+			height: var(--height-tablet);
+		}
+
+		@media ( max-width: 600px ) {
+			height: var(--height-mobile);
+
+		}
+
 	}
 
 	.otter-countdown__display {
 		display: flex;
 		flex-direction: row;
 		width: var(--container-width, 100%);
-		height: var(--height);
 		gap: var( --gap );
+		height: 100%;
 
 		@media ( max-width: 960px ) {
 			gap: var( --gap-tablet );
@@ -65,15 +76,14 @@
 		box-sizing: border-box;
 		width: 100%;
 		padding: var(--padding);
+		height: 100%;
 
 		@media ( max-width: 960px ) {
-			height: var( --height-tablet );
 			border: var( --border-width-tablet ) var(--border-style) var( --border-color );
 			padding: var(--padding-tablet);
 		}
 
 		@media ( max-width: 600px ) {
-			height: var( --height-mobile );
 			border: var( --border-width-mobile ) var(--border-style) var( --border-color );
 			padding: var(--padding-mobile);
 		}
