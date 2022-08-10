@@ -122,7 +122,7 @@ jobs:
           command: test create https://otter-qa.s.themeisle.com/ --location=Sydney
       - name: Create Development Site
         id: create-development
-        uses: instawp/wordpress-testing-automation@main
+        uses: HardeepAsrani/wordpress-testing-automation@main
         with:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
           INSTAWP_TOKEN: ${{ secrets.INSTAWP_TOKEN }}
