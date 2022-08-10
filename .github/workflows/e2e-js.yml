@@ -54,6 +54,16 @@ jobs:
       
       - name: Print the results
         run: |
-          jq '.summary' ./src/blocks/test/e2e/performance/performance.spec.results.json
+          echo "::set-output name=TYPING_AVG::$(jq '.summary.typeAvg' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
+        id: summary  
+
+      - name: Comment
+        uses: NejcZdovc/comment-pr@v1
+        with:
+          file: 'e2e-summary.md'
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          TYPING_AVG: ${{ steps.summary.outputs.TYPING_AVG }}
+
   
   
