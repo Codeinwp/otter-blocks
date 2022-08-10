@@ -31,6 +31,7 @@ import {
 	getSelectionEventDurations,
 	getLoadingDurations
 } from './utils';
+import { mapValues } from 'lodash';
 
 jest.setTimeout( 1000000 );
 
@@ -80,12 +81,12 @@ describe( 'Post Editor Performance', () => {
 
 		const summary = Object.entries( results ).filter( ([ _, value ]) => 0 < value.length ).map( ([ key, value ]) => {
 			return [ `${key}`,
-				{
+				mapValues({
 					'average': average( value ).toFixed( 2 ),
 					'standardDeviation': standardDeviation( value ).toFixed( 2 ),
 					'median': median( value ).toFixed( 2 ),
 					'quantileRank': quantileRank( value, 60 ).toFixed( 2 )
-				}];
+				}, parseFloat ) ];
 		});
 		results.summary = Object.fromEntries( summary );
 

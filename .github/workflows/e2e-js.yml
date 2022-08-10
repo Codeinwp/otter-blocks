@@ -68,6 +68,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
           TYPING_AVG: ${{ steps.summary.outputs.TYPING_AVG }}
+          TYPING_SD: ${{ steps.summary.outputs.TYPING_SD }}
+          TYPING_MD: ${{ steps.summary.outputs.TYPING_MD }}
+          TYPING_QR: ${{ steps.summary.outputs.TYPING_QR }}
 
   
   
