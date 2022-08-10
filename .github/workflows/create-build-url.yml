@@ -128,7 +128,6 @@ jobs:
           INSTAWP_TOKEN: ${{ secrets.INSTAWP_TOKEN }}
           INSTAWP_TEMPLATE_SLUG: otter-qa
           REPO_ID: 46
-          ARTIFACT_URL: https://verti-artifacts.s3.amazonaws.com/${{ github.event.pull_request.base.repo.name }}-${{ needs.dev-zip.outputs.branch-name }}-${{ needs.dev-zip.outputs.git-sha-8 }}/otter-blocks.zip
       - name: Run Tests on Development
         uses: calibreapp/github-actions@main
         env:
