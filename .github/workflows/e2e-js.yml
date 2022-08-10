@@ -54,13 +54,17 @@ jobs:
       
       - name: Print the results
         run: |
-          echo "::set-output name=TYPING_AVG::$(jq '.summary.typeAvg' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
+          echo "::set-output name=TYPING_AVG::$(jq '.summary.type.average' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
+          echo "::set-output name=TYPING_SD::$(jq '.summary.type.standardDeviation' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
+          echo "::set-output name=TYPING_MAX::$(jq '.summary.type.max' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
+          echo "::set-output name=TYPING_QR::$(jq '.summary.type.quantileRank' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
         id: summary  
 
       - name: Comment
         uses: NejcZdovc/comment-pr@v1
         with:
           file: 'e2e-summary.md'
+          identifier: "GITHUB_E2E_SUMMARY"
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
           TYPING_AVG: ${{ steps.summary.outputs.TYPING_AVG }}

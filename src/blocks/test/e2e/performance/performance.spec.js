@@ -3,6 +3,7 @@
  */
 import { basename, join } from 'path';
 import { writeFileSync } from 'fs';
+import { average, max, standardDeviation, quantileRank } from 'simple-statistics';
 
 /**
  * WordPress dependencies
@@ -78,9 +79,13 @@ describe( 'Post Editor Performance', () => {
 	afterAll( async() => {
 
 		const summary = Object.entries( results ).filter( ([ _, value ]) => 0 < value.length ).map( ([ key, value ]) => {
-			const sum = value.reduce( ( s, x ) => s + x, 0 );
-			const avg = sum / value.length;
-			return [ `${key}Avg`, avg ];
+			return [ `${key}`,
+				{
+					'average': average( value ).toFixed( 2 ),
+					'standardDeviation': standardDeviation( value ).toFixed( 2 ),
+					'max': max( value ).toFixed( 2 ),
+					'quantileRank': quantileRank( value, 60 ).toFixed( 2 )
+				}];
 		});
 		results.summary = Object.fromEntries( summary );
 
@@ -142,10 +147,6 @@ describe( 'Post Editor Performance', () => {
 		await saveDraft();
 
 		expect( 0 < results.type.length ).toBe( true );
-
-		const sum = results.type.reduce( ( s, x ) => s + x, 0 );
-		const avg = sum / results.type.length;
-		expect( 60 > avg ).toBe( true );
 	});
 
 	// it( 'Loading', async() => {
