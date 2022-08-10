@@ -103,40 +103,11 @@ describe( 'Post Editor Performance', () => {
 		});
 	});
 
-	// it( 'Loading', async() => {
-
-	// 	// Measuring loading time.
-	// 	let i = 5;
-	// 	while ( i-- ) {
-	// 		if ( await page.$( '.editor-post-save-draft' ) ) {
-	// 			await saveDraft();
-	// 		}
-	// 		await page.reload();
-
-	// 		await page.waitForSelector( '.wp-block' );
-	// 		const {
-	// 			serverResponse,
-	// 			firstPaint,
-	// 			domContentLoaded,
-	// 			loaded,
-	// 			firstContentfulPaint,
-	// 			firstBlock
-	// 		} = await getLoadingDurations();
-
-	// 		results.serverResponse.push( serverResponse );
-	// 		results.firstPaint.push( firstPaint );
-	// 		results.domContentLoaded.push( domContentLoaded );
-	// 		results.loaded.push( loaded );
-	// 		results.firstContentfulPaint.push( firstContentfulPaint );
-	// 		results.firstBlock.push( firstBlock );
-	// 	}
-	// });
-
 	it( 'Typing', async() => {
 
 		// Measuring typing performance.
 		await insertBlock( 'Paragraph' );
-		let i = 30;
+		let i = 60;
 		await page.tracing.start({
 			path: traceFile,
 			screenshots: false,
@@ -171,10 +142,40 @@ describe( 'Post Editor Performance', () => {
 		await saveDraft();
 
 		expect( 0 < results.type.length ).toBe( true );
+
 		const sum = results.type.reduce( ( s, x ) => s + x, 0 );
 		const avg = sum / results.type.length;
 		expect( 60 > avg ).toBe( true );
 	});
+
+	// it( 'Loading', async() => {
+
+	// 	// Measuring loading time.
+	// 	let i = 5;
+	// 	while ( i-- ) {
+	// 		if ( await page.$( '.editor-post-save-draft' ) ) {
+	// 			await saveDraft();
+	// 		}
+	// 		await page.reload();
+
+	// 		await page.waitForSelector( '.wp-block' );
+	// 		const {
+	// 			serverResponse,
+	// 			firstPaint,
+	// 			domContentLoaded,
+	// 			loaded,
+	// 			firstContentfulPaint,
+	// 			firstBlock
+	// 		} = await getLoadingDurations();
+
+	// 		results.serverResponse.push( serverResponse );
+	// 		results.firstPaint.push( firstPaint );
+	// 		results.domContentLoaded.push( domContentLoaded );
+	// 		results.loaded.push( loaded );
+	// 		results.firstContentfulPaint.push( firstContentfulPaint );
+	// 		results.firstBlock.push( firstBlock );
+	// 	}
+	// });
 
 	// it( 'Selecting blocks', async() => {
 
