@@ -2,30 +2,38 @@
 	--background-color: transparent;
 	--border-color: #000;
 	--border-radius: 0px;
+
 	--width: 100%;
 	--container-width: clamp(400px, var(--width) * 4, 100%);
 	--container-width-tablet: var(--container-width);
 	--container-width-mobile: var(--container-width-tablet);
+
 	--height: 100px;
-	--height-tablet: 100px;
-	--height-tablet: var(--height-tablet);
+	--height-tablet: var(--height);
 	--height-mobile: var(--height-mobile);
+
 	--border-style: solid;
 	--border-width: 2px;
 	--border-width-mobile: var(--height-tablet);
+
 	--gap: 6px;
 	--gap-tablet: 6px;
 	--gap-mobile: 6px;
+
 	--value-font-size: 1.5rem;
 	--value-font-size-tablet: var(--value-font-size);
 	--value-font-size-mobile: var(--value-font-size-tablet);
+
 	--label-font-size: 0.6rem;
 	--label-font-size-tablet: var(--label-font-size);
 	--label-font-size-mobile: var(--label-font-size-tablet);
+
 	--alignment: center;
+
 	--padding: 0px;
 	--padding-tablet: var(--padding);
 	--padding-mobile: var(--padding-tablet);
+	
 	--value-font-weight: regular;
 	--label-font-weight: regular;
 
