@@ -8,11 +8,11 @@
 	--container-width-mobile: var(--container-width-tablet);
 	--height: 100px;
 	--height-tablet: 100px;
-	--height-mobile: 100px;
+	--height-tablet: var(--height-tablet);
+	--height-mobile: var(--height-mobile);
 	--border-style: solid;
 	--border-width: 2px;
-	--border-width-tablet: var(--border-width);
-	--border-width-mobile: var(--border-width-tablet);
+	--border-width-mobile: var(--height-tablet);
 	--gap: 6px;
 	--gap-tablet: 6px;
 	--gap-mobile: 6px;
@@ -67,14 +67,14 @@
 		padding: var(--padding);
 
 		@media ( max-width: 960px ) {
-			height: var( --heightTablet );
-			border: var( --borderWidthTablet ) var(--border-style) var( --borderColor );
+			height: var( --height-tablet );
+			border: var( --border-width-tablet ) var(--border-style) var( --border-color );
 			padding: var(--padding-tablet);
 		}
 
 		@media ( max-width: 600px ) {
-			height: var( --heightMobile );
-			border: var( --borderWidthMobile ) var(--border-style) var( --borderColor );
+			height: var( --height-mobile );
+			border: var( --border-width-mobile ) var(--border-style) var( --border-color );
 			padding: var(--padding-mobile);
 		}
 
