@@ -56,7 +56,7 @@ jobs:
         run: |
           echo "::set-output name=TYPING_AVG::$(jq '.summary.type.average' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
           echo "::set-output name=TYPING_SD::$(jq '.summary.type.standardDeviation' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
-          echo "::set-output name=TYPING_MAX::$(jq '.summary.type.max' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
+          echo "::set-output name=TYPING_MD::$(jq '.summary.type.median' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
           echo "::set-output name=TYPING_QR::$(jq '.summary.type.quantileRank' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
         id: summary  
 

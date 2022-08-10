@@ -3,7 +3,7 @@
  */
 import { basename, join } from 'path';
 import { writeFileSync } from 'fs';
-import { average, max, standardDeviation, quantileRank } from 'simple-statistics';
+import { average, median, standardDeviation, quantileRank } from 'simple-statistics';
 
 /**
  * WordPress dependencies
@@ -83,7 +83,7 @@ describe( 'Post Editor Performance', () => {
 				{
 					'average': average( value ).toFixed( 2 ),
 					'standardDeviation': standardDeviation( value ).toFixed( 2 ),
-					'max': max( value ).toFixed( 2 ),
+					'median': median( value ).toFixed( 2 ),
 					'quantileRank': quantileRank( value, 60 ).toFixed( 2 )
 				}];
 		});
