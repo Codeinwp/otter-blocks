@@ -1,6 +1,6 @@
 <?php
 /**
- * Main file.
+ * Main file. Check!
  *
  * @package OtterBlocks
  *
