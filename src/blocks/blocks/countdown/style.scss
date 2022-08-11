@@ -14,7 +14,8 @@
 
 	--border-style: solid;
 	--border-width: 2px;
-	--border-width-mobile: var(--height-tablet);
+	--border-width-tablet: var(--border-width);
+	--border-width-mobile: var(--border-width-tablet);
 
 	--gap: 6px;
 	--gap-tablet: 6px;
