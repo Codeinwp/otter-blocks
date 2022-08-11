@@ -90,7 +90,7 @@ describe( 'Post Editor Performance', () => {
 			}, parseFloat );
 
 			if ( 'type' === key ) {
-				data.above60 = value.map( x => parseFloat( x.toFixed( 2 ) ) ).filter( x => 60 < x );
+				data.above60 = value.map( ( x, i ) => ({ i, x, render: `${i} - ${x.toFixed( 2  )}` }) ).filter( ({ x }) => 60 < x ).map( ({ render }) => render ).join( ', ' );
 			}
 
 			return [ `${key}`, data ];
@@ -119,7 +119,7 @@ describe( 'Post Editor Performance', () => {
 	it( 'Typing', async() => {
 
 		// Measuring typing performance.
-		await insertBlock( 'Paragraph' );
+		await insertBlock( 'Advanced Heading' );
 		let i = 100;
 		await page.tracing.start({
 			path: traceFile,
