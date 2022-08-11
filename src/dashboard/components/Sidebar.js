@@ -52,11 +52,21 @@ const Sidebar = ({
 				title={ __( 'Useful links', 'otter-blocks' ) }
 			>
 				<ul className="otter-info-links">
-					<li><a href={ window.otterObj.docsLink } target="_blank">{ __( 'Docs', 'otter-blocks' ) }</a></li>
 					<li><a href="https://wordpress.org/support/plugin/otter-blocks" target="_blank">{ __( 'Support', 'otter-blocks' ) }</a></li>
 					<li><a href="https://otter.nolt.io/" target="_blank">{ __( 'Feature request', 'otter-blocks' ) }</a></li>
 					<li><a href="https://wordpress.org/support/plugin/otter-blocks/reviews/#new-post" target="_blank">{ __( 'Leave a review', 'otter-blocks' ) }</a></li>
 				</ul>
+
+				<div className="otter-info-button-group is-single">
+					<Button
+						variant="secondary"
+						isSecondary
+						target="_blank"
+						href={ window.otterObj.docsLink }
+					>
+						{ __( 'Documentation', 'otter-blocks' ) }
+					</Button>
+				</div>
 			</Infobox>
 		</Fragment>
 	);
