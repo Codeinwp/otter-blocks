@@ -133,9 +133,14 @@ const Edit = ({
 			}`,
 			`.otter-countdown__display-area[name="separator"] .otter-countdown__value {
 				color: ${ attributes.separatorColor };
-			}`
+			}`,
+			'center' === attributes.separatorAlignment ? `
+			.otter-countdown__display-area[name="separator"] .otter-countdown__label {
+				display: none;
+			}
+			` : ''
 		]);
-	}, [ attributes.valueColor, attributes.labelColor, attributes.separatorColor ]);
+	}, [ attributes.valueColor, attributes.labelColor, attributes.separatorColor, attributes.separatorAlignment ]);
 
 
 	const blockProps = useBlockProps({

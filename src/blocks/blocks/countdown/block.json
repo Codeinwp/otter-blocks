@@ -143,6 +143,9 @@
 		"borderRadiusType": {
 			"type": "string",
 			"default": "linked"
+		},
+		"separatorAlignment": {
+			"type": "string"
 		}
 	},
 	"supports": {
