@@ -58,7 +58,7 @@ jobs:
           echo "::set-output name=TYPING_SD::$(jq '.summary.type.standardDeviation' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
           echo "::set-output name=TYPING_MD::$(jq '.summary.type.median' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
           echo "::set-output name=TYPING_QR60::$(jq '.summary.type.quantileRank60' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
-          echo "::set-output name=TYPING_ABOVE_60::$(jq '.summary.type.above60' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
+          echo "::set-output name=TYPING_ABOVE_60::$(jq -c '.summary.type.above60' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
           echo "::set-output name=TYPING_QR80::$(jq '.summary.type.quantileRank80' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
         id: summary  
 

@@ -90,7 +90,7 @@ describe( 'Post Editor Performance', () => {
 			}, parseFloat );
 
 			if ( 'type' === key ) {
-				data.above60 = value.map( x => x.toFixed( 2 ) ).filter( x => 60 < x );
+				data.above60 = value.map( x => parseFloat( x.toFixed( 2 ) ) ).filter( x => 60 < x );
 			}
 
 			return [ `${key}`, data ];
