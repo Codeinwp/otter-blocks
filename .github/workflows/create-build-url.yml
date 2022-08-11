@@ -108,29 +108,29 @@ jobs:
           edit-mode: replace
           body: ${{ steps.get-comment-body.outputs.body }}
 
-  run-tests:
-    name: Run Performance Tests
-    if: ${{ github.head_ref && github.head_ref != null }}
-    runs-on: ubuntu-latest
-    needs: dev-zip
-    steps:
-      - name: Run Tests on Production
-        uses: calibreapp/github-actions@main
-        env:
-          CALIBRE_API_TOKEN: ${{ secrets.CALIBRE_API_TOKEN }}
-        with:
-          command: test create https://otter-qa.s.themeisle.com/ --location=Sydney
-      - name: Create Development Site
-        id: create-development
-        uses: HardeepAsrani/wordpress-testing-automation@main
-        with:
-          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
-          INSTAWP_TOKEN: ${{ secrets.INSTAWP_TOKEN }}
-          INSTAWP_TEMPLATE_SLUG: otter-qa
-          REPO_ID: 46
-      - name: Run Tests on Development
-        uses: calibreapp/github-actions@main
-        env:
-          CALIBRE_API_TOKEN: ${{ secrets.CALIBRE_API_TOKEN }}
-        with:
-          command: test create ${{ steps.create-development.outputs.instawp_url }} --location=Sydney
+  # run-tests:
+  #   name: Run Performance Tests
+  #   if: ${{ github.head_ref && github.head_ref != null }}
+  #   runs-on: ubuntu-latest
+  #   needs: dev-zip
+  #   steps:
+  #     - name: Run Tests on Production
+  #       uses: calibreapp/github-actions@main
+  #       env:
+  #         CALIBRE_API_TOKEN: ${{ secrets.CALIBRE_API_TOKEN }}
+  #       with:
+  #         command: test create https://otter-qa.s.themeisle.com/ --location=Sydney
+  #     - name: Create Development Site
+  #       id: create-development
+  #       uses: HardeepAsrani/wordpress-testing-automation@main
+  #       with:
+  #         GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+  #         INSTAWP_TOKEN: ${{ secrets.INSTAWP_TOKEN }}
+  #         INSTAWP_TEMPLATE_SLUG: otter-qa
+  #         REPO_ID: 46
+  #     - name: Run Tests on Development
+  #       uses: calibreapp/github-actions@main
+  #       env:
+  #         CALIBRE_API_TOKEN: ${{ secrets.CALIBRE_API_TOKEN }}
+  #       with:
+  #         command: test create ${{ steps.create-development.outputs.instawp_url }} --location=Sydney
