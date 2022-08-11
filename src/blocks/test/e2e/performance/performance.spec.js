@@ -80,13 +80,20 @@ describe( 'Post Editor Performance', () => {
 	afterAll( async() => {
 
 		const summary = Object.entries( results ).filter( ([ _, value ]) => 0 < value.length ).map( ([ key, value ]) => {
-			return [ `${key}`,
-				mapValues({
-					'average': average( value ).toFixed( 2 ),
-					'standardDeviation': standardDeviation( value ).toFixed( 2 ),
-					'median': median( value ).toFixed( 2 ),
-					'quantileRank': quantileRank( value, 60 ).toFixed( 2 )
-				}, parseFloat ) ];
+
+			const data = mapValues({
+				'average': average( value ).toFixed( 2 ),
+				'standardDeviation': standardDeviation( value ).toFixed( 2 ),
+				'median': median( value ).toFixed( 2 ),
+				'quantileRank60': ( quantileRank( value, 60 ) * 100 ).toFixed( 2 ),
+				'quantileRank80': ( quantileRank( value, 80 ) * 100 ).toFixed( 2 )
+			}, parseFloat );
+
+			if ( 'type' === key ) {
+				data.above60 = value.map( x => x.toFixed( 2 ) ).filter( x => 60 < x );
+			}
+
+			return [ `${key}`, data ];
 		});
 		results.summary = Object.fromEntries( summary );
 
@@ -113,7 +120,7 @@ describe( 'Post Editor Performance', () => {
 
 		// Measuring typing performance.
 		await insertBlock( 'Paragraph' );
-		let i = 60;
+		let i = 100;
 		await page.tracing.start({
 			path: traceFile,
 			screenshots: false,
