@@ -269,7 +269,7 @@ class Base_CSS {
 		}
 
 		$blocks     = parse_blocks( $reusable_block->post_content );
-		$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+		$animations = boolval( preg_match( '/\banimated\b/', $reusable_block->post_content ) );
 
 		return $this->cycle_through_static_blocks( $blocks, $animations );
 	}
