@@ -27,6 +27,8 @@
 		"test:e2e:help": "wp-scripts test-e2e --help",
 		"test:e2e:debug": "wp-scripts --inspect-brk test-e2e --puppeteer-devtools",
 		"test:e2e:interactive": "wp-scripts test-e2e -- --puppeteer-interactive",
+		"test:e2e:performance": "wp-scripts test-e2e performance.spec.js",
+		"test:e2e:blockId": "wp-scripts test-e2e uniq-id-checking.spec.js",
 		"wp-env": "wp-env"
 	},
 	"repository": {

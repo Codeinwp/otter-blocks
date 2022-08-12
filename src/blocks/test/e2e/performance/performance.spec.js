@@ -30,7 +30,7 @@ import {
 	getHoverEventDurations,
 	getSelectionEventDurations,
 	getLoadingDurations
-} from './utils';
+} from '../utils';
 import { mapValues } from 'lodash';
 
 jest.setTimeout( 1000000 );
@@ -55,7 +55,7 @@ describe( 'Post Editor Performance', () => {
 
 	beforeAll( async() => {
 		const html = readFile(
-			join( __dirname, '/assets/large-otter-post.html' )
+			join( __dirname, '..', '/assets/large-otter-post.html' )
 		);
 
 		await createNewPost();
