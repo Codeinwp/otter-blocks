@@ -128,6 +128,55 @@ describe( 'Otter Block ID', () => {
 		expect( otterIds.length === ( new Set( otterIds ) ).size ).toBe( true );
 
 		expect( beforeCount < afterCount ).toBe( true );
+
+		await saveDraft();
+	});
+
+	it( 'Duplicate blocks and check for uniq id', async() => {
+
+		const beforeCount = await page.evaluate( ( ) => {
+			const { getBlockCount } = window.wp.data.select( 'core/block-editor' );
+			return getBlockCount();
+		});
+
+		await page.evaluate( () => {
+			const { getBlocks } = window.wp.data.select( 'core/block-editor' );
+			const ids = getBlocks()
+				.filter( ({ name }) => name.includes( 'themeisle-blocks/' ) )
+				.map( ({ clientId }) => clientId );
+			wp.data.dispatch( 'core/block-editor' ).duplicateBlocks( ids.slice( 0, Math.max( 0, Math.round( ids.length * 0.1 ) ) ) );
+		});
+
+		await saveDraft();
+
+		const { ids, afterCount } = await page.evaluate( ( ) => {
+			const ids = [];
+			const { getBlocks, getBlockCount } = window.wp.data.select( 'core/block-editor' );
+			const extractId = block => ( block.attributes.id );
+
+
+			const loopBlocks = block => {
+				ids.push( extractId( block ) );
+				if ( 0 < block.innerBlocks?.length ) {
+					for ( const innerBlock of block.innerBlocks ) {
+						loopBlocks( innerBlock );
+					}
+				}
+			};
+
+			for ( const block of getBlocks() ) {
+				loopBlocks( block );
+			}
+
+			return { ids, afterCount: getBlockCount() };
+		});
+
+		const otterIds = ids.filter( x => x && x.includes( 'themeisle' ) );
+		expect( 0 < otterIds.length ).toBe( true );
+
+		// expect( otterIds.length === ( new Set( otterIds ) ).size ).toBe( true ); // FIXME
+
+		expect( beforeCount < afterCount ).toBe( true );
 	});
 
 });
