@@ -253,7 +253,6 @@ class Main {
 		);
 
 		$tags['textarea'] = array(
-			'type'        => true,
 			'name'        => true,
 			'id'          => true,
 			'required'    => true,
