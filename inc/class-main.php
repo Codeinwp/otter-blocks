@@ -45,6 +45,7 @@ class Main {
 		add_action( 'init', array( $this, 'autoload_classes' ), 9 );
 		add_filter( 'script_loader_tag', array( $this, 'filter_script_loader_tag' ), 10, 2 );
 		add_filter( 'safe_style_css', array( $this, 'used_css_properties' ), 99 );
+		add_filter( 'wp_kses_allowed_html', array( $this, 'used_html_properties' ), 10, 2 );
 		add_action( 'init', array( $this, 'after_update_migration' ) );
 
 		if ( ! function_exists( 'is_wpcom_vip' ) ) {
@@ -213,6 +214,55 @@ class Main {
 		$list = array_merge( $props, $attr );
 
 		return $list;
+	}
+
+	/**
+	 * Used HTML properties
+	 *
+	 * @param array  $tags Allowed HTML tags.
+	 * @param string $context Context.
+	 *
+	 * @return array
+	 * @since   2.0.11
+	 * @access  public
+	 */
+	public function used_html_properties( $tags, $context ) {
+		if ( 'post' !== $context ) {
+			return $tags;
+		}
+
+		if ( isset( $tags['div'] ) ) {
+			$tags['div']['name'] = true;
+		}
+
+		if ( isset( $tags['form'] ) ) {
+			$tags['form']['class'] = true;
+		} else {
+			$tags['form'] = array(
+				'class' => true,
+			);
+		}
+
+		$tags['input'] = array(
+			'type'        => true,
+			'name'        => true,
+			'id'          => true,
+			'required'    => true,
+			'placeholder' => true,
+			'class'       => true,
+		);
+
+		$tags['textarea'] = array(
+			'type'        => true,
+			'name'        => true,
+			'id'          => true,
+			'required'    => true,
+			'placeholder' => true,
+			'rows'        => true,
+			'class'       => true,
+		);
+
+		return $tags;
 	}
 
 	/**
