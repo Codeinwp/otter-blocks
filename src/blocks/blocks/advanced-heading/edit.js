@@ -36,7 +36,7 @@ import metadata from './block.json';
 import { blockInit } from '../../helpers/block-utility.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import googleFontsLoader from '../../helpers/google-fonts';
+import googleFontsLoader from '../../helpers/google-fonts.js';
 
 const { attributes: defaultAttributes } = metadata;
 

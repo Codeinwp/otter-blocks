@@ -53,6 +53,13 @@ class Button_CSS extends Base_CSS {
 						},
 					),
 					array(
+						'property'  => 'justify-content',
+						'default'   => 'center',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['library'] ) && 'themeisle-icons' === $attrs['library'];
+						},
+					),
+					array(
 						'property' => 'color',
 						'value'    => 'color',
 					),
