@@ -174,6 +174,10 @@ We're constantly adding new Gutenberg Blocks to Otter to assist in your website 
 
 We're here to help. Feel free to open a new thread on the [Support Forum](https://wordpress.org/support/plugin/otter-blocks/).
 
+### Documentation
+
+You can check Otter documentation [here](https://docs.themeisle.com/article/1478-otter-blocks-documentation).
+
 ### Useful Resources
 
 - Read more about WordPress on our [blog](https://themeisle.com/blog/).

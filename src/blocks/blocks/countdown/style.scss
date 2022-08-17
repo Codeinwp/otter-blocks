@@ -2,44 +2,66 @@
 	--background-color: transparent;
 	--border-color: #000;
 	--border-radius: 0px;
+
 	--width: 100%;
 	--container-width: clamp(400px, var(--width) * 4, 100%);
 	--container-width-tablet: var(--container-width);
 	--container-width-mobile: var(--container-width-tablet);
+
 	--height: 100px;
-	--height-tablet: 100px;
-	--height-mobile: 100px;
+	--height-tablet: var(--height);
+	--height-mobile: var(--height-mobile);
+
 	--border-style: solid;
 	--border-width: 2px;
 	--border-width-tablet: var(--border-width);
 	--border-width-mobile: var(--border-width-tablet);
+
 	--gap: 6px;
 	--gap-tablet: 6px;
 	--gap-mobile: 6px;
+
 	--value-font-size: 1.5rem;
 	--value-font-size-tablet: var(--value-font-size);
 	--value-font-size-mobile: var(--value-font-size-tablet);
+
 	--label-font-size: 0.6rem;
 	--label-font-size-tablet: var(--label-font-size);
 	--label-font-size-mobile: var(--label-font-size-tablet);
+
 	--alignment: center;
+
 	--padding: 0px;
 	--padding-tablet: var(--padding);
 	--padding-mobile: var(--padding-tablet);
+	
 	--value-font-weight: regular;
 	--label-font-weight: regular;
+
+	border-style: none;
 
 	.otter-countdown__container {
 		display: flex;
 		justify-content: var(--alignment);
+		height: var(--height);
+
+		@media ( max-width: 960px ) {
+			height: var(--height-tablet);
+		}
+
+		@media ( max-width: 600px ) {
+			height: var(--height-mobile);
+
+		}
+
 	}
 
 	.otter-countdown__display {
 		display: flex;
 		flex-direction: row;
 		width: var(--container-width, 100%);
-		height: var(--height);
 		gap: var( --gap );
+		height: 100%;
 
 		@media ( max-width: 960px ) {
 			gap: var( --gap-tablet );
@@ -63,16 +85,15 @@
 		box-sizing: border-box;
 		width: 100%;
 		padding: var(--padding);
+		height: 100%;
 
 		@media ( max-width: 960px ) {
-			height: var( --heightTablet );
-			border: var( --borderWidthTablet ) var(--border-style) var( --borderColor );
+			border: var( --border-width-tablet ) var(--border-style) var( --border-color );
 			padding: var(--padding-tablet);
 		}
 
 		@media ( max-width: 600px ) {
-			height: var( --heightMobile );
-			border: var( --borderWidthMobile ) var(--border-style) var( --borderColor );
+			border: var( --border-width-mobile ) var(--border-style) var( --border-color );
 			padding: var(--padding-mobile);
 		}
 
