@@ -174,6 +174,10 @@ We're constantly adding new Gutenberg Blocks to Otter to assist in your website 
 
 We're here to help. Feel free to open a new thread on the [Support Forum](https://wordpress.org/support/plugin/otter-blocks/).
 
+### Documentation
+
+You can check Otter documentation [here](https://docs.themeisle.com/article/1478-otter-blocks-documentation).
+
 ### Useful Resources
 
 - Read more about WordPress on our [blog](https://themeisle.com/blog/).
@@ -188,6 +192,27 @@ We're here to help. Feel free to open a new thread on the [Support Forum](https:
 5. Section Block
 
 ## Changelog ##
+
+##### [Version 2.0.11](https://github.com/Codeinwp/otter-blocks/compare/v2.0.10...v2.0.11) (2022-08-17)
+
+- Add Option to remove Product Review schema in Product Review block
+- Add Pros/Cons Schema to Product Review Block
+- Add FSE compatibility to Otter
+- Add Docs link to Dashboard & readme
+- Fix certain blocks not working inside the Query Loop block
+- Fix Visibility Conditions not working for Widgets in the Customizer
+- Fix Icon List block not working properly when adding new items
+- Fix border issues in Countdown Block
+- Fix Color & Gradient picker opening together
+- Fix alignment inheritance in Countdown Block
+- Fix undefined variable warning when Animations are used in Dynamic Blocks
+- Fix Alignment control not appearing in Button Group in FSE
+- Fix Countdown & Form blocks not working properly for non-Super Admins in Network sites
+- Fix Dynamic Values modal not opening in Advanced Heading block
+- Fix Plugin Card not behaving nicely when added into smaller spaces
+
+
+
 
 ##### [Version 2.0.10](https://github.com/Codeinwp/otter-blocks/compare/v2.0.9...v2.0.10) (2022-08-04)
 
