@@ -19,6 +19,20 @@ const autocompleteOptions = [];
 
 Object.keys( options ).forEach( option => autocompleteOptions.push( ...options[option].options ) );
 
+autocompleteOptions.sort( ( a, b ) => {
+	if ( ! a?.isDisabled || ( a?.isDisabled && b?.isDisabled ) ) {
+		return false;
+	}
+
+	if ( ! a?.isDisabled && b?.isDisabled ) {
+		return -1;
+	}
+
+	if ( a?.isDisabled && ! b?.isDisabled ) {
+		return true;
+	}
+});
+
 const dynamicValue = {
 	name: 'dynamic-value',
 	triggerPrefix: '%',
