@@ -17,11 +17,14 @@ import {
 	useState
 } from '@wordpress/element';
 
+import { applyFilters } from '@wordpress/hooks';
+
 import { toggleFormat } from '@wordpress/rich-text';
 
 /**
  * Internal dependencies.
  */
+import options from './options.js';
 import Fields from './components/fields.js';
 import InlineControls from './components/inline-controls.js';
 
@@ -53,7 +56,21 @@ const Edit = ({
 	};
 
 	const onApply = () => {
+		const autocompleteOptions = [];
 		const attrs = Object.fromEntries( Object.entries( attributes ).filter( ([ _, v ]) => ( null !== v && '' !== v ) ) );
+
+		if ( value.start === value.end ) { // Here we try to append the format if no text is selected.
+			const dynamicOptions = applyFilters( 'otter.dynamicContent.text.options', options );
+
+			Object.keys( dynamicOptions ).forEach( option => autocompleteOptions.push( ...dynamicOptions[option].options ) );
+
+			const text = autocompleteOptions.find( i => i.value === attrs.type ).label;
+
+			value.text = value.text.substring( 0, value.start ) + text + value.text.substring( value.start );
+			value.end = text.length + value.start;
+			value.formats.splice( value.start, 0, ...new Array( text.length ) );
+			value.replacements.splice( value.start, 0, ...new Array( text.length ) );
+		}
 
 		onChange(
 			toggleFormat( value,
@@ -73,7 +90,7 @@ const Edit = ({
 				icon={ globe }
 				title={ __( 'Dynamic Value', 'otter-blocks' ) }
 				onClick={ () => setOpen( true ) }
-				isDisabled={ isActive || '' === value.text.substring( value.start, value.end ) }
+				isDisabled={ isActive }
 				isActive={ isActive }
 			/>
 
