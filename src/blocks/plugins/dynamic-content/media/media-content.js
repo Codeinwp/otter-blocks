@@ -216,7 +216,7 @@ const MediaContent = ({
 			attrs[ o ] = obj[ o ];
 		});
 
-		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v ) ) );
+		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v && undefined !== v ) ) );
 
 		const url = window.themeisleGutenberg.restRoot + '/dynamic/?' + getQueryStringFromObject( attrs );
 

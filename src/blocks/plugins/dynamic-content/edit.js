@@ -46,7 +46,7 @@ const Edit = ({
 			attrs[ o ] = obj[ o ];
 		});
 
-		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v ) ) );
+		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v && undefined !== v ) ) );
 
 		setAttributes({ ...attrs });
 	};
@@ -57,7 +57,7 @@ const Edit = ({
 
 	const onApply = () => {
 		const autocompleteOptions = [];
-		const attrs = Object.fromEntries( Object.entries( attributes ).filter( ([ _, v ]) => ( null !== v && '' !== v ) ) );
+		const attrs = Object.fromEntries( Object.entries( attributes ).filter( ([ _, v ]) => ( null !== v && '' !== v && undefined !== v ) ) );
 
 		if ( value.start === value.end ) { // Here we try to append the format if no text is selected.
 			const dynamicOptions = applyFilters( 'otter.dynamicContent.text.options', options );
