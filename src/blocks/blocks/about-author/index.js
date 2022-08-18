@@ -30,7 +30,7 @@ registerBlockType( name, {
 	edit,
 	save: () => null,
 	supports: {
-		inserter: undefined !== getBlockType( 'core/post-author' ),
+		inserter: undefined === getBlockType( 'core/post-author' ),
 		html: false
 	},
 	example: {}
