@@ -3,10 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import {
-	registerBlockType,
-	getBlockType
-} from '@wordpress/blocks';
+import { registerBlockType } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -30,7 +27,7 @@ registerBlockType( name, {
 	edit,
 	save: () => null,
 	supports: {
-		inserter: undefined === getBlockType( 'core/post-author' ),
+		inserter: Boolean( window.themeisleGutenberg.isLegacyPre59 ),
 		html: false
 	},
 	example: {}
