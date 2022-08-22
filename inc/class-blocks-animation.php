@@ -199,7 +199,7 @@ class Blocks_Animation {
 	 */
 	public function add_no_script_tag( $tag, $handle, $src ) {
 		if ( 'otter-animation-frontend' === $handle ) {
-			$content = '<style>.animated { visibility: visible; }</style>';
+			$content = '<style>.animated { visibility: visible; animation-play-state: running; }</style>';
 			$tag    .= '<noscript>' . $content . '</noscript>';
 		}
 		return $tag;

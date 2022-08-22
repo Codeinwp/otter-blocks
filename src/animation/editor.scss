@@ -121,6 +121,7 @@
 
 .animated {
    visibility: hidden;
+   animation-play-state: paused;
 }
 
 .block-editor {

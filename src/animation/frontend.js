@@ -163,6 +163,7 @@ window.addEventListener( 'load', () => {
 		element.animationClasses = [];
 
 		element.style.visibility = 'initial';
+		element.style.animationPlayState = 'running';
 
 		if ( ! isElementInViewport( element ) ) {
 			const animationClass = animations.find( ( i ) => {
