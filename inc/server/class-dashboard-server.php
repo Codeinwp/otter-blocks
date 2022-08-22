@@ -105,6 +105,8 @@ class Dashboard_Server {
 			);
 		}
 
+		delete_transient( 'otter_animations_parsed' );
+
 		if ( ! is_dir( $basedir ) ) {
 			return rest_ensure_response(
 				array(
