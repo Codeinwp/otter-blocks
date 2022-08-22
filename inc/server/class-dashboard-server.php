@@ -107,7 +107,7 @@ class Dashboard_Server {
 
 		$transient_deleted = false;
 
-		if( get_transient( 'otter_animations_parsed' ) ) {
+		if ( get_transient( 'otter_animations_parsed' ) ) {
 			delete_transient( 'otter_animations_parsed' );
 			$transient_deleted = true;
 		}
