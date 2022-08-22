@@ -105,14 +105,20 @@ class Dashboard_Server {
 			);
 		}
 
-		delete_transient( 'otter_animations_parsed' );
+		$transient_deleted = false;
+
+		if( get_transient( 'otter_animations_parsed' ) ) {
+			delete_transient( 'otter_animations_parsed' );
+			$transient_deleted = true;
+		}
+
 
 		if ( ! is_dir( $basedir ) ) {
 			return rest_ensure_response(
 				array(
 					'success' => false,
 					'data'    => array(
-						'message' => __( 'Sorry, the directory doesn\'t exist.', 'otter-blocks' ),
+						'message' => $transient_deleted ? __( 'Optimized code deleted.', 'otter-blocks' ) : __( 'Sorry, the directory doesn\'t exist.', 'otter-blocks' ),
 					),
 				)
 			);
