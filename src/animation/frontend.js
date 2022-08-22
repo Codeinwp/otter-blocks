@@ -162,6 +162,8 @@ window.addEventListener( 'load', () => {
 		classes = element.classList;
 		element.animationClasses = [];
 
+		element.style.visibility = 'initial';
+
 		if ( ! isElementInViewport( element ) ) {
 			const animationClass = animations.find( ( i ) => {
 				return Array.from( classes ).find( ( o ) => o === i );

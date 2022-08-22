@@ -118,3 +118,13 @@
 	  top: 16px;
 	}
 }
+
+.animated {
+   visibility: hidden;
+}
+
+.block-editor {
+   .animated {
+      visibility: initial;
+   }
+}

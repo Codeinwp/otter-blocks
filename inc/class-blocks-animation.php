@@ -49,6 +49,7 @@ class Blocks_Animation {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_frontend_assets' ) );
 		add_filter( 'render_block', array( $this, 'frontend_load' ), 800, 2 );
+		add_filter( 'script_loader_tag', array( $this, 'add_no_script_tag' ), 10, 3 );
 	}
 
 	/**
@@ -185,6 +186,23 @@ class Blocks_Animation {
 		}
 
 		return $block_content;
+	}
+
+	/**
+	 * Add no script tag.
+	 *
+	 * @param string $tag The <script> tag for the enqueued script.
+	 * @param array  $handle The script's registered handle.
+	 * @param string $src The script's source URL.
+	 * @return string
+	 * @since 2.0.12
+	 */
+	public function add_no_script_tag( $tag, $handle, $src ) {
+		if ( 'otter-animation-frontend' === $handle ) {
+			$content = '<style>.animated { visibility: visible; }</style>';
+			$tag    .= '<noscript>' . $content . '</noscript>';
+		}
+		return $tag;
 	}
 
 	/**
