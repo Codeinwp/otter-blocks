@@ -108,6 +108,8 @@
 	}
 
 	.otter-countdown__value {
+		display: flex;
+		justify-content: center;
 		font-size: var( --value-font-size );
 		font-weight: var( --value-font-weight );
 		line-height: 1.2;
