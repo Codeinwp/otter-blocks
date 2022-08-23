@@ -11,7 +11,9 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 
 import { InspectorControls } from '@wordpress/block-editor';
 
-import { Fragment } from '@wordpress/element';
+import {
+	Fragment
+} from '@wordpress/element';
 
 import {
 	addFilter,
@@ -29,7 +31,10 @@ import './typing/index.js';
 
 const excludedBlocks = [ 'themeisle-blocks/popup' ];
 
+const removeTimeouts = {};
+
 const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
+
 	return ( props ) => {
 		const hasCustomClassName = hasBlockSupport(
 			props.name,
@@ -38,6 +43,16 @@ const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 		);
 
 		if ( hasCustomClassName && props.isSelected && ! excludedBlocks.includes( props.name ) ) {
+
+			let block = document.querySelector( `.customize-control-sidebar_block_editor #block-${ props.clientId } .animated` ) || document.querySelector( `#block-${ props.clientId }.animated` );
+
+			if ( block ) {
+				clearTimeout( removeTimeouts[ props.clientId ]);
+				removeTimeouts[ props.clientId ] = setTimeout( () => {
+					block.classList.remove( 'animated' );
+				}, 5_000 );
+			}
+
 			return (
 				<Fragment>
 					<BlockEdit { ...props } />
