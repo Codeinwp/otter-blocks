@@ -42,6 +42,8 @@ const ProgressBar = ({
 	toggleSelection
 }) => {
 
+	console.log( attributes );
+
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
@@ -95,7 +97,8 @@ const ProgressBar = ({
 		'--background-color': attributes.backgroundColor,
 		'--border-radius': attributes.borderRadius !== undefined && ( attributes.borderRadius + 'px' ),
 		'--height': attributes.height !== undefined && ( attributes.height + 'px' ),
-		'--bar-background': attributes.barBackgroundColor
+		'--bar-background': attributes.barBackgroundColor,
+		'--title-font-size': attributes.titleFontSize
 	};
 
 	const onHeightChange = value => {

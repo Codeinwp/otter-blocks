@@ -10,6 +10,7 @@
 	--height: 30px;
 	--font-size: calc( var( --height ) * 0.65 );
 	--bar-background: #6adcfa;
+	--title-font-size: initial;
 
 	display: flex;
 	flex-direction: column;
@@ -85,10 +86,12 @@
 		transition: all 1s;
 		position: relative;
 		padding: 4px 10px 7px 10px;
-		background-color: rgba(67, 66, 76, 0.81);
+		background-color: var(--bar-background);
 		border-radius: 2px;
 		line-height: 20px;
 		opacity: 0;
+		font-size: clamp(0px, var(--title-font-size), 1.25rem);
+		text-align: center;
 
 		&.show {
 			opacity: 1;
@@ -107,7 +110,7 @@
 		display: block;
 		border-style: solid;
 		border-width: 5px 5px 0 5px;
-		border-color: rgba(67, 66, 76, 0.81) transparent transparent transparent;
+		border-color: var(--bar-background) transparent transparent transparent;
 	}
 
 	.wp-block-themeisle-blocks-progress-bar__area__title {
@@ -148,7 +151,7 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: space-between;
-		margin-bottom: .25em;
+		margin-bottom: 10px;
 	}
 
 	.wp-block-themeisle-blocks-progress-bar__outer__title {
@@ -156,7 +159,8 @@
 		margin: 0px;
 		display: grid;
 		align-items: center;
-		font-size: var( --font-size );
+		font-size: var( --title-font-size );
+		line-height: 70%;
 	}
 
 	.wp-block-themeisle-blocks-progress-bar__outer__value {
@@ -165,6 +169,8 @@
 		display: grid;
 		align-items: center;
 		position: inherit;
+		font-size: var( --title-font-size );
+		line-height: 70%;
 	}
 }
 
