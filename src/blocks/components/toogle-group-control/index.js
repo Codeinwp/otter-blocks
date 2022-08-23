@@ -51,7 +51,7 @@ const ToogleGroupControl = ({
 							label={ option?.label }
 							onClick={ () => onChange( option?.value )}
 							showTooltip={ Boolean( hideTooltip ) }
-							style={ value == option?.value ? ( style.active ?? style?.button ) : style?.button }
+							style={ value == option?.value ? ( style?.active ?? style?.button ) : style?.button }
 						>
 							{ option?.label && ! Boolean( hideLabels ) && ! Boolean( showBottomLabels ) ? option?.label : '' }
 						</Button>
