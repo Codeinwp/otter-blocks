@@ -37,8 +37,8 @@ const CSSEditor = ({
 		}
 
 		return  attributes.className ?
-			( ! attributes.className.includes( 'ticss-' ) ? [ ...attributes.className.split( ' ' ), `ticss-${uniqueId}` ].join( ' ' ) : attributes.className ) :
-			`ticss-${uniqueId}`;
+			( ! attributes.className.includes( 'ticss-' ) ? [ ...attributes.className.split( ' ' ), `ticss-${ uniqueId }` ].join( ' ' ) : attributes.className ) :
+			`ticss-${ uniqueId }`;
 	};
 
 	const checkInput = ( editor, ignoreErrors = false ) => {
@@ -61,7 +61,7 @@ const CSSEditor = ({
 			initialValue = ( attributes.customCSS ).replace( regex, 'selector' );
 		}
 
-		editorRef.current = wp.CodeMirror( document.getElementById( 'otter-css-editor' ), {
+		editorRef.current = wp.CodeMirror( document.getElementById( 'o-css-editor' ), {
 			value: initialValue,
 			autoCloseBrackets: true,
 			continueComments: true,
@@ -90,7 +90,7 @@ const CSSEditor = ({
 
 	useEffect( () => {
 		const regex = new RegExp( 'selector', 'g' );
-		setCustomCSS( editorValue?.replace( regex, `.${getClassName()}` ) );
+		setCustomCSS( editorValue?.replace( regex, `.${ getClassName().split( ' ' ).find( i => i.includes( 'ticss' ) ) }` ) );
 	}, [ editorValue ]);
 
 	useEffect( () => {
@@ -114,7 +114,7 @@ const CSSEditor = ({
 		<Fragment>
 			<p>{__( 'Add your custom CSS.', 'otter-blocks' )}</p>
 
-			<div id="otter-css-editor" className="otter-css-editor" />
+			<div id="o-css-editor" className="o-css-editor" />
 
 			{ 0 < errors?.length && (
 				<div className='o-css-errors'>
@@ -151,7 +151,7 @@ const CSSEditor = ({
 			<br />
 			<p>{__( 'Example:', 'otter-blocks' )}</p>
 
-			<pre className="otter-css-editor-help">
+			<pre className="o-css-editor-help">
 				{'selector {\n    background: #000;\n}\n\nselector img {\n    border-radius: 100%;\n}'}
 			</pre>
 

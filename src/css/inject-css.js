@@ -15,12 +15,12 @@ import {
 } from '@wordpress/data';
 
 const addStyle = style => {
-	let element = document.getElementById( 'otter-css-editor-styles' );
+	let element = document.getElementById( 'o-css-editor-styles' );
 
 	if ( null === element ) {
 		element = document.createElement( 'style' );
 		element.setAttribute( 'type', 'text/css' );
-		element.setAttribute( 'id', 'otter-css-editor-styles' );
+		element.setAttribute( 'id', 'o-css-editor-styles' );
 		document.getElementsByTagName( 'head' )[0].appendChild( element );
 	}
 

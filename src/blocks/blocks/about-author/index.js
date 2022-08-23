@@ -26,5 +26,9 @@ registerBlockType( name, {
 	],
 	edit,
 	save: () => null,
+	supports: {
+		inserter: Boolean( window.themeisleGutenberg.isLegacyPre59 ),
+		html: false
+	},
 	example: {}
 });

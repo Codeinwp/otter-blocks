@@ -33,10 +33,15 @@ const Edit = ({
 	attributes,
 	changeAttributes
 }) => {
-	const { groups } = useSelect( select => {
+	const {
+		isLoaded,
+		groups
+	} = useSelect( select => {
 		const { groups } = select( 'otter-pro' ).getACFData();
+		const isLoaded = select( 'otter-pro' ).isACFLoaded();
 
 		return {
+			isLoaded,
 			groups
 		};
 	}, []);
@@ -214,7 +219,7 @@ const Edit = ({
 						<BaseControl
 							label={ __( 'Meta Key', 'otter-blocks' ) }
 						>
-							{ ! isEmpty( groups ) ? (
+							{ isLoaded ? (
 								<select
 									value={ attributes.metaKey || 'none' }
 									onChange={ event => changeAttributes({ metaKey: event.target.value  }) }

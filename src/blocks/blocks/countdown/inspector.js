@@ -99,275 +99,276 @@ const Inspector = ({
 
 	return (
 		<InspectorControls>
-			<PanelBody
-				title={ __( 'Time', 'otter-blocks' ) }
-			>
-				<Dropdown
-					position="bottom left"
-					headerTitle={ __( 'Select the date for the deadline', 'otter-blocks' ) }
-					renderToggle={ ({ onToggle, isOpen }) => (
-						<>
-							<Button
-								onClick={ onToggle }
-								isSecondary
-								aria-expanded={ isOpen }
-							>
-								{ attributes.date ? format( settings.formats.datetime, attributes.date ) : __( 'Select Date', 'otter-blocks' ) }
-							</Button>
-						</>
-					) }
-					renderContent={ () => (
-						<DateTimePicker
-							currentDate={ attributes.date }
-							onChange={ date => setAttributes({ date }) }
-						/>
-					) }
-				/>
-			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				<ToggleControl
-					label={ __( 'Display Days', 'otter-blocks' ) }
-					checked={ ! attributes?.exclude?.includes( 'day' ) }
-					onChange={ value => excludeComponent( value, 'day' ) }
-				/>
-
-				<ToggleControl
-					label={ __( 'Display Hours', 'otter-blocks' ) }
-					checked={ ! attributes?.exclude?.includes( 'hour' ) }
-					onChange={ value => excludeComponent( value, 'hour' ) }
-				/>
-
-				<ToggleControl
-					label={ __( 'Display Minutes', 'otter-blocks' ) }
-					checked={ ! attributes?.exclude?.includes( 'minute' ) }
-					onChange={ value => excludeComponent( value, 'minute' ) }
-				/>
-
-				<ToggleControl
-					label={ __( 'Display Seconds', 'otter-blocks' ) }
-					checked={ ! attributes?.exclude?.includes( 'second' ) }
-					onChange={ value => excludeComponent( value, 'second' ) }
-				/>
-
-				<ToggleControl
-					label={ __( 'Display Separators', 'otter-blocks' ) }
-					checked={ attributes?.hasSeparators }
-					onChange={ hasSeparators => setAttributes({ hasSeparators }) }
-				/>
-
-			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Dimensions & Spacing', 'otter-blocks' ) }
-				initialOpen={false}
-			>
-				<ResponsiveControl
-					label={ __( 'Width', 'otter-blocks' ) }
+			<div>
+				<PanelBody
+					title={ __( 'Time', 'otter-blocks' ) }
 				>
-					<UnitContol
-						value={ responsiveGetAttributes([ attributes.containerWidth, attributes.containerWidthTablet, attributes.containerWidthMobile ]) ?? '100%' }
-						onChange={ value => responsiveSetAttributes( value, [ 'containerWidth', 'containerWidthTablet', 'containerWidthMobile' ]) }
-					/>
-				</ResponsiveControl>
-				<ResponsiveControl
-					label={ __( 'Height', 'otter-blocks' ) }
-				>
-					<RangeControl
-						value={ responsiveGetAttributes([ attributes.height, attributes.heightTablet, attributes.heightMobile ]) ?? 100 }
-						onChange={ value => responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]) }
-						min={ 50 }
-						max={ 800 }
-						allowReset
-					/>
-				</ResponsiveControl>
-
-				<ResponsiveControl
-					label={ __( 'Space Between', 'otter-blocks' ) }
-				>
-					<RangeControl
-						value={ responsiveGetAttributes([ attributes.gap, attributes.gapTablet, attributes.gapMobile ]) ?? 6 }
-						onChange={ value => responsiveSetAttributes( value, [ 'gap', 'gapTablet', 'gapMobile' ]) }
-						min={ 0 }
-						max={ 100 }
-						allowReset
-					/>
-				</ResponsiveControl>
-
-				<SelectControl
-					label={__( 'Position', 'otter-blocks' )}
-					value={ attributes.alingment }
-					onChange={ alignment => setAttributes({ alignment: alignment || undefined })}
-					options={[
-						{
-							label: __( 'Default', 'otter-blocks' ),
-							value: ''
-						},
-						{
-							label: __( 'Left', 'otter-blocks' ),
-							value: 'flex-start'
-						},
-						{
-							label: __( 'Center', 'otter-blocks' ),
-							value: 'center'
-						},
-						{
-							label: __( 'Right', 'otter-blocks' ),
-							value: 'flex-end'
-						}
-					]}
-				/>
-			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Typography', 'otter-blocks' ) }
-				initialOpen={false}
-			>
-				<ResponsiveControl
-					label={ __( 'Time Value Font Size', 'otter-blocks' ) }
-				>
-					<FontSizePicker
-						fontSizes={ defaultFontSizes }
-						withReset
-						value={ responsiveGetAttributes([ attributes.valueFontSize, attributes.valueFontSizeTablet, attributes.valueFontSizeMobile ]) }
-						onChange={ value => responsiveSetAttributes( value, [ 'valueFontSize', 'valueFontSizeTablet', 'valueFontSizeMobile' ]) }
-					/>
-				</ResponsiveControl>
-
-				<SelectControl
-					label={__( 'Time Value Font Weight', 'otter-blocks' )}
-					value={ attributes.valueFontWeight }
-					onChange={ valueFontWeight => setAttributes({ valueFontWeight: valueFontWeight || undefined })}
-					options={fontWeights}
-				/>
-
-				<ResponsiveControl
-					label={ __( 'Label Font Size', 'otter-blocks' ) }
-				>
-					<FontSizePicker
-						fontSizes={ defaultFontSizes }
-						withReset
-						value={ responsiveGetAttributes([ attributes.labelFontSize, attributes.labelFontSizeTablet, attributes.labelFontSizeMobile ]) }
-						onChange={ value => responsiveSetAttributes( value, [ 'labelFontSize', 'labelFontSizeTablet', 'labelFontSizeMobile' ]) }
-					/>
-				</ResponsiveControl>
-
-				<SelectControl
-					label={__( 'Label Font Weight', 'otter-blocks' )}
-					value={ attributes.labelFontWeight }
-					onChange={ labelFontWeight => setAttributes({ labelFontWeight: labelFontWeight || undefined })}
-					options={fontWeights}
-				/>
-			</PanelBody>
-
-			<PanelColorSettings
-				title={ __( 'Color', 'otter-blocks' ) }
-				initialOpen={ false }
-				colorSettings={ [
-					{
-						value: attributes.backgroundColor,
-						onChange: backgroundColor => setAttributes({ backgroundColor }),
-						label: __( 'Background', 'otter-blocks' )
-					},
-					{
-						value: attributes.valueColor,
-						onChange: valueColor => setAttributes({ valueColor }),
-						label: __( 'Time Value', 'otter-blocks' )
-					},
-					{
-						value: attributes.labelColor,
-						onChange: labelColor => setAttributes({ labelColor }),
-						label: __( 'Label', 'otter-blocks' )
-					},
-					{
-						value: attributes.separatorColor,
-						onChange: separatorColor => setAttributes({ separatorColor }),
-						label: __( 'Separator', 'otter-blocks' )
-					},
-					{
-						value: attributes.borderColor,
-						onChange: borderColor => setAttributes({ borderColor }),
-						label: __( 'Border', 'otter-blocks' )
-					}
-				] }
-			>
-				<ContrastChecker
-					{ ...{
-						textColor: attributes.backgroundColor,
-						backgroundColor: attributes.valueColor
-					} }
-				/>
-			</PanelColorSettings>
-
-			<PanelBody
-				title={ __( 'Border', 'otter-blocks' ) }
-				initialOpen={false}
-			>
-				<SelectControl
-					label={__( 'Type', 'otter-blocks' )}
-					value={ attributes.borderStyle ?? 'solid' }
-					onChange={ borderStyle => setAttributes({ borderStyle: 'solid' === borderStyle ? undefined : borderStyle })}
-					options={[
-						{
-							label: __( 'None', 'otter-blocks' ),
-							value: 'none'
-						},
-						{
-							label: __( 'Solid', 'otter-blocks' ),
-							value: 'solid'
-						},
-						{
-							label: __( 'Double', 'otter-blocks' ),
-							value: 'double'
-						},
-						{
-							label: __( 'Dotted', 'otter-blocks' ),
-							value: 'dotted'
-						},
-						{
-							label: __( 'Dashed', 'otter-blocks' ),
-							value: 'dashed'
-						}
-					]}
-				/>
-
-				{
-					'none' !== attributes.borderStyle && (
-						<ResponsiveControl
-							label={ __( 'Width', 'otter-blocks' ) }
-						>
-							<RangeControl
-								value={ responsiveGetAttributes([ attributes.borderWidth, attributes.borderWidthTablet, attributes.borderWidthMobile ]) ?? 2 }
-								onChange={ value => responsiveSetAttributes( value, [ 'borderWidth', 'borderWidthTablet', 'borderWidthMobile' ]) }
-								min={ 0 }
-								max={ 50 }
-								allowReset
+					<Dropdown
+						position="bottom left"
+						headerTitle={ __( 'Select the date for the deadline', 'otter-blocks' ) }
+						renderToggle={ ({ onToggle, isOpen }) => (
+							<>
+								<Button
+									onClick={ onToggle }
+									isSecondary
+									aria-expanded={ isOpen }
+								>
+									{ attributes.date ? format( settings.formats.datetime, attributes.date ) : __( 'Select Date', 'otter-blocks' ) }
+								</Button>
+							</>
+						) }
+						renderContent={ () => (
+							<DateTimePicker
+								currentDate={ attributes.date }
+								onChange={ date => setAttributes({ date }) }
 							/>
-						</ResponsiveControl>
-					)
-				}
+						) }
+					/>
+				</PanelBody>
 
+				<PanelBody
+					title={ __( 'Settings', 'otter-blocks' ) }
+					initialOpen={ false }
+				>
+					<ToggleControl
+						label={ __( 'Display Days', 'otter-blocks' ) }
+						checked={ ! attributes?.exclude?.includes( 'day' ) }
+						onChange={ value => excludeComponent( value, 'day' ) }
+					/>
 
-				<BoxControl
-					label={ __( 'Border Radius', 'otter-blocks' ) }
-					values={
-						mergeBoxDefaultValues(
-							attributes.borderRadiusBox,
-							{ left: '0px', right: '0px', bottom: '0px', top: '0px' }
+					<ToggleControl
+						label={ __( 'Display Hours', 'otter-blocks' ) }
+						checked={ ! attributes?.exclude?.includes( 'hour' ) }
+						onChange={ value => excludeComponent( value, 'hour' ) }
+					/>
+
+					<ToggleControl
+						label={ __( 'Display Minutes', 'otter-blocks' ) }
+						checked={ ! attributes?.exclude?.includes( 'minute' ) }
+						onChange={ value => excludeComponent( value, 'minute' ) }
+					/>
+
+					<ToggleControl
+						label={ __( 'Display Seconds', 'otter-blocks' ) }
+						checked={ ! attributes?.exclude?.includes( 'second' ) }
+						onChange={ value => excludeComponent( value, 'second' ) }
+					/>
+
+					<ToggleControl
+						label={ __( 'Display Separators', 'otter-blocks' ) }
+						checked={ attributes?.hasSeparators }
+						onChange={ hasSeparators => setAttributes({ hasSeparators }) }
+					/>
+
+				</PanelBody>
+
+				<PanelBody
+					title={ __( 'Dimensions & Spacing', 'otter-blocks' ) }
+					initialOpen={false}
+				>
+					<ResponsiveControl
+						label={ __( 'Width', 'otter-blocks' ) }
+					>
+						<UnitContol
+							value={ responsiveGetAttributes([ attributes.containerWidth, attributes.containerWidthTablet, attributes.containerWidthMobile ]) ?? '100%' }
+							onChange={ value => responsiveSetAttributes( value, [ 'containerWidth', 'containerWidthTablet', 'containerWidthMobile' ]) }
+						/>
+					</ResponsiveControl>
+					<ResponsiveControl
+						label={ __( 'Height', 'otter-blocks' ) }
+					>
+						<RangeControl
+							value={ responsiveGetAttributes([ attributes.height, attributes.heightTablet, attributes.heightMobile ]) ?? 100 }
+							onChange={ value => responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]) }
+							min={ 50 }
+							max={ 800 }
+							allowReset
+						/>
+					</ResponsiveControl>
+
+					<ResponsiveControl
+						label={ __( 'Space Between', 'otter-blocks' ) }
+					>
+						<RangeControl
+							value={ responsiveGetAttributes([ attributes.gap, attributes.gapTablet, attributes.gapMobile ]) ?? 6 }
+							onChange={ value => responsiveSetAttributes( value, [ 'gap', 'gapTablet', 'gapMobile' ]) }
+							min={ 0 }
+							max={ 100 }
+							allowReset
+						/>
+					</ResponsiveControl>
+
+					<SelectControl
+						label={__( 'Position', 'otter-blocks' )}
+						value={ attributes.alingment }
+						onChange={ alignment => setAttributes({ alignment: alignment || undefined })}
+						options={[
+							{
+								label: __( 'Default', 'otter-blocks' ),
+								value: ''
+							},
+							{
+								label: __( 'Left', 'otter-blocks' ),
+								value: 'flex-start'
+							},
+							{
+								label: __( 'Center', 'otter-blocks' ),
+								value: 'center'
+							},
+							{
+								label: __( 'Right', 'otter-blocks' ),
+								value: 'flex-end'
+							}
+						]}
+					/>
+				</PanelBody>
+
+				<PanelBody
+					title={ __( 'Typography', 'otter-blocks' ) }
+					initialOpen={false}
+				>
+					<ResponsiveControl
+						label={ __( 'Time Value Font Size', 'otter-blocks' ) }
+					>
+						<FontSizePicker
+							fontSizes={ defaultFontSizes }
+							withReset
+							value={ responsiveGetAttributes([ attributes.valueFontSize, attributes.valueFontSizeTablet, attributes.valueFontSizeMobile ]) }
+							onChange={ value => responsiveSetAttributes( value, [ 'valueFontSize', 'valueFontSizeTablet', 'valueFontSizeMobile' ]) }
+						/>
+					</ResponsiveControl>
+
+					<SelectControl
+						label={__( 'Time Value Font Weight', 'otter-blocks' )}
+						value={ attributes.valueFontWeight }
+						onChange={ valueFontWeight => setAttributes({ valueFontWeight: valueFontWeight || undefined })}
+						options={fontWeights}
+					/>
+
+					<ResponsiveControl
+						label={ __( 'Label Font Size', 'otter-blocks' ) }
+					>
+						<FontSizePicker
+							fontSizes={ defaultFontSizes }
+							withReset
+							value={ responsiveGetAttributes([ attributes.labelFontSize, attributes.labelFontSizeTablet, attributes.labelFontSizeMobile ]) }
+							onChange={ value => responsiveSetAttributes( value, [ 'labelFontSize', 'labelFontSizeTablet', 'labelFontSizeMobile' ]) }
+						/>
+					</ResponsiveControl>
+
+					<SelectControl
+						label={__( 'Label Font Weight', 'otter-blocks' )}
+						value={ attributes.labelFontWeight }
+						onChange={ labelFontWeight => setAttributes({ labelFontWeight: labelFontWeight || undefined })}
+						options={fontWeights}
+					/>
+				</PanelBody>
+
+				<PanelColorSettings
+					title={ __( 'Color', 'otter-blocks' ) }
+					initialOpen={ false }
+					colorSettings={ [
+						{
+							value: attributes.backgroundColor,
+							onChange: backgroundColor => setAttributes({ backgroundColor }),
+							label: __( 'Background', 'otter-blocks' )
+						},
+						{
+							value: attributes.valueColor,
+							onChange: valueColor => setAttributes({ valueColor }),
+							label: __( 'Time Value', 'otter-blocks' )
+						},
+						{
+							value: attributes.labelColor,
+							onChange: labelColor => setAttributes({ labelColor }),
+							label: __( 'Label', 'otter-blocks' )
+						},
+						{
+							value: attributes.separatorColor,
+							onChange: separatorColor => setAttributes({ separatorColor }),
+							label: __( 'Separator', 'otter-blocks' )
+						},
+						{
+							value: attributes.borderColor,
+							onChange: borderColor => setAttributes({ borderColor }),
+							label: __( 'Border', 'otter-blocks' )
+						}
+					] }
+				>
+					<ContrastChecker
+						{ ...{
+							textColor: attributes.backgroundColor,
+							backgroundColor: attributes.valueColor
+						} }
+					/>
+				</PanelColorSettings>
+
+				<PanelBody
+					title={ __( 'Border', 'otter-blocks' ) }
+					initialOpen={false}
+				>
+					<SelectControl
+						label={__( 'Type', 'otter-blocks' )}
+						value={ attributes.borderStyle ?? 'solid' }
+						onChange={ borderStyle => setAttributes({ borderStyle: 'solid' === borderStyle ? undefined : borderStyle })}
+						options={[
+							{
+								label: __( 'None', 'otter-blocks' ),
+								value: 'none'
+							},
+							{
+								label: __( 'Solid', 'otter-blocks' ),
+								value: 'solid'
+							},
+							{
+								label: __( 'Double', 'otter-blocks' ),
+								value: 'double'
+							},
+							{
+								label: __( 'Dotted', 'otter-blocks' ),
+								value: 'dotted'
+							},
+							{
+								label: __( 'Dashed', 'otter-blocks' ),
+								value: 'dashed'
+							}
+						]}
+					/>
+
+					{
+						'none' !== attributes.borderStyle && (
+							<ResponsiveControl
+								label={ __( 'Width', 'otter-blocks' ) }
+							>
+								<RangeControl
+									value={ responsiveGetAttributes([ attributes.borderWidth, attributes.borderWidthTablet, attributes.borderWidthMobile ]) ?? 2 }
+									onChange={ value => responsiveSetAttributes( value, [ 'borderWidth', 'borderWidthTablet', 'borderWidthMobile' ]) }
+									min={ 0 }
+									max={ 50 }
+									allowReset
+								/>
+							</ResponsiveControl>
 						)
 					}
-					onChange={ value => {
-						setAttributes({
-							borderRadiusBox: removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' })
-						});
-					} }
-					id="o-border-raduis-box"
-				/>
 
-				{/*
+
+					<BoxControl
+						label={ __( 'Border Radius', 'otter-blocks' ) }
+						values={
+							mergeBoxDefaultValues(
+								attributes.borderRadiusBox,
+								{ left: '0px', right: '0px', bottom: '0px', top: '0px' }
+							)
+						}
+						onChange={ value => {
+							setAttributes({
+								borderRadiusBox: removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' })
+							});
+						} }
+						id="o-border-raduis-box"
+					/>
+
+					{/*
 
 				// Release in future versions
 
@@ -389,7 +390,39 @@ const Inspector = ({
 					/>
 
 				</ResponsiveControl> */}
-			</PanelBody>
+				</PanelBody>
+
+				{
+					attributes.hasSeparators && (
+						<PanelBody
+							title={ __( 'Separators', 'otter-blocks' ) }
+							initialOpen={false}
+						>
+							<SelectControl
+								label={ __( 'Alignment', 'otter-blocks' ) }
+								value={attributes.separatorAlignment}
+								onChange={ separatorAlignment => {
+									if ( ! separatorAlignment ) {
+										setAttributes({ separatorAlignment: undefined });
+									} else {
+										setAttributes({ separatorAlignment });
+									}
+								}}
+								options={[
+									{
+										label: __( 'Default', 'otter-blocks' ),
+										value: ''
+									},
+									{
+										label: __( 'Center', 'otter-blocks' ),
+										value: 'center'
+									}
+								]}
+							/>
+						</PanelBody>
+					)
+				}
+			</div>
 		</InspectorControls>
 	);
 };
