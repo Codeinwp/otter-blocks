@@ -94,7 +94,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 							'value'    => 'backgroundColor',
 							'hasSync'  => 'icon-background-color',
 						),
-					),
+					)
 				),
 			)
 		);
