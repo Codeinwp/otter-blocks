@@ -89,7 +89,7 @@ const WelcomeGuide = ({
 					image: <img src={ window.themeisleGutenberg.assetsPath + '/images/guide/welcome-logo.png' } />,
 					content: (
 						<Fragment>
-							<h1 className="o-welcome-guide__heading">{ __( 'Welcome to Otter', 'otter-blocks' ) }</h1>
+							<h1 className="o-welcome-guide__heading">{ __( 'Welcome to Otter Blocks', 'otter-blocks' ) }</h1>
 							<p className="o-welcome-guide__text">{ __( 'Otter is a lightweight, dynamic collection of page building blocks and templates for the WordPress Block Editor.', 'otter-blocks' ) }</p>
 						</Fragment>
 					)
@@ -130,7 +130,7 @@ const WelcomeGuide = ({
 						<Fragment>
 							<h1 className="o-welcome-guide__heading">{ __( 'Thank you for chosing Otter!', 'otter-blocks' ) }</h1>
 							<p className="o-welcome-guide__text">{ __( 'Joing Otter mailing list to first get information on latest features, tutorials and more.', 'otter-blocks' ) }</p>
-							<p className="o-welcome-guide__text">{ __( 'You also get 10% discount on Otter Pro Subscription when you join our mail list.', 'otter-blocks' ) }</p>
+							<p className="o-welcome-guide__text">{ __( 'You also get 10% discount on Otter PRO Subscription when you join our mail list.', 'otter-blocks' ) }</p>
 
 							<TextControl
 								aria-label={ __( 'Enter your email', 'otter-blocks' ) }
