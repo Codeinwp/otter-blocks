@@ -59,6 +59,7 @@ type Attributes = {
 	paddingTablet: PaddingType
 	valueFontWeight: string
 	labelFontWeight: string
+	seperatorAlignment: 'center'
 } & LegacyAttrs;
 
 export type CountdownProps = BlockProps<Attributes>

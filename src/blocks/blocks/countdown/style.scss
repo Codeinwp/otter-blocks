@@ -99,7 +99,9 @@
 
 		&[name="separator"] {
 			.otter-countdown__label {
-				display: none;
+				opacity: 0%;
+				text-overflow: clip;
+				word-break: normal;
 			}
 			border: unset;
 			background-color: transparent;
@@ -108,6 +110,8 @@
 	}
 
 	.otter-countdown__value {
+		display: flex;
+		justify-content: center;
 		font-size: var( --value-font-size );
 		font-weight: var( --value-font-weight );
 		line-height: 1.2;
