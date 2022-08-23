@@ -15,23 +15,11 @@ import { addFilter } from '@wordpress/hooks';
  */
 import options from './options.js';
 
-const autocompleteOptions = [];
+let autocompleteOptions = [];
 
 Object.keys( options ).forEach( option => autocompleteOptions.push( ...options[option].options ) );
 
-autocompleteOptions.sort( ( a, b ) => {
-	if ( ! a?.isDisabled || ( a?.isDisabled && b?.isDisabled ) ) {
-		return false;
-	}
-
-	if ( ! a?.isDisabled && b?.isDisabled ) {
-		return -1;
-	}
-
-	if ( a?.isDisabled && ! b?.isDisabled ) {
-		return true;
-	}
-});
+autocompleteOptions =  [ ...autocompleteOptions.filter( i => true !== i.isDisabled ), ...autocompleteOptions.filter( i => true === i.isDisabled ) ];
 
 const dynamicValue = {
 	name: 'dynamic-value',
