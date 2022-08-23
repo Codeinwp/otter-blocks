@@ -18,7 +18,10 @@ import {
 	ToggleControl
 } from '@wordpress/components';
 
-import { useDispatch } from '@wordpress/data';
+import {
+	useDispatch,
+	useSelect
+} from '@wordpress/data';
 
 import {
 	Fragment,
@@ -41,7 +44,15 @@ import defaultsAttrs from './global-defaults/defaults.js';
 import useSettings from '../../helpers/use-settings.js';
 
 const Options = () => {
+	const { isOnboardingVisible } = useSelect( select => {
+		const { isOnboardingVisible } = select( 'themeisle-gutenberg/data' );
+		return {
+			isOnboardingVisible: isOnboardingVisible()
+		};
+	});
+
 	const { createNotice } = useDispatch( 'core/notices' );
+	const { showOnboarding } = useDispatch( 'themeisle-gutenberg/data' );
 
 	useEffect( () => {
 		let isMounted = true;
@@ -201,6 +212,14 @@ const Options = () => {
 							checked={ Boolean( getOption( 'themeisle_blocks_settings_default_block' ) ) }
 							disabled={ 'saving' === status }
 							onChange={ () => updateOption( 'themeisle_blocks_settings_default_block', ! Boolean( getOption( 'themeisle_blocks_settings_default_block' ) ), successMessage ) }
+						/>
+					</PanelRow>
+
+					<PanelRow>
+						<ToggleControl
+							label={ __( 'Show onboarding modal', 'otter-blocks' ) }
+							checked={ isOnboardingVisible }
+							onChange={ () => showOnboarding( ! isOnboardingVisible ) }
 						/>
 					</PanelRow>
 				</PanelBody>

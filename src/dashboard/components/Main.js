@@ -15,7 +15,7 @@ import {
 /**
  * Internal dependencies.
  */
-import useSettings from '../hooks/settings.js';
+import useSettings from '../../blocks/helpers/use-settings.js';
 import Sidebar from './Sidebar.js';
 import Dashboard from './pages/Dashboard.js';
 import Upsell from './pages/Upsell.js';

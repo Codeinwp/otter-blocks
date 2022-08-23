@@ -27,10 +27,11 @@ import { registerPlugin } from '@wordpress/plugins';
  * Internal dependencies.
  */
 import './editor.scss';
+import useSettings from './../../helpers/use-settings.js';
 
-const WelcomeGuide = ({
-	setIsOpen
-}) => {
+const WelcomeGuide = () => {
+	const [ getOption, updateOption, status ] = useSettings();
+
 	const [ email, setEmail ] = useState( '' );
 	const [ hasConsent, setConsent ] = useState( false );
 
@@ -42,10 +43,16 @@ const WelcomeGuide = ({
 
 	const { createNotice } = useDispatch( 'core/notices' );
 
+	const { showOnboarding } = useDispatch( 'themeisle-gutenberg/data' );
+
 	useEffect( () => ( '' === email && undefined !== currentUser ) && setEmail( currentUser.email ), [ currentUser ]);
 
 	const onFinish = target => {
-		setIsOpen( false );
+		showOnboarding( false );
+
+		if ( Boolean( getOption( 'themeisle_blocks_settings_onboarding' ) ) ) {
+			updateOption( 'themeisle_blocks_settings_onboarding', false );
+		}
 
 		if ( ! hasConsent || ! Array.from( target.target.classList ).includes( 'components-guide__finish-button' ) ) {
 			return;
@@ -155,16 +162,26 @@ const WelcomeGuide = ({
 };
 
 const Render = () => {
-	const [ isOpen, setIsOpen ] = useState( true );
 
-	if ( ! isOpen ) {
+	const {
+		isOnboardingVisible,
+		isWelcomeActive
+	} = useSelect( select => {
+		const { isOnboardingVisible } = select( 'themeisle-gutenberg/data' );
+		const { isFeatureActive } = select( 'core/edit-post' );
+
+		return {
+			isOnboardingVisible: isOnboardingVisible(),
+			isWelcomeActive: isFeatureActive( 'welcomeGuide' )
+		};
+	});
+
+	if ( isWelcomeActive || ! isOnboardingVisible ) {
 		return null;
 	}
 
 	return (
-		<WelcomeGuide
-			setIsOpen={ setIsOpen }
-		/>
+		<WelcomeGuide/>
 	);
 };
 

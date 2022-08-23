@@ -386,6 +386,7 @@ class Registration {
 				'postTypes'               => get_post_types( [ 'public' => true ] ),
 				'rootUrl'                 => get_site_url(),
 				'restRoot'                => get_rest_url( null, 'otter/v1' ),
+				'showOnboarding'          => get_option( 'themeisle_blocks_settings_onboarding', true ),
 				'hasModule'               => array(
 					'blockConditions' => get_option( 'themeisle_blocks_settings_block_conditions', true ),
 				),
