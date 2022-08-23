@@ -1,6 +1,6 @@
 {
 	"name": "otter-blocks",
-	"version": "2.0.10",
+	"version": "2.0.11",
 	"description": "Otter – Page Builder Blocks & Extensions for Gutenberg",
 	"scripts": {
 		"build": "npm-run-all --parallel prod:*",
@@ -47,7 +47,6 @@
 		"deepmerge": "^4.2.2",
 		"dom-scroll-into-view": "^2.0.1",
 		"hex-rgba": "^1.0.2",
-		"react-google-font-loader": "1.0.5",
 		"react-sortable-hoc": "^2.0.0",
 		"uuid": "^8.3.2"
 	},
