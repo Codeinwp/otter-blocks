@@ -727,8 +727,8 @@ const Edit = ({
 		'--required-color': attributes.inputRequiredColor,
 		'--input-gap': attributes.inputGap !== undefined && ( attributes.inputGap + 'px' ),
 		'--inputs-gap': attributes.inputsGap !== undefined && ( attributes.inputsGap + 'px' ),
-		'--label-font-size': attributes.labelFontSize !== undefined && ( attributes.labelFontSize + 'px' ),
-		'--submit-font-size': attributes.submitFontSize !== undefined && ( attributes.submitFontSize + 'px' ),
+		'--label-font-size': attributes.labelFontSize !== undefined && attributes.labelFontSize,
+		'--submit-font-size': attributes.submitFontSize !== undefined && attributes.submitFontSize,
 		'--help-label-color': attributes.helpLabelColor,
 		'--input-bg-color': attributes.inputBackgroundColor
 	};
