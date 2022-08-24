@@ -18,6 +18,7 @@ import {
 	TextControl,
 	FontSizePicker
 } from '@wordpress/components';
+import { Fragment } from '@wordpress/element';
 
 const defaultFontSizes = [
 	{
@@ -223,13 +224,16 @@ const Inspector = ({
 
 				{
 					( ( 'outer' === attributes.titleStyle ) || ( 'tooltip' === attributes.percentagePosition && 'outer' === attributes.percentagePosition ) ) && (
-						<FontSizePicker
-							label={ __( 'Outer Text Font Size', 'otter-blocks' ) }
-							fontSizes={ defaultFontSizes }
-							withReset
-							value={ attributes.titleFontSize }
-							onChange={ titleFontSize => setAttributes({ titleFontSize }) }
-						/>
+						<Fragment>
+							<h2>{__( 'Outer Text Font Size', 'otter-blocks' )}</h2>
+							<FontSizePicker
+
+								fontSizes={ defaultFontSizes }
+								withReset
+								value={ attributes.titleFontSize }
+								onChange={ titleFontSize => setAttributes({ titleFontSize }) }
+							/>
+						</Fragment>
 					)
 				}
 

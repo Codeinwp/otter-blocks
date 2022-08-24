@@ -42,8 +42,6 @@ const ProgressBar = ({
 	toggleSelection
 }) => {
 
-	console.log( attributes );
-
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
