@@ -35,10 +35,18 @@ const WelcomeGuide = () => {
 	const [ email, setEmail ] = useState( '' );
 	const [ hasConsent, setConsent ] = useState( false );
 
-	const currentUser = useSelect( select => {
+	const {
+		currentUser,
+		site
+	} = useSelect( select => {
 		const { getCurrentUser, getUser } = select( 'core' );
+		const { getSite } = select( 'core' );
 		const user = getUser( getCurrentUser().id );
-		return user;
+
+		return {
+			currentUser: user,
+			site: getSite()?.url
+		};
 	});
 
 	const { createNotice } = useDispatch( 'core/notices' );
@@ -65,7 +73,7 @@ const WelcomeGuide = () => {
 			},
 			body: JSON.stringify({
 				slug: 'otter-blocks',
-				site: wp.data.select( 'core' ).getSite()?.url,
+				site,
 				email
 			})
 		})
@@ -124,10 +132,17 @@ const WelcomeGuide = () => {
 					content: (
 						<Fragment>
 							<h1 className="o-welcome-guide__heading">{ __( 'Make Your Website Shine With Otter Pro', 'otter-blocks' ) }</h1>
-							<p className="o-welcome-guide__text">
-								{ __( 'Upgrade to Otter PRO and get access to our advanced features, like Dynamic Content and the Premium Blocks.', 'otter-blocks' ) }
-								<ExternalLink href={ window.themeisleGutenberg.upgradeLink } target="_blank">{ __( 'Learn more', 'otter-blocks' ) }</ExternalLink>
-							</p>
+							{ Boolean( window.themeisleGutenberg.hasPro ) ? (
+								<p className="o-welcome-guide__text">
+									{ __( 'With Otter PRO, you get access to our advanced features, like Dynamic Content and the Premium Blocks.', 'otter-blocks' ) }
+									<ExternalLink href="https://themeisle.com/plugins/otter-blocks/upgrade/#free-vs-pro" target="_blank">{ __( 'Learn more', 'otter-blocks' ) }</ExternalLink>
+								</p>
+							) : (
+								<p className="o-welcome-guide__text">
+									{ __( 'Upgrade to Otter PRO and get access to our advanced features, like Dynamic Content and the Premium Blocks.', 'otter-blocks' ) }
+									<ExternalLink href={ window.themeisleGutenberg.upgradeLink } target="_blank">{ __( 'Learn more', 'otter-blocks' ) }</ExternalLink>
+								</p>
+							) }
 						</Fragment>
 					)
 				},
@@ -136,8 +151,10 @@ const WelcomeGuide = () => {
 					content: (
 						<Fragment>
 							<h1 className="o-welcome-guide__heading">{ __( 'Thank you for chosing Otter!', 'otter-blocks' ) }</h1>
+
 							<p className="o-welcome-guide__text">{ __( 'Joing Otter mailing list to first get information on latest features, tutorials and more.', 'otter-blocks' ) }</p>
-							<p className="o-welcome-guide__text">{ __( 'You also get 10% discount on Otter PRO Subscription when you join our mail list.', 'otter-blocks' ) }</p>
+
+							{ ! Boolean( window.themeisleGutenberg.hasPro ) && <p className="o-welcome-guide__text">{ __( 'You also get 10% discount on Otter PRO Subscription when you join our mail list.', 'otter-blocks' ) }</p> }
 
 							<TextControl
 								aria-label={ __( 'Enter your email', 'otter-blocks' ) }
