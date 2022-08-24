@@ -7,7 +7,8 @@
 	--padding: 0px;
 	--font-size: 16px;
 
-	text-align: var( --align );
+	display: flex;
+	justify-content: var( --align );
 
 	.wp-block-themeisle-blocks-font-awesome-icons-container {
 		display: inline-flex;

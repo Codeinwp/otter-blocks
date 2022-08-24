@@ -20,6 +20,11 @@ type Attributes = {
 	borderSize: number
 	borderRadius: number
 	isSynced: string[]
+	alignment: {
+		desktop: string
+		tablet: string
+		mobile: string
+	}
 }
 
 export type IconsProps = BlockProps<Attributes>

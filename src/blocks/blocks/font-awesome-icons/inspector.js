@@ -9,6 +9,7 @@ import {
 	PanelBody,
 	Placeholder,
 	RangeControl,
+	SelectControl,
 	Spinner
 } from '@wordpress/components';
 
@@ -25,11 +26,15 @@ import {
 	useState
 } from '@wordpress/element';
 
+import { useSelect } from '@wordpress/data';
+
 /**
  * Internal dependencies
  */
 const IconPickerControl = lazy( () => import( '../../components/icon-picker-control/index.js' ) );
 import SyncControl from '../../components/sync-control/index.js';
+import ResponsiveControl from '../../components/responsive-control/index.js';
+import { buildResponsiveGetAttributes, buildResponsiveSetAttributes } from '../../helpers/helper-functions.js';
 
 /**
  *
@@ -42,6 +47,20 @@ const Inspector = ({
 	getValue
 }) => {
 	const [ hover, setHover ] = useState( false );
+
+	const {
+		responsiveSetAttributes,
+		responsiveGetAttributes
+	} = useSelect( select => {
+		const { getView } = select( 'themeisle-gutenberg/data' );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+
+		return {
+			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
+			responsiveGetAttributes: buildResponsiveGetAttributes( view )
+		};
+	}, []);
 
 	const changeLibrary = value => {
 		setAttributes({
@@ -80,7 +99,7 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Icon Sizes', 'otter-blocks' ) }
+				title={ __( 'Dimensions', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
 				<SyncControl
@@ -130,6 +149,21 @@ const Inspector = ({
 						max={ 100 }
 					/>
 				</SyncControl>
+
+				<ResponsiveControl
+					label={ __( 'Alignment', 'otter-blocks' ) }
+				>
+					<SelectControl
+						value={ responsiveGetAttributes([ attributes.alignment?.desktop, attributes.alignment?.tablet, attributes.alignment?.mobile ]) }
+						options={ [
+							{ label: __( 'Default', 'otter-blocks' ), value: '' },
+							{ label: __( 'Left', 'otter-blocks' ), value: 'flex-start' },
+							{ label: __( 'Center', 'otter-blocks' ), value: 'center' },
+							{ label: __( 'Right', 'otter-blocks' ), value: 'flex-end' }
+						]}
+						onChange={ value => responsiveSetAttributes( '' === value ? undefined : value, [ 'alignment.desktop', 'alignment.tablet', 'alignment.mobile' ], attributes.alignment )}
+					/>
+				</ResponsiveControl>
 			</PanelBody>
 
 			<PanelBody

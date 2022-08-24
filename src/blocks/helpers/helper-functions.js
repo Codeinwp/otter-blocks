@@ -367,6 +367,24 @@ const mapViewToKey = {
 };
 
 /**
+ * Create a nested object from a list of selectors.
+ *
+ * @param {string[]} selectors The selectors list.
+ * @param {any} value The value.
+ * @returns {any}
+ */
+const buildObjectFromSelector = ( selectors, value	) => {
+	if ( 0 === selectors.length ) {
+		return value;
+	}
+
+	const name = selectors.shift();
+	return {
+		[name]: buildObjectFromSelector( selectors, value )
+	};
+};
+
+/**
  * Build a responsive wrapper around `setAttributes`
  *
  * @param {Function} setAttributes The function that set the attributes.
@@ -375,8 +393,11 @@ const mapViewToKey = {
  * @returns {(value: T, keys: string[]) => void}
  */
 export const buildResponsiveSetAttributes = ( setAttributes, currentView ) => {
-	return ( value, keys ) => {
-		setAttributes({ [keys[mapViewToKey[currentView] ?? 0]]: value });
+	return ( value, keys, oldValue = {}) => {
+		const key = keys[mapViewToKey[currentView] ?? 0]?.split( '.' );
+		const attr = merge({ [key[0]]: { ...oldValue }}, buildObjectFromSelector([ ...key ], value ) );
+		console.log( oldValue, { [key[0]]: oldValue }, buildObjectFromSelector( key, value ) );
+		setAttributes( attr );
 	};
 };
 

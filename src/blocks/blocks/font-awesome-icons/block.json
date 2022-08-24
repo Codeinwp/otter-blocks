@@ -73,6 +73,9 @@
 		},
 		"isSynced": {
 			"type": "array"
+		},
+		"alignment": {
+			"type": "object"
 		}
 	},
 	"editorStyle": "otter-font-awesome-editor",
