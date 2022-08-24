@@ -10,8 +10,8 @@
 	--submit-color: white;
 	--submit-msg-color: green;
 	--submit-error-color: red;
-	--inputs-gap: 10px;
-	--input-gap: 16px;
+	--inputs-gap: 16px;
+	--input-gap: 10px;
 	--label-font-size: var(--bodyfontsize, inherit);
 	--message-font-size: var(--bodyfontsize, inherit);
 	--submit-font-size: var(--btnfs, var(--bodyfontsize, inherit));
@@ -100,7 +100,7 @@
 		.o-form-help {
 			opacity: 0.8;
 			color: var(--help-label-color);
-			margin-bottom: 12px;
+			margin-bottom: 0px;
 			font-size: var(--help-font-size);
 		}
 	}

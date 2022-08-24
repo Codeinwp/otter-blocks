@@ -193,13 +193,13 @@ const Inspector = ({
 				>
 					<RangeControl
 						label={ __( 'Spacing', 'otter-blocks' ) }
-						value={ attributes.inputGap ?? 16 }
+						value={ attributes.inputGap ?? 10 }
 						onChange={ inputGap => setAttributes({ inputGap }) }
 						allowReset
 						step={ 0.1 }
 						min={ 0 }
 						max={ 50 }
-						initialPositino={ 5 }
+						initialPositino={ 10 }
 					/>
 				</SyncControl>
 
@@ -244,12 +244,12 @@ const Inspector = ({
 				>
 					<RangeControl
 						label={ __( 'Fields Spacing', 'otter-blocks' ) }
-						value={ attributes.inputsGap ?? 10}
+						value={ attributes.inputsGap ?? 16}
 						onChange={ inputsGap => setAttributes({ inputsGap }) }
 						allowReset
 						min={ 0 }
 						max={ 50 }
-						initialPosition={ 10 }
+						initialPosition={ 16 }
 					/>
 				</SyncControl>
 
