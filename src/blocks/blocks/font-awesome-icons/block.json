@@ -35,7 +35,7 @@
 		},
 		"fontSize": {
 			"type": "number",
-			"default": 16
+			"default": 32
 		},
 		"padding": {
 			"type": "number",
