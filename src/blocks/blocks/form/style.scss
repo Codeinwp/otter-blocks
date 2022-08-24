@@ -18,6 +18,7 @@
 	--input-color: initial;
 	--input-font-size: 1em;
 	--help-font-size: 13px;
+	--input-bg-color: initial;
 
 	.otter-form__container {
 		display: flex;
@@ -89,6 +90,7 @@
 			border-color: var(--border-color);
 			border-style: solid;
 			font-size: var(--input-font-size);
+			background: var(--input-bg-color);
 		}
 
 		.o-form-help {

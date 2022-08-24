@@ -140,7 +140,12 @@ const Inspector = ({
 					{
 						value: attributes.inputColor,
 						onChange: inputColor => setAttributes({ inputColor }),
-						label: __( 'Input', 'otter-blocks' )
+						label: __( 'Input Text', 'otter-blocks' )
+					},
+					{
+						value: attributes.inputBackgroundColor,
+						onChange: inputBackgroundColor => setAttributes({ inputBackgroundColor }),
+						label: __( 'Input Background', 'otter-blocks' )
 					}
 				] }
 			/>
