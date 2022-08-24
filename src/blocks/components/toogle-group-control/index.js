@@ -16,7 +16,6 @@ import {
  */
 import './editor.scss';
 
-
 /**
  *	A group of buttons that actions as a toggle
  *
@@ -30,19 +29,22 @@ const ToogleGroupControl = ({
 	hideLabels,
 	hideTooltip,
 	showBottomLabels,
-	style
+	hasIcon = false
 }) => {
 	return (
 		<ButtonGroup
-			className="o-toggle-group-control"
-			style={ style?.group }
+			className={ classNames(
+				'o-toggle-group-control',
+				{
+					'has-icon': hasIcon
+				}
+			) }
 		>
 			{ options?.map( option => {
 				return (
 					<div
 						key={ option?.value }
 						className="o-toggle-option"
-						style={ style?.option }
 					>
 						<Button
 							isPrimary={ value == option?.value }
@@ -51,12 +53,11 @@ const ToogleGroupControl = ({
 							label={ option?.label }
 							onClick={ () => onChange( option?.value )}
 							showTooltip={ Boolean( hideTooltip ) }
-							style={ value == option?.value ? ( style.active ?? style?.button ) : style?.button }
 						>
 							{ option?.label && ! Boolean( hideLabels ) && ! Boolean( showBottomLabels ) ? option?.label : '' }
 						</Button>
 
-						<p style={ style?.label }>{ option?.label && ! Boolean( hideLabels ) && Boolean( showBottomLabels ) ?  option?.label : '' }</p>
+						<p>{ option?.label && ! Boolean( hideLabels ) && Boolean( showBottomLabels ) ?  option?.label : '' }</p>
 					</div>
 				);
 			}) }
