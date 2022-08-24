@@ -232,6 +232,7 @@ const Edit = ({
 							attributes={ attributes }
 							post={ posts?.[0] }
 							category={ categoriesList[0] }
+							categoriesList={ categoriesList }
 							author={ authors[0] }
 						/>
 					) }

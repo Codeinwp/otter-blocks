@@ -17,6 +17,7 @@ import { applyFilters } from '@wordpress/hooks';
 import Thumbnail from './thumbnail.js';
 
 import {
+	PostsCategory,
 	PostsDescription,
 	PostsMeta,
 	PostsTitle
@@ -26,7 +27,8 @@ const FeaturedPost = ({
 	post,
 	attributes,
 	author,
-	category
+	category,
+	categoriesList
 }) => {
 	if ( ! post  ) {
 		return '';
@@ -48,6 +50,8 @@ const FeaturedPost = ({
 			<div className="o-posts-grid-post-body">
 				{ attributes.template.map( element => {
 					switch ( element ) {
+					case 'category':
+						return <PostsCategory attributes={ attributes } element={ element } category={ category } categoriesList={ categoriesList }/>;
 					case 'title':
 						return <PostsTitle attributes={ attributes } element={ element } post={ post } />;
 					case 'meta':
