@@ -10,7 +10,8 @@ import {
 	Placeholder,
 	RangeControl,
 	SelectControl,
-	Spinner
+	Spinner,
+	FontSizePicker
 } from '@wordpress/components';
 
 import {
@@ -35,6 +36,30 @@ const IconPickerControl = lazy( () => import( '../../components/icon-picker-cont
 import SyncControl from '../../components/sync-control/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import { buildResponsiveGetAttributes, buildResponsiveSetAttributes } from '../../helpers/helper-functions.js';
+import { isNumber } from 'lodash';
+
+const defaultFontSizes = [
+	{
+		name: __( 'Small', 'otter-blocks' ),
+		size: '16px',
+		slug: 'small'
+	},
+	{
+		name: __( 'Medium', 'otter-blocks' ),
+		size: '32px',
+		slug: 'medium'
+	},
+	{
+		name: __( 'Large', 'otter-blocks' ),
+		size: '48px',
+		slug: 'large'
+	},
+	{
+		name: __( 'XL', 'otter-blocks' ),
+		size: '60px',
+		slug: 'xl'
+	}
+];
 
 /**
  *
@@ -107,14 +132,11 @@ const Inspector = ({
 					isSynced={ attributes.isSynced }
 					setAttributes={ setAttributes }
 				>
-					<RangeControl
-						label={ __( 'Icon Size', 'otter-blocks' ) }
-						value={ getValue( 'fontSize' ) }
-						initialPosition={ 16 }
-						onChange={ e => setAttributes({ fontSize: e }) }
-						step={ 0.1 }
-						min={ 12 }
-						max={ 140 }
+					<FontSizePicker
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.fontSize ?? '32px' }
+						onChange={ fontSize =>  setAttributes({ fontSize }) }
 					/>
 				</SyncControl>
 

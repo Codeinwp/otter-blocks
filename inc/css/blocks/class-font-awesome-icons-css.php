@@ -98,7 +98,9 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--font-size',
 						'value'    => 'fontSize',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 						'hasSync'  => 'icon-font-size',
 					),
 				),
@@ -190,7 +192,9 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => 'font-size',
 						'value'    => 'fontSize',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 						'hasSync'  => 'icon-font-size',
 					),
 				),
@@ -268,7 +272,9 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--icon-font-size',
 						'value'    => 'fontSize',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
 						'property' => '--icon-margin',

@@ -2,6 +2,8 @@
  * External dependencies.
  */
 
+import { isNumber } from 'lodash';
+
 /**
  * WordPress dependencies...
  */
@@ -54,7 +56,7 @@ const Edit = ({
 		'--border-radius': attributes.borderRadius !== undefined && `${ attributes.borderRadius }%`,
 		'--margin':	attributes.margin !== undefined && `${ getValue( 'margin' ) }px`,
 		'--padding': attributes.padding !== undefined && `${ getValue( 'padding' ) }px`,
-		'--font-size': attributes.fontSize !== undefined && `${ getValue( 'fontSize' ) }px`,
+		'--font-size': attributes.fontSize !== undefined && ( isNumber( getValue( 'fontSize' ) ) ? `${ getValue( 'fontSize' ) }px` : getValue( 'fontSize' ) ),
 		'--align': attributes.alignment?.desktop,
 		'--align-tablet': attributes.alignment?.tablet,
 		'--align-mobile': attributes.alignment?.mobile
@@ -74,9 +76,6 @@ const Edit = ({
 			}`,
 			`.wp-block-themeisle-blocks-font-awesome-icons-container a {
 				color: ${ getValue( 'textColor' ) };
-			}`,
-			`.wp-block-themeisle-blocks-font-awesome-icons-container i {
-				${ getValue( 'fontSize' ) && `font-size: ${ getValue( 'fontSize' ) }px;` }
 			}`,
 			`.wp-block-themeisle-blocks-font-awesome-icons-container svg {
 				fill: ${ getValue( 'textColor' ) };

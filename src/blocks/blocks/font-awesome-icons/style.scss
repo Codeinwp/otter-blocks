@@ -25,12 +25,14 @@
 		width: calc( var(--font-size) * 1.5 + var( --padding ));
 		height: calc( var(--font-size) * 1.5 + var( --padding ));
 
+
 		svg {
 			width: var( --font-size );
 			height: var( --font-size );
 		}
 
 		i {
+			font-size: var(--font-size);
 			width: 100%;
 		}
 	}
