@@ -119,7 +119,7 @@ class Posts_Grid_Block {
 				}
 
 				if ( 'meta' === $element ) {
-					if ( ( isset( $attributes['displayMeta'] ) && $attributes['displayMeta'] ) && ( ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) || ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) ) ) {
+					if ( ( isset( $attributes['displayMeta'] ) && $attributes['displayMeta'] ) && ( ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) || ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) || ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] ) || ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] ) ) ) {
 						$list_items_markup .= '<p class="o-posts-grid-post-meta">';
 
 						if ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) {
@@ -277,6 +277,14 @@ class Posts_Grid_Block {
 		$html .= '<div class="o-posts-grid-post-body' . ( $thumbnail && $attributes['displayFeaturedImage'] ? '' : ' is-full' ) . '">';
 
 		foreach ( $attributes['template'] as $element ) {
+			if ( 'category' === $element ) {
+				if ( isset( $attributes['displayCategory'] ) && isset( $category[0] ) && $attributes['displayCategory'] ) {
+					$html .= sprintf(
+						'<span class="o-posts-grid-post-category">%1$s</span>',
+						esc_html( $category[0]->cat_name )
+					);
+				}
+			}
 
 			if ( 'title' === $element ) {
 				if ( isset( $attributes['displayTitle'] ) && $attributes['displayTitle'] ) {
