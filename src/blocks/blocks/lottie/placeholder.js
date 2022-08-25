@@ -39,7 +39,7 @@ const BlockPlaceholder = ({
 		return (
 			<Placeholder
 				label={ __( 'Lottie', 'otter-blocks' ) }
-				instructions={ __( 'Add Lottie animations and files to your website.', 'otter-blocks' ) }
+				instructions={ __( 'Add Lottie animations and files to your website. You need to use a .json file.', 'otter-blocks' ) }
 				icon={ <BlockIcon icon={ video } /> }
 				className={ className }
 			>
