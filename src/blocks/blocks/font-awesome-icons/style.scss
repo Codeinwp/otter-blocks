@@ -1,11 +1,13 @@
 .wp-block-themeisle-blocks-font-awesome-icons {
 	--align: center;
+	--align-tablet: var(--align);
+	--align-mobile: var(--align-tablet);
 	--border-color: #000;
 	--border-size: unset;
 	--border-radius: 0%;
 	--margin: 0px;
 	--padding: 0px;
-	--font-size: 16px;
+	--font-size: 32px;
 
 	display: flex;
 	justify-content: var( --align );
@@ -31,5 +33,17 @@
 		i {
 			width: 100%;
 		}
+	}
+}
+
+@media ( max-width: 960px ) {
+	.wp-block-themeisle-blocks-font-awesome-icons {
+		justify-content: var( --align-tablet );
+	}
+}
+
+@media ( max-width: 600px ) {
+	.wp-block-themeisle-blocks-font-awesome-icons {
+		justify-content: var( --align-mobile );
 	}
 }

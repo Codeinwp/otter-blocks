@@ -38,8 +38,34 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--align',
-						'value'    => 'align',
+						'property'  => '--align',
+						'value'     => 'alignment',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['alignment'] ) && ( $attrs['alignment']['desktop'] );
+						},
+						'format'    => function( $value, $attrs ) {
+							return $value['desktop'];
+						},
+					),
+					array(
+						'property'  => '--align-tablet',
+						'value'     => 'alignment',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['alignment'] ) && ( $attrs['alignment']['tablet'] );
+						},
+						'format'    => function( $value, $attrs ) {
+							return $value['tablet'];
+						},
+					),
+					array(
+						'property'  => '--align-mobile',
+						'value'     => 'alignment',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['alignment'] ) && ( $attrs['alignment']['mobile'] );
+						},
+						'format'    => function( $value, $attrs ) {
+							return $value['mobile'];
+						},
 					),
 					array(
 						'property' => '--border-color',

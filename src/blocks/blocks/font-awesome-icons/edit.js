@@ -24,11 +24,6 @@ import {
 	getDefaultValueByField, useCSSNode
 } from '../../helpers/block-utility.js';
 
-import { useSelect } from '@wordpress/data';
-
-import { buildResponsiveGetAttributes } from '../../helpers/helper-functions.js';
-
-
 const { attributes: defaultAttributes } = metadata;
 
 /**
@@ -48,18 +43,6 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
-	const {
-		responsiveGetAttributes
-	} = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-
-		return {
-			responsiveGetAttributes: buildResponsiveGetAttributes( view )
-		};
-	}, []);
-
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
@@ -72,7 +55,9 @@ const Edit = ({
 		'--margin':	attributes.margin !== undefined && `${ getValue( 'margin' ) }px`,
 		'--padding': attributes.padding !== undefined && `${ getValue( 'padding' ) }px`,
 		'--font-size': attributes.fontSize !== undefined && `${ getValue( 'fontSize' ) }px`,
-		'--align': responsiveGetAttributes([ attributes.alignment?.desktop, attributes.alignment?.tablet, attributes.alignment?.mobile ]) ?? 'center'
+		'--align': attributes.alignment?.desktop,
+		'--align-tablet': attributes.alignment?.tablet,
+		'--align-mobile': attributes.alignment?.mobile
 	};
 
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();

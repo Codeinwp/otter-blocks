@@ -1,4 +1,4 @@
-import { isEmpty, merge, omitBy, without } from 'lodash';
+import { isEmpty, merge, set, unset, without, omitBy } from 'lodash';
 
 import { sprintf } from '@wordpress/i18n';
 
@@ -367,37 +367,26 @@ const mapViewToKey = {
 };
 
 /**
- * Create a nested object from a list of selectors.
- *
- * @param {string[]} selectors The selectors list.
- * @param {any} value The value.
- * @returns {any}
- */
-const buildObjectFromSelector = ( selectors, value	) => {
-	if ( 0 === selectors.length ) {
-		return value;
-	}
-
-	const name = selectors.shift();
-	return {
-		[name]: buildObjectFromSelector( selectors, value )
-	};
-};
-
-/**
  * Build a responsive wrapper around `setAttributes`
  *
  * @param {Function} setAttributes The function that set the attributes.
  * @param {'Desktop'|'Tablet'|'Mobile'} currentView The current view.
  * @template T
- * @returns {(value: T, keys: string[]) => void}
+ * @returns {(value: T, keys: string[], oldAttr: Object) => void}) => void}
  */
 export const buildResponsiveSetAttributes = ( setAttributes, currentView ) => {
-	return ( value, keys, oldValue = {}) => {
-		const key = keys[mapViewToKey[currentView] ?? 0]?.split( '.' );
-		const attr = merge({ [key[0]]: { ...oldValue }}, buildObjectFromSelector([ ...key ], value ) );
-		console.log( oldValue, { [key[0]]: oldValue }, buildObjectFromSelector( key, value ) );
-		setAttributes( attr );
+	return ( value, keys, oldAttr = {}) => {
+
+		const attrName = keys[mapViewToKey[currentView] ?? 0]?.split( '.' )[0];
+		const attr = { [attrName]: { ...oldAttr }};
+
+		if ( value === undefined ) {
+			unset( attr, keys[mapViewToKey[currentView] ?? 0]);
+		} else {
+			set( attr, keys[mapViewToKey[currentView] ?? 0], value );
+		}
+
+		setAttributes( 'object' === typeof attr[attrName] && isEmpty( attr[attrName]) ? { [attrName]: undefined } : attr );
 	};
 };
 
