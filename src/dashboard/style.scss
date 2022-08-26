@@ -299,7 +299,7 @@
 					}
 
 					a {
-						color: #1E1E1E;
+						color: #2271b1;
 						text-decoration: none;
 					}
 				}
@@ -381,17 +381,21 @@
 				.content {
 					padding: 20px 40px;
 					color: #757575;
+
+					p {
+						margin: 10px 0;
+					}
 				}
 
 				.h-wrap {
 					display: flex;
 					align-items: center;
-					margin-bottom: 10px;
 
 					h4 {
 						color: #313233;
 						margin: 10px 0;
-						font-size: 24px;
+						font-size: 20px;
+						line-height: 1.2;
 						font-weight: 500;
 					}
 				}

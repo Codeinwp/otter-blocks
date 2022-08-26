@@ -126,7 +126,7 @@ const attributes = {
 	}
 };
 
-const deprecated = [ {
+const deprecated = [{
 	attributes,
 
 	save: ({
@@ -485,6 +485,6 @@ const deprecated = [ {
 			</div>
 		);
 	}
-} ];
+}];
 
 export default deprecated;

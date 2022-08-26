@@ -3,13 +3,22 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { InspectorControls, BlockAlignmentToolbar } from '@wordpress/block-editor';
+import { InspectorControls } from '@wordpress/block-editor';
 
 import {
 	PanelBody,
 	RangeControl,
 	SelectControl
+
 } from '@wordpress/components';
+
+import {
+	positionCenter,
+	positionLeft,
+	positionRight,
+	stretchFullWidth,
+	alignNone
+} from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -17,6 +26,7 @@ import {
 import GoogleFontsControl from '../../../components/google-fonts-control/index.js';
 import SizingControl from '../../../components/sizing-control/index.js';
 import ResponsiveControl from '../../../components/responsive-control';
+import ToogleGroupControl from '../../../components/toogle-group-control/index.js';
 
 /**
  *
@@ -61,7 +71,7 @@ const Inspector = ({
 			mobile: attributes.align.mobile
 		} : {};
 
-		newValue[ currentDevice ] = value;
+		newValue[ currentDevice ] = 'none' === value ? undefined : value;
 		setAttributes({ align: newValue });
 	};
 
@@ -103,6 +113,7 @@ const Inspector = ({
 					label={ __( 'Spacing', 'otter-blocks' ) }
 					value={ attributes.spacing }
 					onChange={ e => setAttributes({ spacing: e }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 50 }
 				/>
@@ -122,13 +133,38 @@ const Inspector = ({
 					label={ __( 'Alignment', 'otter-blocks' ) }
 					className="buttons-alignment-control"
 				>
-					<BlockAlignmentToolbar
-						value={ attributes.align ? attributes.align[ currentDevice ] : undefined }
-						isCollapsed={ false }
-						controls={ [ 'left', 'center', 'right', 'full' ] }
-						onChange={ value => {
-							onAlignmentChange( value );
-						} }
+					<ToogleGroupControl
+						value={ attributes?.align?.[ currentDevice ] ?? 'none' }
+						options={[
+							{
+								icon: alignNone,
+								label: __( 'None', 'otter-blocks' ),
+								value: 'none'
+							},
+							{
+								icon: stretchFullWidth,
+								label: __( 'Full', 'otter-blocks' ),
+								value: 'full'
+							},
+							{
+								icon: positionLeft,
+								label: __( 'Left', 'otter-blocks' ),
+								value: 'left'
+							},
+							{
+								icon: positionCenter,
+								label: __( 'Center', 'otter-blocks' ),
+								value: 'center'
+							},
+							{
+								icon: positionRight,
+								label: __( 'Right', 'otter-blocks' ),
+								value: 'right'
+							}
+						]}
+						onChange={ onAlignmentChange }
+						hideLabels
+						hasIcon
 					/>
 				</ResponsiveControl>
 			</PanelBody>
@@ -141,6 +177,7 @@ const Inspector = ({
 					label={ __( 'Font Size', 'otter-blocks' ) }
 					value={ attributes.fontSize }
 					onChange={ e => setAttributes({ fontSize: e }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 50 }
 				/>
@@ -161,6 +198,7 @@ const Inspector = ({
 					label={ __( 'Line Height', 'otter-blocks' ) }
 					value={ attributes.lineHeight }
 					onChange={ e => setAttributes({ lineHeight: e }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 200 }
 				/>

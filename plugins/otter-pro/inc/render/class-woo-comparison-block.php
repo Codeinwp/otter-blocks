@@ -108,6 +108,7 @@ class Woo_Comparison_Block {
 		$output  = '<div ' . $wrapper_attributes . '>';
 		$output .= ob_get_contents();
 		$output .= '</div>';
+		$output .= '<style type="text/css">.wp-block-themeisle-blocks-woo-comparison .nv-ct-layout-row tbody tr td:first-child{border-left:1px solid var(--border-color)}</style>';
 		ob_end_clean();
 		return $output;
 	}

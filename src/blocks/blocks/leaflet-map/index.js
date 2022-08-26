@@ -27,5 +27,8 @@ registerBlockType( name, {
 	],
 	transforms,
 	edit,
-	save: () => null
+	save: () => null,
+	example: {
+		attributes: {}
+	}
 });

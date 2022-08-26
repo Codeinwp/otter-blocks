@@ -87,15 +87,15 @@ const ProgressBar = ({
 	}, [ attributes.percentage, attributes.duration ]);
 
 	const inlineStyles = {
-		'--titleColor': attributes.titleColor,
-		'--percentageColor': attributes.percentageColor,
-		'--percentageColorOuter': attributes.percentageColor,
-		'--percentageColorTooltip': attributes.percentageColor,
-		'--percentageColorAppend': attributes.percentageColor,
-		'--backgroundColor': attributes.backgroundColor,
-		'--borderRadius': attributes.borderRadius !== undefined && ( attributes.borderRadius + 'px' ),
+		'--title-color': attributes.titleColor,
+		'--percentage-color': attributes.percentageColor,
+		'--percentage-color-outer': attributes.percentageColor,
+		'--percentage-color-tooltip': attributes.percentageColor,
+		'--percentage-color-append': attributes.percentageColor,
+		'--background-color': attributes.backgroundColor,
+		'--border-radius': attributes.borderRadius !== undefined && ( attributes.borderRadius + 'px' ),
 		'--height': attributes.height !== undefined && ( attributes.height + 'px' ),
-		'--barBackground': attributes.barBackgroundColor
+		'--bar-background': attributes.barBackgroundColor
 	};
 
 	const onHeightChange = value => {

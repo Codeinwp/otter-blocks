@@ -31,7 +31,7 @@ const renderCapthcaOn = ( form ) => {
 		return;
 	}
 
-	const id = form.id;
+	const { id } = form;
 
 	const captchaNode = document.createElement( 'div' );
 	const container = form.querySelector( '.otter-form__container' );

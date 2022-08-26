@@ -1,15 +1,15 @@
 .wp-block-themeisle-blocks-accordion {
-	--titleColor: #1e1e1e;
-	--titleBackground: #ffffff;
-	--contentBackground: #ffffff;
+	--title-color: #1e1e1e;
+	--title-background: #ffffff;
+	--content-background: #ffffff;
 
 	margin: 20px auto;
 
 	.wp-block-themeisle-blocks-accordion-item {
-		box-shadow: var( --boxShadow );
+		box-shadow: var( --box-shadow );
 		.wp-block-themeisle-blocks-accordion-item__title {
-			color: var( --titleColor );
-			background: var( --titleBackground );
+			color: var( --title-color );
+			background: var( --title-background );
 
 			border-width: 1px;
 			border-style: solid;
@@ -17,12 +17,12 @@
 
 			padding: 18px 24px 18px 24px;
 
-			font-style: var( --fontStyle );
-			font-weight: var( --fontVariant );
-			font-family: var( --fontFamily );
-			text-transform: var( --textTransform );
-			letter-spacing: var( --letterSpacing );
-			font-size: var( --fontSize, 22px );
+			font-style: var( --font-style );
+			font-weight: var( --font-variant );
+			font-family: var( --font-family );
+			text-transform: var( --text-transform );
+			letter-spacing: var( --letter-spacing );
+			font-size: var( --font-size, 22px );
 
 			list-style: none;
 			cursor: pointer;
@@ -48,7 +48,7 @@
 		}
 
 		.wp-block-themeisle-blocks-accordion-item__content {
-			background: var( --contentBackground );
+			background: var( --content-background );
 
 			border-width: 0 1px 1px 1px;
 			border-style: solid;

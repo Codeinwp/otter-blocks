@@ -8,7 +8,7 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
-import { pick } from 'lodash';
+import { merge, pick } from 'lodash';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
@@ -44,7 +44,10 @@ import ControlPanelControl from '../../../components/control-panel-control/index
 import HTMLAnchorControl from '../../../components/html-anchor-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
 import SyncControl from '../../../components/sync-control/index.js';
-import { isNullObject } from '../../../helpers/helper-functions.js';
+import {
+	isNullObject,
+	removeBoxDefaultValues
+} from '../../../helpers/helper-functions.js';
 import ToogleGroupControl from '../../../components/toogle-group-control/index.js';
 
 /**
@@ -131,9 +134,9 @@ const Inspector = ({
 		case 'Desktop':
 			return getValue( 'padding' );
 		case 'Tablet':
-			return getValue( 'paddingTablet' );
+			return merge({ ...getValue( 'padding' ) }, getValue( 'paddingTablet' ) );
 		case 'Mobile':
-			return getValue( 'paddingMobile' );
+			return merge({ ...getValue( 'padding' ) }, getValue( 'paddingTablet' ), getValue( 'paddingMobile' ) ) ;
 		default:
 			return undefined;
 		}
@@ -148,9 +151,9 @@ const Inspector = ({
 		case 'Desktop':
 			return setAttributes({ padding: value });
 		case 'Tablet':
-			return setAttributes({ paddingTablet: value });
+			return setAttributes({ paddingTablet: removeBoxDefaultValues( value, attributes.padding ) });
 		case 'Mobile':
-			return setAttributes({ paddingMobile: value });
+			return setAttributes({ paddingMobile: removeBoxDefaultValues( value, { ...attributes.padding, ...attributes.paddingTablet }) });
 		default:
 			return undefined;
 		}
@@ -174,9 +177,9 @@ const Inspector = ({
 		case 'Desktop':
 			return getValue( 'margin' );
 		case 'Tablet':
-			return getValue( 'marginTablet' );
+			return merge({ ...getValue( 'margin' ) }, getValue( 'marginTablet' ) );
 		case 'Mobile':
-			return getValue( 'marginMobile' );
+			return merge({ ...getValue( 'margin' ) }, getValue( 'marginTablet' ), getValue( 'marginMobile' ) );
 		default:
 			return undefined;
 		}
@@ -195,9 +198,9 @@ const Inspector = ({
 		case 'Desktop':
 			return setAttributes({ margin: value });
 		case 'Tablet':
-			return setAttributes({ marginTablet: value });
+			return setAttributes({ marginTablet: removeBoxDefaultValues( value, attributes.margin ) });
 		case 'Mobile':
-			return setAttributes({ marginMobile: value });
+			return setAttributes({ marginMobile: removeBoxDefaultValues( value, { ...attributes.margin, ...attributes.marginTablet }) });
 		default:
 			return undefined;
 		}
@@ -222,9 +225,9 @@ const Inspector = ({
 		case 'Desktop':
 			return attributes.columnsHeightCustom;
 		case 'Tablet':
-			return attributes.columnsHeightCustomTablet;
+			return attributes.columnsHeightCustomTablet ?? attributes.columnsHeightCustom;
 		case 'Mobile':
-			return attributes.columnsHeightCustomMobile;
+			return attributes.columnsHeightCustomMobile ?? attributes.columnsHeightCustomTablet ?? attributes.columnsHeightCustom;
 		default:
 			return undefined;
 		}
@@ -304,20 +307,20 @@ const Inspector = ({
 		if ( 'top' == dividerViewType ) {
 			switch ( getView ) {
 			case 'Desktop':
-				return attributes.dividerTopWidth;
+				return attributes.dividerTopWidth ?? 100;
 			case 'Tablet':
-				return attributes.dividerTopWidthTablet;
+				return attributes.dividerTopWidthTablet ?? attributes.dividerTopWidth ?? 100;
 			case 'Mobile':
-				return attributes.dividerTopWidthMobile;
+				return attributes.dividerTopWidthMobile ?? attributes.dividerTopWidthTablet ?? attributes.dividerTopWidth ?? 100;
 			}
 		} else if ( 'bottom' == dividerViewType ) {
 			switch ( getView ) {
 			case 'Desktop':
-				return attributes.dividerBottomWidth;
+				return attributes.dividerBottomWidth ?? 100;
 			case 'Tablet':
-				return attributes.dividerBottomWidthTablet;
+				return attributes.dividerBottomWidthTablet ?? attributes.dividerBottomWidth ?? 100;
 			case 'Mobile':
-				return attributes.dividerBottomWidthMobile;
+				return attributes.dividerBottomWidthMobile ?? attributes.dividerBottomWidthTablet ?? attributes.dividerBottomWidth ?? 100;
 			}
 		}
 
@@ -573,6 +576,7 @@ const Inspector = ({
 									value={ getValue( 'columnsWidth' ) || '' }
 									allowReset
 									onChange={ changeColumnsWidth }
+									step={ 0.1 }
 									min={ 0 }
 									max={ 2400 }
 								/>
@@ -631,6 +635,7 @@ const Inspector = ({
 									<RangeControl
 										value={ getColumnsHeightCustom || '' }
 										onChange={ changeColumnsHeightCustom }
+										step={ 0.1 }
 										min={ 0 }
 										max={ 1000 }
 									/>
@@ -945,6 +950,7 @@ const Inspector = ({
 										<RangeControl
 											value={ getDividerWidth() }
 											onChange={ changeDividerWidth }
+											step={ 0.1 }
 											min={ 0 }
 											max={ 500 }
 										/>
@@ -956,6 +962,7 @@ const Inspector = ({
 										<RangeControl
 											value={ getDividerHeight() }
 											onChange={ changeDividerHeight }
+											step={ 0.1 }
 											min={ 0 }
 											max={ 500 }
 										/>

@@ -110,26 +110,26 @@ const Edit = ({
 	}, [ slugs ]);
 
 	const inlineStyles = {
-		'--imgWidth': `${ attributes.imageWidth }px`,
-		'--imgBorderRadius': attributes.borderRadius && `${ attributes.borderRadius }px;`,
-		'--vertAlign': _align( attributes.verticalAlign ),
-		'--textAlign': attributes.textAlign
+		'--img-width': `${ attributes.imageWidth }px`,
+		'--img-border-radius': attributes.borderRadius && `${ attributes.borderRadius }px;`,
+		'--vert-align': _align( attributes.verticalAlign ),
+		'--text-align': attributes.textAlign
 	};
 
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();
 	useEffect( () => {
 		setNodeCSS([
 			`{
-				${ attributes.customTitleFontSize && `--titleTextSize: ${ attributes.customTitleFontSize }px;` }
-				${ attributes.customDescriptionFontSize && `--descriptionTextSize: ${ attributes.customDescriptionFontSize }px;` }
+				${ attributes.customTitleFontSize && `--title-text-size: ${ attributes.customTitleFontSize }px;` }
+				${ attributes.customDescriptionFontSize && `--description-text-size: ${ attributes.customDescriptionFontSize }px;` }
 			}`,
 			`{
-				${ attributes.customTitleFontSizeTablet && `--titleTextSize: ${ attributes.customTitleFontSizeTablet }px;` }
-				${ attributes.customDescriptionFontSizeTablet && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeTablet }px;` }
+				${ attributes.customTitleFontSizeTablet && `--title-text-size: ${ attributes.customTitleFontSizeTablet }px;` }
+				${ attributes.customDescriptionFontSizeTablet && `--description-text-size: ${ attributes.customDescriptionFontSizeTablet }px;` }
 			}`,
 			`{
-				${ attributes.customTitleFontSizeMobile && `--titleTextSize: ${ attributes.customTitleFontSizeMobile }px;` }
-				${ attributes.customDescriptionFontSizeMobile && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeMobile }px;` }
+				${ attributes.customTitleFontSizeMobile && `--title-text-size: ${ attributes.customTitleFontSizeMobile }px;` }
+				${ attributes.customDescriptionFontSizeMobile && `--description-text-size: ${ attributes.customDescriptionFontSizeMobile }px;` }
 			}`
 		], [
 			'@media ( min-width: 960px )',
@@ -232,6 +232,7 @@ const Edit = ({
 							attributes={ attributes }
 							post={ posts?.[0] }
 							category={ categoriesList[0] }
+							categoriesList={ categoriesList }
 							author={ authors[0] }
 						/>
 					) }

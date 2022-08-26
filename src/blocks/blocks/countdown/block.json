@@ -29,6 +29,9 @@
 		"labelDistance": {
 			"type": "number"
 		},
+		"separatorColor": {
+			"type": "string"
+		},
 		"gap": {
 			"type": "number"
 		},
@@ -47,6 +50,15 @@
 		"widthMobile": {
 			"type": "number"
 		},
+		"containerWidth": {
+			"type": "string"
+		},
+		"containerWidthTablet": {
+			"type": "string"
+		},
+		"containerWidthMobile": {
+			"type": "string"
+		},
 		"height": {
 			"type": "number"
 		},
@@ -57,28 +69,13 @@
 			"type": "number"
 		},
 		"borderRadius": {
-			"type": "number",
-			"default": 0
+			"type": ["number", "object"]
 		},
-		"borderRadiusType": {
-			"type": "string",
-			"default": "linked"
+		"borderRadiusBox": {
+			"type": "object"
 		},
-		"borderRadiusTopRight": {
-			"type": "number",
-			"default": 0
-		},
-		"borderRadiusTopLeft": {
-			"type": "number",
-			"default": 0
-		},
-		"borderRadiusBottomRight": {
-			"type": "number",
-			"default": 0
-		},
-		"borderRadiusBottomLeft": {
-			"type": "number",
-			"default": 0
+		"borderStyle": {
+			"type": "string"
 		},
 		"borderWidth": {
 			"type": "number"
@@ -93,25 +90,62 @@
 			"type": "string"
 		},
 		"valueFontSize": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"valueFontSizeTablet": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"valueFontSizeMobile": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"labelFontSize": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"labelFontSizeTablet": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"labelFontSizeMobile": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"hasSeparators": {
 			"type": "boolean"
+		},
+		"valueFontWeight": {
+			"type": "string"
+		},
+		"labelFontWeight": {
+			"type": "string"
+		},
+		"alignment": {
+			"type": "string"
+		},
+		"padding": {
+			"type": "object"
+		},
+		"paddingTablet": {
+			"type": "object"
+		},
+		"paddingMobile": {
+			"type": "object"
+		},
+		"borderRadiusTopRight": {
+			"type": "number"
+		},
+		"borderRadiusTopLeft": {
+			"type": "number"
+		},
+		"borderRadiusBottomRight": {
+			"type": "number"
+		},
+		"borderRadiusBottomLeft": {
+			"type": "number"
+		},
+		"borderRadiusType": {
+			"type": "string",
+			"default": "linked"
+		},
+		"separatorAlignment": {
+			"type": "string"
 		}
 	},
 	"supports": {

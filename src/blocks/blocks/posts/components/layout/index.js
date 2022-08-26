@@ -121,7 +121,7 @@ export const PostsTitle = ({ attributes, element, post }) => {
 };
 
 export const PostsMeta = ({ attributes, element, post, author, category }) => {
-	if ( attributes.displayMeta && ( attributes.displayDate || attributes.displayAuthor ) ) {
+	if ( attributes.displayMeta && ( attributes.displayDate || attributes.displayAuthor || attributes.displayComments || attributes.displayPostCategory ) ) {
 		return (
 			<p key={ element } className="o-posts-grid-post-meta">
 				{ ( attributes.displayDate ) && (
@@ -156,7 +156,7 @@ export const PostsMeta = ({ attributes, element, post, author, category }) => {
 	return '';
 };
 
-export const PostsDescription = ({attributes,  element, post }) => {
+export const PostsDescription = ({ attributes,  element, post }) => {
 	if ( 0 < attributes.excerptLength && attributes.displayDescription ) {
 		return (
 			<div key={ element } className="o-posts-grid-post-description">

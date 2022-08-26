@@ -1,34 +1,34 @@
 .wp-block-themeisle-blocks-accordion {
-	--titleColor: #1e1e1e;
-	--titleBackground: #ffffff;
-	--borderColor: #d5dadf;
-	--contentBackground: #ffffff;
+	--title-color: #1e1e1e;
+	--title-background: #ffffff;
+	--border-color: #d5dadf;
+	--content-background: #ffffff;
 
 	margin: 20px auto;
 
 	.wp-block-themeisle-blocks-accordion-item {
-		box-shadow: var( --boxShadow );
+		box-shadow: var( --box-shadow );
 
 		.wp-block-themeisle-blocks-accordion-item__title {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
-			color: var( --titleColor );
-			background: var( --titleBackground );
+			color: var( --title-color );
+			background: var( --title-background );
 
-			border-width: var( --headerBorderWidth, 1px );
-			border-style: var( --headerBorderStyle, solid );
-			border-color: var( --headerBorderColor, #d5dadf );
+			border-width: var( --header-border-width, 1px );
+			border-style: var( --header-border-style, solid );
+			border-color: var( --header-border-color, #d5dadf );
 
-			padding: var( --headerPadding );
+			padding: var( --header-padding );
 			cursor: pointer;
 
-			font-style: var( --fontStyle );
-			font-weight: var( --fontVariant );
-			font-family: var( --fontFamily );
-			text-transform: var( --textTransform );
-			letter-spacing: var( --letterSpacing );
-			font-size: var( --fontSize, 22px );
+			font-style: var( --font-style );
+			font-weight: var( --font-variant );
+			font-family: var( --font-family );
+			text-transform: var( --text-transform );
+			letter-spacing: var( --letter-spacing );
+			font-size: var( --font-size, 22px );
 
 			.block-editor-rich-text__editable {
 				cursor: text;
@@ -39,7 +39,7 @@
 			}
 
 			svg {
-				fill: var( --titleColor );
+				fill: var( --title-color );
 				width: 24px;
 				height: 24px;
 			}
@@ -50,13 +50,13 @@
 		}
 
 		.wp-block-themeisle-blocks-accordion-item__content {
-			background: var( --contentBackground );
+			background: var( --content-background );
 
-			border-width: var( --contentBorderWidth, 0 1px 1px 1px );
-			border-style: var( --contentBorderStyle, solid );
-			border-color: var( --contentBorderColor, #d5dadf );
+			border-width: var( --content-border-width, 0 1px 1px 1px );
+			border-style: var( --content-border-style, solid );
+			border-color: var( --content-border-color, #d5dadf );
 
-			padding: var( --contentPadding );
+			padding: var( --content-padding );
 		}
 
 		&:not([ data-align="full"] ) {

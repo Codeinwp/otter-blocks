@@ -48,41 +48,41 @@ class Flip_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--borderColor',
+						'property' => '--border-color',
 						'value'    => 'borderColor',
 					),
 					array(
-						'property' => '--borderWidth',
+						'property' => '--border-width',
 						'value'    => 'borderWidth',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--borderRadius',
+						'property' => '--border-radius',
 						'value'    => 'borderRadius',
 						'unit'     => 'px',
 					),
 					array(
-						'property'  => '--frontBackground',
+						'property'  => '--front-background',
 						'value'     => 'frontBackgroundColor',
 						'condition' => function( $attrs ) {
 							return ! isset( $attrs['frontBackgroundType'] );
 						},
 					),
 					array(
-						'property'  => '--frontBackground',
+						'property'  => '--front-background',
 						'value'     => 'frontBackgroundGradient',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['frontBackgroundType'] ) && 'gradient' === $attrs['frontBackgroundType'];
 						},
 					),
 					array(
-						'property'       => '--frontBackground',
+						'property'       => '--front-background',
 						'pattern'        => 'url( imageURL ) repeat attachment position/size',
 						'pattern_values' => array(
 							'imageURL'   => array(
 								'value'  => 'frontBackgroundImage',
 								'format' => function( $value, $attrs ) {
-									return $value['url'];
+									return apply_filters( 'otter_apply_dynamic_image', $value['url'] );
 								},
 							),
 							'repeat'     => array(
@@ -116,35 +116,35 @@ class Flip_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => '--frontVerticalAlign',
+						'property' => '--front-vertical-align',
 						'value'    => 'frontVerticalAlign',
 					),
 					array(
-						'property' => '--frontHorizontalAlign',
+						'property' => '--front-horizontal-align',
 						'value'    => 'frontHorizontalAlign',
 					),
 					array(
-						'property'  => '--backBackground',
+						'property'  => '--back-background',
 						'value'     => 'backBackgroundColor',
 						'condition' => function( $attrs ) {
 							return ! isset( $attrs['backBackgroundType'] );
 						},
 					),
 					array(
-						'property'  => '--backBackground',
+						'property'  => '--back-background',
 						'value'     => 'backBackgroundGradient',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['backBackgroundType'] ) && 'gradient' === $attrs['backBackgroundType'];
 						},
 					),
 					array(
-						'property'       => '--backBackground',
+						'property'       => '--back-background',
 						'pattern'        => 'url( imageURL ) repeat attachment position/size',
 						'pattern_values' => array(
 							'imageURL'   => array(
 								'value'  => 'backBackgroundImage',
 								'format' => function( $value, $attrs ) {
-									return $value['url'];
+									return apply_filters( 'otter_apply_dynamic_image', $value['url'] );
 								},
 							),
 							'repeat'     => array(
@@ -178,7 +178,7 @@ class Flip_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => '--backVerticalAlign',
+						'property' => '--back-vertical-align',
 						'value'    => 'backVerticalAlign',
 					),
 					array(
@@ -187,7 +187,7 @@ class Flip_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property'       => '--boxShadow',
+						'property'       => '--box-shadow',
 						'pattern'        => 'horizontal vertical blur color',
 						'pattern_values' => array(
 							'horizontal' => array(
@@ -219,12 +219,12 @@ class Flip_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => '--frontMediaWidth',
+						'property' => '--front-media-width',
 						'value'    => 'frontMediaWidth',
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--frontMediaHeight',
+						'property' => '--front-media-height',
 						'value'    => 'frontMediaHeight',
 						'unit'     => 'px',
 					),

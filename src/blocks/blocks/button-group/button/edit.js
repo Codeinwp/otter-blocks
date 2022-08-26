@@ -154,7 +154,6 @@ const Edit = ({
 					<div
 						className="wp-block-button__link"
 						style={ styles }
-						css={ hoverStyles }
 					>
 						{ ( 'left' === attributes.iconType || 'only' === attributes.iconType ) && (
 							'themeisle-icons' === attributes.library && attributes.icon ? (

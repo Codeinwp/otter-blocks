@@ -59,13 +59,25 @@ const Fields = ({
 	changeType,
 	onRemove
 }) => {
-	hasSettingsPanel = applyFilters( 'otter.dynamicContent.hasSettingsPanel', hasSettingsPanel );
+	hasSettingsPanel = applyFilters( 'otter.dynamicContent.text.hasSettingsPanel', hasSettingsPanel );
 
-	const dynamicOptions = applyFilters( 'otter.dynamicContent.options', options );
+	const dynamicOptions = applyFilters( 'otter.dynamicContent.text.options', options );
 
 	return (
 		<Fragment>
 			<PanelBody>
+				<p>{ __( 'Bind page elements with dynamic data from your website database.', 'otter-blocks' ) }</p>
+
+				<ExternalLink
+					target="_blank"
+					rel="noopener noreferrer"
+					href="https://docs.themeisle.com/article/1478-otter-blocks-documentation#dynamicvalues"
+				>
+					{ __( 'Learn more about Dynamic Values', 'otter-blocks' ) }
+				</ExternalLink>
+
+				<br /><br />
+
 				<BaseControl
 					label={ __( 'Data Type', 'otter-blocks' ) }
 					id="o-dynamic-select"
@@ -95,7 +107,7 @@ const Fields = ({
 					/>
 				) }
 
-				{ applyFilters( 'otter.dynamicContent.notices', '' ) }
+				{ applyFilters( 'otter.dynamicContent.text.notices', '' ) }
 			</PanelBody>
 
 			{ hasSettingsPanel.includes( attributes.type ) && (
@@ -180,7 +192,7 @@ const Fields = ({
 						</Fragment>
 					) }
 
-					{ applyFilters( 'otter.dynamicContent.controls', '', attributes, changeAttributes ) }
+					{ applyFilters( 'otter.dynamicContent.text.controls', '', attributes, changeAttributes ) }
 				</PanelBody>
 			) }
 

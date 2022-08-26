@@ -5,7 +5,7 @@ import metadata from './block.json';
 
 const { attributes } = metadata;
 
-const deprecated = [ {
+const deprecated = [{
 	attributes: {
 		...attributes,
 		categories: {
@@ -21,13 +21,13 @@ const deprecated = [ {
 	migrate: oldAttributes => {
 		return {
 			...oldAttributes,
-			categories: [ { id: Number( oldAttributes.categories ) } ]
+			categories: [{ id: Number( oldAttributes.categories ) }]
 		};
 	},
 
 	isEligible: ({ categories }) => categories && 'string' === typeof categories,
 
 	save: () => null
-} ];
+}];
 
 export default deprecated;

@@ -287,6 +287,32 @@ export const _align = value =>{
 };
 
 /**
+ * Get parameter from the URL.
+ */
+export const getObjectFromQueryString = queryString => {
+	if ( -1 < queryString.indexOf( '?' ) ) {
+		queryString = queryString.split( '?' )[1];
+	}
+
+	const pairs = queryString.split( '&' );
+	const result = {};
+
+	pairs.forEach( function( pair ) {
+		pair = pair.split( '=' );
+		if ( '' !== pair[0]) {
+			result[pair[0]] = decodeURIComponent( pair[1] || '' );
+		}
+	});
+
+	return result;
+};
+
+/**
+ * Object to Query String.
+ */
+export const getQueryStringFromObject = params => Object.keys( params ).map( key => key + '=' + params[key]).join( '&' );
+
+/**
  * Return the value of pair [condition, value] which has the first true condition.
  *
  * @param {([bool, any]|[any])[]} arr
@@ -345,4 +371,79 @@ export const mergeBoxDefaultValues = ( box, defaultBox ) => {
 		defaultBox,
 		box
 	);
+};
+
+/**
+ * Return the values from a box type.
+ *
+ * @param {import('./blocks').BoxType} box
+ * @param {import('./blocks').BoxType} defaultBox
+ */
+export const boxValues = ( box, defaultBox ) => {
+	return `${ box?.top ?? defaultBox?.top ?? '0px' } ${ box?.right ?? defaultBox?.right ?? '0px' } ${ box?.bottom ?? defaultBox?.bottom ?? '0px' } ${ box?.left ?? defaultBox?.left ?? '0px' }`;
+};
+
+/**
+ * Remove the default values from Box object.
+ *
+ * @param {import('./blocks').BoxType} box
+ * @param {import('./blocks').BoxType} defaultBox
+ * @return {import('./blocks').BoxType}
+ */
+export const removeBoxDefaultValues = ( box, defaultBox ) => {
+	const cleaned = omitBy( box, ( value, key ) => value === defaultBox[key]);
+	return isEmpty( cleaned ) ? undefined : cleaned;
+};
+
+/**
+ * Merge the Box objects.
+ *
+ * @param {import('./blocks').BoxType} box
+ * @param {import('./blocks').BoxType} defaultBox
+ * @return {import('./blocks').BoxType}
+ */
+export const mergeBoxDefaultValues = ( box, defaultBox ) => {
+	return merge(
+		{ left: '0px', right: '0px', bottom: '0px', top: '0px' },
+		defaultBox,
+		box
+	);
+};
+
+const mapViewToKey = {
+	'Desktop': 0,
+	'Tablet': 1,
+	'Mobile': 2
+};
+
+/**
+ * Build a responsive wrapper around `setAttributes`
+ *
+ * @param {Function} setAttributes The function that set the attributes.
+ * @param {'Desktop'|'Tablet'|'Mobile'} currentView The current view.
+ * @template T
+ * @returns {(value: T, keys: string[]) => void}
+ */
+export const buildResponsiveSetAttributes = ( setAttributes, currentView ) => {
+	return ( value, keys ) => {
+		setAttributes({ [keys[mapViewToKey[currentView] ?? 0]]: value });
+	};
+};
+
+/**
+ * Build a responsive wrapper around current view to choose a value.
+ *
+ * @param {'Desktop'|'Tablet'|'Mobile'} currentView The current view.
+ * @param {'Desktop'|'Tablet'|'Mobile'} defaultView If the value of the current view is undefined or null, fallback to this view.
+ * @param {boolean} cascade Inherit from previous view. Mobile from Tablet, Tablet from Desktop.
+ * @template T
+ * @returns { (values: T[]) => T}
+ */
+export const buildResponsiveGetAttributes = ( currentView, defaultView = 'Desktop', cascade = true ) => {
+	return values => {
+		if ( cascade && ! values?.[mapViewToKey[currentView]] && currentView !== defaultView ) {
+			return values?.[mapViewToKey[currentView] - 1] ?? values?.[mapViewToKey[currentView] - 2];
+		}
+		return ( values?.[mapViewToKey[currentView]] ?? values?.[mapViewToKey[defaultView]]);
+	};
 };

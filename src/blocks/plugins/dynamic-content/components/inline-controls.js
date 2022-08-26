@@ -12,12 +12,14 @@ import {
 
 import {
 	applyFormat,
-	toggleFormat
+	toggleFormat,
+	useAnchorRef
 } from '@wordpress/rich-text';
 
 /**
  * Internal dependencies.
  */
+import { format as settings } from './../index.js';
 import Fields from './fields.js';
 
 const name = 'themeisle-blocks/dynamic-value';
@@ -41,7 +43,7 @@ const InlineControls = ({
 			attrs[ o ] = obj[ o ];
 		});
 
-		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v ) ) );
+		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v && undefined !== v ) ) );
 
 		setAttributes({ ...attrs });
 	};
@@ -50,13 +52,13 @@ const InlineControls = ({
 		setAttributes({ type });
 	};
 
-	const anchorRect = contentRef.current.getBoundingClientRect();
+	const anchorRef = useAnchorRef({ ref: contentRef, value, settings });
 
 	return (
 		<Popover
 			position="bottom-center"
 			noArrow={ false }
-			anchorRect={ anchorRect }
+			anchorRef={ anchorRef }
 			focusOnMount={ false }
 			className="o-dynamic-popover"
 		>

@@ -177,6 +177,16 @@ const IconPickerControl = ({
 				position="bottom center"
 				renderToggle={ ({ isOpen, onToggle }) => (
 					<Fragment>
+						<SelectControl
+							label={ __( 'Icon Library', 'otter-blocks' ) }
+							value={ library }
+							options={ [
+								{ label: __( 'Font Awesome', 'otter-blocks' ), value: 'fontawesome' },
+								{ label: __( 'ThemeIsle Icons', 'otter-blocks' ), value: 'themeisle-icons' },
+								...( allowImage ? [{ label: __( 'Custom Image', 'otter-blocks' ), value: 'image' }] : [])
+							] }
+							onChange={ changeLibrary }
+						/>
 						{ ( allowThemeisleIcons || allowImage ) &&
 							<SelectControl
 								label={ __( 'Icon Library', 'otter-blocks' ) }

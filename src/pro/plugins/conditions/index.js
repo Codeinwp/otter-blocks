@@ -19,6 +19,17 @@ const { Notice } = window.otterComponents;
 
 const applyProConditions = conditions => {
 	const proConditions = {
+		'users': {
+			label: __( 'Users', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'loggedInUserMeta',
+					label: __( 'Logged-in User Meta', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on meta of the logged-in user condition.' ),
+					toogleVisibility: true
+				}
+			]
+		},
 		'posts': {
 			label: __( 'Posts', 'otter-blocks' ),
 			conditions: [

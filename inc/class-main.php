@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks;
 
+use ThemeIsle\GutenbergBlocks\Server\Dashboard_Server;
+
 /**
  * Class Main
  */
@@ -43,6 +45,8 @@ class Main {
 		add_action( 'init', array( $this, 'autoload_classes' ), 9 );
 		add_filter( 'script_loader_tag', array( $this, 'filter_script_loader_tag' ), 10, 2 );
 		add_filter( 'safe_style_css', array( $this, 'used_css_properties' ), 99 );
+		add_filter( 'wp_kses_allowed_html', array( $this, 'used_html_properties' ), 10, 2 );
+		add_action( 'init', array( $this, 'after_update_migration' ) );
 
 		if ( ! function_exists( 'is_wpcom_vip' ) ) {
 			add_filter( 'upload_mimes', array( $this, 'allow_json_svg' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
@@ -71,6 +75,7 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Plugins\Options_Settings',
 			'\ThemeIsle\GutenbergBlocks\Render\Masonry_Variant',
 			'\ThemeIsle\GutenbergBlocks\Server\Dashboard_Server',
+			'\ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Plugin_Card_Server',
 			'\ThemeIsle\GutenbergBlocks\Integration\Form_Providers',
 			'\ThemeIsle\GutenbergBlocks\Integration\Form_Email',
@@ -212,6 +217,54 @@ class Main {
 	}
 
 	/**
+	 * Used HTML properties
+	 *
+	 * @param array  $tags Allowed HTML tags.
+	 * @param string $context Context.
+	 *
+	 * @return array
+	 * @since   2.0.11
+	 * @access  public
+	 */
+	public function used_html_properties( $tags, $context ) {
+		if ( 'post' !== $context ) {
+			return $tags;
+		}
+
+		if ( isset( $tags['div'] ) ) {
+			$tags['div']['name'] = true;
+		}
+
+		if ( isset( $tags['form'] ) ) {
+			$tags['form']['class'] = true;
+		} else {
+			$tags['form'] = array(
+				'class' => true,
+			);
+		}
+
+		$tags['input'] = array(
+			'type'        => true,
+			'name'        => true,
+			'id'          => true,
+			'required'    => true,
+			'placeholder' => true,
+			'class'       => true,
+		);
+
+		$tags['textarea'] = array(
+			'name'        => true,
+			'id'          => true,
+			'required'    => true,
+			'placeholder' => true,
+			'rows'        => true,
+			'class'       => true,
+		);
+
+		return $tags;
+	}
+
+	/**
 	 * Allow JSON uploads
 	 *
 	 * @param array $mimes Supported mimes.
@@ -253,6 +306,24 @@ class Main {
 			$data['ext']  = 'svg';
 		}
 		return $data;
+	}
+
+
+	/**
+	 * After Update Migration
+	 *
+	 * @return bool
+	 * @since  2.0.9
+	 * @access public
+	 */
+	public function after_update_migration() {
+		$db_version = get_option( 'themeisle_blocks_db_version', 0 );
+
+		if ( version_compare( $db_version, OTTER_BLOCKS_VERSION, '<' ) ) {
+			Dashboard_Server::regenerate_styles();
+		}
+
+		return update_option( 'themeisle_blocks_db_version', OTTER_BLOCKS_VERSION );
 	}
 
 	/**

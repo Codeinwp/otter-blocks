@@ -43,6 +43,25 @@ class Accordion_CSS extends Base_CSS {
 				'properties' => array_merge(
 					array(
 						array(
+							'property' => '--title-color',
+							'value'    => 'titleColor',
+							'hasSync'  => 'accordion-title-color',
+						),
+						array(
+							'property' => '--title-background',
+							'value'    => 'titleBackground',
+							'hasSync'  => 'accordion-title-background',
+						),
+						array(
+							'property' => '--border-color',
+							'value'    => 'borderColor',
+							'hasSync'  => 'accordion-border-color',
+						),
+						array(
+							'property' => '--content-background',
+							'value'    => 'contentBackground',
+							'hasSync'  => 'accordion-content-background',
+						array(
 							'property' => '--titleColor',
 							'value'    => 'titleColor',
 							'hasSync'  => 'accordionTitleColor',
@@ -136,7 +155,7 @@ class Accordion_CSS extends Base_CSS {
 							),
 							'condition'      => function( $attrs ) {
 								return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow']['active'];
-							},
+							} ),
 						),
 					)
 				),
@@ -427,19 +446,19 @@ class Accordion_CSS extends Base_CSS {
 				'selector'   => '.wp-block-themeisle-blocks-accordion',
 				'properties' => array(
 					array(
-						'property' => '--accordionTitleColor',
+						'property' => '--accordion-title-color',
 						'value'    => 'titleColor',
 					),
 					array(
-						'property' => '--accordionTitleBackground',
+						'property' => '--accordion-title-background',
 						'value'    => 'titleBackground',
 					),
 					array(
-						'property' => '--accordionBorderColor',
+						'property' => '--accordion-border-color',
 						'value'    => 'borderColor',
 					),
 					array(
-						'property' => '--accordionContentBackground',
+						'property' => '--accordion-content-background',
 						'value'    => 'contentBackground',
 					),
 				),

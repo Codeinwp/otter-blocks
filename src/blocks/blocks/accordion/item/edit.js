@@ -78,7 +78,7 @@ const Edit = ({
 				{ isOpen && (
 					<div className="wp-block-themeisle-blocks-accordion-item__content">
 						<InnerBlocks
-							template={ [ [ 'core/paragraph' ] ] }
+							template={ [[ 'core/paragraph' ]] }
 						/>
 					</div>
 				) }

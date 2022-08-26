@@ -60,6 +60,7 @@ const FontAwesomeIcons = ({
 					value={ defaults.fontSize || '' }
 					initialPosition={ 16 }
 					onChange={ value => changeConfig( blockName, { fontSize: value }) }
+					step={ 0.1 }
 					min={ 12 }
 					max={ 140 }
 				/>
@@ -71,6 +72,7 @@ const FontAwesomeIcons = ({
 					value={ defaults.padding || '' }
 					initialPosition={ 5 }
 					onChange={ value => changeConfig( blockName, { padding: value }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 100 }
 				/>
@@ -82,6 +84,7 @@ const FontAwesomeIcons = ({
 					value={ defaults.margin || '' }
 					initialPosition={ 5 }
 					onChange={ value => changeConfig( blockName, { margin: value }) }
+					step={ 0.1 }
 					min={ 0 }
 					max={ 100 }
 				/>

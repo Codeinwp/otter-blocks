@@ -97,12 +97,12 @@ const Edit = ({
 	});
 
 	const setFormOption = option => {
-		setFormOptions( options => ({...options, ...option}) );
+		setFormOptions( options => ({ ...options, ...option }) );
 	};
 
 	const [ savedFormOptions, setSavedFormOptions ] = useState( true );
 
-	const [ listIDOptions, setListIDOptions ] = useState([ { label: __( 'None', 'otter-blocks' ), value: '' } ]);
+	const [ listIDOptions, setListIDOptions ] = useState([{ label: __( 'None', 'otter-blocks' ), value: '' }]);
 
 	const {
 		insertBlock,
@@ -217,13 +217,13 @@ const Edit = ({
 	useEffect( () => {
 		let controller = new AbortController();
 		const t = setTimeout( () => {
-			setLoading({formOptions: 'done', formIntegration: 'done'});
+			setLoading({ formOptions: 'done', formIntegration: 'done' });
 		}, 3000 );
 
 
 		if ( attributes.optionName ) {
 			api.loadPromise.then( () => {
-				setLoading({ formOptions: 'loading', formIntegration: 'loading'});
+				setLoading({ formOptions: 'loading', formIntegration: 'loading' });
 				( new api.models.Settings() ).fetch({ signal: controller.signal }).done( res => {
 					controller = null;
 					const formData = extractDataFromWpOptions( res.themeisle_blocks_form_emails );
@@ -639,15 +639,15 @@ const Edit = ({
 	useEffect( () => {
 		let controller = new AbortController();
 		const getCaptchaAPIData = () => {
-			setLoading({ captcha: 'loading'});
+			setLoading({ captcha: 'loading' });
 			try {
 				( new api.models.Settings() )?.fetch({ signal: controller.signal }).then( response => {
 					controller = null;
 
 					if ( '' !== response.themeisle_google_captcha_api_site_key && '' !== response.themeisle_google_captcha_api_secret_key ) {
-						setLoading({ captcha: 'done'});
+						setLoading({ captcha: 'done' });
 					} else {
-						setLoading({ captcha: 'missing'});
+						setLoading({ captcha: 'missing' });
 						setGoogleCaptchaAPISiteKey( response.themeisle_google_captcha_api_site_key );
 						setGoogleCaptchaAPISecretKey( response.themeisle_google_captcha_api_secret_key );
 					}
@@ -713,23 +713,23 @@ const Edit = ({
 	};
 
 	const inlineStyles = {
-		'--messageFontSize': attributes.messageFontSize !== undefined && attributes.messageFontSize,
-		'--inputFontSize': attributes.inputFontSize !== undefined && attributes.inputFontSize,
-		'--helpFontSize': attributes.helpFontSize !== undefined && attributes.helpFontSize,
-		'--inputColor': attributes.inputColor,
+		'--message-font-size': attributes.messageFontSize !== undefined && attributes.messageFontSize,
+		'--input-font-size': attributes.inputFontSize !== undefined && attributes.inputFontSize,
+		'--help-font-size': attributes.helpFontSize !== undefined && attributes.helpFontSize,
+		'--input-color': attributes.inputColor,
 		'--padding': padding( attributes.inputPadding ),
-		'--borderRadius': attributes.inputBorderRadius !== undefined && ( attributes.inputBorderRadius + 'px' ),
-		'--borderWidth': attributes.inputBorderWidth !== undefined && ( attributes.inputBorderWidth + 'px' ),
-		'--borderColor': attributes.inputBorderColor,
-		'--labelColor': attributes.labelColor,
-		'--inputWidth': attributes.inputWidth !== undefined && ( attributes.inputWidth + '%' ),
-		'--submitColor': attributes.submitColor,
-		'--requiredColor': attributes.inputRequiredColor,
-		'--inputGap': attributes.inputGap !== undefined && ( attributes.inputGap + 'px' ),
-		'--inputsGap': attributes.inputsGap !== undefined && ( attributes.inputsGap + 'px' ),
-		'--labelFontSize': attributes.labelFontSize !== undefined && ( attributes.labelFontSize + 'px' ),
-		'--submitFontSize': attributes.submitFontSize !== undefined && ( attributes.submitFontSize + 'px' ),
-		'--helpLabelColor': attributes.helpLabelColor
+		'--border-radius': attributes.inputBorderRadius !== undefined && ( attributes.inputBorderRadius + 'px' ),
+		'--border-width': attributes.inputBorderWidth !== undefined && ( attributes.inputBorderWidth + 'px' ),
+		'--border-color': attributes.inputBorderColor,
+		'--label-color': attributes.labelColor,
+		'--input-width': attributes.inputWidth !== undefined && ( attributes.inputWidth + '%' ),
+		'--submit-color': attributes.submitColor,
+		'--required-color': attributes.inputRequiredColor,
+		'--input-gap': attributes.inputGap !== undefined && ( attributes.inputGap + 'px' ),
+		'--inputs-gap': attributes.inputsGap !== undefined && ( attributes.inputsGap + 'px' ),
+		'--label-font-size': attributes.labelFontSize !== undefined && ( attributes.labelFontSize + 'px' ),
+		'--submit-font-size': attributes.submitFontSize !== undefined && ( attributes.submitFontSize + 'px' ),
+		'--help-label-color': attributes.helpLabelColor
 	};
 
 	const [ cssNodeName, setCSS ] = useCSSNode();

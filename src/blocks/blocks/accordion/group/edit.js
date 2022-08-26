@@ -26,7 +26,8 @@ import metadata from './block.json';
 import Inspector from './inspector.js';
 import {
 	blockInit,
-	getDefaultValueByField, useCSSNode
+	getDefaultValueByField,
+	useCSSNode
 } from '../../../helpers/block-utility.js';
 import {
 	boxValues,
@@ -76,24 +77,24 @@ const Edit = ({
 	const contentBorder = getValue( 'contentBorder' );
 
 	const inlineStyles = {
-		'--titleColor': getValue( 'titleColor' ),
-		'--titleBackground': getValue( 'titleBackground' ),
-		'--contentBackground': getValue( 'contentBackground' ),
-		'--fontFamily': getValue( 'fontFamily' ),
-		'--fontVariant': getValue( 'fontVariant' ),
-		'--fontStyle': getValue( 'fontStyle' ),
-		'--textTransform': getValue( 'textTransform' ),
-		'--letterSpacing': getValue( 'letterSpacing' ) ? getValue( 'letterSpacing' ) + 'px' : undefined,
-		'--fontSize': getValue( 'fontSize' ) ? getValue( 'fontSize' ) + 'px' : undefined,
-		'--boxShadow': boxShadow.active && `${boxShadow.horizontal}px ${boxShadow.vertical}px ${boxShadow.blur}px ${boxShadow.spread}px ${hex2rgba( boxShadow.color, boxShadow.colorOpacity )}`,
-		'--headerPadding': boxValues( getValue( 'headerPadding' ), { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
-		'--contentPadding': boxValues( getValue( 'contentPadding' ), { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
-		'--headerBorderWidth': headerBorder?.width && boxValues( headerBorder.width, { top: '1px', right: '1px', bottom: '1px', left: '1px' }),
-		'--contentBorderWidth': contentBorder?.width && boxValues( contentBorder.width, { top: '0', right: '1px', bottom: '1px', left: '1px' }),
-		'--headerBorderColor': headerBorder?.color,
-		'--contentBorderColor': contentBorder?.color,
-		'--headerBorderStyle': headerBorder?.style,
-		'--contentBorderStyle': contentBorder?.style
+		'--title-color': getValue( 'titleColor' ),
+		'--title-background': getValue( 'titleBackground' ),
+		'--content-background': getValue( 'contentBackground' ),
+		'--font-family': getValue( 'fontFamily' ),
+		'--font-variant': getValue( 'fontVariant' ),
+		'--font-style': getValue( 'fontStyle' ),
+		'--text-transform': getValue( 'textTransform' ),
+		'--letter-spacing': getValue( 'letterSpacing' ) ? getValue( 'letterSpacing' ) + 'px' : undefined,
+		'--font-size': getValue( 'fontSize' ) ? getValue( 'fontSize' ) + 'px' : undefined,
+		'--box-shadow': boxShadow.active && `${boxShadow.horizontal}px ${boxShadow.vertical}px ${boxShadow.blur}px ${boxShadow.spread}px ${hex2rgba( boxShadow.color, boxShadow.colorOpacity )}`,
+		'--header-padding': boxValues( getValue( 'headerPadding' ), { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
+		'--content-padding': boxValues( getValue( 'contentPadding' ), { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
+		'--header-border-width': headerBorder?.width && boxValues( headerBorder.width, { top: '1px', right: '1px', bottom: '1px', left: '1px' }),
+		'--content-border-width': contentBorder?.width && boxValues( contentBorder.width, { top: '0', right: '1px', bottom: '1px', left: '1px' }),
+		'--header-border-color': headerBorder?.color,
+		'--content-border-color': contentBorder?.color,
+		'--header-border-style': headerBorder?.style,
+		'--content-border-style': contentBorder?.style
 	};
 
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();
@@ -146,7 +147,7 @@ const Edit = ({
 			<div { ...blockProps }>
 				<InnerBlocks
 					allowedBlocks={ [ 'themeisle-blocks/accordion-item' ] }
-					template={ [ [ 'themeisle-blocks/accordion-item' ] ] }
+					template={ [[ 'themeisle-blocks/accordion-item' ]] }
 					renderAppender={ isSelected ? InnerBlocks.ButtonBlockAppender : '' }
 				/>
 			</div>

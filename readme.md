@@ -1,7 +1,7 @@
 # Otter - Page Builder Blocks & Extensions for Gutenberg #
-**Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/), [uriahs-victor](https://profiles.wordpress.org/uriahs-victor/)  
+**Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/), [uriahs-victor](https://profiles.wordpress.org/uriahs-victor/), [john_pixle](https://profiles.wordpress.org/john_pixle/), [wildmisha](https://profiles.wordpress.org/wildmisha/), [irinelenache](https://profiles.wordpress.org/irinelenache/)  
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder  
-**Requires at least:** 5.6  
+**Requires at least:** 5.8  
 **Tested up to:** 6.0  
 **Requires PHP:** 5.4  
 **Stable tag:** trunk  
@@ -174,6 +174,10 @@ We're constantly adding new Gutenberg Blocks to Otter to assist in your website 
 
 We're here to help. Feel free to open a new thread on the [Support Forum](https://wordpress.org/support/plugin/otter-blocks/).
 
+### Documentation
+
+You can check Otter documentation [here](https://docs.themeisle.com/article/1478-otter-blocks-documentation).
+
 ### Useful Resources
 
 - Read more about WordPress on our [blog](https://themeisle.com/blog/).
@@ -188,6 +192,81 @@ We're here to help. Feel free to open a new thread on the [Support Forum](https:
 5. Section Block
 
 ## Changelog ##
+
+##### [Version 2.0.12](https://github.com/Codeinwp/otter-blocks/compare/v2.0.11...v2.0.12) (2022-08-25)
+
+- Fix Custom CSS not working with certain selectors
+- Disable Author Block for WordPress 5.9 or above; use Core’s block instead
+- Small Dynamic Text enhancements
+- Add separator alignment option in Countdown block
+- Fix Category not shown on Featured Post in Posts Lock
+- Fix Alignment control breaking in Section & Posts block
+
+
+
+
+##### [Version 2.0.11](https://github.com/Codeinwp/otter-blocks/compare/v2.0.10...v2.0.11) (2022-08-17)
+
+- Add Option to remove Product Review schema in Product Review block
+- Add Pros/Cons Schema to Product Review Block
+- Add FSE compatibility to Otter
+- Add Docs link to Dashboard & readme
+- Fix certain blocks not working inside the Query Loop block
+- Fix Visibility Conditions not working for Widgets in the Customizer
+- Fix Icon List block not working properly when adding new items
+- Fix border issues in Countdown Block
+- Fix Color & Gradient picker opening together
+- Fix alignment inheritance in Countdown Block
+- Fix undefined variable warning when Animations are used in Dynamic Blocks
+- Fix Alignment control not appearing in Button Group in FSE
+- Fix Countdown & Form blocks not working properly for non-Super Admins in Network sites
+- Fix Dynamic Values modal not opening in Advanced Heading block
+- Fix Plugin Card not behaving nicely when added into smaller spaces
+
+
+
+
+##### [Version 2.0.10](https://github.com/Codeinwp/otter-blocks/compare/v2.0.9...v2.0.10) (2022-08-04)
+
+- Fix Section Spacing inheritance issue
+- Only load Animations on front-end which are being used
+
+
+
+
+##### [Version 2.0.9](https://github.com/Codeinwp/otter-blocks/compare/v2.0.8...v2.0.9) (2022-07-29)
+
+- Add Dynamic Image Module
+- Load CSS inline if possible to reduce page load time
+- Fix Dynamic Content not working in Query Loop
+- Countdown Block Improvements
+- Add notice in the Custom CSS editor when CSS has errors that can break the page
+- Add Logged-in user meta condition to Block Conditions module
+- Add AggregateRating to schema.org of Review Block
+- Fix the Sticky feature not working
+- Fix CSS inheritance in the editor
+- Fix default margin not working in Icon block
+- Fix Pro users seeing upsell message
+- Fix camelCase CSS variables
+- Fix Review Block only accepting absolute numbers
+- Remove Height automatic change on Circle Counter
+- Add Block Previews
+- Bump minimum compatibility to 5.8
+
+
+
+
+##### [Version 2.0.8](https://github.com/Codeinwp/otter-blocks/compare/v2.0.7...v2.0.8) (2022-07-14)
+
+- Fip Block styling issue
+- Fix styles & scripts not loading in FSE & responsive mode in the editor
+- Fix editor slowness
+- Add single column option to Section
+- Fix Font Module failing in specific scenarios
+- Fix WooCommerce Product Select component keeps spinning when no products are available
+
+
+
 
 ##### [Version 2.0.7](https://github.com/Codeinwp/otter-blocks/compare/v2.0.6...v2.0.7) (2022-07-04)
 

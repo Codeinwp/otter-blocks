@@ -22,7 +22,7 @@ const SelectProducts = ({
 	onChange,
 	...props
 }) => {
-	const { results, status } = useSelect( select => {
+	const { results, status, isLoading } = useSelect( select => {
 		let results = [];
 		let status = 'loading';
 
@@ -33,31 +33,29 @@ const SelectProducts = ({
 		if ( error ) {
 			status = 'error';
 		} else {
-			results = select( COLLECTIONS_STORE_KEY ).getCollection( '/wc/store', 'products', { per_page: 100 });
+			results = 'error' === status ? [] : ( select( COLLECTIONS_STORE_KEY ).getCollection?.( '/wc/store', 'products', { per_page: 100 }) ?? [])?.map( result => ({
+				value: result.id,
+				label: decodeEntities( result.name )
+			}) );
+			status = 'loaded';
 
-			if ( ! isEmpty( results ) ) {
-				status = 'loaded';
-
-				results = [
-					{
-						value: 0,
-						label: __( 'None', 'otter-blocks' )
-					},
-					...results.map( result => ({
-						value: result.id,
-						label: decodeEntities( result.name )
-					}) )
-				];
-			}
+			results = [
+				{
+					value: 0,
+					label: __( 'None', 'otter-blocks' )
+				},
+				...results
+			];
 		}
 
 		return {
 			results,
-			status
+			status,
+			isLoading: select( COLLECTIONS_STORE_KEY ).isResolving( 'getCollection', [ '/wc/store', 'products', { per_page: 100 }])
 		};
 	}, []);
 
-	if ( 'loading' === status ) {
+	if ( isLoading ) {
 		return (
 			<Placeholder><Spinner/></Placeholder>
 		);

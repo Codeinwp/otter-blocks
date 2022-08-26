@@ -16,14 +16,11 @@ import { insertBetweenItems } from '../../../helpers/helper-functions.js';
 const DisplayTimeComponent = ({
 	name,
 	value,
-	tag,
-	styles
+	tag
 }) => {
-	const compStyle = 'sep' !== name ? { ...styles.allComponents, ...styles.mainComponents } : styles.allComponents;
 
 	return (
 		<div
-			style={ compStyle }
 			name={ tag }
 			className={ classnames(
 				'otter-countdown__display-area',
@@ -33,13 +30,11 @@ const DisplayTimeComponent = ({
 			) }
 		>
 			<div
-				style={ styles.value }
 				className="otter-countdown__value"
 			>
 				{ value }
 			</div>
 			<div
-				style={ styles.label }
 				className="otter-countdown__label"
 			>
 				{ name }
@@ -50,8 +45,7 @@ const DisplayTimeComponent = ({
 
 const DisplayTime = ({
 	time,
-	hasSeparators,
-	styles
+	hasSeparators
 }) => {
 	const elemToDisplay = hasSeparators ?
 		insertBetweenItems( time, {
@@ -62,12 +56,12 @@ const DisplayTime = ({
 		time;
 
 	const renderElem = elemToDisplay?.map( ( elem, key ) => (
-		<DisplayTimeComponent { ...elem } key={ key } styles={ styles } />
+		<DisplayTimeComponent { ...elem } key={ key } />
 	) );
 
 	return time !== undefined ? (
 		<div className="otter-countdown__container">
-			<div style={ styles.display } className="otter-countdown__display">{ renderElem }</div>
+			<div className="otter-countdown__display">{ renderElem }</div>
 		</div>
 	) : (
 		<Fragment></Fragment>

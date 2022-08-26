@@ -37,15 +37,9 @@ const FILTER_OPTIONS = {
 const ProFeatures = () => {
 	return (
 		<Fragment>
-			<Notice
-				notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
-				variant="upsell"
-			/>
-
 			<SelectControl
 				label={ __( 'Position', 'otter-blocks' ) }
 				help={ __( 'Position of the block in relation to the screen.', 'otter-blocks' ) }
-				disabled={ true }
 				value="o-sticky-pos-top"
 				options={ [
 					{
@@ -53,8 +47,9 @@ const ProFeatures = () => {
 						value: 'o-sticky-pos-top'
 					},
 					{
-						label: __( 'Bottom', 'otter-blocks' ),
-						value: 'o-sticky-pos-bottom'
+						label: __( 'Bottom (Pro)', 'otter-blocks' ),
+						value: 'o-sticky-pos-bottom',
+						disabled: true
 					}
 				] }
 				onChange={ () => {} }
@@ -73,7 +68,6 @@ const ProFeatures = () => {
 			<SelectControl
 				label={ __( 'Behaviour', 'otter-blocks' ) }
 				help={ __( 'Behaviour when multiple sticky blocks with the same movement limit collide.', 'otter-blocks' ) }
-				disabled={ true }
 				value="o-sticky-bhvr-keep"
 				options={ [
 					{
@@ -81,16 +75,19 @@ const ProFeatures = () => {
 						value: 'o-sticky-bhvr-keep'
 					},
 					{
-						label: __( 'Fade', 'otter-blocks' ),
-						value: 'o-sticky-bhvr-hide'
+						label: __( 'Fade (Pro)', 'otter-blocks' ),
+						value: 'o-sticky-bhvr-hide',
+						disabled: true
 					},
 					{
-						label: __( 'Stack', 'otter-blocks' ),
-						value: 'o-sticky-bhvr-stack'
+						label: __( 'Stack (Pro)', 'otter-blocks' ),
+						value: 'o-sticky-bhvr-stack',
+						disabled: true
 					}
 				] }
 				onChange={ () => {} }
 			/>
+
 			<ToggleControl
 				label={ __( 'Enable on Mobile', 'otter-blocks' ) }
 				help={ __( 'Make the sticky mode active for mobile users.' ) }
@@ -98,6 +95,13 @@ const ProFeatures = () => {
 				checked={ false }
 				onChange={ () => {} }
 			/>
+
+			{ ! Boolean( window.themeisleGutenberg.hasPro ) && (
+				<Notice
+					notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Get more options with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+					variant="upsell"
+				/>
+			) }
 		</Fragment>
 	);
 };
@@ -107,10 +111,10 @@ const Edit = ({
 	setAttributes,
 	clientId
 }) => {
-	const [ containerOptions, setContainerOptions ] = useState([ {
+	const [ containerOptions, setContainerOptions ] = useState([{
 		label: __( 'Screen', 'otter-blocks' ),
 		value: 'o-sticky-scope-screen'
-	} ]);
+	}]);
 
 	/*
 		E.g:
@@ -198,6 +202,16 @@ const Edit = ({
 				title={ __( 'Sticky', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
+				<p>{ __( 'Set any block as Sticky, so that it sticks to another element on the page.', 'otter-blocks' ) }</p>
+
+				<ExternalLink
+					target="_blank"
+					rel="noopener noreferrer"
+					href="https://docs.themeisle.com/article/1529-how-to-make-a-block-sticky"
+				>
+					{ __( 'Learn more about Sticky', 'otter-blocks' ) }
+				</ExternalLink>
+
 				<SelectControl
 					label={ __( 'Sticky To', 'otter-blocks' ) }
 					help={ __( 'Select the parent element for the sticky block.', 'otter-blocks' ) }
@@ -207,14 +221,6 @@ const Edit = ({
 				/>
 
 				{ applyFilters( 'otter.sticky.controls', <ProFeatures />, attributes, FILTER_OPTIONS, addOption ) }
-
-				<ExternalLink
-					target="_blank"
-					rel="noopener noreferrer"
-					href="https://docs.themeisle.com/article/1478-otter-blocks-documentation"
-				>
-					{ __( 'Learn more about Sticky', 'otter-blocks' ) }
-				</ExternalLink>
 
 				{ applyFilters( 'otter.poweredBy', '' ) }
 			</PanelBody>

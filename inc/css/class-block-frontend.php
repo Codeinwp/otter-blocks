@@ -56,6 +56,7 @@ class Block_Frontend extends Base_CSS {
 		add_action( 'wp_head', array( $this, 'enqueue_google_fonts_backward' ), 19 );
 		add_filter( 'get_the_excerpt', array( $this, 'get_excerpt_end' ), 20 );
 		add_action( 'wp_footer', array( $this, 'enqueue_widgets_css' ) );
+		add_action( 'wp_footer', array( $this, 'enqueue_fse_css' ) );
 		add_action( 'wp_head', array( $this, 'enqueue_assets' ) );
 		add_action( 'wp_footer', array( $this, 'enqueue_global_styles' ) );
 	}
@@ -166,12 +167,13 @@ class Block_Frontend extends Base_CSS {
 			$item = str_replace( ' ', '+', $font['fontfamily'] );
 			if ( count( $font['fontvariant'] ) > 0 ) {
 				foreach ( $font['fontvariant'] as $key => $value ) {
-					if ( 'normal' === $value ) {
+					if ( 'normal' === $value || 'regular' === $value ) {
 						$font['fontvariant'][ $key ] = 400;
 					}
 				}
 
 				sort( $font['fontvariant'] );
+				$font['fontvariant'] = array_unique( $font['fontvariant'] );
 
 				$item .= ':wght@' . implode( ';', $font['fontvariant'] );
 			}
@@ -183,7 +185,7 @@ class Block_Frontend extends Base_CSS {
 				'family'  => implode( '&family=', $fonts ),
 				'display' => 'swap',
 			),
-			'https://fonts.googleapis.com/css2' 
+			'https://fonts.googleapis.com/css2'
 		);
 
 		$fonts_url = apply_filters( 'otter_blocks_google_fonts_url', $fonts_url );
@@ -241,7 +243,7 @@ class Block_Frontend extends Base_CSS {
 					return $content;
 				}
 
-				$this->enqueue_styles( $post_id, true );
+				$this->enqueue_styles( $post_id );
 				$this->enqueue_google_fonts( $post_id );
 
 				return $content;
@@ -252,15 +254,13 @@ class Block_Frontend extends Base_CSS {
 	/**
 	 * Enqueue CSS file
 	 *
-	 * @param int  $post_id Post id.
-	 * @param bool $footer IN footer.
+	 * @param int $post_id Post id.
 	 *
 	 * @since   1.3.0
 	 * @access  public
 	 */
-	public function enqueue_styles( $post_id = '', $footer = false ) {
-		$post_id  = $post_id ? $post_id : get_the_ID();
-		$location = 'wp_head';
+	public function enqueue_styles( $post_id = '' ) {
+		$post_id = $post_id ? $post_id : get_the_ID();
 
 		if ( ! function_exists( 'has_blocks' ) ) {
 			return;
@@ -270,13 +270,9 @@ class Block_Frontend extends Base_CSS {
 			return;
 		}
 
-		if ( $footer ) {
-			$location = 'wp_footer';
-		}
-
 		if ( is_preview() ) {
 			add_action(
-				$location,
+				'wp_footer',
 				function () use ( $post_id ) {
 					return $this->get_post_css( $post_id );
 				}
@@ -291,7 +287,7 @@ class Block_Frontend extends Base_CSS {
 			}
 
 			add_action(
-				$location,
+				'wp_footer',
 				function () use ( $post_id ) {
 					return $this->get_post_css( $post_id );
 				}
@@ -309,7 +305,7 @@ class Block_Frontend extends Base_CSS {
 		$blocks = parse_blocks( $content );
 
 		if ( is_array( $blocks ) || ! empty( $blocks ) ) {
-			$this->enqueue_reusable_styles( $blocks, $footer );
+			$this->enqueue_reusable_styles( $blocks );
 		}
 
 		$total_inline_limit = 20000;
@@ -322,7 +318,7 @@ class Block_Frontend extends Base_CSS {
 
 		if ( $this->total_inline_size + $file_size < $total_inline_limit ) {
 			add_action(
-				$location,
+				'wp_footer',
 				function () use ( $post_id ) {
 					return $this->get_post_css( $post_id );
 				}
@@ -332,21 +328,10 @@ class Block_Frontend extends Base_CSS {
 			return;
 		}
 
-		if ( $footer ) {
-			add_action(
-				'wp_footer',
-				function () use ( $post_id, $file_name, $file_url ) {
-					return wp_enqueue_style( 'otter-' . $file_name, $file_url, array( 'otter-blocks' ), THEMEISLE_BLOCKS_VERSION );
-				}
-			);
-
-			return;
-		}
-
 		add_action(
-			'wp_enqueue_scripts',
-			function () use ( $post_id, $file_name, $file_url ) {
-				return wp_enqueue_style( 'otter-' . $file_name, $file_url, array( 'otter-blocks' ), THEMEISLE_BLOCKS_VERSION );
+			'wp_footer',
+			function () use ( $file_name, $file_url, $file_path ) {
+				wp_enqueue_style( 'otter-' . $file_name, $file_url, array(), OTTER_BLOCKS_VERSION );
 			}
 		);
 	}
@@ -355,19 +340,18 @@ class Block_Frontend extends Base_CSS {
 	 * Enqueue CSS file for Reusable Blocks
 	 *
 	 * @param array $blocks List of blocks.
-	 * @param bool  $footer Should we load on footer.
 	 *
 	 * @since   1.3.0
 	 * @access  public
 	 */
-	public function enqueue_reusable_styles( $blocks, $footer = false ) {
+	public function enqueue_reusable_styles( $blocks ) {
 		foreach ( $blocks as $block ) {
 			if ( 'core/block' === $block['blockName'] && ! empty( $block['attrs']['ref'] ) ) {
-				$this->enqueue_styles( $block['attrs']['ref'], $footer );
+				$this->enqueue_styles( $block['attrs']['ref'] );
 			}
 
 			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
-				$this->enqueue_reusable_styles( $block['innerBlocks'], $footer );
+				$this->enqueue_reusable_styles( $block['innerBlocks'] );
 			}
 		}
 	}
@@ -482,7 +466,9 @@ class Block_Frontend extends Base_CSS {
 				return '';
 			}
 
-			$css = $this->cycle_through_blocks( $blocks );
+			$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+
+			$css = $this->cycle_through_blocks( $blocks, $animations );
 		}
 
 		return $css;
@@ -492,14 +478,15 @@ class Block_Frontend extends Base_CSS {
 	 * Cycle thorugh Blocks
 	 *
 	 * @param array $blocks List of blocks.
+	 * @param bool  $animations To check for animations or not.
 	 *
 	 * @return string Block styles.
 	 * @since   1.3.0
 	 * @access  public
 	 */
-	public function cycle_through_blocks( $blocks ) {
+	public function cycle_through_blocks( $blocks, $animations ) {
 		$style  = '';
-		$style .= $this->cycle_through_static_blocks( $blocks );
+		$style .= $this->cycle_through_static_blocks( $blocks, $animations );
 		$style .= $this->cycle_through_reusable_blocks( $blocks );
 
 		return $style;
@@ -562,7 +549,76 @@ class Block_Frontend extends Base_CSS {
 
 		$file_url = CSS_Handler::get_css_url( 'widgets' );
 
-		return wp_enqueue_style( 'otter-widgets', $file_url, array( 'otter-blocks' ), THEMEISLE_BLOCKS_VERSION );
+		$wp_upload_dir = wp_upload_dir( null, false );
+		$basedir       = $wp_upload_dir['basedir'] . '/themeisle-gutenberg/';
+		$file_name     = basename( $file_url );
+		$file_path     = $basedir . $file_name;
+
+		wp_enqueue_style( 'otter-widgets', $file_url, array(), OTTER_BLOCKS_VERSION );
+		wp_style_add_data( 'otter-widgets', 'path', $file_path );
+	}
+
+
+	/**
+	 * Enqueue FSE CSS file
+	 *
+	 * @since   2.0.10
+	 * @access  public
+	 */
+	public function enqueue_fse_css() {
+		if ( ! ( function_exists( 'get_block_templates' ) && function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() && current_theme_supports( 'block-templates' ) ) ) {
+			return;
+		}
+
+		global $_wp_current_template_content;
+
+		$content         = '';
+		$slugs           = array();
+		$template_blocks = parse_blocks( $_wp_current_template_content );
+
+		foreach ( $template_blocks as $template_block ) {
+			if ( 'core/template-part' === $template_block['blockName'] ) {
+				$slugs[] = $template_block['attrs']['slug'];
+			}
+		}
+
+		$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
+
+		foreach ( $templates_parts as $templates_part ) {
+			if ( isset( $templates_part->content ) && in_array( $templates_part->slug, $slugs ) ) {
+				$content .= $templates_part->content;
+			}
+		}
+
+		$content .= $_wp_current_template_content;
+
+		$blocks = parse_blocks( $content );
+
+		if ( ! is_array( $blocks ) || empty( $blocks ) ) {
+			return '';
+		}
+
+		$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+
+		$css = $this->cycle_through_blocks( $blocks, $animations );
+
+		if ( empty( $css ) ) {
+			return;
+		}
+
+		if ( count( self::$google_fonts ) > 0 ) {
+			$fonts = $this->get_fonts( self::$google_fonts );
+
+			if ( count( $fonts['fonts'] ) > 0 ) {
+				wp_enqueue_style( 'otter-google-fonts', $fonts['url'], [], null ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+			}
+		}
+
+		$style  = "\n" . '<style type="text/css" media="all">' . "\n";
+		$style .= $css;
+		$style .= "\n" . '</style>' . "\n";
+
+		echo $style;// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 	}
 
 	/**
@@ -598,7 +654,7 @@ class Block_Frontend extends Base_CSS {
 			foreach ( $posts as $post ) {
 				$class = Registration::instance();
 				$class->enqueue_dependencies( $post );
-				$this->enqueue_styles( $post, true );
+				$this->enqueue_styles( $post );
 			}
 		}
 	}

@@ -1,15 +1,15 @@
 .wp-block-themeisle-blocks-progress-bar {
 	--percentage: 50%;
-	--titleColor: inherit;
-	--percentageColor: rgba(0, 0, 0, 0.4);
-	--percentageColorOuter: inherit;
-	--percentageColorTooltip: #FFF;
-	--percentageColorAppend: #FFF;
-	--backgroundColor: #EEE;
-	--borderRadius: 5px;
+	--title-color: inherit;
+	--percentage-color: rgba(0, 0, 0, 0.4);
+	--percentage-color-outer: inherit;
+	--percentage-color-tooltip: #FFF;
+	--percentage-color-append: #FFF;
+	--background-color: #EEE;
+	--border-radius: 5px;
 	--height: 30px;
-	--fontSize: calc( var( --height ) * 0.65 );
-	--barBackground: #6adcfa;
+	--font-size: calc( var( --height ) * 0.65 );
+	--bar-background: #6adcfa;
 
 	display: flex;
 	flex-direction: column;
@@ -18,36 +18,15 @@
 		margin-top: 43px;
 	}
 
-	.wp-block-themeisle-blocks-progress-bar__outer {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		margin-bottom: .25em;
-	}
-
-	.wp-block-themeisle-blocks-progress-bar__outer__title {
-		color: var( --titleColor );
-		margin: 0px;
-		display: grid;
-		align-items: center;
-	}
-
-	.wp-block-themeisle-blocks-progress-bar__outer__value {
-		color: var( --percentageColorOuter );
-		margin-left: auto;
-		display: grid;
-		align-items: center;
-	}
-
 	.wp-block-themeisle-blocks-progress-bar__area {
 		position: relative;
 		width: 100%;
 		display: block;
 		margin-bottom: 15px;
 		width: 100%;
-		background: var( --backgroundColor );
+		background: var( --background-color );
 		height: var( --height );
-		border-radius: var( --borderRadius );
+		border-radius: var( --border-radius );
 		transition: 0.4s linear;
 		transition-property: width, background-color;
 	}
@@ -58,17 +37,17 @@
 		position: absolute;
 		right: 10px;
 		top: 0;
-		font-size: var( --fontSize );
+		font-size: var( --font-size );
 		height: var( --height );
 		line-height: 30px;
-		color: var( --percentageColor );
+		color: var( --percentage-color );
 	}
 
 	.wp-block-themeisle-blocks-progress-bar__area__bar {
 		height: var( --height );
 		width: 0px;
-		background: var( --barBackground);
-		border-radius: var( --borderRadius );
+		background: var( --bar-background);
+		border-radius: var( --border-radius );
 		opacity: 0;
 
 		&.show {
@@ -84,11 +63,11 @@
 		right: 10px;
 		left: 0px;
 		top: 0;
-		font-size: var( --fontSize );
+		font-size: var( --font-size );
 		margin-right: 5px;
 		height: var( --height );
 		line-height: 30px;
-		color: var( --percentageColorAppend );
+		color: var( --percentage-color-append );
 		opacity: 0;
 
 		&.show {
@@ -102,7 +81,7 @@
 		float: right;
 		bottom: 40px;
 		left: 20px;
-		color: var( --percentageColorTooltip );
+		color: var( --percentage-color-tooltip );
 		transition: all 1s;
 		position: relative;
 		padding: 4px 10px 7px 10px;
@@ -137,32 +116,55 @@
 		left: 0;
 		width: auto;
 		font-weight: bold;
-		font-size: var( --fontSize );
+		font-size: var( --font-size );
 		height: var( --height );
 		color: #ffffff;
 		background: transparent;
-		border-radius: var( --borderRadius ) 0px 0px var( --borderRadius );
+		border-radius: var( --border-radius ) 0px 0px var( --border-radius );
 
 		&.highlight {
-			background: var( --barBackground );
+			background: var( --bar-background );
 
 			span {
-				color: var( --titleColor );
+				color: var( --title-color );
 				background: rgba(0, 0, 0, 0.1);
 			}
 		}
 
 		span {
-			color: var( --titleColor );
+			color: var( --title-color );
 			display: flex;
 			align-items: center;
-			border-radius: var( --borderRadius ) 0px 0px var( --borderRadius );
+			border-radius: var( --border-radius ) 0px 0px var( --border-radius );
 			width: 100%;
 			background: transparent;
 			padding: 0 20px;
 			height: var( --height );
 			line-height: 30px;
 		}
+	}
+
+	.wp-block-themeisle-blocks-progress-bar__outer {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		margin-bottom: .25em;
+	}
+
+	.wp-block-themeisle-blocks-progress-bar__outer__title {
+		color: var( --title-color );
+		margin: 0px;
+		display: grid;
+		align-items: center;
+		font-size: var( --font-size );
+	}
+
+	.wp-block-themeisle-blocks-progress-bar__outer__value {
+		color: var( --percentage-color-outer );
+		margin-left: auto;
+		display: grid;
+		align-items: center;
+		position: inherit;
 	}
 }
 

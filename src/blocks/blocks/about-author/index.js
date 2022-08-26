@@ -25,5 +25,10 @@ registerBlockType( name, {
 		'profile'
 	],
 	edit,
-	save: () => null
+	save: () => null,
+	supports: {
+		inserter: Boolean( window.themeisleGutenberg.isLegacyPre59 ),
+		html: false
+	},
+	example: {}
 });

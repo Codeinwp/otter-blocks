@@ -2,7 +2,6 @@
  * External dependencies
  */
 import hexToRgba from 'hex-rgba';
-import GoogleFontLoader from 'react-google-font-loader';
 
 /**
  * WordPress dependencies.
@@ -37,6 +36,7 @@ import metadata from './block.json';
 import { blockInit } from '../../helpers/block-utility.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
+import googleFontsLoader from '../../helpers/google-fonts.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -171,21 +171,20 @@ const Edit = ({
 		style
 	});
 
+	useEffect( () => {
+		if ( attributes.fontFamily ) {
+			googleFontsLoader.loadFontToBrowser( attributes.fontFamily, attributes.fontVariant );
+		}
+	}, [ attributes.fontFamily ]);
+
 	return (
 		<Fragment>
 			<style>
-				{ `#${ attributes.id } mark, #${ attributes.id } .highlight {
+				{ `#block-${ clientId } mark, #block-${ clientId } .highlight {
 						color: ${ attributes.highlightColor };
 						background: ${ attributes.highlightBackground };
 					}` }
 			</style>
-
-			{ attributes.fontFamily && (
-				<GoogleFontLoader fonts={ [ {
-					font: attributes.fontFamily,
-					weights: attributes.fontVariant && [ `${ attributes.fontVariant + ( 'italic' === attributes.fontStyle ? ':i' : '' ) }` ]
-				} ] } />
-			) }
 
 			<Controls
 				attributes={ attributes }
@@ -202,8 +201,7 @@ const Edit = ({
 				value={ attributes.content }
 				placeholder={ __( 'Write heading…', 'otter-blocks' ) }
 				tagName={ attributes.tag }
-				formattingControls={ [ 'bold', 'italic', 'link', 'strikethrough', 'highlight' ] }
-				allowedFormats={ [ 'core/bold', 'core/italic', 'core/link', 'core/strikethrough', 'themeisle-blocks/highlight', 'themeisle-blocks/count-animation', 'themeisle-blocks/typing-animation' ] }
+				allowedFormats={ [ 'core/bold', 'core/italic', 'core/link', 'core/strikethrough', 'themeisle-blocks/highlight', 'themeisle-blocks/count-animation', 'themeisle-blocks/typing-animation', 'themeisle-blocks/dynamic-value' ] }
 				onMerge={ mergeBlocks }
 				onSplit={ ( value, isOriginal ) => {
 					let block;

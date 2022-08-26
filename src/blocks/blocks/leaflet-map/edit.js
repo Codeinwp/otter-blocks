@@ -175,7 +175,7 @@ const Edit = ({
 			return;
 		}
 
-		let L = window.L;
+		let { L } = window;
 
 		const iframe = getEditorIframe();
 		if ( Boolean( iframe ) ) {

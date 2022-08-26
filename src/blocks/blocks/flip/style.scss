@@ -1,18 +1,18 @@
 .wp-block-themeisle-blocks-flip {
 	--width: 100%;
 	--height: 300px;
-	--borderWidth: 3px;
-	--borderColor: #aaa;
-	--borderRadius: 10px;
-	--frontBackground: transparent;
-	--backBackground: transparent;
+	--border-width: 3px;
+	--border-color: #aaa;
+	--border-radius: 10px;
+	--front-background: transparent;
+	--back-background: transparent;
 	--padding: 20px;
-	--boxShadow: none;
-	--frontVerticalAlign: center;
-	--frontHorizontalAlign: center;
-	--backVerticalAlign: flex-start;
-	--frontMediaWidth: 150px;
-	--frontMediaHeight: 150px;
+	--box-shadow: none;
+	--front-vertical-align: center;
+	--front-horizontal-align: center;
+	--back-vertical-align: flex-start;
+	--front-media-width: 150px;
+	--front-media-height: 150px;
 
 	--flip-anim: unset;
 
@@ -21,8 +21,7 @@
 	align-items: center;
 	margin-left: auto;
 	margin-right: auto;
-	width: var(--width);
-	height: var(--height);
+	height: var( --height );
 
 	perspective: 1000px; /* Remove this if you don't want the 3D effect */
 
@@ -48,7 +47,7 @@
 
 	.o-flip-inner {
 		position: relative;
-		width: 100%;
+		width: var(--width);
 		height: 100%;
 		text-align: center;
 		transition: transform 0.8s;
@@ -71,24 +70,24 @@
 		overflow-x: hidden;
 		overflow-y: auto;
 		background-size: inherit;
-		border: var( --borderWidth ) solid var( --borderColor );
-		border-radius: var( --borderRadius );
+		border: var( --border-width ) solid var( --border-color );
+		border-radius: var( --border-radius );
 		box-sizing: border-box;
 	}
 
 	.o-flip-front {
-		background: var( --frontBackground );
+		background: var( --front-background );
 
 		&:hover {
-			box-shadow: var( --boxShadow );
+			box-shadow: var( --box-shadow );
 		}
 	}
 
 	.o-flip-content {
 		display: flex;
 		flex-direction: column;
-		justify-content: var( --frontVerticalAlign );
-		align-items: var( --frontHorizontalAlign );
+		justify-content: var( --front-vertical-align );
+		align-items: var( --front-horizontal-align );
 
 		padding: var( --padding );
 		width: 100%;
@@ -99,30 +98,30 @@
 		}
 
 		.o-img {
-			width: var( --frontMediaWidth );
-			height: var( --frontMediaHeight );
+			width: var( --front-media-width );
+			height: var( --front-media-height );
 		}
 	}
 
 	.o-flip-back {
-		background: var( --backBackground );
+		background: var( --back-background );
 		padding: var( --padding );
-		box-shadow: var( --boxShadow );
+		box-shadow: var( --box-shadow );
 		transform: var( --flip-anim );
-		justify-content: var( --backVerticalAlign );
+		justify-content: var( --back-vertical-align );
 	}
 
 	.invert {
 		.o-flip-front {
 			transform: var( --flip-anim );
-			box-shadow: var( --boxShadow );
+			box-shadow: var( --box-shadow );
 		}
 
 		.o-flip-back {
 			transform: unset;
 			box-shadow: unset;
 			&:hover {
-				box-shadow: var( --boxShadow );
+				box-shadow: var( --box-shadow );
 			}
 		}
 	}

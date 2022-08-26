@@ -159,7 +159,7 @@ class PopupBlock {
 
 	getScrolledPercent() {
 		const height = document.documentElement;
-		const body = document.body;
+		const { body } = document;
 		const st = 'scrollTop';
 		const sh = 'scrollHeight';
 

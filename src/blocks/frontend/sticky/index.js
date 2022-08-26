@@ -45,7 +45,7 @@ const createObserver = () => {
 
 	const register = ( block, config, container, metadata ) => {
 		indexBlock += 1;
-		blocks[indexBlock.toString()] = {block, config, container, metadata};
+		blocks[indexBlock.toString()] = { block, config, container, metadata };
 		return indexBlock;
 	};
 
@@ -61,7 +61,7 @@ const createObserver = () => {
 		activeIndex.forEach( otherIndex => {
 			if ( container === blocks[otherIndex.toString()].container ) {
 				if ( otherIndex < index ) {
-					const {block, metadata} = blocks[otherIndex.toString()];
+					const { block, metadata } = blocks[otherIndex.toString()];
 					earlyActivation += metadata.activationOffset + ( block?.getBoundingClientRect()?.height || 0 );
 				}
 			}
@@ -83,7 +83,7 @@ const createObserver = () => {
 		activeIndex.forEach( otherIndex => {
 			if ( container === blocks[otherIndex.toString()].container ) {
 				if ( otherIndex < index ) {
-					const {config: otherConfig, block: otherBlock, metadata: otherMetadata} = blocks[otherIndex.toString()];
+					const { config: otherConfig, block: otherBlock, metadata: otherMetadata } = blocks[otherIndex.toString()];
 
 					if ( 'o-sticky-bhvr-stack' === otherConfig?.behaviour &&  blockWidth > Math.abs( metadata.elemLeftPositionInPage - otherMetadata.elemLeftPositionInPage ) ) {
 						gap += otherConfig.offset + otherBlock?.getBoundingClientRect()?.height || 0;
@@ -111,7 +111,7 @@ const createObserver = () => {
 		for ( let otherIndex of ( new Set([ ...dormantIndex, ...activeIndex ]) ) ) {
 			if ( container === blocks[otherIndex.toString()].container ) {
 				if ( otherIndex > index ) {
-					const { block: otherBlock, metadata: otherMetadata} = blocks[otherIndex.toString()];
+					const { block: otherBlock, metadata: otherMetadata } = blocks[otherIndex.toString()];
 					const otherBlockHeight = otherBlock.getBoundingClientRect()?.height || 0;
 
 					// Check if the the blocks collide / Check if the block in on top, and not left or right.
@@ -439,15 +439,33 @@ const getConfigOptions = ( elem ) => {
 			config.useOnMobile = true;
 		}
 		return config;
-	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false});
+	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false });
 };
 
 domReady( () => {
 	const elems = document.querySelectorAll( '.o-sticky' );
 	const observer = createObserver();
 
+	let styles = `
+		.o-is-sticky {
+			position: fixed;
+			z-index: 9999;
+		}
+	`;
+
+	styles = styles.replace( /(\r\n|\n|\r|\t)/gm, '' );
+
+	let hasStyles = false;
+
 	detectLoading( () => {
 		elems.forEach( ( elem ) => {
+			if ( ! hasStyles ) {
+				const styleSheet = document.createElement( 'style' );
+				styleSheet.innerText = styles;
+				document.head.appendChild( styleSheet );
+				hasStyles = true;
+			}
+
 			const config = getConfigOptions( elem );
 			const container = getStickyContainer( elem, config.scope );
 

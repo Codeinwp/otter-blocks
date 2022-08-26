@@ -20,7 +20,7 @@ import {
  * Internal dependencies.
  */
 import globalDefaultsBlocksAttrs from '../plugins/options/global-defaults/defaults.js';
-import {useEffect, useMemo, useRef, useState} from '@wordpress/element';
+import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 
 /**
  * Initiate the global id tracker with an empty list if it is the case.
@@ -90,14 +90,14 @@ export const getDefaultValueByField = ({ name, field, defaultAttributes, attribu
 const localIDs = {};
 
 /**
- * Check if the ID is inside a reusable block.
- * @param {string} clientId
+ * Check if the ID is inside a reusable block or a Query Loop.
+ * @param {string} clientId The client id of the block.
  * @returns {boolean}
  */
-const isInReusableBlock = ( clientId ) => {
-	return getBlockParents( clientId )
-		?.some( id => getBlock( id )?.attributes?.ref );
-};
+const isSharedBlock = ( clientId ) => getBlockParents( clientId )?.some( id => {
+	const { attributes, name } = getBlock( id ) ?? {};
+	return 'core/query' === name || attributes?.ref;
+});
 
 /**
  * Generate an Id based on the client id of the block. If the new id is also already used, create a new one using the `uuid`.
@@ -134,6 +134,8 @@ const generatePrefix = ( name ) => {
 	return `wp-block-${ name.replace( '/', '-' ) }-`;
 };
 
+const idGenerationStatus = {};
+
 /**
  * THe args definition for the block id generator
  *
@@ -155,7 +157,9 @@ const generatePrefix = ( name ) => {
  * @external addBlockId
  */
 export const addBlockId = ( args ) => {
+
 	const { attributes, setAttributes, clientId, idPrefix, name, defaultAttributes } = args;
+	idGenerationStatus[clientId] = 'busy';
 
 	/**
 	 * Create an alias for the global id tracker
@@ -210,14 +214,15 @@ export const addBlockId = ( args ) => {
 	}
 
 	return ( savedId ) => {
+		idGenerationStatus[clientId] = 'free';
 		localIDs[name].delete( attributes?.id || savedId );
 	};
 };
 
-const getBlock = select( 'core/block-editor' ).getBlock;
-const getBlockParents = select( 'core/block-editor' ).getBlockParents;
-const updateBlockAttributes = dispatch( 'core/block-editor' ).updateBlockAttributes;
-const getSelectedBlockClientId = select( 'core/block-editor' ).getSelectedBlockClientId;
+const { getBlock } = select( 'core/block-editor' );
+const { getBlockParents } = select( 'core/block-editor' );
+const { updateBlockAttributes } = dispatch( 'core/block-editor' );
+const { getSelectedBlockClientId } = select( 'core/block-editor' );
 
 /**
  * Create the function that behaves like `setAttributes` using the client id
@@ -267,12 +272,20 @@ const extractBlockData = ( clientId ) => {
  * }
  */
 export const blockInit = ( clientId, defaultAttributes ) => {
-	return addBlockId({
-		clientId,
-		defaultAttributes,
-		setAttributes: ( ! isInReusableBlock( clientId ) || getSelectedBlockClientId() === clientId ) ? updateAttrs( clientId ) : undefined,
-		...extractBlockData( clientId )
-	});
+	if ( undefined === idGenerationStatus[clientId]) {
+		idGenerationStatus[clientId] = 'free';
+	}
+
+	return (
+		'busy' !== idGenerationStatus[clientId] &&
+		( ! isSharedBlock( clientId ) || getSelectedBlockClientId() === clientId )
+	) ?
+		addBlockId({
+			clientId,
+			defaultAttributes,
+			setAttributes: updateAttrs( clientId ),
+			...extractBlockData( clientId )
+		}) : () => {};
 };
 
 
@@ -312,16 +325,16 @@ export const useCSSNode = options => {
 	 * @example CSS with Media.
 	 * setNodeCSS([
 	 * 			`{
-	 * 				${ attributes.customTitleFontSize && `--titleTextSize: ${ attributes.customTitleFontSize }px;` }
-	 * 				${ attributes.customDescriptionFontSize && `--descriptionTextSize: ${ attributes.customDescriptionFontSize }px;` }
+	 * 				${ attributes.customTitleFontSize && `--title-text-size: ${ attributes.customTitleFontSize }px;` }
+	 * 				${ attributes.customDescriptionFontSize && `--description-text-size: ${ attributes.customDescriptionFontSize }px;` }
 	 * 			}`,
 	 * 			`{
-	 * 				${ attributes.customTitleFontSizeTablet && `--titleTextSize: ${ attributes.customTitleFontSizeTablet }px;` }
-	 * 				${ attributes.customDescriptionFontSizeTablet && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeTablet }px;` }
+	 * 				${ attributes.customTitleFontSizeTablet && `--title-text-size: ${ attributes.customTitleFontSizeTablet }px;` }
+	 * 				${ attributes.customDescriptionFontSizeTablet && `--description-text-size: ${ attributes.customDescriptionFontSizeTablet }px;` }
 	 * 			}`,
 	 * 			`{
-	 * 				${ attributes.customTitleFontSizeMobile && `--titleTextSize: ${ attributes.customTitleFontSizeMobile }px;` }
-	 * 				${ attributes.customDescriptionFontSizeMobile && `--descriptionTextSize: ${ attributes.customDescriptionFontSizeMobile }px;` }
+	 * 				${ attributes.customTitleFontSizeMobile && `--title-text-size: ${ attributes.customTitleFontSizeMobile }px;` }
+	 * 				${ attributes.customDescriptionFontSizeMobile && `--description-text-size: ${ attributes.customDescriptionFontSizeMobile }px;` }
 	 * 			}`
 	 * 		], [
 	 * 			'@media ( min-width: 960px )',

@@ -57,7 +57,7 @@ const Edit = ({
 			obj.url = value;
 		}
 
-		setAttributes({ file: { ...obj } });
+		setAttributes({ file: { ...obj }});
 		setEditing( false );
 	};
 

@@ -85,19 +85,26 @@ const getComponentsUpdate = ( root ) => {
 
 /**
  *
- * @param {*} date             The deadline of the countdown
- * @param {*} updateComponents The object with the update functions
+ * @param {string} date The deadline of the countdown.
+ * @param {object} updateComponents The object with the update functions.
+ * @param {() => void} onStart Trigger when the countdown start.
  * @returns {Function} Function that update the countdown every time it is called. You can send a callback to be triggered when is finised.
  */
-const updateTime = ( date, updateComponents ) => {
+const updateTime = ( date, updateComponents, onStart ) => {
 	let _date = date + window.themeisleGutenbergCountdown.timezone;
 	_date = new Date( _date );
 	_date = _date.getTime();
+	let start = true;
 	return ( onFinishCb ) => {
 		const time = getIntervalFromUnix( _date - Date.now() );
 		time.forEach( ({ tag, value, name }) => {
 			updateComponents[tag]?.( name, value );
 		});
+
+		if ( start ) {
+			start = false;
+			onStart?.();
+		}
 
 		if ( 0 >= time ) {
 			onFinishCb();
@@ -109,13 +116,15 @@ domReady( () => {
 	const countdowns = document.querySelectorAll( '.wp-block-themeisle-blocks-countdown' );
 
 	countdowns.forEach( countdown => {
-		const date = countdown.dataset.date;
+		const { date } = countdown.dataset;
 
 		if ( date ) {
-			const update = updateTime( date, getComponentsUpdate( countdown ) );
+			const update = updateTime( date, getComponentsUpdate( countdown ), () => countdown.classList.add( 'ready' ) );
 			const interval = setInterval( () => {
 				update( () => clearInterval( interval ) );
 			}, 500 );
+		} else {
+			countdown.classList.add( 'ready' );
 		}
 	});
 });

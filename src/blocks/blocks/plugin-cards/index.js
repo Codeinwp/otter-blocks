@@ -25,5 +25,10 @@ registerBlockType( name, {
 		'orbitfox'
 	],
 	edit,
-	save: () => null
+	save: () => null,
+	example: {
+		attributes: {
+			slug: 'otter-blocks'
+		}
+	}
 });
