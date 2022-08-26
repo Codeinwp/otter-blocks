@@ -149,19 +149,29 @@ const AlwaysActiveOption = ({ attributes, clientId, addOption }) => {
 								<p>
 									{ __( 'Only one block can be always active.', 'otter-blocks' )}
 								</p>
-								{
-									activeBlocks.map( ( activeBlock, idx ) => {
-										return (
-											<Button
-												key={ idx }
-												variant='secondary'
-												onClick={ () => {
-													dispatch( 'core/block-editor' ).selectBlock( activeBlock.clientId );
-												}}
-											>{ 1 === activeBlocks?.length ? __( 'Go to current active block', 'otter-blocks' ) : `${__( 'Go to active block', 'otter-blocks' )} (${idx})` }</Button>
-										);
-									})
-								}
+								<div
+									style={{
+										display: 'flex',
+										flexDirection: 'column',
+										gap: '10px',
+										alignItems: 'flex-start'
+									}}
+								>
+									{
+										activeBlocks.map( ( activeBlock, idx ) => {
+											return (
+												<Button
+													key={ idx }
+													variant='secondary'
+													onClick={ () => {
+														dispatch( 'core/block-editor' ).selectBlock( activeBlock.clientId );
+													}}
+												>{ 1 === activeBlocks?.length ? __( 'Go to current active block', 'otter-blocks' ) : `${__( 'Go to active block', 'otter-blocks' )} (${idx})` }</Button>
+											);
+										})
+									}
+								</div>
+
 							</Fragment>
 
 						)
