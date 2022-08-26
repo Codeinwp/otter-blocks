@@ -12,6 +12,7 @@ import {
 import apiFetch from '@wordpress/api-fetch';
 
 import {
+	Button,
 	PanelBody,
 	PanelRow,
 	Snackbar,
@@ -42,6 +43,7 @@ import './editor.scss';
 import GlobalDefaults from './global-defaults/index.js';
 import defaultsAttrs from './global-defaults/defaults.js';
 import useSettings from '../../helpers/use-settings.js';
+import { otterIconColored } from '../../helpers/icons.js';
 
 const Options = () => {
 	const { isOnboardingVisible } = useSelect( select => {
@@ -216,11 +218,14 @@ const Options = () => {
 					</PanelRow>
 
 					<PanelRow>
-						<ToggleControl
-							label={ __( 'Show onboarding modal', 'otter-blocks' ) }
-							checked={ isOnboardingVisible }
-							onChange={ () => showOnboarding( ! isOnboardingVisible ) }
-						/>
+						<Button
+							isSecondary
+							icon={ otterIconColored }
+							onClick={ () => showOnboarding( ! isOnboardingVisible ) }
+							className="o-onboarding-button"
+						>
+							{ __( 'Show Onboarding Modal', 'otter-blocks' ) }
+						</Button>
 					</PanelRow>
 				</PanelBody>
 

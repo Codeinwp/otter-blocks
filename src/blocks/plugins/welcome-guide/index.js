@@ -152,9 +152,7 @@ const WelcomeGuide = () => {
 						<Fragment>
 							<h1 className="o-welcome-guide__heading">{ __( 'Thank you for chosing Otter!', 'otter-blocks' ) }</h1>
 
-							<p className="o-welcome-guide__text">{ __( 'Joing Otter mailing list to first get information on latest features, tutorials and more.', 'otter-blocks' ) }</p>
-
-							{ ! Boolean( window.themeisleGutenberg.hasPro ) && <p className="o-welcome-guide__text">{ __( 'You also get 10% discount on Otter PRO Subscription when you join our mail list.', 'otter-blocks' ) }</p> }
+							<p className="o-welcome-guide__text">{ __( 'Join Otter\'s mailing list to get first access to product updates, tutorials and promotions.', 'otter-blocks' ) }</p>
 
 							<TextControl
 								aria-label={ __( 'Enter your email', 'otter-blocks' ) }
@@ -165,7 +163,7 @@ const WelcomeGuide = () => {
 							/>
 
 							<CheckboxControl
-								label={ __( 'Send me information about new features, deals or recommendations by mail.', 'otter-blocks' ) }
+								label={ __( 'Yes, count me in!', 'otter-blocks' ) }
 								checked={ hasConsent }
 								onChange={ () => setConsent( ! hasConsent ) }
 								className="o-welcome-guide__input"
