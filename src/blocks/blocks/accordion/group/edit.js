@@ -86,14 +86,14 @@ const Edit = ({
 		'--letterSpacing': getValue( 'letterSpacing' ) ? getValue( 'letterSpacing' ) + 'px' : undefined,
 		'--fontSize': getValue( 'fontSize' ) ? getValue( 'fontSize' ) + 'px' : undefined,
 		'--boxShadow': boxShadow.active && `${boxShadow.horizontal}px ${boxShadow.vertical}px ${boxShadow.blur}px ${boxShadow.spread}px ${hex2rgba( boxShadow.color, boxShadow.colorOpacity )}`,
-		'--headerPadding': getValue( 'headerPadding' ) && boxValues( getValue( 'headerPadding' ), { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
-		'--contentPadding': getValue( 'contentPadding' ) && boxValues( getValue( 'contentPadding' ), { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
+		'--headerPadding': boxValues( getValue( 'headerPadding' ), { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
+		'--contentPadding': boxValues( getValue( 'contentPadding' ), { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
 		'--headerBorderWidth': headerBorder?.width && boxValues( headerBorder.width, { top: '1px', right: '1px', bottom: '1px', left: '1px' }),
 		'--contentBorderWidth': contentBorder?.width && boxValues( contentBorder.width, { top: '0', right: '1px', bottom: '1px', left: '1px' }),
-		'--headerBorderColor': headerBorder.color,
-		'--contentBorderColor': contentBorder.color,
-		'--headerBorderStyle': headerBorder.style,
-		'--contentBorderStyle': contentBorder.style
+		'--headerBorderColor': headerBorder?.color,
+		'--contentBorderColor': contentBorder?.color,
+		'--headerBorderStyle': headerBorder?.style,
+		'--contentBorderStyle': contentBorder?.style
 	};
 
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();
