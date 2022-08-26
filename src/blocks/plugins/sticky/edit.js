@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 
 import {
+	Button,
 	ExternalLink,
 	PanelBody,
 	RangeControl,
@@ -25,13 +26,15 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import Notice from '../../components/notice/index.js';
+import { useSelect, dispatch } from '@wordpress/data';
 
 const FILTER_OPTIONS = {
 	position: 'o-sticky-pos',
 	offset: 'o-sticky-offset',
 	scope: 'o-sticky-scope',
 	behaviour: 'o-sticky-bhvr',
-	usage: 'o-sticky-use'
+	usage: 'o-sticky-use',
+	active: 'o-sticky-active'
 };
 
 const ProFeatures = () => {
@@ -106,6 +109,69 @@ const ProFeatures = () => {
 	);
 };
 
+const AlwaysActiveOption = ({ attributes, clientId, addOption }) => {
+	const { isRootBlock, activeBlocks } = useSelect( select => {
+		console.count( 'Always on top test' ); // TODO: remove after review.
+		const { getBlocks } = select( 'core/block-editor' );
+		const pageBlocks = getBlocks();
+
+		console.log( pageBlocks, pageBlocks?.filter( block => block.clientId !== clientId && block?.attributes?.clasName?.includes( FILTER_OPTIONS.active ) ) );
+
+		return {
+			isRootBlock: pageBlocks?.some( block => block.clientId === clientId ) ?? false,
+			activeBlocks: pageBlocks?.filter( block => block.clientId !== clientId && block?.attributes?.className?.includes( FILTER_OPTIONS.active ) ) ?? [],
+			isAlwaysActive: pageBlocks?.find( block => block.clientId === clientId )?.attributes?.className?.includes( FILTER_OPTIONS.active )
+		};
+	}, []);
+
+
+	return (
+		<div>
+			{ isRootBlock && (
+				<Fragment>
+					<ToggleControl
+						label={ __( 'Always Active', 'otter-blocks' ) }
+						help={ __( 'Make the block to be always sticky. This is available only for root blocks.', 'otter-blocks' ) }
+						checked={ attributes?.className?.includes( FILTER_OPTIONS.active ) }
+						onChange={ ( value ) => {
+							console.log( activeBlocks ); // TODO: remove after review
+							if ( value && 0 === activeBlocks.length ) {
+								addOption( 'o-sticky-active', FILTER_OPTIONS.active ); // you can activate only if no other block is active
+							} else if ( false === value ) {
+								addOption( undefined, FILTER_OPTIONS.active );
+							}
+						} }
+					/>
+
+					{
+						0 < activeBlocks?.length && (
+							<Fragment>
+								<p>
+									{ __( 'Only one block can be always active.', 'otter-blocks' )}
+								</p>
+								{
+									activeBlocks.map( ( activeBlock, idx ) => {
+										return (
+											<Button
+												key={ idx }
+												variant='secondary'
+												onClick={ () => {
+													dispatch( 'core/block-editor' ).selectBlock( activeBlock.clientId );
+												}}
+											>{ 1 === activeBlocks?.length ? __( 'Go to current active block', 'otter-blocks' ) : `${__( 'Go to active block', 'otter-blocks' )} (${idx})` }</Button>
+										);
+									})
+								}
+							</Fragment>
+
+						)
+					}
+				</Fragment>
+			)}
+		</div>
+	);
+};
+
 const Edit = ({
 	attributes,
 	setAttributes,
@@ -134,8 +200,10 @@ const Edit = ({
 		setAttributes({ className: Array.from( classes ).join( ' ' ) });
 	};
 
+
 	useEffect( () => {
 		if ( clientId ) {
+			console.count( 'Test Perf' ); // TODO: remove after review.
 			const block = document.querySelector( `#block-${ clientId }` );
 			if ( block ) {
 				let parent = block?.parentElement;
@@ -219,6 +287,8 @@ const Edit = ({
 					options={ containerOptions }
 					onChange={ value => addOption( value, FILTER_OPTIONS.scope ) }
 				/>
+
+				<AlwaysActiveOption attributes={ attributes} clientId={ clientId } addOption={ addOption } />
 
 				{ applyFilters( 'otter.sticky.controls', <ProFeatures />, attributes, FILTER_OPTIONS, addOption ) }
 
