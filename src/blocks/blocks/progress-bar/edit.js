@@ -159,7 +159,7 @@ const ProgressBar = ({
 						) }
 
 						{ 'outer' === attributes.percentagePosition && showPercentage && (
-							<div className="wp-block-themeisle-blocks-progress-bar__progress wp-block-themeisle-blocks-progress-bar__outer__value">
+							<div className="wp-block-themeisle-blocks-progress-bar__outer__value wp-block-themeisle-blocks-progress-bar__number">
 								{ `${ attributes.percentage }%` }
 							</div>
 						)}
