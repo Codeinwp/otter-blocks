@@ -1,3 +1,7 @@
+##### [Version 2.0.13](https://github.com/Codeinwp/otter-blocks/compare/v2.0.12...v2.0.13) (2022-08-27)
+
+- Fix JS being loaded everywhere even when not required
+
 ##### [Version 2.0.12](https://github.com/Codeinwp/otter-blocks/compare/v2.0.11...v2.0.12) (2022-08-25)
 
 - Fix Custom CSS not working with certain selectors
