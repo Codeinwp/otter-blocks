@@ -372,6 +372,20 @@ class Registration {
 
 		$this->enqueue_block_styles( $post );
 
+		if ( has_block( 'core/block', $post ) ) {
+			$blocks = parse_blocks( $content );
+			$blocks = array_filter(
+				$blocks,
+				function( $block ) {
+					return 'core/block' === $block['blockName'] && isset( $block['attrs']['ref'] );
+				}
+			);
+
+			foreach ( $blocks as $block ) {
+				$this->enqueue_dependencies( $block['attrs']['ref'] );
+			}
+		}
+
 		if ( ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) || is_admin() ) {
 			return;
 		}
@@ -529,20 +543,6 @@ class Registration {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/progress-bar.asset.php';
 			wp_register_script( 'otter-progress-bar', OTTER_BLOCKS_URL . 'build/blocks/progress-bar.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-progress-bar', 'defer', true );
-		}
-
-		if ( has_block( 'core/block', $post ) ) {
-			$blocks = parse_blocks( $content );
-			$blocks = array_filter(
-				$blocks,
-				function( $block ) {
-					return 'core/block' === $block['blockName'] && isset( $block['attrs']['ref'] );
-				}
-			);
-
-			foreach ( $blocks as $block ) {
-				$this->enqueue_dependencies( $block['attrs']['ref'] );
-			}
 		}
 	}
 
