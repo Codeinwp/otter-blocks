@@ -26,7 +26,8 @@ class Dynamic_Content {
 	 */
 	public function init() {
 		if ( License::has_active_license() ) {
-			add_filter( 'otter_blocks_evaluate_dynamic_content', array( $this, 'evaluate_content' ), 10, 2 );
+			add_filter( 'otter_blocks_evaluate_dynamic_content_text', array( $this, 'evaluate_content' ), 10, 2 );
+			add_filter( 'otter_blocks_evaluate_dynamic_content_link', array( $this, 'evaluate_content_link' ), 10, 2 );
 			add_filter( 'otter_blocks_evaluate_dynamic_content_media_server', array( $this, 'evaluate_content_media_server' ), 10, 2 );
 			add_filter( 'otter_blocks_evaluate_dynamic_content_media_content', array( $this, 'evaluate_content_media_content' ), 10, 2 );
 		}
@@ -58,12 +59,37 @@ class Dynamic_Content {
 			return $this->get_post_meta( $data );
 		}
 
+		if ( 'acf' === $data['type'] && class_exists( 'ACF' ) ) {
+			return $this->get_acf( $data );
+		}
+
 		if ( 'authorMeta' === $data['type'] ) {
 			return $this->get_author_meta( $data );
 		}
 
 		if ( 'loggedInUserMeta' === $data['type'] ) {
 			return $this->get_loggedin_meta( $data );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Evaluate dynamic content links
+	 *
+	 * @param string $value a default value.
+	 * @param array  $data Content data.
+	 *
+	 * @since 2.0.14
+	 * @return bool
+	 */
+	public function evaluate_content_link( $value, $data ) {
+		if ( 'acfURL' === $data['type'] ) {
+			return $this->get_acf( $data );
+		}
+
+		if ( 'postMetaURL' === $data['type'] ) {
+			return $this->get_post_meta( $data );
 		}
 
 		return $value;
@@ -158,6 +184,25 @@ class Dynamic_Content {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
 		$id      = get_the_ID();
 		$meta    = get_post_meta( $id, esc_html( $data['metaKey'] ), true );
+
+		if ( empty( $meta ) || ! is_string( $meta ) ) {
+			$meta = $default;
+		}
+
+		return esc_html( $meta );
+	}
+
+	/**
+	 * Get ACF Meta.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_acf( $data ) {
+		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
+		$id      = get_the_ID();
+		$meta    = get_field( esc_html( $data['metaKey'] ), $id, true );
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;

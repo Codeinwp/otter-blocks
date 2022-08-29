@@ -37,6 +37,7 @@ const Fields = ({
 	changeType,
 	onRemove
 }) => {
+	const hasSettingsPanel = applyFilters( 'otter.dynamicContent.link.hasSettingsPanel', []);
 	const dynamicOptions = applyFilters( 'otter.dynamicContent.link.options', options );
 
 	return (
@@ -91,6 +92,15 @@ const Fields = ({
 
 				{ applyFilters( 'otter.dynamicContent.link.notices', '' ) }
 			</PanelBody>
+
+			{ hasSettingsPanel.includes( attributes.type ) && (
+				<PanelBody
+					title={ __( 'Settings', 'otter-blocks' ) }
+					initialOpen={ false }
+				>
+					{ applyFilters( 'otter.dynamicContent.link.controls', '', attributes, changeAttributes ) }
+				</PanelBody>
+			) }
 
 			<PanelBody>
 				<ButtonGroup>

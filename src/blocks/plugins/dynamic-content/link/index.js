@@ -19,7 +19,8 @@ export const format = {
 	className: null,
 	attributes: {
 		type: 'data-type',
-		target: 'data-target'
+		target: 'data-target',
+		metaKey: 'data-meta-key'
 	},
 	edit
 };

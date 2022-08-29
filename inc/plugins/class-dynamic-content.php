@@ -24,6 +24,7 @@ class Dynamic_Content {
 	 */
 	public function init() {
 		add_filter( 'render_block', array( $this, 'apply_dynamic_content' ) );
+		add_filter( 'render_block', array( $this, 'apply_dynamic_link' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_images' ) );
 		add_filter( 'otter_apply_dynamic_image', array( $this, 'apply_dynamic_images' ) );
 	}
@@ -43,6 +44,23 @@ class Dynamic_Content {
 		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|data-term-type=["\'](?P<termType>[^"\'<>]+)["\']|data-term-separator=["\'](?P<termSeparator>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_data' ), $content );
+	}
+
+	/**
+	 * Filter post content for dynamic content.
+	 *
+	 * @param string $content Post content.
+	 *
+	 * @return string
+	 */
+	public function apply_dynamic_link( $content ) { 
+		if ( false === strpos( $content, '<o-dynamic-link' ) ) {
+			return $content;
+		}
+
+		$re = '/<o-dynamic-link(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-target=["\'](?P<target>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<text>[^ $].*?)<\s*\/\s*o-dynamic-link>/';
+
+		return preg_replace_callback( $re, array( $this, 'apply_link' ), $content );
 	}
 
 	/**
@@ -254,7 +272,7 @@ class Dynamic_Content {
 			return $this->get_current_time( $data );
 		}
 
-		return apply_filters( 'otter_blocks_evaluate_dynamic_content', $data[0], $data );
+		return apply_filters( 'otter_blocks_evaluate_dynamic_content_text', $data[0], $data );
 	}
 
 	/**
@@ -430,6 +448,71 @@ class Dynamic_Content {
 		}
 
 		return empty( $result ) ? false : $result;
+	}
+
+	/**
+	 * Apply dynamic data.
+	 *
+	 * @param array $data Dynamic request.
+	 *
+	 * @return string
+	 */
+	public function apply_link( $data ) {
+		$link = $this->get_link( $data );
+
+		if ( empty( $link ) ) {
+			$link = get_site_url();
+		}
+
+		$attrs = '';
+
+		if ( isset( $data['target'] ) && '_blank' === $data['target'] ) {
+			$attrs = 'target="_blank"';
+		}
+
+		$value = sprintf(
+			'<a href="%s" %s>%s</a>',
+			esc_url( $link ),
+			$attrs,
+			esc_html( $data['text'] )
+		);
+
+		return $value;
+	}
+
+	/**
+	 * Apply dynamic data.
+	 *
+	 * @param array $data Dynamic request.
+	 *
+	 * @return string
+	 */
+	public function get_link( $data ) {
+		if ( ! isset( $data['type'] ) ) {
+			return;
+		}
+
+		if ( 'postURL' === $data['type'] ) {
+			return get_the_permalink();
+		}
+
+		if ( 'siteURL' === $data['type'] ) {
+			return get_site_url();
+		}
+
+		if ( 'featuredImageURL' === $data['type'] ) {
+			return wp_get_attachment_url( get_post_thumbnail_id( get_the_ID() ) );
+		}
+
+		if ( 'authorURL' === $data['type'] ) {
+			return get_author_posts_url( get_post_field( 'post_author', get_the_ID() ) );
+		}
+
+		if ( 'authorWebsite' === $data['type'] ) {
+			return get_the_author_meta( 'url' );
+		}
+
+		return apply_filters( 'otter_blocks_evaluate_dynamic_content_link', '', $data );
 	}
 
 	/**

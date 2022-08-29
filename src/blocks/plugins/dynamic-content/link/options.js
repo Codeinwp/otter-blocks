@@ -9,15 +9,6 @@ const options = [
 		value: 'postURL'
 	},
 	{
-		label: __( 'Post Custom Field', 'otter-blocks' ),
-		value: 'postMetaURL',
-		isDisabled: ! Boolean( window.themeisleGutenberg.isProActive )
-	},
-	{
-		label: __( 'Archive URL', 'otter-blocks' ),
-		value: 'archiveURL'
-	},
-	{
 		label: __( 'Site URL', 'otter-blocks' ),
 		value: 'siteURL'
 	},
@@ -32,6 +23,16 @@ const options = [
 	{
 		label: __( 'Author Website', 'otter-blocks' ),
 		value: 'authorWebsite'
+	},
+	{
+		label: __( 'Post Custom Field', 'otter-blocks' ),
+		value: 'postMetaURL',
+		isDisabled: ! Boolean( window.themeisleGutenberg.isProActive )
+	},
+	{
+		label: __( 'Advanced Custom Fields', 'otter-blocks' ),
+		value: 'acfURL',
+		isDisabled: ! Boolean( window.themeisleGutenberg.isProActive )
 	}
 ];
 
