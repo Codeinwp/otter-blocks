@@ -27,9 +27,9 @@ import moment from 'moment';
 /**
  * Internal dependencies.
  */
-import options from './../options.js';
+import options from './options.js';
 
-import Notice from './../../../components/notice/index.js';
+import Notice from '../../../components/notice/index.js';
 
 let hasSettingsPanel = [
 	'postExcerpt',

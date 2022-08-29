@@ -16,18 +16,13 @@ import {
 	useAnchorRef
 } from '@wordpress/rich-text';
 
-/**
- * Internal dependencies.
- */
-import { format as settings } from './../index.js';
-import Fields from './fields.js';
-
-const name = 'themeisle-blocks/dynamic-value';
-
 const InlineControls = ({
+	name,
 	value,
 	activeAttributes,
 	contentRef,
+	Fields,
+	settings,
 	onChange
 }) => {
 	const [ attributes, setAttributes ] = useState({ ...activeAttributes });

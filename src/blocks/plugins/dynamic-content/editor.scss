@@ -25,12 +25,17 @@
 	}
 }
 
-o-dynamic {
+o-dynamic,
+o-dynamic-link {
 	color: #ED6F57;
 	background: rgba(237, 111, 87, 0.1);
 	padding: 2px 5px;
 	border-radius: 8px;
 	cursor: pointer;
+}
+
+o-dynamic-link {
+	text-decoration: underline;
 }
 
 .o-dynamic-modal {

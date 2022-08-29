@@ -215,7 +215,7 @@ const Edit = ({
 
 			{ ([ 'postMeta', 'authorMeta', 'loggedInUserMeta' ].includes( attributes.type ) ) && (
 				<Fragment>
-					{ 'postMeta' === attributes.type && (
+					{ ( 'postMeta' === attributes.type && Boolean( window.otterPro.hasACF ) ) && (
 						<BaseControl
 							label={ __( 'Meta Key', 'otter-blocks' ) }
 						>

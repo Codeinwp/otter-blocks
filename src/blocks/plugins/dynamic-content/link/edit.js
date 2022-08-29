@@ -24,9 +24,13 @@ import { toggleFormat } from '@wordpress/rich-text';
 /**
  * Internal dependencies.
  */
+import {
+	format as settings,
+	name
+} from './index.js';
 import options from './options.js';
-import Fields from './components/fields.js';
-import InlineControls from './components/inline-controls.js';
+import Fields from './fields.js';
+import InlineControls from '../components/inline-controls.js';
 
 const Edit = ({
 	isActive,
@@ -60,7 +64,7 @@ const Edit = ({
 		const attrs = Object.fromEntries( Object.entries( attributes ).filter( ([ _, v ]) => ( null !== v && '' !== v && undefined !== v ) ) );
 
 		if ( value.start === value.end ) { // Here we try to append the format if no text is selected.
-			const dynamicOptions = applyFilters( 'otter.dynamicContent.text.options', options );
+			const dynamicOptions = applyFilters( 'otter.dynamicContent.link.options', options );
 
 			Object.keys( dynamicOptions ).forEach( option => autocompleteOptions.push( ...dynamicOptions[option].options ) );
 
@@ -75,7 +79,7 @@ const Edit = ({
 		onChange(
 			toggleFormat( value,
 				{
-					type: 'themeisle-blocks/dynamic-value',
+					type: 'themeisle-blocks/dynamic-link',
 					attributes: attrs
 				}
 			)
@@ -88,7 +92,7 @@ const Edit = ({
 		<Fragment>
 			<RichTextToolbarButton
 				icon={ globe }
-				title={ __( 'Dynamic Value', 'otter-blocks' ) }
+				title={ __( 'Dynamic Link', 'otter-blocks' ) }
 				onClick={ () => setOpen( true ) }
 				isDisabled={ isActive }
 				isActive={ isActive }
@@ -96,7 +100,7 @@ const Edit = ({
 
 			{ isOpen && (
 				<Modal
-					title={ __( 'Dynamic Value by Otter', 'otter-blocks' ) }
+					title={ __( 'Dynamic Link by Otter', 'otter-blocks' ) }
 					overlayClassName="o-dynamic-modal"
 					onRequestClose={ () => setOpen( false ) }
 				>
@@ -112,9 +116,12 @@ const Edit = ({
 
 			{ isActive && (
 				<InlineControls
+					name={ name }
 					value={ value }
 					activeAttributes={ activeAttributes }
 					contentRef={ contentRef }
+					Fields={ Fields }
+					settings={ settings }
 					onChange={ onChange }
 				/>
 			) }
