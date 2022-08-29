@@ -1,0 +1,543 @@
+/**
+ * Internal dependencies.
+ */
+import { detectLoading } from '../../helpers/detect-loading.js';
+
+import {
+	domReady,
+	easeOutQuad
+} from '../../helpers/frontend-helper-functions.js';
+
+
+// Testing purpose
+// We can make elem sticky in browser for testing various scenario with different blocks
+// @ts-ignore
+window.debugSticky = false;
+
+/**
+ * Get the container for the given element
+ * @param elem The sticky element
+ * @return The parent container. Return `body` as default
+ */
+const getStickyContainer = (elem: Element, scope): HTMLElement => {
+	let parent = elem?.parentElement;
+	const sections = [];
+	while (parent) {
+		if (
+			(
+				parent.classList.contains('wp-block-themeisle-blocks-advanced-column') ||
+				parent.classList.contains('wp-block-group') ||
+				parent.classList.contains('wp-block-column')
+			) &&
+			'o-sticky-scope-parent' === scope
+		) {
+			return parent;
+		}
+		if (
+			parent.classList.contains('wp-block-themeisle-blocks-advanced-columns') ||
+			parent.classList.contains('wp-block-group') ||
+			parent.classList.contains('wp-block-columns')
+		) {
+			if ('o-sticky-scope-section' === scope) {
+				return parent;
+			} else if ('o-sticky-scope-main-area' === scope) {
+				sections.push(parent);
+			}
+		}
+		parent = parent.parentElement;
+	}
+	return 'o-sticky-scope-main-area' === scope ? sections.pop() : document.body;
+};
+
+type Config = {
+	position: string
+	offset: number
+	scope: string
+	behaviour: string
+	useOnMobile: boolean
+	isAlwaysActive: boolean
+}
+
+/**
+ * Get the configuration options
+ * @param elem The sticky element
+ * @return The configuration
+ */
+const getConfigOptions = (elem: Element): Config => {
+	return Array.from(elem.classList).reduce((config: Config, cssClass) => {
+		if (cssClass.includes('o-sticky-pos-bottom')) {
+			config.position = 'bottom';
+		} else if (cssClass.includes('o-sticky-offset')) {
+			config.offset = parseInt(cssClass.split('-')?.pop());
+		} else if (cssClass.includes('o-sticky-scope')) {
+			config.scope = cssClass;
+		} else if (cssClass.includes('o-sticky-bhvr')) {
+			config.behaviour = cssClass;
+		} else if (cssClass.includes('o-sticky-use-mobile')) {
+			config.useOnMobile = true;
+		} else if (cssClass.includes('o-sticky-active')) {
+			config.isAlwaysActive = true;
+		}
+		return config;
+	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false, isAlwaysActive: false });
+};
+
+const positions = {
+	NONE: 'none',
+	TOP: 'top',
+	BOTTOM: 'bottom',
+	CONSTRAIN_TOP: 'constrain-top',
+	CONSTRAIN_BOTTOM: 'constrain-bottom'
+};
+
+type Position = keyof typeof positions;
+
+class StickyData {
+
+	readonly config: Config
+	readonly selector: HTMLDivElement | string
+	readonly containerSelector: HTMLDivElement | string
+	index: number
+	isActive: boolean
+	isDormant: boolean
+	position: string
+	positionStatus: typeof positions[Position]
+	offset: number
+	triggerLimit: number
+	elem: HTMLDivElement
+	container: HTMLDivElement
+	scrollTop: number
+	scrollLeft: number
+	elemTopPositionInPage: number
+	elemLeftPositionInPage: number
+	elemBottomPositionInPage: number
+	containerHeight: number
+	containerTopPosition: number
+	containerBottomPosition: number
+	offsetY: number
+	activationOffset: number
+	width: number
+	height: number
+	placeholder: HTMLDivElement
+
+	/**
+	 * Create the sticky data container for the element.
+	 * 
+	 * @param selector 
+	 * @param config 
+	 * @param containerSelector 
+	 * @returns 
+	 */
+	constructor(selector: HTMLDivElement | string, config: Config, containerSelector: HTMLDivElement | string) {
+
+		this.config = config;
+		this.selector = selector;
+		this.containerSelector = containerSelector;
+
+		this.index = -1;
+		this.isActive = false;
+		this.isDormant = true;
+		this.positionStatus = positions.NONE;
+
+		this.position = config?.position || 'top';
+		this.offset = config?.offset !== undefined ? config.offset : 40;
+		this.triggerLimit = 'bottom' === config?.position ? window.innerHeight - this.offset : 0;
+
+		// Get node reference for the element and the container
+		this.elem = 'string' === typeof selector ? document.querySelector(selector) : selector;
+		this.container = 'string' === typeof containerSelector ? document.querySelector(containerSelector) : containerSelector;
+
+		// Calculate the element position in the page
+		this.scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+		this.scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+		const { top, left, height, width } = this.elem.
+			getBoundingClientRect();
+
+		this.width = width;
+		this.height = height;
+
+		this.elemTopPositionInPage = top + this.scrollTop;
+		this.elemLeftPositionInPage = left + this.scrollLeft;
+		this.elemBottomPositionInPage = this.elemTopPositionInPage + height;
+
+		if (this.elemBottomPositionInPage < this.triggerLimit) {
+			console.groupCollapsed('Sticky Warning');
+			console.warn(this.elem, 'This element needs to be position lower in the page when using position \'Bottom\'. You can use position \'Top\' as an alternative.');
+			console.groupEnd();
+			return;
+		}
+
+		// Calculate the container positions in the page
+		this.containerHeight = this.container?.getBoundingClientRect()?.height || 0;
+		this.containerTopPosition = this.container ? this.container?.getBoundingClientRect()?.top + this.scrollTop : 0;
+		this.containerBottomPosition = this.containerTopPosition + (this.container?.getBoundingClientRect()?.height || 0);
+
+		// The new positions on the screen when the sticky mod is active
+		this.offsetY = this.offset;
+
+		// We need to activate the sticky mode early for smooth transition
+		this.activationOffset = this.offset + 20;
+
+		/**
+		 * By making the element sticky, we use 'fixed' positioning which removes the element from the document workflow.
+		 * We need to put a placeholder with the same height and width as the element so we can keep layout flow.
+		 */
+		this.placeholder = document.createElement('div');
+		this.placeholder.style.height = height + 'px';
+		this.placeholder.style.width = width + 'px';
+	}
+}
+
+class StickyRunner {
+
+	/**
+	 * The id will be used to uniquely identify the sticky elements and their order in page.
+	 */
+	idGenerator: number
+	stickyElems: StickyData[];
+
+	constructor() {
+		this.idGenerator = 0;
+		this.stickyElems = [];
+	}
+
+	/**
+	 * Register a new sticky element.
+	 *
+	 * @param stickyElem
+	 */
+	register(stickyElem: StickyData) {
+		stickyElem.index = this.idGenerator;
+		this.stickyElems.push(stickyElem);
+		this.idGenerator++;
+	}
+
+	/**
+	 * Update the data for the sticky element.
+	 *
+	 * @param stickyElem
+	 */
+	update(stickyElem: StickyData) {
+
+		// DEBUG
+		// @ts-ignore
+		if (window?.debugSticky) {
+			if (stickyElem.container) {
+				stickyElem.container.style.border = '1px dashed black';
+			}
+			stickyElem.elem.style.border = '1px dashed red';
+		}
+
+		// Check if the scroll with the activation offset has passed the top of the element
+		stickyElem.positionStatus = this.getCurrentPosition(stickyElem, 'o-sticky-bhvr-stack' === stickyElem.config.behaviour ? this.calculateGap(stickyElem) : 0);
+
+		// Check for early activation
+		if (this.getCurrentPosition(stickyElem, this.calculateEarlyActivation(stickyElem))) {
+			stickyElem.isDormant = true;
+		} else {
+			stickyElem.isDormant = false;
+		}
+	}
+
+	/**
+	 * Align the sticky element.
+	 *
+	 * @param stickyElem
+	 */
+	align(stickyElem: StickyData) {
+		if (stickyElem.isDormant && !stickyElem.isActive) {
+			stickyElem.elem.style.position = 'relative';
+			stickyElem.elem.style.zIndex = (9999 + (stickyElem.index || 0)).toString();
+		}
+
+		if (stickyElem.positionStatus !== positions.NONE) {
+
+			// Make de element sticky
+			stickyElem.elem.classList.add('o-is-sticky');
+			stickyElem.elem.style.left = stickyElem.elemLeftPositionInPage + 'px';
+			stickyElem.elem.style.width = stickyElem.width + 'px';
+			stickyElem.elem.style.position = 'fixed';
+
+			// Make the container height to be fixed
+			if (stickyElem.container && 'BODY' !== stickyElem.container.tagName) {
+				stickyElem.container.style.height = 0 < stickyElem.containerHeight ? stickyElem.containerHeight + 'px' : '';
+			}
+
+			// Calculate the gap for stacked elements
+			const gap = 'o-sticky-bhvr-stack' === stickyElem.config.behaviour ? this.calculateGap(stickyElem) : 0;
+			// Get the scroll values
+			const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+			const scrollBottom = scrollTop + window.innerHeight;
+
+			// Set the position of the element
+			switch (stickyElem.positionStatus) {
+				case positions.TOP:
+					stickyElem.elem.style.top = (stickyElem.offsetY + gap) + 'px';
+					stickyElem.elem.style.transform = 'unset';
+					break;
+				case positions.BOTTOM:
+					stickyElem.elem.style.bottom = (stickyElem.offsetY + gap) + 'px';
+					stickyElem.elem.style.transform = 'unset';
+					break;
+				case positions.CONSTRAIN_TOP:
+					stickyElem.elem.style.top = '0px';
+					stickyElem.elem.style.transform = `translateY(${stickyElem.containerBottomPosition - stickyElem.height - scrollTop}px)`;
+					break;
+				case positions.CONSTRAIN_BOTTOM:
+					stickyElem.elem.style.bottom = '0px';
+					stickyElem.elem.style.transformOrigin = 'left bottom';
+					stickyElem.elem.style.transform = `translateY(${stickyElem.containerBottomPosition - scrollBottom}px)`;
+					break;
+				default:
+					console.warn('Unknown position', stickyElem.positionStatus);
+			}
+			this.insertPlaceholder(stickyElem);
+
+			if ('o-sticky-bhvr-hide' === stickyElem.config.behaviour) {
+				stickyElem.elem.style.opacity = easeOutQuad(this.calculateOpacity(stickyElem)).toString();
+			}
+		} else {
+
+			// Clean up the sticky option from the element when is not active
+			stickyElem.elem.classList.remove('o-is-sticky');
+			stickyElem.elem.style.top = '';
+			stickyElem.elem.style.left = '';
+			stickyElem.elem.style.transform = '';
+			stickyElem.elem.style.opacity = '';
+
+			if (!stickyElem.isDormant) {
+				stickyElem.elem.style.position = '';
+				stickyElem.elem.style.zIndex = '';
+			}
+
+			this.removePlaceholder(stickyElem);
+		}
+	}
+
+	/**
+	 * Update the left position of the sticky element.
+	 */
+	resize() {
+		for (const sticky of this.stickyElems) {
+			if (sticky.isActive) {
+
+			}
+			sticky.elemLeftPositionInPage = (sticky.isActive ? sticky.placeholder : sticky.elem).getBoundingClientRect().left + sticky.scrollLeft;
+		}
+	}
+
+	/**
+	 * Run all the process.
+	 */
+	run() {
+		this.stickyElems.forEach(s => this.update(s));
+		this.stickyElems.forEach(s => this.align(s));
+	}
+
+	/**
+	 * Insert the placeholder.
+	 *
+	 * @param stickyElem
+	 */
+	insertPlaceholder(stickyElem: StickyData) {
+		if (!stickyElem.elem.parentElement.contains(stickyElem.placeholder)) {
+			stickyElem.elem.parentElement.insertBefore(stickyElem.placeholder, stickyElem.elem);
+		}
+	}
+
+	/**
+	 * Remove the placeholder.
+	 *
+	 * @param stickyElem
+	 */
+	removePlaceholder(stickyElem: StickyData) {
+		if (stickyElem.elem.parentElement.contains(stickyElem.placeholder)) {
+			stickyElem.elem.parentElement.removeChild(stickyElem.placeholder);
+		}
+	}
+
+	/**
+	 * Get the sticky element current position.
+	 *
+	 * @param stickyElem
+	 * @param earlyActivation
+	 * @returns
+	 */
+	getCurrentPosition(stickyElem: StickyData, earlyActivation: number = 0): string {
+		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+		const scrollBottom = scrollTop + window.innerHeight;
+
+		if ('top' === stickyElem.position &&
+			((
+				(scrollTop + stickyElem.activationOffset + earlyActivation > stickyElem.elemTopPositionInPage) &&
+				(!stickyElem.container || scrollTop + stickyElem.activationOffset + stickyElem.height + earlyActivation < stickyElem.containerBottomPosition)
+			) || stickyElem.config.isAlwaysActive)
+		) {
+			return positions.TOP;
+		}
+
+		if ('bottom' === stickyElem.position &&
+			((
+				(scrollBottom - stickyElem.activationOffset - earlyActivation > stickyElem.elemBottomPositionInPage) &&
+				(!stickyElem.container || scrollBottom - stickyElem.activationOffset - earlyActivation < stickyElem.containerBottomPosition)
+			) || stickyElem.config.isAlwaysActive)
+		) {
+			return positions.BOTTOM;
+		}
+
+		if (stickyElem.container) {
+			if ('top' === stickyElem.position && ((scrollTop + stickyElem.activationOffset + stickyElem.height + earlyActivation > stickyElem.containerBottomPosition) || stickyElem.config.isAlwaysActive)) {
+				return positions.CONSTRAIN_TOP;
+			}
+
+			if ('bottom' === stickyElem.position && ((scrollBottom - stickyElem.activationOffset - earlyActivation >= stickyElem.containerBottomPosition) || stickyElem.config.isAlwaysActive)) {
+				return positions.CONSTRAIN_BOTTOM;
+			}
+		}
+
+		return positions.NONE;
+	}
+
+	/**
+	 *
+	 * Calculate the gap between sticky element and the other that are before him in the same container.
+	 *
+	 * @param stickyElem
+	 */
+	calculateGap(stickyElem: StickyData) {
+		let gap = 0;
+		const blockWidth = stickyElem.elem.getBoundingClientRect()?.width || 0;
+
+		for (const other of this.active) {
+			if (other.index !== stickyElem.index && other.container === stickyElem.container) {
+				if (other.index < stickyElem.index) {
+					if ('o-sticky-bhvr-stack' === other.config?.behaviour && blockWidth > Math.abs(stickyElem.elemLeftPositionInPage - other.elemLeftPositionInPage)) {
+						gap += other.offset + other?.elem.getBoundingClientRect()?.height || 0;
+					}
+				}
+			}
+		}
+
+		return gap;
+	}
+
+	/**
+	 * Calculate the gap between the sticky element and other before him that are active.
+	 *
+	 * @param stickyElem
+	 * @returns
+	 */
+	calculateEarlyActivation(stickyElem: StickyData): number {
+		let gap = 0;
+
+		for (const other of this.active) {
+			if (other.index !== stickyElem.index) {
+				if (other.index < stickyElem.index) {
+					gap += other.activationOffset + (other.elem?.getBoundingClientRect()?.height || 0);
+				}
+			}
+		}
+
+		return gap;
+	}
+
+	/**
+	 * Calculate the opacity for the fade effect.
+	 *
+	 * @param stickyElem
+	 * @returns
+	 */
+	calculateOpacity(stickyElem: StickyData): number {
+		let opacity = 1;
+
+		const blockHeight = stickyElem.elem.getBoundingClientRect()?.height || 0;
+		const blockWidth = stickyElem.elem.getBoundingClientRect()?.width || 0;
+		const currentBottomPosInPage = blockHeight + stickyElem.config.offset + (window.pageYOffset || document.documentElement.scrollTop);
+
+		for (const other of [...this.dormant, ...this.active]) {
+			if (other.index === stickyElem.index) {
+				continue;
+			}
+			if (stickyElem.container === other.container) {
+				if (other.index > stickyElem.index) {
+					const otherBlockHeight = other.elem.getBoundingClientRect()?.height || 0;
+
+					// Check if the the blocks collide / Check if the block in on top, and not left or right.
+					if (blockWidth > Math.abs(stickyElem.elemLeftPositionInPage - other.elemLeftPositionInPage)) {
+						const height = Math.min(blockHeight, otherBlockHeight);
+						opacity = Math.min(1, Math.max(0, other.elemTopPositionInPage + height - currentBottomPosInPage) / height);
+						return opacity;
+					}
+				}
+			}
+		}
+
+		return opacity;
+	}
+
+	/**
+	 * Get the active sticky elements.
+	 *
+	 * @returns
+	 */
+	get active(): StickyData[] {
+		return this.stickyElems.filter(stickyElem => stickyElem.isActive);
+	}
+
+	/**
+	 * Get the dormant sticky elements.
+	 *
+	 * @returns
+	 */
+	get dormant(): StickyData[] {
+		return this.stickyElems.filter(stickyElem => stickyElem.isDormant);
+	}
+}
+
+domReady(() => {
+	const elems = document.querySelectorAll('.o-sticky');
+
+	let styles = `
+		.o-is-sticky {
+			position: fixed;
+			z-index: 9999;
+		}
+	`;
+
+	styles = styles.replace(/(\r\n|\n|\r|\t)/gm, '');
+
+	let hasStyles = false;
+
+	detectLoading(() => {
+
+		const runner = new StickyRunner();
+
+		elems.forEach((elem) => {
+			if (!hasStyles) {
+				const styleSheet = document.createElement('style');
+				styleSheet.innerText = styles;
+				document.head.appendChild(styleSheet);
+				hasStyles = true;
+			}
+
+			const config = getConfigOptions(elem);
+			const container = getStickyContainer(elem, config.scope);
+
+			runner.register(new StickyData(
+				elem as HTMLDivElement,
+				config,
+				container as HTMLDivElement
+			));
+		});
+
+		runner.run();
+
+		window.addEventListener('scroll', () => {
+			runner.run();
+		});
+
+		window.addEventListener('resize', () => {
+			runner.resize();
+		});
+	}, ['lottie']);
+});
