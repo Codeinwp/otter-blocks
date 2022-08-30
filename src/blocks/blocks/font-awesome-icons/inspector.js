@@ -36,7 +36,8 @@ const IconPickerControl = lazy( () => import( '../../components/icon-picker-cont
 import SyncControl from '../../components/sync-control/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import { buildResponsiveGetAttributes, buildResponsiveSetAttributes } from '../../helpers/helper-functions.js';
-import { isNumber } from 'lodash';
+import ToogleGroupControl from '../../components/toogle-group-control/index.js';
+import { alignCenter, alignLeft, alignRight } from '@wordpress/icons';
 
 const defaultFontSizes = [
 	{
@@ -174,16 +175,31 @@ const Inspector = ({
 
 				<ResponsiveControl
 					label={ __( 'Alignment', 'otter-blocks' ) }
+					className="buttons-alignment-control"
 				>
-					<SelectControl
-						value={ responsiveGetAttributes([ attributes.alignment?.desktop, attributes.alignment?.tablet, attributes.alignment?.mobile ]) }
-						options={ [
-							{ label: __( 'Default', 'otter-blocks' ), value: '' },
-							{ label: __( 'Left', 'otter-blocks' ), value: 'flex-start' },
-							{ label: __( 'Center', 'otter-blocks' ), value: 'center' },
-							{ label: __( 'Right', 'otter-blocks' ), value: 'flex-end' }
-						]}
+					<ToogleGroupControl
+						value={ responsiveGetAttributes([ attributes.alignment?.desktop, attributes.alignment?.tablet, attributes.alignment?.mobile ]) ?? 'center' }
 						onChange={ value => responsiveSetAttributes( '' === value ? undefined : value, [ 'alignment.desktop', 'alignment.tablet', 'alignment.mobile' ], attributes.alignment )}
+						options={[
+							{
+								icon: alignLeft,
+
+								// label: __( 'Left', 'otter-blocks' ),
+								value: 'flex-start'
+							},
+							{
+								icon: alignCenter,
+
+								// label: __( 'Center', 'otter-blocks' ),
+								value: 'center'
+							},
+							{
+								icon: alignRight,
+
+								// label: __( 'Right', 'otter-blocks' ),
+								value: 'flex-end'
+							}
+						]}
 					/>
 				</ResponsiveControl>
 			</PanelBody>
