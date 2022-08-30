@@ -15,6 +15,17 @@ import {
 window.debugSticky = false;
 
 /**
+ * Check if the element can be a sticky container.
+ * 
+ * @param parent The parent element to check.
+ * @param cssClasses The CSS classes to check.
+ * @returns 
+ */
+const isParentContainerValid = (parent: Element, cssClasses: string[]): boolean => {
+	return cssClasses.some(c => parent.classList.contains(c));
+}
+
+/**
  * Get the container for the given element
  * @param elem The sticky element
  * @return The parent container. Return `body` as default
@@ -24,23 +35,34 @@ const getStickyContainer = (elem: Element, scope): HTMLElement => {
 	const sections = [];
 	while (parent) {
 		if (
-			(
-				parent.classList.contains('wp-block-themeisle-blocks-advanced-column') ||
-				parent.classList.contains('wp-block-group') ||
-				parent.classList.contains('wp-block-column')
+			isParentContainerValid(
+				parent,
+				[
+					'wp-block-themeisle-blocks-advanced-column',
+					'wp-block-group',
+					'wp-block-column'
+				]
 			) &&
 			'o-sticky-scope-parent' === scope
 		) {
 			return parent;
 		}
-		if (
-			parent.classList.contains('wp-block-themeisle-blocks-advanced-columns') ||
-			parent.classList.contains('wp-block-group') ||
-			parent.classList.contains('wp-block-columns')
-		) {
+
+
+		if (isParentContainerValid(
+			parent,
+			[
+				'wp-block-themeisle-blocks-advanced-columns',
+				'wp-block-group',
+				'wp-block-columns'
+			]
+		)) {
 			if ('o-sticky-scope-section' === scope) {
 				return parent;
 			} else if ('o-sticky-scope-main-area' === scope) {
+				/**
+				 * For determening the main area, we need to up trough the hierarchy to get the root parent.
+				 */
 				sections.push(parent);
 			}
 		}
@@ -50,10 +72,10 @@ const getStickyContainer = (elem: Element, scope): HTMLElement => {
 };
 
 type Config = {
-	position: string
+	position: 'top' | 'bottom'
 	offset: number
-	scope: string
-	behaviour: string
+	scope: `o-sticky-scope-${string}`
+	behaviour: `o-sticky-bhvr-${string}`
 	useOnMobile: boolean
 	isAlwaysActive: boolean
 }
@@ -70,9 +92,9 @@ const getConfigOptions = (elem: Element): Config => {
 		} else if (cssClass.includes('o-sticky-offset')) {
 			config.offset = parseInt(cssClass.split('-')?.pop());
 		} else if (cssClass.includes('o-sticky-scope')) {
-			config.scope = cssClass;
+			config.scope = cssClass as `o-sticky-scope-${string}`;
 		} else if (cssClass.includes('o-sticky-bhvr')) {
-			config.behaviour = cssClass;
+			config.behaviour = cssClass as `o-sticky-bhvr-${string}`;
 		} else if (cssClass.includes('o-sticky-use-mobile')) {
 			config.useOnMobile = true;
 		} else if (cssClass.includes('o-sticky-active')) {
@@ -100,9 +122,7 @@ class StickyData {
 	index: number
 	isActive: boolean
 	isDormant: boolean
-	position: string
 	positionStatus: typeof positions[Position]
-	offset: number
 	triggerLimit: number
 	elem: HTMLDivElement
 	container: HTMLDivElement
@@ -123,9 +143,9 @@ class StickyData {
 	/**
 	 * Create the sticky data container for the element.
 	 * 
-	 * @param selector 
-	 * @param config 
-	 * @param containerSelector 
+	 * @param selector The selector for the sticky data container.
+	 * @param config The configuration for the sticky data container.
+	 * @param containerSelector The container selector for the sticky data container.
 	 * @returns 
 	 */
 	constructor(selector: HTMLDivElement | string, config: Config, containerSelector: HTMLDivElement | string) {
@@ -139,8 +159,6 @@ class StickyData {
 		this.isDormant = true;
 		this.positionStatus = positions.NONE;
 
-		this.position = config?.position || 'top';
-		this.offset = config?.offset !== undefined ? config.offset : 40;
 		this.triggerLimit = 'bottom' === config?.position ? window.innerHeight - this.offset : 0;
 
 		// Get node reference for the element and the container
@@ -186,6 +204,14 @@ class StickyData {
 		this.placeholder.style.height = height + 'px';
 		this.placeholder.style.width = width + 'px';
 	}
+
+	get position() {
+		return this.config.position || 'top'
+	}
+
+	get offset() {
+		return this.config?.offset !== undefined ? this.config.offset : 40;
+	}
 }
 
 class StickyRunner {
@@ -204,7 +230,7 @@ class StickyRunner {
 	/**
 	 * Register a new sticky element.
 	 *
-	 * @param stickyElem
+	 * @param stickyElem The sticky element to register.
 	 */
 	register(stickyElem: StickyData) {
 		stickyElem.index = this.idGenerator;
@@ -213,9 +239,17 @@ class StickyRunner {
 	}
 
 	/**
-	 * Update the data for the sticky element.
+	 * Run all the processes.
+	 */
+	run() {
+		this.stickyElems.forEach(s => this.update(s));
+		this.stickyElems.forEach(s => this.align(s));
+	}
+
+	/**
+	 * Update the data for the sticky elements.
 	 *
-	 * @param stickyElem
+	 * @param stickyElem The sticky element to update.
 	 */
 	update(stickyElem: StickyData) {
 
@@ -230,8 +264,13 @@ class StickyRunner {
 
 		// Check if the scroll with the activation offset has passed the top of the element
 		stickyElem.positionStatus = this.getCurrentPosition(stickyElem, 'o-sticky-bhvr-stack' === stickyElem.config.behaviour ? this.calculateGap(stickyElem) : 0);
-
-		// Check for early activation
+		
+		/**
+		 * Check for early activation
+		 * 
+		 * A dormant sticky element is an element that is going to be activated very soon.
+		 * This is used for making additonal preparation before the other will become active, like calculation the opacity for the fade effect (the element will go transparent before the next element is activated).
+		 */
 		if (this.getCurrentPosition(stickyElem, this.calculateEarlyActivation(stickyElem))) {
 			stickyElem.isDormant = true;
 		} else {
@@ -242,7 +281,7 @@ class StickyRunner {
 	/**
 	 * Align the sticky element.
 	 *
-	 * @param stickyElem
+	 * @param stickyElem The sticky element to align.
 	 */
 	align(stickyElem: StickyData) {
 		if (stickyElem.isDormant && !stickyElem.isActive) {
@@ -251,6 +290,8 @@ class StickyRunner {
 		}
 
 		if (stickyElem.positionStatus !== positions.NONE) {
+
+			stickyElem.isActive = true;
 
 			// Make de element sticky
 			stickyElem.elem.classList.add('o-is-sticky');
@@ -297,6 +338,7 @@ class StickyRunner {
 				stickyElem.elem.style.opacity = easeOutQuad(this.calculateOpacity(stickyElem)).toString();
 			}
 		} else {
+			stickyElem.isActive = false;
 
 			// Clean up the sticky option from the element when is not active
 			stickyElem.elem.classList.remove('o-is-sticky');
@@ -319,25 +361,14 @@ class StickyRunner {
 	 */
 	resize() {
 		for (const sticky of this.stickyElems) {
-			if (sticky.isActive) {
-
-			}
 			sticky.elemLeftPositionInPage = (sticky.isActive ? sticky.placeholder : sticky.elem).getBoundingClientRect().left + sticky.scrollLeft;
 		}
 	}
 
 	/**
-	 * Run all the process.
-	 */
-	run() {
-		this.stickyElems.forEach(s => this.update(s));
-		this.stickyElems.forEach(s => this.align(s));
-	}
-
-	/**
 	 * Insert the placeholder.
 	 *
-	 * @param stickyElem
+	 * @param stickyElem The sticky element to insert placeholder.
 	 */
 	insertPlaceholder(stickyElem: StickyData) {
 		if (!stickyElem.elem.parentElement.contains(stickyElem.placeholder)) {
@@ -348,7 +379,7 @@ class StickyRunner {
 	/**
 	 * Remove the placeholder.
 	 *
-	 * @param stickyElem
+	 * @param stickyElem The sticky element to remove placeholder.
 	 */
 	removePlaceholder(stickyElem: StickyData) {
 		if (stickyElem.elem.parentElement.contains(stickyElem.placeholder)) {
@@ -359,8 +390,8 @@ class StickyRunner {
 	/**
 	 * Get the sticky element current position.
 	 *
-	 * @param stickyElem
-	 * @param earlyActivation
+	 * @param stickyElem The sticky element.
+	 * @param earlyActivation Add on offset to activate eraly in case of multiple sticky elements.
 	 * @returns
 	 */
 	getCurrentPosition(stickyElem: StickyData, earlyActivation: number = 0): string {
@@ -402,7 +433,7 @@ class StickyRunner {
 	 *
 	 * Calculate the gap between sticky element and the other that are before him in the same container.
 	 *
-	 * @param stickyElem
+	 * @param stickyElem The sticky element.
 	 */
 	calculateGap(stickyElem: StickyData) {
 		let gap = 0;
@@ -424,7 +455,7 @@ class StickyRunner {
 	/**
 	 * Calculate the gap between the sticky element and other before him that are active.
 	 *
-	 * @param stickyElem
+	 * @param stickyElem The sticky element.
 	 * @returns
 	 */
 	calculateEarlyActivation(stickyElem: StickyData): number {
@@ -444,7 +475,7 @@ class StickyRunner {
 	/**
 	 * Calculate the opacity for the fade effect.
 	 *
-	 * @param stickyElem
+	 * @param stickyElem The sticky element to calculate the opacity.
 	 * @returns
 	 */
 	calculateOpacity(stickyElem: StickyData): number {
