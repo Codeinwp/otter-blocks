@@ -53,7 +53,11 @@ const WelcomeGuide = () => {
 
 	const { showOnboarding } = useDispatch( 'themeisle-gutenberg/data' );
 
-	useEffect( () => ( '' === email && undefined !== currentUser ) && setEmail( currentUser.email ), [ currentUser ]);
+	useEffect( () => {
+		if ( '' === email && undefined !== currentUser ) {
+			setEmail( currentUser.email );
+		}
+	}, [ currentUser ]);
 
 	const onFinish = target => {
 		showOnboarding( false );
@@ -177,7 +181,6 @@ const WelcomeGuide = () => {
 };
 
 const Render = () => {
-
 	const {
 		isOnboardingVisible,
 		isWelcomeActive
