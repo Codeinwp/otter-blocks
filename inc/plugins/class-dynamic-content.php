@@ -170,7 +170,12 @@ class Dynamic_Content {
 		$value = $this->get_data( $data );
 
 		if ( isset( $data['before'] ) || isset( $data['after'] ) ) {
-			return $this->apply_formatting( $value, $data );
+			$value = $this->apply_formatting( $value, $data );
+		}
+
+		if ( isset( $data['default'] ) && false !== strpos( $data['default'], '<o-dynamic-link' ) ) {
+			$link = $this->apply_dynamic_link( $data['default'] );
+			return preg_replace( '/(<a.*?>).*?(<\/a>)/', '$1' . $value . '$2', $link );
 		}
 
 		return $value;
