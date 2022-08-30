@@ -10,7 +10,7 @@
 	--height: 30px;
 	--font-size: calc( var( --height ) * 0.65 );
 	--bar-background: #6adcfa;
-	--title-font-size: initial;
+	--title-font-size: var(--font-size);
 
 	display: flex;
 	flex-direction: column;
