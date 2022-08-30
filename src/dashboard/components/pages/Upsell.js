@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 
 import { Button } from '@wordpress/components';
 
+import { setUtm } from '../../../blocks/helpers/helper-functions.js';
 const FEATURES = [
 	{
 		label: __( 'More than 30 Custom Blocks', 'otter-blocks' ),
@@ -85,7 +86,7 @@ const Upsell = () => {
 
 			<Button
 				variant="primary"
-				href={ window.otterObj.upgradeLink }
+				href={ setUtm( window.otterObj.upgradeLink, 'viewallfvsp' ) }
 				target="_blank"
 			>
 				{ __( 'View all Otter Pro features', 'otter-blocks' ) }

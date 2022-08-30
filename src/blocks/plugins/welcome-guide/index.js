@@ -28,7 +28,7 @@ import { registerPlugin } from '@wordpress/plugins';
  */
 import './editor.scss';
 import useSettings from './../../helpers/use-settings.js';
-
+import { setUtm } from '../../helpers/helper-functions.js';
 const WelcomeGuide = () => {
 	const [ getOption, updateOption, status ] = useSettings();
 
@@ -144,7 +144,7 @@ const WelcomeGuide = () => {
 							) : (
 								<p className="o-welcome-guide__text">
 									{ __( 'Upgrade to Otter PRO and get access to our advanced features, like Dynamic Content and the Premium Blocks.', 'otter-blocks' ) }
-									<ExternalLink href={ window.themeisleGutenberg.upgradeLink } target="_blank">{ __( 'Learn more', 'otter-blocks' ) }</ExternalLink>
+									<ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'welcomeguide' ) } target="_blank">{ __( 'Learn more', 'otter-blocks' ) }</ExternalLink>
 								</p>
 							) }
 						</Fragment>

@@ -13,7 +13,7 @@ import { Fragment } from '@wordpress/element';
 import Infobox from './Infobox.js';
 
 import LicenseField from './LicenseField.js';
-
+import  { setUtm } from '../../blocks/helpers/helper-functions.js';
 const Sidebar = ({
 	setTab
 }) => {
@@ -40,7 +40,7 @@ const Sidebar = ({
 							variant="primary"
 							isPrimary
 							target="_blank"
-							href={ window.otterObj.upgradeLink }
+							href={ setUtm( window.otterObj.upgradeLink, 'infobox' ) }
 						>
 							{ __( 'Explore Otter Pro', 'otter-blocks' ) }
 						</Button>
