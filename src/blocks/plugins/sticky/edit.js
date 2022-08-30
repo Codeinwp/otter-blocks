@@ -115,8 +115,6 @@ const AlwaysActiveOption = ({ attributes, clientId, addOption }) => {
 		const { getBlocks } = select( 'core/block-editor' );
 		const pageBlocks = getBlocks();
 
-		console.log( pageBlocks, pageBlocks?.filter( block => block.clientId !== clientId && block?.attributes?.clasName?.includes( FILTER_OPTIONS.active ) ) );
-
 		return {
 			isRootBlock: pageBlocks?.some( block => block.clientId === clientId ) ?? false,
 			activeBlocks: pageBlocks?.filter( block => block.clientId !== clientId && block?.attributes?.className?.includes( FILTER_OPTIONS.active ) ) ?? [],
@@ -124,60 +122,62 @@ const AlwaysActiveOption = ({ attributes, clientId, addOption }) => {
 		};
 	}, []);
 
+	const isActive = attributes?.className?.includes( FILTER_OPTIONS.active );
 
 	return (
 		<div>
-			{ isRootBlock && (
-				<Fragment>
-					<ToggleControl
-						label={ __( 'Always Active', 'otter-blocks' ) }
-						help={ __( 'Make the block to be always sticky. This is available only for root blocks.', 'otter-blocks' ) }
-						checked={ attributes?.className?.includes( FILTER_OPTIONS.active ) }
-						onChange={ ( value ) => {
-							console.log( activeBlocks ); // TODO: remove after review
-							if ( value && 0 === activeBlocks.length ) {
-								addOption( 'o-sticky-active', FILTER_OPTIONS.active ); // you can activate only if no other block is active
-							} else if ( false === value ) {
-								addOption( undefined, FILTER_OPTIONS.active );
-							}
-						} }
-					/>
 
-					{
-						0 < activeBlocks?.length && (
-							<Fragment>
-								<p>
-									{ __( 'Only one block can be always active.', 'otter-blocks' )}
-								</p>
-								<div
-									style={{
-										display: 'flex',
-										flexDirection: 'column',
-										gap: '10px',
-										alignItems: 'flex-start'
-									}}
-								>
-									{
-										activeBlocks.map( ( activeBlock, idx ) => {
-											return (
-												<Button
-													key={ idx }
-													variant='secondary'
-													onClick={ () => {
-														dispatch( 'core/block-editor' ).selectBlock( activeBlock.clientId );
-													}}
-												>{ 1 === activeBlocks?.length ? __( 'Go to current active block', 'otter-blocks' ) : `${__( 'Go to active block', 'otter-blocks' )} (${idx})` }</Button>
-											);
-										})
-									}
-								</div>
+			<Fragment>
+				<ToggleControl
+					label={ __( 'Always Active', 'otter-blocks' ) }
+					help={ __( 'Make the block to be always sticky. This is available only for root blocks.', 'otter-blocks' ) }
+					checked={ isActive  }
+					onChange={ ( value ) => {
+						console.log( activeBlocks ); // TODO: remove after review
+						if ( value && 0 === activeBlocks.length ) {
+							addOption( 'o-sticky-active', FILTER_OPTIONS.active ); // you can activate only if no other block is active
+						} else if ( false === value ) {
+							addOption( undefined, FILTER_OPTIONS.active );
+						}
+					} }
+					disabled={ ( 0 < activeBlocks.length || ! isRootBlock ) && ! isActive }
+				/>
 
-							</Fragment>
+				{
+					0 < activeBlocks?.length && (
+						<Fragment>
+							<p>
+								{ __( 'Only one block can be always active.', 'otter-blocks' )}
+							</p>
+							<div
+								style={{
+									display: 'flex',
+									flexDirection: 'column',
+									gap: '10px',
+									alignItems: 'flex-start'
+								}}
+							>
+								{
+									activeBlocks.map( ( activeBlock, idx ) => {
+										return (
+											<Button
+												key={ idx }
+												variant='secondary'
+												onClick={ () => {
+													dispatch( 'core/block-editor' ).selectBlock( activeBlock.clientId );
+												}}
+											>{ 1 === activeBlocks?.length ? __( 'Go to current active block', 'otter-blocks' ) : `${__( 'Go to active block', 'otter-blocks' )} (${idx})` }</Button>
+										);
+									})
+								}
+							</div>
 
-						)
-					}
-				</Fragment>
-			)}
+						</Fragment>
+
+					)
+				}
+			</Fragment>
+
 		</div>
 	);
 };

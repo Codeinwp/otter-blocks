@@ -30,7 +30,7 @@ const isParentContainerValid = (parent: Element, cssClasses: string[]): boolean 
  * @param elem The sticky element
  * @return The parent container. Return `body` as default
  */
-const getStickyContainer = (elem: Element, scope): HTMLElement => {
+const getStickyContainer = (elem: Element, scope: `o-sticky-scope-${string}`): HTMLElement => {
 	let parent = elem?.parentElement;
 	const sections = [];
 	while (parent) {
