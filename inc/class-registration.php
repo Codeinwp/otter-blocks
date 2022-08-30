@@ -241,7 +241,7 @@ class Registration {
 				'isCompatible'            => Main::is_compatible(),
 				'hasPro'                  => Pro::is_pro_installed(),
 				'isProActive'             => Pro::is_pro_active(),
-				'upgradeLink' => tsdk_utmify( Pro::get_url(), 'editor', Pro::get_reference() ),
+				'upgradeLink'             => tsdk_utmify( Pro::get_url(), 'editor', Pro::get_reference() ),
 				'should_show_upsell'      => Pro::should_show_upsell(),
 				'assetsPath'              => OTTER_BLOCKS_URL . 'assets',
 				'updatePath'              => admin_url( 'update-core.php' ),
@@ -249,7 +249,13 @@ class Registration {
 				'mapsAPI'                 => $api,
 				'globalDefaults'          => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
 				'themeDefaults'           => Main::get_global_defaults(),
-				'imageSizes'              => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
+				'imageSizes'              => function_exists( 'is_wpcom_vip' ) ? array(
+					'thumbnail',
+					'medium',
+					'medium_large',
+					'large'
+				) : get_intermediate_image_sizes(),
+				// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
 				'isWPVIP'                 => function_exists( 'is_wpcom_vip' ),
 				'canTrack'                => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
 				'userRoles'               => $wp_roles->roles,
