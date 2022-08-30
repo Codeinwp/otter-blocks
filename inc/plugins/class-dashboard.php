@@ -95,7 +95,7 @@ class Dashboard {
 					'assetsPath'  => OTTER_BLOCKS_URL . 'assets/',
 					'stylesExist' => is_dir( $basedir ),
 					'hasPro'      => Pro::is_pro_installed(),
-					'upgradeLink' => Pro::get_url(),
+					'upgradeLink' => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
 					'docsLink'    => Pro::get_docs_url(),
 				)
 			)

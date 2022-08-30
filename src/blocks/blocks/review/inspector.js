@@ -30,7 +30,7 @@ import { useState, Fragment } from '@wordpress/element';
  */
 import SyncControl from '../../components/sync-control/index.js';
 import Upsell from '../../components/notice/index.js';
-
+import { setUtm } from '../../helpers/helper-functions.js';
 const PanelItem = ({
 	title,
 	remove,
@@ -497,7 +497,7 @@ const Inspector = ({
 					initialOpen={ false }
 				>
 					<Upsell
-						notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+						notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'reviewblock' ) }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
 						variant="upsell"
 					/>
 				</PanelBody>

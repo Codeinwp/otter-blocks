@@ -16,7 +16,7 @@ import {
 	SelectControl,
 	ToggleControl
 } from '@wordpress/components';
-
+import { setUtm } from '../../helpers/helper-functions.js';
 import { Fragment } from '@wordpress/element';
 
 import { applyFilters } from '@wordpress/hooks';
@@ -49,7 +49,7 @@ const ProFeatures = () => {
 			</Disabled>
 
 			<Notice
-				notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+				notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'popupblock' )}>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
 				variant="upsell"
 			/>
 		</Fragment>
