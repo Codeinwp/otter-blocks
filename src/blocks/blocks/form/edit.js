@@ -822,7 +822,7 @@ const Edit = ({
 										{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
 									</button>
 
-									<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+									<div>
 										<div className='o-form-server-response o-success' style={{ color: attributes.submitMessageColor }}>
 											{ formOptions.submitMessage || __( 'Success', 'otter-blocks' ) }
 										</div>

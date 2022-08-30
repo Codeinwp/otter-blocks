@@ -32,7 +32,7 @@
 		.wp-block-button {
 			display: flex;
 			align-items: baseline;
-			flex-direction: row;
+			flex-direction: column;
 
 			.wp-block-button__link {
 				font-size: var(--submit-font-size);
@@ -42,10 +42,12 @@
 				color: var(--submit-color);
 				border: 0px;
 				transition: background-color 0.15s linear;
+				max-width: max-content;
 			}
 
+
 			&.right {
-				flex-direction: row-reverse;
+				align-items: flex-end;
 			}
 
 			&.full {
@@ -54,6 +56,7 @@
 
 				.wp-block-button__link {
 					width: 100%;
+					max-width: unset;
 				}
 			}
 
@@ -64,6 +67,23 @@
 
 		> .protection {
 			display: none;
+		}
+
+		.has-submit-msg  {
+
+			> div {
+				display: flex;
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			&.right > div {
+				align-items: flex-end;
+			}
+
+			&.full > div {
+				align-items: center;
+			}
 		}
 	}
 
@@ -123,13 +143,11 @@
 		}
 	}
 
-
 	.o-form-server-response {
 		text-align: left;
 		padding: 1rem;
 		font-size: var(--message-font-size);
 		border-radius: 10%;
-		margin-left: 10px;
 
 		&.o-success {
 			color: var(--submit-msg-color);
