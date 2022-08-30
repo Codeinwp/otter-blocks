@@ -249,13 +249,7 @@ class Registration {
 				'mapsAPI'                 => $api,
 				'globalDefaults'          => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
 				'themeDefaults'           => Main::get_global_defaults(),
-				'imageSizes'              => function_exists( 'is_wpcom_vip' ) ? array(
-					'thumbnail',
-					'medium',
-					'medium_large',
-					'large'
-				) : get_intermediate_image_sizes(),
-				// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
+				'imageSizes'              => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
 				'isWPVIP'                 => function_exists( 'is_wpcom_vip' ),
 				'canTrack'                => 'yes' === get_option( 'otter_blocks_logger_flag', false ) ? true : false,
 				'userRoles'               => $wp_roles->roles,
