@@ -134,8 +134,8 @@ const WelcomeGuide = () => {
 							<h1 className="o-welcome-guide__heading">{ __( 'Make Your Website Shine With Otter Pro', 'otter-blocks' ) }</h1>
 							{ Boolean( window.themeisleGutenberg.hasPro ) ? (
 								<p className="o-welcome-guide__text">
-									{ __( 'With Otter PRO, you get access to our advanced features, like Dynamic Content and the Premium Blocks.', 'otter-blocks' ) }
-									<ExternalLink href="https://themeisle.com/plugins/otter-blocks/upgrade/#free-vs-pro" target="_blank">{ __( 'Learn more', 'otter-blocks' ) }</ExternalLink>
+									{ __( 'With Otter PRO, you have access to our advanced features, like Dynamic Content and the Premium Blocks.', 'otter-blocks' ) }
+									<ExternalLink href="https://docs.themeisle.com/article/1550-otter-pro-documentation" target="_blank">{ __( 'Learn more', 'otter-blocks' ) }</ExternalLink>
 								</p>
 							) : (
 								<p className="o-welcome-guide__text">
