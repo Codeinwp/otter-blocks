@@ -48,6 +48,17 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_onboarding',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Show Editor Onboarding.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'themeisle_blocks_settings_css_module',
 			array(
 				'type'         => 'boolean',
