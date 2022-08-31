@@ -12,7 +12,8 @@ type Attributes = {
 	backgroundColor: string
 	barBackgroundColor: string
 	titleColor: string
-	percentageColor: string
+	percentageColor: string,
+	titleFontSize: string
 }
 
 export type ProgressBarProps = BlockProps<Attributes>
