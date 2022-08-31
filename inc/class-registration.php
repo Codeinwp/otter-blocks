@@ -879,7 +879,7 @@ class Registration {
 			);
 			wp_script_add_data( 'otter-sticky', 'defer', true );
 
-			add_action('wp_head', array($this, 'sticky_style') );
+			add_action( 'wp_head', array( $this, 'sticky_style' ) );
 			
 			self::$scripts_loaded['sticky'] = true;
 		}
