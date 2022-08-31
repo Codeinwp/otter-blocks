@@ -28,7 +28,7 @@ import { applyFilters } from '@wordpress/hooks';
  */
 import Notice from '../../components/notice/index.js';
 import { useSelect, dispatch } from '@wordpress/data';
-
+import { setUtm } from '../../helpers/helper-functions.js';
 const FILTER_OPTIONS = {
 	position: 'o-sticky-pos',
 	offset: 'o-sticky-offset',
@@ -105,7 +105,7 @@ const ProFeatures = () => {
 
 			{ ! Boolean( window.themeisleGutenberg.hasPro ) && (
 				<Notice
-					notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Get more options with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+					notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'stickyfeature' ) }>{ __( 'Get more options with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
 					variant="upsell"
 				/>
 			) }

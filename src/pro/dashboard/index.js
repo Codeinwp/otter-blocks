@@ -14,7 +14,7 @@ import { addFilter } from '@wordpress/hooks';
 /**
  * Internal dependencies.
  */
-import useSettings from '../helpers/use-settings.js';
+const { useSettings } = window.otterUtils;
 
 const Integrations = props => {
 	const [ getOption, updateOption, status ] = useSettings();
