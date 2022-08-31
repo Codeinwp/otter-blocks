@@ -887,6 +887,13 @@ class Registration {
 		return $block_content;
 	}
 
+	/**
+	 * Add styles for sticky blocks.
+	 * 
+	 * @static
+	 * @since 2.0.14
+	 * @access public
+	 */
 	public static function sticky_style() {
 		echo '<style id="o-sticky-inline-css">.o-sticky.o-sticky-float { height: 0px; } </style>';
 	}
