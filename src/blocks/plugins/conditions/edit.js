@@ -35,6 +35,7 @@ import { applyFilters } from '@wordpress/hooks';
 import PanelTab from '../../components/panel-tab/index.js';
 import Notice from '../../components/notice/index.js';
 import { setUtm } from '../../helpers/helper-functions.js';
+
 const hasPro = Boolean( window.themeisleGutenberg.hasPro );
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 

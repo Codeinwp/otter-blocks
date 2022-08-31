@@ -60,6 +60,10 @@ o-dynamic-link {
 }
 
 .o-dynamic-popover {
+	&.hidden {
+		display: none;
+	}
+
 	.components-popover__content {
 		width: 300px;
 	}
@@ -71,6 +75,15 @@ o-dynamic-link {
 	.components-form-token-field__token-text {
 		display: flex;
 		align-items: center;
+	}
+
+	.o-dynamic-popover-toggle {
+		width: 100%;
+		justify-content: center;
+
+		&:focus {
+			box-shadow: none;
+		}
 	}
 
 	.o-notice {

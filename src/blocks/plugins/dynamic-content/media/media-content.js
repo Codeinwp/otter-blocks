@@ -12,7 +12,7 @@ import {
 	Button,
 	TextControl
 } from '@wordpress/components';
-import { setUtm } from '../../../helpers/helper-functions.js';
+
 import { useSelect } from '@wordpress/data';
 
 import {
@@ -28,7 +28,8 @@ import { applyFilters } from '@wordpress/hooks';
  */
 import {
 	getObjectFromQueryString,
-	getQueryStringFromObject
+	getQueryStringFromObject,
+	setUtm
 } from '../../../helpers/helper-functions.js';
 
 const types = [

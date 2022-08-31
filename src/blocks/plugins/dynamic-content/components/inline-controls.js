@@ -1,9 +1,22 @@
 /**
+ * External dependencies.
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
 
-import { Popover } from '@wordpress/components';
+import {
+	Button,
+	Popover
+} from '@wordpress/components';
+
+import {
+	useDispatch,
+	useSelect
+} from '@wordpress/data';
 
 import {
 	useEffect,
@@ -25,6 +38,15 @@ const InlineControls = ({
 	settings,
 	onChange
 }) => {
+	const { visiblePopover } = useSelect( select => {
+		const { getVisiblePopover } = select( 'themeisle-gutenberg/data' );
+		return {
+			visiblePopover: getVisiblePopover()
+		};
+	});
+
+	const { setVisiblePopover } = useDispatch( 'themeisle-gutenberg/data' );
+
 	const [ attributes, setAttributes ] = useState({ ...activeAttributes });
 
 	useEffect( () => {
@@ -49,13 +71,23 @@ const InlineControls = ({
 
 	const anchorRef = useAnchorRef({ ref: contentRef, value, settings });
 
+	const activeFormats = ( Boolean( value?.formats.length ) && value?.start ) ? value.formats[ value.start ]?.map( obj => obj.type ) : [];
+	const showToggleButton = undefined !== activeFormats && Boolean( activeFormats.length ) && activeFormats.includes( 'themeisle-blocks/dynamic-value' ) && activeFormats.includes( 'themeisle-blocks/dynamic-link' );
+
 	return (
 		<Popover
 			position="bottom-center"
 			noArrow={ false }
 			anchorRef={ anchorRef }
 			focusOnMount={ false }
-			className="o-dynamic-popover"
+			className={
+				classnames(
+					'o-dynamic-popover',
+					{
+						'hidden': showToggleButton && name !== visiblePopover
+					}
+				)
+			}
 		>
 			<Fields
 				activeAttributes={ activeAttributes }
@@ -84,6 +116,15 @@ const InlineControls = ({
 					);
 				} }
 			/>
+
+			{ showToggleButton && (
+				<Button
+					onClick={ () => setVisiblePopover( 'themeisle-blocks/dynamic-value' === name ? 'themeisle-blocks/dynamic-link' : 'themeisle-blocks/dynamic-value' ) }
+					className="o-dynamic-popover-toggle"
+				>
+					{ 'themeisle-blocks/dynamic-value' === name ? __( 'Show Dynamic Link Settings', 'otter-blocks' ) : __( 'Show Dynamic Value Settings', 'otter-blocks' ) }
+				</Button>
+			) }
 		</Popover>
 	);
 };

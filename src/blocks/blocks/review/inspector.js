@@ -31,6 +31,7 @@ import { useState, Fragment } from '@wordpress/element';
 import SyncControl from '../../components/sync-control/index.js';
 import Upsell from '../../components/notice/index.js';
 import { setUtm } from '../../helpers/helper-functions.js';
+
 const PanelItem = ({
 	title,
 	remove,
