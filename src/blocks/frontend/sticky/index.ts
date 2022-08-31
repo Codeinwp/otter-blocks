@@ -77,7 +77,10 @@ type Config = {
 	scope: `o-sticky-scope-${string}`
 	behaviour: `o-sticky-bhvr-${string}`
 	useOnMobile: boolean
-	isAlwaysActive: boolean
+	isFloatMode: boolean
+	width: string
+	sideOffset: string
+	side: 'left' | 'right'
 }
 
 /**
@@ -97,11 +100,17 @@ const getConfigOptions = (elem: Element): Config => {
 			config.behaviour = cssClass as `o-sticky-bhvr-${string}`;
 		} else if (cssClass.includes('o-sticky-use-mobile')) {
 			config.useOnMobile = true;
-		} else if (cssClass.includes('o-sticky-active')) {
-			config.isAlwaysActive = true;
+		} else if (cssClass.includes('o-sticky-float')) {
+			config.isFloatMode = true;
+		} else if (cssClass.includes('o-sticky-width')) {
+			config.width = cssClass.split('-')?.pop();
+		} else if (cssClass.includes('o-sticky-opt-side-offset')) {
+			config.sideOffset = cssClass.split('-')?.pop();
+		} else if (cssClass.includes('o-sticky-side-right')) {
+			config.side = 'right';
 		}
 		return config;
-	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false, isAlwaysActive: false });
+	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false, isFloatMode: false, width: '500px', sideOffset: '20px', side: 'left'} );
 };
 
 const positions = {
@@ -120,6 +129,7 @@ class StickyData {
 	readonly selector: HTMLDivElement | string
 	readonly containerSelector: HTMLDivElement | string
 	index: number
+	status: 'active' | 'dormant' | 'inactive'
 	isActive: boolean
 	isDormant: boolean
 	positionStatus: typeof positions[Position]
@@ -158,6 +168,7 @@ class StickyData {
 		this.isActive = false;
 		this.isDormant = true;
 		this.positionStatus = positions.NONE;
+		this.status = 'inactive';
 
 		this.triggerLimit = 'bottom' === config?.position ? window.innerHeight - this.offset : 0;
 
@@ -203,6 +214,10 @@ class StickyData {
 		this.placeholder = document.createElement('div');
 		this.placeholder.style.height = height + 'px';
 		this.placeholder.style.width = width + 'px';
+
+		// Styling
+		this.elem.style.wordBreak = 'break-word';
+		this.elem.classList.remove('o-sticky-float');
 	}
 
 	get position() {
@@ -211,6 +226,18 @@ class StickyData {
 
 	get offset() {
 		return this.config?.offset !== undefined ? this.config.offset : 40;
+	}
+
+	get side() {
+		return this.config?.side ?? 'left';
+	}
+
+	get sideOffset() {
+		return this.config.sideOffset;
+	}
+	
+	get displayWidth() {
+		return this.config?.isFloatMode ? this.config.width : this.width + 'px';
 	}
 }
 
@@ -262,19 +289,22 @@ class StickyRunner {
 			stickyElem.elem.style.border = '1px dashed red';
 		}
 
-		// Check if the scroll with the activation offset has passed the top of the element
-		stickyElem.positionStatus = this.getCurrentPosition(stickyElem, 'o-sticky-bhvr-stack' === stickyElem.config.behaviour ? this.calculateGap(stickyElem) : 0);
-		
+		stickyElem.status = 'inactive';
+
 		/**
 		 * Check for early activation
 		 * 
 		 * A dormant sticky element is an element that is going to be activated very soon.
 		 * This is used for making additonal preparation before the other will become active, like calculation the opacity for the fade effect (the element will go transparent before the next element is activated).
 		 */
-		if (this.getCurrentPosition(stickyElem, this.calculateEarlyActivation(stickyElem))) {
-			stickyElem.isDormant = true;
-		} else {
-			stickyElem.isDormant = false;
+		 if (this.getCurrentPosition(stickyElem, this.calculateEarlyActivation(stickyElem))) {
+			stickyElem.status = 'dormant';
+		} 
+
+		// Check if the scroll with the activation offset has passed the top of the element
+		stickyElem.positionStatus = this.getCurrentPosition(stickyElem, 'o-sticky-bhvr-stack' === stickyElem.config.behaviour ? this.calculateGap(stickyElem) : 0);
+		if( stickyElem.positionStatus !== positions.NONE) {
+			stickyElem.status = 'active';
 		}
 	}
 
@@ -284,19 +314,20 @@ class StickyRunner {
 	 * @param stickyElem The sticky element to align.
 	 */
 	align(stickyElem: StickyData) {
-		if (stickyElem.isDormant && !stickyElem.isActive) {
+		if (stickyElem.status === 'inactive') {
 			stickyElem.elem.style.position = 'relative';
 			stickyElem.elem.style.zIndex = (9999 + (stickyElem.index || 0)).toString();
 		}
 
-		if (stickyElem.positionStatus !== positions.NONE) {
+		if (stickyElem.status === 'active') {
 
-			stickyElem.isActive = true;
+			if( ! stickyElem.config.isFloatMode ) {
+				stickyElem.elem.style.transition = 'transform 2s';
+			}
 
 			// Make de element sticky
 			stickyElem.elem.classList.add('o-is-sticky');
-			stickyElem.elem.style.left = stickyElem.elemLeftPositionInPage + 'px';
-			stickyElem.elem.style.width = stickyElem.width + 'px';
+			stickyElem.elem.style.width = stickyElem.displayWidth;
 			stickyElem.elem.style.position = 'fixed';
 
 			// Make the container height to be fixed
@@ -310,11 +341,26 @@ class StickyRunner {
 			const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 			const scrollBottom = scrollTop + window.innerHeight;
 
-			// Set the position of the element
+			/**
+			 * Aling on vertical axis
+			 */
+			if( stickyElem.config.isFloatMode ) {
+				if( stickyElem.side === 'left') {
+					stickyElem.elem.style.left = stickyElem.sideOffset;
+				} else {
+					stickyElem.elem.style.right = stickyElem.sideOffset;
+				}
+			} else {
+				stickyElem.elem.style.left = stickyElem.elemLeftPositionInPage + 'px';
+			}
+
+			/**
+			 * Align on vertical axis.
+			 */
 			switch (stickyElem.positionStatus) {
 				case positions.TOP:
-					stickyElem.elem.style.top = (stickyElem.offsetY + gap) + 'px';
-					stickyElem.elem.style.transform = 'unset';
+					stickyElem.elem.style.top = '0px';
+					stickyElem.elem.style.transform = `translateY(${(stickyElem.offsetY + gap)}px)`;
 					break;
 				case positions.BOTTOM:
 					stickyElem.elem.style.bottom = (stickyElem.offsetY + gap) + 'px';
@@ -346,8 +392,10 @@ class StickyRunner {
 			stickyElem.elem.style.left = '';
 			stickyElem.elem.style.transform = '';
 			stickyElem.elem.style.opacity = '';
+			stickyElem.elem.style.width = '';
+			stickyElem.elem.style.transition = '';
 
-			if (!stickyElem.isDormant) {
+			if (stickyElem.status !== 'inactive') {
 				stickyElem.elem.style.position = '';
 				stickyElem.elem.style.zIndex = '';
 			}
@@ -371,7 +419,7 @@ class StickyRunner {
 	 * @param stickyElem The sticky element to insert placeholder.
 	 */
 	insertPlaceholder(stickyElem: StickyData) {
-		if (!stickyElem.elem.parentElement.contains(stickyElem.placeholder)) {
+		if (!stickyElem.config.isFloatMode && !stickyElem.elem.parentElement.contains(stickyElem.placeholder)) {
 			stickyElem.elem.parentElement.insertBefore(stickyElem.placeholder, stickyElem.elem);
 		}
 	}
@@ -382,7 +430,7 @@ class StickyRunner {
 	 * @param stickyElem The sticky element to remove placeholder.
 	 */
 	removePlaceholder(stickyElem: StickyData) {
-		if (stickyElem.elem.parentElement.contains(stickyElem.placeholder)) {
+		if ( !stickyElem.config.isFloatMode && stickyElem.elem.parentElement.contains(stickyElem.placeholder)) {
 			stickyElem.elem.parentElement.removeChild(stickyElem.placeholder);
 		}
 	}
@@ -402,7 +450,7 @@ class StickyRunner {
 			((
 				(scrollTop + stickyElem.activationOffset + earlyActivation > stickyElem.elemTopPositionInPage) &&
 				(!stickyElem.container || scrollTop + stickyElem.activationOffset + stickyElem.height + earlyActivation < stickyElem.containerBottomPosition)
-			) || stickyElem.config.isAlwaysActive)
+			) || stickyElem.config.isFloatMode)
 		) {
 			return positions.TOP;
 		}
@@ -411,17 +459,17 @@ class StickyRunner {
 			((
 				(scrollBottom - stickyElem.activationOffset - earlyActivation > stickyElem.elemBottomPositionInPage) &&
 				(!stickyElem.container || scrollBottom - stickyElem.activationOffset - earlyActivation < stickyElem.containerBottomPosition)
-			) || stickyElem.config.isAlwaysActive)
+			) || stickyElem.config.isFloatMode)
 		) {
 			return positions.BOTTOM;
 		}
 
 		if (stickyElem.container) {
-			if ('top' === stickyElem.position && ((scrollTop + stickyElem.activationOffset + stickyElem.height + earlyActivation > stickyElem.containerBottomPosition) || stickyElem.config.isAlwaysActive)) {
+			if ('top' === stickyElem.position && ((scrollTop + stickyElem.activationOffset + stickyElem.height + earlyActivation > stickyElem.containerBottomPosition) || stickyElem.config.isFloatMode)) {
 				return positions.CONSTRAIN_TOP;
 			}
 
-			if ('bottom' === stickyElem.position && ((scrollBottom - stickyElem.activationOffset - earlyActivation >= stickyElem.containerBottomPosition) || stickyElem.config.isAlwaysActive)) {
+			if ('bottom' === stickyElem.position && ((scrollBottom - stickyElem.activationOffset - earlyActivation >= stickyElem.containerBottomPosition) || stickyElem.config.isFloatMode)) {
 				return positions.CONSTRAIN_BOTTOM;
 			}
 		}
@@ -512,7 +560,7 @@ class StickyRunner {
 	 * @returns
 	 */
 	get active(): StickyData[] {
-		return this.stickyElems.filter(stickyElem => stickyElem.isActive);
+		return this.stickyElems.filter(stickyElem => stickyElem.status === 'active');
 	}
 
 	/**
@@ -521,7 +569,7 @@ class StickyRunner {
 	 * @returns
 	 */
 	get dormant(): StickyData[] {
-		return this.stickyElems.filter(stickyElem => stickyElem.isDormant);
+		return this.stickyElems.filter(stickyElem => stickyElem.status === 'dormant');
 	}
 }
 

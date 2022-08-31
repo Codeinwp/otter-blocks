@@ -11,7 +11,8 @@ import {
 	PanelBody,
 	RangeControl,
 	SelectControl,
-	ToggleControl
+	ToggleControl,
+	__experimentalUnitControl as UnitContol
 } from '@wordpress/components';
 
 import {
@@ -34,7 +35,10 @@ const FILTER_OPTIONS = {
 	scope: 'o-sticky-scope',
 	behaviour: 'o-sticky-bhvr',
 	usage: 'o-sticky-use',
-	active: 'o-sticky-active'
+	float: 'o-sticky-float',
+	width: 'o-sticky-width',
+	side: 'o-sticky-side',
+	sideOffset: 'o-sticky-opt-side-offset'
 };
 
 const ProFeatures = () => {
@@ -109,45 +113,65 @@ const ProFeatures = () => {
 	);
 };
 
-const AlwaysActiveOption = ({ attributes, clientId, addOption }) => {
-	const { isRootBlock, activeBlocks } = useSelect( select => {
+const AlwaysActiveOption = ({ attributes, clientId, addOption, removeOption, removeOptions }) => {
+	const { isRootBlock, activeFloatBlocks } = useSelect( select => {
 		console.count( 'Always on top test' ); // TODO: remove after review.
 		const { getBlocks } = select( 'core/block-editor' );
 		const pageBlocks = getBlocks();
 
 		return {
 			isRootBlock: pageBlocks?.some( block => block.clientId === clientId ) ?? false,
-			activeBlocks: pageBlocks?.filter( block => block.clientId !== clientId && block?.attributes?.className?.includes( FILTER_OPTIONS.active ) ) ?? [],
-			isAlwaysActive: pageBlocks?.find( block => block.clientId === clientId )?.attributes?.className?.includes( FILTER_OPTIONS.active )
+			activeFloatBlocks: pageBlocks?.filter( block => block.clientId !== clientId && block?.attributes?.className?.includes( FILTER_OPTIONS.float ) ) ?? []
 		};
 	}, []);
 
-	const isActive = attributes?.className?.includes( FILTER_OPTIONS.active );
+	const isActive = attributes?.className?.includes( FILTER_OPTIONS.float );
+
+	const [ width, setWidth ] = useState( attributes?.className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.width ) )?.split( '-' )?.pop() );
+	const [ offset, setOffset ] = useState( attributes?.className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.sideOffset ) )?.split( '-' )?.pop() );
+
+	useEffect( () => {
+		console.log( width, offset );
+		if ( attributes?.className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.width ) )?.split( '-' )?.pop() !== width ) {
+			if ( width?.startsWith( '0' ) ) {
+				removeOption( FILTER_OPTIONS.width );
+			} else {
+				addOption( `o-sticky-width-${width}`, FILTER_OPTIONS.width );
+			}
+		}
+		if ( attributes?.className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.sideOffset ) )?.split( '-' )?.pop() !== offset ) {
+			if ( offset?.startsWith( '0' ) ) {
+				removeOption( FILTER_OPTIONS.offset );
+			} else {
+				addOption( `o-sticky-opt-side-offset-${offset}`, FILTER_OPTIONS.offset );
+			}
+		}
+	}, [ width, offset ]);
 
 	return (
 		<div>
 
 			<Fragment>
 				<ToggleControl
-					label={ __( 'Always Active', 'otter-blocks' ) }
-					help={ __( 'Make the block to be always sticky. This is available only for root blocks.', 'otter-blocks' ) }
+					label={ __( 'Float Mode', 'otter-blocks' ) }
+					help={ __( 'Make the block to float. This is available only for root blocks.', 'otter-blocks' ) }
 					checked={ isActive  }
 					onChange={ ( value ) => {
-						console.log( activeBlocks ); // TODO: remove after review
-						if ( value && 0 === activeBlocks.length ) {
-							addOption( 'o-sticky-active', FILTER_OPTIONS.active ); // you can activate only if no other block is active
+						console.log( activeFloatBlocks, value ); // TODO: remove after review
+						if ( value && 0 === activeFloatBlocks.length ) {
+							addOption( FILTER_OPTIONS.float, FILTER_OPTIONS.float ); // you can activate only if no other block is active
 						} else if ( false === value ) {
-							addOption( undefined, FILTER_OPTIONS.active );
+							removeOptions([ FILTER_OPTIONS.float, FILTER_OPTIONS.width, FILTER_OPTIONS.offset ]);
 						}
 					} }
-					disabled={ ( 0 < activeBlocks.length || ! isRootBlock ) && ! isActive }
+					disabled={ ( 0 < activeFloatBlocks.length || ! isRootBlock ) && ! isActive }
 				/>
 
 				{
-					0 < activeBlocks?.length && (
+					0 < activeFloatBlocks?.length && (
 						<Fragment>
 							<p>
-								{ __( 'Only one block can be always active.', 'otter-blocks' )}
+								{ __( 'Only one block can be in float mode.', 'otter-blocks' )}
 							</p>
 							<div
 								style={{
@@ -158,7 +182,7 @@ const AlwaysActiveOption = ({ attributes, clientId, addOption }) => {
 								}}
 							>
 								{
-									activeBlocks.map( ( activeBlock, idx ) => {
+									activeFloatBlocks.map( ( activeBlock, idx ) => {
 										return (
 											<Button
 												key={ idx }
@@ -166,7 +190,7 @@ const AlwaysActiveOption = ({ attributes, clientId, addOption }) => {
 												onClick={ () => {
 													dispatch( 'core/block-editor' ).selectBlock( activeBlock.clientId );
 												}}
-											>{ 1 === activeBlocks?.length ? __( 'Go to current active block', 'otter-blocks' ) : `${__( 'Go to active block', 'otter-blocks' )} (${idx})` }</Button>
+											>{ 1 === activeFloatBlocks?.length ? __( 'Go to current active float block', 'otter-blocks' ) : `${__( 'Go to the active float block', 'otter-blocks' )} (${idx})` }</Button>
 										);
 									})
 								}
@@ -174,6 +198,42 @@ const AlwaysActiveOption = ({ attributes, clientId, addOption }) => {
 
 						</Fragment>
 
+					)
+				}
+				{
+					isActive && (
+						<Fragment>
+							<p>
+								{ __( 'The block is now in a floating state. Set the desired width. Please check the result in Preview.', 'otter-blocks' )}
+							</p>
+							<UnitContol
+								label={ __( 'Width', 'otter-blocks' ) }
+								value={ width ?? '500px' }
+								onChange={ setWidth }
+							/>
+							<SelectControl
+								label={ __( 'Side to stick', 'otter-blocks' ) }
+								value={ attributes?.className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.side ) ) ?? 'o-sticky-side-left' }
+								options={[
+									{
+										label: __( 'Left', 'otter-blocks' ),
+										value: 'o-sticky-side-left'
+									},
+									{
+										label: __( 'Right', 'otter-blocks' ),
+										value: 'o-sticky-side-right'
+									}
+								]}
+								onChange={ value => {
+									addOption( 'o-sticky-side-left' === value ? undefined : value, FILTER_OPTIONS.side );
+								} }
+							/>
+							<UnitContol
+								label={ __( 'Side Offset', 'otter-blocks' ) }
+								value={ offset ?? '20px' }
+								onChange={ setOffset }
+							/>
+						</Fragment>
 					)
 				}
 			</Fragment>
@@ -202,12 +262,32 @@ const Edit = ({
 
 	const limit = attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-scope' ) ).pop() || 'o-sticky-scope-main-area';
 
-	const addOption = ( option, filterOption = FILTER_OPTIONS.position ) => {
-		const classes = new Set( attributes?.className?.split( ' ' )?.filter( c =>  ! c.includes( filterOption ) ) || []);
-		if ( option ) {
-			classes.add( option );
+	const addOptions = ( options, filtersOption ) => {
+
+		const classes = new Set( attributes?.className?.split( ' ' )?.filter(
+			c => ! filtersOption.some(
+				f => c.includes( f )
+			)
+		) ?? []);
+
+		for ( const option of options ) {
+			if ( option ) {
+				classes.add( option );
+			}
 		}
-		setAttributes({ className: Array.from( classes ).join( ' ' ) });
+		setAttributes({ className: Array.from( classes ).filter( x => 'string' === typeof x  && x ).join( ' ' ) });
+	};
+
+	const addOption = ( option, filterOption = FILTER_OPTIONS.position ) => {
+		addOptions([ option ], [ filterOption ]);
+	};
+
+	const removeOptions = ( optionsFilters ) => {
+		addOptions([], optionsFilters );
+	};
+
+	const removeOption = ( optionFilter ) => {
+		removeOptions([ optionFilter ]);
 	};
 
 
@@ -298,7 +378,7 @@ const Edit = ({
 					onChange={ value => addOption( value, FILTER_OPTIONS.scope ) }
 				/>
 
-				<AlwaysActiveOption attributes={ attributes} clientId={ clientId } addOption={ addOption } />
+				<AlwaysActiveOption attributes={ attributes} clientId={ clientId } addOption={ addOption } removeOptions={ removeOptions } removeOption={removeOption} />
 
 				{ applyFilters( 'otter.sticky.controls', <ProFeatures />, attributes, FILTER_OPTIONS, addOption ) }
 

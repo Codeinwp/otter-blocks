@@ -825,10 +825,17 @@ class Registration {
 				true
 			);
 			wp_script_add_data( 'otter-sticky', 'defer', true );
+
+			add_action('wp_head', array($this, 'sticky_style') );
+			
 			self::$scripts_loaded['sticky'] = true;
 		}
 
 		return $block_content;
+	}
+
+	public static function sticky_style() {
+		echo '<style id="o-sticky-inline-css">.o-sticky.o-sticky-float { height: 0px; } </style>';
 	}
 
 	/**
