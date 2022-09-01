@@ -119,11 +119,6 @@
 	}
 }
 
-.animated {
-   visibility: hidden;
-   animation-play-state: paused;
-}
-
 .block-editor, .block-editor-block-list__layout {
    .animated {
       visibility: initial;

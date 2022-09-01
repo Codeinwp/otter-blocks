@@ -195,12 +195,16 @@ class Blocks_Animation {
 	 * @param array  $handle The script's registered handle.
 	 * @param string $src The script's source URL.
 	 * @return string
-	 * @since 2.0.12
+	 * @since 2.0.14
 	 */
 	public function add_no_script_tag( $tag, $handle, $src ) {
 		if ( 'otter-animation-frontend' === $handle ) {
-			$content = '<style>.animated { visibility: visible; animation-play-state: running; }</style>';
-			$tag    .= '<noscript>' . $content . '</noscript>';
+			$hide_anim = '<style id="o-anim-hide-inline-css"> .animated:not(.o-anim-ready) {
+				visibility: hidden;
+				animation-play-state: paused;
+			 }</style>';
+			$noscript  = '<noscript><style>.animated { visibility: visible; animation-play-state: running; }</style></noscript>';
+			$tag      .= $hide_anim . $noscript;
 		}
 		return $tag;
 	}
