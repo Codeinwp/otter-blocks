@@ -57,7 +57,7 @@
 		"@types/wordpress__block-editor": "^7.0.0",
 		"@types/wordpress__components": "^19.10.1",
 		"@wordpress/block-editor": "^9.8.0",
-		"@wordpress/components": "^19.16.0",
+		"@wordpress/components": "^20.0.0",
 		"@wordpress/compose": "^5.14.0",
 		"@wordpress/data": "^6.14.0",
 		"@wordpress/dom-ready": "^3.14.0",
