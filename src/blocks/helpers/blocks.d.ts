@@ -1,4 +1,4 @@
-import {Dispatch, SetStateAction} from 'react';
+import { Dispatch, SetStateAction } from 'react';
 
 export type BlockProps<T> = {
 	attributes: T
@@ -6,7 +6,7 @@ export type BlockProps<T> = {
 	isSelected: boolean
 	clientId: string
 	name: string
-	toggleSelection: (value: boolean) => void
+	toggleSelection: ( value: boolean ) => void
 }
 
 export interface InspectorProps<T> {
@@ -40,10 +40,10 @@ export type OtterNodeCSSOptions = {
 	selector: string
 }
 
-export type OtterSetNodeCSS = (css: string[], media: string[]) => void;
+export type OtterSetNodeCSS = ( css: string[], media: string[]) => void;
 
 export type OtterNodeCSSReturn = [
 	string,
 	OtterSetNodeCSS,
-	Dispatch<SetStateAction<{node: HTMLStyleElement | null , cssNodeName: string}>>
+	Dispatch<SetStateAction<{node: HTMLStyleElement | null, cssNodeName: string}>>
 ]

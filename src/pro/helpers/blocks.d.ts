@@ -4,7 +4,7 @@ export type BlockProps<T> = {
 	isSelected: boolean
 	clientId: string
 	name: string
-	toggleSelection: (value: boolean) => void
+	toggleSelection: ( value: boolean ) => void
 }
 
 export interface InspectorProps<T> {
