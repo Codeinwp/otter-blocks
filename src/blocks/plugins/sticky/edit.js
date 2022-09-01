@@ -153,7 +153,7 @@ const AlwaysActiveOption = ({ attributes, clientId, addOption, removeOption, rem
 						if ( value && 0 === activeFloatBlocks.length ) {
 							addOption( FILTER_OPTIONS.float, FILTER_OPTIONS.float ); // you can activate only if no other block is active
 						} else if ( false === value ) {
-							removeOptions([ FILTER_OPTIONS.float, FILTER_OPTIONS.width, FILTER_OPTIONS.offset ]);
+							removeOptions([ FILTER_OPTIONS.float, FILTER_OPTIONS.width, FILTER_OPTIONS.sideOffset ]);
 						}
 					} }
 					disabled={ ( 0 < activeFloatBlocks.length || ! isRootBlock ) && ! isActive }
