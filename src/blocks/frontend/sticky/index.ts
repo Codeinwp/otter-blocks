@@ -110,7 +110,7 @@ const getConfigOptions = (elem: Element): Config => {
 			config.side = 'right';
 		}
 		return config;
-	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false, isFloatMode: false, width: '500px', sideOffset: '20px', side: 'left'} );
+	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false, isFloatMode: false, width: '100%', sideOffset: '20px', side: 'left'} );
 };
 
 const positions = {
@@ -345,11 +345,15 @@ class StickyRunner {
 			 * Aling on vertical axis
 			 */
 			if( stickyElem.config.isFloatMode ) {
-				if( stickyElem.side === 'left') {
-					stickyElem.elem.style.left = stickyElem.sideOffset;
-				} else {
-					stickyElem.elem.style.right = stickyElem.sideOffset;
+				console.log(stickyElem.sideOffset,stickyElem.sideOffset.includes('%') , parseInt(stickyElem.sideOffset) >= 100)
+				if( ! stickyElem.elem.classList.contains('alignfull') ) {
+					if( stickyElem.side === 'left') {
+						stickyElem.elem.style.left = stickyElem.sideOffset;
+					} else {
+						stickyElem.elem.style.right = stickyElem.sideOffset;
+					}
 				}
+				
 			} else {
 				stickyElem.elem.style.left = stickyElem.elemLeftPositionInPage + 'px';
 			}

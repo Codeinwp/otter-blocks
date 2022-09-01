@@ -133,18 +133,10 @@ const AlwaysActiveOption = ({ attributes, clientId, addOption, removeOption, rem
 	useEffect( () => {
 		console.log( width, offset );
 		if ( attributes?.className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.width ) )?.split( '-' )?.pop() !== width ) {
-			if ( width?.startsWith( '0' ) ) {
-				removeOption( FILTER_OPTIONS.width );
-			} else {
-				addOption( `o-sticky-width-${width}`, FILTER_OPTIONS.width );
-			}
+			addOption( `o-sticky-width-${width}`, FILTER_OPTIONS.width );
 		}
 		if ( attributes?.className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.sideOffset ) )?.split( '-' )?.pop() !== offset ) {
-			if ( offset?.startsWith( '0' ) ) {
-				removeOption( FILTER_OPTIONS.offset );
-			} else {
-				addOption( `o-sticky-opt-side-offset-${offset}`, FILTER_OPTIONS.offset );
-			}
+			addOption( `o-sticky-opt-side-offset-${offset}`, FILTER_OPTIONS.offset );
 		}
 	}, [ width, offset ]);
 
@@ -208,7 +200,7 @@ const AlwaysActiveOption = ({ attributes, clientId, addOption, removeOption, rem
 							</p>
 							<UnitContol
 								label={ __( 'Width', 'otter-blocks' ) }
-								value={ width ?? '500px' }
+								value={ width ?? '100%' }
 								onChange={ setWidth }
 							/>
 							<SelectControl
