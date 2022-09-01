@@ -49,7 +49,6 @@ class Blocks_Animation {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_editor_assets' ) );
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_frontend_assets' ) );
 		add_filter( 'render_block', array( $this, 'frontend_load' ), 800, 2 );
-		add_filter( 'script_loader_tag', array( $this, 'add_no_script_tag' ), 10, 3 );
 	}
 
 	/**
@@ -154,6 +153,9 @@ class Blocks_Animation {
 			);
 
 			wp_script_add_data( 'otter-animation-frontend', 'async', true );
+
+			add_action( 'wp_head', array( $this, 'add_fontend_anim_inline_style' ), 10, 3 );
+
 			self::$scripts_loaded['animation'] = true;
 		}
 
@@ -191,22 +193,15 @@ class Blocks_Animation {
 	/**
 	 * Add no script tag.
 	 *
-	 * @param string $tag The <script> tag for the enqueued script.
-	 * @param array  $handle The script's registered handle.
-	 * @param string $src The script's source URL.
-	 * @return string
+	 * @access public
 	 * @since 2.0.14
 	 */
-	public function add_no_script_tag( $tag, $handle, $src ) {
-		if ( 'otter-animation-frontend' === $handle ) {
-			$hide_anim = '<style id="o-anim-hide-inline-css"> .animated:not(.o-anim-ready) {
-				visibility: hidden;
-				animation-play-state: paused;
-			 }</style>';
-			$noscript  = '<noscript><style>.animated { visibility: visible; animation-play-state: running; }</style></noscript>';
-			$tag      .= $hide_anim . $noscript;
-		}
-		return $tag;
+	public static function add_fontend_anim_inline_style() {
+		echo '<style id="o-anim-hide-inline-css"> .animated:not(.o-anim-ready) {
+			visibility: hidden;
+			animation-play-state: paused;
+		 }</style>
+		 <noscript><style>.animated { visibility: visible; animation-play-state: running; }</style></noscript>';
 	}
 
 	/**
