@@ -77,8 +77,16 @@
 				align-items: flex-start;
 			}
 
+			&:not(.full) .o-form-server-response {
+				padding-left: 0px;
+			}
+
 			&.right > div {
 				align-items: flex-end;
+				
+				.o-form-server-response {
+					padding-right: 0px;
+				}
 			}
 
 			&.full > div {
