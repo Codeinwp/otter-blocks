@@ -113,7 +113,7 @@ class Dynamic_Content {
 
 		global $post;
 
-		$id = ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ? $post->ID : get_queried_object_id();
+		$id = ( defined( 'REST_REQUEST' ) && REST_REQUEST || ( isset( $data['context'] ) && 'query' === $data['context'] ) ) ? $post->ID : get_queried_object_id();
 
 		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
 			$data['context'] = $id;

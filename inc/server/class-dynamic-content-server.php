@@ -78,14 +78,14 @@ class Dynamic_Content_Server {
 							},
 						),
 						'context'  => array(
-							'type'              => 'integer',
+							'type'              => array( 'string', 'integer'),
 							'required'          => true,
 							'description'       => __( 'ID of the post being edited.', 'otter-blocks' ),
 							'sanitize_callback' => function ( $param ) {
-								return intval( $param );
+								return is_numeric( $param ) ? intval( $param ) : esc_attr( $param );
 							},
 							'validate_callback' => function ( $param, $request, $key ) {
-								return is_numeric( $param );
+								return is_numeric( $param ) || is_string( $param );
 							},
 						),
 						'id'       => array(

@@ -168,14 +168,21 @@ const MediaContent = ({
 
 	const {
 		getCurrentPostId,
-		getSelectedBlock
+		getSelectedBlock,
+		isQueryChild
 	} = useSelect( select => {
 		const getCurrentPostId = select( 'core/editor' ) ? select( 'core/editor' ).getCurrentPostId() : 0;
-		const getSelectedBlock = select( 'core/block-editor' ).getSelectedBlock();
+		const {
+			getSelectedBlock,
+			getBlockParentsByBlockName
+		} = select( 'core/block-editor' );
+
+		const currentBlock = getSelectedBlock();
 
 		return {
 			getCurrentPostId: getCurrentPostId || 0,
-			getSelectedBlock
+			getSelectedBlock: currentBlock,
+			isQueryChild: 0 < getBlockParentsByBlockName( currentBlock?.clientId, 'core/query' ).length
 		};
 	}, []);
 
@@ -252,7 +259,7 @@ const MediaContent = ({
 								key={ item.type }
 								uid={ uid }
 								item={ item }
-								context={ getCurrentPostId }
+								context={ isQueryChild ? 'query' : getCurrentPostId }
 								isSelected={ selected ? selected?.includes( `dynamic/?type=${ item.type }` ) : false }
 								onSelect={ onSelect }
 							/>
