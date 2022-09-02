@@ -274,7 +274,7 @@ const IconPickerControl = ({
 
 					return (
 
-						<MenuGroup label={ 'fontawesome' === library ? __( 'Font Awesome Icons', 'otter-blocks' ) : __( 'ThemeIsle Icons', 'otter-blocks' ) }>
+						<MenuGroup label={ 'fontawesome' === library ? __( 'Font Awesome Icons', 'otter-blocks' ) : __( 'ThemeIsle Icons', 'otter-blocks' ) } style={{ paddingBottom: '0px' }}>
 							<TextControl
 								value={ search }
 								onChange={ e => setSearch( e ) }
@@ -310,6 +310,15 @@ const IconPickerControl = ({
 										);
 									}
 								}) }
+							</div>
+							<div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+								<Button
+									variant='tertiary'
+									onClick={ onToggle }
+									style={{ marginTop: '5px' }}
+								>
+									{ __( 'Close', 'otter-blocks' ) }
+								</Button>
 							</div>
 						</MenuGroup>
 					);
