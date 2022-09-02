@@ -78,7 +78,7 @@ class Dynamic_Content_Server {
 							},
 						),
 						'context'  => array(
-							'type'              => array( 'string', 'integer'),
+							'type'              => array( 'string', 'integer' ),
 							'required'          => true,
 							'description'       => __( 'ID of the post being edited.', 'otter-blocks' ),
 							'sanitize_callback' => function ( $param ) {
