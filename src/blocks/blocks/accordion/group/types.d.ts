@@ -1,5 +1,5 @@
-import { AdvancedBorder, BoxPadding, BoxShadow, IconData } from '../../../common'
-import { BlockProps, InspectorProps } from '../../../helpers/blocks'
+import { AdvancedBorder, BoxPadding, BoxShadow, IconData } from '../../../common';
+import { BlockProps, InspectorProps } from '../../../helpers/blocks';
 
 type Attributes = {
 	id: string

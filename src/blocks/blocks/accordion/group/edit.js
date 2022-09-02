@@ -2,7 +2,7 @@
  * External dependencies
  */
 import classnames from 'classnames';
-import GoogleFontLoader from 'react-google-font-loader';
+import googleFontsLoader from '../../../helpers/google-fonts.js';
 
 /**
  * WordPress dependencies.
@@ -116,6 +116,25 @@ const Edit = ({
 		]);
 	}, [ attributes.icon, attributes.openItemIcon ]);
 
+	// todo: active styling does not work after changing icon and icon does not show when first opening editor
+	useEffect( () => {
+		setNodeCSS([
+			`.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__title {
+				--title-color: ${ getValue( 'activeTitleColor' ) };
+				--title-background: ${ getValue( 'activeTitleBackground' ) };
+			}`,
+			`.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__content {
+				--content-background: ${ getValue( 'activeContentBackground' ) };
+			}`
+		]);
+	}, [ attributes.activeTitleColor, attributes.activeTitleBackground, attributes.activeContentBackground ]);
+
+	useEffect( () => {
+		if ( attributes.fontFamily ) {
+			googleFontsLoader.loadFontToBrowser( attributes.fontFamily, attributes.fontVariant );
+		}
+	}, [ attributes.fontFamily ]);
+
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames({
@@ -130,13 +149,6 @@ const Edit = ({
 
 	return (
 		<Fragment>
-			{ attributes.fontFamily && (
-				<GoogleFontLoader fonts={ [ {
-					font: attributes.fontFamily,
-					weights: attributes.fontVariant && [ `${ attributes.fontVariant + ( 'italic' === attributes.fontStyle ? ':i' : '' ) }` ]
-				} ] } />
-			) }
-
 			<Inspector
 				clientId={ clientId }
 				attributes={ attributes }

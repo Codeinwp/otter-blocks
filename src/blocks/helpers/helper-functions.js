@@ -323,6 +323,13 @@ export const getChoice = arr => {
 	return r?.[1] ?? r?.[0];
 };
 
+/**
+ * Converts HEX colors to RGBA.
+ *
+ * @param color
+ * @param alpha
+ * @returns {string}
+ */
 export const hex2rgba = ( color, alpha = 100 ) => {
 	if ( ! color ) {
 		color = '#000000';
@@ -334,43 +341,6 @@ export const hex2rgba = ( color, alpha = 100 ) => {
 
 	const [ r, g, b ] = color.match( /\w\w/g ).map( x => parseInt( x, 16 ) );
 	return `rgba(${r},${g},${b},${alpha / 100})`;
-};
-
-/**
- * Return the values from a box type.
- *
- * @param {import('./blocks').BoxType} box
- * @param {import('./blocks').BoxType} defaultBox
- */
-export const boxValues = ( box, defaultBox ) => {
-	return `${ box?.top ?? defaultBox?.top ?? '0px' } ${ box?.right ?? defaultBox?.right ?? '0px' } ${ box?.bottom ?? defaultBox?.bottom ?? '0px' } ${ box?.left ?? defaultBox?.left ?? '0px' }`;
-};
-
-/**
- * Remove the default values from Box object.
- *
- * @param {import('./blocks').BoxType} box
- * @param {import('./blocks').BoxType} defaultBox
- * @return {import('./blocks').BoxType}
- */
-export const removeBoxDefaultValues = ( box, defaultBox ) => {
-	const cleaned = omitBy( box, ( value, key ) => value === defaultBox[key]);
-	return isEmpty( cleaned ) ? undefined : cleaned;
-};
-
-/**
- * Merge the Box objects.
- *
- * @param {import('./blocks').BoxType} box
- * @param {import('./blocks').BoxType} defaultBox
- * @return {import('./blocks').BoxType}
- */
-export const mergeBoxDefaultValues = ( box, defaultBox ) => {
-	return merge(
-		{ left: '0px', right: '0px', bottom: '0px', top: '0px' },
-		defaultBox,
-		box
-	);
 };
 
 /**

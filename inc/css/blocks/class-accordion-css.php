@@ -40,124 +40,103 @@ class Accordion_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'properties' => array_merge(
+				'properties' => array(
 					array(
-						array(
-							'property' => '--title-color',
-							'value'    => 'titleColor',
-							'hasSync'  => 'accordion-title-color',
-						),
-						array(
-							'property' => '--title-background',
-							'value'    => 'titleBackground',
-							'hasSync'  => 'accordion-title-background',
-						),
-						array(
-							'property' => '--border-color',
-							'value'    => 'borderColor',
-							'hasSync'  => 'accordion-border-color',
-						),
-						array(
-							'property' => '--content-background',
-							'value'    => 'contentBackground',
-							'hasSync'  => 'accordion-content-background',
-						array(
-							'property' => '--titleColor',
-							'value'    => 'titleColor',
-							'hasSync'  => 'accordionTitleColor',
-						),
-						array(
-							'property' => '--titleBackground',
-							'value'    => 'titleBackground',
-							'hasSync'  => 'accordionTitleBackground',
-						),
-						array(
-							'property' => '--borderColor',
-							'value'    => 'borderColor',
-							'hasSync'  => 'accordionBorderColor',
-						),
-						array(
-							'property' => '--contentBackground',
-							'value'    => 'contentBackground',
-							'hasSync'  => 'accordionContentBackground',
-						),
-						array(
-							'property' => '--fontFamily',
-							'value'    => 'fontFamily',
-						),
-						array(
-							'property' => '--fontVariant',
-							'value'    => 'fontVariant',
-						),
-						array(
-							'property' => '--fontStyle',
-							'value'    => 'fontStyle',
-						),
-						array(
-							'property' => '--textTransform',
-							'value'    => 'textTransform',
-						),
-						array(
-							'property' => '--letterSpacing',
-							'value'    => 'letterSpacing',
-							'unit'     => 'px',
-						),
-						array(
-							'property' => '--fontSize',
-							'value'    => 'fontSize',
-							'unit'     => 'px',
-						),
-						array(
-							'property'       => '--boxShadow',
-							'pattern'        => 'horizontal vertical blur spread color',
-							'pattern_values' => array(
-								'horizontal' => array(
-									'value'   => 'boxShadow',
-									'unit'    => 'px',
-									'default' => 0,
-									'format'  => function( $value ) {
-										return $value['horizontal'];
-									},
-								),
-								'vertical'   => array(
-									'value'   => 'boxShadow',
-									'unit'    => 'px',
-									'default' => 0,
-									'format'  => function( $value ) {
-										return $value['vertical'];
-									},
-								),
-								'blur'       => array(
-									'value'   => 'boxShadow',
-									'unit'    => 'px',
-									'default' => 5,
-									'format'  => function( $value ) {
-										return $value['blur'];
-									},
-								),
-								'spread'     => array(
-									'value'   => 'boxShadow',
-									'unit'    => 'px',
-									'default' => 1,
-									'format'  => function( $value ) {
-										return $value['spread'];
-									},
-								),
-								'color'      => array(
-									'value'   => 'boxShadow',
-									'default' => '#000',
-									'format'  => function( $value ) {
-										$opacity = $value['colorOpacity'];
-										$color   = isset( $value['color'] ) ? $value['color'] : '#000000';
-										return ( strpos( $color, '#' ) !== false && $opacity < 100 ) ? $this->hex2rgba( $color, $opacity / 100 ) : $color;
-									},
-								),
+						'property' => '--title-color',
+						'value'    => 'titleColor',
+						'hasSync'  => 'accordion-title-color',
+					),
+					array(
+						'property' => '--title-background',
+						'value'    => 'titleBackground',
+						'hasSync'  => 'accordion-title-background',
+					),
+					array(
+						'property' => '--border-color',
+						'value'    => 'borderColor',
+						'hasSync'  => 'accordion-border-color',
+					),
+					array(
+						'property' => '--content-background',
+						'value'    => 'contentBackground',
+						'hasSync'  => 'accordion-content-background',
+					),
+					array(
+						'property' => '--font-family',
+						'value'    => 'fontFamily',
+					),
+					array(
+						'property' => '--font-variant',
+						'value'    => 'fontVariant',
+					),
+					array(
+						'property' => '--font-style',
+						'value'    => 'fontStyle',
+					),
+					array(
+						'property' => '--text-transform',
+						'value'    => 'textTransform',
+					),
+					array(
+						'property' => '--letter-spacing',
+						'value'    => 'letterSpacing',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--font-size',
+						'value'    => 'fontSize',
+						'unit'     => 'px',
+					),
+					array(
+						'property'       => '--box-shadow',
+						'pattern'        => 'horizontal vertical blur spread color',
+						'pattern_values' => array(
+							'horizontal' => array(
+								'value'   => 'boxShadow',
+								'unit'    => 'px',
+								'default' => 0,
+								'format'  => function( $value ) {
+									return $value['horizontal'];
+								},
 							),
-							'condition'      => function( $attrs ) {
-								return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow']['active'];
-							} ),
+							'vertical'   => array(
+								'value'   => 'boxShadow',
+								'unit'    => 'px',
+								'default' => 0,
+								'format'  => function( $value ) {
+									return $value['vertical'];
+								},
+							),
+							'blur'       => array(
+								'value'   => 'boxShadow',
+								'unit'    => 'px',
+								'default' => 5,
+								'format'  => function( $value ) {
+									return $value['blur'];
+								},
+							),
+							'spread'     => array(
+								'value'   => 'boxShadow',
+								'unit'    => 'px',
+								'default' => 1,
+								'format'  => function( $value ) {
+									return $value['spread'];
+								},
+							),
+							'color'      => array(
+								'value'   => 'boxShadow',
+								'default' => '#000',
+								'format'  => function( $value ) {
+									$opacity = $value['colorOpacity'];
+									$color   = isset( $value['color'] ) ? $value['color'] : '#000000';
+									return ( strpos( $color, '#' ) !== false && $opacity < 100 ) ? $this->hex2rgba( $color, $opacity / 100 ) : $color;
+								},
+							),
 						),
-					)
+						'condition'      => function( $attrs ) {
+							return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow']['active'];
+						},
+					),
 				),
 			)
 		);
@@ -295,15 +274,15 @@ class Accordion_CSS extends Base_CSS {
 				'selector'   => ' .wp-block-themeisle-blocks-accordion-item[open]',
 				'properties' => array(
 					array(
-						'property' => '--titleColor',
+						'property' => '--title-color',
 						'value'    => 'activeTitleColor',
 					),
 					array(
-						'property' => '--titleBackground',
+						'property' => '--title-background',
 						'value'    => 'activeTitleBackground',
 					),
 					array(
-						'property' => '--contentBackground',
+						'property' => '--content-background',
 						'value'    => 'activeContentBackground',
 					),
 				),
