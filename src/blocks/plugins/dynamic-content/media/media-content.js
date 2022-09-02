@@ -12,7 +12,7 @@ import {
 	Button,
 	TextControl
 } from '@wordpress/components';
-
+import { setUtm } from '../../../helpers/helper-functions.js';
 import { useSelect } from '@wordpress/data';
 
 import {
@@ -149,7 +149,7 @@ const MediaSidebar = ({
 					<Button
 						isPrimary
 						target="_blank"
-						href={ window.themeisleGutenberg.upgradeLink }
+						href={ setUtm( window.themeisleGutenberg.upgradeLink, 'dynamicimage' ) }
 					>
 						{ __( 'Get Pro Now', 'otter-blocks' ) }
 					</Button>
@@ -216,7 +216,7 @@ const MediaContent = ({
 			attrs[ o ] = obj[ o ];
 		});
 
-		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v ) ) );
+		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v && undefined !== v ) ) );
 
 		const url = window.themeisleGutenberg.restRoot + '/dynamic/?' + getQueryStringFromObject( attrs );
 

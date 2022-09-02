@@ -53,6 +53,9 @@
 		},
 		"percentageColor": {
 			"type": "string"
+		},
+		"titleFontSize": {
+			"type": "string"
 		}
 	},
 	"editorStyle": "otter-progress-bar-editor",

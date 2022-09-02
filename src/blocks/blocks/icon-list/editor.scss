@@ -71,3 +71,11 @@
 		color: var( --icon-color );
 	}
 }
+
+.editor-styles-wrapper .wp-block.wp-block-themeisle-blocks-icon-list-item {
+	/* We add this to override Neve styles */
+	margin-top: 0;
+	margin-left: 0;
+	margin-bottom: 0;
+	margin-right: 0;
+}

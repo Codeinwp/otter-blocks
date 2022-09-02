@@ -298,6 +298,21 @@ class Countdown_CSS extends Base_CSS {
 			)
 		);
 
+		$css->add_item(
+			array(
+				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area[name="separator"] .otter-countdown__label',
+				'properties' => array(
+					array(
+						'property'  => 'display',
+						'default'   => 'none',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['separatorAlignment'] ) && 'center' === $attrs['separatorAlignment'];
+						},
+					),
+				),
+			)
+		);
+
 		$style = $css->generate();
 
 		return $style;

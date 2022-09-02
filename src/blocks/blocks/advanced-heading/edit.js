@@ -36,7 +36,7 @@ import metadata from './block.json';
 import { blockInit } from '../../helpers/block-utility.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import googleFontsLoader from '../../helpers/google-fonts';
+import googleFontsLoader from '../../helpers/google-fonts.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -201,8 +201,7 @@ const Edit = ({
 				value={ attributes.content }
 				placeholder={ __( 'Write heading…', 'otter-blocks' ) }
 				tagName={ attributes.tag }
-				formattingControls={ [ 'bold', 'italic', 'link', 'strikethrough', 'highlight' ] }
-				allowedFormats={ [ 'core/bold', 'core/italic', 'core/link', 'core/strikethrough', 'themeisle-blocks/highlight', 'themeisle-blocks/count-animation', 'themeisle-blocks/typing-animation' ] }
+				allowedFormats={ [ 'core/bold', 'core/italic', 'core/link', 'core/strikethrough', 'themeisle-blocks/highlight', 'themeisle-blocks/count-animation', 'themeisle-blocks/typing-animation', 'themeisle-blocks/dynamic-value' ] }
 				onMerge={ mergeBlocks }
 				onSplit={ ( value, isOriginal ) => {
 					let block;

@@ -21,8 +21,7 @@
 	align-items: center;
 	margin-left: auto;
 	margin-right: auto;
-	width: var(--width);
-	height: var(--height);
+	height: var( --height );
 
 	perspective: 1000px; /* Remove this if you don't want the 3D effect */
 
@@ -48,7 +47,7 @@
 
 	.o-flip-inner {
 		position: relative;
-		width: 100%;
+		width: var(--width);
 		height: 100%;
 		text-align: center;
 		transition: transform 0.8s;

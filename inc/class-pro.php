@@ -34,9 +34,9 @@ class Pro {
 
 	/**
 	 * Hook upsells
-	 * 
+	 *
 	 * We do it here because the is_pro_active hook is not fired until the init function.
-	 * 
+	 *
 	 * @since   2.0.9
 	 * @access  public
 	 */
@@ -55,7 +55,7 @@ class Pro {
 
 	/**
 	 * Check if Otter Pro is available
-	 * 
+	 *
 	 * @since   2.0.3
 	 * @access  public
 	 * @return  bool
@@ -66,7 +66,7 @@ class Pro {
 
 	/**
 	 * Check if Otter Pro is active
-	 * 
+	 *
 	 * @since   2.0.3
 	 * @access  public
 	 * @return  bool
@@ -77,18 +77,31 @@ class Pro {
 
 	/**
 	 * Get Otter Pro URL
-	 * 
+	 *
 	 * @since   2.0.3
 	 * @access  public
 	 * @return  string
 	 */
 	public static function get_url() {
-		return 'https://bit.ly/otter-upgrade';
+		return 'https://themeisle.com/plugins/otter-blocks/upgrade/';
 	}
 
 	/**
+	 * Get Otter reference install.
+	 *
+	 * @since   2.0.14
+	 * @access  public
+	 *
+	 * @return string Reference key.
+	 */
+	public static function get_reference() {
+		$ref = get_option( 'otter_reference_key', '' );
+
+		return empty( $ref ) ? null : $ref;
+	}
+	/**
 	 * Get Otter Docs URL
-	 * 
+	 *
 	 * @since   2.0.3
 	 * @access  public
 	 * @return  string
@@ -99,7 +112,7 @@ class Pro {
 
 	/**
 	 * Check if we show Upsell notification or not
-	 * 
+	 *
 	 * @since   2.0.4
 	 * @access  public
 	 * @return  bool
@@ -131,7 +144,7 @@ class Pro {
 
 	/**
 	 * Check if we show Upsell notification or not
-	 * 
+	 *
 	 * @since   2.0.8
 	 * @access  public
 	 */
@@ -160,7 +173,7 @@ class Pro {
 
 	/**
 	 * Register Metabox
-	 * 
+	 *
 	 * @param string $post_type Post type.
 	 *
 	 * @since   2.0.3
@@ -179,9 +192,9 @@ class Pro {
 
 	/**
 	 * Render Metabox
-	 * 
+	 *
 	 * @param string $post_type Post type.
-	 * 
+	 *
 	 * @since   2.0.3
 	 * @access  public
 	 */
@@ -212,7 +225,7 @@ class Pro {
 					<li><?php _e( 'Priority Support', 'otter-blocks' ); ?></li>
 				</ul>
 
-				<a href="<?php echo esc_url( self::get_url() ); ?>" target="_blank" class="button button-primary">
+				<a href="<?php echo esc_url_raw( tsdk_utmify( self::get_url(), 'woobuilder', 'wooproducteditor' ) ); ?>" target="_blank" class="button button-primary">
 					<?php _e( 'Discover Otter Pro', 'otter-blocks' ); ?>
 				</a>
 			</div>
@@ -268,7 +281,7 @@ class Pro {
 			</div>',
 			esc_html( $prefix ),
 			esc_html( $message ),
-			esc_url( self::get_url() ),
+			esc_url_raw( tsdk_utmify( self::get_url(), 'noticeusing', 'editor' ) ),
 			esc_html__( 'Learn more', 'otter-blocks' ),
 			esc_url( wp_nonce_url( '?otter-dismiss-dashboard-upsell', 'dismiss' ) ),
 			esc_html__( 'Dismiss notice', 'otter-blocks' )
@@ -291,7 +304,7 @@ class Pro {
 
 	/**
 	 * Add new cron schedule.
-	 * 
+	 *
 	 * @param array $schedules Cron Schedules.
 	 *
 	 * @since   2.0.8

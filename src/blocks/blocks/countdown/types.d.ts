@@ -1,23 +1,32 @@
-import { BlockProps, BoxType, InspectorProps, PaddingType } from '../../helpers/blocks'
+import { BlockProps, BoxType, InspectorProps, PaddingType } from '../../helpers/blocks';
 
 // Remove this in future version.
 type LegacyAttrs = {
+
 	/** @deprecated */
 	width: number
+
 	/** @deprecated */
 	widthTablet: number
+
 	/** @deprecated */
 	widthMobile: number
+
 	/** @deprecated */
 	borderRadius: number
+
 	/** @deprecated */
 	borderRadiusType: string
+
 	/** @deprecated */
 	borderRadiusTopRight: number
+
 	/** @deprecated */
 	borderRadiusTopLeft: number
+
 	/** @deprecated */
 	borderRadiusBottomRight: number
+
 	/** @deprecated */
 	borderRadiusBottomLeft: number
 }
@@ -59,6 +68,7 @@ type Attributes = {
 	paddingTablet: PaddingType
 	valueFontWeight: string
 	labelFontWeight: string
+	seperatorAlignment: 'center'
 } & LegacyAttrs;
 
 export type CountdownProps = BlockProps<Attributes>

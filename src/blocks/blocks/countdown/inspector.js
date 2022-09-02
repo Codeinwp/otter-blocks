@@ -220,6 +220,30 @@ const Inspector = ({
 						}
 					]}
 				/>
+
+				{ attributes.hasSeparators && (
+					<SelectControl
+						label={ __( 'Separator Alignment', 'otter-blocks' ) }
+						value={ attributes.separatorAlignment }
+						onChange={ separatorAlignment => {
+							if ( ! separatorAlignment ) {
+								setAttributes({ separatorAlignment: undefined });
+							} else {
+								setAttributes({ separatorAlignment });
+							}
+						}}
+						options={[
+							{
+								label: __( 'Default', 'otter-blocks' ),
+								value: ''
+							},
+							{
+								label: __( 'Center', 'otter-blocks' ),
+								value: 'center'
+							}
+						]}
+					/>
+				) }
 			</PanelBody>
 
 			<PanelBody
@@ -334,21 +358,19 @@ const Inspector = ({
 					]}
 				/>
 
-				{
-					'none' !== attributes.borderStyle && (
-						<ResponsiveControl
-							label={ __( 'Width', 'otter-blocks' ) }
-						>
-							<RangeControl
-								value={ responsiveGetAttributes([ attributes.borderWidth, attributes.borderWidthTablet, attributes.borderWidthMobile ]) ?? 2 }
-								onChange={ value => responsiveSetAttributes( value, [ 'borderWidth', 'borderWidthTablet', 'borderWidthMobile' ]) }
-								min={ 0 }
-								max={ 50 }
-								allowReset
-							/>
-						</ResponsiveControl>
-					)
-				}
+				{ 'none' !== attributes.borderStyle && (
+					<ResponsiveControl
+						label={ __( 'Width', 'otter-blocks' ) }
+					>
+						<RangeControl
+							value={ responsiveGetAttributes([ attributes.borderWidth, attributes.borderWidthTablet, attributes.borderWidthMobile ]) ?? 2 }
+							onChange={ value => responsiveSetAttributes( value, [ 'borderWidth', 'borderWidthTablet', 'borderWidthMobile' ]) }
+							min={ 0 }
+							max={ 50 }
+							allowReset
+						/>
+					</ResponsiveControl>
+				) }
 
 
 				<BoxControl
