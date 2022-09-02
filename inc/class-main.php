@@ -231,6 +231,23 @@ class Main {
 			return $tags;
 		}
 
+		$global_attributes = array(
+			'aria-describedby' => true,
+			'aria-details'     => true,
+			'aria-label'       => true,
+			'aria-labelledby'  => true,
+			'aria-hidden'      => true,
+			'class'            => true,
+			'data-*'           => true,
+			'dir'              => true,
+			'id'               => true,
+			'lang'             => true,
+			'style'            => true,
+			'title'            => true,
+			'role'             => true,
+			'xml:lang'         => true,
+		);
+
 		if ( isset( $tags['div'] ) ) {
 			$tags['div']['name'] = true;
 		}
@@ -243,22 +260,79 @@ class Main {
 			);
 		}
 
-		$tags['input'] = array(
-			'type'        => true,
-			'name'        => true,
-			'id'          => true,
-			'required'    => true,
-			'placeholder' => true,
-			'class'       => true,
+		if ( ! isset( $tags['svg'] ) ) {
+			$tags['svg'] = array_merge(
+				array(
+					'role'    => true,
+					'xmlns'   => true,
+					'width'   => true,
+					'height'  => true,
+					'viewbox' => true,
+				),
+				$global_attributes
+			);
+		}
+
+		if ( ! isset( $tags['g'] ) ) {
+			$tags['g'] = array( 'fill' => true );
+		}
+
+		if ( ! isset( $tags['title'] ) ) {
+			$tags['title'] = array( 'title' => true );
+		}
+
+		if ( ! isset( $tags['path'] ) ) {
+			$tags['path'] = array(
+				'd'    => true, 
+				'fill' => true,  
+			);
+		}
+
+		if ( ! isset( $tags['lottie-player'] ) ) {
+			$tags['lottie-player'] = array_merge(
+				array(
+					'autoplay'   => true,
+					'loop'       => true,
+					'count'      => true,
+					'speed'      => true,
+					'direction'  => true,
+					'trigger'    => true,
+					'data-*'     => true,
+					'mode'       => true,
+					'background' => true,
+					'src'        => true,
+					'width'      => true,
+				),
+				$global_attributes
+			);
+		}
+
+		if ( ! isset( $tags['o-dynamic'] ) ) {
+			$tags['o-dynamic'] = $global_attributes;
+		}
+
+		if ( ! isset( $tags['o-dynamic-link'] ) ) {
+			$tags['o-dynamic-link'] = $global_attributes;
+		}
+
+		$tags['input'] = array_merge(
+			array(
+				'type'        => true,
+				'name'        => true,
+				'required'    => true,
+				'placeholder' => true,
+			),
+			$global_attributes
 		);
 
-		$tags['textarea'] = array(
-			'name'        => true,
-			'id'          => true,
-			'required'    => true,
-			'placeholder' => true,
-			'rows'        => true,
-			'class'       => true,
+		$tags['textarea'] = array_merge(
+			array(
+				'name'        => true,
+				'required'    => true,
+				'placeholder' => true,
+				'rows'        => true,
+			),
+			$global_attributes
 		);
 
 		return $tags;

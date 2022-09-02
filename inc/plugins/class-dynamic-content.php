@@ -36,7 +36,7 @@ class Dynamic_Content {
 	 *
 	 * @return string
 	 */
-	public function apply_dynamic_content( $content ) { 
+	public function apply_dynamic_content( $content ) {
 		if ( false === strpos( $content, '<o-dynamic' ) ) {
 			return $content;
 		}
@@ -70,7 +70,7 @@ class Dynamic_Content {
 	 *
 	 * @return string
 	 */
-	public function apply_dynamic_images( $content ) { 
+	public function apply_dynamic_images( $content ) {
 		if ( false === strpos( $content, 'otter/v1/dynamic' ) ) {
 			return $content;
 		}
@@ -148,7 +148,7 @@ class Dynamic_Content {
 
 		if ( 'logo' === $data['type'] ) {
 			$custom_logo_id = get_theme_mod( 'custom_logo' );
- 
+
 			if ( $custom_logo_id ) {
 				$value = wp_get_attachment_image_url( $custom_logo_id, 'full' );
 			}
@@ -209,16 +209,21 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_data( $data ) {
+		/*
+		 * We use the queried object ID to make sure when posts are displayed inside other posts
+		 * the displayed post is being used as a source for the dynamic tags. Eg. Custom Layouts inside Neve.
+		 */
+		$queried_object_id = get_queried_object_id();
 		if ( ! isset( $data['type'] ) && isset( $data['default'] ) ) {
 			return esc_html( $data['default'] );
 		}
 
 		if ( 'postID' === $data['type'] ) {
-			return get_the_id();
+			return get_the_id( $queried_object_id );
 		}
 
 		if ( 'postTitle' === $data['type'] ) {
-			return get_the_title();
+			return get_the_title( $queried_object_id );
 		}
 
 		if ( 'postExcerpt' === $data['type'] ) {
@@ -226,11 +231,11 @@ class Dynamic_Content {
 		}
 
 		if ( 'postType' === $data['type'] ) {
-			return get_post_type();
+			return get_post_type( $queried_object_id );
 		}
 
 		if ( 'postStatus' === $data['type'] ) {
-			return get_post_status();
+			return get_post_status( $queried_object_id );
 		}
 
 		if ( 'siteTitle' === $data['type'] ) {
