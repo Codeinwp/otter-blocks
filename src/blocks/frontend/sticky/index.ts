@@ -124,12 +124,15 @@ const positions = {
 
 type Position = keyof typeof positions;
 
+let stickyId = 0;
+
 class StickyData {
 
+	readonly index: number;
 	readonly config: Config;
 	readonly selector: HTMLDivElement | string;
 	readonly containerSelector: HTMLDivElement | string;
-	index: number;
+	orderInPage: number;
 	status: 'active' | 'dormant' | 'inactive';
 	isActive: boolean;
 	isDormant: boolean;
@@ -150,6 +153,8 @@ class StickyData {
 	width: number;
 	height: number;
 	placeholder: HTMLDivElement;
+	stylingNodeName: `o-sticky-node-${typeof this.index}`;
+	stylingNode: HTMLStyleElement;
 
 	/**
 	 * Create the sticky data container for the element.
@@ -161,11 +166,12 @@ class StickyData {
 	 */
 	constructor( selector: HTMLDivElement | string, config: Config, containerSelector: HTMLDivElement | string ) {
 
+		this.index = stickyId++;
 		this.config = config;
 		this.selector = selector;
 		this.containerSelector = containerSelector;
 
-		this.index = -1;
+		this.orderInPage = -1;
 		this.isActive = false;
 		this.isDormant = true;
 		this.positionStatus = positions.NONE;
@@ -217,8 +223,11 @@ class StickyData {
 		this.placeholder.style.width = width + 'px';
 
 		// Styling
-		this.elem.style.wordBreak = 'break-word';
 		this.elem.classList.remove( 'o-sticky-float' );
+
+		this.stylingNodeName = `o-sticky-node-${this.index}`;
+		this.stylingNode = document.createElement( 'style' );
+		document.head.appendChild( this.stylingNode );
 	}
 
 	get position() {
@@ -240,6 +249,15 @@ class StickyData {
 	get displayWidth() {
 		return this.config?.isFloatMode ? this.config.width : this.width + 'px';
 	}
+
+	set styling( content: string ) {
+		this.stylingNode.innerHTML = `
+		.${this.stylingNodeName} {
+			word-break: break-all;
+			${content}
+		}
+	`;
+	}
 }
 
 class StickyRunner {
@@ -247,12 +265,12 @@ class StickyRunner {
 	/**
 	 * The id will be used to uniquely identify the sticky elements and their order in page.
 	 */
-	idGenerator: number;
-	stickyElems: StickyData[];
+	orderInPageCounter: number;
+	items: StickyData[];
 
 	constructor() {
-		this.idGenerator = 0;
-		this.stickyElems = [];
+		this.orderInPageCounter = 0;
+		this.items = [];
 	}
 
 	/**
@@ -261,36 +279,40 @@ class StickyRunner {
 	 * @param stickyElem The sticky element to register.
 	 */
 	register( stickyElem: StickyData ) {
-		stickyElem.index = this.idGenerator;
-		this.stickyElems.push( stickyElem );
-		this.idGenerator++;
+		if ( ! stickyElem.elem ) {
+			return;
+		}
+
+		stickyElem.orderInPage = this.orderInPageCounter;
+		this.items.push( stickyElem );
+		this.orderInPageCounter++;
 	}
 
 	/**
 	 * Run all the processes.
 	 */
 	run() {
-		this.stickyElems.forEach( s => this.update( s ) );
-		this.stickyElems.forEach( s => this.align( s ) );
+		this.items.forEach( s => s.elem && this.update( s ) );
+		this.items.forEach( s => s.elem && this.align( s ) );
 	}
 
 	/**
 	 * Update the data for the sticky elements.
 	 *
-	 * @param stickyElem The sticky element to update.
+	 * @param sticky The sticky element to update.
 	 */
-	update( stickyElem: StickyData ) {
+	update( sticky: StickyData ) {
 
 		// DEBUG
 		// @ts-ignore
 		if ( window?.debugSticky ) {
-			if ( stickyElem.container ) {
-				stickyElem.container.style.border = '1px dashed black';
+			if ( sticky.container ) {
+				sticky.container.style.border = '1px dashed black';
 			}
-			stickyElem.elem.style.border = '1px dashed red';
+			sticky.elem.style.border = '1px dashed red';
 		}
 
-		stickyElem.status = 'inactive';
+		sticky.status = 'inactive';
 
 		/**
 		 * Check for early activation
@@ -298,46 +320,55 @@ class StickyRunner {
 		 * A dormant sticky element is an element that is going to be activated very soon.
 		 * This is used for making additonal preparation before the other will become active, like calculation the opacity for the fade effect (the element will go transparent before the next element is activated).
 		 */
-		 if ( this.getCurrentPosition( stickyElem, this.calculateEarlyActivation( stickyElem ) ) ) {
-			stickyElem.status = 'dormant';
+		if ( this.getCurrentPosition( sticky, this.calculateEarlyActivation( sticky ) ) ) {
+			sticky.status = 'dormant';
 		}
 
 		// Check if the scroll with the activation offset has passed the top of the element
-		stickyElem.positionStatus = this.getCurrentPosition( stickyElem, 'o-sticky-bhvr-stack' === stickyElem.config.behaviour ? this.calculateGap( stickyElem ) : 0 );
-		if ( stickyElem.positionStatus !== positions.NONE ) {
-			stickyElem.status = 'active';
+		sticky.positionStatus = this.getCurrentPosition( sticky, 'o-sticky-bhvr-stack' === sticky.config.behaviour ? this.calculateGap( sticky ) : 0 );
+		if ( sticky.positionStatus !== positions.NONE ) {
+			sticky.status = 'active';
 		}
 	}
 
 	/**
 	 * Align the sticky element.
 	 *
-	 * @param stickyElem The sticky element to align.
+	 * @param sticky The sticky element to align.
 	 */
-	align( stickyElem: StickyData ) {
-		if ( 'inactive' === stickyElem.status ) {
-			stickyElem.elem.style.position = 'relative';
-			stickyElem.elem.style.zIndex = ( 9999 + ( stickyElem.index || 0 ) ).toString();
+	align( sticky: StickyData ) {
+
+		if ( 800 > window.innerWidth && ! sticky.config.useOnMobile ) {
+			return;
 		}
 
-		if ( 'active' === stickyElem.status ) {
+		const cssStyling: string[] = [];
 
-			if ( ! stickyElem.config.isFloatMode ) {
-				stickyElem.elem.style.transition = 'transform 2s';
-			}
+		if ( 'inactive' === sticky.status ) {
+			cssStyling.push( 'position: relative !important' );
+			cssStyling.push( `z-index: ${( 9999 + ( sticky.orderInPage || 0 ) ).toString()}` );
+		}
+
+		if ( 'active' === sticky.status ) {
 
 			// Make de element sticky
-			stickyElem.elem.classList.add( 'o-is-sticky' );
-			stickyElem.elem.style.width = stickyElem.displayWidth;
-			stickyElem.elem.style.position = 'fixed';
+			sticky.elem.classList.add( 'o-is-sticky' );
+
+
+			if ( ! sticky.config.isFloatMode ) {
+				cssStyling.push( 'transition: transform 2s' );
+			}
+
+			cssStyling.push( `width: ${sticky.displayWidth} !important` );
+			cssStyling.push( 'position: fixed !important' );
 
 			// Make the container height to be fixed
-			if ( stickyElem.container && 'BODY' !== stickyElem.container.tagName ) {
-				stickyElem.container.style.height = 0 < stickyElem.containerHeight ? stickyElem.containerHeight + 'px' : '';
+			if ( sticky.container && 'BODY' !== sticky.container.tagName ) {
+				sticky.container.style.height = 0 < sticky.containerHeight ? sticky.containerHeight + 'px' : '';
 			}
 
 			// Calculate the gap for stacked elements
-			const gap = 'o-sticky-bhvr-stack' === stickyElem.config.behaviour ? this.calculateGap( stickyElem ) : 0;
+			const gap = 'o-sticky-bhvr-stack' === sticky.config.behaviour ? this.calculateGap( sticky ) : 0;
 
 			// Get the scroll values
 			const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -346,67 +377,64 @@ class StickyRunner {
 			/**
 			 * Aling on vertical axis
 			 */
-			if ( stickyElem.config.isFloatMode ) {
-				console.log( stickyElem.sideOffset, stickyElem.sideOffset.includes( '%' ), 100 <= parseInt( stickyElem.sideOffset ) );
-				if ( ! stickyElem.elem.classList.contains( 'alignfull' ) ) {
-					if ( 'left' === stickyElem.side ) {
-						stickyElem.elem.style.left = stickyElem.sideOffset;
+			if ( sticky.config.isFloatMode ) {
+				console.log( sticky.sideOffset, sticky.sideOffset.includes( '%' ), 100 <= parseInt( sticky.sideOffset ) ); // TODO: remove aster review
+				if ( ! sticky.elem.classList.contains( 'alignfull' ) ) {
+					if ( 'left' === sticky.side ) {
+						cssStyling.push( `left: ${sticky.sideOffset}` );
 					} else {
-						stickyElem.elem.style.right = stickyElem.sideOffset;
+						cssStyling.push( `right: ${sticky.sideOffset}` );
 					}
 				}
 
 			} else {
-				stickyElem.elem.style.left = stickyElem.elemLeftPositionInPage + 'px';
+				cssStyling.push( `left: ${sticky.elemLeftPositionInPage}px` );
 			}
 
 			/**
 			 * Align on vertical axis.
 			 */
-			switch ( stickyElem.positionStatus ) {
+			switch ( sticky.positionStatus ) {
 			case positions.TOP:
-				stickyElem.elem.style.top = '0px';
-				stickyElem.elem.style.transform = `translateY(${( stickyElem.offsetY + gap )}px)`;
+				cssStyling.push( 'top: 0px' );
+				cssStyling.push( `transform: translateY(${( sticky.offsetY + gap )}px)` );
 				break;
 			case positions.BOTTOM:
-				stickyElem.elem.style.bottom = ( stickyElem.offsetY + gap ) + 'px';
-				stickyElem.elem.style.transform = 'unset';
+				cssStyling.push( `bottom: ${sticky.offsetY + gap}px` );
+				cssStyling.push( 'transform: unset' );
 				break;
 			case positions.CONSTRAIN_TOP:
-				stickyElem.elem.style.top = '0px';
-				stickyElem.elem.style.transform = `translateY(${stickyElem.containerBottomPosition - stickyElem.height - scrollTop}px)`;
+				cssStyling.push( 'top: 0px' );
+				cssStyling.push( `transform: translateY(${( sticky.containerBottomPosition - sticky.height - scrollTop )}px)` );
 				break;
 			case positions.CONSTRAIN_BOTTOM:
-				stickyElem.elem.style.bottom = '0px';
-				stickyElem.elem.style.transformOrigin = 'left bottom';
-				stickyElem.elem.style.transform = `translateY(${stickyElem.containerBottomPosition - scrollBottom}px)`;
+				cssStyling.push( 'bottom: 0px' );
+				cssStyling.push( 'transform-origin: left bottom' );
+				cssStyling.push( `transform: translateY(${sticky.containerBottomPosition - scrollBottom}px)` );
 				break;
 			default:
-				console.warn( 'Unknown position', stickyElem.positionStatus );
+				console.warn( 'Unknown position', sticky.positionStatus );
 			}
-			this.insertPlaceholder( stickyElem );
+			this.insertPlaceholder( sticky );
 
-			if ( 'o-sticky-bhvr-hide' === stickyElem.config.behaviour ) {
-				stickyElem.elem.style.opacity = easeOutQuad( this.calculateOpacity( stickyElem ) ).toString();
+			if ( 'o-sticky-bhvr-hide' === sticky.config.behaviour ) {
+				cssStyling.push( `opacity: ${easeOutQuad( this.calculateOpacity( sticky ) ).toString()}` );
 			}
+
 		} else {
-			stickyElem.isActive = false;
+			sticky.isActive = false;
 
 			// Clean up the sticky option from the element when is not active
-			stickyElem.elem.classList.remove( 'o-is-sticky' );
-			stickyElem.elem.style.top = '';
-			stickyElem.elem.style.left = '';
-			stickyElem.elem.style.transform = '';
-			stickyElem.elem.style.opacity = '';
-			stickyElem.elem.style.width = '';
-			stickyElem.elem.style.transition = '';
+			sticky.elem.classList.remove( 'o-is-sticky' );
+			this.removePlaceholder( sticky );
+		}
 
-			if ( 'inactive' !== stickyElem.status ) {
-				stickyElem.elem.style.position = '';
-				stickyElem.elem.style.zIndex = '';
-			}
+		sticky.styling = cssStyling.join( ';\n' );
 
-			this.removePlaceholder( stickyElem );
+		if ( sticky.isActive || sticky.isDormant ) {
+			sticky.elem.classList.add( sticky.stylingNodeName );
+		} else {
+			sticky.elem.classList.remove( sticky.stylingNodeName );
 		}
 	}
 
@@ -414,7 +442,7 @@ class StickyRunner {
 	 * Update the left position of the sticky element.
 	 */
 	resize() {
-		for ( const sticky of this.stickyElems ) {
+		for ( const sticky of this.items ) {
 			sticky.elemLeftPositionInPage = ( sticky.isActive ? sticky.placeholder : sticky.elem ).getBoundingClientRect().left + sticky.scrollLeft;
 		}
 	}
@@ -422,60 +450,60 @@ class StickyRunner {
 	/**
 	 * Insert the placeholder.
 	 *
-	 * @param stickyElem The sticky element to insert placeholder.
+	 * @param sticky The sticky element to insert placeholder.
 	 */
-	insertPlaceholder( stickyElem: StickyData ) {
-		if ( ! stickyElem.config.isFloatMode && ! stickyElem.elem.parentElement.contains( stickyElem.placeholder ) ) {
-			stickyElem.elem.parentElement.insertBefore( stickyElem.placeholder, stickyElem.elem );
+	insertPlaceholder( sticky: StickyData ) {
+		if ( ! sticky.config.isFloatMode && ! sticky.elem.parentElement.contains( sticky.placeholder ) ) {
+			sticky.elem.parentElement.insertBefore( sticky.placeholder, sticky.elem );
 		}
 	}
 
 	/**
 	 * Remove the placeholder.
 	 *
-	 * @param stickyElem The sticky element to remove placeholder.
+	 * @param sticky The sticky element to remove placeholder.
 	 */
-	removePlaceholder( stickyElem: StickyData ) {
-		if ( ! stickyElem.config.isFloatMode && stickyElem.elem.parentElement.contains( stickyElem.placeholder ) ) {
-			stickyElem.elem.parentElement.removeChild( stickyElem.placeholder );
+	removePlaceholder( sticky: StickyData ) {
+		if ( ! sticky.config.isFloatMode && sticky.elem.parentElement.contains( sticky.placeholder ) ) {
+			sticky.elem.parentElement.removeChild( sticky.placeholder );
 		}
 	}
 
 	/**
 	 * Get the sticky element current position.
 	 *
-	 * @param stickyElem The sticky element.
+	 * @param sticky The sticky element.
 	 * @param earlyActivation Add on offset to activate eraly in case of multiple sticky elements.
 	 * @returns
 	 */
-	getCurrentPosition( stickyElem: StickyData, earlyActivation: number = 0 ): string {
+	getCurrentPosition( sticky: StickyData, earlyActivation: number = 0 ): typeof positions[Position] {
 		const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
 		const scrollBottom = scrollTop + window.innerHeight;
 
-		if ( 'top' === stickyElem.position &&
+		if ( 'top' === sticky.position &&
 			( (
-				( scrollTop + stickyElem.activationOffset + earlyActivation > stickyElem.elemTopPositionInPage ) &&
-				( ! stickyElem.container || scrollTop + stickyElem.activationOffset + stickyElem.height + earlyActivation < stickyElem.containerBottomPosition )
-			) || stickyElem.config.isFloatMode )
+				( scrollTop + sticky.activationOffset + earlyActivation > sticky.elemTopPositionInPage ) &&
+				( ! sticky.container || scrollTop + sticky.activationOffset + sticky.height + earlyActivation < sticky.containerBottomPosition )
+			) || sticky.config.isFloatMode )
 		) {
 			return positions.TOP;
 		}
 
-		if ( 'bottom' === stickyElem.position &&
+		if ( 'bottom' === sticky.position &&
 			( (
-				( scrollBottom - stickyElem.activationOffset - earlyActivation > stickyElem.elemBottomPositionInPage ) &&
-				( ! stickyElem.container || scrollBottom - stickyElem.activationOffset - earlyActivation < stickyElem.containerBottomPosition )
-			) || stickyElem.config.isFloatMode )
+				( scrollBottom - sticky.activationOffset - earlyActivation > sticky.elemBottomPositionInPage ) &&
+				( ! sticky.container || scrollBottom - sticky.activationOffset - earlyActivation < sticky.containerBottomPosition )
+			) || sticky.config.isFloatMode )
 		) {
 			return positions.BOTTOM;
 		}
 
-		if ( stickyElem.container ) {
-			if ( 'top' === stickyElem.position && ( ( scrollTop + stickyElem.activationOffset + stickyElem.height + earlyActivation > stickyElem.containerBottomPosition ) || stickyElem.config.isFloatMode ) ) {
+		if ( sticky.container ) {
+			if ( 'top' === sticky.position && ( ( scrollTop + sticky.activationOffset + sticky.height + earlyActivation > sticky.containerBottomPosition ) || sticky.config.isFloatMode ) ) {
 				return positions.CONSTRAIN_TOP;
 			}
 
-			if ( 'bottom' === stickyElem.position && ( ( scrollBottom - stickyElem.activationOffset - earlyActivation >= stickyElem.containerBottomPosition ) || stickyElem.config.isFloatMode ) ) {
+			if ( 'bottom' === sticky.position && ( ( scrollBottom - sticky.activationOffset - earlyActivation >= sticky.containerBottomPosition ) || sticky.config.isFloatMode ) ) {
 				return positions.CONSTRAIN_BOTTOM;
 			}
 		}
@@ -487,16 +515,16 @@ class StickyRunner {
 	 *
 	 * Calculate the gap between sticky element and the other that are before him in the same container.
 	 *
-	 * @param stickyElem The sticky element.
+	 * @param sticky The sticky element.
 	 */
-	calculateGap( stickyElem: StickyData ) {
+	calculateGap( sticky: StickyData ): number {
 		let gap = 0;
-		const blockWidth = stickyElem.elem.getBoundingClientRect()?.width || 0;
+		const blockWidth = sticky.elem.getBoundingClientRect()?.width || 0;
 
 		for ( const other of this.active ) {
-			if ( other.index !== stickyElem.index && other.container === stickyElem.container ) {
-				if ( other.index < stickyElem.index ) {
-					if ( 'o-sticky-bhvr-stack' === other.config?.behaviour && blockWidth > Math.abs( stickyElem.elemLeftPositionInPage - other.elemLeftPositionInPage ) ) {
+			if ( other.orderInPage !== sticky.orderInPage && other.container === sticky.container ) {
+				if ( other.orderInPage < sticky.orderInPage ) {
+					if ( 'o-sticky-bhvr-stack' === other.config?.behaviour && blockWidth > Math.abs( sticky.elemLeftPositionInPage - other.elemLeftPositionInPage ) ) {
 						gap += other.offset + other?.elem.getBoundingClientRect()?.height || 0;
 					}
 				}
@@ -509,15 +537,15 @@ class StickyRunner {
 	/**
 	 * Calculate the gap between the sticky element and other before him that are active.
 	 *
-	 * @param stickyElem The sticky element.
+	 * @param sticky The sticky element.
 	 * @returns
 	 */
-	calculateEarlyActivation( stickyElem: StickyData ): number {
+	calculateEarlyActivation( sticky: StickyData ): number {
 		let gap = 0;
 
 		for ( const other of this.active ) {
-			if ( other.index !== stickyElem.index ) {
-				if ( other.index < stickyElem.index ) {
+			if ( other.orderInPage !== sticky.orderInPage ) {
+				if ( other.orderInPage < sticky.orderInPage ) {
 					gap += other.activationOffset + ( other.elem?.getBoundingClientRect()?.height || 0 );
 				}
 			}
@@ -529,26 +557,26 @@ class StickyRunner {
 	/**
 	 * Calculate the opacity for the fade effect.
 	 *
-	 * @param stickyElem The sticky element to calculate the opacity.
+	 * @param sticky The sticky element to calculate the opacity.
 	 * @returns
 	 */
-	calculateOpacity( stickyElem: StickyData ): number {
+	calculateOpacity( sticky: StickyData ): number {
 		let opacity = 1;
 
-		const blockHeight = stickyElem.elem.getBoundingClientRect()?.height || 0;
-		const blockWidth = stickyElem.elem.getBoundingClientRect()?.width || 0;
-		const currentBottomPosInPage = blockHeight + stickyElem.config.offset + ( window.pageYOffset || document.documentElement.scrollTop );
+		const blockHeight = sticky.elem.getBoundingClientRect()?.height || 0;
+		const blockWidth = sticky.elem.getBoundingClientRect()?.width || 0;
+		const currentBottomPosInPage = blockHeight + sticky.config.offset + ( window.pageYOffset || document.documentElement.scrollTop );
 
 		for ( const other of [ ...this.dormant, ...this.active ]) {
-			if ( other.index === stickyElem.index ) {
+			if ( other.orderInPage === sticky.orderInPage ) {
 				continue;
 			}
-			if ( stickyElem.container === other.container ) {
-				if ( other.index > stickyElem.index ) {
+			if ( sticky.container === other.container ) {
+				if ( other.orderInPage > sticky.orderInPage ) {
 					const otherBlockHeight = other.elem.getBoundingClientRect()?.height || 0;
 
 					// Check if the the blocks collide / Check if the block in on top, and not left or right.
-					if ( blockWidth > Math.abs( stickyElem.elemLeftPositionInPage - other.elemLeftPositionInPage ) ) {
+					if ( blockWidth > Math.abs( sticky.elemLeftPositionInPage - other.elemLeftPositionInPage ) ) {
 						const height = Math.min( blockHeight, otherBlockHeight );
 						opacity = Math.min( 1, Math.max( 0, other.elemTopPositionInPage + height - currentBottomPosInPage ) / height );
 						return opacity;
@@ -566,7 +594,7 @@ class StickyRunner {
 	 * @returns
 	 */
 	get active(): StickyData[] {
-		return this.stickyElems.filter( stickyElem => 'active' === stickyElem.status );
+		return this.items.filter( stickyElem => 'active' === stickyElem.status );
 	}
 
 	/**
@@ -575,7 +603,11 @@ class StickyRunner {
 	 * @returns
 	 */
 	get dormant(): StickyData[] {
-		return this.stickyElems.filter( stickyElem => 'dormant' === stickyElem.status );
+		return this.items.filter( stickyElem => 'dormant' === stickyElem.status );
+	}
+
+	get isEmpty(): boolean {
+		return 0 === this.items.length;
 	}
 }
 
@@ -598,31 +630,37 @@ domReady( () => {
 		const runner = new StickyRunner();
 
 		elems.forEach( ( elem ) => {
-			if ( ! hasStyles ) {
-				const styleSheet = document.createElement( 'style' );
-				styleSheet.innerText = styles;
-				document.head.appendChild( styleSheet );
-				hasStyles = true;
+			try {
+				if ( ! hasStyles ) {
+					const styleSheet = document.createElement( 'style' );
+					styleSheet.innerText = styles;
+					document.head.appendChild( styleSheet );
+					hasStyles = true;
+				}
+
+				const config = getConfigOptions( elem );
+				const container = getStickyContainer( elem, config.scope );
+
+				runner.register( new StickyData(
+					elem as HTMLDivElement,
+					config,
+					container as HTMLDivElement
+				) );
+			} catch ( error ) {
+				console.error( error );
 			}
-
-			const config = getConfigOptions( elem );
-			const container = getStickyContainer( elem, config.scope );
-
-			runner.register( new StickyData(
-				elem as HTMLDivElement,
-				config,
-				container as HTMLDivElement
-			) );
 		});
 
-		runner.run();
-
-		window.addEventListener( 'scroll', () => {
+		if ( ! runner.isEmpty ) {
 			runner.run();
-		});
 
-		window.addEventListener( 'resize', () => {
-			runner.resize();
-		});
+			window.addEventListener( 'scroll', () => {
+				runner.run();
+			});
+
+			window.addEventListener( 'resize', () => {
+				runner.resize();
+			});
+		}
 	}, [ 'lottie' ]);
 });
