@@ -7,15 +7,41 @@ import { clamp } from 'lodash';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
-	InspectorControls
+	InspectorControls,
+	PanelColorSettings
 } from '@wordpress/block-editor';
 
 import {
 	PanelBody,
 	RangeControl,
 	SelectControl,
-	TextControl
+	TextControl,
+	FontSizePicker
 } from '@wordpress/components';
+import { Fragment } from '@wordpress/element';
+
+const defaultFontSizes = [
+	{
+		name: __( 'Small', 'otter-blocks' ),
+		size: '0.875em',
+		slug: 'small'
+	},
+	{
+		name: __( 'Medium', 'otter-blocks' ),
+		size: '1em',
+		slug: 'medium'
+	},
+	{
+		name: __( 'Large', 'otter-blocks' ),
+		size: '1.125em',
+		slug: 'large'
+	},
+	{
+		name: __( 'XL', 'otter-blocks' ),
+		size: '1.25em',
+		slug: 'xl'
+	}
+];
 
 /**
  *
@@ -114,6 +140,41 @@ const Inspector = ({
 					step={ 0.1 }
 				/>
 
+			</PanelBody>
+
+			<PanelColorSettings
+				title={ __( 'Color', 'otter-blocks' ) }
+				initialOpen={ false }
+				colorSettings={ [
+					{
+						value: attributes.titleColor,
+						onChange: titleColor => setAttributes({ titleColor }),
+						label: __( 'Title', 'otter-blocks' )
+					},
+					{
+						value: attributes.barBackgroundColor,
+						onChange: barBackgroundColor => setAttributes({ barBackgroundColor }),
+						label: __( 'Progress', 'otter-blocks' )
+					},
+					{
+						value: attributes.percentageColor,
+						onChange: percentageColor => setAttributes({ percentageColor }),
+						label: __( 'Percentage', 'otter-blocks' )
+					},
+					{
+						value: attributes.backgroundColor,
+						onChange: backgroundColor => setAttributes({ backgroundColor }),
+						label: __( 'Background', 'otter-blocks' )
+					}
+				] }
+			>
+
+			</PanelColorSettings>
+
+			<PanelBody
+				title={ __( 'Style', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
 				{ 30 <= attributes.height && (
 					<SelectControl
 						label={ __( 'Title Style', 'otter-blocks' ) }
@@ -139,12 +200,7 @@ const Inspector = ({
 					] }
 					onChange={ selectPercentagePosition }
 				/>
-			</PanelBody>
 
-			<PanelBody
-				title={ __( 'Style', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
 				<RangeControl
 					label={ __( 'Height', 'otter-blocks' ) }
 					help={ __( 'The height of the progress bar.', 'otter-blocks' ) }
@@ -166,29 +222,22 @@ const Inspector = ({
 					max={ 35 }
 				/>
 
-				<ColorGradientControl
-					label={ __( 'Progress Color', 'otter-blocks' ) }
-					colorValue={ attributes.barBackgroundColor }
-					onColorChange={ onBarBackgroundColorChange }
-				/>
+				{
+					( ( 'outer' === attributes.titleStyle ) || ( 'tooltip' === attributes.percentagePosition && 'outer' === attributes.percentagePosition ) ) && (
+						<Fragment>
+							<h2>{__( 'Outer Text Font Size', 'otter-blocks' )}</h2>
+							<FontSizePicker
 
-				<ColorGradientControl
-					label={ __( 'Title Color', 'otter-blocks' ) }
-					colorValue={ attributes.titleColor }
-					onColorChange={ onTitleColorChange }
-				/>
+								fontSizes={ defaultFontSizes }
+								withReset
+								value={ attributes.titleFontSize }
+								onChange={ titleFontSize => setAttributes({ titleFontSize }) }
+							/>
+						</Fragment>
+					)
+				}
 
-				<ColorGradientControl
-					label={ __( 'Percentage Color', 'otter-blocks' ) }
-					colorValue={ attributes.percentageColor }
-					onColorChange={ onPerncetageColorChange }
-				/>
 
-				<ColorGradientControl
-					label={ __( 'Background Color', 'otter-blocks' ) }
-					colorValue={ attributes.backgroundColor }
-					onColorChange={ onBackgroundColorChange }
-				/>
 			</PanelBody>
 		</InspectorControls>
 	);
