@@ -56,6 +56,7 @@
 		"@semantic-release/git": "^10.0.1",
 		"@types/wordpress__block-editor": "^7.0.0",
 		"@types/wordpress__components": "^19.10.1",
+		"@typescript-eslint/parser": "^5.36.1",
 		"@wordpress/block-editor": "^9.8.0",
 		"@wordpress/components": "^20.0.0",
 		"@wordpress/compose": "^5.14.0",
