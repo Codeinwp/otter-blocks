@@ -157,17 +157,18 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_terms( $data ) {
-		$terms     = '';
-		$separator = ', ';
+		$terms             = '';
+		$separator         = ', ';
+		$id                = get_queried_object_id();
 
 		if ( isset( $data['termSeparator'] ) && ! empty( $data['termSeparator'] ) ) {
 			$separator = esc_html( $data['termSeparator'] );
 		}
 
 		if ( isset( $data['termType'] ) && 'tags' === $data['termType'] ) {
-			$terms = get_the_tag_list( '', $separator );
+			$terms = get_the_tag_list( '', $separator, '', $id );
 		} else {
-			$terms = get_the_category_list( $separator );
+			$terms = get_the_category_list( $separator, '', $id );
 		}
 
 		return $terms;
@@ -182,7 +183,7 @@ class Dynamic_Content {
 	 */
 	public function get_post_meta( $data ) {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$id      = get_the_ID();
+		$id      = get_queried_object_id();
 		$meta    = get_post_meta( $id, esc_html( $data['metaKey'] ), true );
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
@@ -201,7 +202,7 @@ class Dynamic_Content {
 	 */
 	public function get_acf( $data ) {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$id      = get_the_ID();
+		$id      = get_queried_object_id();
 		$meta    = get_field( esc_html( $data['metaKey'] ), $id, true );
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
@@ -220,7 +221,8 @@ class Dynamic_Content {
 	 */
 	public function get_author_meta( $data ) {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$meta    = get_the_author_meta( esc_html( $data['metaKey'] ) );
+		$id      = get_queried_object_id();
+		$meta    = get_the_author_meta( esc_html( $data['metaKey'] ), get_post_field( 'post_author', $id ) );
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;

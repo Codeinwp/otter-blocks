@@ -113,8 +113,10 @@ class Dynamic_Content {
 
 		global $post;
 
-		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] || ( is_singular() && $data['context'] !== $post->ID ) ) ) {
-			$data['context'] = $post->ID;
+		$id = ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ? $post->ID : get_queried_object_id();
+
+		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
+			$data['context'] = $id;
 		}
 
 		if ( isset( $data['fallback'] ) && ! empty( $data['fallback'] ) ) {
@@ -214,6 +216,7 @@ class Dynamic_Content {
 		 * the displayed post is being used as a source for the dynamic tags. Eg. Custom Layouts inside Neve.
 		 */
 		$queried_object_id = get_queried_object_id();
+
 		if ( ! isset( $data['type'] ) && isset( $data['default'] ) ) {
 			return esc_html( $data['default'] );
 		}
@@ -247,11 +250,11 @@ class Dynamic_Content {
 		}
 
 		if ( 'authorName' === $data['type'] ) {
-			return get_the_author_meta( 'display_name' );
+			return get_the_author_meta( 'display_name', get_post_field( 'post_author', $queried_object_id ) );
 		}
 
 		if ( 'authorDescription' === $data['type'] ) {
-			return get_the_author_meta( 'description' );
+			return get_the_author_meta( 'description', get_post_field( 'post_author', $queried_object_id ) );
 		}
 
 		if ( 'loggedInUserName' === $data['type'] ) {
@@ -293,7 +296,8 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_excerpt( $data ) {
-		$post    = get_post();
+		$id      = get_queried_object_id();
+		$post    = get_post( $id );
 		$excerpt = $post->post_excerpt; // Here we don't use get_the_excerpt() function as it causes an infinite loop.
 
 		if ( empty( $excerpt ) ) {
@@ -502,8 +506,10 @@ class Dynamic_Content {
 			return;
 		}
 
+		$queried_object_id = get_queried_object_id();
+
 		if ( 'postURL' === $data['type'] ) {
-			return get_the_permalink();
+			return get_the_permalink( $queried_object_id );
 		}
 
 		if ( 'siteURL' === $data['type'] ) {
@@ -511,15 +517,15 @@ class Dynamic_Content {
 		}
 
 		if ( 'featuredImageURL' === $data['type'] ) {
-			return wp_get_attachment_url( get_post_thumbnail_id( get_the_ID() ) );
+			return wp_get_attachment_url( get_post_thumbnail_id( $queried_object_id ) );
 		}
 
 		if ( 'authorURL' === $data['type'] ) {
-			return get_author_posts_url( get_post_field( 'post_author', get_the_ID() ) );
+			return get_author_posts_url( get_post_field( 'post_author', $queried_object_id ) );
 		}
 
 		if ( 'authorWebsite' === $data['type'] ) {
-			return get_the_author_meta( 'url' );
+			return get_the_author_meta( 'url', get_post_field( 'post_author', $queried_object_id ) );
 		}
 
 		return apply_filters( 'otter_blocks_evaluate_dynamic_content_link', '', $data );
