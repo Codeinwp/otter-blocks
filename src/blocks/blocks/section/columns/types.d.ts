@@ -1,4 +1,4 @@
-import { BlockProps, BorderType, ImagePosition, InspectorProps, MarginType, MediaImageProps, PaddingType } from '../../../helpers/blocks'
+import { BlockProps, BorderType, ImagePosition, InspectorProps, MarginType, MediaImageProps, PaddingType } from '../../../helpers/blocks';
 
 type Attributes = {
 	id: string
