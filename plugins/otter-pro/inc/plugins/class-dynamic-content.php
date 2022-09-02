@@ -157,9 +157,9 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_terms( $data ) {
-		$terms             = '';
-		$separator         = ', ';
-		$id                = get_queried_object_id();
+		$terms     = '';
+		$separator = ', ';
+		$id        = get_queried_object_id();
 
 		if ( isset( $data['termSeparator'] ) && ! empty( $data['termSeparator'] ) ) {
 			$separator = esc_html( $data['termSeparator'] );

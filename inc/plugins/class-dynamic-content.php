@@ -222,7 +222,7 @@ class Dynamic_Content {
 		}
 
 		if ( 'postID' === $data['type'] ) {
-			return get_the_id( $queried_object_id );
+			return get_the_id();
 		}
 
 		if ( 'postTitle' === $data['type'] ) {
@@ -509,7 +509,7 @@ class Dynamic_Content {
 		$queried_object_id = get_queried_object_id();
 
 		if ( 'postURL' === $data['type'] ) {
-			return get_the_permalink( $queried_object_id );
+			return get_the_permalink( get_the_ID() );
 		}
 
 		if ( 'siteURL' === $data['type'] ) {
