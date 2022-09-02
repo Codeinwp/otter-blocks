@@ -30,6 +30,10 @@ import {
 	useState
 } from '@wordpress/element';
 
+import {
+	close
+} from '@wordpress/icons';
+
 /**
  * Internal dependencies
  */
@@ -311,14 +315,11 @@ const IconPickerControl = ({
 									}
 								}) }
 							</div>
-							<div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+							<div style={{ display: 'flex', justifyContent: 'flex-end', position: 'absolute', top: '10px', right: '5px' }}>
 								<Button
-									variant='tertiary'
 									onClick={ onToggle }
-									style={{ marginTop: '5px' }}
-								>
-									{ __( 'Close', 'otter-blocks' ) }
-								</Button>
+									icon={ close }
+								/>
 							</div>
 						</MenuGroup>
 					);
