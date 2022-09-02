@@ -31,7 +31,7 @@ import {
 } from '@wordpress/element';
 
 import {
-	close
+	closeSmall
 } from '@wordpress/icons';
 
 /**
@@ -315,10 +315,10 @@ const IconPickerControl = ({
 									}
 								}) }
 							</div>
-							<div style={{ display: 'flex', justifyContent: 'flex-end', position: 'absolute', top: '10px', right: '5px' }}>
+							<div style={{ display: 'flex', justifyContent: 'flex-end', position: 'absolute', top: '11px', right: '5px' }}>
 								<Button
 									onClick={ onToggle }
-									icon={ close }
+									icon={ closeSmall }
 								/>
 							</div>
 						</MenuGroup>
