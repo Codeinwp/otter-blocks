@@ -12,12 +12,12 @@ import { RichTextToolbarButton } from '@wordpress/block-editor';
 
 import { Modal } from '@wordpress/components';
 
+import { useSelect } from '@wordpress/data';
+
 import {
 	Fragment,
 	useState
 } from '@wordpress/element';
-
-import { applyFilters } from '@wordpress/hooks';
 
 import { toggleFormat } from '@wordpress/rich-text';
 
@@ -28,7 +28,6 @@ import {
 	format as settings,
 	name
 } from './index.js';
-import options from './options.js';
 import Fields from './fields.js';
 import InlineControls from '../components/inline-controls.js';
 
@@ -39,6 +38,19 @@ const Edit = ({
 	activeAttributes,
 	contentRef
 }) => {
+	const { isQueryChild } = useSelect( select => {
+		const {
+			getSelectedBlock,
+			getBlockParentsByBlockName
+		} = select( 'core/block-editor' );
+
+		const currentBlock = getSelectedBlock();
+
+		return {
+			isQueryChild: 0 < getBlockParentsByBlockName( currentBlock?.clientId, 'core/query' ).length
+		};
+	}, []);
+
 	const [ isOpen, setOpen ] = useState( false );
 
 	const [ attributes, setAttributes ] = useState({});
@@ -60,20 +72,10 @@ const Edit = ({
 	};
 
 	const onApply = () => {
-		const autocompleteOptions = [];
 		const attrs = Object.fromEntries( Object.entries( attributes ).filter( ([ _, v ]) => ( null !== v && '' !== v && undefined !== v ) ) );
 
-		if ( value.start === value.end ) { // Here we try to append the format if no text is selected.
-			const dynamicOptions = applyFilters( 'otter.dynamicContent.link.options', options );
-
-			Object.keys( dynamicOptions ).forEach( option => autocompleteOptions.push( ...dynamicOptions[option].options ) );
-
-			const text = autocompleteOptions.find( i => i.value === attrs.type ).label;
-
-			value.text = value.text.substring( 0, value.start ) + text + value.text.substring( value.start );
-			value.end = text.length + value.start;
-			value.formats.splice( value.start, 0, ...new Array( text.length ) );
-			value.replacements.splice( value.start, 0, ...new Array( text.length ) );
+		if ( isQueryChild ) {
+			attrs.context = 'query';
 		}
 
 		onChange(

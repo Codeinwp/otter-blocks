@@ -19,6 +19,7 @@ export const format = {
 	className: null,
 	attributes: {
 		type: 'data-type',
+		context: 'data-context',
 		target: 'data-target',
 		metaKey: 'data-meta-key'
 	},

@@ -41,7 +41,7 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|data-term-type=["\'](?P<termType>[^"\'<>]+)["\']|data-term-separator=["\'](?P<termSeparator>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
+		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|data-term-type=["\'](?P<termType>[^"\'<>]+)["\']|data-term-separator=["\'](?P<termSeparator>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|data-context=["\'](?P<context>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_data' ), $content );
 	}
@@ -58,7 +58,7 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		$re = '/<o-dynamic-link(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-target=["\'](?P<target>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<text>[^ $].*?)<\s*\/\s*o-dynamic-link>/';
+		$re = '/<o-dynamic-link(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-target=["\'](?P<target>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|data-context=["\'](?P<context>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<text>[^ $].*?)<\s*\/\s*o-dynamic-link>/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_link' ), $content );
 	}
@@ -211,22 +211,26 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_data( $data ) {
-		/*
-		 * We use the queried object ID to make sure when posts are displayed inside other posts
-		 * the displayed post is being used as a source for the dynamic tags. Eg. Custom Layouts inside Neve.
-		 */
-		$queried_object_id = get_queried_object_id();
+		if ( isset( $data['context'] ) && 'query' === $data['context'] ) {
+			$data['context'] = get_the_ID();
+		} else {
+			/*
+			 * We use the queried object ID to make sure when posts are displayed inside other posts
+			 * the displayed post is being used as a source for the dynamic tags. Eg. Custom Layouts inside Neve.
+			 */
+			$data['context'] = get_queried_object_id();
+		}
 
 		if ( ! isset( $data['type'] ) && isset( $data['default'] ) ) {
 			return esc_html( $data['default'] );
 		}
 
 		if ( 'postID' === $data['type'] ) {
-			return get_the_id();
+			return $data['context'];
 		}
 
 		if ( 'postTitle' === $data['type'] ) {
-			return get_the_title( $queried_object_id );
+			return get_the_title( $data['context'] );
 		}
 
 		if ( 'postExcerpt' === $data['type'] ) {
@@ -234,11 +238,11 @@ class Dynamic_Content {
 		}
 
 		if ( 'postType' === $data['type'] ) {
-			return get_post_type( $queried_object_id );
+			return get_post_type( $data['context'] );
 		}
 
 		if ( 'postStatus' === $data['type'] ) {
-			return get_post_status( $queried_object_id );
+			return get_post_status( $data['context'] );
 		}
 
 		if ( 'siteTitle' === $data['type'] ) {
@@ -250,11 +254,11 @@ class Dynamic_Content {
 		}
 
 		if ( 'authorName' === $data['type'] ) {
-			return get_the_author_meta( 'display_name', get_post_field( 'post_author', $queried_object_id ) );
+			return get_the_author_meta( 'display_name', get_post_field( 'post_author', $data['context'] ) );
 		}
 
 		if ( 'authorDescription' === $data['type'] ) {
-			return get_the_author_meta( 'description', get_post_field( 'post_author', $queried_object_id ) );
+			return get_the_author_meta( 'description', get_post_field( 'post_author', $data['context'] ) );
 		}
 
 		if ( 'loggedInUserName' === $data['type'] ) {
@@ -296,8 +300,7 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_excerpt( $data ) {
-		$id      = get_queried_object_id();
-		$post    = get_post( $id );
+		$post    = get_post( $data['context'] );
 		$excerpt = $post->post_excerpt; // Here we don't use get_the_excerpt() function as it causes an infinite loop.
 
 		if ( empty( $excerpt ) ) {
@@ -506,10 +509,14 @@ class Dynamic_Content {
 			return;
 		}
 
-		$queried_object_id = get_queried_object_id();
+		if ( isset( $data['context'] ) && 'query' === $data['context'] ) {
+			$data['context'] = get_the_ID();
+		} else {
+			$data['context'] = get_queried_object_id();
+		}
 
 		if ( 'postURL' === $data['type'] ) {
-			return get_the_permalink( get_the_ID() );
+			return get_the_permalink( $data['context'] );
 		}
 
 		if ( 'siteURL' === $data['type'] ) {
@@ -517,15 +524,15 @@ class Dynamic_Content {
 		}
 
 		if ( 'featuredImageURL' === $data['type'] ) {
-			return wp_get_attachment_url( get_post_thumbnail_id( $queried_object_id ) );
+			return wp_get_attachment_url( get_post_thumbnail_id( $data['context'] ) );
 		}
 
 		if ( 'authorURL' === $data['type'] ) {
-			return get_author_posts_url( get_post_field( 'post_author', $queried_object_id ) );
+			return get_author_posts_url( get_post_field( 'post_author', $data['context'] ) );
 		}
 
 		if ( 'authorWebsite' === $data['type'] ) {
-			return get_the_author_meta( 'url', get_post_field( 'post_author', $queried_object_id ) );
+			return get_the_author_meta( 'url', get_post_field( 'post_author', $data['context'] ) );
 		}
 
 		return apply_filters( 'otter_blocks_evaluate_dynamic_content_link', '', $data );

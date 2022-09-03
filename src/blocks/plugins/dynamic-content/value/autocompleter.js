@@ -10,6 +10,8 @@ import { __ } from '@wordpress/i18n';
 
 import { addFilter } from '@wordpress/hooks';
 
+import { select } from '@wordpress/data';
+
 /**
  * Internal dependencies.
  */
@@ -43,9 +45,21 @@ const dynamicValue = {
 		</span>
 	),
 	isOptionDisabled: option => option.isDisabled,
-	getOptionCompletion: ({ label, value }) => (
-		<o-dynamic data-type={ value }>{ label }</o-dynamic>
-	)
+	getOptionCompletion: ({ label, value }) => {
+		const {
+			getSelectedBlock,
+			getBlockParentsByBlockName
+		} = select( 'core/block-editor' );
+
+		const currentBlock = getSelectedBlock();
+		const isQueryChild = 0 < getBlockParentsByBlockName( currentBlock?.clientId, 'core/query' ).length;
+
+		if ( isQueryChild ) {
+			return <o-dynamic data-type={ value } data-context="query">{ label }</o-dynamic>;
+		}
+
+		return <o-dynamic data-type={ value }>{ label }</o-dynamic>;
+	}
 };
 
 const appenddDynamicValueCompleter = completers => [ ...completers, dynamicValue ];

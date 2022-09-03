@@ -20,6 +20,7 @@ export const format = {
 	className: null,
 	attributes: {
 		type: 'data-type',
+		context: 'data-context',
 		before: 'data-before',
 		after: 'data-after',
 		length: 'data-length',

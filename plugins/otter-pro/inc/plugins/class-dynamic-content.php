@@ -159,16 +159,15 @@ class Dynamic_Content {
 	public function get_terms( $data ) {
 		$terms     = '';
 		$separator = ', ';
-		$id        = get_queried_object_id();
 
 		if ( isset( $data['termSeparator'] ) && ! empty( $data['termSeparator'] ) ) {
 			$separator = esc_html( $data['termSeparator'] );
 		}
 
 		if ( isset( $data['termType'] ) && 'tags' === $data['termType'] ) {
-			$terms = get_the_tag_list( '', $separator, '', $id );
+			$terms = get_the_tag_list( '', $separator, '', $data['context'] );
 		} else {
-			$terms = get_the_category_list( $separator, '', $id );
+			$terms = get_the_category_list( $separator, '', $data['context'] );
 		}
 
 		return $terms;
@@ -183,8 +182,7 @@ class Dynamic_Content {
 	 */
 	public function get_post_meta( $data ) {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$id      = get_queried_object_id();
-		$meta    = get_post_meta( $id, esc_html( $data['metaKey'] ), true );
+		$meta    = get_post_meta( $data['context'], esc_html( $data['metaKey'] ), true );
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;
@@ -202,8 +200,7 @@ class Dynamic_Content {
 	 */
 	public function get_acf( $data ) {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$id      = get_queried_object_id();
-		$meta    = get_field( esc_html( $data['metaKey'] ), $id, true );
+		$meta    = get_field( esc_html( $data['metaKey'] ), $data['context'], true );
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;
@@ -221,8 +218,7 @@ class Dynamic_Content {
 	 */
 	public function get_author_meta( $data ) {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$id      = get_queried_object_id();
-		$meta    = get_the_author_meta( esc_html( $data['metaKey'] ), get_post_field( 'post_author', $id ) );
+		$meta    = get_the_author_meta( esc_html( $data['metaKey'] ), get_post_field( 'post_author', $data['context'] ) );
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;
