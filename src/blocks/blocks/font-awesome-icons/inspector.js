@@ -136,7 +136,7 @@ const Inspector = ({
 					<FontSizePicker
 						fontSizes={ defaultFontSizes }
 						withReset
-						value={ attributes.fontSize ?? '32px' }
+						value={ attributes.fontSize ?? '16px' }
 						onChange={ fontSize =>  setAttributes({ fontSize }) }
 					/>
 				</SyncControl>
