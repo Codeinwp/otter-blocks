@@ -280,6 +280,10 @@ class Registration {
 		$installed_thru_sdk   = get_option( 'themeisle_sdk_promotions_otter_installed', false );
 		$otter_blocks_install = get_option( 'otter_blocks_install' );
 
+		if( defined( 'ENABLE_OTTER_PRO_DEV' ) ) {
+			return false;
+		}
+
 		if ( ! $onboarding_option ) {
 			return false;
 		}
