@@ -74,6 +74,7 @@ const LinkControlToolbar = ({
 						setAttributes({ newTab: newOpensInNewTab });
 					}
 				} }
+				onRemove={ unlinkButton}
 			/>
 		</Popover>
 	);
@@ -98,7 +99,7 @@ const LinkControlToolbar = ({
 						icon={ linkOff }
 						title={ __( 'Unlink', 'otter-blocks' ) }
 						shortcut={ displayShortcut.primaryShift( 'k' ) }
-						onClick={ unlinkButton }
+						onClick={ Boolean( window.themeisleGutenberg.isLegacyPre59 ) ? unlinkButton : openLinkControl }
 						isActive={ true }
 						className="o-toolbar-icon"
 					/>
