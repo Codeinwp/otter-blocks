@@ -1,4 +1,4 @@
-import { BlockProps, InspectorProps } from '../../helpers/blocks'
+import { BlockProps, InspectorProps } from '../../helpers/blocks';
 
 type Attributes = {
 	id: string
@@ -41,6 +41,7 @@ type Attributes = {
 	messageFontSize: number
 	inputFontSize: number
 	helpFontSize: number
+	inputBackgroundColor: string
 }
 
 export type FormProps = BlockProps<Attributes>

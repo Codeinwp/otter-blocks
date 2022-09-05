@@ -1,7 +1,7 @@
 import {
 	BlockProps,
 	InspectorProps
-} from "../../../helpers/blocks"
+} from '../../../helpers/blocks';
 
 type Attributes = {
 	id: string

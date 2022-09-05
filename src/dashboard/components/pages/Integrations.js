@@ -25,7 +25,7 @@ import { applyFilters } from '@wordpress/hooks';
 /**
  * Internal dependencies.
  */
-import useSettings from '../../hooks/settings.js';
+import useSettings from '../../../blocks/helpers/use-settings.js';
 
 const Integrations = () => {
 	const [ getOption, updateOption, status ] = useSettings();
