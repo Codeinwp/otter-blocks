@@ -158,9 +158,12 @@ const speed = [ 'none', 'slow', 'slower', 'fast', 'faster' ];
 
 window.addEventListener( 'load', () => {
 	const elements = document.querySelectorAll( '.animated' );
+
 	for ( const element of elements ) {
 		classes = element.classList;
 		element.animationClasses = [];
+
+		classes.add( 'o-anim-ready' );
 
 		if ( ! isElementInViewport( element ) ) {
 			const animationClass = animations.find( ( i ) => {
@@ -217,6 +220,7 @@ window.addEventListener( 'load', () => {
 				) {
 					const classes = element.animationClasses;
 					classes.forEach( ( i ) => element.classList.add( i ) );
+
 					element.classList.remove( 'hidden-animated' );
 					delete element.animationClasses;
 				}
