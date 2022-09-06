@@ -63,7 +63,9 @@ const Save = ({
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
-		'data-date': attributes.date
+		'data-date': attributes.date,
+		'data-bhv': attributes.behaviour ? attributes.behaviour : undefined,
+		'data-redirect-link': 'redirectLink' === attributes.behaviour && attributes.redirectLink ? attributes.redirectLink : undefined
 	});
 
 	return (

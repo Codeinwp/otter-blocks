@@ -1,7 +1,6 @@
 /**
  * Internal dependencies
  */
-import { forEach } from 'lodash';
 import { domReady } from '../../helpers/frontend-helper-functions';
 
 // Time constants
@@ -25,6 +24,7 @@ class CountdownData {
 	readonly rawData: string;
 	readonly settings?: Settings;
 	readonly targetDate: number;
+	readonly behaviour: 'default' | 'redirectLink' | 'showBlock' | 'hideBlock' | 'disappear' | string;
 	readonly components: {
 		second?: {
 			label?: Element
@@ -51,8 +51,9 @@ class CountdownData {
 
 		elem.classList.add( 'ready' );
 
-		const { date } = elem.dataset;
+		const { date, bhv } = elem.dataset;
 		this.rawData = date ?? '';
+		this.behaviour = bhv ?? 'default';
 		this.targetDate = ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime();
 
 		this.components = {};
@@ -70,7 +71,15 @@ class CountdownData {
 			}
 		);
 
-		this.onEndEvents = [];
+		this.onEndEvents = [ () => this.triggerBehaviour() ];
+
+		document.querySelectorAll( `${this.blockLink}.o-cntdn-bhv-hide` ).forEach(
+			blockElem => {
+				if ( ! this.isStopped ) {
+					( blockElem as HTMLDivElement ).classList.add( '.o-cntdn-ready' );
+				}
+			}
+		);
 	}
 
 	get remainingTime(): number {
@@ -98,6 +107,7 @@ class CountdownData {
 	}
 
 	end() {
+		console.log( 'End' );
 
 		// This can be used by other scripts to see when the countdown ends.
 		const event = new CustomEvent(
@@ -110,6 +120,46 @@ class CountdownData {
 
 		this.elem.dispatchEvent( event );
 		this.onEndEvents.forEach( f => f() );
+	}
+
+	get blockLink() {
+		if ( this.elem.id === undefined ) {
+			return null;
+		}
+		return `.o-countdown-trigger-on-end-${this.elem.id.split( '-' ).pop()}`;
+	}
+
+	triggerBehaviour() {
+		const blockSelectorId = this.blockLink;
+
+		console.log( blockSelectorId );
+
+		switch ( this.behaviour as 'default' | 'redirectLink' | 'showBlock' | 'hideBlock' | 'disappear' ) {
+		case 'default':
+			break;
+		case 'disappear':
+			this.elem.style.display = 'none';
+			break;
+		case 'hideBlock':
+			if ( blockSelectorId ) {
+				document.querySelectorAll( `${blockSelectorId}.o-cntdn-bhv-hide` ).forEach(
+					blockElem => {
+						console.log( blockElem );
+						( blockElem as HTMLDivElement ).classList.add( 'o-cntdn-hide' );
+					}
+				);
+			}
+			break;
+		case 'showBlock':
+			if ( blockSelectorId ) {
+				document.querySelectorAll( `${blockSelectorId}.o-cntdn-bhv-show` ).forEach(
+					blockElem => {
+						( blockElem as HTMLDivElement ).classList.remove( 'o-cntdn-bhv-show' );
+					}
+				);
+			}
+			break;
+		}
 	}
 }
 

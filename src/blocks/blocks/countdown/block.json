@@ -146,6 +146,12 @@
 		},
 		"separatorAlignment": {
 			"type": "string"
+		},
+		"behaviour": {
+			"type": "string"
+		},
+		"redirectLink": {
+			"type": "string"
 		}
 	},
 	"supports": {

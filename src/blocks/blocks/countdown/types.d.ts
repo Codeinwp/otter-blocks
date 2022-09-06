@@ -69,6 +69,8 @@ type Attributes = {
 	valueFontWeight: string
 	labelFontWeight: string
 	seperatorAlignment: 'center'
+	behaviour: 'default' | 'redirectLink' | 'showBlock' | 'hideBlock' | 'disappear'
+	redirectLink: string
 } & LegacyAttrs;
 
 export type CountdownProps = BlockProps<Attributes>

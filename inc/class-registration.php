@@ -449,6 +449,23 @@ class Registration {
 					'timezone' => $tz_offset,
 				)
 			);
+
+			add_action(
+				'wp_header',
+				function() {
+					echo '
+				<style type="text/css">
+					[class*="o-countdown-trigger-on-end-"] {
+						transition: display 1s;
+					}
+					
+					[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show, [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide:not(.o-cntdn-ready), [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide.o-cntdn-hide {
+						visibility: hidden;
+					}
+				</style>
+				';
+				}
+			);
 		}
 
 		if ( ! self::$scripts_loaded['form'] && has_block( 'themeisle-blocks/form', $post ) ) {

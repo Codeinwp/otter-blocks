@@ -19,7 +19,8 @@ import {
 	FontSizePicker,
 	__experimentalBoxControl as BoxControl,
 	SelectControl,
-	__experimentalUnitControl as UnitContol
+	__experimentalUnitControl as UnitContol,
+	TextControl
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -411,6 +412,62 @@ const Inspector = ({
 					/>
 
 				</ResponsiveControl> */}
+			</PanelBody>
+			<PanelBody
+				title={ __( 'Behaviour', 'otter-blocks' ) }
+				initialOpen={false}
+			>
+				<SelectControl
+					label={ __( 'When countdown ends', 'otter-blocks' ) }
+					value={ attributes.behaviour }
+					onChange={ behaviour => setAttributes({ behaviour })}
+					options={[
+						{
+							label: __( 'Default', 'otter-blocks' ),
+							value: ''
+						},
+						{
+							label: __( 'Disappear', 'otter-blocks' ),
+							value: 'disappear'
+						},
+						{
+							label: __( 'Redirect to link', 'otter-blocks' ),
+							value: 'redirectLink'
+						},
+						{
+							label: __( 'Show Block', 'otter-blocks' ),
+							value: 'showBlock'
+						},
+						{
+							label: __( 'Hide Block', 'otter-blocks' ),
+							value: 'hideBlock'
+						}
+					]}
+				/>
+
+				{
+					'redirectLink' === attributes.behaviour && (
+						<TextControl
+							label={ __( 'Redirect Link', 'otter-blocks' ) }
+							value={ attributes.redirectLink }
+							onChange={ redirectLink => setAttributes({ redirectLink })}
+						/>
+					)
+				}
+
+				{
+					attributes.behaviour?.endsWith( 'Block' ) && (
+						<Fragment>
+							<p>
+								{ __( 'Paste the following code in the block that you want to show up when the countdown end. Select the block, go to Inspector > Advanced, and paste into the field "Additional CSS class"', 'otter-blocks' ) }
+							</p>
+							<code style={{ display: 'block', padding: '10px' }}>
+								{ `o-countdown-trigger-on-end-${ attributes.id?.split( '-' ).pop()} o-cntdn-bhv-${ 'hideBlock' === attributes.behaviour ? 'hide' : 'show' }` }
+							</code>
+						</Fragment>
+					)
+				}
+
 			</PanelBody>
 		</InspectorControls>
 	);
