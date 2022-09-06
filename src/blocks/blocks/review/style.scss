@@ -117,7 +117,7 @@
 	}
 
 	.o-review__left_feature {
-		flex-basis: 50%;
+		flex-basis: calc( 50% - 25px );
 		padding: 15px 0;
 		min-width: 0;
 		min-height: 0;
@@ -186,7 +186,6 @@
 	.o-review__right_pros_item,
 	.o-review__right_cons_item {
 		display: flex;
-		align-items: center;
 		padding: 2px 0;
 
 		svg {
@@ -197,6 +196,7 @@
 			background: #EDEAE8;
 			border-radius: 4px;
 			padding: 2px;
+			margin-top: 3px;
 			margin-right: 10px;
 		}
 

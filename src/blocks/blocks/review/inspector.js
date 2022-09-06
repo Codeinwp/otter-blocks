@@ -30,6 +30,7 @@ import { useState, Fragment } from '@wordpress/element';
  */
 import SyncControl from '../../components/sync-control/index.js';
 import Upsell from '../../components/notice/index.js';
+import ButtonToggle from '../../components/button-toggle-control/index.js';
 import { setUtm } from '../../helpers/helper-functions.js';
 const PanelItem = ({
 	title,
@@ -155,10 +156,22 @@ const Inspector = ({
 		setAttributes({ links });
 	};
 
-	const removeLinks = ( index ) => {
+	const removeLinks = index => {
 		let links = [ ...attributes.links ];
 		links = links.filter( ( el, i ) => i !== index );
 		setAttributes({ links });
+	};
+
+	const changeStructure = value => {
+		const classes = attributes?.className?.split( ' ' ) || [];
+
+		if ( 'default' === value && classes.includes( 'is-style-single-column' ) ) {
+			classes.splice( classes.indexOf( 'single-column' ), 1 );
+		} else if ( 'is-style-single-column' === value && ! classes.includes( 'is-style-single-column' ) ) {
+			classes.push( 'is-style-single-column' );
+		}
+
+		setAttributes({ className: classes.join( ' ' ) });
 	};
 
 	return (
@@ -175,6 +188,22 @@ const Inspector = ({
 						{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
 					</Notice>
 				) }
+
+				<ButtonToggle
+					label={ __( 'Column Structure', 'otter-blocks' ) }
+					options={[
+						{
+							label: 'One Column',
+							value: 'is-style-single-column'
+						},
+						{
+							label: 'Two Columns',
+							value: 'default'
+						}
+					]}
+					value={ attributes?.className?.includes( 'is-style-single-column' ) ? 'is-style-single-column' : 'default' }
+					onChange={ changeStructure }
+				/>
 
 				<TextControl
 					label={ __( 'Product Name', 'otter-blocks' ) }
