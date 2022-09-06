@@ -39,6 +39,7 @@ class Review_Block {
 
 		$id        = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-' . wp_rand( 10, 100 );
 		$is_single = ( isset( $attributes['image'] ) && isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ? '' : ' is-single';
+		$scale     = isset( $attributes['scale'] ) ? 2 : 1;
 
 		$wrapper_attributes = get_block_wrapper_attributes(
 			array(
@@ -55,9 +56,9 @@ class Review_Block {
 
 		$html .= '		<div class="o-review__header_meta">';
 		$html .= '			<div class="o-review__header_ratings">';
-		$html .= $this->get_overall_stars( $this->get_overall_ratings( $attributes['features'] ) );
+		$html .= $this->get_overall_stars( $this->get_overall_ratings( $attributes['features'] ), $scale );
 		// translators: Overall rating from 0 to 10.
-		$html .= '				<span>' . sprintf( __( '%g out of 10', 'otter-blocks' ), $this->get_overall_ratings( $attributes['features'] ) ) . '</span>';
+		$html .= '				<span>' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), round( $this->get_overall_ratings( $attributes['features'] ) / $scale, 1 ), 10 / $scale ) . '</span>';
 		$html .= '			</div>';
 
 		if ( ( isset( $attributes['price'] ) && ! empty( $attributes['price'] ) ) || isset( $attributes['discounted'] ) ) {
@@ -100,8 +101,8 @@ class Review_Block {
 				}
 
 				$html .= '		<div class="o-review__left_feature_ratings">';
-				$html .= $this->get_overall_stars( $feature['rating'] );
-				$html .= '			<span>' . round( $feature['rating'], 1 ) . '/10</span>';
+				$html .= $this->get_overall_stars( $feature['rating'], $scale );
+				$html .= '			<span>' . round( $feature['rating'] / $scale, 1 ) . '/' . 10 / $scale . '</span>';
 				$html .= '		</div>';
 				$html .= '	</div>';
 			}
@@ -184,22 +185,19 @@ class Review_Block {
 	/**
 	 * Get overall ratings stars
 	 *
-	 * @param array $ratings Overall ratings of features.
+	 * @param int $ratings Overall ratings of features.
+	 * @param int $divide The scale of ratings.
 	 *
 	 * @return string
 	 */
-	public function get_overall_stars( $ratings = 0 ) {
+	public function get_overall_stars( $ratings = 0, $divide = 1 ) {
 		$stars = '';
 
-		for ( $i = 0; $i < 10; $i++ ) {
+		for ( $i = 0; $i < 10 / $divide; $i++ ) {
 			$class = '';
 
-			if ( round( $ratings ) <= 3 && $i < round( $ratings ) ) {
-				$class = 'low';
-			} elseif ( round( $ratings ) > 3 && round( $ratings ) < 8 && $i < round( $ratings ) ) {
-				$class = 'medium';
-			} elseif ( round( $ratings ) > 7 && round( $ratings ) <= 10 && $i < round( $ratings ) ) {
-				$class = 'high';
+			if ( $i < round( $ratings / $divide ) ) {
+				$class = 'filled';
 			}
 
 			$stars .= '<svg xmlns="http://www.w3.org/2000/svg" class="' . esc_attr( $class ) . '" viewbox="0 0 24 24"><path d="M11.776 4.454a.25.25 0 01.448 0l2.069 4.192a.25.25 0 00.188.137l4.626.672a.25.25 0 01.139.426l-3.348 3.263a.25.25 0 00-.072.222l.79 4.607a.25.25 0 01-.362.263l-4.138-2.175a.25.25 0 00-.232 0l-4.138 2.175a.25.25 0 01-.363-.263l.79-4.607a.25.25 0 00-.071-.222L4.754 9.881a.25.25 0 01.139-.426l4.626-.672a.25.25 0 00.188-.137l2.069-4.192z" /></svg>';

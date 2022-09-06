@@ -47,16 +47,8 @@
 			width: 100%;
 			fill: #8F8F8F;
 
-			&.low {
-				fill: #D56159;
-			}
-
-			&.medium {
+			&.filled {
 				fill: #F2A141;
-			}
-
-			&.high {
-				fill: #63A76E;
 			}
 		}
 
@@ -145,16 +137,8 @@
 			max-height: 25px;
 			fill: #8F8F8F;
 
-			&.low {
-				fill: #D56159;
-			}
-
-			&.medium {
+			&.filled {
 				fill: #F2A141;
-			}
-
-			&.high {
-				fill: #63A76E;
 			}
 		}
 

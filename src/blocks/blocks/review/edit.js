@@ -46,6 +46,30 @@ import {
 
 const { attributes: defaultAttributes } = metadata;
 
+const Stars = ({
+	rating,
+	scale = 'full'
+}) => {
+	const stars = [];
+
+	const divide = 'half' === scale ? 2 : 1;
+
+	for ( let i = 0; 10 / divide > i; i++ ) {
+		stars.push(
+			<StarFilled
+				key={ i }
+				className={ classnames(
+					{
+						'filled': i < Math.round( rating / divide )
+					}
+				) }
+			/>
+		);
+	}
+
+	return stars;
+};
+
 /**
  * Review component
  * @param {import('./type').ReviewProps} props
@@ -68,23 +92,6 @@ const Edit = ({
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
 	const overallRatings = ( attributes.features.reduce( ( accumulator, feature ) => accumulator + feature.rating, 0 ) / attributes.features.length ).toFixed( 1 );
-
-	const stars = [];
-
-	for ( let i = 0; 10 > i; i++ ) {
-		stars.push(
-			<StarFilled
-				key={ i }
-				className={ classnames(
-					{
-						'low': 3 >= Math.round( overallRatings ) && i < Math.round( overallRatings ),
-						'medium': 3 < Math.round( overallRatings ) && 8 > Math.round( overallRatings ) && i < Math.round( overallRatings ),
-						'high': 7 < Math.round( overallRatings ) && 10 >= Math.round( overallRatings ) && i < Math.round( overallRatings )
-					}
-				) }
-			/>
-		);
-	}
 
 	const changeFeature = ( index, value ) => {
 		const features = [ ...attributes.features ];
@@ -124,6 +131,8 @@ const Edit = ({
 	};
 
 	const isPlaceholder = ( 'object' === typeof status && null !== status && status.isError ) || 'isLoading' === status;
+
+	const divide = 'half' === attributes.scale ? 2 : 1;
 
 	let blockProps = useBlockProps({
 		id: attributes.id,
@@ -199,10 +208,13 @@ const Edit = ({
 
 					<div className="o-review__header_meta">
 						<div className="o-review__header_ratings">
-							{ stars }
+							<Stars
+								rating={ overallRatings }
+								scale={ attributes.scale }
+							/>
 
 							<span>
-								{ /** translators: %s Rating score. */ sprintf( __( '%f out of 10', 'otter-blocks' ), Math.abs( overallRatings ) || 0 ) }
+								{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.abs( overallRatings / divide ).toFixed( 1 ) || 0, 10 / divide ) }
 							</span>
 						</div>
 
@@ -257,23 +269,6 @@ const Edit = ({
 
 					<div className="o-review__left_features">
 						{ 0 < attributes.features.length && attributes.features.map( ( feature, index ) => {
-							const ratings = [];
-
-							for ( let i = 0; 10 > i; i++ ) {
-								ratings.push(
-									<StarFilled
-										key={ i }
-										className={ classnames(
-											{
-												'low': 3 >= Math.round( feature.rating ) && i < Math.round( feature.rating ),
-												'medium': 3 < Math.round( feature.rating ) && 8 > Math.round( feature.rating ) && i < Math.round( feature.rating ),
-												'high': 7 < Math.round( feature.rating ) && 10 >= Math.round( feature.rating ) && i < Math.round( feature.rating )
-											}
-										) }
-									/>
-								);
-							}
-
 							return (
 								<div className="o-review__left_feature" key={ index }>
 									<RichText
@@ -285,9 +280,12 @@ const Edit = ({
 									/>
 
 									<div className="o-review__left_feature_ratings">
-										{ ratings }
+										<Stars
+											rating={ feature.rating }
+											scale={ attributes.scale }
+										/>
 
-										<span>{ feature.rating.toFixed( 1 ) }/10</span>
+										<span>{ Math.abs( ( feature.rating / divide ).toFixed( 1 ) ) }/{ 10 / divide }</span>
 									</div>
 								</div>
 							);

@@ -174,6 +174,10 @@ const Inspector = ({
 		setAttributes({ className: classes.join( ' ' ) });
 	};
 
+	const changeScale = value => {
+		setAttributes({ scale: 'half' === value ? value : undefined });
+	};
+
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -188,22 +192,6 @@ const Inspector = ({
 						{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
 					</Notice>
 				) }
-
-				<ButtonToggle
-					label={ __( 'Column Structure', 'otter-blocks' ) }
-					options={[
-						{
-							label: 'One Column',
-							value: 'is-style-single-column'
-						},
-						{
-							label: 'Two Columns',
-							value: 'default'
-						}
-					]}
-					value={ attributes?.className?.includes( 'is-style-single-column' ) ? 'is-style-single-column' : 'default' }
-					onChange={ changeStructure }
-				/>
 
 				<TextControl
 					label={ __( 'Product Name', 'otter-blocks' ) }
@@ -275,6 +263,43 @@ const Inspector = ({
 						</Button>
 					</BaseControl>
 				) }
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Settings', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<ButtonToggle
+					label={ __( 'Column Structure', 'otter-blocks' ) }
+					options={[
+						{
+							label: __( 'One Column', 'otter-blocks' ),
+							value: 'is-style-single-column'
+						},
+						{
+							label: __( 'Two Columns', 'otter-blocks' ),
+							value: 'default'
+						}
+					]}
+					value={ attributes?.className?.includes( 'is-style-single-column' ) ? 'is-style-single-column' : 'default' }
+					onChange={ changeStructure }
+				/>
+
+				<ButtonToggle
+					label={ __( 'Rating Scale', 'otter-blocks' ) }
+					options={[
+						{
+							label: __( '1-10', 'otter-blocks' ),
+							value: 'full'
+						},
+						{
+							label: __( '1-5', 'otter-blocks' ),
+							value: 'half'
+						}
+					]}
+					value={ 'half' === attributes.scale ? 'half' : 'full' }
+					onChange={ changeScale }
+				/>
 			</PanelBody>
 
 			<PanelBody
