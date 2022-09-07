@@ -102,6 +102,7 @@
 		}
 	},
 	"supports": {
+		"align": [ "full", "wide" ],
 		"html": false
 	},
 	"editorStyle": "otter-review-editor",
