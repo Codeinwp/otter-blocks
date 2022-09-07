@@ -158,7 +158,8 @@ class Posts_Grid_Block {
 			if ( 'category' === $element ) {
 				if ( isset( $attributes['displayCategory'] ) && isset( $category[0] ) && $attributes['displayCategory'] ) {
 					$html .= sprintf(
-						'<span class="o-posts-grid-post-category">%1$s</span>',
+						'<span class="o-posts-grid-post-category"><a href="%1$s">%2$s</a></span>',
+						esc_url( get_category_link( $category[0]->cat_ID ) ),
 						esc_html( $category[0]->cat_name )
 					);
 				}
@@ -179,37 +180,46 @@ class Posts_Grid_Block {
 				if ( ( isset( $attributes['displayMeta'] ) && $attributes['displayMeta'] ) && ( ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) || ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) || ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] ) || ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] ) ) ) {
 					$html .= '<p class="o-posts-grid-post-meta">';
 
+					$meta      = array();
+					$posted_on = '';
+
 					if ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) {
-						$html .= sprintf(
+						$posted_on .= sprintf(
 							'%1$s <time datetime="%2$s">%3$s</time> ',
-							__( 'on', 'otter-blocks' ),
+							__( 'Posted on', 'otter-blocks' ),
 							esc_attr( get_the_date( 'c', $id ) ),
 							esc_html( get_the_date( get_option( 'date_format' ), $id ) )
 						);
 					}
 
 					if ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) {
-						$html .= sprintf(
-							'%1$s %2$s',
+						$posted_on .= sprintf(
+							'%1$s <a href="%2$s">%3$s</a>',
 							__( 'by', 'otter-blocks' ),
+							esc_url( get_author_posts_url( get_post_field( 'post_author', $id ) ) ),
 							esc_html( get_the_author_meta( 'display_name', get_post_field( 'post_author', $id ) ) )
 						);
 					}
 
+					$meta[] = $posted_on;
+
 					if ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] && isset( $post->comment_count ) ) {
-						$html .= sprintf(
-							' - %1$s %2$s',
+						$meta[] .= sprintf(
+							'%1$s %2$s',
 							$post->comment_count,
 							'1' === $post->comment_count ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
 						);
 					}
 
 					if ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] && isset( $category[0] ) ) {
-						$html .= sprintf(
-							' - %1$s',
+						$meta[] .= sprintf(
+							'<a href="%1$s">%2$s</a>',
+							esc_url( get_category_link( $category[0]->cat_ID ) ),
 							esc_html( $category[0]->cat_name )
 						);
 					}
+
+					$html .= implode( ' \ ', $meta );
 
 					$html .= '</p>';
 				}

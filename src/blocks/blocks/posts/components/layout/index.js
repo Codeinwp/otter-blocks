@@ -122,35 +122,39 @@ export const PostsTitle = ({ attributes, element, post }) => {
 
 export const PostsMeta = ({ attributes, element, post, author, category }) => {
 	if ( attributes.displayMeta && ( attributes.displayDate || attributes.displayAuthor || attributes.displayComments || attributes.displayPostCategory ) ) {
+		const meta = [];
+		let postedOn = '';
+
+		if ( attributes.displayDate ) {
+
+			/* translators: %s Date posted */
+			postedOn += sprintf( __( 'Posted on %s', 'otter-blocks' ), formatDate( post.date ) );
+		}
+
+		if ( attributes.displayAuthor && undefined !== author ) {
+
+			/* translators: %s Author of the post */
+			postedOn += sprintf( __( ' by %s', 'otter-blocks' ), author.name );
+		}
+
+		meta.push( postedOn );
+
+		if ( ( attributes.displayComments ) ) {
+
+			meta.push( sprintf(
+				'%1$s %2$s',
+				'0',
+				'1' === '0' ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
+			) );
+		}
+
+		if ( ( attributes.displayPostCategory && undefined !== category?.name ) ) {
+			meta.push( sprintf( __( '%s', 'otter-blocks' ), category.name ) );
+		}
+
+
 		return (
-			<p key={ element } className="o-posts-grid-post-meta">
-				{ ( attributes.displayDate ) && (
-
-					/* translators: %s Date posted */
-					sprintf( __( 'on %s', 'otter-blocks' ), formatDate( post.date ) )
-				) }
-
-				{ ( attributes.displayAuthor && undefined !== author ) && (
-
-					/* translators: %s Author of the post */
-					sprintf( __( ' by %s', 'otter-blocks' ), author.name )
-				) }
-
-				{ ( attributes.displayComments ) && (
-
-					// TODO: A way to check the number of comments is to make an API request. This seems wasteful for now. It might change in the future.
-					sprintf(
-						' - %1$s %2$s',
-						'0',
-						'1' === '0' ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
-					)
-				) }
-
-				{ ( attributes.displayPostCategory && undefined !== category?.name ) && (
-
-					sprintf( __( ' - %s', 'otter-blocks' ), category.name )
-				) }
-			</p>
+			<p key={ element } className="o-posts-grid-post-meta">{ meta.join( ' /\ ' ) }</p>
 		);
 	}
 	return '';
