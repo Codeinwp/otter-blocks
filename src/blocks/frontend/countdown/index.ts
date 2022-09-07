@@ -58,7 +58,7 @@ class CountdownData {
 		elem.classList.add( 'ready' );
 
 		const { date, bhv, mode, timer, redirectLink } = elem.dataset;
-		console.log( elem.dataset );
+
 		this.rawData = date ?? '';
 		this.behaviour = bhv ?? 'default';
 
@@ -66,7 +66,6 @@ class CountdownData {
 		this.timer = timer ?? '0';
 
 		this.redirectLink = redirectLink;
-		console.log( this.redirectLink );
 
 		this.components = {};
 		[ 'second', 'minute', 'hour', 'day' ].forEach(
@@ -97,7 +96,6 @@ class CountdownData {
 
 			//const lastVisit = localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` );
 			const lastVisit = localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` );
-			console.log( lastVisit );
 
 			if (
 				! lastVisit ||
@@ -138,7 +136,6 @@ class CountdownData {
 	}
 
 	end() {
-		console.log( 'End' );
 
 		// This can be used by other scripts to see when the countdown ends.
 		const event = new CustomEvent(
@@ -163,8 +160,6 @@ class CountdownData {
 	triggerBehaviour() {
 		const blockSelectorId = this.blockLink;
 
-		console.log( blockSelectorId );
-
 		switch ( this.behaviour as 'default' | 'redirectLink' | 'showBlock' | 'hideBlock' | 'disappear' ) {
 		case 'default':
 			break;
@@ -175,7 +170,6 @@ class CountdownData {
 			if ( blockSelectorId ) {
 				document.querySelectorAll( `${blockSelectorId}.o-cntdn-bhv-hide` ).forEach(
 					blockElem => {
-						console.log( blockElem );
 						( blockElem as HTMLDivElement ).classList.add( 'o-cntdn-hide' );
 					}
 				);
@@ -223,6 +217,8 @@ class CountdownRunner {
 
 			this.countdowns[countdown.id] = countdown;
 			this.running.add( countdown.id );
+
+			console.log( countdown );
 		}
 	}
 

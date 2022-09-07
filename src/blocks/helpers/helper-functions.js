@@ -359,6 +359,5 @@ export const buildResponsiveGetAttributes = ( currentView, defaultView = 'Deskto
 
 export const objectCleaner = ( object ) => {
 	const filtered = omitBy( object, x => x === undefined || null === x || '' === x );
-	console.log( object, filtered );
 	return isEmpty( filtered ) ? undefined : filtered;
 };
