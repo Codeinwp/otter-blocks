@@ -25,12 +25,17 @@
 	}
 }
 
-o-dynamic {
+o-dynamic,
+o-dynamic-link {
 	color: #ED6F57;
 	background: rgba(237, 111, 87, 0.1);
 	padding: 2px 5px;
 	border-radius: 8px;
 	cursor: pointer;
+}
+
+o-dynamic-link {
+	text-decoration: underline;
 }
 
 .o-dynamic-modal {
@@ -55,6 +60,10 @@ o-dynamic {
 }
 
 .o-dynamic-popover {
+	&.hidden {
+		display: none;
+	}
+
 	.components-popover__content {
 		width: 300px;
 	}
@@ -66,6 +75,15 @@ o-dynamic {
 	.components-form-token-field__token-text {
 		display: flex;
 		align-items: center;
+	}
+
+	.o-dynamic-popover-toggle {
+		width: 100%;
+		justify-content: center;
+
+		&:focus {
+			box-shadow: none;
+		}
 	}
 
 	.o-notice {
