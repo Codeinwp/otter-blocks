@@ -1,14 +1,16 @@
 /**
  * Internal dependencies
  */
-import { getCookie, setCookie } from '../../helpers/cookies';
 import { domReady } from '../../helpers/frontend-helper-functions';
+
 
 // Time constants
 const _MS_PER_SECONDS = 1000;
 const _MS_PER_MINUTES = _MS_PER_SECONDS * 60;
 const _MS_PER_HOURS = _MS_PER_MINUTES * 60;
 const _MS_PER_DAY = _MS_PER_HOURS * 24;
+
+const COUNTDOWN_RESET = _MS_PER_DAY * 30;
 
 type Settings = {
 	exclude: string[]
@@ -94,17 +96,17 @@ class CountdownData {
 		if ( 'timer' === this.mode ) {
 
 			//const lastVisit = localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` );
-			const lastVisit = getCookie( `o-countdown-last-visit-${this.elem.id}` );
+			const lastVisit = localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` );
 			console.log( lastVisit );
 
-			if ( ! lastVisit ) {
-				setCookie( `o-countdown-last-visit-${this.elem.id}`, Date.now().toString(), 30 );
-
-				this.targetDate = Date.now() + parseInt( this.timer );
-			} else {
-				this.targetDate = parseInt( lastVisit ) + parseInt( this.timer );
+			if (
+				! lastVisit ||
+				( ( parseInt( lastVisit ) + parseInt( this.timer ) - Date.now() ) > COUNTDOWN_RESET )
+			) {
+				localStorage.setItem( `o-countdown-last-visit-${this.elem.id}`, Date.now().toString() );
 			}
 
+			this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` ) ) + parseInt( this.timer );
 
 		} else {
 			this.targetDate = ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime();
