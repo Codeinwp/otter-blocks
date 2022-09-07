@@ -28,6 +28,7 @@ import { useState, Fragment } from '@wordpress/element';
 /**
  * Internal dependencies
  */
+import InspectorHeader from '../../components/inspector-header/index.js';
 import SyncControl from '../../components/sync-control/index.js';
 import Upsell from '../../components/notice/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
@@ -78,6 +79,8 @@ const Inspector = ({
 	getValue,
 	productAttributes
 }) => {
+	const [ tab, setTab ] = useState( 'settings' );
+
 	const addFeature = () => {
 		const features = [ ...attributes.features ];
 		features.push({
@@ -180,271 +183,256 @@ const Inspector = ({
 
 	return (
 		<InspectorControls>
-			<PanelBody
-				title={ __( 'Product Details', 'otter-blocks' ) }
-			>
-				{ attributes.product && (
-					<Notice
-						status="warning"
-						isDismissible={ false }
-						className="o-html-anchor-control-notice"
+			<InspectorHeader
+				value={ tab }
+				options={[
+					{
+						label: __( 'Settings', 'otter-blocks' ),
+						value: 'settings'
+					},
+					{
+						label: __( 'Style', 'otter-blocks' ),
+						value: 'style'
+					}
+				]}
+				onChange={ setTab }
+			/>
+
+			{ 'settings' === tab && (
+				<Fragment>
+					<PanelBody
+						title={ __( 'Settings', 'otter-blocks' ) }
 					>
-						{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
-					</Notice>
-				) }
-
-				<TextControl
-					label={ __( 'Product Name', 'otter-blocks' ) }
-					type="text"
-					placeholder={ __( 'Name of your product…', 'otter-blocks' ) }
-					value={ productAttributes?.title || attributes.title }
-					disabled={ attributes.product }
-					onChange={ title => setAttributes({ title }) }
-				/>
-
-				<BaseControl>
-					<TextControl
-						label={ __( 'Currency', 'otter-blocks' ) }
-						type="text"
-						placeholder={ __( 'Currency code, like USD or EUR.', 'otter-blocks' ) }
-						value={ productAttributes?.currency || attributes.currency }
-						disabled={ attributes.product }
-						onChange={ currency => setAttributes({ currency }) }
-					/>
-
-					{ __( 'Currency code in three digit ISO 4217 code.', 'otter-blocks' ) + ' ' }
-
-					<ExternalLink href="https://en.wikipedia.org/wiki/ISO_4217#Active_codes">
-						{ __( 'List of ISO 4217 codes.', 'otter-blocks' ) }
-					</ExternalLink>
-				</BaseControl>
-
-				<TextControl
-					label={ __( 'Price', 'otter-blocks' ) }
-					type="number"
-					value={ productAttributes?.price || attributes.price }
-					disabled={ attributes.product }
-					onChange={ value => setAttributes({ price: '' !== value ? Number( value ) : undefined }) }
-				/>
-
-				<TextControl
-					label={ __( 'Discounted Price', 'otter-blocks' ) }
-					type="number"
-					value={ productAttributes?.discounted || attributes.discounted }
-					disabled={ attributes.product }
-					onChange={ value => setAttributes({ discounted: '' !== value ? Number( value ) : undefined }) }
-				/>
-
-				{ ! ( attributes.image || productAttributes?.image ) ? (
-					<MediaPlaceholder
-						labels={ {
-							title: __( 'Product Image', 'otter-blocks' )
-						} }
-						accept="image/*"
-						allowedTypes={ [ 'image' ] }
-						value={ attributes.image }
-						onSelect={ value => setAttributes({ image: pick( value, [ 'id', 'alt', 'url' ]) }) }
-					/>
-				) : (
-					<BaseControl
-						className="o-review__inspector_image"
-					>
-						<img
-							src={ productAttributes?.image?.url || attributes.image.url }
-							alt={ productAttributes?.image?.url || attributes.image.alt }
+						<ButtonToggle
+							label={ __( 'Column Structure', 'otter-blocks' ) }
+							options={[
+								{
+									label: __( 'One Column', 'otter-blocks' ),
+									value: 'is-style-single-column'
+								},
+								{
+									label: __( 'Two Columns', 'otter-blocks' ),
+									value: 'default'
+								}
+							]}
+							value={ attributes?.className?.includes( 'is-style-single-column' ) ? 'is-style-single-column' : 'default' }
+							onChange={ changeStructure }
 						/>
+
+						<ButtonToggle
+							label={ __( 'Rating Scale', 'otter-blocks' ) }
+							options={[
+								{
+									label: __( '1-10', 'otter-blocks' ),
+									value: 'full'
+								},
+								{
+									label: __( '1-5', 'otter-blocks' ),
+									value: 'half'
+								}
+							]}
+							value={ 'half' === attributes.scale ? 'half' : 'full' }
+							onChange={ changeScale }
+						/>
+					</PanelBody>
+
+					<PanelBody
+						title={ __( 'Product Details', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						{ attributes.product && (
+							<Notice
+								status="warning"
+								isDismissible={ false }
+								className="o-html-anchor-control-notice"
+							>
+								{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
+							</Notice>
+						) }
+
+						<TextControl
+							label={ __( 'Product Name', 'otter-blocks' ) }
+							type="text"
+							placeholder={ __( 'Name of your product…', 'otter-blocks' ) }
+							value={ productAttributes?.title || attributes.title }
+							disabled={ attributes.product }
+							onChange={ title => setAttributes({ title }) }
+						/>
+
+						<BaseControl>
+							<TextControl
+								label={ __( 'Currency', 'otter-blocks' ) }
+								type="text"
+								placeholder={ __( 'Currency code, like USD or EUR.', 'otter-blocks' ) }
+								value={ productAttributes?.currency || attributes.currency }
+								disabled={ attributes.product }
+								onChange={ currency => setAttributes({ currency }) }
+							/>
+
+							{ __( 'Currency code in three digit ISO 4217 code.', 'otter-blocks' ) + ' ' }
+
+							<ExternalLink href="https://en.wikipedia.org/wiki/ISO_4217#Active_codes">
+								{ __( 'List of ISO 4217 codes.', 'otter-blocks' ) }
+							</ExternalLink>
+						</BaseControl>
+
+						<TextControl
+							label={ __( 'Price', 'otter-blocks' ) }
+							type="number"
+							value={ productAttributes?.price || attributes.price }
+							disabled={ attributes.product }
+							onChange={ value => setAttributes({ price: '' !== value ? Number( value ) : undefined }) }
+						/>
+
+						<TextControl
+							label={ __( 'Discounted Price', 'otter-blocks' ) }
+							type="number"
+							value={ productAttributes?.discounted || attributes.discounted }
+							disabled={ attributes.product }
+							onChange={ value => setAttributes({ discounted: '' !== value ? Number( value ) : undefined }) }
+						/>
+
+						{ ! ( attributes.image || productAttributes?.image ) ? (
+							<MediaPlaceholder
+								labels={ {
+									title: __( 'Product Image', 'otter-blocks' )
+								} }
+								accept="image/*"
+								allowedTypes={ [ 'image' ] }
+								value={ attributes.image }
+								onSelect={ value => setAttributes({ image: pick( value, [ 'id', 'alt', 'url' ]) }) }
+							/>
+						) : (
+							<BaseControl
+								className="o-review__inspector_image"
+							>
+								<img
+									src={ productAttributes?.image?.url || attributes.image.url }
+									alt={ productAttributes?.image?.url || attributes.image.alt }
+								/>
+
+								<Button
+									isSecondary
+									onClick={ () => setAttributes({ image: undefined }) }
+									disabled={ attributes.product }
+								>
+									{ __( 'Remove image', 'otter-blocks' ) }
+								</Button>
+							</BaseControl>
+						) }
+					</PanelBody>
+
+					<PanelBody
+						title={ __( 'Product Features', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						{ 0 < attributes.features.length && attributes.features.map( ( feature, index ) => (
+							<PanelItem
+								key={ index }
+								title={ feature.title || __( 'Feature', 'otter-blocks' ) }
+								remove={ () => removeFeature( index ) }
+							>
+								<TextControl
+									label={ __( 'Title', 'otter-blocks' ) }
+									type="text"
+									placeholder={ __( 'Feature title', 'otter-blocks' ) }
+									value={ feature.title }
+									onChange={ title => changeFeature( index, { title }) }
+								/>
+
+								<RangeControl
+									label={ __( 'Rating', 'otter-blocks' ) }
+									value={ feature.rating }
+									onChange={ value => changeFeature( index, { rating: Number( value ) }) }
+									step={ 0.1 }
+									min={ 1 }
+									max={ 10 }
+								/>
+							</PanelItem>
+						) ) }
 
 						<Button
 							isSecondary
-							onClick={ () => setAttributes({ image: undefined }) }
-							disabled={ attributes.product }
+							className="o-review__inspector_add"
+							onClick={ addFeature }
 						>
-							{ __( 'Remove image', 'otter-blocks' ) }
+							{ __( 'Add Feature', 'otter-blocks' ) }
 						</Button>
-					</BaseControl>
-				) }
-			</PanelBody>
+					</PanelBody>
 
-			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				<ButtonToggle
-					label={ __( 'Column Structure', 'otter-blocks' ) }
-					options={[
-						{
-							label: __( 'One Column', 'otter-blocks' ),
-							value: 'is-style-single-column'
-						},
-						{
-							label: __( 'Two Columns', 'otter-blocks' ),
-							value: 'default'
-						}
-					]}
-					value={ attributes?.className?.includes( 'is-style-single-column' ) ? 'is-style-single-column' : 'default' }
-					onChange={ changeStructure }
-				/>
-
-				<ButtonToggle
-					label={ __( 'Rating Scale', 'otter-blocks' ) }
-					options={[
-						{
-							label: __( '1-10', 'otter-blocks' ),
-							value: 'full'
-						},
-						{
-							label: __( '1-5', 'otter-blocks' ),
-							value: 'half'
-						}
-					]}
-					value={ 'half' === attributes.scale ? 'half' : 'full' }
-					onChange={ changeScale }
-				/>
-			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Product Features', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				{ 0 < attributes.features.length && attributes.features.map( ( feature, index ) => (
-					<PanelItem
-						key={ index }
-						title={ feature.title || __( 'Feature', 'otter-blocks' ) }
-						remove={ () => removeFeature( index ) }
+					<PanelBody
+						title={ __( 'Pros', 'otter-blocks' ) }
+						initialOpen={ false }
 					>
-						<TextControl
-							label={ __( 'Title', 'otter-blocks' ) }
-							type="text"
-							placeholder={ __( 'Feature title', 'otter-blocks' ) }
-							value={ feature.title }
-							onChange={ title => changeFeature( index, { title }) }
-						/>
+						{ 0 < attributes.pros.length && attributes.pros.map( ( pro, index ) => (
+							<PanelItem
+								key={ index }
+								title={ pro || __( 'Pro', 'otter-blocks' ) }
+								remove={ () => removePro( index ) }
+							>
+								<TextControl
+									label={ __( 'Title', 'otter-blocks' ) }
+									type="text"
+									placeholder={ __( 'Why do you like the product?', 'otter-blocks' ) }
+									value={ pro }
+									onChange={ value => changePro( index, value ) }
+								/>
+							</PanelItem>
+						) ) }
 
-						<RangeControl
-							label={ __( 'Rating', 'otter-blocks' ) }
-							value={ feature.rating }
-							onChange={ value => changeFeature( index, { rating: Number( value ) }) }
-							step={ 0.1 }
-							min={ 1 }
-							max={ 10 }
-						/>
-					</PanelItem>
-				) ) }
+						<Button
+							isSecondary
+							className="o-review__inspector_add"
+							onClick={ addPro }
+						>
+							{ __( 'Add Item', 'otter-blocks' ) }
+						</Button>
+					</PanelBody>
 
-				<Button
-					isSecondary
-					className="o-review__inspector_add"
-					onClick={ addFeature }
-				>
-					{ __( 'Add Feature', 'otter-blocks' ) }
-				</Button>
-			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Pros', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				{ 0 < attributes.pros.length && attributes.pros.map( ( pro, index ) => (
-					<PanelItem
-						key={ index }
-						title={ pro || __( 'Pro', 'otter-blocks' ) }
-						remove={ () => removePro( index ) }
+					<PanelBody
+						title={ __( 'Cons', 'otter-blocks' ) }
+						initialOpen={ false }
 					>
-						<TextControl
-							label={ __( 'Title', 'otter-blocks' ) }
-							type="text"
-							placeholder={ __( 'Why do you like the product?', 'otter-blocks' ) }
-							value={ pro }
-							onChange={ value => changePro( index, value ) }
-						/>
-					</PanelItem>
-				) ) }
+						{ 0 < attributes.cons.length && attributes.cons.map( ( con, index ) => (
+							<PanelItem
+								key={ index }
+								title={ con || __( 'Con', 'otter-blocks' ) }
+								remove={ () => removeCon( index ) }
+							>
+								<TextControl
+									label={ __( 'Title', 'otter-blocks' ) }
+									type="text"
+									placeholder={ __( 'What can be improved?', 'otter-blocks' ) }
+									value={ con }
+									onChange={ value => changeCon( index, value ) }
+								/>
+							</PanelItem>
+						) ) }
 
-				<Button
-					isSecondary
-					className="o-review__inspector_add"
-					onClick={ addPro }
-				>
-					{ __( 'Add Item', 'otter-blocks' ) }
-				</Button>
-			</PanelBody>
+						<Button
+							isSecondary
+							className="o-review__inspector_add"
+							onClick={ addCon }
+						>
+							{ __( 'Add Item', 'otter-blocks' ) }
+						</Button>
+					</PanelBody>
 
-			<PanelBody
-				title={ __( 'Cons', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				{ 0 < attributes.cons.length && attributes.cons.map( ( con, index ) => (
-					<PanelItem
-						key={ index }
-						title={ con || __( 'Con', 'otter-blocks' ) }
-						remove={ () => removeCon( index ) }
+					<PanelBody
+						title={ __( 'Buttons', 'otter-blocks' ) }
+						initialOpen={ false }
 					>
-						<TextControl
-							label={ __( 'Title', 'otter-blocks' ) }
-							type="text"
-							placeholder={ __( 'What can be improved?', 'otter-blocks' ) }
-							value={ con }
-							onChange={ value => changeCon( index, value ) }
-						/>
-					</PanelItem>
-				) ) }
+						{ attributes.product && (
+							<Notice
+								status="warning"
+								isDismissible={ false }
+								className="o-html-anchor-control-notice"
+							>
+								{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
+							</Notice>
+						) }
 
-				<Button
-					isSecondary
-					className="o-review__inspector_add"
-					onClick={ addCon }
-				>
-					{ __( 'Add Item', 'otter-blocks' ) }
-				</Button>
-			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Links', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				{ attributes.product && (
-					<Notice
-						status="warning"
-						isDismissible={ false }
-						className="o-html-anchor-control-notice"
-					>
-						{ __( 'WooCommerce product synchronization is active. Some options might be disabled.', 'otter-blocks' ) }
-					</Notice>
-				) }
-
-				{ 0 < productAttributes?.links?.length && productAttributes?.links?.map( ( link, index ) => (
-					<PanelItem
-						key={ index }
-						title={ link.label || __( 'Link', 'otter-blocks' ) }
-						remove={ () => removeLinks( index ) }
-					>
-						<TextControl
-							label={ __( 'Label', 'otter-blocks' ) }
-							type="text"
-							placeholder={ __( 'Button label', 'otter-blocks' ) }
-							disabled={ attributes.product }
-							value={ link.label }
-						/>
-
-						<TextControl
-							label={ __( 'Link', 'otter-blocks' ) }
-							type="url"
-							placeholder={ 'https://…' }
-							value={ link.href }
-							disabled={ attributes.product }
-						/>
-
-						<ToggleControl
-							label={ __( 'Is this Sponsored?', 'otter-blocks' ) }
-							checked={ link.isSponsored }
-							disabled={ attributes.product }
-						/>
-					</PanelItem>
-				) ) }
-
-				{ ! ( 0 < productAttributes?.links?.length ) && (
-					<Fragment>
-						{ 0 < attributes.links.length && attributes.links.map( ( link, index ) => (
+						{ 0 < productAttributes?.links?.length && productAttributes?.links?.map( ( link, index ) => (
 							<PanelItem
 								key={ index }
 								title={ link.label || __( 'Link', 'otter-blocks' ) }
@@ -454,8 +442,8 @@ const Inspector = ({
 									label={ __( 'Label', 'otter-blocks' ) }
 									type="text"
 									placeholder={ __( 'Button label', 'otter-blocks' ) }
+									disabled={ attributes.product }
 									value={ link.label }
-									onChange={ label => changeLinks( index, { label }) }
 								/>
 
 								<TextControl
@@ -463,87 +451,123 @@ const Inspector = ({
 									type="url"
 									placeholder={ 'https://…' }
 									value={ link.href }
-									onChange={ href => changeLinks( index, { href }) }
+									disabled={ attributes.product }
 								/>
 
 								<ToggleControl
 									label={ __( 'Is this Sponsored?', 'otter-blocks' ) }
 									checked={ link.isSponsored }
-									onChange={ () => changeLinks( index, { isSponsored: ! link.isSponsored }) }
+									disabled={ attributes.product }
 								/>
 							</PanelItem>
 						) ) }
 
-						<Button
-							isSecondary
-							className="o-review__inspector_add"
-							onClick={ addLinks }
-						>
-							{ __( 'Add Links', 'otter-blocks' ) }
-						</Button>
-					</Fragment>
-				) }
-			</PanelBody>
+						{ ! ( 0 < productAttributes?.links?.length ) && (
+							<Fragment>
+								{ 0 < attributes.links.length && attributes.links.map( ( link, index ) => (
+									<PanelItem
+										key={ index }
+										title={ link.label || __( 'Link', 'otter-blocks' ) }
+										remove={ () => removeLinks( index ) }
+									>
+										<TextControl
+											label={ __( 'Label', 'otter-blocks' ) }
+											type="text"
+											placeholder={ __( 'Button label', 'otter-blocks' ) }
+											value={ link.label }
+											onChange={ label => changeLinks( index, { label }) }
+										/>
 
-			<PanelBody
-				title={ __( 'Color', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				<SyncControl
-					field="primaryColor"
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
+										<TextControl
+											label={ __( 'Link', 'otter-blocks' ) }
+											type="url"
+											placeholder={ 'https://…' }
+											value={ link.href }
+											onChange={ href => changeLinks( index, { href }) }
+										/>
+
+										<ToggleControl
+											label={ __( 'Is this Sponsored?', 'otter-blocks' ) }
+											checked={ link.isSponsored }
+											onChange={ () => changeLinks( index, { isSponsored: ! link.isSponsored }) }
+										/>
+									</PanelItem>
+								) ) }
+
+								<Button
+									isSecondary
+									className="o-review__inspector_add"
+									onClick={ addLinks }
+								>
+									{ __( 'Add Links', 'otter-blocks' ) }
+								</Button>
+							</Fragment>
+						) }
+					</PanelBody>
+				</Fragment>
+			) }
+
+			{ 'style' === tab && (
+				<PanelBody
+					title={ __( 'Color', 'otter-blocks' ) }
+					initialOpen={ false }
 				>
-					<ColorGradientControl
-						label={ __( 'Primary', 'otter-blocks' ) }
-						colorValue={ getValue( 'primaryColor' ) }
-						onColorChange={ e => setAttributes({ primaryColor: e }) }
-					/>
-				</SyncControl>
+					<SyncControl
+						field="primaryColor"
+						isSynced={ attributes.isSynced }
+						setAttributes={ setAttributes }
+					>
+						<ColorGradientControl
+							label={ __( 'Primary', 'otter-blocks' ) }
+							colorValue={ getValue( 'primaryColor' ) }
+							onColorChange={ e => setAttributes({ primaryColor: e }) }
+						/>
+					</SyncControl>
 
-				<SyncControl
-					field="backgroundColor"
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<ColorGradientControl
-						label={ __( 'Background', 'otter-blocks' ) }
-						colorValue={ getValue( 'backgroundColor' ) }
-						onColorChange={ e => setAttributes({ backgroundColor: e }) }
-					/>
-				</SyncControl>
+					<SyncControl
+						field="backgroundColor"
+						isSynced={ attributes.isSynced }
+						setAttributes={ setAttributes }
+					>
+						<ColorGradientControl
+							label={ __( 'Background', 'otter-blocks' ) }
+							colorValue={ getValue( 'backgroundColor' ) }
+							onColorChange={ e => setAttributes({ backgroundColor: e }) }
+						/>
+					</SyncControl>
 
-				<ContrastChecker
-					{ ...{
-						textColor: getValue( 'primaryColor' ),
-						backgroundColor: getValue( 'backgroundColor' )
-					} }
-				/>
-
-				<SyncControl
-					field="textColor"
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<ColorGradientControl
-						label={ __( 'Text', 'otter-blocks' ) }
-						colorValue={ getValue( 'textColor' ) }
-						onColorChange={ e => setAttributes({ textColor: e }) }
+					<ContrastChecker
+						{ ...{
+							textColor: getValue( 'primaryColor' ),
+							backgroundColor: getValue( 'backgroundColor' )
+						} }
 					/>
-				</SyncControl>
 
-				<SyncControl
-					field="buttonTextColor"
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<ColorGradientControl
-						label={ __( 'Button Text', 'otter-blocks' ) }
-						colorValue={ getValue( 'buttonTextColor' ) }
-						onColorChange={ e => setAttributes({ buttonTextColor: e }) }
-					/>
-				</SyncControl>
-			</PanelBody>
+					<SyncControl
+						field="textColor"
+						isSynced={ attributes.isSynced }
+						setAttributes={ setAttributes }
+					>
+						<ColorGradientControl
+							label={ __( 'Text', 'otter-blocks' ) }
+							colorValue={ getValue( 'textColor' ) }
+							onColorChange={ e => setAttributes({ textColor: e }) }
+						/>
+					</SyncControl>
+
+					<SyncControl
+						field="buttonTextColor"
+						isSynced={ attributes.isSynced }
+						setAttributes={ setAttributes }
+					>
+						<ColorGradientControl
+							label={ __( 'Button Text', 'otter-blocks' ) }
+							colorValue={ getValue( 'buttonTextColor' ) }
+							onColorChange={ e => setAttributes({ buttonTextColor: e }) }
+						/>
+					</SyncControl>
+				</PanelBody>
+			) }
 
 			{ ( ! Boolean( window.themeisleGutenberg.hasPro ) ) && (
 				<PanelBody
