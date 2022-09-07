@@ -10,7 +10,6 @@ const _MS_PER_DAY = _MS_PER_HOURS * 24;
  *
  */
 export const toTimer = ( timer: CountdownTimer ): number => {
-	console.log( timer );
 	return ( parseInt( timer?.days || '0' ) * _MS_PER_DAY + parseInt( timer?.hours || '0' ) * _MS_PER_HOURS + parseInt( timer?.minutes || '0' ) * _MS_PER_MINUTES + parseInt( timer?.seconds || '0' ) * _MS_PER_SECONDS ) ?? 0;
 };
 
@@ -22,7 +21,6 @@ export const toTimer = ( timer: CountdownTimer ): number => {
  * @returns An object with the values for days, hours, minutes, seconds
  */
 export const getIntervalFromUnix = ( unixTime: number, settings: { exclude?: string[], keepNeg?: boolean }) => {
-	console.log( unixTime );
 	unixTime ??= 0; // Check for null/undefined
 
 	const days = Math.floor( unixTime / _MS_PER_DAY );

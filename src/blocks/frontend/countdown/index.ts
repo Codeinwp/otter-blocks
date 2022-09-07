@@ -55,7 +55,7 @@ class CountdownData {
 		this.id = indexGenerator++;
 		this.elem = elem;
 
-		elem.classList.add( 'ready' );
+		this.elem.classList.add( 'ready' );
 
 		const { date, bhv, mode, timer, redirectLink } = elem.dataset;
 
@@ -87,7 +87,7 @@ class CountdownData {
 		document.querySelectorAll( `${this.blockLink}.o-cntdn-bhv-hide` ).forEach(
 			blockElem => {
 				if ( ! this.isStopped ) {
-					( blockElem as HTMLDivElement ).classList.add( '.o-cntdn-ready' );
+					( blockElem as HTMLDivElement ).classList.add( 'o-cntdn-ready' );
 				}
 			}
 		);
@@ -96,12 +96,15 @@ class CountdownData {
 
 			//const lastVisit = localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` );
 			const lastVisit = localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` );
+			const lastVisitTime = localStorage.getItem( `o-countdown-last-visit-time-${this.elem.id}` );
 
 			if (
 				! lastVisit ||
-				( ( parseInt( lastVisit ) + parseInt( this.timer ) - Date.now() ) > COUNTDOWN_RESET )
+				( ( parseInt( lastVisit ) + parseInt( this.timer ) - Date.now() ) > COUNTDOWN_RESET ) ||
+				lastVisitTime !== this.timer
 			) {
 				localStorage.setItem( `o-countdown-last-visit-${this.elem.id}`, Date.now().toString() );
+				localStorage.setItem( `o-countdown-last-visit-time-${this.elem.id}`, this.timer );
 			}
 
 			this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` ) ) + parseInt( this.timer );
