@@ -378,8 +378,14 @@ class StickyRunner {
 			 * Aling on vertical axis
 			 */
 			if ( sticky.config.isFloatMode ) {
-				console.log( sticky.sideOffset, sticky.sideOffset.includes( '%' ), 100 <= parseInt( sticky.sideOffset ) ); // TODO: remove aster review
-				if ( ! sticky.elem.classList.contains( 'alignfull' ) ) {
+				console.log( sticky.sideOffset, sticky.displayWidth.includes( '%' ), 100 <= parseInt( sticky.displayWidth ) ); // TODO: remove aster review
+				if (
+					! (
+						sticky.elem.classList.contains( 'alignfull' ) &&
+						sticky.displayWidth.includes( '%' ) &&
+						100 <= parseInt( sticky.displayWidth )
+					)
+				) {
 					if ( 'left' === sticky.side ) {
 						cssStyling.push( `left: ${sticky.sideOffset}` );
 					} else {
