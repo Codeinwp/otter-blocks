@@ -1,6 +1,7 @@
 /**
  * Internal dependencies
  */
+import { getCookie, setCookie } from '../../helpers/cookies';
 import { domReady } from '../../helpers/frontend-helper-functions';
 
 // Time constants
@@ -87,10 +88,13 @@ class CountdownData {
 
 		if ( 'timer' === this.mode ) {
 
-			const lastVisit = localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` );
+			//const lastVisit = localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` );
+			const lastVisit = getCookie( `o-countdown-last-visit-${this.elem.id}` );
+			console.log( lastVisit );
 
 			if ( ! lastVisit ) {
-				localStorage.setItem( `o-countdown-last-visit-${this.elem.id}`, Date.now().toString() );
+				setCookie( `o-countdown-last-visit-${this.elem.id}`, Date.now().toString(), 30 );
+
 				this.targetDate = Date.now() + parseInt( this.timer );
 			} else {
 				this.targetDate = parseInt( lastVisit ) + parseInt( this.timer );
