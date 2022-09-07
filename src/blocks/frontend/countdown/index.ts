@@ -28,6 +28,7 @@ class CountdownData {
 	readonly settings?: Settings;
 	readonly targetDate: number;
 	readonly behaviour: 'default' | 'redirectLink' | 'showBlock' | 'hideBlock' | 'disappear' | string;
+	readonly redirectLink?: string;
 	readonly components: {
 		second?: {
 			label?: Element
@@ -54,12 +55,16 @@ class CountdownData {
 
 		elem.classList.add( 'ready' );
 
-		const { date, bhv, mode, timer } = elem.dataset;
+		const { date, bhv, mode, timer, redirectLink } = elem.dataset;
+		console.log( elem.dataset );
 		this.rawData = date ?? '';
 		this.behaviour = bhv ?? 'default';
 
 		this.mode = mode as 'timer' | undefined;
 		this.timer = timer ?? '0';
+
+		this.redirectLink = redirectLink;
+		console.log( this.redirectLink );
 
 		this.components = {};
 		[ 'second', 'minute', 'hour', 'day' ].forEach(
@@ -181,6 +186,11 @@ class CountdownData {
 						( blockElem as HTMLDivElement ).classList.remove( 'o-cntdn-bhv-show' );
 					}
 				);
+			}
+			break;
+		case 'redirectLink':
+			if ( this.redirectLink ) {
+				window.location.replace( this.redirectLink );
 			}
 			break;
 		}
