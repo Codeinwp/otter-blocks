@@ -34,7 +34,8 @@ import {
  * Internal dependencies
  */
 import ResponsiveControl from '../../components/responsive-control/index.js';
-import { mergeBoxDefaultValues, removeBoxDefaultValues, buildResponsiveSetAttributes, buildResponsiveGetAttributes } from '../../helpers/helper-functions.js';
+import { mergeBoxDefaultValues, removeBoxDefaultValues, buildResponsiveSetAttributes, buildResponsiveGetAttributes, objectCleaner } from '../../helpers/helper-functions.js';
+import { Fragment } from '@wordpress/element';
 
 const defaultFontSizes = [
 	{
@@ -103,33 +104,95 @@ const Inspector = ({
 			<PanelBody
 				title={ __( 'Time', 'otter-blocks' ) }
 			>
-				<Dropdown
-					position="bottom left"
-					headerTitle={ __( 'Select the date for the deadline', 'otter-blocks' ) }
-					renderToggle={ ({ onToggle, isOpen }) => (
-						<>
-							<Button
-								onClick={ onToggle }
-								isSecondary
-								aria-expanded={ isOpen }
-							>
-								{ attributes.date ? format( settings.formats.datetime, attributes.date ) : __( 'Select Date', 'otter-blocks' ) }
-							</Button>
-						</>
-					) }
-					renderContent={ () => (
-						<DateTimePicker
-							currentDate={ attributes.date }
-							onChange={ date => setAttributes({ date }) }
-						/>
-					) }
+				<ToggleControl
+					label={ __( 'Timer', 'otter-blocks' ) }
+					checked={  'timer' === attributes.mode }
+					onChange={ value => {
+						setAttributes({ mode: value ? 'timer' : undefined });
+					} }
 				/>
+
+				{
+					'timer' !== attributes.mode && (
+						<Dropdown
+							position="bottom left"
+							headerTitle={ __( 'Select the date for the deadline', 'otter-blocks' ) }
+							renderToggle={ ({ onToggle, isOpen }) => (
+								<>
+									<Button
+										onClick={ onToggle }
+										isSecondary
+										aria-expanded={ isOpen }
+									>
+										{ attributes.date ? format( settings.formats.datetime, attributes.date ) : __( 'Select Date', 'otter-blocks' ) }
+									</Button>
+								</>
+							) }
+							renderContent={ () => (
+								<DateTimePicker
+									currentDate={ attributes.date }
+									onChange={ date => setAttributes({ date }) }
+								/>
+							) }
+						/>
+					)
+				}
+
+				{
+					'timer' === attributes.mode && (
+						<Fragment>
+							<TextControl
+								type="number"
+								label={__( 'Days', 'otter-blocks' )}
+								value={ attributes?.timer?.days ?? '' }
+								onChange={ ( days ) => {
+									setAttributes({
+										timer: objectCleaner({ ...attributes.timer, days })
+									});
+								}}
+							/>
+							<TextControl
+								type="number"
+								label={__( 'Hours', 'otter-blocks' )}
+								value={ attributes?.timer?.hours ?? '' }
+								onChange={ ( hours ) => {
+									setAttributes({
+										timer: objectCleaner({ ...attributes.timer, hours })
+									});
+								}}
+							/>
+							<TextControl
+								type="number"
+								label={__( 'Minutes', 'otter-blocks' )}
+								value={ attributes?.timer?.minutes ?? '' }
+								onChange={ ( minutes ) => {
+									setAttributes({
+										timer: objectCleaner({ ...attributes.timer, minutes })
+									});
+								}}
+							/>
+							<TextControl
+								type="number"
+								label={__( 'Seconds', 'otter-blocks' )}
+								value={ attributes?.timer?.seconds ?? '' }
+								onChange={ ( seconds ) => {
+									setAttributes({
+										timer: objectCleaner({ ...attributes.timer, seconds })
+									});
+								}}
+							/>
+						</Fragment>
+					)
+				}
+
+
 			</PanelBody>
 
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
+
 				<ToggleControl
 					label={ __( 'Display Days', 'otter-blocks' ) }
 					checked={ ! attributes?.exclude?.includes( 'day' ) }

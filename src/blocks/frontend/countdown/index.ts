@@ -21,7 +21,9 @@ class CountdownData {
 
 	readonly id: number;
 	readonly elem: HTMLDivElement;
+	readonly mode?: 'timer';
 	readonly rawData: string;
+	readonly timer: string;
 	readonly settings?: Settings;
 	readonly targetDate: number;
 	readonly behaviour: 'default' | 'redirectLink' | 'showBlock' | 'hideBlock' | 'disappear' | string;
@@ -51,10 +53,12 @@ class CountdownData {
 
 		elem.classList.add( 'ready' );
 
-		const { date, bhv } = elem.dataset;
+		const { date, bhv, mode, timer } = elem.dataset;
 		this.rawData = date ?? '';
 		this.behaviour = bhv ?? 'default';
-		this.targetDate = ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime();
+
+		this.mode = mode as 'timer' | undefined;
+		this.timer = timer ?? '0';
 
 		this.components = {};
 		[ 'second', 'minute', 'hour', 'day' ].forEach(
@@ -80,6 +84,22 @@ class CountdownData {
 				}
 			}
 		);
+
+		if ( 'timer' === this.mode ) {
+
+			const lastVisit = localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` );
+
+			if ( ! lastVisit ) {
+				localStorage.setItem( `o-countdown-last-visit-${this.elem.id}`, Date.now().toString() );
+				this.targetDate = Date.now() + parseInt( this.timer );
+			} else {
+				this.targetDate = parseInt( lastVisit ) + parseInt( this.timer );
+			}
+
+
+		} else {
+			this.targetDate = ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime();
+		}
 	}
 
 	get remainingTime(): number {

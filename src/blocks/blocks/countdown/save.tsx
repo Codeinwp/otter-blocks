@@ -14,9 +14,10 @@ import { Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import {
-	getIntervalFromUnix,
 	insertBetweenItems
 } from '../../helpers/helper-functions.js';
+import { getIntervalFromUnix, timerSerialization } from './common';
+import { isEmpty } from 'lodash';
 
 const DisplayTimeComponent = ({
 	name,
@@ -25,6 +26,8 @@ const DisplayTimeComponent = ({
 }) => {
 	return (
 		<div
+
+			// @ts-ignore . Adding `name` as identifier was not an inspiered choice.
 			name={ tag }
 			className={ classnames(
 				'otter-countdown__display-area',
@@ -65,7 +68,9 @@ const Save = ({
 		id: attributes.id,
 		'data-date': attributes.date,
 		'data-bhv': attributes.behaviour ? attributes.behaviour : undefined,
-		'data-redirect-link': 'redirectLink' === attributes.behaviour && attributes.redirectLink ? attributes.redirectLink : undefined
+		'data-redirect-link': 'redirectLink' === attributes.behaviour && attributes.redirectLink ? attributes.redirectLink : undefined,
+		'data-mode': attributes.mode ? attributes.mode : undefined,
+		'data-timer': ! isEmpty( attributes.timer ) ? timerSerialization( attributes.timer ) : undefined
 	});
 
 	return (

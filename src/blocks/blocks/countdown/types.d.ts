@@ -31,6 +31,13 @@ type LegacyAttrs = {
 	borderRadiusBottomLeft: number
 }
 
+export type CountdownTimer = {
+	days?: string
+	hours?: string
+	minutes?: string
+	seconds?: string
+}
+
 type Attributes = {
 	id: string
 	date: string
@@ -68,9 +75,11 @@ type Attributes = {
 	paddingTablet: PaddingType
 	valueFontWeight: string
 	labelFontWeight: string
-	seperatorAlignment: 'center'
+	separatorAlignment: 'center'
 	behaviour: 'default' | 'redirectLink' | 'showBlock' | 'hideBlock' | 'disappear'
 	redirectLink: string
+	mode: 'timer' | undefined
+	timer: CountdownTimer
 } & LegacyAttrs;
 
 export type CountdownProps = BlockProps<Attributes>

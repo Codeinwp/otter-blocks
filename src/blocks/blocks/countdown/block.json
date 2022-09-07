@@ -152,6 +152,12 @@
 		},
 		"redirectLink": {
 			"type": "string"
+		},
+		"mode": {
+			"type": "string"
+		},
+		"timer": {
+			"type": "object"
 		}
 	},
 	"supports": {
