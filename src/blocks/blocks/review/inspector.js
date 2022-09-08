@@ -33,7 +33,27 @@ import { InspectorExtensions } from '../../components/inspector-slot-fill/index.
 import SyncControl from '../../components/sync-control/index.js';
 import Upsell from '../../components/notice/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
-import { setUtm } from '../../helpers/helper-functions.js';
+import {
+	changeActiveStyle,
+	getActiveStyle,
+	setUtm
+} from '../../helpers/helper-functions.js';
+
+const styles = [
+	{
+		label: __( 'Plain', 'otter-blocks' ),
+		value: 'plain',
+		isDefault: true
+	},
+	{
+		label: __( 'Card', 'otter-blocks' ),
+		value: 'card'
+	},
+	{
+		label: __( 'Border', 'otter-blocks' ),
+		value: 'border'
+	}
+];
 
 const PanelItem = ({
 	title,
@@ -188,16 +208,8 @@ const Inspector = ({
 	};
 
 	const changeStyle = value => {
-		const classes = attributes?.className?.split( ' ' ) || [];
-		const styles  = [ 'plain', 'card', 'border' ];
-
-		if ( 'plain' === value && ( classes.includes( 'is-style-card' ) || classes.includes( 'is-style-border' ) ) ) {
-			classes.splice( classes.indexOf( 'is-style-single-column' ), 1 );
-		} else if ( 'is-style-single-column' === value && ! classes.includes( 'is-style-single-column' ) ) {
-			classes.push( 'is-style-single-column' );
-		}
-
-		setAttributes({ className: classes.join( ' ' ) });
+		const classes = changeActiveStyle( attributes?.className, styles, value );
+		setAttributes({ className: classes });
 	};
 
 	return (
@@ -558,21 +570,8 @@ const Inspector = ({
 						title={ __( 'Style', 'otter-blocks' ) }
 					>
 						<ButtonToggle
-							options={[
-								{
-									label: __( 'Plain', 'otter-blocks' ),
-									value: 'plain'
-								},
-								{
-									label: __( 'Card', 'otter-blocks' ),
-									value: 'card'
-								},
-								{
-									label: __( 'Card', 'otter-blocks' ),
-									value: 'border'
-								}
-							]}
-							value={ attributes?.className?.includes( `is-style-${ attributes.style }` ) ? attributes.style : 'plain' }
+							options={ styles }
+							value={ getActiveStyle( styles, attributes?.className ) }
 							onChange={ changeStyle }
 						/>
 					</PanelBody>

@@ -4,7 +4,7 @@
 	--text-color: inherit;
 	--button-text-color: #FFF;
 	--image-width: 33;
-	--padding: 32p;
+	--padding: 32px;
 
 	background: var( --background-color );
 	display: grid;
@@ -75,6 +75,7 @@
 		grid-template-columns: 1fr 2fr;
 		gap: 50px;
 		align-items: center;
+		padding-top: 30px;
 
 		&.is-quarter {
 			grid-template-columns: 1fr 3fr;
@@ -90,7 +91,10 @@
 		}
 
 		p {
+			display: flex;
+			justify-self: flex-start;
 			color: var( --text-color );
+			margin: 0;
 		}
 
 		img {
@@ -210,7 +214,7 @@
 			background: var( --primary-color );
 			color: var( --button-text-color );
 			padding: 12px 50px;
-			margin: 20px 20px 20px 0;
+			margin: 20px 20px 0 0;
 			cursor: pointer;
 			text-align: center;
 
@@ -273,6 +277,12 @@
 		.o-review__header_details {
 			grid-template-columns: auto;
 			justify-items: center;
+
+			&.is-quarter,
+			&.is-half,
+			&.is-full {
+				grid-template-columns: auto;
+			}
 		}
 
 		.o-review__left {
