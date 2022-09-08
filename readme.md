@@ -193,6 +193,25 @@ You can check Otter documentation [here](https://docs.themeisle.com/article/1478
 
 ## Changelog ##
 
+##### [Version 2.0.13](https://github.com/Codeinwp/otter-blocks/compare/v2.0.12...v2.0.13) (2022-08-27)
+
+- Fix JS being loaded everywhere even when not required
+
+
+
+
+##### [Version 2.0.12](https://github.com/Codeinwp/otter-blocks/compare/v2.0.11...v2.0.12) (2022-08-25)
+
+- Fix Custom CSS not working with certain selectors
+- Disable Author Block for WordPress 5.9 or above; use Core’s block instead
+- Small Dynamic Text enhancements
+- Add separator alignment option in Countdown block
+- Fix Category not shown on Featured Post in Posts Lock
+- Fix Alignment control breaking in Section & Posts block
+
+
+
+
 ##### [Version 2.0.11](https://github.com/Codeinwp/otter-blocks/compare/v2.0.10...v2.0.11) (2022-08-17)
 
 - Add Option to remove Product Review schema in Product Review block

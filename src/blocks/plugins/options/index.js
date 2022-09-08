@@ -12,13 +12,17 @@ import {
 import apiFetch from '@wordpress/api-fetch';
 
 import {
+	Button,
 	PanelBody,
 	PanelRow,
 	Snackbar,
 	ToggleControl
 } from '@wordpress/components';
 
-import { useDispatch } from '@wordpress/data';
+import {
+	useDispatch,
+	useSelect
+} from '@wordpress/data';
 
 import {
 	Fragment,
@@ -39,9 +43,18 @@ import './editor.scss';
 import GlobalDefaults from './global-defaults/index.js';
 import defaultsAttrs from './global-defaults/defaults.js';
 import useSettings from '../../helpers/use-settings.js';
+import { otterIconColored } from '../../helpers/icons.js';
 
 const Options = () => {
+	const { isOnboardingVisible } = useSelect( select => {
+		const { isOnboardingVisible } = select( 'themeisle-gutenberg/data' );
+		return {
+			isOnboardingVisible: isOnboardingVisible()
+		};
+	});
+
 	const { createNotice } = useDispatch( 'core/notices' );
+	const { showOnboarding } = useDispatch( 'themeisle-gutenberg/data' );
 
 	useEffect( () => {
 		let isMounted = true;
@@ -202,6 +215,17 @@ const Options = () => {
 							disabled={ 'saving' === status }
 							onChange={ () => updateOption( 'themeisle_blocks_settings_default_block', ! Boolean( getOption( 'themeisle_blocks_settings_default_block' ) ), successMessage ) }
 						/>
+					</PanelRow>
+
+					<PanelRow>
+						<Button
+							isSecondary
+							icon={ otterIconColored }
+							onClick={ () => showOnboarding( ! isOnboardingVisible ) }
+							className="o-onboarding-button"
+						>
+							{ __( 'Show Onboarding Modal', 'otter-blocks' ) }
+						</Button>
 					</PanelRow>
 				</PanelBody>
 

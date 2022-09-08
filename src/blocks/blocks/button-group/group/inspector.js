@@ -164,23 +164,7 @@ const Inspector = ({
 						]}
 						onChange={ onAlignmentChange }
 						hideLabels
-						style={{
-							button: {
-								color: 'black',
-								boxShadow: 'none',
-								borderRadius: '0px'
-							},
-							active: {
-								color: 'white',
-								backgroundColor: 'black',
-								boxShadow: 'none',
-								borderRadius: '0px'
-							},
-							group: {
-								marginLeft: '0px',
-								marginRight: '0px'
-							}
-						}}
+						hasIcon
 					/>
 				</ResponsiveControl>
 			</PanelBody>

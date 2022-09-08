@@ -93,9 +93,9 @@ class Dashboard {
 				array(
 					'version'     => OTTER_BLOCKS_VERSION,
 					'assetsPath'  => OTTER_BLOCKS_URL . 'assets/',
-					'stylesExist' => is_dir( $basedir ),
+					'stylesExist' => is_dir( $basedir ) || boolval( get_transient( 'otter_animations_parsed' ) ),
 					'hasPro'      => Pro::is_pro_installed(),
-					'upgradeLink' => Pro::get_url(),
+					'upgradeLink' => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
 					'docsLink'    => Pro::get_docs_url(),
 				)
 			)

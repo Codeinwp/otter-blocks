@@ -358,16 +358,16 @@ export const delayList = [
 
 export const speedList = [
 	{
-		label: __( 'Default', 'otter-blocks' ),
-		value: 'none'
-	},
-	{
 		label: __( 'Slow', 'otter-blocks' ),
 		value: 'slow'
 	},
 	{
 		label: __( 'Slower', 'otter-blocks' ),
 		value: 'slower'
+	},
+	{
+		label: __( 'Default', 'otter-blocks' ),
+		value: 'none'
 	},
 	{
 		label: __( 'Fast', 'otter-blocks' ),

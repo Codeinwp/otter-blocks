@@ -1,5 +1,5 @@
-import { Icon } from "@wordpress/components"
-import { CSSProperties } from "react"
+import { Icon } from '@wordpress/components';
+import { CSSProperties } from 'react';
 
 type Style = {
     group: CSSProperties,
@@ -18,7 +18,7 @@ type Option = {
 export type ToggleGroupControlProps = {
     value: number | string,
     options: Option[],
-    onChange: (value: number | string) => void
+    onChange: ( value: number | string ) => void
     hideLabel?: boolean
     hideTooltip?: boolean
     showBottomLabels?: boolean

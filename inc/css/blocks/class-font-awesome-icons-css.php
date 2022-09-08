@@ -79,21 +79,6 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 			)
 		);
 
-		$padding = array();
-
-		// This argument isn't used inside condition because of global defaults.
-		if ( isset( $block['attrs']['library'] ) && 'themeisle-icons' === $this->get_attr_value( $block['attrs']['library'], 'fontawesome' ) ) {
-			$padding = array(
-				array(
-					'property' => 'padding',
-					'value'    => 'padding',
-					'default'  => 5,
-					'unit'     => 'px',
-					'hasSync'  => 'icon-padding',
-				),
-			);
-		}
-
 		$css->add_item(
 			array(
 				'selector'   => ' .wp-block-themeisle-blocks-font-awesome-icons-container',
@@ -109,8 +94,7 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 							'value'    => 'backgroundColor',
 							'hasSync'  => 'icon-background-color',
 						),
-					),
-					$padding
+					)
 				),
 			)
 		);

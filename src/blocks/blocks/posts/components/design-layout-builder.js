@@ -24,6 +24,7 @@ import { applyFilters } from '@wordpress/hooks';
  */
 import { SortableItem, SortableList } from './sortable.js';
 import Notice from '../../../components/notice/index.js';
+import { setUtm } from '../../../helpers/helper-functions.js';
 
 const ProFeatures = () => {
 	return (
@@ -43,7 +44,7 @@ const ProFeatures = () => {
 			<br />
 
 			<Notice
-				notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+				notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'customfield' ) }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
 				variant="upsell"
 			/>
 		</Fragment>
