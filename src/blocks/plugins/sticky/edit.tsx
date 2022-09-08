@@ -145,7 +145,6 @@ const AlwaysActiveOption = (
 	const [ offset, setOffset ] = useState( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.sideOffset ) )?.split( '-' )?.pop() );
 
 	useEffect( () => {
-		console.log( width, offset );
 		if ( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.width ) )?.split( '-' )?.pop() !== width ) {
 			addOption( `o-sticky-width-${width}`, FILTER_OPTIONS.width );
 		}
@@ -163,7 +162,6 @@ const AlwaysActiveOption = (
 					help={ __( 'Make the block to float. This is available only for root blocks.', 'otter-blocks' ) }
 					checked={ isActive  }
 					onChange={ ( value ) => {
-						console.log( activeFloatBlocks, value ); // TODO: remove after review
 						if ( value && 0 === activeFloatBlocks.length ) {
 							addOption( FILTER_OPTIONS.float, FILTER_OPTIONS.float ); // you can activate only if no other block is active
 						} else if ( false === value ) {
