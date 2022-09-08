@@ -34,6 +34,7 @@ import PanelTab from '../../components/panel-tab/index.js';
 import Notice from '../../components/notice/index.js';
 import { setUtm } from '../../helpers/helper-functions.js';
 import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
+
 const hasPro = Boolean( window.themeisleGutenberg.hasPro );
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 

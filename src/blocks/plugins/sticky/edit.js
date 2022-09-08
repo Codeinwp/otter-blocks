@@ -25,6 +25,7 @@ import { applyFilters } from '@wordpress/hooks';
 import Notice from '../../components/notice/index.js';
 import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
 import { setUtm } from '../../helpers/helper-functions.js';
+
 const FILTER_OPTIONS = {
 	position: 'o-sticky-pos',
 	offset: 'o-sticky-offset',

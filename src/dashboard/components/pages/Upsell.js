@@ -5,7 +5,11 @@ import { __ } from '@wordpress/i18n';
 
 import { Button } from '@wordpress/components';
 
+/**
+ * Internal dependencies.
+ */
 import { setUtm } from '../../../blocks/helpers/helper-functions.js';
+
 const FEATURES = [
 	{
 		label: __( 'More than 30 Custom Blocks', 'otter-blocks' ),

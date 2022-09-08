@@ -23,9 +23,9 @@ class GoogleFontsLoader {
 		this.node = document.createElement( 'style' );
 		this.node.type = 'text/css';
 		this.node.setAttribute( 'data-generator', 'otter-blocks-fonts-loader' );
+		this.isAttaching = false;
 
 		this.usedFonts = [];
-		this.nodeAppended = false;
 	}
 
 	/**
@@ -142,13 +142,22 @@ class GoogleFontsLoader {
 	 * Update the node CSS.
 	 */
 	updateCSSNode() {
-		if ( ! this.nodeAppended ) {
-			const doc = getEditorIframe()?.contentWindow?.document ?? document;
-			doc.head.appendChild( this.node );
-			this.nodeAppended = true;
-		}
 		this.node.innerHTML = this.renderCSSFont();
 	}
+
+	attach() {
+		if ( ! this.isAttaching ) {
+			this.isAttaching = true;
+			setTimeout( () => {
+				const currentDocument = getEditorIframe()?.contentWindow?.document ?? document;
+				if ( ! currentDocument?.querySelector( '[data-generator*="otter-blocks-fonts-loader"' ) ) {
+					currentDocument?.head?.appendChild( this.node );
+				}
+				this.isAttaching = false;
+			}, 500 );
+		}
+	}
+
 
 	/**
 	 * Render the Font Face for every used font.
