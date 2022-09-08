@@ -12,6 +12,8 @@ import {
 	RangeControl,
 	SelectControl,
 	ToggleControl,
+
+	// @ts-ignore
 	__experimentalUnitControl as UnitContol
 } from '@wordpress/components';
 
@@ -29,6 +31,7 @@ import { applyFilters } from '@wordpress/hooks';
 import Notice from '../../components/notice/index.js';
 import { useSelect, dispatch } from '@wordpress/data';
 import { setUtm } from '../../helpers/helper-functions.js';
+import { BlockProps, OtterBlock } from '../../helpers/blocks.js';
 const FILTER_OPTIONS = {
 	position: 'o-sticky-pos',
 	offset: 'o-sticky-offset',
@@ -98,6 +101,8 @@ const ProFeatures = () => {
 			<ToggleControl
 				label={ __( 'Enable on Mobile', 'otter-blocks' ) }
 				help={ __( 'Make the sticky mode active for mobile users.' ) }
+
+				// @ts-ignore
 				disabled={ true }
 				checked={ false }
 				onChange={ () => {} }
@@ -105,37 +110,46 @@ const ProFeatures = () => {
 
 			{ ! Boolean( window.themeisleGutenberg.hasPro ) && (
 				<Notice
-					notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'stickyfeature' ) }>{ __( 'Get more options with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
-					variant="upsell"
-				/>
+					notice={<ExternalLink href={setUtm( window.themeisleGutenberg.upgradeLink, 'stickyfeature' )}>{__( 'Get more options with Otter Pro.', 'otter-blocks' )}</ExternalLink>}
+					variant="upsell" instructions={undefined}				/>
 			) }
 		</Fragment>
 	);
 };
 
-const AlwaysActiveOption = ({ attributes, clientId, addOption, removeOption, removeOptions }) => {
+const AlwaysActiveOption = (
+	{ className, clientId, addOption, removeOptions }
+	: {
+		className: string,
+		clientId: string,
+		addOption: ( option: string, filterOption: string ) => void,
+		removeOptions: ( filtersOption: string[]) => void
+	}
+) => {
 	const { isRootBlock, activeFloatBlocks } = useSelect( select => {
 		console.count( 'Always on top test' ); // TODO: remove after review.
 		const { getBlocks } = select( 'core/block-editor' );
-		const pageBlocks = getBlocks();
+
+		// @ts-ignore
+		const pageBlocks: OtterBlock<unknown>[] = getBlocks();
 
 		return {
-			isRootBlock: pageBlocks?.some( block => block.clientId === clientId ) ?? false,
-			activeFloatBlocks: pageBlocks?.filter( block => block.clientId !== clientId && block?.attributes?.className?.includes( FILTER_OPTIONS.float ) ) ?? []
+			isRootBlock: pageBlocks?.some( ( block ) => block.clientId === clientId ) ?? false,
+			activeFloatBlocks: pageBlocks?.filter( ( block ) => block.clientId !== clientId && block?.attributes?.className?.includes( FILTER_OPTIONS.float ) ) ?? []
 		};
 	}, []);
 
-	const isActive = attributes?.className?.includes( FILTER_OPTIONS.float );
+	const isActive = className?.includes( FILTER_OPTIONS.float );
 
-	const [ width, setWidth ] = useState( attributes?.className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.width ) )?.split( '-' )?.pop() );
-	const [ offset, setOffset ] = useState( attributes?.className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.sideOffset ) )?.split( '-' )?.pop() );
+	const [ width, setWidth ] = useState( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.width ) )?.split( '-' )?.pop() );
+	const [ offset, setOffset ] = useState( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.sideOffset ) )?.split( '-' )?.pop() );
 
 	useEffect( () => {
 		console.log( width, offset );
-		if ( attributes?.className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.width ) )?.split( '-' )?.pop() !== width ) {
+		if ( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.width ) )?.split( '-' )?.pop() !== width ) {
 			addOption( `o-sticky-width-${width}`, FILTER_OPTIONS.width );
 		}
-		if ( attributes?.className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.sideOffset ) )?.split( '-' )?.pop() !== offset ) {
+		if ( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.sideOffset ) )?.split( '-' )?.pop() !== offset ) {
 			addOption( `o-sticky-opt-side-offset-${offset}`, FILTER_OPTIONS.offset );
 		}
 	}, [ width, offset ]);
@@ -156,6 +170,8 @@ const AlwaysActiveOption = ({ attributes, clientId, addOption, removeOption, rem
 							removeOptions([ FILTER_OPTIONS.float, FILTER_OPTIONS.width, FILTER_OPTIONS.sideOffset ]);
 						}
 					} }
+
+					// @ts-ignore
 					disabled={ ( 0 < activeFloatBlocks.length || ! isRootBlock ) && ! isActive }
 				/>
 
@@ -205,7 +221,7 @@ const AlwaysActiveOption = ({ attributes, clientId, addOption, removeOption, rem
 							/>
 							<SelectControl
 								label={ __( 'Side to stick', 'otter-blocks' ) }
-								value={ attributes?.className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.side ) ) ?? 'o-sticky-side-left' }
+								value={ className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.side ) ) ?? 'o-sticky-side-left' }
 								options={[
 									{
 										label: __( 'Left', 'otter-blocks' ),
@@ -234,11 +250,12 @@ const AlwaysActiveOption = ({ attributes, clientId, addOption, removeOption, rem
 	);
 };
 
+
 const Edit = ({
 	attributes,
 	setAttributes,
 	clientId
-}) => {
+}: BlockProps<unknown> ) => {
 	const [ containerOptions, setContainerOptions ] = useState([{
 		label: __( 'Screen', 'otter-blocks' ),
 		value: 'o-sticky-scope-screen'
@@ -252,11 +269,11 @@ const Edit = ({
 		And element with the classe like this 'o-sticky o-sticky-pos-bottom o-sticky-pos-bottom-30', it will be a sticky element with 30px distance from the bottom of the window viewport
 	*/
 
-	const limit = attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-scope' ) ).pop() || 'o-sticky-scope-main-area';
+	const limit = ( attributes?.className?.split( ' ' ) as string[]).filter( c => c.includes( 'o-sticky-scope' ) ).pop() || 'o-sticky-scope-main-area';
 
-	const addOptions = ( options, filtersOption ) => {
+	const addOptions = ( options: string[], filtersOption: string[]) => {
 
-		const classes = new Set( attributes?.className?.split( ' ' )?.filter(
+		const classes = new Set( ( attributes?.className?.split( ' ' ) as string[])?.filter(
 			c => ! filtersOption.some(
 				f => c.includes( f )
 			)
@@ -270,18 +287,13 @@ const Edit = ({
 		setAttributes({ className: Array.from( classes ).filter( x => 'string' === typeof x  && x ).join( ' ' ) });
 	};
 
-	const addOption = ( option, filterOption = FILTER_OPTIONS.position ) => {
+	const addOption = ( option: string, filterOption = FILTER_OPTIONS.position ) => {
 		addOptions([ option ], [ filterOption ]);
 	};
 
-	const removeOptions = ( optionsFilters ) => {
+	const removeOptions = ( optionsFilters: string[]) => {
 		addOptions([], optionsFilters );
 	};
-
-	const removeOption = ( optionFilter ) => {
-		removeOptions([ optionFilter ]);
-	};
-
 
 	useEffect( () => {
 		if ( clientId ) {
@@ -289,8 +301,8 @@ const Edit = ({
 			const block = document.querySelector( `#block-${ clientId }` );
 			if ( block ) {
 				let parent = block?.parentElement;
-				const containers = [];
-				const options = [];
+				const containers: string[] = [];
+				const options: {label: string, value: string}[] = [];
 				while ( parent && ! parent.classList.contains( 'is-root-container' ) ) {
 					if (
 						(
@@ -321,7 +333,7 @@ const Edit = ({
 						value: 'o-sticky-scope-main-area'
 					});
 
-					if ( 1 < containers.filter( x => 'section' === x ) ) {
+					if ( 1 < containers.filter( x => 'section' === x )?.length ) {
 						options.push({
 							label: __( 'Section', 'otter-blocks' ),
 							value: 'o-sticky-scope-section'
@@ -348,11 +360,14 @@ const Edit = ({
 
 	return (
 		<InspectorControls>
+			{/* @ts-ignore */}
 			<PanelBody
 				title={ __( 'Sticky', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<p>{ __( 'Set any block as Sticky, so that it sticks to another element on the page.', 'otter-blocks' ) }</p>
+				<p>
+					{ __( 'Set any block as Sticky, so that it sticks to another element on the page.', 'otter-blocks' ) }
+				</p>
 
 				<ExternalLink
 					target="_blank"
@@ -370,7 +385,7 @@ const Edit = ({
 					onChange={ value => addOption( value, FILTER_OPTIONS.scope ) }
 				/>
 
-				<AlwaysActiveOption attributes={ attributes} clientId={ clientId } addOption={ addOption } removeOptions={ removeOptions } removeOption={removeOption} />
+				<AlwaysActiveOption className={ attributes.className} clientId={ clientId } addOption={ addOption } removeOptions={ removeOptions } />
 
 				{ applyFilters( 'otter.sticky.controls', <ProFeatures />, attributes, FILTER_OPTIONS, addOption ) }
 

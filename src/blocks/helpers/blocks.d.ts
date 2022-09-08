@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 
 export type BlockProps<T> = {
-	attributes: T
+	attributes: T & { className: string }
 	setAttributes: ( attributes: Partial<T> ) => void
 	isSelected: boolean
 	clientId: string
@@ -47,3 +47,13 @@ export type OtterNodeCSSReturn = [
 	OtterSetNodeCSS,
 	Dispatch<SetStateAction<{node: HTMLStyleElement | null, cssNodeName: string}>>
 ]
+
+export interface OtterBlock<T> {
+	attributes: T & { className: string, customCSS: string | null, hasCustomCSS: boolean}
+	clientId: string
+	innerBlocks: OtterBlock<T>[]
+	isValid: boolean
+	name: string
+	originalContent: string
+	validationIssues: unknown[]
+}
