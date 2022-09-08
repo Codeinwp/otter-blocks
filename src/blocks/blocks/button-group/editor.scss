@@ -42,6 +42,14 @@
 			}
 		}
 	}
+
+	.wp-block-button__link {
+		display: flex;
+
+		.fab, .fas, .far {
+			line-height: unset;
+		}
+	}
 }
 
 .wp-block-themeisle-blocks-button {

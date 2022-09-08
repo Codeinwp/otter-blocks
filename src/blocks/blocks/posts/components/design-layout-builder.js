@@ -18,13 +18,13 @@ import {
 import { Fragment } from '@wordpress/element';
 
 import { applyFilters } from '@wordpress/hooks';
-import { setUtm } from '../../../helpers/helper-functions.js';
 
 /**
  * Internal dependencies
  */
 import { SortableItem, SortableList } from './sortable.js';
 import Notice from '../../../components/notice/index.js';
+import { setUtm } from '../../../helpers/helper-functions.js';
 
 const ProFeatures = () => {
 	return (

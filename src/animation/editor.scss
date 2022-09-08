@@ -118,3 +118,14 @@
 	  top: 16px;
 	}
 }
+
+.block-editor, .block-editor-block-list__layout {
+   .animated {
+      visibility: initial;
+      animation-play-state: running;
+   }
+}
+
+.customize-control-sidebar_block_editor .animated {
+   animation: none;
+}

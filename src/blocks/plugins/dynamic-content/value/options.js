@@ -40,6 +40,11 @@ const options = {
 				isDisabled: ! Boolean( window.themeisleGutenberg.isProActive )
 			},
 			{
+				label: __( 'Advanced Custom Fields', 'otter-blocks' ),
+				value: 'acf',
+				isDisabled: ! Boolean( window.themeisleGutenberg.isProActive )
+			},
+			{
 				label: __( 'Post Type', 'otter-blocks' ),
 				value: 'postType'
 			},

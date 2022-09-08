@@ -27,10 +27,12 @@ import moment from 'moment';
 /**
  * Internal dependencies.
  */
-import options from './../options.js';
+import options from './options.js';
 
 import Notice from './../../../components/notice/index.js';
+
 import { setUtm } from '../../../helpers/helper-functions.js';
+
 let hasSettingsPanel = [
 	'postExcerpt',
 	'date',
