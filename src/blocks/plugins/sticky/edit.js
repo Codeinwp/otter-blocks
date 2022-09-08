@@ -3,8 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { InspectorControls } from '@wordpress/block-editor';
-
 import {
 	ExternalLink,
 	PanelBody,
@@ -25,6 +23,7 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import Notice from '../../components/notice/index.js';
+import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
 import { setUtm } from '../../helpers/helper-functions.js';
 const FILTER_OPTIONS = {
 	position: 'o-sticky-pos',
@@ -107,10 +106,13 @@ const ProFeatures = () => {
 };
 
 const Edit = ({
+	name,
 	attributes,
 	setAttributes,
 	clientId
 }) => {
+	const Inspector = useInspectorSlot( name );
+
 	const [ containerOptions, setContainerOptions ] = useState([{
 		label: __( 'Screen', 'otter-blocks' ),
 		value: 'o-sticky-scope-screen'
@@ -197,7 +199,7 @@ const Edit = ({
 	}, [ clientId ]);
 
 	return (
-		<InspectorControls>
+		<Inspector>
 			<PanelBody
 				title={ __( 'Sticky', 'otter-blocks' ) }
 				initialOpen={ false }
@@ -224,7 +226,7 @@ const Edit = ({
 
 				{ applyFilters( 'otter.poweredBy', '' ) }
 			</PanelBody>
-		</InspectorControls>
+		</Inspector>
 	);
 };
 

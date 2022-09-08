@@ -29,6 +29,7 @@ import { useState, Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import InspectorHeader from '../../components/inspector-header/index.js';
+import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
 import SyncControl from '../../components/sync-control/index.js';
 import Upsell from '../../components/notice/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
@@ -580,6 +581,8 @@ const Inspector = ({
 					/>
 				</PanelBody>
 			) }
+
+			<InspectorExtensions/>
 		</InspectorControls>
 	);
 };
