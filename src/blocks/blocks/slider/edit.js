@@ -104,7 +104,7 @@ const Edit = ({
 				}
 			}
 		}
-	}, [ isSelected, attributes.id, sliderRef.current, attributes.images ]);
+	}, [ isSelected, attributes.id, sliderRef.current, attributes.images, attributes.width ]);
 
 	useEffect( () => {
 		if ( attributes.images.length && attributes.perView > attributes.images.length ) {
@@ -258,6 +258,9 @@ const Edit = ({
 					<div
 						id={ attributes.id }
 						className="glide"
+						style={{
+							width: attributes.width ?? '600px'
+						}}
 					>
 						<div className="glide__track" data-glide-el="track">
 							<div

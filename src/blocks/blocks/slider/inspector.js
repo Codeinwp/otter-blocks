@@ -10,7 +10,8 @@ import { InspectorControls } from '@wordpress/block-editor';
 import {
 	PanelBody,
 	RangeControl,
-	ToggleControl
+	ToggleControl,
+	__experimentalUnitControl as UnitContol
 } from '@wordpress/components';
 
 import { Fragment } from '@wordpress/element';
@@ -118,6 +119,12 @@ const Inspector = ({
 							step={ 0.1 }
 							min={ 100 }
 							max={ 1400 }
+						/>
+
+						<UnitContol
+							label={ __( 'Width', 'otter-blocks' ) }
+							value={ attributes.width ?? '600px' }
+							onChange={ width => setAttributes({ width }) }
 						/>
 
 						<ToggleControl

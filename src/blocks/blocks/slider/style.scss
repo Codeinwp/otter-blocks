@@ -1,6 +1,9 @@
 .wp-block-themeisle-blocks-slider {
 	--height: 400px;
+	--width: 600px;
 
+	width: var(--width);
+	
 	.glide__slides {
 		height: var( --height );
 		animation: load 4s 3;
