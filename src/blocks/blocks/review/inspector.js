@@ -171,7 +171,7 @@ const Inspector = ({
 		const classes = attributes?.className?.split( ' ' ) || [];
 
 		if ( 'default' === value && classes.includes( 'is-style-single-column' ) ) {
-			classes.splice( classes.indexOf( 'single-column' ), 1 );
+			classes.splice( classes.indexOf( 'is-style-single-column' ), 1 );
 		} else if ( 'is-style-single-column' === value && ! classes.includes( 'is-style-single-column' ) ) {
 			classes.push( 'is-style-single-column' );
 		}
@@ -185,6 +185,19 @@ const Inspector = ({
 
 	const changeImageWidth = value => {
 		setAttributes({ imageWidth: 33 !== Number( value ) ? Number( value ) : undefined });
+	};
+
+	const changeStyle = value => {
+		const classes = attributes?.className?.split( ' ' ) || [];
+		const styles  = [ 'plain', 'card', 'border' ];
+
+		if ( 'plain' === value && ( classes.includes( 'is-style-card' ) || classes.includes( 'is-style-border' ) ) ) {
+			classes.splice( classes.indexOf( 'is-style-single-column' ), 1 );
+		} else if ( 'is-style-single-column' === value && ! classes.includes( 'is-style-single-column' ) ) {
+			classes.push( 'is-style-single-column' );
+		}
+
+		setAttributes({ className: classes.join( ' ' ) });
 	};
 
 	return (
@@ -540,65 +553,90 @@ const Inspector = ({
 			) }
 
 			{ 'style' === tab && (
-				<PanelBody
-					title={ __( 'Color', 'otter-blocks' ) }
-					initialOpen={ false }
-				>
-					<SyncControl
-						field="primaryColor"
-						isSynced={ attributes.isSynced }
-						setAttributes={ setAttributes }
+				<Fragment>
+					<PanelBody
+						title={ __( 'Style', 'otter-blocks' ) }
 					>
-						<ColorGradientControl
-							label={ __( 'Primary', 'otter-blocks' ) }
-							colorValue={ getValue( 'primaryColor' ) }
-							onColorChange={ e => setAttributes({ primaryColor: e }) }
+						<ButtonToggle
+							options={[
+								{
+									label: __( 'Plain', 'otter-blocks' ),
+									value: 'plain'
+								},
+								{
+									label: __( 'Card', 'otter-blocks' ),
+									value: 'card'
+								},
+								{
+									label: __( 'Card', 'otter-blocks' ),
+									value: 'border'
+								}
+							]}
+							value={ attributes?.className?.includes( `is-style-${ attributes.style }` ) ? attributes.style : 'plain' }
+							onChange={ changeStyle }
 						/>
-					</SyncControl>
+					</PanelBody>
 
-					<SyncControl
-						field="backgroundColor"
-						isSynced={ attributes.isSynced }
-						setAttributes={ setAttributes }
+					<PanelBody
+						title={ __( 'Color', 'otter-blocks' ) }
+						initialOpen={ false }
 					>
-						<ColorGradientControl
-							label={ __( 'Background', 'otter-blocks' ) }
-							colorValue={ getValue( 'backgroundColor' ) }
-							onColorChange={ e => setAttributes({ backgroundColor: e }) }
-						/>
-					</SyncControl>
+						<SyncControl
+							field="primaryColor"
+							isSynced={ attributes.isSynced }
+							setAttributes={ setAttributes }
+						>
+							<ColorGradientControl
+								label={ __( 'Primary', 'otter-blocks' ) }
+								colorValue={ getValue( 'primaryColor' ) }
+								onColorChange={ e => setAttributes({ primaryColor: e }) }
+							/>
+						</SyncControl>
 
-					<ContrastChecker
-						{ ...{
-							textColor: getValue( 'primaryColor' ),
-							backgroundColor: getValue( 'backgroundColor' )
-						} }
-					/>
+						<SyncControl
+							field="backgroundColor"
+							isSynced={ attributes.isSynced }
+							setAttributes={ setAttributes }
+						>
+							<ColorGradientControl
+								label={ __( 'Background', 'otter-blocks' ) }
+								colorValue={ getValue( 'backgroundColor' ) }
+								onColorChange={ e => setAttributes({ backgroundColor: e }) }
+							/>
+						</SyncControl>
 
-					<SyncControl
-						field="textColor"
-						isSynced={ attributes.isSynced }
-						setAttributes={ setAttributes }
-					>
-						<ColorGradientControl
-							label={ __( 'Text', 'otter-blocks' ) }
-							colorValue={ getValue( 'textColor' ) }
-							onColorChange={ e => setAttributes({ textColor: e }) }
+						<ContrastChecker
+							{ ...{
+								textColor: getValue( 'primaryColor' ),
+								backgroundColor: getValue( 'backgroundColor' )
+							} }
 						/>
-					</SyncControl>
 
-					<SyncControl
-						field="buttonTextColor"
-						isSynced={ attributes.isSynced }
-						setAttributes={ setAttributes }
-					>
-						<ColorGradientControl
-							label={ __( 'Button Text', 'otter-blocks' ) }
-							colorValue={ getValue( 'buttonTextColor' ) }
-							onColorChange={ e => setAttributes({ buttonTextColor: e }) }
-						/>
-					</SyncControl>
-				</PanelBody>
+						<SyncControl
+							field="textColor"
+							isSynced={ attributes.isSynced }
+							setAttributes={ setAttributes }
+						>
+							<ColorGradientControl
+								label={ __( 'Text', 'otter-blocks' ) }
+								colorValue={ getValue( 'textColor' ) }
+								onColorChange={ e => setAttributes({ textColor: e }) }
+							/>
+						</SyncControl>
+
+						<SyncControl
+							field="buttonTextColor"
+							isSynced={ attributes.isSynced }
+							setAttributes={ setAttributes }
+						>
+							<ColorGradientControl
+								label={ __( 'Button Text', 'otter-blocks' ) }
+								colorValue={ getValue( 'buttonTextColor' ) }
+								onColorChange={ e => setAttributes({ buttonTextColor: e }) }
+							/>
+						</SyncControl>
+					</PanelBody>
+				</Fragment>
 			) }
 
 			{ ( ! Boolean( window.themeisleGutenberg.hasPro ) ) && (

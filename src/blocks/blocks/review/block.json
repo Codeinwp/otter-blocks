@@ -57,17 +57,17 @@
 		"pros": {
 			"type": "array",
 			"default": [
-			"Easy to use",
-			"Good price",
-			"Sturdy build and ergonomics"
+				"Easy to use",
+				"Good price",
+				"Sturdy build and ergonomics"
 			]
 		},
 		"cons": {
 			"type": "array",
 			"default": [
-			"Incompatible with old versions",
-			"Hard to assemble",
-			"Bad color combination"
+				"Incompatible with old versions",
+				"Hard to assemble",
+				"Bad color combination"
 			]
 		},
 		"links": {

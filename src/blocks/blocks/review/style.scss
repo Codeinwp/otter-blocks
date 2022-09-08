@@ -4,12 +4,14 @@
 	--text-color: inherit;
 	--button-text-color: #FFF;
 	--image-width: 33;
+	--padding: 32p;
 
 	background: var( --background-color );
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	gap: 0px 0px;
 	grid-template-areas: 'header header header' 'left left right' 'footer footer footer';
+	padding: var( --padding );
 	margin-bottom: 10px;
 
 	.o-review__header {
