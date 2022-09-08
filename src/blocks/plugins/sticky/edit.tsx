@@ -150,7 +150,7 @@ const AlwaysActiveOption = (
 			addOption( `o-sticky-width-${width}`, FILTER_OPTIONS.width );
 		}
 		if ( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.sideOffset ) )?.split( '-' )?.pop() !== offset ) {
-			addOption( `o-sticky-opt-side-offset-${offset}`, FILTER_OPTIONS.offset );
+			addOption( `o-sticky-opt-side-offset-${offset}`, FILTER_OPTIONS.sideOffset );
 		}
 	}, [ width, offset ]);
 
