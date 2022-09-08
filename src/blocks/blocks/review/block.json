@@ -85,6 +85,9 @@
 			}
 			]
 		},
+		"imageWidth": {
+			"type": "number"
+		},
 		"primaryColor": {
 			"type": "string"
 		},

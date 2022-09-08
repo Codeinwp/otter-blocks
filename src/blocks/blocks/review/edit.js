@@ -140,6 +140,12 @@ const Edit = ({
 		style: inlineStyles
 	});
 
+	const detailsWidth = {
+		25: 'is-quarter',
+		50: 'is-half',
+		100: 'is-full'
+	};
+
 	if ( 'isLoading' === status ) {
 		return (
 			<Fragment>
@@ -194,14 +200,14 @@ const Edit = ({
 								allowedFormats={ [] }
 								value={ attributes.title }
 								onChange={ title => setAttributes({ title }) }
-								tagName="h3"
+								tagName="h2"
 							/>
 						) : (
 							<RichText.Content
 								placeholder={ __( 'Name of your product…', 'otter-blocks' ) }
 								allowedFormats={ [] }
 								value={ productAttributes?.title }
-								tagName="h3"
+								tagName="h2"
 							/>
 						)
 					}
@@ -228,14 +234,13 @@ const Edit = ({
 							{ ( attributes.price || attributes.discounted || productAttributes?.price || productAttributes?.discounted ) && ( getSymbolFromCurrency( productAttributes?.currency || attributes.currency ) ?? '$' ) + '' + ( ( productAttributes?.discounted || attributes.discounted ) ? ( productAttributes?.discounted || attributes.discounted ) : ( productAttributes?.price || attributes.price ) ) }
 						</span>
 					</div>
-				</div>
 
-				<div className="o-review__left">
 					<div
 						className={ classnames(
-							'o-review__left_details',
+							'o-review__header_details',
 							{
-								'is-single': ! attributes.image || ( ! isSelected && ! attributes.description )
+								'is-single': ! attributes.image || ( ! isSelected && ! attributes.description ),
+								[ detailsWidth[ attributes.imageWidth ] ]: attributes.imageWidth
 							}
 						) }
 					>
@@ -266,7 +271,9 @@ const Edit = ({
 							/>
 						) }
 					</div>
+				</div>
 
+				<div className="o-review__left">
 					<div className="o-review__left_features">
 						{ 0 < attributes.features.length && attributes.features.map( ( feature, index ) => {
 							return (
@@ -285,7 +292,9 @@ const Edit = ({
 											scale={ attributes.scale }
 										/>
 
-										<span>{ Math.abs( ( feature.rating / divide ).toFixed( 1 ) ) }/{ 10 / divide }</span>
+										<span>
+											{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.abs( feature.rating / divide ).toFixed( 1 ) || 0, 10 / divide ) }
+										</span>
 									</div>
 								</div>
 							);
@@ -296,7 +305,7 @@ const Edit = ({
 				<div className="o-review__right">
 					{ 0 < attributes.pros.length && (
 						<div className="o-review__right_pros">
-							<h4>{ __( 'Pros', 'otter-blocks' ) }</h4>
+							<h3>{ __( 'Pros', 'otter-blocks' ) }</h3>
 
 							{ attributes.pros.map( ( pro, index ) => (
 								<div className="o-review__right_pros_item" key={ index }>
@@ -315,7 +324,7 @@ const Edit = ({
 
 					{ 0 < attributes.cons.length && (
 						<div className="o-review__right_cons">
-							<h4>{ __( 'Cons', 'otter-blocks' ) }</h4>
+							<h3>{ __( 'Cons', 'otter-blocks' ) }</h3>
 
 							{ attributes.cons.map( ( con, index ) => (
 								<div className="o-review__right_cons_item" key={ index }>
@@ -335,9 +344,9 @@ const Edit = ({
 
 				{ ( 0 < productAttributes?.links?.length || 0 < attributes.links.length ) && (
 					<div className="o-review__footer">
-						<span className="o-review__footer_label">
-							{ __( 'Buy this product', 'otter-blocks' ) }
-						</span>
+						<h3 className="o-review__footer_label">
+							{ __( 'Buy this Product', 'otter-blocks' ) }
+						</h3>
 
 						<div className="o-review__footer_buttons">
 							{ ( productAttributes?.links || attributes.links ).map( ( link, index ) => (

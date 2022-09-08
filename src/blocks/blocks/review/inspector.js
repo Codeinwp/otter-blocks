@@ -183,6 +183,10 @@ const Inspector = ({
 		setAttributes({ scale: 'half' === value ? value : undefined });
 	};
 
+	const changeImageWidth = value => {
+		setAttributes({ imageWidth: 33 !== Number( value ) ? Number( value ) : undefined });
+	};
+
 	return (
 		<InspectorControls>
 			<InspectorHeader
@@ -233,9 +237,35 @@ const Inspector = ({
 									value: 'half'
 								}
 							]}
-							value={ 'half' === attributes.scale ? 'half' : 'full' }
+							value={ attributes.scale || 'full' }
 							onChange={ changeScale }
 						/>
+
+						{ ( attributes.image || productAttributes?.image ) && (
+							<ButtonToggle
+								label={ __( 'Image Width', 'otter-blocks' ) }
+								options={[
+									{
+										label: __( '25%', 'otter-blocks' ),
+										value: 25
+									},
+									{
+										label: __( '33%', 'otter-blocks' ),
+										value: 33
+									},
+									{
+										label: __( '50%', 'otter-blocks' ),
+										value: 50
+									},
+									{
+										label: __( '100%', 'otter-blocks' ),
+										value: 100
+									}
+								]}
+								value={ attributes.imageWidth || 33 }
+								onChange={ changeImageWidth }
+							/>
+						) }
 					</PanelBody>
 
 					<PanelBody

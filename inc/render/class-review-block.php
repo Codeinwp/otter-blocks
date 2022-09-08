@@ -37,9 +37,17 @@ class Review_Block {
 			);
 		}
 
-		$id        = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-' . wp_rand( 10, 100 );
-		$is_single = ( isset( $attributes['image'] ) && isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ? '' : ' is-single';
-		$scale     = isset( $attributes['scale'] ) ? 2 : 1;
+		$id            = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-' . wp_rand( 10, 100 );
+		$details_class = ( isset( $attributes['image'] ) && isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ? '' : 'is-single ';
+		$scale         = isset( $attributes['scale'] ) ? 2 : 1;
+
+		$details_width = array(
+			25  => 'is-quarter',
+			50  => 'is-half',
+			100 => 'is-full',
+		);
+
+		$details_class .= isset( $attributes['imageWidth'] ) ? $details_width[ $attributes['imageWidth'] ] : '';
 
 		$wrapper_attributes = get_block_wrapper_attributes(
 			array(
@@ -51,7 +59,7 @@ class Review_Block {
 		$html .= '  <div class ="o-review__header">';
 
 		if ( isset( $attributes['title'] ) && ! empty( $attributes['title'] ) ) {
-			$html .= '<h3>' . esc_html( $attributes['title'] ) . '</h3>';
+			$html .= '<h2>' . esc_html( $attributes['title'] ) . '</h2>';
 		}
 
 		$html .= '		<div class="o-review__header_meta">';
@@ -73,11 +81,8 @@ class Review_Block {
 		}
 
 		$html .= '		</div>';
-		$html .= '  </div>';
-
-		$html .= '	<div class="o-review__left">';
 		if ( ( isset( $attributes['image'] ) || ( isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ) ) {
-			$html .= '	<div class="o-review__left_details' . $is_single . '">';
+			$html .= '	<div class="o-review__header_details ' . trim( $details_class ) . '">';
 			if ( isset( $attributes['image'] ) ) {
 				if ( isset( $attributes['image']['id'] ) && wp_attachment_is_image( $attributes['image']['id'] ) ) {
 					$html .= wp_get_attachment_image( $attributes['image']['id'], 'medium' );
@@ -91,6 +96,9 @@ class Review_Block {
 			}
 			$html .= '	</div>';
 		}
+		$html .= '  </div>';
+
+		$html .= '	<div class="o-review__left">';
 
 		if ( isset( $attributes['features'] ) && count( $attributes['features'] ) > 0 ) {
 			$html .= '	<div class="o-review__left_features">';
@@ -102,7 +110,8 @@ class Review_Block {
 
 				$html .= '		<div class="o-review__left_feature_ratings">';
 				$html .= $this->get_overall_stars( $feature['rating'], $scale );
-				$html .= '			<span>' . round( $feature['rating'] / $scale, 1 ) . '/' . 10 / $scale . '</span>';
+				// translators: Overall rating from 0 to 10.
+				$html .= '			<span>' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), round( $feature['rating'] / $scale, 1 ), 10 / $scale ) . '</span>';
 				$html .= '		</div>';
 				$html .= '	</div>';
 			}
@@ -113,7 +122,7 @@ class Review_Block {
 		$html .= '	<div class="o-review__right">';
 		if ( isset( $attributes['pros'] ) && count( $attributes['pros'] ) > 0 ) {
 			$html .= '	<div class="o-review__right_pros">';
-			$html .= '		<h4>' . __( 'Pros', 'otter-blocks' ) . '</h4>';
+			$html .= '		<h3>' . __( 'Pros', 'otter-blocks' ) . '</h3>';
 
 			foreach ( $attributes['pros'] as $pro ) {
 				$html .= '	<div class="o-review__right_pros_item">';
@@ -126,7 +135,7 @@ class Review_Block {
 
 		if ( isset( $attributes['cons'] ) && count( $attributes['cons'] ) > 0 ) {
 			$html .= '	<div class="o-review__right_cons">';
-			$html .= '		<h4>' . __( 'Cons', 'otter-blocks' ) . '</h4>';
+			$html .= '		<h3>' . __( 'Cons', 'otter-blocks' ) . '</h3>';
 
 			foreach ( $attributes['cons'] as $con ) {
 				$html .= '	<div class="o-review__right_cons_item">';
@@ -140,7 +149,7 @@ class Review_Block {
 
 		if ( isset( $attributes['links'] ) && count( $attributes['links'] ) > 0 ) {
 			$html .= '	<div class="o-review__footer">';
-			$html .= '		<span class="o-review__footer_label">' . __( 'Buy this product', 'otter-blocks' ) . '</span>';
+			$html .= '		<h3 class="o-review__footer_label">' . __( 'Buy this Product', 'otter-blocks' ) . '</h3>';
 
 			$html .= '		<div class="o-review__footer_buttons">';
 
