@@ -39,7 +39,7 @@ class Review_Block {
 
 		$id            = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-' . wp_rand( 10, 100 );
 		$details_class = ( isset( $attributes['image'] ) && isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ? '' : 'is-single ';
-		$scale         = isset( $attributes['scale'] ) ? 2 : 1;
+		$scale         = isset( $attributes['scale'] ) && 'half' === $attributes['scale'] ? 2 : 1;
 
 		$details_width = array(
 			25  => 'is-quarter',
@@ -47,7 +47,7 @@ class Review_Block {
 			100 => 'is-full',
 		);
 
-		$details_class .= isset( $attributes['imageWidth'] ) ? $details_width[ $attributes['imageWidth'] ] : '';
+		$details_class .= isset( $attributes['imageWidth'] ) && 33 !== $attributes['imageWidth'] ? $details_width[ $attributes['imageWidth'] ] : '';
 
 		$wrapper_attributes = get_block_wrapper_attributes(
 			array(
@@ -55,11 +55,14 @@ class Review_Block {
 			) 
 		);
 
+		$main_heading = isset( $attributes['mainHeading'] ) ? $attributes['mainHeading'] : 'h2';
+		$sub_heading  = isset( $attributes['subHeading'] ) ? $attributes['subHeading'] : 'h3';
+
 		$html  = '<div ' . $wrapper_attributes . '>';
 		$html .= '  <div class ="o-review__header">';
 
 		if ( isset( $attributes['title'] ) && ! empty( $attributes['title'] ) ) {
-			$html .= '<h2>' . esc_html( $attributes['title'] ) . '</h2>';
+			$html .= '<' . $main_heading . '>' . esc_html( $attributes['title'] ) . '</' . $main_heading . '>';
 		}
 
 		$html .= '		<div class="o-review__header_meta">';
@@ -122,7 +125,7 @@ class Review_Block {
 		$html .= '	<div class="o-review__right">';
 		if ( isset( $attributes['pros'] ) && count( $attributes['pros'] ) > 0 ) {
 			$html .= '	<div class="o-review__right_pros">';
-			$html .= '		<h3>' . __( 'Pros', 'otter-blocks' ) . '</h3>';
+			$html .= '		<' . $sub_heading . '>' . __( 'Pros', 'otter-blocks' ) . '</' . $sub_heading . '>';
 
 			foreach ( $attributes['pros'] as $pro ) {
 				$html .= '	<div class="o-review__right_pros_item">';
@@ -135,7 +138,7 @@ class Review_Block {
 
 		if ( isset( $attributes['cons'] ) && count( $attributes['cons'] ) > 0 ) {
 			$html .= '	<div class="o-review__right_cons">';
-			$html .= '		<h3>' . __( 'Cons', 'otter-blocks' ) . '</h3>';
+			$html .= '		<' . $sub_heading . '>' . __( 'Cons', 'otter-blocks' ) . '</' . $sub_heading . '>';
 
 			foreach ( $attributes['cons'] as $con ) {
 				$html .= '	<div class="o-review__right_cons_item">';
@@ -149,7 +152,7 @@ class Review_Block {
 
 		if ( isset( $attributes['links'] ) && count( $attributes['links'] ) > 0 ) {
 			$html .= '	<div class="o-review__footer">';
-			$html .= '		<h3 class="o-review__footer_label">' . __( 'Buy this Product', 'otter-blocks' ) . '</h3>';
+			$html .= '		<' . $sub_heading . ' class="o-review__footer_label">' . __( 'Buy this Product', 'otter-blocks' ) . '</' . $sub_heading . '>';
 
 			$html .= '		<div class="o-review__footer_buttons">';
 

@@ -18,6 +18,7 @@ import {
 	ExternalLink,
 	PanelBody,
 	RangeControl,
+	SelectControl,
 	TextControl,
 	ToggleControl,
 	Notice
@@ -52,6 +53,29 @@ const styles = [
 	{
 		label: __( 'Border', 'otter-blocks' ),
 		value: 'border'
+	}
+];
+
+const headingOptions = [
+	{
+		label: __( 'H2', 'otter-blocks' ),
+		value: 'h2'
+	},
+	{
+		label: __( 'H3', 'otter-blocks' ),
+		value: 'h3'
+	},
+	{
+		label: __( 'H4', 'otter-blocks' ),
+		value: 'h4'
+	},
+	{
+		label: __( 'H5', 'otter-blocks' ),
+		value: 'h5'
+	},
+	{
+		label: __( 'H6', 'otter-blocks' ),
+		value: 'h6'
 	}
 ];
 
@@ -199,14 +223,6 @@ const Inspector = ({
 		setAttributes({ className: classes.join( ' ' ) });
 	};
 
-	const changeScale = value => {
-		setAttributes({ scale: 'half' === value ? value : undefined });
-	};
-
-	const changeImageWidth = value => {
-		setAttributes({ imageWidth: 33 !== Number( value ) ? Number( value ) : undefined });
-	};
-
 	const changeStyle = value => {
 		const classes = changeActiveStyle( attributes?.className, styles, value );
 		setAttributes({ className: classes });
@@ -263,7 +279,7 @@ const Inspector = ({
 								}
 							]}
 							value={ attributes.scale || 'full' }
-							onChange={ changeScale }
+							onChange={ scale => setAttributes({ scale }) }
 						/>
 
 						{ ( attributes.image || productAttributes?.image ) && (
@@ -288,7 +304,7 @@ const Inspector = ({
 									}
 								]}
 								value={ attributes.imageWidth || 33 }
-								onChange={ changeImageWidth }
+								onChange={ imageWidth => setAttributes({ imageWidth: Number( imageWidth ) }) }
 							/>
 						) }
 					</PanelBody>
@@ -573,6 +589,27 @@ const Inspector = ({
 							options={ styles }
 							value={ getActiveStyle( styles, attributes?.className ) }
 							onChange={ changeStyle }
+						/>
+					</PanelBody>
+
+					<PanelBody
+						title={ __( 'Typography', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						<SelectControl
+							label={ __( 'Main Heading', 'otter-blocks' ) }
+							help={ __( 'Product Title HTML Tag', 'otter-blocks' ) }
+							options={ headingOptions }
+							value={ attributes.mainHeading || 'h2' }
+							onChange={ mainHeading => setAttributes({ mainHeading }) }
+						/>
+
+						<SelectControl
+							label={ __( 'Sub Heading', 'otter-blocks' ) }
+							help={ __( 'Pros and Cons titles HTML Tag', 'otter-blocks' ) }
+							options={ headingOptions }
+							value={ attributes.subHeading || 'h3' }
+							onChange={ subHeading => setAttributes({ subHeading }) }
 						/>
 					</PanelBody>
 

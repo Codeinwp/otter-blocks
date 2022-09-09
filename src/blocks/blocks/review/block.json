@@ -88,6 +88,12 @@
 		"imageWidth": {
 			"type": "number"
 		},
+		"mainHeading": {
+			"type": "string"
+		},
+		"subHeading": {
+			"type": "string"
+		},
 		"primaryColor": {
 			"type": "string"
 		},

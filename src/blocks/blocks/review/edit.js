@@ -146,6 +146,10 @@ const Edit = ({
 		100: 'is-full'
 	};
 
+	const mainHeading = attributes.mainHeading || 'h2';
+
+	const SubHeading = attributes.subHeading || 'h3';
+
 	if ( 'isLoading' === status ) {
 		return (
 			<Fragment>
@@ -200,14 +204,14 @@ const Edit = ({
 								allowedFormats={ [] }
 								value={ attributes.title }
 								onChange={ title => setAttributes({ title }) }
-								tagName="h2"
+								tagName={ mainHeading }
 							/>
 						) : (
 							<RichText.Content
 								placeholder={ __( 'Name of your product…', 'otter-blocks' ) }
 								allowedFormats={ [] }
 								value={ productAttributes?.title }
-								tagName="h2"
+								tagName={ mainHeading }
 							/>
 						)
 					}
@@ -240,7 +244,7 @@ const Edit = ({
 							'o-review__header_details',
 							{
 								'is-single': ! attributes.image || ( ! isSelected && ! attributes.description ),
-								[ detailsWidth[ attributes.imageWidth ] ]: attributes.imageWidth
+								[ detailsWidth[ attributes.imageWidth ] ]: ( attributes.imageWidth && 33 !== attributes.imageWidth )
 							}
 						) }
 					>
@@ -305,7 +309,7 @@ const Edit = ({
 				<div className="o-review__right">
 					{ 0 < attributes.pros.length && (
 						<div className="o-review__right_pros">
-							<h3>{ __( 'Pros', 'otter-blocks' ) }</h3>
+							<SubHeading>{ __( 'Pros', 'otter-blocks' ) }</SubHeading>
 
 							{ attributes.pros.map( ( pro, index ) => (
 								<div className="o-review__right_pros_item" key={ index }>
@@ -324,7 +328,7 @@ const Edit = ({
 
 					{ 0 < attributes.cons.length && (
 						<div className="o-review__right_cons">
-							<h3>{ __( 'Cons', 'otter-blocks' ) }</h3>
+							<SubHeading>{ __( 'Cons', 'otter-blocks' ) }</SubHeading>
 
 							{ attributes.cons.map( ( con, index ) => (
 								<div className="o-review__right_cons_item" key={ index }>
@@ -344,9 +348,9 @@ const Edit = ({
 
 				{ ( 0 < productAttributes?.links?.length || 0 < attributes.links.length ) && (
 					<div className="o-review__footer">
-						<h3 className="o-review__footer_label">
+						<SubHeading className="o-review__footer_label">
 							{ __( 'Buy this Product', 'otter-blocks' ) }
-						</h3>
+						</SubHeading>
 
 						<div className="o-review__footer_buttons">
 							{ ( productAttributes?.links || attributes.links ).map( ( link, index ) => (
