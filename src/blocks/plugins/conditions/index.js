@@ -36,7 +36,7 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 		return (
 			<Fragment>
 				<BlockEdit { ...props } />
-				<Edit { ...props } />
+				{ props.isSelected && <Edit { ...props } /> }
 			</Fragment>
 		);
 	};

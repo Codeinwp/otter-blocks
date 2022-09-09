@@ -3,30 +3,35 @@
 	--primary-color: #ED6F57;
 	--text-color: inherit;
 	--button-text-color: #FFF;
+	--border-color: #343130;
 	--image-width: 33;
-	--padding: 32px;
+	--padding-top: 32px;
+	--padding-bottom: 32px;
+	--padding-left: 32px;
+	--padding-right: 32px;
+	--border-width: 0;
 
 	background: var( --background-color );
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	gap: 0px 0px;
 	grid-template-areas: 'header header header' 'left left right' 'footer footer footer';
-	padding: var( --padding );
 	margin-bottom: 10px;
 
+	&.is-style-border {
+		--border-width: 3px;
+	}
+
 	.o-review__header {
-		padding: 0 0 20px 0;
+		padding: var( --padding-top ) var( --padding-right ) 20px var( --padding-left );
 		grid-area: header;
 		overflow: hidden;
+		border: var( --border-width ) solid var( --border-color );
 
-		h3 {
+		h2 {
 			color: var( --text-color );
-			font-size: 28px;
-			font-style: normal;
-			font-weight: 700;
-			line-height: 40px;
-			letter-spacing: 0em;
 			text-align: left;
+			margin: 0;
 		}
 	}
 
@@ -41,6 +46,7 @@
 	.o-review__header_ratings {
 		display: flex;
 		align-items: center;
+		margin-top: 20px;
 
 		svg {
 			max-width: 36px;
@@ -98,8 +104,10 @@
 		}
 
 		img {
-			max-width: 200px;
-			max-height: 400px;
+			max-width: 100%;
+			display: block;
+			height: auto;
+			justify-self: center;
 		}
 
 		&.is-single {
@@ -113,8 +121,11 @@
 
 	.o-review__left {
 		grid-area: left;
-		padding: 20px 30px 20px 0;
+		padding: 20px 20px 20px var( --padding-left );
 		overflow: hidden;
+		border-bottom: var( --border-width ) solid var( --border-color );
+		border-left: var( --border-width ) solid var( --border-color );
+		border-right: calc( var( --border-width ) / 2 ) solid var( --border-color );
 	}
 
 	.o-review__left_features {
@@ -159,16 +170,20 @@
 
 	.o-review__right {
 		grid-area: right;
-		padding: 20px 0 20px 30px;
+		padding: 20px var( --padding-right ) 20px 20px;
 		overflow: hidden;
+		border-bottom: var( --border-width ) solid var( --border-color );
+		border-left: calc( var( --border-width ) / 2 ) solid var( --border-color );
+		border-right: var( --border-width ) solid var( --border-color );
 	}
 
 	.o-review__right_pros,
 	.o-review__right_cons {
 		padding: 10px 0;
 
-		h4 {
+		h3 {
 			color: var( --text-color );
+			margin: 0;
 		}
 	}
 
@@ -196,13 +211,15 @@
 
 	.o-review__footer {
 		grid-area: footer;
-		padding: 20px 0 0 0;
+		padding: 20px var( --padding-right ) var( --padding-bottom ) var( --padding-left );
 		overflow: hidden;
+		border: var( --border-width ) solid var( --border-color );
+		border-top: none;
 	}
 
 	.o-review__footer_label {
 		color: var( --text-color );
-		font-weight: 600;
+		margin: 0;
 	}
 
 	.o-review__footer_buttons {
@@ -286,11 +303,11 @@
 		}
 
 		.o-review__left {
-			padding-right: 0;
+			padding-right: var( --padding-right );
 		}
 
 		.o-review__right {
-			padding-left: 0;
+			padding-left: var( --padding-left );
 		}
 
 		.o-review__left_details {
