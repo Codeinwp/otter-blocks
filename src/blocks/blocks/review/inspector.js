@@ -16,6 +16,7 @@ import {
 	BaseControl,
 	Button,
 	ExternalLink,
+	FontSizePicker,
 	PanelBody,
 	RangeControl,
 	SelectControl,
@@ -76,6 +77,29 @@ const headingOptions = [
 	{
 		label: __( 'H6', 'otter-blocks' ),
 		value: 'h6'
+	}
+];
+
+const defaultFontSizes = [
+	{
+		name: 14,
+		size: '14px'
+	},
+	{
+		name: 16,
+		size: '16px'
+	},
+	{
+		name: 18,
+		size: '18px'
+	},
+	{
+		name: 24,
+		size: '24px'
+	},
+	{
+		name: 28,
+		size: '28px'
 	}
 ];
 
@@ -611,6 +635,17 @@ const Inspector = ({
 							value={ attributes.subHeading || 'h3' }
 							onChange={ subHeading => setAttributes({ subHeading }) }
 						/>
+
+						<BaseControl
+							label={ __( 'Content Font Size', 'otter-blocks' ) }
+						>
+							<FontSizePicker
+								fontSizes={ defaultFontSizes }
+								withReset
+								value={ attributes.contentFontSize }
+								onChange={ contentFontSize => setAttributes({ contentFontSize }) }
+							/>
+						</BaseControl>
 					</PanelBody>
 
 					<PanelBody

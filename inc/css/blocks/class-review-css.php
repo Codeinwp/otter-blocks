@@ -57,6 +57,10 @@ class Review_CSS extends Base_CSS {
 						'value'    => 'buttonTextColor',
 						'hasSync'  => 'review-button-text-color',
 					),
+					array(
+						'property' => '--content-font-size',
+						'value'    => 'contentFontSize',
+					),
 				),
 			)
 		);

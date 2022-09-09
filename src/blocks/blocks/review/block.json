@@ -94,6 +94,9 @@
 		"subHeading": {
 			"type": "string"
 		},
+		"contentFontSize": {
+			"type": "string"
+		},
 		"primaryColor": {
 			"type": "string"
 		},

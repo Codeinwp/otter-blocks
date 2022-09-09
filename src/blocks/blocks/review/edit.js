@@ -127,7 +127,8 @@ const Edit = ({
 		'--background-color': getValue( 'backgroundColor' ),
 		'--primary-color': getValue( 'primaryColor' ),
 		'--text-color': getValue( 'textColor' ),
-		'--button-text-color': getValue( 'buttonTextColor' )
+		'--button-text-color': getValue( 'buttonTextColor' ),
+		'--content-font-size': getValue( 'contentFontSize' )
 	};
 
 	const isPlaceholder = ( 'object' === typeof status && null !== status && status.isError ) || 'isLoading' === status;
