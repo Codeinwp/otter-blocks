@@ -15,6 +15,7 @@ import {
 import {
 	BaseControl,
 	Button,
+	Disabled,
 	ExternalLink,
 	FontSizePicker,
 	PanelBody,
@@ -32,7 +33,7 @@ import { useState, Fragment } from '@wordpress/element';
  */
 import InspectorHeader from '../../components/inspector-header/index.js';
 import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
-import SyncControl from '../../components/sync-control/index.js';
+import SyncControlDropdown from '../../components/sync-control-dropdown/index.js';
 import Upsell from '../../components/notice/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
 import {
@@ -251,6 +252,25 @@ const Inspector = ({
 		const classes = changeActiveStyle( attributes?.className, styles, value );
 		setAttributes({ className: classes });
 	};
+
+	const colorControls = [
+		{
+			label: __( 'Background', 'otter-blocks' ),
+			value: 'backgroundColor'
+		},
+		{
+			label: __( 'Text', 'otter-blocks' ),
+			value: 'textColor'
+		},
+		{
+			label: __( 'Button', 'otter-blocks' ),
+			value: 'primaryColor'
+		},
+		{
+			label: __( 'Button Text', 'otter-blocks' ),
+			value: 'buttonTextColor'
+		}
+	];
 
 	return (
 		<InspectorControls>
@@ -651,61 +671,67 @@ const Inspector = ({
 					<PanelBody
 						title={ __( 'Color', 'otter-blocks' ) }
 						initialOpen={ false }
+						className="o-review__inspector_color"
 					>
-						<SyncControl
-							field="primaryColor"
+						<SyncControlDropdown
 							isSynced={ attributes.isSynced }
+							options={ colorControls }
 							setAttributes={ setAttributes }
-						>
-							<ColorGradientControl
-								label={ __( 'Primary', 'otter-blocks' ) }
-								colorValue={ getValue( 'primaryColor' ) }
-								onColorChange={ e => setAttributes({ primaryColor: e }) }
-							/>
-						</SyncControl>
+						/>
 
-						<SyncControl
-							field="backgroundColor"
-							isSynced={ attributes.isSynced }
-							setAttributes={ setAttributes }
+						<Disabled
+							isDisabled={ attributes.isSynced?.includes( 'backgroundColor' ) || false }
 						>
 							<ColorGradientControl
 								label={ __( 'Background', 'otter-blocks' ) }
 								colorValue={ getValue( 'backgroundColor' ) }
 								onColorChange={ e => setAttributes({ backgroundColor: e }) }
 							/>
-						</SyncControl>
+						</Disabled>
 
-						<ContrastChecker
-							{ ...{
-								textColor: getValue( 'primaryColor' ),
-								backgroundColor: getValue( 'backgroundColor' )
-							} }
-						/>
-
-						<SyncControl
-							field="textColor"
-							isSynced={ attributes.isSynced }
-							setAttributes={ setAttributes }
+						<Disabled
+							isDisabled={ attributes.isSynced?.includes( 'textColor' ) || false }
 						>
 							<ColorGradientControl
 								label={ __( 'Text', 'otter-blocks' ) }
 								colorValue={ getValue( 'textColor' ) }
 								onColorChange={ e => setAttributes({ textColor: e }) }
 							/>
-						</SyncControl>
+						</Disabled>
 
-						<SyncControl
-							field="buttonTextColor"
-							isSynced={ attributes.isSynced }
-							setAttributes={ setAttributes }
+						<ContrastChecker
+							{ ...{
+								textColor: getValue( 'textColor' ),
+								backgroundColor: getValue( 'backgroundColor' )
+							} }
+						/>
+
+						<Disabled
+							isDisabled={ attributes.isSynced?.includes( 'primaryColor' ) || false }
+						>
+							<ColorGradientControl
+								label={ __( 'Button', 'otter-blocks' ) }
+								colorValue={ getValue( 'primaryColor' ) }
+								onColorChange={ e => setAttributes({ primaryColor: e }) }
+							/>
+						</Disabled>
+
+						<Disabled
+							isDisabled={ attributes.isSynced?.includes( 'buttonTextColor' ) || false }
 						>
 							<ColorGradientControl
 								label={ __( 'Button Text', 'otter-blocks' ) }
 								colorValue={ getValue( 'buttonTextColor' ) }
 								onColorChange={ e => setAttributes({ buttonTextColor: e }) }
 							/>
-						</SyncControl>
+						</Disabled>
+
+						<ContrastChecker
+							{ ...{
+								textColor: getValue( 'buttonTextColor' ),
+								backgroundColor: getValue( 'primaryColor' )
+							} }
+						/>
 					</PanelBody>
 				</Fragment>
 			) }
