@@ -57,3 +57,9 @@ export interface OtterBlock<T> {
 	originalContent: string
 	validationIssues: unknown[]
 }
+
+export type ResponsiveProps<T> = {
+	desktop?: T
+	tablet?: T
+	mobile?: T
+}

@@ -80,5 +80,6 @@ type Attributes = {
 	isSynced: string[]
 }
 
+export type SectionAttrs = Partial<Attributes>
 export type SectionProps = BlockProps<Attributes>
 export interface SectionInspector extends InspectorProps<Attributes> {}
