@@ -125,7 +125,6 @@ subscribe( () => {
 		if ( undefined !== meta._themeisle_gutenberg_block_has_review ) {
 			const blocks = getBlocks();
 			const hasReview = checkReviewBlock( blocks );
-			console.log( hasReview );
 
 			if ( meta._themeisle_gutenberg_block_has_review !== hasReview ) {
 				editPost({
