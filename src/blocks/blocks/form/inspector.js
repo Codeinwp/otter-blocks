@@ -9,6 +9,7 @@ import {
 } from '@wordpress/block-editor';
 
 import {
+	BaseControl,
 	Button,
 	ExternalLink,
 	PanelBody,
@@ -140,7 +141,12 @@ const Inspector = ({
 					{
 						value: attributes.inputColor,
 						onChange: inputColor => setAttributes({ inputColor }),
-						label: __( 'Input', 'otter-blocks' )
+						label: __( 'Input Text', 'otter-blocks' )
+					},
+					{
+						value: attributes.inputBackgroundColor,
+						onChange: inputBackgroundColor => setAttributes({ inputBackgroundColor }),
+						label: __( 'Input Background', 'otter-blocks' )
 					}
 				] }
 			/>
@@ -188,13 +194,13 @@ const Inspector = ({
 				>
 					<RangeControl
 						label={ __( 'Spacing', 'otter-blocks' ) }
-						value={ attributes.inputGap ?? 16 }
+						value={ attributes.inputGap ?? 10 }
 						onChange={ inputGap => setAttributes({ inputGap }) }
 						allowReset
 						step={ 0.1 }
 						min={ 0 }
 						max={ 50 }
-						initialPositino={ 5 }
+						initialPositino={ 10 }
 					/>
 				</SyncControl>
 
@@ -239,12 +245,12 @@ const Inspector = ({
 				>
 					<RangeControl
 						label={ __( 'Fields Spacing', 'otter-blocks' ) }
-						value={ attributes.inputsGap ?? 10}
+						value={ attributes.inputsGap ?? 16}
 						onChange={ inputsGap => setAttributes({ inputsGap }) }
 						allowReset
 						min={ 0 }
 						max={ 50 }
-						initialPosition={ 10 }
+						initialPosition={ 16 }
 					/>
 				</SyncControl>
 
@@ -301,15 +307,17 @@ const Inspector = ({
 					isSynced={ attributes.isSynced }
 					setAttributes={ setAttributes }
 				>
-					<h2>{__( 'Help Text Font Size', 'otter-blocks' )}</h2>
-
-					<FontSizePicker
-						label={ __( 'Help Font Size', 'otter-blocks' ) }
-						fontSizes={ defaultFontSizes }
-						withReset
-						value={ attributes.helpFontSize }
-						onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
-					/>
+					<BaseControl
+						label={ __( 'Help Text Font Size', 'otter-blocks' ) }
+					>
+						<FontSizePicker
+							label={ __( 'Help Font Size', 'otter-blocks' ) }
+							fontSizes={ defaultFontSizes }
+							withReset
+							value={ attributes.helpFontSize }
+							onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
+						/>
+					</BaseControl>
 				</SyncControl>
 			</PanelBody>
 
@@ -364,15 +372,17 @@ const Inspector = ({
 					isSynced={ attributes.isSynced }
 					setAttributes={ setAttributes }
 				>
-					<h2>{__( 'Message Font Size', 'otter-blocks' )}</h2>
-
-					<FontSizePicker
+					<BaseControl
 						label={ __( 'Message Font Size', 'otter-blocks' ) }
-						fontSizes={ defaultFontSizes }
-						withReset
-						value={ attributes.messageFontSize }
-						onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
-					/>
+					>
+						<FontSizePicker
+							label={ __( 'Message Font Size', 'otter-blocks' ) }
+							fontSizes={ defaultFontSizes }
+							withReset
+							value={ attributes.messageFontSize }
+							onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
+						/>
+					</BaseControl>
 				</SyncControl>
 			</PanelBody>
 

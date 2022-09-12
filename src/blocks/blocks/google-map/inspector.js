@@ -280,7 +280,7 @@ const Inspector = ({
 				/>
 
 				<ToggleControl
-					label={ __( 'Streen View Control', 'otter-blocks' ) }
+					label={ __( 'Street View Control', 'otter-blocks' ) }
 					checked={ attributes.streetViewControl }
 					onChange={ toggleStreetViewControl }
 				/>

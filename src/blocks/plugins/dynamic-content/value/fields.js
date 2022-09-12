@@ -27,9 +27,11 @@ import moment from 'moment';
 /**
  * Internal dependencies.
  */
-import options from './../options.js';
+import options from './options.js';
 
 import Notice from './../../../components/notice/index.js';
+
+import { setUtm } from '../../../helpers/helper-functions.js';
 
 let hasSettingsPanel = [
 	'postExcerpt',
@@ -102,7 +104,7 @@ const Fields = ({
 
 				{ ( ! Boolean( window.themeisleGutenberg.hasPro ) ) && (
 					<Notice
-						notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Unlock more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+						notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'dynamictext' ) }>{ __( 'Unlock more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
 						variant="upsell"
 					/>
 				) }

@@ -241,7 +241,7 @@ class Registration {
 				'isCompatible'            => Main::is_compatible(),
 				'hasPro'                  => Pro::is_pro_installed(),
 				'isProActive'             => Pro::is_pro_active(),
-				'upgradeLink'             => Pro::get_url(),
+				'upgradeLink'             => tsdk_utmify( Pro::get_url(), 'editor', Pro::get_reference() ),
 				'should_show_upsell'      => Pro::should_show_upsell(),
 				'assetsPath'              => OTTER_BLOCKS_URL . 'assets',
 				'updatePath'              => admin_url( 'update-core.php' ),
@@ -257,6 +257,7 @@ class Registration {
 				'postTypes'               => get_post_types( [ 'public' => true ] ),
 				'rootUrl'                 => get_site_url(),
 				'restRoot'                => get_rest_url( null, 'otter/v1' ),
+				'showOnboarding'          => $this->show_onboarding(),
 				'hasModule'               => array(
 					'blockConditions' => get_option( 'themeisle_blocks_settings_block_conditions', true ),
 				),
@@ -266,6 +267,28 @@ class Registration {
 		);
 
 		wp_enqueue_style( 'otter-editor', OTTER_BLOCKS_URL . 'build/blocks/editor.css', array( 'wp-edit-blocks', 'font-awesome-5', 'font-awesome-4-shims' ), $asset_file['version'] );
+	}
+
+	/**
+	 * Whether to show onboarding or not.
+	 *
+	 * @since   2.0.13
+	 * @access  public
+	 */
+	public function show_onboarding() {
+		$onboarding_option    = get_option( 'themeisle_blocks_settings_onboarding', true );
+		$installed_thru_sdk   = get_option( 'themeisle_sdk_promotions_otter_installed', false );
+		$otter_blocks_install = get_option( 'otter_blocks_install' );
+
+		if ( ! $onboarding_option ) {
+			return false;
+		}
+
+		if ( $installed_thru_sdk && $otter_blocks_install > strtotime( '-2 days' ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -855,10 +878,24 @@ class Registration {
 				true
 			);
 			wp_script_add_data( 'otter-sticky', 'defer', true );
+
+			add_action( 'wp_head', array( $this, 'sticky_style' ) );
+			
 			self::$scripts_loaded['sticky'] = true;
 		}
 
 		return $block_content;
+	}
+
+	/**
+	 * Add styles for sticky blocks.
+	 * 
+	 * @static
+	 * @since 2.0.14
+	 * @access public
+	 */
+	public static function sticky_style() {
+		echo '<style id="o-sticky-inline-css">.o-sticky.o-sticky-float { height: 0px; } </style>';
 	}
 
 	/**

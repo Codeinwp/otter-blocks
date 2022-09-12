@@ -5,7 +5,9 @@
 import { registerStore } from '@wordpress/data';
 
 const DEFAULT_STATE = {
-	viewType: 'Desktop'
+	showOnboarding: Boolean( window.themeisleGutenberg.showOnboarding ),
+	viewType: 'Desktop',
+	visiblePopover: 'themeisle-blocks/dynamic-value'
 };
 
 registerStore( 'themeisle-gutenberg/data', {
@@ -16,12 +18,30 @@ registerStore( 'themeisle-gutenberg/data', {
 			};
 		}
 
+		if ( 'UPDATE_ONBOARDING' === action.type ) {
+			return {
+				showOnboarding: action.showOnboarding
+			};
+		}
+
+		if ( 'UPDATE_POPOVER' === action.type ) {
+			return {
+				visiblePopover: action.visiblePopover
+			};
+		}
+
 		return state;
 	},
 
 	selectors: {
 		getView( state ) {
 			return state.viewType;
+		},
+		isOnboardingVisible( state ) {
+			return state.showOnboarding;
+		},
+		getVisiblePopover( state ) {
+			return state.visiblePopover;
 		}
 	},
 
@@ -30,6 +50,18 @@ registerStore( 'themeisle-gutenberg/data', {
 			return {
 				type: 'UPDATE_VIEW',
 				viewType
+			};
+		},
+		showOnboarding( showOnboarding ) {
+			return {
+				type: 'UPDATE_ONBOARDING',
+				showOnboarding
+			};
+		},
+		setVisiblePopover( visiblePopover ) {
+			return {
+				type: 'UPDATE_POPOVER',
+				visiblePopover
 			};
 		}
 	}

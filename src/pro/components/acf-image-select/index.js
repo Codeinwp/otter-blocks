@@ -24,7 +24,7 @@ const ACFImageSelect = ({
 
 		groups.forEach( group => {
 			group.fields.forEach( field => {
-				if ( 'image' === field.type ) {
+				if ( 'image' === field.type || 'url' === field.type ) {
 					fields.push({
 						label: field.label,
 						value: field.key

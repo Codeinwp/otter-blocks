@@ -120,7 +120,7 @@ const StickyControls = (
 				label={ __( 'Enable on Mobile', 'otter-blocks' ) }
 				help={ __( 'Make the sticky mode active for mobile users.' ) }
 				checked={ useOnMobile }
-				onChange={ () => addOption( 'o-sticky-use-mobile', FILTER_OPTIONS.usage ) }
+				onChange={ ( value ) => addOption( value ? 'o-sticky-use-mobile' : undefined, FILTER_OPTIONS.usage ) }
 			/>
 		</Fragment>
 	);

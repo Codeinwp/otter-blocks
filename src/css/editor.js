@@ -18,6 +18,8 @@ import {
 
 let inputTimeout = null;
 
+window.otterCSSLintIgnored = [];
+
 const CSSEditor = ({
 	attributes,
 	setAttributes,
@@ -42,7 +44,13 @@ const CSSEditor = ({
 	};
 
 	const checkInput = ( editor, ignoreErrors = false ) => {
-		const editorErrors = editor?.state?.lint?.marked?.filter( ({ __annotation }) => 'error' === __annotation?.severity )?.map( ({ __annotation }) => __annotation?.message );
+		let editorErrors = editor?.state?.lint?.marked?.filter( ({ __annotation }) => 'error' === __annotation?.severity )?.map( ({ __annotation }) => __annotation?.message );
+
+		if ( ignoreErrors && 0 < editorErrors?.length ) {
+			window.otterCSSLintIgnored = editorErrors;
+		}
+
+		editorErrors = editorErrors?.filter( error => ! window.otterCSSLintIgnored.includes( error ) );
 
 		setErrors( editorErrors );
 		if ( ! ignoreErrors && 0 < editorErrors?.length ) {
@@ -50,7 +58,6 @@ const CSSEditor = ({
 		}
 		setEditorValue( editor?.getValue() );
 	};
-
 
 	useEffect( () => {
 		const classes = attributes.customCSS && attributes.className?.includes( 'ticss-' ) ? attributes.className.split( ' ' ).find( i => i.includes( 'ticss' ) ) : null;
@@ -139,7 +146,7 @@ const CSSEditor = ({
 
 					<Button
 						variant='secondary'
-						onClick={() => checkInput( editorRef, true )}
+						onClick={() => checkInput( editorRef.current, true )}
 						style={{ width: 'max-content', marginBottom: '20px' }}
 					>
 						{ __( 'Override', 'otter-blocks' ) }
