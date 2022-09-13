@@ -97,6 +97,7 @@ class Dashboard {
 					'hasPro'      => Pro::is_pro_installed(),
 					'upgradeLink' => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
 					'docsLink'    => Pro::get_docs_url(),
+					'siteURL'     => get_site_url(),
 				)
 			)
 		);

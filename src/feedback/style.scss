@@ -1,0 +1,87 @@
+.o-feedback-modal {
+	width: 490px;
+	border-radius: 10px;
+	overflow: visible;
+
+	&.no-header {
+		.components-modal__content {
+			margin-top: 0;
+			padding-top: 24px;
+
+			&::before {
+				display: none;
+			}
+		}
+
+		.components-modal__header {
+			display: none;
+		}
+	}
+
+	.components-modal__header {
+		border: none;
+	}
+
+	.components-modal__header-heading {
+		font-weight: 400;
+		font-size: 20px;
+	}
+
+	.buttons-wrap {
+		display: flex;
+		justify-content: space-between;
+		margin-top: 25px;
+	}
+
+	.f-send {
+		min-width: 112px;
+
+		> svg {
+			margin: 0 auto;
+		}
+	}
+
+	.toggle-info:focus {
+		box-shadow: none;
+	}
+
+	.info {
+		color: #757575;
+		overflow: hidden;
+		height: 0;
+		transition: .2s ease-out;
+
+		.wrapper > p {
+			margin-top: 0;
+		}
+	}
+
+	.info-row {
+		display: flex;
+		justify-content: space-between;
+		border-bottom: 2px solid #cbcbcb;
+
+		p {
+			margin: 6px 0;
+		}
+	}
+
+	.finish-feedback {
+		text-align: center;
+
+		.f-title {
+			font-size: 23px;
+			line-height: 28px;
+			margin: .5em 0;
+		}
+
+		.f-description {
+			width: 55%;
+			margin: 0 auto 20px;
+		}
+
+		button.f-done {
+			padding: 0 30px;
+		}
+	}
+}

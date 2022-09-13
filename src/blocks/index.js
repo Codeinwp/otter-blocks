@@ -15,7 +15,7 @@ import { addFilter } from '@wordpress/hooks';
  * Internal dependencies
  */
 import './editor.scss';
-import { Feedback } from './feedback';
+import '../feedback/index.js';
 import {
 	otterIcon,
 	otterIconColored as icon
@@ -32,8 +32,6 @@ const PoweredBy = () => {
 };
 
 addFilter( 'otter.poweredBy', 'themeisle-gutenberg/powered-by-notice', PoweredBy );
-
-addFilter( 'otter.feedback', 'themeisle-gutenberg/feedback-modal', Feedback );
 
 if ( Boolean( window.themeisleGutenberg.should_show_upsell ) ) {
 	const { createNotice } = dispatch( 'core/notices' );
