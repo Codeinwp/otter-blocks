@@ -50,12 +50,7 @@ class Review_Comparison_Block {
 
 			$block = array();
 
-			foreach ( $post_blocks as $post_block ) {
-				if ( 'themeisle-blocks/review' === $post_block['blockName'] && substr( $post_block['attrs']['id'], -8 ) === $id[1] ) {
-					$block = $post_block;
-					break;
-				}
-			}
+			$block = $this->get_review_block( $post_blocks, $block, $id );
 
 			if ( isset( $block['attrs']['product'] ) && intval( $block['attrs']['product'] ) >= 0 && class_exists( 'WooCommerce' ) ) {
 				$product = wc_get_product( $block['attrs']['product'] );
@@ -117,7 +112,7 @@ class Review_Comparison_Block {
 			$table_images .= '</td>';
 
 			$table_title .= '<td>';
-			if ( isset( $block['attrs']['image'] ) ) {
+			if ( isset( $block['attrs']['title'] ) ) {
 				$table_title .= '<a href="' . get_the_permalink( $id[0] ) . '" target="_blank">';
 				$table_title .= $block['attrs']['title'] ? $block['attrs']['title'] : __( 'Untitled review', 'otter-blocks' );
 				$table_title .= '</a>';
@@ -306,5 +301,29 @@ class Review_Comparison_Block {
 		}
 
 		return $stars;
+	}
+
+	/**
+	 * Filter Review Block from Blocks
+	 *
+	 * @param array $post_blocks Post Blocks.
+	 * @param array $block Variable where we capture the data.
+	 * @param int   $id Block ID.
+	 *
+	 * @return array
+	 */
+	public function get_review_block( $post_blocks, $block, $id ) {
+		foreach ( $post_blocks as $post_block ) {
+			if ( 'themeisle-blocks/review' === $post_block['blockName'] && substr( $post_block['attrs']['id'], -8 ) === $id[1] ) {
+				$block = $post_block;
+				break;
+			}
+
+			if ( isset( $post_block['innerBlocks'] ) ) {
+				$block = $this->get_review_block( $post_block['innerBlocks'], $block, $id );
+			}
+		}
+
+		return $block;
 	}
 }

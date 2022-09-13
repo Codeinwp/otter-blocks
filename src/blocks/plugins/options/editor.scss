@@ -112,6 +112,24 @@
 			.components-base-control__label {
 				margin-bottom: 1em;
 			}
+	
+			.components-base-control {
+				padding: 0;
+			}
+
+			.components-font-size-picker__header {
+				padding: 0;
+			}
+		}
+
+		.components-font-size-picker__header,
+		.component-box-control__header,
+		.component-box-control__header-control-wrapper {
+			padding: 0 10px;
+		}
+
+		.components-font-size-picker__controls {
+			margin: 0;
 		}
 
 		hr {

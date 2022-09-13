@@ -238,8 +238,6 @@ class Review_Block {
 	 * @return array
 	 */
 	public function get_json_ld( $attributes ) {
-		global $post;
-
 		$json = array(
 			'@context' => 'https://schema.org/',
 			'@type'    => 'Product',
@@ -309,28 +307,6 @@ class Review_Block {
 				'@type'           => 'ItemList',
 				'itemListElement' => $items,
 			);
-		}
-
-		if ( is_singular() && has_blocks( $post->post_content ) ) {
-			$review_blocks = array_filter(
-				array_column(
-					parse_blocks( $post->post_content ),
-					'blockName'
-				),
-				function( $block ) {
-					return 'themeisle-blocks/review' === $block;
-				}
-			);
-
-			if ( 1 === count( $review_blocks ) ) {
-				$json['aggregateRating'] = array(
-					'@type'       => 'AggregateRating',
-					'bestRating'  => 10,
-					'worstRating' => 1,
-					'ratingValue' => $this->get_overall_ratings( $attributes['features'] ),
-					'reviewCount' => 1,
-				);
-			}
 		}
 
 		if ( isset( $attributes['links'] ) && count( $attributes['links'] ) > 0 ) {
