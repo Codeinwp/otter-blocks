@@ -10,6 +10,7 @@ export const coreAdaptors = {
 			return {
 				shared: {
 					colors: {
+						text: attrs?.textColor,
 						background: attrs?.backgroundColor
 					}
 				}
@@ -17,7 +18,8 @@ export const coreAdaptors = {
 		},
 		paste( storage: Storage<unknown> ): any {
 			return {
-				backgroundColor: storage.shared.colors.background
+				textColor: storage.shared?.colors?.text,
+				backgroundColor: storage.shared?.colors?.background
 			};
 		}
 	},
@@ -30,7 +32,7 @@ export const coreAdaptors = {
 			return {
 				shared: {
 					colors: {
-						text: attrs?.style?.color?.text,
+						text: attrs?.textColor,
 						background: attrs?.backgroundColor
 					},
 					width: {
@@ -43,11 +45,7 @@ export const coreAdaptors = {
 			return {
 				backgroundColor: storage.shared?.colors?.background,
 				width: storage.shared?.width?.desktop,
-				style: {
-					color: {
-						text: storage.shared?.colors?.text
-					}
-				}
+				textColor: storage.shared?.colors?.text
 			};
 		}
 	},
@@ -81,30 +79,17 @@ export const coreAdaptors = {
 		}
 	},
 
-	// <!-- wp:paragraph {"dropCap":true,"style":{"color":{"background":"#38c13f"},"typography":{"fontStyle":"normal","fontWeight":"500","textTransform":"uppercase","letterSpacing":"5px"}},"textColor":"neve-link-hover-color","fontSize":"x-large"} -->
 	'core/paragraph': {
 
 		/**
          *  https://github.com/WordPress/gutenberg/blob/trunk/packages/block-library/src/group/block.json
         */
 		copy( attrs: any ): Storage<unknown> {
-			const x = {
-				'dropCap': true,
-				'style': {
-					'color': {
-						'background': '#38c13f'
-					},
-					'typography': {
-						'fontStyle': 'normal', 'fontWeight': '500', 'textTransform': 'uppercase', 'letterSpacing': '5px' }
-				},
-				'textColor': 'neve-link-hover-color',
-				'fontSize': 'x-large' };
-
 			return {
 				shared: {
 					colors: {
 						text: attrs?.textColor,
-						background: attrs?.style?.color?.background
+						background: attrs?.backgroundColor
 					},
 					font: {
 						size: attrs?.fontSize,
@@ -124,13 +109,11 @@ export const coreAdaptors = {
 				style: {
 					typography: {
 						fontStyle: s?.font?.style,
-						textTransfrom: s?.font?.transform,
+						textTransform: s?.font?.transform,
 						letterSpacing: s?.font?.letterSpacing
-					},
-					color: {
-						background: s?.colors?.background
 					}
 				},
+				backgroundColor: s?.colors?.background,
 				dropCap: s?.font?.dropCap
 			};
 		}

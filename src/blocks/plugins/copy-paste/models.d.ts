@@ -5,7 +5,7 @@ interface SharedAttrs  {
     padding?: ResponsiveProps<PaddingType>
     margin?: ResponsiveProps<MarginType>
     border?: {
-        width?: number
+        width?: string
         radius?: ResponsiveProps<BorderType>
     }
     colors?: {

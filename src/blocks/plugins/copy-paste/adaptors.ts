@@ -35,7 +35,7 @@ export const adaptors = {
 				},
 				private: {
 					...pickBy( attrs, ( value, key ) => {
-						return key?.includes( 'background' );
+						return key?.includes( 'background' ) ||  key?.includes( 'boxShadow' );
 					})
 				}
 			};
@@ -70,8 +70,14 @@ export const adaptors = {
 						tablet: attrs.marginTablet,
 						mobile: attrs.marginMobile
 					},
+					border: {
+						radius: {
+							desktop: attrs?.borderRadius
+						},
+						width: attrs?.border?.top
+					},
 					colors: {
-						background: attrs.backgroundColor
+						background: attrs?.backgroundColor
 					}
 				},
 				private: {
@@ -92,6 +98,13 @@ export const adaptors = {
 				marginTablet: s.margin?.tablet,
 				marginMobile: s.margin?.mobile,
 				backgroundColor: s.colors?.background,
+				borderRadius: s.border?.radius?.desktop,
+				border: {
+					top: s?.border?.width,
+					bottom: s?.border?.width,
+					left: s?.border?.width,
+					right: s?.border?.width
+				},
 				...storage.private
 			};
 		}
@@ -148,7 +161,7 @@ export const adaptors = {
 						text: attrs.color
 					},
 					border: {
-						width: attrs.borderSize,
+						width: addUnit( attrs.borderSize, 'px' ),
 						radius: {
 							desktop: {
 								top: addUnit( attrs.borderRadius, 'px' ),
@@ -172,7 +185,7 @@ export const adaptors = {
 				...storage.private,
 				border: s?.colors?.border,
 				color: s?.colors?.text,
-				borderSize: s?.border?.width,
+				borderSize: getInt( s?.border?.width ),
 				borderRadius: getInt( s?.border?.radius?.desktop?.top )
 			};
 		}

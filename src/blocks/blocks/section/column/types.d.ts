@@ -18,7 +18,7 @@ type Attributes = {
 	backgroundGradient: string
 	border: BorderType
 	borderColor: string
-	borderRadius: number
+	borderRadius: BorderType
 	boxShadow: boolean
 	boxShadowColor: string
 	boxShadowColorOpacity: number

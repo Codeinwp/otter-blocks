@@ -96,19 +96,17 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 
 		console.log( adaptor );
 
-		if ( adaptor ) {
+		if ( adaptor && props.isSelected ) {
 			return (
 				<Fragment>
 					<BlockEdit { ...props } />
 
 					<PluginBlockSettingsMenuItem
-						icon="sticky"
 						label={  __( 'Copy style', 'otter-blocks' ) }
 						onClick={ copy }
 					/>
 
 					<PluginBlockSettingsMenuItem
-						icon="sticky"
 						label={  __( 'Paste style', 'otter-blocks' ) }
 						onClick={ paste }
 					/>

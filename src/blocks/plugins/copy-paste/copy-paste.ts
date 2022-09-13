@@ -5,7 +5,7 @@ import { CopyPasteStorage } from './models';
 
 class CopyPaste {
 
-	version: '2'; // change this number when the structure of SharedAttrs is not backwards compatible.
+	version: string = '1'; // change this number when the structure of SharedAttrs is not backwards compatible.
 	storage: CopyPasteStorage = { shared: {}};
 
 	constructor() {
