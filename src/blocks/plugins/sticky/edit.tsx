@@ -131,7 +131,6 @@ const AlwaysActiveOption = (
 	}
 ) => {
 	const { isRootBlock, activeFloatBlocks } = useSelect( select => {
-		console.count( 'Always on top test' ); // TODO: remove after review.
 		const { getBlocks } = select( 'core/block-editor' );
 
 		// @ts-ignore
@@ -159,7 +158,6 @@ const AlwaysActiveOption = (
 
 	return (
 		<div>
-
 			<Fragment>
 				<ToggleControl
 					label={ __( 'Float Mode', 'otter-blocks' ) }
@@ -302,7 +300,6 @@ const Edit = ({
 
 	useEffect( () => {
 		if ( clientId ) {
-			console.count( 'Test Perf' ); // TODO: remove after review.
 			const block = document.querySelector( `#block-${ clientId }` );
 			if ( block ) {
 				let parent = block?.parentElement;

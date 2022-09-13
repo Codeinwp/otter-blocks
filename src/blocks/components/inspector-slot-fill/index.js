@@ -10,6 +10,9 @@ import { createSlotFill } from '@wordpress/components';
 const { Fill, Slot } = createSlotFill( 'OtterInspectorExtensions' );
 
 const supportedBlocks = [
+	'themeisle-blocks/advanced-columns',
+	'themeisle-blocks/advanced-column',
+	'themeisle-blocks/advanced-heading',
 	'themeisle-blocks/review'
 ];
 

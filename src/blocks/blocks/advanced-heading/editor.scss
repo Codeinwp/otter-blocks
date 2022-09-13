@@ -1,44 +1,5 @@
 @import "style";
 
-.o-heading-header-panel {
-	&.is-opened {
-		padding: 0;
-	}
-
-	.header-tab {
-		display: inline-block;
-		width: calc( 100% / 2 );
-		height: auto;
-		padding: 10px 20px;
-		text-align: center;
-		cursor: pointer;
-
-		&.is-selected {
-			border-bottom: 2px solid #0085ba;
-			background: #f3f4f5;
-		}
-
-		&:hover {
-			&:not(:disabled):not([aria-disabled="true"]):not(.is-secondary):not(.is-primary):not(.is-tertiary):not(.is-link) {
-				background: #f3f4f5;
-				box-shadow: none;
-			}
-		}
-
-		span {
-			display: inline-block;
-			font-size: 12px;
-
-			.dashicon {
-				display: block;
-				margin: 0 auto;
-				font-size: 20px;
-			}
-		}
-	}
-
-}
-
 .edit-post-settings-sidebar__panel-block .components-panel__body {
 	.components-color-palette {
 		display: inline-block;
