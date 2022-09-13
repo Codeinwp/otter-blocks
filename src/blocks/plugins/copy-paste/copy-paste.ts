@@ -5,13 +5,19 @@ import { CopyPasteStorage } from './models';
 
 class CopyPaste {
 
-	storage: CopyPasteStorage;
+	version: '2'; // change this number when the structure of SharedAttrs is not backwards compatible.
+	storage: CopyPasteStorage = { shared: {}};
 
 	constructor() {
-		this.pull();
+		if ( this.version === this.getSavedVersion() ) {
+			this.pull();
+		} else {
+			this.updateVersion();
+		}
 	}
 
 	copy( block: OtterBlock<unknown> ) {
+		console.log( block );
 		const adaptor = implementedAdaptors.find( a => a === block.name );
 		if ( adaptor ) {
 			const copied = pickBy( adaptors[adaptor].copy( block.attributes ), x => ! ( isNil( x ) ) );
@@ -44,7 +50,13 @@ class CopyPaste {
 		this.storage = JSON.parse( localStorage.getItem( 'o-copyPasteStorage' ) ?? '{}' ) as CopyPasteStorage;
 	}
 
+	getSavedVersion() {
+		return localStorage.getItem( 'o-copyPasteStorage-version' );
+	}
 
+	updateVersion() {
+		localStorage.setItem( 'o-copyPasteStorage-version', this.version );
+	}
 }
 
 export default CopyPaste;
