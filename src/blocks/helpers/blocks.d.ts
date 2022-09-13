@@ -36,6 +36,15 @@ export type MarginType = BoxType
 export type PaddingType = BoxType
 export type BorderType = BoxType
 
+export type BoxShadow = {
+    color: string
+    colorOpacity: number
+    blur: number
+    spread: number
+    horizontal: number
+    vertical: number
+}
+
 export type OtterNodeCSSOptions = {
 	selector: string
 }
