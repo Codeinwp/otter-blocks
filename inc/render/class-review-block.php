@@ -38,8 +38,17 @@ class Review_Block {
 		}
 
 		$id            = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-' . wp_rand( 10, 100 );
+		$class         = '';
 		$details_class = ( isset( $attributes['image'] ) && isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ? '' : 'is-single ';
 		$scale         = isset( $attributes['scale'] ) && 'half' === $attributes['scale'] ? 2 : 1;
+
+		if ( ! ( ( isset( $attributes['pros'] ) && count( $attributes['pros'] ) > 0 ) || ( isset( $attributes['cons'] ) && count( $attributes['cons'] ) > 0 ) ) ) {
+			$class = 'no-pros-cons';
+		}
+
+		if ( ! ( isset( $attributes['links'] ) && count( $attributes['links'] ) > 0 ) ) {
+			$class .= ' no-footer';
+		}
 
 		$details_width = array(
 			25  => 'is-quarter',
@@ -51,7 +60,8 @@ class Review_Block {
 
 		$wrapper_attributes = get_block_wrapper_attributes(
 			array(
-				'id' => $id,
+				'id'    => $id,
+				'class' => $class,
 			) 
 		);
 
@@ -122,33 +132,35 @@ class Review_Block {
 		}
 		$html .= '	</div>';
 
-		$html .= '	<div class="o-review__right">';
-		if ( isset( $attributes['pros'] ) && count( $attributes['pros'] ) > 0 ) {
-			$html .= '	<div class="o-review__right_pros">';
-			$html .= '		<' . $sub_heading . '>' . __( 'Pros', 'otter-blocks' ) . '</' . $sub_heading . '>';
+		if ( ( isset( $attributes['pros'] ) && count( $attributes['pros'] ) > 0 ) || ( isset( $attributes['cons'] ) && count( $attributes['cons'] ) > 0 ) ) {
+			$html .= '	<div class="o-review__right">';
+			if ( isset( $attributes['pros'] ) && count( $attributes['pros'] ) > 0 ) {
+				$html .= '	<div class="o-review__right_pros">';
+				$html .= '		<' . $sub_heading . '>' . __( 'Pros', 'otter-blocks' ) . '</' . $sub_heading . '>';
 
-			foreach ( $attributes['pros'] as $pro ) {
-				$html .= '	<div class="o-review__right_pros_item">';
-				$html .= '		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.3 5.6L9.9 16.9l-4.6-3.4-.9 2.4 5.8 4.3 9.3-12.6z" /></svg>';
-				$html .= '		<p>' . esc_html( $pro ) . '</p>';
+				foreach ( $attributes['pros'] as $pro ) {
+					$html .= '	<div class="o-review__right_pros_item">';
+					$html .= '		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.3 5.6L9.9 16.9l-4.6-3.4-.9 2.4 5.8 4.3 9.3-12.6z" /></svg>';
+					$html .= '		<p>' . esc_html( $pro ) . '</p>';
+					$html .= '	</div>';
+				}
+				$html .= '	</div>';
+			}
+
+			if ( isset( $attributes['cons'] ) && count( $attributes['cons'] ) > 0 ) {
+				$html .= '	<div class="o-review__right_cons">';
+				$html .= '		<' . $sub_heading . '>' . __( 'Cons', 'otter-blocks' ) . '</' . $sub_heading . '>';
+
+				foreach ( $attributes['cons'] as $con ) {
+					$html .= '	<div class="o-review__right_cons_item">';
+					$html .= '		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 11.8l6.1-6.3-1-1-6.1 6.2-6.1-6.2-1 1 6.1 6.3-6.5 6.7 1 1 6.5-6.6 6.5 6.6 1-1z" /></svg>';
+					$html .= '		<p>' . esc_html( $con ) . '</p>';
+					$html .= '	</div>';
+				}
 				$html .= '	</div>';
 			}
 			$html .= '	</div>';
 		}
-
-		if ( isset( $attributes['cons'] ) && count( $attributes['cons'] ) > 0 ) {
-			$html .= '	<div class="o-review__right_cons">';
-			$html .= '		<' . $sub_heading . '>' . __( 'Cons', 'otter-blocks' ) . '</' . $sub_heading . '>';
-
-			foreach ( $attributes['cons'] as $con ) {
-				$html .= '	<div class="o-review__right_cons_item">';
-				$html .= '		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 11.8l6.1-6.3-1-1-6.1 6.2-6.1-6.2-1 1 6.1 6.3-6.5 6.7 1 1 6.5-6.6 6.5 6.6 1-1z" /></svg>';
-				$html .= '		<p>' . esc_html( $con ) . '</p>';
-				$html .= '	</div>';
-			}
-			$html .= '	</div>';
-		}
-		$html .= '	</div>';
 
 		if ( isset( $attributes['links'] ) && count( $attributes['links'] ) > 0 ) {
 			$html .= '	<div class="o-review__footer">';

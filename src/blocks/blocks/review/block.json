@@ -109,6 +109,30 @@
 		"buttonTextColor": {
 			"type": "string"
 		},
+		"starsColor": {
+			"type": "string"
+		},
+		"prosColor": {
+			"type": "string"
+		},
+		"consColor": {
+			"type": "string"
+		},
+		"padding": {
+			"type": "object"
+		},
+		"paddingTablet": {
+			"type": "object"
+		},
+		"paddingMobile": {
+			"type": "object"
+		},
+		"borderWidth": {
+			"type": "number"
+		},
+		"borderRadius": {
+			"type": "number"
+		},
 		"isSynced": {
 			"type": "array"
 		}

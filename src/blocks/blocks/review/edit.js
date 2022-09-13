@@ -1,7 +1,6 @@
 /**
  * External dependencies.
  */
-
 import classnames from 'classnames';
 
 import getSymbolFromCurrency from 'currency-symbol-map';
@@ -45,6 +44,8 @@ import {
 } from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
+
+const px = value => value ? `${ value }px` : value;
 
 const Stars = ({
 	rating,
@@ -128,7 +129,24 @@ const Edit = ({
 		'--primary-color': getValue( 'primaryColor' ),
 		'--text-color': getValue( 'textColor' ),
 		'--button-text-color': getValue( 'buttonTextColor' ),
-		'--content-font-size': getValue( 'contentFontSize' )
+		'--star-color': getValue( 'starColor' ),
+		'--pros-color': getValue( 'prosColor' ),
+		'--cons-color': getValue( 'consColor' ),
+		'--content-font-size': getValue( 'contentFontSize' ),
+		...( attributes?.padding?.top && { '--padding-desktop-top': attributes.padding.top }),
+		...( attributes?.padding?.bottom && { '--padding-desktop-bottom': attributes.padding.bottom }),
+		...( attributes?.padding?.right && { '--padding-desktop-right': attributes.padding.right }),
+		...( attributes?.padding?.left && { '--padding-desktop-left': attributes.padding.left }),
+		...( attributes?.paddingTablet?.top && { '--padding-tablet-top': attributes.paddingTablet.top }),
+		...( attributes?.paddingTablet?.bottom && { '--padding-tablet-bottom': attributes.paddingTablet.bottom }),
+		...( attributes?.paddingTablet?.right && { '--padding-tablet-right': attributes.paddingTablet.right }),
+		...( attributes?.paddingTablet?.left && { '--padding-tablet-left': attributes.paddingTablet.left }),
+		...( attributes?.paddingMobile?.top && { '--padding-mobile-top': attributes.paddingMobile.top }),
+		...( attributes?.paddingMobile?.bottom && { '--padding-mobile-bottom': attributes.paddingMobile.bottom }),
+		...( attributes?.paddingMobile?.right && { '--padding-mobile-right': attributes.paddingMobile.right }),
+		...( attributes?.paddingMobile?.left && { '--padding-mobile-left': attributes.paddingMobile.left }),
+		'--border-width': px( getValue( 'borderWidth' ) ),
+		'--border-radius': px( getValue( 'borderRadius' ) )
 	};
 
 	const isPlaceholder = ( 'object' === typeof status && null !== status && status.isError ) || 'isLoading' === status;
@@ -137,7 +155,10 @@ const Edit = ({
 
 	let blockProps = useBlockProps({
 		id: attributes.id,
-		className: isPlaceholder && 'is-placeholder',
+		className: isPlaceholder ? 'is-placeholder' : classnames({
+			'no-pros-cons': ! ( 0 < attributes.pros.length || 0 < attributes.cons.length ),
+			'no-footer': ! ( 0 < productAttributes?.links?.length || 0 < attributes.links.length )
+		}),
 		style: inlineStyles
 	});
 
@@ -307,45 +328,47 @@ const Edit = ({
 					</div>
 				</div>
 
-				<div className="o-review__right">
-					{ 0 < attributes.pros.length && (
-						<div className="o-review__right_pros">
-							<SubHeading>{ __( 'Pros', 'otter-blocks' ) }</SubHeading>
+				{ ( 0 < attributes.pros.length || 0 < attributes.cons.length ) && (
+					<div className="o-review__right">
+						{ 0 < attributes.pros.length && (
+							<div className="o-review__right_pros">
+								<SubHeading>{ __( 'Pros', 'otter-blocks' ) }</SubHeading>
 
-							{ attributes.pros.map( ( pro, index ) => (
-								<div className="o-review__right_pros_item" key={ index }>
-									{ check }
+								{ attributes.pros.map( ( pro, index ) => (
+									<div className="o-review__right_pros_item" key={ index }>
+										{ check }
 
-									<RichText
-										placeholder={ __( 'Why do you like the product?', 'otter-blocks' ) }
-										value={ pro }
-										onChange={ value => changePro( index, value ) }
-										tagName="p"
-									/>
-								</div>
-							) ) }
-						</div>
-					) }
+										<RichText
+											placeholder={ __( 'Why do you like the product?', 'otter-blocks' ) }
+											value={ pro }
+											onChange={ value => changePro( index, value ) }
+											tagName="p"
+										/>
+									</div>
+								) ) }
+							</div>
+						) }
 
-					{ 0 < attributes.cons.length && (
-						<div className="o-review__right_cons">
-							<SubHeading>{ __( 'Cons', 'otter-blocks' ) }</SubHeading>
+						{ 0 < attributes.cons.length && (
+							<div className="o-review__right_cons">
+								<SubHeading>{ __( 'Cons', 'otter-blocks' ) }</SubHeading>
 
-							{ attributes.cons.map( ( con, index ) => (
-								<div className="o-review__right_cons_item" key={ index }>
-									{ close }
+								{ attributes.cons.map( ( con, index ) => (
+									<div className="o-review__right_cons_item" key={ index }>
+										{ close }
 
-									<RichText
-										placeholder={ __( 'What can be improved?', 'otter-blocks' ) }
-										value={ con }
-										onChange={ value => changeCon( index, value ) }
-										tagName="p"
-									/>
-								</div>
-							) )}
-						</div>
-					) }
-				</div>
+										<RichText
+											placeholder={ __( 'What can be improved?', 'otter-blocks' ) }
+											value={ con }
+											onChange={ value => changeCon( index, value ) }
+											tagName="p"
+										/>
+									</div>
+								) )}
+							</div>
+						) }
+					</div>
+				) }
 
 				{ ( 0 < productAttributes?.links?.length || 0 < attributes.links.length ) && (
 					<div className="o-review__footer">

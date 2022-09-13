@@ -13,6 +13,7 @@ import {
 } from '@wordpress/block-editor';
 
 import {
+	__experimentalBoxControl as BoxControl,
 	BaseControl,
 	Button,
 	Disabled,
@@ -26,6 +27,8 @@ import {
 	Notice
 } from '@wordpress/components';
 
+import { useSelect } from '@wordpress/data';
+
 import { useState, Fragment } from '@wordpress/element';
 
 /**
@@ -37,24 +40,23 @@ import SyncControlDropdown from '../../components/sync-control-dropdown/index.js
 import Upsell from '../../components/notice/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
 import {
+	buildResponsiveGetAttributes,
+	buildResponsiveSetAttributes,
 	changeActiveStyle,
 	getActiveStyle,
 	setUtm
 } from '../../helpers/helper-functions.js';
+import ResponsiveControl from '../../components/responsive-control/index.js';
 
 const styles = [
 	{
-		label: __( 'Plain', 'otter-blocks' ),
-		value: 'plain',
+		label: __( 'Default', 'otter-blocks' ),
+		value: 'default',
 		isDefault: true
 	},
 	{
-		label: __( 'Card', 'otter-blocks' ),
-		value: 'card'
-	},
-	{
-		label: __( 'Border', 'otter-blocks' ),
-		value: 'border'
+		label: __( 'Boxed', 'otter-blocks' ),
+		value: 'boxed'
 	}
 ];
 
@@ -151,6 +153,20 @@ const Inspector = ({
 	productAttributes
 }) => {
 	const [ tab, setTab ] = useState( 'settings' );
+
+	const {
+		responsiveSetAttributes,
+		responsiveGetAttributes
+	} = useSelect( select => {
+		const { getView } = select( 'themeisle-gutenberg/data' );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+
+		return {
+			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
+			responsiveGetAttributes: buildResponsiveGetAttributes( view )
+		};
+	}, []);
 
 	const addFeature = () => {
 		const features = [ ...attributes.features ];
@@ -269,6 +285,18 @@ const Inspector = ({
 		{
 			label: __( 'Button Text', 'otter-blocks' ),
 			value: 'buttonTextColor'
+		},
+		{
+			label: __( 'Stars', 'otter-blocks' ),
+			value: 'starsColor'
+		},
+		{
+			label: __( 'Pros', 'otter-blocks' ),
+			value: 'prosColor'
+		},
+		{
+			label: __( 'Cons', 'otter-blocks' ),
+			value: 'consColor'
 		}
 	];
 
@@ -731,6 +759,74 @@ const Inspector = ({
 								textColor: getValue( 'buttonTextColor' ),
 								backgroundColor: getValue( 'primaryColor' )
 							} }
+						/>
+
+						<Disabled
+							isDisabled={ attributes.isSynced?.includes( 'starsColor' ) || false }
+						>
+							<ColorGradientControl
+								label={ __( 'Stars', 'otter-blocks' ) }
+								colorValue={ getValue( 'starsColor' ) }
+								onColorChange={ e => setAttributes({ starsColor: e }) }
+							/>
+						</Disabled>
+
+						<Disabled
+							isDisabled={ attributes.isSynced?.includes( 'prosColor' ) || false }
+						>
+							<ColorGradientControl
+								label={ __( 'Pros', 'otter-blocks' ) }
+								colorValue={ getValue( 'prosColor' ) }
+								onColorChange={ e => setAttributes({ prosColor: e }) }
+							/>
+						</Disabled>
+
+						<Disabled
+							isDisabled={ attributes.isSynced?.includes( 'consColor' ) || false }
+						>
+							<ColorGradientControl
+								label={ __( 'Cons Color', 'otter-blocks' ) }
+								colorValue={ getValue( 'consColor' ) }
+								onColorChange={ e => setAttributes({ consColor: e }) }
+							/>
+						</Disabled>
+					</PanelBody>
+
+					<PanelBody
+						title={ __( 'Dimensions', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						<ResponsiveControl
+							label={ __( 'Screen Type', 'otter-blocks' ) }
+						>
+							<BoxControl
+								label={ __( 'Padding', 'otter-blocks' ) }
+								values={ responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile ]) }
+								onChange={ value => responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]) }
+							/>
+						</ResponsiveControl>
+					</PanelBody>
+
+					<PanelBody
+						title={ __( 'Border', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						<RangeControl
+							label={ __( 'Width', 'otter-blocks' ) }
+							value={ attributes.borderWidth }
+							onChange={ e => setAttributes({ borderWidth: e }) }
+							min={ 0 }
+							max={ 50 }
+							allowReset
+						/>
+
+						<RangeControl
+							label={ __( 'Radius', 'otter-blocks' ) }
+							value={ attributes.borderRadius }
+							onChange={ e => setAttributes({ borderRadius: e }) }
+							min={ 0 }
+							max={ 100 }
+							allowReset
 						/>
 					</PanelBody>
 				</Fragment>

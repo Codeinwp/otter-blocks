@@ -32,35 +32,101 @@ class Review_CSS extends Base_CSS {
 	 * @access  public
 	 */
 	public function render_css( $block ) {
-		$css = new CSS_Utility( $block );
+		$css     = new CSS_Utility( $block );
+		$padding = array(
+			'padding'       => array(
+				'prefix' => '--padding-desktop-',
+			),
+			'paddingTablet' => array(
+				'prefix' => '--padding-tablet-',
+			),
+			'paddingMobile' => array(
+				'prefix' => '--padding-mobile-',
+			),
+		);
+
+		$padding_sides = array(
+			'top',
+			'bottom',
+			'left',
+			'right',
+		);
+
+		$padding_css = array();
+
+		foreach ( $padding as $key => $item ) {
+			foreach ( $padding_sides as $side ) {
+				array_push(
+					$padding_css, 
+					array(
+						'property'  => $item['prefix'] . $side,
+						'value'     => $key,
+						'format'    => function( $value, $attrs ) use ( $side ) {
+							return $value[ $side ];
+						},
+						'condition' => function( $attrs ) use ( $key, $side ) {
+							return isset( $attrs[ $key ] ) && isset( $attrs[ $key ][ $side ] );
+						},
+					)
+				);
+			}
+		}
 
 		$css->add_item(
 			array(
-				'properties' => array(
+				'properties' => array_merge(
 					array(
-						'property' => '--background-color',
-						'value'    => 'backgroundColor',
-						'hasSync'  => 'review-background-color',
+						array(
+							'property' => '--background-color',
+							'value'    => 'backgroundColor',
+							'hasSync'  => 'review-background-color',
+						),
+						array(
+							'property' => '--primary-color',
+							'value'    => 'primaryColor',
+							'hasSync'  => 'review-primary-color',
+						),
+						array(
+							'property' => '--text-color',
+							'value'    => 'textColor',
+							'hasSync'  => 'review-text-color',
+						),
+						array(
+							'property' => '--button-text-color',
+							'value'    => 'buttonTextColor',
+							'hasSync'  => 'review-button-text-color',
+						),
+						array(
+							'property' => '--stars-color',
+							'value'    => 'starsColor',
+							'hasSync'  => 'review-stars-color',
+						),
+						array(
+							'property' => '--pros-color',
+							'value'    => 'prosColor',
+							'hasSync'  => 'review-pros-color',
+						),
+						array(
+							'property' => '--cons-color',
+							'value'    => 'consColor',
+							'hasSync'  => 'review-cons-color',
+						),
+						array(
+							'property' => '--content-font-size',
+							'value'    => 'contentFontSize',
+						),
+						array(
+							'property' => '--border-width',
+							'value'    => 'borderWidth',
+							'unit'     => 'px',
+						),
+						array(
+							'property' => '--border-radius',
+							'value'    => 'borderRadius',
+							'unit'     => 'px',
+						),
 					),
-					array(
-						'property' => '--primary-color',
-						'value'    => 'primaryColor',
-						'hasSync'  => 'review-primary-color',
-					),
-					array(
-						'property' => '--text-color',
-						'value'    => 'textColor',
-						'hasSync'  => 'review-text-color',
-					),
-					array(
-						'property' => '--button-text-color',
-						'value'    => 'buttonTextColor',
-						'hasSync'  => 'review-button-text-color',
-					),
-					array(
-						'property' => '--content-font-size',
-						'value'    => 'contentFontSize',
-					),
+					$padding_css
 				),
 			)
 		);
@@ -116,6 +182,18 @@ class Review_CSS extends Base_CSS {
 					array(
 						'property' => '--review-button-text-color',
 						'value'    => 'buttonTextColor',
+					),
+					array(
+						'property' => '--review-stars-color',
+						'value'    => 'starsColor',
+					),
+					array(
+						'property' => '--review-pros-color',
+						'value'    => 'prosColor',
+					),
+					array(
+						'property' => '--review-cons-color',
+						'value'    => 'consColor',
 					),
 				),
 			)
