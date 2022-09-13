@@ -133,6 +133,17 @@
 		"borderRadius": {
 			"type": "number"
 		},
+		"boxShadow": {
+			"type": "object",
+			"default": {
+				"active": false,
+				"colorOpacity": 50,
+				"blur": 5,
+				"spread": 1,
+				"horizontal": 0,
+				"vertical": 0
+			}
+		},
 		"isSynced": {
 			"type": "array"
 		}

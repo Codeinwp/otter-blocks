@@ -2,7 +2,7 @@
  * External dependencies.
  */
 import classnames from 'classnames';
-
+import hexToRgba from 'hex-rgba';
 import getSymbolFromCurrency from 'currency-symbol-map';
 
 /**
@@ -124,6 +124,8 @@ const Edit = ({
 		setAttributes({ links });
 	};
 
+	const boxShadow = getValue( 'boxShadow' );
+
 	const inlineStyles = {
 		'--background-color': getValue( 'backgroundColor' ),
 		'--primary-color': getValue( 'primaryColor' ),
@@ -146,7 +148,8 @@ const Edit = ({
 		...( attributes?.paddingMobile?.right && { '--padding-mobile-right': attributes.paddingMobile.right }),
 		...( attributes?.paddingMobile?.left && { '--padding-mobile-left': attributes.paddingMobile.left }),
 		'--border-width': px( getValue( 'borderWidth' ) ),
-		'--border-radius': px( getValue( 'borderRadius' ) )
+		'--border-radius': px( getValue( 'borderRadius' ) ),
+		'--box-shadow': boxShadow.active && `${ boxShadow.horizontal }px ${ boxShadow.vertical }px ${ boxShadow.blur }px ${ boxShadow.spread }px ${ hexToRgba( boxShadow.color || '#FFFFFF', boxShadow.colorOpacity ) }`
 	};
 
 	const isPlaceholder = ( 'object' === typeof status && null !== status && status.isError ) || 'isLoading' === status;

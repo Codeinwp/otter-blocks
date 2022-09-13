@@ -37,6 +37,7 @@ import { useState, Fragment } from '@wordpress/element';
 import InspectorHeader from '../../components/inspector-header/index.js';
 import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
 import SyncControlDropdown from '../../components/sync-control-dropdown/index.js';
+import BoxShadowControl from '../../components/box-shadow-control/index.js';
 import Upsell from '../../components/notice/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
 import {
@@ -267,6 +268,15 @@ const Inspector = ({
 	const changeStyle = value => {
 		const classes = changeActiveStyle( attributes?.className, styles, value );
 		setAttributes({ className: classes });
+	};
+
+	const changeBoxShadow = data => {
+		const boxShadow = { ...attributes.boxShadow };
+		Object.entries( data ).map( ([ key, val ] = data ) => {
+			boxShadow[key] = val;
+		});
+
+		setAttributes({ boxShadow });
 	};
 
 	const colorControls = [
@@ -827,6 +837,11 @@ const Inspector = ({
 							min={ 0 }
 							max={ 100 }
 							allowReset
+						/>
+
+						<BoxShadowControl
+							boxShadow={ attributes.boxShadow }
+							onChange={ changeBoxShadow }
 						/>
 					</PanelBody>
 				</Fragment>

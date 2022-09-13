@@ -125,6 +125,56 @@ class Review_CSS extends Base_CSS {
 							'value'    => 'borderRadius',
 							'unit'     => 'px',
 						),
+						array(
+							'property'       => '--box-shadow',
+							'pattern'        => 'horizontal vertical blur spread color',
+							'pattern_values' => array(
+								'horizontal' => array(
+									'value'   => 'boxShadow',
+									'unit'    => 'px',
+									'default' => 0,
+									'format'  => function( $value ) {
+										return $value['horizontal'];
+									},
+								),
+								'vertical'   => array(
+									'value'   => 'boxShadow',
+									'unit'    => 'px',
+									'default' => 0,
+									'format'  => function( $value ) {
+										return $value['vertical'];
+									},
+								),
+								'blur'       => array(
+									'value'   => 'boxShadow',
+									'unit'    => 'px',
+									'default' => 5,
+									'format'  => function( $value ) {
+										return $value['blur'];
+									},
+								),
+								'spread'     => array(
+									'value'   => 'boxShadow',
+									'unit'    => 'px',
+									'default' => 1,
+									'format'  => function( $value ) {
+										return $value['spread'];
+									},
+								),
+								'color'      => array(
+									'value'   => 'boxShadow',
+									'default' => '#000',
+									'format'  => function( $value ) {
+										$opacity = $value['colorOpacity'];
+										$color   = isset( $value['color'] ) ? $value['color'] : '#000000';
+										return ( strpos( $color, '#' ) !== false && $opacity < 100 ) ? $this->hex2rgba( $color, $opacity / 100 ) : $color;
+									},
+								),
+							),
+							'condition'      => function( $attrs ) {
+								return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow']['active'];
+							},
+						),
 					),
 					$padding_css
 				),
