@@ -256,8 +256,8 @@ class Review_Block {
 			'@type'        => 'Review',
 			'reviewRating' => array(
 				'@type'       => 'Rating',
-				'ratingValue' => $this->get_overall_ratings( $attributes['features'] ),
-				'bestRating'  => 10,
+				'ratingValue' => round( $this->get_overall_ratings( $attributes['features'] ) / 2, 1 ),
+				'bestRating'  => 5,
 			),
 			'author'       => array(
 				'@type' => 'Person',
