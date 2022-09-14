@@ -9,6 +9,7 @@ import {
 } from '@wordpress/block-editor';
 
 import {
+	BaseControl,
 	Button,
 	ExternalLink,
 	PanelBody,
@@ -306,15 +307,17 @@ const Inspector = ({
 					isSynced={ attributes.isSynced }
 					setAttributes={ setAttributes }
 				>
-					<h2>{__( 'Help Text Font Size', 'otter-blocks' )}</h2>
-
-					<FontSizePicker
-						label={ __( 'Help Font Size', 'otter-blocks' ) }
-						fontSizes={ defaultFontSizes }
-						withReset
-						value={ attributes.helpFontSize }
-						onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
-					/>
+					<BaseControl
+						label={ __( 'Help Text Font Size', 'otter-blocks' ) }
+					>
+						<FontSizePicker
+							label={ __( 'Help Font Size', 'otter-blocks' ) }
+							fontSizes={ defaultFontSizes }
+							withReset
+							value={ attributes.helpFontSize }
+							onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
+						/>
+					</BaseControl>
 				</SyncControl>
 			</PanelBody>
 
@@ -369,15 +372,17 @@ const Inspector = ({
 					isSynced={ attributes.isSynced }
 					setAttributes={ setAttributes }
 				>
-					<h2>{__( 'Message Font Size', 'otter-blocks' )}</h2>
-
-					<FontSizePicker
+					<BaseControl
 						label={ __( 'Message Font Size', 'otter-blocks' ) }
-						fontSizes={ defaultFontSizes }
-						withReset
-						value={ attributes.messageFontSize }
-						onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
-					/>
+					>
+						<FontSizePicker
+							label={ __( 'Message Font Size', 'otter-blocks' ) }
+							fontSizes={ defaultFontSizes }
+							withReset
+							value={ attributes.messageFontSize }
+							onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
+						/>
+					</BaseControl>
 				</SyncControl>
 			</PanelBody>
 

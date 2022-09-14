@@ -6,18 +6,19 @@ import { __ } from '@wordpress/i18n';
 import { clamp } from 'lodash';
 
 import {
-	__experimentalColorGradientControl as ColorGradientControl,
 	InspectorControls,
 	PanelColorSettings
 } from '@wordpress/block-editor';
 
 import {
+	BaseControl,
 	PanelBody,
 	RangeControl,
 	SelectControl,
 	TextControl,
 	FontSizePicker
 } from '@wordpress/components';
+
 import { Fragment } from '@wordpress/element';
 
 const defaultFontSizes = [
@@ -224,16 +225,16 @@ const Inspector = ({
 
 				{
 					( ( 'outer' === attributes.titleStyle ) || ( 'tooltip' === attributes.percentagePosition && 'outer' === attributes.percentagePosition ) ) && (
-						<Fragment>
-							<h2>{__( 'Outer Text Font Size', 'otter-blocks' )}</h2>
+						<BaseControl
+							label={ __( 'Outer Text Font Size', 'otter-blocks' ) }
+						>
 							<FontSizePicker
-
 								fontSizes={ defaultFontSizes }
 								withReset
 								value={ attributes.titleFontSize }
 								onChange={ titleFontSize => setAttributes({ titleFontSize }) }
 							/>
-						</Fragment>
+						</BaseControl>
 					)
 				}
 
