@@ -464,6 +464,9 @@ class Registration {
 								max-height: 0px;
 								overflow: hidden;
 								visibility: hidden;
+							}
+
+							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show {
 								transform: scaleY(0);
 							}
 						</style>
