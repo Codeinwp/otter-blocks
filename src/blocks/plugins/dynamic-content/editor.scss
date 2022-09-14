@@ -140,6 +140,14 @@ o-dynamic-link {
 		.o-media-pro-upsell-description {
 			text-align: center;
 		}
+
+		#o-feedback {
+			position: absolute;
+			bottom: 0;
+			margin: 0 auto;
+			left: 0;
+			right: 0;
+		}
 	}
 
 	.o-media-list {

@@ -15,7 +15,6 @@ import { addFilter } from '@wordpress/hooks';
  * Internal dependencies
  */
 import './editor.scss';
-import '../feedback/index.js';
 import {
 	otterIcon,
 	otterIconColored as icon

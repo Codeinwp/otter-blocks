@@ -1,3 +1,16 @@
+#o-feedback {
+	padding: 15px;
+	text-decoration: none;
+
+	&:focus {
+		box-shadow: none;
+	}
+}
+
+.components-modal__screen-overlay {
+	z-index: 160001; /* to be visible from dynamic images */
+}
+
 .o-feedback-modal {
 	width: 490px;
 	border-radius: 10px;
@@ -41,8 +54,12 @@
 		}
 	}
 
-	.toggle-info:focus {
-		box-shadow: none;
+	.toggle-info {
+		text-decoration: none;
+
+		&:focus {
+			box-shadow: none;
+		}
 	}
 
 	.info {

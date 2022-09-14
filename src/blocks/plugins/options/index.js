@@ -36,6 +36,8 @@ import {
 	PluginSidebarMoreMenuItem
 } from '@wordpress/edit-post';
 
+import { applyFilters } from '@wordpress/hooks';
+
 /**
  * Internal dependencies
  */
@@ -236,6 +238,8 @@ const Options = () => {
 					resetConfig={ resetConfig }
 					saveConfig={ saveConfig }
 				/>
+
+				{ applyFilters( 'otter.feedback', __( 'Help us improve Otter Blocks', 'otter-blocks' ) ) }
 			</PluginSidebar>
 		</Fragment>
 	);

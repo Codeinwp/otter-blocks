@@ -10,6 +10,7 @@ import {
 	__,
 	sprintf
 } from '@wordpress/i18n';
+import {applyFilters} from "@wordpress/hooks";
 
 const NAVIGATION_ITEMS = [
 	{
@@ -62,6 +63,7 @@ const Headers = ({
 							<span>{ item.label }</span>
 						</button>
 					) ) }
+					{ applyFilters( 'otter.feedback' ) }
 				</nav>
 			</div>
 		</header>

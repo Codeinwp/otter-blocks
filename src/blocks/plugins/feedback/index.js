@@ -22,16 +22,20 @@ import { addFilter } from '@wordpress/hooks';
 /**
  * Internal Dependencies
  */
-import './style.scss';
+import './editor.scss';
+
+const otterVersion = window.themeisleGutenberg?.version || window.otterObj?.version;
+const siteURL = window.themeisleGutenberg?.siteURL || window.otterObj?.siteURL;
+const finishIcon = window.themeisleGutenberg ? window.themeisleGutenberg.assetsPath + '/icons/finish-feedback.svg' : window.otterObj.assetsPath + 'icons/finish-feedback.svg';
 
 const collectedInfo = [
 	{
 		name: __( 'Plugin version',  'otter-blocks' ),
-		value: window.otterObj.version
+		value: otterVersion
 	},
 	{
 		name: __( 'Current website', 'otter-blocks' ),
-		value: window.otterObj.siteURL
+		value: siteURL
 	},
 	{
 		name: __( 'Uninstall reason', 'otter-blocks' ),
@@ -39,7 +43,10 @@ const collectedInfo = [
 	}
 ];
 
-const Feedback = ( text = __( 'Help us improve', 'otter-blocks' ) ) => {
+const Feedback = (
+	text = __( 'Help us improve', 'otter-blocks' ),
+	position = 'default'
+) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ feedback, setFeedback ] = useState( '' );
 	const [ status, setStatus ] = useState( 'notSubmitted' );
@@ -64,10 +71,10 @@ const Feedback = ( text = __( 'Help us improve', 'otter-blocks' ) ) => {
 			},
 			body: JSON.stringify({
 				slug: 'otter-blocks',
-				version: window.otterObj.version,
+				version: otterVersion,
 				feedback,
 				data: {
-					site: window.otterObj.siteURL
+					site: siteURL
 				}
 			})
 		}).then( r => {
@@ -83,7 +90,7 @@ const Feedback = ( text = __( 'Help us improve', 'otter-blocks' ) ) => {
 	return (
 		<>
 			<Button
-				className="o-feedback"
+				id="o-feedback"
 				variant="link"
 				isLink
 				onClick={() => setIsOpen( ! isOpen )}
@@ -108,9 +115,9 @@ const Feedback = ( text = __( 'Help us improve', 'otter-blocks' ) ) => {
 							<div className="info">
 								<div className="wrapper">
 									<p>{ __( 'We value privacy, that\'s why no email address or IP addresses are collected after you submit the survey. Below is a detailed view of all data that Themeisle will receive if you fill in this survey.', 'otter-blocks' ) }</p>
-									{ collectedInfo.map( row => {
+									{ collectedInfo.map( ( row, index ) => {
 										return (
-											<div className="info-row">
+											<div className="info-row" key={ index }>
 												<p><b>{ row.name }</b></p>
 												<p>{ row.value }</p>
 											</div>
@@ -141,7 +148,7 @@ const Feedback = ( text = __( 'Help us improve', 'otter-blocks' ) ) => {
 					) : (
 						<div className="finish-feedback">
 							<img
-								src={ window.otterObj.assetsPath + 'icons/finish-feedback.svg' }
+								src={ finishIcon }
 							/>
 							<p className="f-title">{ __( 'Thank you for your feedback', 'otter-blocks' ) }</p>
 							<p className="f-description">{ __( 'Your feedback is highly appreciated and will help us to improve Otter Blocks.', 'otter-blocks' ) }</p>
