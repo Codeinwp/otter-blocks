@@ -454,13 +454,17 @@ class Registration {
 				'wp_head',
 				function() {
 					echo '
-						<style type="text/css">
+						<style type="text/css" data-source="otter-blocks">
 							[class*="o-countdown-trigger-on-end-"] {
-								transition: display 1s;
+								transition: transform 1.5s ease;
+								transform-origin: top;
 							}
 							
 							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show, [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide:not(.o-cntdn-ready), [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide.o-cntdn-hide {
+								max-height: 0px;
+								overflow: hidden;
 								visibility: hidden;
+								transform: scaleY(0);
 							}
 						</style>
 				';

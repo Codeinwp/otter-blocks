@@ -84,14 +84,6 @@ class CountdownData {
 
 		this.onEndEvents = [ () => this.triggerBehaviour() ];
 
-		document.querySelectorAll( `${this.blockLink}.o-cntdn-bhv-hide` ).forEach(
-			blockElem => {
-				if ( ! this.isStopped ) {
-					( blockElem as HTMLDivElement ).classList.add( 'o-cntdn-ready' );
-				}
-			}
-		);
-
 		if ( 'timer' === this.mode ) {
 
 			//const lastVisit = localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` );
@@ -107,11 +99,19 @@ class CountdownData {
 				localStorage.setItem( `o-countdown-last-visit-time-${this.elem.id}`, this.timer );
 			}
 
-			this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` ) ) + parseInt( this.timer );
+			this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` )! ) + parseInt( this.timer );
 
 		} else {
 			this.targetDate = ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime();
 		}
+
+		document.querySelectorAll( `${this.connectedBlocksSelector}.o-cntdn-bhv-hide` ).forEach(
+			blockElem => {
+				if ( ! this.isStopped ) {
+					( blockElem as HTMLDivElement ).classList.add( 'o-cntdn-ready' );
+				}
+			}
+		);
 	}
 
 	get remainingTime(): number {
@@ -153,7 +153,7 @@ class CountdownData {
 		this.onEndEvents.forEach( f => f() );
 	}
 
-	get blockLink() {
+	get connectedBlocksSelector() {
 		if ( this.elem.id === undefined ) {
 			return null;
 		}
@@ -161,13 +161,13 @@ class CountdownData {
 	}
 
 	triggerBehaviour() {
-		const blockSelectorId = this.blockLink;
+		const blockSelectorId = this.connectedBlocksSelector;
 
 		switch ( this.behaviour as 'default' | 'redirectLink' | 'showBlock' | 'hideBlock' | 'disappear' ) {
 		case 'default':
 			break;
 		case 'disappear':
-			this.elem.style.display = 'none';
+			this.hide();
 			break;
 		case 'hideBlock':
 			if ( blockSelectorId ) {
@@ -193,6 +193,14 @@ class CountdownData {
 			}
 			break;
 		}
+	}
+
+	hide() {
+		this.elem.style.display = 'none';
+	}
+
+	show() {
+		this.elem.style.display = '';
 	}
 }
 
