@@ -5,7 +5,10 @@ import { coreAdaptors } from './core-adaptors';
 import { ColumnAttrs } from '../../blocks/section/column/types';
 import { ButtonGroupAttrs } from '../../blocks/button-group/group/types';
 import { ButtonAttrs } from '../../blocks/button-group/button/types';
-import { addUnit, getInt } from './utils';
+import { addUnit, getInt, makeBox } from './utils';
+import { IconAttrs } from '../../blocks/font-awesome-icons/types';
+import { IconListAttrs } from '../../blocks/icon-list/types';
+import { IconListItemAttrs } from '../../blocks/icon-list/item/types';
 
 
 export const adaptors = {
@@ -163,12 +166,7 @@ export const adaptors = {
 					border: {
 						width: addUnit( attrs.borderSize, 'px' ),
 						radius: {
-							desktop: {
-								top: addUnit( attrs.borderRadius, 'px' ),
-								bottom: addUnit( attrs.borderRadius, 'px' ),
-								left: addUnit( attrs.borderRadius, 'px' ),
-								right: addUnit( attrs.borderRadius, 'px' )
-							}
+							desktop: makeBox( addUnit( attrs.borderRadius, 'px' ) )
 						}
 					}
 				},
@@ -187,6 +185,99 @@ export const adaptors = {
 				color: s?.colors?.text,
 				borderSize: getInt( s?.border?.width ),
 				borderRadius: getInt( s?.border?.radius?.desktop?.top )
+			};
+		}
+	},
+	'themeisle-blocks/font-awesome-icons': {
+		copy( attrs: IconAttrs ): Storage<IconAttrs> {
+			return {
+				shared: {
+					colors: {
+						border: attrs.borderColor,
+						text: attrs.textColor,
+						background: attrs.backgroundColor
+					},
+					border: {
+						width: addUnit( attrs.borderSize, 'px' ),
+						radius: {
+							desktop: makeBox( addUnit( attrs.borderRadius, 'px' ) )
+						}
+					},
+					padding: {
+						desktop: makeBox( addUnit( attrs.padding, 'px' ) )
+					},
+					margin: {
+						desktop: makeBox( addUnit( attrs.margin, 'px' ) )
+					},
+					font: {
+						size: addUnit( attrs.fontSize, 'px' )
+					}
+				},
+				private: {
+					...pickBy( attrs, ( value, key ) => {
+						return key?.includes( 'Hover' );
+					})
+				}
+			};
+		},
+		paste( storage: Storage<IconAttrs> ): IconAttrs {
+			const { shared: s } = storage;
+			return {
+				...storage.private,
+				borderColor: s?.colors?.border,
+				textColor: s?.colors?.text,
+				borderSize: getInt( s?.border?.width ),
+				borderRadius: getInt( s?.border?.radius?.desktop?.top ),
+				margin: getInt( s?.margin?.desktop?.top ),
+				padding: getInt( s?.padding?.desktop?.top ),
+				fontSize: getInt( s?.font?.size )
+			};
+		}
+	},
+	'themeisle-blocks/icon-list': {
+		copy( attrs: IconListAttrs ): Storage<IconListAttrs> {
+			return {
+				shared: {
+					colors: {
+						text: attrs.defaultContentColor
+					},
+					font: {
+						size: addUnit( attrs.defaultSize, 'px' )
+					}
+				},
+				private: {
+					gap: attrs?.gap,
+					defaultIconColor: attrs?.defaultIconColor
+				}
+			};
+		},
+		paste( storage: Storage<IconListAttrs> ): IconListAttrs {
+			const { shared: s } = storage;
+			return {
+				...storage.private,
+				defaultContentColor: s?.colors?.text,
+				defaultSize: getInt( s?.font?.size )
+			};
+		}
+	},
+	'themeisle-blocks/icon-list-item': {
+		copy( attrs: IconListItemAttrs ): Storage<IconListItemAttrs> {
+			return {
+				shared: {
+					colors: {
+						text: attrs.contentColor
+					}
+				},
+				private: {
+					iconColor: attrs?.iconColor
+				}
+			};
+		},
+		paste( storage: Storage<IconListItemAttrs> ): IconListItemAttrs {
+			const { shared: s } = storage;
+			return {
+				...storage.private,
+				contentColor: s?.colors?.text
 			};
 		}
 	}
