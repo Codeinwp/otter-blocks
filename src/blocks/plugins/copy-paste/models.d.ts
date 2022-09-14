@@ -22,6 +22,7 @@ interface SharedAttrs  {
         lineHeight?: number,
         letterSpacing?: string,
         dropCap?: boolean
+        align?: string
     }
     width?: ResponsiveProps<string>
     height?: ResponsiveProps<string>
@@ -30,6 +31,7 @@ interface SharedAttrs  {
         flexWrap?: string,
         justifyContent?: string,
         orientation?: string
+        verticalAlignment?: string
     }
 }
 

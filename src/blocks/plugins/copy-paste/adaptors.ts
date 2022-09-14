@@ -1,7 +1,7 @@
 import { pickBy } from 'lodash';
 import { SectionAttrs } from '../../blocks/section/columns/types';
 import {  Storage } from './models';
-import { coreAdaptors } from './core-adapators';
+import { coreAdaptors } from './core-adaptors';
 import { ColumnAttrs } from '../../blocks/section/column/types';
 import { ButtonGroupAttrs } from '../../blocks/button-group/group/types';
 import { ButtonAttrs } from '../../blocks/button-group/button/types';
