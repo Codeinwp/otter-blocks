@@ -187,8 +187,8 @@ const AuthorsFieldToken = ( props ) => {
 		const { getUsers, isResolving } = select( 'core' );
 
 		return {
-			postAuthors: ( getUsers({ who: 'authors' }) ?? []).map( author => author.username ),
-			isLoading: isResolving( 'getUsers', [{ who: 'authors' }])
+			postAuthors: ( getUsers({ who: 'authors', context: 'view' }) ?? []).map( author => author.username ),
+			isLoading: isResolving( 'getUsers', [{ who: 'authors', context: 'view' }])
 		};
 	}, [ ]);
 
@@ -212,8 +212,8 @@ const CategoriesFieldToken = ( props ) => {
 		const { getEntityRecords, isResolving } = select( 'core' );
 
 		return {
-			postCategories: ( getEntityRecords( 'taxonomy', 'category', { 'per_page': 100 }) ?? []).map( category => category.slug ),
-			isLoading: isResolving( 'getEntityRecords', [ 'taxonomy', 'category', { 'per_page': 100 }])
+			postCategories: ( getEntityRecords( 'taxonomy', 'category', { 'per_page': 100, context: 'view' }) ?? []).map( category => category.slug ),
+			isLoading: isResolving( 'getEntityRecords', [ 'taxonomy', 'category', { 'per_page': 100, context: 'view' }])
 		};
 	}, [ ]);
 
