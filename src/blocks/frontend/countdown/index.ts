@@ -29,12 +29,13 @@ class CountdownData {
 	readonly timer: string;
 	readonly settings?: Settings;
 	readonly targetDate: number;
-	readonly behaviour: 'default' | 'redirectLink' | 'hide' | string;
+	readonly behaviour: 'default' | 'redirectLink' | 'hide' | 'restart' | string;
 	readonly trigger?: 'showBlock' | 'hideBlock';
 	readonly redirectLink?: string;
 	readonly startInterval?: string;
 	readonly endInterval?: string;
 	readonly hideTime: number;
+
 	readonly components: {
 		second?: {
 			label?: Element
@@ -73,6 +74,7 @@ class CountdownData {
 		this.trigger = trigger as 'showBlock' | 'hideBlock' | undefined;
 		this.startInterval = intvStart;
 		this.endInterval = intvEnd;
+		this.hideTime = 0;
 
 		this.components = {};
 		[ 'second', 'minute', 'hour', 'day' ].forEach(
@@ -106,6 +108,11 @@ class CountdownData {
 			}
 
 			this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` )! ) + parseInt( this.timer );
+
+			if ( this.canRestart ) {
+				localStorage.setItem( `o-countdown-last-visit-${this.elem.id}`, Date.now().toString() );
+				this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` )! ) + parseInt( this.timer );
+			}
 			break;
 
 		case 'interval':
@@ -141,6 +148,10 @@ class CountdownData {
 		}
 
 		return 0 <= this.hideTime - Date.now();
+	}
+
+	get canRestart(): boolean {
+		return 'timer' === this.mode && this.isStopped;
 	}
 
 	updateComponents( states: {tag: 'second'| 'minute'| 'hour'| 'day', label: string, value: string}[]) {

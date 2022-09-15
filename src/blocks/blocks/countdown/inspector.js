@@ -69,8 +69,21 @@ const onExpireHelpMsg = ( behaviour ) => {
 		return __( 'Redirect the user to another URL, when the countdown reaches 0', 'otter-blocks' );
 	case 'hide':
 		return __( 'Hide when the countdown reaches 0', 'otter-blocks' );
+	case 'restart':
+		return 'The Countdown will restart when it reaches 0 and the page is refreshed';
 	default:
 		return __( 'The countdown will restart when it reaches 0', 'otter-blocks' );
+	}
+};
+
+const countdownMoveHelpMsg = ( mode ) => {
+	switch ( mode ) {
+	case 'timer':
+		return __( 'A fixed amount of time for each browser session (Evergreen Countdown)', 'otter-blocks' );
+	case 'interval':
+		return __( 'The countdown will be active only between the Start Date and the End Date', 'otter-blocks' );
+	default:
+		return __( 'A universal deadline for all visitors', 'otter-blocks' );
 	}
 };
 
@@ -135,9 +148,7 @@ const Inspector = ({
 							value: 'interval'
 						}
 					]}
-					help={
-						'timer' === attributes.mode ? __( 'A fixed amount of time for each browser session (Evergreen Countdown)', 'otter-blocks' ) : __( 'A universal deadline for all visitors', 'otter-blocks' )
-					}
+					help={ countdownMoveHelpMsg( attributes.mode )}
 				/>
 
 				{
@@ -587,9 +598,13 @@ const Inspector = ({
 							value: ''
 						},
 						{
-							label: __( 'Hide the countdown', 'otter-blocks' ),
+							label: __( 'Hide the Countdown', 'otter-blocks' ),
 							value: 'hide'
 						},
+						...( 'timer' === attributes.mode ? [{
+							label: __( 'Restart the Countdown', 'otter-blocks' ),
+							value: 'restart'
+						}] : []),
 						{
 							label: __( 'Redirect to link', 'otter-blocks' ),
 							value: 'redirectLink'
