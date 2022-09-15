@@ -23,10 +23,11 @@ import { addFilter } from '@wordpress/hooks';
  * Internal Dependencies
  */
 import './editor.scss';
+import ButtonVariant = Button.ButtonVariant;
 
-const otterVersion = window.themeisleGutenberg?.version || window.otterObj?.version;
-const siteURL = window.themeisleGutenberg?.siteURL || window.otterObj?.siteURL;
-const finishIcon = window.themeisleGutenberg ? window.themeisleGutenberg.assetsPath + '/icons/finish-feedback.svg' : window.otterObj.assetsPath + 'icons/finish-feedback.svg';
+// @ts-ignore
+const { otterVersion, siteURL, assetsPath } = window.themeisleGutenberg ? window.themeisleGutenberg : window.otterObj;
+const finishIcon = assetsPath + ( '/' === assetsPath[ assetsPath.length - 1 ] ? '' : '/' ) + 'icons/finish-feedback.svg';
 
 const collectedInfo = [
 	{
@@ -54,7 +55,7 @@ const collectedInfo = [
 const Feedback = (
 	source,
 	text = __( 'Help us improve', 'otter-blocks' ),
-	variant = 'link'
+	variant:ButtonVariant = 'link'
 ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ feedback, setFeedback ] = useState( '' );
@@ -62,7 +63,7 @@ const Feedback = (
 	const [ showInfo, setShowInfo ] = useState( false );
 
 	useEffect( () => {
-		const info = document.querySelector( '.o-feedback-modal .info' );
+		const info = document.querySelector( '.o-feedback-modal .info' ) as HTMLElement;
 		if ( ! info ) {
 			return;
 		}
