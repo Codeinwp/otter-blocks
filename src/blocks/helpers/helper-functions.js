@@ -287,7 +287,10 @@ export const boxValues = ( box, defaultBox = {}) => {
  * @return {import('./blocks').BoxType}
  */
 export const removeBoxDefaultValues = ( box, defaultBox ) => {
-	const cleaned = omitBy( box, ( value, key ) => value === defaultBox[key]);
+	if ( defaultBox === undefined || isEmpty( defaultBox ) ) {
+		return box;
+	}
+	const cleaned = omitBy( box, ( value, key ) => value === defaultBox?.[key]);
 	return isEmpty( cleaned ) ? undefined : cleaned;
 };
 

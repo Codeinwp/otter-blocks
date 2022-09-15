@@ -29,6 +29,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import './editor.scss';
 import useSettings from './../../helpers/use-settings.js';
 import { setUtm } from '../../helpers/helper-functions.js';
+
 const WelcomeGuide = () => {
 	const [ getOption, updateOption, status ] = useSettings();
 

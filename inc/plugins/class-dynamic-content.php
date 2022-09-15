@@ -24,6 +24,7 @@ class Dynamic_Content {
 	 */
 	public function init() {
 		add_filter( 'render_block', array( $this, 'apply_dynamic_content' ) );
+		add_filter( 'render_block', array( $this, 'apply_dynamic_link' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_images' ) );
 		add_filter( 'otter_apply_dynamic_image', array( $this, 'apply_dynamic_images' ) );
 	}
@@ -35,14 +36,31 @@ class Dynamic_Content {
 	 *
 	 * @return string
 	 */
-	public function apply_dynamic_content( $content ) { 
+	public function apply_dynamic_content( $content ) {
 		if ( false === strpos( $content, '<o-dynamic' ) ) {
 			return $content;
 		}
 
-		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|data-term-type=["\'](?P<termType>[^"\'<>]+)["\']|data-term-separator=["\'](?P<termSeparator>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
+		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|data-term-type=["\'](?P<termType>[^"\'<>]+)["\']|data-term-separator=["\'](?P<termSeparator>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|data-context=["\'](?P<context>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_data' ), $content );
+	}
+
+	/**
+	 * Filter post content for dynamic content.
+	 *
+	 * @param string $content Post content.
+	 *
+	 * @return string
+	 */
+	public function apply_dynamic_link( $content ) { 
+		if ( false === strpos( $content, '<o-dynamic-link' ) ) {
+			return $content;
+		}
+
+		$re = '/<o-dynamic-link(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-target=["\'](?P<target>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|data-context=["\'](?P<context>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<text>[^ $].*?)<\s*\/\s*o-dynamic-link>/';
+
+		return preg_replace_callback( $re, array( $this, 'apply_link' ), $content );
 	}
 
 	/**
@@ -52,7 +70,7 @@ class Dynamic_Content {
 	 *
 	 * @return string
 	 */
-	public function apply_dynamic_images( $content ) { 
+	public function apply_dynamic_images( $content ) {
 		if ( false === strpos( $content, 'otter/v1/dynamic' ) ) {
 			return $content;
 		}
@@ -95,8 +113,10 @@ class Dynamic_Content {
 
 		global $post;
 
-		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] || ( is_singular() && $data['context'] !== $post->ID ) ) ) {
-			$data['context'] = $post->ID;
+		$id = ( defined( 'REST_REQUEST' ) && REST_REQUEST || ( isset( $data['context'] ) && 'query' === $data['context'] ) ) ? $post->ID : get_queried_object_id();
+
+		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
+			$data['context'] = $id;
 		}
 
 		if ( isset( $data['fallback'] ) && ! empty( $data['fallback'] ) ) {
@@ -130,7 +150,7 @@ class Dynamic_Content {
 
 		if ( 'logo' === $data['type'] ) {
 			$custom_logo_id = get_theme_mod( 'custom_logo' );
- 
+
 			if ( $custom_logo_id ) {
 				$value = wp_get_attachment_image_url( $custom_logo_id, 'full' );
 			}
@@ -152,7 +172,12 @@ class Dynamic_Content {
 		$value = $this->get_data( $data );
 
 		if ( isset( $data['before'] ) || isset( $data['after'] ) ) {
-			return $this->apply_formatting( $value, $data );
+			$value = $this->apply_formatting( $value, $data );
+		}
+
+		if ( isset( $data['default'] ) && false !== strpos( $data['default'], '<o-dynamic-link' ) ) {
+			$link = $this->apply_dynamic_link( $data['default'] );
+			return preg_replace( '/(<a.*?>).*?(<\/a>)/', '$1' . $value . '$2', $link );
 		}
 
 		return $value;
@@ -186,16 +211,26 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_data( $data ) {
+		if ( isset( $data['context'] ) && 'query' === $data['context'] ) {
+			$data['context'] = get_the_ID();
+		} else {
+			/*
+			 * We use the queried object ID to make sure when posts are displayed inside other posts
+			 * the displayed post is being used as a source for the dynamic tags. Eg. Custom Layouts inside Neve.
+			 */
+			$data['context'] = get_queried_object_id();
+		}
+
 		if ( ! isset( $data['type'] ) && isset( $data['default'] ) ) {
 			return esc_html( $data['default'] );
 		}
 
 		if ( 'postID' === $data['type'] ) {
-			return get_the_id();
+			return $data['context'];
 		}
 
 		if ( 'postTitle' === $data['type'] ) {
-			return get_the_title();
+			return get_the_title( $data['context'] );
 		}
 
 		if ( 'postExcerpt' === $data['type'] ) {
@@ -203,11 +238,11 @@ class Dynamic_Content {
 		}
 
 		if ( 'postType' === $data['type'] ) {
-			return get_post_type();
+			return get_post_type( $data['context'] );
 		}
 
 		if ( 'postStatus' === $data['type'] ) {
-			return get_post_status();
+			return get_post_status( $data['context'] );
 		}
 
 		if ( 'siteTitle' === $data['type'] ) {
@@ -219,11 +254,11 @@ class Dynamic_Content {
 		}
 
 		if ( 'authorName' === $data['type'] ) {
-			return get_the_author_meta( 'display_name' );
+			return get_the_author_meta( 'display_name', get_post_field( 'post_author', $data['context'] ) );
 		}
 
 		if ( 'authorDescription' === $data['type'] ) {
-			return get_the_author_meta( 'description' );
+			return get_the_author_meta( 'description', get_post_field( 'post_author', $data['context'] ) );
 		}
 
 		if ( 'loggedInUserName' === $data['type'] ) {
@@ -254,7 +289,7 @@ class Dynamic_Content {
 			return $this->get_current_time( $data );
 		}
 
-		return apply_filters( 'otter_blocks_evaluate_dynamic_content', $data[0], $data );
+		return apply_filters( 'otter_blocks_evaluate_dynamic_content_text', $data[0], $data );
 	}
 
 	/**
@@ -265,7 +300,7 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_excerpt( $data ) {
-		$post    = get_post();
+		$post    = get_post( $data['context'] );
 		$excerpt = $post->post_excerpt; // Here we don't use get_the_excerpt() function as it causes an infinite loop.
 
 		if ( empty( $excerpt ) ) {
@@ -430,6 +465,77 @@ class Dynamic_Content {
 		}
 
 		return empty( $result ) ? false : $result;
+	}
+
+	/**
+	 * Apply dynamic data.
+	 *
+	 * @param array $data Dynamic request.
+	 *
+	 * @return string
+	 */
+	public function apply_link( $data ) {
+		$link = $this->get_link( $data );
+
+		if ( empty( $link ) ) {
+			$link = get_site_url();
+		}
+
+		$attrs = '';
+
+		if ( isset( $data['target'] ) && '_blank' === $data['target'] ) {
+			$attrs = 'target="_blank"';
+		}
+
+		$value = sprintf(
+			'<a href="%s" %s>%s</a>',
+			esc_url( $link ),
+			$attrs,
+			esc_html( $data['text'] )
+		);
+
+		return $value;
+	}
+
+	/**
+	 * Apply dynamic data.
+	 *
+	 * @param array $data Dynamic request.
+	 *
+	 * @return string
+	 */
+	public function get_link( $data ) {
+		if ( ! isset( $data['type'] ) ) {
+			return;
+		}
+
+		if ( isset( $data['context'] ) && 'query' === $data['context'] ) {
+			$data['context'] = get_the_ID();
+		} else {
+			$data['context'] = get_queried_object_id();
+		}
+
+		if ( 'postURL' === $data['type'] ) {
+			return get_the_permalink( $data['context'] );
+		}
+
+		if ( 'siteURL' === $data['type'] ) {
+			return get_site_url();
+		}
+
+		if ( 'featuredImageURL' === $data['type'] ) {
+			return wp_get_attachment_url( get_post_thumbnail_id( $data['context'] ) );
+		}
+
+		if ( 'authorURL' === $data['type'] ) {
+			return get_author_posts_url( get_post_field( 'post_author', $data['context'] ) );
+		}
+
+		if ( 'authorWebsite' === $data['type'] ) {
+			return get_the_author_meta( 'url', get_post_field( 'post_author', $data['context'] ) );
+		}
+
+		return apply_filters( 'otter_blocks_evaluate_dynamic_content_link', '', $data );
 	}
 
 	/**

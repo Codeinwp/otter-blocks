@@ -3,8 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { isEmpty } from 'lodash';
-
 import {
 	BaseControl,
 	ExternalLink,
@@ -213,44 +211,49 @@ const Edit = ({
 				</Fragment>
 			) }
 
+
+			{ ( 'acf' === attributes.type && Boolean( window.otterPro.hasACF ) ) && (
+				<BaseControl
+					label={ __( 'Meta Key', 'otter-blocks' ) }
+				>
+					{ isLoaded ? (
+						<select
+							value={ attributes.metaKey || 'none' }
+							onChange={ event => changeAttributes({ metaKey: event.target.value  }) }
+							className="components-select-control__input"
+						>
+							<option value="none">{ __( 'Select a field', 'otter-blocks' ) }</option>
+
+							{ groups.map( group => {
+								return (
+									<optgroup
+										key={ group?.data?.key }
+										label={ group?.data?.title }
+									>
+										{ group?.fields
+											?.filter( ({ key, label, type }) => key && label &&  ALLOWED_ACF_TYPES.includes( type ) )
+											.map( ({ key, label }) => (
+												<option
+													key={ key }
+													value={ key }
+												>
+													{ label }
+												</option>
+											) ) }
+									</optgroup>
+								);
+							}) }
+						</select>
+					) : <Placeholder><Spinner /></Placeholder> }
+				</BaseControl>
+			) }
+
+			{ ( 'acf' === attributes.type && ! Boolean( window.otterPro.hasACF ) ) && (
+				<p>{ __( 'You need to have Advanced Custom Fields plugin installed to use this feature.', 'otter-blocks' ) }</p>
+			) }
+
 			{ ([ 'postMeta', 'authorMeta', 'loggedInUserMeta' ].includes( attributes.type ) ) && (
 				<Fragment>
-					{ 'postMeta' === attributes.type && (
-						<BaseControl
-							label={ __( 'Meta Key', 'otter-blocks' ) }
-						>
-							{ isLoaded ? (
-								<select
-									value={ attributes.metaKey || 'none' }
-									onChange={ event => changeAttributes({ metaKey: event.target.value  }) }
-									className="components-select-control__input"
-								>
-									<option value="none">{ __( 'Select a field', 'otter-blocks' ) }</option>
-
-									{ groups.map( group => {
-										return (
-											<optgroup
-												key={ group?.data?.key }
-												label={ group?.data?.title }
-											>
-												{ group?.fields
-													?.filter( ({ key, label, type }) => key && label &&  ALLOWED_ACF_TYPES.includes( type ) )
-													.map( ({ key, _name, label }) => (
-														<option
-															key={ key }
-															value={ _name }
-														>
-															{ label }
-														</option>
-													) ) }
-											</optgroup>
-										);
-									}) }
-								</select>
-							) : <Placeholder><Spinner /></Placeholder> }
-						</BaseControl>
-					) }
-
 					<FormTokenField
 						label={ __( 'Custom Meta Key', 'otter-blocks' ) }
 						value={ attributes.metaKey ? [ attributes.metaKey ] : [] }

@@ -129,7 +129,7 @@ module.exports = [
 			form: './src/blocks/frontend/form/index.js',
 			countdown: './src/blocks/frontend/countdown/index.ts',
 			popup: './src/blocks/frontend/popup/index.js',
-			sticky: './src/blocks/frontend/sticky/index.js'
+			sticky: './src/blocks/frontend/sticky/index.ts'
 		},
 		output: {
 			path: path.resolve( __dirname, './build/blocks' ),

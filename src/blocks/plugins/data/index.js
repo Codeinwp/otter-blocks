@@ -6,7 +6,8 @@ import { registerStore } from '@wordpress/data';
 
 const DEFAULT_STATE = {
 	showOnboarding: Boolean( window.themeisleGutenberg.showOnboarding ),
-	viewType: 'Desktop'
+	viewType: 'Desktop',
+	visiblePopover: 'themeisle-blocks/dynamic-value'
 };
 
 registerStore( 'themeisle-gutenberg/data', {
@@ -23,6 +24,12 @@ registerStore( 'themeisle-gutenberg/data', {
 			};
 		}
 
+		if ( 'UPDATE_POPOVER' === action.type ) {
+			return {
+				visiblePopover: action.visiblePopover
+			};
+		}
+
 		return state;
 	},
 
@@ -32,6 +39,9 @@ registerStore( 'themeisle-gutenberg/data', {
 		},
 		isOnboardingVisible( state ) {
 			return state.showOnboarding;
+		},
+		getVisiblePopover( state ) {
+			return state.visiblePopover;
 		}
 	},
 
@@ -46,6 +56,12 @@ registerStore( 'themeisle-gutenberg/data', {
 			return {
 				type: 'UPDATE_ONBOARDING',
 				showOnboarding
+			};
+		},
+		setVisiblePopover( visiblePopover ) {
+			return {
+				type: 'UPDATE_POPOVER',
+				visiblePopover
 			};
 		}
 	}
