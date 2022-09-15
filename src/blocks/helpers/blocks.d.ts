@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 
 export type BlockProps<T> = {
-	attributes: T & { className: string }
+	attributes: Partial< T & { className: string }>
 	setAttributes: ( attributes: Partial<T> ) => void
 	isSelected: boolean
 	clientId: string
@@ -10,7 +10,7 @@ export type BlockProps<T> = {
 }
 
 export interface InspectorProps<T> {
-	attributes: T
+	attributes: Partial<T>
 	setAttributes: ( attributes: Partial<T> ) => void
 }
 

@@ -29,7 +29,8 @@ class CountdownData {
 	readonly timer: string;
 	readonly settings?: Settings;
 	readonly targetDate: number;
-	readonly behaviour: 'default' | 'redirectLink' | 'showBlock' | 'hideBlock' | 'disappear' | string;
+	readonly behaviour: 'default' | 'redirectLink' | 'hide' | string;
+	readonly trigger?: 'showBlock' | 'hideBlock';
 	readonly redirectLink?: string;
 	readonly components: {
 		second?: {
@@ -57,7 +58,7 @@ class CountdownData {
 
 		this.elem.classList.add( 'ready' );
 
-		const { date, bhv, mode, timer, redirectLink } = elem.dataset;
+		const { date, bhv, mode, timer, redirectLink, trigger } = elem.dataset;
 
 		this.rawData = date ?? '';
 		this.behaviour = bhv ?? 'default';
@@ -66,6 +67,7 @@ class CountdownData {
 		this.timer = timer ?? '0';
 
 		this.redirectLink = redirectLink;
+		this.trigger = trigger as 'showBlock' | 'hideBlock' | undefined;
 
 		this.components = {};
 		[ 'second', 'minute', 'hour', 'day' ].forEach(
@@ -102,7 +104,11 @@ class CountdownData {
 			this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` )! ) + parseInt( this.timer );
 
 		} else {
-			this.targetDate = ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime();
+			if ( this.rawData ) {
+				this.targetDate = ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime();
+			} else {
+				this.targetDate = Date.now();
+			}
 		}
 
 		document.querySelectorAll( `${this.connectedBlocksSelector}.o-cntdn-bhv-hide` ).forEach(
@@ -163,12 +169,20 @@ class CountdownData {
 	triggerBehaviour() {
 		const blockSelectorId = this.connectedBlocksSelector;
 
-		switch ( this.behaviour as 'default' | 'redirectLink' | 'showBlock' | 'hideBlock' | 'disappear' ) {
+		switch ( this.behaviour as 'default' | 'redirectLink' | 'showBlock' | 'hideBlock' | 'hide' ) {
 		case 'default':
 			break;
-		case 'disappear':
+		case 'hide':
 			this.hide();
 			break;
+		case 'redirectLink':
+			if ( this.redirectLink ) {
+				window.location.replace( this.redirectLink );
+			}
+			break;
+		}
+
+		switch ( this.trigger ) {
 		case 'hideBlock':
 			if ( blockSelectorId ) {
 				document.querySelectorAll( `${blockSelectorId}.o-cntdn-bhv-hide` ).forEach(
@@ -185,11 +199,6 @@ class CountdownData {
 						( blockElem as HTMLDivElement ).classList.remove( 'o-cntdn-bhv-show' );
 					}
 				);
-			}
-			break;
-		case 'redirectLink':
-			if ( this.redirectLink ) {
-				window.location.replace( this.redirectLink );
 			}
 			break;
 		}

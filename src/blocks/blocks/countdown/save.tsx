@@ -18,11 +18,16 @@ import {
 } from '../../helpers/helper-functions.js';
 import { getIntervalFromUnix, timerSerialization } from './common';
 import { isEmpty } from 'lodash';
+import { CountdownProps } from './types.js';
 
 const DisplayTimeComponent = ({
 	name,
 	value,
 	tag
+}: {
+	name: string,
+	value: string,
+	tag: string
 }) => {
 	return (
 		<div
@@ -45,7 +50,7 @@ const DisplayTimeComponent = ({
 const DisplayTime = ({
 	time,
 	hasSeparators
-}) => {
+}: {time: unknown[], hasSeparators?: boolean}) => {
 	const elemToDisplay = hasSeparators ? insertBetweenItems( time, { name: 'sep', value: ':', tag: 'separator' }) : time;
 
 	const renderElem = elemToDisplay?.map( ( elem, key ) => <DisplayTimeComponent { ...elem } key={ key } /> );
@@ -63,14 +68,15 @@ const DisplayTime = ({
 
 const Save = ({
 	attributes
-}) => {
+}: CountdownProps ) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
 		'data-date': attributes.date,
 		'data-bhv': attributes.behaviour ? attributes.behaviour : undefined,
 		'data-redirect-link': 'redirectLink' === attributes.behaviour && attributes.redirectLink ? attributes.redirectLink : undefined,
 		'data-mode': attributes.mode ? attributes.mode : undefined,
-		'data-timer': ! isEmpty( attributes.timer ) ? timerSerialization( attributes.timer ) : undefined
+		'data-timer': ! isEmpty( attributes.timer ) ? timerSerialization( attributes.timer ) : undefined,
+		'data-trigger': attributes.triggers ? attributes.triggers : undefined
 	});
 
 	return (

@@ -62,6 +62,17 @@ const defaultFontSizes = [
 
 const fontWeights = [ '', '100', '200', '300', '400', '500', '600', '700', '800', '900' ].map( x => ({ label: x ? x : 'Default', value: x }) );
 
+const onExpireHelpMsg = ( behaviour ) => {
+	switch ( behaviour ) {
+	case 'redirectLink':
+		return __( 'Redirect the user to another URL, when the countdown reaches 0', 'otter-blocks' );
+	case 'hide':
+		return __( 'Hide when the countdown reaches 0', 'otter-blocks' );
+	default:
+		return __( 'The countdown will restart when it reaches 0', 'otter-blocks' );
+	}
+};
+
 /**
  *
  * @param {import('./types.js').CountdownInspectorProps} props
@@ -102,14 +113,26 @@ const Inspector = ({
 	return (
 		<InspectorControls>
 			<PanelBody
-				title={ __( 'Time', 'otter-blocks' ) }
+				title={ __( 'Time Settings', 'otter-blocks' ) }
 			>
-				<ToggleControl
-					label={ __( 'Timer', 'otter-blocks' ) }
-					checked={  'timer' === attributes.mode }
-					onChange={ value => {
-						setAttributes({ mode: value ? 'timer' : undefined });
-					} }
+
+				<SelectControl
+					label={ __( 'Countdown Type', 'otter-blocks' ) }
+					value={  attributes.mode }
+					onChange={ value => setAttributes({ mode: value ? 'timer' : undefined })}
+					options={[
+						{
+							label: __( 'Static', 'otter-blocks' ),
+							value: ''
+						},
+						{
+							label: __( 'Timer', 'otter-blocks' ),
+							value: 'timer'
+						}
+					]}
+					help={
+						'timer' === attributes.mode ? __( 'A fixed amount of time for each browser session (Evergreen Countdown)', 'otter-blocks' ) : __( 'A universal deadline for all visitors', 'otter-blocks' )
+					}
 				/>
 
 				{
@@ -134,6 +157,9 @@ const Inspector = ({
 									onChange={ date => setAttributes({ date }) }
 								/>
 							) }
+							style={{
+								width: '100%'
+							}}
 						/>
 					)
 				}
@@ -189,7 +215,7 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
+				title={ __( 'Display', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
 
@@ -223,10 +249,22 @@ const Inspector = ({
 					onChange={ hasSeparators => setAttributes({ hasSeparators }) }
 				/>
 
+				<ResponsiveControl
+					label={ __( 'Space Between boxes', 'otter-blocks' ) }
+				>
+					<RangeControl
+						value={ responsiveGetAttributes([ attributes.gap, attributes.gapTablet, attributes.gapMobile ]) ?? 6 }
+						onChange={ value => responsiveSetAttributes( value, [ 'gap', 'gapTablet', 'gapMobile' ]) }
+						min={ 0 }
+						max={ 100 }
+						allowReset
+					/>
+				</ResponsiveControl>
+
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Dimensions & Spacing', 'otter-blocks' ) }
+				title={ __( 'Dimensions', 'otter-blocks' ) }
 				initialOpen={false}
 			>
 				<ResponsiveControl
@@ -245,18 +283,6 @@ const Inspector = ({
 						onChange={ value => responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]) }
 						min={ 50 }
 						max={ 800 }
-						allowReset
-					/>
-				</ResponsiveControl>
-
-				<ResponsiveControl
-					label={ __( 'Space Between', 'otter-blocks' ) }
-				>
-					<RangeControl
-						value={ responsiveGetAttributes([ attributes.gap, attributes.gapTablet, attributes.gapMobile ]) ?? 6 }
-						onChange={ value => responsiveSetAttributes( value, [ 'gap', 'gapTablet', 'gapMobile' ]) }
-						min={ 0 }
-						max={ 100 }
 						allowReset
 					/>
 				</ResponsiveControl>
@@ -477,35 +503,34 @@ const Inspector = ({
 				</ResponsiveControl> */}
 			</PanelBody>
 			<PanelBody
-				title={ __( 'Behaviour', 'otter-blocks' ) }
+				title={ __( 'Countdown End Action', 'otter-blocks' ) }
 				initialOpen={false}
 			>
 				<SelectControl
-					label={ __( 'When countdown ends', 'otter-blocks' ) }
+					label={ __( 'On Expire', 'otter-blocks' ) }
 					value={ attributes.behaviour }
-					onChange={ behaviour => setAttributes({ behaviour })}
+					onChange={ behaviour => {
+						if ( 'redirectLink' === behaviour ) {
+							setAttributes({ behaviour, redirectLink: undefined });
+						} else {
+							setAttributes({ behaviour });
+						}
+					}}
 					options={[
 						{
-							label: __( 'Default', 'otter-blocks' ),
+							label: __( 'No action', 'otter-blocks' ),
 							value: ''
 						},
 						{
-							label: __( 'Disappear', 'otter-blocks' ),
-							value: 'disappear'
+							label: __( 'Hide the countdown', 'otter-blocks' ),
+							value: 'hide'
 						},
 						{
 							label: __( 'Redirect to link', 'otter-blocks' ),
 							value: 'redirectLink'
-						},
-						{
-							label: __( 'Show Block', 'otter-blocks' ),
-							value: 'showBlock'
-						},
-						{
-							label: __( 'Hide Block', 'otter-blocks' ),
-							value: 'hideBlock'
 						}
 					]}
+					help={ onExpireHelpMsg( attributes.behaviour ) }
 				/>
 
 				{
@@ -518,14 +543,42 @@ const Inspector = ({
 					)
 				}
 
+				<ToggleControl
+					label={ __( 'Enable Hide/Show other blocks when the Countdown ends.', 'otter-blocks' ) }
+					checked={ attributes.triggers !== undefined }
+					onChange={ value => {
+						if ( value ) {
+							setAttributes({ triggers: 'showBlock' });
+						} else {
+							setAttributes({ triggers: undefined });
+						}
+					}}
+				/>
+
 				{
-					attributes.behaviour?.endsWith( 'Block' ) && (
+					attributes?.triggers && (
 						<Fragment>
+							<SelectControl
+								label={ __( 'Hide/Show Behavior', 'otter-blocks' ) }
+								value={ attributes.triggers }
+								onChange={ triggers => setAttributes({ triggers })}
+								options={[
+									{
+										label: __( 'Show a block', 'otter-blocks' ),
+										value: 'showBlock'
+									},
+									{
+										label: __( 'Hide a block', 'otter-blocks' ),
+										value: 'hideBlock'
+									}
+								]}
+							/>
+
 							<p>
-								{ __( 'Paste the following code in the block that you want to show up when the countdown end. Select the block, go to Inspector > Advanced, and paste into the field "Additional CSS class"', 'otter-blocks' ) }
+								{ __( 'Paste the following code in the block that you want to show (in the same page) up when the countdown end. Select the block, go to Inspector > Advanced, and paste into the field "Additional CSS class"', 'otter-blocks' ) }
 							</p>
 							<code style={{ display: 'block', padding: '10px' }}>
-								{ `o-countdown-trigger-on-end-${ attributes.id?.split( '-' ).pop()} o-cntdn-bhv-${ 'hideBlock' === attributes.behaviour ? 'hide' : 'show' }` }
+								{ `o-countdown-trigger-on-end-${ attributes.id?.split( '-' ).pop()} o-cntdn-bhv-${ 'hideBlock' === attributes.triggers ? 'hide' : 'show' }` }
 							</code>
 						</Fragment>
 					)

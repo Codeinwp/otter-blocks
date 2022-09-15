@@ -275,7 +275,7 @@ export const getChoice = arr => {
  * @param {import('./blocks').BoxType} box
  * @param {import('./blocks').BoxType} defaultBox
  */
-export const boxValues = ( box, defaultBox = {}) => {
+export const boxValues = ( box = {}, defaultBox = {}) => {
 	return `${ box?.top ?? defaultBox?.top ?? '0px' } ${ box?.right ?? defaultBox?.right ?? '0px' } ${ box?.bottom ?? defaultBox?.bottom ?? '0px' } ${ box?.left ?? defaultBox?.left ?? '0px' }`;
 };
 

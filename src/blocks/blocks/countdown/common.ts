@@ -9,7 +9,7 @@ const _MS_PER_DAY = _MS_PER_HOURS * 24;
 /**
  *
  */
-export const toTimer = ( timer: CountdownTimer ): number => {
+export const toTimer = ( timer: CountdownTimer = {}): number => {
 	return ( parseInt( timer?.days || '0' ) * _MS_PER_DAY + parseInt( timer?.hours || '0' ) * _MS_PER_HOURS + parseInt( timer?.minutes || '0' ) * _MS_PER_MINUTES + parseInt( timer?.seconds || '0' ) * _MS_PER_SECONDS ) ?? 0;
 };
 

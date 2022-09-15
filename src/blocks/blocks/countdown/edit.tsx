@@ -36,7 +36,7 @@ import { CountdownProps } from './types';
 
 const { attributes: defaultAttributes } = metadata;
 
-const optionalUnit = ( value, unit = 'px' ) => isNumber( value ) ? `${ value }${unit}` : value;
+const optionalUnit = ( value: unknown, unit = 'px' ) => isNumber( value ) ? `${ value }${unit}` : value;
 
 const Edit = ({
 	attributes,
