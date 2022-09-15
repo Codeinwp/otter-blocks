@@ -69,6 +69,13 @@ const DisplayTime = ({
 const Save = ({
 	attributes
 }: CountdownProps ) => {
+
+
+	const interval = attributes.startInterval && attributes.endInterval ? {
+		'data-intv-start': attributes.startInterval,
+		'data-intv-end': attributes.endInterval
+	} : {};
+
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
 		'data-date': attributes.date,
@@ -76,7 +83,8 @@ const Save = ({
 		'data-redirect-link': 'redirectLink' === attributes.behaviour && attributes.redirectLink ? attributes.redirectLink : undefined,
 		'data-mode': attributes.mode ? attributes.mode : undefined,
 		'data-timer': ! isEmpty( attributes.timer ) ? timerSerialization( attributes.timer ) : undefined,
-		'data-trigger': attributes.triggers ? attributes.triggers : undefined
+		'data-trigger': attributes.triggers ? attributes.triggers : undefined,
+		...interval
 	});
 
 	return (

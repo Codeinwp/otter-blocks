@@ -79,8 +79,10 @@ type Attributes = {
 	behaviour: 'default' | 'redirectLink' | 'hide'
 	triggers: 'showBlock' | 'hideBlock'
 	redirectLink: string
-	mode: 'timer' | undefined
+	mode: 'timer' | 'interval' | undefined
 	timer: CountdownTimer
+	startInterval: string
+	endInterval: string
 } & LegacyAttrs;
 
 export type CountdownProps = BlockProps<Attributes>

@@ -20,7 +20,8 @@ import {
 	__experimentalBoxControl as BoxControl,
 	SelectControl,
 	__experimentalUnitControl as UnitContol,
-	TextControl
+	TextControl,
+	BaseControl
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -119,15 +120,19 @@ const Inspector = ({
 				<SelectControl
 					label={ __( 'Countdown Type', 'otter-blocks' ) }
 					value={  attributes.mode }
-					onChange={ value => setAttributes({ mode: value ? 'timer' : undefined })}
+					onChange={ value => setAttributes({ mode: value ? value : undefined })}
 					options={[
 						{
 							label: __( 'Static', 'otter-blocks' ),
 							value: ''
 						},
 						{
-							label: __( 'Timer', 'otter-blocks' ),
+							label: __( 'Evergeen', 'otter-blocks' ),
 							value: 'timer'
+						},
+						{
+							label: __( 'Interval', 'otter-blocks' ),
+							value: 'interval'
 						}
 					]}
 					help={
@@ -136,7 +141,7 @@ const Inspector = ({
 				/>
 
 				{
-					'timer' !== attributes.mode && (
+					attributes.mode === undefined && (
 						<Dropdown
 							position="bottom left"
 							headerTitle={ __( 'Select the date for the deadline', 'otter-blocks' ) }
@@ -146,6 +151,7 @@ const Inspector = ({
 										onClick={ onToggle }
 										isSecondary
 										aria-expanded={ isOpen }
+										className="o-extend-btn"
 									>
 										{ attributes.date ? format( settings.formats.datetime, attributes.date ) : __( 'Select Date', 'otter-blocks' ) }
 									</Button>
@@ -157,9 +163,7 @@ const Inspector = ({
 									onChange={ date => setAttributes({ date }) }
 								/>
 							) }
-							style={{
-								width: '100%'
-							}}
+							className="o-extend"
 						/>
 					)
 				}
@@ -211,6 +215,67 @@ const Inspector = ({
 					)
 				}
 
+				{
+					'interval' === attributes.mode && (
+						<Fragment>
+							<BaseControl
+								label={ __( 'Start Date', 'otter-blocks' ) }
+							>
+								<Dropdown
+									position="bottom left"
+									headerTitle={ __( 'Select the date for the deadline', 'otter-blocks' ) }
+									renderToggle={ ({ onToggle, isOpen }) => (
+										<>
+											<Button
+												onClick={ onToggle }
+												isSecondary
+												aria-expanded={ isOpen }
+												className="o-extend-btn"
+											>
+												{ attributes.startInterval ? format( settings.formats.datetime, attributes.startInterval ) : __( 'Select Start Date', 'otter-blocks' ) }
+											</Button>
+										</>
+									) }
+									renderContent={ () => (
+										<DateTimePicker
+											currentDate={ attributes.startInterval }
+											onChange={ startInterval => setAttributes({ startInterval }) }
+										/>
+									) }
+									className="o-extend"
+								/>
+							</BaseControl>
+
+							<BaseControl
+								label={ __( 'End Date', 'otter-blocks' ) }
+							>
+								<Dropdown
+									position="bottom left"
+									headerTitle={ __( 'Select the date for the deadline', 'otter-blocks' ) }
+									renderToggle={ ({ onToggle, isOpen }) => (
+										<>
+											<Button
+												onClick={ onToggle }
+												isSecondary
+												aria-expanded={ isOpen }
+												className="o-extend-btn"
+											>
+												{ attributes.endInterval ? format( settings.formats.datetime, attributes.endInterval ) : __( 'Select End Date', 'otter-blocks' ) }
+											</Button>
+										</>
+									) }
+									renderContent={ () => (
+										<DateTimePicker
+											currentDate={ attributes.endInterval }
+											onChange={ endInterval => setAttributes({ endInterval }) }
+										/>
+									) }
+									className="o-extend"
+								/>
+							</BaseControl>
+						</Fragment>
+					)
+				}
 
 			</PanelBody>
 

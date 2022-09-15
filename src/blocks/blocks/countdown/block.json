@@ -161,6 +161,12 @@
 		},
 		"timer": {
 			"type": "object"
+		},
+		"startInterval": {
+			"type": "string"
+		},
+		"endInterval": {
+			"type": "string"
 		}
 	},
 	"supports": {

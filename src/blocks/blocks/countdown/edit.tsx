@@ -31,7 +31,7 @@ import {
 import DisplayTime from './components/display-time.js';
 import { isEmpty, isNumber, pickBy } from 'lodash';
 import classNames from 'classnames';
-import { getIntervalFromUnix, toTimer } from './common';
+import { fromInterval, getIntervalFromUnix, toTimer } from './common';
 import { CountdownProps } from './types';
 
 const { attributes: defaultAttributes } = metadata;
@@ -84,11 +84,21 @@ const Edit = ({
 			}, 500 );
 		}
 
-
 		return () => {
 			clearInterval( interval );
 		};
 	}, [ attributes.date, attributes.mode ]);
+
+	const getTime = () => {
+		switch ( attributes.mode ) {
+		case 'timer':
+			return toTimer( attributes.timer );
+		case 'interval':
+			return fromInterval( attributes.startInterval, attributes.endInterval );
+		default:
+			return unixTime;
+		}
+	};
 
 
 	const inlineStyles = {
@@ -160,7 +170,7 @@ const Edit = ({
 			{/* @ts-ignore */}
 			<div { ...blockProps }>
 				<DisplayTime
-					time={ getIntervalFromUnix( 'timer' === attributes.mode ? toTimer( attributes.timer ) : unixTime, { exclude: attributes?.exclude }) }
+					time={ getIntervalFromUnix( getTime(), { exclude: attributes?.exclude }) }
 					hasSeparators={ attributes.hasSeparators }
 				/>
 			</div>

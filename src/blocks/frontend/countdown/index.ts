@@ -24,7 +24,7 @@ class CountdownData {
 
 	readonly id: number;
 	readonly elem: HTMLDivElement;
-	readonly mode?: 'timer';
+	readonly mode?: 'timer' | 'interval';
 	readonly rawData: string;
 	readonly timer: string;
 	readonly settings?: Settings;
@@ -32,6 +32,9 @@ class CountdownData {
 	readonly behaviour: 'default' | 'redirectLink' | 'hide' | string;
 	readonly trigger?: 'showBlock' | 'hideBlock';
 	readonly redirectLink?: string;
+	readonly startInterval?: string;
+	readonly endInterval?: string;
+	readonly hideTime: number;
 	readonly components: {
 		second?: {
 			label?: Element
@@ -58,16 +61,18 @@ class CountdownData {
 
 		this.elem.classList.add( 'ready' );
 
-		const { date, bhv, mode, timer, redirectLink, trigger } = elem.dataset;
+		const { date, bhv, mode, timer, redirectLink, trigger, intvEnd, intvStart } = elem.dataset;
 
 		this.rawData = date ?? '';
 		this.behaviour = bhv ?? 'default';
 
-		this.mode = mode as 'timer' | undefined;
+		this.mode = mode as 'timer' | 'interval' | undefined;
 		this.timer = timer ?? '0';
 
 		this.redirectLink = redirectLink;
 		this.trigger = trigger as 'showBlock' | 'hideBlock' | undefined;
+		this.startInterval = intvStart;
+		this.endInterval = intvEnd;
 
 		this.components = {};
 		[ 'second', 'minute', 'hour', 'day' ].forEach(
@@ -86,9 +91,8 @@ class CountdownData {
 
 		this.onEndEvents = [ () => this.triggerBehaviour() ];
 
-		if ( 'timer' === this.mode ) {
-
-			//const lastVisit = localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` );
+		switch ( this.mode ) {
+		case 'timer':
 			const lastVisit = localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` );
 			const lastVisitTime = localStorage.getItem( `o-countdown-last-visit-time-${this.elem.id}` );
 
@@ -102,13 +106,16 @@ class CountdownData {
 			}
 
 			this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` )! ) + parseInt( this.timer );
+			break;
 
-		} else {
-			if ( this.rawData ) {
-				this.targetDate = ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime();
-			} else {
-				this.targetDate = Date.now();
-			}
+		case 'interval':
+			this.targetDate = this.endInterval ? ( new Date( this.endInterval + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : 0;
+			this.hideTime = this.startInterval ? ( new Date( this.startInterval + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : 0;
+			break;
+
+		default:
+			this.targetDate = this.rawData ?  ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : Date.now();
+
 		}
 
 		document.querySelectorAll( `${this.connectedBlocksSelector}.o-cntdn-bhv-hide` ).forEach(
@@ -128,7 +135,24 @@ class CountdownData {
 		return 0  >= this.remainingTime;
 	}
 
+	get mustBeHidden(): boolean {
+		if ( ! this.startInterval ) {
+			return false;
+		}
+
+		return 0 <= this.hideTime - Date.now();
+	}
+
 	updateComponents( states: {tag: 'second'| 'minute'| 'hour'| 'day', label: string, value: string}[]) {
+		if ( 'interval' === this.mode ) {
+			if ( this.mustBeHidden ) {
+				this.hide();
+				return;
+			} else {
+				this.show();
+			}
+		}
+
 		states.forEach( state => {
 			if ( this.components?.[ state.tag ]?.label && this.components[ state.tag ]?.label?.innerHTML !== state.label ) {
 				this.components[ state.tag ]!.label!.innerHTML = state.label ?? '';

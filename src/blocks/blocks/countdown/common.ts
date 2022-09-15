@@ -7,10 +7,30 @@ const _MS_PER_HOURS = _MS_PER_MINUTES * 60;
 const _MS_PER_DAY = _MS_PER_HOURS * 24;
 
 /**
+ *	Get the time from a timer structure
  *
+ * @param timer The timer data strcture.
+ * @returns The time in miliseconds
  */
 export const toTimer = ( timer: CountdownTimer = {}): number => {
 	return ( parseInt( timer?.days || '0' ) * _MS_PER_DAY + parseInt( timer?.hours || '0' ) * _MS_PER_HOURS + parseInt( timer?.minutes || '0' ) * _MS_PER_MINUTES + parseInt( timer?.seconds || '0' ) * _MS_PER_SECONDS ) ?? 0;
+};
+
+/**
+ * Get the time interval from two dates.
+ *
+ * @param start The start date.
+ * @param end The end date.
+ * @returns
+ */
+export const fromInterval = ( start?: string, end?: string ): number => {
+	if ( ! start || ! end ) {
+		return 0;
+	}
+	const startTime = new Date( start ).getTime();
+	const endTime = new Date( end ).getTime();
+
+	return endTime - startTime;
 };
 
 /**
