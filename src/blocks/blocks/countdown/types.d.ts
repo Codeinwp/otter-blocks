@@ -76,7 +76,7 @@ type Attributes = {
 	valueFontWeight: string
 	labelFontWeight: string
 	separatorAlignment: 'center'
-	behaviour: 'default' | 'redirectLink' | 'hide'
+	behaviour: 'default' | 'redirectLink' | 'hide' | 'restart'
 	triggers: 'showBlock' | 'hideBlock'
 	redirectLink: string
 	mode: 'timer' | 'interval' | undefined

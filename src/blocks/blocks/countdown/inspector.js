@@ -133,7 +133,32 @@ const Inspector = ({
 				<SelectControl
 					label={ __( 'Countdown Type', 'otter-blocks' ) }
 					value={  attributes.mode }
-					onChange={ value => setAttributes({ mode: value ? value : undefined })}
+					onChange={ value => {
+
+						const attrs = {
+							mode: value ? value : undefined
+						};
+
+						if ( ! value ) {
+							attrs.date = undefined;
+						}
+
+						if ( 'timer' !== value ) {
+							attrs.timer = undefined;
+							if ( 'restart' === attributes.behaviour ) {
+								attrs.behaviour = undefined;
+							}
+						}
+
+						if ( 'interval' !== value ) {
+							attrs.startInterval = undefined;
+							attrs.endInterval = undefined;
+						}
+
+						setAttributes( attrs );
+					}
+
+					}
 					options={[
 						{
 							label: __( 'Static', 'otter-blocks' ),
