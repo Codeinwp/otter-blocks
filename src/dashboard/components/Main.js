@@ -20,6 +20,7 @@ import Sidebar from './Sidebar.js';
 import Dashboard from './pages/Dashboard.js';
 import Upsell from './pages/Upsell.js';
 import Integrations from './pages/Integrations.js';
+import Feedback from './pages/Feedback.js';
 
 const Main = ({
 	currentTab,
@@ -47,6 +48,10 @@ const Main = ({
 			return (
 				<Upsell />
 			);
+		case 'feedback':
+			return (
+				<Feedback />
+			);
 		default:
 			return (
 				<div className="otter-left">
@@ -65,7 +70,7 @@ const Main = ({
 			<div className={ `otter-main is-${ currentTab}`}>
 				<Content />
 
-				{ 'upsell' !== currentTab && (
+				{ ! [ 'upsell', 'feedback' ].includes( currentTab ) && (
 					<div className="otter-right">
 						<Sidebar setTab={ setTab }/>
 					</div>

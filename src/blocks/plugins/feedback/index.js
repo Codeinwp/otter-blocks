@@ -43,9 +43,18 @@ const collectedInfo = [
 	}
 ];
 
+/**
+ * Displays a button that opens a modal for sending feedback
+ *
+ * @param source The area from where the feedback is given
+ * @param text Text to display inside the button
+ * @param variant Variant of the button
+ * @returns {JSX.Element}
+ */
 const Feedback = (
+	source,
 	text = __( 'Help us improve', 'otter-blocks' ),
-	position = 'default'
+	variant = 'link'
 ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ feedback, setFeedback ] = useState( '' );
@@ -74,7 +83,8 @@ const Feedback = (
 				version: otterVersion,
 				feedback,
 				data: {
-					site: siteURL
+					site: siteURL,
+					source
 				}
 			})
 		}).then( r => {
@@ -91,8 +101,10 @@ const Feedback = (
 		<>
 			<Button
 				id="o-feedback"
-				variant="link"
-				isLink
+				variant={ variant }
+				isLink={ 'link' === variant }
+				isSecondary={ 'secondary' === variant }
+				isPrimary={ 'primary' === variant }
 				onClick={() => setIsOpen( ! isOpen )}
 			>
 				{ text }
@@ -102,6 +114,7 @@ const Feedback = (
 					className={ classnames( 'o-feedback-modal', { 'no-header': 'submitted' === status }) }
 					title={ __( 'Tell us about your experience', 'otter-blocks' ) }
 					onRequestClose={ closeModal }
+					shouldCloseOnClickOutside={ false }
 				>
 					{ 'submitted' !== status ? (
 						<>

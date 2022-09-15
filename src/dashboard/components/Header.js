@@ -10,7 +10,6 @@ import {
 	__,
 	sprintf
 } from '@wordpress/i18n';
-import {applyFilters} from "@wordpress/hooks";
 
 const NAVIGATION_ITEMS = [
 	{
@@ -27,6 +26,11 @@ const NAVIGATION_ITEMS = [
 		slug: 'upsell',
 		label: __( 'Free vs PRO', 'otter-blocks' ),
 		visibility: ! Boolean( window.otterObj.hasPro )
+	},
+	{
+		slug: 'feedback',
+		label: __( 'Help us improve', 'otter-blocks' ),
+		visibility: true
 	}
 ];
 
@@ -63,7 +67,6 @@ const Headers = ({
 							<span>{ item.label }</span>
 						</button>
 					) ) }
-					{ applyFilters( 'otter.feedback' ) }
 				</nav>
 			</div>
 		</header>

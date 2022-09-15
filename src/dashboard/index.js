@@ -11,12 +11,12 @@ import {
  * Internal dependencies.
  */
 import './style.scss';
+import '../blocks/plugins/feedback';
 import Notices from './components/Notices.js';
 import Header from './components/Header.js';
 import Main from './components/Main.js';
 import Footer from './components/Footer.js';
 import useSettings from '../blocks/helpers/use-settings.js';
-import '../blocks/plugins/feedback/index.js';
 
 if ( undefined === window.otterUtils ) {
 	window.otterUtils = {};

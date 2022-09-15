@@ -239,7 +239,7 @@ const Options = () => {
 					saveConfig={ saveConfig }
 				/>
 
-				{ applyFilters( 'otter.feedback', __( 'Help us improve Otter Blocks', 'otter-blocks' ) ) }
+				{ applyFilters( 'otter.feedback', 'otter-menu-editor', __( 'Help us improve Otter Blocks', 'otter-blocks' ) ) }
 			</PluginSidebar>
 		</Fragment>
 	);
