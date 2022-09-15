@@ -127,7 +127,7 @@ class CountdownData {
 
 		document.querySelectorAll( `${this.connectedBlocksSelector}.o-cntdn-bhv-hide` ).forEach(
 			blockElem => {
-				if ( ! this.isStopped ) {
+				if ( ! this.isStopped && ! this.mustBeHidden ) {
 					( blockElem as HTMLDivElement ).classList.add( 'o-cntdn-ready' );
 				}
 			}
@@ -240,11 +240,11 @@ class CountdownData {
 	}
 
 	hide() {
-		this.elem.style.display = 'none';
+		this.elem.classList.add( 'o-hide' );
 	}
 
 	show() {
-		this.elem.style.display = '';
+		this.elem.classList.remove( 'o-hide' );
 	}
 }
 

@@ -456,8 +456,7 @@ class Registration {
 					echo '
 						<style type="text/css" data-source="otter-blocks">
 							[class*="o-countdown-trigger-on-end-"] {
-								transition: transform 1.5s ease;
-								transform-origin: top;
+								transition: opacity 1s ease;
 							}
 							
 							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show, [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide:not(.o-cntdn-ready), [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide.o-cntdn-hide {
@@ -466,8 +465,12 @@ class Registration {
 								visibility: hidden;
 							}
 
+							[data-intv-start]:not(.o-cntdn-ready) {
+								display: none;
+							}
+
 							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show {
-								transform: scaleY(0);
+								opacity: 0;
 							}
 						</style>
 				';
