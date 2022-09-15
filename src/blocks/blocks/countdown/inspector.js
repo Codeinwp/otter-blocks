@@ -604,7 +604,7 @@ const Inspector = ({
 				</ResponsiveControl> */}
 			</PanelBody>
 			<PanelBody
-				title={ __( 'Countdown End Action', 'otter-blocks' ) }
+				title={ __( 'End Action', 'otter-blocks' ) }
 				initialOpen={false}
 			>
 				<SelectControl

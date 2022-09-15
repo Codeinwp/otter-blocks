@@ -258,6 +258,16 @@ class Countdown_CSS extends Base_CSS {
 							);
 						},
 					),
+					array(
+						'property' => 'display',
+						'value'    => 'exclude',
+						'format'   => function( $value, $attrs ) {
+							return 'none';
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['exclude'] ) && is_array($attrs['exclude']) && 4 === count($attrs['exclude']);
+						}, 
+					),
 				),
 			)
 		);

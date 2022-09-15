@@ -12,6 +12,8 @@ import {
 	useState,
 	useEffect
 } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+
 
 import moment from 'moment';
 
@@ -28,11 +30,12 @@ import {
 	boxValues,
 	getTimezone
 } from '../../helpers/helper-functions.js';
-import DisplayTime from './components/display-time.js';
+import DisplayTime from './components/display-time';
 import { isEmpty, isNumber, pickBy } from 'lodash';
 import classNames from 'classnames';
-import { fromInterval, getIntervalFromUnix, toTimer } from './common';
+import { fromInterval, toTimer } from './common';
 import { CountdownProps } from './types';
+import { Notice } from '@wordpress/components';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -169,10 +172,23 @@ const Edit = ({
 			/>
 			{/* @ts-ignore */}
 			<div { ...blockProps }>
+
 				<DisplayTime
-					time={ getIntervalFromUnix( getTime(), { exclude: attributes?.exclude }) }
+					time={ getTime() }
+					settings={ { exclude: attributes?.exclude } }
 					hasSeparators={ attributes.hasSeparators }
 				/>
+				{
+					4 === attributes?.exclude?.length && (
+						<Fragment>
+							<br/>
+							<Notice isDismissible={false} status="info">
+								{__( 'The Countdown will be hidden in page', 'otter-blocks' )}
+							</Notice>
+						</Fragment>
+
+					)
+				}
 			</div>
 		</Fragment>
 	);

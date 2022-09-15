@@ -244,6 +244,7 @@ class CountdownData {
 	}
 
 	show() {
+		this.elem.classList.add( 'o-cntdn-ready' );
 		this.elem.classList.remove( 'o-hide' );
 	}
 }
