@@ -50,12 +50,20 @@ interface SharedAttrs  {
     }
 }
 
+type SharedCore = {
+    textColor?: string,
+    backgroundColor?: string
+    gradient?: string
+}
+
 type Storage<T> = {
     shared?: SharedAttrs
+    core?: SharedCore
     private?: T
 }
 
 type CopyPasteStorage = {
     shared?: SharedAttrs
+    core?: SharedCore
     [key: string]: any
 }

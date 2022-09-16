@@ -1,5 +1,5 @@
 import { merge } from 'lodash';
-import { SharedAttrs, Storage } from './models';
+import { Storage } from './models';
 import { addUnit } from './utils';
 
 const commonExtractor = ( attrs ): Storage<unknown> => {
@@ -21,28 +21,34 @@ const commonExtractor = ( attrs ): Storage<unknown> => {
 				dropCap: attrs?.dropCap,
 				align: attrs?.textAlign
 			}
+		},
+		core: {
+			textColor: attrs?.textColor,
+			backgroundColor: attrs?.backgroundColor,
+			gradient: attrs?.gradient
 		}
 	};
 };
 
-const commonApplyer = ( shared: SharedAttrs ) => {
+const commonApplyer = ( storage: Storage<unknown> ) => {
 	return {
-		textColor: shared?.colors?.text,
-		fontSize: shared?.font?.size,
+		fontSize: storage?.shared?.font?.size,
 		style: {
 			typography: {
-				fontStyle: shared?.font?.style,
-				textTransform: shared?.font?.transform,
-				letterSpacing: shared?.font?.letterSpacing
+				fontStyle: storage?.shared?.font?.style,
+				textTransform: storage?.shared?.font?.transform,
+				letterSpacing: storage?.shared?.font?.letterSpacing
 			},
 			color: {
-				text: shared?.colors?.text,
-				background: shared?.colors?.background,
-				gradient: shared?.colors?.backgroundGradient
+				text: storage?.shared?.colors?.text,
+				background: storage?.shared?.colors?.background,
+				gradient: storage?.shared?.colors?.backgroundGradient
 			}
 		},
-		backgroundColor: shared?.colors?.background,
-		dropCap: shared?.font?.dropCap
+		dropCap: storage?.shared?.font?.dropCap,
+		textColor: storage?.core?.textColor,
+		backgroundColor: storage?.core?.backgroundColor,
+		gradient: storage?.core?.gradient
 	};
 };
 
@@ -59,7 +65,7 @@ export const coreAdaptors = {
 			);
 		},
 		paste( storage: Storage<unknown> ): any {
-			return merge( commonApplyer( storage?.shared ),
+			return merge( commonApplyer( storage ),
 				{
 				}
 			);
@@ -82,7 +88,7 @@ export const coreAdaptors = {
 			);
 		},
 		paste( storage: Storage<unknown> ): any {
-			return merge( commonApplyer( storage?.shared ),
+			return merge( commonApplyer( storage ),
 				{
 					width: storage.shared?.width?.desktop
 				}
@@ -104,7 +110,7 @@ export const coreAdaptors = {
 			);
 		},
 		paste( storage: Storage<unknown> ): any {
-			return merge( commonApplyer( storage?.shared ),
+			return merge( commonApplyer( storage ),
 				{
 					width: storage.shared?.width?.desktop,
 					layout: storage.shared?.layout
@@ -125,7 +131,7 @@ export const coreAdaptors = {
 			);
 		},
 		paste( storage: Storage<unknown> ): any {
-			return merge( commonApplyer( storage?.shared ),
+			return merge( commonApplyer( storage ),
 				{
 
 				}
@@ -143,7 +149,7 @@ export const coreAdaptors = {
 			);
 		},
 		paste( storage: Storage<{}> ): any {
-			return merge( commonApplyer( storage?.shared ),
+			return merge( commonApplyer( storage ),
 				{
 					...storage.private
 				}
@@ -158,7 +164,7 @@ export const coreAdaptors = {
 			);
 		},
 		paste( storage: Storage<{}> ): any {
-			return merge( commonApplyer( storage?.shared ),
+			return merge( commonApplyer( storage ),
 				{
 
 				}
@@ -208,7 +214,7 @@ export const coreAdaptors = {
 			);
 		},
 		paste( storage: Storage<{}> ): any {
-			return merge( commonApplyer( storage?.shared ),
+			return merge( commonApplyer( storage ),
 				{
 					border: {
 						radius: storage?.shared?.border?.radius?.desktop
