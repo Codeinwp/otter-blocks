@@ -43,6 +43,12 @@ class Slider_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 				),
+				'properties' => array(
+					array(
+						'property' => '--width',
+						'value'    => 'width',
+					),
+				),
 			)
 		);
 
