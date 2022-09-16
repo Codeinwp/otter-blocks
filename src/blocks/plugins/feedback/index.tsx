@@ -25,8 +25,8 @@ import { addFilter } from '@wordpress/hooks';
 import './editor.scss';
 import ButtonVariant = Button.ButtonVariant;
 
-// @ts-ignore
-const { otterVersion, siteURL, assetsPath } = window.themeisleGutenberg ? window.themeisleGutenberg : window.otterObj;
+
+const { version: otterVersion, siteURL, assetsPath } = window.themeisleGutenberg ? window.themeisleGutenberg : window.otterObj;
 const finishIcon = assetsPath + ( '/' === assetsPath[ assetsPath.length - 1 ] ? '' : '/' ) + 'icons/finish-feedback.svg';
 
 const collectedInfo = [
@@ -50,13 +50,13 @@ const collectedInfo = [
  * @param source The area from where the feedback is given
  * @param text Text to display inside the button
  * @param variant Variant of the button
- * @returns {JSX.Element}
+ * @returns
  */
 const Feedback = (
-	source,
+	source: string,
 	text = __( 'Help us improve', 'otter-blocks' ),
 	variant:ButtonVariant = 'link'
-) => {
+): JSX.Element => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ feedback, setFeedback ] = useState( '' );
 	const [ status, setStatus ] = useState( 'notSubmitted' );

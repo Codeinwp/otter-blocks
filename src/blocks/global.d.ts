@@ -38,7 +38,7 @@ declare global {
 			blocksIDs: string[]
 			isAncestorTypeAvailable: boolean
 		}
-		otterPro?: {
+		otterPro?: Readonly<{
 			isActive: boolean
 			isExpired: boolean
 			hasWooCommerce: boolean
@@ -57,7 +57,24 @@ declare global {
 				wooComparison: boolean
 			}
 			rootUrl: string
-		}
+		}>
+		otterObj?: Readonly<Partial<{
+			assetsPath: string
+			docksLink: string
+			hasNevePro: string
+			hasPro: string
+			license:{
+				expiration: boolean
+				key: string
+				valid: string
+			}
+			purcharseHistoryURL: string
+			siteURL: string
+			storeURL: string
+			styleExist: string
+			upgradeLink: string
+			version: string
+		}>>
 	}
 }
 
