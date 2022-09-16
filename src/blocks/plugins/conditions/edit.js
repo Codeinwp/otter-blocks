@@ -35,6 +35,7 @@ import { applyFilters } from '@wordpress/hooks';
 import PanelTab from '../../components/panel-tab/index.js';
 import Notice from '../../components/notice/index.js';
 import { setUtm } from '../../helpers/helper-functions.js';
+
 const hasPro = Boolean( window.themeisleGutenberg.hasPro );
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 
@@ -186,8 +187,8 @@ const AuthorsFieldToken = ( props ) => {
 		const { getUsers, isResolving } = select( 'core' );
 
 		return {
-			postAuthors: ( getUsers({ who: 'authors' }) ?? []).map( author => author.username ),
-			isLoading: isResolving( 'getUsers', [{ who: 'authors' }])
+			postAuthors: ( getUsers({ who: 'authors', context: 'view' }) ?? []).map( author => author.username ),
+			isLoading: isResolving( 'getUsers', [{ who: 'authors', context: 'view' }])
 		};
 	}, [ ]);
 
@@ -211,8 +212,8 @@ const CategoriesFieldToken = ( props ) => {
 		const { getEntityRecords, isResolving } = select( 'core' );
 
 		return {
-			postCategories: ( getEntityRecords( 'taxonomy', 'category', { 'per_page': 100 }) ?? []).map( category => category.slug ),
-			isLoading: isResolving( 'getEntityRecords', [ 'taxonomy', 'category', { 'per_page': 100 }])
+			postCategories: ( getEntityRecords( 'taxonomy', 'category', { 'per_page': 100, context: 'view' }) ?? []).map( category => category.slug ),
+			isLoading: isResolving( 'getEntityRecords', [ 'taxonomy', 'category', { 'per_page': 100, context: 'view' }])
 		};
 	}, [ ]);
 

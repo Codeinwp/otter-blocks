@@ -16,7 +16,7 @@ import {
 	SelectControl,
 	ToggleControl
 } from '@wordpress/components';
-import { setUtm } from '../../helpers/helper-functions.js';
+
 import { Fragment } from '@wordpress/element';
 
 import { applyFilters } from '@wordpress/hooks';
@@ -25,6 +25,7 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import Notice from '../../components/notice/index.js';
+import { setUtm } from '../../helpers/helper-functions.js';
 
 /**
  *
