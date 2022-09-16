@@ -38,6 +38,7 @@ import ResponsiveControl from '../../components/responsive-control/index.js';
 import { buildResponsiveGetAttributes, buildResponsiveSetAttributes } from '../../helpers/helper-functions.js';
 import ToogleGroupControl from '../../components/toogle-group-control/index.js';
 import { alignCenter, alignLeft, alignRight } from '@wordpress/icons';
+import { alignHandler } from './edit.js';
 
 const defaultFontSizes = [
 	{
@@ -178,8 +179,8 @@ const Inspector = ({
 					className="buttons-alignment-control"
 				>
 					<ToogleGroupControl
-						value={ responsiveGetAttributes([ attributes.alignment?.desktop, attributes.alignment?.tablet, attributes.alignment?.mobile ]) ?? 'center' }
-						onChange={ value => responsiveSetAttributes( '' === value ? undefined : value, [ 'alignment.desktop', 'alignment.tablet', 'alignment.mobile' ], attributes.alignment )}
+						value={ responsiveGetAttributes([ alignHandler( attributes.align )?.desktop, alignHandler( attributes.align )?.tablet, alignHandler( attributes.align )?.mobile ]) ?? 'center' }
+						onChange={ value => responsiveSetAttributes( '' === value ? undefined : value, [ 'align.desktop', 'align.tablet', 'align.mobile' ], alignHandler( attributes.align ) )}
 						options={[
 							{
 								icon: alignLeft,

@@ -12,7 +12,7 @@
 			"type": "string"
 		},
 		"align": {
-			"type": "string"
+			"type": ["string", "object"]
 		},
 		"library": {
 			"type": "string",
@@ -73,9 +73,6 @@
 		},
 		"isSynced": {
 			"type": "array"
-		},
-		"alignment": {
-			"type": "object"
 		}
 	},
 	"editorStyle": "otter-font-awesome-editor",

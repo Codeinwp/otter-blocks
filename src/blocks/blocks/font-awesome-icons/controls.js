@@ -12,6 +12,7 @@ import { useSelect } from '@wordpress/data';
  */
 import LinkControl from '../../components/link-control/index.js';
 import { buildResponsiveGetAttributes, buildResponsiveSetAttributes } from '../../helpers/helper-functions.js';
+import { alignHandler } from './edit.js';
 
 const mappings = {
 	'left': 'flex-start',
@@ -44,8 +45,8 @@ const Controls = ({
 	return (
 		<BlockControls>
 			<AlignmentToolbar
-				value={ mappings[ responsiveGetAttributes([ attributes.alignment?.desktop, attributes.alignment?.tablet, attributes.alignment?.mobile ]) ?? 'center' ] }
-				onChange={ value => responsiveSetAttributes( '' === value ? undefined : mappings[value], [ 'alignment.desktop', 'alignment.tablet', 'alignment.mobile' ], attributes.alignment )}
+				value={ mappings[ responsiveGetAttributes([ alignHandler( attributes.align )?.desktop, alignHandler( attributes.align )?.tablet, alignHandler( attributes.align )?.mobile ]) ?? 'center' ] }
+				onChange={ value => responsiveSetAttributes( '' === value ? undefined : mappings[value], [ 'align.desktop', 'align.tablet', 'align.mobile' ], alignHandler( attributes.align ) )}
 			/>
 
 			<LinkControl

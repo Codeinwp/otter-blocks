@@ -34,14 +34,30 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 	public function render_css( $block ) {
 		$css = new CSS_Utility( $block );
 
+		$ALIGN_MAP = array(
+			'left' => 'flex-start',
+			'center' => 'center',
+			'right' => 'flex-end'
+		);
+
 		$css->add_item(
 			array(
 				'properties' => array(
 					array(
 						'property'  => '--align',
-						'value'     => 'alignment',
+						'value'     => 'align',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['alignment'] ) && ( $attrs['alignment']['desktop'] );
+							return isset( $attrs['align'] ) && is_string( $attrs['align'] );
+						},
+						'format'    => function( $value, $attrs ) use ($ALIGN_MAP) {
+							return $ALIGN_MAP[$value];
+						},
+					),
+					array(
+						'property'  => '--align',
+						'value'     => 'align',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['align'] ) && isset( $attrs['align']['desktop'] );
 						},
 						'format'    => function( $value, $attrs ) {
 							return $value['desktop'];
@@ -49,9 +65,9 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					),
 					array(
 						'property'  => '--align-tablet',
-						'value'     => 'alignment',
+						'value'     => 'align',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['alignment'] ) && ( $attrs['alignment']['tablet'] );
+							return isset( $attrs['align'] ) && isset( $attrs['align']['tablet'] );
 						},
 						'format'    => function( $value, $attrs ) {
 							return $value['tablet'];
@@ -59,9 +75,9 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					),
 					array(
 						'property'  => '--align-mobile',
-						'value'     => 'alignment',
+						'value'     => 'align',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['alignment'] ) && ( $attrs['alignment']['mobile'] );
+							return isset( $attrs['align'] ) && isset( $attrs['align']['mobile'] );
 						},
 						'format'    => function( $value, $attrs ) {
 							return $value['mobile'];

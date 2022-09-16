@@ -2,7 +2,7 @@
  * External dependencies.
  */
 
-import { isNumber } from 'lodash';
+import { isNumber, isString } from 'lodash';
 
 /**
  * WordPress dependencies...
@@ -27,6 +27,22 @@ import {
 } from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
+
+const ALIGN_MAP = {
+	'right': 'flex-end',
+	'center': 'center',
+	'left': 'flex-start'
+};
+
+export const alignHandler = ( align ) => {
+	if ( isString( align ) ) {
+		return {
+			desktop: ALIGN_MAP?.[align] ?? 'center'
+		};
+	}
+
+	return align;
+};
 
 /**
  * Icons Component
@@ -57,9 +73,9 @@ const Edit = ({
 		'--margin':	attributes.margin !== undefined && `${ getValue( 'margin' ) }px`,
 		'--padding': attributes.padding !== undefined && `${ getValue( 'padding' ) }px`,
 		'--font-size': attributes.fontSize !== undefined && ( isNumber( getValue( 'fontSize' ) ) ? `${ getValue( 'fontSize' ) }px` : getValue( 'fontSize' ) ),
-		'--align': attributes.alignment?.desktop,
-		'--align-tablet': attributes.alignment?.tablet,
-		'--align-mobile': attributes.alignment?.mobile
+		'--align': alignHandler( attributes.align )?.desktop,
+		'--align-tablet': alignHandler( attributes.align )?.tablet,
+		'--align-mobile': alignHandler( attributes.align )?.mobile
 	};
 
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();
