@@ -21,6 +21,10 @@ import {
 	useState
 } from '@wordpress/element';
 
+import {
+	select
+} from '@wordpress/data';
+
 /**
  * Internal dependencies
  */
@@ -58,6 +62,19 @@ const Edit = ({
 
 	const initObserver = useRef( null );
 	const sliderRef = useRef( null );
+
+	useEffect( () => {
+		try {
+			if ( attributes.width === undefined  ) {
+				const parents = select( 'core/block-editor' )?.getBlockParentsByBlockName?.( clientId, 'themeisle-blocks/advanced-columns', true ) ?? [];
+				if ( 0 < parents.length ) {
+					setAttributes({ width: '650px' });
+				}
+			}
+		} catch ( e ) {
+			console.error( e );
+		}
+	}, []);
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -259,7 +276,7 @@ const Edit = ({
 						id={ attributes.id }
 						className="glide"
 						style={{
-							width: attributes.width ?? '600px'
+							width: attributes.width
 						}}
 					>
 						<div className="glide__track" data-glide-el="track">
