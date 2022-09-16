@@ -51,6 +51,7 @@ export const adaptors = {
 			const s = storage.shared;
 
 			return {
+				...storage.private,
 				padding: s?.padding?.desktop,
 				paddingMobile: s?.padding?.mobile,
 				paddingTablet: s?.padding?.tablet,
@@ -60,8 +61,8 @@ export const adaptors = {
 				borderRadius: s?.border?.radius?.desktop,
 				backgroundColor: s?.colors?.background,
 				backgroundGradient: s?.colors?.backgroundGradient,
-				backgroundType: s?.type?.background,
-				...storage.private
+				backgroundType: s?.type?.background
+
 			};
 		}
 	},

@@ -82,7 +82,6 @@ function paste() {
 
 	blocks.forEach( block => {
 		const attrs = copyPaste.paste( block );
-		console.log( attrs );
 		updateBlockAttributes( block.clientId, attrs );
 	});
 }

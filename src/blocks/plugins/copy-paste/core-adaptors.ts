@@ -1,6 +1,50 @@
-import { desktop } from '@wordpress/icons/build-types';
-import { Storage } from './models';
+import { merge } from 'lodash';
+import { SharedAttrs, Storage } from './models';
 import { addUnit } from './utils';
+
+const commonExtractor = ( attrs ): Storage<unknown> => {
+	return {
+		shared: {
+			colors: {
+				text: attrs?.style?.color?.text,
+				background: attrs?.style?.color?.background,
+				backgroundGradient: attrs?.style?.color?.gradient
+			},
+			type: {
+				background: attrs?.style?.color?.gradient ? 'gradient' : undefined
+			},
+			font: {
+				size: attrs?.fontSize,
+				style: attrs?.style?.typography?.fontStyle,
+				transform: attrs?.style?.typography?.textTransform,
+				letterSpacing: attrs?.style?.typography?.letterSpacing,
+				dropCap: attrs?.dropCap,
+				align: attrs?.textAlign
+			}
+		}
+	};
+};
+
+const commonApplyer = ( shared: SharedAttrs ) => {
+	return {
+		textColor: shared?.colors?.text,
+		fontSize: shared?.font?.size,
+		style: {
+			typography: {
+				fontStyle: shared?.font?.style,
+				textTransform: shared?.font?.transform,
+				letterSpacing: shared?.font?.letterSpacing
+			},
+			color: {
+				text: shared?.colors?.text,
+				background: shared?.colors?.background,
+				gradient: shared?.colors?.backgroundGradient
+			}
+		},
+		backgroundColor: shared?.colors?.background,
+		dropCap: shared?.font?.dropCap
+	};
+};
 
 export const coreAdaptors = {
 	'core/columns': {
@@ -9,25 +53,16 @@ export const coreAdaptors = {
          * https://github.com/WordPress/gutenberg/blob/0d60dbc6e1deb575ceced1b8ecaf50e295d8543a/packages/block-library/src/columns/block.json#L4
          */
 		copy( attrs: any ): Storage<unknown> {
-			return {
-				shared: {
-					colors: {
-						text: attrs?.textColor,
-						background: attrs?.backgroundColor,
-						backgroundGradient: attrs?.gradient
-					},
-					type: {
-						background: attrs?.gradient ? 'gradient' : undefined
-					}
+			return merge( commonExtractor( attrs ),
+				{
 				}
-			};
+			);
 		},
 		paste( storage: Storage<unknown> ): any {
-			return {
-				textColor: storage.shared?.colors?.text,
-				backgroundColor: storage.shared?.colors?.background,
-				gradient: storage.shared?.colors?.backgroundGradient
-			};
+			return merge( commonApplyer( storage?.shared ),
+				{
+				}
+			);
 		}
 	},
 	'core/column': {
@@ -36,29 +71,22 @@ export const coreAdaptors = {
          * https://github.com/WordPress/gutenberg/blob/0d60dbc6e1deb575ceced1b8ecaf50e295d8543a/packages/block-library/src/column/block.json#
          */
 		copy( attrs: any ): Storage<unknown> {
-			return {
-				shared: {
-					colors: {
-						text: attrs?.textColor,
-						background: attrs?.backgroundColor,
-						backgroundGradient: attrs?.gradient
-					},
-					width: {
-						desktop: attrs?.width
-					},
-					type: {
-						background: attrs?.gradient ? 'gradient' : undefined
+			return merge( commonExtractor( attrs ),
+				{
+					shared: {
+						width: {
+							desktop: attrs?.width
+						}
 					}
 				}
-			};
+			);
 		},
 		paste( storage: Storage<unknown> ): any {
-			return {
-				backgroundColor: storage.shared?.colors?.background,
-				width: storage.shared?.width?.desktop,
-				textColor: storage.shared?.colors?.text,
-				gradient: storage.shared?.colors?.backgroundGradient
-			};
+			return merge( commonApplyer( storage?.shared ),
+				{
+					width: storage.shared?.width?.desktop
+				}
+			);
 		}
 	},
 	'core/group': {
@@ -67,32 +95,21 @@ export const coreAdaptors = {
          *  https://github.com/WordPress/gutenberg/blob/trunk/packages/block-library/src/group/block.json
         */
 		copy( attrs: any ): Storage<unknown> {
-			return {
-				shared: {
-					colors: {
-						text: attrs?.style?.textColor,
-						background: attrs?.backgroundColor,
-						backgroundGradient: attrs?.gradient
-					},
-					font: {
-						size: attrs?.fontSize
-					},
-					layout: attrs?.layout,
-					type: {
-						background: attrs?.gradient ? 'gradient' : undefined
+			return merge( commonExtractor( attrs ),
+				{
+					shared: {
+						layout: attrs?.layout
 					}
 				}
-			};
+			);
 		},
 		paste( storage: Storage<unknown> ): any {
-			return {
-				backgroundColor: storage.shared?.colors?.background,
-				width: storage.shared?.width?.desktop,
-				textColor: storage.shared?.colors?.text,
-				fontSize: storage.shared?.font?.size,
-				layout: storage.shared?.layout,
-				gradient: storage.shared?.colors?.backgroundGradient
-			};
+			return merge( commonApplyer( storage?.shared ),
+				{
+					width: storage.shared?.width?.desktop,
+					layout: storage.shared?.layout
+				}
+			);
 		}
 	},
 
@@ -102,139 +119,70 @@ export const coreAdaptors = {
          *  https://github.com/WordPress/gutenberg/blob/trunk/packages/block-library/src/group/block.json
         */
 		copy( attrs: any ): Storage<unknown> {
-			return {
-				shared: {
-					colors: {
-						text: attrs?.textColor,
-						background: attrs?.backgroundColor
-					},
-					font: {
-						size: attrs?.fontSize,
-						style: attrs?.style?.typography?.fontStyle,
-						transform: attrs?.style?.typography?.textTransform,
-						letterSpacing: attrs?.style?.typography?.letterSpacing,
-						dropCap: attrs?.dropCap
-					}
+			return merge( commonExtractor( attrs ),
+				{
 				}
-			};
+			);
 		},
 		paste( storage: Storage<unknown> ): any {
-			const { shared: s } = storage;
-			return {
-				textColor: s?.colors?.text,
-				fontSize: s?.font?.size,
-				style: {
-					typography: {
-						fontStyle: s?.font?.style,
-						textTransform: s?.font?.transform,
-						letterSpacing: s?.font?.letterSpacing
-					}
-				},
-				backgroundColor: s?.colors?.background,
-				dropCap: s?.font?.dropCap
-			};
+			return merge( commonApplyer( storage?.shared ),
+				{
+
+				}
+			);
 		}
 	},
 	'core/heading': {
 		copy( attrs: any ): Storage<unknown> {
-			return {
-				shared: {
-					colors: {
-						text: attrs?.textColor,
-						background: attrs?.backgroundColor
-					},
-					font: {
-						size: attrs?.fontSize,
-						style: attrs?.style?.typography?.fontStyle,
-						transform: attrs?.style?.typography?.textTransform,
-						letterSpacing: attrs?.style?.typography?.letterSpacing,
-						dropCap: attrs?.dropCap,
-						align: attrs?.textAlign
+			return merge( commonExtractor( attrs ),
+				{
+					private: {
+						level: attrs?.level
 					}
-				},
-				private: {
-					level: attrs?.level
 				}
-			};
+			);
 		},
 		paste( storage: Storage<{}> ): any {
-			const { shared: s } = storage;
-			return {
-				...storage.private,
-				textColor: s?.colors?.text,
-				fontSize: s?.font?.size,
-				style: {
-					typography: {
-						fontStyle: s?.font?.style,
-						textTransform: s?.font?.transform,
-						letterSpacing: s?.font?.letterSpacing
-					}
-				},
-				backgroundColor: s?.colors?.background,
-				dropCap: s?.font?.dropCap,
-				textAlign: s?.font?.align
-			};
+			return merge( commonApplyer( storage?.shared ),
+				{
+					...storage.private
+				}
+			);
 		}
 	},
 	'core/list': {
 		copy( attrs: any ): Storage<unknown> {
-			return {
-				shared: {
-					colors: {
-						text: attrs?.textColor,
-						background: attrs?.backgroundColor
-					},
-					font: {
-						size: attrs?.fontSize,
-						style: attrs?.style?.typography?.fontStyle,
-						transform: attrs?.style?.typography?.textTransform,
-						letterSpacing: attrs?.style?.typography?.letterSpacing
-					}
+			return merge( commonExtractor( attrs ),
+				{
 				}
-			};
+			);
 		},
 		paste( storage: Storage<{}> ): any {
-			const { shared: s } = storage;
-			return {
-				textColor: s?.colors?.text,
-				fontSize: s?.font?.size,
-				style: {
-					typography: {
-						fontStyle: s?.font?.style,
-						textTransform: s?.font?.transform,
-						letterSpacing: s?.font?.letterSpacing
-					}
-				},
-				backgroundColor: s?.colors?.background
-			};
+			return merge( commonApplyer( storage?.shared ),
+				{
+
+				}
+			);
 		}
 	},
 	'core/image': {
 		copy( attrs: any ): Storage<unknown> {
-			return {
-				shared: {
-					colors: {
-						text: attrs?.textColor,
-						background: attrs?.backgroundColor
+			return merge( commonExtractor( attrs ),
+				{
+					shared: {
+						width: {
+							desktop: addUnit( attrs?.width, 'px' )
+						},
+						height: {
+							desktop: addUnit( attrs?.height, 'px' )
+						}
 					},
-					font: {
-						size: attrs?.fontSize,
-						style: attrs?.style?.typography?.fontStyle,
-						transform: attrs?.style?.typography?.textTransform,
-						letterSpacing: attrs?.style?.typography?.letterSpacing
-					},
-					width: {
-						desktop: addUnit( attrs?.width, 'px' )
-					},
-					height: {
-						desktop: addUnit( attrs?.height, 'px' )
+					private: {
+						style: attrs?.style,
+						sizeSlug: attrs?.sizeSlug
 					}
-				},
-				private: {
-					style: attrs?.style,
-					sizeSlug: attrs?.sizeSlug
 				}
-			};
+			);
 		},
 		paste( storage: Storage<{}> ): any {
 			const { shared: s } = storage;
@@ -247,38 +195,26 @@ export const coreAdaptors = {
 	},
 	'core/button': {
 		copy( attrs: any ): Storage<unknown> {
-			return {
-				shared: {
-					colors: {
-						text: attrs?.textColor,
-						background: attrs?.backgroundColor
-					},
-					font: {
-						size: attrs?.fontSize
-					},
-					border: {
-						radius: {
-							desktop: attrs?.style?.border?.radius
+			return merge( commonExtractor( attrs ),
+				{
+					shared: {
+						border: {
+							radius: {
+								desktop: attrs?.style?.border?.radius
+							}
 						}
 					}
 				}
-			};
+			);
 		},
 		paste( storage: Storage<{}> ): any {
-			const { shared: s } = storage;
-			return {
-				textColor: s?.colors?.text,
-				fontSize: s?.font?.size,
-				style: {
-					typography: {
-						fontStyle: s?.font?.style
-					},
+			return merge( commonApplyer( storage?.shared ),
+				{
 					border: {
-						radius: s?.border?.radius?.desktop
+						radius: storage?.shared?.border?.radius?.desktop
 					}
-				},
-				backgroundColor: s?.colors?.background
-			};
+				}
+			);
 		}
 	},
 	'core/buttons': {
@@ -290,9 +226,8 @@ export const coreAdaptors = {
 			};
 		},
 		paste( storage: Storage<{}> ): any {
-			const { shared: s } = storage;
 			return {
-				layout: s?.layout
+				layout: storage?.shared?.layout
 			};
 		}
 	}

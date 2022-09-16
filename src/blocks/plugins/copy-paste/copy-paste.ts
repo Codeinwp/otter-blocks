@@ -34,6 +34,11 @@ class CopyPaste {
 				shared: this.storage.shared,
 				private: this.storage[block.name]
 			});
+
+			// TODO: remove after review
+			console.group( `Block: ${ block.name}` );
+			console.log( pasted );
+			console.groupEnd();
 			return pasted;
 		}
 
