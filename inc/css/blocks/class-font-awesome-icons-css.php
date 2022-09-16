@@ -34,10 +34,10 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 	public function render_css( $block ) {
 		$css = new CSS_Utility( $block );
 
-		$ALIGN_MAP = array(
-			'left' => 'flex-start',
+		$align_map = array(
+			'left'   => 'flex-start',
 			'center' => 'center',
-			'right' => 'flex-end'
+			'right'  => 'flex-end',
 		);
 
 		$css->add_item(
@@ -49,8 +49,8 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['align'] ) && is_string( $attrs['align'] );
 						},
-						'format'    => function( $value, $attrs ) use ($ALIGN_MAP) {
-							return $ALIGN_MAP[$value];
+						'format'    => function( $value, $attrs ) use ( $align_map ) {
+							return $align_map[ $value ];
 						},
 					),
 					array(
