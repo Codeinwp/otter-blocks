@@ -34,6 +34,18 @@ o-dynamic-link {
 	cursor: pointer;
 }
 
+.wp-block:not(.is-selected) {
+	o-dynamic[data-preview]:not([data-preview=""]) {
+		span {
+			display: none;
+		}
+	
+		&:after {
+			content: attr(data-preview);
+		}
+	}
+}
+
 o-dynamic-link {
 	text-decoration: underline;
 }
