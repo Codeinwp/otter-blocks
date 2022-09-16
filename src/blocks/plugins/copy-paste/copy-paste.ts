@@ -18,9 +18,8 @@ class CopyPaste {
 
 	copy( block: OtterBlock<unknown> ) {
 		console.log( block );
-		const adaptor = implementedAdaptors.find( a => a === block.name );
-		if ( adaptor ) {
-			const copied = pickBy( adaptors[adaptor].copy( block.attributes ), x => ! ( isNil( x ) ) );
+		if ( adaptors?.[block.name]) {
+			const copied = pickBy( adaptors[block.name].copy( block.attributes ), x => ! ( isNil( x ) ) );
 
 			this.storage.shared = copied?.shared;
 			this.storage[block.name] = copied?.private;
@@ -29,13 +28,11 @@ class CopyPaste {
 	}
 
 	paste( block: OtterBlock<unknown> ) {
-		const adaptor = implementedAdaptors.find( a => a === block.name );
-		if ( adaptor ) {
-			const pasted = adaptors[adaptor].paste({
+		if ( adaptors?.[block.name]) {
+			const pasted = adaptors[block.name].paste({
 				shared: this.storage.shared,
 				private: this.storage[block.name]
 			});
-
 			return pasted;
 		}
 
