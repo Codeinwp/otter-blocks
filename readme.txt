@@ -193,6 +193,27 @@ You can check Otter documentation [here](https://docs.themeisle.com/article/1478
 
 == Changelog ==
 
+##### [Version 2.0.14](https://github.com/Codeinwp/otter-blocks/compare/v2.0.13...v2.0.14) (2022-09-12)
+
+- Adding an onboarding experience in Otter
+- Add Dynamic Links feature
+- Progress Bar Block Enhancements
+- Animation Extension Enhancements
+- Add UI control for the input background color to Form Block
+- Add edit link option for Button Group
+- Add Float to Top/Bottom mode to Sticky Extension
+- Fix Review Comparison Table not accessing reviews from inside Section Block
+- Fix ThemeIsle Icons in Button Group not aligning to the text in Editor
+- Fix CSS Editor listing not being able to override
+- Fix Icon Block padding on ThemeIsle Icons library
+- Fix animated elements in viewport flashing before animating
+- Fix Flip Block not working correctly in Firefox
+- Fix Google Fonts not working in responsive views in the Editor
+- Remove AggregateRating from Review Block Schema
+
+
+
+
 ##### [Version 2.0.13](https://github.com/Codeinwp/otter-blocks/compare/v2.0.12...v2.0.13) (2022-08-27)
 
 - Fix JS being loaded everywhere even when not required
