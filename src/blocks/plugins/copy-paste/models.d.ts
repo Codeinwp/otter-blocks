@@ -12,6 +12,7 @@ interface SharedAttrs  {
         text?: string
         background?: string
         border?: string
+        shadow?: string
     },
     font?: {
         size?: string
@@ -32,6 +33,16 @@ interface SharedAttrs  {
         justifyContent?: string,
         orientation?: string
         verticalAlignment?: string
+    }
+
+    // Not sure if shadow deserve to shared since not many block use it.
+    shadow?: {
+        active?: boolean
+        colorOpacity?: string
+        blur?: string
+        spread?: string
+        horizontal?: string
+        vertical?: string
     }
 }
 
