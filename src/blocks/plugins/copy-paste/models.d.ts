@@ -11,6 +11,7 @@ interface SharedAttrs  {
     colors?: {
         text?: string
         background?: string
+        backgroundGradient?: string
         border?: string
         shadow?: string
     },
@@ -43,6 +44,9 @@ interface SharedAttrs  {
         spread?: string
         horizontal?: string
         vertical?: string
+    }
+    type?: {
+        background?: string
     }
 }
 

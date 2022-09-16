@@ -14,7 +14,7 @@ import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
 import { Fragment } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
-import { implementedAdaptors } from './adaptors';
+import { adaptors, implementedAdaptors } from './adaptors';
 import CopyPaste from './copy-paste';
 
 /**
@@ -33,8 +33,6 @@ function copy() {
 	} else {
 		blocks = [ getSelectedBlock() ];
 	}
-
-	console.log( getMultiSelectedBlocks(), getSelectedBlockCount(), getSelectedBlock(), blocks );
 
 	if ( 0 === blocks.length ) {
 		return;
@@ -92,11 +90,7 @@ function paste() {
 
 const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 	return ( props ) => {
-		const adaptor = implementedAdaptors.find( a => a === props.name );
-
-		console.log( adaptor );
-
-		if ( adaptor && props.isSelected ) {
+		if ( adaptors?.[props.name] && props.isSelected ) {
 			return (
 				<Fragment>
 					<BlockEdit { ...props } />

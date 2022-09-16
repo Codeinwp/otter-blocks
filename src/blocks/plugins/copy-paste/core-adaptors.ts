@@ -13,7 +13,11 @@ export const coreAdaptors = {
 				shared: {
 					colors: {
 						text: attrs?.textColor,
-						background: attrs?.backgroundColor
+						background: attrs?.backgroundColor,
+						backgroundGradient: attrs?.gradient
+					},
+					type: {
+						background: attrs?.gradient ? 'gradient' : undefined
 					}
 				}
 			};
@@ -21,7 +25,8 @@ export const coreAdaptors = {
 		paste( storage: Storage<unknown> ): any {
 			return {
 				textColor: storage.shared?.colors?.text,
-				backgroundColor: storage.shared?.colors?.background
+				backgroundColor: storage.shared?.colors?.background,
+				gradient: storage.shared?.colors?.backgroundGradient
 			};
 		}
 	},
@@ -35,10 +40,14 @@ export const coreAdaptors = {
 				shared: {
 					colors: {
 						text: attrs?.textColor,
-						background: attrs?.backgroundColor
+						background: attrs?.backgroundColor,
+						backgroundGradient: attrs?.gradient
 					},
 					width: {
 						desktop: attrs?.width
+					},
+					type: {
+						background: attrs?.gradient ? 'gradient' : undefined
 					}
 				}
 			};
@@ -47,7 +56,8 @@ export const coreAdaptors = {
 			return {
 				backgroundColor: storage.shared?.colors?.background,
 				width: storage.shared?.width?.desktop,
-				textColor: storage.shared?.colors?.text
+				textColor: storage.shared?.colors?.text,
+				gradient: storage.shared?.colors?.backgroundGradient
 			};
 		}
 	},
@@ -61,12 +71,16 @@ export const coreAdaptors = {
 				shared: {
 					colors: {
 						text: attrs?.style?.textColor,
-						background: attrs?.backgroundColor
+						background: attrs?.backgroundColor,
+						backgroundGradient: attrs?.gradient
 					},
 					font: {
 						size: attrs?.fontSize
 					},
-					layout: attrs?.layout
+					layout: attrs?.layout,
+					type: {
+						background: attrs?.gradient ? 'gradient' : undefined
+					}
 				}
 			};
 		},
@@ -76,7 +90,8 @@ export const coreAdaptors = {
 				width: storage.shared?.width?.desktop,
 				textColor: storage.shared?.colors?.text,
 				fontSize: storage.shared?.font?.size,
-				layout: storage.shared?.layout
+				layout: storage.shared?.layout,
+				gradient: storage.shared?.colors?.backgroundGradient
 			};
 		}
 	},

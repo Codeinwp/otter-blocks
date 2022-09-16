@@ -1,6 +1,6 @@
 import { isNil, pickBy } from 'lodash';
 import { OtterBlock } from '../../helpers/blocks';
-import { adaptors, implementedAdaptors } from './adaptors';
+import { adaptors } from './adaptors';
 import { CopyPasteStorage } from './models';
 
 class CopyPaste {
@@ -17,14 +17,15 @@ class CopyPaste {
 	}
 
 	copy( block: OtterBlock<unknown> ) {
-		console.log( block );
-		if ( adaptors?.[block.name]) {
-			const copied = pickBy( adaptors[block.name].copy( block.attributes ), x => ! ( isNil( x ) ) );
-
-			this.storage.shared = copied?.shared;
-			this.storage[block.name] = copied?.private;
-			this.sync();
+		if ( ! adaptors?.[block.name]) {
+			return;
 		}
+
+		const copied = pickBy( adaptors[block.name].copy( block.attributes ), x => ! ( isNil( x ) ) );
+
+		this.storage.shared = copied?.shared;
+		this.storage[block.name] = copied?.private;
+		this.sync();
 	}
 
 	paste( block: OtterBlock<unknown> ) {

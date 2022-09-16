@@ -33,7 +33,11 @@ export const adaptors = {
 						}
 					},
 					colors: {
-						background: attrs.backgroundColor
+						background: attrs.backgroundColor,
+						backgroundGradient: attrs.backgroundGradient
+					},
+					type: {
+						background: attrs.backgroundType
 					}
 				},
 				private: {
@@ -47,14 +51,16 @@ export const adaptors = {
 			const s = storage.shared;
 
 			return {
-				padding: s.padding?.desktop,
-				paddingMobile: s.padding?.mobile,
-				paddingTablet: s.padding?.tablet,
-				margin: s.margin?.desktop,
-				marginTablet: s.margin?.tablet,
-				marginMobile: s.margin?.mobile,
-				borderRadius: s.border?.radius?.desktop,
-				backgroundColor: s.colors?.background,
+				padding: s?.padding?.desktop,
+				paddingMobile: s?.padding?.mobile,
+				paddingTablet: s?.padding?.tablet,
+				margin: s?.margin?.desktop,
+				marginTablet: s?.margin?.tablet,
+				marginMobile: s?.margin?.mobile,
+				borderRadius: s?.border?.radius?.desktop,
+				backgroundColor: s?.colors?.background,
+				backgroundGradient: s?.colors?.backgroundGradient,
+				backgroundType: s?.type?.background,
 				...storage.private
 			};
 		}
@@ -80,7 +86,11 @@ export const adaptors = {
 						width: attrs?.border?.top
 					},
 					colors: {
-						background: attrs?.backgroundColor
+						background: attrs?.backgroundColor,
+						backgroundGradient: attrs.backgroundGradient
+					},
+					type: {
+						background: attrs.backgroundType
 					}
 				},
 				private: {
@@ -108,6 +118,8 @@ export const adaptors = {
 					left: s?.border?.width,
 					right: s?.border?.width
 				},
+				backgroundGradient: s?.colors?.backgroundGradient,
+				backgroundType: s?.type?.background,
 				...storage.private
 			};
 		}
