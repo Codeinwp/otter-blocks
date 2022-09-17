@@ -10,6 +10,11 @@ import apiFetch from '@wordpress/api-fetch';
 
 import { registerStore } from '@wordpress/data';
 
+/**
+ * Internal dependencies
+ */
+import { getQueryStringFromObject } from '../../helpers/helper-functions.js';
+
 const DEFAULT_STATE = {
 	showOnboarding: Boolean( window.themeisleGutenberg.showOnboarding ),
 	viewType: 'Desktop',
@@ -110,15 +115,8 @@ registerStore( 'themeisle-gutenberg/data', {
 	resolvers: {
 		*getDynamicData( attrs ) {
 			const key = hash( attrs );
-			let value = '';
-
-			// TODO: BOOKMARK
-			if ( 'postId' === attrs.type ) {
-				value = wp.data.select( 'core/editor' ).getCurrentPostId();
-			}
-
-			// const path = '/wp/v2/prices/';
-			// const data = yield actions.fetchFromAPI( path );
+			const path = 'otter/v1/dynamic/preview/?' + getQueryStringFromObject( attrs );
+			const value = yield actions.fetchFromAPI( path );
 			return actions.setDynamicData( key, value );
 		}
 	}

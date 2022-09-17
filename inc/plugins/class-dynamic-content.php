@@ -211,14 +211,16 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_data( $data ) {
-		if ( isset( $data['context'] ) && 'query' === $data['context'] ) {
-			$data['context'] = get_the_ID();
-		} else {
-			/*
-			 * We use the queried object ID to make sure when posts are displayed inside other posts
-			 * the displayed post is being used as a source for the dynamic tags. Eg. Custom Layouts inside Neve.
-			 */
-			$data['context'] = get_queried_object_id();
+		if ( ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+			if ( isset( $data['context'] ) && 'query' === $data['context'] ) {
+				$data['context'] = get_the_ID();
+			} else {
+				/*
+				* We use the queried object ID to make sure when posts are displayed inside other posts
+				* the displayed post is being used as a source for the dynamic tags. Eg. Custom Layouts inside Neve.
+				*/
+				$data['context'] = get_queried_object_id();
+			}
 		}
 
 		if ( ! isset( $data['type'] ) && isset( $data['default'] ) ) {

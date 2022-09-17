@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Server;
 
+use ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content;
+
 /**
  * Class Dynamic_Content_Server
  */
@@ -122,6 +124,23 @@ class Dynamic_Content_Server {
 							},
 						),
 					),
+					'permission_callback' => function () {
+						return true;
+					},
+				),
+			)
+		);
+
+		// TODO: BOOKMARK
+		register_rest_route(
+			$namespace,
+			'/dynamic/preview',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => function( $request ) {
+						return Dynamic_Content::instance()->apply_data( $request->get_params() );
+					},
 					'permission_callback' => function () {
 						return true;
 					},

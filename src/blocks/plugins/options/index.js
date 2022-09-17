@@ -172,9 +172,15 @@ const Options = () => {
 		const editor   = document.querySelector( '#editor' );
 		const elements = editor.querySelectorAll( 'o-dynamic' );
 		elements.forEach( element => {
-			const attrs = Object.assign({}, element.dataset );
-			const value = select( 'themeisle-gutenberg/data' ).getDynamicData( attrs );
+			const context = wp.data.select( 'core/editor' ).getCurrentPostId();
+			const attrs = Object.assign({ context }, element.dataset );
+			let value = select( 'themeisle-gutenberg/data' ).getDynamicData( attrs );
+
 			if ( undefined !== value ) {
+				const el = document.createElement( 'div' );
+				el.innerHTML = value;
+				value = el.textContent || el.innerText;
+
 				element.innerHTML = '<span>' + element.innerHTML + '</span>';
 				element.dataset.preview = value;
 			}
