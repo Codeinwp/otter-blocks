@@ -72,7 +72,7 @@ const onExpireHelpMsg = ( behaviour ) => {
 	case 'restart':
 		return 'The Countdown will restart when it reaches 0 and the page is refreshed';
 	default:
-		return __( 'The countdown will restart when it reaches 0', 'otter-blocks' );
+		return __( 'The countdown remains visible when it reaches 0', 'otter-blocks' );
 	}
 };
 
@@ -365,6 +365,94 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelBody
+				title={ __( 'End Action', 'otter-blocks' ) }
+				initialOpen={false}
+			>
+				<SelectControl
+					label={ __( 'On Expire', 'otter-blocks' ) }
+					value={ attributes.behaviour }
+					onChange={ behaviour => {
+						if ( 'redirectLink' === behaviour ) {
+							setAttributes({ behaviour, redirectLink: undefined });
+						} else {
+							setAttributes({ behaviour });
+						}
+					}}
+					options={[
+						{
+							label: __( 'No action', 'otter-blocks' ),
+							value: ''
+						},
+						{
+							label: __( 'Hide the Countdown', 'otter-blocks' ),
+							value: 'hide'
+						},
+						...( 'timer' === attributes.mode ? [{
+							label: __( 'Restart the Countdown', 'otter-blocks' ),
+							value: 'restart'
+						}] : []),
+						{
+							label: __( 'Redirect to link', 'otter-blocks' ),
+							value: 'redirectLink'
+						}
+					]}
+					help={ onExpireHelpMsg( attributes.behaviour ) }
+				/>
+
+				{
+					'redirectLink' === attributes.behaviour && (
+						<TextControl
+							label={ __( 'Redirect Link', 'otter-blocks' ) }
+							value={ attributes.redirectLink }
+							onChange={ redirectLink => setAttributes({ redirectLink })}
+						/>
+					)
+				}
+
+				<ToggleControl
+					label={ __( 'Enable Hide/Show other blocks when the Countdown ends.', 'otter-blocks' ) }
+					checked={ attributes.triggers !== undefined }
+					onChange={ value => {
+						if ( value ) {
+							setAttributes({ triggers: 'showBlock' });
+						} else {
+							setAttributes({ triggers: undefined });
+						}
+					}}
+				/>
+
+				{
+					attributes?.triggers && (
+						<Fragment>
+							<SelectControl
+								label={ __( 'Hide/Show Behavior', 'otter-blocks' ) }
+								value={ attributes.triggers }
+								onChange={ triggers => setAttributes({ triggers })}
+								options={[
+									{
+										label: __( 'Show a block', 'otter-blocks' ),
+										value: 'showBlock'
+									},
+									{
+										label: __( 'Hide a block', 'otter-blocks' ),
+										value: 'hideBlock'
+									}
+								]}
+							/>
+
+							<p>
+								{ __( 'Paste the following code in the block that you want to show (in the same page) up when the countdown end. Select the block, go to Inspector > Advanced, and paste into the field "Additional CSS class"', 'otter-blocks' ) }
+							</p>
+							<code style={{ display: 'block', padding: '10px' }}>
+								{ `o-countdown-trigger-on-end-${ attributes.id?.split( '-' ).pop()} o-cntdn-bhv-${ 'hideBlock' === attributes.triggers ? 'hide' : 'show' }` }
+							</code>
+						</Fragment>
+					)
+				}
+
+			</PanelBody>
+
+			<PanelBody
 				title={ __( 'Dimensions', 'otter-blocks' ) }
 				initialOpen={false}
 			>
@@ -603,93 +691,7 @@ const Inspector = ({
 
 				</ResponsiveControl> */}
 			</PanelBody>
-			<PanelBody
-				title={ __( 'End Action', 'otter-blocks' ) }
-				initialOpen={false}
-			>
-				<SelectControl
-					label={ __( 'On Expire', 'otter-blocks' ) }
-					value={ attributes.behaviour }
-					onChange={ behaviour => {
-						if ( 'redirectLink' === behaviour ) {
-							setAttributes({ behaviour, redirectLink: undefined });
-						} else {
-							setAttributes({ behaviour });
-						}
-					}}
-					options={[
-						{
-							label: __( 'No action', 'otter-blocks' ),
-							value: ''
-						},
-						{
-							label: __( 'Hide the Countdown', 'otter-blocks' ),
-							value: 'hide'
-						},
-						...( 'timer' === attributes.mode ? [{
-							label: __( 'Restart the Countdown', 'otter-blocks' ),
-							value: 'restart'
-						}] : []),
-						{
-							label: __( 'Redirect to link', 'otter-blocks' ),
-							value: 'redirectLink'
-						}
-					]}
-					help={ onExpireHelpMsg( attributes.behaviour ) }
-				/>
 
-				{
-					'redirectLink' === attributes.behaviour && (
-						<TextControl
-							label={ __( 'Redirect Link', 'otter-blocks' ) }
-							value={ attributes.redirectLink }
-							onChange={ redirectLink => setAttributes({ redirectLink })}
-						/>
-					)
-				}
-
-				<ToggleControl
-					label={ __( 'Enable Hide/Show other blocks when the Countdown ends.', 'otter-blocks' ) }
-					checked={ attributes.triggers !== undefined }
-					onChange={ value => {
-						if ( value ) {
-							setAttributes({ triggers: 'showBlock' });
-						} else {
-							setAttributes({ triggers: undefined });
-						}
-					}}
-				/>
-
-				{
-					attributes?.triggers && (
-						<Fragment>
-							<SelectControl
-								label={ __( 'Hide/Show Behavior', 'otter-blocks' ) }
-								value={ attributes.triggers }
-								onChange={ triggers => setAttributes({ triggers })}
-								options={[
-									{
-										label: __( 'Show a block', 'otter-blocks' ),
-										value: 'showBlock'
-									},
-									{
-										label: __( 'Hide a block', 'otter-blocks' ),
-										value: 'hideBlock'
-									}
-								]}
-							/>
-
-							<p>
-								{ __( 'Paste the following code in the block that you want to show (in the same page) up when the countdown end. Select the block, go to Inspector > Advanced, and paste into the field "Additional CSS class"', 'otter-blocks' ) }
-							</p>
-							<code style={{ display: 'block', padding: '10px' }}>
-								{ `o-countdown-trigger-on-end-${ attributes.id?.split( '-' ).pop()} o-cntdn-bhv-${ 'hideBlock' === attributes.triggers ? 'hide' : 'show' }` }
-							</code>
-						</Fragment>
-					)
-				}
-
-			</PanelBody>
 		</InspectorControls>
 	);
 };
