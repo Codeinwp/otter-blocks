@@ -182,7 +182,11 @@ class Dynamic_Content {
 	 */
 	public function get_post_meta( $data ) {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$meta    = get_post_meta( $data['context'], esc_html( $data['metaKey'] ), true );
+		$meta    = '';
+
+		if ( isset( $data['metaKey'] ) ) {
+			$meta = get_post_meta( $data['context'], esc_html( $data['metaKey'] ), true );
+		}
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;
@@ -200,7 +204,11 @@ class Dynamic_Content {
 	 */
 	public function get_acf( $data ) {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$meta    = get_field( esc_html( $data['metaKey'] ), $data['context'], true );
+		$meta    = '';
+
+		if ( isset( $data['metaKey'] ) ) {
+			$meta = get_field( esc_html( $data['metaKey'] ), $data['context'], true );
+		}
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;
