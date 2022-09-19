@@ -26,7 +26,7 @@ import './editor.scss';
 import ButtonVariant = Button.ButtonVariant;
 
 
-const { version, siteURL, assetsPath } = window.themeisleGutenberg ? window.themeisleGutenberg : window.otterObj;
+const { version, assetsPath } = window.themeisleGutenberg ? window.themeisleGutenberg : window.otterObj;
 const finishIcon = assetsPath + ( '/' === assetsPath[ assetsPath.length - 1 ] ? '' : '/' ) + 'icons/finish-feedback.svg';
 
 const collectedInfo = [
@@ -35,7 +35,7 @@ const collectedInfo = [
 		value: version
 	},
 	{
-		name: __( 'Uninstall reason', 'otter-blocks' ),
+		name: __( 'Feedback', 'otter-blocks' ),
 		value: __( 'Text from the above text area', 'otter-blocks' )
 	}
 ];
@@ -68,7 +68,7 @@ const Feedback = (
 	}, [ showInfo ]);
 
 	useEffect( () => {
-		if ( 'emptyFeedback' === status ) {
+		if ( 'emptyFeedback' === status && 5 < feedback.length ) {
 			setStatus( 'notSubmitted' );
 		}
 	}, [ feedback ]);
@@ -108,9 +108,9 @@ const Feedback = (
 		setStatus( 'notSubmitted' );
 	};
 
-	const helpText = {
+	const helpTextByStatus = {
 		'error': __( 'There has been an error. Your feedback couldn\'t be sent.' ),
-		'emptyFeedback': __( 'Please fill in this field.', 'otter-blocks' )
+		'emptyFeedback': __( 'Please provide a feedback before submitting the form.', 'otter-blocks' )
 	};
 
 	return (
@@ -128,7 +128,7 @@ const Feedback = (
 			{ isOpen && (
 				<Modal
 					className={ classnames( 'o-feedback-modal', { 'no-header': 'submitted' === status }) }
-					title={ __( 'Tell us about your experience', 'otter-blocks' ) }
+					title={ __( 'What\'s one thing you need in Otter?', 'otter-blocks' ) }
 					onRequestClose={ closeModal }
 					shouldCloseOnClickOutside={ false }
 				>
@@ -139,12 +139,13 @@ const Feedback = (
 									'invalid': 'emptyFeedback' === status,
 									'f-error': 'error' === status
 								}) }
-								placeholder={ __( 'Share your thoughts about Otter Blocks', 'otter-blocks' ) }
+								placeholder={ __( 'Tell us how can we help you better with Otter Blocks', 'otter-blocks' ) }
 								value={ feedback }
 								rows={7}
 								cols={50}
 								onChange={ value => setFeedback( value ) }
-								help={ helpText[status] || '' }
+								help={ helpTextByStatus[status] || false }
+								autoFocus
 							/>
 							<div className="info">
 								<div className="wrapper">
@@ -162,6 +163,7 @@ const Feedback = (
 							<div className="buttons-wrap">
 								<Button
 									className="toggle-info"
+									aria-expanded={ showInfo }
 									variant="link"
 									isLink
 									onClick={() => setShowInfo( ! showInfo )}

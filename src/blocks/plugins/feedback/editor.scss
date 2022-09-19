@@ -5,10 +5,6 @@ $error-red: #d63638;
 
 	&.is-link {
 		text-decoration: none;
-
-		&:focus {
-			box-shadow: none;
-		}
 	}
 }
 
@@ -21,11 +17,9 @@ $error-red: #d63638;
 	border-radius: 10px;
 	overflow: visible;
 
-	.invalid {
-		textarea {
-			box-shadow: 0 0 0 1px $error-red;
-			border: none;
-		}
+	.invalid textarea {
+		box-shadow: 0 0 0 1px $error-red;
+		border: none;
 	}
 
 	.invalid p, .f-error p {
@@ -72,10 +66,6 @@ $error-red: #d63638;
 
 	.toggle-info {
 		text-decoration: none;
-
-		&:focus {
-			box-shadow: none;
-		}
 	}
 
 	.info {
@@ -84,8 +74,12 @@ $error-red: #d63638;
 		height: 0;
 		transition: .2s ease-out;
 
-		.wrapper > p {
-			margin-top: 0;
+		.wrapper {
+			padding-bottom: 3px;
+
+			> p {
+				margin-top: 0;
+			}
 		}
 	}
 
