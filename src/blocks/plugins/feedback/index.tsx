@@ -26,17 +26,13 @@ import './editor.scss';
 import ButtonVariant = Button.ButtonVariant;
 
 
-const { version: otterVersion, siteURL, assetsPath } = window.themeisleGutenberg ? window.themeisleGutenberg : window.otterObj;
+const { version, siteURL, assetsPath } = window.themeisleGutenberg ? window.themeisleGutenberg : window.otterObj;
 const finishIcon = assetsPath + ( '/' === assetsPath[ assetsPath.length - 1 ] ? '' : '/' ) + 'icons/finish-feedback.svg';
 
 const collectedInfo = [
 	{
 		name: __( 'Plugin version',  'otter-blocks' ),
-		value: otterVersion
-	},
-	{
-		name: __( 'Current website', 'otter-blocks' ),
-		value: siteURL
+		value: version
 	},
 	{
 		name: __( 'Uninstall reason', 'otter-blocks' ),
@@ -71,9 +67,19 @@ const Feedback = (
 		info.style.height = showInfo ? `${ info.querySelector( '.wrapper' ).clientHeight }px` : '0';
 	}, [ showInfo ]);
 
-	const sendFeedback = () => {
-		setStatus( 'loading' );
+	useEffect( () => {
+		if ( 'emptyFeedback' === status ) {
+			setStatus( 'notSubmitted' );
+		}
+	}, [ feedback ]);
 
+	const sendFeedback = () => {
+		if ( 5 >= feedback.length ) {
+			setStatus( 'emptyFeedback' );
+			return;
+		}
+
+		setStatus( 'loading' );
 		fetch( 'https://api.themeisle.com/tracking/feedback', {
 			method: 'POST',
 			headers: {
@@ -81,14 +87,18 @@ const Feedback = (
 			},
 			body: JSON.stringify({
 				slug: 'otter-blocks',
-				version: otterVersion,
+				version: version,
 				feedback,
 				data: {
-					site: siteURL,
-					source
+					'feedback-area': source
 				}
 			})
 		}).then( r => {
+			if ( ! r.ok ) {
+				setStatus( 'error' );
+				return;
+			}
+
 			setStatus( 'submitted' );
 		});
 	};
@@ -96,6 +106,11 @@ const Feedback = (
 	const closeModal = () => {
 		setIsOpen( false );
 		setStatus( 'notSubmitted' );
+	};
+
+	const helpText = {
+		'error': __( 'There has been an error. Your feedback couldn\'t be sent.' ),
+		'emptyFeedback': __( 'Please fill in this field.', 'otter-blocks' )
 	};
 
 	return (
@@ -120,15 +135,20 @@ const Feedback = (
 					{ 'submitted' !== status ? (
 						<>
 							<TextareaControl
+								className={ classnames({
+									'invalid': 'emptyFeedback' === status,
+									'f-error': 'error' === status
+								}) }
 								placeholder={ __( 'Share your thoughts about Otter Blocks', 'otter-blocks' ) }
 								value={ feedback }
 								rows={7}
 								cols={50}
 								onChange={ value => setFeedback( value ) }
+								help={ helpText[status] || '' }
 							/>
 							<div className="info">
 								<div className="wrapper">
-									<p>{ __( 'We value privacy, that\'s why no email address or IP addresses are collected after you submit the survey. Below is a detailed view of all data that Themeisle will receive if you fill in this survey.', 'otter-blocks' ) }</p>
+									<p>{ __( 'We value privacy, that\'s why no domain name, email address or IP addresses are collected after you submit the survey. Below is a detailed view of all data that Themeisle will receive if you fill in this survey.', 'otter-blocks' ) }</p>
 									{ collectedInfo.map( ( row, index ) => {
 										return (
 											<div className="info-row" key={ index }>
