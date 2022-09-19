@@ -83,7 +83,7 @@ let previousBlocks = [];
 subscribe( () => {
 	const { getBlocks } = select( 'core/block-editor' );
 	const blocks = getBlocks();
-	const reusableBlocks = select( 'core' ).getEntityRecords( 'postType', 'wp_block' );
+	const reusableBlocks = select( 'core' ).getEntityRecords( 'postType', 'wp_block', { context: 'view' });
 
 	if ( ! isEqual( previousBlocks, blocks ) ) {
 		previousBlocks = blocks;

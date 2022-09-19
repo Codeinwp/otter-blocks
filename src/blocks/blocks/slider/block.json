@@ -75,6 +75,9 @@
 		"height": {
 			"type": "number",
 			"default": 400
+		},
+		"width": {
+			"type": "string"
 		}
 	},
 	"supports": {
