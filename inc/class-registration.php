@@ -461,9 +461,12 @@ class Registration {
 							
 							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show, [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide:not(.o-cntdn-ready), [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide.o-cntdn-hide, [data-intv-start]:not(.o-cntdn-ready) {
 								height: 0px !important;
+								max-height: 0px !important;
+								min-height: 0px !important;
 								visibility: hidden;
 								box-sizing: border-box;
 								margin: 0px !important;
+								padding: 0px !important;
 								opacity: 0;
 							}
 

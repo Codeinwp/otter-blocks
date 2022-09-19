@@ -90,7 +90,7 @@ class CountdownData {
 			}
 		);
 
-		this.onEndEvents = [ () => this.triggerBehaviour() ];
+		this.onEndEvents = [ () => this.activateBehaviour(), () => this.activateTriggers() ];
 
 		switch ( this.mode ) {
 		case 'timer':
@@ -203,7 +203,7 @@ class CountdownData {
 		return `.o-countdown-trigger-on-end-${this.elem.id.split( '-' ).pop()}`;
 	}
 
-	triggerBehaviour() {
+	activateBehaviour() {
 		switch ( this.behaviour as 'default' | 'redirectLink' | 'showBlock' | 'hideBlock' | 'hide' ) {
 		case 'default':
 			break;
