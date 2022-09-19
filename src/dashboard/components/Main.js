@@ -70,7 +70,7 @@ const Main = ({
 			<div className={ `otter-main is-${ currentTab}`}>
 				<Content />
 
-				{ ! [ 'upsell', 'feedback' ].includes( currentTab ) && (
+				{ 'upsell' !== currentTab && (
 					<div className="otter-right">
 						<Sidebar setTab={ setTab }/>
 					</div>

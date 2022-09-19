@@ -7,14 +7,11 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import {
-	useEffect,
 	useState
 } from '@wordpress/element';
 import {
 	Button,
-	Modal,
-	Spinner,
-	TextareaControl
+	Modal
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
@@ -24,21 +21,10 @@ import { addFilter } from '@wordpress/hooks';
  */
 import './editor.scss';
 import ButtonVariant = Button.ButtonVariant;
+import FeedbackForm from './feedback-form';
 
-
-const { version, assetsPath } = window.themeisleGutenberg ? window.themeisleGutenberg : window.otterObj;
+const { assetsPath } = window.themeisleGutenberg ? window.themeisleGutenberg : window.otterObj;
 const finishIcon = assetsPath + ( '/' === assetsPath[ assetsPath.length - 1 ] ? '' : '/' ) + 'icons/finish-feedback.svg';
-
-const collectedInfo = [
-	{
-		name: __( 'Plugin version',  'otter-blocks' ),
-		value: version
-	},
-	{
-		name: __( 'Feedback', 'otter-blocks' ),
-		value: __( 'Text from the above text area', 'otter-blocks' )
-	}
-];
 
 /**
  * Displays a button that opens a modal for sending feedback
@@ -54,63 +40,11 @@ const Feedback = (
 	variant:ButtonVariant = 'link'
 ): JSX.Element => {
 	const [ isOpen, setIsOpen ] = useState( false );
-	const [ feedback, setFeedback ] = useState( '' );
 	const [ status, setStatus ] = useState( 'notSubmitted' );
-	const [ showInfo, setShowInfo ] = useState( false );
-
-	useEffect( () => {
-		const info = document.querySelector( '.o-feedback-modal .info' ) as HTMLElement;
-		if ( ! info ) {
-			return;
-		}
-
-		info.style.height = showInfo ? `${ info.querySelector( '.wrapper' ).clientHeight }px` : '0';
-	}, [ showInfo ]);
-
-	useEffect( () => {
-		if ( 'emptyFeedback' === status && 5 < feedback.length ) {
-			setStatus( 'notSubmitted' );
-		}
-	}, [ feedback ]);
-
-	const sendFeedback = () => {
-		if ( 5 >= feedback.length ) {
-			setStatus( 'emptyFeedback' );
-			return;
-		}
-
-		setStatus( 'loading' );
-		fetch( 'https://api.themeisle.com/tracking/feedback', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				slug: 'otter-blocks',
-				version: version,
-				feedback,
-				data: {
-					'feedback-area': source
-				}
-			})
-		}).then( r => {
-			if ( ! r.ok ) {
-				setStatus( 'error' );
-				return;
-			}
-
-			setStatus( 'submitted' );
-		});
-	};
 
 	const closeModal = () => {
 		setIsOpen( false );
 		setStatus( 'notSubmitted' );
-	};
-
-	const helpTextByStatus = {
-		'error': __( 'There has been an error. Your feedback couldn\'t be sent.' ),
-		'emptyFeedback': __( 'Please provide a feedback before submitting the form.', 'otter-blocks' )
 	};
 
 	return (
@@ -133,54 +67,11 @@ const Feedback = (
 					shouldCloseOnClickOutside={ false }
 				>
 					{ 'submitted' !== status ? (
-						<>
-							<TextareaControl
-								className={ classnames({
-									'invalid': 'emptyFeedback' === status,
-									'f-error': 'error' === status
-								}) }
-								placeholder={ __( 'Tell us how can we help you better with Otter Blocks', 'otter-blocks' ) }
-								value={ feedback }
-								rows={7}
-								cols={50}
-								onChange={ value => setFeedback( value ) }
-								help={ helpTextByStatus[status] || false }
-								autoFocus
-							/>
-							<div className="info">
-								<div className="wrapper">
-									<p>{ __( 'We value privacy, that\'s why no domain name, email address or IP addresses are collected after you submit the survey. Below is a detailed view of all data that Themeisle will receive if you fill in this survey.', 'otter-blocks' ) }</p>
-									{ collectedInfo.map( ( row, index ) => {
-										return (
-											<div className="info-row" key={ index }>
-												<p><b>{ row.name }</b></p>
-												<p>{ row.value }</p>
-											</div>
-										);
-									}) }
-								</div>
-							</div>
-							<div className="buttons-wrap">
-								<Button
-									className="toggle-info"
-									aria-expanded={ showInfo }
-									variant="link"
-									isLink
-									onClick={() => setShowInfo( ! showInfo )}
-								>
-									{ __( 'What info do we collect?', 'otter-blocks' ) }
-								</Button>
-								<Button
-									className="f-send"
-									variant="primary"
-									isPrimary
-									disabled={ 'loading' === status }
-									onClick={ () => sendFeedback() }
-								>
-									{ 'loading' === status ? <Spinner/> : __( 'Send feedback', 'otter-blocks' ) }
-								</Button>
-							</div>
-						</>
+						<FeedbackForm
+							source={ source }
+							status={ status }
+							setStatus={ setStatus }
+						/>
 					) : (
 						<div className="finish-feedback">
 							<img

@@ -137,17 +137,8 @@
 			grid-template-columns: auto;
 		}
 
-		&.is-feedback {
-			display: block;
-
-			.components-panel__body {
-				display: flex;
-
-				img {
-					max-width: 160px;
-					margin: 25px 40px;
-				}
-			}
+		&.is-feedback .components-panel__body {
+			height: max-content;
 		}
 
 		@media ( max-width: 960px ) {

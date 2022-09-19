@@ -1,17 +1,40 @@
+/**
+ * WordPress dependencies
+ */
+import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { PanelBody } from '@wordpress/components';
-import { applyFilters } from '@wordpress/hooks';
+
+/**
+ * Internal dependencies
+ */
+import FeedbackForm from '../../../blocks/plugins/feedback/feedback-form';
+import Infobox from '../Infobox';
+
+const finishIcon = `${ window.otterObj.assetsPath }icons/finish-feedback.svg`;
 
 const Feedback = () => {
+	const [ status, setStatus ] = useState( 'notSubmitted' );
+
 	return (
-		<PanelBody>
-			<div className="otter-info">
-				<h3>{ __( 'Answer a few questions to help us improve Otter', 'otter-blocks' ) }</h3>
-				<p>{ __( 'We\'re always looking for suggestions to further improve Otter Blocks. If your feedback is especially helpful, and we choose to do an interview with you to discuss your suggestions, you will even gain a yearly membership for free for your trouble.', 'otter-blocks' ) }</p>
-				{ applyFilters( 'otter.feedback', 'dashboard', __( 'Share your Feedback', 'otter-blocks' ), 'secondary' ) }
-			</div>
-			<img src={ window.otterObj.assetsPath + 'images/dashboard-feedback.png' }/>
-		</PanelBody>
+		<Infobox
+			title={ 'submitted' !== status && __( 'What\'s one thing you need in Otter Blocks?', 'otter-blocks' ) }
+		>
+			{ 'submitted' !== status ? (
+				<FeedbackForm
+					source="dashboard"
+					status={ status }
+					setStatus={ setStatus }
+				/>
+			) : (
+				<div className="finish-feedback">
+					<img
+						src={ finishIcon }
+					/>
+					<p className="f-title">{ __( 'Thank you for your feedback', 'otter-blocks' ) }</p>
+					<p className="f-description">{ __( 'Your feedback is highly appreciated and will help us to improve Otter Blocks.', 'otter-blocks' ) }</p>
+				</div>
+			) }
+		</Infobox>
 	);
 };
 

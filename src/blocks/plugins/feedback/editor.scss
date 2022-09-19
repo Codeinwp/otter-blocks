@@ -12,48 +12,21 @@ $error-red: #d63638;
 	z-index: 160001; /* to be visible from dynamic images */
 }
 
-.o-feedback-modal {
-	width: 490px;
-	border-radius: 10px;
-	overflow: visible;
-
+.o-feedback-form {
 	.invalid textarea {
-		box-shadow: 0 0 0 1px $error-red;
-		border: none;
+		border-color: $error-red;
+		box-shadow: 0 0 0 calc( 1.5px - 1px ) $error-red;
+		outline: transparent solid 2px;
 	}
 
 	.invalid p, .f-error p {
 		color: $error-red;
 	}
 
-	&.no-header {
-		.components-modal__content {
-			margin-top: 0;
-			padding-top: 24px;
-
-			&::before {
-				display: none;
-			}
-		}
-
-		.components-modal__header {
-			display: none;
-		}
-	}
-
-	.components-modal__header {
-		border: none;
-	}
-
-	.components-modal__header-heading {
-		font-weight: 400;
-		font-size: 20px;
-	}
-
 	.buttons-wrap {
 		display: flex;
 		justify-content: space-between;
-		margin-top: 25px;
+		margin-top: 14px;
 	}
 
 	.f-send {
@@ -86,29 +59,59 @@ $error-red: #d63638;
 	.info-row {
 		display: flex;
 		justify-content: space-between;
-		border-bottom: 2px solid #cbcbcb;
+		border-bottom: 1px solid #cbcbcb;
 
 		p {
-			margin: 6px 0;
+			margin: 6px 0 !important;
+		}
+	}
+}
+
+.o-feedback-modal {
+	width: 490px;
+	border-radius: 10px;
+	overflow: visible;
+
+	&.no-header {
+		.components-modal__content {
+			margin-top: 0;
+			padding-top: 24px;
+
+			&::before {
+				display: none;
+			}
+		}
+
+		.components-modal__header {
+			display: none;
 		}
 	}
 
-	.finish-feedback {
-		text-align: center;
+	.components-modal__header {
+		border: none;
+	}
 
-		.f-title {
-			font-size: 23px;
-			line-height: 28px;
-			margin: .5em 0;
-		}
+	.components-modal__header-heading {
+		font-weight: 400;
+		font-size: 20px;
+	}
+}
 
-		.f-description {
-			width: 60%;
-			margin: 0 auto 20px;
-		}
+.finish-feedback {
+	text-align: center;
 
-		button.f-done {
-			padding: 0 30px;
-		}
+	.f-title {
+		font-size: 23px;
+		line-height: 28px;
+		margin: .5em 0;
+	}
+
+	.f-description {
+		width: 60%;
+		margin: 0 auto 20px !important;
+	}
+
+	button.f-done {
+		padding: 0 30px;
 	}
 }
