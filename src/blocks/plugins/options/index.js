@@ -21,8 +21,7 @@ import {
 
 import {
 	useDispatch,
-	useSelect,
-	select
+	useSelect
 } from '@wordpress/data';
 
 import {
@@ -167,26 +166,6 @@ const Options = () => {
 
 	const successMessage = __( 'Settings saved. Refresh to see the changes.', 'otter-blocks' );
 
-	// TODO: BOOKMARK
-	const previewContent = () => {
-		const editor   = document.querySelector( '#editor' );
-		const elements = editor.querySelectorAll( 'o-dynamic' );
-		elements.forEach( element => {
-			const context = wp.data.select( 'core/editor' ).getCurrentPostId();
-			const attrs = Object.assign({ context }, element.dataset );
-			let value = select( 'themeisle-gutenberg/data' ).getDynamicData( attrs );
-
-			if ( undefined !== value ) {
-				const el = document.createElement( 'div' );
-				el.innerHTML = value;
-				value = el.textContent || el.innerText;
-
-				element.innerHTML = '<span>' + element.innerHTML + '</span>';
-				element.dataset.preview = value;
-			}
-		});
-	};
-
 	return (
 		<Fragment>
 			{ ( canUser ) && (
@@ -246,15 +225,6 @@ const Options = () => {
 							className="o-onboarding-button"
 						>
 							{ __( 'Show Onboarding Modal', 'otter-blocks' ) }
-						</Button>
-					</PanelRow>
-
-					<PanelRow>
-						<Button
-							isSecondary
-							onClick={ previewContent }
-						>
-							{ __( 'Preview Dynamic Content', 'otter-blocks' ) }
 						</Button>
 					</PanelRow>
 				</PanelBody>

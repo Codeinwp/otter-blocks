@@ -221,6 +221,8 @@ class Dynamic_Content {
 				*/
 				$data['context'] = get_queried_object_id();
 			}
+		} else {
+			$data['default'] = '';
 		}
 
 		if ( ! isset( $data['type'] ) && isset( $data['default'] ) ) {
@@ -291,7 +293,7 @@ class Dynamic_Content {
 			return $this->get_current_time( $data );
 		}
 
-		return apply_filters( 'otter_blocks_evaluate_dynamic_content_text', $data[0], $data );
+		return apply_filters( 'otter_blocks_evaluate_dynamic_content_text', $data['default'], $data );
 	}
 
 	/**
@@ -368,7 +370,7 @@ class Dynamic_Content {
 	public function get_loggedin_email( $data ) {
 		$user    = wp_get_current_user();
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$email   = $current_user->user_email;
+		$email   = $user->user_email;
 
 		if ( empty( $email ) ) {
 			$email = $default;
