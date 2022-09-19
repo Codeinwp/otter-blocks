@@ -29,7 +29,7 @@ class CountdownData {
 	readonly timer: string;
 	readonly settings?: Settings;
 	readonly targetDate: number;
-	readonly behaviour: 'default' | 'redirectLink' | 'hide' | 'restart' | string;
+	readonly behaviour: 'default' | 'redirectLink' | 'hide' | 'restart';
 	readonly trigger?: 'showBlock' | 'hideBlock';
 	readonly redirectLink?: string;
 	readonly startInterval?: string;
@@ -65,7 +65,7 @@ class CountdownData {
 		const { date, bhv, mode, timer, redirectLink, trigger, intvEnd, intvStart } = elem.dataset;
 
 		this.rawData = date ?? '';
-		this.behaviour = bhv ?? 'default';
+		this.behaviour = bhv as 'redirectLink' | 'hide' | 'restart' ?? 'default';
 
 		this.mode = mode as 'timer' | 'interval' | undefined;
 		this.timer = timer ?? '0';
@@ -107,12 +107,12 @@ class CountdownData {
 				localStorage.setItem( `o-countdown-last-visit-time-${this.elem.id}`, this.timer );
 			}
 
-			this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` )! ) + parseInt( this.timer );
-
 			if ( this.canRestart ) {
 				localStorage.setItem( `o-countdown-last-visit-${this.elem.id}`, Date.now().toString() );
-				this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` )! ) + parseInt( this.timer );
 			}
+
+			this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` )! ) + parseInt( this.timer );
+
 			break;
 
 		case 'interval':
@@ -125,13 +125,16 @@ class CountdownData {
 
 		}
 
-		document.querySelectorAll( `${this.connectedBlocksSelector}.o-cntdn-bhv-hide` ).forEach(
-			blockElem => {
-				if ( ! this.isStopped && ! this.mustBeHidden ) {
+		if ( this.isStopped || this.mustBeHidden ) {
+			this.hide();
+		} else {
+			this.show();
+			document.querySelectorAll( `${this.connectedBlocksSelector}.o-cntdn-bhv-hide` ).forEach(
+				blockElem => {
 					( blockElem as HTMLDivElement ).classList.add( 'o-cntdn-ready' );
 				}
-			}
-		);
+			);
+		}
 	}
 
 	get remainingTime(): number {
@@ -151,7 +154,7 @@ class CountdownData {
 	}
 
 	get canRestart(): boolean {
-		return 'timer' === this.mode && this.isStopped;
+		return 'timer' === this.mode && this.isStopped && 'restart' === this.behaviour;
 	}
 
 	updateComponents( states: {tag: 'second'| 'minute'| 'hour'| 'day', label: string, value: string}[]) {

@@ -467,6 +467,10 @@ class Registration {
 								opacity: 0;
 							}
 
+							.wp-block-themeisle-blocks-countdown:not(.o-cntdn-ready) {
+								visibility: hidden;
+							}
+
 							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show {
 								opacity: 0;
 							}
