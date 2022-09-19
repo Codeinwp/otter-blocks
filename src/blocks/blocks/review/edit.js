@@ -131,6 +131,7 @@ const Edit = ({
 		'--primary-color': getValue( 'primaryColor' ),
 		'--text-color': getValue( 'textColor' ),
 		'--button-text-color': getValue( 'buttonTextColor' ),
+		'--border-color': getValue( 'borderColor' ),
 		'--star-color': getValue( 'starColor' ),
 		'--pros-color': getValue( 'prosColor' ),
 		'--cons-color': getValue( 'consColor' ),

@@ -170,6 +170,11 @@ const Review = ({
 						label: __( 'Button Text', 'otter-blocks' )
 					},
 					{
+						value: defaults.borderColor,
+						onChange: value => changeConfig( blockName, { borderColor: value }),
+						label: __( 'Border', 'otter-blocks' )
+					},
+					{
 						value: defaults.starsColor,
 						onChange: value => changeConfig( blockName, { starsColor: value }),
 						label: __( 'Stars', 'otter-blocks' )

@@ -63,6 +63,20 @@ const SyncControlDropdown = ({
 		});
 	};
 
+	const applyAll = () => {
+		let fields = [ ...( isSynced || []) ];
+
+		options.forEach( option => {
+			if ( ! isSynced?.includes( option.value ) ) {
+				fields.push( option.value );
+			}
+		});
+
+		setAttributes({
+			isSynced: fields
+		});
+	};
+
 	const resetAll = () => {
 		let fields = [ ...( isSynced || []) ];
 
@@ -119,6 +133,16 @@ const SyncControlDropdown = ({
 								onClick={ () => enableComplementaryArea( 'core/edit-post', 'themeisle-blocks/otter-options' ) }
 							>
 								{ __( 'Manage Global Defaults', 'otter-blocks' ) }
+							</MenuItem>
+
+							<MenuItem
+								variant={ 'tertiary' }
+								onClick={ () => {
+									applyAll();
+									onClose();
+								} }
+							>
+								{ __( 'Apply all', 'otter-blocks' ) }
 							</MenuItem>
 
 							<MenuItem

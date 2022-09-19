@@ -20,6 +20,7 @@ type Attributes = {
 	backgroundColor: string
 	textColor: string
 	buttonTextColor: string
+	borderColor: string
 	starsColor: string
 	prosColor: string
 	consColor: string

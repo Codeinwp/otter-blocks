@@ -109,6 +109,9 @@
 		"buttonTextColor": {
 			"type": "string"
 		},
+		"borderColor": {
+			"type": "string"
+		},
 		"starsColor": {
 			"type": "string"
 		},

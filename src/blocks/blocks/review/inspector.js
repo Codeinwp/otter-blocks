@@ -297,6 +297,10 @@ const Inspector = ({
 			value: 'buttonTextColor'
 		},
 		{
+			label: __( 'Border', 'otter-blocks' ),
+			value: 'borderColor'
+		},
+		{
 			label: __( 'Stars', 'otter-blocks' ),
 			value: 'starsColor'
 		},
@@ -761,6 +765,16 @@ const Inspector = ({
 								label={ __( 'Button Text', 'otter-blocks' ) }
 								colorValue={ getValue( 'buttonTextColor' ) }
 								onColorChange={ e => setAttributes({ buttonTextColor: e }) }
+							/>
+						</Disabled>
+
+						<Disabled
+							isDisabled={ attributes.isSynced?.includes( 'borderColor' ) || false }
+						>
+							<ColorGradientControl
+								label={ __( 'Border', 'otter-blocks' ) }
+								colorValue={ getValue( 'borderColor' ) }
+								onColorChange={ e => setAttributes({ borderColor: e }) }
 							/>
 						</Disabled>
 

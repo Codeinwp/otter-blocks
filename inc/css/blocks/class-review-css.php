@@ -97,6 +97,11 @@ class Review_CSS extends Base_CSS {
 							'hasSync'  => 'review-button-text-color',
 						),
 						array(
+							'property' => '--border-color',
+							'value'    => 'borderColor',
+							'hasSync'  => 'review-border-color',
+						),
+						array(
 							'property' => '--stars-color',
 							'value'    => 'starsColor',
 							'hasSync'  => 'review-stars-color',
@@ -236,6 +241,10 @@ class Review_CSS extends Base_CSS {
 					array(
 						'property' => '--review-stars-color',
 						'value'    => 'starsColor',
+					),
+					array(
+						'property' => '--review-border-color',
+						'value'    => 'borderColor',
 					),
 					array(
 						'property' => '--review-pros-color',
