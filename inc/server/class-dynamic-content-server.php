@@ -131,7 +131,6 @@ class Dynamic_Content_Server {
 			)
 		);
 
-		// TODO: BOOKMARK
 		register_rest_route(
 			$namespace,
 			'/dynamic/preview',
