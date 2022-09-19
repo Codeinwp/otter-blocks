@@ -459,14 +459,12 @@ class Registration {
 								transition: opacity 1s ease;
 							}
 							
-							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show, [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide:not(.o-cntdn-ready), [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide.o-cntdn-hide {
-								max-height: 0px;
-								overflow: hidden;
+							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show, [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide:not(.o-cntdn-ready), [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide.o-cntdn-hide, [data-intv-start]:not(.o-cntdn-ready) {
+								height: 0px !important;
 								visibility: hidden;
-							}
-
-							[data-intv-start]:not(.o-cntdn-ready) {
-								display: none;
+								box-sizing: border-box;
+								margin: 0px !important;
+								opacity: 0;
 							}
 
 							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show {
