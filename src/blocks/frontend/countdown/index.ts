@@ -62,7 +62,7 @@ class CountdownData {
 
 		this.elem.classList.add( 'ready' );
 
-		const { date, bhv, mode, timer, redirectLink, trigger, intvEnd, intvStart } = elem.dataset;
+		const { date, bhv, mode, timer, redirectLink, intvEnd, intvStart } = elem.dataset;
 
 		this.rawData = date ?? '';
 		this.behaviour = bhv as 'redirectLink' | 'hide' | 'restart' ?? 'default';
@@ -71,7 +71,6 @@ class CountdownData {
 		this.timer = timer ?? '0';
 
 		this.redirectLink = redirectLink;
-		this.trigger = trigger as 'showBlock' | 'hideBlock' | undefined;
 		this.startInterval = intvStart;
 		this.endInterval = intvEnd;
 		this.hideTime = 0;
@@ -107,11 +106,12 @@ class CountdownData {
 				localStorage.setItem( `o-countdown-last-visit-time-${this.elem.id}`, this.timer );
 			}
 
+			this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` )! ) + parseInt( this.timer );
+
 			if ( this.canRestart ) {
 				localStorage.setItem( `o-countdown-last-visit-${this.elem.id}`, Date.now().toString() );
+				this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` )! ) + parseInt( this.timer );
 			}
-
-			this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` )! ) + parseInt( this.timer );
 
 			break;
 
@@ -122,7 +122,6 @@ class CountdownData {
 
 		default:
 			this.targetDate = this.rawData ?  ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : Date.now();
-
 		}
 
 		if ( this.isStopped || this.mustBeHidden ) {
@@ -154,7 +153,7 @@ class CountdownData {
 	}
 
 	get canRestart(): boolean {
-		return 'timer' === this.mode && this.isStopped && 'restart' === this.behaviour;
+		return 'restart' === this.behaviour && 'timer' === this.mode && this.isStopped;
 	}
 
 	updateComponents( states: {tag: 'second'| 'minute'| 'hour'| 'day', label: string, value: string}[]) {
@@ -205,8 +204,6 @@ class CountdownData {
 	}
 
 	triggerBehaviour() {
-		const blockSelectorId = this.connectedBlocksSelector;
-
 		switch ( this.behaviour as 'default' | 'redirectLink' | 'showBlock' | 'hideBlock' | 'hide' ) {
 		case 'default':
 			break;
@@ -219,27 +216,23 @@ class CountdownData {
 			}
 			break;
 		}
+	}
 
-		switch ( this.trigger ) {
-		case 'hideBlock':
-			if ( blockSelectorId ) {
-				document.querySelectorAll( `${blockSelectorId}.o-cntdn-bhv-hide` ).forEach(
-					blockElem => {
-						( blockElem as HTMLDivElement ).classList.add( 'o-cntdn-hide' );
-					}
-				);
-			}
-			break;
-		case 'showBlock':
-			if ( blockSelectorId ) {
-				document.querySelectorAll( `${blockSelectorId}.o-cntdn-bhv-show` ).forEach(
-					blockElem => {
-						( blockElem as HTMLDivElement ).classList.remove( 'o-cntdn-bhv-show' );
-					}
-				);
-			}
-			break;
+	activateTriggers() {
+		const blockSelectorId = this.connectedBlocksSelector;
+
+		if (  ! blockSelectorId ) {
+			return;
 		}
+
+		document.querySelectorAll( `${blockSelectorId}.o-cntdn-bhv-hide` ).forEach(
+			blockElem => ( blockElem as HTMLDivElement ).classList.add( 'o-cntdn-hide' )
+		);
+
+		document.querySelectorAll( `${blockSelectorId}.o-cntdn-bhv-show` ).forEach(
+			blockElem => ( blockElem as HTMLDivElement ).classList.remove( 'o-cntdn-bhv-show' )
+		);
+
 	}
 
 	hide() {

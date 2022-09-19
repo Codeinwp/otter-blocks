@@ -424,27 +424,16 @@ const Inspector = ({
 				{
 					attributes?.triggers && (
 						<Fragment>
-							<SelectControl
-								label={ __( 'Hide/Show Behavior', 'otter-blocks' ) }
-								value={ attributes.triggers }
-								onChange={ triggers => setAttributes({ triggers })}
-								options={[
-									{
-										label: __( 'Show a block', 'otter-blocks' ),
-										value: 'showBlock'
-									},
-									{
-										label: __( 'Hide a block', 'otter-blocks' ),
-										value: 'hideBlock'
-									}
-								]}
-							/>
-
 							<p>
-								{ __( 'Paste the following code in the block that you want to show (in the same page) up when the countdown end. Select the block, go to Inspector > Advanced, and paste into the field "Additional CSS class"', 'otter-blocks' ) }
+								{ __( 'Paste the following code in the block that you want to show up or hide (in the same page) when the countdown end. Select the block, go to Inspector > Advanced, and paste into the field "Additional CSS class"', 'otter-blocks' ) }
 							</p>
+							<p style={{ marginTop: '10px', marginBottom: '5px' }}>{ __( 'Show trigger', 'otter-blocks' ) }</p>
 							<code style={{ display: 'block', padding: '10px' }}>
-								{ `o-countdown-trigger-on-end-${ attributes.id?.split( '-' ).pop()} o-cntdn-bhv-${ 'hideBlock' === attributes.triggers ? 'hide' : 'show' }` }
+								{ `o-countdown-trigger-on-end-${ attributes.id?.split( '-' ).pop()} o-cntdn-bhv-show` }
+							</code>
+							<p style={{ marginTop: '10px', marginBottom: '5px' }}>{ __( 'Hide trigger', 'otter-blocks' ) }</p>
+							<code style={{ display: 'block', padding: '10px' }}>
+								{ `o-countdown-trigger-on-end-${ attributes.id?.split( '-' ).pop()} o-cntdn-bhv-hide` }
 							</code>
 						</Fragment>
 					)

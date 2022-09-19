@@ -150,9 +150,6 @@
 		"behaviour": {
 			"type": "string"
 		},
-		"triggers": {
-			"type": "string"
-		},
 		"redirectLink": {
 			"type": "string"
 		},
