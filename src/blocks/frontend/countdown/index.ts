@@ -67,7 +67,7 @@ class CountdownData {
 		const { date, bhv, mode, timer, redirectLink, intvEnd, intvStart } = elem.dataset;
 
 		this.rawData = date ?? '';
-		this.behaviour = bhv as 'redirectLink' | 'hide' | 'restart' ?? 'default';
+		this.behaviour = bhv as 'redirectLink' | 'hide' | 'restart' | 'default' ?? 'default';
 
 		this.mode = mode as 'timer' | 'interval' | undefined;
 		this.timer = timer ?? '0';
@@ -131,7 +131,7 @@ class CountdownData {
 			this.targetDate = this.rawData ?  ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : Date.now();
 		}
 
-		this.hideOrShow( this.isStopped || this.mustBeHidden );
+		this.hideOrShow( ( this.isStopped && 'hide' === this.behaviour ) || this.mustBeHidden );
 	}
 
 	update( states: {tag: 'second'| 'minute'| 'hour'| 'day', label: string, value: string}[]) {
