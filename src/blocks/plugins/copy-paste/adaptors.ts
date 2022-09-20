@@ -10,6 +10,8 @@ import { IconAttrs } from '../../blocks/font-awesome-icons/types';
 import { IconListAttrs } from '../../blocks/icon-list/types';
 import { IconListItemAttrs } from '../../blocks/icon-list/item/types';
 import { getChoice } from '../../helpers/helper-functions';
+import { AccordionGroupAttrs } from '../../blocks/accordion/group/types';
+import { ProgressAttrs } from '../../blocks/progress-bar/types';
 
 
 export const adaptors = {
@@ -298,7 +300,71 @@ export const adaptors = {
 				contentColor: s?.colors?.text
 			};
 		}
+	},
+	'themeisle-blocks/accordion': {
+		copy( attrs: AccordionGroupAttrs ): Storage<AccordionGroupAttrs> {
+			return {
+				shared: {
+					colors: {
+						background: attrs.contentBackground,
+						border: attrs.borderColor
+					}
+				},
+				private: {
+					titleColor: attrs?.titleColor,
+					titleBackground: attrs?.titleBackground
+				}
+			};
+		},
+		paste( storage: Storage<AccordionGroupAttrs> ): AccordionGroupAttrs {
+			const { shared: s } = storage;
+			return {
+				...storage.private,
+				contentBackground: s?.colors?.background,
+				borderColor: s?.colors?.border
+			};
+		}
+	},
+	'themeisle-blocks/progress-bar': {
+		copy( attrs: ProgressAttrs ): Storage<ProgressAttrs> {
+			return {
+				shared: {
+					colors: {
+						text: attrs?.titleColor,
+						background: attrs?.backgroundColor
+					},
+					height: {
+						desktop: addUnit( attrs?.height, 'px' )
+					},
+					border: {
+						radius: {
+							desktop: makeBox( addUnit( attrs?.borderRadius, 'px' ) )
+						}
+					},
+					font: {
+						size: attrs?.titleFontSize
+					}
+				},
+				private: {
+					barBackgroundColor: attrs?.barBackgroundColor,
+					percentageColor: attrs?.percentageColor,
+					percentagePosition: attrs?.percentagePosition
+				}
+			};
+		},
+		paste( storage: Storage<ProgressAttrs> ): ProgressAttrs {
+			const { shared: s } = storage;
+			return {
+				...storage.private,
+				titleColor: s?.colors?.text,
+				backgroundColor: s?.colors?.background,
+				height: getInt( s?.height?.desktop ),
+				borderRadius: getInt( s?.border?.radius?.desktop?.top ),
+				titleFontSize: s?.font?.size
+			};
+		}
 	}
+
 };
 
 export const implementedAdaptors = Object.keys( adaptors );
