@@ -12,6 +12,9 @@ import { IconListItemAttrs } from '../../blocks/icon-list/item/types';
 import { getChoice } from '../../helpers/helper-functions';
 import { AccordionGroupAttrs } from '../../blocks/accordion/group/types';
 import { ProgressAttrs } from '../../blocks/progress-bar/types';
+import { TabsGroupAttrs } from '../../blocks/tabs/group/types';
+import { FlipAttrs } from '../../blocks/flip/types';
+import { FormAttrs } from '../../blocks/form/type';
 
 
 export const adaptors = {
@@ -363,8 +366,122 @@ export const adaptors = {
 				titleFontSize: s?.font?.size
 			};
 		}
-	}
+	},
+	'themeisle-blocks/tabs': {
+		copy( attrs: TabsGroupAttrs ): Storage<TabsGroupAttrs> {
+			return {
+				shared: {
+					colors: {
+						text: attrs?.activeTitleColor,
+						background: attrs?.tabColor,
+						border: attrs?.borderColor
+					},
+					border: {
+						width: addUnit( attrs?.borderWidth, 'px' )
+					}
+				},
+				private: {
 
+				}
+			};
+		},
+		paste( storage: Storage<TabsGroupAttrs> ): TabsGroupAttrs {
+			const { shared: s } = storage;
+			return {
+				...storage.private,
+				activeTitleColor: s?.colors?.text,
+				tabColor: s?.colors?.background,
+				borderColor: s?.colors?.border,
+				borderWidth: getInt( s?.border?.width )
+			};
+		}
+	},
+	'themeisle-blocks/flip': {
+		copy( attrs: FlipAttrs ): Storage<FlipAttrs> {
+			return {
+				shared: {
+					colors: {
+						background: attrs?.frontBackgroundColor,
+						border: attrs?.borderColor
+					},
+					border: {
+						width: addUnit( attrs?.borderWidth, 'px' ),
+						radius: {
+							desktop: makeBox( addUnit( attrs?.borderRadius, 'px' ) )
+						}
+					},
+					width: {
+						desktop: addUnit( attrs?.width, 'px' )
+					},
+					height: {
+						desktop: addUnit( attrs?.height, 'px' )
+					},
+					padding: {
+						desktop: makeBox( addUnit( attrs?.padding, 'px' ) )
+					},
+					font: {
+						size: addUnit( attrs?.titleFontSize, 'px' )
+					}
+				},
+				private: {
+					...( pickBy( attrs, ( value, key ) => {
+						return key?.includes( 'boxShadow' )  || key?.includes( 'front' ) || key?.includes( 'back' ) || key?.includes( 'Color' );
+					}) ?? {})
+				}
+			};
+		},
+		paste( storage: Storage<FlipAttrs> ): FlipAttrs {
+			const { shared: s } = storage;
+			return {
+				...storage.private,
+				frontBackgroundColor: s?.colors?.background,
+				borderColor: s?.colors?.border,
+				borderWidth: getInt( s?.border?.width ),
+				borderRadius: getInt( s?.border?.radius?.desktop?.top ),
+				width: getInt( s?.width?.desktop ),
+				height: getInt( s?.height?.desktop ),
+				padding: getInt( s?.padding?.desktop?.top ),
+				titleFontSize: getInt( s?.font?.size )
+			};
+		}
+	},
+	'themeisle-blocks/form': {
+		copy( attrs: FormAttrs ): Storage<FormAttrs> {
+			return {
+				shared: {
+					colors: {
+						text: attrs?.labelColor,
+						border: attrs?.inputBorderColor
+					},
+					font: {
+						size: addUnit( attrs?.labelFontSize, 'px' )
+					},
+					border: {
+						width: addUnit( attrs?.inputBorderWidth, 'px' ),
+						radius: {
+							desktop: makeBox( addUnit( attrs?.inputBorderRadius, 'px' ) )
+						}
+					}
+				},
+				private: {
+					...( pickBy( attrs, ( value, key ) => {
+						return key?.includes( 'FontSize' )  || key?.includes( 'Color' ) || key?.includes( 'Width' ) || key?.includes( 'Gap' );
+					}) ?? {})
+				}
+			};
+		},
+		paste( storage: Storage<FormAttrs> ): FormAttrs {
+			const { shared: s } = storage;
+			return {
+				...storage.private,
+				labelColor: s?.colors?.text,
+				labelFontSize: getInt( s?.font?.size ),
+				inputBorderColor: s?.colors?.border,
+				inputBorderRadius: getInt( s?.border?.radius?.desktop?.top ),
+				inputBorderWidth: getInt( s?.border?.width )
+			};
+		}
+	}
 };
 
 export const implementedAdaptors = Object.keys( adaptors );
