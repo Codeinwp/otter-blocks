@@ -99,10 +99,15 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 						onClick={ copy }
 					/>
 
-					<PluginBlockSettingsMenuItem
-						label={  __( 'Paste style', 'otter-blocks' ) }
-						onClick={ paste }
-					/>
+					{
+						! copyPaste.isExpired && (
+							<PluginBlockSettingsMenuItem
+								label={  __( 'Paste style', 'otter-blocks' ) }
+								onClick={ paste }
+							/>
+						)
+					}
+
 				</Fragment>
 			);
 		}

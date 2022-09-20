@@ -1,4 +1,4 @@
-import { isEmpty, isNil, isObject, isObjectLike, pickBy } from 'lodash';
+import { isNil, pickBy } from 'lodash';
 import { OtterBlock } from '../../helpers/blocks';
 import { compactObject } from '../../helpers/helper-functions';
 import { adaptors } from './adaptors';
@@ -8,10 +8,14 @@ class CopyPaste {
 
 	version: string = '1'; // change this number when the structure of SharedAttrs is not backwards compatible.
 	storage: CopyPasteStorage = { shared: {}, core: {}};
+	isExpired: boolean = false;
 
 	constructor() {
+		this.checkExpirationDate();
 		if ( this.version === this.getSavedVersion() ) {
-			this.pull();
+			if ( ! this.isExpired  ) {
+				this.pull();
+			}
 		} else {
 			this.updateVersion();
 		}
@@ -21,6 +25,10 @@ class CopyPaste {
 		try {
 			if ( ! adaptors?.[block.name]) {
 				return;
+			}
+
+			if ( this.isExpired ) {
+				this.updateExpirationDate();
 			}
 
 			const copied = compactObject( pickBy( adaptors[block.name].copy( block.attributes ), x => ! ( isNil( x ) ) ) );
@@ -77,6 +85,16 @@ class CopyPaste {
 
 	updateVersion() {
 		localStorage.setItem( 'o-copyPasteStorage-version', this.version );
+	}
+
+	updateExpirationDate() {
+		localStorage.setItem( 'o-copyPasteStorage-expiration', Date.now().toString() );
+		this.isExpired = false;
+	}
+
+	checkExpirationDate() {
+		const e = localStorage.getItem( 'o-copyPasteStorage-expiration' );
+		this.isExpired = Boolean( isNil( e ) || ( e !== undefined && parseInt( e ) + 24 * 60 * 60 * 1000 < Date.now() ) );
 	}
 }
 
