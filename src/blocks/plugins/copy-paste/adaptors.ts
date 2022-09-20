@@ -9,6 +9,7 @@ import { addUnit, getInt, makeBox } from './utils';
 import { IconAttrs } from '../../blocks/font-awesome-icons/types';
 import { IconListAttrs } from '../../blocks/icon-list/types';
 import { IconListItemAttrs } from '../../blocks/icon-list/item/types';
+import { getChoice } from '../../helpers/helper-functions';
 
 
 export const adaptors = {
@@ -61,8 +62,11 @@ export const adaptors = {
 				borderRadius: s?.border?.radius?.desktop,
 				backgroundColor: s?.colors?.background,
 				backgroundGradient: s?.colors?.backgroundGradient,
-				backgroundType: s?.type?.background
-
+				backgroundType: getChoice([
+					[ s?.colors?.backgroundGradient, 'gradient' ],
+					[ s?.colors?.background, 'color' ],
+					[ undefined ]
+				])
 			};
 		}
 	},

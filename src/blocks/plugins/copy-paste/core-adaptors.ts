@@ -1,4 +1,5 @@
 import { merge } from 'lodash';
+import { getChoice } from '../../helpers/helper-functions';
 import { Storage } from './models';
 import { addUnit } from './utils';
 
@@ -11,7 +12,11 @@ const commonExtractor = ( attrs ): Storage<unknown> => {
 				backgroundGradient: attrs?.style?.color?.gradient
 			},
 			type: {
-				background: attrs?.style?.color?.gradient ? 'gradient' : undefined
+				background: getChoice([
+					[ attrs?.style?.color?.gradient, 'gradient' ],
+					[ attrs?.style?.color?.background, 'color' ],
+					[ undefined ]
+				])
 			},
 			font: {
 				size: attrs?.fontSize,
