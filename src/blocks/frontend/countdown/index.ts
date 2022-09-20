@@ -21,6 +21,7 @@ let indexGenerator: number = 0;
 
 class CountdownData {
 
+	currentTime: number;
 
 	readonly id: number;
 	readonly elem: HTMLDivElement;
@@ -55,6 +56,7 @@ class CountdownData {
 		}
 	};
 	readonly onEndEvents: ( () => void )[];
+	readonly oneTimeRun: { [key: string]: boolean};
 
 	constructor( elem: HTMLDivElement ) {
 		this.id = indexGenerator++;
@@ -74,6 +76,11 @@ class CountdownData {
 		this.startInterval = intvStart;
 		this.endInterval = intvEnd;
 		this.hideTime = 0;
+
+		this.oneTimeRun = {
+			'hideOrShow': false
+		};
+		this.currentTime = Date.now();
 
 		this.components = {};
 		[ 'second', 'minute', 'hour', 'day' ].forEach(
@@ -124,46 +131,12 @@ class CountdownData {
 			this.targetDate = this.rawData ?  ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : Date.now();
 		}
 
-		if ( this.isStopped || this.mustBeHidden ) {
-			this.hide();
-		} else {
-			this.show();
-			document.querySelectorAll( `${this.connectedBlocksSelector}.o-cntdn-bhv-hide` ).forEach(
-				blockElem => {
-					( blockElem as HTMLDivElement ).classList.add( 'o-cntdn-ready' );
-				}
-			);
-		}
+		this.hideOrShow( this.isStopped || this.mustBeHidden );
 	}
 
-	get remainingTime(): number {
-		return this.targetDate - Date.now();
-	}
-
-	get isStopped(): boolean {
-		return 0  >= this.remainingTime;
-	}
-
-	get mustBeHidden(): boolean {
-		if ( ! this.startInterval ) {
-			return false;
-		}
-
-		return 0 <= this.hideTime - Date.now();
-	}
-
-	get canRestart(): boolean {
-		return 'restart' === this.behaviour && 'timer' === this.mode && this.isStopped;
-	}
-
-	updateComponents( states: {tag: 'second'| 'minute'| 'hour'| 'day', label: string, value: string}[]) {
-		if ( 'interval' === this.mode ) {
-			if ( this.mustBeHidden ) {
-				this.hide();
-				return;
-			} else {
-				this.show();
-			}
+	update( states: {tag: 'second'| 'minute'| 'hour'| 'day', label: string, value: string}[]) {
+		if ( 'interval' === this.mode && ! this.oneTimeRun.hideOrShow ) {
+			this.hideOrShow( this.mustBeHidden );
 		}
 
 		states.forEach( state => {
@@ -194,13 +167,6 @@ class CountdownData {
 
 		this.elem.dispatchEvent( event );
 		this.onEndEvents.forEach( f => f() );
-	}
-
-	get connectedBlocksSelector() {
-		if ( this.elem.id === undefined ) {
-			return null;
-		}
-		return `.o-countdown-trigger-on-end-${this.elem.id.split( '-' ).pop()}`;
 	}
 
 	activateBehaviour() {
@@ -235,6 +201,20 @@ class CountdownData {
 
 	}
 
+	hideOrShow( isHidden: boolean ) {
+		if ( isHidden ) {
+			this.hide();
+		} else {
+			this.oneTimeRun.hideOrShow = true;
+			this.show();
+			document.querySelectorAll( `${this.connectedBlocksSelector}.o-cntdn-bhv-hide` ).forEach(
+				blockElem => {
+					( blockElem as HTMLDivElement ).classList.add( 'o-cntdn-ready' );
+				}
+			);
+		}
+	}
+
 	hide() {
 		this.elem.classList.add( 'o-hide' );
 	}
@@ -242,6 +222,33 @@ class CountdownData {
 	show() {
 		this.elem.classList.add( 'o-cntdn-ready' );
 		this.elem.classList.remove( 'o-hide' );
+	}
+
+	get connectedBlocksSelector() {
+		if ( this.elem.id === undefined ) {
+			return null;
+		}
+		return `.o-countdown-trigger-on-end-${this.elem.id.split( '-' ).pop()}`;
+	}
+
+	get remainingTime(): number {
+		return this.targetDate - this.currentTime;
+	}
+
+	get isStopped(): boolean {
+		return 0  >= this.remainingTime;
+	}
+
+	get mustBeHidden(): boolean {
+		return this.startInterval !== undefined && 0 <= this.hideTime - this.currentTime;
+	}
+
+	get canRestart(): boolean {
+		return 'restart' === this.behaviour && 'timer' === this.mode && this.isStopped;
+	}
+
+	set time( time: number ) {
+		this.currentTime = time;
 	}
 }
 
@@ -276,8 +283,9 @@ class CountdownRunner {
 
 	startTimer( interval: number = 300 ) {
 		this.timer = setInterval( () => {
+			const currentTime = Date.now();
 			this.running.forEach( ( countdown ) => {
-				this.updateCountdown( this.countdowns[countdown] as CountdownData );
+				this.updateCountdown( this.countdowns[countdown] as CountdownData, currentTime );
 			});
 
 			if ( 0 === this.running.size ) {
@@ -290,9 +298,12 @@ class CountdownRunner {
 		clearInterval( this.timer );
 	}
 
-	updateCountdown( countdown: CountdownData ) {
+	updateCountdown( countdown: CountdownData, currentTime: number ) {
 		const { id } = countdown;
+		countdown.time = currentTime;
+
 		try {
+
 			const { remainingTime } = countdown;
 
 			const days = Math.floor( remainingTime / _MS_PER_DAY );
@@ -302,7 +313,7 @@ class CountdownRunner {
 
 			const { i18n } = window.themeisleGutenbergCountdown;
 
-			const time = [
+			const timeComponents = [
 				{
 					tag: 'day',
 					label: 1 < days ? i18n.days : i18n.day,
@@ -332,7 +343,7 @@ class CountdownRunner {
 					};
 				}) as {tag: 'second'| 'minute'| 'hour'| 'day', label: string, value: string}[];
 
-			countdown.updateComponents( time );
+			countdown.update( timeComponents );
 
 			if ( countdown.isStopped ) {
 				countdown.end();
