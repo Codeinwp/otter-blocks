@@ -336,7 +336,7 @@ const Edit = ({
 					<div className="o-review__right">
 						{ 0 < attributes.pros.length && (
 							<div className="o-review__right_pros">
-								<SubHeading>{ __( 'Pros', 'otter-blocks' ) }</SubHeading>
+								<SubHeading>{ attributes.prosLabel }</SubHeading>
 
 								{ attributes.pros.map( ( pro, index ) => (
 									<div className="o-review__right_pros_item" key={ index }>
@@ -355,7 +355,7 @@ const Edit = ({
 
 						{ 0 < attributes.cons.length && (
 							<div className="o-review__right_cons">
-								<SubHeading>{ __( 'Cons', 'otter-blocks' ) }</SubHeading>
+								<SubHeading>{ attributes.consLabel }</SubHeading>
 
 								{ attributes.cons.map( ( con, index ) => (
 									<div className="o-review__right_cons_item" key={ index }>
@@ -377,7 +377,7 @@ const Edit = ({
 				{ ( 0 < productAttributes?.links?.length || 0 < attributes.links.length ) && (
 					<div className="o-review__footer">
 						<SubHeading className="o-review__footer_label">
-							{ __( 'Buy this Product', 'otter-blocks' ) }
+							{ attributes.buttonsLabel }
 						</SubHeading>
 
 						<div className="o-review__footer_buttons">

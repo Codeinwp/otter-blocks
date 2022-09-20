@@ -85,6 +85,18 @@
 			}
 			]
 		},
+		"prosLabel": {
+			"type": "string",
+			"default": "Pros"
+		},
+		"consLabel": {
+			"type": "string",
+			"default": "Cros"
+		},
+		"buttonsLabel": {
+			"type": "string",
+			"default": "Buy this Product"
+		},
 		"imageWidth": {
 			"type": "number"
 		},

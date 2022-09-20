@@ -663,6 +663,29 @@ const Inspector = ({
 							</Fragment>
 						) }
 					</PanelBody>
+
+					<PanelBody
+						title={ __( 'Labels', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						<TextControl
+							label={ __( 'Pros', 'otter-blocks' ) }
+							value={ attributes.prosLabel }
+							onChange={ prosLabel => setAttributes({ prosLabel }) }
+						/>
+
+						<TextControl
+							label={ __( 'Cons', 'otter-blocks' ) }
+							value={ attributes.consLabel }
+							onChange={ consLabel => setAttributes({ consLabel }) }
+						/>
+
+						<TextControl
+							label={ __( 'Buttons', 'otter-blocks' ) }
+							value={ attributes.buttonsLabel }
+							onChange={ buttonsLabel => setAttributes({ buttonsLabel }) }
+						/>
+					</PanelBody>
 				</Fragment>
 			) }
 

@@ -12,6 +12,9 @@ type Attributes = {
 	pros: string[]
 	cons: string[]
 	links: {label: string, href: string, isSponsored: boolean}[]
+	prosLabel: string
+	consLabel: string
+	buttonsLabel: string
 	imageWidth: number
 	mainHeading: string
 	subHeading: string

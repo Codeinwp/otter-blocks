@@ -136,7 +136,9 @@ class Review_Block {
 			$html .= '	<div class="o-review__right">';
 			if ( isset( $attributes['pros'] ) && count( $attributes['pros'] ) > 0 ) {
 				$html .= '	<div class="o-review__right_pros">';
-				$html .= '		<' . $sub_heading . '>' . __( 'Pros', 'otter-blocks' ) . '</' . $sub_heading . '>';
+				if ( isset( $attributes['prosLabel'] ) && ! empty( $attributes['prosLabel'] ) ) {
+					$html .= '		<' . $sub_heading . '>' . $attributes['prosLabel'] . '</' . $sub_heading . '>';
+				}
 
 				foreach ( $attributes['pros'] as $pro ) {
 					$html .= '	<div class="o-review__right_pros_item">';
@@ -149,7 +151,9 @@ class Review_Block {
 
 			if ( isset( $attributes['cons'] ) && count( $attributes['cons'] ) > 0 ) {
 				$html .= '	<div class="o-review__right_cons">';
-				$html .= '		<' . $sub_heading . '>' . __( 'Cons', 'otter-blocks' ) . '</' . $sub_heading . '>';
+				if ( isset( $attributes['consLabel'] ) && ! empty( $attributes['consLabel'] ) ) {
+					$html .= '		<' . $sub_heading . '>' . $attributes['consLabel'] . '</' . $sub_heading . '>';
+				}
 
 				foreach ( $attributes['cons'] as $con ) {
 					$html .= '	<div class="o-review__right_cons_item">';
@@ -164,7 +168,9 @@ class Review_Block {
 
 		if ( isset( $attributes['links'] ) && count( $attributes['links'] ) > 0 ) {
 			$html .= '	<div class="o-review__footer">';
-			$html .= '		<' . $sub_heading . ' class="o-review__footer_label">' . __( 'Buy this Product', 'otter-blocks' ) . '</' . $sub_heading . '>';
+			if ( isset( $attributes['buttonsLabel'] ) && ! empty( $attributes['buttonsLabel'] ) ) {
+				$html .= '		<' . $sub_heading . ' class="o-review__footer_label">' . $attributes['buttonsLabel'] . '</' . $sub_heading . '>';
+			}
 
 			$html .= '		<div class="o-review__footer_buttons">';
 
