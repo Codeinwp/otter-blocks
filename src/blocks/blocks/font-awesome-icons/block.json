@@ -12,7 +12,7 @@
 			"type": "string"
 		},
 		"align": {
-			"type": "string"
+			"type": ["string", "object"]
 		},
 		"library": {
 			"type": "string",
@@ -34,8 +34,8 @@
 			"default": false
 		},
 		"fontSize": {
-			"type": "number",
-			"default": 16
+			"type": ["number", "string"],
+			"default": "16px"
 		},
 		"padding": {
 			"type": "number",

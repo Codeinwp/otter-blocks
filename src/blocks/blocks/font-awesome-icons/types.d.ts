@@ -2,7 +2,11 @@ import { BlockProps, InspectorProps } from '../../helpers/blocks';
 
 type Attributes = {
 	id: string
-	align: string
+	align: string | {
+		desktop?: string
+		tablet?: string
+		mobile?: string
+	}
 	library: string
 	prefix: string
 	icon: string
