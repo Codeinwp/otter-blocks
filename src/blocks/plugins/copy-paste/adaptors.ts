@@ -229,7 +229,8 @@ export const adaptors = {
 				private: {
 					...pickBy( attrs, ( value, key ) => {
 						return key?.includes( 'Hover' );
-					})
+					}),
+					align: attrs?.align
 				}
 			};
 		},

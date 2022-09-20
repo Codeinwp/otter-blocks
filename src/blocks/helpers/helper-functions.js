@@ -1,4 +1,4 @@
-import { isEmpty, merge, set, unset, without, omitBy } from 'lodash';
+import { isEmpty, merge, set, unset, without, omitBy, isObjectLike, isNil } from 'lodash';
 
 import { sprintf } from '@wordpress/i18n';
 
@@ -421,4 +421,25 @@ export const buildResponsiveGetAttributes = ( currentView, defaultView = 'Deskto
 		}
 		return ( values?.[mapViewToKey[currentView]] ?? values?.[mapViewToKey[defaultView]]);
 	};
+};
+
+export const compactObject = ( o ) => {
+	if ( ! isObjectLike( o ) ) {
+		return o;
+	}
+
+	for ( const p in o ) {
+		if ( isObjectLike( o[p]) ) {
+			o[p] = compactObject( o[p]);
+		}
+		if ( isNil( o[p]) ) {
+			delete o[p];
+		}
+	}
+
+	if ( isEmpty( o ) ) {
+		return undefined;
+	}
+
+	return o;
 };

@@ -1,5 +1,6 @@
-import { isNil, pickBy } from 'lodash';
+import { isEmpty, isNil, isObject, isObjectLike, pickBy } from 'lodash';
 import { OtterBlock } from '../../helpers/blocks';
+import { compactObject } from '../../helpers/helper-functions';
 import { adaptors } from './adaptors';
 import { CopyPasteStorage, Storage } from './models';
 
@@ -17,20 +18,29 @@ class CopyPaste {
 	}
 
 	copy( block: OtterBlock<unknown> ) {
-		if ( ! adaptors?.[block.name]) {
-			return;
+		try {
+			if ( ! adaptors?.[block.name]) {
+				return;
+			}
+
+			const copied = compactObject( pickBy( adaptors[block.name].copy( block.attributes ), x => ! ( isNil( x ) ) ) );
+
+			this.storage.shared = copied?.shared;
+			this.storage.core = copied?.core;
+			this.storage[block.name] = copied?.private;
+			this.sync();
+		} catch ( e ) {
+			console.error( e );
 		}
-
-		const copied = pickBy( adaptors[block.name].copy( block.attributes ), x => ! ( isNil( x ) ) );
-
-		this.storage.shared = copied?.shared;
-		this.storage.core = copied?.core;
-		this.storage[block.name] = copied?.private;
-		this.sync();
 	}
 
 	paste( block: OtterBlock<unknown> ) {
-		if ( adaptors?.[block.name]) {
+		let pasted = undefined;
+		try {
+			if ( ! adaptors?.[block.name]) {
+				return undefined;
+			}
+
 			const attrs: Storage<unknown> = {
 				shared: this.storage.shared,
 				private: this.storage[block.name]
@@ -40,16 +50,17 @@ class CopyPaste {
 				attrs.core = this.storage.core;
 			}
 
-			const pasted = adaptors[block.name].paste( attrs );
+			pasted = adaptors[block.name].paste( attrs );
 
 			// TODO: remove after review
 			console.group( `Block: ${ block.name}` );
 			console.log( pasted );
 			console.groupEnd();
+		} catch ( e ) {
+			console.error( e );
+		} finally {
 			return pasted;
 		}
-
-		return undefined;
 	}
 
 	sync() {

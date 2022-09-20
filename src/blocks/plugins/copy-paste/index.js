@@ -1,9 +1,7 @@
 /**
  * WordPress dependencies.
  */
-import { __, sprintf } from '@wordpress/i18n';
-
-import { hasBlockSupport } from '@wordpress/blocks';
+import { __ } from '@wordpress/i18n';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
@@ -14,7 +12,7 @@ import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
 import { Fragment } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
-import { adaptors, implementedAdaptors } from './adaptors';
+import { adaptors } from './adaptors';
 import CopyPaste from './copy-paste';
 
 /**
@@ -82,7 +80,9 @@ function paste() {
 
 	blocks.forEach( block => {
 		const attrs = copyPaste.paste( block );
-		updateBlockAttributes( block.clientId, attrs );
+		if ( attrs !== undefined ) {
+			updateBlockAttributes( block.clientId, attrs );
+		}
 	});
 }
 
