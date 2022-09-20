@@ -69,7 +69,7 @@ declare global {
 				valid: string
 			}
 			purcharseHistoryURL: string
-			siteURL: string
+			showFeedbackNotice: boolean
 			storeURL: string
 			styleExist: string
 			upgradeLink: string

@@ -8,10 +8,6 @@ import {
 	Spinner
 } from '@wordpress/components';
 
-import {
-	Fragment
-} from '@wordpress/element';
-
 /**
  * Internal dependencies.
  */
@@ -21,6 +17,8 @@ import Dashboard from './pages/Dashboard.js';
 import Upsell from './pages/Upsell.js';
 import Integrations from './pages/Integrations.js';
 import Feedback from './pages/Feedback.js';
+import NoticeCard from './NoticeCard';
+import { applyFilters } from '@wordpress/hooks';
 
 const Main = ({
 	currentTab,
@@ -65,18 +63,31 @@ const Main = ({
 		}
 	};
 
-	return (
-		<Fragment>
-			<div className={ `otter-main is-${ currentTab}`}>
-				<Content />
+	const feedbackBtn = applyFilters( 'otter.feedback', 'dashboard', __( 'Share your Feedback', 'otter-blocks' ), 'secondary' );
 
-				{ 'upsell' !== currentTab && (
-					<div className="otter-right">
-						<Sidebar setTab={ setTab }/>
+	return (
+		<div className={ `otter-main is-${ currentTab}`}>
+			{ window.otterObj.showFeedbackNotice && (
+				<NoticeCard>
+					<img src={ window.otterObj.assetsPath + 'images/dashboard-feedback.png' } style={ { maxWidth: '100%', objectFit: 'cover' } }/>
+					<div className="notice-text">
+						<h3>{ __( 'What\'s one thing you need in Otter Blocks?', 'otter-blocks' ) }</h3>
+						<span>{ __( 'We\'re always looking for suggestions to further improve Otter Blocks and your feedback can help us do that.', 'otter-blocks' ) }</span>
 					</div>
-				) }
-			</div>
-		</Fragment>
+					<span>
+						{ feedbackBtn }
+					</span>
+				</NoticeCard>
+			) }
+
+			<Content />
+
+			{ 'upsell' !== currentTab && (
+				<div className="otter-right">
+					<Sidebar setTab={ setTab }/>
+				</div>
+			) }
+		</div>
 	);
 };
 

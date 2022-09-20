@@ -53,11 +53,10 @@ const FeedbackForm = ({
 
 	useEffect( () => {
 		const info = document.querySelector( '.o-feedback-form .info' ) as HTMLElement;
-		if ( ! info ) {
-			return;
+		if ( info ) {
+			info.style.height = showInfo ? `${ info.querySelector( '.wrapper' ).clientHeight }px` : '0';
 		}
 
-		info.style.height = showInfo ? `${ info.querySelector( '.wrapper' ).clientHeight }px` : '0';
 	}, [ showInfo ]);
 
 	const sendFeedback = () => {
@@ -97,7 +96,13 @@ const FeedbackForm = ({
 	};
 
 	return (
-		<div className="o-feedback-form">
+		<form
+			className="o-feedback-form"
+			onSubmit={ e => {
+				e.preventDefault();
+				sendFeedback();
+			} }
+		>
 			<TextareaControl
 				className={ classnames({
 					'invalid': 'emptyFeedback' === status,
@@ -142,14 +147,14 @@ const FeedbackForm = ({
 				<Button
 					className="f-send"
 					variant="primary"
+					type="submit"
 					isPrimary
 					disabled={ 'loading' === status }
-					onClick={ () => sendFeedback() }
 				>
 					{ 'loading' === status ? <Spinner/> : __( 'Send feedback', 'otter-blocks' ) }
 				</Button>
 			</div>
-		</div>
+		</form>
 	);
 };
 
