@@ -276,8 +276,6 @@ class CountdownRunner {
 
 			this.countdowns[countdown.id] = countdown;
 			this.running.add( countdown.id );
-
-			console.log( countdown );
 		}
 	}
 
