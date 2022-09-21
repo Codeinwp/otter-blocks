@@ -127,6 +127,11 @@ class Dashboard {
 		exit;
 	}
 
+	/**
+	 * Whether to show the feedback notice or not.
+	 *
+	 * @return bool
+	 */
 	private function should_show_feedback_notice() {
 		$installed = get_option( 'otter_blocks_install' );
 
