@@ -91,13 +91,13 @@ class Dashboard {
 			apply_filters(
 				'otter_dashboard_data',
 				array(
-					'version'     => OTTER_BLOCKS_VERSION,
-					'assetsPath'  => OTTER_BLOCKS_URL . 'assets/',
-					'stylesExist' => is_dir( $basedir ) || boolval( get_transient( 'otter_animations_parsed' ) ),
-					'hasPro'      => Pro::is_pro_installed(),
-					'upgradeLink' => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
-					'docsLink'    => Pro::get_docs_url(),
-					'siteURL'     => get_site_url(),
+					'version'            => OTTER_BLOCKS_VERSION,
+					'assetsPath'         => OTTER_BLOCKS_URL . 'assets/',
+					'stylesExist'        => is_dir( $basedir ) || boolval( get_transient( 'otter_animations_parsed' ) ),
+					'hasPro'             => Pro::is_pro_installed(),
+					'upgradeLink'        => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
+					'docsLink'           => Pro::get_docs_url(),
+					'showFeedbackNotice' => $this->should_show_feedback_notice(),
 				)
 			)
 		);
@@ -125,6 +125,12 @@ class Dashboard {
 		update_option( 'themeisle_blocks_settings_redirect', false );
 		wp_safe_redirect( admin_url( 'options-general.php?page=otter' ) );
 		exit;
+	}
+
+	private function should_show_feedback_notice() {
+		$installed = get_option( 'otter_blocks_install' );
+
+		return ! empty( $installed ) && $installed < strtotime( '-5 days' );
 	}
 
 	/**

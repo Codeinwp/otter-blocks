@@ -35,6 +35,11 @@ const collectedInfo = [
 	}
 ];
 
+const helpTextByStatus = {
+	'error': __( 'There has been an error. Your feedback couldn\'t be sent.' ),
+	'emptyFeedback': __( 'Please provide a feedback before submitting the form.', 'otter-blocks' )
+};
+
 /**
  * Displays a button that opens a modal for sending feedback
  *
@@ -67,32 +72,35 @@ const FeedbackForm = ({
 		}
 
 		setStatus( 'loading' );
-		fetch( 'https://api.themeisle.com/tracking/feedback', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({
-				slug: 'otter-blocks',
-				version: version,
-				feedback: trimmedFeedback,
-				data: {
-					'feedback-area': source
+		try {
+			fetch( 'https://api.themeisle.com/tracking/feedback', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({
+					slug: 'otter-blocks',
+					version: version,
+					feedback: trimmedFeedback,
+					data: {
+						'feedback-area': source
+					}
+				})
+			}).then( r => {
+				if ( ! r.ok ) {
+					setStatus( 'error' );
+					return;
 				}
-			})
-		}).then( r => {
-			if ( ! r.ok ) {
+
+				setStatus( 'submitted' );
+			})?.catch( ( error ) => {
+				console.warn( error.message );
 				setStatus( 'error' );
-				return;
-			}
-
-			setStatus( 'submitted' );
-		});
-	};
-
-	const helpTextByStatus = {
-		'error': __( 'There has been an error. Your feedback couldn\'t be sent.' ),
-		'emptyFeedback': __( 'Please provide a feedback before submitting the form.', 'otter-blocks' )
+			});
+		} catch ( error ) {
+			console.warn( error.message );
+			setStatus( 'error' );
+		}
 	};
 
 	return (

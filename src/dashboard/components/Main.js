@@ -66,8 +66,10 @@ const Main = ({
 
 	return (
 		<div className={ `otter-main is-${ currentTab}`}>
-			{ window.otterObj.showFeedbackNotice && (
-				<NoticeCard>
+			{ 'dashboard' === currentTab && window.otterObj.showFeedbackNotice && (
+				<NoticeCard
+					slug="feedback"
+				>
 					<img src={ window.otterObj.assetsPath + 'images/dashboard-feedback.png' } style={ { maxWidth: '100%', objectFit: 'cover' } }/>
 					<div className="notice-text">
 						<h3>{ __( 'What\'s one thing you need in Otter Blocks?', 'otter-blocks' ) }</h3>

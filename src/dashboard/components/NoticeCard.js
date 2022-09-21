@@ -3,17 +3,28 @@
  */
 import { Button, PanelBody } from '@wordpress/components';
 import { Icon, closeSmall } from '@wordpress/icons';
+import { useState } from '@wordpress/element';
+import classnames from 'classnames';
 
 const NoticeCard = ({
+	slug,
+	className,
 	children
 }) => {
-	const dismissNotice = () => {
+	const storageKey = `otter-${slug}-dismissed`;
+	const [ dismissed, setDismissed ] = useState( localStorage.getItem( storageKey ) );
 
-		// todo
+	const dismissNotice = () => {
+		localStorage.setItem( storageKey, 'true' );
+		setDismissed( 'true' );
 	};
 
+	if ( dismissed ) {
+		return null;
+	}
+
 	return (
-		<PanelBody className="notice-card">
+		<PanelBody className={ classnames( 'notice-card', className ) }>
 			<Button
 				className="dismiss"
 				onClick={ dismissNotice }
