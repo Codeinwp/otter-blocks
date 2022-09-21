@@ -1,4 +1,4 @@
-import { pickBy } from 'lodash';
+import { pick, pickBy } from 'lodash';
 import { SectionAttrs } from '../../blocks/section/columns/types';
 import {  Storage } from './models';
 import { coreAdaptors } from './core-adaptors';
@@ -15,6 +15,7 @@ import { ProgressAttrs } from '../../blocks/progress-bar/types';
 import { TabsGroupAttrs } from '../../blocks/tabs/group/types';
 import { FlipAttrs } from '../../blocks/flip/types';
 import { FormAttrs } from '../../blocks/form/type';
+import { CircleCounterAttrs } from '../../blocks/circle-counter/types';
 
 
 export const adaptors = {
@@ -479,6 +480,37 @@ export const adaptors = {
 				inputBorderColor: s?.colors?.border,
 				inputBorderRadius: getInt( s?.border?.radius?.desktop?.top ),
 				inputBorderWidth: getInt( s?.border?.width )
+			};
+		}
+	},
+	'themeisle-blocks/circle-counter': {
+		copy( attrs: CircleCounterAttrs ): Storage<CircleCounterAttrs> {
+			return {
+				shared: {
+					height: {
+						desktop: addUnit( attrs?.height, 'px' )
+					},
+					font: {
+						size: addUnit( attrs?.fontSizeTitle, 'px' )
+					},
+					colors: {
+						text: attrs?.titleColor,
+						background: attrs?.backgroundColor
+					}
+				},
+				private: {
+					...pick( attrs, [ 'titleStyle', 'fontSizePercent', 'strokeWidth', 'progressColor', 'titleStyle' ] as ( keyof CircleCounterAttrs )[]) // by doing this type adnotation you can enable autocomplete in the array. Using the pick, you can reduce the number of lines.
+				}
+			};
+		},
+		paste( storage: Storage<CircleCounterAttrs> ): CircleCounterAttrs {
+			const { shared: s } = storage;
+			return {
+				...storage.private,
+				height: getInt( s?.height?.desktop, 100 ), // with undefined, the block will break. We need to pass the default value.
+				fontSizeTitle: getInt( s?.font?.size ),
+				titleColor: s?.colors?.text,
+				backgroundColor: s?.colors?.background
 			};
 		}
 	}

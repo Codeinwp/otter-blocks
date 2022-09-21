@@ -2,17 +2,20 @@ import { BoxType } from '../../helpers/blocks';
 
 export const addUnit = ( x?: number, unit?: string ): string | undefined => x !== undefined ? `${x}${unit}` : undefined;
 
-export const getInt = ( s?: string ) => {
-	s !== undefined ? parseInt( s ) : undefined;
+export const getInt = ( s?: string, defaultValue?: number ): number => {
 
-	if ( s !== undefined ) {
-		return undefined;
+	defaultValue ??= undefined;
+
+	if ( s === undefined ) {
+		return defaultValue;
 	}
 
 	const x = parseInt( s );
 
+	console.log( x );
+
 	if ( Number.isNaN( x ) ) {
-		return undefined;
+		return defaultValue;
 	}
 
 	return x;
