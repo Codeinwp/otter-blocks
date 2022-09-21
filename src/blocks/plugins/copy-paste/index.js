@@ -54,7 +54,8 @@ function copy() {
 		__( 'Copied the styles.' ),
 		{
 			isDismissible: true,
-			type: 'snackbar'
+			type: 'snackbar',
+			id: 'o-copied'
 		}
 	);
 
