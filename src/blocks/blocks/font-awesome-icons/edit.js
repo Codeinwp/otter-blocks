@@ -2,6 +2,8 @@
  * External dependencies.
  */
 
+import { isNumber, isString } from 'lodash';
+
 /**
  * WordPress dependencies...
  */
@@ -25,6 +27,22 @@ import {
 } from '../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
+
+const ALIGN_MAP = {
+	'right': 'flex-end',
+	'center': 'center',
+	'left': 'flex-start'
+};
+
+export const alignHandler = ( align ) => {
+	if ( isString( align ) ) {
+		return {
+			desktop: ALIGN_MAP?.[align] ?? 'center'
+		};
+	}
+
+	return align;
+};
 
 /**
  * Icons Component
@@ -54,7 +72,10 @@ const Edit = ({
 		'--border-radius': attributes.borderRadius !== undefined && `${ attributes.borderRadius }%`,
 		'--margin':	attributes.margin !== undefined && `${ getValue( 'margin' ) }px`,
 		'--padding': attributes.padding !== undefined && `${ getValue( 'padding' ) }px`,
-		'--font-size': attributes.fontSize !== undefined && `${ getValue( 'fontSize' ) }px`
+		'--font-size': attributes.fontSize !== undefined && ( isNumber( getValue( 'fontSize' ) ) ? `${ getValue( 'fontSize' ) }px` : getValue( 'fontSize' ) ),
+		'--align': alignHandler( attributes.align )?.desktop,
+		'--align-tablet': alignHandler( attributes.align )?.tablet,
+		'--align-mobile': alignHandler( attributes.align )?.mobile
 	};
 
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();
@@ -71,9 +92,6 @@ const Edit = ({
 			}`,
 			`.wp-block-themeisle-blocks-font-awesome-icons-container a {
 				color: ${ getValue( 'textColor' ) };
-			}`,
-			`.wp-block-themeisle-blocks-font-awesome-icons-container i {
-				${ getValue( 'fontSize' ) && `font-size: ${ getValue( 'fontSize' ) }px;` }
 			}`,
 			`.wp-block-themeisle-blocks-font-awesome-icons-container svg {
 				fill: ${ getValue( 'textColor' ) };

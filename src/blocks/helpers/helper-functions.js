@@ -1,4 +1,4 @@
-import { isEmpty, merge, omitBy, without } from 'lodash';
+import { isEmpty, merge, set, unset, without, omitBy } from 'lodash';
 
 import { sprintf } from '@wordpress/i18n';
 
@@ -388,11 +388,21 @@ export const setUtm = ( urlAdress, linkArea ) => {
  * @param {Function} setAttributes The function that set the attributes.
  * @param {'Desktop'|'Tablet'|'Mobile'} currentView The current view.
  * @template T
- * @returns {(value: T, keys: string[]) => void}
+ * @returns {(value: T, keys: string[], oldAttr: Object) => void}) => void}
  */
 export const buildResponsiveSetAttributes = ( setAttributes, currentView ) => {
-	return ( value, keys ) => {
-		setAttributes({ [keys[mapViewToKey[currentView] ?? 0]]: value });
+	return ( value, keys, oldAttr = {}) => {
+
+		const attrName = keys[mapViewToKey[currentView] ?? 0]?.split( '.' )[0];
+		const attr = { [attrName]: { ...oldAttr }};
+
+		if ( value === undefined ) {
+			unset( attr, keys[mapViewToKey[currentView] ?? 0]);
+		} else {
+			set( attr, keys[mapViewToKey[currentView] ?? 0], value );
+		}
+
+		setAttributes( 'object' === typeof attr[attrName] && isEmpty( attr[attrName]) ? { [attrName]: undefined } : attr );
 	};
 };
 
