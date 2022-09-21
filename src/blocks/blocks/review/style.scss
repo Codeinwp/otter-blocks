@@ -24,6 +24,7 @@
 	margin-bottom: 10px;
 	border: 0;
 	box-shadow: var( --box-shadow );
+	border-radius: var( --border-radius );
 
 	&.is-style-boxed {
 		--border-width: 3px;
