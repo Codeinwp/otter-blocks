@@ -132,7 +132,7 @@ const Edit = ({
 		'--text-color': getValue( 'textColor' ),
 		'--button-text-color': getValue( 'buttonTextColor' ),
 		'--border-color': getValue( 'borderColor' ),
-		'--star-color': getValue( 'starColor' ),
+		'--stars-color': getValue( 'starsColor' ),
 		'--pros-color': getValue( 'prosColor' ),
 		'--cons-color': getValue( 'consColor' ),
 		'--content-font-size': getValue( 'contentFontSize' ),

@@ -4,7 +4,7 @@
 	--text-color: inherit;
 	--button-text-color: #FFF;
 	--border-color: #343130;
-	--star-color: #FFBB38;
+	--stars-color: #FFBB38;
 	--pros-color: #89B784;
 	--cons-color: #D26F6F;
 	--image-width: 33;
@@ -17,7 +17,6 @@
 	--border-radius: 0;
 	--box-shadow: none;
 
-	background: var( --background-color );
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	gap: 0px 0px;
@@ -84,6 +83,7 @@
 	}
 
 	.o-review__header {
+		background: var( --background-color );
 		padding: var( --padding-top ) var( --padding-right ) 20px var( --padding-left );
 		grid-area: header;
 		overflow: hidden;
@@ -104,21 +104,22 @@
 		align-items: center;
 		flex-wrap: wrap;
 		font-size: 28px;
+		margin-top: 20px;
 	}
 
 	.o-review__header_ratings {
 		display: flex;
 		align-items: center;
-		margin-top: 20px;
 
 		svg {
 			max-width: 36px;
 			max-height: 36px;
 			width: 100%;
-			fill: #8F8F8F;
+			fill: var( --stars-color );
 
-			&.filled {
-				fill: var( --star-color );
+			&:not( .filled ) {
+				opacity: 0.5;
+				filter: grayscale(75%);
 			}
 		}
 
@@ -134,7 +135,8 @@
 		color: var( --text-color );
 
 		del {
-			color: #A2A2A2;
+			color: var( --text-color );
+			opacity: 0.4;
 			padding-right: 10px;
 		}
 	}
@@ -142,7 +144,7 @@
 	.o-review__header_details {
 		display: grid;
 		grid-template-columns: 1fr 2fr;
-		gap: 50px;
+		gap: 24px;
 		align-items: center;
 		padding-top: 30px;
 
@@ -184,6 +186,7 @@
 	}
 
 	.o-review__left {
+		background: var( --background-color );
 		grid-area: left;
 		padding: 20px 20px 20px var( --padding-left );
 		overflow: hidden;
@@ -218,10 +221,11 @@
 		svg {
 			max-width: 25px;
 			max-height: 25px;
-			fill: #8F8F8F;
+			fill: var( --stars-color );
 
-			&.filled {
-				fill: var( --star-color );
+			&:not( .filled ) {
+				opacity: 0.5;
+				filter: grayscale(75%);
 			}
 		}
 
@@ -234,6 +238,7 @@
 	}
 
 	.o-review__right {
+		background: var( --background-color );
 		grid-area: right;
 		padding: 20px var( --padding-right ) 20px 20px;
 		overflow: hidden;
@@ -288,6 +293,7 @@
 	}
 
 	.o-review__footer {
+		background: var( --background-color );
 		grid-area: footer;
 		padding: 20px var( --padding-right ) var( --padding-bottom ) var( --padding-left );
 		overflow: hidden;
