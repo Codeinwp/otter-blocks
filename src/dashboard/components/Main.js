@@ -25,6 +25,7 @@ const Main = ({
 	setTab
 }) => {
 	const [ getOption, updateOption, status ] = useSettings();
+	const feedbackBtn = applyFilters( 'otter.feedback', 'dashboard', __( 'Share your Feedback', 'otter-blocks' ), 'secondary' );
 
 	if ( 'loading' === status ) {
 		return (
@@ -62,8 +63,6 @@ const Main = ({
 			);
 		}
 	};
-
-	const feedbackBtn = applyFilters( 'otter.feedback', 'dashboard', __( 'Share your Feedback', 'otter-blocks' ), 'secondary' );
 
 	return (
 		<div className={ `otter-main is-${ currentTab}`}>
