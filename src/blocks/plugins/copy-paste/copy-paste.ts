@@ -94,7 +94,7 @@ class CopyPaste {
 
 	checkExpirationDate() {
 		const e = localStorage.getItem( 'o-copyPasteStorage-expiration' );
-		this.isExpired = Boolean( isNil( e ) || ( e !== undefined && parseInt( e ) + 24 * 60 * 60 * 1000 < Date.now() ) );
+		this.isExpired = Boolean( isNil( e ) || ( e !== undefined && parseInt( e ) + 8 * 60 * 60 * 1000 < Date.now() ) );
 	}
 }
 
