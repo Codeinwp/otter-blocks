@@ -1,4 +1,4 @@
-import { merge } from 'lodash';
+import { merge, pick } from 'lodash';
 import { getChoice } from '../../helpers/helper-functions';
 import { Storage } from './models';
 import { addUnit } from './utils';
@@ -239,6 +239,49 @@ export const coreAdaptors = {
 		paste( storage: Storage<{}> ): any {
 			return {
 				layout: storage?.shared?.layout
+			};
+		}
+	},
+	'core/gallery': {
+		copy( attrs: any ): Storage<unknown> {
+			return {
+				shared: {
+
+				},
+				private: {
+					style: attrs?.style
+				}
+			};
+		},
+		paste( storage: Storage<{}> ): any {
+			return {
+				...storage.private
+			};
+		}
+	},
+	'core/cover': {
+		copy( attrs: any ): Storage<unknown> {
+			return merge( commonExtractor( attrs ),
+				{
+					shared: {
+						padding: {
+							desktop: attrs?.style?.spacing?.padding
+						}
+					},
+					private: {
+						...pick( attrs, [ 'hasParallax', 'isRepeated', 'dimRatio', 'overlayColor', 'focalPoint', 'minHeight', 'contentPosition', 'style', 'contentPosition', 'isDark' ])
+					}
+				}
+			);
+		},
+		paste( storage: Storage<{}> ): any {
+			return {
+				...storage.private,
+				style: {
+					spacing: {
+						paddding: storage?.shared?.padding?.desktop
+					}
+				}
 			};
 		}
 	}
