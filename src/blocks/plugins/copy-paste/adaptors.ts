@@ -70,9 +70,8 @@ export const adaptors = {
 				backgroundColor: s?.colors?.background,
 				backgroundGradient: s?.colors?.backgroundGradient,
 				backgroundType: getChoice([
-					[ s?.colors?.backgroundGradient, 'gradient' ],
-					[ s?.colors?.background, 'color' ],
-					[ undefined ]
+					[ 'gradient' === s?.type?.background, 'gradient' ],
+					[ 'color' ]
 				])
 			};
 		}
