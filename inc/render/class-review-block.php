@@ -40,7 +40,7 @@ class Review_Block {
 		$id            = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-' . wp_rand( 10, 100 );
 		$class         = '';
 		$details_class = ( isset( $attributes['image'] ) && isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ? '' : 'is-single ';
-		$scale         = isset( $attributes['scale'] ) && 'half' === $attributes['scale'] ? 2 : 1;
+		$scale         = get_option( 'themeisle_blocks_settings_review_scale', false ) ? 2 : 1;
 
 		if ( ! ( ( isset( $attributes['pros'] ) && count( $attributes['pros'] ) > 0 ) || ( isset( $attributes['cons'] ) && count( $attributes['cons'] ) > 0 ) ) ) {
 			$class = 'no-pros-cons';

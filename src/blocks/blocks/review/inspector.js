@@ -352,22 +352,6 @@ const Inspector = ({
 							onChange={ changeStructure }
 						/>
 
-						<ButtonToggle
-							label={ __( 'Rating Scale', 'otter-blocks' ) }
-							options={[
-								{
-									label: __( '1-10', 'otter-blocks' ),
-									value: 'full'
-								},
-								{
-									label: __( '1-5', 'otter-blocks' ),
-									value: 'half'
-								}
-							]}
-							value={ attributes.scale || 'full' }
-							onChange={ scale => setAttributes({ scale }) }
-						/>
-
 						{ ( attributes.image || productAttributes?.image ) && (
 							<ButtonToggle
 								label={ __( 'Image Width', 'otter-blocks' ) }
@@ -850,6 +834,7 @@ const Inspector = ({
 								label={ __( 'Padding', 'otter-blocks' ) }
 								values={ responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile ]) }
 								onChange={ value => responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]) }
+								allowReset
 							/>
 						</ResponsiveControl>
 					</PanelBody>

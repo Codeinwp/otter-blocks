@@ -91,7 +91,7 @@
 		border-top-left-radius: var( --border-radius );
 		border-top-right-radius: var( --border-radius );
 
-		h2 {
+		h2, h3, h4, h5, h6 {
 			color: var( --text-color );
 			text-align: left;
 			margin: 0;
@@ -251,7 +251,7 @@
 	.o-review__right_cons {
 		padding: 10px 0;
 
-		h3 {
+		h2, h3, h4, h5, h6 {
 			color: var( --text-color );
 			margin: 0;
 		}

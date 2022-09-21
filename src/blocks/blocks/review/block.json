@@ -30,9 +30,6 @@
 		"description": {
 			"type": "string"
 		},
-		"scale": {
-			"type": "string"
-		},
 		"features": {
 			"type": "array",
 			"default": [

@@ -47,13 +47,11 @@ const { attributes: defaultAttributes } = metadata;
 
 const px = value => value ? `${ value }px` : value;
 
-const Stars = ({
-	rating,
-	scale = 'full'
-}) => {
+const Stars = ({ rating }) => {
+	const scale = Boolean( window.themeisleGutenberg.ratingScale );
 	const stars = [];
 
-	const divide = 'half' === scale ? 2 : 1;
+	const divide = scale ? 2 : 1;
 
 	for ( let i = 0; 10 / divide > i; i++ ) {
 		stars.push(
@@ -155,7 +153,7 @@ const Edit = ({
 
 	const isPlaceholder = ( 'object' === typeof status && null !== status && status.isError ) || 'isLoading' === status;
 
-	const divide = 'half' === attributes.scale ? 2 : 1;
+	const divide = Boolean( window.themeisleGutenberg.ratingScale ) ? 2 : 1;
 
 	let blockProps = useBlockProps({
 		id: attributes.id,
@@ -244,10 +242,7 @@ const Edit = ({
 
 					<div className="o-review__header_meta">
 						<div className="o-review__header_ratings">
-							<Stars
-								rating={ overallRatings }
-								scale={ attributes.scale }
-							/>
+							<Stars rating={ overallRatings } />
 
 							<span>
 								{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.abs( overallRatings / divide ).toFixed( 1 ) || 0, 10 / divide ) }
@@ -317,10 +312,7 @@ const Edit = ({
 									/>
 
 									<div className="o-review__left_feature_ratings">
-										<Stars
-											rating={ feature.rating }
-											scale={ attributes.scale }
-										/>
+										<Stars rating={ feature.rating } />
 
 										<span>
 											{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.abs( feature.rating / divide ).toFixed( 1 ) || 0, 10 / divide ) }
