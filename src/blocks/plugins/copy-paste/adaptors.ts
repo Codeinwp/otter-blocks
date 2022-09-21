@@ -16,6 +16,7 @@ import { TabsGroupAttrs } from '../../blocks/tabs/group/types';
 import { FlipAttrs } from '../../blocks/flip/types';
 import { FormAttrs } from '../../blocks/form/type';
 import { CircleCounterAttrs } from '../../blocks/circle-counter/types';
+import { ReviewAttrs } from '../../blocks/review/type';
 
 
 export const adaptors = {
@@ -510,6 +511,30 @@ export const adaptors = {
 				height: getInt( s?.height?.desktop, 100 ), // with undefined, the block will break. We need to pass the default value.
 				fontSizeTitle: getInt( s?.font?.size ),
 				titleColor: s?.colors?.text,
+				backgroundColor: s?.colors?.background
+			};
+		}
+	},
+	'themeisle-blocks/review': {
+		copy( attrs: ReviewAttrs ): Storage<ReviewAttrs> {
+			return {
+				shared: {
+					colors: {
+						text: attrs?.textColor,
+						background: attrs?.backgroundColor
+					}
+				},
+				private: {
+					primaryColor: attrs?.primaryColor,
+					buttonTextColor: attrs?.buttonTextColor
+				}
+			};
+		},
+		paste( storage: Storage<ReviewAttrs> ): ReviewAttrs {
+			const { shared: s } = storage;
+			return {
+				...storage.private,
+				textColor: s?.colors?.text,
 				backgroundColor: s?.colors?.background
 			};
 		}
