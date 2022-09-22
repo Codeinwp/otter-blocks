@@ -422,3 +422,56 @@ export const buildResponsiveGetAttributes = ( currentView, defaultView = 'Deskto
 		return ( values?.[mapViewToKey[currentView]] ?? values?.[mapViewToKey[defaultView]]);
 	};
 };
+
+/**
+ * Get Active Style Name.
+ *
+ * @param { Object } styles    Block styles.
+ * @param { Array }  className Classes of the block.
+ *
+ * @returns { string }
+ */
+export const getActiveStyle = ( styles, className ) => {
+	const classes = className?.split( ' ' ) || [];
+	const styleValues = styles.map( i => i.value );
+	const defaultValue = styles.find( i => i.isDefault )?.value || '';
+
+	for ( const style of classes ) {
+		if ( -1 === style.indexOf( 'is-style-' ) ) {
+			continue;
+		}
+
+		const potentialStyleName = style.substring( 9 );
+
+		if ( styleValues.indexOf( potentialStyleName )  ) {
+			return potentialStyleName;
+		}
+	}
+
+	return defaultValue;
+};
+
+/**
+ * Replaces the active style in the block's className.
+ *
+ * @param { string } className Class name.
+ * @param { Object } styles    Block styles.
+ * @param { Object } newStyle  The replacing style.
+ *
+ * @return { string } The updated className.
+ */
+export const changeActiveStyle = ( className, styles, newStyle ) =>{
+	const classes = className?.split( ' ' ) || [];
+	const activeStyle = getActiveStyle( styles, className );
+	const defaultValue = styles.find( i => i.isDefault )?.value || '';
+
+	if ( activeStyle ) {
+		classes.splice( classes.indexOf( `is-style-${ activeStyle }` ), 1 );
+	}
+
+	if ( newStyle && newStyle !== defaultValue ) {
+		classes.push( `is-style-${ newStyle }` );
+	}
+
+	return classes.join( ' ' );
+};;
