@@ -21,7 +21,7 @@ import domReady from '@wordpress/dom-ready';
 import ImageGrid from './../../components/image-grid/index.js';
 
 const withGalleryExtension = createHigherOrderComponent( BlockEdit => {
-	return ( props ) => {
+	return props => {
 		const onSelectImages = images => {
 			props.setAttributes({
 				images: images.map( image => ({
