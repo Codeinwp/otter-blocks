@@ -114,6 +114,17 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_review_scale',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Use 0.5 Scale for Review Block.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => false,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'otter_blocks_logger_flag',
 			array(
 				'type'         => 'string',

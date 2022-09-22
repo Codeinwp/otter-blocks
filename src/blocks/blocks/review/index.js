@@ -29,17 +29,6 @@ registerBlockType( name, {
 		'review',
 		'stars'
 	],
-	styles: [
-		{
-			name: 'default',
-			label: __( 'Default', 'otter-blocks' ),
-			isDefault: true
-		},
-		{
-			name: 'single-column',
-			label: __( 'Single Column', 'otter-blocks' )
-		}
-	],
 	edit,
 	save: () => null,
 	example: {

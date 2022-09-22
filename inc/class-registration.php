@@ -258,6 +258,7 @@ class Registration {
 				'rootUrl'                 => get_site_url(),
 				'restRoot'                => get_rest_url( null, 'otter/v1' ),
 				'showOnboarding'          => $this->show_onboarding(),
+				'ratingScale'             => get_option( 'themeisle_blocks_settings_review_scale', false ),
 				'hasModule'               => array(
 					'blockConditions' => get_option( 'themeisle_blocks_settings_block_conditions', true ),
 				),

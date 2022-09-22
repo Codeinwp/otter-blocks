@@ -1,0 +1,31 @@
+.block-editor-block-inspector .o-inspector-header {
+    display: flex;
+    padding: 0;
+    border-top: none;
+
+    .components-button {
+        flex: 1 1 0px;
+        justify-content: center;
+        border-radius: 0;
+        height: 48px;
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        cursor: pointer;
+        padding: 3px 15px;
+        margin-left: 0;
+        font-weight: 500;
+
+        &:focus {
+            box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus) var(--wp-admin-theme-color);
+            position: relative;
+            z-index: 1;
+        }
+
+        &.is-active {
+            box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus) transparent,inset 0 -4px 0 0 var(--wp-admin-theme-color);
+            position: relative;
+            z-index: 1;
+        }
+    }
+}

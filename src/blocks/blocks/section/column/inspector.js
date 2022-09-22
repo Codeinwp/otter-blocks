@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import classnames from 'classnames';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -17,8 +12,6 @@ import {
 
 import {
 	__experimentalBoxControl as BoxControl,
-	Button,
-	Dashicon,
 	PanelBody,
 	ToggleControl,
 	RangeControl,
@@ -35,6 +28,8 @@ import {
 /**
  * Internal dependencies
  */
+import InspectorHeader from '../../../components/inspector-header/index.js';
+import { InspectorExtensions } from '../../../components/inspector-slot-fill/index.js';
 import ResponsiveControl from '../../../components/responsive-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
@@ -183,46 +178,24 @@ const Inspector = ({
 
 	return (
 		<InspectorControls>
-			<PanelBody className="o-section-header-panel">
-				<Button
-					className={ classnames(
-						'header-tab',
-						{ 'is-selected': 'layout' === tab }
-					) }
-					onClick={ () => setTab( 'layout' ) }
-				>
-					<span>
-						<Dashicon icon="editor-table"/>
-						{ __( 'Layout', 'otter-blocks' ) }
-					</span>
-				</Button>
-
-				<Button
-					className={ classnames(
-						'header-tab',
-						{ 'is-selected': 'style' === tab }
-					) }
-					onClick={ () => setTab( 'style' ) }
-				>
-					<span>
-						<Dashicon icon="admin-customizer"/>
-						{ __( 'Style', 'otter-blocks' ) }
-					</span>
-				</Button>
-
-				<Button
-					className={ classnames(
-						'header-tab',
-						{ 'is-selected': 'advanced' === tab }
-					) }
-					onClick={ () => setTab( 'advanced' ) }
-				>
-					<span>
-						<Dashicon icon="admin-generic"/>
-						{ __( 'Advanced', 'otter-blocks' ) }
-					</span>
-				</Button>
-			</PanelBody>
+			<InspectorHeader
+				value={ tab }
+				options={[
+					{
+						label: __( 'Layout', 'otter-blocks' ),
+						value: 'layout'
+					},
+					{
+						label: __( 'Style', 'otter-blocks' ),
+						value: 'style'
+					},
+					{
+						label: __( 'Advanced', 'otter-blocks' ),
+						value: 'advanced'
+					}
+				]}
+				onChange={ setTab }
+			/>
 
 			{ 'layout' === tab && (
 				<Fragment>
@@ -435,6 +408,8 @@ const Inspector = ({
 					/>
 				</PanelBody>
 			) }
+
+			<InspectorExtensions/>
 		</InspectorControls>
 	);
 };

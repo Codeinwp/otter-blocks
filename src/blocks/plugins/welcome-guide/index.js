@@ -11,6 +11,7 @@ import {
 } from '@wordpress/components';
 
 import {
+	select,
 	useDispatch,
 	useSelect
 } from '@wordpress/data';
@@ -204,6 +205,8 @@ const Render = () => {
 	);
 };
 
-registerPlugin( 'otter-welcome', {
-	render: Render
-});
+if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor' ) ) {
+	registerPlugin( 'otter-welcome', {
+		render: Render
+	});
+}
