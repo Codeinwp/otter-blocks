@@ -21,7 +21,7 @@ const Thumbnail = ({
 		featuredImage,
 		altText
 	} = useSelect( select => {
-		const image = select( 'core' ).getMedia( id );
+		const image = select( 'core' ).getMedia( id, { context: 'view' });
 
 		const featuredImage = image ?
 			0 < Object.keys( image.media_details.sizes ).length ?

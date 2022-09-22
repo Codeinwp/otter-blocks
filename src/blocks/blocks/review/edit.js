@@ -1,9 +1,8 @@
 /**
  * External dependencies.
  */
-
 import classnames from 'classnames';
-
+import hexToRgba from 'hex-rgba';
 import getSymbolFromCurrency from 'currency-symbol-map';
 
 /**
@@ -46,6 +45,30 @@ import {
 
 const { attributes: defaultAttributes } = metadata;
 
+const px = value => value ? `${ value }px` : value;
+
+const Stars = ({ rating }) => {
+	const scale = Boolean( window.themeisleGutenberg.ratingScale );
+	const stars = [];
+
+	const divide = scale ? 2 : 1;
+
+	for ( let i = 0; 10 / divide > i; i++ ) {
+		stars.push(
+			<StarFilled
+				key={ i }
+				className={ classnames(
+					{
+						'filled': i < Math.round( rating / divide )
+					}
+				) }
+			/>
+		);
+	}
+
+	return stars;
+};
+
 /**
  * Review component
  * @param {import('./type').ReviewProps} props
@@ -68,23 +91,6 @@ const Edit = ({
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
 	const overallRatings = ( attributes.features.reduce( ( accumulator, feature ) => accumulator + feature.rating, 0 ) / attributes.features.length ).toFixed( 1 );
-
-	const stars = [];
-
-	for ( let i = 0; 10 > i; i++ ) {
-		stars.push(
-			<StarFilled
-				key={ i }
-				className={ classnames(
-					{
-						'low': 3 >= Math.round( overallRatings ) && i < Math.round( overallRatings ),
-						'medium': 3 < Math.round( overallRatings ) && 8 > Math.round( overallRatings ) && i < Math.round( overallRatings ),
-						'high': 7 < Math.round( overallRatings ) && 10 >= Math.round( overallRatings ) && i < Math.round( overallRatings )
-					}
-				) }
-			/>
-		);
-	}
 
 	const changeFeature = ( index, value ) => {
 		const features = [ ...attributes.features ];
@@ -116,20 +122,57 @@ const Edit = ({
 		setAttributes({ links });
 	};
 
+	const boxShadow = getValue( 'boxShadow' );
+
 	const inlineStyles = {
 		'--background-color': getValue( 'backgroundColor' ),
 		'--primary-color': getValue( 'primaryColor' ),
 		'--text-color': getValue( 'textColor' ),
-		'--button-text-color': getValue( 'buttonTextColor' )
+		'--button-text-color': getValue( 'buttonTextColor' ),
+		'--border-color': getValue( 'borderColor' ),
+		'--stars-color': getValue( 'starsColor' ),
+		'--pros-color': getValue( 'prosColor' ),
+		'--cons-color': getValue( 'consColor' ),
+		'--content-font-size': getValue( 'contentFontSize' ),
+		...( attributes?.padding?.top && { '--padding-desktop-top': attributes.padding.top }),
+		...( attributes?.padding?.bottom && { '--padding-desktop-bottom': attributes.padding.bottom }),
+		...( attributes?.padding?.right && { '--padding-desktop-right': attributes.padding.right }),
+		...( attributes?.padding?.left && { '--padding-desktop-left': attributes.padding.left }),
+		...( attributes?.paddingTablet?.top && { '--padding-tablet-top': attributes.paddingTablet.top }),
+		...( attributes?.paddingTablet?.bottom && { '--padding-tablet-bottom': attributes.paddingTablet.bottom }),
+		...( attributes?.paddingTablet?.right && { '--padding-tablet-right': attributes.paddingTablet.right }),
+		...( attributes?.paddingTablet?.left && { '--padding-tablet-left': attributes.paddingTablet.left }),
+		...( attributes?.paddingMobile?.top && { '--padding-mobile-top': attributes.paddingMobile.top }),
+		...( attributes?.paddingMobile?.bottom && { '--padding-mobile-bottom': attributes.paddingMobile.bottom }),
+		...( attributes?.paddingMobile?.right && { '--padding-mobile-right': attributes.paddingMobile.right }),
+		...( attributes?.paddingMobile?.left && { '--padding-mobile-left': attributes.paddingMobile.left }),
+		'--border-width': px( getValue( 'borderWidth' ) ),
+		'--border-radius': px( getValue( 'borderRadius' ) ),
+		'--box-shadow': boxShadow.active && `${ boxShadow.horizontal }px ${ boxShadow.vertical }px ${ boxShadow.blur }px ${ boxShadow.spread }px ${ hexToRgba( boxShadow.color || '#FFFFFF', boxShadow.colorOpacity ) }`
 	};
 
 	const isPlaceholder = ( 'object' === typeof status && null !== status && status.isError ) || 'isLoading' === status;
 
+	const divide = Boolean( window.themeisleGutenberg.ratingScale ) ? 2 : 1;
+
 	let blockProps = useBlockProps({
 		id: attributes.id,
-		className: isPlaceholder && 'is-placeholder',
+		className: isPlaceholder ? 'is-placeholder' : classnames({
+			'no-pros-cons': ! ( 0 < attributes.pros.length || 0 < attributes.cons.length ),
+			'no-footer': ! ( 0 < productAttributes?.links?.length || 0 < attributes.links.length )
+		}),
 		style: inlineStyles
 	});
+
+	const detailsWidth = {
+		25: 'is-quarter',
+		50: 'is-half',
+		100: 'is-full'
+	};
+
+	const mainHeading = attributes.mainHeading || 'h2';
+
+	const SubHeading = attributes.subHeading || 'h3';
 
 	if ( 'isLoading' === status ) {
 		return (
@@ -185,24 +228,24 @@ const Edit = ({
 								allowedFormats={ [] }
 								value={ attributes.title }
 								onChange={ title => setAttributes({ title }) }
-								tagName="h3"
+								tagName={ mainHeading }
 							/>
 						) : (
 							<RichText.Content
 								placeholder={ __( 'Name of your product…', 'otter-blocks' ) }
 								allowedFormats={ [] }
 								value={ productAttributes?.title }
-								tagName="h3"
+								tagName={ mainHeading }
 							/>
 						)
 					}
 
 					<div className="o-review__header_meta">
 						<div className="o-review__header_ratings">
-							{ stars }
+							<Stars rating={ overallRatings } />
 
 							<span>
-								{ /** translators: %s Rating score. */ sprintf( __( '%f out of 10', 'otter-blocks' ), Math.abs( overallRatings ) || 0 ) }
+								{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.abs( overallRatings / divide ).toFixed( 1 ) || 0, 10 / divide ) }
 							</span>
 						</div>
 
@@ -216,14 +259,13 @@ const Edit = ({
 							{ ( attributes.price || attributes.discounted || productAttributes?.price || productAttributes?.discounted ) && ( getSymbolFromCurrency( productAttributes?.currency || attributes.currency ) ?? '$' ) + '' + ( ( productAttributes?.discounted || attributes.discounted ) ? ( productAttributes?.discounted || attributes.discounted ) : ( productAttributes?.price || attributes.price ) ) }
 						</span>
 					</div>
-				</div>
 
-				<div className="o-review__left">
 					<div
 						className={ classnames(
-							'o-review__left_details',
+							'o-review__header_details',
 							{
-								'is-single': ! attributes.image || ( ! isSelected && ! attributes.description )
+								'is-single': ! attributes.image || ( ! isSelected && ! attributes.description ),
+								[ detailsWidth[ attributes.imageWidth ] ]: ( attributes.imageWidth && 33 !== attributes.imageWidth )
 							}
 						) }
 					>
@@ -254,26 +296,11 @@ const Edit = ({
 							/>
 						) }
 					</div>
+				</div>
 
+				<div className="o-review__left">
 					<div className="o-review__left_features">
 						{ 0 < attributes.features.length && attributes.features.map( ( feature, index ) => {
-							const ratings = [];
-
-							for ( let i = 0; 10 > i; i++ ) {
-								ratings.push(
-									<StarFilled
-										key={ i }
-										className={ classnames(
-											{
-												'low': 3 >= Math.round( feature.rating ) && i < Math.round( feature.rating ),
-												'medium': 3 < Math.round( feature.rating ) && 8 > Math.round( feature.rating ) && i < Math.round( feature.rating ),
-												'high': 7 < Math.round( feature.rating ) && 10 >= Math.round( feature.rating ) && i < Math.round( feature.rating )
-											}
-										) }
-									/>
-								);
-							}
-
 							return (
 								<div className="o-review__left_feature" key={ index }>
 									<RichText
@@ -285,9 +312,11 @@ const Edit = ({
 									/>
 
 									<div className="o-review__left_feature_ratings">
-										{ ratings }
+										<Stars rating={ feature.rating } />
 
-										<span>{ feature.rating.toFixed( 1 ) }/10</span>
+										<span>
+											{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.abs( feature.rating / divide ).toFixed( 1 ) || 0, 10 / divide ) }
+										</span>
 									</div>
 								</div>
 							);
@@ -295,51 +324,53 @@ const Edit = ({
 					</div>
 				</div>
 
-				<div className="o-review__right">
-					{ 0 < attributes.pros.length && (
-						<div className="o-review__right_pros">
-							<h4>{ __( 'Pros', 'otter-blocks' ) }</h4>
+				{ ( 0 < attributes.pros.length || 0 < attributes.cons.length ) && (
+					<div className="o-review__right">
+						{ 0 < attributes.pros.length && (
+							<div className="o-review__right_pros">
+								<SubHeading>{ attributes.prosLabel }</SubHeading>
 
-							{ attributes.pros.map( ( pro, index ) => (
-								<div className="o-review__right_pros_item" key={ index }>
-									{ check }
+								{ attributes.pros.map( ( pro, index ) => (
+									<div className="o-review__right_pros_item" key={ index }>
+										{ check }
 
-									<RichText
-										placeholder={ __( 'Why do you like the product?', 'otter-blocks' ) }
-										value={ pro }
-										onChange={ value => changePro( index, value ) }
-										tagName="p"
-									/>
-								</div>
-							) ) }
-						</div>
-					) }
+										<RichText
+											placeholder={ __( 'Why do you like the product?', 'otter-blocks' ) }
+											value={ pro }
+											onChange={ value => changePro( index, value ) }
+											tagName="p"
+										/>
+									</div>
+								) ) }
+							</div>
+						) }
 
-					{ 0 < attributes.cons.length && (
-						<div className="o-review__right_cons">
-							<h4>{ __( 'Cons', 'otter-blocks' ) }</h4>
+						{ 0 < attributes.cons.length && (
+							<div className="o-review__right_cons">
+								<SubHeading>{ attributes.consLabel }</SubHeading>
 
-							{ attributes.cons.map( ( con, index ) => (
-								<div className="o-review__right_cons_item" key={ index }>
-									{ close }
+								{ attributes.cons.map( ( con, index ) => (
+									<div className="o-review__right_cons_item" key={ index }>
+										{ close }
 
-									<RichText
-										placeholder={ __( 'What can be improved?', 'otter-blocks' ) }
-										value={ con }
-										onChange={ value => changeCon( index, value ) }
-										tagName="p"
-									/>
-								</div>
-							) )}
-						</div>
-					) }
-				</div>
+										<RichText
+											placeholder={ __( 'What can be improved?', 'otter-blocks' ) }
+											value={ con }
+											onChange={ value => changeCon( index, value ) }
+											tagName="p"
+										/>
+									</div>
+								) )}
+							</div>
+						) }
+					</div>
+				) }
 
 				{ ( 0 < productAttributes?.links?.length || 0 < attributes.links.length ) && (
 					<div className="o-review__footer">
-						<span className="o-review__footer_label">
-							{ __( 'Buy this product', 'otter-blocks' ) }
-						</span>
+						<SubHeading className="o-review__footer_label">
+							{ attributes.buttonsLabel }
+						</SubHeading>
 
 						<div className="o-review__footer_buttons">
 							{ ( productAttributes?.links || attributes.links ).map( ( link, index ) => (

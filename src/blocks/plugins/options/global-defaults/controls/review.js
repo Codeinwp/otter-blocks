@@ -150,11 +150,6 @@ const Review = ({
 				initialOpen={ false }
 				colorSettings={ [
 					{
-						value: defaults.primaryColor,
-						onChange: value => changeConfig( blockName, { primaryColor: value }),
-						label: __( 'Primary', 'otter-blocks' )
-					},
-					{
 						value: defaults.backgroundColor,
 						onChange: value => changeConfig( blockName, { backgroundColor: value }),
 						label: __( 'Background', 'otter-blocks' )
@@ -165,17 +160,48 @@ const Review = ({
 						label: __( 'Text', 'otter-blocks' )
 					},
 					{
+						value: defaults.primaryColor,
+						onChange: value => changeConfig( blockName, { primaryColor: value }),
+						label: __( 'Button', 'otter-blocks' )
+					},
+					{
 						value: defaults.buttonTextColor,
 						onChange: value => changeConfig( blockName, { buttonTextColor: value }),
 						label: __( 'Button Text', 'otter-blocks' )
+					},
+					{
+						value: defaults.borderColor,
+						onChange: value => changeConfig( blockName, { borderColor: value }),
+						label: __( 'Border', 'otter-blocks' )
+					},
+					{
+						value: defaults.starsColor,
+						onChange: value => changeConfig( blockName, { starsColor: value }),
+						label: __( 'Stars', 'otter-blocks' )
+					},
+					{
+						value: defaults.prosColor,
+						onChange: value => changeConfig( blockName, { prosColor: value }),
+						label: __( 'Pros', 'otter-blocks' )
+					},
+					{
+						value: defaults.consColor,
+						onChange: value => changeConfig( blockName, { consColor: value }),
+						label: __( 'Cons', 'otter-blocks' )
 					}
 				] }
 			>
+				<ContrastChecker
+					{ ...{
+						textColor: defaults.textColor,
+						backgroundColor: defaults.backgroundColor
+					} }
+				/>
 
 				<ContrastChecker
 					{ ...{
-						textColor: defaults.primaryColor,
-						backgroundColor: defaults.backgroundColor
+						textColor: defaults.buttonTextColor,
+						backgroundColor: defaults.parameter
 					} }
 				/>
 			</PanelColorSettings>

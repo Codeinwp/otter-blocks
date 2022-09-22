@@ -11,6 +11,7 @@ type Attributes = {
 	hideArrows: boolean
 	hideBullets: boolean
 	height: number
+	width: string
 }
 
 export type SliderProps = BlockProps<Attributes>

@@ -1,19 +1,26 @@
 {
 	"compilerOptions": {
 	  "target": "esnext" /* Specify ECMAScript target version: 'ES3' (default), 'ES5', 'ES2015', 'ES2016', 'ES2017', 'ES2018', 'ES2019' or 'ESNEXT'. */,
-	  "module": "commonjs" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */,
+	  "module": "esnext" /* Specify module code generation: 'none', 'commonjs', 'amd', 'system', 'umd', 'es2015', or 'ESNext'. */,
 	  "allowJs": true /* Allow javascript files to be compiled. */,
 	  "checkJs": false /* Report errors in .js files. */,
 	  "outDir": "./build" /* Redirect output structure to the directory. */,
 	  "rootDir": "./src" /* Specify the root directory of input files. Use to control the output directory structure with --outDir. */,
-	  "strict": false /* Enable all strict type-checking options. */,
-	  "esModuleInterop": true /* Enables emit interoperability between CommonJS and ES Modules via creation of namespace objects for all imports. Implies 'allowSyntheticDefaultImports'. */,
+	  "strict": true /* Enable all strict type-checking options. */,
 	  "forceConsistentCasingInFileNames": true, /* Disallow inconsistently-cased references to the same file. */
 	  "resolveJsonModule": true,
-	  "jsx": "react-jsx",
+	  "jsx": "preserve",
 	  "noUncheckedIndexedAccess": true,
+	  "lib": [ "dom", "esnext" ],
+	  "moduleResolution": "node",
+	  "allowSyntheticDefaultImports": true,
+	  "esModuleInterop": false,
+	  "declaration": true,
+	  "declarationMap": true,
+	  "isolatedModules": true,
+	  "typeRoots": ["./node_modules/@types"]
 	},
-	"include": ["src/**/*"],
+	"include": ["src/**/*" ],
 	"exclude": [
 		"node_modules/**/*",
 		"build",

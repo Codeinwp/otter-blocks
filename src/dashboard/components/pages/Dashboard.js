@@ -129,6 +129,16 @@ const Dashboard = ({
 
 				<PanelRow>
 					<ToggleControl
+						label={ __( 'Use 1-5 Scale for Review Block', 'otter-blocks' ) }
+						help={ __( 'Use 1-5 rating scale instead of the default 1-10.', 'otter-blocks' ) }
+						checked={ Boolean( getOption( 'themeisle_blocks_settings_review_scale' ) ) }
+						disabled={ 'saving' === status }
+						onChange={ () => updateOption( 'themeisle_blocks_settings_review_scale', ! Boolean( getOption( 'themeisle_blocks_settings_review_scale' ) ) ) }
+					/>
+				</PanelRow>
+
+				<PanelRow>
+					<ToggleControl
 						label={ __( 'Anonymous Data Tracking.', 'otter-blocks' ) }
 						help={ __( 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.', 'otter-blocks' ) }
 						checked={ 'yes' === getOption( 'otter_blocks_logger_flag' ) ? true : false }
