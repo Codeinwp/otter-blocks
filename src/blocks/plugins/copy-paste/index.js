@@ -2,22 +2,19 @@
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
-
 import { createHigherOrderComponent } from '@wordpress/compose';
-
 import { select, dispatch } from '@wordpress/data';
-
 import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
-
 import { Fragment } from '@wordpress/element';
-
 import { addFilter } from '@wordpress/hooks';
-import { adaptors } from './adaptors';
-import CopyPaste from './copy-paste';
+import { KeyboardShortcuts } from '@wordpress/components';
 
 /**
   * Internal dependencies.
   */
+import { adaptors } from './adaptors';
+import CopyPaste from './copy-paste';
+
 
 const copyPaste = new CopyPaste();
 
@@ -94,6 +91,13 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 			return (
 				<Fragment>
 					<BlockEdit { ...props } />
+
+					<KeyboardShortcuts
+						shortcuts={ {
+							'ctrl+alt+c': copy,
+							'ctrl+alt+v': ! copyPaste.isExpired ? paste : () => {}
+						} }
+					/>
 
 					<PluginBlockSettingsMenuItem
 						label={  __( 'Copy style', 'otter-blocks' ) }
