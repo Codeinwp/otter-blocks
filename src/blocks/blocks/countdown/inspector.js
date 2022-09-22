@@ -422,7 +422,7 @@ const Inspector = ({
 				/>
 
 				{
-					attributes?.triggers && (
+					attributes?.onEndAction && (
 						<Fragment>
 							<p>
 								{ __( 'Paste the following code in the block that you want to show up or hide (in the same page) when the countdown end. Select the block, go to Inspector > Advanced, and paste into the field "Additional CSS class"', 'otter-blocks' ) }
