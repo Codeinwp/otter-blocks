@@ -20,7 +20,6 @@ import { addFilter } from '@wordpress/hooks';
  * Internal Dependencies
  */
 import './editor.scss';
-import ButtonVariant = Button.ButtonVariant;
 import FeedbackForm from './feedback-form';
 
 const { assetsPath } = window.themeisleGutenberg ? window.themeisleGutenberg : window.otterObj;
@@ -29,16 +28,14 @@ const finishIcon = assetsPath + ( '/' === assetsPath[ assetsPath.length - 1 ] ? 
 /**
  * Displays a button that opens a modal for sending feedback
  *
- * @param source The area from where the feedback is given
- * @param text Text to display inside the button
- * @param variant Variant of the button
+ * @param {import('./type').FeedbackModalProps} props
  * @returns
  */
-const Feedback = (
-	source: string,
+const FeedbackModal = ({
+	source,
 	text = __( 'Help us improve', 'otter-blocks' ),
-	variant:ButtonVariant = 'link'
-): JSX.Element => {
+	variant = 'link'
+}) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ status, setStatus ] = useState( 'notSubmitted' );
 
@@ -95,4 +92,4 @@ const Feedback = (
 	);
 };
 
-addFilter( 'otter.feedback', 'themeisle-gutenberg/feedback-modal', Feedback );
+addFilter( 'otter.feedback', 'themeisle-gutenberg/feedback-modal', FeedbackModal );

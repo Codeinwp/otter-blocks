@@ -1,7 +1,6 @@
 declare global {
 	interface Window {
 		themeisleGutenberg?: {
-			siteURL: string
 			version: string
 			isCompatible: boolean
 			hasPro: boolean

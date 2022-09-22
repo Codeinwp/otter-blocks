@@ -240,7 +240,7 @@ const Fields = ({
 				</ButtonGroup>
 
 				<div className="o-fp-wrap">
-					{ applyFilters( 'otter.feedback', 'dynamic-value' ) }
+					{ applyFilters( 'otter.feedback', { source: 'dynamic-value' }) }
 					{ applyFilters( 'otter.poweredBy', '' ) }
 				</div>
 			</PanelBody>

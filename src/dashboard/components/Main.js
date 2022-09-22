@@ -25,7 +25,7 @@ const Main = ({
 	setTab
 }) => {
 	const [ getOption, updateOption, status ] = useSettings();
-	const feedbackBtn = applyFilters( 'otter.feedback', 'dashboard', __( 'Share your Feedback', 'otter-blocks' ), 'secondary' );
+	const feedbackBtn = applyFilters( 'otter.feedback', { source: 'dashboard', text: __( 'Share your Feedback', 'otter-blocks' ), variant: 'secondary' });
 
 	if ( 'loading' === status ) {
 		return (

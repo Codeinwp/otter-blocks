@@ -36,30 +36,28 @@ const collectedInfo = [
 ];
 
 const helpTextByStatus = {
-	'error': __( 'There has been an error. Your feedback couldn\'t be sent.' ),
-	'emptyFeedback': __( 'Please provide a feedback before submitting the form.', 'otter-blocks' )
+	error: __( 'There has been an error. Your feedback couldn\'t be sent.' ),
+	emptyFeedback: __( 'Please provide a feedback before submitting the form.', 'otter-blocks' )
 };
 
 /**
  * Displays a button that opens a modal for sending feedback
  *
- * @param source The area from where the feedback is given
- * @param status
- * @param setStatus
+ * @param {import('./type').FeedbackFormProps} props
  * @returns
  */
 const FeedbackForm = ({
 	source,
 	status,
 	setStatus
-}): JSX.Element => {
+}) => {
 	const [ feedback, setFeedback ] = useState( '' );
 	const [ showInfo, setShowInfo ] = useState( false );
 
 	useEffect( () => {
-		const info = document.querySelector( '.o-feedback-form .info' ) as HTMLElement;
+		const info = document.querySelector( '.o-feedback-form .info' );
 		if ( info ) {
-			info.style.height = showInfo ? `${ info.querySelector( '.wrapper' ).clientHeight }px` : '0';
+			info.style.height = showInfo ? `${ info.querySelector( '.wrapper' )?.clientHeight }px` : '0';
 		}
 
 	}, [ showInfo ]);

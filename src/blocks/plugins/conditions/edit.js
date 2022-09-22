@@ -533,7 +533,7 @@ const Edit = ({
 				) }
 
 				<div className="o-fp-wrap">
-					{ applyFilters( 'otter.feedback', 'conditions' ) }
+					{ applyFilters( 'otter.feedback', { source: 'conditions' }) }
 					{ applyFilters( 'otter.poweredBy', '' ) }
 				</div>
 			</PanelBody>
