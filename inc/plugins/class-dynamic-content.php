@@ -72,11 +72,11 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function apply_dynamic_link_button( $content ) { 
-		if ( false === strpos( $content, '#otterDynamic' ) ) {
+		if ( false === strpos( $content, '#otterDynamicLink' ) ) {
 			return $content;
 		}
 
-		$re = '/#otterDynamic\/?.[^"]*/';
+		$re = '/#otterDynamicLink\/?.[^"]*/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_link_button' ), $content );
 	}
@@ -527,7 +527,7 @@ class Dynamic_Content {
 			return;
 		}
 
-		$data = explode( '#otterDynamic', $data[0] );
+		$data = explode( '#otterDynamicLink', $data[0] );
 		$data = self::query_string_to_array( $data[1] );
 	
 		$link = $this->get_link( $data );

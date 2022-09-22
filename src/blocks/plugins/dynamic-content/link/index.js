@@ -73,7 +73,7 @@ const supportedBlocks = {
 const getAttributes = ( attributes, name ) => {
 	const link = attributes[ supportedBlocks[ name ].link ] || '';
 
-	if ( ! link.includes( '#otterDynamic' ) ) {
+	if ( ! link.includes( '#otterDynamicLink' ) ) {
 		return {};
 	}
 
@@ -123,7 +123,7 @@ const DynamicLinkControl = ({
 			attrs.context = 'query';
 		}
 
-		props.setAttributes({ [ supportedBlocks[ props.name ].link ]: `#otterDynamic?${ getQueryStringFromObject( attrs ) }` });
+		props.setAttributes({ [ supportedBlocks[ props.name ].link ]: `#otterDynamicLink?${ getQueryStringFromObject( attrs ) }` });
 	};
 
 	const onRemove = () => {
