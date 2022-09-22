@@ -3,6 +3,7 @@ import { getChoice } from '../../helpers/helper-functions';
 import { Storage } from './models';
 import { addUnit } from './utils';
 
+
 const commonExtractor = ( attrs ): Storage<unknown> => {
 	return {
 		shared: {
@@ -38,6 +39,7 @@ const commonExtractor = ( attrs ): Storage<unknown> => {
 const commonApplyer = ( storage: Storage<unknown> ) => {
 	return {
 		fontSize: storage?.shared?.font?.size,
+		textAlign: storage?.shared?.font?.align,
 		style: {
 			typography: {
 				fontStyle: storage?.shared?.font?.style,
