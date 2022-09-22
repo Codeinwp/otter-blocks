@@ -450,6 +450,38 @@ class Registration {
 					'timezone' => $tz_offset,
 				)
 			);
+
+			add_action(
+				'wp_head',
+				function() {
+					echo '
+						<style type="text/css" data-source="otter-blocks">
+							[class*="o-countdown-trigger-on-end-"] {
+								transition: opacity 1s ease;
+							}
+							
+							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show, [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide:not(.o-cntdn-ready), [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide.o-cntdn-hide, [data-intv-start]:not(.o-cntdn-ready) {
+								height: 0px !important;
+								max-height: 0px !important;
+								min-height: 0px !important;
+								visibility: hidden;
+								box-sizing: border-box;
+								margin: 0px !important;
+								padding: 0px !important;
+								opacity: 0;
+							}
+
+							.wp-block-themeisle-blocks-countdown:not(.o-cntdn-ready) {
+								visibility: hidden;
+							}
+
+							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show {
+								opacity: 0;
+							}
+						</style>
+				';
+				}
+			);
 		}
 
 		if ( ! self::$scripts_loaded['form'] && has_block( 'themeisle-blocks/form', $post ) ) {

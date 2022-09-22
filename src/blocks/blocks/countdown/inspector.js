@@ -19,7 +19,9 @@ import {
 	FontSizePicker,
 	__experimentalBoxControl as BoxControl,
 	SelectControl,
-	__experimentalUnitControl as UnitContol
+	__experimentalUnitControl as UnitContol,
+	TextControl,
+	BaseControl
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -33,7 +35,8 @@ import {
  * Internal dependencies
  */
 import ResponsiveControl from '../../components/responsive-control/index.js';
-import { mergeBoxDefaultValues, removeBoxDefaultValues, buildResponsiveSetAttributes, buildResponsiveGetAttributes } from '../../helpers/helper-functions.js';
+import { mergeBoxDefaultValues, removeBoxDefaultValues, buildResponsiveSetAttributes, buildResponsiveGetAttributes, objectCleaner } from '../../helpers/helper-functions.js';
+import { Fragment } from '@wordpress/element';
 
 const defaultFontSizes = [
 	{
@@ -59,6 +62,30 @@ const defaultFontSizes = [
 ];
 
 const fontWeights = [ '', '100', '200', '300', '400', '500', '600', '700', '800', '900' ].map( x => ({ label: x ? x : 'Default', value: x }) );
+
+const onExpireHelpMsg = ( behaviour ) => {
+	switch ( behaviour ) {
+	case 'redirectLink':
+		return __( 'Redirect the user to another URL, when the countdown reaches 0', 'otter-blocks' );
+	case 'hide':
+		return __( 'Hide when the countdown reaches 0', 'otter-blocks' );
+	case 'restart':
+		return 'The Countdown will restart when it reaches 0 and the page is refreshed';
+	default:
+		return __( 'The countdown remains visible when it reaches 0', 'otter-blocks' );
+	}
+};
+
+const countdownMoveHelpMsg = ( mode ) => {
+	switch ( mode ) {
+	case 'timer':
+		return __( 'A fixed amount of time for each browser session (Evergreen Countdown)', 'otter-blocks' );
+	case 'interval':
+		return __( 'The countdown will be active only between the Start Date and the End Date', 'otter-blocks' );
+	default:
+		return __( 'A universal deadline for all visitors', 'otter-blocks' );
+	}
+};
 
 /**
  *
@@ -100,35 +127,199 @@ const Inspector = ({
 	return (
 		<InspectorControls>
 			<PanelBody
-				title={ __( 'Time', 'otter-blocks' ) }
+				title={ __( 'Time Settings', 'otter-blocks' ) }
 			>
-				<Dropdown
-					position="bottom left"
-					headerTitle={ __( 'Select the date for the deadline', 'otter-blocks' ) }
-					renderToggle={ ({ onToggle, isOpen }) => (
-						<>
-							<Button
-								onClick={ onToggle }
-								isSecondary
-								aria-expanded={ isOpen }
-							>
-								{ attributes.date ? format( settings.formats.datetime, attributes.date ) : __( 'Select Date', 'otter-blocks' ) }
-							</Button>
-						</>
-					) }
-					renderContent={ () => (
-						<DateTimePicker
-							currentDate={ attributes.date }
-							onChange={ date => setAttributes({ date }) }
-						/>
-					) }
+
+				<SelectControl
+					label={ __( 'Countdown Type', 'otter-blocks' ) }
+					value={  attributes.mode }
+					onChange={ value => {
+
+						const attrs = {
+							mode: value ? value : undefined
+						};
+
+						if ( ! value ) {
+							attrs.date = undefined;
+						}
+
+						if ( 'timer' !== value ) {
+							attrs.timer = undefined;
+							if ( 'restart' === attributes.behaviour ) {
+								attrs.behaviour = undefined;
+							}
+						}
+
+						if ( 'interval' !== value ) {
+							attrs.startInterval = undefined;
+							attrs.endInterval = undefined;
+						}
+
+						setAttributes( attrs );
+					}
+
+					}
+					options={[
+						{
+							label: __( 'Static', 'otter-blocks' ),
+							value: ''
+						},
+						{
+							label: __( 'Evergeen', 'otter-blocks' ),
+							value: 'timer'
+						},
+						{
+							label: __( 'Interval', 'otter-blocks' ),
+							value: 'interval'
+						}
+					]}
+					help={ countdownMoveHelpMsg( attributes.mode )}
 				/>
+
+				{
+					attributes.mode === undefined && (
+						<Dropdown
+							position="bottom left"
+							headerTitle={ __( 'Select the date for the deadline', 'otter-blocks' ) }
+							renderToggle={ ({ onToggle, isOpen }) => (
+								<>
+									<Button
+										onClick={ onToggle }
+										isSecondary
+										aria-expanded={ isOpen }
+										className="o-extend-btn"
+									>
+										{ attributes.date ? format( settings.formats.datetime, attributes.date ) : __( 'Select Date', 'otter-blocks' ) }
+									</Button>
+								</>
+							) }
+							renderContent={ () => (
+								<DateTimePicker
+									currentDate={ attributes.date }
+									onChange={ date => setAttributes({ date }) }
+								/>
+							) }
+							className="o-extend"
+						/>
+					)
+				}
+
+				{
+					'timer' === attributes.mode && (
+						<Fragment>
+							<TextControl
+								type="number"
+								label={__( 'Days', 'otter-blocks' )}
+								value={ attributes?.timer?.days ?? '' }
+								onChange={ ( days ) => {
+									setAttributes({
+										timer: objectCleaner({ ...attributes.timer, days })
+									});
+								}}
+							/>
+							<TextControl
+								type="number"
+								label={__( 'Hours', 'otter-blocks' )}
+								value={ attributes?.timer?.hours ?? '' }
+								onChange={ ( hours ) => {
+									setAttributes({
+										timer: objectCleaner({ ...attributes.timer, hours })
+									});
+								}}
+							/>
+							<TextControl
+								type="number"
+								label={__( 'Minutes', 'otter-blocks' )}
+								value={ attributes?.timer?.minutes ?? '' }
+								onChange={ ( minutes ) => {
+									setAttributes({
+										timer: objectCleaner({ ...attributes.timer, minutes })
+									});
+								}}
+							/>
+							<TextControl
+								type="number"
+								label={__( 'Seconds', 'otter-blocks' )}
+								value={ attributes?.timer?.seconds ?? '' }
+								onChange={ ( seconds ) => {
+									setAttributes({
+										timer: objectCleaner({ ...attributes.timer, seconds })
+									});
+								}}
+							/>
+						</Fragment>
+					)
+				}
+
+				{
+					'interval' === attributes.mode && (
+						<Fragment>
+							<BaseControl
+								label={ __( 'Start Date', 'otter-blocks' ) }
+							>
+								<Dropdown
+									position="bottom left"
+									headerTitle={ __( 'Select the date for the deadline', 'otter-blocks' ) }
+									renderToggle={ ({ onToggle, isOpen }) => (
+										<>
+											<Button
+												onClick={ onToggle }
+												isSecondary
+												aria-expanded={ isOpen }
+												className="o-extend-btn"
+											>
+												{ attributes.startInterval ? format( settings.formats.datetime, attributes.startInterval ) : __( 'Select Start Date', 'otter-blocks' ) }
+											</Button>
+										</>
+									) }
+									renderContent={ () => (
+										<DateTimePicker
+											currentDate={ attributes.startInterval }
+											onChange={ startInterval => setAttributes({ startInterval }) }
+										/>
+									) }
+									className="o-extend"
+								/>
+							</BaseControl>
+
+							<BaseControl
+								label={ __( 'End Date', 'otter-blocks' ) }
+							>
+								<Dropdown
+									position="bottom left"
+									headerTitle={ __( 'Select the date for the deadline', 'otter-blocks' ) }
+									renderToggle={ ({ onToggle, isOpen }) => (
+										<>
+											<Button
+												onClick={ onToggle }
+												isSecondary
+												aria-expanded={ isOpen }
+												className="o-extend-btn"
+											>
+												{ attributes.endInterval ? format( settings.formats.datetime, attributes.endInterval ) : __( 'Select End Date', 'otter-blocks' ) }
+											</Button>
+										</>
+									) }
+									renderContent={ () => (
+										<DateTimePicker
+											currentDate={ attributes.endInterval }
+											onChange={ endInterval => setAttributes({ endInterval }) }
+										/>
+									) }
+									className="o-extend"
+								/>
+							</BaseControl>
+						</Fragment>
+					)
+				}
+
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
+				title={ __( 'Display', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
+
 				<ToggleControl
 					label={ __( 'Display Days', 'otter-blocks' ) }
 					checked={ ! attributes?.exclude?.includes( 'day' ) }
@@ -159,10 +350,99 @@ const Inspector = ({
 					onChange={ hasSeparators => setAttributes({ hasSeparators }) }
 				/>
 
+				<ResponsiveControl
+					label={ __( 'Space Between boxes', 'otter-blocks' ) }
+				>
+					<RangeControl
+						value={ responsiveGetAttributes([ attributes.gap, attributes.gapTablet, attributes.gapMobile ]) ?? 6 }
+						onChange={ value => responsiveSetAttributes( value, [ 'gap', 'gapTablet', 'gapMobile' ]) }
+						min={ 0 }
+						max={ 100 }
+						allowReset
+					/>
+				</ResponsiveControl>
+
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Dimensions & Spacing', 'otter-blocks' ) }
+				title={ __( 'End Action', 'otter-blocks' ) }
+				initialOpen={false}
+			>
+				<SelectControl
+					label={ __( 'On Expire', 'otter-blocks' ) }
+					value={ attributes.behaviour }
+					onChange={ behaviour => {
+						if ( 'redirectLink' === behaviour ) {
+							setAttributes({ behaviour, redirectLink: undefined });
+						} else {
+							setAttributes({ behaviour });
+						}
+					}}
+					options={[
+						{
+							label: __( 'No action', 'otter-blocks' ),
+							value: ''
+						},
+						{
+							label: __( 'Hide the Countdown', 'otter-blocks' ),
+							value: 'hide'
+						},
+						...( 'timer' === attributes.mode ? [{
+							label: __( 'Restart the Countdown', 'otter-blocks' ),
+							value: 'restart'
+						}] : []),
+						{
+							label: __( 'Redirect to link', 'otter-blocks' ),
+							value: 'redirectLink'
+						}
+					]}
+					help={ onExpireHelpMsg( attributes.behaviour ) }
+				/>
+
+				{
+					'redirectLink' === attributes.behaviour && (
+						<TextControl
+							label={ __( 'Redirect Link', 'otter-blocks' ) }
+							value={ attributes.redirectLink }
+							onChange={ redirectLink => setAttributes({ redirectLink })}
+						/>
+					)
+				}
+
+				<ToggleControl
+					label={ __( 'Enable Hide/Show other blocks when the Countdown ends.', 'otter-blocks' ) }
+					checked={ attributes.onEndAction !== undefined }
+					onChange={ value => {
+						if ( value ) {
+							setAttributes({ onEndAction: 'all' });
+						} else {
+							setAttributes({ onEndAction: undefined });
+						}
+					}}
+				/>
+
+				{
+					attributes?.onEndAction && (
+						<Fragment>
+							<p>
+								{ __( 'Paste the following code in the block that you want to show up or hide (in the same page) when the countdown end. Select the block, go to Inspector > Advanced, and paste into the field "Additional CSS class"', 'otter-blocks' ) }
+							</p>
+							<p style={{ marginTop: '10px', marginBottom: '5px' }}>{ __( 'Show trigger', 'otter-blocks' ) }</p>
+							<code style={{ display: 'block', padding: '10px' }}>
+								{ `o-countdown-trigger-on-end-${ attributes.id?.split( '-' ).pop()} o-cntdn-bhv-show` }
+							</code>
+							<p style={{ marginTop: '10px', marginBottom: '5px' }}>{ __( 'Hide trigger', 'otter-blocks' ) }</p>
+							<code style={{ display: 'block', padding: '10px' }}>
+								{ `o-countdown-trigger-on-end-${ attributes.id?.split( '-' ).pop()} o-cntdn-bhv-hide` }
+							</code>
+						</Fragment>
+					)
+				}
+
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Dimensions', 'otter-blocks' ) }
 				initialOpen={false}
 			>
 				<ResponsiveControl
@@ -181,18 +461,6 @@ const Inspector = ({
 						onChange={ value => responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]) }
 						min={ 50 }
 						max={ 800 }
-						allowReset
-					/>
-				</ResponsiveControl>
-
-				<ResponsiveControl
-					label={ __( 'Space Between', 'otter-blocks' ) }
-				>
-					<RangeControl
-						value={ responsiveGetAttributes([ attributes.gap, attributes.gapTablet, attributes.gapMobile ]) ?? 6 }
-						onChange={ value => responsiveSetAttributes( value, [ 'gap', 'gapTablet', 'gapMobile' ]) }
-						min={ 0 }
-						max={ 100 }
 						allowReset
 					/>
 				</ResponsiveControl>
@@ -412,6 +680,7 @@ const Inspector = ({
 
 				</ResponsiveControl> */}
 			</PanelBody>
+
 		</InspectorControls>
 	);
 };
