@@ -10,14 +10,17 @@
 	--submit-color: white;
 	--submit-msg-color: green;
 	--submit-error-color: red;
-	--inputs-gap: 10px;
-	--input-gap: 16px;
+	--inputs-gap: 16px;
+	--input-gap: 10px;
 	--label-font-size: var(--bodyfontsize, inherit);
 	--message-font-size: var(--bodyfontsize, inherit);
 	--submit-font-size: var(--btnfs, var(--bodyfontsize, inherit));
 	--input-color: initial;
 	--input-font-size: 1em;
 	--help-font-size: 13px;
+	--input-bg-color: initial;
+
+	border: none;
 
 	.otter-form__container {
 		display: flex;
@@ -31,7 +34,7 @@
 		.wp-block-button {
 			display: flex;
 			align-items: baseline;
-			flex-direction: row;
+			flex-direction: column;
 
 			.wp-block-button__link {
 				font-size: var(--submit-font-size);
@@ -41,10 +44,12 @@
 				color: var(--submit-color);
 				border: 0px;
 				transition: background-color 0.15s linear;
+				max-width: max-content;
 			}
 
+
 			&.right {
-				flex-direction: row-reverse;
+				align-items: flex-end;
 			}
 
 			&.full {
@@ -53,11 +58,41 @@
 
 				.wp-block-button__link {
 					width: 100%;
+					max-width: unset;
 				}
 			}
 
 			@media (max-width: 640px) {
 				flex-direction: column;
+			}
+		}
+
+		> .protection {
+			display: none;
+		}
+
+		.has-submit-msg  {
+
+			> div {
+				display: flex;
+				flex-direction: column;
+				align-items: flex-start;
+			}
+
+			&:not(.full) .o-form-server-response {
+				padding-left: 0px;
+			}
+
+			&.right > div {
+				align-items: flex-end;
+				
+				.o-form-server-response {
+					padding-right: 0px;
+				}
+			}
+
+			&.full > div {
+				align-items: center;
 			}
 		}
 	}
@@ -89,12 +124,13 @@
 			border-color: var(--border-color);
 			border-style: solid;
 			font-size: var(--input-font-size);
+			background: var(--input-bg-color);
 		}
 
 		.o-form-help {
 			opacity: 0.8;
 			color: var(--help-label-color);
-			margin-bottom: 12px;
+			margin-bottom: 0px;
 			font-size: var(--help-font-size);
 		}
 	}
@@ -117,13 +153,11 @@
 		}
 	}
 
-
 	.o-form-server-response {
 		text-align: left;
 		padding: 1rem;
 		font-size: var(--message-font-size);
 		border-radius: 10%;
-		margin-left: 10px;
 
 		&.o-success {
 			color: var(--submit-msg-color);

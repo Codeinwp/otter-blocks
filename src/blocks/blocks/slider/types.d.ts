@@ -1,8 +1,8 @@
-import { BlockProps, InspectorProps, MediaImageProps } from '../../helpers/blocks'
+import { BlockProps, InspectorProps, MediaImageProps } from '../../helpers/blocks';
 
 type Attributes = {
 	id: string
-	images: (MediaImageProps & {caption: string})[]
+	images: ( MediaImageProps & {caption: string})[]
 	perView: number
 	gap: number
 	peek: number
@@ -11,6 +11,7 @@ type Attributes = {
 	hideArrows: boolean
 	hideBullets: boolean
 	height: number
+	width: string
 }
 
 export type SliderProps = BlockProps<Attributes>

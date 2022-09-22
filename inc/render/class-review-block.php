@@ -37,27 +37,49 @@ class Review_Block {
 			);
 		}
 
-		$id        = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-' . wp_rand( 10, 100 );
-		$is_single = ( isset( $attributes['image'] ) && isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ? '' : ' is-single';
+		$id            = isset( $attributes['id'] ) ? $attributes['id'] : 'wp-block-themeisle-blocks-review-' . wp_rand( 10, 100 );
+		$class         = '';
+		$details_class = ( isset( $attributes['image'] ) && isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ? '' : 'is-single ';
+		$scale         = get_option( 'themeisle_blocks_settings_review_scale', false ) ? 2 : 1;
+
+		if ( ! ( ( isset( $attributes['pros'] ) && count( $attributes['pros'] ) > 0 ) || ( isset( $attributes['cons'] ) && count( $attributes['cons'] ) > 0 ) ) ) {
+			$class = 'no-pros-cons';
+		}
+
+		if ( ! ( isset( $attributes['links'] ) && count( $attributes['links'] ) > 0 ) ) {
+			$class .= ' no-footer';
+		}
+
+		$details_width = array(
+			25  => 'is-quarter',
+			50  => 'is-half',
+			100 => 'is-full',
+		);
+
+		$details_class .= isset( $attributes['imageWidth'] ) && 33 !== $attributes['imageWidth'] ? $details_width[ $attributes['imageWidth'] ] : '';
 
 		$wrapper_attributes = get_block_wrapper_attributes(
 			array(
-				'id' => $id,
+				'id'    => $id,
+				'class' => $class,
 			) 
 		);
+
+		$main_heading = isset( $attributes['mainHeading'] ) ? $attributes['mainHeading'] : 'h2';
+		$sub_heading  = isset( $attributes['subHeading'] ) ? $attributes['subHeading'] : 'h3';
 
 		$html  = '<div ' . $wrapper_attributes . '>';
 		$html .= '  <div class ="o-review__header">';
 
 		if ( isset( $attributes['title'] ) && ! empty( $attributes['title'] ) ) {
-			$html .= '<h3>' . esc_html( $attributes['title'] ) . '</h3>';
+			$html .= '<' . $main_heading . '>' . esc_html( $attributes['title'] ) . '</' . $main_heading . '>';
 		}
 
 		$html .= '		<div class="o-review__header_meta">';
 		$html .= '			<div class="o-review__header_ratings">';
-		$html .= $this->get_overall_stars( $this->get_overall_ratings( $attributes['features'] ) );
+		$html .= $this->get_overall_stars( $this->get_overall_ratings( $attributes['features'] ), $scale );
 		// translators: Overall rating from 0 to 10.
-		$html .= '				<span>' . sprintf( __( '%g out of 10', 'otter-blocks' ), $this->get_overall_ratings( $attributes['features'] ) ) . '</span>';
+		$html .= '				<span>' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), round( $this->get_overall_ratings( $attributes['features'] ) / $scale, 1 ), 10 / $scale ) . '</span>';
 		$html .= '			</div>';
 
 		if ( ( isset( $attributes['price'] ) && ! empty( $attributes['price'] ) ) || isset( $attributes['discounted'] ) ) {
@@ -72,11 +94,8 @@ class Review_Block {
 		}
 
 		$html .= '		</div>';
-		$html .= '  </div>';
-
-		$html .= '	<div class="o-review__left">';
 		if ( ( isset( $attributes['image'] ) || ( isset( $attributes['description'] ) && ! empty( $attributes['description'] ) ) ) ) {
-			$html .= '	<div class="o-review__left_details' . $is_single . '">';
+			$html .= '	<div class="o-review__header_details ' . trim( $details_class ) . '">';
 			if ( isset( $attributes['image'] ) ) {
 				if ( isset( $attributes['image']['id'] ) && wp_attachment_is_image( $attributes['image']['id'] ) ) {
 					$html .= wp_get_attachment_image( $attributes['image']['id'], 'medium' );
@@ -90,6 +109,9 @@ class Review_Block {
 			}
 			$html .= '	</div>';
 		}
+		$html .= '  </div>';
+
+		$html .= '	<div class="o-review__left">';
 
 		if ( isset( $attributes['features'] ) && count( $attributes['features'] ) > 0 ) {
 			$html .= '	<div class="o-review__left_features">';
@@ -100,8 +122,9 @@ class Review_Block {
 				}
 
 				$html .= '		<div class="o-review__left_feature_ratings">';
-				$html .= $this->get_overall_stars( $feature['rating'] );
-				$html .= '			<span>' . round( $feature['rating'], 1 ) . '/10</span>';
+				$html .= $this->get_overall_stars( $feature['rating'], $scale );
+				// translators: Overall rating from 0 to 10.
+				$html .= '			<span>' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), round( $feature['rating'] / $scale, 1 ), 10 / $scale ) . '</span>';
 				$html .= '		</div>';
 				$html .= '	</div>';
 			}
@@ -109,37 +132,45 @@ class Review_Block {
 		}
 		$html .= '	</div>';
 
-		$html .= '	<div class="o-review__right">';
-		if ( isset( $attributes['pros'] ) && count( $attributes['pros'] ) > 0 ) {
-			$html .= '	<div class="o-review__right_pros">';
-			$html .= '		<h4>' . __( 'Pros', 'otter-blocks' ) . '</h4>';
+		if ( ( isset( $attributes['pros'] ) && count( $attributes['pros'] ) > 0 ) || ( isset( $attributes['cons'] ) && count( $attributes['cons'] ) > 0 ) ) {
+			$html .= '	<div class="o-review__right">';
+			if ( isset( $attributes['pros'] ) && count( $attributes['pros'] ) > 0 ) {
+				$html .= '	<div class="o-review__right_pros">';
+				if ( isset( $attributes['prosLabel'] ) && ! empty( $attributes['prosLabel'] ) ) {
+					$html .= '		<' . $sub_heading . '>' . $attributes['prosLabel'] . '</' . $sub_heading . '>';
+				}
 
-			foreach ( $attributes['pros'] as $pro ) {
-				$html .= '	<div class="o-review__right_pros_item">';
-				$html .= '		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.3 5.6L9.9 16.9l-4.6-3.4-.9 2.4 5.8 4.3 9.3-12.6z" /></svg>';
-				$html .= '		<p>' . esc_html( $pro ) . '</p>';
+				foreach ( $attributes['pros'] as $pro ) {
+					$html .= '	<div class="o-review__right_pros_item">';
+					$html .= '		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18.3 5.6L9.9 16.9l-4.6-3.4-.9 2.4 5.8 4.3 9.3-12.6z" /></svg>';
+					$html .= '		<p>' . esc_html( $pro ) . '</p>';
+					$html .= '	</div>';
+				}
+				$html .= '	</div>';
+			}
+
+			if ( isset( $attributes['cons'] ) && count( $attributes['cons'] ) > 0 ) {
+				$html .= '	<div class="o-review__right_cons">';
+				if ( isset( $attributes['consLabel'] ) && ! empty( $attributes['consLabel'] ) ) {
+					$html .= '		<' . $sub_heading . '>' . $attributes['consLabel'] . '</' . $sub_heading . '>';
+				}
+
+				foreach ( $attributes['cons'] as $con ) {
+					$html .= '	<div class="o-review__right_cons_item">';
+					$html .= '		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 11.8l6.1-6.3-1-1-6.1 6.2-6.1-6.2-1 1 6.1 6.3-6.5 6.7 1 1 6.5-6.6 6.5 6.6 1-1z" /></svg>';
+					$html .= '		<p>' . esc_html( $con ) . '</p>';
+					$html .= '	</div>';
+				}
 				$html .= '	</div>';
 			}
 			$html .= '	</div>';
 		}
-
-		if ( isset( $attributes['cons'] ) && count( $attributes['cons'] ) > 0 ) {
-			$html .= '	<div class="o-review__right_cons">';
-			$html .= '		<h4>' . __( 'Cons', 'otter-blocks' ) . '</h4>';
-
-			foreach ( $attributes['cons'] as $con ) {
-				$html .= '	<div class="o-review__right_cons_item">';
-				$html .= '		<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 11.8l6.1-6.3-1-1-6.1 6.2-6.1-6.2-1 1 6.1 6.3-6.5 6.7 1 1 6.5-6.6 6.5 6.6 1-1z" /></svg>';
-				$html .= '		<p>' . esc_html( $con ) . '</p>';
-				$html .= '	</div>';
-			}
-			$html .= '	</div>';
-		}
-		$html .= '	</div>';
 
 		if ( isset( $attributes['links'] ) && count( $attributes['links'] ) > 0 ) {
 			$html .= '	<div class="o-review__footer">';
-			$html .= '		<span class="o-review__footer_label">' . __( 'Buy this product', 'otter-blocks' ) . '</span>';
+			if ( isset( $attributes['buttonsLabel'] ) && ! empty( $attributes['buttonsLabel'] ) ) {
+				$html .= '		<' . $sub_heading . ' class="o-review__footer_label">' . $attributes['buttonsLabel'] . '</' . $sub_heading . '>';
+			}
 
 			$html .= '		<div class="o-review__footer_buttons">';
 
@@ -184,22 +215,19 @@ class Review_Block {
 	/**
 	 * Get overall ratings stars
 	 *
-	 * @param array $ratings Overall ratings of features.
+	 * @param int $ratings Overall ratings of features.
+	 * @param int $divide The scale of ratings.
 	 *
 	 * @return string
 	 */
-	public function get_overall_stars( $ratings = 0 ) {
+	public function get_overall_stars( $ratings = 0, $divide = 1 ) {
 		$stars = '';
 
-		for ( $i = 0; $i < 10; $i++ ) {
+		for ( $i = 0; $i < 10 / $divide; $i++ ) {
 			$class = '';
 
-			if ( round( $ratings ) <= 3 && $i < round( $ratings ) ) {
-				$class = 'low';
-			} elseif ( round( $ratings ) > 3 && round( $ratings ) < 8 && $i < round( $ratings ) ) {
-				$class = 'medium';
-			} elseif ( round( $ratings ) > 7 && round( $ratings ) <= 10 && $i < round( $ratings ) ) {
-				$class = 'high';
+			if ( $i < round( $ratings / $divide ) ) {
+				$class = 'filled';
 			}
 
 			$stars .= '<svg xmlns="http://www.w3.org/2000/svg" class="' . esc_attr( $class ) . '" viewbox="0 0 24 24"><path d="M11.776 4.454a.25.25 0 01.448 0l2.069 4.192a.25.25 0 00.188.137l4.626.672a.25.25 0 01.139.426l-3.348 3.263a.25.25 0 00-.072.222l.79 4.607a.25.25 0 01-.362.263l-4.138-2.175a.25.25 0 00-.232 0l-4.138 2.175a.25.25 0 01-.363-.263l.79-4.607a.25.25 0 00-.071-.222L4.754 9.881a.25.25 0 01.139-.426l4.626-.672a.25.25 0 00.188-.137l2.069-4.192z" /></svg>';
@@ -216,8 +244,6 @@ class Review_Block {
 	 * @return array
 	 */
 	public function get_json_ld( $attributes ) {
-		global $post;
-
 		$json = array(
 			'@context' => 'https://schema.org/',
 			'@type'    => 'Product',
@@ -236,8 +262,8 @@ class Review_Block {
 			'@type'        => 'Review',
 			'reviewRating' => array(
 				'@type'       => 'Rating',
-				'ratingValue' => $this->get_overall_ratings( $attributes['features'] ),
-				'bestRating'  => 10,
+				'ratingValue' => round( $this->get_overall_ratings( $attributes['features'] ) / 2, 1 ),
+				'bestRating'  => 5,
 			),
 			'author'       => array(
 				'@type' => 'Person',
@@ -287,28 +313,6 @@ class Review_Block {
 				'@type'           => 'ItemList',
 				'itemListElement' => $items,
 			);
-		}
-
-		if ( is_singular() && has_blocks( $post->post_content ) ) {
-			$review_blocks = array_filter(
-				array_column(
-					parse_blocks( $post->post_content ),
-					'blockName'
-				),
-				function( $block ) {
-					return 'themeisle-blocks/review' === $block;
-				}
-			);
-
-			if ( 1 === count( $review_blocks ) ) {
-				$json['aggregateRating'] = array(
-					'@type'       => 'AggregateRating',
-					'bestRating'  => 10,
-					'worstRating' => 1,
-					'ratingValue' => $this->get_overall_ratings( $attributes['features'] ),
-					'reviewCount' => 1,
-				);
-			}
 		}
 
 		if ( isset( $attributes['links'] ) && count( $attributes['links'] ) > 0 ) {

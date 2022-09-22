@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import scrollIntoView from 'dom-scroll-into-view';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -19,11 +14,7 @@ import {
 	Spinner
 } from '@wordpress/components';
 
-import {
-	useEffect,
-	useRef,
-	useState
-} from '@wordpress/element';
+import { useState } from '@wordpress/element';
 
 import {
 	DOWN,
@@ -38,42 +29,10 @@ const BlockPlaceholder = ({
 	setError,
 	className
 }) => {
-	const searchRef = useRef( null );
-	let scrollingIntoView = false;
-	const suggestionNodes = [];
-
 	const [ isLoading, setLoading ] = useState( false );
 	const [ query, setQuery ] = useState( '' );
 	const [ results, setResults ] = useState({});
 	const [ selectedSuggestion, setSelectedSuggestion ] = useState( null );
-
-	useEffect( () => {
-		let timeoutID = null;
-
-		if ( null !== selectedSuggestion && ! scrollingIntoView ) {
-			scrollingIntoView = true;
-
-			scrollIntoView( suggestionNodes[ selectedSuggestion ], searchRef.current, {
-				onlyScrollIfNeeded: true
-			});
-
-			suggestionNodes[ selectedSuggestion ].focus();
-
-			timeoutID = setTimeout( () => {
-				scrollingIntoView = false;
-			}, 100 );
-		}
-
-		return () => {
-			clearTimeout( timeoutID );
-		};
-	}, [ selectedSuggestion ]);
-
-	const bindSuggestionNode = index => {
-		return ( ref ) => {
-			suggestionNodes[ index ] = ref;
-		};
-	};
 
 	const searchPlugins = async query => {
 		setAttributes({ slug: '' });
@@ -198,7 +157,6 @@ const BlockPlaceholder = ({
 					<div
 						tabIndex="-1"
 						className="o-plugin-cards-search-results"
-						ref={ searchRef }
 					>
 						{ Object.keys( results ).map( i => {
 							const pluginData = results[i];
@@ -216,7 +174,6 @@ const BlockPlaceholder = ({
 								<button
 									className="o-plugin-cards-list-item"
 									key={ i }
-									ref={ bindSuggestionNode( i ) }
 									onClick={ e => {
 										e.preventDefault();
 										selectPlugin( pluginData );

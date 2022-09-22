@@ -7,6 +7,7 @@ type Attributes = {
 	titleColor: string
 	titleBackground: string
 	contentBackground: string
+	borderColor: string
 	isSynced: string
 	fontFamily: string
 	fontVariant: string

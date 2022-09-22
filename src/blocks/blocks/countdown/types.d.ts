@@ -1,25 +1,41 @@
-import { BlockProps, BoxType, InspectorProps, PaddingType } from '../../helpers/blocks'
+import { BlockProps, BoxType, InspectorProps, PaddingType } from '../../helpers/blocks';
 
 // Remove this in future version.
 type LegacyAttrs = {
+
 	/** @deprecated */
 	width: number
+
 	/** @deprecated */
 	widthTablet: number
+
 	/** @deprecated */
 	widthMobile: number
+
 	/** @deprecated */
 	borderRadius: number
+
 	/** @deprecated */
 	borderRadiusType: string
+
 	/** @deprecated */
 	borderRadiusTopRight: number
+
 	/** @deprecated */
 	borderRadiusTopLeft: number
+
 	/** @deprecated */
 	borderRadiusBottomRight: number
+
 	/** @deprecated */
 	borderRadiusBottomLeft: number
+}
+
+export type CountdownTimer = {
+	days?: string
+	hours?: string
+	minutes?: string
+	seconds?: string
 }
 
 type Attributes = {
@@ -59,7 +75,14 @@ type Attributes = {
 	paddingTablet: PaddingType
 	valueFontWeight: string
 	labelFontWeight: string
-	seperatorAlignment: 'center'
+	separatorAlignment: 'center'
+	behaviour: 'default' | 'redirectLink' | 'hide' | 'restart'
+	redirectLink: string
+	mode: 'timer' | 'interval' | undefined
+	timer: CountdownTimer
+	startInterval: string
+	endInterval: string
+	onEndAction: string
 } & LegacyAttrs;
 
 export type CountdownProps = BlockProps<Attributes>

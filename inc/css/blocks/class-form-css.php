@@ -126,6 +126,14 @@ class Form_CSS extends Base_CSS {
 						'property' => '--input-color',
 						'value'    => 'inputColor',
 					),
+					array(
+						'property' => '--input-bg-color',
+						'value'    => 'inputBackgroundColor',
+					),
+					array(
+						'property' => '--required-color',
+						'value'    => 'inputRequiredColor',
+					),
 				),
 			)
 		);

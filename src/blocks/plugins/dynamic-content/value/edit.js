@@ -12,6 +12,8 @@ import { RichTextToolbarButton } from '@wordpress/block-editor';
 
 import { Modal } from '@wordpress/components';
 
+import { useSelect } from '@wordpress/data';
+
 import {
 	Fragment,
 	useState
@@ -24,9 +26,13 @@ import { toggleFormat } from '@wordpress/rich-text';
 /**
  * Internal dependencies.
  */
+import {
+	format as settings,
+	name
+} from './index.js';
 import options from './options.js';
-import Fields from './components/fields.js';
-import InlineControls from './components/inline-controls.js';
+import Fields from './fields.js';
+import InlineControls from '../components/inline-controls.js';
 
 const Edit = ({
 	isActive,
@@ -35,6 +41,19 @@ const Edit = ({
 	activeAttributes,
 	contentRef
 }) => {
+	const { isQueryChild } = useSelect( select => {
+		const {
+			getSelectedBlock,
+			getBlockParentsByBlockName
+		} = select( 'core/block-editor' );
+
+		const currentBlock = getSelectedBlock();
+
+		return {
+			isQueryChild: 0 < getBlockParentsByBlockName( currentBlock?.clientId, 'core/query' ).length
+		};
+	}, []);
+
 	const [ isOpen, setOpen ] = useState( false );
 
 	const [ attributes, setAttributes ] = useState({});
@@ -70,6 +89,10 @@ const Edit = ({
 			value.end = text.length + value.start;
 			value.formats.splice( value.start, 0, ...new Array( text.length ) );
 			value.replacements.splice( value.start, 0, ...new Array( text.length ) );
+		}
+
+		if ( isQueryChild ) {
+			attrs.context = 'query';
 		}
 
 		onChange(
@@ -112,9 +135,12 @@ const Edit = ({
 
 			{ isActive && (
 				<InlineControls
+					name={ name }
 					value={ value }
 					activeAttributes={ activeAttributes }
 					contentRef={ contentRef }
+					Fields={ Fields }
+					settings={ settings }
 					onChange={ onChange }
 				/>
 			) }

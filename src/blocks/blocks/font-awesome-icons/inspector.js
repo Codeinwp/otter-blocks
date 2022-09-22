@@ -9,7 +9,9 @@ import {
 	PanelBody,
 	Placeholder,
 	RangeControl,
-	Spinner
+	SelectControl,
+	Spinner,
+	FontSizePicker
 } from '@wordpress/components';
 
 import {
@@ -25,11 +27,41 @@ import {
 	useState
 } from '@wordpress/element';
 
+import { useSelect } from '@wordpress/data';
+
 /**
  * Internal dependencies
  */
 const IconPickerControl = lazy( () => import( '../../components/icon-picker-control/index.js' ) );
 import SyncControl from '../../components/sync-control/index.js';
+import ResponsiveControl from '../../components/responsive-control/index.js';
+import { buildResponsiveGetAttributes, buildResponsiveSetAttributes } from '../../helpers/helper-functions.js';
+import ToogleGroupControl from '../../components/toogle-group-control/index.js';
+import { alignCenter, alignLeft, alignRight } from '@wordpress/icons';
+import { alignHandler } from './edit.js';
+
+const defaultFontSizes = [
+	{
+		name: __( 'Small', 'otter-blocks' ),
+		size: '16px',
+		slug: 'small'
+	},
+	{
+		name: __( 'Medium', 'otter-blocks' ),
+		size: '32px',
+		slug: 'medium'
+	},
+	{
+		name: __( 'Large', 'otter-blocks' ),
+		size: '48px',
+		slug: 'large'
+	},
+	{
+		name: __( 'XL', 'otter-blocks' ),
+		size: '60px',
+		slug: 'xl'
+	}
+];
 
 /**
  *
@@ -42,6 +74,20 @@ const Inspector = ({
 	getValue
 }) => {
 	const [ hover, setHover ] = useState( false );
+
+	const {
+		responsiveSetAttributes,
+		responsiveGetAttributes
+	} = useSelect( select => {
+		const { getView } = select( 'themeisle-gutenberg/data' );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+
+		return {
+			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
+			responsiveGetAttributes: buildResponsiveGetAttributes( view )
+		};
+	}, []);
 
 	const changeLibrary = value => {
 		setAttributes({
@@ -80,7 +126,7 @@ const Inspector = ({
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Icon Sizes', 'otter-blocks' ) }
+				title={ __( 'Dimensions', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
 				<SyncControl
@@ -88,14 +134,11 @@ const Inspector = ({
 					isSynced={ attributes.isSynced }
 					setAttributes={ setAttributes }
 				>
-					<RangeControl
-						label={ __( 'Icon Size', 'otter-blocks' ) }
-						value={ getValue( 'fontSize' ) }
-						initialPosition={ 16 }
-						onChange={ e => setAttributes({ fontSize: e }) }
-						step={ 0.1 }
-						min={ 12 }
-						max={ 140 }
+					<FontSizePicker
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.fontSize ?? '16px' }
+						onChange={ fontSize =>  setAttributes({ fontSize }) }
 					/>
 				</SyncControl>
 
@@ -130,6 +173,36 @@ const Inspector = ({
 						max={ 100 }
 					/>
 				</SyncControl>
+
+				<ResponsiveControl
+					label={ __( 'Alignment', 'otter-blocks' ) }
+					className="buttons-alignment-control"
+				>
+					<ToogleGroupControl
+						value={ responsiveGetAttributes([ alignHandler( attributes.align )?.desktop, alignHandler( attributes.align )?.tablet, alignHandler( attributes.align )?.mobile ]) ?? 'center' }
+						onChange={ value => responsiveSetAttributes( '' === value ? undefined : value, [ 'align.desktop', 'align.tablet', 'align.mobile' ], alignHandler( attributes.align ) )}
+						options={[
+							{
+								icon: alignLeft,
+
+								// label: __( 'Left', 'otter-blocks' ),
+								value: 'flex-start'
+							},
+							{
+								icon: alignCenter,
+
+								// label: __( 'Center', 'otter-blocks' ),
+								value: 'center'
+							},
+							{
+								icon: alignRight,
+
+								// label: __( 'Right', 'otter-blocks' ),
+								value: 'flex-end'
+							}
+						]}
+					/>
+				</ResponsiveControl>
 			</PanelBody>
 
 			<PanelBody

@@ -94,6 +94,10 @@ class Progress_Bar_CSS extends Base_CSS {
 						'property' => '--bar-background',
 						'value'    => 'barBackgroundColor',
 					),
+					array(
+						'property' => '--title-font-size',
+						'value'    => 'titleFontSize',
+					),
 				),
 			)
 		);

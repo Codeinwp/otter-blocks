@@ -64,6 +64,7 @@ const Edit = ({
 	attributes,
 	setAttributes,
 	clientId,
+	isSelected,
 	name
 }) => {
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
@@ -727,9 +728,10 @@ const Edit = ({
 		'--required-color': attributes.inputRequiredColor,
 		'--input-gap': attributes.inputGap !== undefined && ( attributes.inputGap + 'px' ),
 		'--inputs-gap': attributes.inputsGap !== undefined && ( attributes.inputsGap + 'px' ),
-		'--label-font-size': attributes.labelFontSize !== undefined && ( attributes.labelFontSize + 'px' ),
-		'--submit-font-size': attributes.submitFontSize !== undefined && ( attributes.submitFontSize + 'px' ),
-		'--help-label-color': attributes.helpLabelColor
+		'--label-font-size': attributes.labelFontSize !== undefined && attributes.labelFontSize,
+		'--submit-font-size': attributes.submitFontSize !== undefined && attributes.submitFontSize,
+		'--help-label-color': attributes.helpLabelColor,
+		'--input-bg-color': attributes.inputBackgroundColor
 	};
 
 	const [ cssNodeName, setCSS ] = useCSSNode();
@@ -821,14 +823,16 @@ const Edit = ({
 										{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
 									</button>
 
-									<div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
-										<div className='o-form-server-response o-success' style={{ color: attributes.submitMessageColor }}>
-											{ formOptions.submitMessage || __( 'Success', 'otter-blocks' ) }
+									{ isSelected && (
+										<div>
+											<div className='o-form-server-response o-success' style={{ color: attributes.submitMessageColor }}>
+												{ formOptions.submitMessage || __( 'Success', 'otter-blocks' ) }
+											</div>
+											<div className='o-form-server-response o-error' style={{ color: attributes.submitMessageErrorColor, margin: '0px' }}>
+												{ __( 'Error. Please try again.', 'otter-blocks' ) }
+											</div>
 										</div>
-										<div className='o-form-server-response o-error' style={{ color: attributes.submitMessageErrorColor, margin: '0px' }}>
-											{ __( 'Error. Please try again.', 'otter-blocks' ) }
-										</div>
-									</div>
+									) }
 								</div>
 							</form>
 						) : (

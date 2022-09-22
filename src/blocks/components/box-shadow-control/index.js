@@ -9,7 +9,7 @@ import { RangeControl } from '@wordpress/components';
 /**
  * Internal Dependencies
  */
-import ControlPanelControl from '../control-panel-control';
+import ControlPanelControl from '../control-panel-control/index.js';
 
 const BoxShadowControl = ({
 	boxShadow,

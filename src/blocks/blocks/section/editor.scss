@@ -40,7 +40,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 
 	.wp-block-themeisle-blocks-advanced-column {
 		.wp-block-themeisle-blocks-slider {
-			display: grid;
+			display: block;
 		}
 	}
 
@@ -200,44 +200,6 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	.block-editor-block-contextual-toolbar {
 		&.wp-block-themeisle-blocks-advanced-column {
 			margin: 0;
-		}
-	}
-}
-
-.o-section-header-panel {
-	&.is-opened {
-		padding: 0;
-	}
-
-	.header-tab {
-		display: inline-block;
-		width: calc( 100% / 3 );
-		height: auto;
-		padding: 10px 20px;
-		text-align: center;
-		cursor: pointer;
-
-		&.is-selected {
-			border-bottom: 2px solid #0085ba;
-			background: #f3f4f5;
-		}
-
-		&:hover {
-			&:not(:disabled):not([aria-disabled="true"]):not(.is-secondary):not(.is-primary):not(.is-tertiary):not(.is-link) {
-				background: #f3f4f5;
-				box-shadow: none;
-			}
-		}
-
-		span {
-			display: inline-block;
-			font-size: 12px;
-
-			.dashicon {
-				display: block;
-				margin: 0 auto;
-				font-size: 20px;
-			}
 		}
 	}
 }

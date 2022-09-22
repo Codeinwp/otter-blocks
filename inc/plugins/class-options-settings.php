@@ -48,6 +48,17 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_onboarding',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Show Editor Onboarding.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'themeisle_blocks_settings_css_module',
 			array(
 				'type'         => 'boolean',
@@ -98,6 +109,17 @@ class Options_Settings {
 				'description'  => __( 'Enable Rich Schema in Product Review Block.', 'otter-blocks' ),
 				'show_in_rest' => true,
 				'default'      => true,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_review_scale',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Use 0.5 Scale for Review Block.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => false,
 			)
 		);
 

@@ -3,18 +3,19 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import {
-	PanelColorSettings
-} from '@wordpress/block-editor';
+import { PanelColorSettings } from '@wordpress/block-editor';
 
 import {
+	BaseControl,
 	PanelBody,
 	RangeControl,
-	__experimentalBoxControl as BoxControl, FontSizePicker, TextControl, SelectControl
+	__experimentalBoxControl as BoxControl,
+	FontSizePicker,
+	TextControl,
+	SelectControl
 } from '@wordpress/components';
 
 import { Fragment } from '@wordpress/element';
-import SyncControl from '../../../../components/sync-control';
 
 const defaultFontSizes = [
 	{
@@ -117,36 +118,24 @@ const Form = ({
 				title={ __( 'Label Styling', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<SyncControl
-					field={ 'inputGap' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Spacing', 'otter-blocks' ) }
-						value={ attributes.inputGap ?? 16 }
-						onChange={ inputGap => setAttributes({ inputGap }) }
-						allowReset
-						step={ 0.1 }
-						min={ 0 }
-						max={ 50 }
-						initialPositino={ 5 }
-					/>
-				</SyncControl>
+				<RangeControl
+					label={ __( 'Spacing', 'otter-blocks' ) }
+					value={ attributes.inputGap ?? 16 }
+					onChange={ inputGap => setAttributes({ inputGap }) }
+					allowReset
+					step={ 0.1 }
+					min={ 0 }
+					max={ 50 }
+					initialPositino={ 5 }
+				/>
 
-				<SyncControl
-					field={ 'labelFontSize' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<FontSizePicker
-						label={ __( 'Font Size', 'otter-blocks' ) }
-						fontSizes={ defaultFontSizes }
-						withReset
-						value={ attributes.labelFontSize }
-						onChange={ labelFontSize =>  setAttributes({ labelFontSize }) }
-					/>
-				</SyncControl>
+				<FontSizePicker
+					label={ __( 'Font Size', 'otter-blocks' ) }
+					fontSizes={ defaultFontSizes }
+					withReset
+					value={ attributes.labelFontSize }
+					onChange={ labelFontSize =>  setAttributes({ labelFontSize }) }
+				/>
 
 			</PanelBody>
 
@@ -154,92 +143,58 @@ const Form = ({
 				title={ __( 'Input Styling', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<SyncControl
-					field={ 'inputFontSize' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<FontSizePicker
-						label={ __( 'Input Font Size', 'otter-blocks' ) }
-						fontSizes={ defaultFontSizes }
-						withReset
-						value={ attributes.inputFontSize }
-						onChange={ inputFontSize =>  setAttributes({ inputFontSize }) }
-					/>
-				</SyncControl>
+				<FontSizePicker
+					label={ __( 'Input Font Size', 'otter-blocks' ) }
+					fontSizes={ defaultFontSizes }
+					withReset
+					value={ attributes.inputFontSize }
+					onChange={ inputFontSize =>  setAttributes({ inputFontSize }) }
+				/>
 
-				<SyncControl
-					field={ 'inputsGap' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Fields Spacing', 'otter-blocks' ) }
-						value={ attributes.inputsGap ?? 10}
-						onChange={ inputsGap => setAttributes({ inputsGap }) }
-						allowReset
-						step={ 0.1 }
-						min={ 0 }
-						max={ 50 }
-						initialPosition={ 10 }
-					/>
-				</SyncControl>
+				<RangeControl
+					label={ __( 'Fields Spacing', 'otter-blocks' ) }
+					value={ attributes.inputsGap ?? 10}
+					onChange={ inputsGap => setAttributes({ inputsGap }) }
+					allowReset
+					step={ 0.1 }
+					min={ 0 }
+					max={ 50 }
+					initialPosition={ 10 }
+				/>
 
-				<SyncControl
-					field={ 'inputPadding' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<BoxControl
-						label={ __( 'Input Padding', 'otter-blocks' ) }
-						values={ attributes.inputPadding ?? { 'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px' } }
-						inputProps={ {
-							min: 0,
-							max: 500
-						} }
-						onChange={ inputPadding => setAttributes({ inputPadding }) }
-					/>
-				</SyncControl>
+				<BoxControl
+					label={ __( 'Input Padding', 'otter-blocks' ) }
+					values={ attributes.inputPadding ?? { 'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px' } }
+					inputProps={ {
+						min: 0,
+						max: 500
+					} }
+					onChange={ inputPadding => setAttributes({ inputPadding }) }
+				/>
 
-				<SyncControl
-					field={ 'inputsBorderRadius' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Border Radius', 'otter-blocks' ) }
-						value={ attributes.inputBorderRadius ?? 4 }
-						onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
-						allowReset
-						step={ 0.1 }
-						min={ 0 }
-						max={ 50 }
-					/>
-				</SyncControl>
+				<RangeControl
+					label={ __( 'Border Radius', 'otter-blocks' ) }
+					value={ attributes.inputBorderRadius ?? 4 }
+					onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
+					allowReset
+					step={ 0.1 }
+					min={ 0 }
+					max={ 50 }
+				/>
 
-				<SyncControl
-					field={ 'inputsBorderWidth' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<RangeControl
-						label={ __( 'Border Width', 'otter-blocks' ) }
-						value={ attributes.inputBorderWidth ?? 1 }
-						onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
-						allowReset
-						step={ 0.1 }
-						min={ 0 }
-						max={ 50 }
-					/>
-				</SyncControl>
+				<RangeControl
+					label={ __( 'Border Width', 'otter-blocks' ) }
+					value={ attributes.inputBorderWidth ?? 1 }
+					onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
+					allowReset
+					step={ 0.1 }
+					min={ 0 }
+					max={ 50 }
+				/>
 
-				<SyncControl
-					field={ 'helpFontSize' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
+				<BaseControl
+					label={ __( 'Help Text Font Size', 'otter-blocks' ) }
 				>
-					<h2>{__( 'Help Text Font Size', 'otter-blocks' )}</h2>
-
 					<FontSizePicker
 						label={ __( 'Help Font Size', 'otter-blocks' ) }
 						fontSizes={ defaultFontSizes }
@@ -247,7 +202,7 @@ const Form = ({
 						value={ attributes.helpFontSize }
 						onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
 					/>
-				</SyncControl>
+				</BaseControl>
 			</PanelBody>
 
 			<PanelBody
@@ -262,19 +217,13 @@ const Form = ({
 					help={ __( 'Set the label for the submit button.', 'otter-blocks' ) }
 				/>
 
-				<SyncControl
-					field={ 'submitFontSize' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
-				>
-					<FontSizePicker
-						label={ __( 'Font Size', 'otter-blocks' ) }
-						fontSizes={ defaultFontSizes }
-						withReset
-						value={ attributes.submitFontSize }
-						onChange={ submitFontSize =>  setAttributes({ submitFontSize }) }
-					/>
-				</SyncControl>
+				<FontSizePicker
+					label={ __( 'Font Size', 'otter-blocks' ) }
+					fontSizes={ defaultFontSizes }
+					withReset
+					value={ attributes.submitFontSize }
+					onChange={ submitFontSize =>  setAttributes({ submitFontSize }) }
+				/>
 
 				<SelectControl
 					label={ __( 'Alignment', 'otter-blocks' ) }
@@ -296,21 +245,16 @@ const Form = ({
 					onChange={ submitStyle => setAttributes({ submitStyle }) }
 				/>
 
-				<SyncControl
-					field={ 'messageFontSize' }
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
+				<BaseControl
+					label={ __( 'Message Font Size', 'otter-blocks' ) }
 				>
-					<h2>{__( 'Message Font Size', 'otter-blocks' )}</h2>
-
 					<FontSizePicker
-						label={ __( 'Message Font Size', 'otter-blocks' ) }
 						fontSizes={ defaultFontSizes }
 						withReset
 						value={ attributes.messageFontSize }
 						onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
 					/>
-				</SyncControl>
+				</BaseControl>
 			</PanelBody>
 		</Fragment>
 	);

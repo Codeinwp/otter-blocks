@@ -30,6 +30,10 @@ import {
 	useState
 } from '@wordpress/element';
 
+import {
+	closeSmall
+} from '@wordpress/icons';
+
 /**
  * Internal dependencies
  */
@@ -282,7 +286,7 @@ const IconPickerControl = ({
 
 					return (
 
-						<MenuGroup label={ 'fontawesome' === library ? __( 'Font Awesome Icons', 'otter-blocks' ) : __( 'ThemeIsle Icons', 'otter-blocks' ) }>
+						<MenuGroup label={ 'fontawesome' === library ? __( 'Font Awesome Icons', 'otter-blocks' ) : __( 'ThemeIsle Icons', 'otter-blocks' ) } style={{ paddingBottom: '0px' }}>
 							<TextControl
 								value={ search }
 								onChange={ e => setSearch( e ) }
@@ -318,6 +322,12 @@ const IconPickerControl = ({
 										);
 									}
 								}) }
+							</div>
+							<div style={{ display: 'flex', justifyContent: 'flex-end', position: 'absolute', top: '11px', right: '5px' }}>
+								<Button
+									onClick={ onToggle }
+									icon={ closeSmall }
+								/>
 							</div>
 						</MenuGroup>
 					);
