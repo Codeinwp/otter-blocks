@@ -82,6 +82,7 @@ type Attributes = {
 	timer: CountdownTimer
 	startInterval: string
 	endInterval: string
+	onEndAction: string
 } & LegacyAttrs;
 
 export type CountdownProps = BlockProps<Attributes>

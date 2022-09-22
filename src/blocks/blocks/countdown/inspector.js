@@ -411,12 +411,12 @@ const Inspector = ({
 
 				<ToggleControl
 					label={ __( 'Enable Hide/Show other blocks when the Countdown ends.', 'otter-blocks' ) }
-					checked={ attributes.triggers !== undefined }
+					checked={ attributes.onEndAction !== undefined }
 					onChange={ value => {
 						if ( value ) {
-							setAttributes({ triggers: 'showBlock' });
+							setAttributes({ onEndAction: 'all' });
 						} else {
-							setAttributes({ triggers: undefined });
+							setAttributes({ onEndAction: undefined });
 						}
 					}}
 				/>

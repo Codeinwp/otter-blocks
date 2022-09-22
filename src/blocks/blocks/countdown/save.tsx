@@ -83,6 +83,7 @@ const Save = ({
 		'data-redirect-link': 'redirectLink' === attributes.behaviour && attributes.redirectLink ? attributes.redirectLink : undefined,
 		'data-mode': attributes.mode ? attributes.mode : undefined,
 		'data-timer': ! isEmpty( attributes.timer ) ? timerSerialization( attributes.timer ) : undefined,
+		'data-on-end-action': attributes.onEndAction ? attributes.onEndAction : undefined,
 		...interval
 	});
 

@@ -164,6 +164,9 @@
 		},
 		"endInterval": {
 			"type": "string"
+		},
+		"onEndAction": {
+			"type": "string"
 		}
 	},
 	"supports": {

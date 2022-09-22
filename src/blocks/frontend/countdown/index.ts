@@ -36,6 +36,7 @@ class CountdownData {
 	readonly startInterval?: string;
 	readonly endInterval?: string;
 	readonly hideTime: number;
+	readonly onEndAction?: string;
 
 	readonly components: {
 		second?: {
@@ -64,7 +65,7 @@ class CountdownData {
 
 		this.elem.classList.add( 'ready' );
 
-		const { date, bhv, mode, timer, redirectLink, intvEnd, intvStart } = elem.dataset;
+		const { date, bhv, mode, timer, redirectLink, intvEnd, intvStart, onEndAction } = elem.dataset;
 
 		this.rawData = date ?? '';
 		this.behaviour = bhv as 'redirectLink' | 'hide' | 'restart' | 'default' ?? 'default';
@@ -76,6 +77,7 @@ class CountdownData {
 		this.startInterval = intvStart;
 		this.endInterval = intvEnd;
 		this.hideTime = 0;
+		this.onEndAction = onEndAction;
 
 		this.oneTimeRun = {
 			'hideOrShow': false
@@ -97,7 +99,7 @@ class CountdownData {
 			}
 		);
 
-		this.onEndEvents = [ () => this.activateBehaviour(), () => this.activateTriggers() ];
+		this.onEndEvents = [ () => this.activateBehaviour(), () => this.activateActions() ];
 
 		switch ( this.mode ) {
 		case 'timer':
@@ -184,20 +186,28 @@ class CountdownData {
 		}
 	}
 
-	activateTriggers() {
+	activateActions() {
+
 		const blockSelectorId = this.connectedBlocksSelector;
 
 		if (  ! blockSelectorId ) {
 			return;
 		}
 
-		document.querySelectorAll( `${blockSelectorId}.o-cntdn-bhv-hide` ).forEach(
-			blockElem => ( blockElem as HTMLDivElement ).classList.add( 'o-cntdn-hide' )
-		);
+		switch ( this.onEndAction ) {
+		case 'all':
+			document.querySelectorAll( `${blockSelectorId}.o-cntdn-bhv-hide` ).forEach(
+				blockElem => ( blockElem as HTMLDivElement ).classList.add( 'o-cntdn-hide' )
+			);
 
-		document.querySelectorAll( `${blockSelectorId}.o-cntdn-bhv-show` ).forEach(
-			blockElem => ( blockElem as HTMLDivElement ).classList.remove( 'o-cntdn-bhv-show' )
-		);
+			document.querySelectorAll( `${blockSelectorId}.o-cntdn-bhv-show` ).forEach(
+				blockElem => ( blockElem as HTMLDivElement ).classList.remove( 'o-cntdn-bhv-show' )
+			);
+			break;
+		default:
+			break;
+		}
+
 
 	}
 
