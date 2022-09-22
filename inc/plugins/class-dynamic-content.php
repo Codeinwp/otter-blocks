@@ -25,6 +25,7 @@ class Dynamic_Content {
 	public function init() {
 		add_filter( 'render_block', array( $this, 'apply_dynamic_content' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_link' ) );
+		add_filter( 'render_block', array( $this, 'apply_dynamic_link_button' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_images' ) );
 		add_filter( 'otter_apply_dynamic_image', array( $this, 'apply_dynamic_images' ) );
 	}
@@ -47,7 +48,7 @@ class Dynamic_Content {
 	}
 
 	/**
-	 * Filter post content for dynamic content.
+	 * Filter post content for dynamic link.
 	 *
 	 * @param string $content Post content.
 	 *
@@ -61,6 +62,23 @@ class Dynamic_Content {
 		$re = '/<o-dynamic-link(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-target=["\'](?P<target>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|data-context=["\'](?P<context>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<text>[^ $].*?)<\s*\/\s*o-dynamic-link>/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_link' ), $content );
+	}
+
+	/**
+	 * Filter post content for dynamic link buttons.
+	 *
+	 * @param string $content Post content.
+	 *
+	 * @return string
+	 */
+	public function apply_dynamic_link_button( $content ) { 
+		if ( false === strpos( $content, '#otterDynamic' ) ) {
+			return $content;
+		}
+
+		$re = '/#otterDynamic\/?.[^"]*/';
+
+		return preg_replace_callback( $re, array( $this, 'apply_link_button' ), $content );
 	}
 
 	/**
@@ -92,7 +110,7 @@ class Dynamic_Content {
 	 */
 	public function apply_images( $data ) {
 		if ( ! isset( $data[0] ) ) {
-			return $data;
+			return;
 		}
 
 		$data  = self::query_string_to_array( $data[0] );
@@ -453,7 +471,7 @@ class Dynamic_Content {
 			if ( strpos( $qry, '?' ) !== false ) {
 				$qry = str_replace( array( '&#038;', '&amp;' ), '&', $qry );
 				$q   = wp_parse_url( $qry );
-				$qry = $q['query'];
+				$qry = $q['query'] ?? $q['fragment'];
 			}
 		} else {
 			return false;
@@ -495,6 +513,30 @@ class Dynamic_Content {
 		);
 
 		return $value;
+	}
+
+	/**
+	 * Apply dynamic data for Buttons.
+	 *
+	 * @param array $data Dynamic request.
+	 *
+	 * @return string
+	 */
+	public function apply_link_button( $data ) {
+		if ( ! isset( $data[0] ) ) {
+			return;
+		}
+
+		$data = explode( '#otterDynamic', $data[0] );
+		$data = self::query_string_to_array( $data[1] );
+	
+		$link = $this->get_link( $data );
+
+		if ( empty( $link ) ) {
+			$link = get_site_url();
+		}
+
+		return $link;
 	}
 
 	/**

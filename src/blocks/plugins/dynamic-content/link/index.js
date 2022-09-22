@@ -20,6 +20,8 @@ import {
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
+import { useSelect } from '@wordpress/data';
+
 import {
 	Fragment,
 	useRef,
@@ -32,8 +34,11 @@ import { addFilter } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import edit from './edit.js';
-
 import Fields from './fields.js';
+import {
+	getObjectFromQueryString,
+	getQueryStringFromObject
+} from '../../../helpers/helper-functions.js';
 
 export const name = 'themeisle-blocks/dynamic-link';
 
@@ -55,27 +60,76 @@ registerFormatType( name, format );
 
 const supportedBlocks = {
 	'core/button': {
-		link: 'url',
-		target: 'linkTarget'
+		link: 'url'
 	},
 	'themeisle-blocks/button': {
-		link: 'link',
-		target: 'newTab'
+		link: 'link'
 	},
 	'themeisle-blocks/font-awesome-icons': {
-		link: 'link',
-		target: 'newTab'
+		link: 'link'
 	}
+};
+
+const getAttributes = ( attributes, name ) => {
+	const link = attributes[ supportedBlocks[ name ].link ] || '';
+
+	if ( ! link.includes( '#otterDynamic' ) ) {
+		return {};
+	}
+
+	const attrs = getObjectFromQueryString( link );
+
+	return attrs;
 };
 
 const DynamicLinkControl = ({
 	props,
 	children
 }) => {
+	const activeAttributes = getAttributes( props.attributes, props.name );
+
 	const [ isOpen, setOpen ] = useState( false );
+	const [ attributes, setAttributes ] = useState({ ...activeAttributes });
 	const buttonRef = useRef( null );
 
-	const attributes = props.attributes[ supportedBlocks[ props.name ].link ] || {};
+	const changeAttributes = obj => {
+		let attrs = { ...attributes };
+
+		Object.keys( obj ).forEach( o => {
+			attrs[ o ] = obj[ o ];
+		});
+
+		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v && undefined !== v ) ) );
+
+		setAttributes({ ...attrs });
+	};
+
+	const changeType = type => {
+		setAttributes({ type });
+	};
+
+	const { isQueryChild } = useSelect( select => {
+		const { getBlockParentsByBlockName } = select( 'core/block-editor' );
+
+		return {
+			isQueryChild: 0 < getBlockParentsByBlockName( props.clientId, 'core/query' ).length
+		};
+	}, []);
+
+	const onChange = () => {
+		const attrs = Object.fromEntries( Object.entries( attributes ).filter( ([ _, v ]) => ( null !== v && '' !== v && undefined !== v ) ) );
+
+		if ( isQueryChild ) {
+			attrs.context = 'query';
+		}
+
+		props.setAttributes({ [ supportedBlocks[ props.name ].link ]: `#otterDynamic?${ getQueryStringFromObject( attrs ) }` });
+	};
+
+	const onRemove = () => {
+		setAttributes({});
+		props.setAttributes({ [ supportedBlocks[ props.name ].link ]: undefined });
+	};
 
 	return (
 		<Fragment>
@@ -101,11 +155,13 @@ const DynamicLinkControl = ({
 					onClose={ () => setOpen( false ) }
 				>
 					<Fields
-						activeAttributes={ {} }
-						attributes={ {} }
-						changeAttributes={ () => {} }
-						changeType={ () => {} }
-						onChange={ () => {} }
+						activeAttributes={ activeAttributes }
+						attributes={ attributes }
+						isLinkControl={ true }
+						changeAttributes={ changeAttributes }
+						changeType={ changeType }
+						onChange={ onChange }
+						onRemove={ onRemove }
 					/>
 				</Popover>
 			) }
