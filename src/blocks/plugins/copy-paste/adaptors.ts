@@ -17,6 +17,7 @@ import { FlipAttrs } from '../../blocks/flip/types';
 import { FormAttrs } from '../../blocks/form/type';
 import { CircleCounterAttrs } from '../../blocks/circle-counter/types';
 import { ReviewAttrs } from '../../blocks/review/type';
+import { AdvancedHeadingAttrs } from '../../blocks/advanced-heading/types';
 
 
 export const adaptors = {
@@ -537,7 +538,105 @@ export const adaptors = {
 				backgroundColor: s?.colors?.background
 			};
 		}
+	},
+	'themeisle-blocks/advanced-heading': {
+		copy( attrs: AdvancedHeadingAttrs ): Storage<AdvancedHeadingAttrs> {
+			return {
+				shared: {
+					colors: {
+						text: attrs?.headingColor,
+					},
+					font: {
+						size: addUnit( attrs?.fontSize, 'px'),
+						family: attrs?.fontFamily,
+						variant: attrs?.fontVariant,
+						style: attrs?.fontStyle,
+						letterSpacing: addUnit( attrs?.letterSpacing, 'px'),
+						lineHeight: attrs?.lineHeight,
+						align: attrs?.align,
+						transform: attrs?.textTransform
+					},
+					padding: {
+						desktop: {
+							top: addUnit( attrs?.paddingType === 'unlinked' ? attrs?.paddingTop : attrs?.padding, 'px'),
+							bottom: addUnit(attrs?.paddingType === 'unlinked' ?attrs?.paddingBottom : attrs?.padding, 'px'),
+							right: addUnit(attrs?.paddingType === 'unlinked' ?attrs?.paddingRight : attrs?.padding, 'px'),
+							left: addUnit(attrs?.paddingType === 'unlinked' ?attrs?.paddingLeft : attrs?.padding, 'px'),
+						},
+						tablet: {
+							top: addUnit(attrs?.paddingTypeTablet === 'unlinked' ? attrs?.paddingTopTablet : attrs?.paddingTablet, 'px'),
+							bottom: addUnit(attrs?.paddingTypeTablet === 'unlinked' ? attrs?.paddingBottomTablet : attrs?.paddingTablet, 'px'),
+							right: addUnit(attrs?.paddingTypeTablet === 'unlinked' ? attrs?.paddingRightTablet : attrs?.paddingTablet, 'px'),
+							left: addUnit(attrs?.paddingTypeTablet === 'unlinked' ? attrs?.paddingLeftTablet : attrs?.paddingTablet, 'px'),
+						},
+						mobile: {
+							top: addUnit(attrs?.paddingTypeMobile === 'unlinked' ? attrs?.paddingTopMobile : attrs?.paddingTablet, 'px'),
+							bottom: addUnit(attrs?.paddingTypeMobile === 'unlinked' ? attrs?.paddingBottomMobile : attrs?.paddingMobile, 'px'),
+							right: addUnit(attrs?.paddingTypeMobile === 'unlinked' ? attrs?.paddingRightMobile : attrs?.paddingMobile, 'px'),
+							left: addUnit(attrs?.paddingTypeMobile === 'unlinked' ? attrs?.paddingLeftMobile : attrs?.paddingMobile, 'px'),
+						},
+					},
+					margin: {
+						desktop: {
+							top: addUnit(attrs?.marginType === 'unlinked' ? attrs?.marginTop : attrs?.margin, 'px'),
+							bottom: addUnit(attrs?.marginType === 'unlinked' ?  attrs?.marginBottom : attrs?.margin, 'px'),
+						},
+						tablet: {
+							top: addUnit(attrs?.marginTypeTablet === 'unlinked' ? attrs?.marginTopTablet : attrs?.marginTablet, 'px'),
+							bottom: addUnit(attrs?.marginTypeTablet === 'unlinked' ? attrs?.marginBottomTablet : attrs?.marginTablet, 'px'),
+						},
+						mobile: {
+							top: addUnit(attrs?.marginTypeMobile === 'unlinked' ? attrs?.marginTopMobile : attrs?.marginTablet, 'px'),
+							bottom: addUnit(attrs?.marginTypeMobile === 'unlinked' ? attrs?.marginBottomMobile : attrs?.marginMobile, 'px'),
+						},
+					}
+				},
+				private: {
+					...pick( attrs, [ 'marginType', 'paddingType' ] as ( keyof AdvancedHeadingAttrs )[]),
+					...( pickBy( attrs, ( value, key ) => {
+						return key?.includes( 'highlight' )  || key?.includes( 'Tablet' ) || key?.includes( 'Width' ) || key?.includes( 'Mobile' ) || key?.includes( 'textShadow' );
+					}) ?? {})
+				}
+			};
+		},
+		paste( storage: Storage<AdvancedHeadingAttrs> ): AdvancedHeadingAttrs {
+			const { shared: s } = storage;
+			return {
+				...storage.private,
+				padding: getInt( s?.padding?.desktop?.top ),
+				paddingTop: getInt( s?.padding?.desktop?.top ),
+				paddingBottom: getInt( s?.padding?.desktop?.bottom ),
+				paddingRight: getInt( s?.padding?.desktop?.right ),
+				paddingLeft: getInt( s?.padding?.desktop?.left ),
+				paddingTopTablet: getInt( s?.padding?.tablet?.top ),
+				paddingBottomTablet: getInt( s?.padding?.tablet?.bottom ),
+				paddingRightTablet: getInt( s?.padding?.tablet?.right ),
+				paddingLeftTablet: getInt( s?.padding?.tablet?.left ),
+				paddingTopMobile: getInt( s?.padding?.mobile?.top ),
+				paddingBottomMobile: getInt( s?.padding?.mobile?.bottom ),
+				paddingRightMobile: getInt( s?.padding?.mobile?.right ),
+				paddingLeftMobile: getInt( s?.padding?.mobile?.left ),
+				margin: getInt( s?.margin?.desktop?.top ),
+				marginTop: getInt( s?.margin?.desktop?.top ),
+				marginBottom: getInt( s?.margin?.desktop?.bottom ),
+				marginTopTablet: getInt( s?.margin?.tablet?.top ),
+				marginBottomTablet: getInt( s?.margin?.tablet?.bottom ),
+				marginTopMobile: getInt( s?.margin?.mobile?.top ),
+				marginBottomMobile: getInt( s?.margin?.mobile?.bottom ),
+				fontSize: getInt( s?.font?.size ),
+				fontFamily: s?.font?.family,
+				fontVariant: s?.font?.variant,
+				fontStyle: s?.font?.style,
+				letterSpacing: getInt(s?.font?.letterSpacing),
+				lineHeight: s?.font?.lineHeight,
+				headingColor: s?.colors?.text,
+				align: s?.font?.align,
+				textTransform: s?.font?.transform
+			};
+		}
 	}
 };
 
 export const implementedAdaptors = Object.keys( adaptors );
+
+console.log(implementedAdaptors.join('\n'))
