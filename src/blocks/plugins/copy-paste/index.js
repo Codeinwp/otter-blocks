@@ -47,7 +47,7 @@ function copy() {
 	if ( copied?.every( x => x ) ) {
 		createNotice(
 			'info',
-			__( 'Copied the styles.' ),
+			__( 'Copied the styles.', 'otter-blocks' ),
 			{
 				isDismissible: true,
 				type: 'snackbar',
@@ -57,7 +57,7 @@ function copy() {
 	} else {
 		createNotice(
 			'error',
-			__( 'An error occured when trying to copy the style.' ),
+			__( 'An error occured when trying to copy the style.', 'otter-blocks' ),
 			{
 				isDismissible: true,
 				type: 'snackbar',
