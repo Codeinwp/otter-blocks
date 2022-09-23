@@ -1,12 +1,12 @@
-import { BorderType, MarginType, PaddingType, ResponsiveProps } from '../../helpers/blocks';
+import { BorderRadius, BorderType, MarginType, PaddingType, ResponsiveProps } from '../../helpers/blocks';
 
 
 interface SharedAttrs  {
     padding?: ResponsiveProps<PaddingType>
     margin?: ResponsiveProps<MarginType>
     border?: {
-        width?: string
-        radius?: ResponsiveProps<BorderType>
+        width?: BorderType
+        radius?: ResponsiveProps<BorderRadius>
     }
     colors?: {
         text?: string

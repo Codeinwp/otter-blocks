@@ -5,7 +5,7 @@ import { coreAdaptors } from './core-adaptors';
 import { ColumnAttrs } from '../../blocks/section/column/types';
 import { ButtonGroupAttrs } from '../../blocks/button-group/group/types';
 import { ButtonAttrs } from '../../blocks/button-group/button/types';
-import { addUnit, getInt, makeBox } from './utils';
+import { addUnit, getInt, makeBox, getSingleValueFromBox } from './utils';
 import { IconAttrs } from '../../blocks/font-awesome-icons/types';
 import { IconListAttrs } from '../../blocks/icon-list/types';
 import { IconListItemAttrs } from '../../blocks/icon-list/item/types';
@@ -39,11 +39,13 @@ export const adaptors = {
 					border: {
 						radius: {
 							desktop: attrs.borderRadius
-						}
+						},
+						width: attrs?.border
 					},
 					colors: {
 						background: attrs.backgroundColor,
-						backgroundGradient: attrs.backgroundGradient
+						backgroundGradient: attrs.backgroundGradient,
+						border: attrs?.borderColor
 					},
 					type: {
 						background: attrs.backgroundType
@@ -73,7 +75,8 @@ export const adaptors = {
 				backgroundType: getChoice([
 					[ 'gradient' === s?.type?.background, 'gradient' ],
 					[ 'color' ]
-				])
+				]),
+				border: s?.border?.width
 			};
 		}
 	},
@@ -95,7 +98,7 @@ export const adaptors = {
 						radius: {
 							desktop: attrs?.borderRadius
 						},
-						width: attrs?.border?.top
+						width: attrs?.border
 					},
 					colors: {
 						background: attrs?.backgroundColor,
@@ -116,20 +119,15 @@ export const adaptors = {
 			const s = storage.shared;
 
 			return {
-				padding: s.padding?.desktop,
-				paddingMobile: s.padding?.mobile,
-				paddingTablet: s.padding?.tablet,
-				margin: s.margin?.desktop,
-				marginTablet: s.margin?.tablet,
-				marginMobile: s.margin?.mobile,
-				backgroundColor: s.colors?.background,
-				borderRadius: s.border?.radius?.desktop,
-				border: {
-					top: s?.border?.width,
-					bottom: s?.border?.width,
-					left: s?.border?.width,
-					right: s?.border?.width
-				},
+				padding: s?.padding?.desktop,
+				paddingMobile: s?.padding?.mobile,
+				paddingTablet: s?.padding?.tablet,
+				margin: s?.margin?.desktop,
+				marginTablet: s?.margin?.tablet,
+				marginMobile: s?.margin?.mobile,
+				backgroundColor: s?.colors?.background,
+				borderRadius: s?.border?.radius?.desktop,
+				border: s?.border?.width,
 				backgroundGradient: s?.colors?.backgroundGradient,
 				backgroundType: s?.type?.background,
 				...storage.private
@@ -188,7 +186,7 @@ export const adaptors = {
 						text: attrs.color
 					},
 					border: {
-						width: addUnit( attrs.borderSize, 'px' ),
+						width: makeBox( addUnit( attrs.borderSize, 'px' ) ),
 						radius: {
 							desktop: makeBox( addUnit( attrs.borderRadius, 'px' ) )
 						}
@@ -207,7 +205,7 @@ export const adaptors = {
 				...storage.private,
 				border: s?.colors?.border,
 				color: s?.colors?.text,
-				borderSize: getInt( s?.border?.width ),
+				borderSize: getInt( getSingleValueFromBox( s?.border?.width ) ),
 				borderRadius: getInt( s?.border?.radius?.desktop?.top )
 			};
 		}
@@ -222,7 +220,7 @@ export const adaptors = {
 						background: attrs.backgroundColor
 					},
 					border: {
-						width: addUnit( attrs.borderSize, 'px' ),
+						width: makeBox( addUnit( attrs.borderSize, 'px' ) ),
 						radius: {
 							desktop: makeBox( addUnit( attrs.borderRadius, 'px' ) )
 						}
@@ -251,7 +249,7 @@ export const adaptors = {
 				...storage.private,
 				borderColor: s?.colors?.border,
 				textColor: s?.colors?.text,
-				borderSize: getInt( s?.border?.width ),
+				borderSize: getInt( getSingleValueFromBox( s?.border?.width ) ),
 				borderRadius: getInt( s?.border?.radius?.desktop?.top ),
 				margin: getInt( s?.margin?.desktop?.top ),
 				padding: getInt( s?.padding?.desktop?.top ),
@@ -379,7 +377,7 @@ export const adaptors = {
 						border: attrs?.borderColor
 					},
 					border: {
-						width: addUnit( attrs?.borderWidth, 'px' )
+						width: makeBox( addUnit( attrs?.borderWidth, 'px' ) )
 					}
 				},
 				private: {
@@ -394,7 +392,7 @@ export const adaptors = {
 				activeTitleColor: s?.colors?.text,
 				tabColor: s?.colors?.background,
 				borderColor: s?.colors?.border,
-				borderWidth: getInt( s?.border?.width )
+				borderWidth: getInt( getSingleValueFromBox( s?.border?.width ) )
 			};
 		}
 	},
@@ -407,7 +405,7 @@ export const adaptors = {
 						border: attrs?.borderColor
 					},
 					border: {
-						width: addUnit( attrs?.borderWidth, 'px' ),
+						width: makeBox( addUnit( attrs?.borderWidth, 'px' ) ),
 						radius: {
 							desktop: makeBox( addUnit( attrs?.borderRadius, 'px' ) )
 						}
@@ -438,7 +436,7 @@ export const adaptors = {
 				...storage.private,
 				frontBackgroundColor: s?.colors?.background,
 				borderColor: s?.colors?.border,
-				borderWidth: getInt( s?.border?.width ),
+				borderWidth: getInt( getSingleValueFromBox( s?.border?.width ) ),
 				borderRadius: getInt( s?.border?.radius?.desktop?.top ),
 				width: getInt( s?.width?.desktop ),
 				height: getInt( s?.height?.desktop ),
@@ -459,7 +457,7 @@ export const adaptors = {
 						size: addUnit( attrs?.labelFontSize, 'px' )
 					},
 					border: {
-						width: addUnit( attrs?.inputBorderWidth, 'px' ),
+						width: makeBox( addUnit( attrs?.inputBorderWidth, 'px' ) ),
 						radius: {
 							desktop: makeBox( addUnit( attrs?.inputBorderRadius, 'px' ) )
 						}
@@ -480,7 +478,7 @@ export const adaptors = {
 				labelFontSize: getInt( s?.font?.size ),
 				inputBorderColor: s?.colors?.border,
 				inputBorderRadius: getInt( s?.border?.radius?.desktop?.top ),
-				inputBorderWidth: getInt( s?.border?.width )
+				inputBorderWidth: getInt( getSingleValueFromBox( s?.border?.width ) )
 			};
 		}
 	},
@@ -544,51 +542,51 @@ export const adaptors = {
 			return {
 				shared: {
 					colors: {
-						text: attrs?.headingColor,
+						text: attrs?.headingColor
 					},
 					font: {
-						size: addUnit( attrs?.fontSize, 'px'),
+						size: addUnit( attrs?.fontSize, 'px' ),
 						family: attrs?.fontFamily,
 						variant: attrs?.fontVariant,
 						style: attrs?.fontStyle,
-						letterSpacing: addUnit( attrs?.letterSpacing, 'px'),
+						letterSpacing: addUnit( attrs?.letterSpacing, 'px' ),
 						lineHeight: attrs?.lineHeight,
 						align: attrs?.align,
 						transform: attrs?.textTransform
 					},
 					padding: {
 						desktop: {
-							top: addUnit( attrs?.paddingType === 'unlinked' ? attrs?.paddingTop : attrs?.padding, 'px'),
-							bottom: addUnit(attrs?.paddingType === 'unlinked' ?attrs?.paddingBottom : attrs?.padding, 'px'),
-							right: addUnit(attrs?.paddingType === 'unlinked' ?attrs?.paddingRight : attrs?.padding, 'px'),
-							left: addUnit(attrs?.paddingType === 'unlinked' ?attrs?.paddingLeft : attrs?.padding, 'px'),
+							top: addUnit( 'unlinked' === attrs?.paddingType ? attrs?.paddingTop : attrs?.padding, 'px' ),
+							bottom: addUnit( 'unlinked' === attrs?.paddingType ? attrs?.paddingBottom : attrs?.padding, 'px' ),
+							right: addUnit( 'unlinked' === attrs?.paddingType ? attrs?.paddingRight : attrs?.padding, 'px' ),
+							left: addUnit( 'unlinked' === attrs?.paddingType ? attrs?.paddingLeft : attrs?.padding, 'px' )
 						},
 						tablet: {
-							top: addUnit(attrs?.paddingTypeTablet === 'unlinked' ? attrs?.paddingTopTablet : attrs?.paddingTablet, 'px'),
-							bottom: addUnit(attrs?.paddingTypeTablet === 'unlinked' ? attrs?.paddingBottomTablet : attrs?.paddingTablet, 'px'),
-							right: addUnit(attrs?.paddingTypeTablet === 'unlinked' ? attrs?.paddingRightTablet : attrs?.paddingTablet, 'px'),
-							left: addUnit(attrs?.paddingTypeTablet === 'unlinked' ? attrs?.paddingLeftTablet : attrs?.paddingTablet, 'px'),
+							top: addUnit( 'unlinked' === attrs?.paddingTypeTablet ? attrs?.paddingTopTablet : attrs?.paddingTablet, 'px' ),
+							bottom: addUnit( 'unlinked' === attrs?.paddingTypeTablet ? attrs?.paddingBottomTablet : attrs?.paddingTablet, 'px' ),
+							right: addUnit( 'unlinked' === attrs?.paddingTypeTablet ? attrs?.paddingRightTablet : attrs?.paddingTablet, 'px' ),
+							left: addUnit( 'unlinked' === attrs?.paddingTypeTablet ? attrs?.paddingLeftTablet : attrs?.paddingTablet, 'px' )
 						},
 						mobile: {
-							top: addUnit(attrs?.paddingTypeMobile === 'unlinked' ? attrs?.paddingTopMobile : attrs?.paddingTablet, 'px'),
-							bottom: addUnit(attrs?.paddingTypeMobile === 'unlinked' ? attrs?.paddingBottomMobile : attrs?.paddingMobile, 'px'),
-							right: addUnit(attrs?.paddingTypeMobile === 'unlinked' ? attrs?.paddingRightMobile : attrs?.paddingMobile, 'px'),
-							left: addUnit(attrs?.paddingTypeMobile === 'unlinked' ? attrs?.paddingLeftMobile : attrs?.paddingMobile, 'px'),
-						},
+							top: addUnit( 'unlinked' === attrs?.paddingTypeMobile ? attrs?.paddingTopMobile : attrs?.paddingTablet, 'px' ),
+							bottom: addUnit( 'unlinked' === attrs?.paddingTypeMobile ? attrs?.paddingBottomMobile : attrs?.paddingMobile, 'px' ),
+							right: addUnit( 'unlinked' === attrs?.paddingTypeMobile ? attrs?.paddingRightMobile : attrs?.paddingMobile, 'px' ),
+							left: addUnit( 'unlinked' === attrs?.paddingTypeMobile ? attrs?.paddingLeftMobile : attrs?.paddingMobile, 'px' )
+						}
 					},
 					margin: {
 						desktop: {
-							top: addUnit(attrs?.marginType === 'unlinked' ? attrs?.marginTop : attrs?.margin, 'px'),
-							bottom: addUnit(attrs?.marginType === 'unlinked' ?  attrs?.marginBottom : attrs?.margin, 'px'),
+							top: addUnit( 'unlinked' === attrs?.marginType ? attrs?.marginTop : attrs?.margin, 'px' ),
+							bottom: addUnit( 'unlinked' === attrs?.marginType ?  attrs?.marginBottom : attrs?.margin, 'px' )
 						},
 						tablet: {
-							top: addUnit(attrs?.marginTypeTablet === 'unlinked' ? attrs?.marginTopTablet : attrs?.marginTablet, 'px'),
-							bottom: addUnit(attrs?.marginTypeTablet === 'unlinked' ? attrs?.marginBottomTablet : attrs?.marginTablet, 'px'),
+							top: addUnit( 'unlinked' === attrs?.marginTypeTablet ? attrs?.marginTopTablet : attrs?.marginTablet, 'px' ),
+							bottom: addUnit( 'unlinked' === attrs?.marginTypeTablet ? attrs?.marginBottomTablet : attrs?.marginTablet, 'px' )
 						},
 						mobile: {
-							top: addUnit(attrs?.marginTypeMobile === 'unlinked' ? attrs?.marginTopMobile : attrs?.marginTablet, 'px'),
-							bottom: addUnit(attrs?.marginTypeMobile === 'unlinked' ? attrs?.marginBottomMobile : attrs?.marginMobile, 'px'),
-						},
+							top: addUnit( 'unlinked' === attrs?.marginTypeMobile ? attrs?.marginTopMobile : attrs?.marginTablet, 'px' ),
+							bottom: addUnit( 'unlinked' === attrs?.marginTypeMobile ? attrs?.marginBottomMobile : attrs?.marginMobile, 'px' )
+						}
 					}
 				},
 				private: {
@@ -627,7 +625,7 @@ export const adaptors = {
 				fontFamily: s?.font?.family,
 				fontVariant: s?.font?.variant,
 				fontStyle: s?.font?.style,
-				letterSpacing: getInt(s?.font?.letterSpacing),
+				letterSpacing: getInt( s?.font?.letterSpacing ),
 				lineHeight: s?.font?.lineHeight,
 				headingColor: s?.colors?.text,
 				align: s?.font?.align,
@@ -639,4 +637,4 @@ export const adaptors = {
 
 export const implementedAdaptors = Object.keys( adaptors );
 
-console.log(implementedAdaptors.join('\n'))
+console.log( implementedAdaptors.join( '\n' ) );

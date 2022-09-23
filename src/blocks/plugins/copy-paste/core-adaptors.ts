@@ -1,10 +1,29 @@
-import { merge, pick } from 'lodash';
+import { isObjectLike, merge, pick } from 'lodash';
+import { BoxType } from '../../helpers/blocks';
 import { getChoice } from '../../helpers/helper-functions';
 import { Storage } from './models';
-import { addUnit } from './utils';
+import { addUnit, getInt, getSingleValueFromBox, makeBox } from './utils';
 
+const radiusExtract = ( radius: { topLeft: string; topRight: string; bottomRight: string; bottomLeft: string; }) => {
+	console.log( radius );
+	return {
+		top: radius?.topLeft,
+		right: radius?.topRight,
+		bottom: radius?.bottomRight,
+		left: radius?.bottomLeft
+	};
+};
 
-const commonExtractor = ( attrs ): Storage<unknown> => {
+const radiusApply = ( sharedRadius: BoxType | undefined ) => {
+	return {
+		topLeft: sharedRadius?.top,
+		topRight: sharedRadius?.right,
+		bottomRight: sharedRadius?.bottom,
+		bottomLeft: sharedRadius?.left
+	};
+};
+
+const commonExtractor = ( attrs: any ): Storage<unknown> => {
 	return {
 		shared: {
 			colors: {
@@ -26,6 +45,15 @@ const commonExtractor = ( attrs ): Storage<unknown> => {
 				letterSpacing: attrs?.style?.typography?.letterSpacing,
 				dropCap: attrs?.dropCap,
 				align: attrs?.textAlign
+			},
+			padding: {
+				desktop: attrs?.style?.spacing?.padding
+			},
+			border: {
+				width: makeBox( attrs?.style?.border?.width ),
+				radius: {
+					desktop: ! isObjectLike( attrs?.style?.border?.radius ) ? makeBox( attrs?.style?.border?.radius ) : radiusExtract( attrs?.style?.border?.radius )
+				}
 			}
 		},
 		core: {
@@ -50,6 +78,13 @@ const commonApplyer = ( storage: Storage<unknown> ) => {
 				text: storage?.shared?.colors?.text,
 				background: storage?.shared?.colors?.background,
 				gradient: storage?.shared?.colors?.backgroundGradient
+			},
+			spacing: {
+				padding: storage?.shared?.padding?.desktop
+			},
+			border: {
+				width: getSingleValueFromBox( storage?.shared?.border?.width ),
+				radius: radiusApply( storage?.shared?.border?.radius?.desktop )
 			}
 		},
 		dropCap: storage?.shared?.font?.dropCap,
@@ -201,8 +236,8 @@ export const coreAdaptors = {
 			const { shared: s } = storage;
 			return {
 				...storage.private,
-				width: parseInt( s?.width?.desktop ),
-				height: parseInt( s?.width?.desktop )
+				width: getInt( s?.width?.desktop ),
+				height: getInt( s?.width?.desktop )
 			};
 		}
 	},
