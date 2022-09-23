@@ -237,6 +237,10 @@ class Dynamic_Content {
 			return get_the_title( $data['context'] );
 		}
 
+		if ( 'postContent' === $data['type'] ) {
+			return $this->get_content( $data );
+		}
+
 		if ( 'postExcerpt' === $data['type'] ) {
 			return $this->get_excerpt( $data );
 		}
@@ -294,6 +298,18 @@ class Dynamic_Content {
 		}
 
 		return apply_filters( 'otter_blocks_evaluate_dynamic_content_text', $data['default'], $data );
+	}
+
+	/**
+	 * Get Content.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_content( $data ) {
+		$content = get_the_content( $data['context'] );
+		return wp_kses_post( $content );
 	}
 
 	/**

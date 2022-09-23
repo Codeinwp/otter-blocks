@@ -16,6 +16,10 @@ const options = {
 				value: 'postTitle'
 			},
 			{
+				label: __( 'Post Content', 'otter-blocks' ),
+				value: 'postContent'
+			},
+			{
 				label: __( 'Post Excerpt', 'otter-blocks' ),
 				value: 'postExcerpt'
 			},

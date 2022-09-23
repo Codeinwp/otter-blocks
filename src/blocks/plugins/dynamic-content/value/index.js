@@ -76,6 +76,11 @@ const withDynamicConditions = createHigherOrderComponent( BlockEdit => {
 			elements.forEach( element => {
 				const context = select( 'core/editor' ).getCurrentPostId();
 				const attrs = pick( Object.assign({ context }, element.dataset ), [ 'type', 'context', 'before', 'after', 'length', 'dateType', 'dateFormat', 'dateCustom', 'timeType', 'timeFormat', 'timeCustom', 'termType', 'termSeparator', 'metaKey' ]);
+
+				if ( 'postContent' === attrs.type ) {
+					return;
+				}
+
 				let value = select( 'themeisle-gutenberg/data' ).getDynamicData( attrs );
 				if ( undefined !== value ) {
 					displayData( element, value );
