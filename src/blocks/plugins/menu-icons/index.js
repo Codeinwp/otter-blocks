@@ -28,7 +28,7 @@ import './editor.scss';
 const IconPickerControl = lazy( () => import( '../../components/icon-picker-control/toolbar.js' ) );
 
 const withBlockControls = createHigherOrderComponent( BlockEdit => {
-	return ( props ) => {
+	return props => {
 		if ( ( 'core/navigation-link' === props.name || 'core/navigation-submenu' === props.name ) && props.isSelected ) {
 			return (
 				<Fragment>

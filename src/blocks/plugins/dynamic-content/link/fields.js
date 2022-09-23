@@ -33,6 +33,7 @@ const Fields = ({
 	attributes,
 	changeAttributes,
 	isInline = false,
+	isLinkControl = false,
 	onChange,
 	changeType,
 	onRemove
@@ -75,13 +76,17 @@ const Fields = ({
 					</select>
 				</BaseControl>
 
-				<br />
+				{ ! isLinkControl && (
+					<Fragment>
+						<br />
 
-				<ToggleControl
-					label={ __( 'Open in a new tab', 'otter-blocks' ) }
-					checked={ '_blank' === attributes.target || false }
-					onChange={ () => changeAttributes({ target: '_blank' === attributes.target ? undefined : '_blank' }) }
-				/>
+						<ToggleControl
+							label={ __( 'Open in a new tab', 'otter-blocks' ) }
+							checked={ '_blank' === attributes.target || false }
+							onChange={ () => changeAttributes({ target: '_blank' === attributes.target ? undefined : '_blank' }) }
+						/>
+					</Fragment>
+				)	}
 
 				{ ( ! Boolean( window.themeisleGutenberg.hasPro ) ) && (
 					<Notice
@@ -113,7 +118,7 @@ const Fields = ({
 						{ __( 'Apply', 'otter-blocks' ) }
 					</Button>
 
-					{ isInline && (
+					{ ( isInline || isLinkControl ) && (
 						<Button
 							isDestructive
 							variant="tertiary"
