@@ -49,6 +49,9 @@ const commonExtractor = ( attrs: any ): Storage<unknown> => {
 			padding: {
 				desktop: attrs?.style?.spacing?.padding
 			},
+			margin: {
+				desktop: attrs?.style?.spacing?.margin
+			},
 			border: {
 				width: makeBox( attrs?.style?.border?.width ),
 				radius: {
