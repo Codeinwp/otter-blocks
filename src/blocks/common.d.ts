@@ -1,4 +1,4 @@
-import {BoxType} from "./helpers/blocks";
+import { BoxType } from './helpers/blocks';
 
 export type BoxShadow = {
     color: string
