@@ -7,38 +7,46 @@ import { CopyPasteStorage, Storage } from './models';
 class CopyPaste {
 
 	version: string = '1'; // change this number when the structure of SharedAttrs is not backwards compatible.
-	storage: CopyPasteStorage = { shared: {}, core: {}};
+	storage: CopyPasteStorage = { shared: {}, core: {}, private: {}, copiedBlock: '' };
 	isExpired: boolean = false;
 
 	constructor() {
-		this.checkExpirationDate();
-		if ( this.version === this.getSavedVersion() ) {
-			if ( ! this.isExpired  ) {
-				this.pull();
-			}
-		} else {
+		if ( this.version !== this.getSavedVersion() ) {
 			this.updateVersion();
+			return;
 		}
+
+		this.checkExpirationDate();
+		if ( this.isExpired ) {
+			this.updateExpirationDate();
+			return;
+		}
+
+		this.pull();
 	}
 
 	copy( block: OtterBlock<unknown> ) {
+		let success = false;
 		try {
 			if ( ! adaptors?.[block.name]) {
-				return;
-			}
-
-			if ( this.isExpired ) {
-				this.updateExpirationDate();
+				return success;
 			}
 
 			const copied = compactObject( pickBy( adaptors[block.name].copy( block.attributes ), x => ! ( isNil( x ) ) ) );
 
+			this.storage.copiedBlock = block.name;
 			this.storage.shared = copied?.shared;
 			this.storage.core = copied?.core;
-			this.storage[block.name] = copied?.private;
+			this.storage.private = copied?.private;
 			this.sync();
+
+			success = true;
 		} catch ( e ) {
 			console.error( e );
+			this.storage = {};
+			this.sync();
+		} finally {
+			return success;
 		}
 	}
 
@@ -51,12 +59,9 @@ class CopyPaste {
 
 			const attrs: Storage<unknown> = {
 				shared: this.storage.shared,
-				private: this.storage[block.name]
+				private: block.name === this.storage.copiedBlock ? this.storage.private : undefined,
+				core: block.name?.startsWith( 'core/' ) ? this.storage.core : undefined
 			};
-
-			if ( block.name?.startsWith( 'core/' ) ) {
-				attrs.core = this.storage.core;
-			}
 
 			pasted = adaptors[block.name].paste( attrs );
 

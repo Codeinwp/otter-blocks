@@ -40,23 +40,31 @@ function copy() {
 		return;
 	}
 
-	blocks.forEach( block => {
-		copyPaste.copy( block );
-	});
+	const copied = blocks.map( block => copyPaste.copy( block ) );
 
 	const { createNotice } = dispatch( 'core/notices' );
 
-	createNotice(
-		'info',
-		__( 'Copied the styles.' ),
-		{
-			isDismissible: true,
-			type: 'snackbar',
-			id: 'o-copied'
-		}
-	);
-
-
+	if ( copied?.every( x => x ) ) {
+		createNotice(
+			'info',
+			__( 'Copied the styles.' ),
+			{
+				isDismissible: true,
+				type: 'snackbar',
+				id: 'o-copied'
+			}
+		);
+	} else {
+		createNotice(
+			'error',
+			__( 'An error occured when trying to copy the style.' ),
+			{
+				isDismissible: true,
+				type: 'snackbar',
+				id: 'o-copied'
+			}
+		);
+	}
 }
 
 function paste() {
@@ -102,6 +110,8 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 					<PluginBlockSettingsMenuItem
 						label={  __( 'Copy style', 'otter-blocks' ) }
 						onClick={ copy }
+						icon={ 'M1' }
+
 					/>
 
 					{

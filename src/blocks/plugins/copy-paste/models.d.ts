@@ -63,7 +63,8 @@ type Storage<T> = {
 }
 
 type CopyPasteStorage = {
+    copiedBlock?: string
     shared?: SharedAttrs
     core?: SharedCore
-    [key: string]: any
+    private?: any
 }
