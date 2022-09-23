@@ -103,7 +103,8 @@ export const adaptors = {
 					},
 					colors: {
 						background: attrs?.backgroundColor,
-						backgroundGradient: attrs.backgroundGradient
+						backgroundGradient: attrs.backgroundGradient,
+						border: attrs?.borderColor
 					},
 					type: {
 						background: attrs.backgroundType
@@ -120,6 +121,7 @@ export const adaptors = {
 			const s = storage.shared;
 
 			return {
+				...storage.private,
 				padding: s?.padding?.desktop,
 				paddingMobile: s?.padding?.mobile,
 				paddingTablet: s?.padding?.tablet,
@@ -131,7 +133,7 @@ export const adaptors = {
 				border: s?.border?.width,
 				backgroundGradient: s?.colors?.backgroundGradient,
 				backgroundType: s?.type?.background,
-				...storage.private
+				borderColor: s?.colors?.border
 			};
 		}
 	},
