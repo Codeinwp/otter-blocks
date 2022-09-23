@@ -130,7 +130,7 @@
 
 	&:not( .has-icon ) {
 		.wp-block-themeisle-blocks-accordion-item:not(.is-open) .wp-block-themeisle-blocks-accordion-item__title::after {
-			content: '';
+			content: "";
 			justify-self: end;
 			align-self: center;
 			border-right: 2px solid currentColor;
@@ -143,7 +143,7 @@
 
 	&:not( .has-open-icon ) {
 		.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__title::after {
-			content: '';
+			content: "";
 			justify-self: end;
 			align-self: center;
 			border-right: 2px solid currentColor;

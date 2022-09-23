@@ -98,28 +98,28 @@ const Edit = ({
 		'--content-border-style': contentBorder?.style
 	};
 
-	const [ cssNodeName, setNodeCSS ] = useCSSNode();
+	const [ iconsCSSNodeName, setIconsNodeCSS ] = useCSSNode();
 	useEffect( () => {
 		const icon = getValue( 'icon' );
 		const openIcon = getValue( 'openItemIcon' );
 
-		setNodeCSS([
-			icon && `.wp-block-themeisle-blocks-accordion-item:not(.is-open) .wp-block-themeisle-blocks-accordion-item__title::after {
+		setIconsNodeCSS([
+			icon ? `.wp-block-themeisle-blocks-accordion-item:not(.is-open) .wp-block-themeisle-blocks-accordion-item__title::after {
 				content: "\\${ faIcons[ icon.name ].unicode }" !important;
 				font-family: "${ PREFIX_TO_FAMILY[ icon.prefix ] }" !important;
 				font-weight: ${ 'fas' !== icon.prefix ? '400' : '900' }
-			}`,
-			openIcon && `.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__title::after {
+			}` : '',
+			openIcon ? `.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__title::after {
 				content: "\\${ faIcons[ openIcon.name ].unicode }" !important;
 				font-family: "${ PREFIX_TO_FAMILY[ openIcon.prefix ] }" !important;
 				font-weight: ${ 'fas' !== openIcon.prefix ? '400' : '900' }
-			}`
+			}` : ''
 		]);
 	}, [ attributes.icon, attributes.openItemIcon ]);
 
-	// todo: active styling does not work after changing icon and icon does not show when first opening editor
+	const [ activeCSSNodeName, setActiveNodeCSS ] = useCSSNode();
 	useEffect( () => {
-		setNodeCSS([
+		setActiveNodeCSS([
 			`.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__title {
 				--title-color: ${ getValue( 'activeTitleColor' ) };
 				--title-background: ${ getValue( 'activeTitleBackground' ) };
@@ -139,7 +139,8 @@ const Edit = ({
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: classnames({
-			[ cssNodeName ]: cssNodeName,
+			[ iconsCSSNodeName ]: iconsCSSNodeName,
+			[ activeCSSNodeName ]: activeCSSNodeName,
 			[ `is-${ attributes.gap }-gap` ]: attributes.gap,
 			'icon-first': attributes.iconFirst,
 			'has-icon': !! attributes.icon,

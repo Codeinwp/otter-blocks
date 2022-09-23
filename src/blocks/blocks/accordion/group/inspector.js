@@ -95,7 +95,7 @@ const Inspector = ({
 		const border = ( 'header' === type ? attributes.headerBorder : attributes.contentBorder ) || {};
 
 		border[property] = 'object' === typeof value ? { ...border[property], ...value } : value;
-		setAttributes({ [ type + 'Border' ]: { ...border } });
+		setAttributes({ [ type + 'Border' ]: { ...border }});
 	};
 
 	return (
