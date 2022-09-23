@@ -53,7 +53,7 @@ export const adaptors = {
 				},
 				private: {
 					...pickBy( attrs, ( value, key ) => {
-						return key?.includes( 'background' ) ||  key?.includes( 'boxShadow' );
+						return key?.includes( 'background' ) ||  key?.includes( 'boxShadow' ) ||  key?.includes( 'divider' ) ||  key?.includes( 'columnsHeight' ) ||  key?.includes( 'columnsWidth' ) ||  key?.includes( 'reverseColumnsTablet' ) ;
 					})
 				}
 			};
@@ -76,6 +76,7 @@ export const adaptors = {
 					[ 'gradient' === s?.type?.background, 'gradient' ],
 					[ 'color' ]
 				]),
+				borderColor: s?.colors?.border,
 				border: s?.border?.width
 			};
 		}
