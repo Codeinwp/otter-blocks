@@ -142,12 +142,12 @@ const DynamicLinkControl = ({
 						icon={ globe }
 						title={ __( 'Dynamic Link', 'otter-blocks' ) }
 						ref={ buttonRef }
-						onClick={ () => setOpen( true ) }
+						onClick={ () => setOpen( ! isOpen ) }
 					/>
 				</ToolbarGroup>
 			</BlockControls>
 
-			{ isOpen && (
+			{ ( isOpen && props.isSelected ) && (
 				<Popover
 					position="bottom right"
 					anchorRef={ buttonRef.current }
