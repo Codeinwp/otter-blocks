@@ -471,7 +471,7 @@ class Dynamic_Content {
 			if ( strpos( $qry, '?' ) !== false ) {
 				$qry = str_replace( array( '&#038;', '&amp;' ), '&', $qry );
 				$q   = wp_parse_url( $qry );
-				$qry = $q['query'] ?? $q['fragment'];
+				$qry = isset( $q['query'] ) ? $q['query'] : $q['fragment'];
 			}
 		} else {
 			return false;
