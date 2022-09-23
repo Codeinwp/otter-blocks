@@ -147,60 +147,6 @@ export const insertBetweenItems = ( arr, item ) => {
 	return _arr;
 };
 
-// Time constants
-const _MS_PER_SECONDS = 1000;
-const _MS_PER_MINUTES = _MS_PER_SECONDS * 60;
-const _MS_PER_HOURS = _MS_PER_MINUTES * 60;
-const _MS_PER_DAY = _MS_PER_HOURS * 24;
-
-/**
- * Get the time interval from the unix time
- *
- * @param {number} unixTime Time as UNIX
- * @param {Object} settings Options to keep a components or/and allow negative time
- * @returns An object with the values for days, hours, minutes, seconds
- */
-export const getIntervalFromUnix = ( unixTime, settings ) => {
-	unixTime = unixTime ? unixTime : 0; // Check for null/undefined
-
-	const days = Math.floor( unixTime / _MS_PER_DAY );
-	const hours = Math.floor( unixTime / _MS_PER_HOURS % 24 );
-	const minutes = Math.floor( unixTime / _MS_PER_MINUTES % 60 );
-	const seconds = Math.floor( unixTime / _MS_PER_SECONDS % 60 );
-
-	const time = [
-		{
-			tag: 'day',
-			name: 1 < days ? __( 'Days', 'otter-blocks' ) : __( 'Day', 'otter-blocks' ),
-			value: days
-		},
-		{
-			tag: 'hour',
-			name: 1 < hours ? __( 'Hours', 'otter-blocks' ) : __( 'Hour', 'otter-blocks' ),
-			value: hours
-		},
-		{
-			tag: 'minute',
-			name: 1 < minutes ? __( 'Minutes', 'otter-blocks' ) : __( 'Minute', 'otter-blocks' ),
-			value: minutes
-		},
-		{
-			tag: 'second',
-			name: 1 < seconds ? __( 'Seconds', 'otter-blocks' ) : __( 'Second', 'otter-blocks' ),
-			value: seconds
-		}
-	]
-		.filter( ({ tag }) => ! settings?.exclude?.includes( tag ) )
-		.map( obj => {
-			if ( ! settings?.keepNeg ) {
-				obj.value = Math.max( 0, obj.value );
-			}
-			return obj;
-		});
-
-	return time;
-};
-
 /**
  * Get site's timezone.
  *
@@ -329,7 +275,7 @@ export const getChoice = arr => {
  * @param {import('./blocks').BoxType} box
  * @param {import('./blocks').BoxType} defaultBox
  */
-export const boxValues = ( box, defaultBox ) => {
+export const boxValues = ( box = {}, defaultBox = {}) => {
 	return `${ box?.top ?? defaultBox?.top ?? '0px' } ${ box?.right ?? defaultBox?.right ?? '0px' } ${ box?.bottom ?? defaultBox?.bottom ?? '0px' } ${ box?.left ?? defaultBox?.left ?? '0px' }`;
 };
 
@@ -421,6 +367,70 @@ export const buildResponsiveGetAttributes = ( currentView, defaultView = 'Deskto
 		}
 		return ( values?.[mapViewToKey[currentView]] ?? values?.[mapViewToKey[defaultView]]);
 	};
+};
+
+/**
+ * Get Active Style Name.
+ *
+ * @param { Object } styles    Block styles.
+ * @param { Array }  className Classes of the block.
+ *
+ * @returns { string }
+ */
+export const getActiveStyle = ( styles, className ) => {
+	const classes = className?.split( ' ' ) || [];
+	const styleValues = styles.map( i => i.value );
+	const defaultValue = styles.find( i => i.isDefault )?.value || '';
+
+	for ( const style of classes ) {
+		if ( -1 === style.indexOf( 'is-style-' ) ) {
+			continue;
+		}
+
+		const potentialStyleName = style.substring( 9 );
+
+		if ( styleValues.indexOf( potentialStyleName )  ) {
+			return potentialStyleName;
+		}
+	}
+
+	return defaultValue;
+};
+
+/**
+ * Replaces the active style in the block's className.
+ *
+ * @param { string } className Class name.
+ * @param { Object } styles    Block styles.
+ * @param { Object } newStyle  The replacing style.
+ *
+ * @return { string } The updated className.
+ */
+export const changeActiveStyle = ( className, styles, newStyle ) =>{
+	const classes = className?.split( ' ' ) || [];
+	const activeStyle = getActiveStyle( styles, className );
+	const defaultValue = styles.find( i => i.isDefault )?.value || '';
+
+	if ( activeStyle ) {
+		classes.splice( classes.indexOf( `is-style-${ activeStyle }` ), 1 );
+	}
+
+	if ( newStyle && newStyle !== defaultValue ) {
+		classes.push( `is-style-${ newStyle }` );
+	}
+
+	return classes.join( ' ' );
+};;
+
+/**
+ * Remove undefined values from the object. Make the value undefined is the object is empty.
+ *
+ * @param {Object} object
+ * @returns {Object}
+ */
+export const objectCleaner = ( object ) => {
+	const filtered = omitBy( object, x => x === undefined || null === x || '' === x );
+	return isEmpty( filtered ) ? undefined : filtered;
 };
 
 export const compactObject = ( o ) => {

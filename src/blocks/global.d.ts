@@ -56,6 +56,19 @@ declare global {
 			}
 			rootUrl: string
 		}
+		themeisleGutenbergCountdown: {
+			i18n: {
+				second: string
+				seconds: string
+				minute: string
+				minutes: string
+				hour: string
+				hours: string
+				day: string
+				days: string
+			}
+			timezone: string
+		}
 	}
 }
 

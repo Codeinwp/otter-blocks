@@ -1,4 +1,4 @@
-import { BlockProps, InspectorProps, MediaImageProps } from '../../helpers/blocks';
+import { BlockProps, InspectorProps, MediaImageProps, PaddingType, BoxShadow } from '../../helpers/blocks';
 
 type Attributes = {
 	id: string
@@ -12,10 +12,27 @@ type Attributes = {
 	pros: string[]
 	cons: string[]
 	links: {label: string, href: string, isSponsored: boolean}[]
+	prosLabel: string
+	consLabel: string
+	buttonsLabel: string
+	imageWidth: number
+	mainHeading: string
+	subHeading: string
+	contentFontSize: number
 	primaryColor: string
 	backgroundColor: string
 	textColor: string
 	buttonTextColor: string
+	borderColor: string
+	starsColor: string
+	prosColor: string
+	consColor: string
+	padding: PaddingType
+	paddingMobile: PaddingType
+	paddingTablet: PaddingType
+	borderWidth: number
+	borderRadius: number
+	boxShadow: BoxShadow
 	isSynced: string[]
 }
 

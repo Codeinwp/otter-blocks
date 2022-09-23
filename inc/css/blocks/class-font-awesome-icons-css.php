@@ -126,19 +126,17 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 		$css->add_item(
 			array(
 				'selector'   => ' .wp-block-themeisle-blocks-font-awesome-icons-container',
-				'properties' => array_merge(
+				'properties' => array(
 					array(
-						array(
-							'property' => 'color',
-							'value'    => 'textColor',
-							'hasSync'  => 'icon-text-color',
-						),
-						array(
-							'property' => 'background',
-							'value'    => 'backgroundColor',
-							'hasSync'  => 'icon-background-color',
-						),
-					)
+						'property' => 'color',
+						'value'    => 'textColor',
+						'hasSync'  => 'icon-text-color',
+					),
+					array(
+						'property' => 'background',
+						'value'    => 'backgroundColor',
+						'hasSync'  => 'icon-background-color',
+					),
 				),
 			)
 		);
