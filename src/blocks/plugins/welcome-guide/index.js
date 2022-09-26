@@ -11,6 +11,7 @@ import {
 } from '@wordpress/components';
 
 import {
+	select,
 	useDispatch,
 	useSelect
 } from '@wordpress/data';
@@ -29,6 +30,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import './editor.scss';
 import useSettings from './../../helpers/use-settings.js';
 import { setUtm } from '../../helpers/helper-functions.js';
+
 const WelcomeGuide = () => {
 	const [ getOption, updateOption, status ] = useSettings();
 
@@ -203,6 +205,8 @@ const Render = () => {
 	);
 };
 
-registerPlugin( 'otter-welcome', {
-	render: Render
-});
+if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor' ) ) {
+	registerPlugin( 'otter-welcome', {
+		render: Render
+	});
+}

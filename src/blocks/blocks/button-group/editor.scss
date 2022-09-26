@@ -33,13 +33,21 @@
 		display: flex;
 	}
 
-
 	> .block-editor-inner-blocks {
 		> .block-editor-block-list__layout {
 			> .block-list-appender {
 				position: relative;
 				align-self: center;
 			}
+		}
+	}
+
+	.wp-block-button__link {
+		display: flex;
+		justify-content: center;
+
+		.fab, .fas, .far {
+			line-height: unset;
 		}
 	}
 }

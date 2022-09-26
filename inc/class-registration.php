@@ -258,6 +258,7 @@ class Registration {
 				'rootUrl'                 => get_site_url(),
 				'restRoot'                => get_rest_url( null, 'otter/v1' ),
 				'showOnboarding'          => $this->show_onboarding(),
+				'ratingScale'             => get_option( 'themeisle_blocks_settings_review_scale', false ),
 				'hasModule'               => array(
 					'blockConditions' => get_option( 'themeisle_blocks_settings_block_conditions', true ),
 				),
@@ -448,6 +449,38 @@ class Registration {
 					),
 					'timezone' => $tz_offset,
 				)
+			);
+
+			add_action(
+				'wp_head',
+				function() {
+					echo '
+						<style type="text/css" data-source="otter-blocks">
+							[class*="o-countdown-trigger-on-end-"] {
+								transition: opacity 1s ease;
+							}
+							
+							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show, [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide:not(.o-cntdn-ready), [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide.o-cntdn-hide, [data-intv-start]:not(.o-cntdn-ready) {
+								height: 0px !important;
+								max-height: 0px !important;
+								min-height: 0px !important;
+								visibility: hidden;
+								box-sizing: border-box;
+								margin: 0px !important;
+								padding: 0px !important;
+								opacity: 0;
+							}
+
+							.wp-block-themeisle-blocks-countdown:not(.o-cntdn-ready) {
+								visibility: hidden;
+							}
+
+							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show {
+								opacity: 0;
+							}
+						</style>
+				';
+				}
 			);
 		}
 
@@ -878,10 +911,24 @@ class Registration {
 				true
 			);
 			wp_script_add_data( 'otter-sticky', 'defer', true );
+
+			add_action( 'wp_head', array( $this, 'sticky_style' ) );
+			
 			self::$scripts_loaded['sticky'] = true;
 		}
 
 		return $block_content;
+	}
+
+	/**
+	 * Add styles for sticky blocks.
+	 * 
+	 * @static
+	 * @since 2.0.14
+	 * @access public
+	 */
+	public static function sticky_style() {
+		echo '<style id="o-sticky-inline-css">.o-sticky.o-sticky-float { height: 0px; } </style>';
 	}
 
 	/**

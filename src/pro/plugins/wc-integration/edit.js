@@ -24,6 +24,7 @@ const {
 } = window.otterComponents;
 
 const Edit = ({
+	name,
 	BlockEdit,
 	props
 }) => {
@@ -61,6 +62,12 @@ const Edit = ({
 		};
 	}, [ props.attributes.product ]);
 
+	let Inspector = InspectorControls;
+
+	if ( window?.otterComponents?.useInspectorSlot ) {
+		Inspector = window.otterComponents.useInspectorSlot( props.name );
+	}
+
 	return (
 		<Fragment>
 			<BlockEdit
@@ -69,7 +76,7 @@ const Edit = ({
 				{ ...props }
 			/>
 
-			<InspectorControls>
+			<Inspector>
 				<PanelBody
 					title={ __( 'Sync with WooCommerce', 'otter-blocks' ) }
 					initialOpen={ false }
@@ -97,7 +104,7 @@ const Edit = ({
 						/>
 					) }
 				</PanelBody>
-			</InspectorControls>
+			</Inspector>
 		</Fragment>
 	);
 };

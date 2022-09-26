@@ -19,12 +19,12 @@ import { addFilter } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import './editor.scss';
-import Edit from './edit.js';
+import Edit from './edit';
 
 const EXCEPTED_BLOCK_CONDITIONS = [ '-item', 'form-' ]; // Exclude sub-blocks
 
 const withStickyExtension = createHigherOrderComponent( BlockEdit => {
-	return ( props ) => {
+	return props => {
 		const hasCustomClassName = hasBlockSupport(
 			props.name,
 			'customClassName',

@@ -38,7 +38,7 @@
 	--value-font-weight: regular;
 	--label-font-weight: regular;
 
-	border-style: none;
+	border: none;
 
 	.otter-countdown__container {
 		display: flex;
@@ -138,6 +138,10 @@
 			}
 		}
 		
+	}
+
+	&.o-hide {
+		display: none;
 	}
 
 	@keyframes skeleton-loading {

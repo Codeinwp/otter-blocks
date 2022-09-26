@@ -20,6 +20,7 @@ import {
 	otterIconColored as icon
 } from './helpers/icons.js';
 import { setUtm } from './helpers/helper-functions.js';
+
 updateCategory( 'themeisle-blocks', { icon });
 updateCategory( 'themeisle-woocommerce-blocks', { icon });
 

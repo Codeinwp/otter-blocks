@@ -1,4 +1,4 @@
-const BundleAnalyzerPlugin = require( 'webpack-bundle-analyzer' ).BundleAnalyzerPlugin;
+const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const defaultConfig = require( '@wordpress/scripts/config/webpack.config' );
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const ANALYZER = 'true' === process.env.NODE_ANALYZER ? true : false;
@@ -127,9 +127,9 @@ module.exports = [
 			tabs: './src/blocks/frontend/tabs/index.js',
 			masonry: './src/blocks/frontend/masonry/index.js',
 			form: './src/blocks/frontend/form/index.js',
-			countdown: './src/blocks/frontend/countdown/index.js',
+			countdown: './src/blocks/frontend/countdown/index.ts',
 			popup: './src/blocks/frontend/popup/index.js',
-			sticky: './src/blocks/frontend/sticky/index.js'
+			sticky: './src/blocks/frontend/sticky/index.ts'
 		},
 		output: {
 			path: path.resolve( __dirname, './build/blocks' ),

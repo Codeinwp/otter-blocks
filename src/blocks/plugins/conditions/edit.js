@@ -5,8 +5,6 @@ import { __ } from '@wordpress/i18n';
 
 import { isEmpty } from 'lodash';
 
-import { InspectorControls } from '@wordpress/block-editor';
-
 import {
 	BaseControl,
 	Button,
@@ -35,6 +33,8 @@ import { applyFilters } from '@wordpress/hooks';
 import PanelTab from '../../components/panel-tab/index.js';
 import Notice from '../../components/notice/index.js';
 import { setUtm } from '../../helpers/helper-functions.js';
+import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
+
 const hasPro = Boolean( window.themeisleGutenberg.hasPro );
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 
@@ -186,8 +186,8 @@ const AuthorsFieldToken = ( props ) => {
 		const { getUsers, isResolving } = select( 'core' );
 
 		return {
-			postAuthors: ( getUsers({ who: 'authors' }) ?? []).map( author => author.username ),
-			isLoading: isResolving( 'getUsers', [{ who: 'authors' }])
+			postAuthors: ( getUsers({ who: 'authors', context: 'view' }) ?? []).map( author => author.username ),
+			isLoading: isResolving( 'getUsers', [{ who: 'authors', context: 'view' }])
 		};
 	}, [ ]);
 
@@ -211,8 +211,8 @@ const CategoriesFieldToken = ( props ) => {
 		const { getEntityRecords, isResolving } = select( 'core' );
 
 		return {
-			postCategories: ( getEntityRecords( 'taxonomy', 'category', { 'per_page': 100 }) ?? []).map( category => category.slug ),
-			isLoading: isResolving( 'getEntityRecords', [ 'taxonomy', 'category', { 'per_page': 100 }])
+			postCategories: ( getEntityRecords( 'taxonomy', 'category', { 'per_page': 100, context: 'view' }) ?? []).map( category => category.slug ),
+			isLoading: isResolving( 'getEntityRecords', [ 'taxonomy', 'category', { 'per_page': 100, context: 'view' }])
 		};
 	}, [ ]);
 
@@ -240,9 +240,11 @@ const Separator = ({ label }) => {
 };
 
 const Edit = ({
+	name,
 	attributes,
 	setAttributes: _setAttributes
 }) => {
+	const Inspector = useInspectorSlot( name );
 
 	const [ buffer, setBuffer ] = useState( null );
 	const [ conditions, setConditions ] = useState({});
@@ -383,7 +385,7 @@ const Edit = ({
 	};
 
 	return (
-		<InspectorControls>
+		<Inspector>
 			<PanelBody
 				title={ __( 'Visibility Conditions', 'otter-blocks' ) }
 				initialOpen={ false }
@@ -532,7 +534,7 @@ const Edit = ({
 
 				{ applyFilters( 'otter.poweredBy', '' ) }
 			</PanelBody>
-		</InspectorControls>
+		</Inspector>
 	);
 };
 

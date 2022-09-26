@@ -34,12 +34,54 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 	public function render_css( $block ) {
 		$css = new CSS_Utility( $block );
 
+		$align_map = array(
+			'left'   => 'flex-start',
+			'center' => 'center',
+			'right'  => 'flex-end',
+		);
+
 		$css->add_item(
 			array(
 				'properties' => array(
 					array(
-						'property' => '--align',
-						'value'    => 'align',
+						'property'  => '--align',
+						'value'     => 'align',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['align'] ) && is_string( $attrs['align'] );
+						},
+						'format'    => function( $value, $attrs ) use ( $align_map ) {
+							return $align_map[ $value ];
+						},
+					),
+					array(
+						'property'  => '--align',
+						'value'     => 'align',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['align'] ) && isset( $attrs['align']['desktop'] );
+						},
+						'format'    => function( $value, $attrs ) {
+							return $value['desktop'];
+						},
+					),
+					array(
+						'property'  => '--align-tablet',
+						'value'     => 'align',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['align'] ) && isset( $attrs['align']['tablet'] );
+						},
+						'format'    => function( $value, $attrs ) {
+							return $value['tablet'];
+						},
+					),
+					array(
+						'property'  => '--align-mobile',
+						'value'     => 'align',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['align'] ) && isset( $attrs['align']['mobile'] );
+						},
+						'format'    => function( $value, $attrs ) {
+							return $value['mobile'];
+						},
 					),
 					array(
 						'property' => '--border-color',
@@ -72,7 +114,9 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--font-size',
 						'value'    => 'fontSize',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 						'hasSync'  => 'icon-font-size',
 					),
 				),
@@ -82,19 +126,17 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 		$css->add_item(
 			array(
 				'selector'   => ' .wp-block-themeisle-blocks-font-awesome-icons-container',
-				'properties' => array_merge(
+				'properties' => array(
 					array(
-						array(
-							'property' => 'color',
-							'value'    => 'textColor',
-							'hasSync'  => 'icon-text-color',
-						),
-						array(
-							'property' => 'background',
-							'value'    => 'backgroundColor',
-							'hasSync'  => 'icon-background-color',
-						),
-					)
+						'property' => 'color',
+						'value'    => 'textColor',
+						'hasSync'  => 'icon-text-color',
+					),
+					array(
+						'property' => 'background',
+						'value'    => 'backgroundColor',
+						'hasSync'  => 'icon-background-color',
+					),
 				),
 			)
 		);
@@ -148,7 +190,9 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => 'font-size',
 						'value'    => 'fontSize',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 						'hasSync'  => 'icon-font-size',
 					),
 				),
@@ -226,7 +270,9 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--icon-font-size',
 						'value'    => 'fontSize',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
 						'property' => '--icon-margin',
