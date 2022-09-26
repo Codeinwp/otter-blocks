@@ -5,7 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { select, dispatch } from '@wordpress/data';
 import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
-import { Fragment } from '@wordpress/element';
+import { Fragment, useEffect } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
 import { KeyboardShortcuts } from '@wordpress/components';
 
@@ -14,6 +14,7 @@ import { KeyboardShortcuts } from '@wordpress/components';
   */
 import { adaptors } from './adaptors';
 import CopyPaste from './copy-paste';
+import { pick } from 'lodash';
 
 
 const copyPaste = new CopyPaste();
@@ -92,37 +93,58 @@ function paste() {
 	});
 }
 
+/**
+ * Separate component to prevent multiple calls from filter.
+ *
+ * @returns
+ */
+const CopyPasteComponent = ( ) => {
+
+	useEffect( () => {
+		if ( ! sessionStorage.getItem( 'o-copyPaste-theme-colors' ) ) {
+			const settings = pick( select( 'core/block-editor' )?.getSettings(), [ 'colors', 'gradients', 'styles' ]);
+			sessionStorage.setItem( 'o-copyPaste-theme-colors', JSON.stringify( settings ) );
+		}
+	}, []);
+
+	return (
+		<Fragment>
+
+			<KeyboardShortcuts
+				shortcuts={ {
+					'ctrl+alt+c': copy,
+					'ctrl+alt+v': ! copyPaste.isExpired ? paste : () => {}
+				} }
+			/>
+
+			<PluginBlockSettingsMenuItem
+				label={  __( 'Copy style', 'otter-blocks' ) }
+				onClick={ copy }
+				icon={ 'M1' }
+
+			/>
+
+			{
+				! copyPaste.isExpired && (
+					<PluginBlockSettingsMenuItem
+						label={  __( 'Paste style', 'otter-blocks' ) }
+						onClick={ paste }
+					/>
+				)
+			}
+
+		</Fragment>
+	);
+};
 
 const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 	return ( props ) => {
+
 		if ( adaptors?.[props.name] && props.isSelected ) {
 			return (
 				<Fragment>
 					<BlockEdit { ...props } />
-
-					<KeyboardShortcuts
-						shortcuts={ {
-							'ctrl+alt+c': copy,
-							'ctrl+alt+v': ! copyPaste.isExpired ? paste : () => {}
-						} }
-					/>
-
-					<PluginBlockSettingsMenuItem
-						label={  __( 'Copy style', 'otter-blocks' ) }
-						onClick={ copy }
-						icon={ 'M1' }
-
-					/>
-
-					{
-						! copyPaste.isExpired && (
-							<PluginBlockSettingsMenuItem
-								label={  __( 'Paste style', 'otter-blocks' ) }
-								onClick={ paste }
-							/>
-						)
-					}
-
+					<CopyPasteComponent {...props} />
 				</Fragment>
 			);
 		}

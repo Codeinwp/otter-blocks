@@ -19,7 +19,6 @@ import { CircleCounterAttrs } from '../../blocks/circle-counter/types';
 import { ReviewAttrs } from '../../blocks/review/type';
 import { AdvancedHeadingAttrs } from '../../blocks/advanced-heading/types';
 
-
 export const adaptors = {
 	...coreAdaptors,
 	'themeisle-blocks/advanced-columns': {

@@ -24,8 +24,6 @@ export const getInt = ( s?: string, defaultValue?: number ): number | undefined 
 
 	const x = parseInt( s );
 
-	console.log( x );
-
 	if ( Number.isNaN( x ) ) {
 		return defaultValue;
 	}
@@ -58,4 +56,70 @@ export const getSingleValueFromBox = ( box?: BoxType ) => {
 	}
 	const nonZero = Object.values( box ).find( v => v !== undefined && ! v.startsWith( '0' ) );
 	return nonZero ??  Object.values( box ).pop();
+};
+
+/**
+ * Extract the CSS var name from the given string source.
+ * @param source
+ * @param colorName
+ * @returns
+ */
+const extractCSSColorVar = ( source: string, colorName: string ) => {
+	const initPosition = source.indexOf( colorName );
+
+	if ( -1 === initPosition ) {
+		return undefined;
+	}
+
+	let left = initPosition;
+	let right = initPosition;
+
+	while ( ( '{' !== source[left - 1] && '}' !== source[left - 1] && ';' !== source[left - 1]) && 0 < left - 1 ) {
+		left -= 1;
+	}
+
+	while ( ( ':' !== source[right + 1] && '{' !== source[right + 1] && '}' !== source[right + 1] && ';' !== source[right + 1]) && right + 1 < source.length ) {
+		right += 1;
+	}
+
+	const s = source.slice( left, right + 1 ).trim();
+	return s?.includes( '--wp--preset--' ) ? s : undefined;
+};
+
+/**
+ * Find and extract the CSS var from WP Theme based on the given color name class.
+ * @param colorName The color name.
+ * @returns
+ */
+export const extractVarNameCoreCSS = ( colorName: string | undefined  ) => {
+
+	let settings: Record<string, any> = {};
+
+	if ( sessionStorage?.getItem( 'o-copyPaste-theme-colors' ) ) {
+		settings = JSON.parse( sessionStorage.getItem( 'o-copyPaste-theme-colors' ) ?? '{}' );
+	}
+
+	const defaultColors = [ ...( settings?.colors ?? []), ...( settings?.gradients ?? []) ];
+	const sources: string[] = settings?.styles?.map( ({ css }: {css: string}) => css )?.filter( ( x: string | undefined ) => x?.includes( '--wp--preset--' ) ) ?? [];
+
+	if ( colorName === undefined ) {
+		return undefined;
+	}
+
+	const normalColor =  defaultColors?.find( ({ slug } : {slug: string}) => slug === colorName );
+	if ( normalColor ) {
+		return normalColor?.gradient ?? normalColor?.color;
+	}
+
+	for ( const source of sources ) {
+		let varName = extractCSSColorVar( source, colorName );
+		if ( varName !== undefined ) {
+			if ( ! varName.includes( 'var(' ) ) {
+				varName = `var(${varName})`;
+			}
+			return varName;
+		}
+	}
+
+	return undefined;
 };

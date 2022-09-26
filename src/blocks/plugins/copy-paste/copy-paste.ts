@@ -4,6 +4,11 @@ import { compactObject } from '../../helpers/helper-functions';
 import { adaptors } from './adaptors';
 import { CopyPasteStorage, Storage } from './models';
 
+type Adaptors = Record<string, {
+	copy: ( x: any ) => Storage<any>
+	paste: ( s: Storage<any> ) => any
+}>
+
 class CopyPaste {
 
 	version: string = '1'; // change this number when the structure of SharedAttrs is not backwards compatible.
@@ -28,11 +33,11 @@ class CopyPaste {
 	copy( block: OtterBlock<unknown> ) {
 		let success = false;
 		try {
-			if ( ! adaptors?.[block.name]) {
+			if ( ! ( adaptors as Adaptors )?.[block.name]) {
 				return success;
 			}
 
-			const copied = compactObject( pickBy( adaptors[block.name].copy( block.attributes ), x => ! ( isNil( x ) ) ) );
+			const copied = compactObject( pickBy( ( adaptors as Adaptors )?.[block.name]?.copy( block.attributes ), x => ! ( isNil( x ) ) ) );
 
 			this.storage.copiedBlock = block.name;
 			this.storage.shared = copied?.shared;
@@ -53,7 +58,7 @@ class CopyPaste {
 	paste( block: OtterBlock<unknown> ) {
 		let pasted = undefined;
 		try {
-			if ( ! adaptors?.[block.name]) {
+			if ( ! ( adaptors as Adaptors )?.[block.name]) {
 				return undefined;
 			}
 
@@ -63,7 +68,7 @@ class CopyPaste {
 				core: block.name?.startsWith( 'core/' ) ? this.storage.core : undefined
 			};
 
-			pasted = adaptors[block.name].paste( attrs );
+			pasted = ( adaptors as Adaptors )?.[block.name]?.paste( attrs );
 
 			// TODO: remove after review
 			console.group( `Block: ${ block.name}` );
