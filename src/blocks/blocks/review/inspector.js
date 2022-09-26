@@ -29,7 +29,10 @@ import {
 
 import { useSelect } from '@wordpress/data';
 
-import { useState, Fragment } from '@wordpress/element';
+import {
+	Fragment,
+	useState
+} from '@wordpress/element';
 
 /**
  * Internal dependencies

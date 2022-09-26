@@ -45,7 +45,6 @@ import Layout from './components/layout/index.js';
 import { _align, getCustomPostTypeSlugs } from '../../helpers/helper-functions.js';
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
-import { StyleSwitcherBlockControl } from '../../components/style-switcher-control/index.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -94,10 +93,6 @@ const Edit = ({
 			authors: select( 'core' ).getUsers({ who: 'authors', context: 'view' })
 		};
 	}, [ attributes.categories, attributes.order, attributes.orderBy, attributes.postsToShow, attributes.offset, attributes.postTypes ]);
-
-	const changeStyle = value => {
-		setAttributes({ style: value });
-	};
 
 	useEffect( () => {
 		const fetch = async() => {
@@ -164,7 +159,6 @@ const Edit = ({
 					<Inspector
 						attributes={ attributes }
 						setAttributes={ setAttributes }
-						changeStyle={ changeStyle }
 						categoriesList={ categoriesList }
 					/>
 				) : null }
@@ -185,7 +179,6 @@ const Edit = ({
 					<Inspector
 						attributes={ attributes }
 						setAttributes={ setAttributes }
-						changeStyle={ changeStyle }
 						categoriesList={ categoriesList }
 					/>
 				) : null }
@@ -195,28 +188,9 @@ const Edit = ({
 
 	return (
 		<Fragment>
-			<StyleSwitcherBlockControl
-				label={ __( 'Block Styles', 'otter-blocks' ) }
-				value={ attributes.style }
-				options={ [
-					{
-						label: __( 'Grid', 'otter-blocks' ),
-						value: 'grid',
-						image: window.themeisleGutenberg.assetsPath + '/icons/posts-grid.jpg'
-					},
-					{
-						label: __( 'List', 'otter-blocks' ),
-						value: 'list',
-						image: window.themeisleGutenberg.assetsPath + '/icons/posts-list.jpg'
-					}
-				] }
-				onChange={ changeStyle }
-			/>
-
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				changeStyle={ changeStyle }
 				categoriesList={ categoriesList }
 				posts={ posts }
 			/>

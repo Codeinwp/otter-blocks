@@ -17,13 +17,36 @@ import { InspectorControls } from '@wordpress/block-editor';
 
 import { useSelect } from '@wordpress/data';
 
+import {
+	Fragment,
+	useState
+} from '@wordpress/element';
+
 /**
  * Internal dependencies
  */
+import InspectorHeader from '../../components/inspector-header/index.js';
+import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
 import LayoutBuilder from './components/design-layout-builder.js';
-import { StyleSwitcherInspectorControl } from '../../components/style-switcher-control/index.js';
 import ToogleGroupControl from '../../components/toogle-group-control/index.js';
-import { convertToTitleCase } from '../../helpers/helper-functions.js';
+import ButtonToggle from '../../components/button-toggle-control/index.js';
+import {
+	convertToTitleCase,
+	changeActiveStyle,
+	getActiveStyle
+} from '../../helpers/helper-functions.js';
+
+const styles = [
+	{
+		label: __( 'Default', 'otter-blocks' ),
+		value: 'default',
+		isDefault: true
+	},
+	{
+		label: __( 'Boxed', 'otter-blocks' ),
+		value: 'boxed'
+	}
+];
 
 /**
  *
@@ -33,9 +56,10 @@ import { convertToTitleCase } from '../../helpers/helper-functions.js';
 const Inspector = ({
 	attributes,
 	setAttributes,
-	changeStyle,
 	categoriesList
 }) => {
+	const [ tab, setTab ] = useState( 'settings' );
+
 	const {
 		slugs
 	} = useSelect( select => {
@@ -97,126 +121,153 @@ const Inspector = ({
 		setAttributes({ columns: value });
 	};
 
+	const changeStyle = value => {
+		const classes = changeActiveStyle( attributes?.className, styles, value );
+		setAttributes({ className: classes });
+	};
+
 	return (
 		<InspectorControls>
+			<InspectorHeader
+				value={ tab }
+				options={[
+					{
+						label: __( 'Settings', 'otter-blocks' ),
+						value: 'settings'
+					},
+					{
+						label: __( 'Style', 'otter-blocks' ),
+						value: 'style'
+					}
+				]}
+				onChange={ setTab }
+			/>
+
 			<PanelBody
-				title={ __( 'Styles', 'otter-blocks' ) }
-				initialOpen={ false }
+				title={ __( 'Style', 'otter-blocks' ) }
 			>
-				<StyleSwitcherInspectorControl
-					value={ attributes.style }
-					options={ [
-						{
-							label: __( 'Grid', 'otter-blocks' ),
-							value: 'grid',
-							image: window.themeisleGutenberg.assetsPath + '/icons/posts-grid.jpg'
-						},
-						{
-							label: __( 'List', 'otter-blocks' ),
-							value: 'list',
-							image: window.themeisleGutenberg.assetsPath + '/icons/posts-list.jpg'
-						}
-					] }
+				<ButtonToggle
+					options={ styles }
+					value={ getActiveStyle( styles, attributes?.className ) }
 					onChange={ changeStyle }
 				/>
 			</PanelBody>
 
-			<PanelBody
-				title={ __( 'Post Types', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				<BaseControl>
-					{ __( 'Select the types of the post. If none is selected, the default WordPress post will be displayed.', 'otter-blocks' ) }
-				</BaseControl>
+			{ 'settings' === tab && (
+				<Fragment>
+					<PanelBody
+						title={ __( 'Structure', 'otter-blocks' ) }
+					>
+						<ButtonToggle
+							label={ __( 'Layout', 'otter-blocks' ) }
+							options={[
+								{
+									label: __( 'Row', 'otter-blocks' ),
+									value: 'grid'
+								},
+								{
+									label: __( 'Columns', 'otter-blocks' ),
+									value: 'list'
+								}
+							]}
+							value={ attributes.style }
+							onChange={ value => setAttributes({ style: value }) }
+						/>
 
-				<SelectControl
-					label={ __( 'Post Type', 'otter-blocks' ) }
-					value={ attributes.postTypes[0] || null }
-					onChange={ ( value ) => value && setAttributes({ postTypes: [ value ] }) }
-					options={
-						slugs.map( slug => ({ label: convertToTitleCase( slug ), value: slug }) )
-					}
-				/>
-			</PanelBody>
+						{ 'grid' === attributes.style && (
+							<RangeControl
+								label={ __( 'Columns', 'otter-blocks' ) }
+								value={ attributes.columns }
+								onChange={ changeColumns }
+								min={ 1 }
+								max={ 5 }
+							/>
+						) }
 
-			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
-			>
-				{ 'grid' === attributes.style && (
-					<RangeControl
-						label={ __( 'Columns', 'otter-blocks' ) }
-						value={ attributes.columns }
-						onChange={ changeColumns }
-						min={ 1 }
-						max={ 5 }
-					/>
-				) }
+						<BaseControl
+							label={ __( 'Content Alignment', 'otter-blocks' ) }
+						>
+							<ToogleGroupControl
+								value={ attributes.textAlign }
+								options={[
+									{
+										icon: 'editor-alignleft',
+										label: __( 'Left', 'otter-blocks' ),
+										value: 'left'
+									},
+									{
+										icon: 'editor-aligncenter',
+										label: __( 'Center', 'otter-blocks' ),
+										value: 'center'
+									},
+									{
+										icon: 'editor-alignright',
+										label: __( 'Right', 'otter-blocks' ),
+										value: 'right'
+									}
+								]}
+								onChange={ textAlign => setAttributes({ textAlign }) }
+							/>
+						</BaseControl>
+					</PanelBody>
 
-				<QueryControls
-					order={ attributes.order }
-					orderBy={ attributes.orderBy }
-					onOrderChange={ value => setAttributes({ order: value }) }
-					onOrderByChange={ value => setAttributes({ orderBy: value }) }
-					numberOfItems={ attributes.postsToShow }
-					onNumberOfItemsChange={ value => setAttributes({ postsToShow: value }) }
-					categorySuggestions={ categorySuggestions }
-					selectedCategoryId={ selectedCategoryId }
-					selectedCategories={ selectedCategories }
-					onCategoryChange={ selectCategories }
-				/>
+					<PanelBody
+						title={ __( 'Settings', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						<BaseControl>
+							{ __( 'Select the types of the post. If none is selected, the default WordPress post will be displayed.', 'otter-blocks' ) }
+						</BaseControl>
 
-				<TextControl
-					label={ __( 'Offset', 'otter-blocks' ) }
-					help={ __( 'Number of post to displace or pass over.', 'otter-blocks' ) }
-					type="number"
-					value={ attributes.offset }
-					min={ 0 }
-					onChange={ value => setAttributes({ offset: Number( value ) }) }
-				/>
-
-				<ToggleControl
-					label={ __( 'Enable featured post', 'otter-blocks' ) }
-					checked={ attributes.enableFeaturedPost }
-					onChange={ enableFeaturedPost => setAttributes({ enableFeaturedPost })}
-				/>
-
-				<BaseControl
-					label={ __( 'Text alignment', 'otter-blocks' ) }
-				>
-					<ToogleGroupControl
-						value={ attributes.textAlign }
-						options={[
-							{
-								icon: 'editor-alignleft',
-								label: __( 'Left', 'otter-blocks' ),
-								value: 'left'
-							},
-							{
-								icon: 'editor-aligncenter',
-								label: __( 'Center', 'otter-blocks' ),
-								value: 'center'
-							},
-							{
-								icon: 'editor-alignright',
-								label: __( 'Right', 'otter-blocks' ),
-								value: 'right'
+						<SelectControl
+							label={ __( 'Post Type', 'otter-blocks' ) }
+							value={ attributes.postTypes[0] || null }
+							onChange={ ( value ) => value && setAttributes({ postTypes: [ value ] }) }
+							options={
+								slugs.map( slug => ({ label: convertToTitleCase( slug ), value: slug }) )
 							}
-						]}
-						onChange={ textAlign => setAttributes({ textAlign }) }
-						showBottomLabels
-					/>
-				</BaseControl>
-			</PanelBody>
+						/>
+						<QueryControls
+							order={ attributes.order }
+							orderBy={ attributes.orderBy }
+							onOrderChange={ value => setAttributes({ order: value }) }
+							onOrderByChange={ value => setAttributes({ orderBy: value }) }
+							numberOfItems={ attributes.postsToShow }
+							onNumberOfItemsChange={ value => setAttributes({ postsToShow: value }) }
+							categorySuggestions={ categorySuggestions }
+							selectedCategoryId={ selectedCategoryId }
+							selectedCategories={ selectedCategories }
+							onCategoryChange={ selectCategories }
+						/>
 
-			<PanelBody
-				title={ __( 'Design & Layout', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				<LayoutBuilder
-					attributes={ attributes }
-					setAttributes={ setAttributes }
-				/>
-			</PanelBody>
+						<TextControl
+							label={ __( 'Offset', 'otter-blocks' ) }
+							help={ __( 'Number of post to displace or pass over.', 'otter-blocks' ) }
+							type="number"
+							value={ attributes.offset }
+							min={ 0 }
+							onChange={ value => setAttributes({ offset: Number( value ) }) }
+						/>
+
+						<ToggleControl
+							label={ __( 'Enable Featured Post', 'otter-blocks' ) }
+							checked={ attributes.enableFeaturedPost }
+							onChange={ enableFeaturedPost => setAttributes({ enableFeaturedPost })}
+						/>
+					</PanelBody>
+
+					<PanelBody
+						title={ __( 'Design & Layout', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						<LayoutBuilder
+							attributes={ attributes }
+							setAttributes={ setAttributes }
+						/>
+					</PanelBody>
+				</Fragment>
+			) }
+			<InspectorExtensions/>
 		</InspectorControls>
 	);
 };
