@@ -49,7 +49,7 @@ const addAttribute = ( settings ) => {
 };
 
 const withInspectorControls = createHigherOrderComponent( BlockEdit => {
-	return ( props ) => {
+	return props => {
 		const hasCustomClassName = hasBlockSupport( props.name, 'customClassName', true );
 		if ( hasCustomClassName && props.isSelected ) {
 			let Inspector = InspectorControls;

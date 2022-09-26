@@ -30,7 +30,7 @@ import './typing/index.js';
 const excludedBlocks = [ 'themeisle-blocks/popup' ];
 
 const withInspectorControls = createHigherOrderComponent( BlockEdit => {
-	return ( props ) => {
+	return props => {
 		const hasCustomClassName = hasBlockSupport(
 			props.name,
 			'customClassName',
