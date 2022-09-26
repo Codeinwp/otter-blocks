@@ -17,7 +17,6 @@ export type BoxPadding = {
 }
 
 export type AdvancedBorder = {
-	color: string
 	style: string
 	width: BoxType
 }

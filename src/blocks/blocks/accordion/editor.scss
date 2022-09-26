@@ -1,7 +1,6 @@
 .wp-block-themeisle-blocks-accordion {
 	--title-color: #1e1e1e;
 	--title-background: #ffffff;
-	--border-color: #d5dadf;
 	--content-background: #ffffff;
 
 	margin: 20px auto;
@@ -18,7 +17,7 @@
 
 			border-width: var( --header-border-width, 1px );
 			border-style: var( --header-border-style, solid );
-			border-color: var( --header-border-color, #d5dadf );
+			border-color: var( --border-color, #d5dadf );
 
 			padding: var( --header-padding );
 			cursor: pointer;
@@ -54,7 +53,7 @@
 
 			border-width: var( --content-border-width, 0 1px 1px 1px );
 			border-style: var( --content-border-style, solid );
-			border-color: var( --content-border-color, #d5dadf );
+			border-color: var( --border-color, #d5dadf );
 
 			padding: var( --content-padding );
 		}

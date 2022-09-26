@@ -23,6 +23,9 @@
         "contentBackground": {
             "type": "string"
         },
+		"borderColor": {
+			"type": "string"
+		},
 		"isSynced": {
 			"type": "array"
 		},

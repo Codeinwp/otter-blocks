@@ -175,12 +175,9 @@ class Accordion_CSS extends Base_CSS {
 					),
 					array(
 						'property'  => 'border-color',
-						'value'     => 'headerBorder',
-						'format'    => function( $value ) {
-							return $value['color'];
-						},
+						'value'     => 'borderColor',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['headerBorder'] ) && isset( $attrs['headerBorder']['color'] );
+							return isset( $attrs['borderColor'] );
 						},
 					),
 					array(
@@ -239,12 +236,9 @@ class Accordion_CSS extends Base_CSS {
 					),
 					array(
 						'property'  => 'border-color',
-						'value'     => 'contentBorder',
-						'format'    => function( $value ) {
-							return $value['color'];
-						},
+						'value'     => 'borderColor',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['contentBorder'] ) && isset( $attrs['contentBorder']['color'] );
+							return isset( $attrs['borderColor'] );
 						},
 					),
 					array(

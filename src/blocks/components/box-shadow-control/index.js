@@ -27,7 +27,7 @@ const BoxShadowControl = ({
 
 	return (
 		<ControlPanelControl
-			label={ __( 'Box Shadow', 'otter-blocks' ) }
+			label={ __( 'Shadow Settings', 'otter-blocks' ) }
 			attributes={ boxShadow }
 			setAttributes={ onChange }
 			resetValues={ defaultBoxShadow }

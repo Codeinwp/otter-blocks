@@ -73,29 +73,28 @@ const Edit = ({
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
-	const boxShadow = getValue( 'boxShadow' );
-	const headerBorder = getValue( 'headerBorder' );
-	const contentBorder = getValue( 'contentBorder' );
-
 	const inlineStyles = {
 		'--title-color': getValue( 'titleColor' ),
 		'--title-background': getValue( 'titleBackground' ),
 		'--content-background': getValue( 'contentBackground' ),
-		'--font-family': getValue( 'fontFamily' ),
-		'--font-variant': getValue( 'fontVariant' ),
-		'--font-style': getValue( 'fontStyle' ),
-		'--text-transform': getValue( 'textTransform' ),
-		'--letter-spacing': getValue( 'letterSpacing' ) ? getValue( 'letterSpacing' ) + 'px' : undefined,
-		'--font-size': getValue( 'fontSize' ) ? getValue( 'fontSize' ) + 'px' : undefined,
-		'--box-shadow': boxShadow.active && `${boxShadow.horizontal}px ${boxShadow.vertical}px ${boxShadow.blur}px ${boxShadow.spread}px ${hex2rgba( boxShadow.color, boxShadow.colorOpacity )}`,
-		'--header-padding': boxValues( getValue( 'headerPadding' ), { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
-		'--content-padding': boxValues( getValue( 'contentPadding' ), { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
-		'--header-border-width': headerBorder?.width && boxValues( headerBorder.width, { top: '1px', right: '1px', bottom: '1px', left: '1px' }),
-		'--content-border-width': contentBorder?.width && boxValues( contentBorder.width, { top: '0', right: '1px', bottom: '1px', left: '1px' }),
-		'--header-border-color': headerBorder?.color,
-		'--content-border-color': contentBorder?.color,
-		'--header-border-style': headerBorder?.style,
-		'--content-border-style': contentBorder?.style
+		'--border-color': getValue( 'borderColor' ),
+		'--font-family': attributes.fontFamily,
+		'--font-variant': attributes.fontVariant,
+		'--font-style': attributes.fontStyle,
+		'--text-transform': attributes.textTransform,
+		'--letter-spacing': attributes.letterSpacing ? attributes.letterSpacing + 'px' : undefined,
+		'--font-size': attributes.fontSize ? attributes.fontSize + 'px' : undefined,
+		'--box-shadow': attributes.boxShadow.active &&
+			`${attributes.boxShadow.horizontal}px
+			${attributes.boxShadow.vertical}px
+			${attributes.boxShadow.blur}px ${attributes.boxShadow.spread}px
+			${hex2rgba( attributes.boxShadow.color, attributes.boxShadow.colorOpacity )}`,
+		'--header-padding': boxValues( attributes.headerPadding, { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
+		'--content-padding': boxValues( attributes.contentPadding, { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
+		'--header-border-width': attributes.headerBorder?.width && boxValues( attributes.headerBorder.width, { top: '1px', right: '1px', bottom: '1px', left: '1px' }),
+		'--content-border-width': attributes.contentBorder?.width && boxValues( attributes.contentBorder.width, { top: '0', right: '1px', bottom: '1px', left: '1px' }),
+		'--header-border-style': attributes.headerBorder?.style,
+		'--content-border-style': attributes.contentBorder?.style
 	};
 
 	const [ iconsCSSNodeName, setIconsNodeCSS ] = useCSSNode();
@@ -119,13 +118,19 @@ const Edit = ({
 
 	const [ activeCSSNodeName, setActiveNodeCSS ] = useCSSNode();
 	useEffect( () => {
+		const activeTitleColor = getValue( 'activeTitleColor' );
+		const activeTitleBackground = getValue( 'activeTitleBackground' );
+		const activeContentBackground = getValue( 'activeContentBackground' );
+
 		setActiveNodeCSS([
-			`.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__title {
-				--title-color: ${ getValue( 'activeTitleColor' ) };
-				--title-background: ${ getValue( 'activeTitleBackground' ) };
+			activeTitleColor && `.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__title {
+				--title-color: ${ activeTitleColor };
 			}`,
-			`.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__content {
-				--content-background: ${ getValue( 'activeContentBackground' ) };
+			activeTitleBackground && `.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__title {
+				--title-background: ${ activeTitleBackground };
+			}`,
+			activeContentBackground && `.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__content {
+				--content-background: ${ activeContentBackground };
 			}`
 		]);
 	}, [ attributes.activeTitleColor, attributes.activeTitleBackground, attributes.activeContentBackground ]);
