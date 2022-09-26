@@ -25,7 +25,7 @@ const Main = ({
 	setTab
 }) => {
 	const [ getOption, updateOption, status ] = useSettings();
-	const feedbackBtn = applyFilters( 'otter.feedback', { source: 'dashboard', text: __( 'Share your Feedback', 'otter-blocks' ), variant: 'secondary' });
+	const feedbackBtn = applyFilters( 'otter.feedback', '', 'dashboard', __( 'Share your Feedback', 'otter-blocks' ), 'secondary' );
 
 	if ( 'loading' === status ) {
 		return (
@@ -72,7 +72,7 @@ const Main = ({
 				>
 					<img src={ window.otterObj.assetsPath + 'images/dashboard-feedback.png' } style={ { maxWidth: '100%', objectFit: 'cover' } }/>
 					<div className="notice-text">
-						<h3>{ __( 'What\'s one thing you need in Otter Blocks?', 'otter-blocks' ) }</h3>
+						<h3>{ __( 'What\'s the one thing you need in Otter Blocks?', 'otter-blocks' ) }</h3>
 						<span>{ __( 'We\'re always looking for suggestions to further improve Otter Blocks and your feedback can help us do that.', 'otter-blocks' ) }</span>
 					</div>
 					<span>

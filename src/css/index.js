@@ -73,7 +73,7 @@ const withInspectorControls = createHigherOrderComponent( BlockEdit => {
 							/>
 
 							<div className="o-fp-wrap">
-								{ applyFilters( 'otter.feedback', { source: 'custom-css' }) }
+								{ applyFilters( 'otter.feedback', '', 'custom-css' ) }
 								{ applyFilters( 'otter.poweredBy', '' ) }
 							</div>
 						</PanelBody>

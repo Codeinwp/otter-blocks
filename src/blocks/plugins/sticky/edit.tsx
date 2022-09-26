@@ -393,7 +393,7 @@ const Edit = ({
 
 				{/* @ts-ignore */}
 				<div className="o-fp-wrap">
-					{ applyFilters( 'otter.feedback', 'sticky' ) }
+					{ applyFilters( 'otter.feedback', '', 'sticky' ) }
 					{ applyFilters( 'otter.poweredBy', '' ) }
 				</div>
 			</PanelBody>

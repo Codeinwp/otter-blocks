@@ -107,7 +107,7 @@ const Inspector = ({
 
 	return (
 		<InspectorControls>
-			{ applyFilters( 'otter.feedback', { source: 'popup-block', text: __( 'Help us improve this block', 'otter-blocks' ) }) }
+			{ applyFilters( 'otter.feedback', '', 'popup-block', __( 'Help us improve this block', 'otter-blocks' ) ) }
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>

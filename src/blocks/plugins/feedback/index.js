@@ -28,14 +28,17 @@ const finishIcon = assetsPath + ( '/' === assetsPath[ assetsPath.length - 1 ] ? 
 /**
  * Displays a button that opens a modal for sending feedback
  *
- * @param {import('./type').FeedbackModalProps} props
- * @returns
+ * @param {string} content
+ * @param {string} source
+ * @param {string} text
+ * @param {Button.ButtonVariant} variant
  */
-const FeedbackModal = ({
+const FeedbackModal = (
+	content,
 	source,
 	text = __( 'Help us improve', 'otter-blocks' ),
 	variant = 'link'
-}) => {
+) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const [ status, setStatus ] = useState( 'notSubmitted' );
 
@@ -59,7 +62,7 @@ const FeedbackModal = ({
 			{ isOpen && (
 				<Modal
 					className={ classnames( 'o-feedback-modal', { 'no-header': 'submitted' === status }) }
-					title={ __( 'What\'s one thing you need in Otter?', 'otter-blocks' ) }
+					title={ __( 'What\'s the one thing you need in Otter?', 'otter-blocks' ) }
 					onRequestClose={ closeModal }
 					shouldCloseOnClickOutside={ false }
 				>
