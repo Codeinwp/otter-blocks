@@ -348,7 +348,6 @@ class Advanced_Columns_CSS extends Base_CSS {
 					array(
 						'property'  => 'border-color',
 						'value'     => 'borderColor',
-						'default'   => '#000000',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['border'] ) && is_array( $attrs['border'] );
 						},
