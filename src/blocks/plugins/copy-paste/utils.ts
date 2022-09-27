@@ -86,40 +86,92 @@ const extractCSSColorVar = ( source: string, colorName: string ) => {
 	return s?.includes( '--wp--preset--' ) ? s : undefined;
 };
 
-/**
- * Find and extract the CSS var from WP Theme based on the given color name class.
- * @param colorName The color name.
- * @returns
- */
-export const extractVarNameCoreCSS = ( colorName: string | undefined  ) => {
 
-	let settings: Record<string, any> = {};
+type ThemeSettings = {
+	colors?: ({ slug: string, color: string, name: string})[],
+	gradients?: ({ slug: string, gradient: string, name: string})[],
+	styles?: ({ css: string, baseURL?: string, isGlobalStyles?: boolean, __unstableType: string})[]
+}
 
-	if ( sessionStorage?.getItem( 'o-copyPaste-theme-colors' ) ) {
-		settings = JSON.parse( sessionStorage.getItem( 'o-copyPaste-theme-colors' ) ?? '{}' );
+export const extractThemeCSSVar = ( settings: ThemeSettings ) => {
+
+	if ( 'undefined' === typeof window ) {
+		return;
 	}
 
-	const defaultColors = [ ...( settings?.colors ?? []), ...( settings?.gradients ?? []) ];
+	window.oThemeStyles = {
+		colors: settings?.colors?.map( ({ slug, color }) => ({ label: slug, value: color }) ) ?? [],
+		gradients: settings?.gradients?.map( ({ slug, gradient }) => ({ label: slug, value: gradient }) ) ?? [],
+		cssVars: []
+	};
+
 	const sources: string[] = settings?.styles?.map( ({ css }: {css: string}) => css )?.filter( ( x: string | undefined ) => x?.includes( '--wp--preset--' ) ) ?? [];
 
-	if ( colorName === undefined ) {
+	for ( const source of sources ) {
+		const raw = source.split( ':' ).flatMap( x => x.split( ';' ) ).filter(
+			x => (
+				x !== undefined &&
+				! x.includes( 'var(' ) &&
+				! x.includes( 'linear-gradient(' ) &&
+				! x.includes( 'important' )
+			)
+		);
+
+		window?.oThemeStyles?.cssVars?.push(
+			...(
+				raw
+					.map( s => extractCSSColorVar( s, '--wp--preset--' ) )
+					.filter( x => x !== undefined ) as string[]
+			)
+		);
+	}
+};
+
+export const getColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' | 'any', colorName: string ) => {
+	if ( 'undefined' === typeof window  ) {
 		return undefined;
 	}
 
-	const normalColor =  defaultColors?.find( ({ slug } : {slug: string}) => slug === colorName );
-	if ( normalColor ) {
-		return normalColor?.gradient ?? normalColor?.color;
+	if ( window.oThemeStyles === undefined  ) {
+		return undefined;
 	}
 
-	for ( const source of sources ) {
-		let varName = extractCSSColorVar( source, colorName );
-		if ( varName !== undefined ) {
-			if ( ! varName.includes( 'var(' ) ) {
-				varName = `var(${varName})`;
-			}
-			return varName;
+	switch ( type ) {
+	case 'color':
+		const simpleColor = window.oThemeStyles.colors?.find( ({ label }) => label.includes( colorName ) );
+		if ( simpleColor !== undefined ) {
+			return simpleColor.value;
 		}
-	}
 
-	return undefined;
+		const varNameColor = window.oThemeStyles.cssVars?.filter( x => x.includes( 'color' ) ).find( varName => varName.includes( varName ) );
+
+		return varNameColor;
+
+	case 'gradient':
+		const simpleGradient = window.oThemeStyles.gradients?.find( ({ label }) => label.includes( colorName ) );
+		if ( simpleGradient !== undefined ) {
+			return simpleGradient.value;
+		}
+
+		const varNameGradient = window.oThemeStyles.cssVars?.filter( x => x.includes( 'gradient' ) ).find( varName => varName.includes( varName ) );
+
+		return varNameGradient;
+
+	case 'duotone':
+		const varNameDuotone = window.oThemeStyles.cssVars?.filter( x => x.includes( 'duotone' ) ).find( varName => varName.includes( varName ) );
+
+		return varNameDuotone;
+
+	case 'any':
+		const simple = [ ...window.oThemeStyles.colors ?? [], ...window.oThemeStyles.gradients ?? [] ]?.find( ({ label }) => label.includes( colorName ) );
+		if ( simple !== undefined ) {
+			return simple.value;
+		}
+
+		const varName = window.oThemeStyles.cssVars?.find( varName => varName.includes( varName ) );
+		return varName;
+
+	default:
+		return undefined;
+	}
 };

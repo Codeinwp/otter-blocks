@@ -2,7 +2,7 @@ import { isObjectLike, merge, pick } from 'lodash';
 import { BoxType } from '../../helpers/blocks';
 import { getChoice } from '../../helpers/helper-functions';
 import { Storage } from './models';
-import { addUnit, extractVarNameCoreCSS, getInt, getSingleValueFromBox, makeBox } from './utils';
+import { addUnit, getColorFromThemeStyles, getInt, getSingleValueFromBox, makeBox } from './utils';
 
 const radiusExtract = ( radius: { topLeft: string; topRight: string; bottomRight: string; bottomLeft: string; }) => {
 	return {
@@ -28,9 +28,9 @@ const commonExtractor = ( attrs: any ): Storage<unknown> => {
 	return {
 		shared: {
 			colors: {
-				text: attrs?.style?.color?.text ?? extractVarNameCoreCSS( attrs?.textColor ),
-				background: attrs?.style?.color?.background ?? extractVarNameCoreCSS( attrs?.backgroundColor ),
-				backgroundGradient: attrs?.style?.color?.gradient ?? extractVarNameCoreCSS( attrs?.gradient )
+				text: attrs?.style?.color?.text ?? getColorFromThemeStyles( 'color', attrs?.textColor ),
+				background: attrs?.style?.color?.background ?? getColorFromThemeStyles( 'color', attrs?.backgroundColor ),
+				backgroundGradient: attrs?.style?.color?.gradient ?? getColorFromThemeStyles( 'gradient', attrs?.gradient )
 			},
 			type: {
 				background: getChoice([

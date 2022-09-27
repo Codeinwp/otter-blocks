@@ -68,6 +68,11 @@ declare global {
 				days: string
 			}
 			timezone: string
+		},
+		oThemeStyles?: {
+			colors?: {label: string, value: string}[],
+			gradients?: {label: string, value: string}[],
+			cssVars?: string[]
 		}
 	}
 }

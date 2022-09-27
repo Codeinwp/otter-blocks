@@ -15,11 +15,18 @@ import { KeyboardShortcuts } from '@wordpress/components';
 import { adaptors } from './adaptors';
 import CopyPaste from './copy-paste';
 import { pick } from 'lodash';
+import { extractThemeCSSVar } from './utils';
 
 
 const copyPaste = new CopyPaste();
 
 function copy() {
+
+	if ( 'undefined' !== typeof window && window.oThemeStyles === undefined ) {
+		const settings = pick( select( 'core/block-editor' )?.getSettings(), [ 'colors', 'gradients', 'styles' ]);
+		extractThemeCSSVar( settings );
+	}
+
 	const { getMultiSelectedBlocks, getSelectedBlock, getSelectedBlockCount } = select( 'core/block-editor' );
 
 	let blocks = [];
@@ -99,13 +106,6 @@ function paste() {
  * @returns
  */
 const CopyPasteComponent = ( ) => {
-
-	useEffect( () => {
-		if ( ! sessionStorage.getItem( 'o-copyPaste-theme-colors' ) ) {
-			const settings = pick( select( 'core/block-editor' )?.getSettings(), [ 'colors', 'gradients', 'styles' ]);
-			sessionStorage.setItem( 'o-copyPaste-theme-colors', JSON.stringify( settings ) );
-		}
-	}, []);
 
 	return (
 		<Fragment>
