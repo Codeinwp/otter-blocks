@@ -30,19 +30,12 @@ import {
 	RangeControl
 } from '@wordpress/components';
 
-import { useSelect } from '@wordpress/data';
-
 import {
 	Fragment,
 	useState
 } from '@wordpress/element';
 
 import { applyFilters } from '@wordpress/hooks';
-
-/**
- * Internal dependencies
- */
-import ResponsiveControl from '../../../components/responsive-control/index.js';
 
 const DragHandle = SortableHandle( () => {
 	return (
@@ -82,59 +75,6 @@ export const SortableItem = ({
 	const toggleField = fieldName => {
 		const field = fieldMapping[ fieldName ] || fieldName;
 		setAttributes({ [field]: ! attributes[ field ] });
-	};
-
-	const getView = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-
-		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-	}, []);
-
-	const getTitleFontSize = () => {
-		switch ( getView ) {
-		case 'Desktop':
-			return attributes.customTitleFontSize;
-		case 'Tablet':
-			return attributes.customTitleFontSizeTablet;
-		case 'Mobile':
-			return attributes.customTitleFontSizeMobile;
-		default:
-			return undefined;
-		}
-	};
-
-	const changeTitleFontSize = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ customTitleFontSize: value });
-		} else if ( 'Tablet' === getView ) {
-			setAttributes({ customTitleFontSizeTablet: value });
-		} else if ( 'Mobile' === getView ) {
-			setAttributes({ customTitleFontSizeMobile: value });
-		}
-	};
-
-	const getDescriptionFontSize = () => {
-		switch ( getView ) {
-		case 'Desktop':
-			return attributes.customDescriptionFontSize;
-		case 'Tablet':
-			return attributes.customDescriptionFontSizeTablet;
-		case 'Mobile':
-			return attributes.customDescriptionFontSizeMobile;
-		default:
-			return undefined;
-		}
-	};
-
-	const changeDescriptionFontSize = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ customDescriptionFontSize: value });
-		} else if ( 'Tablet' === getView ) {
-			setAttributes({ customDescriptionFontSizeTablet: value });
-		} else if ( 'Mobile' === getView ) {
-			setAttributes({ customDescriptionFontSizeMobile: value });
-		}
 	};
 
 	const setAttributesCustomMeta = attr => {
@@ -184,7 +124,7 @@ export const SortableItem = ({
 					{ label }
 				</div>
 
-				{ canEdit && 'category' !== template && (
+				{ canEdit && ! [ 'category', 'title' ].includes( template ) && (
 					<Button
 						icon={ isOpen ? 'arrow-up-alt2' : 'arrow-down-alt2' }
 						label={ isOpen ? __( 'Close Settings', 'otter-blocks' ) : __( 'Open Settings', 'otter-blocks' ) }
@@ -210,7 +150,7 @@ export const SortableItem = ({
 				/>
 			</div>
 
-			{ canEdit && 'category' !== template && (
+			{ canEdit && ! [ 'category', 'title' ].includes( template ) && (
 				<div
 					className={ classnames(
 						'o-sortable-control-area',
@@ -230,13 +170,13 @@ export const SortableItem = ({
 							/>
 
 							<ToggleControl
-								label={ __( 'Crop image to fit', 'otter-blocks' ) }
+								label={ __( 'Crop Image to Fit', 'otter-blocks' ) }
 								checked={ attributes.cropImage }
 								onChange={ cropImage => setAttributes({ cropImage }) }
 							/>
 
 							<ToggleControl
-								label={ __( 'Display box shadow', 'otter-blocks' ) }
+								label={ __( 'Display Box Shadow', 'otter-blocks' ) }
 								checked={ attributes.imageBoxShadow }
 								onChange={ imageBoxShadow => setAttributes({ imageBoxShadow }) }
 							/>
@@ -263,59 +203,28 @@ export const SortableItem = ({
 						</Fragment>
 					) }
 
-					{ ( 'title' === template ) && (
-						<Fragment >
-							<SelectControl
-								label={ __( 'Title Tag', 'otter-blocks' ) }
-								value={ attributes.titleTag || 'h5' }
-								options={ [
-									{ label: __( 'H1', 'otter-blocks' ), value: 'h1' },
-									{ label: __( 'H2', 'otter-blocks' ), value: 'h2' },
-									{ label: __( 'H3', 'otter-blocks' ), value: 'h3' },
-									{ label: __( 'H4', 'otter-blocks' ), value: 'h4' },
-									{ label: __( 'H5', 'otter-blocks' ), value: 'h5' },
-									{ label: __( 'H6', 'otter-blocks' ), value: 'h6' }
-								] }
-								onChange={ titleTag => setAttributes({ titleTag }) }
-							/>
-
-							<ResponsiveControl
-								label={ __( 'Font size', 'otter-blocks' ) }
-							>
-								<RangeControl
-									value={ getTitleFontSize() }
-									onChange={ changeTitleFontSize }
-									step={ 0.1 }
-									min={ 0 }
-									max={ 50 }
-									allowReset
-								/>
-							</ResponsiveControl>
-						</Fragment>
-					) }
-
 					{ ( 'meta' === template ) && (
 						<Fragment >
 							<ToggleControl
-								label={ __( 'Display post date', 'otter-blocks' ) }
+								label={ __( 'Display Post Date', 'otter-blocks' ) }
 								checked={ attributes.displayDate }
 								onChange={ displayDate => setAttributes({ displayDate }) }
 							/>
 
 							<ToggleControl
-								label={ __( 'Display author', 'otter-blocks' ) }
+								label={ __( 'Display Author', 'otter-blocks' ) }
 								checked={ attributes.displayAuthor }
 								onChange={ displayAuthor => setAttributes({ displayAuthor }) }
 							/>
 
 							<ToggleControl
-								label={ __( 'Display comments', 'otter-blocks' ) }
+								label={ __( 'Display Comments', 'otter-blocks' ) }
 								checked={ attributes.displayComments }
 								onChange={ displayComments => setAttributes({ displayComments }) }
 							/>
 
 							<ToggleControl
-								label={ __( 'Display category', 'otter-blocks' ) }
+								label={ __( 'Display Category', 'otter-blocks' ) }
 								checked={ attributes.displayPostCategory }
 								onChange={ displayPostCategory => setAttributes({ displayPostCategory }) }
 							/>
@@ -332,23 +241,10 @@ export const SortableItem = ({
 							/>
 
 							<ToggleControl
-								label={ __( 'Display read more link', 'otter-blocks' ) }
+								label={ __( 'Display Read More Link', 'otter-blocks' ) }
 								checked={ attributes.displayReadMoreLink }
 								onChange={ displayReadMoreLink => setAttributes({ displayReadMoreLink }) }
 							/>
-
-							<ResponsiveControl
-								label={ __( 'Font size', 'otter-blocks' ) }
-							>
-								<RangeControl
-									value={ getDescriptionFontSize() }
-									onChange={ changeDescriptionFontSize }
-									step={ 0.1 }
-									min={ 0 }
-									max={ 50 }
-									allowReset
-								/>
-							</ResponsiveControl>
 						</Fragment>
 					) }
 

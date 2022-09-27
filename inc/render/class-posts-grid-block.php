@@ -304,6 +304,6 @@ class Posts_Grid_Block {
 
 		$html .= $this->get_post_fields( $id, $attributes );
 		$html .= '</div>';
-		return sprintf( '<div class="o-featured-post">%1$s</div>', $html );
+		return sprintf( '<div class="o-featured-container"><div class="o-featured-post">%1$s</div></div>', $html );
 	}
 }

@@ -1,5 +1,33 @@
 @import 'style';
 
+.wp-block-themeisle-blocks-posts-grid {
+	.is-grid {
+		&.o-posts-grid-columns-2 {
+			.o-posts-grid-post-blog {
+				flex: 0 0 calc( 50% - 40px );
+			}
+		}
+
+		&.o-posts-grid-columns-3 {
+			.o-posts-grid-post-blog {
+				flex: 0 0 calc( 33.3% - 40px );
+			}
+		}
+
+		&.o-posts-grid-columns-4 {
+			.o-posts-grid-post-blog {
+				flex: 0 0 calc( 25% - 40px );
+			}
+		}
+
+		&.o-posts-grid-columns-5 {
+			.o-posts-grid-post-blog {
+				flex: 0 0 calc( 20% - 40px );
+			}
+		}
+	}
+}
+
 .o-sortable-item-area {
 	margin: 10px 0;
 	z-index: 999999;

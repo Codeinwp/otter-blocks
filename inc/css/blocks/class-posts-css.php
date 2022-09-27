@@ -75,12 +75,16 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--title-text-size',
 						'value'    => 'customTitleFontSize',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
 						'property' => '--description-text-size',
 						'value'    => 'customDescriptionFontSize',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 				),
 			)
@@ -93,12 +97,16 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--title-text-size',
 						'value'    => 'customTitleFontSizeTablet',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
 						'property' => '--description-text-size',
 						'value'    => 'customDescriptionFontSizeTablet',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 				),
 			)
@@ -111,12 +119,16 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--title-text-size',
 						'value'    => 'customTitleFontSizeMobile',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
 						'property' => '--description-text-size',
 						'value'    => 'customDescriptionFontSizeMobile',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 				),
 			)

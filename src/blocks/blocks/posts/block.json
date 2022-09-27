@@ -115,22 +115,22 @@
 			"default": false
 		},
 		"customTitleFontSize": {
-			"type": "number"
+			"type": [ "string", "number" ]
 		},
 		"customTitleFontSizeTable": {
-			"type": "number"
+			"type": [ "string", "number" ]
 		},
 		"customTitleFontSizeMobile": {
-			"type": "number"
+			"type": [ "string", "number" ]
 		},
 		"customDescriptionFontSize": {
-			"type": "number"
+			"type": [ "string", "number" ]
 		},
 		"customDescriptionFontSizeTablet": {
-			"type": "number"
+			"type": [ "string", "number" ]
 		},
 		"customDescriptionFontSizeMobile": {
-			"type": "number"
+			"type": [ "string", "number" ]
 		},
 		"borderRadius": {
 			"type": "number"

@@ -4,6 +4,7 @@
 import { __ } from '@wordpress/i18n';
 
 import {
+	FontSizePicker,
 	PanelBody,
 	QueryControls,
 	RangeControl,
@@ -30,7 +31,10 @@ import { InspectorExtensions } from '../../components/inspector-slot-fill/index.
 import LayoutBuilder from './components/design-layout-builder.js';
 import ToogleGroupControl from '../../components/toogle-group-control/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
+import ResponsiveControl from '../../components/responsive-control/index.js';
 import {
+	buildResponsiveGetAttributes,
+	buildResponsiveSetAttributes,
 	convertToTitleCase,
 	changeActiveStyle,
 	getActiveStyle
@@ -45,6 +49,29 @@ const styles = [
 	{
 		label: __( 'Boxed', 'otter-blocks' ),
 		value: 'boxed'
+	}
+];
+
+const defaultFontSizes = [
+	{
+		name: 14,
+		size: '14px'
+	},
+	{
+		name: 16,
+		size: '16px'
+	},
+	{
+		name: 18,
+		size: '18px'
+	},
+	{
+		name: 24,
+		size: '24px'
+	},
+	{
+		name: 28,
+		size: '28px'
 	}
 ];
 
@@ -67,6 +94,20 @@ const Inspector = ({
 			slugs: select( 'otter-store' ).getPostsSlugs()
 		};
 	}, [ attributes.postTypes ]);
+
+	const {
+		responsiveSetAttributes,
+		responsiveGetAttributes
+	} = useSelect( select => {
+		const { getView } = select( 'themeisle-gutenberg/data' );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+
+		return {
+			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
+			responsiveGetAttributes: buildResponsiveGetAttributes( view )
+		};
+	}, []);
 
 	const categorySuggestions = categoriesList.reduce(
 		( accumulator, category ) => ({
@@ -126,6 +167,7 @@ const Inspector = ({
 		setAttributes({ className: classes });
 	};
 
+
 	return (
 		<InspectorControls>
 			<InspectorHeader
@@ -156,10 +198,23 @@ const Inspector = ({
 			{ 'settings' === tab && (
 				<Fragment>
 					<PanelBody
-						title={ __( 'Structure', 'otter-blocks' ) }
+						title={ __( 'Layout', 'otter-blocks' ) }
 					>
+						<BaseControl>
+							{ __( 'Select the types of the post. If none is selected, the default WordPress post will be displayed.', 'otter-blocks' ) }
+						</BaseControl>
+
+						<SelectControl
+							label={ __( 'Post Type', 'otter-blocks' ) }
+							value={ attributes.postTypes[0] || null }
+							onChange={ ( value ) => value && setAttributes({ postTypes: [ value ] }) }
+							options={
+								slugs.map( slug => ({ label: convertToTitleCase( slug ), value: slug }) )
+							}
+						/>
+
 						<ButtonToggle
-							label={ __( 'Layout', 'otter-blocks' ) }
+							label={ __( 'Orientation', 'otter-blocks' ) }
 							options={[
 								{
 									label: __( 'Row', 'otter-blocks' ),
@@ -215,18 +270,6 @@ const Inspector = ({
 						title={ __( 'Settings', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
-						<BaseControl>
-							{ __( 'Select the types of the post. If none is selected, the default WordPress post will be displayed.', 'otter-blocks' ) }
-						</BaseControl>
-
-						<SelectControl
-							label={ __( 'Post Type', 'otter-blocks' ) }
-							value={ attributes.postTypes[0] || null }
-							onChange={ ( value ) => value && setAttributes({ postTypes: [ value ] }) }
-							options={
-								slugs.map( slug => ({ label: convertToTitleCase( slug ), value: slug }) )
-							}
-						/>
 						<QueryControls
 							order={ attributes.order }
 							orderBy={ attributes.orderBy }
@@ -267,6 +310,51 @@ const Inspector = ({
 					</PanelBody>
 				</Fragment>
 			) }
+
+			{ 'style' === tab && (
+				<Fragment>
+					<PanelBody
+						title={ __( 'Typography', 'otter-blocks' ) }
+					>
+						<SelectControl
+							label={ __( 'Title Tag', 'otter-blocks' ) }
+							value={ attributes.titleTag || 'h5' }
+							options={ [
+								{ label: __( 'H1', 'otter-blocks' ), value: 'h1' },
+								{ label: __( 'H2', 'otter-blocks' ), value: 'h2' },
+								{ label: __( 'H3', 'otter-blocks' ), value: 'h3' },
+								{ label: __( 'H4', 'otter-blocks' ), value: 'h4' },
+								{ label: __( 'H5', 'otter-blocks' ), value: 'h5' },
+								{ label: __( 'H6', 'otter-blocks' ), value: 'h6' }
+							] }
+							onChange={ titleTag => setAttributes({ titleTag }) }
+						/>
+
+						<ResponsiveControl
+							label={ __( 'Title Size', 'otter-blocks' ) }
+						>
+							<FontSizePicker
+								fontSizes={ defaultFontSizes }
+								withReset
+								values={ responsiveGetAttributes([ attributes.customTitleFontSize, attributes.customTitleFontSizeTablet, attributes.customTitleFontSizeMobile ]) }
+								onChange={ value => responsiveSetAttributes( value, [ 'customTitleFontSize', 'customTitleFontSizeTablet', 'customTitleFontSizeMobile' ]) }
+							/>
+						</ResponsiveControl>
+
+						<ResponsiveControl
+							label={ __( 'Description Size', 'otter-blocks' ) }
+						>
+							<FontSizePicker
+								fontSizes={ defaultFontSizes }
+								withReset
+								values={ responsiveGetAttributes([ attributes.customDescriptionFontSize, attributes.customDescriptionFontSizeTablet, attributes.customDescriptionFontSizeMobile ]) }
+								onChange={ value => responsiveSetAttributes( value, [ 'customDescriptionFontSize', 'customDescriptionFontSizeTablet', 'customDescriptionFontSizeMobile' ]) }
+							/>
+						</ResponsiveControl>
+					</PanelBody>
+				</Fragment>
+			) }
+
 			<InspectorExtensions/>
 		</InspectorControls>
 	);

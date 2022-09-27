@@ -1,13 +1,10 @@
 /**
- * External dependencies
- */
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 
 import {
+	isNumber,
 	isUndefined,
 	pickBy
 } from 'lodash';
@@ -39,10 +36,14 @@ import Controls from './controls.js';
 import Inspector from './inspector.js';
 import {
 	blockInit,
+	getDefaultValueByField,
 	useCSSNode
 } from '../../helpers/block-utility.js';
 import Layout from './components/layout/index.js';
-import { _align, getCustomPostTypeSlugs } from '../../helpers/helper-functions.js';
+import {
+	_align,
+	getCustomPostTypeSlugs
+} from '../../helpers/helper-functions.js';
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
 
@@ -112,20 +113,22 @@ const Edit = ({
 		'--text-align': attributes.textAlign
 	};
 
+	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
+
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();
 	useEffect( () => {
 		setNodeCSS([
 			`{
-				${ attributes.customTitleFontSize && `--title-text-size: ${ attributes.customTitleFontSize }px;` }
-				${ attributes.customDescriptionFontSize && `--description-text-size: ${ attributes.customDescriptionFontSize }px;` }
+				${ attributes.customTitleFontSize && `--title-text-size: ${ isNumber( getValue( 'customTitleFontSize' ) ) ? `${ getValue( 'customTitleFontSize' ) }px` : getValue( 'customTitleFontSize' ) };` }
+				${ attributes.customDescriptionFontSize && `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSize' ) ) ? `${ getValue( 'customDescriptionFontSize' ) }px` : getValue( 'customDescriptionFontSize' ) };` }
 			}`,
 			`{
-				${ attributes.customTitleFontSizeTablet && `--title-text-size: ${ attributes.customTitleFontSizeTablet }px;` }
-				${ attributes.customDescriptionFontSizeTablet && `--description-text-size: ${ attributes.customDescriptionFontSizeTablet }px;` }
+				${ attributes.customTitleFontSizeTablet && `--title-text-size: ${ isNumber( getValue( 'customTitleFontSizeTablet' ) ) ? `${ getValue( 'customTitleFontSizeTablet' ) }px` : getValue( 'customTitleFontSizeTablet' ) };` }
+				${ attributes.customDescriptionFontSizeTablet && `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSizeTablet' ) ) ? `${ getValue( 'customDescriptionFontSizeTablet' ) }px` : getValue( 'customDescriptionFontSizeTablet' ) };` }
 			}`,
 			`{
-				${ attributes.customTitleFontSizeMobile && `--title-text-size: ${ attributes.customTitleFontSizeMobile }px;` }
-				${ attributes.customDescriptionFontSizeMobile && `--description-text-size: ${ attributes.customDescriptionFontSizeMobile }px;` }
+				${ attributes.customTitleFontSizeMobile && `--title-text-size: ${ isNumber( getValue( 'customTitleFontSizeMobile' ) ) ? `${ getValue( 'customTitleFontSizeMobile' ) }px` : getValue( 'customTitleFontSizeMobile' ) };` }
+				${ attributes.customDescriptionFontSizeMobile && `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSizeMobile' ) ) ? `${ getValue( 'customDescriptionFontSizeMobile' ) }px` : getValue( 'customDescriptionFontSizeMobile' ) };` }
 			}`
 		], [
 			'@media ( min-width: 960px )',
@@ -133,12 +136,9 @@ const Edit = ({
 			'@media ( max-width: 600px )'
 		]);
 	}, [
-		attributes.customTitleFontSize, attributes.customTitleFontSize,
-		attributes.customDescriptionFontSize, attributes.customDescriptionFontSize,
-		attributes.customTitleFontSizeTablet, attributes.customTitleFontSizeTablet,
-		attributes.customDescriptionFontSizeTablet, attributes.customDescriptionFontSizeTablet,
-		attributes.customTitleFontSizeMobile, attributes.customTitleFontSizeMobile,
-		attributes.customDescriptionFontSizeMobile, attributes.customDescriptionFontSizeMobile
+		attributes.customTitleFontSize, attributes.customDescriptionFontSize,
+		attributes.customTitleFontSizeTablet, attributes.customDescriptionFontSizeTablet,
+		attributes.customTitleFontSizeMobile, attributes.customDescriptionFontSizeMobile
 	]);
 
 	const blockProps = useBlockProps({
