@@ -75,7 +75,8 @@ const WelcomeGuide = () => {
 		fetch( 'https://api.themeisle.com/tracking/subscribe', {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				Accept: 'application/json, */*;q=0.1'
 			},
 			body: JSON.stringify({
 				slug: 'otter-blocks',
