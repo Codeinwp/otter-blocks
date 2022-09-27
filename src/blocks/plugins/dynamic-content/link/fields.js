@@ -129,7 +129,10 @@ const Fields = ({
 					) }
 				</ButtonGroup>
 
-				{ applyFilters( 'otter.poweredBy', '' ) }
+				<div className="o-fp-wrap">
+					{ applyFilters( 'otter.feedback', '', 'dynamic-link' ) }
+					{ applyFilters( 'otter.poweredBy', '' ) }
+				</div>
 			</PanelBody>
 		</Fragment>
 	);

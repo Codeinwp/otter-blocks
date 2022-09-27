@@ -391,7 +391,11 @@ const Edit = ({
 
 				{ applyFilters( 'otter.sticky.controls', <ProFeatures />, attributes, FILTER_OPTIONS, addOption ) }
 
-				{ applyFilters( 'otter.poweredBy', '' ) }
+				{/* @ts-ignore */}
+				<div className="o-fp-wrap">
+					{ applyFilters( 'otter.feedback', '', 'sticky' ) }
+					{ applyFilters( 'otter.poweredBy', '' ) }
+				</div>
 			</PanelBody>
 		</Inspector>
 	);
