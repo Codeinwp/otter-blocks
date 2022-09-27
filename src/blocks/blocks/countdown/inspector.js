@@ -21,7 +21,8 @@ import {
 	SelectControl,
 	__experimentalUnitControl as UnitContol,
 	TextControl,
-	BaseControl
+	BaseControl,
+	ExternalLink
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -37,8 +38,9 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies
  */
 import ResponsiveControl from '../../components/responsive-control/index.js';
-import { mergeBoxDefaultValues, removeBoxDefaultValues, buildResponsiveSetAttributes, buildResponsiveGetAttributes, objectCleaner } from '../../helpers/helper-functions.js';
+import { mergeBoxDefaultValues, removeBoxDefaultValues, buildResponsiveSetAttributes, buildResponsiveGetAttributes, objectCleaner, setUtm } from '../../helpers/helper-functions.js';
 import { Fragment } from '@wordpress/element';
+import Notice from '../../components/notice/index.js';
 
 const defaultFontSizes = [
 	{
@@ -138,11 +140,8 @@ const NonProFeaturesSettings = ({ attributes, setAttributes }) => (
 	/>
 );
 
-const TemplateProFeaturesEnd = ({ children }) => (
-	<PanelBody
-		title={ __( 'End Action', 'otter-blocks' ) }
-		initialOpen={false}
-	>
+const TemplateProFeaturesEnd = () => (
+	<Fragment>
 		<SelectControl
 			label={ __( 'On Expire', 'otter-blocks' ) }
 			value={ '' }
@@ -172,8 +171,12 @@ const TemplateProFeaturesEnd = ({ children }) => (
 			disabled
 		/>
 
-		{ children }
-	</PanelBody>
+		{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
+			<Notice
+				notice={<ExternalLink href={setUtm( window.themeisleGutenberg.upgradeLink, 'countdownfeature' )}>{__( 'Get more options with Otter Pro.', 'otter-blocks' )}</ExternalLink>}
+				variant="upsell" instructions={undefined}				/>
+		) }
+	</Fragment>
 );
 
 /**
@@ -410,7 +413,13 @@ const Inspector = ({
 
 			</PanelBody>
 
-			{ applyFilters( 'otter.countdown.controls.end', TemplateProFeaturesEnd, { attributes: attributes, setAttributes: setAttributes }) }
+			<PanelBody
+				title={ __( 'End Action', 'otter-blocks' ) }
+				initialOpen={false}
+			>
+				{ applyFilters( 'otter.countdown.controls.end', <TemplateProFeaturesEnd />, { attributes: attributes, setAttributes: setAttributes }) }
+			</PanelBody>
+
 
 			<PanelBody
 				title={ __( 'Dimensions', 'otter-blocks' ) }

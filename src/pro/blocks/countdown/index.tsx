@@ -90,22 +90,17 @@ const CountdownProFeaturesEnd = ( Template: React.FC<{}>, {
 	if ( ! Boolean( window?.otterPro?.isActive ) ) {
 		return (
 			<Fragment>
-				{/** @ts-ignore */}
-				<Template>
-					<Notice
-						notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
-						instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Sticky Extension.', 'otter-blocks' ) }
-					/>
-				</Template>
+				{ Template }
+				<Notice
+					notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
+					instructions={ __( 'You need to activate your Otter Pro license to use Pro features of Sticky Extension.', 'otter-blocks' ) }
+				/>
 			</Fragment>
 		);
 	}
 
 	return (
-		<PanelBody
-			title={ __( 'End Action', 'otter-blocks' ) }
-			initialOpen={false}
-		>
+		<Fragment>
 			<SelectControl
 				label={ __( 'On Expire', 'otter-blocks' ) }
 				value={ attributes.behaviour }
@@ -177,7 +172,7 @@ const CountdownProFeaturesEnd = ( Template: React.FC<{}>, {
 				)
 			}
 
-		</PanelBody>
+		</Fragment>
 	);
 };
 
