@@ -24,9 +24,9 @@ const addAttribute = ( props ) => {
 	return props;
 };
 
-const withWooCommerceExtension = createHigherOrderComponent( ( BlockEdit ) => {
-	return ( props ) => {
-		if ( 'themeisle-blocks/review' === props.name ) {
+const withWooCommerceExtension = createHigherOrderComponent( BlockEdit => {
+	return props => {
+		if ( 'themeisle-blocks/review' === props.name && props.isSelected ) {
 			return (
 				<Edit
 					BlockEdit={ BlockEdit }

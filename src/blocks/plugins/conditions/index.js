@@ -32,18 +32,18 @@ const addAttribute = ( props ) => {
 };
 
 const withConditions = createHigherOrderComponent( BlockEdit => {
-	return ( props ) => {
+	return props => {
 		return (
 			<Fragment>
 				<BlockEdit { ...props } />
-				<Edit { ...props } />
+				{ props.isSelected && <Edit { ...props } /> }
 			</Fragment>
 		);
 	};
 }, 'withConditions' );
 
 const withConditionsIndicator = createHigherOrderComponent( BlockListBlock => {
-	return ( props ) => {
+	return props => {
 		return (
 			<BlockListBlock
 				{ ...props }

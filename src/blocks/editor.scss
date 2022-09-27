@@ -77,6 +77,18 @@
 	}
 }
 
+.o-fp-wrap {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	#o-feedback {
+		font-size: 10px;
+		padding: 0;
+		margin-top: 10px;
+	}
+}
+
 .o-is-powered {
 	display: flex;
 	justify-content: flex-end;

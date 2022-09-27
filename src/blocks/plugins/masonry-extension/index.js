@@ -33,7 +33,7 @@ const addAttribute = ( props ) => {
 };
 
 const withMasonryExtension = createHigherOrderComponent( BlockEdit => {
-	return ( props ) => {
+	return props => {
 		if ( 'core/gallery' !== props.name ) {
 			return <BlockEdit { ...props } />;
 		}

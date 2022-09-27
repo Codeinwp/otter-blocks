@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import classnames from 'classnames';
-
-/**
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
@@ -15,8 +10,6 @@ import {
 } from '@wordpress/block-editor';
 
 import {
-	Button,
-	Dashicon,
 	PanelBody,
 	RangeControl,
 	ToggleControl
@@ -32,6 +25,8 @@ import {
 /**
  * Internal dependencies
  */
+import InspectorHeader from '../../components/inspector-header/index.js';
+import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
 import GoogleFontsControl from '../../components/google-fonts-control/index.js';
 import ControlPanelControl from '../../components/control-panel-control/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
@@ -327,33 +322,20 @@ const Inspector = ({
 	return (
 		<Fragment>
 			<InspectorControls>
-				<PanelBody className="o-heading-header-panel">
-					<Button
-						className={ classnames(
-							'header-tab',
-							{ 'is-selected': 'style' === tab }
-						) }
-						onClick={ () => setTab( 'style' ) }
-					>
-						<span>
-							<Dashicon icon="admin-customizer"/>
-							{ __( 'Style', 'otter-blocks' ) }
-						</span>
-					</Button>
-
-					<Button
-						className={ classnames(
-							'header-tab',
-							{ 'is-selected': 'advanced' === tab }
-						) }
-						onClick={ () => setTab( 'advanced' ) }
-					>
-						<span>
-							<Dashicon icon="admin-generic"/>
-							{ __( 'Advanced', 'otter-blocks' ) }
-						</span>
-					</Button>
-				</PanelBody>
+				<InspectorHeader
+					value={ tab }
+					options={[
+						{
+							label: __( 'Style', 'otter-blocks' ),
+							value: 'style'
+						},
+						{
+							label: __( 'Advanced', 'otter-blocks' ),
+							value: 'advanced'
+						}
+					]}
+					onChange={ setTab }
+				/>
 
 				{ 'style' === tab && (
 
@@ -615,6 +597,8 @@ const Inspector = ({
 						</PanelBody>
 					</Fragment>
 				) }
+
+				<InspectorExtensions/>
 			</InspectorControls>
 
 			<HTMLAnchorControl

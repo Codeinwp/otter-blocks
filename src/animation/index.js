@@ -29,8 +29,8 @@ import './typing/index.js';
 
 const excludedBlocks = [ 'themeisle-blocks/popup' ];
 
-const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
-	return ( props ) => {
+const withInspectorControls = createHigherOrderComponent( BlockEdit => {
+	return props => {
 		const hasCustomClassName = hasBlockSupport(
 			props.name,
 			'customClassName',
@@ -38,10 +38,16 @@ const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 		);
 
 		if ( hasCustomClassName && props.isSelected && ! excludedBlocks.includes( props.name ) ) {
+			let Inspector = InspectorControls;
+
+			if ( window?.otterComponents?.useInspectorSlot ) {
+				Inspector = window.otterComponents.useInspectorSlot( props.name );
+			}
+
 			return (
 				<Fragment>
 					<BlockEdit { ...props } />
-					<InspectorControls>
+					<Inspector>
 						<PanelBody
 							title={ __( 'Animations', 'otter-blocks' ) }
 							initialOpen={ false }
@@ -53,9 +59,12 @@ const withInspectorControls = createHigherOrderComponent( ( BlockEdit ) => {
 								attributes={ props.attributes }
 							/>
 
-							{ applyFilters( 'otter.poweredBy', '' ) }
+							<div className="o-fp-wrap">
+								{ applyFilters( 'otter.feedback', '', 'animations' ) }
+								{ applyFilters( 'otter.poweredBy', '' ) }
+							</div>
 						</PanelBody>
-					</InspectorControls>
+					</Inspector>
 				</Fragment>
 			);
 		}

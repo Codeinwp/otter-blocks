@@ -78,7 +78,8 @@ const Edit = ({
 			order: attributes.order,
 			orderby: attributes.orderBy,
 			per_page: attributes.postsToShow, // eslint-disable-line camelcase
-			offset: attributes.offset
+			offset: attributes.offset,
+			context: 'view'
 		}, ( value ) => ! isUndefined( value ) );
 
 		const slugs = attributes.postTypes;
@@ -89,8 +90,8 @@ const Edit = ({
 		return {
 			posts,
 			// eslint-disable-next-line camelcase
-			categoriesList: select( 'core' ).getEntityRecords( 'taxonomy', 'category', { per_page: 100 }),
-			authors: select( 'core' ).getUsers({ who: 'authors' })
+			categoriesList: select( 'core' ).getEntityRecords( 'taxonomy', 'category', { per_page: 100, context: 'view' }),
+			authors: select( 'core' ).getUsers({ who: 'authors', context: 'view' })
 		};
 	}, [ attributes.categories, attributes.order, attributes.orderBy, attributes.postsToShow, attributes.offset, attributes.postTypes ]);
 

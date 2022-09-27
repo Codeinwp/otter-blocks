@@ -11,6 +11,7 @@ import {
 } from '@wordpress/components';
 
 import {
+	select,
 	useDispatch,
 	useSelect
 } from '@wordpress/data';
@@ -74,7 +75,9 @@ const WelcomeGuide = () => {
 		fetch( 'https://api.themeisle.com/tracking/subscribe', {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+				Accept: 'application/json, */*;q=0.1',
+				'Cache-Control': 'no-cache'
 			},
 			body: JSON.stringify({
 				slug: 'otter-blocks',
@@ -204,6 +207,8 @@ const Render = () => {
 	);
 };
 
-registerPlugin( 'otter-welcome', {
-	render: Render
-});
+if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor' ) ) {
+	registerPlugin( 'otter-welcome', {
+		render: Render
+	});
+}

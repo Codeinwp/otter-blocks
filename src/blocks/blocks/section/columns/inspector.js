@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import classnames from 'classnames';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -20,7 +15,6 @@ import {
 	BaseControl,
 	Button,
 	ButtonGroup,
-	Dashicon,
 	PanelBody,
 	ToggleControl,
 	RangeControl,
@@ -31,14 +25,15 @@ import { useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
-	useState,
-	useEffect
+	useState
 } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import LayoutControl from './../components/layout-control/index.js';
+import InspectorHeader from '../../../components/inspector-header/index.js';
+import { InspectorExtensions } from '../../../components/inspector-slot-fill/index.js';
 import ResponsiveControl from '../../../components/responsive-control/index.js';
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
 import HTMLAnchorControl from '../../../components/html-anchor-control/index.js';
@@ -454,46 +449,24 @@ const Inspector = ({
 	return (
 		<Fragment>
 			<InspectorControls>
-				<PanelBody className="o-section-header-panel">
-					<Button
-						className={ classnames(
-							'header-tab',
-							{ 'is-selected': 'layout' === tab }
-						) }
-						onClick={ () => setTab( 'layout' ) }
-					>
-						<span>
-							<Dashicon icon="editor-table"/>
-							{ __( 'Layout', 'otter-blocks' ) }
-						</span>
-					</Button>
-
-					<Button
-						className={ classnames(
-							'header-tab',
-							{ 'is-selected': 'style' === tab }
-						) }
-						onClick={ () => setTab( 'style' ) }
-					>
-						<span>
-							<Dashicon icon="admin-customizer"/>
-							{ __( 'Style', 'otter-blocks' ) }
-						</span>
-					</Button>
-
-					<Button
-						className={ classnames(
-							'header-tab',
-							{ 'is-selected': 'advanced' === tab }
-						) }
-						onClick={ () => setTab( 'advanced' ) }
-					>
-						<span>
-							<Dashicon icon="admin-generic"/>
-							{ __( 'Advanced', 'otter-blocks' ) }
-						</span>
-					</Button>
-				</PanelBody>
+				<InspectorHeader
+					value={ tab }
+					options={[
+						{
+							label: __( 'Layout', 'otter-blocks' ),
+							value: 'layout'
+						},
+						{
+							label: __( 'Style', 'otter-blocks' ),
+							value: 'style'
+						},
+						{
+							label: __( 'Advanced', 'otter-blocks' ),
+							value: 'advanced'
+						}
+					]}
+					onChange={ setTab }
+				/>
 
 				{ 'layout' === tab && (
 
@@ -1044,6 +1017,8 @@ const Inspector = ({
 					</Fragment>
 
 				) }
+
+				<InspectorExtensions/>
 			</InspectorControls>
 
 			<HTMLAnchorControl

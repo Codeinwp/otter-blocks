@@ -3,8 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { InspectorControls } from '@wordpress/block-editor';
-
 import {
 	Button,
 	ExternalLink,
@@ -18,6 +16,11 @@ import {
 } from '@wordpress/components';
 
 import {
+	dispatch,
+	useSelect
+} from '@wordpress/data';
+
+import {
 	Fragment,
 	useState,
 	useEffect
@@ -29,9 +32,10 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import Notice from '../../components/notice/index.js';
-import { useSelect, dispatch } from '@wordpress/data';
+import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
 import { setUtm } from '../../helpers/helper-functions.js';
 import { BlockProps, OtterBlock } from '../../helpers/blocks.js';
+
 const FILTER_OPTIONS = {
 	position: 'o-sticky-pos',
 	offset: 'o-sticky-offset',
@@ -127,7 +131,6 @@ const AlwaysActiveOption = (
 	}
 ) => {
 	const { isRootBlock, activeFloatBlocks } = useSelect( select => {
-		console.count( 'Always on top test' ); // TODO: remove after review.
 		const { getBlocks } = select( 'core/block-editor' );
 
 		// @ts-ignore
@@ -155,7 +158,6 @@ const AlwaysActiveOption = (
 
 	return (
 		<div>
-
 			<Fragment>
 				<ToggleControl
 					label={ __( 'Float Mode', 'otter-blocks' ) }
@@ -250,10 +252,13 @@ const AlwaysActiveOption = (
 
 
 const Edit = ({
+	name,
 	attributes,
 	setAttributes,
 	clientId
 }: BlockProps<unknown> ) => {
+	const Inspector = useInspectorSlot( name );
+
 	const [ containerOptions, setContainerOptions ] = useState([{
 		label: __( 'Screen', 'otter-blocks' ),
 		value: 'o-sticky-scope-screen'
@@ -295,7 +300,6 @@ const Edit = ({
 
 	useEffect( () => {
 		if ( clientId ) {
-			console.count( 'Test Perf' ); // TODO: remove after review.
 			const block = document.querySelector( `#block-${ clientId }` );
 			if ( block ) {
 				let parent = block?.parentElement;
@@ -357,7 +361,7 @@ const Edit = ({
 	}, [ clientId ]);
 
 	return (
-		<InspectorControls>
+		<Inspector>
 			{/* @ts-ignore */}
 			<PanelBody
 				title={ __( 'Sticky', 'otter-blocks' ) }
@@ -387,9 +391,13 @@ const Edit = ({
 
 				{ applyFilters( 'otter.sticky.controls', <ProFeatures />, attributes, FILTER_OPTIONS, addOption ) }
 
-				{ applyFilters( 'otter.poweredBy', '' ) }
+				{/* @ts-ignore */}
+				<div className="o-fp-wrap">
+					{ applyFilters( 'otter.feedback', '', 'sticky' ) }
+					{ applyFilters( 'otter.poweredBy', '' ) }
+				</div>
 			</PanelBody>
-		</InspectorControls>
+		</Inspector>
 	);
 };
 
