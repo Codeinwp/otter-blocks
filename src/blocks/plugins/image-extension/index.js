@@ -46,7 +46,7 @@ const addAttribute = props => {
 };
 
 const withImageExtension = createHigherOrderComponent( BlockEdit => {
-	return ( props ) => {
+	return props => {
 		if ( 'core/image' === props.name && props.attributes.url ) {
 			return (
 				<Edit

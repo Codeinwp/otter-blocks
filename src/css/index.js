@@ -49,7 +49,7 @@ const addAttribute = ( settings ) => {
 };
 
 const withInspectorControls = createHigherOrderComponent( BlockEdit => {
-	return ( props ) => {
+	return props => {
 		const hasCustomClassName = hasBlockSupport( props.name, 'customClassName', true );
 		if ( hasCustomClassName && props.isSelected ) {
 			let Inspector = InspectorControls;
@@ -72,7 +72,10 @@ const withInspectorControls = createHigherOrderComponent( BlockEdit => {
 								attributes={ props.attributes }
 							/>
 
-							{ applyFilters( 'otter.poweredBy', '' ) }
+							<div className="o-fp-wrap">
+								{ applyFilters( 'otter.feedback', '', 'custom-css' ) }
+								{ applyFilters( 'otter.poweredBy', '' ) }
+							</div>
 						</PanelBody>
 					</Inspector>
 				</Fragment>

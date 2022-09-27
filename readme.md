@@ -193,6 +193,23 @@ You can check Otter documentation [here](https://docs.themeisle.com/article/1478
 
 ## Changelog ##
 
+##### [Version 2.0.15](https://github.com/Codeinwp/otter-blocks/compare/v2.0.14...v2.0.15) (2022-09-27)
+
+- Icon Block Enhancements
+- Product Review Block Enhancements
+- Add Evergreen Countdown Option to Countdown Block
+- Add finishing actions to Countdown Block
+- Add Dynamic Link control to Button Blocks
+- Add Otter Feedback Option
+- Fix Slider Block not working inside Section in the Editor
+- Fix unintended border in some blocks when used as non-Admin role.
+- Fix Padding control crashing the Section Block
+- Fix error in Widgets Screen
+- Fix stretched image in Safari
+
+
+
+
 ##### [Version 2.0.14](https://github.com/Codeinwp/otter-blocks/compare/v2.0.13...v2.0.14) (2022-09-12)
 
 - Adding an onboarding experience in Otter
