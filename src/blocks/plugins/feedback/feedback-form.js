@@ -75,7 +75,8 @@ const FeedbackForm = ({
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					Accept: 'application/json, */*;q=0.1'
+					Accept: 'application/json, */*;q=0.1',
+					'Cache-Control': 'no-cache'
 				},
 				body: JSON.stringify({
 					slug: 'otter-blocks',
