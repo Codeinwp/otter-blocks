@@ -4,21 +4,15 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	PanelBody,
 	ToggleControl,
-	RangeControl,
-	Dropdown,
-	Button,
-	DateTimePicker,
-	FontSizePicker,
 	SelectControl,
-	TextControl,
-	BaseControl
+	TextControl
 } from '@wordpress/components';
 
 import { Fragment } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
+
 import { CountdownInspectorProps } from '../../../blocks/blocks/countdown/types';
 import { countdownMoveHelpMsgCountdown, onExpireHelpMsgCountdown } from '../../../blocks/blocks/countdown/inspector';
 const { Notice } = window.otterComponents;

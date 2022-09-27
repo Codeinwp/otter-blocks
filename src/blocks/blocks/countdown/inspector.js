@@ -92,52 +92,60 @@ export const countdownMoveHelpMsgCountdown = ( mode ) => {
 };
 
 const NonProFeaturesSettings = ({ attributes, setAttributes }) => (
-	<SelectControl
-		label={ __( 'Countdown Type', 'otter-blocks' ) }
-		value={  attributes.mode }
-		onChange={
-			value => {
-				const attrs = {
-					mode: value ? value : undefined
-				};
+	<Fragment>
+		<SelectControl
+			label={ __( 'Countdown Type', 'otter-blocks' ) }
+			value={  attributes.mode }
+			onChange={
+				value => {
+					const attrs = {
+						mode: value ? value : undefined
+					};
 
-				if ( ! value ) {
-					attrs.date = undefined;
-				}
-
-				if ( 'timer' !== value ) {
-					attrs.timer = undefined;
-					if ( 'restart' === attributes.behaviour ) {
-						attrs.behaviour = undefined;
+					if ( ! value ) {
+						attrs.date = undefined;
 					}
-				}
 
-				if ( 'interval' !== value ) {
-					attrs.startInterval = undefined;
-					attrs.endInterval = undefined;
-				}
+					if ( 'timer' !== value ) {
+						attrs.timer = undefined;
+						if ( 'restart' === attributes.behaviour ) {
+							attrs.behaviour = undefined;
+						}
+					}
 
-				setAttributes( attrs );
+					if ( 'interval' !== value ) {
+						attrs.startInterval = undefined;
+						attrs.endInterval = undefined;
+					}
+
+					setAttributes( attrs );
+				}
 			}
-		}
-		options={[
-			{
-				label: __( 'Static', 'otter-blocks' ),
-				value: ''
-			},
-			{
-				label: __( 'Evergeen (Pro)', 'otter-blocks' ),
-				value: 'timer',
-				disabled: true
-			},
-			{
-				label: __( 'Interval (Pro)', 'otter-blocks' ),
-				value: 'interval',
-				disabled: true
-			}
-		]}
-		help={ countdownMoveHelpMsgCountdown( attributes.mode )}
-	/>
+			options={[
+				{
+					label: __( 'Static', 'otter-blocks' ),
+					value: ''
+				},
+				{
+					label: __( 'Evergeen (Pro)', 'otter-blocks' ),
+					value: 'timer',
+					disabled: true
+				},
+				{
+					label: __( 'Interval (Pro)', 'otter-blocks' ),
+					value: 'interval',
+					disabled: true
+				}
+			]}
+			help={ countdownMoveHelpMsgCountdown( attributes.mode )}
+		/>
+
+		{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
+			<Notice
+				notice={<ExternalLink href={setUtm( window.themeisleGutenberg.upgradeLink, 'countdownfeature' )}>{__( 'Get more options with Otter Pro.', 'otter-blocks' )}</ExternalLink>}
+				variant="upsell" instructions={undefined}				/>
+		) }
+	</Fragment>
 );
 
 const TemplateProFeaturesEnd = () => (
