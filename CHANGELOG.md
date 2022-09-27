@@ -1,3 +1,7 @@
+##### [Version 2.0.16](https://github.com/Codeinwp/otter-blocks/compare/v2.0.15...v2.0.16) (2022-09-27)
+
+- Minor fixes.
+
 ##### [Version 2.0.15](https://github.com/Codeinwp/otter-blocks/compare/v2.0.14...v2.0.15) (2022-09-27)
 
 - Icon Block Enhancements
