@@ -255,7 +255,8 @@ export const adaptors = {
 				borderRadius: getInt( s?.border?.radius?.desktop?.top ),
 				margin: getInt( s?.margin?.desktop?.top ),
 				padding: getInt( s?.padding?.desktop?.top ),
-				fontSize: getInt( s?.font?.size )
+				fontSize: getInt( s?.font?.size ),
+				backgroundColor: s?.colors?.background
 			};
 		}
 	},
@@ -272,7 +273,8 @@ export const adaptors = {
 				},
 				private: {
 					gap: attrs?.gap,
-					defaultIconColor: attrs?.defaultIconColor
+					defaultIconColor: attrs?.defaultIconColor,
+					horizontalAlign: attrs?.horizontalAlign
 				}
 			};
 		},
@@ -467,7 +469,7 @@ export const adaptors = {
 				},
 				private: {
 					...( pickBy( attrs, ( value, key ) => {
-						return key?.includes( 'FontSize' )  || key?.includes( 'Color' ) || key?.includes( 'Width' ) || key?.includes( 'Gap' );
+						return key?.includes( 'FontSize' )  || key?.includes( 'Color' ) || key?.includes( 'Width' ) || key?.includes( 'Gap' ) || key?.includes( 'Style' );
 					}) ?? {})
 				}
 			};
