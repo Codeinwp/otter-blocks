@@ -85,11 +85,60 @@ export const countdownMoveHelpMsgCountdown = ( mode ) => {
 	case 'interval':
 		return __( 'The countdown will be active only between the Start Date and the End Date', 'otter-blocks' );
 	default:
-		return __( 'A universal deadline for all visitors', 'otter-blocks' );
+		return __( 'An universal deadline for all visitors', 'otter-blocks' );
 	}
 };
 
-const ProFeatures = ({ children }) => (
+const NonProFeaturesSettings = ({ attributes, setAttributes }) => (
+	<SelectControl
+		label={ __( 'Countdown Type', 'otter-blocks' ) }
+		value={  attributes.mode }
+		onChange={
+			value => {
+				const attrs = {
+					mode: value ? value : undefined
+				};
+
+				if ( ! value ) {
+					attrs.date = undefined;
+				}
+
+				if ( 'timer' !== value ) {
+					attrs.timer = undefined;
+					if ( 'restart' === attributes.behaviour ) {
+						attrs.behaviour = undefined;
+					}
+				}
+
+				if ( 'interval' !== value ) {
+					attrs.startInterval = undefined;
+					attrs.endInterval = undefined;
+				}
+
+				setAttributes( attrs );
+			}
+		}
+		options={[
+			{
+				label: __( 'Static', 'otter-blocks' ),
+				value: ''
+			},
+			{
+				label: __( 'Evergeen (Pro)', 'otter-blocks' ),
+				value: 'timer',
+				disabled: true
+			},
+			{
+				label: __( 'Interval (Pro)', 'otter-blocks' ),
+				value: 'interval',
+				disabled: true
+			}
+		]}
+		help={ countdownMoveHelpMsgCountdown( attributes.mode )}
+	/>
+);
+
+const TemplateProFeaturesEnd = ({ children }) => (
 	<PanelBody
 		title={ __( 'End Action', 'otter-blocks' ) }
 		initialOpen={false}
@@ -170,51 +219,8 @@ const Inspector = ({
 				title={ __( 'Time Settings', 'otter-blocks' ) }
 			>
 
-				<SelectControl
-					label={ __( 'Countdown Type', 'otter-blocks' ) }
-					value={  attributes.mode }
-					onChange={ value => {
+				{ applyFilters( 'otter.countdown.controls.settings', <NonProFeaturesSettings attributes={attributes} setAttributes={setAttributes} />, { attributes: attributes, setAttributes: setAttributes }) }
 
-						const attrs = {
-							mode: value ? value : undefined
-						};
-
-						if ( ! value ) {
-							attrs.date = undefined;
-						}
-
-						if ( 'timer' !== value ) {
-							attrs.timer = undefined;
-							if ( 'restart' === attributes.behaviour ) {
-								attrs.behaviour = undefined;
-							}
-						}
-
-						if ( 'interval' !== value ) {
-							attrs.startInterval = undefined;
-							attrs.endInterval = undefined;
-						}
-
-						setAttributes( attrs );
-					}
-
-					}
-					options={[
-						{
-							label: __( 'Static', 'otter-blocks' ),
-							value: ''
-						},
-						{
-							label: __( 'Evergeen', 'otter-blocks' ),
-							value: 'timer'
-						},
-						{
-							label: __( 'Interval', 'otter-blocks' ),
-							value: 'interval'
-						}
-					]}
-					help={ countdownMoveHelpMsgCountdown( attributes.mode )}
-				/>
 
 				{
 					attributes.mode === undefined && (
@@ -404,7 +410,7 @@ const Inspector = ({
 
 			</PanelBody>
 
-			{ applyFilters( 'otter.countdown.controls', ProFeatures, { attributes: attributes, setAttributes: setAttributes }) }
+			{ applyFilters( 'otter.countdown.controls.end', TemplateProFeaturesEnd, { attributes: attributes, setAttributes: setAttributes }) }
 
 			<PanelBody
 				title={ __( 'Dimensions', 'otter-blocks' ) }

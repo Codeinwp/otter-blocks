@@ -20,10 +20,69 @@ import { Fragment } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 import { CountdownInspectorProps } from '../../../blocks/blocks/countdown/types';
-import { onExpireHelpMsgCountdown } from '../../../blocks/blocks/countdown/inspector';
+import { countdownMoveHelpMsgCountdown, onExpireHelpMsgCountdown } from '../../../blocks/blocks/countdown/inspector';
 const { Notice } = window.otterComponents;
 
-const CountdownProFeatures = ( Template: React.FC<{}>, {
+const CountdownProFeaturesSettings = ( Template: React.FC<{}>, { attributes, setAttributes }: CountdownInspectorProps ) => {
+	if ( ! Boolean( window?.otterPro?.isActive ) ) {
+		return (
+			<Fragment>
+				{ Template }
+			</Fragment>
+		);
+	}
+
+	return (
+		<SelectControl
+			label={ __( 'Countdown Type', 'otter-blocks' ) }
+			value={  attributes.mode }
+			onChange={ value => {
+
+				const attrs: any = {
+					mode: value ? value : undefined
+				};
+
+				if ( ! value ) {
+					attrs.date = undefined;
+				}
+
+				if ( 'timer' !== value ) {
+					attrs.timer = undefined;
+					if ( 'restart' === attributes.behaviour ) {
+						attrs.behaviour = undefined;
+					}
+				}
+
+				if ( 'interval' !== value ) {
+					attrs.startInterval = undefined;
+					attrs.endInterval = undefined;
+				}
+
+				setAttributes( attrs );
+			}
+
+			}
+			options={[
+				{
+					label: __( 'Static', 'otter-blocks' ),
+					value: ''
+				},
+				{
+					label: __( 'Evergeen', 'otter-blocks' ),
+					value: 'timer'
+				},
+				{
+					label: __( 'Interval', 'otter-blocks' ),
+					value: 'interval'
+				}
+			]}
+			help={ countdownMoveHelpMsgCountdown( attributes.mode )}
+		/>
+	);
+};
+
+
+const CountdownProFeaturesEnd = ( Template: React.FC<{}>, {
 	attributes,
 	setAttributes
 }: CountdownInspectorProps ) => {
@@ -122,4 +181,5 @@ const CountdownProFeatures = ( Template: React.FC<{}>, {
 	);
 };
 
-addFilter( 'otter.countdown.controls', 'themeisle-gutenberg/countdown-controls', CountdownProFeatures );
+addFilter( 'otter.countdown.controls.settings', 'themeisle-gutenberg/countdown-controls', CountdownProFeaturesSettings );
+addFilter( 'otter.countdown.controls.end', 'themeisle-gutenberg/countdown-controls', CountdownProFeaturesEnd );
