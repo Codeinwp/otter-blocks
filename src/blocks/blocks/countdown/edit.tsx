@@ -1,21 +1,31 @@
 /**
  * External dependencies.
  */
+import classNames from 'classnames';
 
 /**
  * WordPress dependencies
  */
+import { __ } from '@wordpress/i18n';
+
+import {
+	isEmpty,
+	isNumber,
+	pickBy
+} from 'lodash';
+
+import moment from 'moment';
+
 import { useBlockProps } from '@wordpress/block-editor';
+
+import { Notice } from '@wordpress/components';
 
 import {
 	Fragment,
 	useState,
 	useEffect
 } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
 
-
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -31,11 +41,8 @@ import {
 	getTimezone
 } from '../../helpers/helper-functions.js';
 import DisplayTime from './components/display-time';
-import { isEmpty, isNumber, pickBy } from 'lodash';
-import classNames from 'classnames';
 import { fromInterval, toTimer } from './common';
 import { CountdownProps } from './types';
-import { Notice } from '@wordpress/components';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -172,23 +179,20 @@ const Edit = ({
 			/>
 			{/* @ts-ignore */}
 			<div { ...blockProps }>
-
 				<DisplayTime
 					time={ getTime() }
 					settings={ { exclude: attributes?.exclude } }
 					hasSeparators={ attributes.hasSeparators }
 				/>
-				{
-					4 === attributes?.exclude?.length && (
-						<Fragment>
-							<br/>
-							<Notice isDismissible={false} status="info">
-								{__( 'The Countdown will be hidden in page', 'otter-blocks' )}
-							</Notice>
-						</Fragment>
 
-					)
-				}
+				{ 4 === attributes?.exclude?.length && (
+					<Fragment>
+						<br/>
+						<Notice isDismissible={ false } status="info">
+							{ __( 'The Countdown will be hidden in page', 'otter-blocks' ) }
+						</Notice>
+					</Fragment>
+				) }
 			</div>
 		</Fragment>
 	);
