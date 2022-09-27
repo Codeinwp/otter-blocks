@@ -1,3 +1,4 @@
+import { color } from '@wordpress/icons/build-types';
 import { BoxType } from '../../helpers/blocks';
 
 /**
@@ -127,7 +128,7 @@ export const extractThemeCSSVar = ( settings: ThemeSettings ) => {
 	}
 };
 
-export const getColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' | 'any', colorName: string ) => {
+const selectColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' | 'any', colorName: string ) => {
 	if ( 'undefined' === typeof window  ) {
 		return undefined;
 	}
@@ -143,7 +144,7 @@ export const getColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' 
 			return simpleColor.value;
 		}
 
-		const varNameColor = window.oThemeStyles.cssVars?.filter( x => x.includes( 'color' ) ).find( varName => varName.includes( varName ) );
+		const varNameColor = window.oThemeStyles.cssVars?.filter( x => x.includes( 'color' ) ).find( varName => varName.includes( colorName ) );
 
 		return varNameColor;
 
@@ -153,12 +154,12 @@ export const getColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' 
 			return simpleGradient.value;
 		}
 
-		const varNameGradient = window.oThemeStyles.cssVars?.filter( x => x.includes( 'gradient' ) ).find( varName => varName.includes( varName ) );
+		const varNameGradient = window.oThemeStyles.cssVars?.filter( x => x.includes( 'gradient' ) ).find( varName => varName.includes( colorName ) );
 
 		return varNameGradient;
 
 	case 'duotone':
-		const varNameDuotone = window.oThemeStyles.cssVars?.filter( x => x.includes( 'duotone' ) ).find( varName => varName.includes( varName ) );
+		const varNameDuotone = window.oThemeStyles.cssVars?.filter( x => x.includes( 'duotone' ) ).find( varName => varName.includes( colorName ) );
 
 		return varNameDuotone;
 
@@ -168,10 +169,16 @@ export const getColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' 
 			return simple.value;
 		}
 
-		const varName = window.oThemeStyles.cssVars?.find( varName => varName.includes( varName ) );
+		const varName = window.oThemeStyles.cssVars?.find( varName => varName.includes( colorName ) );
 		return varName;
 
 	default:
 		return undefined;
 	}
+};
+
+export const getColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' | 'any', colorName: string ) => {
+	const color = selectColorFromThemeStyles( type, colorName );
+	const isCSSVar = Boolean( color?.includes( '--wp--preset--' ) );
+	return isCSSVar ? `var(${color})` : color;
 };
