@@ -89,24 +89,29 @@ const headingOptions = [
 
 const defaultFontSizes = [
 	{
-		name: 14,
-		size: '14px'
+		name: __( 'XS', 'otter-blocks' ),
+		size: '14px',
+		slug: 'xs'
 	},
 	{
-		name: 16,
-		size: '16px'
+		name: __( 'Small', 'otter-blocks' ),
+		size: '16px',
+		slug: 'small'
 	},
 	{
-		name: 18,
-		size: '18px'
+		name: __( 'Medium', 'otter-blocks' ),
+		size: '18px',
+		slug: 'medium'
 	},
 	{
-		name: 24,
-		size: '24px'
+		name: __( 'Large', 'otter-blocks' ),
+		size: '24px',
+		slug: 'large'
 	},
 	{
-		name: 28,
-		size: '28px'
+		name: __( 'XL', 'otter-blocks' ),
+		size: '28px',
+		slug: 'xl'
 	}
 ];
 

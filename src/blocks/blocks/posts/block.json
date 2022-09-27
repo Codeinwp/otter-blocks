@@ -132,6 +132,15 @@
 		"customDescriptionFontSizeMobile": {
 			"type": [ "string", "number" ]
 		},
+		"customMetaFontSize": {
+			"type": "string"
+		},
+		"customMetaFontSizeTablet": {
+			"type": "string"
+		},
+		"customMetaFontSizeMobile": {
+			"type": "string"
+		},
 		"borderRadius": {
 			"type": "number"
 		},
