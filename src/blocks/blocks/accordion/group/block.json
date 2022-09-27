@@ -26,6 +26,12 @@
 		"borderColor": {
 			"type": "string"
 		},
+		"borderStyle": {
+			"type": "string"
+		},
+		"borderWidth": {
+			"type": "number"
+		},
 		"isSynced": {
 			"type": "array"
 		},
@@ -46,12 +52,6 @@
 		},
 		"letterSpacing": {
 			"type": "string"
-		},
-		"headerBorder": {
-			"type": "object"
-		},
-		"contentBorder": {
-			"type": "object"
 		},
 		"headerPadding": {
 			"type": "object"

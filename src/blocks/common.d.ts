@@ -16,11 +16,6 @@ export type BoxPadding = {
     bottom: string
 }
 
-export type AdvancedBorder = {
-	style: string
-	width: BoxType
-}
-
 export type BoxBorder = BoxPadding;
 
 export type IconData = {

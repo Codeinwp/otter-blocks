@@ -46,6 +46,8 @@ const PREFIX_TO_FAMILY = {
 	fab: 'Font Awesome 5 Brands'
 };
 
+const px = value => value ? `${ value }px` : value;
+
 /**
  * Accordion Group component
  * @param {import('./types').AccordionGroupProps} props
@@ -78,6 +80,8 @@ const Edit = ({
 		'--title-background': getValue( 'titleBackground' ),
 		'--content-background': getValue( 'contentBackground' ),
 		'--border-color': getValue( 'borderColor' ),
+		'--border-style': getValue( 'borderStyle' ),
+		'--border-width': px( getValue( 'borderWidth' ) ),
 		'--font-family': attributes.fontFamily,
 		'--font-variant': attributes.fontVariant,
 		'--font-style': attributes.fontStyle,
@@ -90,11 +94,7 @@ const Edit = ({
 			${attributes.boxShadow.blur}px ${attributes.boxShadow.spread}px
 			${hex2rgba( attributes.boxShadow.color, attributes.boxShadow.colorOpacity )}`,
 		'--header-padding': boxValues( attributes.headerPadding, { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
-		'--content-padding': boxValues( attributes.contentPadding, { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
-		'--header-border-width': attributes.headerBorder?.width && boxValues( attributes.headerBorder.width, { top: '1px', right: '1px', bottom: '1px', left: '1px' }),
-		'--content-border-width': attributes.contentBorder?.width && boxValues( attributes.contentBorder.width, { top: '0', right: '1px', bottom: '1px', left: '1px' }),
-		'--header-border-style': attributes.headerBorder?.style,
-		'--content-border-style': attributes.contentBorder?.style
+		'--content-padding': boxValues( attributes.contentPadding, { top: '18px', right: '24px', bottom: '18px', left: '24px' })
 	};
 
 	const [ iconsCSSNodeName, setIconsNodeCSS ] = useCSSNode();
@@ -120,7 +120,6 @@ const Edit = ({
 	useEffect( () => {
 		const activeTitleColor = getValue( 'activeTitleColor' );
 		const activeTitleBackground = getValue( 'activeTitleBackground' );
-		const activeContentBackground = getValue( 'activeContentBackground' );
 
 		setActiveNodeCSS([
 			activeTitleColor && `.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__title {
@@ -128,12 +127,9 @@ const Edit = ({
 			}`,
 			activeTitleBackground && `.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__title {
 				--title-background: ${ activeTitleBackground };
-			}`,
-			activeContentBackground && `.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__content {
-				--content-background: ${ activeContentBackground };
 			}`
 		]);
-	}, [ attributes.activeTitleColor, attributes.activeTitleBackground, attributes.activeContentBackground ]);
+	}, [ attributes.activeTitleColor, attributes.activeTitleBackground ]);
 
 	useEffect( () => {
 		if ( attributes.fontFamily ) {

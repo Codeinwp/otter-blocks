@@ -138,12 +138,6 @@ const Inspector = ({
 		setAttributes({ tag: targetTag });
 	};
 
-	const onBorderChange = ( attrName, property, value ) => {
-		setAttributes({
-			[ attrName ]: { ...attributes[attrName], [ property ]: 'object' === typeof value ? { ...attributes[attrName][property], ...value } : value }
-		});
-	};
-
 	const changeStyle = value => {
 		const classes = changeActiveStyle( attributes?.className, styles, value );
 		setAttributes({ className: classes });
@@ -345,44 +339,11 @@ const Inspector = ({
 							isDisabled={ attributes.isSynced?.includes( 'backgroundColor' ) || false }
 						>
 							<ColorGradientControl
-								label={ __( 'Active Content Background', 'otter-blocks' ) }
-								colorValue={ attributes.activeContentBackground }
-								onColorChange={ activeContentBackground => setAttributes({ activeContentBackground }) }
-							/>
-						</Disabled>
-
-						<Disabled
-							isDisabled={ attributes.isSynced?.includes( 'backgroundColor' ) || false }
-						>
-							<ColorGradientControl
 								label={ __( 'Border', 'otter-blocks' ) }
 								colorValue={ getValue( 'borderColor' ) }
 								onColorChange={ e => setAttributes({ borderColor: e }) }
 							/>
 						</Disabled>
-					</PanelBody>
-
-					<PanelBody
-						title={ __( 'Icons', 'otter-blocks' ) }
-						initialOpen={ false }
-					>
-						<IconPickerControl
-							label={ __( 'Closed Item Icon', 'otter-blocks' ) }
-							library="fontawesome"
-							prefix={ attributes.icon?.prefix }
-							icon={ attributes.icon?.name }
-							allowThemeisleIcons={ false }
-							onChange={ icon => setAttributes({ icon }) }
-						/>
-
-						<IconPickerControl
-							label={ __( 'Open Item Icon', 'otter-blocks' ) }
-							library="fontawesome"
-							prefix={ attributes.openItemIcon?.prefix }
-							icon={ attributes.openItemIcon?.name }
-							allowThemeisleIcons={ false }
-							onChange={ openItemIcon => setAttributes({ openItemIcon }) }
-						/>
 					</PanelBody>
 
 					<PanelBody
@@ -413,41 +374,48 @@ const Inspector = ({
 					</PanelBody>
 
 					<PanelBody
+						title={ __( 'Icons', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						<IconPickerControl
+							label={ __( 'Closed Item Icon', 'otter-blocks' ) }
+							library="fontawesome"
+							prefix={ attributes.icon?.prefix }
+							icon={ attributes.icon?.name }
+							allowThemeisleIcons={ false }
+							onChange={ icon => setAttributes({ icon }) }
+						/>
+
+						<IconPickerControl
+							label={ __( 'Open Item Icon', 'otter-blocks' ) }
+							library="fontawesome"
+							prefix={ attributes.openItemIcon?.prefix }
+							icon={ attributes.openItemIcon?.name }
+							allowThemeisleIcons={ false }
+							onChange={ openItemIcon => setAttributes({ openItemIcon }) }
+						/>
+					</PanelBody>
+
+					<PanelBody
 						title={ __( 'Borders', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
 						<SelectControl
-							label={ __( 'Header Border Style', 'otter-blocks' ) }
+							label={ __( 'Border Style', 'otter-blocks' ) }
 							labelPosition="left"
-							value={ attributes.headerBorder?.style }
+							value={ attributes.borderStyle }
 							options={[
 								{ label: __( 'Solid', 'otter-blocks' ), value: 'solid' },
 								{ label: __( 'Dashed', 'otter-blocks' ), value: 'dashed' },
 								{ label: __( 'Dotted', 'otter-blocks' ), value: 'dotted' }
 							]}
-							onChange={ value => onBorderChange( 'headerBorder', 'style', value ) }
+							onChange={ borderStyle => setAttributes({ borderStyle }) }
 						/>
-						<BoxControl
-							label={ __( 'Header Border Width', 'otter-blocks' ) }
-							values={ attributes.headerBorder?.width || {} }
-							onChange={ value => onBorderChange( 'headerBorder', 'width', value ) }
-						/>
-						<SelectControl
-							label={ __( 'Content Border Style', 'otter-blocks' ) }
-							labelPosition="left"
-							value={ attributes.contentBorder?.style }
-							options={[
-								{ label: __( 'Solid', 'otter-blocks' ), value: 'solid' },
-								{ label: __( 'Dashed', 'otter-blocks' ), value: 'dashed' },
-								{ label: __( 'Dotted', 'otter-blocks' ), value: 'dotted' }
-							]}
-							onChange={ value => onBorderChange( 'contentBorder', 'style', value ) }
-						/>
-						<BoxControl
-							label={ __( 'Content Border Width', 'otter-blocks' ) }
-							values={ attributes.contentBorder?.width || {} }
-							sides={[ 'right', 'bottom', 'left' ]}
-							onChange={ value => onBorderChange( 'contentBorder', 'width', value ) }
+						<RangeControl
+							label={ __( 'Width(px)', 'otter-blocks' ) }
+							value={ attributes.borderWidth }
+							max={ 50 }
+							onChange={ borderWidth => setAttributes({ borderWidth }) }
 						/>
 						<BoxShadowControl
 							boxShadow={ attributes.boxShadow }

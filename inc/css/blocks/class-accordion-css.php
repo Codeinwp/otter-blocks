@@ -52,11 +52,6 @@ class Accordion_CSS extends Base_CSS {
 						'hasSync'  => 'accordion-title-background',
 					),
 					array(
-						'property' => '--border-color',
-						'value'    => 'borderColor',
-						'hasSync'  => 'accordion-border-color',
-					),
-					array(
 						'property' => '--content-background',
 						'value'    => 'contentBackground',
 						'hasSync'  => 'accordion-content-background',
@@ -86,6 +81,30 @@ class Accordion_CSS extends Base_CSS {
 						'property' => '--font-size',
 						'value'    => 'fontSize',
 						'unit'     => 'px',
+					),
+					array(
+						'property'  => '--border-style',
+						'value'     => 'borderStyle',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['borderStyle'] );
+						},
+					),
+					array(
+						'property'  => '--border-color',
+						'value'     => 'borderColor',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['borderColor'] );
+						},
+					),
+					array(
+						'property'  => '--border-width',
+						'value'     => 'borderWidth',
+						'format'    => function( $value ) {
+							return $value . 'px';
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['borderWidth'] );
+						},
 					),
 					array(
 						'property'       => '--box-shadow',
@@ -146,41 +165,6 @@ class Accordion_CSS extends Base_CSS {
 				'selector'   => ' .wp-block-themeisle-blocks-accordion-item__title',
 				'properties' => array(
 					array(
-						'property'  => 'border-width',
-						'value'     => 'headerBorder',
-						'format'    => function( $value ) {
-							return CSS_Utility::box_values(
-								$value['width'],
-								array(
-									'top'    => '1px',
-									'right'  => '1px',
-									'bottom' => '1px',
-									'left'   => '1px',
-								)
-							);
-						},
-						'condition' => function( $attrs ) {
-							return isset( $attrs['headerBorder'] ) && isset( $attrs['headerBorder']['width'] );
-						},
-					),
-					array(
-						'property'  => 'border-style',
-						'value'     => 'headerBorder',
-						'format'    => function( $value ) {
-							return $value['style'];
-						},
-						'condition' => function( $attrs ) {
-							return isset( $attrs['headerBorder'] ) && isset( $attrs['headerBorder']['style'] );
-						},
-					),
-					array(
-						'property'  => 'border-color',
-						'value'     => 'borderColor',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['borderColor'] );
-						},
-					),
-					array(
 						'property'  => 'padding',
 						'value'     => 'headerPadding',
 						'format'    => function( $value ) {
@@ -206,41 +190,6 @@ class Accordion_CSS extends Base_CSS {
 			array(
 				'selector'   => ' .wp-block-themeisle-blocks-accordion-item__content',
 				'properties' => array(
-					array(
-						'property'  => 'border-width',
-						'value'     => 'contentBorder',
-						'format'    => function( $value ) {
-							return CSS_Utility::box_values(
-								$value['width'],
-								array(
-									'top'    => '0',
-									'right'  => '1px',
-									'bottom' => '1px',
-									'left'   => '1px',
-								)
-							);
-						},
-						'condition' => function( $attrs ) {
-							return isset( $attrs['contentBorder'] ) && isset( $attrs['contentBorder']['width'] );
-						},
-					),
-					array(
-						'property'  => 'border-style',
-						'value'     => 'contentBorder',
-						'format'    => function( $value ) {
-							return $value['style'];
-						},
-						'condition' => function( $attrs ) {
-							return isset( $attrs['contentBorder'] ) && isset( $attrs['contentBorder']['style'] );
-						},
-					),
-					array(
-						'property'  => 'border-color',
-						'value'     => 'borderColor',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['borderColor'] );
-						},
-					),
 					array(
 						'property'  => 'padding',
 						'value'     => 'contentPadding',
@@ -274,10 +223,6 @@ class Accordion_CSS extends Base_CSS {
 					array(
 						'property' => '--title-background',
 						'value'    => 'activeTitleBackground',
-					),
-					array(
-						'property' => '--content-background',
-						'value'    => 'activeContentBackground',
 					),
 				),
 			)

@@ -1,28 +1,25 @@
 .wp-block-themeisle-blocks-accordion {
-	--title-color: #1e1e1e;
-	--title-background: #ffffff;
-	--content-background: #ffffff;
-
+	$block: &;
 	margin: 20px auto;
 
-	.wp-block-themeisle-blocks-accordion-item {
-		box-shadow: var( --box-shadow );
-		.wp-block-themeisle-blocks-accordion-item__title {
-			color: var( --title-color );
-			background: var( --title-background );
+	&-item {
+		box-shadow: var(--box-shadow);
 
-			border-width: 1px;
-			border-style: solid;
-			border-color: #d5dadf;
+		&__title {
+			color: var(--title-color);
+			background: var(--title-background);
+
+			border: 0;
+			border-top: var(--border-width, 1px) var(--border-style, solid) var(--border-color, #ccc);
 
 			padding: 18px 24px 18px 24px;
 
-			font-style: var( --font-style );
-			font-weight: var( --font-variant );
-			font-family: var( --font-family );
-			text-transform: var( --text-transform );
-			letter-spacing: var( --letter-spacing );
-			font-size: var( --font-size, 22px );
+			font-style: var(--font-style);
+			font-weight: var(--font-variant);
+			font-family: var(--font-family);
+			text-transform: var(--text-transform);
+			letter-spacing: var(--letter-spacing);
+			font-size: var(--font-size, 22px);
 
 			list-style: none;
 			cursor: pointer;
@@ -47,75 +44,86 @@
 			}
 		}
 
-		.wp-block-themeisle-blocks-accordion-item__content {
-			background: var( --content-background );
-
-			border-width: 0 1px 1px 1px;
-			border-style: solid;
-			border-color: #d5dadf;
-
+		&__content {
+			background: var(--content-background);
 			padding: 18px 24px 18px 24px;
+
+			border: 0;
 		}
 	}
 
-	&:not( .is-narrow-gap ):not( .is-wide-gap ):not( .is-wider-gap ) {
-		.wp-block-themeisle-blocks-accordion-item {
-			&:not( :first-child ):not(.wp-block-themeisle-blocks-accordion) > {
-					.wp-block-themeisle-blocks-accordion-item__title {
-						border-top: none;
-					}
+	/* default style */
+	&:not( .is-style-boxed ) {
+		#{$block}-item:last-child {
+			&:not([open]):not( .is-open ) #{$block}-item__title {
+				border-bottom: var(--border-width, 1px) var(--border-style, solid) var(--border-color, #ccc);
+			}
+
+			#{$block}-item__content {
+				border: 0;
+				border-bottom: var(--border-width, 1px) var(--border-style, solid) var(--border-color, #ccc);
 			}
 		}
 	}
 
-	&.is-narrow-gap {
-		.wp-block-themeisle-blocks-accordion-item {
-			margin: 5px 0;
+	/* boxed style */
+	&.is-style-boxed {
+		#{$block}-item {
+			&__title {
+				border: var(--border-width, 1px) var(--border-style, solid) var(--border-color, currentColor);
+			}
+
+			&__content {
+				border: var(--border-width, 1px) var(--border-style, solid) var(--border-color, currentColor);
+				border-top: none;
+			}
+		}
+
+		/* when no gap is set, we need to avoid the doubled border between items */
+		&:not( .is-narrow-gap ):not( .is-wide-gap ):not( .is-wider-gap ) {
+			#{$block}-item:not( :first-child ) {
+				#{$block}-item__title {
+					border-top: none;
+				}
+			}
 		}
 	}
 
-	&.is-wide-gap {
-		.wp-block-themeisle-blocks-accordion-item {
-			margin: 10px 0;
-		}
+	&.is-narrow-gap &-item {
+		margin: 5px 0;
 	}
 
-	&.is-wider-gap {
-		.wp-block-themeisle-blocks-accordion-item {
-			margin: 20px 0;
-		}
+	&.is-wide-gap &-item {
+		margin: 10px 0;
 	}
 
-	&.icon-first .wp-block-themeisle-blocks-accordion-item__title {
+	&.is-wider-gap &-item {
+		margin: 20px 0;
+	}
+
+	&.icon-first &-item__title {
 		display: flex;
 		flex-direction: row-reverse;
 		justify-content: flex-end;
-		gap: max( var(--hPaddingLeft, 24px), 10px ); // todo: remove hPaddingLeft
+		gap: 24px;
 	}
 
-	&:not( .has-icon ) {
-		.wp-block-themeisle-blocks-accordion-item:not([open]) .wp-block-themeisle-blocks-accordion-item__title::after {
-			content: '';
-			justify-self: end;
-			align-self: center;
-			border-right: 2px solid currentColor;
-			border-bottom: 2px solid currentColor;
-			width: 8px;
-			height: 8px;
-			transform: rotate(45deg) translate(-25%, 0%);
-		}
+	&:not( .has-icon ) &-item__title::after,
+	&:not( .has-open-icon ) &-item__title::after {
+		content: '';
+		justify-self: end;
+		align-self: center;
+		border-right: 2px solid currentColor;
+		border-bottom: 2px solid currentColor;
+		width: 8px;
+		height: 8px;
 	}
 
-	&:not( .has-open-icon ) {
-		.wp-block-themeisle-blocks-accordion-item[open] .wp-block-themeisle-blocks-accordion-item__title::after {
-			content: '';
-			justify-self: end;
-			align-self: center;
-			border-right: 2px solid currentColor;
-			border-bottom: 2px solid currentColor;
-			width: 8px;
-			height: 8px;
-			transform: rotate(225deg) translate(0%, -45%);
-		}
+	&:not( .has-icon ) &-item:not([open]) &-item__title::after {
+		transform: rotate(45deg) translate(-25%, 0%);
+	}
+
+	&:not( .has-open-icon ) &-item[open] &-item__title::after {
+		transform: rotate(225deg) translate(0%, -45%);
 	}
 }

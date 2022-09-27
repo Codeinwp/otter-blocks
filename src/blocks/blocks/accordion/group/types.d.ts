@@ -1,4 +1,4 @@
-import { AdvancedBorder, BoxPadding, BoxShadow, IconData } from '../../../common';
+import { BoxBorder, BoxPadding, BoxShadow, IconData } from '../../../common';
 import { BlockProps, InspectorProps } from '../../../helpers/blocks';
 
 type Attributes = {
@@ -8,6 +8,8 @@ type Attributes = {
 	titleBackground: string
 	contentBackground: string
 	borderColor: string
+	borderStyle: string
+	borderWidth: number
 	isSynced: string
 	fontFamily: string
 	fontVariant: string
@@ -15,8 +17,6 @@ type Attributes = {
 	textTransform: string
 	fontSize: number
 	letterSpacing: number
-	headerBorder: AdvancedBorder
-	contentBorder: AdvancedBorder
 	headerPadding: BoxPadding
 	contentPadding: BoxPadding
 	tag: string
@@ -25,7 +25,6 @@ type Attributes = {
 	iconFirst: boolean,
 	activeTitleColor: string
 	activeTitleBackground: string
-	activeContentBackground: string
 	icon: IconData
 	openItemIcon: IconData
 }
