@@ -6,7 +6,6 @@ import { pick } from 'lodash';
 import { __ } from '@wordpress/i18n';
 
 import {
-	__experimentalColorGradientControl as ColorGradientControl,
 	ContrastChecker,
 	InspectorControls,
 	MediaPlaceholder
@@ -16,7 +15,6 @@ import {
 	__experimentalBoxControl as BoxControl,
 	BaseControl,
 	Button,
-	Disabled,
 	ExternalLink,
 	FontSizePicker,
 	PanelBody,
@@ -36,7 +34,7 @@ import { useState, Fragment } from '@wordpress/element';
  */
 import InspectorHeader from '../../components/inspector-header/index.js';
 import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
-import SyncControlDropdown from '../../components/sync-control-dropdown/index.js';
+import SyncColorPanel from '../../components/sync-color-panel/index';
 import BoxShadowControl from '../../components/box-shadow-control/index.js';
 import Upsell from '../../components/notice/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
@@ -278,41 +276,6 @@ const Inspector = ({
 
 		setAttributes({ boxShadow });
 	};
-
-	const colorControls = [
-		{
-			label: __( 'Background', 'otter-blocks' ),
-			value: 'backgroundColor'
-		},
-		{
-			label: __( 'Text', 'otter-blocks' ),
-			value: 'textColor'
-		},
-		{
-			label: __( 'Button', 'otter-blocks' ),
-			value: 'primaryColor'
-		},
-		{
-			label: __( 'Button Text', 'otter-blocks' ),
-			value: 'buttonTextColor'
-		},
-		{
-			label: __( 'Border', 'otter-blocks' ),
-			value: 'borderColor'
-		},
-		{
-			label: __( 'Stars', 'otter-blocks' ),
-			value: 'starsColor'
-		},
-		{
-			label: __( 'Pros', 'otter-blocks' ),
-			value: 'prosColor'
-		},
-		{
-			label: __( 'Cons', 'otter-blocks' ),
-			value: 'consColor'
-		}
-	];
 
 	return (
 		<InspectorControls>
@@ -717,37 +680,53 @@ const Inspector = ({
 						</BaseControl>
 					</PanelBody>
 
-					<PanelBody
-						title={ __( 'Color', 'otter-blocks' ) }
-						initialOpen={ false }
-						className="o-review__inspector_color"
+					<SyncColorPanel
+						label={ __( 'Color', 'otter-blocks' ) }
+						isSynced={ attributes.isSynced }
+						options={ [
+							{
+								label: __( 'Background', 'otter-blocks' ),
+								slug: 'backgroundColor',
+								value: getValue( 'backgroundColor' )
+							},
+							{
+								label: __( 'Text', 'otter-blocks' ),
+								slug: 'textColor',
+								value: getValue( 'textColor' )
+							},
+							{
+								label: __( 'Button', 'otter-blocks' ),
+								slug: 'primaryColor',
+								value: getValue( 'primaryColor' )
+							},
+							{
+								label: __( 'Button Text', 'otter-blocks' ),
+								slug: 'buttonTextColor',
+								value: getValue( 'buttonTextColor' )
+							},
+							{
+								label: __( 'Border', 'otter-blocks' ),
+								slug: 'borderColor',
+								value: getValue( 'borderColor' )
+							},
+							{
+								label: __( 'Stars', 'otter-blocks' ),
+								slug: 'starsColor',
+								value: getValue( 'starsColor' )
+							},
+							{
+								label: __( 'Pros', 'otter-blocks' ),
+								slug: 'prosColor',
+								value: getValue( 'prosColor' )
+							},
+							{
+								label: __( 'Cons', 'otter-blocks' ),
+								slug: 'consColor',
+								value: getValue( 'consColor' )
+							}
+						] }
+						setAttributes={ setAttributes }
 					>
-						<SyncControlDropdown
-							isSynced={ attributes.isSynced }
-							options={ colorControls }
-							setAttributes={ setAttributes }
-						/>
-
-						<Disabled
-							isDisabled={ attributes.isSynced?.includes( 'backgroundColor' ) || false }
-						>
-							<ColorGradientControl
-								label={ __( 'Background', 'otter-blocks' ) }
-								colorValue={ getValue( 'backgroundColor' ) }
-								onColorChange={ e => setAttributes({ backgroundColor: e }) }
-							/>
-						</Disabled>
-
-						<Disabled
-							isDisabled={ attributes.isSynced?.includes( 'textColor' ) || false }
-						>
-							<ColorGradientControl
-								label={ __( 'Text', 'otter-blocks' ) }
-								colorValue={ getValue( 'textColor' ) }
-								onColorChange={ e => setAttributes({ textColor: e }) }
-							/>
-						</Disabled>
-
 						<ContrastChecker
 							{ ...{
 								textColor: getValue( 'textColor' ),
@@ -755,73 +734,13 @@ const Inspector = ({
 							} }
 						/>
 
-						<Disabled
-							isDisabled={ attributes.isSynced?.includes( 'primaryColor' ) || false }
-						>
-							<ColorGradientControl
-								label={ __( 'Button', 'otter-blocks' ) }
-								colorValue={ getValue( 'primaryColor' ) }
-								onColorChange={ e => setAttributes({ primaryColor: e }) }
-							/>
-						</Disabled>
-
-						<Disabled
-							isDisabled={ attributes.isSynced?.includes( 'buttonTextColor' ) || false }
-						>
-							<ColorGradientControl
-								label={ __( 'Button Text', 'otter-blocks' ) }
-								colorValue={ getValue( 'buttonTextColor' ) }
-								onColorChange={ e => setAttributes({ buttonTextColor: e }) }
-							/>
-						</Disabled>
-
-						<Disabled
-							isDisabled={ attributes.isSynced?.includes( 'borderColor' ) || false }
-						>
-							<ColorGradientControl
-								label={ __( 'Border', 'otter-blocks' ) }
-								colorValue={ getValue( 'borderColor' ) }
-								onColorChange={ e => setAttributes({ borderColor: e }) }
-							/>
-						</Disabled>
-
 						<ContrastChecker
 							{ ...{
 								textColor: getValue( 'buttonTextColor' ),
 								backgroundColor: getValue( 'primaryColor' )
 							} }
 						/>
-
-						<Disabled
-							isDisabled={ attributes.isSynced?.includes( 'starsColor' ) || false }
-						>
-							<ColorGradientControl
-								label={ __( 'Stars', 'otter-blocks' ) }
-								colorValue={ getValue( 'starsColor' ) }
-								onColorChange={ e => setAttributes({ starsColor: e }) }
-							/>
-						</Disabled>
-
-						<Disabled
-							isDisabled={ attributes.isSynced?.includes( 'prosColor' ) || false }
-						>
-							<ColorGradientControl
-								label={ __( 'Pros', 'otter-blocks' ) }
-								colorValue={ getValue( 'prosColor' ) }
-								onColorChange={ e => setAttributes({ prosColor: e }) }
-							/>
-						</Disabled>
-
-						<Disabled
-							isDisabled={ attributes.isSynced?.includes( 'consColor' ) || false }
-						>
-							<ColorGradientControl
-								label={ __( 'Cons Color', 'otter-blocks' ) }
-								colorValue={ getValue( 'consColor' ) }
-								onColorChange={ e => setAttributes({ consColor: e }) }
-							/>
-						</Disabled>
-					</PanelBody>
+					</SyncColorPanel>
 
 					<PanelBody
 						title={ __( 'Dimensions', 'otter-blocks' ) }
