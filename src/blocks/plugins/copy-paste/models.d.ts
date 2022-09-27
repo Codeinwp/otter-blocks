@@ -7,6 +7,7 @@ interface SharedAttrs  {
     border?: {
         width?: BorderType
         radius?: ResponsiveProps<BorderRadius>
+        style?: string
     }
     colors?: {
         text?: string

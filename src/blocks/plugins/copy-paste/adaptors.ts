@@ -18,6 +18,7 @@ import { FormAttrs } from '../../blocks/form/type';
 import { CircleCounterAttrs } from '../../blocks/circle-counter/types';
 import { ReviewAttrs } from '../../blocks/review/type';
 import { AdvancedHeadingAttrs } from '../../blocks/advanced-heading/types';
+import { CountdownAttrs } from '../../blocks/countdown/types';
 
 export const adaptors = {
 	...coreAdaptors,
@@ -634,6 +635,74 @@ export const adaptors = {
 				headingColor: s?.colors?.text,
 				align: s?.font?.align,
 				textTransform: s?.font?.transform
+			};
+		}
+	},
+	'themeisle-blocks/countdown': {
+		copy( attrs: CountdownAttrs ): Storage<CountdownAttrs> {
+			return {
+				shared: {
+					colors: {
+						text: attrs?.labelColor,
+						background: attrs?.backgroundColor,
+						border: attrs?.borderColor
+					},
+					height: {
+						desktop: addUnit( attrs?.height, 'px' ),
+						tablet: addUnit( attrs?.heightTablet, 'px' ),
+						mobile: addUnit( attrs?.heightMobile, 'px' )
+					},
+					width: {
+						desktop: addUnit( attrs?.containerWidth, 'px' ),
+						tablet: addUnit( attrs?.containerWidthTablet ),
+						mobile: addUnit( attrs?.containerWidthMobile, 'px' )
+					},
+					border: {
+						radius: {
+							desktop: attrs?.borderRadiusBox
+						},
+						width: makeBox( addUnit( attrs?.borderWidth ) ),
+						style: attrs?.borderStyle
+					},
+					font: {
+						size: addUnit( attrs?.labelFontSize, 'px' )
+					},
+					padding: {
+						desktop: attrs?.padding,
+						tablet: attrs?.paddingMobile,
+						mobile: attrs?.paddingTablet
+					}
+				},
+				private: {
+					...pickBy( attrs, ( value, key ) => {
+						return key.includes( 'Tablet' ) ||
+						key.includes( 'gap' ) ||
+						key.includes( 'Color' ) ||
+						key.includes( 'Distance' ) ||
+						key.includes( 'FontSize' );
+					})
+				}
+			};
+		},
+		paste( storage: Storage<CountdownAttrs> ): CountdownAttrs {
+			const { shared: s } = storage;
+			return {
+				...storage.private,
+				labelColor: s?.colors?.text,
+				backgroundColor: s?.colors?.background,
+				borderColor: s?.colors?.border,
+				borderStyle: s?.border?.style,
+				height: getInt( s?.height?.desktop ),
+				heightTablet: getInt( s?.height?.tablet ),
+				heightMobile: getInt( s?.height?.mobile ),
+				containerWidth: getInt( s?.width?.desktop ),
+				containerWidthTablet: getInt( s?.width?.tablet ),
+				containerWidthMobile: getInt( s?.width?.mobile ),
+				borderRadiusBox: s?.border?.radius?.desktop,
+				labelFontSize: getInt( s?.font?.size ),
+				padding: s?.padding?.desktop,
+				paddingTablet: s?.padding?.tablet,
+				paddingMobile: s?.padding?.mobile
 			};
 		}
 	}

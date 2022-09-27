@@ -85,5 +85,6 @@ type Attributes = {
 	onEndAction: string
 } & LegacyAttrs;
 
+export type CountdownAttrs = Partial<Attributes>
 export type CountdownProps = BlockProps<Attributes>
 export interface CountdownInspectorProps extends InspectorProps<Attributes> {}
