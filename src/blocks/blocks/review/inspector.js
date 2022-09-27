@@ -167,87 +167,69 @@ const Inspector = ({
 		};
 	}, []);
 
-	const addFeature = () => {
+	const onChangeFeature = ( props ) => {
 		const features = [ ...attributes.features ];
-		features.push({
-			title: __( 'Feature', 'otter-blocks' ),
-			rating: 9
-		});
+
+		switch ( props.action ) {
+		case 'add':
+			features.push({
+				title: __( 'Feature', 'otter-blocks' ),
+				rating: 9
+			});
+			break;
+		case 'remove':
+			features.splice( props.index, 1 );
+			break;
+		case 'update':
+			features[ props.index ] = {
+				...features[ props.index ],
+				...props.value
+			};
+			break;
+		}
+
 		setAttributes({ features });
 	};
 
-	const changeFeature = ( index, value ) => {
-		const features = [ ...attributes.features ];
-		features[ index ] = {
-			...features[ index ],
-			...value
-		};
-		setAttributes({ features });
+	const onChangeProsCons = ( props ) => {
+		const items = [ ...attributes[ props.type ] ];
+
+		switch ( props.action ) {
+		case 'add':
+			items.push( '' );
+			break;
+		case 'remove':
+			items.splice( props.index, 1 );
+			break;
+		case 'update':
+			items[ props.index ] = props.value;
+			break;
+		}
+
+		setAttributes({ [ props.type ]: items });
 	};
 
-	const removeFeature = ( index ) => {
-		let features = [ ...attributes.features ];
-		features = features.filter( ( el, i ) => i !== index );
-		setAttributes({ features });
-	};
-
-	const addPro = () => {
-		const pros = [ ...attributes.pros ];
-		pros.push( '' );
-		setAttributes({ pros });
-	};
-
-	const changePro = ( index, value ) => {
-		const pros = [ ...attributes.pros ];
-		pros[ index ] = value;
-		setAttributes({ pros });
-	};
-
-	const removePro = ( index ) => {
-		let pros = [ ...attributes.pros ];
-		pros = pros.filter( ( el, i ) => i !== index );
-		setAttributes({ pros });
-	};
-
-	const addCon = () => {
-		const cons = [ ...attributes.cons ];
-		cons.push( '' );
-		setAttributes({ cons });
-	};
-
-	const changeCon = ( index, value ) => {
-		const cons = [ ...attributes.cons ];
-		cons[ index ] = value;
-		setAttributes({ cons });
-	};
-
-	const removeCon = ( index ) => {
-		let cons = [ ...attributes.cons ];
-		cons = cons.filter( ( el, i ) => i !== index );
-		setAttributes({ cons });
-	};
-
-	const addLinks = () => {
+	const onChangeLink = ( props ) => {
 		const links = [ ...attributes.links ];
-		links.push({
-			label: __( 'Buy Now', 'otter-blocks' ),
-			href: ''
-		});
-		setAttributes({ links });
-	};
 
-	const changeLinks = ( index, value ) => {
-		const links = [ ...attributes.links ];
-		links[ index ] = {
-			...links[ index ],
-			...value
-		};
-		setAttributes({ links });
-	};
+		switch ( props.action ) {
+		case 'add':
+			links.push({
+				label: __( 'Buy Now', 'otter-blocks' ),
+				href: ''
+			});
+			break;
+		case 'remove':
+			links.splice( props.index, 1 );
+			break;
+		case 'update':
+			links[ props.index ] = {
+				...links[ props.index ],
+				...props.value
+			};
+			break;
+		}
 
-	const removeLinks = index => {
-		let links = [ ...attributes.links ];
-		links = links.filter( ( el, i ) => i !== index );
 		setAttributes({ links });
 	};
 
@@ -436,20 +418,20 @@ const Inspector = ({
 							<PanelItem
 								key={ index }
 								title={ feature.title || __( 'Feature', 'otter-blocks' ) }
-								remove={ () => removeFeature( index ) }
+								remove={ () => onChangeFeature({ action: 'remove', index }) }
 							>
 								<TextControl
 									label={ __( 'Title', 'otter-blocks' ) }
 									type="text"
 									placeholder={ __( 'Feature title', 'otter-blocks' ) }
 									value={ feature.title }
-									onChange={ title => changeFeature( index, { title }) }
+									onChange={ title => onChangeFeature({ action: 'update', index, value: { title }}) }
 								/>
 
 								<RangeControl
 									label={ __( 'Rating', 'otter-blocks' ) }
 									value={ feature.rating }
-									onChange={ value => changeFeature( index, { rating: Number( value ) }) }
+									onChange={ value => onChangeFeature({ action: 'update', index, value: { rating: Number( value ) }}) }
 									step={ 0.1 }
 									min={ 1 }
 									max={ 10 }
@@ -460,7 +442,7 @@ const Inspector = ({
 						<Button
 							isSecondary
 							className="o-review__inspector_add"
-							onClick={ addFeature }
+							onClick={ () => onChangeFeature({ action: 'add' }) }
 						>
 							{ __( 'Add Feature', 'otter-blocks' ) }
 						</Button>
@@ -474,14 +456,14 @@ const Inspector = ({
 							<PanelItem
 								key={ index }
 								title={ pro || __( 'Pro', 'otter-blocks' ) }
-								remove={ () => removePro( index ) }
+								remove={ () => onChangeProsCons({ type: 'pros', action: 'remove', index }) }
 							>
 								<TextControl
 									label={ __( 'Title', 'otter-blocks' ) }
 									type="text"
 									placeholder={ __( 'Why do you like the product?', 'otter-blocks' ) }
 									value={ pro }
-									onChange={ value => changePro( index, value ) }
+									onChange={ value => onChangeProsCons({ type: 'pros', action: 'update', index, value }) }
 								/>
 							</PanelItem>
 						) ) }
@@ -489,7 +471,7 @@ const Inspector = ({
 						<Button
 							isSecondary
 							className="o-review__inspector_add"
-							onClick={ addPro }
+							onClick={ () => onChangeProsCons({ type: 'pros', action: 'add' }) }
 						>
 							{ __( 'Add Item', 'otter-blocks' ) }
 						</Button>
@@ -503,14 +485,14 @@ const Inspector = ({
 							<PanelItem
 								key={ index }
 								title={ con || __( 'Con', 'otter-blocks' ) }
-								remove={ () => removeCon( index ) }
+								remove={ () => onChangeProsCons({ type: 'cons', action: 'remove', index }) }
 							>
 								<TextControl
 									label={ __( 'Title', 'otter-blocks' ) }
 									type="text"
 									placeholder={ __( 'What can be improved?', 'otter-blocks' ) }
 									value={ con }
-									onChange={ value => changeCon( index, value ) }
+									onChange={ value => onChangeProsCons({ type: 'cons', action: 'update', index, value }) }
 								/>
 							</PanelItem>
 						) ) }
@@ -518,7 +500,7 @@ const Inspector = ({
 						<Button
 							isSecondary
 							className="o-review__inspector_add"
-							onClick={ addCon }
+							onClick={ () => onChangeProsCons({ type: 'cons', action: 'add' }) }
 						>
 							{ __( 'Add Item', 'otter-blocks' ) }
 						</Button>
@@ -542,7 +524,7 @@ const Inspector = ({
 							<PanelItem
 								key={ index }
 								title={ link.label || __( 'Link', 'otter-blocks' ) }
-								remove={ () => removeLinks( index ) }
+								remove={ () => onChangeLink({ action: 'remove', index }) }
 							>
 								<TextControl
 									label={ __( 'Label', 'otter-blocks' ) }
@@ -574,14 +556,14 @@ const Inspector = ({
 									<PanelItem
 										key={ index }
 										title={ link.label || __( 'Link', 'otter-blocks' ) }
-										remove={ () => removeLinks( index ) }
+										remove={ () => onChangeLink({ action: 'remove', index }) }
 									>
 										<TextControl
 											label={ __( 'Label', 'otter-blocks' ) }
 											type="text"
 											placeholder={ __( 'Button label', 'otter-blocks' ) }
 											value={ link.label }
-											onChange={ label => changeLinks( index, { label }) }
+											onChange={ label => onChangeLink({ action: 'update', index, value: { label }}) }
 										/>
 
 										<TextControl
@@ -589,13 +571,13 @@ const Inspector = ({
 											type="url"
 											placeholder={ 'https://…' }
 											value={ link.href }
-											onChange={ href => changeLinks( index, { href }) }
+											onChange={ href => onChangeLink({ action: 'update', index, value: { href }}) }
 										/>
 
 										<ToggleControl
 											label={ __( 'Is this Sponsored?', 'otter-blocks' ) }
 											checked={ link.isSponsored }
-											onChange={ () => changeLinks( index, { isSponsored: ! link.isSponsored }) }
+											onChange={ () => onChangeLink({ action: 'update', index, value: { isSponsored: ! link.isSponsored }}) }
 										/>
 									</PanelItem>
 								) ) }
@@ -603,7 +585,7 @@ const Inspector = ({
 								<Button
 									isSecondary
 									className="o-review__inspector_add"
-									onClick={ addLinks }
+									onClick={ () => onChangeLink({ action: 'add' }) }
 								>
 									{ __( 'Add Links', 'otter-blocks' ) }
 								</Button>
