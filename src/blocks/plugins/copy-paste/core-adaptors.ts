@@ -63,13 +63,15 @@ const commonExtractor = ( attrs: any ): Storage<unknown> => {
 		core: {
 			textColor: attrs?.textColor,
 			backgroundColor: attrs?.backgroundColor,
-			gradient: attrs?.gradient
+			gradient: attrs?.gradient,
+			style: attrs?.style
 		}
 	};
 };
 
 const commonApplyer = ( storage: Storage<unknown> ) => {
 	return {
+		...storage.core?.style ?? {},
 		fontSize: storage?.shared?.font?.size,
 		textAlign: storage?.shared?.font?.align,
 		style: {
@@ -84,7 +86,8 @@ const commonApplyer = ( storage: Storage<unknown> ) => {
 				gradient: storage?.shared?.colors?.backgroundGradient
 			},
 			spacing: {
-				padding: storage?.shared?.padding?.desktop
+				padding: storage?.shared?.padding?.desktop,
+				margin: storage?.shared?.margin?.desktop
 			},
 			border: {
 				width: getSingleValueFromBox( storage?.shared?.border?.width ),
@@ -304,26 +307,18 @@ export const coreAdaptors = {
 		copy( attrs: any ): Storage<unknown> {
 			return merge( commonExtractor( attrs ),
 				{
-					shared: {
-						padding: {
-							desktop: attrs?.style?.spacing?.padding
-						}
-					},
 					private: {
-						...pick( attrs, [ 'hasParallax', 'isRepeated', 'dimRatio', 'overlayColor', 'focalPoint', 'minHeight', 'contentPosition', 'style', 'contentPosition', 'isDark' ])
+						...pick( attrs, [ 'hasParallax', 'isRepeated', 'dimRatio', 'overlayColor', 'focalPoint', 'minHeight', 'contentPosition', 'contentPosition', 'isDark' ])
 					}
 				}
 			);
 		},
 		paste( storage: Storage<{}> ): any {
-			return {
-				...storage.private,
-				style: {
-					spacing: {
-						paddding: storage?.shared?.padding?.desktop
-					}
+			return merge( commonApplyer( storage ),
+				{
+					...storage.private
 				}
-			};
+			);
 		}
 	}
 };
