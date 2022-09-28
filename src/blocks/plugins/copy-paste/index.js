@@ -114,7 +114,7 @@ function paste() {
 }
 
 const iconTextWrapper = ( text ) => (
-	<span style={{ marginLeft: '', marginRight: '3px' }}>{text}</span>
+	<span style={{ marginLeft: '', marginRight: '1px' }}>{text}</span>
 );
 
 /**
