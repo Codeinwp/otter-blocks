@@ -33,7 +33,7 @@ export const getInt = ( s?: string, defaultValue?: number ): number | undefined 
 };
 
 /**
- * Wrapt the given value in a box.
+ * Wrapt the given value in a box type.
  * @param x The value.
  * @returns
  */
@@ -61,8 +61,8 @@ export const getSingleValueFromBox = ( box?: BoxType ) => {
 
 /**
  * Extract the CSS var name from the given string source.
- * @param source
- * @param colorName
+ * @param source The text source with the CSS styles.
+ * @param colorName The string that is contained in the desired CSS var.
  * @returns
  */
 const extractCSSColorVar = ( source: string, colorName: string ) => {
@@ -75,11 +75,11 @@ const extractCSSColorVar = ( source: string, colorName: string ) => {
 	let left = initPosition;
 	let right = initPosition;
 
-	while ( ( '{' !== source[left - 1] && '}' !== source[left - 1] && ';' !== source[left - 1]) && 0 < left - 1 ) {
+	while ( ( '{' !== source[left - 1] && '}' !== source[left - 1] && ';' !== source[left - 1]) && ( 0 < left - 1 ) ) {
 		left -= 1;
 	}
 
-	while ( ( ':' !== source[right + 1] && '{' !== source[right + 1] && '}' !== source[right + 1] && ';' !== source[right + 1]) && right + 1 < source.length ) {
+	while ( ( ':' !== source[right + 1] && '{' !== source[right + 1] && '}' !== source[right + 1] && ';' !== source[right + 1]) && ( right + 1 < source.length ) ) {
 		right += 1;
 	}
 
@@ -94,6 +94,11 @@ type ThemeSettings = {
 	styles?: ({ css: string, baseURL?: string, isGlobalStyles?: boolean, __unstableType: string})[]
 }
 
+/**
+ * Extract the styles from Settings and saved it to global value `window.oThemeStyles`
+ * @param settings The WP settings.
+ * @returns
+ */
 export const extractThemeCSSVar = ( settings: ThemeSettings ) => {
 
 	if ( 'undefined' === typeof window ) {
@@ -106,30 +111,28 @@ export const extractThemeCSSVar = ( settings: ThemeSettings ) => {
 		cssVars: []
 	};
 
-	const sources: string[] = settings?.styles?.map( ({ css }: {css: string}) => css )?.filter( ( x: string | undefined ) => x?.includes( '--wp--preset--' ) ) ?? [];
+	const styleSources: string[] = settings?.styles
+		?.map( ({ css }: {css: string}) => css )
+		?.filter( ( x: string | undefined ) => x?.includes( '--wp--preset--' ) ) ?? [];
 
-	for ( const source of sources ) {
-		const raw = source.split( ':' ).flatMap( x => x.split( ';' ) ).filter(
-			x => (
-				x !== undefined &&
-				! x.includes( 'var(' ) &&
-				! x.includes( 'linear-gradient(' ) &&
-				! x.includes( 'important' )
-			)
-		);
+	const excludeTags = [ 'var(', 'linear-gradient(', 'important' ];
 
-		window?.oThemeStyles?.cssVars?.push(
-			...(
-				raw
-					.map( s => extractCSSColorVar( s, '--wp--preset--' ) )
-					.filter( x => x !== undefined ) as string[]
-			)
-		);
-	}
+	window.oThemeStyles.cssVars = styleSources
+		.flatMap( source => source.split( ':' ) )
+		.flatMap( s => s.split( ';' ) )
+		.filter( s => s !== undefined && excludeTags.every( t => ! s.includes( t ) ) )
+		.map( s => extractCSSColorVar( s, '--wp--preset--' ) )
+		.flatMap( s => s ? [ s ] : []); // this a little trick to simulate a filter which gives us the correct type of string[]
 };
 
+/**
+ * Retrieve the desired color from the global object `window.oThemeStyles` that containts the CSS color values and vars for the current theme.
+ * @param type The type of the color.
+ * @param colorName The string that is contained in the desired CSS var.
+ * @returns
+ */
 const selectColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' | 'any', colorName: string ) => {
-	if ( 'undefined' === typeof window  ) {
+	if ( 'undefined' === typeof window ) {
 		return undefined;
 	}
 
@@ -144,9 +147,7 @@ const selectColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' | 'a
 			return simpleColor.value;
 		}
 
-		const varNameColor = window.oThemeStyles.cssVars?.filter( x => x.includes( 'color' ) ).find( varName => varName.includes( colorName ) );
-
-		return varNameColor;
+		return window.oThemeStyles.cssVars?.filter( x => x.includes( 'color' ) ).find( varName => varName.includes( colorName ) );
 
 	case 'gradient':
 		const simpleGradient = window.oThemeStyles.gradients?.find( ({ label }) => label.includes( colorName ) );
@@ -154,14 +155,10 @@ const selectColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' | 'a
 			return simpleGradient.value;
 		}
 
-		const varNameGradient = window.oThemeStyles.cssVars?.filter( x => x.includes( 'gradient' ) ).find( varName => varName.includes( colorName ) );
-
-		return varNameGradient;
+		return window.oThemeStyles.cssVars?.filter( x => x.includes( 'gradient' ) ).find( varName => varName.includes( colorName ) );
 
 	case 'duotone':
-		const varNameDuotone = window.oThemeStyles.cssVars?.filter( x => x.includes( 'duotone' ) ).find( varName => varName.includes( colorName ) );
-
-		return varNameDuotone;
+		return window.oThemeStyles.cssVars?.filter( x => x.includes( 'duotone' ) ).find( varName => varName.includes( colorName ) );
 
 	case 'any':
 		const simple = [ ...window.oThemeStyles.colors ?? [], ...window.oThemeStyles.gradients ?? [] ]?.find( ({ label }) => label.includes( colorName ) );
@@ -169,14 +166,19 @@ const selectColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' | 'a
 			return simple.value;
 		}
 
-		const varName = window.oThemeStyles.cssVars?.find( varName => varName.includes( colorName ) );
-		return varName;
+		return window.oThemeStyles.cssVars?.find( varName => varName.includes( colorName ) );
 
 	default:
 		return undefined;
 	}
 };
 
+/**
+ * Get the value of the given color name from current theme. This is a wrapper around `selectColorFromThemeStyles`.
+ * @param type The type of the color.
+ * @param colorName The string that is contained in the desired CSS var.
+ * @returns
+ */
 export const getColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' | 'any', colorName: string ) => {
 	const color = selectColorFromThemeStyles( type, colorName );
 	const isCSSVar = Boolean( color?.includes( '--wp--preset--' ) );
