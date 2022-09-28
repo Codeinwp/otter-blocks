@@ -19,6 +19,9 @@ import { CircleCounterAttrs } from '../../blocks/circle-counter/types';
 import { ReviewAttrs } from '../../blocks/review/type';
 import { AdvancedHeadingAttrs } from '../../blocks/advanced-heading/types';
 import { CountdownAttrs } from '../../blocks/countdown/types';
+import { WooComparisonAttrs } from '../../../pro/blocks/woo-comparison/types';
+import { BusinessHoursItemAttrs } from '../../../pro/blocks/business-hours/item/types';
+import { BusinessHoursAttrs } from '../../../pro/blocks/business-hours/types';
 
 export const adaptors = {
 	...coreAdaptors,
@@ -703,6 +706,87 @@ export const adaptors = {
 				padding: s?.padding?.desktop,
 				paddingTablet: s?.padding?.tablet,
 				paddingMobile: s?.padding?.mobile
+			};
+		}
+	},
+	'themeisle-blocks/woo-comparison': {
+		copy( attrs: WooComparisonAttrs ): Storage<WooComparisonAttrs> {
+			return {
+				shared: {
+					colors: {
+						text: attrs?.textColor,
+						border: attrs?.borderColor
+					}
+				},
+				private: {
+					...pick( attrs, [ 'altRow', 'rowColor', 'headerColor', 'altRowColor' ])
+				}
+			};
+		},
+		paste( storage: Storage<WooComparisonAttrs> ): WooComparisonAttrs {
+			return {
+				...storage.private,
+				textColor: storage?.shared?.colors?.text,
+				borderColor: storage?.shared?.colors?.border
+			};
+		}
+	},
+	'themeisle-blocks/business-hours-item': {
+		copy( attrs: BusinessHoursItemAttrs ): Storage<BusinessHoursItemAttrs> {
+			return {
+				shared: {
+					colors: {
+						text: attrs?.labelColor,
+						background: attrs?.backgroundColor
+					}
+				},
+				private: {
+					timeColor: attrs?.timeColor
+				}
+			};
+		},
+		paste( storage: Storage<BusinessHoursItemAttrs> ): BusinessHoursItemAttrs {
+			return {
+				...storage.private,
+				labelColor: storage?.shared?.colors?.text,
+				backgroundColor: storage?.shared?.colors?.background
+			};
+		}
+	},
+	'themeisle-blocks/business-hours': {
+		copy( attrs: BusinessHoursAttrs ): Storage<BusinessHoursAttrs> {
+			return {
+				shared: {
+					colors: {
+						text: attrs?.titleColor,
+						background: attrs?.backgroundColor,
+						border: attrs?.borderColor
+					},
+					border: {
+						width: makeBox( addUnit( attrs?.borderWidth, 'px' ) ),
+						radius: {
+							desktop: makeBox( addUnit( attrs?.borderRadius, 'px' ) )
+						}
+					},
+					font: {
+						size: addUnit( attrs?.titleFontSize, 'px' ),
+						align: attrs?.titleAlignment
+					}
+				},
+				private: {
+					...pick( attrs, [ 'gap', 'itemsFontSize' ] as ( keyof BusinessHoursAttrs )[])
+				}
+			};
+		},
+		paste( storage: Storage<BusinessHoursAttrs> ): BusinessHoursAttrs {
+			return {
+				...storage.private,
+				backgroundColor: storage?.shared?.colors?.background,
+				titleColor: storage.shared?.colors?.text,
+				titleAlignment: storage.shared?.font?.align,
+				borderColor: storage.shared?.colors?.border,
+				borderWidth: getInt( getSingleValueFromBox( storage.shared?.border?.width ) ),
+				borderRadius: getInt( getSingleValueFromBox( storage.shared?.border?.radius?.desktop ) )
 			};
 		}
 	}
