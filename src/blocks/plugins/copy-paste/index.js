@@ -7,7 +7,7 @@ import { select, dispatch } from '@wordpress/data';
 import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
 import { Fragment } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
-import { KeyboardShortcuts } from '@wordpress/components';
+import { KeyboardShortcuts, SVG } from '@wordpress/components';
 
 /**
   * Internal dependencies.
@@ -16,6 +16,7 @@ import { adaptors } from './adaptors';
 import CopyPaste from './copy-paste';
 import { pick } from 'lodash';
 import { extractThemeCSSVar } from './utils';
+import { displayShortcut } from '@wordpress/keycodes';
 
 
 const copyPaste = new CopyPaste();
@@ -112,6 +113,10 @@ function paste() {
 	});
 }
 
+const iconTextWrapper = ( text ) => (
+	<span style={{ marginLeft: '', marginRight: '3px' }}>{text}</span>
+);
+
 /**
  * Separate component to prevent multiple calls from filter.
  *
@@ -132,8 +137,7 @@ const CopyPasteComponent = ( ) => {
 			<PluginBlockSettingsMenuItem
 				label={  __( 'Copy style', 'otter-blocks' ) }
 				onClick={ copy }
-				icon={ 'M1' }
-
+				icon={ iconTextWrapper( `${displayShortcut.ctrl()}${displayShortcut.alt( 'C' )}` ) }
 			/>
 
 			{
@@ -141,6 +145,7 @@ const CopyPasteComponent = ( ) => {
 					<PluginBlockSettingsMenuItem
 						label={  __( 'Paste style', 'otter-blocks' ) }
 						onClick={ paste }
+						icon={ iconTextWrapper( `${displayShortcut.ctrl()}${displayShortcut.alt( 'V' )}` ) }
 					/>
 				)
 			}
