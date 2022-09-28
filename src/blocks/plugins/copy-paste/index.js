@@ -23,11 +23,15 @@ const copyPaste = new CopyPaste();
 function copy() {
 
 	if ( 'undefined' !== typeof window && window.oThemeStyles === undefined ) {
-		const settings = pick( select( 'core/block-editor' )?.getSettings(), [ 'colors', 'gradients', 'styles' ]);
+		const settings = pick( select( 'core/block-editor' )?.getSettings?.() ?? {}, [ 'colors', 'gradients', 'styles' ]);
 		extractThemeCSSVar( settings );
 	}
 
 	const { getMultiSelectedBlocks, getSelectedBlock, getSelectedBlockCount } = select( 'core/block-editor' );
+
+	if ( getMultiSelectedBlocks === undefined || getSelectedBlock === undefined || getSelectedBlockCount === undefined ) {
+		return;
+	}
 
 	let blocks = [];
 
@@ -78,6 +82,10 @@ function copy() {
 function paste() {
 	const { getMultiSelectedBlocks, getSelectedBlock, getSelectedBlockCount } = select( 'core/block-editor' );
 
+	if ( getMultiSelectedBlocks === undefined || getSelectedBlock === undefined || getSelectedBlockCount === undefined ) {
+		return;
+	}
+
 	let blocks = [];
 
 	if ( 1 < getSelectedBlockCount() ) {
@@ -91,6 +99,10 @@ function paste() {
 	}
 
 	const { updateBlockAttributes } = dispatch( 'core/block-editor' );
+
+	if ( updateBlockAttributes === undefined ) {
+		return;
+	}
 
 	blocks.forEach( block => {
 		const attrs = copyPaste.paste( block );
