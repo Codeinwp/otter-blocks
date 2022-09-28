@@ -440,15 +440,4 @@ export const changeActiveStyle = ( className, styles, newStyle ) =>{
 	}
 
 	return classes.join( ' ' );
-};;
-
-/**
- * Remove undefined values from the object. Make the value undefined is the object is empty.
- *
- * @param {Object} object
- * @returns {Object}
- */
-export const objectCleaner = ( object ) => {
-	const filtered = omitBy( object, x => x === undefined || null === x || '' === x );
-	return isEmpty( filtered ) ? undefined : filtered;
 };
