@@ -86,6 +86,10 @@ class Posts_CSS extends Base_CSS {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
+					array(
+						'property' => '--meta-text-size',
+						'value'    => 'customMetaFontSize',
+					),
 				),
 			)
 		);
@@ -108,6 +112,10 @@ class Posts_CSS extends Base_CSS {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
+					array(
+						'property' => '--meta-text-size',
+						'value'    => 'customMetaFontSizeTablet',
+					),
 				),
 			)
 		);
@@ -129,6 +137,10 @@ class Posts_CSS extends Base_CSS {
 						'format'   => function( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
+					),
+					array(
+						'property' => '--meta-text-size',
+						'value'    => 'customMetaFontSizeMobile',
 					),
 				),
 			)

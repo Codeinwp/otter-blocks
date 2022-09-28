@@ -341,7 +341,7 @@ const Inspector = ({
 							<FontSizePicker
 								fontSizes={ defaultFontSizes }
 								withReset
-								values={ responsiveGetAttributes([ attributes.customTitleFontSize, attributes.customTitleFontSizeTablet, attributes.customTitleFontSizeMobile ]) }
+								value={ responsiveGetAttributes([ attributes.customTitleFontSize, attributes.customTitleFontSizeTablet, attributes.customTitleFontSizeMobile ]) }
 								onChange={ value => responsiveSetAttributes( value, [ 'customTitleFontSize', 'customTitleFontSizeTablet', 'customTitleFontSizeMobile' ]) }
 							/>
 						</ResponsiveControl>
@@ -352,7 +352,7 @@ const Inspector = ({
 							<FontSizePicker
 								fontSizes={ defaultFontSizes }
 								withReset
-								values={ responsiveGetAttributes([ attributes.customDescriptionFontSize, attributes.customDescriptionFontSizeTablet, attributes.customDescriptionFontSizeMobile ]) }
+								value={ responsiveGetAttributes([ attributes.customDescriptionFontSize, attributes.customDescriptionFontSizeTablet, attributes.customDescriptionFontSizeMobile ]) }
 								onChange={ value => responsiveSetAttributes( value, [ 'customDescriptionFontSize', 'customDescriptionFontSizeTablet', 'customDescriptionFontSizeMobile' ]) }
 							/>
 						</ResponsiveControl>
@@ -363,7 +363,7 @@ const Inspector = ({
 							<FontSizePicker
 								fontSizes={ defaultFontSizes }
 								withReset
-								values={ responsiveGetAttributes([ attributes.customMetaFontSize, attributes.customMetaFontSizeTablet, attributes.customMetaFontSizeMobile ]) }
+								value={ responsiveGetAttributes([ attributes.customMetaFontSize, attributes.customMetaFontSizeTablet, attributes.customMetaFontSizeMobile ]) }
 								onChange={ value => responsiveSetAttributes( value, [ 'customMetaFontSize', 'customMetaFontSizeTablet', 'customMetaFontSizeMobile' ]) }
 							/>
 						</ResponsiveControl>

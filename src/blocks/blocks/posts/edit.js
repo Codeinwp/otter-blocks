@@ -119,16 +119,19 @@ const Edit = ({
 	useEffect( () => {
 		setNodeCSS([
 			`{
-				${ attributes.customTitleFontSize && `--title-text-size: ${ isNumber( getValue( 'customTitleFontSize' ) ) ? `${ getValue( 'customTitleFontSize' ) }px` : getValue( 'customTitleFontSize' ) };` }
-				${ attributes.customDescriptionFontSize && `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSize' ) ) ? `${ getValue( 'customDescriptionFontSize' ) }px` : getValue( 'customDescriptionFontSize' ) };` }
+				${ attributes.customTitleFontSize ? `--title-text-size: ${ isNumber( getValue( 'customTitleFontSize' ) ) ? `${ getValue( 'customTitleFontSize' ) }px` : getValue( 'customTitleFontSize' ) };` : '' }
+				${ attributes.customDescriptionFontSize ? `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSize' ) ) ? `${ getValue( 'customDescriptionFontSize' ) }px` : getValue( 'customDescriptionFontSize' ) };` : '' }
+				${ attributes.customMetaFontSize ? `--meta-text-size: ${ getValue( 'customMetaFontSize' ) };` : '' }
 			}`,
 			`{
 				${ attributes.customTitleFontSizeTablet && `--title-text-size: ${ isNumber( getValue( 'customTitleFontSizeTablet' ) ) ? `${ getValue( 'customTitleFontSizeTablet' ) }px` : getValue( 'customTitleFontSizeTablet' ) };` }
 				${ attributes.customDescriptionFontSizeTablet && `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSizeTablet' ) ) ? `${ getValue( 'customDescriptionFontSizeTablet' ) }px` : getValue( 'customDescriptionFontSizeTablet' ) };` }
+				${ attributes.customMetaFontSizeTablet && `--meta-text-size: ${ getValue( 'customMetaFontSizeTablet' ) };` }
 			}`,
 			`{
 				${ attributes.customTitleFontSizeMobile && `--title-text-size: ${ isNumber( getValue( 'customTitleFontSizeMobile' ) ) ? `${ getValue( 'customTitleFontSizeMobile' ) }px` : getValue( 'customTitleFontSizeMobile' ) };` }
 				${ attributes.customDescriptionFontSizeMobile && `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSizeMobile' ) ) ? `${ getValue( 'customDescriptionFontSizeMobile' ) }px` : getValue( 'customDescriptionFontSizeMobile' ) };` }
+				${ attributes.customMetaFontSizeMobile && `--meta-text-size: ${ getValue( 'customMetaFontSizeMobile' ) };` }
 			}`
 		], [
 			'@media ( min-width: 960px )',
@@ -136,9 +139,9 @@ const Edit = ({
 			'@media ( max-width: 600px )'
 		]);
 	}, [
-		attributes.customTitleFontSize, attributes.customDescriptionFontSize,
-		attributes.customTitleFontSizeTablet, attributes.customDescriptionFontSizeTablet,
-		attributes.customTitleFontSizeMobile, attributes.customDescriptionFontSizeMobile
+		attributes.customTitleFontSize, attributes.customDescriptionFontSize, attributes.customMetaFontSize,
+		attributes.customTitleFontSizeTablet, attributes.customDescriptionFontSizeTablet, attributes.customMetaFontSizeTablet,
+		attributes.customTitleFontSizeMobile, attributes.customDescriptionFontSizeMobile, attributes.customMetaFontSizeMobile
 	]);
 
 	const blockProps = useBlockProps({

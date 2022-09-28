@@ -5,6 +5,7 @@
 	--img-width: initial;
 	--title-text-size: initial;
 	--description-text-size: initial;
+	--meta-text-size: initial;
 	--border-width: 0;
 	--border-color: inherit;
 
@@ -141,7 +142,7 @@
 		}
 
 		.o-posts-grid-post-category {
-			font-size: 0.85em;
+			font-size: var( --meta-text-size );
 			text-transform: capitalize;
 			margin: 5px 0;
 		}
@@ -162,7 +163,7 @@
 		}
 
 		.o-posts-grid-post-meta {
-			font-size: 0.85em;
+			font-size: var( --meta-text-size );
 			margin: 10px 0;
 		}
 
