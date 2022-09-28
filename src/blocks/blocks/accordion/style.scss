@@ -2,6 +2,11 @@
 	$block: &;
 	margin: 20px auto;
 
+	--title-color: currentColor;
+	--title-background: unset;
+	--content-background: unset;
+	--border-color: #ccc;
+
 	&-item {
 		box-shadow: var(--box-shadow);
 

@@ -372,12 +372,28 @@ class Accordion_CSS extends Base_CSS {
 						'value'    => 'titleBackground',
 					),
 					array(
+						'property' => '--accordion-content-background',
+						'value'    => 'contentBackground',
+					),
+					array(
 						'property' => '--accordion-border-color',
 						'value'    => 'borderColor',
 					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .wp-block-themeisle-blocks-accordion-item[open]',
+				'properties' => array(
 					array(
-						'property' => '--accordion-content-background',
-						'value'    => 'contentBackground',
+						'property' => '--accordion-title-color',
+						'value'    => 'activeTitleColor',
+					),
+					array(
+						'property' => '--accordion-title-background',
+						'value'    => 'activeTitleBackground',
 					),
 				),
 			)

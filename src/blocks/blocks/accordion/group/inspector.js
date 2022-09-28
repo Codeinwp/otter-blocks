@@ -32,40 +32,9 @@ import BoxShadowControl from '../../../components/box-shadow-control';
 import IconPickerControl from '../../../components/icon-picker-control';
 import InspectorHeader from '../../../components/inspector-header';
 import { InspectorExtensions } from '../../../components/inspector-slot-fill';
-import SyncControlDropdown from '../../../components/sync-control-dropdown';
 import ButtonToggle from '../../../components/button-toggle-control';
 import { changeActiveStyle, getActiveStyle } from '../../../helpers/helper-functions';
-
-const colorControls = [
-	{
-		label: __( 'Tab title background', 'otter-blocks' ),
-		value: 'titleBackground'
-	},
-	{
-		label: __( 'Active tab title background', 'otter-blocks' ),
-		value: 'activeTitleBackground'
-	},
-	{
-		label: __( 'Tab title', 'otter-blocks' ),
-		value: 'titleColor'
-	},
-	{
-		label: __( 'Active tab title', 'otter-blocks' ),
-		value: 'activeTitleColor'
-	},
-	{
-		label: __( 'Content background', 'otter-blocks' ),
-		value: 'contentBackground'
-	},
-	{
-		label: __( 'Active Content Background', 'otter-blocks' ),
-		value: 'activeContentBackground'
-	},
-	{
-		label: __( 'Border', 'otter-blocks' ),
-		value: 'borderColor'
-	}
-];
+import SyncColorPanel from '../../../components/sync-color-panel';
 
 const styles = [
 	{
@@ -91,6 +60,39 @@ const Inspector = ({
 	getValue
 }) => {
 	const [ tab, setTab ] = useState( 'settings' );
+
+	const globalColorControls = [
+		{
+			label: __( 'Title', 'otter-blocks' ),
+			slug: 'titleColor',
+			value: getValue( 'titleColor' )
+		},
+		{
+			label: __( 'Active tab title', 'otter-blocks' ),
+			slug: 'activeTitleColor',
+			value: getValue( 'activeTitleColor' )
+		},
+		{
+			label: __( 'Title background', 'otter-blocks' ),
+			slug: 'titleBackground',
+			value: getValue( 'titleBackground' )
+		},
+		{
+			label: __( 'Active tab title background', 'otter-blocks' ),
+			slug: 'activeTitleBackground',
+			value: getValue( 'activeTitleBackground' )
+		},
+		{
+			label: __( 'Content background', 'otter-blocks' ),
+			slug: 'contentBackground',
+			value: getValue( 'contentBackground' )
+		},
+		{
+			label: __( 'Border', 'otter-blocks' ),
+			slug: 'borderColor',
+			value: getValue( 'borderColor' )
+		}
+	];
 
 	const changeFontFamily = value => {
 		if ( ! value ) {
@@ -265,36 +267,12 @@ const Inspector = ({
 						/>
 					</PanelBody>
 
-					<PanelBody
-						title={ __( 'Color', 'otter-blocks' ) }
-						initialOpen={ false }
+					<SyncColorPanel
+						label={ __( 'Color', 'otter-blocks' ) }
+						isSynced={ attributes.isSynced }
+						options={ globalColorControls }
+						setAttributes={ setAttributes }
 					>
-						<SyncControlDropdown
-							isSynced={ attributes.isSynced }
-							options={ colorControls }
-							setAttributes={ setAttributes }
-						/>
-
-						<Disabled
-							isDisabled={ attributes.isSynced?.includes( 'backgroundColor' ) || false }
-						>
-							<ColorGradientControl
-								label={ __( 'Title', 'otter-blocks' ) }
-								colorValue={ attributes.titleColor }
-								onColorChange={ e => setAttributes({ titleColor: e }) }
-							/>
-						</Disabled>
-
-						<Disabled
-							isDisabled={ attributes.isSynced?.includes( 'backgroundColor' ) || false }
-						>
-							<ColorGradientControl
-								label={ __( 'Title Background', 'otter-blocks' ) }
-								colorValue={ attributes.titleBackground }
-								onColorChange={ e => setAttributes({ titleBackground: e }) }
-							/>
-						</Disabled>
-
 						<ContrastChecker
 							{ ...{
 								textColor: getValue( 'titleColor' ),
@@ -302,49 +280,13 @@ const Inspector = ({
 							} }
 						/>
 
-						<ColorGradientControl
-							label={ __( 'Active Title', 'otter-blocks' ) }
-							colorValue={ attributes.activeTitleColor }
-							onColorChange={ activeTitleColor => setAttributes({ activeTitleColor }) }
-						/>
-
-						<Disabled
-							isDisabled={ attributes.isSynced?.includes( 'backgroundColor' ) || false }
-						>
-							<ColorGradientControl
-								label={ __( 'Active Title Background', 'otter-blocks' ) }
-								colorValue={ attributes.activeTitleBackground }
-								onColorChange={ activeTitleBackground => setAttributes({ activeTitleBackground }) }
-							/>
-						</Disabled>
-
 						<ContrastChecker
 							{ ...{
 								textColor: getValue( 'activeTitleColor' ),
 								backgroundColor: getValue( 'activeTitleBackground' )
 							} }
 						/>
-
-						<Disabled
-							isDisabled={ attributes.isSynced?.includes( 'backgroundColor' ) || false }
-						>
-							<ColorGradientControl
-								label={ __( 'Content Background', 'otter-blocks' ) }
-								colorValue={ attributes.contentBackground }
-								onColorChange={ e => setAttributes({ contentBackground: e }) }
-							/>
-						</Disabled>
-
-						<Disabled
-							isDisabled={ attributes.isSynced?.includes( 'backgroundColor' ) || false }
-						>
-							<ColorGradientControl
-								label={ __( 'Border', 'otter-blocks' ) }
-								colorValue={ getValue( 'borderColor' ) }
-								onColorChange={ e => setAttributes({ borderColor: e }) }
-							/>
-						</Disabled>
-					</PanelBody>
+					</SyncColorPanel>
 
 					<PanelBody
 						title={ __( 'Dimensions (Layout)', 'otter-blocks' ) }
