@@ -1,4 +1,4 @@
-import { isEmpty, merge, set, unset, without, omitBy } from 'lodash';
+import { isEmpty, merge, set, unset, without, omitBy, isObjectLike, isString } from 'lodash';
 
 import { sprintf } from '@wordpress/i18n';
 
@@ -420,4 +420,34 @@ export const changeActiveStyle = ( className, styles, newStyle ) =>{
 	}
 
 	return classes.join( ' ' );
+};
+
+export const isBoxType = ( b ) => {
+	return isObjectLike( b ) && ( b?.top || b?.bottom || b?.right || b?.left );
+};
+
+export const stringToBox = ( s ) => {
+	if ( s === undefined ) {
+		return undefined;
+	}
+
+	if ( isBoxType( s ) ) {
+		return s;
+	}
+
+	return {
+		top: s,
+		bottom: s,
+		right: s,
+		left: s
+	};
+};
+
+export const boxToCSS = ( box ) => {
+	if ( box === undefined ) {
+		return undefined;
+	}
+
+	const _box = isString( box ) ? mergeBoxDefaultValues( stringToBox( box ) ) : mergeBoxDefaultValues( box );
+	return `${_box.top} ${_box.right} ${_box.bottom} ${_box.left}`;
 };

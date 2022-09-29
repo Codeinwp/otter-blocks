@@ -25,22 +25,22 @@
 			"default": "flipY"
 		},
 		"width": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"height": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"padding": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"borderWidth": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"borderColor": {
 			"type": "string"
 		},
 		"borderRadius": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"backgroundColor": {
 			"type": "string"
@@ -58,10 +58,10 @@
 			"type": "object"
 		},
 		"frontMediaWidth": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"frontMediaHeight": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"frontBackgroundImage": {
 			"type": "object"

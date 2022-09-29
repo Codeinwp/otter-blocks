@@ -33,7 +33,8 @@ import {
 	blockInit,
 	useCSSNode
 } from '../../helpers/block-utility.js';
-import { getChoice } from '../../helpers/helper-functions.js';
+import { boxToCSS, getChoice, _px } from '../../helpers/helper-functions.js';
+import { isNumber } from 'lodash';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -66,11 +67,15 @@ const Edit = ({
 	};
 
 	const inlineStyles = {
-		'--width': attributes.width !== undefined && `${ attributes.width }px`,
-		'--height': attributes.height !== undefined && `${ attributes.height }px`,
-		'--border-width': attributes.borderWidth !== undefined && `${ attributes.borderWidth }px`,
+		'--width': ( attributes.width !== undefined && isNumber( attributes.width ) && _px( attributes.width ) ) || ( attributes.width?.desktop ),
+		'--width-tablet': attributes.width?.tablet,
+		'--width-mobile': attributes.width?.mobile,
+		'--height': attributes.height !== undefined && _px( attributes.height ),
+		'--height-tablet': attributes.height?.tablet,
+		'--height-mobile': attributes.height?.mobile,
+		'--border-width': attributes.borderWidth !== undefined && boxToCSS( _px( attributes.borderWidth ) ),
 		'--border-color': attributes.borderColor,
-		'--border-radius': attributes.borderRadius !== undefined && `${ attributes.borderRadius }px`,
+		'--border-radius': attributes.borderRadius !== undefined && boxToCSS( _px( attributes.borderRadius ) ),
 		'--front-background': getChoice([
 			[ ( 'gradient' === attributes.frontBackgroundType && attributes.frontBackgroundGradient ), attributes.frontBackgroundGradient ],
 			[ ( 'image' === attributes.frontBackgroundType && attributes.frontBackgroundImage?.url ), `url( ${ attributes.frontBackgroundImage?.url } ) ${ attributes.frontBackgroundRepeat || 'repeat' } ${ attributes.frontBackgroundAttachment || 'scroll' } ${ Math.round( attributes.frontBackgroundPosition?.x * 100 ) || 50 }% ${ Math.round( attributes.frontBackgroundPosition?.y * 100 ) || 50 }%/${ attributes.frontBackgroundSize || 'auto' }` ],
@@ -81,13 +86,16 @@ const Edit = ({
 			[ ( 'image' === attributes.backBackgroundType && attributes.backBackgroundImage?.url ), `url( ${ attributes.backBackgroundImage?.url } ) ${ attributes.backBackgroundRepeat || 'repeat' } ${ attributes.backBackgroundAttachment || 'scroll' } ${ Math.round( attributes.backBackgroundPosition?.x * 100 ) || 50 }% ${ Math.round( attributes.backBackgroundPosition?.y * 100 ) || 50 }%/${ attributes.backBackgroundSize || 'auto' }` ],
 			[ attributes.backBackgroundColor ]
 		]),
-		'--padding': attributes.padding !== undefined && `${ attributes.padding }px`,
 		'--box-shadow': attributes.boxShadow && `${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ getShadowColor() }`,
 		'--front-vertical-align': attributes.frontVerticalAlign,
 		'--front-horizontal-align': attributes.frontHorizontalAlign,
 		'--back-vertical-align': attributes.backVerticalAlign,
 		'--front-media-width': attributes.frontMediaWidth !== undefined && `${ attributes.frontMediaWidth }px`,
-		'--front-media-height': attributes.frontMediaHeight !== undefined && `${ attributes.frontMediaHeight }px`
+		'--front-media-height': attributes.frontMediaHeight !== undefined && `${ attributes.frontMediaHeight }px`,
+		'--padding': attributes.padding !== undefined && isNumber( attributes.padding ) && _px( attributes.padding ) || boxToCSS( attributes?.padding?.desktop ),
+		'--padding-tablet': boxToCSS( attributes?.padding?.tablet ),
+		'--padding-mobile': boxToCSS( attributes?.padding?.mobile )
+
 	};
 
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();
