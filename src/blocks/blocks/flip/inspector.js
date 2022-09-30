@@ -252,53 +252,78 @@ const Inspector = ({
 									onChange={ setSide }
 								/>
 
-								<BaseControl
-									label={ __( 'Vertical Alignment', 'otter-blocks' ) }
-								>
-									<ToogleGroupControl
+								{
+									'front' === side ? (
+										<Fragment>
+											<BaseControl
+												label={ __( 'Vertical Alignment', 'otter-blocks' ) }
+											>
+												<ToogleGroupControl
 
-										options={[
-											{
-												icon: alignTop,
-												value: 'flex-start'
-											},
-											{
-												icon: oAlignCenter,
-												value: 'center'
-											},
-											{
-												icon: alignBottom,
-												value: 'flex-end'
-											}
-										]}
-										value={ attributes.frontVerticalAlign }
-										onChange={ frontVerticalAlign => setAttributes({ frontVerticalAlign }) }
-									/>
-								</BaseControl>
-								<BaseControl
-									label={ __( 'Horizontal Alignment', 'otter-blocks' ) }
-								>
-									<ToogleGroupControl
-										options={[
-											{
-												icon: alignLeft,
-												value: 'flex-start'
-											},
-											{
-												icon: alignCenter,
-												value: 'center'
-											},
-											{
-												icon: alignRight,
-												value: 'flex-end'
-											}
-										]}
-										value={ attributes.frontHorizontalAlign }
-										onChange={ frontHorizontalAlign => setAttributes({ frontHorizontalAlign }) }
-									/>
+													options={[
+														{
+															icon: alignTop,
+															value: 'flex-start'
+														},
+														{
+															icon: oAlignCenter,
+															value: 'center'
+														},
+														{
+															icon: alignBottom,
+															value: 'flex-end'
+														}
+													]}
+													value={ attributes.frontVerticalAlign }
+													onChange={ frontVerticalAlign => setAttributes({ frontVerticalAlign }) }
+												/>
+											</BaseControl>
+											<BaseControl
+												label={ __( 'Horizontal Alignment', 'otter-blocks' ) }
+											>
+												<ToogleGroupControl
+													options={[
+														{
+															icon: alignLeft,
+															value: 'flex-start'
+														},
+														{
+															icon: alignCenter,
+															value: 'center'
+														},
+														{
+															icon: alignRight,
+															value: 'flex-end'
+														}
+													]}
+													value={ attributes.frontHorizontalAlign }
+													onChange={ frontHorizontalAlign => setAttributes({ frontHorizontalAlign }) }
+												/>
 
-								</BaseControl>
+											</BaseControl>
+										</Fragment>
+									) : (
+										<ToogleGroupControl
 
+											options={[
+												{
+													icon: alignTop,
+													value: 'flex-start'
+												},
+												{
+													icon: oAlignCenter,
+													value: 'center'
+												},
+												{
+													icon: alignBottom,
+													value: 'flex-end'
+												}
+											]}
+											value={ attributes.backVerticalAlign }
+											onChange={ backVerticalAlign => setAttributes({ backVerticalAlign }) }
+										/>
+									)
+								}
 							</PanelBody>
 						</Fragment>
 					)
