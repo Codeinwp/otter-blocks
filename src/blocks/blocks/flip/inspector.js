@@ -45,6 +45,7 @@ import ButtonToggle from '../../components/button-toggle-control/index.js';
 import { alignCenter, alignLeft, alignRight } from '@wordpress/icons';
 import ToogleGroupControl from '../../components/toogle-group-control/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
+import { alignBottom, alignTop, alignCenter as oAlignCenter } from '../../helpers/icons.js';
 
 const wrapNumberInString = ( x ) => isNumber( x ) ? `${x}px` : x;
 const wrapNumberInBox = ( x ) => isNumber( x ) ? ({ top: wrapNumberInString( x ), bottom: wrapNumberInString( x ), left: wrapNumberInString( x ), right: wrapNumberInString( x ) }) : x;
@@ -256,20 +257,20 @@ const Inspector = ({
 
 										options={[
 											{
-												icon: alignLeft,
+												icon: alignTop,
 												value: 'flex-start'
 											},
 											{
-												icon: alignCenter,
+												icon: oAlignCenter,
 												value: 'center'
 											},
 											{
-												icon: alignRight,
+												icon: alignBottom,
 												value: 'flex-end'
 											}
 										]}
-										value={ 'center' }
-										onChange={ () => {} }
+										value={ attributes.frontVerticalAlign }
+										onChange={ frontVerticalAlign => setAttributes({ frontVerticalAlign }) }
 									/>
 								</BaseControl>
 								<BaseControl
@@ -290,8 +291,8 @@ const Inspector = ({
 												value: 'flex-end'
 											}
 										]}
-										value={ 'center' }
-										onChange={ () => {} }
+										value={ attributes.frontHorizontalAlign }
+										onChange={ frontHorizontalAlign => setAttributes({ frontHorizontalAlign }) }
 									/>
 
 								</BaseControl>

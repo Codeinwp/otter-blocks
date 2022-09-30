@@ -241,4 +241,13 @@ class CSS_Utility {
 
 		return $_box['top'] . ' ' . $_box['right'] . ' ' . $_box['bottom'] . ' ' . $_box['left'];
 	}
+
+	public static function make_box( $value = '0px' ) {
+		return array(
+			'left'   => $value,
+			'right'  => $value,
+			'top'    => $value,
+			'bottom' => $value,
+		);
+	}
 }

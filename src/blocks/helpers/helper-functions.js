@@ -1,4 +1,4 @@
-import { isEmpty, merge, set, unset, without, omitBy, isObjectLike, isString } from 'lodash';
+import { isEmpty, merge, set, unset, without, omitBy, isObjectLike, isString, isNumber } from 'lodash';
 
 import { sprintf } from '@wordpress/i18n';
 
@@ -184,11 +184,11 @@ export const isUndefinedObject = obj => Object.values( obj ).every( l => l === u
 /**
  * Format the value based on the given unit.
  *
- * @param {string} value
+ * @param {number} value
  * @param {string} unit
  * @returns {string|undefined}
  */
-export const _unit = ( value, unit ) => ( value ? value + unit : undefined );
+export const _unit = ( value, unit ) => ( isNumber( value ) ? value + unit : value );
 
 /**
  * Format the value into a `px` unit.

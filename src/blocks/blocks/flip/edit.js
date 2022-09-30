@@ -107,11 +107,11 @@ const Edit = ({
 			}`,
 			`.o-flip-front .o-flip-content h3 {
 				color: ${ attributes.titleColor };
-				${ attributes.titleFontSize && `font-size: ${ attributes.titleFontSize }px;` }
+				${ attributes.titleFontSize && `font-size: ${ _px( attributes.titleFontSize ) }` }
 			}`,
 			`.o-flip-front .o-flip-content p {
 				color: ${ attributes.descriptionColor };
-				${ attributes.descriptionFontSize && `font-size: ${ attributes.descriptionFontSize }px;` }
+				${ attributes.descriptionFontSize && `font-size: ${ _px( attributes.descriptionFontSize ) }` }
 			}`
 		]);
 	}, [ isFliped, attributes.titleFontSize, attributes.descriptionFontSize, attributes.titleColor, attributes.descriptionColor ]);
