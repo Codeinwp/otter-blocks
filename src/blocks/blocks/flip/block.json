@@ -138,10 +138,10 @@
 			"default": 0
 		},
 		"titleFontSize": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"descriptionFontSize": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"titleColor": {
 			"type": "string"

@@ -39,6 +39,7 @@ import {
 	mergeBoxDefaultValues,
 	removeBoxDefaultValues,
 	stringToBox,
+	_i,
 	_px
 } from '../../helpers/helper-functions.js';
 import InspectorHeader from '../../components/inspector-header/index.js';
@@ -312,7 +313,7 @@ const Inspector = ({
 									label={ __( 'Width', 'otter-blocks' ) }
 								>
 									<UnitControl
-										value={ responsiveGetAttributes([ attributes?.width?.desktop ?? wrapNumberInString( attributes.width ), attributes.width?.tablet, attributes?.width?.mobile ]) ?? '100%' }
+										value={ responsiveGetAttributes([ isNumber( attributes.width ) ? wrapNumberInString( attributes.width ) : attributes?.width?.desktop, attributes.width?.tablet, attributes?.width?.mobile ]) ?? '100%' }
 										onChange={ width => responsiveSetAttributes( width, [ 'width.desktop', 'width.tablet', 'width.mobile' ], attributes.width ) }
 
 										isUnitSelectTabbable
@@ -325,7 +326,7 @@ const Inspector = ({
 									label={ __( 'Height', 'otter-blocks' ) }
 								>
 									<UnitControl
-										value={ responsiveGetAttributes([ attributes?.height?.desktop ?? wrapNumberInString( attributes.height ), attributes.height?.tablet, attributes?.height?.mobile ]) ?? '300px' }
+										value={ responsiveGetAttributes([ isNumber( attributes.height ) ? wrapNumberInString( attributes.height ) : attributes?.height?.desktop, attributes.height?.tablet, attributes?.height?.mobile ]) ?? '300px' }
 										onChange={ height => responsiveSetAttributes( height, [ 'height.desktop', 'height.tablet', 'height.mobile' ], attributes.height ) }
 										isUnitSelectTabbable
 										isResetValueOnUnitChange

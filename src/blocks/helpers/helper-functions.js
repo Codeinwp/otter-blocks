@@ -444,3 +444,8 @@ export const boxToCSS = ( box ) => {
 	const _box = isString( box ) ? mergeBoxDefaultValues( stringToBox( box ) ) : mergeBoxDefaultValues( box );
 	return `${_box.top} ${_box.right} ${_box.bottom} ${_box.left}`;
 };
+
+export const _i = x => {
+	console.log( x );
+	return x;
+};
