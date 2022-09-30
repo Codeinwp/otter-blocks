@@ -242,6 +242,13 @@ class CSS_Utility {
 		return $_box['top'] . ' ' . $_box['right'] . ' ' . $_box['bottom'] . ' ' . $_box['left'];
 	}
 
+	/**
+	 * Make a string into a box type.
+	 *
+	 * @param string $value The value.
+	 *
+	 * @return array|string[]
+	 */
 	public static function make_box( $value = '0px' ) {
 		return array(
 			'left'   => $value,
