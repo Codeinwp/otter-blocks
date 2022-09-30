@@ -121,11 +121,37 @@ class Flip_CSS extends Base_CSS {
 						'property' => '--border-width',
 						'value'    => 'borderWidth',
 						'unit'     => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['borderWidth'] ) && is_numeric( $attrs['borderWidth']);
+						},
+					),
+					array(
+						'property' => '--border-width',
+						'value'    => 'borderWidth',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['borderWidth'] ) && is_array( $attrs['borderWidth']);
+						},
+						'format' => function( $value, $attrs) {
+							return CSS_Utility::box_values($value, CSS_Utility::make_box('3px'));
+						}
 					),
 					array(
 						'property' => '--border-radius',
 						'value'    => 'borderRadius',
 						'unit'     => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['borderRadius'] ) && is_numeric( $attrs['borderRadius']);
+						},
+					),
+					array(
+						'property' => '--border-radius',
+						'value'    => 'borderRadius',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['borderRadius'] ) && is_array( $attrs['borderRadius']);
+						},
+						'format' => function( $value, $attrs) {
+							return CSS_Utility::box_values($value, CSS_Utility::make_box('10px'));
+						}
 					),
 					array(
 						'property'  => '--front-background',

@@ -38,7 +38,8 @@ import {
 	buildResponsiveSetAttributes,
 	mergeBoxDefaultValues,
 	removeBoxDefaultValues,
-	stringToBox
+	stringToBox,
+	_px
 } from '../../helpers/helper-functions.js';
 import InspectorHeader from '../../components/inspector-header/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
@@ -47,7 +48,7 @@ import ToogleGroupControl from '../../components/toogle-group-control/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import { alignBottom, alignTop, alignCenter as oAlignCenter } from '../../helpers/icons.js';
 
-const wrapNumberInString = ( x ) => isNumber( x ) ? `${x}px` : x;
+const wrapNumberInString = _px;
 const wrapNumberInBox = ( x ) => isNumber( x ) ? ({ top: wrapNumberInString( x ), bottom: wrapNumberInString( x ), left: wrapNumberInString( x ), right: wrapNumberInString( x ) }) : x;
 const defaultFontSizes = [
 	{
@@ -458,12 +459,12 @@ const Inspector = ({
 									values={
 										mergeBoxDefaultValues(
 											wrapNumberInBox( attributes.borderWidth ),
-											{ left: '0px', right: '0px', bottom: '0px', top: '0px' }
+											{ left: '3px', right: '3px', bottom: '3px', top: '3px' }
 										)
 									}
 									onChange={ value => {
 										setAttributes({
-											borderWidth: removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' })
+											borderWidth: removeBoxDefaultValues( value, { left: '3px', right: '3px', bottom: '3px', top: '3px' })
 										});
 									} }
 								/>
@@ -473,12 +474,12 @@ const Inspector = ({
 									values={
 										mergeBoxDefaultValues(
 											wrapNumberInBox( attributes.borderRadius ),
-											{ left: '0px', right: '0px', bottom: '0px', top: '0px' }
+											{ left: '10px', right: '10px', bottom: '10px', top: '10px' }
 										)
 									}
 									onChange={ value => {
 										setAttributes({
-											borderRadius: removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' })
+											borderRadius: removeBoxDefaultValues( value, { left: '10px', right: '10px', bottom: '10px', top: '10px' })
 										});
 									} }
 									id="o-border-raduis-box"

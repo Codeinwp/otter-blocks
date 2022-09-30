@@ -75,7 +75,9 @@
 		overflow-x: hidden;
 		overflow-y: auto;
 		background-size: inherit;
-		border: var( --border-width ) solid var( --border-color );
+		border-width: var(--border-width);
+		border-color: var(--border-color);
+		border-style: solid;
 		border-radius: var( --border-radius );
 		box-sizing: border-box;
 	}

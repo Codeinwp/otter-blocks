@@ -422,16 +422,9 @@ export const changeActiveStyle = ( className, styles, newStyle ) =>{
 	return classes.join( ' ' );
 };
 
-export const isBoxType = ( b ) => {
-	return isObjectLike( b ) && ( b?.top || b?.bottom || b?.right || b?.left );
-};
 
 export const stringToBox = ( s ) => {
-	if ( s === undefined ) {
-		return undefined;
-	}
-
-	if ( isBoxType( s ) ) {
+	if ( ! isString( s ) ) {
 		return s;
 	}
 

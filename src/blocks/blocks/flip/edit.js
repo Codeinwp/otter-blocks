@@ -33,7 +33,7 @@ import {
 	blockInit,
 	useCSSNode
 } from '../../helpers/block-utility.js';
-import { boxToCSS, getChoice, _px } from '../../helpers/helper-functions.js';
+import { boxToCSS, getChoice, mergeBoxDefaultValues, stringToBox, _px } from '../../helpers/helper-functions.js';
 import { isNumber } from 'lodash';
 
 const { attributes: defaultAttributes } = metadata;
@@ -73,9 +73,15 @@ const Edit = ({
 		'--height': ( attributes.height !== undefined && isNumber( attributes.isNumber ) && _px( attributes.height ) ) || attributes.height?.desktop,
 		'--height-tablet': attributes.height?.tablet,
 		'--height-mobile': attributes.height?.mobile,
-		'--border-width': attributes.borderWidth !== undefined && boxToCSS( _px( attributes.borderWidth ) ),
+		'--border-width': attributes.borderWidth !== undefined && boxToCSS( mergeBoxDefaultValues(
+			stringToBox( _px( attributes.borderWidth ) ),
+			{ left: '3px', right: '3px', bottom: '3px', top: '3px' }
+		)  ),
 		'--border-color': attributes.borderColor,
-		'--border-radius': attributes.borderRadius !== undefined && boxToCSS( _px( attributes.borderRadius ) ),
+		'--border-radius': attributes.borderRadius !== undefined && boxToCSS( mergeBoxDefaultValues(
+			stringToBox( _px( attributes.borderWidth ) ),
+			{ left: '10px', right: '10px', bottom: '10px', top: '10px' }
+		)  ),
 		'--front-background': getChoice([
 			[ ( 'gradient' === attributes.frontBackgroundType && attributes.frontBackgroundGradient ), attributes.frontBackgroundGradient ],
 			[ ( 'image' === attributes.frontBackgroundType && attributes.frontBackgroundImage?.url ), `url( ${ attributes.frontBackgroundImage?.url } ) ${ attributes.frontBackgroundRepeat || 'repeat' } ${ attributes.frontBackgroundAttachment || 'scroll' } ${ Math.round( attributes.frontBackgroundPosition?.x * 100 ) || 50 }% ${ Math.round( attributes.frontBackgroundPosition?.y * 100 ) || 50 }%/${ attributes.frontBackgroundSize || 'auto' }` ],
