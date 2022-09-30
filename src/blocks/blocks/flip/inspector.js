@@ -3,7 +3,7 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { isNumber, pick } from 'lodash';
+import { isEmpty, isNumber, pick } from 'lodash';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
@@ -37,12 +37,14 @@ import {
 	buildResponsiveGetAttributes,
 	buildResponsiveSetAttributes,
 	mergeBoxDefaultValues,
-	removeBoxDefaultValues
+	removeBoxDefaultValues,
+	stringToBox
 } from '../../helpers/helper-functions.js';
 import InspectorHeader from '../../components/inspector-header/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
 import { alignCenter, alignLeft, alignRight } from '@wordpress/icons';
 import ToogleGroupControl from '../../components/toogle-group-control/index.js';
+import ResponsiveControl from '../../components/responsive-control/index.js';
 
 const wrapNumberInString = ( x ) => isNumber( x ) ? `${x}px` : x;
 const wrapNumberInBox = ( x ) => isNumber( x ) ? ({ top: wrapNumberInString( x ), bottom: wrapNumberInString( x ), left: wrapNumberInString( x ), right: wrapNumberInString( x ) }) : x;
@@ -128,399 +130,415 @@ const Inspector = ({
 				]}
 				onChange={ setTab }
 			/>
-			{
-				'settings' === tab && (
-					<Fragment>
-						<PanelBody
-							title={ __( 'Flip Settings', 'otter-blocks' ) }
-						>
-							<SelectControl
-								label={ __( 'Flip Type', 'otter-blocks' )}
-								value={ attributes.animType }
-								options={ [
-									{ label: __( 'Bottom to Top', 'otter-blocks' ), value: 'flipX' },
-									{ label: __( 'Left to right', 'otter-blocks' ), value: 'flipY' }
-								]}
-								onChange={ animType => setAttributes({ animType })}
-							/>
-							<ToggleControl
-								label={ __( 'Invert the sides', 'otter-blocks' ) }
-								checked={ attributes.isInverted }
-								onChange={ isInverted => setAttributes({ isInverted })}
-								help={ __( 'Use this to display the back side first.', 'otter-blocks' ) }
-							/>
-						</PanelBody>
-						<PanelBody
-							title={ __( 'Front side content', 'otter-blocks' ) }
-						>
-							<ButtonToggle
-								label={ __( 'Content Type', 'otter-blocks' ) }
-								options={[
-									{
-										label: __( 'None', 'otter-blocks' ),
-										value: ''
-									},
-									{
-										label: __( 'Image', 'otter-blocks' ),
-										value: 'image'
-									}
-								]}
-								value={ attributes?.frontContentType }
-								onChange={ v => setAttributes({ frontContentType: v ? v : undefined }) }
-							/>
+			<div>
+				{
+					'settings' === tab && (
+						<Fragment>
+							<PanelBody
+								title={ __( 'Flip Settings', 'otter-blocks' ) }
+							>
+								<SelectControl
+									label={ __( 'Flip Type', 'otter-blocks' )}
+									value={ attributes.animType }
+									options={ [
+										{ label: __( 'Bottom to Top', 'otter-blocks' ), value: 'flipX' },
+										{ label: __( 'Left to right', 'otter-blocks' ), value: 'flipY' }
+									]}
+									onChange={ animType => setAttributes({ animType })}
+								/>
+								<ToggleControl
+									label={ __( 'Invert the sides', 'otter-blocks' ) }
+									checked={ attributes.isInverted }
+									onChange={ isInverted => setAttributes({ isInverted })}
+									help={ __( 'Use this to display the back side first.', 'otter-blocks' ) }
+								/>
+							</PanelBody>
+							<PanelBody
+								title={ __( 'Front side content', 'otter-blocks' ) }
+							>
+								<ButtonToggle
+									label={ __( 'Content Type', 'otter-blocks' ) }
+									options={[
+										{
+											label: __( 'None', 'otter-blocks' ),
+											value: ''
+										},
+										{
+											label: __( 'Image', 'otter-blocks' ),
+											value: 'image'
+										}
+									]}
+									value={ attributes?.frontContentType }
+									onChange={ v => setAttributes({ frontContentType: v ? v : undefined }) }
+								/>
 
-							{
-								'image' === attributes.frontContentType && (
-									<Fragment>
-										<BaseControl
-											label={ __( 'Media Image', 'otter-blocks' ) }
-											help={ __( 'Set an image as showcase.', 'otter-blocks' ) }
-										>
-											{ ! ( attributes.frontMedia?.url ) ? (
-												<MediaPlaceholder
-													labels={ {
-														title: __( 'Media Image', 'otter-blocks' )
-													} }
-													accept="image/*"
-													allowedTypes={ [ 'image' ] }
-													value={ attributes.frontMedia }
-													onSelect={ value => setAttributes({ frontMedia: pick( value, [ 'id', 'alt', 'url' ]) }) }
-												/>
-											) : (
-												<BaseControl
-												>
-													<img
-														src={ attributes.frontMedia.url }
-														alt={ attributes.frontMedia.alt }
-														style={{
-															border: '2px solid var( --wp-admin-theme-color)',
-															maxHeight: '250px'
-														}}
+								{
+									'image' === attributes.frontContentType && (
+										<Fragment>
+											<BaseControl
+												label={ __( 'Media Image', 'otter-blocks' ) }
+												help={ __( 'Set an image as showcase.', 'otter-blocks' ) }
+											>
+												{ ! ( attributes.frontMedia?.url ) ? (
+													<MediaPlaceholder
+														labels={ {
+															title: __( 'Media Image', 'otter-blocks' )
+														} }
+														accept="image/*"
+														allowedTypes={ [ 'image' ] }
+														value={ attributes.frontMedia }
+														onSelect={ value => setAttributes({ frontMedia: pick( value, [ 'id', 'alt', 'url' ]) }) }
 													/>
-
-													<Button
-														isSecondary
-														onClick={ () => setAttributes({ frontMedia: undefined }) }
+												) : (
+													<BaseControl
 													>
-														{ __( 'Remove image', 'otter-blocks' ) }
-													</Button>
-												</BaseControl>
-											) }
-										</BaseControl>
+														<img
+															src={ attributes.frontMedia.url }
+															alt={ attributes.frontMedia.alt }
+															style={{
+																border: '2px solid var( --wp-admin-theme-color)',
+																maxHeight: '250px'
+															}}
+														/>
 
-										<UnitControl
-											onChange={ frontMediaWidth => setAttributes({ frontMediaWidth }) }
-											label={ __( 'Media Width', 'otter-blocks' ) }
-											isUnitSelectTabbable
-											isResetValueOnUnitChange
-											value={ wrapNumberInString( attributes.frontMediaWidth ) }
-										/>
+														<Button
+															isSecondary
+															onClick={ () => setAttributes({ frontMedia: undefined }) }
+														>
+															{ __( 'Remove image', 'otter-blocks' ) }
+														</Button>
+													</BaseControl>
+												) }
+											</BaseControl>
 
-										<UnitControl
-											onChange={ frontMediaHeight => setAttributes({ frontMediaHeight }) }
-											label={ __( 'Media Height', 'otter-blocks' ) }
-											isUnitSelectTabbable
-											isResetValueOnUnitChange
-											value={ wrapNumberInString( attributes.frontMediaHeight ) }
-										/>
-									</Fragment>
-								)
-							}
-						</PanelBody>
-						<PanelBody
-							title={__( 'Alignment', 'otter-blocks' )}
-						>
-							<ButtonToggle
-								label={ __( 'Sides', 'otter-blocks' ) }
-								options={[
-									{
-										label: __( 'Front', 'otter-blocks' ),
-										value: 'front'
-									},
-									{
-										label: __( 'Back', 'otter-blocks' ),
-										value: 'back'
-									}
-								]}
-								value={ side }
-								onChange={ setSide }
-							/>
+											<UnitControl
+												onChange={ frontMediaWidth => setAttributes({ frontMediaWidth }) }
+												label={ __( 'Media Width', 'otter-blocks' ) }
+												isUnitSelectTabbable
+												isResetValueOnUnitChange
+												value={ wrapNumberInString( attributes.frontMediaWidth ) }
+											/>
 
-							<BaseControl
-								label={ __( 'Vertical Alignment', 'otter-blocks' ) }
+											<UnitControl
+												onChange={ frontMediaHeight => setAttributes({ frontMediaHeight }) }
+												label={ __( 'Media Height', 'otter-blocks' ) }
+												isUnitSelectTabbable
+												isResetValueOnUnitChange
+												value={ wrapNumberInString( attributes.frontMediaHeight ) }
+											/>
+										</Fragment>
+									)
+								}
+							</PanelBody>
+							<PanelBody
+								title={__( 'Alignment', 'otter-blocks' )}
 							>
-								<ToogleGroupControl
-
+								<ButtonToggle
+									label={ __( 'Sides', 'otter-blocks' ) }
 									options={[
 										{
-											icon: alignLeft,
-											value: 'flex-start'
+											label: __( 'Front', 'otter-blocks' ),
+											value: 'front'
 										},
 										{
-											icon: alignCenter,
-											value: 'center'
-										},
-										{
-											icon: alignRight,
-											value: 'flex-end'
+											label: __( 'Back', 'otter-blocks' ),
+											value: 'back'
 										}
 									]}
-									value={ 'center' }
-									onChange={ () => {} }
-								/>
-							</BaseControl>
-							<BaseControl
-								label={ __( 'Horizontal Alignment', 'otter-blocks' ) }
-							>
-								<ToogleGroupControl
-									options={[
-										{
-											icon: alignLeft,
-											value: 'flex-start'
-										},
-										{
-											icon: alignCenter,
-											value: 'center'
-										},
-										{
-											icon: alignRight,
-											value: 'flex-end'
-										}
-									]}
-									value={ 'center' }
-									onChange={ () => {} }
+									value={ side }
+									onChange={ setSide }
 								/>
 
-							</BaseControl>
+								<BaseControl
+									label={ __( 'Vertical Alignment', 'otter-blocks' ) }
+								>
+									<ToogleGroupControl
 
-						</PanelBody>
-					</Fragment>
-				)
-			}
-			{
-				'style' === tab && (
-					<Fragment>
-						<PanelBody
-							title={ __( 'Dimensions', 'otter-blocks' ) }
-						>
-							<UnitControl
-								value={ wrapNumberInString( attributes.width ) }
-								onChange={ width => setAttributes({ width }) }
-								label={ __( 'Width', 'otter-blocks' ) }
-								isUnitSelectTabbable
-								isResetValueOnUnitChange
-								allowReset={ true }
-							/>
-
-							<UnitControl
-								value={ wrapNumberInString( attributes.height ) }
-								onChange={ height => setAttributes({ height }) }
-								label={ __( 'Height', 'otter-blocks' ) }
-								isUnitSelectTabbable
-								isResetValueOnUnitChange
-								allowReset={ true }
-							/>
-
-							<BoxControl
-								label={ __( 'Padding', 'otter-blocks' ) }
-								values={
-									mergeBoxDefaultValues(
-										wrapNumberInBox( attributes.padding ),
-										{ left: '0px', right: '0px', bottom: '0px', top: '0px' }
-									)
-								}
-								onChange={ value => {
-									setAttributes({
-										padding: removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' })
-									});
-								} }
-							/>
-						</PanelBody>
-						<PanelBody
-							title={ __( 'Typography Front Side', 'otter-blocks' ) }
-						>
-							<FontSizePicker
-								label={ __( 'Title', 'otter-blocks' ) }
-								value={ wrapNumberInString( attributes.titleFontSize ) }
-								onChange={ titleFontSize => setAttributes({ titleFontSize }) }
-								fontSizes={[ ...defaultFontSizes, { name: '32', size: '32px', slug: '32' }]}
-								allowReset
-							/>
-
-							<FontSizePicker
-								label={ __( 'Description', 'otter-blocks' ) }
-								value={ wrapNumberInBox( attributes.descriptionFontSize ) }
-								onChange={ descriptionFontSize => setAttributes({ descriptionFontSize }) }
-								fontSizes={[ ...defaultFontSizes, { name: '28', size: '28px', slug: '28' }]}
-								allowReset
-							/>
-						</PanelBody>
-						<PanelBody
-							title={ __( 'Front side', 'otter-blocks' ) }
-						>
-							<BackgroundSelectorControl
-								backgroundType={ attributes.frontBackgroundType }
-								backgroundColor={ attributes.frontBackgroundColor }
-								image={ attributes.frontBackgroundImage }
-								gradient={ attributes.frontBackgroundGradient }
-								focalPoint={ attributes.frontBackgroundPosition }
-								backgroundAttachment={ attributes.frontBackgroundAttachment }
-								backgroundRepeat={ attributes.frontBackgroundRepeat }
-								backgroundSize={ attributes.frontBackgroundSize }
-								changeBackgroundType={ frontBackgroundType => setAttributes({ frontBackgroundType }) }
-								changeImage={ media => {
-									setAttributes({
-										frontBackgroundImage: pick( media, [ 'id', 'url' ])
-									});
-								}}
-								removeImage={ () => setAttributes({ frontBackgroundImage: undefined })}
-								changeColor={ frontBackgroundColor => setAttributes({ frontBackgroundColor })}
-								changeGradient={ frontBackgroundGradient => setAttributes({ frontBackgroundGradient }) }
-								changeBackgroundAttachment={ frontBackgroundAttachment => setAttributes({ frontBackgroundAttachment })}
-								changeBackgroundRepeat={ frontBackgroundRepeat => setAttributes({ frontBackgroundRepeat })}
-								changeFocalPoint={ frontBackgroundPosition => setAttributes({ frontBackgroundPosition }) }
-								changeBackgroundSize={ frontBackgroundSize => setAttributes({ frontBackgroundSize }) }
-							/>
-						</PanelBody>
-						<PanelBody
-							title={ __( 'Back side', 'otter-blocks' ) }
-						>
-							<BackgroundSelectorControl
-								backgroundType={ attributes.backBackgroundType }
-								backgroundColor={ attributes.backBackgroundColor }
-								image={ attributes.backBackgroundImage }
-								gradient={ attributes.backBackgroundGradient }
-								focalPoint={ attributes.backBackgroundPosition }
-								backgroundAttachment={ attributes.backBackgroundAttachment }
-								backgroundRepeat={ attributes.backBackgroundRepeat }
-								backgroundSize={ attributes.backBackgroundSize }
-								changeBackgroundType={ backBackgroundType => setAttributes({ backBackgroundType }) }
-								changeImage={ media => {
-									setAttributes({
-										backBackgroundImage: pick( media, [ 'id', 'url' ])
-									});
-								}}
-								removeImage={ () => setAttributes({ backBackgroundImage: undefined })}
-								changeColor={ backBackgroundColor => setAttributes({ backBackgroundColor })}
-								changeGradient={ backBackgroundGradient => setAttributes({ backBackgroundGradient }) }
-								changeBackgroundAttachment={ backBackgroundAttachment => setAttributes({ backBackgroundAttachment })}
-								changeBackgroundRepeat={ backBackgroundRepeat => setAttributes({ backBackgroundRepeat })}
-								changeFocalPoint={ backBackgroundPosition => setAttributes({ backBackgroundPosition }) }
-								changeBackgroundSize={ backBackgroundSize => setAttributes({ backBackgroundSize }) }
-							/>
-						</PanelBody>
-						<PanelColorSettings
-							title={ __( 'Color', 'otter-blocks' ) }
-							initialOpen={ false }
-							colorSettings={ [
-								{
-									value: attributes.borderColor,
-									onChange: borderColor => setAttributes({ borderColor }),
-									label: __( 'Border Color', 'otter-blocks' )
-								},
-								{
-									value: attributes.titleColor,
-									onChange: titleColor => setAttributes({ titleColor }),
-									label: __( 'Title Color', 'otter-blocks' )
-								},
-								{
-									value: attributes.descriptionColor,
-									onChange: descriptionColor => setAttributes({ descriptionColor }),
-									label: __( 'Description Color', 'otter-blocks' )
-								}
-							] }
-						/>
-						<PanelBody
-							title={ __( 'Border', 'otter-blocks' ) }
-							initialOpen={ false }
-						>
-
-							<BoxControl
-								label={ __( 'Border Width', 'otter-blocks' ) }
-								values={
-									mergeBoxDefaultValues(
-										wrapNumberInBox( attributes.borderWidth ),
-										{ left: '0px', right: '0px', bottom: '0px', top: '0px' }
-									)
-								}
-								onChange={ value => {
-									setAttributes({
-										borderWidth: removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' })
-									});
-								} }
-							/>
-
-							<BoxControl
-								label={ __( 'Border Radius', 'otter-blocks' ) }
-								values={
-									mergeBoxDefaultValues(
-										wrapNumberInBox( attributes.borderRadius ),
-										{ left: '0px', right: '0px', bottom: '0px', top: '0px' }
-									)
-								}
-								onChange={ value => {
-									setAttributes({
-										borderRadius: removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' })
-									});
-								} }
-								id="o-border-raduis-box"
-							/>
-
-							<ToggleControl
-								label={ __( 'Shadow Properties', 'otter-blocks' ) }
-								checked={ attributes.boxShadow }
-								onChange={ boxShadow => setAttributes({ boxShadow }) }
-							/>
-
-							{ attributes.boxShadow && (
-								<Fragment>
-									<ColorGradientControl
-										label={ __( 'Color', 'otter-blocks' ) }
-										colorValue={ attributes.boxShadowColor }
-										onColorChange={ changeBoxShadowColor }
+										options={[
+											{
+												icon: alignLeft,
+												value: 'flex-start'
+											},
+											{
+												icon: alignCenter,
+												value: 'center'
+											},
+											{
+												icon: alignRight,
+												value: 'flex-end'
+											}
+										]}
+										value={ 'center' }
+										onChange={ () => {} }
+									/>
+								</BaseControl>
+								<BaseControl
+									label={ __( 'Horizontal Alignment', 'otter-blocks' ) }
+								>
+									<ToogleGroupControl
+										options={[
+											{
+												icon: alignLeft,
+												value: 'flex-start'
+											},
+											{
+												icon: alignCenter,
+												value: 'center'
+											},
+											{
+												icon: alignRight,
+												value: 'flex-end'
+											}
+										]}
+										value={ 'center' }
+										onChange={ () => {} }
 									/>
 
-									<ControlPanelControl
-										label={ __( 'Shadow Properties', 'otter-blocks' ) }
-									>
-										<RangeControl
-											label={ __( 'Opacity', 'otter-blocks' ) }
-											value={ attributes.boxShadowColorOpacity }
-											onChange={ changeBoxShadowColorOpacity }
-											min={ 0 }
-											max={ 100 }
+								</BaseControl>
+
+							</PanelBody>
+						</Fragment>
+					)
+				}
+				{
+					'style' === tab && (
+						<Fragment>
+							<PanelBody
+								title={ __( 'Dimensions', 'otter-blocks' ) }
+							>
+								<ResponsiveControl
+									label={ __( 'Width', 'otter-blocks' ) }
+								>
+									<UnitControl
+										value={ responsiveGetAttributes([ attributes?.width?.desktop ?? wrapNumberInString( attributes.width ), attributes.width?.tablet, attributes?.width?.mobile ]) ?? '100%' }
+										onChange={ width => responsiveSetAttributes( width, [ 'width.desktop', 'width.tablet', 'width.mobile' ], attributes.width ) }
+
+										isUnitSelectTabbable
+										isResetValueOnUnitChange
+										allowReset={ true }
+									/>
+								</ResponsiveControl>
+
+								<ResponsiveControl
+									label={ __( 'Height', 'otter-blocks' ) }
+								>
+									<UnitControl
+										value={ responsiveGetAttributes([ attributes?.height?.desktop ?? wrapNumberInString( attributes.height ), attributes.height?.tablet, attributes?.height?.mobile ]) ?? '300px' }
+										onChange={ height => responsiveSetAttributes( height, [ 'height.desktop', 'height.tablet', 'height.mobile' ], attributes.height ) }
+										isUnitSelectTabbable
+										isResetValueOnUnitChange
+										allowReset={ true }
+									/>
+								</ResponsiveControl>
+
+								<ResponsiveControl
+									label={ __( 'Padding', 'otter-blocks' ) }
+								>
+									<BoxControl
+										values={
+											responsiveGetAttributes([ attributes?.padding?.desktop ?? wrapNumberInString( attributes.padding ), attributes.padding?.tablet, attributes?.padding?.mobile ]) ?? stringToBox( '20px' )
+										}
+										onChange={ value => {
+											if ( 'object' === typeof value ) {
+												value = Object.fromEntries( Object.entries( value ).filter( ([ _, v ]) => null !== v ) );
+											}
+
+											if ( isEmpty( value ) ) {
+												value = undefined;
+											}
+
+											responsiveSetAttributes( value, [ 'padding.desktop', 'padding.tablet', 'padding.mobile' ], attributes.padding );
+										} }
+									/>
+								</ResponsiveControl>
+
+							</PanelBody>
+							<PanelBody
+								title={ __( 'Typography Front Side', 'otter-blocks' ) }
+							>
+								<FontSizePicker
+									label={ __( 'Title', 'otter-blocks' ) }
+									value={ wrapNumberInString( attributes.titleFontSize ) }
+									onChange={ titleFontSize => setAttributes({ titleFontSize }) }
+									fontSizes={[ ...defaultFontSizes, { name: '32', size: '32px', slug: '32' }]}
+									allowReset
+								/>
+
+								<FontSizePicker
+									label={ __( 'Description', 'otter-blocks' ) }
+									value={ wrapNumberInBox( attributes.descriptionFontSize ) }
+									onChange={ descriptionFontSize => setAttributes({ descriptionFontSize }) }
+									fontSizes={[ ...defaultFontSizes, { name: '28', size: '28px', slug: '28' }]}
+									allowReset
+								/>
+							</PanelBody>
+							<PanelBody
+								title={ __( 'Front side', 'otter-blocks' ) }
+							>
+								<BackgroundSelectorControl
+									backgroundType={ attributes.frontBackgroundType }
+									backgroundColor={ attributes.frontBackgroundColor }
+									image={ attributes.frontBackgroundImage }
+									gradient={ attributes.frontBackgroundGradient }
+									focalPoint={ attributes.frontBackgroundPosition }
+									backgroundAttachment={ attributes.frontBackgroundAttachment }
+									backgroundRepeat={ attributes.frontBackgroundRepeat }
+									backgroundSize={ attributes.frontBackgroundSize }
+									changeBackgroundType={ frontBackgroundType => setAttributes({ frontBackgroundType }) }
+									changeImage={ media => {
+										setAttributes({
+											frontBackgroundImage: pick( media, [ 'id', 'url' ])
+										});
+									}}
+									removeImage={ () => setAttributes({ frontBackgroundImage: undefined })}
+									changeColor={ frontBackgroundColor => setAttributes({ frontBackgroundColor })}
+									changeGradient={ frontBackgroundGradient => setAttributes({ frontBackgroundGradient }) }
+									changeBackgroundAttachment={ frontBackgroundAttachment => setAttributes({ frontBackgroundAttachment })}
+									changeBackgroundRepeat={ frontBackgroundRepeat => setAttributes({ frontBackgroundRepeat })}
+									changeFocalPoint={ frontBackgroundPosition => setAttributes({ frontBackgroundPosition }) }
+									changeBackgroundSize={ frontBackgroundSize => setAttributes({ frontBackgroundSize }) }
+								/>
+							</PanelBody>
+							<PanelBody
+								title={ __( 'Back side', 'otter-blocks' ) }
+							>
+								<BackgroundSelectorControl
+									backgroundType={ attributes.backBackgroundType }
+									backgroundColor={ attributes.backBackgroundColor }
+									image={ attributes.backBackgroundImage }
+									gradient={ attributes.backBackgroundGradient }
+									focalPoint={ attributes.backBackgroundPosition }
+									backgroundAttachment={ attributes.backBackgroundAttachment }
+									backgroundRepeat={ attributes.backBackgroundRepeat }
+									backgroundSize={ attributes.backBackgroundSize }
+									changeBackgroundType={ backBackgroundType => setAttributes({ backBackgroundType }) }
+									changeImage={ media => {
+										setAttributes({
+											backBackgroundImage: pick( media, [ 'id', 'url' ])
+										});
+									}}
+									removeImage={ () => setAttributes({ backBackgroundImage: undefined })}
+									changeColor={ backBackgroundColor => setAttributes({ backBackgroundColor })}
+									changeGradient={ backBackgroundGradient => setAttributes({ backBackgroundGradient }) }
+									changeBackgroundAttachment={ backBackgroundAttachment => setAttributes({ backBackgroundAttachment })}
+									changeBackgroundRepeat={ backBackgroundRepeat => setAttributes({ backBackgroundRepeat })}
+									changeFocalPoint={ backBackgroundPosition => setAttributes({ backBackgroundPosition }) }
+									changeBackgroundSize={ backBackgroundSize => setAttributes({ backBackgroundSize }) }
+								/>
+							</PanelBody>
+							<PanelColorSettings
+								title={ __( 'Color', 'otter-blocks' ) }
+								initialOpen={ false }
+								colorSettings={ [
+									{
+										value: attributes.borderColor,
+										onChange: borderColor => setAttributes({ borderColor }),
+										label: __( 'Border Color', 'otter-blocks' )
+									},
+									{
+										value: attributes.titleColor,
+										onChange: titleColor => setAttributes({ titleColor }),
+										label: __( 'Title Color', 'otter-blocks' )
+									},
+									{
+										value: attributes.descriptionColor,
+										onChange: descriptionColor => setAttributes({ descriptionColor }),
+										label: __( 'Description Color', 'otter-blocks' )
+									}
+								] }
+							/>
+							<PanelBody
+								title={ __( 'Border', 'otter-blocks' ) }
+								initialOpen={ false }
+							>
+
+								<BoxControl
+									label={ __( 'Border Width', 'otter-blocks' ) }
+									values={
+										mergeBoxDefaultValues(
+											wrapNumberInBox( attributes.borderWidth ),
+											{ left: '0px', right: '0px', bottom: '0px', top: '0px' }
+										)
+									}
+									onChange={ value => {
+										setAttributes({
+											borderWidth: removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' })
+										});
+									} }
+								/>
+
+								<BoxControl
+									label={ __( 'Border Radius', 'otter-blocks' ) }
+									values={
+										mergeBoxDefaultValues(
+											wrapNumberInBox( attributes.borderRadius ),
+											{ left: '0px', right: '0px', bottom: '0px', top: '0px' }
+										)
+									}
+									onChange={ value => {
+										setAttributes({
+											borderRadius: removeBoxDefaultValues( value, { left: '0px', right: '0px', bottom: '0px', top: '0px' })
+										});
+									} }
+									id="o-border-raduis-box"
+								/>
+
+								<ToggleControl
+									label={ __( 'Shadow Properties', 'otter-blocks' ) }
+									checked={ attributes.boxShadow }
+									onChange={ boxShadow => setAttributes({ boxShadow }) }
+								/>
+
+								{ attributes.boxShadow && (
+									<Fragment>
+										<ColorGradientControl
+											label={ __( 'Color', 'otter-blocks' ) }
+											colorValue={ attributes.boxShadowColor }
+											onColorChange={ changeBoxShadowColor }
 										/>
 
-										<RangeControl
-											label={ __( 'Blur', 'otter-blocks' ) }
-											value={ attributes.boxShadowBlur }
-											onChange={ boxShadowBlur => setAttributes({ boxShadowBlur }) }
-											min={ 0 }
-											max={ 100 }
-										/>
+										<ControlPanelControl
+											label={ __( 'Shadow Properties', 'otter-blocks' ) }
+										>
+											<RangeControl
+												label={ __( 'Opacity', 'otter-blocks' ) }
+												value={ attributes.boxShadowColorOpacity }
+												onChange={ changeBoxShadowColorOpacity }
+												min={ 0 }
+												max={ 100 }
+											/>
 
-										<RangeControl
-											label={ __( 'Horizontal', 'otter-blocks' ) }
-											value={ attributes.boxShadowHorizontal }
-											onChange={ boxShadowHorizontal => setAttributes({ boxShadowHorizontal })}
-											min={ -100 }
-											max={ 100 }
-										/>
+											<RangeControl
+												label={ __( 'Blur', 'otter-blocks' ) }
+												value={ attributes.boxShadowBlur }
+												onChange={ boxShadowBlur => setAttributes({ boxShadowBlur }) }
+												min={ 0 }
+												max={ 100 }
+											/>
 
-										<RangeControl
-											label={ __( 'Vertical', 'otter-blocks' ) }
-											value={ attributes.boxShadowVertical }
-											onChange={ boxShadowVertical => setAttributes({ boxShadowVertical }) }
-											min={ -100 }
-											max={ 100 }
-										/>
-									</ControlPanelControl>
-								</Fragment>
-							) }
-						</PanelBody>
-					</Fragment>
-				)
-			}
+											<RangeControl
+												label={ __( 'Horizontal', 'otter-blocks' ) }
+												value={ attributes.boxShadowHorizontal }
+												onChange={ boxShadowHorizontal => setAttributes({ boxShadowHorizontal })}
+												min={ -100 }
+												max={ 100 }
+											/>
+
+											<RangeControl
+												label={ __( 'Vertical', 'otter-blocks' ) }
+												value={ attributes.boxShadowVertical }
+												onChange={ boxShadowVertical => setAttributes({ boxShadowVertical }) }
+												min={ -100 }
+												max={ 100 }
+											/>
+										</ControlPanelControl>
+									</Fragment>
+								) }
+							</PanelBody>
+						</Fragment>
+					)
+				}
+			</div>
 		</InspectorControls>
 	);
 };

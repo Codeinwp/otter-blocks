@@ -70,7 +70,7 @@ const Edit = ({
 		'--width': ( attributes.width !== undefined && isNumber( attributes.width ) && _px( attributes.width ) ) || ( attributes.width?.desktop ),
 		'--width-tablet': attributes.width?.tablet,
 		'--width-mobile': attributes.width?.mobile,
-		'--height': attributes.height !== undefined && _px( attributes.height ),
+		'--height': ( attributes.height !== undefined && isNumber( attributes.isNumber ) && _px( attributes.height ) ) || attributes.height?.desktop,
 		'--height-tablet': attributes.height?.tablet,
 		'--height-mobile': attributes.height?.mobile,
 		'--border-width': attributes.borderWidth !== undefined && boxToCSS( _px( attributes.borderWidth ) ),

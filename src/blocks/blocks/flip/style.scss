@@ -32,14 +32,6 @@
 	margin-right: auto;
 	height: var( --height );
 
-	@media ( max-width: 960px ) {
-		height: var(--height-tablet);
-	}
-
-	@media ( max-width: 600px ) {
-		height: var(--height-mobile);
-	}
-
 	perspective: 1000px; /* Remove this if you don't want the 3D effect */
 
 	&[class^="block-editor"] {
@@ -70,19 +62,6 @@
 		transition: transform 0.8s;
 		transform-style: preserve-3d;
 		background-size: cover;
-
-		@media ( max-width: 960px ) {
-			width: min(var( --width ), 100%);
-		}
-
-		@media ( max-width: 960px ) {
-			width: var(--width-tablet);
-		}
-
-		@media ( max-width: 600px ) {
-			width: var(--width-mobile);
-
-		}
 	}
 
 	.o-flip-front, .o-flip-back {
@@ -128,15 +107,6 @@
 			width: var( --front-media-width );
 			height: var( --front-media-height );
 		}
-
-		@media ( max-width: 960px ) {
-			padding: var(--padding-tablet);
-		}
-
-		@media ( max-width: 600px ) {
-			padding: var(--padding-mobile);
-
-		}
 	}
 
 	.o-flip-back {
@@ -159,6 +129,36 @@
 			&:hover {
 				box-shadow: var( --box-shadow );
 			}
+		}
+	}
+
+	
+}
+
+@media ( max-width: 960px ) {
+	.wp-block-themeisle-blocks-flip {
+		height: var(--height-tablet);
+	
+		.o-flip-inner {
+			width: var(--width-tablet);
+		}
+	
+		.o-flip-content {
+			padding: var(--padding-tablet);
+		}
+	}
+}
+
+@media ( max-width: 600px ) {
+	.wp-block-themeisle-blocks-flip{
+		height: var(--height-mobile);
+	
+		.o-flip-inner {
+			width: var( --width-mobile );
+		}
+	
+		.o-flip-content {
+			padding: var(--padding-mobile);
 		}
 	}
 }
