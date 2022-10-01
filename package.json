@@ -63,7 +63,7 @@
 		"@wordpress/dom-ready": "^3.16.0",
 		"@wordpress/element": "^4.14.0",
 		"@wordpress/scripts": "^22.5.0",
-		"conventional-changelog-simple-preset": "^1.0.20",
+		"conventional-changelog-simple-preset": "^1.0.23",
 		"eslint-config-wordpress": "^2.0.0",
 		"filemanager-webpack-plugin": "^6.1.7",
 		"grunt": "^1.4.0",
