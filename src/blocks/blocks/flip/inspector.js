@@ -377,22 +377,25 @@ const Inspector = ({
 								</ResponsiveControl>
 
 								<ResponsiveControl
-									label={ __( 'Padding', 'otter-blocks' ) }
+									label={ __( '', 'otter-blocks' ) }
 								>
 									<BoxControl
+										label={ __( 'Padding', 'otter-blocks' ) }
 										values={
-											responsiveGetAttributes([ attributes?.padding?.desktop ?? _px( attributes.padding ), attributes.padding?.tablet, attributes?.padding?.mobile ]) ?? stringToBox( '20px' )
+											responsiveGetAttributes([ attributes?.padding?.desktop, attributes.padding?.tablet, attributes?.padding?.mobile ]) ?? ( isNumber( attributes.padding ) ? stringToBox( _px( attributes.padding ) ) : stringToBox( '20px' ) )
 										}
 										onChange={ value => {
+
+											let result = {};
 											if ( 'object' === typeof value ) {
-												value = Object.fromEntries( Object.entries( value ).filter( ([ _, v ]) => null !== v ) );
+												result = Object.fromEntries( Object.entries( pick( value, [ 'top', 'bottom', 'left', 'right' ]) ).filter( ([ _, v ]) => null !== v && undefined !== v ) );
 											}
 
-											if ( isEmpty( value ) ) {
-												value = undefined;
+											if ( isEmpty( result ) ) {
+												result = undefined;
 											}
 
-											responsiveSetAttributes( value, [ 'padding.desktop', 'padding.tablet', 'padding.mobile' ], attributes.padding );
+											responsiveSetAttributes( result, [ 'padding.desktop', 'padding.tablet', 'padding.mobile' ], attributes.padding );
 										} }
 									/>
 								</ResponsiveControl>
