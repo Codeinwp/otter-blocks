@@ -81,11 +81,12 @@ const defaultFontSizes = [
  */
 const Inspector = ({
 	attributes,
-	setAttributes
+	setAttributes,
+	currentSide,
+	setSide
 }) => {
 
 	const [ tab, setTab ] = useState( 'settings' );
-	const [ side, setSide ] = useState( 'front' );
 
 	const {
 		responsiveSetAttributes,
@@ -259,12 +260,12 @@ const Inspector = ({
 											value: 'back'
 										}
 									]}
-									value={ side }
+									value={ currentSide }
 									onChange={ setSide }
 								/>
 
 								{
-									'front' === side ? (
+									( 'front' === currentSide && ! Boolean( attributes.isInverted ) ) || ( 'back' === currentSide && Boolean( attributes.isInverted ) ) ? (
 										<Fragment>
 											<BaseControl
 												label={ __( 'Vertical Alignment', 'otter-blocks' ) }
@@ -314,25 +315,30 @@ const Inspector = ({
 											</BaseControl>
 										</Fragment>
 									) : (
-										<ToogleGroupControl
+										<BaseControl
+											label={ __( 'Vertical Alignment', 'otter-blocks' ) }
+										>
+											<ToogleGroupControl
 
-											options={[
-												{
-													icon: alignTop,
-													value: 'flex-start'
-												},
-												{
-													icon: oAlignCenter,
-													value: 'center'
-												},
-												{
-													icon: alignBottom,
-													value: 'flex-end'
-												}
-											]}
-											value={ attributes.backVerticalAlign }
-											onChange={ backVerticalAlign => setAttributes({ backVerticalAlign }) }
-										/>
+												options={[
+													{
+														icon: alignTop,
+														value: 'flex-start'
+													},
+													{
+														icon: oAlignCenter,
+														value: 'center'
+													},
+													{
+														icon: alignBottom,
+														value: 'flex-end'
+													}
+												]}
+												value={ attributes.backVerticalAlign }
+												onChange={ backVerticalAlign => setAttributes({ backVerticalAlign }) }
+											/>
+										</BaseControl>
+
 									)
 								}
 							</PanelBody>

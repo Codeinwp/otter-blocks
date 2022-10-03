@@ -41,13 +41,13 @@ const align = ( vertical, horizontal ) => {
 const Controls = ({
 	attributes,
 	setAttributes,
-	isFliped
+	currentSide
 }) => {
 	const BlockAlignmentMatrixControl = __experimentalBlockAlignmentMatrixControl || __experimentalBlockAlignmentMatrixToolbar;
 
 	return (
 		<BlockControls>
-			{ ( ( ! attributes.isInverted && false === isFliped ) || ( attributes.isInverted && isFliped ) ) && (
+			{ ( ( 'front' === currentSide && ! Boolean( attributes.isInverted ) ) || ( 'back' === currentSide && Boolean( attributes.isInverted ) ) ) && (
 				<Toolbar>
 					<BlockAlignmentMatrixControl
 						label={ __( 'Change front side content position', 'otter-blocks' ) }

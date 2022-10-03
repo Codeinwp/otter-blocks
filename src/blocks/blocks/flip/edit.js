@@ -54,7 +54,7 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
-	const [ isFliped, setFliped ] = useState( false );
+	const [ currentSide, setSide ] = useState( 'front' );
 
 	const getShadowColor = () => {
 		if ( attributes.boxShadowColor ) {
@@ -109,7 +109,7 @@ const Edit = ({
 	useEffect( () => {
 		setNodeCSS([
 			`.o-flip-inner {
-				transform: ${ isFliped ? 'var( --flip-anim )' : 'unset' };
+				transform: ${ 'back' === currentSide ? 'var( --flip-anim )' : 'unset' };
 			}`,
 			`.o-flip-front .o-flip-content h3 {
 				color: ${ attributes.titleColor };
@@ -120,7 +120,7 @@ const Edit = ({
 				${ attributes.descriptionFontSize && `font-size: ${ _px( attributes.descriptionFontSize ) }` }
 			}`
 		]);
-	}, [ isFliped, attributes.titleFontSize, attributes.descriptionFontSize, attributes.titleColor, attributes.descriptionColor ]);
+	}, [ currentSide, attributes.titleFontSize, attributes.descriptionFontSize, attributes.titleColor, attributes.descriptionColor ]);
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
@@ -139,12 +139,14 @@ const Edit = ({
 			<Controls
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				isFliped={ isFliped }
+				currentSide={ currentSide }
 			/>
 
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
+				currentSide={ currentSide }
+				setSide={ setSide }
 			/>
 
 			<div { ...blockProps }>
@@ -222,9 +224,9 @@ const Edit = ({
 					<div className="o-switcher">
 						<Button
 							isPrimary
-							onClick={ () => setFliped( ! isFliped ) }
+							onClick={ () => setSide( 'back' === currentSide ? 'front' : 'back' ) }
 						>
-							{ isFliped  ? __( 'Flip to front', 'otter-blocks' ) : __( 'Flip to back', 'otter-blocks' ) }
+							{ 'back' === currentSide  ? __( 'Flip to front', 'otter-blocks' ) : __( 'Flip to back', 'otter-blocks' ) }
 						</Button>
 					</div>
 				) }
