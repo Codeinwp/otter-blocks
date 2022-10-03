@@ -7,6 +7,8 @@
 	--description-text-size: initial;
 	--meta-text-size: initial;
 	--border-width: 0;
+	--text-color: inherit;
+	--background-color: inherit;
 	--border-color: inherit;
 
 	&.is-style-boxed {
@@ -114,6 +116,7 @@
 			border-width: var( --border-width );
 			border-style: solid;
 			border-color: var( --border-color );
+			background: var( --background-color );
 		}
 	}
 
@@ -143,6 +146,7 @@
 
 		.o-posts-grid-post-category {
 			font-size: var( --meta-text-size );
+			color: var( --text-color );
 			text-transform: capitalize;
 			margin: 5px 0;
 		}
@@ -154,7 +158,8 @@
 			a {
 				text-decoration: none;
 				transition: all .15s ease 0s;
-				font-size: var(--title-text-size);
+				font-size: var( --title-text-size );
+				color: var( --text-color );
 
 				&:hover {
 					text-decoration: underline;
@@ -164,6 +169,7 @@
 
 		.o-posts-grid-post-meta {
 			font-size: var( --meta-text-size );
+			color: var( --text-color );
 			margin: 10px 0;
 		}
 
@@ -172,11 +178,13 @@
 
 			p {
 				margin-bottom: 0px;
-				font-size: var(--description-text-size);
+				font-size: var( --description-text-size );
+				color: var( --text-color );
 			}
 
 			.read-more {
 				font-size: var(--description-text-size);
+				color: var( --text-color );
 				display: block;
 				margin-bottom: 5px;
 			}
@@ -193,6 +201,7 @@
 			border-width: var( --border-width );
 			border-style: solid;
 			border-color: var( --border-color );
+			background-color: var( --background-color );
 	
 			.o-posts-grid-post-image a {
 				width: 100%;

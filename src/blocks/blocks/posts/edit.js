@@ -106,14 +106,17 @@ const Edit = ({
 		dispatch( 'otter-store' ).setPostsSlugs( slugs );
 	}, [ slugs ]);
 
+	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
+
 	const inlineStyles = {
 		'--img-width': `${ attributes.imageWidth }px`,
 		'--img-border-radius': attributes.borderRadius && `${ attributes.borderRadius }px;`,
 		'--vert-align': _align( attributes.verticalAlign ),
-		'--text-align': attributes.textAlign
+		'--text-align': attributes.textAlign,
+		'--text-color': getValue( 'textColor' ),
+		'--background-color': getValue( 'backgroundColor' ),
+		'--border-color': getValue( 'borderColor' )
 	};
-
-	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();
 	useEffect( () => {

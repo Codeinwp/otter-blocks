@@ -55,6 +55,18 @@ class Posts_CSS extends Base_CSS {
 						},
 					),
 					array(
+						'property' => '--text-color',
+						'value'    => 'textColor',
+					),
+					array(
+						'property' => '--background-color',
+						'value'    => 'backgroundColor',
+					),
+					array(
+						'property' => '--border-color',
+						'value'    => 'borderColor',
+					),
+					array(
 						'property' => '--img-width',
 						'value'    => 'imageWidth',
 						'unit'     => 'px',

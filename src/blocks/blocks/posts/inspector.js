@@ -14,7 +14,10 @@ import {
 	ToggleControl
 } from '@wordpress/components';
 
-import { InspectorControls } from '@wordpress/block-editor';
+import {
+	InspectorControls,
+	PanelColorSettings
+} from '@wordpress/block-editor';
 
 import { useSelect } from '@wordpress/data';
 
@@ -368,6 +371,28 @@ const Inspector = ({
 							/>
 						</ResponsiveControl>
 					</PanelBody>
+
+					<PanelColorSettings
+						title={ __( 'Color', 'otter-blocks' ) }
+						initialOpen={ false }
+						colorSettings={ [
+							{
+								value: attributes.textColor,
+								onChange: textColor => setAttributes({ textColor }),
+								label: __( 'Text', 'otter-blocks' )
+							},
+							{
+								value: attributes.backgroundColor,
+								onChange: backgroundColor => setAttributes({ backgroundColor }),
+								label: __( 'Background', 'otter-blocks' )
+							},
+							{
+								value: attributes.borderColor,
+								onChange: borderColor => setAttributes({ borderColor }),
+								label: __( 'Border', 'otter-blocks' )
+							}
+						] }
+					/>
 				</Fragment>
 			) }
 

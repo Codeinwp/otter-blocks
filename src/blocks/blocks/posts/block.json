@@ -141,6 +141,15 @@
 		"customMetaFontSizeMobile": {
 			"type": "string"
 		},
+		"textColor": {
+			"type": "string"
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"borderColor": {
+			"type": "string"
+		},
 		"borderRadius": {
 			"type": "number"
 		},
