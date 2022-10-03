@@ -49,8 +49,8 @@ import ToogleGroupControl from '../../components/toogle-group-control/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import { alignBottom, alignTop, alignCenter as oAlignCenter } from '../../helpers/icons.js';
 
-const wrapNumberInString = _px;
-const wrapNumberInBox = ( x ) => isNumber( x ) ? ({ top: wrapNumberInString( x ), bottom: wrapNumberInString( x ), left: wrapNumberInString( x ), right: wrapNumberInString( x ) }) : x;
+const wrapNumberInBox = ( x ) => isNumber( x ) ? stringToBox( _px( x ) ) : x;
+
 const defaultFontSizes = [
 	{
 		name: '14',
@@ -172,7 +172,16 @@ const Inspector = ({
 										}
 									]}
 									value={ attributes?.frontContentType }
-									onChange={ v => setAttributes({ frontContentType: v ? v : undefined }) }
+									onChange={ v => {
+
+										const attrs = { frontContentType: ! isEmpty( v ) ? v : undefined };
+
+										if ( isEmpty( v ) ) {
+											attrs.frontMedia = undefined;
+										}
+
+										setAttributes( attrs );
+									} }
 								/>
 
 								{
@@ -219,15 +228,17 @@ const Inspector = ({
 												label={ __( 'Media Width', 'otter-blocks' ) }
 												isUnitSelectTabbable
 												isResetValueOnUnitChange
-												value={ wrapNumberInString( attributes.frontMediaWidth ) }
+												value={ _px( attributes.frontMediaWidth ) }
 											/>
+
+											<br />
 
 											<UnitControl
 												onChange={ frontMediaHeight => setAttributes({ frontMediaHeight }) }
 												label={ __( 'Media Height', 'otter-blocks' ) }
 												isUnitSelectTabbable
 												isResetValueOnUnitChange
-												value={ wrapNumberInString( attributes.frontMediaHeight ) }
+												value={ _px( attributes.frontMediaHeight ) }
 											/>
 										</Fragment>
 									)
@@ -274,7 +285,7 @@ const Inspector = ({
 															value: 'flex-end'
 														}
 													]}
-													value={ attributes.frontVerticalAlign }
+													value={ attributes.frontVerticalAlign ?? 'center' }
 													onChange={ frontVerticalAlign => setAttributes({ frontVerticalAlign }) }
 												/>
 											</BaseControl>
@@ -296,7 +307,7 @@ const Inspector = ({
 															value: 'flex-end'
 														}
 													]}
-													value={ attributes.frontHorizontalAlign }
+													value={ attributes.frontHorizontalAlign ?? 'center' }
 													onChange={ frontHorizontalAlign => setAttributes({ frontHorizontalAlign }) }
 												/>
 
@@ -338,7 +349,7 @@ const Inspector = ({
 									label={ __( 'Width', 'otter-blocks' ) }
 								>
 									<UnitControl
-										value={ responsiveGetAttributes([ isNumber( attributes.width ) ? wrapNumberInString( attributes.width ) : attributes?.width?.desktop, attributes.width?.tablet, attributes?.width?.mobile ]) ?? '100%' }
+										value={ responsiveGetAttributes([ isNumber( attributes.width ) ? _px( attributes.width ) : attributes?.width?.desktop, attributes.width?.tablet, attributes?.width?.mobile ]) ?? '100%' }
 										onChange={ width => responsiveSetAttributes( width, [ 'width.desktop', 'width.tablet', 'width.mobile' ], attributes.width ) }
 
 										isUnitSelectTabbable
@@ -351,7 +362,7 @@ const Inspector = ({
 									label={ __( 'Height', 'otter-blocks' ) }
 								>
 									<UnitControl
-										value={ responsiveGetAttributes([ isNumber( attributes.height ) ? wrapNumberInString( attributes.height ) : attributes?.height?.desktop, attributes.height?.tablet, attributes?.height?.mobile ]) ?? '300px' }
+										value={ responsiveGetAttributes([ isNumber( attributes.height ) ? _px( attributes.height ) : attributes?.height?.desktop, attributes.height?.tablet, attributes?.height?.mobile ]) ?? '300px' }
 										onChange={ height => responsiveSetAttributes( height, [ 'height.desktop', 'height.tablet', 'height.mobile' ], attributes.height ) }
 										isUnitSelectTabbable
 										isResetValueOnUnitChange
@@ -364,7 +375,7 @@ const Inspector = ({
 								>
 									<BoxControl
 										values={
-											responsiveGetAttributes([ attributes?.padding?.desktop ?? wrapNumberInString( attributes.padding ), attributes.padding?.tablet, attributes?.padding?.mobile ]) ?? stringToBox( '20px' )
+											responsiveGetAttributes([ attributes?.padding?.desktop ?? _px( attributes.padding ), attributes.padding?.tablet, attributes?.padding?.mobile ]) ?? stringToBox( '20px' )
 										}
 										onChange={ value => {
 											if ( 'object' === typeof value ) {
@@ -386,7 +397,7 @@ const Inspector = ({
 							>
 								<FontSizePicker
 									label={ __( 'Title', 'otter-blocks' ) }
-									value={ wrapNumberInString( attributes.titleFontSize ) }
+									value={ _px( attributes.titleFontSize ) }
 									onChange={ titleFontSize => setAttributes({ titleFontSize }) }
 									fontSizes={[ ...defaultFontSizes, { name: '32', size: '32px', slug: '32' }]}
 									allowReset
@@ -485,7 +496,7 @@ const Inspector = ({
 									values={
 										mergeBoxDefaultValues(
 											wrapNumberInBox( attributes.borderWidth ),
-											{ left: '3px', right: '3px', bottom: '3px', top: '3px' }
+											stringToBox( '3px' )
 										)
 									}
 									onChange={ value => {
@@ -500,7 +511,7 @@ const Inspector = ({
 									values={
 										mergeBoxDefaultValues(
 											wrapNumberInBox( attributes.borderRadius ),
-											{ left: '10px', right: '10px', bottom: '10px', top: '10px' }
+											stringToBox( '10px' )
 										)
 									}
 									onChange={ value => {

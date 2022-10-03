@@ -58,10 +58,10 @@
 			"type": "object"
 		},
 		"frontMediaWidth": {
-			"type": ["number", "object"]
+			"type": ["number", "string"]
 		},
 		"frontMediaHeight": {
-			"type": ["number", "object"]
+			"type": ["number", "string"]
 		},
 		"frontBackgroundImage": {
 			"type": "object"
@@ -147,6 +147,9 @@
 			"type": "string"
 		},
 		"descriptionColor": {
+			"type": "string"
+		},
+		"frontContentType": {
 			"type": "string"
 		}
 	},

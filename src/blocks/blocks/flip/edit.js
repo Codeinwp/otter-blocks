@@ -96,8 +96,8 @@ const Edit = ({
 		'--front-vertical-align': attributes.frontVerticalAlign,
 		'--front-horizontal-align': attributes.frontHorizontalAlign,
 		'--back-vertical-align': attributes.backVerticalAlign,
-		'--front-media-width': attributes.frontMediaWidth !== undefined && `${ attributes.frontMediaWidth }px`,
-		'--front-media-height': attributes.frontMediaHeight !== undefined && `${ attributes.frontMediaHeight }px`,
+		'--front-media-width': _px( attributes.frontMediaWidth ),
+		'--front-media-height': _px( attributes.frontMediaHeight ),
 		'--padding': attributes.padding !== undefined && isNumber( attributes.padding ) && _px( attributes.padding ) || boxToCSS( attributes?.padding?.desktop ),
 		'--padding-tablet': boxToCSS( attributes?.padding?.tablet ),
 		'--padding-mobile': boxToCSS( attributes?.padding?.mobile )
