@@ -14,7 +14,8 @@ domReady( () => {
 		const items = accordion.querySelectorAll( '.wp-block-themeisle-blocks-accordion-item' );
 
 		items.forEach( item => {
-			item.addEventListener( 'click', () => {
+			item.addEventListener( 'click', event => {
+				event.stopPropagation();
 				const isOpened = ! item.open;
 
 				if ( ! isOpened ) {

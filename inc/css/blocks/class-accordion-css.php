@@ -90,11 +90,9 @@ class Accordion_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property'  => '--border-color',
-						'value'     => 'borderColor',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['borderColor'] );
-						},
+						'property' => '--border-color',
+						'value'    => 'borderColor',
+						'hasSync'  => 'accordion-border-color',
 					),
 					array(
 						'property'  => '--border-width',
@@ -219,10 +217,12 @@ class Accordion_CSS extends Base_CSS {
 					array(
 						'property' => '--title-color',
 						'value'    => 'activeTitleColor',
+						'hasSync'  => 'accordion-title-color',
 					),
 					array(
 						'property' => '--title-background',
 						'value'    => 'activeTitleBackground',
+						'hasSync'  => 'accordion-title-background',
 					),
 				),
 			)
@@ -261,7 +261,7 @@ class Accordion_CSS extends Base_CSS {
 						'property'  => 'content',
 						'value'     => 'icon',
 						'format'    => function( $value ) use ( $fa_icons ) {
-							return '"' . str_replace( 'f', '\\\f', $fa_icons[ $value['name'] ]['unicode'] ) . '"';
+							return '"' . str_replace( 'f', '\\f', $fa_icons[ $value['name'] ]['unicode'] ) . '"';
 						},
 						'condition' => function( $attrs ) {
 							return isset( $attrs['icon'] );
@@ -299,7 +299,7 @@ class Accordion_CSS extends Base_CSS {
 						'property'  => 'content',
 						'value'     => 'openItemIcon',
 						'format'    => function( $value ) use ( $fa_icons ) {
-							return '"' . str_replace( 'f', '\\\f', $fa_icons[ $value['name'] ]['unicode'] ) . '"';
+							return '"' . str_replace( 'f', '\\f', $fa_icons[ $value['name'] ]['unicode'] ) . '"';
 						},
 						'condition' => function( $attrs ) {
 							return isset( $attrs['openItemIcon'] );
@@ -344,13 +344,13 @@ class Accordion_CSS extends Base_CSS {
 		$block    = $this->library_prefix . '/' . $this->block_prefix;
 
 		if ( empty( $defaults ) ) {
-			return;
+			return '';
 		}
 
 		$defaults = json_decode( $defaults, true );
 
 		if ( ! isset( $defaults[ $block ] ) ) {
-			return;
+			return '';
 		}
 
 		$block = array(
@@ -361,7 +361,7 @@ class Accordion_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => '.wp-block-themeisle-blocks-accordion',
+				'selector'   => ' .wp-block-themeisle-blocks-accordion',
 				'properties' => array(
 					array(
 						'property' => '--accordion-title-color',

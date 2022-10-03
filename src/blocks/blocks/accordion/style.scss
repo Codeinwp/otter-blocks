@@ -15,7 +15,7 @@
 			background: var(--title-background);
 
 			border: 0;
-			border-top: var(--border-width, 1px) var(--border-style, solid) var(--border-color, #ccc);
+			border-top: var(--border-width, 1px) var(--border-style, solid) var(--border-color);
 
 			padding: 18px 24px 18px 24px;
 
@@ -61,12 +61,12 @@
 	&:not( .is-style-boxed ) {
 		#{$block}-item:last-child {
 			&:not([open]):not( .is-open ) #{$block}-item__title {
-				border-bottom: var(--border-width, 1px) var(--border-style, solid) var(--border-color, #ccc);
+				border-bottom: var(--border-width, 1px) var(--border-style, solid) var(--border-color);
 			}
 
 			#{$block}-item__content {
 				border: 0;
-				border-bottom: var(--border-width, 1px) var(--border-style, solid) var(--border-color, #ccc);
+				border-bottom: var(--border-width, 1px) var(--border-style, solid) var(--border-color);
 			}
 		}
 	}

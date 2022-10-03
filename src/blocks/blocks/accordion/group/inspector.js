@@ -4,10 +4,8 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	__experimentalColorGradientControl as ColorGradientControl,
 	ContrastChecker,
-	InspectorControls,
-	PanelColorSettings
+	InspectorControls
 } from '@wordpress/block-editor';
 
 import {
@@ -16,7 +14,7 @@ import {
 	RangeControl,
 	FontSizePicker,
 	ToggleControl,
-	__experimentalBoxControl as BoxControl, Disabled
+	__experimentalBoxControl as BoxControl
 } from '@wordpress/components';
 
 import { select, dispatch } from '@wordpress/data';
