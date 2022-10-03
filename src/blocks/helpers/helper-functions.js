@@ -389,7 +389,7 @@ export const getActiveStyle = ( styles, className ) => {
 
 		const potentialStyleName = style.substring( 9 );
 
-		if ( styleValues.indexOf( potentialStyleName )  ) {
+		if ( -1 < styleValues.indexOf( potentialStyleName ) ) {
 			return potentialStyleName;
 		}
 	}
@@ -411,7 +411,7 @@ export const changeActiveStyle = ( className, styles, newStyle ) =>{
 	const activeStyle = getActiveStyle( styles, className );
 	const defaultValue = styles.find( i => i.isDefault )?.value || '';
 
-	if ( activeStyle ) {
+	if ( activeStyle && -1 < classes.indexOf( `is-style-${ activeStyle }` ) ) {
 		classes.splice( classes.indexOf( `is-style-${ activeStyle }` ), 1 );
 	}
 
