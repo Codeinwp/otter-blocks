@@ -184,6 +184,36 @@ const Edit = ({
 					<div className="o-flip-back">
 						<InnerBlocks
 							renderAppender={ isSelected ? InnerBlocks.ButtonBlockAppender : '' }
+							template={[
+								[
+									'core/heading',
+									{
+										content: 'Lorem ipsum',
+										fontSize: 'x-large'
+									}
+								],
+								[
+									'core/paragraph',
+									{
+										content: 'Tellus posuere sem fermentum facilisis platea.'
+									}
+								],
+								[
+									'core/buttons',
+									{
+										layout: { type: 'flex', justifyContent: 'center' },
+										innerBlocks: [
+											{
+												name: 'core/button',
+												attributes: {
+													className: 'is-style-outline',
+													text: 'Learn more'
+												}
+											}
+										]
+									}
+								]
+							]}
 						/>
 					</div>
 				</div>
