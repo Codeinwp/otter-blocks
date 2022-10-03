@@ -35,6 +35,7 @@ import LayoutBuilder from './components/design-layout-builder.js';
 import ToogleGroupControl from '../../components/toogle-group-control/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
+import BoxShadowControl from '../../components/box-shadow-control/index.js';
 import {
 	buildResponsiveGetAttributes,
 	buildResponsiveSetAttributes,
@@ -175,6 +176,14 @@ const Inspector = ({
 		setAttributes({ className: classes });
 	};
 
+	const changeBoxShadow = ( type, data ) => {
+		const boxShadow = { ...attributes[ type ] };
+		Object.entries( data ).map( ([ key, val ] = data ) => {
+			boxShadow[key] = val;
+		});
+
+		setAttributes({ [type]: boxShadow });
+	};
 
 	return (
 		<InspectorControls>
@@ -415,6 +424,39 @@ const Inspector = ({
 							min={ 0 }
 							max={ 1000 }
 							allowReset
+						/>
+
+						<BoxShadowControl
+							boxShadow={ attributes.imageBoxShadow }
+							onChange={ data => changeBoxShadow( 'imageBoxShadow', data ) }
+						/>
+					</PanelBody>
+
+					<PanelBody
+						title={ __( 'Border', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						<RangeControl
+							label={ __( 'Width', 'otter-blocks' ) }
+							value={ attributes.borderWidth }
+							onChange={ borderWidth => setAttributes({ borderWidth }) }
+							min={ 0 }
+							max={ 50 }
+							allowReset
+						/>
+
+						<RangeControl
+							label={ __( 'Radius', 'otter-blocks' ) }
+							value={ attributes.cardBorderRadius }
+							onChange={ cardBorderRadius => setAttributes({ cardBorderRadius }) }
+							min={ 0 }
+							max={ 100 }
+							allowReset
+						/>
+
+						<BoxShadowControl
+							boxShadow={ attributes.boxShadow }
+							onChange={ data => changeBoxShadow( 'boxShadow', data ) }
 						/>
 					</PanelBody>
 				</Fragment>

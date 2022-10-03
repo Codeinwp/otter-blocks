@@ -1,4 +1,4 @@
-import { BlockProps, InspectorProps } from '../../helpers/blocks';
+import { BlockProps, InspectorProps, BoxShadow } from '../../helpers/blocks';
 
 type Attributes = {
 	id: string
@@ -32,6 +32,10 @@ type Attributes = {
 	customDescriptionFontSizeTablet: number
 	customDescriptionFontSizeMobile: number
 	borderRadius: number
+	borderWidth: number
+	cardBorderRadius: number
+	boxShadow: BoxShadow
+	imageBoxShadow: BoxShadow
 	textAlign: string
 	verticalAlign: string
 	enableFeaturedPost: boolean

@@ -1,4 +1,9 @@
 /**
+ * External dependencies.
+ */
+import hexToRgba from 'hex-rgba';
+
+/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -108,9 +113,18 @@ const Edit = ({
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
+	const imageBoxShadow = getValue( 'imageBoxShadow' );
+	const boxShadow = getValue( 'boxShadow' );
+
+	const px = value => value ? `${ value }px` : value;
+
 	const inlineStyles = {
-		'--img-width': `${ attributes.imageWidth }px`,
-		'--img-border-radius': attributes.borderRadius && `${ attributes.borderRadius }px;`,
+		'--img-width': px( attributes.imageWidth ),
+		'--img-border-radius': px( attributes.borderRadius ),
+		'--img-box-shadow': imageBoxShadow.active && `${ imageBoxShadow.horizontal }px ${ imageBoxShadow.vertical }px ${ imageBoxShadow.blur }px ${ imageBoxShadow.spread }px ${ hexToRgba( imageBoxShadow.color || '#FFFFFF', imageBoxShadow.colorOpacity ) }`,
+		'--border-width': px( attributes.borderWidth ),
+		'--border-radius': px( attributes.cardBorderRadius ),
+		'--box-shadow': boxShadow.active && `${ boxShadow.horizontal }px ${ boxShadow.vertical }px ${ boxShadow.blur }px ${ boxShadow.spread }px ${ hexToRgba( boxShadow.color || '#FFFFFF', boxShadow.colorOpacity ) }`,
 		'--vert-align': _align( attributes.verticalAlign ),
 		'--text-align': attributes.textAlign,
 		'--text-color': getValue( 'textColor' ),

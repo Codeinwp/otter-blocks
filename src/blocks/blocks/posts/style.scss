@@ -3,6 +3,7 @@
 	--vert-align: initial;
 	--img-border-radius: 0;
 	--img-width: initial;
+	--img-box-shadow: none;
 	--title-text-size: initial;
 	--description-text-size: initial;
 	--meta-text-size: initial;
@@ -10,18 +11,16 @@
 	--text-color: inherit;
 	--background-color: inherit;
 	--border-color: inherit;
+	--border-radius: 0;
+	--box-shadow: none;
+
+	border: none;
 
 	&.is-style-boxed {
 		--border-width: 3px;
 
 		.o-posts-grid-post-body {
 			padding: 20px;
-		}
-	}
-
-	.has-shadow {
-		img {
-			box-shadow: 0 10px 25px 0 rgba( 0, 0, 0, .2 );
 		}
 	}
 
@@ -116,7 +115,9 @@
 			border-width: var( --border-width );
 			border-style: solid;
 			border-color: var( --border-color );
+			border-radius: var( --border-radius );
 			background: var( --background-color );
+			box-shadow: var( --box-shadow );
 		}
 	}
 
@@ -127,9 +128,10 @@
 		align-items: center;
 
 		img {
-			width: var(--img-width);
+			width: var( --img-width );
 			border-radius: 5px;
-			border-radius: var(--img-border-radius);
+			border-radius: var( --img-border-radius );
+			box-shadow: var( --img-box-shadow );
 		}
 	}
 
@@ -201,7 +203,9 @@
 			border-width: var( --border-width );
 			border-style: solid;
 			border-color: var( --border-color );
+			border-radius: var( --border-radius );
 			background-color: var( --background-color );
+			box-shadow: var( --box-shadow );
 	
 			.o-posts-grid-post-image a {
 				width: 100%;
