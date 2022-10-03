@@ -26,8 +26,7 @@ import {
 	Button,
 	TextControl,
 	SelectControl,
-	ToggleControl,
-	RangeControl
+	ToggleControl
 } from '@wordpress/components';
 
 import {
@@ -173,32 +172,6 @@ export const SortableItem = ({
 								label={ __( 'Crop Image to Fit', 'otter-blocks' ) }
 								checked={ attributes.cropImage }
 								onChange={ cropImage => setAttributes({ cropImage }) }
-							/>
-
-							<ToggleControl
-								label={ __( 'Display Box Shadow', 'otter-blocks' ) }
-								checked={ attributes.imageBoxShadow }
-								onChange={ imageBoxShadow => setAttributes({ imageBoxShadow }) }
-							/>
-
-							<RangeControl
-								label={ __( 'Border Radius', 'otter-blocks' ) }
-								value={ attributes.borderRadius }
-								onChange={ borderRadius => setAttributes({ borderRadius }) }
-								step={ 0.1 }
-								min={ 0 }
-								max={ 50 }
-								allowReset
-							/>
-
-							<RangeControl
-								label={ __( 'Image Width', 'otter-blocks' ) }
-								value={ attributes.imageWidth }
-								onChange={ imageWidth => setAttributes({ imageWidth }) }
-								step={ 0.1 }
-								min={ 0 }
-								max={ 500 }
-								allowReset
 							/>
 						</Fragment>
 					) }

@@ -33,14 +33,12 @@ const Layout = ({
 						'is-grid',
 						`o-posts-grid-columns-${ attributes.columns }`,
 						{
-							'has-shadow': attributes.imageBoxShadow,
 							'o-crop-img': attributes.cropImage
 						}
 					) :
 					classnames(
 						'is-list',
 						{
-							'has-shadow': attributes.imageBoxShadow,
 							'o-crop-img': attributes.cropImage
 						}
 					)

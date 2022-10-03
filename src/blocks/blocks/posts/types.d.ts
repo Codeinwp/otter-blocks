@@ -12,7 +12,6 @@ type Attributes = {
 	orderBy: string
 	offset: number
 	imageSize: number
-	imageBoxShadow: boolean
 	displayFeaturedImage: boolean
 	displayCategory: boolean
 	displayTitle: boolean

@@ -393,6 +393,30 @@ const Inspector = ({
 							}
 						] }
 					/>
+
+					<PanelBody
+						title={ __( 'Image', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						<RangeControl
+							label={ __( 'Border Radius', 'otter-blocks' ) }
+							value={ attributes.borderRadius }
+							onChange={ borderRadius => setAttributes({ borderRadius }) }
+							step={ 0.1 }
+							min={ 0 }
+							max={ 50 }
+							allowReset
+						/>
+
+						<RangeControl
+							label={ __( 'Image Width', 'otter-blocks' ) }
+							value={ attributes.imageWidth }
+							onChange={ imageWidth => setAttributes({ imageWidth }) }
+							min={ 0 }
+							max={ 1000 }
+							allowReset
+						/>
+					</PanelBody>
 				</Fragment>
 			) }
 

@@ -119,10 +119,6 @@ class Posts_Grid_Block {
 			$class .= ' o-posts-grid-columns-' . $attributes['columns'];
 		}
 
-		if ( isset( $attributes['imageBoxShadow'] ) && true === $attributes['imageBoxShadow'] ) {
-			$class .= ' has-shadow';
-		}
-
 		if ( isset( $attributes['cropImage'] ) && true === $attributes['cropImage'] ) {
 			$class .= ' o-crop-img';
 		}
@@ -293,8 +289,7 @@ class Posts_Grid_Block {
 
 		if ( isset( $thumbnail ) ) {
 			$html .= sprintf(
-				'<div class="o-posts-grid-post-image %1$s"><a href="%2$s">%3$s</a></div>',
-				isset( $attributes['imageBoxShadow'] ) && true === $attributes['imageBoxShadow'] ? 'has-shadow' : '',
+				'<div class="o-posts-grid-post-image"><a href="%1$s">%2$s</a></div>',
 				esc_url( get_the_permalink( $id ) ),
 				$thumbnail
 			);

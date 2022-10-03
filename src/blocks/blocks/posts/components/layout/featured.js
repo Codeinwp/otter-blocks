@@ -36,7 +36,7 @@ const FeaturedPost = ({
 
 	return (
 		<div className="o-featured-container">
-			<div className={ classNames( 'o-featured-post', { 'has-shadow': attributes.imageBoxShadow }) }>
+			<div className="o-featured-post">
 				{ attributes.displayFeaturedImage && (
 					<Thumbnail
 						id={ post.featured_media }
