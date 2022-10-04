@@ -154,18 +154,10 @@ class Accordion_CSS extends Base_CSS {
 							return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow']['active'];
 						},
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-themeisle-blocks-accordion-item__title',
-				'properties' => array(
 					array(
-						'property'  => 'padding',
-						'value'     => 'headerPadding',
-						'format'    => function( $value ) {
+						'property' => '--header-padding',
+						'value'    => 'headerPadding',
+						'format'   => function( $value ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -175,23 +167,12 @@ class Accordion_CSS extends Base_CSS {
 									'left'   => '24px',
 								)
 							);
-						},
-						'condition' => function( $attrs ) {
-							return isset( $attrs['headerPadding'] );
 						},
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-themeisle-blocks-accordion-item__content',
-				'properties' => array(
 					array(
-						'property'  => 'padding',
-						'value'     => 'contentPadding',
-						'format'    => function( $value ) {
+						'property' => 'padding',
+						'value'    => '--content-padding',
+						'format'   => function( $value ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -201,9 +182,6 @@ class Accordion_CSS extends Base_CSS {
 									'left'   => '24px',
 								)
 							);
-						},
-						'condition' => function( $attrs ) {
-							return isset( $attrs['contentPadding'] );
 						},
 					),
 				),
@@ -261,7 +239,7 @@ class Accordion_CSS extends Base_CSS {
 						'property'  => 'content',
 						'value'     => 'icon',
 						'format'    => function( $value ) use ( $fa_icons ) {
-							return '"' . str_replace( 'f', '\\f', $fa_icons[ $value['name'] ]['unicode'] ) . '"';
+							return '"' . str_replace( 'f', '\\\f', $fa_icons[ $value['name'] ]['unicode'] ) . '"';
 						},
 						'condition' => function( $attrs ) {
 							return isset( $attrs['icon'] );
@@ -299,7 +277,7 @@ class Accordion_CSS extends Base_CSS {
 						'property'  => 'content',
 						'value'     => 'openItemIcon',
 						'format'    => function( $value ) use ( $fa_icons ) {
-							return '"' . str_replace( 'f', '\\f', $fa_icons[ $value['name'] ]['unicode'] ) . '"';
+							return '"' . str_replace( 'f', '\\\f', $fa_icons[ $value['name'] ]['unicode'] ) . '"';
 						},
 						'condition' => function( $attrs ) {
 							return isset( $attrs['openItemIcon'] );

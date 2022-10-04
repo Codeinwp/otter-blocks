@@ -2,10 +2,21 @@
 	$block: &;
 	margin: 20px auto;
 
-	--title-color: currentColor;
-	--title-background: unset;
-	--content-background: unset;
+	--title-color: initial;
+	--title-background: initial;
+	--content-background: initial;
+	--border-width: 1px;
+	--border-style: solid;
 	--border-color: #ccc;
+	--box-shadow: none;
+	--font-style: initial;
+	--font-variant: initial;
+	--font-family: initial;
+	--text-transform: initial;
+	--letter-spacing: initial;
+	--font-size: 22px;
+	--header-padding: 18px 24px 18px 24px;
+	--content-padding: 18px 24px 18px 24px;
 
 	&-item {
 		box-shadow: var(--box-shadow);
@@ -14,17 +25,14 @@
 			color: var(--title-color);
 			background: var(--title-background);
 
-			border: 0;
-			border-top: var(--border-width, 1px) var(--border-style, solid) var(--border-color);
-
-			padding: 18px 24px 18px 24px;
+			padding: var(--header-padding);
 
 			font-style: var(--font-style);
 			font-weight: var(--font-variant);
 			font-family: var(--font-family);
 			text-transform: var(--text-transform);
 			letter-spacing: var(--letter-spacing);
-			font-size: var(--font-size, 22px);
+			font-size: var(--font-size);
 
 			list-style: none;
 			cursor: pointer;
@@ -51,58 +59,61 @@
 
 		&__content {
 			background: var(--content-background);
-			padding: 18px 24px 18px 24px;
-
-			border: 0;
-		}
-	}
-
-	/* default style */
-	&:not( .is-style-boxed ) {
-		#{$block}-item:last-child {
-			&:not([open]):not( .is-open ) #{$block}-item__title {
-				border-bottom: var(--border-width, 1px) var(--border-style, solid) var(--border-color);
-			}
-
-			#{$block}-item__content {
-				border: 0;
-				border-bottom: var(--border-width, 1px) var(--border-style, solid) var(--border-color);
-			}
+			padding: var(--content-padding);
 		}
 	}
 
 	/* boxed style */
-	&.is-style-boxed {
-		#{$block}-item {
-			&__title {
-				border: var(--border-width, 1px) var(--border-style, solid) var(--border-color, currentColor);
-			}
-
-			&__content {
-				border: var(--border-width, 1px) var(--border-style, solid) var(--border-color, currentColor);
-				border-top: none;
-			}
+	&.is-style-boxed &-item {
+		&__title {
+			border: var(--border-width) var(--border-style) var(--border-color);
 		}
 
-		/* when no gap is set, we need to avoid the doubled border between items */
-		&:not( .is-narrow-gap ):not( .is-wide-gap ):not( .is-wider-gap ) {
-			#{$block}-item:not( :first-child ) {
-				#{$block}-item__title {
-					border-top: none;
-				}
-			}
+		&__content {
+			border: var(--border-width) var(--border-style) var(--border-color);
+			border-top: none;
 		}
 	}
 
-	&.is-narrow-gap &-item {
+	// when no gap is set, we need to avoid the doubled border between items
+	&.is-style-boxed:not( .is-narrow-gap ):not( .is-wide-gap ):not( .is-wider-gap ) > &-item:not( :first-child ) {
+		#{$block}-item__title {
+			border-top: none;
+		}
+	}
+
+	/* default style */
+	&:not( .is-style-boxed ) > &-item {
+		> #{$block}-item__title {
+			border: 0;
+			border-top: var(--border-width) var(--border-style) var(--border-color);
+		}
+
+		> #{$block}-item__content {
+			border: 0;
+		}
+	}
+
+	&:not( .is-style-boxed ) > &-item:last-child {
+		&:not([open]):not( .is-open ) > #{$block}-item__title {
+			border-bottom: var(--border-width) var(--border-style) var(--border-color);
+		}
+
+		> #{$block}-item__content {
+			border: 0;
+			border-bottom: var(--border-width) var(--border-style) var(--border-color);
+		}
+	}
+
+	&.is-narrow-gap > &-item {
 		margin: 5px 0;
 	}
 
-	&.is-wide-gap &-item {
+	&.is-wide-gap > &-item {
 		margin: 10px 0;
 	}
 
-	&.is-wider-gap &-item {
+	&.is-wider-gap > &-item {
 		margin: 20px 0;
 	}
 

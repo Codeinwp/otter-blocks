@@ -1,16 +1,17 @@
 @import './style.scss';
 
 .wp-block-themeisle-blocks-accordion {
+	$block: &;
 	border: none;
 
-	.wp-block-themeisle-blocks-accordion-item {
+	&-item {
 		border: none;
 
 		&:not([ data-align="full"] ) {
 			max-width: 100%;
 		}
 
-		.wp-block-themeisle-blocks-accordion-item__title {
+		&__title {
 			padding: var( --header-padding );
 			cursor: pointer;
 
@@ -33,12 +34,54 @@
 			}
 		}
 
-		.wp-block-themeisle-blocks-accordion-item__content {
+		&__content {
 			padding: var( --content-padding );
 		}
 
 		&:not([ data-align="full"] ) {
 			max-width: 100%;
+		}
+	}
+
+	/* boxed style */
+	&.is-style-boxed &-item {
+		&__title {
+			border: var(--border-width) var(--border-style) var(--border-color);
+		}
+
+		&__content {
+			border: var(--border-width) var(--border-style) var(--border-color);
+			border-top: none;
+		}
+	}
+
+	// when no gap is set, we need to avoid the doubled border between items
+	&.is-style-boxed:not( .is-narrow-gap ):not( .is-wide-gap ):not( .is-wider-gap ) > * > * > &-item:not( :first-child ) {
+		#{$block}-item__title {
+			border-top: none;
+		}
+	}
+
+	/* default style */
+	&:not( .is-style-boxed ) > * > * > &-item {
+		> #{$block}-item__title {
+			border: 0;
+			border-top: var(--border-width) var(--border-style) var(--border-color);
+		}
+
+		> #{$block}-item__content {
+			border: 0;
+		}
+	}
+
+	&:not( .is-style-boxed ) > * > * > &-item:last-child {
+		&:not([open]):not( .is-open ) > #{$block}-item__title {
+			border-bottom: var(--border-width) var(--border-style) var(--border-color);
+		}
+
+		> #{$block}-item__content {
+			border: 0;
+			border-bottom: var(--border-width) var(--border-style) var(--border-color);
 		}
 	}
 
@@ -52,10 +95,6 @@
 				position: relative;
 			}
 		}
-	}
-
-	&:not( .is-narrow-gap ):not( .is-wide-gap ):not( .is-wider-gap ) {
-
 	}
 
 	&.is-narrow-gap {
@@ -88,16 +127,12 @@
 		}
 	}
 
-	&:not( .has-icon ) {
-		.wp-block-themeisle-blocks-accordion-item:not( .is-open ) .wp-block-themeisle-blocks-accordion-item__title::after {
-			transform: rotate(45deg) translate(-25%, 0%);
-		}
+	&:not( .has-icon ) &-item:not( .is-open ) &-item__title::after {
+		transform: rotate(45deg) translate(-25%, 0%);
 	}
 
-	&:not( .has-open-icon ) {
-		.wp-block-themeisle-blocks-accordion-item.is-open .wp-block-themeisle-blocks-accordion-item__title::after {
-			transform: rotate(225deg) translate(0%, -45%);
-		}
+	&:not( .has-open-icon ) &-item.is-open &-item__title::after {
+		transform: rotate(225deg) translate(0%, -45%);
 	}
 }
 
