@@ -117,7 +117,7 @@
 		margin: 20px 0;
 	}
 
-	&.icon-first &-item__title {
+	&.icon-first > &-item > &-item__title {
 		display: flex;
 		flex-direction: row-reverse;
 		justify-content: flex-end;

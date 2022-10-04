@@ -43,6 +43,13 @@
 		}
 	}
 
+	&.icon-first > * > * > &-item > &-item__title {
+		display: flex;
+		flex-direction: row-reverse;
+		justify-content: flex-end;
+		gap: 24px;
+	}
+
 	/* boxed style */
 	&.is-style-boxed &-item {
 		&__title {

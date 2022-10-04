@@ -190,7 +190,7 @@ class Accordion_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-accordion-item[open]',
+				'selector'   => ' > .wp-block-themeisle-blocks-accordion-item[open]',
 				'properties' => array(
 					array(
 						'property' => '--title-color',
@@ -233,7 +233,7 @@ class Accordion_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-accordion-item:not([open]) .wp-block-themeisle-blocks-accordion-item__title::after',
+				'selector'   => ' > .wp-block-themeisle-blocks-accordion-item:not([open]) > .wp-block-themeisle-blocks-accordion-item__title::after',
 				'properties' => array(
 					array(
 						'property'  => 'content',
@@ -271,7 +271,7 @@ class Accordion_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-accordion-item[open] .wp-block-themeisle-blocks-accordion-item__title::after',
+				'selector'   => ' > .wp-block-themeisle-blocks-accordion-item[open] > .wp-block-themeisle-blocks-accordion-item__title::after',
 				'properties' => array(
 					array(
 						'property'  => 'content',
