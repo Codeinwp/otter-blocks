@@ -22,6 +22,7 @@ import { CountdownAttrs } from '../../blocks/countdown/types';
 import { WooComparisonAttrs } from '../../../pro/blocks/woo-comparison/types';
 import { BusinessHoursItemAttrs } from '../../../pro/blocks/business-hours/item/types';
 import { BusinessHoursAttrs } from '../../../pro/blocks/business-hours/types';
+import { SharingIconsAttrs } from '../../blocks/sharing-icons/types';
 
 export const adaptors = {
 	...coreAdaptors,
@@ -815,6 +816,34 @@ export const adaptors = {
 				borderColor: storage.shared?.colors?.border,
 				borderWidth: getInt( getSingleValueFromBox( storage.shared?.border?.width ) ),
 				borderRadius: getInt( getSingleValueFromBox( storage.shared?.border?.radius?.desktop ) )
+			};
+		}
+	},
+	'themeisle-blocks/sharing-icons': {
+		copy( attrs: SharingIconsAttrs ): Storage<SharingIconsAttrs> {
+			return {
+				shared: {
+					colors: {
+						text: attrs?.textColor,
+						background: attrs?.backgroundColor
+					},
+					border: {
+						radius: {
+							desktop: makeBox( addUnit( attrs?.borderRadius, 'px' ) )
+						}
+					}
+				},
+				private: {
+					...pick( attrs, [ 'gap', 'textDeco', 'facebook', 'twitter', 'linkedin', 'pinterest', 'tumblr', 'reddit' ] as ( keyof SharingIconsAttrs )[])
+				}
+			};
+		},
+		paste( storage: Storage<SharingIconsAttrs> ): SharingIconsAttrs {
+			return {
+				...storage.private,
+				backgroundColor: storage?.shared?.colors?.background,
+				textColor: storage.shared?.colors?.text,
+				borderRadius: getInt( getSingleValueFromBox( storage?.shared?.border?.radius?.desktop ) )
 			};
 		}
 	}
