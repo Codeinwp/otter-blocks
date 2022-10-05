@@ -67,6 +67,24 @@ class Posts_CSS extends Base_CSS {
 						'value'    => 'borderColor',
 					),
 					array(
+						'property' => '--title-text-size',
+						'value'    => 'customTitleFontSize',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
+					),
+					array(
+						'property' => '--description-text-size',
+						'value'    => 'customDescriptionFontSize',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
+					),
+					array(
+						'property' => '--meta-text-size',
+						'value'    => 'customMetaFontSize',
+					),
+					array(
 						'property' => '--img-width',
 						'value'    => 'imageWidth',
 						'unit'     => 'px',
@@ -186,31 +204,20 @@ class Posts_CSS extends Base_CSS {
 							return isset( $attrs['boxShadow'] ) && true === $attrs['boxShadow']['active'];
 						},
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( min-width: 960px )',
-				'properties' => array(
 					array(
-						'property' => '--title-text-size',
-						'value'    => 'customTitleFontSize',
-						'format'   => function( $value, $attrs ) {
-							return is_numeric( $value ) ? $value . 'px' : $value;
-						},
+						'property' => '--column-gap',
+						'value'    => 'columnGap',
+						'unit'     => 'px',
 					),
 					array(
-						'property' => '--description-text-size',
-						'value'    => 'customDescriptionFontSize',
-						'format'   => function( $value, $attrs ) {
-							return is_numeric( $value ) ? $value . 'px' : $value;
-						},
+						'property' => '--row-gap',
+						'value'    => 'rowGap',
+						'unit'     => 'px',
 					),
 					array(
-						'property' => '--meta-text-size',
-						'value'    => 'customMetaFontSize',
+						'property' => '--content-padding',
+						'value'    => 'padding',
+						'unit'     => 'px',
 					),
 				),
 			)
@@ -218,7 +225,7 @@ class Posts_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'query'      => '@media ( min-width: 600px ) and ( max-width: 960px )',
+				'query'      => '@media ( max-width: 960px )',
 				'properties' => array(
 					array(
 						'property' => '--title-text-size',
@@ -237,6 +244,21 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--meta-text-size',
 						'value'    => 'customMetaFontSizeTablet',
+					),
+					array(
+						'property' => '--column-gap',
+						'value'    => 'columnGapTablet',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--row-gap',
+						'value'    => 'rowGapTablet',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--content-padding',
+						'value'    => 'paddingTablet',
+						'unit'     => 'px',
 					),
 				),
 			)
@@ -263,6 +285,21 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--meta-text-size',
 						'value'    => 'customMetaFontSizeMobile',
+					),
+					array(
+						'property' => '--column-gap',
+						'value'    => 'columnGapMobile',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--row-gap',
+						'value'    => 'rowGapMobile',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => '--content-padding',
+						'value'    => 'paddingMobile',
+						'unit'     => 'px',
 					),
 				),
 			)

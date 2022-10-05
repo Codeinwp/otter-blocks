@@ -40,6 +40,16 @@ type Attributes = {
 	verticalAlign: string
 	enableFeaturedPost: boolean
 	imageWidth: number
+	columnGap: number
+	columnGapTablet: number
+	columnGapMobile: number
+	rowGap: number
+	rowGapTablet: number
+	rowGapMobile: number
+	padding: number
+	paddingTablet: number
+	paddingMobile: number
+	contentGap: string
 }
 
 export type PostProps = BlockProps<Attributes>

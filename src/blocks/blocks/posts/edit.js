@@ -127,9 +127,10 @@ const Edit = ({
 		'--box-shadow': boxShadow.active && `${ boxShadow.horizontal }px ${ boxShadow.vertical }px ${ boxShadow.blur }px ${ boxShadow.spread }px ${ hexToRgba( boxShadow.color || '#FFFFFF', boxShadow.colorOpacity ) }`,
 		'--vert-align': _align( attributes.verticalAlign ),
 		'--text-align': attributes.textAlign,
-		'--text-color': getValue( 'textColor' ),
-		'--background-color': getValue( 'backgroundColor' ),
-		'--border-color': getValue( 'borderColor' )
+		'--text-color': attributes.textColor,
+		'--background-color': attributes.backgroundColor,
+		'--border-color': attributes.borderColor,
+		'--content-gap': attributes.contentGap
 	};
 
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();
@@ -139,16 +140,25 @@ const Edit = ({
 				${ attributes.customTitleFontSize ? `--title-text-size: ${ isNumber( getValue( 'customTitleFontSize' ) ) ? `${ getValue( 'customTitleFontSize' ) }px` : getValue( 'customTitleFontSize' ) };` : '' }
 				${ attributes.customDescriptionFontSize ? `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSize' ) ) ? `${ getValue( 'customDescriptionFontSize' ) }px` : getValue( 'customDescriptionFontSize' ) };` : '' }
 				${ attributes.customMetaFontSize ? `--meta-text-size: ${ getValue( 'customMetaFontSize' ) };` : '' }
+				${ attributes.columnGap ? `--column-gap: ${ px( getValue( 'columnGap' ) ) };` : '' }
+				${ attributes.rowGap ? `--row-gap: ${ px( getValue( 'rowGap' ) ) };` : '' }
+				${ attributes.padding ? `--content-padding: ${ px( getValue( 'padding' ) ) };` : '' }
 			}`,
 			`{
 				${ attributes.customTitleFontSizeTablet && `--title-text-size: ${ isNumber( getValue( 'customTitleFontSizeTablet' ) ) ? `${ getValue( 'customTitleFontSizeTablet' ) }px` : getValue( 'customTitleFontSizeTablet' ) };` }
 				${ attributes.customDescriptionFontSizeTablet && `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSizeTablet' ) ) ? `${ getValue( 'customDescriptionFontSizeTablet' ) }px` : getValue( 'customDescriptionFontSizeTablet' ) };` }
 				${ attributes.customMetaFontSizeTablet && `--meta-text-size: ${ getValue( 'customMetaFontSizeTablet' ) };` }
+				${ attributes.columnGapTablet ? `--column-gap: ${ px( getValue( 'columnGapTablet' ) ) };` : '' }
+				${ attributes.rowGapTablet ? `--row-gap: ${ px( getValue( 'rowGapTablet' ) ) };` : '' }
+				${ attributes.paddingTablet ? `--content-padding: ${ px( getValue( 'paddingTablet' ) ) };` : '' }
 			}`,
 			`{
 				${ attributes.customTitleFontSizeMobile && `--title-text-size: ${ isNumber( getValue( 'customTitleFontSizeMobile' ) ) ? `${ getValue( 'customTitleFontSizeMobile' ) }px` : getValue( 'customTitleFontSizeMobile' ) };` }
 				${ attributes.customDescriptionFontSizeMobile && `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSizeMobile' ) ) ? `${ getValue( 'customDescriptionFontSizeMobile' ) }px` : getValue( 'customDescriptionFontSizeMobile' ) };` }
 				${ attributes.customMetaFontSizeMobile && `--meta-text-size: ${ getValue( 'customMetaFontSizeMobile' ) };` }
+				${ attributes.columnGapMobile ? `--column-gap: ${ px( getValue( 'columnGapMobile' ) ) };` : '' }
+				${ attributes.rowGapMobile ? `--row-gap: ${ px( getValue( 'rowGapMobile' ) ) };` : '' }
+				${ attributes.paddingMobile ? `--content-padding: ${ px( getValue( 'paddingMobile' ) ) };` : '' }
 			}`
 		], [
 			'@media ( min-width: 960px )',
@@ -156,9 +166,9 @@ const Edit = ({
 			'@media ( max-width: 600px )'
 		]);
 	}, [
-		attributes.customTitleFontSize, attributes.customDescriptionFontSize, attributes.customMetaFontSize,
-		attributes.customTitleFontSizeTablet, attributes.customDescriptionFontSizeTablet, attributes.customMetaFontSizeTablet,
-		attributes.customTitleFontSizeMobile, attributes.customDescriptionFontSizeMobile, attributes.customMetaFontSizeMobile
+		attributes.customTitleFontSize, attributes.customDescriptionFontSize, attributes.customMetaFontSize, attributes.columnGap, attributes.rowGap, attributes.padding,
+		attributes.customTitleFontSizeTablet, attributes.customDescriptionFontSizeTablet, attributes.customMetaFontSizeTablet, attributes.columnGapTablet, attributes.rowGapTablet, attributes.paddingTablet,
+		attributes.customTitleFontSizeMobile, attributes.customDescriptionFontSizeMobile, attributes.customMetaFontSizeMobile, attributes.columnGapMobile, attributes.rowGapMobile, attributes.paddingMobile
 	]);
 
 	const blockProps = useBlockProps({

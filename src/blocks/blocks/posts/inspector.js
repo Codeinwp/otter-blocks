@@ -231,14 +231,14 @@ const Inspector = ({
 						/>
 
 						<ButtonToggle
-							label={ __( 'Orientation', 'otter-blocks' ) }
+							label={ __( 'Layout', 'otter-blocks' ) }
 							options={[
 								{
-									label: __( 'Row', 'otter-blocks' ),
+									label: __( 'Grid', 'otter-blocks' ),
 									value: 'grid'
 								},
 								{
-									label: __( 'Columns', 'otter-blocks' ),
+									label: __( 'List', 'otter-blocks' ),
 									value: 'list'
 								}
 							]}
@@ -417,19 +417,75 @@ const Inspector = ({
 							allowReset
 						/>
 
-						<RangeControl
-							label={ __( 'Image Width', 'otter-blocks' ) }
-							value={ attributes.imageWidth }
-							onChange={ imageWidth => setAttributes({ imageWidth }) }
-							min={ 0 }
-							max={ 1000 }
-							allowReset
-						/>
+						{ 'list' === attributes.style && (
+							<RangeControl
+								label={ __( 'Image Width', 'otter-blocks' ) }
+								value={ attributes.imageWidth }
+								onChange={ imageWidth => setAttributes({ imageWidth }) }
+								min={ 0 }
+								max={ 1000 }
+								allowReset
+							/>
+						) }
 
 						<BoxShadowControl
 							boxShadow={ attributes.imageBoxShadow }
 							onChange={ data => changeBoxShadow( 'imageBoxShadow', data ) }
 						/>
+					</PanelBody>
+
+					<PanelBody
+						title={ __( 'Spacing', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						{ 'list' !== attributes.style && (
+							<ResponsiveControl
+								label={ __( 'Column Gap', 'otter-blocks' ) }
+							>
+								<RangeControl
+									value={ responsiveGetAttributes([ attributes.columnGap, attributes.columnGapTablet, attributes.columnGapMobile ]) }
+									onChange={ value => responsiveSetAttributes( value, [ 'columnGap', 'columnGapTablet', 'columnGapMobile' ]) }
+									min={ 0 }
+									max={ 500 }
+									allowReset
+								/>
+							</ResponsiveControl>
+						) }
+
+						<ResponsiveControl
+							label={ __( 'Row Gap', 'otter-blocks' ) }
+						>
+							<RangeControl
+								value={ responsiveGetAttributes([ attributes.rowGap, attributes.rowGapTablet, attributes.rowGapMobile ]) }
+								onChange={ value => responsiveSetAttributes( value, [ 'rowGap', 'rowGapTablet', 'rowGapMobile' ]) }
+								min={ 0 }
+								max={ 500 }
+								allowReset
+							/>
+						</ResponsiveControl>
+
+						<ResponsiveControl
+							label={ __( 'Content Padding', 'otter-blocks' ) }
+						>
+							<RangeControl
+								value={ responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile ]) }
+								onChange={ value => responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]) }
+								min={ 0 }
+								max={ 500 }
+								allowReset
+							/>
+						</ResponsiveControl>
+
+						<BaseControl
+							label={ __( 'Space Between', 'otter-blocks' ) }
+						>
+							<FontSizePicker
+								fontSizes={ defaultFontSizes }
+								withReset
+								value={ attributes.contentGap }
+								onChange={ contentGap => setAttributes({ contentGap }) }
+							/>
+						</BaseControl>
 					</PanelBody>
 
 					<PanelBody

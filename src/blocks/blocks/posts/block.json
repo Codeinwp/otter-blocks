@@ -188,6 +188,36 @@
 		},
 		"imageWidth": {
 			"type": "number"
+		},
+		"columnGap": {
+			"type": "number"
+		},
+		"columnGapTablet": {
+			"type": "number"
+		},
+		"columnGapMobile": {
+			"type": "number"
+		},
+		"rowGap": {
+			"type": "number"
+		},
+		"rowGapTablet": {
+			"type": "number"
+		},
+		"rowGapMobile": {
+			"type": "number"
+		},
+		"padding": {
+			"type": "number"
+		},
+		"paddingTablet": {
+			"type": "number"
+		},
+		"paddingMobile": {
+			"type": "number"
+		},
+		"contentGap": {
+			"type": "string"
 		}
 	},
 	"supports": {
