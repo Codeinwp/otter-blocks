@@ -434,7 +434,7 @@ export const adaptors = {
 				},
 				private: {
 					...( pickBy( attrs, ( value, key ) => {
-						return key?.includes( 'boxShadow' )  || key?.includes( 'front' ) || key?.includes( 'back' ) || key?.includes( 'Color' );
+						return key?.includes( 'boxShadow' )  || key?.includes( 'front' ) || key?.includes( 'back' ) || key?.includes( 'Color' ) || key?.includes( 'FontSize' );
 					}) ?? {})
 				}
 			};
