@@ -79,7 +79,7 @@ const Edit = ({
 		)  ),
 		'--border-color': attributes.borderColor,
 		'--border-radius': attributes.borderRadius !== undefined && boxToCSS( mergeBoxDefaultValues(
-			stringToBox( _px( attributes.borderWidth ) ),
+			stringToBox( _px( attributes.borderRadius ) ),
 			{ left: '10px', right: '10px', bottom: '10px', top: '10px' }
 		)  ),
 		'--front-background': getChoice([
