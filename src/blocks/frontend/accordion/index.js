@@ -11,9 +11,7 @@ domReady( () => {
 			return;
 		}
 
-		const items = accordion.querySelectorAll( '.wp-block-themeisle-blocks-accordion-item' );
-
-		// todo: open/close issue in nested accordions
+		const items = Array.from( accordion.children );
 		items.forEach( item => {
 			item.addEventListener( 'click', () => {
 				const isOpened = ! item.open;
@@ -22,8 +20,9 @@ domReady( () => {
 					return;
 				}
 
-				const openedSibling = accordion.querySelectorAll( '[open]' );
-				openedSibling.forEach( sibling => {
+				const openSibling = Array.from( accordion.children ).filter( sibling => sibling.open );
+
+				openSibling.forEach( sibling => {
 					sibling.removeAttribute( 'open' );
 				});
 			});

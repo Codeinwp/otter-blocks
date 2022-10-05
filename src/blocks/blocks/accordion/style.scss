@@ -124,8 +124,8 @@
 		gap: 24px;
 	}
 
-	&:not( .has-icon ) &-item__title::after,
-	&:not( .has-open-icon ) &-item__title::after {
+	&:not( .has-icon ) > &-item > &-item__title::after,
+	&:not( .has-open-icon ) > &-item > &-item__title::after {
 		content: '';
 		justify-self: end;
 		align-self: center;
@@ -135,11 +135,11 @@
 		height: 8px;
 	}
 
-	&:not( .has-icon ) &-item:not([open]) &-item__title::after {
+	&:not( .has-icon ) > &-item:not([open]) > &-item__title::after {
 		transform: rotate(45deg) translate(-25%, 0%);
 	}
 
-	&:not( .has-open-icon ) &-item[open] &-item__title::after {
+	&:not( .has-open-icon ) > &-item[open] > &-item__title::after {
 		transform: rotate(225deg) translate(0%, -45%);
 	}
 }
