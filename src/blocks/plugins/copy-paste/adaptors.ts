@@ -52,6 +52,9 @@ export const adaptors = {
 					},
 					type: {
 						background: attrs.backgroundType
+					},
+					layout: {
+						verticalAlignment: attrs?.verticalAlign
 					}
 				},
 				private: {
@@ -80,7 +83,8 @@ export const adaptors = {
 					[ 'color' ]
 				]),
 				borderColor: s?.colors?.border,
-				border: s?.border?.width
+				border: s?.border?.width,
+				verticalAlign: s?.layout?.verticalAlignment
 			};
 		}
 	},
