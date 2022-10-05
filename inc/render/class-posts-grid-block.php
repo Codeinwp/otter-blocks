@@ -209,9 +209,9 @@ class Posts_Grid_Block {
 
 					if ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] && isset( $category[0] ) ) {
 						$output = '';
-						foreach( $category as $cat ) {
+						foreach ( $category as $cat ) {
 							$separator = ', ';
-							$output .= sprintf(
+							$output   .= sprintf(
 								'<a href="%1$s">%2$s</a>',
 								esc_url( get_category_link( $cat->term_id ) ),
 								esc_html( $cat->cat_name )
