@@ -60,7 +60,7 @@ export const adaptors = {
 				},
 				private: {
 					...pickBy( attrs, ( value, key ) => {
-						return key?.includes( 'background' ) ||  key?.includes( 'boxShadow' ) ||  key?.includes( 'divider' ) ||  key?.includes( 'columnsHeight' ) ||  key?.includes( 'columnsWidth' ) ||  key?.includes( 'reverseColumnsTablet' ) ;
+						return key?.includes( 'background' ) ||  key?.includes( 'boxShadow' ) ||  key?.includes( 'divider' ) ||  key?.includes( 'columnsHeight' ) ||  key?.includes( 'columnsWidth' ) ||  key?.includes( 'reverseColumnsTablet' ) ||  key?.includes( 'layout' ) ;
 					})
 				}
 			};
