@@ -1,10 +1,6 @@
 /**
  * WordPress dependencies
  */
-
-// @ts-ignore
-import { __ } from '@wordpress/i18n';
-
 import {
 
 	// @ts-ignore
@@ -59,7 +55,7 @@ const SyncColorPanel = ( props: SyncColorPanelProps ) => {
 
 			{ options.map( ( option, index ) => (
 				<Disabled
-					key={index}
+					key={ index }
 
 					// @ts-ignore
 					isDisabled={ isSynced?.includes( option.slug ) || false }
