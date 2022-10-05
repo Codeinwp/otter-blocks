@@ -200,7 +200,7 @@ export const adaptors = {
 				},
 				private: {
 					...pickBy( attrs, ( value, key ) => {
-						return key?.includes( 'hover' ) || key?.includes( 'background' );
+						return key?.includes( 'hover' ) || key?.includes( 'background' ) || key?.includes( 'boxShadow' );
 					})
 				}
 			};
