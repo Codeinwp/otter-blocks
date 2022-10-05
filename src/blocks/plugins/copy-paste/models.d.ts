@@ -56,6 +56,7 @@ type SharedCore = {
     backgroundColor?: string
     gradient?: string
     style?: any
+    align?: string
 }
 
 type Storage<T> = {

@@ -64,7 +64,8 @@ const commonExtractor = ( attrs: any ): Storage<unknown> => {
 			textColor: attrs?.textColor,
 			backgroundColor: attrs?.backgroundColor,
 			gradient: attrs?.gradient,
-			style: attrs?.style
+			style: attrs?.style,
+			align: attrs?.align
 		}
 	};
 };
@@ -97,7 +98,8 @@ const commonApplyer = ( storage: Storage<unknown> ) => {
 		dropCap: storage?.shared?.font?.dropCap,
 		textColor: storage?.core?.textColor,
 		backgroundColor: storage?.core?.backgroundColor,
-		gradient: storage?.core?.gradient
+		gradient: storage?.core?.gradient,
+		align: storage?.core?.align
 	};
 };
 
