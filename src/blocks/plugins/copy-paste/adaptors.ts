@@ -359,7 +359,8 @@ export const adaptors = {
 				private: {
 					barBackgroundColor: attrs?.barBackgroundColor,
 					percentageColor: attrs?.percentageColor,
-					percentagePosition: attrs?.percentagePosition
+					percentagePosition: attrs?.percentagePosition,
+					titleStyle: attrs?.titleFontSize
 				}
 			};
 		},
