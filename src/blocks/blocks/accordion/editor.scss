@@ -134,11 +134,22 @@
 		}
 	}
 
-	&:not( .has-icon ) &-item:not( .is-open ) &-item__title::after {
+	&:not( .has-icon ) > * > * > &-item > &-item__title::after,
+	&:not( .has-open-icon ) > * > * > &-item > &-item__title::after {
+		content: '';
+		justify-self: end;
+		align-self: center;
+		border-right: 2px solid currentColor;
+		border-bottom: 2px solid currentColor;
+		width: 8px;
+		height: 8px;
+	}
+
+	&:not( .has-icon ) > * > * > &-item:not( .is-open ) > &-item__title::after {
 		transform: rotate(45deg) translate(-25%, 0%);
 	}
 
-	&:not( .has-open-icon ) &-item.is-open &-item__title::after {
+	&:not( .has-open-icon ) > * > * > &-item.is-open > &-item__title::after {
 		transform: rotate(225deg) translate(0%, -45%);
 	}
 }

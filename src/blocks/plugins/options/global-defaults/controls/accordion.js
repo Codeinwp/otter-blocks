@@ -65,7 +65,7 @@ const Accordion = ({
 					{
 						value: defaults.contentBackground,
 						onChange: value => changeConfig( blockName, { contentBackground: value }),
-						label: __( 'Content background', 'otter-blocks' )
+						label: __( 'Content Background', 'otter-blocks' )
 					},
 					{
 						value: defaults.borderColor,
