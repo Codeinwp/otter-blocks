@@ -49,6 +49,7 @@ const Layout = ({
 				.slice( attributes.enableFeaturedPost ? 1 : 0 )
 				.map( post => {
 					const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
+					const categories = categoriesList && 0 < post?.categories?.length ? categoriesList.filter( item => post.categories.includes( item.id ) ) : [];
 					const author = authors && post.author ? authors.find( item => item.id === post.author ) : undefined;
 					return (
 						<div
@@ -81,7 +82,7 @@ const Layout = ({
 										case 'title':
 											return <PostsTitle key={ element } attributes={ attributes } element={ element } post={ post } />;
 										case 'meta':
-											return <PostsMeta key={ element } attributes={ attributes } element={ element } post={ post } author={ author } category={ category } />;
+											return <PostsMeta key={ element } attributes={ attributes } element={ element } post={ post } author={ author } categories={ categories } />;
 										case 'description':
 											return <PostsDescription key={ element } attributes={ attributes } element={ element } post={ post } />;
 										default:
@@ -118,7 +119,7 @@ export const PostsTitle = ({ attributes, element, post }) => {
 	return '';
 };
 
-export const PostsMeta = ({ attributes, element, post, author, category }) => {
+export const PostsMeta = ({ attributes, element, post, author, categories }) => {
 	if ( attributes.displayMeta && ( attributes.displayDate || attributes.displayAuthor || attributes.displayComments || attributes.displayPostCategory ) ) {
 		const meta = [];
 		let postedOn = '';
@@ -146,8 +147,8 @@ export const PostsMeta = ({ attributes, element, post, author, category }) => {
 			) );
 		}
 
-		if ( ( attributes.displayPostCategory && undefined !== category?.name ) ) {
-			meta.push( sprintf( __( '%s', 'otter-blocks' ), category.name ) );
+		if ( ( attributes.displayPostCategory && Boolean( categories.length ) ) ) {
+			meta.push( categories.map( ({ name }) => name ).join( ', ' ) );
 		}
 
 

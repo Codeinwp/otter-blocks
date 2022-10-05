@@ -208,14 +208,20 @@ class Posts_Grid_Block {
 					}
 
 					if ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] && isset( $category[0] ) ) {
-						$meta[] .= sprintf(
-							'<a href="%1$s">%2$s</a>',
-							esc_url( get_category_link( $category[0]->cat_ID ) ),
-							esc_html( $category[0]->cat_name )
-						);
+						$output = '';
+						foreach( $category as $cat ) {
+							$separator = ', ';
+							$output .= sprintf(
+								'<a href="%1$s">%2$s</a>',
+								esc_url( get_category_link( $cat->term_id ) ),
+								esc_html( $cat->cat_name )
+							) . $separator;
+						}
+
+						$meta[] = trim( $output, $separator );
 					}
 
-					$html .= implode( ' \ ', $meta );
+					$html .= implode( ' / ', $meta );
 
 					$html .= '</p>';
 				}
