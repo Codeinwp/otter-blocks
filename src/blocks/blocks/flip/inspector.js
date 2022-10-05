@@ -142,11 +142,13 @@ const Inspector = ({
 								title={ __( 'Flip Settings', 'otter-blocks' ) }
 							>
 								<SelectControl
-									label={ __( 'Flip Type', 'otter-blocks' )}
+									label={ __( 'Flip Direction', 'otter-blocks' )}
 									value={ attributes.animType }
 									options={ [
-										{ label: __( 'Bottom to Top', 'otter-blocks' ), value: 'flipX' },
-										{ label: __( 'Left to right', 'otter-blocks' ), value: 'flipY' }
+										{ label: __( 'Bottom to top', 'otter-blocks' ), value: 'flipX' },
+										{ label: __( 'Top to bottom', 'otter-blocks' ), value: 'flipX-rev' },
+										{ label: __( 'Left to right', 'otter-blocks' ), value: 'flipY' },
+										{ label: __( 'Right to left', 'otter-blocks' ), value: 'flipY-rev' }
 									]}
 									onChange={ animType => setAttributes({ animType })}
 								/>

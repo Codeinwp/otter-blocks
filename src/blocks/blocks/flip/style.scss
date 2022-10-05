@@ -42,8 +42,16 @@
 		--flip-anim: rotateX(180deg);
 	}
 
+	&.flipX-rev {
+		--flip-anim: rotateX(-180deg);
+	}
+
 	&.flipY {
 		--flip-anim: rotateY(180deg);
+	}
+
+	&.flipY-rev {
+		--flip-anim: rotateY(-180deg);
 	}
 
 	&:hover {
