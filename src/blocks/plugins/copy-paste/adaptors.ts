@@ -657,9 +657,9 @@ export const adaptors = {
 						mobile: addUnit( attrs?.heightMobile, 'px' )
 					},
 					width: {
-						desktop: addUnit( attrs?.containerWidth, 'px' ),
-						tablet: addUnit( attrs?.containerWidthTablet ),
-						mobile: addUnit( attrs?.containerWidthMobile, 'px' )
+						desktop: attrs?.containerWidth,
+						tablet: attrs?.containerWidthTablet,
+						mobile: attrs?.containerWidthMobile
 					},
 					border: {
 						radius: {
@@ -669,7 +669,8 @@ export const adaptors = {
 						style: attrs?.borderStyle
 					},
 					font: {
-						size: addUnit( attrs?.labelFontSize, 'px' )
+						size: addUnit( attrs?.labelFontSize, 'px' ),
+						style: attrs?.labelFontWeight
 					},
 					padding: {
 						desktop: attrs?.padding,
@@ -680,11 +681,13 @@ export const adaptors = {
 				private: {
 					...pickBy( attrs, ( value, key ) => {
 						return key.includes( 'Tablet' ) ||
+						key.includes( 'Mobile' ) ||
 						key.includes( 'gap' ) ||
 						key.includes( 'Color' ) ||
 						key.includes( 'Distance' ) ||
-						key.includes( 'FontSize' );
-					})
+						key.includes( 'Font' );
+					}),
+					alignment: attrs?.alignment
 				}
 			};
 		},
@@ -699,9 +702,9 @@ export const adaptors = {
 				height: getInt( s?.height?.desktop ),
 				heightTablet: getInt( s?.height?.tablet ),
 				heightMobile: getInt( s?.height?.mobile ),
-				containerWidth: getInt( s?.width?.desktop ),
-				containerWidthTablet: getInt( s?.width?.tablet ),
-				containerWidthMobile: getInt( s?.width?.mobile ),
+				containerWidth: s?.width?.desktop,
+				containerWidthTablet: s?.width?.tablet,
+				containerWidthMobile: s?.width?.mobile,
 				borderRadiusBox: s?.border?.radius?.desktop,
 				labelFontSize: getInt( s?.font?.size ),
 				padding: s?.padding?.desktop,

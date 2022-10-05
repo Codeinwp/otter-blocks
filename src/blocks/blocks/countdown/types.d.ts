@@ -50,9 +50,9 @@ type Attributes = {
 	gap: number
 	gapTablet: number
 	gapMobile: number
-	containerWidth: number
-	containerWidthTablet: number
-	containerWidthMobile: number
+	containerWidth: string
+	containerWidthTablet: string
+	containerWidthMobile: string
 	height: number
 	heightTablet: number
 	heightMobile: number
