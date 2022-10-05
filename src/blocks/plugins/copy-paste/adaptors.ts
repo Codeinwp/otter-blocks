@@ -529,11 +529,26 @@ export const adaptors = {
 					colors: {
 						text: attrs?.textColor,
 						background: attrs?.backgroundColor
+					},
+					padding: {
+						desktop: attrs?.padding,
+						tablet: attrs?.paddingMobile,
+						mobile: attrs?.paddingTablet
+					},
+					border: {
+						width: makeBox( addUnit( attrs?.borderWidth, 'px' ) ),
+						radius: {
+							desktop: makeBox( addUnit( attrs?.borderRadius, 'px' ) )
+						}
 					}
 				},
 				private: {
 					primaryColor: attrs?.primaryColor,
-					buttonTextColor: attrs?.buttonTextColor
+					buttonTextColor: attrs?.buttonTextColor,
+					boxShadow: attrs?.boxShadow,
+					...( pickBy( attrs, ( value, key ) => {
+						return key?.includes( 'Color' )  || key?.includes( 'Font' );
+					}) ?? {})
 				}
 			};
 		},
@@ -542,7 +557,12 @@ export const adaptors = {
 			return {
 				...storage.private,
 				textColor: s?.colors?.text,
-				backgroundColor: s?.colors?.background
+				backgroundColor: s?.colors?.background,
+				borderWidth: getInt( getSingleValueFromBox ( s?.border?.width ) ),
+				borderRadius: getInt( getSingleValueFromBox ( s?.border?.radius?.desktop ) ),
+				padding: s?.padding?.desktop,
+				paddingTablet: s?.padding?.tablet,
+				paddingMobile: s?.padding?.mobile
 			};
 		}
 	},
