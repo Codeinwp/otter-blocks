@@ -3,7 +3,6 @@
 	--gap: 5px;
 	--font-size: 20px;
 	--content-color: inherit;
-	--icon-color: inherit;
 
 	display: flex;
 	flex-direction: column;
@@ -67,8 +66,8 @@
 
 	.wp-block-themeisle-blocks-icon-list-item-icon,
 	.wp-block-themeisle-blocks-icon-list-item-icon-custom {
-		fill: var( --icon-color );
-		color: var( --icon-color );
+		fill: var( --icon-color, currentColor );
+		color: var( --icon-color, inherit );
 	}
 }
 
