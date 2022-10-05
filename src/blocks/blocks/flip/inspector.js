@@ -167,19 +167,18 @@ const Inspector = ({
 									options={[
 										{
 											label: __( 'None', 'otter-blocks' ),
-											value: ''
+											value: 'none'
 										},
 										{
 											label: __( 'Image', 'otter-blocks' ),
 											value: 'image'
 										}
 									]}
-									value={ attributes?.frontContentType }
+									value={ attributes?.frontContentType ?? 'none' }
 									onChange={ v => {
 
-										const attrs = { frontContentType: ! isEmpty( v ) ? v : undefined };
-
-										if ( isEmpty( v ) ) {
+										const attrs = { frontContentType: ! isEmpty( v ) && 'none' !== v ? v : undefined };
+										if ( isEmpty( v ) || 'none' === v ) {
 											attrs.frontMedia = undefined;
 										}
 
