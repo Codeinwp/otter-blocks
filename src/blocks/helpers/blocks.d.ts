@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction } from 'react';
 
 export type BlockProps<T> = {
-	attributes: T & { className: string }
+	attributes: Partial< T & { className: string }>
 	setAttributes: ( attributes: Partial<T> ) => void
 	isSelected: boolean
 	clientId: string
@@ -10,7 +10,7 @@ export type BlockProps<T> = {
 }
 
 export interface InspectorProps<T> {
-	attributes: T
+	attributes: Partial<T>
 	setAttributes: ( attributes: Partial<T> ) => void
 }
 
@@ -35,6 +35,15 @@ export type BoxType = {
 export type MarginType = BoxType
 export type PaddingType = BoxType
 export type BorderType = BoxType
+
+export type BoxShadow = {
+    color: string
+    colorOpacity: number
+    blur: number
+    spread: number
+    horizontal: number
+    vertical: number
+}
 
 export type OtterNodeCSSOptions = {
 	selector: string

@@ -33,7 +33,7 @@ const addAttribute = ( props ) => {
 };
 
 const withMasonryExtension = createHigherOrderComponent( BlockEdit => {
-	return ( props ) => {
+	return props => {
 
 		// We need to omit the uploading state of the images, because it can result in duplicated images
 		const imagesUploading = props.attributes?.images?.some(

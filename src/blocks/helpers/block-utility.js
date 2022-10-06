@@ -292,10 +292,10 @@ export const blockInit = ( clientId, defaultAttributes ) => {
 /**
  * Create a Style node for handling `head` Node change when working in a Tablet, Mobile mode or in FSE Editor.
  *
- * @param {OtterNodeCSSOptions?} options The options.
+ * @param {OtterNodeCSSOptions } options The options.
  * @returns {OtterNodeCSSReturn} The name of the node and function handler.
  */
-export const useCSSNode = options => {
+export const useCSSNode = ( options = {}) => {
 	const [ cssList, setCSSProps ] = useState({
 		css: [],
 		media: []

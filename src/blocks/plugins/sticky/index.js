@@ -24,7 +24,7 @@ import Edit from './edit';
 const EXCEPTED_BLOCK_CONDITIONS = [ '-item', 'form-' ]; // Exclude sub-blocks
 
 const withStickyExtension = createHigherOrderComponent( BlockEdit => {
-	return ( props ) => {
+	return props => {
 		const hasCustomClassName = hasBlockSupport(
 			props.name,
 			'customClassName',

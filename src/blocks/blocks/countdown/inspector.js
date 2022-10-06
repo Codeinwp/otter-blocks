@@ -19,7 +19,8 @@ import {
 	FontSizePicker,
 	__experimentalBoxControl as BoxControl,
 	SelectControl,
-	__experimentalUnitControl as UnitContol
+	__experimentalUnitControl as UnitContol,
+	ExternalLink
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -29,11 +30,15 @@ import {
 	__experimentalGetSettings
 } from '@wordpress/date';
 
+import { applyFilters } from '@wordpress/hooks';
+
 /**
  * Internal dependencies
  */
 import ResponsiveControl from '../../components/responsive-control/index.js';
-import { mergeBoxDefaultValues, removeBoxDefaultValues, buildResponsiveSetAttributes, buildResponsiveGetAttributes } from '../../helpers/helper-functions.js';
+import { mergeBoxDefaultValues, removeBoxDefaultValues, buildResponsiveSetAttributes, buildResponsiveGetAttributes, setUtm } from '../../helpers/helper-functions.js';
+import { Fragment } from '@wordpress/element';
+import Notice from '../../components/notice/index.js';
 
 const defaultFontSizes = [
 	{
@@ -59,6 +64,79 @@ const defaultFontSizes = [
 ];
 
 const fontWeights = [ '', '100', '200', '300', '400', '500', '600', '700', '800', '900' ].map( x => ({ label: x ? x : 'Default', value: x }) );
+
+const SettingsPanel = ({ attributes }) => (
+	<Fragment>
+		<SelectControl
+			label={ __( 'Countdown Type', 'otter-blocks' ) }
+			value={  attributes.mode }
+			options={[
+				{
+					label: __( 'Static', 'otter-blocks' ),
+					value: ''
+				},
+				{
+					label: __( 'Evergeen (Pro)', 'otter-blocks' ),
+					value: 'timer',
+					disabled: true
+				},
+				{
+					label: __( 'Interval (Pro)', 'otter-blocks' ),
+					value: 'interval',
+					disabled: true
+				}
+			]}
+			help={ __( 'An universal deadline for all visitors', 'otter-blocks' )}
+		/>
+
+		{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
+			<Notice
+				notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'countdownfeature' ) }>{ __( 'Get more options with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+				variant="upsell"
+			/>
+		) }
+	</Fragment>
+);
+
+const EndActionPanel = () => (
+	<Fragment>
+		<SelectControl
+			label={ __( 'On Expire', 'otter-blocks' ) }
+			value={ 'default' }
+			onChange={ () => {}}
+			options={[
+				{
+					label: __( 'No action', 'otter-blocks' ),
+					value: 'default'
+				},
+				{
+					label: __( 'Hide the Countdown', 'otter-blocks' ),
+					value: 'hide'
+				},
+				{
+					label: __( 'Redirect to link', 'otter-blocks' ),
+					value: 'redirectLink'
+				}
+			]}
+			help={ __( 'The countdown remains visible when it reaches 0', 'otter-blocks' ) }
+			disabled
+		/>
+
+		<ToggleControl
+			label={ __( 'Enable Hide/Show other blocks when the Countdown ends.', 'otter-blocks' ) }
+			checked={ false }
+			onChange={ () => {}}
+			disabled
+		/>
+
+		{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
+			<Notice
+				notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'countdownfeature' ) }>{ __( 'Get more options with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+				variant="upsell"
+			/>
+		) }
+	</Fragment>
+);
 
 /**
  *
@@ -100,33 +178,39 @@ const Inspector = ({
 	return (
 		<InspectorControls>
 			<PanelBody
-				title={ __( 'Time', 'otter-blocks' ) }
+				title={ __( 'Time Settings', 'otter-blocks' ) }
 			>
-				<Dropdown
-					position="bottom left"
-					headerTitle={ __( 'Select the date for the deadline', 'otter-blocks' ) }
-					renderToggle={ ({ onToggle, isOpen }) => (
-						<>
-							<Button
-								onClick={ onToggle }
-								isSecondary
-								aria-expanded={ isOpen }
-							>
-								{ attributes.date ? format( settings.formats.datetime, attributes.date ) : __( 'Select Date', 'otter-blocks' ) }
-							</Button>
-						</>
-					) }
-					renderContent={ () => (
-						<DateTimePicker
-							currentDate={ attributes.date }
-							onChange={ date => setAttributes({ date }) }
-						/>
-					) }
-				/>
+				{ applyFilters( 'otter.countdown.controls.settings', <SettingsPanel attributes={ attributes }/>, { attributes: attributes, setAttributes: setAttributes }) }
+
+				{ attributes.mode === undefined && (
+					<Dropdown
+						position="bottom left"
+						headerTitle={ __( 'Select the date for the deadline', 'otter-blocks' ) }
+						renderToggle={ ({ onToggle, isOpen }) => (
+							<>
+								<Button
+									onClick={ onToggle }
+									isSecondary
+									aria-expanded={ isOpen }
+									className="o-extend-btn"
+								>
+									{ attributes.date ? format( settings.formats.datetime, attributes.date ) : __( 'Select Date', 'otter-blocks' ) }
+								</Button>
+							</>
+						) }
+						renderContent={ () => (
+							<DateTimePicker
+								currentDate={ attributes.date }
+								onChange={ date => setAttributes({ date }) }
+							/>
+						) }
+						className="o-extend"
+					/>
+				) }
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
+				title={ __( 'Display', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
 				<ToggleControl
@@ -159,10 +243,29 @@ const Inspector = ({
 					onChange={ hasSeparators => setAttributes({ hasSeparators }) }
 				/>
 
+				<ResponsiveControl
+					label={ __( 'Space Between boxes', 'otter-blocks' ) }
+				>
+					<RangeControl
+						value={ responsiveGetAttributes([ attributes.gap, attributes.gapTablet, attributes.gapMobile ]) ?? 6 }
+						onChange={ value => responsiveSetAttributes( value, [ 'gap', 'gapTablet', 'gapMobile' ]) }
+						min={ 0 }
+						max={ 100 }
+						allowReset
+					/>
+				</ResponsiveControl>
+
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Dimensions & Spacing', 'otter-blocks' ) }
+				title={ __( 'End Action', 'otter-blocks' ) }
+				initialOpen={false}
+			>
+				{ applyFilters( 'otter.countdown.controls.end', <EndActionPanel />, { attributes: attributes, setAttributes: setAttributes }) }
+			</PanelBody>
+
+			<PanelBody
+				title={ __( 'Dimensions', 'otter-blocks' ) }
 				initialOpen={false}
 			>
 				<ResponsiveControl
@@ -181,18 +284,6 @@ const Inspector = ({
 						onChange={ value => responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]) }
 						min={ 50 }
 						max={ 800 }
-						allowReset
-					/>
-				</ResponsiveControl>
-
-				<ResponsiveControl
-					label={ __( 'Space Between', 'otter-blocks' ) }
-				>
-					<RangeControl
-						value={ responsiveGetAttributes([ attributes.gap, attributes.gapTablet, attributes.gapMobile ]) ?? 6 }
-						onChange={ value => responsiveSetAttributes( value, [ 'gap', 'gapTablet', 'gapMobile' ]) }
-						min={ 0 }
-						max={ 100 }
 						allowReset
 					/>
 				</ResponsiveControl>
@@ -412,6 +503,7 @@ const Inspector = ({
 
 				</ResponsiveControl> */}
 			</PanelBody>
+
 		</InspectorControls>
 	);
 };

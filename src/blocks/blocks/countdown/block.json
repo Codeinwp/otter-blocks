@@ -146,6 +146,27 @@
 		},
 		"separatorAlignment": {
 			"type": "string"
+		},
+		"behaviour": {
+			"type": "string"
+		},
+		"redirectLink": {
+			"type": "string"
+		},
+		"mode": {
+			"type": "string"
+		},
+		"timer": {
+			"type": "object"
+		},
+		"startInterval": {
+			"type": "string"
+		},
+		"endInterval": {
+			"type": "string"
+		},
+		"onEndAction": {
+			"type": "string"
 		}
 	},
 	"supports": {

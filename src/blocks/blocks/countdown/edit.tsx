@@ -1,11 +1,24 @@
 /**
  * External dependencies.
  */
+import classNames from 'classnames';
 
 /**
  * WordPress dependencies
  */
+import { __ } from '@wordpress/i18n';
+
+import {
+	isEmpty,
+	isNumber,
+	pickBy
+} from 'lodash';
+
+import moment from 'moment';
+
 import { useBlockProps } from '@wordpress/block-editor';
+
+import { Notice } from '@wordpress/components';
 
 import {
 	Fragment,
@@ -13,7 +26,6 @@ import {
 	useEffect
 } from '@wordpress/element';
 
-import moment from 'moment';
 
 /**
  * Internal dependencies
@@ -26,27 +38,21 @@ import {
 import Inspector from './inspector.js';
 import {
 	boxValues,
-	getIntervalFromUnix,
 	getTimezone
 } from '../../helpers/helper-functions.js';
-import DisplayTime from './components/display-time.js';
-import { isEmpty, isNumber, pickBy } from 'lodash';
-import classNames from 'classnames';
+import DisplayTime from './components/display-time';
+import { fromInterval, toTimer } from './common';
+import { CountdownProps } from './types';
 
 const { attributes: defaultAttributes } = metadata;
 
-const optionalUnit = ( value, unit = 'px' ) => isNumber( value ) ? `${ value }${unit}` : value;
+const optionalUnit = ( value: unknown, unit = 'px' ) => isNumber( value ) ? `${ value }${unit}` : value;
 
-/**
- *
- * @param {import('./types').CountdownProps} props
- * @returns
- */
 const Edit = ({
 	attributes,
 	setAttributes,
 	clientId
-}) => {
+}: CountdownProps ) => {
 	const [ unixTime, setUnixTime ] = useState( 0 );
 
 	useEffect( () => {
@@ -78,18 +84,32 @@ const Edit = ({
 	 * Update the time interval
 	 */
 	useEffect( () => {
-		const interval = setInterval( () => {
-			if ( attributes.date ) {
-				let date = attributes.date + getTimezone();
-				date = moment( date ).unix() * 1000;
-				setUnixTime( new Date( date ) - new Date() );
-			}
-		}, 500 );
+		let interval: ReturnType<typeof setInterval>;
+		if ( 'timer' !== attributes.mode ) {
+			interval = setInterval( () => {
+				if ( attributes.date ) {
+					const date = moment( attributes.date + getTimezone() ).unix() * 1000;
+					setUnixTime( date - Date.now() );
+				}
+			}, 500 );
+		}
 
 		return () => {
 			clearInterval( interval );
 		};
-	}, [ attributes.date ]);
+	}, [ attributes.date, attributes.mode ]);
+
+	const getTime = () => {
+		switch ( attributes.mode ) {
+		case 'timer':
+			return toTimer( attributes.timer );
+		case 'interval':
+			return fromInterval( attributes.startInterval, attributes.endInterval );
+		default:
+			return unixTime;
+		}
+	};
+
 
 	const inlineStyles = {
 		'--border-radius': boxValues( attributes.borderRadiusBox ),
@@ -144,6 +164,8 @@ const Edit = ({
 
 
 	const blockProps = useBlockProps({
+
+		// @ts-ignore
 		id: attributes.id,
 		className: classNames( cssNodeName, 'ready' ),
 		style: inlineStyles
@@ -155,12 +177,22 @@ const Edit = ({
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 			/>
-
+			{/* @ts-ignore */}
 			<div { ...blockProps }>
 				<DisplayTime
-					time={ getIntervalFromUnix( unixTime, { exclude: attributes?.exclude }) }
+					time={ getTime() }
+					settings={ { exclude: attributes?.exclude } }
 					hasSeparators={ attributes.hasSeparators }
 				/>
+
+				{ 4 === attributes?.exclude?.length && (
+					<Fragment>
+						<br/>
+						<Notice isDismissible={ false } status="info">
+							{ __( 'The Countdown will be hidden in page', 'otter-blocks' ) }
+						</Notice>
+					</Fragment>
+				) }
 			</div>
 		</Fragment>
 	);

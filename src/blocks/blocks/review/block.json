@@ -54,17 +54,17 @@
 		"pros": {
 			"type": "array",
 			"default": [
-			"Easy to use",
-			"Good price",
-			"Sturdy build and ergonomics"
+				"Easy to use",
+				"Good price",
+				"Sturdy build and ergonomics"
 			]
 		},
 		"cons": {
 			"type": "array",
 			"default": [
-			"Incompatible with old versions",
-			"Hard to assemble",
-			"Bad color combination"
+				"Incompatible with old versions",
+				"Hard to assemble",
+				"Bad color combination"
 			]
 		},
 		"links": {
@@ -82,6 +82,30 @@
 			}
 			]
 		},
+		"prosLabel": {
+			"type": "string",
+			"default": "Pros"
+		},
+		"consLabel": {
+			"type": "string",
+			"default": "Cons"
+		},
+		"buttonsLabel": {
+			"type": "string",
+			"default": "Buy this Product"
+		},
+		"imageWidth": {
+			"type": "number"
+		},
+		"mainHeading": {
+			"type": "string"
+		},
+		"subHeading": {
+			"type": "string"
+		},
+		"contentFontSize": {
+			"type": "string"
+		},
 		"primaryColor": {
 			"type": "string"
 		},
@@ -94,22 +118,50 @@
 		"buttonTextColor": {
 			"type": "string"
 		},
+		"borderColor": {
+			"type": "string"
+		},
+		"starsColor": {
+			"type": "string"
+		},
+		"prosColor": {
+			"type": "string"
+		},
+		"consColor": {
+			"type": "string"
+		},
+		"padding": {
+			"type": "object"
+		},
+		"paddingTablet": {
+			"type": "object"
+		},
+		"paddingMobile": {
+			"type": "object"
+		},
+		"borderWidth": {
+			"type": "number"
+		},
+		"borderRadius": {
+			"type": "number"
+		},
+		"boxShadow": {
+			"type": "object",
+			"default": {
+				"active": false,
+				"colorOpacity": 50,
+				"blur": 5,
+				"spread": 1,
+				"horizontal": 0,
+				"vertical": 0
+			}
+		},
 		"isSynced": {
 			"type": "array"
 		}
 	},
-	"styles": [
-		{
-			"name": "default",
-			"label": "Default",
-			"isDefault": true
-		},
-		{
-			"name": "single-column",
-			"label": "Single Column"
-		}
-	],
 	"supports": {
+		"align": [ "full", "wide" ],
 		"html": false
 	},
 	"editorStyle": "otter-review-editor",
