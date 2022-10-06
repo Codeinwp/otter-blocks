@@ -46,6 +46,7 @@
 		"currency-symbol-map": "^5.0.1",
 		"deepmerge": "^4.2.2",
 		"hex-rgba": "^1.0.2",
+		"object-hash": "^3.0.0",
 		"react-sortable-hoc": "^2.0.0",
 		"uuid": "^8.3.2"
 	},
@@ -60,7 +61,7 @@
 		"@wordpress/components": "^20.0.0",
 		"@wordpress/compose": "^5.14.0",
 		"@wordpress/data": "^7.0.0",
-		"@wordpress/dom-ready": "^3.16.0",
+		"@wordpress/dom-ready": "^3.19.0",
 		"@wordpress/element": "^4.14.0",
 		"@wordpress/scripts": "^22.5.0",
 		"conventional-changelog-simple-preset": "^1.0.20",
