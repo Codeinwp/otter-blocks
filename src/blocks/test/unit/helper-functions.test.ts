@@ -1,4 +1,4 @@
-import { boxValues, buildResponsiveGetAttributes, mergeBoxDefaultValues } from '../../helpers/helper-functions.js';
+import { boxValues, buildResponsiveGetAttributes, buildResponsiveSetAttributes, getChoice, mergeBoxDefaultValues, removeBoxDefaultValues } from '../../helpers/helper-functions.js';
 
 describe( 'Box Values Function', () => {
 
@@ -21,7 +21,7 @@ describe( 'Box Values Function', () => {
 	});
 });
 
-describe( 'Get Responsive Attributes Function', () => {
+describe( 'Build Get Responsive Attributes Function', () => {
 
 	test.each([ 'Desktop', 'Tablet', 'Mobile' ])( 'should give the correct value for each view: $.', ( ( view ) => {
 		const getValue = buildResponsiveGetAttributes( view as 'Desktop' | 'Tablet'| 'Mobile' );
@@ -54,6 +54,62 @@ describe( 'Get Responsive Attributes Function', () => {
 	}) );
 });
 
+describe( 'Build Get Responsive Set Attributes', () => {
+
+	let attributes: any = {};
+	let setAttributes = ( attrs: any ) => {
+		attributes = { ...attributes, ...attrs };
+	};
+
+	beforeEach( () => {
+		attributes = {};
+	});
+
+
+	test.each([ 'Desktop', 'Tablet', 'Mobile' ])( 'should set the correct value for each view: $.', ( ( view ) => {
+		const setValue = buildResponsiveSetAttributes( setAttributes, view as 'Desktop' | 'Tablet'| 'Mobile' );
+
+		setValue( 1, [ 'value.desktop', 'value.tablet', 'value.mobile' ], {});
+
+		expect( attributes.value ).toBeDefined();
+		expect( attributes.value[view.toLowerCase()]).toEqual( 1 );
+	}) );
+
+	test.each([ 'Desktop', 'Tablet', 'Mobile' ])( 'should set and unset the correct value for each view: $.', ( ( view ) => {
+		const setValue = buildResponsiveSetAttributes( setAttributes, view as 'Desktop' | 'Tablet'| 'Mobile' );
+
+		setValue( 1, [ 'value.desktop', 'value.tablet', 'value.mobile' ], {});
+
+		expect( attributes.value ).toBeDefined();
+		expect( attributes.value[view.toLowerCase()]).toEqual( 1 );
+
+		setValue( undefined, [ 'value.desktop', 'value.tablet', 'value.mobile' ], {});
+		expect( attributes.value ).toBeUndefined();
+		expect( attributes.value?.[view.toLowerCase()]).toBeUndefined();
+	}) );
+
+	test.each([ 'Desktop', 'Tablet', 'Mobile' ])( 'should set the correct value without affecting other values.', ( ( view ) => {
+		setAttributes({ value: { desktop: 0, tablet: 0, mobile: 0 }});
+		let a: any = { value: { desktop: 0, tablet: 0, mobile: 0 }};
+		const f = ( _a: any ) => {
+			a = { ...a, ..._a };
+		};
+		const setValue = buildResponsiveSetAttributes( f, view as 'Desktop' | 'Tablet'| 'Mobile' );
+
+		setValue( 1, [ 'value.desktop', 'value.tablet', 'value.mobile' ], a.value );
+
+		expect( a.value ).toBeDefined();
+		expect( a.value[view.toLowerCase()]).toEqual( 1 );
+
+		setValue( 1, [ 'value.desktop', 'value.tablet', 'value.mobile' ], a.value );
+
+		expect( a.value ).toBeDefined();
+		expect( a ).toMatchObject(
+			{ value: { desktop: 0, tablet: 0, mobile: 0, [view.toLowerCase()]: 1 }}
+		);
+	}) );
+});
+
 describe( 'Merge Box Default Function', () => {
 	it( 'should keep the value intact if it is complete.', () => {
 		const box = { left: '5px', right: '5px', bottom: '5px', top: '5px' };
@@ -80,5 +136,54 @@ describe( 'Merge Box Default Function', () => {
 		const defaultBox = { bottom: '1px' };
 
 		expect( mergeBoxDefaultValues( box, defaultBox ) ).toMatchObject({ left: '5px', right: '5px', bottom: '1px', top: '0px' });
+	});
+});
+
+describe( 'Remove Default Value Function', () => {
+	it( 'should remove all value from a given object and return undefined', () => {
+		const box = { left: '1px', right: '1px', bottom: '1px', top: '1px' };
+		const defaultBox = { left: '1px', right: '1px', bottom: '1px', top: '1px' };
+
+		expect( removeBoxDefaultValues( box, defaultBox ) ).toEqual( undefined );
+	});
+
+	it( 'should remove only the default value and return a partial object', () => {
+		const box = { left: '5px', right: '5px', bottom: '1px', top: '1px' };
+		const defaultBox = { left: '1px', right: '1px', bottom: '1px', top: '1px' };
+
+		expect( removeBoxDefaultValues( box, defaultBox ) ).toMatchObject({ left: '5px', right: '5px' });
+	});
+
+	it( 'should return undefined when the given box is empty', () => {
+		const defaultBox = { left: '1px', right: '1px', bottom: '1px', top: '1px' };
+
+		expect( removeBoxDefaultValues({}, defaultBox ) ).toEqual( undefined );
+	});
+});
+
+describe( 'Get Choice Function', () => {
+	it( 'should choose the first condition.', () => {
+		expect( getChoice([
+			[ true, 1 ],
+			[ true, 2 ],
+			[ true, 3 ]
+		]) ).toEqual( 1 );
+	});
+
+	it( 'should choose the first true condition.', () => {
+		expect( getChoice([
+			[ false, 1 ],
+			[ true, 2 ],
+			[ true, 3 ]
+		]) ).toEqual( 2 );
+	});
+
+	it( 'should choose the default value.', () => {
+		expect( getChoice([
+			[ false, 1 ],
+			[ false, 2 ],
+			[ false, 3 ],
+			[ 4 ]
+		]) ).toEqual( 4 );
 	});
 });
