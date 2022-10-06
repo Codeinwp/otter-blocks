@@ -150,7 +150,7 @@ class Posts_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property' => '--border-width',
+						'property' => '--border-radius',
 						'value'    => 'cardBorderRadius',
 						'unit'     => 'px',
 					),
