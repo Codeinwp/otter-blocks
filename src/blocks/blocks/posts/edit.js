@@ -175,61 +175,36 @@ const Edit = ({
 		className: cssNodeName
 	});
 
-	if ( ! posts || ! categoriesList || ! authors ) {
-		return (
-			<Fragment>
+	const Preview = ({
+		posts,
+		categoriesList,
+		authors,
+		blockProps,
+		inlineStyles,
+		attributes
+	}) => {
+		if ( ! posts || ! categoriesList || ! authors ) {
+			return (
 				<div { ...blockProps }>
 					<Placeholder>
 						<Spinner />
 						{ __( 'Loading Posts', 'otter-blocks' ) }
 					</Placeholder>
 				</div>
+			);
+		}
 
-				{ ( categoriesList && attributes.offset ) ? (
-					<Inspector
-						attributes={ attributes }
-						setAttributes={ setAttributes }
-						categoriesList={ categoriesList }
-					/>
-				) : null }
-			</Fragment>
-		);
-	}
-
-	if ( 0 === posts.length ) {
-		return (
-			<Fragment>
+		if ( 0 === posts.length ) {
+			return (
 				<div { ...blockProps }>
 					<Placeholder>
 						{ __( 'No Posts', 'otter-blocks' ) }
 					</Placeholder>
 				</div>
+			);
+		}
 
-				{ ( categoriesList && attributes.offset || slugs.length ) ? (
-					<Inspector
-						attributes={ attributes }
-						setAttributes={ setAttributes }
-						categoriesList={ categoriesList }
-					/>
-				) : null }
-			</Fragment>
-		);
-	}
-
-	return (
-		<Fragment>
-			<Inspector
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-				categoriesList={ categoriesList }
-				posts={ posts }
-			/>
-
-			<Controls
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-			/>
-
+		return (
 			<div { ...blockProps } style={ inlineStyles }>
 				<Disabled>
 					{ attributes.enableFeaturedPost && (
@@ -241,6 +216,7 @@ const Edit = ({
 							author={ authors[0] }
 						/>
 					) }
+
 					<Layout
 						attributes={ attributes }
 						posts={ posts }
@@ -249,6 +225,32 @@ const Edit = ({
 					/>
 				</Disabled>
 			</div>
+		);
+	};
+
+	return (
+		<Fragment>
+			{ categoriesList && (
+				<Inspector
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+					categoriesList={ categoriesList }
+				/>
+			) }
+
+			<Controls
+				attributes={ attributes }
+				setAttributes={ setAttributes }
+			/>
+
+			<Preview
+				posts={ posts }
+				categoriesList={ categoriesList }
+				authors={ authors }
+				blockProps={ blockProps }
+				inlineStyles={ inlineStyles }
+				attributes={ attributes }
+			/>
 		</Fragment>
 	);
 };
