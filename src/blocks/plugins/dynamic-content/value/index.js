@@ -96,6 +96,7 @@ const withDynamicConditions = createHigherOrderComponent( BlockEdit => {
 							if ( undefined !== value ) {
 								clearInterval( interval );
 								displayWaitlist[ attrsHash ].forEach( el => displayData( el, value ) );
+								delete displayWaitlist[ attrsHash ];
 							}
 						}, 5000 );
 					} else {
