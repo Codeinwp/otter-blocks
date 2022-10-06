@@ -78,6 +78,10 @@
 			.o-posts-grid-post-body {
 				flex-basis: 66.66%;
 				padding-top: var(  --content-padding );
+
+				&.is-full {
+					flex-basis: 100%;
+				}
 			}
 		}
 	}
@@ -146,10 +150,6 @@
 		text-align: var( --text-align );
 		padding: var( --content-padding );
 		gap: var( --content-gap );
-
-		&.is-full {
-			flex-basis: 100%;
-		}
 
 		.o-posts-grid-post-category {
 			font-size: var( --meta-text-size );
