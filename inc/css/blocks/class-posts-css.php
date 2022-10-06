@@ -95,7 +95,7 @@ class Posts_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property'       => '--image-box-shadow',
+						'property'       => '--img-box-shadow',
 						'pattern'        => 'horizontal vertical blur spread color',
 						'pattern_values' => array(
 							'horizontal' => array(
