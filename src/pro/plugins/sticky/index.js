@@ -128,16 +128,16 @@ const StickyControls = (
 			{
 				isActive && (
 					<BaseControl
-						label={ __( 'Closing the sticky', 'otter-blocks' ) }
+						label={ __( 'Closing the Sticky', 'otter-blocks' ) }
 					>
 						<p>
-							{ __( 'You can make another block that it is inside the sticky element to behave like a closing button. Select the desired block, go to Inspector > Advanced, and paste into the field "Additional CSS class"', 'otter-blocks' )}
+							{ __( 'You can make another block that is inside the sticky element to behave like a closing button by adding the following CSS class.' )}
 						</p>
 						<code style={{ display: 'block', padding: '10px', marginBottom: '5px' }}>
 							{ 'o-sticky-close' }
 						</code>
 						<p>
-							{ __( 'You can transfrom a Button into a close button by inserting the fallowing code as an anchor with Link option.', 'otter-blocks' )}
+							{ __( 'You can transform a Button into a Close button by inserting the fallowing anchor.', 'otter-blocks' )}
 						</p>
 						<code style={{ display: 'block', padding: '10px' }}>
 							{ '#o-sticky-close' }
