@@ -1,7 +1,10 @@
 <?php
 /**
  * Team Members
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Team Members', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'featured', 'columns', 'team' ),

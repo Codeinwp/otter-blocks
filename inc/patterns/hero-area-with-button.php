@@ -1,7 +1,10 @@
 <?php
 /**
  * Hero Area with Button
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Hero Area with Button', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'featured', 'columns', 'header' ),

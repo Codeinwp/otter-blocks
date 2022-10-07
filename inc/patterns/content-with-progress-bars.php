@@ -1,7 +1,10 @@
 <?php
 /**
  * Content with Progress Bars
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Content with Progress Bars', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'columns' ),

@@ -1,7 +1,10 @@
 <?php
 /**
  * Columns with Flip Boxes
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Columns with Flip Boxes', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'featured', 'columns' ),

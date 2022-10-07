@@ -1,7 +1,10 @@
 <?php
 /**
  * Testimonial Columns
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Testimonial Columns', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'testimonials', 'featured', 'columns' ),

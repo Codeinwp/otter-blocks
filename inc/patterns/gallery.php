@@ -1,7 +1,10 @@
 <?php
 /**
  * Gallery
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Gallery', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'featured', 'gallery' ),

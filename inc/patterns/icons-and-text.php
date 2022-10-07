@@ -1,7 +1,10 @@
 <?php
 /**
  * Icons and Text
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Icons and Text', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'columns' ),

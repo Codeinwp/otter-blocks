@@ -1,7 +1,10 @@
 <?php
 /**
  * Countdown
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Countdown', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks' ),

@@ -1,7 +1,10 @@
 <?php
 /**
  * Columns with Icon Features
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Columns with Icon Features', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'featured', 'columns' ),

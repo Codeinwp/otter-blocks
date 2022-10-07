@@ -1,7 +1,10 @@
 <?php
 /**
  * Text with Image Columns
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Text with Image Columns', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'columns' ),

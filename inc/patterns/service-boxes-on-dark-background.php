@@ -1,7 +1,10 @@
 <?php
 /**
  * Service Boxes on Dark Background
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Service Boxes on Dark Background', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'featured', 'columns' ),

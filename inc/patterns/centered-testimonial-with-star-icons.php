@@ -1,7 +1,10 @@
 <?php
 /**
  * Centered Testimonial with Star Icons
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Centered Testimonial with Star Icons', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'testimonials' ),

@@ -1,7 +1,10 @@
 <?php
 /**
  * Border Pricing Table
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Border Pricing Table', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'columns', 'pricing' ),

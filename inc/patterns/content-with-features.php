@@ -1,7 +1,10 @@
 <?php
 /**
  * Content with Features
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Content with Features', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'columns' ),

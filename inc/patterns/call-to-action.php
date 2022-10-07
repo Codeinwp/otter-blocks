@@ -1,7 +1,10 @@
 <?php
 /**
  * Call to Action
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Call to Action', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'cta' ),

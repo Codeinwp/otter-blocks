@@ -1,7 +1,10 @@
 <?php
 /**
  * Author Box
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Author Box', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'featured' ),

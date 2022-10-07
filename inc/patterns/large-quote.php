@@ -1,7 +1,10 @@
 <?php
 /**
  * Large Quote
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Large Quote', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'text' ),

@@ -1,7 +1,10 @@
 <?php
 /**
  * Border Icon Features
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Border Icon Features', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'columns' ),

@@ -1,7 +1,10 @@
 <?php
 /**
  * Image and Text over Dark Background
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Image and Text over Dark Background', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'featured', 'columns' ),

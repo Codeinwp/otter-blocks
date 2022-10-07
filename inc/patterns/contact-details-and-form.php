@@ -1,7 +1,10 @@
 <?php
 /**
  * Contact Details and Form
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Contact Details and Form', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'columns', 'footer' ),

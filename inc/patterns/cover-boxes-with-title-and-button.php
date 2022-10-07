@@ -1,7 +1,10 @@
 <?php
 /**
  * Cover Boxes with Title and Button
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Cover Boxes with Title and Button', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'featured', 'columns' ),

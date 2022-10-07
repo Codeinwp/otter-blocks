@@ -1,7 +1,10 @@
 <?php
 /**
  * Testimonial with Inline Image
+ *
+ * @package ThemeIsle
  */
+
 return array(
 	'title'      => __( 'Testimonial with Inline Image', 'otter-blocks' ),
 	'categories' => array( 'otter-blocks', 'testimonials' ),
