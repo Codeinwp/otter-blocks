@@ -4,6 +4,7 @@
 import { __ } from '@wordpress/i18n';
 
 import {
+	BaseControl,
 	RangeControl,
 	SelectControl,
 	ToggleControl
@@ -34,6 +35,7 @@ const StickyControls = (
 		);
 	}
 
+	const isActive = attributes?.className?.includes( FILTER_OPTIONS.float );
 	const position = attributes?.className?.includes( 'o-sticky-pos-bottom' ) ? 'o-sticky-pos-bottom' : 'o-sticky-pos-top';
 	const behaviour = attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-bhvr' ) ).pop() || 'o-sticky-bhvr-keep';
 	const useOnMobile = Boolean( attributes?.className?.split( ' ' ).filter( c => c.includes( 'o-sticky-use-mobile' ) ).pop() || false );
@@ -122,6 +124,27 @@ const StickyControls = (
 				checked={ useOnMobile }
 				onChange={ ( value ) => addOption( value ? 'o-sticky-use-mobile' : undefined, FILTER_OPTIONS.usage ) }
 			/>
+
+			{
+				isActive && (
+					<BaseControl
+						label={ __( 'Closing the sticky', 'otter-blocks' ) }
+					>
+						<p>
+							{ __( 'You can make another block that it is inside the sticky element to behave like a closing button. Select the desired block, go to Inspector > Advanced, and paste into the field "Additional CSS class"', 'otter-blocks' )}
+						</p>
+						<code style={{ display: 'block', padding: '10px', marginBottom: '5px' }}>
+							{ 'o-sticky-close' }
+						</code>
+						<p>
+							{ __( 'You can transfrom a Button into a close button by inserting the fallowing code as an anchor with Link option.', 'otter-blocks' )}
+						</p>
+						<code style={{ display: 'block', padding: '10px' }}>
+							{ '#o-sticky-close' }
+						</code>
+					</BaseControl>
+				)
+			}
 		</Fragment>
 	);
 };

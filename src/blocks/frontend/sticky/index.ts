@@ -133,7 +133,7 @@ class StickyData {
 	readonly selector: HTMLDivElement | string;
 	readonly containerSelector: HTMLDivElement | string;
 	orderInPage: number;
-	status: 'active' | 'dormant' | 'inactive';
+	status: 'active' | 'dormant' | 'inactive' | 'hidden';
 	isActive: boolean;
 	isDormant: boolean;
 	positionStatus: typeof positions[Position];
@@ -287,6 +287,8 @@ class StickyRunner {
 			return;
 		}
 
+		this.bindCloseButton( stickyElem );
+
 		stickyElem.orderInPage = this.orderInPageCounter;
 		this.items.push( stickyElem );
 		this.orderInPageCounter++;
@@ -316,6 +318,10 @@ class StickyRunner {
 				sticky.container.style.border = '1px dashed black';
 			}
 			sticky.elem.style.border = '1px dashed red';
+		}
+
+		if ( 'hidden' === sticky.status ) {
+			return;
 		}
 
 		sticky.status = 'inactive';
@@ -603,6 +609,24 @@ class StickyRunner {
 		document.body.classList.toggle( 'o-sticky-is-active', value );
 	}
 
+	bindCloseButton( sticky: StickyData ) {
+		if ( ! sticky.config.isFloatMode ) {
+			return;
+		}
+		const classes = sticky.elem.querySelectorAll( '.o-sticky-close' );
+		const anchors = sticky.elem.querySelectorAll( 'a[href=\'#o-sticky-close\']' );
+
+		console.log( classes, anchors );
+
+		[ ...Array.from( classes ), ...Array.from( anchors ) ].forEach( elm => {
+			elm.addEventListener( 'click', ( e ) => {
+				e.preventDefault();
+				sticky.status = 'hidden';
+				sticky.elem.classList.add( 'o-is-close' );
+			});
+		});
+	}
+
 	/**
 	 * Get the active sticky elements.
 	 *
@@ -633,6 +657,9 @@ domReady( () => {
 		.o-is-sticky {
 			position: fixed;
 			z-index: 9999;
+		}
+		.o-is-close {
+			display: none;
 		}
 	`;
 
