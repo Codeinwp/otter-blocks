@@ -50,13 +50,15 @@ const FeaturedPost = ({
 
 				<div className="o-posts-grid-post-body">
 					{ attributes.template.map( element => {
+						const categories = categoriesList && 0 < post?.categories?.length ? categoriesList.filter( item => post.categories.includes( item.id ) ) : [];
+
 						switch ( element ) {
 						case 'category':
 							return <PostsCategory attributes={ attributes } element={ element } category={ category } categoriesList={ categoriesList }/>;
 						case 'title':
 							return <PostsTitle attributes={ attributes } element={ element } post={ post } />;
 						case 'meta':
-							return <PostsMeta attributes={ attributes } element={ element } post={ post } author={ author } category={ category } />;
+							return <PostsMeta attributes={ attributes } element={ element } post={ post } author={ author } categories={ categories } />;
 						case 'description':
 							return <PostsDescription attributes={ attributes } element={ element } post={ post } />;
 						default:
