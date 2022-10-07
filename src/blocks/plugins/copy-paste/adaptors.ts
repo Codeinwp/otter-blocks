@@ -440,7 +440,7 @@ export const adaptors = {
 				private: {
 					...( omit( pickBy( attrs, ( value, key ) => {
 						return key?.includes( 'boxShadow' )  || key?.includes( 'front' ) || key?.includes( 'back' ) || key?.includes( 'Color' ) || key?.includes( 'FontSize' );
-					}) ?? {}, ['frontMedia'] ) ),
+					}) ?? {}, [ 'frontMedia' ]) ),
 					animType: attrs.animType
 				}
 			};
