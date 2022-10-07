@@ -10,3 +10,4 @@ vendor
 todo.md
 artifacts
 *.results.json
+trace.json
