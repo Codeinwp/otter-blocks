@@ -100,6 +100,8 @@ const Fields = ({
 							);
 						}) }
 					</select>
+
+					{ 'postContent' === attributes.type && <p>{ __( 'Post Content can cause an infinite loop when used inside Post Content itself.', 'otter-blocks' ) }</p> }
 				</BaseControl>
 
 				{ ( ! Boolean( window.themeisleGutenberg.hasPro ) ) && (
