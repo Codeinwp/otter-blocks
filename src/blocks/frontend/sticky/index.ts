@@ -613,10 +613,9 @@ class StickyRunner {
 		if ( ! sticky.config.isFloatMode ) {
 			return;
 		}
+
 		const classes = sticky.elem.querySelectorAll( '.o-sticky-close' );
 		const anchors = sticky.elem.querySelectorAll( 'a[href=\'#o-sticky-close\']' );
-
-		console.log( classes, anchors );
 
 		[ ...Array.from( classes ), ...Array.from( anchors ) ].forEach( elm => {
 			elm.addEventListener( 'click', ( e ) => {

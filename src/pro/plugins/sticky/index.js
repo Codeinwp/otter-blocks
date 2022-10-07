@@ -137,7 +137,7 @@ const StickyControls = (
 							{ 'o-sticky-close' }
 						</code>
 						<p>
-							{ __( 'You can transform a Button into a Close button by inserting the fallowing anchor.', 'otter-blocks' )}
+							{ __( 'You can transform a Button into a Close button by inserting the following anchor.', 'otter-blocks' )}
 						</p>
 						<code style={{ display: 'block', padding: '10px' }}>
 							{ '#o-sticky-close' }
