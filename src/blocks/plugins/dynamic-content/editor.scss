@@ -25,13 +25,37 @@
 	}
 }
 
-o-dynamic,
 o-dynamic-link {
 	color: #ED6F57;
 	background: rgba(237, 111, 87, 0.1);
 	padding: 2px 5px;
 	border-radius: 8px;
 	cursor: pointer;
+}
+
+.wp-block.is-selected o-dynamic,
+.wp-block:not(.is-selected) o-dynamic:not([data-preview]),
+.wp-block:not(.is-selected) o-dynamic[data-preview=""] {
+	color: #ED6F57;
+	background: rgba(237, 111, 87, 0.1);
+	padding: 2px 5px;
+	border-radius: 8px;
+	cursor: pointer;
+}
+
+.wp-block:not(.is-selected) {
+	o-dynamic[data-preview]:not([data-preview=""]) {
+		text-decoration-line: underline;
+		text-decoration-style: double;
+		text-decoration-color: var(--wp-admin-theme-color);
+		span {
+			display: none;
+		}
+	
+		&:after {
+			content: attr(data-preview);
+		}
+	}
 }
 
 o-dynamic-link {
@@ -139,6 +163,15 @@ o-dynamic-link {
 
 		.o-media-pro-upsell-description {
 			text-align: center;
+		}
+
+		#o-feedback {
+			position: absolute;
+			bottom: 0;
+			margin: 0 auto;
+			left: 0;
+			right: 0;
+			width: max-content;
 		}
 	}
 

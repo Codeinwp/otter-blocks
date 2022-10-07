@@ -276,6 +276,7 @@ const MediaContent = ({
 					attributes={ attributes }
 					changeAttributes={ changeAttributes }
 				/>
+				{ applyFilters( 'otter.feedback', '', 'dynamic-media', __( 'Help us improve Otter Blocks', 'otter-blocks' ) ) }
 			</div>
 		</Fragment>
 	);

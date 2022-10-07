@@ -25,6 +25,7 @@ class Dynamic_Content {
 	public function init() {
 		add_filter( 'render_block', array( $this, 'apply_dynamic_content' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_link' ) );
+		add_filter( 'render_block', array( $this, 'apply_dynamic_link_button' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_images' ) );
 		add_filter( 'otter_apply_dynamic_image', array( $this, 'apply_dynamic_images' ) );
 	}
@@ -47,7 +48,7 @@ class Dynamic_Content {
 	}
 
 	/**
-	 * Filter post content for dynamic content.
+	 * Filter post content for dynamic link.
 	 *
 	 * @param string $content Post content.
 	 *
@@ -61,6 +62,23 @@ class Dynamic_Content {
 		$re = '/<o-dynamic-link(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-target=["\'](?P<target>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|data-context=["\'](?P<context>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<text>[^ $].*?)<\s*\/\s*o-dynamic-link>/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_link' ), $content );
+	}
+
+	/**
+	 * Filter post content for dynamic link buttons.
+	 *
+	 * @param string $content Post content.
+	 *
+	 * @return string
+	 */
+	public function apply_dynamic_link_button( $content ) { 
+		if ( false === strpos( $content, '#otterDynamicLink' ) ) {
+			return $content;
+		}
+
+		$re = '/#otterDynamicLink\/?.[^"]*/';
+
+		return preg_replace_callback( $re, array( $this, 'apply_link_button' ), $content );
 	}
 
 	/**
@@ -92,7 +110,7 @@ class Dynamic_Content {
 	 */
 	public function apply_images( $data ) {
 		if ( ! isset( $data[0] ) ) {
-			return $data;
+			return;
 		}
 
 		$data  = self::query_string_to_array( $data[0] );
@@ -211,14 +229,18 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_data( $data ) {
-		if ( isset( $data['context'] ) && 'query' === $data['context'] ) {
-			$data['context'] = get_the_ID();
+		if ( ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+			if ( isset( $data['context'] ) && 'query' === $data['context'] ) {
+				$data['context'] = get_the_ID();
+			} else {
+				/*
+				* We use the queried object ID to make sure when posts are displayed inside other posts
+				* the displayed post is being used as a source for the dynamic tags. Eg. Custom Layouts inside Neve.
+				*/
+				$data['context'] = get_queried_object_id();
+			}
 		} else {
-			/*
-			 * We use the queried object ID to make sure when posts are displayed inside other posts
-			 * the displayed post is being used as a source for the dynamic tags. Eg. Custom Layouts inside Neve.
-			 */
-			$data['context'] = get_queried_object_id();
+			$data['default'] = '';
 		}
 
 		if ( ! isset( $data['type'] ) && isset( $data['default'] ) ) {
@@ -231,6 +253,10 @@ class Dynamic_Content {
 
 		if ( 'postTitle' === $data['type'] ) {
 			return get_the_title( $data['context'] );
+		}
+
+		if ( 'postContent' === $data['type'] ) {
+			return $this->get_content( $data );
 		}
 
 		if ( 'postExcerpt' === $data['type'] ) {
@@ -289,7 +315,19 @@ class Dynamic_Content {
 			return $this->get_current_time( $data );
 		}
 
-		return apply_filters( 'otter_blocks_evaluate_dynamic_content_text', $data[0], $data );
+		return apply_filters( 'otter_blocks_evaluate_dynamic_content_text', $data['default'], $data );
+	}
+
+	/**
+	 * Get Content.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_content( $data ) {
+		$content = get_the_content( $data['context'] );
+		return wp_kses_post( $content );
 	}
 
 	/**
@@ -366,7 +404,7 @@ class Dynamic_Content {
 	public function get_loggedin_email( $data ) {
 		$user    = wp_get_current_user();
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$email   = $current_user->user_email;
+		$email   = $user->user_email;
 
 		if ( empty( $email ) ) {
 			$email = $default;
@@ -453,7 +491,7 @@ class Dynamic_Content {
 			if ( strpos( $qry, '?' ) !== false ) {
 				$qry = str_replace( array( '&#038;', '&amp;' ), '&', $qry );
 				$q   = wp_parse_url( $qry );
-				$qry = $q['query'];
+				$qry = isset( $q['query'] ) ? $q['query'] : $q['fragment'];
 			}
 		} else {
 			return false;
@@ -495,6 +533,30 @@ class Dynamic_Content {
 		);
 
 		return $value;
+	}
+
+	/**
+	 * Apply dynamic data for Buttons.
+	 *
+	 * @param array $data Dynamic request.
+	 *
+	 * @return string
+	 */
+	public function apply_link_button( $data ) {
+		if ( ! isset( $data[0] ) ) {
+			return;
+		}
+
+		$data = explode( '#otterDynamicLink', $data[0] );
+		$data = self::query_string_to_array( $data[1] );
+	
+		$link = $this->get_link( $data );
+
+		if ( empty( $link ) ) {
+			$link = get_site_url();
+		}
+
+		return $link;
 	}
 
 	/**

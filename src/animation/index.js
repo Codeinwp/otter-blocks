@@ -30,7 +30,7 @@ import './typing/index.js';
 const excludedBlocks = [ 'themeisle-blocks/popup' ];
 
 const withInspectorControls = createHigherOrderComponent( BlockEdit => {
-	return ( props ) => {
+	return props => {
 		const hasCustomClassName = hasBlockSupport(
 			props.name,
 			'customClassName',
@@ -59,7 +59,10 @@ const withInspectorControls = createHigherOrderComponent( BlockEdit => {
 								attributes={ props.attributes }
 							/>
 
-							{ applyFilters( 'otter.poweredBy', '' ) }
+							<div className="o-fp-wrap">
+								{ applyFilters( 'otter.feedback', '', 'animations' ) }
+								{ applyFilters( 'otter.poweredBy', '' ) }
+							</div>
 						</PanelBody>
 					</Inspector>
 				</Fragment>

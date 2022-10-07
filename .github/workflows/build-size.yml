@@ -127,6 +127,7 @@ jobs:
         uses: NejcZdovc/comment-pr@v1
         with:
           file: 'comment.md'
+          identifier: "GITHUB_BUILD_SIZE"
         env:
           GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
           OLD_ANIMATION: ${{ steps.get-animation-diff.outputs.base_file_string }}

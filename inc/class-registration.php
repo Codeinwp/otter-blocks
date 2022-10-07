@@ -264,6 +264,7 @@ class Registration {
 				),
 				'isLegacyPre59'           => version_compare( get_bloginfo( 'version' ), '5.8.22', '<=' ),
 				'isAncestorTypeAvailable' => version_compare( get_bloginfo( 'version' ), '5.9.22', '>=' ),
+				'version'                 => OTTER_BLOCKS_VERSION,
 			)
 		);
 
@@ -280,6 +281,10 @@ class Registration {
 		$onboarding_option    = get_option( 'themeisle_blocks_settings_onboarding', true );
 		$installed_thru_sdk   = get_option( 'themeisle_sdk_promotions_otter_installed', false );
 		$otter_blocks_install = get_option( 'otter_blocks_install' );
+
+		if ( defined( 'ENABLE_OTTER_PRO_DEV' ) ) {
+			return false;
+		}
 
 		if ( ! $onboarding_option ) {
 			return false;
@@ -913,7 +918,7 @@ class Registration {
 			wp_script_add_data( 'otter-sticky', 'defer', true );
 
 			add_action( 'wp_head', array( $this, 'sticky_style' ) );
-			
+
 			self::$scripts_loaded['sticky'] = true;
 		}
 
@@ -922,7 +927,7 @@ class Registration {
 
 	/**
 	 * Add styles for sticky blocks.
-	 * 
+	 *
 	 * @static
 	 * @since 2.0.14
 	 * @access public

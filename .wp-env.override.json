@@ -1,0 +1,17 @@
+{
+  "plugins": [
+    "."
+  ],
+  "env": {
+    "development": {
+      "themes": [
+        "./one-theme"
+      ]
+    },
+    "tests": {
+      "plugins": [
+        "."
+      ]
+    }
+  }
+}

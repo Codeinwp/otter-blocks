@@ -161,8 +161,7 @@
 			"type": "object"
 		},
 		"borderColor": {
-			"type": "string",
-			"default": "#000000"
+			"type": "string"
 		},
 		"borderRadius": {
 			"type": "object"

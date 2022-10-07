@@ -100,6 +100,8 @@ const Fields = ({
 							);
 						}) }
 					</select>
+
+					{ 'postContent' === attributes.type && <p>{ __( 'Post Content can cause an infinite loop when used inside Post Content itself.', 'otter-blocks' ) }</p> }
 				</BaseControl>
 
 				{ ( ! Boolean( window.themeisleGutenberg.hasPro ) ) && (
@@ -239,7 +241,10 @@ const Fields = ({
 					) }
 				</ButtonGroup>
 
-				{ applyFilters( 'otter.poweredBy', '' ) }
+				<div className="o-fp-wrap">
+					{ applyFilters( 'otter.feedback', '', 'dynamic-value' ) }
+					{ applyFilters( 'otter.poweredBy', '' ) }
+				</div>
 			</PanelBody>
 		</Fragment>
 	);
