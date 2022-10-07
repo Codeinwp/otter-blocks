@@ -423,7 +423,11 @@ export const changeActiveStyle = ( className, styles, newStyle ) =>{
 	return classes.join( ' ' );
 };
 
-
+/**
+ * Wrap a given string in a box object.
+ * @param {string|any} s The value.
+ * @returns {import('./blocks').BoxType|any}
+ */
 export const stringToBox = ( s ) => {
 	if ( ! isString( s ) ) {
 		return s;
@@ -437,6 +441,11 @@ export const stringToBox = ( s ) => {
 	};
 };
 
+/**
+ * Make a box intro a CSS string. If it is a string, wrap it into a box.
+ * @param {string|import('./blocks').BoxType} box The box.
+ * @returns
+ */
 export const boxToCSS = ( box ) => {
 	if ( box === undefined ) {
 		return undefined;
@@ -446,6 +455,11 @@ export const boxToCSS = ( box ) => {
 	return `${_box.top} ${_box.right} ${_box.bottom} ${_box.left}`;
 };
 
+/**
+ * Print the given value then return it. Usefull for debugging.
+ * @param {any} x
+ * @returns
+ */
 export const _i = x => {
 	console.log( x );
 	return x;
