@@ -1,4 +1,4 @@
-import { pick, pickBy } from 'lodash';
+import { omit, pick, pickBy } from 'lodash';
 import { SectionAttrs } from '../../blocks/section/columns/types';
 import {  Storage } from './models';
 import { coreAdaptors } from './core-adaptors';
@@ -365,7 +365,7 @@ export const adaptors = {
 					barBackgroundColor: attrs?.barBackgroundColor,
 					percentageColor: attrs?.percentageColor,
 					percentagePosition: attrs?.percentagePosition,
-					titleStyle: attrs?.titleFontSize
+					titleStyle: attrs?.titleStyle
 				}
 			};
 		},
@@ -438,9 +438,10 @@ export const adaptors = {
 					}
 				},
 				private: {
-					...( pickBy( attrs, ( value, key ) => {
+					...( omit( pickBy( attrs, ( value, key ) => {
 						return key?.includes( 'boxShadow' )  || key?.includes( 'front' ) || key?.includes( 'back' ) || key?.includes( 'Color' ) || key?.includes( 'FontSize' );
-					}) ?? {})
+					}) ?? {}, ['frontMedia'] ) ),
+					animType: attrs.animType
 				}
 			};
 		},
