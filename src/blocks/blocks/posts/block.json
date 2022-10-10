@@ -113,7 +113,7 @@
 		"customTitleFontSize": {
 			"type": [ "string", "number" ]
 		},
-		"customTitleFontSizeTable": {
+		"customTitleFontSizeTablet": {
 			"type": [ "string", "number" ]
 		},
 		"customTitleFontSizeMobile": {
@@ -188,6 +188,12 @@
 		},
 		"imageWidth": {
 			"type": [ "string", "number" ]
+		},
+		"imageWidthTablet": {
+			"type": "string"
+		},
+		"imageWidthMobile": {
+			"type": "string"
 		},
 		"columnGap": {
 			"type": "string"

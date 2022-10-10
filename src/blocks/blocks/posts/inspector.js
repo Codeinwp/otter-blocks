@@ -321,7 +321,7 @@ const Inspector = ({
 					</PanelBody>
 
 					<PanelBody
-						title={ __( 'Design & Layout', 'otter-blocks' ) }
+						title={ __( 'Layout', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
 						<LayoutBuilder
@@ -424,16 +424,19 @@ const Inspector = ({
 
 						{ 'list' === attributes.style && (
 							<Fragment>
-								<UnitContol
+								<ResponsiveControl
 									label={ __( 'Image Width', 'otter-blocks' ) }
-									value={ attributes.imageWidth }
-									onChange={ imageWidth => setAttributes({ imageWidth }) }
-								/>
+								>
+									<UnitContol
+										value={ responsiveGetAttributes([ attributes.imageWidth, attributes.imageWidthTablet, attributes.imageWidthMobile ]) }
+										onChange={ value => responsiveSetAttributes( value, [ 'imageWidth', 'imageWidthTablet', 'imageWidthMobile' ]) }
+									/>
 
-								<ClearButton
-									values={[ 'imageWidth' ]}
-									setAttributes={ setAttributes }
-								/>
+									<ClearButton
+										values={[ 'imageWidth', 'imageWidthTablet', 'imageWidthMobile' ]}
+										setAttributes={ setAttributes }
+									/>
+								</ResponsiveControl>
 							</Fragment>
 						) }
 

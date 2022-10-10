@@ -74,8 +74,36 @@ class Posts_CSS extends Base_CSS {
 						},
 					),
 					array(
+						'property' => '--title-text-size-tablet',
+						'value'    => 'customTitleFontSizeTablet',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
+					),
+					array(
+						'property' => '--title-text-size-mobile',
+						'value'    => 'customTitleFontSizeMobile',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
+					),
+					array(
 						'property' => '--description-text-size',
 						'value'    => 'customDescriptionFontSize',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
+					),
+					array(
+						'property' => '--description-text-size-tablet',
+						'value'    => 'customDescriptionFontSizeTablet',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
+					),
+					array(
+						'property' => '--description-text-size-mobile',
+						'value'    => 'customDescriptionFontSizeMobile',
 						'format'   => function( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
@@ -85,11 +113,27 @@ class Posts_CSS extends Base_CSS {
 						'value'    => 'customMetaFontSize',
 					),
 					array(
+						'property' => '--meta-text-size-tablet',
+						'value'    => 'customMetaFontSizeTablet',
+					),
+					array(
+						'property' => '--meta-text-size-mobile',
+						'value'    => 'customMetaFontSizeMobile',
+					),
+					array(
 						'property' => '--img-width',
 						'value'    => 'imageWidth',
 						'format'   => function( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
+					),
+					array(
+						'property' => '--img-width-tablet',
+						'value'    => 'imageWidthTablet',
+					),
+					array(
+						'property' => '--img-width-mobile',
+						'value'    => 'imageWidthMobile',
 					),
 					array(
 						'property' => '--img-border-radius',
@@ -211,87 +255,35 @@ class Posts_CSS extends Base_CSS {
 						'value'    => 'columnGap',
 					),
 					array(
+						'property' => '--column-gap-tablet',
+						'value'    => 'columnGapTablet',
+					),
+					array(
+						'property' => '--column-gap-mobile',
+						'value'    => 'columnGapMobile',
+					),
+					array(
 						'property' => '--row-gap',
 						'value'    => 'rowGap',
+					),
+					array(
+						'property' => '--row-gap-tablet',
+						'value'    => 'rowGapTablet',
+					),
+					array(
+						'property' => '--row-gap-mobile',
+						'value'    => 'rowGapMobile',
 					),
 					array(
 						'property' => '--content-padding',
 						'value'    => 'padding',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( max-width: 960px )',
-				'properties' => array(
 					array(
-						'property' => '--title-text-size',
-						'value'    => 'customTitleFontSizeTablet',
-						'format'   => function( $value, $attrs ) {
-							return is_numeric( $value ) ? $value . 'px' : $value;
-						},
-					),
-					array(
-						'property' => '--description-text-size',
-						'value'    => 'customDescriptionFontSizeTablet',
-						'format'   => function( $value, $attrs ) {
-							return is_numeric( $value ) ? $value . 'px' : $value;
-						},
-					),
-					array(
-						'property' => '--meta-text-size',
-						'value'    => 'customMetaFontSizeTablet',
-					),
-					array(
-						'property' => '--column-gap',
-						'value'    => 'columnGapTablet',
-					),
-					array(
-						'property' => '--row-gap',
-						'value'    => 'rowGapTablet',
-					),
-					array(
-						'property' => '--content-padding',
+						'property' => '--content-padding-tablet',
 						'value'    => 'paddingTablet',
 					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'query'      => '@media ( max-width: 600px )',
-				'properties' => array(
 					array(
-						'property' => '--title-text-size',
-						'value'    => 'customTitleFontSizeMobile',
-						'format'   => function( $value, $attrs ) {
-							return is_numeric( $value ) ? $value . 'px' : $value;
-						},
-					),
-					array(
-						'property' => '--description-text-size',
-						'value'    => 'customDescriptionFontSizeMobile',
-						'format'   => function( $value, $attrs ) {
-							return is_numeric( $value ) ? $value . 'px' : $value;
-						},
-					),
-					array(
-						'property' => '--meta-text-size',
-						'value'    => 'customMetaFontSizeMobile',
-					),
-					array(
-						'property' => '--column-gap',
-						'value'    => 'columnGapMobile',
-					),
-					array(
-						'property' => '--row-gap',
-						'value'    => 'rowGapMobile',
-					),
-					array(
-						'property' => '--content-padding',
+						'property' => '--content-padding-mobile',
 						'value'    => 'paddingMobile',
 					),
 				),

@@ -41,18 +41,22 @@ import Controls from './controls.js';
 import Inspector from './inspector.js';
 import {
 	blockInit,
-	getDefaultValueByField,
-	useCSSNode
+	getDefaultValueByField
 } from '../../helpers/block-utility.js';
 import Layout from './components/layout/index.js';
 import {
 	_align,
+	buildResponsiveGetAttributes,
 	getCustomPostTypeSlugs
 } from '../../helpers/helper-functions.js';
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
 
 const { attributes: defaultAttributes } = metadata;
+
+const px = value => value ? `${ value }px` : value;
+
+const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
 
 /**
  * Posts component
@@ -100,6 +104,18 @@ const Edit = ({
 		};
 	}, [ attributes.categories, attributes.order, attributes.orderBy, attributes.postsToShow, attributes.offset, attributes.postTypes ]);
 
+	const {
+		responsiveGetAttributes
+	} = useSelect( select => {
+		const { getView } = select( 'themeisle-gutenberg/data' );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+
+		return {
+			responsiveGetAttributes: buildResponsiveGetAttributes( view )
+		};
+	}, []);
+
 	useEffect( () => {
 		const fetch = async() => {
 			setSlugs( await getCustomPostTypeSlugs() );
@@ -116,12 +132,7 @@ const Edit = ({
 	const imageBoxShadow = getValue( 'imageBoxShadow' );
 	const boxShadow = getValue( 'boxShadow' );
 
-	const px = value => value ? `${ value }px` : value;
-
-	const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
-
 	const inlineStyles = {
-		'--img-width': mightBeUnit( attributes.imageWidth ),
 		'--img-border-radius': mightBeUnit( attributes.borderRadius ),
 		'--img-box-shadow': imageBoxShadow.active && `${ imageBoxShadow.horizontal }px ${ imageBoxShadow.vertical }px ${ imageBoxShadow.blur }px ${ imageBoxShadow.spread }px ${ hexToRgba( imageBoxShadow.color || '#FFFFFF', imageBoxShadow.colorOpacity ) }`,
 		'--border-width': mightBeUnit( attributes.borderWidth ),
@@ -132,50 +143,31 @@ const Edit = ({
 		'--text-color': attributes.textColor,
 		'--background-color': attributes.backgroundColor,
 		'--border-color': attributes.borderColor,
-		'--content-gap': attributes.contentGap
+		'--content-gap': attributes.contentGap,
+		'--img-width': responsiveGetAttributes([ mightBeUnit( attributes.imageWidth ), attributes.imageWidthTablet, attributes.imageWidthMobile ]),
+		'--img-width-tablet': attributes.imageWidthTablet,
+		'--img-width-mobile': attributes.imageWidthMobile,
+		'--title-text-size': responsiveGetAttributes([ mightBeUnit( attributes.customTitleFontSize ), mightBeUnit( attributes.customTitleFontSizeTablet ), mightBeUnit( attributes.customTitleFontSizeTablet ) ]),
+		'--title-text-size-tablet': mightBeUnit( attributes.customTitleFontSizeTablet ),
+		'--title-text-size-mobile': mightBeUnit( attributes.customTitleFontSizeMobile ),
+		'--description-text-size': responsiveGetAttributes([ mightBeUnit( attributes.customDescriptionFontSize ), mightBeUnit( attributes.customDescriptionFontSizeTablet ), mightBeUnit( attributes.customDescriptionFontSizeMobile ) ]),
+		'--description-text-size-tablet': mightBeUnit( attributes.customDescriptionFontSizeTablet ),
+		'--description-text-size-mobile': mightBeUnit( attributes.customDescriptionFontSizeMobile ),
+		'--meta-text-size': responsiveGetAttributes([ attributes.customMetaFontSize, attributes.customMetaFontSizeTablet, attributes.customMetaFontSizeMobile ]),
+		'--meta-text-size-tablet': attributes.customMetaFontSizeTablet,
+		'--meta-text-size-mobile': attributes.customMetaFontSizeMobile,
+		'--column-gap': responsiveGetAttributes([ attributes.columnGap, attributes.columnGapTablet, attributes.columnGapMobile ]),
+		'--column-gap-tablet': attributes.columnGapTablet,
+		'--column-gap-mobile': attributes.columnGapMobile,
+		'--row-gap': responsiveGetAttributes([ attributes.rowGap, attributes.rowGapTablet, attributes.rowGapMobile ]),
+		'--row-gap-tablet': attributes.rowGapTablet,
+		'--row-gap-mobile': attributes.rowGapMobile,
+		'--content-padding': responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile ]),
+		'--content-padding-tablet': attributes.paddingTablet,
+		'--content-padding-mobile': attributes.paddingMobile
 	};
 
-	const [ cssNodeName, setNodeCSS ] = useCSSNode();
-	useEffect( () => {
-		setNodeCSS([
-			`{
-				${ attributes.customTitleFontSize ? `--title-text-size: ${ isNumber( getValue( 'customTitleFontSize' ) ) ? `${ getValue( 'customTitleFontSize' ) }px` : getValue( 'customTitleFontSize' ) };` : '' }
-				${ attributes.customDescriptionFontSize ? `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSize' ) ) ? `${ getValue( 'customDescriptionFontSize' ) }px` : getValue( 'customDescriptionFontSize' ) };` : '' }
-				${ attributes.customMetaFontSize ? `--meta-text-size: ${ getValue( 'customMetaFontSize' ) };` : '' }
-				${ attributes.columnGap ? `--column-gap: ${ mightBeUnit( getValue( 'columnGap' ) ) };` : '' }
-				${ attributes.rowGap ? `--row-gap: ${ mightBeUnit( getValue( 'rowGap' ) ) };` : '' }
-				${ attributes.padding ? `--content-padding: ${ mightBeUnit( getValue( 'padding' ) ) };` : '' }
-			}`,
-			`{
-				${ attributes.customTitleFontSizeTablet && `--title-text-size: ${ isNumber( getValue( 'customTitleFontSizeTablet' ) ) ? `${ getValue( 'customTitleFontSizeTablet' ) }px` : getValue( 'customTitleFontSizeTablet' ) };` }
-				${ attributes.customDescriptionFontSizeTablet && `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSizeTablet' ) ) ? `${ getValue( 'customDescriptionFontSizeTablet' ) }px` : getValue( 'customDescriptionFontSizeTablet' ) };` }
-				${ attributes.customMetaFontSizeTablet && `--meta-text-size: ${ getValue( 'customMetaFontSizeTablet' ) };` }
-				${ attributes.columnGapTablet ? `--column-gap: ${ mightBeUnit( getValue( 'columnGapTablet' ) ) };` : '' }
-				${ attributes.rowGapTablet ? `--row-gap: ${ mightBeUnit( getValue( 'rowGapTablet' ) ) };` : '' }
-				${ attributes.paddingTablet ? `--content-padding: ${ mightBeUnit( getValue( 'paddingTablet' ) ) };` : '' }
-			}`,
-			`{
-				${ attributes.customTitleFontSizeMobile && `--title-text-size: ${ isNumber( getValue( 'customTitleFontSizeMobile' ) ) ? `${ getValue( 'customTitleFontSizeMobile' ) }px` : getValue( 'customTitleFontSizeMobile' ) };` }
-				${ attributes.customDescriptionFontSizeMobile && `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSizeMobile' ) ) ? `${ getValue( 'customDescriptionFontSizeMobile' ) }px` : getValue( 'customDescriptionFontSizeMobile' ) };` }
-				${ attributes.customMetaFontSizeMobile && `--meta-text-size: ${ getValue( 'customMetaFontSizeMobile' ) };` }
-				${ attributes.columnGapMobile ? `--column-gap: ${ mightBeUnit( getValue( 'columnGapMobile' ) ) };` : '' }
-				${ attributes.rowGapMobile ? `--row-gap: ${ mightBeUnit( getValue( 'rowGapMobile' ) ) };` : '' }
-				${ attributes.paddingMobile ? `--content-padding: ${ mightBeUnit( getValue( 'paddingMobile' ) ) };` : '' }
-			}`
-		], [
-			'@media ( min-width: 960px )',
-			'@media ( min-width: 600px ) and ( max-width: 960px )',
-			'@media ( max-width: 600px )'
-		]);
-	}, [
-		attributes.customTitleFontSize, attributes.customDescriptionFontSize, attributes.customMetaFontSize, attributes.columnGap, attributes.rowGap, attributes.padding,
-		attributes.customTitleFontSizeTablet, attributes.customDescriptionFontSizeTablet, attributes.customMetaFontSizeTablet, attributes.columnGapTablet, attributes.rowGapTablet, attributes.paddingTablet,
-		attributes.customTitleFontSizeMobile, attributes.customDescriptionFontSizeMobile, attributes.customMetaFontSizeMobile, attributes.columnGapMobile, attributes.rowGapMobile, attributes.paddingMobile
-	]);
-
-	const blockProps = useBlockProps({
-		className: cssNodeName
-	});
+	const blockProps = useBlockProps();
 
 	const Preview = ({
 		posts,

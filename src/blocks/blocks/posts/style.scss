@@ -2,20 +2,41 @@
 	--text-align: initial;
 	--vert-align: initial;
 	--img-border-radius: 0;
-	--img-width: 100%;
 	--img-box-shadow: none;
-	--title-text-size: initial;
-	--description-text-size: initial;
-	--meta-text-size: initial;
 	--border-width: 0;
 	--text-color: inherit;
 	--background-color: inherit;
 	--border-color: inherit;
 	--border-radius: 0;
 	--box-shadow: none;
-	--column-gap: 20px;
+
+	--img-width: 100%;
+	--img-width-tablet: var( --img-width );
+	--img-width-mobile: var( --img-width-tablet );
+
+	--title-text-size: initial;
+	--title-text-size-tablet: var( --title-text-size );
+	--title-text-size-mobile: var( --title-text-size-tablet );
+
+	--description-text-size: initial;
+	--description-text-size-tablet: var( --description-text-size );
+	--description-text-size-mobile: var( --description-text-size-tablet );
+
+	--meta-text-size: initial;
+	--meta-text-size-tablet: var( --meta-text-size );
+	--meta-text-size-mobile: var( --meta-text-size-tablet );
+
+	--column-gap: 10px;
+	--column-gap-tablet: var( --column-gap );
+	--column-gap-mobile: var( --column-gap-tablet );
+
 	--row-gap: 20px;
-	--content-gap: 10px;
+	--row-gap-tablet: var( --row-gap );
+	--row-gap-mobile: var( --row-gap-tablet );
+
+	--content-padding: inherit;
+	--content-padding-tablet: var( --content-padding );
+	--content-padding-mobile: var( --content-padding-tablet );
 
 	border: none;
 
@@ -111,7 +132,6 @@
 		background-clip: border-box;
 
 		.o-posts-grid-post {
-			margin-bottom: 10px;
 			border-width: var( --border-width );
 			border-style: solid;
 			border-color: var( --border-color );
@@ -241,6 +261,73 @@
 			}
 		}
 	}
+
+	.wp-block-themeisle-blocks-posts-grid {
+		.o-posts-grid-post-image {
+			a {
+				width: var( --img-width-tablet );
+			}
+	
+			img {
+				width: var( --img-width-tablet );
+			}
+		}
+
+		&.is-style-boxed {
+			.o-posts-grid-post-body {
+				padding: var( --content-padding-tablet, 20px );
+			}
+		}
+
+		.is-list {
+			row-gap: var( --row-gap-tablet );
+
+			.o-posts-grid-post {
+				.o-posts-grid-post-body {
+					padding-top: var(  --content-padding-tablet );
+				}
+			}
+		}
+
+		.o-posts-grid-post-body {
+			padding: var( --content-padding-tablet );
+
+			.o-posts-grid-post-category {
+				font-size: var( --meta-text-size-tablet );
+			}
+	
+			.o-posts-grid-post-meta {
+				font-size: var( --meta-text-size-tablet );
+			}
+
+			.o-posts-grid-post-title {
+				a {
+					font-size: var( --title-text-size-tablet );
+				}
+			}
+
+			.o-posts-grid-post-description {
+				p {
+					font-size: var( --description-text-size-tablet );
+				}
+	
+				.read-more {
+					font-size: var( --description-text-size-tablet );
+				}
+			}
+		}
+
+		.is-grid {
+			column-gap: var( --column-gap-tablet );
+			row-gap: var( --row-gap-tablet );
+		}
+
+		.o-featured-container {
+			.o-featured-post {
+				margin-bottom: var( --row-gap-tablet );
+			}
+		}
+	}
 }
 
 @media ( max-width: 600px ) {
@@ -263,6 +350,73 @@
 					flex-basis: 100%;
 					padding: 0;
 				}
+			}
+		}
+	}
+
+	.wp-block-themeisle-blocks-posts-grid {
+		.o-posts-grid-post-image {
+			a {
+				width: var( --img-width-mobile );
+			}
+	
+			img {
+				width: var( --img-width-mobile );
+			}
+		}
+
+		&.is-style-boxed {
+			.o-posts-grid-post-body {
+				padding: var( --content-padding-mobile, 20px );
+			}
+		}
+
+		.is-list {
+			row-gap: var( --row-gap-mobile );
+
+			.o-posts-grid-post {
+				.o-posts-grid-post-body {
+					padding-top: var(  --content-padding-mobile );
+				}
+			}
+		}
+
+		.o-posts-grid-post-body {
+			padding: var( --content-padding-mobile );
+
+			.o-posts-grid-post-category {
+				font-size: var( --meta-text-size-mobile );
+			}
+	
+			.o-posts-grid-post-meta {
+				font-size: var( --meta-text-size-mobile );
+			}
+
+			.o-posts-grid-post-title {
+				a {
+					font-size: var( --title-text-size-mobile );
+				}
+			}
+
+			.o-posts-grid-post-description {
+				p {
+					font-size: var( --description-text-size-mobile );
+				}
+	
+				.read-more {
+					font-size: var( --description-text-size-mobile );
+				}
+			}
+		}
+
+		.is-grid {
+			column-gap: var( --column-gap-mobile );
+			row-gap: var( --row-gap-mobile );
+		}
+
+		.o-featured-container {
+			.o-featured-post {
+				margin-bottom: var( --row-gap-mobile );
 			}
 		}
 	}

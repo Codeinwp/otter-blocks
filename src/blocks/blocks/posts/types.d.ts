@@ -26,7 +26,7 @@ type Attributes = {
 	displayReadMoreLink: boolean
 	cropImage: boolean
 	customTitleFontSize: number
-	customTitleFontSizeTable: number
+	customTitleFontSizeTablet: number
 	customTitleFontSizeMobile: number
 	customDescriptionFontSize: number
 	customDescriptionFontSizeTablet: number
@@ -40,6 +40,8 @@ type Attributes = {
 	verticalAlign: string
 	enableFeaturedPost: boolean
 	imageWidth: number|string
+	imageWidthTablet: string
+	imageWidthMobile: string
 	columnGap: string
 	columnGapTablet: string
 	columnGapMobile: string
