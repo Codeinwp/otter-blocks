@@ -8,10 +8,19 @@ import { BlockControls } from '@wordpress/block-editor';
 import { DropdownMenu, ToolbarGroup, ToolbarDropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { otterIcon } from '../../helpers/icons';
+import { sortBy } from 'lodash';
 
 const { Fill, Slot } = createSlotFill( 'OtterControlTools' );
 
 export const useOtterControlTools = () => Fill;
+
+export const OtterControlTools = ({ children, order }) => {
+	return <Fill >
+		<Fragment order={order ?? 99}>
+			{children}
+		</Fragment>
+	</Fill>;
+};
 
 const withOtterTools = createHigherOrderComponent( BlockEdit => {
 
@@ -34,6 +43,8 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 									return null;
 								}
 
+								console.log( fills );
+
 								return (
 									<BlockControls>
 										<ToolbarGroup>
@@ -44,7 +55,9 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 												{
 													({ onClose }) => (
 														<Fragment>
-															{fills}
+															{ sortBy( fills ?? [], fill => {
+																return fill[0]?.props.order;
+															})}
 															<div className="o-fp-wrap" style={{ marginRight: '10px' }}>
 																{/* <ExternalLink href='/wp-admin/options-general.php?page=otter' target='_blank'>{__( 'Feedback', 'otter-blocks' )}</ExternalLink> */}
 																{ applyFilters( 'otter.poweredBy', '' ) }

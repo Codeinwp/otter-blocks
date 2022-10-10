@@ -24,7 +24,7 @@ import { Fragment } from '@wordpress/element';
 import { MenuGroup, MenuItem } from '@wordpress/components';
 
 const BlocksExporter = () => {
-	const OtterControlTools = window?.otterComponents?.useOtterControlTools?.();
+	const OtterControlTools = window?.otterComponents?.OtterControlTools;
 	const { blocks, count } = useSelect( ( select ) => {
 		const {
 			getSelectedBlockCount,
@@ -129,7 +129,7 @@ const BlocksExporter = () => {
 			/>
 			{
 				OtterControlTools !== undefined && (
-					<OtterControlTools>
+					<OtterControlTools order={3}>
 						<MenuGroup>
 							<MenuItem
 								icon={ external }

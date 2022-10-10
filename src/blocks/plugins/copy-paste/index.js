@@ -16,8 +16,7 @@ import { adaptors } from './adaptors';
 import CopyPaste from './copy-paste';
 import { pick } from 'lodash';
 import { extractThemeCSSVar } from './utils';
-import { displayShortcut } from '@wordpress/keycodes';
-import { useOtterControlTools } from '../../components/otter-tools';
+import { OtterControlTools } from '../../components/otter-tools';
 
 
 const copyPaste = new CopyPaste();
@@ -158,16 +157,15 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 	return ( props ) => {
 
 		if ( adaptors?.[props.name] && props.isSelected ) {
-			const OtterControlTools = useOtterControlTools();
+
 			return (
 				<Fragment>
 					<BlockEdit { ...props } />
 					<CopyPasteComponent {...props} />
-					<OtterControlTools>
+					<OtterControlTools order={0}>
 						<MenuGroup>
 							<MenuItem
 								onClick={ copy }
-
 							>
 								{ __( 'Copy Style', 'otter-blocks' ) }
 							</MenuItem>
@@ -175,7 +173,7 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 							<MenuItem
 								onClick={ paste }
 							>
-								{ __( 'Paste style', 'otter-blocks' ) }
+								{ __( 'Paste Style', 'otter-blocks' ) }
 							</MenuItem>
 						</MenuGroup>
 					</OtterControlTools>

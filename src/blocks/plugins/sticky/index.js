@@ -21,7 +21,7 @@ import { addFilter } from '@wordpress/hooks';
 import './editor.scss';
 import Edit from './edit';
 import { MenuGroup, MenuItem } from '@wordpress/components';
-import { useOtterControlTools } from '../../components/otter-tools';
+import { OtterControlTools } from '../../components/otter-tools';
 
 const EXCEPTED_BLOCK_CONDITIONS = [ '-item', 'form-' ]; // Exclude sub-blocks
 
@@ -35,7 +35,6 @@ const withStickyExtension = createHigherOrderComponent( BlockEdit => {
 
 
 		if ( hasCustomClassName && props.isSelected ) {
-			const OtterControlTools = useOtterControlTools();
 			const classes =  props.attributes?.className?.split( ' ' );
 			const isSticky = classes?.includes( 'o-sticky' ) || false;
 
@@ -62,7 +61,7 @@ const withStickyExtension = createHigherOrderComponent( BlockEdit => {
 								onClick={ toggleSticky }
 							/>
 
-							<OtterControlTools>
+							<OtterControlTools order={1}>
 								<MenuGroup>
 									<MenuItem
 										icon="sticky"
