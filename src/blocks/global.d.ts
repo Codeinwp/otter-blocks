@@ -91,6 +91,12 @@ declare global {
 			colors?: {label: string, value: string}[],
 			gradients?: {label: string, value: string}[],
 			cssVars?: string[]
+		},
+		otterComponents?: {
+			SelectProducts?: ( props: any ) => JSX.Element
+			Notice?: ( props: { notice: any, variant: string, instructions: 'string'}) => JSX.Element
+			useInspectorSlot?: ( name: string ) => any
+			useOtterControlTools?: ( props: any ) => any
 		}
 	}
 }

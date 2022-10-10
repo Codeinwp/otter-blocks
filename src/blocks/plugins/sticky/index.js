@@ -20,6 +20,8 @@ import { addFilter } from '@wordpress/hooks';
  */
 import './editor.scss';
 import Edit from './edit';
+import { MenuGroup, MenuItem } from '@wordpress/components';
+import { useOtterControlTools } from '../../components/otter-tools';
 
 const EXCEPTED_BLOCK_CONDITIONS = [ '-item', 'form-' ]; // Exclude sub-blocks
 
@@ -31,31 +33,46 @@ const withStickyExtension = createHigherOrderComponent( BlockEdit => {
 			true
 		);
 
-		const classes =  props.attributes?.className?.split( ' ' );
-		const isSticky = classes?.includes( 'o-sticky' ) || false;
-
-		const toggleSticky = () => {
-			let className = classes?.filter( c => ! c.includes( 'o-sticky' ) ) || [];
-
-			if ( ! isSticky ) {
-				className.push( 'o-sticky', 'o-sticky-scope-main-area', 'o-sticky-pos-top', 'o-sticky-bhvr-keep' );
-			}
-
-			className = className.join( ' ' );
-			props.setAttributes({ className });
-		};
 
 		if ( hasCustomClassName && props.isSelected ) {
+			const OtterControlTools = useOtterControlTools();
+			const classes =  props.attributes?.className?.split( ' ' );
+			const isSticky = classes?.includes( 'o-sticky' ) || false;
+
+			const toggleSticky = () => {
+				let className = classes?.filter( c => ! c.includes( 'o-sticky' ) ) || [];
+
+				if ( ! isSticky ) {
+					className.push( 'o-sticky', 'o-sticky-scope-main-area', 'o-sticky-pos-top', 'o-sticky-bhvr-keep' );
+				}
+
+				className = className.join( ' ' );
+				props.setAttributes({ className });
+			};
+
 			return (
 				<Fragment>
 					<BlockEdit { ...props } />
 
 					{ ! EXCEPTED_BLOCK_CONDITIONS.some( cond => props.name?.includes( cond ) ) && (
-						<PluginBlockSettingsMenuItem
-							icon="sticky"
-							label={ ! isSticky ? __( 'Transform to Sticky', 'otter-blocks' ) : __( 'Remove Sticky Element', 'otter-blocks' ) }
-							onClick={ toggleSticky }
-						/>
+						<Fragment>
+							<PluginBlockSettingsMenuItem
+								icon="sticky"
+								label={ ! isSticky ? __( 'Transform to Sticky', 'otter-blocks' ) : __( 'Remove Sticky Element', 'otter-blocks' ) }
+								onClick={ toggleSticky }
+							/>
+
+							<OtterControlTools>
+								<MenuGroup>
+									<MenuItem
+										icon="sticky"
+										onClick={ toggleSticky }
+									>
+										{ ! isSticky ? __( 'Transform to Sticky', 'otter-blocks' ) : __( 'Remove Sticky Element', 'otter-blocks' ) }
+									</MenuItem>
+								</MenuGroup>
+							</OtterControlTools>
+						</Fragment>
 					) }
 
 					{ props.attributes?.className?.includes( 'o-sticky' ) && (
@@ -70,6 +87,6 @@ const withStickyExtension = createHigherOrderComponent( BlockEdit => {
 	};
 }, 'withStickyExtension' );
 
-if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor' ) ) {
+if ( select( 'core/editor' ) !== undefined ) {
 	addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/sticky-extension', withStickyExtension );
 }

@@ -115,7 +115,7 @@ module.exports = [
 				'./src/blocks/blocks/index.js',
 				'./src/blocks/components/index.js',
 				'./src/blocks/helpers/index.js',
-				'./src/blocks/plugins/registerPlugin.js'
+				'./src/blocks/plugins/registerPlugin.tsx'
 			],
 			'leaflet-map': './src/blocks/frontend/leaflet-map/index.js',
 			'leaflet-gesture-handling': './src/blocks/frontend/leaflet-map/leaflet-gesture-handling.js',

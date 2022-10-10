@@ -7,7 +7,7 @@ import { select, dispatch } from '@wordpress/data';
 import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
 import { Fragment } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
-import { KeyboardShortcuts, SVG } from '@wordpress/components';
+import { KeyboardShortcuts, MenuGroup, MenuItem } from '@wordpress/components';
 
 /**
   * Internal dependencies.
@@ -17,6 +17,7 @@ import CopyPaste from './copy-paste';
 import { pick } from 'lodash';
 import { extractThemeCSSVar } from './utils';
 import { displayShortcut } from '@wordpress/keycodes';
+import { useOtterControlTools } from '../../components/otter-tools';
 
 
 const copyPaste = new CopyPaste();
@@ -137,7 +138,6 @@ const CopyPasteComponent = ( ) => {
 			<PluginBlockSettingsMenuItem
 				label={  __( 'Copy style', 'otter-blocks' ) }
 				onClick={ copy }
-				icon={ iconTextWrapper( `${displayShortcut.ctrl()}${displayShortcut.alt( 'C' )}` ) }
 			/>
 
 			{
@@ -145,11 +145,11 @@ const CopyPasteComponent = ( ) => {
 					<PluginBlockSettingsMenuItem
 						label={  __( 'Paste style', 'otter-blocks' ) }
 						onClick={ paste }
-						icon={ iconTextWrapper( `${displayShortcut.ctrl()}${displayShortcut.alt( 'V' )}` ) }
+
+						// icon={ iconTextWrapper( `${displayShortcut.ctrl()}${displayShortcut.alt( 'V' )}` ) }
 					/>
 				)
 			}
-
 		</Fragment>
 	);
 };
@@ -158,10 +158,27 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 	return ( props ) => {
 
 		if ( adaptors?.[props.name] && props.isSelected ) {
+			const OtterControlTools = useOtterControlTools();
 			return (
 				<Fragment>
 					<BlockEdit { ...props } />
 					<CopyPasteComponent {...props} />
+					<OtterControlTools>
+						<MenuGroup>
+							<MenuItem
+								onClick={ copy }
+
+							>
+								{ __( 'Copy Style', 'otter-blocks' ) }
+							</MenuItem>
+
+							<MenuItem
+								onClick={ paste }
+							>
+								{ __( 'Paste style', 'otter-blocks' ) }
+							</MenuItem>
+						</MenuGroup>
+					</OtterControlTools>
 				</Fragment>
 			);
 		}
@@ -170,7 +187,7 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 	};
 }, 'withCopyPasteExtension' );
 
-if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor' ) ) {
+if ( select?.( 'core/editor' ) !== undefined ) {
 	addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/copy-paste-extension', withCopyPasteExtension );
 }
 
