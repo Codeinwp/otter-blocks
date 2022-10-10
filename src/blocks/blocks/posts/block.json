@@ -147,13 +147,13 @@
 			"type": "string"
 		},
 		"borderRadius": {
-			"type": "number"
+			"type": [ "string", "number" ]
 		},
 		"borderWidth": {
-			"type": "number"
+			"type": "string"
 		},
 		"cardBorderRadius": {
-			"type": "number"
+			"type": "string"
 		},
 		"boxShadow": {
 			"type": "object",
@@ -187,34 +187,34 @@
 			"type": "boolean"
 		},
 		"imageWidth": {
-			"type": "number"
+			"type": [ "string", "number" ]
 		},
 		"columnGap": {
-			"type": "number"
+			"type": "string"
 		},
 		"columnGapTablet": {
-			"type": "number"
+			"type": "string"
 		},
 		"columnGapMobile": {
-			"type": "number"
+			"type": "string"
 		},
 		"rowGap": {
-			"type": "number"
+			"type": "string"
 		},
 		"rowGapTablet": {
-			"type": "number"
+			"type": "string"
 		},
 		"rowGapMobile": {
-			"type": "number"
+			"type": "string"
 		},
 		"padding": {
-			"type": "number"
+			"type": "string"
 		},
 		"paddingTablet": {
-			"type": "number"
+			"type": "string"
 		},
 		"paddingMobile": {
-			"type": "number"
+			"type": "string"
 		},
 		"contentGap": {
 			"type": "string"

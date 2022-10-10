@@ -31,24 +31,24 @@ type Attributes = {
 	customDescriptionFontSize: number
 	customDescriptionFontSizeTablet: number
 	customDescriptionFontSizeMobile: number
-	borderRadius: number
-	borderWidth: number
-	cardBorderRadius: number
+	borderRadius: number|string
+	borderWidth: string
+	cardBorderRadius: string
 	boxShadow: BoxShadow
 	imageBoxShadow: BoxShadow
 	textAlign: string
 	verticalAlign: string
 	enableFeaturedPost: boolean
-	imageWidth: number
-	columnGap: number
-	columnGapTablet: number
-	columnGapMobile: number
-	rowGap: number
-	rowGapTablet: number
-	rowGapMobile: number
-	padding: number
-	paddingTablet: number
-	paddingMobile: number
+	imageWidth: number|string
+	columnGap: string
+	columnGapTablet: string
+	columnGapMobile: string
+	rowGap: string
+	rowGapTablet: string
+	rowGapMobile: string
+	padding: string
+	paddingTablet: string
+	paddingMobile: string
 	contentGap: string
 }
 

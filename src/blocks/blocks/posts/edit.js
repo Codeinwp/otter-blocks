@@ -118,12 +118,14 @@ const Edit = ({
 
 	const px = value => value ? `${ value }px` : value;
 
+	const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
+
 	const inlineStyles = {
-		'--img-width': px( attributes.imageWidth ),
-		'--img-border-radius': px( attributes.borderRadius ),
+		'--img-width': mightBeUnit( attributes.imageWidth ),
+		'--img-border-radius': mightBeUnit( attributes.borderRadius ),
 		'--img-box-shadow': imageBoxShadow.active && `${ imageBoxShadow.horizontal }px ${ imageBoxShadow.vertical }px ${ imageBoxShadow.blur }px ${ imageBoxShadow.spread }px ${ hexToRgba( imageBoxShadow.color || '#FFFFFF', imageBoxShadow.colorOpacity ) }`,
-		'--border-width': px( attributes.borderWidth ),
-		'--border-radius': px( attributes.cardBorderRadius ),
+		'--border-width': mightBeUnit( attributes.borderWidth ),
+		'--border-radius': mightBeUnit( attributes.cardBorderRadius ),
 		'--box-shadow': boxShadow.active && `${ boxShadow.horizontal }px ${ boxShadow.vertical }px ${ boxShadow.blur }px ${ boxShadow.spread }px ${ hexToRgba( boxShadow.color || '#FFFFFF', boxShadow.colorOpacity ) }`,
 		'--vert-align': _align( attributes.verticalAlign ),
 		'--text-align': attributes.textAlign,
@@ -140,25 +142,25 @@ const Edit = ({
 				${ attributes.customTitleFontSize ? `--title-text-size: ${ isNumber( getValue( 'customTitleFontSize' ) ) ? `${ getValue( 'customTitleFontSize' ) }px` : getValue( 'customTitleFontSize' ) };` : '' }
 				${ attributes.customDescriptionFontSize ? `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSize' ) ) ? `${ getValue( 'customDescriptionFontSize' ) }px` : getValue( 'customDescriptionFontSize' ) };` : '' }
 				${ attributes.customMetaFontSize ? `--meta-text-size: ${ getValue( 'customMetaFontSize' ) };` : '' }
-				${ attributes.columnGap ? `--column-gap: ${ px( getValue( 'columnGap' ) ) };` : '' }
-				${ attributes.rowGap ? `--row-gap: ${ px( getValue( 'rowGap' ) ) };` : '' }
-				${ attributes.padding ? `--content-padding: ${ px( getValue( 'padding' ) ) };` : '' }
+				${ attributes.columnGap ? `--column-gap: ${ mightBeUnit( getValue( 'columnGap' ) ) };` : '' }
+				${ attributes.rowGap ? `--row-gap: ${ mightBeUnit( getValue( 'rowGap' ) ) };` : '' }
+				${ attributes.padding ? `--content-padding: ${ mightBeUnit( getValue( 'padding' ) ) };` : '' }
 			}`,
 			`{
 				${ attributes.customTitleFontSizeTablet && `--title-text-size: ${ isNumber( getValue( 'customTitleFontSizeTablet' ) ) ? `${ getValue( 'customTitleFontSizeTablet' ) }px` : getValue( 'customTitleFontSizeTablet' ) };` }
 				${ attributes.customDescriptionFontSizeTablet && `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSizeTablet' ) ) ? `${ getValue( 'customDescriptionFontSizeTablet' ) }px` : getValue( 'customDescriptionFontSizeTablet' ) };` }
 				${ attributes.customMetaFontSizeTablet && `--meta-text-size: ${ getValue( 'customMetaFontSizeTablet' ) };` }
-				${ attributes.columnGapTablet ? `--column-gap: ${ px( getValue( 'columnGapTablet' ) ) };` : '' }
-				${ attributes.rowGapTablet ? `--row-gap: ${ px( getValue( 'rowGapTablet' ) ) };` : '' }
-				${ attributes.paddingTablet ? `--content-padding: ${ px( getValue( 'paddingTablet' ) ) };` : '' }
+				${ attributes.columnGapTablet ? `--column-gap: ${ mightBeUnit( getValue( 'columnGapTablet' ) ) };` : '' }
+				${ attributes.rowGapTablet ? `--row-gap: ${ mightBeUnit( getValue( 'rowGapTablet' ) ) };` : '' }
+				${ attributes.paddingTablet ? `--content-padding: ${ mightBeUnit( getValue( 'paddingTablet' ) ) };` : '' }
 			}`,
 			`{
 				${ attributes.customTitleFontSizeMobile && `--title-text-size: ${ isNumber( getValue( 'customTitleFontSizeMobile' ) ) ? `${ getValue( 'customTitleFontSizeMobile' ) }px` : getValue( 'customTitleFontSizeMobile' ) };` }
 				${ attributes.customDescriptionFontSizeMobile && `--description-text-size: ${ isNumber( getValue( 'customDescriptionFontSizeMobile' ) ) ? `${ getValue( 'customDescriptionFontSizeMobile' ) }px` : getValue( 'customDescriptionFontSizeMobile' ) };` }
 				${ attributes.customMetaFontSizeMobile && `--meta-text-size: ${ getValue( 'customMetaFontSizeMobile' ) };` }
-				${ attributes.columnGapMobile ? `--column-gap: ${ px( getValue( 'columnGapMobile' ) ) };` : '' }
-				${ attributes.rowGapMobile ? `--row-gap: ${ px( getValue( 'rowGapMobile' ) ) };` : '' }
-				${ attributes.paddingMobile ? `--content-padding: ${ px( getValue( 'paddingMobile' ) ) };` : '' }
+				${ attributes.columnGapMobile ? `--column-gap: ${ mightBeUnit( getValue( 'columnGapMobile' ) ) };` : '' }
+				${ attributes.rowGapMobile ? `--row-gap: ${ mightBeUnit( getValue( 'rowGapMobile' ) ) };` : '' }
+				${ attributes.paddingMobile ? `--content-padding: ${ mightBeUnit( getValue( 'paddingMobile' ) ) };` : '' }
 			}`
 		], [
 			'@media ( min-width: 960px )',

@@ -4,6 +4,7 @@
 import { __ } from '@wordpress/i18n';
 
 import {
+	__experimentalUnitControl as UnitContol,
 	FontSizePicker,
 	PanelBody,
 	QueryControls,
@@ -36,6 +37,7 @@ import ToogleGroupControl from '../../components/toogle-group-control/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import BoxShadowControl from '../../components/box-shadow-control/index.js';
+import ClearButton from '../../components/clear-button/index.js';
 import {
 	buildResponsiveGetAttributes,
 	buildResponsiveSetAttributes,
@@ -106,7 +108,8 @@ const Inspector = ({
 
 	const {
 		responsiveSetAttributes,
-		responsiveGetAttributes
+		responsiveGetAttributes,
+		getView
 	} = useSelect( select => {
 		const { getView } = select( 'themeisle-gutenberg/data' );
 		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
@@ -114,7 +117,8 @@ const Inspector = ({
 
 		return {
 			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
-			responsiveGetAttributes: buildResponsiveGetAttributes( view )
+			responsiveGetAttributes: buildResponsiveGetAttributes( view ),
+			getView: view
 		};
 	}, []);
 
@@ -407,25 +411,30 @@ const Inspector = ({
 						title={ __( 'Image', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
-						<RangeControl
+						<UnitContol
 							label={ __( 'Border Radius', 'otter-blocks' ) }
 							value={ attributes.borderRadius }
 							onChange={ borderRadius => setAttributes({ borderRadius }) }
-							step={ 0.1 }
-							min={ 0 }
-							max={ 50 }
-							allowReset
+						/>
+
+						<ClearButton
+							values={[ 'borderRadius' ]}
+							setAttributes={ setAttributes }
 						/>
 
 						{ 'list' === attributes.style && (
-							<RangeControl
-								label={ __( 'Image Width', 'otter-blocks' ) }
-								value={ attributes.imageWidth }
-								onChange={ imageWidth => setAttributes({ imageWidth }) }
-								min={ 0 }
-								max={ 1000 }
-								allowReset
-							/>
+							<Fragment>
+								<UnitContol
+									label={ __( 'Image Width', 'otter-blocks' ) }
+									value={ attributes.imageWidth }
+									onChange={ imageWidth => setAttributes({ imageWidth }) }
+								/>
+
+								<ClearButton
+									values={[ 'imageWidth' ]}
+									setAttributes={ setAttributes }
+								/>
+							</Fragment>
 						) }
 
 						<BoxShadowControl
@@ -442,12 +451,14 @@ const Inspector = ({
 							<ResponsiveControl
 								label={ __( 'Column Gap', 'otter-blocks' ) }
 							>
-								<RangeControl
+								<UnitContol
 									value={ responsiveGetAttributes([ attributes.columnGap, attributes.columnGapTablet, attributes.columnGapMobile ]) }
 									onChange={ value => responsiveSetAttributes( value, [ 'columnGap', 'columnGapTablet', 'columnGapMobile' ]) }
-									min={ 0 }
-									max={ 500 }
-									allowReset
+								/>
+
+								<ClearButton
+									values={[ 'columnGap', 'columnGapTablet', 'columnGapMobile' ]}
+									setAttributes={ setAttributes }
 								/>
 							</ResponsiveControl>
 						) }
@@ -455,24 +466,28 @@ const Inspector = ({
 						<ResponsiveControl
 							label={ __( 'Row Gap', 'otter-blocks' ) }
 						>
-							<RangeControl
+							<UnitContol
 								value={ responsiveGetAttributes([ attributes.rowGap, attributes.rowGapTablet, attributes.rowGapMobile ]) }
 								onChange={ value => responsiveSetAttributes( value, [ 'rowGap', 'rowGapTablet', 'rowGapMobile' ]) }
-								min={ 0 }
-								max={ 500 }
-								allowReset
+							/>
+
+							<ClearButton
+								values={[ 'rowGap', 'rowGapTablet', 'rowGapMobile' ]}
+								setAttributes={ setAttributes }
 							/>
 						</ResponsiveControl>
 
 						<ResponsiveControl
 							label={ __( 'Content Padding', 'otter-blocks' ) }
 						>
-							<RangeControl
+							<UnitContol
 								value={ responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile ]) }
 								onChange={ value => responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]) }
-								min={ 0 }
-								max={ 500 }
-								allowReset
+							/>
+
+							<ClearButton
+								values={[ 'padding', 'paddingTablet', 'paddingMobile' ]}
+								setAttributes={ setAttributes }
 							/>
 						</ResponsiveControl>
 
@@ -492,22 +507,26 @@ const Inspector = ({
 						title={ __( 'Border', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
-						<RangeControl
+						<UnitContol
 							label={ __( 'Width', 'otter-blocks' ) }
 							value={ attributes.borderWidth }
 							onChange={ borderWidth => setAttributes({ borderWidth }) }
-							min={ 0 }
-							max={ 50 }
-							allowReset
 						/>
 
-						<RangeControl
+						<ClearButton
+							values={[ 'borderWidth' ]}
+							setAttributes={ setAttributes }
+						/>
+
+						<UnitContol
 							label={ __( 'Radius', 'otter-blocks' ) }
 							value={ attributes.cardBorderRadius }
 							onChange={ cardBorderRadius => setAttributes({ cardBorderRadius }) }
-							min={ 0 }
-							max={ 100 }
-							allowReset
+						/>
+
+						<ClearButton
+							values={[ 'cardBorderRadius' ]}
+							setAttributes={ setAttributes }
 						/>
 
 						<BoxShadowControl

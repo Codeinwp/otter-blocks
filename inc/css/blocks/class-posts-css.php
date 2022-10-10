@@ -87,12 +87,16 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--img-width',
 						'value'    => 'imageWidth',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
 						'property' => '--img-border-radius',
 						'value'    => 'borderRadius',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
 						'property'       => '--img-box-shadow',
@@ -147,12 +151,10 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--border-width',
 						'value'    => 'borderWidth',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => '--border-radius',
 						'value'    => 'cardBorderRadius',
-						'unit'     => 'px',
 					),
 					array(
 						'property'       => '--box-shadow',
@@ -207,17 +209,14 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--column-gap',
 						'value'    => 'columnGap',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => '--row-gap',
 						'value'    => 'rowGap',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => '--content-padding',
 						'value'    => 'padding',
-						'unit'     => 'px',
 					),
 				),
 			)
@@ -248,17 +247,14 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--column-gap',
 						'value'    => 'columnGapTablet',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => '--row-gap',
 						'value'    => 'rowGapTablet',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => '--content-padding',
 						'value'    => 'paddingTablet',
-						'unit'     => 'px',
 					),
 				),
 			)
@@ -289,17 +285,14 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--column-gap',
 						'value'    => 'columnGapMobile',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => '--row-gap',
 						'value'    => 'rowGapMobile',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => '--content-padding',
 						'value'    => 'paddingMobile',
-						'unit'     => 'px',
 					),
 				),
 			)
