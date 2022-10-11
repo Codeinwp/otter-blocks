@@ -53,12 +53,12 @@ class Flip_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property'  => '--width-tablet',
-						'value'     => 'widthTablet',
+						'property' => '--width-tablet',
+						'value'    => 'widthTablet',
 					),
 					array(
-						'property'  => '--width-mobile',
-						'value'     => 'widthMobile',
+						'property' => '--width-mobile',
+						'value'    => 'widthMobile',
 					),
 					array(
 						'property'  => '--height',
@@ -76,12 +76,12 @@ class Flip_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property'  => '--height-tablet',
-						'value'     => 'heightTablet',
+						'property' => '--height-tablet',
+						'value'    => 'heightTablet',
 					),
 					array(
-						'property'  => '--height-mobile',
-						'value'     => 'heightMobile',
+						'property' => '--height-mobile',
+						'value'    => 'heightMobile',
 					),
 					array(
 						'property' => '--border-color',
@@ -262,16 +262,16 @@ class Flip_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property'  => '--padding-tablet',
-						'value'     => 'paddingTablet',
-						'format'    => function( $value, $attrs ) {
+						'property' => '--padding-tablet',
+						'value'    => 'paddingTablet',
+						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values( $value, CSS_Utility::make_box( '20px' ) );
 						},
 					),
 					array(
-						'property'  => '--padding-mobile',
-						'value'     => 'paddingMobile',
-						'format'    => function( $value, $attrs ) {
+						'property' => '--padding-mobile',
+						'value'    => 'paddingMobile',
+						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values( $value, CSS_Utility::make_box( '20px' ) );
 						},
 					),
