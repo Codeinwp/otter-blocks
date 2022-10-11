@@ -1,4 +1,4 @@
-import { BlockProps, InspectorProps } from '../../helpers/blocks';
+import { BlockProps, BorderType, InspectorProps, PaddingType } from '../../helpers/blocks';
 
 type Attributes = {
 	id: string
@@ -18,6 +18,16 @@ type Attributes = {
 	closeColor: string
 	overlayColor: string
 	overlayOpacity: number
+	borderWidth: BorderType
+	borderRadius: BorderType
+	borderColor: string
+	padding: PaddingType
+	width: string
+	widthTablet: string
+	widthMobile: string
+	height: string
+	heightTablet: string
+	heightMobile: string
 }
 
 export type PopupPros = BlockProps<Attributes>

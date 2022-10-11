@@ -12,10 +12,10 @@
 			"type": "string"
 		},
 		"minWidth": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"maxWidth": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"trigger": {
 			"type": "string"
@@ -62,6 +62,36 @@
 		},
 		"overlayOpacity": {
 			"type": "number"
+		},
+		"padding": {
+			"type": "object"
+		},
+		"borderWidth": {
+			"type": "object"
+		},
+		"borderRadius": {
+			"type": "object"
+		},
+		"borderColor": {
+			"type": "string"
+		},
+		"width": {
+			"type": "string"
+		},
+		"widthTablet": {
+			"type": "string"
+		},
+		"widthMobile": {
+			"type": "string"
+		},
+		"height":{
+			"type": "string"
+		},
+		"heightTablet":{
+			"type": "string"
+		},
+		"heightMobile":{
+			"type": "string"
 		}
 	},
 	"editorStyle": "otter-popup-editor",

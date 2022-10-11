@@ -4,8 +4,8 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	__experimentalColorGradientControl as ColorGradientControl,
-	InspectorControls
+	InspectorControls,
+	PanelColorSettings
 } from '@wordpress/block-editor';
 
 import {
@@ -14,10 +14,12 @@ import {
 	PanelBody,
 	RangeControl,
 	SelectControl,
-	ToggleControl
+	ToggleControl,
+	__experimentalBoxControl as BoxControl,
+	__experimentalUnitControl as UnitControl
 } from '@wordpress/components';
 
-import { Fragment } from '@wordpress/element';
+import { Fragment, useState } from '@wordpress/element';
 
 import { applyFilters } from '@wordpress/hooks';
 
@@ -26,6 +28,8 @@ import { applyFilters } from '@wordpress/hooks';
  */
 import Notice from '../../components/notice/index.js';
 import { setUtm } from '../../helpers/helper-functions.js';
+import InspectorHeader from '../../components/inspector-header/index.js';
+import ResponsiveControl from '../../components/responsive-control/index.js';
 
 /**
  *
@@ -57,10 +61,18 @@ const ProFeatures = () => {
 	);
 };
 
+/**
+ *
+ * @param {import('./types').PopupInspectorProps} param0
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes
 }) => {
+
+	const [ tab, setTab ] = useState( 'settings' );
+
 	let triggerOptions = [
 		{
 			label: __( 'On Load', 'otter-blocks' ),
@@ -108,81 +120,142 @@ const Inspector = ({
 	return (
 		<InspectorControls>
 			{ applyFilters( 'otter.feedback', '', 'popup-block', __( 'Help us improve this block', 'otter-blocks' ) ) }
-			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
-			>
-				<SelectControl
-					label={ __( 'Open Trigger', 'otter-blocks' ) }
-					help={ ! Boolean( window.themeisleGutenberg.hasPro ) && __( 'You need to have Otter Pro to activate Pro features.', 'otter-blocks' ) }
-					options={ triggerOptions }
-					value={ attributes.trigger }
-					onChange={ trigger => setAttributes({ trigger }) }
-				/>
 
-				{ ( undefined === attributes.trigger || 'onLoad' === attributes.trigger ) && (
-					<RangeControl
-						label={ __( 'Wait Time', 'otter-blocks' ) }
-						help={ __( 'How much time to wait before showing the popup. Leave it empty to open instantly', 'otter-blocks' ) }
-						min={ 0 }
-						max={ 100 }
-						value={ attributes.wait }
-						onChange={ value => setAttributes({ wait: Number( value ) }) }
-					/>
-				) }
+			<InspectorHeader
+				value={ tab }
+				options={[
+					{
+						label: __( 'Settings', 'otter-blocks' ),
+						value: 'settings'
+					},
+					{
+						label: __( 'Style', 'otter-blocks' ),
+						value: 'style'
+					}
+				]}
+				onChange={ setTab }
+			/>
 
-				{ applyFilters( 'otter.popupBlock.controls', <Controls />, attributes, setAttributes ) }
-			</PanelBody>
+			<div>
+				{ 'settings' === tab && (
+					<Fragment>
+						<PanelBody
+							title={ __( 'Popup settings', 'otter-blocks' ) }
+						>
+							<SelectControl
+								label={ __( 'Open Trigger', 'otter-blocks' ) }
+								help={ ! Boolean( window.themeisleGutenberg.hasPro ) && __( 'You need to have Otter Pro to activate Pro features.', 'otter-blocks' ) }
+								options={ triggerOptions }
+								value={ attributes.trigger }
+								onChange={ trigger => setAttributes({ trigger }) }
+							/>
 
-			<PanelBody
-				title={ __( 'Style', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				<RangeControl
-					label={ __( 'Minimum Width', 'otter-blocks' ) }
-					step={ 0.1 }
-					min={ 100 }
-					max={ 1000 }
-					value={ attributes.minWidth }
-					allowReset
-					onChange={ value => setAttributes({ minWidth: Number( value ) }) }
-				/>
+							{ ( undefined === attributes.trigger || 'onLoad' === attributes.trigger ) && (
+								<RangeControl
+									label={ __( 'Trigger Time', 'otter-blocks' ) }
+									help={ __( 'How much time to wait before showing the popup. Leave it empty to open instantly', 'otter-blocks' ) }
+									min={ 0 }
+									max={ 100 }
+									value={ attributes.wait }
+									onChange={ value => setAttributes({ wait: Number( value ) }) }
+								/>
+							) }
 
-				<RangeControl
-					label={ __( 'Maximum Width', 'otter-blocks' ) }
-					step={ 0.1 }
-					min={ 100 }
-					max={ 1000 }
-					value={ attributes.maxWidth }
-					allowReset
-					onChange={ value => setAttributes({ maxWidth: Number( value ) }) }
-				/>
+							{ applyFilters( 'otter.popupBlock.controls', <Controls />, attributes, setAttributes ) }
+						</PanelBody>
+					</Fragment>
+				)}
 
-				<ColorGradientControl
-					label={ __( 'Background', 'otter-blocks' ) }
-					colorValue={ attributes.backgroundColor }
-					onColorChange={ backgroundColor => setAttributes({ backgroundColor }) }
-				/>
+				{
+					'style' === tab && (
+						<Fragment>
+							<PanelBody
+								title={ __( 'Dimensions', 'otter-blocks' ) }
+							>
+								<ResponsiveControl>
+									<UnitControl
+										label={ __( 'Width', 'otter-blocks' ) }
+										value={ '80%' }
+									/>
+								</ResponsiveControl>
 
-				{ attributes.showClose && (
-					<ColorGradientControl
-						label={ __( 'Close Button', 'otter-blocks' ) }
-						colorValue={ attributes.closeColor }
-						onColorChange={ closeColor => setAttributes({ closeColor }) }
-					/>
-				) }
+								<ResponsiveControl>
+									<UnitControl
+										label={ __( 'Height', 'otter-blocks' ) }
+										value={ '80%' }
+									/>
+								</ResponsiveControl>
 
-				<ColorGradientControl
-					label={ __( 'Overlay', 'otter-blocks' ) }
-					colorValue={ attributes.overlayColor }
-					onColorChange={ overlayColor => setAttributes({ overlayColor }) }
-				/>
 
-				<RangeControl
-					label={ __( 'Overlay Opacity', 'otter-blocks' ) }
-					value={ attributes.overlayOpacity }
-					onChange={ value => setAttributes({ overlayOpacity: Number( value ) }) }
-				/>
-			</PanelBody>
+							</PanelBody>
+							<PanelColorSettings
+								title={ __( 'Color', 'otter-blocks' ) }
+								initialOpen={ false }
+								colorSettings={ [
+									{
+										value: attributes.backgroundColor,
+										onChange: backgroundColor => setAttributes({ backgroundColor }),
+										label: __( 'Background', 'otter-blocks' )
+									},
+									{
+										value: attributes.closeColor,
+										onChange: closeColor => setAttributes({ closeColor }),
+										label: __( 'Close Button', 'otter-blocks' )
+									},
+									{
+										value: attributes.overlayColor,
+										onChange: overlayColor => setAttributes({ overlayColor }),
+										label: __( 'Overlay', 'otter-blocks' )
+									}
+								] }
+							/>
+							<PanelBody
+								title={ __( 'Overlay', 'otter-blocks' ) }
+							>
+								<RangeControl
+									label={ __( 'Overlay Opacity', 'otter-blocks' ) }
+									value={ attributes.overlayOpacity }
+									onChange={ value => setAttributes({ overlayOpacity: Number( value ) }) }
+								/>
+							</PanelBody>
+							<PanelBody
+								title={ __( 'Close Button', 'otter-blocks' ) }
+							>
+								<ToggleControl
+									label={ __( 'Show Close Button', 'otter-blocks' ) }
+									checked={ attributes.showClose }
+									onChange={ () => setAttributes({ showClose: ! attributes.showClose }) }
+								/>
+								<SelectControl
+									label={ __( 'Position', 'otter-blocks' ) }
+									options={ [
+										{
+											label: __( 'Inside', 'otter-blocks' ),
+											value: 'none'
+										},
+										{
+											label: __( 'Outside', 'otter-blocks' ),
+											value: 'outside'
+										}
+									] }
+								/>
+							</PanelBody>
+							<PanelBody
+								title={ __( 'Border', 'otter-blocks' ) }
+							>
+								<BoxControl
+									label={ __( 'Width', 'otter-blocks' ) }
+									value={{}}
+								/>
+								<BoxControl
+									label={ __( 'Border Radius', 'otter-blocks' ) }
+									value={{}}
+								/>
+							</PanelBody>
+						</Fragment>
+					)
+				}
+			</div>
 		</InspectorControls>
 	);
 };

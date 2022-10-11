@@ -31,6 +31,7 @@ import {
 import metadata from './block.json';
 import Inspector from './inspector.js';
 import { blockInit } from '../../helpers/block-utility';
+import { boxValues } from '../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -57,7 +58,11 @@ const Edit = ({
 		'--background-color': attributes.backgroundColor,
 		'--close-color': attributes.closeColor,
 		'--overlay-color': attributes.overlayColor,
-		'--overlay-opacity': attributes.overlayOpacity ? attributes.overlayOpacity / 100 : 1
+		'--overlay-opacity': attributes.overlayOpacity ? attributes.overlayOpacity / 100 : 1,
+		'--padding': boxValues( attributes.padding ),
+		'--brd-width': boxValues( attributes.borderWidth ),
+		'--brd-radius': boxValues( attributes.borderRadius ),
+		'--brd-color': attributes.borderColor
 	};
 
 	const blockProps = useBlockProps({
