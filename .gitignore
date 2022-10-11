@@ -8,3 +8,6 @@ vendor
 .DS_Store
 .vscode
 todo.md
+artifacts
+*.results.json
+trace.json

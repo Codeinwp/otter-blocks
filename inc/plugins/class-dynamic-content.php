@@ -229,14 +229,18 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_data( $data ) {
-		if ( isset( $data['context'] ) && 'query' === $data['context'] ) {
-			$data['context'] = get_the_ID();
+		if ( ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+			if ( isset( $data['context'] ) && 'query' === $data['context'] ) {
+				$data['context'] = get_the_ID();
+			} else {
+				/*
+				* We use the queried object ID to make sure when posts are displayed inside other posts
+				* the displayed post is being used as a source for the dynamic tags. Eg. Custom Layouts inside Neve.
+				*/
+				$data['context'] = get_queried_object_id();
+			}
 		} else {
-			/*
-			 * We use the queried object ID to make sure when posts are displayed inside other posts
-			 * the displayed post is being used as a source for the dynamic tags. Eg. Custom Layouts inside Neve.
-			 */
-			$data['context'] = get_queried_object_id();
+			$data['default'] = '';
 		}
 
 		if ( ! isset( $data['type'] ) && isset( $data['default'] ) ) {
@@ -249,6 +253,10 @@ class Dynamic_Content {
 
 		if ( 'postTitle' === $data['type'] ) {
 			return get_the_title( $data['context'] );
+		}
+
+		if ( 'postContent' === $data['type'] ) {
+			return $this->get_content( $data );
 		}
 
 		if ( 'postExcerpt' === $data['type'] ) {
@@ -307,7 +315,19 @@ class Dynamic_Content {
 			return $this->get_current_time( $data );
 		}
 
-		return apply_filters( 'otter_blocks_evaluate_dynamic_content_text', $data[0], $data );
+		return apply_filters( 'otter_blocks_evaluate_dynamic_content_text', $data['default'], $data );
+	}
+
+	/**
+	 * Get Content.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_content( $data ) {
+		$content = get_the_content( $data['context'] );
+		return wp_kses_post( $content );
 	}
 
 	/**
@@ -384,7 +404,7 @@ class Dynamic_Content {
 	public function get_loggedin_email( $data ) {
 		$user    = wp_get_current_user();
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$email   = $current_user->user_email;
+		$email   = $user->user_email;
 
 		if ( empty( $email ) ) {
 			$email = $default;

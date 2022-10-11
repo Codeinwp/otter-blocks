@@ -1,6 +1,6 @@
 import { BlockProps, InspectorProps } from '../../helpers/blocks';
 
-type Attributes = {
+type Attributes = Partial<{
 	id: string
 	title: string
 	percentage: number
@@ -12,10 +12,9 @@ type Attributes = {
 	backgroundColor: string
 	barBackgroundColor: string
 	titleColor: string
-	percentageColor: string,
-	titleFontSize: string
-}
+	percentageColor: string
+}>
 
 export type ProgressAttrs = Partial<Attributes>
 export type ProgressBarProps = BlockProps<Attributes>
-export interface ProgressBarInspectorProps extends InspectorProps<Attributes> {}
+export interface ProgressBarInspectorProps extends InspectorProps<Attributes> { }

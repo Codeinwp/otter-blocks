@@ -272,8 +272,9 @@ export const getChoice = arr => {
 /**
  * Return the values from a box type.
  *
- * @param {import('./blocks').BoxType} box
- * @param {import('./blocks').BoxType} defaultBox
+ * @param {import('./blocks').BoxType?} box
+ * @param {import('./blocks').BoxType?} defaultBox
+ * @return {string}
  */
 export const boxValues = ( box = {}, defaultBox = {}) => {
 	return `${ box?.top ?? defaultBox?.top ?? '0px' } ${ box?.right ?? defaultBox?.right ?? '0px' } ${ box?.bottom ?? defaultBox?.bottom ?? '0px' } ${ box?.left ?? defaultBox?.left ?? '0px' }`;
@@ -297,8 +298,8 @@ export const removeBoxDefaultValues = ( box, defaultBox ) => {
 /**
  * Merge the Box objects.
  *
- * @param {import('./blocks').BoxType} box
- * @param {import('./blocks').BoxType} defaultBox
+ * @param {import('./blocks').BoxType?} box
+ * @param {import('./blocks').BoxType?} defaultBox
  * @return {import('./blocks').BoxType}
  */
 export const mergeBoxDefaultValues = ( box, defaultBox ) => {

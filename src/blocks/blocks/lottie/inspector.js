@@ -159,6 +159,7 @@ const Inspector = ({
 						gradientValue={ attributes.backgroundGradient }
 						onColorChange={ newValue => setAttributes({ backgroundColor: newValue }) }
 						onGradientChange={ newValue => setAttributes({ backgroundGradient: newValue }) }
+						showTitle={ false }
 						className="otter-lottie-background-control"
 					/>
 				</PanelBody>
