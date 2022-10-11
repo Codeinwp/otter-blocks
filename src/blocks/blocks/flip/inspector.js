@@ -160,7 +160,7 @@ const Inspector = ({
 								/>
 							</PanelBody>
 							<PanelBody
-								title={ __( 'Front side content', 'otter-blocks' ) }
+								title={ __( 'Front Side Content', 'otter-blocks' ) }
 							>
 								<ButtonToggle
 									label={ __( 'Content Type', 'otter-blocks' ) }
@@ -422,7 +422,7 @@ const Inspector = ({
 								/>
 							</PanelBody>
 							<PanelBody
-								title={ __( 'Front side', 'otter-blocks' ) }
+								title={ __( 'Front Side', 'otter-blocks' ) }
 							>
 								<BackgroundSelectorControl
 									backgroundType={ attributes.frontBackgroundType }
@@ -449,7 +449,7 @@ const Inspector = ({
 								/>
 							</PanelBody>
 							<PanelBody
-								title={ __( 'Back side', 'otter-blocks' ) }
+								title={ __( 'Back Side', 'otter-blocks' ) }
 							>
 								<BackgroundSelectorControl
 									backgroundType={ attributes.backBackgroundType }
