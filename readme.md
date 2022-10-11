@@ -170,6 +170,19 @@ We're constantly adding new Gutenberg Blocks to Otter to assist in your website 
 - Plugin Card Gutenberg Block [FREE]
 - Subscribe Form Gutenberg Block [FREE]
 
+### Get More Options in Otter Pro
+
+With [Otter Pro](https://themeisle.com/plugins/otter-blocks/), you get a lot more features, including:
+
+- Add to Cart Block
+- Business Hours Block
+- Product Review Comparison Block
+- More Dynamic Content options
+- More Visibility Conditions options
+- and more!
+
+You can try a live demo of Otter Pro [by clicking here](https://themeisle.com/plugins/otter-blocks/try-otter/).
+
 ### Support
 
 We're here to help. Feel free to open a new thread on the [Support Forum](https://wordpress.org/support/plugin/otter-blocks/).

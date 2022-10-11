@@ -22,7 +22,7 @@ This steps are similar with the registration of the block.
 
 When you create a class, just duplicated another PHP file and change it. I will choose the `inc/css/blocks/class-accordion-css` since it has a small code and I can delete it faster. 
 
-:warning: *When it comes to naming things we want to fallow the same convention*. For this part the name blueprint is `class-{block name in kebab case [1]}-css.php`
+:warning: *When it comes to naming things we want to follow the same convention*. For this part the name blueprint is `class-{block name in kebab case [1]}-css.php`
 
 So, the name of the file will be: `class-tutorial-2-css.php`
 
@@ -122,7 +122,7 @@ public function autoload_block_classes() {
 
 :warning: If you come back to your page and refresh an PHP error will rise (check the preview page). We made Gutenberg Blocks to know about the existance of this class, but Otter Blocks still does not who is this.
 
-We need to register the class in two more files: `autoload_classmap.php` and `autoload_static.php` in `otter-blocks/vendor/composer`. Fallow the same pattern as the ones in the file for writing the path to the class. Or, you can run `composer dumpautoload -o` in the Otter root folder (`otter-blocks/`) to auto detect the class. It will give you a message like this:
+We need to register the class in two more files: `autoload_classmap.php` and `autoload_static.php` in `otter-blocks/vendor/composer`. Follow the same pattern as the ones in the file for writing the path to the class. Or, you can run `composer dumpautoload -o` in the Otter root folder (`otter-blocks/`) to auto detect the class. It will give you a message like this:
 ```
 Generating optimized autoload files
 Generated optimized autoload files containing 55 classes

@@ -65,6 +65,7 @@ class Main {
 
 		$classnames = array(
 			'\ThemeIsle\GutenbergBlocks\Registration',
+			'\ThemeIsle\GutenbergBlocks\Patterns',
 			'\ThemeIsle\GutenbergBlocks\Pro',
 			'\ThemeIsle\GutenbergBlocks\Blocks_Export_Import',
 			'\ThemeIsle\GutenbergBlocks\CSS\Block_Frontend',

@@ -76,7 +76,7 @@ const SettingsPanel = ({ attributes }) => (
 					value: ''
 				},
 				{
-					label: __( 'Evergeen (Pro)', 'otter-blocks' ),
+					label: __( 'Evergreen (Pro)', 'otter-blocks' ),
 					value: 'timer',
 					disabled: true
 				},
@@ -123,7 +123,8 @@ const EndActionPanel = () => (
 		/>
 
 		<ToggleControl
-			label={ __( 'Enable Hide/Show other blocks when the Countdown ends.', 'otter-blocks' ) }
+			label={ __( 'Hide/Show Blocks When the Countdown Ends', 'otter-blocks' ) }
+			help={ __( 'Enable Hide/Show other blocks when the Countdown ends.', 'otter-blocks' ) }
 			checked={ false }
 			onChange={ () => {}}
 			disabled
