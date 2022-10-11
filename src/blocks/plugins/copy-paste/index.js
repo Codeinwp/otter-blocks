@@ -7,7 +7,7 @@ import { select, dispatch } from '@wordpress/data';
 import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
 import { Fragment } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
-import { KeyboardShortcuts, MenuGroup, MenuItem } from '@wordpress/components';
+import { MenuGroup, MenuItem } from '@wordpress/components';
 
 /**
   * Internal dependencies.
@@ -123,30 +123,25 @@ const iconTextWrapper = ( text ) => (
  * @returns
  */
 const CopyPasteComponent = ( ) => {
-
 	return (
 		<Fragment>
-
-			<KeyboardShortcuts
-				shortcuts={ {
-					'ctrl+alt+c': copy,
-					'ctrl+alt+v': ! copyPaste.isExpired ? paste : () => {}
-				} }
-			/>
-
-			<PluginBlockSettingsMenuItem
-				label={  __( 'Copy style', 'otter-blocks' ) }
-				onClick={ copy }
-			/>
-
 			{
-				! copyPaste.isExpired && (
-					<PluginBlockSettingsMenuItem
-						label={  __( 'Paste style', 'otter-blocks' ) }
-						onClick={ paste }
+				window?.themeisleGutenberg?.isBlockEditor && (
+					<Fragment>
+						<PluginBlockSettingsMenuItem
+							label={  __( 'Copy style', 'otter-blocks' ) }
+							onClick={ copy }
+						/>
 
-						// icon={ iconTextWrapper( `${displayShortcut.ctrl()}${displayShortcut.alt( 'V' )}` ) }
-					/>
+						{
+							! copyPaste.isExpired && (
+								<PluginBlockSettingsMenuItem
+									label={  __( 'Paste style', 'otter-blocks' ) }
+									onClick={ paste }
+								/>
+							)
+						}
+					</Fragment>
 				)
 			}
 		</Fragment>
