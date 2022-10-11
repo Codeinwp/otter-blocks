@@ -17,7 +17,7 @@ const Controls = ({
 	return (
 		<BlockControls>
 			<BlockAlignmentControl
-				label={ __( 'Change vertical alignment', 'otter-blocks' ) }
+				label={ __( 'Change Vertical Alignment', 'otter-blocks' ) }
 				value={ attributes.verticalAlign }
 				onChange={ verticalAlign => setAttributes({ verticalAlign }) }
 			/>

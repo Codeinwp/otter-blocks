@@ -98,7 +98,6 @@
 
 			.o-posts-grid-post-body {
 				flex-basis: 66.66%;
-				padding-top: var(  --content-padding );
 
 				&.is-full {
 					flex-basis: 100%;
@@ -281,12 +280,6 @@
 
 		.is-list {
 			row-gap: var( --row-gap-tablet );
-
-			.o-posts-grid-post {
-				.o-posts-grid-post-body {
-					padding-top: var(  --content-padding-tablet );
-				}
-			}
 		}
 
 		.o-posts-grid-post-body {
@@ -373,12 +366,6 @@
 
 		.is-list {
 			row-gap: var( --row-gap-mobile );
-
-			.o-posts-grid-post {
-				.o-posts-grid-post-body {
-					padding-top: var(  --content-padding-mobile );
-				}
-			}
 		}
 
 		.o-posts-grid-post-body {
