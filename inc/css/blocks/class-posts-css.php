@@ -139,7 +139,19 @@ class Posts_CSS extends Base_CSS {
 						'property' => '--img-border-radius',
 						'value'    => 'borderRadius',
 						'format'   => function( $value, $attrs ) {
-							return is_numeric( $value ) ? $value . 'px' : $value;
+							if ( is_numeric( $value ) ) {
+								return $value . 'px';
+							}
+
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left'   => '0px',
+									'right'  => '0px',
+									'top'    => '0px',
+									'bottom' => '0px',
+								)
+							);
 						},
 					),
 					array(
@@ -199,6 +211,17 @@ class Posts_CSS extends Base_CSS {
 					array(
 						'property' => '--border-radius',
 						'value'    => 'cardBorderRadius',
+						'format'   => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left'   => '0px',
+									'right'  => '0px',
+									'top'    => '0px',
+									'bottom' => '0px',
+								)
+							);
+						},
 					),
 					array(
 						'property'       => '--box-shadow',

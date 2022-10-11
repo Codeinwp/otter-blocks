@@ -10,6 +10,7 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	isNumber,
+	isObject,
 	isUndefined,
 	pickBy
 } from 'lodash';
@@ -46,6 +47,7 @@ import {
 import Layout from './components/layout/index.js';
 import {
 	_align,
+	boxValues,
 	buildResponsiveGetAttributes,
 	getCustomPostTypeSlugs
 } from '../../helpers/helper-functions.js';
@@ -57,6 +59,14 @@ const { attributes: defaultAttributes } = metadata;
 const px = value => value ? `${ value }px` : value;
 
 const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
+
+const mightBeBoxed = value => {
+	if ( isObject( value ) ) {
+		return boxValues( value );
+	}
+
+	return mightBeUnit( value );
+};
 
 /**
  * Posts component
@@ -133,10 +143,10 @@ const Edit = ({
 	const boxShadow = getValue( 'boxShadow' );
 
 	const inlineStyles = {
-		'--img-border-radius': mightBeUnit( attributes.borderRadius ),
+		'--img-border-radius': mightBeBoxed( attributes.borderRadius ),
 		'--img-box-shadow': imageBoxShadow.active && `${ imageBoxShadow.horizontal }px ${ imageBoxShadow.vertical }px ${ imageBoxShadow.blur }px ${ imageBoxShadow.spread }px ${ hexToRgba( imageBoxShadow.color || '#FFFFFF', imageBoxShadow.colorOpacity ) }`,
 		'--border-width': mightBeUnit( attributes.borderWidth ),
-		'--border-radius': mightBeUnit( attributes.cardBorderRadius ),
+		'--border-radius': boxValues( attributes.cardBorderRadius ),
 		'--box-shadow': boxShadow.active && `${ boxShadow.horizontal }px ${ boxShadow.vertical }px ${ boxShadow.blur }px ${ boxShadow.spread }px ${ hexToRgba( boxShadow.color || '#FFFFFF', boxShadow.colorOpacity ) }`,
 		'--vert-align': _align( attributes.verticalAlign ),
 		'--text-align': attributes.textAlign,

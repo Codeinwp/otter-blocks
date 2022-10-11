@@ -147,13 +147,13 @@
 			"type": "string"
 		},
 		"borderRadius": {
-			"type": [ "string", "number" ]
+			"type": [ "number", "object" ]
 		},
 		"borderWidth": {
 			"type": "string"
 		},
 		"cardBorderRadius": {
-			"type": "string"
+			"type": "object"
 		},
 		"boxShadow": {
 			"type": "object",

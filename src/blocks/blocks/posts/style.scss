@@ -131,6 +131,7 @@
 		background-clip: border-box;
 
 		.o-posts-grid-post {
+			overflow: hidden;
 			border-width: var( --border-width );
 			border-style: solid;
 			border-color: var( --border-color );

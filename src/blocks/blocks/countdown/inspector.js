@@ -640,7 +640,6 @@ const Inspector = ({
 					</ResponsiveControl>
 				) }
 
-
 				<BoxControl
 					label={ __( 'Border Radius', 'otter-blocks' ) }
 					values={

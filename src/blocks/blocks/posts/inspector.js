@@ -3,7 +3,10 @@
  */
 import { __ } from '@wordpress/i18n';
 
+import { isNumber } from 'lodash';
+
 import {
+	__experimentalBoxControl as BoxControl,
 	__experimentalUnitControl as UnitContol,
 	FontSizePicker,
 	PanelBody,
@@ -85,6 +88,21 @@ const defaultFontSizes = [
 		slug: 'xl'
 	}
 ];
+
+const px = value => value ? `${ value }px` : value;
+
+const mightBeNumber = value => {
+	if ( isNumber( value ) ) {
+		return {
+			top: px( value ),
+			right: px( value ),
+			bottom: px( value ),
+			left: px( value )
+		};
+	}
+
+	return value;
+};
 
 /**
  *
@@ -411,15 +429,11 @@ const Inspector = ({
 						title={ __( 'Image', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
-						<UnitContol
+						<BoxControl
 							label={ __( 'Border Radius', 'otter-blocks' ) }
-							value={ attributes.borderRadius }
+							values={ mightBeNumber( attributes.borderRadius ) }
 							onChange={ borderRadius => setAttributes({ borderRadius }) }
-						/>
-
-						<ClearButton
-							values={[ 'borderRadius' ]}
-							setAttributes={ setAttributes }
+							id="o-border-raduis-box"
 						/>
 
 						{ 'list' === attributes.style && (
@@ -521,15 +535,11 @@ const Inspector = ({
 							setAttributes={ setAttributes }
 						/>
 
-						<UnitContol
+						<BoxControl
 							label={ __( 'Radius', 'otter-blocks' ) }
 							value={ attributes.cardBorderRadius }
 							onChange={ cardBorderRadius => setAttributes({ cardBorderRadius }) }
-						/>
-
-						<ClearButton
-							values={[ 'cardBorderRadius' ]}
-							setAttributes={ setAttributes }
+							id="o-border-raduis-box"
 						/>
 
 						<BoxShadowControl

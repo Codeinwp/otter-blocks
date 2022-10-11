@@ -31,9 +31,9 @@ type Attributes = {
 	customDescriptionFontSize: number
 	customDescriptionFontSizeTablet: number
 	customDescriptionFontSizeMobile: number
-	borderRadius: number|string
+	borderRadius: number|object
 	borderWidth: string
-	cardBorderRadius: string
+	cardBorderRadius: object
 	boxShadow: BoxShadow
 	imageBoxShadow: BoxShadow
 	textAlign: string
