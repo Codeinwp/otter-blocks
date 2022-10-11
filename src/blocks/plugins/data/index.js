@@ -16,7 +16,7 @@ import { registerStore } from '@wordpress/data';
 import { getQueryStringFromObject } from '../../helpers/helper-functions.js';
 
 const DEFAULT_STATE = {
-	showOnboarding: Boolean( window.themeisleGutenberg.showOnboarding ),
+	showOnboarding: Boolean( window.themeisleGutenberg.showOnboarding ) && 'false' !== localStorage?.getItem( 'o-show-onboarding' ),
 	viewType: 'Desktop',
 	visiblePopover: 'themeisle-blocks/dynamic-value',
 	dynamicData: {}
