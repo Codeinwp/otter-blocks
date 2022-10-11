@@ -3,16 +3,15 @@
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { addFilter, applyFilters } from '@wordpress/hooks';
 import { Fragment } from '@wordpress/element';
-import { createSlotFill, ExternalLink } from '@wordpress/components';
+import { createSlotFill } from '@wordpress/components';
 import { BlockControls } from '@wordpress/block-editor';
-import { DropdownMenu, ToolbarGroup, ToolbarDropdownMenu } from '@wordpress/components';
+import { ToolbarGroup, ToolbarDropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { otterIcon } from '../../helpers/icons';
 import { sortBy } from 'lodash';
 
 const { Fill, Slot } = createSlotFill( 'OtterControlTools' );
 
-export const useOtterControlTools = () => Fill;
 
 export const OtterControlTools = ({ children, order }) => {
 	return <Fill >
@@ -23,12 +22,6 @@ export const OtterControlTools = ({ children, order }) => {
 };
 
 const withOtterTools = createHigherOrderComponent( BlockEdit => {
-
-
-	/**
-	 * Note: The order of the apperence will corespons with the order of imports
-	 *
-	 */
 	return ( props ) => {
 
 		if ( props.isSelected ) {
@@ -42,8 +35,6 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 								if ( ! Boolean( fills.length ) ) {
 									return null;
 								}
-
-								console.log( fills );
 
 								return (
 									<BlockControls>
@@ -59,7 +50,6 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 																return fill[0]?.props.order;
 															})}
 															<div className="o-fp-wrap" style={{ marginRight: '10px' }}>
-																{/* <ExternalLink href='/wp-admin/options-general.php?page=otter' target='_blank'>{__( 'Feedback', 'otter-blocks' )}</ExternalLink> */}
 																{ applyFilters( 'otter.poweredBy', '' ) }
 															</div>
 														</Fragment>
@@ -71,9 +61,7 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 								);
 							}
 						}
-
 					</Slot>
-
 				</Fragment>
 			);
 		}
