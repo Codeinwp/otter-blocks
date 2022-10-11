@@ -27,11 +27,29 @@
 		"width": {
 			"type": ["number", "object"]
 		},
+		"widthTablet": {
+			"type": "object"
+		},
+		"widthMobile": {
+			"type": "object"
+		},
 		"height": {
 			"type": ["number", "object"]
 		},
+		"heightTablet": {
+			"type": "object"
+		},
+		"heightMobile": {
+			"type": "object"
+		},	
 		"padding": {
 			"type": ["number", "object"]
+		},
+		"paddingTablet": {
+			"type": "object"
+		},
+		"paddingMobile": {
+			"type": "object"
 		},
 		"borderWidth": {
 			"type": ["number", "object"]

@@ -356,8 +356,8 @@ const Inspector = ({
 									label={ __( 'Width', 'otter-blocks' ) }
 								>
 									<UnitControl
-										value={ responsiveGetAttributes([ isNumber( attributes.width ) ? _px( attributes.width ) : attributes?.width?.desktop, attributes.width?.tablet, attributes?.width?.mobile ]) ?? '100%' }
-										onChange={ width => responsiveSetAttributes( width, [ 'width.desktop', 'width.tablet', 'width.mobile' ], attributes.width ) }
+										value={ responsiveGetAttributes([ isNumber( attributes.width ) ? _px( attributes.width ) : attributes?.width, attributes.widthTablet, attributes?.widthMobile ]) ?? '100%' }
+										onChange={ width => responsiveSetAttributes( width, [ 'width', 'widthTablet', 'widthMobile' ], attributes.width ) }
 
 										isUnitSelectTabbable
 										isResetValueOnUnitChange
@@ -369,8 +369,8 @@ const Inspector = ({
 									label={ __( 'Height', 'otter-blocks' ) }
 								>
 									<UnitControl
-										value={ responsiveGetAttributes([ isNumber( attributes.height ) ? _px( attributes.height ) : attributes?.height?.desktop, attributes.height?.tablet, attributes?.height?.mobile ]) ?? '300px' }
-										onChange={ height => responsiveSetAttributes( height, [ 'height.desktop', 'height.tablet', 'height.mobile' ], attributes.height ) }
+										value={ responsiveGetAttributes([ isNumber( attributes.height ) ? _px( attributes.height ) : attributes?.height, attributes.heightTablet, attributes?.heightMobile ]) ?? '300px' }
+										onChange={ height => responsiveSetAttributes( height, [ 'height', 'heightTablet', 'heightMobile' ], attributes.height ) }
 										isUnitSelectTabbable
 										isResetValueOnUnitChange
 										allowReset={ true }
@@ -383,7 +383,7 @@ const Inspector = ({
 									<BoxControl
 										label={ __( 'Padding', 'otter-blocks' ) }
 										values={
-											responsiveGetAttributes([ attributes?.padding?.desktop, attributes.padding?.tablet, attributes?.padding?.mobile ]) ?? ( isNumber( attributes.padding ) ? stringToBox( _px( attributes.padding ) ) : stringToBox( '20px' ) )
+											responsiveGetAttributes([ attributes?.padding, attributes.paddingTablet, attributes?.paddingMobile ]) ?? ( isNumber( attributes.padding ) ? stringToBox( _px( attributes.padding ) ) : stringToBox( '20px' ) )
 										}
 										onChange={ value => {
 
@@ -396,7 +396,7 @@ const Inspector = ({
 												result = undefined;
 											}
 
-											responsiveSetAttributes( result, [ 'padding.desktop', 'padding.tablet', 'padding.mobile' ], attributes.padding );
+											responsiveSetAttributes( result, [ 'padding', 'paddingTablet', 'paddingMobile' ], attributes.padding );
 										} }
 									/>
 								</ResponsiveControl>

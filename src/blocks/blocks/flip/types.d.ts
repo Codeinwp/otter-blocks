@@ -1,4 +1,4 @@
-import { BlockProps, BorderType, ImagePosition, InspectorProps, MediaImageProps, PaddingType, Responsive } from '../../helpers/blocks';
+import { BlockProps, BorderType, ImagePosition, InspectorProps, MediaImageProps, PaddingType } from '../../helpers/blocks';
 
 type Attributes = {
 	id: string
@@ -6,9 +6,15 @@ type Attributes = {
 	title: string
 	description: string
 	animType: string
-	width: number | Responsive<string>
-	height: number | Responsive<string>
-	padding: number | Responsive<PaddingType>
+	width: number | string
+	widthTablet: string
+	widthMobile: string
+	height: number | string
+	heightTablet: string
+	heightMobile: string
+	padding: number | PaddingType
+	paddingTablet: PaddingType
+	paddingMobile: PaddingType
 	borderWidth: number
 	borderColor: string
 	borderRadius: number | BorderType
@@ -17,7 +23,7 @@ type Attributes = {
 	frontHorizontalAlign: string
 	backVerticalAlign: string
 	frontContentType: 'image' | 'icon'
-	frontMedia: MediaImage
+	frontMedia: MediaImageProps
 	frontMediaWidth: number | string
 	frontMediaHeight: number | string
 	frontBackgroundImage: MediaImageProps
@@ -50,4 +56,7 @@ type Attributes = {
 }
 
 export type FlipProps = BlockProps<Attributes>
-export interface FlipInspectorProps extends InspectorProps<Attributes> {}
+export interface FlipInspectorProps extends InspectorProps<Attributes> {
+	currentSide: string
+	setSide: ( s: string ) => void
+}

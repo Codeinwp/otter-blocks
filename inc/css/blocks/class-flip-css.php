@@ -49,31 +49,16 @@ class Flip_CSS extends Base_CSS {
 						'property'  => '--width',
 						'value'     => 'width',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['width'] ) && isset( $attrs['width']['desktop'] );
-						},
-						'format'    => function( $value, $attrs ) {
-							return $value['desktop'];
+							return isset( $attrs['width'] ) && is_string( $attrs['width'] );
 						},
 					),
 					array(
 						'property'  => '--width-tablet',
-						'value'     => 'width',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['width'] ) && isset( $attrs['width']['tablet'] );
-						},
-						'format'    => function( $value, $attrs ) {
-							return $value['tablet'];
-						},
+						'value'     => 'widthTablet',
 					),
 					array(
 						'property'  => '--width-mobile',
-						'value'     => 'width',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['width'] ) && isset( $attrs['width']['mobile'] );
-						},
-						'format'    => function( $value, $attrs ) {
-							return $value['mobile'];
-						},
+						'value'     => 'widthMobile',
 					),
 					array(
 						'property'  => '--height',
@@ -87,31 +72,16 @@ class Flip_CSS extends Base_CSS {
 						'property'  => '--height',
 						'value'     => 'height',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['height'] ) && isset( $attrs['height']['desktop'] );
-						},
-						'format'    => function( $value, $attrs ) {
-							return $value['desktop'];
+							return isset( $attrs['height'] ) && is_string( $attrs['height'] );
 						},
 					),
 					array(
 						'property'  => '--height-tablet',
-						'value'     => 'height',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['height'] ) && isset( $attrs['height']['tablet'] );
-						},
-						'format'    => function( $value, $attrs ) {
-							return $value['tablet'];
-						},
+						'value'     => 'heightTablet',
 					),
 					array(
 						'property'  => '--height-mobile',
-						'value'     => 'height',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['height'] ) && isset( $attrs['height']['mobile'] );
-						},
-						'format'    => function( $value, $attrs ) {
-							return $value['mobile'];
-						},
+						'value'     => 'heightMobile',
 					),
 					array(
 						'property' => '--border-color',
@@ -285,30 +255,24 @@ class Flip_CSS extends Base_CSS {
 						'property'  => '--padding',
 						'value'     => 'padding',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['padding'] ) && isset( $attrs['padding']['desktop'] );
+							return isset( $attrs['padding'] ) && is_array( $attrs['padding'] );
 						},
 						'format'    => function( $value, $attrs ) {
-							return CSS_Utility::box_values( $value['desktop'], CSS_Utility::make_box( '20px' ) );
+							return CSS_Utility::box_values( $value, CSS_Utility::make_box( '20px' ) );
 						},
 					),
 					array(
 						'property'  => '--padding-tablet',
-						'value'     => 'padding',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['padding'] ) && isset( $attrs['padding']['tablet'] );
-						},
+						'value'     => 'paddingTablet',
 						'format'    => function( $value, $attrs ) {
-							return CSS_Utility::box_values( $value['tablet'], CSS_Utility::make_box( '20px' ) );
+							return CSS_Utility::box_values( $value, CSS_Utility::make_box( '20px' ) );
 						},
 					),
 					array(
 						'property'  => '--padding-mobile',
-						'value'     => 'padding',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['padding'] ) && isset( $attrs['padding']['mobile'] );
-						},
+						'value'     => 'paddingMobile',
 						'format'    => function( $value, $attrs ) {
-							return CSS_Utility::box_values( $value['mobile'], CSS_Utility::make_box( '20px' ) );
+							return CSS_Utility::box_values( $value, CSS_Utility::make_box( '20px' ) );
 						},
 					),
 					array(

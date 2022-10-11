@@ -193,7 +193,7 @@ export const _unit = ( value, unit ) => ( isNumber( value ) ? value + unit : val
 /**
  * Format the value into a `px` unit.
  *
- * @param {string} value The value.
+ * @param {any} value The value.
  * @returns {string|undefined}
  */
 export const _px = value => _unit( value, 'px' );
@@ -443,7 +443,7 @@ export const stringToBox = ( s ) => {
 
 /**
  * Make a box intro a CSS string. If it is a string, wrap it into a box.
- * @param {string|import('./blocks').BoxType} box The box.
+ * @param {string|import('./blocks').BoxType | undefined} box The box.
  * @returns
  */
 export const boxToCSS = ( box ) => {

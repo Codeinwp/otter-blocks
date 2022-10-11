@@ -3,6 +3,7 @@
  * External dependencies
  */
 import classnames from 'classnames';
+import hexToRgba from 'hex-rgba';
 
 /**
  * WordPress dependencies.
@@ -35,12 +36,14 @@ import {
 } from '../../helpers/block-utility.js';
 import { boxToCSS, getChoice, mergeBoxDefaultValues, stringToBox, _px } from '../../helpers/helper-functions.js';
 import { isNumber } from 'lodash';
+import { type FlipProps } from './types';
+import { type BoxType } from '../../helpers/blocks';
 
 const { attributes: defaultAttributes } = metadata;
 
 /**
  * Flip component
- * @param {import('./types').FlipProps} props
+ * @param props
  * @returns
  */
 const Edit = ({
@@ -48,7 +51,7 @@ const Edit = ({
 	setAttributes,
 	clientId,
 	isSelected
-}) => {
+}: FlipProps ) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
@@ -58,7 +61,7 @@ const Edit = ({
 
 	const getShadowColor = () => {
 		if ( attributes.boxShadowColor ) {
-			if ( attributes.boxShadowColor.includes( '#' ) && 0 <= attributes.boxShadowColorOpacity ) {
+			if ( attributes.boxShadowColor.includes( '#' ) && attributes?.boxShadowColorOpacity && 0 <= attributes.boxShadowColorOpacity ) {
 				return hexToRgba( attributes.boxShadowColor, attributes.boxShadowColorOpacity || 0.00001 );
 			}
 			return attributes.boxShadowColor;
@@ -67,12 +70,12 @@ const Edit = ({
 	};
 
 	const inlineStyles = {
-		'--width': ( attributes.width !== undefined && isNumber( attributes.width ) && _px( attributes.width ) ) || ( attributes.width?.desktop ),
-		'--width-tablet': attributes.width?.tablet,
-		'--width-mobile': attributes.width?.mobile,
-		'--height': ( attributes.height !== undefined && isNumber( attributes.isNumber ) && _px( attributes.height ) ) || attributes.height?.desktop,
-		'--height-tablet': attributes.height?.tablet,
-		'--height-mobile': attributes.height?.mobile,
+		'--width': ( attributes.width !== undefined && isNumber( attributes.width ) && _px( attributes.width ) ) || ( attributes.width ),
+		'--width-tablet': attributes.widthTablet,
+		'--width-mobile': attributes.widthMobile,
+		'--height': ( attributes.height !== undefined && isNumber( attributes.height ) && _px( attributes.height ) ) || attributes.height,
+		'--height-tablet': attributes.heightTablet,
+		'--height-mobile': attributes.heightMobile,
 		'--border-width': attributes.borderWidth !== undefined && boxToCSS( mergeBoxDefaultValues(
 			stringToBox( _px( attributes.borderWidth ) ),
 			{ left: '3px', right: '3px', bottom: '3px', top: '3px' }
@@ -84,12 +87,12 @@ const Edit = ({
 		)  ),
 		'--front-background': getChoice([
 			[ ( 'gradient' === attributes.frontBackgroundType && attributes.frontBackgroundGradient ), attributes.frontBackgroundGradient ],
-			[ ( 'image' === attributes.frontBackgroundType && attributes.frontBackgroundImage?.url ), `url( ${ attributes.frontBackgroundImage?.url } ) ${ attributes.frontBackgroundRepeat || 'repeat' } ${ attributes.frontBackgroundAttachment || 'scroll' } ${ Math.round( attributes.frontBackgroundPosition?.x * 100 ) || 50 }% ${ Math.round( attributes.frontBackgroundPosition?.y * 100 ) || 50 }%/${ attributes.frontBackgroundSize || 'auto' }` ],
+			[ ( 'image' === attributes.frontBackgroundType && attributes.frontBackgroundImage?.url ), `url( ${ attributes.frontBackgroundImage?.url } ) ${ attributes.frontBackgroundRepeat || 'repeat' } ${ attributes.frontBackgroundAttachment || 'scroll' } ${ Math.round( attributes.frontBackgroundPosition?.x ?? 0.5 * 100 ) }% ${ Math.round( attributes.frontBackgroundPosition?.y ?? 0.5 * 100 ) }%/${ attributes.frontBackgroundSize || 'auto' }` ],
 			[ attributes.frontBackgroundColor ]
 		]),
 		'--back-background': getChoice([
 			[ ( 'gradient' === attributes.backBackgroundType && attributes.backBackgroundGradient ), attributes.backBackgroundGradient ],
-			[ ( 'image' === attributes.backBackgroundType && attributes.backBackgroundImage?.url ), `url( ${ attributes.backBackgroundImage?.url } ) ${ attributes.backBackgroundRepeat || 'repeat' } ${ attributes.backBackgroundAttachment || 'scroll' } ${ Math.round( attributes.backBackgroundPosition?.x * 100 ) || 50 }% ${ Math.round( attributes.backBackgroundPosition?.y * 100 ) || 50 }%/${ attributes.backBackgroundSize || 'auto' }` ],
+			[ ( 'image' === attributes.backBackgroundType && attributes.backBackgroundImage?.url ), `url( ${ attributes.backBackgroundImage?.url } ) ${ attributes.backBackgroundRepeat || 'repeat' } ${ attributes.backBackgroundAttachment || 'scroll' } ${ Math.round( attributes.backBackgroundPosition?.x ?? 0.5 * 100 ) }% ${ Math.round( attributes.backBackgroundPosition?.y ?? 0.5 * 100 ) }%/${ attributes.backBackgroundSize || 'auto' }` ],
 			[ attributes.backBackgroundColor ]
 		]),
 		'--box-shadow': attributes.boxShadow && `${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ getShadowColor() }`,
@@ -98,9 +101,9 @@ const Edit = ({
 		'--back-vertical-align': attributes.backVerticalAlign,
 		'--front-media-width': _px( attributes.frontMediaWidth ),
 		'--front-media-height': _px( attributes.frontMediaHeight ),
-		'--padding': attributes.padding !== undefined && isNumber( attributes.padding ) && _px( attributes.padding ) || boxToCSS( attributes?.padding?.desktop ),
-		'--padding-tablet': boxToCSS( attributes?.padding?.tablet ),
-		'--padding-mobile': boxToCSS( attributes?.padding?.mobile )
+		'--padding': attributes.padding !== undefined && isNumber( attributes.padding ) && _px( attributes.padding ) || boxToCSS( attributes?.padding as BoxType | undefined ),
+		'--padding-tablet': boxToCSS( attributes?.paddingTablet ),
+		'--padding-mobile': boxToCSS( attributes?.paddingMobile )
 
 	};
 
@@ -123,6 +126,8 @@ const Edit = ({
 	}, [ currentSide, attributes.titleFontSize, attributes.descriptionFontSize, attributes.titleColor, attributes.descriptionColor ]);
 
 	const blockProps = useBlockProps({
+
+		// @ts-ignore
 		id: attributes.id,
 		className: classnames(
 			{
@@ -151,6 +156,7 @@ const Edit = ({
 				setSide={ setSide }
 			/>
 
+			{/** @ts-ignore */}
 			<div { ...blockProps }>
 				<div
 					className={
@@ -171,14 +177,14 @@ const Edit = ({
 
 							<RichText
 								tagName="h3"
-								value={ attributes.title }
+								value={ attributes.title ?? '' }
 								onChange={ title => setAttributes({ title })}
 								placeholder={ __( 'Insert a title', 'otter-blocks' )}
 							/>
 
 							<RichText
 								tagName="p"
-								value={ attributes.description }
+								value={ attributes.description ?? '' }
 								onChange={ description => setAttributes({ description })}
 								placeholder={ __( 'Insert a description', 'otter-blocks' )}
 							/>
@@ -187,7 +193,7 @@ const Edit = ({
 
 					<div className="o-flip-back">
 						<InnerBlocks
-							renderAppender={ isSelected ? InnerBlocks.ButtonBlockAppender : '' }
+							renderAppender={ isSelected ? InnerBlocks.ButtonBlockAppender : undefined }
 							template={[
 								[
 									'core/heading',
