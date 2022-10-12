@@ -2,13 +2,14 @@
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { addFilter, applyFilters } from '@wordpress/hooks';
-import { Fragment } from '@wordpress/element';
-import { createSlotFill } from '@wordpress/components';
+import { Fragment, useState } from '@wordpress/element';
+import { Button, createSlotFill } from '@wordpress/components';
 import { BlockControls } from '@wordpress/block-editor';
 import { ToolbarGroup, ToolbarDropdownMenu } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { otterIcon } from '../../helpers/icons';
 import { sortBy } from 'lodash';
+import { FeedbackModalComponent } from '../../plugins/feedback';
 
 const { Fill, Slot } = createSlotFill( 'OtterControlTools' );
 
@@ -23,6 +24,14 @@ export const OtterControlTools = ({ children, order }) => {
 
 const withOtterTools = createHigherOrderComponent( BlockEdit => {
 	return ( props ) => {
+
+		const [ isOpen, setIsOpen ] = useState( false );
+		const [ status, setStatus ] = useState( 'notSubmitted' );
+
+		const closeModal = () => {
+			setIsOpen( false );
+			setStatus( 'notSubmitted' );
+		};
 
 		if ( props.isSelected ) {
 			return (
@@ -49,14 +58,32 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 															{ sortBy( fills ?? [], fill => {
 																return fill[0]?.props.order;
 															})}
-															<div className="o-fp-wrap" style={{ marginRight: '10px' }}>
-																{ applyFilters( 'otter.poweredBy', '' ) }
-															</div>
+															<Button
+																id="o-feedback"
+																variant={ 'link' }
+																isLink={ true }
+																onClick={() => {
+																	setIsOpen( ! isOpen );
+																	onClose();
+																}}
+																style={{
+																	paddingLeft: '8px'
+																}}
+															>
+																{ __( 'Help us improve Otter Blocks', 'otter-blocks' ) }
+															</Button>
 														</Fragment>
 													)
 												}
 											</ToolbarDropdownMenu>
 										</ToolbarGroup>
+										<FeedbackModalComponent
+											isOpen={isOpen}
+											status={status}
+											closeModal={closeModal}
+											source={'control-tools'}
+											setStatus={ setStatus }
+										/>
 									</BlockControls>
 								);
 							}
