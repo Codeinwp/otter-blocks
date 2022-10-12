@@ -31,7 +31,6 @@ import { buildResponsiveGetAttributes, buildResponsiveSetAttributes, removeBoxDe
 import InspectorHeader from '../../components/inspector-header/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import { useSelect } from '@wordpress/data';
-import { merge } from 'lodash';
 
 /**
  *
