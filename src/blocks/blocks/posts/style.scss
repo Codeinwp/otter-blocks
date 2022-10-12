@@ -9,6 +9,7 @@
 	--border-color: inherit;
 	--border-radius: 0;
 	--box-shadow: none;
+	--content-gap: 10px;
 
 	--img-width: 100%;
 	--img-width-tablet: var( --img-width );
@@ -18,11 +19,11 @@
 	--title-text-size-tablet: var( --title-text-size );
 	--title-text-size-mobile: var( --title-text-size-tablet );
 
-	--description-text-size: initial;
+	--description-text-size: 16px;
 	--description-text-size-tablet: var( --description-text-size );
 	--description-text-size-mobile: var( --description-text-size-tablet );
 
-	--meta-text-size: initial;
+	--meta-text-size: 14px;
 	--meta-text-size-tablet: var( --meta-text-size );
 	--meta-text-size-mobile: var( --meta-text-size-tablet );
 

@@ -224,27 +224,14 @@ const Inspector = ({
 				onChange={ setTab }
 			/>
 
-			<PanelBody
-				title={ __( 'Style', 'otter-blocks' ) }
-			>
-				<ButtonToggle
-					options={ styles }
-					value={ getActiveStyle( styles, attributes?.className ) }
-					onChange={ changeStyle }
-				/>
-			</PanelBody>
-
 			{ 'settings' === tab && (
 				<Fragment>
 					<PanelBody
 						title={ __( 'Layout', 'otter-blocks' ) }
 					>
-						<BaseControl>
-							{ __( 'Select the types of the post. If none is selected, the default WordPress post will be displayed.', 'otter-blocks' ) }
-						</BaseControl>
-
 						<SelectControl
 							label={ __( 'Post Type', 'otter-blocks' ) }
+							help={ __( 'WordPress contains different types of content and they are divided into collections called "Post types". By default there are a few different ones such as blog posts and pages, but plugins could add more.', 'otter-blocks' ) }
 							value={ attributes.postTypes[0] || null }
 							onChange={ ( value ) => value && setAttributes({ postTypes: [ value ] }) }
 							options={
@@ -339,7 +326,7 @@ const Inspector = ({
 					</PanelBody>
 
 					<PanelBody
-						title={ __( 'Layout', 'otter-blocks' ) }
+						title={ __( 'Elements', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
 						<LayoutBuilder
@@ -353,7 +340,18 @@ const Inspector = ({
 			{ 'style' === tab && (
 				<Fragment>
 					<PanelBody
+						title={ __( 'Style', 'otter-blocks' ) }
+					>
+						<ButtonToggle
+							options={ styles }
+							value={ getActiveStyle( styles, attributes?.className ) }
+							onChange={ changeStyle }
+						/>
+					</PanelBody>
+
+					<PanelBody
 						title={ __( 'Typography', 'otter-blocks' ) }
+						initialOpen={ false }
 					>
 						<SelectControl
 							label={ __( 'Title Tag', 'otter-blocks' ) }

@@ -309,6 +309,10 @@ class Posts_CSS extends Base_CSS {
 						'property' => '--content-padding-mobile',
 						'value'    => 'paddingMobile',
 					),
+					array(
+						'property' => '--content-gap',
+						'value'    => 'contentGap',
+					),
 				),
 			)
 		);
