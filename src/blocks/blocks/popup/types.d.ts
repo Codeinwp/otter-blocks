@@ -21,7 +21,10 @@ type Attributes = {
 	borderWidth: BorderType
 	borderRadius: BorderType
 	borderColor: string
+	borderStyle: string
 	padding: PaddingType
+	paddingTablet: PaddingType
+	paddingMobile: PaddingType
 	width: string
 	widthTablet: string
 	widthMobile: string

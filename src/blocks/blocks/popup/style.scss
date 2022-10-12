@@ -6,6 +6,13 @@ $base-index: 9999 !default;
 	--close-color: #000;
 	--overlay-color: rgba(0, 0, 0, 0.5);
 	--overlay-opacity: 1;
+	--brd-width: 0px;
+	--brd-radius: 0px;
+	--brd-color: #000;
+	--brd-style: hidden;
+	--width: 500px;
+	--height: 500px;
+	--padding: 20px;
 
 	&.is-front {
 		display: none;
@@ -47,8 +54,13 @@ $base-index: 9999 !default;
 		z-index: $base-index + 1;
 		background-color: var( --background-color );
 		min-width: var( --min-width );
-		max-width: var( --max-width );
-		padding: 20px;
+		width: var(--width);
+		padding: var(--padding);
+		border-width: var(--brd-width);
+		border-radius: var(--brd-radius);
+		border-color: var(--brd-color);
+		border-style: var(--brd-style);
+		box-sizing: border-box;
 
 		@media ( max-width: 600px ) {
 			min-width: 100%;

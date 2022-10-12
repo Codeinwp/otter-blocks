@@ -27,9 +27,11 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import Notice from '../../components/notice/index.js';
-import { setUtm } from '../../helpers/helper-functions.js';
+import { buildResponsiveGetAttributes, buildResponsiveSetAttributes, removeBoxDefaultValues, setUtm } from '../../helpers/helper-functions.js';
 import InspectorHeader from '../../components/inspector-header/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
+import { useSelect } from '@wordpress/data';
+import { merge } from 'lodash';
 
 /**
  *
@@ -72,6 +74,20 @@ const Inspector = ({
 }) => {
 
 	const [ tab, setTab ] = useState( 'settings' );
+
+	const {
+		responsiveSetAttributes,
+		responsiveGetAttributes
+	} = useSelect( select => {
+		const { getView } = select( 'themeisle-gutenberg/data' );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+
+		return {
+			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
+			responsiveGetAttributes: buildResponsiveGetAttributes( view )
+		};
+	}, []);
 
 	let triggerOptions = [
 		{
@@ -116,6 +132,8 @@ const Inspector = ({
 			</Fragment>
 		);
 	};
+
+	console.log( attributes );
 
 	return (
 		<InspectorControls>
@@ -175,14 +193,48 @@ const Inspector = ({
 								<ResponsiveControl>
 									<UnitControl
 										label={ __( 'Width', 'otter-blocks' ) }
-										value={ '80%' }
+										value={ responsiveGetAttributes([
+											attributes.width,
+											attributes.widthTablet,
+											attributes.widthMobile
+										]) }
+										setAttributes={ value => {
+											responsiveSetAttributes( value, [ 'width', 'widthTablet', 'widthMobile' ]);
+										}}
 									/>
 								</ResponsiveControl>
 
 								<ResponsiveControl>
 									<UnitControl
 										label={ __( 'Height', 'otter-blocks' ) }
-										value={ '80%' }
+										value={ responsiveGetAttributes([
+											attributes.height,
+											attributes.heightTablet,
+											attributes.heightMobile
+										]) }
+										setAttributes={ value => {
+											responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]);
+										}}
+									/>
+								</ResponsiveControl>
+
+								<ResponsiveControl>
+									<BoxControl
+										label={ __( 'Padding', 'otter-blocks' ) }
+										values={ responsiveGetAttributes([
+											attributes.padding,
+											attributes.paddingTablet,
+											attributes.paddingMobile
+										]) }
+										onChange={ value => {
+											setAttributes({
+												padding: removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' })
+											});
+											responsiveSetAttributes(
+												removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' }),
+												[ 'padding', 'paddingTablet', 'paddingMobile' ]
+											);
+										}}
 									/>
 								</ResponsiveControl>
 
@@ -243,13 +295,60 @@ const Inspector = ({
 							<PanelBody
 								title={ __( 'Border', 'otter-blocks' ) }
 							>
-								<BoxControl
-									label={ __( 'Width', 'otter-blocks' ) }
-									value={{}}
+								<SelectControl
+									label={ __( 'Style', 'otter-blocks' ) }
+									value={ attributes.borderStyle ?? 'hidden'}
+									onChange={ value => setAttributes({ borderStyle: 'hidden' === value ? undefined : value })}
+									options={ [
+										{
+											label: __( 'Hidden', 'otter-blocks' ),
+											value: 'hidden'
+										},
+										{
+											label: __( 'Solid', 'otter-blocks' ),
+											value: 'solid'
+										},
+										{
+											label: __( 'Double', 'otter-blocks' ),
+											value: 'double'
+										},
+										{
+											label: __( 'Outside', 'otter-blocks' ),
+											value: 'outside'
+										},
+										{
+											label: __( 'Ridge', 'otter-blocks' ),
+											value: 'ridge'
+										},
+										{
+											label: __( 'Ridge', 'otter-blocks' ),
+											value: 'dashed'
+										}
+									] }
 								/>
+
+								{
+									attributes?.borderStyle && 'hidden' !== attributes?.borderStyle && (
+										<BoxControl
+											label={ __( 'Width', 'otter-blocks' ) }
+											values={ attributes.borderWidth }
+											onChange={ value => {
+												setAttributes({
+													borderWidth: removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' })
+												});
+											}}
+										/>
+									)
+								}
+
 								<BoxControl
 									label={ __( 'Border Radius', 'otter-blocks' ) }
-									value={{}}
+									values={ attributes.borderRadius }
+									onChange={ value => {
+										setAttributes({
+											borderRadius: removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' })
+										});
+									}}
 								/>
 							</PanelBody>
 						</Fragment>
