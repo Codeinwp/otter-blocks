@@ -405,21 +405,30 @@ const Inspector = ({
 							<PanelBody
 								title={ __( 'Typography Front Side', 'otter-blocks' ) }
 							>
-								<FontSizePicker
+								<BaseControl
 									label={ __( 'Title', 'otter-blocks' ) }
-									value={ _px( attributes.titleFontSize ) }
-									onChange={ titleFontSize => setAttributes({ titleFontSize }) }
-									fontSizes={[ ...defaultFontSizes, { name: '32', size: '32px', slug: '32' }]}
-									allowReset
-								/>
+								>
+									<FontSizePicker
 
-								<FontSizePicker
+										value={ _px( attributes.titleFontSize ) }
+										onChange={ titleFontSize => setAttributes({ titleFontSize }) }
+										fontSizes={[ ...defaultFontSizes, { name: '32', size: '32px', slug: '32' }]}
+										allowReset
+									/>
+								</BaseControl>
+
+								<BaseControl
 									label={ __( 'Description', 'otter-blocks' ) }
-									value={ wrapNumberInBox( attributes.descriptionFontSize ) }
-									onChange={ descriptionFontSize => setAttributes({ descriptionFontSize }) }
-									fontSizes={[ ...defaultFontSizes, { name: '28', size: '28px', slug: '28' }]}
-									allowReset
-								/>
+								>
+									<FontSizePicker
+
+										value={ wrapNumberInBox( attributes.descriptionFontSize ) }
+										onChange={ descriptionFontSize => setAttributes({ descriptionFontSize }) }
+										fontSizes={[ ...defaultFontSizes, { name: '28', size: '28px', slug: '28' }]}
+										allowReset
+									/>
+								</BaseControl>
+
 							</PanelBody>
 							<PanelBody
 								title={ __( 'Front Side', 'otter-blocks' ) }
