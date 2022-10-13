@@ -16,7 +16,8 @@ import {
 	SelectControl,
 	ToggleControl,
 	__experimentalBoxControl as BoxControl,
-	__experimentalUnitControl as UnitControl
+	__experimentalUnitControl as UnitControl,
+	__experimentalAlignmentMatrixControl as AlignmentMatrixControl
 } from '@wordpress/components';
 
 import { Fragment, useState } from '@wordpress/element';
@@ -177,7 +178,34 @@ const Inspector = ({
 									onChange={ value => setAttributes({ wait: Number( value ) }) }
 								/>
 							) }
+						</PanelBody>
+						<PanelBody
+							title={ __( 'Popup Position', 'otter-blocks' )}
+						>
+							<ResponsiveControl
+								label={ __( 'Screen Type', 'otter-blocks' ) }
+							>
+								<div className="o-position-picker">
+									<AlignmentMatrixControl
+										value={ responsiveGetAttributes([
+											`${attributes.verticalPosition ?? 'center'} ${attributes.horizontalPosition ?? 'center' }`,
+											`${attributes.verticalPositionTablet ?? 'center'} ${attributes.horizontalPositionTablet ?? 'center' }`,
+											`${attributes.verticalPositionMobile ?? 'center'} ${attributes.horizontalPositionMobile ?? 'center' }`
+										]) }
+										onChange={ value => {
+											const [ vertical, horizontal ] = value.split( ' ' );
+											responsiveSetAttributes( Boolean( vertical ) && 'center' !== vertical ? vertical : undefined, [ 'verticalPosition', 'verticalPositionTablet', 'verticalPositionMobile' ]);
+											responsiveSetAttributes( Boolean( horizontal ) && 'center' !== horizontal ? horizontal : undefined, [ 'horizontalPosition', 'horizontalPositionMobile', 'horizontalPositionMobile' ]);
+										}}
+									/>
+								</div>
 
+							</ResponsiveControl>
+
+						</PanelBody>
+						<PanelBody
+							title={ __( 'Frequency and Close settings', 'otter-blocks' )}
+						>
 							{ applyFilters( 'otter.popupBlock.controls', <Controls />, attributes, setAttributes ) }
 						</PanelBody>
 					</Fragment>
@@ -189,29 +217,32 @@ const Inspector = ({
 							<PanelBody
 								title={ __( 'Dimensions', 'otter-blocks' ) }
 							>
-								<ResponsiveControl>
+								<ResponsiveControl
+									label={ __( 'Width', 'otter-blocks' ) }
+								>
 									<UnitControl
-										label={ __( 'Width', 'otter-blocks' ) }
+
 										value={ responsiveGetAttributes([
 											attributes.width,
 											attributes.widthTablet,
 											attributes.widthMobile
-										]) }
-										setAttributes={ value => {
+										]) ?? '500px' }
+										onChange={ value => {
 											responsiveSetAttributes( value, [ 'width', 'widthTablet', 'widthMobile' ]);
 										}}
 									/>
 								</ResponsiveControl>
 
-								<ResponsiveControl>
+								<ResponsiveControl
+									label={ __( 'Height', 'otter-blocks' ) }
+								>
 									<UnitControl
-										label={ __( 'Height', 'otter-blocks' ) }
 										value={ responsiveGetAttributes([
 											attributes.height,
 											attributes.heightTablet,
 											attributes.heightMobile
-										]) }
-										setAttributes={ value => {
+										]) ?? '400px' }
+										onChange={ value => {
 											responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]);
 										}}
 									/>

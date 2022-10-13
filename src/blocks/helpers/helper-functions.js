@@ -427,14 +427,14 @@ export const changeActiveStyle = ( className, styles, newStyle ) =>{
  * Create a CSS property declaration.
  * @param {string} prop The name of the property.
  * @param {string | undefined | null} value The value.
- * @param { (c) => boolean | boolean | undefined } condition The condition.
+ * @param { (c: any) => boolean | boolean | undefined } condition The condition.
  * @returns
  */
-export const _cssProp = ( prop, value, condition = undefined ) => value !== undefined && null !== value && ( ! condition || ( typeof condition === condition ? condition( value ) : condition ) ) ? `${prop}: ${value};` : undefined;
+export const _cssProp = ( prop, value, condition = undefined ) => value !== undefined && null !== value && ( condition === undefined || ( 'function' === typeof condition ? condition( value ) : condition ) ) ? `${prop}: ${value};` : undefined;
 
 /**
  * Create a CSS block declaration.
  * @param {[string, string][]} propsPairs The properties grouped in pairs
  * @returns
  */
-export const _cssBlock = ( propsPairs ) => `{\n${propsPairs?.map( pair => _cssProp( pair[0], pair[1]) )?.join( '\n' ) ?? ''} \n}`;
+export const _cssBlock = ( propsPairs ) => `{\n${propsPairs?.map( pair => _cssProp( pair?.[0], pair?.[1], pair?.[2]) )?.join( '\n' ) ?? ''} \n}`;

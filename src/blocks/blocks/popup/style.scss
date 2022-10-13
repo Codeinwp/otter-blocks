@@ -11,7 +11,7 @@ $base-index: 9999 !default;
 	--brd-color: #000;
 	--brd-style: hidden;
 	--width: 500px;
-	--height: 500px;
+	--height: 400px;
 	--padding: 20px;
 
 	&.is-front {
@@ -50,17 +50,18 @@ $base-index: 9999 !default;
 	}
 
 	.otter-popup__modal_content {
-		position: relative;
+		position: absolute;
 		z-index: $base-index + 1;
 		background-color: var( --background-color );
-		min-width: var( --min-width );
 		width: var(--width);
+		height: var(--height);
 		padding: var(--padding);
 		border-width: var(--brd-width);
 		border-radius: var(--brd-radius);
 		border-color: var(--brd-color);
 		border-style: var(--brd-style);
 		box-sizing: border-box;
+		overflow: hidden;
 
 		@media ( max-width: 600px ) {
 			min-width: 100%;
@@ -115,5 +116,17 @@ $base-index: 9999 !default;
 	}
 	to {
 		opacity:1
+	}
+}
+
+.is-sidebar-opened {
+	.otter-popup__modal_content {
+		margin-right: 280px;
+	}
+
+	&:has(.edit-post-header) {
+		.otter-popup__modal_content {
+			margin-top: 50px;
+		}
 	}
 }

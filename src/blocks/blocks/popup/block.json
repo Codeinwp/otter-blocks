@@ -95,6 +95,24 @@
 		},
 		"heightMobile":{
 			"type": "string"
+		},
+		"verticalPosition": {
+			"type": "string"
+		},
+		"horizontalPosition": {
+			"type": "string"
+		},
+		"verticalPositionTablet": {
+			"type": "string"
+		},
+		"horizontalPositionTablet": {
+			"type": "string"
+		},
+		"verticalPositionMobile": {
+			"type": "string"
+		},
+		"horizontalPositionMobile": {
+			"type": "string"
 		}
 	},
 	"editorStyle": "otter-popup-editor",

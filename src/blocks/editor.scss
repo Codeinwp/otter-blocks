@@ -104,3 +104,15 @@
 		height: 14px;
 	}
 }
+
+.o-position-picker {
+	.component-alignment-matrix-control {
+		width: 245px;
+		grid-template-rows: repeat(3, calc(35.6667px));
+
+		span[role="presentation"] {
+			width: 60px;
+			height: 23px;
+		}
+	}
+}

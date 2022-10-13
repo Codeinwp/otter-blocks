@@ -121,7 +121,7 @@ const PopupControls = (
 					help={ __( 'Number of days until the popup is shown again.', 'otter-blocks' ) }
 					min={ 0 }
 					max={ 100 }
-					value={ attributes.recurringTime }
+					value={ attributes.recurringTime ?? 0 }
 					onChange={ value => setAttributes({ recurringTime: Number( value ) }) }
 				/>
 			) }

@@ -59,17 +59,18 @@ const Edit = ({
 		'--background-color': attributes.backgroundColor,
 		'--close-color': attributes.closeColor,
 		'--overlay-color': attributes.overlayColor,
-		'--overlay-opacity': attributes.overlayOpacity ? attributes.overlayOpacity / 100 : 1,
+		'--overlay-opacity': attributes.overlayOpacity !== undefined ? attributes.overlayOpacity / 100 : 1,
 		'--brd-width': boxValues( attributes.borderWidth ),
 		'--brd-radius': boxValues( attributes.borderRadius ),
 		'--brd-color': attributes.borderColor,
 		'--brd-style': attributes.borderStyle
 	};
 
-	const [ cssNodeName, setNodeCSS ] = useCSSNode();
+	const [ cssNodeResponsive, setNodeCSSResponsive ] = useCSSNode();
+	const [ cssNode, setNodeCSS ] = useCSSNode();
 
 	useEffect( () => {
-		setNodeCSS(
+		setNodeCSSResponsive(
 			[
 				_cssBlock([
 					[ '--width', attributes.width ],
@@ -105,10 +106,39 @@ const Edit = ({
 		attributes.heightMobile
 	]);
 
+	useEffect( () => {
+		setNodeCSS(
+			[
+				' .otter-popup__modal_content ' + _cssBlock([
+					[ 'top', '30px', 'top' === attributes.verticalPosition ],
+					[ 'bottom', '30px', 'bottom' === attributes.verticalPosition ],
+					[ 'left', '30px', 'left' === attributes.horizontalPosition ],
+					[ 'right', '30px', 'right' === attributes.horizontalPosition ]
+				]),
+				' .otter-popup__modal_content ' + _cssBlock([
+					[ 'top', '30px', 'top' === attributes.verticalPositionTablet ],
+					[ 'bottom', '30px', 'bottom' === attributes.verticalPositionTablet ],
+					[ 'left', '30px', 'left' === attributes.horizontalPositionTablet ],
+					[ 'right', '30px', 'right' === attributes.horizontalPositionTablet ]
+				]),
+				' .otter-popup__modal_content ' + _cssBlock([
+					[ 'top', '30px', 'top' === attributes.verticalPositionMobile ],
+					[ 'bottom', '30px', 'bottom' === attributes.verticalPositionMobile ],
+					[ 'left', '30px', 'left' === attributes.horizontalPositionMobile ],
+					[ 'right', '30px', 'right' === attributes.horizontalPositionMobile ]
+				])
+			],
+			[
+				'@media ( min-width: 960px )',
+				'@media ( min-width: 600px ) and ( max-width: 960px )',
+				'@media ( max-width: 600px )'
+			]);
+	}, [ attributes.horizontalPosition, attributes.verticalPosition ]);
+
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		style: inlineStyles,
-		className: cssNodeName
+		className: `${cssNodeResponsive} ${cssNode}`
 	});
 
 	return (
