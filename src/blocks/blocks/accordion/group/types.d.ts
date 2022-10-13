@@ -1,9 +1,10 @@
-import { BoxBorder, BoxPadding, BoxShadow, IconData } from '../../../common';
+import { BoxPadding, BoxShadow, IconData } from '../../../common';
 import { BlockProps, InspectorProps } from '../../../helpers/blocks';
 
 type Attributes = {
 	id: string
-	gap: string
+	schema: boolean
+	gap: string | number
 	titleColor: string
 	titleBackground: string
 	contentBackground: string
@@ -17,8 +18,9 @@ type Attributes = {
 	textTransform: string
 	fontSize: number
 	letterSpacing: number
-	headerPadding: BoxPadding
-	contentPadding: BoxPadding
+	padding: BoxPadding
+	paddingTablet: BoxPadding
+	paddingMobile: BoxPadding
 	tag: string
 	alwaysOpen: boolean
 	boxShadow: BoxShadow

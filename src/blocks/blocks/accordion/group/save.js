@@ -17,7 +17,9 @@ const Save = ({
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
 		className: classnames({
-			[ `is-${ attributes.gap }-gap` ]: attributes.gap,
+			[ `is-${ attributes.gap }-gap` ]: attributes.gap && 'string' === typeof attributes.gap,
+			'no-gap': 0 === attributes.gap,
+			'has-gap': 'string' !== typeof attributes.gap && 0 !== attributes.gap,
 			exclusive: false === attributes.alwaysOpen,
 			'icon-first': attributes.iconFirst,
 			'has-icon': !! attributes.icon,

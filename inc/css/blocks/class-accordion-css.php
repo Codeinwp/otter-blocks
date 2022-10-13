@@ -155,9 +155,16 @@ class Accordion_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => '--header-padding',
-						'value'    => 'headerPadding',
-						'format'   => function( $value ) {
+						'property' => '--gap',
+						'value'    => 'gap',
+						'format'   => function( $value, $attrs ) {
+							return $value . 'px';
+						},
+					),
+					array(
+						'property' => '--padding',
+						'value'    => 'padding',
+						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -170,9 +177,24 @@ class Accordion_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => 'padding',
-						'value'    => '--content-padding',
-						'format'   => function( $value ) {
+						'property' => '--padding-tablet',
+						'value'    => 'paddingTablet',
+						'format'   => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'top'    => '18px',
+									'right'  => '24px',
+									'bottom' => '18px',
+									'left'   => '24px',
+								)
+							);
+						},
+					),
+					array(
+						'property' => '--padding-mobile',
+						'value'    => 'paddingMobile',
+						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(

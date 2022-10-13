@@ -14,10 +14,11 @@ import {
 	RangeControl,
 	FontSizePicker,
 	ToggleControl,
-	__experimentalBoxControl as BoxControl
+	__experimentalBoxControl as BoxControl,
+	__experimentalUnitControl as UnitControl
 } from '@wordpress/components';
 
-import { select, dispatch } from '@wordpress/data';
+import { select, dispatch, useSelect } from '@wordpress/data';
 
 import { Fragment, useState } from '@wordpress/element';
 
@@ -31,8 +32,14 @@ import IconPickerControl from '../../../components/icon-picker-control';
 import InspectorHeader from '../../../components/inspector-header';
 import { InspectorExtensions } from '../../../components/inspector-slot-fill';
 import ButtonToggle from '../../../components/button-toggle-control';
-import { changeActiveStyle, getActiveStyle } from '../../../helpers/helper-functions';
+import {
+	buildResponsiveGetAttributes,
+	buildResponsiveSetAttributes,
+	changeActiveStyle,
+	getActiveStyle
+} from '../../../helpers/helper-functions';
 import SyncColorPanel from '../../../components/sync-color-panel';
+import ResponsiveControl from '../../../components/responsive-control';
 
 const styles = [
 	{
@@ -45,6 +52,12 @@ const styles = [
 		value: 'boxed'
 	}
 ];
+
+const gapCompatibility = {
+	narrow: 5,
+	wide: 10,
+	wider: 20
+};
 
 /**
  *
@@ -66,22 +79,22 @@ const Inspector = ({
 			value: getValue( 'titleColor' )
 		},
 		{
-			label: __( 'Active tab title', 'otter-blocks' ),
+			label: __( 'Active Tab Title', 'otter-blocks' ),
 			slug: 'activeTitleColor',
 			value: getValue( 'activeTitleColor' )
 		},
 		{
-			label: __( 'Title background', 'otter-blocks' ),
+			label: __( 'Title Background', 'otter-blocks' ),
 			slug: 'titleBackground',
 			value: getValue( 'titleBackground' )
 		},
 		{
-			label: __( 'Active tab title background', 'otter-blocks' ),
+			label: __( 'Active Tab Title Background', 'otter-blocks' ),
 			slug: 'activeTitleBackground',
 			value: getValue( 'activeTitleBackground' )
 		},
 		{
-			label: __( 'Content background', 'otter-blocks' ),
+			label: __( 'Content Background', 'otter-blocks' ),
 			slug: 'contentBackground',
 			value: getValue( 'contentBackground' )
 		},
@@ -91,6 +104,20 @@ const Inspector = ({
 			value: getValue( 'borderColor' )
 		}
 	];
+
+	const {
+		responsiveSetAttributes,
+		responsiveGetAttributes
+	} = useSelect( select => {
+		const { getView } = select( 'themeisle-gutenberg/data' );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+
+		return {
+			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
+			responsiveGetAttributes: buildResponsiveGetAttributes( view )
+		};
+	}, []);
 
 	const changeFontFamily = value => {
 		if ( ! value ) {
@@ -175,17 +202,21 @@ const Inspector = ({
 						checked={ attributes.alwaysOpen }
 						onChange={ onAlwaysOpenToggle }
 					/>
+					<ToggleControl
+						label={ __( 'Enable FAQ Schema', 'otter-blocks' ) }
+						checked={ attributes.schema }
+					/>
 					<SelectControl
-						label={ __( 'Title HTML tag', 'otter-blocks' ) }
+						label={ __( 'Accordion title HTML tag', 'otter-blocks' ) }
 						value={ attributes.tag || 'div' }
 						options={ [
-							{ label: __( 'Heading 1', 'otter-blocks' ), value: 'h1' },
-							{ label: __( 'Heading 2', 'otter-blocks' ), value: 'h2' },
-							{ label: __( 'Heading 3', 'otter-blocks' ), value: 'h3' },
-							{ label: __( 'Heading 4', 'otter-blocks' ), value: 'h4' },
-							{ label: __( 'Heading 5', 'otter-blocks' ), value: 'h5' },
-							{ label: __( 'Heading 6', 'otter-blocks' ), value: 'h6' },
-							{ label: __( 'Division', 'otter-blocks' ), value: 'div' }
+							{ label: __( 'H1', 'otter-blocks' ), value: 'h1' },
+							{ label: __( 'H2', 'otter-blocks' ), value: 'h2' },
+							{ label: __( 'H3', 'otter-blocks' ), value: 'h3' },
+							{ label: __( 'H4', 'otter-blocks' ), value: 'h4' },
+							{ label: __( 'H5', 'otter-blocks' ), value: 'h5' },
+							{ label: __( 'H6', 'otter-blocks' ), value: 'h6' },
+							{ label: __( 'div', 'otter-blocks' ), value: 'div' }
 						] }
 						onChange={ onTagChange }
 					/>
@@ -290,26 +321,20 @@ const Inspector = ({
 						title={ __( 'Dimensions (Layout)', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
-						<BoxControl
-							label={ __( 'Header Padding', 'otter-blocks' ) }
-							values={ attributes.headerPadding }
-							onChange={ headerPadding => setAttributes({ headerPadding }) }
-						/>
-						<BoxControl
-							label={ __( 'Content Padding', 'otter-blocks' ) }
-							values={ attributes.contentPadding }
-							onChange={ contentPadding => setAttributes({ contentPadding }) }
-						/>
-						<SelectControl
+						<ResponsiveControl
+							label={ __( 'Screen Type', 'otter-blocks' ) }
+						>
+							<BoxControl
+								label={ __( 'Padding', 'otter-blocks' ) }
+								values={ responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile ]) }
+								onChange={ value => responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]) }
+							/>
+						</ResponsiveControl>
+						<RangeControl
 							label={ __( 'Gap between panels', 'otter-blocks' ) }
-							value={ attributes.gap }
-							options={ [
-								{ label: __( 'No Gap', 'otter-blocks' ), value: '' },
-								{ label: __( 'Narrow (5px)', 'otter-blocks' ), value: 'narrow' },
-								{ label: __( 'Wide (10px)', 'otter-blocks' ), value: 'wide' },
-								{ label: __( 'Wider (20px)', 'otter-blocks' ), value: 'wider' }
-							] }
-							onChange={ e => setAttributes({ gap: e }) }
+							value={ 'string' === typeof attributes.gap ? gapCompatibility[attributes.gap] : attributes.gap }
+							onChange={ gap => setAttributes({ gap }) }
+							allowReset
 						/>
 					</PanelBody>
 
@@ -337,7 +362,7 @@ const Inspector = ({
 					</PanelBody>
 
 					<PanelBody
-						title={ __( 'Borders', 'otter-blocks' ) }
+						title={ __( 'Border', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
 						<SelectControl
@@ -351,8 +376,8 @@ const Inspector = ({
 							]}
 							onChange={ borderStyle => setAttributes({ borderStyle }) }
 						/>
-						<RangeControl
-							label={ __( 'Width(px)', 'otter-blocks' ) }
+						<UnitControl
+							label={ __( 'Width', 'otter-blocks' ) }
 							value={ attributes.borderWidth }
 							max={ 50 }
 							onChange={ borderWidth => setAttributes({ borderWidth }) }

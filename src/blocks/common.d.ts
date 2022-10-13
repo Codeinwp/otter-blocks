@@ -1,6 +1,5 @@
-import { BoxType } from './helpers/blocks';
-
 export type BoxShadow = {
+	active: boolean
     color: string
     colorOpacity: number
     blur: number

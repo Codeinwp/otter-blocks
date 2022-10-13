@@ -11,8 +11,11 @@
         "id": {
             "type": "string"
         },
+		"schema": {
+			"type": "boolean"
+		},
         "gap": {
-            "type": "string"
+            "type": [ "string", "number" ]
         },
         "titleColor": {
             "type": "string"
@@ -53,10 +56,13 @@
 		"letterSpacing": {
 			"type": "string"
 		},
-		"headerPadding": {
+		"padding": {
 			"type": "object"
 		},
-		"contentPadding": {
+		"paddingTablet": {
+			"type": "object"
+		},
+		"paddingMobile": {
 			"type": "object"
 		},
 		"tag": {

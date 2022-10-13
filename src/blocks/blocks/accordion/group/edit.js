@@ -81,7 +81,7 @@ const Edit = ({
 		'--content-background': getValue( 'contentBackground' ),
 		'--border-color': getValue( 'borderColor' ),
 		'--border-style': getValue( 'borderStyle' ),
-		'--border-width': px( getValue( 'borderWidth' ) ),
+		'--border-width': getValue( 'borderWidth' ),
 		'--font-family': attributes.fontFamily,
 		'--font-variant': attributes.fontVariant,
 		'--font-style': attributes.fontStyle,
@@ -93,8 +93,10 @@ const Edit = ({
 			${attributes.boxShadow.vertical}px
 			${attributes.boxShadow.blur}px ${attributes.boxShadow.spread}px
 			${hex2rgba( attributes.boxShadow.color, attributes.boxShadow.colorOpacity )}`,
-		'--header-padding': boxValues( attributes.headerPadding, { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
-		'--content-padding': boxValues( attributes.contentPadding, { top: '18px', right: '24px', bottom: '18px', left: '24px' })
+		'--padding': boxValues( attributes.padding, { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
+		'--padding-tablet': boxValues( attributes.paddingTablet, { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
+		'--padding-mobile': boxValues( attributes.paddingMobile, { top: '18px', right: '24px', bottom: '18px', left: '24px' }),
+		'--gap': px( attributes.gap )
 	};
 
 	const [ iconsCSSNodeName, setIconsNodeCSS ] = useCSSNode();
@@ -142,7 +144,9 @@ const Edit = ({
 		className: classnames({
 			[ iconsCSSNodeName ]: iconsCSSNodeName,
 			[ activeCSSNodeName ]: activeCSSNodeName,
-			[ `is-${ attributes.gap }-gap` ]: attributes.gap,
+			[ `is-${ attributes.gap }-gap` ]: 'string' === typeof attributes.gap,
+			'no-gap': 0 === attributes.gap,
+			'has-gap': 'string' !== typeof attributes.gap && 0 < attributes.gap,
 			'icon-first': attributes.iconFirst,
 			'has-icon': !! attributes.icon,
 			'has-open-icon': !! attributes.openItemIcon
