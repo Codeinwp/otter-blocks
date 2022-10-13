@@ -178,7 +178,7 @@ const IconPickerControl = ({
 		>
 			<Dropdown
 				contentClassName="o-icon-picker-popover"
-				position="bottom center"
+				position="bottom left"
 				renderToggle={ ({ isOpen, onToggle }) => (
 					<Fragment>
 						{ ( allowThemeisleIcons || allowImage ) &&

@@ -108,7 +108,7 @@ const SectionColumns = ({
 	};
 
 	const changeColumnsWidth = value => {
-		if ( ( 0 <= value && 1200 >= value ) || undefined === value ) {
+		if ( ( 0 <= value && 2400 >= value ) || undefined === value ) {
 			changeConfig( blockName, {
 				columnsWidth: value
 			});
@@ -168,10 +168,11 @@ const SectionColumns = ({
 				<RangeControl
 					label={ __( 'Maximum Content Width', 'otter-blocks' ) }
 					value={ defaults.columnsWidth || '' }
+					allowReset
 					onChange={ changeColumnsWidth }
 					step={ 0.1 }
 					min={ 0 }
-					max={ 1200 }
+					max={ 2400 }
 				/>
 
 				{ defaults.columnsWidth && (
