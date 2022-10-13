@@ -37,7 +37,7 @@ class CopyPaste {
 				return success;
 			}
 
-			const copied = compactObject( pickBy( ( adaptors as Adaptors )?.[block.name]?.copy( block.attributes ), x => ! ( isNil( x ) ) ) );
+			const copied = compactObject( pickBy( ( adaptors as Adaptors )?.[block.name]?.copy( block.attributes ), x => ! ( isNil( x ) ) ) ) as Storage<unknown>;
 
 			this.storage.copiedBlock = block.name;
 			this.storage.shared = copied?.shared;
@@ -70,10 +70,6 @@ class CopyPaste {
 
 			pasted = ( adaptors as Adaptors )?.[block.name]?.paste( attrs );
 
-			// TODO: remove after review
-			console.group( `Block: ${ block.name}` );
-			console.log( pasted );
-			console.groupEnd();
 		} catch ( e ) {
 			console.error( e );
 		} finally {

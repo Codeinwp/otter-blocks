@@ -54,14 +54,13 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 											>
 												{
 													({ onClose }) => (
-														<Fragment>
+														<div onClick={onClose}>
 															{ sortBy( fills ?? [], fill => {
 																return fill[0]?.props.order;
 															})}
 															<Button
 																id="o-feedback"
 																variant={ 'link' }
-																isLink={ true }
 																onClick={() => {
 																	setIsOpen( ! isOpen );
 																	onClose();
@@ -72,7 +71,7 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 															>
 																{ __( 'Help us improve Otter Blocks', 'otter-blocks' ) }
 															</Button>
-														</Fragment>
+														</div>
 													)
 												}
 											</ToolbarDropdownMenu>

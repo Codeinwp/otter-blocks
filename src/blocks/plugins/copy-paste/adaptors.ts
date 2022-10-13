@@ -851,5 +851,3 @@ export const adaptors = {
 };
 
 export const implementedAdaptors = Object.keys( adaptors );
-
-console.log( implementedAdaptors.join( '\n' ) );
