@@ -41,11 +41,17 @@ const { attributes: defaultAttributes } = metadata;
  * @param {import('./types').PopupPros} props
  * @returns
  */
-const Edit = ({
-	attributes,
-	setAttributes,
-	clientId
-}) => {
+const Edit = (props) => {
+
+	const {
+		attributes,
+		setAttributes,
+		clientId,
+		toggleSelection
+	} = props;
+
+	console.log(props);
+
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
@@ -116,16 +122,16 @@ const Edit = ({
 					[ 'right', '30px', 'right' === attributes.horizontalPosition ]
 				]),
 				' .otter-popup__modal_content ' + _cssBlock([
-					[ 'top', '30px', 'top' === attributes.verticalPositionTablet ],
-					[ 'bottom', '30px', 'bottom' === attributes.verticalPositionTablet ],
-					[ 'left', '30px', 'left' === attributes.horizontalPositionTablet ],
-					[ 'right', '30px', 'right' === attributes.horizontalPositionTablet ]
+					[ 'top', '15px', 'top' === attributes.verticalPositionTablet ],
+					[ 'bottom', '15px', 'bottom' === attributes.verticalPositionTablet ],
+					[ 'left', '15px', 'left' === attributes.horizontalPositionTablet ],
+					[ 'right', '15px', 'right' === attributes.horizontalPositionTablet ]
 				]),
 				' .otter-popup__modal_content ' + _cssBlock([
-					[ 'top', '30px', 'top' === attributes.verticalPositionMobile ],
-					[ 'bottom', '30px', 'bottom' === attributes.verticalPositionMobile ],
-					[ 'left', '30px', 'left' === attributes.horizontalPositionMobile ],
-					[ 'right', '30px', 'right' === attributes.horizontalPositionMobile ]
+					[ 'top', '10px', 'top' === attributes.verticalPositionMobile ],
+					[ 'bottom', '10px', 'bottom' === attributes.verticalPositionMobile ],
+					[ 'left', '10px', 'left' === attributes.horizontalPositionMobile ],
+					[ 'right', '10px', 'right' === attributes.horizontalPositionMobile ]
 				])
 			],
 			[
@@ -133,7 +139,15 @@ const Edit = ({
 				'@media ( min-width: 600px ) and ( max-width: 960px )',
 				'@media ( max-width: 600px )'
 			]);
-	}, [ attributes.horizontalPosition, attributes.verticalPosition ]);
+		},
+		[
+			attributes.horizontalPosition,
+			attributes.verticalPosition,
+			attributes.horizontalPositionTablet,
+			attributes.verticalPositionTablet,
+			attributes.horizontalPositionMobile,
+			attributes.verticalPositionMobile
+		]);
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
@@ -150,6 +164,7 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				<Button
+					variant={ 'primary' }
 					isPrimary
 					icon={ external }
 					onClick={ () => setEditing( true ) }

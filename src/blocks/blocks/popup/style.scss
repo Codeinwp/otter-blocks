@@ -62,6 +62,7 @@ $base-index: 9999 !default;
 		border-style: var(--brd-style);
 		box-sizing: border-box;
 		overflow: hidden;
+		scroll-behavior: auto;
 
 		@media ( max-width: 600px ) {
 			min-width: 100%;
@@ -116,17 +117,5 @@ $base-index: 9999 !default;
 	}
 	to {
 		opacity:1
-	}
-}
-
-.is-sidebar-opened {
-	.otter-popup__modal_content {
-		margin-right: 280px;
-	}
-
-	&:has(.edit-post-header) {
-		.otter-popup__modal_content {
-			margin-top: 50px;
-		}
 	}
 }

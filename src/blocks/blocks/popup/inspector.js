@@ -77,13 +77,15 @@ const Inspector = ({
 
 	const {
 		responsiveSetAttributes,
-		responsiveGetAttributes
+		responsiveGetAttributes,
+		view
 	} = useSelect( select => {
 		const { getView } = select( 'themeisle-gutenberg/data' );
 		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
 		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
 
 		return {
+			view: view,
 			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
 			responsiveGetAttributes: buildResponsiveGetAttributes( view )
 		};
@@ -194,8 +196,27 @@ const Inspector = ({
 										]) }
 										onChange={ value => {
 											const [ vertical, horizontal ] = value.split( ' ' );
-											responsiveSetAttributes( Boolean( vertical ) && 'center' !== vertical ? vertical : undefined, [ 'verticalPosition', 'verticalPositionTablet', 'verticalPositionMobile' ]);
-											responsiveSetAttributes( Boolean( horizontal ) && 'center' !== horizontal ? horizontal : undefined, [ 'horizontalPosition', 'horizontalPositionMobile', 'horizontalPositionMobile' ]);
+
+											switch ( view ) {
+											case 'Desktop':
+												setAttributes({
+													verticalPosition: Boolean( vertical ) && 'center' !== vertical ? vertical : undefined,
+													horizontalPosition: Boolean( horizontal ) && 'center' !== horizontal ? horizontal : undefined
+												});
+												break;
+											case 'Tablet':
+												setAttributes({
+													verticalPositionTabelt: Boolean( vertical ) && 'center' !== vertical ? vertical : undefined,
+													horizontalPositionTablet: Boolean( horizontal ) && 'center' !== horizontal ? horizontal : undefined
+												});
+												break;
+											case 'Mobile':
+												setAttributes({
+													verticalPositionMobile: Boolean( vertical ) && 'center' !== vertical ? vertical : undefined,
+													horizontalPositionMobile: Boolean( horizontal ) && 'center' !== horizontal ? horizontal : undefined
+												});
+												break;
+											}
 										}}
 									/>
 								</div>

@@ -5,3 +5,16 @@
 		z-index: 2;
 	}
 }
+
+
+.is-sidebar-opened {
+	.otter-popup__modal_content {
+		margin-right: 295px;
+	}
+
+	&:has(.edit-post-header) {
+		.otter-popup__modal_content {
+			margin-top: 50px;
+		}
+	}
+}
