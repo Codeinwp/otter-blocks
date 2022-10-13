@@ -104,3 +104,14 @@
 		height: 14px;
 	}
 }
+
+.o-border-raduis-box {
+	>.component-box-control__header-control-wrapper {
+		>.components-flex-item {
+			&:first-child {
+				width: 24px;
+				transform: rotate( 315deg );
+			}
+		}
+	}
+}

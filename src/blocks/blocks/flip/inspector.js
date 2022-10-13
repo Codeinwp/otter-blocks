@@ -525,20 +525,14 @@ const Inspector = ({
 									} }
 								/>
 
-								<BoxControl
+								<UnitControl
 									label={ __( 'Border Radius', 'otter-blocks' ) }
-									values={
-										mergeBoxDefaultValues(
-											wrapNumberInBox( attributes.borderRadius ),
-											stringToBox( '10px' )
-										)
-									}
+									value={ attributes.borderRadius?.top ?? wrapNumberInBox( attributes.borderRadius ) ?? '10px' }
 									onChange={ value => {
 										setAttributes({
-											borderRadius: removeBoxDefaultValues( value, { left: '10px', right: '10px', bottom: '10px', top: '10px' })
+											borderRadius: stringToBox( value )
 										});
 									} }
-									id="o-border-raduis-box"
 								/>
 
 								<ToggleControl
