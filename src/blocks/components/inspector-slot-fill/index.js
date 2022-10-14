@@ -13,6 +13,7 @@ const supportedBlocks = [
 	'themeisle-blocks/advanced-columns',
 	'themeisle-blocks/advanced-column',
 	'themeisle-blocks/advanced-heading',
+	'themeisle-blocks/posts-grid',
 	'themeisle-blocks/review'
 ];
 

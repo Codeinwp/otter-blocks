@@ -35,33 +35,37 @@ const FeaturedPost = ({
 	}
 
 	return (
-		<div className={ classNames( 'o-featured-post', { 'has-shadow': attributes.imageBoxShadow }) }>
-			{ attributes.displayFeaturedImage && (
-				<Thumbnail
-					id={ post.featured_media }
-					link={ post.link }
-					alt={ post.title?.rendered }
-					imgStyle={{
-						borderRadius: attributes.borderRadius !== undefined ? attributes.borderRadius + 'px' : undefined
-					}}
-				/>
-			) }
+		<div className="o-featured-container">
+			<div className="o-featured-post">
+				{ attributes.displayFeaturedImage && (
+					<Thumbnail
+						id={ post.featured_media }
+						link={ post.link }
+						alt={ post.title?.rendered }
+						imgStyle={{
+							borderRadius: attributes.borderRadius !== undefined ? attributes.borderRadius + 'px' : undefined
+						}}
+					/>
+				) }
 
-			<div className="o-posts-grid-post-body">
-				{ attributes.template.map( element => {
-					switch ( element ) {
-					case 'category':
-						return <PostsCategory attributes={ attributes } element={ element } category={ category } categoriesList={ categoriesList }/>;
-					case 'title':
-						return <PostsTitle attributes={ attributes } element={ element } post={ post } />;
-					case 'meta':
-						return <PostsMeta attributes={ attributes } element={ element } post={ post } author={ author } category={ category } />;
-					case 'description':
-						return <PostsDescription attributes={ attributes } element={ element } post={ post } />;
-					default:
-						return applyFilters( 'otter.postsBlock.templateLoop', '', element, attributes );
-					}
-				}) }
+				<div className="o-posts-grid-post-body">
+					{ attributes.template.map( element => {
+						const categories = categoriesList && 0 < post?.categories?.length ? categoriesList.filter( item => post.categories.includes( item.id ) ) : [];
+
+						switch ( element ) {
+						case 'category':
+							return <PostsCategory attributes={ attributes } element={ element } category={ category } categoriesList={ categoriesList }/>;
+						case 'title':
+							return <PostsTitle attributes={ attributes } element={ element } post={ post } />;
+						case 'meta':
+							return <PostsMeta attributes={ attributes } element={ element } post={ post } author={ author } categories={ categories } />;
+						case 'description':
+							return <PostsDescription attributes={ attributes } element={ element } post={ post } />;
+						default:
+							return applyFilters( 'otter.postsBlock.templateLoop', '', element, attributes );
+						}
+					}) }
+				</div>
 			</div>
 		</div>
 	);
