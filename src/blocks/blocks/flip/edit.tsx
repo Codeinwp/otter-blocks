@@ -199,7 +199,7 @@ const Edit = ({
 									'core/heading',
 									{
 										content: 'Lorem ipsum',
-										fontSize: 'x-large'
+										level: 3
 									}
 								],
 								[
