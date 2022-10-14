@@ -163,7 +163,6 @@ const Inspector = ({
 							}
 						]}
 						onChange={ onAlignmentChange }
-						hideLabels
 						hasIcon
 					/>
 				</ResponsiveControl>

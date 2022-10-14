@@ -184,20 +184,17 @@ const Inspector = ({
 						options={[
 							{
 								icon: alignLeft,
-
-								// label: __( 'Left', 'otter-blocks' ),
+								label: __( 'Left', 'otter-blocks' ),
 								value: 'flex-start'
 							},
 							{
 								icon: alignCenter,
-
-								// label: __( 'Center', 'otter-blocks' ),
+								label: __( 'Center', 'otter-blocks' ),
 								value: 'center'
 							},
 							{
 								icon: alignRight,
-
-								// label: __( 'Right', 'otter-blocks' ),
+								label: __( 'Right', 'otter-blocks' ),
 								value: 'flex-end'
 							}
 						]}

@@ -26,9 +26,6 @@ const ToogleGroupControl = ({
 	value,
 	options,
 	onChange,
-	hideLabels,
-	hideTooltip,
-	showBottomLabels,
 	hasIcon = false
 }) => {
 	return (
@@ -47,17 +44,14 @@ const ToogleGroupControl = ({
 						className="o-toggle-option"
 					>
 						<Button
+							key={ option?.value }
 							isPrimary={ value == option?.value }
 							variant={ value == option?.value ? 'primary' : 'secondary' }
 							icon={ option?.icon }
 							label={ option?.label }
 							onClick={ () => onChange( option?.value )}
-							showTooltip={ Boolean( hideTooltip ) }
-						>
-							{ option?.label && ! Boolean( hideLabels ) && ! Boolean( showBottomLabels ) ? option?.label : '' }
-						</Button>
-
-						<p>{ option?.label && ! Boolean( hideLabels ) && Boolean( showBottomLabels ) ?  option?.label : '' }</p>
+							showTooltip={ true }
+						/>
 					</div>
 				);
 			}) }

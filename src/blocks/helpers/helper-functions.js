@@ -270,6 +270,26 @@ export const getChoice = arr => {
 };
 
 /**
+ * Converts HEX colors to RGBA.
+ *
+ * @param color
+ * @param alpha
+ * @returns {string}
+ */
+export const hex2rgba = ( color, alpha = 100 ) => {
+	if ( ! color ) {
+		color = '#000000';
+	}
+
+	if ( '#' !== color[0]) {
+		return color;
+	}
+
+	const [ r, g, b ] = color.match( /\w\w/g ).map( x => parseInt( x, 16 ) );
+	return `rgba(${r},${g},${b},${alpha / 100})`;
+};
+
+/**
  * Return the values from a box type.
  *
  * @param {import('./blocks').BoxType?} box
@@ -342,11 +362,7 @@ export const buildResponsiveSetAttributes = ( setAttributes, currentView ) => {
 		const attrName = keys[mapViewToKey[currentView] ?? 0]?.split( '.' )[0];
 		const attr = { [attrName]: { ...oldAttr }};
 
-		if ( value === undefined ) {
-			unset( attr, keys[mapViewToKey[currentView] ?? 0]);
-		} else {
-			set( attr, keys[mapViewToKey[currentView] ?? 0], value );
-		}
+		set( attr, keys[mapViewToKey[currentView] ?? 0], value );
 
 		setAttributes( 'object' === typeof attr[attrName] && isEmpty( attr[attrName]) ? { [attrName]: undefined } : attr );
 	};
