@@ -17,7 +17,7 @@ import {
 	useEffect
 } from '@wordpress/element';
 
-import { select } from '@wordpress/data';
+import {select, useSelect} from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -68,10 +68,15 @@ const Edit = ({
 
 	// Make it true for old users if they have more than one accordion item
 	// with initiallyOpen === true, and false by default otherwise
-	if ( attributes.alwaysOpen === undefined ) {
-		const children = select( 'core/block-editor' ).getBlocksByClientId( clientId )[0].innerBlocks;
-		setAttributes({ alwaysOpen: 1 < children.filter( child => true === child.attributes.initialOpen ).length });
-	}
+	const children = useSelect( select => {
+		return select( 'core/block-editor' ).getBlocksByClientId( clientId )[0].innerBlocks;
+	});
+
+	useEffect( () => {
+		if ( attributes.alwaysOpen === undefined ) {
+			setAttributes({ alwaysOpen: 1 < children.filter( child => true === child.attributes.initialOpen ).length });
+		}
+	}, []);
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 

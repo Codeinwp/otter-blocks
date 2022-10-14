@@ -96,10 +96,6 @@
 		}
 	}
 
-	&.is-style-boxed:not( .no-gap ) {
-		margin: var(--gap) 0;
-	}
-
 	// when no gap is set, we need to avoid the doubled border between items
 	&.is-style-boxed.no-gap > &-item:not( :first-child ),
 	&.is-style-boxed:not( .is-narrow-gap ):not( .is-wide-gap ):not( .is-wider-gap ):not( .has-gap ) > &-item:not( :first-child ) {

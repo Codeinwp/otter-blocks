@@ -17,10 +17,10 @@ const Save = ({
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
 		className: classnames({
+			exclusive: false === attributes.alwaysOpen,
 			[ `is-${ attributes.gap }-gap` ]: attributes.gap && 'string' === typeof attributes.gap,
 			'no-gap': 0 === attributes.gap,
-			'has-gap': 'string' !== typeof attributes.gap && 0 !== attributes.gap,
-			exclusive: false === attributes.alwaysOpen,
+			'has-gap': attributes.gap && 'string' !== typeof attributes.gap && 0 !== attributes.gap,
 			'icon-first': attributes.iconFirst,
 			'has-icon': !! attributes.icon,
 			'has-open-icon': !! attributes.openItemIcon
