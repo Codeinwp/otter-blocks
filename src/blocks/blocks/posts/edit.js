@@ -1,9 +1,4 @@
 /**
- * External dependencies.
- */
-import hexToRgba from 'hex-rgba';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -49,7 +44,8 @@ import {
 	_align,
 	boxValues,
 	buildResponsiveGetAttributes,
-	getCustomPostTypeSlugs
+	getCustomPostTypeSlugs,
+	hex2rgba
 } from '../../helpers/helper-functions.js';
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
@@ -144,10 +140,10 @@ const Edit = ({
 
 	const inlineStyles = {
 		'--img-border-radius': mightBeBoxed( attributes.borderRadius ),
-		'--img-box-shadow': imageBoxShadow.active && `${ imageBoxShadow.horizontal }px ${ imageBoxShadow.vertical }px ${ imageBoxShadow.blur }px ${ imageBoxShadow.spread }px ${ hexToRgba( imageBoxShadow.color || '#FFFFFF', imageBoxShadow.colorOpacity ) }`,
+		'--img-box-shadow': imageBoxShadow.active && `${ imageBoxShadow.horizontal }px ${ imageBoxShadow.vertical }px ${ imageBoxShadow.blur }px ${ imageBoxShadow.spread }px ${ hex2rgba( imageBoxShadow.color, imageBoxShadow.colorOpacity ) }`,
 		'--border-width': mightBeUnit( attributes.borderWidth ),
 		'--border-radius': boxValues( attributes.cardBorderRadius ),
-		'--box-shadow': boxShadow.active && `${ boxShadow.horizontal }px ${ boxShadow.vertical }px ${ boxShadow.blur }px ${ boxShadow.spread }px ${ hexToRgba( boxShadow.color || '#FFFFFF', boxShadow.colorOpacity ) }`,
+		'--box-shadow': boxShadow.active && `${ boxShadow.horizontal }px ${ boxShadow.vertical }px ${ boxShadow.blur }px ${ boxShadow.spread }px ${ hex2rgba( boxShadow.color, boxShadow.colorOpacity ) }`,
 		'--vert-align': _align( attributes.verticalAlign ),
 		'--text-align': attributes.textAlign,
 		'--text-color': attributes.textColor,
