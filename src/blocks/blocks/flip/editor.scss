@@ -11,4 +11,20 @@
 		align-items: center;
 		justify-content: center;
 	}
+
+	&.is-selected {
+		height: calc( var( --height ) + 60px );
+	}
+}
+
+@media ( max-width: 960px ) {
+	.wp-block-themeisle-blocks-flip {
+		height: calc( var(--height-tablet) + 60px );
+	}
+}
+
+@media ( max-width: 600px ) {
+	.wp-block-themeisle-blocks-flip{
+		height: calc( var(--height-mobile) + 60px);
+	}
 }
