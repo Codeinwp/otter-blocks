@@ -8,12 +8,25 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
+import { isNumber } from 'lodash';
+
 import { Button } from '@wordpress/components';
+
+import { useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
 	useEffect
 } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import { buildResponsiveGetAttributes } from '../../../helpers/helper-functions.js';
+
+const px = value => value ? `${ value }px` : value;
+
+const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
 
 const Map = ({
 	attributes,
@@ -29,13 +42,28 @@ const Map = ({
 		}
 	}, [ displayMap ]);
 
+	const {
+		responsiveGetAttributes
+	} = useSelect( select => {
+		const { getView } = select( 'themeisle-gutenberg/data' );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+
+		return {
+			responsiveGetAttributes: buildResponsiveGetAttributes( view )
+		};
+	}, []);
+
 	return (
 		<Fragment>
 			<div
 				id={ attributes.id }
-				className={ classnames({ 'is-selecting-marker': isSelectingMarker }) }
+				className={ classnames(
+					'wp-block-themeisle-blocks-google-map-container',
+					{ 'is-selecting-marker': isSelectingMarker }
+				) }
 				style={ {
-					height: attributes.height + 'px'
+					height: responsiveGetAttributes([ mightBeUnit( attributes.height ), attributes.heightTablet, attributes.heightMobile ])
 				} }
 			>
 			</div>

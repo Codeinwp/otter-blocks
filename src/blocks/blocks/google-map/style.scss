@@ -1,5 +1,21 @@
 .wp-block-themeisle-blocks-google-map {
+	--height: 400px;
+	--height-tablet: var( --height );
+	--height-mobile: var( --height-tablet );
+
 	margin: 20px 0;
+
+	.wp-block-themeisle-blocks-google-map-container {
+		height: var( --height );
+	
+		@media ( min-width: 600px ) and ( max-width: 960px ) {
+			height: var( --height-tablet ) !important;
+		}
+	
+		@media ( max-width: 600px ) {
+			height: var( --height-mobile ) !important;
+		}
+	}
 }
 
 .wp-block-themeisle-blocks-map {

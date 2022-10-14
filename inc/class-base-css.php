@@ -81,6 +81,7 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Countdown_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Core_Image_Plugin_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Font_Awesome_Icons_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Google_Map_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Icon_List_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Icon_List_Item_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_CSS',

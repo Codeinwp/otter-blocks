@@ -3,6 +3,8 @@
  */
 import { __ } from '@wordpress/i18n';
 
+import { isNumber } from 'lodash';
+
 import {
 	BaseControl,
 	Button,
@@ -11,10 +13,13 @@ import {
 	RangeControl,
 	SelectControl,
 	TextControl,
-	ToggleControl
+	ToggleControl,
+	__experimentalUnitControl as UnitContol
 } from '@wordpress/components';
 
 import { InspectorControls } from '@wordpress/block-editor';
+
+import { useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
@@ -28,7 +33,17 @@ import {
 import InspectorHeader from '../../components/inspector-header/index.js';
 import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
 import { StyleSwitcherInspectorControl } from '../../components/style-switcher-control/index.js';
+import ResponsiveControl from '../../components/responsive-control/index.js';
+import ClearButton from '../../components/clear-button/index.js';
+import {
+	buildResponsiveGetAttributes,
+	buildResponsiveSetAttributes
+} from '../../helpers/helper-functions.js';
 import MarkerWrapper from './components/marker-wrapper.js';
+
+const px = value => value ? `${ value }px` : value;
+
+const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
 
 /**
  *
@@ -52,6 +67,20 @@ const Inspector = ({
 	saveAPIKey
 }) => {
 	const [ tab, setTab ] = useState( 'settings' );
+
+	const {
+		responsiveSetAttributes,
+		responsiveGetAttributes
+	} = useSelect( select => {
+		const { getView } = select( 'themeisle-gutenberg/data' );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+
+		return {
+			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
+			responsiveGetAttributes: buildResponsiveGetAttributes( view )
+		};
+	}, []);
 
 	const searchRef = useRef( null );
 
@@ -109,10 +138,6 @@ const Inspector = ({
 	const changeZoom = value => {
 		setAttributes({ zoom: value });
 		map.setZoom( value );
-	};
-
-	const changeHeight = value => {
-		setAttributes({ height: value });
 	};
 
 	const toggleDraggable = () => {
@@ -205,18 +230,6 @@ const Inspector = ({
 						title={ __( 'Positioning & Zooming', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
-						<SelectControl
-							label={ __( 'Map Type', 'otter-blocks' ) }
-							value={ attributes.type }
-							options={ [
-								{ label: __( 'Road Map', 'otter-blocks' ), value: 'roadmap' },
-								{ label: __( 'Satellite View', 'otter-blocks' ), value: 'satellite' },
-								{ label: __( 'Hybrid', 'otter-blocks' ), value: 'hybrid' },
-								{ label: __( 'Terrain', 'otter-blocks' ), value: 'terrain' }
-							] }
-							onChange={ changeMapType }
-						/>
-
 						<RangeControl
 							label={ __( 'Map Zoom Level', 'otter-blocks' ) }
 							value={ attributes.zoom }
@@ -225,13 +238,19 @@ const Inspector = ({
 							max={ 20 }
 						/>
 
-						<RangeControl
-							label={ __( 'Map Height', 'otter-blocks' ) }
-							value={ attributes.height }
-							onChange={ changeHeight }
-							min={ 100 }
-							max={ 1400 }
-						/>
+						<ResponsiveControl
+							label={ __( 'Height', 'otter-blocks' ) }
+						>
+							<UnitContol
+								value={ responsiveGetAttributes([ mightBeUnit( attributes.height ), attributes.heightTablet, attributes.heightMobile ]) }
+								onChange={ value => responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]) }
+							/>
+
+							<ClearButton
+								values={[ 'height', 'heightTablet', 'heightMobile' ]}
+								setAttributes={ setAttributes }
+							/>
+						</ResponsiveControl>
 					</PanelBody>
 
 					<PanelBody
@@ -358,6 +377,18 @@ const Inspector = ({
 							}
 						] }
 						onChange={ changeStyle }
+					/>
+
+					<SelectControl
+						label={ __( 'Map Type', 'otter-blocks' ) }
+						value={ attributes.type }
+						options={ [
+							{ label: __( 'Road Map', 'otter-blocks' ), value: 'roadmap' },
+							{ label: __( 'Satellite View', 'otter-blocks' ), value: 'satellite' },
+							{ label: __( 'Hybrid', 'otter-blocks' ), value: 'hybrid' },
+							{ label: __( 'Terrain', 'otter-blocks' ), value: 'terrain' }
+						] }
+						onChange={ changeMapType }
 					/>
 				</PanelBody>
 			) }
