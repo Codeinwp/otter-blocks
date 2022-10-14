@@ -156,7 +156,14 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 			return (
 				<Fragment>
 					<BlockEdit { ...props } />
-					<CopyPasteComponent {...props} />
+					{
+
+						/**
+							Might be usefull in the future.
+							<CopyPasteComponent {...props} />
+						*/
+					}
+
 					<OtterControlTools order={0}>
 						<MenuGroup>
 							<MenuItem
