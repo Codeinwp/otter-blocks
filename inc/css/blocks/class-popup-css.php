@@ -66,10 +66,48 @@ class Popup_CSS extends Base_CSS {
 							return $value / 100;
 						},
 					),
+					array(
+						'property' => '--padding',
+						'value'    => 'padding',
+						'format'   => function( $value ) {
+							return CSS_Utility::box_values( $value );
+						},
+					),
+					array(
+						'property' => '--brd-width',
+						'value'    => 'borderWidth',
+						'format'   => function( $value ) {
+							return CSS_Utility::box_values( $value );
+						},
+					),
+					array(
+						'property' => '--brd-radius',
+						'value'    => 'borderRadius',
+						'format'   => function( $value ) {
+							return CSS_Utility::box_values( $value );
+						},
+					),
+					array(
+						'property' => '--brd-color',
+						'value'    => 'borderColor',
+					),
+					array(
+						'property' => '--brd-style',
+						'value'    => 'borderStyle',
+					),
+					array(
+						'property' => '--width',
+						'value'    => 'width',
+					),
+					array(
+						'property' => '--height',
+						'value'    => 'height',
+					),
 				),
 			)
 		);
 
+		// TODO: Add responsive values when #1259 is merged.
 		$style = $css->generate();
 
 		return $style;
