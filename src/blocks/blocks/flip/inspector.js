@@ -201,7 +201,16 @@ const Inspector = ({
 														accept="image/*"
 														allowedTypes={ [ 'image' ] }
 														value={ attributes.frontMedia }
-														onSelect={ value => setAttributes({ frontMedia: pick( value, [ 'id', 'alt', 'url' ]) }) }
+														onSelect={
+															value => {
+																console.log( value );
+																setAttributes({
+																	frontMedia: pick( value, [ 'id', 'alt', 'url' ]),
+																	frontMediaHeight: value?.sizes?.medium.height,
+																	frontMediaWidth: value?.sizes?.medium.width
+																});
+															}
+														}
 													/>
 												) : (
 													<BaseControl
