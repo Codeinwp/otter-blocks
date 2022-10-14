@@ -1,18 +1,14 @@
 /**
- * External dependencies
- */
-import classnames from 'classnames';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 
-import { max } from 'lodash';
+import {
+	isNumber,
+	max
+} from 'lodash';
 
 import { useBlockProps } from '@wordpress/block-editor';
-
-import { ResizableBox } from '@wordpress/components';
 
 import {
 	Fragment,
@@ -22,7 +18,8 @@ import {
 } from '@wordpress/element';
 
 import {
-	select
+	select,
+	useSelect
 } from '@wordpress/data';
 
 /**
@@ -33,6 +30,7 @@ import Placeholder from './placeholder.js';
 import Inspector from './inspector.js';
 import Slide from './components/Slide.js';
 import SliderControls from './components/slider-controls.js';
+import { buildResponsiveGetAttributes } from '../../helpers/helper-functions.js';
 import {
 	blockInit,
 	copyScriptAssetToIframe,
@@ -47,6 +45,10 @@ const options = {
 	threshold: [ 0.0 ]
 };
 
+const px = value => value ? `${ value }px` : value;
+
+const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
+
 /**
  * Slider component
  * @param {import('./types').SliderProps} props
@@ -56,8 +58,7 @@ const Edit = ({
 	attributes,
 	setAttributes,
 	clientId,
-	isSelected,
-	toggleSelection
+	isSelected
 }) => {
 
 	const initObserver = useRef( null );
@@ -129,6 +130,18 @@ const Edit = ({
 		}
 	}, [ attributes.images ]);
 
+	const {
+		responsiveGetAttributes
+	} = useSelect( select => {
+		const { getView } = select( 'themeisle-gutenberg/data' );
+		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
+		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
+
+		return {
+			responsiveGetAttributes: buildResponsiveGetAttributes( view )
+		};
+	}, []);
+
 	const [ selectedImage, setSelectedImage ] = useState( null );
 
 	const initSlider = () => {
@@ -147,6 +160,7 @@ const Edit = ({
 					gap: attributes.gap,
 					peek: attributes.peek,
 					autoplay: false,
+					animationTimingFunc: attributes.transition || 'ease',
 					breakpoints: {
 						800: {
 							perView: 1,
@@ -174,6 +188,7 @@ const Edit = ({
 				gap: attributes.gap,
 				peek: attributes.peek,
 				autoplay: false,
+				animationTimingFunc: attributes.transition || 'ease',
 				breakpoints: {
 					800: {
 						perView: 1,
@@ -218,6 +233,17 @@ const Edit = ({
 		}
 	};
 
+	const inlineStyles = {
+		'--arrows-color': attributes.arrowsColor,
+		'--arrows-background-color': attributes.arrowsBackgroundColor,
+		'--pagination-color': attributes.paginationColor,
+		'--pagination-active-color': attributes.paginationActiveColor,
+		'--border-color': attributes.borderColor,
+		'--border-width': attributes.borderWidth,
+		'--border-radius': attributes.borderRadius,
+		'--width': attributes.width
+	};
+
 	const blockProps = useBlockProps();
 
 	if ( Array.isArray( attributes.images ) && ! attributes.images.length ) {
@@ -246,65 +272,36 @@ const Edit = ({
 			/>
 
 			<div { ...blockProps }>
-				<ResizableBox
-					size={ {
-						height: attributes.height
-					} }
-					enable={ {
-						top: false,
-						right: false,
-						bottom: true,
-						left: false
-					} }
-					minHeight={ 100 }
-					maxHeight={ 1400 }
-					onResizeStart={ () => {
-						toggleSelection( false );
-					} }
-					onResizeStop={ ( event, direction, elt, delta ) => {
-						setAttributes({
-							height: parseInt( attributes.height + delta.height, 10 )
-						});
-						toggleSelection( true );
-					} }
-					className={ classnames(
-						'wp-block-themeisle-blocks-slider-resizer',
-						{ 'is-focused': isSelected }
-					) }
+				<div
+					id={ attributes.id }
+					className="glide"
+					style={ inlineStyles }
 				>
-					<div
-						id={ attributes.id }
-						className="glide"
-						style={{
-							width: attributes.width
-						}}
-					>
-						<div className="glide__track" data-glide-el="track">
-							<div
-								className="glide__slides"
-								style={ {
-									height: `${ attributes.height }px`
-								} }
-							>
-								{ attributes.images.map( ( image, index ) => (
-									<Slide
-										key={ image.url }
-										images={ attributes.images }
-										image={ image }
-										index={ index }
-										isFirstItem={ 0 === index }
-										isLastItem={ ( index + 1 ) === attributes.images.length }
-										isSelected={ isSelected && image.id === selectedImage }
-										setAttributes={ setAttributes }
-										setSelectedImage={ setSelectedImage }
-									/>
-								) ) }
-							</div>
-
-							<SliderControls attributes={ attributes } />
+					<div className="glide__track" data-glide-el="track">
+						<div
+							className="glide__slides"
+							style={ {
+								height: responsiveGetAttributes([ mightBeUnit( attributes.height ), attributes.heightTablet, attributes.heightMobile ])
+							} }
+						>
+							{ attributes.images.map( ( image, index ) => (
+								<Slide
+									key={ image.url }
+									images={ attributes.images }
+									image={ image }
+									index={ index }
+									isFirstItem={ 0 === index }
+									isLastItem={ ( index + 1 ) === attributes.images.length }
+									isSelected={ isSelected && image.id === selectedImage }
+									setAttributes={ setAttributes }
+									setSelectedImage={ setSelectedImage }
+								/>
+							) ) }
 						</div>
+
+						<SliderControls attributes={ attributes } />
 					</div>
-				</ResizableBox>
+				</div>
 
 				{ isSelected && (
 					<Placeholder

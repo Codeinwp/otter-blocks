@@ -155,7 +155,7 @@ const Edit = ({
 
 	const divide = Boolean( window.themeisleGutenberg.ratingScale ) ? 2 : 1;
 
-	let blockProps = useBlockProps({
+	const blockProps = useBlockProps({
 		id: attributes.id,
 		className: isPlaceholder ? 'is-placeholder' : classnames({
 			'no-pros-cons': ! ( 0 < attributes.pros.length || 0 < attributes.cons.length ),
