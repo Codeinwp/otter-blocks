@@ -174,8 +174,8 @@ class CSS_Utility {
 	 *
 	 * @access public
 	 * @since 2.1.0
-	 * @param array $selector CSS selector.
-	 * @param array $properties CSS properties.
+	 * @param string $selector CSS selector.
+	 * @param array  $properties CSS properties.
 	 */
 	public function filter_out_media_queries( $selector, $properties ) {
 		$query_items = array_filter(
