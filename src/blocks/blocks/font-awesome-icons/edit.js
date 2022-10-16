@@ -1,12 +1,11 @@
 /**
- * External dependencies.
- */
-
-import { isNumber, isString } from 'lodash';
-
-/**
  * WordPress dependencies...
  */
+import {
+	isNumber,
+	isString
+} from 'lodash';
+
 import { useBlockProps } from '@wordpress/block-editor';
 
 import {
