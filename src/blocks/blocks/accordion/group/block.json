@@ -33,7 +33,7 @@
 			"type": "string"
 		},
 		"borderWidth": {
-			"type": "number"
+			"type": "string"
 		},
 		"isSynced": {
 			"type": "array"

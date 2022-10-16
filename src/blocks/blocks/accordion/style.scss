@@ -32,12 +32,17 @@
 
 			padding: var(--padding);
 
-			font-style: var(--font-style);
-			font-weight: var(--font-variant);
-			font-family: var(--font-family);
-			text-transform: var(--text-transform);
-			letter-spacing: var(--letter-spacing);
-			font-size: var(--font-size);
+			/* for specificity */
+			#{$block} & > * {
+				font-style: var(--font-style);
+				font-weight: var(--font-variant);
+				font-family: var(--font-family);
+				text-transform: var(--text-transform);
+				letter-spacing: var(--letter-spacing);
+				font-size: var(--font-size);
+
+				margin: 0;
+			}
 
 			list-style: none;
 			cursor: pointer;
@@ -50,10 +55,6 @@
 			svg {
 				width: 24px;
 				height: 24px;
-			}
-
-			> * {
-				margin-bottom: 0;
 			}
 
 			&::-webkit-details-marker,
@@ -146,8 +147,8 @@
 		gap: 24px;
 	}
 
-	&:not( .has-icon ) > &-item > &-item__title::after,
-	&:not( .has-open-icon ) > &-item > &-item__title::after {
+	&:not( .has-icon ) > &-item:not([open]) > &-item__title::after,
+	&:not( .has-open-icon ) > &-item[open] > &-item__title::after {
 		content: '';
 		justify-self: end;
 		align-self: center;

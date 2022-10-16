@@ -10,7 +10,7 @@ type Attributes = {
 	contentBackground: string
 	borderColor: string
 	borderStyle: string
-	borderWidth: number
+	borderWidth: string
 	isSynced: string
 	fontFamily: string
 	fontVariant: string

@@ -98,7 +98,7 @@ class Accordion_CSS extends Base_CSS {
 						'property'  => '--border-width',
 						'value'     => 'borderWidth',
 						'format'    => function( $value ) {
-							return $value . 'px';
+							return $value;
 						},
 						'condition' => function( $attrs ) {
 							return isset( $attrs['borderWidth'] );

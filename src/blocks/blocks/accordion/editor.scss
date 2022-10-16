@@ -131,8 +131,8 @@
 		}
 	}
 
-	&:not( .has-icon ) > * > * > &-item > &-item__title::after,
-	&:not( .has-open-icon ) > * > * > &-item > &-item__title::after {
+	&:not( .has-icon ) > * > * > &-item:not( .is-open ) > &-item__title::after,
+	&:not( .has-open-icon ) > * > * > &-item.is-open > &-item__title::after {
 		content: '';
 		justify-self: end;
 		align-self: center;
