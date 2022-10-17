@@ -32,7 +32,13 @@ class Flip_CSS extends Base_CSS {
 	 * @access  public
 	 */
 	public function render_css( $block ) {
-		$css = new CSS_Utility( $block );
+		$css = new CSS_Utility(
+			$block,
+			array(
+				'tablet' => '@media ( max-width: 960px )',
+				'mobile' => '@media ( max-width: 600px )',
+			) 
+		);
 
 		$css->add_item(
 			array(
@@ -53,12 +59,14 @@ class Flip_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => '--width-tablet',
+						'property' => '--width',
 						'value'    => 'widthTablet',
+						'media'    => 'tablet',
 					),
 					array(
-						'property' => '--width-mobile',
+						'property' => '--width',
 						'value'    => 'widthMobile',
+						'media'    => 'mobile',
 					),
 					array(
 						'property'  => '--height',
@@ -76,12 +84,14 @@ class Flip_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => '--height-tablet',
+						'property' => '--height',
 						'value'    => 'heightTablet',
+						'media'    => 'tablet',
 					),
 					array(
-						'property' => '--height-mobile',
+						'property' => '--height',
 						'value'    => 'heightMobile',
+						'media'    => 'mobile',
 					),
 					array(
 						'property' => '--border-color',
@@ -267,6 +277,7 @@ class Flip_CSS extends Base_CSS {
 						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values( $value, CSS_Utility::make_box( '20px' ) );
 						},
+						'media'    => 'tablet',
 					),
 					array(
 						'property' => '--padding-mobile',
@@ -274,6 +285,7 @@ class Flip_CSS extends Base_CSS {
 						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values( $value, CSS_Utility::make_box( '20px' ) );
 						},
+						'media'    => 'mobile',
 					),
 					array(
 						'property'       => '--box-shadow',
