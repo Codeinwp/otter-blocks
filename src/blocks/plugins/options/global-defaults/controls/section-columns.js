@@ -199,7 +199,6 @@ const SectionColumns = ({
 								}
 							]}
 							onChange={ align => changeHorizontalAlign( align ) }
-							hideLabels
 						/>
 					</BaseControl>
 				) }

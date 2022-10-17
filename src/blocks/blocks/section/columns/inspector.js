@@ -584,7 +584,6 @@ const Inspector = ({
 												}
 											]}
 											onChange={ align => changeHorizontalAlign( align ) }
-											hideLabels
 										/>
 									</BaseControl>
 								</SyncControl>
