@@ -2,6 +2,16 @@
 
 .wp-block-themeisle-blocks-flip {
 	@extend .wp-block-themeisle-blocks-flip;
+
+	--height-tablet: var(--height);
+	--height-mobile: var(--height-tablet);
+
+	--width-tablet: var(--width);
+	--width-mobile: var(--width-tablet);
+
+	--padding-tablet: var(--padding);
+	--padding-mobile: var(--padding-tablet);
+
 	border: none;
 
 	.o-switcher {
@@ -19,12 +29,36 @@
 
 @media ( max-width: 960px ) {
 	.wp-block-themeisle-blocks-flip {
-		height: calc( var(--height-tablet) + 60px );
+		height: var( --height-tablet );
+
+		&.is-selected {
+			height: calc( var( --height-tablet ) + 60px );
+		}
+
+		.o-flip-inner {
+			width: var(--width-tablet);
+		}
+
+		.o-flip-content {
+			padding: var(--padding-tablet);
+		}
 	}
 }
 
 @media ( max-width: 600px ) {
 	.wp-block-themeisle-blocks-flip{
-		height: calc( var(--height-mobile) + 60px);
+		height: var( --height-mobile );
+
+		&.is-selected {
+			height: calc( var( --height-mobile ) + 60px );
+		}
+
+		.o-flip-inner {
+			width: var( --width-mobile );
+		}
+
+		.o-flip-content {
+			padding: var(--padding-mobile);
+		}
 	}
 }

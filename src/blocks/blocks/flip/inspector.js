@@ -367,7 +367,6 @@ const Inspector = ({
 									<UnitControl
 										value={ responsiveGetAttributes([ isNumber( attributes.width ) ? _px( attributes.width ) : attributes?.width, attributes.widthTablet, attributes?.widthMobile ]) ?? '100%' }
 										onChange={ width => responsiveSetAttributes( width, [ 'width', 'widthTablet', 'widthMobile' ], attributes.width ) }
-
 										isUnitSelectTabbable
 										isResetValueOnUnitChange
 										allowReset={ true }
