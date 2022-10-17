@@ -184,7 +184,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 							},
 						),
 					),
-					Shared_CSS::section_shared(),
+					Shared_CSS::section_shared()
 				),
 			)
 		);

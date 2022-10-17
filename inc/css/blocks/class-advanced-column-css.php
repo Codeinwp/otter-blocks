@@ -186,7 +186,7 @@ class Advanced_Column_CSS extends Base_CSS {
 							'hasSync'   => 'column-margin-right',
 						),
 					),
-					Shared_CSS::section_shared(),
+					Shared_CSS::section_shared()
 				),
 			)
 		);
