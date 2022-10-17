@@ -97,9 +97,6 @@ class Base_CSS {
 		);
 
 		self::$blocks_classes = apply_filters( 'otter_blocks_register_css', self::$blocks_classes );
-
-		$shared_css = new \Themeisle\GutenbergBlocks\CSS\Blocks\Shared_CSS();
-		$shared_css->init();
 	}
 
 	/**
@@ -633,7 +630,7 @@ class Base_CSS {
 	 * @since   1.4.4
 	 * @access  public
 	 */
-	public function is_image_url( $url ) {
+	public static function is_image_url( $url ) {
 		return is_string( $url ) && ( preg_match( '/\.(jpeg|jpg|png|gif|svg|bmp|ico|tiff|webp)$/i', $url ) || preg_match( '/\/dynamic\/?.[^"]*/i', $url ) );
 	}
 
