@@ -19,7 +19,10 @@ class Shared_CSS {
 		add_action( 'init', array( $this, 'testing' ) );
 	}
 
-    public function testing() {
-        die( 'hello' );
-    }
+	/**
+	 * Testing the class
+	 */
+	public function testing() {
+		die( 'hello' );
+	}
 }
