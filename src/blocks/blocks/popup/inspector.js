@@ -278,9 +278,6 @@ const Inspector = ({
 											attributes.paddingMobile
 										]) }
 										onChange={ value => {
-											setAttributes({
-												padding: removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' })
-											});
 											responsiveSetAttributes(
 												removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' }),
 												[ 'padding', 'paddingTablet', 'paddingMobile' ]

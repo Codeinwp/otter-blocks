@@ -35,22 +35,22 @@ import { boxValues, _cssBlock } from '../../helpers/helper-functions';
 import { isObjectLike, merge } from 'lodash';
 
 const { attributes: defaultAttributes } = metadata;
+const makeBox = x => ({ top: x, bottom: x, left: x, right: x });
 
 /**
  * Popup component
  * @param {import('./types').PopupPros} props
  * @returns
  */
-const Edit = (props) => {
+const Edit = ( props ) => {
 
 	const {
 		attributes,
 		setAttributes,
-		clientId,
-		toggleSelection
+		clientId
 	} = props;
 
-	console.log(props);
+	console.log( props );
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -69,48 +69,21 @@ const Edit = (props) => {
 		'--brd-width': boxValues( attributes.borderWidth ),
 		'--brd-radius': boxValues( attributes.borderRadius ),
 		'--brd-color': attributes.borderColor,
-		'--brd-style': attributes.borderStyle
+		'--brd-style': attributes.borderStyle,
+
+		// Responsive
+		'--width': ! Boolean( attributes.width ) && attributes.maxWidth ? attributes.maxWidth + 'px' : attributes.width,
+		'--width-tablet': attributes.widthTablet,
+		'--width-mobile': attributes.widthMobile,
+		'--height': attributes.height,
+		'--height-tablet': attributes.heightMobile,
+		'--height-mobile': attributes.heightMobile,
+		'--padding': attributes.padding ?  boxValues( merge( makeBox( '20px' ), attributes.padding ) ) : undefined,
+		'--padding-tablet': attributes.paddingTablet ?  boxValues( merge( makeBox( '20px' ), attributes.padding ?? {}, attributes.paddingTablet ) ) : undefined,
+		'--padding-mobile': attributes.paddingMobile ?  boxValues( merge( makeBox( '20px' ), attributes.padding ?? {}, attributes.paddingTablet  ?? {}, attributes.paddingMobile ) ) : undefined
 	};
 
-	const [ cssNodeResponsive, setNodeCSSResponsive ] = useCSSNode();
 	const [ cssNode, setNodeCSS ] = useCSSNode();
-
-	useEffect( () => {
-		setNodeCSSResponsive(
-			[
-				_cssBlock([
-					[ '--width', attributes.width ],
-					[ '--height', attributes.height ],
-					[ '--padding', boxValues( attributes.padding, { top: '20px', bottom: '20px', left: '20px', right: '20px' }) ]
-				]),
-				_cssBlock([
-					[ '--width', attributes.widthTablet ],
-					[ '--height', attributes.heightTablet ],
-					[ '--padding', boxValues( merge({}, attributes.padding ?? {}, attributes.paddingTablet ), { top: '20px', bottom: '20px', left: '20px', right: '20px' }), isObjectLike ]
-				]),
-				_cssBlock([
-					[ '--width', attributes.widthMobile ],
-					[ '--height', attributes.heightMobile ],
-					[ '--padding', boxValues( merge({}, attributes.padding ?? {}, attributes.paddingTablet ?? {}, attributes.paddingMobile ), { top: '20px', bottom: '20px', left: '20px', right: '20px' }), isObjectLike ]
-				])
-			],
-			[
-				'@media ( min-width: 960px )',
-				'@media ( min-width: 600px ) and ( max-width: 960px )',
-				'@media ( max-width: 600px )'
-			]
-		);
-	}, [
-		attributes.padding,
-		attributes.width,
-		attributes.height,
-		attributes.paddingTablet,
-		attributes.paddingMobile,
-		attributes.widthTablet,
-		attributes.widthMobile,
-		attributes.heightTablet,
-		attributes.heightMobile
-	]);
 
 	useEffect( () => {
 		setNodeCSS(
@@ -139,20 +112,20 @@ const Edit = (props) => {
 				'@media ( min-width: 600px ) and ( max-width: 960px )',
 				'@media ( max-width: 600px )'
 			]);
-		},
-		[
-			attributes.horizontalPosition,
-			attributes.verticalPosition,
-			attributes.horizontalPositionTablet,
-			attributes.verticalPositionTablet,
-			attributes.horizontalPositionMobile,
-			attributes.verticalPositionMobile
-		]);
+	},
+	[
+		attributes.horizontalPosition,
+		attributes.verticalPosition,
+		attributes.horizontalPositionTablet,
+		attributes.verticalPositionTablet,
+		attributes.horizontalPositionMobile,
+		attributes.verticalPositionMobile
+	]);
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		style: inlineStyles,
-		className: `${cssNodeResponsive} ${cssNode}`
+		className: cssNode
 	});
 
 	return (

@@ -67,13 +67,6 @@ class Popup_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => '--padding',
-						'value'    => 'padding',
-						'format'   => function( $value ) {
-							return CSS_Utility::box_values( $value );
-						},
-					),
-					array(
 						'property' => '--brd-width',
 						'value'    => 'borderWidth',
 						'format'   => function( $value ) {
@@ -100,8 +93,45 @@ class Popup_CSS extends Base_CSS {
 						'value'    => 'width',
 					),
 					array(
+						'property' => '--width-tablet',
+						'value'    => 'widthTablet',
+					),
+					array(
+						'property' => '--width-mobile',
+						'value'    => 'widthMobile',
+					),
+					array(
 						'property' => '--height',
 						'value'    => 'height',
+					),
+					array(
+						'property' => '--height-tablet',
+						'value'    => 'heightTablet',
+					),
+					array(
+						'property' => '--height-mobile',
+						'value'    => 'heightMobile',
+					),
+					array(
+						'property' => '--padding',
+						'value'    => 'padding',
+						'format'   => function( $value ) {
+							return CSS_Utility::box_values( $value );
+						},
+					),
+					array(
+						'property' => '--padding-tablet',
+						'value'    => 'paddingTablet',
+						'format'   => function( $value ) {
+							return CSS_Utility::box_values( $value );
+						},
+					),
+					array(
+						'property' => '--padding-mobile',
+						'value'    => 'paddingMobile',
+						'format'   => function( $value ) {
+							return CSS_Utility::box_values( $value );
+						},
 					),
 				),
 			)

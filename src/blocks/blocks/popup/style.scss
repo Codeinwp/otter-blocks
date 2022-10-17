@@ -10,9 +10,19 @@ $base-index: 9999 !default;
 	--brd-radius: 0px;
 	--brd-color: #000;
 	--brd-style: hidden;
+
 	--width: 500px;
+	--width-tablet: var(--width);
+	--width-mobile: var(--width-tablet);
+
 	--height: 400px;
+	--height-tablet: var(--height);
+	--height-mobile: var(--width-tablet);
+
 	--padding: 20px;
+	--padding-tablet: var(--padding);
+	--padding-mobile: var(--padding-tablet);
+
 
 	&.is-front {
 		display: none;
