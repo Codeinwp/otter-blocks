@@ -97,6 +97,9 @@ class Base_CSS {
 		);
 
 		self::$blocks_classes = apply_filters( 'otter_blocks_register_css', self::$blocks_classes );
+
+		$shared_css = new \Themeisle\GutenbergBlocks\CSS\Blocks\Shared_CSS();
+		$shared_css->init();
 	}
 
 	/**

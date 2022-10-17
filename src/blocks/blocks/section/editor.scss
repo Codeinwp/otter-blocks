@@ -39,6 +39,18 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	}
 
 	.wp-block-themeisle-blocks-advanced-column {
+		> * {
+			position: relative;
+		}
+
+		.wp-block-themeisle-blocks-advanced-column-overlay {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+		}
+
 		.wp-block-themeisle-blocks-slider {
 			display: block;
 		}

@@ -157,8 +157,7 @@ const Edit = ({
 
 	const Tag = attributes.columnsHTMLTag;
 
-	let background, borderStyle, borderRadiusStyle, boxShadowStyle;
-
+	let background, overlayBackground, borderStyle, borderRadiusStyle, boxShadowStyle;
 
 	let	stylesheet = {
 		paddingTop: getValue( 'padding' )?.top,
@@ -258,6 +257,40 @@ const Edit = ({
 		...boxShadowStyle
 	};
 
+	if ( 'color' === attributes.backgroundOverlayType ) {
+		overlayBackground = {
+			background: attributes.backgroundOverlayColor,
+			opacity: attributes.backgroundOverlayOpacity / 100
+		};
+	}
+
+	if ( 'image' === attributes.backgroundOverlayType ) {
+		overlayBackground = {
+			backgroundImage: `url( '${ attributes.backgroundOverlayImage?.url }' )`,
+			backgroundAttachment: attributes.backgroundOverlayAttachment,
+			backgroundPosition: `${ Math.round( attributes.backgroundOverlayPosition?.x * 100 ) }% ${ Math.round( attributes.backgroundOverlayPosition?.y * 100 ) }%`,
+			backgroundRepeat: attributes.backgroundOverlayRepeat,
+			backgroundSize: attributes.backgroundOverlaySize,
+			opacity: attributes.backgroundOverlayOpacity / 100
+		};
+	}
+
+	if ( 'gradient' === attributes.backgroundOverlayType ) {
+		overlayBackground = {
+			background: attributes.backgroundOverlayGradient,
+			opacity: attributes.backgroundOverlayOpacity / 100
+		};
+	}
+
+	const showShouldOverlay = ( 'color' === attributes.backgroundOverlayType && attributes.backgroundOverlayColor ) || ( 'image' === attributes.backgroundOverlayType && attributes.backgroundOverlayImage?.url ) || ( 'gradient' === attributes.backgroundOverlayType && attributes.backgroundOverlayGradient );
+
+	const overlayStyle = {
+		...overlayBackground,
+		...borderRadiusStyle,
+		mixBlendMode: attributes.backgroundOverlayBlend,
+		filter: `blur( ${ attributes.backgroundOverlayFilterBlur / 10 }px ) brightness( ${ attributes.backgroundOverlayFilterBrightness / 10 } ) contrast( ${ attributes.backgroundOverlayFilterContrast / 10 } ) grayscale( ${ attributes.backgroundOverlayFilterGrayscale / 100 } ) hue-rotate( ${ attributes.backgroundOverlayFilterHue }deg ) saturate( ${ attributes.backgroundOverlayFilterSaturate / 10 } )`
+	};
+
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		style
@@ -277,6 +310,14 @@ const Edit = ({
 			/>
 
 			<Tag { ...blockProps }>
+				{ showShouldOverlay && (
+					<div
+						className="wp-block-themeisle-blocks-advanced-column-overlay"
+						style={ overlayStyle }
+					>
+					</div>
+				) }
+
 				<InnerBlocks
 					templateLock={ false }
 					renderAppender={ ! hasInnerBlocks && InnerBlocks.ButtonBlockAppender }
