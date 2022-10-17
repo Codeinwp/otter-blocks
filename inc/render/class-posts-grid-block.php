@@ -80,7 +80,6 @@ class Posts_Grid_Block {
 
 			$size      = isset( $attributes['imageSize'] ) ? $attributes['imageSize'] : 'medium';
 			$thumbnail = wp_get_attachment_image_src( get_post_thumbnail_id( $id ), $size );
-			$category  = get_the_category( $id );
 
 			$list_items_markup .= '<div class="o-posts-grid-post-blog o-posts-grid-post-plain"><div class="o-posts-grid-post">';
 
@@ -97,92 +96,7 @@ class Posts_Grid_Block {
 
 			$list_items_markup .= '<div class="o-posts-grid-post-body' . ( $thumbnail && $attributes['displayFeaturedImage'] ? '' : ' is-full' ) . '">';
 
-			foreach ( $attributes['template'] as $element ) {
-				if ( 'category' === $element ) {
-					if ( isset( $attributes['displayCategory'] ) && isset( $category[0] ) && $attributes['displayCategory'] ) {
-						$list_items_markup .= sprintf(
-							'<span class="o-posts-grid-post-category">%1$s</span>',
-							esc_html( $category[0]->cat_name )
-						);
-					}
-				}
-
-				if ( 'title' === $element ) {
-					if ( isset( $attributes['displayTitle'] ) && $attributes['displayTitle'] ) {
-						$list_items_markup .= sprintf(
-							'<%1$s class="o-posts-grid-post-title"><a href="%2$s">%3$s</a></%1$s>',
-							esc_attr( $attributes['titleTag'] ),
-							esc_url( get_the_permalink( $id ) ),
-							esc_html( get_the_title( $id ) )
-						);
-					}
-				}
-
-				if ( 'meta' === $element ) {
-					if ( ( isset( $attributes['displayMeta'] ) && $attributes['displayMeta'] ) && ( ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) || ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) || ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] ) || ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] ) ) ) {
-						$list_items_markup .= '<p class="o-posts-grid-post-meta">';
-
-						if ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) {
-							$list_items_markup .= sprintf(
-								'%1$s <time datetime="%2$s">%3$s</time> ',
-								__( 'on', 'otter-blocks' ),
-								esc_attr( get_the_date( 'c', $id ) ),
-								esc_html( get_the_date( get_option( 'date_format' ), $id ) )
-							);
-						}
-
-						if ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) {
-							$list_items_markup .= sprintf(
-								'%1$s %2$s',
-								__( 'by', 'otter-blocks' ),
-								esc_html( get_the_author_meta( 'display_name', get_post_field( 'post_author', $id ) ) )
-							);
-						}
-
-						if ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] && isset( $post['comment_count'] ) ) {
-							$list_items_markup .= sprintf(
-								' - %1$s %2$s',
-								esc_html( $post['comment_count'] ),
-								esc_html( '1' === $post['comment_count'] ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' ) )
-							);
-						}
-
-						if ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] && isset( $category[0] ) ) {
-							$list_items_markup .= sprintf(
-								' - %1$s',
-								esc_html( $category[0]->cat_name )
-							);
-						}
-
-						$list_items_markup .= '</p>';
-					}
-				}
-
-				if ( 'description' === $element ) {
-					if ( ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) || ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink'] ) ) {
-						$list_items_markup .= '<div class="o-posts-grid-post-description">';
-
-						if ( ( isset( $attributes['excerptLength'] ) && $attributes['excerptLength'] > 0 ) && ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) ) {
-							$list_items_markup .= sprintf(
-								'<p>%1$s</p>',
-								esc_html( $this->get_excerpt_by_id( $id, $attributes['excerptLength'] ) )
-							);
-						}
-
-						if ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink'] ) {
-							$list_items_markup .= sprintf(
-								'<a class="o-posts-read-more" href="%1$s">%2$s</a>',
-								esc_url( get_the_permalink( $id ) ),
-								__( 'Read More', 'otter-blocks' )
-							);
-						}
-
-						$list_items_markup .= '</div>';
-					}
-				}
-
-				$list_items_markup .= apply_filters( 'otter_blocks_posts_fields', '', $attributes, $id, $element );
-			}
+			$list_items_markup .= $this->get_post_fields( $id, $attributes );
 
 			$list_items_markup .= '</div></div></div>';
 		}
@@ -205,10 +119,6 @@ class Posts_Grid_Block {
 			$class .= ' o-posts-grid-columns-' . $attributes['columns'];
 		}
 
-		if ( isset( $attributes['imageBoxShadow'] ) && true === $attributes['imageBoxShadow'] ) {
-			$class .= ' has-shadow';
-		}
-
 		if ( isset( $attributes['cropImage'] ) && true === $attributes['cropImage'] ) {
 			$class .= ' o-crop-img';
 		}
@@ -225,6 +135,125 @@ class Posts_Grid_Block {
 		);
 
 		return $block_content;
+	}
+
+	/**
+	 * Render Post Fields
+	 *
+	 * @param WP_Post $id Post ID.
+	 * @param array   $attributes Blocks attrs.
+	 *
+	 * @return string
+	 */
+	public function get_post_fields( $id, $attributes ) {
+		$html     = '';
+		$post     = get_post( $id );
+		$category = get_the_category( $id );
+
+		foreach ( $attributes['template'] as $element ) {
+			if ( 'category' === $element ) {
+				if ( isset( $attributes['displayCategory'] ) && isset( $category[0] ) && $attributes['displayCategory'] ) {
+					$html .= sprintf(
+						'<span class="o-posts-grid-post-category"><a href="%1$s">%2$s</a></span>',
+						esc_url( get_category_link( $category[0]->cat_ID ) ),
+						esc_html( $category[0]->cat_name )
+					);
+				}
+			}
+
+			if ( 'title' === $element ) {
+				if ( isset( $attributes['displayTitle'] ) && $attributes['displayTitle'] ) {
+					$html .= sprintf(
+						'<%1$s class="o-posts-grid-post-title"><a href="%2$s">%3$s</a></%1$s>',
+						esc_attr( $attributes['titleTag'] ),
+						esc_url( get_the_permalink( $id ) ),
+						esc_html( get_the_title( $id ) )
+					);
+				}
+			}
+
+			if ( 'meta' === $element ) {
+				if ( ( isset( $attributes['displayMeta'] ) && $attributes['displayMeta'] ) && ( ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) || ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) || ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] ) || ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] ) ) ) {
+					$html .= '<p class="o-posts-grid-post-meta">';
+
+					$meta      = array();
+					$posted_on = '';
+
+					if ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) {
+						$posted_on .= sprintf(
+							'%1$s <time datetime="%2$s">%3$s</time> ',
+							__( 'Posted on', 'otter-blocks' ),
+							esc_attr( get_the_date( 'c', $id ) ),
+							esc_html( get_the_date( get_option( 'date_format' ), $id ) )
+						);
+					}
+
+					if ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) {
+						$posted_on .= sprintf(
+							'%1$s <a href="%2$s">%3$s</a>',
+							__( 'by', 'otter-blocks' ),
+							esc_url( get_author_posts_url( get_post_field( 'post_author', $id ) ) ),
+							esc_html( get_the_author_meta( 'display_name', get_post_field( 'post_author', $id ) ) )
+						);
+					}
+
+					$meta[] = $posted_on;
+
+					if ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] && isset( $post->comment_count ) ) {
+						$meta[] .= sprintf(
+							'%1$s %2$s',
+							$post->comment_count,
+							'1' === $post->comment_count ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
+						);
+					}
+
+					if ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] && isset( $category[0] ) ) {
+						$output = '';
+						foreach ( $category as $cat ) {
+							$separator = ', ';
+							$output   .= sprintf(
+								'<a href="%1$s">%2$s</a>',
+								esc_url( get_category_link( $cat->term_id ) ),
+								esc_html( $cat->cat_name )
+							) . $separator;
+						}
+
+						$meta[] = trim( $output, $separator );
+					}
+
+					$html .= implode( ' / ', $meta );
+
+					$html .= '</p>';
+				}
+			}
+
+			if ( 'description' === $element ) {
+				if ( ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) || ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink'] ) ) {
+					$html .= '<div class="o-posts-grid-post-description">';
+
+					if ( ( isset( $attributes['excerptLength'] ) && $attributes['excerptLength'] > 0 ) && ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) ) {
+						$html .= sprintf(
+							'<p>%1$s</p>',
+							esc_html( $this->get_excerpt_by_id( $id, $attributes['excerptLength'] ) )
+						);
+					}
+
+					if ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink'] ) {
+						$html .= sprintf(
+							'<a class="o-posts-read-more" href="%1$s">%2$s</a>',
+							esc_url( get_the_permalink( $id ) ),
+							__( 'Read More', 'otter-blocks' )
+						);
+					}
+
+					$html .= '</div>';
+				}
+			}
+
+			$html .= apply_filters( 'otter_blocks_posts_fields', '', $attributes, $id, $element );
+		}
+
+		return $html;
 	}
 
 	/**
@@ -263,12 +292,10 @@ class Posts_Grid_Block {
 		$id        = $post['ID'];
 		$size      = isset( $attributes['imageSize'] ) ? $attributes['imageSize'] : 'medium';
 		$thumbnail = wp_get_attachment_image( get_post_thumbnail_id( $id ), $size );
-		$category  = get_the_category( $id );
 
 		if ( isset( $thumbnail ) ) {
 			$html .= sprintf(
-				'<div class="o-posts-grid-post-image %1$s"><a href="%2$s">%3$s</a></div>',
-				isset( $attributes['imageBoxShadow'] ) && true === $attributes['imageBoxShadow'] ? 'has-shadow' : '',
+				'<div class="o-posts-grid-post-image"><a href="%1$s">%2$s</a></div>',
 				esc_url( get_the_permalink( $id ) ),
 				$thumbnail
 			);
@@ -276,94 +303,8 @@ class Posts_Grid_Block {
 
 		$html .= '<div class="o-posts-grid-post-body' . ( $thumbnail && $attributes['displayFeaturedImage'] ? '' : ' is-full' ) . '">';
 
-		foreach ( $attributes['template'] as $element ) {
-			if ( 'category' === $element ) {
-				if ( isset( $attributes['displayCategory'] ) && isset( $category[0] ) && $attributes['displayCategory'] ) {
-					$html .= sprintf(
-						'<span class="o-posts-grid-post-category">%1$s</span>',
-						esc_html( $category[0]->cat_name )
-					);
-				}
-			}
-
-			if ( 'title' === $element ) {
-				if ( isset( $attributes['displayTitle'] ) && $attributes['displayTitle'] ) {
-					$html .= sprintf(
-						'<%1$s class="o-posts-grid-post-title"><a href="%2$s">%3$s</a></%1$s>',
-						esc_attr( $attributes['titleTag'] ),
-						esc_url( get_the_permalink( $id ) ),
-						esc_html( get_the_title( $id ) )
-					);
-				}
-			}
-
-			if ( 'meta' === $element ) {
-				if ( ( isset( $attributes['displayMeta'] ) && $attributes['displayMeta'] ) && ( ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) || ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) ) ) {
-					$html .= '<p class="o-posts-grid-post-meta">';
-
-					if ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) {
-						$html .= sprintf(
-							'%1$s <time datetime="%2$s">%3$s</time> ',
-							__( 'on', 'otter-blocks' ),
-							esc_attr( get_the_date( 'c', $id ) ),
-							esc_html( get_the_date( get_option( 'date_format' ), $id ) )
-						);
-					}
-
-					if ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) {
-						$html .= sprintf(
-							'%1$s %2$s',
-							__( 'by', 'otter-blocks' ),
-							esc_html( get_the_author_meta( 'display_name', get_post_field( 'post_author', $id ) ) )
-						);
-					}
-
-					if ( isset( $attributes['displayComments'] ) && $attributes['displayComments'] && isset( $post['comment_count'] ) ) {
-						$html .= sprintf(
-							' - %1$s %2$s',
-							$post['comment_count'],
-							'1' === $post['comment_count'] ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
-						);
-					}
-
-					if ( isset( $attributes['displayPostCategory'] ) && $attributes['displayPostCategory'] && isset( $category[0] ) ) {
-						$html .= sprintf(
-							' - %1$s',
-							esc_html( $category[0]->cat_name )
-						);
-					}
-
-					$html .= '</p>';
-				}
-			}
-
-			if ( 'description' === $element ) {
-				if ( ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) || ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink'] ) ) {
-					$html .= '<div class="o-posts-grid-post-description">';
-
-					if ( ( isset( $attributes['excerptLength'] ) && $attributes['excerptLength'] > 0 ) && ( isset( $attributes['displayDescription'] ) && $attributes['displayDescription'] ) ) {
-						$html .= sprintf(
-							'<p>%1$s</p>',
-							esc_html( $this->get_excerpt_by_id( $id, $attributes['excerptLength'] ) )
-						);
-					}
-
-					if ( isset( $attributes['displayReadMoreLink'] ) && $attributes['displayReadMoreLink'] ) {
-						$html .= sprintf(
-							'<a class="o-posts-read-more" href="%1$s">%2$s</a>',
-							esc_url( get_the_permalink( $id ) ),
-							__( 'Read More', 'otter-blocks' )
-						);
-					}
-
-					$html .= '</div>';
-
-				}
-			}
-
-			$html .= apply_filters( 'otter_blocks_posts_fields', '', $attributes, $id, $element );
-		}
+		$html .= $this->get_post_fields( $id, $attributes );
 		$html .= '</div>';
-		return sprintf( '<div class="o-featured-post">%1$s</div>', $html );
+		return sprintf( '<div class="o-featured-container"><div class="o-featured-post">%1$s</div></div>', $html );
 	}
 }

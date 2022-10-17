@@ -64,6 +64,8 @@ const WelcomeGuide = () => {
 	const onFinish = target => {
 		showOnboarding( false );
 
+		localStorage?.setItem( 'o-show-onboarding', 'false' );
+
 		if ( Boolean( getOption( 'themeisle_blocks_settings_onboarding' ) ) ) {
 			updateOption( 'themeisle_blocks_settings_onboarding', false );
 		}
