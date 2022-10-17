@@ -338,6 +338,8 @@ const Inspector = ({
 											value: 'outside'
 										}
 									] }
+									value={ attributes.closeButtonType }
+									onChange={ value => setAttributes({ closeButtonType: 'none' !== value ? value : undefined })}
 								/>
 							</PanelBody>
 							<PanelBody

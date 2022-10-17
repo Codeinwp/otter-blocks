@@ -6,6 +6,8 @@ import {
 	closeSmall,
 	external
 } from '@wordpress/icons';
+import { isObjectLike, merge } from 'lodash';
+import classnames from 'classnames';
 
 /**
  * WordPress dependencies
@@ -32,7 +34,7 @@ import metadata from './block.json';
 import Inspector from './inspector.js';
 import { blockInit, useCSSNode } from '../../helpers/block-utility';
 import { boxValues, _cssBlock } from '../../helpers/helper-functions';
-import { isObjectLike, merge } from 'lodash';
+
 
 const { attributes: defaultAttributes } = metadata;
 const makeBox = x => ({ top: x, bottom: x, left: x, right: x });
@@ -125,7 +127,7 @@ const Edit = ( props ) => {
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		style: inlineStyles,
-		className: cssNode
+		className: classnames( cssNode, { 'with-outside-button': 'outside' === attributes.closeButtonType })
 	});
 
 	return (

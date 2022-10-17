@@ -8,13 +8,35 @@
 
 
 .is-sidebar-opened {
-	.otter-popup__modal_content {
-		margin-right: 295px;
-	}
-
-	&:has(.edit-post-header) {
+	.wp-block-themeisle-blocks-popup {
 		.otter-popup__modal_content {
-			margin-top: 50px;
+			margin-right: 295px;
+		}
+
+		&:has(.edit-post-header) {
+			.otter-popup__modal_content {
+				margin-top: 50px;
+			}
+		}
+
+		&.with-outside-button {
+			.otter-popup__modal_header {
+				button {
+					position: fixed;
+					top: 65px;
+					right: 310px;
+					border: 2px solid black;
+					background: hsla(0,0%,100%,.133) !important;
+
+					&:hover {
+						background: white !important;
+					}
+				}
+				svg {
+					width: 50px;
+					height: 50px;
+				}
+			}
 		}
 	}
 }

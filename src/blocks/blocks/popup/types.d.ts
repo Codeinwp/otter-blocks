@@ -37,6 +37,8 @@ type Attributes = {
 	horizontalPositionTablet: string
 	verticalPositionMobile: string
 	horizontalPositionMobile: string
+
+	closeButtonType: 'outside'
 }
 
 export type PopupPros = BlockProps<Attributes>

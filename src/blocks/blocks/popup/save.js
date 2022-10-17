@@ -5,13 +5,14 @@ import {
 	InnerBlocks,
 	useBlockProps
 } from '@wordpress/block-editor';
+import classnames from 'classnames';
 
 const Save = ({
 	attributes
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
-		className: 'is-front',
+		className: classnames( 'is-front', { 'with-outside-button': 'outside' === attributes.closeButtonType }),
 		'data-open': attributes.trigger,
 		'data-dismiss': attributes.recurringClose ? attributes.recurringTime : '',
 		'data-time': ( undefined === attributes.trigger || 'onLoad' === attributes.trigger ) ? ( attributes.wait || 0 ) : '',

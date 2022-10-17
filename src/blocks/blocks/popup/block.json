@@ -119,6 +119,9 @@
 		},
 		"horizontalPositionMobile": {
 			"type": "string"
+		},
+		"closeButtonType": {
+			"type": "string"
 		}
 	},
 	"editorStyle": "otter-popup-editor",
