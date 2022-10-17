@@ -15,8 +15,6 @@ import {
 /**
  * Internal dependencies
  */
-import './editor.scss';
-
 import SyncControlDropdown from '../sync-control-dropdown/index.js';
 
 type SyncColorPanelProps = {

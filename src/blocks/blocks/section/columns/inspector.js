@@ -15,6 +15,7 @@ import {
 	BaseControl,
 	Button,
 	ButtonGroup,
+	Disabled,
 	PanelBody,
 	ToggleControl,
 	RangeControl,
@@ -39,6 +40,7 @@ import ControlPanelControl from '../../../components/control-panel-control/index
 import HTMLAnchorControl from '../../../components/html-anchor-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
 import SyncControl from '../../../components/sync-control/index.js';
+import SyncControlDropdown from '../../../components/sync-control-dropdown/index.js';
 import {
 	isNullObject,
 	removeBoxDefaultValues
@@ -496,14 +498,27 @@ const Inspector = ({
 							title={ __( 'Spacing', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
+							<SyncControlDropdown
+								isSynced={ attributes.isSynced }
+								options={ [
+									{
+										label: __( 'Padding', 'otter-blocks' ),
+										value: getPaddingField()
+									},
+									{
+										label: __( 'Margin', 'otter-blocks' ),
+										value: getMarginField()
+									}
+								] }
+								setAttributes={ setAttributes }
+							/>
+
 							<ResponsiveControl
 								label={ __( 'Screen Type', 'otter-blocks' ) }
-								className="otter-section-padding-responsive-control"
 							>
-								<SyncControl
-									field={ getPaddingField() }
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
+								<Disabled
+									isDisabled={ attributes.isSynced?.includes( getPaddingField() ) || false }
+									className="o-disabled"
 								>
 									<BoxControl
 										label={ __( 'Padding', 'otter-blocks' ) }
@@ -514,12 +529,11 @@ const Inspector = ({
 										} }
 										onChange={ changePadding }
 									/>
-								</SyncControl>
+								</Disabled>
 
-								<SyncControl
-									field={ getMarginField() }
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
+								<Disabled
+									isDisabled={ attributes.isSynced?.includes( getMarginField() ) || false }
+									className="o-disabled"
 								>
 									<BoxControl
 										label={ __( 'Margin', 'otter-blocks' ) }
@@ -531,7 +545,7 @@ const Inspector = ({
 										sides={ [ 'top', 'bottom' ] }
 										onChange={ changeMargin }
 									/>
-								</SyncControl>
+								</Disabled>
 							</ResponsiveControl>
 						</PanelBody>
 
