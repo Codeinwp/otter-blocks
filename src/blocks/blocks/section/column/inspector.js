@@ -32,6 +32,7 @@ import InspectorHeader from '../../../components/inspector-header/index.js';
 import { InspectorExtensions } from '../../../components/inspector-slot-fill/index.js';
 import ResponsiveControl from '../../../components/responsive-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
+import BackgroundOverlayControl from '../../../components/background-overlay-control/index.js';
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
 import SyncControl from '../../../components/sync-control/index.js';
 import {
@@ -278,6 +279,51 @@ const Inspector = ({
 							changeBackgroundRepeat={ value => setAttributes({ backgroundRepeat: value })}
 							changeFocalPoint={ value => setAttributes({ backgroundPosition: value }) }
 							changeBackgroundSize={ value => setAttributes({ backgroundSize: value }) }
+						/>
+					</PanelBody>
+
+					<PanelBody
+						title={ __( 'Background Overlay', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						<BackgroundOverlayControl
+							backgroundType={ attributes.backgroundOverlayType }
+							backgroundColor={ attributes.backgroundOverlayColor }
+							image={ attributes.backgroundOverlayImage }
+							gradient={ attributes.backgroundOverlayGradient }
+							focalPoint={ attributes.backgroundOverlayPosition }
+							backgroundAttachment={ attributes.backgroundOverlayAttachment }
+							backgroundRepeat={ attributes.backgroundOverlayRepeat }
+							backgroundSize={ attributes.backgroundOverlaySize }
+							backgroundOpacity={ attributes.backgroundOverlayOpacity }
+							backgroundFilterBlur={ attributes.backgroundOverlayFilterBlur }
+							backgroundFilterBrightness={ attributes.backgroundOverlayFilterBrightness }
+							backgroundFilterContrast={ attributes.backgroundOverlayFilterContrast }
+							backgroundFilterGrayscale={ attributes.backgroundOverlayFilterGrayscale }
+							backgroundFilterHue={ attributes.backgroundOverlayFilterHue }
+							backgroundFilterSaturate={ attributes.backgroundOverlayFilterSaturate }
+							backgroundBlend={ attributes.backgroundOverlayBlend }
+							changeBackgroundType={ value => setAttributes({ backgroundOverlayType: value }) }
+							changeImage={ media => {
+								setAttributes({
+									backgroundOverlayImage: pick( media, [ 'id', 'url' ])
+								});
+							}}
+							removeImage={ () => setAttributes({ backgroundOverlayImage: undefined })}
+							changeColor={ value => setAttributes({ backgroundOverlayColor: value })}
+							changeGradient={ value => setAttributes({ backgroundOverlayGradient: value }) }
+							changeBackgroundAttachment={ value => setAttributes({ backgroundOverlayAttachment: value })}
+							changeBackgroundRepeat={ value => setAttributes({ backgroundOverlayRepeat: value })}
+							changeFocalPoint={ value => setAttributes({ backgroundOverlayPosition: value }) }
+							changeBackgroundSize={ value => setAttributes({ backgroundOverlaySize: value }) }
+							changeOpacity={ value => setAttributes({ backgroundOverlayOpacity: value }) }
+							changeFilterBlur={ value => setAttributes({ backgroundOverlayFilterBlur: value }) }
+							changeFilterBrightness={ value => setAttributes({ backgroundOverlayFilterBrightness: value }) }
+							changeFilterContrast={ value => setAttributes({ backgroundOverlayFilterContrast: value }) }
+							changeFilterGrayscale={ value => setAttributes({ backgroundOverlayFilterGrayscale: value }) }
+							changeFilterHue={ value => setAttributes({ backgroundOverlayFilterHue: value }) }
+							changeFilterSaturate={ value => setAttributes({ backgroundOverlayFilterSaturate: value }) }
+							changeBlend={ value => setAttributes({ backgroundOverlayBlend: value }) }
 						/>
 					</PanelBody>
 

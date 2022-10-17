@@ -58,6 +58,67 @@
 			"type": "string",
 			"default": "linear-gradient(90deg,rgba(54,209,220,1) 0%,rgba(91,134,229,1) 100%)"
 		},
+		"backgroundOverlayOpacity": {
+			"type": "number",
+			"default": 50
+		},
+		"backgroundOverlayType": {
+			"type": "string",
+			"default": "color"
+		},
+		"backgroundOverlayColor": {
+			"type": "string"
+		},
+		"backgroundOverlayImage": {
+			"type": "object"
+		},
+		"backgroundOverlayAttachment": {
+			"type": "string",
+			"default": "scroll"
+		},
+		"backgroundOverlayPosition": {
+			"type": "object"
+		},
+		"backgroundOverlayRepeat": {
+			"type": "string",
+			"default": "repeat"
+		},
+		"backgroundOverlaySize": {
+			"type": "string",
+			"default": "auto"
+		},
+		"backgroundOverlayGradient": {
+			"type": "string",
+			"default": "linear-gradient(90deg,rgba(54,209,220,1) 0%,rgba(91,134,229,1) 100%)"
+		},
+		"backgroundOverlayFilterBlur": {
+			"type": "number",
+			"default": 0
+		},
+		"backgroundOverlayFilterBrightness": {
+			"type": "number",
+			"default": 10
+		},
+		"backgroundOverlayFilterContrast": {
+			"type": "number",
+			"default": 10
+		},
+		"backgroundOverlayFilterGrayscale": {
+			"type": "number",
+			"default": 0
+		},
+		"backgroundOverlayFilterHue": {
+			"type": "number",
+			"default": 0
+		},
+		"backgroundOverlayFilterSaturate": {
+			"type": "number",
+			"default": 10
+		},
+		"backgroundOverlayBlend": {
+			"type": "string",
+			"default": "normal"
+		},
 		"border": {
 			"type": "object"
 		},

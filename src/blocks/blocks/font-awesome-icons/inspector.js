@@ -198,6 +198,7 @@ const Inspector = ({
 								value: 'flex-end'
 							}
 						]}
+						hasIcon
 					/>
 				</ResponsiveControl>
 			</PanelBody>

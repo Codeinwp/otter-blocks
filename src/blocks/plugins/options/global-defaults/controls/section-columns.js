@@ -199,6 +199,7 @@ const SectionColumns = ({
 								}
 							]}
 							onChange={ align => changeHorizontalAlign( align ) }
+							hasIcon
 						/>
 					</BaseControl>
 				) }
