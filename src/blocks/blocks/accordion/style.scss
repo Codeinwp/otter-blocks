@@ -11,13 +11,6 @@
 	--border-color: #ccc;
 	--box-shadow: none;
 
-	--font-style: initial;
-	--font-variant: initial;
-	--font-family: initial;
-	--text-transform: initial;
-	--letter-spacing: initial;
-	--font-size: 18px;
-
 	--padding: 18px 24px 18px 24px;
 	--padding-tablet: var(--padding);
 	--padding-mobile: var(--padding-tablet);
@@ -34,13 +27,6 @@
 
 			/* for specificity */
 			#{$block} & > * {
-				font-style: var(--font-style);
-				font-weight: var(--font-variant);
-				font-family: var(--font-family);
-				text-transform: var(--text-transform);
-				letter-spacing: var(--letter-spacing);
-				font-size: var(--font-size);
-
 				margin: 0;
 			}
 

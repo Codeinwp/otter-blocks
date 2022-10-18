@@ -57,32 +57,6 @@ class Accordion_CSS extends Base_CSS {
 						'hasSync'  => 'accordion-content-background',
 					),
 					array(
-						'property' => '--font-family',
-						'value'    => 'fontFamily',
-					),
-					array(
-						'property' => '--font-variant',
-						'value'    => 'fontVariant',
-					),
-					array(
-						'property' => '--font-style',
-						'value'    => 'fontStyle',
-					),
-					array(
-						'property' => '--text-transform',
-						'value'    => 'textTransform',
-					),
-					array(
-						'property' => '--letter-spacing',
-						'value'    => 'letterSpacing',
-						'unit'     => 'px',
-					),
-					array(
-						'property' => '--font-size',
-						'value'    => 'fontSize',
-						'unit'     => 'px',
-					),
-					array(
 						'property'  => '--border-style',
 						'value'     => 'borderStyle',
 						'condition' => function( $attrs ) {
@@ -223,6 +197,42 @@ class Accordion_CSS extends Base_CSS {
 						'property' => '--title-background',
 						'value'    => 'activeTitleBackground',
 						'hasSync'  => 'accordion-title-background',
+					),
+				),
+			)
+		);
+
+		// Add typography attributes specifically to the title and without CSS variables so the title will
+		// inherit theme styles when these attributes are not set.
+		$css->add_item(
+			array(
+				'selector'   => ' > .wp-block-themeisle-blocks-accordion-item > .wp-block-themeisle-blocks-accordion-item__title > *',
+				'properties' => array(
+					array(
+						'property' => 'font-size',
+						'value'    => 'fontSize',
+						'unit'     => 'px',
+					),
+					array(
+						'property' => 'font-family',
+						'value'    => 'fontFamily',
+					),
+					array(
+						'property' => 'font-variant',
+						'value'    => 'fontVariant',
+					),
+					array(
+						'property' => 'font-style',
+						'value'    => 'fontStyle',
+					),
+					array(
+						'property' => 'text-transform',
+						'value'    => 'textTransform',
+					),
+					array(
+						'property' => 'letter-spacing',
+						'value'    => 'letterSpacing',
+						'unit'     => 'px',
 					),
 				),
 			)
