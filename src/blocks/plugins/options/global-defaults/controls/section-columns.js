@@ -134,7 +134,6 @@ const SectionColumns = ({
 			>
 				<ResponsiveControl
 					label={ __( 'Screen Type', 'otter-blocks' ) }
-					className="otter-section-padding-responsive-control"
 				>
 					<BoxControl
 						label={ __( 'Padding', 'otter-blocks' ) }

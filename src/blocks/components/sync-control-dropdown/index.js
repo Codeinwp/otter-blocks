@@ -110,7 +110,7 @@ const SyncControlDropdown = ({
 				{ ({ onClose = noop }) => (
 					<Fragment>
 						<MenuGroup>
-							{ options.map( option => {
+							{ options.filter( option => ! option?.isHidden ).map( option => {
 								const isSelected = isSynced.includes( option.value );
 
 								return (

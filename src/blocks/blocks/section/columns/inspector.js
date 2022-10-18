@@ -3,7 +3,10 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { merge, pick } from 'lodash';
+import {
+	merge,
+	pick
+} from 'lodash';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
@@ -15,6 +18,7 @@ import {
 	BaseControl,
 	Button,
 	ButtonGroup,
+	Disabled,
 	PanelBody,
 	ToggleControl,
 	RangeControl,
@@ -39,12 +43,12 @@ import ControlPanelControl from '../../../components/control-panel-control/index
 import HTMLAnchorControl from '../../../components/html-anchor-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
 import BackgroundOverlayControl from '../../../components/background-overlay-control/index.js';
-import SyncControl from '../../../components/sync-control/index.js';
 import {
 	isNullObject,
 	removeBoxDefaultValues
 } from '../../../helpers/helper-functions.js';
 import ToogleGroupControl from '../../../components/toogle-group-control/index.js';
+import SyncControlDropdown from '../../../components/sync-control-dropdown/index.js';
 
 /**
  *
@@ -497,14 +501,27 @@ const Inspector = ({
 							title={ __( 'Spacing', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
+							<SyncControlDropdown
+								isSynced={ attributes.isSynced }
+								options={ [
+									{
+										label: __( 'Padding', 'otter-blocks' ),
+										value: getPaddingField()
+									},
+									{
+										label: __( 'Margin', 'otter-blocks' ),
+										value: getMarginField()
+									}
+								] }
+								setAttributes={ setAttributes }
+							/>
+
 							<ResponsiveControl
 								label={ __( 'Screen Type', 'otter-blocks' ) }
-								className="otter-section-padding-responsive-control"
 							>
-								<SyncControl
-									field={ getPaddingField() }
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
+								<Disabled
+									isDisabled={ attributes.isSynced?.includes( getPaddingField() ) || false }
+									className="o-disabled"
 								>
 									<BoxControl
 										label={ __( 'Padding', 'otter-blocks' ) }
@@ -515,12 +532,11 @@ const Inspector = ({
 										} }
 										onChange={ changePadding }
 									/>
-								</SyncControl>
+								</Disabled>
 
-								<SyncControl
-									field={ getMarginField() }
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
+								<Disabled
+									isDisabled={ attributes.isSynced?.includes( getMarginField() ) || false }
+									className="o-disabled"
 								>
 									<BoxControl
 										label={ __( 'Margin', 'otter-blocks' ) }
@@ -532,7 +548,7 @@ const Inspector = ({
 										sides={ [ 'top', 'bottom' ] }
 										onChange={ changeMargin }
 									/>
-								</SyncControl>
+								</Disabled>
 							</ResponsiveControl>
 						</PanelBody>
 
@@ -540,10 +556,25 @@ const Inspector = ({
 							title={ __( 'Section Structure', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
-							<SyncControl
-								field="columnsWidth"
+							<SyncControlDropdown
 								isSynced={ attributes.isSynced }
+								options={ [
+									{
+										label: __( 'Maximum Content Width', 'otter-blocks' ),
+										value: 'columnsWidth'
+									},
+									{
+										label: __( 'Horizontal Align', 'otter-blocks' ),
+										value: 'horizontalAlign',
+										isHidden: undefined === getValue( 'columnsWidth' )
+									}
+								] }
 								setAttributes={ setAttributes }
+							/>
+
+							<Disabled
+								isDisabled={ attributes.isSynced?.includes( 'columnsWidth' ) || false }
+								className="o-disabled"
 							>
 								<RangeControl
 									label={ __( 'Maximum Content Width', 'otter-blocks' ) }
@@ -554,19 +585,18 @@ const Inspector = ({
 									min={ 0 }
 									max={ 2400 }
 								/>
-							</SyncControl>
+							</Disabled>
 
-							{ getValue( 'columnsWidth' ) && (
-								<SyncControl
-									field="horizontalAlign"
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
+							{ undefined !== getValue( 'columnsWidth' ) && (
+								<Disabled
+									isDisabled={ attributes.isSynced?.includes( 'horizontalAlign' ) || false }
+									className="o-disabled"
 								>
 									<BaseControl
 										label={ __( 'Horizontal Align', 'otter-blocks' ) }
 									>
 										<ToogleGroupControl
-											value={ attributes.horizontalAlign }
+											value={ getValue( 'horizontalAlign' ) }
 											options={[
 												{
 													icon: 'editor-alignleft',
@@ -588,7 +618,7 @@ const Inspector = ({
 											hasIcon
 										/>
 									</BaseControl>
-								</SyncControl>
+								</Disabled>
 							) }
 
 							<SelectControl
