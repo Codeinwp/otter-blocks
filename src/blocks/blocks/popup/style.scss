@@ -71,7 +71,6 @@ $base-index: 9999 !default;
 		border-color: var(--brd-color);
 		border-style: var(--brd-style);
 		box-sizing: border-box;
-		overflow: hidden;
 		scroll-behavior: auto;
 
 		@media ( min-width: 600px ) and ( max-width: 960px ) {
@@ -131,24 +130,23 @@ $base-index: 9999 !default;
 	&.with-outside-button {
 		.otter-popup__modal_header {
 			button {
-				position: fixed;
-				top: 50px;
-				right: 50px;
-				border: 2px solid black;
-				background: hsla(0,0%,100%,.133) !important;
+				position: absolute;
+				top: -21px;
+				right: -21px;
+				background: var(--background-color) !important;
+				border-radius: 50%;
+				border: unset;
+				box-shadow: 0 0 4px 0 rgba(0,0,0,.133),0 0 3px 1px rgba(0,0,0,.067);
 
 				&:hover {
-					background: white !important;
-				}
-
-				@media ( max-width: 600px ) {
-					top: 15px;
-					right: 15px;
+					box-shadow: 0 0 4px 0 rgba(0,0,0,.133),0 0 3px 1px rgba(0,0,0,.067);
+					opacity: 1;
 				}
 			}
+
 			svg {
-				width: 50px;
-				height: 50px;
+				width: 40px;
+				height: 40px;
 			}
 		}
 	}
