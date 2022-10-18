@@ -3,7 +3,10 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { merge, pick } from 'lodash';
+import {
+	merge,
+	pick
+} from 'lodash';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
@@ -12,6 +15,7 @@ import {
 
 import {
 	__experimentalBoxControl as BoxControl,
+	Disabled,
 	PanelBody,
 	ToggleControl,
 	RangeControl,
@@ -34,7 +38,7 @@ import ResponsiveControl from '../../../components/responsive-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
 import BackgroundOverlayControl from '../../../components/background-overlay-control/index.js';
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
-import SyncControl from '../../../components/sync-control/index.js';
+import SyncControlDropdown from '../../../components/sync-control-dropdown/index.js';
 import {
 	isNullObject,
 	removeBoxDefaultValues
@@ -203,6 +207,21 @@ const Inspector = ({
 					<PanelBody
 						title={ __( 'Spacing', 'otter-blocks' ) }
 					>
+						<SyncControlDropdown
+							isSynced={ attributes.isSynced }
+							options={ [
+								{
+									label: __( 'Padding', 'otter-blocks' ),
+									value: getPaddingField()
+								},
+								{
+									label: __( 'Margin', 'otter-blocks' ),
+									value: getMarginField()
+								}
+							] }
+							setAttributes={ setAttributes }
+						/>
+
 						{ ( 1 < parentBlock.innerBlocks.length ) && (
 							<RangeControl
 								label={ __( 'Column Width', 'otter-blocks' ) }
@@ -217,10 +236,9 @@ const Inspector = ({
 						<ResponsiveControl
 							label={ __( 'Screen Type', 'otter-blocks' ) }
 						>
-							<SyncControl
-								field={ getPaddingField() }
-								isSynced={ attributes.isSynced }
-								setAttributes={ setAttributes }
+							<Disabled
+								isDisabled={ attributes.isSynced?.includes( getPaddingField() ) || false }
+								className="o-disabled"
 							>
 								<BoxControl
 									label={ __( 'Padding', 'otter-blocks' ) }
@@ -231,12 +249,11 @@ const Inspector = ({
 									} }
 									onChange={ changePadding }
 								/>
-							</SyncControl>
+							</Disabled>
 
-							<SyncControl
-								field={ getMarginField() }
-								isSynced={ attributes.isSynced }
-								setAttributes={ setAttributes }
+							<Disabled
+								isDisabled={ attributes.isSynced?.includes( getMarginField() ) || false }
+								className="o-disabled"
 							>
 								<BoxControl
 									label={ __( 'Margin', 'otter-blocks' ) }
@@ -247,7 +264,7 @@ const Inspector = ({
 									} }
 									onChange={ changeMargin }
 								/>
-							</SyncControl>
+							</Disabled>
 						</ResponsiveControl>
 					</PanelBody>
 				</Fragment>
