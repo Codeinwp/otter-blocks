@@ -199,7 +199,7 @@ const Inspector = ({
 					<ToggleControl
 						label={ __( 'Keep multiple items expanded', 'otter-blocks' ) }
 						help={ __( 'When enabled, multiple accordion items can be expanded at the same time', 'otter-blocks' ) }
-						checked={ attributes.alwaysOpen }
+						checked={ attributes.alwaysOpen || false }
 						onChange={ onAlwaysOpenToggle }
 					/>
 					<ToggleControl

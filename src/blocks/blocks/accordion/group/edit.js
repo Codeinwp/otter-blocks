@@ -98,12 +98,12 @@ const Edit = ({
 	useEffect( () => {
 		setFontNodeCSS([
 			`> * > * > .wp-block-themeisle-blocks-accordion-item .wp-block-themeisle-blocks-accordion-item__title > * {
-				font-size: ${ attributes.fontSize ? attributes.fontSize + 'px' : undefined };
-				font-family: ${ attributes.fontFamily };
-				font-variant: ${ attributes.fontVariant };
-				font-style: ${ attributes.fontStyle };
-				text-transform: ${ attributes.textTransform };
-				letter-spacing: ${ attributes.letterSpacing ? attributes.letterSpacing + 'px' : undefined };
+				${ attributes.fontSize ? ( 'font-size:' + attributes.fontSize + 'px' ) : '' };
+				${ attributes.fontFamily ? ( 'font-family:' + attributes.fontFamily ) : '' };
+				${ attributes.fontVariant ? ( 'font-variant:' + attributes.fontVariant ) : '' };
+				${ attributes.fontStyle ? ( 'font-style:' + attributes.fontStyle ) : '' };
+				${ attributes.textTransform ? ( 'text-transform:' + attributes.textTransform ) : '' };
+				${ attributes.letterSpacing ? ( 'letter-spacing:' + attributes.letterSpacing + 'px' ) : '' };
 			}`
 		]);
 	}, [ attributes.fontSize, attributes.fontFamily, attributes.fontVariant, attributes.fontStyle, attributes.textTransform, attributes.letterSpacing ]);
