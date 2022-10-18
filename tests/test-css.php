@@ -198,4 +198,17 @@ class TestCSS extends TestCase {
 			'#wp-block .wp-block {margin: 10px 20px;}'
 		);
 	}
+
+	/**
+	 * Test box to string transformation.
+	 */
+	public function test_render_box() {
+		$this->assertEqualsCanonicalizing( '', CSS_Utility::render_box( array() ));
+
+		$this->assertEqualsCanonicalizing( '', CSS_Utility::render_box( 1 ) );
+
+		$this->assertEqualsCanonicalizing( '', CSS_Utility::render_box( 'aa' ) );
+
+		$this->assertEqualsCanonicalizing( '10px 10px 10px 10px', CSS_Utility::render_box( CSS_Utility::make_box( '10px') ) );
+	}
 }
