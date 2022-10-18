@@ -49,6 +49,7 @@ import {
 } from '../../../helpers/helper-functions.js';
 import ToogleGroupControl from '../../../components/toogle-group-control/index.js';
 import SyncControlDropdown from '../../../components/sync-control-dropdown/index.js';
+import ButtonDropdownControl from '../../../components/button-dropdown-control/index.js';
 
 /**
  *
@@ -451,6 +452,18 @@ const Inspector = ({
 		}
 	};
 
+	const getBackgroundIndicator = ( type, color, image, gradient ) => {
+		if ( 'color' === type && color ) {
+			return color;
+		} else if ( 'image' === type && image ) {
+			return `url( ${ image } )`;
+		} else if ( 'gradient' === type && gradient ) {
+			return gradient;
+		}
+
+		return undefined;
+	};
+
 	return (
 		<Fragment>
 			<InspectorControls>
@@ -652,76 +665,81 @@ const Inspector = ({
 
 					<Fragment>
 						<PanelBody
-							title={ __( 'Background Settings', 'otter-blocks' ) }
+							title={ __( 'Background', 'otter-blocks' ) }
 						>
-							<BackgroundSelectorControl
-								backgroundType={ attributes.backgroundType }
-								backgroundColor={ attributes.backgroundColor }
-								image={ attributes.backgroundImage }
-								gradient={ attributes.backgroundGradient }
-								focalPoint={ attributes.backgroundPosition }
-								backgroundAttachment={ attributes.backgroundAttachment }
-								backgroundRepeat={ attributes.backgroundRepeat }
-								backgroundSize={ attributes.backgroundSize }
-								changeBackgroundType={ value => setAttributes({ backgroundType: value }) }
-								changeImage={ media => {
-									setAttributes({
-										backgroundImage: pick( media, [ 'id', 'url' ])
-									});
-								}}
-								removeImage={ () => setAttributes({ backgroundImage: undefined })}
-								changeColor={ value => setAttributes({ backgroundColor: value })}
-								changeGradient={ value => setAttributes({ backgroundGradient: value }) }
-								changeBackgroundAttachment={ value => setAttributes({ backgroundAttachment: value })}
-								changeBackgroundRepeat={ value => setAttributes({ backgroundRepeat: value })}
-								changeFocalPoint={ value => setAttributes({ backgroundPosition: value }) }
-								changeBackgroundSize={ value => setAttributes({ backgroundSize: value }) }
-							/>
-						</PanelBody>
+							<ButtonDropdownControl
+								label={ __( 'Background', 'otter-blocks' ) }
+								indicator={ getBackgroundIndicator( attributes.backgroundType, attributes.backgroundColor, attributes.backgroundImage?.url, attributes.backgroundGradient ) }
+							>
+								<BackgroundSelectorControl
+									backgroundType={ attributes.backgroundType }
+									backgroundColor={ attributes.backgroundColor }
+									image={ attributes.backgroundImage }
+									gradient={ attributes.backgroundGradient }
+									focalPoint={ attributes.backgroundPosition }
+									backgroundAttachment={ attributes.backgroundAttachment }
+									backgroundRepeat={ attributes.backgroundRepeat }
+									backgroundSize={ attributes.backgroundSize }
+									changeBackgroundType={ value => setAttributes({ backgroundType: value }) }
+									changeImage={ media => {
+										setAttributes({
+											backgroundImage: pick( media, [ 'id', 'url' ])
+										});
+									}}
+									removeImage={ () => setAttributes({ backgroundImage: undefined })}
+									changeColor={ value => setAttributes({ backgroundColor: value })}
+									changeGradient={ value => setAttributes({ backgroundGradient: value }) }
+									changeBackgroundAttachment={ value => setAttributes({ backgroundAttachment: value })}
+									changeBackgroundRepeat={ value => setAttributes({ backgroundRepeat: value })}
+									changeFocalPoint={ value => setAttributes({ backgroundPosition: value }) }
+									changeBackgroundSize={ value => setAttributes({ backgroundSize: value }) }
+								/>
+							</ButtonDropdownControl>
 
-						<PanelBody
-							title={ __( 'Background Overlay', 'otter-blocks' ) }
-							initialOpen={ false }
-						>
-							<BackgroundOverlayControl
-								backgroundType={ attributes.backgroundOverlayType }
-								backgroundColor={ attributes.backgroundOverlayColor }
-								image={ attributes.backgroundOverlayImage }
-								gradient={ attributes.backgroundOverlayGradient }
-								focalPoint={ attributes.backgroundOverlayPosition }
-								backgroundAttachment={ attributes.backgroundOverlayAttachment }
-								backgroundRepeat={ attributes.backgroundOverlayRepeat }
-								backgroundSize={ attributes.backgroundOverlaySize }
-								backgroundOpacity={ attributes.backgroundOverlayOpacity }
-								backgroundFilterBlur={ attributes.backgroundOverlayFilterBlur }
-								backgroundFilterBrightness={ attributes.backgroundOverlayFilterBrightness }
-								backgroundFilterContrast={ attributes.backgroundOverlayFilterContrast }
-								backgroundFilterGrayscale={ attributes.backgroundOverlayFilterGrayscale }
-								backgroundFilterHue={ attributes.backgroundOverlayFilterHue }
-								backgroundFilterSaturate={ attributes.backgroundOverlayFilterSaturate }
-								backgroundBlend={ attributes.backgroundOverlayBlend }
-								changeBackgroundType={ value => setAttributes({ backgroundOverlayType: value }) }
-								changeImage={ media => {
-									setAttributes({
-										backgroundOverlayImage: pick( media, [ 'id', 'url' ])
-									});
-								}}
-								removeImage={ () => setAttributes({ backgroundOverlayImage: undefined })}
-								changeColor={ value => setAttributes({ backgroundOverlayColor: value })}
-								changeGradient={ value => setAttributes({ backgroundOverlayGradient: value }) }
-								changeBackgroundAttachment={ value => setAttributes({ backgroundOverlayAttachment: value })}
-								changeBackgroundRepeat={ value => setAttributes({ backgroundOverlayRepeat: value })}
-								changeFocalPoint={ value => setAttributes({ backgroundOverlayPosition: value }) }
-								changeBackgroundSize={ value => setAttributes({ backgroundOverlaySize: value }) }
-								changeOpacity={ value => setAttributes({ backgroundOverlayOpacity: value }) }
-								changeFilterBlur={ value => setAttributes({ backgroundOverlayFilterBlur: value }) }
-								changeFilterBrightness={ value => setAttributes({ backgroundOverlayFilterBrightness: value }) }
-								changeFilterContrast={ value => setAttributes({ backgroundOverlayFilterContrast: value }) }
-								changeFilterGrayscale={ value => setAttributes({ backgroundOverlayFilterGrayscale: value }) }
-								changeFilterHue={ value => setAttributes({ backgroundOverlayFilterHue: value }) }
-								changeFilterSaturate={ value => setAttributes({ backgroundOverlayFilterSaturate: value }) }
-								changeBlend={ value => setAttributes({ backgroundOverlayBlend: value }) }
-							/>
+							<ButtonDropdownControl
+								label={ __( 'Background Overlay', 'otter-blocks' ) }
+								indicator={ getBackgroundIndicator( attributes.backgroundOverlayType, attributes.backgroundOverlayColor, attributes.backgroundOverlayImage?.url, attributes.backgroundOverlayGradient ) }
+							>
+								<BackgroundOverlayControl
+									backgroundType={ attributes.backgroundOverlayType }
+									backgroundColor={ attributes.backgroundOverlayColor }
+									image={ attributes.backgroundOverlayImage }
+									gradient={ attributes.backgroundOverlayGradient }
+									focalPoint={ attributes.backgroundOverlayPosition }
+									backgroundAttachment={ attributes.backgroundOverlayAttachment }
+									backgroundRepeat={ attributes.backgroundOverlayRepeat }
+									backgroundSize={ attributes.backgroundOverlaySize }
+									backgroundOpacity={ attributes.backgroundOverlayOpacity }
+									backgroundFilterBlur={ attributes.backgroundOverlayFilterBlur }
+									backgroundFilterBrightness={ attributes.backgroundOverlayFilterBrightness }
+									backgroundFilterContrast={ attributes.backgroundOverlayFilterContrast }
+									backgroundFilterGrayscale={ attributes.backgroundOverlayFilterGrayscale }
+									backgroundFilterHue={ attributes.backgroundOverlayFilterHue }
+									backgroundFilterSaturate={ attributes.backgroundOverlayFilterSaturate }
+									backgroundBlend={ attributes.backgroundOverlayBlend }
+									changeBackgroundType={ value => setAttributes({ backgroundOverlayType: value }) }
+									changeImage={ media => {
+										setAttributes({
+											backgroundOverlayImage: pick( media, [ 'id', 'url' ])
+										});
+									}}
+									removeImage={ () => setAttributes({ backgroundOverlayImage: undefined })}
+									changeColor={ value => setAttributes({ backgroundOverlayColor: value })}
+									changeGradient={ value => setAttributes({ backgroundOverlayGradient: value }) }
+									changeBackgroundAttachment={ value => setAttributes({ backgroundOverlayAttachment: value })}
+									changeBackgroundRepeat={ value => setAttributes({ backgroundOverlayRepeat: value })}
+									changeFocalPoint={ value => setAttributes({ backgroundOverlayPosition: value }) }
+									changeBackgroundSize={ value => setAttributes({ backgroundOverlaySize: value }) }
+									changeOpacity={ value => setAttributes({ backgroundOverlayOpacity: value }) }
+									changeFilterBlur={ value => setAttributes({ backgroundOverlayFilterBlur: value }) }
+									changeFilterBrightness={ value => setAttributes({ backgroundOverlayFilterBrightness: value }) }
+									changeFilterContrast={ value => setAttributes({ backgroundOverlayFilterContrast: value }) }
+									changeFilterGrayscale={ value => setAttributes({ backgroundOverlayFilterGrayscale: value }) }
+									changeFilterHue={ value => setAttributes({ backgroundOverlayFilterHue: value }) }
+									changeFilterSaturate={ value => setAttributes({ backgroundOverlayFilterSaturate: value }) }
+									changeBlend={ value => setAttributes({ backgroundOverlayBlend: value }) }
+								/>
+							</ButtonDropdownControl>
 						</PanelBody>
 
 						<PanelBody
