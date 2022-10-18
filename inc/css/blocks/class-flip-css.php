@@ -37,7 +37,7 @@ class Flip_CSS extends Base_CSS {
 			array(
 				'tablet' => '@media ( max-width: 960px )',
 				'mobile' => '@media ( max-width: 600px )',
-			) 
+			)
 		);
 
 		$css->add_item(
@@ -275,7 +275,13 @@ class Flip_CSS extends Base_CSS {
 						'property' => '--padding-tablet',
 						'value'    => 'paddingTablet',
 						'format'   => function( $value, $attrs ) {
-							return CSS_Utility::box_values( $value, CSS_Utility::make_box( '20px' ) );
+							return CSS_Utility::render_box(
+								CSS_Utility::merge_views(
+									CSS_Utility::make_box( '20px' ),
+									isset( $attrs['padding'] ) && is_array( $attrs['padding'] ) ? $attrs['padding'] : array(),
+									$value
+								)
+							);
 						},
 						'media'    => 'tablet',
 					),
@@ -283,7 +289,14 @@ class Flip_CSS extends Base_CSS {
 						'property' => '--padding-mobile',
 						'value'    => 'paddingMobile',
 						'format'   => function( $value, $attrs ) {
-							return CSS_Utility::box_values( $value, CSS_Utility::make_box( '20px' ) );
+							return CSS_Utility::render_box(
+								CSS_Utility::merge_views(
+									CSS_Utility::make_box( '20px' ),
+									isset( $attrs['padding'] ) && is_array( $attrs['padding'] ) ? $attrs['padding'] : array(),
+									isset( $attrs['paddingTablet'] ) ? $attrs['paddingTablet'] : array(),
+									$value
+								)
+							);
 						},
 						'media'    => 'mobile',
 					),

@@ -404,7 +404,10 @@ const Inspector = ({
 												result = undefined;
 											}
 
-											responsiveSetAttributes( result, [ 'padding', 'paddingTablet', 'paddingMobile' ], attributes.padding );
+											responsiveSetAttributes(
+												removeBoxDefaultValues( result, stringToBox( '20px' ) ),
+												[ 'padding', 'paddingTablet', 'paddingMobile' ]
+											);
 										} }
 									/>
 								</ResponsiveControl>
