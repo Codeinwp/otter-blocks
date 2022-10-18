@@ -57,7 +57,7 @@ const withStickyExtension = createHigherOrderComponent( BlockEdit => {
 						<Fragment>
 
 							{
-								window?.themeisleGutenberg?.isBlockEditor && (
+								window?.themeisleGutenberg?.isBlockEditor && OtterControlTools === undefined && (
 									<PluginBlockSettingsMenuItem
 										icon="sticky"
 										label={ ! isSticky ? __( 'Transform to Sticky', 'otter-blocks' ) : __( 'Remove Sticky Element', 'otter-blocks' ) }

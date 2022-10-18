@@ -122,11 +122,16 @@ const BlocksExporter = () => {
 
 	return (
 		<Fragment>
-			<PluginBlockSettingsMenuItem
-				icon={ external }
-				label={ __( 'Export as JSON', 'otter-blocks' ) }
-				onClick={ exportBlocks }
-			/>
+			{
+				OtterControlTools === undefined && (
+					<PluginBlockSettingsMenuItem
+						icon={ external }
+						label={ __( 'Export as JSON', 'otter-blocks' ) }
+						onClick={ exportBlocks }
+					/>
+				)
+			}
+
 			{
 				OtterControlTools !== undefined && (
 					<OtterControlTools order={3}>
