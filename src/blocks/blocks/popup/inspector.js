@@ -392,6 +392,7 @@ const Inspector = ({
 								}
 
 								<BoxControl
+									id="o-brd-raduis-box"
 									label={ __( 'Border Radius', 'otter-blocks' ) }
 									values={ attributes.borderRadius }
 									onChange={ value => {
