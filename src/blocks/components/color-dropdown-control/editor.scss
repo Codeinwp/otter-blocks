@@ -1,0 +1,46 @@
+.o-color-dropdown-control {
+    padding: 0;
+    border: 1px solid rgba(0,0,0,.1);
+    display: block;
+
+    .o-color-dropdown-control-button {
+        appearance: none;
+        border: 1px solid transparent;
+        cursor: pointer;
+        background: none;
+        text-align: left;
+        padding: calc(9.2px) 12px;
+        padding-top: calc(9.2px);
+        padding-bottom: calc(9.2px);
+        width: 100%;
+        display: flex;
+        margin: 0px;
+        color: inherit;
+        height: 46px;
+
+        &.is-open {
+            background: #f0f0f0;
+            color: var(--wp-admin-theme-color);
+        }
+
+        .component-color-indicator {
+            margin-right: calc(8px);
+            background: linear-gradient(-45deg,transparent 48%,#ddd 0,#ddd 52%,transparent 0);
+        }
+    }
+}
+
+.o-color-dropdown-control-content {
+    .components-popover__content {
+        width: 280px;
+
+        @media (min-width: 782px) {
+            margin-top: -60px !important;
+            margin-right: 156px !important;
+        }
+
+        .block-editor-color-gradient-control__color-indicator {
+            display: none;
+        }
+    }
+}

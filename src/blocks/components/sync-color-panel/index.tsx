@@ -2,12 +2,6 @@
  * WordPress dependencies
  */
 import {
-
-	// @ts-ignore
-	__experimentalColorGradientControl as ColorGradientControl
-} from '@wordpress/block-editor';
-
-import {
 	Disabled,
 	PanelBody
 } from '@wordpress/components';
@@ -15,9 +9,8 @@ import {
 /**
  * Internal dependencies
  */
-import './editor.scss';
-
 import SyncControlDropdown from '../sync-control-dropdown/index.js';
+import ColorDropdownControl from '../color-dropdown-control/index.js';
 
 type SyncColorPanelProps = {
     label: string,
@@ -59,8 +52,9 @@ const SyncColorPanel = ( props: SyncColorPanelProps ) => {
 
 					// @ts-ignore
 					isDisabled={ isSynced?.includes( option.slug ) || false }
+					className="o-disabled"
 				>
-					<ColorGradientControl
+					<ColorDropdownControl
 						label={ option.label }
 						colorValue={ option.value }
 						onColorChange={ ( e: string ) => setAttributes({ [ option.slug ]: e }) }
