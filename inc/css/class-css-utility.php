@@ -6,7 +6,7 @@
  *     'desktop' => '@media ( min-width: 960px )',
  *     'mobile'  => '@media ( max-width: 960px )'
  * );
- * 
+ *
  * $css = new CSS_Utility( $block, $default_queries );
  *
  * $css->add_item( array(
@@ -208,7 +208,7 @@ class CSS_Utility {
 		foreach ( $this->media_items as $selector => $items ) {
 			foreach ( $items as $item ) {
 				$media_query = $this->get_media_query( $item['media'] );
-		
+
 				if ( ! isset( $this->css_array[ $media_query ] ) ) {
 					$this->css_array[ $media_query ] = array();
 				}
@@ -327,18 +327,18 @@ class CSS_Utility {
 	 * @return string
 	 */
 	public static function box_values( $box, $box_default = array() ) {
-		$_box = array_merge(
-			array(
-				'left'   => '0px',
-				'right'  => '0px',
-				'top'    => '0px',
-				'bottom' => '0px',
-			),
-			$box_default,
-			$box
+		return self::render_box(
+			array_merge(
+				array(
+					'left'   => '0px',
+					'right'  => '0px',
+					'top'    => '0px',
+					'bottom' => '0px',
+				),
+				$box_default,
+				$box
+			)
 		);
-
-		return $_box['top'] . ' ' . $_box['right'] . ' ' . $_box['bottom'] . ' ' . $_box['left'];
 	}
 
 	/**
@@ -355,5 +355,56 @@ class CSS_Utility {
 			'top'    => $value,
 			'bottom' => $value,
 		);
+	}
+
+	/**
+	 * Merge tge gives views to a single box value.
+	 *
+	 * @param mixed ...$views The values from other viewports.
+	 *
+	 * @return array|string[]
+	 */
+	public static function merge_views( ...$views ) {
+		$result = self::make_box();
+
+		$valid = array_filter(
+			$views,
+			function( $view ) {
+				return isset( $view ) && is_array( $view );
+			} 
+		);
+
+		foreach ( $valid as $arr ) {
+			if ( isset( $arr['top'] ) ) {
+				$result['top'] = $arr['top'];
+			}
+			if ( isset( $arr['bottom'] ) ) {
+				$result['bottom'] = $arr['bottom'];
+			}
+			if ( isset( $arr['right'] ) ) {
+				$result['right'] = $arr['right'];
+			}
+			if ( isset( $arr['left'] ) ) {
+				$result['left'] = $arr['left'];
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Convert a defined box to a CSS string value.
+	 *
+	 * @param array $box The box value.
+	 *
+	 * @return string
+	 */
+	public static function render_box( $box ) {
+
+		if ( ! isset( $box ) || ! is_array( $box ) || count( $box ) === 0 ) {
+			return '';
+		}
+
+		return $box['top'] . ' ' . $box['right'] . ' ' . $box['bottom'] . ' ' . $box['left'];
 	}
 }
