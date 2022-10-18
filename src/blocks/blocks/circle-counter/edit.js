@@ -115,12 +115,6 @@ const CircularProgressBarBlock = ({
 		};
 	}, [ attributes.percentage, attributes.height ]);
 
-
-	const onTitleChange = value => {
-		setAttributes({ title: value });
-	};
-
-
 	const inlineStyles = {
 		'--font-size-title': px( attributes.fontSizeTitle )
 	};
