@@ -172,12 +172,13 @@ const Inspector = ({
 
 							{ ( undefined === attributes.trigger || 'onLoad' === attributes.trigger ) && (
 								<RangeControl
-									label={ __( 'Trigger Time', 'otter-blocks' ) }
-									help={ __( 'How much time to wait before showing the popup. Leave it empty to open instantly', 'otter-blocks' ) }
+									label={ __( 'Trigger Time (seconds)', 'otter-blocks' ) }
+									help={ __( 'How much time to wait before showing the popup.', 'otter-blocks' ) }
 									min={ 0 }
 									max={ 100 }
-									value={ attributes.wait }
+									value={ attributes.wait ?? 0 }
 									onChange={ value => setAttributes({ wait: Number( value ) }) }
+									allowReset
 								/>
 							) }
 						</PanelBody>
@@ -237,6 +238,7 @@ const Inspector = ({
 						<Fragment>
 							<PanelBody
 								title={ __( 'Dimensions', 'otter-blocks' ) }
+								initialOpen={ true }
 							>
 								<ResponsiveControl
 									label={ __( 'Width', 'otter-blocks' ) }
@@ -276,7 +278,7 @@ const Inspector = ({
 											attributes.padding,
 											attributes.paddingTablet,
 											attributes.paddingMobile
-										]) }
+										]) ?? { top: '0px', bottom: '0px', left: '0px', right: '0px' } }
 										onChange={ value => {
 											responsiveSetAttributes(
 												removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' }),
@@ -290,7 +292,7 @@ const Inspector = ({
 							</PanelBody>
 							<PanelColorSettings
 								title={ __( 'Color', 'otter-blocks' ) }
-								initialOpen={ false }
+								initialOpen={ true }
 								colorSettings={ [
 									{
 										value: attributes.backgroundColor,
@@ -311,15 +313,19 @@ const Inspector = ({
 							/>
 							<PanelBody
 								title={ __( 'Overlay', 'otter-blocks' ) }
+								initialOpen={ false }
 							>
 								<RangeControl
 									label={ __( 'Overlay Opacity', 'otter-blocks' ) }
 									value={ attributes.overlayOpacity }
-									onChange={ value => setAttributes({ overlayOpacity: Number( value ) }) }
+									initialPosition={ 100 }
+									onChange={ value => setAttributes({ overlayOpacity: value !== undefined ? Number( value ) : undefined }) }
+									allowReset
 								/>
 							</PanelBody>
 							<PanelBody
 								title={ __( 'Close Button', 'otter-blocks' ) }
+								initialOpen={ false }
 							>
 								<ToggleControl
 									label={ __( 'Show Close Button', 'otter-blocks' ) }
@@ -344,6 +350,7 @@ const Inspector = ({
 							</PanelBody>
 							<PanelBody
 								title={ __( 'Border', 'otter-blocks' ) }
+								initialOpen={ false }
 							>
 								<SelectControl
 									label={ __( 'Style', 'otter-blocks' ) }
@@ -394,7 +401,7 @@ const Inspector = ({
 								<BoxControl
 									id="o-brd-raduis-box"
 									label={ __( 'Border Radius', 'otter-blocks' ) }
-									values={ attributes.borderRadius }
+									values={ attributes.borderRadius ?? { top: '0px', bottom: '0px', left: '0px', right: '0px' } }
 									onChange={ value => {
 										setAttributes({
 											borderRadius: removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' })

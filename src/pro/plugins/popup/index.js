@@ -64,7 +64,7 @@ const PopupControls = (
 					label={ __( 'Anchor', 'otter-blocks' ) }
 					help={ __( 'You can use this anchor as an anchor link anywhere on the page to open the popup.', 'otter-blocks' ) }
 					value={ attributes.anchor }
-					onChange={ value => setAttributes({ anchor: value.replace( /[^a-zA-Z]/g, '' ) }) }
+					onChange={ value => setAttributes({ anchor: value?.replace( /[^a-zA-Z]/g, '' ) }) }
 				/>
 			) }
 
@@ -82,7 +82,9 @@ const PopupControls = (
 					min={ 0 }
 					max={ 100 }
 					value={ attributes.scroll }
-					onChange={ value => setAttributes({ scroll: Number( value ) }) }
+					onChange={ value => setAttributes({ scroll: value !== undefined ? Number( value ) : value }) }
+					allowReset
+					initialPosition={0}
 				/>
 			) }
 
@@ -118,11 +120,12 @@ const PopupControls = (
 			{ ( attributes.recurringClose && 'onClick' !== attributes.trigger ) && (
 				<RangeControl
 					label={ __( 'Display Interval', 'otter-blocks' ) }
-					help={ __( 'Number of days until the popup is shown again.', 'otter-blocks' ) }
+					help={ __( 'Number of days until the popup is shown again. Leave it empty for one-time display', 'otter-blocks' ) }
 					min={ 0 }
 					max={ 100 }
-					value={ attributes.recurringTime ?? 0 }
-					onChange={ value => setAttributes({ recurringTime: Number( value ) }) }
+					value={ attributes.recurringTime }
+					onChange={ value => setAttributes({ recurringTime: value !== undefined ? Number( value ) : value }) }
+					allowReset
 				/>
 			) }
 		</Fragment>
