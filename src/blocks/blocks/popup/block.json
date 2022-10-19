@@ -63,6 +63,9 @@
 		"overlayOpacity": {
 			"type": "number"
 		},
+		"lockScrolling": {
+			"type": "boolean"
+		},
 		"padding": {
 			"type": "object"
 		},

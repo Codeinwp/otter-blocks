@@ -39,6 +39,7 @@ type Attributes = {
 	horizontalPositionMobile: string
 
 	closeButtonType: 'outside'
+	lockScrolling: boolean
 }
 
 export type PopupPros = BlockProps<Attributes>
