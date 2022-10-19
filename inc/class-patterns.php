@@ -49,33 +49,103 @@ class Patterns {
 		}
 
 		$block_patterns = array(
-			'hero-area-with-button',
-			'content-with-progress-bars',
-			'text-with-image-columns',
-			'large-quote',
-			'image-and-text-over-dark-background',
-			'contact-details-and-form',
-			'call-to-action',
-			'testimonial-columns',
-			'testimonial-with-inline-image',
-			'centered-testimonial-with-star-icons',
-			'cover-boxes-with-title-and-button',
-			'columns-with-image-features',
-			'team-members',
-			'columns-with-icon-features',
-			'columns-with-flip-boxes',
-			'icons-and-text',
-			'gallery',
-			'border-icon-features',
-			'border-pricing-table',
-			'countdown',
-			'service-boxes-on-dark-background',
-			'content-with-features',
-			'author-box',
+			array(
+				'slug'    => 'hero-area-with-button',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'content-with-progress-bars',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'text-with-image-columns',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'large-quote',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'image-and-text-over-dark-background',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'contact-details-and-form',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'call-to-action',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'testimonial-columns',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'testimonial-with-inline-image',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'centered-testimonial-with-star-icons',
+				'minimum' => 5.9,
+			),
+			array(
+				'slug'    => 'cover-boxes-with-title-and-button',
+				'minimum' => 5.9,
+			),
+			array(
+				'slug'    => 'columns-with-image-features',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'team-members',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'columns-with-icon-features',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'columns-with-flip-boxes',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'icons-and-text',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'gallery',
+				'minimum' => 5.9,
+			),
+			array(
+				'slug'    => 'border-icon-features',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'border-pricing-table',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'countdown',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'service-boxes-on-dark-background',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'content-with-features',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'author-box',
+				'minimum' => 5.8,
+			),
 		);
 	
 		/**
-		 * Filters the theme block patterns.
+		 * Filters,
+		 *), the theme block patterns.
 		 *
 		 * @since Twenty Twenty-Two 1.0
 		 *
@@ -84,10 +154,14 @@ class Patterns {
 		$block_patterns = apply_filters( 'otter_blocks_block_patterns', $block_patterns );
 	
 		foreach ( $block_patterns as $block_pattern ) {
-			$pattern_file = OTTER_BLOCKS_PATH . '/inc/patterns/' . $block_pattern . '.php';
+			if ( ! version_compare( get_bloginfo( 'version' ), $block_pattern['minimum'], '>=' ) ) {
+				continue;
+			}
+
+			$pattern_file = OTTER_BLOCKS_PATH . '/inc/patterns/' . $block_pattern['slug'] . '.php';
 	
 			register_block_pattern(
-				'otter-blocks/' . $block_pattern,
+				'otter-blocks/' . $block_pattern['slug'],
 				require $pattern_file
 			);
 		}

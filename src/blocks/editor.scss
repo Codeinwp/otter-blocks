@@ -105,6 +105,10 @@
 	}
 }
 
+.o-disabled {
+	opacity: 0.5;
+}
+
 #o-border-raduis-box {
 	max-width: 100%;
 	>.component-box-control__header-control-wrapper {

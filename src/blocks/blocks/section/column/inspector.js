@@ -215,7 +215,6 @@ const Inspector = ({
 
 						<ResponsiveControl
 							label={ __( 'Screen Type', 'otter-blocks' ) }
-							className="otter-section-padding-responsive-control"
 						>
 							<SyncControl
 								field={ getPaddingField() }
