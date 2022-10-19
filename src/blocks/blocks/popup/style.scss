@@ -127,8 +127,11 @@ $base-index: 9999 !default;
 		}
 	}
 
+
+
 	&.with-outside-button {
 		.otter-popup__modal_header {
+			padding-bottom: 0px;
 			button {
 				position: absolute;
 				top: -15px;

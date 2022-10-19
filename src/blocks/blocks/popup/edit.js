@@ -6,7 +6,7 @@ import {
 	closeSmall,
 	external
 } from '@wordpress/icons';
-import { isObjectLike, merge } from 'lodash';
+import { merge } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -148,7 +148,7 @@ const Edit = ( props ) => {
 				</Button>
 
 				{ isEditing && (
-					<div className="otter-popup__modal_wrap">
+					<div className='otter-popup__modal_wrap'>
 						<div
 							role="presentation"
 							className="otter-popup__modal_wrap_overlay"
