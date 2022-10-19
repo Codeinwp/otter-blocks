@@ -409,6 +409,7 @@ const Inspector = ({
 												[ 'padding', 'paddingTablet', 'paddingMobile' ]
 											);
 										} }
+										allowReset
 									/>
 								</ResponsiveControl>
 
@@ -534,6 +535,7 @@ const Inspector = ({
 											borderWidth: removeBoxDefaultValues( value, { left: '3px', right: '3px', bottom: '3px', top: '3px' })
 										});
 									} }
+									allowReset
 								/>
 
 								<BoxControl
@@ -550,6 +552,7 @@ const Inspector = ({
 											borderRadius: removeBoxDefaultValues( value, { left: '10px', right: '10px', bottom: '10px', top: '10px' })
 										});
 									} }
+									allowReset
 								/>
 
 								<ToggleControl
@@ -575,6 +578,7 @@ const Inspector = ({
 												onChange={ changeBoxShadowColorOpacity }
 												min={ 0 }
 												max={ 100 }
+												allowReset
 											/>
 
 											<RangeControl
@@ -583,6 +587,7 @@ const Inspector = ({
 												onChange={ boxShadowBlur => setAttributes({ boxShadowBlur }) }
 												min={ 0 }
 												max={ 100 }
+												allowReset
 											/>
 
 											<RangeControl
@@ -591,6 +596,7 @@ const Inspector = ({
 												onChange={ boxShadowHorizontal => setAttributes({ boxShadowHorizontal })}
 												min={ -100 }
 												max={ 100 }
+												allowReset
 											/>
 
 											<RangeControl
@@ -599,6 +605,7 @@ const Inspector = ({
 												onChange={ boxShadowVertical => setAttributes({ boxShadowVertical }) }
 												min={ -100 }
 												max={ 100 }
+												allowReset
 											/>
 										</ControlPanelControl>
 									</Fragment>

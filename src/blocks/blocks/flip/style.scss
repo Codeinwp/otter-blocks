@@ -94,12 +94,14 @@
 	.o-flip-content {
 		display: flex;
 		flex-direction: column;
+		width: 100%;
+		height: 100%;
+		box-sizing: border-box;
+
 		justify-content: var( --front-vertical-align );
 		align-items: var( --front-horizontal-align );
 
 		padding: var( --padding );
-		width: 100%;
-		height: 100%;
 
 		h3, p {
 			margin: 0.5rem;
