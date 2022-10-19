@@ -65,6 +65,7 @@ class Main {
 
 		$classnames = array(
 			'\ThemeIsle\GutenbergBlocks\Registration',
+			'\ThemeIsle\GutenbergBlocks\Patterns',
 			'\ThemeIsle\GutenbergBlocks\Pro',
 			'\ThemeIsle\GutenbergBlocks\Blocks_Export_Import',
 			'\ThemeIsle\GutenbergBlocks\CSS\Block_Frontend',
@@ -315,7 +316,12 @@ class Main {
 			$tags['o-dynamic-link'] = $global_attributes;
 		}
 
+		if ( ! isset( $tags['input'] ) ) {
+			$tags['input'] = array();
+		}
+
 		$tags['input'] = array_merge(
+			$tags['input'],
 			array(
 				'type'        => true,
 				'name'        => true,
@@ -325,7 +331,14 @@ class Main {
 			$global_attributes
 		);
 
+		$textarea = array();
+
+		if ( ! isset( $tags['textarea'] ) ) {
+			$tags['textarea'] = array();
+		}
+
 		$tags['textarea'] = array_merge(
+			$tags['textarea'],
 			array(
 				'name'        => true,
 				'required'    => true,

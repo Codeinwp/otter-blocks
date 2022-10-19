@@ -270,10 +270,31 @@ export const getChoice = arr => {
 };
 
 /**
+ * Converts HEX colors to RGBA.
+ *
+ * @param color
+ * @param alpha
+ * @returns {string}
+ */
+export const hex2rgba = ( color, alpha = 100 ) => {
+	if ( ! color ) {
+		color = '#000000';
+	}
+
+	if ( '#' !== color[0]) {
+		return color;
+	}
+
+	const [ r, g, b ] = color.match( /\w\w/g ).map( x => parseInt( x, 16 ) );
+	return `rgba(${r},${g},${b},${alpha / 100})`;
+};
+
+/**
  * Return the values from a box type.
  *
- * @param {import('./blocks').BoxType} box
- * @param {import('./blocks').BoxType} defaultBox
+ * @param {import('./blocks').BoxType?} box
+ * @param {import('./blocks').BoxType?} defaultBox
+ * @return {string}
  */
 export const boxValues = ( box = {}, defaultBox = {}) => {
 	return `${ box?.top ?? defaultBox?.top ?? '0px' } ${ box?.right ?? defaultBox?.right ?? '0px' } ${ box?.bottom ?? defaultBox?.bottom ?? '0px' } ${ box?.left ?? defaultBox?.left ?? '0px' }`;
@@ -297,8 +318,8 @@ export const removeBoxDefaultValues = ( box, defaultBox ) => {
 /**
  * Merge the Box objects.
  *
- * @param {import('./blocks').BoxType} box
- * @param {import('./blocks').BoxType} defaultBox
+ * @param {import('./blocks').BoxType?} box
+ * @param {import('./blocks').BoxType?} defaultBox
  * @return {import('./blocks').BoxType}
  */
 export const mergeBoxDefaultValues = ( box, defaultBox ) => {
@@ -341,11 +362,7 @@ export const buildResponsiveSetAttributes = ( setAttributes, currentView ) => {
 		const attrName = keys[mapViewToKey[currentView] ?? 0]?.split( '.' )[0];
 		const attr = { [attrName]: { ...oldAttr }};
 
-		if ( value === undefined ) {
-			unset( attr, keys[mapViewToKey[currentView] ?? 0]);
-		} else {
-			set( attr, keys[mapViewToKey[currentView] ?? 0], value );
-		}
+		set( attr, keys[mapViewToKey[currentView] ?? 0], value );
 
 		setAttributes( 'object' === typeof attr[attrName] && isEmpty( attr[attrName]) ? { [attrName]: undefined } : attr );
 	};
@@ -389,7 +406,7 @@ export const getActiveStyle = ( styles, className ) => {
 
 		const potentialStyleName = style.substring( 9 );
 
-		if ( styleValues.indexOf( potentialStyleName )  ) {
+		if ( -1 < styleValues.indexOf( potentialStyleName ) ) {
 			return potentialStyleName;
 		}
 	}
@@ -411,7 +428,7 @@ export const changeActiveStyle = ( className, styles, newStyle ) =>{
 	const activeStyle = getActiveStyle( styles, className );
 	const defaultValue = styles.find( i => i.isDefault )?.value || '';
 
-	if ( activeStyle ) {
+	if ( activeStyle && -1 < classes.indexOf( `is-style-${ activeStyle }` ) ) {
 		classes.splice( classes.indexOf( `is-style-${ activeStyle }` ), 1 );
 	}
 
@@ -420,15 +437,4 @@ export const changeActiveStyle = ( className, styles, newStyle ) =>{
 	}
 
 	return classes.join( ' ' );
-};;
-
-/**
- * Remove undefined values from the object. Make the value undefined is the object is empty.
- *
- * @param {Object} object
- * @returns {Object}
- */
-export const objectCleaner = ( object ) => {
-	const filtered = omitBy( object, x => x === undefined || null === x || '' === x );
-	return isEmpty( filtered ) ? undefined : filtered;
 };
