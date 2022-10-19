@@ -3,7 +3,7 @@
  */
 import { domReady } from '../../helpers/frontend-helper-functions.js';
 
-import Popup from './popup.js';
+import Popup from './popup';
 
 domReady( () => {
 	const popups = document.querySelectorAll( '.wp-block-themeisle-blocks-popup' );
