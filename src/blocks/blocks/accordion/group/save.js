@@ -16,6 +16,7 @@ const Save = ({
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
+		'data-has-schema': attributes.FAQSchema,
 		className: classnames({
 			exclusive: false === attributes.alwaysOpen,
 			[ `is-${ attributes.gap }-gap` ]: attributes.gap && 'string' === typeof attributes.gap,

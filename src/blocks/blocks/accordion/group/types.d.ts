@@ -3,7 +3,7 @@ import { BlockProps, InspectorProps } from '../../../helpers/blocks';
 
 type Attributes = {
 	id: string
-	schema: boolean
+	FAQSchema: boolean
 	gap: string | number
 	titleColor: string
 	titleBackground: string

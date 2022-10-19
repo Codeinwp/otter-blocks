@@ -204,7 +204,8 @@ const Inspector = ({
 					/>
 					<ToggleControl
 						label={ __( 'Enable FAQ Schema', 'otter-blocks' ) }
-						checked={ attributes.schema }
+						checked={ attributes.FAQSchema || false }
+						onChange={ FAQSchema => setAttributes({ FAQSchema }) }
 					/>
 					<SelectControl
 						label={ __( 'Accordion title HTML tag', 'otter-blocks' ) }

@@ -11,7 +11,7 @@
         "id": {
             "type": "string"
         },
-		"schema": {
+		"FAQSchema": {
 			"type": "boolean"
 		},
         "gap": {
