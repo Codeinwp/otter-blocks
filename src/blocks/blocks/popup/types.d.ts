@@ -40,6 +40,7 @@ type Attributes = {
 	boxShadow: BoxShadow
 	closeButtonType: 'outside'
 	lockScrolling: boolean
+	disableOn: 'mobile'
 }
 
 export type PopupPros = BlockProps<Attributes>

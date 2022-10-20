@@ -15,7 +15,9 @@ class PopupBlock {
 			return ;
 		}
 
-		this.init();
+		if ( ! this.isDisabled() ) {
+			this.init();
+		}
 	}
 
 	init() {
@@ -25,6 +27,16 @@ class PopupBlock {
 		if ( Boolean( this.element.dataset.lockScrolling ) ) {
 			this.lockScrolling();
 		}
+	}
+
+	isDisabled() {
+		const { disableOn } = this.element.dataset;
+
+		if ( 'mobile' === disableOn && window.matchMedia( '(max-width: 600px)' ) ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	openModal() {

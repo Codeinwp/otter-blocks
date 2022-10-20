@@ -196,7 +196,13 @@ const Inspector = ({
 							<ToggleControl
 								label={ __( 'Disable Page Scrolling', 'otter-blocks' ) }
 								checked={ attributes.lockScrolling }
-								onChange={ () => setAttributes({ lockScrolling: ! attributes.lockScrolling }) }
+								onChange={ ( ) => setAttributes({ lockScrolling: ! attributes.lockScrolling }) }
+							/>
+
+							<ToggleControl
+								label={ __( 'Show on mobile', 'otter-blocks' ) }
+								checked={ ! Boolean( attributes.disableOn ) }
+								onChange={ ( value ) => setAttributes({ disableOn: ! value ? 'mobile' : undefined  }) }
 							/>
 						</PanelBody>
 						<PanelBody

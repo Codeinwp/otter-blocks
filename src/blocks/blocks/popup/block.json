@@ -136,6 +136,9 @@
 				"horizontal": 0,
 				"vertical": 0
 			}
+		},
+		"disableOn": {
+			"type": "string"
 		}
 	},
 	"editorStyle": "otter-popup-editor",
