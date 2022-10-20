@@ -19,6 +19,9 @@ type Attributes = {
 	columnsHeightCustomTablet: number|string
 	columnsHeightCustomMobile: number|string
 	verticalAlign: string
+	color: string
+	colorHover: string
+	linkColor: string
 	backgroundType: string
 	backgroundColor: string
 	backgroundImage: MediaImageProps

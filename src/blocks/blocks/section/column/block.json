@@ -29,6 +29,15 @@
 		"marginMobile": {
 			"type": "object"
 		},
+		"color": {
+			"type": "string"
+		},
+		"colorHover": {
+			"type": "string"
+		},
+		"linkColor": {
+			"type": "string"
+		},
 		"backgroundType": {
 			"type": "string",
 			"default": "color"
@@ -118,6 +127,9 @@
 		"backgroundOverlayBlend": {
 			"type": "string",
 			"default": "normal"
+		},
+		"backgroundColorHover": {
+			"type": "string"
 		},
 		"border": {
 			"type": "object"

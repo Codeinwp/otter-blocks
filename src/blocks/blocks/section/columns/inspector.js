@@ -722,10 +722,25 @@ const Inspector = ({
 							title={ __( 'Background', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
+							<ColorDropdownControl
+								label={ __( 'Text', 'otter-blocks' ) }
+								colorValue={ attributes.color }
+								onColorChange={ color => setAttributes({ color }) }
+								className="is-list is-first"
+							/>
+
+							<ColorDropdownControl
+								label={ __( 'Link', 'otter-blocks' ) }
+								colorValue={ attributes.linkColor }
+								onColorChange={ linkColor => setAttributes({ linkColor }) }
+								className="is-list"
+							/>
+
 							<ButtonDropdownControl
 								label={ __( 'Background', 'otter-blocks' ) }
 								indicator={ getBackgroundIndicator( attributes.backgroundType, attributes.backgroundColor, attributes.backgroundImage?.url, attributes.backgroundGradient ) }
 							>
+
 								<BackgroundSelectorControl
 									backgroundType={ attributes.backgroundType }
 									backgroundColor={ attributes.backgroundColor }
@@ -795,6 +810,13 @@ const Inspector = ({
 									changeBlend={ value => setAttributes({ backgroundOverlayBlend: value }) }
 								/>
 							</ButtonDropdownControl>
+
+							<ColorDropdownControl
+								label={ __( 'Text Hover', 'otter-blocks' ) }
+								colorValue={ attributes.colorHover }
+								onColorChange={ colorHover => setAttributes({ colorHover }) }
+								className="is-list"
+							/>
 						</PanelBody>
 
 						<PanelBody

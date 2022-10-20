@@ -310,7 +310,10 @@ const Edit = ({
 		...background,
 		...borderStyle,
 		...borderRadiusStyle,
-		...boxShadowStyle
+		...boxShadowStyle,
+		'--content-color': attributes.color,
+		'--link-color': attributes.linkColor,
+		'--content-color-hover': attributes.colorHover
 	};
 
 	if ( 'color' === attributes.backgroundOverlayType ) {

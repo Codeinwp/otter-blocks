@@ -48,8 +48,24 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	}
 
 	.wp-block-themeisle-blocks-advanced-column {
+		--background-color-hover: inherit;
+		--content-color: inherit;
+		--link-color: inherit;
+		--content-color-hover: var( --content-color );
+
+		color: var( --content-color );
+
+		&:hover {
+			color: var( --content-color-hover );
+			background: var( --background-color-hover ) !important;
+		}
+
 		> * {
 			position: relative;
+		}
+	
+		a {
+			color: var( --link-color );
 		}
 
 		.wp-block-themeisle-blocks-advanced-column-overlay {

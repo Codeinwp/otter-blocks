@@ -254,7 +254,11 @@ const Edit = ({
 		...background,
 		...borderStyle,
 		...borderRadiusStyle,
-		...boxShadowStyle
+		...boxShadowStyle,
+		'--content-color': attributes.color,
+		'--link-color': attributes.linkColor,
+		'--content-color-hover': attributes.colorHover,
+		'--background-color-hover': attributes.backgroundColorHover
 	};
 
 	if ( 'color' === attributes.backgroundOverlayType ) {

@@ -8,6 +8,9 @@ type Attributes = {
 	margin: MarginType
 	marginTablet: MarginType
 	marginMobile: MarginType
+	color: string
+	colorHover: string
+	linkColor: string
 	backgroundType: string
 	backgroundColor: string
 	backgroundImage: MediaImageProps
@@ -32,6 +35,7 @@ type Attributes = {
 	backgroundOverlayFilterHue: number
 	backgroundOverlayFilterSaturate: number
 	backgroundOverlayBlend: string
+	backgroundColorHover: string
 	border: BorderType
 	borderColor: string
 	borderRadius: number

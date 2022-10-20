@@ -67,6 +67,15 @@
 			"type": "string",
 			"default": "unset"
 		},
+		"color": {
+			"type": "string"
+		},
+		"colorHover": {
+			"type": "string"
+		},
+		"linkColor": {
+			"type": "string"
+		},
 		"backgroundType": {
 			"type": "string",
 			"default": "color"
