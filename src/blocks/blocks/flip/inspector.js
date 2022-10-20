@@ -382,6 +382,33 @@ const Inspector = ({
 										isUnitSelectTabbable
 										isResetValueOnUnitChange
 										allowReset={ true }
+										units={[
+											{
+												default: 300,
+												label: 'px',
+												value: 'px'
+											},
+											{
+												default: 20,
+												label: 'em',
+												value: 'em'
+											},
+											{
+												default: 20,
+												label: 'rem',
+												value: 'rem'
+											},
+											{
+												default: 30,
+												label: 'vw',
+												value: 'vw'
+											},
+											{
+												default: 35,
+												label: 'vh',
+												value: 'vh'
+											}
+										]}
 									/>
 								</ResponsiveControl>
 
