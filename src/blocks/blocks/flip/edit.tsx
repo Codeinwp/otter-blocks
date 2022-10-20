@@ -234,7 +234,7 @@ const Edit = ({
 							isPrimary
 							onClick={ () => setSide( 'back' === currentSide ? 'front' : 'back' ) }
 						>
-							{ 'back' === currentSide  ? __( 'Flip to front', 'otter-blocks' ) : __( 'Flip to back', 'otter-blocks' ) }
+							{ 'back' === currentSide  ? __( 'Flip to Front', 'otter-blocks' ) : __( 'Flip to Back', 'otter-blocks' ) }
 						</Button>
 					</div>
 				) }
