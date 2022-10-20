@@ -18,8 +18,7 @@ const Save = ({
 		'data-anchor': 'onClick' === attributes.trigger ? attributes.anchor : '',
 		'data-offset': 'onScroll' === attributes.trigger ? attributes.scroll : '',
 		'data-outside': attributes.outsideClose ? attributes.outsideClose : '',
-		'data-anchorclose': attributes.anchorClose ? attributes.closeAnchor : '',
-		'data-lock-scrolling': attributes.lockScrolling ? '1' : undefined
+		'data-anchorclose': attributes.anchorClose ? attributes.closeAnchor : ''
 	});
 
 	return (

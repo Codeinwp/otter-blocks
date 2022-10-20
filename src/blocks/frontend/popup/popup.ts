@@ -3,11 +3,13 @@ class PopupBlock {
 	element: HTMLDivElement;
 	happened: boolean;
 	storageKey: string;
+	cssNode: string;
 
 	constructor( element: HTMLDivElement ) {
 		this.element = element;
 		this.happened = false;
 		this.storageKey = 'otter-popup-dismiss';
+		this.cssNode = '';
 
 		const { dismiss, anchor } = element.dataset;
 
@@ -21,10 +23,7 @@ class PopupBlock {
 	init() {
 		this.bindOpen();
 		this.bindClose();
-
-		if ( Boolean( this.element.dataset.lockScrolling ) ) {
-			this.lockScrolling();
-		}
+		this.lockScrolling();
 	}
 
 	openModal() {

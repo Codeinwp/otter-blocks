@@ -62,9 +62,6 @@
 		},
 		"overlayOpacity": {
 			"type": "number"
-		},
-		"lockScrolling": {
-			"type": "boolean"
 		}
 	},
 	"editorStyle": "otter-popup-editor",

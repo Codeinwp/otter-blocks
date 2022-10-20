@@ -18,7 +18,6 @@ type Attributes = {
 	closeColor: string
 	overlayColor: string
 	overlayOpacity: number
-	lockScrolling: boolean
 }
 
 export type PopupPros = BlockProps<Attributes>

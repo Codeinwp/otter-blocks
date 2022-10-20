@@ -121,7 +121,7 @@ const Inspector = ({
 
 				{ ( undefined === attributes.trigger || 'onLoad' === attributes.trigger ) && (
 					<RangeControl
-						label={ __( 'Trigger Delay', 'otter-blocks' ) }
+						label={ __( 'Wait Time', 'otter-blocks' ) }
 						help={ __( 'How much time to wait before showing the popup. Leave it empty to open instantly', 'otter-blocks' ) }
 						min={ 0 }
 						max={ 100 }
@@ -129,12 +129,6 @@ const Inspector = ({
 						onChange={ value => setAttributes({ wait: Number( value ) }) }
 					/>
 				) }
-
-				<ToggleControl
-					label={ __( 'Disable Page Scrolling', 'otter-blocks' ) }
-					checked={ attributes.lockScrolling }
-					onChange={ () => setAttributes({ lockScrolling: ! attributes.lockScrolling }) }
-				/>
 
 				{ applyFilters( 'otter.popupBlock.controls', <Controls />, attributes, setAttributes ) }
 			</PanelBody>
