@@ -145,6 +145,10 @@ $base-index: 9999 !default;
 				border: unset;
 				box-shadow: 0 0 4px 0 rgba(0, 0, 0, .133), 0 0 3px 1px rgba(0, 0, 0, .067);
 				height: 36px !important;
+				width: 36px !important;
+				display: flex;
+				justify-content: center;
+				align-items: center;
 
 				&:hover {
 					box-shadow: 0 0 4px 0 rgba(0, 0, 0, .133), 0 0 3px 1px rgba(0, 0, 0, .067);
