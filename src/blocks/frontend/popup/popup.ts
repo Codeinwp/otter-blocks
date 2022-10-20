@@ -32,7 +32,7 @@ class PopupBlock {
 	isDisabled() {
 		const { disableOn } = this.element.dataset;
 
-		if ( 'mobile' === disableOn && window.matchMedia( '(max-width: 600px)' ) ) {
+		if ( 'mobile' === disableOn && window.matchMedia( '(max-width: 600px)' ).matches ) {
 			return true;
 		}
 
