@@ -186,8 +186,8 @@ class Advanced_Column_CSS extends Base_CSS {
 							'hasSync'   => 'column-margin-right',
 						),
 						array(
-							'property'  => '--background-color-hover',
-							'value'     => 'backgroundColorHover',
+							'property' => '--background-color-hover',
+							'value'    => 'backgroundColorHover',
 						),
 					),
 					Shared_CSS::section_shared()

@@ -20,16 +20,16 @@ class Shared_CSS {
 	public static function section_shared() {
 		$css = array(
 			array(
-				'property'  => '--content-color',
-				'value'     => 'color',
+				'property' => '--content-color',
+				'value'    => 'color',
 			),
 			array(
-				'property'  => '--link-color',
-				'value'     => 'linkColor',
+				'property' => '--link-color',
+				'value'    => 'linkColor',
 			),
 			array(
-				'property'  => '--content-color-hover',
-				'value'     => 'colorHover',
+				'property' => '--content-color-hover',
+				'value'    => 'colorHover',
 			),
 			array(
 				'property'  => 'background',
