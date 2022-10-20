@@ -22,6 +22,7 @@ $base-index: 9999 !default;
 	--padding: 20px;
 	--padding-tablet: var(--padding);
 	--padding-mobile: var(--padding-tablet);
+	--box-shadow: unset;
 
 
 	&.is-front {
@@ -72,6 +73,7 @@ $base-index: 9999 !default;
 		border-style: var(--brd-style);
 		box-sizing: border-box;
 		scroll-behavior: auto;
+		box-shadow: var(--box-shadow);
 
 		@media ( min-width: 600px ) and ( max-width: 960px ) {
 			width: var(--width-tablet);

@@ -32,6 +32,7 @@ import { buildResponsiveGetAttributes, buildResponsiveSetAttributes, removeBoxDe
 import InspectorHeader from '../../components/inspector-header/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import { useSelect } from '@wordpress/data';
+import BoxShadowControl from '../../components/box-shadow-control/index.js';
 
 /**
  *
@@ -114,6 +115,16 @@ const Inspector = ({
 	];
 
 	triggerOptions = applyFilters( 'otter.popupBlock.triggers', triggerOptions );
+
+	const changeBoxShadow = data => {
+		const boxShadow = { ...attributes.boxShadow };
+		Object.entries( data ).map( ([ key, val ] = data ) => {
+			boxShadow[key] = val;
+		});
+
+		setAttributes({ boxShadow });
+	};
+
 
 	const Controls = () => {
 		return (
@@ -413,6 +424,11 @@ const Inspector = ({
 											borderRadius: removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' })
 										});
 									}}
+								/>
+
+								<BoxShadowControl
+									boxShadow={ attributes.boxShadow }
+									onChange={ changeBoxShadow }
 								/>
 							</PanelBody>
 						</Fragment>

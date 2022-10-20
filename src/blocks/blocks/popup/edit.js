@@ -82,7 +82,8 @@ const Edit = ( props ) => {
 		'--height-mobile': attributes.heightMobile,
 		'--padding': attributes.padding ?  boxValues( merge( makeBox( '20px' ), attributes.padding ) ) : undefined,
 		'--padding-tablet': attributes.paddingTablet ?  boxValues( merge( makeBox( '20px' ), attributes.padding ?? {}, attributes.paddingTablet ) ) : undefined,
-		'--padding-mobile': attributes.paddingMobile ?  boxValues( merge( makeBox( '20px' ), attributes.padding ?? {}, attributes.paddingTablet  ?? {}, attributes.paddingMobile ) ) : undefined
+		'--padding-mobile': attributes.paddingMobile ?  boxValues( merge( makeBox( '20px' ), attributes.padding ?? {}, attributes.paddingTablet  ?? {}, attributes.paddingMobile ) ) : undefined,
+		'--box-shadow': attributes.boxShadow.active && `${ attributes.boxShadow.horizontal }px ${ attributes.boxShadow.vertical }px ${ attributes.boxShadow.blur }px ${ attributes.boxShadow.spread }px ${ hexToRgba( attributes.boxShadow.color || '#FFFFFF', attributes.boxShadow.colorOpacity ) }`
 	};
 
 	const [ cssNode, setNodeCSS ] = useCSSNode();

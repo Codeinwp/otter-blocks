@@ -1,4 +1,4 @@
-import { BlockProps, BorderType, InspectorProps, PaddingType } from '../../helpers/blocks';
+import { BlockProps, BorderType, BoxShadow, InspectorProps, PaddingType } from '../../helpers/blocks';
 
 type Attributes = {
 	id: string
@@ -37,7 +37,7 @@ type Attributes = {
 	horizontalPositionTablet: string
 	verticalPositionMobile: string
 	horizontalPositionMobile: string
-
+	boxShadow: BoxShadow
 	closeButtonType: 'outside'
 	lockScrolling: boolean
 }
