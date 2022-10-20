@@ -477,10 +477,6 @@ const Inspector = ({
 						{
 							label: __( 'Style', 'otter-blocks' ),
 							value: 'style'
-						},
-						{
-							label: __( 'Advanced', 'otter-blocks' ),
-							value: 'advanced'
 						}
 					]}
 					onChange={ setTab }
@@ -508,61 +504,6 @@ const Inspector = ({
 								layoutMobile={ attributes.layoutMobile }
 								onClick={ changeLayout }
 							/>
-						</PanelBody>
-
-						<PanelBody
-							title={ __( 'Spacing', 'otter-blocks' ) }
-							initialOpen={ false }
-						>
-							<SyncControlDropdown
-								isSynced={ attributes.isSynced }
-								options={ [
-									{
-										label: __( 'Padding', 'otter-blocks' ),
-										value: getPaddingField()
-									},
-									{
-										label: __( 'Margin', 'otter-blocks' ),
-										value: getMarginField()
-									}
-								] }
-								setAttributes={ setAttributes }
-							/>
-
-							<ResponsiveControl
-								label={ __( 'Screen Type', 'otter-blocks' ) }
-							>
-								<Disabled
-									isDisabled={ attributes.isSynced?.includes( getPaddingField() ) || false }
-									className="o-disabled"
-								>
-									<BoxControl
-										label={ __( 'Padding', 'otter-blocks' ) }
-										values={ getPadding() }
-										inputProps={ {
-											min: 0,
-											max: 500
-										} }
-										onChange={ changePadding }
-									/>
-								</Disabled>
-
-								<Disabled
-									isDisabled={ attributes.isSynced?.includes( getMarginField() ) || false }
-									className="o-disabled"
-								>
-									<BoxControl
-										label={ __( 'Margin', 'otter-blocks' ) }
-										values={ getMargin() }
-										inputProps={ {
-											min: -500,
-											max: 500
-										} }
-										sides={ [ 'top', 'bottom' ] }
-										onChange={ changeMargin }
-									/>
-								</Disabled>
-							</ResponsiveControl>
 						</PanelBody>
 
 						<PanelBody
@@ -658,6 +599,61 @@ const Inspector = ({
 									/>
 								</ResponsiveControl>
 							) }
+
+							<SelectControl
+								label={ __( 'HTML Tag', 'otter-blocks' ) }
+								value={ attributes.columnsHTMLTag }
+								options={ [
+									{ label: __( 'Default (div)', 'otter-blocks' ), value: 'div' },
+									{ label: 'section', value: 'section' },
+									{ label: 'header', value: 'header' },
+									{ label: 'footer', value: 'footer' },
+									{ label: 'article', value: 'article' },
+									{ label: 'main', value: 'main' }
+								] }
+								onChange={ value => setAttributes({ columnsHTMLTag: value }) }
+							/>
+						</PanelBody>
+
+						<PanelBody
+							title={ __( 'Responsive', 'otter-blocks' ) }
+							initialOpen={ false }
+						>
+							<ToggleControl
+								label={ __( 'Hide this section on Desktop devices?', 'otter-blocks' ) }
+								checked={ attributes.hide }
+								onChange={ e => changeHideStatus( e, 'Desktop' ) }
+							/>
+
+							<ToggleControl
+								label={ __( 'Hide this section on Tablet devices?', 'otter-blocks' ) }
+								checked={ attributes.hideTablet }
+								onChange={ e => changeHideStatus( e, 'Tablet' ) }
+							/>
+
+							<ToggleControl
+								label={ __( 'Hide this section on Mobile devices?', 'otter-blocks' ) }
+								checked={ attributes.hideMobile }
+								onChange={ e => changeHideStatus( e, 'Mobile' ) }
+							/>
+
+							<hr/>
+
+							{ ( ! attributes.hideTablet && 'collapsedRows' === attributes.layoutTablet ) && (
+								<ToggleControl
+									label={ __( 'Reverse Columns in Tablet devices?', 'otter-blocks' ) }
+									checked={ attributes.reverseColumnsTablet }
+									onChange={ e => changeReverseColumns( e, 'Tablet' ) }
+								/>
+							) }
+
+							{ ( ! attributes.hideMobile && 'collapsedRows' === attributes.layoutMobile ) && (
+								<ToggleControl
+									label={ __( 'Reverse Columns in Mobile devices?', 'otter-blocks' ) }
+									checked={ attributes.reverseColumnsMobile }
+									onChange={ e => changeReverseColumns( e, 'Mobile' ) }
+								/>
+							) }
 						</PanelBody>
 					</Fragment>
 
@@ -665,7 +661,62 @@ const Inspector = ({
 
 					<Fragment>
 						<PanelBody
+							title={ __( 'Dimensions', 'otter-blocks' ) }
+						>
+							<SyncControlDropdown
+								isSynced={ attributes.isSynced }
+								options={ [
+									{
+										label: __( 'Padding', 'otter-blocks' ),
+										value: getPaddingField()
+									},
+									{
+										label: __( 'Margin', 'otter-blocks' ),
+										value: getMarginField()
+									}
+								] }
+								setAttributes={ setAttributes }
+							/>
+
+							<ResponsiveControl
+								label={ __( 'Screen Type', 'otter-blocks' ) }
+							>
+								<Disabled
+									isDisabled={ attributes.isSynced?.includes( getPaddingField() ) || false }
+									className="o-disabled"
+								>
+									<BoxControl
+										label={ __( 'Padding', 'otter-blocks' ) }
+										values={ getPadding() }
+										inputProps={ {
+											min: 0,
+											max: 500
+										} }
+										onChange={ changePadding }
+									/>
+								</Disabled>
+
+								<Disabled
+									isDisabled={ attributes.isSynced?.includes( getMarginField() ) || false }
+									className="o-disabled"
+								>
+									<BoxControl
+										label={ __( 'Margin', 'otter-blocks' ) }
+										values={ getMargin() }
+										inputProps={ {
+											min: -500,
+											max: 500
+										} }
+										sides={ [ 'top', 'bottom' ] }
+										onChange={ changeMargin }
+									/>
+								</Disabled>
+							</ResponsiveControl>
+						</PanelBody>
+
+						<PanelBody
 							title={ __( 'Background', 'otter-blocks' ) }
+							initialOpen={ false }
 						>
 							<ButtonDropdownControl
 								label={ __( 'Background', 'otter-blocks' ) }
@@ -931,69 +982,6 @@ const Inspector = ({
 									) }
 								</Fragment>
 							) }
-						</PanelBody>
-					</Fragment>
-
-				) || 'advanced' === tab && (
-
-					<Fragment>
-						<PanelBody
-							title={ __( 'Responsive', 'otter-blocks' ) }
-						>
-							<ToggleControl
-								label={ __( 'Hide this section on Desktop devices?', 'otter-blocks' ) }
-								checked={ attributes.hide }
-								onChange={ e => changeHideStatus( e, 'Desktop' ) }
-							/>
-
-							<ToggleControl
-								label={ __( 'Hide this section on Tablet devices?', 'otter-blocks' ) }
-								checked={ attributes.hideTablet }
-								onChange={ e => changeHideStatus( e, 'Tablet' ) }
-							/>
-
-							<ToggleControl
-								label={ __( 'Hide this section on Mobile devices?', 'otter-blocks' ) }
-								checked={ attributes.hideMobile }
-								onChange={ e => changeHideStatus( e, 'Mobile' ) }
-							/>
-
-							<hr/>
-
-							{ ( ! attributes.hideTablet && 'collapsedRows' === attributes.layoutTablet ) && (
-								<ToggleControl
-									label={ __( 'Reverse Columns in Tablet devices?', 'otter-blocks' ) }
-									checked={ attributes.reverseColumnsTablet }
-									onChange={ e => changeReverseColumns( e, 'Tablet' ) }
-								/>
-							) }
-
-							{ ( ! attributes.hideMobile && 'collapsedRows' === attributes.layoutMobile ) && (
-								<ToggleControl
-									label={ __( 'Reverse Columns in Mobile devices?', 'otter-blocks' ) }
-									checked={ attributes.reverseColumnsMobile }
-									onChange={ e => changeReverseColumns( e, 'Mobile' ) }
-								/>
-							) }
-						</PanelBody>
-
-						<PanelBody
-							title={ __( 'Section Settings', 'otter-blocks' ) }
-							initialOpen={ false }
-						>
-							<SelectControl
-								label={ __( 'HTML Tag', 'otter-blocks' ) }
-								value={ attributes.columnsHTMLTag }
-								options={ [
-									{ label: __( 'Default (div)', 'otter-blocks' ), value: 'div' },
-									{ label: 'section', value: 'section' },
-									{ label: 'header', value: 'header' },
-									{ label: 'footer', value: 'footer' },
-									{ label: 'article', value: 'article' },
-									{ label: 'main', value: 'main' }
-								] }
-								onChange={ value => setAttributes({ columnsHTMLTag: value }) }
-							/>
 						</PanelBody>
 					</Fragment>
 

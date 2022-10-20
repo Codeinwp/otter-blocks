@@ -206,19 +206,44 @@ const Inspector = ({
 					{
 						label: __( 'Style', 'otter-blocks' ),
 						value: 'style'
-					},
-					{
-						label: __( 'Advanced', 'otter-blocks' ),
-						value: 'advanced'
 					}
 				]}
 				onChange={ setTab }
 			/>
 
 			{ 'layout' === tab && (
+				<PanelBody
+					title={ __( 'Column Structure', 'otter-blocks' ) }
+				>
+					{ ( 1 < parentBlock.innerBlocks.length ) && (
+						<RangeControl
+							label={ __( 'Column Width', 'otter-blocks' ) }
+							value={ Number( attributes.columnWidth ) }
+							onChange={ changeColumnWidth }
+							step={ 0.1 }
+							min={ 10 }
+							max={ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 10 }
+						/>
+					) }
+
+					<SelectControl
+						label={ __( 'HTML Tag', 'otter-blocks' ) }
+						value={ attributes.columnsHTMLTag }
+						options={ [
+							{ label: __( 'Default (div)', 'otter-blocks' ), value: 'div' },
+							{ label: 'section', value: 'section' },
+							{ label: 'header', value: 'header' },
+							{ label: 'footer', value: 'footer' },
+							{ label: 'article', value: 'article' },
+							{ label: 'main', value: 'main' }
+						] }
+						onChange={ value => setAttributes({ columnsHTMLTag: value }) }
+					/>
+				</PanelBody>
+			) || 'style' === tab && (
 				<Fragment>
 					<PanelBody
-						title={ __( 'Spacing', 'otter-blocks' ) }
+						title={ __( 'Dimensions', 'otter-blocks' ) }
 					>
 						<SyncControlDropdown
 							isSynced={ attributes.isSynced }
@@ -234,17 +259,6 @@ const Inspector = ({
 							] }
 							setAttributes={ setAttributes }
 						/>
-
-						{ ( 1 < parentBlock.innerBlocks.length ) && (
-							<RangeControl
-								label={ __( 'Column Width', 'otter-blocks' ) }
-								value={ Number( attributes.columnWidth ) }
-								onChange={ changeColumnWidth }
-								step={ 0.1 }
-								min={ 10 }
-								max={ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 10 }
-							/>
-						) }
 
 						<ResponsiveControl
 							label={ __( 'Screen Type', 'otter-blocks' ) }
@@ -280,11 +294,10 @@ const Inspector = ({
 							</Disabled>
 						</ResponsiveControl>
 					</PanelBody>
-				</Fragment>
-			) || 'style' === tab && (
-				<Fragment>
+
 					<PanelBody
 						title={ __( 'Background', 'otter-blocks' ) }
+						initialOpen={ false }
 					>
 						<ButtonDropdownControl
 							label={ __( 'Background', 'otter-blocks' ) }
@@ -469,24 +482,6 @@ const Inspector = ({
 						) }
 					</PanelBody>
 				</Fragment>
-			) || 'advanced' === tab && (
-				<PanelBody
-					title={ __( 'Section Settings', 'otter-blocks' ) }
-				>
-					<SelectControl
-						label={ __( 'HTML Tag', 'otter-blocks' ) }
-						value={ attributes.columnsHTMLTag }
-						options={ [
-							{ label: __( 'Default (div)', 'otter-blocks' ), value: 'div' },
-							{ label: 'section', value: 'section' },
-							{ label: 'header', value: 'header' },
-							{ label: 'footer', value: 'footer' },
-							{ label: 'article', value: 'article' },
-							{ label: 'main', value: 'main' }
-						] }
-						onChange={ value => setAttributes({ columnsHTMLTag: value }) }
-					/>
-				</PanelBody>
 			) }
 
 			<InspectorExtensions/>

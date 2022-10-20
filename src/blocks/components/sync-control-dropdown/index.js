@@ -100,7 +100,7 @@ const SyncControlDropdown = ({
 
 	return (
 		<HStack className="o-sync-manage-control">
-			<Heading>{ __( 'Manage Global Sync', 'otter-blocks' ) }</Heading>
+			<Heading>{ __( 'Sync with Global Defaults', 'otter-blocks' ) }</Heading>
 
 			<DropdownMenu
 				icon={ moreVertical }
