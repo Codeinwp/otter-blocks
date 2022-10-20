@@ -206,8 +206,8 @@ const Inspector = ({
 																console.log( value );
 																setAttributes({
 																	frontMedia: pick( value, [ 'id', 'alt', 'url' ]),
-																	frontMediaHeight: value?.sizes?.medium.height,
-																	frontMediaWidth: value?.sizes?.medium.width
+																	frontMediaHeight: _px( value?.sizes?.medium.height ),
+																	frontMediaWidth: _px( value?.sizes?.medium.width )
 																});
 															}
 														}

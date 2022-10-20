@@ -333,14 +333,34 @@ class Flip_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => '--front-media-width',
-						'value'    => 'frontMediaWidth',
-						'unit'     => 'px',
+						'property'  => '--front-media-width',
+						'value'     => 'frontMediaWidth',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['--front-media-width'] ) && is_numeric( $attrs['--front-media-width'] );
+						},
 					),
 					array(
-						'property' => '--front-media-height',
-						'value'    => 'frontMediaHeight',
-						'unit'     => 'px',
+						'property'  => '--front-media-height',
+						'value'     => 'frontMediaHeight',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['--front-media-height'] ) && is_numeric( $attrs['--front-media-height'] );
+						},
+					),
+					array(
+						'property'  => '--front-media-width',
+						'value'     => 'frontMediaWidth',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['frontMediaWidth'] ) && is_string( $attrs['frontMediaWidth'] );
+						},
+					),
+					array(
+						'property'  => '--front-media-height',
+						'value'     => 'frontMediaHeight',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['frontMediaHeight'] ) && is_string( $attrs['frontMediaHeight'] );
+						},
 					),
 				),
 			)
