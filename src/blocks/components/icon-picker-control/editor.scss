@@ -1,44 +1,3 @@
-.o-icon-picker-popover {
-	&:not(.is-mobile) {
-		&.is-bottom {
-			z-index: 9999999;
-		}
-	}
-
-	.components-popover__content {
-		overflow-y: hidden;
-
-		.components-menu-group {
-			padding: 7px;
-		}
-		
-		.components-popover__items {
-			max-height: 300px;
-			overflow-y: auto;
-
-			button {
-				&.is-selected {
-					background: #f8f9f9;
-				}
-
-				svg {
-					width: 15px;
-					max-width: 15px;
-					margin-right: 5px;
-				}
-
-				i {
-					margin-right: 5px;
-				}
-			}
-		}
-	}
-
-	.remove-icon {
-		color: #cc1818;
-	}
-}
-
 .block-editor-block-inspector {
 	.o-icon-picker-control {
 		margin: 8px 0;
@@ -117,11 +76,6 @@
 			}
 		}
 	}
-}
-
-.o-icon-picker-toolbar-button {
-	display: flex;
-	justify-content: center;
 }
 
 @media ( max-width: 782px ) {
