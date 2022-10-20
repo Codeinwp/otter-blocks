@@ -4,19 +4,16 @@
 	.otter-popup__modal_wrap {
 		z-index: 2;
 	}
-}
 
+	.otter-popup__modal_content {
+		margin-top: 65px;
+	}
+}
 
 .is-sidebar-opened {
 	.wp-block-themeisle-blocks-popup {
 		.otter-popup__modal_content {
 			margin-right: 295px;
-		}
-
-		&:has(.edit-post-header) {
-			.otter-popup__modal_content {
-				margin-top: 50px;
-			}
 		}
 	}
 }

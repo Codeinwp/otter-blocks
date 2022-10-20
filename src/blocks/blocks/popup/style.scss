@@ -34,8 +34,8 @@ $base-index: 9999 !default;
 	}
 
 	.otter-popup__modal_wrap_overlay {
-		background-color: var( --overlay-color );
-		opacity: var( --overlay-opacity );
+		background-color: var(--overlay-color);
+		opacity: var(--overlay-opacity);
 		left: 0;
 		right: 0;
 		top: 0;
@@ -63,7 +63,7 @@ $base-index: 9999 !default;
 	.otter-popup__modal_content {
 		position: absolute;
 		z-index: $base-index + 1;
-		background-color: var( --background-color );
+		background-color: var(--background-color);
 		width: var(--width);
 		height: var(--height);
 		padding: var(--padding);
@@ -75,13 +75,13 @@ $base-index: 9999 !default;
 		scroll-behavior: auto;
 		box-shadow: var(--box-shadow);
 
-		@media ( min-width: 600px ) and ( max-width: 960px ) {
+		@media (min-width: 600px) and (max-width: 960px) {
 			width: var(--width-tablet);
 			height: var(--height-tablet);
 			padding: var(--padding-tablet);
 		}
 
-		@media ( max-width: 600px ) {
+		@media (max-width: 600px) {
 			width: var(--width-mobile);
 			height: var(--height-mobile);
 			padding: var(--padding-mobile);
@@ -97,6 +97,8 @@ $base-index: 9999 !default;
 		&::-webkit-scrollbar {
 			display: none;
 		}
+
+
 	}
 
 	.otter-popup__modal_body > * {
@@ -110,7 +112,7 @@ $base-index: 9999 !default;
 
 		button {
 			background-color: transparent !important;
-			color: var( --close-color );
+			color: var(--close-color);
 			height: auto !important;
 			display: flex;
 			align-items: center;
@@ -130,10 +132,10 @@ $base-index: 9999 !default;
 	}
 
 
-
 	&.with-outside-button {
 		.otter-popup__modal_header {
 			padding-bottom: 0px;
+
 			button {
 				position: absolute;
 				top: -15px;
@@ -141,11 +143,11 @@ $base-index: 9999 !default;
 				background: var(--background-color) !important;
 				border-radius: 60%;
 				border: unset;
-				box-shadow: 0 0 4px 0 rgba(0,0,0,.133),0 0 3px 1px rgba(0,0,0,.067);
+				box-shadow: 0 0 4px 0 rgba(0, 0, 0, .133), 0 0 3px 1px rgba(0, 0, 0, .067);
 				height: 36px !important;
 
 				&:hover {
-					box-shadow: 0 0 4px 0 rgba(0,0,0,.133),0 0 3px 1px rgba(0,0,0,.067);
+					box-shadow: 0 0 4px 0 rgba(0, 0, 0, .133), 0 0 3px 1px rgba(0, 0, 0, .067);
 					opacity: 1;
 				}
 			}
@@ -156,8 +158,21 @@ $base-index: 9999 !default;
 			}
 		}
 	}
+
 }
 
+.o-lock-body {
+	height: 100%;
+	overflow-y: hidden;
+}
+
+body:has(#wpadminbar) {
+	.wp-block-themeisle-blocks-popup {
+		.otter-popup__modal_content {
+			margin-top: 25px;
+		}
+	}
+}
 
 
 @-webkit-keyframes popupFadeIn {
@@ -167,9 +182,4 @@ $base-index: 9999 !default;
 	to {
 		opacity:1
 	}
-}
-
-.o-lock-body {
-	height: 100%;
-	overflow-y: hidden;
 }

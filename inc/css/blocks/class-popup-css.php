@@ -32,10 +32,12 @@ class Popup_CSS extends Base_CSS {
 	 * @access  public
 	 */
 	public function render_css( $block ) {
-		$css = new CSS_Utility( $block, array(
-		      'tablet' => '@media ( min-width: 600px ) and ( max-width: 960px )',
-		      'mobile'  => '@media ( max-width: 600px )'
-	      )
+		$css = new CSS_Utility(
+			$block,
+			array(
+				'tablet' => '@media ( min-width: 600px ) and ( max-width: 960px )',
+				'mobile' => '@media ( max-width: 600px )',
+			)
 		);
 
 		$css->add_item(
@@ -146,99 +148,132 @@ class Popup_CSS extends Base_CSS {
 				'selector'   => ' .otter-popup__modal_content',
 				'properties' => array(
 					array(
-						'property' => 'top',
-						'value'    => 'verticalPosition',
+						'property'  => 'top',
+						'value'     => 'verticalPosition',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['verticalPosition'] ) && 'top' === $attrs['verticalPosition'];
 						},
-						'format' => function( $value ) {
+						'format'    => function( $value ) {
 							return '30px';
-						}
+						},
 					),
 					array(
-						'property' => 'bottom',
-						'value'    => '30px',
+						'property'  => 'bottom',
+						'value'     => 'verticalPosition',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['verticalPosition'] ) && 'bottom' === $attrs['verticalPosition'];
-						}
+						},
+						'format'    => function( $value ) {
+							return '30px';
+						},
 					),
 					array(
-						'property' => 'right',
-						'value'    => '30px',
+						'property'  => 'right',
+						'value'     => 'horizontalPosition',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['horizontalPosition'] ) && 'right' === $attrs['horizontalPosition'];
-						}
+						},
+						'format'    => function( $value ) {
+							return '30px';
+						},
 					),
 					array(
-						'property' => 'left',
-						'value'    => '30px',
+						'property'  => 'left',
+						'value'     => 'horizontalPosition',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['horizontalPosition'] ) && 'left' === $attrs['horizontalPosition'];
-						}
+						},
+						'format'    => function( $value ) {
+							return '30px';
+						},
 					),
 					array(
-						'property' => 'top',
-						'value'    => '30px',
+						'property'  => 'top',
+						'value'     => 'verticalPositionTablet',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['verticalPositionTablet'] ) && 'top' === $attrs['verticalPositionTablet'];
 						},
-						'media' => 'tablet'
+						'format'    => function( $value ) {
+							return '15px';
+						},
+						'media'     => 'tablet',
 					),
 					array(
-						'property' => 'bottom',
-						'value'    => '30px',
+						'property'  => 'bottom',
+						'value'     => 'verticalPositionTablet',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['verticalPositionTablet'] ) && 'bottom' === $attrs['verticalPositionTablet'];
 						},
-						'media' => 'tablet'
+						'format'    => function( $value ) {
+							return '15px';
+						},
+						'media'     => 'tablet',
 					),
 					array(
-						'property' => 'right',
-						'value'    => '30px',
+						'property'  => 'right',
+						'value'     => 'horizontalPositionTablet',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['horizontalPositionTablet'] ) && 'right' === $attrs['horizontalPositionTablet'];
 						},
-						'media' => 'tablet'
+						'format'    => function( $value ) {
+							return '15px';
+						},
+						'media'     => 'tablet',
 					),
 					array(
-						'property' => 'left',
-						'value'    => '30px',
+						'property'  => 'left',
+						'value'     => 'horizontalPositionTablet',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['horizontalPositionTablet'] ) && 'left' === $attrs['horizontalPositionTablet'];
 						},
-						'media' => 'tablet'
+						'format'    => function( $value ) {
+							return '15px';
+						},
+						'media'     => 'tablet',
 					),
 					array(
-						'property' => 'top',
-						'value'    => '30px',
+						'property'  => 'top',
+						'value'     => 'verticalPositionMobile',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['verticalPositionMobile'] ) && 'top' === $attrs['verticalPositionMobile'];
 						},
-						'media' => 'mobile'
+						'format'    => function( $value ) {
+							return '10px';
+						},
+						'media'     => 'mobile',
 					),
 					array(
-						'property' => 'bottom',
-						'value'    => '30px',
+						'property'  => 'bottom',
+						'value'     => 'verticalPositionMobile',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['verticalPositionMobile'] ) && 'bottom' === $attrs['verticalPositionMobile'];
 						},
-						'media' => 'mobile'
+						'format'    => function( $value ) {
+							return '10px';
+						},
+						'media'     => 'mobile',
 					),
 					array(
-						'property' => 'right',
-						'value'    => '30px',
+						'property'  => 'right',
+						'value'     => 'horizontalPositionMobile',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['horizontalPositionMobile'] ) && 'right' === $attrs['horizontalPositionMobile'];
 						},
-						'media' => 'mobile'
+						'format'    => function( $value ) {
+							return '10px';
+						},
+						'media'     => 'mobile',
 					),
 					array(
-						'property' => 'left',
-						'value'    => '30px',
+						'property'  => 'left',
+						'value'     => 'horizontalPositionMobile',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['horizontalPositionMobile'] ) && 'left' === $attrs['horizontalPositionMobile'];
 						},
-						'media' => 'mobile'
+						'format'    => function( $value ) {
+							return '10px';
+						},
+						'media'     => 'mobile',
 					),
 					array(
 						'property'       => '--box-shadow',
