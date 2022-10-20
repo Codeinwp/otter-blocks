@@ -44,7 +44,7 @@
 			"type": "object"
 		},
 		"columnsWidth": {
-			"type": "number"
+			"type": [ "number", "string" ]
 		},
 		"horizontalAlign": {
 			"type": "string",
@@ -55,13 +55,13 @@
 			"default": "auto"
 		},
 		"columnsHeightCustom": {
-			"type": "number"
+			"type": [ "number", "string" ]
 		},
 		"columnsHeightCustomTablet": {
-			"type": "number"
+			"type": [ "number", "string" ]
 		},
 		"columnsHeightCustomMobile": {
-			"type": "number"
+			"type": [ "number", "string" ]
 		},
 		"verticalAlign": {
 			"type": "string",

@@ -159,7 +159,9 @@ class Advanced_Columns_CSS extends Base_CSS {
 						array(
 							'property' => '--columns-width',
 							'value'    => 'columnsWidth',
-							'unit'     => 'px',
+							'format'   => function( $value, $attrs ) {
+								return is_numeric( $value ) ? $value . 'px' : $value;
+							},
 							'hasSync'  => 'section-columns-width',
 						),
 						array(
@@ -178,7 +180,9 @@ class Advanced_Columns_CSS extends Base_CSS {
 						array(
 							'property'  => 'min-height',
 							'value'     => 'columnsHeightCustom',
-							'unit'      => 'px',
+							'format'    => function( $value, $attrs ) {
+								return is_numeric( $value ) ? $value . 'px' : $value;
+							},
 							'condition' => function( $attrs ) {
 								return isset( $attrs['columnsHeight'] ) && 'custom' === $attrs['columnsHeight'];
 							},
@@ -325,7 +329,9 @@ class Advanced_Columns_CSS extends Base_CSS {
 					array(
 						'property'  => 'min-height',
 						'value'     => 'columnsHeightCustomTablet',
-						'unit'      => 'px',
+						'format'    => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 						'condition' => function( $attrs ) {
 							return isset( $attrs['columnsHeight'] ) && 'custom' === $attrs['columnsHeight'];
 						},
@@ -465,7 +471,9 @@ class Advanced_Columns_CSS extends Base_CSS {
 					array(
 						'property'  => 'min-height',
 						'value'     => 'columnsHeightCustomMobile',
-						'unit'      => 'px',
+						'format'    => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 						'condition' => function( $attrs ) {
 							return isset( $attrs['columnsHeight'] ) && 'custom' === $attrs['columnsHeight'];
 						},
@@ -1001,7 +1009,9 @@ class Advanced_Columns_CSS extends Base_CSS {
 					array(
 						'property' => '--section-columns-width',
 						'value'    => 'columnsWidth',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
 						'property' => '--section-horizontal-align',

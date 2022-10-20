@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import {
 	times,
 	isEmpty,
+	isNumber,
 	pickBy,
 	merge
 } from 'lodash';
@@ -54,6 +55,10 @@ import {
 } from '../../../helpers/block-utility.js';
 
 const { attributes: defaultAttributes } = metadata;
+
+const px = value => value ? `${ value }px` : value;
+
+const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
 
 /**
  *
@@ -222,7 +227,7 @@ const Edit = ({
 		paddingLeft: getValue( 'padding' ) && getValue( 'padding' ).left,
 		marginTop: getValue( 'margin' ) && getValue( 'margin' ).top,
 		marginBottom: getValue( 'margin' ) && getValue( 'margin' ).bottom,
-		minHeight: 'custom' === attributes.columnsHeight ? `${ attributes.columnsHeightCustom }px` : attributes.columnsHeight
+		minHeight: 'custom' === attributes.columnsHeight ? mightBeUnit( attributes.columnsHeightCustom ) : attributes.columnsHeight
 	};
 
 
@@ -234,7 +239,7 @@ const Edit = ({
 			paddingLeft: getValue( 'paddingTablet' )?.left,
 			marginTop: getValue( 'marginTablet' )?.top,
 			marginBottom: getValue( 'marginTablet' )?.bottom,
-			minHeight: 'custom' === attributes.columnsHeight ? `${ attributes.columnsHeightCustomTablet }px` : attributes.columnsHeight
+			minHeight: 'custom' === attributes.columnsHeight ? mightBeUnit( attributes.columnsHeightCustomTablet ) : attributes.columnsHeight
 		}, ( value ) => value );
 		stylesheet = merge( stylesheet, tabletStyle );
 	}
@@ -247,7 +252,7 @@ const Edit = ({
 			paddingLeft: getValue( 'paddingMobile' )?.left,
 			marginTop: getValue( 'marginMobile' )?.top,
 			marginBottom: getValue( 'marginMobile' )?.bottom,
-			minHeight: 'custom' === attributes.columnsHeight ? `${ attributes.columnsHeightCustomMobile }px` : attributes.columnsHeight
+			minHeight: 'custom' === attributes.columnsHeight ? mightBeUnit( attributes.columnsHeightCustomMobile ) : attributes.columnsHeight
 		}, ( value ) => value );
 		stylesheet = merge( stylesheet, mobileStyle );
 	}
@@ -344,7 +349,7 @@ const Edit = ({
 
 	if ( attributes.columnsWidth ) {
 		innerStyle = {
-			maxWidth: attributes.columnsWidth + 'px'
+			maxWidth: mightBeUnit( getValue( 'columnsWidth' ) )
 		};
 	}
 

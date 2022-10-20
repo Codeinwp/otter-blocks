@@ -12,12 +12,12 @@ type Attributes = {
 	margin: MarginType
 	marginTablet: MarginType
 	marginMobile: MarginType
-	columnsWidth: number
+	columnsWidth: number|string
 	horizontalAlign: string
 	columnsHeight: string
-	columnsHeightCustom: number
-	columnsHeightCustomTablet: number
-	columnsHeightCustomMobile: number
+	columnsHeightCustom: number|string
+	columnsHeightCustomTablet: number|string
+	columnsHeightCustomMobile: number|string
 	verticalAlign: string
 	backgroundType: string
 	backgroundColor: string

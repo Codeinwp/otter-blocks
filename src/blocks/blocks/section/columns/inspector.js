@@ -15,6 +15,7 @@ import {
 
 import {
 	__experimentalBoxControl as BoxControl,
+	__experimentalUnitControl as UnitContol,
 	BaseControl,
 	Button,
 	ButtonGroup,
@@ -46,6 +47,7 @@ import {
 	BackgroundOverlayControl,
 	BackgroundSelectorControl,
 	ButtonDropdownControl,
+	ClearButton,
 	ColorDropdownControl,
 	ControlPanelControl,
 	HTMLAnchorControl,
@@ -209,12 +211,6 @@ const Inspector = ({
 			return setAttributes({ marginMobile: removeBoxDefaultValues( value, { ...attributes.margin, ...attributes.marginTablet }) });
 		default:
 			return undefined;
-		}
-	};
-
-	const changeColumnsWidth = value => {
-		if ( ( 0 <= value && 2400 >= value ) || undefined === value ) {
-			setAttributes({ columnsWidth: value });
 		}
 	};
 
@@ -535,14 +531,15 @@ const Inspector = ({
 								isDisabled={ attributes.isSynced?.includes( 'columnsWidth' ) || false }
 								className="o-disabled"
 							>
-								<RangeControl
+								<UnitContol
 									label={ __( 'Maximum Content Width', 'otter-blocks' ) }
-									value={ getValue( 'columnsWidth' ) || '' }
-									allowReset
-									onChange={ changeColumnsWidth }
-									step={ 0.1 }
-									min={ 0 }
-									max={ 2400 }
+									value={ getValue( 'columnsWidth' ) }
+									onChange={ columnsWidth => setAttributes({ columnsWidth }) }
+								/>
+
+								<ClearButton
+									values={[ 'columnsWidth' ]}
+									setAttributes={ setAttributes }
 								/>
 							</Disabled>
 
@@ -595,12 +592,14 @@ const Inspector = ({
 								<ResponsiveControl
 									label={ __( 'Custom Height', 'otter-blocks' ) }
 								>
-									<RangeControl
-										value={ getColumnsHeightCustom || '' }
+									<UnitContol
+										value={ getColumnsHeightCustom }
 										onChange={ changeColumnsHeightCustom }
-										step={ 0.1 }
-										min={ 0 }
-										max={ 1000 }
+									/>
+
+									<ClearButton
+										values={[ 'columnsHeightCustom', 'columnsHeightCustomTablet', 'columnsHeightCustomMobile' ]}
+										setAttributes={ setAttributes }
 									/>
 								</ResponsiveControl>
 							) }

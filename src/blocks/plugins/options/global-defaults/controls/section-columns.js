@@ -4,10 +4,10 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	BaseControl,
 	__experimentalBoxControl as BoxControl,
-	PanelBody,
-	RangeControl
+	__experimentalUnitControl as UnitContol,
+	BaseControl,
+	PanelBody
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -17,8 +17,12 @@ import { Fragment } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import ResponsiveControl from '../../../../components/responsive-control/index.js';
-import ToogleGroupControl from '../../../../components/toogle-group-control/index.js';
+import {
+	ClearButton,
+	ResponsiveControl,
+	ToogleGroupControl
+} from '../../../../components/index.js';
+
 import { isNullObject } from '../../../../helpers/helper-functions.js';
 
 const SectionColumns = ({
@@ -107,14 +111,6 @@ const SectionColumns = ({
 		}
 	};
 
-	const changeColumnsWidth = value => {
-		if ( ( 0 <= value && 2400 >= value ) || undefined === value ) {
-			changeConfig( blockName, {
-				columnsWidth: value
-			});
-		}
-	};
-
 	const changeHorizontalAlign = value => {
 		if ( defaults.horizontalAlign === value ) {
 			return changeConfig( blockName, {
@@ -164,14 +160,17 @@ const SectionColumns = ({
 				title={ __( 'Section Structure', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<RangeControl
+				<UnitContol
 					label={ __( 'Maximum Content Width', 'otter-blocks' ) }
-					value={ defaults.columnsWidth || '' }
-					allowReset
-					onChange={ changeColumnsWidth }
-					step={ 0.1 }
-					min={ 0 }
-					max={ 2400 }
+					value={ defaults.columnsWidth }
+					onChange={ columnsWidth => changeConfig( blockName, {
+						columnsWidth
+					}) }
+				/>
+
+				<ClearButton
+					values={[ 'columnsWidth' ]}
+					setAttributes={ value => changeConfig( blockName, value ) }
 				/>
 
 				{ defaults.columnsWidth && (
