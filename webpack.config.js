@@ -128,7 +128,7 @@ module.exports = [
 			masonry: './src/blocks/frontend/masonry/index.js',
 			form: './src/blocks/frontend/form/index.js',
 			countdown: './src/blocks/frontend/countdown/index.ts',
-			popup: './src/blocks/frontend/popup/index',
+			popup: './src/blocks/frontend/popup/index.js',
 			sticky: './src/blocks/frontend/sticky/index.ts'
 		},
 		output: {
