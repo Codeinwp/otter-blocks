@@ -5,16 +5,20 @@
 		display: flex;
 		justify-content: space-between;
 		margin-bottom: .5em;
-
-		label {
-			padding: 5px 0;
-		}
+		align-items: center;
 	}
 
 	.o-responsive-buttons {
+		.components-button-group {
+			display: flex;
+			gap: 10px;
+		}
+
 		.components-button {
 			box-shadow: none;
 			border: 0;
+			padding: 0;
+			min-width: unset;
 			color: #B8B8B8;
 
 			&.is-selected {

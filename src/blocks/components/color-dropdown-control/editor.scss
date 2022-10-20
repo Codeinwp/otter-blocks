@@ -3,6 +3,18 @@
     border: 1px solid rgba(0,0,0,.1);
     display: block;
 
+    &.is-list {
+        border-top-width: 0;
+
+        &.is-first {
+            border-top-width: 1px;
+        }
+    }
+
+    &:not( .is-list ) {
+        margin: 20px 0;
+    }
+
     .o-color-dropdown-control-button {
         appearance: none;
         border: 1px solid transparent;

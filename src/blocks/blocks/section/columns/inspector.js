@@ -36,20 +36,25 @@ import {
  * Internal dependencies
  */
 import LayoutControl from './../components/layout-control/index.js';
-import InspectorHeader from '../../../components/inspector-header/index.js';
-import { InspectorExtensions } from '../../../components/inspector-slot-fill/index.js';
-import ResponsiveControl from '../../../components/responsive-control/index.js';
-import ControlPanelControl from '../../../components/control-panel-control/index.js';
-import HTMLAnchorControl from '../../../components/html-anchor-control/index.js';
-import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
-import BackgroundOverlayControl from '../../../components/background-overlay-control/index.js';
+
 import {
 	isNullObject,
 	removeBoxDefaultValues
 } from '../../../helpers/helper-functions.js';
-import ToogleGroupControl from '../../../components/toogle-group-control/index.js';
-import SyncControlDropdown from '../../../components/sync-control-dropdown/index.js';
-import ButtonDropdownControl from '../../../components/button-dropdown-control/index.js';
+
+import {
+	BackgroundOverlayControl,
+	BackgroundSelectorControl,
+	ButtonDropdownControl,
+	ColorDropdownControl,
+	ControlPanelControl,
+	HTMLAnchorControl,
+	InspectorHeader,
+	InspectorExtensions,
+	ResponsiveControl,
+	SyncControlDropdown,
+	ToogleGroupControl
+} from '../../../components/index.js';
 
 /**
  *
@@ -798,6 +803,12 @@ const Inspector = ({
 							className="o-section-border-container"
 							initialOpen={ false }
 						>
+							<ColorDropdownControl
+								label={ __( 'Border Color', 'otter-blocks' ) }
+								colorValue={ attributes.borderColor }
+								onColorChange={ value => setAttributes({ borderColor: value }) }
+							/>
+
 							<BoxControl
 								label={ __( 'Border Width', 'otter-blocks' ) }
 								values={ attributes.border }
@@ -812,12 +823,6 @@ const Inspector = ({
 									}
 								] }
 								onChange={ changeBorder }
-							/>
-
-							<ColorGradientControl
-								label={ __( 'Border Color', 'otter-blocks' ) }
-								colorValue={ attributes.borderColor }
-								onColorChange={ value => setAttributes({ borderColor: value }) }
 							/>
 
 							<BoxControl
@@ -848,57 +853,55 @@ const Inspector = ({
 							/>
 
 							{ attributes.boxShadow && (
-								<Fragment>
+								<ControlPanelControl
+									label={ __( 'Border Shadow', 'otter-blocks' ) }
+								>
 									<ColorGradientControl
 										label={ __( 'Shadow Color', 'otter-blocks' ) }
 										colorValue={ attributes.boxShadowColor }
 										onColorChange={ value => setAttributes({ boxShadowColor: value }) }
 									/>
 
-									<ControlPanelControl
-										label={ __( 'Border Shadow', 'otter-blocks' ) }
-									>
-										<RangeControl
-											label={ __( 'Opacity', 'otter-blocks' ) }
-											value={ attributes.boxShadowColorOpacity }
-											onChange={ value => setAttributes({ boxShadowColorOpacity: value }) }
-											min={ 0 }
-											max={ 100 }
-										/>
+									<RangeControl
+										label={ __( 'Opacity', 'otter-blocks' ) }
+										value={ attributes.boxShadowColorOpacity }
+										onChange={ value => setAttributes({ boxShadowColorOpacity: value }) }
+										min={ 0 }
+										max={ 100 }
+									/>
 
-										<RangeControl
-											label={ __( 'Blur', 'otter-blocks' ) }
-											value={ attributes.boxShadowBlur }
-											onChange={ value => setAttributes({ boxShadowBlur: value }) }
-											min={ 0 }
-											max={ 100 }
-										/>
+									<RangeControl
+										label={ __( 'Blur', 'otter-blocks' ) }
+										value={ attributes.boxShadowBlur }
+										onChange={ value => setAttributes({ boxShadowBlur: value }) }
+										min={ 0 }
+										max={ 100 }
+									/>
 
-										<RangeControl
-											label={ __( 'Spread', 'otter-blocks' ) }
-											value={ attributes.boxShadowSpread }
-											onChange={ value => setAttributes({ boxShadowSpread: value }) }
-											min={ -100 }
-											max={ 100 }
-										/>
+									<RangeControl
+										label={ __( 'Spread', 'otter-blocks' ) }
+										value={ attributes.boxShadowSpread }
+										onChange={ value => setAttributes({ boxShadowSpread: value }) }
+										min={ -100 }
+										max={ 100 }
+									/>
 
-										<RangeControl
-											label={ __( 'Horizontal', 'otter-blocks' ) }
-											value={ attributes.boxShadowHorizontal }
-											onChange={ value => setAttributes({ boxShadowHorizontal: value }) }
-											min={ -100 }
-											max={ 100 }
-										/>
+									<RangeControl
+										label={ __( 'Horizontal', 'otter-blocks' ) }
+										value={ attributes.boxShadowHorizontal }
+										onChange={ value => setAttributes({ boxShadowHorizontal: value }) }
+										min={ -100 }
+										max={ 100 }
+									/>
 
-										<RangeControl
-											label={ __( 'Vertical', 'otter-blocks' ) }
-											value={ attributes.boxShadowVertical }
-											onChange={ value => setAttributes({ boxShadowVertical: value }) }
-											min={ -100 }
-											max={ 100 }
-										/>
-									</ControlPanelControl>
-								</Fragment>
+									<RangeControl
+										label={ __( 'Vertical', 'otter-blocks' ) }
+										value={ attributes.boxShadowVertical }
+										onChange={ value => setAttributes({ boxShadowVertical: value }) }
+										min={ -100 }
+										max={ 100 }
+									/>
+								</ControlPanelControl>
 							) }
 						</PanelBody>
 
@@ -943,7 +946,7 @@ const Inspector = ({
 
 							{ 'none' !== dividerType && (
 								<Fragment>
-									<ColorGradientControl
+									<ColorDropdownControl
 										label={ __( 'Color', 'otter-blocks' ) }
 										colorValue={ getDividerColor() }
 										onColorChange={ changeDividerColor }

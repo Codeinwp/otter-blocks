@@ -1,4 +1,9 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies
  */
 import {
@@ -58,6 +63,10 @@ const SyncColorPanel = ( props: SyncColorPanelProps ) => {
 						label={ option.label }
 						colorValue={ option.value }
 						onColorChange={ ( e: string ) => setAttributes({ [ option.slug ]: e }) }
+						className={ classnames(
+							'is-list',
+							{ 'is-first': 0 === index }
+						) }
 					/>
 				</Disabled>
 			) ) }

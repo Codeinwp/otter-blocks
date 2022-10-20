@@ -26,7 +26,8 @@ const ColorDropdownControl = ({
 	colorValue,
 	gradientValue,
 	onColorChange,
-	onGradientChange
+	onGradientChange,
+	className
 }) => {
 	return (
 		<Dropdown
@@ -35,7 +36,10 @@ const ColorDropdownControl = ({
 				offset: 36,
 				shift: true
 			} }
-			className="o-color-dropdown-control"
+			className={ classnames(
+				'o-color-dropdown-control',
+				className
+			) }
 			contentClassName="o-color-dropdown-control-content"
 			renderToggle={ ({ isOpen, onToggle }) => (
 				<Button
