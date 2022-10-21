@@ -30,7 +30,7 @@ import Placeholder from './placeholder.js';
 import Inspector from './inspector.js';
 import Slide from './components/Slide.js';
 import SliderControls from './components/slider-controls.js';
-import { buildResponsiveGetAttributes } from '../../helpers/helper-functions.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import {
 	blockInit,
 	copyScriptAssetToIframe,
@@ -130,17 +130,7 @@ const Edit = ({
 		}
 	}, [ attributes.images ]);
 
-	const {
-		responsiveGetAttributes
-	} = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-
-		return {
-			responsiveGetAttributes: buildResponsiveGetAttributes( view )
-		};
-	}, []);
+	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
 	const [ selectedImage, setSelectedImage ] = useState( null );
 

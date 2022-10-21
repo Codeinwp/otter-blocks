@@ -43,10 +43,10 @@ import Layout from './components/layout/index.js';
 import {
 	_align,
 	boxValues,
-	buildResponsiveGetAttributes,
 	getCustomPostTypeSlugs,
 	hex2rgba
 } from '../../helpers/helper-functions.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
 
@@ -110,17 +110,7 @@ const Edit = ({
 		};
 	}, [ attributes.categories, attributes.order, attributes.orderBy, attributes.postsToShow, attributes.offset, attributes.postTypes ]);
 
-	const {
-		responsiveGetAttributes
-	} = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-
-		return {
-			responsiveGetAttributes: buildResponsiveGetAttributes( view )
-		};
-	}, []);
+	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
 	useEffect( () => {
 		const fetch = async() => {

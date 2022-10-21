@@ -2,18 +2,18 @@
  * External dependencies
  */
 import { v4 as uuidv4 } from 'uuid';
-import classnames from 'classnames';
 
 /**
  * WordPress dependencies
  */
-import { merge } from 'lodash';
+import {
+	isNumber,
+	merge
+} from 'lodash';
 
 import { __ } from '@wordpress/i18n';
 
 import { useBlockProps } from '@wordpress/block-editor';
-
-import { ResizableBox } from '@wordpress/components';
 
 import {
 	Fragment,
@@ -33,6 +33,12 @@ import {
 	copyScriptAssetToIframe,
 	getEditorIframe
 } from '../../helpers/block-utility.js';
+
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
+
+const px = value => value ? `${ value }px` : value;
+
+const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -55,22 +61,20 @@ export const ActionType = {
 const Edit = ({
 	clientId,
 	attributes,
-	setAttributes,
-	isSelected,
-	toggleSelection
+	setAttributes
 }) => {
-
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
+	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
+
 	const mapRef = useRef( null );
 	const [ map, setMap ] = useState( null );
 	const [ isAddingToLocationActive, setActiveAddingToLocation ] = useState( false );
 	const [ openMarker, setOpenMarker ] = useState( null );
-
 
 	const createMarker = ( markerProps, dispatch ) => {
 		if ( window.L && map && dispatch && markerProps ) {
@@ -282,7 +286,6 @@ const Edit = ({
 	 * Initialize the map.
 	 */
 	useEffect( () => {
-
 		if ( getEditorIframe() ) {
 			copyScriptAssetToIframe( '#leaflet-js', () => {
 				createMap();
@@ -407,41 +410,14 @@ const Edit = ({
 			/>
 
 			<div { ...blockProps }>
-				<ResizableBox
-					size={ {
-						height: attributes.height
-					} }
-					enable={ {
-						top: false,
-						right: false,
-						bottom: true,
-						left: false
-					} }
-					minHeight={ 100 }
-					maxHeight={ 1400 }
-					onResizeStart={ () => {
-						toggleSelection( false );
-					} }
-					onResizeStop={ ( event, direction, elt, delta ) => {
-						setAttributes({
-							height: parseInt( attributes.height + delta.height, 10 )
-						});
-						toggleSelection( true );
-					} }
-					className={ classnames(
-						'wp-block-themeisle-blocks-leaflet-map-resizer',
-						{ 'is-focused': isSelected }
-					) }
-				>
-					<div
-						id={ attributes.id }
-						ref={ mapRef }
-						style={ {
-							width: '100%',
-							height: attributes.height || 400
-						} }>
-					</div>
-				</ResizableBox>
+				<div
+					id={ attributes.id }
+					ref={ mapRef }
+					style={ {
+						width: '100%',
+						height: responsiveGetAttributes([ mightBeUnit( attributes.height || 400 ), attributes.heightTablet, attributes.heightMobile ])
+					} }>
+				</div>
 			</div>
 		</Fragment>
 	);

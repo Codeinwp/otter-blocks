@@ -36,10 +36,7 @@ import { InspectorExtensions } from '../../components/inspector-slot-fill/index.
 import ImageGrid from './../../components/image-grid/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import ClearButton from '../../components/clear-button/index.js';
-import {
-	buildResponsiveGetAttributes,
-	buildResponsiveSetAttributes
-} from '../../helpers/helper-functions.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 const px = value => value ? `${ value }px` : value;
 
@@ -62,16 +59,7 @@ const Inspector = ({
 	const {
 		responsiveSetAttributes,
 		responsiveGetAttributes
-	} = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-
-		return {
-			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
-			responsiveGetAttributes: buildResponsiveGetAttributes( view )
-		};
-	}, []);
+	} = useResponsiveAttributes( setAttributes );
 
 	const changeGap = value => {
 		setAttributes({ gap: Number( value ) });

@@ -9,7 +9,6 @@ import {
 	PanelBody,
 	Placeholder,
 	RangeControl,
-	SelectControl,
 	Spinner,
 	FontSizePicker
 } from '@wordpress/components';
@@ -27,15 +26,13 @@ import {
 	useState
 } from '@wordpress/element';
 
-import { useSelect } from '@wordpress/data';
-
 /**
  * Internal dependencies
  */
 const IconPickerControl = lazy( () => import( '../../components/icon-picker-control/index.js' ) );
 import SyncControl from '../../components/sync-control/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
-import { buildResponsiveGetAttributes, buildResponsiveSetAttributes } from '../../helpers/helper-functions.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import ToogleGroupControl from '../../components/toogle-group-control/index.js';
 import { alignCenter, alignLeft, alignRight } from '@wordpress/icons';
 import { alignHandler } from './edit.js';
@@ -78,16 +75,7 @@ const Inspector = ({
 	const {
 		responsiveSetAttributes,
 		responsiveGetAttributes
-	} = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-
-		return {
-			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
-			responsiveGetAttributes: buildResponsiveGetAttributes( view )
-		};
-	}, []);
+	} = useResponsiveAttributes( setAttributes );
 
 	const changeLibrary = value => {
 		setAttributes({

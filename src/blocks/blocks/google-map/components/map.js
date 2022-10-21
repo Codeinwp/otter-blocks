@@ -12,8 +12,6 @@ import { isNumber } from 'lodash';
 
 import { Button } from '@wordpress/components';
 
-import { useSelect } from '@wordpress/data';
-
 import {
 	Fragment,
 	useEffect
@@ -22,7 +20,7 @@ import {
 /**
  * Internal dependencies
  */
-import { buildResponsiveGetAttributes } from '../../../helpers/helper-functions.js';
+import { useResponsiveAttributes } from '../../../helpers/utility-hooks.js';
 
 const px = value => value ? `${ value }px` : value;
 
@@ -42,17 +40,7 @@ const Map = ({
 		}
 	}, [ displayMap ]);
 
-	const {
-		responsiveGetAttributes
-	} = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-
-		return {
-			responsiveGetAttributes: buildResponsiveGetAttributes( view )
-		};
-	}, []);
+	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
 	return (
 		<Fragment>

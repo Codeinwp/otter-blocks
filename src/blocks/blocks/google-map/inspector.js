@@ -19,8 +19,6 @@ import {
 
 import { InspectorControls } from '@wordpress/block-editor';
 
-import { useSelect } from '@wordpress/data';
-
 import {
 	Fragment,
 	useRef,
@@ -35,10 +33,7 @@ import { InspectorExtensions } from '../../components/inspector-slot-fill/index.
 import { StyleSwitcherInspectorControl } from '../../components/style-switcher-control/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import ClearButton from '../../components/clear-button/index.js';
-import {
-	buildResponsiveGetAttributes,
-	buildResponsiveSetAttributes
-} from '../../helpers/helper-functions.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import MarkerWrapper from './components/marker-wrapper.js';
 
 const px = value => value ? `${ value }px` : value;
@@ -71,16 +66,7 @@ const Inspector = ({
 	const {
 		responsiveSetAttributes,
 		responsiveGetAttributes
-	} = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-
-		return {
-			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
-			responsiveGetAttributes: buildResponsiveGetAttributes( view )
-		};
-	}, []);
+	} = useResponsiveAttributes( setAttributes );
 
 	const searchRef = useRef( null );
 
