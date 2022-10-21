@@ -13,7 +13,7 @@ import { buildResponsiveGetAttributes, buildResponsiveSetAttributes } from './he
  *
  * @param {Function} setAttributes - The setAttributes function from the block.
  */
-export const useResponsiveAttributes = setAttributes => useSelect( select => {
+export const useResponsiveAttributes = ( setAttributes = () => {}) => useSelect( select => {
 	const { getView } = select( 'themeisle-gutenberg/data' );
 	const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
 	const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();

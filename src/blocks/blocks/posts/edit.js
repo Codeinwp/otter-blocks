@@ -110,7 +110,7 @@ const Edit = ({
 		};
 	}, [ attributes.categories, attributes.order, attributes.orderBy, attributes.postsToShow, attributes.offset, attributes.postTypes ]);
 
-	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
+	const { responsiveGetAttributes } = useResponsiveAttributes();
 
 	useEffect( () => {
 		const fetch = async() => {

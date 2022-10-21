@@ -69,7 +69,7 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
-	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
+	const { responsiveGetAttributes } = useResponsiveAttributes();
 
 	const mapRef = useRef( null );
 	const [ map, setMap ] = useState( null );

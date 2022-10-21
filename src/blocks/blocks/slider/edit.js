@@ -130,7 +130,7 @@ const Edit = ({
 		}
 	}, [ attributes.images ]);
 
-	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
+	const { responsiveGetAttributes } = useResponsiveAttributes();
 
 	const [ selectedImage, setSelectedImage ] = useState( null );
 

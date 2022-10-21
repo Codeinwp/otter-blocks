@@ -40,7 +40,7 @@ const Map = ({
 		}
 	}, [ displayMap ]);
 
-	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
+	const { responsiveGetAttributes } = useResponsiveAttributes();
 
 	return (
 		<Fragment>
