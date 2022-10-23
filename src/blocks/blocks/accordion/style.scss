@@ -20,6 +20,10 @@
 		margin: var(--gap) 0;
 
 		&__title {
+			/* to not let box-shadow cover the element */
+			position: relative;
+			z-index: 2;
+
 			color: var(--title-color);
 			background: var(--title-background);
 
@@ -58,6 +62,8 @@
 		}
 
 		&__content {
+			position: relative;
+			z-index: 2;
 			background: var(--content-background);
 			padding: var(--padding);
 
