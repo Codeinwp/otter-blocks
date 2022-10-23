@@ -380,6 +380,13 @@ const Inspector = ({
 						<UnitControl
 							label={ __( 'Width', 'otter-blocks' ) }
 							value={ attributes.borderWidth }
+							units={[
+								{ value: 'px', label: 'px' },
+								{ value: 'em', label: 'em' },
+								{ value: 'rem', label: 'rem' },
+								{ value: 'vw', label: 'vw' },
+								{ value: 'vh', label: 'vh' }
+							]}
 							onChange={ borderWidth => setAttributes({ borderWidth }) }
 						/>
 						<BoxShadowControl
