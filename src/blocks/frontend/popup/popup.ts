@@ -23,10 +23,6 @@ class PopupBlock {
 	init() {
 		this.bindOpen();
 		this.bindClose();
-
-		if ( Boolean( this.element.dataset.lockScrolling ) ) {
-			this.lockScrolling();
-		}
 	}
 
 	isDisabled() {
@@ -42,6 +38,10 @@ class PopupBlock {
 	openModal() {
 		this.element.classList.add( 'active' );
 		this.happened = true;
+
+		if ( Boolean( this.element.dataset.lockScrolling ) ) {
+			this.lockScrolling();
+		}
 	}
 
 	closeModal() {
