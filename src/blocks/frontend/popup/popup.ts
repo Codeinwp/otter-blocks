@@ -3,6 +3,7 @@ class PopupBlock {
 	element: HTMLDivElement;
 	happened: boolean;
 	storageKey: string;
+	canLock: boolean = false;
 
 	constructor( element: HTMLDivElement ) {
 		this.element = element;
@@ -14,6 +15,9 @@ class PopupBlock {
 		if ( this.isItemDismissed() && dismiss && ! anchor && ! Boolean( window.themeisleGutenberg?.isPreview ) ) {
 			return ;
 		}
+
+		this.canLock = Boolean( this.element.dataset.lockScrolling );
+
 
 		if ( ! this.isDisabled() ) {
 			this.init();
@@ -39,9 +43,8 @@ class PopupBlock {
 		this.element.classList.add( 'active' );
 		this.happened = true;
 
-		if ( Boolean( this.element.dataset.lockScrolling ) ) {
-			this.lockScrolling();
-		}
+		this.lockScrolling();
+
 	}
 
 	closeModal() {
@@ -241,11 +244,15 @@ class PopupBlock {
 	}
 
 	lockScrolling() {
-		document.body.classList.add( 'o-lock-body' );
+		if ( this.canLock ) {
+			document.body.classList.add( 'o-lock-body' );
+		}
 	}
 
 	unlockScrolling() {
-		document.body.classList.remove( 'o-lock-body' );
+		if ( this.canLock ) {
+			document.body.classList.remove( 'o-lock-body' );
+		}
 	}
 }
 
