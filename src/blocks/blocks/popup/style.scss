@@ -93,6 +93,7 @@ $base-index: 9999 !default;
 		scrollbar-width: none; /* Firefox */
 		max-height: 75vh;
 		overflow: auto;
+		height: 100%;
 
 		&::-webkit-scrollbar {
 			display: none;
