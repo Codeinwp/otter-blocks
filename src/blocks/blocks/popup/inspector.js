@@ -331,6 +331,11 @@ const Inspector = ({
 										value: attributes.overlayColor,
 										onChange: overlayColor => setAttributes({ overlayColor }),
 										label: __( 'Overlay', 'otter-blocks' )
+									},
+									{
+										value: attributes.borderColor,
+										onChange: borderColor => setAttributes({ borderColor }),
+										label: __( 'Border', 'otter-blocks' )
 									}
 								] }
 							/>
@@ -385,24 +390,20 @@ const Inspector = ({
 											value: 'hidden'
 										},
 										{
-											label: __( 'Solid', 'otter-blocks' ),
-											value: 'solid'
+											label: __( 'Dashed', 'otter-blocks' ),
+											value: 'dashed'
 										},
 										{
 											label: __( 'Double', 'otter-blocks' ),
 											value: 'double'
 										},
 										{
-											label: __( 'Outside', 'otter-blocks' ),
-											value: 'outside'
+											label: __( 'Dotted', 'otter-blocks' ),
+											value: 'dotted'
 										},
 										{
-											label: __( 'Ridge', 'otter-blocks' ),
-											value: 'ridge'
-										},
-										{
-											label: __( 'Ridge', 'otter-blocks' ),
-											value: 'dashed'
+											label: __( 'Solid', 'otter-blocks' ),
+											value: 'solid'
 										}
 									] }
 								/>
@@ -411,7 +412,7 @@ const Inspector = ({
 									attributes?.borderStyle && 'hidden' !== attributes?.borderStyle && (
 										<BoxControl
 											label={ __( 'Width', 'otter-blocks' ) }
-											values={ attributes.borderWidth }
+											values={ attributes.borderWidth ?? { top: '0px', bottom: '0px', left: '0px', right: '0px' } }
 											onChange={ value => {
 												setAttributes({
 													borderWidth: removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' })
