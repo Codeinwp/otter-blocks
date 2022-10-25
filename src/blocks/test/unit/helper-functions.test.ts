@@ -1,4 +1,4 @@
-import { boxValues, buildResponsiveGetAttributes, buildResponsiveSetAttributes, getChoice, mergeBoxDefaultValues, removeBoxDefaultValues } from '../../helpers/helper-functions.js';
+import { boxValues, buildResponsiveGetAttributes, buildResponsiveSetAttributes, compactObject, getChoice, mergeBoxDefaultValues, removeBoxDefaultValues } from '../../helpers/helper-functions.js';
 
 describe( 'Box Values Function', () => {
 
@@ -185,5 +185,22 @@ describe( 'Get Choice Function', () => {
 			[ false, 3 ],
 			[ 4 ]
 		]) ).toEqual( 4 );
+	});
+});
+
+describe( 'Compact Object Function', () => {
+	it( 'should return a object if it do not have empty objects props.', () => {
+		const o = { a: { b: 1, c: { d: 2 }, bb: 3 }};
+		expect( compactObject( o ) ).toEqual({ a: { b: 1, c: { d: 2 }, bb: 3 }});
+	});
+
+	it( 'should modify the copy of the objects.', () => {
+		const o = { a: { b: 1, c: {  }, bb: 3 }};
+		compactObject( o );
+		expect( o ).toEqual({ a: { b: 1, c: {}, bb: 3 }});
+	});
+
+	it( 'should return undefined if the object is composed from undefined and empty objects.', () => {
+		expect( compactObject({ a: {}, b: {}}) ).toBeUndefined();
 	});
 });

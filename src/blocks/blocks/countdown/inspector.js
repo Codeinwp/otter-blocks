@@ -23,12 +23,12 @@ import {
 	ExternalLink
 } from '@wordpress/components';
 
-import { useSelect } from '@wordpress/data';
-
 import {
 	format,
 	__experimentalGetSettings
 } from '@wordpress/date';
+
+import { Fragment } from '@wordpress/element';
 
 import { applyFilters } from '@wordpress/hooks';
 
@@ -36,8 +36,8 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies
  */
 import ResponsiveControl from '../../components/responsive-control/index.js';
-import { mergeBoxDefaultValues, removeBoxDefaultValues, buildResponsiveSetAttributes, buildResponsiveGetAttributes, setUtm } from '../../helpers/helper-functions.js';
-import { Fragment } from '@wordpress/element';
+import { mergeBoxDefaultValues, removeBoxDefaultValues, setUtm } from '../../helpers/helper-functions.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import Notice from '../../components/notice/index.js';
 
 const defaultFontSizes = [
@@ -151,16 +151,7 @@ const Inspector = ({
 	const {
 		responsiveSetAttributes,
 		responsiveGetAttributes
-	} = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-
-		return {
-			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
-			responsiveGetAttributes: buildResponsiveGetAttributes( view )
-		};
-	}, []);
+	} = useResponsiveAttributes( setAttributes );
 
 	const excludeComponent = ( value, componentName ) => {
 		if ( value ) {

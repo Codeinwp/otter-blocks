@@ -10,8 +10,18 @@ type Attributes = {
 	delay: number
 	hideArrows: boolean
 	hideBullets: boolean
-	height: number
+	height: number|string
+	heightTablet: string
+	heightMobile: string
 	width: string
+	transition: string
+	arrowsColor: string
+	arrowsBackgroundColor: string
+	paginationColor: string
+	paginationActiveColor: string
+	borderColor: string
+	borderWidth: string
+	borderRadius: string
 }
 
 export type SliderProps = BlockProps<Attributes>

@@ -277,7 +277,7 @@ class Dynamic_Content {
 			}
 		}
 
-		if ( 'product' === $type && ! empty( $id ) ) {
+		if ( 'product' === $type && class_exists( 'WooCommerce' ) && ! empty( $id ) ) {
 			$product = wc_get_product( $id );
 			$image   = $product->get_image_id();
 			
@@ -337,7 +337,7 @@ class Dynamic_Content {
 			}
 		}
 
-		if ( 'product' === $data['type'] && isset( $data['id'] ) && ! empty( $data['id'] ) ) {
+		if ( 'product' === $data['type'] && class_exists( 'WooCommerce' ) && isset( $data['id'] ) && ! empty( $data['id'] ) ) {
 			$product = wc_get_product( $data['id'] );
 			$image   = $product->get_image_id();
 			

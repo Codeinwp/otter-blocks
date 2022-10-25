@@ -206,6 +206,29 @@ You can check Otter documentation [here](https://docs.themeisle.com/article/1478
 
 ## Changelog ##
 
+#### [Version 2.1.0](https://github.com/Codeinwp/otter-blocks/compare/v2.0.16...v2.1.0) (2022-10-19)
+
+- Add Otter Patterns
+- Add Live Preview of Dynamic Values
+- Add Post Content option to Dynamic Values
+- Add Closing feature to Sticky Extension
+- Add class to body when some element is active in Sticky
+- Posts Block Redesign
+- WordPress 6.1 Compatibility
+- Fix Review Block padding not affecting Pros/Cons
+- Fix type in Review Block
+- Fix Border/Icon color inheritance in Blocks
+- Fix Section inconsistency in Global Settings
+- Fix Otter allowed_html for Forms
+- Fix the Welcome Modal showing more than once
+- Fix Section Vertical alignment not working on Mobile
+- Fix Tabs Block remove option not working
+- Fix Dynamic Image crashing when Woo value is used, and then Woo is deactivated
+- More bug fixes
+
+
+
+
 ##### [Version 2.0.16](https://github.com/Codeinwp/otter-blocks/compare/v2.0.15...v2.0.16) (2022-09-27)
 
 - Minor fixes.

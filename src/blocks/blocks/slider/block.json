@@ -17,31 +17,31 @@
 			"source": "query",
 			"selector": ".wp-block-themeisle-blocks-slider-item-wrapper",
 			"query": {
-			"id": {
-				"type": "number",
-				"source": "attribute",
-				"selector": "img",
-				"attribute": "data-id"
-			},
-			"url": {
-				"type": "string",
-				"source": "attribute",
-				"selector": "img",
-				"attribute": "src"
-			},
-			"alt": {
-				"type": "string",
-				"source": "attribute",
-				"selector": "img",
-				"attribute": "alt",
-				"default": ""
-			},
-			"caption": {
-				"type": "string",
-				"source": "html",
-				"selector": "figcaption",
-				"default": ""
-			}
+				"id": {
+					"type": "number",
+					"source": "attribute",
+					"selector": "img",
+					"attribute": "data-id"
+				},
+				"url": {
+					"type": "string",
+					"source": "attribute",
+					"selector": "img",
+					"attribute": "src"
+				},
+				"alt": {
+					"type": "string",
+					"source": "attribute",
+					"selector": "img",
+					"attribute": "alt",
+					"default": ""
+				},
+				"caption": {
+					"type": "string",
+					"source": "html",
+					"selector": "figcaption",
+					"default": ""
+				}
 			}
 		},
 		"perView": {
@@ -73,10 +73,40 @@
 			"default": false
 		},
 		"height": {
-			"type": "number",
-			"default": 400
+			"type": [ "number", "string" ],
+			"default": "400px"
+		},
+		"heightTablet": {
+			"type": "string"
+		},
+		"heightMobile": {
+			"type": "string"
 		},
 		"width": {
+			"type": "string"
+		},
+		"transition": {
+			"type": "string"
+		},
+		"arrowsColor": {
+			"type": "string"
+		},
+		"arrowsBackgroundColor": {
+			"type": "string"
+		},
+		"paginationColor": {
+			"type": "string"
+		},
+		"paginationActiveColor": {
+			"type": "string"
+		},
+		"borderColor": {
+			"type": "string"
+		},
+		"borderWidth": {
+			"type": "string"
+		},
+		"borderRadius": {
 			"type": "string"
 		}
 	},
