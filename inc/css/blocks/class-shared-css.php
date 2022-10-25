@@ -32,14 +32,14 @@ class Shared_CSS {
 				'value'    => 'colorHover',
 			),
 			array(
-				'property'  => 'background',
+				'property'  => '--background',
 				'value'     => 'backgroundColor',
 				'condition' => function( $attrs ) {
 					return ! ( isset( $attrs['backgroundType'] ) && 'color' !== $attrs['backgroundType'] );
 				},
 			),
 			array(
-				'property'       => 'background',
+				'property'       => '--background',
 				'pattern'        => 'url( imageURL ) repeat attachment position/size',
 				'pattern_values' => array(
 					'imageURL'   => array(
@@ -82,7 +82,7 @@ class Shared_CSS {
 				},
 			),
 			array(
-				'property'  => 'background',
+				'property'  => '--background',
 				'value'     => 'backgroundGradient',
 				'default'   => 'linear-gradient(90deg,rgba(54,209,220,1) 0%,rgba(91,134,229,1) 100%)',
 				'condition' => function( $attrs ) {
@@ -90,7 +90,7 @@ class Shared_CSS {
 				},
 			),
 			array(
-				'property'       => 'background',
+				'property'       => '--background',
 				'pattern'        => 'linear-gradient( angle, firstColor firstLocation, secondColor secondLocation )',
 				'pattern_values' => array(
 					'angle'          => array(
@@ -122,7 +122,7 @@ class Shared_CSS {
 				},
 			),
 			array(
-				'property'       => 'background',
+				'property'       => '--background',
 				'pattern'        => 'radial-gradient( at position, firstColor firstLocation, secondColor secondLocation )',
 				'pattern_values' => array(
 					'position'       => array(

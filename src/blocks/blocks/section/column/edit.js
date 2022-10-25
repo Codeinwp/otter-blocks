@@ -202,13 +202,13 @@ const Edit = ({
 
 	if ( 'color' === attributes.backgroundType ) {
 		background = {
-			backgroundColor: attributes.backgroundColor
+			'--background': attributes.backgroundColor
 		};
 	}
 
 	if ( 'image' === attributes.backgroundType ) {
 		background = {
-			backgroundImage: `url( '${ attributes.backgroundImage?.url }' )`,
+			'--background': `url( '${ attributes.backgroundImage?.url }' )`,
 			backgroundAttachment: attributes.backgroundAttachment,
 			backgroundPosition: `${ Math.round( attributes.backgroundPosition?.x * 100 ) }% ${ Math.round( attributes.backgroundPosition?.y * 100 ) }%`,
 			backgroundRepeat: attributes.backgroundRepeat,
@@ -218,7 +218,7 @@ const Edit = ({
 
 	if ( 'gradient' === attributes.backgroundType ) {
 		background = {
-			backgroundImage: attributes.backgroundGradient
+			'--background': attributes.backgroundGradient
 		};
 	}
 
