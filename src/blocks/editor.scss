@@ -109,3 +109,15 @@
 .o-disabled {
 	opacity: 0.5;
 }
+
+#o-border-raduis-box {
+	max-width: 100%;
+	>.component-box-control__header-control-wrapper {
+		>.components-flex-item {
+			&:first-child {
+				width: 24px;
+				transform: rotate( 315deg );
+			}
+		}
+	}
+}

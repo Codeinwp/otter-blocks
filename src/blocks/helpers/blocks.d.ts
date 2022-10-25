@@ -74,3 +74,9 @@ export type ResponsiveProps<T> = {
 	tablet?: T
 	mobile?: T
 }
+
+export type Responsive<T> = {
+	desktop?: T,
+	tablet?: T,
+	mobile?: T
+}
