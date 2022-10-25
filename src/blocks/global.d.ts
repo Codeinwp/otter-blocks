@@ -86,6 +86,17 @@ declare global {
 				days: string
 			}
 			timezone: string
+		},
+		oThemeStyles?: {
+			colors?: {label: string, value: string}[],
+			gradients?: {label: string, value: string}[],
+			cssVars?: string[]
+		},
+		otterComponents?: {
+			SelectProducts?: ( props: any ) => JSX.Element
+			Notice?: ( props: { notice: any, variant: string, instructions: 'string'}) => JSX.Element
+			useInspectorSlot?: ( name: string ) => any
+			OtterControlTools?: ( props: any ) => any
 		}
 	}
 }

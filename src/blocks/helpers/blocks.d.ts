@@ -32,9 +32,11 @@ export type BoxType = {
 	left?: string
 }
 
+// Alliases to help us in chaning the type easly and uniformly
 export type MarginType = BoxType
 export type PaddingType = BoxType
 export type BorderType = BoxType
+export type BorderRadius = BoxType // the core use something like { topLeft: string; topRight: string; bottomRight: string; bottomLeft: string; }, might migrate this in the future
 
 export type BoxShadow = {
     color: string
@@ -65,4 +67,10 @@ export interface OtterBlock<T> {
 	name: string
 	originalContent: string
 	validationIssues: unknown[]
+}
+
+export type ResponsiveProps<T> = {
+	desktop?: T
+	tablet?: T
+	mobile?: T
 }

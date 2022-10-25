@@ -1,4 +1,4 @@
-import { isEmpty, merge, set, unset, without, omitBy } from 'lodash';
+import { isEmpty, merge, set, unset, without, omitBy, isObjectLike, isNil, cloneDeep } from 'lodash';
 
 import { sprintf } from '@wordpress/i18n';
 
@@ -437,4 +437,39 @@ export const changeActiveStyle = ( className, styles, newStyle ) =>{
 	}
 
 	return classes.join( ' ' );
+};
+
+/**
+ * Helper function to remove empty props objects recursivly in a distructive way.
+ * @param {Object} o The object.
+ * @returns {Object | undefined}
+ */
+export const _compactObject = ( o ) => {
+	if ( ! isObjectLike( o ) ) {
+		return o;
+	}
+
+	for ( const p in o ) {
+		if ( isObjectLike( o[p]) ) {
+			o[p] = compactObject( o[p]);
+		}
+		if ( isNil( o[p]) ) {
+			delete o[p];
+		}
+	}
+
+	if ( isEmpty( o ) ) {
+		return undefined;
+	}
+
+	return o;
+};
+
+/**
+ * Remove empty props objects recursivly.
+ * @param {Object} o The object.
+ * @returns {Object | undefined}
+ */
+export const compactObject = ( o ) => {
+	return _compactObject( cloneDeep( o ) );
 };

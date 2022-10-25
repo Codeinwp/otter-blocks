@@ -26,5 +26,6 @@ type Attributes = {
 	isSynced: string[]
 }
 
+export type IconAttrs = Partial<Attributes>
 export type IconsProps = BlockProps<Attributes>
 export interface IconInspectorProps extends InspectorProps<Attributes> {}

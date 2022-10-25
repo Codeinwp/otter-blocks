@@ -45,7 +45,7 @@ type Attributes = {
 	backgroundOverlayBlend: string
 	border: BorderType
 	borderColor: string
-	borderRadius: number
+	borderRadius: BorderType
 	boxShadow: boolean
 	boxShadowColor: string
 	boxShadowColorOpacity: number
@@ -80,5 +80,6 @@ type Attributes = {
 	isSynced: string[]
 }
 
+export type SectionAttrs = Partial<Attributes>
 export type SectionProps = BlockProps<Attributes>
 export interface SectionInspector extends InspectorProps<Attributes> {}

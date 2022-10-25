@@ -12,5 +12,6 @@ type Attributes= {
 	horizontalAlign: string
 }
 
+export type IconListAttrs = Partial<Attributes>
 export type IconListProps = BlockProps<Attributes>
 export interface IconsListInspectorProps extends InspectorProps<Attributes> {}
