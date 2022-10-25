@@ -12,23 +12,22 @@ use ThemeIsle\GutenbergBlocks\Base_CSS;
 use ThemeIsle\GutenbergBlocks\CSS\CSS_Utility;
 
 /**
- * Class Slider_CSS
+ * Class Leaflet_Map_CSS
  */
-class Slider_CSS extends Base_CSS {
+class Leaflet_Map_CSS extends Base_CSS {
 
 	/**
 	 * The namespace under which the blocks are registered.
 	 *
 	 * @var string
 	 */
-	public $block_prefix = 'slider';
+	public $block_prefix = 'leaflet-map';
 
 	/**
-	 * Generate Slider CSS
+	 * Generate Google Map CSS
 	 *
 	 * @param mixed $block Block data.
 	 * @return string
-	 * @since   1.3.0
 	 * @access  public
 	 */
 	public function render_css( $block ) {
@@ -52,44 +51,10 @@ class Slider_CSS extends Base_CSS {
 						'property' => '--height-mobile',
 						'value'    => 'heightMobile',
 					),
-					array(
-						'property' => '--width',
-						'value'    => 'width',
-					),
-					array(
-						'property' => '--arrows-color',
-						'value'    => 'arrowsColor',
-					),
-					array(
-						'property' => '--arrows-background-color',
-						'value'    => 'arrowsBackgroundColor',
-					),
-					array(
-						'property' => '--pagination-color',
-						'value'    => 'paginationColor',
-					),
-					array(
-						'property' => '--pagination-active-color',
-						'value'    => 'paginationActiveColor',
-					),
-					array(
-						'property' => '--border-color',
-						'value'    => 'borderColor',
-					),
-					array(
-						'property' => '--border-width',
-						'value'    => 'borderWidth',
-					),
-					array(
-						'property' => '--border-radius',
-						'value'    => 'borderRadius',
-					),
 				),
 			)
 		);
 
-		$style = $css->generate();
-
-		return $style;
+		return $css->generate();
 	}
 }

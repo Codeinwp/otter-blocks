@@ -81,8 +81,10 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Countdown_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Core_Image_Plugin_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Font_Awesome_Icons_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Google_Map_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Icon_List_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Icon_List_Item_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Leaflet_Map_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_Input_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_Textarea_CSS',
@@ -93,7 +95,7 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Review_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Tabs_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Posts_CSS',
-			'\Themeisle\GutenbergBlocks\CSS\Blocks\Sharing_Icons_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Sharing_Icons_CSS',
 		);
 
 		self::$blocks_classes = apply_filters( 'otter_blocks_register_css', self::$blocks_classes );
