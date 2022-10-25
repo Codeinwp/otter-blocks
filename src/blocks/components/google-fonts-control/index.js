@@ -34,8 +34,7 @@ import {
 * Internal dependencies
 */
 import './editor.scss';
-import googleFontsLoader from '../../helpers/google-fonts.js';
-
+import googleFontsLoader from '../../helpers/google-fonts';
 
 const GoogleFontsControl = ({
 	label,

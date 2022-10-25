@@ -8,21 +8,12 @@ import {
 	InspectorControls
 } from '@wordpress/block-editor';
 
-import {
-	PanelBody,
-	Placeholder,
-	Spinner
-} from '@wordpress/components';
-
-import {
-	lazy,
-	Suspense
-} from '@wordpress/element';
+import { PanelBody } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-const IconPickerControl = lazy( () => import( '../../../components/icon-picker-control/index.js' ) );
+import IconPickerControl from '../../../components/icon-picker-control/index.js';
 
 /**
  *
@@ -69,17 +60,15 @@ const Inspector = ({
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>
-				<Suspense fallback={ <Placeholder><Spinner /></Placeholder> }>
-					<IconPickerControl
-						label={ __( 'Icon Picker', 'otter-blocks' ) }
-						library={ attributes.library }
-						prefix={ attributes.iconPrefix }
-						icon={ attributes.icon }
-						changeLibrary={ changeLibrary }
-						onChange={ changeIcon }
-						allowImage
-					/>
-				</Suspense>
+				<IconPickerControl
+					label={ __( 'Icon Picker', 'otter-blocks' ) }
+					library={ attributes.library }
+					prefix={ attributes.iconPrefix }
+					icon={ attributes.icon }
+					changeLibrary={ changeLibrary }
+					onChange={ changeIcon }
+					allowImage
+				/>
 
 				<ColorGradientControl
 					label={ __( 'Content Color', 'otter-blocks' ) }

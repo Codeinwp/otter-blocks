@@ -150,7 +150,7 @@ class GoogleFontsLoader {
 			this.isAttaching = true;
 			setTimeout( () => {
 				const currentDocument = getEditorIframe()?.contentWindow?.document ?? document;
-				if ( ! currentDocument?.querySelector( '[data-generator*="otter-blocks-fonts-loader"' ) ) {
+				if ( ! currentDocument?.querySelector( '[data-generator*="otter-blocks-fonts-loader"]' ) ) {
 					currentDocument?.head?.appendChild( this.node );
 				}
 				this.isAttaching = false;
