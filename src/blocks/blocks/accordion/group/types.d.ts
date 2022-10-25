@@ -9,7 +9,6 @@ type Attributes = {
 	titleBackground: string
 	contentBackground: string
 	borderColor: string
-	borderStyle: string
 	borderWidth: string
 	isSynced: string
 	fontFamily: string

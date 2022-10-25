@@ -18,9 +18,15 @@ import {
 	__experimentalUnitControl as UnitControl
 } from '@wordpress/components';
 
-import { select, dispatch, useSelect } from '@wordpress/data';
+import {
+	select,
+	dispatch
+} from '@wordpress/data';
 
-import { Fragment, useState } from '@wordpress/element';
+import {
+	Fragment,
+	useState
+} from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -28,16 +34,15 @@ import { Fragment, useState } from '@wordpress/element';
 import GoogleFontsControl from '../../../components/google-fonts-control';
 import ClearButton from '../../../components/clear-button';
 import BoxShadowControl from '../../../components/box-shadow-control';
-import IconPickerControl from '../../../components/icon-picker-control';
+import IconPickerControl from '../../../components/icon-picker-control/index.js';
 import InspectorHeader from '../../../components/inspector-header';
 import { InspectorExtensions } from '../../../components/inspector-slot-fill';
 import ButtonToggle from '../../../components/button-toggle-control';
 import {
-	buildResponsiveGetAttributes,
-	buildResponsiveSetAttributes,
 	changeActiveStyle,
 	getActiveStyle
 } from '../../../helpers/helper-functions';
+import { useResponsiveAttributes } from '../../../helpers/utility-hooks.js';
 import SyncColorPanel from '../../../components/sync-color-panel';
 import ResponsiveControl from '../../../components/responsive-control';
 
@@ -108,16 +113,7 @@ const Inspector = ({
 	const {
 		responsiveSetAttributes,
 		responsiveGetAttributes
-	} = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-
-		return {
-			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
-			responsiveGetAttributes: buildResponsiveGetAttributes( view )
-		};
-	}, []);
+	} = useResponsiveAttributes( setAttributes );
 
 	const changeFontFamily = value => {
 		if ( ! value ) {
@@ -192,21 +188,24 @@ const Inspector = ({
 					title={ __( 'Settings', 'otter-blocks' ) }
 				>
 					<ToggleControl
-						label={ __( 'Place icon before text', 'otter-blocks' ) }
+						label={ __( 'Place Icon on Left', 'otter-blocks' ) }
 						checked={ attributes.iconFirst }
 						onChange={ iconFirst => setAttributes({ iconFirst }) }
 					/>
+
 					<ToggleControl
-						label={ __( 'Keep multiple items expanded', 'otter-blocks' ) }
+						label={ __( 'Keep Multiple Items Expanded', 'otter-blocks' ) }
 						help={ __( 'When enabled, multiple accordion items can be expanded at the same time', 'otter-blocks' ) }
 						checked={ attributes.alwaysOpen || false }
 						onChange={ onAlwaysOpenToggle }
 					/>
+
 					<ToggleControl
 						label={ __( 'Enable FAQ Schema', 'otter-blocks' ) }
 						checked={ attributes.FAQSchema || false }
 						onChange={ FAQSchema => setAttributes({ FAQSchema }) }
 					/>
+
 					<SelectControl
 						label={ __( 'Accordion title HTML tag', 'otter-blocks' ) }
 						value={ attributes.tag || 'div' }
@@ -235,6 +234,7 @@ const Inspector = ({
 							onChange={ changeStyle }
 						/>
 					</PanelBody>
+
 					<PanelBody
 						title={ __( 'Title Typography', 'otter-blocks' ) }
 					>
@@ -319,7 +319,7 @@ const Inspector = ({
 					</SyncColorPanel>
 
 					<PanelBody
-						title={ __( 'Dimensions (Layout)', 'otter-blocks' ) }
+						title={ __( 'Dimensions', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
 						<ResponsiveControl
@@ -331,8 +331,9 @@ const Inspector = ({
 								onChange={ value => responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]) }
 							/>
 						</ResponsiveControl>
+
 						<RangeControl
-							label={ __( 'Gap between panels', 'otter-blocks' ) }
+							label={ __( 'Gap Between Panels', 'otter-blocks' ) }
 							value={ 'string' === typeof attributes.gap ? gapCompatibility[attributes.gap] : attributes.gap }
 							onChange={ gap => setAttributes({ gap }) }
 							allowReset
@@ -366,17 +367,6 @@ const Inspector = ({
 						title={ __( 'Border', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
-						<SelectControl
-							label={ __( 'Border Style', 'otter-blocks' ) }
-							labelPosition="left"
-							value={ attributes.borderStyle }
-							options={[
-								{ label: __( 'Solid', 'otter-blocks' ), value: 'solid' },
-								{ label: __( 'Dashed', 'otter-blocks' ), value: 'dashed' },
-								{ label: __( 'Dotted', 'otter-blocks' ), value: 'dotted' }
-							]}
-							onChange={ borderStyle => setAttributes({ borderStyle }) }
-						/>
 						<UnitControl
 							label={ __( 'Width', 'otter-blocks' ) }
 							value={ attributes.borderWidth }
@@ -389,6 +379,7 @@ const Inspector = ({
 							]}
 							onChange={ borderWidth => setAttributes({ borderWidth }) }
 						/>
+
 						<BoxShadowControl
 							boxShadow={ attributes.boxShadow }
 							onChange={ changeBoxShadow }

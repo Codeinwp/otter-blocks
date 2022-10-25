@@ -7,9 +7,7 @@ import {
 	Button,
 	ButtonGroup,
 	PanelBody,
-	Placeholder,
 	RangeControl,
-	Spinner,
 	FontSizePicker
 } from '@wordpress/components';
 
@@ -21,15 +19,13 @@ import {
 
 import {
 	Fragment,
-	lazy,
-	Suspense,
 	useState
 } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-const IconPickerControl = lazy( () => import( '../../components/icon-picker-control/index.js' ) );
+import IconPickerControl from '../../components/icon-picker-control/index.js';
 import SyncControl from '../../components/sync-control/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
@@ -101,16 +97,14 @@ const Inspector = ({
 			<PanelBody
 				title={ __( 'Icon', 'otter-blocks' ) }
 			>
-				<Suspense fallback={<Placeholder><Spinner/></Placeholder>}>
-					<IconPickerControl
-						label={ __( 'Icon Picker', 'otter-blocks' ) }
-						library={ attributes.library }
-						prefix={ attributes.prefix }
-						icon={ attributes.icon }
-						changeLibrary={ changeLibrary }
-						onChange={ changeIcon }
-					/>
-				</Suspense>
+				<IconPickerControl
+					label={ __( 'Icon Picker', 'otter-blocks' ) }
+					library={ attributes.library }
+					prefix={ attributes.prefix }
+					icon={ attributes.icon }
+					changeLibrary={ changeLibrary }
+					onChange={ changeIcon }
+				/>
 			</PanelBody>
 
 			<PanelBody

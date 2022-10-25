@@ -5,18 +5,9 @@ import { __ } from '@wordpress/i18n';
 
 import { BlockControls } from '@wordpress/block-editor';
 
-import {
-	Spinner,
-	ToolbarButton
-} from '@wordpress/components';
-
 import { createHigherOrderComponent } from '@wordpress/compose';
 
-import {
-	Fragment,
-	lazy,
-	Suspense
-} from '@wordpress/element';
+import { Fragment } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
@@ -25,7 +16,7 @@ import { addFilter } from '@wordpress/hooks';
  */
 import './editor.scss';
 
-const IconPickerControl = lazy( () => import( '../../components/icon-picker-control/toolbar.js' ) );
+import IconPickerControl from '../../components/icon-picker-control/toolbar';
 
 const withBlockControls = createHigherOrderComponent( BlockEdit => {
 	return props => {
@@ -35,13 +26,11 @@ const withBlockControls = createHigherOrderComponent( BlockEdit => {
 					<BlockEdit { ...props } />
 
 					<BlockControls>
-						<Suspense fallback={ <ToolbarButton><Spinner /></ToolbarButton> }>
-							<IconPickerControl
-								label={ __( 'Menu Icon by Otter', 'otter-blocks' ) }
-								classes={ props.attributes.className }
-								setAttributes={ props.setAttributes }
-							/>
-						</Suspense>
+						<IconPickerControl
+							label={ __( 'Menu Icon by Otter', 'otter-blocks' ) }
+							classes={ props.attributes.className }
+							setAttributes={ props.setAttributes }
+						/>
 					</BlockControls>
 				</Fragment>
 			);

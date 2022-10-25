@@ -85,7 +85,6 @@ const Edit = ({
 		'--title-background': getValue( 'titleBackground' ),
 		'--content-background': getValue( 'contentBackground' ),
 		'--border-color': getValue( 'borderColor' ),
-		'--border-style': getValue( 'borderStyle' ),
 		'--border-width': getValue( 'borderWidth' ),
 		'--box-shadow': attributes.boxShadow.active && `${attributes.boxShadow.horizontal}px ${attributes.boxShadow.vertical}px ${attributes.boxShadow.blur}px ${attributes.boxShadow.spread}px ${hex2rgba( attributes.boxShadow.color, attributes.boxShadow.colorOpacity )}`,
 		'--padding': boxValues( attributes.padding, { top: '18px', right: '24px', bottom: '18px', left: '24px' }),

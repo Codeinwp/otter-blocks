@@ -57,13 +57,6 @@ class Accordion_CSS extends Base_CSS {
 						'hasSync'  => 'accordion-content-background',
 					),
 					array(
-						'property'  => '--border-style',
-						'value'     => 'borderStyle',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['borderStyle'] );
-						},
-					),
-					array(
 						'property' => '--border-color',
 						'value'    => 'borderColor',
 						'hasSync'  => 'accordion-border-color',
