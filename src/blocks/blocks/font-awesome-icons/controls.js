@@ -5,13 +5,12 @@ import {
 	AlignmentToolbar,
 	BlockControls
 } from '@wordpress/block-editor';
-import { useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import LinkControl from '../../components/link-control/index.js';
-import { buildResponsiveGetAttributes, buildResponsiveSetAttributes } from '../../helpers/helper-functions.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import { alignHandler } from './edit.js';
 
 const mappings = {
@@ -27,20 +26,10 @@ const Controls = ({
 	setAttributes,
 	isSelected
 }) => {
-
 	const {
 		responsiveSetAttributes,
 		responsiveGetAttributes
-	} = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-
-		return {
-			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
-			responsiveGetAttributes: buildResponsiveGetAttributes( view )
-		};
-	}, []);
+	} = useResponsiveAttributes( setAttributes );
 
 	return (
 		<BlockControls>

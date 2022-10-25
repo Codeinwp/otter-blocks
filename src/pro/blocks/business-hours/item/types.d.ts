@@ -9,4 +9,5 @@ type Attributes = {
 	timeColor: string
 }
 
+export type BusinessHoursItemAttrs = Partial<Attributes>
 export type BusinessHoursItemProps = BlockProps<Attributes>

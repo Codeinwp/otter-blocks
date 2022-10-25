@@ -15,8 +15,11 @@
         "initialOpen": {
             "type": "boolean",
             "default": false
-        }
-    },
+        },
+		"tag": {
+			"type": "string"
+		}
+	},
 	"supports": {
 		"reusable": false
 	}

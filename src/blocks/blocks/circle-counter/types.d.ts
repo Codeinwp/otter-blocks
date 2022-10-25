@@ -7,7 +7,7 @@ type Attributes = {
 	duration: number
 	titleStyle: string
 	height: number
-	fontSizeTitle: string
+	fontSizeTitle: number
 	fontSizePercent: number
 	strokeWidth: number
 	backgroundColor: string
@@ -15,5 +15,6 @@ type Attributes = {
 	titleColor: string
 }
 
+export type CircleCounterAttrs = Partial<Attributes>
 export type CircleCounterPros = BlockProps<Attributes>
 export interface CircleCounterInspectorProps extends InspectorProps<Attributes> {}

@@ -15,5 +15,6 @@ type Attributes = Partial<{
 	percentageColor: string
 }>
 
+export type ProgressAttrs = Partial<Attributes>
 export type ProgressBarProps = BlockProps<Attributes>
 export interface ProgressBarInspectorProps extends InspectorProps<Attributes> { }

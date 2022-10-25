@@ -11,8 +11,11 @@
         "id": {
             "type": "string"
         },
+		"FAQSchema": {
+			"type": "boolean"
+		},
         "gap": {
-            "type": "string"
+            "type": [ "string", "number" ]
         },
         "titleColor": {
             "type": "string"
@@ -23,16 +26,83 @@
         "contentBackground": {
             "type": "string"
         },
-        "borderColor": {
-            "type": "string"
-        },
+		"borderColor": {
+			"type": "string"
+		},
+		"borderWidth": {
+			"type": "string"
+		},
 		"isSynced": {
 			"type": "array"
+		},
+		"fontFamily": {
+			"type": "string"
+		},
+		"fontVariant": {
+			"type": "string"
+		},
+		"fontStyle": {
+			"type": "string"
+		},
+		"textTransform": {
+			"type": "string"
+		},
+		"fontSize": {
+			"type": "number"
+		},
+		"letterSpacing": {
+			"type": "string"
+		},
+		"padding": {
+			"type": "object"
+		},
+		"paddingTablet": {
+			"type": "object"
+		},
+		"paddingMobile": {
+			"type": "object"
+		},
+		"tag": {
+			"type": "string"
+		},
+		"alwaysOpen": {
+			"type": "boolean"
+		},
+		"boxShadow": {
+			"type": "object",
+			"default": {
+				"active": false,
+				"colorOpacity": 50,
+				"blur": 5,
+				"spread": 1,
+				"horizontal": 0,
+				"vertical": 0
+			}
+		},
+		"iconFirst": {
+			"type": "boolean",
+			"default": false
+		},
+		"activeTitleColor": {
+			"type": "string"
+		},
+		"activeTitleBackground": {
+			"type": "string"
+		},
+		"activeContentBackground": {
+			"type": "string"
+		},
+		"icon": {
+			"type": "object"
+		},
+		"openItemIcon": {
+			"type": "object"
 		}
-    },
+	},
 	"supports": {
 		"html": false
 	},
 	"editorStyle": "otter-accordion-editor",
-	"style": "otter-accordion-style"
+	"style": "otter-accordion-style",
+	"script": "otter-accordion"
 }

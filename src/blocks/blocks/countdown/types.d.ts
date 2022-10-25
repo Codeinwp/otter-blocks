@@ -50,9 +50,9 @@ type Attributes = {
 	gap: number
 	gapTablet: number
 	gapMobile: number
-	containerWidth: number
-	containerWidthTablet: number
-	containerWidthMobile: number
+	containerWidth: string
+	containerWidthTablet: string
+	containerWidthMobile: string
 	height: number
 	heightTablet: number
 	heightMobile: number
@@ -85,5 +85,6 @@ type Attributes = {
 	onEndAction: string
 } & LegacyAttrs;
 
+export type CountdownAttrs = Partial<Attributes>
 export type CountdownProps = BlockProps<Attributes>
 export interface CountdownInspectorProps extends InspectorProps<Attributes> {}

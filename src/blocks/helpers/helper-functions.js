@@ -1,4 +1,4 @@
-import { isEmpty, merge, set, unset, without, omitBy } from 'lodash';
+import { isEmpty, merge, set, unset, without, omitBy, isObjectLike, isString, isNumber, isNil, cloneDeep } from 'lodash';
 
 import { sprintf } from '@wordpress/i18n';
 
@@ -184,16 +184,16 @@ export const isUndefinedObject = obj => Object.values( obj ).every( l => l === u
 /**
  * Format the value based on the given unit.
  *
- * @param {string} value
+ * @param {number} value
  * @param {string} unit
  * @returns {string|undefined}
  */
-export const _unit = ( value, unit ) => ( value ? value + unit : undefined );
+export const _unit = ( value, unit ) => ( isNumber( value ) ? value + unit : value );
 
 /**
  * Format the value into a `px` unit.
  *
- * @param {string} value The value.
+ * @param {any} value The value.
  * @returns {string|undefined}
  */
 export const _px = value => _unit( value, 'px' );
@@ -437,4 +437,81 @@ export const changeActiveStyle = ( className, styles, newStyle ) =>{
 	}
 
 	return classes.join( ' ' );
+};
+
+/**
+ * Wrap a given string in a box object.
+ * @param {string|any} s The value.
+ * @returns {import('./blocks').BoxType|any}
+ */
+export const stringToBox = ( s ) => {
+	if ( ! isString( s ) ) {
+		return s;
+	}
+
+	return {
+		top: s,
+		bottom: s,
+		right: s,
+		left: s
+	};
+};
+
+/**
+ * Make a box intro a CSS string. If it is a string, wrap it into a box.
+ * @param {string|import('./blocks').BoxType | undefined} box The box.
+ * @returns
+ */
+export const boxToCSS = ( box ) => {
+	if ( box === undefined ) {
+		return undefined;
+	}
+
+	const _box = isString( box ) ? mergeBoxDefaultValues( stringToBox( box ) ) : mergeBoxDefaultValues( box );
+	return `${_box.top} ${_box.right} ${_box.bottom} ${_box.left}`;
+};
+
+/**
+ * Print the given value then return it. Usefull for debugging.
+ * @param {any} x
+ * @returns
+ */
+export const _i = x => {
+	console.log( x );
+	return x;
+};
+
+/**
+ * Helper function to remove empty props objects recursivly in a distructive way.
+ * @param {Object} o The object.
+ * @returns {Object | undefined}
+ */
+export const _compactObject = ( o ) => {
+	if ( ! isObjectLike( o ) ) {
+		return o;
+	}
+
+	for ( const p in o ) {
+		if ( isObjectLike( o[p]) ) {
+			o[p] = compactObject( o[p]);
+		}
+		if ( isNil( o[p]) ) {
+			delete o[p];
+		}
+	}
+
+	if ( isEmpty( o ) ) {
+		return undefined;
+	}
+
+	return o;
+};
+
+/**
+ * Remove empty props objects recursivly.
+ * @param {Object} o The object.
+ * @returns {Object | undefined}
+ */
+export const compactObject = ( o ) => {
+	return _compactObject( cloneDeep( o ) );
 };

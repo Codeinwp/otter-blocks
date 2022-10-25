@@ -11,21 +11,54 @@ import {
 
 import { Toolbar } from '@wordpress/components';
 
+const mapping = {
+	'top': 'flex-start',
+	'left': 'flex-start',
+	'bottom': 'flex-end',
+	'right': 'flex-end',
+	'center': 'center'
+};
+
+const verticalMapping = {
+	'flex-start': 'top',
+	'center': 'center',
+	'flex-end': 'bottom'
+};
+
+const horizontalMapping = {
+	'flex-start': 'left',
+	'center': 'center',
+	'flex-end': 'right'
+};
+
+const align = ( vertical, horizontal ) => {
+	if ( vertical && horizontal ) {
+		return `${verticalMapping[vertical]} ${horizontalMapping[horizontal]}`;
+	}
+	return undefined;
+};
+
 const Controls = ({
 	attributes,
 	setAttributes,
-	isFliped
+	currentSide
 }) => {
 	const BlockAlignmentMatrixControl = __experimentalBlockAlignmentMatrixControl || __experimentalBlockAlignmentMatrixToolbar;
 
 	return (
 		<BlockControls>
-			{ ( ( ! attributes.isInverted && false === isFliped ) || ( attributes.isInverted && isFliped ) ) && (
+			{ ( ( 'front' === currentSide && ! Boolean( attributes.isInverted ) ) || ( 'back' === currentSide && Boolean( attributes.isInverted ) ) ) && (
 				<Toolbar>
 					<BlockAlignmentMatrixControl
 						label={ __( 'Change front side content position', 'otter-blocks' ) }
-						value={ attributes.frontAlign }
-						onChange={ frontAlign => setAttributes({ frontAlign }) }
+						value={ align( attributes.frontVerticalAlign, attributes.frontHorizontalAlign ) }
+						onChange={ alignment => {
+							const values = alignment?.split( ' ' );
+							setAttributes({
+								frontVerticalAlign: mapping?.[values?.[0]],
+								frontHorizontalAlign: mapping?.[values?.[1]]
+							});
+						} }
 					/>
 				</Toolbar>
 			) }

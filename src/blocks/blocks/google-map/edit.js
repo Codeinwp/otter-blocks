@@ -11,8 +11,6 @@ import { __ } from '@wordpress/i18n';
 
 import { useBlockProps } from '@wordpress/block-editor';
 
-import { ResizableBox } from '@wordpress/components';
-
 import {
 	Fragment,
 	useEffect,
@@ -46,8 +44,7 @@ const Edit = ({
 	attributes,
 	setAttributes,
 	clientId,
-	isSelected,
-	toggleSelection
+	isSelected
 }) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -545,37 +542,14 @@ const Edit = ({
 			) }
 
 			<div { ...blockProps }>
-				<ResizableBox
-					size={ {
-						height: attributes.height
-					} }
-					enable={ {
-						top: false,
-						right: false,
-						bottom: true,
-						left: false
-					} }
-					minHeight={ 100 }
-					maxHeight={ 1400 }
-					onResizeStart={ () => {
-						toggleSelection( false );
-					} }
-					onResizeStop={ ( event, direction, elt, delta ) => {
-						setAttributes({
-							height: parseInt( attributes.height + delta.height, 10 )
-						});
-						toggleSelection( true );
-					} }
-				>
-					<Map
-						attributes={ attributes }
-						initMap={ initMap }
-						displayMap={ displayMap }
-						isMapLoaded={ isMapLoaded }
-						selectMarker={ selectMarker }
-						isSelectingMarker={ isSelectingMarker }
-					/>
-				</ResizableBox>
+				<Map
+					attributes={ attributes }
+					initMap={ initMap }
+					displayMap={ displayMap }
+					isMapLoaded={ isMapLoaded }
+					selectMarker={ selectMarker }
+					isSelectingMarker={ isSelectingMarker }
+				/>
 			</div>
 		</Fragment>
 	);

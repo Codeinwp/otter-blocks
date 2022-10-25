@@ -115,7 +115,7 @@ module.exports = [
 				'./src/blocks/blocks/index.js',
 				'./src/blocks/components/index.js',
 				'./src/blocks/helpers/index.js',
-				'./src/blocks/plugins/registerPlugin.js'
+				'./src/blocks/plugins/registerPlugin.tsx'
 			],
 			'leaflet-map': './src/blocks/frontend/leaflet-map/index.js',
 			'leaflet-gesture-handling': './src/blocks/frontend/leaflet-map/leaflet-gesture-handling.js',
@@ -129,7 +129,8 @@ module.exports = [
 			form: './src/blocks/frontend/form/index.js',
 			countdown: './src/blocks/frontend/countdown/index.ts',
 			popup: './src/blocks/frontend/popup/index.js',
-			sticky: './src/blocks/frontend/sticky/index.ts'
+			sticky: './src/blocks/frontend/sticky/index.ts',
+			accordion: './src/blocks/frontend/accordion/index.js'
 		},
 		output: {
 			path: path.resolve( __dirname, './build/blocks' ),

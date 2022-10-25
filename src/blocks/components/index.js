@@ -3,12 +3,14 @@
  */
 import { useInspectorSlot } from './inspector-slot-fill/index.js';
 import Notice from './notice/index.js';
+import { OtterControlTools } from './otter-tools/index';
 import SelectProducts from './select-products-control/index.js';
 
 window.otterComponents = {};
 
 window.otterComponents.SelectProducts = SelectProducts;
 window.otterComponents.Notice = Notice;
+window.otterComponents.OtterControlTools = OtterControlTools;
 window.otterComponents.useInspectorSlot = useInspectorSlot;
 
 export { default as BackgroundOverlayControl } from './background-overlay-control/index.js';
