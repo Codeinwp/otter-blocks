@@ -30,14 +30,25 @@
 			"type": "string"
 		},
 		"defaultSize": {
-			"type": "number",
-			"default": 20
+			"type": ["number", "string"],
+			"default": "20px"
+		},
+		"defaultIconSize": {
+			"type": "string"
 		},
 		"gap": {
-			"type": "number",
-			"default": 5
+			"type": ["number", "string"]
+		},
+		"gapIconLabel": {
+			"type": ["string"]
 		},
 		"horizontalAlign": {
+			"type": "string"
+		},
+		"alignmentTablet": {
+			"type": "string"
+		},
+		"alignmentMobile": {
 			"type": "string"
 		}
 	},

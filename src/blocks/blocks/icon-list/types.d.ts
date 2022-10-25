@@ -7,9 +7,13 @@ type Attributes= {
 	defaultIcon: string
 	defaultContentColor: string
 	defaultIconColor: string
+	defaultIconSize: number
 	defaultSize: number
 	gap: number
 	horizontalAlign: string
+	alignmentTablet: string
+	alignmentMobile: string
+	gapIconLabel: string
 }
 
 export type IconListProps = BlockProps<Attributes>
