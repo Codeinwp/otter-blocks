@@ -8,12 +8,23 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
+import { isNumber } from 'lodash';
+
 import { Button } from '@wordpress/components';
 
 import {
 	Fragment,
 	useEffect
 } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import { useResponsiveAttributes } from '../../../helpers/utility-hooks.js';
+
+const px = value => value ? `${ value }px` : value;
+
+const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
 
 const Map = ({
 	attributes,
@@ -29,13 +40,18 @@ const Map = ({
 		}
 	}, [ displayMap ]);
 
+	const { responsiveGetAttributes } = useResponsiveAttributes();
+
 	return (
 		<Fragment>
 			<div
 				id={ attributes.id }
-				className={ classnames({ 'is-selecting-marker': isSelectingMarker }) }
+				className={ classnames(
+					'wp-block-themeisle-blocks-google-map-container',
+					{ 'is-selecting-marker': isSelectingMarker }
+				) }
 				style={ {
-					height: attributes.height + 'px'
+					height: responsiveGetAttributes([ mightBeUnit( attributes.height ), attributes.heightTablet, attributes.heightMobile ])
 				} }
 			>
 			</div>

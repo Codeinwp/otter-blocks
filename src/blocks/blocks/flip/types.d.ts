@@ -55,6 +55,7 @@ type Attributes = {
 
 }
 
+export type FlipAttrs = Partial<Attributes>
 export type FlipProps = BlockProps<Attributes>
 export interface FlipInspectorProps extends InspectorProps<Attributes> {
 	currentSide: string

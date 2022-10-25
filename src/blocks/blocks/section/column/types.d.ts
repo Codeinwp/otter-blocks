@@ -18,7 +18,7 @@ type Attributes = {
 	backgroundGradient: string
 	border: BorderType
 	borderColor: string
-	borderRadius: number
+	borderRadius: BorderType
 	boxShadow: boolean
 	boxShadowColor: string
 	boxShadowColorOpacity: number
@@ -31,5 +31,6 @@ type Attributes = {
 	isSynced: string[]
 }
 
+export type ColumnAttrs = Partial<Attributes>
 export type SectionColumnProps = BlockProps<Attributes>
 export interface SectionColumnInspectorProps extends InspectorProps<Attributes> {}

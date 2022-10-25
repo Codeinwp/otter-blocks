@@ -13,5 +13,6 @@ type Attributes = {
 	altRowColor: string
 }
 
+export type WooComparisonAttrs = Partial<Attributes>
 export type WooComparisonProps = BlockProps<Attributes>
 export interface WooComparisonInspectorProps extends InspectorProps<Attributes> {}
