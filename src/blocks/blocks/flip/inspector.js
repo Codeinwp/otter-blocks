@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+
 import { __ } from '@wordpress/i18n';
 
 import { isEmpty, isNumber, pick } from 'lodash';
@@ -26,7 +27,11 @@ import {
 
 import { Fragment, useState } from '@wordpress/element';
 
-import { useSelect } from '@wordpress/data';
+import {
+	alignCenter,
+	alignLeft,
+	alignRight
+} from '@wordpress/icons';
 
 /**
  * Internal dependencies
@@ -34,8 +39,6 @@ import { useSelect } from '@wordpress/data';
 import ControlPanelControl from '../../components/control-panel-control/index.js';
 import BackgroundSelectorControl from '../../components/background-selector-control/index.js';
 import {
-	buildResponsiveGetAttributes,
-	buildResponsiveSetAttributes,
 	mergeBoxDefaultValues,
 	removeBoxDefaultValues,
 	stringToBox,
@@ -45,10 +48,10 @@ import {
 import InspectorHeader from '../../components/inspector-header/index.js';
 import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
-import { alignCenter, alignLeft, alignRight } from '@wordpress/icons';
 import ToogleGroupControl from '../../components/toogle-group-control/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
 import { alignBottom, alignTop, alignCenter as oAlignCenter } from '../../helpers/icons.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 const wrapNumberInBox = ( x ) => isNumber( x ) ? stringToBox( _px( x ) ) : x;
 
@@ -86,22 +89,12 @@ const Inspector = ({
 	currentSide,
 	setSide
 }) => {
-
 	const [ tab, setTab ] = useState( 'settings' );
 
 	const {
 		responsiveSetAttributes,
 		responsiveGetAttributes
-	} = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-
-		return {
-			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
-			responsiveGetAttributes: buildResponsiveGetAttributes( view )
-		};
-	}, []);
+	} = useResponsiveAttributes( setAttributes );
 
 	const changeBoxShadowColor = value => {
 		setAttributes({
