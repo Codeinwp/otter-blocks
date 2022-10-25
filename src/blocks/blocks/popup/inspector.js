@@ -301,10 +301,10 @@ const Inspector = ({
 											attributes.padding,
 											attributes.paddingTablet,
 											attributes.paddingMobile
-										]) ?? { top: '0px', bottom: '0px', left: '0px', right: '0px' } }
+										]) ?? { top: '20px', bottom: '20px', left: '20px', right: '20px' } }
 										onChange={ value => {
 											responsiveSetAttributes(
-												removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' }),
+												removeBoxDefaultValues( value, { top: '20px', bottom: '20px', left: '20px', right: '20px' }),
 												[ 'padding', 'paddingTablet', 'paddingMobile' ]
 											);
 										}}

@@ -17,3 +17,11 @@
 		}
 	}
 }
+
+#editor:has(.interface-interface-skeleton__secondary-sidebar) {
+	.wp-block-themeisle-blocks-popup {
+		.otter-popup__modal_content {
+			margin-left: 330px;
+		}
+	}
+}
