@@ -31,8 +31,14 @@
 			"type": "number"
 		},
 		"height": {
-			"type": "number",
-			"default": 400
+			"type": [ "number", "string" ],
+			"default": "400px"
+		},
+		"heightTablet": {
+			"type": "string"
+		},
+		"heightMobile": {
+			"type": "string"
 		},
 		"markers": {
 			"type": "array",

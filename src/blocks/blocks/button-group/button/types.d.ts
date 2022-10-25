@@ -34,5 +34,6 @@ type Attributes = {
   icon: string
 }
 
+export type ButtonAttrs = Partial<Attributes>
 export type ButtonGroupButtonProps = BlockProps<Attributes>
 export interface ButtonGroupButtonInspectorProps extends InspectorProps<Attributes> {}

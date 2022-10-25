@@ -8,6 +8,8 @@ import classnames from 'classnames';
  */
 import { __ } from '@wordpress/i18n';
 
+import { isNumber } from 'lodash';
+
 import { useState } from '@wordpress/element';
 
 import {
@@ -15,7 +17,8 @@ import {
 	TextControl,
 	RangeControl,
 	BaseControl,
-	ToggleControl
+	ToggleControl,
+	__experimentalUnitControl as UnitContol
 } from '@wordpress/components';
 
 import { InspectorControls } from '@wordpress/block-editor';
@@ -24,8 +27,14 @@ import { InspectorControls } from '@wordpress/block-editor';
  * Internal dependencies
  */
 import { getLocation } from './utility';
-
 import MarkerWrapper from './components/marker-wrapper.js';
+import ResponsiveControl from '../../components/responsive-control/index.js';
+import ClearButton from '../../components/clear-button/index.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
+
+const px = value => value ? `${ value }px` : value;
+
+const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
 
 /**
  *
@@ -44,6 +53,11 @@ const Inspector = ({
 		target: '',
 		reason: ''
 	});
+
+	const {
+		responsiveSetAttributes,
+		responsiveGetAttributes
+	} = useResponsiveAttributes( setAttributes );
 
 	const search = async() => {
 		setAttributes({ location });
@@ -73,10 +87,6 @@ const Inspector = ({
 
 	const changeLongitude = value => {
 		setAttributes({ longitude: value.toString() });
-	};
-
-	const changeHeight = value => {
-		setAttributes({ height: value });
 	};
 
 	const changeZoom = value => {
@@ -144,13 +154,19 @@ const Inspector = ({
 					max={ 20 }
 				/>
 
-				<RangeControl
-					label={ __( 'Map Height', 'otter-blocks' ) }
-					value={ attributes.height }
-					onChange={ changeHeight }
-					min={ 100 }
-					max={ 1400 }
-				/>
+				<ResponsiveControl
+					label={ __( 'Height', 'otter-blocks' ) }
+				>
+					<UnitContol
+						value={ responsiveGetAttributes([ mightBeUnit( attributes.height ), attributes.heightTablet, attributes.heightMobile ]) }
+						onChange={ value => responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]) }
+					/>
+
+					<ClearButton
+						values={[ 'height', 'heightTablet', 'heightMobile' ]}
+						setAttributes={ setAttributes }
+					/>
+				</ResponsiveControl>
 			</PanelBody>
 
 			<PanelBody

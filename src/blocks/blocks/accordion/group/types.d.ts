@@ -31,5 +31,6 @@ type Attributes = {
 	openItemIcon: IconData
 }
 
+export type AccordionGroupAttrs = Partial<Attributes>
 export type AccordionGroupProps = BlockProps<Attributes>
 export interface AccordionGroupInspectorProps extends InspectorProps<Attributes> {}

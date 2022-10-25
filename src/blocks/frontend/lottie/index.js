@@ -9,10 +9,10 @@ domReady( () => {
 	const initAnimation = animation => {
 		if ( 'false' === animation.dataset.loop ) {
 			animation.setLooping( false );
+		}
 
-			if ( -1 === animation.__direction ) {
-				animation.seek( '100%' );
-			}
+		if ( -1 === animation.__direction ) {
+			animation.seek( '100%' );
 		}
 
 		if ( Boolean( animation.__count ) ) {
@@ -59,7 +59,7 @@ domReady( () => {
 
 				initAnimation( animation );
 
-				return animation.stop();
+				return -1 === animation.__direction ? animation.pause() : animation.stop();
 			}
 
 			if ( 'click' === trigger ) {
@@ -71,7 +71,7 @@ domReady( () => {
 
 				initAnimation( animation );
 
-				return animation.stop();
+				return -1 === animation.__direction ? animation.pause() : animation.stop();
 			}
 
 			return initAnimation( animation );
