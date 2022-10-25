@@ -122,16 +122,6 @@
 	}
 }
 
-#o-brd-raduis-box {
-	max-width: 100%;
-	>.component-box-control__header-control-wrapper {
-		>.components-flex-item {
-			&:first-child {
-				transform: rotate( 315deg );
-			}
-		}
-	}
-}
 #o-border-raduis-box {
 	max-width: 100%;
 	>.component-box-control__header-control-wrapper {

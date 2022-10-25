@@ -380,50 +380,19 @@ const Inspector = ({
 								title={ __( 'Border', 'otter-blocks' ) }
 								initialOpen={ false }
 							>
-								<SelectControl
-									label={ __( 'Style', 'otter-blocks' ) }
-									value={ attributes.borderStyle ?? 'hidden'}
-									onChange={ value => setAttributes({ borderStyle: 'hidden' === value ? undefined : value })}
-									options={ [
-										{
-											label: __( 'Hidden', 'otter-blocks' ),
-											value: 'hidden'
-										},
-										{
-											label: __( 'Dashed', 'otter-blocks' ),
-											value: 'dashed'
-										},
-										{
-											label: __( 'Double', 'otter-blocks' ),
-											value: 'double'
-										},
-										{
-											label: __( 'Dotted', 'otter-blocks' ),
-											value: 'dotted'
-										},
-										{
-											label: __( 'Solid', 'otter-blocks' ),
-											value: 'solid'
-										}
-									] }
-								/>
-
-								{
-									attributes?.borderStyle && 'hidden' !== attributes?.borderStyle && (
-										<BoxControl
-											label={ __( 'Width', 'otter-blocks' ) }
-											values={ attributes.borderWidth ?? { top: '0px', bottom: '0px', left: '0px', right: '0px' } }
-											onChange={ value => {
-												setAttributes({
-													borderWidth: removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' })
-												});
-											}}
-										/>
-									)
-								}
 
 								<BoxControl
-									id="o-brd-raduis-box"
+									label={ __( 'Width', 'otter-blocks' ) }
+									values={ attributes.borderWidth ?? { top: '0px', bottom: '0px', left: '0px', right: '0px' } }
+									onChange={ value => {
+										setAttributes({
+											borderWidth: removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' })
+										});
+									}}
+								/>
+
+								<BoxControl
+									id="o-border-raduis-box"
 									label={ __( 'Border Radius', 'otter-blocks' ) }
 									values={ attributes.borderRadius ?? { top: '0px', bottom: '0px', left: '0px', right: '0px' } }
 									onChange={ value => {
