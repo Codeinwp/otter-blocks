@@ -1,5 +1,7 @@
 .wp-block-themeisle-blocks-icon-list {
-	--horizontal-align: unset;
+	--icon-align: unset;
+	--icon-align-tablet: unset;
+	--icon-align-mobile: unset;
 	--gap: 5px;
 	--font-size: 20px;
 	--content-color: inherit;
@@ -25,10 +27,20 @@
 		display: flex;
 		flex-direction: inherit;
 		flex-wrap: wrap;
-		align-items: var( --horizontal-align );
-		justify-content: var( --horizontal-align );
+		align-items: var( --icon-align );
+		justify-content: var( --icon-align );
 		gap: var( --gap );
 		width: 100%;
+
+		@media (min-width: 600px) and (max-width: 960px) {
+			align-items: var( --icon-align-tablet );
+			justify-content: var( --icon-align-tablet );
+		}
+	
+		@media (max-width: 600px) {
+			align-items: var( --icon-align-mobile );
+			justify-content: var( --icon-align-mobile );
+		}
 	}
 
 	.wp-block-themeisle-blocks-icon-list-item {

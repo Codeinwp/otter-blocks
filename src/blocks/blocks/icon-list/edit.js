@@ -37,7 +37,9 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const inlineStyles = {
-		'--horizontal-align': attributes.horizontalAlign,
+		'--icon-align': attributes.horizontalAlign,
+		'--icon-align-tablet': attributes.alignmentTablet,
+		'--icon-align-mobile': attributes.alignmentMobile,
 		'--gap': attributes.gap && `${ attributes.gap }px`,
 		'--font-size': attributes.defaultSize && `${ attributes.defaultSize }px`
 	};

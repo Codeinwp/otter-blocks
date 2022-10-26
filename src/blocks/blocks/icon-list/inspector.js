@@ -15,7 +15,9 @@ import {
 	RangeControl,
 	FontSizePicker,
 	__experimentalUnitControl as UnitControl,
-	BaseControl
+	BaseControl,
+	Placeholder,
+	Spinner
 } from '@wordpress/components';
 
 import {
@@ -100,8 +102,13 @@ const Inspector = ({
 								label={ __( 'Alignment', 'otter-blocks' ) }
 							>
 								<ToogleGroupControl
-									value={ responsiveGetAttributes([ attributes.horizontalAlign, attributes.alignmentTablet, attributes.alignmentMobile  ]) }
-									onChange={ () => {} }
+									value={ responsiveGetAttributes([ attributes.horizontalAlign, attributes.alignmentTablet, attributes.alignmentMobile  ]) ?? 'flex-start' }
+									onChange={ ( value ) => {
+										responsiveSetAttributes(
+											'flex-start' === value ? undefined : value,
+											[ 'horizontalAlign', 'alignmentTablet', 'alignmentMobile' ]
+										);
+									} }
 									options={[
 										{
 											icon: alignLeft,
