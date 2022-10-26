@@ -2,11 +2,8 @@
  * WordPress Dependencies
  */
 import { __ } from '@wordpress/i18n';
-
 import { Fragment } from '@wordpress/element';
-
 import { __experimentalColorGradientControl as ColorGradientControl } from '@wordpress/block-editor';
-
 import { RangeControl } from '@wordpress/components';
 
 /**
@@ -30,7 +27,7 @@ const BoxShadowControl = ({
 
 	return (
 		<ControlPanelControl
-			label={ __( 'Box Shadow', 'otter-blocks' ) }
+			label={ __( 'Shadow Settings', 'otter-blocks' ) }
 			attributes={ boxShadow }
 			setAttributes={ onChange }
 			resetValues={ defaultBoxShadow }

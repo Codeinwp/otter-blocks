@@ -1,24 +1,26 @@
+@import './style.scss';
+
 .wp-block-themeisle-blocks-accordion {
-	--title-color: #1e1e1e;
-	--title-background: #ffffff;
-	--border-color: #d5dadf;
-	--content-background: #ffffff;
+	$block: &;
+	border: none;
 
-	margin: 20px auto;
+	&-item {
+		border: none;
+		margin: var(--gap) 0;
 
-	.wp-block-themeisle-blocks-accordion-item {
-		.wp-block-themeisle-blocks-accordion-item__title {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-			color: var( --title-color );
-			background: var( --title-background );
-			border: 1px solid var( --border-color );
-			padding: 18px 24px;
+		&:not([ data-align="full"] ) {
+			max-width: 100%;
+		}
+
+		&__title {
 			cursor: pointer;
 
 			.block-editor-rich-text__editable {
 				cursor: text;
+			}
+
+			> * {
+				margin-bottom: 0;
 			}
 
 			svg {
@@ -32,42 +34,69 @@
 			}
 		}
 
-		.wp-block-themeisle-blocks-accordion-item__content {
-			background: var( --content-background );
-			border: 1px solid var( --border-color );
-			border-top: none;
-			padding: 18px 24px;
-		}
-
 		&:not([ data-align="full"] ) {
 			max-width: 100%;
+		}
+	}
+
+	&.icon-first > * > * > &-item > &-item__title {
+		display: flex;
+		flex-direction: row-reverse;
+		justify-content: flex-end;
+		gap: 24px;
+	}
+
+	/* boxed style */
+	&.is-style-boxed &-item {
+		&__title {
+			border: var(--border-width) var(--border-style) var(--border-color);
+		}
+
+		&__content {
+			border: var(--border-width) var(--border-style) var(--border-color);
+			border-top: none;
+		}
+	}
+
+	// when no gap is set, we need to avoid the doubled border between items
+	&.is-style-boxed.no-gap > * > * > &-item:not( :first-child ),
+	&.is-style-boxed:not( .is-narrow-gap ):not( .is-wide-gap ):not( .is-wider-gap ):not( .has-gap ) > * > * > &-item:not( :first-child ) {
+		#{$block}-item__title {
+			border-top: none;
+		}
+	}
+
+	/* default style */
+	&:not( .is-style-boxed ) > * > * > &-item {
+		> #{$block}-item__title {
+			border: 0;
+			border-top: var(--border-width) var(--border-style) var(--border-color);
+		}
+
+		> #{$block}-item__content {
+			border: 0;
+		}
+	}
+
+	&:not( .is-style-boxed ) > * > * > &-item:last-child {
+		&:not([open]):not( .is-open ) > #{$block}-item__title {
+			border-bottom: var(--border-width) var(--border-style) var(--border-color);
+		}
+
+		> #{$block}-item__content {
+			border: 0;
+			border-bottom: var(--border-width) var(--border-style) var(--border-color);
 		}
 	}
 
 	> .block-editor-inner-blocks {
 		> .block-editor-block-list__layout {
 			> .block-editor-block-list__block {
-				margin: 0;
+				//margin: 0;
 			}
 
 			> .block-list-appender {
 				position: relative;
-			}
-		}
-	}
-
-	&:not( .is-narrow-gap ):not( .is-wide-gap ):not( .is-wider-gap ) {
-		> .block-editor-inner-blocks {
-			> .block-editor-block-list__layout {
-				.block-editor-block-list__block {
-					&:not( :first-child ) > {
-						div:not(.wp-block-themeisle-blocks-accordion) > {
-							.wp-block-themeisle-blocks-accordion-item__title {
-								border-top: none;
-							}
-						}
-					}
-				}
 			}
 		}
 	}
@@ -101,4 +130,27 @@
 			}
 		}
 	}
+
+	&:not( .has-icon ) > * > * > &-item:not( .is-open ) > &-item__title::after,
+	&:not( .has-open-icon ) > * > * > &-item.is-open > &-item__title::after {
+		content: '';
+		justify-self: end;
+		align-self: center;
+		border-right: 2px solid currentColor;
+		border-bottom: 2px solid currentColor;
+		width: 8px;
+		height: 8px;
+	}
+
+	&:not( .has-icon ) > * > * > &-item:not( .is-open ) > &-item__title::after {
+		transform: rotate(45deg) translate(-25%, 0%);
+	}
+
+	&:not( .has-open-icon ) > * > * > &-item.is-open > &-item__title::after {
+		transform: rotate(225deg) translate(0%, -45%);
+	}
+}
+
+.accordion-border-control .components-range-control {
+	margin: 0 10px !important;
 }

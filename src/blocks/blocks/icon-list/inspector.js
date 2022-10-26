@@ -10,20 +10,13 @@ import {
 
 import {
 	PanelBody,
-	RangeControl,
-	Placeholder,
-	Spinner
+	RangeControl
 } from '@wordpress/components';
-
-import {
-	lazy,
-	Suspense
-} from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-const IconPickerControl = lazy( () => import( '../../components/icon-picker-control/index.js' ) );
+import IconPickerControl from '../../components/icon-picker-control/index.js';
 
 /**
  *
@@ -78,17 +71,15 @@ const Inspector = ({
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>
-				<Suspense fallback={ <Placeholder><Spinner /></Placeholder> }>
-					<IconPickerControl
-						label={ __( 'Icon Picker', 'otter-blocks' ) }
-						library={ attributes.defaultLibrary }
-						prefix={ attributes.defaultPrefix }
-						icon={ attributes.defaultIcon }
-						changeLibrary={ changeLibrary }
-						onChange={ changeIcon }
-						allowImage
-					/>
-				</Suspense>
+				<IconPickerControl
+					label={ __( 'Icon Picker', 'otter-blocks' ) }
+					library={ attributes.defaultLibrary }
+					prefix={ attributes.defaultPrefix }
+					icon={ attributes.defaultIcon }
+					changeLibrary={ changeLibrary }
+					onChange={ changeIcon }
+					allowImage
+				/>
 
 				<RangeControl
 					label={ __( 'Font Size', 'otter-blocks' ) }
