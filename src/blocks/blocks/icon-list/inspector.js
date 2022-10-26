@@ -13,8 +13,6 @@ import {
 import {
 	PanelBody,
 	RangeControl,
-	Placeholder,
-	Spinner,
 	FontSizePicker,
 	__experimentalUnitControl as UnitControl,
 	BaseControl
@@ -36,7 +34,7 @@ import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 /**
  * Internal dependencies
  */
-const IconPickerControl = lazy( () => import( '../../components/icon-picker-control/index.js' ) );
+import IconPickerControl from '../../components/icon-picker-control/index.js';
 
 /**
  *

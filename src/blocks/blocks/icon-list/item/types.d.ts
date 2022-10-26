@@ -10,5 +10,6 @@ type Attributes = {
 	icon: string
 }
 
+export type IconListItemAttrs = Partial<Attributes>
 export type IconListItemProps = BlockProps<Attributes>
 export interface IconsListItemInspectorProps extends InspectorProps<Attributes> {}

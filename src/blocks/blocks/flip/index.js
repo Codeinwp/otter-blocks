@@ -14,7 +14,7 @@ import { registerBlockType } from '@wordpress/blocks';
  * Internal dependencies
  */
 import metadata from './block.json';
-import edit from './edit.js';
+import edit from './edit';
 import save from './save.js';
 
 const { name } = metadata;
