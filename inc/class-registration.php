@@ -86,6 +86,7 @@ class Registration {
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
 		add_filter( 'render_block', array( $this, 'load_sticky' ), 900, 2 );
 		add_filter( 'render_block', array( $this, 'subscribe_fa' ), 10, 2 );
+		add_filter( 'upload_mimes', array( $this, 'add_dot_lottie_file_type' ) );
 
 		add_action(
 			'wp_footer',
@@ -96,6 +97,17 @@ class Registration {
 				}
 			}
 		);
+	}
+
+	/**
+	 * Allow .lottie files upload
+	 * @param array $mimes
+	 *
+	 * @return array
+	 */
+	public function add_dot_lottie_file_type( $mimes ) {
+		$mimes['lottie'] = 'application/zip';
+		return $mimes;
 	}
 
 	/**
