@@ -33,10 +33,6 @@ domReady( () => {
 	};
 
 	animations.forEach( animation => {
-		// if ( animation.getAttribute( 'src' ).endsWith( '.lottie' ) ) {
-		// 	console.log( animation );
-		// }
-
 		animation.addEventListener( 'load', () => {
 			const trigger = animation.getAttribute( 'trigger' );
 
