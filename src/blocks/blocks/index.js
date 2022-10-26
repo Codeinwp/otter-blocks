@@ -23,5 +23,6 @@ import './review/index.js';
 import './section/index.js';
 import './sharing-icons/index.js';
 import './slider/index.js';
+import './stripe-checkout/index.js';
 import './structural/index.js';
 import './tabs/index.js';

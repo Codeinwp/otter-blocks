@@ -190,6 +190,13 @@
 			"slider/style.css": "blocks/blocks/slider/style.scss"
 		}
 	},
+	"stripe-checkout": {
+		"block": "blocks/blocks/stripe-checkout/block.json",
+		"assets": {
+			"stripe-checkout/editor.css": "blocks/blocks/stripe-checkout/editor.scss",
+			"stripe-checkout/style.css": "blocks/blocks/stripe-checkout/style.scss"
+		}
+	},
 	"pricing": {
 		"block": "blocks/blocks/structural/pricing/block.json"
 	},

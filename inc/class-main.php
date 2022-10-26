@@ -78,6 +78,7 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Server\Dashboard_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Plugin_Card_Server',
+			'\ThemeIsle\GutenbergBlocks\Server\Stripe_Server',
 			'\ThemeIsle\GutenbergBlocks\Integration\Form_Providers',
 			'\ThemeIsle\GutenbergBlocks\Integration\Form_Email',
 			'\ThemeIsle\GutenbergBlocks\Server\Form_Server',
