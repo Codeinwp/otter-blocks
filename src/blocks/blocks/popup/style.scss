@@ -17,7 +17,7 @@ $base-index: 9999 !default;
 
 	--height: fit-content;
 	--height-tablet: var(--height);
-	--height-mobile: var(--width-tablet);
+	--height-mobile: var(--height-tablet);
 
 	--padding: 20px;
 	--padding-tablet: var(--padding);
