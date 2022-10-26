@@ -124,3 +124,24 @@ Example
 
 Adding the link for the source code will be like a gift to the poor soul that it will need to fix it when WP makes some changes.
 
+## Debugging
+
+Under the hood, this feature relies on `localStorage` to store the copied data for cross-tab interaction on the same __browser__ and __host__.
+
+__We do not put anything on the `clipboard`.__
+
+To see the currently copied data, go to the `Application` tab of the Developer Tools in the Browser. Select `Local Storage` and the host URL. ([Guide](https://developer.chrome.com/docs/devtools/storage/localstorage/))
+
+You will see an `o-copyPasteStorage` key, and the content of the `Storage` will be its value.
+
+![copy-paste-local-storage](images/copy-paste-local-storage.png)
+
+Every time you copy a block, it will be sync with the storage. 
+
+When things get hard, better use (`debugger`)[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/debugger].
+
+## Good to know
+
+:warning: If you work on a WP instance and want to copy-paste the style to another WP instance, it will not work.
+
+Maybe in the future, we will have this feature. Still, it is very tricky because you need to override the `clipboard` mechanism on how to parse the data and prevent it from conflicting with the Editor - this is a very niche situation; maybe WP will implement something similar in which we can hook ours.
