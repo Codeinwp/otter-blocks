@@ -279,20 +279,40 @@ const Inspector = ({
 									/>
 								</ResponsiveControl>
 
-								<ResponsiveControl
+								<SelectControl
 									label={ __( 'Height', 'otter-blocks' ) }
-								>
-									<UnitControl
-										value={ responsiveGetAttributes([
-											attributes.height,
-											attributes.heightTablet,
-											attributes.heightMobile
-										]) ?? '400px' }
-										onChange={ value => {
-											responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]);
-										}}
-									/>
-								</ResponsiveControl>
+									options={ [
+										{
+											label: __( 'Fit Content', 'otter-blocks' ),
+											value: 'none'
+										},
+										{
+											label: __( 'Custom', 'otter-blocks' ),
+											value: 'custom'
+										}
+									] }
+									value={ attributes.heightMode }
+									onChange={ value => setAttributes({ heightMode: 'none' !== value ? value : undefined })}
+								/>
+
+								{
+									'custom' === attributes.heightMode && (
+										<ResponsiveControl
+											label={ __( 'Custom Height', 'otter-blocks' ) }
+										>
+											<UnitControl
+												value={ responsiveGetAttributes([
+													attributes.height,
+													attributes.heightTablet,
+													attributes.heightMobile
+												]) ?? '400px' }
+												onChange={ value => {
+													responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]);
+												}}
+											/>
+										</ResponsiveControl>
+									)
+								}
 
 								<ResponsiveControl>
 									<BoxControl

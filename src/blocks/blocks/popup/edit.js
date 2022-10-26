@@ -61,6 +61,12 @@ const Edit = ( props ) => {
 
 	const [ isEditing, setEditing ] = useState( false );
 
+	const height = 'custom' === attributes.heightMode ? {
+		'--height': attributes.height,
+		'--height-tablet': attributes.heightMobile,
+		'--height-mobile': attributes.heightMobile
+	} : { '--height': 'fit-content' };
+
 	const inlineStyles = {
 		'--min-width': attributes.minWidth ? attributes.minWidth + 'px' : '400px',
 		'--max-width': attributes.maxWidth ? attributes.maxWidth + 'px' : undefined,
@@ -77,13 +83,13 @@ const Edit = ( props ) => {
 		'--width': ! Boolean( attributes.width ) && attributes.maxWidth ? attributes.maxWidth + 'px' : attributes.width,
 		'--width-tablet': attributes.widthTablet,
 		'--width-mobile': attributes.widthMobile,
-		'--height': attributes.height,
-		'--height-tablet': attributes.heightMobile,
-		'--height-mobile': attributes.heightMobile,
+
 		'--padding': attributes.padding ?  boxValues( merge( makeBox( '20px' ), attributes.padding ) ) : undefined,
 		'--padding-tablet': attributes.paddingTablet ?  boxValues( merge( makeBox( '20px' ), attributes.padding ?? {}, attributes.paddingTablet ) ) : undefined,
 		'--padding-mobile': attributes.paddingMobile ?  boxValues( merge( makeBox( '20px' ), attributes.padding ?? {}, attributes.paddingTablet  ?? {}, attributes.paddingMobile ) ) : undefined,
-		'--box-shadow': attributes.boxShadow.active && `${ attributes.boxShadow.horizontal }px ${ attributes.boxShadow.vertical }px ${ attributes.boxShadow.blur }px ${ attributes.boxShadow.spread }px ${ hexToRgba( attributes.boxShadow.color || '#FFFFFF', attributes.boxShadow.colorOpacity ) }`
+		'--box-shadow': attributes.boxShadow.active && `${ attributes.boxShadow.horizontal }px ${ attributes.boxShadow.vertical }px ${ attributes.boxShadow.blur }px ${ attributes.boxShadow.spread }px ${ hexToRgba( attributes.boxShadow.color || '#FFFFFF', attributes.boxShadow.colorOpacity ) }`,
+
+		...height
 	};
 
 	const [ cssNode, setNodeCSS ] = useCSSNode();

@@ -107,16 +107,25 @@ class Popup_CSS extends Base_CSS {
 						'value'    => 'widthMobile',
 					),
 					array(
-						'property' => '--height',
-						'value'    => 'height',
+						'property'  => '--height',
+						'value'     => 'height',
+						'condition' => function ( $attrs ) {
+							return isset( $attrs['heightMode'] ) && 'custom' === $attrs['heightMode'];
+						},
 					),
 					array(
-						'property' => '--height-tablet',
-						'value'    => 'heightTablet',
+						'property'  => '--height-tablet',
+						'value'     => 'heightTablet',
+						'condition' => function ( $attrs ) {
+							return isset( $attrs['heightMode'] ) && 'custom' === $attrs['heightMode'];
+						},
 					),
 					array(
-						'property' => '--height-mobile',
-						'value'    => 'heightMobile',
+						'property'  => '--height-mobile',
+						'value'     => 'heightMobile',
+						'condition' => function ( $attrs ) {
+							return isset( $attrs['heightMode'] ) && 'custom' === $attrs['heightMode'];
+						},
 					),
 					array(
 						'property' => '--padding',

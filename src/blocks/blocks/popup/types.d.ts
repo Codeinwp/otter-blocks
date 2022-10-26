@@ -41,6 +41,7 @@ type Attributes = {
 	closeButtonType: 'outside'
 	lockScrolling: boolean
 	disableOn: 'mobile'
+	heightMode: string
 }
 
 export type PopupPros = BlockProps<Attributes>

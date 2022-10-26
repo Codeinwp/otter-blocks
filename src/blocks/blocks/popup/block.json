@@ -96,6 +96,9 @@
 		"widthMobile": {
 			"type": "string"
 		},
+		"heightMode": {
+			"type": "string"
+		},
 		"height":{
 			"type": "string"
 		},
