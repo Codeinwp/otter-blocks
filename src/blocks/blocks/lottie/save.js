@@ -24,6 +24,20 @@ const Save = ({
 		);
 	}
 
+	if ( attributes.file.url.endsWith( '.lottie' ) ) {
+		return (
+			<dotLottie-player
+				id={ attributes.id }
+				autoplay
+				controls
+				loop
+				mode="normal"
+				src={ attributes.file.url }
+				{ ...blockProps }
+			/>
+		);
+	}
+
 	return (
 		<lottie-player
 			autoplay

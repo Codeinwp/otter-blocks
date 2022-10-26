@@ -34,6 +34,22 @@ const LottiePlayer = ({
 		}
 	};
 
+	console.log( attributes.file );
+
+	if ( attributes.file.url.endsWith( '.lottie' ) ) {
+		return (
+			<dotLottie-player
+				id={ attributes.id }
+				ref={ playerRef }
+				autoplay
+				controls
+				loop
+				mode="normal"
+				src={ attributes.file.url }
+			/>
+		);
+	}
+
 	return (
 		<lottie-player
 			id={ attributes.id }

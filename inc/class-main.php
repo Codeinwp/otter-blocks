@@ -284,12 +284,31 @@ class Main {
 
 		if ( ! isset( $tags['path'] ) ) {
 			$tags['path'] = array(
-				'd'    => true, 
-				'fill' => true,  
+				'd'    => true,
+				'fill' => true,
 			);
 		}
 
 		if ( ! isset( $tags['lottie-player'] ) ) {
+			$tags['lottie-player'] = array_merge(
+				array(
+					'autoplay'   => true,
+					'loop'       => true,
+					'count'      => true,
+					'speed'      => true,
+					'direction'  => true,
+					'trigger'    => true,
+					'data-*'     => true,
+					'mode'       => true,
+					'background' => true,
+					'src'        => true,
+					'width'      => true,
+				),
+				$global_attributes
+			);
+		}
+
+		if ( ! isset( $tags['dotlottie-player'] ) ) {
 			$tags['lottie-player'] = array_merge(
 				array(
 					'autoplay'   => true,
