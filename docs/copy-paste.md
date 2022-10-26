@@ -138,7 +138,7 @@ You will see an `o-copyPasteStorage` key, and the content of the `Storage` will 
 
 Every time you copy a block, it will be sync with the storage. 
 
-When things get hard, better use (`debugger`)[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/debugger].
+When things get hard, better use [`debugger`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/debugger).
 
 ## Good to know
 
