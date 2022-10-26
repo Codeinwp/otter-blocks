@@ -3,6 +3,7 @@
 	--icon-align-tablet: unset;
 	--icon-align-mobile: unset;
 	--gap: 5px;
+	--gap-icon-label: 10px;
 	--font-size: 20px;
 	--content-color: inherit;
 
@@ -22,6 +23,7 @@
 		display: inline-flex;
 		align-items: center;
 		transition: margin 0.10s linear;
+		gap: var(--gap-icon-label);
 
 		i {
 			font-size: var( --font-size );
@@ -40,6 +42,7 @@
 
 		p {
 			margin-bottom: 0px;
+			margin-left: 0px;
 		}
 	}
 

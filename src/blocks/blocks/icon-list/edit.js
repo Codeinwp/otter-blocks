@@ -18,6 +18,7 @@ import metadata from './block.json';
 import { blockInit } from '../../helpers/block-utility.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
+import { _px } from '../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -40,7 +41,8 @@ const Edit = ({
 		'--icon-align': attributes.horizontalAlign,
 		'--icon-align-tablet': attributes.alignmentTablet,
 		'--icon-align-mobile': attributes.alignmentMobile,
-		'--gap': attributes.gap && `${ attributes.gap }px`,
+		'--gap': _px( attributes.gap ),
+		'--gab-icon-label': attributes.gapIconLabel,
 		'--font-size': attributes.defaultSize && `${ attributes.defaultSize }px`
 	};
 
