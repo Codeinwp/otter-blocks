@@ -54,17 +54,7 @@
 			"type": "boolean"
 		}
 	},
-	"styles": [
-		{
-			"name": "vertical",
-			"label": "Vertical",
-			"isDefault": true
-		},
-		{
-			"name": "horizontal",
-			"label": "Horizontal"
-		}
-	],
+	
 	"editorStyle": "otter-icon-list-editor",
 	"style": "otter-icon-list-style"
 }

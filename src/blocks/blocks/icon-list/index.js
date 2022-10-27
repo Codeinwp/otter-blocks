@@ -26,17 +26,6 @@ registerBlockType( name, {
 		'list',
 		'items'
 	],
-	styles: [
-		{
-			name: 'vertical',
-			label: __( 'Vertical', 'otter-blocks' ),
-			isDefault: true
-		},
-		{
-			name: 'horizontal',
-			label: __( 'Horizontal', 'otter-blocks' )
-		}
-	],
 	edit,
 	save,
 	example: {

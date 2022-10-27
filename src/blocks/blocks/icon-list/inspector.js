@@ -38,6 +38,7 @@ import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
  * Internal dependencies
  */
 import IconPickerControl from '../../components/icon-picker-control/index.js';
+import ButtonToggle from '../../components/button-toggle-control/index.js';
 
 /**
  *
@@ -76,6 +77,18 @@ const Inspector = ({
 		}
 	};
 
+	const changeStructure = value => {
+		const classes = attributes?.className?.split( ' ' ) || [];
+
+		if ( 'default' === value && classes.includes( 'is-style-horizontal' ) ) {
+			classes.splice( classes.indexOf( 'is-style-horizontal' ), 1 );
+		} else if ( 'is-style-horizontal' === value && ! classes.includes( 'is-style-horizontal' ) ) {
+			classes.push( 'is-style-horizontal' );
+		}
+
+		setAttributes({ className: classes.join( ' ' ) });
+	};
+
 	return (
 		<InspectorControls>
 			<div>
@@ -99,6 +112,21 @@ const Inspector = ({
 						<PanelBody
 							title={ __( 'Layout', 'otter-blocks' ) }
 						>
+							<ButtonToggle
+								label={ __( 'Column Structure', 'otter-blocks' ) }
+								options={[
+									{
+										label: __( 'Vertical', 'otter-blocks' ),
+										value: 'default'
+									},
+									{
+										label: __( 'Horizontal', 'otter-blocks' ),
+										value: 'is-style-horizontal'
+									}
+								]}
+								value={ attributes?.className?.includes( 'is-style-horizontal' ) ? 'is-style-horizontal' : 'default' }
+								onChange={ changeStructure }
+							/>
 							<ResponsiveControl
 								label={ __( 'Alignment', 'otter-blocks' ) }
 							>
