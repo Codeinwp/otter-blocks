@@ -17,7 +17,8 @@ import {
 	__experimentalUnitControl as UnitControl,
 	BaseControl,
 	Placeholder,
-	Spinner
+	Spinner,
+	ToggleControl
 } from '@wordpress/components';
 
 import {
@@ -126,6 +127,12 @@ const Inspector = ({
 											value: 'flex-end'
 										}
 									]}
+								/>
+
+								<ToggleControl
+									label={ __( 'Hide Labels', 'otter-blocks' ) }
+									checked={ Boolean( attributes.hideLabels ) }
+									onChange={ hideLabels => setAttributes({ hideLabels }) }
 								/>
 							</ResponsiveControl>
 

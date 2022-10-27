@@ -50,6 +50,9 @@
 		},
 		"alignmentMobile": {
 			"type": "string"
+		},
+		"hideLabels": {
+			"type": "boolean"
 		}
 	},
 	"styles": [

@@ -14,6 +14,7 @@ type Attributes= {
 	alignmentTablet: string
 	alignmentMobile: string
 	gapIconLabel: string
+	hideLabels: boolean
 }
 
 export type IconListAttrs = Partial<Attributes>

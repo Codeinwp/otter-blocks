@@ -89,7 +89,13 @@ class Icon_List_CSS extends Base_CSS {
 						'unit'     => 'px',
 						'default'  => 20,
 					),
-					
+					array(
+						'property' => '--label-visibility',
+						'value'    => 'hideLabels',
+						'format'   => function( $value ) {
+							return $value ? 'none' : '';
+						}
+					),
 				),
 			)
 		);

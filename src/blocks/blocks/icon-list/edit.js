@@ -44,7 +44,8 @@ const Edit = ({
 		'--gap': _px( attributes.gap ),
 		'--gap-icon-label': attributes.gapIconLabel,
 		'--font-size': _px( attributes.defaultSize ),
-		'--icon-size': attributes.defaultIconSize
+		'--icon-size': attributes.defaultIconSize,
+		'--label-visibility': attributes.hideLabels ? 'none' : undefined
 	};
 
 	const blockProps = useBlockProps({
