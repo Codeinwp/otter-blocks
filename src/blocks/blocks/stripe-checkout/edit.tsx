@@ -3,8 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import apiFetch from '@wordpress/api-fetch';
-
 import { useBlockProps } from '@wordpress/block-editor';
 
 import {
@@ -13,16 +11,13 @@ import {
 	Spinner
 } from '@wordpress/components';
 
-import {
-	useEffect,
-	useState
-} from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
 
 import { store } from '@wordpress/icons';
 
 /**
-  * Internal dependencies.
-  */
+ * Internal dependencies.
+ */
 import { StripeCheckoutProps } from './types';
 
 /**
@@ -34,62 +29,54 @@ const Edit = ({
 	attributes,
 	setAttributes
 }: StripeCheckoutProps ) => {
-	const [ status, setStatus ] = useState( 'loading' );
-	const [ products, setProducts ] = useState([]);
+	const { products, hasRequestFailed, errors, isLoadingProducts } = useSelect( select => {
+		const {
+			getStripeProducts,
+			getResolutionError,
+			isResolving
+		} : {
+			getStripeProducts: Function,
+			getResolutionError: Function,
+			isResolving: Function
+		} = select( 'themeisle-gutenberg/data' );
 
-	useEffect( () => {
-		let isMounted = true;
-
-		( async() => {
-			if ( isMounted ) {
-				try {
-					setStatus( 'loading' );
-					const response: any = await apiFetch({ path: 'otter/v1/stripe/products' });
-					let data = [];
-
-					if ( Boolean( response?.data?.length ) ) {
-						data = response.data.map( ( product: any ) => {
-							return {
-								label: `${ product?.name } (id:${ product?.id })`,
-								value: product?.id
-							};
-						});
-					}
-
-					setProducts( data );
-					setStatus( 'loaded' );
-				} catch ( error ) {
-					setStatus( 'error' );
-				}
-			}
-		})();
-
-		return () => {
-			isMounted = false;
+		return {
+			products: getStripeProducts(),
+			hasRequestFailed: Boolean( getResolutionError( 'getStripeProducts' ) ),
+			errors: getResolutionError( 'getStripeProducts' ),
+			isLoadingProducts: isResolving( 'getStripeProducts' )
 		};
 	}, []);
 
 	const blockProps = useBlockProps();
 
+	if ( isLoadingProducts || hasRequestFailed || undefined === attributes.product ) {
+		return (
+			<div { ...blockProps }>
+				<Placeholder
+					icon={ store }
+					label={ __( 'Stripe Checkout', 'otter-blocks' ) }
+					instructions={ hasRequestFailed ? errors?.message : __( 'Select a product for the Stripe Checkout.', 'otter-blocks' ) }
+				>
+					{ isLoadingProducts && (
+						<Placeholder><Spinner /></Placeholder>
+					) }
+
+					{ ! isLoadingProducts && (
+						<SelectControl
+							value={ attributes.product }
+							options={ products }
+							onChange={ ( value: string ) => setAttributes({ product: value }) }
+						/>
+					) }
+				</Placeholder>
+			</div>
+		);
+	}
+
 	return (
 		<div { ...blockProps }>
-			<Placeholder
-				icon={ store }
-				label={ __( 'Stripe Checkout', 'otter-blocks' ) }
-				instructions={ __( 'Select a product for the Stripe Checkout.', 'otter-blocks' ) }
-			>
-				{ 'loading' === status && (
-					<Placeholder><Spinner /></Placeholder>
-				) }
-
-				{ 'loaded' === status && (
-					<SelectControl
-						value={ attributes.product }
-						options={ products }
-						onChange={ ( value: string ) => setAttributes({ product: value }) }
-					/>
-				) }
-			</Placeholder>
+			<p>Product Selected</p>
 		</div>
 	);
 };

@@ -19,7 +19,8 @@ const DEFAULT_STATE = {
 	showOnboarding: Boolean( window.themeisleGutenberg.showOnboarding ) && 'false' !== localStorage?.getItem( 'o-show-onboarding' ),
 	viewType: 'Desktop',
 	visiblePopover: 'themeisle-blocks/dynamic-value',
-	dynamicData: {}
+	dynamicData: {},
+	stripeProducts: []
 };
 
 const actions = {
@@ -46,6 +47,12 @@ const actions = {
 			type: 'SET_DYNAMIC_DATA',
 			key,
 			value
+		};
+	},
+	setStripeProducts( products ) {
+		return {
+			type: 'SET_STRIPE_PRODUCTS',
+			products
 		};
 	},
 	fetchFromAPI( path ) {
@@ -85,6 +92,12 @@ registerStore( 'themeisle-gutenberg/data', {
 			};
 		}
 
+		if ( 'SET_STRIPE_PRODUCTS' === action.type ) {
+			return {
+				stripeProducts: action.products
+			};
+		}
+
 		return state;
 	},
 
@@ -103,6 +116,9 @@ registerStore( 'themeisle-gutenberg/data', {
 		getDynamicData( state, attrs ) {
 			const key  = hash( attrs );
 			return state.dynamicData[ key ];
+		},
+		getStripeProducts( state ) {
+			return state.stripeProducts;
 		}
 	},
 
@@ -118,6 +134,23 @@ registerStore( 'themeisle-gutenberg/data', {
 			const path = 'otter/v1/dynamic/preview/?' + getQueryStringFromObject( attrs );
 			const value = yield actions.fetchFromAPI( path );
 			return actions.setDynamicData( key, value );
+		},
+		*getStripeProducts() {
+			const path = 'otter/v1/stripe/products';
+			const response = yield actions.fetchFromAPI( path );
+
+			let value = [];
+
+			if ( Boolean( response?.data?.length ) ) {
+				value = response.data.map( product => {
+					return {
+						label: `${ product?.name } (id:${ product?.id })`,
+						value: product?.id
+					};
+				});
+			}
+
+			return actions.setStripeProducts( value );
 		}
 	}
 });
