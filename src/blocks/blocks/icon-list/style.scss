@@ -5,6 +5,7 @@
 	--gap: 5px;
 	--gap-icon-label: 10px;
 	--font-size: 20px;
+	--icon-size: var(--font-size);
 	--content-color: inherit;
 
 	display: flex;
@@ -26,18 +27,18 @@
 		gap: var(--gap-icon-label);
 
 		i {
-			font-size: var( --font-size );
+			font-size: var( --icon-size );
 			text-align: center;
 			width: 1.25em;
 		}
 
 		svg {
-			min-width: var( --font-size );
-			width: var( --font-size );
+			min-width: var( --icon-size );
+			width: var( --icon-size );
 		}
 
 		img {
-			width: var( --font-size );
+			width: var( --icon-size );
 		}
 
 		p {

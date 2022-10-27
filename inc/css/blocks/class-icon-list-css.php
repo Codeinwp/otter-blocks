@@ -38,13 +38,25 @@ class Icon_List_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--horizontal-align',
+						'property' => '--icon-align',
 						'value'    => 'horizontalAlign',
+					),
+					array(
+						'property' => '--icon-align-tablet',
+						'value'    => 'alignmentTablet',
+					),
+					array(
+						'property' => '--icon-align-mobile',
+						'value'    => 'alignmentMobile',
 					),
 					array(
 						'property' => '--gap',
 						'value'    => 'gap',
 						'unit'     => 'px',
+					),
+					array(
+						'property' => '--gap-icon-label',
+						'value'    => 'gapIconLabel',
 					),
 					array(
 						'property' => '--content-color',
@@ -55,10 +67,21 @@ class Icon_List_CSS extends Base_CSS {
 						'value'    => 'defaultIconColor',
 					),
 					array(
+						'property'  => '--font-size',
+						'value'     => 'defaultSize',
+						'unit'      => 'px',
+						'default'   => 20,
+						'condition' => function( $attrs ) {
+							return isset( $attrs['defaultSize'] ) && is_numeric( $attrs['defaultSize'] );
+						},
+					),
+					array(
 						'property' => '--font-size',
 						'value'    => 'defaultSize',
-						'unit'     => 'px',
-						'default'  => 20,
+					),
+					array(
+						'property' => '--icon-size',
+						'value'    => 'defaultIconSize',
 					),
 					array(
 						'property' => 'min-width',
@@ -66,6 +89,7 @@ class Icon_List_CSS extends Base_CSS {
 						'unit'     => 'px',
 						'default'  => 20,
 					),
+					
 				),
 			)
 		);

@@ -42,8 +42,9 @@ const Edit = ({
 		'--icon-align-tablet': attributes.alignmentTablet,
 		'--icon-align-mobile': attributes.alignmentMobile,
 		'--gap': _px( attributes.gap ),
-		'--gab-icon-label': attributes.gapIconLabel,
-		'--font-size': attributes.defaultSize && `${ attributes.defaultSize }px`
+		'--gap-icon-label': attributes.gapIconLabel,
+		'--font-size': _px( attributes.defaultSize ),
+		'--icon-size': attributes.defaultIconSize
 	};
 
 	const blockProps = useBlockProps({
