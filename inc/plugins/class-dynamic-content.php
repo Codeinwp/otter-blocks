@@ -24,6 +24,7 @@ class Dynamic_Content {
 	 */
 	public function init() {
 		add_filter( 'render_block', array( $this, 'apply_dynamic_content' ) );
+		add_filter( 'render_block', array( $this, 'apply_dynamic_magic_tags' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_link' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_link_button' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_images' ) );
@@ -45,6 +46,47 @@ class Dynamic_Content {
 		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|data-term-type=["\'](?P<termType>[^"\'<>]+)["\']|data-term-separator=["\'](?P<termSeparator>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|data-context=["\'](?P<context>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_data' ), $content );
+	}
+
+	/**
+	 * Filter post content for Magic Tags.
+	 *
+	 * @param string $content Post content.
+	 *
+	 * @return string
+	 */
+	public function apply_dynamic_magic_tags( $content ) {
+		if ( false === strpos( $content, '{otterDynamic?type' ) ) {
+			return $content;
+		}
+
+		$re = '/{(otterDynamic\/?.[^"]*)}/';
+
+		return preg_replace_callback( $re, array( $this, 'apply_magic_tags' ), $content );
+	}
+
+	/**
+	 * Apply dynamic data for Magic Tags.
+	 *
+	 * @param array $data Dynamic request.
+	 *
+	 * @return string
+	 */
+	public function apply_magic_tags( $data ) {
+		if ( ! isset( $data[1] ) ) {
+			return;
+		}
+
+		$data = explode( 'otterDynamic', $data[1] );
+		$data = self::query_string_to_array( $data[1] );
+
+		if ( ! isset( $data['default'] ) ) {
+			$data['default'] = '';
+		}
+	
+		$data = $this->apply_data( $data, true );
+
+		return $data;
 	}
 
 	/**
@@ -71,7 +113,7 @@ class Dynamic_Content {
 	 *
 	 * @return string
 	 */
-	public function apply_dynamic_link_button( $content ) { 
+	public function apply_dynamic_link_button( $content ) {
 		if ( false === strpos( $content, '#otterDynamicLink' ) ) {
 			return $content;
 		}
@@ -183,11 +225,12 @@ class Dynamic_Content {
 	 * Apply dynamic data.
 	 *
 	 * @param array $data Dynamic request.
+	 * @param bool  $magic_tags Is a request for Magic Tags.
 	 *
 	 * @return string
 	 */
-	public function apply_data( $data ) {
-		$value = $this->get_data( $data );
+	public function apply_data( $data, $magic_tags = false ) {
+		$value = $this->get_data( $data, $magic_tags );
 
 		if ( isset( $data['before'] ) || isset( $data['after'] ) ) {
 			$value = $this->apply_formatting( $value, $data );
@@ -225,11 +268,12 @@ class Dynamic_Content {
 	 * Get dynamic data.
 	 *
 	 * @param array $data Dynamic request.
+	 * @param bool  $magic_tags Is a request for Magic Tags.
 	 *
 	 * @return string
 	 */
-	public function get_data( $data ) {
-		if ( ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+	public function get_data( $data, $magic_tags ) {
+		if ( ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || true === $magic_tags ) {
 			if ( isset( $data['context'] ) && 'query' === $data['context'] ) {
 				$data['context'] = get_the_ID();
 			} else {
