@@ -183,7 +183,7 @@ const Inspector = ({
 								// help={ __( 'The size of the font size of the content and icon.', 'otter-blocks' ) }
 							>
 								<FontSizePicker
-									value={ _px( attributes.defaultSize ) }
+									value={ _px( attributes.defaultSize ) ?? '16px' }
 									onChange={ defaultSize => setAttributes({ defaultSize }) }
 									fontSizes={[
 										{
@@ -194,12 +194,17 @@ const Inspector = ({
 										{
 											name: 'Normal',
 											size: '16px',
-											slug: 'normal'
+											slug: 'Normal'
 										},
 										{
-											name: 'Big',
-											size: '26px',
-											slug: 'big'
+											name: 'Medium',
+											size: '20px',
+											slug: 'medium'
+										},
+										{
+											name: 'Large',
+											size: '36px',
+											slug: 'large'
 										}
 									]}
 									withReset={ true }
@@ -213,7 +218,7 @@ const Inspector = ({
 								//help={ __( 'The size of the font size of the content and icon.', 'otter-blocks' ) }
 							>
 								<FontSizePicker
-									value={ attributes.defaultIconSize }
+									value={ attributes.defaultIconSize ?? _px( attributes.defaultSize ) ?? '16px' }
 									onChange={ defaultIconSize => setAttributes({ defaultIconSize }) }
 									fontSizes={[
 										{
@@ -224,12 +229,17 @@ const Inspector = ({
 										{
 											name: 'Normal',
 											size: '16px',
-											slug: 'normal'
+											slug: 'Normal'
 										},
 										{
-											name: 'Big',
-											size: '26px',
-											slug: 'big'
+											name: 'Medium',
+											size: '20px',
+											slug: 'medium'
+										},
+										{
+											name: 'Large',
+											size: '36px',
+											slug: 'large'
 										}
 									]}
 									withReset={ true }
