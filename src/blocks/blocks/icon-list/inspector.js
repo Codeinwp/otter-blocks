@@ -279,7 +279,7 @@ const Inspector = ({
 						>
 							<UnitControl
 								label={ __( 'Space between List items', 'otter-blocks' ) }
-								value={ attributes.gap }
+								value={ attributes.gap ?? '5px' }
 								onChange={ gap => setAttributes({ gap }) }
 							/>
 
@@ -287,7 +287,7 @@ const Inspector = ({
 
 							<UnitControl
 								label={ __( 'Space between Icon and Label', 'otter-blocks' ) }
-								value={ attributes.gapIconLabel }
+								value={ attributes.gapIconLabel ?? '16px' }
 								onChange={ gapIconLabel => setAttributes({ gapIconLabel }) }
 							/>
 						</PanelBody>

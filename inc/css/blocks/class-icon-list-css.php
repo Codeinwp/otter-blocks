@@ -50,9 +50,19 @@ class Icon_List_CSS extends Base_CSS {
 						'value'    => 'alignmentMobile',
 					),
 					array(
-						'property' => '--gap',
-						'value'    => 'gap',
-						'unit'     => 'px',
+						'property'  => '--gap',
+						'value'     => 'gap',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['gap'] ) && is_numeric( $attrs['gap'] );
+						},
+					),
+					array(
+						'property'  => '--gap',
+						'value'     => 'gap',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['gap'] ) && is_string( $attrs['gap'] );
+						},
 					),
 					array(
 						'property' => '--gap-icon-label',
@@ -70,31 +80,27 @@ class Icon_List_CSS extends Base_CSS {
 						'property'  => '--font-size',
 						'value'     => 'defaultSize',
 						'unit'      => 'px',
-						'default'   => 20,
 						'condition' => function( $attrs ) {
 							return isset( $attrs['defaultSize'] ) && is_numeric( $attrs['defaultSize'] );
 						},
 					),
 					array(
-						'property' => '--font-size',
-						'value'    => 'defaultSize',
+						'property'  => '--font-size',
+						'value'     => 'defaultSize',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['defaultSize'] ) && is_string( $attrs['defaultSize'] );
+						},
 					),
 					array(
 						'property' => '--icon-size',
 						'value'    => 'defaultIconSize',
 					),
 					array(
-						'property' => 'min-width',
-						'value'    => 'defaultSize',
-						'unit'     => 'px',
-						'default'  => 20,
-					),
-					array(
 						'property' => '--label-visibility',
 						'value'    => 'hideLabels',
 						'format'   => function( $value ) {
 							return $value ? 'none' : '';
-						}
+						},
 					),
 				),
 			)
