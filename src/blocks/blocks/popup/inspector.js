@@ -47,12 +47,14 @@ const ProFeatures = () => {
 					label={ __( 'Close On Anchor Click', 'otter-blocks' ) }
 					checked={ false }
 					onChange={ () => {} }
+					className="o-disabled"
 				/>
 
 				<ToggleControl
 					label={ __( 'Dismiss for Recurring Visitors', 'otter-blocks' ) }
 					checked={ false }
 					onChange={ () => {} }
+					className="o-disabled"
 				/>
 			</Disabled>
 
