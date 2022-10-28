@@ -719,7 +719,7 @@ const Inspector = ({
 						</PanelBody>
 
 						<PanelBody
-							title={ __( 'Background', 'otter-blocks' ) }
+							title={ __( 'Background & Content', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
 							<ColorDropdownControl
