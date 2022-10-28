@@ -98,6 +98,8 @@ class Dashboard {
 					'upgradeLink'        => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
 					'docsLink'           => Pro::get_docs_url(),
 					'showFeedbackNotice' => $this->should_show_feedback_notice(),
+					'showBFDeal'         => $this->bf_deal(),
+					'daysLeft'           => $this->bf_deal( true ),
 				)
 			)
 		);
@@ -136,6 +138,38 @@ class Dashboard {
 		$installed = get_option( 'otter_blocks_install' );
 
 		return ! empty( $installed ) && $installed < strtotime( '-5 days' );
+	}
+
+	/**
+	 * Should show BF Deal?.
+	 *
+	 * @since  2.1.1
+	 * @access public
+	 */
+	public function bf_deal( $days = false ) {
+		$start_time   = '2022-11-21T00:00:00';
+		$end_time     = '2022-11-28T23:59:00';
+		$offset       = 60 * get_option( 'gmt_offset' );
+		$sign         = $offset < 0 ? '-' : '+';
+		$absmin       = abs( $offset );
+		$timezone     = sprintf( '%s%02d:%02d', $sign, $absmin / 60, $absmin % 60 );
+		$start_date   = strtotime( $start_time . $timezone );
+		$current_time = time();
+		$end_date     = strtotime( $end_time . $timezone );
+
+		if ( $days ) {
+			$days_between = ceil( abs( $end_date - $current_time ) / 86400 );
+			return $days_between;
+		}
+
+		$start_date = $current_time > $start_date;
+		$end_date   = $current_time < $end_date;
+
+		if ( $start_date && $end_date ) {
+			return true;
+		}
+
+		return false;
 	}
 
 	/**
