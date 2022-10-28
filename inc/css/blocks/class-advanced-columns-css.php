@@ -210,8 +210,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property'       => 'transform',
-						'pattern'        => 'scaleX( width )',
+						'property'       => 'scale',
+						'pattern'        => 'width 1',
 						'pattern_values' => array(
 							'width' => array(
 								'value'  => 'dividerTopWidth',
@@ -238,8 +238,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property'       => 'transform',
-						'pattern'        => 'scaleX( width )',
+						'property'       => 'scale',
+						'pattern'        => 'width 1',
 						'pattern_values' => array(
 							'width' => array(
 								'value'  => 'dividerBottomWidth',
@@ -351,8 +351,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property'       => 'transform',
-						'pattern'        => 'scaleX( width )',
+						'property'       => 'scale',
+						'pattern'        => 'width 1',
 						'pattern_values' => array(
 							'width' => array(
 								'value'  => 'dividerTopWidthTablet',
@@ -380,8 +380,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property'       => 'transform',
-						'pattern'        => 'scaleX( width )',
+						'property'       => 'scale',
+						'pattern'        => 'width 1',
 						'pattern_values' => array(
 							'width' => array(
 								'value'  => 'dividerBottomWidthTablet',
@@ -493,8 +493,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property'       => 'transform',
-						'pattern'        => 'scaleX( width )',
+						'property'       => 'scale',
+						'pattern'        => 'width 1',
 						'pattern_values' => array(
 							'width' => array(
 								'value'  => 'dividerTopWidthMobile',
@@ -522,8 +522,8 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'unit'     => 'px',
 					),
 					array(
-						'property'       => 'transform',
-						'pattern'        => 'scaleX( width )',
+						'property'       => 'scale',
+						'pattern'        => 'width 1',
 						'pattern_values' => array(
 							'width' => array(
 								'value'  => 'dividerBottomWidthMobile',
