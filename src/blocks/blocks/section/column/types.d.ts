@@ -48,6 +48,7 @@ type Attributes = {
 	boxShadowVertical: number
 	columnsHTMLTag: string
 	columnWidth: number
+	verticalAlign: string
 	isSynced: string[]
 }
 

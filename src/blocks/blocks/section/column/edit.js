@@ -31,6 +31,7 @@ import {
  */
 import metadata from './block.json';
 import layouts from '../layouts.js';
+import Controls from './controls.js';
 import Inspector from './inspector.js';
 import {
 	blockInit,
@@ -248,6 +249,12 @@ const Edit = ({
 		};
 	}
 
+	const verticalAlignValues = {
+		top: 'flex-start',
+		center: 'center',
+		bottom: 'flex-end'
+	};
+
 	const style = {
 		flexBasis: `${ attributes.columnWidth }%`,
 		...stylesheet,
@@ -260,6 +267,10 @@ const Edit = ({
 		'--content-color-hover': attributes.colorHover,
 		'--background-color-hover': attributes.backgroundColorHover
 	};
+
+	if ( attributes.verticalAlign ) {
+		style.alignItems = verticalAlignValues[ attributes.verticalAlign ];
+	}
 
 	if ( 'color' === attributes.backgroundOverlayType ) {
 		overlayBackground = {
@@ -302,6 +313,11 @@ const Edit = ({
 
 	return (
 		<Fragment>
+			<Controls
+				attributes={ attributes }
+				setAttributes={ setAttributes }
+			/>
+
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }

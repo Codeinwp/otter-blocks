@@ -175,6 +175,9 @@
 		"columnWidth": {
 			"type": "string"
 		},
+		"verticalAlign": {
+			"type": "string"
+		},
 		"isSynced": {
 			"type": "array"
 		}

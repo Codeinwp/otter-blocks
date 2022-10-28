@@ -189,6 +189,19 @@ class Advanced_Column_CSS extends Base_CSS {
 							'property' => '--background-color-hover',
 							'value'    => 'backgroundColorHover',
 						),
+						array(
+							'property'  => 'align-self',
+							'value'     => 'verticalAlign',
+							'format'    => function( $value, $attrs ) {
+								$values = array(
+									'top'    => 'flex-start',
+									'center' => 'center',
+									'bottom' => 'flex-end',
+								);
+
+								return $values[ $value ];
+							},
+						),
 					),
 					Shared_CSS::section_shared()
 				),
