@@ -165,7 +165,7 @@ class Base_CSS {
 	 * @since   1.3.0
 	 * @access  public
 	 */
-	public function hex2rgba( $color, $opacity = false ) {
+	public static function hex2rgba( $color, $opacity = false ) {
 		$default = 'rgb(0,0,0)';
 
 		if ( empty( $color ) ) {
