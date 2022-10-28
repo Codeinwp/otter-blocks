@@ -91,7 +91,7 @@ const Main = ({
 
 	return (
 		<Fragment>
-			{ Boolean( window.otterObj.showBFDeal ) && <BlackFriday /> }
+			{ ( ! Boolean( window.otterObj.hasPro ) && Boolean( window.otterObj.showBFDeal ) ) && <BlackFriday /> }
 
 			<div className={ `otter-main is-${ currentTab}`}>
 

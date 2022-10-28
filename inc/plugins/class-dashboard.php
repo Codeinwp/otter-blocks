@@ -143,6 +143,8 @@ class Dashboard {
 	/**
 	 * Should show BF Deal?.
 	 *
+	 * @param bool $days To show in bool or days.
+	 *
 	 * @since  2.1.1
 	 * @access public
 	 */
