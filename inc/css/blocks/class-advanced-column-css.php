@@ -190,9 +190,9 @@ class Advanced_Column_CSS extends Base_CSS {
 							'value'    => 'backgroundColorHover',
 						),
 						array(
-							'property'  => 'align-self',
-							'value'     => 'verticalAlign',
-							'format'    => function( $value, $attrs ) {
+							'property' => 'align-self',
+							'value'    => 'verticalAlign',
+							'format'   => function( $value, $attrs ) {
 								$values = array(
 									'top'    => 'flex-start',
 									'center' => 'center',
