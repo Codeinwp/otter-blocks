@@ -71,7 +71,31 @@ class Stripe_Server {
 			array(
 				array(
 					'methods'             => \WP_REST_Server::READABLE,
-					'callback'            => array( $this, 'products' ),
+					'callback'            => array( $this, 'get_products' ),
+					'permission_callback' => function () {
+						return current_user_can( 'edit_posts' );
+					},
+				),
+			)
+		);
+
+		register_rest_route(
+			$namespace,
+			'/stripe/prices/(?P<id>[a-zA-Z0-9-_]+)',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'get_price' ),
+					'args'                => array(
+						'id' => array(
+							'type'              => 'string',
+							'required'          => true,
+							'description'       => __( 'ID of the Product.', 'otter-blocks' ),
+							'validate_callback' => function ( $param, $request, $key ) {
+								return (string) esc_attr( $param );
+							},
+						),
+					),
 					'permission_callback' => function () {
 						return current_user_can( 'edit_posts' );
 					},
@@ -105,13 +129,24 @@ class Stripe_Server {
 	 *
 	 * @param callback $callback Request callback.
 	 * 
-	 * @return  mixed
-	 * @access  public
+	 * @return mixed
+	 * @access public
 	 */
-	public function create_request( $callback ) {
+	public function create_request( $path, $args = array() ) {
+		$response = array();
+
 		try {
-			$response = $callback;
-		} catch ( \Stripe\Exception\ApiErrorException $e ) {
+			switch ( $path ) {
+				case 'products':
+					$response = $this->stripe->products->all( $args );
+					break;
+				case 'prices':
+					$response = $this->stripe->prices->all( $args );
+					break;
+				default:
+					break;
+			}
+		} catch ( \Stripe\Exception\CardException $e ) {
 			$response = $this->build_error_response( $e );
 		} catch ( \Stripe\Exception\RateLimitException $e ) {
 			$response = $this->build_error_response( $e );
@@ -138,14 +173,32 @@ class Stripe_Server {
 	 * @return \WP_REST_Response
 	 * @access  public
 	 */
-	public function products( \WP_REST_Request $request ) {
+	public function get_products( \WP_REST_Request $request ) {
 		return $this->create_request(
-			$this->stripe->products->all(
-				array(
-					'active' => true,
-					'limit'  => 50,
-				)
-			) 
+			'products',
+			array(
+				'active' => true,
+				'limit'  => 50,
+			)
+		);
+	}
+
+	/**
+	 * Get Product Pricing.
+	 *
+	 * @param \WP_REST_Request $request The request.
+	 * 
+	 * @return \WP_REST_Response
+	 * @access  public
+	 */
+	public function get_price( \WP_REST_Request $request ) {
+		return $this->create_request(
+			'prices',
+			array(
+				'active'  => true,
+				'product' => $request->get_param( 'id' ),
+				'limit'   => 50,
+			)
 		);
 	}
 

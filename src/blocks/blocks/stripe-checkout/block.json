@@ -10,6 +10,9 @@
 	"attributes": {
 		"product": {
 			"type": "string"
+		},
+		"price": {
+			"type": "string"
 		}
 	},
 	"supports": {

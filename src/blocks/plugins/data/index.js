@@ -20,7 +20,8 @@ const DEFAULT_STATE = {
 	viewType: 'Desktop',
 	visiblePopover: 'themeisle-blocks/dynamic-value',
 	dynamicData: {},
-	stripeProducts: []
+	stripeProducts: {},
+	stripeProductsPrices: {}
 };
 
 const actions = {
@@ -53,6 +54,13 @@ const actions = {
 		return {
 			type: 'SET_STRIPE_PRODUCTS',
 			products
+		};
+	},
+	setStripeProductPrices( id, prices ) {
+		return {
+			type: 'SET_STRIPE_PRODUCT_PRICES',
+			id,
+			prices
 		};
 	},
 	fetchFromAPI( path ) {
@@ -98,6 +106,15 @@ registerStore( 'themeisle-gutenberg/data', {
 			};
 		}
 
+		if ( 'SET_STRIPE_PRODUCT_PRICES' === action.type ) {
+			return {
+				stripeProductsPrices: {
+					...state.stripeProductsPrices,
+					[ action.id ]: action.prices
+				}
+			};
+		}
+
 		return state;
 	},
 
@@ -114,11 +131,14 @@ registerStore( 'themeisle-gutenberg/data', {
 			return state.visiblePopover;
 		},
 		getDynamicData( state, attrs ) {
-			const key  = hash( attrs );
+			const key = hash( attrs );
 			return state.dynamicData[ key ];
 		},
 		getStripeProducts( state ) {
 			return state.stripeProducts;
+		},
+		getStripeProductPrices( state, id ) {
+			return state.stripeProductsPrices[ id ];
 		}
 	},
 
@@ -138,19 +158,12 @@ registerStore( 'themeisle-gutenberg/data', {
 		*getStripeProducts() {
 			const path = 'otter/v1/stripe/products';
 			const response = yield actions.fetchFromAPI( path );
-
-			let value = [];
-
-			if ( Boolean( response?.data?.length ) ) {
-				value = response.data.map( product => {
-					return {
-						label: `${ product?.name } (id:${ product?.id })`,
-						value: product?.id
-					};
-				});
-			}
-
-			return actions.setStripeProducts( value );
+			return actions.setStripeProducts( response );
+		},
+		*getStripeProductPrices( id ) {
+			const path = 'otter/v1/stripe/prices/' + id;
+			const response = yield actions.fetchFromAPI( path );
+			return actions.setStripeProductPrices( id, response?.data );
 		}
 	}
 });
