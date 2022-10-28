@@ -8,6 +8,9 @@
 	--icon-size: var(--font-size);
 	--content-color: inherit;
 	--label-visibility: block;
+	--divider-color: black;
+	--divider-width: 2px;
+	--divider-length: 100%;
 
 	display: flex;
 	flex-direction: column;
@@ -15,17 +18,39 @@
 	justify-content: var( --icon-align );
 	gap: var( --gap );
 
+	&.has-divider:not(.is-style-horizontal) .wp-block-themeisle-blocks-icon-list-item:not(:last-child)::after {
+		border-bottom: var(--divider-width) solid var(--divider-color);
+		content: "";
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		height: 100%;
+		width: var(--divider-length);
+	}
+
 	&.is-style-horizontal {
 		flex-wrap: wrap;
 		flex-direction: row;
 		width: 100%;
+
+		&.has-divider .wp-block-themeisle-blocks-icon-list-item:not(:last-child)::after {
+			border-right: var(--divider-width) solid var(--divider-color);
+			content: "";
+			position: absolute;
+			bottom: 0;
+			right: 0;
+			height: var(--divider-length);
+			width: 100%;
+		}
 	}
+
 
 	.wp-block-themeisle-blocks-icon-list-item {
 		display: inline-flex;
 		align-items: center;
 		transition: margin 0.10s linear;
 		gap: var(--gap-icon-label);
+		position: relative;
 
 		i {
 			font-size: var( --icon-size );

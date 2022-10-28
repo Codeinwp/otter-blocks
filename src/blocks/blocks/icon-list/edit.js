@@ -19,6 +19,7 @@ import { blockInit } from '../../helpers/block-utility.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import { _px } from '../../helpers/helper-functions';
+import classNames from 'classnames';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -45,12 +46,16 @@ const Edit = ({
 		'--gap-icon-label': attributes.gapIconLabel,
 		'--font-size': _px( attributes.defaultSize ),
 		'--icon-size': attributes.defaultIconSize,
-		'--label-visibility': attributes.hideLabels ? 'none' : undefined
+		'--label-visibility': attributes.hideLabels ? 'none' : undefined,
+		'--divider-color': attributes.dividerColor,
+		'--divider-width': attributes.dividerWidth,
+		'--divider-length': attributes.dividerLength
 	};
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		style: inlineStyles
+		style: inlineStyles,
+		className: classNames({ 'has-divider': Boolean( attributes.hasDivider ) })
 	});
 
 	return (

@@ -198,7 +198,14 @@ const Inspector = ({
 									value: attributes.defaultIconColor,
 									onChange: defaultIconColor => setAttributes({ defaultIconColor }),
 									label: __( 'Text', 'otter-blocks' )
-								}
+								},
+								...( attributes.hasDivider ? [
+									{
+										value: attributes.dividerColor,
+										onChange: dividerColor => setAttributes({ dividerColor }),
+										label: __( 'Divider', 'otter-blocks' )
+									}
+								] : [])
 							] }
 						/>
 						<PanelBody
@@ -281,6 +288,14 @@ const Inspector = ({
 								label={ __( 'Space between List items', 'otter-blocks' ) }
 								value={ attributes.gap ?? '5px' }
 								onChange={ gap => setAttributes({ gap }) }
+								units={[
+									{
+										a11yLabel: 'Pixels (px)',
+										label: 'px',
+										step: 1,
+										value: 'px'
+									}
+								]}
 							/>
 
 							<br/>
@@ -289,7 +304,55 @@ const Inspector = ({
 								label={ __( 'Space between Icon and Label', 'otter-blocks' ) }
 								value={ attributes.gapIconLabel ?? '16px' }
 								onChange={ gapIconLabel => setAttributes({ gapIconLabel }) }
+								units={[
+									{
+										a11yLabel: 'Pixels (px)',
+										label: 'px',
+										step: 1,
+										value: 'px'
+									}
+								]}
 							/>
+						</PanelBody>
+						<PanelBody
+							title={ __( 'Divider', 'otter-blocks' ) }
+						>
+							<ToggleControl
+								label={ __( 'Enable Divider', 'otter-blocks' ) }
+								checked={ Boolean( attributes.hasDivider ) }
+								onChange={ hasDivider => setAttributes({ hasDivider }) }
+							/>
+
+							{
+								attributes.hasDivider && (
+									<Fragment>
+										<UnitControl
+											label={ __( 'Width', 'otter-blocks' ) }
+											value={ attributes.dividerWidth ?? '2px' }
+											onChange={ dividerWidth => setAttributes({ dividerWidth }) }
+											units={[
+												{
+													a11yLabel: 'Pixels (px)',
+													label: 'px',
+													step: 1,
+													value: 'px'
+												}
+											]}
+											max={5}
+										/>
+
+										<br />
+
+										<UnitControl
+											label={ __( 'Length', 'otter-blocks' ) }
+											value={ attributes.dividerLength ?? '100%' }
+											onChange={ dividerLength => setAttributes({ dividerLength }) }
+											isResetValueOnUnitChange
+
+										/>
+									</Fragment>
+								)
+							}
 						</PanelBody>
 					</Fragment>
 				) }

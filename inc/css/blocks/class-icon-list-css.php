@@ -102,6 +102,18 @@ class Icon_List_CSS extends Base_CSS {
 							return $value ? 'none' : '';
 						},
 					),
+					array(
+						'property' => '--divider-width',
+						'value'    => 'dividerWidth',
+					),
+					array(
+						'property' => '--divider-color',
+						'value'    => 'dividerColor',
+					),
+					array(
+						'property' => '--divider-length',
+						'value'    => 'dividerLength',
+					),
 				),
 			)
 		);

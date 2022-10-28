@@ -52,6 +52,18 @@
 		},
 		"hideLabels": {
 			"type": "boolean"
+		},
+		"hasDivider": {
+			"type": "boolean"
+		},
+		"dividerWidth": {
+			"type": "string"
+		},
+		"dividerColor": {
+			"type": "string"
+		},
+		"dividerLength": {
+			"type": "string"
 		}
 	},
 	
