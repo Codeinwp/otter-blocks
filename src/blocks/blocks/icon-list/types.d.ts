@@ -8,8 +8,8 @@ type Attributes= {
 	defaultContentColor: string
 	defaultIconColor: string
 	defaultIconSize: number
-	defaultSize: number
-	gap: number
+	defaultSize: number | string
+	gap: number | string
 	horizontalAlign: string
 	alignmentTablet: string
 	alignmentMobile: string
