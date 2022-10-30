@@ -2,7 +2,12 @@
 /**
  * CSS generator.
  *
- * $css = new CSS_Utility( $block );
+ * $default_queries = array(
+ *     'desktop' => '@media ( min-width: 960px )',
+ *     'mobile'  => '@media ( max-width: 960px )'
+ * );
+ *
+ * $css = new CSS_Utility( $block, $default_queries );
  *
  * $css->add_item( array(
  *  'global'     => 'global', // Put your media query selector here. It's global by default.
@@ -39,6 +44,7 @@
  *          },
  *      ),
  *  ),
+ *  'media'      => 'desktop', // Media query selector.
  * ) );
  *
  * $style = $css->generate();
@@ -63,6 +69,20 @@ class CSS_Utility {
 	public $block = array();
 
 	/**
+	 * Variable to hold media queries.
+	 *
+	 * @var array
+	 */
+	public $media_queries = array();
+
+	/**
+	 * Variable to hold media items.
+	 *
+	 * @var array
+	 */
+	public $media_items = array();
+
+	/**
 	 * Variable to hold CSS array.
 	 *
 	 * @var array
@@ -81,9 +101,11 @@ class CSS_Utility {
 	 *
 	 * @access public
 	 * @param array $block Block object.
+	 * @param array $media_queries Media queries array.
 	 */
-	public function __construct( $block ) {
-		$this->block = $block;
+	public function __construct( $block, $media_queries = array() ) {
+		$this->block         = $block;
+		$this->media_queries = $media_queries;
 	}
 
 	/**
@@ -95,6 +117,21 @@ class CSS_Utility {
 	 */
 	public function set_id( $id ) {
 		$this->block_id = $id;
+	}
+
+	/**
+	 * Filter media queries.
+	 *
+	 * @access public
+	 * @since 2.1.0
+	 * @param string $query Media Query.
+	 */
+	public function get_media_query( $query ) {
+		if ( isset( $this->media_queries[ $query ] ) && 'global' !== $this->media_queries[ $query ] ) {
+			return $this->media_queries[ $query ];
+		}
+
+		return $query;
 	}
 
 	/**
@@ -114,15 +151,75 @@ class CSS_Utility {
 			)
 		);
 
+		$params['query'] = $this->get_media_query( $params['query'] );
+
 		if ( ! isset( $this->css_array[ $params['query'] ] ) ) {
 			$this->css_array[ $params['query'] ] = array();
 		}
 
+		$params['properties'] = $this->filter_out_media_queries( $params['selector'], $params['properties'] );
+
 		if ( ! isset( $this->css_array[ $params['query'] ][ $params['selector'] ] ) ) {
-			$this->css_array[ $params['query'] ][ $params['selector'] ] = array();
+			$this->css_array[ $params['query'] ][ $params['selector'] ] = $params['properties'];
+		} else {
+			$this->css_array[ $params['query'] ][ $params['selector'] ] = array_merge(
+				$this->css_array[ $params['query'] ][ $params['selector'] ],
+				$params['properties']
+			);
+		}
+	}
+
+	/**
+	 * Filter out media query items.
+	 *
+	 * @access public
+	 * @since 2.1.0
+	 * @param string $selector CSS selector.
+	 * @param array  $properties CSS properties.
+	 */
+	public function filter_out_media_queries( $selector, $properties ) {
+		$query_items = array_filter(
+			$properties,
+			function( $ar ) {
+				return isset( $ar['media'] );
+			}
+		);
+
+		if ( 0 !== count( $query_items ) ) {
+			if ( ! isset( $this->media_items[ $selector ] ) ) {
+				$this->media_items[ $selector ] = $query_items;
+			} else {
+				$this->media_items[ $selector ] = array_merge( $this->media_items, $query_items );
+			}
 		}
 
-		$this->css_array[ $params['query'] ][ $params['selector'] ] = $params['properties'];
+		$properties = array_diff_key( $properties, array_flip( array_keys( $query_items ) ) );
+
+		return $properties;
+	}
+
+	/**
+	 * Process media items pre-generation.
+	 *
+	 * @access public
+	 * @since 2.1.0
+	 */
+	public function process_media_items() {
+		foreach ( $this->media_items as $selector => $items ) {
+			foreach ( $items as $item ) {
+				$media_query = $this->get_media_query( $item['media'] );
+
+				if ( ! isset( $this->css_array[ $media_query ] ) ) {
+					$this->css_array[ $media_query ] = array();
+				}
+
+				if ( ! isset( $this->css_array[ $media_query ][ $selector ] ) ) {
+					$this->css_array[ $media_query ][ $selector ] = array();
+				}
+
+				array_push( $this->css_array[ $media_query ][ $selector ], $item );
+			}
+		}
 	}
 
 	/**
@@ -132,6 +229,8 @@ class CSS_Utility {
 	 * @since 1.6.0
 	 */
 	public function generate() {
+		$this->process_media_items();
+
 		$style = '';
 
 		$attrs = $this->block['attrs'];
@@ -228,17 +327,84 @@ class CSS_Utility {
 	 * @return string
 	 */
 	public static function box_values( $box, $box_default = array() ) {
-		$_box = array_merge(
-			array(
-				'left'   => '0px',
-				'right'  => '0px',
-				'top'    => '0px',
-				'bottom' => '0px',
-			),
-			$box_default,
-			$box
+		return self::render_box(
+			array_merge(
+				array(
+					'left'   => '0px',
+					'right'  => '0px',
+					'top'    => '0px',
+					'bottom' => '0px',
+				),
+				$box_default,
+				$box
+			)
+		);
+	}
+
+	/**
+	 * Make a string into a box type.
+	 *
+	 * @param string $value The value.
+	 *
+	 * @return array|string[]
+	 */
+	public static function make_box( $value = '0px' ) {
+		return array(
+			'left'   => $value,
+			'right'  => $value,
+			'top'    => $value,
+			'bottom' => $value,
+		);
+	}
+
+	/**
+	 * Merge tge gives views to a single box value.
+	 *
+	 * @param mixed ...$views The values from other viewports.
+	 *
+	 * @return array|string[]
+	 */
+	public static function merge_views( ...$views ) {
+		$result = self::make_box();
+
+		$valid = array_filter(
+			$views,
+			function( $view ) {
+				return isset( $view ) && is_array( $view );
+			} 
 		);
 
-		return $_box['top'] . ' ' . $_box['right'] . ' ' . $_box['bottom'] . ' ' . $_box['left'];
+		foreach ( $valid as $arr ) {
+			if ( isset( $arr['top'] ) ) {
+				$result['top'] = $arr['top'];
+			}
+			if ( isset( $arr['bottom'] ) ) {
+				$result['bottom'] = $arr['bottom'];
+			}
+			if ( isset( $arr['right'] ) ) {
+				$result['right'] = $arr['right'];
+			}
+			if ( isset( $arr['left'] ) ) {
+				$result['left'] = $arr['left'];
+			}
+		}
+
+		return $result;
+	}
+
+	/**
+	 * Convert a defined box to a CSS string value.
+	 *
+	 * @param array $box The box value.
+	 *
+	 * @return string
+	 */
+	public static function render_box( $box ) {
+
+		if ( ! isset( $box ) || ! is_array( $box ) || count( $box ) === 0 ) {
+			return '';
+		}
+
+		return $box['top'] . ' ' . $box['right'] . ' ' . $box['bottom'] . ' ' . $box['left'];
 	}
 }

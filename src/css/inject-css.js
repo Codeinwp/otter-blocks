@@ -15,12 +15,12 @@ import {
 } from '@wordpress/data';
 
 const addStyle = style => {
-	let element = document.getElementById( 'otter-css-editor-styles' );
+	let element = document.getElementById( 'o-css-editor-styles' );
 
 	if ( null === element ) {
 		element = document.createElement( 'style' );
 		element.setAttribute( 'type', 'text/css' );
-		element.setAttribute( 'id', 'otter-css-editor-styles' );
+		element.setAttribute( 'id', 'o-css-editor-styles' );
 		document.getElementsByTagName( 'head' )[0].appendChild( element );
 	}
 
@@ -83,7 +83,7 @@ let previousBlocks = [];
 subscribe( () => {
 	const { getBlocks } = select( 'core/block-editor' );
 	const blocks = getBlocks();
-	const reusableBlocks = select( 'core' ).getEntityRecords( 'postType', 'wp_block' );
+	const reusableBlocks = select( 'core' ).getEntityRecords( 'postType', 'wp_block', { context: 'view' });
 
 	if ( ! isEqual( previousBlocks, blocks ) ) {
 		previousBlocks = blocks;

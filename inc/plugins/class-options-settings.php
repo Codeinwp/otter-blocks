@@ -48,6 +48,17 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_onboarding',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Show Editor Onboarding.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'themeisle_blocks_settings_css_module',
 			array(
 				'type'         => 'boolean',
@@ -76,6 +87,39 @@ class Options_Settings {
 				'description'  => __( 'Blocks Conditions module allows to hide/display blocks to your users based on selected conditions.', 'otter-blocks' ),
 				'show_in_rest' => true,
 				'default'      => true,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_optimize_animations_css',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Optimize Animations CSS.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_disable_review_schema',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Enable Rich Schema in Product Review Block.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_review_scale',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Use 0.5 Scale for Review Block.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => false,
 			)
 		);
 

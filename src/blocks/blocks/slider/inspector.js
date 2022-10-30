@@ -3,22 +3,44 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { max } from 'lodash';
+import {
+	max,
+	isNumber
+} from 'lodash';
 
-import { InspectorControls } from '@wordpress/block-editor';
+import {
+	InspectorControls,
+	PanelColorSettings
+} from '@wordpress/block-editor';
 
 import {
 	PanelBody,
 	RangeControl,
-	ToggleControl
+	SelectControl,
+	ToggleControl,
+	__experimentalUnitControl as UnitContol
 } from '@wordpress/components';
 
-import { Fragment } from '@wordpress/element';
+import { useSelect } from '@wordpress/data';
+
+import {
+	Fragment,
+	useState
+} from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
+import InspectorHeader from '../../components/inspector-header/index.js';
+import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
 import ImageGrid from './../../components/image-grid/index.js';
+import ResponsiveControl from '../../components/responsive-control/index.js';
+import ClearButton from '../../components/clear-button/index.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
+
+const px = value => value ? `${ value }px` : value;
+
+const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
 
 /**
  *
@@ -32,6 +54,13 @@ const Inspector = ({
 	changePerView,
 	onSelectImages
 }) => {
+	const [ tab, setTab ] = useState( 'settings' );
+
+	const {
+		responsiveSetAttributes,
+		responsiveGetAttributes
+	} = useResponsiveAttributes( setAttributes );
+
 	const changeGap = value => {
 		setAttributes({ gap: Number( value ) });
 		slider.update({ gap: Number( value ) });
@@ -42,118 +71,245 @@ const Inspector = ({
 		slider.update({ peek: Number( value ) });
 	};
 
-	const changeHeight = value => {
-		setAttributes({ height: Number( value ) });
-	};
-
-	const toggleAutoplay = value => {
-		setAttributes({ autoplay: value });
-	};
-
-	const changeDelay = value => {
-		setAttributes({ delay: value });
-	};
-
-	const toggleArrows = value => {
-		setAttributes({ hideArrows: value });
-	};
-
-	const toggleBullets = value => {
-		setAttributes({ hideBullets: value });
+	const changeTransition = value => {
+		setAttributes({ transition: 'ease' !== value ? value : undefined });
+		slider.update({ animationTimingFunc: value });
 	};
 
 	return (
 		<InspectorControls>
-			<PanelBody
-				title={ __( 'Images', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				<ImageGrid
-					attributes={ attributes }
-					onSelectImages={ onSelectImages }
-				/>
-			</PanelBody>
+			<InspectorHeader
+				value={ tab }
+				options={[
+					{
+						label: __( 'Settings', 'otter-blocks' ),
+						value: 'settings'
+					},
+					{
+						label: __( 'Style', 'otter-blocks' ),
+						value: 'style'
+					}
+				]}
+				onChange={ setTab }
+			/>
 
-			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
-			>
-				{ attributes.images.length && (
-					<Fragment>
-						<RangeControl
-							label={ __( 'Slides Per Page', 'otter-blocks' ) }
-							help={ __( 'A number of visible slides.', 'otter-blocks' ) }
-							value={ attributes.perView }
-							onChange={ changePerView }
-							min={ 1 }
-							max={ max([ Math.round( attributes.images.length / 2 ), 1 ]) }
-						/>
-
-						{ 1 < attributes.perView && (
+			{ 'settings' === tab && (
+				<Fragment>
+					<PanelBody
+						title={ __( 'Slides', 'otter-blocks' ) }
+					>
+						{ attributes.images.length && (
 							<Fragment>
 								<RangeControl
-									label={ __( 'Gap', 'otter-blocks' ) }
-									help={ __( 'A size of the space between slides.', 'otter-blocks' ) }
-									value={ attributes.gap }
-									onChange={ changeGap }
-									min={ 0 }
-									max={ 100 }
+									label={ __( 'Slides Per Page', 'otter-blocks' ) }
+									help={ __( 'A number of visible slides.', 'otter-blocks' ) }
+									value={ attributes.perView }
+									onChange={ changePerView }
+									min={ 1 }
+									max={ max([ Math.round( attributes.images.length / 2 ), 1 ]) }
 								/>
 
-								<RangeControl
-									label={ __( 'Peek', 'otter-blocks' ) }
-									help={ __( 'The value of the future slides which have to be visible in the current slide.', 'otter-blocks' ) }
-									value={ attributes.peek }
-									onChange={ changePeek }
-									min={ 0 }
-									max={ 100 }
+								{ 1 < attributes.perView && (
+									<Fragment>
+										<RangeControl
+											label={ __( 'Gap', 'otter-blocks' ) }
+											help={ __( 'A size of the space between slides.', 'otter-blocks' ) }
+											value={ attributes.gap }
+											onChange={ changeGap }
+											min={ 0 }
+											max={ 100 }
+										/>
+
+										<RangeControl
+											label={ __( 'Peek', 'otter-blocks' ) }
+											help={ __( 'The value of the future slides which have to be visible in the current slide.', 'otter-blocks' ) }
+											value={ attributes.peek }
+											onChange={ changePeek }
+											min={ 0 }
+											max={ 100 }
+										/>
+									</Fragment>
+								) }
+
+								<ToggleControl
+									label={ __( 'Hide Arrows', 'otter-blocks' ) }
+									help={ __( 'Hide navigation arrows.', 'otter-blocks' ) }
+									checked={ attributes.hideArrows }
+									onChange={ () => setAttributes({ hideArrows: ! attributes.hideArrows }) }
+								/>
+
+								<ToggleControl
+									label={ __( 'Hide Pagination', 'otter-blocks' ) }
+									help={ __( 'Hide navigation bullets.', 'otter-blocks' ) }
+									checked={ attributes.hideBullets }
+									onChange={ () => setAttributes({ hideBullets: ! attributes.hideBullets }) }
 								/>
 							</Fragment>
 						) }
+					</PanelBody>
 
-						<RangeControl
-							label={ __( 'Height', 'otter-blocks' ) }
-							help={ __( 'Slider height in pixels.', 'otter-blocks' ) }
-							value={ attributes.height }
-							onChange={ changeHeight }
-							step={ 0.1 }
-							min={ 100 }
-							max={ 1400 }
+					<PanelBody
+						title={ __( 'Images', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						<ImageGrid
+							attributes={ attributes }
+							onSelectImages={ onSelectImages }
 						/>
+					</PanelBody>
 
-						<ToggleControl
-							label={ __( 'Autoplay', 'otter-blocks' ) }
-							help={ __( 'Autoplay slider in the front.', 'otter-blocks' ) }
-							checked={ attributes.autoplay }
-							onChange={ toggleAutoplay }
-						/>
+					<PanelBody
+						title={ __( 'Autoplay', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						{ attributes.images.length && (
+							<Fragment>
+								<ToggleControl
+									label={ __( 'Autoplay', 'otter-blocks' ) }
+									help={ __( 'Autoplay slider in the front.', 'otter-blocks' ) }
+									checked={ attributes.autoplay }
+									onChange={ () => setAttributes({ autoplay: ! attributes.autoplay }) }
+								/>
 
-						{ attributes.autoplay && (
-							<RangeControl
-								label={ __( 'Delay', 'otter-blocks' ) }
-								help={ __( 'Delay in slide change (in seconds).', 'otter-blocks' ) }
-								value={ attributes.delay }
-								onChange={ changeDelay }
-								min={ 1 }
-								max={ 10 }
-							/>
+								{ attributes.autoplay && (
+									<RangeControl
+										label={ __( 'Delay', 'otter-blocks' ) }
+										help={ __( 'Delay in slide change (in seconds).', 'otter-blocks' ) }
+										value={ attributes.delay }
+										onChange={ delay => setAttributes({ delay }) }
+										min={ 1 }
+										max={ 10 }
+										allowReset
+									/>
+								) }
+							</Fragment>
 						) }
+					</PanelBody>
+				</Fragment>
+			) }
 
-						<ToggleControl
-							label={ __( 'Hide Arrows', 'otter-blocks' ) }
-							help={ __( 'Hide navigation arrows.', 'otter-blocks' ) }
-							checked={ attributes.hideArrows }
-							onChange={ toggleArrows }
+			{ 'style' === tab && (
+				<Fragment>
+					<PanelBody
+						title={ __( 'Dimensions and Motion', 'otter-blocks' ) }
+					>
+						{ attributes.images.length && (
+							<Fragment>
+								<ResponsiveControl
+									label={ __( 'Height', 'otter-blocks' ) }
+								>
+									<UnitContol
+										value={ responsiveGetAttributes([ mightBeUnit( attributes.height ), attributes.heightTablet, attributes.heightMobile ]) }
+										onChange={ value => responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]) }
+									/>
+
+									<ClearButton
+										values={[ 'height', 'heightTablet', 'heightMobile' ]}
+										setAttributes={ setAttributes }
+									/>
+								</ResponsiveControl>
+
+								<UnitContol
+									label={ __( 'Width', 'otter-blocks' ) }
+									value={ attributes.width }
+									onChange={ width => setAttributes({ width }) }
+								/>
+
+								<SelectControl
+									label={ __( 'Transition', 'otter-blocks' ) }
+									value={ attributes.transition || 'ease' }
+									options={[
+										{
+											label: __( 'Linear', 'otter-blocks' ),
+											value: 'linear'
+										},
+										{
+											label: __( 'Ease', 'otter-blocks' ),
+											value: 'ease'
+										},
+										{
+											label: __( 'Ease In', 'otter-blocks' ),
+											value: 'ease-in'
+										},
+										{
+											label: __( 'Ease In Out', 'otter-blocks' ),
+											value: 'ease-in-out'
+										},
+										{
+											label: __( 'Bounce', 'otter-blocks' ),
+											value: 'cubic-bezier(0.680, -0.550, 0.265, 1.550)'
+										}
+									]}
+									onChange={ changeTransition }
+								/>
+							</Fragment>
+						) }
+					</PanelBody>
+
+					<PanelColorSettings
+						title={ __( 'Color', 'otter-blocks' ) }
+						initialOpen={ false }
+						colorSettings={ [
+							{
+								value: attributes.arrowsColor,
+								onChange: arrowsColor => setAttributes({ arrowsColor }),
+								label: __( 'Arrows', 'otter-blocks' )
+							},
+							{
+								value: attributes.arrowsBackgroundColor,
+								onChange: arrowsBackgroundColor => setAttributes({ arrowsBackgroundColor }),
+								label: __( 'Arrows Background', 'otter-blocks' )
+							},
+							{
+								value: attributes.paginationColor,
+								onChange: paginationColor => setAttributes({ paginationColor }),
+								label: __( 'Pagination', 'otter-blocks' )
+							},
+							{
+								value: attributes.paginationActiveColor,
+								onChange: paginationActiveColor => setAttributes({ paginationActiveColor }),
+								label: __( 'Pagination Active', 'otter-blocks' )
+							},
+							{
+								value: attributes.borderColor,
+								onChange: borderColor => setAttributes({ borderColor }),
+								label: __( 'Border', 'otter-blocks' )
+							}
+						] }
+					/>
+
+					<PanelBody
+						title={ __( 'Border', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						<UnitContol
+							label={ __( 'Width', 'otter-blocks' ) }
+							value={ attributes.borderWidth }
+							onChange={ borderWidth => setAttributes({ borderWidth }) }
 						/>
 
-						<ToggleControl
-							label={ __( 'Hide Bullets', 'otter-blocks' ) }
-							help={ __( 'Hide navigation bullets.', 'otter-blocks' ) }
-							checked={ attributes.hideBullets }
-							onChange={ toggleBullets }
+						<ClearButton
+							values={[ 'borderWidth' ]}
+							setAttributes={ setAttributes }
 						/>
-					</Fragment>
-				) }
-			</PanelBody>
+
+						<br/>
+
+						<UnitContol
+							label={ __( 'Radius', 'otter-blocks' ) }
+							value={ attributes.borderRadius }
+							onChange={ borderRadius => setAttributes({ borderRadius }) }
+						/>
+
+						<ClearButton
+							values={[ 'borderRadius' ]}
+							setAttributes={ setAttributes }
+						/>
+					</PanelBody>
+				</Fragment>
+			) }
+
+			<InspectorExtensions/>
 		</InspectorControls>
 	);
 };

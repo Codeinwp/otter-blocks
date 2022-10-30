@@ -170,9 +170,26 @@ We're constantly adding new Gutenberg Blocks to Otter to assist in your website 
 - Plugin Card Gutenberg Block [FREE]
 - Subscribe Form Gutenberg Block [FREE]
 
+### Get More Options in Otter Pro
+
+With [Otter Pro](https://themeisle.com/plugins/otter-blocks/), you get a lot more features, including:
+
+- Add to Cart Block
+- Business Hours Block
+- Product Review Comparison Block
+- More Dynamic Content options
+- More Visibility Conditions options
+- and more!
+
+You can try a live demo of Otter Pro [by clicking here](https://themeisle.com/plugins/otter-blocks/try-otter/).
+
 ### Support
 
 We're here to help. Feel free to open a new thread on the [Support Forum](https://wordpress.org/support/plugin/otter-blocks/).
+
+### Documentation
+
+You can check Otter documentation [here](https://docs.themeisle.com/article/1478-otter-blocks-documentation).
 
 ### Useful Resources
 
@@ -188,6 +205,122 @@ We're here to help. Feel free to open a new thread on the [Support Forum](https:
 5. Section Block
 
 == Changelog ==
+
+#### [Version 2.1.0](https://github.com/Codeinwp/otter-blocks/compare/v2.0.16...v2.1.0) (2022-10-19)
+
+- Add Otter Patterns
+- Add Live Preview of Dynamic Values
+- Add Post Content option to Dynamic Values
+- Add Closing feature to Sticky Extension
+- Add class to body when some element is active in Sticky
+- Posts Block Redesign
+- WordPress 6.1 Compatibility
+- Fix Review Block padding not affecting Pros/Cons
+- Fix type in Review Block
+- Fix Border/Icon color inheritance in Blocks
+- Fix Section inconsistency in Global Settings
+- Fix Otter allowed_html for Forms
+- Fix the Welcome Modal showing more than once
+- Fix Section Vertical alignment not working on Mobile
+- Fix Tabs Block remove option not working
+- Fix Dynamic Image crashing when Woo value is used, and then Woo is deactivated
+- More bug fixes
+
+
+
+
+##### [Version 2.0.16](https://github.com/Codeinwp/otter-blocks/compare/v2.0.15...v2.0.16) (2022-09-27)
+
+- Minor fixes.
+
+
+
+
+##### [Version 2.0.15](https://github.com/Codeinwp/otter-blocks/compare/v2.0.14...v2.0.15) (2022-09-27)
+
+- Icon Block Enhancements
+- Product Review Block Enhancements
+- Add Evergreen Countdown Option to Countdown Block
+- Add finishing actions to Countdown Block
+- Add Dynamic Link control to Button Blocks
+- Add Otter Feedback Option
+- Fix Slider Block not working inside Section in the Editor
+- Fix unintended border in some blocks when used as non-Admin role.
+- Fix Padding control crashing the Section Block
+- Fix error in Widgets Screen
+- Fix stretched image in Safari
+
+
+
+
+##### [Version 2.0.14](https://github.com/Codeinwp/otter-blocks/compare/v2.0.13...v2.0.14) (2022-09-12)
+
+- Adding an onboarding experience in Otter
+- Add Dynamic Links feature
+- Progress Bar Block Enhancements
+- Animation Extension Enhancements
+- Add UI control for the input background color to Form Block
+- Add edit link option for Button Group
+- Add Float to Top/Bottom mode to Sticky Extension
+- Fix Review Comparison Table not accessing reviews from inside Section Block
+- Fix ThemeIsle Icons in Button Group not aligning to the text in Editor
+- Fix CSS Editor listing not being able to override
+- Fix Icon Block padding on ThemeIsle Icons library
+- Fix animated elements in viewport flashing before animating
+- Fix Flip Block not working correctly in Firefox
+- Fix Google Fonts not working in responsive views in the Editor
+- Remove AggregateRating from Review Block Schema
+
+
+
+
+##### [Version 2.0.13](https://github.com/Codeinwp/otter-blocks/compare/v2.0.12...v2.0.13) (2022-08-27)
+
+- Fix JS being loaded everywhere even when not required
+
+
+
+
+##### [Version 2.0.12](https://github.com/Codeinwp/otter-blocks/compare/v2.0.11...v2.0.12) (2022-08-25)
+
+- Fix Custom CSS not working with certain selectors
+- Disable Author Block for WordPress 5.9 or above; use Core’s block instead
+- Small Dynamic Text enhancements
+- Add separator alignment option in Countdown block
+- Fix Category not shown on Featured Post in Posts Lock
+- Fix Alignment control breaking in Section & Posts block
+
+
+
+
+##### [Version 2.0.11](https://github.com/Codeinwp/otter-blocks/compare/v2.0.10...v2.0.11) (2022-08-17)
+
+- Add Option to remove Product Review schema in Product Review block
+- Add Pros/Cons Schema to Product Review Block
+- Add FSE compatibility to Otter
+- Add Docs link to Dashboard & readme
+- Fix certain blocks not working inside the Query Loop block
+- Fix Visibility Conditions not working for Widgets in the Customizer
+- Fix Icon List block not working properly when adding new items
+- Fix border issues in Countdown Block
+- Fix Color & Gradient picker opening together
+- Fix alignment inheritance in Countdown Block
+- Fix undefined variable warning when Animations are used in Dynamic Blocks
+- Fix Alignment control not appearing in Button Group in FSE
+- Fix Countdown & Form blocks not working properly for non-Super Admins in Network sites
+- Fix Dynamic Values modal not opening in Advanced Heading block
+- Fix Plugin Card not behaving nicely when added into smaller spaces
+
+
+
+
+##### [Version 2.0.10](https://github.com/Codeinwp/otter-blocks/compare/v2.0.9...v2.0.10) (2022-08-04)
+
+- Fix Section Spacing inheritance issue
+- Only load Animations on front-end which are being used
+
+
+
 
 ##### [Version 2.0.9](https://github.com/Codeinwp/otter-blocks/compare/v2.0.8...v2.0.9) (2022-07-29)
 

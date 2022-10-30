@@ -32,7 +32,6 @@ const { attributes: defaultAttributes } = metadata;
 /**
  * Progress Bar Block
  * @param {import('./types').ProgressBarProps} props
- * @returns
  */
 const ProgressBar = ({
 	attributes,
@@ -95,7 +94,8 @@ const ProgressBar = ({
 		'--background-color': attributes.backgroundColor,
 		'--border-radius': attributes.borderRadius !== undefined && ( attributes.borderRadius + 'px' ),
 		'--height': attributes.height !== undefined && ( attributes.height + 'px' ),
-		'--bar-background': attributes.barBackgroundColor
+		'--bar-background': attributes.barBackgroundColor,
+		'--title-font-size': attributes.titleFontSize
 	};
 
 	const onHeightChange = value => {
@@ -158,7 +158,7 @@ const ProgressBar = ({
 						) }
 
 						{ 'outer' === attributes.percentagePosition && showPercentage && (
-							<div className="wp-block-themeisle-blocks-progress-bar__progress wp-block-themeisle-blocks-progress-bar__outer__value">
+							<div className="wp-block-themeisle-blocks-progress-bar__outer__value wp-block-themeisle-blocks-progress-bar__number">
 								{ `${ attributes.percentage }%` }
 							</div>
 						)}

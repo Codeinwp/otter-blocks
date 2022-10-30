@@ -7,6 +7,12 @@
 
 namespace ThemeIsle\GutenbergBlocks;
 
+use Sabberworm\CSS\Parser;
+use Sabberworm\CSS\OutputFormat;
+use Sabberworm\CSS\RuleSet\DeclarationBlock;
+use Sabberworm\CSS\CSSList\AtRuleBlockList;
+use Sabberworm\CSS\CSSList\KeyFrame;
+
 /**
  * Class Base_CSS
  */
@@ -75,8 +81,10 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Countdown_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Core_Image_Plugin_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Font_Awesome_Icons_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Google_Map_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Icon_List_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Icon_List_Item_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Leaflet_Map_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_Input_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_Textarea_CSS',
@@ -87,7 +95,7 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Review_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Tabs_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Posts_CSS',
-			'\Themeisle\GutenbergBlocks\CSS\Blocks\Sharing_Icons_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Sharing_Icons_CSS',
 		);
 
 		self::$blocks_classes = apply_filters( 'otter_blocks_register_css', self::$blocks_classes );
@@ -207,7 +215,9 @@ class Base_CSS {
 				return;
 			}
 
-			return $this->cycle_through_static_blocks( $blocks );
+			$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+
+			return $this->cycle_through_static_blocks( $blocks, $animations );
 		}
 	}
 
@@ -235,7 +245,9 @@ class Base_CSS {
 				return;
 			}
 
-			return $this->cycle_through_static_blocks( $blocks );
+			$animations = boolval( preg_match( '/\banimated\b/', $content ) );
+
+			return $this->cycle_through_static_blocks( $blocks, $animations );
 		}
 	}
 
@@ -258,22 +270,25 @@ class Base_CSS {
 			return;
 		}
 
-		$blocks = parse_blocks( $reusable_block->post_content );
+		$blocks     = parse_blocks( $reusable_block->post_content );
+		$animations = boolval( preg_match( '/\banimated\b/', $reusable_block->post_content ) );
 
-		return $this->cycle_through_static_blocks( $blocks );
+		return $this->cycle_through_static_blocks( $blocks, $animations );
 	}
 
 	/**
 	 * Cycle thorugh Static Blocks
 	 *
 	 * @param array $blocks List of blocks.
+	 * @param bool  $animations To check for animations or not.
 	 *
 	 * @return string Style.
 	 * @since   1.3.0
 	 * @access  public
 	 */
-	public function cycle_through_static_blocks( $blocks ) {
+	public function cycle_through_static_blocks( $blocks, $animations = true ) {
 		$style = '';
+
 		foreach ( $blocks as $block ) {
 			foreach ( self::$blocks_classes as $classname ) {
 				$path = new $classname();
@@ -292,11 +307,275 @@ class Base_CSS {
 			}
 
 			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
-				$style .= $this->cycle_through_static_blocks( $block['innerBlocks'] );
+				$style .= $this->cycle_through_static_blocks( $block['innerBlocks'], false );
+			}
+		}
+
+		if ( true === $animations && class_exists( '\ThemeIsle\GutenbergBlocks\Blocks_Animation' ) && get_option( 'themeisle_blocks_settings_blocks_animation', true ) && get_option( 'themeisle_blocks_settings_optimize_animations_css', true ) ) {
+			$style .= $this->get_animation_css( $blocks );
+		}
+
+		return $style;
+	}
+
+	/**
+	 * Get Animation CSS
+	 *
+	 * @param array $blocks List of blocks.
+	 *
+	 * @return string CSS.
+	 * @since   2.0.10
+	 * @access  public
+	 */
+	public function get_animation_css( $blocks ) {
+		$style   = '';
+		$classes = $this->get_animation_classes( $blocks );
+
+		if ( 0 === count( $classes ) ) {
+			return $style;
+		}
+
+		$prepared_classes = array( ':root' );
+
+		foreach ( $classes as $class ) {
+			array_push( $prepared_classes, '.' . $class, '.animated.' . $class );
+		}
+
+		$classes = $prepared_classes;
+
+		$content = get_transient( 'otter_animations_parsed' );
+
+		if ( false === $content ) {
+			$parser = null;
+			if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
+				$parser = new Parser( wpcom_vip_file_get_contents( OTTER_BLOCKS_PATH . '/build/animation/index.css' ) );
+			} else {
+				$parser = new Parser( file_get_contents( OTTER_BLOCKS_PATH . '/build/animation/index.css' ) ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
+			}
+	
+			$content = $parser->parse()->getContents();
+
+			set_transient( 'otter_animations_parsed', $content, MONTH_IN_SECONDS ); 
+		}
+
+		$format = OutputFormat::createCompact();
+
+		foreach ( $content as $rule ) {
+			if ( $rule instanceof DeclarationBlock ) {
+				foreach ( $rule->getSelectors() as $selector ) {
+					if ( in_array( $selector, $classes ) ) {
+						$style .= $rule->render( $format );
+					}
+				}
+				continue;
+			}
+		
+			/*
+			 * This is used to get the reduced-motion animation styles.
+			 */
+			if ( $rule instanceof AtRuleBlockList ) {
+				if ( false === in_array( $rule->atRuleArgs(), array( '(prefers-reduced-motion:reduce),print', 'screen' ) ) ) {
+					continue;
+				}
+		
+				$style .= $rule->render( $format );
+				continue;
+			}
+
+			/*
+			 * This is used to get actual animation which is a @keyframe.
+			 */
+			if ( $rule instanceof KeyFrame ) {
+				if ( in_array( '.' . $rule->getAnimationName(), $classes ) ) {
+					$style .= $rule->render( $format );
+				}
+				continue;
 			}
 		}
 
 		return $style;
+	}
+
+	/**
+	 * Get Animation Classes
+	 *
+	 * @param array $blocks List of blocks.
+	 *
+	 * @return array CSS classes.
+	 * @since   2.0.10
+	 * @access  public
+	 */
+	public function get_animation_classes( $blocks ) {
+		$classes = array();
+
+		$allowed_classes = array(
+			'animated',
+			'bounce',
+			'flash',
+			'pulse',
+			'rubberBand',
+			'shakeX',
+			'shakeY',
+			'headShake',
+			'swing',
+			'tada',
+			'wobble',
+			'jello',
+			'heartBeat',
+			'hinge',
+			'jackInTheBox',
+			'backInDown',
+			'backInLeft',
+			'backInRight',
+			'backInUp',
+			'backOutDown',
+			'backOutLeft',
+			'backOutRight',
+			'backOutUp',
+			'bounceIn',
+			'bounceInDown',
+			'bounceInLeft',
+			'bounceInRight',
+			'bounceInUp',
+			'bounceOut',
+			'bounceOutDown',
+			'bounceOutLeft',
+			'bounceOutRight',
+			'bounceOutUp',
+			'fadeIn',
+			'fadeInDown',
+			'fadeInDownBig',
+			'fadeInLeft',
+			'fadeInLeftBig',
+			'fadeInRight',
+			'fadeInRightBig',
+			'fadeInUp',
+			'fadeInTopLeft',
+			'fadeInTopRight',
+			'fadeInBottomLeft',
+			'fadeInBottomRight',
+			'fadeOut',
+			'fadeOutDown',
+			'fadeOutDownBig',
+			'fadeOutLeft',
+			'fadeOutLeftBig',
+			'fadeOutRight',
+			'fadeOutRightBig',
+			'fadeOutUp',
+			'fadeOutUpBig',
+			'fadeOutTopLeft',
+			'fadeOutTopRight',
+			'fadeOutBottomRight',
+			'fadeOutBottomLeft',
+			'flip',
+			'flipInX',
+			'flipInY',
+			'flipOutX',
+			'flipOutY',
+			'lightSpeedInRight',
+			'lightSpeedInLeft',
+			'lightSpeedOutRight',
+			'lightSpeedOutLeft',
+			'rotateIn',
+			'rotateInDownLeft',
+			'rotateInDownRight',
+			'rotateInUpLeft',
+			'rotateInUpRight',
+			'rotateOut',
+			'rotateOutDownLeft',
+			'rotateOutDownRight',
+			'rotateOutUpLeft',
+			'rotateOutUpRight',
+			'slideInDown',
+			'slideInLeft',
+			'slideInRight',
+			'slideInUp',
+			'slideOutDown',
+			'slideOutLeft',
+			'slideOutRight',
+			'slideOutUp',
+			'zoomIn',
+			'zoomInDown',
+			'zoomInLeft',
+			'zoomInRight',
+			'zoomInUp',
+			'zoomOut',
+			'zoomOutDown',
+			'zoomOutLeft',
+			'zoomOutRight',
+			'zoomOutUp',
+			'rollIn',
+			'rollOut',
+			'backOutDown',
+			'backOutLeft',
+			'backOutRight',
+			'backOutUp',
+			'bounceOut',
+			'bounceOutDown',
+			'bounceOutLeft',
+			'bounceOutRight',
+			'bounceOutUp',
+			'fadeOut',
+			'fadeOutDown',
+			'fadeOutDownBig',
+			'fadeOutLeft',
+			'fadeOutLeftBig',
+			'fadeOutRight',
+			'fadeOutRightBig',
+			'fadeOutUp',
+			'fadeOutUpBig',
+			'fadeOutTopLeft',
+			'fadeOutTopRight',
+			'fadeOutBottomRight',
+			'fadeOutBottomLeft',
+			'flipOutX',
+			'flipOutY',
+			'lightSpeedOutRight',
+			'lightSpeedOutLeft',
+			'rotateOut',
+			'rotateOutDownLeft',
+			'rotateOutDownRight',
+			'rotateOutUpLeft',
+			'rotateOutUpRight',
+			'slideOutDown',
+			'slideOutLeft',
+			'slideOutRight',
+			'slideOutUp',
+			'zoomOut',
+			'zoomOutDown',
+			'zoomOutLeft',
+			'zoomOutRight',
+			'zoomOutUp',
+			'rollOut',
+			'delay-100ms',
+			'delay-200ms',
+			'delay-500ms',
+			'delay-1s',
+			'delay-2s',
+			'delay-3s',
+			'delay-4s',
+			'delay-5s',
+			'slow',
+			'slower',
+			'fast',
+			'faster',
+		);
+
+		foreach ( $blocks as $block ) {
+			if ( isset( $block['attrs']['className'] ) && ! empty( $block['attrs']['className'] ) ) {
+				if ( preg_match( '/\banimated\b/', $block['attrs']['className'] ) ) {
+					$classes = array_merge( $classes, explode( ' ', trim( $block['attrs']['className'] ) ) );
+				}
+			}
+
+			if ( isset( $block['innerBlocks'] ) && ! empty( $block['innerBlocks'] ) && is_array( $block['innerBlocks'] ) ) {
+				$classes = array_merge( $classes, $this->get_animation_classes( $block['innerBlocks'] ) );
+			}
+		}
+
+		$classes = array_intersect( array_unique( $classes ), $allowed_classes );
+
+		return $classes;
 	}
 
 	/**
@@ -330,6 +609,7 @@ class Base_CSS {
 	 */
 	public function cycle_through_reusable_blocks( $blocks ) {
 		$style = '';
+
 		foreach ( $blocks as $block ) {
 			if ( 'core/block' === $block['blockName'] && ! empty( $block['attrs']['ref'] ) ) {
 				$style .= $this->get_reusable_block_css( $block['attrs']['ref'] );

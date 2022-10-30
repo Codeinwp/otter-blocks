@@ -58,10 +58,6 @@
 			"type": "string",
 			"default": "full"
 		},
-		"imageBoxShadow": {
-			"type": "boolean",
-			"default": true
-		},
 		"displayFeaturedImage": {
 			"type": "boolean",
 			"default": true
@@ -115,25 +111,71 @@
 			"default": false
 		},
 		"customTitleFontSize": {
-			"type": "number"
+			"type": [ "string", "number" ]
 		},
-		"customTitleFontSizeTable": {
-			"type": "number"
+		"customTitleFontSizeTablet": {
+			"type": [ "string", "number" ]
 		},
 		"customTitleFontSizeMobile": {
-			"type": "number"
+			"type": [ "string", "number" ]
 		},
 		"customDescriptionFontSize": {
-			"type": "number"
+			"type": [ "string", "number" ]
 		},
 		"customDescriptionFontSizeTablet": {
-			"type": "number"
+			"type": [ "string", "number" ]
 		},
 		"customDescriptionFontSizeMobile": {
-			"type": "number"
+			"type": [ "string", "number" ]
+		},
+		"customMetaFontSize": {
+			"type": "string"
+		},
+		"customMetaFontSizeTablet": {
+			"type": "string"
+		},
+		"customMetaFontSizeMobile": {
+			"type": "string"
+		},
+		"textColor": {
+			"type": "string"
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"borderColor": {
+			"type": "string"
 		},
 		"borderRadius": {
-			"type": "number"
+			"type": [ "number", "object" ]
+		},
+		"borderWidth": {
+			"type": "string"
+		},
+		"cardBorderRadius": {
+			"type": "object"
+		},
+		"boxShadow": {
+			"type": "object",
+			"default": {
+				"active": false,
+				"colorOpacity": 50,
+				"blur": 5,
+				"spread": 1,
+				"horizontal": 0,
+				"vertical": 0
+			}
+		},
+		"imageBoxShadow": {
+			"type": "object",
+			"default": {
+				"active": false,
+				"colorOpacity": 50,
+				"blur": 5,
+				"spread": 1,
+				"horizontal": 0,
+				"vertical": 0
+			}
 		},
 		"textAlign": {
 			"type": "string"
@@ -145,7 +187,43 @@
 			"type": "boolean"
 		},
 		"imageWidth": {
-			"type": "number"
+			"type": [ "string", "number" ]
+		},
+		"imageWidthTablet": {
+			"type": "string"
+		},
+		"imageWidthMobile": {
+			"type": "string"
+		},
+		"columnGap": {
+			"type": "string"
+		},
+		"columnGapTablet": {
+			"type": "string"
+		},
+		"columnGapMobile": {
+			"type": "string"
+		},
+		"rowGap": {
+			"type": "string"
+		},
+		"rowGapTablet": {
+			"type": "string"
+		},
+		"rowGapMobile": {
+			"type": "string"
+		},
+		"padding": {
+			"type": "string"
+		},
+		"paddingTablet": {
+			"type": "string"
+		},
+		"paddingMobile": {
+			"type": "string"
+		},
+		"contentGap": {
+			"type": "string"
 		}
 	},
 	"supports": {

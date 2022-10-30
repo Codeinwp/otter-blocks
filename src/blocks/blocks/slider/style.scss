@@ -1,14 +1,44 @@
 .wp-block-themeisle-blocks-slider {
 	--height: 400px;
+	--height-tablet: var( --height );
+	--height-mobile: var( --height-tablet );
+	--arrows-color: #333;
+	--arrows-background-color: #fff;
+	--pagination-color: rgba(255,255,255,0.5);
+	--pagination-active-color: #fff;
+	--border-color: inherit;
+	--border-width: 0;
+	--border-radius: 0;
+	--width: auto;
 
+	width: var( --width );
+
+	.glide__track {
+		border: var( --border-width ) solid var( --border-color );
+		border-radius: var( --border-radius );
+		overflow: hidden;
+	}
+	
 	.glide__slides {
 		height: var( --height );
 		animation: load 4s 3;
 
 		@keyframes load {
-			0%, 100% {background-color: inherit;}
-			50% {background-color: #d8d8d8;}
-		  }
+			0%, 100% {
+				background-color: inherit;
+			}
+			50% {
+				background-color: #d8d8d8;
+			}
+		}
+
+		@media ( min-width: 600px ) and ( max-width: 960px ) {
+			height: var( --height-tablet ) !important;
+		}
+
+		@media ( max-width: 600px ) {
+			height: var( --height-mobile ) !important;
+		}
 	}
 
 	.wp-block-themeisle-blocks-slider-item-wrapper {
@@ -46,9 +76,9 @@
 
 	.glide__arrows {
 		.glide__arrow {
-			background: #fff;
+			background: var( --arrows-background-color );
 			border: none;
-			color: #333;
+			color: var( --arrows-color );
 			padding: 12px;
 			opacity: 0.75;
 
@@ -64,7 +94,18 @@
 
 			svg {
 				display: block;
+				fill: var( --arrows-color );
 			}
+		}
+	}
+
+	.glide__track {
+		.glide__bullet {
+			background-color: var( --pagination-color );
+		}
+
+		.glide__bullet--active {
+			background-color: var( --pagination-active-color );
 		}
 	}
 

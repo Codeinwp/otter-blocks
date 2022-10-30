@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import classnames from 'classnames';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -17,8 +12,6 @@ import {
 
 import {
 	__experimentalBoxControl as BoxControl,
-	Button,
-	Dashicon,
 	PanelBody,
 	ToggleControl,
 	RangeControl,
@@ -35,11 +28,16 @@ import {
 /**
  * Internal dependencies
  */
+import InspectorHeader from '../../../components/inspector-header/index.js';
+import { InspectorExtensions } from '../../../components/inspector-slot-fill/index.js';
 import ResponsiveControl from '../../../components/responsive-control/index.js';
 import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
 import SyncControl from '../../../components/sync-control/index.js';
-import { isNullObject } from '../../../helpers/helper-functions.js';
+import {
+	isNullObject,
+	removeBoxDefaultValues
+} from '../../../helpers/helper-functions.js';
 
 /**
  *
@@ -94,9 +92,9 @@ const Inspector = ({
 		case 'Desktop':
 			return getValue( 'padding' );
 		case 'Tablet':
-			return merge( getValue( 'padding' ), getValue( 'paddingTablet' ) );
+			return merge({ ...getValue( 'padding' ) }, getValue( 'paddingTablet' ) );
 		case 'Mobile':
-			return merge( getValue( 'padding' ), getValue( 'paddingTablet' ), getValue( 'paddingMobile' ) );
+			return merge({ ...getValue( 'padding' ) }, getValue( 'paddingTablet' ), getValue( 'paddingMobile' ) );
 		default:
 			return undefined;
 		}
@@ -111,9 +109,9 @@ const Inspector = ({
 		case 'Desktop':
 			return setAttributes({ padding: value });
 		case 'Tablet':
-			return setAttributes({ paddingTablet: value });
+			return setAttributes({ paddingTablet: removeBoxDefaultValues( value, attributes.padding ) });
 		case 'Mobile':
-			return setAttributes({ paddingMobile: value });
+			return setAttributes({ paddingMobile: removeBoxDefaultValues( value, { ...attributes.padding, ...attributes.paddingTablet }) });
 		default:
 			return undefined;
 		}
@@ -137,9 +135,9 @@ const Inspector = ({
 		case 'Desktop':
 			return getValue( 'margin' );
 		case 'Tablet':
-			return merge( getValue( 'margin' ), getValue( 'marginTablet' ) );
+			return merge({ ...getValue( 'margin' ) }, getValue( 'marginTablet' ) );
 		case 'Mobile':
-			return merge( getValue( 'margin' ), getValue( 'marginTablet' ), getValue( 'marginMobile' ) );
+			return merge({ ...getValue( 'margin' ) }, getValue( 'marginTablet' ), getValue( 'marginMobile' ) );
 		default:
 			return undefined;
 		}
@@ -154,9 +152,9 @@ const Inspector = ({
 		case 'Desktop':
 			return setAttributes({ margin: value });
 		case 'Tablet':
-			return setAttributes({ marginTablet: value });
+			return setAttributes({ marginTablet: removeBoxDefaultValues( value, attributes.margin ) });
 		case 'Mobile':
-			return setAttributes({ marginMobile: value });
+			return setAttributes({ marginMobile: removeBoxDefaultValues( value, { ...attributes.margin, ...attributes.marginTablet }) });
 		default:
 			return undefined;
 		}
@@ -180,46 +178,24 @@ const Inspector = ({
 
 	return (
 		<InspectorControls>
-			<PanelBody className="o-section-header-panel">
-				<Button
-					className={ classnames(
-						'header-tab',
-						{ 'is-selected': 'layout' === tab }
-					) }
-					onClick={ () => setTab( 'layout' ) }
-				>
-					<span>
-						<Dashicon icon="editor-table"/>
-						{ __( 'Layout', 'otter-blocks' ) }
-					</span>
-				</Button>
-
-				<Button
-					className={ classnames(
-						'header-tab',
-						{ 'is-selected': 'style' === tab }
-					) }
-					onClick={ () => setTab( 'style' ) }
-				>
-					<span>
-						<Dashicon icon="admin-customizer"/>
-						{ __( 'Style', 'otter-blocks' ) }
-					</span>
-				</Button>
-
-				<Button
-					className={ classnames(
-						'header-tab',
-						{ 'is-selected': 'advanced' === tab }
-					) }
-					onClick={ () => setTab( 'advanced' ) }
-				>
-					<span>
-						<Dashicon icon="admin-generic"/>
-						{ __( 'Advanced', 'otter-blocks' ) }
-					</span>
-				</Button>
-			</PanelBody>
+			<InspectorHeader
+				value={ tab }
+				options={[
+					{
+						label: __( 'Layout', 'otter-blocks' ),
+						value: 'layout'
+					},
+					{
+						label: __( 'Style', 'otter-blocks' ),
+						value: 'style'
+					},
+					{
+						label: __( 'Advanced', 'otter-blocks' ),
+						value: 'advanced'
+					}
+				]}
+				onChange={ setTab }
+			/>
 
 			{ 'layout' === tab && (
 				<Fragment>
@@ -239,7 +215,6 @@ const Inspector = ({
 
 						<ResponsiveControl
 							label={ __( 'Screen Type', 'otter-blocks' ) }
-							className="otter-section-padding-responsive-control"
 						>
 							<SyncControl
 								field={ getPaddingField() }
@@ -432,6 +407,8 @@ const Inspector = ({
 					/>
 				</PanelBody>
 			) }
+
+			<InspectorExtensions/>
 		</InspectorControls>
 	);
 };

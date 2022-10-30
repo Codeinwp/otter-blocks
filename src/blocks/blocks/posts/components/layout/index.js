@@ -33,14 +33,12 @@ const Layout = ({
 						'is-grid',
 						`o-posts-grid-columns-${ attributes.columns }`,
 						{
-							'has-shadow': attributes.imageBoxShadow,
 							'o-crop-img': attributes.cropImage
 						}
 					) :
 					classnames(
 						'is-list',
 						{
-							'has-shadow': attributes.imageBoxShadow,
 							'o-crop-img': attributes.cropImage
 						}
 					)
@@ -51,6 +49,7 @@ const Layout = ({
 				.slice( attributes.enableFeaturedPost ? 1 : 0 )
 				.map( post => {
 					const category = categoriesList && 0 < post?.categories?.length ? categoriesList.find( item => item.id === post.categories[0]) : undefined;
+					const categories = categoriesList && 0 < post?.categories?.length ? categoriesList.filter( item => post.categories.includes( item.id ) ) : [];
 					const author = authors && post.author ? authors.find( item => item.id === post.author ) : undefined;
 					return (
 						<div
@@ -83,7 +82,7 @@ const Layout = ({
 										case 'title':
 											return <PostsTitle key={ element } attributes={ attributes } element={ element } post={ post } />;
 										case 'meta':
-											return <PostsMeta key={ element } attributes={ attributes } element={ element } post={ post } author={ author } category={ category } />;
+											return <PostsMeta key={ element } attributes={ attributes } element={ element } post={ post } author={ author } categories={ categories } />;
 										case 'description':
 											return <PostsDescription key={ element } attributes={ attributes } element={ element } post={ post } />;
 										default:
@@ -120,37 +119,41 @@ export const PostsTitle = ({ attributes, element, post }) => {
 	return '';
 };
 
-export const PostsMeta = ({ attributes, element, post, author, category }) => {
-	if ( attributes.displayMeta && ( attributes.displayDate || attributes.displayAuthor ) ) {
+export const PostsMeta = ({ attributes, element, post, author, categories }) => {
+	if ( attributes.displayMeta && ( attributes.displayDate || attributes.displayAuthor || attributes.displayComments || attributes.displayPostCategory ) ) {
+		const meta = [];
+		let postedOn = '';
+
+		if ( attributes.displayDate ) {
+
+			/* translators: %s Date posted */
+			postedOn += sprintf( __( 'Posted on %s', 'otter-blocks' ), formatDate( post.date ) );
+		}
+
+		if ( attributes.displayAuthor && undefined !== author ) {
+
+			/* translators: %s Author of the post */
+			postedOn += sprintf( __( ' by %s', 'otter-blocks' ), author.name );
+		}
+
+		meta.push( postedOn );
+
+		if ( ( attributes.displayComments ) ) {
+
+			meta.push( sprintf(
+				'%1$s %2$s',
+				'0',
+				'1' === '0' ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
+			) );
+		}
+
+		if ( ( attributes.displayPostCategory && Boolean( categories.length ) ) ) {
+			meta.push( categories.map( ({ name }) => name ).join( ', ' ) );
+		}
+
+
 		return (
-			<p key={ element } className="o-posts-grid-post-meta">
-				{ ( attributes.displayDate ) && (
-
-					/* translators: %s Date posted */
-					sprintf( __( 'on %s', 'otter-blocks' ), formatDate( post.date ) )
-				) }
-
-				{ ( attributes.displayAuthor && undefined !== author ) && (
-
-					/* translators: %s Author of the post */
-					sprintf( __( ' by %s', 'otter-blocks' ), author.name )
-				) }
-
-				{ ( attributes.displayComments ) && (
-
-					// TODO: A way to check the number of comments is to make an API request. This seems wasteful for now. It might change in the future.
-					sprintf(
-						' - %1$s %2$s',
-						'0',
-						'1' === '0' ? __( 'comment', 'otter-blocks' ) : __( 'comments', 'otter-blocks' )
-					)
-				) }
-
-				{ ( attributes.displayPostCategory && undefined !== category?.name ) && (
-
-					sprintf( __( ' - %s', 'otter-blocks' ), category.name )
-				) }
-			</p>
+			<p key={ element } className="o-posts-grid-post-meta">{ meta.join( ' /\ ' ) }</p>
 		);
 	}
 	return '';

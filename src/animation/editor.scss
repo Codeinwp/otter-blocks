@@ -119,19 +119,13 @@
 	}
 }
 
-.o-anim-typing-caret::after {
-	font-weight: 100;
-	content: '|';
-	color: #2E3D48;
-	animation: 1s blink step-end infinite;
-  }
+.block-editor, .block-editor-block-list__layout {
+   .animated {
+      visibility: initial;
+      animation-play-state: running;
+   }
+}
 
-  @keyframes blink {
-	from, to {
-	  color: transparent;
-	}
-	50% {
-	  color: black;
-	}
-  }
-
+.customize-control-sidebar_block_editor .animated {
+   animation: none;
+}

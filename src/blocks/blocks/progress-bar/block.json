@@ -5,7 +5,11 @@
 	"title": "Progress Bar",
 	"category": "themeisle-blocks",
 	"description": "Show your progress with a beautiful Progress Bar block. Powered by Otter.",
-	"keywords": [ "progress", "bar", "skills" ],
+	"keywords": [
+		"progress",
+		"bar",
+		"skills"
+	],
 	"textdomain": "otter-blocks",
 	"attributes": {
 		"id": {
@@ -48,6 +52,9 @@
 			"type": "string"
 		},
 		"percentageColor": {
+			"type": "string"
+		},
+		"titleFontSize": {
 			"type": "string"
 		}
 	},

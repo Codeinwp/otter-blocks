@@ -1,6 +1,8 @@
 @mixin align-full {
 	.wp-block-button {
 		flex: 1;
+		margin: unset;
+
 
 		.wp-block-button__link {
 			width: 100%;

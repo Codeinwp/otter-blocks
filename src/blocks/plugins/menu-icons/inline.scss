@@ -1,0 +1,45 @@
+//
+// Notice: This CSS is added inline in the class-registration.php file using `wp_add_inline_style( 'font-awesome-5', $styles );` function.
+//
+
+.fas,
+.fab,
+.far {
+	&.wp-block-navigation-item {
+		font-weight: inherit;
+		-moz-osx-font-smoothing: inherit;
+		-webkit-font-smoothing: inherit;
+
+		&:before {
+			font-family: "Font Awesome 5 Free";
+			margin-right: 5px;
+		}
+	}
+}
+
+.fab,
+.far {
+	&.wp-block-navigation-item {
+		&:before {
+			padding-right: 5px;
+			font-weight: 400;
+		}
+	}
+}
+
+.fas {
+	&.wp-block-navigation-item {
+		&:before {
+			padding-right: 5px;
+			font-weight: 900;
+		}
+	}
+}
+
+.fab {
+	&.wp-block-navigation-item {
+		&:before {
+			font-family: "Font Awesome 5 Brands";
+		}
+	}
+}

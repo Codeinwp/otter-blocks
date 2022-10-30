@@ -160,12 +160,3 @@
 		margin-top: 8px;
 	}
 }
-
-.wp-block-themeisle-blocks-leaflet-map-resizer {
-	&.is-focused {
-		.components-resizable-box__handle {
-			display: block;
-			z-index: 1;
-		}
-	}
-}

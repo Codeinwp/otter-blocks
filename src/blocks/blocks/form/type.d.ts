@@ -1,4 +1,4 @@
-import { BlockProps, InspectorProps } from '../../helpers/blocks'
+import { BlockProps, InspectorProps, PaddingType } from '../../helpers/blocks';
 
 type Attributes = {
 	id: string
@@ -12,12 +12,7 @@ type Attributes = {
 	submitLabel: string
 	sendUserEmail: boolean
 	redirectLink: string
-	inputPadding: {
-		top: string
-		right: string
-		bottom: string
-		left: string
-	}
+	inputPadding: PaddingType
 	labelColor: string
 	helpLabelColor: string
 	labelFontSize: number
@@ -41,7 +36,9 @@ type Attributes = {
 	messageFontSize: number
 	inputFontSize: number
 	helpFontSize: number
+	inputBackgroundColor: string
 }
 
+export type FormAttrs = Partial<Attributes>
 export type FormProps = BlockProps<Attributes>
 export interface FormInspectorProps extends InspectorProps<Attributes> {}

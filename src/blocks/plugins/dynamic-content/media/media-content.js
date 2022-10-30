@@ -28,7 +28,8 @@ import { applyFilters } from '@wordpress/hooks';
  */
 import {
 	getObjectFromQueryString,
-	getQueryStringFromObject
+	getQueryStringFromObject,
+	setUtm
 } from '../../../helpers/helper-functions.js';
 
 const types = [
@@ -149,7 +150,7 @@ const MediaSidebar = ({
 					<Button
 						isPrimary
 						target="_blank"
-						href={ window.themeisleGutenberg.upgradeLink }
+						href={ setUtm( window.themeisleGutenberg.upgradeLink, 'dynamicimage' ) }
 					>
 						{ __( 'Get Pro Now', 'otter-blocks' ) }
 					</Button>
@@ -167,14 +168,21 @@ const MediaContent = ({
 
 	const {
 		getCurrentPostId,
-		getSelectedBlock
+		getSelectedBlock,
+		isQueryChild
 	} = useSelect( select => {
 		const getCurrentPostId = select( 'core/editor' ) ? select( 'core/editor' ).getCurrentPostId() : 0;
-		const getSelectedBlock = select( 'core/block-editor' ).getSelectedBlock();
+		const {
+			getSelectedBlock,
+			getBlockParentsByBlockName
+		} = select( 'core/block-editor' );
+
+		const currentBlock = getSelectedBlock();
 
 		return {
 			getCurrentPostId: getCurrentPostId || 0,
-			getSelectedBlock
+			getSelectedBlock: currentBlock,
+			isQueryChild: 0 < getBlockParentsByBlockName( currentBlock?.clientId, 'core/query' ).length
 		};
 	}, []);
 
@@ -216,7 +224,7 @@ const MediaContent = ({
 			attrs[ o ] = obj[ o ];
 		});
 
-		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v ) ) );
+		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v && undefined !== v ) ) );
 
 		const url = window.themeisleGutenberg.restRoot + '/dynamic/?' + getQueryStringFromObject( attrs );
 
@@ -251,7 +259,7 @@ const MediaContent = ({
 								key={ item.type }
 								uid={ uid }
 								item={ item }
-								context={ getCurrentPostId }
+								context={ isQueryChild ? 'query' : getCurrentPostId }
 								isSelected={ selected ? selected?.includes( `dynamic/?type=${ item.type }` ) : false }
 								onSelect={ onSelect }
 							/>
@@ -268,6 +276,7 @@ const MediaContent = ({
 					attributes={ attributes }
 					changeAttributes={ changeAttributes }
 				/>
+				{ applyFilters( 'otter.feedback', '', 'dynamic-media', __( 'Help us improve Otter Blocks', 'otter-blocks' ) ) }
 			</div>
 		</Fragment>
 	);

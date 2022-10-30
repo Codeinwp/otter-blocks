@@ -1,4 +1,4 @@
-import { BlockProps, InspectorProps } from '../../../helpers/blocks'
+import { BlockProps, InspectorProps } from '../../../helpers/blocks';
 
 type Attributes = {
 	id: string
@@ -10,5 +10,6 @@ type Attributes = {
 	icon: string
 }
 
+export type IconListItemAttrs = Partial<Attributes>
 export type IconListItemProps = BlockProps<Attributes>
 export interface IconsListItemInspectorProps extends InspectorProps<Attributes> {}

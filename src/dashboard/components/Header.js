@@ -26,6 +26,11 @@ const NAVIGATION_ITEMS = [
 		slug: 'upsell',
 		label: __( 'Free vs PRO', 'otter-blocks' ),
 		visibility: ! Boolean( window.otterObj.hasPro )
+	},
+	{
+		slug: 'feedback',
+		label: __( 'Help us improve', 'otter-blocks' ),
+		visibility: true
 	}
 ];
 

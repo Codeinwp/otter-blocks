@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Server;
 
+use ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content;
+
 /**
  * Class Dynamic_Content_Server
  */
@@ -78,14 +80,14 @@ class Dynamic_Content_Server {
 							},
 						),
 						'context'  => array(
-							'type'              => 'integer',
+							'type'              => array( 'string', 'integer' ),
 							'required'          => true,
 							'description'       => __( 'ID of the post being edited.', 'otter-blocks' ),
 							'sanitize_callback' => function ( $param ) {
-								return intval( $param );
+								return is_numeric( $param ) ? intval( $param ) : esc_attr( $param );
 							},
 							'validate_callback' => function ( $param, $request, $key ) {
-								return is_numeric( $param );
+								return is_numeric( $param ) || is_string( $param );
 							},
 						),
 						'id'       => array(
@@ -122,6 +124,22 @@ class Dynamic_Content_Server {
 							},
 						),
 					),
+					'permission_callback' => function () {
+						return true;
+					},
+				),
+			)
+		);
+
+		register_rest_route(
+			$namespace,
+			'/dynamic/preview',
+			array(
+				array(
+					'methods'             => \WP_REST_Server::READABLE,
+					'callback'            => function( $request ) {
+						return Dynamic_Content::instance()->apply_data( $request->get_params() );
+					},
 					'permission_callback' => function () {
 						return true;
 					},

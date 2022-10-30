@@ -1,0 +1,18 @@
+name: InstaWP WordPress Testing
+
+on:
+  push:
+    tags:
+      - "*"
+
+jobs:
+  create-wp-for-testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: instawp/wordpress-testing-automation@main
+        with:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          INSTAWP_TOKEN: ${{ secrets.INSTAWP_TOKEN }}
+          INSTAWP_TEMPLATE_SLUG: otter-qa
+          REPO_ID: 46
+          INSTAWP_ACTION: create-site-template

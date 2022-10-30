@@ -1,18 +1,22 @@
 .wp-block-themeisle-blocks-font-awesome-icons {
 	--align: center;
-	--border-color: #000;
+	--align-tablet: var(--align);
+	--align-mobile: var(--align-tablet);
+	--border-color: inherit;
 	--border-size: unset;
 	--border-radius: 0%;
 	--margin: 0px;
 	--padding: 0px;
 	--font-size: 16px;
 
-	text-align: var( --align );
+	display: flex;
+	justify-content: var( --align );
 
 	.wp-block-themeisle-blocks-font-awesome-icons-container {
 		display: inline-flex;
 		justify-content: center;
-		border: var( --border-size ) solid var( --border-color );
+		border: var( --border-size ) solid;
+		border-color: var( --border-color );
 		border-radius: var( --border-radius );
 		margin: var( --margin );
 
@@ -22,13 +26,29 @@
 		width: calc( var(--font-size) * 1.5 + var( --padding ));
 		height: calc( var(--font-size) * 1.5 + var( --padding ));
 
+		box-sizing: content-box;
+
 		svg {
 			width: var( --font-size );
 			height: var( --font-size );
+			fill: currentColor;
 		}
 
 		i {
+			font-size: var(--font-size);
 			width: 100%;
 		}
+	}
+}
+
+@media ( max-width: 960px ) {
+	.wp-block-themeisle-blocks-font-awesome-icons {
+		justify-content: var( --align-tablet );
+	}
+}
+
+@media ( max-width: 600px ) {
+	.wp-block-themeisle-blocks-font-awesome-icons {
+		justify-content: var( --align-mobile );
 	}
 }

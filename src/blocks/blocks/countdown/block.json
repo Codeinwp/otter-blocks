@@ -69,7 +69,7 @@
 			"type": "number"
 		},
 		"borderRadius": {
-			"type": ["number", "object"]
+			"type": [ "number", "object" ]
 		},
 		"borderRadiusBox": {
 			"type": "object"
@@ -90,22 +90,22 @@
 			"type": "string"
 		},
 		"valueFontSize": {
-			"type": ["number", "string"]
+			"type": [ "number", "string" ]
 		},
 		"valueFontSizeTablet": {
-			"type": ["number", "string"]
+			"type": [ "number", "string" ]
 		},
 		"valueFontSizeMobile": {
-			"type": ["number", "string"]
+			"type": [ "number", "string" ]
 		},
 		"labelFontSize": {
-			"type": ["number", "string"]
+			"type": [ "number", "string" ]
 		},
 		"labelFontSizeTablet": {
-			"type": ["number", "string"]
+			"type": [ "number", "string" ]
 		},
 		"labelFontSizeMobile": {
-			"type": ["number", "string"]
+			"type": [ "number", "string" ]
 		},
 		"hasSeparators": {
 			"type": "boolean"
@@ -143,6 +143,30 @@
 		"borderRadiusType": {
 			"type": "string",
 			"default": "linked"
+		},
+		"separatorAlignment": {
+			"type": "string"
+		},
+		"behaviour": {
+			"type": "string"
+		},
+		"redirectLink": {
+			"type": "string"
+		},
+		"mode": {
+			"type": "string"
+		},
+		"timer": {
+			"type": "object"
+		},
+		"startInterval": {
+			"type": "string"
+		},
+		"endInterval": {
+			"type": "string"
+		},
+		"onEndAction": {
+			"type": "string"
 		}
 	},
 	"supports": {

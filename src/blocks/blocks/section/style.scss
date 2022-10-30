@@ -6,6 +6,28 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	}
 }
 
+@mixin vertical-alignment {
+	&.has-vertical-flex-start,
+	&.has-vertical-top {
+		> .innerblocks-wrap {
+			align-items: flex-start;
+		}
+	}
+
+	&.has-vertical-center {
+		> .innerblocks-wrap {
+			align-items: center;
+		}
+	}
+
+	&.has-vertical-flex-end,
+	&.has-vertical-bottom {
+		> .innerblocks-wrap {
+			align-items: flex-end;
+		}
+	}
+}
+
 .wp-block-themeisle-blocks-advanced-columns {
 	--columns-width: initial;
 	--horizontal-align: unset;
@@ -28,6 +50,11 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	.wp-block-themeisle-blocks-advanced-column {
 		.wp-block-themeisle-blocks-slider {
 			display: grid;
+		}
+
+		.aligncenter {
+			margin-left: auto;
+			margin-right: auto;
 		}
 	}
 
@@ -74,34 +101,12 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	}
 }
 
-@media ( min-width: 600px ) {
-	.wp-block-themeisle-blocks-advanced-columns {
-		&.has-vertical-flex-start,
-		&.has-vertical-top {
-			.innerblocks-wrap {
-				align-items: flex-start;
-			}
-		}
-
-		&.has-vertical-center {
-			.innerblocks-wrap {
-				align-items: center;
-			}
-		}
-
-		&.has-vertical-flex-end,
-		&.has-vertical-bottom {
-			.innerblocks-wrap {
-				align-items: flex-end;
-			}
-		}
-	}
-}
-
 @media ( min-width: 960px ) {
 	.wp-block-themeisle-blocks-advanced-columns {
 		display: flex;
 		position: relative;
+
+		@include vertical-alignment;
 
 		.innerblocks-wrap {
 			display: flex;
@@ -395,6 +400,10 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 			}
 		}
 
+		&:not( .has-tablet-collapsedRows-layout ) {
+			@include vertical-alignment;
+		}
+
 		&.has-tablet-collapsedRows-layout {
 			> .innerblocks-wrap {
 				flex-direction: column;
@@ -537,6 +546,10 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 					}
 				}
 			}
+		}
+
+		&:not( .has-mobile-collapsedRows-layout ) {
+			@include vertical-alignment;
 		}
 
 		&.has-mobile-collapsedRows-layout {

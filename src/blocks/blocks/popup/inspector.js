@@ -25,6 +25,7 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import Notice from '../../components/notice/index.js';
+import { setUtm } from '../../helpers/helper-functions.js';
 
 /**
  *
@@ -49,7 +50,7 @@ const ProFeatures = () => {
 			</Disabled>
 
 			<Notice
-				notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+				notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'popupblock' )}>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
 				variant="upsell"
 			/>
 		</Fragment>
@@ -106,6 +107,7 @@ const Inspector = ({
 
 	return (
 		<InspectorControls>
+			{ applyFilters( 'otter.feedback', '', 'popup-block', __( 'Help us improve this block', 'otter-blocks' ) ) }
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>

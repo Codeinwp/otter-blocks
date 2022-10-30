@@ -15,7 +15,7 @@ This is what we create, a visual interface so that the WordPress user can create
 
 You can edit the text between the `p` tag. The change will be reflected when you go back. 
 
-To go back, fallow the same steps and select the `Visual editor` (or `Ctrl+Shift+Alt+M`).
+To go back, follow the same steps and select the `Visual editor` (or `Ctrl+Shift+Alt+M`).
 
 Now that we know [we are burdened with a glorious purpose](https://en.wikipedia.org/wiki/Glorious_Purpose), let's see what WordPress can offer us.
 

@@ -1,9 +1,9 @@
-import { BlockProps, InspectorProps } from '../../helpers/blocks'
+import { BlockProps, InspectorProps } from '../../helpers/blocks';
 
 type Attributes= {
 	id: string
 	defaultLibrary: string
-	defaultIconPrefix: string
+	defaultPrefix: string
 	defaultIcon: string
 	defaultContentColor: string
 	defaultIconColor: string
@@ -12,5 +12,6 @@ type Attributes= {
 	horizontalAlign: string
 }
 
+export type IconListAttrs = Partial<Attributes>
 export type IconListProps = BlockProps<Attributes>
 export interface IconsListInspectorProps extends InspectorProps<Attributes> {}

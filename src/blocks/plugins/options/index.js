@@ -12,13 +12,16 @@ import {
 import apiFetch from '@wordpress/api-fetch';
 
 import {
+	Button,
 	PanelBody,
 	PanelRow,
-	Snackbar,
-	ToggleControl
+	Snackbar
 } from '@wordpress/components';
 
-import { useDispatch } from '@wordpress/data';
+import {
+	useDispatch,
+	useSelect
+} from '@wordpress/data';
 
 import {
 	Fragment,
@@ -32,16 +35,26 @@ import {
 	PluginSidebarMoreMenuItem
 } from '@wordpress/edit-post';
 
+import { applyFilters } from '@wordpress/hooks';
+
 /**
  * Internal dependencies
  */
 import './editor.scss';
 import GlobalDefaults from './global-defaults/index.js';
 import defaultsAttrs from './global-defaults/defaults.js';
-import useSettings from '../../helpers/use-settings.js';
+import { otterIconColored } from '../../helpers/icons.js';
 
 const Options = () => {
+	const { isOnboardingVisible } = useSelect( select => {
+		const { isOnboardingVisible } = select( 'themeisle-gutenberg/data' );
+		return {
+			isOnboardingVisible: isOnboardingVisible()
+		};
+	});
+
 	const { createNotice } = useDispatch( 'core/notices' );
+	const { showOnboarding } = useDispatch( 'themeisle-gutenberg/data' );
 
 	useEffect( () => {
 		let isMounted = true;
@@ -92,8 +105,6 @@ const Options = () => {
 	const [ blockDefaults, setBlockDefaults ] = useState({});
 
 	const settingsRef = useRef( null );
-
-	const [ getOption, updateOption, status ] = useSettings();
 
 	const dispatchNotice = value => {
 		if ( ! Snackbar ) {
@@ -151,8 +162,6 @@ const Options = () => {
 		});
 	};
 
-	const successMessage = __( 'Settings saved. Refresh to see the changes.', 'otter-blocks' );
-
 	return (
 		<Fragment>
 			{ ( canUser ) && (
@@ -169,39 +178,14 @@ const Options = () => {
 			>
 				<PanelBody className="o-options-general">
 					<PanelRow>
-						<ToggleControl
-							label={ __( 'Enable Custom CSS', 'otter-blocks' ) }
-							checked={ Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ) }
-							disabled={ 'saving' === status }
-							onChange={ () => updateOption( 'themeisle_blocks_settings_css_module', ! Boolean( getOption( 'themeisle_blocks_settings_css_module' ) ), successMessage ) }
-						/>
-					</PanelRow>
-
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Enable Blocks Animation', 'otter-blocks' ) }
-							checked={ Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ) }
-							disabled={ 'saving' === status }
-							onChange={ () => updateOption( 'themeisle_blocks_settings_blocks_animation', ! Boolean( getOption( 'themeisle_blocks_settings_blocks_animation' ) ), successMessage ) }
-						/>
-					</PanelRow>
-
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Enable Visibility Conditions', 'otter-blocks' ) }
-							checked={ Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ) }
-							disabled={ 'saving' === status }
-							onChange={ () => updateOption( 'themeisle_blocks_settings_block_conditions', ! Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ), successMessage ) }
-						/>
-					</PanelRow>
-
-					<PanelRow>
-						<ToggleControl
-							label={ __( 'Make Section your default block for Pages', 'otter-blocks' ) }
-							checked={ Boolean( getOption( 'themeisle_blocks_settings_default_block' ) ) }
-							disabled={ 'saving' === status }
-							onChange={ () => updateOption( 'themeisle_blocks_settings_default_block', ! Boolean( getOption( 'themeisle_blocks_settings_default_block' ) ), successMessage ) }
-						/>
+						<Button
+							isSecondary
+							icon={ otterIconColored }
+							onClick={ () => showOnboarding( ! isOnboardingVisible ) }
+							className="o-onboarding-button"
+						>
+							{ __( 'Show Onboarding Modal', 'otter-blocks' ) }
+						</Button>
 					</PanelRow>
 				</PanelBody>
 
@@ -212,6 +196,8 @@ const Options = () => {
 					resetConfig={ resetConfig }
 					saveConfig={ saveConfig }
 				/>
+
+				{ applyFilters( 'otter.feedback', '', 'otter-menu-editor', __( 'Help us improve Otter Blocks', 'otter-blocks' ) ) }
 			</PluginSidebar>
 		</Fragment>
 	);

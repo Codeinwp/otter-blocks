@@ -94,6 +94,9 @@
 		"inputColor": {
 			"type": "string"
 		},
+		"inputBackgroundColor": {
+			"type": "string"
+		},
 		"inputsGap": {
 			"type": "number"
 		},

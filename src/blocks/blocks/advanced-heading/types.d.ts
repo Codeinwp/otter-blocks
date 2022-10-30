@@ -1,4 +1,4 @@
-import { BlockProps, InspectorProps } from '../../helpers/blocks'
+import { BlockProps, InspectorProps } from '../../helpers/blocks';
 
 type Attributes = {
   id: string
@@ -13,8 +13,8 @@ type Attributes = {
   fontSize: number
   fontSizeTablet: number
   fontSizeMobile: number
-  fontFamily: number
-  fontVariant: number
+  fontFamily: string
+  fontVariant: string
   fontStyle: string
   textTransform: string
   lineHeight: number
@@ -57,5 +57,6 @@ type Attributes = {
   marginBottomMobile: number
 }
 
+export type AdvancedHeadingAttrs = Partial<Attributes>
 export type AdvancedHeadingProps = BlockProps<Attributes>
 export interface AdvancedHeadingInspectorProps extends InspectorProps<Attributes> {}

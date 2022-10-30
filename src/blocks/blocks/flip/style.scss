@@ -1,12 +1,13 @@
 .wp-block-themeisle-blocks-flip {
 	--width: 100%;
 	--height: 300px;
+	--padding: 20px;
+
 	--border-width: 3px;
 	--border-color: #aaa;
 	--border-radius: 10px;
 	--front-background: transparent;
 	--back-background: transparent;
-	--padding: 20px;
 	--box-shadow: none;
 	--front-vertical-align: center;
 	--front-horizontal-align: center;
@@ -21,8 +22,7 @@
 	align-items: center;
 	margin-left: auto;
 	margin-right: auto;
-	width: var(--width);
-	height: var(--height);
+	height: var( --height );
 
 	perspective: 1000px; /* Remove this if you don't want the 3D effect */
 
@@ -34,8 +34,16 @@
 		--flip-anim: rotateX(180deg);
 	}
 
+	&.flipX-rev {
+		--flip-anim: rotateX(-180deg);
+	}
+
 	&.flipY {
 		--flip-anim: rotateY(180deg);
+	}
+
+	&.flipY-rev {
+		--flip-anim: rotateY(-180deg);
 	}
 
 	&:hover {
@@ -48,16 +56,12 @@
 
 	.o-flip-inner {
 		position: relative;
-		width: 100%;
+		width: var(--width);
 		height: 100%;
 		text-align: center;
 		transition: transform 0.8s;
 		transform-style: preserve-3d;
 		background-size: cover;
-
-		@media ( max-width: 960px ) {
-			width: min(var( --width ), 100%);
-		}
 	}
 
 	.o-flip-front, .o-flip-back {
@@ -71,13 +75,16 @@
 		overflow-x: hidden;
 		overflow-y: auto;
 		background-size: inherit;
-		border: var( --border-width ) solid var( --border-color );
+		border-width: var(--border-width);
+		border-color: var(--border-color);
+		border-style: solid;
 		border-radius: var( --border-radius );
 		box-sizing: border-box;
 	}
 
 	.o-flip-front {
 		background: var( --front-background );
+		transform: rotate(0deg);
 
 		&:hover {
 			box-shadow: var( --box-shadow );
@@ -87,12 +94,14 @@
 	.o-flip-content {
 		display: flex;
 		flex-direction: column;
+		width: 100%;
+		height: 100%;
+		box-sizing: border-box;
+
 		justify-content: var( --front-vertical-align );
 		align-items: var( --front-horizontal-align );
 
 		padding: var( --padding );
-		width: 100%;
-		height: 100%;
 
 		h3, p {
 			margin: 0.5rem;
@@ -119,7 +128,7 @@
 		}
 
 		.o-flip-back {
-			transform: unset;
+			transform: rotate(0deg);
 			box-shadow: unset;
 			&:hover {
 				box-shadow: var( --box-shadow );

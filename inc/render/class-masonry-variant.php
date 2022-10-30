@@ -46,7 +46,7 @@ class Masonry_Variant {
 			);
 
 			wp_script_add_data( 'macy', 'async', true );
-			+
+
 			wp_enqueue_script(
 				'otter-masonry',
 				OTTER_BLOCKS_URL . 'build/blocks/masonry.js',
@@ -62,7 +62,9 @@ class Masonry_Variant {
 
 			$margin = isset( $block['attrs']['margin'] ) ? $block['attrs']['margin'] : 10;
 
-			$block_content = '<div class="otter-masonry" data-margin="' . $margin . '">' . $block_content . '</div>';
+			$style = '<style type="text/css">.otter-masonry .blocks-gallery-grid .blocks-gallery-item img{ width:100% }</style>';
+
+			$block_content = $style . '<div class="otter-masonry" data-margin="' . $margin . '">' . $block_content . '</div>';
 
 			return $block_content;
 		}

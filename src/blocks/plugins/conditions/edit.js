@@ -5,8 +5,6 @@ import { __ } from '@wordpress/i18n';
 
 import { isEmpty } from 'lodash';
 
-import { InspectorControls } from '@wordpress/block-editor';
-
 import {
 	BaseControl,
 	Button,
@@ -34,6 +32,8 @@ import { applyFilters } from '@wordpress/hooks';
  */
 import PanelTab from '../../components/panel-tab/index.js';
 import Notice from '../../components/notice/index.js';
+import { setUtm } from '../../helpers/helper-functions.js';
+import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
 
 const hasPro = Boolean( window.themeisleGutenberg.hasPro );
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
@@ -186,8 +186,8 @@ const AuthorsFieldToken = ( props ) => {
 		const { getUsers, isResolving } = select( 'core' );
 
 		return {
-			postAuthors: ( getUsers({ who: 'authors' }) ?? []).map( author => author.username ),
-			isLoading: isResolving( 'getUsers', [{ who: 'authors' }])
+			postAuthors: ( getUsers({ who: 'authors', context: 'view' }) ?? []).map( author => author.username ),
+			isLoading: isResolving( 'getUsers', [{ who: 'authors', context: 'view' }])
 		};
 	}, [ ]);
 
@@ -211,8 +211,8 @@ const CategoriesFieldToken = ( props ) => {
 		const { getEntityRecords, isResolving } = select( 'core' );
 
 		return {
-			postCategories: ( getEntityRecords( 'taxonomy', 'category', { 'per_page': 100 }) ?? []).map( category => category.slug ),
-			isLoading: isResolving( 'getEntityRecords', [ 'taxonomy', 'category', { 'per_page': 100 }])
+			postCategories: ( getEntityRecords( 'taxonomy', 'category', { 'per_page': 100, context: 'view' }) ?? []).map( category => category.slug ),
+			isLoading: isResolving( 'getEntityRecords', [ 'taxonomy', 'category', { 'per_page': 100, context: 'view' }])
 		};
 	}, [ ]);
 
@@ -240,19 +240,50 @@ const Separator = ({ label }) => {
 };
 
 const Edit = ({
+	name,
 	attributes,
-	setAttributes
+	setAttributes: _setAttributes
 }) => {
+	const Inspector = useInspectorSlot( name );
+
+	const [ buffer, setBuffer ] = useState( null );
 	const [ conditions, setConditions ] = useState({});
 	const [ flatConditions, setFlatConditions ] = useState([]);
 	const [ toggleVisibility, setToggleVisibility ] = useState([]);
+
+	const setAttributes = ( attrs ) => {
+
+		if ( window.wp.hasOwnProperty( 'customize' ) && window.wp.customize ) {
+
+			/**
+			 * Customizer only use shallow comparision for checking the changes, thus conditions updates are not detected.
+			 * Trick: By changing the numbers of the conditions we trigger the update.
+			 * The buffer will revert the trick to the correct value.
+			 */
+			const otterConditions = [ ...( attrs.otterConditions || []), []];
+			_setAttributes({ otterConditions });
+			setBuffer( attrs );
+		} else {
+			_setAttributes( attrs );
+		}
+
+	};
+
+	/**
+	 * Use an intermediary buffer to add the real attributes to the block.
+	 */
+	useEffect( () => {
+		if ( buffer &&  window.wp.hasOwnProperty( 'customize' ) && window.wp.customize ) {
+			_setAttributes( buffer );
+		}
+	}, [ buffer ]);
 
 	useEffect( () => {
 		if ( ! Boolean( attributes?.otterConditions?.length ) ) {
 			return;
 		}
 
-		let otterConditions = attributes.otterConditions?.filter( c => ! isEmpty( c ) );
+		let otterConditions = [ ...attributes.otterConditions?.filter( c => ! isEmpty( c ) ) ];
 
 		if ( ! Boolean( otterConditions.length ) ) {
 			otterConditions = undefined;
@@ -354,7 +385,7 @@ const Edit = ({
 	};
 
 	return (
-		<InspectorControls>
+		<Inspector>
 			<PanelBody
 				title={ __( 'Visibility Conditions', 'otter-blocks' ) }
 				initialOpen={ false }
@@ -496,14 +527,17 @@ const Edit = ({
 
 				{ ( ! hasPro ) && (
 					<Notice
-						notice={ <ExternalLink href={ window.themeisleGutenberg.upgradeLink }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
+						notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'blockconditions' ) }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
 						variant="upsell"
 					/>
 				) }
 
-				{ applyFilters( 'otter.poweredBy', '' ) }
+				<div className="o-fp-wrap">
+					{ applyFilters( 'otter.feedback', '', 'conditions' ) }
+					{ applyFilters( 'otter.poweredBy', '' ) }
+				</div>
 			</PanelBody>
-		</InspectorControls>
+		</Inspector>
 	);
 };
 

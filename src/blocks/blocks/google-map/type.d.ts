@@ -1,4 +1,4 @@
-import { BlockProps, InspectorProps } from '../../helpers/blocks'
+import { BlockProps, InspectorProps } from '../../helpers/blocks';
 
 type Attributes = {
 	id: string
@@ -8,7 +8,9 @@ type Attributes = {
 	longitude: string
 	type: string
 	zoom: number
-	height: number
+	height: number|string
+	heightTablet: number
+	heightMobile: number
 	draggable: boolean
 	mapTypeControl: boolean
 	zoomControl: boolean

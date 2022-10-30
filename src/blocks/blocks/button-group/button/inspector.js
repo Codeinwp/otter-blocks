@@ -13,15 +13,11 @@ import {
 	ButtonGroup,
 	PanelBody,
 	RangeControl,
-	Placeholder,
-	SelectControl,
-	Spinner
+	SelectControl
 } from '@wordpress/components';
 
 import {
 	Fragment,
-	lazy,
-	Suspense,
 	useState
 } from '@wordpress/element';
 
@@ -29,7 +25,7 @@ import {
  * Internal dependencies
  */
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
-const IconPickerControl = lazy( () => import( '../../../components/icon-picker-control/index.js' ) );
+import IconPickerControl from '../../../components/icon-picker-control/index.js';
 
 /**
  *
@@ -306,16 +302,14 @@ const Inspector = ({
 				/>
 
 				{ 'none' !== attributes.iconType && (
-					<Suspense fallback={<Placeholder><Spinner/></Placeholder>}>
-						<IconPickerControl
-							label={ __( 'Icon Picker', 'otter-blocks' ) }
-							library={ attributes.library }
-							prefix={ attributes.prefix }
-							icon={ attributes.icon }
-							changeLibrary={ changeLibrary }
-							onChange={ changeIcon }
-						/>
-					</Suspense>
+					<IconPickerControl
+						label={ __( 'Icon Picker', 'otter-blocks' ) }
+						library={ attributes.library }
+						prefix={ attributes.prefix }
+						icon={ attributes.icon }
+						changeLibrary={ changeLibrary }
+						onChange={ changeIcon }
+					/>
 				) }
 			</PanelBody>
 		</InspectorControls>

@@ -34,6 +34,7 @@ import {
 * Internal dependencies
 */
 import './editor.scss';
+import googleFontsLoader from '../../helpers/google-fonts';
 
 const GoogleFontsControl = ({
 	label,
@@ -50,34 +51,12 @@ const GoogleFontsControl = ({
 	const instanceId = useInstanceId( GoogleFontsControl );
 
 	useEffect( () => {
-		let isMounted = true;
-
-		fetch( 'https://www.googleapis.com/webfonts/v1/webfonts?key=AIzaSyClGdkPJ1BvgLOol5JAkQY4Mv2lkLYu00k' )
-			.then( blob => blob.json() )
-			.then( data => {
-				if ( isMounted ) {
-					setFonts( data.items );
-					if ( value ) {
-						data.items.find( i => {
-							if ( value === i.family ) {
-								const variants = ( i.variants )
-									.filter( o => false === o.includes( 'italic' ) )
-									.map( o => {
-										return o = {
-											'label': startCase( toLower( o ) ),
-											'value': o
-										};
-									});
-								return setVariants( variants );
-							}
-						});
-					}
-				}
-			});
-
-		return () => {
-			isMounted = false;
-		};
+		googleFontsLoader.afterLoading().then( ( loader ) => {
+			setFonts( loader.fonts );
+			if ( value ) {
+				setVariants( loader.getVariants( value ) );
+			}
+		});
 	}, []);
 
 	const [ fonts, setFonts ] = useState( null );
@@ -111,6 +90,7 @@ const GoogleFontsControl = ({
 							] }
 							onChange={ e => {
 								let variants = [];
+								loadFontToPage( e, 'regular', fonts );
 
 								if ( '' === e ) {
 									variants = [
@@ -177,10 +157,11 @@ const GoogleFontsControl = ({
 											{ __( 'Default', 'otter-blocks' ) }
 										</MenuItem>
 
-										{ ( fonts ).map( i => {
+										{ ( fonts ).map( ( i, index ) => {
 											if ( ! search || i.family.toLowerCase().includes( search.toLowerCase() ) ) {
 												return (
 													<MenuItem
+														key={index}
 														className={ classnames(
 															{ 'is-selected': ( i.family === value ) }
 														) }

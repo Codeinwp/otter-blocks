@@ -45,6 +45,7 @@ class Main {
 		add_action( 'init', array( $this, 'autoload_classes' ), 9 );
 		add_filter( 'script_loader_tag', array( $this, 'filter_script_loader_tag' ), 10, 2 );
 		add_filter( 'safe_style_css', array( $this, 'used_css_properties' ), 99 );
+		add_filter( 'wp_kses_allowed_html', array( $this, 'used_html_properties' ), 10, 2 );
 		add_action( 'init', array( $this, 'after_update_migration' ) );
 
 		if ( ! function_exists( 'is_wpcom_vip' ) ) {
@@ -64,6 +65,7 @@ class Main {
 
 		$classnames = array(
 			'\ThemeIsle\GutenbergBlocks\Registration',
+			'\ThemeIsle\GutenbergBlocks\Patterns',
 			'\ThemeIsle\GutenbergBlocks\Pro',
 			'\ThemeIsle\GutenbergBlocks\Blocks_Export_Import',
 			'\ThemeIsle\GutenbergBlocks\CSS\Block_Frontend',
@@ -216,6 +218,140 @@ class Main {
 	}
 
 	/**
+	 * Used HTML properties
+	 *
+	 * @param array  $tags Allowed HTML tags.
+	 * @param string $context Context.
+	 *
+	 * @return array
+	 * @since   2.0.11
+	 * @access  public
+	 */
+	public function used_html_properties( $tags, $context ) {
+		if ( 'post' !== $context ) {
+			return $tags;
+		}
+
+		$global_attributes = array(
+			'aria-describedby' => true,
+			'aria-details'     => true,
+			'aria-label'       => true,
+			'aria-labelledby'  => true,
+			'aria-hidden'      => true,
+			'class'            => true,
+			'data-*'           => true,
+			'dir'              => true,
+			'id'               => true,
+			'lang'             => true,
+			'style'            => true,
+			'title'            => true,
+			'role'             => true,
+			'xml:lang'         => true,
+		);
+
+		if ( isset( $tags['div'] ) ) {
+			$tags['div']['name'] = true;
+		}
+
+		if ( isset( $tags['form'] ) ) {
+			$tags['form']['class'] = true;
+		} else {
+			$tags['form'] = array(
+				'class' => true,
+			);
+		}
+
+		if ( ! isset( $tags['svg'] ) ) {
+			$tags['svg'] = array_merge(
+				array(
+					'role'    => true,
+					'xmlns'   => true,
+					'width'   => true,
+					'height'  => true,
+					'viewbox' => true,
+				),
+				$global_attributes
+			);
+		}
+
+		if ( ! isset( $tags['g'] ) ) {
+			$tags['g'] = array( 'fill' => true );
+		}
+
+		if ( ! isset( $tags['title'] ) ) {
+			$tags['title'] = array( 'title' => true );
+		}
+
+		if ( ! isset( $tags['path'] ) ) {
+			$tags['path'] = array(
+				'd'    => true, 
+				'fill' => true,  
+			);
+		}
+
+		if ( ! isset( $tags['lottie-player'] ) ) {
+			$tags['lottie-player'] = array_merge(
+				array(
+					'autoplay'   => true,
+					'loop'       => true,
+					'count'      => true,
+					'speed'      => true,
+					'direction'  => true,
+					'trigger'    => true,
+					'data-*'     => true,
+					'mode'       => true,
+					'background' => true,
+					'src'        => true,
+					'width'      => true,
+				),
+				$global_attributes
+			);
+		}
+
+		if ( ! isset( $tags['o-dynamic'] ) ) {
+			$tags['o-dynamic'] = $global_attributes;
+		}
+
+		if ( ! isset( $tags['o-dynamic-link'] ) ) {
+			$tags['o-dynamic-link'] = $global_attributes;
+		}
+
+		if ( ! isset( $tags['input'] ) ) {
+			$tags['input'] = array();
+		}
+
+		$tags['input'] = array_merge(
+			$tags['input'],
+			array(
+				'type'        => true,
+				'name'        => true,
+				'required'    => true,
+				'placeholder' => true,
+			),
+			$global_attributes
+		);
+
+		$textarea = array();
+
+		if ( ! isset( $tags['textarea'] ) ) {
+			$tags['textarea'] = array();
+		}
+
+		$tags['textarea'] = array_merge(
+			$tags['textarea'],
+			array(
+				'name'        => true,
+				'required'    => true,
+				'placeholder' => true,
+				'rows'        => true,
+			),
+			$global_attributes
+		);
+
+		return $tags;
+	}
+
+	/**
 	 * Allow JSON uploads
 	 *
 	 * @param array $mimes Supported mimes.
@@ -270,9 +406,7 @@ class Main {
 	public function after_update_migration() {
 		$db_version = get_option( 'themeisle_blocks_db_version', 0 );
 
-		// We don't want to regenerate block styles for every update,
-		// only if user is switching from an older version to 2.0.9 or above.
-		if ( version_compare( $db_version, '2.0.9', '<' ) ) {
+		if ( version_compare( $db_version, OTTER_BLOCKS_VERSION, '<' ) ) {
 			Dashboard_Server::regenerate_styles();
 		}
 

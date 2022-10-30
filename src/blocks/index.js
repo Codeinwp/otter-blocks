@@ -1,5 +1,5 @@
 /**
- * WordPRess dependencies
+ * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 
@@ -14,12 +14,12 @@ import { addFilter } from '@wordpress/hooks';
 /**
  * Internal dependencies
  */
-import './style.scss';
 import './editor.scss';
 import {
 	otterIcon,
 	otterIconColored as icon
 } from './helpers/icons.js';
+import { setUtm } from './helpers/helper-functions.js';
 
 updateCategory( 'themeisle-blocks', { icon });
 updateCategory( 'themeisle-woocommerce-blocks', { icon });
@@ -76,7 +76,7 @@ if ( Boolean( window.themeisleGutenberg.should_show_upsell ) ) {
 					label: __( 'Tell me more!', 'otter-blocks' ),
 					variant: 'link',
 					noDefaultClasses: true,
-					onClick: () => window.open( window.themeisleGutenberg.upgradeLink, '_blank' )
+					onClick: () => window.open( setUtm( window.themeisleGutenberg.upgradeLink, 'tellmemore' ), '_blank' )
 				}
 			]
 		}

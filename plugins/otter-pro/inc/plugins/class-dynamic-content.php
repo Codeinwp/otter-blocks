@@ -26,7 +26,8 @@ class Dynamic_Content {
 	 */
 	public function init() {
 		if ( License::has_active_license() ) {
-			add_filter( 'otter_blocks_evaluate_dynamic_content', array( $this, 'evaluate_content' ), 10, 2 );
+			add_filter( 'otter_blocks_evaluate_dynamic_content_text', array( $this, 'evaluate_content' ), 10, 2 );
+			add_filter( 'otter_blocks_evaluate_dynamic_content_link', array( $this, 'evaluate_content_link' ), 10, 2 );
 			add_filter( 'otter_blocks_evaluate_dynamic_content_media_server', array( $this, 'evaluate_content_media_server' ), 10, 2 );
 			add_filter( 'otter_blocks_evaluate_dynamic_content_media_content', array( $this, 'evaluate_content_media_content' ), 10, 2 );
 		}
@@ -58,12 +59,37 @@ class Dynamic_Content {
 			return $this->get_post_meta( $data );
 		}
 
+		if ( 'acf' === $data['type'] && class_exists( 'ACF' ) ) {
+			return $this->get_acf( $data );
+		}
+
 		if ( 'authorMeta' === $data['type'] ) {
 			return $this->get_author_meta( $data );
 		}
 
 		if ( 'loggedInUserMeta' === $data['type'] ) {
 			return $this->get_loggedin_meta( $data );
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Evaluate dynamic content links
+	 *
+	 * @param string $value a default value.
+	 * @param array  $data Content data.
+	 *
+	 * @since 2.0.14
+	 * @return bool
+	 */
+	public function evaluate_content_link( $value, $data ) {
+		if ( 'acfURL' === $data['type'] ) {
+			return $this->get_acf( $data );
+		}
+
+		if ( 'postMetaURL' === $data['type'] ) {
+			return $this->get_post_meta( $data );
 		}
 
 		return $value;
@@ -88,9 +114,9 @@ class Dynamic_Content {
 		}
 
 		if ( isset( $data['dateType'] ) && 'modified' === $data['dateType'] ) {
-			$date = get_the_modified_date( $format );
+			$date = get_the_modified_date( $format, $data['context'] );
 		} else {
-			$date = get_the_date( $format );
+			$date = get_the_date( $format, $data['context'] );
 		}
 
 		return $date;
@@ -115,9 +141,9 @@ class Dynamic_Content {
 		}
 
 		if ( isset( $data['timeType'] ) && 'modified' === $data['timeType'] ) {
-			$time = get_the_modified_time( $format );
+			$time = get_the_modified_time( $format, $data['context'] );
 		} else {
-			$time = get_the_time( $format );
+			$time = get_the_time( $format, $data['context'] );
 		}
 
 		return $time;
@@ -139,9 +165,9 @@ class Dynamic_Content {
 		}
 
 		if ( isset( $data['termType'] ) && 'tags' === $data['termType'] ) {
-			$terms = get_the_tag_list( '', $separator );
+			$terms = get_the_tag_list( '', $separator, '', $data['context'] );
 		} else {
-			$terms = get_the_category_list( $separator );
+			$terms = get_the_category_list( $separator, '', $data['context'] );
 		}
 
 		return $terms;
@@ -156,8 +182,33 @@ class Dynamic_Content {
 	 */
 	public function get_post_meta( $data ) {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$id      = get_the_ID();
-		$meta    = get_post_meta( $id, esc_html( $data['metaKey'] ), true );
+		$meta    = '';
+
+		if ( isset( $data['metaKey'] ) ) {
+			$meta = get_post_meta( $data['context'], esc_html( $data['metaKey'] ), true );
+		}
+
+		if ( empty( $meta ) || ! is_string( $meta ) ) {
+			$meta = $default;
+		}
+
+		return esc_html( $meta );
+	}
+
+	/**
+	 * Get ACF Meta.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_acf( $data ) {
+		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
+		$meta    = '';
+
+		if ( isset( $data['metaKey'] ) ) {
+			$meta = get_field( esc_html( $data['metaKey'] ), $data['context'], true );
+		}
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;
@@ -175,7 +226,7 @@ class Dynamic_Content {
 	 */
 	public function get_author_meta( $data ) {
 		$default = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$meta    = get_the_author_meta( esc_html( $data['metaKey'] ) );
+		$meta    = get_the_author_meta( esc_html( $data['metaKey'] ), get_post_field( 'post_author', $data['context'] ) );
 
 		if ( empty( $meta ) || ! is_string( $meta ) ) {
 			$meta = $default;
@@ -226,7 +277,7 @@ class Dynamic_Content {
 			}
 		}
 
-		if ( 'product' === $type && ! empty( $id ) ) {
+		if ( 'product' === $type && class_exists( 'WooCommerce' ) && ! empty( $id ) ) {
 			$product = wc_get_product( $id );
 			$image   = $product->get_image_id();
 			
@@ -286,7 +337,7 @@ class Dynamic_Content {
 			}
 		}
 
-		if ( 'product' === $data['type'] && isset( $data['id'] ) && ! empty( $data['id'] ) ) {
+		if ( 'product' === $data['type'] && class_exists( 'WooCommerce' ) && isset( $data['id'] ) && ! empty( $data['id'] ) ) {
 			$product = wc_get_product( $data['id'] );
 			$image   = $product->get_image_id();
 			

@@ -1,6 +1,7 @@
 declare global {
 	interface Window {
 		themeisleGutenberg?: {
+			version: string
 			isCompatible: boolean
 			hasPro: boolean
 			upgradeLink: string
@@ -36,12 +37,53 @@ declare global {
 			blocksIDs: string[]
 			isAncestorTypeAvailable: boolean
 		}
-		otterPro?: {
+		otterPro?: Readonly<{
 			isActive: boolean
 			isExpired: boolean
 			hasWooCommerce: boolean
 			hasLearnDash: boolean
 			rootUrl: string
+		}>
+		otterObj?: Readonly<Partial<{
+			assetsPath: string
+			docksLink: string
+			hasNevePro: string
+			hasPro: string
+			license:{
+				expiration: boolean
+				key: string
+				valid: string
+			}
+			purcharseHistoryURL: string
+			showFeedbackNotice: boolean
+			storeURL: string
+			styleExist: string
+			upgradeLink: string
+			version: string
+		}>>
+		themeisleGutenbergCountdown: {
+			i18n: {
+				second: string
+				seconds: string
+				minute: string
+				minutes: string
+				hour: string
+				hours: string
+				day: string
+				days: string
+			}
+			timezone: string
+		},
+		oThemeStyles?: {
+			colors?: {label: string, value: string}[],
+			gradients?: {label: string, value: string}[],
+			cssVars?: string[]
+		},
+		otterComponents?: {
+			SelectProducts?: ( props: any ) => JSX.Element
+			Notice?: ( props: { notice: any, variant: string, instructions: 'string'}) => JSX.Element
+			useInspectorSlot?: ( name: string ) => any
+			OtterControlTools?: ( props: any ) => any
 		}
 	}
 }

@@ -40,7 +40,49 @@ class Slider_CSS extends Base_CSS {
 					array(
 						'property' => '--height',
 						'value'    => 'height',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
+					),
+					array(
+						'property' => '--height-tablet',
+						'value'    => 'heightTablet',
+					),
+					array(
+						'property' => '--height-mobile',
+						'value'    => 'heightMobile',
+					),
+					array(
+						'property' => '--width',
+						'value'    => 'width',
+					),
+					array(
+						'property' => '--arrows-color',
+						'value'    => 'arrowsColor',
+					),
+					array(
+						'property' => '--arrows-background-color',
+						'value'    => 'arrowsBackgroundColor',
+					),
+					array(
+						'property' => '--pagination-color',
+						'value'    => 'paginationColor',
+					),
+					array(
+						'property' => '--pagination-active-color',
+						'value'    => 'paginationActiveColor',
+					),
+					array(
+						'property' => '--border-color',
+						'value'    => 'borderColor',
+					),
+					array(
+						'property' => '--border-width',
+						'value'    => 'borderWidth',
+					),
+					array(
+						'property' => '--border-radius',
+						'value'    => 'borderRadius',
 					),
 				),
 			)

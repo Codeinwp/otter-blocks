@@ -5,7 +5,10 @@ import { __ } from '@wordpress/i18n';
 
 import { serialize } from '@wordpress/blocks';
 
-import { SelectControl } from '@wordpress/components';
+import {
+	Button,
+	SelectControl
+} from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
 
@@ -232,6 +235,15 @@ function AnimationControls({
 		callback?.();
 	};
 
+	const replayAnimation = () => {
+		let classes = attributes.className;
+		classes = classes.replace( animation, 'o-replay' );
+
+		setAttributes({ className: classes });
+
+		setTimeout( () => setAttributes({ className: classes.replace( 'o-replay', animation ) }), 100 );
+	};
+
 	return (
 		<Fragment>
 			<ControlPanelControl
@@ -260,6 +272,13 @@ function AnimationControls({
 								options={ speedList }
 								onChange={ value => updateAnimConfig( AnimationType.default, speed, value, () => setSpeed( value ) ) }
 							/>
+
+							<Button
+								variant="secondary"
+								onClick={ replayAnimation }
+							>
+								{ __( 'Replay Animation', 'otter-blocks' ) }
+							</Button>
 						</Fragment>
 					) }
 				</div>

@@ -30,11 +30,17 @@ import {
 	useState
 } from '@wordpress/element';
 
+import {
+	closeSmall
+} from '@wordpress/icons';
+
 /**
  * Internal dependencies
  */
 import './editor.scss';
-import data from '../../helpers/fa-icons.json';
+
+// @ts-ignore
+import data from '../../../../assets/fontawesome/fa-icons.json';
 import themeIsleIcons from './../../helpers/themeisle-icons.js';
 
 const FontAwesomeIconsList = ({
@@ -71,7 +77,8 @@ const IconPickerControl = ({
 	icon,
 	changeLibrary,
 	onChange,
-	allowImage = false
+	allowImage = false,
+	allowThemeisleIcons = true
 }) => {
 	const instanceId = useInstanceId( IconPickerControl );
 
@@ -81,7 +88,6 @@ const IconPickerControl = ({
 		Object.keys( data ).forEach( i => {
 			Object.keys( data[i].styles ).forEach( o => {
 				let prefix = '';
-				let { terms } = data[i].search;
 
 				switch ( data[i].styles[o]) {
 				case 'brands':
@@ -97,17 +103,11 @@ const IconPickerControl = ({
 					prefix = 'fas';
 				}
 
-				terms.push(
-					i,
-					data[i].label
-				);
-
 				icons.push({
 					name: i,
 					unicode: data[i].unicode,
 					prefix,
-					label: data[i].label,
-					search: terms
+					label: data[i].label
 				});
 			});
 		});
@@ -178,19 +178,21 @@ const IconPickerControl = ({
 		>
 			<Dropdown
 				contentClassName="o-icon-picker-popover"
-				position="bottom center"
+				position="bottom left"
 				renderToggle={ ({ isOpen, onToggle }) => (
 					<Fragment>
-						<SelectControl
-							label={ __( 'Icon Library', 'otter-blocks' ) }
-							value={ library }
-							options={ [
-								{ label: __( 'Font Awesome', 'otter-blocks' ), value: 'fontawesome' },
-								{ label: __( 'ThemeIsle Icons', 'otter-blocks' ), value: 'themeisle-icons' },
-								...( allowImage ? [{ label: __( 'Custom Image', 'otter-blocks' ), value: 'image' }] : [])
-							] }
-							onChange={ changeLibrary }
-						/>
+						{ ( allowThemeisleIcons || allowImage ) &&
+							<SelectControl
+								label={ __( 'Icon Library', 'otter-blocks' ) }
+								value={ library }
+								options={ [
+									{ label: __( 'Font Awesome', 'otter-blocks' ), value: 'fontawesome' },
+									...( allowThemeisleIcons ? [{ label: __( 'ThemeIsle Icons', 'otter-blocks' ), value: 'themeisle-icons' }] : []),
+									...( allowImage ? [{ label: __( 'Custom Image', 'otter-blocks' ), value: 'image' }] : [])
+								] }
+								onChange={ changeLibrary }
+							/>
+						}
 
 						{ 'image' !== library ? (
 							<BaseControl label={ label }>
@@ -274,7 +276,7 @@ const IconPickerControl = ({
 
 					return (
 
-						<MenuGroup label={ 'fontawesome' === library ? __( 'Font Awesome Icons', 'otter-blocks' ) : __( 'ThemeIsle Icons', 'otter-blocks' ) }>
+						<MenuGroup label={ 'fontawesome' === library ? __( 'Font Awesome Icons', 'otter-blocks' ) : __( 'ThemeIsle Icons', 'otter-blocks' ) } style={{ paddingBottom: '0px' }}>
 							<TextControl
 								value={ search }
 								onChange={ e => setSearch( e ) }
@@ -282,7 +284,7 @@ const IconPickerControl = ({
 
 							<div className="components-popover__items">
 								{ selectedIcons.map( ( i, index ) => {
-									if ( 'fontawesome' === library && ( ! search || i.search.some( ( o ) => o.toLowerCase().match( search.toLowerCase() ) ) ) ) {
+									if ( 'fontawesome' === library && ( ! search || i.name.match( search.toLowerCase() ) || i.label.toLowerCase().match( search.toLowerCase() ) ) ) {
 										return (
 											<FontAwesomeIconsList
 												i={ i }
@@ -311,6 +313,12 @@ const IconPickerControl = ({
 									}
 								}) }
 							</div>
+							<div style={{ display: 'flex', justifyContent: 'flex-end', position: 'absolute', top: '11px', right: '5px' }}>
+								<Button
+									onClick={ onToggle }
+									icon={ closeSmall }
+								/>
+							</div>
 						</MenuGroup>
 					);
 				} }
@@ -330,7 +338,6 @@ export const IconPickerToolbarControl = ({
 		Object.keys( data ).forEach( i => {
 			Object.keys( data[i].styles ).forEach( o => {
 				let prefix = '';
-				let { terms } = data[i].search;
 
 				switch ( data[i].styles[o]) {
 				case 'brands':
@@ -346,17 +353,11 @@ export const IconPickerToolbarControl = ({
 					prefix = 'fas';
 				}
 
-				terms.push(
-					i,
-					data[i].label
-				);
-
 				icons.push({
 					name: i,
 					unicode: data[i].unicode,
 					prefix,
-					label: data[i].label,
-					search: terms
+					label: data[i].label
 				});
 			});
 		});
@@ -463,7 +464,7 @@ export const IconPickerToolbarControl = ({
 							) }
 
 							{ icons.map( i => {
-								if ( ! search || i.search.some( ( o ) => o.toLowerCase().match( search.toLowerCase() ) ) ) {
+								if ( ! search || i.name.match( search.toLowerCase() ) || i.label.toLowerCase().match( search.toLowerCase() ) ) {
 									return (
 										<FontAwesomeIconsList
 											i={ i }

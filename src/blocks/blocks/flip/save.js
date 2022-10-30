@@ -21,7 +21,9 @@ const Save = ({
 			'anim',
 			{
 				'flipX': 'flipX' === attributes.animType,
-				'flipY': 'flipY' === attributes.animType
+				'flipY': 'flipY' === attributes.animType,
+				'flipY-rev': 'flipY-rev' === attributes.animType,
+				'flipX-rev': 'flipX-rev' === attributes.animType
 			}
 		)
 	});

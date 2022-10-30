@@ -48,10 +48,11 @@ class Registration {
 		'leaflet-map'    => false,
 		'lottie'         => false,
 		'slider'         => false,
+		'sticky'         => false,
 		'tabs'           => false,
 		'popup'          => false,
 		'progress-bar'   => false,
-		'sticky'         => false,
+		'accordion'      => false,
 	);
 
 	/**
@@ -84,9 +85,10 @@ class Registration {
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) ); // Don't change the priority or else Blocks CSS will stop working.
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
 		add_filter( 'render_block', array( $this, 'load_sticky' ), 900, 2 );
+		add_filter( 'render_block', array( $this, 'subscribe_fa' ), 10, 2 );
 
 		add_action(
-			'get_footer',
+			'wp_footer',
 			static function () {
 				if ( Registration::$is_fa_loaded ) {
 					wp_enqueue_style( 'font-awesome-5' );
@@ -187,7 +189,6 @@ class Registration {
 		wp_style_add_data( 'glidejs-theme', 'path', OTTER_BLOCKS_PATH . '/assets/glide/glide.theme.min.css' );
 	}
 
-
 	/**
 	 * Load Gutenberg blocks.
 	 *
@@ -241,7 +242,7 @@ class Registration {
 				'isCompatible'            => Main::is_compatible(),
 				'hasPro'                  => Pro::is_pro_installed(),
 				'isProActive'             => Pro::is_pro_active(),
-				'upgradeLink'             => Pro::get_url(),
+				'upgradeLink'             => tsdk_utmify( Pro::get_url(), 'editor', Pro::get_reference() ),
 				'should_show_upsell'      => Pro::should_show_upsell(),
 				'assetsPath'              => OTTER_BLOCKS_URL . 'assets',
 				'updatePath'              => admin_url( 'update-core.php' ),
@@ -257,15 +258,44 @@ class Registration {
 				'postTypes'               => get_post_types( [ 'public' => true ] ),
 				'rootUrl'                 => get_site_url(),
 				'restRoot'                => get_rest_url( null, 'otter/v1' ),
+				'showOnboarding'          => $this->show_onboarding(),
+				'ratingScale'             => get_option( 'themeisle_blocks_settings_review_scale', false ),
 				'hasModule'               => array(
 					'blockConditions' => get_option( 'themeisle_blocks_settings_block_conditions', true ),
 				),
 				'isLegacyPre59'           => version_compare( get_bloginfo( 'version' ), '5.8.22', '<=' ),
 				'isAncestorTypeAvailable' => version_compare( get_bloginfo( 'version' ), '5.9.22', '>=' ),
+				'version'                 => OTTER_BLOCKS_VERSION,
 			)
 		);
 
 		wp_enqueue_style( 'otter-editor', OTTER_BLOCKS_URL . 'build/blocks/editor.css', array( 'wp-edit-blocks', 'font-awesome-5', 'font-awesome-4-shims' ), $asset_file['version'] );
+	}
+
+	/**
+	 * Whether to show onboarding or not.
+	 *
+	 * @since   2.0.13
+	 * @access  public
+	 */
+	public function show_onboarding() {
+		$onboarding_option    = get_option( 'themeisle_blocks_settings_onboarding', true );
+		$installed_thru_sdk   = get_option( 'themeisle_sdk_promotions_otter_installed', false );
+		$otter_blocks_install = get_option( 'otter_blocks_install' );
+
+		if ( defined( 'ENABLE_OTTER_PRO_DEV' ) ) {
+			return false;
+		}
+
+		if ( ! $onboarding_option ) {
+			return false;
+		}
+
+		if ( $installed_thru_sdk && $otter_blocks_install > strtotime( '-2 days' ) ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**
@@ -281,10 +311,6 @@ class Registration {
 			return;
 		}
 
-		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/blocks.asset.php';
-		wp_enqueue_style( 'otter-blocks', OTTER_BLOCKS_URL . 'build/blocks/blocks.css', [], $asset_file['version'] );
-		wp_style_add_data( 'otter-blocks', 'path', OTTER_BLOCKS_PATH . '/build/blocks/blocks.css' );
-
 		if ( is_singular() ) {
 			$this->enqueue_dependencies();
 		} else {
@@ -296,8 +322,6 @@ class Registration {
 				}
 			}
 		}
-
-		add_filter( 'render_block', [ $this, 'subscribe_fa' ], 10, 2 );
 
 		add_filter(
 			'the_content',
@@ -319,6 +343,10 @@ class Registration {
 
 		if ( $has_widgets ) {
 			$this->enqueue_dependencies( 'widgets' );
+		}
+
+		if ( function_exists( 'get_block_templates' ) && function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() && current_theme_supports( 'block-templates' ) ) {
+			$this->enqueue_dependencies( 'block-templates' );
 		}
 	}
 
@@ -342,6 +370,28 @@ class Registration {
 			}
 
 			$post = $content;
+		} elseif ( 'block-templates' === $post ) {
+			global $_wp_current_template_content;
+
+			$slugs           = array();
+			$template_blocks = parse_blocks( $_wp_current_template_content );
+
+			foreach ( $template_blocks as $template_block ) {
+				if ( 'core/template-part' === $template_block['blockName'] ) {
+					$slugs[] = $template_block['attrs']['slug'];
+				}
+			}
+
+			$templates_parts = get_block_templates( array( 'slugs__in' => $slugs ), 'wp_template_part' );
+
+			foreach ( $templates_parts as $templates_part ) {
+				if ( isset( $templates_part->content ) && in_array( $templates_part->slug, $slugs ) ) {
+					$content .= $templates_part->content;
+				}
+			}
+
+			$content .= $_wp_current_template_content;
+			$post     = $content;
 		} else {
 			$content = get_the_content( null, false, $post );
 		}
@@ -366,8 +416,7 @@ class Registration {
 			}
 		}
 
-		// On AMP context, we don't load JS files.
-		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+		if ( ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) || is_admin() ) {
 			return;
 		}
 
@@ -375,14 +424,12 @@ class Registration {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/circle-counter.asset.php';
 			wp_register_script( 'otter-circle-counter', OTTER_BLOCKS_URL . 'build/blocks/circle-counter.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-circle-counter', 'defer', true );
-			self::$scripts_loaded['circle-counter'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['countdown'] && has_block( 'themeisle-blocks/countdown', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/countdown.asset.php';
 			wp_register_script( 'otter-countdown', OTTER_BLOCKS_URL . 'build/blocks/countdown.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-countdown', 'defer', true );
-			self::$scripts_loaded['countdown'] = true;
 
 			$offset    = (float) get_option( 'gmt_offset' );
 			$hours     = (int) $offset;
@@ -409,6 +456,38 @@ class Registration {
 					'timezone' => $tz_offset,
 				)
 			);
+
+			add_action(
+				'wp_head',
+				function() {
+					echo '
+						<style type="text/css" data-source="otter-blocks">
+							[class*="o-countdown-trigger-on-end-"] {
+								transition: opacity 1s ease;
+							}
+
+							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show, [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide:not(.o-cntdn-ready), [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide.o-cntdn-hide, [data-intv-start]:not(.o-cntdn-ready) {
+								height: 0px !important;
+								max-height: 0px !important;
+								min-height: 0px !important;
+								visibility: hidden;
+								box-sizing: border-box;
+								margin: 0px !important;
+								padding: 0px !important;
+								opacity: 0;
+							}
+
+							.wp-block-themeisle-blocks-countdown:not(.o-cntdn-ready) {
+								visibility: hidden;
+							}
+
+							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show {
+								opacity: 0;
+							}
+						</style>
+				';
+				}
+			);
 		}
 
 		if ( ! self::$scripts_loaded['form'] && has_block( 'themeisle-blocks/form', $post ) ) {
@@ -434,8 +513,6 @@ class Registration {
 					),
 				)
 			);
-
-			self::$scripts_loaded['form'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['google-map'] && has_block( 'themeisle-blocks/google-map', $post ) ) {
@@ -448,7 +525,6 @@ class Registration {
 				wp_script_add_data( 'otter-google-map', 'defer', true );
 				wp_register_script( 'google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . esc_attr( $apikey ) . '&libraries=places&callback=initMapScript', array( 'otter-google-map' ), '', true ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.NoExplicitVersion
 				wp_script_add_data( 'google-maps', 'defer', true );
-				self::$scripts_loaded['google-map'] = true;
 			}
 		}
 
@@ -467,7 +543,6 @@ class Registration {
 			);
 
 			wp_script_add_data( 'otter-leaflet', 'defer', true );
-			self::$scripts_loaded['leaflet-map'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['lottie'] && has_block( 'themeisle-blocks/lottie', $post ) ) {
@@ -487,7 +562,6 @@ class Registration {
 			);
 
 			wp_script_add_data( 'otter-lottie', 'defer', true );
-			self::$scripts_loaded['lottie'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['slider'] && has_block( 'themeisle-blocks/slider', $post ) ) {
@@ -505,14 +579,12 @@ class Registration {
 			);
 
 			wp_script_add_data( 'otter-slider', 'async', true );
-			self::$scripts_loaded['slider'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['tabs'] && has_block( 'themeisle-blocks/tabs', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/tabs.asset.php';
 			wp_register_script( 'otter-tabs', OTTER_BLOCKS_URL . 'build/blocks/tabs.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-tabs', 'defer', true );
-			self::$scripts_loaded['tabs'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['popup'] && has_block( 'themeisle-blocks/popup', $post ) ) {
@@ -527,17 +599,19 @@ class Registration {
 					'isPreview' => is_preview(),
 				)
 			);
-
-			self::$scripts_loaded['popup'] = true;
 		}
 
 		if ( ! self::$scripts_loaded['progress-bar'] && has_block( 'themeisle-blocks/progress-bar', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/progress-bar.asset.php';
 			wp_register_script( 'otter-progress-bar', OTTER_BLOCKS_URL . 'build/blocks/progress-bar.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-progress-bar', 'defer', true );
-			self::$scripts_loaded['progress-bar'] = true;
 		}
 
+		if ( ! self::$scripts_loaded['accordion'] && has_block( 'themeisle-blocks/accordion', $post ) ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/accordion.asset.php';
+			wp_register_script( 'otter-accordion', OTTER_BLOCKS_URL . 'build/blocks/accordion.js', $asset_file['dependencies'], $asset_file['version'], true );
+			wp_script_add_data( 'otter-accordion', 'defer', true );
+		}
 	}
 
 	/**
@@ -815,6 +889,18 @@ class Registration {
 			if ( isset( $block['attrs']['className'] ) && strpos( $block['attrs']['className'], 'fa-' ) !== false ) {
 				self::$is_fa_loaded = true;
 
+				// See the src/blocks/plugins/menu-icons/inline.css file for where this comes from.
+				$styles = '.fab.wp-block-navigation-item,.far.wp-block-navigation-item,.fas.wp-block-navigation-item{-moz-osx-font-smoothing:inherit;-webkit-font-smoothing:inherit;font-weight:inherit}.fab.wp-block-navigation-item:before,.far.wp-block-navigation-item:before,.fas.wp-block-navigation-item:before{font-family:Font Awesome\ 5 Free;margin-right:5px}.fab.wp-block-navigation-item:before,.far.wp-block-navigation-item:before{font-weight:400;padding-right:5px}.fas.wp-block-navigation-item:before{font-weight:900;padding-right:5px}.fab.wp-block-navigation-item:before{font-family:Font Awesome\ 5 Brands}';
+
+				wp_add_inline_style( 'font-awesome-5', $styles );
+				return $block_content;
+			}
+		}
+
+		if ( 'themeisle-blocks/accordion' === $block['blockName'] ) {
+			if ( isset( $block['attrs']['icon'] ) || isset( $block['attrs']['openItemIcon'] ) ) {
+				self::$is_fa_loaded = true;
+
 				return $block_content;
 			}
 		}
@@ -845,10 +931,24 @@ class Registration {
 				true
 			);
 			wp_script_add_data( 'otter-sticky', 'defer', true );
+
+			add_action( 'wp_head', array( $this, 'sticky_style' ) );
+
 			self::$scripts_loaded['sticky'] = true;
 		}
 
 		return $block_content;
+	}
+
+	/**
+	 * Add styles for sticky blocks.
+	 *
+	 * @static
+	 * @since 2.0.14
+	 * @access public
+	 */
+	public static function sticky_style() {
+		echo '<style id="o-sticky-inline-css">.o-sticky.o-sticky-float { height: 0px; } </style>';
 	}
 
 	/**

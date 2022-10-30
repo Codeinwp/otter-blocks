@@ -258,6 +258,16 @@ class Countdown_CSS extends Base_CSS {
 							);
 						},
 					),
+					array(
+						'property'  => 'display',
+						'value'     => 'exclude',
+						'format'    => function( $value, $attrs ) {
+							return 'none';
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['exclude'] ) && is_array( $attrs['exclude'] ) && 4 === count( $attrs['exclude'] );
+						}, 
+					),
 				),
 			)
 		);
@@ -293,6 +303,21 @@ class Countdown_CSS extends Base_CSS {
 					array(
 						'property' => 'color',
 						'value'    => 'separatorColor',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .otter-countdown__container .otter-countdown__display .otter-countdown__display-area[name="separator"] .otter-countdown__label',
+				'properties' => array(
+					array(
+						'property'  => 'display',
+						'default'   => 'none',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['separatorAlignment'] ) && 'center' === $attrs['separatorAlignment'];
+						},
 					),
 				),
 			)
