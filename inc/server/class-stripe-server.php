@@ -7,7 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\Server;
 
-use Stripe\StripeClient;
+use ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
 
 /**
  * Class Stripe_Server
@@ -36,13 +36,6 @@ class Stripe_Server {
 	public $version = 'v1';
 
 	/**
-	 * Stripe API Key.
-	 *
-	 * @var Stripe_Server
-	 */
-	public $api_key = '';
-
-	/**
 	 * Stripe Object.
 	 *
 	 * @var Stripe_Server
@@ -54,7 +47,7 @@ class Stripe_Server {
 	 */
 	public function init() {
 		$this->api_key = get_option( 'themeisle_stripe_api_key' );
-		$this->stripe  = new StripeClient( $this->api_key );
+		$this->stripe  = new Stripe_API();
 		
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}
@@ -105,68 +98,6 @@ class Stripe_Server {
 	}
 
 	/**
-	 * Build Error Message
-	 *
-	 * @param object $error Error Object.
-	 * 
-	 * @return \WP_Error
-	 * @access  public
-	 */
-	public function build_error_response( $error ) {
-		return new \WP_Error(
-			'otter_stripe_error',
-			$error->getError()->message,
-			array(
-				'status' => $error->getHttpStatus(),
-				'code'   => $error->getError()->code,
-				'type'   => $error->getError()->type,
-			)
-		);
-	}
-
-	/**
-	 * Make Stripe Request
-	 *
-	 * @param string $path Request path.
-	 * @param array  $args Request arguments.
-	 * 
-	 * @return mixed
-	 * @access public
-	 */
-	public function create_request( $path, $args = array() ) {
-		$response = array();
-
-		try {
-			switch ( $path ) {
-				case 'products':
-					$response = $this->stripe->products->all( $args );
-					break;
-				case 'prices':
-					$response = $this->stripe->prices->all( $args );
-					break;
-				default:
-					break;
-			}
-		} catch ( \Stripe\Exception\CardException $e ) {
-			$response = $this->build_error_response( $e );
-		} catch ( \Stripe\Exception\RateLimitException $e ) {
-			$response = $this->build_error_response( $e );
-		} catch ( \Stripe\Exception\InvalidRequestException $e ) {
-			$response = $this->build_error_response( $e );
-		} catch ( \Stripe\Exception\AuthenticationException $e ) {
-			$response = $this->build_error_response( $e );
-		} catch ( \Stripe\Exception\ApiConnectionException $e ) {
-			$response = $this->build_error_response( $e );
-		} catch ( \Stripe\Exception\ApiErrorException $e ) {
-			$response = $this->build_error_response( $e );
-		} catch ( Exception $e ) {
-			$response = $this->build_error_response( $e );
-		}
-
-		return rest_ensure_response( $response );
-	}
-
-	/**
 	 * List Products.
 	 *
 	 * @param \WP_REST_Request $request The request.
@@ -175,7 +106,7 @@ class Stripe_Server {
 	 * @access  public
 	 */
 	public function get_products( \WP_REST_Request $request ) {
-		return $this->create_request(
+		return $this->stripe->create_request(
 			'products',
 			array(
 				'active' => true,
@@ -193,7 +124,7 @@ class Stripe_Server {
 	 * @access  public
 	 */
 	public function get_price( \WP_REST_Request $request ) {
-		return $this->create_request(
+		return $this->stripe->create_request(
 			'prices',
 			array(
 				'active'  => true,

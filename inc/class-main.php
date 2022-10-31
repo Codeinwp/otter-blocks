@@ -74,6 +74,7 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Plugins\Dashboard',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Dynamic_Content',
 			'\ThemeIsle\GutenbergBlocks\Plugins\Options_Settings',
+			'\ThemeIsle\GutenbergBlocks\Plugins\Stripe_API',
 			'\ThemeIsle\GutenbergBlocks\Render\Masonry_Variant',
 			'\ThemeIsle\GutenbergBlocks\Server\Dashboard_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server',

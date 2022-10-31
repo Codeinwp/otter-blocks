@@ -3,7 +3,6 @@
     display: flex;
     flex-direction: column;
     min-width: 400px;
-    height: 112px;
     border-radius: 6px;
     justify-content: center;
 
@@ -48,7 +47,7 @@
     }
 
     button {
-        height: 36px;
+        width: 100%;
         background: #ED6F57;
         border-radius: 0 0 4px 4px;
         color: #fff;
