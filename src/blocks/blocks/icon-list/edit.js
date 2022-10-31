@@ -31,7 +31,8 @@ const { attributes: defaultAttributes } = metadata;
 const Edit = ({
 	attributes,
 	setAttributes,
-	clientId
+	clientId,
+	className
 }) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -55,7 +56,7 @@ const Edit = ({
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		style: inlineStyles,
-		className: classNames({ 'has-divider': Boolean( attributes.hasDivider ) })
+		className: classNames( className, { 'has-divider': Boolean( attributes.hasDivider ) })
 	});
 
 	return (
