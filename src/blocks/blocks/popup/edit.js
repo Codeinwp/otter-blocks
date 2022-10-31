@@ -47,7 +47,8 @@ const makeBox = x => ({ top: x, bottom: x, left: x, right: x });
 const Edit = ({
 	attributes,
 	setAttributes,
-	clientId
+	clientId,
+	className
 }) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -129,7 +130,7 @@ const Edit = ({
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		style: inlineStyles,
-		className: classnames( cssNode, { 'with-outside-button': 'outside' === attributes.closeButtonType })
+		className: classnames( className, cssNode, { 'with-outside-button': 'outside' === attributes.closeButtonType })
 	});
 
 	return (

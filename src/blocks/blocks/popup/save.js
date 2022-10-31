@@ -8,11 +8,12 @@ import {
 import classnames from 'classnames';
 
 const Save = ({
-	attributes
+	attributes,
+	className
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
-		className: classnames( 'is-front', { 'with-outside-button': 'outside' === attributes.closeButtonType }),
+		className: classnames( className, 'is-front', { 'with-outside-button': 'outside' === attributes.closeButtonType }),
 		'data-open': attributes.trigger,
 		'data-dismiss': attributes.recurringClose ? attributes.recurringTime : '',
 		'data-time': ( undefined === attributes.trigger || 'onLoad' === attributes.trigger ) ? ( attributes.wait || 0 ) : '',
