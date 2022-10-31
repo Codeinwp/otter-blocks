@@ -160,7 +160,7 @@ const Inspector = ({
 								<ToggleControl
 									label={ __( 'Hide Labels', 'otter-blocks' ) }
 									checked={ Boolean( attributes.hideLabels ) }
-									onChange={ hideLabels => setAttributes({ hideLabels }) }
+									onChange={ () => setAttributes({ hideLabels: ! attributes.hideLabels }) }
 								/>
 							</ResponsiveControl>
 
@@ -320,7 +320,7 @@ const Inspector = ({
 							<ToggleControl
 								label={ __( 'Enable Divider', 'otter-blocks' ) }
 								checked={ Boolean( attributes.hasDivider ) }
-								onChange={ hasDivider => setAttributes({ hasDivider }) }
+								onChange={ () => setAttributes({ hasDivider: ! attributes.hasDivider }) }
 							/>
 
 							{

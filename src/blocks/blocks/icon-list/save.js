@@ -8,11 +8,12 @@ import {
 import classNames from 'classnames';
 
 const Save = ({
-	attributes
+	attributes,
+	className
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
-		className: classNames({ 'has-divider': Boolean( attributes.hasDivider ) })
+		className: classNames( className, { 'has-divider': Boolean( attributes.hasDivider ) })
 	});
 
 	return (

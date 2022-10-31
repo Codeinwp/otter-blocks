@@ -15,7 +15,7 @@ type Attributes= {
 	alignmentMobile: string
 	gapIconLabel: string
 	hideLabels: boolean
-	hasDivider: string
+	hasDivider: boolean
 	dividerWidth: string
 	dividerColor: string
 	dividerLength: string

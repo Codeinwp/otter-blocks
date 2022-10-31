@@ -29,6 +29,14 @@
 			justify-content: var( --icon-align-mobile );
 		}
 	}
+
+	&.is-selected.has-divider {
+		&.is-style-horizontal, &:not(.is-style-horizontal) {
+			.wp-block-themeisle-blocks-icon-list-item:nth-last-child(2)::after {
+				display: none;
+			}
+		}
+	}
 }
 
 .editor-styles-wrapper .wp-block.wp-block-themeisle-blocks-icon-list-item {
