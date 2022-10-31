@@ -20,7 +20,7 @@ const DEFAULT_STATE = {
 	viewType: 'Desktop',
 	visiblePopover: 'themeisle-blocks/dynamic-value',
 	dynamicData: {},
-	stripeProducts: {},
+	stripeProducts: [],
 	stripeProductsPrices: {}
 };
 
@@ -53,14 +53,14 @@ const actions = {
 	setStripeProducts( products ) {
 		return {
 			type: 'SET_STRIPE_PRODUCTS',
-			products
+			products: products?.data
 		};
 	},
 	setStripeProductPrices( id, prices ) {
 		return {
 			type: 'SET_STRIPE_PRODUCT_PRICES',
 			id,
-			prices
+			prices: prices?.data
 		};
 	},
 	fetchFromAPI( path ) {
@@ -75,24 +75,28 @@ registerStore( 'themeisle-gutenberg/data', {
 	reducer( state = DEFAULT_STATE, action ) {
 		if ( 'UPDATE_VIEW' === action.type ) {
 			return {
+				...state,
 				viewType: action.viewType
 			};
 		}
 
 		if ( 'UPDATE_ONBOARDING' === action.type ) {
 			return {
+				...state,
 				showOnboarding: action.showOnboarding
 			};
 		}
 
 		if ( 'UPDATE_POPOVER' === action.type ) {
 			return {
+				...state,
 				visiblePopover: action.visiblePopover
 			};
 		}
 
 		if ( 'SET_DYNAMIC_DATA' === action.type ) {
 			return {
+				...state,
 				dynamicData: {
 					...state.dynamicData,
 					[ action.key ]: action.value
@@ -102,12 +106,14 @@ registerStore( 'themeisle-gutenberg/data', {
 
 		if ( 'SET_STRIPE_PRODUCTS' === action.type ) {
 			return {
+				...state,
 				stripeProducts: action.products
 			};
 		}
 
 		if ( 'SET_STRIPE_PRODUCT_PRICES' === action.type ) {
 			return {
+				...state,
 				stripeProductsPrices: {
 					...state.stripeProductsPrices,
 					[ action.id ]: action.prices
@@ -138,7 +144,7 @@ registerStore( 'themeisle-gutenberg/data', {
 			return state.stripeProducts;
 		},
 		getStripeProductPrices( state, id ) {
-			return state.stripeProductsPrices[ id ];
+			return state.stripeProductsPrices?.[ id ];
 		}
 	},
 
@@ -163,7 +169,7 @@ registerStore( 'themeisle-gutenberg/data', {
 		*getStripeProductPrices( id ) {
 			const path = 'otter/v1/stripe/prices/' + id;
 			const response = yield actions.fetchFromAPI( path );
-			return actions.setStripeProductPrices( id, response?.data );
+			return actions.setStripeProductPrices( id, response );
 		}
 	}
 });

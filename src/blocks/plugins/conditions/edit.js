@@ -189,7 +189,7 @@ const AuthorsFieldToken = ( props ) => {
 			postAuthors: ( getUsers({ who: 'authors', context: 'view' }) ?? []).map( author => author.username ),
 			isLoading: isResolving( 'getUsers', [{ who: 'authors', context: 'view' }])
 		};
-	}, [ ]);
+	}, []);
 
 	return isLoading ? (
 		<Placeholder><Spinner /></Placeholder>

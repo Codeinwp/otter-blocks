@@ -13,6 +13,12 @@
 		},
 		"price": {
 			"type": "string"
+		},
+		"successMessage": {
+			"type": "string"
+		},
+		"cancelMessage": {
+			"type": "string"
 		}
 	},
 	"supports": {

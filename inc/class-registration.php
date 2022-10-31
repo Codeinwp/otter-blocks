@@ -718,6 +718,7 @@ class Registration {
 			'service',
 			'sharing-icons',
 			'slider',
+			'stripe-checkout',
 			'tabs',
 			'tabs-item',
 			'testimonials',

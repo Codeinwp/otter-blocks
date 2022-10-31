@@ -127,7 +127,8 @@ class Stripe_Server {
 	/**
 	 * Make Stripe Request
 	 *
-	 * @param callback $callback Request callback.
+	 * @param string $path Request path.
+	 * @param array $args Request arguments.
 	 * 
 	 * @return mixed
 	 * @access public
