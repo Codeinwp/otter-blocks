@@ -6,7 +6,8 @@ import { __ } from '@wordpress/i18n';
 import {
 	AlignmentToolbar,
 	__experimentalColorGradientControl as ColorGradientControl,
-	InspectorControls
+	InspectorControls,
+	PanelColorSettings
 } from '@wordpress/block-editor';
 
 import {
@@ -50,7 +51,7 @@ const Inspector = ({
 		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
 	}, []);
 
-	const [ tab, setTab ] = useState( 'style' );
+	const [ tab, setTab ] = useState( 'settings' );
 
 	const changeFontFamily = value => {
 		if ( ! value ) {
@@ -326,285 +327,304 @@ const Inspector = ({
 					value={ tab }
 					options={[
 						{
-							label: __( 'Style', 'otter-blocks' ),
-							value: 'style'
+							label: __( 'Settings', 'otter-blocks' ),
+							value: 'settings'
 						},
 						{
-							label: __( 'Advanced', 'otter-blocks' ),
-							value: 'advanced'
+							label: __( 'Style', 'otter-blocks' ),
+							value: 'style'
 						}
 					]}
 					onChange={ setTab }
 				/>
 
-				{ 'style' === tab && (
+				<div>
 
-					<Fragment>
-						<PanelBody
-							title={ __( 'General Settings', 'otter-blocks' ) }
-							className="o-adv-h-panel"
-						>
-							<ColorGradientControl
-								label={ __( 'Heading Color', 'otter-blocks' ) }
-								colorValue={ attributes.headingColor }
-								onColorChange={ headingColor => setAttributes({ headingColor }) }
-							/>
+					{
+						'settings' === tab && (
+							<Fragment>
+								<PanelBody
+									title={ __( 'Sizing', 'otter-blocks' ) }
+								>
+									<ResponsiveControl
+										label={ __( 'Alignment', 'otter-blocks' ) }
+									>
+										<AlignmentToolbar
+											value={ getAlignment() }
+											onChange={ changeAlignment }
+											isCollapsed={ false }
+										/>
+									</ResponsiveControl>
+								</PanelBody>
+								<PanelBody
+									title={ __( 'Link Settings', 'otter-blocks' ) }
+								>
 
-							<ResponsiveControl
-								label={ __( 'Font Size', 'otter-blocks' ) }
+								</PanelBody>
+							</Fragment>
+						)
+					}
+
+					{ 'style' === tab && (
+						<Fragment>
+							<PanelBody
+								title={ __( 'Typography', 'otter-blocks' ) }
+								initialOpen={ false }
 							>
+
+								<ResponsiveControl
+									label={ __( 'Font Size', 'otter-blocks' ) }
+								>
+									<RangeControl
+										value={ getFontSize() || '' }
+										onChange={ changeFontSize }
+										step={ 0.1 }
+										min={ 1 }
+										max={ 500 }
+										allowReset={ true }
+									/>
+								</ResponsiveControl>
+
+								<GoogleFontsControl
+									label={ __( 'Font Family', 'otter-blocks' ) }
+									value={ attributes.fontFamily }
+									onChangeFontFamily={ changeFontFamily }
+									valueVariant={ attributes.fontVariant }
+									onChangeFontVariant={ fontVariant => setAttributes({ fontVariant }) }
+									valueStyle={ attributes.fontStyle }
+									onChangeFontStyle={ fontStyle => setAttributes({ fontStyle }) }
+									valueTransform={ attributes.textTransform }
+									onChangeTextTransform={ textTransform => setAttributes({ textTransform }) }
+								/>
+
+								<ClearButton
+									values={[ 'fontFamily', 'fontVariant', 'fontStyle', 'textTransform' ]}
+									setAttributes={ setAttributes }
+								/>
+
 								<RangeControl
-									value={ getFontSize() || '' }
-									onChange={ changeFontSize }
+									label={ __( 'Line Height', 'otter-blocks' ) }
+									value={ attributes.lineHeight }
+									onChange={ lineHeight => setAttributes({ lineHeight }) }
 									step={ 0.1 }
-									min={ 1 }
-									max={ 500 }
+									min={ 0 }
+									max={ 3 }
 									allowReset={ true }
 								/>
-							</ResponsiveControl>
 
-							<ResponsiveControl
-								label={ __( 'Alignment', 'otter-blocks' ) }
-							>
-								<AlignmentToolbar
-									value={ getAlignment() }
-									onChange={ changeAlignment }
-									isCollapsed={ false }
+								<RangeControl
+									label={ __( 'Letter Spacing', 'otter-blocks' ) }
+									value={ attributes.letterSpacing }
+									onChange={ letterSpacing => setAttributes({ letterSpacing }) }
+									step={ 0.1 }
+									min={ -50 }
+									max={ 100 }
+									allowReset={ true }
 								/>
-							</ResponsiveControl>
-						</PanelBody>
 
-						<PanelBody
-							title={ __( 'Typography Settings', 'otter-blocks' ) }
-							initialOpen={ false }
-						>
-							<GoogleFontsControl
-								label={ __( 'Font Family', 'otter-blocks' ) }
-								value={ attributes.fontFamily }
-								onChangeFontFamily={ changeFontFamily }
-								valueVariant={ attributes.fontVariant }
-								onChangeFontVariant={ fontVariant => setAttributes({ fontVariant }) }
-								valueStyle={ attributes.fontStyle }
-								onChangeFontStyle={ fontStyle => setAttributes({ fontStyle }) }
-								valueTransform={ attributes.textTransform }
-								onChangeTextTransform={ textTransform => setAttributes({ textTransform }) }
+							</PanelBody>
+
+							<PanelColorSettings
+								title={ __( 'Color', 'otter-blocks' ) }
+								initialOpen={ false }
+								colorSettings={ [
+									{
+										value: attributes.headingColor,
+										onChange: headingColor => setAttributes({ headingColor }),
+										label: __( 'Text', 'otter-blocks' )
+									},
+									{
+										value: attributes.highlightBackground,
+										onChange: highlightBackground => setAttributes({ highlightBackground }),
+										label: __( 'Highlight Text', 'otter-blocks' )
+									},
+									{
+										value: attributes.highlightBackground,
+										onChange: highlightBackground => setAttributes({ highlightBackground }),
+										label: __( 'Highlight Background', 'otter-blocks' )
+									}
+								] }
 							/>
 
-							<ClearButton
-								values={[ 'fontFamily', 'fontVariant', 'fontStyle', 'textTransform' ]}
-								setAttributes={ setAttributes }
-							/>
-
-							<RangeControl
-								label={ __( 'Line Height', 'otter-blocks' ) }
-								value={ attributes.lineHeight }
-								onChange={ lineHeight => setAttributes({ lineHeight }) }
-								step={ 0.1 }
-								min={ 0 }
-								max={ 3 }
-								allowReset={ true }
-							/>
-
-							<RangeControl
-								label={ __( 'Letter Spacing', 'otter-blocks' ) }
-								value={ attributes.letterSpacing }
-								onChange={ letterSpacing => setAttributes({ letterSpacing }) }
-								step={ 0.1 }
-								min={ -50 }
-								max={ 100 }
-								allowReset={ true }
-							/>
-
-							<ToggleControl
-								label={ __( 'Shadow Properties', 'otter-blocks' ) }
-								checked={ attributes.textShadow }
-								onChange={ textShadow => setAttributes({ textShadow }) }
-							/>
-
-							{ attributes.textShadow && (
-								<Fragment>
-									<ColorGradientControl
-										label={ __( 'Color', 'otter-blocks' ) }
-										colorValue={ attributes.textShadowColor }
-										onColorChange={ textShadowColor => setAttributes({ textShadowColor }) }
+							<PanelBody
+								title={ __( 'Dimensions', 'otter-blocks' ) }
+								initialOpen={ false }
+							>
+								<ResponsiveControl
+									label={ __( 'Padding', 'otter-blocks' ) }
+								>
+									<SizingControl
+										type={ getPaddingType() }
+										min={ 0 }
+										max={ 500 }
+										changeType={ changePaddingType }
+										onChange={ changePadding }
+										options={ [
+											{
+												label: __( 'Top', 'otter-blocks' ),
+												type: 'top',
+												value: getPadding( 'top' )
+											},
+											{
+												label: __( 'Right', 'otter-blocks' ),
+												type: 'right',
+												value: getPadding( 'right' )
+											},
+											{
+												label: __( 'Bottom', 'otter-blocks' ),
+												type: 'bottom',
+												value: getPadding( 'bottom' )
+											},
+											{
+												label: __( 'Left', 'otter-blocks' ),
+												type: 'left',
+												value: getPadding( 'left' )
+											}
+										] }
 									/>
+								</ResponsiveControl>
 
-									<ControlPanelControl
-										label={ __( 'Shadow Properties', 'otter-blocks' ) }
-									>
-										<RangeControl
-											label={ __( 'Opacity', 'otter-blocks' ) }
-											value={ attributes.textShadowColorOpacity }
-											onChange={ textShadowColorOpacity => setAttributes({ textShadowColorOpacity }) }
-											min={ 0 }
-											max={ 100 }
-										/>
-
-										<RangeControl
-											label={ __( 'Blur', 'otter-blocks' ) }
-											value={ attributes.textShadowBlur }
-											onChange={ textShadowBlur => setAttributes({ textShadowBlur }) }
-											min={ 0 }
-											max={ 100 }
-										/>
-
-										<RangeControl
-											label={ __( 'Horizontal', 'otter-blocks' ) }
-											value={ attributes.textShadowHorizontal }
-											onChange={ textShadowHorizontal => setAttributes({ textShadowHorizontal }) }
-											min={ -100 }
-											max={ 100 }
-										/>
-
-										<RangeControl
-											label={ __( 'Vertical', 'otter-blocks' ) }
-											value={ attributes.textShadowVertical }
-											onChange={ textShadowVertical => setAttributes({ textShadowVertical }) }
-											min={ -100 }
-											max={ 100 }
-										/>
-									</ControlPanelControl>
-
-								</Fragment>
-							) }
-						</PanelBody>
-					</Fragment>
-
-				) || 'advanced' === tab && (
-
-					<Fragment>
-						<PanelBody
-							title={ __( 'Highlight Color', 'otter-blocks' ) }
-						>
-							<ColorGradientControl
-								label={ __( 'Highlight Color', 'otter-blocks' ) }
-								colorValue={ attributes.highlightColor }
-								onColorChange={ highlightColor => setAttributes({ highlightColor }) }
-							/>
-
-							<ColorGradientControl
-								label={ __( 'Highlight Background', 'otter-blocks' ) }
-								colorValue={ attributes.highlightBackground }
-								onColorChange={ highlightBackground => setAttributes({ highlightBackground }) }
-							/>
-						</PanelBody>
-
-						<PanelBody
-							title={ __( 'Spacing', 'otter-blocks' ) }
-							initialOpen={ false }
-						>
-							<ResponsiveControl
-								label={ __( 'Padding', 'otter-blocks' ) }
-							>
-								<SizingControl
-									type={ getPaddingType() }
-									min={ 0 }
-									max={ 500 }
-									changeType={ changePaddingType }
-									onChange={ changePadding }
-									options={ [
-										{
-											label: __( 'Top', 'otter-blocks' ),
-											type: 'top',
-											value: getPadding( 'top' )
-										},
-										{
-											label: __( 'Right', 'otter-blocks' ),
-											type: 'right',
-											value: getPadding( 'right' )
-										},
-										{
-											label: __( 'Bottom', 'otter-blocks' ),
-											type: 'bottom',
-											value: getPadding( 'bottom' )
-										},
-										{
-											label: __( 'Left', 'otter-blocks' ),
-											type: 'left',
-											value: getPadding( 'left' )
-										}
-									] }
+								<ClearButton
+									values={[
+										{ 'padding': 'Desktop' === getView && 'linked' === attributes.paddingType },
+										{ 'paddingTablet': 'Tablet' === getView && 'linked' === attributes.paddingType },
+										{ 'paddingMobile': 'Mobile' === getView && 'linked' === attributes.paddingType },
+										{ 'paddingRight': 'Desktop' === getView && 'linked' !== attributes.paddingType },
+										{ 'paddingRightTablet': 'Tablet' === getView && 'linked' !== attributes.paddingType },
+										{ 'paddingRightMobile': 'Mobile' === getView && 'linked' !== attributes.paddingType },
+										{ 'paddingTop': 'Desktop' === getView && 'linked' !== attributes.paddingType },
+										{ 'paddingTopTablet': 'Tablet' === getView && 'linked' !== attributes.paddingType },
+										{ 'paddingTopMobile': 'Mobile' === getView && 'linked' !== attributes.paddingType },
+										{ 'paddingBottom': 'Desktop' === getView && 'linked' !== attributes.paddingType },
+										{ 'paddingBottomTablet': 'Tablet' === getView && 'linked' !== attributes.paddingType },
+										{ 'paddingBottomMobile': 'Mobile' === getView && 'linked' !== attributes.paddingType },
+										{ 'paddingLeft': 'Desktop' === getView && 'linked' !== attributes.paddingType },
+										{ 'paddingLeftTablet': 'Tablet' === getView && 'linked' !== attributes.paddingType },
+										{ 'paddingLeftMobile': 'Mobile' === getView && 'linked' !== attributes.paddingType }
+									]}
+									setAttributes={ setAttributes }
 								/>
-							</ResponsiveControl>
 
-							<ClearButton
-								values={[
-									{ 'padding': 'Desktop' === getView && 'linked' === attributes.paddingType },
-									{ 'paddingTablet': 'Tablet' === getView && 'linked' === attributes.paddingType },
-									{ 'paddingMobile': 'Mobile' === getView && 'linked' === attributes.paddingType },
-									{ 'paddingRight': 'Desktop' === getView && 'linked' !== attributes.paddingType },
-									{ 'paddingRightTablet': 'Tablet' === getView && 'linked' !== attributes.paddingType },
-									{ 'paddingRightMobile': 'Mobile' === getView && 'linked' !== attributes.paddingType },
-									{ 'paddingTop': 'Desktop' === getView && 'linked' !== attributes.paddingType },
-									{ 'paddingTopTablet': 'Tablet' === getView && 'linked' !== attributes.paddingType },
-									{ 'paddingTopMobile': 'Mobile' === getView && 'linked' !== attributes.paddingType },
-									{ 'paddingBottom': 'Desktop' === getView && 'linked' !== attributes.paddingType },
-									{ 'paddingBottomTablet': 'Tablet' === getView && 'linked' !== attributes.paddingType },
-									{ 'paddingBottomMobile': 'Mobile' === getView && 'linked' !== attributes.paddingType },
-									{ 'paddingLeft': 'Desktop' === getView && 'linked' !== attributes.paddingType },
-									{ 'paddingLeftTablet': 'Tablet' === getView && 'linked' !== attributes.paddingType },
-									{ 'paddingLeftMobile': 'Mobile' === getView && 'linked' !== attributes.paddingType }
-								]}
-								setAttributes={ setAttributes }
-							/>
+								<ResponsiveControl
+									label={ __( 'Margin', 'otter-blocks' ) }
+								>
+									<SizingControl
+										type={ getMarginType() }
+										min={ -500 }
+										max={ 500 }
+										changeType={ changeMarginType }
+										onChange={ changeMargin }
+										options={ [
+											{
+												label: __( 'Top', 'otter-blocks' ),
+												type: 'top',
+												value: getMargin( 'top' )
+											},
+											{
+												label: __( 'Right', 'otter-blocks' ),
+												disabled: true
+											},
+											{
+												label: __( 'Bottom', 'otter-blocks' ),
+												type: 'bottom',
+												value: getMargin( 'bottom' )
+											},
+											{
+												label: __( 'Left', 'otter-blocks' ),
+												disabled: true
+											}
+										] }
+									/>
+								</ResponsiveControl>
 
-							<ResponsiveControl
-								label={ __( 'Margin', 'otter-blocks' ) }
-							>
-								<SizingControl
-									type={ getMarginType() }
-									min={ -500 }
-									max={ 500 }
-									changeType={ changeMarginType }
-									onChange={ changeMargin }
-									options={ [
-										{
-											label: __( 'Top', 'otter-blocks' ),
-											type: 'top',
-											value: getMargin( 'top' )
-										},
-										{
-											label: __( 'Right', 'otter-blocks' ),
-											disabled: true
-										},
-										{
-											label: __( 'Bottom', 'otter-blocks' ),
-											type: 'bottom',
-											value: getMargin( 'bottom' )
-										},
-										{
-											label: __( 'Left', 'otter-blocks' ),
-											disabled: true
-										}
-									] }
+								<ClearButton
+									values={[
+										{ 'margin': 'Desktop' === getView && 'linked' === attributes.marginType },
+										{ 'marginTablet': 'Tablet' === getView && 'linked' === attributes.marginType },
+										{ 'marginMobile': 'Mobile' === getView && 'linked' === attributes.marginType },
+										{ 'marginTop': 'Desktop' === getView && 'linked' !== attributes.marginType },
+										{ 'marginTopTablet': 'Tablet' === getView && 'linked' !== attributes.marginType },
+										{ 'marginTopMobile': 'Mobile' === getView && 'linked' !== attributes.marginType },
+										{ 'marginBottom': 'Desktop' === getView && 'linked' !== attributes.marginType },
+										{ 'marginBottomTablet': 'Tablet' === getView && 'linked' !== attributes.marginType },
+										{ 'marginBottomMobile': 'Mobile' === getView && 'linked' !== attributes.marginType }
+									]}
+									setAttributes={ setAttributes }
 								/>
-							</ResponsiveControl>
+							</PanelBody>
 
-							<ClearButton
-								values={[
-									{ 'margin': 'Desktop' === getView && 'linked' === attributes.marginType },
-									{ 'marginTablet': 'Tablet' === getView && 'linked' === attributes.marginType },
-									{ 'marginMobile': 'Mobile' === getView && 'linked' === attributes.marginType },
-									{ 'marginTop': 'Desktop' === getView && 'linked' !== attributes.marginType },
-									{ 'marginTopTablet': 'Tablet' === getView && 'linked' !== attributes.marginType },
-									{ 'marginTopMobile': 'Mobile' === getView && 'linked' !== attributes.marginType },
-									{ 'marginBottom': 'Desktop' === getView && 'linked' !== attributes.marginType },
-									{ 'marginBottomTablet': 'Tablet' === getView && 'linked' !== attributes.marginType },
-									{ 'marginBottomMobile': 'Mobile' === getView && 'linked' !== attributes.marginType }
-								]}
-								setAttributes={ setAttributes }
-							/>
-						</PanelBody>
-					</Fragment>
-				) }
+							<PanelBody
+								title={ __( 'Shadow', 'otter-blocks' ) }
+								className="o-adv-h-panel"
+							>
+								<ToggleControl
+									label={ __( 'Enable Text Shadow', 'otter-blocks' ) }
+									checked={ attributes.textShadow }
+									onChange={ textShadow => setAttributes({ textShadow }) }
+								/>
 
-				<InspectorExtensions/>
+								{ attributes.textShadow && (
+									<Fragment>
+										<ColorGradientControl
+											label={ __( 'Color', 'otter-blocks' ) }
+											colorValue={ attributes.textShadowColor }
+											onColorChange={ textShadowColor => setAttributes({ textShadowColor }) }
+										/>
+
+										<ControlPanelControl
+											label={ __( 'Shadow Properties', 'otter-blocks' ) }
+										>
+											<RangeControl
+												label={ __( 'Opacity', 'otter-blocks' ) }
+												value={ attributes.textShadowColorOpacity }
+												onChange={ textShadowColorOpacity => setAttributes({ textShadowColorOpacity }) }
+												min={ 0 }
+												max={ 100 }
+											/>
+
+											<RangeControl
+												label={ __( 'Blur', 'otter-blocks' ) }
+												value={ attributes.textShadowBlur }
+												onChange={ textShadowBlur => setAttributes({ textShadowBlur }) }
+												min={ 0 }
+												max={ 100 }
+											/>
+
+											<RangeControl
+												label={ __( 'Horizontal', 'otter-blocks' ) }
+												value={ attributes.textShadowHorizontal }
+												onChange={ textShadowHorizontal => setAttributes({ textShadowHorizontal }) }
+												min={ -100 }
+												max={ 100 }
+											/>
+
+											<RangeControl
+												label={ __( 'Vertical', 'otter-blocks' ) }
+												value={ attributes.textShadowVertical }
+												onChange={ textShadowVertical => setAttributes({ textShadowVertical }) }
+												min={ -100 }
+												max={ 100 }
+											/>
+										</ControlPanelControl>
+
+									</Fragment>
+								) }
+
+							</PanelBody>
+						</Fragment>
+
+					)  }
+
+					<InspectorExtensions/>
+
+				</div>
 			</InspectorControls>
 
 			<HTMLAnchorControl
 				value={ attributes.id }
 				onChange={ id => setAttributes({ id }) }
 			/>
+
 		</Fragment>
 	);
 };
