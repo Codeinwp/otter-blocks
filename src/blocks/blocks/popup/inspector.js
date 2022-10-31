@@ -28,10 +28,10 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import Notice from '../../components/notice/index.js';
-import { buildResponsiveGetAttributes, buildResponsiveSetAttributes, removeBoxDefaultValues, setUtm } from '../../helpers/helper-functions.js';
+import { removeBoxDefaultValues, setUtm } from '../../helpers/helper-functions.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import InspectorHeader from '../../components/inspector-header/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
-import { useSelect } from '@wordpress/data';
 import BoxShadowControl from '../../components/box-shadow-control/index.js';
 
 /**
@@ -75,24 +75,12 @@ const Inspector = ({
 	attributes,
 	setAttributes
 }) => {
-
 	const [ tab, setTab ] = useState( 'settings' );
 
 	const {
 		responsiveSetAttributes,
-		responsiveGetAttributes,
-		view
-	} = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-
-		return {
-			view: view,
-			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
-			responsiveGetAttributes: buildResponsiveGetAttributes( view )
-		};
-	}, []);
+		responsiveGetAttributes
+	} = useResponsiveAttributes( setAttributes );
 
 	let triggerOptions = [
 		{
@@ -127,7 +115,6 @@ const Inspector = ({
 		setAttributes({ boxShadow });
 	};
 
-
 	const Controls = () => {
 		return (
 			<Fragment>
@@ -147,8 +134,6 @@ const Inspector = ({
 			</Fragment>
 		);
 	};
-
-	console.log( attributes );
 
 	return (
 		<InspectorControls>
@@ -185,8 +170,8 @@ const Inspector = ({
 
 							{ ( undefined === attributes.trigger || 'onLoad' === attributes.trigger ) && (
 								<RangeControl
-									label={ __( 'Trigger Delay (seconds)', 'otter-blocks' ) }
-									help={ __( 'How much time to wait before showing the popup.', 'otter-blocks' ) }
+									label={ __( 'Trigger Delay', 'otter-blocks' ) }
+									help={ __( 'How much time in seconds to wait before showing the popup.', 'otter-blocks' ) }
 									min={ 0 }
 									max={ 100 }
 									value={ attributes.wait ?? 0 }
@@ -207,8 +192,10 @@ const Inspector = ({
 								onChange={ ( value ) => setAttributes({ disableOn: ! value ? 'mobile' : undefined  }) }
 							/>
 						</PanelBody>
+
 						<PanelBody
 							title={ __( 'Popup Position', 'otter-blocks' )}
+							initialOpen={ false }
 						>
 							<ResponsiveControl
 								label={ __( 'Screen Type', 'otter-blocks' ) }
@@ -216,9 +203,9 @@ const Inspector = ({
 								<div className="o-position-picker">
 									<AlignmentMatrixControl
 										value={ responsiveGetAttributes([
-											`${attributes.verticalPosition ?? 'center'} ${attributes.horizontalPosition ?? 'center' }`,
-											`${attributes.verticalPositionTablet ?? 'center'} ${attributes.horizontalPositionTablet ?? 'center' }`,
-											`${attributes.verticalPositionMobile ?? 'center'} ${attributes.horizontalPositionMobile ?? 'center' }`
+											`${	attributes.verticalPosition ?? 'center' } ${ attributes.horizontalPosition ?? 'center' }`,
+											`${	attributes.verticalPositionTablet ?? 'center' } ${ attributes.horizontalPositionTablet ?? 'center' }`,
+											`${	attributes.verticalPositionMobile ?? 'center' } ${ attributes.horizontalPositionMobile ?? 'center' }`
 										]) }
 										onChange={ value => {
 											const [ vertical, horizontal ] = value.split( ' ' );
@@ -250,8 +237,10 @@ const Inspector = ({
 							</ResponsiveControl>
 
 						</PanelBody>
+
 						<PanelBody
-							title={ __( 'Frequency and Close settings', 'otter-blocks' )}
+							title={ __( 'Frequency & Close Settings', 'otter-blocks' )}
+							initialOpen={ false }
 						>
 							{ applyFilters( 'otter.popupBlock.controls', <Controls />, attributes, setAttributes ) }
 						</PanelBody>
@@ -263,7 +252,6 @@ const Inspector = ({
 						<Fragment>
 							<PanelBody
 								title={ __( 'Dimensions', 'otter-blocks' ) }
-								initialOpen={ true }
 							>
 								<ResponsiveControl
 									label={ __( 'Width', 'otter-blocks' ) }
@@ -335,9 +323,10 @@ const Inspector = ({
 
 
 							</PanelBody>
+
 							<PanelColorSettings
 								title={ __( 'Color', 'otter-blocks' ) }
-								initialOpen={ true }
+								initialOpen={ false }
 								colorSettings={ [
 									{
 										value: attributes.backgroundColor,
@@ -373,6 +362,7 @@ const Inspector = ({
 									allowReset
 								/>
 							</PanelBody>
+
 							<PanelBody
 								title={ __( 'Close Button', 'otter-blocks' ) }
 								initialOpen={ false }
@@ -398,11 +388,11 @@ const Inspector = ({
 									onChange={ value => setAttributes({ closeButtonType: 'none' !== value ? value : undefined })}
 								/>
 							</PanelBody>
+
 							<PanelBody
 								title={ __( 'Border', 'otter-blocks' ) }
 								initialOpen={ false }
 							>
-
 								<BoxControl
 									label={ __( 'Width', 'otter-blocks' ) }
 									values={ attributes.borderWidth ?? { top: '0px', bottom: '0px', left: '0px', right: '0px' } }

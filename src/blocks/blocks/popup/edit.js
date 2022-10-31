@@ -1,18 +1,19 @@
 /**
  * External dependencies
  */
-
 import {
 	closeSmall,
 	external
 } from '@wordpress/icons';
-import { merge } from 'lodash';
+
 import classnames from 'classnames';
 
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
+
+import { merge } from 'lodash';
 
 import {
 	InnerBlocks,
@@ -35,7 +36,6 @@ import Inspector from './inspector.js';
 import { blockInit, useCSSNode } from '../../helpers/block-utility';
 import { boxValues, _cssBlock } from '../../helpers/helper-functions';
 
-
 const { attributes: defaultAttributes } = metadata;
 const makeBox = x => ({ top: x, bottom: x, left: x, right: x });
 
@@ -44,16 +44,11 @@ const makeBox = x => ({ top: x, bottom: x, left: x, right: x });
  * @param {import('./types').PopupPros} props
  * @returns
  */
-const Edit = ( props ) => {
-
-	const {
-		attributes,
-		setAttributes,
-		clientId
-	} = props;
-
-	console.log( props );
-
+const Edit = ({
+	attributes,
+	setAttributes,
+	clientId
+}) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
