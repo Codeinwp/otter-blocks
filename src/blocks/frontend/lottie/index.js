@@ -58,7 +58,6 @@ domReady( () => {
 				});
 
 				initAnimation( animation );
-
 				return -1 === animation.__direction ? animation.pause() : animation.stop();
 			}
 
@@ -68,9 +67,7 @@ domReady( () => {
 				});
 
 				animation.addEventListener( 'complete', () => animation.stop() );
-
 				initAnimation( animation );
-
 				return -1 === animation.__direction ? animation.pause() : animation.stop();
 			}
 

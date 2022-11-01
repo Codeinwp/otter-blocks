@@ -264,7 +264,6 @@ class Main {
 		if ( ! isset( $tags['svg'] ) ) {
 			$tags['svg'] = array_merge(
 				array(
-					'role'    => true,
 					'xmlns'   => true,
 					'width'   => true,
 					'height'  => true,
@@ -293,12 +292,12 @@ class Main {
 			$tags['lottie-player'] = array_merge(
 				array(
 					'autoplay'   => true,
+					'hover'      => true,
 					'loop'       => true,
 					'count'      => true,
 					'speed'      => true,
 					'direction'  => true,
 					'trigger'    => true,
-					'data-*'     => true,
 					'mode'       => true,
 					'background' => true,
 					'src'        => true,
@@ -317,7 +316,6 @@ class Main {
 					'speed'      => true,
 					'direction'  => true,
 					'trigger'    => true,
-					'data-*'     => true,
 					'mode'       => true,
 					'background' => true,
 					'src'        => true,

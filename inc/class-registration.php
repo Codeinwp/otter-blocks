@@ -101,6 +101,7 @@ class Registration {
 
 	/**
 	 * Allow .lottie files upload
+	 *
 	 * @param array $mimes Allowed mines.
 	 *
 	 * @return array
