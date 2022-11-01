@@ -380,6 +380,40 @@ class Pro {
 	}
 
 	/**
+	 * Should show BF Deal?.
+	 *
+	 * @param bool $days To show in bool or days.
+	 *
+	 * @since  2.1.1
+	 * @access public
+	 */
+	public static function bf_deal( $days = false ) {
+		$start_time   = '2022-11-21T00:00:00';
+		$end_time     = '2022-11-28T23:59:00';
+		$offset       = 60 * get_option( 'gmt_offset' );
+		$sign         = $offset < 0 ? '-' : '+';
+		$absmin       = abs( $offset );
+		$timezone     = sprintf( '%s%02d:%02d', $sign, $absmin / 60, $absmin % 60 );
+		$start_date   = strtotime( $start_time . $timezone );
+		$current_time = time();
+		$end_date     = strtotime( $end_time . $timezone );
+
+		if ( $days ) {
+			$days_between = ceil( abs( $end_date - $current_time ) / 86400 );
+			return $days_between;
+		}
+
+		$start_date = $current_time > $start_date;
+		$end_date   = $current_time < $end_date;
+
+		if ( $start_date && $end_date && ! self::is_pro_installed() ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Singleton method.
 	 *
 	 * @static

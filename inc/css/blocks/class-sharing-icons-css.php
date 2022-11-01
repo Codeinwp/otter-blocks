@@ -5,7 +5,7 @@
  * @package ThemeIsle\GutenbergBlocks\CSS\Blocks
  */
 
-namespace Themeisle\GutenbergBlocks\CSS\Blocks;
+namespace ThemeIsle\GutenbergBlocks\CSS\Blocks;
 
 use ThemeIsle\GutenbergBlocks\Base_CSS;
 use ThemeIsle\GutenbergBlocks\CSS\CSS_Utility;
