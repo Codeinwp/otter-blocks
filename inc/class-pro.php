@@ -158,16 +158,16 @@ class Pro {
 			$show_upsell = true;
 		}
 
-		if ( defined( 'OTTER_BLOCKS_SHOW_NOTICES' ) && true === OTTER_BLOCKS_SHOW_NOTICES ) {
-			$show_upsell = true;
-		}
-
 		if ( isset( $notifications['dashboard_upsell'] ) && true === boolval( $notifications['dashboard_upsell'] ) ) {
 			$show_upsell = false;
 		}
 
 		if ( self::bf_deal() ) {
 			$show_upsell = false;
+		}
+
+		if ( defined( 'OTTER_BLOCKS_SHOW_NOTICES' ) && true === OTTER_BLOCKS_SHOW_NOTICES ) {
+			$show_upsell = true;
 		}
 
 		if ( $show_upsell ) {
@@ -186,7 +186,7 @@ class Pro {
 		$show_upsell = self::bf_deal();
 
 		if ( defined( 'NEVE_VERSION' ) || defined( 'NEVE_PRO_VERSION' ) ) {
-			$show_upsell = false;
+			// $show_upsell = false;
 		}
 
 		if ( isset( $notifications['2022_bf_notice'] ) && true === boolval( $notifications['2022_bf_notice'] ) ) {
@@ -346,6 +346,11 @@ class Pro {
 	 * @access  public
 	 */
 	public function dashboard_upsell_bf_notice() {
+		$current_screen = get_current_screen();
+
+		if ( isset( $current_screen->base ) && 'settings_page_otter' === $current_screen->base ) {
+			return;
+		}
 		?>
 		<script type="text/javascript">
 			const disableBFNotice = $ => {
