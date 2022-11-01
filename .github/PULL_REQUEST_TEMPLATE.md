@@ -29,4 +29,5 @@ new QueryQA().select('blocks').run()
 - [ ] Does not impact the [Core Web Vitals](https://web.dev/vitals/).
 - [ ] In case of deprecation, old blocks are safely migrated.
 - [ ] It is usable in Widgets and FSE.
+- [ ] Copy/Paste is working if the attributes are modified.
 

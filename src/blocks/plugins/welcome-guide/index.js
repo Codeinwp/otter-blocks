@@ -35,7 +35,7 @@ const WelcomeGuide = () => {
 	const [ getOption, updateOption, status ] = useSettings();
 
 	const [ email, setEmail ] = useState( '' );
-	const [ hasConsent, setConsent ] = useState( false );
+	const [ hasConsent, setConsent ] = useState( true );
 
 	const {
 		currentUser,
