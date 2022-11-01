@@ -17,8 +17,6 @@ import {
 	__experimentalBoxControl as BoxControl,
 	__experimentalUnitControl as UnitContol,
 	BaseControl,
-	Button,
-	ButtonGroup,
 	Disabled,
 	PanelBody,
 	ToggleControl,
@@ -47,6 +45,7 @@ import {
 	BackgroundOverlayControl,
 	BackgroundSelectorControl,
 	ButtonDropdownControl,
+	ButtonToggleControl,
 	ClearButton,
 	ColorDropdownControl,
 	ControlPanelControl,
@@ -931,25 +930,21 @@ const Inspector = ({
 							initialOpen={ false }
 							className="wp-block-themeisle-shape-divider"
 						>
-							<ButtonGroup>
-								<Button
-									isSmall
-									isSecondary={ 'top' !== dividerViewType }
-									isPrimary={ 'top' === dividerViewType }
-									onClick={ () => setDividerViewType( 'top' ) }
-								>
-									{ __( 'Top', 'otter-blocks' ) }
-								</Button>
-
-								<Button
-									isSmall
-									isSecondary={ 'bottom' !== dividerViewType }
-									isPrimary={ 'bottom' === dividerViewType }
-									onClick={ () => setDividerViewType( 'bottom' ) }
-								>
-									{ __( 'Bottom', 'otter-blocks' ) }
-								</Button>
-							</ButtonGroup>
+							<ButtonToggleControl
+								label={ __( 'Sides', 'otter-blocks' ) }
+								options={[
+									{
+										label: __( 'Top', 'otter-blocks' ),
+										value: 'top'
+									},
+									{
+										label: __( 'Bottom', 'otter-blocks' ),
+										value: 'bottom'
+									}
+								]}
+								value={ dividerViewType }
+								onChange={ setDividerViewType }
+							/>
 
 							<SelectControl
 								label={ __( 'Type', 'otter-blocks' ) }
