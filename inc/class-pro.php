@@ -186,7 +186,7 @@ class Pro {
 		$show_upsell = self::bf_deal();
 
 		if ( defined( 'NEVE_VERSION' ) || defined( 'NEVE_PRO_VERSION' ) ) {
-			// $show_upsell = false;
+			$show_upsell = false;
 		}
 
 		if ( isset( $notifications['2022_bf_notice'] ) && true === boolval( $notifications['2022_bf_notice'] ) ) {
