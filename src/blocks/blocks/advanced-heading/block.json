@@ -40,13 +40,13 @@
 			"type": "string"
 		},
 		"fontSize": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"fontSizeTablet": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"fontSizeMobile": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"fontFamily": {
 			"type": "string"
@@ -64,7 +64,7 @@
 			"type": "number"
 		},
 		"letterSpacing": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"textShadow": {
 			"type": "boolean",
@@ -103,14 +103,14 @@
 			"default": "linked"
 		},
 		"padding": {
-			"type": "number",
+			"type": ["number", "object"],
 			"default": 0
 		},
 		"paddingTablet": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"paddingMobile": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"paddingTop": {
 			"type": "number",
@@ -165,14 +165,14 @@
 			"default": "unlinked"
 		},
 		"margin": {
-			"type": "number",
+			"type": ["number", "object"],
 			"default": 0
 		},
 		"marginTablet": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"marginMobile": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"marginTop": {
 			"type": "number",
@@ -193,6 +193,15 @@
 		},
 		"marginBottomMobile": {
 			"type": "number"
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"linkColor": {
+			"type": "string"
+		},
+		"linkHoverColor": {
+			"type": "string"
 		}
 	},
 	"editorStyle": "otter-advanced-heading-editor",

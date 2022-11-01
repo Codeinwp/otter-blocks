@@ -11,9 +11,14 @@ import {
 } from '@wordpress/block-editor';
 
 import {
+	FontSizePicker,
 	PanelBody,
 	RangeControl,
-	ToggleControl
+	SelectControl,
+	TextControl,
+	ToggleControl,
+	__experimentalBoxControl as BoxControl,
+	__experimentalUnitControl as UnitControl
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -22,6 +27,10 @@ import {
 	Fragment,
 	useState
 } from '@wordpress/element';
+
+import {
+	isNumber
+} from 'lodash';
 
 /**
  * Internal dependencies
@@ -34,6 +43,11 @@ import ResponsiveControl from '../../components/responsive-control/index.js';
 import SizingControl from '../../components/sizing-control/index.js';
 import HTMLAnchorControl from '../../components/html-anchor-control/index.js';
 import ClearButton from '../../components/clear-button/index.js';
+import { alignCenter, alignLeft, alignRight } from '@wordpress/icons';
+import ToogleGroupControl from '../../components/toogle-group-control/index.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
+import { makeBox } from '../../plugins/copy-paste/utils';
+import { _px } from '../../helpers/helper-functions.js';
 
 /**
  *
@@ -51,7 +65,8 @@ const Inspector = ({
 		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
 	}, []);
 
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useState( 'style' );
+	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
 	const changeFontFamily = value => {
 		if ( ! value ) {
@@ -227,6 +242,18 @@ const Inspector = ({
 		return undefined;
 	};
 
+	const getOldPaddingValues = () => ({
+		top: _px( responsiveGetAttributes([ attributes.paddingTop, attributes.paddingTopTablet, attributes.paddingTopMobile  ]) ) ?? '0px',
+		bottom: _px( responsiveGetAttributes([ attributes.paddingBottom, attributes.paddingBottomTablet, attributes.paddingBottomMobile  ]) ) ?? '0px',
+		right: _px ( responsiveGetAttributes([ attributes.paddingRight, attributes.paddingRightTablet, attributes.paddingRightMobile  ]) ) ?? '0px',
+		left: _px( responsiveGetAttributes([ attributes.paddingLeft, attributes.paddingLeftTablet, attributes.paddingLeftMobile  ]) ) ?? '0px'
+	});
+
+	const getOldMarginValues = () => ({
+		top: _px( responsiveGetAttributes([ attributes.marginTop, attributes.marginTopTablet, attributes.marginTopMobile  ]) ) ?? '0px',
+		bottom: _px( responsiveGetAttributes([ attributes.marginBottom, attributes.marginBottomTablet, attributes.marginBottomMobile  ]) ) ?? '0px'
+	});
+
 
 	const getMarginType = () => {
 		switch ( getView ) {
@@ -349,18 +376,48 @@ const Inspector = ({
 									<ResponsiveControl
 										label={ __( 'Alignment', 'otter-blocks' ) }
 									>
-										<AlignmentToolbar
-											value={ getAlignment() }
-											onChange={ changeAlignment }
-											isCollapsed={ false }
+										<ToogleGroupControl
+											value={ responsiveGetAttributes([ attributes.align, attributes.alignTablet, attributes.alignMobile  ]) ?? 'left' }
+											onChange={ value => responsiveSetAttributes( 'left' === value ? undefined : value, [ 'align', 'alignTablet', 'alignMobile' ]) }
+											options={[
+												{
+													icon: alignLeft,
+													label: __( 'Left', 'otter-blocks' ),
+													value: 'left'
+												},
+												{
+													icon: alignCenter,
+													label: __( 'Center', 'otter-blocks' ),
+													value: 'center'
+												},
+												{
+													icon: alignRight,
+													label: __( 'Right', 'otter-blocks' ),
+													value: 'right'
+												}
+											]}
+											hasIcon
 										/>
 									</ResponsiveControl>
-								</PanelBody>
-								<PanelBody
-									title={ __( 'Link Settings', 'otter-blocks' ) }
-								>
 
+									<SelectControl
+										label={ __( 'HTML Tag', 'otter-blocks' ) }
+										value={ attributes.tag  }
+										onChange={ tag  => setAttributes({ tag }) }
+										options={[
+											{ label: __( 'H1', 'otter-blocks' ), value: 'h1' },
+											{ label: __( 'H2', 'otter-blocks' ), value: 'h2' },
+											{ label: __( 'H3', 'otter-blocks' ), value: 'h3' },
+											{ label: __( 'H4', 'otter-blocks' ), value: 'h4' },
+											{ label: __( 'H5', 'otter-blocks' ), value: 'h5' },
+											{ label: __( 'H6', 'otter-blocks' ), value: 'h6' },
+											{ label: __( 'div', 'otter-blocks' ), value: 'div' },
+											{ label: __( 'span', 'otter-blocks' ), value: 'span' },
+											{ label: __( 'p', 'otter-blocks' ), value: 'p' }
+										]}
+									/>
 								</PanelBody>
+
 							</Fragment>
 						)
 					}
@@ -374,14 +431,36 @@ const Inspector = ({
 
 								<ResponsiveControl
 									label={ __( 'Font Size', 'otter-blocks' ) }
+									initialOpen={ true }
 								>
-									<RangeControl
-										value={ getFontSize() || '' }
-										onChange={ changeFontSize }
-										step={ 0.1 }
-										min={ 1 }
-										max={ 500 }
-										allowReset={ true }
+
+									<FontSizePicker
+										value={ _px( responsiveGetAttributes([ attributes.fontSize, attributes.fontSizeTablet, attributes.fontSizeMobile  ]) ) ?? '20px'}
+										onChange={ value => responsiveSetAttributes( value, [ 'fontSize', 'fontSizeTablet', 'fontSizeMobile' ]) }
+										fontSizes={
+											[
+												{
+													name: __( '13', 'otter-blocks' ),
+													size: '13px',
+													slug: 'small'
+												},
+												{
+													name: __( '20', 'otter-blocks' ),
+													size: '20px',
+													slug: 'medium'
+												},
+												{
+													name: __( '36', 'otter-blocks' ),
+													size: '36px',
+													slug: 'large'
+												},
+												{
+													name: __( '42', 'otter-blocks' ),
+													size: '42px',
+													slug: 'xl'
+												}
+											]
+										}
 									/>
 								</ResponsiveControl>
 
@@ -397,29 +476,29 @@ const Inspector = ({
 									onChangeTextTransform={ textTransform => setAttributes({ textTransform }) }
 								/>
 
-								<ClearButton
-									values={[ 'fontFamily', 'fontVariant', 'fontStyle', 'textTransform' ]}
-									setAttributes={ setAttributes }
-								/>
-
-								<RangeControl
+								<UnitControl
 									label={ __( 'Line Height', 'otter-blocks' ) }
 									value={ attributes.lineHeight }
 									onChange={ lineHeight => setAttributes({ lineHeight }) }
 									step={ 0.1 }
 									min={ 0 }
 									max={ 3 }
-									allowReset={ true }
 								/>
 
-								<RangeControl
+								<br />
+
+								<UnitControl
 									label={ __( 'Letter Spacing', 'otter-blocks' ) }
 									value={ attributes.letterSpacing }
 									onChange={ letterSpacing => setAttributes({ letterSpacing }) }
 									step={ 0.1 }
 									min={ -50 }
 									max={ 100 }
-									allowReset={ true }
+								/>
+
+								<ClearButton
+									values={[ 'fontFamily', 'fontVariant', 'fontStyle', 'textTransform', 'lineHeight', 'letterSpacing' ]}
+									setAttributes={ setAttributes }
 								/>
 
 							</PanelBody>
@@ -432,6 +511,21 @@ const Inspector = ({
 										value: attributes.headingColor,
 										onChange: headingColor => setAttributes({ headingColor }),
 										label: __( 'Text', 'otter-blocks' )
+									},
+									{
+										value: attributes.backgroundColor,
+										onChange: backgroundColor => setAttributes({ backgroundColor }),
+										label: __( 'Background', 'otter-blocks' )
+									},
+									{
+										value: attributes.linkColor,
+										onChange: linkColor => setAttributes({ linkColor }),
+										label: __( 'Link', 'otter-blocks' )
+									},
+									{
+										value: attributes.linkHoverColor,
+										onChange: linkHoverColor => setAttributes({ linkHoverColor }),
+										label: __( 'Link Hover', 'otter-blocks' )
 									},
 									{
 										value: attributes.highlightBackground,
@@ -448,43 +542,30 @@ const Inspector = ({
 
 							<PanelBody
 								title={ __( 'Dimensions', 'otter-blocks' ) }
-								initialOpen={ false }
+								initialOpen={ true }
 							>
 								<ResponsiveControl
 									label={ __( 'Padding', 'otter-blocks' ) }
 								>
-									<SizingControl
-										type={ getPaddingType() }
-										min={ 0 }
-										max={ 500 }
-										changeType={ changePaddingType }
-										onChange={ changePadding }
-										options={ [
-											{
-												label: __( 'Top', 'otter-blocks' ),
-												type: 'top',
-												value: getPadding( 'top' )
-											},
-											{
-												label: __( 'Right', 'otter-blocks' ),
-												type: 'right',
-												value: getPadding( 'right' )
-											},
-											{
-												label: __( 'Bottom', 'otter-blocks' ),
-												type: 'bottom',
-												value: getPadding( 'bottom' )
-											},
-											{
-												label: __( 'Left', 'otter-blocks' ),
-												type: 'left',
-												value: getPadding( 'left' )
-											}
-										] }
+									<BoxControl
+
+										// label={ __( 'Padding', 'otter-blocks' ) }
+										values={
+											responsiveGetAttributes([
+												isFinite( attributes.padding ) ? makeBox( _px( attributes.padding ) ) : attributes.padding,
+												isFinite( attributes.paddingTablet ) ? makeBox( _px( attributes.paddingTablet ) ) : attributes.paddingTablet,
+												isFinite( attributes.paddingMobile ) ? makeBox( _px( attributes.paddingMobile ) ) : attributes.paddingMobile
+											]) ?? getOldPaddingValues()
+										}
+										onChange={ value => {
+											responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
+										} }
 									/>
+
 								</ResponsiveControl>
 
-								<ClearButton
+
+								{/* <ClearButton
 									values={[
 										{ 'padding': 'Desktop' === getView && 'linked' === attributes.paddingType },
 										{ 'paddingTablet': 'Tablet' === getView && 'linked' === attributes.paddingType },
@@ -503,41 +584,29 @@ const Inspector = ({
 										{ 'paddingLeftMobile': 'Mobile' === getView && 'linked' !== attributes.paddingType }
 									]}
 									setAttributes={ setAttributes }
-								/>
+								/> */}
 
 								<ResponsiveControl
 									label={ __( 'Margin', 'otter-blocks' ) }
 								>
-									<SizingControl
-										type={ getMarginType() }
-										min={ -500 }
-										max={ 500 }
-										changeType={ changeMarginType }
-										onChange={ changeMargin }
-										options={ [
-											{
-												label: __( 'Top', 'otter-blocks' ),
-												type: 'top',
-												value: getMargin( 'top' )
-											},
-											{
-												label: __( 'Right', 'otter-blocks' ),
-												disabled: true
-											},
-											{
-												label: __( 'Bottom', 'otter-blocks' ),
-												type: 'bottom',
-												value: getMargin( 'bottom' )
-											},
-											{
-												label: __( 'Left', 'otter-blocks' ),
-												disabled: true
-											}
-										] }
+									<BoxControl
+
+										// label={ __( 'Padding', 'otter-blocks' ) }
+										values={
+											responsiveGetAttributes([
+												isFinite( attributes.margin ) ? makeBox( _px( attributes.margin ) ) : attributes.margin,
+												isFinite( attributes.marginTablet ) ? makeBox( _px( attributes.marginTablet ) ) : attributes.marginTablet,
+												isFinite( attributes.marginMobile ) ? makeBox( _px( attributes.marginMobile ) ) : attributes.marginMobile
+											]) ?? getOldMarginValues()
+										}
+										onChange={ value => {
+											responsiveSetAttributes( value, [ 'margin', 'marginTablet', 'marginMobile' ]);
+										} }
+										sides={ [ 'top', 'bottom' ] }
 									/>
 								</ResponsiveControl>
 
-								<ClearButton
+								{/* <ClearButton
 									values={[
 										{ 'margin': 'Desktop' === getView && 'linked' === attributes.marginType },
 										{ 'marginTablet': 'Tablet' === getView && 'linked' === attributes.marginType },
@@ -550,7 +619,7 @@ const Inspector = ({
 										{ 'marginBottomMobile': 'Mobile' === getView && 'linked' !== attributes.marginType }
 									]}
 									setAttributes={ setAttributes }
-								/>
+								/> */}
 							</PanelBody>
 
 							<PanelBody

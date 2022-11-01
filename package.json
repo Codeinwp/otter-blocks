@@ -69,6 +69,7 @@
 		"@testing-library/react": "12.1.5",
 		"@testing-library/user-event": "14.2.0",
 		"@types/jest": "^28.1.6",
+		"@types/lodash": "^4.14.187",
 		"@types/wordpress__block-editor": "^7.0.0",
 		"@types/wordpress__components": "^19.10.1",
 		"@typescript-eslint/parser": "^5.36.1",

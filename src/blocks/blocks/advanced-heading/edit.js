@@ -37,6 +37,7 @@ import { blockInit } from '../../helpers/block-utility.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import googleFontsLoader from '../../helpers/google-fonts.js';
+import { _px } from '../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -98,55 +99,58 @@ const Edit = ({
 		setAttributes({ content: value });
 	};
 
+	const oldPaddingDesktop = ({
+		top: attributes.paddingTop ?? '0px',
+		bottom: attributes.paddingBottom ?? '0px',
+		right: attributes.paddingRight ?? '0px',
+		left: attributes.paddingLeft ?? '0px'
+	});
+
+	const oldPaddingTablet = ({
+		top: attributes.paddingTopTablet ?? '0px',
+		bottom: attributes.paddingBottomTablet ?? '0px',
+		right: attributes.paddingRightTablet ?? '0px',
+		left: attributes.paddingLeftTablet ?? '0px'
+	});
+
+	const oldPaddingMobile = ({
+		top: attributes.paddingTopMobile ?? '0px',
+		bottom: attributes.paddingBottomMobile ?? '0px',
+		right: attributes.paddingRightMobile ?? '0px',
+		left: attributes.paddingLeftMobile ?? '0px'
+	});
+
+	const oldMarginDesktop = ({
+		top: attributes.marginTop ?? '0px',
+		bottom: attributes.marginBottom ?? '0px'
+	});
+
+	const oldMarginTablet = ({
+		top: attributes.marginTopTablet ?? '0px',
+		bottom: attributes.marginBottomTablet ?? '0px'
+	});
+
+	const oldMarginMobile = ({
+		top: attributes.marginTopMobile ?? '0px',
+		bottom: attributes.marginBottomMobile ?? '0px'
+	});
+
+	const inlineStyle = {
+		'--padding': attributes.padding ?  boxValues( merge( oldPaddingDesktop, attributes.padding ) ) : undefined,
+		'--padding-tablet': attributes.paddingTablet ?  boxValues( merge( oldPaddingTablet, attributes.padding ?? {}, attributes.paddingTablet ) ) : undefined,
+		'--padding-mobile': attributes.paddingMobile ?  boxValues( merge( oldPaddingMobile, attributes.padding ?? {}, attributes.paddingTablet  ?? {}, attributes.paddingMobile ) ) : undefined,
+		'--margin': attributes.margin ?  boxValues( merge( oldMarginDesktop, attributes.margin ) ) : undefined,
+		'--margin-tablet': attributes.marginTablet ?  boxValues( merge( oldMarginTablet, attributes.margin ?? {}, attributes.marginTablet ) ) : undefined,
+		'--margin-mobile': attributes.marginMobile ?  boxValues( merge( oldMarginMobile, attributes.margin ?? {}, attributes.marginTablet  ?? {}, attributes.marginMobile ) ) : undefined,
+		'--text-align': attributes.align,
+		'--text-align-tablet': attributes.alignTablet,
+		'--text-align-mobile': attributes.alignMobile,
+		'--font-size': attributes.fontSize,
+		'--font-size-tablet': attributes.fontSizeTablet,
+		'--font-size-mobile': attributes.fontSizeMobile
+	};
+
 	let fontSizeStyle, stylesheet, textShadowStyle;
-
-	if ( isDesktop ) {
-		fontSizeStyle = {
-			fontSize: attributes.fontSize ? `${ attributes.fontSize }px` : undefined
-		};
-
-		stylesheet = {
-			textAlign: attributes.align,
-			paddingTop: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingTop }px`,
-			paddingRight: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingRight }px`,
-			paddingBottom: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingBottom }px`,
-			paddingLeft: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingLeft }px`,
-			marginTop: 'linked' === attributes.marginType ? `${ attributes.margin }px` : `${ attributes.marginTop }px`,
-			marginBottom: 'linked' === attributes.marginType ? `${ attributes.margin }px` : `${ attributes.marginBottom }px`
-		};
-	}
-
-	if ( isTablet ) {
-		fontSizeStyle = {
-			fontSize: attributes.fontSizeTablet ? `${ attributes.fontSizeTablet }px` : undefined
-		};
-
-		stylesheet = {
-			textAlign: attributes.alignTablet,
-			paddingTop: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingTopTablet }px`,
-			paddingRight: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingRightTablet }px`,
-			paddingBottom: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingBottomTablet }px`,
-			paddingLeft: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingLeftTablet }px`,
-			marginTop: 'linked' === attributes.marginTypeTablet ? `${ attributes.marginTablet }px` : `${ attributes.marginTopTablet }px`,
-			marginBottom: 'linked' === attributes.marginTypeTablet ? `${ attributes.marginTablet }px` : `${ attributes.marginBottomTablet }px`
-		};
-	}
-
-	if ( isMobile ) {
-		fontSizeStyle = {
-			fontSize: attributes.fontSizeMobile ? `${ attributes.fontSizeMobile }px` : undefined
-		};
-
-		stylesheet = {
-			textAlign: attributes.alignMobile,
-			paddingTop: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingTopMobile }px`,
-			paddingRight: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingRightMobile }px`,
-			paddingBottom: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingBottomMobile }px`,
-			paddingLeft: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingLeftMobile }px`,
-			marginTop: 'linked' === attributes.marginTypeMobile ? `${ attributes.marginMobile }px` : `${ attributes.marginTopMobile }px`,
-			marginBottom: 'linked' === attributes.marginTypeMobile ? `${ attributes.marginMobile }px` : `${ attributes.marginBottomMobile }px`
-		};
-	}
 
 	if ( attributes.textShadow ) {
 		textShadowStyle = {
@@ -156,16 +160,16 @@ const Edit = ({
 
 	const style = omitBy({
 		color: attributes.headingColor,
-		...fontSizeStyle,
 		fontFamily: attributes.fontFamily || undefined,
 		fontWeight: 'regular' === attributes.fontVariant ? 'normal' : attributes.fontVariant,
 		fontStyle: attributes.fontStyle || undefined,
 		textTransform: attributes.textTransform || undefined,
 		lineHeight: ( 3 < attributes.lineHeight ? attributes.lineHeight + 'px' : attributes.lineHeight ) || undefined,
-		letterSpacing: attributes.letterSpacing && `${ attributes.letterSpacing }px`,
-		...stylesheet,
-		...textShadowStyle
+		letterSpacing: _px( attributes.letterSpacing ),
+		...textShadowStyle,
+		...inlineStyle
 	}, x => x?.includes?.( 'undefined' ) );
+
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
