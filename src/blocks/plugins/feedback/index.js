@@ -62,6 +62,7 @@ const FeedbackModal = (
 			{ isOpen && (
 				<Modal
 					className={ classnames( 'o-feedback-modal', { 'no-header': 'submitted' === status }) }
+					overlayClassName="o-feedback-modal-overlay"
 					title={ __( 'What\'s the one thing you need in Otter?', 'otter-blocks' ) }
 					onRequestClose={ closeModal }
 					shouldCloseOnClickOutside={ false }
