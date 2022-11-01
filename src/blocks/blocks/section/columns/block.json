@@ -46,6 +46,12 @@
 		"columnsWidth": {
 			"type": [ "number", "string" ]
 		},
+		"columnsWidthTablet": {
+			"type": "string"
+		},
+		"columnsWidthMobile": {
+			"type": "string"
+		},
 		"horizontalAlign": {
 			"type": "string",
 			"default": "unset"

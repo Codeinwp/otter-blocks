@@ -57,6 +57,8 @@ import {
 	ToogleGroupControl
 } from '../../../components/index.js';
 
+import { useResponsiveAttributes } from '../../../helpers/utility-hooks.js';
+
 /**
  *
  * @param {import('../column/types.js').SectionColumnInspectorProps} props
@@ -77,6 +79,8 @@ const Inspector = ({
 
 		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
 	}, []);
+
+	const { responsiveSetAttributes } = useResponsiveAttributes( setAttributes );
 
 	const [ tab, setTab ] = useState( 'layout' );
 
@@ -212,6 +216,34 @@ const Inspector = ({
 			return undefined;
 		}
 	};
+
+	const getColumnsWidthField = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return 'columnsWidth';
+		case 'Tablet':
+			return 'columnsWidthTablet';
+		case 'Mobile':
+			return 'columnsWidthMobile';
+		default:
+			return undefined;
+		}
+	};
+
+	let getColumnsWidth = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return getValue( 'columnsWidth' );
+		case 'Tablet':
+			return getValue( 'columnsWidthTablet' ) ?? getValue( 'columnsWidth' );
+		case 'Mobile':
+			return getValue( 'columnsWidthMobile' ) ?? getValue( 'columnsWidthTablet' ) ?? getValue( 'columnsWidth' );
+		default:
+			return undefined;
+		}
+	};
+
+	getColumnsWidth = getColumnsWidth();
 
 	const changeHorizontalAlign = value => {
 		if ( attributes.horizontalAlign === value ) {
@@ -515,7 +547,7 @@ const Inspector = ({
 								options={ [
 									{
 										label: __( 'Maximum Content Width', 'otter-blocks' ),
-										value: 'columnsWidth'
+										value: getColumnsWidthField()
 									},
 									{
 										label: __( 'Horizontal Align', 'otter-blocks' ),
@@ -527,19 +559,22 @@ const Inspector = ({
 							/>
 
 							<Disabled
-								isDisabled={ attributes.isSynced?.includes( 'columnsWidth' ) || false }
+								isDisabled={ attributes.isSynced?.includes( getColumnsWidthField() ) || false }
 								className="o-disabled"
 							>
-								<UnitContol
+								<ResponsiveControl
 									label={ __( 'Maximum Content Width', 'otter-blocks' ) }
-									value={ getValue( 'columnsWidth' ) }
-									onChange={ columnsWidth => setAttributes({ columnsWidth }) }
-								/>
+								>
+									<UnitContol
+										value={ getColumnsWidth }
+										onChange={ value => responsiveSetAttributes( value, [ 'columnsWidth', 'columnsWidthTablet', 'columnsWidthMobile' ]) }
+									/>
 
-								<ClearButton
-									values={[ 'columnsWidth' ]}
-									setAttributes={ setAttributes }
-								/>
+									<ClearButton
+										values={[ 'columnsWidth', 'columnsWidthTablet', 'columnsWidthMobile' ]}
+										setAttributes={ setAttributes }
+									/>
+								</ResponsiveControl>
 							</Disabled>
 
 							{ undefined !== getValue( 'columnsWidth' ) && (

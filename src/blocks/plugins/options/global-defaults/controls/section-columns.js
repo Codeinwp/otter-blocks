@@ -111,6 +111,38 @@ const SectionColumns = ({
 		}
 	};
 
+	const getColumnsWidth = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return defaults.columnsWidth;
+		case 'Tablet':
+			return defaults.columnsWidthTablet;
+		case 'Mobile':
+			return defaults.columnsWidthMobile;
+		default:
+			return undefined;
+		}
+	};
+
+	const changeColumnsWidth = value => {
+		switch ( getView ) {
+		case 'Desktop':
+			return changeConfig( blockName, {
+				columnsWidth: value
+			});
+		case 'Tablet':
+			return changeConfig( blockName, {
+				columnsWidthTablet: value
+			});
+		case 'Mobile':
+			return changeConfig( blockName, {
+				columnsWidthMobile: value
+			});
+		default:
+			return undefined;
+		}
+	};
+
 	const changeHorizontalAlign = value => {
 		if ( defaults.horizontalAlign === value ) {
 			return changeConfig( blockName, {
@@ -160,16 +192,17 @@ const SectionColumns = ({
 				title={ __( 'Section Structure', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<UnitContol
+				<ResponsiveControl
 					label={ __( 'Maximum Content Width', 'otter-blocks' ) }
-					value={ defaults.columnsWidth }
-					onChange={ columnsWidth => changeConfig( blockName, {
-						columnsWidth
-					}) }
-				/>
+				>
+					<UnitContol
+						value={ getColumnsWidth() }
+						onChange={ changeColumnsWidth }
+					/>
+				</ResponsiveControl>
 
 				<ClearButton
-					values={[ 'columnsWidth' ]}
+					values={[ 'columnsWidth', 'columnsWidthTablet', 'columnsWidthMobile' ]}
 					setAttributes={ value => changeConfig( blockName, value ) }
 				/>
 

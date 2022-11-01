@@ -13,6 +13,8 @@ type Attributes = {
 	marginTablet: MarginType
 	marginMobile: MarginType
 	columnsWidth: number|string
+	columnsWidthTablet: string
+	columnsWidthMobile: string
 	horizontalAlign: string
 	columnsHeight: string
 	columnsHeightCustom: number|string

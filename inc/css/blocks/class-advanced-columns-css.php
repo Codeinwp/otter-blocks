@@ -84,7 +84,13 @@ class Advanced_Columns_CSS extends Base_CSS {
 			$block['attrs'] = $this->merge_old_attributes( $block['attrs'] );
 		}
 
-		$css = new CSS_Utility( $block );
+		$css = new CSS_Utility(
+			$block,
+			array(
+				'tablet' => '@media ( max-width: 960px )',
+				'mobile' => '@media ( max-width: 600px )',
+			)
+		);
 
 		$css->add_item(
 			array(
@@ -163,6 +169,18 @@ class Advanced_Columns_CSS extends Base_CSS {
 								return is_numeric( $value ) ? $value . 'px' : $value;
 							},
 							'hasSync'  => 'section-columns-width',
+						),
+						array(
+							'property' => '--columns-width',
+							'value'    => 'columnsWidthTablet',
+							'hasSync'  => 'section-columns-width',
+							'media'    => 'tablet',
+						),
+						array(
+							'property' => '--columns-width',
+							'value'    => 'columnsWidthMobile',
+							'hasSync'  => 'section-columns-width',
+							'media'    => 'mobile',
 						),
 						array(
 							'property' => 'justify-content',
@@ -1012,6 +1030,16 @@ class Advanced_Columns_CSS extends Base_CSS {
 						'format'   => function( $value, $attrs ) {
 							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
+					),
+					array(
+						'property' => '--section-columns-width',
+						'value'    => 'columnsWidthTablet',
+						'media'    => 'tablet',
+					),
+					array(
+						'property' => '--section-columns-width',
+						'value'    => 'columnsWidthMobile',
+						'media'    => 'mobile',
 					),
 					array(
 						'property' => '--section-horizontal-align',

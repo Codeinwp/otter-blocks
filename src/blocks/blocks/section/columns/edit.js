@@ -356,6 +356,14 @@ const Edit = ({
 		};
 	}
 
+	if ( ( isTablet || isMobile ) && getValue( 'columnsWidthTablet' ) ) {
+		innerStyle.maxWidth = mightBeUnit( getValue( 'columnsWidthTablet' ) );
+	}
+
+	if ( isMobile && getValue( 'columnsWidthMobile' ) ) {
+		innerStyle.maxWidth = mightBeUnit( getValue( 'columnsWidthMobile' ) );
+	}
+
 	const classes = classnames(
 		`has-${ attributes.columns }-columns`,
 		`has-desktop-${ attributes.layout }-layout`,
