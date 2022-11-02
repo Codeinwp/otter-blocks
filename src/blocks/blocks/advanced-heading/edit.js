@@ -8,7 +8,7 @@ import hexToRgba from 'hex-rgba';
  */
 import { __ } from '@wordpress/i18n';
 
-import { omitBy } from 'lodash';
+import { isObjectLike, omitBy } from 'lodash';
 
 import {
 	createBlock,
@@ -37,7 +37,8 @@ import { blockInit } from '../../helpers/block-utility.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import googleFontsLoader from '../../helpers/google-fonts.js';
-import { _px } from '../../helpers/helper-functions';
+import { boxValues, _px } from '../../helpers/helper-functions';
+import { makeBox } from '../../plugins/copy-paste/utils';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -99,49 +100,52 @@ const Edit = ({
 		setAttributes({ content: value });
 	};
 
-	const oldPaddingDesktop = ({
+
+	const oldPaddingDesktop = 'unlinked' === attributes.paddingType ? ({
 		top: attributes.paddingTop ?? '0px',
 		bottom: attributes.paddingBottom ?? '0px',
 		right: attributes.paddingRight ?? '0px',
 		left: attributes.paddingLeft ?? '0px'
-	});
+	}) : ( isFinite( attributes.padding ) ? makeBox( _px( attributes.padding ) ) : makeBox( '0px' ) );
 
-	const oldPaddingTablet = ({
+	const oldPaddingTablet = 'unlinked' === attributes.paddingTypeTablet ? ({
 		top: attributes.paddingTopTablet ?? '0px',
 		bottom: attributes.paddingBottomTablet ?? '0px',
 		right: attributes.paddingRightTablet ?? '0px',
 		left: attributes.paddingLeftTablet ?? '0px'
-	});
+	}) : ( isFinite( attributes.paddingTablet ) ? makeBox( _px( attributes.paddingTablet ) ) : undefined );
 
-	const oldPaddingMobile = ({
+	const oldPaddingMobile = 'unlinked' === attributes.paddingTypeMobile ?  ({
 		top: attributes.paddingTopMobile ?? '0px',
 		bottom: attributes.paddingBottomMobile ?? '0px',
 		right: attributes.paddingRightMobile ?? '0px',
 		left: attributes.paddingLeftMobile ?? '0px'
-	});
+	}) : ( isFinite( attributes.paddingMobile ) ? makeBox( _px( attributes.paddingMobile ) ) : undefined );
 
-	const oldMarginDesktop = ({
+	const oldMarginDesktop = undefined === attributes.marginType ?  ({
 		top: attributes.marginTop ?? '0px',
 		bottom: attributes.marginBottom ?? '0px'
-	});
+	}) : ( isFinite( attributes.margin ) ? makeBox( _px( attributes.margin ) ) : undefined );
 
-	const oldMarginTablet = ({
+	const oldMarginTablet = undefined === attributes.marginTypeTablet ? ({
 		top: attributes.marginTopTablet ?? '0px',
 		bottom: attributes.marginBottomTablet ?? '0px'
-	});
+	}) : ( isFinite( attributes.marginTablet ) ? makeBox( _px( attributes.marginTablet ) ) : undefined ) ;
 
-	const oldMarginMobile = ({
+	const oldMarginMobile = undefined === attributes.marginTypeMobile ?  ({
 		top: attributes.marginTopMobile ?? '0px',
 		bottom: attributes.marginBottomMobile ?? '0px'
-	});
+	}) : ( isFinite( attributes.marginMobile ) ? makeBox( _px( attributes.marginMobile ) ) : undefined );
+
+	const renderBox = box => isObjectLike( box ) ? boxValues( box ) : undefined;
 
 	const inlineStyle = {
-		'--padding': attributes.padding ?  boxValues( merge( oldPaddingDesktop, attributes.padding ) ) : undefined,
-		'--padding-tablet': attributes.paddingTablet ?  boxValues( merge( oldPaddingTablet, attributes.padding ?? {}, attributes.paddingTablet ) ) : undefined,
-		'--padding-mobile': attributes.paddingMobile ?  boxValues( merge( oldPaddingMobile, attributes.padding ?? {}, attributes.paddingTablet  ?? {}, attributes.paddingMobile ) ) : undefined,
-		'--margin': attributes.margin ?  boxValues( merge( oldMarginDesktop, attributes.margin ) ) : undefined,
-		'--margin-tablet': attributes.marginTablet ?  boxValues( merge( oldMarginTablet, attributes.margin ?? {}, attributes.marginTablet ) ) : undefined,
-		'--margin-mobile': attributes.marginMobile ?  boxValues( merge( oldMarginMobile, attributes.margin ?? {}, attributes.marginTablet  ?? {}, attributes.marginMobile ) ) : undefined,
+		'--padding': isObjectLike( attributes.padding ) ? boxValues( attributes.padding ) : renderBox( oldPaddingDesktop ),
+		'--padding-tablet': isObjectLike( attributes.paddingTablet ) ?  boxValues( merge( attributes.padding ?? {}, attributes.paddingTablet ) ) : renderBox( oldPaddingTablet ),
+		'--padding-mobile': isObjectLike( attributes.paddingMobile ) ?  boxValues( merge( attributes.padding ?? {}, attributes.paddingTablet  ?? {}, attributes.paddingMobile ) ) : renderBox( oldPaddingMobile ),
+		'--margin': isObjectLike( attributes.margin ) ?  boxValues( attributes.margin ) : renderBox( oldMarginDesktop ),
+		'--margin-tablet': isObjectLike( attributes.marginTablet ) ?  boxValues( merge( attributes.margin ?? {}, attributes.marginTablet ) ) : renderBox( oldMarginTablet ),
+		'--margin-mobile': isObjectLike( attributes.marginMobile ) ?  boxValues( merge( attributes.margin ?? {}, attributes.marginTablet  ?? {}, attributes.marginMobile ) ) : renderBox( oldMarginMobile ),
 		'--text-align': attributes.align,
 		'--text-align-tablet': attributes.alignTablet,
 		'--text-align-mobile': attributes.alignMobile,

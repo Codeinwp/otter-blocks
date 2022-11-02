@@ -91,16 +91,13 @@
 			"default": 0
 		},
 		"paddingType": {
-			"type": "string",
-			"default": "linked"
+			"type": "string"
 		},
 		"paddingTypeTablet": {
-			"type": "string",
-			"default": "linked"
+			"type": "string"
 		},
 		"paddingTypeMobile": {
-			"type": "string",
-			"default": "linked"
+			"type": "string"
 		},
 		"padding": {
 			"type": ["number", "object"],
@@ -153,16 +150,13 @@
 			"type": "number"
 		},
 		"marginType": {
-			"type": "string",
-			"default": "unlinked"
+			"type": "string"
 		},
 		"marginTypeTablet": {
-			"type": "string",
-			"default": "unlinked"
+			"type": "string"
 		},
 		"marginTypeMobile": {
-			"type": "string",
-			"default": "unlinked"
+			"type": "string"
 		},
 		"margin": {
 			"type": ["number", "object"],
