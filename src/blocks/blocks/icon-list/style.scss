@@ -26,6 +26,7 @@
 		left: 0;
 		height: 100%;
 		width: var(--divider-length);
+		box-sizing: content-box;
 	}
 
 	&.is-style-horizontal {
@@ -41,6 +42,7 @@
 			right: 0;
 			height: var(--divider-length);
 			width: 100%;
+			box-sizing: content-box;
 		}
 	}
 
