@@ -50,7 +50,14 @@ const Edit = ({
 		'--label-visibility': attributes.hideLabels ? 'none' : undefined,
 		'--divider-color': attributes.dividerColor,
 		'--divider-width': attributes.dividerWidth,
-		'--divider-length': attributes.dividerLength
+		'--divider-length': attributes.dividerLength,
+
+		'--divider-margin-left': attributes.horizontalAlign ? 'auto' : undefined,
+		'--divider-margin-right': 'flex-end' === attributes.horizontalAlign ? '0' : undefined,
+		'--divider-margin-left-tablet': attributes.alignmentTablet ? 'auto' : undefined,
+		'--divider-margin-right-tablet': 'flex-end' === attributes.alignmentTablet ? '0' : undefined,
+		'--divider-margin-left-mobile': attributes.alignmentMobile ? 'auto' : undefined,
+		'--divider-margin-right-mobile': 'flex-end' === attributes.alignmentMobile ? '0' : undefined
 	};
 
 	const blockProps = useBlockProps({
