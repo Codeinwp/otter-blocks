@@ -205,7 +205,7 @@ const Edit = ({
 							</div>
 						</div>
 
-						<button>{ __( 'Checkout', 'otter-blocks' ) }</button>
+						<a>{ __( 'Checkout', 'otter-blocks' ) }</a>
 					</Fragment>
 				)}
 

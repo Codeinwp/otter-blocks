@@ -56,8 +56,26 @@ class Stripe_Checkout_Block {
 		$details_markup .= '<h5>' . $currency . $amount . '</h5>';
 		$details_markup .= '</div>';
 
+		$mode = 'recurring' === $price['type'] ? 'subscription' : 'payment';
 
-		$button_markup = '<form action="#URL_GOES_HERE" method="POST"><button type="submit">' . __( 'Checkout', 'otter-blocks' ) . '</button></form>';
+		$permalink = add_query_arg( 'stripe_session_id', '{CHECKOUT_SESSION_ID}', get_permalink() );
+
+		$session = $stripe->create_request(
+			'create_session',
+			array(
+				'success_url' => $permalink,
+				'cancel_url'  => $permalink,
+				'line_items'  => array(
+					array(
+						'price'    => $attributes['price'],
+						'quantity' => 1,
+					),
+				),
+				'mode'        => $mode,
+			)
+		);
+
+		$button_markup = '<a href="' . esc_url( $session->url ) . '">' . __( 'Checkout', 'otter-blocks' ) . '</a>';
 
 		return sprintf(
 			'<div %1$s><div class="o-stripe-checkout">%2$s</div>%3$s</div>',

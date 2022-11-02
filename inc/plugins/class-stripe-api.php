@@ -84,6 +84,9 @@ class Stripe_API {
 				case 'price':
 					$response = $this->stripe->prices->retrieve( $args );
 					break;
+				case 'create_session':
+					$response = $this->stripe->checkout->sessions->create( $args );
+					break;
 				default:
 					break;
 			}
