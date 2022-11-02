@@ -481,6 +481,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 			display: flex;
 			flex-basis: 100%;
 			word-break: keep-all;
+			max-width: var( --columns-width );
 
 			.wp-block-themeisle-blocks-advanced-column {
 				position: relative;
