@@ -114,6 +114,57 @@ class Icon_List_CSS extends Base_CSS {
 						'property' => '--divider-length',
 						'value'    => 'dividerLength',
 					),
+					array(
+						'property' => '--divider-margin-left',
+						'value'    => 'horizontalAlign',
+						'format'   => function( $value ) {
+							return 'auto';
+						},
+					),
+					array(
+						'property' => '--divider-margin-left-tablet',
+						'value'    => 'alignmentTablet',
+						'format'   => function( $value ) {
+							return 'auto';
+						},
+					),
+					array(
+						'property' => '--divider-margin-left-mobile',
+						'value'    => 'alignmentMobile',
+						'format'   => function( $value ) {
+							return 'auto';
+						},
+					),
+					array(
+						'property'  => '--divider-margin-right',
+						'value'     => 'horizontalAlign',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['horizontalAlign'] ) && 'flex-end' === $attrs['horizontalAlign'];
+						},
+						'format'    => function( $value ) {
+							return '0';
+						},
+					),
+					array(
+						'property'  => '--divider-margin-right-tablet',
+						'value'     => 'alignmentTablet',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['alignmentTablet'] ) && 'flex-end' === $attrs['alignmentTablet'];
+						},
+						'format'    => function( $value ) {
+							return '0';
+						},
+					),
+					array(
+						'property'  => '--divider-margin-right-mobile',
+						'value'     => 'alignmentMobile',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['alignmentMobile'] ) && 'flex-end' === $attrs['alignmentMobile'];
+						},
+						'format'    => function( $value ) {
+							return '0';
+						},
+					),
 				),
 			)
 		);
