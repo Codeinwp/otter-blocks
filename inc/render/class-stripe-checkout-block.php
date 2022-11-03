@@ -33,10 +33,12 @@ class Stripe_Checkout_Block {
 		$stripe = new Stripe_API();
 
 		if ( isset( $_GET['stripe_session_id'] ) ) {// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
-			$status = $stripe->get_status_for_price_id( esc_attr( $_GET['stripe_session_id'] ), esc_attr( $attributes['price'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$session_id = esc_attr( $_GET['stripe_session_id'] );// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$status     = $stripe->get_status_for_price_id( $session_id, esc_attr( $attributes['price'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
 
 			if ( false !== $status ) {
 				if ( 'success' === $status ) {
+					$stripe->save_customer_id( $session_id );
 					$message = isset( $attributes['successMessage'] ) ? $attributes['successMessage'] : __( 'Your payment was successful. If you have any questions, please email orders@example.com.', 'otter-blocks' );
 				} else {
 					$message = isset( $attributes['cancelMessage'] ) ? $attributes['cancelMessage'] : __( 'Your payment was unsuccessful. If you have any questions, please email orders@example.com.', 'otter-blocks' );

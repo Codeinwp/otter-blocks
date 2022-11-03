@@ -36,6 +36,10 @@ class Stripe_API {
 	public function __construct() {
 		$api_key      = get_option( 'themeisle_stripe_api_key' );
 		$this->stripe = new StripeClient( $api_key );
+
+		if ( ! session_id() ) {
+			session_start();
+		}
 	}
 
 	/**
@@ -56,36 +60,6 @@ class Stripe_API {
 				'type'   => $error->getError()->type,
 			)
 		);
-	}
-
-	/**
-	 * Get status for price id.
-	 *
-	 * @param string $session_id Stripe Session ID.
-	 * @param string $price_id Price ID.
-	 * 
-	 * @return false|string
-	 * @access  public
-	 */
-	public function get_status_for_price_id( $session_id, $price_id ) {
-		$session   = $this->create_request( 'get_session', $session_id );
-		$status    = 'complete' === $session['status'] ? 'success' : 'error';
-		$items     = $this->create_request( 'session_items', $session_id );
-		$price_ids = array();
-		$message   = '';
-
-		if ( 0 < count( $items['data'] ) ) {
-			foreach ( $items['data'] as $item ) {
-				$price_ids[] = $item['price']['id'];
-			}
-			$price = $this->create_request( 'get_price', $items['data'][0]['price']['id'] );
-		}
-
-		if ( ! in_array( $price_id, $price_ids ) ) {
-			return false;
-		}
-
-		return $status;
 	}
 
 	/**
@@ -143,5 +117,90 @@ class Stripe_API {
 		}
 
 		return $response;
+	}
+
+	/**
+	 * Get status for price id.
+	 *
+	 * @param string $session_id Stripe Session ID.
+	 * @param string $price_id Price ID.
+	 * 
+	 * @return false|string
+	 * @access  public
+	 */
+	public function get_status_for_price_id( $session_id, $price_id ) {
+		$session   = $this->create_request( 'get_session', $session_id );
+		$status    = 'complete' === $session['status'] ? 'success' : 'error';
+		$items     = $this->create_request( 'session_items', $session_id );
+		$price_ids = array();
+		$message   = '';
+
+		if ( 0 < count( $items['data'] ) ) {
+			foreach ( $items['data'] as $item ) {
+				$price_ids[] = $item['price']['id'];
+			}
+			$price = $this->create_request( 'get_price', $items['data'][0]['price']['id'] );
+		}
+
+		if ( ! in_array( $price_id, $price_ids ) ) {
+			return false;
+		}
+
+		return $status;
+	}
+
+	/**
+	 * Set Customer ID for curent user.
+	 *
+	 * @param string $session_id Stripe Session ID.
+	 * 
+	 * @access  public
+	 */
+	public function save_customer_id( $session_id ) {
+		if ( false !== $this->get_customer_id() ) {
+			return;
+		}
+
+		$session = $this->create_request( 'get_session', $session_id );
+
+		if ( ! isset( $session['customer'] ) || empty( $session['customer'] ) ) {
+			return;
+		}
+
+		$customer = $session['customer'];
+
+		if ( is_user_logged_in() ) {
+			$user_id = get_current_user_id();
+
+			if ( empty( get_user_meta( $user_id, 'o_stripe_customer_id', true ) ) ) {
+				$updated = update_user_meta( $user_id, 'o_stripe_customer_id', $customer );
+			}
+		}
+
+		$_SESSION['o_stripe_customer_id'] = $customer;
+	}
+
+	/**
+	 * Get Customer ID for curent user.
+	 * 
+	 * @return false|string
+	 * @access  public
+	 */
+	public function get_customer_id() {
+		$customer_id = false;
+
+		if ( isset( $_SESSION['o_stripe_customer_id'] ) ) {
+			$customer_id = esc_attr( $_SESSION['o_stripe_customer_id'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		}
+
+		if ( is_user_logged_in() ) {
+			$user_id = get_current_user_id();
+
+			if ( ! empty( get_user_meta( $user_id, 'o_stripe_customer_id', true ) ) ) {
+				$customer_id = get_user_meta( $user_id, 'o_stripe_customer_id', true );
+			}
+		}
+
+		return $customer_id;
 	}
 }
