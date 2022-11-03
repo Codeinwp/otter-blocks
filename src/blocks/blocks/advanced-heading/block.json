@@ -100,8 +100,7 @@
 			"type": "string"
 		},
 		"padding": {
-			"type": ["number", "object"],
-			"default": 0
+			"type": ["number", "object"]
 		},
 		"paddingTablet": {
 			"type": ["number", "object"]
@@ -120,8 +119,7 @@
 			"type": "number"
 		},
 		"paddingRight": {
-			"type": "number",
-			"default": 0
+			"type": "number"
 		},
 		"paddingRightTablet": {
 			"type": "number"
@@ -130,8 +128,7 @@
 			"type": "number"
 		},
 		"paddingBottom": {
-			"type": "number",
-			"default": 0
+			"type": "number"
 		},
 		"paddingBottomTablet": {
 			"type": "number"
@@ -140,8 +137,7 @@
 			"type": "number"
 		},
 		"paddingLeft": {
-			"type": "number",
-			"default": 0
+			"type": "number"
 		},
 		"paddingLeftTablet": {
 			"type": "number"
@@ -159,8 +155,7 @@
 			"type": "string"
 		},
 		"margin": {
-			"type": ["number", "object"],
-			"default": 0
+			"type": ["number", "object"]
 		},
 		"marginTablet": {
 			"type": ["number", "object"]
@@ -169,8 +164,7 @@
 			"type": ["number", "object"]
 		},
 		"marginTop": {
-			"type": "number",
-			"default": 0
+			"type": "number"
 		},
 		"marginTopTablet": {
 			"type": "number"
@@ -179,8 +173,7 @@
 			"type": "number"
 		},
 		"marginBottom": {
-			"type": "number",
-			"default": 25
+			"type": "number"
 		},
 		"marginBottomTablet": {
 			"type": "number"

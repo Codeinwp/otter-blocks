@@ -42,18 +42,8 @@ class Advanced_Heading_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => 'text-align',
-						'value'    => 'align',
-						'default'  => 'unset',
-					),
-					array(
 						'property' => 'color',
 						'value'    => 'headingColor',
-					),
-					array(
-						'property' => 'font-size',
-						'value'    => 'fontSize',
-						'unit'     => 'px',
 					),
 					array(
 						'property' => 'font-family',
@@ -124,7 +114,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'unit'      => 'px',
 						'default'   => 0,
 						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'] );
+							return ( ! is_object( $attrs['padding'] ) ) && ! ( isset( $attrs['paddingType'] ) && is_numeric( $attrs['padding'] ) && 'unlinked' === $attrs['paddingType'] );
 						},
 					),
 					array(
@@ -133,7 +123,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'unit'      => 'px',
 						'default'   => 0,
 						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'];
+							return ( ! is_object( $attrs['padding'] ) ) && isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'];
 						},
 					),
 					array(
@@ -142,7 +132,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'unit'      => 'px',
 						'default'   => 0,
 						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'];
+							return ( ! is_object( $attrs['padding'] ) ) && isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'];
 						},
 					),
 					array(
@@ -151,7 +141,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'unit'      => 'px',
 						'default'   => 0,
 						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'];
+							return ( ! is_object( $attrs['padding'] ) ) && isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'];
 						},
 					),
 					array(
@@ -160,7 +150,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'unit'      => 'px',
 						'default'   => 0,
 						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'];
+							return ( ! is_object( $attrs['padding'] ) ) && isset( $attrs['paddingType'] ) && 'unlinked' === $attrs['paddingType'];
 						},
 					),
 					array(
@@ -169,7 +159,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'unit'      => 'px',
 						'default'   => 0,
 						'condition' => function( $attrs ) {
-							return isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'];
+							return ( ! is_object( $attrs['margin'] ) ) && isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'];
 						},
 					),
 					array(
@@ -178,7 +168,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'unit'      => 'px',
 						'default'   => 0,
 						'condition' => function( $attrs ) {
-							return isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'];
+							return ( ! is_object( $attrs['margin'] ) ) && isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'];
 						},
 					),
 					array(
@@ -187,7 +177,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'unit'      => 'px',
 						'default'   => 0,
 						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] );
+							return ( ! is_object( $attrs['margin'] ) ) && ! ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] );
 						},
 					),
 					array(
@@ -196,7 +186,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'unit'      => 'px',
 						'default'   => 20,
 						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] );
+							return ( ! is_object( $attrs['margin'] ) ) && ! ( isset( $attrs['marginType'] ) && 'linked' === $attrs['marginType'] );
 						},
 					),
 				),
@@ -233,20 +223,11 @@ class Advanced_Heading_CSS extends Base_CSS {
 				'query'      => '@media ( min-width: 600px ) and ( max-width: 960px )',
 				'properties' => array(
 					array(
-						'property' => 'text-align',
-						'value'    => 'alignTablet',
-					),
-					array(
-						'property' => 'font-size',
-						'value'    => 'fontSizeTablet',
-						'unit'     => 'px',
-					),
-					array(
 						'property'  => 'padding',
 						'value'     => 'paddingTablet',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'] );
+							return ( ! is_object( $attrs['paddingTablet'] ) ) && ! ( isset( $attrs['paddingTypeTablet'] ) && is_numeric( $attrs['paddingTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'] );
 						},
 					),
 					array(
@@ -254,7 +235,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'paddingTopTablet',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'];
+							return ( ! is_object( $attrs['paddingTablet'] ) ) && isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'];
 						},
 					),
 					array(
@@ -262,7 +243,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'paddingRightTablet',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'];
+							return ( ! is_object( $attrs['paddingTablet'] ) ) && isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'];
 						},
 					),
 					array(
@@ -270,7 +251,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'paddingBottomTablet',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'];
+							return ( ! is_object( $attrs['paddingTablet'] ) ) && isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'];
 						},
 					),
 					array(
@@ -278,7 +259,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'paddingLeftTablet',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'];
+							return ( ! is_object( $attrs['paddingTablet'] ) ) && isset( $attrs['paddingTypeTablet'] ) && 'unlinked' === $attrs['paddingTypeTablet'];
 						},
 					),
 					array(
@@ -286,7 +267,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'marginTablet',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'];
+							return ( ! is_object( $attrs['marginTablet'] ) ) && isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'];
 						},
 					),
 					array(
@@ -294,7 +275,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'marginTablet',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'];
+							return ( ! is_object( $attrs['marginTablet'] ) ) && isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'];
 						},
 					),
 					array(
@@ -302,7 +283,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'marginTopTablet',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'] );
+							return ( ! is_object( $attrs['marginTablet'] ) ) && ! ( isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'] );
 						},
 					),
 					array(
@@ -310,7 +291,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'marginBottomTablet',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'] );
+							return ( ! is_object( $attrs['marginTablet'] ) ) && ! ( isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'] );
 						},
 					),
 				),
@@ -322,20 +303,11 @@ class Advanced_Heading_CSS extends Base_CSS {
 				'query'      => '@media ( max-width: 600px )',
 				'properties' => array(
 					array(
-						'property' => 'text-align',
-						'value'    => 'alignMobile',
-					),
-					array(
-						'property' => 'font-size',
-						'value'    => 'fontSizeMobile',
-						'unit'     => 'px',
-					),
-					array(
 						'property'  => 'padding',
 						'value'     => 'paddingMobile',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'] );
+							return ( ! is_object( $attrs['paddingMobile'] ) ) && ! ( isset( $attrs['paddingTypeMobile'] ) && is_numeric( $attrs['paddingMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'] );
 						},
 					),
 					array(
@@ -343,7 +315,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'paddingTopMobile',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'];
+							return ( ! is_object( $attrs['paddingMobile'] ) ) && isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'];
 						},
 					),
 					array(
@@ -351,7 +323,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'paddingRightMobile',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'];
+							return ( ! is_object( $attrs['paddingMobile'] ) ) && isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'];
 						},
 					),
 					array(
@@ -367,7 +339,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'paddingLeftMobile',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'];
+							return ( ! is_object( $attrs['paddingMobile'] ) ) && isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'];
 						},
 					),
 					array(
@@ -375,7 +347,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'marginMobile',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'];
+							return ( ! is_object( $attrs['marginMobile'] ) ) && isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'];
 						},
 					),
 					array(
@@ -383,7 +355,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'marginMobile',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'];
+							return ( ! is_object( $attrs['marginMobile'] ) ) && isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'];
 						},
 					),
 					array(
@@ -391,7 +363,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'marginTopMobile',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'] );
+							return ( ! is_object( $attrs['marginMobile'] ) ) && ! ( isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'] );
 						},
 					),
 					array(
@@ -399,7 +371,133 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'marginBottomMobile',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return ! ( isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'] );
+							return ( ! is_object( $attrs['marginMobile'] ) ) && ! ( isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'] );
+						},
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'properties' => array(
+					array(
+						'property'  => '--font-size',
+						'value'     => 'fontSize',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['fontSize'] ) && is_numeric( $attrs['fontSize'] );
+						},
+					),
+					array(
+						'property'  => '--font-size-tablet',
+						'value'     => 'fontSizeTablet',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['fontSizeTablet'] ) && is_numeric( $attrs['fontSizeTablet'] );
+						},
+					),
+					array(
+						'property'  => '--font-size-mobile',
+						'value'     => 'fontSizeMobile',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['fontSizeMobile'] ) && is_numeric( $attrs['fontSizeMobile'] );
+						},
+					),
+					array(
+						'property'  => '--font-size',
+						'value'     => 'fontSize',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['fontSize'] ) && is_string( $attrs['fontSize'] );
+						},
+					),
+					array(
+						'property'  => '--font-size-tablet',
+						'value'     => 'fontSizeTablet',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['fontSizeTablet'] ) && is_string( $attrs['fontSizeTablet'] );
+						},
+					),
+					array(
+						'property'  => '--font-size-mobile',
+						'value'     => 'fontSizeMobile',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['fontSizeMobile'] ) && is_string( $attrs['fontSizeMobile'] );
+						},
+					),
+					array(
+						'property' => '--text-align',
+						'value'    => 'align',
+					),
+					array(
+						'property' => '--text-align-tablet',
+						'value'    => 'alignTablet',
+					),
+					array(
+						'property' => '--text-align-mobile',
+						'value'    => 'alignMobile',
+					),
+					array(
+						'property'  => '--padding',
+						'value'     => 'padding',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['padding'] ) && is_object( $attrs['padding'] );
+						},
+						'format'    => function( $value ) {
+							return CSS_Utility::render_box( $value );
+						},
+					),
+					array(
+						'property'  => '--padding-tablet',
+						'value'     => 'paddingTablet',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingTablet'] ) && is_object( $attrs['paddingTablet'] );
+						},
+						'format'    => function( $value ) {
+							return CSS_Utility::render_box( $value );
+						},
+					),
+					array(
+						'property'  => '--padding-mobile',
+						'value'     => 'paddingMobile',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['paddingTablet'] ) && is_object( $attrs['paddingTablet'] );
+						},
+						'format'    => function( $value ) {
+							return CSS_Utility::render_box( $value );
+						},
+					),
+					array(
+						'property'  => '--margin',
+						'value'     => 'margin',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['margin'] ) && is_object( $attrs['margin'] );
+						},
+						'format'    => function( $value ) {
+							return CSS_Utility::render_box( $value );
+						},
+					),
+					array(
+						'property'  => '--margin-tablet',
+						'value'     => 'marginTablet',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['marginTablet'] ) && is_object( $attrs['marginTablet'] );
+						},
+						'format'    => function( $value ) {
+							return CSS_Utility::render_box( $value );
+						},
+					),
+					array(
+						'property'  => '--margin-mobile',
+						'value'     => 'marginMobile',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['marginMobile'] ) && is_object( $attrs['marginMobile'] );
+						},
+						'format'    => function( $value ) {
+							return CSS_Utility::render_box( $value );
 						},
 					),
 				),

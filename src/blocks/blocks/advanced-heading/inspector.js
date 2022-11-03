@@ -29,7 +29,7 @@ import {
 } from '@wordpress/element';
 
 import {
-	isNumber
+	isNumber, isObjectLike
 } from 'lodash';
 
 /**
@@ -58,12 +58,6 @@ const Inspector = ({
 	attributes,
 	setAttributes
 }) => {
-	const getView = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-
-		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-	}, []);
 
 	const [ tab, setTab ] = useState( 'style' );
 	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
@@ -83,165 +77,6 @@ const Inspector = ({
 		}
 	};
 
-	const getFontSize = () => {
-		switch ( getView ) {
-		case 'Desktop':
-			return attributes.fontSize;
-		case 'Tablet':
-			return attributes.fontSizeTablet;
-		case 'Mobile':
-			return attributes.fontSizeMobile;
-		default:
-			return undefined;
-		}
-	};
-
-	const changeFontSize = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ fontSize: value });
-		} else if ( 'Tablet' === getView ) {
-			setAttributes({ fontSizeTablet: value });
-		} else if ( 'Mobile' === getView ) {
-			setAttributes({ fontSizeMobile: value });
-		}
-	};
-
-	const getAlignment = () => {
-		switch ( getView ) {
-		case 'Desktop':
-			return attributes.align;
-		case 'Tablet':
-			return attributes.alignTablet;
-		case 'Mobile':
-			return attributes.alignMobile;
-		default:
-			return undefined;
-		}
-	};
-
-
-	const changeAlignment = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ align: value });
-		} else if ( 'Tablet' === getView ) {
-			setAttributes({ alignTablet: value });
-		} else if ( 'Mobile' === getView ) {
-			setAttributes({ alignMobile: value });
-		}
-	};
-
-	const getPaddingType = () => {
-		switch ( getView ) {
-		case 'Desktop':
-			return attributes.paddingType;
-		case 'Tablet':
-			return attributes.paddingTypeTablet;
-		case 'Mobile':
-			return attributes.paddingTypeMobile;
-		default:
-			return undefined;
-		}
-	};
-
-	const changePaddingType = value => {
-		if ( 'Desktop' === getView ) {
-			setAttributes({ paddingType: value });
-		} else if ( 'Tablet' === getView ) {
-			setAttributes({ paddingTypeTablet: value });
-		} else if ( 'Mobile' === getView ) {
-			setAttributes({ paddingTypeMobile: value });
-		}
-	};
-
-	const desktopPaddingType = {
-		top: 'paddingTop',
-		right: 'paddingRight',
-		bottom: 'paddingBottom',
-		left: 'paddingLeft'
-	};
-
-	const tabletPaddingType = {
-		top: 'paddingTopTablet',
-		right: 'paddingRightTablet',
-		bottom: 'paddingBottomTablet',
-		left: 'paddingLeftTablet'
-	};
-
-	const mobilePaddingType = {
-		top: 'paddingTopMobile',
-		right: 'paddingRightMobile',
-		bottom: 'paddingBottomMobile',
-		left: 'paddingLeftMobile'
-	};
-
-	const changePadding = ( type, value ) => {
-		switch ( getView ) {
-		case 'Desktop':
-			if ( 'linked' === attributes.paddingType ) {
-				setAttributes({ padding: value });
-			} else {
-				setAttributes({ [desktopPaddingType[type]]: value });
-			}
-			break;
-		case 'Tablet':
-			if ( 'linked' === attributes.paddingTypeTablet ) {
-				setAttributes({ paddingTablet: value });
-			} else {
-				setAttributes({ [tabletPaddingType[type]]: value });
-			}
-			break;
-		case 'Mobile':
-			if ( 'linked' === attributes.paddingTypeMobile ) {
-				setAttributes({ paddingMobile: value });
-			} else {
-				setAttributes({ [mobilePaddingType[type]]: value });
-			}
-			break;
-		}
-	};
-
-	const getPadding = type => {
-		if ( 'top' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingTop;
-			case 'Tablet':
-				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingTopTablet;
-			case 'Mobile':
-				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingTopMobile;
-			}
-		} else if ( 'right' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingRight;
-			case 'Tablet':
-				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingRightTablet;
-			case 'Mobile':
-				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingRightMobile;
-			}
-		} else if ( 'bottom' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingBottom;
-			case 'Tablet':
-				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingBottomTablet;
-			case 'Mobile':
-				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingBottomMobile;
-			}
-		} else if ( 'left' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.paddingType ? attributes.padding : attributes.paddingLeft;
-			case 'Tablet':
-				return 'linked' === attributes.paddingTypeTablet ? attributes.paddingTablet : attributes.paddingLeftTablet;
-			case 'Mobile':
-				return 'linked' === attributes.paddingTypeMobile ? attributes.paddingMobile : attributes.paddingLeftMobile;
-			}
-		}
-
-		return undefined;
-	};
-
 	const getOldPaddingValues = () => ({
 		top: _px( responsiveGetAttributes([ attributes.paddingTop, attributes.paddingTopTablet, attributes.paddingTopMobile  ]) ) ?? '0px',
 		bottom: _px( responsiveGetAttributes([ attributes.paddingBottom, attributes.paddingBottomTablet, attributes.paddingBottomMobile  ]) ) ?? '0px',
@@ -254,98 +89,46 @@ const Inspector = ({
 		bottom: _px( responsiveGetAttributes([ attributes.marginBottom, attributes.marginBottomTablet, attributes.marginBottomMobile  ]) ) ?? '0px'
 	});
 
+	const oldPaddingDesktop = 'unlinked' === attributes.paddingType ? ({
+		top: attributes.paddingTop ?? '0px',
+		bottom: attributes.paddingBottom ?? '25px',
+		right: attributes.paddingRight ?? '0px',
+		left: attributes.paddingLeft ?? '0px'
+	}) : ( isFinite( attributes.padding ) ? makeBox( _px( attributes.padding ) ) : {
+		top: '0px',
+		bottom: '25px',
+		right: '0px',
+		left: '0px'
+	});
 
-	const getMarginType = () => {
-		switch ( getView ) {
-		case 'Desktop':
-			return attributes.marginType;
-		case 'Tablet':
-			return attributes.marginTypeTablet;
-		case 'Mobile':
-			return attributes.marginTypeMobile;
-		default:
-			return undefined;
-		}
-	};
+	const oldPaddingTablet = 'unlinked' === attributes.paddingTypeTablet ? ({
+		top: attributes.paddingTopTablet ?? '0px',
+		bottom: attributes.paddingBottomTablet ?? '0px',
+		right: attributes.paddingRightTablet ?? '0px',
+		left: attributes.paddingLeftTablet ?? '0px'
+	}) : ( isFinite( attributes.paddingTablet ) ? makeBox( _px( attributes.paddingTablet ) ) : undefined );
 
-	const changeMarginType = value => {
-		switch ( getView ) {
-		case 'Desktop':
-			setAttributes({ marginType: value });
-			break;
-		case 'Tablet':
-			setAttributes({ marginTypeTablet: value });
-			break;
-		case 'Mobile':
-			setAttributes({ marginTypeMobile: value });
-			break;
-		}
-	};
+	const oldPaddingMobile = 'unlinked' === attributes.paddingTypeMobile ?  ({
+		top: attributes.paddingTopMobile ?? '0px',
+		bottom: attributes.paddingBottomMobile ?? '0px',
+		right: attributes.paddingRightMobile ?? '0px',
+		left: attributes.paddingLeftMobile ?? '0px'
+	}) : ( isFinite( attributes.paddingMobile ) ? makeBox( _px( attributes.paddingMobile ) ) : undefined );
 
-	const desktopMarginType = {
-		top: 'marginTop',
-		bottom: 'marginBottom'
-	};
+	const oldMarginDesktop = undefined === attributes.marginType ?  ({
+		top: attributes.marginTop ?? '0px',
+		bottom: attributes.marginBottom ?? '0px'
+	}) : ( isFinite( attributes.margin ) ? makeBox( _px( attributes.margin ) ) : undefined );
 
-	const tabletMarginType = {
-		top: 'marginTopTablet',
-		bottom: 'marginBottomTablet'
-	};
+	const oldMarginTablet = undefined === attributes.marginTypeTablet ? ({
+		top: attributes.marginTopTablet ?? '0px',
+		bottom: attributes.marginBottomTablet ?? '0px'
+	}) : ( isFinite( attributes.marginTablet ) ? makeBox( _px( attributes.marginTablet ) ) : undefined ) ;
 
-	const mobileMarginType = {
-		top: 'marginTopMobile',
-		bottom: 'marginBottomMobile'
-	};
-
-	const changeMargin = ( type, value ) => {
-		switch ( getView ) {
-		case 'Desktop':
-			if ( 'linked' === attributes.marginType ) {
-				setAttributes({ margin: value });
-			} else {
-				setAttributes({ [desktopMarginType[type]]: value });
-			}
-			break;
-		case 'Tablet':
-			if ( 'linked' === attributes.marginTypeTablet ) {
-				setAttributes({ marginTablet: value });
-			} else {
-				setAttributes({ [tabletMarginType[type]]: value });
-			}
-			break;
-		case 'Mobile':
-			if ( 'linked' === attributes.marginTypeMobile ) {
-				setAttributes({ marginMobile: value });
-			} else {
-				setAttributes({ [mobileMarginType[type]]: value });
-			}
-			break;
-		}
-	};
-
-	const getMargin = type => {
-		if ( 'top' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.marginType ? attributes.margin : attributes.marginTop;
-			case 'Tablet':
-				return 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginTopTablet;
-			case 'Mobile':
-				return 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginTopMobile;
-			}
-		} else if ( 'bottom' == type ) {
-			switch ( getView ) {
-			case 'Desktop':
-				return 'linked' === attributes.marginType ? attributes.margin : attributes.marginBottom;
-			case 'Tablet':
-				return 'linked' === attributes.marginTypeTablet ? attributes.marginTablet : attributes.marginBottomTablet;
-			case 'Mobile':
-				return 'linked' === attributes.marginTypeMobile ? attributes.marginMobile : attributes.marginBottomMobile;
-			}
-		}
-
-		return undefined;
-	};
+	const oldMarginMobile = undefined === attributes.marginTypeMobile ?  ({
+		top: attributes.marginTopMobile ?? '0px',
+		bottom: attributes.marginBottomMobile ?? '0px'
+	}) : ( isFinite( attributes.marginMobile ) ? makeBox( _px( attributes.marginMobile ) ) : undefined );
 
 	return (
 		<Fragment>
@@ -548,14 +331,13 @@ const Inspector = ({
 									label={ __( 'Padding', 'otter-blocks' ) }
 								>
 									<BoxControl
-
-										// label={ __( 'Padding', 'otter-blocks' ) }
+										label={ __( '', 'otter-blocks' ) }
 										values={
 											responsiveGetAttributes([
-												isFinite( attributes.padding ) ? makeBox( _px( attributes.padding ) ) : attributes.padding,
-												isFinite( attributes.paddingTablet ) ? makeBox( _px( attributes.paddingTablet ) ) : attributes.paddingTablet,
-												isFinite( attributes.paddingMobile ) ? makeBox( _px( attributes.paddingMobile ) ) : attributes.paddingMobile
-											]) ?? getOldPaddingValues()
+												isObjectLike( attributes.padding ) ?  attributes.padding : oldPaddingDesktop,
+												isObjectLike( attributes.paddingTablet ) ? attributes.paddingTablet : oldPaddingTablet,
+												isObjectLike( attributes.paddingMobile ) ?  attributes.paddingMobile : oldPaddingMobile
+											]) ?? makeBox( '0px' )
 										}
 										onChange={ value => {
 											responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
@@ -594,9 +376,9 @@ const Inspector = ({
 										// label={ __( 'Padding', 'otter-blocks' ) }
 										values={
 											responsiveGetAttributes([
-												isFinite( attributes.margin ) ? makeBox( _px( attributes.margin ) ) : attributes.margin,
-												isFinite( attributes.marginTablet ) ? makeBox( _px( attributes.marginTablet ) ) : attributes.marginTablet,
-												isFinite( attributes.marginMobile ) ? makeBox( _px( attributes.marginMobile ) ) : attributes.marginMobile
+												isObjectLike( attributes.margin ) ? attributes.margin : oldMarginDesktop,
+												isObjectLike( attributes.marginTablet ) ? attributes.marginTablet : oldMarginTablet,
+												isObjectLike( attributes.marginMobile ) ?  attributes.marginMobile : oldMarginMobile
 											]) ?? getOldMarginValues()
 										}
 										onChange={ value => {

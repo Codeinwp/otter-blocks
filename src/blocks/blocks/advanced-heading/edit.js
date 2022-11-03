@@ -103,7 +103,7 @@ const Edit = ({
 
 	const oldPaddingDesktop = 'unlinked' === attributes.paddingType ? ({
 		top: attributes.paddingTop ?? '0px',
-		bottom: attributes.paddingBottom ?? '0px',
+		bottom: attributes.paddingBottom ?? '25px',
 		right: attributes.paddingRight ?? '0px',
 		left: attributes.paddingLeft ?? '0px'
 	}) : ( isFinite( attributes.padding ) ? makeBox( _px( attributes.padding ) ) : makeBox( '0px' ) );
