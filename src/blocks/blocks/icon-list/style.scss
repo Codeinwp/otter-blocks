@@ -15,14 +15,14 @@
 	--divider-width: 2px;
 	--divider-length: 100%;
 
-	&:root {
-		--divider-margin-left: 0;
-		--divider-margin-right: auto;
-		--divider-margin-left-tablet: var(--divider-margin-left);
-		--divider-margin-right-tablet: var(--divider-margin-right);
-		--divider-margin-left-mobile: var(--divider-margin-left-tablet);
-		--divider-margin-right-mobile: var(--divider-margin-right-tablet);
-	}
+	
+	--divider-margin-left: 0;
+	--divider-margin-right: auto;
+	--divider-margin-left-tablet: var(--divider-margin-left);
+	--divider-margin-right-tablet: var(--divider-margin-right);
+	--divider-margin-left-mobile: var(--divider-margin-left-tablet);
+	--divider-margin-right-mobile: var(--divider-margin-right-tablet);
+	
 
 	display: flex;
 	flex-direction: column;
