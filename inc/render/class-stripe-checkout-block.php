@@ -42,7 +42,7 @@ class Stripe_Checkout_Block {
 					$message = isset( $attributes['cancelMessage'] ) ? $attributes['cancelMessage'] : __( 'Your payment was unsuccessful. If you have any questions, please email orders@example.com.', 'otter-blocks' );
 				}
 
-				return sprintf( '<p>%s</p>', $message );
+				return sprintf( '<p class="o-stripe-message-%2$s">%1$s</p>', $message, $status );
 			}
 		}
 
