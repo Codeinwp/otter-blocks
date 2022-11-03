@@ -37,8 +37,8 @@ class Stripe_API {
 		$api_key      = get_option( 'themeisle_stripe_api_key' );
 		$this->stripe = new StripeClient( $api_key );
 
-		if ( ! session_id() ) {
-			session_start();
+		if ( ! session_id() && ! function_exists( 'is_wpcom_vip' ) ) { // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.session_session_id
+			session_start(); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.session_session_start
 		}
 	}
 
@@ -177,7 +177,9 @@ class Stripe_API {
 			}
 		}
 
-		$_SESSION['o_stripe_customer_id'] = $customer;
+		if ( ! function_exists( 'is_wpcom_vip' ) ) {
+			$_SESSION['o_stripe_customer_id'] = $customer; // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.session___SESSION
+		}
 	}
 
 	/**
@@ -189,8 +191,8 @@ class Stripe_API {
 	public function get_customer_id() {
 		$customer_id = false;
 
-		if ( isset( $_SESSION['o_stripe_customer_id'] ) ) {
-			$customer_id = esc_attr( $_SESSION['o_stripe_customer_id'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( ! function_exists( 'is_wpcom_vip' ) && isset( $_SESSION['o_stripe_customer_id'] ) ) { //phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.session___SESSION
+			$customer_id = esc_attr( $_SESSION['o_stripe_customer_id'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPressVIPMinimum.Variables.RestrictedVariables.session___SESSION
 		}
 
 		if ( is_user_logged_in() ) {
