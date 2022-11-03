@@ -105,7 +105,7 @@ const Inspector = ({
 				<TextareaControl
 					label={ __( 'Cancel Message', 'otter-blocks' ) }
 					value={ attributes.cancelMessage }
-					placeholder={ __( 'Your payment was cancelled. If you have any questions, please email orders@example.com.', 'otter-blocks' ) }
+					placeholder={ __( 'Your payment was unsuccessful. If you have any questions, please email orders@example.com.', 'otter-blocks' ) }
 					onChange={ cancelMessage => setAttributes({ cancelMessage }) }
 				/>
 			</PanelBody>

@@ -210,7 +210,7 @@ const Edit = ({
 				)}
 
 				{ 'success' === view && ( attributes.successMessage || __( 'Your payment was successful. If you have any questions, please email orders@example.com.', 'otter-blocks' ) ) }
-				{ 'cancel' === view && ( attributes.cancelMessage || __( 'Your payment was cancelled. If you have any questions, please email orders@example.com.', 'otter-blocks' ) ) }
+				{ 'cancel' === view && ( attributes.cancelMessage || __( 'Your payment was unsuccessful. If you have any questions, please email orders@example.com.', 'otter-blocks' ) ) }
 			</div>
 		</Fragment>
 	);

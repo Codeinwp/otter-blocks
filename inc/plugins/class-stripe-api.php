@@ -59,6 +59,36 @@ class Stripe_API {
 	}
 
 	/**
+	 * Get status for price id.
+	 *
+	 * @param string $session_id Stripe Session ID.
+	 * @param string $price_id Price ID.
+	 * 
+	 * @return false|string
+	 * @access  public
+	 */
+	public function get_status_for_price_id( $session_id, $price_id ) {
+		$session   = $this->create_request( 'get_session', $session_id );
+		$status    = 'complete' === $session['status'] ? 'success' : 'error';
+		$items     = $this->create_request( 'session_items', $session_id );
+		$price_ids = array();
+		$message   = '';
+
+		if ( 0 < count( $items['data'] ) ) {
+			foreach ( $items['data'] as $item ) {
+				$price_ids[] = $item['price']['id'];
+			}
+			$price = $this->create_request( 'get_price', $items['data'][0]['price']['id'] );
+		}
+
+		if ( ! in_array( $price_id, $price_ids ) ) {
+			return false;
+		}
+
+		return $status;
+	}
+
+	/**
 	 * Make Stripe Request
 	 *
 	 * @param string $path Request path.
@@ -86,6 +116,12 @@ class Stripe_API {
 					break;
 				case 'create_session':
 					$response = $this->stripe->checkout->sessions->create( $args );
+					break;
+				case 'get_session':
+					$response = $this->stripe->checkout->sessions->retrieve( $args );
+					break;
+				case 'session_items':
+					$response = $this->stripe->checkout->sessions->allLineItems( $args );
 					break;
 				default:
 					break;

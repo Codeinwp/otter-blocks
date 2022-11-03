@@ -32,10 +32,21 @@ class Stripe_Checkout_Block {
 
 		$stripe = new Stripe_API();
 
-		$product = $stripe->create_request(
-			'product',
-			$attributes['product']
-		);
+		if ( isset( $_GET['stripe_session_id'] ) ) {// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+			$status = $stripe->get_status_for_price_id( esc_attr( $_GET['stripe_session_id'] ), esc_attr( $attributes['price'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+
+			if ( false !== $status ) {
+				if ( 'success' === $status ) {
+					$message = isset( $attributes['successMessage'] ) ? $attributes['successMessage'] : __( 'Your payment was successful. If you have any questions, please email orders@example.com.', 'otter-blocks' );
+				} else {
+					$message = isset( $attributes['cancelMessage'] ) ? $attributes['cancelMessage'] : __( 'Your payment was unsuccessful. If you have any questions, please email orders@example.com.', 'otter-blocks' );
+				}
+
+				return sprintf( '<p>%s</p>', $message );
+			}
+		}
+
+		$product = $stripe->create_request( 'product', $attributes['product'] );
 
 		$details_markup = '';
 
@@ -43,10 +54,7 @@ class Stripe_Checkout_Block {
 			$details_markup .= '<img src="' . $product['images'][0] . '" alt="' . $product['description'] . '" />';
 		}
 
-		$price = $stripe->create_request(
-			'price',
-			$attributes['price']
-		);
+		$price = $stripe->create_request( 'price', $attributes['price'] );
 
 		$currency = Review_Block::get_currency( $price['currency'] );
 		$amount   = number_format( $price['unit_amount'] / 100, 2, '.', ' ' );
