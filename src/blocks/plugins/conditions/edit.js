@@ -158,6 +158,17 @@ const defaultConditions = {
 			}
 		]
 	},
+	'stripe': {
+		label: __( 'Stripe', 'otter-blocks' ),
+		conditions: [
+			{
+				value: 'stripePurchaseHistory',
+				label: __( 'Purchase History', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on user\'s Stripe purchase history.' ),
+				toogleVisibility: true
+			}
+		]
+	},
 	'learndash': {
 		label: __( 'LearnDash', 'otter-blocks' ),
 		conditions: [
@@ -463,6 +474,10 @@ const Edit = ({
 												__experimentalExpandOnFocus={ true }
 												__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
 											/>
+										) }
+
+										{ 'stripePurchaseHistory' === i.type && (
+											<Fragment></Fragment>
 										) }
 
 										{ applyFilters( 'otter.blockConditions.controls', '', index, n, i, attributes.otterConditions, setAttributes, changeValue ) }
