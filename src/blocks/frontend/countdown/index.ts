@@ -29,7 +29,7 @@ class CountdownData {
 	readonly rawData: string;
 	readonly timer: string;
 	readonly settings?: Settings;
-	readonly targetDate: number;
+	readonly deadline: number;
 	readonly behaviour: 'default' | 'redirectLink' | 'hide' | 'restart';
 	readonly trigger?: 'showBlock' | 'hideBlock';
 	readonly redirectLink?: string;
@@ -106,31 +106,40 @@ class CountdownData {
 			const lastVisit = localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` );
 			const lastVisitTime = localStorage.getItem( `o-countdown-last-visit-time-${this.elem.id}` );
 
+			// Set the deadling based on the last visit.
+			this.deadline = parseInt( lastVisit! ) + parseInt( this.timer );
+
+			// Check if the client is first time on the page.
 			if (
 				! lastVisit ||
 				( ( parseInt( lastVisit ) + parseInt( this.timer ) - Date.now() ) > COUNTDOWN_RESET ) ||
 				lastVisitTime !== this.timer
 			) {
+
+				// Record the curent visit and timer time. Set a new deadline.
 				localStorage.setItem( `o-countdown-last-visit-${this.elem.id}`, Date.now().toString() );
 				localStorage.setItem( `o-countdown-last-visit-time-${this.elem.id}`, this.timer );
+				this.deadline = Date.now() + parseInt( this.timer );
 			}
 
-			this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` )! ) + parseInt( this.timer );
 
+			// Check if the deadline is still valid and if we can reset.
 			if ( this.canRestart ) {
+
+				// Record the current visit and set the new deadline.
 				localStorage.setItem( `o-countdown-last-visit-${this.elem.id}`, Date.now().toString() );
-				this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` )! ) + parseInt( this.timer );
+				this.deadline = Date.now() + parseInt( this.timer );
 			}
 
 			break;
 
 		case 'interval':
-			this.targetDate = this.endInterval ? ( new Date( this.endInterval + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : 0;
+			this.deadline = this.endInterval ? ( new Date( this.endInterval + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : 0;
 			this.hideTime = this.startInterval ? ( new Date( this.startInterval + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : 0;
 			break;
 
 		default:
-			this.targetDate = this.rawData ?  ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : Date.now();
+			this.deadline = this.rawData ?  ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : Date.now();
 		}
 
 		this.hideOrShow( ( this.isStopped && 'hide' === this.behaviour ) || this.mustBeHidden );
@@ -242,7 +251,7 @@ class CountdownData {
 	}
 
 	get remainingTime(): number {
-		return this.targetDate - this.currentTime;
+		return this.deadline - this.currentTime;
 	}
 
 	get isStopped(): boolean {
