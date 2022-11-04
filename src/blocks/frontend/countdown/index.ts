@@ -3,6 +3,70 @@
  */
 import { domReady } from '../../helpers/frontend-helper-functions';
 
+const Base64 = {
+
+	// private property
+	_keyStr: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
+
+	// public method for encoding
+	encode: function( input: string ) {
+		let output = '';
+		let chr1, chr2, chr3, enc1, enc2, enc3, enc4;
+		let i = 0;
+
+		input = Base64.utf8Encode( input );
+
+		while ( i < input.length ) {
+
+			chr1 = input.charCodeAt( i++ );
+			chr2 = input.charCodeAt( i++ );
+			chr3 = input.charCodeAt( i++ );
+
+			enc1 = chr1 >> 2;
+			enc2 = ( ( chr1 & 3 ) << 4 ) | ( chr2 >> 4 );
+			enc3 = ( ( chr2 & 15 ) << 2 ) | ( chr3 >> 6 );
+			enc4 = chr3 & 63;
+
+			if ( isNaN( chr2 ) ) {
+				enc3 = enc4 = 64;
+			} else if ( isNaN( chr3 ) ) {
+				enc4 = 64;
+			}
+
+			output = output +
+			Base64._keyStr.charAt( enc1 ) + Base64._keyStr.charAt( enc2 ) +
+			Base64._keyStr.charAt( enc3 ) + Base64._keyStr.charAt( enc4 );
+
+		}
+
+		return output;
+	},
+
+	// private method for UTF-8 encoding
+	utf8Encode: function( string: string ) {
+		string = string.replace( /\r\n/g, '\n' );
+		let utftext = '';
+
+		for ( let n = 0; n < string.length; n++ ) {
+
+			let c = string.charCodeAt( n );
+
+			if ( 128 > c ) {
+				utftext += String.fromCharCode( c );
+			} else if ( ( 127 < c ) && ( 2048 > c ) ) {
+				utftext += String.fromCharCode( ( c >> 6 ) | 192 );
+				utftext += String.fromCharCode( ( c & 63 ) | 128 );
+			} else {
+				utftext += String.fromCharCode( ( c >> 12 ) | 224 );
+				utftext += String.fromCharCode( ( ( c >> 6 ) & 63 ) | 128 );
+				utftext += String.fromCharCode( ( c & 63 ) | 128 );
+			}
+
+		}
+
+		return utftext;
+	}
+};
 
 // Time constants
 const _MS_PER_SECONDS = 1000;
@@ -11,6 +75,9 @@ const _MS_PER_HOURS = _MS_PER_MINUTES * 60;
 const _MS_PER_DAY = _MS_PER_HOURS * 24;
 
 const COUNTDOWN_RESET = _MS_PER_DAY * 30;
+
+const LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE = `o-countdown-last-visit-time-${Base64.encode( window.location.pathname )}-`;
+const TIMER_VALUE_FROM_LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE = `o-countdown-last-visit-time-${Base64.encode( window.location.pathname )}-`;
 
 type Settings = {
 	exclude: string[]
@@ -103,22 +170,26 @@ class CountdownData {
 
 		switch ( this.mode ) {
 		case 'timer':
-			const lastVisit = localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` );
-			const lastVisitTime = localStorage.getItem( `o-countdown-last-visit-time-${this.elem.id}` );
+
+			// Record when the user was last time on this page.
+			const lastVisitTimeRecord = localStorage.getItem( `${LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE}-${this.elem.id}` );
+
+			// Record what was the timer value.
+			const timerValueRecorded = localStorage.getItem( `${TIMER_VALUE_FROM_LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE}-${this.elem.id}` );
 
 			// Set the deadling based on the last visit.
-			this.deadline = parseInt( lastVisit! ) + parseInt( this.timer );
+			this.deadline = parseInt( lastVisitTimeRecord! ) + parseInt( this.timer );
 
 			// Check if the client is first time on the page.
 			if (
-				! lastVisit ||
-				( ( parseInt( lastVisit ) + parseInt( this.timer ) - Date.now() ) > COUNTDOWN_RESET ) ||
-				lastVisitTime !== this.timer
+				! lastVisitTimeRecord ||
+				( ( parseInt( lastVisitTimeRecord ) + parseInt( this.timer ) - Date.now() ) > COUNTDOWN_RESET ) ||
+				timerValueRecorded !== this.timer
 			) {
 
 				// Record the curent visit and timer time. Set a new deadline.
-				localStorage.setItem( `o-countdown-last-visit-${this.elem.id}`, Date.now().toString() );
-				localStorage.setItem( `o-countdown-last-visit-time-${this.elem.id}`, this.timer );
+				localStorage.setItem( `${LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE}-${this.elem.id}`, Date.now().toString() );
+				localStorage.setItem( `${TIMER_VALUE_FROM_LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE}-${this.elem.id}`, this.timer );
 				this.deadline = Date.now() + parseInt( this.timer );
 			}
 
@@ -127,7 +198,7 @@ class CountdownData {
 			if ( this.canRestart ) {
 
 				// Record the current visit and set the new deadline.
-				localStorage.setItem( `o-countdown-last-visit-${this.elem.id}`, Date.now().toString() );
+				localStorage.setItem( `${LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE}--${this.elem.id}`, Date.now().toString() );
 				this.deadline = Date.now() + parseInt( this.timer );
 			}
 
