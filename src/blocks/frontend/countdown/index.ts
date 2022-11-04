@@ -15,7 +15,7 @@ const _MS_PER_DAY = _MS_PER_HOURS * 24;
 
 const COUNTDOWN_RESET = _MS_PER_DAY * 30;
 
-const LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE = `o-countdown-last-visit-time-${ toBase64( window.location.pathname ) }-`;
+const LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE = `o-countdown-last-visit-${ toBase64( window.location.pathname ) }-`;
 const TIMER_VALUE_FROM_LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE = `o-countdown-last-visit-time-${ toBase64( window.location.pathname ) }-`;
 
 type Settings = {
