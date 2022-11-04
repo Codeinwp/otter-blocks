@@ -14,6 +14,8 @@ Otter is a dynamic collection of page building blocks and templates for the Word
 
 Otter is a Gutenberg Blocks page builder plugin that adds extra functionality to the WordPress Block Editor (also known as Gutenberg) for a better page building experience without the need for traditional page builders like Elementor and Divi.
 
+### [See the Otter Blocks in action](https://demo.themeisle.com/otter-blocks/) | [Documentation](https://docs.themeisle.com/article/1478-otter-blocks-documentation) | [Otter Pro](https://themeisle.com/plugins/otter-blocks/upgrade/)
+
 Otter Blocks Plugin not only adds extra custom blocks for Gutenberg, but it also adds extra functionality such as Custom CSS, Animations and Visibility Conditions to default or third party blocks present on your website. 
 
 The Custom CSS block feature makes it possible to directly customize the CSS properties of any Gutenberg block on the page, while the Animation feature makes it quick and easy to add animations to any block to enhance the appeal of your different page blocks and sections. With the Visibility Conditions feature by Otter, you can set which conditions should be met for your chosen blocks to be displayed on the page.
@@ -205,6 +207,14 @@ You can check Otter documentation [here](https://docs.themeisle.com/article/1478
 5. Section Block
 
 == Changelog ==
+
+##### [Version 2.1.1](https://github.com/Codeinwp/otter-blocks/compare/v2.1.0...v2.1.1) (2022-11-01)
+
+- Fix Media Modal not appearing properly if used inside a Popup
+- Fix Sharing Block CSS not being generated
+
+
+
 
 #### [Version 2.1.0](https://github.com/Codeinwp/otter-blocks/compare/v2.0.16...v2.1.0) (2022-10-19)
 

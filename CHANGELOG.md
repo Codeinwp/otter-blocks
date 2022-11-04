@@ -1,3 +1,8 @@
+##### [Version 2.1.1](https://github.com/Codeinwp/otter-blocks/compare/v2.1.0...v2.1.1) (2022-11-01)
+
+- Fix Media Modal not appearing properly if used inside a Popup
+- Fix Sharing Block CSS not being generated
+
 #### [Version 2.1.0](https://github.com/Codeinwp/otter-blocks/compare/v2.0.16...v2.1.0) (2022-10-19)
 
 - Add Otter Patterns
