@@ -162,6 +162,16 @@ class Block_Conditions {
 			}
 		}
 
+		if ( 'stripePurchaseHistory' === $condition['type'] ) {
+			if ( isset( $condition['product'] ) ) {
+				if ( $visibility ) {
+					return $this->has_stripe_product( $condition['product'] );
+				} else {
+					return ! $this->has_stripe_product( $condition['product'] );
+				}
+			}
+		}
+
 		return apply_filters( 'otter_blocks_evaluate_condition', true, $condition, $visibility );
 
 	}
@@ -238,6 +248,19 @@ class Block_Conditions {
 		);
 
 		return array_intersect( $categories, $used_categories ) === $categories;
+	}
+
+	/**
+	 * Check Stripe Product.
+	 *
+	 * @param string $product Selected Stripe product.
+	 *
+	 * @access public
+	 */
+	public function has_stripe_product( $product ) {
+		$stripe   = new Stripe_API();
+		$customer = $stripe->get_customer_id();
+		return true;
 	}
 
 	/**

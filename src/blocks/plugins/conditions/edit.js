@@ -30,6 +30,7 @@ import { applyFilters } from '@wordpress/hooks';
 /**
  * Internal dependencies.
  */
+import StripeControls from './components/stripe-controls';
 import PanelTab from '../../components/panel-tab/index.js';
 import Notice from '../../components/notice/index.js';
 import { setUtm } from '../../helpers/helper-functions.js';
@@ -477,7 +478,10 @@ const Edit = ({
 										) }
 
 										{ 'stripePurchaseHistory' === i.type && (
-											<Fragment></Fragment>
+											<StripeControls
+												product={ i.product }
+												onChange={ product => changeValue( product, index, n, 'product' ) }
+											/>
 										) }
 
 										{ applyFilters( 'otter.blockConditions.controls', '', index, n, i, attributes.otterConditions, setAttributes, changeValue ) }

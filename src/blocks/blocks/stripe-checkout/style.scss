@@ -46,7 +46,7 @@
         }
     }
 
-    a {
+    a:not(.wp-block-button__link) {
         width: 100%;
         background: #ED6F57;
         border-radius: 0 0 4px 4px;

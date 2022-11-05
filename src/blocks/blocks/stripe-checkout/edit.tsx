@@ -93,7 +93,7 @@ const Edit = ({
 		const prices = attributes.product ? getStripeProductPrices( attributes.product ) : [];
 
 		return {
-			prices: attributes.product ? getStripeProductPrices( attributes.product ) : [],
+			prices,
 			pricesList: prices ? prices?.map( ( prices: Price ) => {
 				return {
 					label: `${ prices?.currency } ${ prices?.unit_amount } (id:${ prices?.id })`,
