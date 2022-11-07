@@ -56,7 +56,7 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function apply_dynamic_magic_tags( $content ) {
-		if ( false === strpos( $content, '{otterDynamic?type' ) ) {
+		if ( false === strpos( $content, '{otterDynamic?' ) ) {
 			return $content;
 		}
 
@@ -542,7 +542,7 @@ class Dynamic_Content {
 		}
 
 		foreach ( explode( '&', $qry ) as $couple ) {
-			list ( $key, $val ) = explode( '=', $couple );
+			list ( $key, $val ) = array_pad( explode( '=', $couple ), 2, null );
 			$result[ $key ]     = $val;
 		}
 
