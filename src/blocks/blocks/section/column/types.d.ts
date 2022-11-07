@@ -8,6 +8,9 @@ type Attributes = {
 	margin: MarginType
 	marginTablet: MarginType
 	marginMobile: MarginType
+	color: string
+	colorHover: string
+	linkColor: string
 	backgroundType: string
 	backgroundColor: string
 	backgroundImage: MediaImageProps
@@ -16,6 +19,23 @@ type Attributes = {
 	backgroundRepeat: string
 	backgroundSize: number
 	backgroundGradient: string
+	backgroundOverlayOpacity: number
+	backgroundOverlayType: string
+	backgroundOverlayColor: string
+	backgroundOverlayImage: ImagePosition
+	backgroundOverlayAttachment: string
+	backgroundOverlayPosition: ImagePosition
+	backgroundOverlayRepeat: string
+	backgroundOverlaySize: number
+	backgroundOverlayGradient: string
+	backgroundOverlayFilterBlur: number
+	backgroundOverlayFilterBrightness: number
+	backgroundOverlayFilterContrast: number
+	backgroundOverlayFilterGrayscale: number
+	backgroundOverlayFilterHue: number
+	backgroundOverlayFilterSaturate: number
+	backgroundOverlayBlend: string
+	backgroundColorHover: string
 	border: BorderType
 	borderColor: string
 	borderRadius: BorderType
@@ -28,6 +48,7 @@ type Attributes = {
 	boxShadowVertical: number
 	columnsHTMLTag: string
 	columnWidth: number
+	verticalAlign: string
 	isSynced: string[]
 }
 
