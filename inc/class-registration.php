@@ -87,9 +87,6 @@ class Registration {
 		add_filter( 'render_block', array( $this, 'load_sticky' ), 900, 2 );
 		add_filter( 'render_block', array( $this, 'subscribe_fa' ), 10, 2 );
 
-		// phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
-		add_filter( 'upload_mimes', array( $this, 'add_dot_lottie_file_type' ) );
-
 		add_action(
 			'wp_footer',
 			static function () {
@@ -99,18 +96,6 @@ class Registration {
 				}
 			}
 		);
-	}
-
-	/**
-	 * Allow .lottie files upload
-	 *
-	 * @param array $mimes Allowed mines.
-	 *
-	 * @return array
-	 */
-	public function add_dot_lottie_file_type( $mimes ) {
-		$mimes['lottie'] = 'application/zip';
-		return $mimes;
 	}
 
 	/**
