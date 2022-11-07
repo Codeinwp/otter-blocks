@@ -79,6 +79,15 @@
 
 		.wp-block-themeisle-blocks-icon-list-item {
 			width: 100%;
+			justify-content: var( --icon-align );
+
+			@media (min-width: 600px) and (max-width: 960px) {
+				justify-content: var( --icon-align-tablet );
+			}
+		
+			@media (max-width: 600px) {
+				justify-content: var( --icon-align-mobile );
+			}
 		}
 
 		&.has-divider .wp-block-themeisle-blocks-icon-list-item:not(:last-child)::after {

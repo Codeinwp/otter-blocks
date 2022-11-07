@@ -134,7 +134,7 @@ const Inspector = ({
 									value={ responsiveGetAttributes([ attributes.horizontalAlign, attributes.alignmentTablet, attributes.alignmentMobile  ]) ?? 'flex-start' }
 									onChange={ ( value ) => {
 										responsiveSetAttributes(
-											'flex-start' === value ? undefined : value,
+											value,
 											[ 'horizontalAlign', 'alignmentTablet', 'alignmentMobile' ]
 										);
 									} }
@@ -158,12 +158,13 @@ const Inspector = ({
 									hasIcon={ true }
 								/>
 
-								<ToggleControl
-									label={ __( 'Hide Labels', 'otter-blocks' ) }
-									checked={ Boolean( attributes.hideLabels ) }
-									onChange={ () => setAttributes({ hideLabels: ! attributes.hideLabels }) }
-								/>
 							</ResponsiveControl>
+
+							<ToggleControl
+								label={ __( 'Hide Labels', 'otter-blocks' ) }
+								checked={ Boolean( attributes.hideLabels ) }
+								onChange={ () => setAttributes({ hideLabels: ! attributes.hideLabels }) }
+							/>
 
 						</PanelBody>
 						<PanelBody
