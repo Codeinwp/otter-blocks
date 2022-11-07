@@ -49,6 +49,13 @@ domReady( () => {
 		}
 
 		if ( 'hover' === trigger ) {
+			animation.addEventListener( 'mouseover', () => {
+				animation.play();
+			});
+
+			animation.addEventListener( 'mouseout', () => {
+				animation.stop();
+			});
 			initAnimation( animation );
 			return -1 === animation.__direction ? animation.pause() : animation.stop();
 		}

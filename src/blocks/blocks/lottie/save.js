@@ -30,8 +30,8 @@ const Save = ({
 	}
 
 	return cloneElement( LottieElement, {
-		autoplay: ! attributes.trigger || 'none' === attributes.trigger,
-		loop: attributes.loop,
+		autoplay: true,
+		loop: true,
 		count: attributes.direction ? attributes.count * -1 : attributes.count,
 		speed: attributes.speed,
 		direction: attributes.direction ? -1 : 1,

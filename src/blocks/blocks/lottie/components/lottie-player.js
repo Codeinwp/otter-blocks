@@ -22,6 +22,11 @@ const LottiePlayer = ({
 					playerRef.current.addEventListener( 'complete', initLoop );
 				}
 			});
+			copyScriptAssetToIframe( '#dotlottie-player-js', () => {
+				if ( ! isEmpty( attributes.file ) && attributes.loop && null !== playerRef.current ) {
+					playerRef.current.addEventListener( 'complete', initLoop );
+				}
+			});
 		} else {
 			if ( ! isEmpty( attributes.file ) && attributes.loop && null !== playerRef.current ) {
 				playerRef.current.addEventListener( 'complete', initLoop );
