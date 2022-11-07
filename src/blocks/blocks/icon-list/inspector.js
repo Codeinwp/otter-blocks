@@ -4,15 +4,12 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	__experimentalColorGradientControl as ColorGradientControl,
 	InspectorControls,
-	PanelColorSettings,
-	ContrastChecker
+	PanelColorSettings
 } from '@wordpress/block-editor';
 
 import {
 	PanelBody,
-	RangeControl,
 	FontSizePicker,
 	__experimentalUnitControl as UnitControl,
 	BaseControl,
@@ -23,7 +20,6 @@ import {
 
 import {
 	Fragment,
-	lazy,
 	Suspense,
 	useState
 } from '@wordpress/element';
