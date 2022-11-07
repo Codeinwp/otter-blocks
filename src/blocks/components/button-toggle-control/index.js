@@ -18,7 +18,7 @@ import {
  */
 import './editor.scss';
 
-const ButtonToggle = ({
+const ButtonToggleControl = ({
 	label,
 	help,
 	options,
@@ -55,4 +55,4 @@ const ButtonToggle = ({
 	);
 };
 
-export default ButtonToggle;
+export default ButtonToggleControl;

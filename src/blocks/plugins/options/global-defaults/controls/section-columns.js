@@ -4,10 +4,10 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	BaseControl,
 	__experimentalBoxControl as BoxControl,
-	PanelBody,
-	RangeControl
+	__experimentalUnitControl as UnitContol,
+	BaseControl,
+	PanelBody
 } from '@wordpress/components';
 
 import { useSelect } from '@wordpress/data';
@@ -17,8 +17,12 @@ import { Fragment } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import ResponsiveControl from '../../../../components/responsive-control/index.js';
-import ToogleGroupControl from '../../../../components/toogle-group-control/index.js';
+import {
+	ClearButton,
+	ResponsiveControl,
+	ToogleGroupControl
+} from '../../../../components/index.js';
+
 import { isNullObject } from '../../../../helpers/helper-functions.js';
 
 const SectionColumns = ({
@@ -107,11 +111,35 @@ const SectionColumns = ({
 		}
 	};
 
+	const getColumnsWidth = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return defaults.columnsWidth;
+		case 'Tablet':
+			return defaults.columnsWidthTablet;
+		case 'Mobile':
+			return defaults.columnsWidthMobile;
+		default:
+			return undefined;
+		}
+	};
+
 	const changeColumnsWidth = value => {
-		if ( ( 0 <= value && 2400 >= value ) || undefined === value ) {
-			changeConfig( blockName, {
+		switch ( getView ) {
+		case 'Desktop':
+			return changeConfig( blockName, {
 				columnsWidth: value
 			});
+		case 'Tablet':
+			return changeConfig( blockName, {
+				columnsWidthTablet: value
+			});
+		case 'Mobile':
+			return changeConfig( blockName, {
+				columnsWidthMobile: value
+			});
+		default:
+			return undefined;
 		}
 	};
 
@@ -164,14 +192,18 @@ const SectionColumns = ({
 				title={ __( 'Section Structure', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<RangeControl
+				<ResponsiveControl
 					label={ __( 'Maximum Content Width', 'otter-blocks' ) }
-					value={ defaults.columnsWidth || '' }
-					allowReset
-					onChange={ changeColumnsWidth }
-					step={ 0.1 }
-					min={ 0 }
-					max={ 2400 }
+				>
+					<UnitContol
+						value={ getColumnsWidth() }
+						onChange={ changeColumnsWidth }
+					/>
+				</ResponsiveControl>
+
+				<ClearButton
+					values={[ 'columnsWidth', 'columnsWidthTablet', 'columnsWidthMobile' ]}
+					setAttributes={ value => changeConfig( blockName, value ) }
 				/>
 
 				{ defaults.columnsWidth && (
@@ -198,6 +230,7 @@ const SectionColumns = ({
 								}
 							]}
 							onChange={ align => changeHorizontalAlign( align ) }
+							hasIcon
 						/>
 					</BaseControl>
 				) }

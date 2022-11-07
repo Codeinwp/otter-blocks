@@ -276,6 +276,7 @@ const Inspector = ({
 									}
 								]}
 								onChange={ textAlign => setAttributes({ textAlign }) }
+								hasIcon
 							/>
 						</BaseControl>
 					</PanelBody>

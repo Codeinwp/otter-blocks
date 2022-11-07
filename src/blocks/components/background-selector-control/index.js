@@ -3,17 +3,17 @@
  */
 import { __ } from '@wordpress/i18n';
 
+import { trash } from '@wordpress/icons';
+
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
-	MediaPlaceholder
+	MediaPlaceholder,
+	MediaReplaceFlow
 } from '@wordpress/block-editor';
 
 import {
-	Button,
-	ButtonGroup,
 	FocalPointPicker,
-	Icon,
-	PanelRow,
+	MenuItem,
 	SelectControl
 } from '@wordpress/components';
 
@@ -25,8 +25,8 @@ import { Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import './editor.scss';
-import { barcodeIcon } from '../../helpers/icons.js';
 import ControlPanelControl from '../control-panel-control/index.js';
+import ToogleGroupControl from '../toogle-group-control/index.js';
 
 const BackgroundSelectorControl = ({
 	backgroundType,
@@ -53,36 +53,24 @@ const BackgroundSelectorControl = ({
 
 	return (
 		<div id={ id } className="components-base-control o-background-selector-control">
-			<div className="components-base-control__field">
-				<div className="components-base-control__title">
-					<label className="components-base-control__label">{ __( 'Background Type', 'otter-blocks' ) }</label>
-					<ButtonGroup className="linking-controls">
-						<Button
-							icon={ 'admin-customizer' }
-							label={ __( 'Color', 'otter-blocks' ) }
-							showTooltip={ true }
-							isPrimary={ 'color' === backgroundType }
-							onClick={ () => changeBackgroundType( 'color' ) }
-						/>
-
-						<Button
-							icon={ 'format-image' }
-							label={ __( 'Image', 'otter-blocks' ) }
-							showTooltip={ true }
-							isPrimary={ 'image' === backgroundType }
-							onClick={ () => changeBackgroundType( 'image' ) }
-						/>
-
-						<Button
-							icon={ () => <Icon icon={ barcodeIcon } /> }
-							label={ __( 'Gradient', 'otter-blocks' ) }
-							showTooltip={ true }
-							isPrimary={ 'gradient' === backgroundType }
-							onClick={ () => changeBackgroundType( 'gradient' ) }
-						/>
-					</ButtonGroup>
-				</div>
-			</div>
+			<ToogleGroupControl
+				value={ backgroundType }
+				options={[
+					{
+						label: __( 'Color', 'otter-blocks' ),
+						value: 'color'
+					},
+					{
+						label: __( 'Image', 'otter-blocks' ),
+						value: 'image'
+					},
+					{
+						label: __( 'Gradient', 'otter-blocks' ),
+						value: 'gradient'
+					}
+				]}
+				onChange={ changeBackgroundType }
+			/>
 
 			{
 				( 'color' === backgroundType || undefined === backgroundType ) && (
@@ -105,6 +93,22 @@ const BackgroundSelectorControl = ({
 								onDrag={ changeFocalPoint }
 								onChange={ changeFocalPoint }
 							/>
+
+							<MediaReplaceFlow
+								name={ __( 'Manage Image', 'otter-blocks' ) }
+								mediaURL={ image.url }
+								mediaId={ image?.id }
+								accept="image/*"
+								allowedTypes={ [ 'image' ] }
+								onSelect={ changeImage }
+							>
+								<MenuItem
+									icon={ trash }
+									onClick={ removeImage }
+								>
+									{ __( 'Clear Image', 'otter-blocks' ) }
+								</MenuItem>
+							</MediaReplaceFlow>
 
 							<ControlPanelControl
 								label={ __( 'Background Settings', 'otter-blocks' ) }
@@ -141,29 +145,23 @@ const BackgroundSelectorControl = ({
 									onChange={ changeBackgroundSize }
 								/>
 							</ControlPanelControl>
-
-							<PanelRow>
-								<Button
-									isSmall
-									isSecondary
-									onClick={ removeImage }
-								>
-									{ __( 'Clear Image', 'otter-blocks' ) }
-								</Button>
-							</PanelRow>
 						</Fragment>
 					) : (
-						<MediaPlaceholder
-							icon="format-image"
-							labels={ {
-								title: __( 'Background Image', 'otter-blocks' ),
-								name: __( 'an image', 'otter-blocks' )
-							} }
-							value={ image?.id }
-							onSelect={ changeImage }
-							accept="image/*"
-							allowedTypes={ [ 'image' ] }
-						/>
+						<Fragment>
+							<br />
+
+							<MediaPlaceholder
+								icon="format-image"
+								labels={ {
+									title: __( 'Background Image', 'otter-blocks' ),
+									name: __( 'an image', 'otter-blocks' )
+								} }
+								value={ image?.id }
+								onSelect={ changeImage }
+								accept="image/*"
+								allowedTypes={ [ 'image' ] }
+							/>
+						</Fragment>
 					)
 				)
 			}

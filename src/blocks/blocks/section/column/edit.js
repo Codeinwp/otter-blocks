@@ -31,6 +31,7 @@ import {
  */
 import metadata from './block.json';
 import layouts from '../layouts.js';
+import Controls from './controls.js';
 import Inspector from './inspector.js';
 import {
 	blockInit,
@@ -157,8 +158,7 @@ const Edit = ({
 
 	const Tag = attributes.columnsHTMLTag;
 
-	let background, borderStyle, borderRadiusStyle, boxShadowStyle;
-
+	let background, overlayBackground, borderStyle, borderRadiusStyle, boxShadowStyle;
 
 	let	stylesheet = {
 		paddingTop: getValue( 'padding' )?.top,
@@ -203,13 +203,13 @@ const Edit = ({
 
 	if ( 'color' === attributes.backgroundType ) {
 		background = {
-			backgroundColor: attributes.backgroundColor
+			'--background': attributes.backgroundColor
 		};
 	}
 
 	if ( 'image' === attributes.backgroundType ) {
 		background = {
-			backgroundImage: `url( '${ attributes.backgroundImage?.url }' )`,
+			'--background': `url( '${ attributes.backgroundImage?.url }' )`,
 			backgroundAttachment: attributes.backgroundAttachment,
 			backgroundPosition: `${ Math.round( attributes.backgroundPosition?.x * 100 ) }% ${ Math.round( attributes.backgroundPosition?.y * 100 ) }%`,
 			backgroundRepeat: attributes.backgroundRepeat,
@@ -219,7 +219,7 @@ const Edit = ({
 
 	if ( 'gradient' === attributes.backgroundType ) {
 		background = {
-			backgroundImage: attributes.backgroundGradient
+			'--background': attributes.backgroundGradient
 		};
 	}
 
@@ -249,13 +249,61 @@ const Edit = ({
 		};
 	}
 
+	const verticalAlignValues = {
+		top: 'flex-start',
+		center: 'center',
+		bottom: 'flex-end'
+	};
+
 	const style = {
 		flexBasis: `${ attributes.columnWidth }%`,
 		...stylesheet,
 		...background,
 		...borderStyle,
 		...borderRadiusStyle,
-		...boxShadowStyle
+		...boxShadowStyle,
+		'--content-color': attributes.color,
+		'--link-color': attributes.linkColor,
+		'--content-color-hover': attributes.colorHover,
+		'--background-color-hover': attributes.backgroundColorHover
+	};
+
+	if ( attributes.verticalAlign ) {
+		style.alignItems = verticalAlignValues[ attributes.verticalAlign ];
+	}
+
+	if ( 'color' === attributes.backgroundOverlayType ) {
+		overlayBackground = {
+			background: attributes.backgroundOverlayColor,
+			opacity: attributes.backgroundOverlayOpacity / 100
+		};
+	}
+
+	if ( 'image' === attributes.backgroundOverlayType ) {
+		overlayBackground = {
+			backgroundImage: `url( '${ attributes.backgroundOverlayImage?.url }' )`,
+			backgroundAttachment: attributes.backgroundOverlayAttachment,
+			backgroundPosition: `${ Math.round( attributes.backgroundOverlayPosition?.x * 100 ) }% ${ Math.round( attributes.backgroundOverlayPosition?.y * 100 ) }%`,
+			backgroundRepeat: attributes.backgroundOverlayRepeat,
+			backgroundSize: attributes.backgroundOverlaySize,
+			opacity: attributes.backgroundOverlayOpacity / 100
+		};
+	}
+
+	if ( 'gradient' === attributes.backgroundOverlayType ) {
+		overlayBackground = {
+			background: attributes.backgroundOverlayGradient,
+			opacity: attributes.backgroundOverlayOpacity / 100
+		};
+	}
+
+	const showShouldOverlay = ( 'color' === attributes.backgroundOverlayType && attributes.backgroundOverlayColor ) || ( 'image' === attributes.backgroundOverlayType && attributes.backgroundOverlayImage?.url ) || ( 'gradient' === attributes.backgroundOverlayType && attributes.backgroundOverlayGradient );
+
+	const overlayStyle = {
+		...overlayBackground,
+		...borderRadiusStyle,
+		mixBlendMode: attributes.backgroundOverlayBlend,
+		filter: `blur( ${ attributes.backgroundOverlayFilterBlur / 10 }px ) brightness( ${ attributes.backgroundOverlayFilterBrightness / 10 } ) contrast( ${ attributes.backgroundOverlayFilterContrast / 10 } ) grayscale( ${ attributes.backgroundOverlayFilterGrayscale / 100 } ) hue-rotate( ${ attributes.backgroundOverlayFilterHue }deg ) saturate( ${ attributes.backgroundOverlayFilterSaturate / 10 } )`
 	};
 
 	const blockProps = useBlockProps({
@@ -265,6 +313,11 @@ const Edit = ({
 
 	return (
 		<Fragment>
+			<Controls
+				attributes={ attributes }
+				setAttributes={ setAttributes }
+			/>
+
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
@@ -277,6 +330,14 @@ const Edit = ({
 			/>
 
 			<Tag { ...blockProps }>
+				{ showShouldOverlay && (
+					<div
+						className="wp-block-themeisle-blocks-advanced-column-overlay"
+						style={ overlayStyle }
+					>
+					</div>
+				) }
+
 				<InnerBlocks
 					templateLock={ false }
 					renderAppender={ ! hasInnerBlocks && InnerBlocks.ButtonBlockAppender }

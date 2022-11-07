@@ -100,7 +100,7 @@ const SyncControlDropdown = ({
 
 	return (
 		<HStack className="o-sync-manage-control">
-			<Heading>{ __( 'Manage Global Sync', 'otter-blocks' ) }</Heading>
+			<Heading>{ __( 'Sync with Global Defaults', 'otter-blocks' ) }</Heading>
 
 			<DropdownMenu
 				icon={ moreVertical }
@@ -110,7 +110,7 @@ const SyncControlDropdown = ({
 				{ ({ onClose = noop }) => (
 					<Fragment>
 						<MenuGroup>
-							{ options.map( option => {
+							{ options.filter( option => ! option?.isHidden ).map( option => {
 								const isSelected = isSynced.includes( option.value );
 
 								return (
