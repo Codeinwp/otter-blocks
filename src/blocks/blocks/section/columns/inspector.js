@@ -82,7 +82,7 @@ const Inspector = ({
 
 	const { responsiveSetAttributes } = useResponsiveAttributes( setAttributes );
 
-	const [ tab, setTab ] = useState( 'layout' );
+	const [ tab, setTab ] = useState( 'settings' );
 
 	const changeColumns = value => {
 		if ( 6 >= value ) {
@@ -503,8 +503,8 @@ const Inspector = ({
 					value={ tab }
 					options={[
 						{
-							label: __( 'Layout', 'otter-blocks' ),
-							value: 'layout'
+							label: __( 'Settings', 'otter-blocks' ),
+							value: 'settings'
 						},
 						{
 							label: __( 'Style', 'otter-blocks' ),
@@ -514,7 +514,7 @@ const Inspector = ({
 					onChange={ setTab }
 				/>
 
-				{ 'layout' === tab && (
+				{ 'settings' === tab && (
 
 					<Fragment>
 						<PanelBody

@@ -48,11 +48,20 @@
 
         @media (min-width: 782px) {
             margin-top: -60px !important;
-            margin-right: 156px !important;
         }
 
         .block-editor-color-gradient-control__color-indicator {
             display: none;
+        }
+    }
+}
+
+body:not( .branch-6-1 ) {
+    .o-color-dropdown-control-content {
+        .components-popover__content {
+            @media (min-width: 782px) {
+                margin-right: 156px !important;
+            }
         }
     }
 }
