@@ -9,7 +9,7 @@ const Save = ({
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
-		src: attributes.file ? attributes.file.url : '',
+		...( attributes.file.url.endsWith( '.lottie' ) ? { 'data-src': attributes.file ? attributes.file.url : '' } : { src: attributes.file ? attributes.file.url : '' }),
 		width: attributes.width
 	});
 

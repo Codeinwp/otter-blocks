@@ -4,7 +4,8 @@
 import { domReady } from '../../helpers/frontend-helper-functions.js';
 
 domReady( () => {
-	const animations = document.querySelectorAll( '.wp-block-themeisle-blocks-lottie' );
+	const lottieAmin = document.querySelectorAll( 'lottie-player.wp-block-themeisle-blocks-lottie' );
+	const dotLottieAnim = document.querySelectorAll( 'dotlottie-player.wp-block-themeisle-blocks-lottie' );
 
 	const initAnimation = animation => {
 		if ( 'false' === animation.dataset.loop ) {
@@ -32,14 +33,13 @@ domReady( () => {
 		}
 	};
 
-	const handleAnimation = e => {
-		const animation = e.target;
+	const eventAnim = animation => {
 		const trigger = animation.getAttribute( 'trigger' );
-
 		if ( 'scroll' === trigger ) {
 			return window.LottieInteractivity.create({
 				mode: 'scroll',
-				player: `#${ animation.id }`,
+				player: animation.getLottie(),
+				container: animation,
 				actions: [{
 					visibility: [ 0, 1 ],
 					type: 'seek',
@@ -49,14 +49,6 @@ domReady( () => {
 		}
 
 		if ( 'hover' === trigger ) {
-			animation.addEventListener( 'mouseover', () => {
-				animation.play();
-			});
-
-			animation.addEventListener( 'mouseout', () => {
-				animation.stop();
-			});
-
 			initAnimation( animation );
 			return -1 === animation.__direction ? animation.pause() : animation.stop();
 		}
@@ -74,9 +66,7 @@ domReady( () => {
 		return initAnimation( animation );
 	};
 
-	animations.forEach( animation => {
-		animation.addEventListener( 'load', handleAnimation );
-
+	const addStyle = animation => {
 		if ( animation.getAttribute( 'width' ) ) {
 			animation.style.height = 'auto';
 
@@ -87,5 +77,27 @@ domReady( () => {
 				animation.style.width = ( 'px' !== width.toString().slice( -2 ) ) ? `${width}px` : width;
 			}
 		}
+	};
+
+	lottieAmin.forEach( animation => {
+		animation.addEventListener( 'load', e => {
+			const animation = e.target;
+			eventAnim( animation );
+		});
+
+		addStyle( animation );
+	});
+
+	dotLottieAnim.forEach( animation => {
+		const interval = setInterval( () => {
+			if ( animation.load ) {
+				animation.load( animation.dataset.src )?.then( () => {
+					eventAnim( animation );
+				});
+
+				addStyle( animation );
+				clearInterval( interval );
+			}
+		}, 0 );
 	});
 });
