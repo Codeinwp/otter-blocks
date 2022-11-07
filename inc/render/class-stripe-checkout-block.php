@@ -38,7 +38,7 @@ class Stripe_Checkout_Block {
 
 			if ( false !== $status ) {
 				if ( 'success' === $status ) {
-					$stripe->save_customer_id( $session_id );
+					$stripe->save_customer_data( $session_id );
 					$message = isset( $attributes['successMessage'] ) ? $attributes['successMessage'] : __( 'Your payment was successful. If you have any questions, please email orders@example.com.', 'otter-blocks' );
 				} else {
 					$message = isset( $attributes['cancelMessage'] ) ? $attributes['cancelMessage'] : __( 'Your payment was unsuccessful. If you have any questions, please email orders@example.com.', 'otter-blocks' );
@@ -68,7 +68,13 @@ class Stripe_Checkout_Block {
 
 		$mode = 'recurring' === $price['type'] ? 'subscription' : 'payment';
 
-		$permalink = add_query_arg( 'stripe_session_id', '{CHECKOUT_SESSION_ID}', get_permalink() );
+		$permalink = add_query_arg(
+			array(
+				'stripe_session_id' => '{CHECKOUT_SESSION_ID}',
+				'product_id'        => $attributes['product'],
+			),
+			get_permalink() 
+		);
 
 		$session = $stripe->create_request(
 			'create_session',

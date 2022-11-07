@@ -152,8 +152,10 @@ class Stripe_API {
 	 * 
 	 * @access  public
 	 */
-	public function save_customer_id( $session_id ) {
-		if ( false !== $this->get_customer_id() || ! is_user_logged_in() ) {
+	public function save_customer_data( $session_id ) {
+		$user_id = get_current_user_id();
+
+		if ( ! $user_id ) {
 			return;
 		}
 
@@ -163,13 +165,34 @@ class Stripe_API {
 			return;
 		}
 
-		$customer = $session['customer'];
+		$data = $this->get_customer_data();
+		$id   = hash( 'md4', $session_id );
+		$ids  = array_column( $data, 'id' );
 
-		$user_id = get_current_user_id();
-
-		if ( empty( get_user_meta( $user_id, 'o_stripe_customer_id', true ) ) ) {
-			update_user_meta( $user_id, 'o_stripe_customer_id', $customer );
+		if ( in_array( $id, $ids ) ) {
+			return;
 		}
+
+		$mode = $session['mode'];
+
+		$object = array(
+			'id'   => $id,
+			'mode' => $mode,
+		);
+
+		if ( 'subscription' === $mode && isset( $session['subscription'] ) && ! empty( $session['subscription'] ) ) {
+			$object['subscription_id'] = $session['subscription'];
+		}
+
+		$queries = [];
+		parse_str( $session['success_url'], $queries );
+		if ( isset( $queries['product_id'] ) ) {
+			$object['product_id'] = $queries['product_id'];
+		}
+
+		array_push( $data, $object );
+
+		update_user_meta( $user_id, 'o_stripe_data', json_encode( $data ) );
 	}
 
 	/**
@@ -178,17 +201,21 @@ class Stripe_API {
 	 * @return false|string
 	 * @access  public
 	 */
-	public function get_customer_id() {
-		$customer_id = false;
-
-		if ( ! is_user_logged_in() ) {
-			return $customer_id;
-		}
+	public function get_customer_data() {
+		$data = array();
 
 		$user_id = get_current_user_id();
 
-		if ( ! empty( get_user_meta( $user_id, 'o_stripe_customer_id', true ) ) ) {
-			$customer_id = get_user_meta( $user_id, 'o_stripe_customer_id', true );
+		if ( ! $user_id ) {
+			return $data;
 		}
+
+		if ( empty( get_user_meta( $user_id, 'o_stripe_data', true ) ) ) {
+			return $data;
+		}
+
+		$data = get_user_meta( $user_id, 'o_stripe_data', true );
+
+		return json_decode( $data, true );
 	}
 }

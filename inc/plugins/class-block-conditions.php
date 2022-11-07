@@ -258,8 +258,8 @@ class Block_Conditions {
 	 * @access public
 	 */
 	public function has_stripe_product( $product ) {
-		$stripe   = new Stripe_API();
-		$customer = $stripe->get_customer_id();
+		// $stripe   = new Stripe_API();
+		// $customer = $stripe->get_customer_id();
 		return true;
 	}
 
