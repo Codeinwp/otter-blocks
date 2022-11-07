@@ -56,6 +56,7 @@ domReady( () => {
 			animation.addEventListener( 'mouseout', () => {
 				animation.stop();
 			});
+
 			initAnimation( animation );
 			return -1 === animation.__direction ? animation.pause() : animation.stop();
 		}

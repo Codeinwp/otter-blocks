@@ -86,6 +86,8 @@ class Registration {
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_block_assets' ) );
 		add_filter( 'render_block', array( $this, 'load_sticky' ), 900, 2 );
 		add_filter( 'render_block', array( $this, 'subscribe_fa' ), 10, 2 );
+
+		// phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
 		add_filter( 'upload_mimes', array( $this, 'add_dot_lottie_file_type' ) );
 
 		add_action(
