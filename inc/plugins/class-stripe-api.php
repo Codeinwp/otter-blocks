@@ -36,10 +36,6 @@ class Stripe_API {
 	public function __construct() {
 		$api_key      = get_option( 'themeisle_stripe_api_key' );
 		$this->stripe = new StripeClient( $api_key );
-
-		if ( ! session_id() && ! function_exists( 'is_wpcom_vip' ) ) { // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.session_session_id
-			session_start(); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.session_session_start
-		}
 	}
 
 	/**
@@ -157,7 +153,7 @@ class Stripe_API {
 	 * @access  public
 	 */
 	public function save_customer_id( $session_id ) {
-		if ( false !== $this->get_customer_id() ) {
+		if ( false !== $this->get_customer_id() || ! is_user_logged_in() ) {
 			return;
 		}
 
@@ -169,16 +165,10 @@ class Stripe_API {
 
 		$customer = $session['customer'];
 
-		if ( is_user_logged_in() ) {
-			$user_id = get_current_user_id();
+		$user_id = get_current_user_id();
 
-			if ( empty( get_user_meta( $user_id, 'o_stripe_customer_id', true ) ) ) {
-				$updated = update_user_meta( $user_id, 'o_stripe_customer_id', $customer );
-			}
-		}
-
-		if ( ! function_exists( 'is_wpcom_vip' ) ) {
-			$_SESSION['o_stripe_customer_id'] = $customer; // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.session___SESSION
+		if ( empty( get_user_meta( $user_id, 'o_stripe_customer_id', true ) ) ) {
+			update_user_meta( $user_id, 'o_stripe_customer_id', $customer );
 		}
 	}
 
@@ -191,18 +181,14 @@ class Stripe_API {
 	public function get_customer_id() {
 		$customer_id = false;
 
-		if ( ! function_exists( 'is_wpcom_vip' ) && isset( $_SESSION['o_stripe_customer_id'] ) ) { //phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.session___SESSION
-			$customer_id = esc_attr( $_SESSION['o_stripe_customer_id'] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPressVIPMinimum.Variables.RestrictedVariables.session___SESSION
+		if ( ! is_user_logged_in() ) {
+			return $customer_id;
 		}
 
-		if ( is_user_logged_in() ) {
-			$user_id = get_current_user_id();
+		$user_id = get_current_user_id();
 
-			if ( ! empty( get_user_meta( $user_id, 'o_stripe_customer_id', true ) ) ) {
-				$customer_id = get_user_meta( $user_id, 'o_stripe_customer_id', true );
-			}
+		if ( ! empty( get_user_meta( $user_id, 'o_stripe_customer_id', true ) ) ) {
+			$customer_id = get_user_meta( $user_id, 'o_stripe_customer_id', true );
 		}
-
-		return $customer_id;
 	}
 }
