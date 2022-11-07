@@ -277,13 +277,20 @@ export const adaptors = {
 						text: attrs.defaultContentColor
 					},
 					font: {
-						size: addUnit( attrs.defaultSize, 'px' )
+						size: ! isNaN( attrs.defaultSize as number ) ? addUnit( attrs.defaultSize as number, 'px' ) : attrs.defaultSize as string | undefined
 					}
 				},
 				private: {
 					gap: attrs?.gap,
 					defaultIconColor: attrs?.defaultIconColor,
-					horizontalAlign: attrs?.horizontalAlign
+					horizontalAlign: attrs?.horizontalAlign,
+					alignmentTablet: attrs?.alignmentTablet,
+					alignmentMobile: attrs?.alignmentMobile,
+					hasDivider: attrs?.hasDivider,
+					dividerColor: attrs?.dividerColor,
+					dividerLength: attrs?.dividerLength,
+					dividerWidth: attrs?.dividerWidth,
+					gapIconLabel: attrs?.gapIconLabel
 				}
 			};
 		},
@@ -292,7 +299,7 @@ export const adaptors = {
 			return {
 				...storage.private,
 				defaultContentColor: s?.colors?.text,
-				defaultSize: getInt( s?.font?.size )
+				defaultSize: s?.font?.size
 			};
 		}
 	},

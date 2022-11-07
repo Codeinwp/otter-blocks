@@ -5,12 +5,15 @@ import {
 	InnerBlocks,
 	useBlockProps
 } from '@wordpress/block-editor';
+import classNames from 'classnames';
 
 const Save = ({
-	attributes
+	attributes,
+	className
 }) => {
 	const blockProps = useBlockProps.save({
-		id: attributes.id
+		id: attributes.id,
+		className: classNames( className, { 'has-divider': Boolean( attributes.hasDivider ) })
 	});
 
 	return (
