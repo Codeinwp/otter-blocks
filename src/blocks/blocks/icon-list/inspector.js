@@ -155,6 +155,7 @@ const Inspector = ({
 											value: 'flex-end'
 										}
 									]}
+									hasIcon={ true }
 								/>
 
 								<ToggleControl
