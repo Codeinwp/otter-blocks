@@ -20,6 +20,7 @@ import Controls from './controls.js';
 import Inspector from './inspector.js';
 import { _px } from '../../helpers/helper-functions';
 import classNames from 'classnames';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -39,8 +40,10 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
+	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
+
 	const inlineStyles = {
-		'--icon-align': attributes.horizontalAlign,
+		'--icon-align': responsiveGetAttributes([ attributes.horizontalAlign, attributes.alignmentTablet, attributes.alignmentMobile  ]),
 		'--icon-align-tablet': attributes.alignmentTablet,
 		'--icon-align-mobile': attributes.alignmentMobile,
 		'--gap': _px( attributes.gap ),
