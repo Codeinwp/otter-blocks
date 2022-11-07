@@ -39,6 +39,7 @@ import Inspector from './inspector.js';
 import googleFontsLoader from '../../helpers/google-fonts.js';
 import { boxValues, _px } from '../../helpers/helper-functions';
 import { makeBox } from '../../plugins/copy-paste/utils';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -99,6 +100,8 @@ const Edit = ({
 	const changeContent = value => {
 		setAttributes({ content: value });
 	};
+
+	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
 
 	const oldPaddingDesktop = 'unlinked' === attributes.paddingType ? ({

@@ -348,8 +348,8 @@ const Inspector = ({
 											responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
 										} }
 									/>
-									<BoxControl
 
+									<BoxControl
 										label={ __( 'Margin', 'otter-blocks' ) }
 										values={
 											responsiveGetAttributes([
