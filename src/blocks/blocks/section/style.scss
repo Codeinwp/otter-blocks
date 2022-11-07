@@ -29,9 +29,11 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 }
 
 .wp-block-themeisle-blocks-advanced-columns {
+	--background: transparent;
 	--columns-width: initial;
 	--horizontal-align: unset;
 
+	background: var( --background );
 	justify-content: var( --horizontal-align );
 
 	.wp-themeisle-block-overlay,
@@ -48,6 +50,36 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	}
 
 	.wp-block-themeisle-blocks-advanced-column {
+		--background: transparent;
+		--background-color-hover: var( --background );
+		--text-color: var( --content-color, inherit );
+		--link-color: inherit;
+		--text-color-hover: var( --content-color-hover, inherit );
+
+		color: var( --text-color );
+		background: var( --background );
+
+		&:hover {
+			color: var( --text-color-hover );
+			background: var( --background-color-hover );
+		}
+
+		> * {
+			position: relative;
+		}
+	
+		a {
+			color: var( --link-color );
+		}
+
+		.wp-block-themeisle-blocks-advanced-column-overlay {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+		}
+
 		.wp-block-themeisle-blocks-slider {
 			display: grid;
 		}
@@ -449,6 +481,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 			display: flex;
 			flex-basis: 100%;
 			word-break: keep-all;
+			max-width: var( --columns-width );
 
 			.wp-block-themeisle-blocks-advanced-column {
 				position: relative;

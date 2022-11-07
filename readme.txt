@@ -2,7 +2,7 @@
 Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1, arinat, uriahs-victor, john_pixle, wildmisha, irinelenache
 Tags: gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder
 Requires at least: 5.8
-Tested up to: 6.0
+Tested up to: 6.1
 Requires PHP: 5.4
 Stable tag: trunk
 License: GPLv3
@@ -13,6 +13,8 @@ Otter is a dynamic collection of page building blocks and templates for the Word
 == Description ==
 
 Otter is a Gutenberg Blocks page builder plugin that adds extra functionality to the WordPress Block Editor (also known as Gutenberg) for a better page building experience without the need for traditional page builders like Elementor and Divi.
+
+### [See the Otter Blocks in action](https://demo.themeisle.com/otter-blocks/) | [Documentation](https://docs.themeisle.com/article/1478-otter-blocks-documentation) | [Otter Pro](https://themeisle.com/plugins/otter-blocks/upgrade/)
 
 Otter Blocks Plugin not only adds extra custom blocks for Gutenberg, but it also adds extra functionality such as Custom CSS, Animations and Visibility Conditions to default or third party blocks present on your website. 
 
@@ -205,6 +207,14 @@ You can check Otter documentation [here](https://docs.themeisle.com/article/1478
 5. Section Block
 
 == Changelog ==
+
+##### [Version 2.1.1](https://github.com/Codeinwp/otter-blocks/compare/v2.1.0...v2.1.1) (2022-11-01)
+
+- Fix Media Modal not appearing properly if used inside a Popup
+- Fix Sharing Block CSS not being generated
+
+
+
 
 #### [Version 2.1.0](https://github.com/Codeinwp/otter-blocks/compare/v2.0.16...v2.1.0) (2022-10-19)
 

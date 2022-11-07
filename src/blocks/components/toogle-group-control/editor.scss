@@ -10,21 +10,6 @@
 	&.has-icon {
 		margin-left: 0px;
 		margin-right: 0px;
-
-		.components-button {
-			&.is-primary {
-				color: #fff;
-				background-color: #000;
-				box-shadow: none;
-				border-radius: 0;
-			}
-
-			&.is-secondary {
-				color: #000;
-				box-shadow: none;
-				border-radius: 0px;
-			}
-		}
 	}
 
 	.o-toggle-option {
@@ -53,7 +38,10 @@
 			}
 
 			&.is-primary {
-				background: #2f2f2f;
+				color: #fff;
+				background-color: #000;
+				box-shadow: none;
+				border-radius: 0;
 
 				.dashicon {
 					color: #fff;
@@ -62,6 +50,12 @@
 				svg {
 					fill: #fff;
 				}
+			}
+
+			&.is-secondary {
+				color: #000;
+				box-shadow: none;
+				border-radius: 0px;
 			}
 		}
 	}

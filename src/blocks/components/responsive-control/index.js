@@ -3,6 +3,12 @@
  */
 import classnames from 'classnames';
 
+import {
+	desktop,
+	mobile,
+	tablet
+} from '@wordpress/icons';
+
 /**
  * WordPress dependencies
  */
@@ -10,8 +16,8 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	Button,
-	Dropdown,
-	Icon
+	ButtonGroup,
+	Dropdown
 } from '@wordpress/components';
 
 import {
@@ -28,8 +34,6 @@ import {
  * Internal dependencies
  */
 import './editor.scss';
-
-import { checkIcon } from '../../helpers/icons.js';
 
 const ResponsiveControl = ({
 	label,
@@ -72,7 +76,6 @@ const ResponsiveControl = ({
 		>
 			<div className="components-base-control__field">
 				<div className="components-base-control__title">
-					<label className="components-base-control__label" style={ ! window?.themeisleGutenberg?.isLegacyPre59 ? { textTransform: 'uppercase' } : {} }>{ label }</label>
 					<div className="floating-controls">
 						<Dropdown
 							position="top left"
@@ -133,6 +136,35 @@ const ResponsiveControl = ({
 								</div>
 							) }
 						/>
+						<label className="components-base-control__label" style={ ! window?.themeisleGutenberg?.isLegacyPre59 ? { textTransform: 'uppercase' } : {} }>{ label }</label>
+						<div className="o-responsive-buttons">
+							<ButtonGroup>
+								<Button
+									icon={ desktop }
+									label={ __( 'Desktop' ) }
+									onClick={ () => setView( 'Desktop' ) }
+									className={ classnames({
+										'is-selected': 'Desktop' === getView
+									}) }
+								/>
+								<Button
+									icon={ tablet }
+									label={ __( 'Tablet' ) }
+									onClick={ () => setView( 'Tablet' ) }
+									className={ classnames({
+										'is-selected': 'Tablet' === getView
+									}) }
+								/>
+								<Button
+									icon={ mobile }
+									label={ __( 'Mobile' ) }
+									onClick={ () => setView( 'Mobile' ) }
+									className={ classnames({
+										'is-selected': 'Mobile' === getView
+									}) }
+								/>
+							</ButtonGroup>
+						</div>
 					</div>
 				</div>
 				{ children }

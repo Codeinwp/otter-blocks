@@ -50,8 +50,10 @@ const ToogleGroupControl = ({
 							icon={ option?.icon }
 							label={ option?.label }
 							onClick={ () => onChange( option?.value )}
-							showTooltip={ true }
-						/>
+							showTooltip={ hasIcon }
+						>
+							{ hasIcon ? '' : option?.label }
+						</Button>
 					</div>
 				);
 			}) }

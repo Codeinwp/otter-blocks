@@ -3,7 +3,10 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { merge, pick } from 'lodash';
+import {
+	merge,
+	pick
+} from 'lodash';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
@@ -12,9 +15,8 @@ import {
 
 import {
 	__experimentalBoxControl as BoxControl,
+	__experimentalUnitControl as UnitContol,
 	BaseControl,
-	Button,
-	ButtonGroup,
 	Disabled,
 	PanelBody,
 	ToggleControl,
@@ -33,19 +35,29 @@ import {
  * Internal dependencies
  */
 import LayoutControl from './../components/layout-control/index.js';
-import InspectorHeader from '../../../components/inspector-header/index.js';
-import { InspectorExtensions } from '../../../components/inspector-slot-fill/index.js';
-import ResponsiveControl from '../../../components/responsive-control/index.js';
-import ControlPanelControl from '../../../components/control-panel-control/index.js';
-import HTMLAnchorControl from '../../../components/html-anchor-control/index.js';
-import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
-import SyncControl from '../../../components/sync-control/index.js';
-import SyncControlDropdown from '../../../components/sync-control-dropdown/index.js';
+
 import {
 	isNullObject,
 	removeBoxDefaultValues
 } from '../../../helpers/helper-functions.js';
-import ToogleGroupControl from '../../../components/toogle-group-control/index.js';
+
+import {
+	BackgroundOverlayControl,
+	BackgroundSelectorControl,
+	ButtonDropdownControl,
+	ButtonToggleControl,
+	ClearButton,
+	ColorDropdownControl,
+	ControlPanelControl,
+	HTMLAnchorControl,
+	InspectorHeader,
+	InspectorExtensions,
+	ResponsiveControl,
+	SyncControlDropdown,
+	ToogleGroupControl
+} from '../../../components/index.js';
+
+import { useResponsiveAttributes } from '../../../helpers/utility-hooks.js';
 
 /**
  *
@@ -68,7 +80,9 @@ const Inspector = ({
 		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
 	}, []);
 
-	const [ tab, setTab ] = useState( 'layout' );
+	const { responsiveSetAttributes } = useResponsiveAttributes( setAttributes );
+
+	const [ tab, setTab ] = useState( 'settings' );
 
 	const changeColumns = value => {
 		if ( 6 >= value ) {
@@ -203,11 +217,33 @@ const Inspector = ({
 		}
 	};
 
-	const changeColumnsWidth = value => {
-		if ( ( 0 <= value && 2400 >= value ) || undefined === value ) {
-			setAttributes({ columnsWidth: value });
+	const getColumnsWidthField = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return 'columnsWidth';
+		case 'Tablet':
+			return 'columnsWidthTablet';
+		case 'Mobile':
+			return 'columnsWidthMobile';
+		default:
+			return undefined;
 		}
 	};
+
+	let getColumnsWidth = () => {
+		switch ( getView ) {
+		case 'Desktop':
+			return getValue( 'columnsWidth' );
+		case 'Tablet':
+			return getValue( 'columnsWidthTablet' ) ?? getValue( 'columnsWidth' );
+		case 'Mobile':
+			return getValue( 'columnsWidthMobile' ) ?? getValue( 'columnsWidthTablet' ) ?? getValue( 'columnsWidth' );
+		default:
+			return undefined;
+		}
+	};
+
+	getColumnsWidth = getColumnsWidth();
 
 	const changeHorizontalAlign = value => {
 		if ( attributes.horizontalAlign === value ) {
@@ -448,6 +484,18 @@ const Inspector = ({
 		}
 	};
 
+	const getBackgroundIndicator = ( type, color, image, gradient ) => {
+		if ( 'color' === type && color ) {
+			return color;
+		} else if ( 'image' === type && image ) {
+			return `url( ${ image } )`;
+		} else if ( 'gradient' === type && gradient ) {
+			return gradient;
+		}
+
+		return undefined;
+	};
+
 	return (
 		<Fragment>
 			<InspectorControls>
@@ -455,22 +503,18 @@ const Inspector = ({
 					value={ tab }
 					options={[
 						{
-							label: __( 'Layout', 'otter-blocks' ),
-							value: 'layout'
+							label: __( 'Settings', 'otter-blocks' ),
+							value: 'settings'
 						},
 						{
 							label: __( 'Style', 'otter-blocks' ),
 							value: 'style'
-						},
-						{
-							label: __( 'Advanced', 'otter-blocks' ),
-							value: 'advanced'
 						}
 					]}
 					onChange={ setTab }
 				/>
 
-				{ 'layout' === tab && (
+				{ 'settings' === tab && (
 
 					<Fragment>
 						<PanelBody
@@ -495,8 +539,167 @@ const Inspector = ({
 						</PanelBody>
 
 						<PanelBody
-							title={ __( 'Spacing', 'otter-blocks' ) }
+							title={ __( 'Section Structure', 'otter-blocks' ) }
 							initialOpen={ false }
+						>
+							<SyncControlDropdown
+								isSynced={ attributes.isSynced }
+								options={ [
+									{
+										label: __( 'Maximum Content Width', 'otter-blocks' ),
+										value: getColumnsWidthField()
+									},
+									{
+										label: __( 'Horizontal Align', 'otter-blocks' ),
+										value: 'horizontalAlign',
+										isHidden: undefined === getValue( 'columnsWidth' )
+									}
+								] }
+								setAttributes={ setAttributes }
+							/>
+
+							<Disabled
+								isDisabled={ attributes.isSynced?.includes( getColumnsWidthField() ) || false }
+								className="o-disabled"
+							>
+								<ResponsiveControl
+									label={ __( 'Maximum Content Width', 'otter-blocks' ) }
+								>
+									<UnitContol
+										value={ getColumnsWidth }
+										onChange={ value => responsiveSetAttributes( value, [ 'columnsWidth', 'columnsWidthTablet', 'columnsWidthMobile' ]) }
+									/>
+
+									<ClearButton
+										values={[ 'columnsWidth', 'columnsWidthTablet', 'columnsWidthMobile' ]}
+										setAttributes={ setAttributes }
+									/>
+								</ResponsiveControl>
+							</Disabled>
+
+							{ undefined !== getValue( 'columnsWidth' ) && (
+								<Disabled
+									isDisabled={ attributes.isSynced?.includes( 'horizontalAlign' ) || false }
+									className="o-disabled"
+								>
+									<BaseControl
+										label={ __( 'Horizontal Align', 'otter-blocks' ) }
+									>
+										<ToogleGroupControl
+											value={ getValue( 'horizontalAlign' ) }
+											options={[
+												{
+													icon: 'editor-alignleft',
+													label: __( 'Left', 'otter-blocks' ),
+													value: 'flex-start'
+												},
+												{
+													icon: 'editor-aligncenter',
+													label: __( 'Center', 'otter-blocks' ),
+													value: 'center'
+												},
+												{
+													icon: 'editor-alignright',
+													label: __( 'Right', 'otter-blocks' ),
+													value: 'flex-end'
+												}
+											]}
+											onChange={ align => changeHorizontalAlign( align ) }
+											hasIcon
+										/>
+									</BaseControl>
+								</Disabled>
+							) }
+
+							<SelectControl
+								label={ __( 'Minimum Height', 'otter-blocks' ) }
+								value={ attributes.columnsHeight }
+								options={ [
+									{ label: __( 'Default', 'otter-blocks' ), value: 'auto' },
+									{ label: __( 'Fit to Screen', 'otter-blocks' ), value: '100vh' },
+									{ label: __( 'Custom', 'otter-blocks' ), value: 'custom' }
+								] }
+								onChange={ value => setAttributes({ columnsHeight: value }) }
+							/>
+
+							{ 'custom' === attributes.columnsHeight && (
+								<ResponsiveControl
+									label={ __( 'Custom Height', 'otter-blocks' ) }
+								>
+									<UnitContol
+										value={ getColumnsHeightCustom }
+										onChange={ changeColumnsHeightCustom }
+									/>
+
+									<ClearButton
+										values={[ 'columnsHeightCustom', 'columnsHeightCustomTablet', 'columnsHeightCustomMobile' ]}
+										setAttributes={ setAttributes }
+									/>
+								</ResponsiveControl>
+							) }
+
+							<SelectControl
+								label={ __( 'HTML Tag', 'otter-blocks' ) }
+								value={ attributes.columnsHTMLTag }
+								options={ [
+									{ label: __( 'Default (div)', 'otter-blocks' ), value: 'div' },
+									{ label: 'section', value: 'section' },
+									{ label: 'header', value: 'header' },
+									{ label: 'footer', value: 'footer' },
+									{ label: 'article', value: 'article' },
+									{ label: 'main', value: 'main' }
+								] }
+								onChange={ value => setAttributes({ columnsHTMLTag: value }) }
+							/>
+						</PanelBody>
+
+						<PanelBody
+							title={ __( 'Responsive', 'otter-blocks' ) }
+							initialOpen={ false }
+						>
+							<ToggleControl
+								label={ __( 'Hide this section on Desktop devices?', 'otter-blocks' ) }
+								checked={ attributes.hide }
+								onChange={ e => changeHideStatus( e, 'Desktop' ) }
+							/>
+
+							<ToggleControl
+								label={ __( 'Hide this section on Tablet devices?', 'otter-blocks' ) }
+								checked={ attributes.hideTablet }
+								onChange={ e => changeHideStatus( e, 'Tablet' ) }
+							/>
+
+							<ToggleControl
+								label={ __( 'Hide this section on Mobile devices?', 'otter-blocks' ) }
+								checked={ attributes.hideMobile }
+								onChange={ e => changeHideStatus( e, 'Mobile' ) }
+							/>
+
+							<hr/>
+
+							{ ( ! attributes.hideTablet && 'collapsedRows' === attributes.layoutTablet ) && (
+								<ToggleControl
+									label={ __( 'Reverse Columns in Tablet devices?', 'otter-blocks' ) }
+									checked={ attributes.reverseColumnsTablet }
+									onChange={ e => changeReverseColumns( e, 'Tablet' ) }
+								/>
+							) }
+
+							{ ( ! attributes.hideMobile && 'collapsedRows' === attributes.layoutMobile ) && (
+								<ToggleControl
+									label={ __( 'Reverse Columns in Mobile devices?', 'otter-blocks' ) }
+									checked={ attributes.reverseColumnsMobile }
+									onChange={ e => changeReverseColumns( e, 'Mobile' ) }
+								/>
+							) }
+						</PanelBody>
+					</Fragment>
+
+				) || 'style' === tab && (
+
+					<Fragment>
+						<PanelBody
+							title={ __( 'Dimensions', 'otter-blocks' ) }
 						>
 							<SyncControlDropdown
 								isSynced={ attributes.isSynced }
@@ -550,227 +753,103 @@ const Inspector = ({
 						</PanelBody>
 
 						<PanelBody
-							title={ __( 'Section Structure', 'otter-blocks' ) }
+							title={ __( 'Background & Content', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
-							<SyncControl
-								field="columnsWidth"
-								isSynced={ attributes.isSynced }
-								setAttributes={ setAttributes }
+							<ColorDropdownControl
+								label={ __( 'Text', 'otter-blocks' ) }
+								colorValue={ attributes.color }
+								onColorChange={ color => setAttributes({ color }) }
+								className="is-list is-first"
+							/>
+
+							<ColorDropdownControl
+								label={ __( 'Link', 'otter-blocks' ) }
+								colorValue={ attributes.linkColor }
+								onColorChange={ linkColor => setAttributes({ linkColor }) }
+								className="is-list"
+							/>
+
+							<ButtonDropdownControl
+								label={ __( 'Background', 'otter-blocks' ) }
+								indicator={ getBackgroundIndicator( attributes.backgroundType, attributes.backgroundColor, attributes.backgroundImage?.url, attributes.backgroundGradient ) }
 							>
-								<RangeControl
-									label={ __( 'Maximum Content Width', 'otter-blocks' ) }
-									value={ getValue( 'columnsWidth' ) || '' }
-									allowReset
-									onChange={ changeColumnsWidth }
-									step={ 0.1 }
-									min={ 0 }
-									max={ 2400 }
+
+								<BackgroundSelectorControl
+									backgroundType={ attributes.backgroundType }
+									backgroundColor={ attributes.backgroundColor }
+									image={ attributes.backgroundImage }
+									gradient={ attributes.backgroundGradient }
+									focalPoint={ attributes.backgroundPosition }
+									backgroundAttachment={ attributes.backgroundAttachment }
+									backgroundRepeat={ attributes.backgroundRepeat }
+									backgroundSize={ attributes.backgroundSize }
+									changeBackgroundType={ value => setAttributes({ backgroundType: value }) }
+									changeImage={ media => {
+										setAttributes({
+											backgroundImage: pick( media, [ 'id', 'url' ])
+										});
+									}}
+									removeImage={ () => setAttributes({ backgroundImage: undefined })}
+									changeColor={ value => setAttributes({ backgroundColor: value })}
+									changeGradient={ value => setAttributes({ backgroundGradient: value }) }
+									changeBackgroundAttachment={ value => setAttributes({ backgroundAttachment: value })}
+									changeBackgroundRepeat={ value => setAttributes({ backgroundRepeat: value })}
+									changeFocalPoint={ value => setAttributes({ backgroundPosition: value }) }
+									changeBackgroundSize={ value => setAttributes({ backgroundSize: value }) }
 								/>
-							</SyncControl>
+							</ButtonDropdownControl>
 
-							{ getValue( 'columnsWidth' ) && (
-								<SyncControl
-									field="horizontalAlign"
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
-								>
-									<BaseControl
-										label={ __( 'Horizontal Align', 'otter-blocks' ) }
-									>
-										<ToogleGroupControl
-											value={ attributes.horizontalAlign }
-											options={[
-												{
-													icon: 'editor-alignleft',
-													label: __( 'Left', 'otter-blocks' ),
-													value: 'flex-start'
-												},
-												{
-													icon: 'editor-aligncenter',
-													label: __( 'Center', 'otter-blocks' ),
-													value: 'center'
-												},
-												{
-													icon: 'editor-alignright',
-													label: __( 'Right', 'otter-blocks' ),
-													value: 'flex-end'
-												}
-											]}
-											onChange={ align => changeHorizontalAlign( align ) }
-										/>
-									</BaseControl>
-								</SyncControl>
-							) }
-
-							<SelectControl
-								label={ __( 'Minimum Height', 'otter-blocks' ) }
-								value={ attributes.columnsHeight }
-								options={ [
-									{ label: __( 'Default', 'otter-blocks' ), value: 'auto' },
-									{ label: __( 'Fit to Screen', 'otter-blocks' ), value: '100vh' },
-									{ label: __( 'Custom', 'otter-blocks' ), value: 'custom' }
-								] }
-								onChange={ value => setAttributes({ columnsHeight: value }) }
-							/>
-
-							{ 'custom' === attributes.columnsHeight && (
-								<ResponsiveControl
-									label={ __( 'Custom Height', 'otter-blocks' ) }
-								>
-									<RangeControl
-										value={ getColumnsHeightCustom || '' }
-										onChange={ changeColumnsHeightCustom }
-										step={ 0.1 }
-										min={ 0 }
-										max={ 1000 }
-									/>
-								</ResponsiveControl>
-							) }
-						</PanelBody>
-					</Fragment>
-
-				) || 'style' === tab && (
-
-					<Fragment>
-						<PanelBody
-							title={ __( 'Background Settings', 'otter-blocks' ) }
-						>
-							<BackgroundSelectorControl
-								backgroundType={ attributes.backgroundType }
-								backgroundColor={ attributes.backgroundColor }
-								image={ attributes.backgroundImage }
-								gradient={ attributes.backgroundGradient }
-								focalPoint={ attributes.backgroundPosition }
-								backgroundAttachment={ attributes.backgroundAttachment }
-								backgroundRepeat={ attributes.backgroundRepeat }
-								backgroundSize={ attributes.backgroundSize }
-								changeBackgroundType={ value => setAttributes({ backgroundType: value }) }
-								changeImage={ media => {
-									setAttributes({
-										backgroundImage: pick( media, [ 'id', 'url' ])
-									});
-								}}
-								removeImage={ () => setAttributes({ backgroundImage: undefined })}
-								changeColor={ value => setAttributes({ backgroundColor: value })}
-								changeGradient={ value => setAttributes({ backgroundGradient: value }) }
-								changeBackgroundAttachment={ value => setAttributes({ backgroundAttachment: value })}
-								changeBackgroundRepeat={ value => setAttributes({ backgroundRepeat: value })}
-								changeFocalPoint={ value => setAttributes({ backgroundPosition: value }) }
-								changeBackgroundSize={ value => setAttributes({ backgroundSize: value }) }
-							/>
-						</PanelBody>
-
-						<PanelBody
-							title={ __( 'Background Overlay', 'otter-blocks' ) }
-							initialOpen={ false }
-						>
-							<BackgroundSelectorControl
-								backgroundType={ attributes.backgroundOverlayType }
-								backgroundColor={ attributes.backgroundOverlayColor }
-								image={ attributes.backgroundOverlayImage }
-								gradient={ attributes.backgroundOverlayGradient }
-								focalPoint={ attributes.backgroundOverlayPosition }
-								backgroundAttachment={ attributes.backgroundOverlayAttachment }
-								backgroundRepeat={ attributes.backgroundOverlayRepeat }
-								backgroundSize={ attributes.backgroundOverlaySize }
-								changeBackgroundType={ value => setAttributes({ backgroundOverlayType: value }) }
-								changeImage={ media => {
-									setAttributes({
-										backgroundOverlayImage: pick( media, [ 'id', 'url' ])
-									});
-								}}
-								removeImage={ () => setAttributes({ backgroundOverlayImage: undefined })}
-								changeColor={ value => setAttributes({ backgroundOverlayColor: value })}
-								changeGradient={ value => setAttributes({ backgroundOverlayGradient: value }) }
-								changeBackgroundAttachment={ value => setAttributes({ backgroundOverlayAttachment: value })}
-								changeBackgroundRepeat={ value => setAttributes({ backgroundOverlayRepeat: value })}
-								changeFocalPoint={ value => setAttributes({ backgroundOverlayPosition: value }) }
-								changeBackgroundSize={ value => setAttributes({ backgroundOverlaySize: value }) }
-							/>
-
-							<RangeControl
-								label={ __( 'Overlay Opacity', 'otter-blocks' ) }
-								value={ attributes.backgroundOverlayOpacity }
-								onChange={ value => setAttributes({ backgroundOverlayOpacity: value }) }
-								min={ 0 }
-								max={ 100 }
-							/>
-
-							<ControlPanelControl
-								label={ __( 'CSS Filters', 'otter-blocks' ) }
+							<ButtonDropdownControl
+								label={ __( 'Background Overlay', 'otter-blocks' ) }
+								indicator={ getBackgroundIndicator( attributes.backgroundOverlayType, attributes.backgroundOverlayColor, attributes.backgroundOverlayImage?.url, attributes.backgroundOverlayGradient ) }
 							>
-								<RangeControl
-									label={ __( 'Blur', 'otter-blocks' ) }
-									value={ attributes.backgroundOverlayFilterBlur }
-									onChange={ value => setAttributes({ backgroundOverlayFilterBlur: value }) }
-									min={ 0 }
-									max={ 100 }
+								<BackgroundOverlayControl
+									backgroundType={ attributes.backgroundOverlayType }
+									backgroundColor={ attributes.backgroundOverlayColor }
+									image={ attributes.backgroundOverlayImage }
+									gradient={ attributes.backgroundOverlayGradient }
+									focalPoint={ attributes.backgroundOverlayPosition }
+									backgroundAttachment={ attributes.backgroundOverlayAttachment }
+									backgroundRepeat={ attributes.backgroundOverlayRepeat }
+									backgroundSize={ attributes.backgroundOverlaySize }
+									backgroundOpacity={ attributes.backgroundOverlayOpacity }
+									backgroundFilterBlur={ attributes.backgroundOverlayFilterBlur }
+									backgroundFilterBrightness={ attributes.backgroundOverlayFilterBrightness }
+									backgroundFilterContrast={ attributes.backgroundOverlayFilterContrast }
+									backgroundFilterGrayscale={ attributes.backgroundOverlayFilterGrayscale }
+									backgroundFilterHue={ attributes.backgroundOverlayFilterHue }
+									backgroundFilterSaturate={ attributes.backgroundOverlayFilterSaturate }
+									backgroundBlend={ attributes.backgroundOverlayBlend }
+									changeBackgroundType={ value => setAttributes({ backgroundOverlayType: value }) }
+									changeImage={ media => {
+										setAttributes({
+											backgroundOverlayImage: pick( media, [ 'id', 'url' ])
+										});
+									}}
+									removeImage={ () => setAttributes({ backgroundOverlayImage: undefined })}
+									changeColor={ value => setAttributes({ backgroundOverlayColor: value })}
+									changeGradient={ value => setAttributes({ backgroundOverlayGradient: value }) }
+									changeBackgroundAttachment={ value => setAttributes({ backgroundOverlayAttachment: value })}
+									changeBackgroundRepeat={ value => setAttributes({ backgroundOverlayRepeat: value })}
+									changeFocalPoint={ value => setAttributes({ backgroundOverlayPosition: value }) }
+									changeBackgroundSize={ value => setAttributes({ backgroundOverlaySize: value }) }
+									changeOpacity={ value => setAttributes({ backgroundOverlayOpacity: value }) }
+									changeFilterBlur={ value => setAttributes({ backgroundOverlayFilterBlur: value }) }
+									changeFilterBrightness={ value => setAttributes({ backgroundOverlayFilterBrightness: value }) }
+									changeFilterContrast={ value => setAttributes({ backgroundOverlayFilterContrast: value }) }
+									changeFilterGrayscale={ value => setAttributes({ backgroundOverlayFilterGrayscale: value }) }
+									changeFilterHue={ value => setAttributes({ backgroundOverlayFilterHue: value }) }
+									changeFilterSaturate={ value => setAttributes({ backgroundOverlayFilterSaturate: value }) }
+									changeBlend={ value => setAttributes({ backgroundOverlayBlend: value }) }
 								/>
+							</ButtonDropdownControl>
 
-								<RangeControl
-									label={ __( 'Brightness', 'otter-blocks' ) }
-									value={ attributes.backgroundOverlayFilterBrightness }
-									onChange={ value => setAttributes({ backgroundOverlayFilterBrightness: value }) }
-									min={ 0 }
-									max={ 100 }
-								/>
-
-								<RangeControl
-									label={ __( 'Contrast', 'otter-blocks' ) }
-									value={ attributes.backgroundOverlayFilterContrast }
-									onChange={ value => setAttributes({ backgroundOverlayFilterContrast: value }) }
-									min={ 0 }
-									max={ 100 }
-								/>
-
-								<RangeControl
-									label={ __( 'Grayscale', 'otter-blocks' ) }
-									value={ attributes.backgroundOverlayFilterGrayscale }
-									onChange={ value => setAttributes({ backgroundOverlayFilterGrayscale: value }) }
-									min={ 0 }
-									max={ 100 }
-								/>
-
-								<RangeControl
-									label={ __( 'Hue', 'otter-blocks' ) }
-									value={ attributes.backgroundOverlayFilterHue }
-									onChange={ value => setAttributes({ backgroundOverlayFilterHue: value }) }
-									min={ 0 }
-									max={ 360 }
-								/>
-
-								<RangeControl
-									label={ __( 'Saturation', 'otter-blocks' ) }
-									value={ attributes.backgroundOverlayFilterSaturate }
-									onChange={ value => setAttributes({ backgroundOverlayFilterSaturate: value }) }
-									min={ 0 }
-									max={ 100 }
-								/>
-							</ControlPanelControl>
-
-							<SelectControl
-								label={ __( 'Blend Mode', 'otter-blocks' ) }
-								value={ attributes.backgroundOverlayBlend }
-								options={ [
-									{ label: __( 'Normal', 'otter-blocks' ), value: 'normal' },
-									{ label: __( 'Multiply', 'otter-blocks' ), value: 'multiply' },
-									{ label: __( 'Screen', 'otter-blocks' ), value: 'screen' },
-									{ label: __( 'Overlay', 'otter-blocks' ), value: 'overlay' },
-									{ label: __( 'Darken', 'otter-blocks' ), value: 'darken' },
-									{ label: __( 'Lighten', 'otter-blocks' ), value: 'lighten' },
-									{ label: __( 'Color Dodge', 'otter-blocks' ), value: 'color-dodge' },
-									{ label: __( 'Color Burn', 'otter-blocks' ), value: 'color-burn' },
-									{ label: __( 'Hard Light', 'otter-blocks' ), value: 'hard-light' },
-									{ label: __( 'Soft Light', 'otter-blocks' ), value: 'soft-light' },
-									{ label: __( 'Difference', 'otter-blocks' ), value: 'difference' },
-									{ label: __( 'Exclusion', 'otter-blocks' ), value: 'exclusion' },
-									{ label: __( 'Hue', 'otter-blocks' ), value: 'hue' },
-									{ label: __( 'Saturation', 'otter-blocks' ), value: 'saturation' },
-									{ label: __( 'Color', 'otter-blocks' ), value: 'color' },
-									{ label: __( 'Luminosity', 'otter-blocks' ), value: 'luminosity' }
-								] }
-								onChange={ value => setAttributes({ backgroundOverlayBlend: value }) }
+							<ColorDropdownControl
+								label={ __( 'Text Hover', 'otter-blocks' ) }
+								colorValue={ attributes.colorHover }
+								onColorChange={ colorHover => setAttributes({ colorHover }) }
+								className="is-list"
 							/>
 						</PanelBody>
 
@@ -779,6 +858,12 @@ const Inspector = ({
 							className="o-section-border-container"
 							initialOpen={ false }
 						>
+							<ColorDropdownControl
+								label={ __( 'Border Color', 'otter-blocks' ) }
+								colorValue={ attributes.borderColor }
+								onColorChange={ value => setAttributes({ borderColor: value }) }
+							/>
+
 							<BoxControl
 								label={ __( 'Border Width', 'otter-blocks' ) }
 								values={ attributes.border }
@@ -793,12 +878,6 @@ const Inspector = ({
 									}
 								] }
 								onChange={ changeBorder }
-							/>
-
-							<ColorGradientControl
-								label={ __( 'Border Color', 'otter-blocks' ) }
-								colorValue={ attributes.borderColor }
-								onColorChange={ value => setAttributes({ borderColor: value }) }
 							/>
 
 							<BoxControl
@@ -829,57 +908,55 @@ const Inspector = ({
 							/>
 
 							{ attributes.boxShadow && (
-								<Fragment>
+								<ControlPanelControl
+									label={ __( 'Border Shadow', 'otter-blocks' ) }
+								>
 									<ColorGradientControl
 										label={ __( 'Shadow Color', 'otter-blocks' ) }
 										colorValue={ attributes.boxShadowColor }
 										onColorChange={ value => setAttributes({ boxShadowColor: value }) }
 									/>
 
-									<ControlPanelControl
-										label={ __( 'Border Shadow', 'otter-blocks' ) }
-									>
-										<RangeControl
-											label={ __( 'Opacity', 'otter-blocks' ) }
-											value={ attributes.boxShadowColorOpacity }
-											onChange={ value => setAttributes({ boxShadowColorOpacity: value }) }
-											min={ 0 }
-											max={ 100 }
-										/>
+									<RangeControl
+										label={ __( 'Opacity', 'otter-blocks' ) }
+										value={ attributes.boxShadowColorOpacity }
+										onChange={ value => setAttributes({ boxShadowColorOpacity: value }) }
+										min={ 0 }
+										max={ 100 }
+									/>
 
-										<RangeControl
-											label={ __( 'Blur', 'otter-blocks' ) }
-											value={ attributes.boxShadowBlur }
-											onChange={ value => setAttributes({ boxShadowBlur: value }) }
-											min={ 0 }
-											max={ 100 }
-										/>
+									<RangeControl
+										label={ __( 'Blur', 'otter-blocks' ) }
+										value={ attributes.boxShadowBlur }
+										onChange={ value => setAttributes({ boxShadowBlur: value }) }
+										min={ 0 }
+										max={ 100 }
+									/>
 
-										<RangeControl
-											label={ __( 'Spread', 'otter-blocks' ) }
-											value={ attributes.boxShadowSpread }
-											onChange={ value => setAttributes({ boxShadowSpread: value }) }
-											min={ -100 }
-											max={ 100 }
-										/>
+									<RangeControl
+										label={ __( 'Spread', 'otter-blocks' ) }
+										value={ attributes.boxShadowSpread }
+										onChange={ value => setAttributes({ boxShadowSpread: value }) }
+										min={ -100 }
+										max={ 100 }
+									/>
 
-										<RangeControl
-											label={ __( 'Horizontal', 'otter-blocks' ) }
-											value={ attributes.boxShadowHorizontal }
-											onChange={ value => setAttributes({ boxShadowHorizontal: value }) }
-											min={ -100 }
-											max={ 100 }
-										/>
+									<RangeControl
+										label={ __( 'Horizontal', 'otter-blocks' ) }
+										value={ attributes.boxShadowHorizontal }
+										onChange={ value => setAttributes({ boxShadowHorizontal: value }) }
+										min={ -100 }
+										max={ 100 }
+									/>
 
-										<RangeControl
-											label={ __( 'Vertical', 'otter-blocks' ) }
-											value={ attributes.boxShadowVertical }
-											onChange={ value => setAttributes({ boxShadowVertical: value }) }
-											min={ -100 }
-											max={ 100 }
-										/>
-									</ControlPanelControl>
-								</Fragment>
+									<RangeControl
+										label={ __( 'Vertical', 'otter-blocks' ) }
+										value={ attributes.boxShadowVertical }
+										onChange={ value => setAttributes({ boxShadowVertical: value }) }
+										min={ -100 }
+										max={ 100 }
+									/>
+								</ControlPanelControl>
 							) }
 						</PanelBody>
 
@@ -888,25 +965,21 @@ const Inspector = ({
 							initialOpen={ false }
 							className="wp-block-themeisle-shape-divider"
 						>
-							<ButtonGroup>
-								<Button
-									isSmall
-									isSecondary={ 'top' !== dividerViewType }
-									isPrimary={ 'top' === dividerViewType }
-									onClick={ () => setDividerViewType( 'top' ) }
-								>
-									{ __( 'Top', 'otter-blocks' ) }
-								</Button>
-
-								<Button
-									isSmall
-									isSecondary={ 'bottom' !== dividerViewType }
-									isPrimary={ 'bottom' === dividerViewType }
-									onClick={ () => setDividerViewType( 'bottom' ) }
-								>
-									{ __( 'Bottom', 'otter-blocks' ) }
-								</Button>
-							</ButtonGroup>
+							<ButtonToggleControl
+								label={ __( 'Sides', 'otter-blocks' ) }
+								options={[
+									{
+										label: __( 'Top', 'otter-blocks' ),
+										value: 'top'
+									},
+									{
+										label: __( 'Bottom', 'otter-blocks' ),
+										value: 'bottom'
+									}
+								]}
+								value={ dividerViewType }
+								onChange={ setDividerViewType }
+							/>
 
 							<SelectControl
 								label={ __( 'Type', 'otter-blocks' ) }
@@ -924,7 +997,7 @@ const Inspector = ({
 
 							{ 'none' !== dividerType && (
 								<Fragment>
-									<ColorGradientControl
+									<ColorDropdownControl
 										label={ __( 'Color', 'otter-blocks' ) }
 										colorValue={ getDividerColor() }
 										onColorChange={ changeDividerColor }
@@ -963,69 +1036,6 @@ const Inspector = ({
 									) }
 								</Fragment>
 							) }
-						</PanelBody>
-					</Fragment>
-
-				) || 'advanced' === tab && (
-
-					<Fragment>
-						<PanelBody
-							title={ __( 'Responsive', 'otter-blocks' ) }
-						>
-							<ToggleControl
-								label={ __( 'Hide this section on Desktop devices?', 'otter-blocks' ) }
-								checked={ attributes.hide }
-								onChange={ e => changeHideStatus( e, 'Desktop' ) }
-							/>
-
-							<ToggleControl
-								label={ __( 'Hide this section on Tablet devices?', 'otter-blocks' ) }
-								checked={ attributes.hideTablet }
-								onChange={ e => changeHideStatus( e, 'Tablet' ) }
-							/>
-
-							<ToggleControl
-								label={ __( 'Hide this section on Mobile devices?', 'otter-blocks' ) }
-								checked={ attributes.hideMobile }
-								onChange={ e => changeHideStatus( e, 'Mobile' ) }
-							/>
-
-							<hr/>
-
-							{ ( ! attributes.hideTablet && 'collapsedRows' === attributes.layoutTablet ) && (
-								<ToggleControl
-									label={ __( 'Reverse Columns in Tablet devices?', 'otter-blocks' ) }
-									checked={ attributes.reverseColumnsTablet }
-									onChange={ e => changeReverseColumns( e, 'Tablet' ) }
-								/>
-							) }
-
-							{ ( ! attributes.hideMobile && 'collapsedRows' === attributes.layoutMobile ) && (
-								<ToggleControl
-									label={ __( 'Reverse Columns in Mobile devices?', 'otter-blocks' ) }
-									checked={ attributes.reverseColumnsMobile }
-									onChange={ e => changeReverseColumns( e, 'Mobile' ) }
-								/>
-							) }
-						</PanelBody>
-
-						<PanelBody
-							title={ __( 'Section Settings', 'otter-blocks' ) }
-							initialOpen={ false }
-						>
-							<SelectControl
-								label={ __( 'HTML Tag', 'otter-blocks' ) }
-								value={ attributes.columnsHTMLTag }
-								options={ [
-									{ label: __( 'Default (div)', 'otter-blocks' ), value: 'div' },
-									{ label: 'section', value: 'section' },
-									{ label: 'header', value: 'header' },
-									{ label: 'footer', value: 'footer' },
-									{ label: 'article', value: 'article' },
-									{ label: 'main', value: 'main' }
-								] }
-								onChange={ value => setAttributes({ columnsHTMLTag: value }) }
-							/>
 						</PanelBody>
 					</Fragment>
 
