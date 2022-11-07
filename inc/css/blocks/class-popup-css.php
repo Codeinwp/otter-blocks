@@ -326,7 +326,7 @@ class Popup_CSS extends Base_CSS {
 								'format'  => function( $value ) {
 									$opacity = $value['colorOpacity'];
 									$color   = isset( $value['color'] ) ? $value['color'] : '#000000';
-									return ( strpos( $color, '#' ) !== false && $opacity < 100 ) ? $this->hex2rgba( $color, $opacity / 100 ) : $color;
+									return ( strpos( $color, '#' ) !== false && $opacity < 100 ) ? Base_CSS::hex2rgba( $color, $opacity / 100 ) : $color;
 								},
 							),
 						),
