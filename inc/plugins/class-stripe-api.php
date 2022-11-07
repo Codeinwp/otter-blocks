@@ -39,6 +39,17 @@ class Stripe_API {
 	}
 
 	/**
+	 * Check if API keys are set
+	 * 
+	 * @return bool
+	 * @access public
+	 */
+	public static function has_keys() {
+		$api_key = get_option( 'themeisle_stripe_api_key' );
+		return empty( $api_key ) ? false : true;
+	}
+
+	/**
 	 * Build Error Message
 	 *
 	 * @param object $error Error Object.
@@ -92,6 +103,9 @@ class Stripe_API {
 					break;
 				case 'session_items':
 					$response = $this->stripe->checkout->sessions->allLineItems( $args );
+					break;
+				case 'get_subscription':
+					$response = $this->stripe->subscriptions->retrieve( $args );
 					break;
 				default:
 					break;
@@ -192,13 +206,13 @@ class Stripe_API {
 
 		array_push( $data, $object );
 
-		update_user_meta( $user_id, 'o_stripe_data', json_encode( $data ) );
+		update_user_meta( $user_id, 'o_stripe_data', wp_json_encode( $data ) );
 	}
 
 	/**
 	 * Get Customer ID for curent user.
 	 * 
-	 * @return false|string
+	 * @return  array
 	 * @access  public
 	 */
 	public function get_customer_data() {
@@ -217,5 +231,54 @@ class Stripe_API {
 		$data = get_user_meta( $user_id, 'o_stripe_data', true );
 
 		return json_decode( $data, true );
+	}
+
+	/**
+	 * Check if user owns a product.
+	 *
+	 * @param string $product Product ID.
+	 * 
+	 * @return  bool
+	 * @access  public
+	 */
+	public function check_purchase( $product ) {
+		$data = $this->get_customer_data();
+
+		if ( 1 > count( $data ) ) {
+			return false;
+		}
+
+		$possible_values = array_filter(
+			$data,
+			function( $item ) use ( $product ) {
+				return $product === $item['product_id'];
+			}
+		);
+
+		if ( 1 > count( $possible_values ) ) {
+			return false;
+		}
+
+		$bool = false;
+
+		foreach ( $possible_values as $value ) {
+			if ( 'subscription' === $value['mode'] ) {
+				$subscription = $this->create_request( 'get_subscription', $value['subscription_id'] );
+
+				if ( 'active' !== $subscription['status'] ) {
+					continue;
+				}
+
+				$bool = true;
+				break;
+			}
+
+			if ( 'payment' === $value['mode'] ) {
+				$bool = true;
+				break;
+			}
+		}
+		
+		return $bool;
 	}
 }

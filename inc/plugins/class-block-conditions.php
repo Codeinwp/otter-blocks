@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Plugins;
 
+use ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
+
 /**
  * Class Block_Conditions
  */
@@ -163,7 +165,7 @@ class Block_Conditions {
 		}
 
 		if ( 'stripePurchaseHistory' === $condition['type'] ) {
-			if ( isset( $condition['product'] ) ) {
+			if ( isset( $condition['product'] ) && Stripe_API::has_keys() ) {
 				if ( $visibility ) {
 					return $this->has_stripe_product( $condition['product'] );
 				} else {
@@ -258,9 +260,8 @@ class Block_Conditions {
 	 * @access public
 	 */
 	public function has_stripe_product( $product ) {
-		// $stripe   = new Stripe_API();
-		// $customer = $stripe->get_customer_id();
-		return true;
+		$stripe = new Stripe_API();
+		return $stripe->check_purchase( $product );
 	}
 
 	/**

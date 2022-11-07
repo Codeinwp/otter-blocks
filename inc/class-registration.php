@@ -7,7 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks;
 
-use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro;
+use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro, ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
 
 /**
  * Class Registration.
@@ -248,6 +248,7 @@ class Registration {
 				'updatePath'              => admin_url( 'update-core.php' ),
 				'optionsPath'             => admin_url( 'options-general.php?page=otter' ),
 				'mapsAPI'                 => $api,
+				'hasStripeAPI'            => Stripe_API::has_keys(),
 				'globalDefaults'          => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
 				'themeDefaults'           => Main::get_global_defaults(),
 				'imageSizes'              => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes

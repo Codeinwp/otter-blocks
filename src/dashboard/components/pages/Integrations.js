@@ -171,13 +171,13 @@ const Integrations = () => {
 				<PanelRow>
 					<BaseControl
 						label={ __( 'Stripe API', 'otter-blocks' ) }
-						help={ __( 'In order to use Stripe block, you need to use Stripe API.', 'otter-blocks' ) }
+						help={ __( 'In order to use Stripe block, you need to use Stripe API. You can also use Restricted keys.', 'otter-blocks' ) }
 						id="otter-options-stripe-api"
 						className="otter-button-field"
 					>
 						<TextControl
 							type="password"
-							label={ __( 'API Key', 'otter-blocks' ) }
+							label={ __( 'Secret Key', 'otter-blocks' ) }
 							value={ stripeAPI }
 							placeholder={ __( 'Stripe API Key', 'otter-blocks' ) }
 							disabled={ 'saving' === status }
@@ -198,6 +198,12 @@ const Integrations = () => {
 								href="https://stripe.com/docs/keys"
 							>
 								{ __( 'Get API Key', 'otter-blocks' ) }
+							</ExternalLink>
+
+							<ExternalLink
+								href="#"
+							>
+								{ __( 'More Info', 'otter-blocks' ) }
 							</ExternalLink>
 						</div>
 					</BaseControl>

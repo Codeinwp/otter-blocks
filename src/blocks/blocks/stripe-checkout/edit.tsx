@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { useBlockProps } from '@wordpress/block-editor';
 
 import {
+	ExternalLink,
 	Placeholder,
 	SelectControl,
 	Spinner
@@ -133,6 +134,23 @@ const Edit = ({
 	const blockProps = useBlockProps({
 		className: classnames({ 'is-placeholder': showPlaceholder })
 	});
+
+	if ( ! Boolean( window.themeisleGutenberg.hasStripeAPI ) ) {
+		return (
+			<div { ...blockProps }>
+				<Placeholder
+					icon={ store }
+					label={ __( 'Stripe Checkout', 'otter-blocks' ) }
+				>
+					<p>
+						{ __( 'You need to set your Stripe API keys in the Otter Dashboard.', 'otter-blocks' ) }
+						{ ' ' }
+						<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Visit Dashboard', 'otter-blocks' ) }</ExternalLink>
+					</p>
+				</Placeholder>
+			</div>
+		);
+	}
 
 	if ( showPlaceholder ) {
 		return (

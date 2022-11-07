@@ -8,6 +8,7 @@
 
     .o-stripe-checkout {
         display: flex;
+        padding: 10px;
 
         img {
             border-radius: 4px;
@@ -47,7 +48,6 @@
     }
 
     a:not(.wp-block-button__link) {
-        width: 100%;
         background: #ED6F57;
         border-radius: 0 0 4px 4px;
         color: #fff;

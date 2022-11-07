@@ -26,7 +26,7 @@ class Stripe_Checkout_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		if ( ! isset( $attributes['product'] ) || ! isset( $attributes['price'] ) ) {
+		if ( ! isset( $attributes['product'] ) || ! isset( $attributes['price'] ) || ! is_user_logged_in() || ! Stripe_API::has_keys() ) {
 			return '';
 		}
 

@@ -478,10 +478,22 @@ const Edit = ({
 										) }
 
 										{ 'stripePurchaseHistory' === i.type && (
-											<StripeControls
-												product={ i.product }
-												onChange={ product => changeValue( product, index, n, 'product' ) }
-											/>
+											<Fragment>
+												{ Boolean( window.themeisleGutenberg.hasStripeAPI ) && (
+													<StripeControls
+														product={ i.product }
+														onChange={ product => changeValue( product, index, n, 'product' ) }
+													/>
+												) }
+
+												{ ! Boolean( window.themeisleGutenberg.hasStripeAPI ) && (
+													<p>
+														{ __( 'You need to set your Stripe API keys in the Otter Dashboard.', 'otter-blocks' ) }
+														{ ' ' }
+														<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Visit Dashboard', 'otter-blocks' ) }</ExternalLink>
+													</p>
+												) }
+											</Fragment>
 										) }
 
 										{ applyFilters( 'otter.blockConditions.controls', '', index, n, i, attributes.otterConditions, setAttributes, changeValue ) }
