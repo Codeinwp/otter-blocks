@@ -308,7 +308,7 @@ class Main {
 		}
 
 		if ( ! isset( $tags['dotlottie-player'] ) ) {
-			$tags['lottie-player'] = array_merge(
+			$tags['dotlottie-player'] = array_merge(
 				array(
 					'autoplay'   => true,
 					'loop'       => true,

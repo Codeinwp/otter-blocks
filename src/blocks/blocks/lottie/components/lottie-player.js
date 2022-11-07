@@ -48,7 +48,6 @@ const LottiePlayer = ({
 		src: attributes.file.url,
 		autoplay: ! attributes.trigger || 'none' === attributes.trigger,
 		loop: attributes.loop,
-		hover: 'hover' === attributes.trigger,
 		count: attributes.direction ? attributes.count * -1 : attributes.count,
 		speed: attributes.speed,
 		background: attributes.backgroundColor || attributes.backgroundGradient,
@@ -61,6 +60,7 @@ const LottiePlayer = ({
 			maxWidth: ( attributes.width && '%' === attributes.width.toString().slice( -1 ) ) ? `${ attributes.width }` : false,
 			height: 'auto'
 		},
+		...( 'hover' === attributes.trigger && { hover: 'hover' }),
 		...( attributes.ariaLabel && { 'aria-label': attributes.ariaLabel })
 	});
 };

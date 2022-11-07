@@ -32,47 +32,50 @@ domReady( () => {
 		}
 	};
 
+	const handleAnimation = e => {
+		const animation = e.target;
+		const trigger = animation.getAttribute( 'trigger' );
+
+		if ( 'scroll' === trigger ) {
+			return window.LottieInteractivity.create({
+				mode: 'scroll',
+				player: `#${ animation.id }`,
+				actions: [{
+					visibility: [ 0, 1 ],
+					type: 'seek',
+					frames: [ 0, animation.getLottie().totalFrames ]
+				}]
+			});
+		}
+
+		if ( 'hover' === trigger ) {
+			animation.addEventListener( 'mouseover', () => {
+				animation.play();
+			});
+
+			animation.addEventListener( 'mouseout', () => {
+				animation.stop();
+			});
+
+			initAnimation( animation );
+			return -1 === animation.__direction ? animation.pause() : animation.stop();
+		}
+
+		if ( 'click' === trigger ) {
+			animation.addEventListener( 'click', () => {
+				animation.play();
+			});
+
+			animation.addEventListener( 'complete', () => animation.stop() );
+			initAnimation( animation );
+			return -1 === animation.__direction ? animation.pause() : animation.stop();
+		}
+
+		return initAnimation( animation );
+	};
+
 	animations.forEach( animation => {
-		animation.addEventListener( 'load', () => {
-			const trigger = animation.getAttribute( 'trigger' );
-
-			if ( 'scroll' === trigger ) {
-				return window.LottieInteractivity.create({
-					mode: 'scroll',
-					player: `#${ animation.id }`,
-					actions: [{
-						visibility: [ 0, 1 ],
-						type: 'seek',
-						frames: [ 0, animation.getLottie().totalFrames ]
-					}]
-				});
-			}
-
-			if ( 'hover' === trigger ) {
-				animation.addEventListener( 'mouseover', () => {
-					animation.play();
-				});
-
-				animation.addEventListener( 'mouseout', () => {
-					animation.stop();
-				});
-
-				initAnimation( animation );
-				return -1 === animation.__direction ? animation.pause() : animation.stop();
-			}
-
-			if ( 'click' === trigger ) {
-				animation.addEventListener( 'click', () => {
-					animation.play();
-				});
-
-				animation.addEventListener( 'complete', () => animation.stop() );
-				initAnimation( animation );
-				return -1 === animation.__direction ? animation.pause() : animation.stop();
-			}
-
-			return initAnimation( animation );
-		});
+		animation.addEventListener( 'load', handleAnimation );
 
 		if ( animation.getAttribute( 'width' ) ) {
 			animation.style.height = 'auto';

@@ -29,19 +29,17 @@ const Save = ({
 		return LottieElement;
 	}
 
-	LottieElement = cloneElement( LottieElement, {
+	return cloneElement( LottieElement, {
 		autoplay: ! attributes.trigger || 'none' === attributes.trigger,
 		loop: attributes.loop,
-		hover: 'hover' === attributes.trigger,
 		count: attributes.direction ? attributes.count * -1 : attributes.count,
 		speed: attributes.speed,
 		direction: attributes.direction ? -1 : 1,
 		trigger: attributes.trigger,
 		'data-loop': attributes.loop,
-		mode: 'normal'
+		mode: 'normal',
+		...( 'hover' === attributes.trigger && { hover: 'hover' })
 	});
-
-	return LottieElement;
 };
 
 export default Save;
