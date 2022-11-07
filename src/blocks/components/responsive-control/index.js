@@ -72,7 +72,7 @@ const ResponsiveControl = ({
 		>
 			<div className="components-base-control__field">
 				<div className="components-base-control__title">
-					<label className="components-base-control__label">{ label }</label>
+					<label className="components-base-control__label" style={ ! window?.themeisleGutenberg?.isLegacyPre59 ? { textTransform: 'uppercase' } : {} }>{ label }</label>
 					<div className="floating-controls">
 						<Dropdown
 							position="top left"

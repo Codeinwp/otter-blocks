@@ -79,9 +79,6 @@
 
 		.wp-block-themeisle-blocks-icon-list-item {
 			width: 100%;
-			display: flex;
-			align-items: var( --icon-align );
-			justify-content: var( --icon-align );
 		}
 
 		&.has-divider .wp-block-themeisle-blocks-icon-list-item:not(:last-child)::after {

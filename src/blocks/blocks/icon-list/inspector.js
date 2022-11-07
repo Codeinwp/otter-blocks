@@ -113,7 +113,7 @@ const Inspector = ({
 							title={ __( 'Layout', 'otter-blocks' ) }
 						>
 							<ButtonToggle
-								label={ __( 'Column Structure', 'otter-blocks' ) }
+								label={ __( 'List Orientation', 'otter-blocks' ) }
 								options={[
 									{
 										label: __( 'Vertical', 'otter-blocks' ),
