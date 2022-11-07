@@ -4,7 +4,6 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	AlignmentToolbar,
 	__experimentalColorGradientControl as ColorGradientControl,
 	InspectorControls,
 	PanelColorSettings
@@ -15,13 +14,10 @@ import {
 	PanelBody,
 	RangeControl,
 	SelectControl,
-	TextControl,
 	ToggleControl,
 	__experimentalBoxControl as BoxControl,
 	__experimentalUnitControl as UnitControl
 } from '@wordpress/components';
-
-import { useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
@@ -29,7 +25,7 @@ import {
 } from '@wordpress/element';
 
 import {
-	isNumber, isObjectLike
+	isObjectLike
 } from 'lodash';
 
 /**
@@ -40,7 +36,6 @@ import { InspectorExtensions } from '../../components/inspector-slot-fill/index.
 import GoogleFontsControl from '../../components/google-fonts-control/index.js';
 import ControlPanelControl from '../../components/control-panel-control/index.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
-import SizingControl from '../../components/sizing-control/index.js';
 import HTMLAnchorControl from '../../components/html-anchor-control/index.js';
 import ClearButton from '../../components/clear-button/index.js';
 import { alignCenter, alignLeft, alignRight } from '@wordpress/icons';
@@ -76,18 +71,6 @@ const Inspector = ({
 			});
 		}
 	};
-
-	const getOldPaddingValues = () => ({
-		top: _px( responsiveGetAttributes([ attributes.paddingTop, attributes.paddingTopTablet, attributes.paddingTopMobile  ]) ) ?? '0px',
-		bottom: _px( responsiveGetAttributes([ attributes.paddingBottom, attributes.paddingBottomTablet, attributes.paddingBottomMobile  ]) ) ?? '0px',
-		right: _px ( responsiveGetAttributes([ attributes.paddingRight, attributes.paddingRightTablet, attributes.paddingRightMobile  ]) ) ?? '0px',
-		left: _px( responsiveGetAttributes([ attributes.paddingLeft, attributes.paddingLeftTablet, attributes.paddingLeftMobile  ]) ) ?? '0px'
-	});
-
-	const getOldMarginValues = () => ({
-		top: _px( responsiveGetAttributes([ attributes.marginTop, attributes.marginTopTablet, attributes.marginTopMobile  ]) ) ?? '0px',
-		bottom: _px( responsiveGetAttributes([ attributes.marginBottom, attributes.marginBottomTablet, attributes.marginBottomMobile  ]) ) ?? '0px'
-	});
 
 	const oldPaddingDesktop = 'unlinked' === attributes.paddingType ? ({
 		top: attributes.paddingTop ?? '0px',
@@ -379,7 +362,7 @@ const Inspector = ({
 												isObjectLike( attributes.margin ) ? attributes.margin : oldMarginDesktop,
 												isObjectLike( attributes.marginTablet ) ? attributes.marginTablet : oldMarginTablet,
 												isObjectLike( attributes.marginMobile ) ?  attributes.marginMobile : oldMarginMobile
-											]) ?? getOldMarginValues()
+											]) ?? makeBox( '0px' )
 										}
 										onChange={ value => {
 											responsiveSetAttributes( value, [ 'margin', 'marginTablet', 'marginMobile' ]);
