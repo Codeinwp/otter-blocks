@@ -310,25 +310,6 @@ const Inspector = ({
 								title={ __( 'Dimensions', 'otter-blocks' ) }
 								initialOpen={ true }
 							>
-								<ResponsiveControl
-									label={ __( 'Padding', 'otter-blocks' ) }
-								>
-									<BoxControl
-										label={ __( '', 'otter-blocks' ) }
-										values={
-											responsiveGetAttributes([
-												isObjectLike( attributes.padding ) ?  attributes.padding : oldPaddingDesktop,
-												isObjectLike( attributes.paddingTablet ) ? attributes.paddingTablet : oldPaddingTablet,
-												isObjectLike( attributes.paddingMobile ) ?  attributes.paddingMobile : oldPaddingMobile
-											]) ?? makeBox( '0px' )
-										}
-										onChange={ value => {
-											responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
-										} }
-									/>
-
-								</ResponsiveControl>
-
 
 								{/* <ClearButton
 									values={[
@@ -352,11 +333,24 @@ const Inspector = ({
 								/> */}
 
 								<ResponsiveControl
-									label={ __( 'Margin', 'otter-blocks' ) }
+									label={ __( 'Screen Type', 'otter-blocks' ) }
 								>
 									<BoxControl
+										label={ __( 'Padding', 'otter-blocks' ) }
+										values={
+											responsiveGetAttributes([
+												isObjectLike( attributes.padding ) ?  attributes.padding : oldPaddingDesktop,
+												isObjectLike( attributes.paddingTablet ) ? attributes.paddingTablet : oldPaddingTablet,
+												isObjectLike( attributes.paddingMobile ) ?  attributes.paddingMobile : oldPaddingMobile
+											]) ?? makeBox( '0px' )
+										}
+										onChange={ value => {
+											responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
+										} }
+									/>
+									<BoxControl
 
-										// label={ __( 'Padding', 'otter-blocks' ) }
+										label={ __( 'Margin', 'otter-blocks' ) }
 										values={
 											responsiveGetAttributes([
 												isObjectLike( attributes.margin ) ? attributes.margin : oldMarginDesktop,
