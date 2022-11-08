@@ -249,6 +249,26 @@ const Inspector = ({
 									step={ 0.1 }
 									min={ 0 }
 									max={ 3 }
+									units={[
+										{
+											a11yLabel: 'Unitless (u)',
+											label: 'u',
+											step: 0.1,
+											value: ''
+										},
+										{
+											a11yLabel: 'Pixels (px)',
+											label: 'px',
+											step: 0.1,
+											value: 'px'
+										},
+										{
+											a11yLabel: 'Percentage (%)',
+											label: '%',
+											step: 1,
+											value: '%'
+										}
+									]}
 								/>
 
 								<br />

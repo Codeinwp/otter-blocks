@@ -69,10 +69,20 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'    => 'textTransform',
 					),
 					array(
-						'property' => 'line-height',
-						'value'    => 'lineHeight',
-						'format'   => function( $value, $attrs ) {
+						'property'  => 'line-height',
+						'value'     => 'lineHeight',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['lineHeight'] ) && is_numeric( $attrs['lineHeight'] );
+						},
+						'format'    => function( $value, $attrs ) {
 							return 3 < $value ? $value . 'px' : $value;
+						},
+					),
+					array(
+						'property'  => 'line-height',
+						'value'     => 'lineHeight',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['lineHeight'] ) && is_string( $attrs['lineHeight'] );
 						},
 					),
 					array(
