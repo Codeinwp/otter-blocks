@@ -15,13 +15,14 @@ import {
 } from '@wordpress/data';
 
 const addStyle = style => {
-	let element = document.getElementById( 'o-css-editor-styles' );
+	let anchor = window.parent.document.querySelector( 'iframe[name="editor-canvas"]' )?.contentWindow.document.head || document.head;
+	let element = anchor.querySelector( '#o-css-editor-styles' );
 
 	if ( null === element ) {
 		element = document.createElement( 'style' );
 		element.setAttribute( 'type', 'text/css' );
 		element.setAttribute( 'id', 'o-css-editor-styles' );
-		document.getElementsByTagName( 'head' )[0].appendChild( element );
+		anchor?.appendChild( element );
 	}
 
 	if ( element.textContent === style ) {
@@ -79,19 +80,30 @@ const getCustomCssFromBlocks = ( blocks, reusableBlocks ) => {
 };
 
 let previousBlocks = [];
+let previewView = false;
 
 subscribe( () => {
 	const { getBlocks } = select( 'core/block-editor' );
+	const __experimentalGetPreviewDeviceType = select( 'core/edit-post' ) ? select( 'core/edit-post' ).__experimentalGetPreviewDeviceType() : false;
 	const blocks = getBlocks();
 	const reusableBlocks = select( 'core' ).getEntityRecords( 'postType', 'wp_block', { context: 'view' });
 
-	if ( ! isEqual( previousBlocks, blocks ) ) {
-		previousBlocks = blocks;
-
+	if ( ! isEqual( previousBlocks, blocks ) || previewView !== __experimentalGetPreviewDeviceType ) {
 		const blocksStyle = getCustomCssFromBlocks( blocks, reusableBlocks );
 
 		if ( blocksStyle ) {
-			addStyle( blocksStyle );
+			if ( previewView !== __experimentalGetPreviewDeviceType && 'Desktop' === previewView ) {
+				setTimeout( () => {
+
+					// A small delay for the iFrame to properly initialize.
+					addStyle( blocksStyle );
+				}, 500 );
+			} else {
+				addStyle( blocksStyle );
+			}
 		}
+
+		previousBlocks = blocks;
+		previewView = __experimentalGetPreviewDeviceType;
 	}
 });
