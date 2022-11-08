@@ -73,10 +73,10 @@ const Inspector = ({
 	};
 
 	const oldPaddingDesktop = 'unlinked' === attributes.paddingType ? ({
-		top: attributes.paddingTop ?? '0px',
-		bottom: attributes.paddingBottom ?? '25px',
-		right: attributes.paddingRight ?? '0px',
-		left: attributes.paddingLeft ?? '0px'
+		top: _px( attributes.paddingTop ) ?? '0px',
+		bottom: _px( attributes.paddingBottom ) ?? '25px',
+		right: _px( attributes.paddingRight ) ?? '0px',
+		left: _px( attributes.paddingLeft ) ?? '0px'
 	}) : ( isFinite( attributes.padding ) ? makeBox( _px( attributes.padding ) ) : {
 		top: '0px',
 		bottom: '25px',
@@ -85,32 +85,32 @@ const Inspector = ({
 	});
 
 	const oldPaddingTablet = 'unlinked' === attributes.paddingTypeTablet ? ({
-		top: attributes.paddingTopTablet ?? '0px',
-		bottom: attributes.paddingBottomTablet ?? '0px',
-		right: attributes.paddingRightTablet ?? '0px',
-		left: attributes.paddingLeftTablet ?? '0px'
+		top: _px( attributes.paddingTopTablet ) ?? '0px',
+		bottom: _px( attributes.paddingBottomTablet ) ?? '0px',
+		right: _px( attributes.paddingRightTablet ) ?? '0px',
+		left: _px( attributes.paddingLeftTablet ) ?? '0px'
 	}) : ( isFinite( attributes.paddingTablet ) ? makeBox( _px( attributes.paddingTablet ) ) : undefined );
 
 	const oldPaddingMobile = 'unlinked' === attributes.paddingTypeMobile ?  ({
-		top: attributes.paddingTopMobile ?? '0px',
-		bottom: attributes.paddingBottomMobile ?? '0px',
-		right: attributes.paddingRightMobile ?? '0px',
-		left: attributes.paddingLeftMobile ?? '0px'
+		top: _px( attributes.paddingTopMobile ) ?? '0px',
+		bottom: _px( attributes.paddingBottomMobile ) ?? '0px',
+		right: _px( attributes.paddingRightMobile ) ?? '0px',
+		left: _px( attributes.paddingLeftMobile ) ?? '0px'
 	}) : ( isFinite( attributes.paddingMobile ) ? makeBox( _px( attributes.paddingMobile ) ) : undefined );
 
 	const oldMarginDesktop = undefined === attributes.marginType ?  ({
-		top: attributes.marginTop ?? '0px',
-		bottom: attributes.marginBottom ?? '0px'
+		top: _px( attributes.marginTop ) ?? '0px',
+		bottom: _px( attributes.marginBottom ) ?? '0px'
 	}) : ( isFinite( attributes.margin ) ? makeBox( _px( attributes.margin ) ) : undefined );
 
 	const oldMarginTablet = undefined === attributes.marginTypeTablet ? ({
-		top: attributes.marginTopTablet ?? '0px',
-		bottom: attributes.marginBottomTablet ?? '0px'
+		top: _px( attributes.marginTopTablet ) ?? '0px',
+		bottom: _px( attributes.marginBottomTablet ) ?? '0px'
 	}) : ( isFinite( attributes.marginTablet ) ? makeBox( _px( attributes.marginTablet ) ) : undefined ) ;
 
 	const oldMarginMobile = undefined === attributes.marginTypeMobile ?  ({
-		top: attributes.marginTopMobile ?? '0px',
-		bottom: attributes.marginBottomMobile ?? '0px'
+		top: _px( attributes.marginTopMobile ) ?? '0px',
+		bottom: _px( attributes.marginBottomMobile ) ?? '0px'
 	}) : ( isFinite( attributes.marginMobile ) ? makeBox( _px( attributes.marginMobile ) ) : undefined );
 
 	return (
