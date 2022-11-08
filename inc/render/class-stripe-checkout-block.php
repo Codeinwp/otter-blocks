@@ -26,7 +26,7 @@ class Stripe_Checkout_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		if ( ! isset( $attributes['product'] ) || ! isset( $attributes['price'] ) || ! is_user_logged_in() || ! Stripe_API::has_keys() ) {
+		if ( ! isset( $attributes['product'] ) || ! isset( $attributes['price'] ) || ! Stripe_API::has_keys() ) {
 			return '';
 		}
 
@@ -38,7 +38,6 @@ class Stripe_Checkout_Block {
 
 			if ( false !== $status ) {
 				if ( 'success' === $status ) {
-					$stripe->save_customer_data( $session_id );
 					$message = isset( $attributes['successMessage'] ) ? $attributes['successMessage'] : __( 'Your payment was successful. If you have any questions, please email orders@example.com.', 'otter-blocks' );
 				} else {
 					$message = isset( $attributes['cancelMessage'] ) ? $attributes['cancelMessage'] : __( 'Your payment was unsuccessful. If you have any questions, please email orders@example.com.', 'otter-blocks' );

@@ -36,6 +36,8 @@ class Stripe_API {
 	public function __construct() {
 		$api_key      = get_option( 'themeisle_stripe_api_key' );
 		$this->stripe = new StripeClient( $api_key );
+
+		add_action( 'init', array( $this, 'init' ) );
 	}
 
 	/**
@@ -47,6 +49,22 @@ class Stripe_API {
 	public static function has_keys() {
 		$api_key = get_option( 'themeisle_stripe_api_key' );
 		return empty( $api_key ) ? false : true;
+	}
+
+	/**
+	 * Init
+	 *
+	 * @access public
+	 */
+	public function init() {
+		if ( isset( $_GET['stripe_session_id'] ) ) {// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification
+			$session_id = esc_attr( $_GET['stripe_session_id'] );// phpcs:ignore WordPress.Security.NonceVerification.NoNonceVerification, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			$session    = $this->create_request( 'get_session', $session_id );
+
+			if ( isset( $session['status'] ) && 'complete' === $session['status'] ) {
+				$this->save_customer_data( $session_id );
+			}
+		}
 	}
 
 	/**
@@ -169,10 +187,6 @@ class Stripe_API {
 	public function save_customer_data( $session_id ) {
 		$user_id = get_current_user_id();
 
-		if ( ! $user_id ) {
-			return;
-		}
-
 		$session = $this->create_request( 'get_session', $session_id );
 
 		if ( ! isset( $session['customer'] ) || empty( $session['customer'] ) ) {
@@ -206,6 +220,11 @@ class Stripe_API {
 
 		array_push( $data, $object );
 
+		if ( ! $user_id ) {
+			setcookie( 'o_stripe_data', wp_json_encode( $data ), strtotime( '+1 week' ), COOKIEPATH, COOKIE_DOMAIN, false ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.cookies_setcookie
+			return;
+		}
+
 		update_user_meta( $user_id, 'o_stripe_data', wp_json_encode( $data ) );
 	}
 
@@ -221,6 +240,10 @@ class Stripe_API {
 		$user_id = get_current_user_id();
 
 		if ( ! $user_id ) {
+			if ( isset( $_COOKIE['o_stripe_data'] ) && ! empty( $_COOKIE['o_stripe_data'] ) ) { // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE
+				$data = json_decode( stripcslashes( $_COOKIE['o_stripe_data'] ), true ); // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+			}
+
 			return $data;
 		}
 
