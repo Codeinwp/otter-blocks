@@ -37,7 +37,7 @@ import { blockInit } from '../../helpers/block-utility.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import googleFontsLoader from '../../helpers/google-fonts.js';
-import { boxValues, _px } from '../../helpers/helper-functions';
+import { boxValues, _cssBlock, _px } from '../../helpers/helper-functions';
 import { makeBox } from '../../plugins/copy-paste/utils';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks';
 
@@ -55,29 +55,6 @@ const Edit = ({
 	mergeBlocks,
 	onReplace
 }) => {
-	const {
-		isViewportAvailable,
-		isPreviewDesktop,
-		isPreviewTablet,
-		isPreviewMobile
-	} = useSelect( select => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-
-		return {
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
-		};
-	}, []);
-
-	const isLarger = useViewportMatch( 'large', '>=' );
-
-	const isLarge = useViewportMatch( 'large', '<=' );
-
-	const isSmall = useViewportMatch( 'small', '>=' );
-
-	const isSmaller = useViewportMatch( 'small', '<=' );
 
 	useEffect( () => {
 		googleFontsLoader.attach( );
@@ -85,17 +62,6 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
-	let isDesktop = isLarger && ! isLarge && isSmall && ! isSmaller;
-
-	let isTablet = ! isLarger && ! isLarge && isSmall && ! isSmaller;
-
-	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
-
-	if ( isViewportAvailable && ! isMobile ) {
-		isDesktop = isPreviewDesktop;
-		isTablet = isPreviewTablet;
-		isMobile = isPreviewMobile;
-	}
 
 	const changeContent = value => {
 		setAttributes({ content: value });
@@ -143,21 +109,45 @@ const Edit = ({
 	const renderBox = box => isObjectLike( box ) ? boxValues( box ) : undefined;
 
 	const inlineStyle = {
-		'--padding': isObjectLike( attributes.padding ) ? boxValues( attributes.padding ) : renderBox( oldPaddingDesktop ),
-		'--padding-tablet': isObjectLike( attributes.paddingTablet ) ?  boxValues( merge( attributes.padding ?? {}, attributes.paddingTablet ) ) : renderBox( oldPaddingTablet ),
-		'--padding-mobile': isObjectLike( attributes.paddingMobile ) ?  boxValues( merge( attributes.padding ?? {}, attributes.paddingTablet  ?? {}, attributes.paddingMobile ) ) : renderBox( oldPaddingMobile ),
-		'--margin': isObjectLike( attributes.margin ) ?  boxValues( attributes.margin ) : renderBox( oldMarginDesktop ),
-		'--margin-tablet': isObjectLike( attributes.marginTablet ) ?  boxValues( merge( attributes.margin ?? {}, attributes.marginTablet ) ) : renderBox( oldMarginTablet ),
-		'--margin-mobile': isObjectLike( attributes.marginMobile ) ?  boxValues( merge( attributes.margin ?? {}, attributes.marginTablet  ?? {}, attributes.marginMobile ) ) : renderBox( oldMarginMobile ),
-		'--text-align': attributes.align,
+		'--padding': isObjectLike( responsiveGetAttributes([
+			attributes.padding,
+			attributes.paddingTablet,
+			attributes.paddingMobile
+		]) ) ? boxValues( responsiveGetAttributes([
+				attributes.padding,
+				attributes.paddingTablet,
+				attributes.paddingMobile
+			]) ) : renderBox( oldPaddingDesktop ),
+		'--padding-tablet': isObjectLike( attributes.paddingTablet ) ?  boxValues( attributes.paddingTablet ) : renderBox( oldPaddingTablet ),
+		'--padding-mobile': isObjectLike( attributes.paddingMobile ) ?  boxValues( attributes.paddingMobile ) : renderBox( oldPaddingMobile ),
+		'--margin': isObjectLike( responsiveGetAttributes([
+			attributes.margin,
+			attributes.marginTablet,
+			attributes.marginMobile
+		]) ) ?  boxValues( responsiveGetAttributes([
+				attributes.margin,
+				attributes.marginTablet,
+				attributes.marginMobile
+			]) ) : renderBox( oldMarginDesktop ),
+		'--margin-tablet': isObjectLike( attributes.marginTablet ) ?  boxValues( attributes.marginTablet ) : renderBox( oldMarginTablet ),
+		'--margin-mobile': isObjectLike( attributes.marginMobile ) ?  boxValues( attributes.marginMobile ) : renderBox( oldMarginMobile ),
+		'--text-align': responsiveGetAttributes([
+			attributes.align,
+			attributes.alignTablet,
+			attributes.alignMobile
+		]),
 		'--text-align-tablet': attributes.alignTablet,
 		'--text-align-mobile': attributes.alignMobile,
-		'--font-size': attributes.fontSize,
+		'--font-size': responsiveGetAttributes([
+			attributes.fontSize,
+			attributes.fontSizeTablet,
+			attributes.fontSizeMobile
+		]),
 		'--font-size-tablet': attributes.fontSizeTablet,
 		'--font-size-mobile': attributes.fontSizeMobile
 	};
 
-	let fontSizeStyle, stylesheet, textShadowStyle;
+	let textShadowStyle;
 
 	if ( attributes.textShadow ) {
 		textShadowStyle = {
@@ -166,6 +156,11 @@ const Edit = ({
 	}
 
 	const style = omitBy({
+		fontSize: responsiveGetAttributes([
+			attributes.fontSize,
+			attributes.fontSizeTablet,
+			attributes.fontSizeMobile
+		]),
 		color: attributes.headingColor,
 		fontFamily: attributes.fontFamily || undefined,
 		fontWeight: 'regular' === attributes.fontVariant ? 'normal' : attributes.fontVariant,
@@ -173,6 +168,7 @@ const Edit = ({
 		textTransform: attributes.textTransform || undefined,
 		lineHeight: ( 3 < attributes.lineHeight ? attributes.lineHeight + 'px' : attributes.lineHeight ) || undefined,
 		letterSpacing: _px( attributes.letterSpacing ),
+		background: attributes.backgroundColor,
 		...textShadowStyle,
 		...inlineStyle
 	}, x => x?.includes?.( 'undefined' ) );
@@ -192,10 +188,22 @@ const Edit = ({
 	return (
 		<Fragment>
 			<style>
-				{ `#block-${ clientId } mark, #block-${ clientId } .highlight {
-						color: ${ attributes.highlightColor };
-						background: ${ attributes.highlightBackground };
-					}` }
+				{
+					`#block-${ clientId } mark, #block-${ clientId } .highlight ` + _cssBlock([
+						[ 'color', attributes.highlightColor ],
+						[ 'background', attributes.highlightBackground ]
+					])
+				}
+				{
+					`#block-${ clientId } a` + _cssBlock([
+						[ 'color', attributes.linkColor  ]
+					])
+				}
+				{
+					`#block-${ clientId } a:hover` + _cssBlock([
+						[ 'color', attributes.linkHoverColor  ]
+					])
+				}
 			</style>
 
 			<Controls

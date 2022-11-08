@@ -144,7 +144,7 @@ const Inspector = ({
 									>
 										<ToogleGroupControl
 											value={ responsiveGetAttributes([ attributes.align, attributes.alignTablet, attributes.alignMobile  ]) ?? 'left' }
-											onChange={ value => responsiveSetAttributes( 'left' === value ? undefined : value, [ 'align', 'alignTablet', 'alignMobile' ]) }
+											onChange={ value => responsiveSetAttributes( value, [ 'align', 'alignTablet', 'alignMobile' ]) }
 											options={[
 												{
 													icon: alignLeft,
@@ -294,8 +294,8 @@ const Inspector = ({
 										label: __( 'Link Hover', 'otter-blocks' )
 									},
 									{
-										value: attributes.highlightBackground,
-										onChange: highlightBackground => setAttributes({ highlightBackground }),
+										value: attributes.highlightColor,
+										onChange: highlightColor => setAttributes({ highlightColor }),
 										label: __( 'Highlight Text', 'otter-blocks' )
 									},
 									{
