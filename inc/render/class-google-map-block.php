@@ -47,7 +47,7 @@ class Google_Map_Block {
 		}
 
 		if ( isset( $attributes['height'] ) ) {
-			$style .= 'height:' . esc_attr( $attributes['height'] . 'px;' );
+			$style .= 'height:' . esc_attr( is_numeric( $attributes['height'] ) ? $attributes['height'] . 'px' : $attributes['height'] );
 		}
 
 		$wrapper_attributes = get_block_wrapper_attributes(

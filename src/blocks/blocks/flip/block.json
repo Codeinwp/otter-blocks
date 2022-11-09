@@ -25,22 +25,40 @@
 			"default": "flipY"
 		},
 		"width": {
-			"type": "number"
+			"type": ["number", "object"]
+		},
+		"widthTablet": {
+			"type": "object"
+		},
+		"widthMobile": {
+			"type": "object"
 		},
 		"height": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
+		"heightTablet": {
+			"type": "object"
+		},
+		"heightMobile": {
+			"type": "object"
+		},	
 		"padding": {
-			"type": "number"
+			"type": ["number", "object"]
+		},
+		"paddingTablet": {
+			"type": "object"
+		},
+		"paddingMobile": {
+			"type": "object"
 		},
 		"borderWidth": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"borderColor": {
 			"type": "string"
 		},
 		"borderRadius": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"backgroundColor": {
 			"type": "string"
@@ -58,10 +76,10 @@
 			"type": "object"
 		},
 		"frontMediaWidth": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"frontMediaHeight": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"frontBackgroundImage": {
 			"type": "object"
@@ -138,15 +156,18 @@
 			"default": 0
 		},
 		"titleFontSize": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"descriptionFontSize": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"titleColor": {
 			"type": "string"
 		},
 		"descriptionColor": {
+			"type": "string"
+		},
+		"frontContentType": {
 			"type": "string"
 		}
 	},

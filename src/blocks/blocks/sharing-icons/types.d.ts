@@ -15,5 +15,6 @@ type Attributes = {
 	textColor: string
 }
 
+export type SharingIconsAttrs = Partial<Attributes>
 export type SharingIconsProps = BlockProps<Attributes>
 export interface SharingIconsInspectorProps extends InspectorProps<Attributes> {}

@@ -48,9 +48,19 @@ const Accordion = ({
 						label: __( 'Title', 'otter-blocks' )
 					},
 					{
+						value: defaults.activeTitleColor,
+						onChange: value => changeConfig( blockName, { activeTitleColor: value }),
+						label: __( 'Active tab title', 'otter-blocks' )
+					},
+					{
 						value: defaults.titleBackground,
 						onChange: value => changeConfig( blockName, { titleBackground: value }),
 						label: __( 'Title Background', 'otter-blocks' )
+					},
+					{
+						value: defaults.activeTitleBackground,
+						onChange: value => changeConfig( blockName, { activeTitleBackground: value }),
+						label: __( 'Active tab title Background', 'otter-blocks' )
 					},
 					{
 						value: defaults.contentBackground,
@@ -60,7 +70,7 @@ const Accordion = ({
 					{
 						value: defaults.borderColor,
 						onChange: value => changeConfig( blockName, { borderColor: value }),
-						label: __( 'Border Color', 'otter-blocks' )
+						label: __( 'Border', 'otter-blocks' )
 					}
 				] }
 			>

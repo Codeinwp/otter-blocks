@@ -25,8 +25,6 @@ import {
 	Notice
 } from '@wordpress/components';
 
-import { useSelect } from '@wordpress/data';
-
 import {
 	Fragment,
 	useState
@@ -42,12 +40,11 @@ import BoxShadowControl from '../../components/box-shadow-control/index.js';
 import Upsell from '../../components/notice/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
 import {
-	buildResponsiveGetAttributes,
-	buildResponsiveSetAttributes,
 	changeActiveStyle,
 	getActiveStyle,
 	setUtm
 } from '../../helpers/helper-functions.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
 
 const styles = [
@@ -164,16 +161,7 @@ const Inspector = ({
 	const {
 		responsiveSetAttributes,
 		responsiveGetAttributes
-	} = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-
-		return {
-			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
-			responsiveGetAttributes: buildResponsiveGetAttributes( view )
-		};
-	}, []);
+	} = useResponsiveAttributes( setAttributes );
 
 	const onChangeFeature = ( props ) => {
 		const features = [ ...attributes.features ];

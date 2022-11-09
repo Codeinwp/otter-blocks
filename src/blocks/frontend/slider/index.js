@@ -21,7 +21,6 @@ const init = () => {
 			return false;
 		}
 
-
 		Object.keys( options ).map( option => options[option] = Number( options[option]) );
 
 		const observer = new IntersectionObserver( entries => {
@@ -42,6 +41,7 @@ const init = () => {
 						keyboard: true,
 						autoplay,
 						hoverpause: true,
+						animationTimingFunc: slider.dataset?.transition || 'ease',
 						breakpoints: {
 							800: {
 								perView: 1,

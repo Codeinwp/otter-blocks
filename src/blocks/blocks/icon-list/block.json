@@ -30,28 +30,43 @@
 			"type": "string"
 		},
 		"defaultSize": {
-			"type": "number",
-			"default": 20
+			"type": ["number", "string"]
+		},
+		"defaultIconSize": {
+			"type": "string"
 		},
 		"gap": {
-			"type": "number",
-			"default": 5
+			"type": ["number", "string"]
+		},
+		"gapIconLabel": {
+			"type": ["string"]
 		},
 		"horizontalAlign": {
 			"type": "string"
+		},
+		"alignmentTablet": {
+			"type": "string"
+		},
+		"alignmentMobile": {
+			"type": "string"
+		},
+		"hideLabels": {
+			"type": "boolean"
+		},
+		"hasDivider": {
+			"type": "boolean"
+		},
+		"dividerWidth": {
+			"type": "string"
+		},
+		"dividerColor": {
+			"type": "string"
+		},
+		"dividerLength": {
+			"type": "string"
 		}
 	},
-	"styles": [
-		{
-			"name": "vertical",
-			"label": "Vertical",
-			"isDefault": true
-		},
-		{
-			"name": "horizontal",
-			"label": "Horizontal"
-		}
-	],
+	
 	"editorStyle": "otter-icon-list-editor",
 	"style": "otter-icon-list-style"
 }

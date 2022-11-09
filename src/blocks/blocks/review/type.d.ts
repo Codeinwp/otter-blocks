@@ -36,5 +36,6 @@ type Attributes = {
 	isSynced: string[]
 }
 
+export type ReviewAttrs = Partial<Attributes>
 export type ReviewProps = BlockProps<Attributes>
 export interface ReviewInspectorProps extends InspectorProps<Attributes> {}

@@ -13,8 +13,12 @@ const supportedBlocks = [
 	'themeisle-blocks/advanced-columns',
 	'themeisle-blocks/advanced-column',
 	'themeisle-blocks/advanced-heading',
+	'themeisle-blocks/accordion',
+	'themeisle-blocks/flip',
+	'themeisle-blocks/google-map',
 	'themeisle-blocks/posts-grid',
-	'themeisle-blocks/review'
+	'themeisle-blocks/review',
+	'themeisle-blocks/slider'
 ];
 
 export const useInspectorSlot = name => {

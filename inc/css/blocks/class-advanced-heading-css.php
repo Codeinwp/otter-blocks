@@ -110,7 +110,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 								'default' => '#000',
 								'format'  => function( $value, $attrs ) {
 									$opacity = ( isset( $attrs['textShadowColorOpacity'] ) ? $attrs['textShadowColorOpacity'] : 50 ) / 100;
-									return $this->hex2rgba( $value, $opacity );
+									return Base_CSS::hex2rgba( $value, $opacity );
 								},
 							),
 						),

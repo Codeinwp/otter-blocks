@@ -32,34 +32,106 @@ class Flip_CSS extends Base_CSS {
 	 * @access  public
 	 */
 	public function render_css( $block ) {
-		$css = new CSS_Utility( $block );
+		$css = new CSS_Utility(
+			$block,
+			array(
+				'tablet' => '@media ( max-width: 960px )',
+				'mobile' => '@media ( max-width: 600px )',
+			)
+		);
 
 		$css->add_item(
 			array(
 				'properties' => array(
 					array(
+						'property'  => '--width',
+						'value'     => 'width',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['width'] ) && is_numeric( $attrs['width'] );
+						},
+					),
+					array(
+						'property'  => '--width',
+						'value'     => 'width',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['width'] ) && is_string( $attrs['width'] );
+						},
+					),
+					array(
 						'property' => '--width',
-						'value'    => 'width',
-						'unit'     => 'px',
+						'value'    => 'widthTablet',
+						'media'    => 'tablet',
+					),
+					array(
+						'property' => '--width',
+						'value'    => 'widthMobile',
+						'media'    => 'mobile',
+					),
+					array(
+						'property'  => '--height',
+						'value'     => 'height',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['height'] ) && is_numeric( $attrs['height'] );
+						},
+					),
+					array(
+						'property'  => '--height',
+						'value'     => 'height',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['height'] ) && is_string( $attrs['height'] );
+						},
 					),
 					array(
 						'property' => '--height',
-						'value'    => 'height',
-						'unit'     => 'px',
+						'value'    => 'heightTablet',
+						'media'    => 'tablet',
+					),
+					array(
+						'property' => '--height',
+						'value'    => 'heightMobile',
+						'media'    => 'mobile',
 					),
 					array(
 						'property' => '--border-color',
 						'value'    => 'borderColor',
 					),
 					array(
-						'property' => '--border-width',
-						'value'    => 'borderWidth',
-						'unit'     => 'px',
+						'property'  => '--border-width',
+						'value'     => 'borderWidth',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['borderWidth'] ) && is_numeric( $attrs['borderWidth'] );
+						},
 					),
 					array(
-						'property' => '--border-radius',
-						'value'    => 'borderRadius',
-						'unit'     => 'px',
+						'property'  => '--border-width',
+						'value'     => 'borderWidth',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['borderWidth'] ) && is_array( $attrs['borderWidth'] );
+						},
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values( $value, CSS_Utility::make_box( '3px' ) );
+						},
+					),
+					array(
+						'property'  => '--border-radius',
+						'value'     => 'borderRadius',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['borderRadius'] ) && is_numeric( $attrs['borderRadius'] );
+						},
+					),
+					array(
+						'property'  => '--border-radius',
+						'value'     => 'borderRadius',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['borderRadius'] ) && is_array( $attrs['borderRadius'] );
+						},
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values( $value, CSS_Utility::make_box( '10px' ) );
+						},
 					),
 					array(
 						'property'  => '--front-background',
@@ -182,9 +254,51 @@ class Flip_CSS extends Base_CSS {
 						'value'    => 'backVerticalAlign',
 					),
 					array(
-						'property' => '--padding',
-						'value'    => 'padding',
-						'unit'     => 'px',
+						'property'  => '--padding',
+						'value'     => 'padding',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['padding'] ) && is_numeric( $attrs['padding'] );
+						},
+					),
+					array(
+						'property'  => '--padding',
+						'value'     => 'padding',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['padding'] ) && is_array( $attrs['padding'] );
+						},
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values( $value, CSS_Utility::make_box( '20px' ) );
+						},
+					),
+					array(
+						'property' => '--padding-tablet',
+						'value'    => 'paddingTablet',
+						'format'   => function( $value, $attrs ) {
+							return CSS_Utility::render_box(
+								CSS_Utility::merge_views(
+									CSS_Utility::make_box( '20px' ),
+									isset( $attrs['padding'] ) && is_array( $attrs['padding'] ) ? $attrs['padding'] : array(),
+									$value
+								)
+							);
+						},
+						'media'    => 'tablet',
+					),
+					array(
+						'property' => '--padding-mobile',
+						'value'    => 'paddingMobile',
+						'format'   => function( $value, $attrs ) {
+							return CSS_Utility::render_box(
+								CSS_Utility::merge_views(
+									CSS_Utility::make_box( '20px' ),
+									isset( $attrs['padding'] ) && is_array( $attrs['padding'] ) ? $attrs['padding'] : array(),
+									isset( $attrs['paddingTablet'] ) ? $attrs['paddingTablet'] : array(),
+									$value
+								)
+							);
+						},
+						'media'    => 'mobile',
 					),
 					array(
 						'property'       => '--box-shadow',
@@ -210,7 +324,7 @@ class Flip_CSS extends Base_CSS {
 								'default' => '#000',
 								'format'  => function( $value, $attrs ) {
 									$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 );
-									return ( strpos( $value, '#' ) !== false && $opacity < 100 ) ? $this->hex2rgba( $value, $opacity / 100 ) : $value;
+									return ( strpos( $value, '#' ) !== false && $opacity < 100 ) ? Base_CSS::hex2rgba( $value, $opacity / 100 ) : $value;
 								},
 							),
 						),
@@ -219,14 +333,34 @@ class Flip_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => '--front-media-width',
-						'value'    => 'frontMediaWidth',
-						'unit'     => 'px',
+						'property'  => '--front-media-width',
+						'value'     => 'frontMediaWidth',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['--front-media-width'] ) && is_numeric( $attrs['--front-media-width'] );
+						},
 					),
 					array(
-						'property' => '--front-media-height',
-						'value'    => 'frontMediaHeight',
-						'unit'     => 'px',
+						'property'  => '--front-media-height',
+						'value'     => 'frontMediaHeight',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['--front-media-height'] ) && is_numeric( $attrs['--front-media-height'] );
+						},
+					),
+					array(
+						'property'  => '--front-media-width',
+						'value'     => 'frontMediaWidth',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['frontMediaWidth'] ) && is_string( $attrs['frontMediaWidth'] );
+						},
+					),
+					array(
+						'property'  => '--front-media-height',
+						'value'     => 'frontMediaHeight',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['frontMediaHeight'] ) && is_string( $attrs['frontMediaHeight'] );
+						},
 					),
 				),
 			)
@@ -243,7 +377,9 @@ class Flip_CSS extends Base_CSS {
 					array(
 						'property' => 'font-size',
 						'value'    => 'titleFontSize',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 				),
 			)
@@ -260,7 +396,9 @@ class Flip_CSS extends Base_CSS {
 					array(
 						'property' => 'font-size',
 						'value'    => 'descriptionFontSize',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 				),
 			)

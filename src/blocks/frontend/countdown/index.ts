@@ -3,6 +3,9 @@
  */
 import { domReady } from '../../helpers/frontend-helper-functions';
 
+const toBase64 = ( str: string ) => {
+	return window.btoa( unescape( encodeURIComponent( str ) ) );
+};
 
 // Time constants
 const _MS_PER_SECONDS = 1000;
@@ -11,6 +14,9 @@ const _MS_PER_HOURS = _MS_PER_MINUTES * 60;
 const _MS_PER_DAY = _MS_PER_HOURS * 24;
 
 const COUNTDOWN_RESET = _MS_PER_DAY * 30;
+
+const LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE = `o-countdown-last-visit-${ toBase64( window.location.pathname ) }-`;
+const TIMER_VALUE_FROM_LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE = `o-countdown-last-visit-time-${ toBase64( window.location.pathname ) }-`;
 
 type Settings = {
 	exclude: string[]
@@ -29,7 +35,7 @@ class CountdownData {
 	readonly rawData: string;
 	readonly timer: string;
 	readonly settings?: Settings;
-	readonly targetDate: number;
+	readonly deadline: number;
 	readonly behaviour: 'default' | 'redirectLink' | 'hide' | 'restart';
 	readonly trigger?: 'showBlock' | 'hideBlock';
 	readonly redirectLink?: string;
@@ -103,34 +109,47 @@ class CountdownData {
 
 		switch ( this.mode ) {
 		case 'timer':
-			const lastVisit = localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` );
-			const lastVisitTime = localStorage.getItem( `o-countdown-last-visit-time-${this.elem.id}` );
 
+			// Record when the user was last time on this page.
+			const lastVisitTimeRecord = localStorage.getItem( `${LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE}-${this.elem.id}` );
+
+			// Record what was the timer value.
+			const timerValueRecorded = localStorage.getItem( `${TIMER_VALUE_FROM_LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE}-${this.elem.id}` );
+
+			// Set the deadling based on the last visit.
+			this.deadline = parseInt( lastVisitTimeRecord! ) + parseInt( this.timer );
+
+			// Check if the client is first time on the page.
 			if (
-				! lastVisit ||
-				( ( parseInt( lastVisit ) + parseInt( this.timer ) - Date.now() ) > COUNTDOWN_RESET ) ||
-				lastVisitTime !== this.timer
+				! lastVisitTimeRecord ||
+				( ( parseInt( lastVisitTimeRecord ) + parseInt( this.timer ) - Date.now() ) > COUNTDOWN_RESET ) ||
+				timerValueRecorded !== this.timer
 			) {
-				localStorage.setItem( `o-countdown-last-visit-${this.elem.id}`, Date.now().toString() );
-				localStorage.setItem( `o-countdown-last-visit-time-${this.elem.id}`, this.timer );
+
+				// Record the curent visit and timer time. Set a new deadline.
+				localStorage.setItem( `${LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE}-${this.elem.id}`, Date.now().toString() );
+				localStorage.setItem( `${TIMER_VALUE_FROM_LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE}-${this.elem.id}`, this.timer );
+				this.deadline = Date.now() + parseInt( this.timer );
 			}
 
-			this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` )! ) + parseInt( this.timer );
 
+			// Check if the deadline is still valid and if we can reset.
 			if ( this.canRestart ) {
-				localStorage.setItem( `o-countdown-last-visit-${this.elem.id}`, Date.now().toString() );
-				this.targetDate = parseInt( localStorage.getItem( `o-countdown-last-visit-${this.elem.id}` )! ) + parseInt( this.timer );
+
+				// Record the current visit and set the new deadline.
+				localStorage.setItem( `${LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE}--${this.elem.id}`, Date.now().toString() );
+				this.deadline = Date.now() + parseInt( this.timer );
 			}
 
 			break;
 
 		case 'interval':
-			this.targetDate = this.endInterval ? ( new Date( this.endInterval + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : 0;
+			this.deadline = this.endInterval ? ( new Date( this.endInterval + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : 0;
 			this.hideTime = this.startInterval ? ( new Date( this.startInterval + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : 0;
 			break;
 
 		default:
-			this.targetDate = this.rawData ?  ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : Date.now();
+			this.deadline = this.rawData ?  ( new Date( this.rawData + ( window?.themeisleGutenbergCountdown?.timezone ?? '' ) ) ).getTime() : Date.now();
 		}
 
 		this.hideOrShow( ( this.isStopped && 'hide' === this.behaviour ) || this.mustBeHidden );
@@ -242,7 +261,7 @@ class CountdownData {
 	}
 
 	get remainingTime(): number {
-		return this.targetDate - this.currentTime;
+		return this.deadline - this.currentTime;
 	}
 
 	get isStopped(): boolean {

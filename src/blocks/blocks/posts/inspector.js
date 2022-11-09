@@ -42,12 +42,11 @@ import ResponsiveControl from '../../components/responsive-control/index.js';
 import BoxShadowControl from '../../components/box-shadow-control/index.js';
 import ClearButton from '../../components/clear-button/index.js';
 import {
-	buildResponsiveGetAttributes,
-	buildResponsiveSetAttributes,
 	convertToTitleCase,
 	changeActiveStyle,
 	getActiveStyle
 } from '../../helpers/helper-functions.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 const styles = [
 	{
@@ -126,19 +125,8 @@ const Inspector = ({
 
 	const {
 		responsiveSetAttributes,
-		responsiveGetAttributes,
-		getView
-	} = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-
-		return {
-			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
-			responsiveGetAttributes: buildResponsiveGetAttributes( view ),
-			getView: view
-		};
-	}, []);
+		responsiveGetAttributes
+	} = useResponsiveAttributes( setAttributes );
 
 	const categorySuggestions = categoriesList.reduce(
 		( accumulator, category ) => ({
@@ -288,6 +276,7 @@ const Inspector = ({
 									}
 								]}
 								onChange={ textAlign => setAttributes({ textAlign }) }
+								hasIcon
 							/>
 						</BaseControl>
 					</PanelBody>
