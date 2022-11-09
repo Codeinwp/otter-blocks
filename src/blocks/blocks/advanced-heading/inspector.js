@@ -250,8 +250,8 @@ const Inspector = ({
 									max={ 3 }
 									units={[
 										{
-											a11yLabel: 'Unitless (u)',
-											label: 'u',
+											a11yLabel: 'Unitless (-)',
+											label: '-',
 											step: 0.1,
 											value: ''
 										},
