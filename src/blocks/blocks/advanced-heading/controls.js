@@ -12,7 +12,7 @@ import {
 	ToolbarGroup
 } from '@wordpress/components';
 
-import { BlockControls } from '@wordpress/block-editor';
+import { AlignmentToolbar, BlockControls } from '@wordpress/block-editor';
 
 import { Fragment } from '@wordpress/element';
 
@@ -20,11 +20,15 @@ import { Fragment } from '@wordpress/element';
  * Internal dependencies
  */
 import GoogleFontsControl from '../../components/google-fonts-control/index.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 const Controls = ({
 	attributes,
 	setAttributes
 }) => {
+
+	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
+
 
 	const changeFontFamily = value => {
 		if ( ! value ) {
@@ -177,6 +181,14 @@ const Controls = ({
 							/>
 						</Fragment>
 					) }
+				/>
+			</ToolbarGroup>
+			<ToolbarGroup>
+				<AlignmentToolbar
+					value={ responsiveGetAttributes([ attributes.align, attributes.alignTablet, attributes.alignMobile  ]) ?? 'left' }
+					onChange={ align => {
+						responsiveSetAttributes( align, [ 'align', 'alignTablet', 'alignMobile' ]);
+					} }
 				/>
 			</ToolbarGroup>
 		</BlockControls>

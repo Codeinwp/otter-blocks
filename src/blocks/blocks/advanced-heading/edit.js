@@ -68,7 +68,7 @@ const Edit = ({
 
 	const oldPaddingDesktop = 'unlinked' === attributes.paddingType ? ({
 		top: _px( attributes.paddingTop ) ?? '0px',
-		bottom: _px( attributes.paddingBottom ) ?? '25px',
+		bottom: _px( attributes.paddingBottom ) ?? '0px',
 		right: _px( attributes.paddingRight ) ?? '0px',
 		left: _px( attributes.paddingLeft ) ?? '0px'
 	}) : ( isFinite( attributes.padding ) ? makeBox( _px( attributes.padding ) ) : makeBox( '0px' ) );
@@ -89,7 +89,7 @@ const Edit = ({
 
 	const oldMarginDesktop = undefined === attributes.marginType ?  ({
 		top: _px( attributes.marginTop ) ?? '0px',
-		bottom: _px( attributes.marginBottom ) ?? '0px'
+		bottom: _px( attributes.marginBottom ) ?? '25px'
 	}) : ( isFinite( attributes.margin ) ? makeBox( _px( attributes.margin ) ) : undefined );
 
 	const oldMarginTablet = undefined === attributes.marginTypeTablet ? ({
