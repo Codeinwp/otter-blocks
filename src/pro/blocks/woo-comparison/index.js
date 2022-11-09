@@ -11,7 +11,10 @@ import {
 
 import { useBlockProps } from '@wordpress/block-editor';
 
-import { Placeholder } from '@wordpress/components';
+import {
+	Button,
+	Placeholder
+} from '@wordpress/components';
 
 import { useDispatch } from '@wordpress/data';
 
@@ -24,6 +27,8 @@ import metadata from './block.json';
 
 const { name } = metadata;
 
+let shouldMigrate = false;
+
 const edit = ({
 	clientId,
 	attributes
@@ -34,13 +39,17 @@ const edit = ({
 		const blocks = getBlockTypes();
 
 		if ( -1 !== blocks.findIndex( block => 'sparks/woo-comparison' === block.name ) ) {
-			return replaceBlocks( clientId, [
-				createBlock( 'sparks/woo-comparison', {
-					...attributes
-				})
-			]);
+			shouldMigrate = true;
 		}
 	}, []);
+
+	if ( shouldMigrate ) {
+		replaceBlocks( clientId, [
+			createBlock( 'sparks/woo-comparison', {
+				...attributes
+			})
+		]);
+	}
 
 	return (
 		<div { ...useBlockProps() }>
