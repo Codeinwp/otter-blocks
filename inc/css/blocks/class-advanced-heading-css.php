@@ -74,7 +74,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['lineHeight'] ) && is_numeric( $attrs['lineHeight'] );
 						},
-						'format'    => function( $value, $attrs ) {
+						'format'    => function( $value ) {
 							return 3 < $value ? $value . 'px' : $value;
 						},
 					),
@@ -86,9 +86,19 @@ class Advanced_Heading_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => 'letter-spacing',
-						'value'    => 'letterSpacing',
-						'unit'     => 'px',
+						'property'  => 'letter-spacing',
+						'value'     => 'letterSpacing',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['letterSpacing'] ) && is_numeric( $attrs['letterSpacing'] );
+						},
+					),
+					array(
+						'property'  => 'letter-spacing',
+						'value'     => 'letterSpacing',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['letterSpacing'] ) && is_string( $attrs['letterSpacing'] );
+						},
 					),
 					array(
 						'property'       => 'text-shadow',
