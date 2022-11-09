@@ -208,6 +208,26 @@ You can check Otter documentation [here](https://docs.themeisle.com/article/1478
 
 == Changelog ==
 
+##### [Version 2.1.2](https://github.com/Codeinwp/otter-blocks/compare/v2.1.1...v2.1.2) (2022-11-09)
+
+- Section Enhancements
+- Flip Block Enhancements
+- Accordion Block Enhancements
+- Popup Block Enhancements
+- Icon List Block Enhancements
+- New Copy & Paste Style Feature
+- Add .lottie files support to Lottie Block
+- Add Background Overlay to Column Block
+- Add Text Color option to Section & Column Block
+- Add Structured FAQ Data option to Accordion Block
+- Fix some Lottie features not working in Reverse Mode
+- Fix Sharing Icon inconsistency in Editor/Frontend
+- Fix Shape Divider not working in Section Block when used in a particular way
+- Fix Evergreen Countdown stopping after sometime
+
+
+
+
 ##### [Version 2.1.1](https://github.com/Codeinwp/otter-blocks/compare/v2.1.0...v2.1.1) (2022-11-01)
 
 - Fix Media Modal not appearing properly if used inside a Popup
