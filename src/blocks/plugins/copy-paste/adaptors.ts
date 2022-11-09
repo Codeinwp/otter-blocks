@@ -1,4 +1,4 @@
-import { omit, pick, pickBy } from 'lodash';
+import { isNumber, omit, pick, pickBy } from 'lodash';
 import { SectionAttrs } from '../../blocks/section/columns/types';
 import {  Storage } from './models';
 import { coreAdaptors } from './core-adaptors';
@@ -428,17 +428,17 @@ export const adaptors = {
 					border: {
 						width: makeBox( addUnit( attrs?.borderWidth, 'px' ) ),
 						radius: {
-							desktop: makeBox( addUnit( attrs?.borderRadius, 'px' ) )
+							desktop: isNumber(  attrs?.borderRadius ) ? makeBox( addUnit( attrs?.borderRadius, 'px' ) ) : attrs?.borderRadius
 						}
 					},
 					width: {
-						desktop: addUnit( attrs?.width, 'px' )
+						desktop: isNumber(  attrs?.width ) ? addUnit( attrs?.width as number | undefined, 'px' ) : attrs?.width as string | undefined
 					},
 					height: {
-						desktop: addUnit( attrs?.height, 'px' )
+						desktop: isNumber(  attrs?.height ) ?  addUnit( attrs?.height, 'px' ) : attrs?.height as string | undefined
 					},
 					padding: {
-						desktop: makeBox( addUnit( attrs?.padding, 'px' ) )
+						desktop: isNumber(  attrs?.padding ) ?  makeBox( addUnit( attrs?.padding, 'px' ) ) : attrs?.padding
 					},
 					font: {
 						size: addUnit( attrs?.titleFontSize, 'px' )
