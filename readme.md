@@ -2,7 +2,7 @@
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/), [uriahs-victor](https://profiles.wordpress.org/uriahs-victor/), [john_pixle](https://profiles.wordpress.org/john_pixle/), [wildmisha](https://profiles.wordpress.org/wildmisha/), [irinelenache](https://profiles.wordpress.org/irinelenache/)  
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder  
 **Requires at least:** 5.8  
-**Tested up to:** 6.0  
+**Tested up to:** 6.1  
 **Requires PHP:** 5.4  
 **Stable tag:** trunk  
 **License:** GPLv3  
@@ -207,6 +207,26 @@ You can check Otter documentation [here](https://docs.themeisle.com/article/1478
 5. Section Block
 
 ## Changelog ##
+
+##### [Version 2.1.2](https://github.com/Codeinwp/otter-blocks/compare/v2.1.1...v2.1.2) (2022-11-09)
+
+- Section Enhancements
+- Flip Block Enhancements
+- Accordion Block Enhancements
+- Popup Block Enhancements
+- Icon List Block Enhancements
+- New Copy & Paste Style Feature
+- Add .lottie files support to Lottie Block
+- Add Background Overlay to Column Block
+- Add Text Color option to Section & Column Block
+- Add Structured FAQ Data option to Accordion Block
+- Fix some Lottie features not working in Reverse Mode
+- Fix Sharing Icon inconsistency in Editor/Frontend
+- Fix Shape Divider not working in Section Block when used in a particular way
+- Fix Evergreen Countdown stopping after sometime
+
+
+
 
 ##### [Version 2.1.1](https://github.com/Codeinwp/otter-blocks/compare/v2.1.0...v2.1.1) (2022-11-01)
 
