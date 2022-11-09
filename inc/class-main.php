@@ -82,6 +82,7 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Integration\Form_Email',
 			'\ThemeIsle\GutenbergBlocks\Server\Form_Server',
 			'\ThemeIsle\GutenbergBlocks\Render\Live_Search',
+			'\ThemeIsle\GutenbergBlocks\Server\Live_Search_Server',
 		);
 
 		$classnames = apply_filters( 'otter_blocks_autoloader', $classnames );

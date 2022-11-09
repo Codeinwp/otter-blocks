@@ -41,6 +41,14 @@ class Live_Search {
 			$asset_file['version'],
 			true
 		);
+		wp_localize_script(
+			'otter-live-search',
+			'liveSearchData',
+			array(
+				'nonce'   => wp_create_nonce( 'wp_rest' ),
+				'restUrl' => esc_url_raw( get_rest_url() ) . 'otter/v1/live-search'
+			)
+		);
 
 		return '<div class="otter-live-search">' . $block_content . '</div>';
 	}
