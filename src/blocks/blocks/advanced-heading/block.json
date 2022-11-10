@@ -61,7 +61,7 @@
 			"type": "string"
 		},
 		"lineHeight": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"letterSpacing": {
 			"type": ["number", "string"]
