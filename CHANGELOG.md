@@ -1,3 +1,7 @@
+##### [Version 2.1.3](https://github.com/Codeinwp/otter-blocks/compare/v2.1.2...v2.1.3) (2022-11-10)
+
+ - Fixed a crash issue for users with PHP8.0 & PHP8.1 with WP version lower than 6.1
+
 ##### [Version 2.1.2](https://github.com/Codeinwp/otter-blocks/compare/v2.1.1...v2.1.2) (2022-11-09)
 
 - Section Enhancements
