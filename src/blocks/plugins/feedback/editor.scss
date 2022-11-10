@@ -9,7 +9,7 @@ $error-red: #d63638;
 }
 
 .o-feedback-modal-overlay {
-	z-index: 160001; /* to be visible from dynamic images */
+	z-index: 999999999; /* to be visible from dynamic images */
 }
 
 .o-feedback-form {
