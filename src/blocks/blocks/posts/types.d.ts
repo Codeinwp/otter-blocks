@@ -1,4 +1,4 @@
-import { BlockProps, InspectorProps } from '../../helpers/blocks';
+import { BlockProps, InspectorProps, BoxShadow } from '../../helpers/blocks';
 
 type Attributes = {
 	id: string
@@ -12,7 +12,6 @@ type Attributes = {
 	orderBy: string
 	offset: number
 	imageSize: number
-	imageBoxShadow: boolean
 	displayFeaturedImage: boolean
 	displayCategory: boolean
 	displayTitle: boolean
@@ -27,16 +26,32 @@ type Attributes = {
 	displayReadMoreLink: boolean
 	cropImage: boolean
 	customTitleFontSize: number
-	customTitleFontSizeTable: number
+	customTitleFontSizeTablet: number
 	customTitleFontSizeMobile: number
 	customDescriptionFontSize: number
 	customDescriptionFontSizeTablet: number
 	customDescriptionFontSizeMobile: number
-	borderRadius: number
+	borderRadius: number|object
+	borderWidth: string
+	cardBorderRadius: object
+	boxShadow: BoxShadow
+	imageBoxShadow: BoxShadow
 	textAlign: string
 	verticalAlign: string
 	enableFeaturedPost: boolean
-	imageWidth: number
+	imageWidth: number|string
+	imageWidthTablet: string
+	imageWidthMobile: string
+	columnGap: string
+	columnGapTablet: string
+	columnGapMobile: string
+	rowGap: string
+	rowGapTablet: string
+	rowGapMobile: string
+	padding: string
+	paddingTablet: string
+	paddingMobile: string
+	contentGap: string
 }
 
 export type PostProps = BlockProps<Attributes>

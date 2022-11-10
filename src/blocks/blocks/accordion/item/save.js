@@ -18,7 +18,7 @@ const Save = ({
 		<details { ...blockProps }>
 			<summary className="wp-block-themeisle-blocks-accordion-item__title">
 				<RichText.Content
-					tagName="div"
+					tagName={ attributes.tag || 'div' }
 					value={ attributes.title }
 				/>
 			</summary>

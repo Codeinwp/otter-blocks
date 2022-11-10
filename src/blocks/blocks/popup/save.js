@@ -5,20 +5,24 @@ import {
 	InnerBlocks,
 	useBlockProps
 } from '@wordpress/block-editor';
+import classnames from 'classnames';
 
 const Save = ({
-	attributes
+	attributes,
+	className
 }) => {
 	const blockProps = useBlockProps.save({
 		id: attributes.id,
-		className: 'is-front',
+		className: classnames( className, 'is-front', { 'with-outside-button': 'outside' === attributes.closeButtonType }),
 		'data-open': attributes.trigger,
 		'data-dismiss': attributes.recurringClose ? attributes.recurringTime : '',
 		'data-time': ( undefined === attributes.trigger || 'onLoad' === attributes.trigger ) ? ( attributes.wait || 0 ) : '',
 		'data-anchor': 'onClick' === attributes.trigger ? attributes.anchor : '',
 		'data-offset': 'onScroll' === attributes.trigger ? attributes.scroll : '',
 		'data-outside': attributes.outsideClose ? attributes.outsideClose : '',
-		'data-anchorclose': attributes.anchorClose ? attributes.closeAnchor : ''
+		'data-anchorclose': attributes.anchorClose ? attributes.closeAnchor : '',
+		'data-lock-scrolling': attributes.lockScrolling ? '1' : undefined,
+		'data-disable-on': attributes.disableOn ? attributes.disableOn : undefined
 	});
 
 	return (

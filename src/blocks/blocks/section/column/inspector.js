@@ -3,7 +3,10 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { merge, pick } from 'lodash';
+import {
+	merge,
+	pick
+} from 'lodash';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
@@ -12,6 +15,7 @@ import {
 
 import {
 	__experimentalBoxControl as BoxControl,
+	Disabled,
 	PanelBody,
 	ToggleControl,
 	RangeControl,
@@ -28,12 +32,19 @@ import {
 /**
  * Internal dependencies
  */
-import InspectorHeader from '../../../components/inspector-header/index.js';
-import { InspectorExtensions } from '../../../components/inspector-slot-fill/index.js';
-import ResponsiveControl from '../../../components/responsive-control/index.js';
-import BackgroundSelectorControl from '../../../components/background-selector-control/index.js';
-import ControlPanelControl from '../../../components/control-panel-control/index.js';
-import SyncControl from '../../../components/sync-control/index.js';
+
+import {
+	BackgroundOverlayControl,
+	BackgroundSelectorControl,
+	ButtonDropdownControl,
+	ColorDropdownControl,
+	ControlPanelControl,
+	InspectorHeader,
+	InspectorExtensions,
+	ResponsiveControl,
+	SyncControlDropdown
+} from '../../../components/index.js';
+
 import {
 	isNullObject,
 	removeBoxDefaultValues
@@ -176,6 +187,18 @@ const Inspector = ({
 		setAttributes({ borderRadius: value });
 	};
 
+	const getBackgroundIndicator = ( type, color, image, gradient ) => {
+		if ( 'color' === type && color ) {
+			return color;
+		} else if ( 'image' === type && image ) {
+			return `url( ${ image } )`;
+		} else if ( 'gradient' === type && gradient ) {
+			return gradient;
+		}
+
+		return undefined;
+	};
+
 	return (
 		<InspectorControls>
 			<InspectorHeader
@@ -188,39 +211,66 @@ const Inspector = ({
 					{
 						label: __( 'Style', 'otter-blocks' ),
 						value: 'style'
-					},
-					{
-						label: __( 'Advanced', 'otter-blocks' ),
-						value: 'advanced'
 					}
 				]}
 				onChange={ setTab }
 			/>
 
 			{ 'layout' === tab && (
+				<PanelBody
+					title={ __( 'Column Structure', 'otter-blocks' ) }
+				>
+					{ ( 1 < parentBlock.innerBlocks.length ) && (
+						<RangeControl
+							label={ __( 'Column Width', 'otter-blocks' ) }
+							value={ Number( attributes.columnWidth ) }
+							onChange={ changeColumnWidth }
+							step={ 0.1 }
+							min={ 10 }
+							max={ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 10 }
+						/>
+					) }
+
+					<SelectControl
+						label={ __( 'HTML Tag', 'otter-blocks' ) }
+						value={ attributes.columnsHTMLTag }
+						options={ [
+							{ label: __( 'Default (div)', 'otter-blocks' ), value: 'div' },
+							{ label: 'section', value: 'section' },
+							{ label: 'header', value: 'header' },
+							{ label: 'footer', value: 'footer' },
+							{ label: 'article', value: 'article' },
+							{ label: 'main', value: 'main' }
+						] }
+						onChange={ value => setAttributes({ columnsHTMLTag: value }) }
+					/>
+				</PanelBody>
+			) || 'style' === tab && (
 				<Fragment>
 					<PanelBody
-						title={ __( 'Spacing', 'otter-blocks' ) }
+						title={ __( 'Dimensions', 'otter-blocks' ) }
 					>
-						{ ( 1 < parentBlock.innerBlocks.length ) && (
-							<RangeControl
-								label={ __( 'Column Width', 'otter-blocks' ) }
-								value={ Number( attributes.columnWidth ) }
-								onChange={ changeColumnWidth }
-								step={ 0.1 }
-								min={ 10 }
-								max={ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 10 }
-							/>
-						) }
+						<SyncControlDropdown
+							isSynced={ attributes.isSynced }
+							options={ [
+								{
+									label: __( 'Padding', 'otter-blocks' ),
+									value: getPaddingField()
+								},
+								{
+									label: __( 'Margin', 'otter-blocks' ),
+									value: getMarginField()
+								}
+							] }
+							setAttributes={ setAttributes }
+						/>
 
 						<ResponsiveControl
 							label={ __( 'Screen Type', 'otter-blocks' ) }
-							className="otter-section-padding-responsive-control"
 						>
-							<SyncControl
-								field={ getPaddingField() }
-								isSynced={ attributes.isSynced }
-								setAttributes={ setAttributes }
+							<Disabled
+								isDisabled={ attributes.isSynced?.includes( getPaddingField() ) || false }
+								className="o-disabled"
 							>
 								<BoxControl
 									label={ __( 'Padding', 'otter-blocks' ) }
@@ -231,12 +281,11 @@ const Inspector = ({
 									} }
 									onChange={ changePadding }
 								/>
-							</SyncControl>
+							</Disabled>
 
-							<SyncControl
-								field={ getMarginField() }
-								isSynced={ attributes.isSynced }
-								setAttributes={ setAttributes }
+							<Disabled
+								isDisabled={ attributes.isSynced?.includes( getMarginField() ) || false }
+								className="o-disabled"
 							>
 								<BoxControl
 									label={ __( 'Margin', 'otter-blocks' ) }
@@ -247,37 +296,114 @@ const Inspector = ({
 									} }
 									onChange={ changeMargin }
 								/>
-							</SyncControl>
+							</Disabled>
 						</ResponsiveControl>
 					</PanelBody>
-				</Fragment>
-			) || 'style' === tab && (
-				<Fragment>
+
 					<PanelBody
-						title={ __( 'Background Settings', 'otter-blocks' ) }
+						title={ __( 'Background & Content', 'otter-blocks' ) }
+						initialOpen={ false }
 					>
-						<BackgroundSelectorControl
-							backgroundType={ attributes.backgroundType }
-							backgroundColor={ attributes.backgroundColor }
-							image={ attributes.backgroundImage }
-							gradient={ attributes.backgroundGradient }
-							focalPoint={ attributes.backgroundPosition }
-							backgroundAttachment={ attributes.backgroundAttachment }
-							backgroundRepeat={ attributes.backgroundRepeat }
-							backgroundSize={ attributes.backgroundSize }
-							changeBackgroundType={ value => setAttributes({ backgroundType: value }) }
-							changeImage={ media => {
-								setAttributes({
-									backgroundImage: pick( media, [ 'id', 'url' ])
-								});
-							}}
-							removeImage={ () => setAttributes({ backgroundImage: undefined })}
-							changeColor={ value => setAttributes({ backgroundColor: value })}
-							changeGradient={ value => setAttributes({ backgroundGradient: value }) }
-							changeBackgroundAttachment={ value => setAttributes({ backgroundAttachment: value })}
-							changeBackgroundRepeat={ value => setAttributes({ backgroundRepeat: value })}
-							changeFocalPoint={ value => setAttributes({ backgroundPosition: value }) }
-							changeBackgroundSize={ value => setAttributes({ backgroundSize: value }) }
+						<ColorDropdownControl
+							label={ __( 'Text', 'otter-blocks' ) }
+							colorValue={ attributes.color }
+							onColorChange={ color => setAttributes({ color }) }
+							className="is-list is-first"
+						/>
+
+						<ColorDropdownControl
+							label={ __( 'Link', 'otter-blocks' ) }
+							colorValue={ attributes.linkColor }
+							onColorChange={ linkColor => setAttributes({ linkColor }) }
+							className="is-list"
+						/>
+
+						<ButtonDropdownControl
+							label={ __( 'Background', 'otter-blocks' ) }
+							indicator={ getBackgroundIndicator( attributes.backgroundType, attributes.backgroundColor, attributes.backgroundImage?.url, attributes.backgroundGradient ) }
+						>
+							<BackgroundSelectorControl
+								backgroundType={ attributes.backgroundType }
+								backgroundColor={ attributes.backgroundColor }
+								image={ attributes.backgroundImage }
+								gradient={ attributes.backgroundGradient }
+								focalPoint={ attributes.backgroundPosition }
+								backgroundAttachment={ attributes.backgroundAttachment }
+								backgroundRepeat={ attributes.backgroundRepeat }
+								backgroundSize={ attributes.backgroundSize }
+								changeBackgroundType={ value => setAttributes({ backgroundType: value }) }
+								changeImage={ media => {
+									setAttributes({
+										backgroundImage: pick( media, [ 'id', 'url' ])
+									});
+								}}
+								removeImage={ () => setAttributes({ backgroundImage: undefined })}
+								changeColor={ value => setAttributes({ backgroundColor: value })}
+								changeGradient={ value => setAttributes({ backgroundGradient: value }) }
+								changeBackgroundAttachment={ value => setAttributes({ backgroundAttachment: value })}
+								changeBackgroundRepeat={ value => setAttributes({ backgroundRepeat: value })}
+								changeFocalPoint={ value => setAttributes({ backgroundPosition: value }) }
+								changeBackgroundSize={ value => setAttributes({ backgroundSize: value }) }
+							/>
+						</ButtonDropdownControl>
+
+						<ButtonDropdownControl
+							label={ __( 'Background Overlay', 'otter-blocks' ) }
+							indicator={ getBackgroundIndicator( attributes.backgroundOverlayType, attributes.backgroundOverlayColor, attributes.backgroundOverlayImage?.url, attributes.backgroundOverlayGradient ) }
+						>
+							<BackgroundOverlayControl
+								backgroundType={ attributes.backgroundOverlayType }
+								backgroundColor={ attributes.backgroundOverlayColor }
+								image={ attributes.backgroundOverlayImage }
+								gradient={ attributes.backgroundOverlayGradient }
+								focalPoint={ attributes.backgroundOverlayPosition }
+								backgroundAttachment={ attributes.backgroundOverlayAttachment }
+								backgroundRepeat={ attributes.backgroundOverlayRepeat }
+								backgroundSize={ attributes.backgroundOverlaySize }
+								backgroundOpacity={ attributes.backgroundOverlayOpacity }
+								backgroundFilterBlur={ attributes.backgroundOverlayFilterBlur }
+								backgroundFilterBrightness={ attributes.backgroundOverlayFilterBrightness }
+								backgroundFilterContrast={ attributes.backgroundOverlayFilterContrast }
+								backgroundFilterGrayscale={ attributes.backgroundOverlayFilterGrayscale }
+								backgroundFilterHue={ attributes.backgroundOverlayFilterHue }
+								backgroundFilterSaturate={ attributes.backgroundOverlayFilterSaturate }
+								backgroundBlend={ attributes.backgroundOverlayBlend }
+								changeBackgroundType={ value => setAttributes({ backgroundOverlayType: value }) }
+								changeImage={ media => {
+									setAttributes({
+										backgroundOverlayImage: pick( media, [ 'id', 'url' ])
+									});
+								}}
+								removeImage={ () => setAttributes({ backgroundOverlayImage: undefined })}
+								changeColor={ value => setAttributes({ backgroundOverlayColor: value })}
+								changeGradient={ value => setAttributes({ backgroundOverlayGradient: value }) }
+								changeBackgroundAttachment={ value => setAttributes({ backgroundOverlayAttachment: value })}
+								changeBackgroundRepeat={ value => setAttributes({ backgroundOverlayRepeat: value })}
+								changeFocalPoint={ value => setAttributes({ backgroundOverlayPosition: value }) }
+								changeBackgroundSize={ value => setAttributes({ backgroundOverlaySize: value }) }
+								changeOpacity={ value => setAttributes({ backgroundOverlayOpacity: value }) }
+								changeFilterBlur={ value => setAttributes({ backgroundOverlayFilterBlur: value }) }
+								changeFilterBrightness={ value => setAttributes({ backgroundOverlayFilterBrightness: value }) }
+								changeFilterContrast={ value => setAttributes({ backgroundOverlayFilterContrast: value }) }
+								changeFilterGrayscale={ value => setAttributes({ backgroundOverlayFilterGrayscale: value }) }
+								changeFilterHue={ value => setAttributes({ backgroundOverlayFilterHue: value }) }
+								changeFilterSaturate={ value => setAttributes({ backgroundOverlayFilterSaturate: value }) }
+								changeBlend={ value => setAttributes({ backgroundOverlayBlend: value }) }
+							/>
+						</ButtonDropdownControl>
+
+						<ColorDropdownControl
+							label={ __( 'Text Hover', 'otter-blocks' ) }
+							colorValue={ attributes.colorHover }
+							onColorChange={ colorHover => setAttributes({ colorHover }) }
+							className="is-list"
+						/>
+
+						<ColorDropdownControl
+							label={ __( 'Background Hover', 'otter-blocks' ) }
+							colorValue={ attributes.backgroundColorHover }
+							onColorChange={ backgroundColorHover => setAttributes({ backgroundColorHover }) }
+							className="is-list"
 						/>
 					</PanelBody>
 
@@ -286,6 +412,12 @@ const Inspector = ({
 						className="o-section-border-container"
 						initialOpen={ false }
 					>
+						<ColorDropdownControl
+							label={ __( 'Border Color', 'otter-blocks' ) }
+							colorValue={ attributes.borderColor }
+							onColorChange={ value => setAttributes({ borderColor: value }) }
+						/>
+
 						<BoxControl
 							label={ __( 'Border Width', 'otter-blocks' ) }
 							values={ attributes.border }
@@ -300,12 +432,6 @@ const Inspector = ({
 								}
 							] }
 							onChange={ changeBorder }
-						/>
-
-						<ColorGradientControl
-							label={ __( 'Border Color', 'otter-blocks' ) }
-							colorValue={ attributes.borderColor }
-							onColorChange={ value => setAttributes({ borderColor: value }) }
 						/>
 
 						<BoxControl
@@ -335,78 +461,58 @@ const Inspector = ({
 						/>
 
 						{ attributes.boxShadow && (
-							<Fragment>
+							<ControlPanelControl
+								label={ __( 'Shadow Properties', 'otter-blocks' ) }
+							>
 								<ColorGradientControl
 									label={ __( 'Shadow Color', 'otter-blocks' ) }
 									colorValue={ attributes.boxShadowColor }
 									onColorChange={ value => setAttributes({ boxShadowColor: value }) }
 								/>
 
-								<ControlPanelControl
-									label={ __( 'Shadow Properties', 'otter-blocks' ) }
-								>
-									<RangeControl
-										label={ __( 'Opacity', 'otter-blocks' ) }
-										value={ attributes.boxShadowColorOpacity }
-										onChange={ value => setAttributes({ boxShadowColorOpacity: value }) }
-										min={ 0 }
-										max={ 100 }
-									/>
+								<RangeControl
+									label={ __( 'Opacity', 'otter-blocks' ) }
+									value={ attributes.boxShadowColorOpacity }
+									onChange={ value => setAttributes({ boxShadowColorOpacity: value }) }
+									min={ 0 }
+									max={ 100 }
+								/>
 
-									<RangeControl
-										label={ __( 'Blur', 'otter-blocks' ) }
-										value={ attributes.boxShadowBlur }
-										onChange={ value => setAttributes({ boxShadowBlur: value }) }
-										min={ 0 }
-										max={ 100 }
-									/>
+								<RangeControl
+									label={ __( 'Blur', 'otter-blocks' ) }
+									value={ attributes.boxShadowBlur }
+									onChange={ value => setAttributes({ boxShadowBlur: value }) }
+									min={ 0 }
+									max={ 100 }
+								/>
 
-									<RangeControl
-										label={ __( 'Spread', 'otter-blocks' ) }
-										value={ attributes.boxShadowSpread }
-										onChange={ value => setAttributes({ boxShadowSpread: value }) }
-										min={ -100 }
-										max={ 100 }
-									/>
+								<RangeControl
+									label={ __( 'Spread', 'otter-blocks' ) }
+									value={ attributes.boxShadowSpread }
+									onChange={ value => setAttributes({ boxShadowSpread: value }) }
+									min={ -100 }
+									max={ 100 }
+								/>
 
-									<RangeControl
-										label={ __( 'Horizontal', 'otter-blocks' ) }
-										value={ attributes.boxShadowHorizontal }
-										onChange={ value => setAttributes({ boxShadowHorizontal: value }) }
-										min={ -100 }
-										max={ 100 }
-									/>
+								<RangeControl
+									label={ __( 'Horizontal', 'otter-blocks' ) }
+									value={ attributes.boxShadowHorizontal }
+									onChange={ value => setAttributes({ boxShadowHorizontal: value }) }
+									min={ -100 }
+									max={ 100 }
+								/>
 
-									<RangeControl
-										label={ __( 'Vertical', 'otter-blocks' ) }
-										value={ attributes.boxShadowVertical }
-										onChange={ value => setAttributes({ boxShadowVertical: value }) }
-										min={ -100 }
-										max={ 100 }
-									/>
-								</ControlPanelControl>
-							</Fragment>
+								<RangeControl
+									label={ __( 'Vertical', 'otter-blocks' ) }
+									value={ attributes.boxShadowVertical }
+									onChange={ value => setAttributes({ boxShadowVertical: value }) }
+									min={ -100 }
+									max={ 100 }
+								/>
+							</ControlPanelControl>
 						) }
 					</PanelBody>
 				</Fragment>
-			) || 'advanced' === tab && (
-				<PanelBody
-					title={ __( 'Section Settings', 'otter-blocks' ) }
-				>
-					<SelectControl
-						label={ __( 'HTML Tag', 'otter-blocks' ) }
-						value={ attributes.columnsHTMLTag }
-						options={ [
-							{ label: __( 'Default (div)', 'otter-blocks' ), value: 'div' },
-							{ label: 'section', value: 'section' },
-							{ label: 'header', value: 'header' },
-							{ label: 'footer', value: 'footer' },
-							{ label: 'article', value: 'article' },
-							{ label: 'main', value: 'main' }
-						] }
-						onChange={ value => setAttributes({ columnsHTMLTag: value }) }
-					/>
-				</PanelBody>
 			) }
 
 			<InspectorExtensions/>

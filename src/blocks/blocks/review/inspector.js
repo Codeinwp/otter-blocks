@@ -25,9 +25,10 @@ import {
 	Notice
 } from '@wordpress/components';
 
-import { useSelect } from '@wordpress/data';
-
-import { useState, Fragment } from '@wordpress/element';
+import {
+	Fragment,
+	useState
+} from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -39,12 +40,11 @@ import BoxShadowControl from '../../components/box-shadow-control/index.js';
 import Upsell from '../../components/notice/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
 import {
-	buildResponsiveGetAttributes,
-	buildResponsiveSetAttributes,
 	changeActiveStyle,
 	getActiveStyle,
 	setUtm
 } from '../../helpers/helper-functions.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import ResponsiveControl from '../../components/responsive-control/index.js';
 
 const styles = [
@@ -84,24 +84,29 @@ const headingOptions = [
 
 const defaultFontSizes = [
 	{
-		name: 14,
-		size: '14px'
+		name: __( 'XS', 'otter-blocks' ),
+		size: '14px',
+		slug: 'xs'
 	},
 	{
-		name: 16,
-		size: '16px'
+		name: __( 'Small', 'otter-blocks' ),
+		size: '16px',
+		slug: 'small'
 	},
 	{
-		name: 18,
-		size: '18px'
+		name: __( 'Medium', 'otter-blocks' ),
+		size: '18px',
+		slug: 'medium'
 	},
 	{
-		name: 24,
-		size: '24px'
+		name: __( 'Large', 'otter-blocks' ),
+		size: '24px',
+		slug: 'large'
 	},
 	{
-		name: 28,
-		size: '28px'
+		name: __( 'XL', 'otter-blocks' ),
+		size: '28px',
+		slug: 'xl'
 	}
 ];
 
@@ -156,16 +161,7 @@ const Inspector = ({
 	const {
 		responsiveSetAttributes,
 		responsiveGetAttributes
-	} = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-		const view = __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType() : getView();
-
-		return {
-			responsiveSetAttributes: buildResponsiveSetAttributes( setAttributes, view ),
-			responsiveGetAttributes: buildResponsiveGetAttributes( view )
-		};
-	}, []);
+	} = useResponsiveAttributes( setAttributes );
 
 	const onChangeFeature = ( props ) => {
 		const features = [ ...attributes.features ];

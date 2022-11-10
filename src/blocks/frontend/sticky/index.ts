@@ -69,7 +69,7 @@ const getStickyContainer = ( elem: Element, scope: `o-sticky-scope-${string}` ):
 		}
 		parent = parent.parentElement;
 	}
-	return 'o-sticky-scope-main-area' === scope ? sections.pop() : document.body;
+	return 'o-sticky-scope-main-area' === scope && 0 < sections.length ? sections.pop() as HTMLElement : document.body;
 };
 
 type Config = {
@@ -94,7 +94,7 @@ const getConfigOptions = ( elem: Element ): Config => {
 		if ( cssClass.includes( 'o-sticky-pos-bottom' ) ) {
 			config.position = 'bottom';
 		} else if ( cssClass.includes( 'o-sticky-offset' ) ) {
-			config.offset = parseInt( cssClass.split( '-' )?.pop() );
+			config.offset = parseInt( cssClass.split( '-' )?.pop() ?? '40' );
 		} else if ( cssClass.includes( 'o-sticky-scope' ) ) {
 			config.scope = cssClass as `o-sticky-scope-${string}`;
 		} else if ( cssClass.includes( 'o-sticky-bhvr' ) ) {
@@ -104,9 +104,9 @@ const getConfigOptions = ( elem: Element ): Config => {
 		} else if ( cssClass.includes( 'o-sticky-float' ) ) {
 			config.isFloatMode = true;
 		} else if ( cssClass.includes( 'o-sticky-width' ) ) {
-			config.width = cssClass.split( '-' )?.pop();
+			config.width = cssClass.split( '-' ).pop() as string;
 		} else if ( cssClass.includes( 'o-sticky-opt-side-offset' ) ) {
-			config.sideOffset = cssClass.split( '-' )?.pop();
+			config.sideOffset = cssClass.split( '-' ).pop() as string;
 		} else if ( cssClass.includes( 'o-sticky-side-right' ) ) {
 			config.side = 'right';
 		}
@@ -133,7 +133,7 @@ class StickyData {
 	readonly selector: HTMLDivElement | string;
 	readonly containerSelector: HTMLDivElement | string;
 	orderInPage: number;
-	status: 'active' | 'dormant' | 'inactive';
+	status: 'active' | 'dormant' | 'inactive' | 'hidden';
 	isActive: boolean;
 	isDormant: boolean;
 	positionStatus: typeof positions[Position];
@@ -180,8 +180,8 @@ class StickyData {
 		this.triggerLimit = 'bottom' === config?.position ? window.innerHeight - this.offset : 0;
 
 		// Get node reference for the element and the container
-		this.elem = 'string' === typeof selector ? document.querySelector( selector ) : selector;
-		this.container = 'string' === typeof containerSelector ? document.querySelector( containerSelector ) : containerSelector;
+		this.elem = 'string' === typeof selector ? document.querySelector( selector ) as HTMLDivElement  : selector;
+		this.container = 'string' === typeof containerSelector ? document.querySelector( containerSelector ) as HTMLDivElement : containerSelector;
 
 		// Calculate the element position in the page
 		this.scrollTop = window.pageYOffset || document.documentElement.scrollTop;
@@ -195,13 +195,6 @@ class StickyData {
 		this.elemTopPositionInPage = top + this.scrollTop;
 		this.elemLeftPositionInPage = left + this.scrollLeft;
 		this.elemBottomPositionInPage = this.elemTopPositionInPage + height;
-
-		if ( this.elemBottomPositionInPage < this.triggerLimit ) {
-			console.groupCollapsed( 'Sticky Warning' );
-			console.warn( this.elem, 'This element needs to be position lower in the page when using position \'Bottom\'. You can use position \'Top\' as an alternative.' );
-			console.groupEnd();
-			return;
-		}
 
 		// Calculate the container positions in the page
 		this.containerHeight = this.container?.getBoundingClientRect()?.height || 0;
@@ -228,6 +221,10 @@ class StickyData {
 		this.stylingNodeName = `o-sticky-node-${this.index}`;
 		this.stylingNode = document.createElement( 'style' );
 		document.head.appendChild( this.stylingNode );
+	}
+
+	get canBeRun() {
+		return this.elemBottomPositionInPage > this.triggerLimit;
 	}
 
 	get position() {
@@ -283,6 +280,15 @@ class StickyRunner {
 			return;
 		}
 
+		if ( ! stickyElem.canBeRun ) {
+			console.groupCollapsed( 'Sticky Warning' );
+			console.warn( stickyElem.elem, 'This element needs to be position lower in the page when using position \'Bottom\'. You can use position \'Top\' as an alternative.' );
+			console.groupEnd();
+			return;
+		}
+
+		this.bindCloseButton( stickyElem );
+
 		stickyElem.orderInPage = this.orderInPageCounter;
 		this.items.push( stickyElem );
 		this.orderInPageCounter++;
@@ -294,6 +300,8 @@ class StickyRunner {
 	run() {
 		this.items.forEach( s => s.elem && this.update( s ) );
 		this.items.forEach( s => s.elem && this.align( s ) );
+
+		this.toggleGlobalClass( 0 < this.active.length );
 	}
 
 	/**
@@ -310,6 +318,10 @@ class StickyRunner {
 				sticky.container.style.border = '1px dashed black';
 			}
 			sticky.elem.style.border = '1px dashed red';
+		}
+
+		if ( 'hidden' === sticky.status ) {
+			return;
 		}
 
 		sticky.status = 'inactive';
@@ -458,8 +470,8 @@ class StickyRunner {
 	 * @param sticky The sticky element to insert placeholder.
 	 */
 	insertPlaceholder( sticky: StickyData ) {
-		if ( ! sticky.config.isFloatMode && ! sticky.elem.parentElement.contains( sticky.placeholder ) ) {
-			sticky.elem.parentElement.insertBefore( sticky.placeholder, sticky.elem );
+		if ( ! sticky.config.isFloatMode && ! sticky.elem?.parentElement?.contains( sticky.placeholder ) ) {
+			sticky.elem?.parentElement?.insertBefore( sticky.placeholder, sticky.elem );
 		}
 	}
 
@@ -469,7 +481,7 @@ class StickyRunner {
 	 * @param sticky The sticky element to remove placeholder.
 	 */
 	removePlaceholder( sticky: StickyData ) {
-		if ( ! sticky.config.isFloatMode && sticky.elem.parentElement.contains( sticky.placeholder ) ) {
+		if ( ! sticky.config.isFloatMode && sticky.elem?.parentElement?.contains( sticky.placeholder ) ) {
 			sticky.elem.parentElement.removeChild( sticky.placeholder );
 		}
 	}
@@ -593,6 +605,27 @@ class StickyRunner {
 		return opacity;
 	}
 
+	toggleGlobalClass( value: boolean ) {
+		document.body.classList.toggle( 'o-sticky-is-active', value );
+	}
+
+	bindCloseButton( sticky: StickyData ) {
+		if ( ! sticky.config.isFloatMode ) {
+			return;
+		}
+
+		const classes = sticky.elem.querySelectorAll( '.o-sticky-close' );
+		const anchors = sticky.elem.querySelectorAll( 'a[href=\'#o-sticky-close\']' );
+
+		[ ...Array.from( classes ), ...Array.from( anchors ) ].forEach( elm => {
+			elm.addEventListener( 'click', ( e ) => {
+				e.preventDefault();
+				sticky.status = 'hidden';
+				sticky.elem.classList.add( 'o-is-close' );
+			});
+		});
+	}
+
 	/**
 	 * Get the active sticky elements.
 	 *
@@ -623,6 +656,9 @@ domReady( () => {
 		.o-is-sticky {
 			position: fixed;
 			z-index: 9999;
+		}
+		.o-is-close {
+			display: none;
 		}
 	`;
 

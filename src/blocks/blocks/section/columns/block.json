@@ -44,7 +44,13 @@
 			"type": "object"
 		},
 		"columnsWidth": {
-			"type": "number"
+			"type": [ "number", "string" ]
+		},
+		"columnsWidthTablet": {
+			"type": "string"
+		},
+		"columnsWidthMobile": {
+			"type": "string"
 		},
 		"horizontalAlign": {
 			"type": "string",
@@ -55,17 +61,26 @@
 			"default": "auto"
 		},
 		"columnsHeightCustom": {
-			"type": "number"
+			"type": [ "number", "string" ]
 		},
 		"columnsHeightCustomTablet": {
-			"type": "number"
+			"type": [ "number", "string" ]
 		},
 		"columnsHeightCustomMobile": {
-			"type": "number"
+			"type": [ "number", "string" ]
 		},
 		"verticalAlign": {
 			"type": "string",
 			"default": "unset"
+		},
+		"color": {
+			"type": "string"
+		},
+		"colorHover": {
+			"type": "string"
+		},
+		"linkColor": {
+			"type": "string"
 		},
 		"backgroundType": {
 			"type": "string",

@@ -124,7 +124,7 @@ class Button_CSS extends Base_CSS {
 								'default' => '#000',
 								'format'  => function( $value, $attrs ) {
 									$opacity = ( isset( $attrs['boxShadowColorOpacity'] ) ? $attrs['boxShadowColorOpacity'] : 50 ) / 100;
-									return $this->hex2rgba( $value, $opacity );
+									return Base_CSS::hex2rgba( $value, $opacity );
 								},
 							),
 						),
@@ -185,7 +185,7 @@ class Button_CSS extends Base_CSS {
 								'default' => '#000',
 								'format'  => function( $value, $attrs ) {
 									$opacity = ( isset( $attrs['hoverBoxShadowColorOpacity'] ) ? $attrs['hoverBoxShadowColorOpacity'] : 50 ) / 100;
-									return $this->hex2rgba( $value, $opacity );
+									return Base_CSS::hex2rgba( $value, $opacity );
 								},
 							),
 						),

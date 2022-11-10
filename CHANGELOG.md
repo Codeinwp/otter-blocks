@@ -1,3 +1,49 @@
+##### [Version 2.1.3](https://github.com/Codeinwp/otter-blocks/compare/v2.1.2...v2.1.3) (2022-11-10)
+
+ - Fixed a crash issue for users with PHP8.0 & PHP8.1 with WP version lower than 6.1
+
+##### [Version 2.1.2](https://github.com/Codeinwp/otter-blocks/compare/v2.1.1...v2.1.2) (2022-11-09)
+
+- Section Enhancements
+- Flip Block Enhancements
+- Accordion Block Enhancements
+- Popup Block Enhancements
+- Icon List Block Enhancements
+- New Copy & Paste Style Feature
+- Add .lottie files support to Lottie Block
+- Add Background Overlay to Column Block
+- Add Text Color option to Section & Column Block
+- Add Structured FAQ Data option to Accordion Block
+- Fix some Lottie features not working in Reverse Mode
+- Fix Sharing Icon inconsistency in Editor/Frontend
+- Fix Shape Divider not working in Section Block when used in a particular way
+- Fix Evergreen Countdown stopping after sometime
+
+##### [Version 2.1.1](https://github.com/Codeinwp/otter-blocks/compare/v2.1.0...v2.1.1) (2022-11-01)
+
+- Fix Media Modal not appearing properly if used inside a Popup
+- Fix Sharing Block CSS not being generated
+
+#### [Version 2.1.0](https://github.com/Codeinwp/otter-blocks/compare/v2.0.16...v2.1.0) (2022-10-19)
+
+- Add Otter Patterns
+- Add Live Preview of Dynamic Values
+- Add Post Content option to Dynamic Values
+- Add Closing feature to Sticky Extension
+- Add class to body when some element is active in Sticky
+- Posts Block Redesign
+- WordPress 6.1 Compatibility
+- Fix Review Block padding not affecting Pros/Cons
+- Fix type in Review Block
+- Fix Border/Icon color inheritance in Blocks
+- Fix Section inconsistency in Global Settings
+- Fix Otter allowed_html for Forms
+- Fix the Welcome Modal showing more than once
+- Fix Section Vertical alignment not working on Mobile
+- Fix Tabs Block remove option not working
+- Fix Dynamic Image crashing when Woo value is used, and then Woo is deactivated
+- More bug fixes
+
 ##### [Version 2.0.16](https://github.com/Codeinwp/otter-blocks/compare/v2.0.15...v2.0.16) (2022-09-27)
 
 - Minor fixes.

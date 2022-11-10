@@ -313,9 +313,8 @@ class Block_Conditions {
 		return false;
 	}
 
-
 	/**
-	 * Get WordPress timezone..
+	 * Get WordPress timezone.
 	 *
 	 * @since  1.7.0
 	 * @access public

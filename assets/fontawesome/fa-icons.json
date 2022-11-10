@@ -1,0 +1,10222 @@
+{
+	"500px": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f26e",
+		"label": "500px"
+	},
+	"accessible-icon": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f368",
+		"label": "Accessible Icon"
+	},
+	"accusoft": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f369",
+		"label": "Accusoft"
+	},
+	"acquisitions-incorporated": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f6af",
+		"label": "Acquisitions Incorporated"
+	},
+	"ad": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f641",
+		"label": "Ad"
+	},
+	"address-book": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f2b9",
+		"label": "Address Book"
+	},
+	"address-card": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f2bb",
+		"label": "Address Card"
+	},
+	"adjust": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f042",
+		"label": "adjust"
+	},
+	"adn": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f170",
+		"label": "App.net"
+	},
+	"adobe": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f778",
+		"label": "Adobe"
+	},
+	"adversal": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f36a",
+		"label": "Adversal"
+	},
+	"affiliatetheme": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f36b",
+		"label": "affiliatetheme"
+	},
+	"air-freshener": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5d0",
+		"label": "Air Freshener"
+	},
+	"airbnb": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f834",
+		"label": "Airbnb"
+	},
+	"algolia": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f36c",
+		"label": "Algolia"
+	},
+	"align-center": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f037",
+		"label": "align-center"
+	},
+	"align-justify": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f039",
+		"label": "align-justify"
+	},
+	"align-left": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f036",
+		"label": "align-left"
+	},
+	"align-right": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f038",
+		"label": "align-right"
+	},
+	"alipay": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f642",
+		"label": "Alipay"
+	},
+	"allergies": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f461",
+		"label": "Allergies"
+	},
+	"amazon": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f270",
+		"label": "Amazon"
+	},
+	"amazon-pay": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f42c",
+		"label": "Amazon Pay"
+	},
+	"ambulance": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0f9",
+		"label": "ambulance"
+	},
+	"american-sign-language-interpreting": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2a3",
+		"label": "American Sign Language Interpreting"
+	},
+	"amilia": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f36d",
+		"label": "Amilia"
+	},
+	"anchor": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f13d",
+		"label": "Anchor"
+	},
+	"android": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f17b",
+		"label": "Android"
+	},
+	"angellist": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f209",
+		"label": "AngelList"
+	},
+	"angle-double-down": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f103",
+		"label": "Angle Double Down"
+	},
+	"angle-double-left": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f100",
+		"label": "Angle Double Left"
+	},
+	"angle-double-right": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f101",
+		"label": "Angle Double Right"
+	},
+	"angle-double-up": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f102",
+		"label": "Angle Double Up"
+	},
+	"angle-down": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f107",
+		"label": "angle-down"
+	},
+	"angle-left": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f104",
+		"label": "angle-left"
+	},
+	"angle-right": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f105",
+		"label": "angle-right"
+	},
+	"angle-up": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f106",
+		"label": "angle-up"
+	},
+	"angry": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f556",
+		"label": "Angry Face"
+	},
+	"angrycreative": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f36e",
+		"label": "Angry Creative"
+	},
+	"angular": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f420",
+		"label": "Angular"
+	},
+	"ankh": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f644",
+		"label": "Ankh"
+	},
+	"app-store": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f36f",
+		"label": "App Store"
+	},
+	"app-store-ios": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f370",
+		"label": "iOS App Store"
+	},
+	"apper": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f371",
+		"label": "Apper Systems AB"
+	},
+	"apple": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f179",
+		"label": "Apple"
+	},
+	"apple-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5d1",
+		"label": "Fruit Apple"
+	},
+	"apple-pay": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f415",
+		"label": "Apple Pay"
+	},
+	"archive": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f187",
+		"label": "Archive"
+	},
+	"archway": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f557",
+		"label": "Archway"
+	},
+	"arrow-alt-circle-down": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f358",
+		"label": "Alternate Arrow Circle Down"
+	},
+	"arrow-alt-circle-left": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f359",
+		"label": "Alternate Arrow Circle Left"
+	},
+	"arrow-alt-circle-right": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f35a",
+		"label": "Alternate Arrow Circle Right"
+	},
+	"arrow-alt-circle-up": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f35b",
+		"label": "Alternate Arrow Circle Up"
+	},
+	"arrow-circle-down": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0ab",
+		"label": "Arrow Circle Down"
+	},
+	"arrow-circle-left": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0a8",
+		"label": "Arrow Circle Left"
+	},
+	"arrow-circle-right": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0a9",
+		"label": "Arrow Circle Right"
+	},
+	"arrow-circle-up": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0aa",
+		"label": "Arrow Circle Up"
+	},
+	"arrow-down": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f063",
+		"label": "arrow-down"
+	},
+	"arrow-left": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f060",
+		"label": "arrow-left"
+	},
+	"arrow-right": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f061",
+		"label": "arrow-right"
+	},
+	"arrow-up": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f062",
+		"label": "arrow-up"
+	},
+	"arrows-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0b2",
+		"label": "Alternate Arrows"
+	},
+	"arrows-alt-h": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f337",
+		"label": "Alternate Arrows Horizontal"
+	},
+	"arrows-alt-v": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f338",
+		"label": "Alternate Arrows Vertical"
+	},
+	"artstation": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f77a",
+		"label": "Artstation"
+	},
+	"assistive-listening-systems": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2a2",
+		"label": "Assistive Listening Systems"
+	},
+	"asterisk": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f069",
+		"label": "asterisk"
+	},
+	"asymmetrik": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f372",
+		"label": "Asymmetrik, Ltd."
+	},
+	"at": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1fa",
+		"label": "At"
+	},
+	"atlas": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f558",
+		"label": "Atlas"
+	},
+	"atlassian": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f77b",
+		"label": "Atlassian"
+	},
+	"atom": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5d2",
+		"label": "Atom"
+	},
+	"audible": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f373",
+		"label": "Audible"
+	},
+	"audio-description": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f29e",
+		"label": "Audio Description"
+	},
+	"autoprefixer": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f41c",
+		"label": "Autoprefixer"
+	},
+	"avianex": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f374",
+		"label": "avianex"
+	},
+	"aviato": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f421",
+		"label": "Aviato"
+	},
+	"award": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f559",
+		"label": "Award"
+	},
+	"aws": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f375",
+		"label": "Amazon Web Services (AWS)"
+	},
+	"baby": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f77c",
+		"label": "Baby"
+	},
+	"baby-carriage": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f77d",
+		"label": "Baby Carriage"
+	},
+	"backspace": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f55a",
+		"label": "Backspace"
+	},
+	"backward": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f04a",
+		"label": "backward"
+	},
+	"bacon": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7e5",
+		"label": "Bacon"
+	},
+	"bahai": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f666",
+		"label": "Bahá'í"
+	},
+	"balance-scale": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f24e",
+		"label": "Balance Scale"
+	},
+	"balance-scale-left": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f515",
+		"label": "Balance Scale (Left-Weighted)"
+	},
+	"balance-scale-right": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f516",
+		"label": "Balance Scale (Right-Weighted)"
+	},
+	"ban": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f05e",
+		"label": "ban"
+	},
+	"band-aid": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f462",
+		"label": "Band-Aid"
+	},
+	"bandcamp": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2d5",
+		"label": "Bandcamp"
+	},
+	"barcode": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f02a",
+		"label": "barcode"
+	},
+	"bars": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0c9",
+		"label": "Bars"
+	},
+	"baseball-ball": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f433",
+		"label": "Baseball Ball"
+	},
+	"basketball-ball": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f434",
+		"label": "Basketball Ball"
+	},
+	"bath": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2cd",
+		"label": "Bath"
+	},
+	"battery-empty": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f244",
+		"label": "Battery Empty"
+	},
+	"battery-full": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f240",
+		"label": "Battery Full"
+	},
+	"battery-half": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f242",
+		"label": "Battery 1/2 Full"
+	},
+	"battery-quarter": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f243",
+		"label": "Battery 1/4 Full"
+	},
+	"battery-three-quarters": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f241",
+		"label": "Battery 3/4 Full"
+	},
+	"battle-net": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f835",
+		"label": "Battle.net"
+	},
+	"bed": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f236",
+		"label": "Bed"
+	},
+	"beer": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0fc",
+		"label": "beer"
+	},
+	"behance": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1b4",
+		"label": "Behance"
+	},
+	"behance-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1b5",
+		"label": "Behance Square"
+	},
+	"bell": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f0f3",
+		"label": "bell"
+	},
+	"bell-slash": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1f6",
+		"label": "Bell Slash"
+	},
+	"bezier-curve": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f55b",
+		"label": "Bezier Curve"
+	},
+	"bible": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f647",
+		"label": "Bible"
+	},
+	"bicycle": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f206",
+		"label": "Bicycle"
+	},
+	"biking": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f84a",
+		"label": "Biking"
+	},
+	"bimobject": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f378",
+		"label": "BIMobject"
+	},
+	"binoculars": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1e5",
+		"label": "Binoculars"
+	},
+	"biohazard": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f780",
+		"label": "Biohazard"
+	},
+	"birthday-cake": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1fd",
+		"label": "Birthday Cake"
+	},
+	"bitbucket": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f171",
+		"label": "Bitbucket"
+	},
+	"bitcoin": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f379",
+		"label": "Bitcoin"
+	},
+	"bity": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f37a",
+		"label": "Bity"
+	},
+	"black-tie": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f27e",
+		"label": "Font Awesome Black Tie"
+	},
+	"blackberry": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f37b",
+		"label": "BlackBerry"
+	},
+	"blender": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f517",
+		"label": "Blender"
+	},
+	"blender-phone": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6b6",
+		"label": "Blender Phone"
+	},
+	"blind": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f29d",
+		"label": "Blind"
+	},
+	"blog": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f781",
+		"label": "Blog"
+	},
+	"blogger": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f37c",
+		"label": "Blogger"
+	},
+	"blogger-b": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f37d",
+		"label": "Blogger B"
+	},
+	"bluetooth": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f293",
+		"label": "Bluetooth"
+	},
+	"bluetooth-b": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f294",
+		"label": "Bluetooth"
+	},
+	"bold": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f032",
+		"label": "bold"
+	},
+	"bolt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0e7",
+		"label": "Lightning Bolt"
+	},
+	"bomb": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1e2",
+		"label": "Bomb"
+	},
+	"bone": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5d7",
+		"label": "Bone"
+	},
+	"bong": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f55c",
+		"label": "Bong"
+	},
+	"book": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f02d",
+		"label": "book"
+	},
+	"book-dead": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6b7",
+		"label": "Book of the Dead"
+	},
+	"book-medical": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7e6",
+		"label": "Medical Book"
+	},
+	"book-open": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f518",
+		"label": "Book Open"
+	},
+	"book-reader": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5da",
+		"label": "Book Reader"
+	},
+	"bookmark": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f02e",
+		"label": "bookmark"
+	},
+	"bootstrap": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f836",
+		"label": "Bootstrap"
+	},
+	"border-all": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f84c",
+		"label": "Border All"
+	},
+	"border-none": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f850",
+		"label": "Border None"
+	},
+	"border-style": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f853",
+		"label": "Border Style"
+	},
+	"bowling-ball": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f436",
+		"label": "Bowling Ball"
+	},
+	"box": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f466",
+		"label": "Box"
+	},
+	"box-open": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f49e",
+		"label": "Box Open"
+	},
+	"box-tissue": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f95b",
+		"label": "Tissue Box"
+	},
+	"boxes": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f468",
+		"label": "Boxes"
+	},
+	"braille": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2a1",
+		"label": "Braille"
+	},
+	"brain": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5dc",
+		"label": "Brain"
+	},
+	"bread-slice": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7ec",
+		"label": "Bread Slice"
+	},
+	"briefcase": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0b1",
+		"label": "Briefcase"
+	},
+	"briefcase-medical": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f469",
+		"label": "Medical Briefcase"
+	},
+	"broadcast-tower": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f519",
+		"label": "Broadcast Tower"
+	},
+	"broom": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f51a",
+		"label": "Broom"
+	},
+	"brush": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f55d",
+		"label": "Brush"
+	},
+	"btc": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f15a",
+		"label": "BTC"
+	},
+	"buffer": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f837",
+		"label": "Buffer"
+	},
+	"bug": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f188",
+		"label": "Bug"
+	},
+	"building": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1ad",
+		"label": "Building"
+	},
+	"bullhorn": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0a1",
+		"label": "bullhorn"
+	},
+	"bullseye": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f140",
+		"label": "Bullseye"
+	},
+	"burn": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f46a",
+		"label": "Burn"
+	},
+	"buromobelexperte": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f37f",
+		"label": "Büromöbel-Experte GmbH & Co. KG."
+	},
+	"bus": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f207",
+		"label": "Bus"
+	},
+	"bus-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f55e",
+		"label": "Bus Alt"
+	},
+	"business-time": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f64a",
+		"label": "Business Time"
+	},
+	"buy-n-large": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f8a6",
+		"label": "Buy n Large"
+	},
+	"buysellads": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f20d",
+		"label": "BuySellAds"
+	},
+	"calculator": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1ec",
+		"label": "Calculator"
+	},
+	"calendar": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f133",
+		"label": "Calendar"
+	},
+	"calendar-alt": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f073",
+		"label": "Alternate Calendar"
+	},
+	"calendar-check": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f274",
+		"label": "Calendar Check"
+	},
+	"calendar-day": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f783",
+		"label": "Calendar with Day Focus"
+	},
+	"calendar-minus": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f272",
+		"label": "Calendar Minus"
+	},
+	"calendar-plus": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f271",
+		"label": "Calendar Plus"
+	},
+	"calendar-times": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f273",
+		"label": "Calendar Times"
+	},
+	"calendar-week": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f784",
+		"label": "Calendar with Week Focus"
+	},
+	"camera": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f030",
+		"label": "camera"
+	},
+	"camera-retro": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f083",
+		"label": "Retro Camera"
+	},
+	"campground": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6bb",
+		"label": "Campground"
+	},
+	"canadian-maple-leaf": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f785",
+		"label": "Canadian Maple Leaf"
+	},
+	"candy-cane": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f786",
+		"label": "Candy Cane"
+	},
+	"cannabis": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f55f",
+		"label": "Cannabis"
+	},
+	"capsules": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f46b",
+		"label": "Capsules"
+	},
+	"car": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1b9",
+		"label": "Car"
+	},
+	"car-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5de",
+		"label": "Alternate Car"
+	},
+	"car-battery": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5df",
+		"label": "Car Battery"
+	},
+	"car-crash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5e1",
+		"label": "Car Crash"
+	},
+	"car-side": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5e4",
+		"label": "Car Side"
+	},
+	"caravan": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f8ff",
+		"label": "Caravan"
+	},
+	"caret-down": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0d7",
+		"label": "Caret Down"
+	},
+	"caret-left": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0d9",
+		"label": "Caret Left"
+	},
+	"caret-right": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0da",
+		"label": "Caret Right"
+	},
+	"caret-square-down": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f150",
+		"label": "Caret Square Down"
+	},
+	"caret-square-left": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f191",
+		"label": "Caret Square Left"
+	},
+	"caret-square-right": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f152",
+		"label": "Caret Square Right"
+	},
+	"caret-square-up": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f151",
+		"label": "Caret Square Up"
+	},
+	"caret-up": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0d8",
+		"label": "Caret Up"
+	},
+	"carrot": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f787",
+		"label": "Carrot"
+	},
+	"cart-arrow-down": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f218",
+		"label": "Shopping Cart Arrow Down"
+	},
+	"cart-plus": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f217",
+		"label": "Add to Shopping Cart"
+	},
+	"cash-register": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f788",
+		"label": "Cash Register"
+	},
+	"cat": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6be",
+		"label": "Cat"
+	},
+	"cc-amazon-pay": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f42d",
+		"label": "Amazon Pay Credit Card"
+	},
+	"cc-amex": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1f3",
+		"label": "American Express Credit Card"
+	},
+	"cc-apple-pay": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f416",
+		"label": "Apple Pay Credit Card"
+	},
+	"cc-diners-club": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f24c",
+		"label": "Diner's Club Credit Card"
+	},
+	"cc-discover": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1f2",
+		"label": "Discover Credit Card"
+	},
+	"cc-jcb": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f24b",
+		"label": "JCB Credit Card"
+	},
+	"cc-mastercard": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1f1",
+		"label": "MasterCard Credit Card"
+	},
+	"cc-paypal": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1f4",
+		"label": "Paypal Credit Card"
+	},
+	"cc-stripe": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1f5",
+		"label": "Stripe Credit Card"
+	},
+	"cc-visa": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1f0",
+		"label": "Visa Credit Card"
+	},
+	"centercode": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f380",
+		"label": "Centercode"
+	},
+	"centos": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f789",
+		"label": "Centos"
+	},
+	"certificate": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0a3",
+		"label": "certificate"
+	},
+	"chair": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6c0",
+		"label": "Chair"
+	},
+	"chalkboard": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f51b",
+		"label": "Chalkboard"
+	},
+	"chalkboard-teacher": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f51c",
+		"label": "Chalkboard Teacher"
+	},
+	"charging-station": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5e7",
+		"label": "Charging Station"
+	},
+	"chart-area": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1fe",
+		"label": "Area Chart"
+	},
+	"chart-bar": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f080",
+		"label": "Bar Chart"
+	},
+	"chart-line": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f201",
+		"label": "Line Chart"
+	},
+	"chart-pie": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f200",
+		"label": "Pie Chart"
+	},
+	"check": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f00c",
+		"label": "Check"
+	},
+	"check-circle": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f058",
+		"label": "Check Circle"
+	},
+	"check-double": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f560",
+		"label": "Double Check"
+	},
+	"check-square": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f14a",
+		"label": "Check Square"
+	},
+	"cheese": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7ef",
+		"label": "Cheese"
+	},
+	"chess": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f439",
+		"label": "Chess"
+	},
+	"chess-bishop": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f43a",
+		"label": "Chess Bishop"
+	},
+	"chess-board": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f43c",
+		"label": "Chess Board"
+	},
+	"chess-king": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f43f",
+		"label": "Chess King"
+	},
+	"chess-knight": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f441",
+		"label": "Chess Knight"
+	},
+	"chess-pawn": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f443",
+		"label": "Chess Pawn"
+	},
+	"chess-queen": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f445",
+		"label": "Chess Queen"
+	},
+	"chess-rook": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f447",
+		"label": "Chess Rook"
+	},
+	"chevron-circle-down": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f13a",
+		"label": "Chevron Circle Down"
+	},
+	"chevron-circle-left": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f137",
+		"label": "Chevron Circle Left"
+	},
+	"chevron-circle-right": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f138",
+		"label": "Chevron Circle Right"
+	},
+	"chevron-circle-up": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f139",
+		"label": "Chevron Circle Up"
+	},
+	"chevron-down": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f078",
+		"label": "chevron-down"
+	},
+	"chevron-left": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f053",
+		"label": "chevron-left"
+	},
+	"chevron-right": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f054",
+		"label": "chevron-right"
+	},
+	"chevron-up": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f077",
+		"label": "chevron-up"
+	},
+	"child": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1ae",
+		"label": "Child"
+	},
+	"chrome": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f268",
+		"label": "Chrome"
+	},
+	"chromecast": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f838",
+		"label": "Chromecast"
+	},
+	"church": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f51d",
+		"label": "Church"
+	},
+	"circle": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f111",
+		"label": "Circle"
+	},
+	"circle-notch": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1ce",
+		"label": "Circle Notched"
+	},
+	"city": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f64f",
+		"label": "City"
+	},
+	"clinic-medical": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7f2",
+		"label": "Medical Clinic"
+	},
+	"clipboard": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f328",
+		"label": "Clipboard"
+	},
+	"clipboard-check": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f46c",
+		"label": "Clipboard with Check"
+	},
+	"clipboard-list": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f46d",
+		"label": "Clipboard List"
+	},
+	"clock": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f017",
+		"label": "Clock"
+	},
+	"clone": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f24d",
+		"label": "Clone"
+	},
+	"closed-captioning": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f20a",
+		"label": "Closed Captioning"
+	},
+	"cloud": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0c2",
+		"label": "Cloud"
+	},
+	"cloud-download-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f381",
+		"label": "Alternate Cloud Download"
+	},
+	"cloud-meatball": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f73b",
+		"label": "Cloud with (a chance of) Meatball"
+	},
+	"cloud-moon": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6c3",
+		"label": "Cloud with Moon"
+	},
+	"cloud-moon-rain": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f73c",
+		"label": "Cloud with Moon and Rain"
+	},
+	"cloud-rain": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f73d",
+		"label": "Cloud with Rain"
+	},
+	"cloud-showers-heavy": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f740",
+		"label": "Cloud with Heavy Showers"
+	},
+	"cloud-sun": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6c4",
+		"label": "Cloud with Sun"
+	},
+	"cloud-sun-rain": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f743",
+		"label": "Cloud with Sun and Rain"
+	},
+	"cloud-upload-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f382",
+		"label": "Alternate Cloud Upload"
+	},
+	"cloudscale": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f383",
+		"label": "cloudscale.ch"
+	},
+	"cloudsmith": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f384",
+		"label": "Cloudsmith"
+	},
+	"cloudversify": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f385",
+		"label": "cloudversify"
+	},
+	"cocktail": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f561",
+		"label": "Cocktail"
+	},
+	"code": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f121",
+		"label": "Code"
+	},
+	"code-branch": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f126",
+		"label": "Code Branch"
+	},
+	"codepen": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1cb",
+		"label": "Codepen"
+	},
+	"codiepie": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f284",
+		"label": "Codie Pie"
+	},
+	"coffee": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0f4",
+		"label": "Coffee"
+	},
+	"cog": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f013",
+		"label": "cog"
+	},
+	"cogs": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f085",
+		"label": "cogs"
+	},
+	"coins": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f51e",
+		"label": "Coins"
+	},
+	"columns": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0db",
+		"label": "Columns"
+	},
+	"comment": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f075",
+		"label": "comment"
+	},
+	"comment-alt": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f27a",
+		"label": "Alternate Comment"
+	},
+	"comment-dollar": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f651",
+		"label": "Comment Dollar"
+	},
+	"comment-dots": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f4ad",
+		"label": "Comment Dots"
+	},
+	"comment-medical": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7f5",
+		"label": "Alternate Medical Chat"
+	},
+	"comment-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4b3",
+		"label": "Comment Slash"
+	},
+	"comments": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f086",
+		"label": "comments"
+	},
+	"comments-dollar": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f653",
+		"label": "Comments Dollar"
+	},
+	"compact-disc": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f51f",
+		"label": "Compact Disc"
+	},
+	"compass": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f14e",
+		"label": "Compass"
+	},
+	"compress": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f066",
+		"label": "Compress"
+	},
+	"compress-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f422",
+		"label": "Alternate Compress"
+	},
+	"compress-arrows-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f78c",
+		"label": "Alternate Compress Arrows"
+	},
+	"concierge-bell": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f562",
+		"label": "Concierge Bell"
+	},
+	"confluence": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f78d",
+		"label": "Confluence"
+	},
+	"connectdevelop": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f20e",
+		"label": "Connect Develop"
+	},
+	"contao": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f26d",
+		"label": "Contao"
+	},
+	"cookie": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f563",
+		"label": "Cookie"
+	},
+	"cookie-bite": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f564",
+		"label": "Cookie Bite"
+	},
+	"copy": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f0c5",
+		"label": "Copy"
+	},
+	"copyright": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1f9",
+		"label": "Copyright"
+	},
+	"cotton-bureau": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f89e",
+		"label": "Cotton Bureau"
+	},
+	"couch": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4b8",
+		"label": "Couch"
+	},
+	"cpanel": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f388",
+		"label": "cPanel"
+	},
+	"creative-commons": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f25e",
+		"label": "Creative Commons"
+	},
+	"creative-commons-by": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4e7",
+		"label": "Creative Commons Attribution"
+	},
+	"creative-commons-nc": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4e8",
+		"label": "Creative Commons Noncommercial"
+	},
+	"creative-commons-nc-eu": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4e9",
+		"label": "Creative Commons Noncommercial (Euro Sign)"
+	},
+	"creative-commons-nc-jp": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4ea",
+		"label": "Creative Commons Noncommercial (Yen Sign)"
+	},
+	"creative-commons-nd": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4eb",
+		"label": "Creative Commons No Derivative Works"
+	},
+	"creative-commons-pd": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4ec",
+		"label": "Creative Commons Public Domain"
+	},
+	"creative-commons-pd-alt": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4ed",
+		"label": "Alternate Creative Commons Public Domain"
+	},
+	"creative-commons-remix": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4ee",
+		"label": "Creative Commons Remix"
+	},
+	"creative-commons-sa": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4ef",
+		"label": "Creative Commons Share Alike"
+	},
+	"creative-commons-sampling": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4f0",
+		"label": "Creative Commons Sampling"
+	},
+	"creative-commons-sampling-plus": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4f1",
+		"label": "Creative Commons Sampling +"
+	},
+	"creative-commons-share": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4f2",
+		"label": "Creative Commons Share"
+	},
+	"creative-commons-zero": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4f3",
+		"label": "Creative Commons CC0"
+	},
+	"credit-card": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f09d",
+		"label": "Credit Card"
+	},
+	"critical-role": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f6c9",
+		"label": "Critical Role"
+	},
+	"crop": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f125",
+		"label": "crop"
+	},
+	"crop-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f565",
+		"label": "Alternate Crop"
+	},
+	"cross": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f654",
+		"label": "Cross"
+	},
+	"crosshairs": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f05b",
+		"label": "Crosshairs"
+	},
+	"crow": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f520",
+		"label": "Crow"
+	},
+	"crown": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f521",
+		"label": "Crown"
+	},
+	"crutch": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7f7",
+		"label": "Crutch"
+	},
+	"css3": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f13c",
+		"label": "CSS 3 Logo"
+	},
+	"css3-alt": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f38b",
+		"label": "Alternate CSS3 Logo"
+	},
+	"cube": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1b2",
+		"label": "Cube"
+	},
+	"cubes": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1b3",
+		"label": "Cubes"
+	},
+	"cut": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0c4",
+		"label": "Cut"
+	},
+	"cuttlefish": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f38c",
+		"label": "Cuttlefish"
+	},
+	"d-and-d": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f38d",
+		"label": "Dungeons & Dragons"
+	},
+	"d-and-d-beyond": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f6ca",
+		"label": "D&D Beyond"
+	},
+	"dailymotion": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f952",
+		"label": "dailymotion"
+	},
+	"dashcube": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f210",
+		"label": "DashCube"
+	},
+	"database": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1c0",
+		"label": "Database"
+	},
+	"deaf": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2a4",
+		"label": "Deaf"
+	},
+	"delicious": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1a5",
+		"label": "Delicious"
+	},
+	"democrat": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f747",
+		"label": "Democrat"
+	},
+	"deploydog": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f38e",
+		"label": "deploy.dog"
+	},
+	"deskpro": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f38f",
+		"label": "Deskpro"
+	},
+	"desktop": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f108",
+		"label": "Desktop"
+	},
+	"dev": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f6cc",
+		"label": "DEV"
+	},
+	"deviantart": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1bd",
+		"label": "deviantART"
+	},
+	"dharmachakra": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f655",
+		"label": "Dharmachakra"
+	},
+	"dhl": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f790",
+		"label": "DHL"
+	},
+	"diagnoses": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f470",
+		"label": "Diagnoses"
+	},
+	"diaspora": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f791",
+		"label": "Diaspora"
+	},
+	"dice": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f522",
+		"label": "Dice"
+	},
+	"dice-d20": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6cf",
+		"label": "Dice D20"
+	},
+	"dice-d6": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6d1",
+		"label": "Dice D6"
+	},
+	"dice-five": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f523",
+		"label": "Dice Five"
+	},
+	"dice-four": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f524",
+		"label": "Dice Four"
+	},
+	"dice-one": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f525",
+		"label": "Dice One"
+	},
+	"dice-six": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f526",
+		"label": "Dice Six"
+	},
+	"dice-three": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f527",
+		"label": "Dice Three"
+	},
+	"dice-two": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f528",
+		"label": "Dice Two"
+	},
+	"digg": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1a6",
+		"label": "Digg Logo"
+	},
+	"digital-ocean": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f391",
+		"label": "Digital Ocean"
+	},
+	"digital-tachograph": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f566",
+		"label": "Digital Tachograph"
+	},
+	"directions": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5eb",
+		"label": "Directions"
+	},
+	"discord": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f392",
+		"label": "Discord"
+	},
+	"discourse": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f393",
+		"label": "Discourse"
+	},
+	"disease": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7fa",
+		"label": "Disease"
+	},
+	"divide": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f529",
+		"label": "Divide"
+	},
+	"dizzy": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f567",
+		"label": "Dizzy Face"
+	},
+	"dna": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f471",
+		"label": "DNA"
+	},
+	"dochub": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f394",
+		"label": "DocHub"
+	},
+	"docker": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f395",
+		"label": "Docker"
+	},
+	"dog": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6d3",
+		"label": "Dog"
+	},
+	"dollar-sign": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f155",
+		"label": "Dollar Sign"
+	},
+	"dolly": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f472",
+		"label": "Dolly"
+	},
+	"dolly-flatbed": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f474",
+		"label": "Dolly Flatbed"
+	},
+	"donate": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4b9",
+		"label": "Donate"
+	},
+	"door-closed": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f52a",
+		"label": "Door Closed"
+	},
+	"door-open": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f52b",
+		"label": "Door Open"
+	},
+	"dot-circle": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f192",
+		"label": "Dot Circle"
+	},
+	"dove": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4ba",
+		"label": "Dove"
+	},
+	"download": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f019",
+		"label": "Download"
+	},
+	"draft2digital": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f396",
+		"label": "Draft2digital"
+	},
+	"drafting-compass": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f568",
+		"label": "Drafting Compass"
+	},
+	"dragon": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6d5",
+		"label": "Dragon"
+	},
+	"draw-polygon": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5ee",
+		"label": "Draw Polygon"
+	},
+	"dribbble": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f17d",
+		"label": "Dribbble"
+	},
+	"dribbble-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f397",
+		"label": "Dribbble Square"
+	},
+	"dropbox": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f16b",
+		"label": "Dropbox"
+	},
+	"drum": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f569",
+		"label": "Drum"
+	},
+	"drum-steelpan": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f56a",
+		"label": "Drum Steelpan"
+	},
+	"drumstick-bite": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6d7",
+		"label": "Drumstick with Bite Taken Out"
+	},
+	"drupal": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1a9",
+		"label": "Drupal Logo"
+	},
+	"dumbbell": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f44b",
+		"label": "Dumbbell"
+	},
+	"dumpster": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f793",
+		"label": "Dumpster"
+	},
+	"dumpster-fire": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f794",
+		"label": "Dumpster Fire"
+	},
+	"dungeon": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6d9",
+		"label": "Dungeon"
+	},
+	"dyalog": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f399",
+		"label": "Dyalog"
+	},
+	"earlybirds": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f39a",
+		"label": "Earlybirds"
+	},
+	"ebay": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4f4",
+		"label": "eBay"
+	},
+	"edge": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f282",
+		"label": "Edge Browser"
+	},
+	"edit": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f044",
+		"label": "Edit"
+	},
+	"egg": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7fb",
+		"label": "Egg"
+	},
+	"eject": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f052",
+		"label": "eject"
+	},
+	"elementor": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f430",
+		"label": "Elementor"
+	},
+	"ellipsis-h": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f141",
+		"label": "Horizontal Ellipsis"
+	},
+	"ellipsis-v": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f142",
+		"label": "Vertical Ellipsis"
+	},
+	"ello": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f5f1",
+		"label": "Ello"
+	},
+	"ember": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f423",
+		"label": "Ember"
+	},
+	"empire": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1d1",
+		"label": "Galactic Empire"
+	},
+	"envelope": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f0e0",
+		"label": "Envelope"
+	},
+	"envelope-open": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f2b6",
+		"label": "Envelope Open"
+	},
+	"envelope-open-text": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f658",
+		"label": "Envelope Open-text"
+	},
+	"envelope-square": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f199",
+		"label": "Envelope Square"
+	},
+	"envira": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f299",
+		"label": "Envira Gallery"
+	},
+	"equals": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f52c",
+		"label": "Equals"
+	},
+	"eraser": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f12d",
+		"label": "eraser"
+	},
+	"erlang": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f39d",
+		"label": "Erlang"
+	},
+	"ethereum": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f42e",
+		"label": "Ethereum"
+	},
+	"ethernet": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f796",
+		"label": "Ethernet"
+	},
+	"etsy": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2d7",
+		"label": "Etsy"
+	},
+	"euro-sign": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f153",
+		"label": "Euro Sign"
+	},
+	"evernote": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f839",
+		"label": "Evernote"
+	},
+	"exchange-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f362",
+		"label": "Alternate Exchange"
+	},
+	"exclamation": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f12a",
+		"label": "exclamation"
+	},
+	"exclamation-circle": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f06a",
+		"label": "Exclamation Circle"
+	},
+	"exclamation-triangle": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f071",
+		"label": "Exclamation Triangle"
+	},
+	"expand": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f065",
+		"label": "Expand"
+	},
+	"expand-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f424",
+		"label": "Alternate Expand"
+	},
+	"expand-arrows-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f31e",
+		"label": "Alternate Expand Arrows"
+	},
+	"expeditedssl": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f23e",
+		"label": "ExpeditedSSL"
+	},
+	"external-link-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f35d",
+		"label": "Alternate External Link"
+	},
+	"external-link-square-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f360",
+		"label": "Alternate External Link Square"
+	},
+	"eye": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f06e",
+		"label": "Eye"
+	},
+	"eye-dropper": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1fb",
+		"label": "Eye Dropper"
+	},
+	"eye-slash": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f070",
+		"label": "Eye Slash"
+	},
+	"facebook": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f09a",
+		"label": "Facebook"
+	},
+	"facebook-f": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f39e",
+		"label": "Facebook F"
+	},
+	"facebook-messenger": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f39f",
+		"label": "Facebook Messenger"
+	},
+	"facebook-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f082",
+		"label": "Facebook Square"
+	},
+	"fan": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f863",
+		"label": "Fan"
+	},
+	"fantasy-flight-games": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f6dc",
+		"label": "Fantasy Flight-games"
+	},
+	"fast-backward": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f049",
+		"label": "fast-backward"
+	},
+	"fast-forward": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f050",
+		"label": "fast-forward"
+	},
+	"faucet": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f905",
+		"label": "Faucet"
+	},
+	"fax": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1ac",
+		"label": "Fax"
+	},
+	"feather": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f52d",
+		"label": "Feather"
+	},
+	"feather-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f56b",
+		"label": "Alternate Feather"
+	},
+	"fedex": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f797",
+		"label": "FedEx"
+	},
+	"fedora": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f798",
+		"label": "Fedora"
+	},
+	"female": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f182",
+		"label": "Female"
+	},
+	"fighter-jet": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0fb",
+		"label": "fighter-jet"
+	},
+	"figma": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f799",
+		"label": "Figma"
+	},
+	"file": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f15b",
+		"label": "File"
+	},
+	"file-alt": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f15c",
+		"label": "Alternate File"
+	},
+	"file-archive": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1c6",
+		"label": "Archive File"
+	},
+	"file-audio": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1c7",
+		"label": "Audio File"
+	},
+	"file-code": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1c9",
+		"label": "Code File"
+	},
+	"file-contract": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f56c",
+		"label": "File Contract"
+	},
+	"file-csv": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6dd",
+		"label": "File CSV"
+	},
+	"file-download": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f56d",
+		"label": "File Download"
+	},
+	"file-excel": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1c3",
+		"label": "Excel File"
+	},
+	"file-export": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f56e",
+		"label": "File Export"
+	},
+	"file-image": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1c5",
+		"label": "Image File"
+	},
+	"file-import": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f56f",
+		"label": "File Import"
+	},
+	"file-invoice": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f570",
+		"label": "File Invoice"
+	},
+	"file-invoice-dollar": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f571",
+		"label": "File Invoice with US Dollar"
+	},
+	"file-medical": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f477",
+		"label": "Medical File"
+	},
+	"file-medical-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f478",
+		"label": "Alternate Medical File"
+	},
+	"file-pdf": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1c1",
+		"label": "PDF File"
+	},
+	"file-powerpoint": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1c4",
+		"label": "Powerpoint File"
+	},
+	"file-prescription": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f572",
+		"label": "File Prescription"
+	},
+	"file-signature": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f573",
+		"label": "File Signature"
+	},
+	"file-upload": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f574",
+		"label": "File Upload"
+	},
+	"file-video": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1c8",
+		"label": "Video File"
+	},
+	"file-word": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1c2",
+		"label": "Word File"
+	},
+	"fill": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f575",
+		"label": "Fill"
+	},
+	"fill-drip": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f576",
+		"label": "Fill Drip"
+	},
+	"film": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f008",
+		"label": "Film"
+	},
+	"filter": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0b0",
+		"label": "Filter"
+	},
+	"fingerprint": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f577",
+		"label": "Fingerprint"
+	},
+	"fire": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f06d",
+		"label": "fire"
+	},
+	"fire-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7e4",
+		"label": "Alternate Fire"
+	},
+	"fire-extinguisher": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f134",
+		"label": "fire-extinguisher"
+	},
+	"firefox": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f269",
+		"label": "Firefox"
+	},
+	"firefox-browser": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f907",
+		"label": "Firefox Browser"
+	},
+	"first-aid": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f479",
+		"label": "First Aid"
+	},
+	"first-order": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2b0",
+		"label": "First Order"
+	},
+	"first-order-alt": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f50a",
+		"label": "Alternate First Order"
+	},
+	"firstdraft": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3a1",
+		"label": "firstdraft"
+	},
+	"fish": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f578",
+		"label": "Fish"
+	},
+	"fist-raised": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6de",
+		"label": "Raised Fist"
+	},
+	"flag": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f024",
+		"label": "flag"
+	},
+	"flag-checkered": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f11e",
+		"label": "flag-checkered"
+	},
+	"flag-usa": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f74d",
+		"label": "United States of America Flag"
+	},
+	"flask": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0c3",
+		"label": "Flask"
+	},
+	"flickr": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f16e",
+		"label": "Flickr"
+	},
+	"flipboard": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f44d",
+		"label": "Flipboard"
+	},
+	"flushed": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f579",
+		"label": "Flushed Face"
+	},
+	"fly": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f417",
+		"label": "Fly"
+	},
+	"folder": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f07b",
+		"label": "Folder"
+	},
+	"folder-minus": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f65d",
+		"label": "Folder Minus"
+	},
+	"folder-open": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f07c",
+		"label": "Folder Open"
+	},
+	"folder-plus": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f65e",
+		"label": "Folder Plus"
+	},
+	"font": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f031",
+		"label": "font"
+	},
+	"font-awesome": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2b4",
+		"label": "Font Awesome"
+	},
+	"font-awesome-alt": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f35c",
+		"label": "Alternate Font Awesome"
+	},
+	"font-awesome-flag": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f425",
+		"label": "Font Awesome Flag"
+	},
+	"font-awesome-logo-full": {
+		"styles": [
+			"regular",
+			"solid",
+			"brands"
+		],
+		"unicode": "f4e6",
+		"label": "Font Awesome Full Logo",
+		"private": true
+	},
+	"fonticons": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f280",
+		"label": "Fonticons"
+	},
+	"fonticons-fi": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3a2",
+		"label": "Fonticons Fi"
+	},
+	"football-ball": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f44e",
+		"label": "Football Ball"
+	},
+	"fort-awesome": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f286",
+		"label": "Fort Awesome"
+	},
+	"fort-awesome-alt": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3a3",
+		"label": "Alternate Fort Awesome"
+	},
+	"forumbee": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f211",
+		"label": "Forumbee"
+	},
+	"forward": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f04e",
+		"label": "forward"
+	},
+	"foursquare": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f180",
+		"label": "Foursquare"
+	},
+	"free-code-camp": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2c5",
+		"label": "freeCodeCamp"
+	},
+	"freebsd": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3a4",
+		"label": "FreeBSD"
+	},
+	"frog": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f52e",
+		"label": "Frog"
+	},
+	"frown": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f119",
+		"label": "Frowning Face"
+	},
+	"frown-open": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f57a",
+		"label": "Frowning Face With Open Mouth"
+	},
+	"fulcrum": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f50b",
+		"label": "Fulcrum"
+	},
+	"funnel-dollar": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f662",
+		"label": "Funnel Dollar"
+	},
+	"futbol": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1e3",
+		"label": "Futbol"
+	},
+	"galactic-republic": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f50c",
+		"label": "Galactic Republic"
+	},
+	"galactic-senate": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f50d",
+		"label": "Galactic Senate"
+	},
+	"gamepad": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f11b",
+		"label": "Gamepad"
+	},
+	"gas-pump": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f52f",
+		"label": "Gas Pump"
+	},
+	"gavel": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0e3",
+		"label": "Gavel"
+	},
+	"gem": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f3a5",
+		"label": "Gem"
+	},
+	"genderless": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f22d",
+		"label": "Genderless"
+	},
+	"get-pocket": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f265",
+		"label": "Get Pocket"
+	},
+	"gg": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f260",
+		"label": "GG Currency"
+	},
+	"gg-circle": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f261",
+		"label": "GG Currency Circle"
+	},
+	"ghost": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6e2",
+		"label": "Ghost"
+	},
+	"gift": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f06b",
+		"label": "gift"
+	},
+	"gifts": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f79c",
+		"label": "Gifts"
+	},
+	"git": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1d3",
+		"label": "Git"
+	},
+	"git-alt": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f841",
+		"label": "Git Alt"
+	},
+	"git-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1d2",
+		"label": "Git Square"
+	},
+	"github": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f09b",
+		"label": "GitHub"
+	},
+	"github-alt": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f113",
+		"label": "Alternate GitHub"
+	},
+	"github-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f092",
+		"label": "GitHub Square"
+	},
+	"gitkraken": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3a6",
+		"label": "GitKraken"
+	},
+	"gitlab": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f296",
+		"label": "GitLab"
+	},
+	"gitter": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f426",
+		"label": "Gitter"
+	},
+	"glass-cheers": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f79f",
+		"label": "Glass Cheers"
+	},
+	"glass-martini": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f000",
+		"label": "Martini Glass"
+	},
+	"glass-martini-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f57b",
+		"label": "Alternate Glass Martini"
+	},
+	"glass-whiskey": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7a0",
+		"label": "Glass Whiskey"
+	},
+	"glasses": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f530",
+		"label": "Glasses"
+	},
+	"glide": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2a5",
+		"label": "Glide"
+	},
+	"glide-g": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2a6",
+		"label": "Glide G"
+	},
+	"globe": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0ac",
+		"label": "Globe"
+	},
+	"globe-africa": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f57c",
+		"label": "Globe with Africa shown"
+	},
+	"globe-americas": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f57d",
+		"label": "Globe with Americas shown"
+	},
+	"globe-asia": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f57e",
+		"label": "Globe with Asia shown"
+	},
+	"globe-europe": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7a2",
+		"label": "Globe with Europe shown"
+	},
+	"gofore": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3a7",
+		"label": "Gofore"
+	},
+	"golf-ball": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f450",
+		"label": "Golf Ball"
+	},
+	"goodreads": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3a8",
+		"label": "Goodreads"
+	},
+	"goodreads-g": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3a9",
+		"label": "Goodreads G"
+	},
+	"google": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1a0",
+		"label": "Google Logo"
+	},
+	"google-drive": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3aa",
+		"label": "Google Drive"
+	},
+	"google-play": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3ab",
+		"label": "Google Play"
+	},
+	"google-plus": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2b3",
+		"label": "Google Plus"
+	},
+	"google-plus-g": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f0d5",
+		"label": "Google Plus G"
+	},
+	"google-plus-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f0d4",
+		"label": "Google Plus Square"
+	},
+	"google-wallet": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1ee",
+		"label": "Google Wallet"
+	},
+	"gopuram": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f664",
+		"label": "Gopuram"
+	},
+	"graduation-cap": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f19d",
+		"label": "Graduation Cap"
+	},
+	"gratipay": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f184",
+		"label": "Gratipay (Gittip)"
+	},
+	"grav": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2d6",
+		"label": "Grav"
+	},
+	"greater-than": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f531",
+		"label": "Greater Than"
+	},
+	"greater-than-equal": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f532",
+		"label": "Greater Than Equal To"
+	},
+	"grimace": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f57f",
+		"label": "Grimacing Face"
+	},
+	"grin": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f580",
+		"label": "Grinning Face"
+	},
+	"grin-alt": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f581",
+		"label": "Alternate Grinning Face"
+	},
+	"grin-beam": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f582",
+		"label": "Grinning Face With Smiling Eyes"
+	},
+	"grin-beam-sweat": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f583",
+		"label": "Grinning Face With Sweat"
+	},
+	"grin-hearts": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f584",
+		"label": "Smiling Face With Heart-Eyes"
+	},
+	"grin-squint": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f585",
+		"label": "Grinning Squinting Face"
+	},
+	"grin-squint-tears": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f586",
+		"label": "Rolling on the Floor Laughing"
+	},
+	"grin-stars": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f587",
+		"label": "Star-Struck"
+	},
+	"grin-tears": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f588",
+		"label": "Face With Tears of Joy"
+	},
+	"grin-tongue": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f589",
+		"label": "Face With Tongue"
+	},
+	"grin-tongue-squint": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f58a",
+		"label": "Squinting Face With Tongue"
+	},
+	"grin-tongue-wink": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f58b",
+		"label": "Winking Face With Tongue"
+	},
+	"grin-wink": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f58c",
+		"label": "Grinning Winking Face"
+	},
+	"grip-horizontal": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f58d",
+		"label": "Grip Horizontal"
+	},
+	"grip-lines": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7a4",
+		"label": "Grip Lines"
+	},
+	"grip-lines-vertical": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7a5",
+		"label": "Grip Lines Vertical"
+	},
+	"grip-vertical": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f58e",
+		"label": "Grip Vertical"
+	},
+	"gripfire": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3ac",
+		"label": "Gripfire, Inc."
+	},
+	"grunt": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3ad",
+		"label": "Grunt"
+	},
+	"guitar": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7a6",
+		"label": "Guitar"
+	},
+	"gulp": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3ae",
+		"label": "Gulp"
+	},
+	"h-square": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0fd",
+		"label": "H Square"
+	},
+	"hacker-news": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1d4",
+		"label": "Hacker News"
+	},
+	"hacker-news-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3af",
+		"label": "Hacker News Square"
+	},
+	"hackerrank": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f5f7",
+		"label": "Hackerrank"
+	},
+	"hamburger": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f805",
+		"label": "Hamburger"
+	},
+	"hammer": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6e3",
+		"label": "Hammer"
+	},
+	"hamsa": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f665",
+		"label": "Hamsa"
+	},
+	"hand-holding": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4bd",
+		"label": "Hand Holding"
+	},
+	"hand-holding-heart": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4be",
+		"label": "Hand Holding Heart"
+	},
+	"hand-holding-medical": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f95c",
+		"label": "Hand Holding Medical Cross"
+	},
+	"hand-holding-usd": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4c0",
+		"label": "Hand Holding US Dollar"
+	},
+	"hand-holding-water": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4c1",
+		"label": "Hand Holding Water"
+	},
+	"hand-lizard": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f258",
+		"label": "Lizard (Hand)"
+	},
+	"hand-middle-finger": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f806",
+		"label": "Hand with Middle Finger Raised"
+	},
+	"hand-paper": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f256",
+		"label": "Paper (Hand)"
+	},
+	"hand-peace": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f25b",
+		"label": "Peace (Hand)"
+	},
+	"hand-point-down": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f0a7",
+		"label": "Hand Pointing Down"
+	},
+	"hand-point-left": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f0a5",
+		"label": "Hand Pointing Left"
+	},
+	"hand-point-right": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f0a4",
+		"label": "Hand Pointing Right"
+	},
+	"hand-point-up": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f0a6",
+		"label": "Hand Pointing Up"
+	},
+	"hand-pointer": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f25a",
+		"label": "Pointer (Hand)"
+	},
+	"hand-rock": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f255",
+		"label": "Rock (Hand)"
+	},
+	"hand-scissors": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f257",
+		"label": "Scissors (Hand)"
+	},
+	"hand-sparkles": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f95d",
+		"label": "Hand Sparkles"
+	},
+	"hand-spock": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f259",
+		"label": "Spock (Hand)"
+	},
+	"hands": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4c2",
+		"label": "Hands"
+	},
+	"hands-helping": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4c4",
+		"label": "Helping Hands"
+	},
+	"hands-wash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f95e",
+		"label": "Hands Wash"
+	},
+	"handshake": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f2b5",
+		"label": "Handshake"
+	},
+	"handshake-alt-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f95f",
+		"label": "Handshake Alternate Slash"
+	},
+	"handshake-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f960",
+		"label": "Handshake Slash"
+	},
+	"hanukiah": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6e6",
+		"label": "Hanukiah"
+	},
+	"hard-hat": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f807",
+		"label": "Hard Hat"
+	},
+	"hashtag": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f292",
+		"label": "Hashtag"
+	},
+	"hat-cowboy": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f8c0",
+		"label": "Cowboy Hat"
+	},
+	"hat-cowboy-side": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f8c1",
+		"label": "Cowboy Hat Side"
+	},
+	"hat-wizard": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6e8",
+		"label": "Wizard's Hat"
+	},
+	"hdd": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f0a0",
+		"label": "HDD"
+	},
+	"head-side-cough": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f961",
+		"label": "Head Side Cough"
+	},
+	"head-side-cough-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f962",
+		"label": "Head Side-cough-slash"
+	},
+	"head-side-mask": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f963",
+		"label": "Head Side Mask"
+	},
+	"head-side-virus": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f964",
+		"label": "Head Side Virus"
+	},
+	"heading": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1dc",
+		"label": "heading"
+	},
+	"headphones": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f025",
+		"label": "headphones"
+	},
+	"headphones-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f58f",
+		"label": "Alternate Headphones"
+	},
+	"headset": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f590",
+		"label": "Headset"
+	},
+	"heart": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f004",
+		"label": "Heart"
+	},
+	"heart-broken": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7a9",
+		"label": "Heart Broken"
+	},
+	"heartbeat": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f21e",
+		"label": "Heartbeat"
+	},
+	"helicopter": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f533",
+		"label": "Helicopter"
+	},
+	"highlighter": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f591",
+		"label": "Highlighter"
+	},
+	"hiking": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6ec",
+		"label": "Hiking"
+	},
+	"hippo": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6ed",
+		"label": "Hippo"
+	},
+	"hips": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f452",
+		"label": "Hips"
+	},
+	"hire-a-helper": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3b0",
+		"label": "HireAHelper"
+	},
+	"history": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1da",
+		"label": "History"
+	},
+	"hockey-puck": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f453",
+		"label": "Hockey Puck"
+	},
+	"holly-berry": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7aa",
+		"label": "Holly Berry"
+	},
+	"home": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f015",
+		"label": "home"
+	},
+	"hooli": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f427",
+		"label": "Hooli"
+	},
+	"hornbill": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f592",
+		"label": "Hornbill"
+	},
+	"horse": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6f0",
+		"label": "Horse"
+	},
+	"horse-head": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7ab",
+		"label": "Horse Head"
+	},
+	"hospital": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f0f8",
+		"label": "hospital"
+	},
+	"hospital-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f47d",
+		"label": "Alternate Hospital"
+	},
+	"hospital-symbol": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f47e",
+		"label": "Hospital Symbol"
+	},
+	"hospital-user": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f80d",
+		"label": "Hospital with User"
+	},
+	"hot-tub": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f593",
+		"label": "Hot Tub"
+	},
+	"hotdog": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f80f",
+		"label": "Hot Dog"
+	},
+	"hotel": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f594",
+		"label": "Hotel"
+	},
+	"hotjar": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3b1",
+		"label": "Hotjar"
+	},
+	"hourglass": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f254",
+		"label": "Hourglass"
+	},
+	"hourglass-end": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f253",
+		"label": "Hourglass End"
+	},
+	"hourglass-half": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f252",
+		"label": "Hourglass Half"
+	},
+	"hourglass-start": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f251",
+		"label": "Hourglass Start"
+	},
+	"house-damage": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6f1",
+		"label": "Damaged House"
+	},
+	"house-user": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f965",
+		"label": "House User"
+	},
+	"houzz": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f27c",
+		"label": "Houzz"
+	},
+	"hryvnia": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6f2",
+		"label": "Hryvnia"
+	},
+	"html5": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f13b",
+		"label": "HTML 5 Logo"
+	},
+	"hubspot": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3b2",
+		"label": "HubSpot"
+	},
+	"i-cursor": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f246",
+		"label": "I Beam Cursor"
+	},
+	"ice-cream": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f810",
+		"label": "Ice Cream"
+	},
+	"icicles": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7ad",
+		"label": "Icicles"
+	},
+	"icons": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f86d",
+		"label": "Icons"
+	},
+	"id-badge": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f2c1",
+		"label": "Identification Badge"
+	},
+	"id-card": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f2c2",
+		"label": "Identification Card"
+	},
+	"id-card-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f47f",
+		"label": "Alternate Identification Card"
+	},
+	"ideal": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f913",
+		"label": "iDeal"
+	},
+	"igloo": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7ae",
+		"label": "Igloo"
+	},
+	"image": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f03e",
+		"label": "Image"
+	},
+	"images": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f302",
+		"label": "Images"
+	},
+	"imdb": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2d8",
+		"label": "IMDB"
+	},
+	"inbox": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f01c",
+		"label": "inbox"
+	},
+	"indent": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f03c",
+		"label": "Indent"
+	},
+	"industry": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f275",
+		"label": "Industry"
+	},
+	"infinity": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f534",
+		"label": "Infinity"
+	},
+	"info": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f129",
+		"label": "Info"
+	},
+	"info-circle": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f05a",
+		"label": "Info Circle"
+	},
+	"instagram": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f16d",
+		"label": "Instagram"
+	},
+	"instagram-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f955",
+		"label": "Instagram Square"
+	},
+	"intercom": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f7af",
+		"label": "Intercom"
+	},
+	"internet-explorer": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f26b",
+		"label": "Internet-explorer"
+	},
+	"invision": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f7b0",
+		"label": "InVision"
+	},
+	"ioxhost": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f208",
+		"label": "ioxhost"
+	},
+	"italic": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f033",
+		"label": "italic"
+	},
+	"itch-io": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f83a",
+		"label": "itch.io"
+	},
+	"itunes": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3b4",
+		"label": "iTunes"
+	},
+	"itunes-note": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3b5",
+		"label": "Itunes Note"
+	},
+	"java": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4e4",
+		"label": "Java"
+	},
+	"jedi": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f669",
+		"label": "Jedi"
+	},
+	"jedi-order": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f50e",
+		"label": "Jedi Order"
+	},
+	"jenkins": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3b6",
+		"label": "Jenkis"
+	},
+	"jira": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f7b1",
+		"label": "Jira"
+	},
+	"joget": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3b7",
+		"label": "Joget"
+	},
+	"joint": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f595",
+		"label": "Joint"
+	},
+	"joomla": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1aa",
+		"label": "Joomla Logo"
+	},
+	"journal-whills": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f66a",
+		"label": "Journal of the Whills"
+	},
+	"js": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3b8",
+		"label": "JavaScript (JS)"
+	},
+	"js-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3b9",
+		"label": "JavaScript (JS) Square"
+	},
+	"jsfiddle": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1cc",
+		"label": "jsFiddle"
+	},
+	"kaaba": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f66b",
+		"label": "Kaaba"
+	},
+	"kaggle": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f5fa",
+		"label": "Kaggle"
+	},
+	"key": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f084",
+		"label": "key"
+	},
+	"keybase": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4f5",
+		"label": "Keybase"
+	},
+	"keyboard": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f11c",
+		"label": "Keyboard"
+	},
+	"keycdn": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3ba",
+		"label": "KeyCDN"
+	},
+	"khanda": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f66d",
+		"label": "Khanda"
+	},
+	"kickstarter": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3bb",
+		"label": "Kickstarter"
+	},
+	"kickstarter-k": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3bc",
+		"label": "Kickstarter K"
+	},
+	"kiss": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f596",
+		"label": "Kissing Face"
+	},
+	"kiss-beam": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f597",
+		"label": "Kissing Face With Smiling Eyes"
+	},
+	"kiss-wink-heart": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f598",
+		"label": "Face Blowing a Kiss"
+	},
+	"kiwi-bird": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f535",
+		"label": "Kiwi Bird"
+	},
+	"korvue": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f42f",
+		"label": "KORVUE"
+	},
+	"landmark": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f66f",
+		"label": "Landmark"
+	},
+	"language": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1ab",
+		"label": "Language"
+	},
+	"laptop": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f109",
+		"label": "Laptop"
+	},
+	"laptop-code": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5fc",
+		"label": "Laptop Code"
+	},
+	"laptop-house": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f966",
+		"label": "Laptop House"
+	},
+	"laptop-medical": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f812",
+		"label": "Laptop Medical"
+	},
+	"laravel": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3bd",
+		"label": "Laravel"
+	},
+	"lastfm": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f202",
+		"label": "last.fm"
+	},
+	"lastfm-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f203",
+		"label": "last.fm Square"
+	},
+	"laugh": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f599",
+		"label": "Grinning Face With Big Eyes"
+	},
+	"laugh-beam": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f59a",
+		"label": "Laugh Face with Beaming Eyes"
+	},
+	"laugh-squint": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f59b",
+		"label": "Laughing Squinting Face"
+	},
+	"laugh-wink": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f59c",
+		"label": "Laughing Winking Face"
+	},
+	"layer-group": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5fd",
+		"label": "Layer Group"
+	},
+	"leaf": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f06c",
+		"label": "leaf"
+	},
+	"leanpub": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f212",
+		"label": "Leanpub"
+	},
+	"lemon": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f094",
+		"label": "Lemon"
+	},
+	"less": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f41d",
+		"label": "Less"
+	},
+	"less-than": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f536",
+		"label": "Less Than"
+	},
+	"less-than-equal": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f537",
+		"label": "Less Than Equal To"
+	},
+	"level-down-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f3be",
+		"label": "Alternate Level Down"
+	},
+	"level-up-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f3bf",
+		"label": "Alternate Level Up"
+	},
+	"life-ring": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1cd",
+		"label": "Life Ring"
+	},
+	"lightbulb": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f0eb",
+		"label": "Lightbulb"
+	},
+	"line": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3c0",
+		"label": "Line"
+	},
+	"link": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0c1",
+		"label": "Link"
+	},
+	"linkedin": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f08c",
+		"label": "LinkedIn"
+	},
+	"linkedin-in": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f0e1",
+		"label": "LinkedIn In"
+	},
+	"linode": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2b8",
+		"label": "Linode"
+	},
+	"linux": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f17c",
+		"label": "Linux"
+	},
+	"lira-sign": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f195",
+		"label": "Turkish Lira Sign"
+	},
+	"list": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f03a",
+		"label": "List"
+	},
+	"list-alt": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f022",
+		"label": "Alternate List"
+	},
+	"list-ol": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0cb",
+		"label": "list-ol"
+	},
+	"list-ul": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0ca",
+		"label": "list-ul"
+	},
+	"location-arrow": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f124",
+		"label": "location-arrow"
+	},
+	"lock": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f023",
+		"label": "lock"
+	},
+	"lock-open": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f3c1",
+		"label": "Lock Open"
+	},
+	"long-arrow-alt-down": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f309",
+		"label": "Alternate Long Arrow Down"
+	},
+	"long-arrow-alt-left": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f30a",
+		"label": "Alternate Long Arrow Left"
+	},
+	"long-arrow-alt-right": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f30b",
+		"label": "Alternate Long Arrow Right"
+	},
+	"long-arrow-alt-up": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f30c",
+		"label": "Alternate Long Arrow Up"
+	},
+	"low-vision": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2a8",
+		"label": "Low Vision"
+	},
+	"luggage-cart": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f59d",
+		"label": "Luggage Cart"
+	},
+	"lungs": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f604",
+		"label": "Lungs"
+	},
+	"lungs-virus": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f967",
+		"label": "Lungs Virus"
+	},
+	"lyft": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3c3",
+		"label": "lyft"
+	},
+	"magento": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3c4",
+		"label": "Magento"
+	},
+	"magic": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0d0",
+		"label": "magic"
+	},
+	"magnet": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f076",
+		"label": "magnet"
+	},
+	"mail-bulk": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f674",
+		"label": "Mail Bulk"
+	},
+	"mailchimp": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f59e",
+		"label": "Mailchimp"
+	},
+	"male": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f183",
+		"label": "Male"
+	},
+	"mandalorian": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f50f",
+		"label": "Mandalorian"
+	},
+	"map": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f279",
+		"label": "Map"
+	},
+	"map-marked": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f59f",
+		"label": "Map Marked"
+	},
+	"map-marked-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5a0",
+		"label": "Alternate Map Marked"
+	},
+	"map-marker": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f041",
+		"label": "map-marker"
+	},
+	"map-marker-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f3c5",
+		"label": "Alternate Map Marker"
+	},
+	"map-pin": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f276",
+		"label": "Map Pin"
+	},
+	"map-signs": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f277",
+		"label": "Map Signs"
+	},
+	"markdown": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f60f",
+		"label": "Markdown"
+	},
+	"marker": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5a1",
+		"label": "Marker"
+	},
+	"mars": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f222",
+		"label": "Mars"
+	},
+	"mars-double": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f227",
+		"label": "Mars Double"
+	},
+	"mars-stroke": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f229",
+		"label": "Mars Stroke"
+	},
+	"mars-stroke-h": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f22b",
+		"label": "Mars Stroke Horizontal"
+	},
+	"mars-stroke-v": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f22a",
+		"label": "Mars Stroke Vertical"
+	},
+	"mask": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6fa",
+		"label": "Mask"
+	},
+	"mastodon": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4f6",
+		"label": "Mastodon"
+	},
+	"maxcdn": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f136",
+		"label": "MaxCDN"
+	},
+	"mdb": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f8ca",
+		"label": "Material Design for Bootstrap"
+	},
+	"medal": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5a2",
+		"label": "Medal"
+	},
+	"medapps": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3c6",
+		"label": "MedApps"
+	},
+	"medium": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f23a",
+		"label": "Medium"
+	},
+	"medium-m": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3c7",
+		"label": "Medium M"
+	},
+	"medkit": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0fa",
+		"label": "medkit"
+	},
+	"medrt": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3c8",
+		"label": "MRT"
+	},
+	"meetup": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2e0",
+		"label": "Meetup"
+	},
+	"megaport": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f5a3",
+		"label": "Megaport"
+	},
+	"meh": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f11a",
+		"label": "Neutral Face"
+	},
+	"meh-blank": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f5a4",
+		"label": "Face Without Mouth"
+	},
+	"meh-rolling-eyes": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f5a5",
+		"label": "Face With Rolling Eyes"
+	},
+	"memory": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f538",
+		"label": "Memory"
+	},
+	"mendeley": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f7b3",
+		"label": "Mendeley"
+	},
+	"menorah": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f676",
+		"label": "Menorah"
+	},
+	"mercury": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f223",
+		"label": "Mercury"
+	},
+	"meteor": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f753",
+		"label": "Meteor"
+	},
+	"microblog": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f91a",
+		"label": "Micro.blog"
+	},
+	"microchip": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2db",
+		"label": "Microchip"
+	},
+	"microphone": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f130",
+		"label": "microphone"
+	},
+	"microphone-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f3c9",
+		"label": "Alternate Microphone"
+	},
+	"microphone-alt-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f539",
+		"label": "Alternate Microphone Slash"
+	},
+	"microphone-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f131",
+		"label": "Microphone Slash"
+	},
+	"microscope": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f610",
+		"label": "Microscope"
+	},
+	"microsoft": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3ca",
+		"label": "Microsoft"
+	},
+	"minus": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f068",
+		"label": "minus"
+	},
+	"minus-circle": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f056",
+		"label": "Minus Circle"
+	},
+	"minus-square": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f146",
+		"label": "Minus Square"
+	},
+	"mitten": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7b5",
+		"label": "Mitten"
+	},
+	"mix": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3cb",
+		"label": "Mix"
+	},
+	"mixcloud": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f289",
+		"label": "Mixcloud"
+	},
+	"mixer": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f956",
+		"label": "Mixer"
+	},
+	"mizuni": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3cc",
+		"label": "Mizuni"
+	},
+	"mobile": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f10b",
+		"label": "Mobile Phone"
+	},
+	"mobile-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f3cd",
+		"label": "Alternate Mobile"
+	},
+	"modx": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f285",
+		"label": "MODX"
+	},
+	"monero": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3d0",
+		"label": "Monero"
+	},
+	"money-bill": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0d6",
+		"label": "Money Bill"
+	},
+	"money-bill-alt": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f3d1",
+		"label": "Alternate Money Bill"
+	},
+	"money-bill-wave": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f53a",
+		"label": "Wavy Money Bill"
+	},
+	"money-bill-wave-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f53b",
+		"label": "Alternate Wavy Money Bill"
+	},
+	"money-check": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f53c",
+		"label": "Money Check"
+	},
+	"money-check-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f53d",
+		"label": "Alternate Money Check"
+	},
+	"monument": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5a6",
+		"label": "Monument"
+	},
+	"moon": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f186",
+		"label": "Moon"
+	},
+	"mortar-pestle": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5a7",
+		"label": "Mortar Pestle"
+	},
+	"mosque": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f678",
+		"label": "Mosque"
+	},
+	"motorcycle": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f21c",
+		"label": "Motorcycle"
+	},
+	"mountain": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6fc",
+		"label": "Mountain"
+	},
+	"mouse": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f8cc",
+		"label": "Mouse"
+	},
+	"mouse-pointer": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f245",
+		"label": "Mouse Pointer"
+	},
+	"mug-hot": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7b6",
+		"label": "Mug Hot"
+	},
+	"music": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f001",
+		"label": "Music"
+	},
+	"napster": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3d2",
+		"label": "Napster"
+	},
+	"neos": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f612",
+		"label": "Neos"
+	},
+	"network-wired": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6ff",
+		"label": "Wired Network"
+	},
+	"neuter": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f22c",
+		"label": "Neuter"
+	},
+	"newspaper": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1ea",
+		"label": "Newspaper"
+	},
+	"nimblr": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f5a8",
+		"label": "Nimblr"
+	},
+	"node": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f419",
+		"label": "Node.js"
+	},
+	"node-js": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3d3",
+		"label": "Node.js JS"
+	},
+	"not-equal": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f53e",
+		"label": "Not Equal"
+	},
+	"notes-medical": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f481",
+		"label": "Medical Notes"
+	},
+	"npm": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3d4",
+		"label": "npm"
+	},
+	"ns8": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3d5",
+		"label": "NS8"
+	},
+	"nutritionix": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3d6",
+		"label": "Nutritionix"
+	},
+	"object-group": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f247",
+		"label": "Object Group"
+	},
+	"object-ungroup": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f248",
+		"label": "Object Ungroup"
+	},
+	"odnoklassniki": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f263",
+		"label": "Odnoklassniki"
+	},
+	"odnoklassniki-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f264",
+		"label": "Odnoklassniki Square"
+	},
+	"oil-can": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f613",
+		"label": "Oil Can"
+	},
+	"old-republic": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f510",
+		"label": "Old Republic"
+	},
+	"om": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f679",
+		"label": "Om"
+	},
+	"opencart": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f23d",
+		"label": "OpenCart"
+	},
+	"openid": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f19b",
+		"label": "OpenID"
+	},
+	"opera": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f26a",
+		"label": "Opera"
+	},
+	"optin-monster": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f23c",
+		"label": "Optin Monster"
+	},
+	"orcid": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f8d2",
+		"label": "ORCID"
+	},
+	"osi": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f41a",
+		"label": "Open Source Initiative"
+	},
+	"otter": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f700",
+		"label": "Otter"
+	},
+	"outdent": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f03b",
+		"label": "Outdent"
+	},
+	"page4": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3d7",
+		"label": "page4 Corporation"
+	},
+	"pagelines": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f18c",
+		"label": "Pagelines"
+	},
+	"pager": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f815",
+		"label": "Pager"
+	},
+	"paint-brush": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1fc",
+		"label": "Paint Brush"
+	},
+	"paint-roller": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5aa",
+		"label": "Paint Roller"
+	},
+	"palette": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f53f",
+		"label": "Palette"
+	},
+	"palfed": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3d8",
+		"label": "Palfed"
+	},
+	"pallet": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f482",
+		"label": "Pallet"
+	},
+	"paper-plane": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f1d8",
+		"label": "Paper Plane"
+	},
+	"paperclip": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0c6",
+		"label": "Paperclip"
+	},
+	"parachute-box": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4cd",
+		"label": "Parachute Box"
+	},
+	"paragraph": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1dd",
+		"label": "paragraph"
+	},
+	"parking": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f540",
+		"label": "Parking"
+	},
+	"passport": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5ab",
+		"label": "Passport"
+	},
+	"pastafarianism": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f67b",
+		"label": "Pastafarianism"
+	},
+	"paste": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0ea",
+		"label": "Paste"
+	},
+	"patreon": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3d9",
+		"label": "Patreon"
+	},
+	"pause": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f04c",
+		"label": "pause"
+	},
+	"pause-circle": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f28b",
+		"label": "Pause Circle"
+	},
+	"paw": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1b0",
+		"label": "Paw"
+	},
+	"paypal": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1ed",
+		"label": "Paypal"
+	},
+	"peace": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f67c",
+		"label": "Peace"
+	},
+	"pen": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f304",
+		"label": "Pen"
+	},
+	"pen-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f305",
+		"label": "Alternate Pen"
+	},
+	"pen-fancy": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5ac",
+		"label": "Pen Fancy"
+	},
+	"pen-nib": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5ad",
+		"label": "Pen Nib"
+	},
+	"pen-square": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f14b",
+		"label": "Pen Square"
+	},
+	"pencil-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f303",
+		"label": "Alternate Pencil"
+	},
+	"pencil-ruler": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5ae",
+		"label": "Pencil Ruler"
+	},
+	"penny-arcade": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f704",
+		"label": "Penny Arcade"
+	},
+	"people-arrows": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f968",
+		"label": "People Arrows"
+	},
+	"people-carry": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4ce",
+		"label": "People Carry"
+	},
+	"pepper-hot": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f816",
+		"label": "Hot Pepper"
+	},
+	"percent": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f295",
+		"label": "Percent"
+	},
+	"percentage": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f541",
+		"label": "Percentage"
+	},
+	"periscope": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3da",
+		"label": "Periscope"
+	},
+	"person-booth": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f756",
+		"label": "Person Entering Booth"
+	},
+	"phabricator": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3db",
+		"label": "Phabricator"
+	},
+	"phoenix-framework": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3dc",
+		"label": "Phoenix Framework"
+	},
+	"phoenix-squadron": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f511",
+		"label": "Phoenix Squadron"
+	},
+	"phone": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f095",
+		"label": "Phone"
+	},
+	"phone-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f879",
+		"label": "Alternate Phone"
+	},
+	"phone-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f3dd",
+		"label": "Phone Slash"
+	},
+	"phone-square": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f098",
+		"label": "Phone Square"
+	},
+	"phone-square-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f87b",
+		"label": "Alternate Phone Square"
+	},
+	"phone-volume": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2a0",
+		"label": "Phone Volume"
+	},
+	"photo-video": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f87c",
+		"label": "Photo Video"
+	},
+	"php": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f457",
+		"label": "PHP"
+	},
+	"pied-piper": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2ae",
+		"label": "Pied Piper Logo"
+	},
+	"pied-piper-alt": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1a8",
+		"label": "Alternate Pied Piper Logo (Old)"
+	},
+	"pied-piper-hat": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4e5",
+		"label": "Pied Piper Hat (Old)"
+	},
+	"pied-piper-pp": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1a7",
+		"label": "Pied Piper PP Logo (Old)"
+	},
+	"pied-piper-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f91e",
+		"label": "Pied Piper Square Logo (Old)"
+	},
+	"piggy-bank": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4d3",
+		"label": "Piggy Bank"
+	},
+	"pills": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f484",
+		"label": "Pills"
+	},
+	"pinterest": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f0d2",
+		"label": "Pinterest"
+	},
+	"pinterest-p": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f231",
+		"label": "Pinterest P"
+	},
+	"pinterest-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f0d3",
+		"label": "Pinterest Square"
+	},
+	"pizza-slice": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f818",
+		"label": "Pizza Slice"
+	},
+	"place-of-worship": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f67f",
+		"label": "Place of Worship"
+	},
+	"plane": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f072",
+		"label": "plane"
+	},
+	"plane-arrival": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5af",
+		"label": "Plane Arrival"
+	},
+	"plane-departure": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5b0",
+		"label": "Plane Departure"
+	},
+	"plane-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f969",
+		"label": "Plane Slash"
+	},
+	"play": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f04b",
+		"label": "play"
+	},
+	"play-circle": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f144",
+		"label": "Play Circle"
+	},
+	"playstation": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3df",
+		"label": "PlayStation"
+	},
+	"plug": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1e6",
+		"label": "Plug"
+	},
+	"plus": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f067",
+		"label": "plus"
+	},
+	"plus-circle": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f055",
+		"label": "Plus Circle"
+	},
+	"plus-square": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f0fe",
+		"label": "Plus Square"
+	},
+	"podcast": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2ce",
+		"label": "Podcast"
+	},
+	"poll": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f681",
+		"label": "Poll"
+	},
+	"poll-h": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f682",
+		"label": "Poll H"
+	},
+	"poo": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2fe",
+		"label": "Poo"
+	},
+	"poo-storm": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f75a",
+		"label": "Poo Storm"
+	},
+	"poop": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f619",
+		"label": "Poop"
+	},
+	"portrait": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f3e0",
+		"label": "Portrait"
+	},
+	"pound-sign": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f154",
+		"label": "Pound Sign"
+	},
+	"power-off": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f011",
+		"label": "Power Off"
+	},
+	"pray": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f683",
+		"label": "Pray"
+	},
+	"praying-hands": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f684",
+		"label": "Praying Hands"
+	},
+	"prescription": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5b1",
+		"label": "Prescription"
+	},
+	"prescription-bottle": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f485",
+		"label": "Prescription Bottle"
+	},
+	"prescription-bottle-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f486",
+		"label": "Alternate Prescription Bottle"
+	},
+	"print": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f02f",
+		"label": "print"
+	},
+	"procedures": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f487",
+		"label": "Procedures"
+	},
+	"product-hunt": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f288",
+		"label": "Product Hunt"
+	},
+	"project-diagram": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f542",
+		"label": "Project Diagram"
+	},
+	"pump-medical": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f96a",
+		"label": "Pump Medical"
+	},
+	"pump-soap": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f96b",
+		"label": "Pump Soap"
+	},
+	"pushed": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3e1",
+		"label": "Pushed"
+	},
+	"puzzle-piece": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f12e",
+		"label": "Puzzle Piece"
+	},
+	"python": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3e2",
+		"label": "Python"
+	},
+	"qq": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1d6",
+		"label": "QQ"
+	},
+	"qrcode": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f029",
+		"label": "qrcode"
+	},
+	"question": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f128",
+		"label": "Question"
+	},
+	"question-circle": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f059",
+		"label": "Question Circle"
+	},
+	"quidditch": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f458",
+		"label": "Quidditch"
+	},
+	"quinscape": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f459",
+		"label": "QuinScape"
+	},
+	"quora": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2c4",
+		"label": "Quora"
+	},
+	"quote-left": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f10d",
+		"label": "quote-left"
+	},
+	"quote-right": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f10e",
+		"label": "quote-right"
+	},
+	"quran": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f687",
+		"label": "Quran"
+	},
+	"r-project": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4f7",
+		"label": "R Project"
+	},
+	"radiation": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7b9",
+		"label": "Radiation"
+	},
+	"radiation-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7ba",
+		"label": "Alternate Radiation"
+	},
+	"rainbow": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f75b",
+		"label": "Rainbow"
+	},
+	"random": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f074",
+		"label": "random"
+	},
+	"raspberry-pi": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f7bb",
+		"label": "Raspberry Pi"
+	},
+	"ravelry": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2d9",
+		"label": "Ravelry"
+	},
+	"react": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f41b",
+		"label": "React"
+	},
+	"reacteurope": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f75d",
+		"label": "ReactEurope"
+	},
+	"readme": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4d5",
+		"label": "ReadMe"
+	},
+	"rebel": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1d0",
+		"label": "Rebel Alliance"
+	},
+	"receipt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f543",
+		"label": "Receipt"
+	},
+	"record-vinyl": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f8d9",
+		"label": "Record Vinyl"
+	},
+	"recycle": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1b8",
+		"label": "Recycle"
+	},
+	"red-river": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3e3",
+		"label": "red river"
+	},
+	"reddit": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1a1",
+		"label": "reddit Logo"
+	},
+	"reddit-alien": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f281",
+		"label": "reddit Alien"
+	},
+	"reddit-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1a2",
+		"label": "reddit Square"
+	},
+	"redhat": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f7bc",
+		"label": "Redhat"
+	},
+	"redo": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f01e",
+		"label": "Redo"
+	},
+	"redo-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2f9",
+		"label": "Alternate Redo"
+	},
+	"registered": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f25d",
+		"label": "Registered Trademark"
+	},
+	"remove-format": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f87d",
+		"label": "Remove Format"
+	},
+	"renren": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f18b",
+		"label": "Renren"
+	},
+	"reply": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f3e5",
+		"label": "Reply"
+	},
+	"reply-all": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f122",
+		"label": "reply-all"
+	},
+	"replyd": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3e6",
+		"label": "replyd"
+	},
+	"republican": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f75e",
+		"label": "Republican"
+	},
+	"researchgate": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4f8",
+		"label": "Researchgate"
+	},
+	"resolving": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3e7",
+		"label": "Resolving"
+	},
+	"restroom": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7bd",
+		"label": "Restroom"
+	},
+	"retweet": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f079",
+		"label": "Retweet"
+	},
+	"rev": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f5b2",
+		"label": "Rev.io"
+	},
+	"ribbon": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4d6",
+		"label": "Ribbon"
+	},
+	"ring": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f70b",
+		"label": "Ring"
+	},
+	"road": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f018",
+		"label": "road"
+	},
+	"robot": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f544",
+		"label": "Robot"
+	},
+	"rocket": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f135",
+		"label": "rocket"
+	},
+	"rocketchat": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3e8",
+		"label": "Rocket.Chat"
+	},
+	"rockrms": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3e9",
+		"label": "Rockrms"
+	},
+	"route": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4d7",
+		"label": "Route"
+	},
+	"rss": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f09e",
+		"label": "rss"
+	},
+	"rss-square": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f143",
+		"label": "RSS Square"
+	},
+	"ruble-sign": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f158",
+		"label": "Ruble Sign"
+	},
+	"ruler": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f545",
+		"label": "Ruler"
+	},
+	"ruler-combined": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f546",
+		"label": "Ruler Combined"
+	},
+	"ruler-horizontal": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f547",
+		"label": "Ruler Horizontal"
+	},
+	"ruler-vertical": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f548",
+		"label": "Ruler Vertical"
+	},
+	"running": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f70c",
+		"label": "Running"
+	},
+	"rupee-sign": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f156",
+		"label": "Indian Rupee Sign"
+	},
+	"sad-cry": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f5b3",
+		"label": "Crying Face"
+	},
+	"sad-tear": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f5b4",
+		"label": "Loudly Crying Face"
+	},
+	"safari": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f267",
+		"label": "Safari"
+	},
+	"salesforce": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f83b",
+		"label": "Salesforce"
+	},
+	"sass": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f41e",
+		"label": "Sass"
+	},
+	"satellite": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7bf",
+		"label": "Satellite"
+	},
+	"satellite-dish": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7c0",
+		"label": "Satellite Dish"
+	},
+	"save": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f0c7",
+		"label": "Save"
+	},
+	"schlix": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3ea",
+		"label": "SCHLIX"
+	},
+	"school": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f549",
+		"label": "School"
+	},
+	"screwdriver": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f54a",
+		"label": "Screwdriver"
+	},
+	"scribd": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f28a",
+		"label": "Scribd"
+	},
+	"scroll": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f70e",
+		"label": "Scroll"
+	},
+	"sd-card": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7c2",
+		"label": "Sd Card"
+	},
+	"search": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f002",
+		"label": "Search"
+	},
+	"search-dollar": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f688",
+		"label": "Search Dollar"
+	},
+	"search-location": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f689",
+		"label": "Search Location"
+	},
+	"search-minus": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f010",
+		"label": "Search Minus"
+	},
+	"search-plus": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f00e",
+		"label": "Search Plus"
+	},
+	"searchengin": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3eb",
+		"label": "Searchengin"
+	},
+	"seedling": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4d8",
+		"label": "Seedling"
+	},
+	"sellcast": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2da",
+		"label": "Sellcast"
+	},
+	"sellsy": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f213",
+		"label": "Sellsy"
+	},
+	"server": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f233",
+		"label": "Server"
+	},
+	"servicestack": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3ec",
+		"label": "Servicestack"
+	},
+	"shapes": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f61f",
+		"label": "Shapes"
+	},
+	"share": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f064",
+		"label": "Share"
+	},
+	"share-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1e0",
+		"label": "Alternate Share"
+	},
+	"share-alt-square": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1e1",
+		"label": "Alternate Share Square"
+	},
+	"share-square": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f14d",
+		"label": "Share Square"
+	},
+	"shekel-sign": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f20b",
+		"label": "Shekel Sign"
+	},
+	"shield-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f3ed",
+		"label": "Alternate Shield"
+	},
+	"shield-virus": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f96c",
+		"label": "Shield Virus"
+	},
+	"ship": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f21a",
+		"label": "Ship"
+	},
+	"shipping-fast": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f48b",
+		"label": "Shipping Fast"
+	},
+	"shirtsinbulk": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f214",
+		"label": "Shirts in Bulk"
+	},
+	"shoe-prints": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f54b",
+		"label": "Shoe Prints"
+	},
+	"shopify": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f957",
+		"label": "Shopify"
+	},
+	"shopping-bag": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f290",
+		"label": "Shopping Bag"
+	},
+	"shopping-basket": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f291",
+		"label": "Shopping Basket"
+	},
+	"shopping-cart": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f07a",
+		"label": "shopping-cart"
+	},
+	"shopware": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f5b5",
+		"label": "Shopware"
+	},
+	"shower": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2cc",
+		"label": "Shower"
+	},
+	"shuttle-van": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5b6",
+		"label": "Shuttle Van"
+	},
+	"sign": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4d9",
+		"label": "Sign"
+	},
+	"sign-in-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2f6",
+		"label": "Alternate Sign In"
+	},
+	"sign-language": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2a7",
+		"label": "Sign Language"
+	},
+	"sign-out-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2f5",
+		"label": "Alternate Sign Out"
+	},
+	"signal": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f012",
+		"label": "signal"
+	},
+	"signature": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5b7",
+		"label": "Signature"
+	},
+	"sim-card": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7c4",
+		"label": "SIM Card"
+	},
+	"simplybuilt": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f215",
+		"label": "SimplyBuilt"
+	},
+	"sistrix": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3ee",
+		"label": "SISTRIX"
+	},
+	"sitemap": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0e8",
+		"label": "Sitemap"
+	},
+	"sith": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f512",
+		"label": "Sith"
+	},
+	"skating": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7c5",
+		"label": "Skating"
+	},
+	"sketch": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f7c6",
+		"label": "Sketch"
+	},
+	"skiing": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7c9",
+		"label": "Skiing"
+	},
+	"skiing-nordic": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7ca",
+		"label": "Skiing Nordic"
+	},
+	"skull": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f54c",
+		"label": "Skull"
+	},
+	"skull-crossbones": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f714",
+		"label": "Skull & Crossbones"
+	},
+	"skyatlas": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f216",
+		"label": "skyatlas"
+	},
+	"skype": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f17e",
+		"label": "Skype"
+	},
+	"slack": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f198",
+		"label": "Slack Logo"
+	},
+	"slack-hash": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3ef",
+		"label": "Slack Hashtag"
+	},
+	"slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f715",
+		"label": "Slash"
+	},
+	"sleigh": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7cc",
+		"label": "Sleigh"
+	},
+	"sliders-h": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1de",
+		"label": "Horizontal Sliders"
+	},
+	"slideshare": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1e7",
+		"label": "Slideshare"
+	},
+	"smile": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f118",
+		"label": "Smiling Face"
+	},
+	"smile-beam": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f5b8",
+		"label": "Beaming Face With Smiling Eyes"
+	},
+	"smile-wink": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f4da",
+		"label": "Winking Face"
+	},
+	"smog": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f75f",
+		"label": "Smog"
+	},
+	"smoking": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f48d",
+		"label": "Smoking"
+	},
+	"smoking-ban": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f54d",
+		"label": "Smoking Ban"
+	},
+	"sms": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7cd",
+		"label": "SMS"
+	},
+	"snapchat": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2ab",
+		"label": "Snapchat"
+	},
+	"snapchat-ghost": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2ac",
+		"label": "Snapchat Ghost"
+	},
+	"snapchat-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2ad",
+		"label": "Snapchat Square"
+	},
+	"snowboarding": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7ce",
+		"label": "Snowboarding"
+	},
+	"snowflake": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f2dc",
+		"label": "Snowflake"
+	},
+	"snowman": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7d0",
+		"label": "Snowman"
+	},
+	"snowplow": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7d2",
+		"label": "Snowplow"
+	},
+	"soap": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f96e",
+		"label": "Soap"
+	},
+	"socks": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f696",
+		"label": "Socks"
+	},
+	"solar-panel": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5ba",
+		"label": "Solar Panel"
+	},
+	"sort": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0dc",
+		"label": "Sort"
+	},
+	"sort-alpha-down": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f15d",
+		"label": "Sort Alphabetical Down"
+	},
+	"sort-alpha-down-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f881",
+		"label": "Alternate Sort Alphabetical Down"
+	},
+	"sort-alpha-up": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f15e",
+		"label": "Sort Alphabetical Up"
+	},
+	"sort-alpha-up-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f882",
+		"label": "Alternate Sort Alphabetical Up"
+	},
+	"sort-amount-down": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f160",
+		"label": "Sort Amount Down"
+	},
+	"sort-amount-down-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f884",
+		"label": "Alternate Sort Amount Down"
+	},
+	"sort-amount-up": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f161",
+		"label": "Sort Amount Up"
+	},
+	"sort-amount-up-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f885",
+		"label": "Alternate Sort Amount Up"
+	},
+	"sort-down": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0dd",
+		"label": "Sort Down (Descending)"
+	},
+	"sort-numeric-down": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f162",
+		"label": "Sort Numeric Down"
+	},
+	"sort-numeric-down-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f886",
+		"label": "Alternate Sort Numeric Down"
+	},
+	"sort-numeric-up": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f163",
+		"label": "Sort Numeric Up"
+	},
+	"sort-numeric-up-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f887",
+		"label": "Alternate Sort Numeric Up"
+	},
+	"sort-up": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0de",
+		"label": "Sort Up (Ascending)"
+	},
+	"soundcloud": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1be",
+		"label": "SoundCloud"
+	},
+	"sourcetree": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f7d3",
+		"label": "Sourcetree"
+	},
+	"spa": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5bb",
+		"label": "Spa"
+	},
+	"space-shuttle": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f197",
+		"label": "Space Shuttle"
+	},
+	"speakap": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3f3",
+		"label": "Speakap"
+	},
+	"speaker-deck": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f83c",
+		"label": "Speaker Deck"
+	},
+	"spell-check": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f891",
+		"label": "Spell Check"
+	},
+	"spider": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f717",
+		"label": "Spider"
+	},
+	"spinner": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f110",
+		"label": "Spinner"
+	},
+	"splotch": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5bc",
+		"label": "Splotch"
+	},
+	"spotify": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1bc",
+		"label": "Spotify"
+	},
+	"spray-can": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5bd",
+		"label": "Spray Can"
+	},
+	"square": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f0c8",
+		"label": "Square"
+	},
+	"square-full": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f45c",
+		"label": "Square Full"
+	},
+	"square-root-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f698",
+		"label": "Alternate Square Root"
+	},
+	"squarespace": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f5be",
+		"label": "Squarespace"
+	},
+	"stack-exchange": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f18d",
+		"label": "Stack Exchange"
+	},
+	"stack-overflow": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f16c",
+		"label": "Stack Overflow"
+	},
+	"stackpath": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f842",
+		"label": "Stackpath"
+	},
+	"stamp": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5bf",
+		"label": "Stamp"
+	},
+	"star": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f005",
+		"label": "Star"
+	},
+	"star-and-crescent": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f699",
+		"label": "Star and Crescent"
+	},
+	"star-half": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f089",
+		"label": "star-half"
+	},
+	"star-half-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5c0",
+		"label": "Alternate Star Half"
+	},
+	"star-of-david": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f69a",
+		"label": "Star of David"
+	},
+	"star-of-life": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f621",
+		"label": "Star of Life"
+	},
+	"staylinked": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3f5",
+		"label": "StayLinked"
+	},
+	"steam": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1b6",
+		"label": "Steam"
+	},
+	"steam-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1b7",
+		"label": "Steam Square"
+	},
+	"steam-symbol": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3f6",
+		"label": "Steam Symbol"
+	},
+	"step-backward": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f048",
+		"label": "step-backward"
+	},
+	"step-forward": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f051",
+		"label": "step-forward"
+	},
+	"stethoscope": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0f1",
+		"label": "Stethoscope"
+	},
+	"sticker-mule": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3f7",
+		"label": "Sticker Mule"
+	},
+	"sticky-note": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f249",
+		"label": "Sticky Note"
+	},
+	"stop": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f04d",
+		"label": "stop"
+	},
+	"stop-circle": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f28d",
+		"label": "Stop Circle"
+	},
+	"stopwatch": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2f2",
+		"label": "Stopwatch"
+	},
+	"stopwatch-20": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f96f",
+		"label": "Stopwatch 20"
+	},
+	"store": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f54e",
+		"label": "Store"
+	},
+	"store-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f54f",
+		"label": "Alternate Store"
+	},
+	"store-alt-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f970",
+		"label": "Alternate Store Slash"
+	},
+	"store-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f971",
+		"label": "Store Slash"
+	},
+	"strava": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f428",
+		"label": "Strava"
+	},
+	"stream": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f550",
+		"label": "Stream"
+	},
+	"street-view": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f21d",
+		"label": "Street View"
+	},
+	"strikethrough": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0cc",
+		"label": "Strikethrough"
+	},
+	"stripe": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f429",
+		"label": "Stripe"
+	},
+	"stripe-s": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f42a",
+		"label": "Stripe S"
+	},
+	"stroopwafel": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f551",
+		"label": "Stroopwafel"
+	},
+	"studiovinari": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3f8",
+		"label": "Studio Vinari"
+	},
+	"stumbleupon": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1a4",
+		"label": "StumbleUpon Logo"
+	},
+	"stumbleupon-circle": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1a3",
+		"label": "StumbleUpon Circle"
+	},
+	"subscript": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f12c",
+		"label": "subscript"
+	},
+	"subway": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f239",
+		"label": "Subway"
+	},
+	"suitcase": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0f2",
+		"label": "Suitcase"
+	},
+	"suitcase-rolling": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5c1",
+		"label": "Suitcase Rolling"
+	},
+	"sun": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f185",
+		"label": "Sun"
+	},
+	"superpowers": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2dd",
+		"label": "Superpowers"
+	},
+	"superscript": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f12b",
+		"label": "superscript"
+	},
+	"supple": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3f9",
+		"label": "Supple"
+	},
+	"surprise": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f5c2",
+		"label": "Hushed Face"
+	},
+	"suse": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f7d6",
+		"label": "Suse"
+	},
+	"swatchbook": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5c3",
+		"label": "Swatchbook"
+	},
+	"swift": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f8e1",
+		"label": "Swift"
+	},
+	"swimmer": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5c4",
+		"label": "Swimmer"
+	},
+	"swimming-pool": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5c5",
+		"label": "Swimming Pool"
+	},
+	"symfony": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f83d",
+		"label": "Symfony"
+	},
+	"synagogue": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f69b",
+		"label": "Synagogue"
+	},
+	"sync": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f021",
+		"label": "Sync"
+	},
+	"sync-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2f1",
+		"label": "Alternate Sync"
+	},
+	"syringe": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f48e",
+		"label": "Syringe"
+	},
+	"table": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0ce",
+		"label": "table"
+	},
+	"table-tennis": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f45d",
+		"label": "Table Tennis"
+	},
+	"tablet": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f10a",
+		"label": "tablet"
+	},
+	"tablet-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f3fa",
+		"label": "Alternate Tablet"
+	},
+	"tablets": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f490",
+		"label": "Tablets"
+	},
+	"tachometer-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f3fd",
+		"label": "Alternate Tachometer"
+	},
+	"tag": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f02b",
+		"label": "tag"
+	},
+	"tags": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f02c",
+		"label": "tags"
+	},
+	"tape": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4db",
+		"label": "Tape"
+	},
+	"tasks": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0ae",
+		"label": "Tasks"
+	},
+	"taxi": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1ba",
+		"label": "Taxi"
+	},
+	"teamspeak": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f4f9",
+		"label": "TeamSpeak"
+	},
+	"teeth": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f62e",
+		"label": "Teeth"
+	},
+	"teeth-open": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f62f",
+		"label": "Teeth Open"
+	},
+	"telegram": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2c6",
+		"label": "Telegram"
+	},
+	"telegram-plane": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3fe",
+		"label": "Telegram Plane"
+	},
+	"temperature-high": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f769",
+		"label": "High Temperature"
+	},
+	"temperature-low": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f76b",
+		"label": "Low Temperature"
+	},
+	"tencent-weibo": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1d5",
+		"label": "Tencent Weibo"
+	},
+	"tenge": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7d7",
+		"label": "Tenge"
+	},
+	"terminal": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f120",
+		"label": "Terminal"
+	},
+	"text-height": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f034",
+		"label": "text-height"
+	},
+	"text-width": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f035",
+		"label": "Text Width"
+	},
+	"th": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f00a",
+		"label": "th"
+	},
+	"th-large": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f009",
+		"label": "th-large"
+	},
+	"th-list": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f00b",
+		"label": "th-list"
+	},
+	"the-red-yeti": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f69d",
+		"label": "The Red Yeti"
+	},
+	"theater-masks": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f630",
+		"label": "Theater Masks"
+	},
+	"themeco": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f5c6",
+		"label": "Themeco"
+	},
+	"themeisle": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2b2",
+		"label": "ThemeIsle"
+	},
+	"thermometer": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f491",
+		"label": "Thermometer"
+	},
+	"thermometer-empty": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2cb",
+		"label": "Thermometer Empty"
+	},
+	"thermometer-full": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2c7",
+		"label": "Thermometer Full"
+	},
+	"thermometer-half": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2c9",
+		"label": "Thermometer 1/2 Full"
+	},
+	"thermometer-quarter": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2ca",
+		"label": "Thermometer 1/4 Full"
+	},
+	"thermometer-three-quarters": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2c8",
+		"label": "Thermometer 3/4 Full"
+	},
+	"think-peaks": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f731",
+		"label": "Think Peaks"
+	},
+	"thumbs-down": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f165",
+		"label": "thumbs-down"
+	},
+	"thumbs-up": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f164",
+		"label": "thumbs-up"
+	},
+	"thumbtack": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f08d",
+		"label": "Thumbtack"
+	},
+	"ticket-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f3ff",
+		"label": "Alternate Ticket"
+	},
+	"times": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f00d",
+		"label": "Times"
+	},
+	"times-circle": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f057",
+		"label": "Times Circle"
+	},
+	"tint": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f043",
+		"label": "tint"
+	},
+	"tint-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5c7",
+		"label": "Tint Slash"
+	},
+	"tired": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f5c8",
+		"label": "Tired Face"
+	},
+	"toggle-off": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f204",
+		"label": "Toggle Off"
+	},
+	"toggle-on": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f205",
+		"label": "Toggle On"
+	},
+	"toilet": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7d8",
+		"label": "Toilet"
+	},
+	"toilet-paper": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f71e",
+		"label": "Toilet Paper"
+	},
+	"toilet-paper-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f972",
+		"label": "Toilet Paper Slash"
+	},
+	"toolbox": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f552",
+		"label": "Toolbox"
+	},
+	"tools": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7d9",
+		"label": "Tools"
+	},
+	"tooth": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5c9",
+		"label": "Tooth"
+	},
+	"torah": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6a0",
+		"label": "Torah"
+	},
+	"torii-gate": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6a1",
+		"label": "Torii Gate"
+	},
+	"tractor": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f722",
+		"label": "Tractor"
+	},
+	"trade-federation": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f513",
+		"label": "Trade Federation"
+	},
+	"trademark": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f25c",
+		"label": "Trademark"
+	},
+	"traffic-light": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f637",
+		"label": "Traffic Light"
+	},
+	"trailer": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f941",
+		"label": "Trailer"
+	},
+	"train": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f238",
+		"label": "Train"
+	},
+	"tram": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f7da",
+		"label": "Tram"
+	},
+	"transgender": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f224",
+		"label": "Transgender"
+	},
+	"transgender-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f225",
+		"label": "Alternate Transgender"
+	},
+	"trash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1f8",
+		"label": "Trash"
+	},
+	"trash-alt": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f2ed",
+		"label": "Alternate Trash"
+	},
+	"trash-restore": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f829",
+		"label": "Trash Restore"
+	},
+	"trash-restore-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f82a",
+		"label": "Alternative Trash Restore"
+	},
+	"tree": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1bb",
+		"label": "Tree"
+	},
+	"trello": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f181",
+		"label": "Trello"
+	},
+	"tripadvisor": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f262",
+		"label": "TripAdvisor"
+	},
+	"trophy": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f091",
+		"label": "trophy"
+	},
+	"truck": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0d1",
+		"label": "truck"
+	},
+	"truck-loading": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4de",
+		"label": "Truck Loading"
+	},
+	"truck-monster": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f63b",
+		"label": "Truck Monster"
+	},
+	"truck-moving": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4df",
+		"label": "Truck Moving"
+	},
+	"truck-pickup": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f63c",
+		"label": "Truck Side"
+	},
+	"tshirt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f553",
+		"label": "T-Shirt"
+	},
+	"tty": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1e4",
+		"label": "TTY"
+	},
+	"tumblr": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f173",
+		"label": "Tumblr"
+	},
+	"tumblr-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f174",
+		"label": "Tumblr Square"
+	},
+	"tv": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f26c",
+		"label": "Television"
+	},
+	"twitch": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1e8",
+		"label": "Twitch"
+	},
+	"twitter": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f099",
+		"label": "Twitter"
+	},
+	"twitter-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f081",
+		"label": "Twitter Square"
+	},
+	"typo3": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f42b",
+		"label": "Typo3"
+	},
+	"uber": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f402",
+		"label": "Uber"
+	},
+	"ubuntu": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f7df",
+		"label": "Ubuntu"
+	},
+	"uikit": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f403",
+		"label": "UIkit"
+	},
+	"umbraco": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f8e8",
+		"label": "Umbraco"
+	},
+	"umbrella": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0e9",
+		"label": "Umbrella"
+	},
+	"umbrella-beach": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5ca",
+		"label": "Umbrella Beach"
+	},
+	"underline": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0cd",
+		"label": "Underline"
+	},
+	"undo": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0e2",
+		"label": "Undo"
+	},
+	"undo-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2ea",
+		"label": "Alternate Undo"
+	},
+	"uniregistry": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f404",
+		"label": "Uniregistry"
+	},
+	"unity": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f949",
+		"label": "Unity 3D"
+	},
+	"universal-access": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f29a",
+		"label": "Universal Access"
+	},
+	"university": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f19c",
+		"label": "University"
+	},
+	"unlink": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f127",
+		"label": "unlink"
+	},
+	"unlock": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f09c",
+		"label": "unlock"
+	},
+	"unlock-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f13e",
+		"label": "Alternate Unlock"
+	},
+	"untappd": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f405",
+		"label": "Untappd"
+	},
+	"upload": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f093",
+		"label": "Upload"
+	},
+	"ups": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f7e0",
+		"label": "UPS"
+	},
+	"usb": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f287",
+		"label": "USB"
+	},
+	"user": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f007",
+		"label": "User"
+	},
+	"user-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f406",
+		"label": "Alternate User"
+	},
+	"user-alt-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4fa",
+		"label": "Alternate User Slash"
+	},
+	"user-astronaut": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4fb",
+		"label": "User Astronaut"
+	},
+	"user-check": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4fc",
+		"label": "User Check"
+	},
+	"user-circle": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f2bd",
+		"label": "User Circle"
+	},
+	"user-clock": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4fd",
+		"label": "User Clock"
+	},
+	"user-cog": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4fe",
+		"label": "User Cog"
+	},
+	"user-edit": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4ff",
+		"label": "User Edit"
+	},
+	"user-friends": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f500",
+		"label": "User Friends"
+	},
+	"user-graduate": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f501",
+		"label": "User Graduate"
+	},
+	"user-injured": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f728",
+		"label": "User Injured"
+	},
+	"user-lock": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f502",
+		"label": "User Lock"
+	},
+	"user-md": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0f0",
+		"label": "Doctor"
+	},
+	"user-minus": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f503",
+		"label": "User Minus"
+	},
+	"user-ninja": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f504",
+		"label": "User Ninja"
+	},
+	"user-nurse": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f82f",
+		"label": "Nurse"
+	},
+	"user-plus": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f234",
+		"label": "User Plus"
+	},
+	"user-secret": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f21b",
+		"label": "User Secret"
+	},
+	"user-shield": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f505",
+		"label": "User Shield"
+	},
+	"user-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f506",
+		"label": "User Slash"
+	},
+	"user-tag": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f507",
+		"label": "User Tag"
+	},
+	"user-tie": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f508",
+		"label": "User Tie"
+	},
+	"user-times": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f235",
+		"label": "Remove User"
+	},
+	"users": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0c0",
+		"label": "Users"
+	},
+	"users-cog": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f509",
+		"label": "Users Cog"
+	},
+	"usps": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f7e1",
+		"label": "United States Postal Service"
+	},
+	"ussunnah": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f407",
+		"label": "us-Sunnah Foundation"
+	},
+	"utensil-spoon": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2e5",
+		"label": "Utensil Spoon"
+	},
+	"utensils": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f2e7",
+		"label": "Utensils"
+	},
+	"vaadin": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f408",
+		"label": "Vaadin"
+	},
+	"vector-square": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5cb",
+		"label": "Vector Square"
+	},
+	"venus": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f221",
+		"label": "Venus"
+	},
+	"venus-double": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f226",
+		"label": "Venus Double"
+	},
+	"venus-mars": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f228",
+		"label": "Venus Mars"
+	},
+	"viacoin": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f237",
+		"label": "Viacoin"
+	},
+	"viadeo": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2a9",
+		"label": "Video"
+	},
+	"viadeo-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2aa",
+		"label": "Video Square"
+	},
+	"vial": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f492",
+		"label": "Vial"
+	},
+	"vials": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f493",
+		"label": "Vials"
+	},
+	"viber": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f409",
+		"label": "Viber"
+	},
+	"video": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f03d",
+		"label": "Video"
+	},
+	"video-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4e2",
+		"label": "Video Slash"
+	},
+	"vihara": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6a7",
+		"label": "Vihara"
+	},
+	"vimeo": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f40a",
+		"label": "Vimeo"
+	},
+	"vimeo-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f194",
+		"label": "Vimeo Square"
+	},
+	"vimeo-v": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f27d",
+		"label": "Vimeo"
+	},
+	"vine": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1ca",
+		"label": "Vine"
+	},
+	"virus": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f974",
+		"label": "Virus"
+	},
+	"virus-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f975",
+		"label": "Virus Slash"
+	},
+	"viruses": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f976",
+		"label": "Viruses"
+	},
+	"vk": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f189",
+		"label": "VK"
+	},
+	"vnv": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f40b",
+		"label": "VNV"
+	},
+	"voicemail": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f897",
+		"label": "Voicemail"
+	},
+	"volleyball-ball": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f45f",
+		"label": "Volleyball Ball"
+	},
+	"volume-down": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f027",
+		"label": "Volume Down"
+	},
+	"volume-mute": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6a9",
+		"label": "Volume Mute"
+	},
+	"volume-off": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f026",
+		"label": "Volume Off"
+	},
+	"volume-up": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f028",
+		"label": "Volume Up"
+	},
+	"vote-yea": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f772",
+		"label": "Vote Yea"
+	},
+	"vr-cardboard": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f729",
+		"label": "Cardboard VR"
+	},
+	"vuejs": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f41f",
+		"label": "Vue.js"
+	},
+	"walking": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f554",
+		"label": "Walking"
+	},
+	"wallet": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f555",
+		"label": "Wallet"
+	},
+	"warehouse": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f494",
+		"label": "Warehouse"
+	},
+	"water": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f773",
+		"label": "Water"
+	},
+	"wave-square": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f83e",
+		"label": "Square Wave"
+	},
+	"waze": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f83f",
+		"label": "Waze"
+	},
+	"weebly": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f5cc",
+		"label": "Weebly"
+	},
+	"weibo": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f18a",
+		"label": "Weibo"
+	},
+	"weight": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f496",
+		"label": "Weight"
+	},
+	"weight-hanging": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5cd",
+		"label": "Hanging Weight"
+	},
+	"weixin": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1d7",
+		"label": "Weixin (WeChat)"
+	},
+	"whatsapp": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f232",
+		"label": "What's App"
+	},
+	"whatsapp-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f40c",
+		"label": "What's App Square"
+	},
+	"wheelchair": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f193",
+		"label": "Wheelchair"
+	},
+	"whmcs": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f40d",
+		"label": "WHMCS"
+	},
+	"wifi": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f1eb",
+		"label": "WiFi"
+	},
+	"wikipedia-w": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f266",
+		"label": "Wikipedia W"
+	},
+	"wind": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f72e",
+		"label": "Wind"
+	},
+	"window-close": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f410",
+		"label": "Window Close"
+	},
+	"window-maximize": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f2d0",
+		"label": "Window Maximize"
+	},
+	"window-minimize": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f2d1",
+		"label": "Window Minimize"
+	},
+	"window-restore": {
+		"styles": [
+			"solid",
+			"regular"
+		],
+		"unicode": "f2d2",
+		"label": "Window Restore"
+	},
+	"windows": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f17a",
+		"label": "Windows"
+	},
+	"wine-bottle": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f72f",
+		"label": "Wine Bottle"
+	},
+	"wine-glass": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f4e3",
+		"label": "Wine Glass"
+	},
+	"wine-glass-alt": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f5ce",
+		"label": "Alternate Wine Glas"
+	},
+	"wix": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f5cf",
+		"label": "Wix"
+	},
+	"wizards-of-the-coast": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f730",
+		"label": "Wizards of the Coast"
+	},
+	"wolf-pack-battalion": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f514",
+		"label": "Wolf Pack Battalion"
+	},
+	"won-sign": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f159",
+		"label": "Won Sign"
+	},
+	"wordpress": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f19a",
+		"label": "WordPress Logo"
+	},
+	"wordpress-simple": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f411",
+		"label": "Wordpress Simple"
+	},
+	"wpbeginner": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f297",
+		"label": "WPBeginner"
+	},
+	"wpexplorer": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2de",
+		"label": "WPExplorer"
+	},
+	"wpforms": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f298",
+		"label": "WPForms"
+	},
+	"wpressr": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f3e4",
+		"label": "wpressr"
+	},
+	"wrench": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f0ad",
+		"label": "Wrench"
+	},
+	"x-ray": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f497",
+		"label": "X-Ray"
+	},
+	"xbox": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f412",
+		"label": "Xbox"
+	},
+	"xing": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f168",
+		"label": "Xing"
+	},
+	"xing-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f169",
+		"label": "Xing Square"
+	},
+	"y-combinator": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f23b",
+		"label": "Y Combinator"
+	},
+	"yahoo": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f19e",
+		"label": "Yahoo Logo"
+	},
+	"yammer": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f840",
+		"label": "Yammer"
+	},
+	"yandex": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f413",
+		"label": "Yandex"
+	},
+	"yandex-international": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f414",
+		"label": "Yandex International"
+	},
+	"yarn": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f7e3",
+		"label": "Yarn"
+	},
+	"yelp": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f1e9",
+		"label": "Yelp"
+	},
+	"yen-sign": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f157",
+		"label": "Yen Sign"
+	},
+	"yin-yang": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "f6ad",
+		"label": "Yin Yang"
+	},
+	"yoast": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f2b1",
+		"label": "Yoast"
+	},
+	"youtube": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f167",
+		"label": "YouTube"
+	},
+	"youtube-square": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f431",
+		"label": "YouTube Square"
+	},
+	"zhihu": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "f63f",
+		"label": "Zhihu"
+	}
+}

@@ -5,24 +5,16 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
-	InspectorControls
+	InspectorControls,
+	PanelColorSettings
 } from '@wordpress/block-editor';
 
-import {
-	PanelBody,
-	Placeholder,
-	Spinner
-} from '@wordpress/components';
-
-import {
-	lazy,
-	Suspense
-} from '@wordpress/element';
+import { PanelBody } from '@wordpress/components';
 
 /**
  * Internal dependencies
  */
-const IconPickerControl = lazy( () => import( '../../../components/icon-picker-control/index.js' ) );
+import IconPickerControl from '../../../components/icon-picker-control/index.js';
 
 /**
  *
@@ -69,32 +61,34 @@ const Inspector = ({
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>
-				<Suspense fallback={ <Placeholder><Spinner /></Placeholder> }>
-					<IconPickerControl
-						label={ __( 'Icon Picker', 'otter-blocks' ) }
-						library={ attributes.library }
-						prefix={ attributes.iconPrefix }
-						icon={ attributes.icon }
-						changeLibrary={ changeLibrary }
-						onChange={ changeIcon }
-						allowImage
-					/>
-				</Suspense>
-
-				<ColorGradientControl
-					label={ __( 'Content Color', 'otter-blocks' ) }
-					colorValue={ attributes.contentColor }
-					onColorChange={ onDefaultContentColorChange }
+				<IconPickerControl
+					label={ __( 'Icon Picker', 'otter-blocks' ) }
+					library={ attributes.library }
+					prefix={ attributes.iconPrefix }
+					icon={ attributes.icon }
+					changeLibrary={ changeLibrary }
+					onChange={ changeIcon }
+					allowImage
 				/>
-
-				{ 'image' !== attributes.library && (
-					<ColorGradientControl
-						label={ __( 'Icon Color', 'otter-blocks' ) }
-						colorValue={ attributes.iconColor }
-						onColorChange={ onDefaultIconColorChange }
-					/>
-				) }
 			</PanelBody>
+			<PanelColorSettings
+				title={ __( 'Color', 'otter-blocks' ) }
+				initialOpen={ true }
+				colorSettings={ [
+					{
+						value: attributes.contentColor,
+						onChange: contentColor => setAttributes({ contentColor }),
+						label: __( 'Content Color', 'otter-blocks' )
+					},
+					...( 'image' !== attributes.library ? [
+						{
+							value: attributes.iconColor,
+							onChange: iconColor => setAttributes({ iconColor }),
+							label: __( 'Icon Color', 'otter-blocks' )
+						}
+					] : [])
+				] }
+			/>
 		</InspectorControls>
 	);
 };

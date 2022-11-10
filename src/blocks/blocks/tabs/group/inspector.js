@@ -41,7 +41,7 @@ const Inspector = ({
 }) => {
 	const [ defaultTab, setDefaultTab ] = useState( children.find( c => true === c.attributes.defaultOpen )?.clientId );
 	const { updateBlockAttributes } = useDispatch( 'core/block-editor' );
-	const { getBlock } = useSelect( select => select( 'core/block-editor' ).getBlock );
+	const { getBlock } = useSelect( select => select( 'core/block-editor' ) );
 
 	useEffect( () => {
 		setDefaultTab( children.find( c => true === c.attributes.defaultOpen )?.clientId );

@@ -52,6 +52,5 @@
 		"align": [ "left", "center", "right" ]
 	},
 	"editorStyle": "otter-lottie-editor",
-	"editorScript": "lottie-player",
 	"script": "otter-lottie"
 }

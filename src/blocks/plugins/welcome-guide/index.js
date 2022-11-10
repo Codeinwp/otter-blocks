@@ -35,7 +35,7 @@ const WelcomeGuide = () => {
 	const [ getOption, updateOption, status ] = useSettings();
 
 	const [ email, setEmail ] = useState( '' );
-	const [ hasConsent, setConsent ] = useState( false );
+	const [ hasConsent, setConsent ] = useState( true );
 
 	const {
 		currentUser,
@@ -63,6 +63,8 @@ const WelcomeGuide = () => {
 
 	const onFinish = target => {
 		showOnboarding( false );
+
+		localStorage?.setItem( 'o-show-onboarding', 'false' );
 
 		if ( Boolean( getOption( 'themeisle_blocks_settings_onboarding' ) ) ) {
 			updateOption( 'themeisle_blocks_settings_onboarding', false );

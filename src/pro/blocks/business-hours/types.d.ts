@@ -14,5 +14,6 @@ type Attributes = {
 	borderRadius: number
 }
 
+export type BusinessHoursAttrs = Partial<Attributes>
 export type BusinessHoursProps = BlockProps<Attributes>
 export interface BusinessHoursInspectorProps extends InspectorProps<Attributes> {}

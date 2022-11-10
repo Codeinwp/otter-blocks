@@ -1,12 +1,13 @@
 .wp-block-themeisle-blocks-flip {
 	--width: 100%;
 	--height: 300px;
+	--padding: 20px;
+
 	--border-width: 3px;
 	--border-color: #aaa;
 	--border-radius: 10px;
 	--front-background: transparent;
 	--back-background: transparent;
-	--padding: 20px;
 	--box-shadow: none;
 	--front-vertical-align: center;
 	--front-horizontal-align: center;
@@ -33,8 +34,16 @@
 		--flip-anim: rotateX(180deg);
 	}
 
+	&.flipX-rev {
+		--flip-anim: rotateX(-180deg);
+	}
+
 	&.flipY {
 		--flip-anim: rotateY(180deg);
+	}
+
+	&.flipY-rev {
+		--flip-anim: rotateY(-180deg);
 	}
 
 	&:hover {
@@ -53,10 +62,6 @@
 		transition: transform 0.8s;
 		transform-style: preserve-3d;
 		background-size: cover;
-
-		@media ( max-width: 960px ) {
-			width: min(var( --width ), 100%);
-		}
 	}
 
 	.o-flip-front, .o-flip-back {
@@ -70,7 +75,9 @@
 		overflow-x: hidden;
 		overflow-y: auto;
 		background-size: inherit;
-		border: var( --border-width ) solid var( --border-color );
+		border-width: var(--border-width);
+		border-color: var(--border-color);
+		border-style: solid;
 		border-radius: var( --border-radius );
 		box-sizing: border-box;
 	}
@@ -87,12 +94,14 @@
 	.o-flip-content {
 		display: flex;
 		flex-direction: column;
+		width: 100%;
+		height: 100%;
+		box-sizing: border-box;
+
 		justify-content: var( --front-vertical-align );
 		align-items: var( --front-horizontal-align );
 
 		padding: var( --padding );
-		width: 100%;
-		height: 100%;
 
 		h3, p {
 			margin: 0.5rem;

@@ -33,7 +33,7 @@ const variations = [
 			columns: 2,
 			layout: 'equal',
 			layoutTablet: 'equal',
-			layoutMobile: 'equal'
+			layoutMobile: 'collapsedRows'
 		},
 		innerBlocks: [
 			[ 'themeisle-blocks/advanced-column', { columnWidth: '50' }],
@@ -50,7 +50,7 @@ const variations = [
 			columns: 2,
 			layout: 'oneTwo',
 			layoutTablet: 'equal',
-			layoutMobile: 'equal'
+			layoutMobile: 'collapsedRows'
 		},
 		innerBlocks: [
 			[ 'themeisle-blocks/advanced-column', { columnWidth: '33.34' }],
@@ -67,7 +67,7 @@ const variations = [
 			columns: 2,
 			layout: 'twoOne',
 			layoutTablet: 'equal',
-			layoutMobile: 'equal'
+			layoutMobile: 'collapsedRows'
 		},
 		innerBlocks: [
 			[ 'themeisle-blocks/advanced-column', { columnWidth: '66.66' }],
@@ -84,7 +84,7 @@ const variations = [
 			columns: 3,
 			layout: 'equal',
 			layoutTablet: 'equal',
-			layoutMobile: 'equal'
+			layoutMobile: 'collapsedRows'
 		},
 		innerBlocks: [
 			[ 'themeisle-blocks/advanced-column', { columnWidth: '33.33' }],
@@ -102,7 +102,7 @@ const variations = [
 			columns: 3,
 			layout: 'oneOneTwo',
 			layoutTablet: 'equal',
-			layoutMobile: 'equal'
+			layoutMobile: 'collapsedRows'
 		},
 		innerBlocks: [
 			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' }],
@@ -120,7 +120,7 @@ const variations = [
 			columns: 3,
 			layout: 'twoOneOne',
 			layoutTablet: 'equal',
-			layoutMobile: 'equal'
+			layoutMobile: 'collapsedRows'
 		},
 		innerBlocks: [
 			[ 'themeisle-blocks/advanced-column', { columnWidth: '50' }],
@@ -138,7 +138,7 @@ const variations = [
 			columns: 4,
 			layout: 'equal',
 			layoutTablet: 'equal',
-			layoutMobile: 'equal'
+			layoutMobile: 'collapsedRows'
 		},
 		innerBlocks: [
 			[ 'themeisle-blocks/advanced-column', { columnWidth: '25' }],

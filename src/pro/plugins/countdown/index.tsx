@@ -101,7 +101,7 @@ const CountdownProFeaturesSettings = ( Template: React.FC<{}>, { attributes, set
 						value: ''
 					},
 					{
-						label: __( 'Evergeen', 'otter-blocks' ),
+						label: __( 'Evergreen', 'otter-blocks' ),
 						value: 'timer'
 					},
 					{
@@ -279,7 +279,8 @@ const CountdownProFeaturesEnd = ( Template: React.FC<{}>, {
 			) }
 
 			<ToggleControl
-				label={ __( 'Enable Hide/Show other blocks when the Countdown ends.', 'otter-blocks' ) }
+				label={ __( 'Hide/Show Blocks When the Countdown Ends', 'otter-blocks' ) }
+				help={ __( 'Enable Hide/Show other blocks when the Countdown ends.', 'otter-blocks' ) }
 				checked={ attributes.onEndAction !== undefined }
 				onChange={ value => {
 					if ( value ) {

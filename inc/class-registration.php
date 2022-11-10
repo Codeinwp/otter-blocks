@@ -52,6 +52,7 @@ class Registration {
 		'tabs'           => false,
 		'popup'          => false,
 		'progress-bar'   => false,
+		'accordion'      => false,
 	);
 
 	/**
@@ -178,6 +179,9 @@ class Registration {
 		wp_register_script( 'lottie-player', OTTER_BLOCKS_URL . 'assets/lottie/lottie-player.min.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'lottie-player', 'async', true );
 
+		wp_register_script( 'dotlottie-player', OTTER_BLOCKS_URL . 'assets/lottie/dotlottie-player.min.js', [], $asset_file['version'], true );
+		wp_script_add_data( 'dotlottie-player', 'async', true );
+
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/slider.asset.php';
 		wp_register_script( 'glidejs', OTTER_BLOCKS_URL . 'assets/glide/glide.min.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'glidejs', 'async', true );
@@ -217,7 +221,7 @@ class Registration {
 			OTTER_BLOCKS_URL . 'build/blocks/blocks.js',
 			array_merge(
 				$asset_file['dependencies'],
-				array( 'otter-vendor', 'glidejs', 'lottie-player' )
+				array( 'otter-vendor', 'glidejs', 'lottie-player', 'dotlottie-player' )
 			),
 			$asset_file['version'],
 			true
@@ -265,6 +269,7 @@ class Registration {
 				'isLegacyPre59'           => version_compare( get_bloginfo( 'version' ), '5.8.22', '<=' ),
 				'isAncestorTypeAvailable' => version_compare( get_bloginfo( 'version' ), '5.9.22', '>=' ),
 				'version'                 => OTTER_BLOCKS_VERSION,
+				'showBFDeal'              => Pro::bf_deal(),
 			)
 		);
 
@@ -464,7 +469,7 @@ class Registration {
 							[class*="o-countdown-trigger-on-end-"] {
 								transition: opacity 1s ease;
 							}
-							
+
 							[class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-show, [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide:not(.o-cntdn-ready), [class*="o-countdown-trigger-on-end-"].o-cntdn-bhv-hide.o-cntdn-hide, [data-intv-start]:not(.o-cntdn-ready) {
 								height: 0px !important;
 								max-height: 0px !important;
@@ -546,7 +551,7 @@ class Registration {
 
 		if ( ! self::$scripts_loaded['lottie'] && has_block( 'themeisle-blocks/lottie', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
-			wp_register_script( 'lottie-interactivity', OTTER_BLOCKS_URL . 'assets/lottie/lottie-interactivity.min.js', array( 'lottie-player' ), $asset_file['version'], true );
+			wp_register_script( 'lottie-interactivity', OTTER_BLOCKS_URL . 'assets/lottie/lottie-interactivity.min.js', array( 'lottie-player', 'dotlottie-player' ), $asset_file['version'], true );
 			wp_script_add_data( 'lottie-interactivity', 'async', true );
 
 			wp_register_script(
@@ -554,7 +559,7 @@ class Registration {
 				OTTER_BLOCKS_URL . 'build/blocks/lottie.js',
 				array_merge(
 					$asset_file['dependencies'],
-					array( 'lottie-player', 'lottie-interactivity' )
+					array( 'lottie-player', 'dotlottie-player', 'lottie-interactivity' )
 				),
 				$asset_file['version'],
 				true
@@ -604,6 +609,12 @@ class Registration {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/progress-bar.asset.php';
 			wp_register_script( 'otter-progress-bar', OTTER_BLOCKS_URL . 'build/blocks/progress-bar.js', $asset_file['dependencies'], $asset_file['version'], true );
 			wp_script_add_data( 'otter-progress-bar', 'defer', true );
+		}
+
+		if ( ! self::$scripts_loaded['accordion'] && has_block( 'themeisle-blocks/accordion', $post ) ) {
+			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/accordion.asset.php';
+			wp_register_script( 'otter-accordion', OTTER_BLOCKS_URL . 'build/blocks/accordion.js', $asset_file['dependencies'], $asset_file['version'], true );
+			wp_script_add_data( 'otter-accordion', 'defer', true );
 		}
 	}
 
@@ -886,6 +897,14 @@ class Registration {
 				$styles = '.fab.wp-block-navigation-item,.far.wp-block-navigation-item,.fas.wp-block-navigation-item{-moz-osx-font-smoothing:inherit;-webkit-font-smoothing:inherit;font-weight:inherit}.fab.wp-block-navigation-item:before,.far.wp-block-navigation-item:before,.fas.wp-block-navigation-item:before{font-family:Font Awesome\ 5 Free;margin-right:5px}.fab.wp-block-navigation-item:before,.far.wp-block-navigation-item:before{font-weight:400;padding-right:5px}.fas.wp-block-navigation-item:before{font-weight:900;padding-right:5px}.fab.wp-block-navigation-item:before{font-family:Font Awesome\ 5 Brands}';
 
 				wp_add_inline_style( 'font-awesome-5', $styles );
+				return $block_content;
+			}
+		}
+
+		if ( 'themeisle-blocks/accordion' === $block['blockName'] ) {
+			if ( isset( $block['attrs']['icon'] ) || isset( $block['attrs']['openItemIcon'] ) ) {
+				self::$is_fa_loaded = true;
+
 				return $block_content;
 			}
 		}

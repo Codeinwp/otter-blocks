@@ -1,8 +1,9 @@
+// @ts-nocheck
+
 /**
  * WordPress dependencies
  */
 import { Icon } from '@wordpress/components';
-
 import { select } from '@wordpress/data';
 
 import { registerPlugin } from '@wordpress/plugins';
@@ -22,14 +23,17 @@ import './galley-extension/index.js';
 import './masonry-extension/index.js';
 import './image-extension/index.js';
 import './menu-icons/index.js';
+import './copy-paste/index.js';
 import './sticky/index.js';
 import './dynamic-content/index.js';
 import './welcome-guide/index.js';
-import './feedback';
+import '../components/otter-tools/index';
+import './feedback/index.js';
+import './bf-deal/index.js';
 
 const icon = <Icon icon={ otterIcon } />;
 
-if ( Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor' ) ) {
+if ( Boolean( window.themeisleGutenberg?.isBlockEditor ) && select( 'core/editor' ) ) {
 	registerPlugin( 'themeisle-blocks', {
 		icon,
 		render: Options

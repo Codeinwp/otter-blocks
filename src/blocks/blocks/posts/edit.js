@@ -1,13 +1,11 @@
 /**
- * External dependencies
- */
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 
 import {
+	isNumber,
+	isObject,
 	isUndefined,
 	pickBy
 } from 'lodash';
@@ -39,15 +37,32 @@ import Controls from './controls.js';
 import Inspector from './inspector.js';
 import {
 	blockInit,
-	useCSSNode
+	getDefaultValueByField
 } from '../../helpers/block-utility.js';
 import Layout from './components/layout/index.js';
-import { _align, getCustomPostTypeSlugs } from '../../helpers/helper-functions.js';
+import {
+	_align,
+	boxValues,
+	getCustomPostTypeSlugs,
+	hex2rgba
+} from '../../helpers/helper-functions.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
-import { StyleSwitcherBlockControl } from '../../components/style-switcher-control/index.js';
 
 const { attributes: defaultAttributes } = metadata;
+
+const px = value => value ? `${ value }px` : value;
+
+const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
+
+const mightBeBoxed = value => {
+	if ( isObject( value ) ) {
+		return boxValues( value );
+	}
+
+	return mightBeUnit( value );
+};
 
 /**
  * Posts component
@@ -95,9 +110,7 @@ const Edit = ({
 		};
 	}, [ attributes.categories, attributes.order, attributes.orderBy, attributes.postsToShow, attributes.offset, attributes.postTypes ]);
 
-	const changeStyle = value => {
-		setAttributes({ style: value });
-	};
+	const { responsiveGetAttributes } = useResponsiveAttributes();
 
 	useEffect( () => {
 		const fetch = async() => {
@@ -110,122 +123,78 @@ const Edit = ({
 		dispatch( 'otter-store' ).setPostsSlugs( slugs );
 	}, [ slugs ]);
 
+	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
+
+	const imageBoxShadow = getValue( 'imageBoxShadow' );
+	const boxShadow = getValue( 'boxShadow' );
+
 	const inlineStyles = {
-		'--img-width': `${ attributes.imageWidth }px`,
-		'--img-border-radius': attributes.borderRadius && `${ attributes.borderRadius }px;`,
+		'--img-border-radius': mightBeBoxed( attributes.borderRadius ),
+		'--img-box-shadow': imageBoxShadow.active && `${ imageBoxShadow.horizontal }px ${ imageBoxShadow.vertical }px ${ imageBoxShadow.blur }px ${ imageBoxShadow.spread }px ${ hex2rgba( imageBoxShadow.color, imageBoxShadow.colorOpacity ) }`,
+		'--border-width': mightBeUnit( attributes.borderWidth ),
+		'--border-radius': boxValues( attributes.cardBorderRadius ),
+		'--box-shadow': boxShadow.active && `${ boxShadow.horizontal }px ${ boxShadow.vertical }px ${ boxShadow.blur }px ${ boxShadow.spread }px ${ hex2rgba( boxShadow.color, boxShadow.colorOpacity ) }`,
 		'--vert-align': _align( attributes.verticalAlign ),
-		'--text-align': attributes.textAlign
+		'--text-align': attributes.textAlign,
+		'--text-color': attributes.textColor,
+		'--background-color': attributes.backgroundColor,
+		'--border-color': attributes.borderColor,
+		'--content-gap': attributes.contentGap,
+		'--img-width': responsiveGetAttributes([ mightBeUnit( attributes.imageWidth ), attributes.imageWidthTablet, attributes.imageWidthMobile ]),
+		'--img-width-tablet': attributes.imageWidthTablet,
+		'--img-width-mobile': attributes.imageWidthMobile,
+		'--title-text-size': responsiveGetAttributes([ mightBeUnit( attributes.customTitleFontSize ), mightBeUnit( attributes.customTitleFontSizeTablet ), mightBeUnit( attributes.customTitleFontSizeTablet ) ]),
+		'--title-text-size-tablet': mightBeUnit( attributes.customTitleFontSizeTablet ),
+		'--title-text-size-mobile': mightBeUnit( attributes.customTitleFontSizeMobile ),
+		'--description-text-size': responsiveGetAttributes([ mightBeUnit( attributes.customDescriptionFontSize ), mightBeUnit( attributes.customDescriptionFontSizeTablet ), mightBeUnit( attributes.customDescriptionFontSizeMobile ) ]),
+		'--description-text-size-tablet': mightBeUnit( attributes.customDescriptionFontSizeTablet ),
+		'--description-text-size-mobile': mightBeUnit( attributes.customDescriptionFontSizeMobile ),
+		'--meta-text-size': responsiveGetAttributes([ attributes.customMetaFontSize, attributes.customMetaFontSizeTablet, attributes.customMetaFontSizeMobile ]),
+		'--meta-text-size-tablet': attributes.customMetaFontSizeTablet,
+		'--meta-text-size-mobile': attributes.customMetaFontSizeMobile,
+		'--column-gap': responsiveGetAttributes([ attributes.columnGap, attributes.columnGapTablet, attributes.columnGapMobile ]),
+		'--column-gap-tablet': attributes.columnGapTablet,
+		'--column-gap-mobile': attributes.columnGapMobile,
+		'--row-gap': responsiveGetAttributes([ attributes.rowGap, attributes.rowGapTablet, attributes.rowGapMobile ]),
+		'--row-gap-tablet': attributes.rowGapTablet,
+		'--row-gap-mobile': attributes.rowGapMobile,
+		'--content-padding': responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile ]),
+		'--content-padding-tablet': attributes.paddingTablet,
+		'--content-padding-mobile': attributes.paddingMobile
 	};
 
-	const [ cssNodeName, setNodeCSS ] = useCSSNode();
-	useEffect( () => {
-		setNodeCSS([
-			`{
-				${ attributes.customTitleFontSize && `--title-text-size: ${ attributes.customTitleFontSize }px;` }
-				${ attributes.customDescriptionFontSize && `--description-text-size: ${ attributes.customDescriptionFontSize }px;` }
-			}`,
-			`{
-				${ attributes.customTitleFontSizeTablet && `--title-text-size: ${ attributes.customTitleFontSizeTablet }px;` }
-				${ attributes.customDescriptionFontSizeTablet && `--description-text-size: ${ attributes.customDescriptionFontSizeTablet }px;` }
-			}`,
-			`{
-				${ attributes.customTitleFontSizeMobile && `--title-text-size: ${ attributes.customTitleFontSizeMobile }px;` }
-				${ attributes.customDescriptionFontSizeMobile && `--description-text-size: ${ attributes.customDescriptionFontSizeMobile }px;` }
-			}`
-		], [
-			'@media ( min-width: 960px )',
-			'@media ( min-width: 600px ) and ( max-width: 960px )',
-			'@media ( max-width: 600px )'
-		]);
-	}, [
-		attributes.customTitleFontSize, attributes.customTitleFontSize,
-		attributes.customDescriptionFontSize, attributes.customDescriptionFontSize,
-		attributes.customTitleFontSizeTablet, attributes.customTitleFontSizeTablet,
-		attributes.customDescriptionFontSizeTablet, attributes.customDescriptionFontSizeTablet,
-		attributes.customTitleFontSizeMobile, attributes.customTitleFontSizeMobile,
-		attributes.customDescriptionFontSizeMobile, attributes.customDescriptionFontSizeMobile
-	]);
+	const blockProps = useBlockProps();
 
-	const blockProps = useBlockProps({
-		className: cssNodeName
-	});
-
-	if ( ! posts || ! categoriesList || ! authors ) {
-		return (
-			<Fragment>
+	const Preview = ({
+		posts,
+		categoriesList,
+		authors,
+		blockProps,
+		inlineStyles,
+		attributes
+	}) => {
+		if ( ! posts || ! categoriesList || ! authors ) {
+			return (
 				<div { ...blockProps }>
 					<Placeholder>
 						<Spinner />
 						{ __( 'Loading Posts', 'otter-blocks' ) }
 					</Placeholder>
 				</div>
+			);
+		}
 
-				{ ( categoriesList && attributes.offset ) ? (
-					<Inspector
-						attributes={ attributes }
-						setAttributes={ setAttributes }
-						changeStyle={ changeStyle }
-						categoriesList={ categoriesList }
-					/>
-				) : null }
-			</Fragment>
-		);
-	}
-
-	if ( 0 === posts.length ) {
-		return (
-			<Fragment>
+		if ( 0 === posts.length ) {
+			return (
 				<div { ...blockProps }>
 					<Placeholder>
 						{ __( 'No Posts', 'otter-blocks' ) }
 					</Placeholder>
 				</div>
+			);
+		}
 
-				{ ( categoriesList && attributes.offset || slugs.length ) ? (
-					<Inspector
-						attributes={ attributes }
-						setAttributes={ setAttributes }
-						changeStyle={ changeStyle }
-						categoriesList={ categoriesList }
-					/>
-				) : null }
-			</Fragment>
-		);
-	}
-
-	return (
-		<Fragment>
-			<StyleSwitcherBlockControl
-				label={ __( 'Block Styles', 'otter-blocks' ) }
-				value={ attributes.style }
-				options={ [
-					{
-						label: __( 'Grid', 'otter-blocks' ),
-						value: 'grid',
-						image: window.themeisleGutenberg.assetsPath + '/icons/posts-grid.jpg'
-					},
-					{
-						label: __( 'List', 'otter-blocks' ),
-						value: 'list',
-						image: window.themeisleGutenberg.assetsPath + '/icons/posts-list.jpg'
-					}
-				] }
-				onChange={ changeStyle }
-			/>
-
-			<Inspector
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-				changeStyle={ changeStyle }
-				categoriesList={ categoriesList }
-				posts={ posts }
-			/>
-
-			<Controls
-				attributes={ attributes }
-				setAttributes={ setAttributes }
-			/>
-
+		return (
 			<div { ...blockProps } style={ inlineStyles }>
 				<Disabled>
 					{ attributes.enableFeaturedPost && (
@@ -237,6 +206,7 @@ const Edit = ({
 							author={ authors[0] }
 						/>
 					) }
+
 					<Layout
 						attributes={ attributes }
 						posts={ posts }
@@ -245,6 +215,32 @@ const Edit = ({
 					/>
 				</Disabled>
 			</div>
+		);
+	};
+
+	return (
+		<Fragment>
+			{ categoriesList && (
+				<Inspector
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+					categoriesList={ categoriesList }
+				/>
+			) }
+
+			<Controls
+				attributes={ attributes }
+				setAttributes={ setAttributes }
+			/>
+
+			<Preview
+				posts={ posts }
+				categoriesList={ categoriesList }
+				authors={ authors }
+				blockProps={ blockProps }
+				inlineStyles={ inlineStyles }
+				attributes={ attributes }
+			/>
 		</Fragment>
 	);
 };

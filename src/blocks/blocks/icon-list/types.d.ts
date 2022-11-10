@@ -7,10 +7,20 @@ type Attributes= {
 	defaultIcon: string
 	defaultContentColor: string
 	defaultIconColor: string
-	defaultSize: number
-	gap: number
+	defaultIconSize: number
+	defaultSize: number | string
+	gap: number | string
 	horizontalAlign: string
+	alignmentTablet: string
+	alignmentMobile: string
+	gapIconLabel: string
+	hideLabels: boolean
+	hasDivider: boolean
+	dividerWidth: string
+	dividerColor: string
+	dividerLength: string
 }
 
+export type IconListAttrs = Partial<Attributes>
 export type IconListProps = BlockProps<Attributes>
 export interface IconsListInspectorProps extends InspectorProps<Attributes> {}

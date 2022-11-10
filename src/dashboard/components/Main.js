@@ -1,12 +1,17 @@
 /**
  * WordPress dependencies.
  */
-import { __ } from '@wordpress/i18n';
+import {
+	__,
+	sprintf
+} from '@wordpress/i18n';
 
 import {
 	Placeholder,
 	Spinner
 } from '@wordpress/components';
+
+import { Fragment  } from '@wordpress/element';
 
 /**
  * Internal dependencies.
@@ -19,6 +24,12 @@ import Integrations from './pages/Integrations.js';
 import Feedback from './pages/Feedback.js';
 import NoticeCard from './NoticeCard';
 import { applyFilters } from '@wordpress/hooks';
+
+let daysLeft = sprintf( __( '%s Days', 'otter-blocks' ), Number( window.otterObj.daysLeft ) );
+
+if ( 1 === Number( window.otterObj.daysLeft ) ) {
+	daysLeft = __( 'Less than 24 hours', 'otter-blocks' );
+}
 
 const Main = ({
 	currentTab,
@@ -64,31 +75,50 @@ const Main = ({
 		}
 	};
 
-	return (
-		<div className={ `otter-main is-${ currentTab}`}>
-			{ 'dashboard' === currentTab && window.otterObj.showFeedbackNotice && (
-				<NoticeCard
-					slug="feedback"
-				>
-					<img src={ window.otterObj.assetsPath + 'images/dashboard-feedback.png' } style={ { maxWidth: '100%', objectFit: 'cover' } }/>
-					<div className="notice-text">
-						<h3>{ __( 'What\'s the one thing you need in Otter Blocks?', 'otter-blocks' ) }</h3>
-						<span>{ __( 'We\'re always looking for suggestions to further improve Otter Blocks and your feedback can help us do that.', 'otter-blocks' ) }</span>
+	const BlackFriday = () => {
+		return (
+			<div className="otter-bf-banner">
+				<a href="https://bit.ly/otter-2022bf" target="_blank">
+					<img src={ `${ window.otterObj.assetsPath }/images/black-friday-banner.png` } alt={ __( 'Black Friday deal for Otter!', 'otter-blocks' ) } />
+
+					<div className="otter-bf-text">
+						<h3>{ __( 'Hurry up!', 'otter-blocks' ) } <span>{ daysLeft }</span> Left</h3>
 					</div>
-					<span>
-						{ feedbackBtn }
-					</span>
-				</NoticeCard>
-			) }
+				</a>
+			</div>
+		);
+	};
 
-			<Content />
+	return (
+		<Fragment>
+			{ Boolean( window.otterObj.showBFDeal ) && <BlackFriday /> }
 
-			{ 'upsell' !== currentTab && (
-				<div className="otter-right">
-					<Sidebar setTab={ setTab }/>
-				</div>
-			) }
-		</div>
+			<div className={ `otter-main is-${ currentTab}`}>
+
+				{ 'dashboard' === currentTab && window.otterObj.showFeedbackNotice && (
+					<NoticeCard
+						slug="feedback"
+					>
+						<img src={ window.otterObj.assetsPath + 'images/dashboard-feedback.png' } style={ { maxWidth: '100%', objectFit: 'cover' } }/>
+						<div className="notice-text">
+							<h3>{ __( 'What\'s the one thing you need in Otter Blocks?', 'otter-blocks' ) }</h3>
+							<span>{ __( 'We\'re always looking for suggestions to further improve Otter Blocks and your feedback can help us do that.', 'otter-blocks' ) }</span>
+						</div>
+						<span>
+							{ feedbackBtn }
+						</span>
+					</NoticeCard>
+				) }
+
+				<Content />
+
+				{ 'upsell' !== currentTab && (
+					<div className="otter-right">
+						<Sidebar setTab={ setTab }/>
+					</div>
+				) }
+			</div>
+		</Fragment>
 	);
 };
 

@@ -26,7 +26,7 @@ import { registerBlockType } from '@wordpress/block-editor';
 // If your WordPress use a different language, you will probably see the below strings translated (where is the case)
 import { __ } from '@wordpress/i18n';
 
-// Register the block under the internal name as 'themeisle-blocks/tutorial-1' with the fallowing options
+// Register the block under the internal name as 'themeisle-blocks/tutorial-1' with the following options
 registerBlockType( 'themeisle-blocks/tutorial-1', {
 	title: __( 'My first Block - Tutorial 1' ), // The title of the block that the user will see in the menu
 	description: __( 'Small Example' ), // Description of the block
@@ -145,7 +145,7 @@ registerBlockType( 'themeisle-blocks/tutorial-1', {
 
 You can check the `index` file of the block in the `src/block` and see that they follow this pattern.
 
-The `attributes.js` fallow this tructure:
+The `attributes.js` follow this tructure:
 ```javascript
 const attributes = {
 	text: {

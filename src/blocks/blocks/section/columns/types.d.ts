@@ -12,13 +12,18 @@ type Attributes = {
 	margin: MarginType
 	marginTablet: MarginType
 	marginMobile: MarginType
-	columnsWidth: number
+	columnsWidth: number|string
+	columnsWidthTablet: string
+	columnsWidthMobile: string
 	horizontalAlign: string
 	columnsHeight: string
-	columnsHeightCustom: number
-	columnsHeightCustomTablet: number
-	columnsHeightCustomMobile: number
+	columnsHeightCustom: number|string
+	columnsHeightCustomTablet: number|string
+	columnsHeightCustomMobile: number|string
 	verticalAlign: string
+	color: string
+	colorHover: string
+	linkColor: string
 	backgroundType: string
 	backgroundColor: string
 	backgroundImage: MediaImageProps
@@ -45,7 +50,7 @@ type Attributes = {
 	backgroundOverlayBlend: string
 	border: BorderType
 	borderColor: string
-	borderRadius: number
+	borderRadius: BorderType
 	boxShadow: boolean
 	boxShadowColor: string
 	boxShadowColorOpacity: number
@@ -80,5 +85,6 @@ type Attributes = {
 	isSynced: string[]
 }
 
+export type SectionAttrs = Partial<Attributes>
 export type SectionProps = BlockProps<Attributes>
 export interface SectionInspector extends InspectorProps<Attributes> {}
