@@ -45,30 +45,7 @@ const Controls = ({
 		}
 	};
 
-	const getTagIcon = value => {
-		switch ( value ) {
-		case 'h1':
-			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">H1</text></SVG>;
-		case 'h2':
-			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">H2</text></SVG>;
-		case 'h3':
-			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">H3</text></SVG>;
-		case 'h4':
-			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">H4</text></SVG>;
-		case 'h5':
-			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">H5</text></SVG>;
-		case 'h6':
-			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">H6</text></SVG>;
-		case 'div':
-			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">DIV</text></SVG>;
-		case 'p':
-			return <SVG style={ { width: '25px', height: '20px' } }><text x="0" y="15">P</text></SVG>;
-		case 'span':
-			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">SPAN</text></SVG>;
-		default:
-			return <SVG style={ { width: '25px', height: '20px' } }><text style={ { fontSize: '12px' } } x="0" y="15">DEFAULT</text></SVG>;
-		}
-	};
+	const wrapTagIntoIcon = tag => ( <span className='o-list-elem-controls'>{ tag }</span> );
 
 
 	const changeTag = value => {
@@ -78,53 +55,53 @@ const Controls = ({
 	return (
 		<BlockControls>
 			<DropdownMenu
-				icon={ getTagIcon( attributes.tag ) }
+				icon={ wrapTagIntoIcon( attributes.tag ) }
 				label={ __( 'Select tag', 'otter-blocks' ) }
 				className="components-toolbar"
 				controls={ [
 					{
 						title: __( 'Heading', 'otter-blocks' ) + ' 1',
-						icon: getTagIcon( 'h1' ),
+						icon: wrapTagIntoIcon( 'h1' ),
 						onClick: () => changeTag( 'h1' )
 					},
 					{
 						title: __( 'Heading', 'otter-blocks' ) + ' 2',
-						icon: getTagIcon( 'h2' ),
+						icon: wrapTagIntoIcon( 'h2' ),
 						onClick: () => changeTag( 'h2' )
 					},
 					{
 						title: __( 'Heading', 'otter-blocks' ) + ' 3',
-						icon: getTagIcon( 'h3' ),
+						icon: wrapTagIntoIcon( 'h3' ),
 						onClick: () => changeTag( 'h3' )
 					},
 					{
 						title: __( 'Heading', 'otter-blocks' ) + ' 4',
-						icon: getTagIcon( 'h4' ),
+						icon: wrapTagIntoIcon( 'h4' ),
 						onClick: () => changeTag( 'h4' )
 					},
 					{
 						title: __( 'Heading', 'otter-blocks' ) + ' 5',
-						icon: getTagIcon( 'h5' ),
+						icon: wrapTagIntoIcon( 'h5' ),
 						onClick: () => changeTag( 'h5' )
 					},
 					{
 						title: __( 'Heading', 'otter-blocks' ) + ' 6',
-						icon: getTagIcon( 'h6' ),
+						icon: wrapTagIntoIcon( 'h6' ),
 						onClick: () => changeTag( 'h6' )
 					},
 					{
 						title: __( 'Division', 'otter-blocks' ),
-						icon: getTagIcon( 'div' ),
+						icon: wrapTagIntoIcon( 'div' ),
 						onClick: () => changeTag( 'div' )
 					},
 					{
 						title: __( 'Paragraph', 'otter-blocks' ),
-						icon: getTagIcon( 'p' ),
+						icon: wrapTagIntoIcon( 'p' ),
 						onClick: () => changeTag( 'p' )
 					},
 					{
 						title: __( 'Span Tag', 'otter-blocks' ),
-						icon: getTagIcon( 'span' ),
+						icon: wrapTagIntoIcon( 'span' ),
 						onClick: () => changeTag( 'span' )
 					}
 				] }
