@@ -59,7 +59,7 @@ export const adaptors = {
 					}
 				},
 				private: {
-					...pickBy( attrs, ( value, key ) => {
+					...pickBy( attrs, ( _value, key ) => {
 						return key?.includes( 'background' ) ||  key?.includes( 'boxShadow' ) ||  key?.includes( 'divider' ) ||  key?.includes( 'columnsHeight' ) ||  key?.includes( 'columnsWidth' ) ||  key?.includes( 'reverseColumnsTablet' ) ||  key?.includes( 'layout' ) ;
 					})
 				}
@@ -119,7 +119,7 @@ export const adaptors = {
 					}
 				},
 				private: {
-					...pickBy( attrs, ( value, key ) => {
+					...pickBy( attrs, ( _value, key ) => {
 						return key?.includes( 'background' );
 					})
 				}
@@ -204,7 +204,7 @@ export const adaptors = {
 					}
 				},
 				private: {
-					...pickBy( attrs, ( value, key ) => {
+					...pickBy( attrs, ( _value, key ) => {
 						return key?.includes( 'hover' ) || key?.includes( 'background' ) || key?.includes( 'boxShadow' );
 					})
 				}
@@ -247,7 +247,7 @@ export const adaptors = {
 					}
 				},
 				private: {
-					...pickBy( attrs, ( value, key ) => {
+					...pickBy( attrs, ( _value, key ) => {
 						return key?.includes( 'Hover' );
 					}),
 					align: attrs?.align
@@ -445,7 +445,7 @@ export const adaptors = {
 					}
 				},
 				private: {
-					...( omit( pickBy( attrs, ( value, key ) => {
+					...( omit( pickBy( attrs, ( _value, key ) => {
 						return key?.includes( 'boxShadow' )  || key?.includes( 'front' ) || key?.includes( 'back' ) || key?.includes( 'Color' ) || key?.includes( 'FontSize' );
 					}) ?? {}, [ 'frontMedia' ]) ),
 					animType: attrs.animType
@@ -486,7 +486,7 @@ export const adaptors = {
 					}
 				},
 				private: {
-					...( pickBy( attrs, ( value, key ) => {
+					...( pickBy( attrs, ( _value, key ) => {
 						return key?.includes( 'FontSize' )  || key?.includes( 'Color' ) || key?.includes( 'Width' ) || key?.includes( 'Gap' ) || key?.includes( 'Style' );
 					}) ?? {})
 				}
@@ -559,7 +559,7 @@ export const adaptors = {
 					primaryColor: attrs?.primaryColor,
 					buttonTextColor: attrs?.buttonTextColor,
 					boxShadow: attrs?.boxShadow,
-					...( pickBy( attrs, ( value, key ) => {
+					...( pickBy( attrs, ( _value, key ) => {
 						return key?.includes( 'Color' )  || key?.includes( 'Font' );
 					}) ?? {})
 				}
@@ -633,7 +633,7 @@ export const adaptors = {
 				},
 				private: {
 					...pick( attrs, [ 'marginType', 'paddingType' ] as ( keyof AdvancedHeadingAttrs )[]),
-					...( pickBy( attrs, ( value, key ) => {
+					...( pickBy( attrs, ( _value, key ) => {
 						return key?.includes( 'highlight' )  || key?.includes( 'Tablet' ) || key?.includes( 'Width' ) || key?.includes( 'Mobile' ) || key?.includes( 'textShadow' );
 					}) ?? {})
 				}
@@ -712,7 +712,7 @@ export const adaptors = {
 					}
 				},
 				private: {
-					...pickBy( attrs, ( value, key ) => {
+					...pickBy( attrs, ( _value, key ) => {
 						return key.includes( 'Tablet' ) ||
 						key.includes( 'Mobile' ) ||
 						key.includes( 'gap' ) ||
