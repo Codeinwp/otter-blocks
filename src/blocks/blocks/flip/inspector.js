@@ -426,7 +426,7 @@ const Inspector = ({
 										}
 
 										responsiveSetAttributes(
-											removeBoxDefaultValues( result, stringToBox( '20px' ) ),
+											result,
 											[ 'padding', 'paddingTablet', 'paddingMobile' ]
 										);
 									} }
