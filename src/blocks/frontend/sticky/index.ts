@@ -62,7 +62,7 @@ const getStickyContainer = ( elem: Element, scope: `o-sticky-scope-${string}` ):
 			} else if ( 'o-sticky-scope-main-area' === scope ) {
 
 				/**
-				 * For determening the main area, we need to up trough the hierarchy to get the root parent.
+				 * For determining the main area, we need to up through the hierarchy to get the root parent.
 				 */
 				sections.push( parent );
 			}
@@ -209,7 +209,7 @@ class StickyData {
 
 		/**
 		 * By making the element sticky, we use 'fixed' positioning which removes the element from the document workflow.
-		 * We need to put a placeholder with the same height and width as the element so we can keep layout flow.
+		 * We need to put a placeholder with the same height and width as the element, so we can keep layout flow.
 		 */
 		this.placeholder = document.createElement( 'div' );
 		this.placeholder.style.height = height + 'px';
@@ -330,7 +330,7 @@ class StickyRunner {
 		 * Check for early activation
 		 *
 		 * A dormant sticky element is an element that is going to be activated very soon.
-		 * This is used for making additonal preparation before the other will become active, like calculation the opacity for the fade effect (the element will go transparent before the next element is activated).
+		 * This is used for making additional preparation before the other will become active, like calculation the opacity for the fade effect (the element will go transparent before the next element is activated).
 		 */
 		if ( this.getCurrentPosition( sticky, this.calculateEarlyActivation( sticky ) ) ) {
 			sticky.status = 'dormant';
@@ -387,7 +387,7 @@ class StickyRunner {
 			const scrollBottom = scrollTop + window.innerHeight;
 
 			/**
-			 * Aling on vertical axis
+			 * Align on vertical axis
 			 */
 			if ( sticky.config.isFloatMode ) {
 				if (
@@ -490,7 +490,7 @@ class StickyRunner {
 	 * Get the sticky element current position.
 	 *
 	 * @param sticky The sticky element.
-	 * @param earlyActivation Add on offset to activate eraly in case of multiple sticky elements.
+	 * @param earlyActivation Add on offset to activate early in case of multiple sticky elements.
 	 * @returns
 	 */
 	getCurrentPosition( sticky: StickyData, earlyActivation: number = 0 ): typeof positions[Position] {
@@ -592,7 +592,7 @@ class StickyRunner {
 				if ( other.orderInPage > sticky.orderInPage ) {
 					const otherBlockHeight = other.elem.getBoundingClientRect()?.height || 0;
 
-					// Check if the the blocks collide / Check if the block in on top, and not left or right.
+					// Check if the blocks collide / Check if the block in on top, and not left or right.
 					if ( blockWidth > Math.abs( sticky.elemLeftPositionInPage - other.elemLeftPositionInPage ) ) {
 						const height = Math.min( blockHeight, otherBlockHeight );
 						opacity = Math.min( 1, Math.max( 0, other.elemTopPositionInPage + height - currentBottomPosInPage ) / height );

@@ -131,7 +131,7 @@ module.exports = [
 			popup: './src/blocks/frontend/popup/index',
 			sticky: './src/blocks/frontend/sticky/index.ts',
 			accordion: './src/blocks/frontend/accordion/index.js',
-			'live-search': './src/blocks/frontend/live-search/index.js'
+			'live-search': './src/blocks/frontend/live-search/index.ts'
 		},
 		output: {
 			path: path.resolve( __dirname, './build/blocks' ),

@@ -2,6 +2,7 @@
 
 namespace ThemeIsle\GutenbergBlocks\Server;
 
+use WP_Query;
 use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
@@ -76,7 +77,7 @@ class Live_Search_Server {
 			$namespace,
 			'/live-search',
 			array(
-				'methods'             => WP_REST_Server::CREATABLE,
+				'methods'             => WP_REST_Server::READABLE,
 				'callback'            => array( $this, 'search' ),
 				'permission_callback' => function ( $request ) {
 					$nonces = $request->get_header_as_array( 'X-WP-Nonce' );
@@ -89,6 +90,13 @@ class Live_Search_Server {
 					}
 					return __return_false();
 				},
+				'args'     => array(
+					's'  => array(
+						'required'    => true,
+						'type'        => 'string',
+						'description' => 'String to search for',
+					)
+				),
 			)
 		);
 	}
@@ -101,8 +109,22 @@ class Live_Search_Server {
 	 * @since 2.0.3
 	 */
 	public function search( WP_REST_Request $request ) {
-		// todo
-		return new WP_REST_Response( [ 'success' => true ], 200 );
+		$query = new WP_Query( array( 's'=> $request->get_param( 's' ) ) );
+
+		return new WP_REST_Response(
+			array(
+				'success' => true,
+				'results' => array_map(
+					function( $post ) {
+						return array(
+							'link'  => get_permalink( $post->ID ),
+							'title' => $post->post_title
+						);
+					},
+					$query->posts
+				)
+			)
+		);
 	}
 
 	/**
