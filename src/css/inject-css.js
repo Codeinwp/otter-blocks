@@ -14,9 +14,25 @@ import {
 	subscribe
 } from '@wordpress/data';
 
+let isInitialCall = true;
+
 const addStyle = style => {
-	let anchor = window.parent.document.querySelector( 'iframe[name="editor-canvas"]' )?.contentWindow.document.head || document.head;
+	const iFrame = window.parent.document.querySelector( 'iframe[name="editor-canvas"]' )?.contentWindow;
+	let anchor = iFrame?.document.head || document.head;
 	let element = anchor.querySelector( '#o-css-editor-styles' );
+
+	if ( isInitialCall && iFrame ) {
+		iFrame.addEventListener( 'DOMContentLoaded', function() {
+			setTimeout( () => {
+
+				// A small delay for the iFrame to properly initialize.
+				addStyle( style );
+			}, 500 );
+		});
+
+		isInitialCall = false;
+		return;
+	}
 
 	if ( null === element ) {
 		element = document.createElement( 'style' );
