@@ -133,14 +133,7 @@ const Edit = ({
 			attributes.alignMobile
 		]),
 		'--text-align-tablet': attributes.alignTablet,
-		'--text-align-mobile': attributes.alignMobile,
-		'--font-size': responsiveGetAttributes([
-			attributes.fontSize,
-			attributes.fontSizeTablet,
-			attributes.fontSizeMobile
-		]),
-		'--font-size-tablet': attributes.fontSizeTablet,
-		'--font-size-mobile': attributes.fontSizeMobile
+		'--text-align-mobile': attributes.alignMobile
 	};
 
 	let textShadowStyle;

@@ -4,17 +4,13 @@ span.wp-block-themeisle-blocks-advanced-heading {
 
 .wp-block-themeisle-blocks-advanced-heading {
 
-	--padding: 0px 0px 25px 0px;
+	--padding: 0px;
 	--padding-tablet: var(--padding);
 	--padding-mobile: var(--padding-tablet);
 
-	--margin: 0px;
+	--margin: 0px 0px 25px 0px;
 	--margin-tablet: var(--margin);
 	--margin-mobile: var(--margin-tablet);
-
-	--font-size: 20px;
-	--font-size-tablet: var(--font-size);
-	--font-size-mobile: var(--font-size-tablet);
 
 	--text-align: left;
 	--text-align-tablet: var(--text-align);

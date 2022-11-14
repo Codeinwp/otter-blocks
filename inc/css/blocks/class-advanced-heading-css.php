@@ -244,7 +244,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'query'      => '@media ( min-width: 600px ) and ( max-width: 960px )',
+				'query'      => '@media ( max-width: 960px )',
 				'properties' => array(
 					array(
 						'property'  => 'padding',
@@ -318,6 +318,21 @@ class Advanced_Heading_CSS extends Base_CSS {
 							return ( ! is_array( $attrs['marginTablet'] ) ) && ! ( isset( $attrs['marginTypeTablet'] ) && 'linked' === $attrs['marginTypeTablet'] );
 						},
 					),
+					array(
+						'property'  => 'font-size',
+						'value'     => 'fontSizeTablet',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['fontSizeTablet'] ) && is_numeric( $attrs['fontSizeTablet'] );
+						},
+					),
+					array(
+						'property'  => 'font-size',
+						'value'     => 'fontSizeTablet',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['fontSizeTablet'] ) && is_string( $attrs['fontSizeTablet'] );
+						},
+					),
 				),
 			)
 		);
@@ -355,7 +370,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 						'value'     => 'paddingBottomMobile',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'];
+							return ( ! is_array( $attrs['paddingMobile'] ) ) && isset( $attrs['paddingTypeMobile'] ) && 'unlinked' === $attrs['paddingTypeMobile'];
 						},
 					),
 					array(
@@ -398,6 +413,21 @@ class Advanced_Heading_CSS extends Base_CSS {
 							return ( ! is_array( $attrs['marginMobile'] ) ) && ! ( isset( $attrs['marginTypeMobile'] ) && 'linked' === $attrs['marginTypeMobile'] );
 						},
 					),
+					array(
+						'property'  => 'font-size',
+						'value'     => 'fontSizeMobile',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['fontSizeMobile'] ) && is_numeric( $attrs['fontSizeMobile'] );
+						},
+					),
+					array(
+						'property'  => 'font-size',
+						'value'     => 'fontSizeMobile',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['fontSizeMobile'] ) && is_string( $attrs['fontSizeMobile'] );
+						},
+					),
 				),
 			)
 		);
@@ -406,7 +436,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property'  => '--font-size',
+						'property'  => 'font-size',
 						'value'     => 'fontSize',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
@@ -414,42 +444,10 @@ class Advanced_Heading_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property'  => '--font-size-tablet',
-						'value'     => 'fontSizeTablet',
-						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['fontSizeTablet'] ) && is_numeric( $attrs['fontSizeTablet'] );
-						},
-					),
-					array(
-						'property'  => '--font-size-mobile',
-						'value'     => 'fontSizeMobile',
-						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['fontSizeMobile'] ) && is_numeric( $attrs['fontSizeMobile'] );
-						},
-					),
-					array(
-						'property'  => '--font-size',
+						'property'  => 'font-size',
 						'value'     => 'fontSize',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['fontSize'] ) && is_string( $attrs['fontSize'] );
-						},
-					),
-					array(
-						'property'  => '--font-size-tablet',
-						'value'     => 'fontSizeTablet',
-						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['fontSizeTablet'] ) && is_string( $attrs['fontSizeTablet'] );
-						},
-					),
-					array(
-						'property'  => '--font-size-mobile',
-						'value'     => 'fontSizeMobile',
-						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['fontSizeMobile'] ) && is_string( $attrs['fontSizeMobile'] );
 						},
 					),
 					array(
