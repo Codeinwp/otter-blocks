@@ -272,7 +272,7 @@ class Flip_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => '--padding-tablet',
+						'property' => '--padding',
 						'value'    => 'paddingTablet',
 						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::render_box(
@@ -286,7 +286,7 @@ class Flip_CSS extends Base_CSS {
 						'media'    => 'tablet',
 					),
 					array(
-						'property' => '--padding-mobile',
+						'property' => '--padding',
 						'value'    => 'paddingMobile',
 						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::render_box(

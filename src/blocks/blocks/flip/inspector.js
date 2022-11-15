@@ -361,21 +361,19 @@ const Inspector = ({
 							title={ __( 'Dimensions', 'otter-blocks' ) }
 						>
 							<ResponsiveControl
-								label={ __( 'Width', 'otter-blocks' ) }
+								label={ __( 'Screen Type', 'otter-blocks' ) }
 							>
 								<UnitControl
+									label={ __( 'Width', 'otter-blocks' ) }
 									value={ responsiveGetAttributes([ isNumber( attributes.width ) ? _px( attributes.width ) : attributes?.width, attributes.widthTablet, attributes?.widthMobile ]) ?? '100%' }
 									onChange={ width => responsiveSetAttributes( width, [ 'width', 'widthTablet', 'widthMobile' ], attributes.width ) }
 									isUnitSelectTabbable
 									isResetValueOnUnitChange
 									allowReset={ true }
 								/>
-							</ResponsiveControl>
-
-							<ResponsiveControl
-								label={ __( 'Height', 'otter-blocks' ) }
-							>
+								<br />
 								<UnitControl
+									label={ __( 'Height', 'otter-blocks' ) }
 									value={ responsiveGetAttributes([ isNumber( attributes.height ) ? _px( attributes.height ) : attributes?.height, attributes.heightTablet, attributes?.heightMobile ]) ?? '300px' }
 									onChange={ height => responsiveSetAttributes( height, [ 'height', 'heightTablet', 'heightMobile' ], attributes.height ) }
 									isUnitSelectTabbable
@@ -409,11 +407,8 @@ const Inspector = ({
 										}
 									]}
 								/>
-							</ResponsiveControl>
 
-							<ResponsiveControl
-								label={ __( '', 'otter-blocks' ) }
-							>
+								<br />
 								<BoxControl
 									label={ __( 'Padding', 'otter-blocks' ) }
 									values={
@@ -431,7 +426,7 @@ const Inspector = ({
 										}
 
 										responsiveSetAttributes(
-											removeBoxDefaultValues( result, stringToBox( '20px' ) ),
+											result,
 											[ 'padding', 'paddingTablet', 'paddingMobile' ]
 										);
 									} }
