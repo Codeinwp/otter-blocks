@@ -14,6 +14,8 @@ jobs:
       branch-name: ${{ steps.retrieve-branch-name.outputs.branch_name }}
       git-sha-8: ${{ steps.retrieve-git-sha-8.outputs.sha8 }}
     steps:
+      - name: Install WPCLI
+        run: curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
       - name: Check out source files
         uses: actions/checkout@v2
       - name: Get Composer Cache Directory
@@ -29,8 +31,6 @@ jobs:
             ${{ runner.os }}-composer-
       - name: Install composer deps
         run: composer install --no-dev --prefer-dist --no-progress --no-suggest
-      - name: Install WPCLI
-        run: composer global require wp-cli/wp-cli && composer global update && export PATH=~/.composer/vendor/bin:$PATH
       - name: Install npm deps
         run: npm ci
       - name: Build files
