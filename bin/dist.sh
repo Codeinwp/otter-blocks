@@ -59,25 +59,17 @@ do
 
   cd ../..
 
-  if [ $i == 'animation' ] && [ ! -d "dist/$DIST_FOLDER/assets" ]; then
-    mkdir "dist/$DIST_FOLDER/assets"
-  fi
-
   if [ ! -d "dist/$DIST_FOLDER/build" ]; then
     mkdir "dist/$DIST_FOLDER/build"
   fi
 
-  cp inc/class-blocks-$i.php build/$i dist/$DIST_FOLDER -r
-
-  if [ $i == 'animation' ]; then
-    cp assets/animate dist/$DIST_FOLDER/assets -r
-  fi
+  cp -r inc/class-blocks-$i.php build/$i dist/$DIST_FOLDER
 
   cd dist
 
   mv $DIST_FOLDER/$i $DIST_FOLDER/build/$i
 
-  php -d memory_limit=1024M "$(which wp)" i18n make-pot $BUILD_NAME $BUILD_NAME/languages/$BUILD_NAME.pot
+  php -d memory_limit=1024M "$(which wp)" i18n make-pot $BUILD_NAME $BUILD_NAME/languages/$BUILD_NAME.pot --domain=otter-blocks
   cp $BUILD_NAME/languages/$BUILD_NAME.pot $BUILD_NAME/languages/$BUILD_NAME.po
   "$(which wp)" i18n make-json $BUILD_NAME/languages/$BUILD_NAME.po --no-purge
 
@@ -109,13 +101,13 @@ if [ ! -d "dist/$DIST_FOLDER/build" ]; then
   mkdir "dist/$DIST_FOLDER/build"
 fi
 
-cp build/pro dist/$DIST_FOLDER -r
+cp -r build/pro dist/$DIST_FOLDER
 
 cd dist
 
 mv $DIST_FOLDER/pro $DIST_FOLDER/build/pro
 
-php -d memory_limit=1024M "$(which wp)" i18n make-pot $DIST_FOLDER $DIST_FOLDER/languages/otter-pro.pot
+php -d memory_limit=1024M "$(which wp)" i18n make-pot $DIST_FOLDER $DIST_FOLDER/languages/otter-pro.pot --domain=otter-blocks
 cp $DIST_FOLDER/languages/otter-pro.pot $DIST_FOLDER/languages/otter-pro.po
 "$(which wp)" i18n make-json $DIST_FOLDER/languages/otter-pro.po --no-purge
 
