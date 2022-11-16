@@ -13,6 +13,7 @@ type Attributes = Partial<{
 	barBackgroundColor: string
 	titleColor: string
 	percentageColor: string
+	titleFontSize: string
 }>
 
 export type ProgressAttrs = Partial<Attributes>

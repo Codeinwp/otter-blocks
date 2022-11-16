@@ -38,6 +38,7 @@ import { boxToCSS, getChoice, mergeBoxDefaultValues, stringToBox, _px } from '..
 import { isNumber } from 'lodash';
 import { type FlipProps } from './types';
 import { type BoxType } from '../../helpers/blocks';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -59,6 +60,10 @@ const Edit = ({
 
 	const [ currentSide, setSide ] = useState( 'front' );
 
+	const {
+		responsiveGetAttributes
+	} = useResponsiveAttributes( setAttributes );
+
 	const getShadowColor = () => {
 		if ( attributes.boxShadowColor ) {
 			if ( attributes.boxShadowColor.includes( '#' ) && attributes?.boxShadowColorOpacity && 0 <= attributes.boxShadowColorOpacity ) {
@@ -70,10 +75,10 @@ const Edit = ({
 	};
 
 	const inlineStyles = {
-		'--width': ( attributes.width !== undefined && isNumber( attributes.width ) && _px( attributes.width ) ) || ( attributes.width ),
+		'--width': responsiveGetAttributes([ isNumber( attributes.width ) ? _px( attributes.width ) : attributes?.width, attributes.widthTablet, attributes?.widthMobile ]) ?? '100%',
 		'--width-tablet': attributes.widthTablet,
 		'--width-mobile': attributes.widthMobile,
-		'--height': ( attributes.height !== undefined && isNumber( attributes.height ) && _px( attributes.height ) ) || attributes.height,
+		'--height': responsiveGetAttributes([ isNumber( attributes.height ) ? _px( attributes.height ) : attributes?.height, attributes.heightTablet, attributes?.heightMobile ]) ?? '300px',
 		'--height-tablet': attributes.heightTablet,
 		'--height-mobile': attributes.heightMobile,
 		'--border-width': attributes.borderWidth !== undefined && boxToCSS( mergeBoxDefaultValues(
@@ -101,7 +106,7 @@ const Edit = ({
 		'--back-vertical-align': attributes.backVerticalAlign,
 		'--front-media-width': _px( attributes.frontMediaWidth ),
 		'--front-media-height': _px( attributes.frontMediaHeight ),
-		'--padding': attributes.padding !== undefined && isNumber( attributes.padding ) && _px( attributes.padding ) || boxToCSS( attributes?.padding as BoxType | undefined ),
+		'--padding': responsiveGetAttributes([ attributes?.padding, attributes.paddingTablet, attributes?.paddingMobile ]) ?? ( isNumber( attributes.padding ) ? stringToBox( _px( attributes.padding ) ) : stringToBox( '20px' ) ),
 		'--padding-tablet': boxToCSS( attributes?.paddingTablet ),
 		'--padding-mobile': boxToCSS( attributes?.paddingMobile )
 
