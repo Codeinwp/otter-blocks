@@ -30,7 +30,7 @@ jobs:
       - name: Install composer deps
         run: composer install --no-dev --prefer-dist --no-progress --no-suggest
       - name: Install WPCLI
-        run: composer global require wp-cli/wp-cli && $ composer global update && export PATH=~/.composer/vendor/bin:$PATH
+        run: composer global require wp-cli/wp-cli && composer global update && export PATH=~/.composer/vendor/bin:$PATH
       - name: Install npm deps
         run: npm ci
       - name: Build files
