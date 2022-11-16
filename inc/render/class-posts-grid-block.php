@@ -69,25 +69,27 @@ class Posts_Grid_Block {
 			)
 		);
 
-		if ( isset( $sticky_posts_id ) && isset( $attributes['featuredPostOrder'] ) && 'sticky-first' === $attributes['featuredPostOrder'] ) {
+		if ( isset( $attributes['featuredPostOrder'] ) && 'sticky-first' === $attributes['featuredPostOrder'] ) {
 
 			$sticky_posts_id = get_option( 'sticky_posts' );
 
-			$sticky_posts = array_filter(
-				$recent_posts,
-				function ( $x ) use ( $sticky_posts_id ) {
-					return in_array( $x['ID'], $sticky_posts_id );
-				}
-			);
-	
-			$non_sticky_posts = array_filter(
-				$recent_posts,
-				function ( $x ) use ( $sticky_posts_id ) {
-					return ! in_array( $x['ID'], $sticky_posts_id );
-				}
-			);
-	
-			$recent_posts = array_merge( $sticky_posts, $non_sticky_posts );
+			if( isset( $sticky_posts_id ) ) {
+				$sticky_posts = array_filter(
+					$recent_posts,
+					function ( $x ) use ( $sticky_posts_id ) {
+						return in_array( $x['ID'], $sticky_posts_id );
+					}
+				);
+		
+				$non_sticky_posts = array_filter(
+					$recent_posts,
+					function ( $x ) use ( $sticky_posts_id ) {
+						return ! in_array( $x['ID'], $sticky_posts_id );
+					}
+				);
+		
+				$recent_posts = array_merge( $sticky_posts, $non_sticky_posts );
+			}
 		}
 
 		$list_items_markup = '';
