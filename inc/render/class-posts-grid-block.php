@@ -73,7 +73,7 @@ class Posts_Grid_Block {
 
 			$sticky_posts_id = get_option( 'sticky_posts' );
 
-			if( isset( $sticky_posts_id ) ) {
+			if ( isset( $sticky_posts_id ) ) {
 				$sticky_posts = array_filter(
 					$recent_posts,
 					function ( $x ) use ( $sticky_posts_id ) {
