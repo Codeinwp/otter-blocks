@@ -41,6 +41,12 @@ class Blocks_CSS {
 	 * @access  public
 	 */
 	public function enqueue_editor_assets() {
+		$current_screen = get_current_screen();
+
+		if ( 'widgets' === $current_screen->base || 'customize' === $current_screen->base ) {
+			return;
+		}
+
 		wp_enqueue_code_editor( array( 'type' => 'text/css' ) );
 
 		wp_add_inline_script( 
