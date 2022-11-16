@@ -69,9 +69,10 @@ class Posts_Grid_Block {
 			)
 		);
 
-		$sticky_posts_id = get_option( 'sticky_posts' );
-
 		if ( isset( $sticky_posts_id ) && isset( $attributes['featuredPostOrder'] ) && 'sticky-first' === $attributes['featuredPostOrder'] ) {
+
+			$sticky_posts_id = get_option( 'sticky_posts' );
+
 			$sticky_posts = array_filter(
 				$recent_posts,
 				function ( $x ) use ( $sticky_posts_id ) {
