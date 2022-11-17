@@ -7,6 +7,9 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
+use WP_Post;
+use WP_Query;
+
 /**
  * Class Posts_Grid_Block
  */
@@ -53,7 +56,7 @@ class Posts_Grid_Block {
 			);
 		};
 
-		$recent_posts = ( isset( $attributes['postTypes'] ) && 0 < count( $attributes['postTypes'] ) ) ? array_merge( ...array_map( $get_custom_post_types_posts, $attributes['postTypes'] ) ) : wp_get_recent_posts(
+		$recent_posts = ( isset( $attributes['postTypes'] ) && 0 < count( $attributes['postTypes'] ) ) ? array_merge( ...array_map( $get_custom_post_types_posts, $attributes['postTypes'] ) ) : get_posts(
 			apply_filters(
 				'themeisle_gutenberg_posts_block_query',
 				array(
@@ -93,9 +96,10 @@ class Posts_Grid_Block {
 		}
 
 		$list_items_markup = '';
+	
+		foreach ( $recent_posts as $post ) {
 
-		foreach ( array_slice( $recent_posts, isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] && isset( $recent_posts[0] ) ? 1 : 0 ) as $post ) {
-			$id = $post['ID'];
+			$id = $post instanceof WP_Post ? $post->ID : $post;
 
 			if ( isset( $attributes['featuredPost'] ) && $attributes['featuredPost'] === $id ) {
 				continue;
@@ -312,7 +316,7 @@ class Posts_Grid_Block {
 
 		$html = '';
 
-		$id        = $post['ID'];
+		$id        = $post instanceof WP_Post ? $post->ID : $post;
 		$size      = isset( $attributes['imageSize'] ) ? $attributes['imageSize'] : 'medium';
 		$thumbnail = wp_get_attachment_image( get_post_thumbnail_id( $id ), $size );
 
