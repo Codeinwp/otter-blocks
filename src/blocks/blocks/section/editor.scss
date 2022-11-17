@@ -11,6 +11,14 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	--background: transparent;
 	--columns-width: initial;
 	display: flex;
+	--text-color: var( --content-color, inherit );
+	--text-color-hover: var( --content-color-hover, inherit );
+
+	color: var( --text-color );
+
+	&:hover {
+		color: var( --text-color-hover );
+	}
 
 	> .innerblocks-wrap {
 		flex-basis: 100%;
