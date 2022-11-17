@@ -45,25 +45,24 @@ domReady( () => {
 		inputElement?.addEventListener( 'input', ( event: Event ) => {
 			const searchValue = ( event.target as HTMLInputElement )?.value;
 
-			if ( 0 !== searchValue.length ) {
-				requestData( searchValue ).then( r => {
-					if ( ! r.success ) {
-						console.error( r.message );
-						return;
-					}
-
-					const { results } = r;
-					updateResults( searchValue, block, results );
-				});
-
-				if ( ! block?.querySelector( '.search-results' ) ) {
-					createResultsContainer( resultsContainer, block, inputElement as HTMLElement );
-				}
-			} else {
+			if ( 0 === searchValue.length ) {
 				resultsContainer = block?.querySelector( '.search-results' );
-				if ( resultsContainer ) {
-					block?.removeChild( resultsContainer as Node );
+				resultsContainer && block?.removeChild( resultsContainer as Node );
+				return;
+			}
+
+			requestData( searchValue ).then( r => {
+				if ( ! r.success ) {
+					console.error( r.message );
+					return;
 				}
+
+				const { results } = r;
+				updateResults( searchValue, block, results );
+			});
+
+			if ( ! block?.querySelector( '.search-results' ) ) {
+				createResultsContainer( resultsContainer, block, inputElement as HTMLElement );
 			}
 		});
 
@@ -75,12 +74,17 @@ domReady( () => {
 		});
 
 		// Remove the results container when the input is unfocused
-		inputElement?.addEventListener( 'focusout', ( event: Event ) => {
+		block?.addEventListener( 'focusout', ( event: Event ) => {
 			resultsContainer = block?.querySelector( '.search-results' );
-			if ( resultsContainer ) {
-				block?.removeChild( resultsContainer as Node );
-			}
+			resultsContainer && block?.removeChild( resultsContainer as Node );
 		});
+
+		// document.body.addEventListener( 'click', ( event: MouseEvent ) => {
+		// 	if ( null === ( event?.target as Element )?.closest( '.wp-block-search__inside-wrapper' ) ) {
+		// 		resultsContainer = block?.querySelector( '.search-results' );
+		// 		resultsContainer && ( block?.removeChild( resultsContainer as Node ) );
+		// 	}
+		// });
 	};
 
 	const createResultsContainer = ( resultsContainer: Element | null | undefined, block: Element | null, inputElement: HTMLElement ) => {
@@ -90,13 +94,13 @@ domReady( () => {
 		}
 
 		const { height, fontSize } = getComputedStyle( inputElement );
-		const { paddingTop, paddingBottom, borderBottomWidth } = inputElement.parentElement ? getComputedStyle( inputElement.parentElement ) : { paddingTop: 0, paddingBottom: 0, borderBottomWidth: 0 };
+		const parentStyle = inputElement.parentElement ? getComputedStyle( inputElement.parentElement ) : null;
 
 		const container = document.createElement( 'div' );
 
 		container.classList.add( 'search-results' );
 		container.style.width = inputElement.offsetWidth + 'px';
-		container.style.top = `calc( ${height} + ${paddingTop} + ${paddingBottom} + ${borderBottomWidth} )`;
+		container.style.top = `calc( ${height} + ${parentStyle?.paddingTop} + ${parentStyle?.paddingBottom} + ${parentStyle?.borderBottomWidth} )`;
 		container.style.fontSize = `calc( ${fontSize} - 4px )`;
 
 		block?.appendChild( container );

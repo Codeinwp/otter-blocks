@@ -4,15 +4,15 @@
 	}
 
 	.search-results {
-		background-color: var( --formfieldbgcolor, #fff );
-		border-radius: var( --formfieldborderradius, 1px );
-		margin-top: 10px;
-		padding: 15px 0;
-
 		position: absolute;
 		z-index: 5;
 
+		background-color: var( --formfieldbgcolor, #fff );
+		border-radius: var( --formfieldborderradius, 1px );
 		border: 1px solid rgba(49, 50, 51, 0.12);
+
+		margin-top: 10px;
+		padding: 15px 0;
 
 		&__row {
 			padding: 8px 12px;
