@@ -92,13 +92,15 @@ subscribe( () => {
 			isSavingWidgetAreas,
 			getEditedWidgetAreas
 		} = select( 'core/edit-widgets' );
-
-		const isSavingWidgets = isSavingWidgetAreas();
 		const editedAreas = getEditedWidgetAreas();
 
-		if ( isSavingWidgets && 0 < editedAreas.length && ! isSavingCSS ) {
-			isSavingCSS = true;
-			saveWidgets();
+		if ( 0 < editedAreas.length && ! isSavingCSS ) {
+
+			// Don't move this condition out of here. Widgets throw error in Chrome. See https://github.com/Codeinwp/otter-blocks/issues/1332
+			if ( isSavingWidgetAreas() ) {
+				isSavingCSS = true;
+				saveWidgets();
+			}
 		}
 	}
 

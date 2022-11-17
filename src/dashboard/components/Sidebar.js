@@ -53,7 +53,7 @@ const Sidebar = ({
 			>
 				<ul className="otter-info-links">
 					<li><a href="https://wordpress.org/support/plugin/otter-blocks" target="_blank">{ __( 'Support', 'otter-blocks' ) }</a></li>
-					<li><a href="https://otter.nolt.io/" target="_blank">{ __( 'Feature request', 'otter-blocks' ) }</a></li>
+					<li><a href="https://github.com/Codeinwp/otter-blocks/discussions" target="_blank">{ __( 'Feature request', 'otter-blocks' ) }</a></li>
 					<li><a href="https://wordpress.org/support/plugin/otter-blocks/reviews/#new-post" target="_blank">{ __( 'Leave a review', 'otter-blocks' ) }</a></li>
 				</ul>
 
