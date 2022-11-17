@@ -402,6 +402,7 @@ const Inspector = ({
 
 							<PanelBody
 								title={ __( 'Shadow', 'otter-blocks' ) }
+								initialOpen={ false }
 								className="o-adv-h-panel"
 							>
 								<ToggleControl

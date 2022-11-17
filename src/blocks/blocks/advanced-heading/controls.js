@@ -26,9 +26,7 @@ const Controls = ({
 	attributes,
 	setAttributes
 }) => {
-
 	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
-
 
 	const changeFontFamily = value => {
 		if ( ! value ) {
@@ -46,7 +44,6 @@ const Controls = ({
 	};
 
 	const wrapTagIntoIcon = tag => ( <span className='o-list-elem-controls'>{ tag }</span> );
-
 
 	const changeTag = value => {
 		setAttributes({ tag: value });
