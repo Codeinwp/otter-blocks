@@ -38,7 +38,7 @@ class Posts_Grid_Block {
 		}
 
 		$get_custom_post_types_posts = function ( $post_type ) use ( $attributes, $categories ) {
-			return wp_get_recent_posts(
+			return get_posts(
 				apply_filters(
 					'themeisle_gutenberg_posts_block_query',
 					array(
@@ -80,14 +80,14 @@ class Posts_Grid_Block {
 				$sticky_posts = array_filter(
 					$recent_posts,
 					function ( $x ) use ( $sticky_posts_id ) {
-						return in_array( $x['ID'], $sticky_posts_id );
+						return in_array( $x instanceof WP_Post ? $x->ID : $x, $sticky_posts_id );
 					}
 				);
 		
 				$non_sticky_posts = array_filter(
 					$recent_posts,
 					function ( $x ) use ( $sticky_posts_id ) {
-						return ! in_array( $x['ID'], $sticky_posts_id );
+						return ! in_array( $x instanceof WP_Post ? $x->ID : $x, $sticky_posts_id );
 					}
 				);
 		
@@ -97,7 +97,7 @@ class Posts_Grid_Block {
 
 		$list_items_markup = '';
 	
-		foreach ( $recent_posts as $post ) {
+		foreach ( array_slice( $recent_posts, isset( $attributes['enableFeaturedPost'] ) && $attributes['enableFeaturedPost'] && isset( $recent_posts[0] ) ? 1 : 0 ) as $post ) {
 
 			$id = $post instanceof WP_Post ? $post->ID : $post;
 
