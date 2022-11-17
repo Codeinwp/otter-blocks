@@ -1,4 +1,4 @@
-import { isNumber, omit, pick, pickBy } from 'lodash';
+import { omit, pick, pickBy, isNumber, isObjectLike } from 'lodash';
 import { SectionAttrs } from '../../blocks/section/columns/types';
 import {  Storage } from './models';
 import { coreAdaptors } from './core-adaptors';
@@ -23,6 +23,7 @@ import { WooComparisonAttrs } from '../../../pro/blocks/woo-comparison/types';
 import { BusinessHoursItemAttrs } from '../../../pro/blocks/business-hours/item/types';
 import { BusinessHoursAttrs } from '../../../pro/blocks/business-hours/types';
 import { SharingIconsAttrs } from '../../blocks/sharing-icons/types';
+import { BoxType } from '../../helpers/blocks';
 
 export const adaptors = {
 	...coreAdaptors,
@@ -587,47 +588,47 @@ export const adaptors = {
 						text: attrs?.headingColor
 					},
 					font: {
-						size: addUnit( attrs?.fontSize, 'px' ),
+						size: isNumber( attrs?.fontSize ) ? addUnit( attrs?.fontSize, 'px' ) : attrs?.fontSize,
 						family: attrs?.fontFamily,
 						variant: attrs?.fontVariant,
 						style: attrs?.fontStyle,
-						letterSpacing: addUnit( attrs?.letterSpacing, 'px' ),
+						letterSpacing: isNumber( attrs?.letterSpacing ) ? addUnit( attrs?.letterSpacing, 'px' ) : attrs?.letterSpacing,
 						lineHeight: attrs?.lineHeight,
 						align: attrs?.align,
 						transform: attrs?.textTransform
 					},
 					padding: {
-						desktop: {
-							top: addUnit( 'unlinked' === attrs?.paddingType ? attrs?.paddingTop : attrs?.padding, 'px' ),
-							bottom: addUnit( 'unlinked' === attrs?.paddingType ? attrs?.paddingBottom : attrs?.padding, 'px' ),
-							right: addUnit( 'unlinked' === attrs?.paddingType ? attrs?.paddingRight : attrs?.padding, 'px' ),
-							left: addUnit( 'unlinked' === attrs?.paddingType ? attrs?.paddingLeft : attrs?.padding, 'px' )
+						desktop: isObjectLike( attrs?.padding ) ? attrs?.padding as BoxType | undefined : {
+							top: addUnit( 'unlinked' === attrs?.paddingType ? attrs?.paddingTop : attrs?.padding as number | undefined, 'px' ),
+							bottom: addUnit( 'unlinked' === attrs?.paddingType ? attrs?.paddingBottom : attrs?.padding as number | undefined, 'px' ),
+							right: addUnit( 'unlinked' === attrs?.paddingType ? attrs?.paddingRight : attrs?.padding as number | undefined, 'px' ),
+							left: addUnit( 'unlinked' === attrs?.paddingType ? attrs?.paddingLeft : attrs?.padding as number | undefined, 'px' )
 						},
-						tablet: {
-							top: addUnit( 'unlinked' === attrs?.paddingTypeTablet ? attrs?.paddingTopTablet : attrs?.paddingTablet, 'px' ),
-							bottom: addUnit( 'unlinked' === attrs?.paddingTypeTablet ? attrs?.paddingBottomTablet : attrs?.paddingTablet, 'px' ),
-							right: addUnit( 'unlinked' === attrs?.paddingTypeTablet ? attrs?.paddingRightTablet : attrs?.paddingTablet, 'px' ),
-							left: addUnit( 'unlinked' === attrs?.paddingTypeTablet ? attrs?.paddingLeftTablet : attrs?.paddingTablet, 'px' )
+						tablet: isObjectLike( attrs?.paddingTablet ) ? attrs?.paddingTablet as BoxType | undefined : {
+							top: addUnit( 'unlinked' === attrs?.paddingTypeTablet ? attrs?.paddingTopTablet : attrs?.paddingTablet as number | undefined, 'px' ),
+							bottom: addUnit( 'unlinked' === attrs?.paddingTypeTablet ? attrs?.paddingBottomTablet : attrs?.paddingTablet as number | undefined, 'px' ),
+							right: addUnit( 'unlinked' === attrs?.paddingTypeTablet ? attrs?.paddingRightTablet : attrs?.paddingTablet as number | undefined, 'px' ),
+							left: addUnit( 'unlinked' === attrs?.paddingTypeTablet ? attrs?.paddingLeftTablet : attrs?.paddingTablet as number | undefined, 'px' )
 						},
-						mobile: {
-							top: addUnit( 'unlinked' === attrs?.paddingTypeMobile ? attrs?.paddingTopMobile : attrs?.paddingTablet, 'px' ),
-							bottom: addUnit( 'unlinked' === attrs?.paddingTypeMobile ? attrs?.paddingBottomMobile : attrs?.paddingMobile, 'px' ),
-							right: addUnit( 'unlinked' === attrs?.paddingTypeMobile ? attrs?.paddingRightMobile : attrs?.paddingMobile, 'px' ),
-							left: addUnit( 'unlinked' === attrs?.paddingTypeMobile ? attrs?.paddingLeftMobile : attrs?.paddingMobile, 'px' )
+						mobile: isObjectLike( attrs?.paddingMobile ) ? attrs?.paddingMobile as BoxType | undefined : {
+							top: addUnit( 'unlinked' === attrs?.paddingTypeMobile ? attrs?.paddingTopMobile : attrs?.paddingTablet as number | undefined, 'px' ),
+							bottom: addUnit( 'unlinked' === attrs?.paddingTypeMobile ? attrs?.paddingBottomMobile : attrs?.paddingMobile as number | undefined, 'px' ),
+							right: addUnit( 'unlinked' === attrs?.paddingTypeMobile ? attrs?.paddingRightMobile : attrs?.paddingMobile as number | undefined, 'px' ),
+							left: addUnit( 'unlinked' === attrs?.paddingTypeMobile ? attrs?.paddingLeftMobile : attrs?.paddingMobile as number | undefined, 'px' )
 						}
 					},
 					margin: {
-						desktop: {
-							top: addUnit( 'unlinked' === attrs?.marginType ? attrs?.marginTop : attrs?.margin, 'px' ),
-							bottom: addUnit( 'unlinked' === attrs?.marginType ?  attrs?.marginBottom : attrs?.margin, 'px' )
+						desktop: isObjectLike( attrs?.margin ) ? attrs?.margin as BoxType | undefined : {
+							top: addUnit( 'unlinked' === attrs?.marginType ? attrs?.marginTop : attrs?.margin as number | undefined, 'px' ),
+							bottom: addUnit( 'unlinked' === attrs?.marginType ?  attrs?.marginBottom : attrs?.margin as number | undefined, 'px' )
 						},
-						tablet: {
-							top: addUnit( 'unlinked' === attrs?.marginTypeTablet ? attrs?.marginTopTablet : attrs?.marginTablet, 'px' ),
-							bottom: addUnit( 'unlinked' === attrs?.marginTypeTablet ? attrs?.marginBottomTablet : attrs?.marginTablet, 'px' )
+						tablet: isObjectLike( attrs?.marginTablet ) ? attrs?.marginTablet as BoxType | undefined : {
+							top: addUnit( 'unlinked' === attrs?.marginTypeTablet ? attrs?.marginTopTablet : attrs?.marginTablet as number | undefined, 'px' ),
+							bottom: addUnit( 'unlinked' === attrs?.marginTypeTablet ? attrs?.marginBottomTablet : attrs?.marginTablet as number | undefined, 'px' )
 						},
-						mobile: {
-							top: addUnit( 'unlinked' === attrs?.marginTypeMobile ? attrs?.marginTopMobile : attrs?.marginTablet, 'px' ),
-							bottom: addUnit( 'unlinked' === attrs?.marginTypeMobile ? attrs?.marginBottomMobile : attrs?.marginMobile, 'px' )
+						mobile: isObjectLike( attrs?.marginTablet ) ? attrs?.marginTablet as BoxType | undefined : {
+							top: addUnit( 'unlinked' === attrs?.marginTypeMobile ? attrs?.marginTopMobile : attrs?.marginTablet as number | undefined, 'px' ),
+							bottom: addUnit( 'unlinked' === attrs?.marginTypeMobile ? attrs?.marginBottomMobile : attrs?.marginMobile as number | undefined, 'px' )
 						}
 					}
 				},
