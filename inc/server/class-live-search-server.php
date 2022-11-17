@@ -89,14 +89,7 @@ class Live_Search_Server {
 						}
 					}
 					return __return_false();
-				},
-				'args'     => array(
-					's'  => array(
-						'required'    => true,
-						'type'        => 'string',
-						'description' => 'String to search for',
-					)
-				),
+				}
 			)
 		);
 	}
@@ -109,7 +102,12 @@ class Live_Search_Server {
 	 * @since 2.0.3
 	 */
 	public function search( WP_REST_Request $request ) {
-		$query = new WP_Query( array( 's'=> $request->get_param( 's' ) ) );
+		$query = new WP_Query(
+			array(
+				'posts_per_page' => 20,
+				's'              => $request->get_param( 's' ),
+			)
+		);
 
 		return new WP_REST_Response(
 			array(

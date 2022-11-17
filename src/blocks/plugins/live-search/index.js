@@ -1,9 +1,16 @@
+/**
+ * External dependencies
+ */
 import { registerBlockVariation } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
 import { createHigherOrderComponent } from '@wordpress/compose';
-import Edit from './edit.js';
 import { assign } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import Edit from './edit.js';
 
 const addAttribute = ( props ) => {
 	if ( 'core/search' === props.name ) {

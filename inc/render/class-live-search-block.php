@@ -4,8 +4,12 @@
  *
  * @package ThemeIsle\GutenbergBlocks\Render
  */
+
 namespace ThemeIsle\GutenbergBlocks\Render;
 
+/**
+ * Class Live_Search
+ */
 class Live_Search {
 	/**
 	 * The main instance var.
@@ -46,11 +50,18 @@ class Live_Search {
 			'liveSearchData',
 			array(
 				'nonce'   => wp_create_nonce( 'wp_rest' ),
-				'restUrl' => esc_url_raw( get_rest_url() ) . 'otter/v1/live-search'
+				'restUrl' => esc_url_raw( get_rest_url() ) . 'otter/v1/live-search',
+				'strings' => array(
+					/* translators: This is followed by the search string */
+					'noResults' => __( 'No results for', 'otter-blocks' )
+				)
 			)
 		);
 
-		return '<div class="otter-live-search">' . $block_content . '</div>';
+		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/live-search-style.asset.php';
+		wp_enqueue_style( 'otter-live-search-style', OTTER_BLOCKS_URL . 'build/blocks/live-search-style.css', $asset_file['dependencies'], $asset_file['version'] );
+
+		return '<div class="o-live-search">' . $block_content . '</div>';
 	}
 
 	/**

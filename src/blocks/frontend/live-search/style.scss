@@ -1,0 +1,29 @@
+.o-live-search {
+	.wp-block-search__inside-wrapper {
+		position: relative;
+	}
+
+	.search-results {
+		background-color: var( --formfieldbgcolor, #fff );
+		border-radius: var( --formfieldborderradius, 1px );
+		margin-top: 10px;
+		padding: 15px 0;
+
+		position: absolute;
+		z-index: 5;
+
+		border: 1px solid rgba(49, 50, 51, 0.12);
+
+		&__row {
+			padding: 8px 12px;
+
+			&:not(.no-results):hover {
+				background-color: rgba(49, 50, 51, 0.12);
+			}
+
+			a {
+				text-decoration: none;
+			}
+		}
+	}
+}
