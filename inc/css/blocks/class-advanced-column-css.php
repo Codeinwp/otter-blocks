@@ -210,6 +210,36 @@ class Advanced_Column_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
+				'selector'   => ':hover',
+				'properties' => array(
+					array(
+						'property'  => 'color',
+						'default'   => 'var( --content-color-hover )',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['colorHover'] );
+						},
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' a:not( .wp-block-button__link )',
+				'properties' => array(
+					array(
+						'property'  => 'color',
+						'default'   => 'var( --link-color )',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['linkColor'] );
+						},
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
 				'selector'   => ' > .wp-block-themeisle-blocks-advanced-column-overlay',
 				'properties' => Shared_CSS::section_overlay(),
 			)
