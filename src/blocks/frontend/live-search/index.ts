@@ -8,6 +8,8 @@ type ResultsEntry = {
 	title: string
 }
 
+type ResultsContainer = Element | null | undefined;
+
 domReady( () => {
 
 	// @ts-ignore
@@ -37,7 +39,7 @@ domReady( () => {
 		const inputElement = element.querySelector( 'input.wp-block-search__input' );
 
 		// Create this variable so the results are kept when the input gets unfocused
-		let resultsContainer: Element | null | undefined;
+		let resultsContainer: ResultsContainer;
 
 		inputElement?.setAttribute( 'autocomplete', 'off' );
 
@@ -67,27 +69,28 @@ domReady( () => {
 		});
 
 		// Open the results container when the input is focused
-		inputElement?.addEventListener( 'focus', ( event: Event ) => {
+		inputElement?.addEventListener( 'focusin', ( event: Event ) => {
 			if ( 0 !== ( inputElement as HTMLInputElement ).value.length ) {
 				createResultsContainer( resultsContainer, block, inputElement as HTMLElement );
 			}
 		});
 
-		// Remove the results container when the input is unfocused
-		block?.addEventListener( 'focusout', ( event: Event ) => {
-			resultsContainer = block?.querySelector( '.search-results' );
-			resultsContainer && block?.removeChild( resultsContainer as Node );
-		});
+		// Detect clicks outside the search block and close the results container
+		const onClickOutside = ( event: MouseEvent ) => {
+			if ( null === ( event?.target as Element )?.closest( '.wp-block-search__inside-wrapper' ) ) {
 
-		// document.body.addEventListener( 'click', ( event: MouseEvent ) => {
-		// 	if ( null === ( event?.target as Element )?.closest( '.wp-block-search__inside-wrapper' ) ) {
-		// 		resultsContainer = block?.querySelector( '.search-results' );
-		// 		resultsContainer && ( block?.removeChild( resultsContainer as Node ) );
-		// 	}
-		// });
+				// if the click was outside .wp-block-search__inside-wrapper
+				const tmpResultsContainer = block?.querySelector( '.search-results' );
+				if ( tmpResultsContainer ) {
+					resultsContainer = block?.removeChild( tmpResultsContainer as Node ) as ResultsContainer;
+				}
+			}
+		};
+
+		window.addEventListener( 'click', onClickOutside );
 	};
 
-	const createResultsContainer = ( resultsContainer: Element | null | undefined, block: Element | null, inputElement: HTMLElement ) => {
+	const createResultsContainer = ( resultsContainer: ResultsContainer, block: Element | null, inputElement: HTMLElement ) => {
 		if ( resultsContainer ) {
 			block?.appendChild( resultsContainer );
 			return;
