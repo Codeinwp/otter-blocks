@@ -1,4 +1,10 @@
 /**
+ * External dependencied
+ */
+
+import { debounce } from 'lodash';
+
+/**
  * Internal dependencies
  */
 import { domReady } from '../../helpers/frontend-helper-functions.js';
@@ -43,16 +49,7 @@ domReady( () => {
 
 		inputElement?.setAttribute( 'autocomplete', 'off' );
 
-		// Fires when the input value is changed
-		inputElement?.addEventListener( 'input', ( event: Event ) => {
-			const searchValue = ( event.target as HTMLInputElement )?.value;
-
-			if ( 0 === searchValue.length ) {
-				resultsContainer = block?.querySelector( '.search-results' );
-				resultsContainer && block?.removeChild( resultsContainer as Node );
-				return;
-			}
-
+		const debouncedRequest = debounce( ( searchValue: string ) => {
 			requestData( searchValue ).then( r => {
 				if ( ! r.success ) {
 					console.error( r.message );
@@ -62,6 +59,34 @@ domReady( () => {
 				const { results } = r;
 				updateResults( searchValue, block, results );
 			});
+		}, 300 );
+
+		const removeResultsContainer = () => {
+			const tmpResultsContainer = block?.querySelector( '.search-results' );
+			if ( tmpResultsContainer ) {
+				resultsContainer = block?.removeChild( tmpResultsContainer as Node ) as ResultsContainer;
+			}
+		};
+
+		// Detect clicks outside the search block and close the results container
+		const onClickOutside = ( event: MouseEvent ) => {
+			if ( null === ( event?.target as Element )?.closest( '.wp-block-search__inside-wrapper' ) ) {
+
+				// if the click was outside .wp-block-search__inside-wrapper
+				removeResultsContainer();
+			}
+		};
+
+		// Fires when the input value is changed
+		inputElement?.addEventListener( 'input', ( event: Event ) => {
+			const searchValue = ( event.target as HTMLInputElement )?.value;
+
+			if ( 0 === searchValue.length ) {
+				removeResultsContainer();
+				return;
+			}
+
+			debouncedRequest( searchValue );
 
 			if ( ! block?.querySelector( '.search-results' ) ) {
 				createResultsContainer( resultsContainer, block, inputElement as HTMLElement );
@@ -74,18 +99,6 @@ domReady( () => {
 				createResultsContainer( resultsContainer, block, inputElement as HTMLElement );
 			}
 		});
-
-		// Detect clicks outside the search block and close the results container
-		const onClickOutside = ( event: MouseEvent ) => {
-			if ( null === ( event?.target as Element )?.closest( '.wp-block-search__inside-wrapper' ) ) {
-
-				// if the click was outside .wp-block-search__inside-wrapper
-				const tmpResultsContainer = block?.querySelector( '.search-results' );
-				if ( tmpResultsContainer ) {
-					resultsContainer = block?.removeChild( tmpResultsContainer as Node ) as ResultsContainer;
-				}
-			}
-		};
 
 		window.addEventListener( 'click', onClickOutside );
 	};
