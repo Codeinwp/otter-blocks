@@ -37,6 +37,7 @@ import {
 	blockInit,
 	getDefaultValueByField
 } from '../../../helpers/block-utility.js';
+import { _cssBlock } from '../../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
