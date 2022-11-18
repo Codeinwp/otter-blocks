@@ -228,7 +228,7 @@ class Advanced_Columns_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-themeisle-blocks-advanced-column a',
+				'selector'   => ' a:not( .wp-block-button__link )',
 				'properties' => array(
 					array(
 						'property'  => 'color',
