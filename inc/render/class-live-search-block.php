@@ -53,15 +53,20 @@ class Live_Search {
 				'restUrl' => esc_url_raw( get_rest_url() ) . 'otter/v1/live-search',
 				'strings' => array(
 					/* translators: This is followed by the search string */
-					'noResults' => __( 'No results for', 'otter-blocks' )
-				)
+					'noResults' => __( 'No results for', 'otter-blocks' ),
+				),
 			)
 		);
 
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/live-search-style.asset.php';
 		wp_enqueue_style( 'otter-live-search-style', OTTER_BLOCKS_URL . 'build/blocks/live-search-style.css', $asset_file['dependencies'], $asset_file['version'] );
 
-		return '<div class="o-live-search">' . $block_content . '</div>';
+		$post_types_data = '';
+		if ( isset( $block['attrs']['postTypes'] ) ) {
+			$post_types_data = 'data-post-types=' . wp_json_encode( $block['attrs']['postTypes'] );
+		}
+
+		return '<div class="o-live-search"' . $post_types_data . '>' . $block_content . '</div>';
 	}
 
 	/**

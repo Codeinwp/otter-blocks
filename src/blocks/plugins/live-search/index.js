@@ -18,6 +18,9 @@ const addAttribute = ( props ) => {
 			isLive: {
 				type: 'boolean',
 				default: false
+			},
+			postTypes: {
+				type: 'array'
 			}
 		});
 	}

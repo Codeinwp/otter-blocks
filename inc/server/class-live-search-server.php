@@ -89,7 +89,7 @@ class Live_Search_Server {
 						}
 					}
 					return __return_false();
-				}
+				},
 			)
 		);
 	}
@@ -105,6 +105,7 @@ class Live_Search_Server {
 		$query = new WP_Query(
 			array(
 				'posts_per_page' => 20,
+				'post_type'      => $request->get_param( 'post_types' ),
 				's'              => $request->get_param( 's' ),
 			)
 		);
@@ -116,11 +117,11 @@ class Live_Search_Server {
 					function( $post ) {
 						return array(
 							'link'  => get_permalink( $post->ID ),
-							'title' => $post->post_title
+							'title' => $post->post_title,
 						);
 					},
 					$query->posts
-				)
+				),
 			)
 		);
 	}

@@ -3,11 +3,14 @@
  */
 import { __ } from '@wordpress/i18n';
 import {
+	FormTokenField,
 	PanelBody,
 	ToggleControl
 } from '@wordpress/components';
 import { InspectorControls } from '@wordpress/block-editor';
 import { Fragment } from '@wordpress/element';
+
+const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 
 const Edit = ({
 	BlockEdit,
@@ -18,6 +21,10 @@ const Edit = ({
 		props.setAttributes({ isLive });
 	};
 
+	const onPostTypeChange = types => {
+		props.setAttributes({ postTypes: types });
+	};
+
 	return (
 		<Fragment>
 			<InspectorControls>
@@ -26,10 +33,18 @@ const Edit = ({
 					initialOpen={ false }
 				>
 					<ToggleControl
-						label={ __( 'Live Search', 'otter-blocks' ) }
-						help={ __( 'Toggle on to see live search.', 'otter-blocks' ) }
+						label={ __( 'Enable Live Search', 'otter-blocks' ) }
 						checked={ props.attributes.isLive }
 						onChange={ toggleLive }
+					/>
+
+					<FormTokenField
+						label={ __( 'Search in', 'otter-blocks' ) }
+						value={ props.attributes.postTypes }
+						suggestions={ postTypes }
+						onChange={ types => onPostTypeChange( types ) }
+						__experimentalExpandOnFocus={ true }
+						__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
 					/>
 				</PanelBody>
 			</InspectorControls>

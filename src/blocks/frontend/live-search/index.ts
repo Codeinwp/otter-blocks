@@ -25,7 +25,7 @@ domReady( () => {
 	const liveSearch = document.querySelectorAll( '.o-live-search' );
 	const loadingIcon = '<svg class="spinner" viewBox="0 0 100 100" width="16" height="16" xmlns="http://www.w3.org/2000/svg" focusable="false" style="width: calc(16px); height: calc(16px);"><circle cx="50" cy="50" r="50" vector-effect="non-scaling-stroke" class="main-circle"></circle><path d="m 50 0 a 50 50 0 0 1 50 50" vector-effect="non-scaling-stroke" class="moving-circle"></path></svg>';
 
-	const requestData = async( search: string ) => {
+	const requestData = async( search: string, postTypes: Array<string> ) => {
 		const options = {
 			method: 'GET',
 			headers: {
@@ -35,7 +35,12 @@ domReady( () => {
 			}
 		};
 
-		return await fetch( `${restUrl}?s=${search}`, options ).then( ( response ) => {
+		let params = `s=${search}`;
+		postTypes.forEach( type => {
+			params = `${params}&post_types[]=${type}`;
+		});
+
+		return await fetch( `${restUrl}?${params}`, options ).then( ( response ) => {
 			return response.json();
 		}).catch( error => {
 			console.error( error.message );
@@ -47,6 +52,10 @@ domReady( () => {
 		const block = element.querySelector( '.wp-block-search__inside-wrapper' );
 		const inputElement = element.querySelector( 'input.wp-block-search__input' );
 
+		const { postTypes } = ( element as HTMLElement ).dataset;
+		let postTypesArray: Array<string> = [];
+		postTypes && ( postTypesArray = JSON.parse( postTypes ) );
+
 		// Create this variable to cache the results
 		let resultsContainer: ResultsContainer;
 
@@ -54,7 +63,7 @@ domReady( () => {
 
 		const debouncedRequest = debounce( ( searchValue: string ) => {
 			addLoadingIcon( resultsContainer );
-			requestData( searchValue ).then( r => {
+			requestData( searchValue, postTypesArray ).then( r => {
 				removeLoadingIcon( block );
 
 				if ( ! r.success ) {
