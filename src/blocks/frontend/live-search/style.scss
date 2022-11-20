@@ -15,15 +15,53 @@
 		padding: 15px 0;
 
 		&__row {
-			padding: 8px 12px;
-
-			&:not(.no-results):hover {
+			&:not(.no-results):not(.spinner-container):hover {
 				background-color: rgba(49, 50, 51, 0.12);
 			}
 
-			a {
+			a, &.no-results {
 				text-decoration: none;
+				display: block;
+				padding: 8px 12px;
 			}
 		}
+	}
+
+	.spinner-container {
+		text-align: center;
+	}
+
+	.spinner {
+		width: 16px;
+		height: 16px;
+		position: relative;
+		color: #007cba;
+		overflow: visible;
+		display: flex;
+		margin: auto;
+
+		.main-circle {
+			fill: transparent;
+			stroke-width: 1.5px;
+			stroke: rgb(221, 221, 221);
+		}
+
+		.moving-circle {
+			fill: transparent;
+			stroke-width: 1.5px;
+			stroke: currentcolor;
+			stroke-linecap: round;
+			transform-origin: 50% 50%;
+			animation: 1.4s linear 0s infinite normal both running o-animation-rotate;
+		}
+	}
+}
+
+@keyframes o-animation-rotate {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
 	}
 }
