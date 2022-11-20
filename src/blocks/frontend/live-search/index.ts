@@ -99,6 +99,29 @@ domReady( () => {
 			}
 		});
 
+		inputElement?.addEventListener( 'keyup', ( event: Event ) => {
+			const keyEvent = event as KeyboardEvent;
+			if ( 'ArrowDown' !== keyEvent.key && 'ArrowUp' !== keyEvent.key ) {
+				return;
+			}
+
+			const highlighted = resultsContainer?.querySelector( '.highlight' );
+			if ( ! highlighted ) {
+				return;
+			}
+
+			if ( 'ArrowDown' === keyEvent.key && highlighted.nextElementSibling ) {
+				highlighted.classList.remove( 'highlight' );
+				highlighted.nextElementSibling.classList.add( 'highlight' );
+				return;
+			}
+
+			if ( 'ArrowUp' === keyEvent.key && highlighted.previousElementSibling ) {
+				highlighted.classList.remove( 'highlight' );
+				highlighted.previousElementSibling.classList.add( 'highlight' );
+			}
+		});
+
 		// Detect clicks outside the search block and close the results container
 		window.addEventListener( 'click', ( event: MouseEvent ) => {
 			if ( null === ( event?.target as Element )?.closest( '.wp-block-search__inside-wrapper' ) ) {
@@ -166,9 +189,11 @@ domReady( () => {
 			return;
 		}
 
-		results.forEach( ({ link, title }) => {
+		results.forEach( ({ link, title }, index ) => {
 			const option = document.createElement( 'div' );
 			option.classList.add( `${CONTAINER_CLASS}__row` );
+
+			( 0 === index ) && option.classList.add( 'highlight' );
 
 			const optionLink = document.createElement( 'a' );
 			optionLink.href = link;

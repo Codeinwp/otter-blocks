@@ -15,7 +15,7 @@
 		padding: 15px 0;
 
 		&__row {
-			&:not(.no-results):not(.spinner-container):hover {
+			&.highlight {
 				background-color: rgba(49, 50, 51, 0.12);
 			}
 
