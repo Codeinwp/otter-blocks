@@ -29,7 +29,7 @@ class Live_Search {
 	 * Block render function for server-side.
 	 *
 	 * @param string $block_content Blocks content.
-	 * @param array $block Blocks data.
+	 * @param array  $block Blocks data.
 	 * @return mixed|string
 	 */
 	public function render_blocks( $block_content, $block ) {

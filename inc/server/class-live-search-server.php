@@ -1,4 +1,9 @@
 <?php
+/**
+ * Live Search server logic.
+ *
+ * @package ThemeIsle\GutenbergBlocks\Server
+ */
 
 namespace ThemeIsle\GutenbergBlocks\Server;
 
@@ -7,6 +12,9 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 
+/**
+ * Class Live_Search_Server
+ */
 class Live_Search_Server {
 
 	/**
