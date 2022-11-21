@@ -25,22 +25,22 @@
 			"default": "flipY"
 		},
 		"width": {
-			"type": ["number", "object"]
+			"type": ["number", "string"]
 		},
 		"widthTablet": {
-			"type": "object"
+			"type": ["string"]
 		},
 		"widthMobile": {
-			"type": "object"
+			"type": ["string"]
 		},
 		"height": {
-			"type": ["number", "object"]
+			"type": ["number", "string"]
 		},
 		"heightTablet": {
-			"type": "object"
+			"type": ["string"]
 		},
 		"heightMobile": {
-			"type": "object"
+			"type": ["string"]
 		},	
 		"padding": {
 			"type": ["number", "object"]

@@ -86,7 +86,5 @@ const withInspectorControls = createHigherOrderComponent( BlockEdit => {
 	};
 }, 'withInspectorControl' );
 
-if ( ! select( 'core/edit-site' ) ) {
-	addFilter( 'blocks.registerBlockType', 'themeisle-custom-css/attribute', addAttribute );
-	addFilter( 'editor.BlockEdit', 'themeisle-custom-css/with-inspector-controls', withInspectorControls );
-}
+addFilter( 'blocks.registerBlockType', 'themeisle-custom-css/attribute', addAttribute );
+addFilter( 'editor.BlockEdit', 'themeisle-custom-css/with-inspector-controls', withInspectorControls );
