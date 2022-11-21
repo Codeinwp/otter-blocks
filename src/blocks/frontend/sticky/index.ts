@@ -82,6 +82,8 @@ type Config = {
 	width: string
 	sideOffset: string
 	side: 'left' | 'right'
+	isBannerMode: boolean
+	bannerGap: string
 }
 
 /**
@@ -109,9 +111,13 @@ const getConfigOptions = ( elem: Element ): Config => {
 			config.sideOffset = cssClass.split( '-' ).pop() as string;
 		} else if ( cssClass.includes( 'o-sticky-side-right' ) ) {
 			config.side = 'right';
+		} else if ( cssClass.includes( 'o-sticky-banner-mode' ) ) {
+			config.isBannerMode = true;
+		} else if ( cssClass.includes( 'o-sticky-banner-gap' ) ) {
+			config.bannerGap = cssClass.split( '-' ).pop() as string;
 		}
 		return config;
-	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false, isFloatMode: false, width: '100%', sideOffset: '20px', side: 'left' });
+	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false, isFloatMode: false, width: '100%', sideOffset: '20px', side: 'left', isBannerMode: false, bannerGap: '' });
 };
 
 const positions = {
@@ -221,6 +227,10 @@ class StickyData {
 		this.stylingNodeName = `o-sticky-node-${this.index}`;
 		this.stylingNode = document.createElement( 'style' );
 		document.head.appendChild( this.stylingNode );
+
+		if ( config.isBannerMode && 'top' === config.position ) {
+			document.body.style.marginTop = config.bannerGap ? config.bannerGap : this.height + 'px';
+		}
 	}
 
 	get canBeRun() {
