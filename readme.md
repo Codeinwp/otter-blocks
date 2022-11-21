@@ -1,4 +1,4 @@
-# Otter - Page Builder Blocks & Extensions for Gutenberg #
+# Otter - Gutenberg Blocks – Page Builder for Gutenberg Editor & FSE #
 **Contributors:** [themeisle](https://profiles.wordpress.org/themeisle/), [hardeepasrani](https://profiles.wordpress.org/hardeepasrani/), [soarerobertdaniel7](https://profiles.wordpress.org/soarerobertdaniel7/), [mariamunteanu1](https://profiles.wordpress.org/mariamunteanu1/), [arinat](https://profiles.wordpress.org/arinat/), [uriahs-victor](https://profiles.wordpress.org/uriahs-victor/), [john_pixle](https://profiles.wordpress.org/john_pixle/), [wildmisha](https://profiles.wordpress.org/wildmisha/), [irinelenache](https://profiles.wordpress.org/irinelenache/)  
 **Tags:** gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder  
 **Requires at least:** 5.8  
@@ -207,6 +207,18 @@ You can check Otter documentation [here](https://docs.themeisle.com/article/1478
 5. Section Block
 
 ## Changelog ##
+
+##### [Version 2.1.4](https://github.com/Codeinwp/otter-blocks/compare/v2.1.3...v2.1.4) (2022-11-21)
+
+- Advanced Heading Enhancements
+- Fix the Widgets page not loading with Otter on Chrome
+- Fix Custom CSS work with FSE
+- Fix the Button Color Issue
+- Migrate WooCommerce Comparison to Sparks Plugin
+- Fix Flip Block not saving Responsive Attributes
+
+
+
 
 ##### [Version 2.1.3](https://github.com/Codeinwp/otter-blocks/compare/v2.1.2...v2.1.3) (2022-11-10)
 
