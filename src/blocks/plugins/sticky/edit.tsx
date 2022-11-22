@@ -45,7 +45,9 @@ const FILTER_OPTIONS = {
 	float: 'o-sticky-float',
 	width: 'o-sticky-width',
 	side: 'o-sticky-side',
-	sideOffset: 'o-sticky-opt-side-offset'
+	sideOffset: 'o-sticky-opt-side-offset',
+	bannerMode: 'o-sticky-banner-mode',
+	bannerGap: 'o-sticky-banner-gap'
 };
 
 const ProFeatures = () => {
@@ -112,7 +114,7 @@ const ProFeatures = () => {
 				onChange={ () => {} }
 			/>
 
-			{ ! Boolean( window.themeisleGutenberg.hasPro ) && (
+			{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
 				<Notice
 					notice={<ExternalLink href={setUtm( window.themeisleGutenberg.upgradeLink, 'stickyfeature' )}>{__( 'Get more options with Otter Pro.', 'otter-blocks' )}</ExternalLink>}
 					variant="upsell" instructions={undefined}				/>
@@ -124,9 +126,9 @@ const ProFeatures = () => {
 const AlwaysActiveOption = (
 	{ className, clientId, addOption, removeOptions }
 	: {
-		className: string,
+		className: string | undefined,
 		clientId: string,
-		addOption: ( option: string, filterOption: string ) => void,
+		addOption: ( option: string | undefined, filterOption: string ) => void,
 		removeOptions: ( filtersOption: string[]) => void
 	}
 ) => {
@@ -143,9 +145,11 @@ const AlwaysActiveOption = (
 	}, []);
 
 	const isActive = className?.includes( FILTER_OPTIONS.float );
+	const isBanner = className?.includes( FILTER_OPTIONS.bannerMode );
 
 	const [ width, setWidth ] = useState( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.width ) )?.split( '-' )?.pop() );
 	const [ offset, setOffset ] = useState( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.sideOffset ) )?.split( '-' )?.pop() );
+	const [ bannerGap, setBannerGap ] = useState( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.bannerGap ) )?.split( '-' )?.pop() );
 
 	useEffect( () => {
 		if ( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.width ) )?.split( '-' )?.pop() !== width ) {
@@ -154,7 +158,14 @@ const AlwaysActiveOption = (
 		if ( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.sideOffset ) )?.split( '-' )?.pop() !== offset ) {
 			addOption( `o-sticky-opt-side-offset-${offset}`, FILTER_OPTIONS.sideOffset );
 		}
-	}, [ width, offset ]);
+		if ( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.bannerGap ) )?.split( '-' )?.pop() !== bannerGap ) {
+			if ( '' === bannerGap ) {
+				removeOptions([ FILTER_OPTIONS.bannerGap ]);
+			} else {
+				addOption( `${FILTER_OPTIONS.bannerGap}-${bannerGap}`, FILTER_OPTIONS.bannerGap );
+			}
+		}
+	}, [ width, offset, bannerGap ]);
 
 	return (
 		<div>
@@ -167,7 +178,7 @@ const AlwaysActiveOption = (
 						if ( value && 0 === activeFloatBlocks.length ) {
 							addOption( FILTER_OPTIONS.float, FILTER_OPTIONS.float ); // you can activate only if no other block is active
 						} else if ( false === value ) {
-							removeOptions([ FILTER_OPTIONS.float, FILTER_OPTIONS.width, FILTER_OPTIONS.sideOffset ]);
+							removeOptions([ FILTER_OPTIONS.float, FILTER_OPTIONS.width, FILTER_OPTIONS.sideOffset, FILTER_OPTIONS.bannerGap, FILTER_OPTIONS.bannerMode ]);
 						}
 					} }
 
@@ -241,6 +252,31 @@ const AlwaysActiveOption = (
 								value={ offset ?? '20px' }
 								onChange={ setOffset }
 							/>
+
+							{
+								className?.includes( 'o-sticky-pos-top' ) && (
+									<Fragment>
+										<ToggleControl
+											label={ __( 'Is Banner', 'otter-blocks' ) }
+											help={ __( 'Make the block to act like a banner.', 'otter-blocks' ) }
+											checked={ isBanner  }
+											onChange={ ( value ) => {
+												if ( value ) {
+													addOption( FILTER_OPTIONS.bannerMode, FILTER_OPTIONS.bannerMode );
+												} else if ( false === value ) {
+													removeOptions([ FILTER_OPTIONS.bannerMode, FILTER_OPTIONS.bannerGap ]);
+												}
+											} }
+										/>
+										<UnitContol
+											label={ __( 'Banner Gap', 'otter-blocks' ) }
+											value={ bannerGap }
+											onChange={ setBannerGap }
+										/>
+										<p style={{ fontSize: '12px', color: 'rgb(117, 117, 117)', marginTop: 'calc(8px)' }}>{__( 'Set the size of space between the top of your page and the header. Use this to make space for the banner. If empty, it will automatically configure.', 'otter-blocks' )}</p>
+									</Fragment>
+								)
+							}
 						</Fragment>
 					)
 				}
@@ -274,7 +310,7 @@ const Edit = ({
 
 	const limit = ( attributes?.className?.split( ' ' ) as string[]).filter( c => c.includes( 'o-sticky-scope' ) ).pop() || 'o-sticky-scope-main-area';
 
-	const addOptions = ( options: string[], filtersOption: string[]) => {
+	const addOptions = ( options: ( string | undefined )[], filtersOption: string[]) => {
 
 		const classes = new Set( ( attributes?.className?.split( ' ' ) as string[])?.filter(
 			c => ! filtersOption.some(
@@ -290,7 +326,7 @@ const Edit = ({
 		setAttributes({ className: Array.from( classes ).filter( x => 'string' === typeof x  && x ).join( ' ' ) });
 	};
 
-	const addOption = ( option: string, filterOption = FILTER_OPTIONS.position ) => {
+	const addOption = ( option: string | undefined, filterOption = FILTER_OPTIONS.position ) => {
 		addOptions([ option ], [ filterOption ]);
 	};
 
