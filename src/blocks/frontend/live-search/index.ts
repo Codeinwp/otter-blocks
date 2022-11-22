@@ -49,15 +49,16 @@ domReady( () => {
 	};
 
 	const handleLiveSearch = ( element: Element ) => {
+		const form = element.querySelector( 'form' );
 		const block = element.querySelector( '.wp-block-search__inside-wrapper' );
 		const inputElement = element.querySelector( 'input.wp-block-search__input' );
+
+		// Create this variable to cache the results
+		let resultsContainer: ResultsContainer;
 
 		const { postTypes } = ( element as HTMLElement ).dataset;
 		let postTypesArray: Array<string> = [];
 		postTypes && ( postTypesArray = JSON.parse( postTypes ) );
-
-		// Create this variable to cache the results
-		let resultsContainer: ResultsContainer;
 
 		inputElement?.setAttribute( 'autocomplete', 'off' );
 
@@ -75,6 +76,17 @@ domReady( () => {
 				updateResults( searchValue, block, results );
 			});
 		}, 300 );
+
+		// When pressing the Enter key, the default behavior should pe prevented
+		// so that the page can get redirected to the highlighted result
+		form?.addEventListener( 'keypress', ( event: KeyboardEvent ) => {
+			if ( 'Enter' === event.key && resultsContainer ) {
+				event.preventDefault();
+
+				const highlighted = resultsContainer.querySelector( '.highlight > a' );
+				window.location = ( highlighted as HTMLAnchorElement )?.href as unknown as Location;
+			}
+		});
 
 		// Fires when the input value is changed
 		inputElement?.addEventListener( 'input', ( event: Event ) => {
@@ -94,14 +106,19 @@ domReady( () => {
 
 		// Open the results container when the input is focused
 		inputElement?.addEventListener( 'focusin', () => {
-			if ( 0 !== ( inputElement as HTMLInputElement ).value.length ) {
+			const searchValue = ( inputElement as HTMLInputElement ).value;
+			if ( 0 !== searchValue.length ) {
 				resultsContainer = createResultsContainer( resultsContainer, block, inputElement as HTMLElement );
+
+				if ( resultsContainer && ! resultsContainer.querySelector( '.search-results > :not(.spinner-container):not(.no-results)' ) ) {
+					debouncedRequest( ( inputElement as HTMLInputElement ).value );
+				}
 			}
 		});
 
-		inputElement?.addEventListener( 'keyup', ( event: Event ) => {
+		inputElement?.addEventListener( 'keydown', ( event: Event ) => {
 			const keyEvent = event as KeyboardEvent;
-			if ( 'ArrowDown' !== keyEvent.key && 'ArrowUp' !== keyEvent.key ) {
+			if ( 'ArrowDown' !== keyEvent.key && 'ArrowUp' !== keyEvent.key && 'Enter' !== keyEvent.key ) {
 				return;
 			}
 
@@ -191,15 +208,21 @@ domReady( () => {
 
 		results.forEach( ({ link, title }, index ) => {
 			const option = document.createElement( 'div' );
-			option.classList.add( `${CONTAINER_CLASS}__row` );
+			const optionLink = document.createElement( 'a' );
 
+			option.classList.add( `${CONTAINER_CLASS}__row` );
 			( 0 === index ) && option.classList.add( 'highlight' );
 
-			const optionLink = document.createElement( 'a' );
 			optionLink.href = link;
 			optionLink.innerText = title;
 
 			option.appendChild( optionLink );
+			option.addEventListener( 'mouseover', () => {
+				const highlighted = container.querySelector( '.highlight' );
+				highlighted?.classList.remove( 'highlight' );
+				option.classList.add( 'highlight' );
+			});
+
 			container?.appendChild( option );
 		});
 	};
@@ -210,7 +233,7 @@ domReady( () => {
 		}
 
 		const loading = document.createElement( 'div' );
-		loading.classList.add( 'spinner-container', 'search-results__row' );
+		loading.classList.add( `${CONTAINER_CLASS}__row`, 'spinner-container' );
 		loading.innerHTML = loadingIcon;
 
 		container.innerHTML = '';
@@ -223,7 +246,7 @@ domReady( () => {
 			return;
 		}
 
-		const loading = container?.querySelector( '.spinner-container' );
+		const loading = container.querySelector( '.spinner-container' );
 		loading && container.removeChild( loading as Node );
 	};
 });
