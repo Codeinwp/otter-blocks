@@ -46,8 +46,7 @@ class Stripe_Server {
 	 * Initialize the class
 	 */
 	public function init() {
-		$this->api_key = get_option( 'themeisle_stripe_api_key' );
-		$this->stripe  = new Stripe_API();
+		$this->stripe = new Stripe_API();
 		
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
 	}

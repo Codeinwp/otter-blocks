@@ -34,6 +34,10 @@ class Stripe_API {
 	 * @access public
 	 */
 	public function __construct() {
+		if ( ! self::has_keys() ) {
+			return;
+		}
+
 		$api_key      = get_option( 'themeisle_stripe_api_key' );
 		$this->stripe = new StripeClient( $api_key );
 
@@ -139,6 +143,8 @@ class Stripe_API {
 		} catch ( \Stripe\Exception\ApiConnectionException $e ) {
 			$response = $this->build_error_response( $e );
 		} catch ( \Stripe\Exception\ApiErrorException $e ) {
+			$response = $this->build_error_response( $e );
+		} catch ( \Stripe\Exception\InvalidArgumentException $e ) {
 			$response = $this->build_error_response( $e );
 		} catch ( Exception $e ) {
 			$response = $this->build_error_response( $e );
