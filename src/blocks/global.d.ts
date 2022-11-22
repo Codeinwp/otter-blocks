@@ -97,6 +97,13 @@ declare global {
 			Notice?: ( props: { notice: any, variant: string, instructions: 'string'}) => JSX.Element
 			useInspectorSlot?: ( name: string ) => any
 			OtterControlTools?: ( props: any ) => any
+		},
+		liveSearchData: {
+			nonce: string,
+			restUrl: string,
+			strings: {
+				noResults: string
+			}
 		}
 	}
 }

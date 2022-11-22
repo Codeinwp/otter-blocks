@@ -20,8 +20,7 @@ type ResultsContainer = Element | null | undefined;
 domReady( () => {
 	const CONTAINER_CLASS = 'search-results';
 
-	// @ts-ignore
-	const { nonce, restUrl, strings } = liveSearchData;
+	const { nonce, restUrl, strings } = window.liveSearchData;
 	const liveSearch = document.querySelectorAll( '.o-live-search' );
 	const loadingIcon = '<svg class="spinner" viewBox="0 0 100 100" width="16" height="16" xmlns="http://www.w3.org/2000/svg" focusable="false" style="width: calc(16px); height: calc(16px);"><circle cx="50" cy="50" r="50" vector-effect="non-scaling-stroke" class="main-circle"></circle><path d="m 50 0 a 50 50 0 0 1 50 50" vector-effect="non-scaling-stroke" class="moving-circle"></path></svg>';
 
@@ -35,10 +34,7 @@ domReady( () => {
 			}
 		};
 
-		let params = `s=${search}`;
-		postTypes.forEach( type => {
-			params = `${params}&post_types[]=${type}`;
-		});
+		const params = postTypes.reduce( ( p, type ) => p + `&post_types[]=${type}`, `s=${search}` );
 
 		return await fetch( `${restUrl}?${params}`, options ).then( ( response ) => {
 			return response.json();
@@ -57,8 +53,7 @@ domReady( () => {
 		let resultsContainer: ResultsContainer;
 
 		const { postTypes } = ( element as HTMLElement ).dataset;
-		let postTypesArray: Array<string> = [];
-		postTypes && ( postTypesArray = JSON.parse( postTypes ) );
+		const postTypesArray: Array<string> = postTypes ? JSON.parse( postTypes ) : [];
 
 		inputElement?.setAttribute( 'autocomplete', 'off' );
 
@@ -247,6 +242,8 @@ domReady( () => {
 		}
 
 		const loading = container.querySelector( '.spinner-container' );
-		loading && container.removeChild( loading as Node );
+		if ( loading ) {
+			container.removeChild( loading as Node );
+		}
 	};
 });
