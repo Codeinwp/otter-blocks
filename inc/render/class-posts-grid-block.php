@@ -7,8 +7,6 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
-use WP_Post;
-use WP_Query;
 
 /**
  * Class Posts_Grid_Block
