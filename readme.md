@@ -208,6 +208,13 @@ You can check Otter documentation [here](https://docs.themeisle.com/article/1478
 
 ## Changelog ##
 
+##### [Version 2.1.5](https://github.com/Codeinwp/otter-blocks/compare/v2.1.4...v2.1.5) (2022-11-23)
+
+- Fix Black Friday deal notice not dismissing; sorry for that.
+
+
+
+
 ##### [Version 2.1.4](https://github.com/Codeinwp/otter-blocks/compare/v2.1.3...v2.1.4) (2022-11-21)
 
 - Advanced Heading Enhancements
