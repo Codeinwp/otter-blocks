@@ -312,6 +312,21 @@ const Inspector = ({
 							checked={ attributes.enableFeaturedPost }
 							onChange={ enableFeaturedPost => setAttributes({ enableFeaturedPost })}
 						/>
+
+						{
+							attributes.enableFeaturedPost && (
+								<SelectControl
+									label={ __( 'Featured Post', 'otter-blocks' ) }
+									value={ attributes.featuredPostOrder }
+									options={ [
+										{ label: __( 'Latest Post', 'otter-blocks' ), value: 'none' },
+										{ label: __( 'Sticky Post', 'otter-blocks' ), value: 'sticky-first' }
+									] }
+									onChange={ value => setAttributes({ featuredPostOrder: 'none' !== value ? value : undefined }) }
+								/>
+							)
+						}
+
 					</PanelBody>
 
 					<PanelBody
