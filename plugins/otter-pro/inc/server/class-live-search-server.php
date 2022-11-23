@@ -2,10 +2,10 @@
 /**
  * Live Search server logic.
  *
- * @package ThemeIsle\GutenbergBlocks\Server
+ * @package ThemeIsle\OtterPro\Server
  */
 
-namespace ThemeIsle\GutenbergBlocks\Server;
+namespace ThemeIsle\OtterPro\Server;
 
 use WP_Query;
 use WP_REST_Request;
@@ -20,7 +20,7 @@ class Live_Search_Server {
 	/**
 	 * The main instance var.
 	 *
-	 * @var Form_Server
+	 * @var Live_Search_Server
 	 * @since 2.0.0
 	 */
 	public static $instance = null;
@@ -28,7 +28,7 @@ class Live_Search_Server {
 	/**
 	 * Rest route namespace.
 	 *
-	 * @var Form_Server
+	 * @var Live_Search_Server
 	 * @since 2.0.0
 	 */
 	public $namespace = 'otter/';
@@ -36,7 +36,7 @@ class Live_Search_Server {
 	/**
 	 * Rest route version.
 	 *
-	 * @var Form_Server
+	 * @var Live_Search_Server
 	 * @since 2.0.0
 	 */
 	public $version = 'v1';

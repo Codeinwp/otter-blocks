@@ -3,12 +3,13 @@
  */
 
 // @ts-ignore
-import { debounce } from 'lodash';
+import { debounce, merge } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { domReady } from '../../helpers/frontend-helper-functions.js';
+import { rgb2hsl } from '../../helpers/helper-functions';
 
 type ResultsEntry = {
 	link: string,
@@ -49,13 +50,17 @@ domReady( () => {
 		const block = element.querySelector( '.wp-block-search__inside-wrapper' );
 		const inputElement = element.querySelector( 'input.wp-block-search__input' );
 
+		if ( ! inputElement ) {
+			return;
+		}
+
 		// Create this variable to cache the results
 		let resultsContainer: ResultsContainer;
 
 		const { postTypes } = ( element as HTMLElement ).dataset;
 		const postTypesArray: Array<string> = postTypes ? JSON.parse( postTypes ) : [];
 
-		inputElement?.setAttribute( 'autocomplete', 'off' );
+		inputElement.setAttribute( 'autocomplete', 'off' );
 
 		const debouncedRequest = debounce( ( searchValue: string ) => {
 			addLoadingIcon( resultsContainer );
@@ -68,7 +73,7 @@ domReady( () => {
 				}
 
 				const { results } = r;
-				updateResults( searchValue, block, results );
+				updateResults( searchValue, block, results, inputElement );
 			});
 		}, 300 );
 
@@ -84,7 +89,7 @@ domReady( () => {
 		});
 
 		// Fires when the input value is changed
-		inputElement?.addEventListener( 'input', ( event: Event ) => {
+		inputElement.addEventListener( 'input', ( event: Event ) => {
 			const searchValue = ( event.target as HTMLInputElement )?.value;
 
 			if ( 0 === searchValue.length ) {
@@ -100,7 +105,7 @@ domReady( () => {
 		});
 
 		// Open the results container when the input is focused
-		inputElement?.addEventListener( 'focusin', () => {
+		inputElement.addEventListener( 'focusin', () => {
 			const searchValue = ( inputElement as HTMLInputElement ).value;
 			if ( 0 !== searchValue.length ) {
 				resultsContainer = createResultsContainer( resultsContainer, block, inputElement as HTMLElement );
@@ -111,8 +116,14 @@ domReady( () => {
 			}
 		});
 
-		inputElement?.addEventListener( 'keydown', ( event: Event ) => {
+		inputElement.addEventListener( 'keydown', ( event: Event ) => {
+			if ( ! resultsContainer ) {
+				return;
+			}
+
 			const keyEvent = event as KeyboardEvent;
+			const containerDimensions = resultsContainer.getBoundingClientRect();
+
 			if ( 'ArrowDown' !== keyEvent.key && 'ArrowUp' !== keyEvent.key && 'Enter' !== keyEvent.key ) {
 				return;
 			}
@@ -123,14 +134,25 @@ domReady( () => {
 			}
 
 			if ( 'ArrowDown' === keyEvent.key && highlighted.nextElementSibling ) {
-				highlighted.classList.remove( 'highlight' );
-				highlighted.nextElementSibling.classList.add( 'highlight' );
+				removeHighlight( highlighted );
+				highlight( highlighted.nextElementSibling as HTMLElement, inputElement );
+
+				const dimensions = highlighted.nextElementSibling.getBoundingClientRect();
+				if ( dimensions.bottom > containerDimensions.bottom ) {
+					resultsContainer.scrollBy( 0, dimensions.height );
+				}
+
 				return;
 			}
 
 			if ( 'ArrowUp' === keyEvent.key && highlighted.previousElementSibling ) {
-				highlighted.classList.remove( 'highlight' );
-				highlighted.previousElementSibling.classList.add( 'highlight' );
+				removeHighlight( highlighted );
+				highlight( highlighted.previousElementSibling as HTMLElement, inputElement );
+
+				const dimensions = highlighted.previousElementSibling.getBoundingClientRect();
+				if ( dimensions.top > containerDimensions.top ) {
+					resultsContainer.scrollBy( 0, -dimensions.height );
+				}
 			}
 		});
 
@@ -152,15 +174,19 @@ domReady( () => {
 			return resultsContainer ;
 		}
 
-		const { height, fontSize } = getComputedStyle( inputElement );
+		const { height, fontSize, backgroundColor, borderRadius, color } = getComputedStyle( inputElement );
 		const parentStyle = inputElement.parentElement ? getComputedStyle( inputElement.parentElement ) : null;
 
 		const container = document.createElement( 'div' );
 
 		container.classList.add( CONTAINER_CLASS );
+
 		container.style.width = inputElement.offsetWidth + 'px';
 		container.style.top = `calc( ${height} + ${parentStyle?.paddingTop} + ${parentStyle?.paddingBottom} + ${parentStyle?.borderBottomWidth} )`;
 		container.style.fontSize = `calc( ${fontSize} - 4px )`;
+		container.style.backgroundColor = backgroundColor;
+		container.style.borderRadius = borderRadius;
+		container.style.color = color;
 
 		addLoadingIcon( container );
 		block?.appendChild( container );
@@ -182,7 +208,7 @@ domReady( () => {
 		return null;
 	};
 
-	const updateResults = ( searchValue: string, block: Element | null, results: Array<ResultsEntry> ) => {
+	const updateResults = ( searchValue: string, block: Element | null, results: Array<ResultsEntry>, inputElement: Element ) => {
 		const container = block?.querySelector( `.${CONTAINER_CLASS}` );
 		if ( ! container ) {
 			return;
@@ -206,7 +232,7 @@ domReady( () => {
 			const optionLink = document.createElement( 'a' );
 
 			option.classList.add( `${CONTAINER_CLASS}__row` );
-			( 0 === index ) && option.classList.add( 'highlight' );
+			( 0 === index ) && highlight( option, inputElement );
 
 			optionLink.href = link;
 			optionLink.innerText = title;
@@ -214,8 +240,11 @@ domReady( () => {
 			option.appendChild( optionLink );
 			option.addEventListener( 'mouseover', () => {
 				const highlighted = container.querySelector( '.highlight' );
-				highlighted?.classList.remove( 'highlight' );
-				option.classList.add( 'highlight' );
+				if ( highlighted ) {
+					removeHighlight( highlighted );
+				}
+
+				highlight( option, inputElement );
 			});
 
 			container?.appendChild( option );
@@ -245,5 +274,20 @@ domReady( () => {
 		if ( loading ) {
 			container.removeChild( loading as Node );
 		}
+	};
+
+	const highlight = ( element: HTMLElement, input: Element ) => {
+		element.classList.add( 'highlight' );
+
+		const inputBackground = getComputedStyle( input ).backgroundColor;
+		const hsl = rgb2hsl( inputBackground );
+		const dark = 50 >= hsl[2];
+
+		element.style.backgroundColor = dark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(49, 50, 51, 0.12)';
+	};
+
+	const removeHighlight = ( element: Element ) => {
+		element.classList.remove( 'highlight' );
+		element.removeAttribute( 'style' );
 	};
 });

@@ -7,16 +7,15 @@
 		position: absolute;
 		z-index: 5;
 
-		background-color: var( --formfieldbgcolor, #fff );
-		border-radius: var( --formfieldborderradius, 1px );
 		border: 1px solid rgba(49, 50, 51, 0.12);
-
 		margin-top: 10px;
 		padding: 15px 0;
+		max-height: 500px;
+		overflow: scroll;
 
 		&__row {
-			&.highlight {
-				background-color: rgba(49, 50, 51, 0.12);
+			> * {
+				color: inherit;
 			}
 
 			a, &.no-results {

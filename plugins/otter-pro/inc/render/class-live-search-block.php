@@ -2,10 +2,10 @@
 /**
  * Live Search variant.
  *
- * @package ThemeIsle\GutenbergBlocks\Render
+ * @package ThemeIsle\OtterPro\Render
  */
 
-namespace ThemeIsle\GutenbergBlocks\Render;
+namespace ThemeIsle\OtterPro\Render;
 
 /**
  * Class Live_Search

@@ -48,7 +48,7 @@ class Main {
 	 * Autoload classes.
 	 *
 	 * @param string $classnames Block Classnames.
-	 * 
+	 *
 	 * @since   2.0.1
 	 * @access  public
 	 */
@@ -65,6 +65,8 @@ class Main {
 			'\ThemeIsle\OtterPro\Server\Dashboard_Server',
 			'\ThemeIsle\OtterPro\Server\Filter_Blocks_Server',
 			'\ThemeIsle\OtterPro\Server\Posts_ACF_Server',
+			'\ThemeIsle\OtterPro\Render\Live_Search',
+			'\ThemeIsle\OtterPro\Server\Live_Search_Server',
 		);
 
 		$classnames = array_merge( $classnames, $classes );
@@ -76,7 +78,7 @@ class Main {
 	 * Register Blocks.
 	 *
 	 * @param string $blocks Blocks List.
-	 * 
+	 *
 	 * @since   2.0.1
 	 * @access  public
 	 */
@@ -109,7 +111,7 @@ class Main {
 	 * Register Dynamic Blocks.
 	 *
 	 * @param string $dynamic_blocks Dynamic Blocks.
-	 * 
+	 *
 	 * @since   2.0.1
 	 * @access  public
 	 */
@@ -140,7 +142,7 @@ class Main {
 	 * Register Blocks CSS.
 	 *
 	 * @param string $blocks Blocks List.
-	 * 
+	 *
 	 * @since   2.0.1
 	 * @access  public
 	 */
