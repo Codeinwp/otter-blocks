@@ -7,7 +7,6 @@
 
 namespace ThemeIsle\GutenbergBlocks\Render;
 
-
 /**
  * Class Posts_Grid_Block
  */
