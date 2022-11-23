@@ -200,7 +200,7 @@ const Inspector = ({
 								>
 
 									<FontSizePicker
-										value={ _px( responsiveGetAttributes([ attributes.fontSize, attributes.fontSizeTablet, attributes.fontSizeMobile  ]) ) ?? '20px'}
+										value={ _px( responsiveGetAttributes([ attributes.fontSize, attributes.fontSizeTablet, attributes.fontSizeMobile  ]) ) }
 										onChange={ value => responsiveSetAttributes( value, [ 'fontSize', 'fontSizeTablet', 'fontSizeMobile' ]) }
 										fontSizes={
 											[

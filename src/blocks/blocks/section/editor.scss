@@ -42,15 +42,10 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	.wp-block-themeisle-blocks-advanced-column {
 		--background: transparent;
 		--background-color-hover: var( --background );
-		--text-color: var( --content-color, inherit );
-		--link-color: inherit;
-		--text-color-hover: var( --content-color-hover, inherit );
 
-		color: var( --text-color );
 		background: var( --background );
 
 		&:hover {
-			color: var( --text-color-hover );
 			background: var( --background-color-hover );
 		}
 
@@ -58,7 +53,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 			position: relative;
 		}
 	
-		a {
+		a:not( .wp-block-button__link ) {
 			color: var( --link-color );
 		}
 

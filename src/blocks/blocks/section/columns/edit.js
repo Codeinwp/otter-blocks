@@ -53,6 +53,7 @@ import {
 	blockInit,
 	getDefaultValueByField
 } from '../../../helpers/block-utility.js';
+import { _cssBlock } from '../../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -311,9 +312,7 @@ const Edit = ({
 		...borderStyle,
 		...borderRadiusStyle,
 		...boxShadowStyle,
-		'--content-color': attributes.color,
-		'--link-color': attributes.linkColor,
-		'--content-color-hover': attributes.colorHover
+		'--link-color': attributes.linkColor
 	};
 
 	if ( 'color' === attributes.backgroundOverlayType ) {
@@ -411,6 +410,19 @@ const Edit = ({
 
 	return (
 		<Fragment>
+			<style>
+				{
+					`#block-${ clientId } ` + _cssBlock([
+						[ 'color', attributes.color ]
+					])
+				}
+				{
+					`#block-${ clientId }:hover ` + _cssBlock([
+						[ 'color', attributes.colorHover ]
+					])
+				}
+			</style>
+
 			<Controls
 				attributes={ attributes }
 				setAttributes={ setAttributes }
