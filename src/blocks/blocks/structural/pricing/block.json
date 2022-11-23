@@ -6,5 +6,8 @@
 	"category": "themeisle-blocks",
 	"description": "Pricing tables are a critical part in showcasing your services, prices and overall offerings. Powered by Otter.",
 	"keywords": [ "pricing", "table", "money" ],
-	"textdomain": "otter-blocks"
+	"textdomain": "otter-blocks",
+	"supports": {
+		"inserter": false
+	}
 }
