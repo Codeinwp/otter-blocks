@@ -2,11 +2,12 @@
 	"$schema": "https://schemas.wp.org/trunk/block.json",
 	"apiVersion": 2,
 	"name": "themeisle-blocks/form-nonce",
-	"title": "Nonce Field",
+	"title": "CSRF Protection",
 	"category": "themeisle-blocks",
 	"description": "Protect the form from CSRF.",
 	"keywords": [ "protection", "csrf", "field" ],
 	"textdomain": "otter-blocks",
+	"ancestor": [ "themeisle-blocks/form" ],
 	"attributes": {
 		"formId": {
 			"type": "string"
