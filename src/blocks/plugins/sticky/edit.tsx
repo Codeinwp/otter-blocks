@@ -257,8 +257,8 @@ const AlwaysActiveOption = (
 								className?.includes( 'o-sticky-pos-top' ) && (
 									<Fragment>
 										<ToggleControl
-											label={ __( 'Is Banner', 'otter-blocks' ) }
-											help={ __( 'Make the block to act like a banner.', 'otter-blocks' ) }
+											label={ __( 'Prevent Header Obstruction', 'otter-blocks' ) }
+											help={ __( 'Add an extra space above the Header to fit the Sticky block.', 'otter-blocks' ) }
 											checked={ isBanner  }
 											onChange={ ( value ) => {
 												if ( value ) {
@@ -269,11 +269,11 @@ const AlwaysActiveOption = (
 											} }
 										/>
 										<UnitContol
-											label={ __( 'Banner Gap', 'otter-blocks' ) }
+											label={ __( 'Top to Header Gap', 'otter-blocks' ) }
 											value={ bannerGap }
 											onChange={ setBannerGap }
 										/>
-										<p style={{ fontSize: '12px', color: 'rgb(117, 117, 117)', marginTop: 'calc(8px)' }}>{__( 'Set the size of space between the top of your page and the header. Use this to make space for the banner. If empty, it will automatically configure.', 'otter-blocks' )}</p>
+										<p style={{ fontSize: '12px', color: 'rgb(117, 117, 117)', marginTop: 'calc(8px)' }}>{__( 'Set the size of space between the top of your page and the header. If empty, it will automatically configure.', 'otter-blocks' )}</p>
 									</Fragment>
 								)
 							}
