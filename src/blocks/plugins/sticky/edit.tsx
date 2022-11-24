@@ -225,11 +225,15 @@ const AlwaysActiveOption = (
 							<p>
 								{ __( 'The block is now in a floating state. Set the desired width. Please check the result in Preview.', 'otter-blocks' )}
 							</p>
+
 							<UnitContol
 								label={ __( 'Width', 'otter-blocks' ) }
 								value={ width ?? '100%' }
 								onChange={ setWidth }
 							/>
+
+							<p style={{ fontSize: '12px', color: 'rgb(117, 117, 117)', marginTop: 'calc(8px)' }}>{__( 'Set the width of the block.', 'otter-blocks' )}</p>
+
 							<SelectControl
 								label={ __( 'Side to stick', 'otter-blocks' ) }
 								value={ className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.side ) ) ?? 'o-sticky-side-left' }
@@ -247,11 +251,14 @@ const AlwaysActiveOption = (
 									addOption( 'o-sticky-side-left' === value ? undefined : value, FILTER_OPTIONS.side );
 								} }
 							/>
+
 							<UnitContol
 								label={ __( 'Side Offset', 'otter-blocks' ) }
 								value={ offset ?? '20px' }
 								onChange={ setOffset }
 							/>
+
+							<p style={{ fontSize: '12px', color: 'rgb(117, 117, 117)', marginTop: 'calc(8px)' }}>{__( 'Set the distance between the Sticky block and the chosen side.', 'otter-blocks' )}</p>
 
 							{
 								className?.includes( 'o-sticky-pos-top' ) && (

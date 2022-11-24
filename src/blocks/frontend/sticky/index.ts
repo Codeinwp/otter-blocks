@@ -400,20 +400,25 @@ class StickyRunner {
 			 * Aling on vertical axis
 			 */
 			if ( sticky.config.isFloatMode ) {
-				if (
-					! (
-						sticky.elem.classList.contains( 'alignfull' ) &&
-						sticky.displayWidth.includes( '%' ) &&
-						100 <= parseInt( sticky.displayWidth )
-					)
-				) {
+
+				let offset = sticky.sideOffset;
+
+				if ( sticky.elem.classList.contains( 'alignfull' ) && sticky.displayWidth.includes( '100%' )  ) {
+					offset = '';
+
+					// Execeptions
+					if ( 'neve_body' === document.body.id ) {
+						offset = offset = '0px';
+					}
+				}
+
+				if ( '' !== offset ) {
 					if ( 'left' === sticky.side ) {
 						cssStyling.push( `left: ${sticky.sideOffset}` );
 					} else {
 						cssStyling.push( `right: ${sticky.sideOffset}` );
 					}
 				}
-
 			} else {
 				cssStyling.push( `left: ${sticky.elemLeftPositionInPage}px` );
 			}

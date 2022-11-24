@@ -1,5 +1,7 @@
 # Sticky Blocks
 
+> An endless source of issues.
+
 ## Introduction
 
 Make any Guteberg block a sticky block.
