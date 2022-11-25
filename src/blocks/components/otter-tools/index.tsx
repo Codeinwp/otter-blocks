@@ -31,9 +31,9 @@ const { Fill, Slot } = createSlotFill( 'OtterControlTools' );
 
 export const OtterControlTools = ({ children, order }) => {
 	return <Fill >
-		<Fragment order={ order ?? 99 }>
+		<div key={order} order={ order ?? 99 }>
 			{ children }
-		</Fragment>
+		</div>
 	</Fill>;
 };
 
