@@ -208,7 +208,7 @@ const Inspector = ({
 					value={ attributes.height }
 					onChange={ onHeightChange }
 					step={ 0.1 }
-					min={ 0 }
+					min={ 5 }
 					max={ 100 }
 				/>
 

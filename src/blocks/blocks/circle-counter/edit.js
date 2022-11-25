@@ -154,7 +154,7 @@ const CircularProgressBarBlock = ({
 						height: attributes.height,
 						width: attributes.height
 					} }
-					minHeight={ 0 }
+					minHeight={ 20 }
 					maxHeight={ 240 }
 					enable={ {
 						top: false,
