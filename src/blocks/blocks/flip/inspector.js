@@ -200,7 +200,6 @@ const Inspector = ({
 													value={ attributes.frontMedia }
 													onSelect={
 														value => {
-															console.log( value );
 															setAttributes({
 																frontMedia: pick( value, [ 'id', 'alt', 'url' ]),
 																frontMediaHeight: _px( value?.sizes?.medium.height ),

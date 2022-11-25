@@ -163,7 +163,7 @@ jQuery( document ).ready( function( $ ) {
 		);
 	};
 
-	wp.media.view.Modal.prototype.on( 'open', function() {
+	wp.media.view.Modal.prototype.on( 'open', () => {
 		if ( ! activeFrame ) {
 			return false;
 		}
@@ -181,7 +181,7 @@ jQuery( document ).ready( function( $ ) {
 	$( document ).on(
 		'click',
 		'.media-router button.media-menu-item',
-		function() {
+		() => {
 			if ( ! activeFrame ) {
 				return;
 			}
