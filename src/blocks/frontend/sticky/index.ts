@@ -637,7 +637,6 @@ class StickyRunner {
 				e.preventDefault();
 				sticky.status = 'hidden';
 				sticky.elem.classList.add( 'o-is-close' );
-				console.log( sticky );
 				if ( sticky.config.fitInHeader ) {
 					document.body.style.marginTop = '';
 				}
@@ -696,7 +695,6 @@ domReady( () => {
 					styleSheet.innerText = styles;
 					styleSheet.id = 'o-stycky-css-gen';
 					document.head.appendChild( styleSheet );
-					console.log( styleSheet );
 					hasStyles = true;
 				}
 
