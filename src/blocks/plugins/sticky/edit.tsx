@@ -46,8 +46,8 @@ const FILTER_OPTIONS = {
 	width: 'o-sticky-width',
 	side: 'o-sticky-side',
 	sideOffset: 'o-sticky-opt-side-offset',
-	bannerMode: 'o-sticky-banner-mode',
-	bannerGap: 'o-sticky-banner-gap'
+	fitInHeader: 'o-sticky-header-space',
+	headerGap: 'o-sticky-header-gap'
 };
 
 const ProFeatures = () => {
@@ -145,11 +145,11 @@ const AlwaysActiveOption = (
 	}, []);
 
 	const isActive = className?.includes( FILTER_OPTIONS.float );
-	const isBanner = className?.includes( FILTER_OPTIONS.bannerMode );
+	const isBanner = className?.includes( FILTER_OPTIONS.fitInHeader );
 
 	const [ width, setWidth ] = useState( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.width ) )?.split( '-' )?.pop() );
 	const [ offset, setOffset ] = useState( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.sideOffset ) )?.split( '-' )?.pop() );
-	const [ bannerGap, setBannerGap ] = useState( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.bannerGap ) )?.split( '-' )?.pop() );
+	const [ bannerGap, setBannerGap ] = useState( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.headerGap ) )?.split( '-' )?.pop() );
 
 	useEffect( () => {
 		if ( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.width ) )?.split( '-' )?.pop() !== width ) {
@@ -158,11 +158,11 @@ const AlwaysActiveOption = (
 		if ( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.sideOffset ) )?.split( '-' )?.pop() !== offset ) {
 			addOption( `o-sticky-opt-side-offset-${offset}`, FILTER_OPTIONS.sideOffset );
 		}
-		if ( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.bannerGap ) )?.split( '-' )?.pop() !== bannerGap ) {
+		if ( className?.split( ' ' )?.find( c => c.includes( FILTER_OPTIONS.headerGap ) )?.split( '-' )?.pop() !== bannerGap ) {
 			if ( '' === bannerGap ) {
-				removeOptions([ FILTER_OPTIONS.bannerGap ]);
+				removeOptions([ FILTER_OPTIONS.headerGap ]);
 			} else {
-				addOption( `${FILTER_OPTIONS.bannerGap}-${bannerGap}`, FILTER_OPTIONS.bannerGap );
+				addOption( `${FILTER_OPTIONS.headerGap}-${bannerGap}`, FILTER_OPTIONS.headerGap );
 			}
 		}
 	}, [ width, offset, bannerGap ]);
@@ -178,7 +178,7 @@ const AlwaysActiveOption = (
 						if ( value && 0 === activeFloatBlocks.length ) {
 							addOption( FILTER_OPTIONS.float, FILTER_OPTIONS.float ); // you can activate only if no other block is active
 						} else if ( false === value ) {
-							removeOptions([ FILTER_OPTIONS.float, FILTER_OPTIONS.width, FILTER_OPTIONS.sideOffset, FILTER_OPTIONS.bannerGap, FILTER_OPTIONS.bannerMode ]);
+							removeOptions([ FILTER_OPTIONS.float, FILTER_OPTIONS.width, FILTER_OPTIONS.sideOffset, FILTER_OPTIONS.headerGap, FILTER_OPTIONS.fitInHeader ]);
 						}
 					} }
 
@@ -269,18 +269,25 @@ const AlwaysActiveOption = (
 											checked={ isBanner  }
 											onChange={ ( value ) => {
 												if ( value ) {
-													addOption( FILTER_OPTIONS.bannerMode, FILTER_OPTIONS.bannerMode );
+													addOption( FILTER_OPTIONS.fitInHeader, FILTER_OPTIONS.fitInHeader );
 												} else if ( false === value ) {
-													removeOptions([ FILTER_OPTIONS.bannerMode, FILTER_OPTIONS.bannerGap ]);
+													removeOptions([ FILTER_OPTIONS.fitInHeader, FILTER_OPTIONS.headerGap ]);
 												}
 											} }
 										/>
-										<UnitContol
-											label={ __( 'Top to Header Gap', 'otter-blocks' ) }
-											value={ bannerGap }
-											onChange={ setBannerGap }
-										/>
-										<p style={{ fontSize: '12px', color: 'rgb(117, 117, 117)', marginTop: 'calc(8px)' }}>{__( 'Set the size of space between the top of your page and the header. If empty, it will automatically configure.', 'otter-blocks' )}</p>
+
+										{
+											isBanner && (
+												<Fragment>
+													<UnitContol
+														label={ __( 'Top to Header Gap', 'otter-blocks' ) }
+														value={ bannerGap }
+														onChange={ setBannerGap }
+													/>
+													<p style={{ fontSize: '12px', color: 'rgb(117, 117, 117)', marginTop: 'calc(8px)' }}>{__( 'Set the size of space between the top of your page and the header. If empty, it will automatically configure.', 'otter-blocks' )}</p>
+												</Fragment>
+											)
+										}
 									</Fragment>
 								)
 							}

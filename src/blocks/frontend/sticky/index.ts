@@ -82,8 +82,8 @@ type Config = {
 	width: string
 	sideOffset: string
 	side: 'left' | 'right'
-	isBannerMode: boolean
-	bannerGap: string
+	fitInHeader: boolean
+	headerGap: string
 }
 
 /**
@@ -111,13 +111,13 @@ const getConfigOptions = ( elem: Element ): Config => {
 			config.sideOffset = cssClass.split( '-' ).pop() as string;
 		} else if ( cssClass.includes( 'o-sticky-side-right' ) ) {
 			config.side = 'right';
-		} else if ( cssClass.includes( 'o-sticky-banner-mode' ) ) {
-			config.isBannerMode = true;
-		} else if ( cssClass.includes( 'o-sticky-banner-gap' ) ) {
-			config.bannerGap = cssClass.split( '-' ).pop() as string;
+		} else if ( cssClass.includes( 'o-sticky-header-space' ) ) {
+			config.fitInHeader = true;
+		} else if ( cssClass.includes( 'o-sticky-header-gap' ) ) {
+			config.headerGap = cssClass.split( '-' ).pop() as string;
 		}
 		return config;
-	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false, isFloatMode: false, width: '100%', sideOffset: '20px', side: 'left', isBannerMode: false, bannerGap: '' });
+	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false, isFloatMode: false, width: '100%', sideOffset: '20px', side: 'left', fitInHeader: false, headerGap: '' });
 };
 
 const positions = {
@@ -228,8 +228,8 @@ class StickyData {
 		this.stylingNode = document.createElement( 'style' );
 		document.head.appendChild( this.stylingNode );
 
-		if ( config.isBannerMode && 'top' === config.position ) {
-			document.body.style.marginTop = config.bannerGap ? config.bannerGap : this.height + 'px';
+		if ( config.fitInHeader && 'top' === config.position ) {
+			document.body.style.marginTop = config.headerGap ? config.headerGap : this.height + 'px';
 		}
 	}
 
@@ -637,6 +637,10 @@ class StickyRunner {
 				e.preventDefault();
 				sticky.status = 'hidden';
 				sticky.elem.classList.add( 'o-is-close' );
+				console.log( sticky );
+				if ( sticky.config.fitInHeader ) {
+					document.body.style.marginTop = '';
+				}
 			});
 		});
 	}
@@ -673,7 +677,7 @@ domReady( () => {
 			z-index: 9999;
 		}
 		.o-is-close {
-			display: none;
+			display: none !important;
 		}
 	`;
 
@@ -690,7 +694,9 @@ domReady( () => {
 				if ( ! hasStyles ) {
 					const styleSheet = document.createElement( 'style' );
 					styleSheet.innerText = styles;
+					styleSheet.id = 'o-stycky-css-gen';
 					document.head.appendChild( styleSheet );
+					console.log( styleSheet );
 					hasStyles = true;
 				}
 
