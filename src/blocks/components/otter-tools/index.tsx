@@ -26,6 +26,7 @@ import { addFilter } from '@wordpress/hooks';
  */
 import { otterIcon } from '../../helpers/icons';
 import { FeedbackModalComponent } from '../../plugins/feedback';
+import { tool } from '@wordpress/icons';
 
 const { Fill, Slot } = createSlotFill( 'OtterControlTools' );
 
@@ -48,7 +49,10 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 			setStatus( 'notSubmitted' );
 		};
 
+
 		if ( props.isSelected ) {
+			const isSupportedBlock = ( props.name?.startsWith( 'core/' ) || props.name?.startsWith( 'themeisle-blocks/' ) );
+
 			return (
 				<Fragment>
 					<BlockEdit { ...props } />
@@ -65,7 +69,7 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 										<ToolbarGroup>
 											<ToolbarDropdownMenu
 												label={__( 'Otter Tools', 'otter-blocks' )}
-												icon={ otterIcon }
+												icon={ isSupportedBlock ? otterIcon : tool  }
 											>
 												{
 													({ onClose }) => (
