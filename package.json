@@ -1,6 +1,6 @@
 {
 	"name": "otter-blocks",
-	"version": "2.1.1",
+	"version": "2.1.2",
 	"description": "Otter – Page Builder Blocks & Extensions for Gutenberg",
 	"scripts": {
 		"build": "npm-run-all --parallel prod:*",
