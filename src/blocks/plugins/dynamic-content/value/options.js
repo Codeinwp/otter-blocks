@@ -111,6 +111,16 @@ const options = {
 			}
 		]
 	},
+	'url': {
+		label: __( 'URL', 'otter-blocks' ),
+		options: [
+			{
+				label: __( 'URL Parameter', 'otter-blocks' ),
+				value: 'queryString',
+				isDisabled: ! Boolean( window.themeisleGutenberg.isProActive )
+			}
+		]
+	},
 	'misc': {
 		label: __( 'Miscellaneous', 'otter-blocks' ),
 		options: [

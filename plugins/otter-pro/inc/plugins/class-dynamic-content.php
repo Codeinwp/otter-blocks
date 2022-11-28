@@ -71,6 +71,10 @@ class Dynamic_Content {
 			return $this->get_loggedin_meta( $data );
 		}
 
+		if ( 'queryString' === $data['type'] ) {
+			return $this->get_query_string( $data );
+		}
+
 		return $value;
 	}
 
@@ -252,6 +256,61 @@ class Dynamic_Content {
 		}
 
 		return esc_html( $meta );
+	}
+
+	/**
+	 * Format String.
+	 *
+	 * @param string $string String.
+	 * @param string $format String Format Type.
+	 *
+	 * @return string
+	 */
+	public function format_string( $string, $format = 'default' ) {
+		$value = $string;
+
+		switch ( $format ) {
+			case 'capitalize':
+				$value = ucfirst( $string );
+				break;
+			case 'uppercase':
+				$value = strtoupper( $string );
+				break;
+			case 'lowercase':
+				$value = strtolower( $string );
+				break;
+			default:
+				$value = $string;
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Get Query String Value.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_query_string( $data ) {
+		$value  = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
+		$format = isset( $data['format'] ) ? esc_html( $data['format'] ) : 'default';
+		$url    = home_url( add_query_arg( null, null ) );
+
+		$url_components = wp_parse_url( $url );
+
+		if ( ! isset( $url_components['query'] ) ) {
+			return $value;
+		}
+
+		parse_str( $url_components['query'], $params );
+
+		if ( isset( $params[ $data['parameter'] ] ) && is_string( $params[ $data['parameter'] ] ) ) {
+			$value = $params[ $data['parameter'] ];
+		}
+
+		return esc_html( $this->format_string( $value, $format ) );
 	}
 
 	/**

@@ -59,6 +59,15 @@ const applyProContent = options => {
 					value: 'loggedInUserMeta'
 				}
 			]
+		},
+		'url': {
+			label: __( 'URL', 'otter-blocks' ),
+			options: [
+				{
+					label: __( 'URL Parameter', 'otter-blocks' ),
+					value: 'queryString'
+				}
+			]
 		}
 	};
 
@@ -83,7 +92,8 @@ const applySettingsPanel = options => {
 		'postMeta',
 		'acf',
 		'authorMeta',
-		'loggedInUserMeta'
+		'loggedInUserMeta',
+		'queryString'
 	];
 
 	options.push( ...hasSettingsPanel );

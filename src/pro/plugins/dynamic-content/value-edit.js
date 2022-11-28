@@ -267,6 +267,42 @@ const Edit = ({
 					<p>{ __( 'Type your own or select a pre-defined value. Press Enter to confirm.', 'otter-blocks' ) }</p>
 				</Fragment>
 			) }
+
+			{ ([ 'queryString' ].includes( attributes.type ) ) && (
+				<Fragment>
+					<TextControl
+						label={ __( 'Parameter', 'otter-blocks' ) }
+						placeholder={ __( 'A query string parameter from your URL, ie utm_source.', 'otter-blocks' ) }
+						type="text"
+						value={ attributes.parameter }
+						onChange={ parameter => changeAttributes({ parameter }) }
+					/>
+
+					<SelectControl
+						label={ __( 'Format', 'otter-blocks' ) }
+						value={ attributes.format || 'default' }
+						options={ [
+							{
+								label: __( 'Default', 'otter-blocks' ),
+								value: 'default'
+							},
+							{
+								label: __( 'Capitalize', 'otter-blocks' ),
+								value: 'capitalize'
+							},
+							{
+								label: __( 'Uppercase', 'otter-blocks' ),
+								value: 'uppercase'
+							},
+							{
+								label: __( 'Lowercase', 'otter-blocks' ),
+								value: 'lowercase'
+							}
+						] }
+						onChange={ format => changeAttributes({ format }) }
+					/>
+				</Fragment>
+			) }
 		</Fragment>
 	);
 };
