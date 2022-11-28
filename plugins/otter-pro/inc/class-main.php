@@ -58,15 +58,15 @@ class Main {
 			'\ThemeIsle\OtterPro\Plugins\Dynamic_Content',
 			'\ThemeIsle\OtterPro\Plugins\Fonts_Module',
 			'\ThemeIsle\OtterPro\Plugins\License',
+			'\ThemeIsle\OtterPro\Plugins\Live_Search',
 			'\ThemeIsle\OtterPro\Plugins\Options_Settings',
 			'\ThemeIsle\OtterPro\Plugins\Posts_ACF_Integration',
 			'\ThemeIsle\OtterPro\Plugins\Review_Woo_Integration',
 			'\ThemeIsle\OtterPro\Plugins\WooCommerce_Builder',
 			'\ThemeIsle\OtterPro\Server\Dashboard_Server',
 			'\ThemeIsle\OtterPro\Server\Filter_Blocks_Server',
-			'\ThemeIsle\OtterPro\Server\Posts_ACF_Server',
-			'\ThemeIsle\OtterPro\Render\Live_Search',
 			'\ThemeIsle\OtterPro\Server\Live_Search_Server',
+			'\ThemeIsle\OtterPro\Server\Posts_ACF_Server',
 		);
 
 		$classnames = array_merge( $classnames, $classes );

@@ -2,10 +2,10 @@
 /**
  * Live Search variant.
  *
- * @package ThemeIsle\OtterPro\Render
+ * @package ThemeIsle\OtterPro\Plugins
  */
 
-namespace ThemeIsle\OtterPro\Render;
+namespace ThemeIsle\OtterPro\Plugins;
 
 /**
  * Class Live_Search
