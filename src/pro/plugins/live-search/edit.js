@@ -10,6 +10,7 @@ import {
 import { InspectorControls } from '@wordpress/block-editor';
 import { Fragment } from '@wordpress/element';
 
+const { Notice } = window.otterComponents;
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 
 const Edit = ({
@@ -25,6 +26,27 @@ const Edit = ({
 		props.setAttributes({ postTypes: types });
 	};
 
+	const Notices = () => {
+		if ( Boolean( window.otterPro.isExpired ) ) {
+			return (
+				<Notice
+					notice={ __( 'Otter Pro license has expired.', 'otter-blocks' ) }
+					instructions={ __( 'You need to renew your Otter Pro license in order to continue using the live search feature.', 'otter-blocks' ) }
+				/>
+			);
+		}
+
+		if ( ! Boolean( window.otterPro.isActive ) ) {
+			return (
+				<Notice
+					notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
+					instructions={ __( 'You need to activate your Otter Pro license to use the live search feature.', 'otter-blocks' ) }
+					style={{ color: 'red' }}
+				/>
+			);
+		}
+	};
+
 	return (
 		<Fragment>
 			<InspectorControls>
@@ -32,20 +54,27 @@ const Edit = ({
 					title={ __( 'Live Search', 'otter-blocks' ) }
 					initialOpen={ false }
 				>
-					<ToggleControl
-						label={ __( 'Enable Live Search', 'otter-blocks' ) }
-						checked={ props.attributes.isLive }
-						onChange={ toggleLive }
-					/>
+					{ ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) &&
+						(
+							<>
+								<ToggleControl
+									label={ __( 'Enable Live Search', 'otter-blocks' ) }
+									checked={ props.attributes.isLive }
+									onChange={ toggleLive }
+								/>
 
-					<FormTokenField
-						label={ __( 'Search in', 'otter-blocks' ) }
-						value={ props.attributes.postTypes }
-						suggestions={ postTypes }
-						onChange={ types => onPostTypeChange( types ) }
-						__experimentalExpandOnFocus={ true }
-						__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
-					/>
+								<FormTokenField
+									label={ __( 'Search in', 'otter-blocks' ) }
+									value={ props.attributes.postTypes }
+									suggestions={ postTypes }
+									onChange={ types => onPostTypeChange( types ) }
+									__experimentalExpandOnFocus={ true }
+									__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
+								/>
+							</>
+						)
+					}
+					{ Notices() }
 				</PanelBody>
 			</InspectorControls>
 

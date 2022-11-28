@@ -43,17 +43,20 @@ const withLiveExtension = createHigherOrderComponent( BlockEdit => {
 	};
 }, 'withLiveExtension' );
 
-addFilter( 'blocks.registerBlockType', 'themeisle-gutenberg/live-search-attributes', addAttribute );
-addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/live-search-extension', withLiveExtension );
+if ( ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) ) {
+	addFilter( 'blocks.registerBlockType', 'themeisle-gutenberg/live-search-attributes', addAttribute );
 
-registerBlockVariation( 'core/search', {
-	name: 'themeisle-gutenberg/live-search',
-	title: __( 'Live Search', 'otter-blocks' ),
-	description: __( 'this is a temporary description.', 'otter-blocks' ),
-	category: 'themeisle-blocks',
-	attributes: {
-		buttonText: __( 'Search' ),
-		label: __( 'Search' ),
-		isLive: true
-	}
-});
+	registerBlockVariation( 'core/search', {
+		name: 'themeisle-gutenberg/live-search',
+		title: __( 'Live Search', 'otter-blocks' ),
+		description: __( 'this is a temporary description.', 'otter-blocks' ),
+		category: 'themeisle-blocks',
+		attributes: {
+			buttonText: __( 'Search' ),
+			label: __( 'Search' ),
+			isLive: true
+		}
+	});
+}
+
+addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/live-search-extension', withLiveExtension );

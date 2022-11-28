@@ -9,7 +9,7 @@ import { debounce, merge } from 'lodash';
  * Internal dependencies
  */
 import { domReady } from '../../helpers/frontend-helper-functions.js';
-import { rgb2hsl } from '../../helpers/helper-functions';
+import { rgb2hsl } from '../../helpers/frontend-helper-functions';
 
 type ResultsEntry = {
 	link: string,
@@ -37,12 +37,12 @@ domReady( () => {
 
 		const params = postTypes.reduce( ( p, type ) => p + `&post_types[]=${type}`, `s=${search}` );
 
-		return await fetch( `${restUrl}?${params}`, options ).then( ( response ) => {
-			return response.json();
-		}).catch( error => {
+		const response = await fetch( `${restUrl}?${params}`, options ).catch( error => {
 			console.error( error.message );
 			return error;
 		});
+
+		return response.json();
 	};
 
 	const handleLiveSearch = ( element: Element ) => {
@@ -69,6 +69,7 @@ domReady( () => {
 
 				if ( ! r.success ) {
 					console.error( r.message );
+					removeResultsContainer( block, resultsContainer, false );
 					return;
 				}
 
@@ -150,7 +151,7 @@ domReady( () => {
 				highlight( highlighted.previousElementSibling as HTMLElement, inputElement );
 
 				const dimensions = highlighted.previousElementSibling.getBoundingClientRect();
-				if ( dimensions.top > containerDimensions.top ) {
+				if ( dimensions.top < containerDimensions.top ) {
 					resultsContainer.scrollBy( 0, -dimensions.height );
 				}
 			}
@@ -277,13 +278,14 @@ domReady( () => {
 	};
 
 	const highlight = ( element: HTMLElement, input: Element ) => {
-		element.classList.add( 'highlight' );
 
+		// Determine the background color for a light/dark theme
 		const inputBackground = getComputedStyle( input ).backgroundColor;
-		const hsl = rgb2hsl( inputBackground );
-		const dark = 50 >= hsl[2];
+		const [ ,, lightness ] = rgb2hsl( inputBackground );
+		const isDark = 50 >= lightness;
 
-		element.style.backgroundColor = dark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(49, 50, 51, 0.12)';
+		element.classList.add( 'highlight' );
+		element.style.backgroundColor = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(49, 50, 51, 0.12)';
 	};
 
 	const removeHighlight = ( element: Element ) => {

@@ -16,6 +16,14 @@
 		}
 	}
 
+	&.is-outside-panel {
+		padding-left: 25px;
+		padding-right: 25px;
+		margin-left: 10px;
+		margin-right: 10px;
+		text-align: center;
+	}
+
 	.components-external-link {
 		display: flex;
 		flex-direction: row-reverse;

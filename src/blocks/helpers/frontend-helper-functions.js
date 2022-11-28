@@ -124,3 +124,47 @@ export const domReady = ( callback ) => {
 	// DOMContentLoaded has not fired yet, delay callback until then.
 	document.addEventListener( 'DOMContentLoaded', callback );
 };
+
+/**
+ * Converts HEX colors to HSL.
+ *
+ * @param color
+ * @param asArray
+ * @returns {string|array}
+ */
+export const rgb2hsl = ( color, asArray = true ) => {
+	const rgb = color.substring( 4, color.length - 1 )
+		.replace( / /g, '' )
+		.split( ',' );
+
+	const r = parseFloat( rgb[0]) / 255;
+	const g = parseFloat( rgb[1]) / 255;
+	const b = parseFloat( rgb[2]) / 255;
+
+	const max = Math.max( r, g, b );
+	const min = Math.min( r, g, b );
+
+	let h, s,
+		l = ( max + min ) / 2;
+
+	if ( max === min ) {
+		h = s = 0; // achromatic
+	} else {
+		const d = max - min;
+		s = 0.5 < l ? d / ( 2 - max - min ) : d / ( max + min );
+
+		switch ( max ) {
+		case r: h = ( g - b ) / d + ( g < b ? 6 : 0 ); break;
+		case g: h = ( b - r ) / d + 2; break;
+		case b: h = ( r - g ) / d + 4; break;
+		}
+
+		h /= 6;
+	}
+
+	if ( asArray ) {
+		return [ h * 360, s * 100, l * 100 ];
+	}
+
+	return `hsl( ${h * 360}, ${s * 100}, ${l * 100} )`;
+};
