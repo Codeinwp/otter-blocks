@@ -325,14 +325,13 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_country( $data ) {
-		$value      = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$location   = null;
-		$ip_address = sanitize_text_field( $_SERVER['REMOTE_ADDR'] ); // phpcs:ignore WordPressVIPMinimum.Variables.ServerVariables.UserControlledHeaders, WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__REMOTE_ADDR__
+		$value    = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
+		$location = null;
 
 		if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
-			$location = json_decode( wpcom_vip_file_get_contents( 'http://www.geoplugin.net/json.gp?ip=' . $ip_address ), true );
+			$location = json_decode( wpcom_vip_file_get_contents( 'http://www.geoplugin.net/json.gp' ), true );
 		} else {
-			$location = json_decode( file_get_contents( 'http://www.geoplugin.net/json.gp?ip=' . $ip_address ), true ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown, WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsRemoteFile
+			$location = json_decode( file_get_contents( 'http://www.geoplugin.net/json.gp' ), true ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown, WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsRemoteFile
 		}
 
 		if ( isset( $location['geoplugin_countryName'] ) && is_string( $location['geoplugin_countryName'] ) ) {

@@ -506,13 +506,12 @@ class Block_Conditions {
 	 * @access public
 	 */
 	public function has_country( $condition ) {
-		$location   = null;
-		$ip_address = sanitize_text_field( $_SERVER['REMOTE_ADDR'] ); // phpcs:ignore WordPressVIPMinimum.Variables.ServerVariables.UserControlledHeaders, WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__REMOTE_ADDR__
+		$location = null;
 
 		if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
-			$location = json_decode( wpcom_vip_file_get_contents( 'http://www.geoplugin.net/json.gp?ip=' . $ip_address ), true );
+			$location = json_decode( wpcom_vip_file_get_contents( 'http://www.geoplugin.net/json.gp' ), true );
 		} else {
-			$location = json_decode( file_get_contents( 'http://www.geoplugin.net/json.gp?ip=' . $ip_address ), true ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown, WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsRemoteFile
+			$location = json_decode( file_get_contents( 'http://www.geoplugin.net/json.gp' ), true ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown, WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsRemoteFile
 		}
 
 		if ( ! isset( $location['geoplugin_countryCode'] ) ) {
