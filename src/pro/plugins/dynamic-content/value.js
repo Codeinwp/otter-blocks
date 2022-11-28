@@ -60,12 +60,16 @@ const applyProContent = options => {
 				}
 			]
 		},
-		'url': {
-			label: __( 'URL', 'otter-blocks' ),
+		'misc': {
+			label: __( 'Miscellaneous', 'otter-blocks' ),
 			options: [
 				{
 					label: __( 'URL Parameter', 'otter-blocks' ),
 					value: 'queryString'
+				},
+				{
+					label: __( 'Country', 'otter-blocks' ),
+					value: 'country'
 				}
 			]
 		}

@@ -75,6 +75,10 @@ class Dynamic_Content {
 			return $this->get_query_string( $data );
 		}
 
+		if ( 'country' === $data['type'] ) {
+			return $this->get_country( $data );
+		}
+
 		return $value;
 	}
 
@@ -311,6 +315,31 @@ class Dynamic_Content {
 		}
 
 		return esc_html( $this->format_string( $value, $format ) );
+	}
+
+	/**
+	 * Get User Country.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_country( $data ) {
+		$value      = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
+		$location   = null;
+		$ip_address = sanitize_text_field( $_SERVER['REMOTE_ADDR'] ); // phpcs:ignore WordPressVIPMinimum.Variables.ServerVariables.UserControlledHeaders, WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__REMOTE_ADDR__
+
+		if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
+			$location = json_decode( wpcom_vip_file_get_contents( 'http://www.geoplugin.net/json.gp?ip=' . $ip_address ), true );
+		} else {
+			$location = json_decode( file_get_contents( 'http://www.geoplugin.net/json.gp?ip=' . $ip_address ), true ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown, WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsRemoteFile
+		}
+
+		if ( isset( $location['geoplugin_countryName'] ) && is_string( $location['geoplugin_countryName'] ) ) {
+			$value = $location['geoplugin_countryName'];
+		}
+
+		return $value;
 	}
 
 	/**

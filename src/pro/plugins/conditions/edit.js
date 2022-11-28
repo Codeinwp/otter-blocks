@@ -6,14 +6,13 @@ import {
 	sprintf
 } from '@wordpress/i18n';
 
-import { isEmpty } from 'lodash';
-
 import {
 	BaseControl,
 	Button,
 	CheckboxControl,
 	DateTimePicker,
 	Dropdown,
+	ExternalLink,
 	FormTokenField,
 	Placeholder,
 	SelectControl,
@@ -798,6 +797,20 @@ const Edit = ({
 							onChange={ e => changeValue( e, groupIndex, itemIndex, 'status' ) }
 						/>
 					</CoursesSelect>
+				</Fragment>
+			) }
+
+			{ 'country' === item.type && (
+				<Fragment>
+					<TextControl
+						label={ __( 'Country Code(s)', 'otter-blocks' ) }
+						placeholder="US, CA, GB"
+						help={ __( 'A comma separated list of country codes', 'otter-blocks' ) }
+						value={ item.value }
+						onChange={ e => changeValue( e, groupIndex, itemIndex, 'value' ) }
+					/>
+
+					<ExternalLink href="https://www.geoplugin.com/iso3166">{ __( 'A list of country codes. ', 'otter-blocks' ) }</ExternalLink>
 				</Fragment>
 			) }
 		</Fragment>

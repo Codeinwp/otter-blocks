@@ -174,6 +174,17 @@ const defaultConditions = {
 				isDisabled: true
 			}
 		]
+	},
+	'location': {
+		label: __( 'Location', 'otter-blocks' ),
+		conditions: [
+			{
+				value: 'country',
+				label: __( 'Country', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on user\'s country based on the IP address.' ),
+				isDisabled: true
+			}
+		]
 	}
 };
 const defaultConditionsKeys = Object.keys( defaultConditions );

@@ -121,6 +121,17 @@ const applyProConditions = conditions => {
 					isDisabled: ! Boolean( window.otterPro.hasLearnDash )
 				}
 			]
+		},
+		'location': {
+			label: __( 'Location', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'country',
+					label: __( 'Country', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on user\'s country based on the IP address.' ),
+					toogleVisibility: true
+				}
+			]
 		}
 	};
 

@@ -149,6 +149,16 @@ class Block_Conditions {
 			}
 		}
 
+		if ( 'country' === $condition['type'] ) {
+			if ( isset( $condition['value'] ) ) {
+				if ( $visibility ) {
+					return $this->has_country( $condition );
+				} else {
+					return ! $this->has_country( $condition );
+				}
+			}
+		}
+
 		return $bool;
 	}
 
@@ -481,6 +491,35 @@ class Block_Conditions {
 		$progress     = learndash_user_get_course_progress( $current_user->ID, $condition['course'], 'summary' );
 
 		if ( $progress['status'] === $condition['status'] ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check based on user's country.
+	 *
+	 * @param array $condition Condition.
+	 *
+	 * @since  2.1.6
+	 * @access public
+	 */
+	public function has_country( $condition ) {
+		$location   = null;
+		$ip_address = sanitize_text_field( $_SERVER['REMOTE_ADDR'] ); // phpcs:ignore WordPressVIPMinimum.Variables.ServerVariables.UserControlledHeaders, WordPress.Security.ValidatedSanitizedInput.InputNotValidated, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__REMOTE_ADDR__
+
+		if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
+			$location = json_decode( wpcom_vip_file_get_contents( 'http://www.geoplugin.net/json.gp?ip=' . $ip_address ), true );
+		} else {
+			$location = json_decode( file_get_contents( 'http://www.geoplugin.net/json.gp?ip=' . $ip_address ), true ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown, WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsRemoteFile
+		}
+
+		if ( ! isset( $location['geoplugin_countryCode'] ) ) {
+			return false;
+		};
+
+		if ( in_array( $location['geoplugin_countryCode'], array_map( 'strtoupper', array_map( 'trim', explode( ',', $condition['value'] ) ) ), true ) ) {
 			return true;
 		}
 
