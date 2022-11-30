@@ -82,6 +82,8 @@ type Config = {
 	width: string
 	sideOffset: string
 	side: 'left' | 'right'
+	fitInHeader: boolean
+	headerGap: string
 }
 
 /**
@@ -109,9 +111,13 @@ const getConfigOptions = ( elem: Element ): Config => {
 			config.sideOffset = cssClass.split( '-' ).pop() as string;
 		} else if ( cssClass.includes( 'o-sticky-side-right' ) ) {
 			config.side = 'right';
+		} else if ( cssClass.includes( 'o-sticky-header-space' ) ) {
+			config.fitInHeader = true;
+		} else if ( cssClass.includes( 'o-sticky-header-gap' ) ) {
+			config.headerGap = cssClass.split( '-' ).pop() as string;
 		}
 		return config;
-	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false, isFloatMode: false, width: '100%', sideOffset: '20px', side: 'left' });
+	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false, isFloatMode: false, width: '100%', sideOffset: '20px', side: 'left', fitInHeader: false, headerGap: '' });
 };
 
 const positions = {
@@ -221,6 +227,10 @@ class StickyData {
 		this.stylingNodeName = `o-sticky-node-${this.index}`;
 		this.stylingNode = document.createElement( 'style' );
 		document.head.appendChild( this.stylingNode );
+
+		if ( config.fitInHeader && 'top' === config.position ) {
+			document.body.style.marginTop = config.headerGap ? config.headerGap : this.height + 'px';
+		}
 	}
 
 	get canBeRun() {
@@ -390,20 +400,25 @@ class StickyRunner {
 			 * Align on vertical axis
 			 */
 			if ( sticky.config.isFloatMode ) {
-				if (
-					! (
-						sticky.elem.classList.contains( 'alignfull' ) &&
-						sticky.displayWidth.includes( '%' ) &&
-						100 <= parseInt( sticky.displayWidth )
-					)
-				) {
+
+				let offset = sticky.sideOffset;
+
+				if ( sticky.elem.classList.contains( 'alignfull' ) && sticky.displayWidth.includes( '100%' )  ) {
+					offset = '';
+
+					// Execeptions
+					if ( 'neve_body' === document.body.id ) {
+						offset = offset = '0px';
+					}
+				}
+
+				if ( '' !== offset ) {
 					if ( 'left' === sticky.side ) {
 						cssStyling.push( `left: ${sticky.sideOffset}` );
 					} else {
 						cssStyling.push( `right: ${sticky.sideOffset}` );
 					}
 				}
-
 			} else {
 				cssStyling.push( `left: ${sticky.elemLeftPositionInPage}px` );
 			}
@@ -622,6 +637,9 @@ class StickyRunner {
 				e.preventDefault();
 				sticky.status = 'hidden';
 				sticky.elem.classList.add( 'o-is-close' );
+				if ( sticky.config.fitInHeader ) {
+					document.body.style.marginTop = '';
+				}
 			});
 		});
 	}
@@ -658,7 +676,7 @@ domReady( () => {
 			z-index: 9999;
 		}
 		.o-is-close {
-			display: none;
+			display: none !important;
 		}
 	`;
 
@@ -675,6 +693,7 @@ domReady( () => {
 				if ( ! hasStyles ) {
 					const styleSheet = document.createElement( 'style' );
 					styleSheet.innerText = styles;
+					styleSheet.id = 'o-stycky-css-gen';
 					document.head.appendChild( styleSheet );
 					hasStyles = true;
 				}

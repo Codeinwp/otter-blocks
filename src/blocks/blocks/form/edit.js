@@ -4,6 +4,7 @@
 import classnames from 'classnames';
 
 import { get } from 'lodash';
+import hash from 'object-hash';
 
 /**
  * WordPress dependencies
@@ -136,16 +137,19 @@ const Edit = ({
 		[ name ]
 	);
 
-	const { children, hasEmailField } = useSelect( select => {
+	const { children, hasEmailField, hasProtection } = useSelect( select => {
 		const {
 			getBlock
 		} = select( 'core/block-editor' );
 		const children = getBlock( clientId ).innerBlocks;
 		return {
 			children,
-			hasEmailField: children?.some( b => ( 'email' === b?.attributes?.type ) )
+			hasEmailField: children?.some( b => ( 'email' === b?.attributes?.type ) ),
+			hasProtection: 0 < children?.filter( ({ name }) => 'themeisle-blocks/form-nonce' === name )?.length
 		};
 	});
+
+	const hasEssentialData = attributes.optionName && hasProtection;
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -158,8 +162,8 @@ const Edit = ({
 	useEffect( () => {
 		if ( attributes.id && select( 'core/edit-widgets' ) ) {
 			setAttributes({ optionName: `widget_${ attributes.id.slice( -8 ) }` });
-		} else if ( attributes.id && Boolean( window.themeisleGutenberg.isBlockEditor ) && select( 'core/editor' )?.getCurrentPostId() ) {
-			setAttributes({ optionName: `${ select( 'core/editor' ).getCurrentPostId() }_${ attributes.id.slice( -8 ) }` });
+		} else if ( attributes.id ) {
+			setAttributes({ optionName: `${ hash({ url: window.location.pathname }) }_${ attributes.id.slice( -8 ) }` });
 		}
 	}, [ attributes.id ]);
 
@@ -824,14 +828,33 @@ const Edit = ({
 									</button>
 
 									{ isSelected && (
-										<div>
-											<div className='o-form-server-response o-success' style={{ color: attributes.submitMessageColor }}>
-												{ formOptions.submitMessage || __( 'Success', 'otter-blocks' ) }
+										<Fragment>
+											<div>
+												<div className='o-form-server-response o-success' style={{ color: attributes.submitMessageColor }}>
+													{ formOptions.submitMessage || __( 'Success', 'otter-blocks' ) }
+												</div>
+												<div className='o-form-server-response o-error' style={{ color: attributes.submitMessageErrorColor, margin: '0px' }}>
+													{ __( 'Error. Please try again.', 'otter-blocks' ) }
+												</div>
 											</div>
-											<div className='o-form-server-response o-error' style={{ color: attributes.submitMessageErrorColor, margin: '0px' }}>
-												{ __( 'Error. Please try again.', 'otter-blocks' ) }
-											</div>
-										</div>
+											{
+												! hasEssentialData && attributes.id && (
+													<Fragment>
+														<p>{__( 'Some data is missing!', 'otter-blocks' )}</p>
+														{
+															attributes.optionName === undefined && (
+																<p>{__( 'Bad initialization. Please create another Form!', 'otter-blocks' )}</p>
+															)
+														}
+														{
+															false === hasProtection && (
+																<p>{__( 'CSRF protection is missing. Please create another Form!', 'otter-blocks' )}</p>
+															)
+														}
+													</Fragment>
+												)
+											}
+										</Fragment>
 									) }
 								</div>
 							</form>

@@ -224,6 +224,9 @@
 		},
 		"contentGap": {
 			"type": "string"
+		},
+		"featuredPostOrder": {
+			"type": "string"
 		}
 	},
 	"supports": {

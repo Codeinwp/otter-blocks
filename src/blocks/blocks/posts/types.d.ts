@@ -52,6 +52,7 @@ type Attributes = {
 	paddingTablet: string
 	paddingMobile: string
 	contentGap: string
+	featuredPostOrder: string
 }
 
 export type PostProps = BlockProps<Attributes>

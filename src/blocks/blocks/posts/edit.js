@@ -98,9 +98,16 @@ const Edit = ({
 		}, ( value ) => ! isUndefined( value ) );
 
 		const slugs = attributes.postTypes;
-		const posts = ( 0 < slugs.length ) ? (
+		let posts = ( 0 < slugs.length ) ? (
 			slugs.map( slug => select( 'core' ).getEntityRecords( 'postType', slug, latestPostsQuery ) ).flat()
 		) : select( 'core' ).getEntityRecords( 'postType', 'post', latestPostsQuery );
+
+		if ( attributes.featuredPostOrder && 0 < posts?.length ) {
+			posts = [
+				...( posts?.filter( ({ sticky }) => Boolean( sticky ) ) ?? []),
+				...( posts?.filter( ({ sticky }) => ! Boolean( sticky ) ) ?? [])
+			];
+		}
 
 		return {
 			posts,
@@ -108,7 +115,7 @@ const Edit = ({
 			categoriesList: select( 'core' ).getEntityRecords( 'taxonomy', 'category', { per_page: 100, context: 'view' }),
 			authors: select( 'core' ).getUsers({ who: 'authors', context: 'view' })
 		};
-	}, [ attributes.categories, attributes.order, attributes.orderBy, attributes.postsToShow, attributes.offset, attributes.postTypes ]);
+	}, [ attributes.categories, attributes.order, attributes.orderBy, attributes.postsToShow, attributes.offset, attributes.postTypes, attributes.featuredPostOrder ]);
 
 	const { responsiveGetAttributes } = useResponsiveAttributes();
 

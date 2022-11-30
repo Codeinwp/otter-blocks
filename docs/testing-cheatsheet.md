@@ -42,8 +42,7 @@ wp.data.select( 'core/blocks' ).getBlockTypes()
 		const neveBlocks = [
 			'themeisle-blocks/add-to-cart-button',
 			'themeisle-blocks/business-hours',
-			'themeisle-blocks/review-comparison',
-			'themeisle-blocks/woo-comparison'
+			'themeisle-blocks/review-comparison'
 		];
 		return name.includes( 'themeisle-blocks/' ) && !neveBlocks.includes(name);	
 	})
@@ -64,7 +63,6 @@ wp.data.select( 'core/blocks' ).getBlockTypes()
 			'themeisle-blocks/add-to-cart-button',
 			'themeisle-blocks/business-hours',
 			'themeisle-blocks/review-comparison',
-			'themeisle-blocks/woo-comparison',
 			'themeisle-blocks/popup'
 		];
 		return neveBlocks.includes(name);	

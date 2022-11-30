@@ -99,7 +99,6 @@ class Main {
 			'product-title',
 			'product-upsells',
 			'review-comparison',
-			'woo-comparison',
 		);
 
 		$blocks = array_merge( $blocks, $pro_blocks );
@@ -130,7 +129,6 @@ class Main {
 			'product-title'             => '\ThemeIsle\OtterPro\Render\WooCommerce\Product_Title_Block',
 			'product-upsells'           => '\ThemeIsle\OtterPro\Render\WooCommerce\Product_Upsells_Block',
 			'review-comparison'         => '\ThemeIsle\OtterPro\Render\Review_Comparison_Block',
-			'woo-comparison'            => '\ThemeIsle\OtterPro\Render\Woo_Comparison_Block',
 		);
 
 		$dynamic_blocks = array_merge( $dynamic_blocks, $blocks );
@@ -151,7 +149,6 @@ class Main {
 			'\ThemeIsle\OtterPro\CSS\Blocks\Business_Hours_CSS',
 			'\ThemeIsle\OtterPro\CSS\Blocks\Business_Hours_Item_CSS',
 			'\ThemeIsle\OtterPro\CSS\Blocks\Review_Comparison_CSS',
-			'\ThemeIsle\OtterPro\CSS\Blocks\Woo_Comparison_CSS',
 		);
 
 		$blocks = array_merge( $blocks, $pro_blocks );
@@ -179,13 +176,6 @@ class Main {
 			true
 		);
 
-		$default_fields = array();
-
-		if ( class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Fields' ) ) {
-			$fields         = new \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Fields();
-			$default_fields = wp_json_encode( array_keys( ( $fields->get_fields() ) ) );
-		}
-
 		wp_localize_script(
 			'otter-pro',
 			'otterPro',
@@ -195,20 +185,6 @@ class Main {
 				'hasWooCommerce' => class_exists( 'WooCommerce' ),
 				'hasLearnDash'   => defined( 'LEARNDASH_VERSION' ),
 				'hasACF'         => class_exists( 'ACF' ),
-				'themeMods'      => array(
-					'listingType'   => get_theme_mod( 'neve_comparison_table_product_listing_type', 'column' ),
-					'altRow'        => get_theme_mod( 'neve_comparison_table_enable_alternating_row_bg_color', false ),
-					'fields'        => get_theme_mod( 'neve_comparison_table_fields', $default_fields ),
-					'rowColor'      => get_theme_mod( 'neve_comparison_table_rows_background_color', 'var(--nv-site-bg)' ),
-					'headerColor'   => get_theme_mod( 'neve_comparison_table_header_text_color', 'var(--nv-text-color)' ),
-					'textColor'     => get_theme_mod( 'neve_comparison_table_text_color', 'var(--nv-text-color)' ),
-					'borderColor'   => get_theme_mod( 'neve_comparison_table_borders_color', '#BDC7CB' ),
-					'altRowColor'   => get_theme_mod( 'neve_comparison_table_alternate_row_bg_color', 'var(--nv-light-bg)' ),
-					'defaultFields' => $default_fields,
-				),
-				'hasNeveSupport' => array(
-					'wooComparison' => class_exists( '\Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options' ) ? true === boolval( \Neve_Pro\Modules\Woocommerce_Booster\Comparison_Table\Options::is_module_activated() ) : false,
-				),
 				'rootUrl'        => get_site_url(),
 			)
 		);

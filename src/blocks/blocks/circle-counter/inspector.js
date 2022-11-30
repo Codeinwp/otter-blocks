@@ -79,13 +79,14 @@ const Inspector = ({
 
 			<PanelBody
 				title={ __( 'Style', 'otter-blocks' ) }
+				initialOpen={ false }
 			>
 				<RangeControl
 					label={ __( 'Height', 'otter-blocks' ) }
 					help={ __( 'The height of the circle counter.', 'otter-blocks' ) }
 					value={ attributes.height }
 					onChange={ height => setAttributes({ height }) }
-					min={ 0 }
+					min={ 20 }
 					max={ 240 }
 				/>
 

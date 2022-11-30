@@ -1,24 +1,39 @@
 // @ts-nocheck
+/**
+ * WordPress dependencies.
+ */
+import { __ } from '@wordpress/i18n';
+
+import { sortBy } from 'lodash';
+
+import { BlockControls } from '@wordpress/block-editor';
+
+import {
+	Button,
+	ToolbarDropdownMenu,
+	ToolbarGroup,
+	createSlotFill
+} from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
-import { addFilter, applyFilters } from '@wordpress/hooks';
+
 import { Fragment, useState } from '@wordpress/element';
-import { Button, createSlotFill } from '@wordpress/components';
-import { BlockControls } from '@wordpress/block-editor';
-import { ToolbarGroup, ToolbarDropdownMenu } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+
+import { addFilter } from '@wordpress/hooks';
+
+/**
+ * Internal dependencies.
+ */
 import { otterIcon } from '../../helpers/icons';
-import { sortBy } from 'lodash';
 import { FeedbackModalComponent } from '../../plugins/feedback';
 
 const { Fill, Slot } = createSlotFill( 'OtterControlTools' );
 
-
 export const OtterControlTools = ({ children, order }) => {
 	return <Fill >
-		<Fragment order={order ?? 99}>
+		<div key={order ?? 99} order={order ?? 99}>
 			{children}
-		</Fragment>
+		</div>
 	</Fill>;
 };
 
@@ -55,9 +70,13 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 												{
 													({ onClose }) => (
 														<div onClick={onClose}>
-															{ sortBy( fills ?? [], fill => {
-																return fill[0]?.props.order;
-															})}
+															{
+																sortBy( fills ?? [], fill => {
+																	return fill[0]?.props.order;
+																}).map( fill => {
+																	return fill[0]?.props?.children;
+																})
+															}
 															<Button
 																id="o-feedback"
 																variant={ 'link' }
@@ -96,6 +115,4 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 	};
 }, 'withOtterTools' );
 
-
 addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/otter-tools', withOtterTools );
-

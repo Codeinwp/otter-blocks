@@ -1,3 +1,20 @@
+##### [Version 2.1.5](https://github.com/Codeinwp/otter-blocks/compare/v2.1.4...v2.1.5) (2022-11-23)
+
+- Fix Black Friday deal notice not dismissing; sorry for that.
+
+##### [Version 2.1.4](https://github.com/Codeinwp/otter-blocks/compare/v2.1.3...v2.1.4) (2022-11-21)
+
+- Advanced Heading Enhancements
+- Fix the Widgets page not loading with Otter on Chrome
+- Fix Custom CSS work with FSE
+- Fix the Button Color Issue
+- Migrate WooCommerce Comparison to Sparks Plugin
+- Fix Flip Block not saving Responsive Attributes
+
+##### [Version 2.1.3](https://github.com/Codeinwp/otter-blocks/compare/v2.1.2...v2.1.3) (2022-11-10)
+
+ - Fixed a crash issue for users with PHP8.0 & PHP8.1 with WP version lower than 6.1
+
 ##### [Version 2.1.2](https://github.com/Codeinwp/otter-blocks/compare/v2.1.1...v2.1.2) (2022-11-09)
 
 - Section Enhancements

@@ -183,7 +183,8 @@ class Pro {
 	 * @access  public
 	 */
 	public function should_show_bf_upsell() {
-		$show_upsell = self::bf_deal();
+		$show_upsell   = self::bf_deal();
+		$notifications = get_option( 'themeisle_blocks_settings_notifications', array() );
 
 		if ( defined( 'NEVE_VERSION' ) || defined( 'NEVE_PRO_VERSION' ) ) {
 			$show_upsell = false;

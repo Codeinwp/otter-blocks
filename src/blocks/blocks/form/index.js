@@ -90,6 +90,12 @@ registerBlockType( name, {
 					}
 				],
 				[
+					'themeisle-blocks/form-nonce',
+					{
+
+					}
+				],
+				[
 					'themeisle-blocks/form-textarea',
 					{
 						label: __( 'Message', 'otter-blocks' )
@@ -124,6 +130,12 @@ registerBlockType( name, {
 						label: __( 'Email', 'otter-blocks' ),
 						type: 'email',
 						isRequired: true
+					}
+				],
+				[
+					'themeisle-blocks/form-nonce',
+					{
+
 					}
 				],
 				[

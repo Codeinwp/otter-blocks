@@ -199,17 +199,33 @@ const MediaContent = ({
 
 		setContentTypes( filteredTypes );
 
-		if ( undefined !== window?.otterCurrentMediaProps?.value && 8 === String( window?.otterCurrentMediaProps?.value ).length ) {
-			const blockAttrs = getSelectedBlock.attributes;
-			const obj = Object.keys( blockAttrs ).filter( i => 'string' === typeof blockAttrs[ i ] && blockAttrs[ i ]?.includes( 'otter/v1/dynamic' ) );
-			const target = obj.find( o => blockAttrs[ o ]?.includes( window.otterCurrentMediaProps.value ) );
-
-			const attrs = getObjectFromQueryString( blockAttrs[ target ] || '' );
-			attrs.uid = uid;
-			const url = window.themeisleGutenberg.restRoot + '/dynamic/?' + getQueryStringFromObject( attrs );
-			onSelect( url );
-			window.otterCurrentMediaProps = {};
+		if ( ! ( undefined !== window?.otterCurrentMediaProps?.value && 8 === String( window?.otterCurrentMediaProps?.value ).length ) ) {
+			return;
 		}
+
+		const blockAttrs = getSelectedBlock.attributes;
+
+		let target = '';
+
+		Object.keys( blockAttrs ).every( key => {
+			if ( 'string' === typeof blockAttrs[ key ] && blockAttrs[ key ]?.includes( 'otter/v1/dynamic' ) && blockAttrs[ key ]?.includes( window.otterCurrentMediaProps.value ) ) {
+				target = blockAttrs[ key ];
+				return false;
+			}
+
+			if ( 'object' === typeof blockAttrs[ key ] && blockAttrs[ key ]?.url?.includes( 'otter/v1/dynamic' ) && blockAttrs[ key ]?.url?.includes( window.otterCurrentMediaProps.value ) ) {
+				target = blockAttrs[ key ]?.url;
+				return false;
+			}
+
+			return true;
+		});
+
+		const attrs = getObjectFromQueryString( target || '' );
+		attrs.uid = uid;
+		const url = window.themeisleGutenberg.restRoot + '/dynamic/?' + getQueryStringFromObject( attrs );
+		onSelect( url );
+		window.otterCurrentMediaProps = {};
 	}, []);
 
 	useEffect( () => {

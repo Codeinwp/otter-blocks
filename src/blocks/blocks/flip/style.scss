@@ -26,9 +26,9 @@
 
 	perspective: 1000px; /* Remove this if you don't want the 3D effect */
 
-	&[class^="block-editor"] {
-		width: auto;
-	}
+	// &[class^="block-editor"] {
+	// 	width: auto;
+	// }
 
 	&.flipX {
 		--flip-anim: rotateX(180deg);

@@ -50,3 +50,7 @@
 	top: 0;
 	border: 1px solid var(--wp-admin-theme-color);
 }
+
+.o-sticky.o-sticky-banner-mode:not( .is-selected )::after {
+	content: "Sticky Banner";
+}
