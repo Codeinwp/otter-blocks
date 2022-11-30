@@ -1,22 +1,59 @@
 /**
  * Wordpress dependencies
  */
-
 // @ts-ignore
-import { debounce, merge } from 'lodash';
+import { debounce } from 'lodash';
 
 /**
  * Internal dependencies
  */
 import { domReady } from '../../helpers/frontend-helper-functions.js';
 import { rgb2hsl } from '../../helpers/frontend-helper-functions';
+import { page, post, product, generic } from './icons';
 
 type ResultsEntry = {
 	link: string,
-	title: string
+	title: string,
+	type: string,
+	date: string,
+	author: string,
+	parent?: string,
+	price?: string
 }
 
 type ResultsContainer = Element | null | undefined;
+
+const getPostIcon = ( type: string ) => {
+	switch ( type ) {
+	case 'post': return post();
+	case 'page': return page();
+	case 'product': return product();
+	default: return generic();
+	}
+};
+
+const getMeta = ( entry: ResultsEntry ) => {
+	const meta = document.createElement( 'div' );
+
+	switch ( entry.type ) {
+	case 'post': {
+		meta.innerHTML = `${entry.date} / by ${entry.author}${ entry.parent ? ' / ' + entry.parent : '' }`;
+		break;
+	}
+	case 'page': {
+		meta.innerHTML = entry.parent ?? '';
+		break;
+	}
+	case 'product': {
+		meta.innerHTML = entry.price ?? '';
+		break;
+	}
+	default: return null;
+	}
+
+	meta.classList.add( 'meta' );
+	return meta;
+};
 
 domReady( () => {
 	const CONTAINER_CLASS = 'search-results';
@@ -48,7 +85,15 @@ domReady( () => {
 	const handleLiveSearch = ( element: Element ) => {
 		const form = element.querySelector( 'form' );
 		const block = element.querySelector( '.wp-block-search__inside-wrapper' );
-		const inputElement = element.querySelector( 'input.wp-block-search__input' );
+		const inputElement = element.querySelector( 'input.wp-block-search__input' ) as HTMLInputElement;
+
+		const inputStyle = getComputedStyle( inputElement );
+		const parentStyle = inputElement.parentElement ? getComputedStyle( inputElement.parentElement ) : null;
+
+		const wrap = document.createElement( 'div' );
+		wrap.classList.add( 'container-wrap' );
+		wrap.style.width = inputElement.offsetWidth + 'px';
+		wrap.style.top = `calc( ${inputStyle.height} + ${parentStyle?.paddingTop} + ${parentStyle?.paddingBottom} + ${parentStyle?.borderBottomWidth} )`;
 
 		if ( ! inputElement ) {
 			return;
@@ -94,12 +139,12 @@ domReady( () => {
 			const searchValue = ( event.target as HTMLInputElement )?.value;
 
 			if ( 0 === searchValue.length ) {
-				resultsContainer =  removeResultsContainer( block, resultsContainer, false );
+				resultsContainer = removeResultsContainer( block, resultsContainer, false );
 				return;
 			}
 
-			if ( ! block?.querySelector( `.${CONTAINER_CLASS}` ) ) {
-				resultsContainer = createResultsContainer( resultsContainer, block, inputElement as HTMLElement );
+			if ( ! block?.querySelector( '.container-wrap' ) ) {
+				resultsContainer = createResultsContainer( wrap, resultsContainer, block, inputStyle );
 			}
 
 			debouncedRequest( searchValue );
@@ -109,7 +154,7 @@ domReady( () => {
 		inputElement.addEventListener( 'focusin', () => {
 			const searchValue = ( inputElement as HTMLInputElement ).value;
 			if ( 0 !== searchValue.length ) {
-				resultsContainer = createResultsContainer( resultsContainer, block, inputElement as HTMLElement );
+				resultsContainer = createResultsContainer( wrap, resultsContainer, block, inputStyle );
 
 				if ( resultsContainer && ! resultsContainer.querySelector( '.search-results > :not(.spinner-container):not(.no-results)' ) ) {
 					debouncedRequest( ( inputElement as HTMLInputElement ).value );
@@ -118,12 +163,12 @@ domReady( () => {
 		});
 
 		inputElement.addEventListener( 'keydown', ( event: Event ) => {
-			if ( ! resultsContainer ) {
+			if ( ! resultsContainer || ! resultsContainer.parentElement ) {
 				return;
 			}
 
 			const keyEvent = event as KeyboardEvent;
-			const containerDimensions = resultsContainer.getBoundingClientRect();
+			const containerDimensions = resultsContainer.parentElement.getBoundingClientRect();
 
 			if ( 'ArrowDown' !== keyEvent.key && 'ArrowUp' !== keyEvent.key && 'Enter' !== keyEvent.key ) {
 				return;
@@ -140,7 +185,7 @@ domReady( () => {
 
 				const dimensions = highlighted.nextElementSibling.getBoundingClientRect();
 				if ( dimensions.bottom > containerDimensions.bottom ) {
-					resultsContainer.scrollBy( 0, dimensions.height );
+					resultsContainer.parentElement.scrollBy( 0, dimensions.height );
 				}
 
 				return;
@@ -152,7 +197,7 @@ domReady( () => {
 
 				const dimensions = highlighted.previousElementSibling.getBoundingClientRect();
 				if ( dimensions.top < containerDimensions.top ) {
-					resultsContainer.scrollBy( 0, -dimensions.height );
+					resultsContainer.parentElement.scrollBy( 0, -dimensions.height );
 				}
 			}
 		});
@@ -169,40 +214,40 @@ domReady( () => {
 
 	liveSearch.forEach( handleLiveSearch );
 
-	const createResultsContainer = ( resultsContainer: ResultsContainer, block: Element | null, inputElement: HTMLElement ) => {
+	const createResultsContainer = ( wrap: Element, resultsContainer: ResultsContainer, block: Element | null, inputStyle: CSSStyleDeclaration ) => {
+		wrap.innerHTML = '';
+
 		if ( resultsContainer && ! block?.querySelector( '.search_results' ) ) {
-			block?.appendChild( resultsContainer );
+			wrap.appendChild( resultsContainer );
+			block?.appendChild( wrap );
 			return resultsContainer ;
 		}
 
-		const { height, fontSize, backgroundColor, borderRadius, color } = getComputedStyle( inputElement );
-		const parentStyle = inputElement.parentElement ? getComputedStyle( inputElement.parentElement ) : null;
-
 		const container = document.createElement( 'div' );
-
 		container.classList.add( CONTAINER_CLASS );
 
-		container.style.width = inputElement.offsetWidth + 'px';
-		container.style.top = `calc( ${height} + ${parentStyle?.paddingTop} + ${parentStyle?.paddingBottom} + ${parentStyle?.borderBottomWidth} )`;
-		container.style.fontSize = `calc( ${fontSize} - 4px )`;
-		container.style.backgroundColor = backgroundColor;
-		container.style.borderRadius = borderRadius;
-		container.style.color = color;
+		container.style.fontSize = `calc( ${inputStyle.fontSize} - 4px )`;
+		container.style.backgroundColor = inputStyle.backgroundColor;
+		container.style.borderRadius = inputStyle.borderRadius;
+		container.style.color = inputStyle.color;
 
 		addLoadingIcon( container );
-		block?.appendChild( container );
+		wrap.appendChild( container );
+
+		block?.appendChild( wrap );
 
 		return container;
 	};
 
 	const removeResultsContainer = ( block: Element | null, resultsContainer: ResultsContainer, cache = true ) => {
-		const tmpResultsContainer = block?.querySelector( `.${CONTAINER_CLASS}` );
+		const tmpResultsContainer = block?.querySelector( '.container-wrap' );
 		if ( ! tmpResultsContainer ) {
 			return;
 		}
 
 		if ( cache ) {
-			return block?.removeChild( tmpResultsContainer as Node ) as ResultsContainer;
+			const wrap = block?.removeChild( tmpResultsContainer as Node ) as ResultsContainer;
+			return wrap?.querySelector( `.${CONTAINER_CLASS}` );
 		}
 
 		block?.removeChild( tmpResultsContainer as Node );
@@ -228,17 +273,9 @@ domReady( () => {
 			return;
 		}
 
-		results.forEach( ({ link, title }, index ) => {
-			const option = document.createElement( 'div' );
-			const optionLink = document.createElement( 'a' );
+		results.forEach( ( result, index ) => {
+			const option = getResultElement( result, index, inputElement );
 
-			option.classList.add( `${CONTAINER_CLASS}__row` );
-			( 0 === index ) && highlight( option, inputElement );
-
-			optionLink.href = link;
-			optionLink.innerText = title;
-
-			option.appendChild( optionLink );
 			option.addEventListener( 'mouseover', () => {
 				const highlighted = container.querySelector( '.highlight' );
 				if ( highlighted ) {
@@ -291,5 +328,36 @@ domReady( () => {
 	const removeHighlight = ( element: Element ) => {
 		element.classList.remove( 'highlight' );
 		element.removeAttribute( 'style' );
+	};
+
+	const getResultElement = ( entry: ResultsEntry, index: number, inputElement: Element ) => {
+		const optionWrap = document.createElement( 'div' );
+		const option = document.createElement( 'a' );
+
+		optionWrap.classList.add( `${CONTAINER_CLASS}__row` );
+		option.href = entry.link;
+
+		( 0 === index ) && highlight( optionWrap, inputElement );
+
+		const icon = document.createElement( 'div' );
+		icon.classList.add( `${CONTAINER_CLASS}__row-left` );
+		icon.innerHTML = getPostIcon( entry.type );
+
+		const data = document.createElement( 'div' );
+		data.classList.add( `${CONTAINER_CLASS}__row-right` );
+		data.innerHTML = entry.title;
+
+		const meta = getMeta( entry );
+		if ( meta ) {
+			const inputFontSize = getComputedStyle( inputElement ).fontSize;
+			meta.style.fontSize = `calc( ${inputFontSize} - 6px )`;
+			data.appendChild( meta );
+		}
+
+		option.appendChild( icon );
+		option.appendChild( data );
+
+		optionWrap.appendChild( option );
+		return optionWrap;
 	};
 });

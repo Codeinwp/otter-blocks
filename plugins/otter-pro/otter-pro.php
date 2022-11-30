@@ -82,7 +82,7 @@ if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
 				esc_url( $link ),
 				esc_html__( 'Install', 'otter-blocks' )
 			);
-		} 
+		}
 	);
 }
 
@@ -96,7 +96,7 @@ if ( defined( 'OTTER_BLOCKS_VERSION' ) && ! defined( 'OTTER_BLOCKS_PRO_SUPPORT' 
 				'<div class="error"><p>%1$s</p></div>',
 				esc_html( $message )
 			);
-		} 
+		}
 	);
 }
 
