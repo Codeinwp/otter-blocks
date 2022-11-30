@@ -127,7 +127,7 @@ class Live_Search_Server {
 							'link'   => get_permalink( $post->ID ),
 							'title'  => $post->post_title,
 							'type'   => $post->post_type,
-							'date'   => $post->post_date,
+							'date'   => get_the_date( 'F d, Y', $post ),
 							'author' => get_the_author_meta( 'display_name', $post->post_author ),
 							'parent' => get_post( $post->post_parent )->post_title,
 						);
