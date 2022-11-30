@@ -71,6 +71,26 @@ class Block_Conditions {
 			}
 		}
 
+		if ( 'country' === $condition['type'] ) {
+			if ( isset( $condition['value'] ) ) {
+				if ( $visibility ) {
+					return $this->has_country( $condition );
+				} else {
+					return ! $this->has_country( $condition );
+				}
+			}
+		}
+
+		if ( 'cookie' === $condition['type'] ) {
+			if ( isset( $condition['cookie_key'] ) ) {
+				if ( $visibility ) {
+					return $this->has_cookie( $condition );
+				} else {
+					return ! $this->has_cookie( $condition );
+				}
+			}
+		}
+
 		if ( 'dateRange' === $condition['type'] ) {
 			if ( isset( $condition['start_date'] ) ) {
 				return $this->has_date_range( $condition );
@@ -145,16 +165,6 @@ class Block_Conditions {
 					return $this->has_course_status( $condition );
 				} else {
 					return ! $this->has_course_status( $condition );
-				}
-			}
-		}
-
-		if ( 'country' === $condition['type'] ) {
-			if ( isset( $condition['value'] ) ) {
-				if ( $visibility ) {
-					return $this->has_country( $condition );
-				} else {
-					return ! $this->has_country( $condition );
 				}
 			}
 		}
@@ -240,6 +250,76 @@ class Block_Conditions {
 		}
 
 		return array_intersect( $cond_params, $params ) === $cond_params;
+	}
+
+	/**
+	 * Check based on user's country.
+	 *
+	 * @param array $condition Condition.
+	 *
+	 * @since  2.1.6
+	 * @access public
+	 */
+	public function has_country( $condition ) {
+		$location = null;
+
+		if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
+			$location = json_decode( wpcom_vip_file_get_contents( 'http://www.geoplugin.net/json.gp' ), true );
+		} else {
+			$location = json_decode( file_get_contents( 'http://www.geoplugin.net/json.gp' ), true ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown, WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsRemoteFile
+		}
+
+		if ( ! isset( $location['geoplugin_countryCode'] ) ) {
+			return false;
+		};
+
+		if ( in_array( $location['geoplugin_countryCode'], array_map( 'strtoupper', array_map( 'trim', explode( ',', $condition['value'] ) ) ), true ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check cookie compare.
+	 *
+	 * @param array $condition Condition.
+	 *
+	 * @since  1.7.0
+	 * @access public
+	 */
+	public function has_cookie( $condition ) {
+		if ( ! isset( $condition['cookie_key'] ) || ! isset( $condition['cookie_compare'] ) ) {
+			return true;
+		}
+
+		$cookie = '';
+
+		if ( isset( $_COOKIE[ $condition['cookie_key'] ] ) ) { // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE
+			$cookie = esc_attr( $_COOKIE[ $condition['cookie_key'] ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE
+		}
+
+		if ( 'is_true' === $condition['cookie_compare'] ) {
+			return true === boolval( $cookie );
+		}
+
+		if ( 'is_false' === $condition['cookie_compare'] ) {
+			return false === boolval( $cookie );
+		}
+
+		if ( 'is_empty' === $condition['cookie_compare'] ) {
+			return empty( $cookie );
+		}
+
+		if ( 'if_equals' === $condition['cookie_compare'] && isset( $condition['cookie_value'] ) ) {
+			return $cookie === $condition['cookie_value'];
+		}
+
+		if ( 'if_contains' === $condition['cookie_compare'] && isset( $condition['cookie_value'] ) ) {
+			return false !== strpos( $cookie, $condition['cookie_value'] );
+		}
+
+		return false;
 	}
 
 	/**
@@ -491,34 +571,6 @@ class Block_Conditions {
 		$progress     = learndash_user_get_course_progress( $current_user->ID, $condition['course'], 'summary' );
 
 		if ( $progress['status'] === $condition['status'] ) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Check based on user's country.
-	 *
-	 * @param array $condition Condition.
-	 *
-	 * @since  2.1.6
-	 * @access public
-	 */
-	public function has_country( $condition ) {
-		$location = null;
-
-		if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
-			$location = json_decode( wpcom_vip_file_get_contents( 'http://www.geoplugin.net/json.gp' ), true );
-		} else {
-			$location = json_decode( file_get_contents( 'http://www.geoplugin.net/json.gp' ), true ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown, WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsRemoteFile
-		}
-
-		if ( ! isset( $location['geoplugin_countryCode'] ) ) {
-			return false;
-		};
-
-		if ( in_array( $location['geoplugin_countryCode'], array_map( 'strtoupper', array_map( 'trim', explode( ',', $condition['value'] ) ) ), true ) ) {
 			return true;
 		}
 

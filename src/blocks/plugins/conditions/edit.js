@@ -95,17 +95,6 @@ const defaultConditions = {
 			}
 		]
 	},
-	'url': {
-		label: __( 'URL', 'otter-blocks' ),
-		conditions: [
-			{
-				value: 'queryString',
-				label: __( 'Query String (Pro)', 'otter-blocks' ),
-				help: __( 'The condition will be met if the URL contains specified parameters.' ),
-				isDisabled: true
-			}
-		]
-	},
 	'dateAndTime': {
 		label: __( 'Date & Time', 'otter-blocks' ),
 		conditions: [
@@ -125,6 +114,29 @@ const defaultConditions = {
 				value: 'timeRecurring',
 				label: __( 'Time Recurring (Pro)', 'otter-blocks' ),
 				help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.' ),
+				isDisabled: true
+			}
+		]
+	},
+	'advance': {
+		label: __( 'Advance', 'otter-blocks' ),
+		conditions: [
+			{
+				value: 'queryString',
+				label: __( 'Query String (Pro)', 'otter-blocks' ),
+				help: __( 'The condition will be met if the URL contains specified parameters.' ),
+				isDisabled: true
+			},
+			{
+				value: 'country',
+				label: __( 'Country', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on user\'s country based on the IP address.' ),
+				isDisabled: true
+			},
+			{
+				value: 'cookie',
+				label: __( 'Cookie', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on PHP cookies.' ),
 				isDisabled: true
 			}
 		]
@@ -171,17 +183,6 @@ const defaultConditions = {
 				value: 'learnDashCourseStatus',
 				label: __( 'Course Status (Pro)', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on user\'s LearnDash course status.' ),
-				isDisabled: true
-			}
-		]
-	},
-	'location': {
-		label: __( 'Location', 'otter-blocks' ),
-		conditions: [
-			{
-				value: 'country',
-				label: __( 'Country', 'otter-blocks' ),
-				help: __( 'The selected block will be visible based on user\'s country based on the IP address.' ),
 				isDisabled: true
 			}
 		]

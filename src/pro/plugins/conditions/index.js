@@ -41,17 +41,6 @@ const applyProConditions = conditions => {
 				}
 			]
 		},
-		'url': {
-			label: __( 'URL', 'otter-blocks' ),
-			conditions: [
-				{
-					value: 'queryString',
-					label: __( 'Query String', 'otter-blocks' ),
-					help: __( 'The condition will be met if the URL contains specified parameters.' ),
-					toogleVisibility: true
-				}
-			]
-		},
 		'dateAndTime': {
 			label: __( 'Date & Time', 'otter-blocks' ),
 			conditions: [
@@ -69,6 +58,29 @@ const applyProConditions = conditions => {
 					value: 'timeRecurring',
 					label: __( 'Time Recurring', 'otter-blocks' ),
 					help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.' )
+				}
+			]
+		},
+		'advance': {
+			label: __( 'Advance', 'otter-blocks' ),
+			conditions: [
+				{
+					value: 'queryString',
+					label: __( 'Query String', 'otter-blocks' ),
+					help: __( 'The condition will be met if the URL contains specified parameters.' ),
+					toogleVisibility: true
+				},
+				{
+					value: 'country',
+					label: __( 'Country', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on user\'s country based on the IP address.' ),
+					toogleVisibility: true
+				},
+				{
+					value: 'cookie',
+					label: __( 'Cookie', 'otter-blocks' ),
+					help: __( 'The selected block will be visible based on PHP cookies.' ),
+					toogleVisibility: true
 				}
 			]
 		},
@@ -121,17 +133,6 @@ const applyProConditions = conditions => {
 					isDisabled: ! Boolean( window.otterPro.hasLearnDash )
 				}
 			]
-		},
-		'location': {
-			label: __( 'Location', 'otter-blocks' ),
-			conditions: [
-				{
-					value: 'country',
-					label: __( 'Country', 'otter-blocks' ),
-					help: __( 'The selected block will be visible based on user\'s country based on the IP address.' ),
-					toogleVisibility: true
-				}
-			]
 		}
 	};
 
@@ -160,6 +161,11 @@ const applyProDefaults = ( attrs, value ) => {
 
 	if ( 'queryString' === value ) {
 		attrs.match = 'any';
+	}
+
+	if ( 'cookie' === value ) {
+		// eslint-disable-next-line camelcase
+		attrs.cookie_compare = 'is_true';
 	}
 
 	if ( 'wooProductsInCart' == value ) {
