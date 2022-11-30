@@ -94,6 +94,7 @@ domReady( () => {
 		wrap.classList.add( 'container-wrap' );
 		wrap.style.width = inputElement.offsetWidth + 'px';
 		wrap.style.top = `calc( ${inputStyle.height} + ${parentStyle?.paddingTop} + ${parentStyle?.paddingBottom} + ${parentStyle?.borderBottomWidth} )`;
+		wrap.style.borderRadius = inputStyle.borderRadius;
 
 		if ( ! inputElement ) {
 			return;
@@ -228,7 +229,6 @@ domReady( () => {
 
 		container.style.fontSize = `calc( ${inputStyle.fontSize} - 4px )`;
 		container.style.backgroundColor = inputStyle.backgroundColor;
-		container.style.borderRadius = inputStyle.borderRadius;
 		container.style.color = inputStyle.color;
 
 		addLoadingIcon( container );
