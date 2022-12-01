@@ -96,7 +96,7 @@ class Registration {
 	/**
 	 * Register our custom block category.
 	 *
-	 * @param array $categories All categories.
+	 * @param array                   $categories All categories.
 	 * @param WP_Block_Editor_Context $block_editor_context The current block editor context.
 	 *
 	 * @return mixed

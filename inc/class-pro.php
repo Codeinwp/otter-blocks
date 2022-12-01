@@ -51,7 +51,7 @@ class Pro {
 		add_action( 'otter_montly_scheduled_events', array( $this, 'reset_dashboard_notice' ) );
 		add_action( 'admin_init', array( $this, 'should_show_dashboard_upsell' ), 11 );
 		add_action( 'admin_init', array( $this, 'should_show_bf_upsell' ), 11 );
-		add_filter( 'plugin_action_links_' . plugin_basename( OTTER_BLOCKS_BASEFILE ), array( $this, 'add_pro_link', ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( OTTER_BLOCKS_BASEFILE ), array( $this, 'add_pro_link' ) );
 	}
 
 	/**
@@ -522,7 +522,7 @@ class Pro {
 	 * @access public
 	 */
 	public function add_pro_link( $links ) {
-		$links[] =  sprintf(
+		$links[] = sprintf(
 			'<a href="%s" target="_blank" style="color:#ed6f57;font-weight:bold;">%s</a>',
 			esc_url_raw( tsdk_utmify( self::get_url(), 'pluginspage', 'action' ) ),
 			__( 'Get Otter Pro', 'otter-blocks' )
