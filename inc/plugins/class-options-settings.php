@@ -225,7 +225,7 @@ class Options_Settings {
 				'description'       => __( 'Make Section block your default block for Pages?', 'otter-blocks' ),
 				'sanitize_callback' => 'rest_sanitize_boolean',
 				'show_in_rest'      => true,
-				'default'           => true,
+				'default'           => false,
 			)
 		);
 
@@ -413,7 +413,7 @@ class Options_Settings {
 	 * @access  public
 	 */
 	public function default_block() {
-		if ( ! get_option( 'themeisle_blocks_settings_default_block', true ) ) {
+		if ( ! get_option( 'themeisle_blocks_settings_default_block', false ) ) {
 			return;
 		}
 
