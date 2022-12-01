@@ -73,12 +73,7 @@ class Registration {
 	 * Initialize the class
 	 */
 	public function init() {
-		if ( version_compare( floatval( get_bloginfo( 'version' ) ), '5.8', '>=' ) ) {
-			add_filter( 'block_categories_all', array( $this, 'block_categories' ) );
-		} else {
-			add_filter( 'block_categories', array( $this, 'block_categories' ) );
-		}
-
+		add_filter( 'block_categories_all', array( $this, 'block_categories' ), 11, 2 );
 		add_action( 'init', array( $this, 'register_blocks' ) );
 		add_action( 'init', array( $this, 'init_amp_blocks' ) );
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_assets' ), 1 );
@@ -102,15 +97,15 @@ class Registration {
 	 * Register our custom block category.
 	 *
 	 * @param array $categories All categories.
+	 * @param WP_Block_Editor_Context $block_editor_context The current block editor context.
 	 *
 	 * @return mixed
 	 * @since   2.0.0
 	 * @access public
 	 * @link   https://wordpress.org/gutenberg/handbook/extensibility/extending-blocks/#managing-block-categories
 	 */
-	public function block_categories( $categories ) {
+	public function block_categories( $categories, $block_editor_context ) {
 		return array_merge(
-			$categories,
 			array(
 				array(
 					'slug'  => 'themeisle-blocks',
@@ -120,7 +115,8 @@ class Registration {
 					'slug'  => 'themeisle-woocommerce-blocks',
 					'title' => __( 'WooCommerce Builder by Otter', 'otter-blocks' ),
 				),
-			)
+			),
+			$categories
 		);
 	}
 
