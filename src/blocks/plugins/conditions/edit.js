@@ -8,7 +8,6 @@ import { isEmpty } from 'lodash';
 import {
 	BaseControl,
 	Button,
-	ExternalLink,
 	FormTokenField,
 	PanelBody,
 	SelectControl,
@@ -31,11 +30,8 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import PanelTab from '../../components/panel-tab/index.js';
-import Notice from '../../components/notice/index.js';
-import { setUtm } from '../../helpers/helper-functions.js';
 import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
 
-const hasPro = Boolean( window.themeisleGutenberg.hasPro );
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 
 const defaultConditions = {
@@ -524,13 +520,6 @@ const Edit = ({
 				</Button>
 
 				{ applyFilters( 'otter.blockConditions.notices', '' ) }
-
-				{ ( ! hasPro ) && (
-					<Notice
-						notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'blockconditions' ) }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
-						variant="upsell"
-					/>
-				) }
 
 				<div className="o-fp-wrap">
 					{ applyFilters( 'otter.feedback', '', 'conditions' ) }
