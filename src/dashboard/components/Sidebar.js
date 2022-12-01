@@ -25,7 +25,14 @@ const Sidebar = ({
 				<Infobox
 					title={ __( 'Otter Pro', 'otter-blocks' ) }
 				>
-					<p>{ __( 'Upgrade to Otter Pro and get instant access to all pro features — including WooCommerce builder — and much more.', 'otter-blocks' ) }</p>
+					<ul>
+						<li>{ __( 'Pro Block Addons', 'otter-blocks' ) }</li>
+						<li>{ __( 'Dynamic Content', 'otter-blocks' ) }</li>
+						<li>{ __( 'Block Conditions', 'otter-blocks' ) }</li>
+						<li>{ __( 'WooCommerce Extensions', 'otter-blocks' ) }</li>
+						<li>{ __( 'WooCommerce Product Builder', 'otter-blocks' ) }</li>
+						<li>{ __( 'Priority Support', 'otter-blocks' ) }</li>
+					</ul>
 
 					<div className="otter-info-button-group">
 						<Button
