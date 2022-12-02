@@ -11,6 +11,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	--background: transparent;
 	--columns-width: initial;
 	display: flex;
+	transition: 0.3s;
 
 	> .innerblocks-wrap {
 		flex-basis: 100%;
@@ -53,6 +54,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 		--background-color-hover: var( --background );
 
 		background: var( --background );
+		transition: 0.3s;
 
 		&:hover {
 			background: var( --background-color-hover );
