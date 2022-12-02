@@ -73,6 +73,10 @@ const types = [
 	}
 ];
 
+const routeBase = window.themeisleGutenberg.restRoot.includes( '?rest_route=' ) ? '/dynamic/&' : '/dynamic/?';
+
+const getRouteBase = url => url.includes( '?rest_route=' ) ? '/dynamic/&' : '/dynamic/?';
+
 const MediaItem = ({
 	uid,
 	item,
@@ -80,7 +84,7 @@ const MediaItem = ({
 	isSelected,
 	onSelect
 }) => {
-	const url = window.themeisleGutenberg.restRoot + '/dynamic/?type=' + item.type + '&context=' + context + '&uid=' + uid;
+	const url = window.themeisleGutenberg.restRoot + routeBase + 'type=' + item.type + '&context=' + context + '&uid=' + uid;
 
 	const isDisabled = ( undefined !== item?.isAvailable && ! item?.isAvailable );
 
@@ -223,7 +227,7 @@ const MediaContent = ({
 
 		const attrs = getObjectFromQueryString( target || '' );
 		attrs.uid = uid;
-		const url = window.themeisleGutenberg.restRoot + '/dynamic/?' + getQueryStringFromObject( attrs );
+		const url = window.themeisleGutenberg.restRoot + routeBase + getQueryStringFromObject( attrs );
 		onSelect( url );
 		window.otterCurrentMediaProps = {};
 	}, []);
@@ -242,7 +246,7 @@ const MediaContent = ({
 
 		attrs = Object.fromEntries( Object.entries( attrs ).filter( ([ _, v ]) => ( null !== v && '' !== v && undefined !== v ) ) );
 
-		const url = window.themeisleGutenberg.restRoot + '/dynamic/?' + getQueryStringFromObject( attrs );
+		const url = window.themeisleGutenberg.restRoot + routeBase + getQueryStringFromObject( attrs );
 
 		onSelectImage({
 			id: uid,
@@ -276,7 +280,7 @@ const MediaContent = ({
 								uid={ uid }
 								item={ item }
 								context={ isQueryChild ? 'query' : getCurrentPostId }
-								isSelected={ selected ? selected?.includes( `dynamic/?type=${ item.type }` ) : false }
+								isSelected={ selected ? selected?.includes( `${ getRouteBase( selected ) }type=${ item.type }` ) : false }
 								onSelect={ onSelect }
 							/>
 						);

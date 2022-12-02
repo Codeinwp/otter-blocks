@@ -175,7 +175,7 @@ class Dynamic_Content {
 
 		$id = ( defined( 'REST_REQUEST' ) && REST_REQUEST || ( isset( $data['context'] ) && 'query' === $data['context'] ) ) ? $post->ID : get_queried_object_id();
 
-		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
+		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] || 'query' === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
 			$data['context'] = $id;
 		}
 
@@ -386,11 +386,15 @@ class Dynamic_Content {
 		$excerpt = $post->post_excerpt; // Here we don't use get_the_excerpt() function as it causes an infinite loop.
 
 		if ( empty( $excerpt ) ) {
-			return $data['default'];
+			$excerpt = wp_trim_excerpt( '', $post );
 		}
 
 		if ( isset( $data['length'] ) && ! empty( $data['length'] ) ) {
 			$excerpt = substr( $excerpt, 0, intval( $data['length'] ) ) . '…';
+		}
+
+		if ( empty( $excerpt ) ) {
+			return $data['default'];
 		}
 
 		return sanitize_text_field( $excerpt );
