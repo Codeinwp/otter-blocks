@@ -8,7 +8,7 @@
 namespace ThemeIsle\GutenbergBlocks\Integration;
 
 /**
- * Class Plugin_Card_Server
+ * Class Mailchimp_Integration
  *
  * @since 2.0.3
  */

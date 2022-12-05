@@ -11,6 +11,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	--background: transparent;
 	--columns-width: initial;
 	display: flex;
+	transition: 0.3s;
 
 	> .innerblocks-wrap {
 		flex-basis: 100%;
@@ -39,11 +40,21 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 		}
 	}
 
+	.block-editor-block-variation-picker {
+		.block-editor-block-variation-picker__variations {
+			svg {
+				width: 48px;
+				height: 48px;
+			}
+		}
+	}
+
 	.wp-block-themeisle-blocks-advanced-column {
 		--background: transparent;
 		--background-color-hover: var( --background );
 
 		background: var( --background );
+		transition: 0.3s;
 
 		&:hover {
 			background: var( --background-color-hover );

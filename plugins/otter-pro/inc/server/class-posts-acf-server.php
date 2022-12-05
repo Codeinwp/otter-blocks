@@ -109,7 +109,7 @@ class Posts_ACF_Server {
 	 * @static
 	 * @since 1.0.0
 	 * @access public
-	 * @return Plugin_Card_Server
+	 * @return Posts_ACF_Server
 	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {

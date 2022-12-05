@@ -22,7 +22,7 @@ use WP_REST_Response;
 use WP_REST_Server;
 
 /**
- * Class Plugin_Card_Server
+ * Class Form_Server
  *
  * @since 2.0.0
  */
