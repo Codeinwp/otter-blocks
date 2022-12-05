@@ -7,7 +7,8 @@ import { select, dispatch } from '@wordpress/data';
 import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
 import { Fragment } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
-import { MenuGroup, MenuItem } from '@wordpress/components';
+import { KeyboardShortcuts, MenuGroup, MenuItem } from '@wordpress/components';
+import { isAppleOS, displayShortcut } from '@wordpress/keycodes';
 
 /**
   * Internal dependencies.
@@ -155,11 +156,20 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 
 			return (
 				<Fragment>
+					<KeyboardShortcuts
+
+						// Sometime it works, sometime is not. Not to reliable
+						shortcuts={ {
+							'mod+alt+j': copy,
+							'mod+alt+k': paste
+						} }
+					/>
+
 					<BlockEdit { ...props } />
 					{
 
 						/**
-							Might be usefull in the future.
+							Might be useful in the future.
 							<CopyPasteComponent {...props} />
 						*/
 					}
@@ -168,12 +178,14 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 						<MenuGroup>
 							<MenuItem
 								onClick={ copy }
+								shortcut={ isAppleOS() ? displayShortcut.primaryAlt( 'j' ) : '' }
 							>
 								{ __( 'Copy Style', 'otter-blocks' ) }
 							</MenuItem>
 
 							<MenuItem
 								onClick={ paste }
+								shortcut={ isAppleOS() ? displayShortcut.primaryAlt( 'k' ) : '' }
 							>
 								{ __( 'Paste Style', 'otter-blocks' ) }
 							</MenuItem>
