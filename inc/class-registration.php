@@ -257,6 +257,7 @@ class Registration {
 				'postTypes'               => get_post_types( [ 'public' => true ] ),
 				'rootUrl'                 => get_site_url(),
 				'restRoot'                => get_rest_url( null, 'otter/v1' ),
+				'isPrettyPermalinks'      => boolval( get_option( 'permalink_structure' ) ),
 				'showOnboarding'          => $this->show_onboarding(),
 				'ratingScale'             => get_option( 'themeisle_blocks_settings_review_scale', false ),
 				'hasModule'               => array(
