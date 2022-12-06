@@ -12,7 +12,8 @@ import {
 	Button,
 	ToolbarDropdownMenu,
 	ToolbarGroup,
-	createSlotFill
+	createSlotFill,
+	KeyboardShortcuts
 } from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -20,6 +21,8 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { Fragment, useState } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
+import { isAppleOS } from '@wordpress/keycodes';
+
 
 /**
  * Internal dependencies.
@@ -48,70 +51,66 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 			setStatus( 'notSubmitted' );
 		};
 
-		if ( props.isSelected ) {
-			return (
-				<Fragment>
-					<BlockEdit { ...props } />
-					<Slot>
-						{
-							fills => {
+		return (
+			<Fragment>
+				<BlockEdit { ...props } />
+				<KeyboardShortcuts
 
-								if ( ! Boolean( fills.length ) ) {
-									return null;
-								}
-
-								return (
-									<BlockControls>
-										<ToolbarGroup>
-											<ToolbarDropdownMenu
-												label={__( 'Otter Tools', 'otter-blocks' )}
-												icon={ otterIcon }
-											>
-												{
-													({ onClose }) => (
-														<div onClick={onClose}>
-															{
-																sortBy( fills ?? [], fill => {
-																	return fill[0]?.props.order;
-																}).map( fill => {
-																	return fill[0]?.props?.children;
-																})
-															}
-															<Button
-																id="o-feedback"
-																variant={ 'link' }
-																onClick={() => {
-																	setIsOpen( ! isOpen );
-																	onClose();
-																}}
-																style={{
-																	paddingLeft: '8px'
-																}}
-															>
-																{ __( 'Help us improve Otter Blocks', 'otter-blocks' ) }
-															</Button>
-														</div>
-													)
-												}
-											</ToolbarDropdownMenu>
-										</ToolbarGroup>
-										<FeedbackModalComponent
-											isOpen={isOpen}
-											status={status}
-											closeModal={closeModal}
-											source={'control-tools'}
-											setStatus={ setStatus }
-										/>
-									</BlockControls>
-								);
-							}
+					// Sometime it works, sometime is not. Not to reliable
+					shortcuts={
+						isAppleOS() ? {
+							'mod+ctrl+j': window?.oPlugins?.copy,
+							'mod+ctrl+k': window?.oPlugins?.paste
+						} : {
+							'ctrl+alt+j': window?.oPlugins?.copy,
+							'ctrl+alt+k': window?.oPlugins?.paste
 						}
-					</Slot>
-				</Fragment>
-			);
-		}
+					}
+					bindGlobal={true}
+				/>
+				{ ( props.isSelected ) && (
+					<Fragment>
+						<Slot>
+							{
+								fills => {
 
-		return <BlockEdit { ...props } />;
+									if ( ! Boolean( fills.length ) ) {
+										return null;
+									}
+
+									return (
+										<BlockControls>
+
+											<ToolbarGroup>
+												<ToolbarDropdownMenu
+													label={__( 'Otter Tools', 'otter-blocks' )}
+													icon={ otterIcon }
+												>
+													{
+														({ onClose }) => (
+															<div onClick={onClose}>
+																{
+																	sortBy( fills ?? [], fill => {
+																		return fill[0]?.props.order;
+																	}).map( fill => {
+																		return fill[0]?.props?.children;
+																	})
+																}
+															</div>
+														)
+													}
+												</ToolbarDropdownMenu>
+											</ToolbarGroup>
+										</BlockControls>
+									);
+								}
+							}
+						</Slot>
+					</Fragment>
+				)}
+
+			</Fragment>
+		);
 	};
 }, 'withOtterTools' );
 
