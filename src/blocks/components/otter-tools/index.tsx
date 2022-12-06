@@ -12,7 +12,8 @@ import {
 	Button,
 	ToolbarDropdownMenu,
 	ToolbarGroup,
-	createSlotFill
+	createSlotFill,
+	KeyboardShortcuts
 } from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -20,6 +21,8 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { Fragment, useState } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
+import { isAppleOS } from '@wordpress/keycodes';
+
 
 /**
  * Internal dependencies.
@@ -50,72 +53,86 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 		};
 
 
-		if ( props.isSelected ) {
-			const isSupportedBlock = ( props.name?.startsWith( 'core/' ) || props.name?.startsWith( 'themeisle-blocks/' ) );
+		const isSupportedBlock = ( props.name?.startsWith( 'core/' ) || props.name?.startsWith( 'themeisle-blocks/' ) );
 
-			return (
-				<Fragment>
-					<BlockEdit { ...props } />
-					<Slot>
-						{
-							fills => {
+		return (
+			<Fragment>
+				<BlockEdit { ...props } />
+				<KeyboardShortcuts
 
-								if ( ! Boolean( fills.length ) ) {
-									return null;
+					// Sometime it works, sometime is not. Not to reliable
+					shortcuts={
+						isAppleOS() ? {
+							'mod+ctrl+j': window?.oPlugins?.copy,
+							'mod+ctrl+k': window?.oPlugins?.paste
+						} : {}
+					}
+					bindGlobal={true}
+				/>
+				{ ( props.isSelected ) && (
+					<Fragment>
+						<Slot>
+							{
+								fills => {
+
+									if ( ! Boolean( fills.length ) ) {
+										return null;
+									}
+
+									return (
+										<BlockControls>
+
+											<ToolbarGroup>
+												<ToolbarDropdownMenu
+													label={__( 'Otter Tools', 'otter-blocks' )}
+													icon={ isSupportedBlock ? otterIcon : tool  }
+												>
+													{
+														({ onClose }) => (
+															<div onClick={onClose}>
+																{
+																	sortBy( fills ?? [], fill => {
+																		return fill[0]?.props.order;
+																	}).map( fill => {
+																		return fill[0]?.props?.children;
+																	})
+																}
+																<Button
+																	id="o-feedback"
+																	variant={ 'link' }
+																	onClick={() => {
+																		setIsOpen( ! isOpen );
+																		onClose();
+																	}}
+																	style={{
+																		paddingLeft: '8px'
+																	}}
+																>
+																	{ __( 'Help us improve Otter Blocks', 'otter-blocks' ) }
+																</Button>
+															</div>
+														)
+													}
+												</ToolbarDropdownMenu>
+											</ToolbarGroup>
+
+											<FeedbackModalComponent
+												isOpen={isOpen}
+												status={status}
+												closeModal={closeModal}
+												source={'control-tools'}
+												setStatus={ setStatus }
+											/>
+										</BlockControls>
+									);
 								}
-
-								return (
-									<BlockControls>
-										<ToolbarGroup>
-											<ToolbarDropdownMenu
-												label={__( 'Otter Tools', 'otter-blocks' )}
-												icon={ isSupportedBlock ? otterIcon : tool  }
-											>
-												{
-													({ onClose }) => (
-														<div onClick={onClose}>
-															{
-																sortBy( fills ?? [], fill => {
-																	return fill[0]?.props.order;
-																}).map( fill => {
-																	return fill[0]?.props?.children;
-																})
-															}
-															<Button
-																id="o-feedback"
-																variant={ 'link' }
-																onClick={() => {
-																	setIsOpen( ! isOpen );
-																	onClose();
-																}}
-																style={{
-																	paddingLeft: '8px'
-																}}
-															>
-																{ __( 'Help us improve Otter Blocks', 'otter-blocks' ) }
-															</Button>
-														</div>
-													)
-												}
-											</ToolbarDropdownMenu>
-										</ToolbarGroup>
-										<FeedbackModalComponent
-											isOpen={isOpen}
-											status={status}
-											closeModal={closeModal}
-											source={'control-tools'}
-											setStatus={ setStatus }
-										/>
-									</BlockControls>
-								);
 							}
-						}
-					</Slot>
-				</Fragment>
-			);
-		}
+						</Slot>
+					</Fragment>
+				)}
 
-		return <BlockEdit { ...props } />;
+			</Fragment>
+		);
 	};
 }, 'withOtterTools' );
 

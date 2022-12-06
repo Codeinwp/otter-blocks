@@ -7,7 +7,7 @@ import { select, dispatch } from '@wordpress/data';
 import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
 import { Fragment } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
-import { KeyboardShortcuts, MenuGroup, MenuItem } from '@wordpress/components';
+import { MenuGroup, MenuItem } from '@wordpress/components';
 import { isAppleOS, displayShortcut } from '@wordpress/keycodes';
 
 /**
@@ -58,24 +58,24 @@ function copy() {
 
 	const { createNotice } = dispatch( 'core/notices' );
 
-	if ( copied?.every( x => x ) ) {
+	if ( 0 < copied?.filter( x => 'SUCCESS' == x )?.length ) {
 		createNotice(
 			'info',
 			__( 'Copied the styles.', 'otter-blocks' ),
 			{
 				isDismissible: true,
 				type: 'snackbar',
-				id: 'o-copied'
+				id: 'o-copied-success'
 			}
 		);
-	} else {
+	} else if ( 0 < copied?.filter( x => 'ERROR' == x )?.length ) {
 		createNotice(
 			'error',
-			__( 'An error occured when trying to copy the style.', 'otter-blocks' ),
+			__( 'An error occurred when trying to copy the style.', 'otter-blocks' ),
 			{
 				isDismissible: true,
 				type: 'snackbar',
-				id: 'o-copied'
+				id: 'o-copied-error'
 			}
 		);
 	}
@@ -149,6 +149,7 @@ const CopyPasteComponent = ( ) => {
 	);
 };
 
+
 const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 	return ( props ) => {
 
@@ -156,14 +157,6 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 
 			return (
 				<Fragment>
-					<KeyboardShortcuts
-
-						// Sometime it works, sometime is not. Not to reliable
-						shortcuts={ {
-							'mod+alt+j': copy,
-							'mod+alt+k': paste
-						} }
-					/>
 
 					<BlockEdit { ...props } />
 					{
@@ -178,14 +171,14 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 						<MenuGroup>
 							<MenuItem
 								onClick={ copy }
-								shortcut={ isAppleOS() ? displayShortcut.primaryAlt( 'j' ) : '' }
+								shortcut={ isAppleOS() ? displayShortcut.ctrl( '' ) + displayShortcut.primary( 'j' ) : '' }
 							>
 								{ __( 'Copy Style', 'otter-blocks' ) }
 							</MenuItem>
 
 							<MenuItem
 								onClick={ paste }
-								shortcut={ isAppleOS() ? displayShortcut.primaryAlt( 'k' ) : '' }
+								shortcut={ isAppleOS() ? displayShortcut.ctrl( '' ) + displayShortcut.primary( 'k' ) : '' }
 							>
 								{ __( 'Paste Style', 'otter-blocks' ) }
 							</MenuItem>
@@ -202,4 +195,10 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 if ( select?.( 'core/editor' ) !== undefined ) {
 	addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/copy-paste-extension', withCopyPasteExtension );
 }
+
+// Load to global scope
+window.oPlugins = {
+	copy: copy,
+	paste: paste
+};
 
