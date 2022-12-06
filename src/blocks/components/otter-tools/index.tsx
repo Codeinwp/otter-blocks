@@ -65,7 +65,10 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 						isAppleOS() ? {
 							'mod+ctrl+j': window?.oPlugins?.copy,
 							'mod+ctrl+k': window?.oPlugins?.paste
-						} : {}
+						} : {
+							'ctrl+alt+j': window?.oPlugins?.copy,
+							'ctrl+alt+k': window?.oPlugins?.paste
+						}
 					}
 					bindGlobal={true}
 				/>
