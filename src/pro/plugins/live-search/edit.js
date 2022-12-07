@@ -20,12 +20,12 @@ const Edit = ({
 	props
 }) => {
 	const toggleLive = () => {
-		const isLive = ! props.attributes.isLive;
-		props.setAttributes({ isLive });
+		const otterIsLive = ! props.attributes.otterIsLive;
+		props.setAttributes({ otterIsLive });
 	};
 
 	const onPostTypeChange = types => {
-		props.setAttributes({ postTypes: types });
+		props.setAttributes({ otterSearchQuery: { postTypes: types }});
 	};
 
 	const Notices = () => {
@@ -63,14 +63,14 @@ const Edit = ({
 							<>
 								<ToggleControl
 									label={ __( 'Enable Live Search', 'otter-blocks' ) }
-									checked={ props.attributes.isLive }
+									checked={ props.attributes.otterIsLive }
 									onChange={ toggleLive }
 								/>
 
-								{ props.attributes.isLive && (
+								{ props.attributes.otterIsLive && (
 									<FormTokenField
 										label={ __( 'Search in', 'otter-blocks' ) }
-										value={ props.attributes.postTypes }
+										value={ props.attributes.otterSearchQuery?.postTypes || [] }
 										suggestions={ postTypes.filter( type => ! excludeTypes.includes( type ) ) }
 										onChange={ types => onPostTypeChange( types ) }
 										__experimentalExpandOnFocus={ true }

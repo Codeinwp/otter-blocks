@@ -15,12 +15,12 @@ import Edit from './edit.js';
 const addAttribute = ( props ) => {
 	if ( 'core/search' === props.name ) {
 		props.attributes = assign( props.attributes, {
-			isLive: {
+			otterIsLive: {
 				type: 'boolean',
 				default: false
 			},
-			postTypes: {
-				type: 'array'
+			otterSearchQuery: {
+				type: 'object'
 			}
 		});
 	}

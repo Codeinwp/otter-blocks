@@ -31,29 +31,25 @@ const liveSearchUpsell = createHigherOrderComponent( BlockEdit => {
 						title={ __( 'Live Search', 'otter-blocks' ) }
 						initialOpen={ false }
 					>
-						{ ! ( Boolean( false ) ) && (
-							<>
-								<Disabled>
-									<ToggleControl
-										label={ __( 'Enable Live Search', 'otter-blocks' ) }
-										checked={ false }
-										onChange={ () => {} }
-										className="o-disabled"
-									/>
-								</Disabled>
-								<Notice
-									notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'search-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
-									variant="upsell"
-								/>
-								<Button
-									className="o-live-search__doc"
-									variant="secondary"
-									href={ liveSearchDocUrl }
-								>
-									{ __( 'Learn more', 'otter-blocks' ) }
-								</Button>
-							</>
-						) }
+						<Disabled>
+							<ToggleControl
+								label={ __( 'Enable Live Search', 'otter-blocks' ) }
+								checked={ false }
+								onChange={ () => {} }
+								className="o-disabled"
+							/>
+						</Disabled>
+						<Notice
+							notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'search-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+							variant="upsell"
+						/>
+						<Button
+							className="o-live-search__doc"
+							variant="secondary"
+							href={ liveSearchDocUrl }
+						>
+							{ __( 'Learn more', 'otter-blocks' ) }
+						</Button>
 					</PanelBody>
 				</InspectorControls>
 
@@ -63,4 +59,6 @@ const liveSearchUpsell = createHigherOrderComponent( BlockEdit => {
 	};
 }, 'liveSearchUpsell' );
 
-addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/live-search-upsell', liveSearchUpsell );
+if ( ! Boolean( window.themeisleGutenberg.hasPro ) ) {
+	addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/live-search-upsell', liveSearchUpsell );
+}
