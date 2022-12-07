@@ -59,6 +59,7 @@ class Main {
 			'\ThemeIsle\OtterPro\Plugins\Fonts_Module',
 			'\ThemeIsle\OtterPro\Plugins\License',
 			'\ThemeIsle\OtterPro\Plugins\Options_Settings',
+			'\ThemeIsle\OtterPro\Plugins\Patterns',
 			'\ThemeIsle\OtterPro\Plugins\Posts_ACF_Integration',
 			'\ThemeIsle\OtterPro\Plugins\Review_Woo_Integration',
 			'\ThemeIsle\OtterPro\Plugins\WooCommerce_Builder',
