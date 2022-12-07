@@ -79,6 +79,70 @@ class Patterns {
 				'slug'    => 'contact-form-with-text-and-image-on-two-columns',
 				'minimum' => 5.8,
 			),
+			array(
+				'slug'    => 'wide-media-and-text-over-dark-background',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'contact-form-with-a-full-width-map',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'team-members-section-with-description',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'contact-form-with-map-and-icons',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'product-review-in-plain-style',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'four-columns-with-circular-progress-bar',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'grid-portfolio-with-two-columns-and-a-description',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'portfolio-with-alternating-layout-and-header',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'portfolio-with-wide-images-over-dark-background',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'centered-subscription-form',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'two-columns-subscribe-form',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'two-columns-posts-section-and-a-description',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'posts-grid-with-a-featured-post-over-dark-background',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'posts-list-with-border',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'slider-with-three-slides',
+				'minimum' => 5.8,
+			),
+			array(
+				'slug'    => 'wide-header-with-text-and-a-button',
+				'minimum' => 5.8,
+			),
 		);
 
 		foreach ( $block_patterns as $block_pattern ) {
