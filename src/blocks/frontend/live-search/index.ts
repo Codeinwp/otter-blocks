@@ -221,7 +221,7 @@ domReady( () => {
 		const container = document.createElement( 'div' );
 		container.classList.add( CONTAINER_CLASS );
 
-		container.style.fontSize = `calc( ${inputStyle.fontSize} - 4px )`;
+		container.style.fontSize = `max( calc( ${inputStyle.fontSize} - 4px ), 14px )`;
 		container.style.backgroundColor = inputStyle.backgroundColor;
 		container.style.color = inputStyle.color;
 
@@ -345,7 +345,7 @@ domReady( () => {
 		const meta = getMeta( entry );
 		if ( meta ) {
 			const inputFontSize = getComputedStyle( inputElement ).fontSize;
-			meta.style.fontSize = `calc( ${inputFontSize} - 6px )`;
+			meta.style.fontSize = `max( calc( ${inputFontSize} - 6px ), 12px )`;
 			data.appendChild( meta );
 		}
 

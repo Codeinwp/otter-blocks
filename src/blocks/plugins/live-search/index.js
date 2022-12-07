@@ -5,7 +5,7 @@ import { addFilter } from '@wordpress/hooks';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { InspectorControls } from '@wordpress/block-editor';
 import { Fragment } from '@wordpress/element';
-import { ExternalLink } from '@wordpress/components';
+import { Button, Disabled, ExternalLink, PanelBody, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -13,7 +13,9 @@ import { __ } from '@wordpress/i18n';
  */
 import Notice from '../../components/notice';
 import { setUtm } from '../../helpers/helper-functions';
+import './editor.scss';
 
+const liveSearchDocUrl = 'https://docs.themeisle.com/article/1747-the-live-search-feature-otter-features-library';
 
 const liveSearchUpsell = createHigherOrderComponent( BlockEdit => {
 	return props => {
@@ -24,14 +26,37 @@ const liveSearchUpsell = createHigherOrderComponent( BlockEdit => {
 		return (
 			<Fragment>
 				<InspectorControls>
-					{ ! ( Boolean( window.themeisleGutenberg.hasPro ) ) && (
-						<Notice
-							notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'search-block' ) }>{ __( 'Get Live Search Results with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
-							variant="upsell"
-							outsidePanel
-						/>
-					) }
+					<PanelBody
+						className="o-live-search"
+						title={ __( 'Live Search', 'otter-blocks' ) }
+						initialOpen={ false }
+					>
+						{ ! ( Boolean( false ) ) && (
+							<>
+								<Disabled>
+									<ToggleControl
+										label={ __( 'Enable Live Search', 'otter-blocks' ) }
+										checked={ false }
+										onChange={ () => {} }
+										className="o-disabled"
+									/>
+								</Disabled>
+								<Notice
+									notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'search-block' ) }>{ __( 'Unlock this with Otter Pro.', 'otter-blocks' ) }</ExternalLink> }
+									variant="upsell"
+								/>
+								<Button
+									className="o-live-search__doc"
+									variant="secondary"
+									href={ liveSearchDocUrl }
+								>
+									{ __( 'Learn more', 'otter-blocks' ) }
+								</Button>
+							</>
+						) }
+					</PanelBody>
 				</InspectorControls>
+
 				<BlockEdit { ...props } />
 			</Fragment>
 		);

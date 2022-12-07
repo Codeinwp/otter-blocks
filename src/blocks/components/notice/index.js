@@ -3,7 +3,6 @@
  */
 import { Tooltip } from '@wordpress/components';
 import { info } from '@wordpress/icons';
-import classNames from 'classnames';
 
 /**
  * Internal dependencies
@@ -13,11 +12,10 @@ import './editor.scss';
 const Notice = ({
 	notice,
 	variant = 'default',
-	instructions,
-	outsidePanel = false
+	instructions
 }) => {
 	return (
-		<div className={classNames( 'o-notice', `is-${ variant }`, { 'is-outside-panel': outsidePanel })}>
+		<div className={ `o-notice is-${ variant }` }>
 			{ notice }
 
 			{ instructions && (
