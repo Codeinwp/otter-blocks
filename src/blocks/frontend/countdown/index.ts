@@ -381,15 +381,22 @@ class CountdownRunner {
 	 */
 	startTimer( interval: number = 300 ) {
 		this.timer = setInterval( () => {
-			const currentTime = Date.now();
-			this.running.forEach( ( countdown ) => {
-				this.updateCountdown( this.countdowns[countdown] as CountdownData, currentTime );
-			});
-
-			if ( 0 === this.running.size ) {
-				this.stopTimer();
-			}
+			this.update();
 		}, interval );
+	}
+
+	/**
+	 * Update he countdown using the current time.
+	 */
+	update() {
+		const currentTime = Date.now();
+		this.running.forEach( ( countdown ) => {
+			this.updateCountdown( this.countdowns[countdown] as CountdownData, currentTime );
+		});
+
+		if ( 0 === this.running.size ) {
+			this.stopTimer();
+		}
 	}
 
 	/**
@@ -476,6 +483,8 @@ domReady( () => {
 		const c = new CountdownData( countdown as HTMLDivElement );
 		runner.register( c );
 	});
+
+	runner.update();
 
 	runner.startTimer();
 });
