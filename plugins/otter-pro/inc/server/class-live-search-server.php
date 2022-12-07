@@ -124,6 +124,7 @@ class Live_Search_Server {
 				'results' => array_map(
 					function( $post ) {
 						$data = array(
+							'id'     => $post->ID,
 							'link'   => get_permalink( $post->ID ),
 							'title'  => $post->post_title,
 							'type'   => $post->post_type,

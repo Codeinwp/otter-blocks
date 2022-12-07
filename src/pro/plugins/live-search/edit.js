@@ -9,9 +9,11 @@ import {
 } from '@wordpress/components';
 import { InspectorControls } from '@wordpress/block-editor';
 import { Fragment } from '@wordpress/element';
+import { applyFilters } from '@wordpress/hooks';
 
 const { Notice } = window.otterComponents;
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
+const excludeTypes = [ 'attachment' ];
 
 const Edit = ({
 	BlockEdit,
@@ -45,6 +47,8 @@ const Edit = ({
 				/>
 			);
 		}
+
+		return null;
 	};
 
 	return (
@@ -63,18 +67,21 @@ const Edit = ({
 									onChange={ toggleLive }
 								/>
 
-								<FormTokenField
-									label={ __( 'Search in', 'otter-blocks' ) }
-									value={ props.attributes.postTypes }
-									suggestions={ postTypes }
-									onChange={ types => onPostTypeChange( types ) }
-									__experimentalExpandOnFocus={ true }
-									__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
-								/>
+								{ props.attributes.isLive && (
+									<FormTokenField
+										label={ __( 'Search in', 'otter-blocks' ) }
+										value={ props.attributes.postTypes }
+										suggestions={ postTypes.filter( type => ! excludeTypes.includes( type ) ) }
+										onChange={ types => onPostTypeChange( types ) }
+										__experimentalExpandOnFocus={ true }
+										__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
+									/>
+								)}
 							</>
 						)
 					}
-					{ Notices() }
+					{ <Notices/> }
+					{ applyFilters( 'otter.poweredBy', '' ) }
 				</PanelBody>
 			</InspectorControls>
 

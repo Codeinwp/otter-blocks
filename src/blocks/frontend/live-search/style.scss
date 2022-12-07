@@ -15,10 +15,14 @@
 	.search-results {
 		display: grid;
 		grid-auto-rows: 1fr;
+		width: 100%;
 
 		padding: 15px 0;
 
 		&__row {
+			width: 100%;
+			overflow: hidden;
+
 			> * {
 				color: inherit;
 			}
@@ -49,6 +53,10 @@
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
+
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
 
 				.meta {
 					opacity: .65;

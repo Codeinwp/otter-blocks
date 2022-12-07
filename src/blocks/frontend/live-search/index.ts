@@ -1,17 +1,11 @@
 /**
- * Wordpress dependencies
- */
-// @ts-ignore
-import { debounce } from 'lodash';
-
-/**
  * Internal dependencies
  */
-import { domReady } from '../../helpers/frontend-helper-functions.js';
-import { rgb2hsl } from '../../helpers/frontend-helper-functions';
+import { domReady, rgb2hsl, debounce } from '../../helpers/frontend-helper-functions.js';
 import { page, post, product, generic } from './icons';
 
 type ResultsEntry = {
+	id: number,
 	link: string,
 	title: string,
 	type: string,
@@ -334,7 +328,7 @@ domReady( () => {
 		const optionWrap = document.createElement( 'div' );
 		const option = document.createElement( 'a' );
 
-		optionWrap.classList.add( `${CONTAINER_CLASS}__row` );
+		optionWrap.classList.add( `${CONTAINER_CLASS}__row`,  `is-type-${ entry.type }`, `is-id-${ entry.id }` );
 		option.href = entry.link;
 
 		( 0 === index ) && highlight( optionWrap, inputElement );
@@ -346,6 +340,7 @@ domReady( () => {
 		const data = document.createElement( 'div' );
 		data.classList.add( `${CONTAINER_CLASS}__row-right` );
 		data.innerHTML = entry.title;
+		data.setAttribute( 'title', entry.title );
 
 		const meta = getMeta( entry );
 		if ( meta ) {

@@ -126,6 +126,23 @@ export const domReady = ( callback ) => {
 };
 
 /**
+ * Debounce function
+ *
+ * @param func The function to apply.
+ * @param timeout
+ * @returns {(function(...[*]): void)|*}
+ */
+export const debounce = ( func, timeout = 500 ) => {
+	let timer;
+	return ( ...args ) => {
+		clearTimeout( timer );
+		timer = setTimeout( () => {
+			func.apply( this, args );
+		}, timeout );
+	};
+};
+
+/**
  * Converts HEX colors to HSL.
  *
  * @param color
