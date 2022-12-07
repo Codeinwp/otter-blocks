@@ -3,6 +3,11 @@
  */
 import { domReady } from '../../helpers/frontend-helper-functions';
 
+/**
+ * Simple base64 encoding. This is used to hash the url to prevent reusable blocks from accessing and changing the same data --> making them unique per page.
+ * @param str The string.
+ * @returns
+ */
 const toBase64 = ( str: string ) => {
 	return window.btoa( unescape( encodeURIComponent( str ) ) );
 };
@@ -16,6 +21,7 @@ const _MS_PER_DAY = _MS_PER_HOURS * 24;
 // Local storage locations for saving information about user interaction with the page.
 const LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE = `o-countdown-last-visit-${ toBase64( window.location.pathname ) }-`;
 const TIMER_VALUE_FROM_LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE = `o-countdown-last-visit-time-${ toBase64( window.location.pathname ) }-`;
+const TIMER_TIMEZONE_FROM_LAST_VISIT_ON_SITE = `o-countdown-last-visit-timezone-${ toBase64( window.location.pathname ) }-`;
 
 type Settings = {
 	exclude: string[]
@@ -124,8 +130,11 @@ class CountdownData {
 			// Record when the user was last time on this page.
 			const lastVisitTimeRecord = localStorage.getItem( `${LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE}-${this.elem.id}` ) ?? '0';
 
-			// Record what was the timer value.
+			// Record with the timer value.
 			const timerValueRecorded = localStorage.getItem( `${TIMER_VALUE_FROM_LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE}-${this.elem.id}` );
+
+			// Record with the timezone
+			const timezoneRecorded = localStorage.getItem( `${TIMER_TIMEZONE_FROM_LAST_VISIT_ON_SITE}-${this.elem.id}` ) ?? '0';
 
 			// Set the deadline based on the last visit.
 			this.deadline = parseInt( lastVisitTimeRecord! ) + parseInt( this.timer );
@@ -134,17 +143,20 @@ class CountdownData {
 			 * Reset conditions:
 			 * - the user is first time on the page
 			 * - the timer has reach the deadline
-			 * - the time was changed
+			 * - the deadline time was changed
+			 * - the timezone has changed
 			 */
 			if (
 				! lastVisitTimeRecord ||
 				( 0 > ( parseInt( lastVisitTimeRecord ) + parseInt( this.timer ) - Date.now() ) ) ||
-				timerValueRecorded !== this.timer
+				timerValueRecorded !== this.timer ||
+				timezoneRecorded != ( new Date() ).getTimezoneOffset().toString()
 			) {
 
-				// Record the curent visit and timer time. Set a new deadline.
+				// Record the current visit and timer time. Set a new deadline.
 				localStorage.setItem( `${LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE}-${this.elem.id}`, Date.now().toString() );
 				localStorage.setItem( `${TIMER_VALUE_FROM_LAST_TIME_VISIT_ON_SITE_RECORD_SOURCE}-${this.elem.id}`, this.timer );
+				localStorage.setItem( `${TIMER_TIMEZONE_FROM_LAST_VISIT_ON_SITE}-${this.elem.id}`, ( new Date() ).getTimezoneOffset().toString() );
 				this.deadline = Date.now() + parseInt( this.timer );
 			}
 			break;
