@@ -397,10 +397,6 @@ class Registration {
 			$content = get_the_content( null, false, $post );
 		}
 
-		if ( strpos( $content, '<!-- wp:' ) === false ) {
-			return false;
-		}
-
 		$this->enqueue_block_styles( $post );
 
 		if ( has_block( 'core/block', $post ) ) {
