@@ -149,7 +149,24 @@ const Edit = ({
 		};
 	});
 
+	const { canSaveData } = useSelect( select => {
+
+		// console.count( 'Trigger Save Detection' );
+		const isSavingPost = select( 'core/editor' ).isSavingPost();
+
+		return {
+			canSaveData: isSavingPost
+		};
+	});
+
 	const hasEssentialData = attributes.optionName && hasProtection;
+
+	useEffect( () => {
+		if ( canSaveData ) {
+			console.count( 'Save Effect' );
+			saveFormEmailOptions();
+		}
+	}, [ canSaveData ]);
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );

@@ -49,6 +49,12 @@
 		"inputPadding": {
 			"type": "object"
 		},
+		"inputPaddingTablet": {
+			"type": "object"
+		},
+		"inputPaddingMobile": {
+			"type": "object"
+		},
 		"labelColor": {
 			"type": "string"
 		},
@@ -118,8 +124,23 @@
 		"submitStyle": {
 			"type": "string"
 		},
+		"submitStyleTablet": {
+			"type": "string"
+		},
+		"submitStyleMobile": {
+			"type": "string"
+		},
 		"isSynced": {
 			"type": "array"
+		},
+		"buttonPadding": {
+			"type": "object"
+		},
+		"buttonPaddingTablet": {
+			"type": "object"
+		},
+		"buttonPaddingMobile": {
+			"type": "object"
 		}
 	},
 	"supports": {
