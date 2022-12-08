@@ -20,8 +20,8 @@
 		padding: 15px 0;
 
 		&__row {
-			width: 100%;
-			overflow: hidden;
+			min-width: 0;
+			display: flex;
 
 			> * {
 				color: inherit;
@@ -35,12 +35,16 @@
 
 			a {
 				gap: 12px;
-				height: 100%;
+				width: 100%;
 			}
 
 			&-left {
-				svg path {
-					fill: currentColor;
+				svg {
+					margin: 1px;
+
+					path {
+						fill: currentColor;
+					}
 				}
 
 				display: flex;
@@ -53,13 +57,18 @@
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
-
-				white-space: nowrap;
-				text-overflow: ellipsis;
 				overflow: hidden;
 
 				.meta {
 					opacity: .65;
+				}
+
+				.post-title {
+					margin: 0;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					overflow: hidden;
+					min-width: 0;
 				}
 			}
 		}

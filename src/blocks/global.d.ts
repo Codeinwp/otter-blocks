@@ -90,6 +90,7 @@ declare global {
 			restUrl: string,
 			strings: {
 				noResults: string
+				noTitle: string
 			}
 		}
 	}

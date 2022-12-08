@@ -54,7 +54,7 @@ if ( ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpir
 		attributes: {
 			buttonText: __( 'Search' ),
 			label: __( 'Search' ),
-			isLive: true
+			otterIsLive: true
 		}
 	});
 }

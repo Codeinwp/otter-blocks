@@ -89,6 +89,7 @@ domReady( () => {
 		wrap.style.width = inputElement.offsetWidth + 'px';
 		wrap.style.top = `calc( ${inputStyle.height} + ${parentStyle?.paddingTop} + ${parentStyle?.paddingBottom} + ${parentStyle?.borderBottomWidth} )`;
 		wrap.style.borderRadius = inputStyle.borderRadius;
+		wrap.style.backgroundColor = inputStyle.backgroundColor;
 
 		if ( ! inputElement ) {
 			return;
@@ -109,7 +110,7 @@ domReady( () => {
 
 				if ( ! r.success ) {
 					console.error( r.message );
-					removeResultsContainer( block, resultsContainer, false );
+					resultsContainer = removeResultsContainer( block, resultsContainer, false );
 					return;
 				}
 
@@ -164,13 +165,21 @@ domReady( () => {
 
 			const keyEvent = event as KeyboardEvent;
 			const containerDimensions = resultsContainer.parentElement.getBoundingClientRect();
+			const keys = [ 'ArrowDown', 'ArrowUp', 'Enter', 'Escape' ];
 
-			if ( 'ArrowDown' !== keyEvent.key && 'ArrowUp' !== keyEvent.key && 'Enter' !== keyEvent.key ) {
+			if ( ! keys.includes( keyEvent.key ) ) {
+				return;
+			}
+
+			if ( 'Escape' === keyEvent.key ) {
+				inputElement.blur();
+				resultsContainer = removeResultsContainer( block, resultsContainer );
 				return;
 			}
 
 			const highlighted = resultsContainer?.querySelector( '.highlight' );
 			if ( ! highlighted ) {
+				highlight( resultsContainer.children[0] as HTMLElement, inputElement );
 				return;
 			}
 
@@ -220,9 +229,9 @@ domReady( () => {
 
 		const container = document.createElement( 'div' );
 		container.classList.add( CONTAINER_CLASS );
+		container.setAttribute( 'role', 'list' );
 
 		container.style.fontSize = `max( calc( ${inputStyle.fontSize} - 4px ), 14px )`;
-		container.style.backgroundColor = inputStyle.backgroundColor;
 		container.style.color = inputStyle.color;
 
 		addLoadingIcon( container );
@@ -329,9 +338,8 @@ domReady( () => {
 		const option = document.createElement( 'a' );
 
 		optionWrap.classList.add( `${CONTAINER_CLASS}__row`,  `is-type-${ entry.type }`, `is-id-${ entry.id }` );
+		optionWrap.setAttribute( 'role', 'option' );
 		option.href = entry.link;
-
-		( 0 === index ) && highlight( optionWrap, inputElement );
 
 		const icon = document.createElement( 'div' );
 		icon.classList.add( `${CONTAINER_CLASS}__row-left` );
@@ -339,8 +347,13 @@ domReady( () => {
 
 		const data = document.createElement( 'div' );
 		data.classList.add( `${CONTAINER_CLASS}__row-right` );
-		data.innerHTML = entry.title;
-		data.setAttribute( 'title', entry.title );
+
+		const title = document.createElement( 'p' );
+		title.classList.add( 'post-title' );
+		title.setAttribute( 'title', entry.title );
+		title.innerText = 0 < entry.title.length ? entry.title : strings.noTitle;
+
+		data.appendChild( title );
 
 		const meta = getMeta( entry );
 		if ( meta ) {
