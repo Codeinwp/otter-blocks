@@ -59,8 +59,8 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 					// Sometime it works, sometime is not. Not to reliable
 					shortcuts={
 						isAppleOS() ? {
-							'mod+ctrl+j': window?.oPlugins?.copy,
-							'mod+ctrl+k': window?.oPlugins?.paste
+							'ctrl+c': window?.oPlugins?.copy,
+							'ctrl+v': window?.oPlugins?.paste
 						} : {
 							'ctrl+alt+j': window?.oPlugins?.copy,
 							'ctrl+alt+k': window?.oPlugins?.paste
