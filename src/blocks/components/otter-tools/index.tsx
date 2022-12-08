@@ -32,9 +32,9 @@ import { FeedbackModalComponent } from '../../plugins/feedback';
 
 const { Fill, Slot } = createSlotFill( 'OtterControlTools' );
 
-export const OtterControlTools = ({ children, order }) => {
+export const OtterControlTools = ({ children, order, source }) => {
 	return <Fill >
-		<div key={order ?? 99} order={order ?? 99}>
+		<div key={order ?? 99} order={order ?? 99} source={source}>
 			{children}
 		</div>
 	</Fill>;
@@ -54,20 +54,7 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 		return (
 			<Fragment>
 				<BlockEdit { ...props } />
-				<KeyboardShortcuts
 
-					// Sometime it works, sometime is not. Not to reliable
-					shortcuts={
-						isAppleOS() ? {
-							'ctrl+c': window?.oPlugins?.copy,
-							'ctrl+v': window?.oPlugins?.paste
-						} : {
-							'ctrl+alt+j': window?.oPlugins?.copy,
-							'ctrl+alt+k': window?.oPlugins?.paste
-						}
-					}
-					bindGlobal={true}
-				/>
 				{ ( props.isSelected ) && (
 					<Fragment>
 						<Slot>
@@ -80,6 +67,22 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 
 									return (
 										<BlockControls>
+											{
+												fills.some( x => 'copy-paste' === x[0].props?.source ) && (
+													<KeyboardShortcuts
+														shortcuts={
+															isAppleOS() ? {
+																'ctrl+c': window?.oPlugins?.copy,
+																'ctrl+v': window?.oPlugins?.paste
+															} : {
+																'ctrl+alt+j': window?.oPlugins?.copy,
+																'ctrl+alt+k': window?.oPlugins?.paste
+															}
+														}
+														bindGlobal={true}
+													/>
+												)
+											}
 
 											<ToolbarGroup>
 												<ToolbarDropdownMenu
