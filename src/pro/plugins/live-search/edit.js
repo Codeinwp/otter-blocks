@@ -43,7 +43,6 @@ const Edit = ({
 				<Notice
 					notice={ __( 'You need to activate Otter Pro.', 'otter-blocks' ) }
 					instructions={ __( 'You need to activate your Otter Pro license to use the live search feature.', 'otter-blocks' ) }
-					style={{ color: 'red' }}
 				/>
 			);
 		}
@@ -68,14 +67,20 @@ const Edit = ({
 								/>
 
 								{ props.attributes.otterIsLive && (
-									<FormTokenField
-										label={ __( 'Search in', 'otter-blocks' ) }
-										value={ props.attributes.otterSearchQuery?.postTypes || [] }
-										suggestions={ postTypes.filter( type => ! excludeTypes.includes( type ) ) }
-										onChange={ types => onPostTypeChange( types ) }
-										__experimentalExpandOnFocus={ true }
-										__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
-									/>
+									<>
+										<FormTokenField
+											label={ __( 'Search in', 'otter-blocks' ) }
+											value={ props.attributes.otterSearchQuery?.postTypes || [] }
+											suggestions={ postTypes.filter( type => ! excludeTypes.includes( type ) ) }
+											onChange={ types => onPostTypeChange( types ) }
+											__experimentalExpandOnFocus={ true }
+											__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
+										/>
+										<Notice
+											notice={ __( 'Leave empty to search in all post types.', 'otter-blocks' ) }
+											variant="help"
+										/>
+									</>
 								)}
 							</>
 						)
