@@ -54,7 +54,7 @@ class Live_Search {
 				'strings' => array(
 					/* translators: This is followed by the search string */
 					'noResults' => __( 'No results for', 'otter-blocks' ),
-					'noTitle' => sprintf( '(%s)', __( 'no title', 'otter-blocks' ) )
+					'noTitle'   => sprintf( '(%s)', __( 'no title', 'otter-blocks' ) ),
 				),
 			)
 		);
