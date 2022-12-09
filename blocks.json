@@ -126,7 +126,6 @@
 	"plugin-cards": {
 		"block": "blocks/blocks/plugin-cards/block.json",
 		"assets": {
-			"plugin-cards/editor.css": "blocks/blocks/plugin-cards/editor.scss",
 			"plugin-cards/style.css": "blocks/blocks/plugin-cards/style.scss"
 		}
 	},

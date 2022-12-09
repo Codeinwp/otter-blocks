@@ -6,5 +6,8 @@
 	"category": "themeisle-blocks",
 	"description": "Display kudos from customers and clients and display them on your website. Powered by Otter.",
 	"keywords": [ "testimonials", "quotes", "business" ],
-	"textdomain": "otter-blocks"
+	"textdomain": "otter-blocks",
+	"supports": {
+		"inserter": false
+	}
 }

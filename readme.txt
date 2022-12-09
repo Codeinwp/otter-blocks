@@ -169,7 +169,6 @@ We're constantly adding new Gutenberg Blocks to Otter to assist in your website 
 - Flip Card Gutenberg Block [FREE]
 - Popup Gutenberg Block [FREE]
 - Sharing Icons Gutenberg Block [FREE]
-- Plugin Card Gutenberg Block [FREE]
 - Subscribe Form Gutenberg Block [FREE]
 
 ### Get More Options in Otter Pro

@@ -31,9 +31,9 @@ const { Fill, Slot } = createSlotFill( 'OtterControlTools' );
 
 export const OtterControlTools = ({ children, order }) => {
 	return <Fill >
-		<Fragment order={ order ?? 99 }>
-			{ children }
-		</Fragment>
+		<div key={order ?? 99} order={order ?? 99}>
+			{children}
+		</div>
 	</Fill>;
 };
 
@@ -70,9 +70,13 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 												{
 													({ onClose }) => (
 														<div onClick={onClose}>
-															{ sortBy( fills ?? [], fill => {
-																return fill[0]?.props.order;
-															})}
+															{
+																sortBy( fills ?? [], fill => {
+																	return fill[0]?.props.order;
+																}).map( fill => {
+																	return fill[0]?.props?.children;
+																})
+															}
 															<Button
 																id="o-feedback"
 																variant={ 'link' }
