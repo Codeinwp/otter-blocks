@@ -123,9 +123,12 @@ domReady( () => {
 		// so that the page can get redirected to the highlighted result
 		form?.addEventListener( 'keypress', ( event: KeyboardEvent ) => {
 			if ( 'Enter' === event.key && resultsContainer ) {
-				event.preventDefault();
-
 				const highlighted = resultsContainer.querySelector( '.highlight > a' );
+				if ( ! highlighted ) {
+					return;
+				}
+
+				event.preventDefault();
 				window.location = ( highlighted as HTMLAnchorElement )?.href as unknown as Location;
 			}
 		});
@@ -165,7 +168,7 @@ domReady( () => {
 
 			const keyEvent = event as KeyboardEvent;
 			const containerDimensions = resultsContainer.parentElement.getBoundingClientRect();
-			const keys = [ 'ArrowDown', 'ArrowUp', 'Enter', 'Escape' ];
+			const keys = [ 'ArrowDown', 'ArrowUp', 'Escape' ];
 
 			if ( ! keys.includes( keyEvent.key ) ) {
 				return;
