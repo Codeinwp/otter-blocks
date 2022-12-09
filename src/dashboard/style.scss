@@ -4,6 +4,10 @@
 	box-sizing: inherit;
 }
 
+#wpbody-content > .error, #wpbody-content > .info, #wpbody-content > .notice {
+	display: none !important;
+}
+
 .settings_page_otter {
 	background: #f6f6f6;
 	font-size: 14px;
