@@ -54,6 +54,18 @@ class Options_Settings {
 				'default'      => true === boolval( get_option( 'nv_pro_enable_local_fonts', false ) ) ? true : false,
 			)
 		);
+
+		register_setting(
+			'themeisle_blocks_settings',
+			'otter_iphub_api_key',
+			array(
+				'type'              => 'string',
+				'description'       => __( 'IPHub API Key.', 'otter-blocks' ),
+				'sanitize_callback' => 'sanitize_text_field',
+				'show_in_rest'      => true,
+				'default'           => '',
+			)
+		);
 	}
 
 	/**

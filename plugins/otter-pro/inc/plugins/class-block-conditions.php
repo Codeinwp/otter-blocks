@@ -7,7 +7,7 @@
 
 namespace ThemeIsle\OtterPro\Plugins;
 
-use ThemeIsle\OtterPro\Plugins\License;
+use ThemeIsle\OtterPro\Plugins\License, ThemeIsle\OtterPro\Plugins\Dynamic_Content;
 
 /**
  * Class Block_Conditions
@@ -261,19 +261,17 @@ class Block_Conditions {
 	 * @access public
 	 */
 	public function has_country( $condition ) {
-		$location = null;
+		$location = Dynamic_Content::get_user_location( 'countryCode' );
 
-		if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
-			$location = json_decode( wpcom_vip_file_get_contents( 'http://www.geoplugin.net/json.gp' ), true );
-		} else {
-			$location = json_decode( file_get_contents( 'http://www.geoplugin.net/json.gp' ), true ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown, WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsRemoteFile
+		if ( false !== $location ) {
+			$location = $location;
 		}
 
-		if ( ! isset( $location['geoplugin_countryCode'] ) ) {
+		if ( ! isset( $location['countryCode'] ) ) {
 			return false;
 		};
 
-		if ( in_array( $location['geoplugin_countryCode'], array_map( 'strtoupper', array_map( 'trim', explode( ',', $condition['value'] ) ) ), true ) ) {
+		if ( in_array( $location['countryCode'], array_map( 'strtoupper', array_map( 'trim', explode( ',', $condition['value'] ) ) ), true ) ) {
 			return true;
 		}
 

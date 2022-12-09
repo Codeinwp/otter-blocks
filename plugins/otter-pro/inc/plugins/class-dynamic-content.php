@@ -318,6 +318,77 @@ class Dynamic_Content {
 	}
 
 	/**
+	 * Get the client IP address
+	 *
+	 * @return string
+	 */
+	public static function get_client_ip() {
+		$ipaddress = '';
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPressVIPMinimum.Variables.ServerVariables.UserControlledHeaders, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__REMOTE_ADDR__
+		if ( isset( $_SERVER['HTTP_CLIENT_IP'] ) ) {
+			$ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+		} elseif ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+			$ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		} elseif ( isset( $_SERVER['HTTP_X_FORWARDED'] ) ) {
+			$ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+		} elseif ( isset( $_SERVER['HTTP_FORWARDED_FOR'] ) ) {
+			$ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+		} elseif ( isset( $_SERVER['HTTP_FORWARDED'] ) ) {
+			$ipaddress = $_SERVER['HTTP_FORWARDED'];
+		} elseif ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
+			$ipaddress = $_SERVER['REMOTE_ADDR'];
+		} else {
+			$ipaddress = '';
+		}
+		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPressVIPMinimum.Variables.ServerVariables.UserControlledHeaders, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__REMOTE_ADDR__
+		return $ipaddress;
+	}
+
+	/**
+	 * Get User Location.
+	 *
+	 * @param string $value Value to return.
+	 *
+	 * @return string|bool
+	 */
+	public static function get_user_location( $value = 'countryName' ) {
+		$api = get_option( 'otter_iphub_api_key', '' );
+
+		if ( empty( $api ) ) {
+			return false;
+		}
+
+		$ip   = self::get_client_ip();
+		$url  = 'http://v2.api.iphub.info/ip/' . $ip;
+		$args = array(
+			'method'  => 'GET',
+			'headers' => array(
+				'X-Key' => $api,
+			),
+		);
+
+		$response = '';
+
+		if ( function_exists( 'vip_safe_wp_remote_get' ) ) {
+			$response = vip_safe_wp_remote_get( $url, '', 3, 1, 20, $args );
+		} else {
+			$response = wp_remote_get( $url, $args ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
+		}
+
+		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			return false;
+		}
+
+		if ( isset( $body[ $value ] ) && 'ZZ' !== $body[ $value ] ) {
+			return $body[ $value ];
+		}
+
+		return false;
+	}
+
+	/**
 	 * Get User Country.
 	 *
 	 * @param array $data Dynamic Data.
@@ -326,16 +397,10 @@ class Dynamic_Content {
 	 */
 	public function get_country( $data ) {
 		$value    = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
-		$location = null;
+		$location = self::get_user_location();
 
-		if ( function_exists( 'wpcom_vip_file_get_contents' ) ) {
-			$location = json_decode( wpcom_vip_file_get_contents( 'http://www.geoplugin.net/json.gp' ), true );
-		} else {
-			$location = json_decode( file_get_contents( 'http://www.geoplugin.net/json.gp' ), true ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown, WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsRemoteFile
-		}
-
-		if ( isset( $location['geoplugin_countryName'] ) && is_string( $location['geoplugin_countryName'] ) ) {
-			$value = $location['geoplugin_countryName'];
+		if ( false !== $location ) {
+			$value = $location;
 		}
 
 		return $value;
