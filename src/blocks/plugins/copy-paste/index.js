@@ -171,14 +171,14 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 						<MenuGroup>
 							<MenuItem
 								onClick={ copy }
-								shortcut={ isAppleOS() ? displayShortcut.ctrl( '' ) + displayShortcut.primary( 'j' ) : displayShortcut.ctrl( '' ) + displayShortcut.alt( 'j' ) }
+								shortcut={ isAppleOS() ? displayShortcut.ctrl( 'c' ) : displayShortcut.ctrl( '' ) + displayShortcut.alt( 'j' ) }
 							>
 								{ __( 'Copy Style', 'otter-blocks' ) }
 							</MenuItem>
 
 							<MenuItem
 								onClick={ paste }
-								shortcut={ isAppleOS() ? displayShortcut.ctrl( '' ) + displayShortcut.primary( 'k' ) : displayShortcut.ctrl( '' ) + displayShortcut.alt( 'k' ) }
+								shortcut={ isAppleOS() ? displayShortcut.ctrl( 'v' ) : displayShortcut.ctrl( '' ) + displayShortcut.alt( 'k' ) }
 							>
 								{ __( 'Paste Style', 'otter-blocks' ) }
 							</MenuItem>
