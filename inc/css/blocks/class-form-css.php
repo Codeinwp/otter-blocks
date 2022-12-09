@@ -134,6 +134,81 @@ class Form_CSS extends Base_CSS {
 						'property' => '--required-color',
 						'value'    => 'inputRequiredColor',
 					),
+					array(
+						'property' => '--padding-tablet',
+						'value'    => 'paddingTablet',
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left'   => '8px',
+									'right'  => '8px',
+									'top'    => '8px',
+									'bottom' => '8px',
+								)
+							);
+						},
+					),
+					array(
+						'property' => '--padding-mobile',
+						'value'    => 'paddingMobile',
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left'   => '8px',
+									'right'  => '8px',
+									'top'    => '8px',
+									'bottom' => '8px',
+								)
+							);
+						},
+					),
+					array(
+						'property' => '--btn-pad',
+						'value'    => 'buttonPadding',
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left'   => '20px',
+									'right'  => '20px',
+									'top'    => '10px',
+									'bottom' => '10px',
+								)
+							);
+						},
+					),
+					array(
+						'property' => '--btn-pad-tablet',
+						'value'    => 'buttonPaddingTablet',
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left'   => '20px',
+									'right'  => '20px',
+									'top'    => '10px',
+									'bottom' => '10px',
+								)
+							);
+						},
+					),
+					array(
+						'property' => '--btn-pad-mobile',
+						'value'    => 'buttonPaddingMobile',
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left'   => '20px',
+									'right'  => '20px',
+									'top'    => '10px',
+									'bottom' => '10px',
+								)
+							);
+						},
+					),
 				),
 			)
 		);

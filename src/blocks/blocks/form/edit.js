@@ -51,6 +51,7 @@ import {
 } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks';
 const { attributes: defaultAttributes } = metadata;
 
 export const FormContext = createContext({});
@@ -70,6 +71,8 @@ const Edit = ({
 }) => {
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
+
+	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
 	const [ loadingState, setLoadingState ] = useState({
 		formOptions: 'done',
@@ -739,7 +742,7 @@ const Edit = ({
 		'--input-font-size': attributes.inputFontSize !== undefined && attributes.inputFontSize,
 		'--help-font-size': attributes.helpFontSize !== undefined && attributes.helpFontSize,
 		'--input-color': attributes.inputColor,
-		'--padding': padding( attributes.inputPadding ),
+		'--padding': padding( responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile  ]) ),
 		'--border-radius': attributes.inputBorderRadius !== undefined && ( attributes.inputBorderRadius + 'px' ),
 		'--border-width': attributes.inputBorderWidth !== undefined && ( attributes.inputBorderWidth + 'px' ),
 		'--border-color': attributes.inputBorderColor,
@@ -752,7 +755,8 @@ const Edit = ({
 		'--label-font-size': attributes.labelFontSize !== undefined && attributes.labelFontSize,
 		'--submit-font-size': attributes.submitFontSize !== undefined && attributes.submitFontSize,
 		'--help-label-color': attributes.helpLabelColor,
-		'--input-bg-color': attributes.inputBackgroundColor
+		'--input-bg-color': attributes.inputBackgroundColor,
+		'--btn-pad': padding( responsiveGetAttributes([ attributes.buttonPadding, attributes.buttonPaddingTablet, attributes.buttonPaddingMobile ]) )
 	};
 
 	const [ cssNodeName, setCSS ] = useCSSNode();
@@ -833,7 +837,11 @@ const Edit = ({
 										classnames(
 											'wp-block-button has-submit-msg',
 											{ 'right': 'right' === attributes.submitStyle },
-											{ 'full': 'full' === attributes.submitStyle }
+											{ 'full': 'full' === attributes.submitStyle },
+											{ 'full-tablet': 'full' === attributes.submitStyleTablet },
+											{ 'right-tablet': 'right' === attributes.submitStyleTablet },
+											{ 'full-mobile': 'full' === attributes.submitStyleMobile },
+											{ 'right-mobile': 'right' === attributes.submitStyleMobile }
 										)}
 								>
 									<button

@@ -258,7 +258,7 @@ const Inspector = ({
 									options={[
 										{
 											label: 'Default',
-											value: ''
+											value: 'left'
 										},
 										{
 											label: 'Right',
@@ -269,7 +269,7 @@ const Inspector = ({
 											value: 'full'
 										}
 									]}
-									onChange={ value => responsiveSetAttributes( value, [ 'submitStyle', 'submitStyleTablet', 'submitStyleMobile' ]) }
+									onChange={ value => responsiveSetAttributes( '' === value ? undefined : value, [ 'submitStyle', 'submitStyleTablet', 'submitStyleMobile' ]) }
 								/>
 							</ResponsiveControl>
 
@@ -679,6 +679,18 @@ const Inspector = ({
 									/>
 								</Fragment>
 
+								<BoxControl
+									label={ __( 'Padding', 'otter-blocks' ) }
+									values={ responsiveGetAttributes([ attributes.buttonPadding, attributes.buttonPaddingTablet, attributes.buttonPaddingMobile  ]) ?? { top: '10px', bottom: '10px', right: '20px', left: '20px' }  }
+									onChange={
+										value => {
+
+											// TODO: add clean up functions
+											responsiveSetAttributes( value, [ 'buttonPadding', 'buttonPaddingTablet', 'buttonPaddingMobile' ]);
+										}
+									}
+								/>
+
 
 							</PanelBody>
 
@@ -703,16 +715,12 @@ const Inspector = ({
 									isSynced={ attributes.isSynced }
 									setAttributes={ setAttributes }
 								>
-									<ResponsiveControl
-										label={ __( 'Message Font Size', 'otter-blocks' ) }
-									>
-										<FontSizePicker
-											fontSizes={ defaultFontSizes }
-											withReset
-											value={ attributes.messageFontSize }
-											onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
-										/>
-									</ResponsiveControl>
+									<FontSizePicker
+										fontSizes={ defaultFontSizes }
+										withReset
+										value={ attributes.messageFontSize }
+										onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
+									/>
 								</Fragment>
 							</PanelBody>
 
@@ -827,12 +835,16 @@ const Inspector = ({
 									>
 										<BoxControl
 											label={ __( 'Input Padding', 'otter-blocks' ) }
-											values={ attributes.inputPadding ?? { 'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px' } }
+											values={ responsiveGetAttributes([ attributes.inputPadding, attributes.inputPaddingTablet, attributes.inputPaddingMobile  ]) ?? { 'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px' } }
 											inputProps={ {
 												min: 0,
 												max: 500
 											} }
-											onChange={ inputPadding => setAttributes({ inputPadding }) }
+											onChange={ value => {
+
+												// TODO: Add clean up
+												responsiveSetAttributes( value, [ 'inputPadding', 'inputPaddingTablet', 'inputPaddingMobile' ]);
+											} }
 										/>
 									</ResponsiveControl>
 
