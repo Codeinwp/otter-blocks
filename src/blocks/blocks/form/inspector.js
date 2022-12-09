@@ -679,19 +679,21 @@ const Inspector = ({
 									/>
 								</Fragment>
 
-								<BoxControl
-									label={ __( 'Padding', 'otter-blocks' ) }
-									values={ responsiveGetAttributes([ attributes.buttonPadding, attributes.buttonPaddingTablet, attributes.buttonPaddingMobile  ]) ?? { top: '10px', bottom: '10px', right: '20px', left: '20px' }  }
-									onChange={
-										value => {
+								<ResponsiveControl
+									label="Screen Type"
+								>
+									<BoxControl
+										label={ __( 'Padding', 'otter-blocks' ) }
+										values={ responsiveGetAttributes([ attributes.buttonPadding, attributes.buttonPaddingTablet, attributes.buttonPaddingMobile  ]) ?? { top: '10px', bottom: '10px', right: '20px', left: '20px' }  }
+										onChange={
+											value => {
 
-											// TODO: add clean up functions
-											responsiveSetAttributes( value, [ 'buttonPadding', 'buttonPaddingTablet', 'buttonPaddingMobile' ]);
+												// TODO: add clean up functions
+												responsiveSetAttributes( value, [ 'buttonPadding', 'buttonPaddingTablet', 'buttonPaddingMobile' ]);
+											}
 										}
-									}
-								/>
-
-
+									/>
+								</ResponsiveControl>
 							</PanelBody>
 
 							<PanelBody

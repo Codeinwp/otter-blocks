@@ -34,12 +34,15 @@ const Save = ({
 				<div className={
 					classnames(
 						'wp-block-button',
+						{ 'left': 'left' === attributes.submitStyle },
 						{ 'right': 'right' === attributes.submitStyle },
 						{ 'full': 'full' === attributes.submitStyle },
 						{ 'full-tablet': 'full' === attributes.submitStyleTablet },
 						{ 'right-tablet': 'right' === attributes.submitStyleTablet },
+						{ 'left-tablet': 'left' === attributes.submitStyleTablet },
 						{ 'full-mobile': 'full' === attributes.submitStyleMobile },
-						{ 'right-mobile': 'right' === attributes.submitStyleMobile }
+						{ 'right-mobile': 'right' === attributes.submitStyleMobile },
+						{ 'left-mobile': 'left' === attributes.submitStyleMobile }
 					)}
 				>
 					<button
