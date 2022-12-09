@@ -267,11 +267,11 @@ class Block_Conditions {
 			$location = $location;
 		}
 
-		if ( ! isset( $location['countryCode'] ) ) {
+		if ( ! isset( $location ) ) {
 			return false;
 		};
 
-		if ( in_array( $location['countryCode'], array_map( 'strtoupper', array_map( 'trim', explode( ',', $condition['value'] ) ) ), true ) ) {
+		if ( in_array( $location, array_map( 'strtoupper', array_map( 'trim', explode( ',', $condition['value'] ) ) ), true ) ) {
 			return true;
 		}
 

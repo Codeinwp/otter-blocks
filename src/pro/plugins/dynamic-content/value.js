@@ -100,6 +100,10 @@ const applySettingsPanel = options => {
 		'queryString'
 	];
 
+	if ( ! Boolean( window.otterPro.hasIPHubAPI ) ) {
+		hasSettingsPanel.push( 'country' );
+	}
+
 	options.push( ...hasSettingsPanel );
 
 	return options;

@@ -472,6 +472,10 @@ const Edit = ({
 
 			{ 'country' === item.type && (
 				<Fragment>
+					{ ! Boolean( window.otterPro.hasIPHubAPI ) && (
+						<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Setup API to use this feature. ', 'otter-blocks' ) }</ExternalLink>
+					) }
+
 					<TextControl
 						label={ __( 'Country Code(s)', 'otter-blocks' ) }
 						placeholder="US, CA, GB"
