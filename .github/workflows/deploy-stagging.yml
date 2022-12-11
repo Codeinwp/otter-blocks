@@ -1,8 +1,9 @@
 name: Sync with staging
 
 on:
-    push:
-        branches: [development]
+  pull_request:
+    types: [ opened, synchronize, ready_for_review ]
+    branches: [development]
 
 jobs:
     deploy:
