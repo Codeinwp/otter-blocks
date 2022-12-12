@@ -14,6 +14,7 @@ import { applyFilters } from '@wordpress/hooks';
 const { Notice } = window.otterComponents;
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 const excludeTypes = [ 'attachment' ];
+const hasNecessaryPlan = [ 2, 3 ].includes( window.otterPro.licenseType );
 
 const Edit = ({
 	BlockEdit,
@@ -29,6 +30,15 @@ const Edit = ({
 	};
 
 	const Notices = () => {
+		if ( ! hasNecessaryPlan ) {
+			return (
+				<Notice
+					notice={ __( 'You need to upgrade your plan.', 'otter-blocks' ) }
+					instructions={ __( 'You need to upgrade your plan to Business or Agency in order to use the live search feature.', 'otter-blocks' ) }
+				/>
+			);
+		}
+
 		if ( Boolean( window.otterPro.isExpired ) ) {
 			return (
 				<Notice
@@ -57,7 +67,7 @@ const Edit = ({
 					title={ __( 'Live Search', 'otter-blocks' ) }
 					initialOpen={ false }
 				>
-					{ ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) &&
+					{ ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpired ) ) && hasNecessaryPlan &&
 						(
 							<>
 								<ToggleControl

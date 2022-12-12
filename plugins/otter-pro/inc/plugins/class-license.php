@@ -19,6 +19,20 @@ class License {
 	protected static $instance = null;
 
 	/**
+	 * Price ID to licence type map
+	 *
+	 * @var int[]
+	 */
+	public static $otter_plans_map = [
+		1 => 1,
+		2 => 2,
+		3 => 3,
+		4 => 1,
+		5 => 2,
+		6 => 3,
+	];
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -109,6 +123,33 @@ class License {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get the licence type.
+	 * 1 - personal, 2 - business, 3 - agency.
+	 *
+	 * @return int
+	 */
+	public static function get_license_type() {
+		$license = self::get_license_data();
+		if ( $license === false ) {
+			return -1;
+		}
+
+		if ( ! isset( $license->price_id ) ) {
+			return -1;
+		}
+
+		if ( isset( $license->license ) && ( $license->license !== 'valid' && $license->license !== 'active_expired' ) ) {
+			return - 1;
+		}
+
+		if ( ! array_key_exists( $license->price_id, self::$otter_plans_map ) ) {
+			return -1;
+		}
+
+		return self::$otter_plans_map[ $license->price_id ];
 	}
 
 	/**

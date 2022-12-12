@@ -40,6 +40,7 @@ declare global {
 		otterPro?: Readonly<{
 			isActive: boolean
 			isExpired: boolean
+			licenseType: number
 			hasWooCommerce: boolean
 			hasLearnDash: boolean
 			rootUrl: string
