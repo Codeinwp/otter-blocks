@@ -15,7 +15,7 @@ import {
  * Internal dependencies
  */
 import SyncControlDropdown from '../sync-control-dropdown/index.js';
-import ColorDropdownControl from '../color-dropdown-control/index.js';
+import ColorDropdownControl from '../color-dropdown-control/index';
 
 type SyncColorPanelProps = {
     label: string,

@@ -19,7 +19,7 @@ export { default as BoxShadowControl } from './box-shadow-control/index.js';
 export { default as ButtonDropdownControl } from './button-dropdown-control/index.js';
 export { default as ButtonToggleControl } from './button-toggle-control/index.js';
 export { default as ClearButton } from './clear-button/index.js';
-export { default as ColorDropdownControl } from './color-dropdown-control/index.js';
+export { default as ColorDropdownControl } from './color-dropdown-control/index';
 export { default as ControlPanelControl } from './control-panel-control/index.js';
 export { default as GoogleFontsControl } from './google-fonts-control/index.js';
 export { default as HTMLAnchorControl } from './html-anchor-control/index.js';
