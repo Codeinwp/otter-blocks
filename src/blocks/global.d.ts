@@ -84,6 +84,10 @@ declare global {
 			Notice?: ( props: { notice: any, variant: string, instructions: 'string'}) => JSX.Element
 			useInspectorSlot?: ( name: string ) => any
 			OtterControlTools?: ( props: any ) => any
+		},
+		oPlugins: {
+			copy?: () => void,
+			paste?: () => void
 		}
 	}
 }

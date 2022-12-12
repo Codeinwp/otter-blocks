@@ -12,7 +12,8 @@ import {
 	Button,
 	ToolbarDropdownMenu,
 	ToolbarGroup,
-	createSlotFill
+	createSlotFill,
+	KeyboardShortcuts
 } from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
@@ -21,17 +22,19 @@ import { Fragment, useState } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
+
 /**
  * Internal dependencies.
  */
 import { otterIcon } from '../../helpers/icons';
 import { FeedbackModalComponent } from '../../plugins/feedback';
+import { isAppleOS } from '../../helpers/helper-functions';
 
 const { Fill, Slot } = createSlotFill( 'OtterControlTools' );
 
-export const OtterControlTools = ({ children, order }) => {
+export const OtterControlTools = ({ children, order, source }) => {
 	return <Fill >
-		<div key={order ?? 99} order={order ?? 99}>
+		<div key={order ?? 99} order={order ?? 99} source={source}>
 			{children}
 		</div>
 	</Fill>;
@@ -48,70 +51,69 @@ const withOtterTools = createHigherOrderComponent( BlockEdit => {
 			setStatus( 'notSubmitted' );
 		};
 
-		if ( props.isSelected ) {
-			return (
-				<Fragment>
-					<BlockEdit { ...props } />
-					<Slot>
-						{
-							fills => {
+		return (
+			<Fragment>
+				<BlockEdit {...props} />
 
-								if ( ! Boolean( fills.length ) ) {
-									return null;
-								}
+				{( props.isSelected ) && (
+					<Fragment>
+						<Slot>
+							{
+								fills => {
 
-								return (
-									<BlockControls>
-										<ToolbarGroup>
-											<ToolbarDropdownMenu
-												label={__( 'Otter Tools', 'otter-blocks' )}
-												icon={ otterIcon }
-											>
-												{
-													({ onClose }) => (
-														<div onClick={onClose}>
-															{
-																sortBy( fills ?? [], fill => {
-																	return fill[0]?.props.order;
-																}).map( fill => {
-																	return fill[0]?.props?.children;
-																})
+									if ( ! Boolean( fills.length ) ) {
+										return null;
+									}
+
+									return (
+										<BlockControls>
+											{
+												fills.some( x => 'copy-paste' === x[0].props?.source ) && (
+													<KeyboardShortcuts
+														shortcuts={
+															isAppleOS() ? {
+																'ctrl+c': window?.oPlugins?.copy,
+																'ctrl+v': window?.oPlugins?.paste
+															} : {
+																'alt+c': window?.oPlugins?.copy,
+																'alt+x': window?.oPlugins?.paste
 															}
-															<Button
-																id="o-feedback"
-																variant={ 'link' }
-																onClick={() => {
-																	setIsOpen( ! isOpen );
-																	onClose();
-																}}
-																style={{
-																	paddingLeft: '8px'
-																}}
-															>
-																{ __( 'Help us improve Otter Blocks', 'otter-blocks' ) }
-															</Button>
-														</div>
-													)
-												}
-											</ToolbarDropdownMenu>
-										</ToolbarGroup>
-										<FeedbackModalComponent
-											isOpen={isOpen}
-											status={status}
-											closeModal={closeModal}
-											source={'control-tools'}
-											setStatus={ setStatus }
-										/>
-									</BlockControls>
-								);
-							}
-						}
-					</Slot>
-				</Fragment>
-			);
-		}
+														}
+														bindGlobal={true}
+													/>
+												)
+											}
 
-		return <BlockEdit { ...props } />;
+											<ToolbarGroup>
+												<ToolbarDropdownMenu
+													label={__( 'Otter Tools', 'otter-blocks' )}
+													icon={otterIcon}
+												>
+													{
+														({ onClose }) => (
+															<div onClick={onClose}>
+																{
+																	sortBy( fills ?? [], fill => {
+																		return fill[0]?.props.order;
+																	}).map( fill => {
+																		return fill[0]?.props?.children;
+																	})
+																}
+															</div>
+														)
+													}
+												</ToolbarDropdownMenu>
+											</ToolbarGroup>
+										</BlockControls>
+									);
+								}
+							}
+						</Slot>
+					</Fragment>
+				)}
+
+			</Fragment>
+		);
 	};
 }, 'withOtterTools' );
 
