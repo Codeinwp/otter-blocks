@@ -23,7 +23,7 @@ class License {
 	 *
 	 * @var int[]
 	 */
-	public static $otter_plans_map = [
+	public static $plans_map = [
 		1 => 1,
 		2 => 2,
 		3 => 3,
@@ -133,7 +133,7 @@ class License {
 	 */
 	public static function get_license_type() {
 		$license = self::get_license_data();
-		if ( $license === false ) {
+		if ( false === $license ) {
 			return -1;
 		}
 
@@ -141,15 +141,15 @@ class License {
 			return -1;
 		}
 
-		if ( isset( $license->license ) && ( $license->license !== 'valid' && $license->license !== 'active_expired' ) ) {
+		if ( isset( $license->license ) && ( 'valid' !== $license->license && 'active_expired' !== $license->license ) ) {
 			return - 1;
 		}
 
-		if ( ! array_key_exists( $license->price_id, self::$otter_plans_map ) ) {
+		if ( ! array_key_exists( $license->price_id, self::$plans_map ) ) {
 			return -1;
 		}
 
-		return self::$otter_plans_map[ $license->price_id ];
+		return self::$plans_map[ $license->price_id ];
 	}
 
 	/**

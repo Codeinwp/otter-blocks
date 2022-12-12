@@ -33,7 +33,7 @@ class Live_Search {
 	 * @return mixed|string
 	 */
 	public function render_blocks( $block_content, $block ) {
-		if ( is_admin() || 'core/search' !== $block['blockName'] || ! isset( $block['attrs']['otterIsLive'] ) || ! array_search( License::get_license_type(), array(2, 3) ) ) {
+		if ( is_admin() || 'core/search' !== $block['blockName'] || ! isset( $block['attrs']['otterIsLive'] ) || ! array_search( License::get_license_type(), array( 2, 3 ) ) ) {
 			return $block_content;
 		}
 
@@ -58,8 +58,6 @@ class Live_Search {
 				),
 			)
 		);
-
-		var_dump( License::get_license_data() );
 
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/live-search-style.asset.php';
 		wp_enqueue_style( 'otter-live-search-style', OTTER_BLOCKS_URL . 'build/blocks/live-search-style.css', $asset_file['dependencies'], $asset_file['version'] );
