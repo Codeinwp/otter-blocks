@@ -21,7 +21,6 @@ import { createHigherOrderComponent } from '@wordpress/compose';
 import { Fragment, useState } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
-import { isAppleOS } from '@wordpress/keycodes';
 
 
 /**
@@ -29,8 +28,9 @@ import { isAppleOS } from '@wordpress/keycodes';
  */
 import { otterIcon } from '../../helpers/icons';
 import { FeedbackModalComponent } from '../../plugins/feedback';
+import { isAppleOS } from '../../helpers/helper-functions';
 
-const { Fill, Slot } = createSlotFill('OtterControlTools');
+const { Fill, Slot } = createSlotFill( 'OtterControlTools' );
 
 export const OtterControlTools = ({ children, order, source }) => {
 	return <Fill >
@@ -40,35 +40,35 @@ export const OtterControlTools = ({ children, order, source }) => {
 	</Fill>;
 };
 
-const withOtterTools = createHigherOrderComponent(BlockEdit => {
-	return (props) => {
+const withOtterTools = createHigherOrderComponent( BlockEdit => {
+	return ( props ) => {
 
-		const [isOpen, setIsOpen] = useState(false);
-		const [status, setStatus] = useState('notSubmitted');
+		const [ isOpen, setIsOpen ] = useState( false );
+		const [ status, setStatus ] = useState( 'notSubmitted' );
 
 		const closeModal = () => {
-			setIsOpen(false);
-			setStatus('notSubmitted');
+			setIsOpen( false );
+			setStatus( 'notSubmitted' );
 		};
 
 		return (
 			<Fragment>
 				<BlockEdit {...props} />
 
-				{(props.isSelected) && (
+				{( props.isSelected ) && (
 					<Fragment>
 						<Slot>
 							{
 								fills => {
 
-									if (!Boolean(fills.length)) {
+									if ( ! Boolean( fills.length ) ) {
 										return null;
 									}
 
 									return (
 										<BlockControls>
 											{
-												fills.some(x => 'copy-paste' === x[0].props?.source) && (
+												fills.some( x => 'copy-paste' === x[0].props?.source ) && (
 													<KeyboardShortcuts
 														shortcuts={
 															isAppleOS() ? {
@@ -86,16 +86,16 @@ const withOtterTools = createHigherOrderComponent(BlockEdit => {
 
 											<ToolbarGroup>
 												<ToolbarDropdownMenu
-													label={__('Otter Tools', 'otter-blocks')}
+													label={__( 'Otter Tools', 'otter-blocks' )}
 													icon={otterIcon}
 												>
 													{
 														({ onClose }) => (
 															<div onClick={onClose}>
 																{
-																	sortBy(fills ?? [], fill => {
+																	sortBy( fills ?? [], fill => {
 																		return fill[0]?.props.order;
-																	}).map(fill => {
+																	}).map( fill => {
 																		return fill[0]?.props?.children;
 																	})
 																}
@@ -115,6 +115,6 @@ const withOtterTools = createHigherOrderComponent(BlockEdit => {
 			</Fragment>
 		);
 	};
-}, 'withOtterTools');
+}, 'withOtterTools' );
 
-addFilter('editor.BlockEdit', 'themeisle-gutenberg/otter-tools', withOtterTools);
+addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/otter-tools', withOtterTools );

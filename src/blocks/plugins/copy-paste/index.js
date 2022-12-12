@@ -8,7 +8,7 @@ import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
 import { Fragment } from '@wordpress/element';
 import { addFilter } from '@wordpress/hooks';
 import { MenuGroup, MenuItem } from '@wordpress/components';
-import { isAppleOS, displayShortcut } from '@wordpress/keycodes';
+import { displayShortcut } from '@wordpress/keycodes';
 
 /**
   * Internal dependencies.
@@ -18,6 +18,7 @@ import CopyPaste from './copy-paste';
 import { pick } from 'lodash';
 import { extractThemeCSSVar } from './utils';
 import { OtterControlTools } from '../../components/otter-tools';
+import { isAppleOS } from '../../helpers/helper-functions';
 
 
 const copyPaste = new CopyPaste();
