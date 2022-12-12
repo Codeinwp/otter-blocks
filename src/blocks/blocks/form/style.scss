@@ -65,9 +65,7 @@
 			}
 
 			&.right {
-				@media( min-width: 1024px ) {
-					align-items: flex-end;
-				}
+				align-items: flex-end;
 			}
 
 			&.right-tablet {
@@ -101,14 +99,12 @@
 			}
 
 			&.full {
-				@media( min-width: 1024px ) {
-					flex-direction: column;
-					align-items: center;
+				flex-direction: column;
+				align-items: center;
 
-					.wp-block-button__link {
-						width: 100%;
-						max-width: unset;
-					}
+				.wp-block-button__link {
+					width: 100%;
+					max-width: unset;
 				}
 			}
 
@@ -158,12 +154,10 @@
 			}
 
 			&.right > div {
-				@media( min-width: 1024px ) {
-					align-items: flex-end;
-					
-					.o-form-server-response {
-						padding-right: 0px;
-					}
+				align-items: flex-end;
+				
+				.o-form-server-response {
+					padding-right: 0px;
 				}
 			}
 
@@ -188,12 +182,10 @@
 			}
 
 			&.left > div {
-				@media( min-width: 1024px ) {
-					align-items: flex-end;
-					
-					.o-form-server-response {
-						padding-left: 0px;
-					}
+				align-items: flex-end;
+				
+				.o-form-server-response {
+					padding-left: 0px;
 				}
 			}
 
@@ -218,9 +210,7 @@
 			}
 
 			&.full > div {
-				@media( min-width: 1024px ) {
-					align-items: center;
-				}
+				align-items: center;
 			}
 
 			&.full-tablet > div {
