@@ -38,6 +38,10 @@ import { FormContext } from './edit.js';
 import { ColorDropdownControl, InspectorHeader, ResponsiveControl, ToogleGroupControl } from '../../components/index.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
+import { isObjectLike } from 'lodash';
+import { makeBox } from '../../plugins/copy-paste/utils';
+import { _px } from '../../helpers/helper-functions.js';
+
 const compare = x => {
 	return x?.[1] && x[0] !== x[1];
 };
@@ -632,6 +636,8 @@ const Inspector = ({
 									]}
 								/>
 
+								<br/>
+
 								{
 									( 'normal' === buttonColorView && (
 										<Fragment>
@@ -639,12 +645,14 @@ const Inspector = ({
 												label={__( 'Text', 'otter-blocks' )}
 												colorValue={attributes.submitColor}
 												onColorChange={( /** @type {string} */ value ) => setAttributes({ submitColor: value })}
+												className="is-list is-first"
 											/>
 
 											<ColorDropdownControl
 												label={__( 'Background', 'otter-blocks' )}
 												colorValue={attributes.submitBackgroundColor}
 												onColorChange={( /** @type {string} */ value ) => setAttributes({ submitBackgroundColor: value })}
+												className="is-list"
 											/>
 										</Fragment>
 									) ) ||
@@ -654,16 +662,20 @@ const Inspector = ({
 												label={__( 'Text', 'otter-blocks' )}
 												colorValue={attributes.submitBackgroundColor}
 												onColorChange={( /** @type {string} */ value ) => setAttributes({ submitColor: value })}
+												className="is-list is-first"
 											/>
 
 											<ColorDropdownControl
 												label={__( 'Background', 'otter-blocks' )}
 												colorValue={attributes.submitBackgroundColorHover}
 												onColorChange={( /** @type {string} */ value ) => setAttributes({ submitBackgroundColor: value })}
+												className="is-list"
 											/>
 										</Fragment>
 									) )
 								}
+
+								<br/>
 
 								<Fragment
 									field={ 'submitFontSize' }
@@ -704,13 +716,17 @@ const Inspector = ({
 									label={__( 'Success message', 'otter-blocks' )}
 									colorValue={attributes.submitMessageColor}
 									onColorChange={( /** @type {string} */ value ) => setAttributes({ submitMessageColor: value })}
+									className="is-list is-first"
 								/>
 
 								<ColorDropdownControl
 									label={__( 'Error message', 'otter-blocks' )}
 									colorValue={attributes.submitMessageErrorColor}
 									onColorChange={( /** @type {string} */ value ) => setAttributes({ submitMessageErrorColor: value })}
+									className="is-list"
 								/>
+
+								<br/>
 
 								<Fragment
 									field={ 'messageFontSize' }
@@ -879,15 +895,12 @@ const Inspector = ({
 									isSynced={ attributes.isSynced }
 									setAttributes={ setAttributes }
 								>
-									<RangeControl
+									<BoxControl
 										label={ __( 'Border Width', 'otter-blocks' ) }
-										value={ attributes.inputBorderWidth ?? 1 }
-										onChange={ inputBorderWidth => setAttributes({ inputBorderWidth }) }
-										allowReset
-										step={ 0.1 }
-										min={ 0 }
-										max={ 50 }
+										values={ ! isObjectLike( attributes.inputBorderWidth ) ? makeBox( _px( attributes.inputBorderWidth ?? 1 ) ) : attributes.inputBorderWidth }
+										onChange={ inputBorderWidth  => setAttributes({ inputBorderWidth }) }
 									/>
+
 								</Fragment>
 							</PanelBody>
 							<PanelBody

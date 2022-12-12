@@ -65,13 +65,13 @@
 			"type": "string"
 		},
 		"inputBorderRadius": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"inputBorderColor": {
 			"type": "string"
 		},
 		"inputBorderWidth": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"submitMessage": {
 			"type": "string"
