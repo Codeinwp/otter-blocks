@@ -1,8 +1,9 @@
 name: Sync with staging
 
 on:
-    push:
-        branches: [development]
+  pull_request:
+    types: [ opened, synchronize, ready_for_review ]
+    branches: [development]
 
 jobs:
     deploy:
@@ -43,3 +44,11 @@ jobs:
                 PAGELY_INTEGRATION_ID: ${{secrets.PAGELY_INTEGRATION_ID}}
                 PAGELY_APP_ID: ${{secrets.PAGELY_APP_ID_STAGING}}
                 PAGELY_WORKING_DIR: ${{github.workspace}}/dist/otter-blocks
+            - name: Run deploy
+              uses: pagely/action-deploy@v1
+              with:
+                PAGELY_DEPLOY_DEST: "/httpdocs/wp-content/plugins/otter-pro"
+                PAGELY_INTEGRATION_SECRET: ${{secrets.PAGELY_INTEGRATION_SECRET}}
+                PAGELY_INTEGRATION_ID: ${{secrets.PAGELY_INTEGRATION_ID}}
+                PAGELY_APP_ID: ${{secrets.PAGELY_APP_ID_STAGING}}
+                PAGELY_WORKING_DIR: ${{github.workspace}}/dist/otter-pro

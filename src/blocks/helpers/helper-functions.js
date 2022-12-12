@@ -531,3 +531,27 @@ export const _compactObject = ( o ) => {
 export const compactObject = ( o ) => {
 	return _compactObject( cloneDeep( o ) );
 };
+
+/**
+ * Return true if platform is MacOS.
+ *
+ * @param {Window?} _window window object by default; used for DI testing.
+ *
+ * @return {boolean} True if MacOS; false otherwise.
+ */
+export function isAppleOS( _window = null ) {
+	if ( ! _window ) {
+		if ( 'undefined' === typeof window ) {
+			return false;
+		}
+
+		_window = window;
+	}
+
+	const { platform } = _window.navigator;
+
+	return (
+		-1 !== platform.indexOf( 'Mac' ) ||
+		[ 'iPad', 'iPhone' ].includes( platform )
+	);
+}

@@ -13,8 +13,8 @@
 		}
 	},
 	"supports": {
-		"html": false
+		"html": false,
+		"inserter": false
 	},
-	"editorStyle": "otter-plugin-card-editor",
 	"style": "otter-plugin-card-style"
 }

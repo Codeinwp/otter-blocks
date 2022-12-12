@@ -93,6 +93,10 @@ declare global {
 				noResults: string
 				noTitle: string
 			}
+		},
+		oPlugins: {
+			copy?: () => void,
+			paste?: () => void
 		}
 	}
 }

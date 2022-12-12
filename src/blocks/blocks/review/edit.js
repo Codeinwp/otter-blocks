@@ -242,10 +242,10 @@ const Edit = ({
 
 					<div className="o-review__header_meta">
 						<div className="o-review__header_ratings">
-							<Stars rating={ overallRatings } />
+							<Stars rating={ Math.max( overallRatings, 1 ) } />
 
 							<span>
-								{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.abs( overallRatings / divide ).toFixed( 1 ) || 0, 10 / divide ) }
+								{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.max( Math.abs( overallRatings / divide ).toFixed( 1 ) || 0, 1 ), 10 / divide ) }
 							</span>
 						</div>
 
@@ -312,10 +312,10 @@ const Edit = ({
 									/>
 
 									<div className="o-review__left_feature_ratings">
-										<Stars rating={ feature.rating } />
+										<Stars rating={ Math.max( feature.rating, 1 ) } />
 
 										<span>
-											{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.abs( feature.rating / divide ).toFixed( 1 ) || 0, 10 / divide ) }
+											{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.max( Math.abs( feature.rating / divide ).toFixed( 1 ) || 0, 1 ), 10 / divide ) }
 										</span>
 									</div>
 								</div>

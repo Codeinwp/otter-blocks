@@ -187,6 +187,7 @@ class Main {
 				'hasLearnDash'   => defined( 'LEARNDASH_VERSION' ),
 				'hasACF'         => class_exists( 'ACF' ),
 				'rootUrl'        => get_site_url(),
+				'hasIPHubAPI'    => empty( get_option( 'otter_iphub_api_key', '' ) ) ? false : true,
 			)
 		);
 

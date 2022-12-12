@@ -7,7 +7,7 @@
 
 namespace ThemeIsle\OtterPro\Plugins;
 
-use ThemeIsle\OtterPro\Plugins\License;
+use ThemeIsle\OtterPro\Plugins\License, ThemeIsle\OtterPro\Plugins\Dynamic_Content;
 
 /**
  * Class Block_Conditions
@@ -67,6 +67,26 @@ class Block_Conditions {
 					return $this->has_query_string( $condition );
 				} else {
 					return ! $this->has_query_string( $condition );
+				}
+			}
+		}
+
+		if ( 'country' === $condition['type'] ) {
+			if ( isset( $condition['value'] ) ) {
+				if ( $visibility ) {
+					return $this->has_country( $condition );
+				} else {
+					return ! $this->has_country( $condition );
+				}
+			}
+		}
+
+		if ( 'cookie' === $condition['type'] ) {
+			if ( isset( $condition['cookie_key'] ) ) {
+				if ( $visibility ) {
+					return $this->has_cookie( $condition );
+				} else {
+					return ! $this->has_cookie( $condition );
 				}
 			}
 		}
@@ -230,6 +250,74 @@ class Block_Conditions {
 		}
 
 		return array_intersect( $cond_params, $params ) === $cond_params;
+	}
+
+	/**
+	 * Check based on user's country.
+	 *
+	 * @param array $condition Condition.
+	 *
+	 * @since  2.1.6
+	 * @access public
+	 */
+	public function has_country( $condition ) {
+		$location = Dynamic_Content::get_user_location( 'countryCode' );
+
+		if ( false !== $location ) {
+			$location = $location;
+		}
+
+		if ( ! isset( $location ) ) {
+			return false;
+		};
+
+		if ( in_array( $location, array_map( 'strtoupper', array_map( 'trim', explode( ',', $condition['value'] ) ) ), true ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check cookie compare.
+	 *
+	 * @param array $condition Condition.
+	 *
+	 * @since  1.7.0
+	 * @access public
+	 */
+	public function has_cookie( $condition ) {
+		if ( ! isset( $condition['cookie_key'] ) || ! isset( $condition['cookie_compare'] ) ) {
+			return true;
+		}
+
+		$cookie = '';
+
+		if ( isset( $_COOKIE[ $condition['cookie_key'] ] ) ) { // phpcs:ignore WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE
+			$cookie = esc_attr( $_COOKIE[ $condition['cookie_key'] ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___COOKIE
+		}
+
+		if ( 'is_true' === $condition['cookie_compare'] ) {
+			return true === boolval( $cookie );
+		}
+
+		if ( 'is_false' === $condition['cookie_compare'] ) {
+			return false === boolval( $cookie );
+		}
+
+		if ( 'is_empty' === $condition['cookie_compare'] ) {
+			return empty( $cookie );
+		}
+
+		if ( 'if_equals' === $condition['cookie_compare'] && isset( $condition['cookie_value'] ) ) {
+			return $cookie === $condition['cookie_value'];
+		}
+
+		if ( 'if_contains' === $condition['cookie_compare'] && isset( $condition['cookie_value'] ) ) {
+			return false !== strpos( $cookie, $condition['cookie_value'] );
+		}
+
+		return false;
 	}
 
 	/**
