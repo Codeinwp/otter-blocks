@@ -38,8 +38,19 @@ class Stripe_API {
 			return;
 		}
 
+		\Stripe\Stripe::setAppInfo(
+			'WordPress Otter Blocks',
+			OTTER_BLOCKS_VERSION,
+			'https://github.com/Codeinwp/otter-blocks/'
+		);
+
 		$api_key      = get_option( 'themeisle_stripe_api_key' );
-		$this->stripe = new StripeClient( $api_key );
+		$this->stripe = new StripeClient(
+			array(
+				'api_key'        => $api_key,
+				'stripe_version' => '2022-11-15',
+			)
+		);
 
 		add_action( 'init', array( $this, 'init' ) );
 	}
