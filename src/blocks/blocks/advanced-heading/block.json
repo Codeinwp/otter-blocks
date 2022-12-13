@@ -40,13 +40,13 @@
 			"type": "string"
 		},
 		"fontSize": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"fontSizeTablet": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"fontSizeMobile": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"fontFamily": {
 			"type": "string"
@@ -61,10 +61,10 @@
 			"type": "string"
 		},
 		"lineHeight": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"letterSpacing": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"textShadow": {
 			"type": "boolean",
@@ -91,26 +91,22 @@
 			"default": 0
 		},
 		"paddingType": {
-			"type": "string",
-			"default": "linked"
+			"type": "string"
 		},
 		"paddingTypeTablet": {
-			"type": "string",
-			"default": "linked"
+			"type": "string"
 		},
 		"paddingTypeMobile": {
-			"type": "string",
-			"default": "linked"
+			"type": "string"
 		},
 		"padding": {
-			"type": "number",
-			"default": 0
+			"type": ["number", "object"]
 		},
 		"paddingTablet": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"paddingMobile": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"paddingTop": {
 			"type": "number",
@@ -123,8 +119,7 @@
 			"type": "number"
 		},
 		"paddingRight": {
-			"type": "number",
-			"default": 0
+			"type": "number"
 		},
 		"paddingRightTablet": {
 			"type": "number"
@@ -133,8 +128,7 @@
 			"type": "number"
 		},
 		"paddingBottom": {
-			"type": "number",
-			"default": 0
+			"type": "number"
 		},
 		"paddingBottomTablet": {
 			"type": "number"
@@ -143,8 +137,7 @@
 			"type": "number"
 		},
 		"paddingLeft": {
-			"type": "number",
-			"default": 0
+			"type": "number"
 		},
 		"paddingLeftTablet": {
 			"type": "number"
@@ -153,30 +146,25 @@
 			"type": "number"
 		},
 		"marginType": {
-			"type": "string",
-			"default": "unlinked"
+			"type": "string"
 		},
 		"marginTypeTablet": {
-			"type": "string",
-			"default": "unlinked"
+			"type": "string"
 		},
 		"marginTypeMobile": {
-			"type": "string",
-			"default": "unlinked"
+			"type": "string"
 		},
 		"margin": {
-			"type": "number",
-			"default": 0
+			"type": ["number", "object"]
 		},
 		"marginTablet": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"marginMobile": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"marginTop": {
-			"type": "number",
-			"default": 0
+			"type": "number"
 		},
 		"marginTopTablet": {
 			"type": "number"
@@ -185,14 +173,22 @@
 			"type": "number"
 		},
 		"marginBottom": {
-			"type": "number",
-			"default": 25
+			"type": "number"
 		},
 		"marginBottomTablet": {
 			"type": "number"
 		},
 		"marginBottomMobile": {
 			"type": "number"
+		},
+		"backgroundColor": {
+			"type": "string"
+		},
+		"linkColor": {
+			"type": "string"
+		},
+		"linkHoverColor": {
+			"type": "string"
 		}
 	},
 	"editorStyle": "otter-advanced-heading-editor",

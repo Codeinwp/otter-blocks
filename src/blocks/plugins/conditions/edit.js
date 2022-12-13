@@ -8,7 +8,6 @@ import { isEmpty } from 'lodash';
 import {
 	BaseControl,
 	Button,
-	ExternalLink,
 	FormTokenField,
 	PanelBody,
 	SelectControl,
@@ -32,11 +31,8 @@ import { applyFilters } from '@wordpress/hooks';
  */
 import StripeControls from './components/stripe-controls';
 import PanelTab from '../../components/panel-tab/index.js';
-import Notice from '../../components/notice/index.js';
-import { setUtm } from '../../helpers/helper-functions.js';
 import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
 
-const hasPro = Boolean( window.themeisleGutenberg.hasPro );
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 
 const defaultConditions = {
@@ -96,17 +92,6 @@ const defaultConditions = {
 			}
 		]
 	},
-	'url': {
-		label: __( 'URL', 'otter-blocks' ),
-		conditions: [
-			{
-				value: 'queryString',
-				label: __( 'Query String (Pro)', 'otter-blocks' ),
-				help: __( 'The condition will be met if the URL contains specified parameters.' ),
-				isDisabled: true
-			}
-		]
-	},
 	'dateAndTime': {
 		label: __( 'Date & Time', 'otter-blocks' ),
 		conditions: [
@@ -126,6 +111,29 @@ const defaultConditions = {
 				value: 'timeRecurring',
 				label: __( 'Time Recurring (Pro)', 'otter-blocks' ),
 				help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.' ),
+				isDisabled: true
+			}
+		]
+	},
+	'advance': {
+		label: __( 'Advance', 'otter-blocks' ),
+		conditions: [
+			{
+				value: 'queryString',
+				label: __( 'Query String (Pro)', 'otter-blocks' ),
+				help: __( 'The condition will be met if the URL contains specified parameters.' ),
+				isDisabled: true
+			},
+			{
+				value: 'country',
+				label: __( 'Country', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on user\'s country based on the IP address.' ),
+				isDisabled: true
+			},
+			{
+				value: 'cookie',
+				label: __( 'Cookie', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on PHP cookies.' ),
 				isDisabled: true
 			}
 		]
@@ -555,13 +563,6 @@ const Edit = ({
 				</Button>
 
 				{ applyFilters( 'otter.blockConditions.notices', '' ) }
-
-				{ ( ! hasPro ) && (
-					<Notice
-						notice={ <ExternalLink href={ setUtm( window.themeisleGutenberg.upgradeLink, 'blockconditions' ) }>{ __( 'Get more options with Otter Pro. ', 'otter-blocks' ) }</ExternalLink> }
-						variant="upsell"
-					/>
-				) }
 
 				<div className="o-fp-wrap">
 					{ applyFilters( 'otter.feedback', '', 'conditions' ) }

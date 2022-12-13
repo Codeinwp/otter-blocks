@@ -6,6 +6,24 @@ $base-index: 9999 !default;
 	--close-color: #000;
 	--overlay-color: rgba(0, 0, 0, 0.5);
 	--overlay-opacity: 1;
+	--brd-width: 0px;
+	--brd-radius: 0px;
+	--brd-color: #000;
+	--brd-style: solid;
+
+	--width: 500px;
+	--width-tablet: var(--width);
+	--width-mobile: var(--width-tablet);
+
+	--height: fit-content;
+	--height-tablet: var(--height);
+	--height-mobile: var(--height-tablet);
+
+	--padding: 20px;
+	--padding-tablet: var(--padding);
+	--padding-mobile: var(--padding-tablet);
+	--box-shadow: unset;
+
 
 	&.is-front {
 		display: none;
@@ -16,8 +34,8 @@ $base-index: 9999 !default;
 	}
 
 	.otter-popup__modal_wrap_overlay {
-		background-color: var( --overlay-color );
-		opacity: var( --overlay-opacity );
+		background-color: var(--overlay-color);
+		opacity: var(--overlay-opacity);
 		left: 0;
 		right: 0;
 		top: 0;
@@ -43,15 +61,30 @@ $base-index: 9999 !default;
 	}
 
 	.otter-popup__modal_content {
-		position: relative;
+		position: absolute;
 		z-index: $base-index + 1;
-		background-color: var( --background-color );
-		min-width: var( --min-width );
-		max-width: var( --max-width );
-		padding: 20px;
+		background-color: var(--background-color);
+		width: var(--width);
+		height: var(--height);
+		padding: var(--padding);
+		border-width: var(--brd-width);
+		border-radius: var(--brd-radius);
+		border-color: var(--brd-color);
+		border-style: var(--brd-style);
+		box-sizing: border-box;
+		scroll-behavior: auto;
+		box-shadow: var(--box-shadow);
 
-		@media ( max-width: 600px ) {
-			min-width: 100%;
+		@media (min-width: 600px) and (max-width: 960px) {
+			width: var(--width-tablet);
+			height: var(--height-tablet);
+			padding: var(--padding-tablet);
+		}
+
+		@media (max-width: 600px) {
+			width: var(--width-mobile);
+			height: var(--height-mobile);
+			padding: var(--padding-mobile);
 		}
 	}
 
@@ -60,10 +93,13 @@ $base-index: 9999 !default;
 		scrollbar-width: none; /* Firefox */
 		max-height: 75vh;
 		overflow: auto;
+		height: 100%;
 
 		&::-webkit-scrollbar {
 			display: none;
 		}
+
+
 	}
 
 	.otter-popup__modal_body > * {
@@ -77,7 +113,7 @@ $base-index: 9999 !default;
 
 		button {
 			background-color: transparent !important;
-			color: var( --close-color );
+			color: var(--close-color);
 			height: auto !important;
 			display: flex;
 			align-items: center;
@@ -95,7 +131,54 @@ $base-index: 9999 !default;
 			}
 		}
 	}
+
+
+	&.with-outside-button {
+		.otter-popup__modal_header {
+			padding-bottom: 0px;
+
+			button {
+				position: absolute;
+				top: -15px;
+				right: -15px;
+				background: var(--background-color) !important;
+				border-radius: 60%;
+				border: unset;
+				box-shadow: 0 0 4px 0 rgba(0, 0, 0, .133), 0 0 3px 1px rgba(0, 0, 0, .067);
+				height: 36px !important;
+				width: 36px !important;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+
+				&:hover {
+					box-shadow: 0 0 4px 0 rgba(0, 0, 0, .133), 0 0 3px 1px rgba(0, 0, 0, .067);
+					opacity: 1;
+				}
+			}
+
+			svg {
+				width: 32px;
+				height: 32px;
+			}
+		}
+	}
+
 }
+
+.o-lock-body {
+	height: 100%;
+	overflow-y: hidden;
+}
+
+body:has(#wpadminbar) {
+	.wp-block-themeisle-blocks-popup {
+		.otter-popup__modal_content {
+			margin-top: 25px;
+		}
+	}
+}
+
 
 @-webkit-keyframes popupFadeIn {
 	0% {

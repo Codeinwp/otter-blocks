@@ -42,19 +42,6 @@ declare global {
 			isExpired: boolean
 			hasWooCommerce: boolean
 			hasLearnDash: boolean
-			themeMods: {
-				listingType: string
-				altRow: boolean
-				rowColor: string
-				headerColor: string
-				textColor: string
-				borderColor: string
-				altRowColor: string
-				defaultFields: object
-			}
-			hasNeveSupport: {
-				wooComparison: boolean
-			}
 			rootUrl: string
 		}>
 		otterObj?: Readonly<Partial<{
@@ -97,6 +84,10 @@ declare global {
 			Notice?: ( props: { notice: any, variant: string, instructions: 'string'}) => JSX.Element
 			useInspectorSlot?: ( name: string ) => any
 			OtterControlTools?: ( props: any ) => any
+		},
+		oPlugins: {
+			copy?: () => void,
+			paste?: () => void
 		}
 	}
 }

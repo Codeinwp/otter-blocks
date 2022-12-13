@@ -3,6 +3,12 @@
  */
 import classnames from 'classnames';
 
+import {
+	desktop,
+	mobile,
+	tablet
+} from '@wordpress/icons';
+
 /**
  * WordPress dependencies
  */
@@ -10,8 +16,7 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	Button,
-	Dropdown,
-	Icon
+	ButtonGroup
 } from '@wordpress/components';
 
 import {
@@ -28,8 +33,6 @@ import {
  * Internal dependencies
  */
 import './editor.scss';
-
-import { checkIcon } from '../../helpers/icons.js';
 
 const ResponsiveControl = ({
 	label,
@@ -73,66 +76,33 @@ const ResponsiveControl = ({
 			<div className="components-base-control__field">
 				<div className="components-base-control__title">
 					<label className="components-base-control__label">{ label }</label>
-					<div className="floating-controls">
-						<Dropdown
-							position="top left"
-							renderToggle={ ({ isOpen, onToggle }) => (
-								<Button
-									icon={ 'Mobile' === getView ? 'smartphone' : getView.toLowerCase() }
-									label={ __( 'Responsiveness Settings', 'otter-blocks' ) }
-									showTooltip={ true }
-									className="is-button"
-									onClick={ onToggle }
-									aria-expanded={ isOpen }
-								/>
-							) }
-							renderContent={ () => (
-								<div className="o-responsive-control-settings">
-									<div className="o-responsive-control-settings-title">
-										{ __( 'View', 'otter-blocks' ) }
-									</div>
-
-									<Button
-										className={ classnames(
-											'o-responsive-control-settings-item',
-											{ 'is-selected': 'Desktop' === getView }
-										) }
-										onClick={ () => setView( 'Desktop' ) }
-									>
-										{ 'Desktop' === getView && <Icon icon={ checkIcon } /> }
-										<span className="popover-title">
-											{ __( 'Desktop', 'otter-blocks' ) }
-										</span>
-									</Button>
-
-									<Button
-										className={ classnames(
-											'o-responsive-control-settings-item',
-											{ 'is-selected': 'Tablet' === getView }
-										) }
-										onClick={ () => setView( 'Tablet' ) }
-									>
-										{ 'Tablet' === getView && <Icon icon={ checkIcon } /> }
-										<span className="popover-title">
-											{ __( 'Tablet', 'otter-blocks' ) }
-										</span>
-									</Button>
-
-									<Button
-										className={ classnames(
-											'o-responsive-control-settings-item',
-											{ 'is-selected': 'Mobile' === getView }
-										) }
-										onClick={ () => setView( 'Mobile' ) }
-									>
-										{ 'Mobile' === getView && <Icon icon={ checkIcon } /> }
-										<span className="popover-title">
-											{ __( 'Mobile', 'otter-blocks' ) }
-										</span>
-									</Button>
-								</div>
-							) }
-						/>
+					<div className="o-responsive-buttons">
+						<ButtonGroup>
+							<Button
+								icon={ desktop }
+								label={ __( 'Desktop' ) }
+								onClick={ () => setView( 'Desktop' ) }
+								className={ classnames({
+									'is-selected': 'Desktop' === getView
+								}) }
+							/>
+							<Button
+								icon={ tablet }
+								label={ __( 'Tablet' ) }
+								onClick={ () => setView( 'Tablet' ) }
+								className={ classnames({
+									'is-selected': 'Tablet' === getView
+								}) }
+							/>
+							<Button
+								icon={ mobile }
+								label={ __( 'Mobile' ) }
+								onClick={ () => setView( 'Mobile' ) }
+								className={ classnames({
+									'is-selected': 'Mobile' === getView
+								}) }
+							/>
+						</ButtonGroup>
 					</div>
 				</div>
 				{ children }

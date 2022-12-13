@@ -1,16 +1,27 @@
 class PopupBlock {
-	constructor( element ) {
+
+	element: HTMLDivElement;
+	happened: boolean;
+	storageKey: string;
+	canLock: boolean = false;
+
+	constructor( element: HTMLDivElement ) {
 		this.element = element;
 		this.happened = false;
 		this.storageKey = 'otter-popup-dismiss';
 
 		const { dismiss, anchor } = element.dataset;
 
-		if ( this.isItemDismissed() && dismiss && ! anchor && ! Boolean( window.themeisleGutenberg.isPreview ) ) {
-			return false;
+		if ( this.isItemDismissed() && dismiss && ! anchor && ! Boolean( window.themeisleGutenberg?.isPreview ) ) {
+			return ;
 		}
 
-		this.init();
+		this.canLock = Boolean( this.element.dataset.lockScrolling );
+
+
+		if ( ! this.isDisabled() ) {
+			this.init();
+		}
 	}
 
 	init() {
@@ -18,14 +29,28 @@ class PopupBlock {
 		this.bindClose();
 	}
 
+	isDisabled() {
+		const { disableOn } = this.element.dataset;
+
+		if ( 'mobile' === disableOn && window.matchMedia( '(max-width: 600px)' ).matches ) {
+			return true;
+		}
+
+		return false;
+	}
+
 	openModal() {
 		this.element.classList.add( 'active' );
 		this.happened = true;
+
+		this.lockScrolling();
+
 	}
 
 	closeModal() {
 		this.element.classList.remove( 'active' );
 		this.dismissModal();
+		this.unlockScrolling();
 	}
 
 	dismissModal() {
@@ -38,14 +63,14 @@ class PopupBlock {
 		}
 
 		const now = new Date();
-		const cache = JSON.parse( localStorage.getItem( this.storageKey ) ) || [];
-		const exists = cache.some( ( entry ) => entry.modalID === id );
+		const cache = JSON.parse( localStorage.getItem( this.storageKey ) ?? '[]' ) || [];
+		const exists = cache.some( ( entry: { modalID: string; }) => entry.modalID === id );
 
 		if ( exists ) {
 			return false;
 		}
 
-		const ttl = 1000 * 60 * 60 * 24 * dismiss;
+		const ttl = 1000 * 60 * 60 * 24 * parseInt( dismiss );
 
 		const item = {
 			expiry: now.getTime() + ttl,
@@ -61,8 +86,8 @@ class PopupBlock {
 	isItemDismissed() {
 		const { id } = this.element;
 
-		const cache = JSON.parse( localStorage.getItem( this.storageKey ) ) || [];
-		const inCache = cache.filter( ( entry ) => entry.modalID === id );
+		const cache = JSON.parse( localStorage.getItem( this.storageKey ) ?? '[]' ) || [];
+		const inCache = cache.filter( ( entry: { modalID: string; }) => entry.modalID === id );
 
 		if ( 0 === inCache.length ) {
 			return false;
@@ -75,7 +100,7 @@ class PopupBlock {
 			return true;
 		}
 
-		const newCache = cache.filter( ( i ) => {
+		const newCache = cache.filter( ( i: any ) => {
 			return i !== inCache[ 0 ];
 		});
 
@@ -129,7 +154,7 @@ class PopupBlock {
 
 			const { offset } = this.element.dataset;
 
-			if ( parseInt( offset ) >= parseInt( this.getScrolledPercent() ) ) {
+			if ( parseInt( offset ?? '0' ) >= this.getScrolledPercent() ) {
 				return false;
 			}
 
@@ -142,7 +167,7 @@ class PopupBlock {
 
 		setTimeout( () => {
 			this.openModal();
-		}, time * 1000 );
+		}, parseInt( time ?? '0' ) * 1000 );
 	}
 
 	bindExitIntent() {
@@ -213,9 +238,21 @@ class PopupBlock {
 
 		const overlay = this.element.querySelector( '.otter-popup__modal_wrap_overlay' );
 
-		overlay.addEventListener( 'click', () => {
+		overlay?.addEventListener( 'click', () => {
 			this.closeModal();
 		});
+	}
+
+	lockScrolling() {
+		if ( this.canLock ) {
+			document.body.classList.add( 'o-lock-body' );
+		}
+	}
+
+	unlockScrolling() {
+		if ( this.canLock ) {
+			document.body.classList.remove( 'o-lock-body' );
+		}
 	}
 }
 

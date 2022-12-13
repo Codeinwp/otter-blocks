@@ -73,12 +73,7 @@ class Registration {
 	 * Initialize the class
 	 */
 	public function init() {
-		if ( version_compare( floatval( get_bloginfo( 'version' ) ), '5.8', '>=' ) ) {
-			add_filter( 'block_categories_all', array( $this, 'block_categories' ) );
-		} else {
-			add_filter( 'block_categories', array( $this, 'block_categories' ) );
-		}
-
+		add_filter( 'block_categories_all', array( $this, 'block_categories' ), 11, 2 );
 		add_action( 'init', array( $this, 'register_blocks' ) );
 		add_action( 'init', array( $this, 'init_amp_blocks' ) );
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_assets' ), 1 );
@@ -101,16 +96,16 @@ class Registration {
 	/**
 	 * Register our custom block category.
 	 *
-	 * @param array $categories All categories.
+	 * @param array                   $categories All categories.
+	 * @param WP_Block_Editor_Context $block_editor_context The current block editor context.
 	 *
 	 * @return mixed
 	 * @since   2.0.0
 	 * @access public
 	 * @link   https://wordpress.org/gutenberg/handbook/extensibility/extending-blocks/#managing-block-categories
 	 */
-	public function block_categories( $categories ) {
+	public function block_categories( $categories, $block_editor_context ) {
 		return array_merge(
-			$categories,
 			array(
 				array(
 					'slug'  => 'themeisle-blocks',
@@ -120,7 +115,8 @@ class Registration {
 					'slug'  => 'themeisle-woocommerce-blocks',
 					'title' => __( 'WooCommerce Builder by Otter', 'otter-blocks' ),
 				),
-			)
+			),
+			$categories
 		);
 	}
 
@@ -179,6 +175,9 @@ class Registration {
 		wp_register_script( 'lottie-player', OTTER_BLOCKS_URL . 'assets/lottie/lottie-player.min.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'lottie-player', 'async', true );
 
+		wp_register_script( 'dotlottie-player', OTTER_BLOCKS_URL . 'assets/lottie/dotlottie-player.min.js', [], $asset_file['version'], true );
+		wp_script_add_data( 'dotlottie-player', 'async', true );
+
 		$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/slider.asset.php';
 		wp_register_script( 'glidejs', OTTER_BLOCKS_URL . 'assets/glide/glide.min.js', [], $asset_file['version'], true );
 		wp_script_add_data( 'glidejs', 'async', true );
@@ -218,7 +217,7 @@ class Registration {
 			OTTER_BLOCKS_URL . 'build/blocks/blocks.js',
 			array_merge(
 				$asset_file['dependencies'],
-				array( 'otter-vendor', 'glidejs', 'lottie-player' )
+				array( 'otter-vendor', 'glidejs', 'lottie-player', 'dotlottie-player' )
 			),
 			$asset_file['version'],
 			true
@@ -259,6 +258,7 @@ class Registration {
 				'postTypes'               => get_post_types( [ 'public' => true ] ),
 				'rootUrl'                 => get_site_url(),
 				'restRoot'                => get_rest_url( null, 'otter/v1' ),
+				'isPrettyPermalinks'      => boolval( get_option( 'permalink_structure' ) ),
 				'showOnboarding'          => $this->show_onboarding(),
 				'ratingScale'             => get_option( 'themeisle_blocks_settings_review_scale', false ),
 				'hasModule'               => array(
@@ -267,6 +267,7 @@ class Registration {
 				'isLegacyPre59'           => version_compare( get_bloginfo( 'version' ), '5.8.22', '<=' ),
 				'isAncestorTypeAvailable' => version_compare( get_bloginfo( 'version' ), '5.9.22', '>=' ),
 				'version'                 => OTTER_BLOCKS_VERSION,
+				'showBFDeal'              => Pro::bf_deal(),
 			)
 		);
 
@@ -395,10 +396,6 @@ class Registration {
 			$post     = $content;
 		} else {
 			$content = get_the_content( null, false, $post );
-		}
-
-		if ( strpos( $content, '<!-- wp:' ) === false ) {
-			return false;
 		}
 
 		$this->enqueue_block_styles( $post );
@@ -548,7 +545,7 @@ class Registration {
 
 		if ( ! self::$scripts_loaded['lottie'] && has_block( 'themeisle-blocks/lottie', $post ) ) {
 			$asset_file = include OTTER_BLOCKS_PATH . '/build/blocks/lottie.asset.php';
-			wp_register_script( 'lottie-interactivity', OTTER_BLOCKS_URL . 'assets/lottie/lottie-interactivity.min.js', array( 'lottie-player' ), $asset_file['version'], true );
+			wp_register_script( 'lottie-interactivity', OTTER_BLOCKS_URL . 'assets/lottie/lottie-interactivity.min.js', array( 'lottie-player', 'dotlottie-player' ), $asset_file['version'], true );
 			wp_script_add_data( 'lottie-interactivity', 'async', true );
 
 			wp_register_script(
@@ -556,7 +553,7 @@ class Registration {
 				OTTER_BLOCKS_URL . 'build/blocks/lottie.js',
 				array_merge(
 					$asset_file['dependencies'],
-					array( 'lottie-player', 'lottie-interactivity' )
+					array( 'lottie-player', 'dotlottie-player', 'lottie-interactivity' )
 				),
 				$asset_file['version'],
 				true

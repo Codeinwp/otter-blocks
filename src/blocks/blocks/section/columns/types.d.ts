@@ -12,13 +12,18 @@ type Attributes = {
 	margin: MarginType
 	marginTablet: MarginType
 	marginMobile: MarginType
-	columnsWidth: number
+	columnsWidth: number|string
+	columnsWidthTablet: string
+	columnsWidthMobile: string
 	horizontalAlign: string
 	columnsHeight: string
-	columnsHeightCustom: number
-	columnsHeightCustomTablet: number
-	columnsHeightCustomMobile: number
+	columnsHeightCustom: number|string
+	columnsHeightCustomTablet: number|string
+	columnsHeightCustomMobile: number|string
 	verticalAlign: string
+	color: string
+	colorHover: string
+	linkColor: string
 	backgroundType: string
 	backgroundColor: string
 	backgroundImage: MediaImageProps

@@ -8,8 +8,10 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 }
 
 .wp-block-themeisle-blocks-advanced-columns {
+	--background: transparent;
 	--columns-width: initial;
 	display: flex;
+	transition: 0.3s;
 
 	> .innerblocks-wrap {
 		flex-basis: 100%;
@@ -38,7 +40,42 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 		}
 	}
 
+	.block-editor-block-variation-picker {
+		.block-editor-block-variation-picker__variations {
+			svg {
+				width: 48px;
+				height: 48px;
+			}
+		}
+	}
+
 	.wp-block-themeisle-blocks-advanced-column {
+		--background: transparent;
+		--background-color-hover: var( --background );
+
+		background: var( --background );
+		transition: 0.3s;
+
+		&:hover {
+			background: var( --background-color-hover );
+		}
+
+		> * {
+			position: relative;
+		}
+	
+		a:not( .wp-block-button__link ) {
+			color: var( --link-color );
+		}
+
+		.wp-block-themeisle-blocks-advanced-column-overlay {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			top: 0;
+			left: 0;
+		}
+
 		.wp-block-themeisle-blocks-slider {
 			display: block;
 		}

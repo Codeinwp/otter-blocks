@@ -440,6 +440,22 @@ export const changeActiveStyle = ( className, styles, newStyle ) =>{
 };
 
 /**
+ * Create a CSS property declaration.
+ * @param {string} prop The name of the property.
+ * @param {string | undefined | null} value The value.
+ * @param { (c: any) => boolean | boolean | undefined } condition The condition.
+ * @returns
+ */
+export const _cssProp = ( prop, value, condition = undefined ) => value !== undefined && null !== value && ( condition === undefined || ( 'function' === typeof condition ? condition( value ) : condition ) ) ? `${prop}: ${value};` : undefined;
+
+/**
+ * Create a CSS block declaration.
+ * @param {[string, string][]} propsPairs The properties grouped in pairs
+ * @returns
+ */
+export const _cssBlock = ( propsPairs ) => `{\n${propsPairs?.map( pair => _cssProp( pair?.[0], pair?.[1], pair?.[2]) )?.join( '\n' ) ?? ''} \n}`;
+
+/**
  * Wrap a given string in a box object.
  * @param {string|any} s The value.
  * @returns {import('./blocks').BoxType|any}
@@ -515,3 +531,27 @@ export const _compactObject = ( o ) => {
 export const compactObject = ( o ) => {
 	return _compactObject( cloneDeep( o ) );
 };
+
+/**
+ * Return true if platform is MacOS.
+ *
+ * @param {Window?} _window window object by default; used for DI testing.
+ *
+ * @return {boolean} True if MacOS; false otherwise.
+ */
+export function isAppleOS( _window = null ) {
+	if ( ! _window ) {
+		if ( 'undefined' === typeof window ) {
+			return false;
+		}
+
+		_window = window;
+	}
+
+	const { platform } = _window.navigator;
+
+	return (
+		-1 !== platform.indexOf( 'Mac' ) ||
+		[ 'iPad', 'iPhone' ].includes( platform )
+	);
+}

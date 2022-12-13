@@ -72,7 +72,7 @@ const BlockPlaceholder = ({
 				instructions: __( 'Add Lottie animations and files to your website.', 'otter-blocks' )
 			} }
 			icon={ <BlockIcon icon={ video } /> }
-			accept={ [ 'application/json' ] }
+			accept={ [ 'application/json', '.lottie' ] }
 			allowedTypes={ [ 'application/json' ] }
 			value={ { ...file } }
 			onSelectURL={ onChange }

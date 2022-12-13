@@ -17,7 +17,6 @@ import './lottie/index.js';
 import './plugin-cards/index.js';
 import './popup/index.js';
 import './posts/index.js';
-import './pricing-section/index.js';
 import './progress-bar/index.js';
 import './review/index.js';
 import './section/index.js';

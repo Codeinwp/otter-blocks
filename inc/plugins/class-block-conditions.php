@@ -175,7 +175,6 @@ class Block_Conditions {
 		}
 
 		return apply_filters( 'otter_blocks_evaluate_condition', true, $condition, $visibility );
-
 	}
 
 	/**

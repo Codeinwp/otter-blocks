@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import {
 	times,
 	isEmpty,
+	isNumber,
 	pickBy,
 	merge
 } from 'lodash';
@@ -52,8 +53,13 @@ import {
 	blockInit,
 	getDefaultValueByField
 } from '../../../helpers/block-utility.js';
+import { _cssBlock } from '../../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
+
+const px = value => value ? `${ value }px` : value;
+
+const mightBeUnit = value => isNumber( value ) ? px( value ) : value;
 
 /**
  *
@@ -222,7 +228,7 @@ const Edit = ({
 		paddingLeft: getValue( 'padding' ) && getValue( 'padding' ).left,
 		marginTop: getValue( 'margin' ) && getValue( 'margin' ).top,
 		marginBottom: getValue( 'margin' ) && getValue( 'margin' ).bottom,
-		minHeight: 'custom' === attributes.columnsHeight ? `${ attributes.columnsHeightCustom }px` : attributes.columnsHeight
+		minHeight: 'custom' === attributes.columnsHeight ? mightBeUnit( attributes.columnsHeightCustom ) : attributes.columnsHeight
 	};
 
 
@@ -234,7 +240,7 @@ const Edit = ({
 			paddingLeft: getValue( 'paddingTablet' )?.left,
 			marginTop: getValue( 'marginTablet' )?.top,
 			marginBottom: getValue( 'marginTablet' )?.bottom,
-			minHeight: 'custom' === attributes.columnsHeight ? `${ attributes.columnsHeightCustomTablet }px` : attributes.columnsHeight
+			minHeight: 'custom' === attributes.columnsHeight ? mightBeUnit( attributes.columnsHeightCustomTablet ) : attributes.columnsHeight
 		}, ( value ) => value );
 		stylesheet = merge( stylesheet, tabletStyle );
 	}
@@ -247,7 +253,7 @@ const Edit = ({
 			paddingLeft: getValue( 'paddingMobile' )?.left,
 			marginTop: getValue( 'marginMobile' )?.top,
 			marginBottom: getValue( 'marginMobile' )?.bottom,
-			minHeight: 'custom' === attributes.columnsHeight ? `${ attributes.columnsHeightCustomMobile }px` : attributes.columnsHeight
+			minHeight: 'custom' === attributes.columnsHeight ? mightBeUnit( attributes.columnsHeightCustomMobile ) : attributes.columnsHeight
 		}, ( value ) => value );
 		stylesheet = merge( stylesheet, mobileStyle );
 	}
@@ -305,7 +311,8 @@ const Edit = ({
 		...background,
 		...borderStyle,
 		...borderRadiusStyle,
-		...boxShadowStyle
+		...boxShadowStyle,
+		'--link-color': attributes.linkColor
 	};
 
 	if ( 'color' === attributes.backgroundOverlayType ) {
@@ -344,8 +351,16 @@ const Edit = ({
 
 	if ( attributes.columnsWidth ) {
 		innerStyle = {
-			maxWidth: attributes.columnsWidth + 'px'
+			maxWidth: mightBeUnit( getValue( 'columnsWidth' ) )
 		};
+	}
+
+	if ( ( isTablet || isMobile ) && getValue( 'columnsWidthTablet' ) ) {
+		innerStyle.maxWidth = mightBeUnit( getValue( 'columnsWidthTablet' ) );
+	}
+
+	if ( isMobile && getValue( 'columnsWidthMobile' ) ) {
+		innerStyle.maxWidth = mightBeUnit( getValue( 'columnsWidthMobile' ) );
 	}
 
 	const classes = classnames(
@@ -395,6 +410,19 @@ const Edit = ({
 
 	return (
 		<Fragment>
+			<style>
+				{
+					`#block-${ clientId } ` + _cssBlock([
+						[ 'color', attributes.color ]
+					])
+				}
+				{
+					`#block-${ clientId }:hover ` + _cssBlock([
+						[ 'color', attributes.colorHover ]
+					])
+				}
+			</style>
+
 			<Controls
 				attributes={ attributes }
 				setAttributes={ setAttributes }

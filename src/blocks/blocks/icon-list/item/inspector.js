@@ -5,7 +5,8 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
-	InspectorControls
+	InspectorControls,
+	PanelColorSettings
 } from '@wordpress/block-editor';
 
 import { PanelBody } from '@wordpress/components';
@@ -69,21 +70,25 @@ const Inspector = ({
 					onChange={ changeIcon }
 					allowImage
 				/>
-
-				<ColorGradientControl
-					label={ __( 'Content Color', 'otter-blocks' ) }
-					colorValue={ attributes.contentColor }
-					onColorChange={ onDefaultContentColorChange }
-				/>
-
-				{ 'image' !== attributes.library && (
-					<ColorGradientControl
-						label={ __( 'Icon Color', 'otter-blocks' ) }
-						colorValue={ attributes.iconColor }
-						onColorChange={ onDefaultIconColorChange }
-					/>
-				) }
 			</PanelBody>
+			<PanelColorSettings
+				title={ __( 'Color', 'otter-blocks' ) }
+				initialOpen={ true }
+				colorSettings={ [
+					{
+						value: attributes.contentColor,
+						onChange: contentColor => setAttributes({ contentColor }),
+						label: __( 'Content Color', 'otter-blocks' )
+					},
+					...( 'image' !== attributes.library ? [
+						{
+							value: attributes.iconColor,
+							onChange: iconColor => setAttributes({ iconColor }),
+							label: __( 'Icon Color', 'otter-blocks' )
+						}
+					] : [])
+				] }
+			/>
 		</InspectorControls>
 	);
 };

@@ -5,12 +5,18 @@ import { __ } from '@wordpress/i18n';
 
 import { registerBlockType } from '@wordpress/blocks';
 
+import { useBlockProps } from '@wordpress/block-editor';
+
+import {
+	ExternalLink,
+	Placeholder
+} from '@wordpress/components';
+
 /**
  * Internal dependencies
  */
 import metadata from './block.json';
 import { pluginsIcon as icon } from '../../helpers/icons.js';
-import edit from './edit.js';
 
 const { name } = metadata;
 
@@ -24,11 +30,16 @@ registerBlockType( name, {
 		'card',
 		'orbitfox'
 	],
-	edit,
-	save: () => null,
-	example: {
-		attributes: {
-			slug: 'otter-blocks'
-		}
-	}
+	edit: () => {
+		return (
+			<div { ...useBlockProps() }>
+				<Placeholder>
+					{ __( 'This block has been deprecated. Please switch to a different plugin for a Plugin Card. For the time being, it will keep working on the frontend.', 'otter-blocks' ) }
+					<br />
+					<ExternalLink href="https://wordpress.org/plugins/wp-plugin-info-card/">{ __( 'We recommend WP Plugin Info Card.', 'otter-blocks' ) }</ExternalLink>
+				</Placeholder>
+			</div>
+		);
+	},
+	save: () => null
 });

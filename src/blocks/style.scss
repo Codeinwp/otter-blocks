@@ -1,0 +1,18 @@
+.otter-masonry {
+    .blocks-gallery-grid {
+        .blocks-gallery-item {
+            img {
+                width: 100%;
+            }
+        }
+    }
+}
+
+.o-is-sticky {
+	position: fixed;
+	z-index: 9999;
+}
+
+.o-woocommerce-builder .woocommerce-product-gallery {
+    width: 100% !important;
+}

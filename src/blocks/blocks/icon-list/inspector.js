@@ -4,19 +4,37 @@
 import { __ } from '@wordpress/i18n';
 
 import {
-	__experimentalColorGradientControl as ColorGradientControl,
-	InspectorControls
+	InspectorControls,
+	PanelColorSettings
 } from '@wordpress/block-editor';
 
 import {
 	PanelBody,
-	RangeControl
+	FontSizePicker,
+	__experimentalUnitControl as UnitControl,
+	BaseControl,
+	Placeholder,
+	Spinner,
+	ToggleControl
 } from '@wordpress/components';
+
+import {
+	Fragment,
+	Suspense,
+	useState
+} from '@wordpress/element';
+import InspectorHeader from '../../components/inspector-header/index.js';
+import { _px } from '../../helpers/helper-functions.js';
+import ToogleGroupControl from '../../components/toogle-group-control/index.js';
+import { alignCenter, alignLeft, alignRight } from '@wordpress/icons';
+import ResponsiveControl from '../../components/responsive-control/index.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 /**
  * Internal dependencies
  */
 import IconPickerControl from '../../components/icon-picker-control/index.js';
+import ButtonToggle from '../../components/button-toggle-control/index.js';
 
 /**
  *
@@ -27,6 +45,11 @@ const Inspector = ({
 	attributes,
 	setAttributes
 }) => {
+
+	const [ tab, setTab ] = useState( 'settings' );
+
+	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
+
 	const changeLibrary = value => {
 		setAttributes({
 			defaultLibrary: value,
@@ -50,71 +73,288 @@ const Inspector = ({
 		}
 	};
 
-	const onDefaultContentColorChange = value => {
-		setAttributes({ defaultContentColor: value });
-	};
+	const changeStructure = value => {
+		const classes = attributes?.className?.split( ' ' ) || [];
 
-	const onDefaultIconColorChange = value => {
-		setAttributes({ defaultIconColor: value });
-	};
+		if ( 'default' === value && classes.includes( 'is-style-horizontal' ) ) {
+			classes.splice( classes.indexOf( 'is-style-horizontal' ), 1 );
+		} else if ( 'is-style-horizontal' === value && ! classes.includes( 'is-style-horizontal' ) ) {
+			classes.push( 'is-style-horizontal' );
+		}
 
-	const onDefaultSizeChange = value => {
-		setAttributes({ defaultSize: value });
-	};
-
-	const onGapChange = value => {
-		setAttributes({ gap: value });
+		setAttributes({ className: classes.join( ' ' ) });
 	};
 
 	return (
 		<InspectorControls>
-			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
-			>
-				<IconPickerControl
-					label={ __( 'Icon Picker', 'otter-blocks' ) }
-					library={ attributes.defaultLibrary }
-					prefix={ attributes.defaultPrefix }
-					icon={ attributes.defaultIcon }
-					changeLibrary={ changeLibrary }
-					onChange={ changeIcon }
-					allowImage
+			<div>
+				<InspectorHeader
+					value={ tab }
+					options={[
+						{
+							label: __( 'Settings', 'otter-blocks' ),
+							value: 'settings'
+						},
+						{
+							label: __( 'Style', 'otter-blocks' ),
+							value: 'style'
+						}
+					]}
+					onChange={ setTab }
 				/>
 
-				<RangeControl
-					label={ __( 'Font Size', 'otter-blocks' ) }
-					help={ __( 'The size of the font size of the content and icon.', 'otter-blocks' ) }
-					value={ attributes.defaultSize }
-					onChange={ onDefaultSizeChange }
-					step={ 0.1 }
-					min={ 0 }
-					max={ 60 }
-					allowReset={ true }
-				/>
+				{ 'settings' === tab && (
+					<Fragment>
+						<PanelBody
+							title={ __( 'Layout', 'otter-blocks' ) }
+						>
+							<ButtonToggle
+								label={ __( 'List Orientation', 'otter-blocks' ) }
+								options={[
+									{
+										label: __( 'Vertical', 'otter-blocks' ),
+										value: 'default'
+									},
+									{
+										label: __( 'Horizontal', 'otter-blocks' ),
+										value: 'is-style-horizontal'
+									}
+								]}
+								value={ attributes?.className?.includes( 'is-style-horizontal' ) ? 'is-style-horizontal' : 'default' }
+								onChange={ changeStructure }
+							/>
+							<ResponsiveControl
+								label={ __( 'Alignment', 'otter-blocks' ) }
+							>
+								<ToogleGroupControl
+									value={ responsiveGetAttributes([ attributes.horizontalAlign, attributes.alignmentTablet, attributes.alignmentMobile  ]) ?? 'flex-start' }
+									onChange={ ( value ) => {
+										responsiveSetAttributes(
+											value,
+											[ 'horizontalAlign', 'alignmentTablet', 'alignmentMobile' ]
+										);
+									} }
+									options={[
+										{
+											icon: alignLeft,
+											label: __( 'Left', 'otter-blocks' ),
+											value: 'flex-start'
+										},
+										{
+											icon: alignCenter,
+											label: __( 'Center', 'otter-blocks' ),
+											value: 'center'
+										},
+										{
+											icon: alignRight,
+											label: __( 'Right', 'otter-blocks' ),
+											value: 'flex-end'
+										}
+									]}
+									hasIcon={ true }
+								/>
 
-				<RangeControl
-					label={ __( 'Gap', 'otter-blocks' ) }
-					help={ __( 'The distance between the items.', 'otter-blocks' ) }
-					value={ attributes.gap }
-					onChange={ onGapChange }
-					step={ 0.1 }
-					min={ 0 }
-					max={ 60 }
-					allowReset={ true }
-				/>
+							</ResponsiveControl>
 
-				<ColorGradientControl
-					label={ __( 'Content Color', 'otter-blocks' ) }
-					colorValue={ attributes.defaultContentColor }
-					onColorChange={ onDefaultContentColorChange }
-				/>
+							<ToggleControl
+								label={ __( 'Hide Labels', 'otter-blocks' ) }
+								checked={ Boolean( attributes.hideLabels ) }
+								onChange={ () => setAttributes({ hideLabels: ! attributes.hideLabels }) }
+							/>
 
-				<ColorGradientControl
-					label={ __( 'Icon Color', 'otter-blocks' ) }
-					colorValue={ attributes.defaultIconColor }
-					onColorChange={ onDefaultIconColorChange }
-				/>
-			</PanelBody>
+						</PanelBody>
+						<PanelBody
+							title={ __( 'Icons', 'otter-blocks' ) }
+						>
+							<Suspense fallback={ <Placeholder><Spinner /></Placeholder> }>
+								<IconPickerControl
+									label={ __( 'Icon Picker', 'otter-blocks' ) }
+									library={ attributes.defaultLibrary }
+									prefix={ attributes.defaultPrefix }
+									icon={ attributes.defaultIcon }
+									changeLibrary={ changeLibrary }
+									onChange={ changeIcon }
+									allowImage
+								/>
+							</Suspense>
+						</PanelBody>
+					</Fragment>
+				) }
+
+				{ 'style' === tab && (
+					<Fragment>
+						<PanelColorSettings
+							title={ __( 'Color', 'otter-blocks' ) }
+							initialOpen={ true }
+							colorSettings={ [
+								{
+									value: attributes.defaultIconColor,
+									onChange: defaultIconColor => setAttributes({ defaultIconColor }),
+									label: __( 'Icon', 'otter-blocks' )
+								},
+								{
+									value: attributes.defaultContentColor,
+									onChange: defaultContentColor => setAttributes({ defaultContentColor }),
+									label: __( 'Text', 'otter-blocks' )
+								},
+								...( attributes.hasDivider ? [
+									{
+										value: attributes.dividerColor,
+										onChange: dividerColor => setAttributes({ dividerColor }),
+										label: __( 'Divider', 'otter-blocks' )
+									}
+								] : [])
+							] }
+						/>
+						<PanelBody
+							title={ __( 'Size', 'otter-blocks' ) }
+						>
+							<BaseControl
+								label={ __( 'Font Size', 'otter-blocks' ) }
+								__nextHasNoMarginBottom={ true }
+
+								// help={ __( 'The size of the font size of the content and icon.', 'otter-blocks' ) }
+							>
+								<FontSizePicker
+									value={ _px( attributes.defaultSize ) ?? '16px' }
+									onChange={ defaultSize => setAttributes({ defaultSize }) }
+									fontSizes={[
+										{
+											name: 'Small',
+											size: '12px',
+											slug: 'small'
+										},
+										{
+											name: 'Normal',
+											size: '16px',
+											slug: 'Normal'
+										},
+										{
+											name: 'Medium',
+											size: '20px',
+											slug: 'medium'
+										},
+										{
+											name: 'Large',
+											size: '36px',
+											slug: 'large'
+										}
+									]}
+									withReset={ true }
+								/>
+							</BaseControl>
+
+							<BaseControl
+								label={ __( 'Icon Size', 'otter-blocks' ) }
+								__nextHasNoMarginBottom={ true }
+
+								//help={ __( 'The size of the font size of the content and icon.', 'otter-blocks' ) }
+							>
+								<FontSizePicker
+									value={ attributes.defaultIconSize ?? _px( attributes.defaultSize ) ?? '16px' }
+									onChange={ defaultIconSize => setAttributes({ defaultIconSize }) }
+									fontSizes={[
+										{
+											name: 'Small',
+											size: '12px',
+											slug: 'small'
+										},
+										{
+											name: 'Normal',
+											size: '16px',
+											slug: 'Normal'
+										},
+										{
+											name: 'Medium',
+											size: '20px',
+											slug: 'medium'
+										},
+										{
+											name: 'Large',
+											size: '36px',
+											slug: 'large'
+										}
+									]}
+									withReset={ true }
+								/>
+							</BaseControl>
+						</PanelBody>
+						<PanelBody
+							title={ __( 'Dimensions', 'otter-blocks' ) }
+						>
+							<UnitControl
+								label={ __( 'Space between List items', 'otter-blocks' ) }
+								value={ attributes.gap ?? '5px' }
+								onChange={ gap => setAttributes({ gap }) }
+								units={[
+									{
+										a11yLabel: 'Pixels (px)',
+										label: 'px',
+										step: 1,
+										value: 'px'
+									}
+								]}
+							/>
+
+							<br/>
+
+							<UnitControl
+								label={ __( 'Space between Icon and Label', 'otter-blocks' ) }
+								value={ attributes.gapIconLabel ?? '16px' }
+								onChange={ gapIconLabel => setAttributes({ gapIconLabel }) }
+								units={[
+									{
+										a11yLabel: 'Pixels (px)',
+										label: 'px',
+										step: 1,
+										value: 'px'
+									}
+								]}
+							/>
+						</PanelBody>
+						<PanelBody
+							title={ __( 'Divider', 'otter-blocks' ) }
+						>
+							<ToggleControl
+								label={ __( 'Enable Divider', 'otter-blocks' ) }
+								checked={ Boolean( attributes.hasDivider ) }
+								onChange={ () => setAttributes({ hasDivider: ! attributes.hasDivider }) }
+							/>
+
+							{
+								attributes.hasDivider && (
+									<Fragment>
+										<UnitControl
+											label={ __( 'Width', 'otter-blocks' ) }
+											value={ attributes.dividerWidth ?? '2px' }
+											onChange={ dividerWidth => setAttributes({ dividerWidth }) }
+											units={[
+												{
+													a11yLabel: 'Pixels (px)',
+													label: 'px',
+													step: 1,
+													value: 'px'
+												}
+											]}
+											max={5}
+										/>
+
+										<br />
+
+										<UnitControl
+											label={ __( 'Length', 'otter-blocks' ) }
+											value={ attributes.dividerLength ?? '100%' }
+											onChange={ dividerLength => setAttributes({ dividerLength }) }
+											isResetValueOnUnitChange
+
+										/>
+									</Fragment>
+								)
+							}
+						</PanelBody>
+					</Fragment>
+				) }
+			</div>
 		</InspectorControls>
 	);
 };

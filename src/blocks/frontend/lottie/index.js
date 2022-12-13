@@ -4,7 +4,8 @@
 import { domReady } from '../../helpers/frontend-helper-functions.js';
 
 domReady( () => {
-	const animations = document.querySelectorAll( '.wp-block-themeisle-blocks-lottie' );
+	const lottieAmin = document.querySelectorAll( 'lottie-player.wp-block-themeisle-blocks-lottie' );
+	const dotLottieAnim = document.querySelectorAll( 'dotlottie-player.wp-block-themeisle-blocks-lottie' );
 
 	const initAnimation = animation => {
 		if ( 'false' === animation.dataset.loop ) {
@@ -32,51 +33,48 @@ domReady( () => {
 		}
 	};
 
-	animations.forEach( animation => {
-		animation.addEventListener( 'load', () => {
-			const trigger = animation.getAttribute( 'trigger' );
+	const eventAnim = animation => {
+		const trigger = animation.getAttribute( 'trigger' );
+		if ( 'scroll' === trigger ) {
+			return window.LottieInteractivity.create({
+				mode: 'scroll',
+				player: animation.getLottie(),
+				container: animation,
+				actions: [{
+					visibility: [ 0, 1 ],
+					type: 'seek',
+					frames: [ 0, animation.getLottie().totalFrames ]
+				}]
+			});
+		}
 
-			if ( 'scroll' === trigger ) {
-				return window.LottieInteractivity.create({
-					mode: 'scroll',
-					player: `#${ animation.id }`,
-					actions: [{
-						visibility: [ 0, 1 ],
-						type: 'seek',
-						frames: [ 0, animation.getLottie().totalFrames ]
-					}]
-				});
-			}
+		if ( 'hover' === trigger ) {
+			animation.addEventListener( 'mouseover', () => {
+				animation.play();
+			});
 
-			if ( 'hover' === trigger ) {
-				animation.addEventListener( 'mouseover', () => {
-					animation.play();
-				});
+			animation.addEventListener( 'mouseout', () => {
+				animation.stop();
+			});
 
-				animation.addEventListener( 'mouseout', () => {
-					animation.stop();
-				});
+			initAnimation( animation );
+			return -1 === animation.__direction ? animation.pause() : animation.stop();
+		}
 
-				initAnimation( animation );
+		if ( 'click' === trigger ) {
+			animation.addEventListener( 'click', () => {
+				animation.play();
+			});
 
-				return -1 === animation.__direction ? animation.pause() : animation.stop();
-			}
+			animation.addEventListener( 'complete', () => animation.stop() );
+			initAnimation( animation );
+			return -1 === animation.__direction ? animation.pause() : animation.stop();
+		}
 
-			if ( 'click' === trigger ) {
-				animation.addEventListener( 'click', () => {
-					animation.play();
-				});
+		return initAnimation( animation );
+	};
 
-				animation.addEventListener( 'complete', () => animation.stop() );
-
-				initAnimation( animation );
-
-				return -1 === animation.__direction ? animation.pause() : animation.stop();
-			}
-
-			return initAnimation( animation );
-		});
-
+	const addStyle = animation => {
 		if ( animation.getAttribute( 'width' ) ) {
 			animation.style.height = 'auto';
 
@@ -87,5 +85,27 @@ domReady( () => {
 				animation.style.width = ( 'px' !== width.toString().slice( -2 ) ) ? `${width}px` : width;
 			}
 		}
+	};
+
+	lottieAmin.forEach( animation => {
+		animation.addEventListener( 'load', e => {
+			const animation = e.target;
+			eventAnim( animation );
+		});
+
+		addStyle( animation );
+	});
+
+	dotLottieAnim.forEach( animation => {
+		const interval = setInterval( () => {
+			if ( animation.load ) {
+				animation.load( animation.dataset.src )?.then( () => {
+					eventAnim( animation );
+				});
+
+				addStyle( animation );
+				clearInterval( interval );
+			}
+		}, 0 );
 	});
 });

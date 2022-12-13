@@ -126,7 +126,6 @@
 	"plugin-cards": {
 		"block": "blocks/blocks/plugin-cards/block.json",
 		"assets": {
-			"plugin-cards/editor.css": "blocks/blocks/plugin-cards/editor.scss",
 			"plugin-cards/style.css": "blocks/blocks/plugin-cards/style.scss"
 		}
 	},
@@ -218,10 +217,7 @@
 	},
 	"woo-comparison": {
 		"isPro": true,
-		"block": "pro/blocks/woo-comparison/block.json",
-		"assets": {
-			"woo-comparison/editor.css": "pro/blocks/woo-comparison/editor.scss"
-		}
+		"block": "pro/blocks/woo-comparison/block.json"
 	},
 	"product-add-to-cart": {
 		"isPro": true,

@@ -1,4 +1,4 @@
-import { BlockProps, InspectorProps } from '../../helpers/blocks';
+import { BlockProps, InspectorProps, MarginType, PaddingType } from '../../helpers/blocks';
 
 type Attributes = {
   id: string
@@ -10,15 +10,15 @@ type Attributes = {
   headingColor: string
   highlightColor: string
   highlightBackground: string
-  fontSize: number
-  fontSizeTablet: number
-  fontSizeMobile: number
+  fontSize: number | string
+  fontSizeTablet: number | string
+  fontSizeMobile: number | string
   fontFamily: string
   fontVariant: string
   fontStyle: string
   textTransform: string
   lineHeight: number
-  letterSpacing: number
+  letterSpacing: number | string
   textShadow: boolean
   textShadowColor: string
   textShadowColorOpacity: number
@@ -28,9 +28,9 @@ type Attributes = {
   paddingType: string
   paddingTypeTablet: string
   paddingTypeMobile: string
-  padding: number
-  paddingTablet: number
-  paddingMobile: number
+  padding: number | PaddingType
+  paddingTablet: number | PaddingType
+  paddingMobile: number | PaddingType
   paddingTop: number
   paddingTopTablet: number
   paddingTopMobile: number
@@ -46,15 +46,18 @@ type Attributes = {
   marginType: string
   marginTypeTablet: string
   marginTypeMobile: string
-  margin: number
-  marginTablet: number
-  marginMobile: number
+  margin: number | MarginType
+  marginTablet: number | MarginType
+  marginMobile: number | MarginType
   marginTop: number
   marginTopTablet: number
   marginTopMobile: number
   marginBottom: number
   marginBottomTablet: number
   marginBottomMobile: number
+  linkColor: string
+  linkHoverColor: string,
+  backgroundColor: string
 }
 
 export type AdvancedHeadingAttrs = Partial<Attributes>

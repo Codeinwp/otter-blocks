@@ -24,6 +24,7 @@ class Dynamic_Content {
 	 */
 	public function init() {
 		add_filter( 'render_block', array( $this, 'apply_dynamic_content' ) );
+		add_filter( 'render_block', array( $this, 'apply_dynamic_magic_tags' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_link' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_link_button' ) );
 		add_filter( 'render_block', array( $this, 'apply_dynamic_images' ) );
@@ -42,9 +43,51 @@ class Dynamic_Content {
 			return $content;
 		}
 
-		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|data-term-type=["\'](?P<termType>[^"\'<>]+)["\']|data-term-separator=["\'](?P<termSeparator>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|data-context=["\'](?P<context>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
+		// Todo: Improve this Regex, it can't go on for like this. Soon it will be longer than the available space in the universe!!!
+		$re = '/<o-dynamic(?:\s+(?:data-type=["\'](?P<type>[^"\'<>]+)["\']|data-id=["\'](?P<id>[^"\'<>]+)["\']|data-before=["\'](?P<before>[^"\'<>]+)["\']|data-after=["\'](?P<after>[^"\'<>]+)["\']|data-length=["\'](?P<length>[^"\'<>]+)["\']|data-date-type=["\'](?P<dateType>[^"\'<>]+)["\']|data-date-format=["\'](?P<dateFormat>[^"\'<>]+)["\']|data-date-custom=["\'](?P<dateCustom>[^"\'<>]+)["\']|data-time-type=["\'](?P<timeType>[^"\'<>]+)["\']|data-time-format=["\'](?P<timeFormat>[^"\'<>]+)["\']|data-time-custom=["\'](?P<timeCustom>[^"\'<>]+)["\']|data-term-type=["\'](?P<termType>[^"\'<>]+)["\']|data-term-separator=["\'](?P<termSeparator>[^"\'<>]+)["\']|data-meta-key=["\'](?P<metaKey>[^"\'<>]+)["\']|data-parameter=["\'](?P<parameter>[^"\'<>]+)["\']|data-format=["\'](?P<format>[^"\'<>]+)["\']|data-context=["\'](?P<context>[^"\'<>]+)["\']|[a-zA-Z-]+=["\'][^"\'<>]+["\']))*\s*>(?<default>[^ $].*?)<\s*\/\s*o-dynamic>/';
 
 		return preg_replace_callback( $re, array( $this, 'apply_data' ), $content );
+	}
+
+	/**
+	 * Filter post content for Magic Tags.
+	 *
+	 * @param string $content Post content.
+	 *
+	 * @return string
+	 */
+	public function apply_dynamic_magic_tags( $content ) {
+		if ( false === strpos( $content, '{otterDynamic?' ) ) {
+			return $content;
+		}
+
+		$re = '/{(otterDynamic\/?.[^"]*)}/';
+
+		return preg_replace_callback( $re, array( $this, 'apply_magic_tags' ), $content );
+	}
+
+	/**
+	 * Apply dynamic data for Magic Tags.
+	 *
+	 * @param array $data Dynamic request.
+	 *
+	 * @return string
+	 */
+	public function apply_magic_tags( $data ) {
+		if ( ! isset( $data[1] ) ) {
+			return;
+		}
+
+		$data = explode( 'otterDynamic', $data[1] );
+		$data = self::query_string_to_array( $data[1] );
+
+		if ( ! isset( $data['default'] ) ) {
+			$data['default'] = '';
+		}
+	
+		$data = $this->apply_data( $data, true );
+
+		return $data;
 	}
 
 	/**
@@ -71,7 +114,7 @@ class Dynamic_Content {
 	 *
 	 * @return string
 	 */
-	public function apply_dynamic_link_button( $content ) { 
+	public function apply_dynamic_link_button( $content ) {
 		if ( false === strpos( $content, '#otterDynamicLink' ) ) {
 			return $content;
 		}
@@ -133,7 +176,7 @@ class Dynamic_Content {
 
 		$id = ( defined( 'REST_REQUEST' ) && REST_REQUEST || ( isset( $data['context'] ) && 'query' === $data['context'] ) ) ? $post->ID : get_queried_object_id();
 
-		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
+		if ( isset( $data['context'] ) && ( 0 === $data['context'] || null === $data['context'] || 'query' === $data['context'] || ( is_singular() && $data['context'] !== $id ) ) ) {
 			$data['context'] = $id;
 		}
 
@@ -183,11 +226,12 @@ class Dynamic_Content {
 	 * Apply dynamic data.
 	 *
 	 * @param array $data Dynamic request.
+	 * @param bool  $magic_tags Is a request for Magic Tags.
 	 *
 	 * @return string
 	 */
-	public function apply_data( $data ) {
-		$value = $this->get_data( $data );
+	public function apply_data( $data, $magic_tags = false ) {
+		$value = $this->get_data( $data, $magic_tags );
 
 		if ( isset( $data['before'] ) || isset( $data['after'] ) ) {
 			$value = $this->apply_formatting( $value, $data );
@@ -225,11 +269,12 @@ class Dynamic_Content {
 	 * Get dynamic data.
 	 *
 	 * @param array $data Dynamic request.
+	 * @param bool  $magic_tags Is a request for Magic Tags.
 	 *
 	 * @return string
 	 */
-	public function get_data( $data ) {
-		if ( ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+	public function get_data( $data, $magic_tags ) {
+		if ( ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || true === $magic_tags ) {
 			if ( isset( $data['context'] ) && 'query' === $data['context'] ) {
 				$data['context'] = get_the_ID();
 			} else {
@@ -342,11 +387,15 @@ class Dynamic_Content {
 		$excerpt = $post->post_excerpt; // Here we don't use get_the_excerpt() function as it causes an infinite loop.
 
 		if ( empty( $excerpt ) ) {
-			return $data['default'];
+			$excerpt = wp_trim_excerpt( '', $post );
 		}
 
 		if ( isset( $data['length'] ) && ! empty( $data['length'] ) ) {
 			$excerpt = substr( $excerpt, 0, intval( $data['length'] ) ) . '…';
+		}
+
+		if ( empty( $excerpt ) ) {
+			return $data['default'];
 		}
 
 		return sanitize_text_field( $excerpt );
@@ -498,7 +547,7 @@ class Dynamic_Content {
 		}
 
 		foreach ( explode( '&', $qry ) as $couple ) {
-			list ( $key, $val ) = explode( '=', $couple );
+			list ( $key, $val ) = array_pad( explode( '=', $couple ), 2, null );
 			$result[ $key ]     = $val;
 		}
 

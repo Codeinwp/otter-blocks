@@ -49,7 +49,7 @@ class Main {
 		add_action( 'init', array( $this, 'after_update_migration' ) );
 
 		if ( ! function_exists( 'is_wpcom_vip' ) ) {
-			add_filter( 'upload_mimes', array( $this, 'allow_json_svg' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
+			add_filter( 'upload_mimes', array( $this, 'allow_meme_types' ) ); // phpcs:ignore WordPressVIPMinimum.Hooks.RestrictedHooks.upload_mimes
 			add_filter( 'wp_check_filetype_and_ext', array( $this, 'fix_mime_type_json_svg' ), 75, 4 );
 		}
 	}
@@ -78,7 +78,6 @@ class Main {
 			'\ThemeIsle\GutenbergBlocks\Render\Masonry_Variant',
 			'\ThemeIsle\GutenbergBlocks\Server\Dashboard_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Dynamic_Content_Server',
-			'\ThemeIsle\GutenbergBlocks\Server\Plugin_Card_Server',
 			'\ThemeIsle\GutenbergBlocks\Server\Stripe_Server',
 			'\ThemeIsle\GutenbergBlocks\Integration\Form_Providers',
 			'\ThemeIsle\GutenbergBlocks\Integration\Form_Email',
@@ -266,7 +265,6 @@ class Main {
 		if ( ! isset( $tags['svg'] ) ) {
 			$tags['svg'] = array_merge(
 				array(
-					'role'    => true,
 					'xmlns'   => true,
 					'width'   => true,
 					'height'  => true,
@@ -286,8 +284,8 @@ class Main {
 
 		if ( ! isset( $tags['path'] ) ) {
 			$tags['path'] = array(
-				'd'    => true, 
-				'fill' => true,  
+				'd'    => true,
+				'fill' => true,
 			);
 		}
 
@@ -295,12 +293,30 @@ class Main {
 			$tags['lottie-player'] = array_merge(
 				array(
 					'autoplay'   => true,
+					'hover'      => true,
 					'loop'       => true,
 					'count'      => true,
 					'speed'      => true,
 					'direction'  => true,
 					'trigger'    => true,
-					'data-*'     => true,
+					'mode'       => true,
+					'background' => true,
+					'src'        => true,
+					'width'      => true,
+				),
+				$global_attributes
+			);
+		}
+
+		if ( ! isset( $tags['dotlottie-player'] ) ) {
+			$tags['dotlottie-player'] = array_merge(
+				array(
+					'autoplay'   => true,
+					'loop'       => true,
+					'count'      => true,
+					'speed'      => true,
+					'direction'  => true,
+					'trigger'    => true,
 					'mode'       => true,
 					'background' => true,
 					'src'        => true,
@@ -362,9 +378,10 @@ class Main {
 	 * @since  1.5.7
 	 * @access public
 	 */
-	public function allow_json_svg( $mimes ) {
-		$mimes['json'] = 'application/json';
-		$mimes['svg']  = 'image/svg+xml';
+	public function allow_meme_types( $mimes ) {
+		$mimes['json']   = 'application/json';
+		$mimes['lottie'] = 'application/zip';
+		$mimes['svg']    = 'image/svg+xml';
 		return $mimes;
 	}
 

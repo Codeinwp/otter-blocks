@@ -4,6 +4,10 @@
 	box-sizing: inherit;
 }
 
+#wpbody-content > .error, #wpbody-content > .info, #wpbody-content > .notice {
+	display: none !important;
+}
+
 .settings_page_otter {
 	background: #f6f6f6;
 	font-size: 14px;
@@ -208,6 +212,13 @@
 					p {
 						margin: 0;
 					}
+				}
+
+				ul {
+					list-style: disc;
+					font-weight: 450;
+					padding: inherit;
+					font-size: 14px;
 				}
 
 				.otter-license-purchase-history {
@@ -515,4 +526,50 @@
 	bottom: 40px;
 	padding-left: 16px;
 	padding-right: 16px;
+}
+
+.otter-bf-banner {
+	margin: 25px auto 0 auto;
+	max-width: 930px;
+	position: relative;
+
+	img {
+		width: 100%;
+	}
+
+	a:focus {
+		box-shadow: none;
+	}
+
+	.otter-bf-text {
+		position: absolute;
+		top: 0;
+		right: 0;
+		margin: 8px 10px;
+		background: #1F2733;
+		border-radius: 6px;
+
+		h3 {
+			margin: 0;
+			padding: 10px 12px;
+			color: #fff;
+			font-size: 13px;
+			text-transform: uppercase;
+
+			span {
+				color: #FFCB7C;
+			}
+		}
+	}
+
+	@media ( max-width: 600px ) {
+		.otter-bf-text {
+			margin: 4px 5px;
+
+			h3 {
+				padding: 0px 8px;
+				font-size: 8px;
+			}
+		}
+	}
 }
