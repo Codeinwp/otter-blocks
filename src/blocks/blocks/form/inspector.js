@@ -606,21 +606,6 @@ const Inspector = ({
 										slug: 'labelColor'
 									},
 									{
-										value: attributes.helpLabelColor,
-										label: __( 'Help Label', 'otter-blocks' ),
-										slug: 'helpLabelColor'
-									},
-									{
-										value: attributes.inputBorderColor,
-										label: __( 'Border', 'otter-blocks' ),
-										slug: 'inputBorderColor'
-									},
-									{
-										value: attributes.inputRequiredColor,
-										label: __( 'Label Required', 'otter-blocks' ),
-										slug: 'inputRequiredColor'
-									},
-									{
 										value: attributes.inputColor,
 										label: __( 'Input Text', 'otter-blocks' ),
 										slug: 'inputColor'
@@ -629,7 +614,24 @@ const Inspector = ({
 										value: attributes.inputBackgroundColor,
 										label: __( 'Input Background', 'otter-blocks' ),
 										slug: 'inputBackgroundColor'
+									},
+									{
+										value: attributes.inputBorderColor,
+										label: __( 'Border', 'otter-blocks' ),
+										slug: 'inputBorderColor'
+									},
+									{
+										value: attributes.helpLabelColor,
+										label: __( 'Helper Label', 'otter-blocks' ),
+										slug: 'helpLabelColor'
+									},
+									{
+										value: attributes.inputRequiredColor,
+										label: __( 'Required Label', 'otter-blocks' ),
+										slug: 'inputRequiredColor'
 									}
+
+
 								] }
 							/>
 
@@ -811,38 +813,6 @@ const Inspector = ({
 									/>
 								</AutoDisableSyncAttr>
 							</PanelBody>
-
-							<PanelColorSettings
-								title={ __( 'Button Color', 'otter-blocks' ) }
-								initialOpen={ false }
-								colorSettings={ [
-									{
-										value: attributes.submitColor,
-										onChange: submitColor => setAttributes({ submitColor }),
-										label: __( 'Submit Text', 'otter-blocks' )
-									},
-									{
-										value: attributes.submitBackgroundColor,
-										onChange: submitBackgroundColor => setAttributes({ submitBackgroundColor }),
-										label: __( 'Button Background', 'otter-blocks' )
-									},
-									{
-										value: attributes.submitBackgroundColorHover,
-										onChange: submitBackgroundColorHover => setAttributes({ submitBackgroundColorHover }),
-										label: __( 'Button Background on Hover', 'otter-blocks' )
-									},
-									{
-										value: attributes.submitMessageColor,
-										onChange: submitMessageColor => setAttributes({ submitMessageColor }),
-										label: __( 'Successful Message', 'otter-blocks' )
-									},
-									{
-										value: attributes.submitMessageErrorColor,
-										onChange: submitMessageErrorColor => setAttributes({ submitMessageErrorColor }),
-										label: __( 'Error Message', 'otter-blocks' )
-									}
-								] }
-							/>
 
 							<PanelBody
 								title={ __( 'Labels', 'otter-blocks' ) }
