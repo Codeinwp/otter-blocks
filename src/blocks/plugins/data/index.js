@@ -20,7 +20,9 @@ const DEFAULT_STATE = {
 	isBFDealVisible: Boolean( window.themeisleGutenberg.showBFDeal ) && 'false' !== window.localStorage?.getItem( 'o-show-bf-deal' ),
 	viewType: 'Desktop',
 	visiblePopover: 'themeisle-blocks/dynamic-value',
-	dynamicData: {}
+	dynamicData: {},
+	stripeProducts: [],
+	stripeProductsPrices: {}
 };
 
 const actions = {
@@ -55,6 +57,19 @@ const actions = {
 			value
 		};
 	},
+	setStripeProducts( products ) {
+		return {
+			type: 'SET_STRIPE_PRODUCTS',
+			products: products?.data
+		};
+	},
+	setStripeProductPrices( id, prices ) {
+		return {
+			type: 'SET_STRIPE_PRODUCT_PRICES',
+			id,
+			prices: prices?.data
+		};
+	},
 	fetchFromAPI( path ) {
 		return {
 			type: 'FETCH_FROM_API',
@@ -67,12 +82,14 @@ registerStore( 'themeisle-gutenberg/data', {
 	reducer( state = DEFAULT_STATE, action ) {
 		if ( 'UPDATE_VIEW' === action.type ) {
 			return {
+				...state,
 				viewType: action.viewType
 			};
 		}
 
 		if ( 'UPDATE_ONBOARDING' === action.type ) {
 			return {
+				...state,
 				showOnboarding: action.showOnboarding
 			};
 		}
@@ -85,15 +102,34 @@ registerStore( 'themeisle-gutenberg/data', {
 
 		if ( 'UPDATE_POPOVER' === action.type ) {
 			return {
+				...state,
 				visiblePopover: action.visiblePopover
 			};
 		}
 
 		if ( 'SET_DYNAMIC_DATA' === action.type ) {
 			return {
+				...state,
 				dynamicData: {
 					...state.dynamicData,
 					[ action.key ]: action.value
+				}
+			};
+		}
+
+		if ( 'SET_STRIPE_PRODUCTS' === action.type ) {
+			return {
+				...state,
+				stripeProducts: action.products
+			};
+		}
+
+		if ( 'SET_STRIPE_PRODUCT_PRICES' === action.type ) {
+			return {
+				...state,
+				stripeProductsPrices: {
+					...state.stripeProductsPrices,
+					[ action.id ]: action.prices
 				}
 			};
 		}
@@ -117,8 +153,14 @@ registerStore( 'themeisle-gutenberg/data', {
 			return state.visiblePopover;
 		},
 		getDynamicData( state, attrs ) {
-			const key  = hash( attrs );
+			const key = hash( attrs );
 			return state.dynamicData[ key ];
+		},
+		getStripeProducts( state ) {
+			return state.stripeProducts;
+		},
+		getStripeProductPrices( state, id ) {
+			return state.stripeProductsPrices?.[ id ];
 		}
 	},
 
@@ -134,6 +176,16 @@ registerStore( 'themeisle-gutenberg/data', {
 			const path = 'otter/v1/dynamic/preview/?' + getQueryStringFromObject( attrs );
 			const value = yield actions.fetchFromAPI( path );
 			return actions.setDynamicData( key, value );
+		},
+		*getStripeProducts() {
+			const path = 'otter/v1/stripe/products';
+			const response = yield actions.fetchFromAPI( path );
+			return actions.setStripeProducts( response );
+		},
+		*getStripeProductPrices( id ) {
+			const path = 'otter/v1/stripe/prices/' + id;
+			const response = yield actions.fetchFromAPI( path );
+			return actions.setStripeProductPrices( id, response );
 		}
 	}
 });

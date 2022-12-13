@@ -29,6 +29,7 @@ import { applyFilters } from '@wordpress/hooks';
 /**
  * Internal dependencies.
  */
+import StripeControls from './components/stripe-controls';
 import PanelTab from '../../components/panel-tab/index.js';
 import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
 
@@ -166,6 +167,17 @@ const defaultConditions = {
 			}
 		]
 	},
+	'stripe': {
+		label: __( 'Stripe', 'otter-blocks' ),
+		conditions: [
+			{
+				value: 'stripePurchaseHistory',
+				label: __( 'Purchase History', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on user\'s Stripe purchase history.' ),
+				toogleVisibility: true
+			}
+		]
+	},
 	'learndash': {
 		label: __( 'LearnDash', 'otter-blocks' ),
 		conditions: [
@@ -197,7 +209,7 @@ const AuthorsFieldToken = ( props ) => {
 			postAuthors: ( getUsers({ who: 'authors', context: 'view' }) ?? []).map( author => author.username ),
 			isLoading: isResolving( 'getUsers', [{ who: 'authors', context: 'view' }])
 		};
-	}, [ ]);
+	}, []);
 
 	return isLoading ? (
 		<Placeholder><Spinner /></Placeholder>
@@ -471,6 +483,25 @@ const Edit = ({
 												__experimentalExpandOnFocus={ true }
 												__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
 											/>
+										) }
+
+										{ 'stripePurchaseHistory' === i.type && (
+											<Fragment>
+												{ Boolean( window.themeisleGutenberg.hasStripeAPI ) && (
+													<StripeControls
+														product={ i.product }
+														onChange={ product => changeValue( product, index, n, 'product' ) }
+													/>
+												) }
+
+												{ ! Boolean( window.themeisleGutenberg.hasStripeAPI ) && (
+													<p>
+														{ __( 'You need to set your Stripe API keys in the Otter Dashboard.', 'otter-blocks' ) }
+														{ ' ' }
+														<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Visit Dashboard', 'otter-blocks' ) }</ExternalLink>
+													</p>
+												) }
+											</Fragment>
 										) }
 
 										{ applyFilters( 'otter.blockConditions.controls', '', index, n, i, attributes.otterConditions, setAttributes, changeValue ) }
