@@ -47,7 +47,8 @@ import {
 import metadata from './block.json';
 import {
 	blockInit,
-	useCSSNode
+	useCSSNode,
+	getDefaultValueByField
 } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
@@ -72,7 +73,7 @@ const Edit = ({
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
 
-	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
+	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
 	const [ loadingState, setLoadingState ] = useState({
 		formOptions: 'done',
@@ -81,9 +82,19 @@ const Edit = ({
 		captcha: 'init',
 		serviceTesting: 'init'
 	});
+
 	const setLoading = l => {
 		setLoadingState( loading => ({ ...loading, ...l }) );
 	};
+
+	/**
+	 * Get global value if it is the case.
+	 * @param {import('../../common').SyncAttrs<import('./type').FormAttrs>} field
+	 * @returns
+	 */
+	const getSyncValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
+
+	getSyncValue( '' );
 
 	const [ formOptions, setFormOptions ] = useState({
 		provider: undefined,
@@ -738,25 +749,35 @@ const Edit = ({
 	};
 
 	const inlineStyles = {
-		'--message-font-size': attributes.messageFontSize !== undefined && attributes.messageFontSize,
-		'--input-font-size': attributes.inputFontSize !== undefined && attributes.inputFontSize,
-		'--help-font-size': attributes.helpFontSize !== undefined && attributes.helpFontSize,
-		'--input-color': attributes.inputColor,
-		'--padding': padding( responsiveGetAttributes([ attributes.padding, attributes.paddingTablet, attributes.paddingMobile  ]) ),
-		'--border-radius': attributes.inputBorderRadius !== undefined && ( attributes.inputBorderRadius + 'px' ),
-		'--border-width': attributes.inputBorderWidth !== undefined && ( attributes.inputBorderWidth + 'px' ),
-		'--border-color': attributes.inputBorderColor,
-		'--label-color': attributes.labelColor,
-		'--input-width': attributes.inputWidth !== undefined && ( attributes.inputWidth + '%' ),
-		'--submit-color': attributes.submitColor,
-		'--required-color': attributes.inputRequiredColor,
-		'--input-gap': attributes.inputGap !== undefined && ( attributes.inputGap + 'px' ),
-		'--inputs-gap': attributes.inputsGap !== undefined && ( attributes.inputsGap + 'px' ),
-		'--label-font-size': attributes.labelFontSize !== undefined && attributes.labelFontSize,
-		'--submit-font-size': attributes.submitFontSize !== undefined && attributes.submitFontSize,
-		'--help-label-color': attributes.helpLabelColor,
-		'--input-bg-color': attributes.inputBackgroundColor,
-		'--btn-pad': padding( responsiveGetAttributes([ attributes.buttonPadding, attributes.buttonPaddingTablet, attributes.buttonPaddingMobile ]) )
+		'--message-font-size': getSyncValue( 'messageFontSize' ),
+		'--input-font-size': getSyncValue( 'inputFontSize' ),
+		'--help-font-size': getSyncValue( 'helpFontSize' ),
+		'--input-color': getSyncValue( 'inputColor' ),
+		'--padding': padding(
+			responsiveGetAttributes([
+				getSyncValue( 'padding' ),
+				getSyncValue( 'paddingTablet' ),
+				getSyncValue( 'paddingMobile' )
+			]) ),
+		'--border-radius': getSyncValue( 'inputBorderRadius' ) !== undefined && ( getSyncValue( 'inputBorderRadius' ) + 'px' ),
+		'--border-width': padding ( getSyncValue( 'inputBorderWidth' ) ),
+		'--border-color': getSyncValue( 'inputBorderColor' ),
+		'--label-color': getSyncValue( 'labelColor' ),
+		'--input-width': getSyncValue( 'inputWidth' ) !== undefined && ( getSyncValue( 'inputWidth' ) + '%' ),
+		'--submit-color': getSyncValue( 'submitColor' ),
+		'--required-color': getSyncValue( 'inputRequiredColor' ),
+		'--input-gap': getSyncValue( 'inputGap' ) !== undefined && ( getSyncValue( 'inputGap' ) + 'px' ),
+		'--inputs-gap': getSyncValue( 'inputsGap' ) !== undefined && ( getSyncValue( 'inputsGap' ) + 'px' ),
+		'--label-font-size': getSyncValue( 'labelFontSize' ),
+		'--submit-font-size': getSyncValue( 'submitFontSize' ),
+		'--help-label-color': getSyncValue( 'helpLabelColor' ),
+		'--input-bg-color': getSyncValue( 'inputBackgroundColor' ),
+		'--btn-pad': padding(
+			responsiveGetAttributes([
+				getSyncValue( 'buttonPadding' ),
+				getSyncValue( 'buttonPaddingTablet' ),
+				getSyncValue( 'buttonPaddingMobile' )
+			]) )
 	};
 
 	const [ cssNodeName, setCSS ] = useCSSNode();

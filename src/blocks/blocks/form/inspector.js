@@ -22,7 +22,8 @@ import {
 	ToggleControl,
 	TextareaControl,
 	__experimentalBoxControl as BoxControl,
-	FontSizePicker
+	FontSizePicker,
+	Disabled
 } from '@wordpress/components';
 
 import {
@@ -100,7 +101,6 @@ const Inspector = ({
 	const {
 		listIDOptions,
 		setListIDOptions,
-		saveFormEmailOptions,
 		saveIntegration,
 		savedFormOptions,
 		sendTestEmail,
@@ -127,6 +127,15 @@ const Inspector = ({
 		[ formOptions.listId, savedFormOptions?.integration?.listId ],
 		[ formOptions.action, savedFormOptions?.integration?.action ]
 	]);
+
+	const AutoDisableSyncAttr = ({ attr, children }) => {
+		return <Disabled
+			isDisabled={ attributes.isSynced?.includes( attr ) || false }
+			className="o-disabled"
+		>
+			{ children }
+		</Disabled>;
+	};
 
 	return (
 		<InspectorControls>
@@ -684,48 +693,57 @@ const Inspector = ({
 									) ) ||
 									( 'hover' === buttonColorView && (
 										<Fragment>
-											<ColorDropdownControl
-												label={__( 'Text', 'otter-blocks' )}
-												colorValue={attributes.submitColorHover}
-												onColorChange={( /** @type {string} */ value ) => setAttributes({ submitColor: value })}
-												className="is-list is-first"
-											/>
+											<AutoDisableSyncAttr attr={'submitColorHover'}>
+												<ColorDropdownControl
+													label={__( 'Text', 'otter-blocks' )}
+													colorValue={attributes.submitColorHover}
+													onColorChange={( /** @type {string} */ value ) => setAttributes({ submitColor: value })}
+													className="is-list is-first"
+												/>
+											</AutoDisableSyncAttr>
 
-											<ColorDropdownControl
-												label={__( 'Background', 'otter-blocks' )}
-												colorValue={attributes.submitBackgroundColorHover}
-												onColorChange={( /** @type {string} */ value ) => setAttributes({ submitBackgroundColor: value })}
-												className="is-list"
-											/>
+											<AutoDisableSyncAttr attr={'submitBackgroundColorHover'}>
+												<ColorDropdownControl
+													label={__( 'Background', 'otter-blocks' )}
+													colorValue={attributes.submitBackgroundColorHover}
+													onColorChange={( /** @type {string} */ value ) => setAttributes({ submitBackgroundColor: value })}
+													className="is-list"
+												/>
+											</AutoDisableSyncAttr>
 										</Fragment>
 									) )
 								}
 
 								<br/>
 
-								<FontSizePicker
-									label={ __( 'Font Size', 'otter-blocks' ) }
-									fontSizes={ defaultFontSizes }
-									withReset
-									value={ attributes.submitFontSize }
-									onChange={ submitFontSize =>  setAttributes({ submitFontSize }) }
-								/>
-
-								<ResponsiveControl
-									label="Screen Type"
-								>
-									<BoxControl
-										label={ __( 'Padding', 'otter-blocks' ) }
-										values={ responsiveGetAttributes([ attributes.buttonPadding, attributes.buttonPaddingTablet, attributes.buttonPaddingMobile  ]) ?? { top: '10px', bottom: '10px', right: '20px', left: '20px' }  }
-										onChange={
-											value => {
-
-												// TODO: add clean up functions
-												responsiveSetAttributes( value, [ 'buttonPadding', 'buttonPaddingTablet', 'buttonPaddingMobile' ]);
-											}
-										}
+								<AutoDisableSyncAttr attr={'submitFontSize'}>
+									<FontSizePicker
+										label={ __( 'Font Size', 'otter-blocks' ) }
+										fontSizes={ defaultFontSizes }
+										withReset
+										value={ attributes.submitFontSize }
+										onChange={ submitFontSize =>  setAttributes({ submitFontSize }) }
 									/>
-								</ResponsiveControl>
+								</AutoDisableSyncAttr>
+
+								<AutoDisableSyncAttr attr={'buttonPadding'}>
+									<ResponsiveControl
+										label="Screen Type"
+									>
+										<BoxControl
+											label={ __( 'Padding', 'otter-blocks' ) }
+											values={ responsiveGetAttributes([ attributes.buttonPadding, attributes.buttonPaddingTablet, attributes.buttonPaddingMobile  ]) ?? { top: '10px', bottom: '10px', right: '20px', left: '20px' }  }
+											onChange={
+												value => {
+
+													// TODO: add clean up functions
+													responsiveSetAttributes( value, [ 'buttonPadding', 'buttonPaddingTablet', 'buttonPaddingMobile' ]);
+												}
+											}
+										/>
+									</ResponsiveControl>
+								</AutoDisableSyncAttr>
+
 							</PanelBody>
 
 							<PanelBody
@@ -752,28 +770,34 @@ const Inspector = ({
 									setAttributes={setAttributes}
 								/>
 
-								<ColorDropdownControl
-									label={__( 'Success message', 'otter-blocks' )}
-									colorValue={attributes.submitMessageColor}
-									onColorChange={( /** @type {string} */ value ) => setAttributes({ submitMessageColor: value })}
-									className="is-list is-first"
-								/>
+								<AutoDisableSyncAttr attr={'submitMessageColor'}>
+									<ColorDropdownControl
+										label={__( 'Success message', 'otter-blocks' )}
+										colorValue={attributes.submitMessageColor}
+										onColorChange={( /** @type {string} */ value ) => setAttributes({ submitMessageColor: value })}
+										className="is-list is-first"
+									/>
+								</AutoDisableSyncAttr>
 
-								<ColorDropdownControl
-									label={__( 'Error message', 'otter-blocks' )}
-									colorValue={attributes.submitMessageErrorColor}
-									onColorChange={( /** @type {string} */ value ) => setAttributes({ submitMessageErrorColor: value })}
-									className="is-list"
-								/>
+								<AutoDisableSyncAttr attr={'submitMessageErrorColor'}>
+									<ColorDropdownControl
+										label={__( 'Error message', 'otter-blocks' )}
+										colorValue={attributes.submitMessageErrorColor}
+										onColorChange={( /** @type {string} */ value ) => setAttributes({ submitMessageErrorColor: value })}
+										className="is-list"
+									/>
+								</AutoDisableSyncAttr>
+
 
 								<br/>
-
-								<FontSizePicker
-									fontSizes={ defaultFontSizes }
-									withReset
-									value={ attributes.messageFontSize }
-									onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
-								/>
+								<AutoDisableSyncAttr attr={'messageFontSize'}>
+									<FontSizePicker
+										fontSizes={ defaultFontSizes }
+										withReset
+										value={ attributes.messageFontSize }
+										onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
+									/>
+								</AutoDisableSyncAttr>
 							</PanelBody>
 
 							<PanelColorSettings
@@ -872,41 +896,49 @@ const Inspector = ({
 									setAttributes={setAttributes}
 								/>
 
-								<FontSizePicker
-									label={ __( 'Input Font Size', 'otter-blocks' ) }
-									fontSizes={ defaultFontSizes }
-									withReset
-									value={ attributes.inputFontSize }
-									onChange={ inputFontSize =>  setAttributes({ inputFontSize }) }
-								/>
-
-								<RangeControl
-									label={ __( 'Fields Spacing', 'otter-blocks' ) }
-									value={ attributes.inputsGap ?? 16}
-									onChange={ inputsGap => setAttributes({ inputsGap }) }
-									allowReset
-									min={ 0 }
-									max={ 50 }
-									initialPosition={ 16 }
-								/>
-
-								<ResponsiveControl
-									label={ __( 'Screen Type', 'otter-blocks' ) }
-								>
-									<BoxControl
-										label={ __( 'Input Padding', 'otter-blocks' ) }
-										values={ responsiveGetAttributes([ attributes.inputPadding, attributes.inputPaddingTablet, attributes.inputPaddingMobile  ]) ?? { 'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px' } }
-										inputProps={ {
-											min: 0,
-											max: 500
-										} }
-										onChange={ value => {
-
-											// TODO: Add clean up
-											responsiveSetAttributes( value, [ 'inputPadding', 'inputPaddingTablet', 'inputPaddingMobile' ]);
-										} }
+								<AutoDisableSyncAttr attr={'inputFontSize'}>
+									<FontSizePicker
+										label={ __( 'Input Font Size', 'otter-blocks' ) }
+										fontSizes={ defaultFontSizes }
+										withReset
+										value={ attributes.inputFontSize }
+										onChange={ inputFontSize =>  setAttributes({ inputFontSize }) }
 									/>
-								</ResponsiveControl>
+
+								</AutoDisableSyncAttr>
+
+								<AutoDisableSyncAttr attr={'inputsGap'}>
+									<RangeControl
+										label={ __( 'Fields Spacing', 'otter-blocks' ) }
+										value={ attributes.inputsGap ?? 16}
+										onChange={ inputsGap => setAttributes({ inputsGap }) }
+										allowReset
+										min={ 0 }
+										max={ 50 }
+										initialPosition={ 16 }
+									/>
+								</AutoDisableSyncAttr>
+
+								<AutoDisableSyncAttr attr={'inputsGap'}>
+									<ResponsiveControl
+										label={ __( 'Screen Type', 'otter-blocks' ) }
+									>
+										<BoxControl
+											label={ __( 'Input Padding', 'otter-blocks' ) }
+											values={ responsiveGetAttributes([ attributes.inputPadding, attributes.inputPaddingTablet, attributes.inputPaddingMobile  ]) ?? { 'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px' } }
+											inputProps={ {
+												min: 0,
+												max: 500
+											} }
+											onChange={ value => {
+
+												// TODO: Add clean up
+												responsiveSetAttributes( value, [ 'inputPadding', 'inputPaddingTablet', 'inputPaddingMobile' ]);
+											} }
+										/>
+									</ResponsiveControl>
+								</AutoDisableSyncAttr>
+
 							</PanelBody>
 
 							<PanelBody
@@ -928,23 +960,25 @@ const Inspector = ({
 									setAttributes={setAttributes}
 								/>
 
+								<AutoDisableSyncAttr attr={'inputBorderRadius'}>
+									<RangeControl
+										label={ __( 'Border Radius', 'otter-blocks' ) }
+										value={ attributes.inputBorderRadius ?? 4 }
+										onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
+										allowReset
+										step={ 0.1 }
+										min={ 0 }
+										max={ 50 }
+									/>
+								</AutoDisableSyncAttr>
 
-								<RangeControl
-									label={ __( 'Border Radius', 'otter-blocks' ) }
-									value={ attributes.inputBorderRadius ?? 4 }
-									onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
-									allowReset
-									step={ 0.1 }
-									min={ 0 }
-									max={ 50 }
-								/>
-
-								<BoxControl
-									label={ __( 'Border Width', 'otter-blocks' ) }
-									values={ ! isObjectLike( attributes.inputBorderWidth ) ? makeBox( _px( attributes.inputBorderWidth ?? 1 ) ) : attributes.inputBorderWidth }
-									onChange={ inputBorderWidth  => setAttributes({ inputBorderWidth }) }
-								/>
-
+								<AutoDisableSyncAttr attr={'inputBorderWidth'}>
+									<BoxControl
+										label={ __( 'Border Width', 'otter-blocks' ) }
+										values={ ! isObjectLike( attributes.inputBorderWidth ) ? makeBox( _px( attributes.inputBorderWidth ?? 1 ) ) : attributes.inputBorderWidth }
+										onChange={ inputBorderWidth  => setAttributes({ inputBorderWidth }) }
+									/>
+								</AutoDisableSyncAttr>
 							</PanelBody>
 							<PanelBody
 								title={ __( 'Helper Text', 'otter-blocks' ) }
@@ -961,14 +995,15 @@ const Inspector = ({
 									setAttributes={setAttributes}
 								/>
 
-								<FontSizePicker
-									label={ __( 'Help Font Size', 'otter-blocks' ) }
-									fontSizes={ defaultFontSizes }
-									withReset
-									value={ attributes.helpFontSize }
-									onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
-								/>
-
+								<AutoDisableSyncAttr attr={'helpFontSize'}>
+									<FontSizePicker
+										label={ __( 'Help Font Size', 'otter-blocks' ) }
+										fontSizes={ defaultFontSizes }
+										withReset
+										value={ attributes.helpFontSize }
+										onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
+									/>
+								</AutoDisableSyncAttr>
 							</PanelBody>
 
 						</Fragment>
