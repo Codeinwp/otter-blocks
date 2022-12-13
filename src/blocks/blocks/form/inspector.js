@@ -36,7 +36,7 @@ import {
  * Internal dependencies.
  */
 import { FormContext } from './edit.js';
-import { ColorDropdownControl, InspectorHeader, ResponsiveControl, SyncControlDropdown, ToogleGroupControl } from '../../components/index.js';
+import { ColorDropdownControl, InspectorHeader, ResponsiveControl, SyncColorPanel, SyncControlDropdown, ToogleGroupControl } from '../../components/index.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 import { isObjectLike } from 'lodash';
@@ -130,7 +130,10 @@ const Inspector = ({
 
 	const AutoDisableSyncAttr = ({ attr, children }) => {
 		return <Disabled
-			isDisabled={ attributes.isSynced?.includes( attr ) || false }
+			isDisabled={
+				attributes.isSynced?.includes( attr ) ||
+				false
+			}
 			className="o-disabled"
 		>
 			{ children }
@@ -266,25 +269,28 @@ const Inspector = ({
 							<ResponsiveControl
 								label={ __( 'Alignment', 'otter-blocks' ) }
 							>
-								<SelectControl
-									value={ responsiveGetAttributes([ attributes.submitStyle, attributes.submitStyleTablet, attributes.submitStyleMobile  ]) ?? 'default-template' }
-									options={[
-										{
-											label: 'Default',
-											value: 'left'
-										},
-										{
-											label: 'Right',
-											value: 'right'
-										},
-										{
-											label: 'Full',
-											value: 'full'
-										}
-									]}
-									onChange={ value => responsiveSetAttributes( '' === value ? undefined : value, [ 'submitStyle', 'submitStyleTablet', 'submitStyleMobile' ]) }
-								/>
+								<AutoDisableSyncAttr attr={responsiveGetAttributes([ 'submitStyle', 'submitStyleTablet', 'submitStyleMobile' ])}>
+									<SelectControl
+										value={ responsiveGetAttributes([ attributes.submitStyle, attributes.submitStyleTablet, attributes.submitStyleMobile  ]) }
+										options={[
+											{
+												label: 'Default',
+												value: 'left'
+											},
+											{
+												label: 'Right',
+												value: 'right'
+											},
+											{
+												label: 'Full',
+												value: 'full'
+											}
+										]}
+										onChange={ value => responsiveSetAttributes( '' === value ? undefined : value, [ 'submitStyle', 'submitStyleTablet', 'submitStyleMobile' ]) }
+									/>
+								</AutoDisableSyncAttr>
 							</ResponsiveControl>
+
 
 							<TextControl
 								label={ __( 'Label', 'otter-blocks' ) }
@@ -588,39 +594,41 @@ const Inspector = ({
 				{
 					'style' === tab && (
 						<Fragment>
-							<PanelColorSettings
-								title={ __( 'Form Color', 'otter-blocks' ) }
+							<SyncColorPanel
+								label={ __( 'Form Color', 'otter-blocks' ) }
+								isSynced={ attributes.isSynced ?? [] }
 								initialOpen={ false }
-								colorSettings={ [
+								setAttributes={ setAttributes }
+								options={ [
 									{
 										value: attributes.labelColor,
-										onChange: labelColor => setAttributes({ labelColor }),
-										label: __( 'Label', 'otter-blocks' )
+										label: __( 'Label', 'otter-blocks' ),
+										slug: 'labelColor'
 									},
 									{
 										value: attributes.helpLabelColor,
-										onChange: helpLabelColor => setAttributes({ helpLabelColor }),
-										label: __( 'Help Label', 'otter-blocks' )
+										label: __( 'Help Label', 'otter-blocks' ),
+										slug: 'helpLabelColor'
 									},
 									{
 										value: attributes.inputBorderColor,
-										onChange: inputBorderColor => setAttributes({ inputBorderColor }),
-										label: __( 'Border', 'otter-blocks' )
+										label: __( 'Border', 'otter-blocks' ),
+										slug: 'inputBorderColor'
 									},
 									{
 										value: attributes.inputRequiredColor,
-										onChange: inputRequiredColor => setAttributes({ inputRequiredColor }),
-										label: __( 'Label Required', 'otter-blocks' )
+										label: __( 'Label Required', 'otter-blocks' ),
+										slug: 'inputRequiredColor'
 									},
 									{
 										value: attributes.inputColor,
-										onChange: inputColor => setAttributes({ inputColor }),
-										label: __( 'Input Text', 'otter-blocks' )
+										label: __( 'Input Text', 'otter-blocks' ),
+										slug: 'inputColor'
 									},
 									{
 										value: attributes.inputBackgroundColor,
-										onChange: inputBackgroundColor => setAttributes({ inputBackgroundColor }),
-										label: __( 'Input Background', 'otter-blocks' )
+										label: __( 'Input Background', 'otter-blocks' ),
+										slug: 'inputBackgroundColor'
 									}
 								] }
 							/>
@@ -676,19 +684,23 @@ const Inspector = ({
 								{
 									( 'normal' === buttonColorView && (
 										<Fragment>
-											<ColorDropdownControl
-												label={__( 'Text', 'otter-blocks' )}
-												colorValue={attributes.submitColor}
-												onColorChange={( /** @type {string} */ value ) => setAttributes({ submitColor: value })}
-												className="is-list is-first"
-											/>
+											<AutoDisableSyncAttr attr={'submitColor'}>
+												<ColorDropdownControl
+													label={__( 'Text', 'otter-blocks' )}
+													colorValue={attributes.submitColor}
+													onColorChange={( /** @type {string} */ value ) => setAttributes({ submitColor: value })}
+													className="is-list is-first"
+												/>
+											</AutoDisableSyncAttr>
 
-											<ColorDropdownControl
-												label={__( 'Background', 'otter-blocks' )}
-												colorValue={attributes.submitBackgroundColor}
-												onColorChange={( /** @type {string} */ value ) => setAttributes({ submitBackgroundColor: value })}
-												className="is-list"
-											/>
+											<AutoDisableSyncAttr attr={'submitBackgroundColor'}>
+												<ColorDropdownControl
+													label={__( 'Background', 'otter-blocks' )}
+													colorValue={attributes.submitBackgroundColor}
+													onColorChange={( /** @type {string} */ value ) => setAttributes({ submitBackgroundColor: value })}
+													className="is-list"
+												/>
+											</AutoDisableSyncAttr>
 										</Fragment>
 									) ) ||
 									( 'hover' === buttonColorView && (
@@ -726,13 +738,13 @@ const Inspector = ({
 									/>
 								</AutoDisableSyncAttr>
 
-								<AutoDisableSyncAttr attr={'buttonPadding'}>
-									<ResponsiveControl
-										label="Screen Type"
-									>
+								<ResponsiveControl
+									label="Screen Type"
+								>
+									<AutoDisableSyncAttr attr={responsiveGetAttributes([ 'buttonPadding', 'buttonPaddingTablet', 'buttonPaddingMobile' ])}>
 										<BoxControl
 											label={ __( 'Padding', 'otter-blocks' ) }
-											values={ responsiveGetAttributes([ attributes.buttonPadding, attributes.buttonPaddingTablet, attributes.buttonPaddingMobile  ]) ?? { top: '10px', bottom: '10px', right: '20px', left: '20px' }  }
+											values={ responsiveGetAttributes([ attributes.buttonPadding, attributes.buttonPaddingTablet, attributes.buttonPaddingMobile ]) ?? { top: '10px', bottom: '10px', right: '20px', left: '20px' }  }
 											onChange={
 												value => {
 
@@ -741,8 +753,8 @@ const Inspector = ({
 												}
 											}
 										/>
-									</ResponsiveControl>
-								</AutoDisableSyncAttr>
+									</AutoDisableSyncAttr>
+								</ResponsiveControl>
 
 							</PanelBody>
 
@@ -919,10 +931,10 @@ const Inspector = ({
 									/>
 								</AutoDisableSyncAttr>
 
-								<AutoDisableSyncAttr attr={'inputsGap'}>
-									<ResponsiveControl
-										label={ __( 'Screen Type', 'otter-blocks' ) }
-									>
+								<ResponsiveControl
+									label={ __( 'Screen Type', 'otter-blocks' ) }
+								>
+									<AutoDisableSyncAttr attr={responsiveGetAttributes([ 'inputPadding', 'inputPaddingTablet', 'inputPaddingMobile' ])}>
 										<BoxControl
 											label={ __( 'Input Padding', 'otter-blocks' ) }
 											values={ responsiveGetAttributes([ attributes.inputPadding, attributes.inputPaddingTablet, attributes.inputPaddingMobile  ]) ?? { 'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px' } }
@@ -936,8 +948,8 @@ const Inspector = ({
 												responsiveSetAttributes( value, [ 'inputPadding', 'inputPaddingTablet', 'inputPaddingMobile' ]);
 											} }
 										/>
-									</ResponsiveControl>
-								</AutoDisableSyncAttr>
+									</AutoDisableSyncAttr>
+								</ResponsiveControl>
 
 							</PanelBody>
 
