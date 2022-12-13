@@ -35,7 +35,7 @@ import {
  * Internal dependencies.
  */
 import { FormContext } from './edit.js';
-import { ColorDropdownControl, InspectorHeader, ResponsiveControl, ToogleGroupControl } from '../../components/index.js';
+import { ColorDropdownControl, InspectorHeader, ResponsiveControl, SyncControlDropdown, ToogleGroupControl } from '../../components/index.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 import { isObjectLike } from 'lodash';
@@ -620,6 +620,32 @@ const Inspector = ({
 								title={ __( 'Button', 'otter-blocks' ) }
 								initialOpen={ true }
 							>
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									options={[
+										{
+											label: __( 'Font Size', 'otter-blocks' ),
+											value: 'submitFontSize'
+										},
+										{
+											label: __( 'Normal Text Color', 'otter-blocks' ),
+											value: 'submitColor'
+										},
+										{
+											label: __( 'Normal Background Color', 'otter-blocks' ),
+											value: 'submitBackgroundColor'
+										},
+										{
+											label: __( 'Hover Text Color', 'otter-blocks' ),
+											value: 'submitColorHover'
+										},
+										{
+											label: __( 'Hover Background Color', 'otter-blocks' ),
+											value: 'submitBackgroundColorHover'
+										}
+									]}
+									setAttributes={setAttributes}
+								/>
 
 								<ToogleGroupControl
 									value={buttonColorView}
@@ -660,7 +686,7 @@ const Inspector = ({
 										<Fragment>
 											<ColorDropdownControl
 												label={__( 'Text', 'otter-blocks' )}
-												colorValue={attributes.submitBackgroundColor}
+												colorValue={attributes.submitColorHover}
 												onColorChange={( /** @type {string} */ value ) => setAttributes({ submitColor: value })}
 												className="is-list is-first"
 											/>
@@ -677,19 +703,13 @@ const Inspector = ({
 
 								<br/>
 
-								<Fragment
-									field={ 'submitFontSize' }
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
-								>
-									<FontSizePicker
-										label={ __( 'Font Size', 'otter-blocks' ) }
-										fontSizes={ defaultFontSizes }
-										withReset
-										value={ attributes.submitFontSize }
-										onChange={ submitFontSize =>  setAttributes({ submitFontSize }) }
-									/>
-								</Fragment>
+								<FontSizePicker
+									label={ __( 'Font Size', 'otter-blocks' ) }
+									fontSizes={ defaultFontSizes }
+									withReset
+									value={ attributes.submitFontSize }
+									onChange={ submitFontSize =>  setAttributes({ submitFontSize }) }
+								/>
 
 								<ResponsiveControl
 									label="Screen Type"
@@ -712,6 +732,26 @@ const Inspector = ({
 								title={ __( 'Submit Messages', 'otter-blocks' ) }
 								initialOpen={ true }
 							>
+
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									options={[
+										{
+											label: __( 'Font Size', 'otter-blocks' ),
+											value: 'messageFontSize'
+										},
+										{
+											label: __( 'Success message', 'otter-blocks' ),
+											value: 'submitMessageColor'
+										},
+										{
+											label: __( 'Error message', 'otter-blocks' ),
+											value: 'submitMessageErrorColor'
+										}
+									]}
+									setAttributes={setAttributes}
+								/>
+
 								<ColorDropdownControl
 									label={__( 'Success message', 'otter-blocks' )}
 									colorValue={attributes.submitMessageColor}
@@ -728,18 +768,12 @@ const Inspector = ({
 
 								<br/>
 
-								<Fragment
-									field={ 'messageFontSize' }
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
-								>
-									<FontSizePicker
-										fontSizes={ defaultFontSizes }
-										withReset
-										value={ attributes.messageFontSize }
-										onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
-									/>
-								</Fragment>
+								<FontSizePicker
+									fontSizes={ defaultFontSizes }
+									withReset
+									value={ attributes.messageFontSize }
+									onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
+								/>
 							</PanelBody>
 
 							<PanelColorSettings
@@ -778,152 +812,163 @@ const Inspector = ({
 								title={ __( 'Labels', 'otter-blocks' ) }
 								initialOpen={ true }
 							>
-								<Fragment
-									field={ 'labelFontSize' }
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
-								>
-									<FontSizePicker
-										label={ __( 'Font Size', 'otter-blocks' ) }
-										fontSizes={ defaultFontSizes }
-										withReset
-										value={ attributes.labelFontSize }
-										onChange={ labelFontSize =>  setAttributes({ labelFontSize }) }
-									/>
-								</Fragment>
-								<Fragment
-									field={ 'inputGap' }
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
-								>
-									<RangeControl
-										label={ __( 'Spacing', 'otter-blocks' ) }
-										value={ attributes.inputGap ?? 10 }
-										onChange={ inputGap => setAttributes({ inputGap }) }
-										allowReset
-										step={ 0.1 }
-										min={ 0 }
-										max={ 50 }
-										initialPositino={ 10 }
-									/>
-								</Fragment>
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									options={[
+										{
+											label: __( 'Font Size', 'otter-blocks' ),
+											value: 'labelFontSize'
+										},
+										{
+											label: __( 'Spacing', 'otter-blocks' ),
+											value: 'inputGap'
+										}
+									]}
+									setAttributes={setAttributes}
+								/>
+
+								<FontSizePicker
+									label={ __( 'Font Size', 'otter-blocks' ) }
+									fontSizes={ defaultFontSizes }
+									withReset
+									value={ attributes.labelFontSize }
+									onChange={ labelFontSize =>  setAttributes({ labelFontSize }) }
+								/>
+
+
+								<RangeControl
+									label={ __( 'Spacing', 'otter-blocks' ) }
+									value={ attributes.inputGap ?? 10 }
+									onChange={ inputGap => setAttributes({ inputGap }) }
+									allowReset
+									step={ 0.1 }
+									min={ 0 }
+									max={ 50 }
+									initialPosition={ 10 }
+								/>
+
 							</PanelBody>
 
 							<PanelBody
 								title={ __( 'Input fields', 'otter-blocks' ) }
 								initialOpen={ true }
 							>
-								<Fragment
-									field={ 'inputFontSize' }
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									options={[
+										{
+											label: __( 'Input Font Size', 'otter-blocks' ),
+											value: 'inputFontSize'
+										},
+										{
+											label: __( 'Fields Spacing', 'otter-blocks' ),
+											value: 'inputsGap'
+										},
+										{
+											label: __( 'Input Padding', 'otter-blocks' ),
+											value: 'inputPadding'
+										}
+									]}
+									setAttributes={setAttributes}
+								/>
+
+								<FontSizePicker
+									label={ __( 'Input Font Size', 'otter-blocks' ) }
+									fontSizes={ defaultFontSizes }
+									withReset
+									value={ attributes.inputFontSize }
+									onChange={ inputFontSize =>  setAttributes({ inputFontSize }) }
+								/>
+
+								<RangeControl
+									label={ __( 'Fields Spacing', 'otter-blocks' ) }
+									value={ attributes.inputsGap ?? 16}
+									onChange={ inputsGap => setAttributes({ inputsGap }) }
+									allowReset
+									min={ 0 }
+									max={ 50 }
+									initialPosition={ 16 }
+								/>
+
+								<ResponsiveControl
+									label={ __( 'Screen Type', 'otter-blocks' ) }
 								>
-									<FontSizePicker
-										label={ __( 'Input Font Size', 'otter-blocks' ) }
-										fontSizes={ defaultFontSizes }
-										withReset
-										value={ attributes.inputFontSize }
-										onChange={ inputFontSize =>  setAttributes({ inputFontSize }) }
+									<BoxControl
+										label={ __( 'Input Padding', 'otter-blocks' ) }
+										values={ responsiveGetAttributes([ attributes.inputPadding, attributes.inputPaddingTablet, attributes.inputPaddingMobile  ]) ?? { 'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px' } }
+										inputProps={ {
+											min: 0,
+											max: 500
+										} }
+										onChange={ value => {
+
+											// TODO: Add clean up
+											responsiveSetAttributes( value, [ 'inputPadding', 'inputPaddingTablet', 'inputPaddingMobile' ]);
+										} }
 									/>
-								</Fragment>
-
-								<Fragment
-									field={ 'inputsGap' }
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
-								>
-									<RangeControl
-										label={ __( 'Fields Spacing', 'otter-blocks' ) }
-										value={ attributes.inputsGap ?? 16}
-										onChange={ inputsGap => setAttributes({ inputsGap }) }
-										allowReset
-										min={ 0 }
-										max={ 50 }
-										initialPosition={ 16 }
-									/>
-								</Fragment>
-
-								<Fragment
-									field={ 'inputPadding' }
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
-								>
-									<ResponsiveControl
-										label={ __( 'Screen Type', 'otter-blocks' ) }
-									>
-										<BoxControl
-											label={ __( 'Input Padding', 'otter-blocks' ) }
-											values={ responsiveGetAttributes([ attributes.inputPadding, attributes.inputPaddingTablet, attributes.inputPaddingMobile  ]) ?? { 'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px' } }
-											inputProps={ {
-												min: 0,
-												max: 500
-											} }
-											onChange={ value => {
-
-												// TODO: Add clean up
-												responsiveSetAttributes( value, [ 'inputPadding', 'inputPaddingTablet', 'inputPaddingMobile' ]);
-											} }
-										/>
-									</ResponsiveControl>
-
-								</Fragment>
-
+								</ResponsiveControl>
 							</PanelBody>
 
 							<PanelBody
 								title={ __( 'Border', 'otter-blocks' ) }
 								initialOpen={ false }
 							>
-								<Fragment
-									field={ 'inputsBorderRadius' }
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
-								>
-									<RangeControl
-										label={ __( 'Border Radius', 'otter-blocks' ) }
-										value={ attributes.inputBorderRadius ?? 4 }
-										onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
-										allowReset
-										step={ 0.1 }
-										min={ 0 }
-										max={ 50 }
-									/>
-								</Fragment>
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									options={[
+										{
+											label: __( 'Border Radius', 'otter-blocks' ),
+											value: 'inputsBorderRadius'
+										},
+										{
+											label: __( 'Border Width', 'otter-blocks' ),
+											value: 'inputsBorderWidth'
+										}
+									]}
+									setAttributes={setAttributes}
+								/>
 
-								<Fragment
-									field={ 'inputsBorderWidth' }
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
-								>
-									<BoxControl
-										label={ __( 'Border Width', 'otter-blocks' ) }
-										values={ ! isObjectLike( attributes.inputBorderWidth ) ? makeBox( _px( attributes.inputBorderWidth ?? 1 ) ) : attributes.inputBorderWidth }
-										onChange={ inputBorderWidth  => setAttributes({ inputBorderWidth }) }
-									/>
 
-								</Fragment>
+								<RangeControl
+									label={ __( 'Border Radius', 'otter-blocks' ) }
+									value={ attributes.inputBorderRadius ?? 4 }
+									onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
+									allowReset
+									step={ 0.1 }
+									min={ 0 }
+									max={ 50 }
+								/>
+
+								<BoxControl
+									label={ __( 'Border Width', 'otter-blocks' ) }
+									values={ ! isObjectLike( attributes.inputBorderWidth ) ? makeBox( _px( attributes.inputBorderWidth ?? 1 ) ) : attributes.inputBorderWidth }
+									onChange={ inputBorderWidth  => setAttributes({ inputBorderWidth }) }
+								/>
+
 							</PanelBody>
 							<PanelBody
 								title={ __( 'Helper Text', 'otter-blocks' ) }
 								initialOpen={ true }
 							>
-								<Fragment
-									field={ 'helpFontSize' }
-									isSynced={ attributes.isSynced }
-									setAttributes={ setAttributes }
-								>
-									<BaseControl
-										label={ __( 'Help Text Font Size', 'otter-blocks' ) }
-									>
-										<FontSizePicker
-											label={ __( 'Help Font Size', 'otter-blocks' ) }
-											fontSizes={ defaultFontSizes }
-											withReset
-											value={ attributes.helpFontSize }
-											onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
-										/>
-									</BaseControl>
-								</Fragment>
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									options={[
+										{
+											label: __( 'Help Font Size', 'otter-blocks' ),
+											value: 'helpFontSize'
+										}
+									]}
+									setAttributes={setAttributes}
+								/>
+
+								<FontSizePicker
+									label={ __( 'Help Font Size', 'otter-blocks' ) }
+									fontSizes={ defaultFontSizes }
+									withReset
+									value={ attributes.helpFontSize }
+									onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
+								/>
+
 							</PanelBody>
 
 						</Fragment>

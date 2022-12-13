@@ -30,6 +30,7 @@ type Attributes = {
 	submitBackgroundColorHover: string
 	submitFontSize: number
 	submitColor: string
+	submitColorHover: string
 	inputGap: number
 	inputColor: string
 	inputsGap: number
@@ -44,6 +45,7 @@ type Attributes = {
 	buttonPadding: string
 	buttonPaddingTablet: string
 	buttonPaddingMobile: string
+	isSynced: string[]
 }
 
 export type FormAttrs = Partial<Attributes>

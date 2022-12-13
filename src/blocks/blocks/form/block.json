@@ -94,6 +94,9 @@
 		"submitColor": {
 			"type": "string"
 		},
+		"submitColorHover": {
+			"type": "string"
+		},
 		"inputGap": {
 			"type": "number"
 		},
