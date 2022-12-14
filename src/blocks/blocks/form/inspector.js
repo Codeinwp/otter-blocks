@@ -42,6 +42,8 @@ import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import { isObjectLike } from 'lodash';
 import { makeBox } from '../../plugins/copy-paste/utils';
 import { _px } from '../../helpers/helper-functions.js';
+import { SortableContainer } from 'react-sortable-hoc';
+import { SortableInputField } from './sortable-input-fields';
 
 const compare = x => {
 	return x?.[1] && x[0] !== x[1];
@@ -108,7 +110,8 @@ const Inspector = ({
 		formOptions,
 		setFormOption,
 		testService,
-		hasEmailField
+		hasEmailField,
+		children
 	} = useContext( FormContext );
 
 	const formOptionsChanged = isChanged([
@@ -140,6 +143,22 @@ const Inspector = ({
 		</Disabled>;
 	};
 
+	// const TabsList = SortableContainer( ({ items }) => {
+	// 	return (
+	// 		<div>
+	// 			{ children.map( ( inputField, index ) => {
+	// 				return (
+	// 					<SortableInputField
+	// 						key={ inputField.clientId }
+	// 						index={ index }
+
+	// 					/>
+	// 				);
+	// 			}) }
+	// 		</div>
+	// 	);
+	// });
+
 	return (
 		<InspectorControls>
 
@@ -161,6 +180,12 @@ const Inspector = ({
 			<div>
 				{ 'settings' === tab && (
 					<Fragment>
+						<PanelBody
+							title={ __( 'Input Fields', 'otter-blocks' ) }
+							initialOpen={ true }
+						>
+
+						</PanelBody>
 						<PanelBody
 							title={ __( 'Form Options', 'otter-blocks' ) }
 							initialOpen={ true }

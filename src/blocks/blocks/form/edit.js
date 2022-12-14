@@ -813,7 +813,8 @@ const Edit = ({
 					sendTestEmail,
 					loadingState,
 					testService,
-					hasEmailField
+					hasEmailField,
+					children
 				}}
 			>
 				<Inspector
