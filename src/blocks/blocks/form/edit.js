@@ -819,9 +819,6 @@ const Edit = ({
 			if ( 0 < children?.length ) {
 				const block = children.find( block => block.clientId === blockId );
 				removeBlock( block.clientId, false );
-				if ( activeTab === blockId ) {
-					setActiveTab( '' );
-				}
 			}
 		},
 		add: ( blockName ) => {
