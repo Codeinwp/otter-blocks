@@ -59,6 +59,19 @@ const applyProContent = options => {
 					value: 'loggedInUserMeta'
 				}
 			]
+		},
+		'misc': {
+			label: __( 'Miscellaneous', 'otter-blocks' ),
+			options: [
+				{
+					label: __( 'URL Parameter', 'otter-blocks' ),
+					value: 'queryString'
+				},
+				{
+					label: __( 'Country', 'otter-blocks' ),
+					value: 'country'
+				}
+			]
 		}
 	};
 
@@ -83,8 +96,13 @@ const applySettingsPanel = options => {
 		'postMeta',
 		'acf',
 		'authorMeta',
-		'loggedInUserMeta'
+		'loggedInUserMeta',
+		'queryString'
 	];
+
+	if ( ! Boolean( window.otterPro.hasIPHubAPI ) ) {
+		hasSettingsPanel.push( 'country' );
+	}
 
 	options.push( ...hasSettingsPanel );
 

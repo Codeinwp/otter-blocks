@@ -7,7 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks;
 
-use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro;
+use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro, ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
 
 /**
  * Class Registration.
@@ -247,6 +247,7 @@ class Registration {
 				'updatePath'              => admin_url( 'update-core.php' ),
 				'optionsPath'             => admin_url( 'options-general.php?page=otter' ),
 				'mapsAPI'                 => $api,
+				'hasStripeAPI'            => Stripe_API::has_keys(),
 				'globalDefaults'          => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
 				'themeDefaults'           => Main::get_global_defaults(),
 				'imageSizes'              => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
@@ -672,14 +673,15 @@ class Registration {
 	 */
 	public function register_blocks() {
 		$dynamic_blocks = array(
-			'about-author'  => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
-			'form-nonce'    => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
-			'google-map'    => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
-			'leaflet-map'   => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
-			'plugin-cards'  => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
-			'posts-grid'    => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
-			'review'        => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
-			'sharing-icons' => '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
+			'about-author'    => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
+			'form-nonce'      => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
+			'google-map'      => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
+			'leaflet-map'     => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
+			'plugin-cards'    => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
+			'posts-grid'      => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
+			'review'          => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
+			'sharing-icons'   => '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
+			'stripe-checkout' => '\ThemeIsle\GutenbergBlocks\Render\Stripe_Checkout_Block',
 		);
 
 		$dynamic_blocks = apply_filters( 'otter_blocks_register_dynamic_blocks', $dynamic_blocks );
@@ -715,6 +717,7 @@ class Registration {
 			'service',
 			'sharing-icons',
 			'slider',
+			'stripe-checkout',
 			'tabs',
 			'tabs-item',
 			'testimonials',

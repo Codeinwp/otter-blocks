@@ -65,6 +65,7 @@ $base-index: 9999 !default;
 		z-index: $base-index + 1;
 		background-color: var(--background-color);
 		width: var(--width);
+		max-width: 100%;
 		height: var(--height);
 		padding: var(--padding);
 		border-width: var(--brd-width);

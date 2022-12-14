@@ -117,7 +117,9 @@ class License {
 	 * @return bool|\stdClass
 	 */
 	public static function get_license_data() {
-		return get_option( 'otter_pro_license_data' );
+		$option_name = basename( dirname( OTTER_PRO_BASEFILE ) );
+		$option_name = str_replace( '-', '_', strtolower( trim( $option_name ) ) );
+		return get_option( $option_name . '_license_data' );
 	}
 
 	/**

@@ -26,11 +26,12 @@ class Main {
 	 */
 	public function init() {
 		if ( ! defined( 'OTTER_PRO_VERSION' ) ) {
+			define( 'OTTER_PRO_VERSION', OTTER_BLOCKS_VERSION );
 			define( 'OTTER_PRO_URL', OTTER_BLOCKS_URL . 'plugins/otter-pro/' );
 			define( 'OTTER_PRO_PATH', OTTER_BLOCKS_PATH . '/plugins/otter-pro' );
+			define( 'OTTER_PRO_BASEFILE', OTTER_PRO_PATH . '/otter-pro.php' );
 			define( 'OTTER_PRO_BUILD_URL', OTTER_BLOCKS_URL . 'build/pro/' );
 			define( 'OTTER_PRO_BUILD_PATH', OTTER_BLOCKS_PATH . '/build/pro/' );
-			define( 'OTTER_PRO_VERSION', OTTER_BLOCKS_VERSION );
 		}
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
@@ -184,6 +185,7 @@ class Main {
 				'hasLearnDash'   => defined( 'LEARNDASH_VERSION' ),
 				'hasACF'         => class_exists( 'ACF' ),
 				'rootUrl'        => get_site_url(),
+				'hasIPHubAPI'    => empty( get_option( 'otter_iphub_api_key', '' ) ) ? false : true,
 			)
 		);
 
