@@ -112,6 +112,14 @@ const Edit = ({
 		bcc: undefined
 	});
 
+	const {
+		insertBlock,
+		removeBlock,
+		selectBlock,
+		moveBlockToPosition,
+		updateBlockAttributes
+	} = useDispatch( 'core/block-editor' );
+
 	const setFormOption = option => {
 		setFormOptions( options => ({ ...options, ...option }) );
 	};
@@ -119,11 +127,6 @@ const Edit = ({
 	const [ savedFormOptions, setSavedFormOptions ] = useState( true );
 
 	const [ listIDOptions, setListIDOptions ] = useState([{ label: __( 'None', 'otter-blocks' ), value: '' }]);
-
-	const {
-		insertBlock,
-		removeBlock
-	} = useDispatch( 'core/block-editor' );
 
 	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
 	const { createNotice } = dispatch( 'core/notices' );
@@ -799,6 +802,34 @@ const Edit = ({
 		className: cssNodeName
 	});
 
+	const inputFieldActions = {
+		select: ( blockId ) => {
+			if ( 0 < children?.length ) {
+				const block = children.find( block => block.clientId === blockId );
+				selectBlock( block.clientId );
+			}
+		},
+		move: ( blockId, position ) => {
+			const blockClientId = children.find( block => block.clientId === blockId )?.clientId;
+			if ( blockClientId ) {
+				moveBlockToPosition( blockClientId, clientId, clientId, position );
+			}
+		},
+		delete: ( blockId ) => {
+			if ( 0 < children?.length ) {
+				const block = children.find( block => block.clientId === blockId );
+				removeBlock( block.clientId, false );
+				if ( activeTab === blockId ) {
+					setActiveTab( '' );
+				}
+			}
+		},
+		add: ( blockName ) => {
+			const itemBlock = createBlock( blockName );
+			insertBlock( itemBlock, ( children?.length ) || 0, clientId, false );
+		}
+	};
+
 	return (
 		<Fragment>
 			<FormContext.Provider
@@ -814,7 +845,8 @@ const Edit = ({
 					loadingState,
 					testService,
 					hasEmailField,
-					children
+					children,
+					inputFieldActions
 				}}
 			>
 				<Inspector

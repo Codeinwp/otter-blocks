@@ -111,8 +111,13 @@ const Inspector = ({
 		setFormOption,
 		testService,
 		hasEmailField,
-		children
+		children,
+		inputFieldActions
 	} = useContext( FormContext );
+
+	const inputFields = children.filter( inputField => {
+		return 'themeisle-blocks/form-input' === inputField.name || 'themeisle-blocks/form-textarea' === inputField.name;
+	});
 
 	const formOptionsChanged = isChanged([
 		[ formOptions.emailTo, savedFormOptions?.email ],
@@ -143,21 +148,27 @@ const Inspector = ({
 		</Disabled>;
 	};
 
-	// const TabsList = SortableContainer( ({ items }) => {
-	// 	return (
-	// 		<div>
-	// 			{ children.map( ( inputField, index ) => {
-	// 				return (
-	// 					<SortableInputField
-	// 						key={ inputField.clientId }
-	// 						index={ index }
+	const InputFieldList = SortableContainer( ({ items }) => {
+		return (
+			<div>
+				{ items
+					.map( ( inputField, index ) => {
+						return (
+							<SortableInputField
+								key={ inputField.clientId }
+								index={ index }
+								inputField={ inputField }
+								actions={inputFieldActions}
+							/>
+						);
+					}) }
+			</div>
+		);
+	});
 
-	// 					/>
-	// 				);
-	// 			}) }
-	// 		</div>
-	// 	);
-	// });
+	const onSortEnd = ({ oldIndex, newIndex }) => {
+		inputFieldActions.move( inputFields[oldIndex].clientId, newIndex );
+	};
 
 	return (
 		<InspectorControls>
@@ -184,7 +195,25 @@ const Inspector = ({
 							title={ __( 'Input Fields', 'otter-blocks' ) }
 							initialOpen={ true }
 						>
+							<p>{ __( 'Press and hold to use drag and drop to sort the tabs', 'otter-blocks' ) }</p>
 
+							{ 0 < children?.length && (
+								<InputFieldList
+									items={ inputFields }
+									onSortEnd={ onSortEnd }
+									useDragHandle
+									axis="y"
+									lockAxis="y"
+								/>
+							) }
+
+							<Button
+								isSecondary
+								className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
+								onClick={ () => inputFieldActions?.add?.( 'themeisle-blocks/form-input' ) }
+							>
+								{ __( 'Add Input Field', 'otter-blocks' ) }
+							</Button>
 						</PanelBody>
 						<PanelBody
 							title={ __( 'Form Options', 'otter-blocks' ) }

@@ -25,18 +25,27 @@ const DragHandle = SortableHandle( () => {
 type SortableTabProps = {
     inputField: FormInputProps
     actions: {
-        select: ( clientId: string ) => void
-        delete: ( clientId: string ) => void
+        select?: ( clientId: string ) => void
+        delete?: ( clientId: string ) => void
     }
 }
 
+const fieldNames: Record<string, string> = {
+	'text': __( 'Text Field', 'otter-blocks' ),
+	'email': __( 'Email Field', 'otter-blocks' ),
+	'date': __( 'Date Field', 'otter-blocks' ),
+	'number': __( 'Number Field', 'otter-blocks' ),
+	'textarea': __( 'Textarea Field', 'otter-blocks' )
+};
+
 export const SortableInputField = SortableElement( ({ inputField, actions } : SortableTabProps ) => {
+	const fieldName = 'themeisle-blocks/form-input' ? ( inputField.attributes.type ?? 'text' ) : 'textarea';
 	return (
 		<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option">
 			<DragHandle />
 
 			<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option__name">
-				{ inputField.attributes.type || __( 'Untitled Tab', 'otter-blocks' ) }
+				{ inputField?.attributes?.label ?? fieldNames[fieldName] ?? __( 'Invalid Field', 'otter-blocks' ) }
 			</div>
 
 			<Button

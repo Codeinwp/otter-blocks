@@ -9,6 +9,7 @@ import {
 } from '@wordpress/block-editor';
 
 import {
+	Button,
 	PanelBody,
 	SelectControl,
 	TextControl,
@@ -23,13 +24,22 @@ import {
  */
 const Inspector = ({
 	attributes,
-	setAttributes
+	setAttributes,
+	selectParent
 }) => {
 	return (
 		<InspectorControls>
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>
+				<Button
+					isSecondary
+					variant="secondary"
+					onClick={ () => selectParent?.() }
+				>
+					{ __( 'Back to the Form', 'otter-blocks' ) }
+				</Button>
+
 				<SelectControl
 					label={ __( 'Field Type', 'otter-blocks' ) }
 					value={ attributes.type }

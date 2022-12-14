@@ -20,6 +20,7 @@ import {
 import metadata from './block.json';
 import { blockInit } from '../../../helpers/block-utility.js';
 import Inspector from './inspector.js';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -43,6 +44,24 @@ const Edit = ({
 	const labelRef = useRef( null );
 	const inputRef = useRef( null );
 	const helpRef = useRef( null );
+
+	const {
+		parentClientId
+	} = useSelect( select => {
+		const {
+			getBlock,
+			getBlockRootClientId
+		} = select( 'core/block-editor' );
+
+		const parentClientId = getBlockRootClientId( clientId );
+		const parentBlock = getBlock( parentClientId );
+
+		return {
+			parentClientId: parentBlock.clientId
+		};
+	}, []);
+
+	const { selectBlock } = useDispatch( 'core/block-editor' );
 
 
 	useEffect( () => {
@@ -68,6 +87,7 @@ const Edit = ({
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
+				selectParent={ () => selectBlock( parentClientId ) }
 			/>
 
 			<div { ...blockProps }>

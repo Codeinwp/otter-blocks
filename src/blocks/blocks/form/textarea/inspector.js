@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 
 import {
+	Button,
 	PanelBody,
 	TextControl,
 	ToggleControl
@@ -13,13 +14,22 @@ import {
 
 const Inspector = ({
 	attributes,
-	setAttributes
+	setAttributes,
+	selectParent
 }) => {
 	return (
 		<InspectorControls>
 			<PanelBody
 				title={ __( 'Settings', 'otter-blocks' ) }
 			>
+				<Button
+					isSecondary
+					variant="secondary"
+					onClick={ () => selectParent?.() }
+				>
+					{ __( 'Back to the Form', 'otter-blocks' ) }
+				</Button>
+
 				<TextControl
 					label={ __( 'Label', 'otter-blocks' ) }
 					value={ attributes.label }
