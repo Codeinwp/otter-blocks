@@ -135,5 +135,6 @@
 			"name": "outline",
 			"label": "Outline"
 		}
-	]
+	],
+	"style": "wp-block-button"
 }
