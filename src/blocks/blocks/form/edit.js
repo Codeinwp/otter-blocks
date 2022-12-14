@@ -3,7 +3,7 @@
  */
 import classnames from 'classnames';
 
-import { get } from 'lodash';
+import { get, isObjectLike } from 'lodash';
 import hash from 'object-hash';
 
 /**
@@ -53,10 +53,10 @@ import {
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks';
+import { renderBoxOrNumWithUnit } from '../../helpers/helper-functions';
 const { attributes: defaultAttributes } = metadata;
 
 export const FormContext = createContext({});
-const padding = x => x ? x.top + ' ' + x.right + ' ' + x.bottom + ' ' + x.left : null;
 
 /**
  * Form component
@@ -753,14 +753,14 @@ const Edit = ({
 		'--input-font-size': getSyncValue( 'inputFontSize' ),
 		'--help-font-size': getSyncValue( 'helpFontSize' ),
 		'--input-color': getSyncValue( 'inputColor' ),
-		'--padding': padding(
+		'--padding': renderBoxOrNumWithUnit(
 			responsiveGetAttributes([
-				getSyncValue( 'padding' ),
-				getSyncValue( 'paddingTablet' ),
-				getSyncValue( 'paddingMobile' )
-			]) ),
-		'--border-radius': getSyncValue( 'inputBorderRadius' ) !== undefined && ( getSyncValue( 'inputBorderRadius' ) + 'px' ),
-		'--border-width': padding ( getSyncValue( 'inputBorderWidth' ) ),
+				getSyncValue( 'inputPadding' ),
+				getSyncValue( 'inputPaddingTablet' ),
+				getSyncValue( 'inputPaddingMobile' )
+			]), 'px' ),
+		'--border-radius': renderBoxOrNumWithUnit( getSyncValue( 'inputBorderRadius' ), 'px' ),
+		'--border-width': renderBoxOrNumWithUnit( getSyncValue( 'inputBorderWidth' ), 'px' ),
 		'--border-color': getSyncValue( 'inputBorderColor' ),
 		'--label-color': getSyncValue( 'labelColor' ),
 		'--input-width': getSyncValue( 'inputWidth' ) !== undefined && ( getSyncValue( 'inputWidth' ) + '%' ),
@@ -772,13 +772,14 @@ const Edit = ({
 		'--submit-font-size': getSyncValue( 'submitFontSize' ),
 		'--help-label-color': getSyncValue( 'helpLabelColor' ),
 		'--input-bg-color': getSyncValue( 'inputBackgroundColor' ),
-		'--btn-pad': padding(
+		'--btn-pad': renderBoxOrNumWithUnit(
 			responsiveGetAttributes([
 				getSyncValue( 'buttonPadding' ),
 				getSyncValue( 'buttonPaddingTablet' ),
 				getSyncValue( 'buttonPaddingMobile' )
-			]) )
+			]), 'px' )
 	};
+
 
 	const [ cssNodeName, setCSS ] = useCSSNode();
 	useEffect( ()=>{

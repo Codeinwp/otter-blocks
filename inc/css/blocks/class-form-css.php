@@ -49,9 +49,38 @@ class Form_CSS extends Base_CSS {
 						'value'    => 'inputBorderColor',
 					),
 					array(
-						'property' => '--border-width',
-						'value'    => 'inputBorderWidth',
-						'unit'     => 'px',
+						'property'  => '--border-width',
+						'value'     => 'inputBorderWidth',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['inputBorderWidth'] ) && is_numeric( $attrs['inputBorderWidth'] );
+						},
+					),
+					array(
+						'property'  => '--border-width',
+						'value'     => 'inputBorderWidth',
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left'   => '8px',
+									'right'  => '8px',
+									'top'    => '8px',
+									'bottom' => '8px',
+								)
+							);
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['inputBorderWidth'] ) && is_array( $attrs['inputBorderWidth'] );
+						},
+					),
+					array(
+						'property'  => '--padding',
+						'value'     => 'inputPadding',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['inputPadding'] ) && is_numeric( $attrs['inputPadding'] );
+						},
 					),
 					array(
 						'property'  => '--padding',
@@ -68,7 +97,7 @@ class Form_CSS extends Base_CSS {
 							);
 						},
 						'condition' => function( $attrs ) {
-							return isset( $attrs['inputPadding'] );
+							return isset( $attrs['inputPadding'] ) && is_array( $attrs['inputPadding'] );
 						},
 					),
 					array(
@@ -137,7 +166,7 @@ class Form_CSS extends Base_CSS {
 					array(
 						'property' => '--padding-tablet',
 						'value'    => 'paddingTablet',
-						'format'    => function( $value, $attrs ) {
+						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -152,7 +181,7 @@ class Form_CSS extends Base_CSS {
 					array(
 						'property' => '--padding-mobile',
 						'value'    => 'paddingMobile',
-						'format'    => function( $value, $attrs ) {
+						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -167,7 +196,7 @@ class Form_CSS extends Base_CSS {
 					array(
 						'property' => '--btn-pad',
 						'value'    => 'buttonPadding',
-						'format'    => function( $value, $attrs ) {
+						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -182,7 +211,7 @@ class Form_CSS extends Base_CSS {
 					array(
 						'property' => '--btn-pad-tablet',
 						'value'    => 'buttonPaddingTablet',
-						'format'    => function( $value, $attrs ) {
+						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -197,7 +226,7 @@ class Form_CSS extends Base_CSS {
 					array(
 						'property' => '--btn-pad-mobile',
 						'value'    => 'buttonPaddingMobile',
-						'format'    => function( $value, $attrs ) {
+						'format'   => function( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(

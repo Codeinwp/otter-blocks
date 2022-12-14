@@ -943,14 +943,11 @@ const Inspector = ({
 								/>
 
 								<AutoDisableSyncAttr attr={'inputBorderRadius'}>
-									<RangeControl
+									<BoxControl
 										label={ __( 'Border Radius', 'otter-blocks' ) }
-										value={ attributes.inputBorderRadius ?? 4 }
-										onChange={ inputBorderRadius => setAttributes({ inputBorderRadius }) }
-										allowReset
-										step={ 0.1 }
-										min={ 0 }
-										max={ 50 }
+										values={ ! isObjectLike( attributes.borderRadius ) ? makeBox( _px( attributes.borderRadius ?? 4 ) ) : attributes.borderRadius }
+										onChange={ borderRadius  => setAttributes({ borderRadius }) }
+										id="o-border-raduis-box"
 									/>
 								</AutoDisableSyncAttr>
 

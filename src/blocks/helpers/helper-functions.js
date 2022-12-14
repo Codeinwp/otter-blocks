@@ -531,3 +531,16 @@ export const _compactObject = ( o ) => {
 export const compactObject = ( o ) => {
 	return _compactObject( cloneDeep( o ) );
 };
+
+/**
+ * Utility function for rendering to CSS legacy value that were numbers before converting it to a box value type.
+ * @param {string|import('./blocks').BoxType | number | undefined} box The box to render.
+ * @param {string} unit The unit to add if the box is a number.
+ * @returns
+ */
+export const renderBoxOrNumWithUnit = ( box, unit ) => {
+	if ( isNumber( box ) ) {
+		return boxToCSS( _unit( box, unit ) );
+	}
+	return boxToCSS( box );
+};

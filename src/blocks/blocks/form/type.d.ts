@@ -18,9 +18,9 @@ type Attributes = {
 	labelColor: string
 	helpLabelColor: string
 	labelFontSize: number
-	inputBorderRadius: number
+	inputBorderRadius: number | PaddingType
 	inputBorderColor: string
-	inputBorderWidth: number
+	inputBorderWidth: number | PaddingType
 	inputWidth: number
 	inputRequiredColor: string
 	submitMessage: string
