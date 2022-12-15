@@ -84,6 +84,8 @@ domReady( () => {
 		const inputStyle = getComputedStyle( inputElement );
 		const parentStyle = inputElement.parentElement ? getComputedStyle( inputElement.parentElement ) : null;
 
+		inputElement.value = '';
+
 		const wrap = document.createElement( 'div' );
 		wrap.classList.add( 'container-wrap' );
 		wrap.style.width = inputElement.offsetWidth + 'px';
@@ -211,7 +213,7 @@ domReady( () => {
 
 		// Detect clicks outside the search block and close the results container
 		window.addEventListener( 'click', ( event: MouseEvent ) => {
-			if ( null === ( event?.target as Element )?.closest( '.wp-block-search__inside-wrapper' ) ) {
+			if ( null === ( event?.target as Element )?.closest( `#${inputElement.id}` ) ) {
 
 				// if the click was outside .wp-block-search__inside-wrapper
 				resultsContainer = removeResultsContainer( block, resultsContainer );
