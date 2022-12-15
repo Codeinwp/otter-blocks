@@ -436,6 +436,7 @@ class CSS_Handler extends Base_CSS {
 		$compressor->setMaxExecutionTime( 120 );
 		$compressor->setPcreBacktrackLimit( 3000000 );
 		$compressor->setPcreRecursionLimit( 150000 );
+		ini_set( 'pcre.jit', '0' );
 
 		$css = htmlspecialchars_decode( $css );
 		$css = $compressor->run( $css );
