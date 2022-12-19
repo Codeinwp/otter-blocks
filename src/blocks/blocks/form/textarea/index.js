@@ -5,6 +5,8 @@ import { __ } from '@wordpress/i18n';
 
 import { registerBlockType } from '@wordpress/blocks';
 
+import { createBlock } from '@wordpress/blocks';
+
 /**
  * Internal dependencies
  */
@@ -32,5 +34,19 @@ registerBlockType( name, {
 		'input'
 	],
 	edit,
-	save
+	save,
+	transforms: {
+		to: [
+			{
+				type: 'block',
+				blocks: [ 'themeisle-blocks/form-input' ],
+				transform: ( attributes ) => {
+
+					return createBlock( 'themeisle-blocks/form-input', {
+						...attributes
+					});
+				}
+			}
+		]
+	}
 });

@@ -14,6 +14,8 @@ import {
 	useRef
 } from '@wordpress/element';
 
+import { createBlock } from '@wordpress/blocks';
+
 /**
  * Internal dependencies
  */
@@ -53,16 +55,25 @@ const Edit = ({
 			getBlockRootClientId
 		} = select( 'core/block-editor' );
 
+		if ( ! clientId ) {
+			return {
+				parentClientId: ''
+			};
+		}
+
 		const parentClientId = getBlockRootClientId( clientId );
-		const parentBlock = getBlock( parentClientId );
 
 		return {
-			parentClientId: parentBlock.clientId
+			parentClientId: parentClientId ?? ''
 		};
-	}, []);
+	}, [ clientId ]);
 
-	const { selectBlock } = useDispatch( 'core/block-editor' );
+	const { selectBlock, replaceBlock } = useDispatch( 'core/block-editor' );
 
+	const switchToInput = type => {
+		const block = createBlock( 'themeisle-blocks/form-input', { ...attributes, type: type });
+		replaceBlock( clientId, block );
+	};
 
 	useEffect( () => {
 		const per = x => x ? x + '%' : x;
@@ -88,6 +99,7 @@ const Edit = ({
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 				selectParent={ () => selectBlock( parentClientId ) }
+				switchToInput={ switchToInput }
 			/>
 
 			<div { ...blockProps }>

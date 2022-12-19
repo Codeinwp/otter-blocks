@@ -20,12 +20,12 @@ import {
  *
  * @param {import('./types').FormInputProps} props
  * @returns {JSX.Element}
- * @constructor
  */
 const Inspector = ({
 	attributes,
 	setAttributes,
-	selectParent
+	selectParent,
+	switchToTextarea
 }) => {
 	return (
 		<InspectorControls>
@@ -59,9 +59,19 @@ const Inspector = ({
 						{
 							label: __( 'Number', 'otter-blocks' ),
 							value: 'number'
+						},
+						{
+							label: __( 'Textarea', 'otter-blocks' ),
+							value: 'textarea'
 						}
 					] }
-					onChange={ type => setAttributes({ type }) }
+					onChange={ type => {
+						if ( 'textarea' === type ) {
+							switchToTextarea?.();
+							return;
+						}
+						setAttributes({ type });
+					}}
 				/>
 
 				<TextControl
