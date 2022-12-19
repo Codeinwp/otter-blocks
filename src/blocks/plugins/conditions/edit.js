@@ -126,13 +126,13 @@ const defaultConditions = {
 			},
 			{
 				value: 'country',
-				label: __( 'Country', 'otter-blocks' ),
+				label: __( 'Country (Pro)', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on user\'s country based on the IP address.' ),
 				isDisabled: true
 			},
 			{
 				value: 'cookie',
-				label: __( 'Cookie', 'otter-blocks' ),
+				label: __( 'Cookie (Pro)', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on PHP cookies.' ),
 				isDisabled: true
 			}
