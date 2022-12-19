@@ -209,27 +209,8 @@ const Inspector = ({
 										]) }
 										onChange={ value => {
 											const [ vertical, horizontal ] = value.split( ' ' );
-
-											switch ( view ) {
-											case 'Desktop':
-												setAttributes({
-													verticalPosition: Boolean( vertical ) && 'center' !== vertical ? vertical : undefined,
-													horizontalPosition: Boolean( horizontal ) && 'center' !== horizontal ? horizontal : undefined
-												});
-												break;
-											case 'Tablet':
-												setAttributes({
-													verticalPositionTabelt: Boolean( vertical ) && 'center' !== vertical ? vertical : undefined,
-													horizontalPositionTablet: Boolean( horizontal ) && 'center' !== horizontal ? horizontal : undefined
-												});
-												break;
-											case 'Mobile':
-												setAttributes({
-													verticalPositionMobile: Boolean( vertical ) && 'center' !== vertical ? vertical : undefined,
-													horizontalPositionMobile: Boolean( horizontal ) && 'center' !== horizontal ? horizontal : undefined
-												});
-												break;
-											}
+											responsiveSetAttributes( Boolean( vertical ) && 'center' !== vertical ? vertical : undefined, [ 'verticalPosition', 'verticalPositionTablet', 'verticalPositionMobile' ]);
+											responsiveSetAttributes( Boolean( horizontal ) && 'center' !== horizontal ? horizontal : undefined, [ 'horizontalPosition', 'horizontalPositionTablet', 'horizontalPositionMobile' ]);
 										}}
 									/>
 								</div>
