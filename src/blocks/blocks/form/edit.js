@@ -92,9 +92,12 @@ const Edit = ({
 	 * @param {import('../../common').SyncAttrs<import('./type').FormAttrs>} field
 	 * @returns
 	 */
-	const getSyncValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
-
-	getSyncValue( '' );
+	const getSyncValue = field =>{
+		if ( attributes?.isSynced?.includes( field ) ) {
+			return getDefaultValueByField({ name, field, defaultAttributes, attributes });
+		}
+		return attributes?.[field];
+	};
 
 	const [ formOptions, setFormOptions ] = useState({
 		provider: undefined,

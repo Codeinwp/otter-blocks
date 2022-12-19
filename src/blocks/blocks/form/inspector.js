@@ -684,8 +684,6 @@ const Inspector = ({
 										label: __( 'Required Label', 'otter-blocks' ),
 										slug: 'inputRequiredColor'
 									}
-
-
 								] }
 							/>
 
@@ -715,6 +713,10 @@ const Inspector = ({
 										{
 											label: __( 'Hover Background Color', 'otter-blocks' ),
 											value: 'submitBackgroundColorHover'
+										},
+										{
+											label: __( 'Padding', 'otter-blocks' ),
+											value: responsiveGetAttributes([ 'buttonPadding', 'buttonPaddingTablet', 'buttonPaddingMobile' ])
 										}
 									]}
 									setAttributes={setAttributes}
@@ -887,26 +889,28 @@ const Inspector = ({
 									setAttributes={setAttributes}
 								/>
 
-								<FontSizePicker
-									label={ __( 'Font Size', 'otter-blocks' ) }
-									fontSizes={ defaultFontSizes }
-									withReset
-									value={ attributes.labelFontSize }
-									onChange={ labelFontSize =>  setAttributes({ labelFontSize }) }
-								/>
+								<AutoDisableSyncAttr attr={'labelFontSize'}>
+									<FontSizePicker
+										label={ __( 'Font Size', 'otter-blocks' ) }
+										fontSizes={ defaultFontSizes }
+										withReset
+										value={ attributes.labelFontSize }
+										onChange={ labelFontSize =>  setAttributes({ labelFontSize }) }
+									/>
+								</AutoDisableSyncAttr>
 
-
-								<RangeControl
-									label={ __( 'Spacing', 'otter-blocks' ) }
-									value={ attributes.inputGap ?? 10 }
-									onChange={ inputGap => setAttributes({ inputGap }) }
-									allowReset
-									step={ 0.1 }
-									min={ 0 }
-									max={ 50 }
-									initialPosition={ 10 }
-								/>
-
+								<AutoDisableSyncAttr attr={'inputGap'}>
+									<RangeControl
+										label={ __( 'Spacing', 'otter-blocks' ) }
+										value={ attributes.inputGap ?? 10 }
+										onChange={ inputGap => setAttributes({ inputGap }) }
+										allowReset
+										step={ 0.1 }
+										min={ 0 }
+										max={ 50 }
+										initialPosition={ 10 }
+									/>
+								</AutoDisableSyncAttr>
 							</PanelBody>
 
 							<PanelBody
@@ -979,18 +983,18 @@ const Inspector = ({
 
 							<PanelBody
 								title={ __( 'Border', 'otter-blocks' ) }
-								initialOpen={ false }
+								initialOpen={ true }
 							>
 								<SyncControlDropdown
 									isSynced={attributes.isSynced}
 									options={[
 										{
 											label: __( 'Border Radius', 'otter-blocks' ),
-											value: 'inputsBorderRadius'
+											value: 'inputBorderRadius'
 										},
 										{
 											label: __( 'Border Width', 'otter-blocks' ),
-											value: 'inputsBorderWidth'
+											value: 'inputBorderWidth'
 										}
 									]}
 									setAttributes={setAttributes}
@@ -999,8 +1003,8 @@ const Inspector = ({
 								<AutoDisableSyncAttr attr={'inputBorderRadius'}>
 									<BoxControl
 										label={ __( 'Border Radius', 'otter-blocks' ) }
-										values={ ! isObjectLike( attributes.borderRadius ) ? makeBox( _px( attributes.borderRadius ?? 4 ) ) : attributes.borderRadius }
-										onChange={ borderRadius  => setAttributes({ borderRadius }) }
+										values={ ! isObjectLike( attributes.inputBorderRadius ) ? makeBox( _px( attributes.inputBorderRadius ?? 4 ) ) : attributes.inputBorderRadius }
+										onChange={ inputBorderRadius  => setAttributes({ inputBorderRadius }) }
 										id="o-border-raduis-box"
 									/>
 								</AutoDisableSyncAttr>
