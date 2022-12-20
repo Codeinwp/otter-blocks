@@ -57,10 +57,10 @@ class Live_Search_Server {
 	}
 
 	/**
-	 * Add custom query vars
+	 * Add custom query vars.
 	 *
-	 * @param $query_vars
-	 * @return mixed
+	 * @param array $query_vars Query vars.
+	 * @return array
 	 */
 	public function add_query_vars( $query_vars ) {
 		$query_vars[] = 'o_post_type';
@@ -68,10 +68,10 @@ class Live_Search_Server {
 	}
 
 	/**
-	 * Parse the custom query vars
+	 * Parse the custom query vars.
 	 *
-	 * @param $query
-	 * @return mixed
+	 * @param WP_Query $query WP Query object
+	 * @return WP_Query
 	 */
 	public function parse_query( $query ) {
 		if ( get_query_var( 'o_post_type' ) ) {

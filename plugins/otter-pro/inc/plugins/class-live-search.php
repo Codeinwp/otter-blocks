@@ -67,9 +67,9 @@ class Live_Search {
 			$post_types_data = 'data-post-types=' . wp_json_encode( $block['attrs']['otterSearchQuery']['post_type'] );
 		}
 
-		// insert hidden fields to filter core's search results
+		// Insert hidden fields to filter core's search results.
 		$query_params_markup = '';
-		if ( isset( $block['attrs']['otterSearchQuery'] ) &&  count( $block['attrs']['otterSearchQuery'] ) > 0 ) {
+		if ( isset( $block['attrs']['otterSearchQuery'] ) && count( $block['attrs']['otterSearchQuery'] ) > 0 ) {
 			foreach ( $block['attrs']['otterSearchQuery'] as $param => $value ) {
 				$query_params_markup .= sprintf(
 					'<input type="hidden" name="o_%s" value="%s" />',
