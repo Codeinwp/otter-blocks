@@ -18,6 +18,21 @@ use WP_REST_Response;
  */
 class Form_Data_Response {
 
+	// TODO: Integrate the new error code system.
+	const SUCCESS_EMAIL_SEND      = '0';
+	const SUCCESS_USER_SUBSCRIBED = '1';
+
+	const ERROR_MISSING_DATA    = '101';
+	const ERROR_MISSING_CAPTCHA = '102';
+	const ERROR_MISSING_NONCE   = '103';
+	const ERROR_MISSING_EMAIL   = '104';
+	const ERROR_FORM_ID_INVALID = '105';
+	const ERROR_EMAIL_NOT_SEND  = '106';
+
+	const ERROR_PROVIDER_NOT_REGISTERED  = '201';
+	const ERROR_PROVIDER_SUBSCRIBE_ERROR = '202';
+	const ERROR_PROVIDER_INVALID_KEY     = '203';
+
 	/**
 	 * Response Data.
 	 *
@@ -44,6 +59,7 @@ class Form_Data_Response {
 	public function __construct() {
 		$this->response['success'] = false;
 		$this->response['reasons'] = array();
+		$this->response['code']    = self::SUCCESS_EMAIL_SEND;
 	}
 
 	/**
@@ -101,6 +117,8 @@ class Form_Data_Response {
 	 */
 	public function build_response() {
 		// TODO: We can to addition operation when returning the response.
+		$this->process_error_code();
+
 		return rest_ensure_response( $this->response );
 	}
 
@@ -216,5 +234,51 @@ class Form_Data_Response {
 	public function set_is_credential_error( $is_credential_error ) {
 		$this->is_credential_error = $is_credential_error;
 		return $this;
+	}
+
+	/**
+	 * Add the error messages based on the code error.
+	 *
+	 * @return void
+	 * @since 2.1.7
+	 */
+	public function process_error_code() {
+		switch ( $this->response['code'] ) {
+			case self::ERROR_MISSING_DATA:
+				$this->add_reason( __( 'Essential data is missing!', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_MISSING_CAPTCHA:
+				$this->add_reason( __( 'Captcha token is missing!', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_MISSING_EMAIL:
+				$this->add_reason( __( 'Missing email field in form!', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_MISSING_NONCE:
+				$this->add_reason( __( 'Missing CSRF protection in form!', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_FORM_ID_INVALID:
+				$this->add_reason( __( 'Form ID is invalid!', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_EMAIL_NOT_SEND:
+				$this->add_reason( __( 'Email could not be send. Might be an error with the service!', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_PROVIDER_INVALID_KEY:
+				$this->add_reason( __( 'Invalid service authentication credentials!', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_PROVIDER_NOT_REGISTERED:
+				$this->add_reason( __( 'The service is not registered!', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_PROVIDER_SUBSCRIBE_ERROR:
+				$this->add_reason( __( 'Error received from service when subscribing the user!', 'otter-blocks' ) );
+				break;
+		}
 	}
 }
