@@ -52,8 +52,34 @@ class Live_Search_Server {
 		 * Register the REST API endpoints.
 		 */
 		add_action( 'rest_api_init', array( $this, 'register_routes' ) );
+		add_filter( 'query_vars', array( $this, 'add_query_vars' ) );
+		add_action( 'parse_query', array( $this, 'parse_query' ) );
 	}
 
+	/**
+	 * Add custom query vars
+	 *
+	 * @param $query_vars
+	 * @return mixed
+	 */
+	public function add_query_vars( $query_vars ) {
+		$query_vars[] = 'o_post_type';
+		return $query_vars;
+	}
+
+	/**
+	 * Parse the custom query vars
+	 *
+	 * @param $query
+	 * @return mixed
+	 */
+	public function parse_query( $query ) {
+		if ( get_query_var( 'o_post_type' ) ) {
+			$query->set( 'post_type', explode( ',', get_query_var( 'o_post_type' ) ) );
+		}
+
+		return $query;
+	}
 
 	/**
 	 * The instance method for the static class.
@@ -113,7 +139,7 @@ class Live_Search_Server {
 		$query = new WP_Query(
 			array(
 				'posts_per_page' => 20,
-				'post_type'      => $request->get_param( 'post_types' ),
+				'post_type'      => $request->get_param( 'post_type' ),
 				's'              => $request->get_param( 's' ),
 			)
 		);

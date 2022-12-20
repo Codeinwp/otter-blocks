@@ -61,10 +61,11 @@
 
 				.meta {
 					opacity: .65;
+					margin-right: auto;
 				}
 
 				.post-title {
-					margin: 0;
+					margin: 0 auto 0 0;
 					white-space: nowrap;
 					text-overflow: ellipsis;
 					overflow: hidden;

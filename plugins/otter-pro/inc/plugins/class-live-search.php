@@ -63,10 +63,23 @@ class Live_Search {
 		wp_enqueue_style( 'otter-live-search-style', OTTER_BLOCKS_URL . 'build/blocks/live-search-style.css', $asset_file['dependencies'], $asset_file['version'] );
 
 		$post_types_data = '';
-		if ( isset( $block['attrs']['otterSearchQuery']['postTypes'] ) ) {
-			$post_types_data = 'data-post-types=' . wp_json_encode( $block['attrs']['otterSearchQuery']['postTypes'] );
+		if ( isset( $block['attrs']['otterSearchQuery']['post_type'] ) ) {
+			$post_types_data = 'data-post-types=' . wp_json_encode( $block['attrs']['otterSearchQuery']['post_type'] );
 		}
 
+		// insert hidden fields to filter core's search results
+		$query_params_markup = '';
+		if ( isset( $block['attrs']['otterSearchQuery'] ) &&  count( $block['attrs']['otterSearchQuery'] ) > 0 ) {
+			foreach ( $block['attrs']['otterSearchQuery'] as $param => $value ) {
+				$query_params_markup .= sprintf(
+					'<input type="hidden" name="o_%s" value="%s" />',
+					esc_attr( $param ),
+					esc_attr( implode( ',', $value ) )
+				);
+			}
+		}
+
+		$block_content = substr( $block_content, 0, strpos( $block_content, '</form>' ) ) . $query_params_markup . substr( $block_content, strpos( $block_content, '</form>' ) );
 		return '<div class="o-live-search"' . $post_types_data . '>' . $block_content . '</div>';
 	}
 

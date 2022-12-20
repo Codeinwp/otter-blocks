@@ -66,7 +66,7 @@ domReady( () => {
 			}
 		};
 
-		const params = postTypes.reduce( ( p, type ) => p + `&post_types[]=${type}`, `s=${search}` );
+		const params = postTypes.reduce( ( p, type ) => p + `&post_type[]=${type}`, `s=${search}` );
 
 		const response = await fetch( `${restUrl}?${params}`, options ).catch( error => {
 			console.error( error.message );
