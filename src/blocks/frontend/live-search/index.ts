@@ -77,9 +77,13 @@ domReady( () => {
 	};
 
 	const handleLiveSearch = ( element: Element ) => {
+		const inputElement = element.querySelector( 'input.wp-block-search__input' ) as HTMLInputElement;
+		if ( ! inputElement ) {
+			return;
+		}
+
 		const form = element.querySelector( 'form' );
 		const block = element.querySelector( '.wp-block-search__inside-wrapper' );
-		const inputElement = element.querySelector( 'input.wp-block-search__input' ) as HTMLInputElement;
 
 		const inputStyle = getComputedStyle( inputElement );
 		const parentStyle = inputElement.parentElement ? getComputedStyle( inputElement.parentElement ) : null;
@@ -89,13 +93,20 @@ domReady( () => {
 		const wrap = document.createElement( 'div' );
 		wrap.classList.add( 'container-wrap' );
 		wrap.style.width = inputElement.offsetWidth + 'px';
-		wrap.style.top = `calc( ${inputStyle.height} + ${parentStyle?.paddingTop} + ${parentStyle?.paddingBottom} + ${parentStyle?.borderBottomWidth} )`;
 		wrap.style.borderRadius = inputStyle.borderRadius;
 		wrap.style.backgroundColor = inputStyle.backgroundColor;
 
-		if ( ! inputElement ) {
-			return;
+		const inputEndPageDistance = document.documentElement.scrollHeight - ( inputElement.getBoundingClientRect().bottom + window.scrollY );
+		let inputEdgeDistance = inputEndPageDistance;
+
+		if ( 300 > inputEndPageDistance ) {
+			wrap.style.top = `calc( ${inputStyle.height} + ${parentStyle?.paddingTop} + ${parentStyle?.paddingBottom} + ${parentStyle?.borderBottomWidth} )`;
+		} else {
+			wrap.style.bottom = `calc( ${inputStyle.height} + ${parentStyle?.paddingTop} + ${parentStyle?.paddingBottom} + ${parentStyle?.borderBottomWidth} )`;
+			inputEdgeDistance = inputElement.getBoundingClientRect().top + window.scrollY;
 		}
+
+		wrap.style.maxHeight = Math.min( 500, inputEdgeDistance - 20 ) + 'px';
 
 		// Create this variable to cache the results
 		let resultsContainer: ResultsContainer;

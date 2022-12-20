@@ -80,7 +80,7 @@ const Edit = ({
 									<>
 										<FormTokenField
 											label={ __( 'Search in', 'otter-blocks' ) }
-											value={ props.attributes.otterSearchQuery['post_type'] || [] }
+											value={ props.attributes.otterSearchQuery ? props.attributes.otterSearchQuery['post_type'] : [] }
 											suggestions={ postTypes.filter( type => ! excludeTypes.includes( type ) ) }
 											onChange={ types => onPostTypeChange( types ) }
 											__experimentalExpandOnFocus={ true }

@@ -70,7 +70,7 @@ class Live_Search_Server {
 	/**
 	 * Parse the custom query vars.
 	 *
-	 * @param WP_Query $query WP Query object
+	 * @param WP_Query $query WP Query object.
 	 * @return WP_Query
 	 */
 	public function parse_query( $query ) {
