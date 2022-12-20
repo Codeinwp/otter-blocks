@@ -78,6 +78,13 @@ class Form_Settings_Data {
 	private $submit_message = '';
 
 	/**
+	 * The message when the email can not be send.
+	 *
+	 * @var string
+	 */
+	private $error_message = '';
+
+	/**
 	 * The name of the sender.
 	 *
 	 * @var string
@@ -191,6 +198,9 @@ class Form_Settings_Data {
 				}
 				if ( isset( $form['submitMessage'] ) ) {
 					$integration->set_submit_message( $form['submitMessage'] );
+				}
+				if ( isset( $form['errorMessage'] ) ) {
+					$integration->set_error_message( $form['errorMessage'] );
 				}
 				if ( isset( $form['fromName'] ) ) {
 					$integration->set_from_name( $form['fromName'] );
@@ -400,6 +410,18 @@ class Form_Settings_Data {
 	}
 
 	/**
+	 * Set the message when the email can not be send.
+	 *
+	 * @param string $error_message The message.
+	 * @return Form_Settings_Data
+	 * @since 2.1.7
+	 */
+	public function set_error_message( $error_message ) {
+		$this->error_message = $error_message;
+		return $this;
+	}
+
+	/**
 	 * Get the provider.
 	 *
 	 * @return string
@@ -487,6 +509,16 @@ class Form_Settings_Data {
 	 */
 	public function get_submit_message() {
 		return $this->submit_message;
+	}
+
+	/**
+	 * Get the message for submit.
+	 *
+	 * @return string
+	 * @since 2.1.7
+	 */
+	public function get_error_message() {
+		return $this->error_message;
 	}
 
 	/**

@@ -286,6 +286,9 @@ class Options_Settings {
 							if ( isset( $item['submitMessage'] ) ) {
 								$item['submitMessage'] = sanitize_text_field( $item['submitMessage'] );
 							}
+							if ( isset( $item['errorMessage'] ) ) {
+								$item['errorMessage'] = sanitize_text_field( $item['errorMessage'] );
+							}
 							if ( isset( $item['integration']['provider'] ) ) {
 								$item['integration']['provider'] = sanitize_text_field( $item['integration']['provider'] );
 							}
@@ -328,6 +331,9 @@ class Options_Settings {
 									'type' => 'string',
 								),
 								'submitMessage' => array(
+									'type' => 'string',
+								),
+								'errorMessage'  => array(
 									'type' => 'string',
 								),
 								'cc'            => array(

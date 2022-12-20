@@ -44,6 +44,7 @@ import { makeBox } from '../../plugins/copy-paste/utils';
 import { _px } from '../../helpers/helper-functions.js';
 import { SortableContainer } from 'react-sortable-hoc';
 import { SortableInputField } from './sortable-input-fields';
+import { alignCenter, alignLeft, alignRight, menu } from '@wordpress/icons';
 
 const compare = x => {
 	return x?.[1] && x[0] !== x[1];
@@ -295,14 +296,6 @@ const Inspector = ({
 								help={ __( 'Set the name of the sender. Some SMTP plugins might override this value.', 'otter-blocks' ) }
 							/>
 
-							<TextareaControl
-								label={ __( 'Submit Success Message', 'otter-blocks' ) }
-								placeholder={ __( 'Success', 'otter-blocks' ) }
-								value={ formOptions.submitMessage }
-								onChange={ submitMessage =>  setFormOption({ submitMessage })  }
-								help={ __( 'Show this message after the form was successfully submitted.', 'otter-blocks' ) }
-							/>
-
 							{ 'done' === loadingState?.formOptions && formOptionsChanged && (
 								<div className="o-fetch-msg">
 									{ __( 'You have made some modifications. Do not forget to save the options.', 'otter-blocks' ) }
@@ -318,29 +311,38 @@ const Inspector = ({
 						</PanelBody>
 						<PanelBody
 							title={ __( 'Button options', 'otter-blocks' ) }
-							initialOpen={ false }
+							initialOpen={ true }
 						>
 							<ResponsiveControl
 								label={ __( 'Alignment', 'otter-blocks' ) }
 							>
 								<AutoDisableSyncAttr attr={responsiveGetAttributes([ 'submitStyle', 'submitStyleTablet', 'submitStyleMobile' ])}>
-									<SelectControl
-										value={ responsiveGetAttributes([ attributes.submitStyle, attributes.submitStyleTablet, attributes.submitStyleMobile  ]) }
+									<ToogleGroupControl
+										value={ responsiveGetAttributes([ attributes.submitStyle, attributes.submitStyleTablet, attributes.submitStyleMobile  ]) ?? 'left' }
+										onChange={ value => responsiveSetAttributes( '' === value ? undefined : value, [ 'submitStyle', 'submitStyleTablet', 'submitStyleMobile' ]) }
 										options={[
 											{
-												label: 'Default',
+												icon: alignLeft,
+												label: __( 'Left', 'otter-blocks' ),
 												value: 'left'
 											},
 											{
-												label: 'Right',
+												icon: alignCenter,
+												label: __( 'Center', 'otter-blocks' ),
+												value: 'center'
+											},
+											{
+												icon: alignRight,
+												label: __( 'Right', 'otter-blocks' ),
 												value: 'right'
 											},
 											{
-												label: 'Full',
+												icon: menu,
+												label: __( 'Full', 'otter-blocks' ),
 												value: 'full'
 											}
 										]}
-										onChange={ value => responsiveSetAttributes( '' === value ? undefined : value, [ 'submitStyle', 'submitStyleTablet', 'submitStyleMobile' ]) }
+										hasIcon={ true }
 									/>
 								</AutoDisableSyncAttr>
 							</ResponsiveControl>
@@ -620,7 +622,7 @@ const Inspector = ({
 								label={ __( 'Add captcha checkbox', 'otter-blocks' ) }
 								checked={ attributes.hasCaptcha }
 								onChange={ hasCaptcha => setAttributes({ hasCaptcha }) }
-								help={ __( 'Add Google reCaptcha V2 for protection againts bots. You will need an API Key.', 'otter-blocks' ) }
+								help={ __( 'Add Google reCaptcha V2 for protection against bots. You will need an API Key.', 'otter-blocks' ) }
 							/>
 
 							{
@@ -642,6 +644,25 @@ const Inspector = ({
 									</div>
 								)
 							}
+						</PanelBody>
+						<PanelBody
+							title={ __( 'Submit Messages', 'otter-blocks' ) }
+							initialOpen={ true }
+						>
+							<TextareaControl
+								label={ __( 'Success Message', 'otter-blocks' ) }
+								placeholder={ __( 'Success', 'otter-blocks' ) }
+								value={ formOptions.submitMessage }
+								onChange={ submitMessage =>  setFormOption({ submitMessage })  }
+								help={ __( 'Show this message after the form was successfully submitted.', 'otter-blocks' ) }
+							/>
+							<TextareaControl
+								label={ __( 'Error Message', 'otter-blocks' ) }
+								placeholder={ __( 'Oops! I cannot send this email', 'otter-blocks' ) }
+								value={ formOptions.errorMessage }
+								onChange={ errorMessage =>  setFormOption({ errorMessage })  }
+								help={ __( 'This message will be displayed when there is a problem with the server.' ) }
+							/>
 						</PanelBody>
 					</Fragment>
 				) }
@@ -1042,7 +1063,6 @@ const Inspector = ({
 									/>
 								</AutoDisableSyncAttr>
 							</PanelBody>
-
 						</Fragment>
 					)
 				}

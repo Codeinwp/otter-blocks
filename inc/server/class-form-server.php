@@ -301,7 +301,11 @@ class Form_Server {
 			// phpcs:ignore
 			$res->set_success( wp_mail( $to, $email_subject, $email_body, $headers ) );
 			if ( ! $res->is_success() ) {
-				$res->set_error( __( 'Email could not be send.', 'otter-blocks' ) );
+				if ( null !== $form_options->get_error_message() ) {
+					$res->set_error( $form_options->get_error_message() );
+				} else {
+					$res->set_error( __( 'Email could not be send.', 'otter-blocks' ) );
+				}
 			}
 		} catch ( Exception  $e ) {
 			$res->set_error( $e->getMessage() );

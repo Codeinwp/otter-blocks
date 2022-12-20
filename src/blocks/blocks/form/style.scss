@@ -68,13 +68,13 @@
 				align-items: flex-end;
 			}
 
-			&.right-tablet {
+			&.o-right-tablet {
 				@media ( max-width: 1024px ) {
 					align-items: flex-end;
 				}
 			}
 
-			&.right-mobile {
+			&.o-right-mobile {
 				@media ( max-width: 640px ) {
 					align-items: flex-end;
 				}
@@ -86,15 +86,33 @@
 				}
 			}
 
-			&.left-tablet {
+			&.o-left-tablet {
 				@media ( max-width: 1024px ) {
 					align-items: flex-start;
 				}
 			}
 
-			&.left-mobile {
+			&.o-left-mobile {
 				@media ( max-width: 640px ) {
 					align-items: flex-start;
+				}
+			}
+
+			&.o-center {
+				@media( min-width: 1024px ) {
+					align-items: center;
+				}
+			}
+
+			&.o-center-tablet {
+				@media ( max-width: 1024px ) {
+					align-items: center;
+				}
+			}
+
+			&.o-center-mobile {
+				@media ( max-width: 640px ) {
+					align-items: center;
 				}
 			}
 
@@ -108,7 +126,7 @@
 				}
 			}
 
-			&.full-tablet {
+			&.o-full-tablet {
 				@media ( max-width: 1024px ) {
 					flex-direction: column;
 					align-items: center;
@@ -120,7 +138,7 @@
 				}
 			}
 
-			&.full-mobile {
+			&.o-full-mobile {
 				@media ( max-width:640px ) {
 					flex-direction: column;
 					align-items: center;
@@ -161,7 +179,7 @@
 				}
 			}
 
-			&.right-tablet > div {
+			&.o-right-tablet > div {
 				@media ( max-width: 1024px ) {
 					align-items: flex-end;
 					
@@ -171,7 +189,7 @@
 				}
 			}
 
-			&.right-mobile > div {
+			&.o-right-mobile > div {
 				@media ( max-width:640px ) {
 					align-items: flex-end;
 					
@@ -189,7 +207,7 @@
 				}
 			}
 
-			&.left-tablet > div {
+			&.o-left-tablet > div {
 				@media ( max-width: 1024px ) {
 					align-items: flex-end;
 					
@@ -199,7 +217,7 @@
 				}
 			}
 
-			&.left-mobile > div {
+			&.o-left-mobile > div {
 				@media ( max-width:640px ) {
 					align-items: flex-end;
 					
@@ -209,17 +227,17 @@
 				}
 			}
 
-			&.full > div {
+			&.full > div, &.o-center > div {
 				align-items: center;
 			}
 
-			&.full-tablet > div {
+			&.o-full-tablet > div, &.o-center-tablet > div  {
 				@media ( max-width: 1024px ) {
 					align-items: center;
 				}
 			} 
 
-			&.full-mobile > div {
+			&.o-full-mobile > div, &.o-center-mobile > div  {
 				@media ( max-width:640px ) {
 					align-items: center;
 				}

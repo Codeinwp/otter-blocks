@@ -83,7 +83,10 @@ const Edit = ({
 		serviceTesting: 'init'
 	});
 
+	const [ optionsHaveChanged, setOptionsHaveChanged ] = useState( false );
+
 	const setLoading = l => {
+		setOptionsHaveChanged( true );
 		setLoadingState( loading => ({ ...loading, ...l }) );
 	};
 
@@ -110,6 +113,7 @@ const Edit = ({
 		action: undefined,
 		hasCaptcha: undefined,
 		submitMessage: undefined,
+		errorMessage: undefined,
 		apiKey: undefined,
 		cc: undefined,
 		bcc: undefined
@@ -119,8 +123,7 @@ const Edit = ({
 		insertBlock,
 		removeBlock,
 		selectBlock,
-		moveBlockToPosition,
-		updateBlockAttributes
+		moveBlockToPosition
 	} = useDispatch( 'core/block-editor' );
 
 	const setFormOption = option => {
@@ -172,21 +175,22 @@ const Edit = ({
 	const { canSaveData } = useSelect( select => {
 
 		// console.count( 'Trigger Save Detection' );
-		const isSavingPost = select( 'core/editor' ).isSavingPost();
+		const isSavingPost = select( 'core/editor' )?.isSavingPost();
+		const isAutosaving = select( 'core/editor' )?.isAutosavingPost();
 
 		return {
-			canSaveData: isSavingPost
+			canSaveData: ! isAutosaving && isSavingPost
 		};
 	});
 
 	const hasEssentialData = attributes.optionName && hasProtection;
 
 	useEffect( () => {
-		if ( canSaveData ) {
+		if ( canSaveData && optionsHaveChanged ) {
 			console.count( 'Save Effect' );
 			saveFormEmailOptions();
 		}
-	}, [ canSaveData ]);
+	}, [ canSaveData, optionsHaveChanged ]);
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -245,6 +249,7 @@ const Edit = ({
 			cc: wpOptions?.cc,
 			bcc: wpOptions?.bcc,
 			submitMessage: wpOptions?.submitMessage,
+			errorMessage: wpOptions?.errorMessage,
 			provider: wpOptions?.integration?.provider,
 			apiKey: wpOptions?.integration?.apiKey,
 			listId: wpOptions?.integration?.listId,
@@ -308,6 +313,7 @@ const Edit = ({
 						emails[index].redirectLink !== formOptions.redirectLink ||
 						emails[index].emailSubject !== formOptions.subject ||
 						emails[index].submitMessage !== formOptions.submitMessage ||
+						emails[index].errorMessage !== formOptions.errorMessage ||
 						emails[index].fromName !== formOptions.fromName ||
 						emails[index].cc !== formOptions.cc ||
 						emails[index].bcc !== formOptions.bcc
@@ -318,6 +324,7 @@ const Edit = ({
 					emails[index].redirectLink = formOptions.redirectLink;
 					emails[index].emailSubject = formOptions.subject;
 					emails[index].submitMessage = formOptions.submitMessage;
+					emails[index].errorMessage = formOptions.errorMessage;
 					emails[index].fromName = formOptions.fromName;
 					emails[index].cc = formOptions.cc;
 					emails[index].bcc = formOptions.bcc;
@@ -333,6 +340,7 @@ const Edit = ({
 					redirectLink: formOptions.redirectLink,
 					emailSubject: formOptions.subject,
 					submitMessage: formOptions.submitMessage,
+					errorMessage: formOptions.errorMessage,
 					cc: formOptions.cc,
 					bcc: formOptions.bcc
 				});
@@ -891,12 +899,18 @@ const Edit = ({
 									className={
 										classnames(
 											'wp-block-button has-submit-msg',
+											{ 'left': 'left' === attributes.submitStyle },
 											{ 'right': 'right' === attributes.submitStyle },
 											{ 'full': 'full' === attributes.submitStyle },
-											{ 'full-tablet': 'full' === attributes.submitStyleTablet },
-											{ 'right-tablet': 'right' === attributes.submitStyleTablet },
-											{ 'full-mobile': 'full' === attributes.submitStyleMobile },
-											{ 'right-mobile': 'right' === attributes.submitStyleMobile }
+											{ 'o-full-tablet': 'full' === attributes.submitStyleTablet },
+											{ 'o-right-tablet': 'right' === attributes.submitStyleTablet },
+											{ 'o-left-tablet': 'left' === attributes.submitStyleTablet },
+											{ 'o-full-mobile': 'full' === attributes.submitStyleMobile },
+											{ 'o-right-mobile': 'right' === attributes.submitStyleMobile },
+											{ 'o-left-mobile': 'left' === attributes.submitStyleMobile },
+											{ 'o-center': 'center' === attributes.submitStyle },
+											{ 'o-center-tablet': 'center' === attributes.submitStyleTablet },
+											{ 'o-center-mobile': 'center' === attributes.submitStyleMobile }
 										)}
 								>
 									<button
