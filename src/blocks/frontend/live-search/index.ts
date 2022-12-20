@@ -99,7 +99,7 @@ domReady( () => {
 		const inputEndPageDistance = document.documentElement.scrollHeight - ( inputElement.getBoundingClientRect().bottom + window.scrollY );
 		let inputEdgeDistance = inputEndPageDistance;
 
-		if ( 300 > inputEndPageDistance ) {
+		if ( 300 < inputEndPageDistance ) {
 			wrap.style.top = `calc( ${inputStyle.height} + ${parentStyle?.paddingTop} + ${parentStyle?.paddingBottom} + ${parentStyle?.borderBottomWidth} )`;
 		} else {
 			wrap.style.bottom = `calc( ${inputStyle.height} + ${parentStyle?.paddingTop} + ${parentStyle?.paddingBottom} + ${parentStyle?.borderBottomWidth} )`;
