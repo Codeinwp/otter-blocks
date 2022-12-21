@@ -33,7 +33,12 @@ class Live_Search {
 	 * @return mixed|string
 	 */
 	public function render_blocks( $block_content, $block ) {
-		if ( is_admin() || 'core/search' !== $block['blockName'] || ! isset( $block['attrs']['otterIsLive'] ) || ! array_search( License::get_license_type(), array( 2, 3 ) ) ) {
+		if (
+			is_admin() ||
+			'core/search' !== $block['blockName'] ||
+			! ( isset( $block['attrs']['otterIsLive'] ) && $block['attrs']['otterIsLive'] === true ) ||
+			! in_array( License::get_license_type(), array( 2, 3 ) ) )
+		{
 			return $block_content;
 		}
 
