@@ -41,6 +41,7 @@ declare global {
 			isActive: boolean
 			isExpired: boolean
 			licenseType: string
+			hasNeveLicense: boolean
 			hasWooCommerce: boolean
 			hasLearnDash: boolean
 			rootUrl: string

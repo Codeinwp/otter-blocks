@@ -183,6 +183,7 @@ class Main {
 				'isActive'       => License::has_active_license(),
 				'isExpired'      => License::has_expired_license(),
 				'licenseType'    => License::get_license_type(),
+				'hasNeveLicense' => License::get_license_data()->key === apply_filters( 'product_neve_license_key', 'free' ),
 				'hasWooCommerce' => class_exists( 'WooCommerce' ),
 				'hasLearnDash'   => defined( 'LEARNDASH_VERSION' ),
 				'hasACF'         => class_exists( 'ACF' ),

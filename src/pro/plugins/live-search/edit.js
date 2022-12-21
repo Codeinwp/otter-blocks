@@ -14,7 +14,7 @@ import { applyFilters } from '@wordpress/hooks';
 const { Notice } = window.otterComponents;
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 const excludeTypes = [ 'attachment' ];
-const hasNecessaryPlan = [ 2, 3 ].includes( parseInt( window.otterPro.licenseType ) );
+const hasNecessaryPlan = [ 2, 3 ].includes( parseInt( window.otterPro.licenseType ) ) || window.otterPro.hasNeveLicense;
 
 const Edit = ({
 	BlockEdit,
