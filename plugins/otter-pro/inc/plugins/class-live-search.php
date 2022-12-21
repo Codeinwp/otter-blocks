@@ -33,14 +33,9 @@ class Live_Search {
 	 * @return mixed|string
 	 */
 	public function render_blocks( $block_content, $block ) {
-		$hasLicense = in_array( License::get_license_type(), array( 2, 3 ) ) || apply_filters( 'product_neve_license_key', 'free' ) === License::get_license_data()->key;
+		$has_license = in_array( License::get_license_type(), array( 2, 3 ) ) || apply_filters( 'product_neve_license_key', 'free' ) === License::get_license_data()->key;
 
-		if (
-			is_admin() ||
-			'core/search' !== $block['blockName'] ||
-			! ( isset( $block['attrs']['otterIsLive'] ) && $block['attrs']['otterIsLive'] === true ) ||
-			! $hasLicense )
-		{
+		if ( is_admin() || 'core/search' !== $block['blockName'] || ! ( isset( $block['attrs']['otterIsLive'] ) && true === $block['attrs']['otterIsLive'] ) || ! $has_license ) {
 			return $block_content;
 		}
 
