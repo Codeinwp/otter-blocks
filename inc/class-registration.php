@@ -498,6 +498,7 @@ class Registration {
 				'themeisleGutenbergForm',
 				array(
 					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
+					'reRecaptchaAPIURL'  => apply_filters( 'otter_blocks_recaptcha_api_url', 'https://www.google.com/recaptcha/api.js' ),
 					'root'               => esc_url_raw( rest_url() ),
 					'nonce'              => wp_create_nonce( 'wp_rest' ),
 					'messages'           => array(
