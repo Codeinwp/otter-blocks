@@ -14,7 +14,6 @@ import { __ } from '@wordpress/i18n';
 import Notice from '../../components/notice';
 import { setUtm } from '../../helpers/helper-functions';
 import './editor.scss';
-import thumbnail from '../../../../assets/images/live-search-thumbnail.png';
 
 const liveSearchDocUrl = 'https://docs.themeisle.com/article/1747-the-live-search-feature-otter-features-library';
 
@@ -33,7 +32,7 @@ const liveSearchUpsell = createHigherOrderComponent( BlockEdit => {
 						initialOpen={ false }
 					>
 						<img
-							src={ thumbnail }
+							src={ window.themeisleGutenberg.assetsPath + '/images/live-search-thumbnail.png' }
 							alt={ __( 'Thumbnail of live search feature', 'otter-blocks' ) }
 							className="otter-live-search-thumbnail-image"
 						/>
@@ -53,6 +52,7 @@ const liveSearchUpsell = createHigherOrderComponent( BlockEdit => {
 							className="o-live-search__doc"
 							variant="secondary"
 							href={ liveSearchDocUrl }
+							target="_blank"
 						>
 							{ __( 'Learn more', 'otter-blocks' ) }
 						</Button>
