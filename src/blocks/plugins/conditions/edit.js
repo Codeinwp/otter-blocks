@@ -8,6 +8,7 @@ import { isEmpty } from 'lodash';
 import {
 	BaseControl,
 	Button,
+	ExternalLink,
 	FormTokenField,
 	PanelBody,
 	SelectControl,
@@ -30,8 +31,10 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import StripeControls from './components/stripe-controls';
-import PanelTab from '../../components/panel-tab/index.js';
-import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
+import {
+	PanelTab,
+	useOtterTools
+} from '../../components/index.js';
 
 const postTypes = Object.keys( window.themeisleGutenberg.postTypes );
 
@@ -259,13 +262,12 @@ const Separator = ({ label }) => {
 	);
 };
 
+let Inspector = Fragment;
+
 const Edit = ({
-	name,
 	attributes,
 	setAttributes: _setAttributes
 }) => {
-	const Inspector = useInspectorSlot( name );
-
 	const [ buffer, setBuffer ] = useState( null );
 	const [ conditions, setConditions ] = useState({});
 	const [ flatConditions, setFlatConditions ] = useState([]);
@@ -288,6 +290,14 @@ const Edit = ({
 		}
 
 	};
+
+	useEffect( () => {
+		Inspector = useOtterTools({
+			hasValue: () => undefined !== attributes.otterConditions && Boolean( attributes?.otterConditions?.length ),
+			label: __( 'Visibility Conditions', 'otter-blocks' ),
+			onDeselect: () => setAttributes({ otterConditions: undefined })
+		});
+	}, []);
 
 	/**
 	 * Use an intermediary buffer to add the real attributes to the block.
@@ -409,7 +419,6 @@ const Edit = ({
 			<PanelBody
 				title={ __( 'Visibility Conditions', 'otter-blocks' ) }
 				initialOpen={ false }
-				className="o-is-new"
 			>
 				<p>{ __( 'Control the visibility of your blocks based on the following conditions.', 'otter-blocks' ) }</p>
 

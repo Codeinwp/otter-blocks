@@ -53,6 +53,10 @@
       display: flex;
    }
 
+   .components-button.is-secondary {
+      margin-top: 24px;
+   }
+
    .o-animations-control__button {
       background: transparent;
       position: relative;
@@ -101,6 +105,15 @@
 
 .otter-animations-count-image {
    width: 100%;
+}
+
+.o-animation-popover .components-popover__content {
+   min-width: 240px;
+   padding: 20px;
+
+   .components-heading {
+      margin-bottom: 12px;
+   }
 }
 
 @media screen {

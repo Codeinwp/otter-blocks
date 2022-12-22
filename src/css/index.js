@@ -54,8 +54,17 @@ const withInspectorControls = createHigherOrderComponent( BlockEdit => {
 		if ( hasCustomClassName && props.isSelected ) {
 			let Inspector = InspectorControls;
 
-			if ( window?.otterComponents?.useInspectorSlot ) {
-				Inspector = window.otterComponents.useInspectorSlot( props.name );
+			if ( window?.otterComponents?.useOtterTools ) {
+				Inspector = window.otterComponents.useOtterTools({
+					hasValue: () => Boolean( props.attributes?.hasCustomCSS ),
+					label: __( 'Custom CSS', 'otter-blocks' ),
+					onDeselect: () => {
+						props.setAttributes({
+							hasCustomCSS: false,
+							customCSS: null
+						});
+					}
+				});
 			}
 
 			return (

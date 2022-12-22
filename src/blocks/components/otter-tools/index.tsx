@@ -9,7 +9,6 @@ import { sortBy } from 'lodash';
 import { BlockControls } from '@wordpress/block-editor';
 
 import {
-	Button,
 	ToolbarDropdownMenu,
 	ToolbarGroup,
 	createSlotFill,
@@ -22,12 +21,10 @@ import { Fragment, useState } from '@wordpress/element';
 
 import { addFilter } from '@wordpress/hooks';
 
-
 /**
  * Internal dependencies.
  */
 import { otterIcon } from '../../helpers/icons';
-import { FeedbackModalComponent } from '../../plugins/feedback';
 import { isAppleOS } from '../../helpers/helper-functions';
 
 const { Fill, Slot } = createSlotFill( 'OtterControlTools' );

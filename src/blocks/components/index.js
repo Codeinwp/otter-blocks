@@ -4,6 +4,7 @@
 import { useInspectorSlot } from './inspector-slot-fill/index.js';
 import Notice from './notice/index.js';
 import { OtterControlTools } from './otter-tools/index';
+import useOtterTools from './otter-tools-inspector/index';
 import SelectProducts from './select-products-control/index.js';
 
 window.otterComponents = {};
@@ -12,6 +13,7 @@ window.otterComponents.SelectProducts = SelectProducts;
 window.otterComponents.Notice = Notice;
 window.otterComponents.OtterControlTools = OtterControlTools;
 window.otterComponents.useInspectorSlot = useInspectorSlot;
+window.otterComponents.useOtterTools = useOtterTools;
 
 export { default as BackgroundOverlayControl } from './background-overlay-control/index.js';
 export { default as BackgroundSelectorControl } from './background-selector-control/index.js';
@@ -32,6 +34,7 @@ export {
 } from './inspector-slot-fill/index.js';
 export { default as LinkControlToolbar } from './link-control/index.js';
 export { default as Notice } from './notice/index.js';
+export { default as useOtterTools } from './otter-tools-inspector/index';
 export { default as PanelTab } from './panel-tab/index.js';
 export { default as ResponsiveControl } from './responsive-control/index.js';
 export { default as SelectProducts } from './select-products-control/index.js';

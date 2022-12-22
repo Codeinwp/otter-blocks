@@ -5,18 +5,11 @@ import { __ } from '@wordpress/i18n';
 
 import { hasBlockSupport } from '@wordpress/blocks';
 
-import { PanelBody } from '@wordpress/components';
-
 import { createHigherOrderComponent } from '@wordpress/compose';
-
-import { InspectorControls } from '@wordpress/block-editor';
 
 import { Fragment } from '@wordpress/element';
 
-import {
-	addFilter,
-	applyFilters
-} from '@wordpress/hooks';
+import { addFilter } from '@wordpress/hooks';
 
 /**
   * Internal dependencies.
@@ -38,33 +31,14 @@ const withInspectorControls = createHigherOrderComponent( BlockEdit => {
 		);
 
 		if ( hasCustomClassName && props.isSelected && ! excludedBlocks.includes( props.name ) ) {
-			let Inspector = InspectorControls;
-
-			if ( window?.otterComponents?.useInspectorSlot ) {
-				Inspector = window.otterComponents.useInspectorSlot( props.name );
-			}
-
 			return (
 				<Fragment>
 					<BlockEdit { ...props } />
-					<Inspector>
-						<PanelBody
-							title={ __( 'Animations', 'otter-blocks' ) }
-							initialOpen={ false }
-							className="o-is-new"
-						>
-							<AnimationControls
-								clientId={ props.clientId }
-								setAttributes={ props.setAttributes }
-								attributes={ props.attributes }
-							/>
-
-							<div className="o-fp-wrap">
-								{ applyFilters( 'otter.feedback', '', 'animations' ) }
-								{ applyFilters( 'otter.poweredBy', '' ) }
-							</div>
-						</PanelBody>
-					</Inspector>
+					<AnimationControls
+						clientId={ props.clientId }
+						setAttributes={ props.setAttributes }
+						attributes={ props.attributes }
+					/>
 				</Fragment>
 			);
 		}
