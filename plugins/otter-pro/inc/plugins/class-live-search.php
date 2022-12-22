@@ -51,9 +51,10 @@ class Live_Search {
 			'otter-live-search',
 			'liveSearchData',
 			array(
-				'nonce'   => wp_create_nonce( 'wp_rest' ),
-				'restUrl' => esc_url_raw( get_rest_url() ) . 'otter/v1/live-search',
-				'strings' => array(
+				'nonce'              => wp_create_nonce( 'wp_rest' ),
+				'restUrl'            => esc_url_raw( get_rest_url() ) . 'otter/v1/live-search',
+				'permalinkStructure' => get_option( 'permalink_structure' ),
+				'strings'            => array(
 					/* translators: This is followed by the search string */
 					'noResults' => __( 'No results for', 'otter-blocks' ),
 					'noTitle'   => sprintf( '(%s)', __( 'no title', 'otter-blocks' ) ),

@@ -90,6 +90,7 @@ declare global {
 		liveSearchData: {
 			nonce: string,
 			restUrl: string,
+			permalinkStructure: string,
 			strings: {
 				noResults: string
 				noTitle: string

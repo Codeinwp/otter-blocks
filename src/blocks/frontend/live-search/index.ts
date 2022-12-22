@@ -68,7 +68,9 @@ domReady( () => {
 
 		const params = postTypes.reduce( ( p, type ) => p + `&post_type[]=${type}`, `s=${search}` );
 
-		const response = await fetch( `${restUrl}?${params}`, options ).catch( error => {
+		// use '&' for plain permalinks
+		const symbol = window.liveSearchData.permalinkStructure.length > 0 ? '?' : '&';
+		const response = await fetch( `${restUrl}${symbol}${params}`, options ).catch( error => {
 			console.error( error.message );
 			return error;
 		});
