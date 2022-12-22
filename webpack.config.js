@@ -130,7 +130,9 @@ module.exports = [
 			countdown: './src/blocks/frontend/countdown/index.ts',
 			popup: './src/blocks/frontend/popup/index',
 			sticky: './src/blocks/frontend/sticky/index.ts',
-			accordion: './src/blocks/frontend/accordion/index.js'
+			accordion: './src/blocks/frontend/accordion/index.js',
+			'live-search': './src/blocks/frontend/live-search/index.ts',
+			'live-search-style': './src/blocks/frontend/live-search/style.scss'
 		},
 		output: {
 			path: path.resolve( __dirname, './build/blocks' ),

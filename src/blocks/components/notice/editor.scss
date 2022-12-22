@@ -16,6 +16,12 @@
 		}
 	}
 
+	&.is-help {
+		color: #50575e;
+		font-size: 12px;
+		padding: 10px;
+	}
+
 	.components-external-link {
 		display: flex;
 		flex-direction: row-reverse;
