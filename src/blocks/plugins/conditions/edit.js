@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { isEmpty } from 'lodash';
 
 import {
+	__experimentalToolsPanelItem as ToolsPanelItem,
 	BaseControl,
 	Button,
 	ExternalLink,
@@ -402,168 +403,175 @@ const Edit = ({
 	};
 
 	return (
-		<PanelBody
-			title={ __( 'Visibility Conditions', 'otter-blocks' ) }
-			initialOpen={ false }
+		<ToolsPanelItem
+			hasValue={ () => undefined !== attributes.otterConditions && Boolean( attributes.otterConditions?.length ) }
+			label={ __( 'Visibility Conditions', 'otter-blocks' ) }
+			onDeselect={ () => setAttributes({ otterConditions: undefined }) }
+			isShownByDefault={ false }
 		>
-			<p>{ __( 'Control the visibility of your blocks based on the following conditions.', 'otter-blocks' ) }</p>
+			<PanelBody
+				title={ __( 'Visibility Conditions', 'otter-blocks' ) }
+				initialOpen={ false }
+			>
+				<p>{ __( 'Control the visibility of your blocks based on the following conditions.', 'otter-blocks' ) }</p>
 
-			<p>{ __( 'Display the block if…', 'otter-blocks' ) }</p>
+				<p>{ __( 'Display the block if…', 'otter-blocks' ) }</p>
 
-			{ attributes.otterConditions && attributes.otterConditions.map( ( group, index ) => {
-				return (
-					<Fragment key={ index }>
-						<PanelTab
-							label={ __( 'Rule Group', 'otter-blocks' ) }
-							onDelete={ () => removeGroup( index ) }
-						>
-							{ group && group.map( ( i, n ) => (
-								<Fragment key={ `${ index }_${ n }` }>
-									<BaseControl
-										label={ __( 'Condition', 'otter-blocks' ) }
-										help={ flatConditions.find( condition => condition.value === ( i.type || 'none' ) )?.help }
-										id={ `o-conditions-${ index }-${ n }` }
-									>
-										<select
-											value={ i.type || '' }
-											onChange={ e => changeCondition( e.target.value, index, n ) }
-											className="components-select-control__input"
+				{ attributes.otterConditions && attributes.otterConditions.map( ( group, index ) => {
+					return (
+						<Fragment key={ index }>
+							<PanelTab
+								label={ __( 'Rule Group', 'otter-blocks' ) }
+								onDelete={ () => removeGroup( index ) }
+							>
+								{ group && group.map( ( i, n ) => (
+									<Fragment key={ `${ index }_${ n }` }>
+										<BaseControl
+											label={ __( 'Condition', 'otter-blocks' ) }
+											help={ flatConditions.find( condition => condition.value === ( i.type || 'none' ) )?.help }
 											id={ `o-conditions-${ index }-${ n }` }
 										>
-											<option value="none">{ __( 'Select a condition', 'otter-blocks' ) }</option>
+											<select
+												value={ i.type || '' }
+												onChange={ e => changeCondition( e.target.value, index, n ) }
+												className="components-select-control__input"
+												id={ `o-conditions-${ index }-${ n }` }
+											>
+												<option value="none">{ __( 'Select a condition', 'otter-blocks' ) }</option>
 
-											{ Object.keys( conditions ).map( i => {
-												return (
-													<optgroup label={ conditions[i].label } key={ i }>
-														{ conditions[i].conditions.map( o => <option value={ o.value } key={ o.value } disabled={ o?.isDisabled }>{ o.label }</option> ) }
-													</optgroup>
-												);
-											}) }
-										</select>
-									</BaseControl>
+												{ Object.keys( conditions ).map( i => {
+													return (
+														<optgroup label={ conditions[i].label } key={ i }>
+															{ conditions[i].conditions.map( o => <option value={ o.value } key={ o.value } disabled={ o?.isDisabled }>{ o.label }</option> ) }
+														</optgroup>
+													);
+												}) }
+											</select>
+										</BaseControl>
 
-									{ 'userRoles' === i.type && (
-										<FormTokenField
-											label={ __( 'User Roles', 'otter-blocks' ) }
-											value={ i.roles }
-											suggestions={ Object.keys( window.themeisleGutenberg.userRoles ) }
-											onChange={ roles => changeArrayValue( roles, index, n, 'roles' ) }
-											__experimentalExpandOnFocus={ true }
-											__experimentalValidateInput={ newValue => Object.keys( window.themeisleGutenberg.userRoles ).includes( newValue ) }
-										/>
-									) }
+										{ 'userRoles' === i.type && (
+											<FormTokenField
+												label={ __( 'User Roles', 'otter-blocks' ) }
+												value={ i.roles }
+												suggestions={ Object.keys( window.themeisleGutenberg.userRoles ) }
+												onChange={ roles => changeArrayValue( roles, index, n, 'roles' ) }
+												__experimentalExpandOnFocus={ true }
+												__experimentalValidateInput={ newValue => Object.keys( window.themeisleGutenberg.userRoles ).includes( newValue ) }
+											/>
+										) }
 
-									{ 'postAuthor' === i.type && (
-										<AuthorsFieldToken
-											label={ __( 'Post Author', 'otter-blocks' ) }
-											value={ i.authors }
-											onChange={ authors => changeArrayValue( authors, index, n, 'authors' ) }
-										/>
-									) }
+										{ 'postAuthor' === i.type && (
+											<AuthorsFieldToken
+												label={ __( 'Post Author', 'otter-blocks' ) }
+												value={ i.authors }
+												onChange={ authors => changeArrayValue( authors, index, n, 'authors' ) }
+											/>
+										) }
 
-									{ 'postCategory' === i.type && (
-										<CategoriesFieldToken
-											label={ __( 'Post Category', 'otter-blocks' ) }
-											value={ i.categories }
-											onChange={ categories => changeArrayValue( categories, index, n, 'categories' ) }
-										/>
-									) }
+										{ 'postCategory' === i.type && (
+											<CategoriesFieldToken
+												label={ __( 'Post Category', 'otter-blocks' ) }
+												value={ i.categories }
+												onChange={ categories => changeArrayValue( categories, index, n, 'categories' ) }
+											/>
+										) }
 
-									{ 'postType' === i.type && (
-										<FormTokenField
-											label={ __( 'Post Types', 'otter-blocks' ) }
-											value={ i.post_types }
-											suggestions={ postTypes }
-											onChange={ types => changeArrayValue( types, index, n, 'post_types' ) }
-											__experimentalExpandOnFocus={ true }
-											__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
-										/>
-									) }
+										{ 'postType' === i.type && (
+											<FormTokenField
+												label={ __( 'Post Types', 'otter-blocks' ) }
+												value={ i.post_types }
+												suggestions={ postTypes }
+												onChange={ types => changeArrayValue( types, index, n, 'post_types' ) }
+												__experimentalExpandOnFocus={ true }
+												__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
+											/>
+										) }
 
-									{ 'stripePurchaseHistory' === i.type && (
-										<Fragment>
-											{ Boolean( window.themeisleGutenberg.hasStripeAPI ) && (
-												<StripeControls
-													product={ i.product }
-													onChange={ product => changeValue( product, index, n, 'product' ) }
-												/>
-											) }
+										{ 'stripePurchaseHistory' === i.type && (
+											<Fragment>
+												{ Boolean( window.themeisleGutenberg.hasStripeAPI ) && (
+													<StripeControls
+														product={ i.product }
+														onChange={ product => changeValue( product, index, n, 'product' ) }
+													/>
+												) }
 
-											{ ! Boolean( window.themeisleGutenberg.hasStripeAPI ) && (
-												<p>
-													{ __( 'You need to set your Stripe API keys in the Otter Dashboard.', 'otter-blocks' ) }
-													{ ' ' }
-													<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Visit Dashboard', 'otter-blocks' ) }</ExternalLink>
-												</p>
-											) }
-										</Fragment>
-									) }
+												{ ! Boolean( window.themeisleGutenberg.hasStripeAPI ) && (
+													<p>
+														{ __( 'You need to set your Stripe API keys in the Otter Dashboard.', 'otter-blocks' ) }
+														{ ' ' }
+														<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Visit Dashboard', 'otter-blocks' ) }</ExternalLink>
+													</p>
+												) }
+											</Fragment>
+										) }
 
-									{ applyFilters( 'otter.blockConditions.controls', '', index, n, i, attributes.otterConditions, setAttributes, changeValue ) }
+										{ applyFilters( 'otter.blockConditions.controls', '', index, n, i, attributes.otterConditions, setAttributes, changeValue ) }
 
-									{ toggleVisibility.includes( i.type ) && (
-										<SelectControl
-											label={ __( 'If condition is true, the block should be:', 'otter-blocks' ) }
-											options={ [
-												{
-													value: true,
-													label: __( 'Visible', 'otter-blocks' )
-												},
-												{
-													value: false,
-													label: __( 'Hidden', 'otter-blocks' )
-												}
-											] }
-											value={ i.visibility }
-											onChange={ e => changeVisibility( e, index, n ) }
-										/>
-									) }
+										{ toggleVisibility.includes( i.type ) && (
+											<SelectControl
+												label={ __( 'If condition is true, the block should be:', 'otter-blocks' ) }
+												options={ [
+													{
+														value: true,
+														label: __( 'Visible', 'otter-blocks' )
+													},
+													{
+														value: false,
+														label: __( 'Hidden', 'otter-blocks' )
+													}
+												] }
+												value={ i.visibility }
+												onChange={ e => changeVisibility( e, index, n ) }
+											/>
+										) }
 
-									<Button
-										isDestructive
-										className="o-conditions__add"
-										onClick={ () => removeCondition( index, n ) }
-									>
-										{ __( 'Delete Condition', 'otter-blocks' ) }
-									</Button>
+										<Button
+											isDestructive
+											className="o-conditions__add"
+											onClick={ () => removeCondition( index, n ) }
+										>
+											{ __( 'Delete Condition', 'otter-blocks' ) }
+										</Button>
 
-									{ ( 1 < group.length && n !== group.length - 1 ) && (
-										<Separator label={ __( 'AND', 'otter-blocks' ) } />
-									) }
-								</Fragment>
-							) ) }
+										{ ( 1 < group.length && n !== group.length - 1 ) && (
+											<Separator label={ __( 'AND', 'otter-blocks' ) } />
+										) }
+									</Fragment>
+								) ) }
 
-							<Button
-								isSecondary
-								className="o-conditions__add"
-								onClick={ () => addNewCondition( index ) }
-							>
-								{ __( 'Add a New Condition', 'otter-blocks' ) }
-							</Button>
-						</PanelTab>
+								<Button
+									isSecondary
+									className="o-conditions__add"
+									onClick={ () => addNewCondition( index ) }
+								>
+									{ __( 'Add a New Condition', 'otter-blocks' ) }
+								</Button>
+							</PanelTab>
 
-						{ ( 1 < attributes.otterConditions.length && index !== attributes.otterConditions.length - 1 ) && (
-							<Separator label={ __( 'OR', 'otter-blocks' ) } />
-						) }
-					</Fragment>
-				);
-			}) }
+							{ ( 1 < attributes.otterConditions.length && index !== attributes.otterConditions.length - 1 ) && (
+								<Separator label={ __( 'OR', 'otter-blocks' ) } />
+							) }
+						</Fragment>
+					);
+				}) }
 
-			<Button
-				isSecondary
-				className="o-conditions__add"
-				onClick={ addGroup }
-			>
-				{ __( 'Add Rule Group', 'otter-blocks' ) }
-			</Button>
+				<Button
+					isSecondary
+					className="o-conditions__add"
+					onClick={ addGroup }
+				>
+					{ __( 'Add Rule Group', 'otter-blocks' ) }
+				</Button>
 
-			{ applyFilters( 'otter.blockConditions.notices', '' ) }
+				{ applyFilters( 'otter.blockConditions.notices', '' ) }
 
-			<div className="o-fp-wrap">
-				{ applyFilters( 'otter.feedback', '', 'conditions' ) }
-				{ applyFilters( 'otter.poweredBy', '' ) }
-			</div>
-		</PanelBody>
+				<div className="o-fp-wrap">
+					{ applyFilters( 'otter.feedback', '', 'conditions' ) }
+					{ applyFilters( 'otter.poweredBy', '' ) }
+				</div>
+			</PanelBody>
+		</ToolsPanelItem>
 	);
 };
 

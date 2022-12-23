@@ -20,11 +20,8 @@ import {
 } from '@wordpress/data';
 
 import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
-import { Fragment } from '@wordpress/element';
-import { MenuGroup, MenuItem } from '@wordpress/components';
 
 const BlocksExporter = () => {
-	const OtterControlTools = window?.otterComponents?.OtterControlTools;
 	const { blocks, count } = useSelect( ( select ) => {
 		const {
 			getSelectedBlockCount,
@@ -121,32 +118,11 @@ const BlocksExporter = () => {
 	};
 
 	return (
-		<Fragment>
-			{
-				OtterControlTools === undefined && (
-					<PluginBlockSettingsMenuItem
-						icon={ external }
-						label={ __( 'Export as JSON', 'otter-blocks' ) }
-						onClick={ exportBlocks }
-					/>
-				)
-			}
-
-			{
-				OtterControlTools !== undefined && (
-					<OtterControlTools order={3}>
-						<MenuGroup>
-							<MenuItem
-								icon={ external }
-								onClick={ exportBlocks }
-							>
-								{ __( 'Export as JSON', 'otter-blocks' ) }
-							</MenuItem>
-						</MenuGroup>
-					</OtterControlTools>
-				)
-			}
-		</Fragment>
+		<PluginBlockSettingsMenuItem
+			icon={ external }
+			label={ __( 'Export as JSON', 'otter-blocks' ) }
+			onClick={ exportBlocks }
+		/>
 	);
 };
 

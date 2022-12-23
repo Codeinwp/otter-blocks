@@ -10,8 +10,6 @@ import { __ } from '@wordpress/i18n';
 
 import { assign } from 'lodash';
 
-import { __experimentalToolsPanelItem as ToolsPanelItem } from '@wordpress/components';
-
 import { createHigherOrderComponent } from '@wordpress/compose';
 
 import { Fragment } from '@wordpress/element';
@@ -40,14 +38,7 @@ const BlockConditions = ( el, props ) => {
 		<Fragment>
 			{ el }
 
-			<ToolsPanelItem
-				hasValue={ () => undefined !== props.attributes.otterConditions && Boolean( props.attributes?.otterConditions?.length ) }
-				label={ __( 'Visibility Conditions', 'otter-blocks' ) }
-				onDeselect={ () => props.setAttributes({ otterConditions: undefined }) }
-				isShownByDefault={ false }
-			>
-				<Edit { ...props } />
-			</ToolsPanelItem>
+			<Edit { ...props } />
 		</Fragment>
 	);
 };

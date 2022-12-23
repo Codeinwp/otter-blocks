@@ -27,7 +27,6 @@ import './copy-paste/index.js';
 import './sticky/index.js';
 import './dynamic-content/index.js';
 import './welcome-guide/index.js';
-import '../components/otter-tools/index';
 import './feedback/index.js';
 import './bf-deal/index.js';
 import './otter-tools-inspector/index';

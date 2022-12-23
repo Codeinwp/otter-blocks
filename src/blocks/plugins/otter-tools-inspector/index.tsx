@@ -8,6 +8,8 @@ import { __experimentalToolsPanel as ToolsPanel } from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
+import { Fragment } from '@wordpress/element';
+
 import {
 	addFilter,
 	applyFilters
@@ -19,15 +21,18 @@ import {
 import './editor.scss';
 import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
 
+// @ts-ignore
+const shouldAppear = Object.keys( window.themeisleGutenberg?.hasModule ).some( ( i: string ) => Boolean( window.themeisleGutenberg?.hasModule[ i ]) );
+
 const withConditions = createHigherOrderComponent( BlockEdit => {
 	return props => {
 		const Inspector = useInspectorSlot( props.name );
 
 		return (
-			<div>
+			<Fragment>
 				<BlockEdit { ...props } />
 
-				{ props.isSelected && (
+				{ ( props.isSelected && shouldAppear ) && (
 					<Inspector>
 						<ToolsPanel
 							label={ __( 'Block Tools' ) }
@@ -37,7 +42,7 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 						</ToolsPanel>
 					</Inspector>
 				) }
-			</div>
+			</Fragment>
 		);
 	};
 }, 'withConditions' );

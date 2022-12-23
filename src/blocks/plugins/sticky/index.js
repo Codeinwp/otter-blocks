@@ -20,8 +20,6 @@ import { addFilter } from '@wordpress/hooks';
  */
 import './editor.scss';
 import Edit from './edit';
-import { MenuGroup, MenuItem } from '@wordpress/components';
-import { OtterControlTools } from '../../components/otter-tools';
 
 const EXCEPTED_BLOCK_CONDITIONS = [ '-item', 'form-' ]; // Exclude sub-blocks
 
@@ -53,31 +51,12 @@ const withStickyExtension = createHigherOrderComponent( BlockEdit => {
 				<Fragment>
 					<BlockEdit { ...props } />
 
-					{ ! EXCEPTED_BLOCK_CONDITIONS.some( cond => props.name?.includes( cond ) ) && (
-						<Fragment>
-
-							{
-								window?.themeisleGutenberg?.isBlockEditor && OtterControlTools === undefined && (
-									<PluginBlockSettingsMenuItem
-										icon="sticky"
-										label={ ! isSticky ? __( 'Transform to Sticky', 'otter-blocks' ) : __( 'Remove Sticky Element', 'otter-blocks' ) }
-										onClick={ toggleSticky }
-									/>
-								)
-							}
-
-
-							<OtterControlTools order={1}>
-								<MenuGroup>
-									<MenuItem
-										icon="sticky"
-										onClick={ toggleSticky }
-									>
-										{ ! isSticky ? __( 'Transform to Sticky', 'otter-blocks' ) : __( 'Remove Sticky Element', 'otter-blocks' ) }
-									</MenuItem>
-								</MenuGroup>
-							</OtterControlTools>
-						</Fragment>
+					{ ( ! EXCEPTED_BLOCK_CONDITIONS.some( cond => props.name?.includes( cond ) ) && Boolean( window?.themeisleGutenberg?.isBlockEditor ) ) && (
+						<PluginBlockSettingsMenuItem
+							icon="sticky"
+							label={ ! isSticky ? __( 'Transform to Sticky', 'otter-blocks' ) : __( 'Remove Sticky Element', 'otter-blocks' ) }
+							onClick={ toggleSticky }
+						/>
 					) }
 
 					{ props.attributes?.className?.includes( 'o-sticky' ) && (
