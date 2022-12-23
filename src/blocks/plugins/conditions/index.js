@@ -6,7 +6,11 @@ import classnames from 'classnames';
 /**
  * WordPress dependencies.
  */
+import { __ } from '@wordpress/i18n';
+
 import { assign } from 'lodash';
+
+import { __experimentalToolsPanelItem as ToolsPanelItem } from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
@@ -31,16 +35,22 @@ const addAttribute = ( props ) => {
 	return props;
 };
 
-const withConditions = createHigherOrderComponent( BlockEdit => {
-	return props => {
-		return (
-			<Fragment>
-				<BlockEdit { ...props } />
-				{ props.isSelected && <Edit { ...props } /> }
-			</Fragment>
-		);
-	};
-}, 'withConditions' );
+const BlockConditions = ( el, props ) => {
+	return (
+		<Fragment>
+			{ el }
+
+			<ToolsPanelItem
+				hasValue={ () => undefined !== props.attributes.otterConditions && Boolean( props.attributes?.otterConditions?.length ) }
+				label={ __( 'Visibility Conditions', 'otter-blocks' ) }
+				onDeselect={ () => props.setAttributes({ otterConditions: undefined }) }
+				isShownByDefault={ false }
+			>
+				<Edit { ...props } />
+			</ToolsPanelItem>
+		</Fragment>
+	);
+};
 
 const withConditionsIndicator = createHigherOrderComponent( BlockListBlock => {
 	return props => {
@@ -59,6 +69,6 @@ const withConditionsIndicator = createHigherOrderComponent( BlockListBlock => {
 
 if ( Boolean( window.themeisleGutenberg.hasModule.blockConditions ) ) {
 	addFilter( 'blocks.registerBlockType', 'themeisle-gutenberg/conditions-register', addAttribute );
-	addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/conditions-inspector', withConditions );
+	addFilter( 'otter.blockTools', 'themeisle-gutenberg/conditions-inspector', BlockConditions );
 	addFilter( 'editor.BlockListBlock', 'themeisle-gutenberg/contextual-indicators', withConditionsIndicator );
 }

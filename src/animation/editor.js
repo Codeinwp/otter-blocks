@@ -3,8 +3,6 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import { InspectorControls } from '@wordpress/block-editor';
-
 import {
 	Button,
 	PanelBody,
@@ -44,8 +42,6 @@ const AnimationType = {
 };
 
 import { memo } from '@wordpress/element';
-
-let Inspector = InspectorControls;
 
 export const updateAnimConfig = ( type, oldValue, newValue, callback, attributes, setAttributes ) => {
 	let template;
@@ -194,12 +190,8 @@ function AnimationControls({
 	};
 
 	useEffect( () => {
-		if ( window?.otterComponents?.useOtterTools ) {
-			Inspector = window.otterComponents.useOtterTools({
-				hasValue: () => Boolean( 'none' !== animation ),
-				label: __( 'Animations', 'otter-blocks' ),
-				onDeselect: () => updateAnimation( 'none' )
-			});
+		if ( undefined !== window?.blocksAnimation ) {
+			window.blocksAnimation.removeAnimation = () => updateAnimation( 'none' );
 		}
 	}, []);
 
@@ -213,77 +205,75 @@ function AnimationControls({
 	};
 
 	return (
-		<Inspector>
-			<PanelBody
-				title={ __( 'Animations', 'otter-blocks' ) }
-				initialOpen={ false }
+		<PanelBody
+			title={ __( 'Animations', 'otter-blocks' ) }
+			initialOpen={ false }
+		>
+			<div className="o-animations-control">
+				<AnimationPopover
+					animationsList={ animationsList }
+					updateAnimation={ updateAnimation }
+					currentAnimationLabel={ currentAnimationLabel }
+					setCurrentAnimationLabel={ setCurrentAnimationLabel }
+				/>
+
+				{ 'none' !== animation && (
+					<Fragment>
+						<SelectControl
+							label={ __( 'Delay', 'otter-blocks' ) }
+							value={ delay || 'none' }
+							options={ delayList }
+							onChange={  value => updateAnimConfig( AnimationType.default, delay, value, () => setDelay( value ), attributes, setAttributes ) }
+						/>
+
+						<SelectControl
+							label={ __( 'Speed', 'otter-blocks' ) }
+							value={ speed || 'none' }
+							options={ speedList }
+							onChange={ value => updateAnimConfig( AnimationType.default, speed, value, () => setSpeed( value ), attributes, setAttributes ) }
+						/>
+
+						<Button
+							variant="secondary"
+							onClick={ replayAnimation }
+						>
+							{ __( 'Replay Animation', 'otter-blocks' ) }
+						</Button>
+					</Fragment>
+				) }
+			</div>
+
+			<ControlPanelControl
+				label={ __( 'Count Animations', 'otter-blocks' ) }
 			>
-				<div className="o-animations-control">
-					<AnimationPopover
-						animationsList={ animationsList }
-						updateAnimation={ updateAnimation }
-						currentAnimationLabel={ currentAnimationLabel }
-						setCurrentAnimationLabel={ setCurrentAnimationLabel }
-					/>
+				<img
+					src={ typingPlaceholder }
+					alt={ _( 'Using Count Animation in the Block Editor', 'otter-blocks' ) }
+					className="otter-animations-count-image"
+				/>
 
-					{ 'none' !== animation && (
-						<Fragment>
-							<SelectControl
-								label={ __( 'Delay', 'otter-blocks' ) }
-								value={ delay || 'none' }
-								options={ delayList }
-								onChange={  value => updateAnimConfig( AnimationType.default, delay, value, () => setDelay( value ), attributes, setAttributes ) }
-							/>
+				<p>{ __( 'You can add counting animation from the format toolbar of this block.', 'otter-blocks' ) }</p>
+				<p>{ __( 'Note: This feature is not available in all the blocks.', 'otter-blocks' ) }</p>
+			</ControlPanelControl>
 
-							<SelectControl
-								label={ __( 'Speed', 'otter-blocks' ) }
-								value={ speed || 'none' }
-								options={ speedList }
-								onChange={ value => updateAnimConfig( AnimationType.default, speed, value, () => setSpeed( value ), attributes, setAttributes ) }
-							/>
+			<ControlPanelControl
+				label={ __( 'Typing Animations', 'otter-blocks' ) }
+			>
+				<img
+					src={ countPlaceholder }
+					alt={ _( 'Using Typing Animation in the Block Editor', 'otter-blocks' ) }
+					className="otter-animations-count-image"
+				/>
 
-							<Button
-								variant="secondary"
-								onClick={ replayAnimation }
-							>
-								{ __( 'Replay Animation', 'otter-blocks' ) }
-							</Button>
-						</Fragment>
-					) }
-				</div>
+				<p>{ __( 'You can add typing animation from the format toolbar of this block.', 'otter-blocks' ) }</p>
+				<p>{ __( 'Note: This feature is not available in all the blocks.', 'otter-blocks' ) }</p>
+			</ControlPanelControl>
 
-				<ControlPanelControl
-					label={ __( 'Count Animations', 'otter-blocks' ) }
-				>
-					<img
-						src={ typingPlaceholder }
-						alt={ _( 'Using Count Animation in the Block Editor', 'otter-blocks' ) }
-						className="otter-animations-count-image"
-					/>
-
-					<p>{ __( 'You can add counting animation from the format toolbar of this block.', 'otter-blocks' ) }</p>
-					<p>{ __( 'Note: This feature is not available in all the blocks.', 'otter-blocks' ) }</p>
-				</ControlPanelControl>
-
-				<ControlPanelControl
-					label={ __( 'Typing Animations', 'otter-blocks' ) }
-				>
-					<img
-						src={ countPlaceholder }
-						alt={ _( 'Using Typing Animation in the Block Editor', 'otter-blocks' ) }
-						className="otter-animations-count-image"
-					/>
-
-					<p>{ __( 'You can add typing animation from the format toolbar of this block.', 'otter-blocks' ) }</p>
-					<p>{ __( 'Note: This feature is not available in all the blocks.', 'otter-blocks' ) }</p>
-				</ControlPanelControl>
-
-				<div className="o-fp-wrap">
-					{ applyFilters( 'otter.feedback', '', 'animations' ) }
-					{ applyFilters( 'otter.poweredBy', '' ) }
-				</div>
-			</PanelBody>
-		</Inspector>
+			<div className="o-fp-wrap">
+				{ applyFilters( 'otter.feedback', '', 'animations' ) }
+				{ applyFilters( 'otter.poweredBy', '' ) }
+			</div>
+		</PanelBody>
 	);
 }
 
