@@ -69,6 +69,6 @@ const withConditionsIndicator = createHigherOrderComponent( BlockListBlock => {
 
 if ( Boolean( window.themeisleGutenberg.hasModule.blockConditions ) ) {
 	addFilter( 'blocks.registerBlockType', 'themeisle-gutenberg/conditions-register', addAttribute );
-	addFilter( 'otter.blockTools', 'themeisle-gutenberg/conditions-inspector', BlockConditions );
+	addFilter( 'otter.blockTools', 'themeisle-gutenberg/conditions-inspector', BlockConditions, 3 );
 	addFilter( 'editor.BlockListBlock', 'themeisle-gutenberg/contextual-indicators', withConditionsIndicator );
 }

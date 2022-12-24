@@ -124,7 +124,7 @@ const withInspectorControls = createHigherOrderComponent( BlockEdit => {
 addFilter( 'blocks.registerBlockType', 'themeisle-custom-css/attribute', addAttribute );
 
 if ( Boolean( window?.blocksCSS?.hasOtter ) ) {
-	addFilter( 'otter.blockTools', 'themeisle-custom-css/with-inspector-controls', BlockCSSWrapper );
+	addFilter( 'otter.blockTools', 'themeisle-custom-css/with-inspector-controls', BlockCSSWrapper, 2 );
 } else {
 	addFilter( 'editor.BlockEdit', 'themeisle-custom-css/with-inspector-controls', withInspectorControls );
 }

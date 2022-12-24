@@ -72,7 +72,7 @@ const withInspectorControls = createHigherOrderComponent( BlockEdit => {
 }, 'withInspectorControl' );
 
 if ( Boolean( window?.blocksAnimation?.hasOtter ) ) {
-	addFilter( 'otter.blockTools', 'themeisle-animations/with-inspector-controls', BlockAnimation );
+	addFilter( 'otter.blockTools', 'themeisle-animations/with-inspector-controls', BlockAnimation, 1 );
 } else {
 	addFilter( 'editor.BlockEdit', 'themeisle-animations/with-inspector-controls', withInspectorControls );
 }

@@ -59,4 +59,4 @@ const StickyExtension = ( el, props ) => {
 	return el;
 };
 
-addFilter( 'otter.blockTools', 'themeisle-gutenberg/sticky-extension', StickyExtension );
+addFilter( 'otter.blockTools', 'themeisle-gutenberg/sticky-extension', StickyExtension, 4 );
