@@ -30,6 +30,7 @@ import './welcome-guide/index.js';
 import './feedback/index.js';
 import './bf-deal/index.js';
 import './otter-tools-inspector/index';
+import './live-search/index.js';
 
 const icon = <Icon icon={ otterIcon } />;
 
