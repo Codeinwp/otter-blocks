@@ -21,9 +21,6 @@ import {
 import './editor.scss';
 import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
 
-// @ts-ignore
-const shouldAppear = Object.keys( window.themeisleGutenberg?.hasModule ).some( ( i: string ) => Boolean( window.themeisleGutenberg?.hasModule[ i ]) );
-
 const withConditions = createHigherOrderComponent( BlockEdit => {
 	return props => {
 		const Inspector = useInspectorSlot( props.name );
@@ -32,7 +29,7 @@ const withConditions = createHigherOrderComponent( BlockEdit => {
 			<Fragment>
 				<BlockEdit { ...props } />
 
-				{ ( props.isSelected && shouldAppear ) && (
+				{ props.isSelected && (
 					<Inspector>
 						<ToolsPanel
 							label={ __( 'Block Tools' ) }
