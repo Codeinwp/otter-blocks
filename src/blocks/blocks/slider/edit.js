@@ -151,6 +151,7 @@ const Edit = ({
 					peek: attributes.peek,
 					autoplay: false,
 					animationTimingFunc: attributes.transition || 'ease',
+					direction: window.themeisleGutenberg.isRTL ? 'rtl' : 'ltr',
 					breakpoints: {
 						800: {
 							perView: 1,
@@ -179,6 +180,7 @@ const Edit = ({
 				peek: attributes.peek,
 				autoplay: false,
 				animationTimingFunc: attributes.transition || 'ease',
+				direction: window.themeisleGutenberg.isRTL ? 'rtl' : 'ltr',
 				breakpoints: {
 					800: {
 						perView: 1,

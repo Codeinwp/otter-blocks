@@ -268,6 +268,7 @@ class Registration {
 				'isAncestorTypeAvailable' => version_compare( get_bloginfo( 'version' ), '5.9.22', '>=' ),
 				'version'                 => OTTER_BLOCKS_VERSION,
 				'showBFDeal'              => Pro::bf_deal(),
+				'isRTL'                   => is_rtl(),
 			)
 		);
 
@@ -578,6 +579,14 @@ class Registration {
 			);
 
 			wp_script_add_data( 'otter-slider', 'async', true );
+
+			wp_localize_script(
+				'otter-slider',
+				'themeisleGutenbergSlider',
+				array(
+					'isRTL' => is_rtl(),
+				)
+			);
 		}
 
 		if ( ! self::$scripts_loaded['tabs'] && has_block( 'themeisle-blocks/tabs', $post ) ) {
