@@ -14,6 +14,7 @@ import { addFilter } from '@wordpress/hooks';
 /**
  * Internal dependencies.
  */
+import { masonryIcon as icon } from '../../helpers/icons.js';
 import Edit from './edit.js';
 
 const addAttribute = ( props ) => {
@@ -54,6 +55,7 @@ registerBlockVariation( 'core/gallery', {
 	name: 'themeisle-gutenberg/masonry',
 	title: __( 'Masonry', 'otter-blocks' ),
 	description: __( 'Display multiple images in a rich masonry layout.', 'otter-blocks' ),
+	icon,
 	category: 'themeisle-blocks',
 	attributes: {
 		isMasonry: true

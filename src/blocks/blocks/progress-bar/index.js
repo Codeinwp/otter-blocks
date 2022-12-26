@@ -9,6 +9,7 @@ import { registerBlockType } from '@wordpress/blocks';
  * Internal dependencies
  */
 import metadata from './block.json';
+import { progressIcon as icon } from '../../helpers/icons.js';
 import edit from './edit.js';
 import save from './save.js';
 import transforms from './transforms.js';
@@ -19,7 +20,7 @@ registerBlockType( name, {
 	...metadata,
 	title: __( 'Progress Bar', 'otter-blocks' ),
 	description: __( 'Show your progress with a beautiful Progress Bar block. Powered by Otter.', 'otter-blocks' ),
-	icon: 'minus',
+	icon,
 	keywords: [
 		'progress',
 		'bar',

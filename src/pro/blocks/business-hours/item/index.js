@@ -12,7 +12,7 @@ import metadata from './block.json';
 import edit from './edit.js';
 import save from './save.js';
 
-const { mapIcon: icon } = window.otterUtils.icons;
+const { businessHoursIcon: icon } = window.otterUtils.icons;
 
 const { name } = metadata;
 
