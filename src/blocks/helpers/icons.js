@@ -66,7 +66,7 @@ export const otterIconColored = ({ className }) => {
 
 export const accordionIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M20 10H4v5h16v-5ZM4 9a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H4Zm16-4H4v2h16V5ZM4 4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H4Zm16 14H4v2h16v-2ZM4 17a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H4Z" clip-rule="evenodd"/>
 		</SVG>
 	);
@@ -74,7 +74,7 @@ export const accordionIcon = () => {
 
 export const accordionItemIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path d="M3 10a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4Z"/>
 			<Path fill-rule="evenodd" d="M20 10H4v4h16v-4ZM4 9a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1H4Zm16-4H4v2h16V5ZM4 4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H4Zm16 13H4v2h16v-2ZM4 16a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H4Z" clip-rule="evenodd"/>
 		</SVG>
@@ -83,7 +83,7 @@ export const accordionItemIcon = () => {
 
 export const headingIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path d="M15.999 6.455v12.39h.651c.364 0 .546.133.546.399v.357c0 .266-.182.399-.546.399h-2.541c-.364 0-.546-.133-.546-.399v-.357c0-.266.182-.399.546-.399h.651v-5.88H6.843v5.88h.651c.364 0 .546.133.546.399v.357c0 .266-.182.399-.546.399H4.953c-.364 0-.546-.133-.546-.399v-.357c0-.266.182-.399.546-.399h.651V6.455h-.651c-.364 0-.546-.133-.546-.399v-.357c0-.266.182-.399.546-.399h2.541c.364 0 .546.133.546.399v.357c0 .266-.182.399-.546.399h-.651v5.355h7.917V6.455h-.651c-.364 0-.546-.133-.546-.399v-.357c0-.266.182-.399.546-.399h2.541c.364 0 .546.133.546.399v.357c0 .266-.182.399-.546.399h-.651Z"/>
 			<Path fill-rule="evenodd" d="M17.5 3a.5.5 0 0 1 .5-.5h4a.5.5 0 0 1 0 1h-4a.5.5 0 0 1-.5-.5Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M20 5.5a.5.5 0 0 1-.5-.5V1a.5.5 0 0 1 1 0v4a.5.5 0 0 1-.5.5Z" clip-rule="evenodd"/>
@@ -93,7 +93,7 @@ export const headingIcon = () => {
 
 export const buttonsIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M20 5H4v5h16V5ZM4 4a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H4Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M5.5 7a.5.5 0 0 0 0 1h13a.5.5 0 0 0 0-1h-13ZM20 14H4v5h16v-5ZM4 13a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-5a1 1 0 0 0-1-1H4Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M5.618 16a.5.5 0 0 0 0 1h12.764a.5.5 0 0 0 0-1H5.618Z" clip-rule="evenodd"/>
@@ -103,7 +103,7 @@ export const buttonsIcon = () => {
 
 export const buttonIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M20 9H4v5h16V9ZM4 8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H4Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M5.618 11a.5.5 0 0 0 0 1h12.764a.5.5 0 0 0 0-1H5.618Z" clip-rule="evenodd"/>
 		</SVG>
@@ -112,7 +112,7 @@ export const buttonIcon = () => {
 
 export const circleIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18Zm0-1.346a7.654 7.654 0 1 1 0-15.308 7.654 7.654 0 0 1 0 15.308ZM12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10Zm0-3.346a6.654 6.654 0 1 1 0-13.308 6.654 6.654 0 0 1 0 13.308Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M6.005 18.713a9 9 0 0 1-2.115-2.81.355.355 0 0 1 .01-.335.615.615 0 0 1 .378-.296c.316-.091.812.079 1.128.615a7.655 7.655 0 1 0 8.1-11.392c-.61-.122-.934-.535-.951-.864a.615.615 0 0 1 .155-.454.355.355 0 0 1 .314-.119 9 9 0 1 1-7.019 15.655Zm-3.016-2.377c-.4-.832.123-1.768 1.011-2.025.888-.256 1.798.272 2.267 1.068a6.655 6.655 0 1 0 7.042-9.903c-.905-.182-1.703-.869-1.753-1.791-.049-.923.664-1.725 1.581-1.62A10 10 0 1 1 2.99 16.337Z" clip-rule="evenodd"/>
 			<Path d="M4.182 14.868c-.867.318-1.324 1.289-.866 2.091A10 10 0 1 0 13.921 2.186c-.906-.177-1.68.566-1.704 1.49-.024.923.717 1.671 1.606 1.924a6.654 6.654 0 1 1-7.304 10.174c-.524-.761-1.47-1.224-2.337-.906Z"/>
@@ -123,7 +123,7 @@ export const circleIcon = () => {
 
 export const countdownIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M9 9H3v6h6V9ZM3 8a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H3Zm18 1h-6v6h6V9Zm-6-1a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1h-6Z" clip-rule="evenodd"/>
 			<Path d="M11 10a1 1 0 1 1 2 0 1 1 0 1 1-2 0Zm0 4a1 1 0 1 1 2 0 1 1 0 1 1-2 0Z"/>
 		</SVG>
@@ -132,7 +132,7 @@ export const countdownIcon = () => {
 
 export const flipIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M11.5 7V4h1v3A2.5 2.5 0 0 0 15 9.5h4v1h-4A3.5 3.5 0 0 1 11.5 7Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M11 4H5v16h14v-8a8 8 0 0 0-8-8ZM5 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-8a9 9 0 0 0-9-9H5Z" clip-rule="evenodd"/>
 		</SVG>
@@ -141,7 +141,7 @@ export const flipIcon = () => {
 
 export const faIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M20 4H4v16h16V4ZM4 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H4Z" clip-rule="evenodd"/>
 			<Path d="M11.776 7.454a.25.25 0 0 1 .448 0l1.187 2.406a.25.25 0 0 0 .189.136l2.654.386a.25.25 0 0 1 .139.427l-1.921 1.872a.25.25 0 0 0-.072.221l.453 2.644a.25.25 0 0 1-.362.263l-2.375-1.248a.25.25 0 0 0-.232 0L9.509 15.81a.25.25 0 0 1-.362-.263l.453-2.644a.25.25 0 0 0-.072-.221l-1.92-1.872a.25.25 0 0 1 .138-.427l2.654-.386a.25.25 0 0 0 .189-.136l1.187-2.406Z"/>
 		</SVG>
@@ -150,7 +150,7 @@ export const faIcon = () => {
 
 export const formIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M19 3H5v18h14V3ZM5 2a1 1 0 0 0-1 1v18a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H5Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M17 5H7v2h10V5ZM7 4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H7Zm10 7H7v1h10v-1ZM7 10a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-1a1 1 0 0 0-1-1H7Zm10 5H7v4h10v-4ZM7 14a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1H7Z" clip-rule="evenodd"/>
 		</SVG>
@@ -159,7 +159,7 @@ export const formIcon = () => {
 
 export const formFieldIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M19 10H5v4h14v-4ZM5 9a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1H5Z" clip-rule="evenodd"/>
 			<Path d="M6 12.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 0 1h-8a.5.5 0 0 1-.5-.5Z"/>
 		</SVG>
@@ -168,7 +168,7 @@ export const formFieldIcon = () => {
 
 export const googleMapIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M16.453 13.552C17.429 11.962 18 10.499 18 9.125 18 5.725 15.297 3 12 3S6 5.726 6 9.125c0 1.374.57 2.837 1.547 4.427.975 1.586 2.285 3.19 3.648 4.859l.004.004.801.983c.267-.33.535-.657.801-.983l.004-.004c1.363-1.669 2.673-3.273 3.648-4.86Zm-3.813 6.645c.31-.384.624-.769.939-1.153C16.286 15.732 19 12.412 19 9.125 19 5.19 15.866 2 12 2S5 5.19 5 9.125c0 3.287 2.714 6.607 5.421 9.919.315.384.629.769.939 1.153.216.268.43.535.64.803.21-.268.424-.535.64-.803ZM15.5 9a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Zm-1 0a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0Z" clip-rule="evenodd"/>
 		</SVG>
 	);
@@ -176,7 +176,7 @@ export const googleMapIcon = () => {
 
 export const iconListIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M20 6H9v2h11V6ZM9 5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H9Zm11 6H9v2h11v-2ZM9 10a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H9Zm11 6H9v2h11v-2ZM9 15a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H9ZM6 6H4v2h2V6ZM4 5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4Zm2 6H4v2h2v-2Zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H4Zm2 6H4v2h2v-2Zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H4Z" clip-rule="evenodd"/>
 		</SVG>
 	);
@@ -184,7 +184,7 @@ export const iconListIcon = () => {
 
 export const iconListItemIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M20 6H9v2h11V6ZM9 5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H9Z" clip-rule="evenodd"/>
 			<Path d="M8 11a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-2Z"/>
 			<Path fill-rule="evenodd" d="M20 11H9v2h11v-2ZM9 10a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H9Zm11 6H9v2h11v-2ZM9 15a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H9ZM6 6H4v2h2V6ZM4 5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H4Z" clip-rule="evenodd"/>
@@ -196,7 +196,7 @@ export const iconListItemIcon = () => {
 
 export const mapIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M8.872 8.64a.5.5 0 0 0-.41 0l-5.667 2.55a.5.5 0 0 0-.295.457v8.806a.5.5 0 0 0 .705.456l4.846-2.18a1.5 1.5 0 0 1 1.231 0l5.846 2.63a.5.5 0 0 0 .41 0l5.667-2.55a.5.5 0 0 0 .295-.456V9.547a.5.5 0 0 0-.705-.456l-4.846 2.18a1.5 1.5 0 0 1-1.231 0l-5.846-2.63Zm-.82-.911a1.5 1.5 0 0 1 1.23 0l5.846 2.63a.5.5 0 0 0 .41 0l4.846-2.18A1.5 1.5 0 0 1 22.5 9.547v8.806a1.5 1.5 0 0 1-.884 1.368l-5.667 2.55a1.5 1.5 0 0 1-1.231 0l-5.846-2.63a.5.5 0 0 0-.41 0l-4.846 2.18A1.5 1.5 0 0 1 1.5 20.453v-8.806a1.5 1.5 0 0 1 .884-1.368l5.667-2.55Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M16.515 13.662C18.255 11.396 20 9.123 20 6.875 20 4.183 17.985 2 15.5 2S11 4.183 11 6.875c0 2.25 1.745 4.52 3.485 6.787.343.446.686.892 1.015 1.338.33-.446.672-.892 1.015-1.338ZM15.5 8.5a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm-2.4 6.2a.5.5 0 0 1 .7-.1l4 3a.5.5 0 0 1-.6.8l-4-3a.5.5 0 0 1-.1-.7Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M17.9 14.7a.5.5 0 0 0-.7-.1l-4 3a.5.5 0 0 0 .6.8l4-3a.5.5 0 0 0 .1-.7Z" clip-rule="evenodd"/>
@@ -206,7 +206,7 @@ export const mapIcon = () => {
 
 export const lottieIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M16.917 5.26c.302-.046.747-.01.58-.01a.75.75 0 0 1 .007 1.5.879.879 0 0 1-.2-.014c-.034-.006-.05-.01-.16.007-.128.02-.367.086-.71.33-.707.502-1.83 1.74-3.235 4.74-1.464 3.126-2.915 4.744-4.07 5.578-.579.418-1.078.636-1.456.747a2.858 2.858 0 0 1-.464.099 1.897 1.897 0 0 1-.2.013h-.033s-.002 0 .024-.75l-.026.75a.75.75 0 0 1 .029-1.5H7m.003 0a1.372 1.372 0 0 0 .246-.05c.21-.063.556-.203 1.001-.524.891-.644 2.2-2.03 3.591-5 1.45-3.095 2.709-4.605 3.723-5.326.517-.367.974-.531 1.353-.59" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M20 4H4v16h16V4ZM4 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H4Z" clip-rule="evenodd"/>
 		</SVG>
@@ -215,7 +215,7 @@ export const lottieIcon = () => {
 
 export const popupIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M3 9.5a.5.5 0 0 0-.5.5v11a.5.5 0 0 0 .5.5h13a.5.5 0 0 0 .5-.5v-3.5a.5.5 0 0 1 1 0V21a1.5 1.5 0 0 1-1.5 1.5H3A1.5 1.5 0 0 1 1.5 21V10A1.5 1.5 0 0 1 3 8.5h1.531a.5.5 0 1 1 0 1H3Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M21 3H8v11h13V3ZM8 2a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h13a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H8Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M14.45 4.55h4.5a.5.5 0 0 1 .5.5v4.5a.5.5 0 1 1-1 0V6.257l-4.096 4.097a.5.5 0 0 1-.707-.708l4.096-4.096H14.45a.5.5 0 0 1 0-1Z" clip-rule="evenodd"/>
@@ -225,7 +225,7 @@ export const popupIcon = () => {
 
 export const postsIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M7 5H5v2h2V5ZM5 4a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1H5Zm2 7H5v2h2v-2Zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H5Zm2 7H5v2h2v-2Zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H5Zm8-11h-2v2h2V5Zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-2Zm2 7h-2v2h2v-2Zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-2Zm2 7h-2v2h2v-2Zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-2Zm8-11h-2v2h2V5Zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V5a1 1 0 0 0-1-1h-2Zm2 7h-2v2h2v-2Zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-2Zm2 7h-2v2h2v-2Zm-2-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-2Z" clip-rule="evenodd"/>
 		</SVG>
 	);
@@ -233,7 +233,7 @@ export const postsIcon = () => {
 
 export const progressIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M21 10H3v4h18v-4ZM3 9a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1H3Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M13 10H3v4h10a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1ZM3 9a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h10a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2H3Z" clip-rule="evenodd"/>
 		</SVG>
@@ -242,7 +242,7 @@ export const progressIcon = () => {
 
 export const reviewIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M1.717 8.588a.5.5 0 0 1 .695.13l2.264 3.297a.5.5 0 1 1-.825.566L1.588 9.283a.5.5 0 0 1 .13-.695Zm20.566 0a.5.5 0 0 1 .13.695l-2.264 3.298a.5.5 0 1 1-.825-.566l2.264-3.298a.5.5 0 0 1 .695-.13Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M19 13H5v7h14v-7ZM5 12a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7a1 1 0 0 0-1-1H5Z" clip-rule="evenodd"/>
 			<Path d="M11.776 3.454a.25.25 0 0 1 .448 0l1.04 2.108a.25.25 0 0 0 .189.137l2.326.338a.25.25 0 0 1 .138.426l-1.683 1.64a.25.25 0 0 0-.072.222l.397 2.316a.25.25 0 0 1-.362.264l-2.08-1.094a.25.25 0 0 0-.233 0l-2.08 1.094a.25.25 0 0 1-.363-.264l.397-2.316a.25.25 0 0 0-.072-.221L8.083 6.463a.25.25 0 0 1 .139-.426l2.325-.338a.25.25 0 0 0 .189-.137l1.04-2.108Z"/>
@@ -252,7 +252,7 @@ export const reviewIcon = () => {
 
 export const columnsIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M21 4H3v16h18V4ZM3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H3Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M19 15H5v3h14v-3ZM5 14a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1H5Zm5-8H5v6h5V6ZM5 5a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H5Zm14 1h-5v1h5V6Zm-5-1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-5Zm5 5h-5v2h5v-2Zm-5-1a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1h-5Z" clip-rule="evenodd"/>
 		</SVG>
@@ -261,7 +261,7 @@ export const columnsIcon = () => {
 
 export const columnIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M21 4H3v16h18V4ZM3 3a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h18a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H3Z" clip-rule="evenodd"/>
 			<Path d="M4 6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6Z"/>
 			<Path fill-rule="evenodd" d="M7 6H5v12h2V6ZM5 5a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1H5Zm8 1h-2v12h2V6Zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2Zm8 1h-2v12h2V6Zm-2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h2a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1h-2Z" clip-rule="evenodd"/>
@@ -271,7 +271,7 @@ export const columnIcon = () => {
 
 export const sharingIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="m14.69 6.154-6.715 4.268a.5.5 0 0 1-.537-.844l6.716-4.268.536.844Zm-7.122 7.094a.5.5 0 0 1 .684-.18l6.432 3.752-.504.864-6.432-3.752a.5.5 0 0 1-.18-.684Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M17 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm0 12a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM6 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4Zm0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clip-rule="evenodd"/>
 		</SVG>
@@ -280,7 +280,7 @@ export const sharingIcon = () => {
 
 export const sliderIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M2 5H1a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1h1v-1H1V6h1V5Zm20 14h1V6h-1V5h1a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-1v-1Zm-6.5-8a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm0 1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm-8-3.87v8.37h9.207L7.5 8.13Zm-1-.904a.6.6 0 0 1 1.004-.444l10.64 9.674a.6.6 0 0 1-.403 1.044H7.1a.6.6 0 0 1-.6-.6V7.226Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M3 3v18a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1Zm1 0v18h16V3H4Z" clip-rule="evenodd"/>
 		</SVG>
@@ -289,7 +289,7 @@ export const sliderIcon = () => {
 
 export const tabsIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M11.726 4.722c-1.033-.345-2.398-.243-3.628.003a.5.5 0 0 1-.196-.98c1.27-.255 2.851-.403 4.14.028.658.22 1.257.596 1.688 1.199.431.602.663 1.386.663 2.366a.5.5 0 0 1-1 0c0-.821-.193-1.388-.476-1.784-.283-.396-.688-.664-1.191-.832Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M15.726 4.722c-1.033-.345-2.398-.243-3.628.003a.5.5 0 0 1-.196-.98c1.27-.255 2.851-.403 4.14.028.658.22 1.257.596 1.688 1.199.431.602.663 1.386.663 2.366a.5.5 0 0 1-1 0c0-.821-.192-1.388-.476-1.784-.283-.396-.688-.664-1.192-.832Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="m8.449 7.878-.091-.9-.035-.365c-.073-.795-.126-1.366-.5-1.83C7.468 4.338 6.57 3.763 4 3.887v16.01h16V7.877H8.449ZM3 3.866v16.03a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V7.878a1 1 0 0 0-1-1H9.353l-.03-.33C9.182 4.893 8.99 2.632 3.91 2.891a.968.968 0 0 0-.91.975Z" clip-rule="evenodd"/>
@@ -299,7 +299,7 @@ export const tabsIcon = () => {
 
 export const tabsItemIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="m8.449 8.002-.091-.9-.035-.365c-.073-.793-.126-1.362-.499-1.826C7.467 4.468 6.57 3.893 4 4.017V20h16V8.002H8.449ZM3 3.996V20a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V8.002a1 1 0 0 0-1-1H9.353l-.03-.33C9.182 5.02 8.99 2.762 3.91 3.02a.968.968 0 0 0-.91.976Z" clip-rule="evenodd"/>
 		</SVG>
 	);
@@ -307,7 +307,7 @@ export const tabsItemIcon = () => {
 
 export const masonryIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M14 3H3v4h11V3ZM3 2a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H3Zm6 9H3v10h6V11Zm-6-1a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V11a1 1 0 0 0-1-1H3Zm18-7h-3v4h3V3Zm-3-1a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1h-3Zm3 9h-8v3h8v-3Zm-8-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-8Zm8 8h-8v3h8v-3Zm-8-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1h-8Z" clip-rule="evenodd"/>
 		</SVG>
 	);
@@ -315,7 +315,7 @@ export const masonryIcon = () => {
 
 export const searchIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M13.5 6C10.5 6 8 8.5 8 11.5c0 1.1.3 2.1.9 3l-3.4 3 1 1.1 3.4-2.9c1 .9 2.2 1.4 3.6 1.4 3 0 5.5-2.5 5.5-5.5C19 8.5 16.5 6 13.5 6zm0 9.5c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z" clip-rule="evenodd"/>
 		</SVG>
 	);
@@ -323,7 +323,7 @@ export const searchIcon = () => {
 
 export const cartIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<path d="M11 18.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm6 0a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/>
 			<path fill-rule="evenodd" d="M2.5 4a.5.5 0 0 1 .5-.5h.78a1.5 1.5 0 0 1 1.422 1.026L6.36 8h12.286a1.5 1.5 0 0 1 1.434 1.941l-1.385 4.5a1.5 1.5 0 0 1-1.434 1.059H8.74a1.5 1.5 0 0 1-1.434-1.059L5.524 8.653l-1.27-3.811a.5.5 0 0 0-.475-.342H3a.5.5 0 0 1-.5-.5Zm4.177 5 1.584 5.147a.5.5 0 0 0 .478.353h8.522a.5.5 0 0 0 .478-.353l1.385-4.5A.5.5 0 0 0 18.646 9H6.677Z" clip-rule="evenodd"/>
 		</SVG>
@@ -332,7 +332,7 @@ export const cartIcon = () => {
 
 export const businessHoursIcon = () => {
 	return (
-		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon">
+		<SVG viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="o-block-icon" width="24" height="24">
 			<Path fill-rule="evenodd" d="M16.347 8.36a.477.477 0 0 1-.694 0l-3.12-3.243L9.415 8.36a.477.477 0 0 1-.693 0 .524.524 0 0 1 0-.72l3.466-3.604a.48.48 0 0 1 .693 0l3.467 3.604a.524.524 0 0 1 0 .72Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M20 9H4v10h16V9ZM4 8h16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" clip-rule="evenodd"/>
 			<Path fill-rule="evenodd" d="M8 15.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5Zm-3-3a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13a.5.5 0 0 1-.5-.5Z" clip-rule="evenodd"/>
