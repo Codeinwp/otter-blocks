@@ -12,6 +12,9 @@ import {
 import apiFetch from '@wordpress/api-fetch';
 
 import {
+	__experimentalNavigatorProvider as NavigatorProvider,
+	__experimentalNavigatorScreen as NavigatorScreen,
+	__experimentalUseNavigator as useNavigator,
 	Button,
 	PanelBody,
 	PanelRow,
@@ -37,13 +40,50 @@ import {
 
 import { applyFilters } from '@wordpress/hooks';
 
+import {
+	chevronRightSmall,
+	chevronLeftSmall
+} from '@wordpress/icons';
+
 /**
  * Internal dependencies
  */
 import './editor.scss';
 import GlobalDefaults from './global-defaults/index.js';
 import defaultsAttrs from './global-defaults/defaults.js';
+import Accordion from './global-defaults/controls/accordion.js';
+import AdvancedHeading from './global-defaults/controls/advanced-heading.js';
+import ButtonBlock from './global-defaults/controls/button.js';
+import ButtonGroup from './global-defaults/controls/button-group.js';
+import FontAwesomeIcons from './global-defaults/controls/font-awesome-icons.js';
+import SectionColumns from './global-defaults/controls/section-columns.js';
+import SectionColumn from './global-defaults/controls/section-column.js';
+import ReviewControl from './global-defaults/controls/review.js';
+import Form from './global-defaults/controls/form.js';
 import { otterIconColored } from '../../helpers/icons.js';
+
+export let NavigatorButton = ({
+	path,
+	isBack = false,
+	onClickAction = () => {},
+	...props
+}) => {
+	const navigator = useNavigator();
+
+	return (
+		<Button
+			onClick={ () => {
+				if ( undefined !== navigator.push ) {
+					navigator.push( path, { isBack });
+				} else {
+					navigator.goTo( path, { isBack });
+				}
+				onClickAction();
+			} }
+			{ ...props }
+		/>
+	);
+};
 
 const Options = () => {
 	const { isOnboardingVisible } = useSelect( select => {
@@ -103,6 +143,8 @@ const Options = () => {
 	const [ canUser, setCanUser ] = useState( false );
 	const [ isAPILoaded, setAPILoaded ] = useState( false );
 	const [ blockDefaults, setBlockDefaults ] = useState({});
+	const [ selectedBlock, setSelectedBlock ] = useState( undefined );
+	const [ isLoading, setLoading ] = useState( false );
 
 	const settingsRef = useRef( null );
 
@@ -162,6 +204,53 @@ const Options = () => {
 		});
 	};
 
+	const globalControls = [
+		{
+			name: 'themeisle-blocks/accordion',
+			control: Accordion
+		},
+		{
+			name: 'themeisle-blocks/advanced-heading',
+			control: AdvancedHeading
+		},
+		{
+			name: 'themeisle-blocks/button-group',
+			control: ButtonGroup
+		},
+		{
+			name: 'themeisle-blocks/button',
+			control: ButtonBlock
+		},
+		{
+			name: 'themeisle-blocks/font-awesome-icons',
+			control: FontAwesomeIcons
+		},
+		{
+			name: 'themeisle-blocks/review',
+			control: ReviewControl
+		},
+		{
+			name: 'themeisle-blocks/advanced-columns',
+			control: SectionColumns
+		},
+		{
+			name: 'themeisle-blocks/advanced-column',
+			control: SectionColumn
+		},
+		{
+			name: 'themeisle-blocks/form',
+			control: Form
+		}
+	];
+
+	let Controls = null;
+
+	if ( selectedBlock ) {
+		Controls = globalControls.find( item => item.name === selectedBlock ).control;
+	}
+
+	const navigator = useNavigator();
+
 	return (
 		<Fragment>
 			{ ( canUser ) && (
@@ -176,28 +265,96 @@ const Options = () => {
 				title={ __( 'Otter Options', 'otter-blocks' ) }
 				name="otter-options"
 			>
-				<PanelBody className="o-options-general">
-					<PanelRow>
-						<Button
-							isSecondary
-							icon={ otterIconColored }
-							onClick={ () => showOnboarding( ! isOnboardingVisible ) }
-							className="o-onboarding-button"
+				<NavigatorProvider
+					initialPath="/"
+				>
+					<NavigatorScreen path="/">
+						<PanelBody className="o-options-general">
+							<PanelRow>
+								<Button
+									icon={ otterIconColored }
+									onClick={ () => showOnboarding( ! isOnboardingVisible ) }
+									className="o-onboarding-button"
+								>
+									{ __( 'Show Onboarding Modal', 'otter-blocks' ) }
+								</Button>
+							</PanelRow>
+						</PanelBody>
+
+						<NavigatorButton
+							path="/block-settings"
+							icon={ chevronRightSmall }
+							className="o-navi-button"
 						>
-							{ __( 'Show Onboarding Modal', 'otter-blocks' ) }
-						</Button>
-					</PanelRow>
-				</PanelBody>
+							{ __( 'Block Settings', 'otter-blocks' ) }
+						</NavigatorButton>
 
-				<GlobalDefaults
-					isAPILoaded={ isAPILoaded }
-					blockDefaults={ blockDefaults }
-					changeConfig={ changeConfig }
-					resetConfig={ resetConfig }
-					saveConfig={ saveConfig }
-				/>
+						{ applyFilters( 'otter.feedback', '', 'otter-menu-editor', __( 'Help us improve Otter Blocks', 'otter-blocks' ) ) }
+					</NavigatorScreen>
 
-				{ applyFilters( 'otter.feedback', '', 'otter-menu-editor', __( 'Help us improve Otter Blocks', 'otter-blocks' ) ) }
+					<NavigatorScreen
+						path="/block-settings"
+						className="o-options-global-defaults"
+					>
+						<NavigatorButton
+							path="/"
+							icon={ chevronLeftSmall }
+							className="o-navi-button o-navi-button-back"
+						>
+							{ __( 'Back', 'otter-blocks' ) }
+						</NavigatorButton>
+
+						<GlobalDefaults
+							isAPILoaded={ isAPILoaded }
+							globalControls={ globalControls }
+							blockDefaults={ blockDefaults }
+							setSelectedBlock={ setSelectedBlock}
+						/>
+					</NavigatorScreen>
+
+					<NavigatorScreen
+						path="/block-settings/global-defaults"
+						className="o-options-global-defaults-modal"
+					>
+						<NavigatorButton
+							path="/block-settings"
+							icon={ chevronLeftSmall }
+							className="o-navi-button o-navi-button-back"
+						>
+							{ __( 'Back', 'otter-blocks' ) }
+						</NavigatorButton>
+
+						{ selectedBlock && (
+							<Fragment>
+								<Controls
+									blockName={ selectedBlock }
+									defaults={ blockDefaults[ selectedBlock ] }
+									changeConfig={ changeConfig }
+								/>
+
+								<div className="o-options-global-defaults-actions">
+									<Button
+										isDestructive
+										onClick={ () => resetConfig( selectedBlock ) }
+									>
+										{ __( 'Reset', 'otter-blocks' ) }
+									</Button>
+
+									<Button
+										isBusy={ isLoading }
+										onClick={ async() => {
+											setLoading( true );
+											await saveConfig();
+											setLoading( false );
+										} }
+									>
+										{ __( 'Save', 'otter-blocks' ) }
+									</Button>
+								</div>
+							</Fragment>
+						)}
+					</NavigatorScreen>
+				</NavigatorProvider>
 			</PluginSidebar>
 		</Fragment>
 	);

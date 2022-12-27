@@ -1,95 +1,85 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 
-import { getBlockType } from '@wordpress/blocks';
-
 import {
 	Button,
-	Icon,
-	Modal
+	Icon
 } from '@wordpress/components';
 
-import {
-	Fragment,
-	useState
-} from '@wordpress/element';
+import { useDispatch } from '@wordpress/data';
+
+import { useCallback } from '@wordpress/element';
+
+import { settings } from '@wordpress/icons';
+
+import { NavigatorButton } from '../index.js';
 
 const BlockItem = ({
-	blockName,
-	saveConfig,
-	resetConfig,
-	children
+	block,
+	hasSettings,
+	hiddenBlocks,
+	setSelectedBlock
 }) => {
-	const block = getBlockType( blockName );
+	const { showBlockTypes, hideBlockTypes } = useDispatch( 'core/edit-post' );
 
-	const [ isOpen, setOpen ] = useState( false );
-	const [ isLoading, setLoading ] = useState( false );
+	const toggleVisible = useCallback( ( blockName, nextIsChecked ) => {
+		if ( nextIsChecked ) {
+			showBlockTypes( blockName );
+		} else {
+			hideBlockTypes( blockName );
+		}
+	}, []);
 
 	if ( ! block ) {
 		return null;
 	}
 
+	const isHidden = hiddenBlocks.includes( block.name );
+
 	return (
-		<Fragment>
-			<Button
-				className="o-options-global-defaults-list-item block-editor-block-types-list__item"
-				onClick={ () => setOpen( true ) }
-			>
-				<div className="o-options-global-defaults-list-item-icon">
-					<Icon
-						icon={ block.icon.src }
-					/>
-				</div>
-
-				<div className="o-options-global-defaults-list-item-title">
-					{ block.title }
-				</div>
-			</Button>
-
-			{ isOpen && (
-				<Modal
-					title={ block.title }
-					onRequestClose={ () => setOpen( false ) }
-					shouldCloseOnClickOutside={ false }
-					overlayClassName="o-options-global-defaults-modal"
-				>
-					{ children }
-
-					<div className="o-options-global-defaults-actions">
-						<Button
-							isLink
-							isDestructive
-							onClick={ () => resetConfig( blockName ) }
-						>
-							{ __( 'Reset', 'otter-blocks' ) }
-						</Button>
-
-						<div className="o-options-global-defaults-actions-primary">
-							<Button
-								isSecondary
-								onClick={ () => setOpen( false ) }
-							>
-								{ __( 'Close', 'otter-blocks' ) }
-							</Button>
-
-							<Button
-								isPrimary
-								isBusy={ isLoading }
-								onClick={ async() => {
-									setLoading( true );
-									await saveConfig();
-									setLoading( false );
-								} }
-							>
-								{ __( 'Save', 'otter-blocks' ) }
-							</Button>
-						</div>
-					</div>
-				</Modal>
+		<div
+			className={ classnames(
+				'o-options-block-item',
+				{
+					'editable': hasSettings,
+					'hidden': isHidden
+				}
 			) }
-		</Fragment>
+		>
+			<div className="o-options-block-item-icon">
+				<Icon
+					icon={ block.icon.src }
+				/>
+			</div>
+
+			<div className="o-options-block-item-label">{ block.title }</div>
+
+			{ hasSettings && (
+				<NavigatorButton
+					path="/block-settings/global-defaults"
+					icon={ settings }
+					label={ __( 'Open Settings', 'otter-blocks' ) }
+					showTooltip={ true }
+					className="o-options-block-item-button"
+					onClickAction={ () => setSelectedBlock( block.name ) }
+				/>
+			)}
+
+			<Button
+				icon={ isHidden ? 'hidden' : 'visibility' }
+				label={ isHidden ? __( 'Show Block', 'otter-blocks' ) : __( 'Hide Block', 'otter-blocks' ) }
+				showTooltip={ true }
+				className="o-options-block-item-button"
+				onClick={ () => toggleVisible( block.name, isHidden ) }
+			/>
+		</div>
 	);
 };
 
