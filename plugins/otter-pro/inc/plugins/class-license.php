@@ -75,6 +75,7 @@ class License {
 			'site_inactive',
 			'item_name_mismatch',
 			'no_activations_left',
+			'not_active',
 		);
 
 		if ( in_array( $status->license, $invalid_statuses ) ) {
