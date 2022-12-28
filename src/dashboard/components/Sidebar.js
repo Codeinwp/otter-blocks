@@ -30,7 +30,6 @@ const Sidebar = ({
 						<li>{ __( 'Pro Block Patterns', 'otter-blocks' ) }</li>
 						<li>{ __( 'Dynamic Content', 'otter-blocks' ) }</li>
 						<li>{ __( 'Block Conditions', 'otter-blocks' ) }</li>
-						<li>{ __( 'WooCommerce Extensions', 'otter-blocks' ) }</li>
 						<li>{ __( 'WooCommerce Product Builder', 'otter-blocks' ) }</li>
 						<li>{ __( 'Priority Support', 'otter-blocks' ) }</li>
 					</ul>

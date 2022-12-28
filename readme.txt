@@ -207,6 +207,22 @@ You can check Otter documentation [here](https://docs.themeisle.com/article/1478
 
 == Changelog ==
 
+##### [Version 2.1.6](https://github.com/Codeinwp/otter-blocks/compare/v2.1.5...v2.1.6) (2022-12-09)
+
+- Add option to show Sticky Posts in Posts Block
+- Add min font-size & height for the Process Bar Block
+- Disable Section onboarding by default
+- Add default transition timer to Section
+- Various fixes in Dynamic Values
+- Fix Review Block schema issue
+- Fix Image alignment in Review Block
+- Fix Form Block not working in Templates
+- Fix Sticky Float option not sticking to Left
+- Deprecate older blocks
+
+
+
+
 ##### [Version 2.1.5](https://github.com/Codeinwp/otter-blocks/compare/v2.1.4...v2.1.5) (2022-11-23)
 
 - Fix Black Friday deal notice not dismissing; sorry for that.

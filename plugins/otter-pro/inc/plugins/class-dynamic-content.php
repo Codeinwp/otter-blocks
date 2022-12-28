@@ -71,6 +71,14 @@ class Dynamic_Content {
 			return $this->get_loggedin_meta( $data );
 		}
 
+		if ( 'queryString' === $data['type'] ) {
+			return $this->get_query_string( $data );
+		}
+
+		if ( 'country' === $data['type'] ) {
+			return $this->get_country( $data );
+		}
+
 		return $value;
 	}
 
@@ -252,6 +260,150 @@ class Dynamic_Content {
 		}
 
 		return esc_html( $meta );
+	}
+
+	/**
+	 * Format String.
+	 *
+	 * @param string $string String.
+	 * @param string $format String Format Type.
+	 *
+	 * @return string
+	 */
+	public function format_string( $string, $format = 'default' ) {
+		$value = $string;
+
+		switch ( $format ) {
+			case 'capitalize':
+				$value = ucfirst( $string );
+				break;
+			case 'uppercase':
+				$value = strtoupper( $string );
+				break;
+			case 'lowercase':
+				$value = strtolower( $string );
+				break;
+			default:
+				$value = $string;
+		}
+
+		return $value;
+	}
+
+	/**
+	 * Get Query String Value.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_query_string( $data ) {
+		$value  = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
+		$format = isset( $data['format'] ) ? esc_html( $data['format'] ) : 'default';
+		$url    = home_url( add_query_arg( null, null ) );
+
+		$url_components = wp_parse_url( $url );
+
+		if ( ! isset( $url_components['query'] ) ) {
+			return $value;
+		}
+
+		parse_str( $url_components['query'], $params );
+
+		if ( isset( $params[ $data['parameter'] ] ) && is_string( $params[ $data['parameter'] ] ) ) {
+			$value = $params[ $data['parameter'] ];
+		}
+
+		return esc_html( $this->format_string( $value, $format ) );
+	}
+
+	/**
+	 * Get the client IP address
+	 *
+	 * @return string
+	 */
+	public static function get_client_ip() {
+		$ipaddress = '';
+		// phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPressVIPMinimum.Variables.ServerVariables.UserControlledHeaders, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__REMOTE_ADDR__
+		if ( isset( $_SERVER['HTTP_CLIENT_IP'] ) ) {
+			$ipaddress = $_SERVER['HTTP_CLIENT_IP'];
+		} elseif ( isset( $_SERVER['HTTP_X_FORWARDED_FOR'] ) ) {
+			$ipaddress = $_SERVER['HTTP_X_FORWARDED_FOR'];
+		} elseif ( isset( $_SERVER['HTTP_X_FORWARDED'] ) ) {
+			$ipaddress = $_SERVER['HTTP_X_FORWARDED'];
+		} elseif ( isset( $_SERVER['HTTP_FORWARDED_FOR'] ) ) {
+			$ipaddress = $_SERVER['HTTP_FORWARDED_FOR'];
+		} elseif ( isset( $_SERVER['HTTP_FORWARDED'] ) ) {
+			$ipaddress = $_SERVER['HTTP_FORWARDED'];
+		} elseif ( isset( $_SERVER['REMOTE_ADDR'] ) ) {
+			$ipaddress = $_SERVER['REMOTE_ADDR'];
+		} else {
+			$ipaddress = '';
+		}
+		// phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPressVIPMinimum.Variables.ServerVariables.UserControlledHeaders, WordPressVIPMinimum.Variables.RestrictedVariables.cache_constraints___SERVER__REMOTE_ADDR__
+		return $ipaddress;
+	}
+
+	/**
+	 * Get User Location.
+	 *
+	 * @param string $value Value to return.
+	 *
+	 * @return string|bool
+	 */
+	public static function get_user_location( $value = 'countryName' ) {
+		$api = get_option( 'otter_iphub_api_key', '' );
+
+		if ( empty( $api ) ) {
+			return false;
+		}
+
+		$ip   = self::get_client_ip();
+		$url  = 'http://v2.api.iphub.info/ip/' . $ip;
+		$args = array(
+			'method'  => 'GET',
+			'headers' => array(
+				'X-Key' => $api,
+			),
+		);
+
+		$response = '';
+
+		if ( function_exists( 'vip_safe_wp_remote_get' ) ) {
+			$response = vip_safe_wp_remote_get( $url, '', 3, 1, 20, $args );
+		} else {
+			$response = wp_remote_get( $url, $args ); // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
+		}
+
+		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
+			return false;
+		}
+
+		if ( isset( $body[ $value ] ) && 'ZZ' !== $body[ $value ] ) {
+			return $body[ $value ];
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get User Country.
+	 *
+	 * @param array $data Dynamic Data.
+	 *
+	 * @return string
+	 */
+	public function get_country( $data ) {
+		$value    = isset( $data['default'] ) ? esc_html( $data['default'] ) : '';
+		$location = self::get_user_location();
+
+		if ( false !== $location ) {
+			$value = $location;
+		}
+
+		return $value;
 	}
 
 	/**

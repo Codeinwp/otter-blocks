@@ -17,7 +17,7 @@ export const addCaptchaOnPage = ( forms ) => {
 			}, 200 );
 		});
 
-		script.src = 'https://www.google.com/recaptcha/api.js';
+		script.src = window?.themeisleGutenbergForm?.reRecaptchaAPIURL;
 	}
 };
 

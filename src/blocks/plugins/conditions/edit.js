@@ -29,6 +29,7 @@ import { applyFilters } from '@wordpress/hooks';
 /**
  * Internal dependencies.
  */
+import StripeControls from './components/stripe-controls';
 import PanelTab from '../../components/panel-tab/index.js';
 import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
 
@@ -91,17 +92,6 @@ const defaultConditions = {
 			}
 		]
 	},
-	'url': {
-		label: __( 'URL', 'otter-blocks' ),
-		conditions: [
-			{
-				value: 'queryString',
-				label: __( 'Query String (Pro)', 'otter-blocks' ),
-				help: __( 'The condition will be met if the URL contains specified parameters.' ),
-				isDisabled: true
-			}
-		]
-	},
 	'dateAndTime': {
 		label: __( 'Date & Time', 'otter-blocks' ),
 		conditions: [
@@ -121,6 +111,29 @@ const defaultConditions = {
 				value: 'timeRecurring',
 				label: __( 'Time Recurring (Pro)', 'otter-blocks' ),
 				help: __( 'The selected block will be visible during the selected time. Timezone is used based on your WordPress settings.' ),
+				isDisabled: true
+			}
+		]
+	},
+	'advance': {
+		label: __( 'Advance', 'otter-blocks' ),
+		conditions: [
+			{
+				value: 'queryString',
+				label: __( 'Query String (Pro)', 'otter-blocks' ),
+				help: __( 'The condition will be met if the URL contains specified parameters.' ),
+				isDisabled: true
+			},
+			{
+				value: 'country',
+				label: __( 'Country (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on user\'s country based on the IP address.' ),
+				isDisabled: true
+			},
+			{
+				value: 'cookie',
+				label: __( 'Cookie (Pro)', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on PHP cookies.' ),
 				isDisabled: true
 			}
 		]
@@ -151,6 +164,17 @@ const defaultConditions = {
 				label: __( 'Total Spent (Pro)', 'otter-blocks' ),
 				help: __( 'The selected block will be visible based on how much the user spent during lifetime.' ),
 				isDisabled: true
+			}
+		]
+	},
+	'stripe': {
+		label: __( 'Stripe', 'otter-blocks' ),
+		conditions: [
+			{
+				value: 'stripePurchaseHistory',
+				label: __( 'Purchase History', 'otter-blocks' ),
+				help: __( 'The selected block will be visible based on user\'s Stripe purchase history.' ),
+				toogleVisibility: true
 			}
 		]
 	},
@@ -185,7 +209,7 @@ const AuthorsFieldToken = ( props ) => {
 			postAuthors: ( getUsers({ who: 'authors', context: 'view' }) ?? []).map( author => author.username ),
 			isLoading: isResolving( 'getUsers', [{ who: 'authors', context: 'view' }])
 		};
-	}, [ ]);
+	}, []);
 
 	return isLoading ? (
 		<Placeholder><Spinner /></Placeholder>
@@ -459,6 +483,25 @@ const Edit = ({
 												__experimentalExpandOnFocus={ true }
 												__experimentalValidateInput={ newValue => postTypes.includes( newValue ) }
 											/>
+										) }
+
+										{ 'stripePurchaseHistory' === i.type && (
+											<Fragment>
+												{ Boolean( window.themeisleGutenberg.hasStripeAPI ) && (
+													<StripeControls
+														product={ i.product }
+														onChange={ product => changeValue( product, index, n, 'product' ) }
+													/>
+												) }
+
+												{ ! Boolean( window.themeisleGutenberg.hasStripeAPI ) && (
+													<p>
+														{ __( 'You need to set your Stripe API keys in the Otter Dashboard.', 'otter-blocks' ) }
+														{ ' ' }
+														<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Visit Dashboard', 'otter-blocks' ) }</ExternalLink>
+													</p>
+												) }
+											</Fragment>
 										) }
 
 										{ applyFilters( 'otter.blockConditions.controls', '', index, n, i, attributes.otterConditions, setAttributes, changeValue ) }

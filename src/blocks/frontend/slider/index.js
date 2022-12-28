@@ -42,6 +42,7 @@ const init = () => {
 						autoplay,
 						hoverpause: true,
 						animationTimingFunc: slider.dataset?.transition || 'ease',
+						direction: window.themeisleGutenbergSlider.isRTL ? 'rtl' : 'ltr',
 						breakpoints: {
 							800: {
 								perView: 1,

@@ -26,11 +26,12 @@ class Main {
 	 */
 	public function init() {
 		if ( ! defined( 'OTTER_PRO_VERSION' ) ) {
+			define( 'OTTER_PRO_VERSION', OTTER_BLOCKS_VERSION );
 			define( 'OTTER_PRO_URL', OTTER_BLOCKS_URL . 'plugins/otter-pro/' );
 			define( 'OTTER_PRO_PATH', OTTER_BLOCKS_PATH . '/plugins/otter-pro' );
+			define( 'OTTER_PRO_BASEFILE', OTTER_PRO_PATH . '/otter-pro.php' );
 			define( 'OTTER_PRO_BUILD_URL', OTTER_BLOCKS_URL . 'build/pro/' );
 			define( 'OTTER_PRO_BUILD_PATH', OTTER_BLOCKS_PATH . '/build/pro/' );
-			define( 'OTTER_PRO_VERSION', OTTER_BLOCKS_VERSION );
 		}
 
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
@@ -48,7 +49,7 @@ class Main {
 	 * Autoload classes.
 	 *
 	 * @param string $classnames Block Classnames.
-	 * 
+	 *
 	 * @since   2.0.1
 	 * @access  public
 	 */
@@ -58,6 +59,7 @@ class Main {
 			'\ThemeIsle\OtterPro\Plugins\Dynamic_Content',
 			'\ThemeIsle\OtterPro\Plugins\Fonts_Module',
 			'\ThemeIsle\OtterPro\Plugins\License',
+			'\ThemeIsle\OtterPro\Plugins\Live_Search',
 			'\ThemeIsle\OtterPro\Plugins\Options_Settings',
 			'\ThemeIsle\OtterPro\Plugins\Patterns',
 			'\ThemeIsle\OtterPro\Plugins\Posts_ACF_Integration',
@@ -65,6 +67,7 @@ class Main {
 			'\ThemeIsle\OtterPro\Plugins\WooCommerce_Builder',
 			'\ThemeIsle\OtterPro\Server\Dashboard_Server',
 			'\ThemeIsle\OtterPro\Server\Filter_Blocks_Server',
+			'\ThemeIsle\OtterPro\Server\Live_Search_Server',
 			'\ThemeIsle\OtterPro\Server\Posts_ACF_Server',
 		);
 
@@ -77,7 +80,7 @@ class Main {
 	 * Register Blocks.
 	 *
 	 * @param string $blocks Blocks List.
-	 * 
+	 *
 	 * @since   2.0.1
 	 * @access  public
 	 */
@@ -109,7 +112,7 @@ class Main {
 	 * Register Dynamic Blocks.
 	 *
 	 * @param string $dynamic_blocks Dynamic Blocks.
-	 * 
+	 *
 	 * @since   2.0.1
 	 * @access  public
 	 */
@@ -139,7 +142,7 @@ class Main {
 	 * Register Blocks CSS.
 	 *
 	 * @param string $blocks Blocks List.
-	 * 
+	 *
 	 * @since   2.0.1
 	 * @access  public
 	 */
@@ -181,10 +184,13 @@ class Main {
 			array(
 				'isActive'       => License::has_active_license(),
 				'isExpired'      => License::has_expired_license(),
+				'licenseType'    => License::get_license_type(),
+				'hasNeveLicense' => License::get_license_data()->key === apply_filters( 'product_neve_license_key', 'free' ),
 				'hasWooCommerce' => class_exists( 'WooCommerce' ),
 				'hasLearnDash'   => defined( 'LEARNDASH_VERSION' ),
 				'hasACF'         => class_exists( 'ACF' ),
 				'rootUrl'        => get_site_url(),
+				'hasIPHubAPI'    => empty( get_option( 'otter_iphub_api_key', '' ) ) ? false : true,
 			)
 		);
 
