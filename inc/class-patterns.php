@@ -50,113 +50,113 @@ class Patterns {
 			}
 		}
 
-		$block_patterns = array(
-			array(
-				'slug'    => 'hero-area-with-button',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'content-with-progress-bars',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'text-with-image-columns',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'large-quote',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'image-and-text-over-dark-background',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'contact-details-and-form',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'call-to-action',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'testimonial-columns',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'testimonial-with-inline-image',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'centered-testimonial-with-star-icons',
-				'minimum' => 5.9,
-			),
-			array(
-				'slug'    => 'cover-boxes-with-title-and-button',
-				'minimum' => 5.9,
-			),
-			array(
-				'slug'    => 'columns-with-image-features',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'team-members',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'columns-with-icon-features',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'columns-with-flip-boxes',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'icons-and-text',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'gallery',
-				'minimum' => 5.9,
-			),
-			array(
-				'slug'    => 'border-icon-features',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'border-pricing-table',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'countdown',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'service-boxes-on-dark-background',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'content-with-features',
-				'minimum' => 5.8,
-			),
-			array(
-				'slug'    => 'author-box',
-				'minimum' => 5.8,
-			),
-		);
+		// $block_patterns = array(
+		// 	array(
+		// 		'slug'    => 'hero-area-with-button',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'content-with-progress-bars',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'text-with-image-columns',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'large-quote',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'image-and-text-over-dark-background',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'contact-details-and-form',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'call-to-action',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'testimonial-columns',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'testimonial-with-inline-image',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'centered-testimonial-with-star-icons',
+		// 		'minimum' => 5.9,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'cover-boxes-with-title-and-button',
+		// 		'minimum' => 5.9,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'columns-with-image-features',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'team-members',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'columns-with-icon-features',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'columns-with-flip-boxes',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'icons-and-text',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'gallery',
+		// 		'minimum' => 5.9,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'border-icon-features',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'border-pricing-table',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'countdown',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'service-boxes-on-dark-background',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'content-with-features',
+		// 		'minimum' => 5.8,
+		// 	),
+		// 	array(
+		// 		'slug'    => 'author-box',
+		// 		'minimum' => 5.8,
+		// 	),
+		// );
 
-		foreach ( $block_patterns as $block_pattern ) {
-			if ( ! version_compare( get_bloginfo( 'version' ), $block_pattern['minimum'], '>=' ) ) {
-				continue;
-			}
+		// foreach ( $block_patterns as $block_pattern ) {
+		// 	if ( ! version_compare( get_bloginfo( 'version' ), $block_pattern['minimum'], '>=' ) ) {
+		// 		continue;
+		// 	}
 
-			$pattern_file = OTTER_BLOCKS_PATH . '/inc/patterns/' . $block_pattern['slug'] . '.php';
+		// 	$pattern_file = OTTER_BLOCKS_PATH . '/inc/patterns/' . $block_pattern['slug'] . '.php';
 	
-			register_block_pattern(
-				'otter-blocks/' . $block_pattern['slug'],
-				require $pattern_file
-			);
-		}
+		// 	register_block_pattern(
+		// 		'otter-blocks/' . $block_pattern['slug'],
+		// 		require $pattern_file
+		// 	);
+		// }
 	}
 
 	/**
