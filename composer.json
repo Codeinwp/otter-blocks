@@ -55,6 +55,6 @@
 		"tubalmartin/cssmin": "^4.1",
 		"wptt/webfont-loader": "^1.1",
 		"sabberworm/php-css-parser": "^8.4",
-		"stripe/stripe-php": "^9.8"
+		"stripe/stripe-php": "^10.3"
 	}
 }
