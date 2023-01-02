@@ -67,6 +67,7 @@ const Inspector = ({
 								value: attributes[icon].backgroundColor,
 								onChange: value => onIconChange( value, icon, 'backgroundColor' ),
 								onGradientChange: value => onIconChange( value, icon, 'backgroundColor' ),
+								isShownByDefault: false,
 
 								/* translators: %s Social Website */
 								label: sprintf( __( ' %s Background Color', 'otter-blocks' ), socialList[icon].label )
@@ -74,6 +75,7 @@ const Inspector = ({
 							{
 								value: attributes[icon].textColor,
 								onChange: value => onIconChange( value, icon, 'textColor' ),
+								isShownByDefault: false,
 
 								/* translators: %s Social Website */
 								label: sprintf( __( ' %s Text Color', 'otter-blocks' ), socialList[icon].label )

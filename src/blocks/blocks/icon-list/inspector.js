@@ -185,29 +185,33 @@ const Inspector = ({
 					<Fragment>
 						<PanelColorSettings
 							title={ __( 'Color', 'otter-blocks' ) }
-							initialOpen={ true }
+							initialOpen={ false }
 							colorSettings={ [
 								{
 									value: attributes.defaultIconColor,
 									onChange: defaultIconColor => setAttributes({ defaultIconColor }),
-									label: __( 'Icon', 'otter-blocks' )
+									label: __( 'Icon', 'otter-blocks' ),
+									isShownByDefault: false
 								},
 								{
 									value: attributes.defaultContentColor,
 									onChange: defaultContentColor => setAttributes({ defaultContentColor }),
-									label: __( 'Text', 'otter-blocks' )
+									label: __( 'Text', 'otter-blocks' ),
+									isShownByDefault: false
 								},
 								...( attributes.hasDivider ? [
 									{
 										value: attributes.dividerColor,
 										onChange: dividerColor => setAttributes({ dividerColor }),
-										label: __( 'Divider', 'otter-blocks' )
+										label: __( 'Divider', 'otter-blocks' ),
+										isShownByDefault: false
 									}
 								] : [])
 							] }
 						/>
 						<PanelBody
 							title={ __( 'Size', 'otter-blocks' ) }
+							initialOpen={ false }
 						>
 							<BaseControl
 								label={ __( 'Font Size', 'otter-blocks' ) }
@@ -281,6 +285,7 @@ const Inspector = ({
 						</PanelBody>
 						<PanelBody
 							title={ __( 'Dimensions', 'otter-blocks' ) }
+							initialOpen={ false }
 						>
 							<UnitControl
 								label={ __( 'Space between List items', 'otter-blocks' ) }
@@ -314,6 +319,7 @@ const Inspector = ({
 						</PanelBody>
 						<PanelBody
 							title={ __( 'Divider', 'otter-blocks' ) }
+							initialOpen={ false }
 						>
 							<ToggleControl
 								label={ __( 'Enable Divider', 'otter-blocks' ) }

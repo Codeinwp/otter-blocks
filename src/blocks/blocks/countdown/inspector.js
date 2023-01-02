@@ -377,27 +377,32 @@ const Inspector = ({
 					{
 						value: attributes.backgroundColor,
 						onChange: backgroundColor => setAttributes({ backgroundColor }),
-						label: __( 'Background', 'otter-blocks' )
+						label: __( 'Background', 'otter-blocks' ),
+						isShownByDefault: false
 					},
 					{
 						value: attributes.valueColor,
 						onChange: valueColor => setAttributes({ valueColor }),
-						label: __( 'Time Value', 'otter-blocks' )
+						label: __( 'Time Value', 'otter-blocks' ),
+						isShownByDefault: false
 					},
 					{
 						value: attributes.labelColor,
 						onChange: labelColor => setAttributes({ labelColor }),
-						label: __( 'Label', 'otter-blocks' )
+						label: __( 'Label', 'otter-blocks' ),
+						isShownByDefault: false
 					},
 					{
 						value: attributes.separatorColor,
 						onChange: separatorColor => setAttributes({ separatorColor }),
-						label: __( 'Separator', 'otter-blocks' )
+						label: __( 'Separator', 'otter-blocks' ),
+						isShownByDefault: false
 					},
 					{
 						value: attributes.borderColor,
 						onChange: borderColor => setAttributes({ borderColor }),
-						label: __( 'Border', 'otter-blocks' )
+						label: __( 'Border', 'otter-blocks' ),
+						isShownByDefault: false
 					}
 				] }
 			>
