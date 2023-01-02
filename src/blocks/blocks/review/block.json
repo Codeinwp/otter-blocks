@@ -97,6 +97,9 @@
 		"imageWidth": {
 			"type": "number"
 		},
+		"imageSize": {
+			"type": "string"
+		},
 		"mainHeading": {
 			"type": "string"
 		},

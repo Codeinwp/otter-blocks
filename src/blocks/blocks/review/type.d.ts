@@ -16,6 +16,7 @@ type Attributes = {
 	consLabel: string
 	buttonsLabel: string
 	imageWidth: number
+	imageSize: string
 	mainHeading: string
 	subHeading: string
 	contentFontSize: number

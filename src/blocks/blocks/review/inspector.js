@@ -1,7 +1,11 @@
 /**
  * WordPress dependencies
  */
-import { pick } from 'lodash';
+import {
+	startCase,
+	toLower,
+	pick
+} from 'lodash';
 
 import { __ } from '@wordpress/i18n';
 
@@ -294,29 +298,41 @@ const Inspector = ({
 						/>
 
 						{ ( attributes.image || productAttributes?.image ) && (
-							<ButtonToggle
-								label={ __( 'Image Width', 'otter-blocks' ) }
-								options={[
-									{
-										label: __( '25%', 'otter-blocks' ),
-										value: 25
-									},
-									{
-										label: __( '33%', 'otter-blocks' ),
-										value: 33
-									},
-									{
-										label: __( '50%', 'otter-blocks' ),
-										value: 50
-									},
-									{
-										label: __( '100%', 'otter-blocks' ),
-										value: 100
-									}
-								]}
-								value={ attributes.imageWidth || 33 }
-								onChange={ imageWidth => setAttributes({ imageWidth: Number( imageWidth ) }) }
-							/>
+							<Fragment>
+								<ButtonToggle
+									label={ __( 'Image Width', 'otter-blocks' ) }
+									options={[
+										{
+											label: __( '25%', 'otter-blocks' ),
+											value: 25
+										},
+										{
+											label: __( '33%', 'otter-blocks' ),
+											value: 33
+										},
+										{
+											label: __( '50%', 'otter-blocks' ),
+											value: 50
+										},
+										{
+											label: __( '100%', 'otter-blocks' ),
+											value: 100
+										}
+									]}
+									value={ attributes.imageWidth || 33 }
+									onChange={ imageWidth => setAttributes({ imageWidth: Number( imageWidth ) }) }
+								/>
+
+								<SelectControl
+									label={ __( 'Image Size', 'otter-blocks' ) }
+									value={ attributes.imageSize }
+									options={ window.themeisleGutenberg.imageSizes.map( size => ({
+										label: startCase( toLower( size ) ),
+										value: size
+									}) ) }
+									onChange={ imageSize => setAttributes({ imageSize }) }
+								/>
+							</Fragment>
 						) }
 					</PanelBody>
 
