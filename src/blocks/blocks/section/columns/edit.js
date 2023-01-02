@@ -158,6 +158,13 @@ const Edit = ({
 		}
 	}, [ children ]);
 
+	useEffect( () => {
+		if ( 6 < attributes.columns ) {
+			setAttributes({ columns: 6 });
+			changeColumnsNumbers( 6 );
+		}
+	}, [ attributes.columns ]);
+
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
 	// +-------------------------------- SCREEN SIZE --------------------------------+
