@@ -5,7 +5,12 @@ import { __ } from '@wordpress/i18n';
 
 import { pick } from 'lodash';
 
-import { KeyboardShortcuts } from '@wordpress/components';
+import { BlockSettingsMenuControls } from '@wordpress/block-editor';
+
+import {
+	MenuItem,
+	KeyboardShortcuts
+} from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
@@ -13,8 +18,6 @@ import {
 	select,
 	dispatch
 } from '@wordpress/data';
-
-import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
 
 import { Fragment } from '@wordpress/element';
 
@@ -135,41 +138,43 @@ const iconTextWrapper = ( text ) => (
 const CopyPasteComponent = ( ) => {
 	return (
 		<Fragment>
-			{ window?.themeisleGutenberg?.isBlockEditor && (
-				<Fragment>
+			<KeyboardShortcuts
+				shortcuts={
+					isAppleOS() ? {
+						'ctrl+c': copy,
+						'ctrl+v': paste
+					} : {
+						'alt+c': copy,
+						'alt+x': paste
+					}
+				}
+				bindGlobal={ true }
+			/>
 
-					<KeyboardShortcuts
-						shortcuts={
-							isAppleOS() ? {
-								'ctrl+c': copy,
-								'ctrl+v': paste
-							} : {
-								'alt+c': copy,
-								'alt+x': paste
-							}
-						}
-						bindGlobal={ true }
-					/>
+			<BlockSettingsMenuControls>
+				{ () => (
+					<Fragment>
+						<MenuItem
+							icon={ iconTextWrapper( isAppleOS() ? displayShortcut.ctrl( 'c' ) : displayShortcut.alt( 'c' ) ) }
+							onClick={ copy }
+						>
+							{ __( 'Copy Style', 'otter-blocks' ) }
+						</MenuItem>
 
-					<PluginBlockSettingsMenuItem
-						label={  __( 'Copy Style', 'otter-blocks' ) }
-						icon={ iconTextWrapper( isAppleOS() ? displayShortcut.ctrl( 'c' ) : displayShortcut.alt( 'c' ) ) }
-						onClick={ copy }
-					/>
-
-					{ ! copyPaste.isExpired && (
-						<PluginBlockSettingsMenuItem
-							label={  __( 'Paste Style', 'otter-blocks' ) }
-							icon={ iconTextWrapper( isAppleOS() ? displayShortcut.ctrl( 'v' ) : displayShortcut.alt( 'x' ) ) }
-							onClick={ paste }
-						/>
-					) }
-				</Fragment>
-			) }
+						{ ! copyPaste.isExpired && (
+							<MenuItem
+								icon={ iconTextWrapper( isAppleOS() ? displayShortcut.ctrl( 'v' ) : displayShortcut.alt( 'x' ) ) }
+								onClick={ paste }
+							>
+								{ __( 'Paste Style', 'otter-blocks' ) }
+							</MenuItem>
+						) }
+					</Fragment>
+				) }
+			</BlockSettingsMenuControls>
 		</Fragment>
 	);
 };
-
 
 const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 	return ( props ) => {
@@ -188,6 +193,4 @@ const withCopyPasteExtension = createHigherOrderComponent( BlockEdit => {
 	};
 }, 'withCopyPasteExtension' );
 
-if ( select?.( 'core/editor' ) !== undefined ) {
-	addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/copy-paste-extension', withCopyPasteExtension );
-}
+addFilter( 'editor.BlockEdit', 'themeisle-gutenberg/copy-paste-extension', withCopyPasteExtension );

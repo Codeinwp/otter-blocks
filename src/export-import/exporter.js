@@ -14,12 +14,14 @@ import apiFetch from '@wordpress/api-fetch';
 
 import { serialize } from '@wordpress/blocks';
 
+import { MenuItem } from '@wordpress/components';
+
 import {
 	useDispatch,
 	useSelect
 } from '@wordpress/data';
 
-import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
+import { BlockSettingsMenuControls } from '@wordpress/block-editor';
 
 const BlocksExporter = () => {
 	const { blocks, count } = useSelect( ( select ) => {
@@ -118,11 +120,16 @@ const BlocksExporter = () => {
 	};
 
 	return (
-		<PluginBlockSettingsMenuItem
-			icon={ external }
-			label={ __( 'Export as JSON', 'otter-blocks' ) }
-			onClick={ exportBlocks }
-		/>
+		<BlockSettingsMenuControls>
+			{ () => (
+				<MenuItem
+					icon={ external }
+					onClick={ exportBlocks }
+				>
+					{ __( 'Export as JSON', 'otter-blocks' ) }
+				</MenuItem>
+			) }
+		</BlockSettingsMenuControls>
 	);
 };
 
