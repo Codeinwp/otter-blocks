@@ -143,7 +143,7 @@ class License {
 		}
 
 		if ( isset( $license->license ) && ( 'valid' !== $license->license && 'active_expired' !== $license->license ) ) {
-			return - 1;
+			return -1;
 		}
 
 		if ( ! array_key_exists( $license->price_id, self::$plans_map ) ) {
