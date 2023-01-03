@@ -34,7 +34,7 @@ const Edit = ({
 			return (
 				<Notice
 					notice={ __( 'You need to upgrade your plan.', 'otter-blocks' ) }
-					instructions={ __( 'You need to upgrade your plan to Business or Agency in order to use the live search feature.', 'otter-blocks' ) }
+					instructions={ __( 'You need to upgrade your plan to Agency in order to use the Live Search feature.', 'otter-blocks' ) }
 				/>
 			);
 		}
