@@ -42,6 +42,8 @@ describe( 'Otter Block ID', () => {
 			}});
 		}, licenseKey );
 
+		await page.waitForTimeout( 2000 );
+
 		await page.evaluate( ( _html ) => {
 			const { parse } = window.wp.blocks;
 			const { dispatch } = window.wp.data;
