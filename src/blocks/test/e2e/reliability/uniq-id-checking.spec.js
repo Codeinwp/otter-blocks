@@ -36,10 +36,20 @@ describe( 'Otter Block ID', () => {
 			console.warn( 'No Otter Pro license provided!' );
 		}
 		await page.evaluate( ( _licenseKey ) => {
-			window.wp.apiFetch({ path: 'otter/v1/toggle_license', method: 'POST', data: {
-				action: 'activate',
-				key: _licenseKey
-			}});
+
+			// window.wp.apiFetch({ path: 'otter/v1/toggle_license', method: 'POST', data: {
+			// 	action: 'activate',
+			// 	key: _licenseKey
+			// }});
+
+			// Temporary solution
+			window.otterPro = Object.assign(
+				window.otterPro,
+				{
+					isActive: true,
+					isExpired: true
+				}
+			);
 		}, licenseKey );
 
 		await page.waitForTimeout( 2000 );
