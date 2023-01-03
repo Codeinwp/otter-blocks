@@ -152,25 +152,23 @@ class Form_Settings_Data {
 	/**
 	 * Check if it has the necessary data set.
 	 *
-	 * @return string[] The issues about the missing settings.
+	 * @return string The issues about the missing settings.
 	 * @since 2.0.3
 	 */
 	public function check_data() {
-		$issues = array();
-
 		if ( ! $this->has_provider() ) {
-			$issues[] = __( 'Provider settings are missing!', 'otter-blocks' );
+			return Form_Data_Response::ERROR_MISSING_PROVIDER;
 		}
 
 		if ( ! $this->has_api_key() ) {
-			$issues[] = __( 'API Key is missing!', 'otter-blocks' );
+			return Form_Data_Response::ERROR_MISSING_API_KEY;
 		}
 
 		if ( ! $this->has_list_id() ) {
-			$issues[] = __( 'Mail list is missing!', 'otter-blocks' );
+			return Form_Data_Response::ERROR_MISSING_MAIL_LIST_ID;
 		}
 
-		return $issues;
+		return '';
 	}
 
 	/**

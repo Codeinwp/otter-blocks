@@ -174,7 +174,8 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	 * @param string $api_key The API Key of the provider.
 	 * @return array[
 	 *  'validate' => boolean,
-	 *  'reason' => string
+	 *  'reason' => string,
+	 *  'code' => string
 	 * ]
 	 * @since 2.0.3
 	 */
@@ -183,12 +184,14 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 			return array(
 				'valid'  => false,
 				'reason' => __( 'API Key is missing!', 'otter-blocks' ),
+				'code'   => Form_Data_Response::ERROR_MISSING_API_KEY,
 			);
 		}
 
 		return array(
 			'valid'  => true,
 			'reason' => '',
+			'code'   => '',
 		);
 	}
 

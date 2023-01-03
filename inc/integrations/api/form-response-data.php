@@ -22,16 +22,26 @@ class Form_Data_Response {
 	const SUCCESS_EMAIL_SEND      = '0';
 	const SUCCESS_USER_SUBSCRIBED = '1';
 
-	const ERROR_MISSING_DATA    = '101';
-	const ERROR_MISSING_CAPTCHA = '102';
-	const ERROR_MISSING_NONCE   = '103';
-	const ERROR_MISSING_EMAIL   = '104';
-	const ERROR_FORM_ID_INVALID = '105';
-	const ERROR_EMAIL_NOT_SEND  = '106';
+	const ERROR_RUNTIME_ERROR = '10'; 
 
-	const ERROR_PROVIDER_NOT_REGISTERED  = '201';
-	const ERROR_PROVIDER_SUBSCRIBE_ERROR = '202';
-	const ERROR_PROVIDER_INVALID_KEY     = '203';
+	// Request validation errors.
+	const ERROR_MISSING_DATA         = '101';
+	const ERROR_MISSING_CAPTCHA      = '102';
+	const ERROR_MISSING_NONCE        = '103';
+	const ERROR_MISSING_EMAIL        = '104';
+	const ERROR_FORM_ID_INVALID      = '105';
+	const ERROR_EMAIL_NOT_SEND       = '106';
+	const ERROR_MISSING_PROVIDER     = '107';
+	const ERROR_MISSING_API_KEY      = '108';
+	const ERROR_MISSING_MAIL_LIST_ID = '109';
+
+	// Errors from external services.
+	const ERROR_PROVIDER_NOT_REGISTERED         = '201';
+	const ERROR_PROVIDER_SUBSCRIBE_ERROR        = '202';
+	const ERROR_PROVIDER_INVALID_KEY            = '203';
+	const ERROR_INVALID_CAPTCHA_TOKEN           = '204';
+	const ERROR_PROVIDER_INVALID_API_KEY_FORMAT = '205';
+
 
 	/**
 	 * Response Data.
@@ -57,9 +67,10 @@ class Form_Data_Response {
 	 * @since 2.0.0
 	 */
 	public function __construct() {
-		$this->response['success'] = false;
-		$this->response['reasons'] = array();
-		$this->response['code']    = self::SUCCESS_EMAIL_SEND;
+		$this->response['success']       = false;
+		$this->response['reasons']       = array();
+		$this->response['code']          = self::SUCCESS_EMAIL_SEND;
+		$this->response['display_error'] = '';
 	}
 
 	/**
@@ -74,6 +85,28 @@ class Form_Data_Response {
 		if ( isset( $provider ) ) {
 			$this->response['provider'] = $provider;
 		}
+		return $this;
+	}
+
+	/**
+	 * Set error code.
+	 *
+	 * @param string $code Error code.
+	 * @since 2.1.7
+	 */
+	public function set_code_error( $code ) {
+		$this->response['code'] = $code;
+		return $this;
+	}
+
+	/**
+	 * Set error that the user is going to see.
+	 *
+	 * @param string $err_msg Error code.
+	 * @since 2.1.7
+	 */
+	public function set_display_error( $err_msg ) {
+		$this->response['display_error'] = $err_msg;
 		return $this;
 	}
 
@@ -245,40 +278,55 @@ class Form_Data_Response {
 	public function process_error_code() {
 		switch ( $this->response['code'] ) {
 			case self::ERROR_MISSING_DATA:
-				$this->add_reason( __( 'Essential data is missing!', 'otter-blocks' ) );
+				$this->add_reason( __( 'Essential data is missing.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_MISSING_CAPTCHA:
-				$this->add_reason( __( 'Captcha token is missing!', 'otter-blocks' ) );
+				$this->add_reason( __( 'Captcha token is missing.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_MISSING_EMAIL:
-				$this->add_reason( __( 'Missing email field in form!', 'otter-blocks' ) );
+				$this->add_reason( __( 'Missing email field in form.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_MISSING_NONCE:
-				$this->add_reason( __( 'Missing CSRF protection in form!', 'otter-blocks' ) );
+				$this->add_reason( __( 'Missing CSRF protection in form.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_FORM_ID_INVALID:
-				$this->add_reason( __( 'Form ID is invalid!', 'otter-blocks' ) );
+				$this->add_reason( __( 'Form ID is invalid.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_EMAIL_NOT_SEND:
-				$this->add_reason( __( 'Email could not be send. Might be an error with the service!', 'otter-blocks' ) );
+				$this->add_reason( __( 'Email could not be send. Might be an error with the service.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_PROVIDER_INVALID_KEY:
-				$this->add_reason( __( 'Invalid service authentication credentials!', 'otter-blocks' ) );
+				$this->add_reason( __( 'Invalid service authentication credentials.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_PROVIDER_NOT_REGISTERED:
-				$this->add_reason( __( 'The service is not registered!', 'otter-blocks' ) );
+				$this->add_reason( __( 'The 3rd-party service is not registered.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_PROVIDER_SUBSCRIBE_ERROR:
-				$this->add_reason( __( 'Error received from service when subscribing the user!', 'otter-blocks' ) );
+				$this->add_reason( __( 'Error received from service when subscribing the user.', 'otter-blocks' ) );
 				break;
+			case self::ERROR_MISSING_PROVIDER:
+				$this->add_reason( __( 'Provider settings are missing.', 'otter-blocks' ) );
+				break;
+			case self::ERROR_MISSING_API_KEY:
+				$this->add_reason( __( 'API Key is missing from settings.', 'otter-blocks' ) );
+				break;  
+			case self::ERROR_MISSING_MAIL_LIST_ID:
+				$this->add_reason( __( 'API Key is missing.', 'otter-blocks' ) );
+				break;  
+			case self::ERROR_INVALID_CAPTCHA_TOKEN:
+				$this->add_reason( __( 'The reCaptcha token is invalid.', 'otter-blocks' ) );
+				break;
+			case self::ERROR_PROVIDER_INVALID_API_KEY_FORMAT:
+				$this->add_reason( __( 'The API key format is invalid.', 'otter-blocks' ) );
+				break;  
 		}
 	}
 }

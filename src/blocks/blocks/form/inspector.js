@@ -113,7 +113,8 @@ const Inspector = ({
 		testService,
 		hasEmailField,
 		children,
-		inputFieldActions
+		inputFieldActions,
+		hasInnerBlocks
 	} = useContext( FormContext );
 
 	const inputFields = children.filter( inputField => {
@@ -192,30 +193,35 @@ const Inspector = ({
 			<div>
 				{ 'settings' === tab && (
 					<Fragment>
-						<PanelBody
-							title={ __( 'Input Fields', 'otter-blocks' ) }
-							initialOpen={ true }
-						>
-							<p>{ __( 'Press and hold to use drag and drop to sort the tabs', 'otter-blocks' ) }</p>
+						{
+							hasInnerBlocks && (
+								<PanelBody
+									title={ __( 'Input Fields', 'otter-blocks' ) }
+									initialOpen={ true }
+								>
+									<p>{ __( 'Press and hold to use drag and drop to sort the tabs', 'otter-blocks' ) }</p>
 
-							{ 0 < children?.length && (
-								<InputFieldList
-									items={ inputFields }
-									onSortEnd={ onSortEnd }
-									useDragHandle
-									axis="y"
-									lockAxis="y"
-								/>
-							) }
+									{ 0 < children?.length && (
+										<InputFieldList
+											items={ inputFields }
+											onSortEnd={ onSortEnd }
+											useDragHandle
+											axis="y"
+											lockAxis="y"
+										/>
+									) }
 
-							<Button
-								isSecondary
-								className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
-								onClick={ () => inputFieldActions?.add?.( 'themeisle-blocks/form-input' ) }
-							>
-								{ __( 'Add Input Field', 'otter-blocks' ) }
-							</Button>
-						</PanelBody>
+									<Button
+										isSecondary
+										className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
+										onClick={ () => inputFieldActions?.add?.( 'themeisle-blocks/form-input' ) }
+									>
+										{ __( 'Add Input Field', 'otter-blocks' ) }
+									</Button>
+								</PanelBody>
+							)
+						}
+
 						<PanelBody
 							title={ __( 'Form Options', 'otter-blocks' ) }
 							initialOpen={ true }

@@ -192,7 +192,8 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 	 * @param string $api_key The API Key of the provider.
 	 * @return array[
 	 *  'validate' => boolean,
-	 *  'reason' => string
+	 *  'reason' => string,
+	 *  'code' => string
 	 * ]
 	 * @since 2.0.3
 	 */
@@ -201,6 +202,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 			return array(
 				'valid'  => false,
 				'reason' => __( 'API Key is missing!', 'otter-blocks' ),
+				'code'   => Form_Data_Response::ERROR_PROVIDER_INVALID_KEY,
 			);
 		}
 
@@ -209,11 +211,13 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 			return array(
 				'valid'  => false,
 				'reason' => __( 'Invalid API Key format!', 'otter-blocks' ),
+				'code'   => Form_Data_Response::ERROR_PROVIDER_INVALID_API_KEY_FORMAT,
 			);
 		}
 		return array(
 			'valid'  => true,
 			'reason' => '',
+			'code'   => '',
 		);
 	}
 

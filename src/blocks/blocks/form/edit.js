@@ -854,7 +854,8 @@ const Edit = ({
 					testService,
 					hasEmailField,
 					children,
-					inputFieldActions
+					inputFieldActions,
+					hasInnerBlocks
 				}}
 			>
 				<Inspector
