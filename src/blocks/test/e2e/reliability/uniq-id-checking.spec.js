@@ -28,6 +28,20 @@ describe( 'Otter Block ID', () => {
 		);
 
 		await createNewPost();
+
+		// Activate Otter Pro
+		const licenseKey = process?.env?.OTTER_PRO_LICENSE ?? '';
+
+		if ( '' === licenseKey ) {
+			console.warn( 'No Otter Pro license provided!' );
+		}
+		await page.evaluate( ( _licenseKey ) => {
+			window.wp.apiFetch({ path: 'otter/v1/toggle_license', method: 'POST', data: {
+				action: 'activate',
+				key: _licenseKey
+			}});
+		}, licenseKey );
+
 		await page.evaluate( ( _html ) => {
 			const { parse } = window.wp.blocks;
 			const { dispatch } = window.wp.data;
@@ -98,9 +112,13 @@ describe( 'Otter Block ID', () => {
 
 		});
 
-		console.log( `Ids that appear more than once: ${Object.keys( duplicates ).filter( i => 1 < duplicates[i]).map( i => `\n| ${duplicates[i].toString().padStart( 2, ' ' )} ${i}` ).join( '' )}`  );
+		const hasNoDuplicates = Object.keys( duplicates ).every( i => 1 === duplicates[i]);
 
-		expect( otterIds.length === s.size ).toBe( true );
+		if ( ! hasNoDuplicates ) {
+			console.log( `Ids that appear more than once: ${Object.keys( duplicates ).filter( i => 1 < duplicates[i]).map( i => `\n| ${duplicates[i].toString().padStart( 2, ' ' )} ${i}` ).join( '' )}`  );
+		}
+
+		expect( hasNoDuplicates ).toBe( true );
 	});
 
 	it( 'Insert extra blocks and check for uniq id', async() => {
@@ -159,9 +177,13 @@ describe( 'Otter Block ID', () => {
 
 		});
 
-		console.log( `Ids that appear more than once: ${Object.keys( duplicates ).filter( i => 1 < duplicates[i]).map( i => `\n| ${duplicates[i].toString().padStart( 2, ' ' )} ${i}` ).join( '' )}`  );
+		const hasNoDuplicates = Object.keys( duplicates ).every( i => 1 === duplicates[i]);
 
-		expect( otterIds.length === s.size ).toBe( true );
+		if ( ! hasNoDuplicates ) {
+			console.log( `Ids that appear more than once: ${Object.keys( duplicates ).filter( i => 1 < duplicates[i]).map( i => `\n| ${duplicates[i].toString().padStart( 2, ' ' )} ${i}` ).join( '' )}`  );
+		}
+
+		expect( hasNoDuplicates ).toBe( true );
 
 		expect( beforeCount < afterCount ).toBe( true );
 

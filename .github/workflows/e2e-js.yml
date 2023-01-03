@@ -54,6 +54,8 @@ jobs:
 
       # run the node.js puppeteer script (which takes the screenshots and controls chrome)
       - run: npm run test:e2e
+        env:
+          OTTER_PRO_LICENSE: ${{ secrets.OTTER_PRO_LICENSE }}
       
       - name: Print the results
         run: |
