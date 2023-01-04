@@ -779,6 +779,9 @@ const Edit = ({
 		'--label-color': getSyncValue( 'labelColor' ),
 		'--input-width': getSyncValue( 'inputWidth' ) !== undefined && ( getSyncValue( 'inputWidth' ) + '%' ),
 		'--submit-color': getSyncValue( 'submitColor' ),
+		'--submit-bg-color': getSyncValue( 'submitBackgroundColor' ),
+		'--submit-color-hover': getSyncValue( 'submitColorHover' ),
+		'--submit-bg-color-hover': getSyncValue( 'submitBackgroundColorHover' ),
 		'--required-color': getSyncValue( 'inputRequiredColor' ),
 		'--input-gap': getSyncValue( 'inputGap' ) !== undefined && ( getSyncValue( 'inputGap' ) + 'px' ),
 		'--inputs-gap': getSyncValue( 'inputsGap' ) !== undefined && ( getSyncValue( 'inputsGap' ) + 'px' ),
@@ -794,24 +797,9 @@ const Edit = ({
 			]), 'px' )
 	};
 
-
-	const [ cssNodeName, setCSS ] = useCSSNode();
-	useEffect( ()=>{
-		setCSS([
-			`.otter-form__container .wp-block-button__link {
-				background-color: ${attributes.submitBackgroundColor}
-			}`,
-			`.otter-form__container .wp-block-button__link:hover {
-				${ getSyncValue( 'submitColorHover' ) && `color: ${getSyncValue( 'submitColorHover' )};` }
-				${ getSyncValue( 'submitBackgroundColorHover' ) && `background-color: ${getSyncValue( 'submitBackgroundColorHover' )};` }
-			}`
-		]);
-	}, [ attributes.submitBackgroundColor, attributes.submitBackgroundColorHover, attributes.submitColorHover ]);
-
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		style: inlineStyles,
-		className: cssNodeName
+		style: inlineStyles
 	});
 
 	const inputFieldActions = {

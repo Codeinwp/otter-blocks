@@ -130,6 +130,21 @@ class Form_CSS extends Base_CSS {
 						'hasSync'  => 'form-submit-color',
 					),
 					array(
+						'property' => '--submit-bg-color',
+						'value'    => 'submitBackgroundColor',
+						'hasSync'  => 'form-submit-bg-color',
+					),
+					array(
+						'property' => '--submit-color-hover',
+						'value'    => 'submitColorHover',
+						'hasSync'  => 'form-submit-color',
+					),
+					array(
+						'property' => '--submit-bg-color-hover',
+						'value'    => 'submitBackgroundColorHover',
+						'hasSync'  => 'form-submit-bg-color',
+					),
+					array(
 						'property' => '--help-label-color',
 						'value'    => 'helpLabelColor',
 						'hasSync'  => 'form-label-color',
@@ -280,34 +295,6 @@ class Form_CSS extends Base_CSS {
 			)
 		);
 
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-button__link',
-				'properties' => array(
-					array(
-						'property' => 'background-color',
-						'value'    => 'submitBackgroundColor',
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-button__link:hover',
-				'properties' => array(
-					array(
-						'property' => 'color',
-						'value'    => 'submitColorHover',
-					),
-					array(
-						'property' => 'background-color',
-						'value'    => 'submitBackgroundColorHover',
-					),
-				),
-			)
-		);
-
 		$style = $css->generate();
 
 		return $style;
@@ -437,6 +424,18 @@ class Form_CSS extends Base_CSS {
 					array(
 						'property' => '--form-submit-color',
 						'value'    => 'submitColor',
+					),
+					array(
+						'property' => '--form-submit-bg-color',
+						'value'    => 'submitBackgroundColor',
+					),
+					array(
+						'property' => '--form-submit-color-hover',
+						'value'    => 'submitColorHover',
+					),
+					array(
+						'property' => '--submit-bg-color-hover',
+						'value'    => 'submitBackgroundColorHover',
 					),
 					array(
 						'property' => '--form-help-label-color',

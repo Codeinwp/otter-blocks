@@ -8,6 +8,9 @@
 	--input-width: 100%;
 	--required-color: red;
 	--submit-color: white;
+	--submit-color-hover: white;
+	--submit-bg-color: orange;
+	--submit-bg-color-hover: rgb(183, 125, 16);
 	--submit-msg-color: green;
 	--submit-error-color: red;
 	--inputs-gap: 16px;
@@ -51,9 +54,15 @@
 				height: auto;
 				padding: var(--btn-pad);
 				color: var(--submit-color);
+				background-color: var(--submit-bg-color);
 				border: 0px;
 				transition: background-color 0.15s linear;
 				max-width: max-content;
+
+				&:hover {
+					color: var(--submit-color-hover);
+					background-color: var(--submit-bg-color-hover);
+				}
 
 				@media ( min-width:640px ) and ( max-width: 1024px ) {
 					padding: var(--btn-pad-tablet);
