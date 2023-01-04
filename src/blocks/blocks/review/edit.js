@@ -287,7 +287,7 @@ const Edit = ({
 						className={ classnames(
 							'o-review__header_details',
 							{
-								'is-single': ! attributes.image || ( ! isSelected && ! attributes.description ),
+								'is-single': ! image || ( ! isSelected && ! attributes.description ),
 								[ detailsWidth[ attributes.imageWidth ] ]: ( attributes.imageWidth && 33 !== attributes.imageWidth )
 							}
 						) }
