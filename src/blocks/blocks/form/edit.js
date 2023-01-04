@@ -798,15 +798,20 @@ const Edit = ({
 
 	const [ cssNodeName, setCSS ] = useCSSNode();
 	useEffect( ()=>{
+		console.log( `.otter-form__container .wp-block-button__link:hover {
+			${ getSyncValue( 'submitColorHover' ) && `color: ${getSyncValue( 'submitColorHover' )}` }
+			${ getSyncValue( 'submitBackgroundColorHover' ) && `background-color: ${getSyncValue( 'submitBackgroundColorHover' )}` }
+		}` );
 		setCSS([
 			`.otter-form__container .wp-block-button__link {
 				background-color: ${attributes.submitBackgroundColor}
 			}`,
 			`.otter-form__container .wp-block-button__link:hover {
-				${ attributes.submitBackgroundColorHover && `background-color: ${attributes.submitBackgroundColorHover}` }
+				${ getSyncValue( 'submitColorHover' ) && `color: ${getSyncValue( 'submitColorHover' )};` }
+				${ getSyncValue( 'submitBackgroundColorHover' ) && `background-color: ${getSyncValue( 'submitBackgroundColorHover' )};` }
 			}`
 		]);
-	}, [ attributes.submitBackgroundColor, attributes.submitBackgroundColorHover ]);
+	}, [ attributes.submitBackgroundColor, attributes.submitBackgroundColorHover, attributes.submitColorHover ]);
 
 	const blockProps = useBlockProps({
 		id: attributes.id,

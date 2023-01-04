@@ -794,7 +794,7 @@ const Inspector = ({
 												<ColorDropdownControl
 													label={__( 'Text', 'otter-blocks' )}
 													colorValue={attributes.submitColorHover}
-													onColorChange={( /** @type {string} */ value ) => setAttributes({ submitColor: value })}
+													onColorChange={( /** @type {string} */ value ) => setAttributes({ submitColorHover: value })}
 													className="is-list is-first"
 												/>
 											</AutoDisableSyncAttr>
@@ -803,7 +803,7 @@ const Inspector = ({
 												<ColorDropdownControl
 													label={__( 'Background', 'otter-blocks' )}
 													colorValue={attributes.submitBackgroundColorHover}
-													onColorChange={( /** @type {string} */ value ) => setAttributes({ submitBackgroundColor: value })}
+													onColorChange={( /** @type {string} */ value ) => setAttributes({ submitBackgroundColorHover: value })}
 													className="is-list"
 												/>
 											</AutoDisableSyncAttr>

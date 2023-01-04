@@ -297,6 +297,10 @@ class Form_CSS extends Base_CSS {
 				'selector'   => ' .wp-block-button__link:hover',
 				'properties' => array(
 					array(
+						'property' => 'color',
+						'value'    => 'submitColorHover',
+					),
+					array(
 						'property' => 'background-color',
 						'value'    => 'submitBackgroundColorHover',
 					),
