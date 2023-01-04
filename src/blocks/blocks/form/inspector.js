@@ -316,7 +316,7 @@ const Inspector = ({
 
 						</PanelBody>
 						<PanelBody
-							title={ __( 'Button options', 'otter-blocks' ) }
+							title={ __( 'Button Options', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
 							<ResponsiveControl
@@ -941,7 +941,7 @@ const Inspector = ({
 							</PanelBody>
 
 							<PanelBody
-								title={ __( 'Input fields', 'otter-blocks' ) }
+								title={ __( 'Input Fields', 'otter-blocks' ) }
 								initialOpen={ false }
 							>
 								<SyncControlDropdown
