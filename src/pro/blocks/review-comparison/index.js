@@ -14,7 +14,7 @@ import metadata from './block.json';
 import edit from './edit.js';
 import Inactive from '../../components/inactive/index.js';
 
-const { faIcon: icon } = window.otterUtils.icons;
+const { reviewIcon: icon } = window.otterUtils.icons;
 
 const { name } = metadata;
 

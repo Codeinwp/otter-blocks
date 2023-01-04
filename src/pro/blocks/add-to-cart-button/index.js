@@ -9,14 +9,14 @@ import { useBlockProps } from '@wordpress/block-editor';
 
 import { Placeholder } from '@wordpress/components';
 
-import { store as icon } from '@wordpress/icons';
-
 /**
  * Internal dependencies
  */
 import metadata from './block.json';
 import edit from './edit.js';
 import Inactive from '../../components/inactive/index.js';
+
+const { cartIcon: icon } = window.otterUtils.icons;
 
 const { name } = metadata;
 
