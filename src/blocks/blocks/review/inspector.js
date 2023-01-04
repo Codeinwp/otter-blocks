@@ -300,7 +300,7 @@ const Inspector = ({
 						{ ( attributes.image || productAttributes?.image ) && (
 							<Fragment>
 								<ButtonToggle
-									label={ __( 'Image Width', 'otter-blocks' ) }
+									label={ __( 'Image Area Width', 'otter-blocks' ) }
 									options={[
 										{
 											label: __( '25%', 'otter-blocks' ),
