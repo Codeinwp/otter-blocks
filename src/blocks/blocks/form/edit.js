@@ -4,6 +4,7 @@
 import classnames from 'classnames';
 
 import { get, isObjectLike } from 'lodash';
+
 import hash from 'object-hash';
 
 /**

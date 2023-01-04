@@ -19,6 +19,20 @@ class License {
 	protected static $instance = null;
 
 	/**
+	 * Price ID to licence type map
+	 *
+	 * @var int[]
+	 */
+	public static $plans_map = [
+		1 => 1,
+		2 => 2,
+		3 => 3,
+		4 => 1,
+		5 => 2,
+		6 => 3,
+	];
+
+	/**
 	 * Initialize the class
 	 */
 	public function init() {
@@ -61,6 +75,7 @@ class License {
 			'site_inactive',
 			'item_name_mismatch',
 			'no_activations_left',
+			'not_active',
 		);
 
 		if ( in_array( $status->license, $invalid_statuses ) ) {
@@ -109,6 +124,33 @@ class License {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Get the licence type.
+	 * 1 - personal, 2 - business, 3 - agency.
+	 *
+	 * @return int
+	 */
+	public static function get_license_type() {
+		$license = self::get_license_data();
+		if ( false === $license ) {
+			return -1;
+		}
+
+		if ( ! isset( $license->price_id ) ) {
+			return -1;
+		}
+
+		if ( isset( $license->license ) && ( 'valid' !== $license->license && 'active_expired' !== $license->license ) ) {
+			return -1;
+		}
+
+		if ( ! array_key_exists( $license->price_id, self::$plans_map ) ) {
+			return -1;
+		}
+
+		return self::$plans_map[ $license->price_id ];
 	}
 
 	/**

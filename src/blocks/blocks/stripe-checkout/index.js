@@ -12,12 +12,11 @@ import {
 	Placeholder
 } from '@wordpress/components';
 
-import { store as icon } from '@wordpress/icons';
-
 /**
   * Internal dependencies
   */
 import metadata from './block.json';
+import { cartIcon as icon } from '../../helpers/icons.js';
 import edit from './edit';
 
 const { name } = metadata;

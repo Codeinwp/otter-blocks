@@ -7,8 +7,6 @@ import { registerBlockType } from '@wordpress/blocks';
 
 import { useBlockProps } from '@wordpress/block-editor';
 
-import { receipt as icon } from '@wordpress/icons';
-
 /**
  * Internal dependencies
  */
@@ -17,6 +15,8 @@ import edit from './edit.js';
 import save from './save.js';
 import Inactive from '../../components/inactive/index.js';
 import './item/index.js';
+
+const { businessHoursIcon: icon } = window.otterUtils.icons;
 
 const { name } = metadata;
 
@@ -45,7 +45,7 @@ registerBlockType( name, {
 	styles: [
 		{
 			name: 'default',
-			label: __( 'default', 'otter-blocks' ),
+			label: __( 'Default', 'otter-blocks' ),
 			isDefault: true
 		},
 		{

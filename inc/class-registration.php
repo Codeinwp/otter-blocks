@@ -268,6 +268,7 @@ class Registration {
 				'isAncestorTypeAvailable' => version_compare( get_bloginfo( 'version' ), '5.9.22', '>=' ),
 				'version'                 => OTTER_BLOCKS_VERSION,
 				'showBFDeal'              => Pro::bf_deal(),
+				'isRTL'                   => is_rtl(),
 			)
 		);
 
@@ -498,6 +499,7 @@ class Registration {
 				'themeisleGutenbergForm',
 				array(
 					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
+					'reRecaptchaAPIURL'  => apply_filters( 'otter_blocks_recaptcha_api_url', 'https://www.google.com/recaptcha/api.js' ),
 					'root'               => esc_url_raw( rest_url() ),
 					'nonce'              => wp_create_nonce( 'wp_rest' ),
 					'messages'           => array(
@@ -577,6 +579,14 @@ class Registration {
 			);
 
 			wp_script_add_data( 'otter-slider', 'async', true );
+
+			wp_localize_script(
+				'otter-slider',
+				'themeisleGutenbergSlider',
+				array(
+					'isRTL' => is_rtl(),
+				)
+			);
 		}
 
 		if ( ! self::$scripts_loaded['tabs'] && has_block( 'themeisle-blocks/tabs', $post ) ) {

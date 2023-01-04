@@ -163,17 +163,20 @@ const Inspector = ({
 					{
 						value: attributes.activeTitleColor,
 						onChange: onActiveTitleColorChange,
-						label: __( 'Active Title Color', 'otter-blocks' )
+						label: __( 'Active Title Color', 'otter-blocks' ),
+						isShownByDefault: false
 					},
 					{
 						value: attributes.tabColor,
 						onChange: onTabColorChange,
-						label: __( 'Background', 'otter-blocks' )
+						label: __( 'Background', 'otter-blocks' ),
+						isShownByDefault: false
 					},
 					{
 						value: attributes.borderColor,
 						onChange: onBorderColorChange,
-						label: __( 'Border Color', 'otter-blocks' )
+						label: __( 'Border Color', 'otter-blocks' ),
+						isShownByDefault: false
 					}
 				] }
 			>

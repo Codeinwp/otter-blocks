@@ -2,7 +2,6 @@
  * WordPress dependencies.
  */
 import { Tooltip } from '@wordpress/components';
-
 import { info } from '@wordpress/icons';
 
 /**

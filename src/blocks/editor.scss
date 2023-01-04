@@ -18,6 +18,14 @@
 	max-width: none !important;
 }
 
+svg.o-block-icon {
+	fill: url( #o-icon-fill ) !important;
+}
+
+.block-editor-list-view-leaf.is-selected svg.o-block-icon {
+	fill: #fff !important;
+}
+
 .o-notice {
 	display: flex;
 	align-items: center;

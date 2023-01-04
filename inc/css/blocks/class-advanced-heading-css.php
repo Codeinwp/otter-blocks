@@ -499,7 +499,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 							return isset( $attrs['margin'] ) && is_array( $attrs['margin'] );
 						},
 						'format'    => function( $value ) {
-							return CSS_Utility::render_box( $value );
+							return CSS_Utility::box_values( $value );
 						},
 					),
 					array(
@@ -509,7 +509,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 							return isset( $attrs['marginTablet'] ) && is_array( $attrs['marginTablet'] );
 						},
 						'format'    => function( $value ) {
-							return CSS_Utility::render_box( $value );
+							return CSS_Utility::box_values( $value );
 						},
 					),
 					array(
@@ -519,7 +519,7 @@ class Advanced_Heading_CSS extends Base_CSS {
 							return isset( $attrs['marginMobile'] ) && is_array( $attrs['marginMobile'] );
 						},
 						'format'    => function( $value ) {
-							return CSS_Utility::render_box( $value );
+							return CSS_Utility::box_values( $value );
 						},
 					),
 				),
