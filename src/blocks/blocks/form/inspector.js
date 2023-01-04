@@ -317,7 +317,7 @@ const Inspector = ({
 						</PanelBody>
 						<PanelBody
 							title={ __( 'Button options', 'otter-blocks' ) }
-							initialOpen={ true }
+							initialOpen={ false }
 						>
 							<ResponsiveControl
 								label={ __( 'Alignment', 'otter-blocks' ) }
@@ -364,7 +364,7 @@ const Inspector = ({
 						</PanelBody>
 						<PanelBody
 							title={ __( 'Action after Submit', 'otter-blocks' ) }
-							initialOpen={ true }
+							initialOpen={ false }
 						>
 							<TextControl
 								label={ __( 'Redirect To', 'otter-blocks' ) }
@@ -653,7 +653,7 @@ const Inspector = ({
 						</PanelBody>
 						<PanelBody
 							title={ __( 'Submit Messages', 'otter-blocks' ) }
-							initialOpen={ true }
+							initialOpen={ false }
 						>
 							<TextareaControl
 								label={ __( 'Success Message', 'otter-blocks' ) }
@@ -678,7 +678,7 @@ const Inspector = ({
 							<SyncColorPanel
 								label={ __( 'Form Color', 'otter-blocks' ) }
 								isSynced={ attributes.isSynced ?? [] }
-								initialOpen={ false }
+								initialOpen={ true }
 								setAttributes={ setAttributes }
 								options={ [
 									{
@@ -716,7 +716,7 @@ const Inspector = ({
 
 							<PanelBody
 								title={ __( 'Button', 'otter-blocks' ) }
-								initialOpen={ true }
+								initialOpen={ false }
 							>
 								<SyncControlDropdown
 									isSynced={attributes.isSynced}
@@ -845,7 +845,7 @@ const Inspector = ({
 
 							<PanelBody
 								title={ __( 'Submit Messages', 'otter-blocks' ) }
-								initialOpen={ true }
+								initialOpen={ false }
 							>
 
 								<SyncControlDropdown
@@ -899,7 +899,7 @@ const Inspector = ({
 
 							<PanelBody
 								title={ __( 'Labels', 'otter-blocks' ) }
-								initialOpen={ true }
+								initialOpen={ false }
 							>
 								<SyncControlDropdown
 									isSynced={attributes.isSynced}
@@ -942,7 +942,7 @@ const Inspector = ({
 
 							<PanelBody
 								title={ __( 'Input fields', 'otter-blocks' ) }
-								initialOpen={ true }
+								initialOpen={ false }
 							>
 								<SyncControlDropdown
 									isSynced={attributes.isSynced}
@@ -1010,7 +1010,7 @@ const Inspector = ({
 
 							<PanelBody
 								title={ __( 'Border', 'otter-blocks' ) }
-								initialOpen={ true }
+								initialOpen={ false }
 							>
 								<SyncControlDropdown
 									isSynced={attributes.isSynced}
@@ -1046,7 +1046,7 @@ const Inspector = ({
 							</PanelBody>
 							<PanelBody
 								title={ __( 'Helper Text', 'otter-blocks' ) }
-								initialOpen={ true }
+								initialOpen={ false }
 							>
 								<SyncControlDropdown
 									isSynced={attributes.isSynced}
@@ -1073,8 +1073,6 @@ const Inspector = ({
 					)
 				}
 			</div>
-
-
 		</InspectorControls>
 	);
 };

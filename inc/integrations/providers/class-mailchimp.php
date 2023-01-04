@@ -137,8 +137,14 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 		if ( is_wp_error( $response ) || 200 !== wp_remote_retrieve_response_code( $response ) ) {
 			$res->set_error( ! empty( $body['detail'] ) && 'null' !== $body['detail'] ? $body['detail'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'mailchimp' )->set_is_credential_error( $this->is_credential_error( $body['status'] ) );
 
+			if ( ! empty( $body['detail'] ) && str_contains( $body['detail'], 'fake' ) ) {
+				$res->set_code( Form_Data_Response::ERROR_PROVIDER_INVALID_EMAIL );
+			} else {
+				$res->set_code( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR );
+			}       
 		} else {
 			$res->mark_as_success();
+			$res->set_code( Form_Data_Response::SUCCESS_USER_SUBSCRIBED );
 		}
 
 		return $res;

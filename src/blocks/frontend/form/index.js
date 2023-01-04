@@ -162,7 +162,9 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 				 */
 				const res = response;
 
-				if ( res?.success ) {
+				console.log( res );
+
+				if ( '0' === res?.code || '1' === res?.code || res?.success ) {
 					const msg = res?.submitMessage ? res.submitMessage :  'Success';
 					displayMsg.setMsg( msg ).show();
 
@@ -180,18 +182,26 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 					let errorMsgSlug = '';
 
 					// TODO: Write pattern to display a more useful error message.
-					if ( res?.provider && res?.error?.includes( 'invalid' ) || res?.error?.includes( 'fake' ) ) { // mailchimp
-						errorMsgSlug = 'invalid-email';
-					} else if ( res?.provider && res?.error?.includes( 'duplicate' ) || res?.error?.includes( 'already' ) ) { // sendinblue
-						errorMsgSlug = 'already-registered';
+					if ( 0 < res?.displayError?.length ) {
+						errorMsgSlug = res?.displayError;
+
+						displayMsg.setMsg( errorMsgSlug, 'error' ).show();
 					} else {
-						errorMsgSlug = 'try-again';
+
+						// if ( res?.provider && res?.error?.includes( 'invalid' ) || res?.error?.includes( 'fake' ) ) { // mailchimp
+						// 	errorMsgSlug = 'invalid-email';
+						// } else if ( res?.provider && res?.error?.includes( 'duplicate' ) || res?.error?.includes( 'already' ) ) { // sendinblue
+						// 	errorMsgSlug = 'already-registered';
+						// } else {
+						// 	errorMsgSlug = 'try-again';
+						// }
+
+						displayMsg.setMsg( res?.reasons?.join( '' ), 'error' ).show();
 					}
 
-					displayMsg.pullMsg( errorMsgSlug, 'error' ).show();
 
 					// eslint-disable-next-line no-console
-					console.error( res?.error, res?.reasons );
+					console.error( `(${res?.code}) ${res?.reasons?.join( '' )}` );
 				}
 
 				/**

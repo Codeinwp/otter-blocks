@@ -204,7 +204,7 @@ class Form_Server {
 			$error_code = $this->check_form_conditions( $form_data );
 
 			if ( $error_code ) {
-				$res->set_code_error( $error_code );
+				$res->set_code( $error_code );
 				return $res->build_response();
 			}
 
@@ -212,7 +212,7 @@ class Form_Server {
 			if ( $form_data->payload_has_field( 'token' ) ) {
 				$result = $this->check_form_captcha( $form_data );
 				if ( ! $result['success'] ) {
-					$res->set_code_error( Form_Data_Response::ERROR_INVALID_CAPTCHA_TOKEN );
+					$res->set_code( Form_Data_Response::ERROR_INVALID_CAPTCHA_TOKEN );
 					return $res->build_response();
 				}
 			}
@@ -237,12 +237,12 @@ class Form_Server {
 
 				return $provider_response;
 			} else {
-				$res->set_code_error( Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED );
+				$res->set_code( Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED );
 			}
 
 			do_action( 'otter_form_after_submit', $form_data );
 		} catch ( Exception $e ) {
-			$res->set_code_error( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
 			$res->add_reason( $e->getMessage() );
 			$this->send_error_email( $e->getMessage(), $form_data );
 		}
@@ -268,7 +268,7 @@ class Form_Server {
 			$email_message = Form_Email::instance()->build_email( $form_data );
 			$email_body    = apply_filters( 'otter_form_email_build_body', $email_message );
 
-			// Sent the form date to the admin site as a default behaviour.
+			// Sent the form date to the admin site as a default behavior.
 			$to = sanitize_email( get_site_option( 'admin_email' ) );
 
 			// Check if we need to send it to another user email.
@@ -280,6 +280,10 @@ class Form_Server {
 					if ( isset( $form['form'] ) && $form['form'] === $option_name && isset( $form['email'] ) && '' !== $form['email'] ) {
 						$to = sanitize_email( $form['email'] );
 					}
+				}
+
+				if ( empty( $to ) ) {
+					$to = sanitize_email( get_site_option( 'admin_email' ) );
 				}
 			}
 
@@ -303,11 +307,13 @@ class Form_Server {
 
 			// phpcs:ignore
 			$res->set_success( wp_mail( $to, $email_subject, $email_body, $headers ) );
-			if ( ! $res->is_success() ) {
-				$res->set_code_error( Form_Data_Response::ERROR_EMAIL_NOT_SEND );
+			if ( $res->is_success() ) {
+				$res->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
+			} else {
+				$res->set_code( Form_Data_Response::ERROR_EMAIL_NOT_SEND );
 			}
 		} catch ( Exception  $e ) {
-			$res->set_code_error( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
 			$res->add_reason( $e->getMessage() );
 			$this->send_error_email( $e->getMessage(), $form_data );
 		} finally {
@@ -396,7 +402,7 @@ class Form_Server {
 			// phpcs:ignore
 			$res->set_success( wp_mail( $to, $email_subject, $email_body, $headers ) );
 		} catch ( Exception  $e ) {
-			$res->set_code_error( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
 			$res->add_reason( $e->getMessage() );
 		} finally {
 			return $res->build_response();
@@ -434,11 +440,11 @@ class Form_Server {
 					$service->set_api_key( $form_data->get_payload_field( 'apiKey' ) );
 					$res->set_response( $service->get_information_from_provider( $form_data ) );
 				} else {
-					$res->set_code_error( $valid_api_key['code'] );
+					$res->set_code( $valid_api_key['code'] );
 				}
 			}
 		} catch ( Exception $e ) {
-			$res->set_code_error( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
 			$res->add_reason( $e->getMessage() );
 		} finally {
 			return $res->build_response();
@@ -466,7 +472,7 @@ class Form_Server {
 					$service = new Sendinblue_Integration();
 					break;
 				default:
-					$res->set_code_error( Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED );
+					$res->set_code( Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED );
 			}
 
 			if ( isset( $service ) ) {
@@ -479,11 +485,11 @@ class Form_Server {
 						$res->set_error( __( 'Contact list ID is missing!', 'otter-blocks' ) );
 					}
 				} else {
-					$res->set_code_error( $valid_api_key['code'] );
+					$res->set_code( $valid_api_key['code'] );
 				}
 			}
 		} catch ( Exception $e ) {
-			$res->set_code_error( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
 			$res->add_reason( $e->getMessage() );
 		} finally {
 			return $res->build_response();
@@ -542,17 +548,14 @@ class Form_Server {
 
 				if ( $valid_api_key['valid'] ) {
 					$res->copy( $service->subscribe( $email ) );
-
-					// Add additional data like: redirect link when the request is successful.
-					$res->add_values( $wp_options_form->get_submit_data() );
 				} else {
-					$res->set_code_error( $valid_api_key['code'] );
+					$res->set_code( $valid_api_key['code'] );
 				}
 			} else {
-				$res->set_code_error( $error_code );
+				$res->set_code( $error_code );
 			}
 		} catch ( Exception $e ) {
-			$res->set_code_error( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
 			$res->add_reason( $e->getMessage() );
 			$this->send_error_email( $e->getMessage(), $form_data );
 		} finally {
@@ -560,6 +563,9 @@ class Form_Server {
 			if ( $res->is_credential_error() ) {
 				self::send_error_email( 'error', $form_data );
 			}
+			$form_options = $form_data->get_form_options();
+			$res->add_values( $form_options->get_submit_data() );
+
 			return $res->build_response();
 		}
 	}

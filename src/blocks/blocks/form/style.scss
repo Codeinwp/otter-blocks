@@ -200,7 +200,7 @@
 			}
 
 			&.left > div {
-				align-items: flex-end;
+				align-items: flex-start;
 				
 				.o-form-server-response {
 					padding-left: 0px;
@@ -209,7 +209,7 @@
 
 			&.o-left-tablet > div {
 				@media ( max-width: 1024px ) {
-					align-items: flex-end;
+					align-items: flex-start;
 					
 					.o-form-server-response {
 						padding-left: 0px;
@@ -219,7 +219,7 @@
 
 			&.o-left-mobile > div {
 				@media ( max-width:640px ) {
-					align-items: flex-end;
+					align-items: flex-start;
 					
 					.o-form-server-response {
 						padding-left: 0px;

@@ -529,6 +529,7 @@ class Form_Settings_Data {
 		return array(
 			'redirectLink'  => $this->get_redirect_link(),
 			'submitMessage' => $this->get_submit_message(),
+			'displayError'  => $this->get_error_message(),
 		);
 	}
 

@@ -22,7 +22,7 @@ class Form_Data_Response {
 	const SUCCESS_EMAIL_SEND      = '0';
 	const SUCCESS_USER_SUBSCRIBED = '1';
 
-	const ERROR_RUNTIME_ERROR = '10'; 
+	const ERROR_RUNTIME_ERROR = '10';
 
 	// Request validation errors.
 	const ERROR_MISSING_DATA         = '101';
@@ -36,11 +36,14 @@ class Form_Data_Response {
 	const ERROR_MISSING_MAIL_LIST_ID = '109';
 
 	// Errors from external services.
-	const ERROR_PROVIDER_NOT_REGISTERED         = '201';
-	const ERROR_PROVIDER_SUBSCRIBE_ERROR        = '202';
-	const ERROR_PROVIDER_INVALID_KEY            = '203';
-	const ERROR_INVALID_CAPTCHA_TOKEN           = '204';
-	const ERROR_PROVIDER_INVALID_API_KEY_FORMAT = '205';
+	const ERROR_PROVIDER_NOT_REGISTERED            = '201';
+	const ERROR_PROVIDER_SUBSCRIBE_ERROR           = '202';
+	const ERROR_PROVIDER_INVALID_KEY               = '203';
+	const ERROR_INVALID_CAPTCHA_TOKEN              = '204';
+	const ERROR_PROVIDER_INVALID_API_KEY_FORMAT    = '205';
+	const ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED = '206';
+	const ERROR_PROVIDER_INVALID_EMAIL             = '207';
+	const ERROR_PROVIDER_DUPLICATED_EMAIL          = '208';
 
 
 	/**
@@ -67,10 +70,10 @@ class Form_Data_Response {
 	 * @since 2.0.0
 	 */
 	public function __construct() {
-		$this->response['success']       = false;
-		$this->response['reasons']       = array();
-		$this->response['code']          = self::SUCCESS_EMAIL_SEND;
-		$this->response['display_error'] = '';
+		$this->response['success']      = false;
+		$this->response['reasons']      = array();
+		$this->response['code']         = self::SUCCESS_EMAIL_SEND;
+		$this->response['displayError'] = '';
 	}
 
 	/**
@@ -94,7 +97,7 @@ class Form_Data_Response {
 	 * @param string $code Error code.
 	 * @since 2.1.7
 	 */
-	public function set_code_error( $code ) {
+	public function set_code( $code ) {
 		$this->response['code'] = $code;
 		return $this;
 	}
@@ -106,7 +109,7 @@ class Form_Data_Response {
 	 * @since 2.1.7
 	 */
 	public function set_display_error( $err_msg ) {
-		$this->response['display_error'] = $err_msg;
+		$this->response['displayError'] = $err_msg;
 		return $this;
 	}
 
@@ -312,21 +315,38 @@ class Form_Data_Response {
 			case self::ERROR_PROVIDER_SUBSCRIBE_ERROR:
 				$this->add_reason( __( 'Error received from service when subscribing the user.', 'otter-blocks' ) );
 				break;
+
 			case self::ERROR_MISSING_PROVIDER:
 				$this->add_reason( __( 'Provider settings are missing.', 'otter-blocks' ) );
 				break;
+
 			case self::ERROR_MISSING_API_KEY:
 				$this->add_reason( __( 'API Key is missing from settings.', 'otter-blocks' ) );
-				break;  
+				break;
+
 			case self::ERROR_MISSING_MAIL_LIST_ID:
 				$this->add_reason( __( 'API Key is missing.', 'otter-blocks' ) );
-				break;  
+				break;
+
 			case self::ERROR_INVALID_CAPTCHA_TOKEN:
 				$this->add_reason( __( 'The reCaptcha token is invalid.', 'otter-blocks' ) );
 				break;
+
 			case self::ERROR_PROVIDER_INVALID_API_KEY_FORMAT:
 				$this->add_reason( __( 'The API key format is invalid.', 'otter-blocks' ) );
-				break;  
+				break;
+
+			case self::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED:
+				$this->add_reason( __( 'The email was already registered.', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_PROVIDER_INVALID_EMAIL:
+				$this->add_reason( __( 'The email address is invalid.', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_PROVIDER_DUPLICATED_EMAIL:
+				$this->add_reason( __( 'The email was already registered.', 'otter-blocks' ) );
+				break;
 		}
 	}
 }

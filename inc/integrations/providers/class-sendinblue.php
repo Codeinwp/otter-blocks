@@ -14,6 +14,7 @@ namespace ThemeIsle\GutenbergBlocks\Integration;
  */
 class Sendinblue_Integration implements FormSubscribeServiceInterface {
 
+
 	/**
 	 * The API Key of the service.
 	 *
@@ -31,9 +32,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 	/**
 	 * The default constructor.
 	 */
-	public function __construct() {
-
-	}
+	public function __construct() {     }
 
 	/**
 	 * Extract the API Key and the contact list.
@@ -84,7 +83,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 		} else {
 			$return['success'] = true;
 			$return['list_id'] = array_map(
-				function( $item ) {
+				function ( $item ) {
 					return array(
 						'id'   => $item['id'],
 						'name' => $item['name'],
@@ -131,10 +130,17 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 			$res->set_error( ! empty( $body['message'] ) && 'null' !== $body['message'] ? $body['message'] : __( 'The request has been rejected by the provider!', 'otter-blocks' ), 'sendinblue' );
 
 			if ( isset( $body['code'] ) ) {
-				$res->set_error( $body['message'], 'sendinblue' )->set_is_credential_error( $this->is_credential_error( $body['code'] ) );
+				$res->set_is_credential_error( $this->is_credential_error( $body['code'] ) );
+			}
+
+			if ( ! empty( $body['message'] ) && str_contains( $body['message'], 'already' ) ) {
+				$res->set_code( Form_Data_Response::ERROR_PROVIDER_DUPLICATED_EMAIL );
+			} else {
+				$res->set_code( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR );
 			}
 		} else {
 			$res->mark_as_success();
+			$res->set_code( Form_Data_Response::SUCCESS_USER_SUBSCRIBED );
 		}
 
 		return $res;
