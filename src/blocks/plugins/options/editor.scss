@@ -76,6 +76,7 @@
 			.o-options-block-item-label {
 				flex-basis: 40%;
 				flex-grow: 1;
+				padding-right: 5px;
 			}
 		}
 
@@ -84,18 +85,12 @@
 
 			.o-options-block-item-icon {
 				svg {
-					fill: #555555A3 !important;
+					fill: #E5E5E5 !important;
 				}
 			}
 
 			.o-options-block-item-label {
-				color: #e5e5e5;
-			}
-
-			.o-options-block-item-button {
-				svg {
-					fill :#e5e5e5;
-				}
+				color: #E5E5E5;
 			}
 		}
 

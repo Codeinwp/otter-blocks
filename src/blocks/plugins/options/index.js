@@ -301,7 +301,7 @@ const Options = () => {
 							icon={ chevronLeftSmall }
 							className="o-navi-button o-navi-button-back"
 						>
-							{ __( 'Back', 'otter-blocks' ) }
+							{ __( 'Settings', 'otter-blocks' ) }
 						</NavigatorButton>
 
 						<GlobalDefaults
@@ -321,7 +321,7 @@ const Options = () => {
 							icon={ chevronLeftSmall }
 							className="o-navi-button o-navi-button-back"
 						>
-							{ __( 'Back', 'otter-blocks' ) }
+							{ __( 'Blocks', 'otter-blocks' ) }
 						</NavigatorButton>
 
 						{ selectedBlock && (
