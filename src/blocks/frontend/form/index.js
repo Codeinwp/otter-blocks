@@ -162,8 +162,6 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 				 */
 				const res = response;
 
-				console.log( res );
-
 				if ( '0' === res?.code || '1' === res?.code || res?.success ) {
 					const msg = res?.submitMessage ? res.submitMessage :  'Success';
 					displayMsg.setMsg( msg ).show();

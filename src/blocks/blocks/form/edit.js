@@ -188,7 +188,6 @@ const Edit = ({
 
 	useEffect( () => {
 		if ( canSaveData && optionsHaveChanged ) {
-			console.count( 'Save Effect' );
 			saveFormEmailOptions();
 		}
 	}, [ canSaveData, optionsHaveChanged ]);
@@ -798,10 +797,6 @@ const Edit = ({
 
 	const [ cssNodeName, setCSS ] = useCSSNode();
 	useEffect( ()=>{
-		console.log( `.otter-form__container .wp-block-button__link:hover {
-			${ getSyncValue( 'submitColorHover' ) && `color: ${getSyncValue( 'submitColorHover' )}` }
-			${ getSyncValue( 'submitBackgroundColorHover' ) && `background-color: ${getSyncValue( 'submitBackgroundColorHover' )}` }
-		}` );
 		setCSS([
 			`.otter-form__container .wp-block-button__link {
 				background-color: ${attributes.submitBackgroundColor}
