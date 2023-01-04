@@ -45,7 +45,7 @@ registerBlockType( name, {
 	styles: [
 		{
 			name: 'default',
-			label: __( 'default', 'otter-blocks' ),
+			label: __( 'Default', 'otter-blocks' ),
 			isDefault: true
 		},
 		{
