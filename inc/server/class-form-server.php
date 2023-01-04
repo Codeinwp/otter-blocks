@@ -220,10 +220,6 @@ class Form_Server {
 			$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_payload_field( 'formOption' ) );
 			$form_data->set_form_options( $form_options );
 
-			if ( null !== $form_options->get_error_message() ) {
-				$res->set_error( $form_options->get_error_message() );
-			}
-
 			do_action( 'otter_form_before_submit', $form_data );
 			// Select the submit function based on the provider.
 			$provider_handlers = apply_filters( 'otter_select_form_provider', $form_data );

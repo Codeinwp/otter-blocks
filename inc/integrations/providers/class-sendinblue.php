@@ -134,7 +134,7 @@ class Sendinblue_Integration implements FormSubscribeServiceInterface {
 			}
 
 			if ( ! empty( $body['message'] ) && str_contains( $body['message'], 'already' ) ) {
-				$res->set_code( Form_Data_Response::ERROR_PROVIDER_DUPLICATED_EMAIL );
+				$res->set_code( Form_Data_Response::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED );
 			} else {
 				$res->set_code( Form_Data_Response::ERROR_PROVIDER_SUBSCRIBE_ERROR );
 			}

@@ -281,7 +281,7 @@ class Form_Data_Response {
 	public function process_error_code() {
 		switch ( $this->response['code'] ) {
 			case self::ERROR_MISSING_DATA:
-				$this->add_reason( __( 'Essential data is missing.', 'otter-blocks' ) );
+				$this->add_reason( __( 'Essential data is missing: invalid Form id or protection.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_MISSING_CAPTCHA:
