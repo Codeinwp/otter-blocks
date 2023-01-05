@@ -51,13 +51,7 @@ jobs:
       - name: setup wp env
         run: |
           npm run wp-env start
-
-      - name: Setup WP-CLI
-        uses: godaddy-wordpress/setup-wp-cli@main
-
-      - name: testing
-        run: |
-          wp eval 'echo ${{ secrets.OTTER_PRO_LICENSE }};'
+          wp-env run cli wp eval 'echo ${{ secrets.OTTER_PRO_LICENSE }};'
         env:
           OTTER_PRO_LICENSE: ${{ secrets.OTTER_PRO_LICENSE }}
 
