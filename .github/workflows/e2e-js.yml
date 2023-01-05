@@ -51,7 +51,7 @@ jobs:
       - name: setup wp env
         run: |
           npm run wp-env start
-          wp-env run cli wp eval 'echo ${{ secrets.OTTER_PRO_LICENSE }};'
+          npm run wp-env run cli wp eval 'echo ${{ secrets.OTTER_PRO_LICENSE }};'
         env:
           OTTER_PRO_LICENSE: ${{ secrets.OTTER_PRO_LICENSE }}
 
