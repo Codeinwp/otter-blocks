@@ -7,10 +7,10 @@
 	--help-label-color: inherit;
 	--input-width: 100%;
 	--required-color: red;
-	--submit-color: white;
-	--submit-color-hover: white;
-	--submit-bg-color: orange;
-	--submit-bg-color-hover: rgb(183, 125, 16);
+	--submit-color: var(--wp--preset--color--contrast);
+	--submit-color-hover: var(--wp--preset--color--base);
+	--submit-bg-color: var(--wp--preset--color--primary);
+	--submit-bg-color-hover: var(--wp--preset--color--contrast);
 	--submit-msg-color: green;
 	--submit-error-color: red;
 	--inputs-gap: 16px;

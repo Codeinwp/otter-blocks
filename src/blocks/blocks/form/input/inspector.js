@@ -30,7 +30,7 @@ const Inspector = ({
 	return (
 		<InspectorControls>
 			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
+				title={ __( 'Field Settings', 'otter-blocks' ) }
 			>
 				<Button
 					isSecondary

@@ -713,7 +713,6 @@ const Inspector = ({
 									}
 								] }
 							/>
-
 							<PanelBody
 								title={ __( 'Button', 'otter-blocks' ) }
 								initialOpen={ false }
@@ -842,61 +841,6 @@ const Inspector = ({
 								</ResponsiveControl>
 
 							</PanelBody>
-
-							<PanelBody
-								title={ __( 'Submit Messages', 'otter-blocks' ) }
-								initialOpen={ false }
-							>
-
-								<SyncControlDropdown
-									isSynced={attributes.isSynced}
-									options={[
-										{
-											label: __( 'Font Size', 'otter-blocks' ),
-											value: 'messageFontSize'
-										},
-										{
-											label: __( 'Success message', 'otter-blocks' ),
-											value: 'submitMessageColor'
-										},
-										{
-											label: __( 'Error message', 'otter-blocks' ),
-											value: 'submitMessageErrorColor'
-										}
-									]}
-									setAttributes={setAttributes}
-								/>
-
-								<AutoDisableSyncAttr attr={'submitMessageColor'}>
-									<ColorDropdownControl
-										label={__( 'Success message', 'otter-blocks' )}
-										colorValue={attributes.submitMessageColor}
-										onColorChange={( /** @type {string} */ value ) => setAttributes({ submitMessageColor: value })}
-										className="is-list is-first"
-									/>
-								</AutoDisableSyncAttr>
-
-								<AutoDisableSyncAttr attr={'submitMessageErrorColor'}>
-									<ColorDropdownControl
-										label={__( 'Error message', 'otter-blocks' )}
-										colorValue={attributes.submitMessageErrorColor}
-										onColorChange={( /** @type {string} */ value ) => setAttributes({ submitMessageErrorColor: value })}
-										className="is-list"
-									/>
-								</AutoDisableSyncAttr>
-
-
-								<br/>
-								<AutoDisableSyncAttr attr={'messageFontSize'}>
-									<FontSizePicker
-										fontSizes={ defaultFontSizes }
-										withReset
-										value={ attributes.messageFontSize }
-										onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
-									/>
-								</AutoDisableSyncAttr>
-							</PanelBody>
-
 							<PanelBody
 								title={ __( 'Labels', 'otter-blocks' ) }
 								initialOpen={ false }
@@ -939,7 +883,6 @@ const Inspector = ({
 									/>
 								</AutoDisableSyncAttr>
 							</PanelBody>
-
 							<PanelBody
 								title={ __( 'Input Fields', 'otter-blocks' ) }
 								initialOpen={ false }
@@ -1005,9 +948,7 @@ const Inspector = ({
 										/>
 									</AutoDisableSyncAttr>
 								</ResponsiveControl>
-
 							</PanelBody>
-
 							<PanelBody
 								title={ __( 'Border', 'otter-blocks' ) }
 								initialOpen={ false }
@@ -1066,6 +1007,59 @@ const Inspector = ({
 										withReset
 										value={ attributes.helpFontSize }
 										onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
+									/>
+								</AutoDisableSyncAttr>
+							</PanelBody>
+							<PanelBody
+								title={ __( 'Submit Messages', 'otter-blocks' ) }
+								initialOpen={ false }
+							>
+
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									options={[
+										{
+											label: __( 'Font Size', 'otter-blocks' ),
+											value: 'messageFontSize'
+										},
+										{
+											label: __( 'Success message', 'otter-blocks' ),
+											value: 'submitMessageColor'
+										},
+										{
+											label: __( 'Error message', 'otter-blocks' ),
+											value: 'submitMessageErrorColor'
+										}
+									]}
+									setAttributes={setAttributes}
+								/>
+
+								<AutoDisableSyncAttr attr={'submitMessageColor'}>
+									<ColorDropdownControl
+										label={__( 'Success message', 'otter-blocks' )}
+										colorValue={attributes.submitMessageColor}
+										onColorChange={( /** @type {string} */ value ) => setAttributes({ submitMessageColor: value })}
+										className="is-list is-first"
+									/>
+								</AutoDisableSyncAttr>
+
+								<AutoDisableSyncAttr attr={'submitMessageErrorColor'}>
+									<ColorDropdownControl
+										label={__( 'Error message', 'otter-blocks' )}
+										colorValue={attributes.submitMessageErrorColor}
+										onColorChange={( /** @type {string} */ value ) => setAttributes({ submitMessageErrorColor: value })}
+										className="is-list"
+									/>
+								</AutoDisableSyncAttr>
+
+
+								<br/>
+								<AutoDisableSyncAttr attr={'messageFontSize'}>
+									<FontSizePicker
+										fontSizes={ defaultFontSizes }
+										withReset
+										value={ attributes.messageFontSize }
+										onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
 									/>
 								</AutoDisableSyncAttr>
 							</PanelBody>
