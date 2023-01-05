@@ -35,23 +35,19 @@
 			"default": [
 			{
 				"title": "Stability",
-				"rating": 9,
-				"description": "Really stable and solid build"
+				"rating": 9
 			},
 			{
 				"title": "Ease of Use",
-				"rating": 4,
-				"description": "Not that good for beginners"
+				"rating": 4
 			},
 			{
 				"title": "Look & Feel",
-				"rating": 9,
-				"description": "Beautiful colours"
+				"rating": 9
 			},
 			{
 				"title": "Price",
-				"rating": 7,
-				"description": "Good price for the quality"
+				"rating": 7
 			}
 			]
 		},

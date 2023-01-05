@@ -342,13 +342,15 @@ const Edit = ({
 										</span>
 									</div>
 
-									<RichText
-										placeholder={ __( 'Feature Description', 'otter-blocks' ) }
-										value={ feature.description }
-										className="o-review__left_feature_description"
-										onChange={ description => changeFeature( index, { description }) }
-										tagName="span"
-									/>
+									{ ( isSelected || feature.description ) && (
+										<RichText
+											placeholder={ __( 'Feature Description...', 'otter-blocks' ) }
+											value={ feature.description }
+											className="o-review__left_feature_description"
+											onChange={ description => changeFeature( index, { description }) }
+											tagName="span"
+										/>
+									) }
 								</div>
 							);
 						}) }
