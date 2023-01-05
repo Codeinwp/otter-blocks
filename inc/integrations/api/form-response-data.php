@@ -73,7 +73,7 @@ class Form_Data_Response {
 		$this->response['success']      = false;
 		$this->response['reasons']      = array();
 		$this->response['code']         = self::SUCCESS_EMAIL_SEND;
-		$this->response['displayError'] = '';
+		$this->response['displayError'] = 'Error. Please try again.';
 	}
 
 	/**

@@ -664,7 +664,7 @@ const Inspector = ({
 							/>
 							<TextareaControl
 								label={ __( 'Error Message', 'otter-blocks' ) }
-								placeholder={ __( 'Oops! I cannot send this email', 'otter-blocks' ) }
+								placeholder={ __( 'Error. Please try again.', 'otter-blocks' ) }
 								value={ formOptions.errorMessage }
 								onChange={ errorMessage =>  setFormOption({ errorMessage })  }
 								help={ __( 'This message will be displayed when there is a problem with the server.' ) }
