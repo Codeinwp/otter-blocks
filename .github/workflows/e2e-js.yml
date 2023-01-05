@@ -44,21 +44,20 @@ jobs:
         run: |
           npm ci
           
-      # - name: Make dev build
-      #   run: |
-      #     npm run build-dev
+      - name: Make dev build
+        run: |
+          npm run build-dev
 
       - name: setup wp env
         run: |
           npm run wp-env start
-          npm run wp-env run cli wp eval 'echo ${{ secrets.OTTER_PRO_LICENSE }};'
+          npm run wp-env run cli wp eval 'echo $( secrets.OTTER_PRO_LICENSE );'
+          npm run wp-env run cli wp eval 'apply_filters( 'themeisle_sdk_license_process_otter', $( secrets.OTTER_PRO_LICENSE ), 'activate' );'
         env:
           OTTER_PRO_LICENSE: ${{ secrets.OTTER_PRO_LICENSE }}
 
       # run the node.js puppeteer script (which takes the screenshots and controls chrome)
-      # - run: npm run test:e2e
-      #   env:
-      #     OTTER_PRO_LICENSE: ${{ secrets.OTTER_PRO_LICENSE }}
+      - run: npm run test:e2e
       
       # - name: Print the results
       #   run: |
