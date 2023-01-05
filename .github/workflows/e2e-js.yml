@@ -51,6 +51,8 @@ jobs:
       - name: setup wp env
         run: |
           npm run wp-env start
+        env:
+          OTTER_PRO_LICENSE: ${{ secrets.OTTER_PRO_LICENSE }}
 
       # run the node.js puppeteer script (which takes the screenshots and controls chrome)
       - run: npm run test:e2e

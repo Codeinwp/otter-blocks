@@ -38,4 +38,10 @@ if ( ENABLE_OTTER_PRO_DEV && defined( 'WPINC' ) && class_exists( '\ThemeIsle\Ott
 	add_filter( 'otter_pro_hide_license_field', '__return_true' );
 
 	\ThemeIsle\OtterPro\Main::instance();
+
+	$license = getenv( 'OTTER_PRO_LICENSE' );
+
+	if ( ! empty( $license ) ) {
+		apply_filters( 'themeisle_sdk_license_process_otter', $license, 'activate' );
+	}
 }
