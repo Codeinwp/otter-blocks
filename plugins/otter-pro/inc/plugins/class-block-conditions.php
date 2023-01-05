@@ -240,16 +240,26 @@ class Block_Conditions {
 			return false;
 		}
 
-		$query_string = preg_replace( '/\s/', '', $condition['query_string'] );
+		$query_string = preg_replace( '/\n/', '&', $condition['query_string'] );
+		$query_string = preg_replace( '/\s/', '', $query_string );
 
 		parse_str( $url_components['query'], $params );
 		parse_str( $query_string, $cond_params );
 
+		$result = array_intersect( array_map( 'serialize', $cond_params ), array_map( 'serialize', $params ) );
+		$result = array_map( 'unserialize', $result );
+
 		if ( 'any' === $condition['match'] ) {
-			return count( array_intersect( $cond_params, $params ) ) > 0;
+			$empty_keys = array_keys( $cond_params, '', ARRAY_FILTER_USE_KEY );
+
+			if ( $empty_keys > 0 && count( array_intersect( $empty_keys, array_keys( $params ) ) ) > 0 ) {
+				return true;
+			}
+
+			return count( $result ) > 0;
 		}
 
-		return array_intersect( $cond_params, $params ) === $cond_params;
+		return $result === $cond_params;
 	}
 
 	/**
