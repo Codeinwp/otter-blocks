@@ -252,7 +252,7 @@ class Block_Conditions {
 		if ( 'any' === $condition['match'] ) {
 			$empty_keys = array_keys( $cond_params, '', ARRAY_FILTER_USE_KEY );
 
-			if ( $empty_keys > 0 && count( array_intersect( $empty_keys, array_keys( $params ) ) ) > 0 ) {
+			if ( count( $empty_keys ) > 0 && count( array_intersect( $empty_keys, array_keys( $params ) ) ) > 0 ) {
 				return true;
 			}
 
