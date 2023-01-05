@@ -51,10 +51,7 @@ jobs:
       - name: setup wp env
         run: |
           npm run wp-env start
-          npm run wp-env run cli wp eval 'echo $( secrets.OTTER_PRO_LICENSE );'
-          npm run wp-env run cli wp eval 'apply_filters( 'themeisle_sdk_license_process_otter', $( secrets.OTTER_PRO_LICENSE ), 'activate' );'
-        env:
-          OTTER_PRO_LICENSE: ${{ secrets.OTTER_PRO_LICENSE }}
+          npm run wp-env run cli wp wp option add otter_pro_license_data 'O:8:"stdClass":18:{s:7:"success";b:1;s:7:"license";s:5:"valid";s:7:"item_id";b:0;s:9:"item_name";s:9:"Otter Pro";s:8:"checksum";s:32:"cb2b562b41513047e26c483111d9d877";s:7:"expires";s:19:"2023-10-12 23:59:59";s:10:"payment_id";i:8574767;s:13:"customer_name";s:14:"Hardeep Asrani";s:14:"customer_email";s:21:"test@localhost.com";s:13:"license_limit";i:999;s:10:"site_count";i:0;s:16:"activations_left";i:999;s:8:"price_id";i:20;s:9:"otter_pro";b:1;s:11:"download_id";i:8656086;s:7:"version";s:5:"2.1.6";s:4:"plan";i:20;s:3:"key";s:32:"1f23153969a0bcb1f23153969a0bcb";}'
 
       # run the node.js puppeteer script (which takes the screenshots and controls chrome)
       - run: npm run test:e2e
