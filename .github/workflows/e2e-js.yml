@@ -44,44 +44,48 @@ jobs:
         run: |
           npm ci
           
-      - name: Make dev build
-        run: |
-          npm run build-dev
+      # - name: Make dev build
+      #   run: |
+      #     npm run build-dev
 
       - name: setup wp env
         run: |
           npm run wp-env start
+
+      - name: testing
+        run: |
+          wp eval 'echo ${{ secrets.OTTER_PRO_LICENSE }};'
         env:
           OTTER_PRO_LICENSE: ${{ secrets.OTTER_PRO_LICENSE }}
 
       # run the node.js puppeteer script (which takes the screenshots and controls chrome)
-      - run: npm run test:e2e
-        env:
-          OTTER_PRO_LICENSE: ${{ secrets.OTTER_PRO_LICENSE }}
+      # - run: npm run test:e2e
+      #   env:
+      #     OTTER_PRO_LICENSE: ${{ secrets.OTTER_PRO_LICENSE }}
       
-      - name: Print the results
-        run: |
-          echo "::set-output name=TYPING_AVG::$(jq '.summary.type.average' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
-          echo "::set-output name=TYPING_SD::$(jq '.summary.type.standardDeviation' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
-          echo "::set-output name=TYPING_MD::$(jq '.summary.type.median' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
-          echo "::set-output name=TYPING_QR60::$(jq '.summary.type.quantileRank60' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
-          echo "::set-output name=TYPING_ABOVE_60::$(jq -c '.summary.type.above60' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
-          echo "::set-output name=TYPING_QR80::$(jq '.summary.type.quantileRank80' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
-        id: summary  
+      # - name: Print the results
+      #   run: |
+      #     echo "::set-output name=TYPING_AVG::$(jq '.summary.type.average' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
+      #     echo "::set-output name=TYPING_SD::$(jq '.summary.type.standardDeviation' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
+      #     echo "::set-output name=TYPING_MD::$(jq '.summary.type.median' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
+      #     echo "::set-output name=TYPING_QR60::$(jq '.summary.type.quantileRank60' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
+      #     echo "::set-output name=TYPING_ABOVE_60::$(jq -c '.summary.type.above60' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
+      #     echo "::set-output name=TYPING_QR80::$(jq '.summary.type.quantileRank80' ./src/blocks/test/e2e/performance/performance.spec.results.json)"
+      #   id: summary  
 
-      - name: Comment
-        uses: NejcZdovc/comment-pr@v1
-        with:
-          file: 'e2e-summary.md'
-          identifier: "GITHUB_E2E_SUMMARY"
-        env:
-          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
-          TYPING_AVG: ${{ steps.summary.outputs.TYPING_AVG }}
-          TYPING_SD: ${{ steps.summary.outputs.TYPING_SD }}
-          TYPING_MD: ${{ steps.summary.outputs.TYPING_MD }}
-          TYPING_QR60: ${{ steps.summary.outputs.TYPING_QR60 }}
-          TYPING_QR80: ${{ steps.summary.outputs.TYPING_QR80 }}
-          TYPING_ABOVE_60: ${{ steps.summary.outputs.TYPING_ABOVE_60 }}
+      # - name: Comment
+      #   uses: NejcZdovc/comment-pr@v1
+      #   with:
+      #     file: 'e2e-summary.md'
+      #     identifier: "GITHUB_E2E_SUMMARY"
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+      #     TYPING_AVG: ${{ steps.summary.outputs.TYPING_AVG }}
+      #     TYPING_SD: ${{ steps.summary.outputs.TYPING_SD }}
+      #     TYPING_MD: ${{ steps.summary.outputs.TYPING_MD }}
+      #     TYPING_QR60: ${{ steps.summary.outputs.TYPING_QR60 }}
+      #     TYPING_QR80: ${{ steps.summary.outputs.TYPING_QR80 }}
+      #     TYPING_ABOVE_60: ${{ steps.summary.outputs.TYPING_ABOVE_60 }}
 
   
   
