@@ -450,7 +450,7 @@ export const _cssProp = ( prop, value, condition = undefined ) => value !== unde
 
 /**
  * Create a CSS block declaration.
- * @param {[string, string][]} propsPairs The properties grouped in pairs
+ * @param {[string, string, ((c: any) => boolean | boolean | undefined) | undefined][]} propsPairs The properties grouped in pairs
  * @returns
  */
 export const _cssBlock = ( propsPairs ) => `{\n${propsPairs?.map( pair => _cssProp( pair?.[0], pair?.[1], pair?.[2]) )?.join( '\n' ) ?? ''} \n}`;

@@ -7,10 +7,10 @@
 	--help-label-color: inherit;
 	--input-width: 100%;
 	--required-color: red;
-	--submit-color: var(--wp--preset--color--contrast);
-	--submit-color-hover: var(--wp--preset--color--base);
-	--submit-bg-color: var(--wp--preset--color--primary);
-	--submit-bg-color-hover: var(--wp--preset--color--contrast);
+	// --submit-color: initial; // var(--wp--preset--color--contrast);
+	// --submit-color-hover: initial; // var(--wp--preset--color--base);
+	// --submit-bg-color: initial; // var(--wp--preset--color--primary);
+	// --submit-bg-color-hover: initial;// var(--wp--preset--color--contrast);
 	--submit-msg-color: green;
 	--submit-error-color: red;
 	--inputs-gap: 16px;
@@ -53,16 +53,9 @@
 				text-align: center;
 				height: auto;
 				padding: var(--btn-pad);
-				color: var(--submit-color);
-				background-color: var(--submit-bg-color);
 				border: 0px;
 				transition: background-color 0.15s linear;
 				max-width: max-content;
-
-				&:hover {
-					color: var(--submit-color-hover);
-					background-color: var(--submit-bg-color-hover);
-				}
 
 				@media ( min-width:640px ) and ( max-width: 1024px ) {
 					padding: var(--btn-pad-tablet);

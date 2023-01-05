@@ -54,7 +54,7 @@ import {
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks';
-import { renderBoxOrNumWithUnit } from '../../helpers/helper-functions';
+import { renderBoxOrNumWithUnit, _cssBlock } from '../../helpers/helper-functions';
 const { attributes: defaultAttributes } = metadata;
 
 export const FormContext = createContext({});
@@ -859,6 +859,20 @@ const Edit = ({
 								className="otter-form__container"
 								onSubmit={ () => false }
 							>
+								<style>
+									{
+										`#block-${ clientId } .wp-block-button .wp-block-button__link:not(:hover) ` + _cssBlock([
+											[ 'color', attributes.submitColor ],
+											[ 'background-color', attributes.submitBackgroundColor ]
+										])
+									}
+									{
+										`#block-${ clientId } .wp-block-button .wp-block-button__link ` + _cssBlock([
+											[ 'color', attributes.submitColorHover ],
+											[ 'background-color', attributes.submitBackgroundColorHover ]
+										])
+									}
+								</style>
 								<InnerBlocks
 								/>
 
