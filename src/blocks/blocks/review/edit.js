@@ -341,6 +341,16 @@ const Edit = ({
 											{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.max( Math.abs( feature.rating / divide ).toFixed( 1 ) || 0, 1 ), 10 / divide ) }
 										</span>
 									</div>
+
+									{ ( isSelected || feature.description ) && (
+										<RichText
+											placeholder={ __( 'Feature Description...', 'otter-blocks' ) }
+											value={ feature.description }
+											className="o-review__left_feature_description"
+											onChange={ description => changeFeature( index, { description }) }
+											tagName="span"
+										/>
+									) }
 								</div>
 							);
 						}) }

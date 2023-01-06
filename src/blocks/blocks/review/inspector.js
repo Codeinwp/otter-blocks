@@ -26,6 +26,7 @@ import {
 	SelectControl,
 	TextControl,
 	ToggleControl,
+	TextareaControl,
 	Notice
 } from '@wordpress/components';
 
@@ -447,6 +448,13 @@ const Inspector = ({
 									step={ 0.1 }
 									min={ 1 }
 									max={ 10 }
+								/>
+
+								<TextareaControl
+									label={ __( 'Description', 'otter-blocks' ) }
+									placeholder={ __( 'Feature Description' ) }
+									value={ feature.description }
+									onChange={ description =>  onChangeFeature({ action: 'update', index, value: { description }}) }
 								/>
 							</PanelItem>
 						) ) }
