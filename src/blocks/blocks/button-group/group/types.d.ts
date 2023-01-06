@@ -1,11 +1,13 @@
-import { BlockProps, InspectorProps } from '../../../helpers/blocks';
+import { BlockProps, InspectorProps, PaddingType, Responsive } from '../../../helpers/blocks';
 
 type Attributes = {
 	id: string
-	align: string | object
+	align: string | Responsive<string>
 	spacing: number
-	paddingTopBottom: number
-	paddingLeftRight: number
+	paddingTopBottom: number | string
+	paddingLeftRight: number | string
+	paddingTablet: PaddingType
+	paddingMobile: PaddingType
 	collapse: string
 	fontSize: number
 	fontFamily: string

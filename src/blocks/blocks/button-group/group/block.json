@@ -19,10 +19,19 @@
 			"default": 20
 		},
 		"paddingTopBottom": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"paddingLeftRight": {
-			"type": "number"
+			"type": ["number", "string"]
+		},
+		"padding": {
+			"type": "object"
+		},
+		"paddingTablet": {
+			"type": "object"
+		},
+		"paddingMobile": {
+			"type": "object"
 		},
 		"collapse": {
 			"type": "string",
