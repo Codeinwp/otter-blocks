@@ -20,41 +20,51 @@ class Sharing_Icons_Block {
 	 * @return array
 	 */
 	public static function get_social_profiles() {
+		if ( get_post()->post_type === 'neve_custom_layout' ) {
+			$current_url = home_url( add_query_arg( null, null ) );
+
+			// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.url_to_postid_url_to_postid
+			$id_from_url = function_exists( 'wpcom_vip_url_to_postid' ) ? wpcom_vip_url_to_postid( $current_url ) : url_to_postid( $current_url );
+			$current_id  = $id_from_url > 0 ? $id_from_url : get_the_ID();
+		} else {
+			$current_id = get_the_ID();
+		}
+
 		$social_attributes = array(
 			'facebook'  => array(
 				'label' => esc_html__( 'Facebook', 'otter-blocks' ),
 				'icon'  => 'facebook-f',
-				'url'   => 'https://www.facebook.com/sharer/sharer.php?u=' . esc_url( get_the_permalink() ) . '&title=' . esc_attr( get_the_title() ),
+				'url'   => 'https://www.facebook.com/sharer/sharer.php?u=' . esc_url( get_the_permalink( $current_id ) ) . '&title=' . esc_attr( get_the_title( $current_id ) ),
 			),
 
 			'twitter'   => array(
 				'label' => esc_html__( 'Twitter', 'otter-blocks' ),
 				'icon'  => 'twitter',
-				'url'   => 'http://twitter.com/share?url=' . esc_url( get_the_permalink() ) . '&text=' . esc_attr( get_the_title() ),
+				'url'   => 'http://twitter.com/share?url=' . esc_url( get_the_permalink( $current_id ) ) . '&text=' . esc_attr( get_the_title( $current_id ) ),
 			),
 
 			'linkedin'  => array(
 				'label' => esc_html__( 'Linkedin', 'otter-blocks' ),
 				'icon'  => 'linkedin-in',
-				'url'   => 'https://www.linkedin.com/shareArticle?mini=true&url=' . esc_url( get_the_permalink() ) . '&title=' . esc_attr( get_the_title() ),
+				'url'   => 'https://www.linkedin.com/shareArticle?mini=true&url=' . esc_url( get_the_permalink( $current_id ) ) . '&title=' . esc_attr( get_the_title( $current_id ) ),
 			),
 
 			'pinterest' => array(
 				'label' => esc_html__( 'Pinterest', 'otter-blocks' ),
 				'icon'  => 'pinterest-p',
-				'url'   => 'https://pinterest.com/pin/create/button/?url=' . esc_url( get_the_permalink() ) . '&description=' . esc_attr( get_the_title() ),
+				'url'   => 'https://pinterest.com/pin/create/button/?url=' . esc_url( get_the_permalink( $current_id ) ) . '&description=' . esc_attr( get_the_title( $current_id ) ),
 			),
 
 			'tumblr'    => array(
 				'label' => esc_html__( 'Tumblr', 'otter-blocks' ),
 				'icon'  => 'tumblr',
-				'url'   => 'https://tumblr.com/share/link?url=' . esc_url( get_the_permalink() ) . '&name=' . esc_attr( get_the_title() ),
+				'url'   => 'https://tumblr.com/share/link?url=' . esc_url( get_the_permalink( $current_id ) ) . '&name=' . esc_attr( get_the_title( $current_id ) ),
 			),
 
 			'reddit'    => array(
 				'label' => esc_html__( 'Reddit', 'otter-blocks' ),
 				'icon'  => 'reddit-alien',
-				'url'   => 'https://www.reddit.com/submit?url=' . esc_url( get_the_permalink() ),
+				'url'   => 'https://www.reddit.com/submit?url=' . esc_url( get_the_permalink( $current_id ) ),
 			),
 		);
 
