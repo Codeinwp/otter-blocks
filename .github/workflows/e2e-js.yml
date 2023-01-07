@@ -55,8 +55,6 @@ jobs:
       - name: Setup WP Env
         run: |
           npm run wp-env start
-          npm run wp-env run cli wp core version
-          npm run wp-env run cli wp core update
 
       # run the node.js puppeteer script (which takes the screenshots and controls chrome)
       - run: npm run test:e2e
