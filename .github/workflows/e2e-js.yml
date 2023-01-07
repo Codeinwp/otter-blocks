@@ -50,7 +50,7 @@ jobs:
 
       - name: Create License File
         run: |
-          printf "<?php return '${{ secrets.OTTER_PRO_LICENSE }}';" > _license.php
+          printf "{\"key\":\"${{ secrets.OTTER_PRO_LICENSE }}\"}" > license.json
 
       - name: setup wp env
         run: |

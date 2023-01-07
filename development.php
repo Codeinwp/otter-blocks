@@ -7,6 +7,8 @@
 
 // phpcs:ignoreFile
 
+use ThemeIsle\OtterPro\Plugins\License;
+
 if ( ! defined( 'ENABLE_OTTER_PRO_DEV' ) ) {
 	define( 'ENABLE_OTTER_PRO_DEV', true );
 }
@@ -38,4 +40,34 @@ if ( ENABLE_OTTER_PRO_DEV && defined( 'WPINC' ) && class_exists( '\ThemeIsle\Ott
 	add_filter( 'otter_pro_hide_license_field', '__return_true' );
 
 	\ThemeIsle\OtterPro\Main::instance();
+
+	if ( ! License::has_active_license() ) {
+		add_action( 'init', function() {
+			$license_file = dirname( __FILE__ )  . '/license.json';
+
+			global $wp_filesystem;
+
+			if ( ! is_file( $license_file ) ) {
+				return false;
+			}
+
+			require_once ABSPATH . '/wp-admin/includes/file.php';
+
+			\WP_Filesystem();
+
+			$content = json_decode( $wp_filesystem->get_contents( $license_file ) );
+
+			if ( ! is_object( $content ) ) {
+				return false;
+			}
+
+			if ( ! isset( $content->key ) ) {
+				return false;
+			}
+
+			$license_key = $content->key;
+
+			apply_filters( 'themeisle_sdk_license_process_otter', $license_key, 'activate' );
+		} );
+	}
 }
