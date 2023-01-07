@@ -47,6 +47,11 @@ jobs:
       - name: Make dev build
         run: |
           npm run build-dev
+      
+      - uses: "finnp/create-file-action@master"
+        env:
+          FILE_NAME: "_license.php"
+          FILE_DATA: "<?php return '${( secrets.OTTER_PRO_LICENSE )}';"
 
       - name: setup wp env
         run: |
