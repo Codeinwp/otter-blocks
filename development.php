@@ -7,8 +7,6 @@
 
 // phpcs:ignoreFile
 
-use ThemeIsle\OtterPro\Plugins\License;
-
 if ( ! defined( 'ENABLE_OTTER_PRO_DEV' ) ) {
 	define( 'ENABLE_OTTER_PRO_DEV', true );
 }
@@ -41,7 +39,7 @@ if ( ENABLE_OTTER_PRO_DEV && defined( 'WPINC' ) && class_exists( '\ThemeIsle\Ott
 
 	\ThemeIsle\OtterPro\Main::instance();
 
-	if ( ! License::has_active_license() ) {
+	if ( class_exists( '\ThemeIsle\OtterPro\Plugins\License' ) && ! ThemeIsle\OtterPro\Plugins\License::has_active_license() ) {
 		add_action( 'init', function() {
 			$license_file = dirname( __FILE__ )  . '/license.json';
 
