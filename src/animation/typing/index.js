@@ -8,9 +8,7 @@ import { brush } from '@wordpress/icons';
  */
 import { __ } from '@wordpress/i18n';
 
-import {
-	RichTextToolbarButton
-} from '@wordpress/block-editor';
+import { RichTextToolbarButton } from '@wordpress/block-editor';
 
 import { Fragment } from '@wordpress/element';
 
@@ -22,17 +20,22 @@ import {
 /**
  * Internal dependencies.
  */
+import InlineControls from './inline-controls.js';
 
 const name = 'themeisle-blocks/typing-animation';
 
-registerFormatType( name, {
+export const format = {
 	name,
 	title: __( 'Typing Animation', 'otter-blocks' ),
 	tagName: 'o-anim-typing',
 	className: null,
 
-	edit: ({ isActive, value, onChange }) => {
-
+	edit: ({
+		isActive,
+		value,
+		onChange,
+		contentRef
+	}) => {
 		const onToggle = () => {
 			onChange( toggleFormat( value, { type: name }) );
 		};
@@ -45,7 +48,16 @@ registerFormatType( name, {
 					onClick={ onToggle }
 					isActive={ isActive }
 				/>
+
+				{ isActive && (
+					<InlineControls
+						value={ value }
+						contentRef={ contentRef }
+					/>
+				) }
 			</Fragment>
 		);
 	}
-});
+};
+
+registerFormatType( name, format );

@@ -5,29 +5,47 @@ import { __ } from '@wordpress/i18n';
 
 import { hasBlockSupport } from '@wordpress/blocks';
 
-import { PanelBody } from '@wordpress/components';
+import { InspectorControls } from '@wordpress/block-editor';
+
+import { __experimentalToolsPanelItem as ToolsPanelItem } from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
 
-import { InspectorControls } from '@wordpress/block-editor';
-
 import { Fragment } from '@wordpress/element';
 
-import {
-	addFilter,
-	applyFilters
-} from '@wordpress/hooks';
+import { addFilter } from '@wordpress/hooks';
 
 /**
   * Internal dependencies.
   */
 import './editor.scss';
 
-import AnimationControls from './editor.js';
+import Edit from './editor.js';
 import './count/index.js';
 import './typing/index.js';
 
 const excludedBlocks = [ 'themeisle-blocks/popup' ];
+
+const BlockAnimation = ( el, props ) => {
+	if ( hasBlockSupport( props.name, 'customClassName', true ) && ! excludedBlocks.includes( props.name ) ) {
+		return (
+			<Fragment>
+				{ el }
+
+				<ToolsPanelItem
+					hasValue={ () => Boolean( props?.attributes?.className?.includes( 'animated' ) ) }
+					label={ __( 'Animations', 'otter-blocks' ) }
+					onDeselect={ () => window?.blocksAnimation?.removeAnimation() }
+					isShownByDefault={ false }
+				>
+					<Edit { ...props } />
+				</ToolsPanelItem>
+			</Fragment>
+		);
+	}
+
+	return el;
+};
 
 const withInspectorControls = createHigherOrderComponent( BlockEdit => {
 	return props => {
@@ -38,33 +56,13 @@ const withInspectorControls = createHigherOrderComponent( BlockEdit => {
 		);
 
 		if ( hasCustomClassName && props.isSelected && ! excludedBlocks.includes( props.name ) ) {
-			let Inspector = InspectorControls;
-
-			if ( window?.otterComponents?.useInspectorSlot ) {
-				Inspector = window.otterComponents.useInspectorSlot( props.name );
-			}
-
 			return (
 				<Fragment>
 					<BlockEdit { ...props } />
-					<Inspector>
-						<PanelBody
-							title={ __( 'Animations', 'otter-blocks' ) }
-							initialOpen={ false }
-							className="o-is-new"
-						>
-							<AnimationControls
-								clientId={ props.clientId }
-								setAttributes={ props.setAttributes }
-								attributes={ props.attributes }
-							/>
 
-							<div className="o-fp-wrap">
-								{ applyFilters( 'otter.feedback', '', 'animations' ) }
-								{ applyFilters( 'otter.poweredBy', '' ) }
-							</div>
-						</PanelBody>
-					</Inspector>
+					<InspectorControls>
+						<Edit { ...props } />
+					</InspectorControls>
 				</Fragment>
 			);
 		}
@@ -73,4 +71,8 @@ const withInspectorControls = createHigherOrderComponent( BlockEdit => {
 	};
 }, 'withInspectorControl' );
 
-addFilter( 'editor.BlockEdit', 'themeisle-custom-css/with-inspector-controls', withInspectorControls );
+if ( Boolean( window?.blocksAnimation?.hasOtter ) ) {
+	addFilter( 'otter.blockTools', 'themeisle-animations/with-inspector-controls', BlockAnimation, 1 );
+} else {
+	addFilter( 'editor.BlockEdit', 'themeisle-animations/with-inspector-controls', withInspectorControls );
+}

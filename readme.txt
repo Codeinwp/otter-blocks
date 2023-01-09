@@ -1,7 +1,7 @@
 === Otter - Gutenberg Blocks – Page Builder for Gutenberg Editor & FSE ===
 Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1, arinat, uriahs-victor, john_pixle, wildmisha, irinelenache
 Tags: gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder
-Requires at least: 5.8
+Requires at least: 5.9
 Tested up to: 6.1
 Requires PHP: 5.4
 Stable tag: trunk
