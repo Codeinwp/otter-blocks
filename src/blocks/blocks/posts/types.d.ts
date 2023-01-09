@@ -20,6 +20,7 @@ type Attributes = {
 	displayDescription: boolean
 	excerptLength: number
 	displayDate: boolean
+	displayUpdatedDate: boolean
 	displayAuthor: boolean
 	displayComments: boolean
 	displayPostCategory: boolean
