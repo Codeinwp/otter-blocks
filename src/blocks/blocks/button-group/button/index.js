@@ -27,6 +27,10 @@ registerBlockType( name, {
 	],
 	styles: [
 		{
+			name: 'plain',
+			label: __( 'Plain', 'otter-blocks' )
+		},
+		{
 			name: 'fill',
 			label: __( 'Fill', 'otter-blocks' ),
 			isDefault: true

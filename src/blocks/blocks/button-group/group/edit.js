@@ -27,6 +27,8 @@ import metadata from './block.json';
 import Inspector from './inspector.js';
 import { blockInit } from '../../../helpers/block-utility.js';
 import googleFontsLoader from '../../../helpers/google-fonts.js';
+import { boxToCSS, _px } from '../../../helpers/helper-functions';
+import { useResponsiveAttributes } from '../../../helpers/utility-hooks';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -40,36 +42,8 @@ const Edit = ({
 	setAttributes,
 	clientId
 }) => {
-	const {
-		isViewportAvailable,
-		isPreviewDesktop,
-		isPreviewTablet,
-		isPreviewMobile
-	} = useSelect( select => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
 
-		return {
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
-		};
-	}, []);
-
-	const currentDevice = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-
-		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType().toLowerCase() : getView().toLowerCase();
-	}, []);
-
-	const isLarger = useViewportMatch( 'large', '>=' );
-
-	const isLarge = useViewportMatch( 'large', '<=' );
-
-	const isSmall = useViewportMatch( 'small', '>=' );
-
-	const isSmaller = useViewportMatch( 'small', '<=' );
+	const { responsiveGetAttributes } = useResponsiveAttributes( () => {});
 
 	useEffect( () => {
 		googleFontsLoader.attach();
@@ -77,30 +51,22 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, []);
 
-	let isDesktop = isLarger && ! isLarge && isSmall && ! isSmaller;
-
-	let isTablet = ! isLarger && ! isLarge && isSmall && ! isSmaller;
-
-	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
-
-	if ( isViewportAvailable && ! isMobile ) {
-		isDesktop = isPreviewDesktop;
-		isTablet = isPreviewTablet;
-		isMobile = isPreviewMobile;
-	}
-
-
-	const inlineCSS = {
-		'--spacing': attributes.spacing && attributes.spacing + 'px'
+	const desktopPadding = {
+		top: _px( attributes.paddingTopBottom ) ?? '15px',
+		bottom: _px( attributes.paddingTopBottom ) ?? '15px',
+		right: _px ( attributes.paddingLeftRight ) ?? '30px',
+		left: _px( attributes.paddingLeftRight ) ?? '30px'
 	};
 
-	const alignClasses = [ 'desktop', 'tablet', 'mobile' ].reduce( ( acc, device ) => {
-		if ( attributes.align && attributes.align[ device ]) {
-			acc.push( `align-${ attributes.align[ device ] }-${ device }` );
-		}
+	const inlineCSS = {
+		'--spacing': _px( attributes.spacing ),
+		'--padding': boxToCSS( responsiveGetAttributes([ desktopPadding, attributes.paddingTablet, attributes.paddingMobile ]) ),
+		'--font-size': attributes.fontSize
+	};
 
-		return acc;
-	}, []);
+	const alignClasses = [ 'desktop', 'tablet', 'mobile' ]
+		.filter( device => attributes.align && attributes.align[ device ])
+		.map( device => `align-${ attributes.align[ device ] }-${ device }` );
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
@@ -108,12 +74,14 @@ const Edit = ({
 			'wp-block-buttons',
 			{
 				[ `align-${ attributes.align }` ]: 'string' === typeof attributes.align,
-				'collapse': ( 'collapse-desktop' === attributes.collapse && ( isDesktop || isTablet || isMobile ) ) || ( 'collapse-tablet' === attributes.collapse && ( isTablet || isMobile ) ) || ( 'collapse-mobile' === attributes.collapse && isMobile )
+				'collapse': responsiveGetAttributes([ 'collapse-desktop', 'collapse-tablet', 'collapse-mobile' ]) === attributes.collapse
 			},
 			...alignClasses
 		),
 		style: inlineCSS
 	});
+
+	console.log( inlineCSS );
 
 	useEffect( () => {
 		if ( attributes.fontFamily ) {
@@ -126,7 +94,6 @@ const Edit = ({
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				currentDevice={ currentDevice }
 			/>
 
 			<div { ...blockProps }>

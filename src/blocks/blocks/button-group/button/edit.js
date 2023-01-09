@@ -86,11 +86,6 @@ const Edit = ({
 	if ( hasParent ) {
 
 		buttonStyle = {
-			paddingTop: `${ parentAttributes.paddingTopBottom }px`,
-			paddingBottom: `${ parentAttributes.paddingTopBottom }px`,
-			paddingLeft: `${ parentAttributes.paddingLeftRight }px`,
-			paddingRight: `${ parentAttributes.paddingLeftRight }px`,
-			fontSize: parentAttributes.fontSize && `${ parentAttributes.fontSize }px`,
 			fontFamily: parentAttributes.fontFamily,
 			fontWeight: parentAttributes.fontVariant,
 			fontStyle: parentAttributes.fontStyle,

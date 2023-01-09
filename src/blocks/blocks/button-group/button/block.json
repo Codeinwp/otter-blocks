@@ -52,10 +52,10 @@
 			"type": "string"
 		},
 		"borderSize": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"borderRadius": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"boxShadow": {
 			"type": "boolean",
@@ -120,6 +120,10 @@
 		},
 		"icon": {
 			"type": "string"
+		},
+		"noFollow": {
+			"type": "boolean",
+			"default": true
 		}
 	},
 	"supports": {

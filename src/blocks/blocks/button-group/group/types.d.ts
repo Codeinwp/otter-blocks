@@ -3,18 +3,18 @@ import { BlockProps, InspectorProps, PaddingType, Responsive } from '../../../he
 type Attributes = {
 	id: string
 	align: string | Responsive<string>
-	spacing: number
+	spacing: number | string
 	paddingTopBottom: number | string
 	paddingLeftRight: number | string
 	paddingTablet: PaddingType
 	paddingMobile: PaddingType
 	collapse: string
-	fontSize: number
+	fontSize: number | string
 	fontFamily: string
 	fontVariant: string
 	textTransform: string
 	fontStyle: string
-	lineHeight: number
+	lineHeight: number | string
 }
 
 export type ButtonGroupAttrs = Partial<Attributes>

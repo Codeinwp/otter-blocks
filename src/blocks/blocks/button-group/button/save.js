@@ -31,7 +31,7 @@ const Save = ({
 			<a
 				href={ attributes.link }
 				target={ attributes.newTab ? '_blank' : '_self' }
-				rel="noopener noreferrer"
+				rel={ attributes.noFollow ? 'noopener noreferrer' : undefined }
 				className="wp-block-button__link"
 			>
 				{ ( 'left' === attributes.iconType || 'only' === attributes.iconType ) && (

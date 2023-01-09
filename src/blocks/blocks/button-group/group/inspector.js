@@ -14,7 +14,7 @@ import {
 	__experimentalBoxControl as BoxControl,
 	BaseControl,
 	FontSizePicker,
-	__experimentalHStack as HStack
+	__experimentalUnitControl as UnitControl
 } from '@wordpress/components';
 
 import {
@@ -43,7 +43,7 @@ import ToogleGroupControl from '../../../components/toogle-group-control/index.j
 import { useResponsiveAttributes } from '../../../helpers/utility-hooks.js';
 import { InspectorHeader } from '../../../components/index.js';
 import { makeBox } from '../../../plugins/copy-paste/utils';
-import { getChoice, _i } from '../../../helpers/helper-functions.js';
+import { getChoice, _i, _px } from '../../../helpers/helper-functions.js';
 
 /**
  *
@@ -52,8 +52,7 @@ import { getChoice, _i } from '../../../helpers/helper-functions.js';
  */
 const Inspector = ({
 	attributes,
-	setAttributes,
-	currentDevice
+	setAttributes
 }) => {
 
 	const presets = {
@@ -153,7 +152,6 @@ const Inspector = ({
 
 	useEffect( () => {
 		if ( storeChanged ) {
-			console.log({ proxyStore, storeChanged });
 			setAttributes({
 				paddingTopBottom: proxyStore?.padding?.top,
 				paddingLeftRight: proxyStore?.padding?.right,
@@ -253,8 +251,8 @@ const Inspector = ({
 											( () => {
 												const padding = responsiveGetAttributes([
 													makeBoxFromSplitAxis(
-														attributes.paddingTopBottom,
-														attributes.paddingLeftRight
+														_px( attributes.paddingTopBottom ),
+														_px( attributes.paddingLeftRight )
 													),
 													attributes.paddingTablet,
 													attributes.paddingMobile
@@ -359,14 +357,11 @@ const Inspector = ({
 
 								</ResponsiveControl>
 
-
-								<RangeControl
+								<UnitControl
 									label={ __( 'Spacing', 'otter-blocks' ) }
-									value={ attributes.spacing }
+									value={ _px( attributes.spacing ) }
 									onChange={ e => setAttributes({ spacing: e }) }
 									step={ 0.1 }
-									min={ 0 }
-									max={ 50 }
 								/>
 
 
