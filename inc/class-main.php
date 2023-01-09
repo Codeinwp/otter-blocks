@@ -427,6 +427,7 @@ class Main {
 
 		if ( version_compare( $db_version, OTTER_BLOCKS_VERSION, '<' ) ) {
 			Dashboard_Server::regenerate_styles();
+			do_action( 'otter_blocks_plugin_update' );
 		}
 
 		return update_option( 'themeisle_blocks_db_version', OTTER_BLOCKS_VERSION );

@@ -33,7 +33,7 @@ class Patterns {
 	 *
 	 * @access  public
 	 */
-	public static function register_patterns() {
+	public function register_patterns() {
 		$block_pattern_categories = array(
 			'otter-blocks' => array( 'label' => __( 'Otter Blocks', 'otter-blocks' ) ),
 			'cta'          => array( 'label' => __( 'Call to Action', 'otter-blocks' ) ),
