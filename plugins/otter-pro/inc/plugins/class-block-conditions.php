@@ -290,7 +290,7 @@ class Block_Conditions {
 					return false;
 				}
 			} elseif ( ! isset( $cond_param['value'] ) ) {
-				if ( empty( $params[ $cond_param['key'] ] ) ) {
+				if ( ! isset( $params[ $cond_param['key'] ] ) ) {
 					return false;
 				}
 			} else {
