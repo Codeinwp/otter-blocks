@@ -204,12 +204,21 @@ class Posts_Grid_Block {
 					$posted_on = '';
 
 					if ( isset( $attributes['displayDate'] ) && $attributes['displayDate'] ) {
-						$posted_on .= sprintf(
-							'%1$s <time datetime="%2$s">%3$s</time> ',
-							__( 'Posted on', 'otter-blocks' ),
-							esc_attr( get_the_date( 'c', $id ) ),
-							esc_html( get_the_date( get_option( 'date_format' ), $id ) )
-						);
+						if ( isset( $attributes['displayUpdatedDate'] ) && $attributes['displayUpdatedDate'] ) {
+							$posted_on .= sprintf(
+								'%1$s <time datetime="%2$s">%3$s</time> ',
+								__( 'Updated on', 'otter-blocks' ),
+								esc_attr( get_the_modified_date( 'c', $id ) ),
+								esc_html( get_the_modified_date( get_option( 'date_format' ), $id ) )
+							);
+						} else {
+							$posted_on .= sprintf(
+								'%1$s <time datetime="%2$s">%3$s</time> ',
+								__( 'Posted on', 'otter-blocks' ),
+								esc_attr( get_the_date( 'c', $id ) ),
+								esc_html( get_the_date( get_option( 'date_format' ), $id ) )
+							);
+						}
 					}
 
 					if ( isset( $attributes['displayAuthor'] ) && $attributes['displayAuthor'] ) {
