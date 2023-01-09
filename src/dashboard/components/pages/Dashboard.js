@@ -92,6 +92,16 @@ const Dashboard = ({
 						onChange={ () => updateOption( 'themeisle_blocks_settings_block_conditions', ! Boolean( getOption( 'themeisle_blocks_settings_block_conditions' ) ) ) }
 					/>
 				</PanelRow>
+
+				<PanelRow>
+					<ToggleControl
+						label={ __( 'Highlight the Dynamic Text', 'otter-blocks' ) }
+						help={ __( 'Easily differentiate between dynamic and normal text in the editor.', 'otter-blocks' ) }
+						checked={ Boolean( getOption( 'themeisle_blocks_settings_highlight_dynamic' ) ) }
+						disabled={ 'saving' === status }
+						onChange={ () => updateOption( 'themeisle_blocks_settings_highlight_dynamic', ! Boolean( getOption( 'themeisle_blocks_settings_highlight_dynamic' ) ) ) }
+					/>
+				</PanelRow>
 			</PanelBody>
 
 			<PanelBody

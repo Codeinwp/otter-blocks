@@ -269,6 +269,7 @@ class Registration {
 				'version'                 => OTTER_BLOCKS_VERSION,
 				'showBFDeal'              => Pro::bf_deal(),
 				'isRTL'                   => is_rtl(),
+				'highlightDynamicText'    => get_option( 'themeisle_blocks_settings_highlight_dynamic', true )
 			)
 		);
 

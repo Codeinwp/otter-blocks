@@ -92,6 +92,17 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_blocks_settings_highlight_dynamic',
+			array(
+				'type'         => 'boolean',
+				'description'  => __( 'Easily differentiate between dynamic and normal text in the editor.', 'otter-blocks' ),
+				'show_in_rest' => true,
+				'default'      => true,
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'themeisle_blocks_settings_optimize_animations_css',
 			array(
 				'type'         => 'boolean',

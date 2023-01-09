@@ -36,6 +36,7 @@ declare global {
 			}
 			blocksIDs: string[]
 			isAncestorTypeAvailable: boolean
+			highlightDynamicText: boolean
 		}
 		otterPro?: Readonly<{
 			isActive: boolean
