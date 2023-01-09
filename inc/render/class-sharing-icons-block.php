@@ -20,15 +20,7 @@ class Sharing_Icons_Block {
 	 * @return array
 	 */
 	public static function get_social_profiles() {
-		if ( get_post()->post_type === 'neve_custom_layout' ) {
-			$current_url = home_url( add_query_arg( null, null ) );
-
-			// phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.url_to_postid_url_to_postid
-			$id_from_url = function_exists( 'wpcom_vip_url_to_postid' ) ? wpcom_vip_url_to_postid( $current_url ) : url_to_postid( $current_url );
-			$current_id  = $id_from_url > 0 ? $id_from_url : get_the_ID();
-		} else {
-			$current_id = get_the_ID();
-		}
+		$current_id = get_queried_object_id();
 
 		$social_attributes = array(
 			'facebook'  => array(
