@@ -93,6 +93,19 @@ $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 	}
 }
 
+@mixin padding-and-font-size {
+	padding: var(--padding);
+	font-size: var(--font-size);
+
+	@media ( min-width: 600px ) and ( max-width: 960px ) {
+		padding: var(--padding-tablet);
+	}
+
+	@media ( max-width: 600px ) {
+		padding: var(--padding-mobile);
+	}
+}
+
 .wp-block-themeisle-blocks-button-group {
 	--padding: 15px 30px;
 	--padding-tablet: var(--padding);
@@ -106,16 +119,7 @@ $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 
 		&.wp-block-button {
 			.wp-block-button__link {
-				padding: var(--padding);
-				font-size: var(--font-size);
-		
-				@media ( min-width: 600px ) and ( max-width: 960px ) {
-					paddingS: var(--padding-tablet);
-				}
-			
-				@media ( max-width: 600px ) {
-					padding: var(--padding-mobile);
-				}
+				@include padding-and-font-size
 			}
 
 			&.is-style-plain {
@@ -123,13 +127,14 @@ $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 					border-width: 0px;
 					background: transparent;
 					--padding: 0px;
+					@include padding-and-font-size; // Default WP css overshadow the padding and font size for the button. With this trick, we increase priority without the usage of !important.
 				}
-				
 			}
 	
 			&.is-style-outline {
 				.wp-block-button__link {
 					background: transparent;
+					@include padding-and-font-size;
 				}
 			}
 		}

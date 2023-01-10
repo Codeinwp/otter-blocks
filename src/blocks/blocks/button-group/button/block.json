@@ -52,10 +52,10 @@
 			"type": "string"
 		},
 		"borderSize": {
-			"type": ["number", "string"]
+			"type": ["number", "object"]
 		},
 		"borderRadius": {
-			"type": ["number", "string"]
+			"type": ["number", "object"]
 		},
 		"boxShadow": {
 			"type": "boolean",

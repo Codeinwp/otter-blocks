@@ -34,6 +34,7 @@ import {
 	blockInit,
 	useCSSNode
 } from '../../../helpers/block-utility.js';
+import { boxToCSS, objectOrNumberAsBox } from '../../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -50,8 +51,6 @@ const Edit = ( props ) => {
 		isSelected,
 		clientId
 	} = props;
-
-	console.log( props );
 
 	const {
 		hasParent,
@@ -106,8 +105,9 @@ const Edit = ( props ) => {
 		if ( attributes?.className?.includes( 'is-style-outline' ) ) {
 			return {
 				color: attributes.color,
-				border: `${ attributes.borderSize }px solid ${ attributes.border }`,
-				borderRadius: attributes.borderRadius,
+				borderWidth: boxToCSS( objectOrNumberAsBox( attributes.borderSize ) ),
+				borderColor: attributes.border,
+				borderRadius: boxToCSS( objectOrNumberAsBox( attributes.borderRadius ) ),
 				...boxShadowStyle
 			};
 		}
@@ -115,8 +115,9 @@ const Edit = ( props ) => {
 		return {
 			color: attributes.color,
 			background: attributes.background || attributes.backgroundGradient,
-			border: `${ attributes.borderSize }px solid ${ attributes.border }`,
-			borderRadius: attributes.borderRadius,
+			borderWidth: boxToCSS( objectOrNumberAsBox( attributes.borderSize ) ),
+			borderColor: attributes.border,
+			borderRadius: boxToCSS( objectOrNumberAsBox( attributes.borderRadius ) ),
 			...boxShadowStyle
 		};
 	};
@@ -125,6 +126,8 @@ const Edit = ( props ) => {
 		...getCSSBasedOnStyle(),
 		...buttonStyle
 	};
+
+	console.log( styles );
 
 	const iconStyles = {
 		fill: attributes.color,
