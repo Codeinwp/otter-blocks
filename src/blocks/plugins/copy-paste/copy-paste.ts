@@ -30,11 +30,11 @@ class CopyPaste {
 		this.pull();
 	}
 
-	copy( block: OtterBlock<unknown> ) {
-		let success = false;
+	copy( block: OtterBlock<unknown> ): 'SUCCESS' | 'NO-ADAPTOR' | 'ERROR' {
+		let success: 'SUCCESS' | 'NO-ADAPTOR' | 'ERROR'  = 'ERROR';
 		try {
 			if ( ! ( adaptors as Adaptors )?.[block.name]) {
-				return success;
+				return 'NO-ADAPTOR';
 			}
 
 			const copied = compactObject( pickBy( ( adaptors as Adaptors )?.[block.name]?.copy( block.attributes ), x => ! ( isNil( x ) ) ) ) as Storage<unknown>;
@@ -45,7 +45,7 @@ class CopyPaste {
 			this.storage.private = copied?.private;
 			this.sync();
 
-			success = true;
+			success = 'SUCCESS';
 		} catch ( e ) {
 			console.error( e );
 			this.storage = {};

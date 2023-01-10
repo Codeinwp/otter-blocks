@@ -7,7 +7,7 @@
 
 namespace ThemeIsle\GutenbergBlocks;
 
-use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro;
+use ThemeIsle\GutenbergBlocks\Main, ThemeIsle\GutenbergBlocks\Pro, ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
 
 /**
  * Class Registration.
@@ -247,6 +247,7 @@ class Registration {
 				'updatePath'              => admin_url( 'update-core.php' ),
 				'optionsPath'             => admin_url( 'options-general.php?page=otter' ),
 				'mapsAPI'                 => $api,
+				'hasStripeAPI'            => Stripe_API::has_keys(),
 				'globalDefaults'          => json_decode( get_option( 'themeisle_blocks_settings_global_defaults', '{}' ) ),
 				'themeDefaults'           => Main::get_global_defaults(),
 				'imageSizes'              => function_exists( 'is_wpcom_vip' ) ? array( 'thumbnail', 'medium', 'medium_large', 'large' ) : get_intermediate_image_sizes(), // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.get_intermediate_image_sizes_get_intermediate_image_sizes
@@ -261,12 +262,15 @@ class Registration {
 				'showOnboarding'          => $this->show_onboarding(),
 				'ratingScale'             => get_option( 'themeisle_blocks_settings_review_scale', false ),
 				'hasModule'               => array(
-					'blockConditions' => get_option( 'themeisle_blocks_settings_block_conditions', true ),
+					'blockCSS'        => boolval( get_option( 'themeisle_blocks_settings_css_module', true ) ),
+					'blockAnimations' => boolval( get_option( 'themeisle_blocks_settings_blocks_animation', true ) ),
+					'blockConditions' => boolval( get_option( 'themeisle_blocks_settings_block_conditions', true ) ),
 				),
 				'isLegacyPre59'           => version_compare( get_bloginfo( 'version' ), '5.8.22', '<=' ),
 				'isAncestorTypeAvailable' => version_compare( get_bloginfo( 'version' ), '5.9.22', '>=' ),
 				'version'                 => OTTER_BLOCKS_VERSION,
 				'showBFDeal'              => Pro::bf_deal(),
+				'isRTL'                   => is_rtl(),
 			)
 		);
 
@@ -497,6 +501,7 @@ class Registration {
 				'themeisleGutenbergForm',
 				array(
 					'reRecaptchaSitekey' => get_option( 'themeisle_google_captcha_api_site_key' ),
+					'reRecaptchaAPIURL'  => apply_filters( 'otter_blocks_recaptcha_api_url', 'https://www.google.com/recaptcha/api.js' ),
 					'root'               => esc_url_raw( rest_url() ),
 					'nonce'              => wp_create_nonce( 'wp_rest' ),
 					'messages'           => array(
@@ -576,6 +581,14 @@ class Registration {
 			);
 
 			wp_script_add_data( 'otter-slider', 'async', true );
+
+			wp_localize_script(
+				'otter-slider',
+				'themeisleGutenbergSlider',
+				array(
+					'isRTL' => is_rtl(),
+				)
+			);
 		}
 
 		if ( ! self::$scripts_loaded['tabs'] && has_block( 'themeisle-blocks/tabs', $post ) ) {
@@ -672,14 +685,15 @@ class Registration {
 	 */
 	public function register_blocks() {
 		$dynamic_blocks = array(
-			'about-author'  => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
-			'form-nonce'    => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
-			'google-map'    => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
-			'leaflet-map'   => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
-			'plugin-cards'  => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
-			'posts-grid'    => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
-			'review'        => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
-			'sharing-icons' => '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
+			'about-author'    => '\ThemeIsle\GutenbergBlocks\Render\About_Author_Block',
+			'form-nonce'      => '\ThemeIsle\GutenbergBlocks\Render\Form_Nonce_Block',
+			'google-map'      => '\ThemeIsle\GutenbergBlocks\Render\Google_Map_Block',
+			'leaflet-map'     => '\ThemeIsle\GutenbergBlocks\Render\Leaflet_Map_Block',
+			'plugin-cards'    => '\ThemeIsle\GutenbergBlocks\Render\Plugin_Card_Block',
+			'posts-grid'      => '\ThemeIsle\GutenbergBlocks\Render\Posts_Grid_Block',
+			'review'          => '\ThemeIsle\GutenbergBlocks\Render\Review_Block',
+			'sharing-icons'   => '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
+			'stripe-checkout' => '\ThemeIsle\GutenbergBlocks\Render\Stripe_Checkout_Block',
 		);
 
 		$dynamic_blocks = apply_filters( 'otter_blocks_register_dynamic_blocks', $dynamic_blocks );
@@ -715,6 +729,7 @@ class Registration {
 			'service',
 			'sharing-icons',
 			'slider',
+			'stripe-checkout',
 			'tabs',
 			'tabs-item',
 			'testimonials',

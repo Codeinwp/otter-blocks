@@ -295,32 +295,38 @@ const Inspector = ({
 									{
 										value: attributes.headingColor,
 										onChange: headingColor => setAttributes({ headingColor }),
-										label: __( 'Text', 'otter-blocks' )
+										label: __( 'Text', 'otter-blocks' ),
+										isShownByDefault: false
 									},
 									{
 										value: attributes.backgroundColor,
 										onChange: backgroundColor => setAttributes({ backgroundColor }),
-										label: __( 'Background', 'otter-blocks' )
+										label: __( 'Background', 'otter-blocks' ),
+										isShownByDefault: false
 									},
 									{
 										value: attributes.linkColor,
 										onChange: linkColor => setAttributes({ linkColor }),
-										label: __( 'Link', 'otter-blocks' )
+										label: __( 'Link', 'otter-blocks' ),
+										isShownByDefault: false
 									},
 									{
 										value: attributes.linkHoverColor,
 										onChange: linkHoverColor => setAttributes({ linkHoverColor }),
-										label: __( 'Link Hover', 'otter-blocks' )
+										label: __( 'Link Hover', 'otter-blocks' ),
+										isShownByDefault: false
 									},
 									{
 										value: attributes.highlightColor,
 										onChange: highlightColor => setAttributes({ highlightColor }),
-										label: __( 'Highlight Text', 'otter-blocks' )
+										label: __( 'Highlight Text', 'otter-blocks' ),
+										isShownByDefault: false
 									},
 									{
 										value: attributes.highlightBackground,
 										onChange: highlightBackground => setAttributes({ highlightBackground }),
-										label: __( 'Highlight Background', 'otter-blocks' )
+										label: __( 'Highlight Background', 'otter-blocks' ),
+										isShownByDefault: false
 									}
 								] }
 							/>

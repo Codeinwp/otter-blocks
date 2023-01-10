@@ -1,9 +1,9 @@
 {
 	"about-author": {
-		"block": "blocks/blocks/about-author/block.json",
+		"block": "blocks/blocks/deprecated/about-author/block.json",
 		"assets": {
-			"about-author/editor.css": "blocks/blocks/about-author/editor.scss",
-			"about-author/style.css": "blocks/blocks/about-author/style.scss"
+			"about-author/editor.css": "blocks/blocks/deprecated/about-author/editor.scss",
+			"about-author/style.css": "blocks/blocks/deprecated/about-author/style.scss"
 		}
 	},
 	"accordion": {
@@ -124,9 +124,9 @@
 		}
 	},
 	"plugin-cards": {
-		"block": "blocks/blocks/plugin-cards/block.json",
+		"block": "blocks/blocks/deprecated/plugin-cards/block.json",
 		"assets": {
-			"plugin-cards/style.css": "blocks/blocks/plugin-cards/style.scss"
+			"plugin-cards/style.css": "blocks/blocks/deprecated/plugin-cards/style.scss"
 		}
 	},
 	"popup": {
@@ -189,14 +189,21 @@
 			"slider/style.css": "blocks/blocks/slider/style.scss"
 		}
 	},
+	"stripe-checkout": {
+		"block": "blocks/blocks/stripe-checkout/block.json",
+		"assets": {
+			"stripe-checkout/editor.css": "blocks/blocks/stripe-checkout/editor.scss",
+			"stripe-checkout/style.css": "blocks/blocks/stripe-checkout/style.scss"
+		}
+	},
 	"pricing": {
-		"block": "blocks/blocks/structural/pricing/block.json"
+		"block": "blocks/blocks/deprecated/pricing/block.json"
 	},
 	"service": {
-		"block": "blocks/blocks/structural/service/block.json"
+		"block": "blocks/blocks/deprecated/service/block.json"
 	},
 	"testimonials": {
-		"block": "blocks/blocks/structural/testimonials/block.json"
+		"block": "blocks/blocks/deprecated/testimonials/block.json"
 	},
 	"tabs": {
 		"block": "blocks/blocks/tabs/group/block.json",

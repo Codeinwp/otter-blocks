@@ -64,7 +64,7 @@ const PopupControls = (
 					label={ __( 'Anchor', 'otter-blocks' ) }
 					help={ __( 'You can use this anchor as an anchor link anywhere on the page to open the popup.', 'otter-blocks' ) }
 					value={ attributes.anchor }
-					onChange={ value => setAttributes({ anchor: value?.replace( /[^a-zA-Z]/g, '' ) }) }
+					onChange={ anchor => setAttributes({ anchor }) }
 				/>
 			) }
 
@@ -105,7 +105,7 @@ const PopupControls = (
 					label={ __( 'Close Anchor', 'otter-blocks' ) }
 					help={ __( 'You can use this anchor as an anchor link anywhere on the page to close the popup.', 'otter-blocks' ) }
 					value={ attributes.closeAnchor }
-					onChange={ value => setAttributes({ closeAnchor: value.replace( /[^a-zA-Z]/g, '' ) }) }
+					onChange={ closeAnchor => setAttributes({ closeAnchor }) }
 				/>
 			) }
 

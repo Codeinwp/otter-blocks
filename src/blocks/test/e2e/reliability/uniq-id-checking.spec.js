@@ -82,7 +82,25 @@ describe( 'Otter Block ID', () => {
 
 		const otterIds = ids.filter( x => x && x.includes( 'themeisle' ) );
 		expect( 0 < otterIds.length ).toBe( true );
-		expect( otterIds.length === ( new Set( otterIds ) ).size ).toBe( true );
+
+		const s = new Set( otterIds );
+
+		console.log( `Ids: ${otterIds.length} | Uniq ids: ${s.size}` );
+
+		const duplicates = {};
+
+		otterIds.forEach( i => {
+			if ( duplicates[i] === undefined ) {
+				duplicates[i] = 1;
+			} else {
+				duplicates[i] += 1;
+			}
+
+		});
+
+		console.log( `Ids that appear more than once: ${Object.keys( duplicates ).filter( i => 1 < duplicates[i]).map( i => `\n| ${duplicates[i].toString().padStart( 2, ' ' )} ${i}` ).join( '' )}`  );
+
+		expect( otterIds.length === s.size ).toBe( true );
 	});
 
 	it( 'Insert extra blocks and check for uniq id', async() => {
@@ -125,7 +143,25 @@ describe( 'Otter Block ID', () => {
 
 		const otterIds = ids.filter( x => x && x.includes( 'themeisle' ) );
 		expect( 0 < otterIds.length ).toBe( true );
-		expect( otterIds.length === ( new Set( otterIds ) ).size ).toBe( true );
+
+		const s = new Set( otterIds );
+
+		console.log( `Ids: ${otterIds.length} | Uniq ids: ${s.size}` );
+
+		const duplicates = {};
+
+		otterIds.forEach( i => {
+			if ( duplicates[i] === undefined ) {
+				duplicates[i] = 1;
+			} else {
+				duplicates[i] += 1;
+			}
+
+		});
+
+		console.log( `Ids that appear more than once: ${Object.keys( duplicates ).filter( i => 1 < duplicates[i]).map( i => `\n| ${duplicates[i].toString().padStart( 2, ' ' )} ${i}` ).join( '' )}`  );
+
+		expect( otterIds.length === s.size ).toBe( true );
 
 		expect( beforeCount < afterCount ).toBe( true );
 

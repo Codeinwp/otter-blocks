@@ -16,6 +16,11 @@ import {
 	TextControl
 } from '@wordpress/components';
 
+/**
+ * Internal dependencies
+ */
+import { googleMapIcon as icon } from '../../helpers/icons.js';
+
 const BlockPlaceholder = ({
 	api,
 	error,
@@ -37,7 +42,7 @@ const BlockPlaceholder = ({
 	if ( ! isAPISaved ) {
 		return (
 			<Placeholder
-				icon="admin-site"
+				icon={ icon }
 				label={ __( 'Google Maps', 'otter-blocks' ) }
 				instructions={ __( 'A Google Maps API key is required, please enter one below.', 'otter-blocks' ) }
 			>

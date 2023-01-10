@@ -1,7 +1,10 @@
 name: Test e2e for JS
 
-on: [pull_request]
-
+on:
+  pull_request:
+    types: [ opened, synchronize, ready_for_review ]
+    branches-ignore:
+      - "update_dependencies"
 
 jobs:
   e2e:

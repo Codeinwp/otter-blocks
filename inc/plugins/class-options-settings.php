@@ -195,6 +195,18 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_stripe_api_key',
+			array(
+				'type'              => 'string',
+				'description'       => __( 'Stripe API key for the Stripe Block.', 'otter-blocks' ),
+				'sanitize_callback' => 'sanitize_text_field',
+				'show_in_rest'      => true,
+				'default'           => '',
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'themeisle_google_captcha_api_site_key',
 			array(
 				'type'              => 'string',

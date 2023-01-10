@@ -412,17 +412,20 @@ const Inspector = ({
 							{
 								value: attributes.textColor,
 								onChange: textColor => setAttributes({ textColor }),
-								label: __( 'Text', 'otter-blocks' )
+								label: __( 'Text', 'otter-blocks' ),
+								isShownByDefault: false
 							},
 							{
 								value: attributes.backgroundColor,
 								onChange: backgroundColor => setAttributes({ backgroundColor }),
-								label: __( 'Background', 'otter-blocks' )
+								label: __( 'Background', 'otter-blocks' ),
+								isShownByDefault: false
 							},
 							{
 								value: attributes.borderColor,
 								onChange: borderColor => setAttributes({ borderColor }),
-								label: __( 'Border', 'otter-blocks' )
+								label: __( 'Border', 'otter-blocks' ),
+								isShownByDefault: false
 							}
 						] }
 					/>
