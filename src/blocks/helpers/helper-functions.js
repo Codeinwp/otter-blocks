@@ -5,6 +5,7 @@ import { sprintf } from '@wordpress/i18n';
 import { __experimentalGetSettings } from '@wordpress/date';
 
 import { __ } from '@wordpress/i18n';
+import { makeBox } from '../plugins/copy-paste/utils';
 
 // Post types to exclude
 const excludedTypes = [
@@ -213,6 +214,29 @@ export const _em = value => _unit( value, 'em' );
  * @returns {string|undefined}
  */
 export const _percent = value => _unit( value, '%' );
+
+/**
+ * Make a box type from a number or an object with Box like props.
+ * @param {Object|number} value
+ * @param {import('./blocks').BoxType?} defaultValue
+ * @returns {import('./blocks').BoxType}
+ */
+export const objectOrNumberAsBox = ( value, defaultValue = undefined ) => {
+	if ( isNumber( value ) ) {
+		return makeBox( _px( value ) );
+	}
+
+	if ( value === undefined ) {
+		return defaultValue;
+	}
+
+	return {
+		top: value?.top,
+		bottom: value?.bottom,
+		right: value?.right,
+		left: value?.left
+	};
+};
 
 const verticalMapping = {
 	'top': 'flex-start',

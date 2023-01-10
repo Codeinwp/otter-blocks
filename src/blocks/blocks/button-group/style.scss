@@ -100,6 +100,9 @@ $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 	--font-size: 15px;
 
 	.wp-block-themeisle-blocks-button {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 
 		&.wp-block-button {
 			.wp-block-button__link {
@@ -107,7 +110,7 @@ $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 				font-size: var(--font-size);
 		
 				@media ( min-width: 600px ) and ( max-width: 960px ) {
-					padding: var(--padding-tablet);
+					paddingS: var(--padding-tablet);
 				}
 			
 				@media ( max-width: 600px ) {

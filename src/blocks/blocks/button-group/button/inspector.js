@@ -29,6 +29,7 @@ import ControlPanelControl from '../../../components/control-panel-control/index
 import IconPickerControl from '../../../components/icon-picker-control/index.js';
 import { ColorDropdownControl, InspectorHeader, ToogleGroupControl } from '../../../components/index.js';
 import { makeBox } from '../../../plugins/copy-paste/utils';
+import { objectOrNumberAsBox } from '../../../helpers/helper-functions.js';
 
 /**
  *
@@ -138,7 +139,10 @@ const Inspector = ({
 										{ label: __( 'Right', 'otter-blocks' ), value: 'right' },
 										{ label: __( 'Icon Only', 'otter-blocks' ), value: 'only' }
 									] }
-									onChange={ e => setAttributes({ iconType: e }) }
+									onChange={ e => {
+										const defaultIcon = 'none' !== e && attributes.icon === undefined ? { prefix: 'fas', icon: 'chevron-right' } : {};
+										setAttributes({ iconType: e, ...defaultIcon });
+									} }
 								/>
 
 								{ 'none' !== attributes.iconType && (
@@ -176,7 +180,9 @@ const Inspector = ({
 										<ColorDropdownControl
 											label={ __( 'Background', 'otter-blocks' ) }
 											colorValue={ attributes.background }
-											onColorChange={ background => setAttributes({ background }) }
+											gradientValue={ attributes.backgroundGradient }
+											onColorChange={ background => setAttributes({ background: background })}
+											onGradientChange={ backgroundGradient => setAttributes({ backgroundGradient })}
 											className="is-list"
 										/>
 
@@ -199,7 +205,9 @@ const Inspector = ({
 										<ColorDropdownControl
 											label={ __( 'Background', 'otter-blocks' ) }
 											colorValue={ attributes.hoverBackground }
+											gradientValue={ attributes.hoverBackgroundGradient }
 											onColorChange={ hoverBackground => setAttributes({ hoverBackground }) }
+											onGradientChange={ hoverBackgroundGradient => setAttributes({ hoverBackgroundGradient }) }
 											className="is-list"
 										/>
 
@@ -219,13 +227,13 @@ const Inspector = ({
 							>
 								<BoxControl
 									label={ __( 'Border Width', 'otter-blocks' ) }
-									values={ makeBox( attributes.borderSize ) }
+									values={ objectOrNumberAsBox( attributes.borderSize ) }
 									onChange={ e => setAttributes({ borderSize: e }) }
 								/>
 
 								<BoxControl
 									label={ __( 'Border Radius', 'otter-blocks' ) }
-									values={ makeBox( attributes.borderRadius ) }
+									values={ objectOrNumberAsBox( attributes.borderRadius ) }
 									onChange={ e => setAttributes({ borderRadius: e }) }
 								/>
 

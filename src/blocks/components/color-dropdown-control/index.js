@@ -21,6 +21,14 @@ import {
  */
 import './editor.scss';
 
+/**
+ * The component for choosing colors and gradients.
+ *
+ * Warning: `onColorChange` and `onGradientChange` trigger at the same time. If you choose a color, `onColorChange` will trigger with the color value and `onGradientChange` will trigger with `undefined`.
+ *
+ * @param {import('./type').ColorDropdownControlProps} props
+ * @returns
+ */
 const ColorDropdownControl = ({
 	label,
 	colorValue,

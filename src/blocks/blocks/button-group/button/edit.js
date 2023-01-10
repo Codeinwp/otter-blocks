@@ -42,12 +42,17 @@ const { attributes: defaultAttributes } = metadata;
  * @param {import('./types').ButtonGroupButtonProps} props
  * @returns
  */
-const Edit = ({
-	attributes,
-	setAttributes,
-	isSelected,
-	clientId
-}) => {
+const Edit = ( props ) => {
+
+	const {
+		attributes,
+		setAttributes,
+		isSelected,
+		clientId
+	} = props;
+
+	console.log( props );
+
 	const {
 		hasParent,
 		parentAttributes
@@ -75,8 +80,6 @@ const Edit = ({
 
 	let buttonStyle = {};
 
-	let buttonStyleParent = {};
-
 	if ( attributes.boxShadow ) {
 		boxShadowStyle = {
 			boxShadow: `${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ attributes.boxShadowSpread }px ${ hexToRgba( ( attributes.boxShadowColor ? attributes.boxShadowColor : '#000000' ), attributes.boxShadowColorOpacity ) }`
@@ -94,12 +97,32 @@ const Edit = ({
 		};
 	}
 
+	const getCSSBasedOnStyle = () => {
+		if ( attributes?.className?.includes( 'is-style-plain' ) ) {
+			return {
+				color: attributes.color
+			};
+		}
+		if ( attributes?.className?.includes( 'is-style-outline' ) ) {
+			return {
+				color: attributes.color,
+				border: `${ attributes.borderSize }px solid ${ attributes.border }`,
+				borderRadius: attributes.borderRadius,
+				...boxShadowStyle
+			};
+		}
+
+		return {
+			color: attributes.color,
+			background: attributes.background || attributes.backgroundGradient,
+			border: `${ attributes.borderSize }px solid ${ attributes.border }`,
+			borderRadius: attributes.borderRadius,
+			...boxShadowStyle
+		};
+	};
+
 	const styles = {
-		color: attributes.color,
-		background: attributes.background || attributes.backgroundGradient,
-		border: `${ attributes.borderSize }px solid ${ attributes.border }`,
-		borderRadius: attributes.borderRadius,
-		...boxShadowStyle,
+		...getCSSBasedOnStyle(),
 		...buttonStyle
 	};
 
@@ -127,8 +150,7 @@ const Edit = ({
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		className: classnames( 'wp-block-button', cssNodeName ),
-		style: buttonStyleParent
+		className: classnames( 'wp-block-button', cssNodeName )
 	});
 
 	return (
