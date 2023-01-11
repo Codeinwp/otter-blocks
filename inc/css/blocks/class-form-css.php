@@ -52,8 +52,19 @@ class Form_CSS extends Base_CSS {
 					array(
 						'property'  => '--border-radius',
 						'value'     => 'inputBorderRadius',
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left'   => '8px',
+									'right'  => '8px',
+									'top'    => '8px',
+									'bottom' => '8px',
+								)
+							);
+						},
 						'condition' => function( $attrs ) {
-							return isset( $attrs['inputBorderRadius'] ) && is_numeric( $attrs['inputBorderRadius'] );
+							return isset( $attrs['inputBorderRadius'] ) && is_array( $attrs['inputBorderRadius'] );
 						},
 						'hasSync'   => 'form-border-radius',
 					),
@@ -341,6 +352,7 @@ class Form_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
+				'selector'   => '.wp-block-themeisle-blocks-form',
 				'properties' => array(
 					array(
 						'property' => '--form-label-color',
@@ -568,7 +580,7 @@ class Form_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-button__link:not(:hover)',
+				'selector'   => '.wp-block-themeisle-blocks-form .wp-block-button__link:not(:hover)',
 				'properties' => array(
 					array(
 						'property' => 'color',
@@ -584,7 +596,7 @@ class Form_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-button__link:hover',
+				'selector'   => '.wp-block-themeisle-blocks-form .wp-block-button__link:hover',
 				'properties' => array(
 					array(
 						'property' => 'color',
