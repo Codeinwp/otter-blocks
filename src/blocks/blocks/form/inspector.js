@@ -45,6 +45,7 @@ import { _px } from '../../helpers/helper-functions.js';
 import { SortableContainer } from 'react-sortable-hoc';
 import { SortableInputField } from './sortable-input-fields';
 import { alignCenter, alignLeft, alignRight, menu } from '@wordpress/icons';
+import AutoDisableSyncAttr from '../../components/auto-disable-sync-attr/index';
 
 const compare = x => {
 	return x?.[1] && x[0] !== x[1];
@@ -81,6 +82,7 @@ const defaultFontSizes = [
 		slug: 'xl'
 	}
 ];
+
 
 /**
  *
@@ -137,18 +139,6 @@ const Inspector = ({
 		[ formOptions.listId, savedFormOptions?.integration?.listId ],
 		[ formOptions.action, savedFormOptions?.integration?.action ]
 	]);
-
-	const AutoDisableSyncAttr = ({ attr, children }) => {
-		return <Disabled
-			isDisabled={
-				attributes.isSynced?.includes( attr ) ||
-				false
-			}
-			className="o-disabled"
-		>
-			{ children }
-		</Disabled>;
-	};
 
 	const InputFieldList = SortableContainer( ({ items }) => {
 		return (
@@ -322,7 +312,7 @@ const Inspector = ({
 							<ResponsiveControl
 								label={ __( 'Alignment', 'otter-blocks' ) }
 							>
-								<AutoDisableSyncAttr attr={responsiveGetAttributes([ 'submitStyle', 'submitStyleTablet', 'submitStyleMobile' ])}>
+								<AutoDisableSyncAttr attributes={attributes} attr={responsiveGetAttributes([ 'submitStyle', 'submitStyleTablet', 'submitStyleMobile' ])}>
 									<ToogleGroupControl
 										value={ responsiveGetAttributes([ attributes.submitStyle, attributes.submitStyleTablet, attributes.submitStyleMobile  ]) ?? 'left' }
 										onChange={ value => responsiveSetAttributes( '' === value ? undefined : value, [ 'submitStyle', 'submitStyleTablet', 'submitStyleMobile' ]) }
@@ -768,7 +758,7 @@ const Inspector = ({
 								{
 									( 'normal' === buttonColorView && (
 										<Fragment>
-											<AutoDisableSyncAttr attr={'submitColor'}>
+											<AutoDisableSyncAttr attributes={attributes} attr={'submitColor'}>
 												<ColorDropdownControl
 													label={__( 'Text', 'otter-blocks' )}
 													colorValue={attributes.submitColor}
@@ -777,7 +767,7 @@ const Inspector = ({
 												/>
 											</AutoDisableSyncAttr>
 
-											<AutoDisableSyncAttr attr={'submitBackgroundColor'}>
+											<AutoDisableSyncAttr attributes={attributes} attr={'submitBackgroundColor'}>
 												<ColorDropdownControl
 													label={__( 'Background', 'otter-blocks' )}
 													colorValue={attributes.submitBackgroundColor}
@@ -789,7 +779,7 @@ const Inspector = ({
 									) ) ||
 									( 'hover' === buttonColorView && (
 										<Fragment>
-											<AutoDisableSyncAttr attr={'submitColorHover'}>
+											<AutoDisableSyncAttr attributes={attributes} attr={'submitColorHover'}>
 												<ColorDropdownControl
 													label={__( 'Text', 'otter-blocks' )}
 													colorValue={attributes.submitColorHover}
@@ -798,7 +788,7 @@ const Inspector = ({
 												/>
 											</AutoDisableSyncAttr>
 
-											<AutoDisableSyncAttr attr={'submitBackgroundColorHover'}>
+											<AutoDisableSyncAttr attributes={attributes} attr={'submitBackgroundColorHover'}>
 												<ColorDropdownControl
 													label={__( 'Background', 'otter-blocks' )}
 													colorValue={attributes.submitBackgroundColorHover}
@@ -812,7 +802,7 @@ const Inspector = ({
 
 								<br/>
 
-								<AutoDisableSyncAttr attr={'submitFontSize'}>
+								<AutoDisableSyncAttr attributes={attributes} attr={'submitFontSize'}>
 									<FontSizePicker
 										label={ __( 'Font Size', 'otter-blocks' ) }
 										fontSizes={ defaultFontSizes }
@@ -825,7 +815,7 @@ const Inspector = ({
 								<ResponsiveControl
 									label="Screen Type"
 								>
-									<AutoDisableSyncAttr attr={responsiveGetAttributes([ 'buttonPadding', 'buttonPaddingTablet', 'buttonPaddingMobile' ])}>
+									<AutoDisableSyncAttr attributes={attributes} attr={responsiveGetAttributes([ 'buttonPadding', 'buttonPaddingTablet', 'buttonPaddingMobile' ])}>
 										<BoxControl
 											label={ __( 'Padding', 'otter-blocks' ) }
 											values={ responsiveGetAttributes([ attributes.buttonPadding, attributes.buttonPaddingTablet, attributes.buttonPaddingMobile ]) ?? { top: '10px', bottom: '10px', right: '20px', left: '20px' }  }
@@ -860,7 +850,7 @@ const Inspector = ({
 									setAttributes={setAttributes}
 								/>
 
-								<AutoDisableSyncAttr attr={'labelFontSize'}>
+								<AutoDisableSyncAttr attributes={attributes} attr={'labelFontSize'}>
 									<FontSizePicker
 										label={ __( 'Font Size', 'otter-blocks' ) }
 										fontSizes={ defaultFontSizes }
@@ -870,7 +860,7 @@ const Inspector = ({
 									/>
 								</AutoDisableSyncAttr>
 
-								<AutoDisableSyncAttr attr={'inputGap'}>
+								<AutoDisableSyncAttr attributes={attributes} attr={'inputGap'}>
 									<RangeControl
 										label={ __( 'Spacing', 'otter-blocks' ) }
 										value={ attributes.inputGap ?? 10 }
@@ -906,7 +896,7 @@ const Inspector = ({
 									setAttributes={setAttributes}
 								/>
 
-								<AutoDisableSyncAttr attr={'inputFontSize'}>
+								<AutoDisableSyncAttr attributes={attributes} attr={'inputFontSize'}>
 									<FontSizePicker
 										label={ __( 'Input Font Size', 'otter-blocks' ) }
 										fontSizes={ defaultFontSizes }
@@ -917,7 +907,7 @@ const Inspector = ({
 
 								</AutoDisableSyncAttr>
 
-								<AutoDisableSyncAttr attr={'inputsGap'}>
+								<AutoDisableSyncAttr attributes={attributes} attr={'inputsGap'}>
 									<RangeControl
 										label={ __( 'Fields Spacing', 'otter-blocks' ) }
 										value={ attributes.inputsGap ?? 16}
@@ -932,7 +922,7 @@ const Inspector = ({
 								<ResponsiveControl
 									label={ __( 'Screen Type', 'otter-blocks' ) }
 								>
-									<AutoDisableSyncAttr attr={responsiveGetAttributes([ 'inputPadding', 'inputPaddingTablet', 'inputPaddingMobile' ])}>
+									<AutoDisableSyncAttr attributes={attributes} attr={responsiveGetAttributes([ 'inputPadding', 'inputPaddingTablet', 'inputPaddingMobile' ])}>
 										<BoxControl
 											label={ __( 'Input Padding', 'otter-blocks' ) }
 											values={ responsiveGetAttributes([ attributes.inputPadding, attributes.inputPaddingTablet, attributes.inputPaddingMobile  ]) ?? { 'top': '8px', 'right': '8px', 'bottom': '8px', 'left': '8px' } }
@@ -968,7 +958,7 @@ const Inspector = ({
 									setAttributes={setAttributes}
 								/>
 
-								<AutoDisableSyncAttr attr={'inputBorderRadius'}>
+								<AutoDisableSyncAttr attributes={attributes} attr={'inputBorderRadius'}>
 									<BoxControl
 										label={ __( 'Border Radius', 'otter-blocks' ) }
 										values={ ! isObjectLike( attributes.inputBorderRadius ) ? makeBox( _px( attributes.inputBorderRadius ?? 4 ) ) : attributes.inputBorderRadius }
@@ -977,7 +967,7 @@ const Inspector = ({
 									/>
 								</AutoDisableSyncAttr>
 
-								<AutoDisableSyncAttr attr={'inputBorderWidth'}>
+								<AutoDisableSyncAttr attributes={attributes} attr={'inputBorderWidth'}>
 									<BoxControl
 										label={ __( 'Border Width', 'otter-blocks' ) }
 										values={ ! isObjectLike( attributes.inputBorderWidth ) ? makeBox( _px( attributes.inputBorderWidth ?? 1 ) ) : attributes.inputBorderWidth }
@@ -1000,7 +990,7 @@ const Inspector = ({
 									setAttributes={setAttributes}
 								/>
 
-								<AutoDisableSyncAttr attr={'helpFontSize'}>
+								<AutoDisableSyncAttr attributes={attributes} attr={'helpFontSize'}>
 									<FontSizePicker
 										label={ __( 'Help Font Size', 'otter-blocks' ) }
 										fontSizes={ defaultFontSizes }
@@ -1034,7 +1024,7 @@ const Inspector = ({
 									setAttributes={setAttributes}
 								/>
 
-								<AutoDisableSyncAttr attr={'submitMessageColor'}>
+								<AutoDisableSyncAttr attributes={attributes} attr={'submitMessageColor'}>
 									<ColorDropdownControl
 										label={__( 'Success message', 'otter-blocks' )}
 										colorValue={attributes.submitMessageColor}
@@ -1043,7 +1033,7 @@ const Inspector = ({
 									/>
 								</AutoDisableSyncAttr>
 
-								<AutoDisableSyncAttr attr={'submitMessageErrorColor'}>
+								<AutoDisableSyncAttr attributes={attributes} attr={'submitMessageErrorColor'}>
 									<ColorDropdownControl
 										label={__( 'Error message', 'otter-blocks' )}
 										colorValue={attributes.submitMessageErrorColor}
@@ -1054,7 +1044,7 @@ const Inspector = ({
 
 
 								<br/>
-								<AutoDisableSyncAttr attr={'messageFontSize'}>
+								<AutoDisableSyncAttr attributes={attributes} attr={'messageFontSize'}>
 									<FontSizePicker
 										fontSizes={ defaultFontSizes }
 										withReset

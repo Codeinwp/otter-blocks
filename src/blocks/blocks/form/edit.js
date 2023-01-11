@@ -71,6 +71,7 @@ const Edit = ({
 	isSelected,
 	name
 }) => {
+
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
 
