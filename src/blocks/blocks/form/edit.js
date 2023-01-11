@@ -862,14 +862,14 @@ const Edit = ({
 								<style>
 									{
 										`#block-${ clientId } .wp-block-button .wp-block-button__link:not(:hover) ` + _cssBlock([
-											[ 'color', attributes.submitColor ],
-											[ 'background-color', attributes.submitBackgroundColor ]
+											[ 'color', getSyncValue( 'submitColor' ) ],
+											[ 'background-color', getSyncValue( 'submitBackgroundColor' )  ]
 										])
 									}
 									{
-										`#block-${ clientId } .wp-block-button .wp-block-button__link ` + _cssBlock([
-											[ 'color', attributes.submitColorHover ],
-											[ 'background-color', attributes.submitBackgroundColorHover ]
+										`#block-${ clientId } .wp-block-button .wp-block-button__link:hover ` + _cssBlock([
+											[ 'color', getSyncValue( 'submitColorHover' ) ],
+											[ 'background-color', getSyncValue( 'submitBackgroundColorHover' ) ]
 										])
 									}
 								</style>

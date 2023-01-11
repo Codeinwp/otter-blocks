@@ -277,7 +277,7 @@ class Form_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-button__link:not(:hover)',
+				'selector'   => ' .wp-block-button .wp-block-button__link:not(:hover)',
 				'properties' => array(
 					array(
 						'property' => 'color',
@@ -293,7 +293,7 @@ class Form_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector'   => ' .wp-block-button__link:hover',
+				'selector'   => ' .wp-block-button .wp-block-button__link:hover',
 				'properties' => array(
 					array(
 						'property' => 'color',
