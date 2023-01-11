@@ -76,8 +76,10 @@ const InlineControls = ({
 
 	return (
 		<Popover
-			position="bottom-center"
+			position="bottom center right"
+			placement="bottom"
 			noArrow={ false }
+			anchor={ anchorRef }
 			anchorRef={ anchorRef }
 			focusOnMount={ false }
 			className={

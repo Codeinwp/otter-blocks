@@ -57,7 +57,7 @@ class Review_CSS extends Base_CSS {
 		foreach ( $padding as $key => $item ) {
 			foreach ( $padding_sides as $side ) {
 				array_push(
-					$padding_css, 
+					$padding_css,
 					array(
 						'property'  => $item['prefix'] . $side,
 						'value'     => $key,
