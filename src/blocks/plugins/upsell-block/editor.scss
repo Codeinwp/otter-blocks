@@ -1,0 +1,41 @@
+.o-block-patterns-upsell {
+    background: #ed6f57;
+    height: 56px;
+    margin: -8px -8px -28px -8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 24px;
+
+    h3 {
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0;
+    }
+
+    a {
+        background: #f07d66;
+        padding: 8px 12px;
+        border-radius: 2px;
+        color: #FFF !important;
+        font-size: 14px;
+        font-weight: 600 !important;
+        margin: 0;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .components-button {
+        color: #fff;
+    }
+
+    .o-block-patterns-upsell__actions {
+        display: flex;
+        align-items: center;
+    }
+}
+
+.block-editor-block-preview__content-iframe .o-block-patterns-upsell {
+    display: none;
+}

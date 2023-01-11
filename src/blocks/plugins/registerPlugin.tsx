@@ -29,8 +29,8 @@ import './dynamic-content/index.js';
 import './welcome-guide/index.js';
 import '../components/otter-tools/index';
 import './feedback/index.js';
-import './bf-deal/index.js';
 import './live-search/index.js';
+import './upsell-block/index.js';
 
 const icon = <Icon icon={ otterIcon } />;
 
