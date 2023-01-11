@@ -27,15 +27,18 @@ import {
  * Internal dependencies
  */
 import metadata from './block.json';
+import parentMetadata from '../group/block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import themeIsleIcons from './../../../helpers/themeisle-icons';
 import {
 	blockInit,
+	buildGetSyncValue,
 	useCSSNode
 } from '../../../helpers/block-utility.js';
-import { boxToCSS, objectOrNumberAsBox } from '../../../helpers/helper-functions';
+import { boxToCSS, objectOrNumberAsBox, _px } from '../../../helpers/helper-functions';
 
+const { attributes: defaultParentAttributes } = parentMetadata;
 const { attributes: defaultAttributes } = metadata;
 
 /**
@@ -49,12 +52,14 @@ const Edit = ( props ) => {
 		attributes,
 		setAttributes,
 		isSelected,
-		clientId
+		clientId,
+		name
 	} = props;
 
 	const {
 		hasParent,
-		parentAttributes
+		parentAttributes,
+		getSyncValueParent
 	} = useSelect( select => {
 		const {
 			getBlock,
@@ -66,9 +71,12 @@ const Edit = ( props ) => {
 
 		return {
 			hasParent: parentBlock ? true : false,
-			parentAttributes: parentBlock ? parentBlock.attributes : {}
+			parentAttributes: parentBlock ? parentBlock.attributes : {},
+			getSyncValueParent: buildGetSyncValue( parentBlock?.name, parentBlock?.attributes, defaultParentAttributes )
 		};
 	}, []);
+
+	const getSyncValue = buildGetSyncValue( name, attributes, defaultAttributes );
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -81,43 +89,43 @@ const Edit = ( props ) => {
 
 	if ( attributes.boxShadow ) {
 		boxShadowStyle = {
-			boxShadow: `${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ attributes.boxShadowSpread }px ${ hexToRgba( ( attributes.boxShadowColor ? attributes.boxShadowColor : '#000000' ), attributes.boxShadowColorOpacity ) }`
+			boxShadow: `${ getSyncValue( 'boxShadowHorizontal' ) }px ${ getSyncValue( 'boxShadowVertical' ) }px ${ getSyncValue( 'boxShadowBlur' ) }px ${ getSyncValue( 'boxShadowSpread' ) }px ${ hexToRgba( ( getSyncValue( 'boxShadowColor' ) ? getSyncValue( 'boxShadowColor' ) : '#000000' ), getSyncValue( 'boxShadowColorOpacity' ) ) }`
 		};
 	}
 
 	if ( hasParent ) {
 
 		buttonStyle = {
-			fontFamily: parentAttributes.fontFamily,
-			fontWeight: parentAttributes.fontVariant,
-			fontStyle: parentAttributes.fontStyle,
-			textTransform: parentAttributes.textTransform,
-			lineHeight: parentAttributes.lineHeight && `${ parentAttributes.lineHeight }px`
+			fontFamily: getSyncValueParent( 'fontFamily' ),
+			fontWeight: getSyncValueParent( 'fontVariant' ),
+			fontStyle: getSyncValueParent( 'fontStyle' ),
+			textTransform: getSyncValueParent( 'textTransform' ),
+			lineHeight: getSyncValueParent( 'lineHeight' ) && `${ getSyncValueParent( 'lineHeight' ) }px`
 		};
 	}
 
 	const getCSSBasedOnStyle = () => {
 		if ( attributes?.className?.includes( 'is-style-plain' ) ) {
 			return {
-				color: attributes.color
+				color: getSyncValue( 'color' )
 			};
 		}
 		if ( attributes?.className?.includes( 'is-style-outline' ) ) {
 			return {
-				color: attributes.color,
-				borderWidth: boxToCSS( objectOrNumberAsBox( attributes.borderSize ) ),
-				borderColor: attributes.border,
-				borderRadius: boxToCSS( objectOrNumberAsBox( attributes.borderRadius ) ),
+				color: getSyncValue( 'color' ),
+				borderWidth: boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderSize' ) ) ),
+				borderColor: getSyncValue( 'border' ),
+				borderRadius: boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderRadius' ) ) ),
 				...boxShadowStyle
 			};
 		}
 
 		return {
-			color: attributes.color,
-			background: attributes.background || attributes.backgroundGradient,
-			borderWidth: boxToCSS( objectOrNumberAsBox( attributes.borderSize ) ),
-			borderColor: attributes.border,
-			borderRadius: boxToCSS( objectOrNumberAsBox( attributes.borderRadius ) ),
+			color: getSyncValue( 'color' ),
+			background: getSyncValue( 'background' ) || getSyncValue( 'backgroundGradient' ),
+			borderWidth: boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderSize' ) ) ),
+			borderColor: getSyncValue( 'border' ),
+			borderRadius: boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderRadius' ) ) ),
 			...boxShadowStyle
 		};
 	};
@@ -130,8 +138,8 @@ const Edit = ( props ) => {
 	console.log( styles );
 
 	const iconStyles = {
-		fill: attributes.color,
-		width: parentAttributes.fontSize && `${ parentAttributes.fontSize }px`
+		fill: getSyncValue( 'color' ),
+		width: _px( getSyncValueParent( 'fontSize' ) )
 	};
 
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
@@ -140,16 +148,18 @@ const Edit = ( props ) => {
 	useEffect( () => {
 		setCSSNode([
 			`.wp-block-button__link:hover {
-				color: ${ attributes.hoverColor } !important;
-				background: ${ attributes.hoverBackground || attributes.hoverBackgroundGradient } !important;
+				color: ${ getSyncValue( 'hoverColor' ) } !important;
+				background: ${ getSyncValue( 'hoverBackground' ) || getSyncValue( 'hoverBackgroundGradient' ) } !important;
 				border-color: ${ attributes.hoverBorder } !important;
-				${ attributes.boxShadow && `box-shadow: ${ attributes.hoverBoxShadowHorizontal }px ${ attributes.hoverBoxShadowVertical }px ${ attributes.hoverBoxShadowBlur }px ${ attributes.hoverBoxShadowSpread }px ${ hexToRgba( ( attributes.hoverBoxShadowColor ? attributes.hoverBoxShadowColor : '#000000' ), attributes.hoverBoxShadowColorOpacity ) } !important;` }
+				${ getSyncValue( 'attributes.boxShadow' ) && `box-shadow: ${ getSyncValue( 'hoverBoxShadowHorizontal' ) }px ${ getSyncValue( 'hoverBoxShadowVertical' ) }px ${ attributes.hoverBoxShadowBlur }px ${ attributes.hoverBoxShadowSpread }px ${ hexToRgba( ( attributes.hoverBoxShadowColor ? attributes.hoverBoxShadowColor : '#000000' ), attributes.hoverBoxShadowColorOpacity ) } !important;` }
 			}`,
 			`.wp-block-button__link:hover svg {
 				fill: ${ attributes.hoverColor } !important;
 			}`
 		]);
-	}, [ attributes.hoverColor, attributes.hoverBackground, attributes.hoverBackgroundGradient, attributes.hoverBorder, attributes.hoverColor, attributes.boxShadow, attributes.hoverBoxShadowHorizontal, attributes.hoverBoxShadowBlur, attributes.hoverBoxShadowSpread, attributes.hoverBoxShadowColor, attributes.hoverBoxShadowColorOpacity ]);
+	}, [
+		attributes.hoverColor,
+		attributes.hoverBackground, attributes.hoverBackgroundGradient, attributes.hoverBorder, attributes.hoverColor, attributes.boxShadow, attributes.hoverBoxShadowHorizontal, attributes.hoverBoxShadowBlur, attributes.hoverBoxShadowSpread, attributes.hoverBoxShadowColor, attributes.hoverBoxShadowColorOpacity ]);
 
 	const blockProps = useBlockProps({
 		id: attributes.id,

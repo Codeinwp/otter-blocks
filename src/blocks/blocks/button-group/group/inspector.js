@@ -44,6 +44,7 @@ import { useResponsiveAttributes } from '../../../helpers/utility-hooks.js';
 import { InspectorHeader } from '../../../components/index.js';
 import { makeBox } from '../../../plugins/copy-paste/utils';
 import { getChoice, _i, _px } from '../../../helpers/helper-functions.js';
+import TypographySelectorControl from '../../../components/typography-selector-control/index';
 
 /**
  *
@@ -371,7 +372,7 @@ const Inspector = ({
 								title={ __( 'Typography', 'otter-blocks' ) }
 								initialOpen={ true }
 							>
-								<BaseControl
+								{/* <BaseControl
 									label={ __( 'Font Size', 'otter-blocks' ) }
 								>
 									<FontSizePicker
@@ -418,7 +419,10 @@ const Inspector = ({
 									onChangeFontStyle={ e => setAttributes({ fontStyle: e }) }
 									valueTransform={ attributes.textTransform }
 									onChangeTextTransform={ e => setAttributes({ textTransform: e }) }
-								/>
+								/> */}
+
+								<TypographySelectorControl />
+
 
 								<RangeControl
 									label={ __( 'Line Height', 'otter-blocks' ) }
@@ -429,6 +433,7 @@ const Inspector = ({
 									max={ 200 }
 								/>
 							</PanelBody>
+
 						</Fragment>
 					)
 				}
