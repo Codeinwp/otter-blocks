@@ -9,7 +9,7 @@ import { registerBlockType } from '@wordpress/blocks';
  * Internal dependencies
  */
 import metadata from './block.json';
-import { faIcon as icon } from '../../../helpers/icons.js';
+import { iconListItemIcon as icon } from '../../../helpers/icons.js';
 import edit from './edit.js';
 import save from './save.js';
 

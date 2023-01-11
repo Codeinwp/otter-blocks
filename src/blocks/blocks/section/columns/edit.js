@@ -53,6 +53,7 @@ import {
 	blockInit,
 	getDefaultValueByField
 } from '../../../helpers/block-utility.js';
+import { columnsIcon as icon } from '../../../helpers/icons.js';
 import { _cssBlock } from '../../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
@@ -396,6 +397,7 @@ const Edit = ({
 				<VariationPicker
 					label={ __( 'Section', 'otter-blocks' )  }
 					instructions={ __( 'Select a layout to start with, or make one yourself.', 'otter-blocks' ) }
+					icon={ icon }
 					variations={ variations }
 					onSelect={ ( nextVariation = defaultVariation ) => {
 						if ( nextVariation ) {

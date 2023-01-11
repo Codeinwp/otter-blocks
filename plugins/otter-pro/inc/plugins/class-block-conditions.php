@@ -240,16 +240,67 @@ class Block_Conditions {
 			return false;
 		}
 
-		$query_string = preg_replace( '/\s/', '', $condition['query_string'] );
+		$query_string = preg_replace( '/\n/', '&', $condition['query_string'] );
+		$query_string = preg_replace( '/\s/', '', $query_string );
+		$query_string = preg_replace( '/\[\]/', '', $query_string );
+		$pairs        = explode( '&', $query_string );
 
-		parse_str( $url_components['query'], $params );
-		parse_str( $query_string, $cond_params );
+		$cond_params = array();
 
-		if ( 'any' === $condition['match'] ) {
-			return count( array_intersect( $cond_params, $params ) ) > 0;
+		foreach ( $pairs as $pair ) {
+			$param = explode( '=', $pair );
+
+			if ( isset( $param[1] ) ) {
+				$cond_params[] = array(
+					'key'   => $param[0],
+					'value' => $param[1],
+				);
+			} else {
+				$cond_params[] = array(
+					'key' => $param[0],
+				);
+			}
 		}
 
-		return array_intersect( $cond_params, $params ) === $cond_params;
+		parse_str( $url_components['query'], $params );
+
+		if ( 'any' === $condition['match'] ) {
+			foreach ( $params as $key => $value ) {
+				foreach ( $cond_params as $cond_param ) {
+					if ( is_array( $value ) ) {
+						if ( $key === $cond_param['key'] && ( ! isset( $cond_param['value'] ) || in_array( $cond_param['value'], $value ) ) ) {
+							return true;
+						}
+					} else {
+						if ( $key === $cond_param['key'] && ( ! isset( $cond_param['value'] ) || $value === $cond_param['value'] ) ) {
+							return true;
+						}
+					}
+				}
+			}
+		}
+
+		foreach ( $cond_params as $cond_param ) {
+			if ( ! isset( $params[ $cond_param['key'] ] ) ) {
+				return false;
+			}
+
+			if ( is_array( $params[ $cond_param['key'] ] ) ) {
+				if ( ! in_array( $cond_param['value'], $params[ $cond_param['key'] ] ) ) {
+					return false;
+				}
+			} elseif ( ! isset( $cond_param['value'] ) ) {
+				if ( ! isset( $params[ $cond_param['key'] ] ) ) {
+					return false;
+				}
+			} else {
+				if ( $params[ $cond_param['key'] ] !== $cond_param['value'] ) {
+					return false;
+				}
+			}
+		}
+
+		return true;
 	}
 
 	/**

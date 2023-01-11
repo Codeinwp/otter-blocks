@@ -9,7 +9,7 @@ import { registerBlockType } from '@wordpress/blocks';
  * Internal dependencies
  */
 import metadata from './block.json';
-import { inputIcon as icon } from '../../../helpers/icons.js';
+import { formFieldIcon as icon } from '../../../helpers/icons.js';
 import edit from './edit.js';
 import save from './save.js';
 import deprecated from './deprecated.js';

@@ -9,11 +9,12 @@ import { hasBlockSupport } from '@wordpress/blocks';
 
 import { InspectorControls } from '@wordpress/block-editor';
 
-import { PanelBody } from '@wordpress/components';
+import {
+	__experimentalToolsPanelItem as ToolsPanelItem,
+	PanelBody
+} from '@wordpress/components';
 
 import { createHigherOrderComponent } from '@wordpress/compose';
-
-import { select } from '@wordpress/data';
 
 import { Fragment } from '@wordpress/element';
 
@@ -30,6 +31,8 @@ import './editor.scss';
 import CSSEditor from './editor.js';
 
 import './inject-css.js';
+
+import { onDeselect } from './inject-css.js';
 
 const addAttribute = ( settings ) => {
 	if ( hasBlockSupport( settings, 'customClassName', true ) ) {
@@ -48,36 +51,68 @@ const addAttribute = ( settings ) => {
 	return settings;
 };
 
+const Edit = ({
+	clientId,
+	setAttributes,
+	attributes
+}) => {
+	return (
+		<PanelBody
+			title={ __( 'Custom CSS', 'otter-blocks' ) }
+			initialOpen={ false }
+		>
+			<CSSEditor
+				clientId={ clientId }
+				setAttributes={ setAttributes }
+				attributes={ attributes }
+			/>
+
+			<div className="o-fp-wrap">
+				{ applyFilters( 'otter.feedback', '', 'custom-css' ) }
+				{ applyFilters( 'otter.poweredBy', '' ) }
+			</div>
+		</PanelBody>
+	);
+};
+
+const BlockCSSWrapper = ( el, props ) => {
+	if ( hasBlockSupport( props.name, 'customClassName', true ) ) {
+		return (
+			<Fragment>
+				{ el }
+
+				<ToolsPanelItem
+					hasValue={ () => Boolean( props.attributes?.hasCustomCSS ) }
+					label={ __( 'Custom CSS', 'otter-blocks' ) }
+					onDeselect={ () => {
+						props.setAttributes({
+							hasCustomCSS: false,
+							customCSS: null
+						});
+
+						onDeselect();
+					} }
+					isShownByDefault={ false }
+				>
+					<Edit { ...props } />
+				</ToolsPanelItem>
+			</Fragment>
+		);
+	}
+
+	return el;
+};
+
 const withInspectorControls = createHigherOrderComponent( BlockEdit => {
 	return props => {
 		const hasCustomClassName = hasBlockSupport( props.name, 'customClassName', true );
 		if ( hasCustomClassName && props.isSelected ) {
-			let Inspector = InspectorControls;
-
-			if ( window?.otterComponents?.useInspectorSlot ) {
-				Inspector = window.otterComponents.useInspectorSlot( props.name );
-			}
-
 			return (
 				<Fragment>
 					<BlockEdit { ...props } />
-					<Inspector>
-						<PanelBody
-							title={ __( 'Custom CSS', 'otter-blocks' ) }
-							initialOpen={ false }
-						>
-							<CSSEditor
-								clientId={ props.clientId }
-								setAttributes={ props.setAttributes }
-								attributes={ props.attributes }
-							/>
-
-							<div className="o-fp-wrap">
-								{ applyFilters( 'otter.feedback', '', 'custom-css' ) }
-								{ applyFilters( 'otter.poweredBy', '' ) }
-							</div>
-						</PanelBody>
-					</Inspector>
+					<InspectorControls>
+						<Edit { ...props } />
+					</InspectorControls>
 				</Fragment>
 			);
 		}
@@ -87,4 +122,9 @@ const withInspectorControls = createHigherOrderComponent( BlockEdit => {
 }, 'withInspectorControl' );
 
 addFilter( 'blocks.registerBlockType', 'themeisle-custom-css/attribute', addAttribute );
-addFilter( 'editor.BlockEdit', 'themeisle-custom-css/with-inspector-controls', withInspectorControls );
+
+if ( Boolean( window?.blocksCSS?.hasOtter ) ) {
+	addFilter( 'otter.blockTools', 'themeisle-custom-css/with-inspector-controls', BlockCSSWrapper, 2 );
+} else {
+	addFilter( 'editor.BlockEdit', 'themeisle-custom-css/with-inspector-controls', withInspectorControls );
+}

@@ -8,7 +8,7 @@ type Attributes = {
 	discounted: number
 	image: MediaImageProps
 	description: string
-	features: {title: string, rating: number}[]
+	features: {title: string, rating: number, description: string}[]
 	pros: string[]
 	cons: string[]
 	links: {label: string, href: string, isSponsored: boolean}[]
@@ -16,6 +16,7 @@ type Attributes = {
 	consLabel: string
 	buttonsLabel: string
 	imageWidth: number
+	imageSize: string
 	mainHeading: string
 	subHeading: string
 	contentFontSize: number

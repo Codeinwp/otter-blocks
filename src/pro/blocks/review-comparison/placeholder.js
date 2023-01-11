@@ -17,7 +17,7 @@ import {
 
 import { useState } from '@wordpress/element';
 
-import { blockTable } from '@wordpress/icons';
+const { reviewIcon: icon } = window.otterUtils.icons;
 
 const BlockPlaceholder = ({
 	attributes,
@@ -80,7 +80,7 @@ const BlockPlaceholder = ({
 		<Placeholder
 			label={ __( 'Product Review Comparison', 'otter-blocks' ) }
 			instructions={ __( 'Display a selection of product reviews in a comparison table. You need to have some pre-existing reviews to use this block.', 'otter-blocks' ) }
-			icon={ blockTable }
+			icon={ icon }
 			isColumnLayout={ true }
 			className="o-review-comparison__placeholder"
 		>
