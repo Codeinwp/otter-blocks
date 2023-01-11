@@ -98,6 +98,14 @@ const getCustomCssFromBlocks = ( blocks, reusableBlocks ) => {
 let previousBlocks = [];
 let previewView = false;
 
+export const onDeselect = () => {
+	const { getBlocks } = select( 'core/block-editor' );
+	const blocks = getBlocks();
+	const reusableBlocks = select( 'core' ).getEntityRecords( 'postType', 'wp_block', { context: 'view' });
+	const blocksStyle = getCustomCssFromBlocks( blocks, reusableBlocks );
+	addStyle( blocksStyle );
+};
+
 subscribe( () => {
 	const { getBlocks } = select( 'core/block-editor' );
 	const __experimentalGetPreviewDeviceType = select( 'core/edit-post' ) ? select( 'core/edit-post' ).__experimentalGetPreviewDeviceType() : false;

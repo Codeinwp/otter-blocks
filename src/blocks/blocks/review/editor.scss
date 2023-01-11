@@ -7,57 +7,61 @@
 	}
 }
 
-.o-review__inspector_image {
-	img {
-		max-height: 250px;
-		border: 2px solid var( --wp-admin-theme-color );
-	}
-}
-
-.o-review__inspector_add {
-	display: flex;
-	justify-content: center;
-	width: 100%;
-}
-
-.o-review__inspector_panel_item {
-	margin: 10px 0;
-
-	.o-review__inspector_panel_item__header {
-		display: flex;
-		border: 1px solid #d5dadf;
-	}
-
-	.o-review__inspector_panel_item__title {
-		flex-basis: 80%;
-		padding: 10px 15px;
-		cursor: pointer;
-		text-align: left;
-		overflow: hidden;
-		white-space: nowrap;
-	}
-
-	.o-review__inspector_panel_item__arrow {
-		display: flex;
-		flex-basis: 20%;
-		justify-content: center;
-		padding: 10px 5px;
-		border-left: 1px solid #d5dadf;
-		cursor: pointer;
-
-		.dashicon {
-			margin: 2px;
+.o-review {
+	&__inspector {
+		&_image {
+			img {
+				max-height: 250px;
+				border: 2px solid var( --wp-admin-theme-color );
+			}
 		}
-	}
 
-	.o-review__inspector_panel_item__content {
-		border: 1px solid #d5dadf;
-		border-top: none;
-		padding: 10px 15px;
-		display: block;
+		&_add {
+			display: flex;
+			justify-content: center;
+			width: 100%;
+		}
 
-		.components-base-control {
-			margin-top: 12px;
+		&_panel_item {
+			margin: 10px 0;
+
+			&__header {
+				display: flex;
+				border: 1px solid #d5dadf;
+			}
+
+			&__title {
+				flex-basis: 80%;
+				padding: 10px 15px;
+				cursor: pointer;
+				text-align: left;
+				overflow: hidden;
+				white-space: nowrap;
+			}
+
+			&__arrow {
+				display: flex;
+				flex-basis: 20%;
+				justify-content: center;
+				padding: 10px 5px;
+				border-left: 1px solid #d5dadf;
+				cursor: pointer;
+
+				.dashicon {
+					margin: 2px;
+				}
+			}
+
+			&__content {
+				border: 1px solid #d5dadf;
+				border-top: none;
+				padding: 10px 15px;
+				display: block;
+
+				.components-base-control {
+					margin-top: 12px;
+				}
+			}
 		}
 	}
 }

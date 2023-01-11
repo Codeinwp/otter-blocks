@@ -62,7 +62,7 @@ class Review_Block {
 			array(
 				'id'    => $id,
 				'class' => $class,
-			) 
+			)
 		);
 
 		$main_heading = isset( $attributes['mainHeading'] ) ? $attributes['mainHeading'] : 'h2';
@@ -98,7 +98,7 @@ class Review_Block {
 			$html .= '	<div class="o-review__header_details ' . trim( $details_class ) . '">';
 			if ( isset( $attributes['image'] ) ) {
 				if ( isset( $attributes['image']['id'] ) && wp_attachment_is_image( $attributes['image']['id'] ) ) {
-					$html .= wp_get_attachment_image( $attributes['image']['id'], 'medium' );
+					$html .= wp_get_attachment_image( $attributes['image']['id'], isset( $attributes['imageSize'] ) ? $attributes['imageSize'] : 'medium' );
 				} else {
 					$html .= '	<img src="' . esc_url( $attributes['image']['url'] ) . '" alt="' . esc_attr( $attributes['image']['alt'] ) . '"/>';
 				}
@@ -126,6 +126,11 @@ class Review_Block {
 				// translators: Overall rating from 1 to 10.
 				$html .= '			<span>' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), 1 <= round( $feature['rating'] / $scale, 1 ) ? round( $feature['rating'] / $scale, 1 ) : 1, 10 / $scale ) . '</span>';
 				$html .= '		</div>';
+
+				if ( isset( $feature['description'] ) ) {
+					$html .= '	<span class="o-review__left_feature_description">' . $feature['description'] . '</span>';
+				}
+
 				$html .= '	</div>';
 			}
 			$html .= '	</div>';

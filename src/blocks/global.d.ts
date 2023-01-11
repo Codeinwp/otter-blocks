@@ -32,7 +32,9 @@ declare global {
 			}
 			rootUrl: string
 			hasModule: {
-				blocksConditions: boolean
+				blockCSS: boolean
+				blockAnimations: boolean
+				blockConditions: boolean
 			}
 			blocksIDs: string[]
 			isAncestorTypeAvailable: boolean
@@ -85,7 +87,6 @@ declare global {
 			SelectProducts?: ( props: any ) => JSX.Element
 			Notice?: ( props: { notice: any, variant: string, instructions: 'string'}) => JSX.Element
 			useInspectorSlot?: ( name: string ) => any
-			OtterControlTools?: ( props: any ) => any
 		},
 		liveSearchData: {
 			nonce: string,
@@ -95,10 +96,6 @@ declare global {
 				noResults: string
 				noTitle: string
 			}
-		},
-		oPlugins: {
-			copy?: () => void,
-			paste?: () => void
 		}
 	}
 }

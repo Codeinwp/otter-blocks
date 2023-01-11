@@ -16,7 +16,6 @@ import {
  * Internal dependencies
  */
 import metadata from './block.json';
-import { pluginsIcon as icon } from '../../helpers/icons.js';
 
 const { name } = metadata;
 
@@ -24,7 +23,7 @@ registerBlockType( name, {
 	...metadata,
 	title: __( 'Plugin Card', 'otter-blocks' ),
 	description: __( 'Plugin Card block lets you display plugins data in your blog posts. Powered by Otter.', 'otter-blocks' ),
-	icon,
+	icon: 'admin-plugins',
 	keywords: [
 		'plugin',
 		'card',

@@ -312,22 +312,26 @@ const Inspector = ({
 									{
 										value: attributes.backgroundColor,
 										onChange: backgroundColor => setAttributes({ backgroundColor }),
-										label: __( 'Background', 'otter-blocks' )
+										label: __( 'Background', 'otter-blocks' ),
+										isShownByDefault: false
 									},
 									{
 										value: attributes.closeColor,
 										onChange: closeColor => setAttributes({ closeColor }),
-										label: __( 'Close Button', 'otter-blocks' )
+										label: __( 'Close Button', 'otter-blocks' ),
+										isShownByDefault: false
 									},
 									{
 										value: attributes.overlayColor,
 										onChange: overlayColor => setAttributes({ overlayColor }),
-										label: __( 'Overlay', 'otter-blocks' )
+										label: __( 'Overlay', 'otter-blocks' ),
+										isShownByDefault: false
 									},
 									{
 										value: attributes.borderColor,
 										onChange: borderColor => setAttributes({ borderColor }),
-										label: __( 'Border', 'otter-blocks' )
+										label: __( 'Border', 'otter-blocks' ),
+										isShownByDefault: false
 									}
 								] }
 							/>

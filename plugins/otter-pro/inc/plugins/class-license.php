@@ -75,6 +75,7 @@ class License {
 			'site_inactive',
 			'item_name_mismatch',
 			'no_activations_left',
+			'not_active',
 		);
 
 		if ( in_array( $status->license, $invalid_statuses ) ) {
@@ -142,7 +143,7 @@ class License {
 		}
 
 		if ( isset( $license->license ) && ( 'valid' !== $license->license && 'active_expired' !== $license->license ) ) {
-			return - 1;
+			return -1;
 		}
 
 		if ( ! array_key_exists( $license->price_id, self::$plans_map ) ) {

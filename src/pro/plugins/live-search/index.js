@@ -12,6 +12,8 @@ import { assign } from 'lodash';
  */
 import Edit from './edit.js';
 
+const { searchIcon: icon } = window.otterUtils.icons;
+
 const addAttribute = ( props ) => {
 	if ( 'core/search' === props.name ) {
 		props.attributes = assign( props.attributes, {
@@ -50,6 +52,7 @@ if ( ( Boolean( window.otterPro.isActive ) && ! Boolean( window.otterPro.isExpir
 		name: 'themeisle-gutenberg/live-search',
 		title: __( 'Live Search', 'otter-blocks' ),
 		description: __( 'this is a temporary description.', 'otter-blocks' ),
+		icon,
 		category: 'themeisle-blocks',
 		attributes: {
 			buttonText: __( 'Search' ),

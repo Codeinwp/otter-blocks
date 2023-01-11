@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { rotateRight as icon } from '@wordpress/icons';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -14,6 +9,7 @@ import { registerBlockType } from '@wordpress/blocks';
  * Internal dependencies
  */
 import metadata from './block.json';
+import { circleIcon as icon } from '../../helpers/icons.js';
 import edit from './edit.js';
 import save from './save.js';
 import transforms from './transforms.js';

@@ -42,10 +42,14 @@ const renderCapthcaOn = ( form ) => {
 		{
 			sitekey: window?.themeisleGutenbergForm?.reRecaptchaSitekey,
 			callback: ( token ) => {
-				if ( ! window.themeisleGutenberg?.tokens ) {
+				if ( ! window.themeisleGutenberg ) {
 					window.themeisleGutenberg = {};
+				}
+
+				if ( ! window.themeisleGutenberg?.tokens ) {
 					window.themeisleGutenberg.tokens = {};
 				}
+
 				window.themeisleGutenberg.tokens[id] = {
 					token,
 					reset: () => window.grecaptcha?.reset( captcha )
