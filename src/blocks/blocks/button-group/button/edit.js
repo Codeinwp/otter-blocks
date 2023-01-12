@@ -150,11 +150,11 @@ const Edit = ( props ) => {
 			`.wp-block-button__link:hover {
 				color: ${ getSyncValue( 'hoverColor' ) } !important;
 				background: ${ getSyncValue( 'hoverBackground' ) || getSyncValue( 'hoverBackgroundGradient' ) } !important;
-				border-color: ${ attributes.hoverBorder } !important;
-				${ getSyncValue( 'attributes.boxShadow' ) && `box-shadow: ${ getSyncValue( 'hoverBoxShadowHorizontal' ) }px ${ getSyncValue( 'hoverBoxShadowVertical' ) }px ${ attributes.hoverBoxShadowBlur }px ${ attributes.hoverBoxShadowSpread }px ${ hexToRgba( ( attributes.hoverBoxShadowColor ? attributes.hoverBoxShadowColor : '#000000' ), attributes.hoverBoxShadowColorOpacity ) } !important;` }
+				border-color: ${ getSyncValue( 'hoverBorder' ) } !important;
+				${ getSyncValue( 'boxShadow' ) && `box-shadow: ${ getSyncValue( 'hoverBoxShadowHorizontal' ) }px ${ getSyncValue( 'hoverBoxShadowVertical' ) }px ${ getSyncValue( 'hoverBoxShadowBlur' ) }px ${ getSyncValue( 'attributes.hoverBoxShadowSpread' ) }px ${ hexToRgba( ( getSyncValue( 'hoverBoxShadowColor' ) ? getSyncValue( 'hoverBoxShadowColor' ) : '#000000' ), getSyncValue( 'hoverBoxShadowColorOpacity' ) ) } !important;` }
 			}`,
 			`.wp-block-button__link:hover svg {
-				fill: ${ attributes.hoverColor } !important;
+				fill: ${ getSyncValue( 'attributes.hoverColor' ) } !important;
 			}`
 		]);
 	}, [
