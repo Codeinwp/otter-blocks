@@ -8,31 +8,34 @@ import { brush } from '@wordpress/icons';
  */
 import { __ } from '@wordpress/i18n';
 
+import { RichTextToolbarButton } from '@wordpress/block-editor';
+
+import { Fragment } from '@wordpress/element';
+
 import {
 	registerFormatType,
 	toggleFormat
 } from '@wordpress/rich-text';
 
-import {
-	RichTextToolbarButton
-} from '@wordpress/block-editor';
-
-import { Fragment } from '@wordpress/element';
-
 /**
  * Internal dependencies.
  */
-import './editor.scss';
+import InlineControls from './inline-controls.js';
 
 const name = 'themeisle-blocks/count-animation';
 
-registerFormatType( name, {
+export const format = {
 	name,
 	title: __( 'Count Animation', 'otter-blocks' ),
 	tagName: 'o-anim-count',
 	className: null,
 
-	edit: ({ isActive, value, onChange }) => {
+	edit: ({
+		isActive,
+		value,
+		onChange,
+		contentRef
+	}) => {
 		const regex = /^\$?[\d,]+(\.\d*)?$/;
 
 		const onToggle = () => {
@@ -50,7 +53,16 @@ registerFormatType( name, {
 					onClick={ onToggle }
 					isActive={ isActive }
 				/>
+
+				{ isActive && (
+					<InlineControls
+						value={ value }
+						contentRef={ contentRef }
+					/>
+				) }
 			</Fragment>
 		);
 	}
-});
+};
+
+registerFormatType( name, format );

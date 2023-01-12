@@ -14,16 +14,16 @@ import {
 /**
  * Internal dependencies
  */
-import SyncControlDropdown from '../sync-control-dropdown/index.js';
-import ColorDropdownControl from '../color-dropdown-control/index.js';
+import SyncControlDropdown from '../sync-control-dropdown/index';
+import ColorDropdownControl from '../color-dropdown-control/index';
 
 type SyncColorPanelProps = {
     label: string,
     initialOpen?: boolean,
     isSynced: string[],
-    options: { label: string, slug: string, value: string }[],
-    setAttributes: Function,
-    children: React.ReactNode
+    options: { label: string, slug: string, value?: string }[],
+    setAttributes: ( x: any ) => void,
+    children?: React.ReactNode
 };
 
 const SyncColorPanel = ( props: SyncColorPanelProps ) => {
@@ -66,7 +66,7 @@ const SyncColorPanel = ( props: SyncColorPanelProps ) => {
 						className={ classnames(
 							'is-list',
 							{ 'is-first': 0 === index }
-						) }
+						) as 'is-list'}
 					/>
 				</Disabled>
 			) ) }

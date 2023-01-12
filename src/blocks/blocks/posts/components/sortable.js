@@ -177,12 +177,20 @@ export const SortableItem = ({
 					) }
 
 					{ ( 'meta' === template ) && (
-						<Fragment >
+						<Fragment>
 							<ToggleControl
 								label={ __( 'Display Post Date', 'otter-blocks' ) }
 								checked={ attributes.displayDate }
 								onChange={ displayDate => setAttributes({ displayDate }) }
 							/>
+
+							{ attributes.displayDate && (
+								<ToggleControl
+									label={ __( 'Display Last Updated Date', 'otter-blocks' ) }
+									checked={ attributes.displayUpdatedDate }
+									onChange={ displayUpdatedDate => setAttributes({ displayUpdatedDate }) }
+								/>
+							)}
 
 							<ToggleControl
 								label={ __( 'Display Author', 'otter-blocks' ) }

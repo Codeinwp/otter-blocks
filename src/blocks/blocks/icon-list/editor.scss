@@ -39,7 +39,8 @@
 	}
 }
 
-.editor-styles-wrapper .wp-block.wp-block-themeisle-blocks-icon-list-item {
+.editor-styles-wrapper .wp-block.wp-block-themeisle-blocks-icon-list-item,
+.editor-styles-wrapper .block-editor-block-list__layout.is-root-container p.wp-block-themeisle-blocks-icon-list-item-content {
 	/* We add this to override Neve styles */
 	margin-top: 0;
 	margin-left: 0;

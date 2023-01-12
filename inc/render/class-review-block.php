@@ -62,7 +62,7 @@ class Review_Block {
 			array(
 				'id'    => $id,
 				'class' => $class,
-			) 
+			)
 		);
 
 		$main_heading = isset( $attributes['mainHeading'] ) ? $attributes['mainHeading'] : 'h2';
@@ -126,6 +126,11 @@ class Review_Block {
 				// translators: Overall rating from 1 to 10.
 				$html .= '			<span>' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), 1 <= round( $feature['rating'] / $scale, 1 ) ? round( $feature['rating'] / $scale, 1 ) : 1, 10 / $scale ) . '</span>';
 				$html .= '		</div>';
+
+				if ( isset( $feature['description'] ) ) {
+					$html .= '	<span class="o-review__left_feature_description">' . $feature['description'] . '</span>';
+				}
+
 				$html .= '	</div>';
 			}
 			$html .= '	</div>';

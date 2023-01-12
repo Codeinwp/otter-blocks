@@ -14,12 +14,19 @@ import {
 	useRef
 } from '@wordpress/element';
 
+import { useDispatch, useSelect } from '@wordpress/data';
+
+import { omit } from 'lodash';
+
+import { createBlock } from '@wordpress/blocks';
+
 /**
  * Internal dependencies
  */
 import metadata from './block.json';
 import { blockInit } from '../../../helpers/block-utility.js';
 import Inspector from './inspector.js';
+
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -43,6 +50,34 @@ const Edit = ({
 	const labelRef = useRef( null );
 	const inputRef = useRef( null );
 	const helpRef = useRef( null );
+
+	const {
+		parentClientId
+	} = useSelect( select => {
+		const {
+			getBlock,
+			getBlockRootClientId
+		} = select( 'core/block-editor' );
+
+		if ( ! clientId ) {
+			return {
+				parentClientId: ''
+			};
+		}
+
+		const parentClientId = getBlockRootClientId( clientId );
+
+		return {
+			parentClientId: parentClientId ?? ''
+		};
+	}, [ clientId ]);
+
+	const { selectBlock, replaceBlock } = useDispatch( 'core/block-editor' );
+
+	const switchToTextarea = () => {
+		const block = createBlock( 'themeisle-blocks/form-textarea', { ...omit( attributes, [ 'type' ]) });
+		replaceBlock( clientId, block );
+	};
 
 
 	useEffect( () => {
@@ -68,6 +103,8 @@ const Edit = ({
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
+				selectParent={ () => selectBlock( parentClientId ) }
+				switchToTextarea={ switchToTextarea }
 			/>
 
 			<div { ...blockProps }>

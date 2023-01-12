@@ -42,6 +42,7 @@ $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 	@if ($device == 'desktop') {
 		.wp-block-themeisle-blocks-button-group {
 			display: flex;
+			flex-wrap: wrap;
 
 			&.collapse-#{$device} {
 				flex-direction: column;
@@ -66,6 +67,8 @@ $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 	} @else {
 		@media (max-width: #{$media-query}) {
 			.wp-block-themeisle-blocks-button-group {
+				flex-wrap: wrap;
+
 				&.collapse-#{$device} {
 					flex-direction: column;
 				}

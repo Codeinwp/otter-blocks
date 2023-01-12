@@ -7,6 +7,8 @@ import classnames from 'classnames';
  * WordPress dependencies
  */
 import {
+
+	/*@ts-ignore */
 	__experimentalColorGradientControl as ColorGradientControl
 } from '@wordpress/block-editor';
 
@@ -21,13 +23,19 @@ import {
  */
 import './editor.scss';
 
+type ColorDropdownControlProps = {
+	label?: string
+	colorValue?: string
+	gradientValue?: string
+	onColorChange?: ( color: string ) => void
+	onGradientChange?: ( color: string ) => void
+	className?: `${'is-list' | 'is-list is-first'}${string}`
+}
+
 /**
- * The component for choosing colors and gradients.
- *
- * Warning: `onColorChange` and `onGradientChange` trigger at the same time. If you choose a color, `onColorChange` will trigger with the color value and `onGradientChange` will trigger with `undefined`.
- *
- * @param {import('./type').ColorDropdownControlProps} props
- * @returns
+ * Add a single color picker component. To append a component to one another use "is-list" as className in both component. Use "is-first" to mark which is the first.
+ * @param props The props.
+ * @returns A color picker component.
  */
 const ColorDropdownControl = ({
 	label,
@@ -36,9 +44,11 @@ const ColorDropdownControl = ({
 	onColorChange,
 	onGradientChange,
 	className
-}) => {
+} : ColorDropdownControlProps ) => {
 	return (
 		<Dropdown
+
+			/*@ts-ignore */
 			popoverProps={ {
 				placement: 'left-start',
 				offset: 36,
@@ -59,6 +69,8 @@ const ColorDropdownControl = ({
 					aria-expanded={ isOpen }
 				>
 					<ColorIndicator
+
+						/*@ts-ignore */
 						colorValue={ colorValue ?? gradientValue }
 					/>
 

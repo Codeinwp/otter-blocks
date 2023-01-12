@@ -125,9 +125,15 @@ export const PostsMeta = ({ attributes, element, post, author, categories }) => 
 		let postedOn = '';
 
 		if ( attributes.displayDate ) {
+			if ( attributes.displayUpdatedDate ) {
 
-			/* translators: %s Date posted */
-			postedOn += sprintf( __( 'Posted on %s', 'otter-blocks' ), formatDate( post.date ) );
+				/* translators: %s Date updated */
+				postedOn += sprintf( __( 'Updated on %s', 'otter-blocks' ), formatDate( post.modified ) );
+			} else {
+
+				/* translators: %s Date posted */
+				postedOn += sprintf( __( 'Posted on %s', 'otter-blocks' ), formatDate( post.date ) );
+			}
 		}
 
 		if ( attributes.displayAuthor && undefined !== author ) {
