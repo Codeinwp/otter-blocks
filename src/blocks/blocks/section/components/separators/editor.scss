@@ -2,6 +2,7 @@
 	position: absolute;
 	left: 0;
 	width: 100%;
+	overflow-x: clip;
 
 	&.top {
 		top: 0;
