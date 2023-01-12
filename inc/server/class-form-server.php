@@ -22,7 +22,7 @@ use WP_REST_Response;
 use WP_REST_Server;
 
 /**
- * Class Plugin_Card_Server
+ * Class Form_Server
  *
  * @since 2.0.0
  */
@@ -636,7 +636,7 @@ class Form_Server {
 	public function check_form_captcha( $form_data ) {
 		$secret = get_option( 'themeisle_google_captcha_api_secret_key' );
 		$resp   = wp_remote_post(
-			'https://www.google.com/recaptcha/api/siteverify',
+			apply_filters( 'otter_blocks_recaptcha_verify_url', 'https://www.google.com/recaptcha/api/siteverify' ),
 			array(
 				'body'    => 'secret=' . $secret . '&response=' . $form_data->get_payload_field( 'token' ),
 				'headers' => [

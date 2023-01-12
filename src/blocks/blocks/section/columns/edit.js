@@ -53,6 +53,8 @@ import {
 	blockInit,
 	getDefaultValueByField
 } from '../../../helpers/block-utility.js';
+import { columnsIcon as icon } from '../../../helpers/icons.js';
+import { _cssBlock } from '../../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -156,6 +158,13 @@ const Edit = ({
 			});
 		}
 	}, [ children ]);
+
+	useEffect( () => {
+		if ( 6 < attributes.columns ) {
+			setAttributes({ columns: 6 });
+			changeColumnsNumbers( 6 );
+		}
+	}, [ attributes.columns ]);
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
@@ -311,9 +320,7 @@ const Edit = ({
 		...borderStyle,
 		...borderRadiusStyle,
 		...boxShadowStyle,
-		'--content-color': attributes.color,
-		'--link-color': attributes.linkColor,
-		'--content-color-hover': attributes.colorHover
+		'--link-color': attributes.linkColor
 	};
 
 	if ( 'color' === attributes.backgroundOverlayType ) {
@@ -390,6 +397,7 @@ const Edit = ({
 				<VariationPicker
 					label={ __( 'Section', 'otter-blocks' )  }
 					instructions={ __( 'Select a layout to start with, or make one yourself.', 'otter-blocks' ) }
+					icon={ icon }
 					variations={ variations }
 					onSelect={ ( nextVariation = defaultVariation ) => {
 						if ( nextVariation ) {
@@ -411,6 +419,19 @@ const Edit = ({
 
 	return (
 		<Fragment>
+			<style>
+				{
+					`#block-${ clientId } ` + _cssBlock([
+						[ 'color', attributes.color ]
+					])
+				}
+				{
+					`#block-${ clientId }:hover ` + _cssBlock([
+						[ 'color', attributes.colorHover ]
+					])
+				}
+			</style>
+
 			<Controls
 				attributes={ attributes }
 				setAttributes={ setAttributes }

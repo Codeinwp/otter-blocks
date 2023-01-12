@@ -1,0 +1,20 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/plugin-cards",
+	"title": "Plugin Card",
+	"category": "themeisle-blocks",
+	"description": "Plugin Card block lets you display plugins data in your blog posts. Powered by Otter.",
+	"keywords": [ "plugin", "card", "orbitfox" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"slug": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"html": false,
+		"inserter": false
+	},
+	"style": "otter-plugin-card-style"
+}

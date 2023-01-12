@@ -7,6 +7,8 @@
 
 namespace ThemeIsle\GutenbergBlocks\Plugins;
 
+use ThemeIsle\GutenbergBlocks\Plugins\Stripe_API;
+
 /**
  * Class Block_Conditions
  */
@@ -162,8 +164,17 @@ class Block_Conditions {
 			}
 		}
 
-		return apply_filters( 'otter_blocks_evaluate_condition', true, $condition, $visibility );
+		if ( 'stripePurchaseHistory' === $condition['type'] ) {
+			if ( isset( $condition['product'] ) && Stripe_API::has_keys() ) {
+				if ( $visibility ) {
+					return $this->has_stripe_product( $condition['product'] );
+				} else {
+					return ! $this->has_stripe_product( $condition['product'] );
+				}
+			}
+		}
 
+		return apply_filters( 'otter_blocks_evaluate_condition', true, $condition, $visibility );
 	}
 
 	/**
@@ -238,6 +249,18 @@ class Block_Conditions {
 		);
 
 		return array_intersect( $categories, $used_categories ) === $categories;
+	}
+
+	/**
+	 * Check Stripe Product.
+	 *
+	 * @param string $product Selected Stripe product.
+	 *
+	 * @access public
+	 */
+	public function has_stripe_product( $product ) {
+		$stripe = new Stripe_API();
+		return $stripe->check_purchase( $product );
 	}
 
 	/**

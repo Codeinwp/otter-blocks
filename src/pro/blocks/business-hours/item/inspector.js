@@ -22,17 +22,20 @@ const Inspector = ({
 					{
 						value: attributes.backgroundColor,
 						onChange: backgroundColor => setAttributes({ backgroundColor }),
-						label: __( 'Background', 'otter-blocks' )
+						label: __( 'Background', 'otter-blocks' ),
+						isShownByDefault: false
 					},
 					{
 						value: attributes.labelColor,
 						onChange: labelColor => setAttributes({ labelColor }),
-						label: __( 'Label', 'otter-blocks' )
+						label: __( 'Label', 'otter-blocks' ),
+						isShownByDefault: false
 					},
 					{
 						value: attributes.timeColor,
 						onChange: timeColor => setAttributes({ timeColor }),
-						label: __( 'Time', 'otter-blocks' )
+						label: __( 'Time', 'otter-blocks' ),
+						isShownByDefault: false
 					}
 				] }
 			>

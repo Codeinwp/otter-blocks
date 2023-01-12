@@ -35,6 +35,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 
 	background: var( --background );
 	justify-content: var( --horizontal-align );
+	transition: 0.3s;
 
 	.wp-themeisle-block-overlay,
 	.wp-block-themeisle-blocks-advanced-columns-overlay {
@@ -52,24 +53,17 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	.wp-block-themeisle-blocks-advanced-column {
 		--background: transparent;
 		--background-color-hover: var( --background );
-		--text-color: var( --content-color, inherit );
 		--link-color: inherit;
-		--text-color-hover: var( --content-color-hover, inherit );
 
-		color: var( --text-color );
 		background: var( --background );
+		transition: 0.3s;
 
 		&:hover {
-			color: var( --text-color-hover );
 			background: var( --background-color-hover );
 		}
 
 		> * {
 			position: relative;
-		}
-	
-		a {
-			color: var( --link-color );
 		}
 
 		.wp-block-themeisle-blocks-advanced-column-overlay {

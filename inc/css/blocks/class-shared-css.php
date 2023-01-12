@@ -153,6 +153,13 @@ class Shared_CSS {
 				},
 			),
 			array(
+				'property'  => 'color',
+				'default'   => 'var( --content-color )',
+				'condition' => function( $attrs ) {
+					return isset( $attrs['color'] );
+				},
+			),
+			array(
 				'property'       => 'border-width',
 				'pattern'        => 'top right bottom left',
 				'pattern_values' => array(

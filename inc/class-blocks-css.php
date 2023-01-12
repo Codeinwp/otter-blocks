@@ -41,6 +41,12 @@ class Blocks_CSS {
 	 * @access  public
 	 */
 	public function enqueue_editor_assets() {
+		$current_screen = get_current_screen();
+
+		if ( 'widgets' === $current_screen->base || 'customize' === $current_screen->base ) {
+			return;
+		}
+
 		wp_enqueue_code_editor( array( 'type' => 'text/css' ) );
 
 		wp_add_inline_script( 
@@ -50,12 +56,24 @@ class Blocks_CSS {
 
 		$asset_file = include BLOCKS_CSS_PATH . '/build/css/index.asset.php';
 
+		if ( defined( 'OTTER_BLOCKS_VERSION' ) ) {
+			array_push( $asset_file['dependencies'], 'otter-blocks' );
+		}
+
 		wp_enqueue_script(
 			'otter-css',
 			BLOCKS_CSS_URL . 'build/css/index.js',
 			array_merge( $asset_file['dependencies'], array( 'code-editor', 'csslint' ) ),
 			$asset_file['version'],
 			true
+		);
+
+		wp_localize_script(
+			'otter-css',
+			'blocksCSS',
+			array(
+				'hasOtter' => defined( 'OTTER_BLOCKS_VERSION' ),
+			)
 		);
 
 		wp_set_script_translations( 'otter-css', 'otter-blocks' );

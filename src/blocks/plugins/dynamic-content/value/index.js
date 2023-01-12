@@ -45,7 +45,9 @@ export const format = {
 		timeCustom: 'data-time-custom',
 		termType: 'data-term-type',
 		termSeparator: 'data-term-separator',
-		metaKey: 'data-meta-key'
+		metaKey: 'data-meta-key',
+		parameter: 'data-parameter',
+		format: 'data-format'
 	},
 	edit
 };

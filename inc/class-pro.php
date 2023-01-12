@@ -51,6 +51,7 @@ class Pro {
 		add_action( 'otter_montly_scheduled_events', array( $this, 'reset_dashboard_notice' ) );
 		add_action( 'admin_init', array( $this, 'should_show_dashboard_upsell' ), 11 );
 		add_action( 'admin_init', array( $this, 'should_show_bf_upsell' ), 11 );
+		add_filter( 'plugin_action_links_' . plugin_basename( OTTER_BLOCKS_BASEFILE ), array( $this, 'add_pro_link' ) );
 	}
 
 	/**
@@ -183,7 +184,8 @@ class Pro {
 	 * @access  public
 	 */
 	public function should_show_bf_upsell() {
-		$show_upsell = self::bf_deal();
+		$show_upsell   = self::bf_deal();
+		$notifications = get_option( 'themeisle_blocks_settings_notifications', array() );
 
 		if ( defined( 'NEVE_VERSION' ) || defined( 'NEVE_PRO_VERSION' ) ) {
 			$show_upsell = false;
@@ -509,6 +511,24 @@ class Pro {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Add Pro Link to Plugins Page
+	 *
+	 * @param array $links Action Links.
+	 *
+	 * @since  2.1.6
+	 * @access public
+	 */
+	public function add_pro_link( $links ) {
+		$links[] = sprintf(
+			'<a href="%s" target="_blank" style="color:#ed6f57;font-weight:bold;">%s</a>',
+			esc_url_raw( tsdk_utmify( self::get_url(), 'pluginspage', 'action' ) ),
+			__( 'Get Otter Pro', 'otter-blocks' )
+		);
+
+		return $links;
 	}
 
 	/**

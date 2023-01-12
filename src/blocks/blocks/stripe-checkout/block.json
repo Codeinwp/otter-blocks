@@ -1,0 +1,29 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/stripe-checkout",
+	"title": "Stripe Checkout",
+	"category": "themeisle-blocks",
+	"description": "A Stripe Checkout to sell your products on your website without any hassle. Powered by Otter.",
+	"keywords": [ "stripe", "checkout", "payment" ],
+	"textdomain": "otter-blocks",
+	"attributes": {
+		"product": {
+			"type": "string"
+		},
+		"price": {
+			"type": "string"
+		},
+		"successMessage": {
+			"type": "string"
+		},
+		"cancelMessage": {
+			"type": "string"
+		}
+	},
+	"supports": {
+		"html": false
+	},
+	"editorStyle": "otter-stripe-checkout-editor",
+	"style": "otter-stripe-checkout-style"
+}

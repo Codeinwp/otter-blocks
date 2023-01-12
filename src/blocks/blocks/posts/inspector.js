@@ -312,6 +312,21 @@ const Inspector = ({
 							checked={ attributes.enableFeaturedPost }
 							onChange={ enableFeaturedPost => setAttributes({ enableFeaturedPost })}
 						/>
+
+						{
+							attributes.enableFeaturedPost && (
+								<SelectControl
+									label={ __( 'Featured Post', 'otter-blocks' ) }
+									value={ attributes.featuredPostOrder }
+									options={ [
+										{ label: __( 'Latest Post', 'otter-blocks' ), value: 'none' },
+										{ label: __( 'Sticky Post', 'otter-blocks' ), value: 'sticky-first' }
+									] }
+									onChange={ value => setAttributes({ featuredPostOrder: 'none' !== value ? value : undefined }) }
+								/>
+							)
+						}
+
 					</PanelBody>
 
 					<PanelBody
@@ -397,17 +412,20 @@ const Inspector = ({
 							{
 								value: attributes.textColor,
 								onChange: textColor => setAttributes({ textColor }),
-								label: __( 'Text', 'otter-blocks' )
+								label: __( 'Text', 'otter-blocks' ),
+								isShownByDefault: false
 							},
 							{
 								value: attributes.backgroundColor,
 								onChange: backgroundColor => setAttributes({ backgroundColor }),
-								label: __( 'Background', 'otter-blocks' )
+								label: __( 'Background', 'otter-blocks' ),
+								isShownByDefault: false
 							},
 							{
 								value: attributes.borderColor,
 								onChange: borderColor => setAttributes({ borderColor }),
-								label: __( 'Border', 'otter-blocks' )
+								label: __( 'Border', 'otter-blocks' ),
+								isShownByDefault: false
 							}
 						] }
 					/>

@@ -23,6 +23,8 @@ import {
 	Spinner
 } from '@wordpress/components';
 
+import { useSelect } from '@wordpress/data';
+
 import {
 	Fragment,
 	useEffect
@@ -87,6 +89,27 @@ const Edit = ({
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
+
+	const { image } = useSelect( select => {
+		let image = undefined;
+		const size = attributes.imageSize || 'medium';
+
+		if ( attributes.image?.id || productAttributes.image?.id ) {
+			image = select( 'core' ).getMedia( attributes.image?.id || productAttributes.image?.id, { context: 'view' });
+		}
+
+		image = image ?
+			0 < Object.keys( image.media_details.sizes ).length ?
+				image.media_details.sizes[size] ?
+					image.media_details.sizes[size].source_url :
+					image.source_url :
+				image.source_url :
+			null;
+
+		return {
+			image
+		};
+	}, [ attributes.image, attributes.imageSize, productAttributes ]);
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
@@ -242,10 +265,10 @@ const Edit = ({
 
 					<div className="o-review__header_meta">
 						<div className="o-review__header_ratings">
-							<Stars rating={ overallRatings } />
+							<Stars rating={ Math.max( overallRatings, 1 ) } />
 
 							<span>
-								{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.abs( overallRatings / divide ).toFixed( 1 ) || 0, 10 / divide ) }
+								{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.max( Math.abs( overallRatings / divide ).toFixed( 1 ) || 0, 1 ), 10 / divide ) }
 							</span>
 						</div>
 
@@ -264,19 +287,19 @@ const Edit = ({
 						className={ classnames(
 							'o-review__header_details',
 							{
-								'is-single': ! attributes.image || ( ! isSelected && ! attributes.description ),
+								'is-single': ! image || ( ! isSelected && ! attributes.description ),
 								[ detailsWidth[ attributes.imageWidth ] ]: ( attributes.imageWidth && 33 !== attributes.imageWidth )
 							}
 						) }
 					>
 						{ ( productAttributes?.image ) ? (
 							<img
-								src={ productAttributes?.image?.url }
+								src={ image }
 								alt={ productAttributes?.image?.alt }
 							/>
 						) : attributes.image && (
 							<img
-								src={ attributes.image.url }
+								src={ image }
 								alt={ attributes.image.alt }
 							/>
 						) }
@@ -312,12 +335,22 @@ const Edit = ({
 									/>
 
 									<div className="o-review__left_feature_ratings">
-										<Stars rating={ feature.rating } />
+										<Stars rating={ Math.max( feature.rating, 1 ) } />
 
 										<span>
-											{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.abs( feature.rating / divide ).toFixed( 1 ) || 0, 10 / divide ) }
+											{ /** translators: %s Rating score. */ sprintf( __( '%f out of %f', 'otter-blocks' ), Math.max( Math.abs( feature.rating / divide ).toFixed( 1 ) || 0, 1 ), 10 / divide ) }
 										</span>
 									</div>
+
+									{ ( isSelected || feature.description ) && (
+										<RichText
+											placeholder={ __( 'Feature Description...', 'otter-blocks' ) }
+											value={ feature.description }
+											className="o-review__left_feature_description"
+											onChange={ description => changeFeature( index, { description }) }
+											tagName="span"
+										/>
+									) }
 								</div>
 							);
 						}) }

@@ -7,7 +7,7 @@
  * Plugin Name:          Otter Pro
  * Plugin URI:           https://themeisle.com/plugins/otter-blocks
  * Description:          Create beautiful and attracting posts, pages, and landing pages with Otter – Page Builder Blocks & Extensions for Gutenberg. Otter comes with dozens of Gutenberg blocks that are all you need to build beautiful pages.
- * Version:              2.1.3
+ * Version:              2.2.0
  * Author:               ThemeIsle
  * Author URI:           https://themeisle.com
  * License:              GPL-2.0+
@@ -28,7 +28,7 @@ define( 'OTTER_PRO_URL', plugins_url( '/', __FILE__ ) );
 define( 'OTTER_PRO_PATH', dirname( __FILE__ ) );
 define( 'OTTER_PRO_BUILD_URL', plugins_url( '/', __FILE__ ) . 'build/pro/' );
 define( 'OTTER_PRO_BUILD_PATH', dirname( __FILE__ ) . '/build/pro/' );
-define( 'OTTER_PRO_VERSION', '2.1.3' );
+define( 'OTTER_PRO_VERSION', '2.2.0' );
 
 require_once dirname( __FILE__ ) . '/autoloader.php';
 $autoloader = new \ThemeIsle\OtterPro\Autoloader();
@@ -82,7 +82,7 @@ if ( ! defined( 'OTTER_BLOCKS_VERSION' ) ) {
 				esc_url( $link ),
 				esc_html__( 'Install', 'otter-blocks' )
 			);
-		} 
+		}
 	);
 }
 
@@ -96,7 +96,7 @@ if ( defined( 'OTTER_BLOCKS_VERSION' ) && ! defined( 'OTTER_BLOCKS_PRO_SUPPORT' 
 				'<div class="error"><p>%1$s</p></div>',
 				esc_html( $message )
 			);
-		} 
+		}
 	);
 }
 

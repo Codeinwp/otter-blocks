@@ -62,7 +62,7 @@ const getStickyContainer = ( elem: Element, scope: `o-sticky-scope-${string}` ):
 			} else if ( 'o-sticky-scope-main-area' === scope ) {
 
 				/**
-				 * For determening the main area, we need to up trough the hierarchy to get the root parent.
+				 * For determining the main area, we need to up through the hierarchy to get the root parent.
 				 */
 				sections.push( parent );
 			}
@@ -82,6 +82,8 @@ type Config = {
 	width: string
 	sideOffset: string
 	side: 'left' | 'right'
+	fitInHeader: boolean
+	headerGap: string
 }
 
 /**
@@ -109,9 +111,13 @@ const getConfigOptions = ( elem: Element ): Config => {
 			config.sideOffset = cssClass.split( '-' ).pop() as string;
 		} else if ( cssClass.includes( 'o-sticky-side-right' ) ) {
 			config.side = 'right';
+		} else if ( cssClass.includes( 'o-sticky-header-space' ) ) {
+			config.fitInHeader = true;
+		} else if ( cssClass.includes( 'o-sticky-header-gap' ) ) {
+			config.headerGap = cssClass.split( '-' ).pop() as string;
 		}
 		return config;
-	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false, isFloatMode: false, width: '100%', sideOffset: '20px', side: 'left' });
+	}, { position: 'top', offset: 40, scope: 'o-sticky-scope-main-area', behaviour: 'o-sticky-bhvr-keep', useOnMobile: false, isFloatMode: false, width: '100%', sideOffset: '20px', side: 'left', fitInHeader: false, headerGap: '' });
 };
 
 const positions = {
@@ -209,7 +215,7 @@ class StickyData {
 
 		/**
 		 * By making the element sticky, we use 'fixed' positioning which removes the element from the document workflow.
-		 * We need to put a placeholder with the same height and width as the element so we can keep layout flow.
+		 * We need to put a placeholder with the same height and width as the element, so we can keep layout flow.
 		 */
 		this.placeholder = document.createElement( 'div' );
 		this.placeholder.style.height = height + 'px';
@@ -221,6 +227,10 @@ class StickyData {
 		this.stylingNodeName = `o-sticky-node-${this.index}`;
 		this.stylingNode = document.createElement( 'style' );
 		document.head.appendChild( this.stylingNode );
+
+		if ( config.fitInHeader && 'top' === config.position ) {
+			document.body.style.marginTop = config.headerGap ? config.headerGap : this.height + 'px';
+		}
 	}
 
 	get canBeRun() {
@@ -330,7 +340,7 @@ class StickyRunner {
 		 * Check for early activation
 		 *
 		 * A dormant sticky element is an element that is going to be activated very soon.
-		 * This is used for making additonal preparation before the other will become active, like calculation the opacity for the fade effect (the element will go transparent before the next element is activated).
+		 * This is used for making additional preparation before the other will become active, like calculation the opacity for the fade effect (the element will go transparent before the next element is activated).
 		 */
 		if ( this.getCurrentPosition( sticky, this.calculateEarlyActivation( sticky ) ) ) {
 			sticky.status = 'dormant';
@@ -387,23 +397,28 @@ class StickyRunner {
 			const scrollBottom = scrollTop + window.innerHeight;
 
 			/**
-			 * Aling on vertical axis
+			 * Align on vertical axis
 			 */
 			if ( sticky.config.isFloatMode ) {
-				if (
-					! (
-						sticky.elem.classList.contains( 'alignfull' ) &&
-						sticky.displayWidth.includes( '%' ) &&
-						100 <= parseInt( sticky.displayWidth )
-					)
-				) {
+
+				let offset = sticky.sideOffset;
+
+				if ( sticky.elem.classList.contains( 'alignfull' ) && sticky.displayWidth.includes( '100%' )  ) {
+					offset = '';
+
+					// Execeptions
+					if ( 'neve_body' === document.body.id ) {
+						offset = offset = '0px';
+					}
+				}
+
+				if ( '' !== offset ) {
 					if ( 'left' === sticky.side ) {
 						cssStyling.push( `left: ${sticky.sideOffset}` );
 					} else {
 						cssStyling.push( `right: ${sticky.sideOffset}` );
 					}
 				}
-
 			} else {
 				cssStyling.push( `left: ${sticky.elemLeftPositionInPage}px` );
 			}
@@ -490,7 +505,7 @@ class StickyRunner {
 	 * Get the sticky element current position.
 	 *
 	 * @param sticky The sticky element.
-	 * @param earlyActivation Add on offset to activate eraly in case of multiple sticky elements.
+	 * @param earlyActivation Add on offset to activate early in case of multiple sticky elements.
 	 * @returns
 	 */
 	getCurrentPosition( sticky: StickyData, earlyActivation: number = 0 ): typeof positions[Position] {
@@ -592,7 +607,7 @@ class StickyRunner {
 				if ( other.orderInPage > sticky.orderInPage ) {
 					const otherBlockHeight = other.elem.getBoundingClientRect()?.height || 0;
 
-					// Check if the the blocks collide / Check if the block in on top, and not left or right.
+					// Check if the blocks collide / Check if the block in on top, and not left or right.
 					if ( blockWidth > Math.abs( sticky.elemLeftPositionInPage - other.elemLeftPositionInPage ) ) {
 						const height = Math.min( blockHeight, otherBlockHeight );
 						opacity = Math.min( 1, Math.max( 0, other.elemTopPositionInPage + height - currentBottomPosInPage ) / height );
@@ -622,6 +637,9 @@ class StickyRunner {
 				e.preventDefault();
 				sticky.status = 'hidden';
 				sticky.elem.classList.add( 'o-is-close' );
+				if ( sticky.config.fitInHeader ) {
+					document.body.style.marginTop = '';
+				}
 			});
 		});
 	}
@@ -658,7 +676,7 @@ domReady( () => {
 			z-index: 9999;
 		}
 		.o-is-close {
-			display: none;
+			display: none !important;
 		}
 	`;
 
@@ -675,6 +693,7 @@ domReady( () => {
 				if ( ! hasStyles ) {
 					const styleSheet = document.createElement( 'style' );
 					styleSheet.innerText = styles;
+					styleSheet.id = 'o-stycky-css-gen';
 					document.head.appendChild( styleSheet );
 					hasStyles = true;
 				}

@@ -253,27 +253,32 @@ const Inspector = ({
 							{
 								value: attributes.arrowsColor,
 								onChange: arrowsColor => setAttributes({ arrowsColor }),
-								label: __( 'Arrows', 'otter-blocks' )
+								label: __( 'Arrows', 'otter-blocks' ),
+								isShownByDefault: false
 							},
 							{
 								value: attributes.arrowsBackgroundColor,
 								onChange: arrowsBackgroundColor => setAttributes({ arrowsBackgroundColor }),
-								label: __( 'Arrows Background', 'otter-blocks' )
+								label: __( 'Arrows Background', 'otter-blocks' ),
+								isShownByDefault: false
 							},
 							{
 								value: attributes.paginationColor,
 								onChange: paginationColor => setAttributes({ paginationColor }),
-								label: __( 'Pagination', 'otter-blocks' )
+								label: __( 'Pagination', 'otter-blocks' ),
+								isShownByDefault: false
 							},
 							{
 								value: attributes.paginationActiveColor,
 								onChange: paginationActiveColor => setAttributes({ paginationActiveColor }),
-								label: __( 'Pagination Active', 'otter-blocks' )
+								label: __( 'Pagination Active', 'otter-blocks' ),
+								isShownByDefault: false
 							},
 							{
 								value: attributes.borderColor,
 								onChange: borderColor => setAttributes({ borderColor }),
-								label: __( 'Border', 'otter-blocks' )
+								label: __( 'Border', 'otter-blocks' ),
+								isShownByDefault: false
 							}
 						] }
 					/>

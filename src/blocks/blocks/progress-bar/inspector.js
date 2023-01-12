@@ -150,22 +150,26 @@ const Inspector = ({
 					{
 						value: attributes.titleColor,
 						onChange: titleColor => setAttributes({ titleColor }),
-						label: __( 'Title', 'otter-blocks' )
+						label: __( 'Title', 'otter-blocks' ),
+						isShownByDefault: false
 					},
 					{
 						value: attributes.barBackgroundColor,
 						onChange: barBackgroundColor => setAttributes({ barBackgroundColor }),
-						label: __( 'Progress', 'otter-blocks' )
+						label: __( 'Progress', 'otter-blocks' ),
+						isShownByDefault: false
 					},
 					{
 						value: attributes.percentageColor,
 						onChange: percentageColor => setAttributes({ percentageColor }),
-						label: __( 'Percentage', 'otter-blocks' )
+						label: __( 'Percentage', 'otter-blocks' ),
+						isShownByDefault: false
 					},
 					{
 						value: attributes.backgroundColor,
 						onChange: backgroundColor => setAttributes({ backgroundColor }),
-						label: __( 'Background', 'otter-blocks' )
+						label: __( 'Background', 'otter-blocks' ),
+						isShownByDefault: false
 					}
 				] }
 			>
@@ -208,7 +212,7 @@ const Inspector = ({
 					value={ attributes.height }
 					onChange={ onHeightChange }
 					step={ 0.1 }
-					min={ 0 }
+					min={ 5 }
 					max={ 100 }
 				/>
 

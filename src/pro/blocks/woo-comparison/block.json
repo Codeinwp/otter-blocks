@@ -42,6 +42,5 @@
 	},
 	"supports": {
 		"html": false
-	},
-	"editorStyle": "otter-woo-comparison-editor"
+	}
 }

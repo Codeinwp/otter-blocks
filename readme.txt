@@ -1,7 +1,7 @@
 === Otter - Gutenberg Blocks – Page Builder for Gutenberg Editor & FSE ===
 Contributors: themeisle, hardeepasrani, soarerobertdaniel7, mariamunteanu1, arinat, uriahs-victor, john_pixle, wildmisha, irinelenache
 Tags: gutenberg blocks, gutenberg, block,post grid block, google map block, columns block, advanced columns, section, row, layout, templates, lottie, progress bar, product review, review, accordion, tabs, page builder, countdown, contact form, masonry, popup, review builder
-Requires at least: 5.8
+Requires at least: 5.9
 Tested up to: 6.1
 Requires PHP: 5.4
 Stable tag: trunk
@@ -169,7 +169,6 @@ We're constantly adding new Gutenberg Blocks to Otter to assist in your website 
 - Flip Card Gutenberg Block [FREE]
 - Popup Gutenberg Block [FREE]
 - Sharing Icons Gutenberg Block [FREE]
-- Plugin Card Gutenberg Block [FREE]
 - Subscribe Form Gutenberg Block [FREE]
 
 ### Get More Options in Otter Pro
@@ -207,6 +206,70 @@ You can check Otter documentation [here](https://docs.themeisle.com/article/1478
 5. Section Block
 
 == Changelog ==
+
+#### [Version 2.2.0](https://github.com/Codeinwp/otter-blocks/compare/v2.1.6...v2.2.0) (2023-01-10)
+
+- Added Stripe Block
+- Added hCaptcha Integration
+- Added Live Search Addon
+- Added Parameter Based Dynamic Value
+- Added a Country Location for Dynamic Value & Conditions
+- Added Cookie-based Block Conditions
+- Added Copy/Paste-keyboard Shortcuts
+- Added New Otter Block Icons
+- Added Image Size Option to Review Block
+- Added Option to Show Last Updated Date in the Posts Block
+- Redesigned Global Defaults UI & Block Visibility Controls
+- Redesigned UI for Block Extensions
+- Allow Non-standard Characters in Anchor
+- Allow Description for Product Review Block
+- Improve Query String-Based Visibility Conditions
+- Improve Evergreen Countdown
+- Fix Popup Position Not Being Changed
+- Fix Popup Width Not Being Responsive on Mobile
+- Fix Button Group Styles Not Working in FSE Editor
+- Fix Advanced Heading Margin Control
+- Fix Lotties Console Error
+- Fix Slider Block Not Working in RTL
+- Fix the Form Block Not Working Inside a Popup
+
+
+
+
+##### [Version 2.1.6](https://github.com/Codeinwp/otter-blocks/compare/v2.1.5...v2.1.6) (2022-12-09)
+
+- Add option to show Sticky Posts in Posts Block
+- Add min font-size & height for the Process Bar Block
+- Disable Section onboarding by default
+- Add default transition timer to Section
+- Various fixes in Dynamic Values
+- Fix Review Block schema issue
+- Fix Image alignment in Review Block
+- Fix Form Block not working in Templates
+- Fix Sticky Float option not sticking to Left
+- Deprecate older blocks
+
+
+
+
+##### [Version 2.1.5](https://github.com/Codeinwp/otter-blocks/compare/v2.1.4...v2.1.5) (2022-11-23)
+
+- Fix Black Friday deal notice not dismissing; sorry for that.
+
+
+
+
+##### [Version 2.1.4](https://github.com/Codeinwp/otter-blocks/compare/v2.1.3...v2.1.4) (2022-11-21)
+
+- Advanced Heading Enhancements
+- Fix the Widgets page not loading with Otter on Chrome
+- Fix Custom CSS work with FSE
+- Fix the Button Color Issue
+- Migrate WooCommerce Comparison to Sparks Plugin
+- Fix Flip Block not saving Responsive Attributes
+
+
+
 
 ##### [Version 2.1.3](https://github.com/Codeinwp/otter-blocks/compare/v2.1.2...v2.1.3) (2022-11-10)
 

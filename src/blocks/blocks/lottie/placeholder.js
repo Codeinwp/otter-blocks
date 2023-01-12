@@ -1,17 +1,9 @@
 /**
- * External dependencies
- */
-import { video } from '@wordpress/icons';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 
-import {
-	BlockIcon,
-	MediaPlaceholder
-} from '@wordpress/block-editor';
+import { MediaPlaceholder } from '@wordpress/block-editor';
 
 import {
 	Button,
@@ -19,6 +11,11 @@ import {
 } from '@wordpress/components';
 
 import { useState } from '@wordpress/element';
+
+/**
+ * Internal dependencies
+ */
+import { lottieIcon as icon } from '../../helpers/icons.js';
 
 const BlockPlaceholder = ({
 	className,
@@ -40,7 +37,7 @@ const BlockPlaceholder = ({
 			<Placeholder
 				label={ __( 'Lottie', 'otter-blocks' ) }
 				instructions={ __( 'Add Lottie animations and files to your website. You need to use a .json file.', 'otter-blocks' ) }
-				icon={ <BlockIcon icon={ video } /> }
+				icon={ icon }
 				className={ className }
 			>
 				<form onSubmit={ onChangeValue }>
@@ -71,7 +68,7 @@ const BlockPlaceholder = ({
 				title: __( 'Lottie', 'otter-blocks' ),
 				instructions: __( 'Add Lottie animations and files to your website.', 'otter-blocks' )
 			} }
-			icon={ <BlockIcon icon={ video } /> }
+			icon={ icon }
 			accept={ [ 'application/json', '.lottie' ] }
 			allowedTypes={ [ 'application/json' ] }
 			value={ { ...file } }

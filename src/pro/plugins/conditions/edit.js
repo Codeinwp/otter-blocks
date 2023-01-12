@@ -6,14 +6,13 @@ import {
 	sprintf
 } from '@wordpress/i18n';
 
-import { isEmpty } from 'lodash';
-
 import {
 	BaseControl,
 	Button,
 	CheckboxControl,
 	DateTimePicker,
 	Dropdown,
+	ExternalLink,
 	FormTokenField,
 	Placeholder,
 	SelectControl,
@@ -468,6 +467,72 @@ const Edit = ({
 						value={ item.compare }
 						onChange={ e => changeValue( e, groupIndex, itemIndex, 'match' ) }
 					/>
+				</Fragment>
+			) }
+
+			{ 'country' === item.type && (
+				<Fragment>
+					{ ! Boolean( window.otterPro.hasIPHubAPI ) && (
+						<ExternalLink href={ window.themeisleGutenberg.optionsPath }>{ __( 'Setup API to use this feature. ', 'otter-blocks' ) }</ExternalLink>
+					) }
+
+					<TextControl
+						label={ __( 'Country Code(s)', 'otter-blocks' ) }
+						placeholder="US, CA, GB"
+						help={ __( 'A comma separated list of country codes', 'otter-blocks' ) }
+						value={ item.value }
+						onChange={ e => changeValue( e, groupIndex, itemIndex, 'value' ) }
+					/>
+
+					<ExternalLink href="https://www.geoplugin.com/iso3166">{ __( 'A list of country codes. ', 'otter-blocks' ) }</ExternalLink>
+				</Fragment>
+			) }
+
+			{ 'cookie' === item.type && (
+				<Fragment>
+					<TextControl
+						label={ __( 'Cookie', 'otter-blocks' ) }
+						help={ __( 'Key of the cookie you want to compare.', 'otter-blocks' ) }
+						value={ item.cookie_key }
+						onChange={ e => changeValue( e, groupIndex, itemIndex, 'cookie_key' ) }
+					/>
+
+					<SelectControl
+						label={ __( 'Compare Operator', 'otter-blocks' ) }
+						options={ [
+							{
+								value: 'is_true',
+								label: __( 'Is True', 'otter-blocks' )
+							},
+							{
+								value: 'is_false',
+								label: __( 'Is False', 'otter-blocks' )
+							},
+							{
+								value: 'is_empty',
+								label: __( 'Is Empty', 'otter-blocks' )
+							},
+							{
+								value: 'if_equals',
+								label: __( 'If Equals', 'otter-blocks' )
+							},
+							{
+								value: 'if_contains',
+								label: __( 'If Contains', 'otter-blocks' )
+							}
+						] }
+						value={ item.cookie_compare }
+						onChange={ e => changeValue( e, groupIndex, itemIndex, 'cookie_compare' ) }
+					/>
+
+					{ ( 'if_equals' === item.cookie_compare || 'if_contains' === item.cookie_compare ) && (
+						<TextControl
+							label={ __( 'Cookie Value', 'otter-blocks' ) }
+							help={ __( 'Value of the cookie to compare.', 'otter-blocks' ) }
+							value={ item.cookie_value }
+							onChange={ e => changeValue( e, groupIndex, itemIndex, 'cookie_value' ) }
+						/>
+					) }
 				</Fragment>
 			) }
 

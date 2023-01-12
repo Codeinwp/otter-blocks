@@ -3,6 +3,36 @@ span.wp-block-themeisle-blocks-advanced-heading {
 }
 
 .wp-block-themeisle-blocks-advanced-heading {
+
+	--padding: 0px;
+	--padding-tablet: var(--padding);
+	--padding-mobile: var(--padding-tablet);
+
+	--margin: 0px 0px 25px 0px;
+	--margin-tablet: var(--margin);
+	--margin-mobile: var(--margin-tablet);
+
+	--text-align: left;
+	--text-align-tablet: var(--text-align);
+	--text-align-mobile: var(--text-align-tablet);
+
+	padding: var(--padding);
+	margin: var(--margin);
+	text-align: var(--text-align);
+
+
+	@media ( min-width: 600px ) and ( max-width: 960px ) {
+		padding: var(--padding-tablet);
+		margin: var(--margin-tablet);
+		text-align: var(--text-align-tablet);
+	}
+
+	@media ( max-width: 600px ) {
+		padding: var(--padding-mobile);
+		margin: var(--margin-mobile);
+		text-align: var(--text-align-mobile);
+	}
+
 	&.highlight {
 		background-color: yellow;
 		color: black;

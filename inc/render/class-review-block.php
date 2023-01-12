@@ -62,7 +62,7 @@ class Review_Block {
 			array(
 				'id'    => $id,
 				'class' => $class,
-			) 
+			)
 		);
 
 		$main_heading = isset( $attributes['mainHeading'] ) ? $attributes['mainHeading'] : 'h2';
@@ -78,8 +78,8 @@ class Review_Block {
 		$html .= '		<div class="o-review__header_meta">';
 		$html .= '			<div class="o-review__header_ratings">';
 		$html .= $this->get_overall_stars( $this->get_overall_ratings( $attributes['features'] ), $scale );
-		// translators: Overall rating from 0 to 10.
-		$html .= '				<span>' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), round( $this->get_overall_ratings( $attributes['features'] ) / $scale, 1 ), 10 / $scale ) . '</span>';
+		// translators: Overall rating from 1 to 10.
+		$html .= '				<span>' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), $this->get_overall_ratings( $attributes['features'], $scale ), 10 / $scale ) . '</span>';
 		$html .= '			</div>';
 
 		if ( ( isset( $attributes['price'] ) && ! empty( $attributes['price'] ) ) || isset( $attributes['discounted'] ) ) {
@@ -98,7 +98,7 @@ class Review_Block {
 			$html .= '	<div class="o-review__header_details ' . trim( $details_class ) . '">';
 			if ( isset( $attributes['image'] ) ) {
 				if ( isset( $attributes['image']['id'] ) && wp_attachment_is_image( $attributes['image']['id'] ) ) {
-					$html .= wp_get_attachment_image( $attributes['image']['id'], 'medium' );
+					$html .= wp_get_attachment_image( $attributes['image']['id'], isset( $attributes['imageSize'] ) ? $attributes['imageSize'] : 'medium' );
 				} else {
 					$html .= '	<img src="' . esc_url( $attributes['image']['url'] ) . '" alt="' . esc_attr( $attributes['image']['alt'] ) . '"/>';
 				}
@@ -123,9 +123,14 @@ class Review_Block {
 
 				$html .= '		<div class="o-review__left_feature_ratings">';
 				$html .= $this->get_overall_stars( $feature['rating'], $scale );
-				// translators: Overall rating from 0 to 10.
-				$html .= '			<span>' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), round( $feature['rating'] / $scale, 1 ), 10 / $scale ) . '</span>';
+				// translators: Overall rating from 1 to 10.
+				$html .= '			<span>' . sprintf( __( '%1$g out of %2$g', 'otter-blocks' ), 1 <= round( $feature['rating'] / $scale, 1 ) ? round( $feature['rating'] / $scale, 1 ) : 1, 10 / $scale ) . '</span>';
 				$html .= '		</div>';
+
+				if ( isset( $feature['description'] ) ) {
+					$html .= '	<span class="o-review__left_feature_description">' . $feature['description'] . '</span>';
+				}
+
 				$html .= '	</div>';
 			}
 			$html .= '	</div>';
@@ -190,10 +195,11 @@ class Review_Block {
 	 * Get overall ratings
 	 *
 	 * @param array $features An array of features.
+	 * @param int   $divide The scale of ratings.
 	 *
 	 * @return int
 	 */
-	public function get_overall_ratings( $features ) {
+	public function get_overall_ratings( $features, $divide = 1 ) {
 		if ( count( $features ) <= 0 ) {
 			return 0;
 		}
@@ -207,9 +213,9 @@ class Review_Block {
 			0
 		);
 
-		$rating = round( $rating / count( $features ), 1 );
+		$rating = round( ( $rating / count( $features ) ) / $divide, 1 );
 
-		return $rating;
+		return 1 <= $rating ? $rating : 1;
 	}
 
 	/**
@@ -262,7 +268,7 @@ class Review_Block {
 			'@type'        => 'Review',
 			'reviewRating' => array(
 				'@type'       => 'Rating',
-				'ratingValue' => round( $this->get_overall_ratings( $attributes['features'] ) / 2, 1 ),
+				'ratingValue' => $this->get_overall_ratings( $attributes['features'], 2 ),
 				'bestRating'  => 5,
 			),
 			'author'       => array(

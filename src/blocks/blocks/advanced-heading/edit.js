@@ -8,7 +8,7 @@ import hexToRgba from 'hex-rgba';
  */
 import { __ } from '@wordpress/i18n';
 
-import { omitBy } from 'lodash';
+import { isObjectLike, omitBy } from 'lodash';
 
 import {
 	createBlock,
@@ -19,10 +19,6 @@ import {
 	RichText,
 	useBlockProps
 } from '@wordpress/block-editor';
-
-import { useViewportMatch } from '@wordpress/compose';
-
-import { useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
@@ -37,6 +33,9 @@ import { blockInit } from '../../helpers/block-utility.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import googleFontsLoader from '../../helpers/google-fonts.js';
+import { boxValues, _cssBlock, _px } from '../../helpers/helper-functions';
+import { makeBox } from '../../plugins/copy-paste/utils';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -52,29 +51,6 @@ const Edit = ({
 	mergeBlocks,
 	onReplace
 }) => {
-	const {
-		isViewportAvailable,
-		isPreviewDesktop,
-		isPreviewTablet,
-		isPreviewMobile
-	} = useSelect( select => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-
-		return {
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
-		};
-	}, []);
-
-	const isLarger = useViewportMatch( 'large', '>=' );
-
-	const isLarge = useViewportMatch( 'large', '<=' );
-
-	const isSmall = useViewportMatch( 'small', '>=' );
-
-	const isSmaller = useViewportMatch( 'small', '<=' );
 
 	useEffect( () => {
 		googleFontsLoader.attach( );
@@ -82,71 +58,85 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
-	let isDesktop = isLarger && ! isLarge && isSmall && ! isSmaller;
-
-	let isTablet = ! isLarger && ! isLarge && isSmall && ! isSmaller;
-
-	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
-
-	if ( isViewportAvailable && ! isMobile ) {
-		isDesktop = isPreviewDesktop;
-		isTablet = isPreviewTablet;
-		isMobile = isPreviewMobile;
-	}
 
 	const changeContent = value => {
 		setAttributes({ content: value });
 	};
 
-	let fontSizeStyle, stylesheet, textShadowStyle;
+	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
-	if ( isDesktop ) {
-		fontSizeStyle = {
-			fontSize: attributes.fontSize ? `${ attributes.fontSize }px` : undefined
-		};
 
-		stylesheet = {
-			textAlign: attributes.align,
-			paddingTop: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingTop }px`,
-			paddingRight: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingRight }px`,
-			paddingBottom: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingBottom }px`,
-			paddingLeft: 'linked' === attributes.paddingType ? `${ attributes.padding }px` : `${ attributes.paddingLeft }px`,
-			marginTop: 'linked' === attributes.marginType ? `${ attributes.margin }px` : `${ attributes.marginTop }px`,
-			marginBottom: 'linked' === attributes.marginType ? `${ attributes.margin }px` : `${ attributes.marginBottom }px`
-		};
-	}
+	const oldPaddingDesktop = 'unlinked' === attributes.paddingType ? ({
+		top: _px( attributes.paddingTop ) ?? '0px',
+		bottom: _px( attributes.paddingBottom ) ?? '0px',
+		right: _px( attributes.paddingRight ) ?? '0px',
+		left: _px( attributes.paddingLeft ) ?? '0px'
+	}) : ( isFinite( attributes.padding ) ? makeBox( _px( attributes.padding ) ) : makeBox( '0px' ) );
 
-	if ( isTablet ) {
-		fontSizeStyle = {
-			fontSize: attributes.fontSizeTablet ? `${ attributes.fontSizeTablet }px` : undefined
-		};
+	const oldPaddingTablet = 'unlinked' === attributes.paddingTypeTablet ? ({
+		top: _px( attributes.paddingTopTablet ) ?? '0px',
+		bottom: _px( attributes.paddingBottomTablet ) ?? '0px',
+		right: _px( attributes.paddingRightTablet ) ?? '0px',
+		left: _px( attributes.paddingLeftTablet ) ?? '0px'
+	}) : ( isFinite( attributes.paddingTablet ) ? makeBox( _px( attributes.paddingTablet ) ) : undefined );
 
-		stylesheet = {
-			textAlign: attributes.alignTablet,
-			paddingTop: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingTopTablet }px`,
-			paddingRight: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingRightTablet }px`,
-			paddingBottom: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingBottomTablet }px`,
-			paddingLeft: 'linked' === attributes.paddingTypeTablet ? `${ attributes.paddingTablet }px` : `${ attributes.paddingLeftTablet }px`,
-			marginTop: 'linked' === attributes.marginTypeTablet ? `${ attributes.marginTablet }px` : `${ attributes.marginTopTablet }px`,
-			marginBottom: 'linked' === attributes.marginTypeTablet ? `${ attributes.marginTablet }px` : `${ attributes.marginBottomTablet }px`
-		};
-	}
+	const oldPaddingMobile = 'unlinked' === attributes.paddingTypeMobile ?  ({
+		top: _px( attributes.paddingTopMobile ) ?? '0px',
+		bottom: _px( attributes.paddingBottomMobile ) ?? '0px',
+		right: _px( attributes.paddingRightMobile ) ?? '0px',
+		left: _px( attributes.paddingLeftMobile ) ?? '0px'
+	}) : ( isFinite( attributes.paddingMobile ) ? makeBox( _px( attributes.paddingMobile ) ) : undefined );
 
-	if ( isMobile ) {
-		fontSizeStyle = {
-			fontSize: attributes.fontSizeMobile ? `${ attributes.fontSizeMobile }px` : undefined
-		};
+	const oldMarginDesktop = undefined === attributes.marginType ?  ({
+		top: _px( attributes.marginTop ) ?? '0px',
+		bottom: _px( attributes.marginBottom ) ?? '25px'
+	}) : ( isFinite( attributes.margin ) ? makeBox( _px( attributes.margin ) ) : undefined );
 
-		stylesheet = {
-			textAlign: attributes.alignMobile,
-			paddingTop: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingTopMobile }px`,
-			paddingRight: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingRightMobile }px`,
-			paddingBottom: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingBottomMobile }px`,
-			paddingLeft: 'linked' === attributes.paddingTypeMobile ? `${ attributes.paddingMobile }px` : `${ attributes.paddingLeftMobile }px`,
-			marginTop: 'linked' === attributes.marginTypeMobile ? `${ attributes.marginMobile }px` : `${ attributes.marginTopMobile }px`,
-			marginBottom: 'linked' === attributes.marginTypeMobile ? `${ attributes.marginMobile }px` : `${ attributes.marginBottomMobile }px`
-		};
-	}
+	const oldMarginTablet = undefined === attributes.marginTypeTablet ? ({
+		top: _px( attributes.marginTopTablet ) ?? '0px',
+		bottom: _px( attributes.marginBottomTablet ) ?? '0px'
+	}) : ( isFinite( attributes.marginTablet ) ? makeBox( _px( attributes.marginTablet ) ) : undefined ) ;
+
+	const oldMarginMobile = undefined === attributes.marginTypeMobile ?  ({
+		top: _px( attributes.marginTopMobile ) ?? '0px',
+		bottom: _px( attributes.marginBottomMobile ) ?? '0px'
+	}) : ( isFinite( attributes.marginMobile ) ? makeBox( _px( attributes.marginMobile ) ) : undefined );
+
+	const renderBox = box => isObjectLike( box ) ? boxValues( box ) : undefined;
+
+	const inlineStyle = {
+		'--padding': isObjectLike( responsiveGetAttributes([
+			attributes.padding,
+			attributes.paddingTablet,
+			attributes.paddingMobile
+		]) ) ? boxValues( responsiveGetAttributes([
+				attributes.padding,
+				attributes.paddingTablet,
+				attributes.paddingMobile
+			]) ) : renderBox( oldPaddingDesktop ),
+		'--padding-tablet': isObjectLike( attributes.paddingTablet ) ?  boxValues( attributes.paddingTablet ) : renderBox( oldPaddingTablet ),
+		'--padding-mobile': isObjectLike( attributes.paddingMobile ) ?  boxValues( attributes.paddingMobile ) : renderBox( oldPaddingMobile ),
+		'--margin': isObjectLike( responsiveGetAttributes([
+			attributes.margin,
+			attributes.marginTablet,
+			attributes.marginMobile
+		]) ) ?  boxValues( responsiveGetAttributes([
+				attributes.margin,
+				attributes.marginTablet,
+				attributes.marginMobile
+			]) ) : renderBox( oldMarginDesktop ),
+		'--margin-tablet': isObjectLike( attributes.marginTablet ) ?  boxValues( attributes.marginTablet ) : renderBox( oldMarginTablet ),
+		'--margin-mobile': isObjectLike( attributes.marginMobile ) ?  boxValues( attributes.marginMobile ) : renderBox( oldMarginMobile ),
+		'--text-align': responsiveGetAttributes([
+			attributes.align,
+			attributes.alignTablet,
+			attributes.alignMobile
+		]),
+		'--text-align-tablet': attributes.alignTablet,
+		'--text-align-mobile': attributes.alignMobile
+	};
+
+	let textShadowStyle;
 
 	if ( attributes.textShadow ) {
 		textShadowStyle = {
@@ -155,17 +145,23 @@ const Edit = ({
 	}
 
 	const style = omitBy({
+		fontSize: responsiveGetAttributes([
+			attributes.fontSize,
+			attributes.fontSizeTablet,
+			attributes.fontSizeMobile
+		]),
 		color: attributes.headingColor,
-		...fontSizeStyle,
 		fontFamily: attributes.fontFamily || undefined,
 		fontWeight: 'regular' === attributes.fontVariant ? 'normal' : attributes.fontVariant,
 		fontStyle: attributes.fontStyle || undefined,
 		textTransform: attributes.textTransform || undefined,
 		lineHeight: ( 3 < attributes.lineHeight ? attributes.lineHeight + 'px' : attributes.lineHeight ) || undefined,
-		letterSpacing: attributes.letterSpacing && `${ attributes.letterSpacing }px`,
-		...stylesheet,
-		...textShadowStyle
+		letterSpacing: _px( attributes.letterSpacing ),
+		background: attributes.backgroundColor,
+		...textShadowStyle,
+		...inlineStyle
 	}, x => x?.includes?.( 'undefined' ) );
+
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
@@ -181,10 +177,22 @@ const Edit = ({
 	return (
 		<Fragment>
 			<style>
-				{ `#block-${ clientId } mark, #block-${ clientId } .highlight {
-						color: ${ attributes.highlightColor };
-						background: ${ attributes.highlightBackground };
-					}` }
+				{
+					`#block-${ clientId } mark, #block-${ clientId } .highlight ` + _cssBlock([
+						[ 'color', attributes.highlightColor ],
+						[ 'background', attributes.highlightBackground ]
+					])
+				}
+				{
+					`#block-${ clientId } a` + _cssBlock([
+						[ 'color', attributes.linkColor  ]
+					])
+				}
+				{
+					`#block-${ clientId } a:hover` + _cssBlock([
+						[ 'color', attributes.linkHoverColor  ]
+					])
+				}
 			</style>
 
 			<Controls

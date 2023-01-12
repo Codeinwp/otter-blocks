@@ -27,12 +27,14 @@ const Inspector = ({
 					{
 						value: attributes.buttonColor,
 						onChange: value => setAttributes({ buttonColor: value }),
-						label: __( 'Button', 'otter-blocks' )
+						label: __( 'Button', 'otter-blocks' ),
+						isShownByDefault: false
 					},
 					{
 						value: attributes.buttonText,
 						onChange: value => setAttributes({ buttonText: value }),
-						label: __( 'Button text', 'otter-blocks' )
+						label: __( 'Button text', 'otter-blocks' ),
+						isShownByDefault: false
 					}
 				] }
 			>

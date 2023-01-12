@@ -1,0 +1,13 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/pricing",
+	"title": "Pricing",
+	"category": "themeisle-blocks",
+	"description": "Pricing tables are a critical part in showcasing your services, prices and overall offerings. Powered by Otter.",
+	"keywords": [ "pricing", "table", "money" ],
+	"textdomain": "otter-blocks",
+	"supports": {
+		"inserter": false
+	}
+}

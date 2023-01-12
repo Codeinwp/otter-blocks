@@ -37,6 +37,7 @@ import {
 	blockInit,
 	getDefaultValueByField
 } from '../../../helpers/block-utility.js';
+import { _cssBlock } from '../../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -149,8 +150,13 @@ const Edit = ({
 
 	if ( attributes.columnWidth === undefined ) {
 		const index = parentBlock.innerBlocks.findIndex( i => i.clientId === clientId );
-		const { columns } = parentBlock.attributes;
+		let { columns } = parentBlock.attributes;
 		const { layout } = parentBlock.attributes;
+
+		if ( 6 < columns ) {
+			columns = 6;
+		}
+
 		updateBlockAttributes( clientId, {
 			columnWidth: layouts[columns][layout][index]
 		});
@@ -262,9 +268,7 @@ const Edit = ({
 		...borderStyle,
 		...borderRadiusStyle,
 		...boxShadowStyle,
-		'--content-color': attributes.color,
 		'--link-color': attributes.linkColor,
-		'--content-color-hover': attributes.colorHover,
 		'--background-color-hover': attributes.backgroundColorHover
 	};
 
@@ -313,6 +317,19 @@ const Edit = ({
 
 	return (
 		<Fragment>
+			<style>
+				{
+					`#block-${ clientId } ` + _cssBlock([
+						[ 'color', attributes.color ]
+					])
+				}
+				{
+					`#block-${ clientId }:hover ` + _cssBlock([
+						[ 'color', attributes.colorHover ]
+					])
+				}
+			</style>
+
 			<Controls
 				attributes={ attributes }
 				setAttributes={ setAttributes }

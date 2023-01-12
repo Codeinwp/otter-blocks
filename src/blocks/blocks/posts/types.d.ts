@@ -20,6 +20,7 @@ type Attributes = {
 	displayDescription: boolean
 	excerptLength: number
 	displayDate: boolean
+	displayUpdatedDate: boolean
 	displayAuthor: boolean
 	displayComments: boolean
 	displayPostCategory: boolean
@@ -52,6 +53,7 @@ type Attributes = {
 	paddingTablet: string
 	paddingMobile: string
 	contentGap: string
+	featuredPostOrder: string
 }
 
 export type PostProps = BlockProps<Attributes>

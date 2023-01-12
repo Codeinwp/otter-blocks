@@ -9,7 +9,7 @@ import { registerBlockType } from '@wordpress/blocks';
  * Internal dependencies.
  */
 import metadata from './block.json';
-import { contactIcon as icon } from '../../helpers/icons.js';
+import { formIcon as icon } from '../../helpers/icons.js';
 import deprecated from './deprecated.js';
 import edit from './edit.js';
 import save from './save.js';
@@ -90,6 +90,12 @@ registerBlockType( name, {
 					}
 				],
 				[
+					'themeisle-blocks/form-nonce',
+					{
+
+					}
+				],
+				[
 					'themeisle-blocks/form-textarea',
 					{
 						label: __( 'Message', 'otter-blocks' )
@@ -124,6 +130,12 @@ registerBlockType( name, {
 						label: __( 'Email', 'otter-blocks' ),
 						type: 'email',
 						isRequired: true
+					}
+				],
+				[
+					'themeisle-blocks/form-nonce',
+					{
+
 					}
 				],
 				[

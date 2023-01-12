@@ -70,7 +70,7 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 	const formIsEmpty = 2 > formFieldsData?.length;
 	const nonceFieldValue = extractNonceValue( form );
 	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
-	const hasValidToken = id && window.themeisleGutenberg?.tokens[id].token;
+	const hasValidToken = id && window.themeisleGutenberg?.tokens?.[id]?.token;
 
 
 	const spinner = document.createElement( 'span' );

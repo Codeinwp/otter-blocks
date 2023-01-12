@@ -9,6 +9,7 @@ import { registerBlockType } from '@wordpress/blocks';
  * Internal dependencies
  */
 import metadata from './block.json';
+import { sliderIcon as icon } from '../../helpers/icons.js';
 import deprecated from './deprecated.js';
 import transforms from './transforms.js';
 import edit from './edit.js';
@@ -20,7 +21,7 @@ registerBlockType( name, {
 	...metadata,
 	title: __( 'Slider', 'otter-blocks' ),
 	description: __( 'Minimal image slider to showcase beautiful images. Powered by Otter.', 'otter-blocks' ),
-	icon: 'images-alt2',
+	icon,
 	keywords: [
 		'slider',
 		'gallery',

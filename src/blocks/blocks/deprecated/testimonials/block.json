@@ -1,0 +1,13 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/testimonials",
+	"title": "Testimonials",
+	"category": "themeisle-blocks",
+	"description": "Display kudos from customers and clients and display them on your website. Powered by Otter.",
+	"keywords": [ "testimonials", "quotes", "business" ],
+	"textdomain": "otter-blocks",
+	"supports": {
+		"inserter": false
+	}
+}

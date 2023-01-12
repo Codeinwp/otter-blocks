@@ -29,7 +29,7 @@ const NAVIGATION_ITEMS = [
 	},
 	{
 		slug: 'feedback',
-		label: __( 'Help us improve', 'otter-blocks' ),
+		label: __( 'Feedback', 'otter-blocks' ),
 		visibility: true
 	}
 ];

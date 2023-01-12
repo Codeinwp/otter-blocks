@@ -25,7 +25,13 @@ const Sidebar = ({
 				<Infobox
 					title={ __( 'Otter Pro', 'otter-blocks' ) }
 				>
-					<p>{ __( 'Upgrade to Otter Pro and get instant access to all pro features — including WooCommerce builder — and much more.', 'otter-blocks' ) }</p>
+					<ul>
+						<li>{ __( 'Pro Block Addons', 'otter-blocks' ) }</li>
+						<li>{ __( 'Dynamic Content', 'otter-blocks' ) }</li>
+						<li>{ __( 'Block Conditions', 'otter-blocks' ) }</li>
+						<li>{ __( 'WooCommerce Product Builder', 'otter-blocks' ) }</li>
+						<li>{ __( 'Priority Support', 'otter-blocks' ) }</li>
+					</ul>
 
 					<div className="otter-info-button-group">
 						<Button
@@ -53,7 +59,7 @@ const Sidebar = ({
 			>
 				<ul className="otter-info-links">
 					<li><a href="https://wordpress.org/support/plugin/otter-blocks" target="_blank">{ __( 'Support', 'otter-blocks' ) }</a></li>
-					<li><a href="https://otter.nolt.io/" target="_blank">{ __( 'Feature request', 'otter-blocks' ) }</a></li>
+					<li><a href="https://github.com/Codeinwp/otter-blocks/discussions" target="_blank">{ __( 'Feature request', 'otter-blocks' ) }</a></li>
 					<li><a href="https://wordpress.org/support/plugin/otter-blocks/reviews/#new-post" target="_blank">{ __( 'Leave a review', 'otter-blocks' ) }</a></li>
 				</ul>
 

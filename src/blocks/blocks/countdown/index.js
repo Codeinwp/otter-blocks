@@ -1,9 +1,4 @@
 /**
- * External dependencies
- */
-import { calendar as icon } from '@wordpress/icons';
-
-/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
@@ -14,6 +9,7 @@ import { registerBlockType } from '@wordpress/blocks';
  * Internal dependencies
  */
 import metadata from './block.json';
+import { countdownIcon as icon } from '../../helpers/icons.js';
 import edit from './edit';
 import save from './save';
 

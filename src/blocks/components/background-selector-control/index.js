@@ -94,21 +94,23 @@ const BackgroundSelectorControl = ({
 								onChange={ changeFocalPoint }
 							/>
 
-							<MediaReplaceFlow
-								name={ __( 'Manage Image', 'otter-blocks' ) }
-								mediaURL={ image.url }
-								mediaId={ image?.id }
-								accept="image/*"
-								allowedTypes={ [ 'image' ] }
-								onSelect={ changeImage }
-							>
-								<MenuItem
-									icon={ trash }
-									onClick={ removeImage }
+							<div className="o-background-image-manage">
+								<MediaReplaceFlow
+									name={ __( 'Manage Image', 'otter-blocks' ) }
+									mediaURL={ image.url }
+									mediaId={ image?.id }
+									accept="image/*"
+									allowedTypes={ [ 'image' ] }
+									onSelect={ changeImage }
 								>
-									{ __( 'Clear Image', 'otter-blocks' ) }
-								</MenuItem>
-							</MediaReplaceFlow>
+									<MenuItem
+										icon={ trash }
+										onClick={ removeImage }
+									>
+										{ __( 'Clear Image', 'otter-blocks' ) }
+									</MenuItem>
+								</MediaReplaceFlow>
+							</div>
 
 							<ControlPanelControl
 								label={ __( 'Background Settings', 'otter-blocks' ) }

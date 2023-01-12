@@ -1,0 +1,13 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/service",
+	"title": "Service",
+	"category": "themeisle-blocks",
+	"description": "Use this Service block to showcase services your website offers. Powered by Otter.",
+	"keywords": [ "services", "icon", "features" ],
+	"textdomain": "otter-blocks",
+	"supports": {
+		"inserter": false
+	}
+}

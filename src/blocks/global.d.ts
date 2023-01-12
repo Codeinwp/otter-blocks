@@ -32,7 +32,9 @@ declare global {
 			}
 			rootUrl: string
 			hasModule: {
-				blocksConditions: boolean
+				blockCSS: boolean
+				blockAnimations: boolean
+				blockConditions: boolean
 			}
 			blocksIDs: string[]
 			isAncestorTypeAvailable: boolean
@@ -40,21 +42,10 @@ declare global {
 		otterPro?: Readonly<{
 			isActive: boolean
 			isExpired: boolean
+			licenseType: string
+			hasNeveLicense: boolean
 			hasWooCommerce: boolean
 			hasLearnDash: boolean
-			themeMods: {
-				listingType: string
-				altRow: boolean
-				rowColor: string
-				headerColor: string
-				textColor: string
-				borderColor: string
-				altRowColor: string
-				defaultFields: object
-			}
-			hasNeveSupport: {
-				wooComparison: boolean
-			}
 			rootUrl: string
 		}>
 		otterObj?: Readonly<Partial<{
@@ -96,7 +87,15 @@ declare global {
 			SelectProducts?: ( props: any ) => JSX.Element
 			Notice?: ( props: { notice: any, variant: string, instructions: 'string'}) => JSX.Element
 			useInspectorSlot?: ( name: string ) => any
-			OtterControlTools?: ( props: any ) => any
+		},
+		liveSearchData: {
+			nonce: string,
+			restUrl: string,
+			permalinkStructure: string,
+			strings: {
+				noResults: string
+				noTitle: string
+			}
 		}
 	}
 }

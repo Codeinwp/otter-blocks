@@ -129,6 +129,16 @@ const options = {
 			{
 				label: __( 'Current Time', 'otter-blocks' ),
 				value: 'time'
+			},
+			{
+				label: __( 'URL Parameter', 'otter-blocks' ),
+				value: 'queryString',
+				isDisabled: ! Boolean( window.themeisleGutenberg.isProActive )
+			},
+			{
+				label: __( 'Country', 'otter-blocks' ),
+				value: 'country',
+				isDisabled: ! Boolean( window.themeisleGutenberg.isProActive )
 			}
 		]
 	}

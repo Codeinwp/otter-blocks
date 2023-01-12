@@ -1,0 +1,116 @@
+.o-live-search {
+	.wp-block-search__inside-wrapper {
+		position: relative;
+	}
+
+	.container-wrap {
+		position: absolute;
+		z-index: 30;
+		border: 1px solid rgba(49, 50, 51, 0.12);
+		margin-top: 10px;
+		margin-bottom: 10px;
+		overflow-y: auto;
+	}
+
+	.search-results {
+		display: grid;
+		grid-auto-rows: 1fr;
+		width: 100%;
+
+		padding: 15px 0;
+
+		&__row {
+			min-width: 0;
+			display: flex;
+
+			> * {
+				color: inherit;
+			}
+
+			a, &.no-results {
+				padding: 8px 12px;
+				text-decoration: none;
+				display: flex;
+			}
+
+			a {
+				gap: 12px;
+				width: 100%;
+			}
+
+			&-left {
+				svg {
+					margin: 1px;
+
+					path {
+						fill: currentColor;
+					}
+				}
+
+				display: flex;
+				align-items: center;
+				opacity: .24;
+			}
+
+			&-right {
+				line-height: 1.7;
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				overflow: hidden;
+				text-align: left;
+
+				.meta {
+					opacity: .65;
+					margin-right: auto;
+				}
+
+				.post-title {
+					margin: 0;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					overflow: hidden;
+					min-width: 0;
+				}
+			}
+		}
+	}
+
+	.spinner-container {
+		text-align: center;
+	}
+
+	.spinner {
+		width: 16px;
+		height: 16px;
+		position: relative;
+		color: #007cba;
+		overflow: visible;
+		display: flex;
+		margin: 5px auto;
+
+		.main-circle {
+			fill: transparent;
+			stroke-width: 1.5px;
+			stroke: rgb(221, 221, 221);
+		}
+
+		.moving-circle {
+			fill: transparent;
+			stroke-width: 1.5px;
+			stroke: currentcolor;
+			stroke-linecap: round;
+			transform-origin: 50% 50%;
+			animation: 1.4s linear 0s infinite normal both running o-animation-rotate;
+		}
+	}
+}
+
+@keyframes o-animation-rotate {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
+}
