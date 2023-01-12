@@ -160,7 +160,7 @@ const Form = ({
 							<ColorDropdownControl
 								label={__( 'Text', 'otter-blocks' )}
 								colorValue={attributes.submitColorHover}
-								onColorChange={( /** @type {string} */ value ) => setAttributes({ submitColoHover: value })}
+								onColorChange={( /** @type {string} */ value ) => setAttributes({ submitColorHover: value })}
 								className="is-list is-first"
 							/>
 
