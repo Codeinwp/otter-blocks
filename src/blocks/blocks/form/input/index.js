@@ -5,6 +5,10 @@ import { __ } from '@wordpress/i18n';
 
 import { registerBlockType } from '@wordpress/blocks';
 
+import { createBlock } from '@wordpress/blocks';
+
+import { omit } from 'lodash';
+
 /**
  * Internal dependencies
  */
@@ -61,5 +65,19 @@ registerBlockType( name, {
 		}
 	],
 	edit,
-	save
+	save,
+	transforms: {
+		to: [
+			{
+				type: 'block',
+				blocks: [ 'themeisle-blocks/form-textarea' ],
+				transform: ( attributes ) => {
+					const attrs = omit( attributes, [ 'type' ]);
+					return createBlock( 'themeisle-blocks/form-textarea', {
+						...attrs
+					});
+				}
+			}
+		]
+	}
 });

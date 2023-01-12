@@ -1,5 +1,5 @@
 .wp-block-themeisle-blocks-form {
-	--padding: 8px;
+	
 	--border-radius: 4px;
 	--border-color: inherit;
 	--border-width: 1px;
@@ -7,7 +7,10 @@
 	--help-label-color: inherit;
 	--input-width: 100%;
 	--required-color: red;
-	--submit-color: white;
+	// --submit-color: initial; // var(--wp--preset--color--contrast);
+	// --submit-color-hover: initial; // var(--wp--preset--color--base);
+	// --submit-bg-color: initial; // var(--wp--preset--color--primary);
+	// --submit-bg-color-hover: initial;// var(--wp--preset--color--contrast);
 	--submit-msg-color: green;
 	--submit-error-color: red;
 	--inputs-gap: 16px;
@@ -19,6 +22,15 @@
 	--input-font-size: 1em;
 	--help-font-size: 13px;
 	--input-bg-color: initial;
+
+	// Responsive
+	--btn-pad: 10px 20px;
+	--btn-pad-tablet: var(--btn-pad);
+	--btn-pad-mobile: var(--btn-pad-tablet);
+
+	--padding: 8px; // input
+	--padding-tablet: var(--padding);
+	--padding-mobile: var(--padding-tablet);
 
 	border: none;
 
@@ -40,16 +52,70 @@
 				font-size: var(--submit-font-size);
 				text-align: center;
 				height: auto;
-				padding: 10px 20px;
-				color: var(--submit-color);
+				padding: var(--btn-pad);
 				border: 0px;
 				transition: background-color 0.15s linear;
 				max-width: max-content;
-			}
 
+				@media ( min-width:640px ) and ( max-width: 1024px ) {
+					padding: var(--btn-pad-tablet);
+				}
+
+				@media ( max-width: 640px ) {
+					padding: var(--btn-pad-mobile);
+				}
+			}
 
 			&.right {
 				align-items: flex-end;
+			}
+
+			&.o-right-tablet {
+				@media ( max-width: 1024px ) {
+					align-items: flex-end;
+				}
+			}
+
+			&.o-right-mobile {
+				@media ( max-width: 640px ) {
+					align-items: flex-end;
+				}
+			}
+
+			&.left {
+				@media( min-width: 1024px ) {
+					align-items: flex-start;
+				}
+			}
+
+			&.o-left-tablet {
+				@media ( max-width: 1024px ) {
+					align-items: flex-start;
+				}
+			}
+
+			&.o-left-mobile {
+				@media ( max-width: 640px ) {
+					align-items: flex-start;
+				}
+			}
+
+			&.o-center {
+				@media( min-width: 1024px ) {
+					align-items: center;
+				}
+			}
+
+			&.o-center-tablet {
+				@media ( max-width: 1024px ) {
+					align-items: center;
+				}
+			}
+
+			&.o-center-mobile {
+				@media ( max-width: 640px ) {
+					align-items: center;
+				}
 			}
 
 			&.full {
@@ -59,6 +125,30 @@
 				.wp-block-button__link {
 					width: 100%;
 					max-width: unset;
+				}
+			}
+
+			&.o-full-tablet {
+				@media ( max-width: 1024px ) {
+					flex-direction: column;
+					align-items: center;
+
+					.wp-block-button__link {
+						width: 100%;
+						max-width: unset;
+					}
+				}
+			}
+
+			&.o-full-mobile {
+				@media ( max-width:640px ) {
+					flex-direction: column;
+					align-items: center;
+
+					.wp-block-button__link {
+						width: 100%;
+						max-width: unset;
+					}
 				}
 			}
 
@@ -91,8 +181,68 @@
 				}
 			}
 
-			&.full > div {
+			&.o-right-tablet > div {
+				@media ( max-width: 1024px ) {
+					align-items: flex-end;
+					
+					.o-form-server-response {
+						padding-right: 0px;
+					}
+				}
+			}
+
+			&.o-right-mobile > div {
+				@media ( max-width:640px ) {
+					align-items: flex-end;
+					
+					.o-form-server-response {
+						padding-right: 0px;
+					}
+				}
+			}
+
+			&.left > div {
+				align-items: flex-start;
+				
+				.o-form-server-response {
+					padding-left: 0px;
+				}
+			}
+
+			&.o-left-tablet > div {
+				@media ( max-width: 1024px ) {
+					align-items: flex-start;
+					
+					.o-form-server-response {
+						padding-left: 0px;
+					}
+				}
+			}
+
+			&.o-left-mobile > div {
+				@media ( max-width:640px ) {
+					align-items: flex-start;
+					
+					.o-form-server-response {
+						padding-left: 0px;
+					}
+				}
+			}
+
+			&.full > div, &.o-center > div {
 				align-items: center;
+			}
+
+			&.o-full-tablet > div, &.o-center-tablet > div  {
+				@media ( max-width: 1024px ) {
+					align-items: center;
+				}
+			} 
+
+			&.o-full-mobile > div, &.o-center-mobile > div  {
+				@media ( max-width:640px ) {
+					align-items: center;
+				}
 			}
 		}
 	}

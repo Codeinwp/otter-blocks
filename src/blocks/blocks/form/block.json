@@ -49,6 +49,12 @@
 		"inputPadding": {
 			"type": "object"
 		},
+		"inputPaddingTablet": {
+			"type": "object"
+		},
+		"inputPaddingMobile": {
+			"type": "object"
+		},
 		"labelColor": {
 			"type": "string"
 		},
@@ -59,13 +65,13 @@
 			"type": "string"
 		},
 		"inputBorderRadius": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"inputBorderColor": {
 			"type": "string"
 		},
 		"inputBorderWidth": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"submitMessage": {
 			"type": "string"
@@ -86,6 +92,9 @@
 			"type": "string"
 		},
 		"submitColor": {
+			"type": "string"
+		},
+		"submitColorHover": {
 			"type": "string"
 		},
 		"inputGap": {
@@ -118,8 +127,23 @@
 		"submitStyle": {
 			"type": "string"
 		},
+		"submitStyleTablet": {
+			"type": "string"
+		},
+		"submitStyleMobile": {
+			"type": "string"
+		},
 		"isSynced": {
 			"type": "array"
+		},
+		"buttonPadding": {
+			"type": "object"
+		},
+		"buttonPaddingTablet": {
+			"type": "object"
+		},
+		"buttonPaddingMobile": {
+			"type": "object"
 		}
 	},
 	"supports": {
