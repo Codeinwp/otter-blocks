@@ -124,7 +124,7 @@ const Inspector = ({
 		};
 	};
 
-	const [ tab, setTab ] = useState( 'settings' );
+	const [ tab, setTab ] = useState( 'style' );
 
 	const [ proxyStore, setProxyStore ] = useState({
 		padding: makeBoxFromSplitAxis(
@@ -421,17 +421,33 @@ const Inspector = ({
 									onChangeTextTransform={ e => setAttributes({ textTransform: e }) }
 								/> */}
 
-								<TypographySelectorControl />
+								<TypographySelectorControl
+									enableComponents={{
+										fontFamily: true,
+										appearance: true,
+										lineHeight: true,
+										letterCase: true
+									}}
 
+									componentsValue={{
+										fontSize: attributes.fontSize,
+										fontFamily: attributes.fontFamily,
+										lineHeight: attributes.lineHeight,
+										appearance: attributes.fontVariant,
+										letterCase: attributes.fontStyle
+									}}
 
-								<RangeControl
-									label={ __( 'Line Height', 'otter-blocks' ) }
-									value={ attributes.lineHeight }
-									onChange={ e => setAttributes({ lineHeight: e }) }
-									step={ 0.1 }
-									min={ 0 }
-									max={ 200 }
+									onChange={ values => {
+										setAttributes({
+											fontSize: values.fontSize,
+											fontFamily: values.fontFamily,
+											lineHeight: values.lineHeight,
+											fontVariant: values.appearance,
+											fontStyle: values.letterCase
+										});
+									} }
 								/>
+
 							</PanelBody>
 
 						</Fragment>

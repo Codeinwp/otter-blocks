@@ -1,0 +1,30 @@
+.o-typo-header {
+    padding: 10px 0px 0px 0px;
+
+    &> .components-heading {
+        margin: 0;
+    }
+}
+
+.o-two-column-components {
+	gap: 10px;
+	justify-content: space-between;
+	align-items: baseline;
+	display: grid;
+	justify-items: stretch;
+	grid-template-columns: 1fr 1fr;
+	max-height: 55px;
+
+	&> .components-base-control {
+		margin: 8px 0px;
+	}
+}
+
+.block-editor-block-inspector .components-base-control.o-no-margin {
+	margin: 0px;
+
+	&> .components-base-control__field .components-base-control {
+		margin: 0px 0px 14px 0px;
+	}
+}
+
