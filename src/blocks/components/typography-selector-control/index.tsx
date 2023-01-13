@@ -22,7 +22,8 @@ import {
 	__experimentalHStack as HStack,
 	DropdownMenu,
 	RangeControl,
-	Disabled
+	Disabled,
+	Spinner
 } from '@wordpress/components';
 import ToogleGroupControl from '../toogle-group-control';
 import { check, formatCapitalize, formatLowercase, formatStrikethrough, formatUnderline, formatUppercase, moreVertical, reset } from '@wordpress/icons';
@@ -153,12 +154,15 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 
 	// const [ variants, setVariants ] = useState<{label: string, value: string}[]>([]);
 	const [ search, setSearch ] = useState( '' );
+	const [ isLoading, setLoading ] = useState( false );
 
 	useEffect( () => {
 		console.count( 'Font' );
 		if ( showComponent?.fontFamily && 0 === fonts.length ) {
+			setLoading( true );
 			googleFontsLoader.afterLoading().then( ( loader ) => {
 				setFonts( loader.fonts );
+				setLoading( false );
 
 				// if ( componentsValue?.fontFamily ) {
 				// 	setVariants( loader.getVariants( componentsValue?.fontFamily ) );
@@ -313,6 +317,9 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 												onClick={ onToggle }
 												aria-expanded={ isOpen }
 											>
+												{
+													0 === fonts.length && isLoading ? <Spinner/> : ''
+												}
 												{ componentsValue?.fontFamily ?? componentsDefaultValue?.fontFamily ?? __( 'Select Font Family', 'otter-blocks' ) }
 											</Button>
 										) }
