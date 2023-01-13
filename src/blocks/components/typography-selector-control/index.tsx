@@ -158,7 +158,9 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 
 	useEffect( () => {
 		console.count( 'Font' );
-		if ( showComponent?.fontFamily && 0 === fonts.length ) {
+
+		// Special case when the Font Family component is rendered as a simple Select instead of a Popover
+		if ( Boolean( props.config?.fontFamilyAsSelect ) && showComponent?.fontFamily && 0 === fonts.length ) {
 			setLoading( true );
 			googleFontsLoader.afterLoading().then( ( loader ) => {
 				setFonts( loader.fonts );
@@ -169,6 +171,7 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 				// }
 			});
 		}
+
 	}, [ showComponent?.fontFamily, fonts ]);
 
 	return (
@@ -314,12 +317,22 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 											<Button
 												className="o-gfont-button"
 												id={ id }
-												onClick={ onToggle }
+												onClick={ () => {
+													if ( showComponent?.fontFamily && 0 === fonts.length ) {
+														setLoading( true );
+														googleFontsLoader.afterLoading().then( ( loader ) => {
+															setFonts( loader.fonts );
+															setLoading( false );
+
+															// if ( componentsValue?.fontFamily ) {
+															// 	setVariants( loader.getVariants( componentsValue?.fontFamily ) );
+															// }
+														});
+													}
+													onToggle?.();
+												} }
 												aria-expanded={ isOpen }
 											>
-												{
-													0 === fonts.length && isLoading ? <Spinner/> : ''
-												}
 												{ componentsValue?.fontFamily ?? componentsDefaultValue?.fontFamily ?? __( 'Select Font Family', 'otter-blocks' ) }
 											</Button>
 										) }
@@ -341,6 +354,16 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 													>
 														{ __( 'Default', 'otter-blocks' ) }
 													</MenuItem>
+
+													{
+														0 === fonts.length && isLoading ?
+
+															( <Fragment>
+																<Spinner/>
+																{ __( 'Loading fonts.', 'otter-blocks' ) }
+															</Fragment> ) :
+															''
+													}
 
 													{ ( fonts ).map( ( i, index ) => {
 														if ( ! search || i.family.toLowerCase().includes( search.toLowerCase() ) ) {
