@@ -28,7 +28,6 @@ import {
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
 import IconPickerControl from '../../../components/icon-picker-control/index.js';
 import { ColorDropdownControl, InspectorHeader, ToogleGroupControl } from '../../../components/index.js';
-import { makeBox } from '../../../plugins/copy-paste/utils';
 import { objectOrNumberAsBox } from '../../../helpers/helper-functions.js';
 
 /**

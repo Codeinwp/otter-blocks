@@ -72,9 +72,30 @@ class Button_CSS extends Base_CSS {
 						'value'    => 'backgroundGradient',
 					),
 					array(
-						'property' => 'border-width',
-						'value'    => 'borderSize',
-						'unit'     => 'px',
+						'property'  => 'border-width',
+						'value'     => 'borderSize',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['borderSize'] ) && is_numeric( $attrs['borderSize'] );
+						},
+					),
+					array(
+						'property'  => '--border-width',
+						'value'     => 'borderSize',
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left'   => '1px',
+									'right'  => '1px',
+									'top'    => '1px',
+									'bottom' => '1px',
+								)
+							);
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['borderSize'] ) && is_array( $attrs['borderSize'] );
+						},
 					),
 					array(
 						'property'  => 'border-color',
@@ -91,9 +112,30 @@ class Button_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => 'border-radius',
-						'value'    => 'borderRadius',
-						'unit'     => 'px',
+						'property'  => 'border-radius',
+						'value'     => 'borderRadius',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['borderRadius'] ) && is_numeric( $attrs['borderRadius'] );
+						},
+					),
+					array(
+						'property'  => 'border-radius',
+						'value'     => 'borderRadius',
+						'format'    => function( $value, $attrs ) {
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'left'   => '1px',
+									'right'  => '1px',
+									'top'    => '1px',
+									'bottom' => '1px',
+								)
+							);
+						},
+						'condition' => function( $attrs ) {
+							return isset( $attrs['borderRadius'] ) && is_array( $attrs['borderRadius'] );
+						},
 					),
 					array(
 						'property'       => 'box-shadow',

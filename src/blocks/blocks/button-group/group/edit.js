@@ -11,10 +11,6 @@ import {
 	useBlockProps
 } from '@wordpress/block-editor';
 
-import { useViewportMatch } from '@wordpress/compose';
-
-import { useSelect } from '@wordpress/data';
-
 import {
 	Fragment,
 	useEffect

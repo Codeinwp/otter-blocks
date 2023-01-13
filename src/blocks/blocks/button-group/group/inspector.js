@@ -9,26 +9,18 @@ import { InspectorControls } from '@wordpress/block-editor';
 
 import {
 	PanelBody,
-	RangeControl,
 	SelectControl,
 	__experimentalBoxControl as BoxControl,
 	BaseControl,
-	FontSizePicker,
 	__experimentalUnitControl as UnitControl
 } from '@wordpress/components';
 
 import {
-	positionCenter,
-	positionLeft,
-	positionRight,
-	stretchFullWidth,
-	alignNone,
 	alignLeft,
 	alignCenter,
 	alignRight,
-	justifySpaceBetween,
-	alignJustify,
-	menu
+	menu,
+	settings
 } from '@wordpress/icons';
 
 import { Fragment, useEffect, useState } from '@wordpress/element';
@@ -36,13 +28,10 @@ import { Fragment, useEffect, useState } from '@wordpress/element';
 /**
  * Internal dependencies
  */
-import GoogleFontsControl from '../../../components/google-fonts-control/index.js';
-import SizingControl from '../../../components/sizing-control/index.js';
 import ResponsiveControl from '../../../components/responsive-control';
 import ToogleGroupControl from '../../../components/toogle-group-control/index.js';
 import { useResponsiveAttributes } from '../../../helpers/utility-hooks.js';
 import { InspectorHeader } from '../../../components/index.js';
-import { makeBox } from '../../../plugins/copy-paste/utils';
 import { getChoice, _i, _px } from '../../../helpers/helper-functions.js';
 import TypographySelectorControl from '../../../components/typography-selector-control/index';
 
@@ -165,23 +154,6 @@ const Inspector = ({
 
 	}, [ proxyStore.padding, proxyStore.paddingTablet, proxyStore.paddingMobile, storeChanged ]);
 
-
-	const changeFontFamily = value => {
-		if ( ! value ) {
-			setAttributes({
-				fontFamily: undefined,
-				fontVariant: undefined,
-				fontStyle: undefined
-			});
-		} else {
-			setAttributes({
-				fontFamily: value,
-				fontVariant: 'normal',
-				fontStyle: 'normal'
-			});
-		}
-	};
-
 	return (
 		<InspectorControls>
 			<div>
@@ -292,16 +264,16 @@ const Inspector = ({
 												value: 'XL'
 											},
 											{
-												label: __( 'C', 'otter-blocks' ),
-												value: 'custom'
+												label: __( '', 'otter-blocks' ),
+												value: 'custom',
+												icon: settings
 											}
 										]}
 										onChange={ value => {
 											if ( 'custom' === value ) {
+												setTab( 'style' );
 												return;
 											}
-
-											console.log( presets[value]);
 
 											responsiveSetAttributes( presets[value].padding, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
 											setAttributes({ fontSize: presets[value].fontSize });
@@ -346,7 +318,7 @@ const Inspector = ({
 												),
 												attributes.paddingTablet,
 												attributes.paddingMobile
-											])
+											]) ?? makeBoxFromSplitAxis( '15px', '20px' )
 										}
 
 										onChange={ value => {

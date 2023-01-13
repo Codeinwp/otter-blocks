@@ -485,15 +485,12 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 
 			{
 				showComponent?.lineHeight && (
-					<RangeControl
+					<UnitControl
 						label={ __( 'Line Height', 'otter-blocks' ) }
 
 						/*@ts-ignore */
 						value={ componentsValue?.lineHeight ?? componentsDefaultValue?.lineHeight }
-						onChange={ lineHeight => onChangeValue( 'lineHeight', lineHeight ) }
-						step={ 0.1 }
-						min={ 0 }
-						max={ 3 }
+						onChange={ ( lineHeight: string ) => onChangeValue( 'lineHeight', lineHeight ) }
 					/>
 				)
 			}

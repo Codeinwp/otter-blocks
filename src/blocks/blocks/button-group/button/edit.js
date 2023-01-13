@@ -159,7 +159,12 @@ const Edit = ( props ) => {
 		]);
 	}, [
 		attributes.hoverColor,
-		attributes.hoverBackground, attributes.hoverBackgroundGradient, attributes.hoverBorder, attributes.hoverColor, attributes.boxShadow, attributes.hoverBoxShadowHorizontal, attributes.hoverBoxShadowBlur, attributes.hoverBoxShadowSpread, attributes.hoverBoxShadowColor, attributes.hoverBoxShadowColorOpacity ]);
+		attributes.hoverBackground, attributes.hoverBackgroundGradient,
+		attributes.hoverBorder, attributes.hoverColor, attributes.boxShadow,
+		attributes.hoverBoxShadowHorizontal, attributes.hoverBoxShadowBlur,
+		attributes.hoverBoxShadowSpread, attributes.hoverBoxShadowColor,
+		attributes.hoverBoxShadowColorOpacity
+	]);
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
