@@ -21,11 +21,11 @@ class Sharing_Icons_Block {
 	 */
 	public static function get_social_profiles() {
 		$current_url = home_url( add_query_arg( null, null ) );
-		$title = get_the_title( get_queried_object_id() );
+		$title       = get_the_title( get_queried_object_id() );
 
 		if ( is_archive() ) {
 			$title = get_the_archive_title();
-		} else if ( is_home() && wp_is_block_theme() ) {
+		} elseif ( is_home() && wp_is_block_theme() ) {
 			$title = get_bloginfo( 'title' );
 		}
 
