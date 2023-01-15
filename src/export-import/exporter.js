@@ -14,17 +14,16 @@ import apiFetch from '@wordpress/api-fetch';
 
 import { serialize } from '@wordpress/blocks';
 
+import { MenuItem } from '@wordpress/components';
+
 import {
 	useDispatch,
 	useSelect
 } from '@wordpress/data';
 
-import { PluginBlockSettingsMenuItem } from '@wordpress/edit-post';
-import { Fragment } from '@wordpress/element';
-import { MenuGroup, MenuItem } from '@wordpress/components';
+import { BlockSettingsMenuControls } from '@wordpress/block-editor';
 
 const BlocksExporter = () => {
-	const OtterControlTools = window?.otterComponents?.OtterControlTools;
 	const { blocks, count } = useSelect( ( select ) => {
 		const {
 			getSelectedBlockCount,
@@ -121,32 +120,16 @@ const BlocksExporter = () => {
 	};
 
 	return (
-		<Fragment>
-			{
-				OtterControlTools === undefined && (
-					<PluginBlockSettingsMenuItem
-						icon={ external }
-						label={ __( 'Export as JSON', 'otter-blocks' ) }
-						onClick={ exportBlocks }
-					/>
-				)
-			}
-
-			{
-				OtterControlTools !== undefined && (
-					<OtterControlTools order={3}>
-						<MenuGroup>
-							<MenuItem
-								icon={ external }
-								onClick={ exportBlocks }
-							>
-								{ __( 'Export as JSON', 'otter-blocks' ) }
-							</MenuItem>
-						</MenuGroup>
-					</OtterControlTools>
-				)
-			}
-		</Fragment>
+		<BlockSettingsMenuControls>
+			{ () => (
+				<MenuItem
+					icon={ external }
+					onClick={ exportBlocks }
+				>
+					{ __( 'Export as JSON', 'otter-blocks' ) }
+				</MenuItem>
+			) }
+		</BlockSettingsMenuControls>
 	);
 };
 

@@ -32,7 +32,6 @@ import { applyFilters } from '@wordpress/hooks';
  * Internal dependencies.
  */
 import Notice from '../../components/notice/index.js';
-import { useInspectorSlot } from '../../components/inspector-slot-fill/index.js';
 import { setUtm } from '../../helpers/helper-functions.js';
 import { BlockProps, OtterBlock } from '../../helpers/blocks.js';
 
@@ -300,15 +299,11 @@ const AlwaysActiveOption = (
 	);
 };
 
-
 const Edit = ({
-	name,
 	attributes,
 	setAttributes,
 	clientId
 }: BlockProps<unknown> ) => {
-	const Inspector = useInspectorSlot( name );
-
 	const [ containerOptions, setContainerOptions ] = useState([{
 		label: __( 'Screen', 'otter-blocks' ),
 		value: 'o-sticky-scope-screen'
@@ -411,43 +406,40 @@ const Edit = ({
 	}, [ clientId ]);
 
 	return (
-		<Inspector>
-			{/* @ts-ignore */}
-			<PanelBody
-				title={ __( 'Sticky', 'otter-blocks' ) }
-				initialOpen={ false }
+		<PanelBody
+			title={ __( 'Sticky', 'otter-blocks' ) }
+			initialOpen={ false }
+		>
+			<p>
+				{ __( 'Set any block as Sticky, so that it sticks to another element on the page.', 'otter-blocks' ) }
+			</p>
+
+			<ExternalLink
+				target="_blank"
+				rel="noopener noreferrer"
+				href="https://docs.themeisle.com/article/1529-how-to-make-a-block-sticky"
 			>
-				<p>
-					{ __( 'Set any block as Sticky, so that it sticks to another element on the page.', 'otter-blocks' ) }
-				</p>
+				{ __( 'Learn more about Sticky', 'otter-blocks' ) }
+			</ExternalLink>
 
-				<ExternalLink
-					target="_blank"
-					rel="noopener noreferrer"
-					href="https://docs.themeisle.com/article/1529-how-to-make-a-block-sticky"
-				>
-					{ __( 'Learn more about Sticky', 'otter-blocks' ) }
-				</ExternalLink>
+			<SelectControl
+				label={ __( 'Sticky To', 'otter-blocks' ) }
+				help={ __( 'Select the parent element for the sticky block.', 'otter-blocks' ) }
+				value={ limit }
+				options={ containerOptions }
+				onChange={ value => addOption( value, FILTER_OPTIONS.scope ) }
+			/>
 
-				<SelectControl
-					label={ __( 'Sticky To', 'otter-blocks' ) }
-					help={ __( 'Select the parent element for the sticky block.', 'otter-blocks' ) }
-					value={ limit }
-					options={ containerOptions }
-					onChange={ value => addOption( value, FILTER_OPTIONS.scope ) }
-				/>
+			<AlwaysActiveOption className={ attributes.className} clientId={ clientId } addOption={ addOption } removeOptions={ removeOptions } />
 
-				<AlwaysActiveOption className={ attributes.className} clientId={ clientId } addOption={ addOption } removeOptions={ removeOptions } />
+			{ applyFilters( 'otter.sticky.controls', <ProFeatures />, attributes, FILTER_OPTIONS, addOption ) }
 
-				{ applyFilters( 'otter.sticky.controls', <ProFeatures />, attributes, FILTER_OPTIONS, addOption ) }
-
-				{/* @ts-ignore */}
-				<div className="o-fp-wrap">
-					{ applyFilters( 'otter.feedback', '', 'sticky' ) }
-					{ applyFilters( 'otter.poweredBy', '' ) }
-				</div>
-			</PanelBody>
-		</Inspector>
+			{/* @ts-ignore */}
+			<div className="o-fp-wrap">
+				{ applyFilters( 'otter.feedback', '', 'sticky' ) }
+				{ applyFilters( 'otter.poweredBy', '' ) }
+			</div>
+		</PanelBody>
 	);
 };
 

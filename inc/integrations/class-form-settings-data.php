@@ -78,6 +78,13 @@ class Form_Settings_Data {
 	private $submit_message = '';
 
 	/**
+	 * The message when the email can not be send.
+	 *
+	 * @var string
+	 */
+	private $error_message = '';
+
+	/**
 	 * The name of the sender.
 	 *
 	 * @var string
@@ -145,25 +152,23 @@ class Form_Settings_Data {
 	/**
 	 * Check if it has the necessary data set.
 	 *
-	 * @return string[] The issues about the missing settings.
+	 * @return string The issues about the missing settings.
 	 * @since 2.0.3
 	 */
 	public function check_data() {
-		$issues = array();
-
 		if ( ! $this->has_provider() ) {
-			$issues[] = __( 'Provider settings are missing!', 'otter-blocks' );
+			return Form_Data_Response::ERROR_MISSING_PROVIDER;
 		}
 
 		if ( ! $this->has_api_key() ) {
-			$issues[] = __( 'API Key is missing!', 'otter-blocks' );
+			return Form_Data_Response::ERROR_MISSING_API_KEY;
 		}
 
 		if ( ! $this->has_list_id() ) {
-			$issues[] = __( 'Mail list is missing!', 'otter-blocks' );
+			return Form_Data_Response::ERROR_MISSING_MAIL_LIST_ID;
 		}
 
-		return $issues;
+		return '';
 	}
 
 	/**
@@ -191,6 +196,9 @@ class Form_Settings_Data {
 				}
 				if ( isset( $form['submitMessage'] ) ) {
 					$integration->set_submit_message( $form['submitMessage'] );
+				}
+				if ( isset( $form['errorMessage'] ) ) {
+					$integration->set_error_message( $form['errorMessage'] );
 				}
 				if ( isset( $form['fromName'] ) ) {
 					$integration->set_from_name( $form['fromName'] );
@@ -400,6 +408,18 @@ class Form_Settings_Data {
 	}
 
 	/**
+	 * Set the message when the email can not be send.
+	 *
+	 * @param string $error_message The message.
+	 * @return Form_Settings_Data
+	 * @since 2.1.7
+	 */
+	public function set_error_message( $error_message ) {
+		$this->error_message = $error_message;
+		return $this;
+	}
+
+	/**
 	 * Get the provider.
 	 *
 	 * @return string
@@ -490,6 +510,16 @@ class Form_Settings_Data {
 	}
 
 	/**
+	 * Get the message for submit.
+	 *
+	 * @return string
+	 * @since 2.1.7
+	 */
+	public function get_error_message() {
+		return $this->error_message;
+	}
+
+	/**
 	 * Get the OnSuccess submit data: redirectLink, submitMessage.
 	 *
 	 * @return array
@@ -499,6 +529,7 @@ class Form_Settings_Data {
 		return array(
 			'redirectLink'  => $this->get_redirect_link(),
 			'submitMessage' => $this->get_submit_message(),
+			'displayError'  => $this->get_error_message(),
 		);
 	}
 

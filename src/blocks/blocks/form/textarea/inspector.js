@@ -6,20 +6,65 @@ import { __ } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 
 import {
+	Button,
 	PanelBody,
+	SelectControl,
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
 
 const Inspector = ({
 	attributes,
-	setAttributes
+	setAttributes,
+	selectParent,
+	switchToInput
 }) => {
 	return (
 		<InspectorControls>
 			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
+				title={ __( 'Field Settings', 'otter-blocks' ) }
 			>
+				<Button
+					isSecondary
+					variant="secondary"
+					onClick={ () => selectParent?.() }
+				>
+					{ __( 'Back to the Form', 'otter-blocks' ) }
+				</Button>
+
+				<SelectControl
+					label={ __( 'Field Type', 'otter-blocks' ) }
+					value={ 'textarea' }
+					options={ [
+						{
+							label: __( 'Text', 'otter-blocks' ),
+							value: 'text'
+						},
+						{
+							label: __( 'Email', 'otter-blocks' ),
+							value: 'email'
+						},
+						{
+							label: __( 'Date', 'otter-blocks' ),
+							value: 'date'
+						},
+						{
+							label: __( 'Number', 'otter-blocks' ),
+							value: 'number'
+						},
+						{
+							label: __( 'Textarea', 'otter-blocks' ),
+							value: 'textarea'
+						}
+					] }
+					onChange={ type => {
+						if ( 'textarea' === type ) {
+							return;
+						}
+						switchToInput( type );
+					}}
+				/>
+
 				<TextControl
 					label={ __( 'Label', 'otter-blocks' ) }
 					value={ attributes.label }
