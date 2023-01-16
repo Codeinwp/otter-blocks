@@ -24,7 +24,7 @@ const Thumbnail = ({
 		const image = select( 'core' ).getMedia( id, { context: 'view' });
 
 		const featuredImage = image ?
-			0 < Object.keys( image.media_details.sizes ).length ?
+			( 'string' !== typeof image && 0 < Object.keys( image.media_details.sizes ).length ) ?
 				image.media_details.sizes[size] ?
 					image.media_details.sizes[size].source_url :
 					image.source_url :
