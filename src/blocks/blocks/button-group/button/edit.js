@@ -135,8 +135,6 @@ const Edit = ( props ) => {
 		...buttonStyle
 	};
 
-	console.log( styles );
-
 	const iconStyles = {
 		fill: getSyncValue( 'color' ),
 		width: _px( getSyncValueParent( 'fontSize' ) )

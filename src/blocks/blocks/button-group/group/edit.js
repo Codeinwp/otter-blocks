@@ -21,7 +21,7 @@ import {
  */
 import metadata from './block.json';
 import Inspector from './inspector.js';
-import { blockInit } from '../../../helpers/block-utility.js';
+import { blockInit, buildGetSyncValue } from '../../../helpers/block-utility.js';
 import googleFontsLoader from '../../../helpers/google-fonts.js';
 import { boxToCSS, _px } from '../../../helpers/helper-functions';
 import { useResponsiveAttributes } from '../../../helpers/utility-hooks';
@@ -36,7 +36,8 @@ const { attributes: defaultAttributes } = metadata;
 const Edit = ({
 	attributes,
 	setAttributes,
-	clientId
+	clientId,
+	name
 }) => {
 
 	const { responsiveGetAttributes } = useResponsiveAttributes( () => {});
@@ -47,17 +48,22 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, []);
 
+	const getSyncValue = buildGetSyncValue( name, attributes, defaultAttributes );
+
 	const desktopPadding = {
-		top: _px( attributes.paddingTopBottom ) ?? '15px',
-		bottom: _px( attributes.paddingTopBottom ) ?? '15px',
-		right: _px ( attributes.paddingLeftRight ) ?? '30px',
-		left: _px( attributes.paddingLeftRight ) ?? '30px'
+		top: _px( getSyncValue( 'paddingTopBottom' ) ) ?? '15px',
+		bottom: _px( getSyncValue( 'paddingTopBottom' ) ) ?? '15px',
+		right: _px ( getSyncValue( 'paddingLeftRight' ) ) ?? '30px',
+		left: _px( getSyncValue( 'paddingLeftRight' ) ) ?? '30px'
 	};
 
 	const inlineCSS = {
-		'--spacing': _px( attributes.spacing ),
-		'--padding': boxToCSS( responsiveGetAttributes([ desktopPadding, attributes.paddingTablet, attributes.paddingMobile ]) ),
-		'--font-size': attributes.fontSize
+		'--spacing': _px( getSyncValue( 'spacing' ) ),
+		'--padding': boxToCSS( responsiveGetAttributes([
+			desktopPadding,
+			getSyncValue( 'paddingTablet' ),
+			getSyncValue( 'paddingMobile' ) ]) ),
+		'--font-size': getSyncValue( 'fontSize' )
 	};
 
 	const alignClasses = [ 'desktop', 'tablet', 'mobile' ]
@@ -77,11 +83,11 @@ const Edit = ({
 		style: inlineCSS
 	});
 
-	console.log( inlineCSS );
+	console.log( inlineCSS, getSyncValue( 'paddingTopBottom' ) );
 
 	useEffect( () => {
-		if ( attributes.fontFamily ) {
-			googleFontsLoader.loadFontToBrowser( attributes.fontFamily, attributes.fontVariant );
+		if ( getSyncValue( 'fontFamily' ) ) {
+			googleFontsLoader.loadFontToBrowser( getSyncValue( 'fontFamily' ), getSyncValue( 'fontVariant' ) );
 		}
 	}, [ attributes.fontFamily ]);
 

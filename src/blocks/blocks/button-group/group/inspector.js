@@ -1,5 +1,7 @@
 // @ts-check
 
+import { uniq } from 'lodash';
+
 /**
  * WordPress dependencies.
  */
@@ -34,6 +36,7 @@ import { useResponsiveAttributes } from '../../../helpers/utility-hooks.js';
 import { InspectorHeader, SyncControlDropdown } from '../../../components/index.js';
 import { getChoice, _i, _px } from '../../../helpers/helper-functions.js';
 import TypographySelectorControl from '../../../components/typography-selector-control/index';
+import AutoDisableSyncAttr from '../../../components/auto-disable-sync-attr';
 
 /**
  *
@@ -122,7 +125,13 @@ const Inspector = ({
 		),
 		paddingTablet: attributes.paddingTablet,
 		paddingMobile: attributes.paddingMobile,
-		align: attributes.align
+		align: attributes.align,
+		isSynced: uniq( attributes?.isSynced?.map( x => {
+			if ( 'paddingTopBottom' === x || 'paddingLeftRight' === x ) {
+				return 'padding';
+			}
+			return x;
+		}) )
 	});
 
 	const [ storeChanged, setStoreChanged ] = useState( false );
@@ -135,6 +144,7 @@ const Inspector = ({
 		paddingTablet: attributes.paddingTablet,
 		paddingMobile: attributes.paddingMobile,
 		align: attributes.align,
+		isSynced: attributes.isSynced,
 		...attr
 	});
 
@@ -147,7 +157,13 @@ const Inspector = ({
 				paddingLeftRight: proxyStore?.padding?.right,
 				paddingTablet: proxyStore?.paddingTablet,
 				paddingMobile: proxyStore?.paddingMobile,
-				align: proxyStore?.align
+				align: proxyStore?.align,
+				isSynced: uniq( proxyStore?.isSynced?.map( x => {
+					if ( 'padding' === x ) {
+						return [ 'paddingTopBottom', 'paddingLeftRight' ];
+					}
+					return x;
+				}).flat() )
 			});
 			setStoreChanged( false );
 		}
@@ -305,6 +321,7 @@ const Inspector = ({
 							<PanelBody
 								title={ __( 'Dimensions', 'otter-blocks' ) }
 							>
+
 								<SyncControlDropdown
 									isSynced={attributes.isSynced}
 									options={[
@@ -317,40 +334,47 @@ const Inspector = ({
 											value: 'spacing'
 										}
 									]}
-									setAttributes={setAttributes}
+									setAttributes={ attrs => {
+										updateStore( attrs );
+										setStoreChanged( true );
+									} }
 								/>
+
 
 								<ResponsiveControl
 									label={ __( 'Screen Type', 'otter-blocks' ) }
 								>
-									<BoxControl
-										label={ __( 'Padding', 'otter-blocks' ) }
-										values={
-											responsiveGetAttributes([
-												makeBoxFromSplitAxis(
-													attributes.paddingTopBottom,
-													attributes.paddingLeftRight
-												),
-												attributes.paddingTablet,
-												attributes.paddingMobile
-											]) ?? makeBoxFromSplitAxis( '15px', '20px' )
-										}
+									<AutoDisableSyncAttr attr={responsiveGetAttributes([ 'padding', 'paddingTablet', 'paddingMobile' ])} attributes={attributes}>
+										<BoxControl
+											label={ __( 'Padding', 'otter-blocks' ) }
+											values={
+												responsiveGetAttributes([
+													makeBoxFromSplitAxis(
+														attributes.paddingTopBottom,
+														attributes.paddingLeftRight
+													),
+													attributes.paddingTablet,
+													attributes.paddingMobile
+												]) ?? makeBoxFromSplitAxis( '15px', '20px' )
+											}
 
-										onChange={ value => {
-											responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
-											setStoreChanged( true );
-										} }
-										splitOnAxis={ true }
-									/>
-
+											onChange={ value => {
+												responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
+												setStoreChanged( true );
+											} }
+											splitOnAxis={ true }
+										/>
+									</AutoDisableSyncAttr>
 								</ResponsiveControl>
 
-								<UnitControl
-									label={ __( 'Spacing', 'otter-blocks' ) }
-									value={ _px( attributes.spacing ) }
-									onChange={ e => setAttributes({ spacing: e }) }
-									step={ 0.1 }
-								/>
+								<AutoDisableSyncAttr attr='spacing' attributes={attributes}>
+									<UnitControl
+										label={ __( 'Spacing', 'otter-blocks' ) }
+										value={ _px( attributes.spacing ) }
+										onChange={ e => setAttributes({ spacing: e }) }
+										step={ 0.1 }
+									/>
+								</AutoDisableSyncAttr>
 
 
 							</PanelBody>
