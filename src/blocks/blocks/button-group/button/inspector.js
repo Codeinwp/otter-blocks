@@ -9,6 +9,7 @@ import {
 } from '@wordpress/block-editor';
 
 import {
+	BaseControl,
 	PanelBody,
 	RangeControl,
 	SelectControl,
@@ -27,8 +28,25 @@ import {
  */
 import ControlPanelControl from '../../../components/control-panel-control/index.js';
 import IconPickerControl from '../../../components/icon-picker-control/index.js';
-import { ColorDropdownControl, InspectorHeader, ToogleGroupControl } from '../../../components/index.js';
-import { objectOrNumberAsBox } from '../../../helpers/helper-functions.js';
+import { ColorDropdownControl, InspectorHeader, SyncControlDropdown, ToogleGroupControl } from '../../../components/index.js';
+import { changeActiveStyle, getActiveStyle, objectOrNumberAsBox } from '../../../helpers/helper-functions.js';
+import AutoDisableSyncAttr from '../../../components/auto-disable-sync-attr/index';
+
+const styles = [
+	{
+		label: __( 'Fill', 'otter-blocks' ),
+		value: 'fill',
+		isDefault: true
+	},
+	{
+		label: __( 'Outline', 'otter-blocks' ),
+		value: 'outline'
+	},
+	{
+		label: __( 'Plain', 'otter-blocks' ),
+		value: 'plain'
+	}
+];
 
 /**
  *
@@ -163,59 +181,121 @@ const Inspector = ({
 					'style' === tab && (
 						<Fragment>
 							<PanelBody
+								title={ __( 'Style variations', 'otter-blocks' ) }
+							>
+
+								<p>
+									{ __( 'Select a style', 'otter-blocks' ) }
+								</p>
+								<ToogleGroupControl
+
+									value={ getActiveStyle( styles, attributes?.className ) }
+									options={ styles }
+									onChange={ value => {
+										const classes = changeActiveStyle( attributes?.className, styles, value );
+										setAttributes({ className: classes });
+									} }
+								/>
+
+							</PanelBody>
+							<PanelBody
 								title={ __( 'Colors', 'otter-blocks' ) }
 							>
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									options={[
+										{
+											label: __( 'Color', 'otter-blocks' ),
+											value: 'color'
+										},
+										{
+											label: __( 'Background', 'otter-blocks' ),
+											value: 'background'
+										},
+										{
+											label: __( 'Border', 'otter-blocks' ),
+											value: 'border'
+										},
+										{
+											label: __( 'Hover Color', 'otter-blocks' ),
+											value: 'hoverColor'
+										},
+										{
+											label: __( 'Hover Background', 'otter-blocks' ),
+											value: 'hoverBackground'
+										},
+										{
+											label: __( 'Hover Border', 'otter-blocks' ),
+											value: 'hoverBorder'
+										}
+									]}
+									setAttributes={setAttributes}
+								/>
+
 								<HoverControl/>
 
 								{ ! hover ? (
 									<Fragment key="without-hover">
-										<ColorDropdownControl
-											label={ __( 'Text', 'otter-blocks' ) }
-											colorValue={ attributes.color }
-											onColorChange={ color => setAttributes({ color }) }
-											className="is-list is-first"
-										/>
+										<AutoDisableSyncAttr attr='color' attributes={attributes}>
+											<ColorDropdownControl
+												label={ __( 'Text', 'otter-blocks' ) }
+												colorValue={ attributes.color }
+												onColorChange={ color => setAttributes({ color }) }
+												className="is-list is-first"
+											/>
+										</AutoDisableSyncAttr>
 
-										<ColorDropdownControl
-											label={ __( 'Background', 'otter-blocks' ) }
-											colorValue={ attributes.background }
-											gradientValue={ attributes.backgroundGradient }
-											onColorChange={ background => setAttributes({ background: background })}
-											onGradientChange={ backgroundGradient => setAttributes({ backgroundGradient })}
-											className="is-list"
-										/>
+										<AutoDisableSyncAttr attr='background' attributes={attributes}>
+											<ColorDropdownControl
+												label={ __( 'Background', 'otter-blocks' ) }
+												colorValue={ attributes.background }
+												gradientValue={ attributes.backgroundGradient }
+												onColorChange={ background => setAttributes({ background: background })}
+												onGradientChange={ backgroundGradient => setAttributes({ backgroundGradient })}
+												className="is-list"
+											/>
+										</AutoDisableSyncAttr>
 
-										<ColorDropdownControl
-											label={ __( 'Border', 'otter-blocks' ) }
-											colorValue={ attributes.border }
-											onColorChange={ border => setAttributes({ border }) }
-											className="is-list"
-										/>
+										<AutoDisableSyncAttr attr='border' attributes={attributes}>
+											<ColorDropdownControl
+												label={ __( 'Border', 'otter-blocks' ) }
+												colorValue={ attributes.border }
+												onColorChange={ border => setAttributes({ border }) }
+												className="is-list"
+											/>
+										</AutoDisableSyncAttr>
 									</Fragment>
 								) : (
 									<Fragment key="with-hover">
-										<ColorDropdownControl
-											label={ __( 'Text', 'otter-blocks' ) }
-											colorValue={ attributes.hoverColor }
-											onColorChange={ hoverColor => setAttributes({ hoverColor }) }
-											className="is-list is-first"
-										/>
+										<AutoDisableSyncAttr attr='hoverColor' attributes={attributes}>
+											<ColorDropdownControl
+												label={ __( 'Text', 'otter-blocks' ) }
+												colorValue={ attributes.hoverColor }
+												onColorChange={ hoverColor => setAttributes({ hoverColor }) }
+												className="is-list is-first"
+											/>
+										</AutoDisableSyncAttr>
 
-										<ColorDropdownControl
-											label={ __( 'Background', 'otter-blocks' ) }
-											colorValue={ attributes.hoverBackground }
-											gradientValue={ attributes.hoverBackgroundGradient }
-											onColorChange={ hoverBackground => setAttributes({ hoverBackground }) }
-											onGradientChange={ hoverBackgroundGradient => setAttributes({ hoverBackgroundGradient }) }
-											className="is-list"
-										/>
+										<AutoDisableSyncAttr attr='hoverBackground' attributes={attributes}>
+											<ColorDropdownControl
+												label={ __( 'Background', 'otter-blocks' ) }
+												colorValue={ attributes.hoverBackground }
+												gradientValue={ attributes.hoverBackgroundGradient }
+												onColorChange={ hoverBackground => setAttributes({ hoverBackground }) }
+												onGradientChange={ hoverBackgroundGradient => setAttributes({ hoverBackgroundGradient }) }
+												className="is-list"
+											/>
+										</AutoDisableSyncAttr>
 
-										<ColorDropdownControl
-											label={ __( 'Border', 'otter-blocks' ) }
-											colorValue={ attributes.hoverBackground }
-											onColorChange={ hoverBackground => setAttributes({ hoverBackground }) }
-											className="is-list"
-										/>
+										<AutoDisableSyncAttr attr='hoverBorder' attributes={attributes}>
+											<ColorDropdownControl
+												label={ __( 'Border', 'otter-blocks' ) }
+												colorValue={ attributes.hoverBorder }
+												onColorChange={ hoverBorder => setAttributes({ hoverBorder }) }
+												className="is-list"
+											/>
+										</AutoDisableSyncAttr>
+
 									</Fragment>
 								) }
 							</PanelBody>
@@ -224,17 +304,84 @@ const Inspector = ({
 								title={ __( 'Border & Box Shadow', 'otter-blocks' ) }
 								initialOpen={ true }
 							>
-								<BoxControl
-									label={ __( 'Border Width', 'otter-blocks' ) }
-									values={ objectOrNumberAsBox( attributes.borderSize ) }
-									onChange={ e => setAttributes({ borderSize: e }) }
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									options={[
+										{
+											label: __( 'Border Width', 'otter-blocks' ),
+											value: 'borderSize'
+										},
+										{
+											label: __( 'Border Radius', 'otter-blocks' ),
+											value: 'borderRadius'
+										},
+										{
+											label: __( 'Shadow Color', 'otter-blocks' ),
+											value: 'boxShadowColor'
+										},
+										{
+											label: __( 'Shadow Opacity', 'otter-blocks' ),
+											value: 'boxShadowColorOpacity'
+										},
+										{
+											label: __( 'Shadow Blur', 'otter-blocks' ),
+											value: 'boxShadowBlur'
+										},
+										{
+											label: __( 'Shadow Spread', 'otter-blocks' ),
+											value: 'boxShadowSpread'
+										},
+										{
+											label: __( 'Shadow Horizontal', 'otter-blocks' ),
+											value: 'boxShadowHorizontal'
+										},
+										{
+											label: __( 'Shadow Vertical', 'otter-blocks' ),
+											value: 'boxShadowVertical'
+										},
+										{
+											label: __( 'Hover Shadow Color', 'otter-blocks' ),
+											value: 'hoverBoxShadowColor'
+										},
+										{
+											label: __( 'Hover Shadow Opacity', 'otter-blocks' ),
+											value: 'hoverBoxShadowColorOpacity'
+										},
+										{
+											label: __( 'Hover Shadow Blur', 'otter-blocks' ),
+											value: 'hoverBoxShadowBlur'
+										},
+										{
+											label: __( 'Hover Shadow Spread', 'otter-blocks' ),
+											value: 'hoverBoxShadowSpread'
+										},
+										{
+											label: __( 'Hover Shadow Horizontal', 'otter-blocks' ),
+											value: 'hoverBoxShadowHorizontal'
+										},
+										{
+											label: __( 'Hover Shadow Vertical', 'otter-blocks' ),
+											value: 'hoverBoxShadowVertical'
+										}
+									]}
+									setAttributes={setAttributes}
 								/>
 
-								<BoxControl
-									label={ __( 'Border Radius', 'otter-blocks' ) }
-									values={ objectOrNumberAsBox( attributes.borderRadius ) }
-									onChange={ e => setAttributes({ borderRadius: e }) }
-								/>
+								<AutoDisableSyncAttr attr='borderSize' attributes={attributes}>
+									<BoxControl
+										label={ __( 'Border Width', 'otter-blocks' ) }
+										values={ objectOrNumberAsBox( attributes.borderSize ) }
+										onChange={ e => setAttributes({ borderSize: e }) }
+									/>
+								</AutoDisableSyncAttr>
+
+								<AutoDisableSyncAttr attr='borderRadius' attributes={attributes}>
+									<BoxControl
+										label={ __( 'Border Radius', 'otter-blocks' ) }
+										values={ objectOrNumberAsBox( attributes.borderRadius ) }
+										onChange={ e => setAttributes({ borderRadius: e }) }
+									/>
+								</AutoDisableSyncAttr>
 
 								<ControlPanelControl
 									label={ __( 'Box Shadow', 'otter-blocks' ) }
@@ -261,99 +408,125 @@ const Inspector = ({
 
 									{ ! hover ? (
 										<Fragment key="without-hover">
-											<ColorGradientControl
-												label={ __( 'Shadow Color', 'otter-blocks' ) }
-												colorValue={ attributes.boxShadowColor }
-												onColorChange={ e => setAttributes({ boxShadowColor: e }) }
-											/>
+											<AutoDisableSyncAttr attr='boxShadowColor' attributes={attributes}>
+												<ColorGradientControl
+													label={ __( 'Shadow Color', 'otter-blocks' ) }
+													colorValue={ attributes.boxShadowColor }
+													onColorChange={ e => setAttributes({ boxShadowColor: e }) }
+												/>
+											</AutoDisableSyncAttr>
 
-											<RangeControl
-												label={ __( 'Opacity', 'otter-blocks' ) }
-												value={ attributes.boxShadowColorOpacity }
-												onChange={ e => setAttributes({ boxShadowColorOpacity: e }) }
-												min={ 0 }
-												max={ 100 }
-											/>
+											<AutoDisableSyncAttr attr='boxShadowColorOpacity' attributes={attributes}>
+												<RangeControl
+													label={ __( 'Opacity', 'otter-blocks' ) }
+													value={ attributes.boxShadowColorOpacity }
+													onChange={ e => setAttributes({ boxShadowColorOpacity: e }) }
+													min={ 0 }
+													max={ 100 }
+												/>
+											</AutoDisableSyncAttr>
 
-											<RangeControl
-												label={ __( 'Blur', 'otter-blocks' ) }
-												value={ attributes.boxShadowBlur }
-												onChange={ e => setAttributes({ boxShadowBlur: e }) }
-												min={ 0 }
-												max={ 100 }
-											/>
+											<AutoDisableSyncAttr attr='boxShadowBlur' attributes={attributes}>
+												<RangeControl
+													label={ __( 'Blur', 'otter-blocks' ) }
+													value={ attributes.boxShadowBlur }
+													onChange={ e => setAttributes({ boxShadowBlur: e }) }
+													min={ 0 }
+													max={ 100 }
+												/>
+											</AutoDisableSyncAttr>
 
-											<RangeControl
-												label={ __( 'Spread', 'otter-blocks' ) }
-												value={ attributes.boxShadowSpread }
-												onChange={ e => setAttributes({ boxShadowSpread: e }) }
-												min={ -100 }
-												max={ 100 }
-											/>
+											<AutoDisableSyncAttr attr='boxShadowSpread' attributes={attributes}>
+												<RangeControl
+													label={ __( 'Spread', 'otter-blocks' ) }
+													value={ attributes.boxShadowSpread }
+													onChange={ e => setAttributes({ boxShadowSpread: e }) }
+													min={ -100 }
+													max={ 100 }
+												/>
+											</AutoDisableSyncAttr>
 
-											<RangeControl
-												label={ __( 'Horizontal', 'otter-blocks' ) }
-												value={ attributes.boxShadowHorizontal }
-												onChange={ e => setAttributes({ boxShadowHorizontal: e }) }
-												min={ -100 }
-												max={ 100 }
-											/>
+											<AutoDisableSyncAttr attr='boxShadowHorizontal' attributes={attributes}>
+												<RangeControl
+													label={ __( 'Horizontal', 'otter-blocks' ) }
+													value={ attributes.boxShadowHorizontal }
+													onChange={ e => setAttributes({ boxShadowHorizontal: e }) }
+													min={ -100 }
+													max={ 100 }
+												/>
+											</AutoDisableSyncAttr>
 
-											<RangeControl
-												label={ __( 'Vertical', 'otter-blocks' ) }
-												value={ attributes.boxShadowVertical }
-												onChange={ e => setAttributes({ boxShadowVertical: e }) }
-												min={ -100 }
-												max={ 100 }
-											/>
+											<AutoDisableSyncAttr attr='boxShadowVertical' attributes={attributes}>
+												<RangeControl
+													label={ __( 'Vertical', 'otter-blocks' ) }
+													value={ attributes.boxShadowVertical }
+													onChange={ e => setAttributes({ boxShadowVertical: e }) }
+													min={ -100 }
+													max={ 100 }
+												/>
+											</AutoDisableSyncAttr>
 										</Fragment>
 									) : (
 										<Fragment key="with-hover">
-											<ColorGradientControl
-												label={ __( 'Shadow Color on Hover', 'otter-blocks' ) }
-												colorValue={ attributes.hoverBoxShadowColor }
-												onColorChange={ e => setAttributes({ hoverBoxShadowColor: e }) }
-											/>
+											<AutoDisableSyncAttr attr='hoverBoxShadowColor' attributes={attributes}>
 
-											<RangeControl
-												label={ __( 'Opacity', 'otter-blocks' ) }
-												value={ attributes.hoverBoxShadowColorOpacity }
-												onChange={ e => setAttributes({ hoverBoxShadowColorOpacity: e }) }
-												min={ 0 }
-												max={ 100 }
-											/>
+												<ColorGradientControl
+													label={ __( 'Shadow Color on Hover', 'otter-blocks' ) }
+													colorValue={ attributes.hoverBoxShadowColor }
+													onColorChange={ e => setAttributes({ hoverBoxShadowColor: e }) }
+												/>
+											</AutoDisableSyncAttr>
 
-											<RangeControl
-												label={ __( 'Blur', 'otter-blocks' ) }
-												value={ attributes.hoverBoxShadowBlur }
-												onChange={ e => setAttributes({ hoverBoxShadowBlur: e }) }
-												min={ 0 }
-												max={ 100 }
-											/>
+											<AutoDisableSyncAttr attr='hoverBoxShadowColorOpacity' attributes={attributes}>
+												<RangeControl
+													label={ __( 'Opacity', 'otter-blocks' ) }
+													value={ attributes.hoverBoxShadowColorOpacity }
+													onChange={ e => setAttributes({ hoverBoxShadowColorOpacity: e }) }
+													min={ 0 }
+													max={ 100 }
+												/>
+											</AutoDisableSyncAttr>
 
-											<RangeControl
-												label={ __( 'Spread', 'otter-blocks' ) }
-												value={ attributes.hoverBoxShadowSpread }
-												onChange={ e => setAttributes({ hoverBoxShadowSpread: e }) }
-												min={ -100 }
-												max={ 100 }
-											/>
+											<AutoDisableSyncAttr attr='hoverBoxShadowBlur' attributes={attributes}>
+												<RangeControl
+													label={ __( 'Blur', 'otter-blocks' ) }
+													value={ attributes.hoverBoxShadowBlur }
+													onChange={ e => setAttributes({ hoverBoxShadowBlur: e }) }
+													min={ 0 }
+													max={ 100 }
+												/>
 
-											<RangeControl
-												label={ __( 'Horizontal', 'otter-blocks' ) }
-												value={ attributes.hoverBoxShadowHorizontal }
-												onChange={ e => setAttributes({ hoverBoxShadowHorizontal: e }) }
-												min={ -100 }
-												max={ 100 }
-											/>
+											</AutoDisableSyncAttr>
 
-											<RangeControl
-												label={ __( 'Vertical', 'otter-blocks' ) }
-												value={ attributes.hoverBoxShadowVertical }
-												onChange={ e => setAttributes({ hoverBoxShadowVertical: e }) }
-												min={ -100 }
-												max={ 100 }
-											/>
+											<AutoDisableSyncAttr attr='boxShadowVertical' attributes={attributes}>
+												<RangeControl
+													label={ __( 'hoverBoxShadowSpread', 'otter-blocks' ) }
+													value={ attributes.hoverBoxShadowSpread }
+													onChange={ e => setAttributes({ hoverBoxShadowSpread: e }) }
+													min={ -100 }
+													max={ 100 }
+												/>
+											</AutoDisableSyncAttr>
+
+											<AutoDisableSyncAttr attr='hoverBoxShadowHorizontal' attributes={attributes}>
+												<RangeControl
+													label={ __( 'Horizontal', 'otter-blocks' ) }
+													value={ attributes.hoverBoxShadowHorizontal }
+													onChange={ e => setAttributes({ hoverBoxShadowHorizontal: e }) }
+													min={ -100 }
+													max={ 100 }
+												/>
+											</AutoDisableSyncAttr>
+
+											<AutoDisableSyncAttr attr='hoverBoxShadowVertical' attributes={attributes}>
+												<RangeControl
+													label={ __( 'Vertical', 'otter-blocks' ) }
+													value={ attributes.hoverBoxShadowVertical }
+													onChange={ e => setAttributes({ hoverBoxShadowVertical: e }) }
+													min={ -100 }
+													max={ 100 }
+												/>
+											</AutoDisableSyncAttr>
 										</Fragment>
 									) }
 								</ControlPanelControl>

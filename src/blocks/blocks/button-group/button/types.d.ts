@@ -33,6 +33,7 @@ type Attributes = {
   prefix: string
   icon: string
   noFollow: boolean
+  isSynced: string[]
 }
 
 export type ButtonAttrs = Partial<Attributes>

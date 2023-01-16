@@ -54,6 +54,9 @@
 		},
 		"lineHeight": {
 			"type": ["number", "string"]
+		},
+		"isSynced": {
+			"type": "array"
 		}
 	},
 	"editorStyle": "otter-button-group-editor",

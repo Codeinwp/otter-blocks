@@ -16,12 +16,9 @@ import {
 	MenuItem,
 	SelectControl,
 	TextControl,
-	__experimentalToolsPanel as ToolsPanel,
-	__experimentalToolsPanelItem as ToolsPanelItem,
 	__experimentalUnitControl as UnitControl,
 	__experimentalHStack as HStack,
 	DropdownMenu,
-	RangeControl,
 	Disabled,
 	Spinner
 } from '@wordpress/components';
@@ -40,6 +37,7 @@ const TwoItemOnRow = ({ children }) => {
 };
 
 interface IsEnabled {
+	fontSize: boolean
 	fontFamily: boolean;
 	appearance: boolean;
 	spacing: boolean;
@@ -120,6 +118,7 @@ const defaultStates = {
 type TypographySelectorControlProps = {
 	enableComponents?: Partial<IsEnabled>
 	showComponents?: Partial<IsEnabled>
+	showAsDisable?: Partial<IsEnabled>
 	componentsValue?: Partial<ComponentsValue>
 	componentsDefaultValue?: Partial<ComponentsValue>
 	onChange?: OnChange
@@ -136,7 +135,8 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 		componentsValue,
 		componentsDefaultValue,
 		showComponents,
-		onChange
+		onChange,
+		showAsDisable
 	} = props;
 
 	const [ showComponent, setShowComponent ] = useState(
@@ -175,7 +175,7 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 	}, [ showComponent?.fontFamily, fonts ]);
 
 	return (
-		<div>
+		<div className='o-typo-component'>
 			<HStack className="o-typo-header">
 				<p>{ __( 'Font Size', 'otter-blocks' ) }</p>
 
@@ -264,138 +264,152 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 				</DropdownMenu>
 			</HStack>
 
-			<FontSizePicker
 
-				/*@ts-ignore */
-				value={ componentsValue?.fontSize ?? componentsDefaultValue?.fontSize }
+			<Disabled
 
-				/*@ts-ignore */
-				fontSizes={ props.fontSizes ?? defaultStates.fontSizes }
-				onChange={ fontSize => onChangeValue( 'fontSize', fontSize?.toString() ) }
-			/>
+				// @ts-ignore
+				isDisabled={ Boolean( showAsDisable?.fontSize ) }
+			>
+				<FontSizePicker
+
+					/*@ts-ignore */
+					value={ componentsValue?.fontSize ?? componentsDefaultValue?.fontSize }
+
+					/*@ts-ignore */
+					fontSizes={ props.fontSizes ?? defaultStates.fontSizes }
+					onChange={ fontSize => onChangeValue( 'fontSize', fontSize?.toString() ) }
+				/>
+			</Disabled>
 
 
 			{
 				showComponent?.fontFamily && (
-					<div className="o-gfont-control">
-						<BaseControl
-							label={ 'Font Family' }
-							id={ id }
-							className="o-no-margin"
-						>
-							{ ( null !== fonts ) ? (
-								( Boolean( props.config?.fontFamilyAsSelect ) ) ? (
-									<SelectControl
-										value={ componentsValue?.fontFamily ?? componentsDefaultValue?.fontFamily }
-										id={ id }
-										options={ [
-											{
-												label: __( 'Default', 'otter-blocks' ),
-												value: ''
-											},
-											...fonts.map( i => {
-												return i = {
-													label: i.family,
-													value: i.family
-												};
-											})
-										] }
-										onChange={ e => {
-											if ( '' === e ) {
-												onChangeValue( 'fontFamily', undefined );
-												return;
-											}
+					<Disabled
 
-											onChangeValue( 'fontFamily', e );
-										} }
-									/>
-								) : (
-									<Dropdown
-										contentClassName="o-gfont-popover"
-										position="bottom center"
-										renderToggle={ ({ isOpen, onToggle }) => (
-											<Button
-												className="o-gfont-button"
-												id={ id }
-												onClick={ () => {
-													if ( showComponent?.fontFamily && 0 === fonts.length ) {
-														setLoading( true );
-														googleFontsLoader.afterLoading().then( ( loader ) => {
-															setFonts( loader.fonts );
-															setLoading( false );
+						// @ts-ignore
+						isDisabled={ Boolean( showAsDisable?.fontFamily ) }
+					>
+						<div className="o-gfont-control">
+							<BaseControl
+								label={ 'Font Family' }
+								id={ id }
+								className="o-no-margin"
+							>
+								{ ( null !== fonts ) ? (
+									( Boolean( props.config?.fontFamilyAsSelect ) ) ? (
+										<SelectControl
+											value={ componentsValue?.fontFamily ?? componentsDefaultValue?.fontFamily }
+											id={ id }
+											options={ [
+												{
+													label: __( 'Default', 'otter-blocks' ),
+													value: ''
+												},
+												...fonts.map( i => {
+													return i = {
+														label: i.family,
+														value: i.family
+													};
+												})
+											] }
+											onChange={ e => {
+												if ( '' === e ) {
+													onChangeValue( 'fontFamily', undefined );
+													return;
+												}
+
+												onChangeValue( 'fontFamily', e );
+											} }
+										/>
+									) : (
+										<Dropdown
+											contentClassName="o-gfont-popover"
+											position="bottom center"
+											renderToggle={ ({ isOpen, onToggle }) => (
+												<Button
+													className="o-gfont-button"
+													id={ id }
+													onClick={ () => {
+														if ( showComponent?.fontFamily && 0 === fonts.length ) {
+															setLoading( true );
+															googleFontsLoader.afterLoading().then( ( loader ) => {
+																setFonts( loader.fonts );
+																setLoading( false );
 
 															// if ( componentsValue?.fontFamily ) {
 															// 	setVariants( loader.getVariants( componentsValue?.fontFamily ) );
 															// }
-														});
-													}
-													onToggle?.();
-												} }
-												aria-expanded={ isOpen }
-											>
-												{ componentsValue?.fontFamily ?? componentsDefaultValue?.fontFamily ?? __( 'Select Font Family', 'otter-blocks' ) }
-											</Button>
-										) }
-										renderContent={ ({ onToggle }) => (
-											<MenuGroup label={ __( 'Google Fonts', 'otter-blocks' ) }>
-												<TextControl
-													value={ search }
-													onChange={ e => setSearch( e ) }
-												/>
-
-												<div className="components-popover__items">
-													<MenuItem
-														onClick={ () => {
-
-															onToggle();
-															onChangeValue( 'fontFamily', undefined );
-															setSearch( '' );
-														}}
-													>
-														{ __( 'Default', 'otter-blocks' ) }
-													</MenuItem>
-
-													{
-														0 === fonts.length && isLoading ?
-
-															( <Fragment>
-																<Spinner/>
-																{ __( 'Loading fonts.', 'otter-blocks' ) }
-															</Fragment> ) :
-															''
-													}
-
-													{ ( fonts ).map( ( i, index ) => {
-														if ( ! search || i.family.toLowerCase().includes( search.toLowerCase() ) ) {
-															return (
-																<MenuItem
-																	key={index}
-																	className={ classNames(
-																		{ 'is-selected': ( i.family === componentsValue?.fontFamily ) }
-																	) }
-																	onClick={ () => {
-																		onToggle();
-
-																		onChangeValue( 'fontFamily', i.family );
-																		setSearch( '' );
-																	}}
-																>
-																	{ i.family }
-																</MenuItem>
-															);
+															});
 														}
-													}) }
+														onToggle?.();
+													} }
+													aria-expanded={ isOpen }
+												>
+													{ componentsValue?.fontFamily ?? componentsDefaultValue?.fontFamily ?? __( 'Select Font Family', 'otter-blocks' ) }
+												</Button>
+											) }
+											renderContent={ ({ onToggle }) => (
+												<MenuGroup label={ __( 'Google Fonts', 'otter-blocks' ) }>
+													<TextControl
+														value={ search }
+														onChange={ e => setSearch( e ) }
+													/>
 
-												</div>
-											</MenuGroup>
-										) }
-									/>
-								)
-							) : (
-								__( 'Loading…', 'otter-blocks' )
-							) }
-						</BaseControl>
-					</div>
+													<div className="components-popover__items">
+														<MenuItem
+															onClick={ () => {
+
+																onToggle();
+																onChangeValue( 'fontFamily', undefined );
+																setSearch( '' );
+															}}
+														>
+															{ __( 'Default', 'otter-blocks' ) }
+														</MenuItem>
+
+														{
+															0 === fonts.length && isLoading ?
+
+																( <Fragment>
+																	<Spinner/>
+																	{ __( 'Loading fonts.', 'otter-blocks' ) }
+																</Fragment> ) :
+																''
+														}
+
+														{ ( fonts ).map( ( i, index ) => {
+															if ( ! search || i.family.toLowerCase().includes( search.toLowerCase() ) ) {
+																return (
+																	<MenuItem
+																		key={index}
+																		className={ classNames(
+																			{ 'is-selected': ( i.family === componentsValue?.fontFamily ) }
+																		) }
+																		onClick={ () => {
+																			onToggle();
+
+																			onChangeValue( 'fontFamily', i.family );
+																			setSearch( '' );
+																		}}
+																	>
+																		{ i.family }
+																	</MenuItem>
+																);
+															}
+														}) }
+
+													</div>
+												</MenuGroup>
+											) }
+										/>
+									)
+								) : (
+									__( 'Loading…', 'otter-blocks' )
+								) }
+							</BaseControl>
+						</div>
+					</Disabled>
+
 				)
 			}
 
@@ -406,31 +420,43 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 					<TwoItemOnRow>
 						{
 							showComponent?.appearance && (
-								<SelectControl
-									label={ __( 'Appearance', 'otter-blocks' ) }
-									value={ componentsValue?.appearance ?? componentsDefaultValue?.appearance }
-									options={ [
-										{
-											label: __( 'Regular', 'otter-blocks' ),
-											value: 'normal'
-										},
-										{
-											label: __( 'Italic', 'otter-blocks' ),
-											value: 'italic'
-										}
-									] }
-									onChange={ appearance => onChangeValue( 'appearance', appearance ) }
-								/>
+								<Disabled
+
+									// @ts-ignore
+									isDisabled={ Boolean( showAsDisable?.appearance ) }
+								>
+									<SelectControl
+										label={ __( 'Appearance', 'otter-blocks' ) }
+										value={ componentsValue?.appearance ?? componentsDefaultValue?.appearance }
+										options={ [
+											{
+												label: __( 'Regular', 'otter-blocks' ),
+												value: 'normal'
+											},
+											{
+												label: __( 'Italic', 'otter-blocks' ),
+												value: 'italic'
+											}
+										] }
+										onChange={ appearance => onChangeValue( 'appearance', appearance ) }
+									/>
+								</Disabled>
 							)
 						}
 
 						{
 							showComponent.spacing && (
-								<UnitControl
-									label="Spacing"
-									value={ componentsValue?.spacing ?? componentsDefaultValue?.spacing }
-									onChange={ ( spacing: string ) => onChangeValue( 'spacing', spacing ) }
-								/>
+								<Disabled
+
+									// @ts-ignore
+									isDisabled={ Boolean( showAsDisable?.spacing ) }
+								>
+									<UnitControl
+										label="Spacing"
+										value={ componentsValue?.spacing ?? componentsDefaultValue?.spacing }
+										onChange={ ( spacing: string ) => onChangeValue( 'spacing', spacing ) }
+									/>
+								</Disabled>
 							)
 						}
 					</TwoItemOnRow>
@@ -439,89 +465,107 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 
 			{
 				showComponent?.decoration && (
-					<BaseControl
-						label={ __( 'Decoration', 'otter-blocks' ) }
-						id={'1'}
-					>
-						<ToogleGroupControl
-							hasIcon
+					<Disabled
 
-							/*@ts-ignore */
-							value={
-								componentsValue?.decoration ?? componentsDefaultValue?.decoration
-							}
-							options={[
-								{
-									label: __( 'Reset', 'otter-blocks' ),
-									value: 'reset',
-									icon: reset
-								},
-								{
-									label: __( 'Underline', 'otter-blocks' ),
-									value: 'underline',
-									icon: formatUnderline
-								},
-								{
-									label: __( 'Strikethrough', 'otter-blocks' ),
-									value: 'strikethrough',
-									icon: formatStrikethrough
+						// @ts-ignore
+						isDisabled={ Boolean( showAsDisable?.decoration ) }
+					>
+						<BaseControl
+							label={ __( 'Decoration', 'otter-blocks' ) }
+							id={'1'}
+						>
+							<ToogleGroupControl
+								hasIcon
+
+								/*@ts-ignore */
+								value={
+									componentsValue?.decoration ?? componentsDefaultValue?.decoration
 								}
-							]}
-							onChange={ decoration => onChangeValue( 'decoration', decoration ) }
-						/>
-					</BaseControl>
+								options={[
+									{
+										label: __( 'Reset', 'otter-blocks' ),
+										value: 'reset',
+										icon: reset
+									},
+									{
+										label: __( 'Underline', 'otter-blocks' ),
+										value: 'underline',
+										icon: formatUnderline
+									},
+									{
+										label: __( 'Strikethrough', 'otter-blocks' ),
+										value: 'strikethrough',
+										icon: formatStrikethrough
+									}
+								]}
+								onChange={ decoration => onChangeValue( 'decoration', decoration ) }
+							/>
+						</BaseControl>
+					</Disabled>
 				)
 			}
 
 			{
 				showComponent?.letterCase && (
-					<BaseControl
-						label={ __( 'Letter Case', 'otter-blocks' ) }
-						id={'1'}
+					<Disabled
+
+						// @ts-ignore
+						isDisabled={ Boolean( showAsDisable?.letterCase ) }
 					>
-						<ToogleGroupControl
-							hasIcon
 
-							/*@ts-ignore */
-							value={ componentsValue?.letterCase ?? componentsDefaultValue?.letterCase }
-							options={[
-								{
-									label: __( 'None', 'otter-blocks' ),
-									value: 'none',
-									icon: reset
-								},
-								{
-									label: __( 'Uppercase', 'otter-blocks' ),
-									value: 'uppercase',
-									icon: formatUppercase
-								},
-								{
-									label: __( 'Lowercase', 'otter-blocks' ),
-									value: 'lowercase',
-									icon: formatLowercase
-								},
-								{
-									label: __( 'Capitalize', 'otter-blocks' ),
-									value: 'capitalize',
-									icon: formatCapitalize
-								}
-							]}
-							onChange={ letterCase => onChangeValue( 'letterCase', letterCase ) }
-						/>
-					</BaseControl>
+						<BaseControl
+							label={ __( 'Letter Case', 'otter-blocks' ) }
+							id={'1'}
+						>
+							<ToogleGroupControl
+								hasIcon
 
+								/*@ts-ignore */
+								value={ componentsValue?.letterCase ?? componentsDefaultValue?.letterCase }
+								options={[
+									{
+										label: __( 'None', 'otter-blocks' ),
+										value: 'none',
+										icon: reset
+									},
+									{
+										label: __( 'Uppercase', 'otter-blocks' ),
+										value: 'uppercase',
+										icon: formatUppercase
+									},
+									{
+										label: __( 'Lowercase', 'otter-blocks' ),
+										value: 'lowercase',
+										icon: formatLowercase
+									},
+									{
+										label: __( 'Capitalize', 'otter-blocks' ),
+										value: 'capitalize',
+										icon: formatCapitalize
+									}
+								]}
+								onChange={ letterCase => onChangeValue( 'letterCase', letterCase ) }
+							/>
+						</BaseControl>
+					</Disabled>
 				)
 			}
 
 			{
 				showComponent?.lineHeight && (
-					<UnitControl
-						label={ __( 'Line Height', 'otter-blocks' ) }
+					<Disabled
 
-						/*@ts-ignore */
-						value={ componentsValue?.lineHeight ?? componentsDefaultValue?.lineHeight }
-						onChange={ ( lineHeight: string ) => onChangeValue( 'lineHeight', lineHeight ) }
-					/>
+						// @ts-ignore
+						isDisabled={ Boolean( showAsDisable?.lineHeight ) }
+					>
+						<UnitControl
+							label={ __( 'Line Height', 'otter-blocks' ) }
+
+							/*@ts-ignore */
+							value={ componentsValue?.lineHeight ?? componentsDefaultValue?.lineHeight }
+							onChange={ ( lineHeight: string ) => onChangeValue( 'lineHeight', lineHeight ) }
+						/>
+					</Disabled>
 				)
 			}
 

@@ -31,7 +31,7 @@ import { Fragment, useEffect, useState } from '@wordpress/element';
 import ResponsiveControl from '../../../components/responsive-control';
 import ToogleGroupControl from '../../../components/toogle-group-control/index.js';
 import { useResponsiveAttributes } from '../../../helpers/utility-hooks.js';
-import { InspectorHeader } from '../../../components/index.js';
+import { InspectorHeader, SyncControlDropdown } from '../../../components/index.js';
 import { getChoice, _i, _px } from '../../../helpers/helper-functions.js';
 import TypographySelectorControl from '../../../components/typography-selector-control/index';
 
@@ -305,6 +305,21 @@ const Inspector = ({
 							<PanelBody
 								title={ __( 'Dimensions', 'otter-blocks' ) }
 							>
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									options={[
+										{
+											label: __( 'Padding', 'otter-blocks' ),
+											value: responsiveGetAttributes([ 'padding', 'paddingTablet', 'paddingMobile' ])
+										},
+										{
+											label: __( 'Spacing', 'otter-blocks' ),
+											value: 'spacing'
+										}
+									]}
+									setAttributes={setAttributes}
+								/>
+
 								<ResponsiveControl
 									label={ __( 'Screen Type', 'otter-blocks' ) }
 								>
@@ -344,54 +359,32 @@ const Inspector = ({
 								title={ __( 'Typography', 'otter-blocks' ) }
 								initialOpen={ true }
 							>
-								{/* <BaseControl
-									label={ __( 'Font Size', 'otter-blocks' ) }
-								>
-									<FontSizePicker
-										value={ attributes.fontSize }
-										fontSizes={ [
-											{
-												name: __( 'Extra Small', 'otter-blocks' ),
-												slug: 'extra-small',
-												size: 14
-											},
-											{
-												name: __( 'Small', 'otter-blocks' ),
-												slug: 'small',
-												size: 16
-											},
-											{
-												name: __( 'Medium', 'otter-blocks' ),
-												slug: 'medium',
-												size: 18
-											},
-											{
-												name: __( 'Large', 'otter-blocks' ),
-												slug: 'large',
-												size: 24
-											},
-											{
-												name: __( 'Extra Large', 'otter-blocks' ),
-												slug: 'extra-large',
-												size: 28
-											}
-										] }
-										onChange={ fontSize => setAttributes({ fontSize }) }
-									/>
-
-								</BaseControl>
-
-								<GoogleFontsControl
-									label={ __( 'Font Family', 'otter-blocks' ) }
-									value={ attributes.fontFamily }
-									onChangeFontFamily={ changeFontFamily }
-									valueVariant={ attributes.fontVariant }
-									onChangeFontVariant={ e => setAttributes({ fontVariant: e }) }
-									valueStyle={ attributes.fontStyle }
-									onChangeFontStyle={ e => setAttributes({ fontStyle: e }) }
-									valueTransform={ attributes.textTransform }
-									onChangeTextTransform={ e => setAttributes({ textTransform: e }) }
-								/> */}
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									options={[
+										{
+											label: __( 'Font Size', 'otter-blocks' ),
+											value: 'fontSize'
+										},
+										{
+											label: __( 'Font Family', 'otter-blocks' ),
+											value: 'fontFamily'
+										},
+										{
+											label: __( 'Appearance', 'otter-blocks' ),
+											value: 'fontVariant'
+										},
+										{
+											label: __( 'Letter Case', 'otter-blocks' ),
+											value: 'fontStyle'
+										},
+										{
+											label: __( 'Line Height', 'otter-blocks' ),
+											value: 'lineHeight'
+										}
+									]}
+									setAttributes={setAttributes}
+								/>
 
 								<TypographySelectorControl
 									enableComponents={{
@@ -418,8 +411,15 @@ const Inspector = ({
 											fontStyle: values.letterCase
 										});
 									} }
-								/>
 
+									showAsDisable={{
+										fontSize: attributes.isSynced?.includes( 'fontSize' ),
+										fontFamily: attributes.isSynced?.includes( 'fontFamily' ),
+										appearance: attributes.isSynced?.includes( 'fontVariant' ),
+										lineHeight: attributes.isSynced?.includes( 'lineHeight' ),
+										letterCase: attributes.isSynced?.includes( 'fontStyle' )
+									}}
+								/>
 							</PanelBody>
 
 						</Fragment>

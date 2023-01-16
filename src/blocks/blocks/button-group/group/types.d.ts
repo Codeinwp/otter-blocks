@@ -15,6 +15,7 @@ type Attributes = {
 	textTransform: string
 	fontStyle: string
 	lineHeight: number | string
+	isSynced: string[]
 }
 
 export type ButtonGroupAttrs = Partial<Attributes>
