@@ -45,10 +45,12 @@ o-dynamic-link {
 
 .wp-block:not(.is-selected) {
 	o-dynamic[data-preview]:not([data-preview=""]) {
-		text-decoration-line: underline;
-		text-decoration-style: dashed;
-		text-decoration-thickness: 7%;
-		text-decoration-color: var(--wp-admin-theme-color);
+		&:not(.hide-highlight) {
+			text-decoration-line: underline;
+			text-decoration-style: dashed;
+			text-decoration-thickness: 7%;
+			text-decoration-color: var(--wp-admin-theme-color);
+		}
 		span {
 			display: none;
 		}
