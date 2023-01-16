@@ -21,17 +21,6 @@ class Main {
 	protected static $instance = null;
 
 	/**
-	 * GutenbergBlocks constructor.
-	 *
-	 * @since   1.0.0
-	 * @access  public
-	 */
-	public function __construct() {
-		$this->name        = __( 'Otter', 'otter-blocks' );
-		$this->description = __( 'Blocks for Gutenberg', 'otter-blocks' );
-	}
-
-	/**
 	 * Method to define hooks needed.
 	 *
 	 * @since   1.0.0
