@@ -16,7 +16,7 @@ import { type FormInputProps } from './input/types';
 
 const DragHandle = SortableHandle( () => {
 	return (
-		<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option__drag" tabIndex="0">
+		<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option__drag" tabIndex={ 0 }>
 			<span></span>
 		</div>
 	);
@@ -39,7 +39,8 @@ const fieldNames: Record<string, string> = {
 };
 
 export const SortableInputField = SortableElement( ({ inputField, actions } : SortableTabProps ) => {
-	const fieldName = 'themeisle-blocks/form-input' ? ( inputField.attributes.type ?? 'text' ) : 'textarea';
+	const fieldName = 'themeisle-blocks/form-input' === inputField.name ? ( inputField.attributes.type ?? 'text' ) : 'textarea';
+
 	return (
 		<div className="wp-block-themeisle-blocks-tabs-inspector-tab-option">
 			<DragHandle />

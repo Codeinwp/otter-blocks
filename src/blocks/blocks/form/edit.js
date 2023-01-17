@@ -3,7 +3,7 @@
  */
 import classnames from 'classnames';
 
-import { get, isObjectLike } from 'lodash';
+import { get } from 'lodash';
 
 import hash from 'object-hash';
 
@@ -28,7 +28,6 @@ import {
 } from '@wordpress/blocks';
 
 import {
-	dispatch,
 	select,
 	useSelect,
 	useDispatch
@@ -38,7 +37,6 @@ import {
 	Fragment,
 	useState,
 	useEffect,
-	useRef,
 	createContext
 } from '@wordpress/element';
 
@@ -48,7 +46,6 @@ import {
 import metadata from './block.json';
 import {
 	blockInit,
-	useCSSNode,
 	getDefaultValueByField
 } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
@@ -124,6 +121,7 @@ const Edit = ({
 	const {
 		insertBlock,
 		removeBlock,
+		replaceInnerBlocks,
 		selectBlock,
 		moveBlockToPosition
 	} = useDispatch( 'core/block-editor' );
@@ -136,8 +134,7 @@ const Edit = ({
 
 	const [ listIDOptions, setListIDOptions ] = useState([{ label: __( 'None', 'otter-blocks' ), value: '' }]);
 
-	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
-	const { createNotice } = dispatch( 'core/notices' );
+	const { createNotice } = useDispatch( 'core/notices' );
 
 	const hasInnerBlocks = useSelect(
 		select =>
@@ -972,6 +969,7 @@ const Edit = ({
 											true
 										);
 									}
+									selectBlock( clientId );
 								} }
 								allowSkip
 							/>
