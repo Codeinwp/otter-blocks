@@ -134,6 +134,13 @@ const Inspector = ({
 		}) )
 	});
 
+
+	/**
+	 * Reusing `paddingTopBottom` and `paddingLeftRight` introduce some edge cases when handling the update and Global CSS.
+	 * By using a proxy, we can treat them as `padding` in Components and handle the update in a unified matter.
+	 *
+	 * This method is very useful when attributes are split. We might use it in the future for more complex components like BorderBoxControl.
+	 */
 	const [ storeChanged, setStoreChanged ] = useState( false );
 
 	const updateStore = attr => setProxyStore({

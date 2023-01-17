@@ -116,13 +116,40 @@ const defaultStates = {
 };
 
 type TypographySelectorControlProps = {
+
+	/**
+	 * Select which components to use.
+	 */
 	enableComponents?: Partial<IsEnabled>
-	showComponents?: Partial<IsEnabled>
+
+	/**
+	 * Make the components to in a disabled state. Useful for Global Defaults Sync.
+	 */
 	showAsDisable?: Partial<IsEnabled>
+
+	/**
+	 * The values of the components.
+	 */
 	componentsValue?: Partial<ComponentsValue>
+
+	/**
+	 * The default values of the components.
+	 */
 	componentsDefaultValue?: Partial<ComponentsValue>
+
+	/**
+	 * It triggers when a component change its value. It offers all the values at once.
+	 */
 	onChange?: OnChange
+
+	/**
+	 * The font sizes options for FontSizePicker
+	 */
 	fontSizes?: ({ name?: string, slug?: string, size?: string | number })[]
+
+	/**
+	 * Various config options.
+	 */
 	config?: {
 		fontFamilyAsSelect?: boolean
 	}
@@ -134,7 +161,6 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 		enableComponents,
 		componentsValue,
 		componentsDefaultValue,
-		showComponents,
 		onChange,
 		showAsDisable
 	} = props;
@@ -157,10 +183,14 @@ const TypographySelectorControl = ( props: TypographySelectorControlProps ) => {
 	const [ isLoading, setLoading ] = useState( false );
 
 	useEffect( () => {
-		console.count( 'Font' );
 
-		// Special case when the Font Family component is rendered as a simple Select instead of a Popover
-		if ( Boolean( props.config?.fontFamilyAsSelect ) && showComponent?.fontFamily && 0 === fonts.length ) {
+		/**
+		 * This effect create a lazy loading for Font options. We make a request to Google Api only if it is needed.
+		 */
+		if (
+			Boolean( props.config?.fontFamilyAsSelect )	&& // Special case when the Font Family component is rendered as a simple Select instead of a Popover
+			showComponent?.fontFamily && 0 === fonts.length
+		) {
 			setLoading( true );
 			googleFontsLoader.afterLoading().then( ( loader ) => {
 				setFonts( loader.fonts );
