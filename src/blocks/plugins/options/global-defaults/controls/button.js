@@ -50,7 +50,9 @@ const ButtonBlock = ({
 		);
 	};
 
-	const setAttributes = x => changeConfig( blockName, x );
+	const setAttributes = x => {
+		changeConfig( blockName, x );
+	};
 
 	return (
 		<Fragment>
@@ -71,9 +73,7 @@ const ButtonBlock = ({
 						<ColorDropdownControl
 							label={ __( 'Background', 'otter-blocks' ) }
 							colorValue={ attributes.background }
-							gradientValue={ attributes.backgroundGradient }
 							onColorChange={ background => setAttributes({ background: background })}
-							onGradientChange={ backgroundGradient => setAttributes({ backgroundGradient })}
 							className="is-list"
 						/>
 
@@ -96,9 +96,7 @@ const ButtonBlock = ({
 						<ColorDropdownControl
 							label={ __( 'Background', 'otter-blocks' ) }
 							colorValue={ attributes.hoverBackground }
-							gradientValue={ attributes.hoverBackgroundGradient }
 							onColorChange={ hoverBackground => setAttributes({ hoverBackground }) }
-							onGradientChange={ hoverBackgroundGradient => setAttributes({ hoverBackgroundGradient }) }
 							className="is-list"
 						/>
 

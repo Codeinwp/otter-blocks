@@ -323,7 +323,7 @@ const Inspector = ({
 							>
 
 								<SyncControlDropdown
-									isSynced={attributes.isSynced}
+									isSynced={proxyStore.isSynced}
 									options={[
 										{
 											label: __( 'Padding', 'otter-blocks' ),
@@ -344,7 +344,7 @@ const Inspector = ({
 								<ResponsiveControl
 									label={ __( 'Screen Type', 'otter-blocks' ) }
 								>
-									<AutoDisableSyncAttr attr={responsiveGetAttributes([ 'padding', 'paddingTablet', 'paddingMobile' ])} attributes={attributes}>
+									<AutoDisableSyncAttr attr={responsiveGetAttributes([ 'padding', 'paddingTablet', 'paddingMobile' ])} attributes={proxyStore}>
 										<BoxControl
 											label={ __( 'Padding', 'otter-blocks' ) }
 											values={

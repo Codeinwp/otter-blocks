@@ -114,33 +114,40 @@ $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 	--padding-tablet: var(--padding);
 	--padding-mobile: var(--padding-tablet);
 	--font-size: 15px;
+	--spacing: 20px;
+
+	gap: var(--spacing);
 
 	.wp-block-themeisle-blocks-button {
 		display: flex;
 		justify-content: center;
 		align-items: center;
 
-		&.wp-block-button {
-			.wp-block-button__link {
-				@include padding-and-font-size
+		&:is(.wp-block-button) .wp-block-button__link {
+			padding: var(--padding);
+			font-size: var(--font-size);
+
+			@media ( min-width: 600px ) and ( max-width: 960px ) {
+				padding: var(--padding-tablet);
 			}
 
-			&.is-style-plain {
-				.wp-block-button__link {
-					border-width: 0px;
-					background: transparent;
-					--padding: 0px;
-					@include padding-and-font-size; // Default WP css overshadow the padding and font size for the button. With this trick, we increase priority without the usage of !important.
-				}
+			@media ( max-width: 600px ) {
+				padding: var(--padding-mobile);
+			}		
+		}
+
+		&.wp-block-button {
+			&:is(.is-style-plain, .is-style-outline) .wp-block-button__link {
+				background: transparent !important;
 			}
-	
-			&.is-style-outline {
-				.wp-block-button__link {
-					background: transparent;
-					@include padding-and-font-size;
-				}
+			
+			&:is(.is-style-plain) .wp-block-button__link {
+				border-width: 0px !important;
+				padding: 0px !important;
+				box-shadow: unset !important;
 			}
 		}
+
 		
 		svg {
 			fill: currentColor;

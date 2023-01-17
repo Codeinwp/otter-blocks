@@ -42,40 +42,20 @@ class Button_Group_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property'  => '--spacing',
-						'value'     => 'spacing',
-						'default'   => 20,
-						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['spacing'] ) && is_numeric( $attrs['spacing'] );
+						'property' => '--spacing',
+						'value'    => 'spacing',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
-						'hasSync'   => 'gr-btn-spacing',
+						'hasSync'  => 'gr-btn-spacing',
 					),
 					array(
-						'property'  => '--spacing',
-						'value'     => 'spacing',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['spacing'] ) && is_string( $attrs['spacing'] );
+						'property' => '--font-size',
+						'value'    => 'fontSize',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
-						'hasSync'   => 'gr-btn-spacing',
-					),
-					array(
-						'property'  => '--font-size',
-						'value'     => 'fontSize',
-						'default'   => 20,
-						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['spacing'] ) && is_numeric( $attrs['spacing'] );
-						},
-						'hasSync'   => 'gr-btn-font-size',
-					),
-					array(
-						'property'  => '--font-size',
-						'value'     => 'fontSize',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['spacing'] ) && is_string( $attrs['spacing'] );
-						},
-						'hasSync'   => 'gr-btn-font-size',
+						'hasSync'  => 'gr-btn-font-size',
 					),
 					array(
 						'property' => '--padding-tablet',
@@ -120,26 +100,39 @@ class Button_Group_CSS extends Base_CSS {
 					array(
 						'property' => 'padding-top',
 						'value'    => 'paddingTopBottom',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
+						'hasSync'  => 'gr-btn-padding-vertical',
 					),
 					array(
 						'property' => 'padding-bottom',
 						'value'    => 'paddingTopBottom',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
+						'hasSync'  => 'gr-btn-padding-vertical',
 					),
 					array(
 						'property' => 'padding-left',
 						'value'    => 'paddingLeftRight',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
+						'hasSync'  => 'gr-btn-padding-horizontal',
 					),
 					array(
 						'property' => 'padding-right',
 						'value'    => 'paddingLeftRight',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
+						'hasSync'  => 'gr-btn-padding-horizontal',
 					),
 					array(
 						'property' => 'font-family',
 						'value'    => 'fontFamily',
+						'hasSync'  => 'gr-btn-font-family',
 					),
 					array(
 						'property' => 'font-weight',
@@ -147,30 +140,26 @@ class Button_Group_CSS extends Base_CSS {
 						'format'   => function( $value, $attrs ) {
 							return 'regular' === $value ? 'normal' : $value;
 						},
+						'hasSync'  => 'gr-btn-font-variant',
 					),
 					array(
 						'property' => 'text-transform',
 						'value'    => 'textTransform',
+						'hasSync'  => 'gr-btn-font-transform',
 					),
 					array(
 						'property' => 'font-style',
 						'value'    => 'fontStyle',
 						'default'  => 'normal',
+						'hasSync'  => 'gr-btn-font-style',
 					),
 					array(
-						'property'  => 'line-height',
-						'value'     => 'lineHeight',
-						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['lineHeight'] ) && is_numeric( $attrs['lineHeight'] );
+						'property' => 'line-height',
+						'value'    => 'lineHeight',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
-					),
-					array(
-						'property'  => 'line-height',
-						'value'     => 'lineHeight',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['lineHeight'] ) && is_string( $attrs['lineHeight'] );
-						},
+						'hasSync'  => 'gr-btn-font-height',
 					),
 				),
 			)
@@ -181,19 +170,12 @@ class Button_Group_CSS extends Base_CSS {
 				'selector'   => ' .wp-block-themeisle-blocks-button .wp-block-button__link svg',
 				'properties' => array(
 					array(
-						'property'  => 'width',
-						'value'     => 'fontSize',
-						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['fontSize'] ) && is_numeric( $attrs['fontSize'] );
+						'property' => 'width',
+						'value'    => 'fontSize',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
-					),
-					array(
-						'property'  => 'width',
-						'value'     => 'fontSize',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['fontSize'] ) && is_string( $attrs['fontSize'] );
-						},
+						'hasSync'  => 'gr-btn-font-size',
 					),
 				),
 			)
@@ -236,35 +218,17 @@ class Button_Group_CSS extends Base_CSS {
 				'selector'   => ' .wp-block-themeisle-blocks-button-group',
 				'properties' => array(
 					array(
-						'property'  => '--gr-btn-spacing',
-						'value'     => 'spacing',
-						'default'   => 20,
-						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['spacing'] ) && is_numeric( $attrs['spacing'] );
+						'property' => '--gr-btn-spacing',
+						'value'    => 'spacing',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 					array(
-						'property'  => '--gr-btn-spacing',
-						'value'     => 'spacing',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['spacing'] ) && is_string( $attrs['spacing'] );
-						},
-					),
-					array(
-						'property'  => '--gr-btn-font-size',
-						'value'     => 'fontSize',
-						'default'   => 20,
-						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['spacing'] ) && is_numeric( $attrs['spacing'] );
-						},
-					),
-					array(
-						'property'  => '--gr-btn-font-size',
-						'value'     => 'fontSize',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['spacing'] ) && is_string( $attrs['spacing'] );
+						'property' => '--gr-btn-font-size',
+						'value'    => 'fontSize',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 					array(
@@ -306,81 +270,44 @@ class Button_Group_CSS extends Base_CSS {
 				'selector'   => ' .wp-block-themeisle-blocks-button .wp-block-button__link',
 				'properties' => array(
 					array(
-						'property' => 'padding-top',
+						'property' => '--gr-btn-padding-vertical',
 						'value'    => 'paddingTopBottom',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
-						'property' => 'padding-bottom',
-						'value'    => 'paddingTopBottom',
-						'unit'     => 'px',
-					),
-					array(
-						'property' => 'padding-left',
+						'property' => '--gr-btn-padding-horizontal',
 						'value'    => 'paddingLeftRight',
-						'unit'     => 'px',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
+						},
 					),
 					array(
-						'property' => 'padding-right',
-						'value'    => 'paddingLeftRight',
-						'unit'     => 'px',
-					),
-					array(
-						'property' => 'font-family',
+						'property' => '--gr-btn-font-family',
 						'value'    => 'fontFamily',
 					),
 					array(
-						'property' => 'font-weight',
+						'property' => '--gr-btn-font-variant',
 						'value'    => 'fontVariant',
 						'format'   => function( $value, $attrs ) {
 							return 'regular' === $value ? 'normal' : $value;
 						},
 					),
 					array(
-						'property' => 'text-transform',
+						'property' => '--gr-btn-font-transform',
 						'value'    => 'textTransform',
 					),
 					array(
-						'property' => 'font-style',
+						'property' => '--gr-btn-font-style',
 						'value'    => 'fontStyle',
 						'default'  => 'normal',
 					),
 					array(
-						'property'  => 'line-height',
-						'value'     => 'lineHeight',
-						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['lineHeight'] ) && is_numeric( $attrs['lineHeight'] );
-						},
-					),
-					array(
-						'property'  => 'line-height',
-						'value'     => 'lineHeight',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['lineHeight'] ) && is_string( $attrs['lineHeight'] );
-						},
-					),
-				),
-			)
-		);
-
-		$css->add_item(
-			array(
-				'selector'   => ' .wp-block-themeisle-blocks-button .wp-block-button__link svg',
-				'properties' => array(
-					array(
-						'property'  => 'width',
-						'value'     => 'fontSize',
-						'unit'      => 'px',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['fontSize'] ) && is_numeric( $attrs['fontSize'] );
-						},
-					),
-					array(
-						'property'  => 'width',
-						'value'     => 'fontSize',
-						'condition' => function( $attrs ) {
-							return isset( $attrs['fontSize'] ) && is_string( $attrs['fontSize'] );
+						'property' => '--gr-btn-font-height',
+						'value'    => 'lineHeight',
+						'format'   => function( $value, $attrs ) {
+							return is_numeric( $value ) ? $value . 'px' : $value;
 						},
 					),
 				),
