@@ -144,7 +144,7 @@ const Inspector = ({
 								/>
 							</PanelBody>
 							<PanelBody
-								title={ __( 'Icon Settings', 'otter-blocks' ) }
+								title={ __( 'Icon settings', 'otter-blocks' ) }
 								initialOpen={ true }
 							>
 								<SelectControl

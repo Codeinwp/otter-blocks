@@ -337,7 +337,7 @@ const Inspector = ({
 											value: responsiveGetAttributes([ 'padding', 'paddingTablet', 'paddingMobile' ])
 										},
 										{
-											label: __( 'Spacing', 'otter-blocks' ),
+											label: __( 'Space between', 'otter-blocks' ),
 											value: 'spacing'
 										}
 									]}
@@ -376,7 +376,7 @@ const Inspector = ({
 
 								<AutoDisableSyncAttr attr='spacing' attributes={attributes}>
 									<UnitControl
-										label={ __( 'Spacing', 'otter-blocks' ) }
+										label={ __( 'Space Between', 'otter-blocks' ) }
 										value={ _px( attributes.spacing ) }
 										onChange={ e => setAttributes({ spacing: e }) }
 										step={ 0.1 }
