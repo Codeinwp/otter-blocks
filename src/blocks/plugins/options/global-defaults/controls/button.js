@@ -102,8 +102,8 @@ const ButtonBlock = ({
 
 						<ColorDropdownControl
 							label={ __( 'Border', 'otter-blocks' ) }
-							colorValue={ attributes.hoverBackground }
-							onColorChange={ hoverBackground => setAttributes({ hoverBackground }) }
+							colorValue={ attributes.hoverBorder }
+							onColorChange={ hoverBorder => setAttributes({ hoverBorder }) }
 							className="is-list"
 						/>
 					</Fragment>

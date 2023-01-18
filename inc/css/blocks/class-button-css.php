@@ -100,7 +100,7 @@ class Button_CSS extends Base_CSS {
 						'condition' => function( $attrs ) {
 							return isset( $attrs['borderSize'] ) && is_array( $attrs['borderSize'] );
 						},
-						'hasSync'   => 'gr-btn-border-width',
+						'hasSync'   => 'gr-btn-border-size',
 					),
 					array(
 						'property' => 'border-color',
