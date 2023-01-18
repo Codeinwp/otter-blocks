@@ -1,4 +1,4 @@
-// @ts-ignore
+// @ts-check
 /**
  * External dependencies.
  */
@@ -24,6 +24,9 @@ import {
 } from '@wordpress/block-editor';
 
 import {
+	__experimentalBoxControl as BoxControl,
+	__experimentalToolsPanel as ToolsPanel,
+	__experimentalToolsPanelItem as ToolsPanelItem,
 	BaseControl,
 	Button,
 	ExternalLink,
@@ -32,9 +35,7 @@ import {
 	SelectControl,
 	Spinner,
 	TextControl,
-	ToggleControl,
 	TextareaControl,
-	__experimentalBoxControl as BoxControl,
 	FontSizePicker
 } from '@wordpress/components';
 
@@ -103,7 +104,6 @@ const Inspector = ({
 }) => {
 
 	const [ tab, setTab ] = useState( 'settings' );
-	const [ mailRecipientsView, setMailRecipientsView ] = useState( 'to' );
 	const [ buttonColorView, setButtonColorView ] = useState( 'normal' );
 
 	const {
@@ -196,7 +196,7 @@ const Inspector = ({
 								) }
 
 								<Button
-									isSecondary
+									variant="secondary"
 									className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
 									onClick={ () => inputFieldActions?.add?.( 'themeisle-blocks/form-input' ) }
 								>
@@ -205,9 +205,8 @@ const Inspector = ({
 							</PanelBody>
 						) }
 
-						<PanelBody
-							title={ __( 'Form Options', 'otter-blocks' ) }
-							initialOpen={ true }
+						<ToolsPanel
+							label={ __( 'Form Options' ) }
 						>
 							{ 'loading' === loadingState?.formOptions && (
 								<div className="o-fetch-msg">
@@ -216,26 +215,17 @@ const Inspector = ({
 								</div>
 							) }
 
-							<ToogleGroupControl
-								value={ mailRecipientsView }
-								onChange={ setMailRecipientsView }
-								options={[
-									{
-										label: __( 'To', 'otter-blocks' ),
-										value: 'to'
-									},
-									{
-										label: __( 'Cc', 'otter-blocks' ),
-										value: 'cc'
-									},
-									{
-										label: __( 'Bcc', 'otter-blocks' ),
-										value: 'bcc'
-									}
-								]}
-							/>
+							{ 'error' === loadingState?.formOptions && (
+								<div className="o-fetch-msg o-error">
+									{ __( 'An error has occurred while saving. Please try again.', 'otter-blocks' ) }
+								</div>
+							) }
 
-							{ ( 'to' === mailRecipientsView && (
+							<ToolsPanelItem
+								hasValue={ () => false }
+								label={ __( 'Email To', 'otter-blocks' ) }
+								isShownByDefault={ true }
+							>
 								<TextControl
 									label={ __( 'Email To', 'otter-blocks' ) }
 									placeholder={ __( 'Default is to admin site', 'otter-blocks' ) }
@@ -244,75 +234,104 @@ const Inspector = ({
 									onChange={ emailTo => setFormOption({ emailTo }) }
 									help={ __( 'Send the form\'s data to another email. (Admin\'s email is default).', 'otter-blocks' ) }
 								/>
-							) ) || ( 'cc' === mailRecipientsView && (
+							</ToolsPanelItem>
+
+							<ToolsPanelItem
+								hasValue={ () => undefined !== formOptions.cc }
+								label={ __( 'CC', 'otter-blocks' ) }
+								onDeselect={ () => setFormOption({ cc: '' }) }
+								isShownByDefault={ false }
+							>
 								<TextControl
-									label={ __( 'Cc', 'otter-blocks' ) }
+									label={ __( 'CC', 'otter-blocks' ) }
 									placeholder={ __( 'Send copies to', 'otter-blocks' ) }
 									type="text"
 									value={ formOptions.cc }
 									onChange={ cc => setFormOption({ cc }) }
 									help={ __( 'Add emails separated by commas: example1@otter.com, example2@otter.com.', 'otter-blocks' ) }
 								/>
-							) ) || ( 'bcc' === mailRecipientsView && (
+							</ToolsPanelItem>
+
+							<ToolsPanelItem
+								hasValue={ () => undefined !== formOptions.bcc }
+								label={ __( 'BCC', 'otter-blocks' ) }
+								onDeselect={ () => setFormOption({ bcc: '' }) }
+								isShownByDefault={ false }
+							>
 								<TextControl
-									label={ __( 'Bcc', 'otter-blocks' ) }
+									label={ __( 'BCC', 'otter-blocks' ) }
 									placeholder={ __( 'Send copies to', 'otter-blocks' ) }
 									type="text"
 									value={ formOptions.bcc }
 									onChange={ bcc => setFormOption({ bcc }) }
 									help={ __( 'Add emails separated by commas: example1@otter.com, example2@otter.com.', 'otter-blocks' ) }
 								/>
-							) ) }
+							</ToolsPanelItem>
 
-							<TextControl
+							<ToolsPanelItem
+								hasValue={ () => false }
 								label={ __( 'Email Subject', 'otter-blocks' ) }
-								placeholder={ __( 'A new submission', 'otter-blocks' ) }
-								value={ formOptions.subject }
-								onChange={ subject => setFormOption({ subject }) }
-								help={ __( 'Customize the title of the email that you are gonna receive after a user submits the form.', 'otter-blocks' ) }
-							/>
+								isShownByDefault={ true }
+							>
+								<TextControl
+									label={ __( 'Email Subject', 'otter-blocks' ) }
+									placeholder={ __( 'A new submission', 'otter-blocks' ) }
+									value={ formOptions.subject }
+									onChange={ subject => setFormOption({ subject }) }
+									help={ __( 'Customize the title of the email that you are gonna receive after a user submits the form.', 'otter-blocks' ) }
+								/>
+							</ToolsPanelItem>
 
-							<TextControl
+							<ToolsPanelItem
+								hasValue={ () => undefined !== formOptions.fromEmail }
 								label={ __( 'From Name', 'otter-blocks' ) }
-								value={ formOptions.fromName }
-								onChange={ fromName => setFormOption({ fromName }) }
-								help={ __( 'Set the name of the sender. Some SMTP plugins might override this value.', 'otter-blocks' ) }
+								onDeselect={ () => setFormOption({ fromEmail: '' }) }
+								isShownByDefault={ false }
+							>
+								<TextControl
+									label={ __( 'From Name', 'otter-blocks' ) }
+									value={ formOptions.fromName }
+									onChange={ fromName => setFormOption({ fromName }) }
+									help={ __( 'Set the name of the sender. Some SMTP plugins might override this value.', 'otter-blocks' ) }
+								/>
+							</ToolsPanelItem>
+
+							<ToolsPanelItem
+								hasValue={ () => undefined !== formOptions.redirectLink }
+								label={ __( 'Redirect on Submit', 'otter-blocks' ) }
+								onDeselect={ () => setFormOption({ redirectLink: '' }) }
+								isShownByDefault={ false }
+							>
+								<TextControl
+									label={ __( 'Redirect on Submit', 'otter-blocks' ) }
+									type="url"
+									placeholder={ __( 'https://example.com', 'otter-blocks' ) }
+									value={ formOptions.redirectLink }
+									onChange={ redirectLink => setFormOption({ redirectLink })  }
+									help={ __( 'Redirect the user to another page when submit is successful.', 'otter-blocks' ) }
+								/>
+
+								{ formOptions.redirectLink && (
+									<ExternalLink
+										href={ formOptions.redirectLink }
+										style={ {
+											marginBottom: '10px',
+											display: 'block'
+										} }
+									>
+										{ __( 'Preview Redirect link.', 'otter-blocks' ) }
+									</ExternalLink>
+								) }
+							</ToolsPanelItem>
+
+							<ToolsPanelItem
+								hasValue={ () => true === attributes.hasCaptcha }
+								label={ __( 'Enable reCaptcha', 'otter-blocks' ) }
+								onSelect={ () => setAttributes({ hasCaptcha: true }) }
+								onDeselect={ () => setAttributes({ hasCaptcha: false }) }
+								isShownByDefault={ false }
 							/>
-
-							<TextControl
-								label={ __( 'Redirect To', 'otter-blocks' ) }
-								type="url"
-								placeholder={ __( 'https://example.com', 'otter-blocks' ) }
-								value={ formOptions.redirectLink }
-								onChange={ redirectLink => setFormOption({ redirectLink })  }
-								help={ __( 'Redirect the user to another page when submit is successful.', 'otter-blocks' ) }
-							/>
-
-							{ formOptions.redirectLink && (
-								<ExternalLink
-									href={ formOptions.redirectLink }
-									style={ {
-										marginBottom: '10px',
-										display: 'block'
-									} }
-								>
-									{ __( 'Preview Redirect link.', 'otter-blocks' ) }
-								</ExternalLink>
-							) }
-
-							<ToggleControl
-								label={ __( 'Add Captcha Checkbox', 'otter-blocks' ) }
-								checked={ attributes.hasCaptcha }
-								onChange={ hasCaptcha => setAttributes({ hasCaptcha }) }
-								help={ __( 'Add Google reCaptcha V2 for protection against bots. You will need an API Key.', 'otter-blocks' ) }
-							/>
-
-							{ 'error' === loadingState?.formOptions && (
-								<div className="o-fetch-msg o-error">
-									{ __( 'An error has occurred while saving. Please try again.', 'otter-blocks' ) }
-								</div>
-							) }
-						</PanelBody>
+						</ToolsPanel>
 
 						<PanelBody
 							title={ __( 'Marketing Integration', 'otter-blocks' ) }
