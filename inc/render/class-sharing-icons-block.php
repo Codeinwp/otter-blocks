@@ -25,8 +25,6 @@ class Sharing_Icons_Block {
 
 		if ( is_archive() ) {
 			$title = get_the_archive_title();
-		} elseif ( is_home() && wp_is_block_theme() ) {
-			$title = get_bloginfo( 'title' );
 		}
 
 		$social_attributes = array(
