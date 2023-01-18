@@ -136,19 +136,6 @@ $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 			}		
 		}
 
-		&:is(.wp-block-button) :is(.wp-block-button__link) {
-			padding: var(--padding);
-			font-size: var(--font-size);
-
-			@media ( min-width: 600px ) and ( max-width: 960px ) {
-				padding: var(--padding-tablet);
-			}
-
-			@media ( max-width: 600px ) {
-				padding: var(--padding-mobile);
-			}		
-		}
-
 		&.wp-block-button {
 			&:is(.is-style-plain, .is-style-outline) :is(.wp-block-button__link) {
 				background: transparent !important;
