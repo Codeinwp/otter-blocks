@@ -49,6 +49,7 @@ import layouts from '../layouts.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import Separators from '../components/separators/index.js';
+import { useDarkBackground } from '../index.js';
 import {
 	blockInit,
 	getDefaultValueByField
@@ -165,6 +166,8 @@ const Edit = ({
 			changeColumnsNumbers( 6 );
 		}
 	}, [ attributes.columns ]);
+
+	useDarkBackground( attributes, setAttributes );
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 

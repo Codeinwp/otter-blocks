@@ -13,6 +13,10 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 	display: flex;
 	transition: 0.3s;
 
+	&.has-dark-bg {
+		color: #fff;
+	}
+
 	> .innerblocks-wrap {
 		flex-basis: 100%;
 		width: 100%;
@@ -35,6 +39,10 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 
 				.wp-block-themeisle-blocks-advanced-columns {
 					max-width: unset;
+				}
+
+				&.has-dark-bg {
+					color: #fff;
 				}
 			}
 		}

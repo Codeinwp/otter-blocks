@@ -290,6 +290,38 @@ export const hex2rgba = ( color, alpha = 100 ) => {
 };
 
 /**
+ * Check if color is a dark.
+ *
+ * @param color
+ * @returns {boolean}
+ */
+export const isColorDark = color => {
+	if ( ! color ) {
+		return false;
+	}
+
+	let value = color;
+
+	if ( color.startsWith( 'var(' ) ) {
+		value = getComputedStyle( document.documentElement ).getPropertyValue( color.slice( 4, -1 ) ).trim();
+	}
+
+	// Convert hex to RGB if necessary
+	if ( value.startsWith( '#' ) ) {
+		value = hex2rgba( value );
+	}
+
+	// Extract the red, green, and blue values
+	const [ r, g, b ] = value.match( /\d+/g ).map( Number );
+
+	// Calculate the brightness value
+	const brightness = ( 0.299 * r ) + ( 0.587 * g ) + ( 0.114 * b );
+
+	// Compare the brightness to a threshold
+	return 128 > brightness;
+};
+
+/**
  * Return the values from a box type.
  *
  * @param {import('./blocks').BoxType?} box

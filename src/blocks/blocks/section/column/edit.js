@@ -33,6 +33,7 @@ import metadata from './block.json';
 import layouts from '../layouts.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
+import { useDarkBackground } from '../index.js';
 import {
 	blockInit,
 	getDefaultValueByField
@@ -129,6 +130,8 @@ const Edit = ({
 			}
 		}
 	}, [ isSelected, attributes.columnWidth, parentBlock.innerBlocks.length ]);
+
+	useDarkBackground( attributes, setAttributes );
 
 	const currentBlockWidth = useRef( attributes.columnWidth );
 	const nextBlock = useRef( adjacentBlockClientId && adjacentBlockClientId );
