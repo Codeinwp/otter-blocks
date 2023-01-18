@@ -85,7 +85,7 @@ const Edit = ( props ) => {
 
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
-	const [ cssNodeName, setCSSNode ] = useCSSNode();
+	const [ cssNodeName ] = useCSSNode();
 
 	const blockProps = useBlockProps({
 		id: attributes.id,

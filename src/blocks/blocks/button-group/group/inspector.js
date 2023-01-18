@@ -116,7 +116,7 @@ const Inspector = ({
 		};
 	};
 
-	const [ tab, setTab ] = useState( 'style' );
+	const [ tab, setTab ] = useState( 'settings' );
 
 	const [ proxyStore, setProxyStore ] = useState({
 		padding: makeBoxFromSplitAxis(

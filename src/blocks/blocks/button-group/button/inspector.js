@@ -20,6 +20,7 @@ import {
 
 import {
 	Fragment,
+	useEffect,
 	useState
 } from '@wordpress/element';
 
@@ -31,6 +32,7 @@ import IconPickerControl from '../../../components/icon-picker-control/index.js'
 import { ColorDropdownControl, InspectorHeader, SyncControlDropdown, ToogleGroupControl } from '../../../components/index.js';
 import { changeActiveStyle, getActiveStyle, objectOrNumberAsBox } from '../../../helpers/helper-functions.js';
 import AutoDisableSyncAttr from '../../../components/auto-disable-sync-attr/index';
+import { uniq } from 'lodash';
 
 const styles = [
 	{
@@ -77,6 +79,54 @@ const Inspector = ({
 			setAttributes({ icon: value });
 		}
 	};
+
+	/**
+	 * A proxy store for edge case scenario: making all shadow settings to look like a single option in UI.
+	 */
+	const [ proxyStore, setProxyStore ] = useState({
+		isSynced: uniq(
+			attributes.isSynced
+				?.map( x => x.includes( 'boxShadow' ) ? 'shadow' : x )
+				?.map( x => x.includes( 'hoverBoxShadow' ) ? 'shadowHover' : x )
+		)
+	});
+
+	const [ storeChanged, setStoreChanged ] = useState( false );
+
+	useEffect( () => {
+		if ( storeChanged ) {
+			let { isSynced } = attributes;
+
+
+			isSynced = isSynced?.filter( x => ! ( x.includes( 'boxShadow' ) || x.includes( 'hoverBoxShadow' ) ) );
+			if ( proxyStore.isSynced?.some( x => 'shadow' === x ) ) {
+				isSynced = uniq(
+					[ ...isSynced,
+						'boxShadow',
+						'boxShadowColor',
+						'boxShadowColorOpacity',
+						'boxShadowBlur',
+						'boxShadowSpread',
+						'boxShadowHorizontal',
+						'boxShadowVertical' ]
+				);
+			}
+			if ( proxyStore.isSynced?.some( x => 'shadowHover' === x ) ) {
+				isSynced = uniq(
+					[ ...isSynced,
+						'hoverBoxShadowColor',
+						'hoverBoxShadowColorOpacity',
+						'hoverBoxShadowBlur',
+						'hoverBoxShadowSpread',
+						'hoverBoxShadowHorizontal',
+						'hoverBoxShadowVertical' ]
+				);
+			}
+
+			setAttributes({ isSynced });
+			setStoreChanged( false );
+		}
+	}, [ proxyStore, storeChanged ]);
 
 	const HoverControl = () => {
 		return (
@@ -305,7 +355,7 @@ const Inspector = ({
 								initialOpen={ true }
 							>
 								<SyncControlDropdown
-									isSynced={attributes.isSynced}
+									isSynced={proxyStore.isSynced}
 									options={[
 										{
 											label: __( 'Border Width', 'otter-blocks' ),
@@ -316,55 +366,19 @@ const Inspector = ({
 											value: 'borderRadius'
 										},
 										{
-											label: __( 'Shadow Color', 'otter-blocks' ),
-											value: 'boxShadowColor'
+											label: __( 'Shadow', 'otter-blocks' ),
+											value: 'shadow'
 										},
 										{
-											label: __( 'Shadow Opacity', 'otter-blocks' ),
-											value: 'boxShadowColorOpacity'
-										},
-										{
-											label: __( 'Shadow Blur', 'otter-blocks' ),
-											value: 'boxShadowBlur'
-										},
-										{
-											label: __( 'Shadow Spread', 'otter-blocks' ),
-											value: 'boxShadowSpread'
-										},
-										{
-											label: __( 'Shadow Horizontal', 'otter-blocks' ),
-											value: 'boxShadowHorizontal'
-										},
-										{
-											label: __( 'Shadow Vertical', 'otter-blocks' ),
-											value: 'boxShadowVertical'
-										},
-										{
-											label: __( 'Hover Shadow Color', 'otter-blocks' ),
-											value: 'hoverBoxShadowColor'
-										},
-										{
-											label: __( 'Hover Shadow Opacity', 'otter-blocks' ),
-											value: 'hoverBoxShadowColorOpacity'
-										},
-										{
-											label: __( 'Hover Shadow Blur', 'otter-blocks' ),
-											value: 'hoverBoxShadowBlur'
-										},
-										{
-											label: __( 'Hover Shadow Spread', 'otter-blocks' ),
-											value: 'hoverBoxShadowSpread'
-										},
-										{
-											label: __( 'Hover Shadow Horizontal', 'otter-blocks' ),
-											value: 'hoverBoxShadowHorizontal'
-										},
-										{
-											label: __( 'Hover Shadow Vertical', 'otter-blocks' ),
-											value: 'hoverBoxShadowVertical'
+											label: __( 'Shadow Hover', 'otter-blocks' ),
+											value: 'shadowHover'
 										}
 									]}
-									setAttributes={setAttributes}
+									setAttributes={value => {
+										setProxyStore( value );
+										setStoreChanged( true );
+									}
+									}
 								/>
 
 								<AutoDisableSyncAttr attr='borderSize' attributes={attributes}>

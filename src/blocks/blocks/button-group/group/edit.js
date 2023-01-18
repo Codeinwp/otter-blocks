@@ -25,6 +25,7 @@ import { blockInit, buildGetSyncValue } from '../../../helpers/block-utility.js'
 import googleFontsLoader from '../../../helpers/google-fonts.js';
 import { boxToCSS, _px } from '../../../helpers/helper-functions';
 import { useResponsiveAttributes } from '../../../helpers/utility-hooks';
+import Controls from './controls';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -83,8 +84,6 @@ const Edit = ({
 		style: inlineCSS
 	});
 
-	console.log( inlineCSS, getSyncValue( 'paddingTopBottom' ) );
-
 	useEffect( () => {
 		if ( getSyncValue( 'fontFamily' ) ) {
 			googleFontsLoader.loadFontToBrowser( getSyncValue( 'fontFamily' ), getSyncValue( 'fontVariant' ) );
@@ -94,6 +93,11 @@ const Edit = ({
 	return (
 		<Fragment>
 			<Inspector
+				attributes={ attributes }
+				setAttributes={ setAttributes }
+			/>
+
+			<Controls
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 			/>
