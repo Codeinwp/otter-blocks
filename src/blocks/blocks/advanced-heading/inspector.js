@@ -296,13 +296,13 @@ const Inspector = ({
 										value: attributes.headingColor,
 										onChange: headingColor => setAttributes({ headingColor }),
 										label: __( 'Text', 'otter-blocks' ),
-										isShownByDefault: false
+										isShownByDefault: true
 									},
 									{
 										value: attributes.backgroundColor,
 										onChange: backgroundColor => setAttributes({ backgroundColor }),
 										label: __( 'Background', 'otter-blocks' ),
-										isShownByDefault: false
+										isShownByDefault: true
 									},
 									{
 										value: attributes.linkColor,
