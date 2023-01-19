@@ -467,7 +467,7 @@ export const changeActiveStyle = ( className, styles, newStyle ) =>{
  * Create a CSS property declaration.
  * @param {string} prop The name of the property.
  * @param {string | undefined | null} value The value.
- * @param { (c: any) => boolean | boolean | undefined } condition The condition.
+ * @param { ((c: any) => boolean) | boolean | undefined } condition The condition.
  * @returns
  */
 export const _cssProp = ( prop, value, condition = undefined ) => value !== undefined && null !== value && ( condition === undefined || ( 'function' === typeof condition ? condition( value ) : condition ) ) ? `${prop}: ${value};` : undefined;
@@ -477,7 +477,12 @@ export const _cssProp = ( prop, value, condition = undefined ) => value !== unde
  * @param {[string, string, ((c: any) => boolean | boolean | undefined) | undefined][]} propsPairs The properties grouped in pairs
  * @returns
  */
-export const _cssBlock = ( propsPairs ) => `{\n${propsPairs?.map( pair => _cssProp( pair?.[0], pair?.[1], pair?.[2]) )?.join( '\n' ) ?? ''} \n}`;
+export const _cssBlock = ( propsPairs ) => `{\n${
+	propsPairs
+		?.map( pair => _cssProp( pair?.[0], pair?.[1], pair?.[2]) )
+		?.filter( x => x !== undefined )
+		?.join( '\n' ) ??
+	''} \n}`;
 
 /**
  * Wrap a given string in a box object.

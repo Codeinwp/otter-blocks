@@ -92,6 +92,8 @@ const Edit = ( props ) => {
 		className: classnames( 'wp-block-button', cssNodeName )
 	});
 
+	console.log( getSyncValueParent( 'boxShadow' ) );
+
 	return (
 		<Fragment>
 			<Controls
@@ -119,7 +121,7 @@ const Edit = ( props ) => {
 							[ 'font-style', getSyncValueParent( 'fontStyle' ) ],
 							[ 'text-transform', getSyncValueParent( 'textTransform' ) ],
 							[ 'line-height',  getSyncValueParent( 'lineHeight' ) && `${ getSyncValueParent( 'lineHeight' ) }px` ],
-							[ 'box-shadow', `${ getSyncValue( 'boxShadowHorizontal' ) }px ${ getSyncValue( 'boxShadowVertical' ) }px ${ getSyncValue( 'boxShadowBlur' ) }px ${ getSyncValue( 'boxShadowSpread' ) }px ${ hexToRgba( ( getSyncValue( 'boxShadowColor' ) ? getSyncValue( 'boxShadowColor' ) : '#000000' ), getSyncValue( 'boxShadowColorOpacity' ) ) }`,  getSyncValueParent( 'boxShadow' ) ]
+							[ 'box-shadow', `${ getSyncValue( 'boxShadowHorizontal' ) }px ${ getSyncValue( 'boxShadowVertical' ) }px ${ getSyncValue( 'boxShadowBlur' ) }px ${ getSyncValue( 'boxShadowSpread' ) }px ${ hexToRgba( ( getSyncValue( 'boxShadowColor' ) ? getSyncValue( 'boxShadowColor' ) : '#000000' ), getSyncValue( 'boxShadowColorOpacity' ) ) }`, Boolean(  getSyncValueParent( 'boxShadow' ) ) ]
 						])
 					}
 					{
@@ -127,7 +129,7 @@ const Edit = ( props ) => {
 							[ 'background', getSyncValue( 'hoverBackground' ) ],
 							[ 'background', getSyncValue( 'hoverBackgroundGradient' ) ],
 							[ 'border-color', getSyncValue( 'hoverBorder' ) ],
-							[ 'box-shadow', `${ getSyncValue( 'hoverBoxShadowHorizontal' ) }px ${ getSyncValue( 'hoverBoxShadowVertical' ) }px ${ getSyncValue( 'hoverBoxShadowBlur' ) }px ${ getSyncValue( 'hoverBoxShadowSpread' ) }px ${ hexToRgba( ( getSyncValue( 'hoverBoxShadowColor' ) ? getSyncValue( 'hoverBoxShadowColor' ) : '#000000' ), getSyncValue( 'hoverBoxShadowColorOpacity' ) ) }`, getSyncValueParent( 'boxShadow' ) ]
+							[ 'box-shadow', `${ getSyncValue( 'hoverBoxShadowHorizontal' ) }px ${ getSyncValue( 'hoverBoxShadowVertical' ) }px ${ getSyncValue( 'hoverBoxShadowBlur' ) }px ${ getSyncValue( 'hoverBoxShadowSpread' ) }px ${ hexToRgba( ( getSyncValue( 'hoverBoxShadowColor' ) ? getSyncValue( 'hoverBoxShadowColor' ) : '#000000' ), Boolean( getSyncValue( 'hoverBoxShadowColorOpacity' ) ) ) }`, getSyncValueParent( 'boxShadow' ) ]
 						])
 					}
 					{
