@@ -1,4 +1,9 @@
 /**
+ * External dependencies.
+ */
+import classnames from 'classnames';
+
+/**
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
@@ -50,7 +55,9 @@ const edit = props => {
 	return (
 		<div
 			id={ `o-upsell-${ props.clientId }` }
-			className="o-block-patterns-upsell"
+			className={ classnames( 'o-block-patterns-upsell alignfull', {
+				'is-neve': Boolean( window.themeisleGutenberg.hasNeve )
+			}) }
 		>
 			<h3>{ __( 'Get more Patterns with Otter Pro.', 'otter-blocks' ) }</h3>
 
