@@ -49,13 +49,13 @@ import layouts from '../layouts.js';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import Separators from '../components/separators/index.js';
-import { useDarkBackground } from '../index.js';
 import {
 	blockInit,
 	getDefaultValueByField
 } from '../../../helpers/block-utility.js';
 import { columnsIcon as icon } from '../../../helpers/icons.js';
 import { _cssBlock } from '../../../helpers/helper-functions';
+import { useDarkBackground } from '../../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -167,7 +167,7 @@ const Edit = ({
 		}
 	}, [ attributes.columns ]);
 
-	useDarkBackground( attributes, setAttributes );
+	useDarkBackground( 'color' === attributes.backgroundType && attributes.backgroundColor, attributes, setAttributes );
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 

@@ -24,7 +24,8 @@ import {
 import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
-import { useCSSNode } from '../../../blocks/helpers/block-utility';
+import { useCSSNode } from '../../../blocks/helpers/block-utility.js';
+import { useDarkBackground } from '../../../blocks/helpers/utility-hooks.js';
 
 const { blockInit } = window.otterUtils;
 
@@ -72,6 +73,8 @@ const Edit = ({
 			}`
 		]);
 	}, [ attributes.itemsFontSize, attributes.gap, attributes.borderRadius ]);
+
+	useDarkBackground( attributes.backgroundColor, attributes, setAttributes );
 
 	const blockProps = useBlockProps({
 		id: attributes.id,

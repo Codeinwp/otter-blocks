@@ -191,20 +191,20 @@ const Inspector = ({
 									value: attributes.defaultIconColor,
 									onChange: defaultIconColor => setAttributes({ defaultIconColor }),
 									label: __( 'Icon', 'otter-blocks' ),
-									isShownByDefault: false
+									isShownByDefault: true
 								},
 								{
 									value: attributes.defaultContentColor,
 									onChange: defaultContentColor => setAttributes({ defaultContentColor }),
 									label: __( 'Text', 'otter-blocks' ),
-									isShownByDefault: false
+									isShownByDefault: true
 								},
 								...( attributes.hasDivider ? [
 									{
 										value: attributes.dividerColor,
 										onChange: dividerColor => setAttributes({ dividerColor }),
 										label: __( 'Divider', 'otter-blocks' ),
-										isShownByDefault: false
+										isShownByDefault: true
 									}
 								] : [])
 							] }
