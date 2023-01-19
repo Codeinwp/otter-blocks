@@ -17,14 +17,21 @@ class Sharing_Icons_Block {
 	/**
 	 * Return attributes for social media services.
 	 *
+	 * @param string|null $context Context of the sharing icons block.
+	 *
 	 * @return array
 	 */
-	public static function get_social_profiles() {
+	public static function get_social_profiles( $context = null ) {
 		$current_url = home_url( add_query_arg( null, null ) );
 		$title       = get_the_title( get_queried_object_id() );
 
 		if ( is_archive() ) {
 			$title = get_the_archive_title();
+		}  elseif ( $context === 'query' ) {
+			$current_url = get_the_permalink();
+			$title       = get_the_title();
+		} elseif ( null === get_queried_object() && is_home() ) {
+			$title = get_bloginfo( 'name' );
 		}
 
 		$social_attributes = array(
@@ -89,7 +96,7 @@ class Sharing_Icons_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		$social_attributes = $this->get_social_profiles();
+		$social_attributes = $this->get_social_profiles( isset( $attributes['context'] ) ? $attributes['context'] : null );
 
 		$class = '';
 
