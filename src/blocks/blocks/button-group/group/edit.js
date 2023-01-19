@@ -23,7 +23,7 @@ import metadata from './block.json';
 import Inspector from './inspector.js';
 import { blockInit, buildGetSyncValue } from '../../../helpers/block-utility.js';
 import googleFontsLoader from '../../../helpers/google-fonts.js';
-import { boxToCSS, _px } from '../../../helpers/helper-functions';
+import { boxToCSS, _cssBlock, _px } from '../../../helpers/helper-functions';
 import { useResponsiveAttributes } from '../../../helpers/utility-hooks';
 import Controls from './controls';
 
@@ -101,6 +101,23 @@ const Edit = ({
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 			/>
+
+			<style>
+				{
+					`#block-${clientId} .wp-block-button div.wp-block-button__link` + _cssBlock([
+						[ 'font-family', getSyncValue( 'fontFamily' ) ],
+						[ 'font-weight', getSyncValue( 'fontVariant' ) ],
+						[ 'font-style', getSyncValue( 'fontStyle' ) ],
+						[ 'text-transform', getSyncValue( 'textTransform' ) ],
+						[ 'line-height',  _px( getSyncValue( 'lineHeight' ) ) ]
+					])
+				}
+				{
+					`#block-${clientId} .wp-block-button .wp-block-button__link :is(svg, i, div)` + _cssBlock([
+						[ 'font-size', _px( getSyncValue( 'fontSize' ) ) ]
+					])
+				}
+			</style>
 
 			<div { ...blockProps }>
 				<InnerBlocks

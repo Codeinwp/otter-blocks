@@ -16,8 +16,6 @@ import {
 	useBlockProps
 } from '@wordpress/block-editor';
 
-import { useSelect } from '@wordpress/data';
-
 import {
 	Fragment,
 	useEffect
@@ -27,18 +25,15 @@ import {
  * Internal dependencies
  */
 import metadata from './block.json';
-import parentMetadata from '../group/block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import themeIsleIcons from './../../../helpers/themeisle-icons';
 import {
 	blockInit,
-	buildGetSyncValue,
-	useCSSNode
+	buildGetSyncValue
 } from '../../../helpers/block-utility.js';
 import { boxToCSS, objectOrNumberAsBox, _cssBlock, _px } from '../../../helpers/helper-functions';
 
-const { attributes: defaultParentAttributes } = parentMetadata;
 const { attributes: defaultAttributes } = metadata;
 
 /**
@@ -56,26 +51,6 @@ const Edit = ( props ) => {
 		name
 	} = props;
 
-	const {
-		hasParent,
-		parentAttributes,
-		getSyncValueParent
-	} = useSelect( select => {
-		const {
-			getBlock,
-			getBlockRootClientId
-		} = select( 'core/block-editor' );
-
-		const parentClientId = getBlockRootClientId( clientId );
-		const parentBlock = getBlock( parentClientId );
-
-		return {
-			hasParent: parentBlock ? true : false,
-			parentAttributes: parentBlock ? parentBlock.attributes : {},
-			getSyncValueParent: buildGetSyncValue( parentBlock?.name, parentBlock?.attributes, defaultParentAttributes )
-		};
-	}, []);
-
 	const getSyncValue = buildGetSyncValue( name, attributes, defaultAttributes );
 
 	useEffect( () => {
@@ -85,14 +60,10 @@ const Edit = ( props ) => {
 
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
-	const [ cssNodeName ] = useCSSNode();
-
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		className: classnames( 'wp-block-button', cssNodeName )
+		className: classnames( 'wp-block-button' )
 	});
-
-	console.log( getSyncValueParent( 'boxShadow' ) );
 
 	return (
 		<Fragment>
@@ -110,37 +81,31 @@ const Edit = ( props ) => {
 			<div { ...blockProps }>
 				<style>
 					{
-						`.wp-block-themeisle-blocks-button-group .${cssNodeName}.wp-block-button div.wp-block-button__link` + _cssBlock([
+						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button div.wp-block-button__link` + _cssBlock([
 							[ 'background', getSyncValue( 'background' ) ],
 							[ 'background', getSyncValue( 'backgroundGradient' ) ],
 							[ 'border-width', boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderSize' ) ) ) ],
 							[ 'border-color', getSyncValue( 'border' ) ],
 							[ 'border-radius', boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderRadius' ) ) ) ],
-							[ 'font-family', getSyncValueParent( 'fontFamily' ) ],
-							[ 'font-weight', getSyncValueParent( 'fontVariant' ) ],
-							[ 'font-style', getSyncValueParent( 'fontStyle' ) ],
-							[ 'text-transform', getSyncValueParent( 'textTransform' ) ],
-							[ 'line-height',  getSyncValueParent( 'lineHeight' ) && `${ getSyncValueParent( 'lineHeight' ) }px` ],
-							[ 'box-shadow', `${ getSyncValue( 'boxShadowHorizontal' ) }px ${ getSyncValue( 'boxShadowVertical' ) }px ${ getSyncValue( 'boxShadowBlur' ) }px ${ getSyncValue( 'boxShadowSpread' ) }px ${ hexToRgba( ( getSyncValue( 'boxShadowColor' ) ? getSyncValue( 'boxShadowColor' ) : '#000000' ), getSyncValue( 'boxShadowColorOpacity' ) ) }`, Boolean(  getSyncValueParent( 'boxShadow' ) ) ]
+							[ 'box-shadow', `${ getSyncValue( 'boxShadowHorizontal' ) }px ${ getSyncValue( 'boxShadowVertical' ) }px ${ getSyncValue( 'boxShadowBlur' ) }px ${ getSyncValue( 'boxShadowSpread' ) }px ${ hexToRgba( ( getSyncValue( 'boxShadowColor' ) ? getSyncValue( 'boxShadowColor' ) : '#000000' ), getSyncValue( 'boxShadowColorOpacity' ) ) }`, Boolean(  getSyncValue( 'boxShadow' ) ) ]
 						])
 					}
 					{
-						`.wp-block-themeisle-blocks-button-group .${cssNodeName}.wp-block-button .wp-block-button__link:hover` + _cssBlock([
+						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button .wp-block-button__link:hover` + _cssBlock([
 							[ 'background', getSyncValue( 'hoverBackground' ) ],
 							[ 'background', getSyncValue( 'hoverBackgroundGradient' ) ],
 							[ 'border-color', getSyncValue( 'hoverBorder' ) ],
-							[ 'box-shadow', `${ getSyncValue( 'hoverBoxShadowHorizontal' ) }px ${ getSyncValue( 'hoverBoxShadowVertical' ) }px ${ getSyncValue( 'hoverBoxShadowBlur' ) }px ${ getSyncValue( 'hoverBoxShadowSpread' ) }px ${ hexToRgba( ( getSyncValue( 'hoverBoxShadowColor' ) ? getSyncValue( 'hoverBoxShadowColor' ) : '#000000' ), Boolean( getSyncValue( 'hoverBoxShadowColorOpacity' ) ) ) }`, getSyncValueParent( 'boxShadow' ) ]
+							[ 'box-shadow', `${ getSyncValue( 'hoverBoxShadowHorizontal' ) }px ${ getSyncValue( 'hoverBoxShadowVertical' ) }px ${ getSyncValue( 'hoverBoxShadowBlur' ) }px ${ getSyncValue( 'hoverBoxShadowSpread' ) }px ${ hexToRgba( ( getSyncValue( 'hoverBoxShadowColor' ) ? getSyncValue( 'hoverBoxShadowColor' ) : '#000000' ), Boolean( getSyncValue( 'hoverBoxShadowColorOpacity' ) ) ) }`, getSyncValue( 'boxShadow' ) ]
 						])
 					}
 					{
-						`.wp-block-themeisle-blocks-button-group .${cssNodeName}.wp-block-button .wp-block-button__link :is(svg, i, div)` + _cssBlock([
+						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button .wp-block-button__link :is(svg, i, div)` + _cssBlock([
 							[ 'color', getSyncValue( 'color' ) ],
-							[ 'fill', getSyncValue( 'color' ) ],
-							[ 'font-size', _px( getSyncValueParent( 'fontSize' ) ) ]
+							[ 'fill', getSyncValue( 'color' ) ]
 						])
 					}
 					{
-						`.wp-block-themeisle-blocks-button-group .${cssNodeName}.wp-block-button .wp-block-button__link:hover :is(svg, i, div)` + _cssBlock([
+						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button .wp-block-button__link:hover :is(svg, i, div)` + _cssBlock([
 							[ 'fill', getSyncValue( 'hoverColor' ) ],
 							[ 'color', getSyncValue( 'hoverColor' ) ]
 						])
