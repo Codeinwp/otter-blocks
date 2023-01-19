@@ -3,6 +3,8 @@ import { OtterBlock } from '../../helpers/blocks';
 import { compactObject } from '../../helpers/helper-functions';
 import { adaptors } from './adaptors';
 import { CopyPasteStorage, Storage } from './models';
+import { copyAnimations, pasteAnimations } from './plugins';
+
 
 type Adaptors = Record<string, {
 	copy: ( x: any ) => Storage<any>
@@ -43,6 +45,7 @@ class CopyPaste {
 			this.storage.shared = copied?.shared;
 			this.storage.core = copied?.core;
 			this.storage.private = copied?.private;
+			this.storage.animations = copyAnimations( block?.attributes?.className );
 			this.sync();
 
 			success = 'SUCCESS';
@@ -69,7 +72,7 @@ class CopyPaste {
 			};
 
 			pasted = ( adaptors as Adaptors )?.[block.name]?.paste( attrs );
-
+			pasted.className = pasteAnimations( block.attributes?.className, this.storage.animations );
 		} catch ( e ) {
 			console.error( e );
 		} finally {
