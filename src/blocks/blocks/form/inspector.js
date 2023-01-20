@@ -207,6 +207,7 @@ const Inspector = ({
 
 						<ToolsPanel
 							label={ __( 'Form Options' ) }
+							className="o-form-options"
 						>
 							{ 'loading' === loadingState?.formOptions && (
 								<div className="o-fetch-msg">
@@ -232,7 +233,7 @@ const Inspector = ({
 									type="email"
 									value={ formOptions.emailTo }
 									onChange={ emailTo => setFormOption({ emailTo }) }
-									help={ __( 'Send the form\'s data to another email. (Admin\'s email is default).', 'otter-blocks' ) }
+									help={ __( 'Default is site administrator.', 'otter-blocks' ) }
 								/>
 							</ToolsPanelItem>
 
@@ -278,7 +279,7 @@ const Inspector = ({
 									placeholder={ __( 'A new submission', 'otter-blocks' ) }
 									value={ formOptions.subject }
 									onChange={ subject => setFormOption({ subject }) }
-									help={ __( 'Customize the title of the email that you are gonna receive after a user submits the form.', 'otter-blocks' ) }
+									help={ __( 'Enter the title of the email.', 'otter-blocks' ) }
 								/>
 							</ToolsPanelItem>
 
