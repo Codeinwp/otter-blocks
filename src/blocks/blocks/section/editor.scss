@@ -72,7 +72,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 			position: relative;
 		}
 	
-		a:not( .wp-block-button__link ) {
+		a:not( .wp-block-button__link ):not( .social-icon ) {
 			color: var( --link-color );
 		}
 
