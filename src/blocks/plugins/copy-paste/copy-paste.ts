@@ -73,6 +73,15 @@ class CopyPaste {
 
 			pasted = ( adaptors as Adaptors )?.[block.name]?.paste( attrs );
 			pasted.className = pasteAnimations( block.attributes?.className, this.storage.animations );
+
+			if ( block.name !== this.storage.copiedBlock ) {
+
+				/**
+				 * If the blocks are not the same type, copy only the defined values. This will prevent some unwanted override.
+				 */
+				pasted = compactObject( pasted );
+			}
+
 		} catch ( e ) {
 			console.error( e );
 		} finally {

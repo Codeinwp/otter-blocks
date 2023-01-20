@@ -16,9 +16,11 @@ export const copyAnimations = ( className: string | undefined ) => {
 		...speedList
 	];
 
-	return allClasses.filter( c => {
+	const otterAnim = allClasses.filter( c => {
 		return 0 < c.length && animations.some( a => c === a );
 	});
+
+	return 0 === otterAnim.length ? undefined : otterAnim;
 };
 
 export const pasteAnimations = ( className: string | undefined, animList: string[] | undefined ) => {
