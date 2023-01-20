@@ -61,6 +61,7 @@ class Main {
 			'\ThemeIsle\OtterPro\Plugins\License',
 			'\ThemeIsle\OtterPro\Plugins\Live_Search',
 			'\ThemeIsle\OtterPro\Plugins\Options_Settings',
+			'\ThemeIsle\OtterPro\Plugins\Patterns',
 			'\ThemeIsle\OtterPro\Plugins\Posts_ACF_Integration',
 			'\ThemeIsle\OtterPro\Plugins\Review_Woo_Integration',
 			'\ThemeIsle\OtterPro\Plugins\WooCommerce_Builder',
