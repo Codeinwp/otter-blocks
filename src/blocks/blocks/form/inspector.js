@@ -226,6 +226,7 @@ const Inspector = ({
 								hasValue={ () => false }
 								label={ __( 'Email To', 'otter-blocks' ) }
 								isShownByDefault={ true }
+								className="is-first"
 							>
 								<TextControl
 									label={ __( 'Email To', 'otter-blocks' ) }
