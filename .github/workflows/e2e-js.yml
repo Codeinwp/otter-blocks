@@ -48,12 +48,24 @@ jobs:
         run: |
           npm run build-dev
 
-      - name: setup wp env
+      - name: Create License File
+        run: |
+          printf "{\"key\":\"${{ secrets.OTTER_PRO_LICENSE }}\"}" > license.json
+
+      - name: Setup WP Env
         run: |
           npm run wp-env start
 
       # run the node.js puppeteer script (which takes the screenshots and controls chrome)
       - run: npm run test:e2e
+
+      - name: Upload video files
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifacts
+          path: ./artifacts/tests/
+          retention-days: 1
       
       - name: Print the results
         run: |
