@@ -4,6 +4,7 @@
 import { basename, join } from 'path';
 import { writeFileSync } from 'fs';
 import { average, median, standardDeviation, quantileRank } from 'simple-statistics';
+const { PuppeteerScreenRecorder } = require( 'puppeteer-screen-recorder' );
 
 /**
  * WordPress dependencies
@@ -11,12 +12,7 @@ import { average, median, standardDeviation, quantileRank } from 'simple-statist
 import {
 	createNewPost,
 	saveDraft,
-	publishPost,
-	insertBlock,
-	openGlobalBlockInserter,
-	closeGlobalBlockInserter,
-	openListView,
-	closeListView
+	insertBlock
 } from '@wordpress/e2e-test-utils';
 
 /**
@@ -25,12 +21,9 @@ import {
 import {
 	readFile,
 	deleteFile,
-	getTypingEventDurations,
-	getClickEventDurations,
-	getHoverEventDurations,
-	getSelectionEventDurations,
-	getLoadingDurations
+	getTypingEventDurations
 } from '../utils';
+
 import { mapValues } from 'lodash';
 
 jest.setTimeout( 1000000 );
@@ -117,6 +110,14 @@ describe( 'Post Editor Performance', () => {
 	});
 
 	it( 'Typing', async() => {
+		const screenRecorderOptions = {
+			followNewTab: true,
+			fps: 25
+		};
+
+		const savePath = './artifacts/tests/typing-test.mp4';
+		const screenRecorder = new PuppeteerScreenRecorder( page, screenRecorderOptions );
+		await screenRecorder.start( savePath );
 
 		// Measuring typing performance.
 		await insertBlock( 'Advanced Heading' );
@@ -153,6 +154,7 @@ describe( 'Post Editor Performance', () => {
 			}
 		}
 		await saveDraft();
+		await screenRecorder.stop();
 
 		expect( 0 < results.type.length ).toBe( true );
 	});

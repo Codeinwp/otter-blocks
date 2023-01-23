@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { join } from 'path';
+const { PuppeteerScreenRecorder } = require( 'puppeteer-screen-recorder' );
 
 /**
   * WordPress dependencies
@@ -58,6 +59,15 @@ describe( 'Otter Block ID', () => {
 	});
 
 	it( 'Check if ID is uniq for otter blocks', async() => {
+		const screenRecorderOptions = {
+			followNewTab: true,
+			fps: 25
+		};
+
+		const savePath = './artifacts/tests/uniq-id-test.mp4';
+		const screenRecorder = new PuppeteerScreenRecorder( page, screenRecorderOptions );
+		await screenRecorder.start( savePath );
+
 		const ids = await page.evaluate( ( ) => {
 			const ids = [];
 			const { getBlocks } = window.wp.data.select( 'core/block-editor' );
@@ -97,6 +107,7 @@ describe( 'Otter Block ID', () => {
 			}
 
 		});
+		await screenRecorder.stop();
 
 		console.log( `Ids that appear more than once: ${Object.keys( duplicates ).filter( i => 1 < duplicates[i]).map( i => `\n| ${duplicates[i].toString().padStart( 2, ' ' )} ${i}` ).join( '' )}`  );
 

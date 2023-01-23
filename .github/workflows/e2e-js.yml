@@ -58,6 +58,13 @@ jobs:
 
       # run the node.js puppeteer script (which takes the screenshots and controls chrome)
       - run: npm run test:e2e
+
+      - name: Upload video files
+        uses: actions/upload-artifact@v2
+        with:
+          name: artifacts
+          path: ./artifacts/tests/**.mp4
+          retention-days: 1
       
       - name: Print the results
         run: |
