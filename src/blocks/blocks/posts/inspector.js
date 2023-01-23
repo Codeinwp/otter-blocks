@@ -33,14 +33,17 @@ import {
 /**
  * Internal dependencies
  */
-import InspectorHeader from '../../components/inspector-header/index.js';
-import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
+import {
+	BoxShadowControl,
+	ButtonToggleControl,
+	ClearButton,
+	InspectorExtensions,
+	InspectorHeader,
+	ResponsiveControl,
+	ToogleGroupControl
+} from '../../components/index.js';
+
 import LayoutBuilder from './components/design-layout-builder.js';
-import ToogleGroupControl from '../../components/toogle-group-control/index.js';
-import ButtonToggle from '../../components/button-toggle-control/index.js';
-import ResponsiveControl from '../../components/responsive-control/index.js';
-import BoxShadowControl from '../../components/box-shadow-control/index.js';
-import ClearButton from '../../components/clear-button/index.js';
 import {
 	convertToTitleCase,
 	changeActiveStyle,
@@ -227,7 +230,7 @@ const Inspector = ({
 							}
 						/>
 
-						<ButtonToggle
+						<ButtonToggleControl
 							label={ __( 'Layout', 'otter-blocks' ) }
 							options={[
 								{
@@ -348,7 +351,7 @@ const Inspector = ({
 					<PanelBody
 						title={ __( 'Style', 'otter-blocks' ) }
 					>
-						<ButtonToggle
+						<ButtonToggleControl
 							options={ styles }
 							value={ getActiveStyle( styles, attributes?.className ) }
 							onChange={ changeStyle }

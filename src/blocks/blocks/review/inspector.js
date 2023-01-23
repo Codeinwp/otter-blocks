@@ -38,19 +38,22 @@ import {
 /**
  * Internal dependencies
  */
-import InspectorHeader from '../../components/inspector-header/index.js';
-import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
-import SyncColorPanel from '../../components/sync-color-panel/index';
-import BoxShadowControl from '../../components/box-shadow-control/index.js';
-import Upsell from '../../components/notice/index.js';
-import ButtonToggle from '../../components/button-toggle-control/index.js';
+import {
+	BoxShadowControl,
+	ButtonToggleControl,
+	InspectorExtensions,
+	InspectorHeader,
+	Notice as Upsell,
+	ResponsiveControl,
+	SyncColorPanel
+} from '../../components/index.js';
+
 import {
 	changeActiveStyle,
 	getActiveStyle,
 	setUtm
 } from '../../helpers/helper-functions.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
-import ResponsiveControl from '../../components/responsive-control/index.js';
 
 const styles = [
 	{
@@ -282,7 +285,7 @@ const Inspector = ({
 					<PanelBody
 						title={ __( 'Settings', 'otter-blocks' ) }
 					>
-						<ButtonToggle
+						<ButtonToggleControl
 							label={ __( 'Column Structure', 'otter-blocks' ) }
 							options={[
 								{
@@ -300,7 +303,7 @@ const Inspector = ({
 
 						{ ( attributes.image || productAttributes?.image ) && (
 							<Fragment>
-								<ButtonToggle
+								<ButtonToggleControl
 									label={ __( 'Image Area Width', 'otter-blocks' ) }
 									options={[
 										{
@@ -645,7 +648,7 @@ const Inspector = ({
 					<PanelBody
 						title={ __( 'Style', 'otter-blocks' ) }
 					>
-						<ButtonToggle
+						<ButtonToggleControl
 							options={ styles }
 							value={ getActiveStyle( styles, attributes?.className ) }
 							onChange={ changeStyle }

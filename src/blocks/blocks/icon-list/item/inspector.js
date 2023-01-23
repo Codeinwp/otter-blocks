@@ -14,7 +14,7 @@ import { PanelBody } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import IconPickerControl from '../../../components/icon-picker-control/index.js';
+import { IconPickerControl } from '../../../components/index.js';
 
 /**
  *

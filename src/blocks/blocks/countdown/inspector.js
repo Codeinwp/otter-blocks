@@ -38,12 +38,16 @@ import { applyFilters } from '@wordpress/hooks';
 /**
  * Internal dependencies
  */
-import InspectorHeader from '../../components/inspector-header/index.js';
-import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
-import ResponsiveControl from '../../components/responsive-control/index.js';
+import {
+	InspectorExtensions,
+	InspectorHeader,
+	Notice,
+	ResponsiveControl
+} from '../../components/index.js';
+
 import { mergeBoxDefaultValues, removeBoxDefaultValues, setUtm } from '../../helpers/helper-functions.js';
+
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
-import Notice from '../../components/notice/index.js';
 
 const defaultFontSizes = [
 	{

@@ -31,20 +31,24 @@ import {
 /**
  * Internal dependencies
  */
-import GoogleFontsControl from '../../../components/google-fonts-control';
-import ClearButton from '../../../components/clear-button';
-import BoxShadowControl from '../../../components/box-shadow-control';
-import IconPickerControl from '../../../components/icon-picker-control/index.js';
-import InspectorHeader from '../../../components/inspector-header';
-import { InspectorExtensions } from '../../../components/inspector-slot-fill';
-import ButtonToggle from '../../../components/button-toggle-control';
+import {
+	BoxShadowControl,
+	ButtonToggleControl,
+	ClearButton,
+	GoogleFontsControl,
+	IconPickerControl,
+	InspectorExtensions,
+	InspectorHeader,
+	ResponsiveControl,
+	SyncColorPanel
+} from '../../../components/index.js';
+
 import {
 	changeActiveStyle,
 	getActiveStyle
-} from '../../../helpers/helper-functions';
+} from '../../../helpers/helper-functions.js';
+
 import { useResponsiveAttributes } from '../../../helpers/utility-hooks.js';
-import SyncColorPanel from '../../../components/sync-color-panel';
-import ResponsiveControl from '../../../components/responsive-control';
 
 const styles = [
 	{
@@ -232,7 +236,7 @@ const Inspector = ({
 					<PanelBody
 						title={ __( 'Style', 'otter-blocks' ) }
 					>
-						<ButtonToggle
+						<ButtonToggleControl
 							options={ styles }
 							value={ getActiveStyle( styles, attributes?.className ) }
 							onChange={ changeStyle }

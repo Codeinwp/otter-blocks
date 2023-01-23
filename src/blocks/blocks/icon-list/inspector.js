@@ -29,14 +29,17 @@ import { alignCenter, alignLeft, alignRight } from '@wordpress/icons';
 /**
  * Internal dependencies
  */
-import InspectorHeader from '../../components/inspector-header/index.js';
-import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
+import {
+	ButtonToggleControl,
+	IconPickerControl,
+	InspectorExtensions,
+	InspectorHeader,
+	ResponsiveControl,
+	ToogleGroupControl
+} from '../../components/index.js';
+
 import { _px } from '../../helpers/helper-functions.js';
-import ToogleGroupControl from '../../components/toogle-group-control/index.js';
-import ResponsiveControl from '../../components/responsive-control/index.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
-import IconPickerControl from '../../components/icon-picker-control/index.js';
-import ButtonToggle from '../../components/button-toggle-control/index.js';
 
 /**
  *
@@ -109,7 +112,7 @@ const Inspector = ({
 						<PanelBody
 							title={ __( 'Layout', 'otter-blocks' ) }
 						>
-							<ButtonToggle
+							<ButtonToggleControl
 								label={ __( 'List Orientation', 'otter-blocks' ) }
 								options={[
 									{

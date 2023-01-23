@@ -1,4 +1,13 @@
 /**
+ * External dependencies.
+ */
+import {
+	alignCenter,
+	alignLeft,
+	alignRight
+} from '@wordpress/icons';
+
+/**
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
@@ -31,15 +40,17 @@ import {
 /**
  * Internal dependencies
  */
-import InspectorHeader from '../../components/inspector-header/index.js';
-import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
-import GoogleFontsControl from '../../components/google-fonts-control/index.js';
-import ControlPanelControl from '../../components/control-panel-control/index.js';
-import ResponsiveControl from '../../components/responsive-control/index.js';
-import HTMLAnchorControl from '../../components/html-anchor-control/index.js';
-import ClearButton from '../../components/clear-button/index.js';
-import { alignCenter, alignLeft, alignRight } from '@wordpress/icons';
-import ToogleGroupControl from '../../components/toogle-group-control/index.js';
+import {
+	ClearButton,
+	ControlPanelControl,
+	GoogleFontsControl,
+	HTMLAnchorControl,
+	InspectorExtensions,
+	InspectorHeader,
+	ResponsiveControl,
+	ToogleGroupControl
+} from '../../components/index.js';
+
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import { makeBox } from '../../plugins/copy-paste/utils';
 import { _px } from '../../helpers/helper-functions.js';

@@ -1,10 +1,22 @@
 /**
+ * External dependencies
+ */
+import {
+	alignCenter,
+	alignLeft,
+	alignRight
+} from '@wordpress/icons';
+
+/**
  * WordPress dependencies
  */
-
 import { __ } from '@wordpress/i18n';
 
-import { isEmpty, isNumber, pick } from 'lodash';
+import {
+	isEmpty,
+	isNumber,
+	pick
+} from 'lodash';
 
 import {
 	__experimentalColorGradientControl as ColorGradientControl,
@@ -25,19 +37,24 @@ import {
 	FontSizePicker
 } from '@wordpress/components';
 
-import { Fragment, useState } from '@wordpress/element';
-
 import {
-	alignCenter,
-	alignLeft,
-	alignRight
-} from '@wordpress/icons';
+	Fragment,
+	useState
+} from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import ControlPanelControl from '../../components/control-panel-control/index.js';
-import BackgroundSelectorControl from '../../components/background-selector-control/index.js';
+import {
+	BackgroundSelectorControl,
+	ButtonToggleControl,
+	ControlPanelControl,
+	InspectorExtensions,
+	InspectorHeader,
+	ResponsiveControl,
+	ToogleGroupControl
+} from '../../components/index.js';
+
 import {
 	mergeBoxDefaultValues,
 	removeBoxDefaultValues,
@@ -45,12 +62,9 @@ import {
 	_i,
 	_px
 } from '../../helpers/helper-functions.js';
-import InspectorHeader from '../../components/inspector-header/index.js';
-import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
-import ButtonToggle from '../../components/button-toggle-control/index.js';
-import ToogleGroupControl from '../../components/toogle-group-control/index.js';
-import ResponsiveControl from '../../components/responsive-control/index.js';
+
 import { alignBottom, alignTop, alignCenter as oAlignCenter } from '../../helpers/icons.js';
+
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 const wrapNumberInBox = ( x ) => isNumber( x ) ? stringToBox( _px( x ) ) : x;
@@ -159,7 +173,7 @@ const Inspector = ({
 							title={ __( 'Front Side Content', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
-							<ButtonToggle
+							<ButtonToggleControl
 								label={ __( 'Content Type', 'otter-blocks' ) }
 								options={[
 									{
@@ -256,7 +270,7 @@ const Inspector = ({
 							title={ __( 'Alignment', 'otter-blocks' ) }
 							initialOpen={ false }
 						>
-							<ButtonToggle
+							<ButtonToggleControl
 								label={ __( 'Sides', 'otter-blocks' ) }
 								options={[
 									{

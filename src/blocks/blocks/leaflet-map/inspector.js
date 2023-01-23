@@ -26,10 +26,13 @@ import { InspectorControls } from '@wordpress/block-editor';
 /**
  * Internal dependencies
  */
+import {
+	ClearButton,
+	ResponsiveControl
+} from '../../components/index.js';
+
 import { getLocation } from './utility';
 import MarkerWrapper from './components/marker-wrapper.js';
-import ResponsiveControl from '../../components/responsive-control/index.js';
-import ClearButton from '../../components/clear-button/index.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 const px = value => value ? `${ value }px` : value;

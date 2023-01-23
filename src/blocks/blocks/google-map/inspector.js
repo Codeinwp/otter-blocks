@@ -28,11 +28,14 @@ import {
 /**
  * Internal dependencies
  */
-import InspectorHeader from '../../components/inspector-header/index.js';
-import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
-import { StyleSwitcherInspectorControl } from '../../components/style-switcher-control/index.js';
-import ResponsiveControl from '../../components/responsive-control/index.js';
-import ClearButton from '../../components/clear-button/index.js';
+import {
+	ClearButton,
+	InspectorExtensions,
+	InspectorHeader,
+	ResponsiveControl,
+	StyleSwitcherInspectorControl
+} from '../../components/index.js';
+
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import MarkerWrapper from './components/marker-wrapper.js';
 

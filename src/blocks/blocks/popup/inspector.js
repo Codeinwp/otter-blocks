@@ -27,13 +27,16 @@ import { applyFilters } from '@wordpress/hooks';
 /**
  * Internal dependencies.
  */
-import Notice from '../../components/notice/index.js';
+import {
+	BoxShadowControl,
+	InspectorExtensions,
+	InspectorHeader,
+	Notice,
+	ResponsiveControl
+} from '../../components/index.js';
+
 import { removeBoxDefaultValues, setUtm } from '../../helpers/helper-functions.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
-import InspectorHeader from '../../components/inspector-header/index.js';
-import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
-import ResponsiveControl from '../../components/responsive-control/index.js';
-import BoxShadowControl from '../../components/box-shadow-control/index.js';
 
 /**
  *
