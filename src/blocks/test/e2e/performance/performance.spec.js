@@ -28,6 +28,8 @@ import { mapValues } from 'lodash';
 
 jest.setTimeout( 1000000 );
 
+let screenRecorder;
+
 describe( 'Post Editor Performance', () => {
 	const results = {
 		serverResponse: [],
@@ -47,6 +49,15 @@ describe( 'Post Editor Performance', () => {
 	let traceResults;
 
 	beforeAll( async() => {
+		const screenRecorderOptions = {
+			followNewTab: true,
+			fps: 25
+		};
+
+		const savePath = './artifacts/tests/typing-test.mp4';
+		screenRecorder = new PuppeteerScreenRecorder( page, screenRecorderOptions );
+		await screenRecorder.start( savePath );
+
 		const html = readFile(
 			join( __dirname, '..', '/assets/large-otter-post.html' )
 		);
@@ -71,6 +82,7 @@ describe( 'Post Editor Performance', () => {
 	});
 
 	afterAll( async() => {
+		await screenRecorder.stop();
 
 		const summary = Object.entries( results ).filter( ([ _, value ]) => 0 < value.length ).map( ([ key, value ]) => {
 
@@ -110,14 +122,6 @@ describe( 'Post Editor Performance', () => {
 	});
 
 	it( 'Typing', async() => {
-		const screenRecorderOptions = {
-			followNewTab: true,
-			fps: 25
-		};
-
-		const savePath = './artifacts/tests/typing-test.mp4';
-		const screenRecorder = new PuppeteerScreenRecorder( page, screenRecorderOptions );
-		await screenRecorder.start( savePath );
 
 		// Measuring typing performance.
 		await insertBlock( 'Advanced Heading' );
@@ -154,7 +158,6 @@ describe( 'Post Editor Performance', () => {
 			}
 		}
 		await saveDraft();
-		await screenRecorder.stop();
 
 		expect( 0 < results.type.length ).toBe( true );
 	});

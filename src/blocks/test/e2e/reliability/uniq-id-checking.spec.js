@@ -21,12 +21,23 @@ import {
 
 jest.setTimeout( 1000000 );
 
+let screenRecorder;
+
 describe( 'Otter Block ID', () => {
 
 	beforeAll( async() => {
 		const html = readFile(
 			join( __dirname, '..', '/assets/large-otter-post.html' )
 		);
+
+		const screenRecorderOptions = {
+			followNewTab: true,
+			fps: 25
+		};
+
+		const savePath = './artifacts/tests/uniq-id-test.mp4';
+		screenRecorder = new PuppeteerScreenRecorder( page, screenRecorderOptions );
+		await screenRecorder.start( savePath );
 
 		await createNewPost();
 		await page.evaluate( ( _html ) => {
@@ -47,6 +58,10 @@ describe( 'Otter Block ID', () => {
 		await saveDraft();
 	});
 
+	afterAll( async() => {
+		await screenRecorder.stop();
+	});
+
 	beforeEach( async() => {
 
 		// Disable auto-save to avoid impacting the metrics.
@@ -59,15 +74,6 @@ describe( 'Otter Block ID', () => {
 	});
 
 	it( 'Check if ID is uniq for otter blocks', async() => {
-		const screenRecorderOptions = {
-			followNewTab: true,
-			fps: 25
-		};
-
-		const savePath = './artifacts/tests/uniq-id-test.mp4';
-		const screenRecorder = new PuppeteerScreenRecorder( page, screenRecorderOptions );
-		await screenRecorder.start( savePath );
-
 		const ids = await page.evaluate( ( ) => {
 			const ids = [];
 			const { getBlocks } = window.wp.data.select( 'core/block-editor' );
@@ -107,7 +113,6 @@ describe( 'Otter Block ID', () => {
 			}
 
 		});
-		await screenRecorder.stop();
 
 		console.log( `Ids that appear more than once: ${Object.keys( duplicates ).filter( i => 1 < duplicates[i]).map( i => `\n| ${duplicates[i].toString().padStart( 2, ' ' )} ${i}` ).join( '' )}`  );
 
