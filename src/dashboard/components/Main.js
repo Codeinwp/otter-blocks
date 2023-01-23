@@ -75,25 +75,9 @@ const Main = ({
 		}
 	};
 
-	const BlackFriday = () => {
-		return (
-			<div className="otter-bf-banner">
-				<a href="https://bit.ly/otter-2022bf" target="_blank">
-					<img src={ `${ window.otterObj.assetsPath }/images/black-friday-banner.png` } alt={ __( 'Black Friday deal for Otter!', 'otter-blocks' ) } />
-
-					<div className="otter-bf-text">
-						<h3>{ __( 'Hurry up!', 'otter-blocks' ) } <span>{ daysLeft }</span> Left</h3>
-					</div>
-				</a>
-			</div>
-		);
-	};
-
 	return (
 		<Fragment>
-			{ Boolean( window.otterObj.showBFDeal ) && <BlackFriday /> }
-
-			<div className={ `otter-main is-${ currentTab}`}>
+			<div className={ `otter-main is-${ currentTab }`}>
 
 				{ 'dashboard' === currentTab && window.otterObj.showFeedbackNotice && (
 					<NoticeCard

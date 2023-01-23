@@ -54,7 +54,7 @@ const Inspector = ({
 	setAttributes
 }) => {
 
-	const [ tab, setTab ] = useState( 'style' );
+	const [ tab, setTab ] = useState( 'settings' );
 	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
 	const changeFontFamily = value => {
@@ -132,61 +132,59 @@ const Inspector = ({
 				/>
 
 				<div>
-
-					{
-						'settings' === tab && (
-							<Fragment>
-								<PanelBody
-									title={ __( 'Sizing', 'otter-blocks' ) }
+					{ 'settings' === tab && (
+						<Fragment>
+							<PanelBody
+								title={ __( 'Sizing', 'otter-blocks' ) }
+							>
+								<ResponsiveControl
+									label={ __( 'Alignment', 'otter-blocks' ) }
 								>
-									<ResponsiveControl
-										label={ __( 'Alignment', 'otter-blocks' ) }
-									>
-										<ToogleGroupControl
-											value={ responsiveGetAttributes([ attributes.align, attributes.alignTablet, attributes.alignMobile  ]) ?? 'left' }
-											onChange={ value => responsiveSetAttributes( value, [ 'align', 'alignTablet', 'alignMobile' ]) }
-											options={[
-												{
-													icon: alignLeft,
-													label: __( 'Left', 'otter-blocks' ),
-													value: 'left'
-												},
-												{
-													icon: alignCenter,
-													label: __( 'Center', 'otter-blocks' ),
-													value: 'center'
-												},
-												{
-													icon: alignRight,
-													label: __( 'Right', 'otter-blocks' ),
-													value: 'right'
-												}
-											]}
-											hasIcon
-										/>
-									</ResponsiveControl>
-
-									<SelectControl
-										label={ __( 'HTML Tag', 'otter-blocks' ) }
-										value={ attributes.tag  }
-										onChange={ tag  => setAttributes({ tag }) }
+									<ToogleGroupControl
+										value={ responsiveGetAttributes([ attributes.align, attributes.alignTablet, attributes.alignMobile  ]) ?? 'left' }
+										onChange={ value => responsiveSetAttributes( value, [ 'align', 'alignTablet', 'alignMobile' ]) }
 										options={[
-											{ label: __( 'H1', 'otter-blocks' ), value: 'h1' },
-											{ label: __( 'H2', 'otter-blocks' ), value: 'h2' },
-											{ label: __( 'H3', 'otter-blocks' ), value: 'h3' },
-											{ label: __( 'H4', 'otter-blocks' ), value: 'h4' },
-											{ label: __( 'H5', 'otter-blocks' ), value: 'h5' },
-											{ label: __( 'H6', 'otter-blocks' ), value: 'h6' },
-											{ label: __( 'div', 'otter-blocks' ), value: 'div' },
-											{ label: __( 'span', 'otter-blocks' ), value: 'span' },
-											{ label: __( 'p', 'otter-blocks' ), value: 'p' }
+											{
+												icon: alignLeft,
+												label: __( 'Left', 'otter-blocks' ),
+												value: 'left'
+											},
+											{
+												icon: alignCenter,
+												label: __( 'Center', 'otter-blocks' ),
+												value: 'center'
+											},
+											{
+												icon: alignRight,
+												label: __( 'Right', 'otter-blocks' ),
+												value: 'right'
+											}
 										]}
+										hasIcon
 									/>
-								</PanelBody>
+								</ResponsiveControl>
 
-							</Fragment>
-						)
-					}
+								<SelectControl
+									label={ __( 'HTML Tag', 'otter-blocks' ) }
+									value={ attributes.tag  }
+									onChange={ tag  => setAttributes({ tag }) }
+									options={[
+										{ label: __( 'H1', 'otter-blocks' ), value: 'h1' },
+										{ label: __( 'H2', 'otter-blocks' ), value: 'h2' },
+										{ label: __( 'H3', 'otter-blocks' ), value: 'h3' },
+										{ label: __( 'H4', 'otter-blocks' ), value: 'h4' },
+										{ label: __( 'H5', 'otter-blocks' ), value: 'h5' },
+										{ label: __( 'H6', 'otter-blocks' ), value: 'h6' },
+										{ label: __( 'div', 'otter-blocks' ), value: 'div' },
+										{ label: __( 'span', 'otter-blocks' ), value: 'span' },
+										{ label: __( 'p', 'otter-blocks' ), value: 'p' }
+									]}
+								/>
+							</PanelBody>
+
+							<InspectorExtensions/>
+						</Fragment>
+					) }
 
 					{ 'style' === tab && (
 						<Fragment>
@@ -466,11 +464,7 @@ const Inspector = ({
 
 							</PanelBody>
 						</Fragment>
-
 					)  }
-
-					<InspectorExtensions/>
-
 				</div>
 			</InspectorControls>
 

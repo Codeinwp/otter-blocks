@@ -36,7 +36,7 @@ import {
  * Internal dependencies.
  */
 import { FormContext } from './edit.js';
-import { ColorDropdownControl, InspectorHeader, ResponsiveControl, SyncColorPanel, SyncControlDropdown, ToogleGroupControl } from '../../components/index.js';
+import { ColorDropdownControl, InspectorHeader, InspectorExtensions, ResponsiveControl, SyncColorPanel, SyncControlDropdown, ToogleGroupControl } from '../../components/index.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 import { isObjectLike } from 'lodash';
@@ -660,6 +660,8 @@ const Inspector = ({
 								help={ __( 'This message will be displayed when there is a problem with the server.' ) }
 							/>
 						</PanelBody>
+
+						<InspectorExtensions/>
 					</Fragment>
 				) }
 				{

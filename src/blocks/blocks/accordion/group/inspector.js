@@ -184,43 +184,47 @@ const Inspector = ({
 			/>
 
 			{ 'settings' === tab && (
-				<PanelBody
-					title={ __( 'Settings', 'otter-blocks' ) }
-				>
-					<ToggleControl
-						label={ __( 'Place Icon on Left', 'otter-blocks' ) }
-						checked={ attributes.iconFirst }
-						onChange={ iconFirst => setAttributes({ iconFirst }) }
-					/>
+				<Fragment>
+					<PanelBody
+						title={ __( 'Settings', 'otter-blocks' ) }
+					>
+						<ToggleControl
+							label={ __( 'Place Icon on Left', 'otter-blocks' ) }
+							checked={ attributes.iconFirst }
+							onChange={ iconFirst => setAttributes({ iconFirst }) }
+						/>
 
-					<ToggleControl
-						label={ __( 'Keep Multiple Items Expanded', 'otter-blocks' ) }
-						help={ __( 'When enabled, multiple accordion items can be expanded at the same time', 'otter-blocks' ) }
-						checked={ attributes.alwaysOpen || false }
-						onChange={ onAlwaysOpenToggle }
-					/>
+						<ToggleControl
+							label={ __( 'Keep Multiple Items Expanded', 'otter-blocks' ) }
+							help={ __( 'When enabled, multiple accordion items can be expanded at the same time', 'otter-blocks' ) }
+							checked={ attributes.alwaysOpen || false }
+							onChange={ onAlwaysOpenToggle }
+						/>
 
-					<ToggleControl
-						label={ __( 'Enable FAQ Schema', 'otter-blocks' ) }
-						checked={ attributes.FAQSchema || false }
-						onChange={ FAQSchema => setAttributes({ FAQSchema }) }
-					/>
+						<ToggleControl
+							label={ __( 'Enable FAQ Schema', 'otter-blocks' ) }
+							checked={ attributes.FAQSchema || false }
+							onChange={ FAQSchema => setAttributes({ FAQSchema }) }
+						/>
 
-					<SelectControl
-						label={ __( 'Accordion title HTML tag', 'otter-blocks' ) }
-						value={ attributes.tag || 'div' }
-						options={ [
-							{ label: __( 'H1', 'otter-blocks' ), value: 'h1' },
-							{ label: __( 'H2', 'otter-blocks' ), value: 'h2' },
-							{ label: __( 'H3', 'otter-blocks' ), value: 'h3' },
-							{ label: __( 'H4', 'otter-blocks' ), value: 'h4' },
-							{ label: __( 'H5', 'otter-blocks' ), value: 'h5' },
-							{ label: __( 'H6', 'otter-blocks' ), value: 'h6' },
-							{ label: __( 'div', 'otter-blocks' ), value: 'div' }
-						] }
-						onChange={ onTagChange }
-					/>
-				</PanelBody>
+						<SelectControl
+							label={ __( 'Accordion title HTML tag', 'otter-blocks' ) }
+							value={ attributes.tag || 'div' }
+							options={ [
+								{ label: __( 'H1', 'otter-blocks' ), value: 'h1' },
+								{ label: __( 'H2', 'otter-blocks' ), value: 'h2' },
+								{ label: __( 'H3', 'otter-blocks' ), value: 'h3' },
+								{ label: __( 'H4', 'otter-blocks' ), value: 'h4' },
+								{ label: __( 'H5', 'otter-blocks' ), value: 'h5' },
+								{ label: __( 'H6', 'otter-blocks' ), value: 'h6' },
+								{ label: __( 'div', 'otter-blocks' ), value: 'div' }
+							] }
+							onChange={ onTagChange }
+						/>
+					</PanelBody>
+
+					<InspectorExtensions/>
+				</Fragment>
 			) }
 
 			{ 'style' === tab && (
@@ -387,8 +391,6 @@ const Inspector = ({
 					</PanelBody>
 				</Fragment>
 			) }
-
-			<InspectorExtensions/>
 		</InspectorControls>
 	);
 };

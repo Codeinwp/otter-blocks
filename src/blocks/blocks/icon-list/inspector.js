@@ -23,16 +23,18 @@ import {
 	Suspense,
 	useState
 } from '@wordpress/element';
-import InspectorHeader from '../../components/inspector-header/index.js';
-import { _px } from '../../helpers/helper-functions.js';
-import ToogleGroupControl from '../../components/toogle-group-control/index.js';
+
 import { alignCenter, alignLeft, alignRight } from '@wordpress/icons';
-import ResponsiveControl from '../../components/responsive-control/index.js';
-import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 /**
  * Internal dependencies
  */
+import InspectorHeader from '../../components/inspector-header/index.js';
+import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
+import { _px } from '../../helpers/helper-functions.js';
+import ToogleGroupControl from '../../components/toogle-group-control/index.js';
+import ResponsiveControl from '../../components/responsive-control/index.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import IconPickerControl from '../../components/icon-picker-control/index.js';
 import ButtonToggle from '../../components/button-toggle-control/index.js';
 
@@ -45,7 +47,6 @@ const Inspector = ({
 	attributes,
 	setAttributes
 }) => {
-
 	const [ tab, setTab ] = useState( 'settings' );
 
 	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
@@ -178,6 +179,8 @@ const Inspector = ({
 								/>
 							</Suspense>
 						</PanelBody>
+
+						<InspectorExtensions/>
 					</Fragment>
 				) }
 

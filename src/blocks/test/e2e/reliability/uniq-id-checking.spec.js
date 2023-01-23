@@ -2,6 +2,7 @@
  * External dependencies
  */
 import { join } from 'path';
+const { PuppeteerScreenRecorder } = require( 'puppeteer-screen-recorder' );
 
 /**
   * WordPress dependencies
@@ -20,12 +21,23 @@ import {
 
 jest.setTimeout( 1000000 );
 
+let screenRecorder;
+
 describe( 'Otter Block ID', () => {
 
 	beforeAll( async() => {
 		const html = readFile(
 			join( __dirname, '..', '/assets/large-otter-post.html' )
 		);
+
+		const screenRecorderOptions = {
+			followNewTab: true,
+			fps: 25
+		};
+
+		const savePath = './artifacts/tests/uniq-id-test.mp4';
+		screenRecorder = new PuppeteerScreenRecorder( page, screenRecorderOptions );
+		await screenRecorder.start( savePath );
 
 		await createNewPost();
 		await page.evaluate( ( _html ) => {
@@ -44,6 +56,10 @@ describe( 'Otter Block ID', () => {
 		}, html );
 
 		await saveDraft();
+	});
+
+	afterAll( async() => {
+		await screenRecorder.stop();
 	});
 
 	beforeEach( async() => {
