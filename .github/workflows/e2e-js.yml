@@ -60,6 +60,7 @@ jobs:
       - run: npm run test:e2e
 
       - name: Upload video files
+        if: always()
         uses: actions/upload-artifact@v2
         with:
           name: artifacts
