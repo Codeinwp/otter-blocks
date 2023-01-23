@@ -217,34 +217,38 @@ const Inspector = ({
 			/>
 
 			{ 'layout' === tab && (
-				<PanelBody
-					title={ __( 'Column Structure', 'otter-blocks' ) }
-				>
-					{ ( 1 < parentBlock.innerBlocks.length ) && (
-						<RangeControl
-							label={ __( 'Column Width', 'otter-blocks' ) }
-							value={ Number( attributes.columnWidth ) }
-							onChange={ changeColumnWidth }
-							step={ 0.1 }
-							min={ 10 }
-							max={ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 10 }
-						/>
-					) }
+				<Fragment>
+					<PanelBody
+						title={ __( 'Column Structure', 'otter-blocks' ) }
+					>
+						{ ( 1 < parentBlock.innerBlocks.length ) && (
+							<RangeControl
+								label={ __( 'Column Width', 'otter-blocks' ) }
+								value={ Number( attributes.columnWidth ) }
+								onChange={ changeColumnWidth }
+								step={ 0.1 }
+								min={ 10 }
+								max={ ( Number( attributes.columnWidth ) + Number( nextBlockWidth.current ) ) - 10 }
+							/>
+						) }
 
-					<SelectControl
-						label={ __( 'HTML Tag', 'otter-blocks' ) }
-						value={ attributes.columnsHTMLTag }
-						options={ [
-							{ label: __( 'Default (div)', 'otter-blocks' ), value: 'div' },
-							{ label: 'section', value: 'section' },
-							{ label: 'header', value: 'header' },
-							{ label: 'footer', value: 'footer' },
-							{ label: 'article', value: 'article' },
-							{ label: 'main', value: 'main' }
-						] }
-						onChange={ value => setAttributes({ columnsHTMLTag: value }) }
-					/>
-				</PanelBody>
+						<SelectControl
+							label={ __( 'HTML Tag', 'otter-blocks' ) }
+							value={ attributes.columnsHTMLTag }
+							options={ [
+								{ label: __( 'Default (div)', 'otter-blocks' ), value: 'div' },
+								{ label: 'section', value: 'section' },
+								{ label: 'header', value: 'header' },
+								{ label: 'footer', value: 'footer' },
+								{ label: 'article', value: 'article' },
+								{ label: 'main', value: 'main' }
+							] }
+							onChange={ value => setAttributes({ columnsHTMLTag: value }) }
+						/>
+					</PanelBody>
+
+					<InspectorExtensions/>
+				</Fragment>
 			) || 'style' === tab && (
 				<Fragment>
 					<PanelBody
@@ -514,8 +518,6 @@ const Inspector = ({
 					</PanelBody>
 				</Fragment>
 			) }
-
-			<InspectorExtensions/>
 		</InspectorControls>
 	);
 };

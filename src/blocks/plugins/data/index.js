@@ -17,7 +17,6 @@ import { getQueryStringFromObject } from '../../helpers/helper-functions.js';
 
 const DEFAULT_STATE = {
 	showOnboarding: Boolean( window.themeisleGutenberg.showOnboarding ) && 'false' !== window.localStorage?.getItem( 'o-show-onboarding' ),
-	isBFDealVisible: Boolean( window.themeisleGutenberg.showBFDeal ) && 'false' !== window.localStorage?.getItem( 'o-show-bf-deal' ),
 	viewType: 'Desktop',
 	visiblePopover: 'themeisle-blocks/dynamic-value',
 	dynamicData: {},
@@ -36,12 +35,6 @@ const actions = {
 		return {
 			type: 'UPDATE_ONBOARDING',
 			showOnboarding
-		};
-	},
-	showBFDeal( isBFDealVisible ) {
-		return {
-			type: 'UPDATE_BF_DEAL',
-			isBFDealVisible
 		};
 	},
 	setVisiblePopover( visiblePopover ) {
@@ -94,12 +87,6 @@ registerStore( 'themeisle-gutenberg/data', {
 			};
 		}
 
-		if ( 'UPDATE_BF_DEAL' === action.type ) {
-			return {
-				isBFDealVisible: action.isBFDealVisible
-			};
-		}
-
 		if ( 'UPDATE_POPOVER' === action.type ) {
 			return {
 				...state,
@@ -145,9 +132,6 @@ registerStore( 'themeisle-gutenberg/data', {
 		},
 		isOnboardingVisible( state ) {
 			return state.showOnboarding;
-		},
-		isBFDealVisible( state ) {
-			return state.isBFDealVisible;
 		},
 		getVisiblePopover( state ) {
 			return state.visiblePopover;

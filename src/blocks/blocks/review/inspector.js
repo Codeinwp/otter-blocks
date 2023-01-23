@@ -635,6 +635,8 @@ const Inspector = ({
 							onChange={ buttonsLabel => setAttributes({ buttonsLabel }) }
 						/>
 					</PanelBody>
+
+					<InspectorExtensions/>
 				</Fragment>
 			) }
 
@@ -801,8 +803,6 @@ const Inspector = ({
 					/>
 				</PanelBody>
 			) }
-
-			<InspectorExtensions/>
 		</InspectorControls>
 	);
 };
