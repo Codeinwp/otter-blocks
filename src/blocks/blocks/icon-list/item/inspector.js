@@ -48,14 +48,6 @@ const Inspector = ({
 		});
 	};
 
-	const onDefaultContentColorChange = value => {
-		setAttributes({ contentColor: value });
-	};
-
-	const onDefaultIconColorChange = value => {
-		setAttributes({ iconColor: value });
-	};
-
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -71,6 +63,7 @@ const Inspector = ({
 					allowImage
 				/>
 			</PanelBody>
+
 			<PanelColorSettings
 				title={ __( 'Color', 'otter-blocks' ) }
 				initialOpen={ true }

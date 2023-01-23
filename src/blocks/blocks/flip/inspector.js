@@ -351,6 +351,8 @@ const Inspector = ({
 								)
 							}
 						</PanelBody>
+
+						<InspectorExtensions/>
 					</Fragment>
 				) }
 
@@ -644,8 +646,6 @@ const Inspector = ({
 					</Fragment>
 				) }
 			</div>
-
-			<InspectorExtensions/>
 		</InspectorControls>
 	);
 };

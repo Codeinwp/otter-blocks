@@ -321,6 +321,8 @@ const Inspector = ({
 							{ __( 'Save API Key', 'otter-blocks' ) }
 						</Button>
 					</PanelBody>
+
+					<InspectorExtensions/>
 				</Fragment>
 			) }
 
@@ -378,8 +380,6 @@ const Inspector = ({
 					/>
 				</PanelBody>
 			) }
-
-			<InspectorExtensions/>
 		</InspectorControls>
 	);
 };

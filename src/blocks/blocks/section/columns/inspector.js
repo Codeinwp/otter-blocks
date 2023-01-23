@@ -693,6 +693,8 @@ const Inspector = ({
 								/>
 							) }
 						</PanelBody>
+
+						<InspectorExtensions/>
 					</Fragment>
 
 				) || 'style' === tab && (
@@ -1038,10 +1040,7 @@ const Inspector = ({
 							) }
 						</PanelBody>
 					</Fragment>
-
 				) }
-
-				<InspectorExtensions/>
 			</InspectorControls>
 
 			<HTMLAnchorControl
