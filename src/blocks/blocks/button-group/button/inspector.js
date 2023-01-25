@@ -150,7 +150,7 @@ const Inspector = ({
 		);
 	};
 
-	const [ tab, setTab ] = useState( 'style' );
+	const [ tab, setTab ] = useState( 'settings' );
 
 	return (
 		<InspectorControls>
@@ -195,7 +195,7 @@ const Inspector = ({
 							</PanelBody>
 							<PanelBody
 								title={ __( 'Icon settings', 'otter-blocks' ) }
-								initialOpen={ true }
+								initialOpen={ false }
 							>
 								<SelectControl
 									label={ __( 'Icon Position', 'otter-blocks' ) }
@@ -352,7 +352,7 @@ const Inspector = ({
 
 							<PanelBody
 								title={ __( 'Border & Box Shadow', 'otter-blocks' ) }
-								initialOpen={ true }
+								initialOpen={ false }
 							>
 								<SyncControlDropdown
 									isSynced={proxyStore.isSynced}

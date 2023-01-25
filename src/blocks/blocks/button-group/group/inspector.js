@@ -388,7 +388,7 @@ const Inspector = ({
 
 							<PanelBody
 								title={ __( 'Typography', 'otter-blocks' ) }
-								initialOpen={ true }
+								initialOpen={ false }
 							>
 								<SyncControlDropdown
 									isSynced={attributes.isSynced}
