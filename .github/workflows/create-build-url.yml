@@ -14,8 +14,6 @@ jobs:
       branch-name: ${{ steps.retrieve-branch-name.outputs.branch_name }}
       git-sha-8: ${{ steps.retrieve-git-sha-8.outputs.sha8 }}
     steps:
-      - name: Install WPCLI
-        run: curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && chmod +x wp-cli.phar && mv wp-cli.phar /usr/local/bin/wp
       - name: Check out source files
         uses: actions/checkout@v2
       - name: Get Composer Cache Directory

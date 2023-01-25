@@ -76,7 +76,7 @@ class Blocks_CSS {
 			)
 		);
 
-		wp_set_script_translations( 'otter-css', 'otter-blocks' );
+		wp_set_script_translations( 'otter-css', 'blocks-css' );
 
 		wp_enqueue_style(
 			'otter-css',

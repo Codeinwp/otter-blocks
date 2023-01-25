@@ -48,7 +48,7 @@ class Blocks_Export_Import {
 			true
 		);
 	
-		wp_set_script_translations( 'blocks-export-import', 'otter-blocks' );
+		wp_set_script_translations( 'blocks-export-import', 'blocks-export-import' );
 	}
 
 	/**
