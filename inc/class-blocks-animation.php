@@ -67,12 +67,24 @@ class Blocks_Animation {
 			$asset_file['version']
 		);
 
+		if ( defined( 'OTTER_BLOCKS_VERSION' ) ) {
+			array_push( $asset_file['dependencies'], 'otter-blocks' );
+		}
+
 		wp_enqueue_script(
 			'otter-animation',
 			BLOCKS_ANIMATION_URL . 'build/animation/index.js',
 			$asset_file['dependencies'],
 			$asset_file['version'],
 			true
+		);
+
+		wp_localize_script(
+			'otter-animation',
+			'blocksAnimation',
+			array(
+				'hasOtter' => defined( 'OTTER_BLOCKS_VERSION' ),
+			)
 		);
 
 		wp_set_script_translations( 'otter-animation', 'otter-blocks' );

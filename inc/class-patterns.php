@@ -33,7 +33,7 @@ class Patterns {
 	 *
 	 * @access  public
 	 */
-	public static function register_patterns() {
+	public function register_patterns() {
 		$block_pattern_categories = array(
 			'otter-blocks' => array( 'label' => __( 'Otter Blocks', 'otter-blocks' ) ),
 			'cta'          => array( 'label' => __( 'Call to Action', 'otter-blocks' ) ),
@@ -41,6 +41,8 @@ class Patterns {
 			'pricing'      => array( 'label' => __( 'Pricing', 'otter-blocks' ) ),
 			'testimonials' => array( 'label' => __( 'Testimonials', 'otter-blocks' ) ),
 		);
+
+		$block_pattern_categories = apply_filters( 'otter_blocks_block_pattern_categories', $block_pattern_categories );
 	
 		foreach ( $block_pattern_categories as $name => $properties ) {
 			if ( ! \WP_Block_Pattern_Categories_Registry::get_instance()->is_registered( $name ) ) {
@@ -142,17 +144,7 @@ class Patterns {
 				'minimum' => 5.8,
 			),
 		);
-	
-		/**
-		 * Filters,
-		 *), the theme block patterns.
-		 *
-		 * @since Twenty Twenty-Two 1.0
-		 *
-		 * @param array $block_patterns List of block patterns by name.
-		 */
-		$block_patterns = apply_filters( 'otter_blocks_block_patterns', $block_patterns );
-	
+
 		foreach ( $block_patterns as $block_pattern ) {
 			if ( ! version_compare( get_bloginfo( 'version' ), $block_pattern['minimum'], '>=' ) ) {
 				continue;

@@ -14,12 +14,15 @@ import {
 	useRef
 } from '@wordpress/element';
 
+import { createBlock } from '@wordpress/blocks';
+
 /**
  * Internal dependencies
  */
 import metadata from './block.json';
 import { blockInit } from '../../../helpers/block-utility.js';
 import Inspector from './inspector.js';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -44,6 +47,33 @@ const Edit = ({
 	const inputRef = useRef( null );
 	const helpRef = useRef( null );
 
+	const {
+		parentClientId
+	} = useSelect( select => {
+		const {
+			getBlock,
+			getBlockRootClientId
+		} = select( 'core/block-editor' );
+
+		if ( ! clientId ) {
+			return {
+				parentClientId: ''
+			};
+		}
+
+		const parentClientId = getBlockRootClientId( clientId );
+
+		return {
+			parentClientId: parentClientId ?? ''
+		};
+	}, [ clientId ]);
+
+	const { selectBlock, replaceBlock } = useDispatch( 'core/block-editor' );
+
+	const switchToInput = type => {
+		const block = createBlock( 'themeisle-blocks/form-input', { ...attributes, type: type });
+		replaceBlock( clientId, block );
+	};
 
 	useEffect( () => {
 		const per = x => x ? x + '%' : x;
@@ -68,6 +98,8 @@ const Edit = ({
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
+				selectParent={ () => selectBlock( parentClientId ) }
+				switchToInput={ switchToInput }
 			/>
 
 			<div { ...blockProps }>

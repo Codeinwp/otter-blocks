@@ -13,6 +13,10 @@
 	@media ( max-width: 600px ) {
 		height: var( --height-mobile ) !important;
 	}
+
+	.leaflet-bar a {
+		text-decoration: none !important;
+	}
 }
 
 .wp-block-themeisle-blocks-leaflet-map-overview {

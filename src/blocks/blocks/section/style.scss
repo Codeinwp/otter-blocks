@@ -30,7 +30,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 
 .wp-block-themeisle-blocks-advanced-columns {
 	--background: transparent;
-	--columns-width: initial;
+	--columns-width: 100%;
 	--horizontal-align: unset;
 
 	background: var( --background );

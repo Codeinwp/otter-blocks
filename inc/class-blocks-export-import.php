@@ -38,12 +38,6 @@ class Blocks_Export_Import {
 	 * @access  public
 	 */
 	public function enqueue_editor_assets() {
-		$current_screen = get_current_screen();
-
-		if ( 'post' !== $current_screen->base ) {
-			return;
-		}
-
 		$asset_file = include BLOCKS_EXPORT_IMPORT_PATH . '/build/export-import/index.asset.php';
 	
 		wp_enqueue_script(

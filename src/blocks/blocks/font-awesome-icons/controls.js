@@ -9,7 +9,7 @@ import {
 /**
  * Internal dependencies
  */
-import LinkControl from '../../components/link-control/index.js';
+import { LinkControlToolbar } from '../../components/index.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import { alignHandler } from './edit.js';
 
@@ -38,7 +38,7 @@ const Controls = ({
 				onChange={ value => responsiveSetAttributes( '' === value ? undefined : mappings[value], [ 'align.desktop', 'align.tablet', 'align.mobile' ], alignHandler( attributes.align ) )}
 			/>
 
-			<LinkControl
+			<LinkControlToolbar
 				isSelected={ isSelected }
 				setAttributes={ setAttributes }
 				url={ attributes.link }
