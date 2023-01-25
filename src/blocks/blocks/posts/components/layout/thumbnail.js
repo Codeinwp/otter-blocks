@@ -10,6 +10,8 @@ import { Fragment } from '@wordpress/element';
 
 import { useSelect } from '@wordpress/data';
 
+import { isEmpty } from 'lodash';
+
 const Thumbnail = ({
 	id,
 	link,
@@ -24,7 +26,7 @@ const Thumbnail = ({
 		const image = select( 'core' ).getMedia( id, { context: 'view' });
 
 		const featuredImage = image ?
-			( 'string' !== typeof image && 0 < Object.keys( image.media_details.sizes ).length ) ?
+			( 'string' !== typeof image && ! isEmpty( image.media_details ) && 0 < Object.keys( image.media_details.sizes ).length ) ?
 				image.media_details.sizes[size] ?
 					image.media_details.sizes[size].source_url :
 					image.source_url :
