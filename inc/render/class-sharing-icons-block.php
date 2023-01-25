@@ -27,7 +27,7 @@ class Sharing_Icons_Block {
 
 		if ( is_archive() ) {
 			$title = get_the_archive_title();
-		}  elseif ( $context === 'query' ) {
+		} elseif ( 'query' === $context ) {
 			$current_url = get_the_permalink();
 			$title       = get_the_title();
 		} elseif ( null === get_queried_object() && is_home() ) {
