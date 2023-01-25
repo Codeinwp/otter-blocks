@@ -27,12 +27,16 @@ import { applyFilters } from '@wordpress/hooks';
 /**
  * Internal dependencies.
  */
-import Notice from '../../components/notice/index.js';
+import {
+	BoxShadowControl,
+	InspectorExtensions,
+	InspectorHeader,
+	Notice,
+	ResponsiveControl
+} from '../../components/index.js';
+
 import { removeBoxDefaultValues, setUtm } from '../../helpers/helper-functions.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
-import InspectorHeader from '../../components/inspector-header/index.js';
-import ResponsiveControl from '../../components/responsive-control/index.js';
-import BoxShadowControl from '../../components/box-shadow-control/index.js';
 
 /**
  *
@@ -225,188 +229,186 @@ const Inspector = ({
 						>
 							{ applyFilters( 'otter.popupBlock.controls', <Controls />, attributes, setAttributes ) }
 						</PanelBody>
+
+						<InspectorExtensions />
 					</Fragment>
 				)}
 
-				{
-					'style' === tab && (
-						<Fragment>
-							<PanelBody
-								title={ __( 'Dimensions', 'otter-blocks' ) }
+				{ 'style' === tab && (
+					<Fragment>
+						<PanelBody
+							title={ __( 'Dimensions', 'otter-blocks' ) }
+						>
+							<ResponsiveControl
+								label={ __( 'Width', 'otter-blocks' ) }
 							>
-								<ResponsiveControl
-									label={ __( 'Width', 'otter-blocks' ) }
-								>
-									<UnitControl
+								<UnitControl
 
-										value={ responsiveGetAttributes([
-											attributes.width,
-											attributes.widthTablet,
-											attributes.widthMobile
-										]) ?? '500px' }
-										onChange={ value => {
-											responsiveSetAttributes( value, [ 'width', 'widthTablet', 'widthMobile' ]);
-										}}
-									/>
-								</ResponsiveControl>
-
-								<SelectControl
-									label={ __( 'Height', 'otter-blocks' ) }
-									options={ [
-										{
-											label: __( 'Fit Content', 'otter-blocks' ),
-											value: 'none'
-										},
-										{
-											label: __( 'Custom', 'otter-blocks' ),
-											value: 'custom'
-										}
-									] }
-									value={ attributes.heightMode }
-									onChange={ value => setAttributes({ heightMode: 'none' !== value ? value : undefined })}
+									value={ responsiveGetAttributes([
+										attributes.width,
+										attributes.widthTablet,
+										attributes.widthMobile
+									]) ?? '500px' }
+									onChange={ value => {
+										responsiveSetAttributes( value, [ 'width', 'widthTablet', 'widthMobile' ]);
+									}}
 								/>
+							</ResponsiveControl>
 
-								{
-									'custom' === attributes.heightMode && (
-										<ResponsiveControl
-											label={ __( 'Custom Height', 'otter-blocks' ) }
-										>
-											<UnitControl
-												value={ responsiveGetAttributes([
-													attributes.height,
-													attributes.heightTablet,
-													attributes.heightMobile
-												]) ?? '400px' }
-												onChange={ value => {
-													responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]);
-												}}
-											/>
-										</ResponsiveControl>
-									)
-								}
-
-								<ResponsiveControl>
-									<BoxControl
-										label={ __( 'Padding', 'otter-blocks' ) }
-										values={ responsiveGetAttributes([
-											attributes.padding,
-											attributes.paddingTablet,
-											attributes.paddingMobile
-										]) ?? { top: '20px', bottom: '20px', left: '20px', right: '20px' } }
-										onChange={ value => {
-											responsiveSetAttributes(
-												removeBoxDefaultValues( value, { top: '20px', bottom: '20px', left: '20px', right: '20px' }),
-												[ 'padding', 'paddingTablet', 'paddingMobile' ]
-											);
-										}}
-									/>
-								</ResponsiveControl>
-
-
-							</PanelBody>
-
-							<PanelColorSettings
-								title={ __( 'Color', 'otter-blocks' ) }
-								initialOpen={ false }
-								colorSettings={ [
+							<SelectControl
+								label={ __( 'Height', 'otter-blocks' ) }
+								options={ [
 									{
-										value: attributes.backgroundColor,
-										onChange: backgroundColor => setAttributes({ backgroundColor }),
-										label: __( 'Background', 'otter-blocks' ),
-										isShownByDefault: false
+										label: __( 'Fit Content', 'otter-blocks' ),
+										value: 'none'
 									},
 									{
-										value: attributes.closeColor,
-										onChange: closeColor => setAttributes({ closeColor }),
-										label: __( 'Close Button', 'otter-blocks' ),
-										isShownByDefault: false
-									},
-									{
-										value: attributes.overlayColor,
-										onChange: overlayColor => setAttributes({ overlayColor }),
-										label: __( 'Overlay', 'otter-blocks' ),
-										isShownByDefault: false
-									},
-									{
-										value: attributes.borderColor,
-										onChange: borderColor => setAttributes({ borderColor }),
-										label: __( 'Border', 'otter-blocks' ),
-										isShownByDefault: false
+										label: __( 'Custom', 'otter-blocks' ),
+										value: 'custom'
 									}
 								] }
+								value={ attributes.heightMode }
+								onChange={ value => setAttributes({ heightMode: 'none' !== value ? value : undefined })}
 							/>
-							<PanelBody
-								title={ __( 'Overlay', 'otter-blocks' ) }
-								initialOpen={ false }
-							>
-								<RangeControl
-									label={ __( 'Overlay Opacity', 'otter-blocks' ) }
-									value={ attributes.overlayOpacity }
-									initialPosition={ 100 }
-									onChange={ value => setAttributes({ overlayOpacity: value !== undefined ? Number( value ) : undefined }) }
-									allowReset
-								/>
-							</PanelBody>
 
-							<PanelBody
-								title={ __( 'Close Button', 'otter-blocks' ) }
-								initialOpen={ false }
-							>
-								<ToggleControl
-									label={ __( 'Show Close Button', 'otter-blocks' ) }
-									checked={ attributes.showClose }
-									onChange={ () => setAttributes({ showClose: ! attributes.showClose }) }
-								/>
-								<SelectControl
-									label={ __( 'Position', 'otter-blocks' ) }
-									options={ [
-										{
-											label: __( 'Inside', 'otter-blocks' ),
-											value: 'none'
-										},
-										{
-											label: __( 'Outside', 'otter-blocks' ),
-											value: 'outside'
-										}
-									] }
-									value={ attributes.closeButtonType }
-									onChange={ value => setAttributes({ closeButtonType: 'none' !== value ? value : undefined })}
-								/>
-							</PanelBody>
+							{
+								'custom' === attributes.heightMode && (
+									<ResponsiveControl
+										label={ __( 'Custom Height', 'otter-blocks' ) }
+									>
+										<UnitControl
+											value={ responsiveGetAttributes([
+												attributes.height,
+												attributes.heightTablet,
+												attributes.heightMobile
+											]) ?? '400px' }
+											onChange={ value => {
+												responsiveSetAttributes( value, [ 'height', 'heightTablet', 'heightMobile' ]);
+											}}
+										/>
+									</ResponsiveControl>
+								)
+							}
 
-							<PanelBody
-								title={ __( 'Border', 'otter-blocks' ) }
-								initialOpen={ false }
-							>
+							<ResponsiveControl>
 								<BoxControl
-									label={ __( 'Width', 'otter-blocks' ) }
-									values={ attributes.borderWidth ?? { top: '0px', bottom: '0px', left: '0px', right: '0px' } }
+									label={ __( 'Padding', 'otter-blocks' ) }
+									values={ responsiveGetAttributes([
+										attributes.padding,
+										attributes.paddingTablet,
+										attributes.paddingMobile
+									]) ?? { top: '20px', bottom: '20px', left: '20px', right: '20px' } }
 									onChange={ value => {
-										setAttributes({
-											borderWidth: removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' })
-										});
+										responsiveSetAttributes(
+											removeBoxDefaultValues( value, { top: '20px', bottom: '20px', left: '20px', right: '20px' }),
+											[ 'padding', 'paddingTablet', 'paddingMobile' ]
+										);
 									}}
 								/>
+							</ResponsiveControl>
+						</PanelBody>
 
-								<BoxControl
-									id="o-border-raduis-box"
-									label={ __( 'Border Radius', 'otter-blocks' ) }
-									values={ attributes.borderRadius ?? { top: '0px', bottom: '0px', left: '0px', right: '0px' } }
-									onChange={ value => {
-										setAttributes({
-											borderRadius: removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' })
-										});
-									}}
-								/>
+						<PanelColorSettings
+							title={ __( 'Color', 'otter-blocks' ) }
+							initialOpen={ false }
+							colorSettings={ [
+								{
+									value: attributes.backgroundColor,
+									onChange: backgroundColor => setAttributes({ backgroundColor }),
+									label: __( 'Background', 'otter-blocks' ),
+									isShownByDefault: false
+								},
+								{
+									value: attributes.closeColor,
+									onChange: closeColor => setAttributes({ closeColor }),
+									label: __( 'Close Button', 'otter-blocks' ),
+									isShownByDefault: false
+								},
+								{
+									value: attributes.overlayColor,
+									onChange: overlayColor => setAttributes({ overlayColor }),
+									label: __( 'Overlay', 'otter-blocks' ),
+									isShownByDefault: false
+								},
+								{
+									value: attributes.borderColor,
+									onChange: borderColor => setAttributes({ borderColor }),
+									label: __( 'Border', 'otter-blocks' ),
+									isShownByDefault: false
+								}
+							] }
+						/>
+						<PanelBody
+							title={ __( 'Overlay', 'otter-blocks' ) }
+							initialOpen={ false }
+						>
+							<RangeControl
+								label={ __( 'Overlay Opacity', 'otter-blocks' ) }
+								value={ attributes.overlayOpacity }
+								initialPosition={ 100 }
+								onChange={ value => setAttributes({ overlayOpacity: value !== undefined ? Number( value ) : undefined }) }
+								allowReset
+							/>
+						</PanelBody>
 
-								<BoxShadowControl
-									boxShadow={ attributes.boxShadow }
-									onChange={ changeBoxShadow }
-								/>
-							</PanelBody>
-						</Fragment>
-					)
-				}
+						<PanelBody
+							title={ __( 'Close Button', 'otter-blocks' ) }
+							initialOpen={ false }
+						>
+							<ToggleControl
+								label={ __( 'Show Close Button', 'otter-blocks' ) }
+								checked={ attributes.showClose }
+								onChange={ () => setAttributes({ showClose: ! attributes.showClose }) }
+							/>
+							<SelectControl
+								label={ __( 'Position', 'otter-blocks' ) }
+								options={ [
+									{
+										label: __( 'Inside', 'otter-blocks' ),
+										value: 'none'
+									},
+									{
+										label: __( 'Outside', 'otter-blocks' ),
+										value: 'outside'
+									}
+								] }
+								value={ attributes.closeButtonType }
+								onChange={ value => setAttributes({ closeButtonType: 'none' !== value ? value : undefined })}
+							/>
+						</PanelBody>
+
+						<PanelBody
+							title={ __( 'Border', 'otter-blocks' ) }
+							initialOpen={ false }
+						>
+							<BoxControl
+								label={ __( 'Width', 'otter-blocks' ) }
+								values={ attributes.borderWidth ?? { top: '0px', bottom: '0px', left: '0px', right: '0px' } }
+								onChange={ value => {
+									setAttributes({
+										borderWidth: removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' })
+									});
+								}}
+							/>
+
+							<BoxControl
+								id="o-border-raduis-box"
+								label={ __( 'Border Radius', 'otter-blocks' ) }
+								values={ attributes.borderRadius ?? { top: '0px', bottom: '0px', left: '0px', right: '0px' } }
+								onChange={ value => {
+									setAttributes({
+										borderRadius: removeBoxDefaultValues( value, { top: '0px', bottom: '0px', left: '0px', right: '0px' })
+									});
+								}}
+							/>
+
+							<BoxShadowControl
+								boxShadow={ attributes.boxShadow }
+								onChange={ changeBoxShadow }
+							/>
+						</PanelBody>
+					</Fragment>
+				) }
 			</div>
 		</InspectorControls>
 	);

@@ -1,4 +1,13 @@
 /**
+ * External dependencies...
+ */
+import {
+	alignCenter,
+	alignLeft,
+	alignRight
+} from '@wordpress/icons';
+
+/**
  * WordPress dependencies...
  */
 import { __ } from '@wordpress/i18n';
@@ -25,12 +34,15 @@ import {
 /**
  * Internal dependencies
  */
-import IconPickerControl from '../../components/icon-picker-control/index.js';
-import SyncControl from '../../components/sync-control/index.js';
-import ResponsiveControl from '../../components/responsive-control/index.js';
+import {
+	IconPickerControl,
+	ResponsiveControl,
+	SyncControl,
+	ToogleGroupControl
+} from '../../components/index.js';
+
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
-import ToogleGroupControl from '../../components/toogle-group-control/index.js';
-import { alignCenter, alignLeft, alignRight } from '@wordpress/icons';
+
 import { alignHandler } from './edit.js';
 
 const defaultFontSizes = [

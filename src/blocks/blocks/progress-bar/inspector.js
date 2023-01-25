@@ -19,8 +19,6 @@ import {
 	FontSizePicker
 } from '@wordpress/components';
 
-import { Fragment } from '@wordpress/element';
-
 const defaultFontSizes = [
 	{
 		name: __( 'Small', 'otter-blocks' ),
@@ -87,28 +85,12 @@ const Inspector = ({
 		setAttributes({ percentagePosition: value });
 	};
 
-	const onBackgroundColorChange = value => {
-		setAttributes({ backgroundColor: value });
-	};
-
-	const onBarBackgroundColorChange = value => {
-		setAttributes({ barBackgroundColor: value });
-	};
-
 	const onDurationChange = value => {
 		if ( value === undefined ) {
 			return ;
 		}
 		value = clamp( value, 0, 3 );
 		setAttributes({ duration: value });
-	};
-
-	const onTitleColorChange = value => {
-		setAttributes({ titleColor: value });
-	};
-
-	const onPerncetageColorChange = value => {
-		setAttributes({ percentageColor: value });
 	};
 
 	return (
