@@ -98,8 +98,6 @@ class Dashboard {
 					'upgradeLink'        => tsdk_utmify( Pro::get_url(), 'options', Pro::get_reference() ),
 					'docsLink'           => Pro::get_docs_url(),
 					'showFeedbackNotice' => $this->should_show_feedback_notice(),
-					'showBFDeal'         => Pro::bf_deal(),
-					'daysLeft'           => Pro::bf_deal( true ),
 				)
 			)
 		);

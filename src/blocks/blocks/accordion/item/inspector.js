@@ -9,7 +9,11 @@ import {
 	PanelBody,
 	ToggleControl
 } from '@wordpress/components';
-import { select, dispatch } from '@wordpress/data';
+
+import {
+	select,
+	dispatch
+} from '@wordpress/data';
 
 const Inspector = ({
 	clientId,

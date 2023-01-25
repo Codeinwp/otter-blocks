@@ -1,4 +1,13 @@
 /**
+ * External dependencies.
+ */
+import {
+	alignCenter,
+	alignLeft,
+	alignRight
+} from '@wordpress/icons';
+
+/**
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
@@ -31,15 +40,17 @@ import {
 /**
  * Internal dependencies
  */
-import InspectorHeader from '../../components/inspector-header/index.js';
-import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
-import GoogleFontsControl from '../../components/google-fonts-control/index.js';
-import ControlPanelControl from '../../components/control-panel-control/index.js';
-import ResponsiveControl from '../../components/responsive-control/index.js';
-import HTMLAnchorControl from '../../components/html-anchor-control/index.js';
-import ClearButton from '../../components/clear-button/index.js';
-import { alignCenter, alignLeft, alignRight } from '@wordpress/icons';
-import ToogleGroupControl from '../../components/toogle-group-control/index.js';
+import {
+	ClearButton,
+	ControlPanelControl,
+	GoogleFontsControl,
+	HTMLAnchorControl,
+	InspectorExtensions,
+	InspectorHeader,
+	ResponsiveControl,
+	ToogleGroupControl
+} from '../../components/index.js';
+
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 import { makeBox } from '../../plugins/copy-paste/utils';
 import { _px } from '../../helpers/helper-functions.js';
@@ -54,7 +65,7 @@ const Inspector = ({
 	setAttributes
 }) => {
 
-	const [ tab, setTab ] = useState( 'style' );
+	const [ tab, setTab ] = useState( 'settings' );
 	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
 	const changeFontFamily = value => {
@@ -132,61 +143,59 @@ const Inspector = ({
 				/>
 
 				<div>
-
-					{
-						'settings' === tab && (
-							<Fragment>
-								<PanelBody
-									title={ __( 'Sizing', 'otter-blocks' ) }
+					{ 'settings' === tab && (
+						<Fragment>
+							<PanelBody
+								title={ __( 'Sizing', 'otter-blocks' ) }
+							>
+								<ResponsiveControl
+									label={ __( 'Alignment', 'otter-blocks' ) }
 								>
-									<ResponsiveControl
-										label={ __( 'Alignment', 'otter-blocks' ) }
-									>
-										<ToogleGroupControl
-											value={ responsiveGetAttributes([ attributes.align, attributes.alignTablet, attributes.alignMobile  ]) ?? 'left' }
-											onChange={ value => responsiveSetAttributes( value, [ 'align', 'alignTablet', 'alignMobile' ]) }
-											options={[
-												{
-													icon: alignLeft,
-													label: __( 'Left', 'otter-blocks' ),
-													value: 'left'
-												},
-												{
-													icon: alignCenter,
-													label: __( 'Center', 'otter-blocks' ),
-													value: 'center'
-												},
-												{
-													icon: alignRight,
-													label: __( 'Right', 'otter-blocks' ),
-													value: 'right'
-												}
-											]}
-											hasIcon
-										/>
-									</ResponsiveControl>
-
-									<SelectControl
-										label={ __( 'HTML Tag', 'otter-blocks' ) }
-										value={ attributes.tag  }
-										onChange={ tag  => setAttributes({ tag }) }
+									<ToogleGroupControl
+										value={ responsiveGetAttributes([ attributes.align, attributes.alignTablet, attributes.alignMobile  ]) ?? 'left' }
+										onChange={ value => responsiveSetAttributes( value, [ 'align', 'alignTablet', 'alignMobile' ]) }
 										options={[
-											{ label: __( 'H1', 'otter-blocks' ), value: 'h1' },
-											{ label: __( 'H2', 'otter-blocks' ), value: 'h2' },
-											{ label: __( 'H3', 'otter-blocks' ), value: 'h3' },
-											{ label: __( 'H4', 'otter-blocks' ), value: 'h4' },
-											{ label: __( 'H5', 'otter-blocks' ), value: 'h5' },
-											{ label: __( 'H6', 'otter-blocks' ), value: 'h6' },
-											{ label: __( 'div', 'otter-blocks' ), value: 'div' },
-											{ label: __( 'span', 'otter-blocks' ), value: 'span' },
-											{ label: __( 'p', 'otter-blocks' ), value: 'p' }
+											{
+												icon: alignLeft,
+												label: __( 'Left', 'otter-blocks' ),
+												value: 'left'
+											},
+											{
+												icon: alignCenter,
+												label: __( 'Center', 'otter-blocks' ),
+												value: 'center'
+											},
+											{
+												icon: alignRight,
+												label: __( 'Right', 'otter-blocks' ),
+												value: 'right'
+											}
 										]}
+										hasIcon
 									/>
-								</PanelBody>
+								</ResponsiveControl>
 
-							</Fragment>
-						)
-					}
+								<SelectControl
+									label={ __( 'HTML Tag', 'otter-blocks' ) }
+									value={ attributes.tag  }
+									onChange={ tag  => setAttributes({ tag }) }
+									options={[
+										{ label: __( 'H1', 'otter-blocks' ), value: 'h1' },
+										{ label: __( 'H2', 'otter-blocks' ), value: 'h2' },
+										{ label: __( 'H3', 'otter-blocks' ), value: 'h3' },
+										{ label: __( 'H4', 'otter-blocks' ), value: 'h4' },
+										{ label: __( 'H5', 'otter-blocks' ), value: 'h5' },
+										{ label: __( 'H6', 'otter-blocks' ), value: 'h6' },
+										{ label: __( 'div', 'otter-blocks' ), value: 'div' },
+										{ label: __( 'span', 'otter-blocks' ), value: 'span' },
+										{ label: __( 'p', 'otter-blocks' ), value: 'p' }
+									]}
+								/>
+							</PanelBody>
+
+							<InspectorExtensions/>
+						</Fragment>
+					) }
 
 					{ 'style' === tab && (
 						<Fragment>
@@ -296,13 +305,13 @@ const Inspector = ({
 										value: attributes.headingColor,
 										onChange: headingColor => setAttributes({ headingColor }),
 										label: __( 'Text', 'otter-blocks' ),
-										isShownByDefault: false
+										isShownByDefault: true
 									},
 									{
 										value: attributes.backgroundColor,
 										onChange: backgroundColor => setAttributes({ backgroundColor }),
 										label: __( 'Background', 'otter-blocks' ),
-										isShownByDefault: false
+										isShownByDefault: true
 									},
 									{
 										value: attributes.linkColor,
@@ -466,11 +475,7 @@ const Inspector = ({
 
 							</PanelBody>
 						</Fragment>
-
 					)  }
-
-					<InspectorExtensions/>
-
 				</div>
 			</InspectorControls>
 

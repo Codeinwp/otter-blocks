@@ -233,6 +233,44 @@ class StickyData {
 		}
 	}
 
+	recalculatePositions() {
+
+		if ( this.config.isFloatMode ) {
+			return;
+		}
+
+		// Calculate the element position in the page
+		this.scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+		this.scrollLeft = window.pageXOffset || document.documentElement.scrollLeft;
+		const { top, left, height, width } = this.elem.
+			getBoundingClientRect();
+
+		this.width = width;
+		this.height = height;
+
+		this.elemTopPositionInPage = top + this.scrollTop;
+		this.elemLeftPositionInPage = left + this.scrollLeft;
+		this.elemBottomPositionInPage = this.elemTopPositionInPage + height;
+
+		// Calculate the container positions in the page
+		this.containerHeight = this.container?.getBoundingClientRect()?.height || 0;
+		this.containerTopPosition = this.container ? this.container?.getBoundingClientRect()?.top + this.scrollTop : 0;
+		this.containerBottomPosition = this.containerTopPosition + ( this.container?.getBoundingClientRect()?.height || 0 );
+
+		// The new positions on the screen when the sticky mod is active
+		this.offsetY = this.offset;
+
+		// We need to activate the sticky mode early for smooth transition
+		this.activationOffset = this.offset + 20;
+
+		/**
+		 * By making the element sticky, we use 'fixed' positioning which removes the element from the document workflow.
+		 * We need to put a placeholder with the same height and width as the element, so we can keep layout flow.
+		 */
+		// this.placeholder.style.height = height + 'px';
+		// this.placeholder.style.width = width + 'px';
+	}
+
 	get canBeRun() {
 		return this.elemBottomPositionInPage > this.triggerLimit;
 	}
@@ -620,6 +658,10 @@ class StickyRunner {
 		return opacity;
 	}
 
+	updateTriggers() {
+		this.items.forEach( item => item.recalculatePositions() );
+	}
+
 	toggleGlobalClass( value: boolean ) {
 		document.body.classList.toggle( 'o-sticky-is-active', value );
 	}
@@ -721,6 +763,17 @@ domReady( () => {
 			window.addEventListener( 'resize', () => {
 				runner.resize();
 			});
+
+			// create an Observer instance
+			const resizeObserver = new ResizeObserver( entries => {
+				console.log( 'Body height changed:', entries?.[0]?.target.clientHeight );
+				if ( entries?.[0]?.target.clientHeight ) {
+					runner.updateTriggers();
+				}
+			});
+
+			// start observing a DOM node
+			resizeObserver.observe( document.body );
 		}
 	}, [ 'lottie' ]);
 });
