@@ -217,7 +217,7 @@ export const _percent = value => _unit( value, '%' );
 
 /**
  * Make a box type from a number or an object with Box like props.
- * @param {Object|number} value
+ * @param {Object|number|undefined} value
  * @param {import('./blocks').BoxType?} defaultValue
  * @returns {import('./blocks').BoxType}
  */

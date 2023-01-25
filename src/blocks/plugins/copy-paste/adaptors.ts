@@ -9,7 +9,7 @@ import { addUnit, getInt, makeBox, getSingleValueFromBox } from './utils';
 import { IconAttrs } from '../../blocks/font-awesome-icons/types';
 import { IconListAttrs } from '../../blocks/icon-list/types';
 import { IconListItemAttrs } from '../../blocks/icon-list/item/types';
-import { getChoice } from '../../helpers/helper-functions';
+import { getChoice, objectOrNumberAsBox, _px } from '../../helpers/helper-functions';
 import { AccordionGroupAttrs } from '../../blocks/accordion/group/types';
 import { ProgressAttrs } from '../../blocks/progress-bar/types';
 import { TabsGroupAttrs } from '../../blocks/tabs/group/types';
@@ -152,14 +152,16 @@ export const adaptors = {
 				shared: {
 					padding: {
 						desktop: {
-							top: addUnit( attrs.paddingTopBottom, 'px' ),
-							bottom: addUnit( attrs.paddingTopBottom, 'px' ),
-							left: addUnit( attrs.paddingLeftRight, 'px' ),
-							right: addUnit( attrs.paddingLeftRight, 'px' )
-						}
+							top: _px( attrs.paddingTopBottom ),
+							bottom: _px( attrs.paddingTopBottom ),
+							left: _px( attrs.paddingLeftRight ),
+							right: _px( attrs.paddingLeftRight )
+						},
+						tablet: attrs.paddingTablet,
+						mobile: attrs.paddingMobile
 					},
 					font: {
-						size: addUnit( attrs.fontSize, 'px' ),
+						size: _px( attrs.fontSize ),
 						family: attrs.fontFamily,
 						variant: attrs.fontVariant,
 						transform: attrs.textTransform,
@@ -178,9 +180,11 @@ export const adaptors = {
 			const { shared: s } = storage;
 			return {
 				...storage.private,
-				paddingTopBottom: getInt( s?.padding?.desktop?.top ),
-				paddingLeftRight: getInt( s?.padding?.desktop?.left ),
-				fontSize: getInt( s?.font?.size ),
+				paddingTopBottom: s?.padding?.desktop?.top,
+				paddingLeftRight: s?.padding?.desktop?.left,
+				paddingTablet: s?.padding?.tablet,
+				paddingMobile: s?.padding?.mobile,
+				fontSize: s?.font?.size,
 				fontFamily: s?.font?.family,
 				fontVariant: s?.font?.variant,
 				fontStyle: s?.font?.style,
@@ -198,9 +202,9 @@ export const adaptors = {
 						text: attrs.color
 					},
 					border: {
-						width: makeBox( addUnit( attrs.borderSize, 'px' ) ),
+						width: objectOrNumberAsBox( attrs.borderSize ),
 						radius: {
-							desktop: makeBox( addUnit( attrs.borderRadius, 'px' ) )
+							desktop: objectOrNumberAsBox( attrs.borderRadius )
 						}
 					}
 				},
@@ -217,8 +221,8 @@ export const adaptors = {
 				...storage.private,
 				border: s?.colors?.border,
 				color: s?.colors?.text,
-				borderSize: getInt( getSingleValueFromBox( s?.border?.width ) ),
-				borderRadius: getInt( s?.border?.radius?.desktop?.top )
+				borderSize: s?.border?.width,
+				borderRadius: s?.border?.radius?.desktop
 			};
 		}
 	},
