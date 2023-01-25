@@ -269,7 +269,6 @@ class Registration {
 				'isLegacyPre59'           => version_compare( get_bloginfo( 'version' ), '5.8.22', '<=' ),
 				'isAncestorTypeAvailable' => version_compare( get_bloginfo( 'version' ), '5.9.22', '>=' ),
 				'version'                 => OTTER_BLOCKS_VERSION,
-				'showBFDeal'              => Pro::bf_deal(),
 				'isRTL'                   => is_rtl(),
 			)
 		);
