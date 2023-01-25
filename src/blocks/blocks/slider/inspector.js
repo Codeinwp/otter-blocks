@@ -31,11 +31,14 @@ import {
 /**
  * Internal dependencies
  */
-import InspectorHeader from '../../components/inspector-header/index.js';
-import { InspectorExtensions } from '../../components/inspector-slot-fill/index.js';
-import ImageGrid from './../../components/image-grid/index.js';
-import ResponsiveControl from '../../components/responsive-control/index.js';
-import ClearButton from '../../components/clear-button/index.js';
+import {
+	ClearButton,
+	ImageGrid,
+	InspectorExtensions,
+	InspectorHeader,
+	ResponsiveControl
+} from '../../components/index.js';
+
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 const px = value => value ? `${ value }px` : value;
@@ -185,6 +188,8 @@ const Inspector = ({
 							</Fragment>
 						) }
 					</PanelBody>
+
+					<InspectorExtensions/>
 				</Fragment>
 			) }
 
@@ -313,8 +318,6 @@ const Inspector = ({
 					</PanelBody>
 				</Fragment>
 			) }
-
-			<InspectorExtensions/>
 		</InspectorControls>
 	);
 };

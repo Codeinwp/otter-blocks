@@ -8,18 +8,20 @@ import {
 	Dropdown,
 	DropdownMenu,
 	RangeControl,
-	SVG,
 	ToolbarGroup
 } from '@wordpress/components';
 
-import { AlignmentToolbar, BlockControls } from '@wordpress/block-editor';
+import {
+	AlignmentToolbar,
+	BlockControls
+} from '@wordpress/block-editor';
 
 import { Fragment } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import GoogleFontsControl from '../../components/google-fonts-control/index.js';
+import { GoogleFontsControl } from '../../components/index.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 const Controls = ({

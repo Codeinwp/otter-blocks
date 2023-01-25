@@ -21,17 +21,6 @@ class Main {
 	protected static $instance = null;
 
 	/**
-	 * GutenbergBlocks constructor.
-	 *
-	 * @since   1.0.0
-	 * @access  public
-	 */
-	public function __construct() {
-		$this->name        = __( 'Otter', 'otter-blocks' );
-		$this->description = __( 'Blocks for Gutenberg', 'otter-blocks' );
-	}
-
-	/**
 	 * Method to define hooks needed.
 	 *
 	 * @since   1.0.0
@@ -427,6 +416,7 @@ class Main {
 
 		if ( version_compare( $db_version, OTTER_BLOCKS_VERSION, '<' ) ) {
 			Dashboard_Server::regenerate_styles();
+			do_action( 'otter_blocks_plugin_update' );
 		}
 
 		return update_option( 'themeisle_blocks_db_version', OTTER_BLOCKS_VERSION );

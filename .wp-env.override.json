@@ -1,7 +1,13 @@
 {
+  "core": null,
   "plugins": [
     "."
   ],
+  "config": {
+    "WP_DEBUG": true,
+    "WP_DEBUG_DISPLAY": true,
+    "FS_METHOD": "direct"
+  },
   "env": {
     "development": {
       "themes": [
