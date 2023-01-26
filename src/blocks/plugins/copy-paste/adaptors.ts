@@ -484,9 +484,9 @@ export const adaptors = {
 						size: addUnit( attrs?.labelFontSize, 'px' )
 					},
 					border: {
-						width: makeBox( addUnit( attrs?.inputBorderWidth, 'px' ) ),
+						width: objectOrNumberAsBox( attrs?.inputBorderWidth ),
 						radius: {
-							desktop: makeBox( addUnit( attrs?.inputBorderRadius, 'px' ) )
+							desktop: objectOrNumberAsBox( attrs?.inputBorderRadius )
 						}
 					}
 				},
@@ -504,8 +504,8 @@ export const adaptors = {
 				labelColor: s?.colors?.text,
 				labelFontSize: getInt( s?.font?.size ),
 				inputBorderColor: s?.colors?.border,
-				inputBorderRadius: getInt( s?.border?.radius?.desktop?.top ),
-				inputBorderWidth: getInt( getSingleValueFromBox( s?.border?.width ) )
+				inputBorderRadius: s?.border?.radius?.desktop,
+				inputBorderWidth: s?.border?.width
 			};
 		}
 	},
@@ -673,7 +673,7 @@ export const adaptors = {
 				fontVariant: s?.font?.variant,
 				fontStyle: s?.font?.style,
 				letterSpacing: getInt( s?.font?.letterSpacing ),
-				lineHeight: s?.font?.lineHeight,
+				lineHeight: getInt( s?.font?.lineHeight as string ),
 				headingColor: s?.colors?.text,
 				align: s?.font?.align,
 				textTransform: s?.font?.transform
