@@ -36,6 +36,7 @@ import {
 
 // @ts-ignore
 import faIcons from '../../../../../assets/fontawesome/fa-icons.json';
+import { __ } from '@wordpress/i18n';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -175,7 +176,20 @@ const Edit = ({
 			<div { ...blockProps }>
 				<InnerBlocks
 					allowedBlocks={ [ 'themeisle-blocks/accordion-item' ] }
-					template={ [[ 'themeisle-blocks/accordion-item' ]] }
+					template={ [
+						[ 'themeisle-blocks/accordion-item', {
+							content: __( 'Accordion item one content', 'otter-blocks' )
+						}, [[ 'core/paragraph', {
+							placeholder: __( 'This is a placeholder tab content. It is important to have the necessary information in the block, but at this stage, it is just a placeholder to help you visualise how the content is displayed. Feel free to edit this with your actual content.', 'otter-blocks' )
+						}]]
+						],
+						[ 'themeisle-blocks/accordion-item', {
+							content: __( 'Accordion item one content', 'otter-blocks' )
+						}, [[ 'core/paragraph', {
+							placeholder: __( 'This is a placeholder tab content. It is important to have the necessary information in the block, but at this stage, it is just a placeholder to help you visualise how the content is displayed. Feel free to edit this with your actual content.', 'otter-blocks' )
+						}]]
+						]
+					] }
 					renderAppender={ isSelected ? InnerBlocks.ButtonBlockAppender : '' }
 				/>
 			</div>
