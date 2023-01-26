@@ -481,7 +481,7 @@ export const adaptors = {
 						border: attrs?.inputBorderColor
 					},
 					font: {
-						size: addUnit( attrs?.labelFontSize, 'px' )
+						size: _px( attrs?.labelFontSize )
 					},
 					border: {
 						width: objectOrNumberAsBox( attrs?.inputBorderWidth ),
@@ -502,7 +502,7 @@ export const adaptors = {
 			return {
 				...storage.private,
 				labelColor: s?.colors?.text,
-				labelFontSize: getInt( s?.font?.size ),
+				labelFontSize: s?.font?.size,
 				inputBorderColor: s?.colors?.border,
 				inputBorderRadius: s?.border?.radius?.desktop,
 				inputBorderWidth: s?.border?.width
