@@ -38,9 +38,16 @@ import metadata from './block.json';
 import Inspector from './inspector.js';
 import Controls from './controls.js';
 import { blockInit } from '../../../helpers/block-utility.js';
+import { boxToCSS } from '../../../helpers/helper-functions';
+import classNames from 'classnames';
 
 const { attributes: defaultAttributes } = metadata;
 
+/**
+ *
+ * @param {import('./types').TabsGroupProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,
@@ -134,10 +141,19 @@ const Edit = ({
 
 
 	const inlineStyles = {
-		'--border-width': undefined !== attributes.borderWidth ? attributes.borderWidth + 'px' : '3px',
+		'--title-border-width': boxToCSS( attributes.titleBorderWidth ),
+		'--border-width': boxToCSS( attributes.borderWidth ),
 		'--border-color': attributes.borderColor,
+		'--title-color': attributes.titleColor,
+		'--title-background': attributes.titleBackgroundColor,
+		'--tab-color': attributes.tabColor,
 		'--active-title-color': attributes.activeTitleColor,
-		'--tab-color': attributes.tabColor
+		'--active-title-background': attributes.activeTitleBackgroundColor,
+		'--active-title-border-color': attributes.activeBorderColor,
+		'--content-text-color': attributes.contentTextColor,
+		'--title-align': attributes.titleAlignment,
+		'--title-padding': boxToCSS( attributes.titlePadding ),
+		'--content-padding': boxToCSS( attributes.contentPadding )
 	};
 
 	/**
@@ -182,7 +198,8 @@ const Edit = ({
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		style: inlineStyles
+		style: inlineStyles,
+		className: classNames({ 'has-pos-left': 'left' === attributes.tabsPosition  }, 'is-style-border' )
 	});
 
 	return (
