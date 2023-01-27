@@ -38,6 +38,7 @@ import {
 	getDefaultValueByField
 } from '../../../helpers/block-utility.js';
 import { _cssBlock } from '../../../helpers/helper-functions';
+import { useDarkBackground } from '../../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -129,6 +130,8 @@ const Edit = ({
 			}
 		}
 	}, [ isSelected, attributes.columnWidth, parentBlock.innerBlocks.length ]);
+
+	useDarkBackground( 'color' === attributes.backgroundType && attributes.backgroundColor, attributes, setAttributes );
 
 	const currentBlockWidth = useRef( attributes.columnWidth );
 	const nextBlock = useRef( adjacentBlockClientId && adjacentBlockClientId );

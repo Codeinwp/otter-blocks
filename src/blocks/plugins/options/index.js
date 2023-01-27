@@ -52,7 +52,6 @@ import './editor.scss';
 import GlobalDefaults from './global-defaults/index.js';
 import defaultsAttrs from './global-defaults/defaults.js';
 import Accordion from './global-defaults/controls/accordion.js';
-import AdvancedHeading from './global-defaults/controls/advanced-heading.js';
 import ButtonBlock from './global-defaults/controls/button.js';
 import ButtonGroup from './global-defaults/controls/button-group.js';
 import FontAwesomeIcons from './global-defaults/controls/font-awesome-icons.js';
@@ -208,10 +207,6 @@ const Options = () => {
 		{
 			name: 'themeisle-blocks/accordion',
 			control: Accordion
-		},
-		{
-			name: 'themeisle-blocks/advanced-heading',
-			control: AdvancedHeading
 		},
 		{
 			name: 'themeisle-blocks/button-group',

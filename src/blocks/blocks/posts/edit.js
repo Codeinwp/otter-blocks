@@ -46,7 +46,10 @@ import {
 	getCustomPostTypeSlugs,
 	hex2rgba
 } from '../../helpers/helper-functions.js';
-import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
+import {
+	useDarkBackground,
+	useResponsiveAttributes
+} from '../../helpers/utility-hooks.js';
 import '../../components/store/index.js';
 import FeaturedPost from './components/layout/featured.js';
 
@@ -129,6 +132,8 @@ const Edit = ({
 	useEffect( () => {
 		dispatch( 'otter-store' ).setPostsSlugs( slugs );
 	}, [ slugs ]);
+
+	useDarkBackground( attributes.backgroundColor, attributes, setAttributes );
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 

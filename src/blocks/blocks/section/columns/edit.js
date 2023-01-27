@@ -55,6 +55,7 @@ import {
 } from '../../../helpers/block-utility.js';
 import { columnsIcon as icon } from '../../../helpers/icons.js';
 import { _cssBlock } from '../../../helpers/helper-functions';
+import { useDarkBackground } from '../../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -165,6 +166,8 @@ const Edit = ({
 			changeColumnsNumbers( 6 );
 		}
 	}, [ attributes.columns ]);
+
+	useDarkBackground( 'color' === attributes.backgroundType && attributes.backgroundColor, attributes, setAttributes );
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
