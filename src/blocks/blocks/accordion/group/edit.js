@@ -7,36 +7,26 @@ import googleFontsLoader from '../../../helpers/google-fonts.js';
 /**
  * WordPress dependencies.
  */
-import {
-	InnerBlocks,
-	useBlockProps
-} from '@wordpress/block-editor';
-
-import {
-	Fragment,
-	useEffect
-} from '@wordpress/element';
-
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
+import { Fragment, useEffect } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import metadata from './block.json';
 import Inspector from './inspector.js';
+import BlockAppender from '../../../components/block-appender-button';
+import { boxValues, hex2rgba } from '../../../helpers/helper-functions';
 import {
 	blockInit,
 	getDefaultValueByField,
 	useCSSNode
 } from '../../../helpers/block-utility.js';
-import {
-	boxValues,
-	hex2rgba
-} from '../../../helpers/helper-functions';
 
 // @ts-ignore
 import faIcons from '../../../../../assets/fontawesome/fa-icons.json';
-import { __ } from '@wordpress/i18n';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -177,20 +167,17 @@ const Edit = ({
 				<InnerBlocks
 					allowedBlocks={ [ 'themeisle-blocks/accordion-item' ] }
 					template={ [
-						[ 'themeisle-blocks/accordion-item', {
-							content: __( 'Accordion item one content', 'otter-blocks' )
-						}, [[ 'core/paragraph', {
-							placeholder: __( 'This is a placeholder tab content. It is important to have the necessary information in the block, but at this stage, it is just a placeholder to help you visualise how the content is displayed. Feel free to edit this with your actual content.', 'otter-blocks' )
-						}]]
-						],
-						[ 'themeisle-blocks/accordion-item', {
-							content: __( 'Accordion item one content', 'otter-blocks' )
-						}, [[ 'core/paragraph', {
-							placeholder: __( 'This is a placeholder tab content. It is important to have the necessary information in the block, but at this stage, it is just a placeholder to help you visualise how the content is displayed. Feel free to edit this with your actual content.', 'otter-blocks' )
-						}]]
-						]
+						[ 'themeisle-blocks/accordion-item', { placeholder: __( 'Accordion title one', 'otter-blocks' ) }],
+						[ 'themeisle-blocks/accordion-item', { placeholder: __( 'Accordion title two', 'otter-blocks' ) }]
 					] }
-					renderAppender={ isSelected ? InnerBlocks.ButtonBlockAppender : '' }
+					renderAppender={() =>
+						<BlockAppender
+							buttonText={ __( 'Add Accordion Item', 'otter-blocks' ) }
+							variant="primary"
+							allowedBlock="themeisle-blocks/accordion-item"
+							clientId={ clientId }
+						/>
+					}
 				/>
 			</div>
 		</Fragment>

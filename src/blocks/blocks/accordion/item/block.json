@@ -9,6 +9,9 @@
     "parent": [ "themeisle-blocks/accordion" ],
 	"textdomain": "otter-blocks",
     "attributes": {
+		"placeholder": {
+			"type": "string"
+		},
         "title": {
             "type": "string"
         },
