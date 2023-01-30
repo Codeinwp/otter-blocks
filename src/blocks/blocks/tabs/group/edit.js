@@ -185,7 +185,6 @@ const Edit = ({
 		'--active-title-background': getSyncValue( 'activeTitleBackgroundColor' ),
 		'--active-title-border-color': getSyncValue( 'activeBorderColor' ),
 		'--content-text-color': getSyncValue( 'contentTextColor' ),
-		'--title-align': getSyncValue( 'titleAlignment' ),
 		'--title-padding': boxToCSS( getSyncValue( 'titlePadding' ) ),
 		'--content-padding': boxToCSS( getSyncValue( 'titlePadding' ) ),
 		'--border-side-width': 'left' === attributes.tabsPosition ?  getSyncValue( 'borderWidth' )?.left :  getSyncValue( 'borderWidth' )?.top

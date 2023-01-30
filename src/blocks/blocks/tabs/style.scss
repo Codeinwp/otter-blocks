@@ -12,13 +12,12 @@
 	--title-padding: 5px 10px;
 	--title-border-width: var(--border-width);
 	--active-title-border-color: var(--border-color);
-	--title-alignment: flex-start;
 	--border-side-width: 3px;
 
 	.wp-block-themeisle-blocks-tabs__header {
 		display: flex;
 		flex-direction: row;
-		justify-content: var(--title-alignment);
+		justify-content: flex-start;
 		border-color: var( --border-color );
 
 		@media ( max-width: 800px ) {
