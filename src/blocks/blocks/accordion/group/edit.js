@@ -24,15 +24,19 @@ import { useSelect } from '@wordpress/data';
  */
 import metadata from './block.json';
 import Inspector from './inspector.js';
+
 import {
 	blockInit,
 	getDefaultValueByField,
 	useCSSNode
 } from '../../../helpers/block-utility.js';
+
 import {
 	boxValues,
 	hex2rgba
 } from '../../../helpers/helper-functions';
+
+import { useDarkBackground } from '../../../helpers/utility-hooks.js';
 
 // @ts-ignore
 import faIcons from '../../../../../assets/fontawesome/fa-icons.json';
@@ -146,6 +150,10 @@ const Edit = ({
 			googleFontsLoader.loadFontToBrowser( attributes.fontFamily, attributes.fontVariant );
 		}
 	}, [ attributes.fontFamily ]);
+
+	useDarkBackground( getValue( 'titleBackground' ), attributes, setAttributes, 'has-dark-title-bg' );
+	useDarkBackground( getValue( 'activeTitleBackground' ), attributes, setAttributes, 'has-dark-active-title-bg' );
+	useDarkBackground( getValue( 'contentBackground' ), attributes, setAttributes, 'has-dark-content-bg' );
 
 	const blockProps = useBlockProps({
 		id: attributes.id,

@@ -3,6 +3,14 @@
 .wp-block-themeisle-blocks-tabs {
 
     border: none;
+
+    &.has-dark-bg {
+        --active-title-color: #fff;
+
+        .wp-block-themeisle-blocks-tabs__content {
+            color: #fff;
+        }
+    }
     
     .wp-block-themeisle-blocks-tabs__header_item {
         

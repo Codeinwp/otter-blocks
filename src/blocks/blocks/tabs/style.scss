@@ -14,6 +14,14 @@
 	--active-title-border-color: var(--border-color);
 	--border-side-width: 3px;
 
+    &.has-dark-bg {
+        --active-title-color: #fff;
+
+        .wp-block-themeisle-blocks-tabs__content {
+            color: #fff;
+        }
+    }
+
 	.wp-block-themeisle-blocks-tabs__header {
 		display: flex;
 		flex-direction: row;

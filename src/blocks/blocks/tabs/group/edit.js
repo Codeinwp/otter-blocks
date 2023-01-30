@@ -41,6 +41,7 @@ import { blockInit, getDefaultValueByField } from '../../../helpers/block-utilit
 import { boxToCSS } from '../../../helpers/helper-functions';
 import classNames from 'classnames';
 import BlockAppender from '../../../components/block-appender-button';
+import { useDarkBackground } from '../../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -136,6 +137,8 @@ const Edit = ({
 			}
 		}
 	}, [ activeTab, children ]);
+
+	useDarkBackground( attributes.tabColor, attributes, setAttributes );
 
 	/**
 	 * ------------ Tab Actions ------------

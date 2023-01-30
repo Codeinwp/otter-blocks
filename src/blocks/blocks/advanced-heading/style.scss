@@ -3,7 +3,6 @@ span.wp-block-themeisle-blocks-advanced-heading {
 }
 
 .wp-block-themeisle-blocks-advanced-heading {
-
 	--padding: 0px;
 	--padding-tablet: var(--padding);
 	--padding-mobile: var(--padding-tablet);
@@ -20,6 +19,9 @@ span.wp-block-themeisle-blocks-advanced-heading {
 	margin: var(--margin);
 	text-align: var(--text-align);
 
+	&.has-dark-bg {
+		color: #fff;
+	}
 
 	@media ( min-width: 600px ) and ( max-width: 960px ) {
 		padding: var(--padding-tablet);
