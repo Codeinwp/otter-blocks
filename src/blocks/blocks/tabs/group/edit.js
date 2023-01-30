@@ -43,6 +43,27 @@ import classNames from 'classnames';
 
 const { attributes: defaultAttributes } = metadata;
 
+const TabHeader = ({
+	tag,
+	title,
+	onClick,
+	active
+}) => {
+	const CustomTag = tag ?? 'div';
+	return (
+		<div
+			className={ classnames(
+				'wp-block-themeisle-blocks-tabs__header_item',
+				{
+					'active': active
+				}
+			) }
+		>
+			<CustomTag onClick={ onClick }>{ title }</CustomTag>
+		</div>
+	);
+};
+
 /**
  *
  * @param {import('./types').TabsGroupProps} props
@@ -153,30 +174,14 @@ const Edit = ({
 		'--content-text-color': attributes.contentTextColor,
 		'--title-align': attributes.titleAlignment,
 		'--title-padding': boxToCSS( attributes.titlePadding ),
-		'--content-padding': boxToCSS( attributes.contentPadding )
+		'--content-padding': boxToCSS( attributes.contentPadding ),
+		'--border-side-width': 'left' === attributes.tabsPosition ? attributes.borderWidth?.left : attributes.borderWidth?.top
 	};
 
 	/**
 	 * ------------ Tab Components ------------
 	 */
-	const TabHeader = ({
-		title,
-		onClick,
-		active
-	}) => {
-		return (
-			<div
-				className={ classnames(
-					'wp-block-themeisle-blocks-tabs__header_item',
-					{
-						'active': active
-					}
-				) }
-			>
-				<div onClick={ onClick }>{ title }</div>
-			</div>
-		);
-	};
+
 
 	const AddTab = () => {
 		return (
@@ -186,7 +191,6 @@ const Edit = ({
 					style={{
 						display: 'flex',
 						width: '30px',
-						height: '30px',
 						alignItems: 'center'
 					}}
 				>
@@ -199,7 +203,11 @@ const Edit = ({
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		style: inlineStyles,
-		className: classNames({ 'has-pos-left': 'left' === attributes.tabsPosition  }, 'is-style-border' )
+		className: classNames(
+			{ 'has-pos-left': 'left' === attributes.tabsPosition  },
+			'is-style-border',
+			`is-align-${ attributes.titleAlignment }`
+		)
 	});
 
 	return (
@@ -224,11 +232,12 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				<div className="wp-block-themeisle-blocks-tabs__header">
-					{ children?.map( tabHeader => {
+					{ children?.map( ( tabHeader, idx ) => {
 						return (
 							<TabHeader
 								key={ tabHeader.clientId }
-								title={ tabHeader.attributes.title || __( 'Insert Title', 'otter-blocks' ) }
+								tag={ attributes.titleTag }
+								title={ tabHeader.attributes.title ?? `${__( 'Tab', 'otter-blocks' )} ${idx}` }
 								active={ tabHeader.clientId === activeTab }
 								onClick={ () => toggleActiveTab( tabHeader.clientId ) }
 							/>

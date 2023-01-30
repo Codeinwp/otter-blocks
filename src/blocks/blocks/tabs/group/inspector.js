@@ -148,40 +148,47 @@ const Inspector = ({
 										onChange={ tabsPosition => setAttributes({ tabsPosition }) }
 									/>
 								</BaseControl>
-								<BaseControl
-									label={ __( 'Alignment', 'otter-blocks' ) }
-								>
-									<ToogleGroupControl
-										value={ attributes.titleAlignment ?? 'left' }
-										onChange={ titleAlignment => setAttributes({ titleAlignment }) }
-										options={[
-											{
-												icon: alignLeft,
-												label: __( 'Left', 'otter-blocks' ),
-												value: 'left'
-											},
-											{
-												icon: alignCenter,
-												label: __( 'Center', 'otter-blocks' ),
-												value: 'center'
-											},
-											{
-												icon: alignRight,
-												label: __( 'Right', 'otter-blocks' ),
-												value: 'right'
-											},
-											{
-												icon: menu,
-												label: __( 'Full', 'otter-blocks' ),
-												value: 'full'
-											}
-										]}
-										hasIcon={ true }
-									/>
-								</BaseControl>
+
+								{
+									'left' !== attributes.tabsPosition && (
+										<BaseControl
+											label={ __( 'Alignment', 'otter-blocks' ) }
+										>
+											<ToogleGroupControl
+												value={ attributes.titleAlignment ?? 'left' }
+												onChange={ titleAlignment => setAttributes({ titleAlignment }) }
+												options={[
+													{
+														icon: alignLeft,
+														label: __( 'Left', 'otter-blocks' ),
+														value: 'left'
+													},
+													{
+														icon: alignCenter,
+														label: __( 'Center', 'otter-blocks' ),
+														value: 'center'
+													},
+													{
+														icon: alignRight,
+														label: __( 'Right', 'otter-blocks' ),
+														value: 'right'
+													},
+													{
+														icon: menu,
+														label: __( 'Full', 'otter-blocks' ),
+														value: 'full'
+													}
+												]}
+												hasIcon={ true }
+											/>
+										</BaseControl>
+									)
+								}
+
 								<SelectControl
 									label={ __( 'Tab title HTML tag', 'otter-blocks' ) }
-									value={ attributes.tabTitle ?? 'div' }
+									value={ attributes.titleTag ?? 'div' }
+									onChange={ titleTag => setAttributes({ titleTag }) }
 									options={[
 										{
 											label: __( 'H1', 'otter-blocks' ),
