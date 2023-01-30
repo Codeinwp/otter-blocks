@@ -32,8 +32,28 @@ import { useSelect, useDispatch } from '@wordpress/data';
  * Internal dependencies.
  */
 import { SortableTab } from './components/sortable-tabs.js';
-import { InspectorHeader, SyncColorPanel, ToogleGroupControl } from '../../../components/index.js';
+import { InspectorHeader, SyncColorPanel, SyncControlDropdown, ToogleGroupControl } from '../../../components/index.js';
 import { alignCenter, alignLeft, alignRight, menu } from '@wordpress/icons';
+import { changeActiveStyle, getActiveStyle } from '../../../helpers/helper-functions.js';
+import AutoDisableSyncAttr from '../../../components/auto-disable-sync-attr/index';
+
+const styles = [
+	{
+		label: __( 'Default', 'otter-blocks' ),
+		value: 'default',
+		isDefault: true
+	},
+	{
+		label: __( 'Border', 'otter-blocks' ),
+		value: 'border'
+	},
+	{
+		label: __( 'Boxed', 'otter-blocks' ),
+		value: 'boxed'
+	}
+
+];
+
 
 /**
  *
@@ -137,11 +157,11 @@ const Inspector = ({
 										value={ attributes.tabsPosition ?? 'top' }
 										options={[
 											{
-												label: __( 'Top', 'otter-blocks' ),
+												label: __( 'Vertical', 'otter-blocks' ),
 												value: 'top'
 											},
 											{
-												label: __( 'Left', 'otter-blocks' ),
+												label: __( 'Horizontal', 'otter-blocks' ),
 												value: 'left'
 											}
 										]}
@@ -267,6 +287,7 @@ const Inspector = ({
 							>
 								<SelectControl
 									label={ __( 'Select a style', 'otter-blocks' ) }
+									value={ getActiveStyle( styles, attributes.className ) }
 									options={ [
 										{
 											label: __( 'Default', 'otter-blocks' ),
@@ -281,44 +302,61 @@ const Inspector = ({
 											value: 'boxed'
 										}
 									] }
+									onChange={ value => {
+										const classes = changeActiveStyle( attributes?.className, styles, value ) || undefined;
+										setAttributes({ className: classes });
+									} }
 								/>
 							</PanelBody>
 							<PanelBody
 								title={ __( 'Typography', 'otter-blocks' ) }
 							>
-								<FontSizePicker
-									fontSizes={
-										[
-											{
-												name: __( 'Small', 'otter-blocks' ),
-												slug: 'small',
-												size: 14
-											},
-											{
-												name: __( 'Normal', 'otter-blocks' ),
-												slug: 'normal',
-												size: 16
-											},
-											{
-												name: __( 'Medium', 'otter-blocks' ),
-												slug: 'medium',
-												size: 20
-											},
-											{
-												name: __( 'Large', 'otter-blocks' ),
-												slug: 'large',
-												size: 24
-											},
-											{
-												name: __( 'XL', 'otter-blocks' ),
-												slug: 'xl',
-												size: 28
-											}
-										]
-									}
-									value={ attributes.titleFontSize }
-									onChange={ titleFontSize => setAttributes({ titleFontSize }) }
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									setAttributes={setAttributes}
+									options={[
+										{
+											label: __( 'Font Size', 'otter-blocks' ),
+											value: 'titleFontSize'
+										}
+									]}
 								/>
+								<AutoDisableSyncAttr attr='titleFontSize' attributes={attributes}>
+									<FontSizePicker
+										fontSizes={
+											[
+												{
+													name: __( 'Small', 'otter-blocks' ),
+													slug: 'small',
+													size: 14
+												},
+												{
+													name: __( 'Normal', 'otter-blocks' ),
+													slug: 'normal',
+													size: 16
+												},
+												{
+													name: __( 'Medium', 'otter-blocks' ),
+													slug: 'medium',
+													size: 20
+												},
+												{
+													name: __( 'Large', 'otter-blocks' ),
+													slug: 'large',
+													size: 24
+												},
+												{
+													name: __( 'XL', 'otter-blocks' ),
+													slug: 'xl',
+													size: 28
+												}
+											]
+										}
+										value={ attributes.titleFontSize }
+										onChange={ titleFontSize => setAttributes({ titleFontSize }) }
+									/>
+								</AutoDisableSyncAttr>
+
 							</PanelBody>
 							<SyncColorPanel
 								label={ __( 'Colors', 'otter-blocks' ) }
@@ -372,16 +410,35 @@ const Inspector = ({
 								title={ __( 'Dimensions(Layout)', 'otter-blocks' ) }
 								initialOpen={ true }
 							>
-								<BoxControl
-									label={ __( 'Title Padding', 'otter-blocks' ) }
-									values={ attributes.titlePadding }
-									onChange={ titlePadding => setAttributes({ titlePadding }) }
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									setAttributes={setAttributes}
+									options={[
+										{
+											label: __( 'Title Padding', 'otter-blocks' ),
+											value: 'titlePadding'
+										},
+										{
+											label: __( 'Content Padding', 'otter-blocks' ),
+											value: 'contentPadding'
+										}
+									]}
 								/>
-								<BoxControl
-									label={ __( 'Content Padding', 'otter-blocks' ) }
-									values={ attributes.contentPadding }
-									onChange={ contentPadding => setAttributes({ contentPadding }) }
-								/>
+								<AutoDisableSyncAttr attr='titlePadding' attributes={attributes}>
+									<BoxControl
+										label={ __( 'Title Padding', 'otter-blocks' ) }
+										values={ attributes.titlePadding }
+										onChange={ titlePadding => setAttributes({ titlePadding }) }
+									/>
+								</AutoDisableSyncAttr>
+								<AutoDisableSyncAttr attr='contentPadding' attributes={attributes}>
+									<BoxControl
+										label={ __( 'Content Padding', 'otter-blocks' ) }
+										values={ attributes.contentPadding }
+										onChange={ contentPadding => setAttributes({ contentPadding }) }
+									/>
+								</AutoDisableSyncAttr>
+
 							</PanelBody>
 							<PanelBody
 								title={ __( 'Border Radius', 'otter-blocks' ) }
@@ -398,19 +455,36 @@ const Inspector = ({
 									id="o-border-raduis-box"
 								/> */}
 
-								<BoxControl
-									label={ __( 'Title Border Width', 'otter-blocks' ) }
-									values={ attributes.titleBorderWidth }
-									onChange={ titleBorderWidth => setAttributes({ titleBorderWidth }) }
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									setAttributes={setAttributes}
+									options={[
+										{
+											label: __( 'Title Border Width', 'otter-blocks' ),
+											value: 'titleBorderWidth'
+										},
+										{
+											label: __( 'Content Border Width', 'otter-blocks' ),
+											value: 'borderWidth'
+										}
+									]}
 								/>
 
-								<BoxControl
-									label={ __( 'Content Border Width', 'otter-blocks' ) }
-									values={ attributes.borderWidth }
-									onChange={ borderWidth => setAttributes({ borderWidth }) }
-								/>
+								<AutoDisableSyncAttr attr='titleBorderWidth' attributes={attributes}>
+									<BoxControl
+										label={ __( 'Title Border Width', 'otter-blocks' ) }
+										values={ attributes.titleBorderWidth }
+										onChange={ titleBorderWidth => setAttributes({ titleBorderWidth }) }
+									/>
+								</AutoDisableSyncAttr>
+								<AutoDisableSyncAttr attr='borderWidth' attributes={attributes}>
+									<BoxControl
+										label={ __( 'Content Border Width', 'otter-blocks' ) }
+										values={ attributes.borderWidth }
+										onChange={ borderWidth => setAttributes({ borderWidth }) }
+									/>
+								</AutoDisableSyncAttr>
 							</PanelBody>
-
 						</Fragment>
 					)
 				}

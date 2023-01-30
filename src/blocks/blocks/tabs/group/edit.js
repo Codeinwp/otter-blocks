@@ -37,9 +37,10 @@ import {
 import metadata from './block.json';
 import Inspector from './inspector.js';
 import Controls from './controls.js';
-import { blockInit } from '../../../helpers/block-utility.js';
+import { blockInit, getDefaultValueByField } from '../../../helpers/block-utility.js';
 import { boxToCSS } from '../../../helpers/helper-functions';
 import classNames from 'classnames';
+import BlockAppender from '../../../components/block-appender-button';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -58,8 +59,9 @@ const TabHeader = ({
 					'active': active
 				}
 			) }
+			onClick={ onClick }
 		>
-			<CustomTag onClick={ onClick }>{ title }</CustomTag>
+			<CustomTag >{ title }</CustomTag>
 		</div>
 	);
 };
@@ -73,7 +75,8 @@ const Edit = ({
 	attributes,
 	setAttributes,
 	isSelected,
-	clientId
+	clientId,
+	name
 }) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -81,6 +84,19 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const contentRef = useRef( null );
+
+	// TODO: Replace this with the builder sync function.
+	/**
+	 * Get global value if it is the case.
+	 * @param {import('../../../common').SyncAttrs<import('./types').TabsGroupAttrs>} field
+	 * @returns
+	 */
+	const getSyncValue = field =>{
+		if ( attributes?.isSynced?.includes( field ) ) {
+			return getDefaultValueByField({ name, field, defaultAttributes, attributes });
+		}
+		return attributes?.[field];
+	};
 
 	const children = useSelect( select => {
 		const { getBlock } = select( 'core/block-editor' );
@@ -93,8 +109,7 @@ const Edit = ({
 		insertBlock,
 		removeBlock,
 		selectBlock,
-		moveBlockToPosition,
-		updateBlockAttributes
+		moveBlockToPosition
 	} = useDispatch( 'core/block-editor' );
 
 	const toggleActiveTab = blockId => {
@@ -124,9 +139,8 @@ const Edit = ({
 
 	/**
 	 * ------------ Tab Actions ------------
-	 *
-	 * @param  blockId
 	 */
+
 	const selectTab = ( blockId ) => {
 		if ( 0 < children?.length ) {
 			const block = children.find( block => block.clientId === blockId );
@@ -160,52 +174,29 @@ const Edit = ({
 	 * ------------ Tab Dynamic CSS ------------
 	 */
 
-
 	const inlineStyles = {
-		'--title-border-width': boxToCSS( attributes.titleBorderWidth ),
-		'--border-width': boxToCSS( attributes.borderWidth ),
-		'--border-color': attributes.borderColor,
-		'--title-color': attributes.titleColor,
-		'--title-background': attributes.titleBackgroundColor,
-		'--tab-color': attributes.tabColor,
-		'--active-title-color': attributes.activeTitleColor,
-		'--active-title-background': attributes.activeTitleBackgroundColor,
-		'--active-title-border-color': attributes.activeBorderColor,
-		'--content-text-color': attributes.contentTextColor,
-		'--title-align': attributes.titleAlignment,
-		'--title-padding': boxToCSS( attributes.titlePadding ),
-		'--content-padding': boxToCSS( attributes.contentPadding ),
-		'--border-side-width': 'left' === attributes.tabsPosition ? attributes.borderWidth?.left : attributes.borderWidth?.top
-	};
-
-	/**
-	 * ------------ Tab Components ------------
-	 */
-
-
-	const AddTab = () => {
-		return (
-			<div className="wp-block-themeisle-blocks-tabs__header_item">
-				<div
-					onClick={ addTab }
-					style={{
-						display: 'flex',
-						width: '30px',
-						alignItems: 'center'
-					}}
-				>
-					<Icon icon={ plus } />
-				</div>
-			</div>
-		);
+		'--title-border-width': boxToCSS( getSyncValue( 'titleBorderWidth' ) ),
+		'--border-width': boxToCSS( getSyncValue( 'borderWidth' ) ),
+		'--border-color': getSyncValue( 'borderColor' ),
+		'--title-color': getSyncValue( 'titleColor' ),
+		'--title-background': getSyncValue( 'titleBackgroundColor' ),
+		'--tab-color': getSyncValue( 'tabColor' ),
+		'--active-title-color': getSyncValue( 'activeTitleColor' ),
+		'--active-title-background': getSyncValue( 'activeTitleBackgroundColor' ),
+		'--active-title-border-color': getSyncValue( 'activeBorderColor' ),
+		'--content-text-color': getSyncValue( 'contentTextColor' ),
+		'--title-align': getSyncValue( 'titleAlignment' ),
+		'--title-padding': boxToCSS( getSyncValue( 'titlePadding' ) ),
+		'--content-padding': boxToCSS( getSyncValue( 'titlePadding' ) ),
+		'--border-side-width': 'left' === attributes.tabsPosition ?  getSyncValue( 'borderWidth' )?.left :  getSyncValue( 'borderWidth' )?.top
 	};
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
 		style: inlineStyles,
 		className: classNames(
+			attributes.className,
 			{ 'has-pos-left': 'left' === attributes.tabsPosition  },
-			'is-style-border',
 			`is-align-${ attributes.titleAlignment }`
 		)
 	});
@@ -244,7 +235,14 @@ const Edit = ({
 						);
 					}) || '' }
 
-					{ ( isSelected || 0 === children.length ) && <AddTab /> }
+					{ ( isSelected || 0 === children.length ) && (
+						<BlockAppender
+							buttonText={ __( 'Add Tab', 'otter-blocks' ) }
+							variant="primary"
+							allowedBlock="themeisle-blocks/tabs-item"
+							clientId={ clientId }
+						/>
+					) }
 				</div>
 
 				<div
