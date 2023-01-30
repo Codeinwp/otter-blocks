@@ -207,6 +207,19 @@ You can check Otter documentation [here](https://docs.themeisle.com/article/1478
 
 ## Changelog ##
 
+##### [Version 2.2.1](https://github.com/Codeinwp/otter-blocks/compare/v2.2.0...v2.2.1) (2023-01-30)
+
+- Form Block Redesign & Enhancements
+- Introduce Pro Patterns
+- Improve how content blocks behave with darker backgrounds
+- Fix Popup behaviour with Sticky elements
+- Fix Sticky feature not working properly with Tabs Block
+- Fix some minor issues with various themes
+- Fix PHP 8.2 issues
+
+
+
+
 #### [Version 2.2.0](https://github.com/Codeinwp/otter-blocks/compare/v2.1.6...v2.2.0) (2023-01-10)
 
 - Added Stripe Block
