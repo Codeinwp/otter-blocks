@@ -15,7 +15,7 @@ import {
 
 import { createBlock } from '@wordpress/blocks';
 
-import { useSelect } from '@wordpress/data';
+import { select, useSelect } from '@wordpress/data';
 
 import {
 	Fragment,
@@ -95,6 +95,15 @@ const Edit = ({
 		}
 	}, [ attributes.library, attributes.icon ]);
 
+	useEffect( () => {
+		if ( ! attributes.placeholder ) {
+			const parentClientId = select( 'core/block-editor' ).getBlockParents( clientId ).at( -1 );
+			const parentBlock = select( 'core/block-editor' ).getBlock( parentClientId );
+
+			setAttributes({ placeholder: __( 'List item ', 'otter-blocks' ) + parentBlock.innerBlocks.length });
+		}
+	}, [ attributes.placeholder ]);
+
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
 	const iconClassName = `${ attributes.iconPrefix || parentAttributes.defaultPrefix } fa-${ attributes.icon || parentAttributes.defaultIcon }`;
@@ -144,7 +153,7 @@ const Edit = ({
 				<RichText
 					identifier="content"
 					tagName="p"
-					placeholder={ __( 'Write your content…', 'otter-blocks' ) }
+					placeholder={ attributes.placeholder }
 					className={ classnames(
 						{ 'wp-block-themeisle-blocks-icon-list-item-content': ! attributes.contentColor },
 						{ 'wp-block-themeisle-blocks-icon-list-item-content-custom': attributes.contentColor }

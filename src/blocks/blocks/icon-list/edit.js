@@ -10,6 +10,7 @@ import {
 	Fragment,
 	useEffect
 } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
@@ -86,7 +87,11 @@ const Edit = ({
 					allowedBlocks={ [ 'themeisle-blocks/icon-list-item' ] }
 					__experimentalMoverDirection="vertical"
 					orientation="vertical"
-					template={ [[ 'themeisle-blocks/icon-list-item' ]] }
+					template={ [
+						[ 'themeisle-blocks/icon-list-item', { placeholder: __( 'List item one', 'otter-blocks' ) }],
+						[ 'themeisle-blocks/icon-list-item', { placeholder: __( 'List item two', 'otter-blocks' ) }],
+						[ 'themeisle-blocks/icon-list-item', { placeholder: __( 'List item three', 'otter-blocks' ) }]
+					] }
 					renderAppender={ InnerBlocks.DefaultAppender }
 				/>
 			</div>

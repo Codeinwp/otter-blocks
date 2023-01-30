@@ -109,10 +109,9 @@ const Edit = ({
 		'--back-vertical-align': attributes.backVerticalAlign,
 		'--front-media-width': _px( attributes.frontMediaWidth ),
 		'--front-media-height': _px( attributes.frontMediaHeight ),
-		'--padding': responsiveGetAttributes([ attributes?.padding, attributes.paddingTablet, attributes?.paddingMobile ]) ?? ( isNumber( attributes.padding ) ? stringToBox( _px( attributes.padding ) ) : stringToBox( '20px' ) ),
+		'--padding': boxToCSS( responsiveGetAttributes([ attributes?.padding, attributes.paddingTablet, attributes?.paddingMobile ]) ?? ( isNumber( attributes.padding ) ? stringToBox( _px( attributes.padding ) ) : stringToBox( '20px' ) ) ),
 		'--padding-tablet': boxToCSS( attributes?.paddingTablet ),
 		'--padding-mobile': boxToCSS( attributes?.paddingMobile )
-
 	};
 
 	const [ cssNodeName, setNodeCSS ] = useCSSNode();
@@ -187,59 +186,41 @@ const Edit = ({
 								tagName="h3"
 								value={ attributes.title ?? '' }
 								onChange={ title => setAttributes({ title })}
-								placeholder={ __( 'Insert a title', 'otter-blocks' )}
+								placeholder={ __( 'Front title', 'otter-blocks' )}
 							/>
 
 							<RichText
 								tagName="p"
 								value={ attributes.description ?? '' }
 								onChange={ description => setAttributes({ description })}
-								placeholder={ __( 'Insert a description', 'otter-blocks' )}
+								placeholder={ __( 'This is is just a placeholder to help you visualise how the content is displayed in the flip box. Feel free to edit this with your actual content.', 'otter-blocks' )}
 							/>
 						</div>
 					</div>
 
 					<div className="o-flip-back">
-						<InnerBlocks
-							renderAppender={ isSelected ? InnerBlocks.ButtonBlockAppender : undefined }
-							template={[
-								[
-									'core/heading',
-									{
-										content: 'Lorem ipsum',
+						<div className="o-flip-content">
+							<InnerBlocks
+								renderAppender={ isSelected ? InnerBlocks.DefaultBlockAppender : undefined }
+								template={[
+									[ 'core/heading', {
+										placeholder: __( 'Back title', 'otter-blocks' ),
 										level: 3
-									}
-								],
-								[
-									'core/paragraph',
-									{
-										content: 'Tellus posuere sem fermentum facilisis platea.'
-									}
-								],
-								[
-									'core/buttons',
-									{
-										layout: { type: 'flex', justifyContent: 'center' },
-										innerBlocks: [
-											{
-												name: 'core/button',
-												attributes: {
-													className: 'is-style-outline',
-													text: 'Learn more'
-												}
-											}
-										]
-									}
-								]
-							]}
-						/>
+									}],
+									[ 'core/paragraph', { placeholder: __( 'This is is just a placeholder to help you visualise how the content is displayed in the flip box. Feel free to edit this with your actual content.', 'otter-blocks' ) }],
+									[ 'core/buttons', {
+										layout: { type: 'flex', justifyContent: 'center' }
+									}, [[ 'core/button', { className: 'is-style-fill', placeholder: __( 'Button text', 'otter-blocks' ) }]]]
+								]}
+							/>
+						</div>
 					</div>
 				</div>
 
 				{ isSelected && (
 					<div className="o-switcher">
 						<Button
-							isPrimary
+							variant="primary"
 							onClick={ () => setSide( 'back' === currentSide ? 'front' : 'back' ) }
 						>
 							{ 'back' === currentSide  ? __( 'Flip to Front', 'otter-blocks' ) : __( 'Flip to Back', 'otter-blocks' ) }

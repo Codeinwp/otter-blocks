@@ -2,6 +2,7 @@ import { BlockProps, InspectorProps } from '../../../helpers/blocks';
 
 type Attributes = {
 	id: string
+	placeholder: string
 	content: string
 	contentColor: string
 	iconColor: string
