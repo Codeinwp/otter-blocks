@@ -81,19 +81,19 @@ const Inspector = ({
 						value: attributes.titleColor,
 						onChange: titleColor => setAttributes({ titleColor }),
 						label: __( 'Title', 'otter-blocks' ),
-						isShownByDefault: false
+						isShownByDefault: true
 					},
 					{
 						value: attributes.backgroundColor,
 						onChange: backgroundColor => setAttributes({ backgroundColor }),
 						label: __( 'Background', 'otter-blocks' ),
-						isShownByDefault: false
+						isShownByDefault: true
 					},
 					{
 						value: attributes.borderColor,
 						onChange: borderColor => setAttributes({ borderColor }),
 						label: __( 'Border', 'otter-blocks' ),
-						isShownByDefault: false
+						isShownByDefault: true
 					}
 				] }
 			>

@@ -35,7 +35,10 @@ import Inspector from './inspector.js';
 import googleFontsLoader from '../../helpers/google-fonts.js';
 import { boxValues, _cssBlock, _px } from '../../helpers/helper-functions';
 import { makeBox } from '../../plugins/copy-paste/utils';
-import { useResponsiveAttributes } from '../../helpers/utility-hooks';
+import {
+	useDarkBackground,
+	useResponsiveAttributes
+} from '../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -58,13 +61,13 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
+	useDarkBackground( attributes.backgroundColor, attributes, setAttributes );
 
 	const changeContent = value => {
 		setAttributes({ content: value });
 	};
 
 	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
-
 
 	const oldPaddingDesktop = 'unlinked' === attributes.paddingType ? ({
 		top: _px( attributes.paddingTop ) ?? '0px',

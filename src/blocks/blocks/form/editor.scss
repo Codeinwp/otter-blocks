@@ -39,3 +39,11 @@
 		border-color: red;
 	}
 }
+
+.o-form-options {
+	// gap: 0 !important;
+
+	.components-tools-panel-item:not( .is-first ) {
+		border-top: 1px solid #ededed;
+	}
+}

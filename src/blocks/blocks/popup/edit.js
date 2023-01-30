@@ -35,6 +35,7 @@ import metadata from './block.json';
 import Inspector from './inspector.js';
 import { blockInit, useCSSNode } from '../../helpers/block-utility';
 import { boxValues, _cssBlock } from '../../helpers/helper-functions';
+import { useDarkBackground } from '../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 const makeBox = x => ({ top: x, bottom: x, left: x, right: x });
@@ -126,6 +127,8 @@ const Edit = ({
 		attributes.horizontalPositionMobile,
 		attributes.verticalPositionMobile
 	]);
+
+	useDarkBackground( attributes.backgroundColor, attributes, setAttributes );
 
 	const blockProps = useBlockProps({
 		id: attributes.id,

@@ -38,6 +38,7 @@ import metadata from './block.json';
 import Inspector from './inspector.js';
 import Controls from './controls.js';
 import { blockInit } from '../../../helpers/block-utility.js';
+import { useDarkBackground } from '../../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -93,6 +94,8 @@ const Edit = ({
 			}
 		}
 	}, [ activeTab, children ]);
+
+	useDarkBackground( attributes.tabColor, attributes, setAttributes );
 
 	/**
 	 * ------------ Tab Actions ------------

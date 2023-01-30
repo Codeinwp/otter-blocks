@@ -41,6 +41,10 @@
 
 	border: none;
 
+	&.has-dark-bg {
+		--text-color: #fff;
+	}
+
 	&.is-style-boxed {
 		--border-width: 3px;
 

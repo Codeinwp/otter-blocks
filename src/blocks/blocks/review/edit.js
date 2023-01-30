@@ -35,15 +35,19 @@ import {
  */
 import metadata from './block.json';
 import Inspector from './inspector.js';
+
 import {
 	check,
 	close,
 	StarFilled
 } from '../../helpers/icons.js';
+
 import {
 	blockInit,
 	getDefaultValueByField
 } from '../../helpers/block-utility.js';
+
+import { useDarkBackground } from '../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -112,6 +116,8 @@ const Edit = ({
 	}, [ attributes.image, attributes.imageSize, productAttributes ]);
 
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
+
+	useDarkBackground( getValue( 'backgroundColor' ), attributes, setAttributes );
 
 	const overallRatings = ( attributes.features.reduce( ( accumulator, feature ) => accumulator + feature.rating, 0 ) / attributes.features.length ).toFixed( 1 );
 

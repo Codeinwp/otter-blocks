@@ -22,3 +22,5 @@ export type IconData = {
     name: string
     prefix: string
 }
+
+export type SyncAttrs<T> = keyof T
