@@ -38,52 +38,52 @@ class Tabs_CSS extends Base_CSS {
 			array(
 				'properties' => array(
 					array(
-						'property' => '--border-width',
-						'value'    => 'borderWidth',
-						'unit'     => 'px',
-						'condition'=> function( $attrs ) {
+						'property'  => '--border-width',
+						'value'     => 'borderWidth',
+						'unit'      => 'px',
+						'condition' => function( $attrs ) {
 							return isset( $attrs['borderWidth'] ) && ! is_numeric( $attrs['borderWidth'] );
 						},
 					),
 					array(
 						'property' => '--border-color',
 						'value'    => 'borderColor',
-						'hasSync'   => 'tabs-border-color',
+						'hasSync'  => 'tabs-border-color',
 					),
 					array(
 						'property' => '--active-title-color',
 						'value'    => 'activeTitleColor',
-						'hasSync'   => 'tabs-active-title-color',
+						'hasSync'  => 'tabs-active-title-color',
 					),
 					array(
 						'property' => '--active-title-background',
 						'value'    => 'activeTitleBackgroundColor',
-						'hasSync'   => 'tabs-active-title-background-color',
+						'hasSync'  => 'tabs-active-title-background-color',
 					),
 					array(
 						'property' => '--active-title-border-color',
 						'value'    => 'activeBorderColor',
-						'hasSync'   => 'tabs-active-border-color',
+						'hasSync'  => 'tabs-active-border-color',
 					),
 					array(
 						'property' => '--tab-color',
 						'value'    => 'tabColor',
-						'hasSync'   => 'tabs-tab-color',
+						'hasSync'  => 'tabs-tab-color',
 					),
 					array(
 						'property' => '--content-text-color',
 						'value'    => 'contentTextColor',
-						'hasSync'   => 'tabs-content-text-color',
+						'hasSync'  => 'tabs-content-text-color',
 					),
 					array(
 						'property' => '--title-color',
 						'value'    => 'titleColor',
-						'hasSync'   => 'tabs-title-color',
+						'hasSync'  => 'tabs-title-color',
 					),
 					array(
 						'property' => '--title-background',
 						'value'    => 'titleBackgroundColor',
-						'hasSync'   => 'tabs-background-color',
+						'hasSync'  => 'tabs-background-color',
 					),
 					array(
 						'property' => '--title-border-width',
@@ -99,12 +99,12 @@ class Tabs_CSS extends Base_CSS {
 								)
 							);
 						},
-						'hasSync'   => 'tabs-title-border-width',
+						'hasSync'  => 'tabs-title-border-width',
 					),
 					array(
-						'property' => '--border-width',
-						'value'    => 'borderWidth',
-						'format'   => function( $value, $attrs ) {
+						'property'  => '--border-width',
+						'value'     => 'borderWidth',
+						'format'    => function( $value, $attrs ) {
 							return CSS_Utility::box_values(
 								$value,
 								array(
@@ -134,7 +134,7 @@ class Tabs_CSS extends Base_CSS {
 								)
 							);
 						},
-						'hasSync'   => 'tabs-title-padding',
+						'hasSync'  => 'tabs-title-padding',
 					),
 					array(
 						'property' => '--content-padding',
@@ -150,22 +150,22 @@ class Tabs_CSS extends Base_CSS {
 								)
 							);
 						},
-						'hasSync'   => 'tabs-content-padding',
+						'hasSync'  => 'tabs-content-padding',
 					),
 					array(
 						'property' => '--border-side-width',
 						'value'    => 'borderWidth',
 						'format'   => function( $value, $attrs ) {
 							
-							if( isset( $attrs['tabsPosition'] ) ) {
-								if( 'left' === $attrs['tabsPosition'] ) {
-									if( isset( $value['left'] ) ) {
+							if ( isset( $attrs['tabsPosition'] ) ) {
+								if ( 'left' === $attrs['tabsPosition'] ) {
+									if ( isset( $value['left'] ) ) {
 										return $value['left'];
 									}
 								}
 							}
 
-							if( isset( $value['top'] ) ) {
+							if ( isset( $value['top'] ) ) {
 								return $value['top'];
 							}
 
@@ -210,7 +210,7 @@ class Tabs_CSS extends Base_CSS {
 
 		$css->add_item(
 			array(
-				'selector' => '.wp-block-themeisle-blocks-tabs',
+				'selector'   => '.wp-block-themeisle-blocks-tabs',
 				'properties' => array(
 					array(
 						'property' => '--tabs-border-color',
@@ -222,7 +222,7 @@ class Tabs_CSS extends Base_CSS {
 					),
 					array(
 						'property' => '--tabs-active-title-background-color',
-						'value'    => 'tabColor', // Inheritance
+						'value'    => 'tabColor', // Inheritance.
 					),
 					array(
 						'property' => '--tabs-active-title-background-color',
@@ -308,7 +308,7 @@ class Tabs_CSS extends Base_CSS {
 								)
 							);
 						},
-					)
+					),
 				),
 			)
 		);
