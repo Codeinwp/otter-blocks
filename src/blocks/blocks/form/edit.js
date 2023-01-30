@@ -19,6 +19,7 @@ import apiFetch from '@wordpress/api-fetch';
 import {
 	__experimentalBlockVariationPicker as VariationPicker,
 	InnerBlocks,
+	RichText,
 	useBlockProps
 } from '@wordpress/block-editor';
 
@@ -172,8 +173,6 @@ const Edit = ({
 	});
 
 	const { canSaveData } = useSelect( select => {
-
-		// console.count( 'Trigger Save Detection' );
 		const isSavingPost = select( 'core/editor' )?.isSavingPost();
 		const isAutosaving = select( 'core/editor' )?.isAutosavingPost();
 
@@ -915,13 +914,15 @@ const Edit = ({
 											{ 'o-center-mobile': 'center' === attributes.submitStyleMobile }
 										)}
 								>
-									<button
+									<RichText
 										className='wp-block-button__link'
+										placeholder={ __( 'Submit', 'otter-blocks' ) }
+										value={ attributes.submitLabel }
+										onChange={ submitLabel => setAttributes({ submitLabel }) }
+										tagName="button"
 										type='submit'
-										disabled
-									>
-										{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
-									</button>
+										onClick={ e => e.preventDefault() }
+									/>
 
 									{ isSelected && (
 										<Fragment>

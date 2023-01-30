@@ -459,7 +459,6 @@ const Inspector = ({
 								label={ __( 'Title', 'otter-blocks' ) }
 							>
 								<FontSizePicker
-
 									value={ _px( attributes.titleFontSize ) }
 									onChange={ titleFontSize => setAttributes({ titleFontSize }) }
 									fontSizes={[ ...defaultFontSizes, { name: '32', size: '32px', slug: '32' }]}
@@ -471,7 +470,6 @@ const Inspector = ({
 								label={ __( 'Description', 'otter-blocks' ) }
 							>
 								<FontSizePicker
-
 									value={ wrapNumberInBox( attributes.descriptionFontSize ) }
 									onChange={ descriptionFontSize => setAttributes({ descriptionFontSize }) }
 									fontSizes={[ ...defaultFontSizes, { name: '28', size: '28px', slug: '28' }]}

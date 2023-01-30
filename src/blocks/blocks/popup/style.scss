@@ -24,6 +24,10 @@ $base-index: 99999 !default;
 	--padding-mobile: var(--padding-tablet);
 	--box-shadow: unset;
 
+	&.has-dark-bg {
+		color: #fff;
+		--close-color: #fff;
+	}
 
 	&.is-front {
 		display: none;

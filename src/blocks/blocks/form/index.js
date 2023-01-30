@@ -108,7 +108,8 @@ registerBlockType( name, {
 						fontSize: 'extra-small'
 					}
 				]
-			]
+			],
+			scope: [ 'block' ]
 		},
 		{
 			name: 'themeisle-blocks/form-subscribe',
@@ -145,7 +146,8 @@ registerBlockType( name, {
 						fontSize: 'extra-small'
 					}
 				]
-			]
+			],
+			scope: [ 'block' ]
 		}
 	]
 });

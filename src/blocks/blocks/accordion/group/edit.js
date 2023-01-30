@@ -25,6 +25,8 @@ import {
 	useCSSNode
 } from '../../../helpers/block-utility.js';
 
+import { useDarkBackground } from '../../../helpers/utility-hooks.js';
+
 // @ts-ignore
 import faIcons from '../../../../../assets/fontawesome/fa-icons.json';
 
@@ -137,6 +139,10 @@ const Edit = ({
 			googleFontsLoader.loadFontToBrowser( attributes.fontFamily, attributes.fontVariant );
 		}
 	}, [ attributes.fontFamily ]);
+
+	useDarkBackground( getValue( 'titleBackground' ), attributes, setAttributes, 'has-dark-title-bg' );
+	useDarkBackground( getValue( 'activeTitleBackground' ), attributes, setAttributes, 'has-dark-active-title-bg' );
+	useDarkBackground( getValue( 'contentBackground' ), attributes, setAttributes, 'has-dark-content-bg' );
 
 	const blockProps = useBlockProps({
 		id: attributes.id,

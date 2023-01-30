@@ -23,8 +23,15 @@
 	margin-left: auto;
 	margin-right: auto;
 	height: var( --height );
-
 	perspective: 1000px; /* Remove this if you don't want the 3D effect */
+
+	&.has-dark-front-bg {
+		color: #fff;
+	}
+
+	&.has-dark-back-bg {
+		color: #fff;
+	}
 
 	// &[class^="block-editor"] {
 	// 	width: auto;

@@ -3,10 +3,12 @@
  */
 import { useSelect } from '@wordpress/data';
 
+import { useEffect } from '@wordpress/element';
+
 /**
  * Internal dependencies
  */
-import { buildResponsiveGetAttributes, buildResponsiveSetAttributes } from './helper-functions.js';
+import { buildResponsiveGetAttributes, buildResponsiveSetAttributes, isColorDark } from './helper-functions.js';
 
 /**
  * Utiliy hook to get/set responsive attributes.
@@ -23,3 +25,29 @@ export const useResponsiveAttributes = ( setAttributes = () => {}) => useSelect(
 		responsiveGetAttributes: buildResponsiveGetAttributes( view )
 	};
 }, []);
+
+/**
+ * Utility hook to get/set dark background class.
+ *
+ * @param {string} backgroundColor - The background color.
+ * @param {Object} attributes - The block attributes.
+ * @param {Function} setAttributes - The setAttributes function from the block.
+ * @param {string} className - The class name to add/remove.
+ */
+export const useDarkBackground = ( backgroundColor, attributes, setAttributes, className = 'has-dark-bg' ) => {
+	useEffect( () => {
+		const isDark = isColorDark( backgroundColor );
+
+		if ( isDark && ! attributes?.className?.includes( className ) ) {
+			let classes = attributes.className || '';
+			classes = classes.split( ' ' );
+			classes.push( className );
+			classes = classes.join( ' ' ).trim();
+			setAttributes({ className: classes });
+		}
+
+		if ( ! isDark && attributes?.className?.includes( className ) ) {
+			setAttributes({ className: attributes.className.replace( className, '' ).trim() });
+		}
+	}, [ backgroundColor ]);
+};

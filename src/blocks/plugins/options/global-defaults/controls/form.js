@@ -5,32 +5,28 @@
  */
 import { __ } from '@wordpress/i18n';
 
-import {
-	InspectorControls,
-	PanelColorSettings
-} from '@wordpress/block-editor';
+import { isObjectLike } from 'lodash';
+
+import { PanelColorSettings } from '@wordpress/block-editor';
 
 import {
 	BaseControl,
-	Button,
-	ExternalLink,
 	PanelBody,
 	RangeControl,
-	SelectControl,
-	Spinner,
-	TextControl,
-	ToggleControl,
-	TextareaControl,
 	__experimentalBoxControl as BoxControl,
-	FontSizePicker,
-	Disabled
+	FontSizePicker
 } from '@wordpress/components';
 
+import {
+	Fragment,
+	useState
+} from '@wordpress/element';
 
-import { Fragment, useState } from '@wordpress/element';
+/**
+ * Internal dependencies
+ */
 import { ColorDropdownControl, ResponsiveControl, ToogleGroupControl } from '../../../../components';
 import { useResponsiveAttributes } from '../../../../helpers/utility-hooks';
-import { isObjectLike } from 'lodash';
 import { _px } from '../../../../helpers/helper-functions';
 import { makeBox } from '../../../copy-paste/utils';
 
@@ -107,6 +103,16 @@ const Form = ({
 						value: attributes.inputRequiredColor,
 						onChange: inputRequiredColor => setAttributes({ inputRequiredColor }),
 						label: __( 'Required Label', 'otter-blocks' )
+					},
+					{
+						value: attributes.submitMessageColor,
+						onChange: submitMessageColor => setAttributes({ submitMessageColor }),
+						label: __( 'Success Message', 'otter-blocks' )
+					},
+					{
+						value: attributes.submitMessageErrorColor,
+						onChange: submitMessageErrorColor => setAttributes({ submitMessageErrorColor }),
+						label: __( 'Error Message', 'otter-blocks' )
 					}
 				] }
 			/>
@@ -115,10 +121,9 @@ const Form = ({
 				title={ __( 'Button', 'otter-blocks' ) }
 				initialOpen={ true }
 			>
-
 				<ToogleGroupControl
-					value={buttonColorView}
-					onChange={setButtonColorView}
+					value={ buttonColorView }
+					onChange={ setButtonColorView }
 					options={[
 						{
 							label: 'Normal',
@@ -136,48 +141,41 @@ const Form = ({
 				{
 					( 'normal' === buttonColorView && (
 						<Fragment>
-
 							<ColorDropdownControl
-								label={__( 'Text', 'otter-blocks' )}
-								colorValue={attributes.submitColor}
+								label={ __( 'Text', 'otter-blocks' ) }
+								colorValue={ attributes.submitColor }
 								onColorChange={( /** @type {string} */ value ) => setAttributes({ submitColor: value })}
 								className="is-list is-first"
 							/>
 
-
 							<ColorDropdownControl
-								label={__( 'Background', 'otter-blocks' )}
-								colorValue={attributes.submitBackgroundColor}
+								label={ __( 'Background', 'otter-blocks' ) }
+								colorValue={ attributes.submitBackgroundColor }
 								onColorChange={( /** @type {string} */ value ) => setAttributes({ submitBackgroundColor: value })}
 								className="is-list"
 							/>
-
 						</Fragment>
 					) ) ||
 					( 'hover' === buttonColorView && (
 						<Fragment>
-
 							<ColorDropdownControl
-								label={__( 'Text', 'otter-blocks' )}
-								colorValue={attributes.submitColorHover}
+								label={ __( 'Text', 'otter-blocks' ) }
+								colorValue={ attributes.submitColorHover }
 								onColorChange={( /** @type {string} */ value ) => setAttributes({ submitColorHover: value })}
 								className="is-list is-first"
 							/>
 
-
 							<ColorDropdownControl
-								label={__( 'Background', 'otter-blocks' )}
-								colorValue={attributes.submitBackgroundColorHover}
+								label={ __( 'Background', 'otter-blocks' ) }
+								colorValue={ attributes.submitBackgroundColorHover }
 								onColorChange={( /** @type {string} */ value ) => setAttributes({ submitBackgroundColorHover: value })}
 								className="is-list"
 							/>
-
 						</Fragment>
 					) )
 				}
 
 				<br/>
-
 
 				<FontSizePicker
 					label={ __( 'Font Size', 'otter-blocks' ) }
@@ -187,60 +185,21 @@ const Form = ({
 					onChange={ submitFontSize =>  setAttributes({ submitFontSize }) }
 				/>
 
-
 				<ResponsiveControl
-					label="Screen Type"
+					label={ __( 'Screen Type', 'otter-blocks' ) }
 				>
-
 					<BoxControl
 						label={ __( 'Padding', 'otter-blocks' ) }
 						values={ responsiveGetAttributes([ attributes.buttonPadding, attributes.buttonPaddingTablet, attributes.buttonPaddingMobile ]) ?? { top: '10px', bottom: '10px', right: '20px', left: '20px' }  }
-						onChange={
-							value => {
-
-								// TODO: add clean up functions
-								responsiveSetAttributes( value, [ 'buttonPadding', 'buttonPaddingTablet', 'buttonPaddingMobile' ]);
-							}
-						}
+						onChange={ value => responsiveSetAttributes( value, [ 'buttonPadding', 'buttonPaddingTablet', 'buttonPaddingMobile' ]) }
 					/>
-
 				</ResponsiveControl>
-
-			</PanelBody>
-
-			<PanelBody
-				title={ __( 'Submit Messages', 'otter-blocks' ) }
-				initialOpen={ true }
-			>
-				<ColorDropdownControl
-					label={__( 'Success message', 'otter-blocks' )}
-					colorValue={attributes.submitMessageColor}
-					onColorChange={( /** @type {string} */ value ) => setAttributes({ submitMessageColor: value })}
-					className="is-list is-first"
-				/>
-
-				<ColorDropdownControl
-					label={__( 'Error message', 'otter-blocks' )}
-					colorValue={attributes.submitMessageErrorColor}
-					onColorChange={( /** @type {string} */ value ) => setAttributes({ submitMessageErrorColor: value })}
-					className="is-list"
-				/>
-
-				<br/>
-
-				<FontSizePicker
-					fontSizes={ defaultFontSizes }
-					withReset
-					value={ attributes.messageFontSize }
-					onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
-				/>
 			</PanelBody>
 
 			<PanelBody
 				title={ __( 'Labels', 'otter-blocks' ) }
 				initialOpen={ true }
 			>
-
 				<FontSizePicker
 					label={ __( 'Font Size', 'otter-blocks' ) }
 					fontSizes={ defaultFontSizes }
@@ -262,10 +221,9 @@ const Form = ({
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Input fields', 'otter-blocks' ) }
+				title={ __( 'Input Fields', 'otter-blocks' ) }
 				initialOpen={ true }
 			>
-
 				<FontSizePicker
 					label={ __( 'Input Font Size', 'otter-blocks' ) }
 					fontSizes={ defaultFontSizes }
@@ -273,7 +231,6 @@ const Form = ({
 					value={ attributes.inputFontSize }
 					onChange={ inputFontSize =>  setAttributes({ inputFontSize }) }
 				/>
-
 
 				<RangeControl
 					label={ __( 'Fields Spacing', 'otter-blocks' ) }
@@ -295,14 +252,11 @@ const Form = ({
 							min: 0,
 							max: 500
 						} }
-						onChange={ value => {
-
-							// TODO: Add clean up
-							responsiveSetAttributes( value, [ 'inputPadding', 'inputPaddingTablet', 'inputPaddingMobile' ]);
-						} }
+						onChange={ value => responsiveSetAttributes( value, [ 'inputPadding', 'inputPaddingTablet', 'inputPaddingMobile' ]) }
 					/>
 				</ResponsiveControl>
 			</PanelBody>
+
 			<PanelBody
 				title={ __( 'Border', 'otter-blocks' ) }
 				initialOpen={ true }
@@ -320,17 +274,32 @@ const Form = ({
 					onChange={ inputBorderWidth  => setAttributes({ inputBorderWidth }) }
 				/>
 			</PanelBody>
+
 			<PanelBody
-				title={ __( 'Helper Text', 'otter-blocks' ) }
+				title={ __( 'Helper & Submit Messages', 'otter-blocks' ) }
 				initialOpen={ true }
 			>
-				<FontSizePicker
-					label={ __( 'Help Font Size', 'otter-blocks' ) }
-					fontSizes={ defaultFontSizes }
-					withReset
-					value={ attributes.helpFontSize }
-					onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
-				/>
+				<BaseControl
+					label={ __( 'Helper Text Size', 'otter-blocks' ) }
+				>
+					<FontSizePicker
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.helpFontSize }
+						onChange={ helpFontSize =>  setAttributes({ helpFontSize }) }
+					/>
+				</BaseControl>
+
+				<BaseControl
+					label={ __( 'Success/Error Message Size', 'otter-blocks' ) }
+				>
+					<FontSizePicker
+						fontSizes={ defaultFontSizes }
+						withReset
+						value={ attributes.messageFontSize }
+						onChange={ messageFontSize =>  setAttributes({ messageFontSize }) }
+					/>
+				</BaseControl>
 			</PanelBody>
 		</Fragment>
 	);

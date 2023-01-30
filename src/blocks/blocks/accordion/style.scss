@@ -12,8 +12,20 @@
 	--box-shadow: none;
 
 	--padding: 18px 24px 18px 24px;
-	--padding-tablet: var(--padding);
-	--padding-mobile: var(--padding-tablet);
+	--padding-tablet: var( --padding );
+	--padding-mobile: var( --padding-tablet );
+
+	&.has-dark-title-bg {
+		--title-color: #FFF;
+	}
+
+	&.has-dark-active-title-bg {
+		--title-color: #FFF;
+	}
+
+	&.has-dark-content-bg {
+		color: #FFF;
+	}
 
 	&-item {
 		box-shadow: var(--box-shadow);
