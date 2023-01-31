@@ -47,35 +47,33 @@ const Tabs = ({
 				title={ __( 'Typography', 'otter-blocks' ) }
 			>
 				<FontSizePicker
-					fontSizes={
-						[
-							{
-								name: __( 'Small', 'otter-blocks' ),
-								slug: 'small',
-								size: 14
-							},
-							{
-								name: __( 'Normal', 'otter-blocks' ),
-								slug: 'normal',
-								size: 16
-							},
-							{
-								name: __( 'Medium', 'otter-blocks' ),
-								slug: 'medium',
-								size: 20
-							},
-							{
-								name: __( 'Large', 'otter-blocks' ),
-								slug: 'large',
-								size: 24
-							},
-							{
-								name: __( 'XL', 'otter-blocks' ),
-								slug: 'xl',
-								size: 28
-							}
-						]
-					}
+					fontSizes={ [
+						{
+							name: __( 'Extra Small', 'otter-blocks' ),
+							icon: 'small',
+							size: '14px'
+						},
+						{
+							name: __( 'Small', 'otter-blocks' ),
+							slug: 'small',
+							size: '16px'
+						},
+						{
+							name: __( 'Medium', 'otter-blocks' ),
+							slug: 'medium',
+							size: '18px'
+						},
+						{
+							name: __( 'Large', 'otter-blocks' ),
+							slug: 'large',
+							size: '24px'
+						},
+						{
+							name: __( 'Extra Large', 'otter-blocks' ),
+							slug: 'extra-large',
+							size: '28px'
+						}
+					] }
 					value={ attributes.titleFontSize }
 					onChange={ titleFontSize => setAttributes({ titleFontSize }) }
 				/>

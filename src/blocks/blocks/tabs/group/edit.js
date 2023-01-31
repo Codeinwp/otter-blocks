@@ -190,7 +190,8 @@ const Edit = ({
 		'--content-text-color': getSyncValue( 'contentTextColor' ),
 		'--title-padding': boxToCSS( getSyncValue( 'titlePadding' ) ),
 		'--content-padding': boxToCSS( getSyncValue( 'titlePadding' ) ),
-		'--border-side-width': 'left' === attributes.tabsPosition ?  getSyncValue( 'borderWidth' )?.left :  getSyncValue( 'borderWidth' )?.top
+		'--border-side-width': 'left' === attributes.tabsPosition ?  getSyncValue( 'borderWidth' )?.left :  getSyncValue( 'borderWidth' )?.top,
+		'--font-size': getSyncValue( 'titleFontSize' )
 	};
 
 	const blockProps = useBlockProps({
@@ -256,7 +257,7 @@ const Edit = ({
 						template={ [
 							[ 'themeisle-blocks/tabs-item',
 								{
-									title: __( 'Tab 11', 'otter-blocks' )
+									title: __( 'Tab 1', 'otter-blocks' )
 								}
 							],
 							[ 'themeisle-blocks/tabs-item',
