@@ -270,6 +270,7 @@ class Registration {
 				'isAncestorTypeAvailable' => version_compare( get_bloginfo( 'version' ), '5.9.22', '>=' ),
 				'version'                 => OTTER_BLOCKS_VERSION,
 				'isRTL'                   => is_rtl(),
+				'highlightDynamicText'    => get_option( 'themeisle_blocks_settings_highlight_dynamic', true ),
 			)
 		);
 

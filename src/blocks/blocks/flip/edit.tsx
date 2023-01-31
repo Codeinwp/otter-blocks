@@ -37,8 +37,10 @@ import {
 import { boxToCSS, getChoice, mergeBoxDefaultValues, stringToBox, _px } from '../../helpers/helper-functions.js';
 import { isNumber } from 'lodash';
 import { type FlipProps } from './types';
-import { type BoxType } from '../../helpers/blocks';
-import { useResponsiveAttributes } from '../../helpers/utility-hooks';
+import {
+	useDarkBackground,
+	useResponsiveAttributes
+} from '../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -58,11 +60,12 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
+	useDarkBackground( 'color' === attributes.frontBackgroundType && attributes.frontBackgroundColor, attributes, setAttributes, 'has-dark-front-bg' );
+	useDarkBackground( 'color' === attributes.backBackgroundType && attributes.backBackgroundColor, attributes, setAttributes, 'has-dark-back-bg' );
+
 	const [ currentSide, setSide ] = useState( 'front' );
 
-	const {
-		responsiveGetAttributes
-	} = useResponsiveAttributes( setAttributes );
+	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
 	const getShadowColor = () => {
 		if ( attributes.boxShadowColor ) {
