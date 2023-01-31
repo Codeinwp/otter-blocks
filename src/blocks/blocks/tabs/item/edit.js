@@ -99,9 +99,7 @@ const Edit = ({
 
 				<div className="wp-block-themeisle-blocks-tabs-item__content">
 					<InnerBlocks
-						template={ [[ 'core/paragraph', {
-							content: __( 'This is just a placeholder to help you visualize how the content is displayed in the tabs. Feel free to edit this with your actual content.', 'otter-blocks' )
-						}]] }
+						template={ [[ 'core/paragraph' ]] }
 					/>
 				</div>
 			</div>

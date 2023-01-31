@@ -258,17 +258,27 @@ const Edit = ({
 							[ 'themeisle-blocks/tabs-item',
 								{
 									title: __( 'Tab 1', 'otter-blocks' )
-								}
+								},
+								[[ 'core/paragraph', {
+									content: __( 'This is just a placeholder to help you visualize how the content is displayed in the tabs. Feel free to edit this with your actual content.', 'otter-blocks' )
+								}]]
 							],
 							[ 'themeisle-blocks/tabs-item',
 								{
 									title: __( 'Tab 2', 'otter-blocks' )
-								}
+								},
+								[[ 'core/paragraph', {
+									content: __( 'This is just a placeholder to help you visualize how the content is displayed in the tabs. Feel free to edit this with your actual content.', 'otter-blocks' )
+								}]]
 							],
 							[ 'themeisle-blocks/tabs-item',
 								{
 									title: __( 'Tab 3', 'otter-blocks' )
-								}
+
+								},
+								[[ 'core/paragraph', {
+									content: __( 'This is just a placeholder to help you visualize how the content is displayed in the tabs. Feel free to edit this with your actual content.', 'otter-blocks' )
+								}]]
 							]
 						] }
 						orientation="horizontal"
