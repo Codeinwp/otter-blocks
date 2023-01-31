@@ -230,7 +230,7 @@ const Edit = ({
 							<TabHeader
 								key={ tabHeader.clientId }
 								tag={ attributes.titleTag }
-								title={ tabHeader.attributes.title ?? `${__( 'Tab', 'otter-blocks' )} ${idx}` }
+								title={ tabHeader.attributes.title ?? `${__( 'Tab', 'otter-blocks' )} ${idx + 1}` }
 								active={ tabHeader.clientId === activeTab }
 								onClick={ () => toggleActiveTab( tabHeader.clientId ) }
 							/>
@@ -253,7 +253,23 @@ const Edit = ({
 				>
 					<InnerBlocks
 						allowedBlocks={ [ 'themeisle-blocks/tabs-item' ] }
-						template={ [[ 'themeisle-blocks/tabs-item' ]] }
+						template={ [
+							[ 'themeisle-blocks/tabs-item',
+								{
+									title: __( 'Tab 11', 'otter-blocks' )
+								}
+							],
+							[ 'themeisle-blocks/tabs-item',
+								{
+									title: __( 'Tab 2', 'otter-blocks' )
+								}
+							],
+							[ 'themeisle-blocks/tabs-item',
+								{
+									title: __( 'Tab 3', 'otter-blocks' )
+								}
+							]
+						] }
 						orientation="horizontal"
 						renderAppender={ false }
 					/>

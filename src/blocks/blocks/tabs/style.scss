@@ -56,8 +56,8 @@
 			color: var( --active-title-color );
 			background: var(--active-title-background);
 			border-width: var( --title-border-width );
-			border-style: solid;
 			border-color: var(--active-title-border-color);
+			border-style: solid;
 			position: relative;
 			z-index: 4;
 		}
@@ -96,10 +96,14 @@
 
 		.wp-block-themeisle-blocks-tabs-item__header {
 			width: 100%;
-			border-width: var( --border-width );
 			border-style: solid;
+			border-width: var( --border-width );
 			border-color: var( --border-color );
-			padding: 5px 10px;
+			font-size: var(--font-size);
+			padding: var(--title-padding);
+			color: var( --title-color );
+			background-color: var(--title-background);
+			
 			cursor: pointer;
 
 			@media (min-width: 800px) {
@@ -108,7 +112,8 @@
 
 			&.active {
 				color: var( --active-title-color );
-				background: var( --tab-color );
+				background: var(--active-title-background);
+				border-color: var(--active-title-border-color);
 				border-bottom-style: none;
 			}
 		}
