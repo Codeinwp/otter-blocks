@@ -96,13 +96,13 @@ const Edit = ({
 	}, [ attributes.library, attributes.icon ]);
 
 	useEffect( () => {
-		if ( ! attributes.placeholder ) {
+		if ( attributes.content === undefined ) {
 			const parentClientId = select( 'core/block-editor' ).getBlockParents( clientId ).at( -1 );
 			const parentBlock = select( 'core/block-editor' ).getBlock( parentClientId );
 
-			setAttributes({ placeholder: __( 'List item ', 'otter-blocks' ) + parentBlock.innerBlocks.length });
+			setAttributes({ content: __( 'List item ', 'otter-blocks' ) + parentBlock.innerBlocks.length });
 		}
-	}, [ attributes.placeholder ]);
+	}, []);
 
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
 
@@ -153,7 +153,6 @@ const Edit = ({
 				<RichText
 					identifier="content"
 					tagName="p"
-					placeholder={ attributes.placeholder }
 					className={ classnames(
 						{ 'wp-block-themeisle-blocks-icon-list-item-content': ! attributes.contentColor },
 						{ 'wp-block-themeisle-blocks-icon-list-item-content-custom': attributes.contentColor }

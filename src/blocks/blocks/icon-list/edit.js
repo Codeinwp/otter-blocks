@@ -88,9 +88,9 @@ const Edit = ({
 					__experimentalMoverDirection="vertical"
 					orientation="vertical"
 					template={ [
-						[ 'themeisle-blocks/icon-list-item', { placeholder: __( 'List item one', 'otter-blocks' ) }],
-						[ 'themeisle-blocks/icon-list-item', { placeholder: __( 'List item two', 'otter-blocks' ) }],
-						[ 'themeisle-blocks/icon-list-item', { placeholder: __( 'List item three', 'otter-blocks' ) }]
+						[ 'themeisle-blocks/icon-list-item', { content: __( 'List item 1', 'otter-blocks' ) }],
+						[ 'themeisle-blocks/icon-list-item', { content: __( 'List item 2', 'otter-blocks' ) }],
+						[ 'themeisle-blocks/icon-list-item', { content: __( 'List item 3', 'otter-blocks' ) }]
 					] }
 					renderAppender={ InnerBlocks.DefaultAppender }
 				/>

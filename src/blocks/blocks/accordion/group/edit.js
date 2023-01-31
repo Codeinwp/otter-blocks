@@ -173,8 +173,8 @@ const Edit = ({
 				<InnerBlocks
 					allowedBlocks={ [ 'themeisle-blocks/accordion-item' ] }
 					template={ [
-						[ 'themeisle-blocks/accordion-item', { placeholder: __( 'Accordion title one', 'otter-blocks' ) }],
-						[ 'themeisle-blocks/accordion-item', { placeholder: __( 'Accordion title two', 'otter-blocks' ) }]
+						[ 'themeisle-blocks/accordion-item', { title: __( 'Accordion title 1', 'otter-blocks' ) }],
+						[ 'themeisle-blocks/accordion-item', { title: __( 'Accordion title 2', 'otter-blocks' ) }]
 					] }
 					renderAppender={() =>
 						<BlockAppender
