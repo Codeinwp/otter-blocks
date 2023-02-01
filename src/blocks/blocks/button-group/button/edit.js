@@ -113,7 +113,7 @@ const Edit = ( props ) => {
 					}
 				</style>
 				{ 'none' !== attributes.iconType ? (
-					<div
+					<a
 						className="wp-block-button__link"
 					>
 						{ ( 'left' === attributes.iconType || 'only' === attributes.iconType ) && (
@@ -141,7 +141,7 @@ const Edit = ( props ) => {
 								placeholder={ __( 'Add text…', 'otter-blocks' ) }
 								value={ attributes.text }
 								onChange={ value => setAttributes({ text: value }) }
-								tagName="div"
+								tagName="span"
 								withoutInteractiveFormatting
 							/>
 						) }
@@ -155,16 +155,19 @@ const Edit = ( props ) => {
 								<i className={ `${ attributes.prefix } fa-fw fa-${ attributes.icon } margin-left` }></i>
 							)
 						) }
-					</div>
+					</a>
 				) : (
-					<RichText
-						placeholder={ __( 'Add text…', 'otter-blocks' ) }
-						value={ attributes.text }
-						onChange={ value => setAttributes({ text: value }) }
-						tagName="div"
-						withoutInteractiveFormatting
+					<a
 						className="wp-block-button__link"
-					/>
+					>
+						<RichText
+							placeholder={ __( 'Add text…', 'otter-blocks' ) }
+							value={ attributes.text }
+							onChange={ value => setAttributes({ text: value }) }
+							tagName="span"
+							withoutInteractiveFormatting
+						/>
+					</a>
 				) }
 			</div>
 		</Fragment>
