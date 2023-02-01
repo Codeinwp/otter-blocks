@@ -51,6 +51,7 @@ const ButtonBlock = ({
 	};
 
 	const setAttributes = x => {
+		console.log( x );
 		changeConfig( blockName, x );
 	};
 
@@ -117,13 +118,13 @@ const ButtonBlock = ({
 				<BoxControl
 					label={ __( 'Border Width', 'otter-blocks' ) }
 					values={ objectOrNumberAsBox( attributes.borderSize ) }
-					onChange={ e => setAttributes({ borderSize: e }) }
+					onChange={ borderSize => setAttributes({ borderSize }) }
 				/>
 
 				<BoxControl
 					label={ __( 'Border Radius', 'otter-blocks' ) }
 					values={ objectOrNumberAsBox( attributes.borderRadius ) }
-					onChange={ e => setAttributes({ borderRadius: e }) }
+					onChange={ borderRadius => setAttributes({ borderRadius }) }
 				/>
 
 				<ControlPanelControl
