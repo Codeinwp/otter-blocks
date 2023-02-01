@@ -60,21 +60,6 @@ class Button_CSS extends Base_CSS {
 						},
 					),
 					array(
-						'property' => 'color',
-						'value'    => 'color',
-						'hasSync'  => 'gr-btn-color',
-					),
-					array(
-						'property' => 'background',
-						'value'    => 'background',
-						'hasSync'  => 'gr-btn-background',
-					),
-					array(
-						'property' => 'background',
-						'value'    => 'backgroundGradient',
-						'hasSync'  => 'gr-btn-background',
-					),
-					array(
 						'property'  => 'border-width',
 						'value'     => 'borderSize',
 						'unit'      => 'px',
@@ -103,14 +88,12 @@ class Button_CSS extends Base_CSS {
 						'hasSync'   => 'gr-btn-border-size',
 					),
 					array(
-						'property' => 'border-color',
-						'value'    => 'border',
-						'hasSync'  => 'gr-btn-border-color',
-					),
-					array(
 						'property' => 'border-style',
 						'default'  => 'solid',
 						'hasSync'  => 'gr-btn-border-style',
+						'condition' => function( $attrs ) {
+							return isset( $attrs['border'] ) && ! empty( $attrs['border'] );
+						},
 					),
 					array(
 						'property'  => 'border-radius',
@@ -139,6 +122,34 @@ class Button_CSS extends Base_CSS {
 							return isset( $attrs['borderRadius'] ) && is_array( $attrs['borderRadius'] );
 						},
 						'hasSync'   => 'gr-btn-border-radius',
+					),
+				),
+			)
+		);
+
+		$css->add_item(
+			array(
+				'selector'   => ' .wp-block-button__link:not(:hover)',
+				'properties' => array(
+					array(
+						'property' => 'color',
+						'value'    => 'color',
+						'hasSync'  => 'gr-btn-color',
+					),
+					array(
+						'property' => 'background',
+						'value'    => 'background',
+						'hasSync'  => 'gr-btn-background',
+					),
+					array(
+						'property' => 'background',
+						'value'    => 'backgroundGradient',
+						'hasSync'  => 'gr-btn-background',
+					),
+					array(
+						'property' => 'border-color',
+						'value'    => 'border',
+						'hasSync'  => 'gr-btn-border-color',
 					),
 					array(
 						'property'       => 'box-shadow',
@@ -178,7 +189,7 @@ class Button_CSS extends Base_CSS {
 						},
 						'hasSync'        => 'gr-btn-shadow',
 					),
-				),
+				)
 			)
 		);
 
