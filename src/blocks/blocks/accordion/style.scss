@@ -79,6 +79,10 @@
 			background: var(--content-background);
 			padding: var(--padding);
 
+			> p:last-child {
+				margin-bottom: 0;
+			}
+
 			@media ( max-width: 960px ) {
 				padding: var(--padding-tablet);
 			}

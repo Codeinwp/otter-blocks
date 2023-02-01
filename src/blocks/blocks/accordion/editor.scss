@@ -34,6 +34,10 @@
 			}
 		}
 
+		&__content > * > * > p:last-child {
+			margin-bottom: 0;
+		}
+
 		&:not([ data-align="full"] ) {
 			max-width: 100%;
 		}
