@@ -311,6 +311,10 @@ export const isColorDark = color => {
 		value = hex2rgba( value );
 	}
 
+	if ( ! Boolean( value ) ) {
+		return false;
+	}
+
 	// Extract the red, green, and blue values
 	const [ r, g, b ] = value.match( /\d+/g ).map( Number );
 
