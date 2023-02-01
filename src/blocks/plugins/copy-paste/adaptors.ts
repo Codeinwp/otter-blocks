@@ -5,7 +5,7 @@ import { coreAdaptors } from './core-adaptors';
 import { ColumnAttrs } from '../../blocks/section/column/types';
 import { ButtonGroupAttrs } from '../../blocks/button-group/group/types';
 import { ButtonAttrs } from '../../blocks/button-group/button/types';
-import { addUnit, getInt, makeBox, getSingleValueFromBox } from './utils';
+import { addUnit, getInt, makeBox, getSingleValueFromBox, createBoxFrom } from './utils';
 import { IconAttrs } from '../../blocks/font-awesome-icons/types';
 import { IconListAttrs } from '../../blocks/icon-list/types';
 import { IconListItemAttrs } from '../../blocks/icon-list/item/types';
@@ -488,6 +488,11 @@ export const adaptors = {
 						radius: {
 							desktop: objectOrNumberAsBox( attrs?.inputBorderRadius )
 						}
+					},
+					padding: {
+						desktop: attrs?.inputPadding,
+						tablet: attrs?.inputPaddingTablet,
+						mobile: attrs?.inputPaddingMobile
 					}
 				},
 				private: {
@@ -505,7 +510,10 @@ export const adaptors = {
 				labelFontSize: s?.font?.size,
 				inputBorderColor: s?.colors?.border,
 				inputBorderRadius: s?.border?.radius?.desktop,
-				inputBorderWidth: s?.border?.width
+				inputBorderWidth: s?.border?.width,
+				inputPadding: s?.padding?.desktop,
+				inputPaddingTablet: s?.padding?.tablet,
+				inputPaddingMobile: s?.padding?.mobile
 			};
 		}
 	},

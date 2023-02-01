@@ -70,4 +70,5 @@ type CopyPasteStorage = {
     shared?: SharedAttrs
     core?: SharedCore
     private?: any
+    animations?: string[]
 }
