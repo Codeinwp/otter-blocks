@@ -176,7 +176,6 @@ const Edit = ({
 	/**
 	 * ------------ Tab Dynamic CSS ------------
 	 */
-
 	const inlineStyles = {
 		'--title-border-width': boxToCSS( getSyncValue( 'titleBorderWidth' ) ),
 		'--border-width': boxToCSS( getSyncValue( 'borderWidth' ) ),
