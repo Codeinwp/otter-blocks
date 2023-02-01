@@ -88,9 +88,9 @@ class Button_CSS extends Base_CSS {
 						'hasSync'   => 'gr-btn-border-size',
 					),
 					array(
-						'property' => 'border-style',
-						'default'  => 'solid',
-						'hasSync'  => 'gr-btn-border-style',
+						'property'  => 'border-style',
+						'default'   => 'solid',
+						'hasSync'   => 'gr-btn-border-style',
 						'condition' => function( $attrs ) {
 							return isset( $attrs['border'] ) && ! empty( $attrs['border'] );
 						},
@@ -189,7 +189,7 @@ class Button_CSS extends Base_CSS {
 						},
 						'hasSync'        => 'gr-btn-shadow',
 					),
-				)
+				),
 			)
 		);
 
