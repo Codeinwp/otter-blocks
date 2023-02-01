@@ -120,6 +120,11 @@
 	.hidden-animated {
 		visibility: hidden;
 	}
+
+   .animated .wp-block-navigation,
+   .animated.wp-block-navigation {
+      animation-fill-mode: none;
+   }
 }
 
 @media ( max-width: 782px ) {

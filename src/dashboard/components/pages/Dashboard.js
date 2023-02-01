@@ -139,6 +139,16 @@ const Dashboard = ({
 
 				<PanelRow>
 					<ToggleControl
+						label={ __( 'Highlight the Dynamic Text', 'otter-blocks' ) }
+						help={ __( 'Easily differentiate between dynamic and normal text in the editor.', 'otter-blocks' ) }
+						checked={ Boolean( getOption( 'themeisle_blocks_settings_highlight_dynamic' ) ) }
+						disabled={ 'saving' === status }
+						onChange={ () => updateOption( 'themeisle_blocks_settings_highlight_dynamic', ! Boolean( getOption( 'themeisle_blocks_settings_highlight_dynamic' ) ) ) }
+					/>
+				</PanelRow>
+
+				<PanelRow>
+					<ToggleControl
 						label={ __( 'Anonymous Data Tracking.', 'otter-blocks' ) }
 						help={ __( 'Become a contributor by opting in to our anonymous data tracking. We guarantee no sensitive data is collected.', 'otter-blocks' ) }
 						checked={ 'yes' === getOption( 'otter_blocks_logger_flag' ) ? true : false }

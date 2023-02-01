@@ -58,6 +58,9 @@
 		},
 		"textColor" : {
 			"type": "string"
+		},
+		"context": {
+			"type": "string"
 		}
 	},
 	"styles": [

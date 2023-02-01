@@ -61,6 +61,10 @@ const displayData = ( element, value ) => {
 	el.innerHTML = value;
 	value = el.textContent || el.innerText;
 
+	if ( ! Boolean( window.themeisleGutenberg.highlightDynamicText ) ) {
+		element.classList.add( 'hide-highlight' );
+	}
+
 	element.innerHTML = '<span>' + element.innerHTML + '</span>';
 	element.dataset.preview = value;
 };

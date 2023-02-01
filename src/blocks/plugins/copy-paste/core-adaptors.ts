@@ -1,4 +1,4 @@
-import { isObjectLike, merge, pick } from 'lodash';
+import { merge, pick } from 'lodash';
 import { BoxType } from '../../helpers/blocks';
 import { getChoice } from '../../helpers/helper-functions';
 import { Storage } from './models';
@@ -52,13 +52,14 @@ const commonExtractor = ( attrs: any ): Storage<unknown> => {
 			},
 			margin: {
 				desktop: attrs?.style?.spacing?.margin
-			},
-			border: {
-				width: makeBox( attrs?.style?.border?.width ),
-				radius: {
-					desktop: ! isObjectLike( attrs?.style?.border?.radius ) ? makeBox( attrs?.style?.border?.radius ) : radiusExtract( attrs?.style?.border?.radius )
-				}
 			}
+
+			// border: {
+			// 	width: makeBox( attrs?.style?.border?.width ),
+			// 	radius: {
+			// 		desktop: ! isObjectLike( attrs?.style?.border?.radius ) ? makeBox( attrs?.style?.border?.radius ) : radiusExtract( attrs?.style?.border?.radius )
+			// 	}
+			// }
 		},
 		core: {
 			textColor: attrs?.textColor,
