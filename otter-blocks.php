@@ -26,6 +26,7 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'OTTER_BLOCKS_BASEFILE', __FILE__ );
 define( 'OTTER_BLOCKS_URL', plugins_url( '/', __FILE__ ) );
 define( 'OTTER_BLOCKS_PATH', dirname( __FILE__ ) );
+define( 'OTTER_BLOCKS_DIRNAME', basename( OTTER_BLOCKS_PATH ) );
 define( 'OTTER_BLOCKS_VERSION', '2.2.1' );
 define( 'OTTER_BLOCKS_PRO_SUPPORT', true );
 define( 'OTTER_BLOCKS_SHOW_NOTICES', false );
@@ -57,5 +58,16 @@ add_action(
 			sprintf( '<a href="%s">%s</a>', admin_url( 'options-general.php?page=otter' ), __( 'Settings', 'otter-blocks' ) )
 		);
 		return $links;
+	}
+);
+
+add_filter(
+	'themeisle_sdk_compatibilities/' . OTTER_BLOCKS_DIRNAME, function ( $compatibilities ) {
+		$compatibilities['OtterPro'] = array(
+			'basefile'  => defined( 'OTTER_PRO_BASEFILE' ) ? OTTER_PRO_BASEFILE : '',
+			'required'  => '2.1',
+			'tested_up' => OTTER_BLOCKS_VERSION,
+		);
+		return $compatibilities;
 	}
 );

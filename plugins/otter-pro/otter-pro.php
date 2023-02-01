@@ -26,6 +26,7 @@ if ( ! defined( 'WPINC' ) ) {
 define( 'OTTER_PRO_BASEFILE', __FILE__ );
 define( 'OTTER_PRO_URL', plugins_url( '/', __FILE__ ) );
 define( 'OTTER_PRO_PATH', dirname( __FILE__ ) );
+define( 'OTTER_PRO_DIRNAME', basename( OTTER_PRO_PATH ) );
 define( 'OTTER_PRO_BUILD_URL', plugins_url( '/', __FILE__ ) . 'build/pro/' );
 define( 'OTTER_PRO_BUILD_PATH', dirname( __FILE__ ) . '/build/pro/' );
 define( 'OTTER_PRO_VERSION', '2.2.1' );
@@ -48,6 +49,17 @@ add_filter(
 	'themesle_sdk_namespace_' . md5( __FILE__ ),
 	function () {
 		return 'otter';
+	}
+);
+
+add_filter(
+	'themeisle_sdk_compatibilities/' . OTTER_PRO_DIRNAME, function ( $compatibilities ) {
+		$compatibilities['OtterFree'] = array(
+			'basefile'  => defined( 'OTTER_BLOCKS_BASEFILE' ) ? OTTER_BLOCKS_BASEFILE : '',
+			'required'  => '2.1',
+			'tested_up' => OTTER_PRO_VERSION,
+		);
+		return $compatibilities;
 	}
 );
 
