@@ -1,6 +1,6 @@
 // @ts-check
 
-import { uniq } from 'lodash';
+import { delay, uniq } from 'lodash';
 
 /**
  * WordPress dependencies.
@@ -125,7 +125,6 @@ const Inspector = ({
 		),
 		paddingTablet: attributes.paddingTablet,
 		paddingMobile: attributes.paddingMobile,
-		align: attributes.align,
 		isSynced: uniq( attributes?.isSynced?.map( x => {
 			if ( 'paddingTopBottom' === x || 'paddingLeftRight' === x ) {
 				return 'padding';
@@ -150,12 +149,12 @@ const Inspector = ({
 		),
 		paddingTablet: attributes.paddingTablet,
 		paddingMobile: attributes.paddingMobile,
-		align: attributes.align,
 		isSynced: attributes.isSynced,
 		...attr
 	});
 
-	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( updateStore );
+	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
+	const { responsiveSetAttributes: responsiveSetProxyAttributes, responsiveGetAttributes: responsiveGetProxyAttributes } = useResponsiveAttributes( updateStore );
 
 	useEffect( () => {
 		if ( storeChanged ) {
@@ -176,6 +175,27 @@ const Inspector = ({
 		}
 
 	}, [ proxyStore.padding, proxyStore.paddingTablet, proxyStore.paddingMobile, storeChanged ]);
+
+	const getCurrentPreset = () => {
+		const padding = responsiveGetProxyAttributes([
+			makeBoxFromSplitAxis(
+				attributes.paddingTopBottom,
+				attributes.paddingLeftRight
+			),
+			attributes.paddingTablet,
+			attributes.paddingMobile
+		]);
+
+		const { fontSize } = attributes;
+		return getChoice([
+			[ isEqualToPreset( padding, fontSize, 'XS' ), 'XS' ],
+			[ isEqualToPreset( padding, fontSize, 'S' ), 'S' ],
+			[ isEqualToPreset( padding, fontSize, 'M' ), 'M' ],
+			[ isEqualToPreset( padding, fontSize, 'L' ), 'L' ],
+			[ isEqualToPreset( padding, fontSize, 'XL' ), 'XL' ],
+			[ 'custom' ]
+		]);
+	};
 
 	return (
 		<InspectorControls>
@@ -232,7 +252,6 @@ const Inspector = ({
 										]}
 										onChange={ value => {
 											responsiveSetAttributes( value, [ 'align.desktop', 'align.tablet', 'align.mobile' ], attributes.align ?? {});
-											setStoreChanged( true );
 										} }
 										hasIcon
 									/>
@@ -243,28 +262,7 @@ const Inspector = ({
 								>
 									<ToogleGroupControl
 
-										value={
-											( () => {
-												const padding = responsiveGetAttributes([
-													makeBoxFromSplitAxis(
-														_px( attributes.paddingTopBottom ),
-														_px( attributes.paddingLeftRight )
-													),
-													attributes.paddingTablet,
-													attributes.paddingMobile
-												]);
-
-												const { fontSize } = attributes;
-												return getChoice([
-													[ isEqualToPreset( padding, fontSize, 'XS' ), 'XS' ],
-													[ isEqualToPreset( padding, fontSize, 'S' ), 'S' ],
-													[ isEqualToPreset( padding, fontSize, 'M' ), 'M' ],
-													[ isEqualToPreset( padding, fontSize, 'L' ), 'L' ],
-													[ isEqualToPreset( padding, fontSize, 'XL' ), 'XL' ],
-													[ 'custom' ]
-												]);
-											})()
-										}
+										value={ getCurrentPreset() }
 										options={[
 											{
 												label: __( 'XS', 'otter-blocks' ),
@@ -298,9 +296,19 @@ const Inspector = ({
 												return;
 											}
 
-											responsiveSetAttributes( presets[value].padding, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
-											setAttributes({ fontSize: presets[value].fontSize });
-											setStoreChanged( true );
+											const paddingOption = {
+												[responsiveGetProxyAttributes([
+													'padding', 'paddingTablet', 'paddingMobile'
+												])]: presets[value].padding
+											};
+
+											setAttributes({
+												fontSize: presets[value].fontSize,
+												paddingTopBottom: paddingOption?.padding?.top,
+												paddingLeftRight: paddingOption?.padding?.right,
+												paddingTablet: paddingOption?.paddingTablet,
+												paddingMobile: paddingOption?.paddingMobile
+											});
 										} }
 									/>
 								</BaseControl>
@@ -334,7 +342,7 @@ const Inspector = ({
 									options={[
 										{
 											label: __( 'Padding', 'otter-blocks' ),
-											value: responsiveGetAttributes([ 'padding', 'paddingTablet', 'paddingMobile' ])
+											value: responsiveGetProxyAttributes([ 'padding', 'paddingTablet', 'paddingMobile' ])
 										},
 										{
 											label: __( 'Space between', 'otter-blocks' ),
@@ -351,11 +359,11 @@ const Inspector = ({
 								<ResponsiveControl
 									label={ __( 'Screen Type', 'otter-blocks' ) }
 								>
-									<AutoDisableSyncAttr attr={responsiveGetAttributes([ 'padding', 'paddingTablet', 'paddingMobile' ])} attributes={proxyStore}>
+									<AutoDisableSyncAttr attr={responsiveGetProxyAttributes([ 'padding', 'paddingTablet', 'paddingMobile' ])} attributes={proxyStore}>
 										<BoxControl
 											label={ __( 'Padding', 'otter-blocks' ) }
 											values={
-												responsiveGetAttributes([
+												responsiveGetProxyAttributes([
 													makeBoxFromSplitAxis(
 														attributes.paddingTopBottom,
 														attributes.paddingLeftRight
@@ -366,7 +374,7 @@ const Inspector = ({
 											}
 
 											onChange={ value => {
-												responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
+												responsiveSetProxyAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
 												setStoreChanged( true );
 											} }
 											splitOnAxis={ true }
