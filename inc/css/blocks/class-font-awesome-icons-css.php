@@ -100,15 +100,41 @@ class Font_Awesome_Icons_CSS extends Base_CSS {
 					array(
 						'property' => '--margin',
 						'value'    => 'margin',
-						'default'  => 5,
-						'unit'     => 'px',
+						'format'   => function( $value ) {
+							if ( is_numeric( $value ) ) {
+								return $value . 'px';
+							}
+
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'top'    => '5px',
+									'right'  => '5px',
+									'bottom' => '5px',
+									'left'   => '5px',
+								)
+							);
+						},
 						'hasSync'  => 'icon-margin',
 					),
 					array(
 						'property' => '--padding',
 						'value'    => 'padding',
-						'default'  => 5,
-						'unit'     => 'px',
+						'format'   => function( $value ) {
+							if ( is_numeric( $value ) ) {
+								return $value . 'px';
+							}
+
+							return CSS_Utility::box_values(
+								$value,
+								array(
+									'top'    => '5px',
+									'right'  => '5px',
+									'bottom' => '5px',
+									'left'   => '5px',
+								)
+							);
+						},
 						'hasSync'  => 'icon-padding',
 					),
 					array(

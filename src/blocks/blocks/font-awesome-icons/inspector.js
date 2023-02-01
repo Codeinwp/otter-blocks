@@ -17,7 +17,8 @@ import {
 	ButtonGroup,
 	PanelBody,
 	RangeControl,
-	FontSizePicker
+	FontSizePicker,
+	__experimentalBoxControl as BoxControl
 } from '@wordpress/components';
 
 import {
@@ -44,6 +45,9 @@ import {
 import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
 
 import { alignHandler } from './edit.js';
+import { isObjectLike } from 'lodash';
+import { makeBox } from '../../plugins/copy-paste/utils';
+import { _px } from '../../helpers/helper-functions';
 
 const defaultFontSizes = [
 	{
@@ -141,30 +145,23 @@ const Inspector = ({
 					isSynced={ attributes.isSynced }
 					setAttributes={ setAttributes }
 				>
-					<RangeControl
+					<BoxControl
 						label={ __( 'Padding', 'otter-blocks' ) }
-						value={ getValue( 'padding' ) }
-						initialPosition={ 5 }
-						onChange={ e => setAttributes({ padding: e }) }
-						step={ 0.1 }
-						min={ 0 }
-						max={ 100 }
+						values={ ! isObjectLike( attributes.padding ) ? makeBox( _px( attributes.padding ?? 5 ) ) : attributes.padding }
+						onChange={ padding => setAttributes({ padding }) }
 					/>
 				</SyncControl>
 
+				{/*todo*/}
 				<SyncControl
 					field="margin"
 					isSynced={ attributes.isSynced }
 					setAttributes={ setAttributes }
 				>
-					<RangeControl
+					<BoxControl
 						label={ __( 'Margin', 'otter-blocks' ) }
-						value={ getValue( 'margin' ) }
-						initialPosition={ 5 }
-						onChange={ e => setAttributes({ margin: e }) }
-						step={ 0.1 }
-						min={ 0 }
-						max={ 100 }
+						values={ ! isObjectLike( attributes.margin ) ? makeBox( _px( attributes.margin ?? 5 ) ) : attributes.margin }
+						onChange={ margin => setAttributes({ margin }) }
 					/>
 				</SyncControl>
 

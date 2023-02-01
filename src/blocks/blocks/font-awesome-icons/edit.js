@@ -2,7 +2,7 @@
  * WordPress dependencies...
  */
 import {
-	isNumber,
+	isNumber, isObjectLike,
 	isString
 } from 'lodash';
 
@@ -24,6 +24,7 @@ import {
 	blockInit,
 	getDefaultValueByField, useCSSNode
 } from '../../helpers/block-utility.js';
+import { boxValues } from '../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -65,12 +66,11 @@ const Edit = ({
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
 	const inlineStyles = {
-		'--align': attributes.align,
 		'--border-color': attributes.borderColor,
 		'--border-size': attributes.borderSize !== undefined && `${attributes.borderSize }px`,
 		'--border-radius': attributes.borderRadius !== undefined && `${ attributes.borderRadius }%`,
-		'--margin':	attributes.margin !== undefined && `${ getValue( 'margin' ) }px`,
-		'--padding': attributes.padding !== undefined && `${ getValue( 'padding' ) }px`,
+		'--margin': ! isObjectLike( getValue( 'margin' ) ) ? getValue( 'margin' ) + 'px' : boxValues( getValue( 'margin' ), { top: '5px', right: '5px', bottom: '5px', left: '5px' }),
+		'--padding': ! isObjectLike( getValue( 'padding' ) ) ? getValue( 'padding' ) + 'px' : boxValues( getValue( 'padding' ), { top: '5px', right: '5px', bottom: '5px', left: '5px' }),
 		'--font-size': attributes.fontSize !== undefined && ( isNumber( getValue( 'fontSize' ) ) ? `${ getValue( 'fontSize' ) }px` : getValue( 'fontSize' ) ),
 		'--align': alignHandler( attributes.align )?.desktop,
 		'--align-tablet': alignHandler( attributes.align )?.tablet,

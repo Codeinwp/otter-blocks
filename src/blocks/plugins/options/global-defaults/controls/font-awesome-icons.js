@@ -4,6 +4,7 @@
 import { __ } from '@wordpress/i18n';
 
 import {
+	__experimentalBoxControl as BoxControl,
 	Button,
 	ButtonGroup,
 	PanelBody,
@@ -20,6 +21,9 @@ import {
 	Fragment,
 	useState
 } from '@wordpress/element';
+import { isObjectLike } from 'lodash';
+import { makeBox } from '../../../copy-paste/utils';
+import { _px } from '../../../../helpers/helper-functions';
 
 const FontAwesomeIcons = ({
 	blockName,
@@ -67,27 +71,20 @@ const FontAwesomeIcons = ({
 
 				<hr/>
 
-				<RangeControl
+				<BoxControl
 					label={ __( 'Padding', 'otter-blocks' ) }
-					value={ defaults.padding || '' }
-					initialPosition={ 5 }
-					onChange={ value => changeConfig( blockName, { padding: value }) }
-					step={ 0.1 }
-					min={ 0 }
-					max={ 100 }
+					values={ ! isObjectLike( defaults.padding ) ? makeBox( _px( defaults.padding ?? 5 ) ) : defaults.padding }
+					onChange={ padding => changeConfig( blockName, { padding }) }
 				/>
 
 				<hr/>
 
-				<RangeControl
+				<BoxControl
 					label={ __( 'Margin', 'otter-blocks' ) }
-					value={ defaults.margin || '' }
-					initialPosition={ 5 }
-					onChange={ value => changeConfig( blockName, { margin: value }) }
-					step={ 0.1 }
-					min={ 0 }
-					max={ 100 }
+					values={ ! isObjectLike( defaults.margin ) ? makeBox( _px( defaults.margin ?? 5 ) ) : defaults.margin }
+					onChange={ margin => changeConfig( blockName, { margin }) }
 				/>
+
 			</PanelBody>
 
 			<PanelBody
