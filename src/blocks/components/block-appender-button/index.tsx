@@ -6,6 +6,16 @@ import { useDispatch, useSelect } from '@wordpress/data';
 import { createBlock } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 
+/**
+ * External dependencies
+ */
+import classnames from 'classnames';
+
+/**
+ * Internal dependencies
+ */
+import './editor.scss';
+
 type BlockAppenderButtonProps = {
 	buttonText?: string,
 	clientId: string,
@@ -30,14 +40,24 @@ const BlockAppender = ({
 	const { getBlock } = useSelect(
 		( select:( store: string ) => any ) => select( 'core/block-editor' ),
 		[]);
+
 	const onClick = () => {
 		const { innerBlocks } = getBlock( clientId );
 		const newBlock = createBlock( allowedBlock );
 		insertBlock( newBlock, innerBlocks.length, clientId );
 	};
 
+	const { className, ...restProps } = props;
+
 	return (
-		<Button onClick={ onClick } { ...props }>
+		<Button
+			onClick={ onClick }
+			className={ classnames(
+				'o-block-appender-button',
+				className
+			) }
+			{ ...restProps }
+		>
 			{ buttonText }
 		</Button>
 	);
