@@ -20,18 +20,18 @@ domReady( () => {
 			headerItem.classList.add( 'wp-block-themeisle-blocks-tabs__header_item' );
 			const content = item.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__content' );
 
+			headerItem.innerHTML = item.dataset.title || `Tab ${ index + 1 }`;
+			headerItem.tabIndex = 0;
+
+			const headerMobile = item.querySelector( '.wp-block-themeisle-blocks-tabs-item__header' );
+
 			if ( 'true' === item.dataset.defaultOpen && ! openedTab ) {
 				headerItem.classList.add( 'active' );
 				content.classList.add( 'active' );
 				openedTab = true;
 			} else {
-				closedTabs.push({ headerItem, content });
+				closedTabs.push({ headerItem, content, headerMobile });
 			}
-
-			headerItem.innerHTML = item.dataset.title || `Tab ${ index + 1 }`;
-			headerItem.tabIndex = 0;
-
-			const headerMobile = item.querySelector( '.wp-block-themeisle-blocks-tabs-item__header' );
 
 			const toggleTabs = ( i, idx ) => {
 				const content = i.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__content' );
@@ -76,6 +76,7 @@ domReady( () => {
 		if ( ! openedTab ) {
 			closedTabs?.[0]?.headerItem.classList.add( 'active' );
 			closedTabs?.[0]?.content.classList.add( 'active' );
+			closedTabs?.[0]?.headerMobile.classList.add( 'active' );
 		}
 	});
 });
