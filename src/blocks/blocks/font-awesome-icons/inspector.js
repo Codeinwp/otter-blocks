@@ -1,53 +1,42 @@
 /**
  * External dependencies...
  */
+import { isObjectLike } from 'lodash';
+
+
+/**
+ * WordPress dependencies...
+ */
+import { ContrastChecker, InspectorControls } from '@wordpress/block-editor';
+import {
+	__experimentalBoxControl as BoxControl,
+	Disabled,
+	FontSizePicker,
+	PanelBody,
+	RangeControl
+} from '@wordpress/components';
+import { Fragment, useState } from '@wordpress/element';
 import {
 	alignCenter,
 	alignLeft,
 	alignRight
 } from '@wordpress/icons';
-
-/**
- * WordPress dependencies...
- */
 import { __ } from '@wordpress/i18n';
-
-import {
-	Button,
-	ButtonGroup,
-	PanelBody,
-	RangeControl,
-	FontSizePicker,
-	__experimentalBoxControl as BoxControl
-} from '@wordpress/components';
-
-import {
-	__experimentalColorGradientControl as ColorGradientControl,
-	ContrastChecker,
-	InspectorControls
-} from '@wordpress/block-editor';
-
-import {
-	Fragment,
-	useState
-} from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
 import {
+	ColorDropdownControl,
 	IconPickerControl,
 	ResponsiveControl,
-	SyncControl,
+	SyncControlDropdown,
 	ToogleGroupControl
 } from '../../components/index.js';
-
-import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
-
-import { alignHandler } from './edit.js';
-import { isObjectLike } from 'lodash';
-import { makeBox } from '../../plugins/copy-paste/utils';
 import { _px } from '../../helpers/helper-functions';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks.js';
+import { alignHandler } from './edit.js';
+import { makeBox } from '../../plugins/copy-paste/utils';
 
 const defaultFontSizes = [
 	{
@@ -127,10 +116,27 @@ const Inspector = ({
 				title={ __( 'Dimensions', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<SyncControl
-					field="fontSize"
+				<SyncControlDropdown
 					isSynced={ attributes.isSynced }
+					options={ [
+						{
+							label: __( 'Size', 'otter-blocks' ),
+							value: 'fontSize'
+						},
+						{
+							label: __( 'Padding', 'otter-blocks' ),
+							value: 'padding'
+						},
+						{
+							label: __( 'Margin', 'otter-blocks' ),
+							value: 'margin'
+						}
+					] }
 					setAttributes={ setAttributes }
+				/>
+
+				<Disabled
+					isDisabled={ attributes.isSynced?.includes( 'fontSize' ) || false }
 				>
 					<FontSizePicker
 						fontSizes={ defaultFontSizes }
@@ -138,32 +144,27 @@ const Inspector = ({
 						value={ attributes.fontSize ?? '16px' }
 						onChange={ fontSize =>  setAttributes({ fontSize }) }
 					/>
-				</SyncControl>
+				</Disabled>
 
-				<SyncControl
-					field="padding"
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
+				<Disabled
+					isDisabled={ attributes.isSynced?.includes( 'padding' ) || false }
 				>
 					<BoxControl
 						label={ __( 'Padding', 'otter-blocks' ) }
 						values={ ! isObjectLike( attributes.padding ) ? makeBox( _px( attributes.padding ?? 5 ) ) : attributes.padding }
 						onChange={ padding => setAttributes({ padding }) }
 					/>
-				</SyncControl>
+				</Disabled>
 
-				{/*todo*/}
-				<SyncControl
-					field="margin"
-					isSynced={ attributes.isSynced }
-					setAttributes={ setAttributes }
+				<Disabled
+					isDisabled={ attributes.isSynced?.includes( 'margin' ) || false }
 				>
 					<BoxControl
 						label={ __( 'Margin', 'otter-blocks' ) }
 						values={ ! isObjectLike( attributes.margin ) ? makeBox( _px( attributes.margin ?? 5 ) ) : attributes.margin }
 						onChange={ margin => setAttributes({ margin }) }
 					/>
-				</SyncControl>
+				</Disabled>
 
 				<ResponsiveControl
 					label={ __( 'Alignment', 'otter-blocks' ) }
@@ -198,51 +199,78 @@ const Inspector = ({
 				title={ __( 'Color', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<ButtonGroup>
-					<Button
-						isSmall
-						isSecondary={ hover }
-						isPrimary={ ! hover }
-						onClick={ () => setHover( false ) }
-					>
-						{ __( 'Normal', 'otter-blocks' ) }
-					</Button>
+				<SyncControlDropdown
+					isSynced={ attributes.isSynced }
+					options={ [
+						{
+							label: __( 'Background', 'otter-blocks' ),
+							value: 'backgroundColor'
+						},
+						{
+							label: __( 'Icon', 'otter-blocks' ),
+							value: 'textColor'
+						},
+						{
+							label: __( 'Hover Background', 'otter-blocks' ),
+							value: 'backgroundColorHover'
+						},
+						{
+							label: __( 'Hover Icon', 'otter-blocks' ),
+							value: 'textColorHover'
+						}
+					] }
+					setAttributes={ setAttributes }
+				/>
 
-					<Button
-						isSmall
-						isSecondary={ ! hover }
-						isPrimary={ hover }
-						onClick={ () => setHover( true ) }
-					>
-						{ __( 'Hover', 'otter-blocks' ) }
-					</Button>
-				</ButtonGroup>
+				<ToogleGroupControl
+					onChange={ value => setHover( value ) }
+					value={ hover }
+					options={[
+						{
+							value: false,
+							label: __( 'Normal', 'otter-blocks' )
+						},
+						{
+							value: true,
+							label: __( 'Hover', 'otter-blocks' )
+						}
+					]}
+				/>
+
+				<br/>
 
 				{ hover ? (
 					<Fragment>
-						<SyncControl
-							field="backgroundColorHover"
-							isSynced={ attributes.isSynced }
-							setAttributes={ setAttributes }
+						<Disabled
+							isDisabled={ attributes.isSynced?.includes( 'backgroundColorHover' ) || false }
 						>
-							<ColorGradientControl
-								label={ __( 'Hover Background', 'otter-blocks' ) }
+							<ColorDropdownControl
+								label={ __( 'Background', 'otter-blocks' ) }
 								colorValue={ getValue( 'backgroundColorHover' ) }
-								onColorChange={ e => setAttributes({ backgroundColorHover: e }) }
+								onColorChange={ backgroundColorHover => setAttributes({ backgroundColorHover }) }
+								className="is-list is-first"
 							/>
-						</SyncControl>
+						</Disabled>
 
-						<SyncControl
-							field="textColorHover"
-							isSynced={ attributes.isSynced }
-							setAttributes={ setAttributes }
+						<Disabled
+							isDisabled={ attributes.isSynced?.includes( 'textColorHover' ) || false }
 						>
-							<ColorGradientControl
-								label={ __( 'Hover Icon', 'otter-blocks' ) }
+							<ColorDropdownControl
+								label={ __( 'Icon', 'otter-blocks' ) }
 								colorValue={ getValue( 'textColorHover' ) }
-								onColorChange={ e => setAttributes({ textColorHover: e }) }
+								onColorChange={ textColorHover => setAttributes({ textColorHover }) }
+								className="is-list"
 							/>
-						</SyncControl>
+						</Disabled>
+
+						<ColorDropdownControl
+							label={ __( 'Hover Border', 'otter-blocks' ) }
+							colorValue={ attributes.borderColorHover }
+							onColorChange={ borderColorHover => setAttributes({ borderColorHover }) }
+							className="is-list is-last"
+						/>
+
+						<br/>
 
 						<ContrastChecker
 							{ ...{
@@ -250,50 +278,45 @@ const Inspector = ({
 								backgroundColor: getValue( 'backgroundColorHover' )
 							} }
 						/>
-
-						<ColorGradientControl
-							label={ __( 'Hover Border', 'otter-blocks' ) }
-							colorValue={ attributes.borderColorHover }
-							onColorChange={ e => setAttributes({ borderColorHover: e }) }
-						/>
 					</Fragment>
 				) : (
 					<Fragment>
-						<SyncControl
-							field="backgroundColor"
-							isSynced={ attributes.isSynced }
-							setAttributes={ setAttributes }
+						<Disabled
+							isDisabled={ attributes.isSynced?.includes( 'backgroundColor' ) || false }
 						>
-							<ColorGradientControl
+							<ColorDropdownControl
 								label={ __( 'Background', 'otter-blocks' ) }
 								colorValue={ getValue( 'backgroundColor' ) }
 								onColorChange={ e => setAttributes({ backgroundColor: e }) }
+								className="is-list is-first"
 							/>
-						</SyncControl>
+						</Disabled>
 
-						<SyncControl
-							field="textColor"
-							isSynced={ attributes.isSynced }
-							setAttributes={ setAttributes }
+						<Disabled
+							isDisabled={ attributes.isSynced?.includes( 'textColor' ) || false }
 						>
-							<ColorGradientControl
+							<ColorDropdownControl
 								label={ __( 'Icon', 'otter-blocks' ) }
 								colorValue={ getValue( 'textColor' ) }
 								onColorChange={ e => setAttributes({ textColor: e }) }
+								className="is-list"
 							/>
-						</SyncControl>
+						</Disabled>
+
+						<ColorDropdownControl
+							label={ __( 'Border', 'otter-blocks' ) }
+							colorValue={ attributes.borderColor }
+							onColorChange={ e => setAttributes({ borderColor: e }) }
+							className="is-list is-last"
+						/>
+
+						<br/>
 
 						<ContrastChecker
 							{ ...{
 								textColor: getValue( 'textColor' ),
 								backgroundColor: getValue( 'backgroundColor' )
 							} }
-						/>
-
-						<ColorGradientControl
-							label={ __( 'Border', 'otter-blocks' ) }
-							colorValue={ attributes.borderColor }
-							onColorChange={ e => setAttributes({ borderColor: e }) }
 						/>
 					</Fragment>
 				) }
