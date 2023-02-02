@@ -51,7 +51,6 @@ const ButtonBlock = ({
 	};
 
 	const setAttributes = x => {
-		console.log( x );
 		changeConfig( blockName, x );
 	};
 

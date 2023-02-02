@@ -139,10 +139,6 @@ $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 		&.wp-block-button {
 			&:is(.is-style-plain, .is-style-outline) :is(.wp-block-button__link, .wp-block-button__link:hover) {
 				background: transparent;
-
-				&:hover {
-					background: transparent;
-				}
 			}
 			
 			&:is(.is-style-plain) :is(.wp-block-button__link, .wp-block-button__link:hover) {
