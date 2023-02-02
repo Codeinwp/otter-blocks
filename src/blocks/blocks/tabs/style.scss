@@ -92,6 +92,10 @@ $margin-offset-scaling: 1.5;
 
 		@media ( max-width: 800px ) {
 			display: block;
+
+			:is(.wp-block-themeisle-blocks-tabs-item__header, .wp-block-themeisle-blocks-tabs-item__content) {
+				box-sizing: border-box;
+			}
 		}
 
 		&:not(:last-child) {
