@@ -137,14 +137,18 @@ $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 		}
 
 		&.wp-block-button {
-			&:is(.is-style-plain, .is-style-outline) :is(.wp-block-button__link) {
-				background: transparent !important;
+			&:is(.is-style-plain, .is-style-outline) :is(.wp-block-button__link, .wp-block-button__link:hover) {
+				background: transparent;
+
+				&:hover {
+					background: transparent;
+				}
 			}
 			
-			&:is(.is-style-plain) :is(.wp-block-button__link) {
-				border-width: 0px !important;
-				padding: 0px !important;
-				box-shadow: unset !important;
+			&:is(.is-style-plain) :is(.wp-block-button__link, .wp-block-button__link:hover) {
+				border-width: 0px;
+				padding: 0px;
+				box-shadow: unset;
 			}
 		}
 
