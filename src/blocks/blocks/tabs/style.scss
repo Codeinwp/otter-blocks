@@ -41,7 +41,6 @@ $margin-offset-scaling: 1.5;
 		padding: var(--title-padding);
 		color: var( --title-color );
 		background-color: var(--title-background);
-		white-space: nowrap;
 		cursor: pointer;
 
 		display: flex;
@@ -168,13 +167,11 @@ $margin-offset-scaling: 1.5;
 
 		.wp-block-themeisle-blocks-tabs__header {
 			flex-direction: column;
-			min-width: 10%;
 			max-width: 30%;
 		}
 
 		.wp-block-themeisle-blocks-tabs__header_item {
 			border-bottom-style: solid;
-			white-space: pre-wrap;
 
 			&.active {
 				margin-right: calc(0px - var(--border-side-width) * var( --o-s-mul));
