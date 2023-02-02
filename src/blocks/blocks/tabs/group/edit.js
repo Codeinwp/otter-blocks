@@ -1,8 +1,6 @@
 /**
  * External dependencies
  */
-import { plus } from '@wordpress/icons';
-
 import classnames from 'classnames';
 
 /**
@@ -16,8 +14,6 @@ import {
 	InnerBlocks,
 	useBlockProps
 } from '@wordpress/block-editor';
-
-import { Icon } from '@wordpress/components';
 
 import {
 	useSelect,
@@ -38,7 +34,7 @@ import metadata from './block.json';
 import Inspector from './inspector.js';
 import Controls from './controls.js';
 import { blockInit, getDefaultValueByField } from '../../../helpers/block-utility.js';
-import { boxToCSS } from '../../../helpers/helper-functions';
+import { boxToCSS, _px } from '../../../helpers/helper-functions';
 import classNames from 'classnames';
 import BlockAppender from '../../../components/block-appender-button';
 import { useDarkBackground } from '../../../helpers/utility-hooks.js';
@@ -190,7 +186,9 @@ const Edit = ({
 		'--title-padding': boxToCSS( getSyncValue( 'titlePadding' ) ),
 		'--content-padding': boxToCSS( getSyncValue( 'titlePadding' ) ),
 		'--border-side-width': 'left' === attributes.tabsPosition ?  getSyncValue( 'borderWidth' )?.left :  getSyncValue( 'borderWidth' )?.top,
-		'--font-size': getSyncValue( 'titleFontSize' )
+		'--font-size': _px( getSyncValue( 'titleFontSize' ) ),
+		'--o-s-mul': isSelected ? 2 : 1
+
 	};
 
 	const blockProps = useBlockProps({
