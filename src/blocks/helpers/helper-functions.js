@@ -311,7 +311,7 @@ export const isColorDark = color => {
 		value = hex2rgba( value );
 	}
 
-	if ( ! value ) {
+	if ( ! Boolean( value ) ) {
 		return false;
 	}
 
