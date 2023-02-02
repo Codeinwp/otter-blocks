@@ -123,7 +123,7 @@ $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 		justify-content: center;
 		align-items: center;
 
-		&:is(.wp-block-button) div:is(.wp-block-button__link) {
+		&:is(.wp-block-button) :is(div, span, a).wp-block-button__link {
 			padding: var(--padding);
 			font-size: var(--font-size);
 

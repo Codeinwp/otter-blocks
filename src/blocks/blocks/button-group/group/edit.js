@@ -64,7 +64,7 @@ const Edit = ({
 			desktopPadding,
 			getSyncValue( 'paddingTablet' ),
 			getSyncValue( 'paddingMobile' ) ]) ),
-		'--font-size': getSyncValue( 'fontSize' )
+		'--font-size': _px( getSyncValue( 'fontSize' ) )
 	};
 
 	const alignClasses = [ 'desktop', 'tablet', 'mobile' ]
@@ -104,7 +104,7 @@ const Edit = ({
 
 			<style>
 				{
-					`#block-${clientId} .wp-block-button div.wp-block-button__link` + _cssBlock([
+					`#block-${clientId} .wp-block-button :is(div, a, span).wp-block-button__link` + _cssBlock([
 						[ 'font-family', getSyncValue( 'fontFamily' ) ],
 						[ 'font-weight', getSyncValue( 'fontVariant' ) ],
 						[ 'font-style', getSyncValue( 'fontStyle' ) ],

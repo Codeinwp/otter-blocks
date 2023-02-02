@@ -81,12 +81,15 @@ const Edit = ( props ) => {
 			<div { ...blockProps }>
 				<style>
 					{
-						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button div.wp-block-button__link` + _cssBlock([
+						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button :is(div, a, span).wp-block-button__link` + _cssBlock([
+							[ 'border-width', boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderSize' ) ) ), Boolean( getSyncValue( 'borderSize' ) ) ],
+							[ 'border-radius', boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderRadius' ) ) ), Boolean( getSyncValue( 'borderRadius' ) ) ]
+						])
+					}
+					{
+						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button :is(div, a, span).wp-block-button__link:not(:hover)` + _cssBlock([
 							[ 'background', getSyncValue( 'background' ) ],
 							[ 'background', getSyncValue( 'backgroundGradient' ) ],
-							[ 'border-width', boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderSize' ) ) ), Boolean( getSyncValue( 'borderSize' ) ) ],
-							[ 'border-color', getSyncValue( 'border' ) ],
-							[ 'border-radius', boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderRadius' ) ) ), Boolean( getSyncValue( 'borderRadius' ) ) ],
 							[ 'box-shadow', `${ getSyncValue( 'boxShadowHorizontal' ) }px ${ getSyncValue( 'boxShadowVertical' ) }px ${ getSyncValue( 'boxShadowBlur' ) }px ${ getSyncValue( 'boxShadowSpread' ) }px ${ hexToRgba( ( getSyncValue( 'boxShadowColor' ) ? getSyncValue( 'boxShadowColor' ) : '#000000' ), getSyncValue( 'boxShadowColorOpacity' ) ) }`, Boolean(  getSyncValue( 'boxShadow' ) ) ],
 							[ 'color', getSyncValue( 'color' ) ]
 						])
