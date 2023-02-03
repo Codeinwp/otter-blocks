@@ -268,7 +268,7 @@ class Button_CSS extends Base_CSS {
 	 * Generate Button Group Global CSS
 	 * 
 	 * @return string
-	 * @since 2.2.0
+	 * @since 2.2.3
 	 * @access public
 	 */
 	public function render_global_css() {
