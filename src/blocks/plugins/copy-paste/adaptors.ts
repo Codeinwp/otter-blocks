@@ -399,11 +399,16 @@ export const adaptors = {
 						border: attrs?.borderColor
 					},
 					border: {
-						width: makeBox( addUnit( attrs?.borderWidth, 'px' ) )
+						width: attrs?.borderWidth as BoxType // TODO: update after #1431 is merged
+					},
+					padding: {
+						desktop: attrs?.contentPadding
 					}
 				},
 				private: {
-
+					...( pickBy( attrs ?? {}, ( _value, key ) => {
+						return key?.includes( 'boxShadow' ) || key?.includes( 'Color' ) || key?.includes( 'Size' ) || key?.includes( 'Padding' ) || key?.includes( 'Width' );
+					}) ?? {})
 				}
 			};
 		},
@@ -414,7 +419,8 @@ export const adaptors = {
 				activeTitleColor: s?.colors?.text,
 				tabColor: s?.colors?.background,
 				borderColor: s?.colors?.border,
-				borderWidth: getInt( getSingleValueFromBox( s?.border?.width ) )
+				borderWidth: s?.border?.width,
+				contentPadding: s?.padding?.desktop
 			};
 		}
 	},
