@@ -82,8 +82,10 @@ const Edit = ( props ) => {
 				<style>
 					{
 						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button :is(div, a, span).wp-block-button__link` + _cssBlock([
+							[ 'border-color', getSyncValue( 'border' ) ],
 							[ 'border-width', boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderSize' ) ) ), Boolean( getSyncValue( 'borderSize' ) ) ],
-							[ 'border-radius', boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderRadius' ) ) ), Boolean( getSyncValue( 'borderRadius' ) ) ]
+							[ 'border-radius', boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderRadius' ) ) ), Boolean( getSyncValue( 'borderRadius' ) ) ],
+							[ 'border-style', 'solid', Boolean( getSyncValue( 'borderSize' ) ) ]
 						])
 					}
 					{
