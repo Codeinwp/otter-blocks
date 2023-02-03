@@ -64,13 +64,6 @@
 		"unicode": "f170",
 		"label": "App.net"
 	},
-	"adobe": {
-		"styles": [
-			"brands"
-		],
-		"unicode": "f778",
-		"label": "Adobe"
-	},
 	"adversal": {
 		"styles": [
 			"brands"
@@ -594,6 +587,20 @@
 		"unicode": "f7e5",
 		"label": "Bacon"
 	},
+	"bacteria": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "e059",
+		"label": "Bacteria"
+	},
+	"bacterium": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "e05a",
+		"label": "Bacterium"
+	},
 	"bahai": {
 		"styles": [
 			"solid"
@@ -1042,7 +1049,7 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f95b",
+		"unicode": "e05b",
 		"label": "Tissue Box"
 	},
 	"boxes": {
@@ -1925,6 +1932,13 @@
 		"unicode": "f382",
 		"label": "Alternate Cloud Upload"
 	},
+	"cloudflare": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e07d",
+		"label": "Cloudflare"
+	},
 	"cloudscale": {
 		"styles": [
 			"brands"
@@ -2413,7 +2427,7 @@
 		"styles": [
 			"brands"
 		],
-		"unicode": "f952",
+		"unicode": "e052",
 		"label": "dailymotion"
 	},
 	"dashcube": {
@@ -2436,6 +2450,13 @@
 		],
 		"unicode": "f2a4",
 		"label": "Deaf"
+	},
+	"deezer": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e077",
+		"label": "Deezer"
 	},
 	"delicious": {
 		"styles": [
@@ -2866,6 +2887,13 @@
 		"unicode": "f282",
 		"label": "Edge Browser"
 	},
+	"edge-legacy": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e078",
+		"label": "Edge Legacy Browser"
+	},
 	"edit": {
 		"styles": [
 			"solid",
@@ -3176,7 +3204,7 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f905",
+		"unicode": "e005",
 		"label": "Faucet"
 	},
 	"fax": {
@@ -3474,7 +3502,7 @@
 		"styles": [
 			"brands"
 		],
-		"unicode": "f907",
+		"unicode": "e007",
 		"label": "Firefox Browser"
 	},
 	"first-aid": {
@@ -3642,8 +3670,7 @@
 			"brands"
 		],
 		"unicode": "f4e6",
-		"label": "Font Awesome Full Logo",
-		"private": true
+		"label": "Font Awesome Full Logo"
 	},
 	"fonticons": {
 		"styles": [
@@ -4041,6 +4068,13 @@
 		"unicode": "f3aa",
 		"label": "Google Drive"
 	},
+	"google-pay": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e079",
+		"label": "Google Pay"
+	},
 	"google-play": {
 		"styles": [
 			"brands"
@@ -4272,6 +4306,13 @@
 		"unicode": "f3ad",
 		"label": "Grunt"
 	},
+	"guilded": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e07e",
+		"label": "Guilded"
+	},
 	"guitar": {
 		"styles": [
 			"solid"
@@ -4353,7 +4394,7 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f95c",
+		"unicode": "e05c",
 		"label": "Hand Holding Medical Cross"
 	},
 	"hand-holding-usd": {
@@ -4461,7 +4502,7 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f95d",
+		"unicode": "e05d",
 		"label": "Hand Sparkles"
 	},
 	"hand-spock": {
@@ -4490,7 +4531,7 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f95e",
+		"unicode": "e05e",
 		"label": "Hands Wash"
 	},
 	"handshake": {
@@ -4505,14 +4546,14 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f95f",
+		"unicode": "e05f",
 		"label": "Handshake Alternate Slash"
 	},
 	"handshake-slash": {
 		"styles": [
 			"solid"
 		],
-		"unicode": "f960",
+		"unicode": "e060",
 		"label": "Handshake Slash"
 	},
 	"hanukiah": {
@@ -4569,28 +4610,28 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f961",
+		"unicode": "e061",
 		"label": "Head Side Cough"
 	},
 	"head-side-cough-slash": {
 		"styles": [
 			"solid"
 		],
-		"unicode": "f962",
+		"unicode": "e062",
 		"label": "Head Side-cough-slash"
 	},
 	"head-side-mask": {
 		"styles": [
 			"solid"
 		],
-		"unicode": "f963",
+		"unicode": "e063",
 		"label": "Head Side Mask"
 	},
 	"head-side-virus": {
 		"styles": [
 			"solid"
 		],
-		"unicode": "f964",
+		"unicode": "e064",
 		"label": "Head Side Virus"
 	},
 	"heading": {
@@ -4691,6 +4732,13 @@
 		],
 		"unicode": "f1da",
 		"label": "History"
+	},
+	"hive": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e07f",
+		"label": "Hive Blockchain Network"
 	},
 	"hockey-puck": {
 		"styles": [
@@ -4838,7 +4886,7 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f965",
+		"unicode": "e065",
 		"label": "House User"
 	},
 	"houzz": {
@@ -4924,7 +4972,7 @@
 		"styles": [
 			"brands"
 		],
-		"unicode": "f913",
+		"unicode": "e013",
 		"label": "iDeal"
 	},
 	"igloo": {
@@ -4999,6 +5047,13 @@
 		"unicode": "f05a",
 		"label": "Info Circle"
 	},
+	"innosoft": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e080",
+		"label": "Innosoft"
+	},
 	"instagram": {
 		"styles": [
 			"brands"
@@ -5010,8 +5065,15 @@
 		"styles": [
 			"brands"
 		],
-		"unicode": "f955",
+		"unicode": "e055",
 		"label": "Instagram Square"
+	},
+	"instalod": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e081",
+		"label": "InstaLOD"
 	},
 	"intercom": {
 		"styles": [
@@ -5287,7 +5349,7 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f966",
+		"unicode": "e066",
 		"label": "Laptop House"
 	},
 	"laptop-medical": {
@@ -5582,7 +5644,7 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f967",
+		"unicode": "e067",
 		"label": "Lungs Virus"
 	},
 	"lyft": {
@@ -5887,7 +5949,7 @@
 		"styles": [
 			"brands"
 		],
-		"unicode": "f91a",
+		"unicode": "e01a",
 		"label": "Micro.blog"
 	},
 	"microchip": {
@@ -5986,7 +6048,7 @@
 		"styles": [
 			"brands"
 		],
-		"unicode": "f956",
+		"unicode": "e056",
 		"label": "Mixer"
 	},
 	"mizuni": {
@@ -6245,6 +6307,13 @@
 		],
 		"unicode": "f248",
 		"label": "Object Ungroup"
+	},
+	"octopus-deploy": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e082",
+		"label": "Octopus Deploy"
 	},
 	"odnoklassniki": {
 		"styles": [
@@ -6553,7 +6622,7 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f968",
+		"unicode": "e068",
 		"label": "People Arrows"
 	},
 	"people-carry": {
@@ -6569,6 +6638,13 @@
 		],
 		"unicode": "f816",
 		"label": "Hot Pepper"
+	},
+	"perbyte": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e083",
+		"label": "PerByte"
 	},
 	"percent": {
 		"styles": [
@@ -6707,7 +6783,7 @@
 		"styles": [
 			"brands"
 		],
-		"unicode": "f91e",
+		"unicode": "e01e",
 		"label": "Pied Piper Square Logo (Old)"
 	},
 	"piggy-bank": {
@@ -6784,7 +6860,7 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f969",
+		"unicode": "e069",
 		"label": "Plane Slash"
 	},
 	"play": {
@@ -6968,14 +7044,14 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f96a",
+		"unicode": "e06a",
 		"label": "Pump Medical"
 	},
 	"pump-soap": {
 		"styles": [
 			"solid"
 		],
-		"unicode": "f96b",
+		"unicode": "e06b",
 		"label": "Pump Soap"
 	},
 	"pushed": {
@@ -7421,6 +7497,13 @@
 		"unicode": "f156",
 		"label": "Indian Rupee Sign"
 	},
+	"rust": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e07a",
+		"label": "Rust"
+	},
 	"sad-cry": {
 		"styles": [
 			"solid",
@@ -7653,7 +7736,7 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f96c",
+		"unicode": "e06c",
 		"label": "Shield Virus"
 	},
 	"ship": {
@@ -7688,7 +7771,7 @@
 		"styles": [
 			"brands"
 		],
-		"unicode": "f957",
+		"unicode": "e057",
 		"label": "Shopify"
 	},
 	"shopping-bag": {
@@ -7788,6 +7871,13 @@
 		],
 		"unicode": "f215",
 		"label": "SimplyBuilt"
+	},
+	"sink": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "e06d",
+		"label": "Sink"
 	},
 	"sistrix": {
 		"styles": [
@@ -8014,7 +8104,7 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f96e",
+		"unicode": "e06e",
 		"label": "Soap"
 	},
 	"socks": {
@@ -8411,7 +8501,7 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f96f",
+		"unicode": "e06f",
 		"label": "Stopwatch 20"
 	},
 	"store": {
@@ -8432,14 +8522,14 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f970",
+		"unicode": "e070",
 		"label": "Alternate Store Slash"
 	},
 	"store-slash": {
 		"styles": [
 			"solid"
 		],
-		"unicode": "f971",
+		"unicode": "e071",
 		"label": "Store Slash"
 	},
 	"strava": {
@@ -8936,6 +9026,13 @@
 		"unicode": "f3ff",
 		"label": "Alternate Ticket"
 	},
+	"tiktok": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e07b",
+		"label": "TikTok"
+	},
 	"times": {
 		"styles": [
 			"solid"
@@ -9005,7 +9102,7 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f972",
+		"unicode": "e072",
 		"label": "Toilet Paper Slash"
 	},
 	"toolbox": {
@@ -9075,7 +9172,7 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f941",
+		"unicode": "e041",
 		"label": "Trailer"
 	},
 	"train": {
@@ -9148,13 +9245,6 @@
 		],
 		"unicode": "f181",
 		"label": "Trello"
-	},
-	"tripadvisor": {
-		"styles": [
-			"brands"
-		],
-		"unicode": "f262",
-		"label": "TripAdvisor"
 	},
 	"trophy": {
 		"styles": [
@@ -9303,6 +9393,13 @@
 		"unicode": "f5ca",
 		"label": "Umbrella Beach"
 	},
+	"uncharted": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e084",
+		"label": "Uncharted Software"
+	},
 	"underline": {
 		"styles": [
 			"solid"
@@ -9335,7 +9432,7 @@
 		"styles": [
 			"brands"
 		],
-		"unicode": "f949",
+		"unicode": "e049",
 		"label": "Unity 3D"
 	},
 	"universal-access": {
@@ -9372,6 +9469,13 @@
 		],
 		"unicode": "f13e",
 		"label": "Alternate Unlock"
+	},
+	"unsplash": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e07c",
+		"label": "Unsplash"
 	},
 	"untappd": {
 		"styles": [
@@ -9585,6 +9689,13 @@
 		"unicode": "f509",
 		"label": "Users Cog"
 	},
+	"users-slash": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "e073",
+		"label": "Users Slash"
+	},
 	"usps": {
 		"styles": [
 			"brands"
@@ -9648,6 +9759,20 @@
 		"unicode": "f228",
 		"label": "Venus Mars"
 	},
+	"vest": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "e085",
+		"label": "vest"
+	},
+	"vest-patches": {
+		"styles": [
+			"solid"
+		],
+		"unicode": "e086",
+		"label": "vest-patches"
+	},
 	"viacoin": {
 		"styles": [
 			"brands"
@@ -9660,14 +9785,14 @@
 			"brands"
 		],
 		"unicode": "f2a9",
-		"label": "Video"
+		"label": "Viadeo"
 	},
 	"viadeo-square": {
 		"styles": [
 			"brands"
 		],
 		"unicode": "f2aa",
-		"label": "Video Square"
+		"label": "Viadeo Square"
 	},
 	"vial": {
 		"styles": [
@@ -9743,21 +9868,21 @@
 		"styles": [
 			"solid"
 		],
-		"unicode": "f974",
+		"unicode": "e074",
 		"label": "Virus"
 	},
 	"virus-slash": {
 		"styles": [
 			"solid"
 		],
-		"unicode": "f975",
+		"unicode": "e075",
 		"label": "Virus Slash"
 	},
 	"viruses": {
 		"styles": [
 			"solid"
 		],
-		"unicode": "f976",
+		"unicode": "e076",
 		"label": "Viruses"
 	},
 	"vk": {
@@ -9857,6 +9982,13 @@
 		],
 		"unicode": "f494",
 		"label": "Warehouse"
+	},
+	"watchman-monitoring": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e087",
+		"label": "Watchman Monitoring"
 	},
 	"water": {
 		"styles": [
@@ -10036,6 +10168,13 @@
 		],
 		"unicode": "f730",
 		"label": "Wizards of the Coast"
+	},
+	"wodu": {
+		"styles": [
+			"brands"
+		],
+		"unicode": "e088",
+		"label": "Wodu"
 	},
 	"wolf-pack-battalion": {
 		"styles": [
