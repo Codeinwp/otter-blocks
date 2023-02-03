@@ -187,8 +187,7 @@ const Edit = ({
 		'--content-padding': boxToCSS( getSyncValue( 'titlePadding' ) ),
 		'--border-side-width': 'left' === attributes.tabsPosition ?  getSyncValue( 'borderWidth' )?.left :  getSyncValue( 'borderWidth' )?.top,
 		'--font-size': _px( getSyncValue( 'titleFontSize' ) ),
-		'--o-s-mul': isSelected ? 2 : 1
-
+		'--o-s-mul': 1
 	};
 
 	const blockProps = useBlockProps({
