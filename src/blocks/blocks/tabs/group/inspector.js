@@ -36,6 +36,7 @@ import { InspectorHeader, SyncColorPanel, SyncControlDropdown, ToogleGroupContro
 import { alignCenter, alignLeft, alignRight, menu } from '@wordpress/icons';
 import { changeActiveStyle, getActiveStyle } from '../../../helpers/helper-functions.js';
 import AutoDisableSyncAttr from '../../../components/auto-disable-sync-attr/index';
+import { makeBox } from '../../../plugins/copy-paste/utils';
 
 const styles = [
 	{
@@ -425,14 +426,14 @@ const Inspector = ({
 								<AutoDisableSyncAttr attr='titlePadding' attributes={attributes}>
 									<BoxControl
 										label={ __( 'Title Padding', 'otter-blocks' ) }
-										values={ attributes.titlePadding }
+										values={ attributes.titlePadding ?? { top: '5px', bottom: '5px', left: '10px', right: '10px' }  }
 										onChange={ titlePadding => setAttributes({ titlePadding }) }
 									/>
 								</AutoDisableSyncAttr>
 								<AutoDisableSyncAttr attr='contentPadding' attributes={attributes}>
 									<BoxControl
 										label={ __( 'Content Padding', 'otter-blocks' ) }
-										values={ attributes.contentPadding }
+										values={ attributes.contentPadding ?? makeBox( '0px' )  }
 										onChange={ contentPadding => setAttributes({ contentPadding }) }
 									/>
 								</AutoDisableSyncAttr>
@@ -471,14 +472,14 @@ const Inspector = ({
 								<AutoDisableSyncAttr attr='titleBorderWidth' attributes={attributes}>
 									<BoxControl
 										label={ __( 'Title Border Width', 'otter-blocks' ) }
-										values={ attributes.titleBorderWidth }
+										values={ attributes.titleBorderWidth ?? attributes.borderWidth ?? makeBox( '3px' ) }
 										onChange={ titleBorderWidth => setAttributes({ titleBorderWidth }) }
 									/>
 								</AutoDisableSyncAttr>
 								<AutoDisableSyncAttr attr='borderWidth' attributes={attributes}>
 									<BoxControl
 										label={ __( 'Content Border Width', 'otter-blocks' ) }
-										values={ attributes.borderWidth }
+										values={ attributes.borderWidth ?? makeBox( '3px' ) }
 										onChange={ borderWidth => setAttributes({ borderWidth }) }
 									/>
 								</AutoDisableSyncAttr>
