@@ -176,13 +176,13 @@ const Edit = ({
 						[ 'themeisle-blocks/accordion-item', { title: __( 'Accordion title 1', 'otter-blocks' ) }],
 						[ 'themeisle-blocks/accordion-item', { title: __( 'Accordion title 2', 'otter-blocks' ) }]
 					] }
-					renderAppender={() =>
+					renderAppender={ isSelected ? () =>
 						<BlockAppender
 							buttonText={ __( 'Add Accordion Item', 'otter-blocks' ) }
 							variant="primary"
 							allowedBlock="themeisle-blocks/accordion-item"
 							clientId={ clientId }
-						/>
+						/> : undefined
 					}
 				/>
 			</div>

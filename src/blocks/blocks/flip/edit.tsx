@@ -132,16 +132,6 @@ const Edit = ({
 		]);
 	}, [ currentSide, attributes.titleFontSize, attributes.descriptionFontSize, attributes.titleColor, attributes.descriptionColor ]);
 
-	useEffect( () => {
-		if ( attributes.title === undefined ) {
-			setAttributes({ title: __( 'Front title', 'otter-blocks' ) });
-		}
-
-		if ( attributes.description === undefined ) {
-			setAttributes({ description: __( 'This is is just a placeholder to help you visualise how the content is displayed in the flip box. Feel free to edit this with your actual content.', 'otter-blocks' ) });
-		}
-	}, []);
-
 	const blockProps = useBlockProps({
 
 		// @ts-ignore
@@ -194,12 +184,14 @@ const Edit = ({
 
 							<RichText
 								tagName="h3"
+								placeholder={ __( 'Front title', 'otter-blocks' ) }
 								value={ attributes.title ?? '' }
 								onChange={ title => setAttributes({ title })}
 							/>
 
 							<RichText
 								tagName="p"
+								placeholder={ __( 'This is is just a placeholder to help you visualise how the content is displayed in the flip box. Feel free to edit this with your actual content.', 'otter-blocks' ) }
 								value={ attributes.description ?? '' }
 								onChange={ description => setAttributes({ description })}
 							/>
@@ -212,13 +204,13 @@ const Edit = ({
 								renderAppender={ isSelected ? InnerBlocks.DefaultBlockAppender : undefined }
 								template={[
 									[ 'core/heading', {
-										content: __( 'Back title', 'otter-blocks' ),
+										placeholder: __( 'Back title', 'otter-blocks' ),
 										level: 3
 									}],
-									[ 'core/paragraph', { content: __( 'This is is just a placeholder to help you visualise how the content is displayed in the flip box. Feel free to edit this with your actual content.', 'otter-blocks' ) }],
+									[ 'core/paragraph', { placeholder: __( 'This is is just a placeholder to help you visualise how the content is displayed in the flip box. Feel free to edit this with your actual content.', 'otter-blocks' ) }],
 									[ 'core/buttons', {
 										layout: { type: 'flex', justifyContent: 'center' }
-									}, [[ 'core/button', { className: 'is-style-fill', text: __( 'Button text', 'otter-blocks' ) }]]]
+									}, [[ 'core/button', { className: 'is-style-fill', placeholder: __( 'Button text', 'otter-blocks' ) }]]]
 								]}
 							/>
 						</div>
