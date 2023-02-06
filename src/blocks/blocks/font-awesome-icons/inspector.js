@@ -137,6 +137,7 @@ const Inspector = ({
 
 				<Disabled
 					isDisabled={ attributes.isSynced?.includes( 'fontSize' ) || false }
+					className="o-disabled"
 				>
 					<FontSizePicker
 						fontSizes={ defaultFontSizes }
@@ -148,6 +149,7 @@ const Inspector = ({
 
 				<Disabled
 					isDisabled={ attributes.isSynced?.includes( 'padding' ) || false }
+					className="o-disabled"
 				>
 					<BoxControl
 						label={ __( 'Padding', 'otter-blocks' ) }
@@ -158,6 +160,7 @@ const Inspector = ({
 
 				<Disabled
 					isDisabled={ attributes.isSynced?.includes( 'margin' ) || false }
+					className="o-disabled"
 				>
 					<BoxControl
 						label={ __( 'Margin', 'otter-blocks' ) }
@@ -243,6 +246,7 @@ const Inspector = ({
 					<Fragment>
 						<Disabled
 							isDisabled={ attributes.isSynced?.includes( 'backgroundColorHover' ) || false }
+							className="o-disabled"
 						>
 							<ColorDropdownControl
 								label={ __( 'Background', 'otter-blocks' ) }
@@ -254,6 +258,7 @@ const Inspector = ({
 
 						<Disabled
 							isDisabled={ attributes.isSynced?.includes( 'textColorHover' ) || false }
+							className="o-disabled"
 						>
 							<ColorDropdownControl
 								label={ __( 'Icon', 'otter-blocks' ) }
@@ -283,6 +288,7 @@ const Inspector = ({
 					<Fragment>
 						<Disabled
 							isDisabled={ attributes.isSynced?.includes( 'backgroundColor' ) || false }
+							className="o-disabled"
 						>
 							<ColorDropdownControl
 								label={ __( 'Background', 'otter-blocks' ) }
@@ -294,6 +300,7 @@ const Inspector = ({
 
 						<Disabled
 							isDisabled={ attributes.isSynced?.includes( 'textColor' ) || false }
+							className="o-disabled"
 						>
 							<ColorDropdownControl
 								label={ __( 'Icon', 'otter-blocks' ) }
