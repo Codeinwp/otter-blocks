@@ -55,18 +55,13 @@ const Edit = ({
 	const { selectBlock } = useDispatch( 'core/block-editor' );
 
 	const switchActiveState = () => {
-		const tabs = document.querySelectorAll( `#block-${ parentClientId } .wp-block-themeisle-blocks-tabs__content .wp-block-themeisle-blocks-tabs-item` );
-
-		if ( tabs ) {
-			tabs.forEach( tab => {
-				tab.querySelector( '.wp-block-themeisle-blocks-tabs-item__header' )?.classList.remove( 'active' );
-				tab.querySelector( '.wp-block-themeisle-blocks-tabs-item__content' )?.classList.remove( 'active' );
-			});
-		}
-
 		if ( contentRef.current ) {
-			contentRef.current.querySelector( '.wp-block-themeisle-blocks-tabs-item__header' )?.classList.add( 'active' );
-			contentRef.current.querySelector( '.wp-block-themeisle-blocks-tabs-item__content' )?.classList.add( 'active' );
+			const otherTabsComponents = contentRef.current?.parentNode?.querySelectorAll( ':scope > .wp-block-themeisle-blocks-tabs-item  > .wp-block-themeisle-blocks-tabs-item__header, :scope > .wp-block-themeisle-blocks-tabs-item  > .wp-block-themeisle-blocks-tabs-item__content' ) ?? [];
+
+			otherTabsComponents?.forEach( component => component?.classList?.remove( 'active' ) );
+
+			contentRef.current.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__header' )?.classList.add( 'active' );
+			contentRef.current.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__content' )?.classList.add( 'active' );
 		}
 	};
 

@@ -11,6 +11,10 @@
             color: #fff;
         }
     }
+
+    .wp-block-themeisle-blocks-tabs__header_item + div {
+        margin-bottom: calc(0px - var(--border-side-width));
+    }
     
     .wp-block-themeisle-blocks-tabs__header_item {
         
@@ -30,7 +34,7 @@
                 border-color: var( --border-color );
                 background-color: inherit;
 
-                div {
+                > div {
                     margin-top: 0px;
                     margin-bottom: 0px;
                 }

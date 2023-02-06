@@ -110,9 +110,11 @@ const Edit = ({
 	} = useDispatch( 'core/block-editor' );
 
 	const toggleActiveTab = blockId => {
+		console.log({ blockId, activeTab });
 		if ( contentRef.current ) {
 			children.forEach( block => {
-				const blockContent = contentRef.current.querySelector( `#block-${ block.clientId } .wp-block-themeisle-blocks-tabs-item__content` );
+				const blockContent = contentRef.current.querySelector( `#block-${ block.clientId } > .wp-block-themeisle-blocks-tabs-item__content` );
+
 				blockContent?.classList.toggle( 'active', block.clientId === blockId );
 			});
 			setActiveTab( blockId );
@@ -235,12 +237,14 @@ const Edit = ({
 					}) || '' }
 
 					{ ( isSelected || 0 === children.length ) && (
-						<BlockAppender
-							buttonText={ __( 'Add Tab', 'otter-blocks' ) }
-							variant="primary"
-							allowedBlock="themeisle-blocks/tabs-item"
-							clientId={ clientId }
-						/>
+						<div>
+							<BlockAppender
+								buttonText={ __( 'Add Tab', 'otter-blocks' ) }
+								variant="primary"
+								allowedBlock="themeisle-blocks/tabs-item"
+								clientId={ clientId }
+							/>
+						</div>
 					) }
 				</div>
 
