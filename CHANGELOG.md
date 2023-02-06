@@ -1,3 +1,12 @@
+##### [Version 2.2.2](https://github.com/Codeinwp/otter-blocks/compare/v2.2.1...v2.2.2) (2023-02-06)
+
+- Fix Social Sharing Links When Used with FSE
+- Fix the Compatibility of the Posts Block with FIFU Plugin
+- Fix Animation Module Breaking FSE Mobile Menu
+- Fix Section Block Breaking When Changing Theme
+- Simplify Dynamic Value Preview
+- Copy Animations with Copy-paste Style
+
 ##### [Version 2.2.1](https://github.com/Codeinwp/otter-blocks/compare/v2.2.0...v2.2.1) (2023-01-30)
 
 - Form Block Redesign & Enhancements
