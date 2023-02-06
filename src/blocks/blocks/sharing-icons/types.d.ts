@@ -13,6 +13,7 @@ type Attributes = {
 	textDeco: string
 	backgroundColor: string
 	textColor: string
+	context: string
 }
 
 export type SharingIconsAttrs = Partial<Attributes>

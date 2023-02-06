@@ -12,6 +12,8 @@ import {
 
 import ServerSideRender from '@wordpress/server-side-render';
 
+import { useSelect } from '@wordpress/data';
+
 /**
  * Internal dependencies
  */
@@ -37,6 +39,25 @@ const Edit = ({
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
+
+	const { isQueryChild } = useSelect( select => {
+		const {
+			getBlock,
+			getBlockParentsByBlockName
+		} = select( 'core/block-editor' );
+
+		const currentBlock = getBlock( clientId );
+
+		return {
+			isQueryChild: 0 < getBlockParentsByBlockName( currentBlock?.clientId, 'core/query' ).length
+		};
+	}, []);
+
+	useEffect( () => {
+		if ( isQueryChild ) {
+			setAttributes({ context: 'query' });
+		}
+	}, [ isQueryChild ]);
 
 	const blockProps = useBlockProps();
 
