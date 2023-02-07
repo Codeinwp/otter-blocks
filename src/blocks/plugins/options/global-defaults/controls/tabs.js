@@ -11,27 +11,13 @@ import {
 } from '@wordpress/block-editor';
 
 import {
-	BaseControl,
-	Button,
-	ExternalLink,
 	PanelBody,
-	RangeControl,
-	SelectControl,
-	Spinner,
-	TextControl,
-	ToggleControl,
-	TextareaControl,
 	__experimentalBoxControl as BoxControl,
-	FontSizePicker,
-	Disabled
+	FontSizePicker
 } from '@wordpress/components';
 
-import { Fragment, useState } from '@wordpress/element';
-import { ColorDropdownControl, ResponsiveControl, ToogleGroupControl } from '../../../../components';
-import { useResponsiveAttributes } from '../../../../helpers/utility-hooks';
-import { isEmpty, isObjectLike } from 'lodash';
-import { _px } from '../../../../helpers/helper-functions';
-import { makeBox } from '../../../copy-paste/utils';
+import { Fragment } from '@wordpress/element';
+import { isEmptyBox, _px } from '../../../../helpers/helper-functions';
 
 const Tabs = ({
 	blockName,
@@ -132,13 +118,13 @@ const Tabs = ({
 				<BoxControl
 					label={ __( 'Title Padding', 'otter-blocks' ) }
 					values={ attributes.titlePadding }
-					onChange={ titlePadding => setAttributes({ titlePadding: ! isEmpty( titlePadding ) ? titlePadding : undefined }) }
+					onChange={ titlePadding => setAttributes({ titlePadding: ! isEmptyBox( titlePadding ) ? titlePadding : undefined }) }
 				/>
 				<BoxControl
 					label={ __( 'Content Padding', 'otter-blocks' ) }
 					values={ attributes.contentPadding }
 					onChange={ contentPadding => setAttributes({ contentPadding:
-					! isEmpty( contentPadding ) ? contentPadding : undefined }) }
+					! isEmptyBox( contentPadding ) ? contentPadding : undefined }) }
 				/>
 			</PanelBody>
 			<PanelBody
@@ -160,7 +146,7 @@ const Tabs = ({
 					label={ __( 'Title Border Width', 'otter-blocks' ) }
 					values={ attributes.titleBorderWidth }
 					onChange={ titleBorderWidth => {
-						setAttributes({ titleBorderWidth: ! isEmpty( titleBorderWidth ) ? titleBorderWidth : undefined });
+						setAttributes({ titleBorderWidth: ! isEmptyBox( titleBorderWidth ) ? titleBorderWidth : undefined });
 					} }
 				/>
 
@@ -168,7 +154,7 @@ const Tabs = ({
 					label={ __( 'Content Border Width', 'otter-blocks' ) }
 					values={ attributes.borderWidth }
 					onChange={ borderWidth => {
-						setAttributes({ borderWidth: ! isEmpty( borderWidth ) ? borderWidth : undefined });
+						setAttributes({ borderWidth: ! isEmptyBox( borderWidth ) ? borderWidth : undefined });
 					} }
 				/>
 			</PanelBody>

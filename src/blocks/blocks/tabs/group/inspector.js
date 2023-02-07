@@ -9,9 +9,7 @@ import { SortableContainer } from 'react-sortable-hoc';
 import { __ } from '@wordpress/i18n';
 
 import {
-	ContrastChecker,
-	InspectorControls,
-	PanelColorSettings
+	InspectorControls
 } from '@wordpress/block-editor';
 
 import {
@@ -19,7 +17,6 @@ import {
 	Button,
 	FontSizePicker,
 	PanelBody,
-	RangeControl,
 	SelectControl,
 	__experimentalBoxControl as BoxControl
 } from '@wordpress/components';
@@ -34,7 +31,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { SortableTab } from './components/sortable-tabs.js';
 import { InspectorHeader, SyncColorPanel, SyncControlDropdown, ToogleGroupControl } from '../../../components/index.js';
 import { alignCenter, alignLeft, alignRight, menu } from '@wordpress/icons';
-import { changeActiveStyle, getActiveStyle } from '../../../helpers/helper-functions.js';
+import { changeActiveStyle, getActiveStyle, isEmptyBox } from '../../../helpers/helper-functions.js';
 import AutoDisableSyncAttr from '../../../components/auto-disable-sync-attr/index';
 import { makeBox } from '../../../plugins/copy-paste/utils';
 
@@ -52,7 +49,6 @@ const styles = [
 		label: __( 'Boxed', 'otter-blocks' ),
 		value: 'boxed'
 	}
-
 ];
 
 
@@ -427,7 +423,7 @@ const Inspector = ({
 									<BoxControl
 										label={ __( 'Title Padding', 'otter-blocks' ) }
 										values={ attributes.titlePadding ?? { top: '5px', bottom: '5px', left: '10px', right: '10px' }  }
-										onChange={ titlePadding => setAttributes({ titlePadding: ! isEmpty( titlePadding ) ? titlePadding : undefined }) }
+										onChange={ titlePadding => setAttributes({ titlePadding: ! isEmptyBox( titlePadding ) ? titlePadding : undefined }) }
 									/>
 								</AutoDisableSyncAttr>
 								<AutoDisableSyncAttr attr='contentPadding' attributes={attributes}>
@@ -435,7 +431,7 @@ const Inspector = ({
 										label={ __( 'Content Padding', 'otter-blocks' ) }
 										values={ attributes.contentPadding ?? makeBox( '0px' )  }
 										onChange={ contentPadding => setAttributes({ contentPadding:
-											! isEmpty( contentPadding ) ? contentPadding : undefined }) }
+											! isEmptyBox( contentPadding ) ? contentPadding : undefined }) }
 									/>
 								</AutoDisableSyncAttr>
 
@@ -475,7 +471,7 @@ const Inspector = ({
 										label={ __( 'Title Border Width', 'otter-blocks' ) }
 										values={ attributes.titleBorderWidth ?? attributes.borderWidth ?? makeBox( '3px' ) }
 										onChange={ titleBorderWidth => {
-											setAttributes({ titleBorderWidth: ! isEmpty( titleBorderWidth ) ? titleBorderWidth : undefined });
+											setAttributes({ titleBorderWidth: ! isEmptyBox( titleBorderWidth ) ? titleBorderWidth : undefined });
 										} }
 									/>
 								</AutoDisableSyncAttr>
@@ -484,7 +480,7 @@ const Inspector = ({
 										label={ __( 'Content Border Width', 'otter-blocks' ) }
 										values={ attributes.borderWidth ?? makeBox( '3px' ) }
 										onChange={ borderWidth => {
-											setAttributes({ borderWidth: ! isEmpty( borderWidth ) ? borderWidth : undefined });
+											setAttributes({ borderWidth: ! isEmptyBox( borderWidth ) ? borderWidth : undefined });
 										} }
 									/>
 								</AutoDisableSyncAttr>

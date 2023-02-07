@@ -604,3 +604,13 @@ export function isAppleOS( _window = null ) {
 		[ 'iPad', 'iPhone' ].includes( platform )
 	);
 }
+
+/**
+ * Check if a box value is empty.
+ *
+ * @param {import('./blocks').BoxType | undefined} box The box.
+ * @returns {boolean}
+ */
+export const isEmptyBox = ( box ) => {
+	return ! ( box?.top !== undefined && box?.right !== undefined && box?.bottom !== undefined && box?.left !== undefined );
+};
