@@ -21,6 +21,7 @@ import {
 
 import {
 	Fragment,
+	useEffect,
 	useRef
 } from '@wordpress/element';
 
@@ -37,7 +38,8 @@ const Edit = ({
 	const contentRef = useRef( null );
 
 	const {
-		parentClientId
+		parentClientId,
+		titleTag
 	} = useSelect( select => {
 		const {
 			getBlock,
@@ -47,10 +49,21 @@ const Edit = ({
 		const parentClientId = getBlockRootClientId( clientId );
 		const parentBlock = getBlock( parentClientId );
 
+		console.log( parentBlock );
+
 		return {
-			parentClientId: parentBlock.clientId
+			parentClientId: parentBlock.clientId,
+			titleTag: parentBlock.attributes.titleTag
 		};
 	}, []);
+
+	useEffect( () => {
+		if ( titleTag !== undefined && titleTag !== attributes.titleTag ) {
+			setAttributes({
+				titleTag: 'div' !== titleTag ? titleTag : undefined
+			});
+		}
+	},  [ titleTag ]);
 
 	const { selectBlock } = useDispatch( 'core/block-editor' );
 

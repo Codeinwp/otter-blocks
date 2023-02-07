@@ -239,16 +239,16 @@ const Edit = ({
 
 					{ ( isSelected || 0 === children.length ) && (
 						<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: '10px' }}>
-							{/* <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid black', padding: '5px 10px', marginBottom: '3px' }}>
+							<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '3px' }}>
 
 								<Icon icon={ plus } />
-							</div> */}
-							<BlockAppender
+							</div>
+							{/* <BlockAppender
 								buttonText={ __( 'Add Tab', 'otter-blocks' ) }
 								variant="primary"
 								allowedBlock="themeisle-blocks/tabs-item"
 								clientId={ clientId }
-							/>
+							/> */}
 						</div>
 					) }
 				</div>

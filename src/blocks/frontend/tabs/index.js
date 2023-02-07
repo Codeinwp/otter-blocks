@@ -16,14 +16,17 @@ domReady( () => {
 		const closedTabs = [];
 
 		items.forEach( ( item, index ) => {
-			const headerItem = document.createElement( 'div' );
-			headerItem.classList.add( 'wp-block-themeisle-blocks-tabs__header_item' );
 			const content = item.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__content' );
 
-			headerItem.innerHTML = item.dataset.title || `Tab ${ index + 1 }`;
+			const headerMobile = item.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__header' );
+
+			const headerItem = document.createElement( 'div' );
+			headerItem.classList.add( 'wp-block-themeisle-blocks-tabs__header_item' );
 			headerItem.tabIndex = 0;
 
-			const headerMobile = item.querySelector( '.wp-block-themeisle-blocks-tabs-item__header' );
+			const tabTitle = headerMobile.cloneNode( true );
+			tabTitle.classList.remove( 'wp-block-themeisle-blocks-tabs-item__header' );
+			headerItem.appendChild( tabTitle );
 
 			if ( 'true' === item.dataset.defaultOpen && ! openedTab ) {
 				headerItem.classList.add( 'active' );

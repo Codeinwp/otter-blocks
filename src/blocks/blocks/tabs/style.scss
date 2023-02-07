@@ -64,6 +64,10 @@ $margin-offset-scaling: 1.5;
 			z-index: 4;
 		}
 
+		&> * {
+			font-size: var(--font-size);
+		}
+
 		&.hidden {
 			display: block;
 		}
@@ -131,7 +135,6 @@ $margin-offset-scaling: 1.5;
 			border-style: solid;
 			border-width: var( --border-width );
 			border-color: var( --border-color );
-			font-size: var(--font-size);
 			padding: var(--title-padding);
 			color: var( --title-color );
 			background-color: var(--title-background);
@@ -146,6 +149,10 @@ $margin-offset-scaling: 1.5;
 				color: var( --active-title-color );
 				background: var(--active-title-background);
 				border-color: var(--border-color);
+			}
+
+			&> * {
+				font-size: var(--font-size);
 			}
 		}
 

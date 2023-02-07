@@ -15,6 +15,10 @@
 		"defaultOpen": {
 			"type": "boolean",
 			"default": false
+		},
+		"titleTag": {
+			"type": "string",
+			"default": "div"
 		}
 	}
 }
