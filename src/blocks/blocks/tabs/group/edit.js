@@ -38,6 +38,8 @@ import { boxToCSS, _px } from '../../../helpers/helper-functions';
 import classNames from 'classnames';
 import BlockAppender from '../../../components/block-appender-button';
 import { useDarkBackground } from '../../../helpers/utility-hooks.js';
+import { plus } from '@wordpress/icons';
+import { Icon } from '@wordpress/components';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -187,9 +189,8 @@ const Edit = ({
 		'--content-text-color': getSyncValue( 'contentTextColor' ),
 		'--title-padding': boxToCSS( getSyncValue( 'titlePadding' ) ),
 		'--content-padding': boxToCSS( getSyncValue( 'titlePadding' ) ),
-		'--border-side-width': 'left' === attributes.tabsPosition ?  getSyncValue( 'borderWidth' )?.left :  getSyncValue( 'borderWidth' )?.top,
-		'--font-size': _px( getSyncValue( 'titleFontSize' ) ),
-		'--o-s-mul': 1
+		'--border-side-width': 'left' === attributes.tabsPosition ?  getSyncValue( 'borderWidth' )?.left ?? '3px' :  getSyncValue( 'borderWidth' )?.top ?? '3px',
+		'--font-size': _px( getSyncValue( 'titleFontSize' ) )
 	};
 
 	const blockProps = useBlockProps({
@@ -237,7 +238,11 @@ const Edit = ({
 					}) || '' }
 
 					{ ( isSelected || 0 === children.length ) && (
-						<div>
+						<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: '10px' }}>
+							{/* <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid black', padding: '5px 10px', marginBottom: '3px' }}>
+
+								<Icon icon={ plus } />
+							</div> */}
 							<BlockAppender
 								buttonText={ __( 'Add Tab', 'otter-blocks' ) }
 								variant="primary"

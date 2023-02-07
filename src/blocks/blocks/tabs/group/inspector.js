@@ -427,14 +427,15 @@ const Inspector = ({
 									<BoxControl
 										label={ __( 'Title Padding', 'otter-blocks' ) }
 										values={ attributes.titlePadding ?? { top: '5px', bottom: '5px', left: '10px', right: '10px' }  }
-										onChange={ titlePadding => setAttributes({ titlePadding }) }
+										onChange={ titlePadding => setAttributes({ titlePadding: ! isEmpty( titlePadding ) ? titlePadding : undefined }) }
 									/>
 								</AutoDisableSyncAttr>
 								<AutoDisableSyncAttr attr='contentPadding' attributes={attributes}>
 									<BoxControl
 										label={ __( 'Content Padding', 'otter-blocks' ) }
 										values={ attributes.contentPadding ?? makeBox( '0px' )  }
-										onChange={ contentPadding => setAttributes({ contentPadding }) }
+										onChange={ contentPadding => setAttributes({ contentPadding:
+											! isEmpty( contentPadding ) ? contentPadding : undefined }) }
 									/>
 								</AutoDisableSyncAttr>
 
@@ -473,14 +474,18 @@ const Inspector = ({
 									<BoxControl
 										label={ __( 'Title Border Width', 'otter-blocks' ) }
 										values={ attributes.titleBorderWidth ?? attributes.borderWidth ?? makeBox( '3px' ) }
-										onChange={ titleBorderWidth => setAttributes({ titleBorderWidth }) }
+										onChange={ titleBorderWidth => {
+											setAttributes({ titleBorderWidth: ! isEmpty( titleBorderWidth ) ? titleBorderWidth : undefined });
+										} }
 									/>
 								</AutoDisableSyncAttr>
 								<AutoDisableSyncAttr attr='borderWidth' attributes={attributes}>
 									<BoxControl
 										label={ __( 'Content Border Width', 'otter-blocks' ) }
 										values={ attributes.borderWidth ?? makeBox( '3px' ) }
-										onChange={ borderWidth => setAttributes({ borderWidth }) }
+										onChange={ borderWidth => {
+											setAttributes({ borderWidth: ! isEmpty( borderWidth ) ? borderWidth : undefined });
+										} }
 									/>
 								</AutoDisableSyncAttr>
 							</PanelBody>

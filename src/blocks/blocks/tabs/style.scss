@@ -6,7 +6,7 @@ $margin-offset-scaling: 1.5;
 	--border-color: #000;
 	--title-color: inherit;
 	--title-background: transparent;
-	--tab-color: white;
+	--tab-color: #F5F5F5;
 	--active-title-color: inherit;
 	--active-title-background: var(--tab-color);
 	--content-text-color: inherit;
@@ -88,7 +88,7 @@ $margin-offset-scaling: 1.5;
 	
 
 	&:not(.has-pos-left) {
-		.wp-block-themeisle-blocks-tabs__header {
+		&> .wp-block-themeisle-blocks-tabs__header {
 			align-items: center;
 
 			button {
@@ -260,7 +260,6 @@ $margin-offset-scaling: 1.5;
 					border-width: var(--title-border-width);
 
 					&.active {
-						border-left-width: 0px;
 						border-top-width: 0px;
 						border-color: var(--active-title-border-color);
 					}
@@ -287,6 +286,7 @@ $margin-offset-scaling: 1.5;
 				
 				&.active {
 					border-right-width: 0px;
+					border-left-width: 0px;
 				}
 			} 
 
@@ -314,6 +314,7 @@ $margin-offset-scaling: 1.5;
 		&.has-pos-left {
 			&> .wp-block-themeisle-blocks-tabs__header .wp-block-themeisle-blocks-tabs__header_item.active {
 				border-bottom-width: 0px;
+				border-left-color: transparent;
 			}
 
 			.wp-block-themeisle-blocks-tabs-item__content {

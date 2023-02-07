@@ -29,7 +29,7 @@ import {
 import { Fragment, useState } from '@wordpress/element';
 import { ColorDropdownControl, ResponsiveControl, ToogleGroupControl } from '../../../../components';
 import { useResponsiveAttributes } from '../../../../helpers/utility-hooks';
-import { isObjectLike } from 'lodash';
+import { isEmpty, isObjectLike } from 'lodash';
 import { _px } from '../../../../helpers/helper-functions';
 import { makeBox } from '../../../copy-paste/utils';
 
@@ -132,12 +132,13 @@ const Tabs = ({
 				<BoxControl
 					label={ __( 'Title Padding', 'otter-blocks' ) }
 					values={ attributes.titlePadding }
-					onChange={ titlePadding => setAttributes({ titlePadding }) }
+					onChange={ titlePadding => setAttributes({ titlePadding: ! isEmpty( titlePadding ) ? titlePadding : undefined }) }
 				/>
 				<BoxControl
 					label={ __( 'Content Padding', 'otter-blocks' ) }
 					values={ attributes.contentPadding }
-					onChange={ contentPadding => setAttributes({ contentPadding }) }
+					onChange={ contentPadding => setAttributes({ contentPadding:
+					! isEmpty( contentPadding ) ? contentPadding : undefined }) }
 				/>
 			</PanelBody>
 			<PanelBody
@@ -158,13 +159,17 @@ const Tabs = ({
 				<BoxControl
 					label={ __( 'Title Border Width', 'otter-blocks' ) }
 					values={ attributes.titleBorderWidth }
-					onChange={ titleBorderWidth => setAttributes({ titleBorderWidth }) }
+					onChange={ titleBorderWidth => {
+						setAttributes({ titleBorderWidth: ! isEmpty( titleBorderWidth ) ? titleBorderWidth : undefined });
+					} }
 				/>
 
 				<BoxControl
 					label={ __( 'Content Border Width', 'otter-blocks' ) }
 					values={ attributes.borderWidth }
-					onChange={ borderWidth => setAttributes({ borderWidth }) }
+					onChange={ borderWidth => {
+						setAttributes({ borderWidth: ! isEmpty( borderWidth ) ? borderWidth : undefined });
+					} }
 				/>
 			</PanelBody>
 		</Fragment>
