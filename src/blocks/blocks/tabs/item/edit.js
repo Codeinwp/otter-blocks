@@ -100,7 +100,7 @@ const Edit = ({
 							'active': attributes.defaultOpen ? attributes.defaultOpen : false
 						}
 					) }
-					tagName="div"
+					tagName={ attributes.titleTag ?? 'div' }
 					onClick={ switchActiveState }
 					withoutInteractiveFormatting
 				/>

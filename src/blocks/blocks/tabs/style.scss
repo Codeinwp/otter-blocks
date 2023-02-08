@@ -42,6 +42,7 @@ $margin-offset-scaling: 1.5;
 		background-color: var(--title-background);
 		border-width: var(--title-border-width);
 		cursor: pointer;
+		margin: 0px;
 
 		display: flex;
 		align-items: center;
@@ -138,6 +139,7 @@ $margin-offset-scaling: 1.5;
 			padding: var(--title-padding);
 			color: var( --title-color );
 			background-color: var(--title-background);
+			margin: 0px;
 			
 			cursor: pointer;
 
@@ -212,7 +214,11 @@ $margin-offset-scaling: 1.5;
 			}
 
 			&:has( > .active) {
-				height: 100%;
+
+				@media (min-width: 800px) {
+					height: 100%;
+				}
+				
 			}
 		}
 

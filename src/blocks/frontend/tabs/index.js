@@ -17,8 +17,10 @@ domReady( () => {
 
 		items.forEach( ( item, index ) => {
 			const content = item.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__content' );
+			content.setAttribute( 'role', 'tabpanel' );
 
 			const headerMobile = item.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__header' );
+			headerMobile.setAttribute( 'role', 'tab' );
 
 			const headerItem = document.createElement( 'div' );
 			headerItem.classList.add( 'wp-block-themeisle-blocks-tabs__header_item' );
@@ -45,12 +47,14 @@ domReady( () => {
 
 				headerMobile.classList.toggle( 'active', idx === index );
 				headerMobile.classList.toggle( 'hidden', idx !== index );
+				headerMobile.setAttribute( 'aria-selected', idx === index );
 
 				const headerItems = Array.from( header.childNodes );
 
 				headerItems.forEach( ( h, idx ) => {
 					h.classList.toggle( 'active', idx === index );
 					h.classList.toggle( 'hidden', idx !== index );
+					h.setAttribute( 'aria-selected', idx === index );
 				});
 			};
 
