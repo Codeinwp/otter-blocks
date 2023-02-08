@@ -120,7 +120,7 @@ const Inspector = ({
 		return { label: `${ index + 1 }. ${ c.attributes.title || __( 'Untitled Tab', 'otter-blocks' ) }`, value: c.clientId };
 	});
 
-	const [ tab, setTab ] = useState( 'style' );
+	const [ tab, setTab ] = useState( 'settings' );
 
 
 	return (
@@ -356,7 +356,7 @@ const Inspector = ({
 							<SyncColorPanel
 								label={ __( 'Colors', 'otter-blocks' ) }
 								isSynced={ attributes.isSynced ?? [] }
-								initialOpen={ true }
+								initialOpen={ false }
 								setAttributes={ setAttributes }
 								options={ [
 									{
@@ -403,7 +403,7 @@ const Inspector = ({
 							/>
 							<PanelBody
 								title={ __( 'Dimensions(Layout)', 'otter-blocks' ) }
-								initialOpen={ true }
+								initialOpen={ false }
 							>
 								<SyncControlDropdown
 									isSynced={attributes.isSynced}
@@ -438,7 +438,7 @@ const Inspector = ({
 							</PanelBody>
 							<PanelBody
 								title={ __( 'Border Radius', 'otter-blocks' ) }
-								initialOpen={ true }
+								initialOpen={ false }
 							>
 								{/*
 

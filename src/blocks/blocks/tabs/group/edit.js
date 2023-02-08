@@ -65,6 +65,23 @@ const TabHeader = ({
 	);
 };
 
+const AddTabHeader = ({
+	clientId
+}) => {
+	return (
+		<div className='add-header-container'>
+			<div className='add-header-item'>
+				<BlockAppender
+					buttonText={ __( 'Add Tab+', 'otter-blocks' ) }
+					variant="primary"
+					allowedBlock="themeisle-blocks/tabs-item"
+					clientId={ clientId }
+				/>
+			</div>
+		</div>
+	);
+};
+
 /**
  *
  * @param {import('./types').TabsGroupProps} props
@@ -241,18 +258,7 @@ const Edit = ({
 					}) || '' }
 
 					{ ( isSelected || 0 === children.length ) && (
-						<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginLeft: '10px' }}>
-							<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '3px' }}>
-
-								<Icon icon={ plus } />
-							</div>
-							{/* <BlockAppender
-								buttonText={ __( 'Add Tab', 'otter-blocks' ) }
-								variant="primary"
-								allowedBlock="themeisle-blocks/tabs-item"
-								clientId={ clientId }
-							/> */}
-						</div>
+						<AddTabHeader clientId={ clientId } />
 					) }
 				</div>
 

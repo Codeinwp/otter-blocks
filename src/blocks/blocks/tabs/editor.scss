@@ -87,7 +87,37 @@
                 }
             }
         }
-    }    
+    }
+    
+    .add-header-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+
+        &> .add-header-item > button {
+            position: absolute;
+            bottom: -20px;
+            z-index: 10;
+        }
+    }
+    
+    &.has-pos-left {
+        .add-header-container {
+            height: 30px;
+    
+            &> .add-header-item > button {
+                left: -11px;
+            }
+        }
+    }
+
+    &:not(.has-pos-left) {
+        &> .add-header-item > button {
+            bottom: -20px;
+            right: 12px;
+        }
+    }
 }
 
 .wp-block-themeisle-blocks-tabs-inspector-tab-option {

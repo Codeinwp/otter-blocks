@@ -49,8 +49,6 @@ const Edit = ({
 		const parentClientId = getBlockRootClientId( clientId );
 		const parentBlock = getBlock( parentClientId );
 
-		console.log( parentBlock );
-
 		return {
 			parentClientId: parentBlock.clientId,
 			titleTag: parentBlock.attributes.titleTag
