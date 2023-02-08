@@ -117,7 +117,10 @@ const Edit = ({
 			children.forEach( block => {
 				const blockContent = contentRef.current.querySelector( `#block-${ block.clientId } > .wp-block-themeisle-blocks-tabs-item__content` );
 
+				const blockHeader = contentRef.current.querySelector( `#block-${ block.clientId } > .wp-block-themeisle-blocks-tabs-item__header` );
+
 				blockContent?.classList.toggle( 'active', block.clientId === blockId );
+				blockHeader?.classList.toggle( 'active', block.clientId === blockId );
 			});
 			setActiveTab( blockId );
 		}

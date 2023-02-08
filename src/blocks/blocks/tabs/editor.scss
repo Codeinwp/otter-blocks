@@ -24,13 +24,13 @@
         }
     }
 
-    .wp-block-themeisle-blocks-tabs__content {
+    &:not(.has-pos-left) > .wp-block-themeisle-blocks-tabs__content {
 
-        .block-editor-inner-blocks {
+       &> .block-editor-inner-blocks {
             border-color: inherit;
             background-color: inherit;
 
-            .block-editor-block-list__layout {
+            &> .block-editor-block-list__layout {
                 border-color: var( --border-color );
                 background-color: inherit;
 
@@ -39,16 +39,15 @@
                     margin-bottom: 0px;
                 }
 
-                .block-editor-block-list__block { 
+                &> .block-editor-block-list__block { 
 					border-color: inherit;
                     &:not(:last-of-type) {
-                        .wp-block-themeisle-blocks-tabs-item__header {
+                        &> .wp-block-themeisle-blocks-tabs-item__header {
                             border-bottom-style: none;
                         }
 
-                        @media (max-width: 800px) {
-                            .wp-block-themeisle-blocks-tabs-item__content {
-                                border-bottom-style: none;
+                        @media (min-width: 800px) {
+                            &> .wp-block-themeisle-blocks-tabs-item__content {
 								border-color: inherit;
                             }
                         }
@@ -69,12 +68,26 @@
             > .block-editor-block-list__layout {
                 height: 100%;
 
-                > .block-editor-block-list__block:has( > .wp-block-themeisle-blocks-tabs-item__content.active) { 
-                    height: 100%;
+                > .block-editor-block-list__block:has( > .wp-block-themeisle-blocks-tabs-item__content.active) {
+                    @media (min-width: 800px) {
+                        height: 100%;
+                    }
                 }
             }
         }
     }
+
+    &.is-style-boxed > .wp-block-themeisle-blocks-tabs__content {
+        &> .block-editor-inner-blocks {
+            &> .block-editor-block-list__layout {
+                &> .wp-block-themeisle-blocks-tabs-item {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 3px;
+                }
+            }
+        }
+    }    
 }
 
 .wp-block-themeisle-blocks-tabs-inspector-tab-option {
