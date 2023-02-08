@@ -28,6 +28,7 @@ $margin-offset-scaling: 1.5;
 		display: flex;
 		flex-direction: row;
 		justify-content: flex-start;
+		flex-wrap: wrap;
 		border-color: var( --border-color );
 
 		@media ( max-width: 800px ) {
