@@ -5,7 +5,7 @@ import {
 	isNumber, isObjectLike,
 	isString
 } from 'lodash';
-
+import classnames from 'classnames';
 import { useBlockProps } from '@wordpress/block-editor';
 
 import {
@@ -125,8 +125,16 @@ const Edit = ({
 					}
 				</style>
 
-				<span className="wp-block-themeisle-blocks-font-awesome-icons-container">
-					{ 'themeisle-icons' === attributes.library ? <Icon/> : <i className={ `${ attributes.prefix } fa-${ attributes.icon }` }></i> }
+				<span className={ classnames(
+					'wp-block-themeisle-blocks-font-awesome-icons-container',
+					{ 'nan-padding': ! isNumber( attributes.padding ) }
+				)}>
+					{ 'themeisle-icons' === attributes.library ? <Icon/> : <i className={ classnames(
+						`${ attributes.prefix }`,
+						`fa-${ attributes.icon }`,
+						{ 'fa-fw': ! isNumber( attributes.padding ) }
+					)}
+					/> }
 				</span>
 			</div>
 		</Fragment>

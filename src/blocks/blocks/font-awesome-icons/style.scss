@@ -19,10 +19,19 @@
 		border-color: var( --border-color );
 		border-radius: var( --border-radius );
 		margin: var( --margin );
-		padding: var( --padding );
 
 		text-align: center;
 		align-items: center;
+
+		&:not(.nan-padding) {
+			width: calc( var(--font-size) * 1.5 + var( --padding ));
+			height: calc( var(--font-size) * 1.5 + var( --padding ));
+		}
+
+		&.nan-padding {
+			padding: var( --padding );
+			aspect-ratio: 1;
+		}
 
 		box-sizing: content-box;
 
@@ -34,7 +43,6 @@
 
 		i {
 			font-size: var(--font-size);
-			width: 100%;
 		}
 	}
 }
