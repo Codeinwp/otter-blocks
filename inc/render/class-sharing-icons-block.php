@@ -17,44 +17,58 @@ class Sharing_Icons_Block {
 	/**
 	 * Return attributes for social media services.
 	 *
+	 * @param string|null $context Context of the sharing icons block.
+	 *
 	 * @return array
 	 */
-	public static function get_social_profiles() {
+	public static function get_social_profiles( $context = null ) {
+		$current_url = home_url( add_query_arg( null, null ) );
+		$title       = get_the_title( get_queried_object_id() );
+
+		if ( is_archive() ) {
+			$title = get_the_archive_title();
+		} elseif ( 'query' === $context ) {
+			$current_url = get_the_permalink();
+			$title       = get_the_title();
+		} elseif ( null === get_queried_object() && is_home() ) {
+			$title = get_bloginfo( 'name' );
+		}
+
 		$social_attributes = array(
 			'facebook'  => array(
 				'label' => esc_html__( 'Facebook', 'otter-blocks' ),
 				'icon'  => 'facebook-f',
-				'url'   => 'https://www.facebook.com/sharer/sharer.php?u=' . esc_url( get_the_permalink() ) . '&title=' . esc_attr( get_the_title() ),
+				'url'   => 'https://www.facebook.com/sharer/sharer.php?u=' . esc_url( $current_url ) . '&title=' . esc_attr( $title ),
 			),
 
 			'twitter'   => array(
 				'label' => esc_html__( 'Twitter', 'otter-blocks' ),
 				'icon'  => 'twitter',
-				'url'   => 'http://twitter.com/share?url=' . esc_url( get_the_permalink() ) . '&text=' . esc_attr( get_the_title() ),
+				'url'   => 'http://twitter.com/share?url=' . esc_url( $current_url ) . '&text=' . esc_attr( $title ),
 			),
 
 			'linkedin'  => array(
 				'label' => esc_html__( 'Linkedin', 'otter-blocks' ),
 				'icon'  => 'linkedin-in',
-				'url'   => 'https://www.linkedin.com/shareArticle?mini=true&url=' . esc_url( get_the_permalink() ) . '&title=' . esc_attr( get_the_title() ),
+				'url'   => 'https://www.linkedin.com/shareArticle?mini=true&url=' . esc_url( $current_url ) . '&title=' . esc_attr( $title ),
 			),
 
 			'pinterest' => array(
 				'label' => esc_html__( 'Pinterest', 'otter-blocks' ),
 				'icon'  => 'pinterest-p',
-				'url'   => 'https://pinterest.com/pin/create/button/?url=' . esc_url( get_the_permalink() ) . '&description=' . esc_attr( get_the_title() ),
+				'url'   => 'https://pinterest.com/pin/create/button/?url=' . esc_url( $current_url ) . '&description=' . esc_attr( $title ),
 			),
 
 			'tumblr'    => array(
 				'label' => esc_html__( 'Tumblr', 'otter-blocks' ),
 				'icon'  => 'tumblr',
-				'url'   => 'https://tumblr.com/share/link?url=' . esc_url( get_the_permalink() ) . '&name=' . esc_attr( get_the_title() ),
+				'url'   => 'https://tumblr.com/share/link?url=' . esc_url( $current_url ) . '&name=' . esc_attr( $title ),
 			),
 
 			'reddit'    => array(
 				'label' => esc_html__( 'Reddit', 'otter-blocks' ),
 				'icon'  => 'reddit-alien',
-				'url'   => 'https://www.reddit.com/submit?url=' . esc_url( get_the_permalink() ),
+				'url'   => 'https://www.reddit.com/submit?url=' . esc_url( $current_url ),
 			),
 		);
 
@@ -82,7 +96,7 @@ class Sharing_Icons_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		$social_attributes = $this->get_social_profiles();
+		$social_attributes = $this->get_social_profiles( isset( $attributes['context'] ) ? $attributes['context'] : null );
 
 		$class = '';
 

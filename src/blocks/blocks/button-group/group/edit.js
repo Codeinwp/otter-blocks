@@ -11,10 +11,6 @@ import {
 	useBlockProps
 } from '@wordpress/block-editor';
 
-import { useViewportMatch } from '@wordpress/compose';
-
-import { useSelect } from '@wordpress/data';
-
 import {
 	Fragment,
 	useEffect
@@ -25,8 +21,11 @@ import {
  */
 import metadata from './block.json';
 import Inspector from './inspector.js';
-import { blockInit } from '../../../helpers/block-utility.js';
+import { blockInit, buildGetSyncValue } from '../../../helpers/block-utility.js';
 import googleFontsLoader from '../../../helpers/google-fonts.js';
+import { boxToCSS, _cssBlock, _px } from '../../../helpers/helper-functions';
+import { useResponsiveAttributes } from '../../../helpers/utility-hooks';
+import Controls from './controls';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -38,38 +37,11 @@ const { attributes: defaultAttributes } = metadata;
 const Edit = ({
 	attributes,
 	setAttributes,
-	clientId
+	clientId,
+	name
 }) => {
-	const {
-		isViewportAvailable,
-		isPreviewDesktop,
-		isPreviewTablet,
-		isPreviewMobile
-	} = useSelect( select => {
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
 
-		return {
-			isViewportAvailable: __experimentalGetPreviewDeviceType ? true : false,
-			isPreviewDesktop: __experimentalGetPreviewDeviceType ? 'Desktop' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewTablet: __experimentalGetPreviewDeviceType ? 'Tablet' === __experimentalGetPreviewDeviceType() : false,
-			isPreviewMobile: __experimentalGetPreviewDeviceType ? 'Mobile' === __experimentalGetPreviewDeviceType() : false
-		};
-	}, []);
-
-	const currentDevice = useSelect( select => {
-		const { getView } = select( 'themeisle-gutenberg/data' );
-		const { __experimentalGetPreviewDeviceType } = select( 'core/edit-post' ) ? select( 'core/edit-post' ) : false;
-
-		return __experimentalGetPreviewDeviceType ? __experimentalGetPreviewDeviceType().toLowerCase() : getView().toLowerCase();
-	}, []);
-
-	const isLarger = useViewportMatch( 'large', '>=' );
-
-	const isLarge = useViewportMatch( 'large', '<=' );
-
-	const isSmall = useViewportMatch( 'small', '>=' );
-
-	const isSmaller = useViewportMatch( 'small', '<=' );
+	const { responsiveGetAttributes } = useResponsiveAttributes( () => {});
 
 	useEffect( () => {
 		googleFontsLoader.attach();
@@ -77,30 +49,27 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, []);
 
-	let isDesktop = isLarger && ! isLarge && isSmall && ! isSmaller;
+	const getSyncValue = buildGetSyncValue( name, attributes, defaultAttributes );
 
-	let isTablet = ! isLarger && ! isLarge && isSmall && ! isSmaller;
-
-	let isMobile = ! isLarger && ! isLarge && ! isSmall && ! isSmaller;
-
-	if ( isViewportAvailable && ! isMobile ) {
-		isDesktop = isPreviewDesktop;
-		isTablet = isPreviewTablet;
-		isMobile = isPreviewMobile;
-	}
-
-
-	const inlineCSS = {
-		'--spacing': attributes.spacing && attributes.spacing + 'px'
+	const desktopPadding = {
+		top: _px( getSyncValue( 'paddingTopBottom' ) ) ?? '15px',
+		bottom: _px( getSyncValue( 'paddingTopBottom' ) ) ?? '15px',
+		right: _px ( getSyncValue( 'paddingLeftRight' ) ) ?? '30px',
+		left: _px( getSyncValue( 'paddingLeftRight' ) ) ?? '30px'
 	};
 
-	const alignClasses = [ 'desktop', 'tablet', 'mobile' ].reduce( ( acc, device ) => {
-		if ( attributes.align && attributes.align[ device ]) {
-			acc.push( `align-${ attributes.align[ device ] }-${ device }` );
-		}
+	const inlineCSS = {
+		'--spacing': _px( getSyncValue( 'spacing' ) ),
+		'--padding': boxToCSS( responsiveGetAttributes([
+			desktopPadding,
+			getSyncValue( 'paddingTablet' ),
+			getSyncValue( 'paddingMobile' ) ]) ),
+		'--font-size': _px( getSyncValue( 'fontSize' ) )
+	};
 
-		return acc;
-	}, []);
+	const alignClasses = [ 'desktop', 'tablet', 'mobile' ]
+		.filter( device => attributes.align && attributes.align[ device ])
+		.map( device => `align-${ attributes.align[ device ] }-${ device }` );
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
@@ -108,7 +77,7 @@ const Edit = ({
 			'wp-block-buttons',
 			{
 				[ `align-${ attributes.align }` ]: 'string' === typeof attributes.align,
-				'collapse': ( 'collapse-desktop' === attributes.collapse && ( isDesktop || isTablet || isMobile ) ) || ( 'collapse-tablet' === attributes.collapse && ( isTablet || isMobile ) ) || ( 'collapse-mobile' === attributes.collapse && isMobile )
+				'collapse': responsiveGetAttributes([ 'collapse-desktop', 'collapse-tablet', 'collapse-mobile' ]) === attributes.collapse
 			},
 			...alignClasses
 		),
@@ -116,8 +85,8 @@ const Edit = ({
 	});
 
 	useEffect( () => {
-		if ( attributes.fontFamily ) {
-			googleFontsLoader.loadFontToBrowser( attributes.fontFamily, attributes.fontVariant );
+		if ( getSyncValue( 'fontFamily' ) ) {
+			googleFontsLoader.loadFontToBrowser( getSyncValue( 'fontFamily' ), getSyncValue( 'fontVariant' ) );
 		}
 	}, [ attributes.fontFamily ]);
 
@@ -126,8 +95,29 @@ const Edit = ({
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				currentDevice={ currentDevice }
 			/>
+
+			<Controls
+				attributes={ attributes }
+				setAttributes={ setAttributes }
+			/>
+
+			<style>
+				{
+					`#block-${clientId} .wp-block-button :is(div, a, span).wp-block-button__link` + _cssBlock([
+						[ 'font-family', getSyncValue( 'fontFamily' ) ],
+						[ 'font-weight', getSyncValue( 'fontVariant' ) ],
+						[ 'font-style', getSyncValue( 'fontStyle' ) ],
+						[ 'text-transform', getSyncValue( 'textTransform' ) ],
+						[ 'line-height',  _px( getSyncValue( 'lineHeight' ) ) ]
+					])
+				}
+				{
+					`#block-${clientId} .wp-block-button .wp-block-button__link :is(svg, i, div)` + _cssBlock([
+						[ 'font-size', _px( getSyncValue( 'fontSize' ) ) ]
+					])
+				}
+			</style>
 
 			<div { ...blockProps }>
 				<InnerBlocks

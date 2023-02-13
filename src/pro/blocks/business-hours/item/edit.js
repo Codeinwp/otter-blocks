@@ -18,6 +18,7 @@ import {
  */
 import metadata from './block.json';
 import Inspector from './inspector.js';
+import { useDarkBackground } from '../../../../blocks/helpers/utility-hooks.js';
 
 const { blockInit } = window.otterUtils;
 
@@ -37,6 +38,8 @@ const Edit = ({
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
+
+	useDarkBackground( attributes.backgroundColor, attributes, setAttributes );
 
 	const style = {
 		backgroundColor: attributes.backgroundColor

@@ -19,6 +19,7 @@ import apiFetch from '@wordpress/api-fetch';
 import {
 	__experimentalBlockVariationPicker as VariationPicker,
 	InnerBlocks,
+	RichText,
 	useBlockProps
 } from '@wordpress/block-editor';
 
@@ -28,7 +29,6 @@ import {
 } from '@wordpress/blocks';
 
 import {
-	dispatch,
 	select,
 	useSelect,
 	useDispatch
@@ -38,7 +38,6 @@ import {
 	Fragment,
 	useState,
 	useEffect,
-	useRef,
 	createContext
 } from '@wordpress/element';
 
@@ -48,14 +47,15 @@ import {
 import metadata from './block.json';
 import {
 	blockInit,
-	useCSSNode
+	getDefaultValueByField
 } from '../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
+import { useResponsiveAttributes } from '../../helpers/utility-hooks';
+import { renderBoxOrNumWithUnit, _cssBlock, _px } from '../../helpers/helper-functions';
 const { attributes: defaultAttributes } = metadata;
 
 export const FormContext = createContext({});
-const padding = x => x ? x.top + ' ' + x.right + ' ' + x.bottom + ' ' + x.left : null;
 
 /**
  * Form component
@@ -69,8 +69,11 @@ const Edit = ({
 	isSelected,
 	name
 }) => {
+
 	const [ googleCaptchaAPISiteKey, setGoogleCaptchaAPISiteKey ] = useState( '' );
 	const [ googleCaptchaAPISecretKey, setGoogleCaptchaAPISecretKey ] = useState( '' );
+
+	const { responsiveGetAttributes } = useResponsiveAttributes( setAttributes );
 
 	const [ loadingState, setLoadingState ] = useState({
 		formOptions: 'done',
@@ -79,8 +82,24 @@ const Edit = ({
 		captcha: 'init',
 		serviceTesting: 'init'
 	});
+
+	const [ optionsHaveChanged, setOptionsHaveChanged ] = useState( false );
+
 	const setLoading = l => {
+		setOptionsHaveChanged( true );
 		setLoadingState( loading => ({ ...loading, ...l }) );
+	};
+
+	/**
+	 * Get global value if it is the case.
+	 * @param {import('../../common').SyncAttrs<import('./type').FormAttrs>} field
+	 * @returns
+	 */
+	const getSyncValue = field =>{
+		if ( attributes?.isSynced?.includes( field ) ) {
+			return getDefaultValueByField({ name, field, defaultAttributes, attributes });
+		}
+		return attributes?.[field];
 	};
 
 	const [ formOptions, setFormOptions ] = useState({
@@ -94,10 +113,19 @@ const Edit = ({
 		action: undefined,
 		hasCaptcha: undefined,
 		submitMessage: undefined,
+		errorMessage: undefined,
 		apiKey: undefined,
 		cc: undefined,
 		bcc: undefined
 	});
+
+	const {
+		insertBlock,
+		removeBlock,
+		replaceInnerBlocks,
+		selectBlock,
+		moveBlockToPosition
+	} = useDispatch( 'core/block-editor' );
 
 	const setFormOption = option => {
 		setFormOptions( options => ({ ...options, ...option }) );
@@ -107,13 +135,7 @@ const Edit = ({
 
 	const [ listIDOptions, setListIDOptions ] = useState([{ label: __( 'None', 'otter-blocks' ), value: '' }]);
 
-	const {
-		insertBlock,
-		removeBlock
-	} = useDispatch( 'core/block-editor' );
-
-	const { replaceInnerBlocks } = useDispatch( 'core/block-editor' );
-	const { createNotice } = dispatch( 'core/notices' );
+	const { createNotice } = useDispatch( 'core/notices' );
 
 	const hasInnerBlocks = useSelect(
 		select =>
@@ -150,7 +172,22 @@ const Edit = ({
 		};
 	});
 
+	const { canSaveData } = useSelect( select => {
+		const isSavingPost = select( 'core/editor' )?.isSavingPost();
+		const isAutosaving = select( 'core/editor' )?.isAutosavingPost();
+
+		return {
+			canSaveData: ! isAutosaving && isSavingPost
+		};
+	});
+
 	const hasEssentialData = attributes.optionName && hasProtection;
+
+	useEffect( () => {
+		if ( canSaveData && optionsHaveChanged ) {
+			saveFormEmailOptions();
+		}
+	}, [ canSaveData, optionsHaveChanged ]);
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -209,6 +246,7 @@ const Edit = ({
 			cc: wpOptions?.cc,
 			bcc: wpOptions?.bcc,
 			submitMessage: wpOptions?.submitMessage,
+			errorMessage: wpOptions?.errorMessage,
 			provider: wpOptions?.integration?.provider,
 			apiKey: wpOptions?.integration?.apiKey,
 			listId: wpOptions?.integration?.listId,
@@ -272,6 +310,7 @@ const Edit = ({
 						emails[index].redirectLink !== formOptions.redirectLink ||
 						emails[index].emailSubject !== formOptions.subject ||
 						emails[index].submitMessage !== formOptions.submitMessage ||
+						emails[index].errorMessage !== formOptions.errorMessage ||
 						emails[index].fromName !== formOptions.fromName ||
 						emails[index].cc !== formOptions.cc ||
 						emails[index].bcc !== formOptions.bcc
@@ -282,6 +321,7 @@ const Edit = ({
 					emails[index].redirectLink = formOptions.redirectLink;
 					emails[index].emailSubject = formOptions.subject;
 					emails[index].submitMessage = formOptions.submitMessage;
+					emails[index].errorMessage = formOptions.errorMessage;
 					emails[index].fromName = formOptions.fromName;
 					emails[index].cc = formOptions.cc;
 					emails[index].bcc = formOptions.bcc;
@@ -297,6 +337,7 @@ const Edit = ({
 					redirectLink: formOptions.redirectLink,
 					emailSubject: formOptions.subject,
 					submitMessage: formOptions.submitMessage,
+					errorMessage: formOptions.errorMessage,
 					cc: formOptions.cc,
 					bcc: formOptions.bcc
 				});
@@ -719,43 +760,69 @@ const Edit = ({
 	};
 
 	const inlineStyles = {
-		'--message-font-size': attributes.messageFontSize !== undefined && attributes.messageFontSize,
-		'--input-font-size': attributes.inputFontSize !== undefined && attributes.inputFontSize,
-		'--help-font-size': attributes.helpFontSize !== undefined && attributes.helpFontSize,
-		'--input-color': attributes.inputColor,
-		'--padding': padding( attributes.inputPadding ),
-		'--border-radius': attributes.inputBorderRadius !== undefined && ( attributes.inputBorderRadius + 'px' ),
-		'--border-width': attributes.inputBorderWidth !== undefined && ( attributes.inputBorderWidth + 'px' ),
-		'--border-color': attributes.inputBorderColor,
-		'--label-color': attributes.labelColor,
-		'--input-width': attributes.inputWidth !== undefined && ( attributes.inputWidth + '%' ),
-		'--submit-color': attributes.submitColor,
-		'--required-color': attributes.inputRequiredColor,
-		'--input-gap': attributes.inputGap !== undefined && ( attributes.inputGap + 'px' ),
-		'--inputs-gap': attributes.inputsGap !== undefined && ( attributes.inputsGap + 'px' ),
-		'--label-font-size': attributes.labelFontSize !== undefined && attributes.labelFontSize,
-		'--submit-font-size': attributes.submitFontSize !== undefined && attributes.submitFontSize,
-		'--help-label-color': attributes.helpLabelColor,
-		'--input-bg-color': attributes.inputBackgroundColor
+		'--message-font-size': getSyncValue( 'messageFontSize' ),
+		'--input-font-size': getSyncValue( 'inputFontSize' ),
+		'--help-font-size': getSyncValue( 'helpFontSize' ),
+		'--input-color': getSyncValue( 'inputColor' ),
+		'--padding': renderBoxOrNumWithUnit(
+			responsiveGetAttributes([
+				getSyncValue( 'inputPadding' ),
+				getSyncValue( 'inputPaddingTablet' ),
+				getSyncValue( 'inputPaddingMobile' )
+			]), 'px' ),
+		'--border-radius': renderBoxOrNumWithUnit( getSyncValue( 'inputBorderRadius' ), 'px' ),
+		'--border-width': renderBoxOrNumWithUnit( getSyncValue( 'inputBorderWidth' ), 'px' ),
+		'--border-color': getSyncValue( 'inputBorderColor' ),
+		'--label-color': getSyncValue( 'labelColor' ),
+		'--input-width': getSyncValue( 'inputWidth' ) !== undefined && ( getSyncValue( 'inputWidth' ) + '%' ),
+		'--submit-color': getSyncValue( 'submitColor' ),
+		'--submit-bg-color': getSyncValue( 'submitBackgroundColor' ),
+		'--submit-color-hover': getSyncValue( 'submitColorHover' ),
+		'--submit-bg-color-hover': getSyncValue( 'submitBackgroundColorHover' ),
+		'--required-color': getSyncValue( 'inputRequiredColor' ),
+		'--input-gap': getSyncValue( 'inputGap' ) !== undefined && ( getSyncValue( 'inputGap' ) + 'px' ),
+		'--inputs-gap': getSyncValue( 'inputsGap' ) !== undefined && ( getSyncValue( 'inputsGap' ) + 'px' ),
+		'--label-font-size': _px( getSyncValue( 'labelFontSize' ) ),
+		'--submit-font-size': getSyncValue( 'submitFontSize' ),
+		'--help-label-color': getSyncValue( 'helpLabelColor' ),
+		'--input-bg-color': getSyncValue( 'inputBackgroundColor' ),
+		'--btn-pad': renderBoxOrNumWithUnit(
+			responsiveGetAttributes([
+				getSyncValue( 'buttonPadding' ),
+				getSyncValue( 'buttonPaddingTablet' ),
+				getSyncValue( 'buttonPaddingMobile' )
+			]), 'px' )
 	};
-
-	const [ cssNodeName, setCSS ] = useCSSNode();
-	useEffect( ()=>{
-		setCSS([
-			`.otter-form__container .wp-block-button__link {
-				background-color: ${attributes.submitBackgroundColor}
-			}`,
-			`.otter-form__container .wp-block-button__link:hover {
-				${ attributes.submitBackgroundColorHover && `background-color: ${attributes.submitBackgroundColorHover}` }
-			}`
-		]);
-	}, [ attributes.submitBackgroundColor, attributes.submitBackgroundColorHover ]);
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		style: inlineStyles,
-		className: cssNodeName
+		style: inlineStyles
 	});
+
+	const inputFieldActions = {
+		select: ( blockId ) => {
+			if ( 0 < children?.length ) {
+				const block = children.find( block => block.clientId === blockId );
+				selectBlock( block.clientId );
+			}
+		},
+		move: ( blockId, position ) => {
+			const blockClientId = children.find( block => block.clientId === blockId )?.clientId;
+			if ( blockClientId ) {
+				moveBlockToPosition( blockClientId, clientId, clientId, position );
+			}
+		},
+		delete: ( blockId ) => {
+			if ( 0 < children?.length ) {
+				const block = children.find( block => block.clientId === blockId );
+				removeBlock( block.clientId, false );
+			}
+		},
+		add: ( blockName ) => {
+			const itemBlock = createBlock( blockName );
+			insertBlock( itemBlock, ( children?.length ) || 0, clientId, false );
+		}
+	};
 
 	return (
 		<Fragment>
@@ -771,7 +838,10 @@ const Edit = ({
 					sendTestEmail,
 					loadingState,
 					testService,
-					hasEmailField
+					hasEmailField,
+					children,
+					inputFieldActions,
+					hasInnerBlocks
 				}}
 			>
 				<Inspector
@@ -786,6 +856,20 @@ const Edit = ({
 								className="otter-form__container"
 								onSubmit={ () => false }
 							>
+								<style>
+									{
+										`#block-${ clientId } .wp-block-button .wp-block-button__link:not(:hover) ` + _cssBlock([
+											[ 'color', getSyncValue( 'submitColor' ) ],
+											[ 'background-color', getSyncValue( 'submitBackgroundColor' )  ]
+										])
+									}
+									{
+										`#block-${ clientId } .wp-block-button .wp-block-button__link:hover ` + _cssBlock([
+											[ 'color', getSyncValue( 'submitColorHover' ) ],
+											[ 'background-color', getSyncValue( 'submitBackgroundColorHover' ) ]
+										])
+									}
+								</style>
 								<InnerBlocks
 								/>
 
@@ -816,17 +900,29 @@ const Edit = ({
 									className={
 										classnames(
 											'wp-block-button has-submit-msg',
+											{ 'left': 'left' === attributes.submitStyle },
 											{ 'right': 'right' === attributes.submitStyle },
-											{ 'full': 'full' === attributes.submitStyle }
+											{ 'full': 'full' === attributes.submitStyle },
+											{ 'o-full-tablet': 'full' === attributes.submitStyleTablet },
+											{ 'o-right-tablet': 'right' === attributes.submitStyleTablet },
+											{ 'o-left-tablet': 'left' === attributes.submitStyleTablet },
+											{ 'o-full-mobile': 'full' === attributes.submitStyleMobile },
+											{ 'o-right-mobile': 'right' === attributes.submitStyleMobile },
+											{ 'o-left-mobile': 'left' === attributes.submitStyleMobile },
+											{ 'o-center': 'center' === attributes.submitStyle },
+											{ 'o-center-tablet': 'center' === attributes.submitStyleTablet },
+											{ 'o-center-mobile': 'center' === attributes.submitStyleMobile }
 										)}
 								>
-									<button
+									<RichText
 										className='wp-block-button__link'
+										placeholder={ __( 'Submit', 'otter-blocks' ) }
+										value={ attributes.submitLabel }
+										onChange={ submitLabel => setAttributes({ submitLabel }) }
+										tagName="button"
 										type='submit'
-										disabled
-									>
-										{ attributes.submitLabel ? attributes.submitLabel : __( 'Submit', 'otter-blocks' ) }
-									</button>
+										onClick={ e => e.preventDefault() }
+									/>
 
 									{ isSelected && (
 										<Fragment>
@@ -874,6 +970,7 @@ const Edit = ({
 											true
 										);
 									}
+									selectBlock( clientId );
 								} }
 								allowSkip
 							/>

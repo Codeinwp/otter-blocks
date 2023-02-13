@@ -1,4 +1,5 @@
 import { color } from '@wordpress/icons/build-types';
+import { isNumber, isString } from 'lodash';
 import { BoxType } from '../../helpers/blocks';
 
 /**
@@ -183,4 +184,16 @@ export const getColorFromThemeStyles = ( type: 'color' | 'gradient' | 'duotone' 
 	const color = selectColorFromThemeStyles( type, colorName );
 	const isCSSVar = Boolean( color?.includes( '--wp--preset--' ) );
 	return isCSSVar ? `var(${color})` : color;
+};
+
+export const createBoxFrom = ( x: string | number | undefined | BoxType ) => {
+	if ( isNumber( x ) ) {
+		return makeBox( addUnit( x, 'px' ) );
+	}
+
+	if ( isString( x ) ) {
+		return makeBox( x );
+	}
+
+	return x;
 };

@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.2.29",
+            "version": "3.2.34",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "9456fb0944ec69c3975de04aaf56233ddc2f828c"
+                "reference": "f8d3a16d65a77d4f31dbfa1ffcb5ca3ac5c9979b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/9456fb0944ec69c3975de04aaf56233ddc2f828c",
-                "reference": "9456fb0944ec69c3975de04aaf56233ddc2f828c",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/f8d3a16d65a77d4f31dbfa1ffcb5ca3ac5c9979b",
+                "reference": "f8d3a16d65a77d4f31dbfa1ffcb5ca3ac5c9979b",
                 "shasum": ""
             },
             "require-dev": {
@@ -42,9 +42,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.2.29"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.2.34"
             },
-            "time": "2022-09-08T15:34:21+00:00"
+            "time": "2023-01-31T08:26:01+00:00"
         },
         {
             "name": "masterminds/html5",

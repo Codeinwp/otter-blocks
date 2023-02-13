@@ -52,10 +52,10 @@
 			"type": "string"
 		},
 		"borderSize": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"borderRadius": {
-			"type": "number"
+			"type": ["number", "object"]
 		},
 		"boxShadow": {
 			"type": "boolean",
@@ -120,21 +120,17 @@
 		},
 		"icon": {
 			"type": "string"
+		},
+		"noFollow": {
+			"type": "boolean",
+			"default": true
+		},
+		"isSynced": {
+			"type": "array"
 		}
 	},
 	"supports": {
 		"reusable": false
 	},
-	"styles": [
-		{
-			"name": "fill",
-			"label": "Fill",
-			"isDefault": true
-		},
-		{
-			"name": "outline",
-			"label": "Outline"
-		}
-	],
 	"style": "wp-block-button"
 }

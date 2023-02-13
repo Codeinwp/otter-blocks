@@ -43,7 +43,7 @@
 	min-width: 300px;
 	overflow: hidden;
 
-	.components-button-group {
+	.components-button-group:not(.o-toggle-group-control) {
 		padding-bottom: 10px;
 	}
 }

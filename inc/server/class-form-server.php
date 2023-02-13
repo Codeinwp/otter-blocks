@@ -201,11 +201,10 @@ class Form_Server {
 		try {
 
 			// Check is the request is OK.
-			$reasons = $this->check_form_conditions( $form_data );
+			$error_code = $this->check_form_conditions( $form_data );
 
-			if ( 0 < count( $reasons ) ) {
-				$res->set_error( __( 'Invalid request!', 'otter-blocks' ) );
-				$res->set_reasons( $reasons );
+			if ( $error_code ) {
+				$res->set_code( $error_code );
 				return $res->build_response();
 			}
 
@@ -213,11 +212,10 @@ class Form_Server {
 			if ( $form_data->payload_has_field( 'token' ) ) {
 				$result = $this->check_form_captcha( $form_data );
 				if ( ! $result['success'] ) {
-					$res->set_error( __( 'The reCaptcha was invalid!', 'otter-blocks' ) );
+					$res->set_code( Form_Data_Response::ERROR_INVALID_CAPTCHA_TOKEN );
 					return $res->build_response();
 				}
 			}
-
 
 			$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_payload_field( 'formOption' ) );
 			$form_data->set_form_options( $form_options );
@@ -235,12 +233,13 @@ class Form_Server {
 
 				return $provider_response;
 			} else {
-				$res->set_error( __( 'The email service provider was not registered!', 'otter-blocks' ) );
+				$res->set_code( Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED );
 			}
 
 			do_action( 'otter_form_after_submit', $form_data );
 		} catch ( Exception $e ) {
-			$res->set_error( $e->getMessage() );
+			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$res->add_reason( $e->getMessage() );
 			$this->send_error_email( $e->getMessage(), $form_data );
 		}
 
@@ -265,7 +264,7 @@ class Form_Server {
 			$email_message = Form_Email::instance()->build_email( $form_data );
 			$email_body    = apply_filters( 'otter_form_email_build_body', $email_message );
 
-			// Sent the form date to the admin site as a default behaviour.
+			// Sent the form date to the admin site as a default behavior.
 			$to = sanitize_email( get_site_option( 'admin_email' ) );
 
 			// Check if we need to send it to another user email.
@@ -277,6 +276,10 @@ class Form_Server {
 					if ( isset( $form['form'] ) && $form['form'] === $option_name && isset( $form['email'] ) && '' !== $form['email'] ) {
 						$to = sanitize_email( $form['email'] );
 					}
+				}
+
+				if ( empty( $to ) ) {
+					$to = sanitize_email( get_site_option( 'admin_email' ) );
 				}
 			}
 
@@ -300,11 +303,14 @@ class Form_Server {
 
 			// phpcs:ignore
 			$res->set_success( wp_mail( $to, $email_subject, $email_body, $headers ) );
-			if ( ! $res->is_success() ) {
-				$res->set_error( __( 'Email could not be send.', 'otter-blocks' ) );
+			if ( $res->is_success() ) {
+				$res->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
+			} else {
+				$res->set_code( Form_Data_Response::ERROR_EMAIL_NOT_SEND );
 			}
 		} catch ( Exception  $e ) {
-			$res->set_error( $e->getMessage() );
+			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$res->add_reason( $e->getMessage() );
 			$this->send_error_email( $e->getMessage(), $form_data );
 		} finally {
 			$form_options = $form_data->get_form_options();
@@ -392,7 +398,8 @@ class Form_Server {
 			// phpcs:ignore
 			$res->set_success( wp_mail( $to, $email_subject, $email_body, $headers ) );
 		} catch ( Exception  $e ) {
-			$res->set_error( $e->getMessage() );
+			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$res->add_reason( $e->getMessage() );
 		} finally {
 			return $res->build_response();
 		}
@@ -429,11 +436,12 @@ class Form_Server {
 					$service->set_api_key( $form_data->get_payload_field( 'apiKey' ) );
 					$res->set_response( $service->get_information_from_provider( $form_data ) );
 				} else {
-					$res->set_error( $valid_api_key['reason'] );
+					$res->set_code( $valid_api_key['code'] );
 				}
 			}
 		} catch ( Exception $e ) {
-			$res->set_error( $e->getMessage() );
+			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$res->add_reason( $e->getMessage() );
 		} finally {
 			return $res->build_response();
 		}
@@ -460,7 +468,7 @@ class Form_Server {
 					$service = new Sendinblue_Integration();
 					break;
 				default:
-					$res->set_error( __( 'Invalid request! Provider is missing.', 'otter-blocks' ) );
+					$res->set_code( Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED );
 			}
 
 			if ( isset( $service ) ) {
@@ -473,11 +481,12 @@ class Form_Server {
 						$res->set_error( __( 'Contact list ID is missing!', 'otter-blocks' ) );
 					}
 				} else {
-					$res->set_error( $valid_api_key['reason'] );
+					$res->set_code( $valid_api_key['code'] );
 				}
 			}
 		} catch ( Exception $e ) {
-			$res->set_error( $e->getMessage() );
+			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$res->add_reason( $e->getMessage() );
 		} finally {
 			return $res->build_response();
 		}
@@ -516,10 +525,10 @@ class Form_Server {
 			// Get the api credentials from the Form block.
 			$wp_options_form = $form_data->get_form_options();
 
-			$issues = $wp_options_form->check_data();
+			$error_code = $wp_options_form->check_data();
 
 			if (
-				count( $issues ) == 0
+				'' === $error_code
 			) {
 				$service = null;
 				switch ( $wp_options_form->get_provider() ) {
@@ -535,23 +544,24 @@ class Form_Server {
 
 				if ( $valid_api_key['valid'] ) {
 					$res->copy( $service->subscribe( $email ) );
-
-					// Add additional data like: redirect link when the request is successful.
-					$res->add_values( $wp_options_form->get_submit_data() );
 				} else {
-					$res->set_error( $valid_api_key['reason'] );
+					$res->set_code( $valid_api_key['code'] );
 				}
 			} else {
-				$res->set_reasons( $issues );
+				$res->set_code( $error_code );
 			}
 		} catch ( Exception $e ) {
-			$res->set_error( __( 'Server error!', 'otter-blocks' ) );
+			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
+			$res->add_reason( $e->getMessage() );
 			$this->send_error_email( $e->getMessage(), $form_data );
 		} finally {
 			// Handle the case when the credential are no longer valid.
 			if ( $res->is_credential_error() ) {
 				self::send_error_email( 'error', $form_data );
 			}
+			$form_options = $form_data->get_form_options();
+			$res->add_values( $form_options->get_submit_data() );
+
 			return $res->build_response();
 		}
 	}
@@ -592,35 +602,24 @@ class Form_Server {
 	 * @access public
 	 * @param Form_Data_Request $form_data Data from the request.
 	 *
-	 * @return array
+	 * @return string
 	 * @since 2.0.0
 	 */
 	public function check_form_conditions( $form_data ) {
+		if ( ! $this->has_required_data( $form_data ) ) {
+			return Form_Data_Response::ERROR_MISSING_DATA;
+		}
 
-		$reasons = array();
-		try {
-			if ( ! $this->has_required_data( $form_data ) ) {
-				$reasons += array( __( 'Essential data is missing!', 'otter-blocks' ) );
-				return $reasons;
-			}
+		$form_options = $form_data->get_form_options();
 
-			$form_options = $form_data->get_form_options();
-
-			if (
-				$form_options->form_has_captcha() &&
-				(
-					! $form_data->payload_has_field( 'token' ) ||
-					'' === $form_data->get_payload_field( 'token' )
-				)
-			) {
-				$reasons += array(
-					__( 'Token is missing!', 'otter-blocks' ),
-				);
-			}
-		} catch ( Exception $e ) {
-			$reasons[] = $e->getMessage();
-		} finally {
-			return $reasons;
+		if (
+			$form_options->form_has_captcha() &&
+			(
+				! $form_data->payload_has_field( 'token' ) ||
+				'' === $form_data->get_payload_field( 'token' )
+			)
+		) {
+			return Form_Data_Response::ERROR_MISSING_CAPTCHA;
 		}
 	}
 

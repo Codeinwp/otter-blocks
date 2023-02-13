@@ -13,12 +13,14 @@ type Attributes = {
 	sendUserEmail: boolean
 	redirectLink: string
 	inputPadding: PaddingType
+	inputPaddingTablet: PaddingType
+	inputPaddingMobile: PaddingType
 	labelColor: string
 	helpLabelColor: string
-	labelFontSize: number
-	inputBorderRadius: number
+	labelFontSize: number | string
+	inputBorderRadius: number | PaddingType
 	inputBorderColor: string
-	inputBorderWidth: number
+	inputBorderWidth: number | PaddingType
 	inputWidth: number
 	inputRequiredColor: string
 	submitMessage: string
@@ -26,17 +28,24 @@ type Attributes = {
 	submitMessageErrorColor: string
 	submitBackgroundColor: string
 	submitBackgroundColorHover: string
-	submitFontSize: number
+	submitFontSize: number | string
 	submitColor: string
+	submitColorHover: string
 	inputGap: number
 	inputColor: string
 	inputsGap: number
 	submitStyle: string
+	submitStyleTablet: string
+	submitStyleMobile: string
 	fromName: string
 	messageFontSize: number
 	inputFontSize: number
 	helpFontSize: number
 	inputBackgroundColor: string
+	buttonPadding: string
+	buttonPaddingTablet: string
+	buttonPaddingMobile: string
+	isSynced: string[]
 }
 
 export type FormAttrs = Partial<Attributes>

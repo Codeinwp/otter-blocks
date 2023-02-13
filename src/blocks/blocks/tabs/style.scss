@@ -4,6 +4,14 @@
 	--active-title-color: inherit;
 	--tab-color: transparent;
 
+    &.has-dark-bg {
+        --active-title-color: #fff;
+
+        .wp-block-themeisle-blocks-tabs__content {
+            color: #fff;
+        }
+    }
+
 	.wp-block-themeisle-blocks-tabs__header {
 		display: flex;
 		flex-direction: row;

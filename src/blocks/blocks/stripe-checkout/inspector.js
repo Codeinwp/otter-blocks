@@ -16,7 +16,7 @@ import {
 /**
  * Internal dependencies
  */
-import ButtonToggle from '../../components/button-toggle-control/index.js';
+import { ButtonToggleControl } from '../../components/index.js';
 
 const Inspector = ({
 	attributes,
@@ -75,7 +75,7 @@ const Inspector = ({
 				title={ __( 'Success & Cancel Messages', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<ButtonToggle
+				<ButtonToggleControl
 					label={ __( 'View', 'otter-blocks' ) }
 					value={ view }
 					options={[

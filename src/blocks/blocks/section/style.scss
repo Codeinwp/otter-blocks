@@ -30,7 +30,7 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 
 .wp-block-themeisle-blocks-advanced-columns {
 	--background: transparent;
-	--columns-width: initial;
+	--columns-width: 100%;
 	--horizontal-align: unset;
 
 	background: var( --background );
@@ -82,6 +82,10 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 			margin-left: auto;
 			margin-right: auto;
 		}
+
+		&.has-dark-bg {
+			color: #fff;
+		}
 	}
 
 	&.has-default-gap {
@@ -124,6 +128,10 @@ html[lang="ja"], html[lang="ko"], html[lang="zh"], html[lang="zh-Hans"], html[la
 			margin-left: 30px;
 			margin-right: 30px;
 		}
+	}
+
+	&.has-dark-bg {
+		color: #fff;
 	}
 }
 

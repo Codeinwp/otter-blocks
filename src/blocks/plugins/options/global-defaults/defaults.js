@@ -1,5 +1,4 @@
 const defaultsAttrs = {
-	'themeisle-blocks/advanced-heading': {},
 	'themeisle-blocks/button-group': {},
 	'themeisle-blocks/button': {},
 	'themeisle-blocks/font-awesome-icons': {},

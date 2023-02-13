@@ -205,7 +205,54 @@ You can check Otter documentation [here](https://docs.themeisle.com/article/1478
 4. Google Map Block
 5. Section Block
 
+== Frequently Asked Questions ==
+
+= Is Otter Blocks free? =
+
+Otter comes in both free and premium versions. The [premium version](https://themeisle.com/plugins/otter-blocks/upgrade/) offers a wider variety of blocks and multiple options to customise them, [compared to the free version](https://docs.themeisle.com/article/1487-whats-the-difference-between-otter-free-and-otter-neve-pro).
+
+= What page builder is compatible with Otter? =
+
+Otter provides blocks for Gutenberg, the default WordPress editor and page builder.
+
+= Can I use Otter with any WordPress theme? =
+
+Sure, Otter is compatible with any WordPress theme.
+
+= Where can I get help? =
+
+If you encounter any difficulties or if you have questions about Otter, you can create a ticket on our [support forum](https://wordpress.org/support/plugin/otter-blocks/). Also, feel free to check our [documentation](https://docs.themeisle.com/article/1478-otter-blocks-documentation) to find out more about the features within the plugin and how to use it to its full potential.
+
+= What are the Patterns and how can I use them? =
+
+The Patterns have been designed to make it easier for you to build your site using predefined blocks that can be then customised according to your needs. You can take a look at our [dedicated documentation](https://docs.themeisle.com/article/1785-block-patterns-otter-features-library) to find out all you need to know about the Patterns.
+
 == Changelog ==
+
+##### [Version 2.2.2](https://github.com/Codeinwp/otter-blocks/compare/v2.2.1...v2.2.2) (2023-02-06)
+
+- Fix Social Sharing Links When Used with FSE
+- Fix the Compatibility of the Posts Block with FIFU Plugin
+- Fix Animation Module Breaking FSE Mobile Menu
+- Fix Section Block Breaking When Changing Theme
+- Simplify Dynamic Value Preview
+- Copy Animations with Copy-paste Style
+
+
+
+
+##### [Version 2.2.1](https://github.com/Codeinwp/otter-blocks/compare/v2.2.0...v2.2.1) (2023-01-30)
+
+- Form Block Redesign & Enhancements
+- Introduce Pro Patterns
+- Improve how content blocks behave with darker backgrounds
+- Fix Popup behaviour with Sticky elements
+- Fix Sticky feature not working properly with Tabs Block
+- Fix some minor issues with various themes
+- Fix PHP 8.2 issues
+
+
+
 
 #### [Version 2.2.0](https://github.com/Codeinwp/otter-blocks/compare/v2.1.6...v2.2.0) (2023-01-10)
 

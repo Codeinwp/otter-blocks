@@ -22,7 +22,7 @@ interface SharedAttrs  {
         variant?: string
         transform?: string
         style?: string
-        lineHeight?: number,
+        lineHeight?: number | string,
         letterSpacing?: string,
         dropCap?: boolean
         align?: string
@@ -70,4 +70,5 @@ type CopyPasteStorage = {
     shared?: SharedAttrs
     core?: SharedCore
     private?: any
+    animations?: string[]
 }

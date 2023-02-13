@@ -15,21 +15,30 @@
 			"type": [ "string", "object" ]
 		},
 		"spacing": {
-			"type": "number",
-			"default": 20
+			"type": ["number", "string"],
+			"default": "20px"
 		},
 		"paddingTopBottom": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"paddingLeftRight": {
-			"type": "number"
+			"type": ["number", "string"]
+		},
+		"padding": {
+			"type": "object"
+		},
+		"paddingTablet": {
+			"type": "object"
+		},
+		"paddingMobile": {
+			"type": "object"
 		},
 		"collapse": {
 			"type": "string",
 			"default": "collapse-none"
 		},
 		"fontSize": {
-			"type": "number"
+			"type": ["number", "string"]
 		},
 		"fontFamily": {
 			"type": "string"
@@ -44,7 +53,10 @@
 			"type": "string"
 		},
 		"lineHeight": {
-			"type": "number"
+			"type": ["number", "string"]
+		},
+		"isSynced": {
+			"type": "array"
 		}
 	},
 	"editorStyle": "otter-button-group-editor",

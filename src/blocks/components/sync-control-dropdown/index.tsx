@@ -30,19 +30,30 @@ import './editor.scss';
 
 const noop = () => {};
 
+type SyncControlDropdownProps = {
+	isSynced?: string[]
+	options: {label: string, value: any, isHidden?: boolean}[]
+	setAttributes: ( attrs: any ) => void
+}
+
+/**
+ * A dropdown that let you select which of the given attrs to sync with global defaults.
+ * @param props The props.
+ * @returns
+ */
 const SyncControlDropdown = ({
 	isSynced = [],
 	options,
 	setAttributes
-}) => {
+} : SyncControlDropdownProps ) => {
 	const { enableComplementaryArea } = useDispatch( 'core/interface' );
 
 	if ( 0 === options.length ) {
 		return null;
 	}
 
-	const toggleItem = field => {
-		let fields = [ ...( isSynced || []) ];
+	const toggleItem = ( field: string ) => {
+		let fields: string[] | undefined = [ ...( isSynced || []) ];
 		const isActive = isSynced?.includes( field );
 
 		if ( isActive ) {
@@ -78,13 +89,13 @@ const SyncControlDropdown = ({
 	};
 
 	const resetAll = () => {
-		let fields = [ ...( isSynced || []) ];
+		let fields: string[] | undefined = [ ...( isSynced || []) ];
 
 		options.forEach( option => {
 			if ( isSynced?.includes( option.value ) ) {
-				const index = fields.indexOf( option.value );
-				if ( -1 !== index ) {
-					fields.splice( index, 1 );
+				const index = fields?.indexOf( option.value );
+				if ( index !== undefined && -1 !== index ) {
+					fields?.splice( index, 1 );
 				}
 			}
 		});
@@ -116,6 +127,8 @@ const SyncControlDropdown = ({
 								return (
 									<MenuItem
 										key={ option.value }
+
+										/**@ts-ignore */
 										icon={ isSelected && check }
 										isSelected={ isSelected }
 										label={ option.label }

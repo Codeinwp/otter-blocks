@@ -5,6 +5,7 @@ import { sprintf } from '@wordpress/i18n';
 import { __experimentalGetSettings } from '@wordpress/date';
 
 import { __ } from '@wordpress/i18n';
+import { makeBox } from '../plugins/copy-paste/utils';
 
 // Post types to exclude
 const excludedTypes = [
@@ -214,6 +215,29 @@ export const _em = value => _unit( value, 'em' );
  */
 export const _percent = value => _unit( value, '%' );
 
+/**
+ * Make a box type from a number or an object with Box like props.
+ * @param {Object|number|undefined} value
+ * @param {import('./blocks').BoxType?} defaultValue
+ * @returns {import('./blocks').BoxType}
+ */
+export const objectOrNumberAsBox = ( value, defaultValue = undefined ) => {
+	if ( isNumber( value ) ) {
+		return makeBox( _px( value ) );
+	}
+
+	if ( value === undefined ) {
+		return defaultValue;
+	}
+
+	return {
+		top: value?.top,
+		bottom: value?.bottom,
+		right: value?.right,
+		left: value?.left
+	};
+};
+
 const verticalMapping = {
 	'top': 'flex-start',
 	'left': 'flex-start',
@@ -287,6 +311,42 @@ export const hex2rgba = ( color, alpha = 100 ) => {
 
 	const [ r, g, b ] = color.match( /\w\w/g ).map( x => parseInt( x, 16 ) );
 	return `rgba(${r},${g},${b},${alpha / 100})`;
+};
+
+/**
+ * Check if color is a dark.
+ *
+ * @param color
+ * @returns {boolean}
+ */
+export const isColorDark = color => {
+	if ( ! color ) {
+		return false;
+	}
+
+	let value = color;
+
+	if ( color.startsWith( 'var(' ) ) {
+		value = getComputedStyle( document.documentElement ).getPropertyValue( color.slice( 4, -1 ) ).trim();
+	}
+
+	// Convert hex to RGB if necessary
+	if ( value.startsWith( '#' ) ) {
+		value = hex2rgba( value );
+	}
+
+	if ( ! Boolean( value ) ) {
+		return false;
+	}
+
+	// Extract the red, green, and blue values
+	const [ r, g, b ] = value.match( /\d+/g ).map( Number );
+
+	// Calculate the brightness value
+	const brightness = ( 0.299 * r ) + ( 0.587 * g ) + ( 0.114 * b );
+
+	// Compare the brightness to a threshold
+	return 128 > brightness;
 };
 
 /**
@@ -443,17 +503,22 @@ export const changeActiveStyle = ( className, styles, newStyle ) =>{
  * Create a CSS property declaration.
  * @param {string} prop The name of the property.
  * @param {string | undefined | null} value The value.
- * @param { (c: any) => boolean | boolean | undefined } condition The condition.
+ * @param { ((c: any) => boolean) | boolean | undefined } condition The condition.
  * @returns
  */
 export const _cssProp = ( prop, value, condition = undefined ) => value !== undefined && null !== value && ( condition === undefined || ( 'function' === typeof condition ? condition( value ) : condition ) ) ? `${prop}: ${value};` : undefined;
 
 /**
  * Create a CSS block declaration.
- * @param {[string, string][]} propsPairs The properties grouped in pairs
+ * @param {[string, string, ((c: any) => boolean | boolean | undefined) | undefined][]} propsPairs The properties grouped in pairs
  * @returns
  */
-export const _cssBlock = ( propsPairs ) => `{\n${propsPairs?.map( pair => _cssProp( pair?.[0], pair?.[1], pair?.[2]) )?.join( '\n' ) ?? ''} \n}`;
+export const _cssBlock = ( propsPairs ) => `{\n${
+	propsPairs
+		?.map( pair => _cssProp( pair?.[0], pair?.[1], pair?.[2]) )
+		?.filter( x => x !== undefined )
+		?.join( '\n' ) ??
+	''} \n}`;
 
 /**
  * Wrap a given string in a box object.
@@ -530,6 +595,19 @@ export const _compactObject = ( o ) => {
  */
 export const compactObject = ( o ) => {
 	return _compactObject( cloneDeep( o ) );
+};
+
+/**
+ * Utility function for rendering to CSS legacy value that were numbers before converting it to a box value type.
+ * @param {string|import('./blocks').BoxType | number | undefined} box The box to render.
+ * @param {string} unit The unit to add if the box is a number.
+ * @returns
+ */
+export const renderBoxOrNumWithUnit = ( box, unit ) => {
+	if ( isNumber( box ) ) {
+		return boxToCSS( _unit( box, unit ) );
+	}
+	return boxToCSS( box );
 };
 
 /**

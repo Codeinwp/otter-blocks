@@ -1,4 +1,4 @@
-$base-index: 9999 !default;
+$base-index: 99999 !default;
 
 .wp-block-themeisle-blocks-popup {
 	--min-width: 400px;
@@ -24,6 +24,10 @@ $base-index: 9999 !default;
 	--padding-mobile: var(--padding-tablet);
 	--box-shadow: unset;
 
+	&.has-dark-bg {
+		color: #fff;
+		--close-color: #fff;
+	}
 
 	&.is-front {
 		display: none;
