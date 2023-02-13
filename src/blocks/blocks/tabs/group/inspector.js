@@ -422,14 +422,14 @@ const Inspector = ({
 								<AutoDisableSyncAttr attr='titlePadding' attributes={attributes}>
 									<BoxControl
 										label={ __( 'Title Padding', 'otter-blocks' ) }
-										values={ attributes.titlePadding ?? { top: '5px', bottom: '5px', left: '10px', right: '10px' }  }
+										values={ attributes.titlePadding ?? makeBox( '16px' )  }
 										onChange={ titlePadding => setAttributes({ titlePadding: ! isEmptyBox( titlePadding ) ? titlePadding : undefined }) }
 									/>
 								</AutoDisableSyncAttr>
 								<AutoDisableSyncAttr attr='contentPadding' attributes={attributes}>
 									<BoxControl
 										label={ __( 'Content Padding', 'otter-blocks' ) }
-										values={ attributes.contentPadding ?? makeBox( '0px' )  }
+										values={ attributes.contentPadding ?? makeBox( '16px' )  }
 										onChange={ contentPadding => setAttributes({ contentPadding:
 											! isEmptyBox( contentPadding ) ? contentPadding : undefined }) }
 									/>

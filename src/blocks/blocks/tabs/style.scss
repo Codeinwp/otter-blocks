@@ -10,8 +10,8 @@ $margin-offset-scaling: 1.5;
 	--active-title-color: inherit;
 	--active-title-background: var(--tab-color);
 	--content-text-color: inherit;
-	--content-padding: 0px;
-	--title-padding: 5px 10px;
+	--content-padding: 16px;
+	--title-padding: 16px;
 	--title-border-width: var(--border-width);
 	--active-title-border-color: #ed6f57;
 	--border-side-width: 3px;
@@ -111,6 +111,7 @@ $margin-offset-scaling: 1.5;
 
 	.wp-block-themeisle-blocks-tabs-item {
 		display: flex;
+		margin: 0px;
 
 		@media ( max-width: 800px ) {
 			display: block;
@@ -316,7 +317,7 @@ $margin-offset-scaling: 1.5;
 
 			.wp-block-themeisle-blocks-tabs-item__content {
 				border-left-width: 0px;
-				border-top-width: 0px;
+				// border-top-width: 0px;
 			}
 
 			@media (min-width: 800px) {
