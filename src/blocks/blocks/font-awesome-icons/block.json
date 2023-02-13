@@ -39,12 +39,7 @@
 		},
 		"padding": {
 			"type": [ "number", "object" ],
-			"default": {
-				"top": "5px",
-				"right": "5px",
-				"bottom": "5px",
-				"left": "5px"
-			}
+			"default": 5
 		},
 		"margin": {
 			"type": [ "number", "object" ],
