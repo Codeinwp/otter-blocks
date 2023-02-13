@@ -68,8 +68,14 @@
             > .block-editor-block-list__layout {
                 height: 100%;
 
-                > .block-editor-block-list__block:has( > .wp-block-themeisle-blocks-tabs-item__content.active) {
-                    @media (min-width: 800px) {
+                > .block-editor-block-list__block {
+                    &:has( > .wp-block-themeisle-blocks-tabs-item__content.active) {
+                        @media (min-width: 800px) {
+                            height: 100%;
+                        }
+                    }
+
+                    &> .wp-block-themeisle-blocks-tabs-item__content.active {
                         height: 100%;
                     }
                 }
@@ -107,7 +113,7 @@
             height: 30px;
     
             &> .add-header-item > button {
-                left: -11px;
+                left: 9px;
             }
         }
     }

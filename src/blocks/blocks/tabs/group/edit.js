@@ -66,16 +66,18 @@ const TabHeader = ({
 };
 
 const AddTabHeader = ({
-	clientId
+	clientId,
+	addTab
 }) => {
 	return (
 		<div className='add-header-container'>
 			<div className='add-header-item'>
 				<BlockAppender
-					buttonText={ __( 'Add Tab+', 'otter-blocks' ) }
+					buttonText={ __( 'Add Tab', 'otter-blocks' ) }
 					variant="primary"
 					allowedBlock="themeisle-blocks/tabs-item"
 					clientId={ clientId }
+					onClick={ addTab }
 				/>
 			</div>
 		</div>
@@ -129,7 +131,6 @@ const Edit = ({
 	} = useDispatch( 'core/block-editor' );
 
 	const toggleActiveTab = blockId => {
-		console.log({ blockId, activeTab });
 		if ( contentRef.current ) {
 			children.forEach( block => {
 				const blockContent = contentRef.current.querySelector( `#block-${ block.clientId } > .wp-block-themeisle-blocks-tabs-item__content` );
@@ -189,7 +190,9 @@ const Edit = ({
 	};
 
 	const addTab = () => {
-		const itemBlock = createBlock( 'themeisle-blocks/tabs-item' );
+		const itemBlock = createBlock( 'themeisle-blocks/tabs-item', {
+			title: __( 'Tab ', 'otter-blocks' ) + ( ( children?.length ?? 0 ) + 1 )
+		});
 		insertBlock( itemBlock, ( children?.length ) || 0, clientId, false );
 	};
 
@@ -258,7 +261,7 @@ const Edit = ({
 					}) || '' }
 
 					{ ( isSelected || 0 === children.length ) && (
-						<AddTabHeader clientId={ clientId } />
+						<AddTabHeader clientId={ clientId } addTab={ addTab } />
 					) }
 				</div>
 
