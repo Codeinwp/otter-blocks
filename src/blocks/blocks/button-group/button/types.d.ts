@@ -1,4 +1,4 @@
-import { BlockProps, InspectorProps } from '../../../helpers/blocks';
+import { BlockProps, BorderRadius, BorderType, InspectorProps } from '../../../helpers/blocks';
 
 type Attributes = {
   id: string
@@ -13,8 +13,8 @@ type Attributes = {
   hoverBackground: string
   hoverBackgroundGradient: string
   hoverBorder: string
-  borderSize: number
-  borderRadius: number
+  borderSize: number | BorderType
+  borderRadius: number | BorderRadius
   boxShadow: boolean
   boxShadowColor: string
   boxShadowColorOpacity: number
@@ -32,6 +32,8 @@ type Attributes = {
   library: string
   prefix: string
   icon: string
+  noFollow: boolean
+  isSynced: string[]
 }
 
 export type ButtonAttrs = Partial<Attributes>

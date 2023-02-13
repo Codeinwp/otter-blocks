@@ -431,3 +431,12 @@ export const copyScriptAssetToIframe = ( assetSelectorId, callback ) => {
 		}
 	}
 };
+
+export const buildGetSyncValue = ( name, attributes, defaultAttributes ) => {
+	return ( field ) => {
+		if ( attributes?.isSynced?.includes( field ) ) {
+			return getDefaultValueByField({ name, field, defaultAttributes, attributes });
+		}
+		return attributes?.[field];
+	};
+};

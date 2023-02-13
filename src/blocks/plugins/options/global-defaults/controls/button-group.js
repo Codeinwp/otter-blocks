@@ -5,134 +5,143 @@ import { __ } from '@wordpress/i18n';
 
 import {
 	PanelBody,
-	RangeControl,
-	SelectControl
+	__experimentalBoxControl as BoxControl,
+	__experimentalUnitControl as UnitControl
 } from '@wordpress/components';
 
-import { Fragment } from '@wordpress/element';
+import { Fragment, useEffect, useState } from '@wordpress/element';
 
 /**
  * Internal dependencies
  */
-import SizingControl from '../../../../components/sizing-control/index.js';
-import GoogleFontsControl from '../../../../components/google-fonts-control/index.js';
+import TypographySelectorControl from '../../../../components/typography-selector-control/index';
+import { ResponsiveControl } from '../../../../components/index.js';
+import { useResponsiveAttributes } from '../../../../helpers/utility-hooks.js';
+import { _px } from '../../../../helpers/helper-functions';
 
 const ButtonGroupBlock = ({
 	blockName,
-	defaults,
+	defaults: attributes,
 	changeConfig
 }) => {
-	const changeFontFamily = value => {
-		if ( ! value ) {
-			changeConfig( blockName, {
-				fontFamily: value,
-				fontVariant: value
-			});
-		} else {
-			changeConfig( blockName, {
-				fontFamily: value,
-				fontVariant: 'normal',
-				fontStyle: 'normal'
-			});
-		}
+
+	const setAttributes = x => changeConfig( blockName, x );
+
+	const makeBoxFromSplitAxis = ( vertical, horizontal ) => {
+		return {
+			top: vertical,
+			bottom: vertical,
+			right: horizontal,
+			left: horizontal
+		};
 	};
+
+	const [ proxyStore, setProxyStore ] = useState({
+		padding: makeBoxFromSplitAxis(
+			attributes.paddingTopBottom,
+			attributes.paddingLeftRight
+		),
+		paddingTablet: attributes.paddingTablet,
+		paddingMobile: attributes.paddingMobile,
+		align: attributes.align
+	});
+
+	const [ storeChanged, setStoreChanged ] = useState( false );
+
+	const updateStore = attr => setProxyStore({
+		padding: makeBoxFromSplitAxis(
+			attributes.paddingTopBottom,
+			attributes.paddingLeftRight
+		),
+		paddingTablet: attributes.paddingTablet,
+		paddingMobile: attributes.paddingMobile,
+		align: attributes.align,
+		...attr
+	});
+
+	const { responsiveSetAttributes, responsiveGetAttributes } = useResponsiveAttributes( updateStore );
+
+	useEffect( () => {
+		if ( storeChanged ) {
+			setAttributes({
+				paddingTopBottom: proxyStore?.padding?.top,
+				paddingLeftRight: proxyStore?.padding?.right,
+				paddingTablet: proxyStore?.paddingTablet,
+				paddingMobile: proxyStore?.paddingMobile,
+				align: proxyStore?.align
+			});
+			setStoreChanged( false );
+		}
+
+	}, [ proxyStore.padding, proxyStore.paddingTablet, proxyStore.paddingMobile, storeChanged ]);
 
 	return (
 		<Fragment>
 			<PanelBody
-				title={ __( 'Spacing', 'otter-blocks' ) }
+				title={ __( 'Dimensions', 'otter-blocks' ) }
 			>
-				<SizingControl
-					label={ __( 'Button Padding', 'otter-blocks' ) }
-					min={ 0 }
-					max={ 100 }
-					onChange={ ( key, value ) => changeConfig( blockName, { [key]: value }) }
-					options={ [
-						{
-							label: __( 'Top', 'otter-blocks' ),
-							type: 'paddingTopBottom',
-							value: defaults.paddingTopBottom
-						},
-						{
-							label: __( 'Right', 'otter-blocks' ),
-							type: 'paddingLeftRight',
-							value: defaults.paddingLeftRight
-						},
-						{
-							label: __( 'Bottom', 'otter-blocks' ),
-							type: 'paddingTopBottom',
-							value: defaults.paddingTopBottom
-						},
-						{
-							label: __( 'Left', 'otter-blocks' ),
-							type: 'paddingLeftRight',
-							value: defaults.paddingLeftRight
+				<ResponsiveControl
+					label={ __( 'Screen Type', 'otter-blocks' ) }
+				>
+					<BoxControl
+						label={ __( 'Padding', 'otter-blocks' ) }
+						values={
+							responsiveGetAttributes([
+								makeBoxFromSplitAxis(
+									attributes.paddingTopBottom,
+									attributes.paddingLeftRight
+								),
+								attributes.paddingTablet,
+								attributes.paddingMobile
+							]) ?? makeBoxFromSplitAxis( '15px', '20px' )
 						}
-					] }
-				/>
 
-				<hr/>
+						onChange={ value => {
+							responsiveSetAttributes( value, [ 'padding', 'paddingTablet', 'paddingMobile' ]);
+							setStoreChanged( true );
+						} }
+						splitOnAxis={ true }
+					/>
 
-				<RangeControl
-					label={ __( 'Group Spacing', 'otter-blocks' ) }
-					value={ defaults.spacing }
-					onChange={ value => changeConfig( blockName, { spacing: value }) }
+				</ResponsiveControl>
+
+				<UnitControl
+					label={ __( 'Spacing', 'otter-blocks' ) }
+					value={ _px( attributes.spacing ) }
+					onChange={ e => setAttributes({ spacing: e }) }
 					step={ 0.1 }
-					min={ 0 }
-					max={ 50 }
-				/>
-
-				<hr/>
-
-				<SelectControl
-					label={ __( 'Collapse On', 'otter-blocks' ) }
-					value={ defaults.collapse }
-					options={ [
-						{ label: __( 'None', 'otter-blocks' ), value: 'collapse-none' },
-						{ label: __( 'Desktop', 'otter-blocks' ), value: 'collapse-desktop' },
-						{ label: __( 'Tablet', 'otter-blocks' ), value: 'collapse-tablet' },
-						{ label: __( 'Mobile', 'otter-blocks' ), value: 'collapse-mobile' }
-					] }
-					onChange={ value => changeConfig( blockName, { collapse: value }) }
 				/>
 			</PanelBody>
 
 			<PanelBody
-				title={ __( 'Typography Settings', 'otter-blocks' ) }
-				initialOpen={ false }
+				title={ __( 'Typography', 'otter-blocks' ) }
+				initialOpen={ true }
 			>
-				<RangeControl
-					label={ __( 'Font Size', 'otter-blocks' ) }
-					value={ defaults.fontSize || '' }
-					onChange={ value => changeConfig( blockName, { fontSize: value }) }
-					step={ 0.1 }
-					min={ 0 }
-					max={ 50 }
-				/>
+				<TypographySelectorControl
+					enableComponents={{
+						fontFamily: true,
+						appearance: true,
+						lineHeight: true,
+						letterCase: true
+					}}
 
-				<hr/>
+					componentsValue={{
+						fontSize: attributes.fontSize,
+						fontFamily: attributes.fontFamily,
+						lineHeight: attributes.lineHeight,
+						appearance: attributes.fontVariant,
+						letterCase: attributes.fontStyle
+					}}
 
-				<GoogleFontsControl
-					label={ __( 'Font Family', 'otter-blocks' ) }
-					value={ defaults.fontFamily }
-					onChangeFontFamily={ changeFontFamily }
-					valueVariant={ defaults.fontVariant }
-					onChangeFontVariant={ value => changeConfig( blockName, { fontVariant: value }) }
-					valueStyle={ defaults.fontStyle }
-					onChangeFontStyle={ value => changeConfig( blockName, { fontStyle: value }) }
-					valueTransform={ defaults.textTransform }
-					onChangeTextTransform={ value => changeConfig( blockName, { textTransform: value }) }
-				/>
-
-				<hr/>
-
-				<RangeControl
-					label={ __( 'Line Height', 'otter-blocks' ) }
-					value={ defaults.lineHeight || '' }
-					onChange={ value => changeConfig( blockName, { lineHeight: value }) }
-					step={ 0.1 }
-					min={ 0 }
-					max={ 200 }
+					onChange={ values => {
+						setAttributes({
+							fontSize: values.fontSize,
+							fontFamily: values.fontFamily,
+							lineHeight: values.lineHeight,
+							fontVariant: values.appearance,
+							fontStyle: values.letterCase
+						});
+					} }
 				/>
 			</PanelBody>
 		</Fragment>
