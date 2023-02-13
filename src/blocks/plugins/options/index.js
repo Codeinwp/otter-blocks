@@ -183,10 +183,10 @@ const Options = () => {
 
 		Object.keys( filterDefault ).forEach( i => {
 			Object.keys( filterDefault[i]).forEach( k => {
-				if ( undefined !== defaultsAttrs[i][k] && filterDefault[i][k] === defaultsAttrs[i][k]) {
+				if ( undefined !== defaultsAttrs[i]?.[k] && filterDefault[i][k] === defaultsAttrs[i][k]) {
 					delete filterDefault[i][k];
-				} else if ( 'object' === typeof filterDefault[i][k]) {
-					if ( isEqual( filterDefault[i][k], defaultsAttrs[i][k]) ) {
+				} else if ( 'object' === typeof filterDefault[i]?.[k]) {
+					if ( isEqual( filterDefault[i]?.[k], defaultsAttrs[i]?.[k]) ) {
 						delete filterDefault[i][k];
 					}
 				}

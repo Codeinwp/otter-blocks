@@ -52,7 +52,7 @@ import {
 import Inspector from './inspector.js';
 import Placeholder from './placeholder.js';
 import { useResponsiveAttributes } from '../../helpers/utility-hooks';
-import { renderBoxOrNumWithUnit, _cssBlock } from '../../helpers/helper-functions';
+import { renderBoxOrNumWithUnit, _cssBlock, _px } from '../../helpers/helper-functions';
 const { attributes: defaultAttributes } = metadata;
 
 export const FormContext = createContext({});
@@ -782,7 +782,7 @@ const Edit = ({
 		'--required-color': getSyncValue( 'inputRequiredColor' ),
 		'--input-gap': getSyncValue( 'inputGap' ) !== undefined && ( getSyncValue( 'inputGap' ) + 'px' ),
 		'--inputs-gap': getSyncValue( 'inputsGap' ) !== undefined && ( getSyncValue( 'inputsGap' ) + 'px' ),
-		'--label-font-size': getSyncValue( 'labelFontSize' ),
+		'--label-font-size': _px( getSyncValue( 'labelFontSize' ) ),
 		'--submit-font-size': getSyncValue( 'submitFontSize' ),
 		'--help-label-color': getSyncValue( 'helpLabelColor' ),
 		'--input-bg-color': getSyncValue( 'inputBackgroundColor' ),

@@ -25,27 +25,32 @@ registerBlockType( name, {
 		'buttons',
 		'button group'
 	],
-	styles: [
-		{
-			name: 'fill',
-			label: __( 'Fill', 'otter-blocks' ),
-			isDefault: true
-		},
-		{
-			name: 'outline',
-			label: __( 'Outline', 'otter-blocks' )
-		},
-		... window.themeisleGutenberg.hasNeve ? [
-			{
-				name: 'primary',
-				label: __( 'Primary', 'otter-blocks' )
-			},
-			{
-				name: 'secondary',
-				label: __( 'Secondary', 'otter-blocks' )
-			}
-		] : []
-	],
+
+	// styles: [
+	// 	{
+	// 		name: 'plain',
+	// 		label: __( 'Plain', 'otter-blocks' )
+	// 	},
+	// 	{
+	// 		name: 'fill',
+	// 		label: __( 'Fill', 'otter-blocks' ),
+	// 		isDefault: true
+	// 	},
+	// 	{
+	// 		name: 'outline',
+	// 		label: __( 'Outline', 'otter-blocks' )
+	// 	},
+	// 	... window.themeisleGutenberg.hasNeve ? [
+	// 		{
+	// 			name: 'primary',
+	// 			label: __( 'Primary', 'otter-blocks' )
+	// 		},
+	// 		{
+	// 			name: 'secondary',
+	// 			label: __( 'Secondary', 'otter-blocks' )
+	// 		}
+	// 	] : []
+	// ],
 	edit,
 	save,
 	example: {

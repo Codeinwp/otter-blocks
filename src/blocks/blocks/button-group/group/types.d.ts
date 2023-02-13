@@ -1,18 +1,21 @@
-import { BlockProps, InspectorProps } from '../../../helpers/blocks';
+import { BlockProps, InspectorProps, PaddingType, Responsive } from '../../../helpers/blocks';
 
 type Attributes = {
 	id: string
-	align: string | object
-	spacing: number
-	paddingTopBottom: number
-	paddingLeftRight: number
+	align: string | Responsive<string>
+	spacing: number | string
+	paddingTopBottom: number | string
+	paddingLeftRight: number | string
+	paddingTablet: PaddingType
+	paddingMobile: PaddingType
 	collapse: string
-	fontSize: number
+	fontSize: number | string
 	fontFamily: string
 	fontVariant: string
 	textTransform: string
 	fontStyle: string
-	lineHeight: number
+	lineHeight: number | string
+	isSynced: string[]
 }
 
 export type ButtonGroupAttrs = Partial<Attributes>
