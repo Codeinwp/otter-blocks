@@ -333,16 +333,41 @@
 			}
 		}
 
-		&.has-pos-left {
-			&> .wp-block-themeisle-blocks-tabs__header .wp-block-themeisle-blocks-tabs__header_item.active {
-				border-bottom-width: 0px;
-				border-left-color: transparent;
-			}
+		@media (min-width: 800px) {
+			&.has-pos-left {
+				&> .wp-block-themeisle-blocks-tabs__header .wp-block-themeisle-blocks-tabs__header_item.active {
+					border-bottom-width: 0px;
+					border-left-color: transparent;
+				}
 
-			.wp-block-themeisle-blocks-tabs-item__content {
-				border-top-width: 0px;
-				border-bottom-width: 0px;
-				border-right-width: 0px;
+				.wp-block-themeisle-blocks-tabs-item__content {
+					border-top-width: 0px;
+					border-bottom-width: 0px;
+					border-right-width: 0px;
+				}
+			}
+		}
+		
+
+		@media (max-width: 800px) {
+			&.has-pos-left {
+				.wp-block-themeisle-blocks-tabs-item__header {
+					border-color: var(--active-title-border-color);
+					border-left-width: 0px;
+					border-right-width: 0px;
+					border-top-width: 0px;
+				}
+
+				.wp-block-themeisle-blocks-tabs-item__header:not(.active) {
+					border-bottom-width: 0px;
+				}
+	
+				.wp-block-themeisle-blocks-tabs-item__content {
+					border-bottom-width: 0px;
+					border-left-width: 0px;
+					border-right-width: 0px;
+					border-top-width: 0px;
+				}
 			}
 		}
 	}
