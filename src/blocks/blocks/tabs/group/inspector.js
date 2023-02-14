@@ -282,28 +282,32 @@ const Inspector = ({
 							<PanelBody
 								title={ __( 'Style variations', 'otter-blocks' ) }
 							>
-								<SelectControl
+								<BaseControl
 									label={ __( 'Select a style', 'otter-blocks' ) }
-									value={ getActiveStyle( styles, attributes.className ) }
-									options={ [
-										{
-											label: __( 'Default', 'otter-blocks' ),
-											value: 'default'
-										},
-										{
-											label: __( 'Border', 'otter-blocks' ),
-											value: 'border'
-										},
-										{
-											label: __( 'Boxed', 'otter-blocks' ),
-											value: 'boxed'
-										}
-									] }
-									onChange={ value => {
-										const classes = changeActiveStyle( attributes?.className, styles, value ) || undefined;
-										setAttributes({ className: classes });
-									} }
-								/>
+								>
+									<ToogleGroupControl
+										value={ getActiveStyle( styles, attributes.className ) }
+										onChange={ value => {
+											const classes = changeActiveStyle( attributes?.className, styles, value ) || undefined;
+											setAttributes({ className: classes });
+										} }
+										options={[
+											{
+												label: __( 'Default', 'otter-blocks' ),
+												value: 'default'
+											},
+											{
+												label: __( 'Border', 'otter-blocks' ),
+												value: 'border'
+											},
+											{
+												label: __( 'Boxed', 'otter-blocks' ),
+												value: 'boxed'
+											}
+										]}
+										hasIcon={ false }
+									/>
+								</BaseControl>
 							</PanelBody>
 							<PanelBody
 								title={ __( 'Typography', 'otter-blocks' ) }
