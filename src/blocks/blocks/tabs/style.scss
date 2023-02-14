@@ -165,10 +165,14 @@
 			border-width: var( --border-width );
 			border-style: solid;
 			border-color: var( --border-color );
-			color: var(--content-text-color);
+			
 			width: 100%;
 			padding: var(--content-padding);
 			display: none;
+
+			:is(p, .wp-block-paragraph) {
+				color: var(--content-text-color);
+			}
 
 			&.active {
 				background: var( --tab-color );
