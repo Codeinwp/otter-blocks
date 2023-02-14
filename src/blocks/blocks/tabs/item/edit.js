@@ -83,6 +83,7 @@ const Edit = ({
 	return (
 		<Fragment>
 			<Inspector
+				attributes={attributes}
 				setAttributes={ setAttributes }
 				selectParent={ () => selectBlock( parentClientId ) }
 			/>

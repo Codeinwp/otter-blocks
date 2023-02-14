@@ -147,7 +147,7 @@ const Inspector = ({
 							<PanelBody
 								title={ __( 'Tabs Settings', 'otter-blocks' ) }
 							>
-								<BaseControl
+								{/* <BaseControl
 									label={ __( 'Tab titles position', 'otter-blocks' ) }
 								>
 									<ToogleGroupControl
@@ -164,7 +164,7 @@ const Inspector = ({
 										]}
 										onChange={ tabsPosition => setAttributes({ tabsPosition }) }
 									/>
-								</BaseControl>
+								</BaseControl> */}
 
 								{
 									'left' !== attributes.tabsPosition && (
