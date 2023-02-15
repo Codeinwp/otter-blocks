@@ -5,6 +5,8 @@ import { addCaptchaOnPage } from './captcha.js';
 import DisplayFormMessage from './message.js';
 import { domReady } from '../../helpers/frontend-helper-functions.js';
 
+let startTimeAntiBot = null;
+
 /**
  * Get the fields with their value from the form.
  *
@@ -128,6 +130,9 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 			payload.nonceValue = nonceFieldValue;
 		}
 
+		payload.antiSpamTime = Date.now() - ( startTimeAntiBot ?? Date.now() );
+		payload.antiSpamHoneyPot = Boolean( form.querySelector( ':scope > .otter-form__container > .protection .o-anti-bot' )?.checked ?? false );
+
 		payload.postUrl = window.location.href;
 
 
@@ -229,8 +234,8 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
  * @param {HTMLDivElement} form
  */
 const cleanInputs = ( form ) => {
-	const inputs = form?.querySelectorAll( '.otter-form__container .wp-block-themeisle-blocks-form-input' );
-	const textarea = form?.querySelectorAll( '.otter-form__container .wp-block-themeisle-blocks-form-textarea' );
+	const inputs = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-input' );
+	const textarea = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-textarea' );
 
 	[ ...inputs, ...textarea ]?.forEach( input => {
 		const valueElem = input.querySelector( '.otter-form-input, .otter-form-textarea-input' );
@@ -271,6 +276,8 @@ domReady( () => {
 	const forms = document.querySelectorAll( '.wp-block-themeisle-blocks-form' );
 
 	addCaptchaOnPage( forms );
+
+	startTimeAntiBot = Date.now();
 
 	forms.forEach( ( form ) => {
 		if ( form.classList.contains( 'can-submit-and-subscribe' ) ) {
