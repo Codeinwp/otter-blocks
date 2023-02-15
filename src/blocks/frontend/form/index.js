@@ -185,20 +185,13 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 					let errorMsgSlug = '';
 
 					// TODO: Write pattern to display a more useful error message.
-					if ( 0 < res?.displayError?.length ) {
+					if ( '110' === res.code ) {
+						displayMsg.setMsg( res?.reasons?.join( '' ), 'error' ).show();
+					} else if ( 0 < res?.displayError?.length ) {
 						errorMsgSlug = res?.displayError;
 
 						displayMsg.setMsg( errorMsgSlug, 'error' ).show();
 					} else {
-
-						// if ( res?.provider && res?.error?.includes( 'invalid' ) || res?.error?.includes( 'fake' ) ) { // mailchimp
-						// 	errorMsgSlug = 'invalid-email';
-						// } else if ( res?.provider && res?.error?.includes( 'duplicate' ) || res?.error?.includes( 'already' ) ) { // sendinblue
-						// 	errorMsgSlug = 'already-registered';
-						// } else {
-						// 	errorMsgSlug = 'try-again';
-						// }
-
 						displayMsg.setMsg( res?.reasons?.join( '' ), 'error' ).show();
 					}
 
