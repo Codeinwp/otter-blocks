@@ -46,6 +46,10 @@ class Tabs_CSS extends Base_CSS {
 						},
 					),
 					array(
+						'property' => '--font-size',
+						'value'    => 'titleFontSize',
+					),
+					array(
 						'property' => '--border-color',
 						'value'    => 'borderColor',
 						'hasSync'  => 'tabs-border-color',
