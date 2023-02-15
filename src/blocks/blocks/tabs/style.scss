@@ -221,6 +221,7 @@
 	&.is-style-boxed {
 		--border-width: 0px;
 		--title-border-width: var(--border-width);
+		--tab-color: #F5F5F5;
 
 		> div.wp-block-themeisle-blocks-tabs__content > .wp-block-themeisle-blocks-tabs-item {
 			display: flex;
