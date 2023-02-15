@@ -224,7 +224,11 @@
 
 		> div.wp-block-themeisle-blocks-tabs__content > .wp-block-themeisle-blocks-tabs-item {
 			display: flex;
-			flex-direction: column;
+
+			@media (max-width: 800px) {
+				flex-direction: column;
+			}
+			
 
 			&> .wp-block-themeisle-blocks-tabs-item__content {
 				flex-grow: 1;

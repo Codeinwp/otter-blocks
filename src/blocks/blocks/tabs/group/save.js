@@ -14,7 +14,6 @@ const Save = ({
 		id: attributes.id,
 		className: classNames(
 			attributes.className,
-			{ 'has-pos-left': 'left' === attributes.tabsPosition  },
 			( attributes.titleAlignment && `is-align-${ attributes.titleAlignment }` )
 		)
 	});
