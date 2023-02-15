@@ -2,10 +2,10 @@
 	--border-width: 3px;
 	--border-radius: 8px;
 	--border-color: #000;
-	--title-color: inherit;
+	--title-color: #000;
 	--title-background: transparent;
-	--tab-color: #F5F5F5;
-	--active-title-color: inherit;
+	--tab-color: white;
+	--active-title-color: var(--title-color);
 	--active-title-background: var(--tab-color);
 	--content-text-color: inherit;
 	--content-padding: 16px;
@@ -28,7 +28,6 @@
 		display: flex;
 		flex-direction: row;
 		justify-content: flex-start;
-		flex-wrap: wrap;
 		border-color: var( --border-color );
 
 		@media ( max-width: 800px ) {
@@ -90,8 +89,6 @@
 			}
 		}
 	} 
-	
-	
 
 	&:not(.has-pos-left) {
 		&> .wp-block-themeisle-blocks-tabs__header {
@@ -195,47 +192,6 @@
 		}
 	}
 
-	&.has-pos-left {
-		display: flex;
-		flex-direction: row;
-		width: 100%;
-
-		.wp-block-themeisle-blocks-tabs__header {
-			flex-direction: column;
-			max-width: 30%;
-			min-width: 12%;
-		}
-
-		.wp-block-themeisle-blocks-tabs__header_item {
-			border-bottom-style: solid;
-			margin-right: calc(0px - var(--border-side-width));
-		}
-		
-		.wp-block-themeisle-blocks-tabs__content {
-			flex-grow: 1; 
-		}
-
-		.wp-block-themeisle-blocks-tabs-item {
-			.wp-block-themeisle-blocks-tabs-item__content {
-				width: 100%;
-			}
-
-			&:has( > .active) {
-
-				@media (min-width: 800px) {
-					height: 100%;
-				}
-				
-			}
-		}
-
-		&:not(.is-style-border) {
-			.wp-block-themeisle-blocks-tabs__header_item {
-				border-right-width: 0px;
-			}
-		}
-	}
-
 	&:not(.has-pos-left) {
 		&.is-align-center {
 			.wp-block-themeisle-blocks-tabs__header {
@@ -269,7 +225,6 @@
 		> div.wp-block-themeisle-blocks-tabs__content > .wp-block-themeisle-blocks-tabs-item {
 			display: flex;
 			flex-direction: column;
-			gap: 3px;
 
 			&> .wp-block-themeisle-blocks-tabs-item__content {
 				flex-grow: 1;
@@ -326,7 +281,14 @@
 
 			.wp-block-themeisle-blocks-tabs-item__content {
 				border-left-width: 0px;
-				// border-top-width: 0px;
+				border-right-width: 0px;
+			}
+
+			@media (max-width: 800px) {
+				.wp-block-themeisle-blocks-tabs-item__content {
+					border-top-width: 0px;
+					border-bottom-width: 0px;
+				}
 			}
 
 			@media (min-width: 800px) {
@@ -334,6 +296,72 @@
 					border-right-width: 0px;
 					border-bottom-width: 0px;
 				}
+			}
+		}
+	}
+}
+
+/*
+
+// HAS POS LEFT LEGACY as reference for future updates
+.wp-block-themeisle-blocks-tabs {
+
+	&.has-pos-left {
+		display: flex;
+		flex-direction: row;
+		width: 100%;
+
+		.wp-block-themeisle-blocks-tabs__header {
+			flex-direction: column;
+			max-width: 30%;
+			min-width: 12%;
+		}
+
+		.wp-block-themeisle-blocks-tabs__header_item {
+			border-bottom-style: solid;
+			margin-right: calc(0px - var(--border-side-width));
+		}
+		
+		.wp-block-themeisle-blocks-tabs__content {
+			flex-grow: 1; 
+		}
+
+		.wp-block-themeisle-blocks-tabs-item {
+			.wp-block-themeisle-blocks-tabs-item__content {
+				width: 100%;
+			}
+
+			&:has( > .active) {
+
+				@media (min-width: 800px) {
+					height: 100%;
+				}
+				
+			}
+		}
+
+		&:not(.is-style-border) {
+			.wp-block-themeisle-blocks-tabs__header_item {
+				border-right-width: 0px;
+			}
+		}
+	}
+	
+	&.is-style-border {
+		&:not(.has-pos-left), &.has-pos-left {
+			&> .wp-block-themeisle-blocks-tabs__header {
+				.wp-block-themeisle-blocks-tabs__header_item {
+					border-width: var(--title-border-width);
+
+					&.active {
+						border-top-width: 0px;
+						border-color: var(--active-title-border-color);
+					}
+				}
+			}
+
+			.wp-block-themeisle-blocks-tabs-item__header {
+				border-width: var(--title-border-width);
 			}
 		}
 
@@ -376,3 +404,5 @@
 		}
 	}
 }
+
+*/

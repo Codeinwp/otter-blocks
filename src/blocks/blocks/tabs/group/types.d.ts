@@ -16,7 +16,6 @@ type Attributes = {
     titlePadding: BoxType
     contentPadding: BoxType
     titleFontSize: string
-    tabsPosition: 'top' | 'left'
     titleTag: string
     titleAlignment: string
     isSynced: string[]

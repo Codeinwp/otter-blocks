@@ -234,10 +234,6 @@ const Inspector = ({
 										{
 											label: __( 'Div', 'otter-blocks' ),
 											value: 'div'
-										},
-										{
-											label: __( 'Span', 'otter-blocks' ),
-											value: 'span'
 										}
 									]}
 								/>
