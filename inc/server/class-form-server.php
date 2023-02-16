@@ -55,7 +55,7 @@ class Form_Server {
 	/**
 	 * Anti Spam timeout
 	 */
-	const ANTI_SPAM_TIMEOUT = 3000; // 3 seconds
+	const ANTI_SPAM_TIMEOUT = 5000; // 5 seconds
 
 
 	/**
