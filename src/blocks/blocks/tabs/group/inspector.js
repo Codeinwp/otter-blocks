@@ -201,42 +201,6 @@ const Inspector = ({
 										</BaseControl>
 									)
 								}
-
-								<SelectControl
-									label={ __( 'Tab title HTML tag', 'otter-blocks' ) }
-									value={ attributes.titleTag ?? 'div' }
-									onChange={ titleTag => setAttributes({ titleTag }) }
-									options={[
-										{
-											label: __( 'H1', 'otter-blocks' ),
-											value: 'h1'
-										},
-										{
-											label: __( 'H2', 'otter-blocks' ),
-											value: 'h2'
-										},
-										{
-											label: __( 'H3', 'otter-blocks' ),
-											value: 'h3'
-										},
-										{
-											label: __( 'H4', 'otter-blocks' ),
-											value: 'h4'
-										},
-										{
-											label: __( 'H5', 'otter-blocks' ),
-											value: 'h5'
-										},
-										{
-											label: __( 'H6', 'otter-blocks' ),
-											value: 'h6'
-										},
-										{
-											label: __( 'Div', 'otter-blocks' ),
-											value: 'div'
-										}
-									]}
-								/>
 							</PanelBody>
 							<PanelBody
 								title={ __( 'Tabs Management', 'otter-blocks' ) }
@@ -370,7 +334,7 @@ const Inspector = ({
 										slug: 'activeTitleBackgroundColor'
 									},
 									{
-										value: attributes.titleColor,
+										value: attributes.titleColor ?? attributes.tabColor ?? 'white',
 										label: __( 'Title color', 'otter-blocks' ),
 										slug: 'titleColor'
 									},
@@ -385,7 +349,7 @@ const Inspector = ({
 										slug: 'contentTextColor'
 									},
 									{
-										value: attributes.tabColor,
+										value: attributes.tabColor ?? 'white',
 										label: __( 'Content background', 'otter-blocks' ),
 										slug: 'tabColor'
 									},
@@ -437,7 +401,7 @@ const Inspector = ({
 
 							</PanelBody>
 							<PanelBody
-								title={ __( 'Border Radius', 'otter-blocks' ) }
+								title={ __( 'Border', 'otter-blocks' ) }
 								initialOpen={ false }
 							>
 								{/*

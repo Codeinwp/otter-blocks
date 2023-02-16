@@ -38,8 +38,7 @@ const Edit = ({
 	const contentRef = useRef( null );
 
 	const {
-		parentClientId,
-		titleTag
+		parentClientId
 	} = useSelect( select => {
 		const {
 			getBlock,
@@ -50,18 +49,9 @@ const Edit = ({
 		const parentBlock = getBlock( parentClientId );
 
 		return {
-			parentClientId: parentBlock.clientId,
-			titleTag: parentBlock.attributes.titleTag
+			parentClientId: parentBlock.clientId
 		};
 	}, []);
-
-	useEffect( () => {
-		if ( titleTag !== undefined && titleTag !== attributes.titleTag ) {
-			setAttributes({
-				titleTag: 'div' !== titleTag ? titleTag : undefined
-			});
-		}
-	},  [ titleTag ]);
 
 	const { selectBlock } = useDispatch( 'core/block-editor' );
 
@@ -99,7 +89,7 @@ const Edit = ({
 							'active': attributes.defaultOpen ? attributes.defaultOpen : false
 						}
 					) }
-					tagName={ attributes.titleTag ?? 'div' }
+					tagName={ 'div' }
 					onClick={ switchActiveState }
 					withoutInteractiveFormatting
 				/>

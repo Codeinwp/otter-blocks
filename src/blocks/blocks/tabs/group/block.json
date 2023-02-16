@@ -53,10 +53,6 @@
 		"titleFontSize" : {
 			"type": "string"
 		},
-		"titleTag": {
-			"type": "string",
-			"default": "div"
-		},
 		"titleAlignment": {
 			"type": "string"
 		},

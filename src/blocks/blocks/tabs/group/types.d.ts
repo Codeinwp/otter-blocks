@@ -16,7 +16,6 @@ type Attributes = {
     titlePadding: BoxType
     contentPadding: BoxType
     titleFontSize: string
-    titleTag: string
     titleAlignment: string
     isSynced: string[]
 };
