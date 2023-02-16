@@ -6,8 +6,8 @@
 	--icon-align-mobile: var(--icon-align-mobile);
 	--gap: 5px;
 	--gap-icon-label: 10px;
-	--font-size: 20px;
-	--icon-size: var(--font-size);
+	--font-size: inherit;
+	--icon-size: 12px;
 	--content-color: inherit;
 	--label-visibility: block;
 
@@ -15,14 +15,14 @@
 	--divider-width: 2px;
 	--divider-length: 100%;
 
-	
+
 	--divider-margin-left: 0;
 	--divider-margin-right: auto;
 	--divider-margin-left-tablet: var(--divider-margin-left);
 	--divider-margin-right-tablet: var(--divider-margin-right);
 	--divider-margin-left-mobile: var(--divider-margin-left-tablet);
 	--divider-margin-right-mobile: var(--divider-margin-right-tablet);
-	
+
 
 	display: flex;
 	flex-direction: column;
@@ -84,7 +84,7 @@
 			@media (min-width: 600px) and (max-width: 960px) {
 				justify-content: var( --icon-align-tablet );
 			}
-		
+
 			@media (max-width: 600px) {
 				justify-content: var( --icon-align-mobile );
 			}
@@ -112,7 +112,7 @@
 				margin-right: var(--divider-margin-right-mobile);
 			}
 		}
-	} 
+	}
 
 	.wp-block-themeisle-blocks-icon-list-item-content,
 	.wp-block-themeisle-blocks-icon-list-item-content-custom {

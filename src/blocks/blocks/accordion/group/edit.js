@@ -7,34 +7,23 @@ import googleFontsLoader from '../../../helpers/google-fonts.js';
 /**
  * WordPress dependencies.
  */
-import {
-	InnerBlocks,
-	useBlockProps
-} from '@wordpress/block-editor';
-
-import {
-	Fragment,
-	useEffect
-} from '@wordpress/element';
-
+import { InnerBlocks, useBlockProps } from '@wordpress/block-editor';
+import { Fragment, useEffect } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 
 /**
  * Internal dependencies
  */
 import metadata from './block.json';
 import Inspector from './inspector.js';
-
+import BlockAppender from '../../../components/block-appender-button';
+import { boxValues, hex2rgba } from '../../../helpers/helper-functions';
 import {
 	blockInit,
 	getDefaultValueByField,
 	useCSSNode
 } from '../../../helpers/block-utility.js';
-
-import {
-	boxValues,
-	hex2rgba
-} from '../../../helpers/helper-functions';
 
 import { useDarkBackground } from '../../../helpers/utility-hooks.js';
 
@@ -183,8 +172,18 @@ const Edit = ({
 			<div { ...blockProps }>
 				<InnerBlocks
 					allowedBlocks={ [ 'themeisle-blocks/accordion-item' ] }
-					template={ [[ 'themeisle-blocks/accordion-item' ]] }
-					renderAppender={ isSelected ? InnerBlocks.ButtonBlockAppender : '' }
+					template={ [
+						[ 'themeisle-blocks/accordion-item', { title: __( 'Accordion title 1', 'otter-blocks' ) }],
+						[ 'themeisle-blocks/accordion-item', { title: __( 'Accordion title 2', 'otter-blocks' ) }]
+					] }
+					renderAppender={ isSelected ? () =>
+						<BlockAppender
+							buttonText={ __( 'Add Accordion Item', 'otter-blocks' ) }
+							variant="primary"
+							allowedBlock="themeisle-blocks/accordion-item"
+							clientId={ clientId }
+						/> : undefined
+					}
 				/>
 			</div>
 		</Fragment>

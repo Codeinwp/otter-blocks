@@ -471,7 +471,7 @@ class Block_Frontend extends Base_CSS {
 			$css = $this->cycle_through_blocks( $blocks, $animations );
 		}
 
-		return $css;
+		return stripslashes( $css );
 	}
 
 	/**
