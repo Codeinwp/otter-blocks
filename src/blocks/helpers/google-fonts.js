@@ -26,6 +26,7 @@ class GoogleFontsLoader {
 		this.isAttaching = false;
 
 		this.usedFonts = [];
+		this.previewFonts = [];
 	}
 
 	/**
@@ -173,6 +174,22 @@ class GoogleFontsLoader {
 				}
 			`;
 		}).join( '\n' );
+	}
+
+	addPreviewFont( fontName, text ) {
+		if ( ! this.previewFonts.find( ( _ ) => _.fontName === fontName && _.text === text ) ) {
+			this.previewFonts.push({ fontName, text });
+
+			const textURIEncoded = encodeURIComponent( text );
+			const codedGoogleFontRequest = `https://fonts.googleapis.com/css2?family=${fontName.replace( ' ', '+' )}&text=${textURIEncoded}`;
+
+			const link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.href = codedGoogleFontRequest;
+
+			const currentDocument = getEditorIframe()?.contentWindow?.document ?? document;
+			currentDocument?.body?.appendChild( link );
+		}
 	}
 }
 
