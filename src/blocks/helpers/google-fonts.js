@@ -26,7 +26,7 @@ class GoogleFontsLoader {
 		this.isAttaching = false;
 
 		this.usedFonts = [];
-		this.previewFonts = [];
+		this.previewFonts = new Set();
 	}
 
 	/**
@@ -153,6 +153,7 @@ class GoogleFontsLoader {
 				const currentDocument = getEditorIframe()?.contentWindow?.document ?? document;
 				if ( ! currentDocument?.querySelector( '[data-generator*="otter-blocks-fonts-loader"]' ) ) {
 					currentDocument?.head?.appendChild( this.node );
+					this.previewFonts.clear();
 				}
 				this.isAttaching = false;
 			}, 500 );
@@ -177,19 +178,22 @@ class GoogleFontsLoader {
 	}
 
 	addPreviewFont( fontName, text ) {
-		if ( ! this.previewFonts.find( ( _ ) => _.fontName === fontName && _.text === text ) ) {
-			this.previewFonts.push({ fontName, text });
 
-			const textURIEncoded = encodeURIComponent( text );
-			const codedGoogleFontRequest = `https://fonts.googleapis.com/css2?family=${fontName.replace( ' ', '+' )}&text=${textURIEncoded}`;
-
-			const link = document.createElement( 'link' );
-			link.rel = 'stylesheet';
-			link.href = codedGoogleFontRequest;
-
-			const currentDocument = getEditorIframe()?.contentWindow?.document ?? document;
-			currentDocument?.body?.appendChild( link );
+		if ( this.previewFonts.has( fontName ) ) {
+			return;
 		}
+
+		this.previewFonts.add( fontName );
+
+		const textURIEncoded = encodeURIComponent( text );
+		const codedGoogleFontRequest = `https://fonts.googleapis.com/css2?family=${fontName.replace( ' ', '+' )}&text=${textURIEncoded}`;
+
+		const link = document.createElement( 'link' );
+		link.rel = 'stylesheet';
+		link.href = codedGoogleFontRequest;
+
+		const currentDocument = getEditorIframe()?.contentWindow?.document ?? document;
+		currentDocument?.body?.appendChild( link );
 	}
 }
 
