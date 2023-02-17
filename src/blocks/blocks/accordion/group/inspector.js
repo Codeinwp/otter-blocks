@@ -53,12 +53,12 @@ import { useResponsiveAttributes } from '../../../helpers/utility-hooks.js';
 const styles = [
 	{
 		label: __( 'Default', 'otter-blocks' ),
-		value: 'default',
-		isDefault: true
+		value: 'default'
 	},
 	{
 		label: __( 'Boxed', 'otter-blocks' ),
-		value: 'boxed'
+		value: 'boxed',
+		isDefault: true
 	}
 ];
 

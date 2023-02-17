@@ -357,7 +357,7 @@ const Inspector = ({
 													value: 'flex-end'
 												}
 											]}
-											value={ attributes.backVerticalAlign }
+											value={ attributes.backVerticalAlign ?? 'center' }
 											onChange={ backVerticalAlign => setAttributes({ backVerticalAlign }) }
 										/>
 									</BaseControl>

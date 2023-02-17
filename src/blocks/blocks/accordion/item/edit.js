@@ -15,7 +15,7 @@ import {
 } from '@wordpress/block-editor';
 
 import {
-	Fragment,
+	Fragment, useEffect,
 	useState
 } from '@wordpress/element';
 
@@ -23,6 +23,7 @@ import {
  * Internal dependencies
  */
 import Inspector from './inspector.js';
+import { select } from '@wordpress/data';
 
 /**
  * Accordion Item component
@@ -44,6 +45,15 @@ const Edit = ({
 		}
 	};
 
+	useEffect( () => {
+		if ( attributes.title === undefined ) {
+			const parentClientId = select( 'core/block-editor' ).getBlockParents( clientId ).at( -1 );
+			const parentBlock = select( 'core/block-editor' ).getBlock( parentClientId );
+
+			setAttributes({ title: __( 'Accordion item ', 'otter-blocks' ) + parentBlock.innerBlocks.length });
+		}
+	}, []);
+
 	return (
 		<Fragment>
 			<Inspector
@@ -62,7 +72,6 @@ const Edit = ({
 					onClick={ toggle }
 				>
 					<RichText
-						placeholder={ __( 'Add text…', 'otter-blocks' ) }
 						value={ attributes.title }
 						onChange={ value => {
 							if ( ! isOpen ) {
@@ -78,7 +87,9 @@ const Edit = ({
 				{ isOpen && (
 					<div className="wp-block-themeisle-blocks-accordion-item__content">
 						<InnerBlocks
-							template={ [[ 'core/paragraph' ]] }
+							template={ [[ 'core/paragraph', {
+								content: __( 'This is a placeholder tab content. It is important to have the necessary information in the block, but at this stage, it is just a placeholder to help you visualise how the content is displayed. Feel free to edit this with your actual content.', 'otter-blocks' )
+							}]] }
 						/>
 					</div>
 				) }
