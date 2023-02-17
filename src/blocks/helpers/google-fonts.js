@@ -146,6 +146,9 @@ class GoogleFontsLoader {
 		this.node.innerHTML = this.renderCSSFont();
 	}
 
+	/**
+	 * Attach the node to the document.
+	 */
 	attach() {
 		if ( ! this.isAttaching ) {
 			this.isAttaching = true;
@@ -177,6 +180,13 @@ class GoogleFontsLoader {
 		}).join( '\n' );
 	}
 
+	/**
+	 * Add Google Font font link to the document.
+	 *
+	 * @param {string} fontName The name of the font.
+	 * @param {string} text The text to preview.
+	 * @returns
+	 */
 	addPreviewFont( fontName, text ) {
 
 		if ( this.previewFonts.has( fontName ) ) {
