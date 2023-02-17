@@ -93,6 +93,9 @@
 	"form-textarea": {
 		"block": "blocks/blocks/form/textarea/block.json"
 	},
+	"form-multiple-choice": {
+		"block": "blocks/blocks/form/multiple-choice/block.json"
+	},
 	"google-map": {
 		"block": "blocks/blocks/google-map/block.json",
 		"assets": {

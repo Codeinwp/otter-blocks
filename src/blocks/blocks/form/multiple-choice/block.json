@@ -1,0 +1,50 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "themeisle-blocks/form-multiple-choice",
+	"title": "Form Multiple Choice Input",
+	"category": "themeisle-blocks",
+	"description": "Display a checkbox, select, radio.",
+	"keywords": [ "form", "checkbox", "select", "radio", "multiple" ],
+	"textdomain": "otter-blocks",
+	"ancestor": [ "themeisle-blocks/form" ],
+	"attributes": {
+		"id": {
+			"type": "string"
+		},
+		"type": {
+			"type": "string",
+			"default": "checkbox"
+		},
+		"label": {
+			"type": "string"
+		},
+		"placeholder": {
+			"type": "string"
+		},
+		"isRequired": {
+			"type": "boolean"
+		},
+		"mappedName": {
+			"type": "string"
+		},
+		"labelColor": {
+			"type": "string"
+		},
+		"inputWidth": {
+			"type": "object"
+		},
+		"helpText": {
+			"type": "string"
+		},
+		"options": {
+			"type": "string"
+		},
+		"multipleSelection": {
+			"type": "boolean"
+		}
+	},
+	"supports": {
+		"align": [ "wide", "full" ]
+	}
+}
