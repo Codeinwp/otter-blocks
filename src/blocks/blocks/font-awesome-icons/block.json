@@ -38,8 +38,7 @@
 			"default": "16px"
 		},
 		"padding": {
-			"type": [ "number", "object" ],
-			"default": 5
+			"type": [ "number", "object" ]
 		},
 		"margin": {
 			"type": [ "number", "object" ],

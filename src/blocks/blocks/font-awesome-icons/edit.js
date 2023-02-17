@@ -67,7 +67,7 @@ const Edit = ({
 		'--border-size': attributes.borderSize !== undefined && `${attributes.borderSize }px`,
 		'--border-radius': attributes.borderRadius !== undefined && `${ attributes.borderRadius }%`,
 		'--margin': ! isObjectLike( getValue( 'margin' ) ) ? getValue( 'margin' ) + 'px' : boxValues( getValue( 'margin' ), { top: '5px', right: '5px', bottom: '5px', left: '5px' }),
-		'--padding': ! isObjectLike( getValue( 'padding' ) ) ? getValue( 'padding' ) + 'px' : boxValues( getValue( 'padding' ), { top: '5px', right: '5px', bottom: '5px', left: '5px' }),
+		'--padding': attributes.padding && ( ! isObjectLike( getValue( 'padding' ) ) ? getValue( 'padding' ) + 'px' : boxValues( getValue( 'padding' ), { top: '5px', right: '5px', bottom: '5px', left: '5px' }) ),
 		'--font-size': attributes.fontSize !== undefined && ( isNumber( getValue( 'fontSize' ) ) ? `${ getValue( 'fontSize' ) }px` : getValue( 'fontSize' ) ),
 		'--align': alignHandler( attributes.align )?.desktop,
 		'--align-tablet': alignHandler( attributes.align )?.tablet,
@@ -127,12 +127,11 @@ const Edit = ({
 
 				<span className={ classnames(
 					'wp-block-themeisle-blocks-font-awesome-icons-container',
-					{ 'nan-padding': ! isNumber( attributes.padding ) }
+					{ 'nan-padding': attributes.padding && ! isNumber( attributes.padding ) }
 				)}>
 					{ 'themeisle-icons' === attributes.library ? <Icon/> : <i className={ classnames(
 						`${ attributes.prefix }`,
-						`fa-${ attributes.icon }`,
-						{ 'fa-fw': ! isNumber( attributes.padding ) }
+						`fa-${ attributes.icon }`
 					)}
 					/> }
 				</span>

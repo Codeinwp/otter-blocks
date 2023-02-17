@@ -5,56 +5,69 @@
 	--border-color: inherit;
 	--border-size: unset;
 	--border-radius: 0%;
-	--margin: 0px;
-	--padding: 0px;
+	--margin: 5px;
+	--padding: 5px;
 	--font-size: 16px;
 
 	display: flex;
-	justify-content: var( --align );
+	justify-content: var(--align);
 
 	.wp-block-themeisle-blocks-font-awesome-icons-container {
 		display: inline-flex;
 		justify-content: center;
-		border: var( --border-size ) solid;
-		border-color: var( --border-color );
-		border-radius: var( --border-radius );
-		margin: var( --margin );
+		border: var(--border-size) solid;
+		border-color: var(--border-color );
+		border-radius: var(--border-radius);
+		margin: var(--margin);
+
+		font-size: var(--font-size);
 
 		text-align: center;
 		align-items: center;
 
+		/* This is for old versions of the block. */
 		&:not(.nan-padding) {
-			width: calc( var(--font-size) * 1.5 + var( --padding ));
-			height: calc( var(--font-size) * 1.5 + var( --padding ));
+			width: calc(var(--font-size) * 1.5 + var(--padding));
+			height: calc(var(--font-size) * 1.5 + var(--padding));
+
+			i {
+				font-size: var(--font-size);
+			}
 		}
 
 		&.nan-padding {
-			padding: var( --padding );
+			padding: var(--padding);
 			aspect-ratio: 1;
+
+			/**
+			 * The `fa-fw` class sets the width to 1.25em, so we are
+			 * doing some kind of reverse thing for the same effect, but not
+			 * break the layout and keep the icons in the set dimension.
+			 */
+			i {
+				font-size: calc(var(--font-size) / 1.25);
+				width: var(--font-size);
+			}
 		}
 
 		box-sizing: content-box;
 
 		svg {
-			width: var( --font-size );
-			height: var( --font-size );
+			width: var(--font-size);
+			height: var(--font-size);
 			fill: currentColor;
-		}
-
-		i {
-			font-size: var(--font-size);
 		}
 	}
 }
 
 @media ( max-width: 960px ) {
 	.wp-block-themeisle-blocks-font-awesome-icons {
-		justify-content: var( --align-tablet );
+		justify-content: var(--align-tablet);
 	}
 }
 
 @media ( max-width: 600px ) {
 	.wp-block-themeisle-blocks-font-awesome-icons {
-		justify-content: var( --align-mobile );
+		justify-content: var(--align-mobile);
 	}
 }

@@ -25,15 +25,14 @@ const Save = ({
 
 	const classes = classnames(
 		`${ attributes.prefix }`,
-		`fa-${ attributes.icon }`,
-		{ 'fa-fw': ! isNumber( attributes.padding ) }
+		`fa-${ attributes.icon }`
 	);
 
 	return (
 		<div { ...blockProps }>
 			<span className={ classnames(
 				'wp-block-themeisle-blocks-font-awesome-icons-container',
-				{ 'nan-padding': ! isNumber( attributes.padding ) }
+				{ 'nan-padding': attributes.padding && ! isNumber( attributes.padding ) }
 			)}>
 				{ ( attributes.link ) ? (
 					<a
