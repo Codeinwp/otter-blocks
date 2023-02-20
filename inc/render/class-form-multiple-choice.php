@@ -58,7 +58,7 @@ class Form_Multiple_Choice_Block {
 		$output = '<div class="o-form-multiple-choice-field">';
 
 		$output .= '<input type="' . $type . '" name="' . $name . '" id="' . $id . '" value="' . $value . '" />';
-		$output .= '<label for="' . $id . '" class="o-form-choice-label">' . $label . '</label>';
+		$output .= '<label for="' . $id . '" class="o-form-choice-label__label">' . $label . '</label>';
 
 		$output .= '</div>';
 

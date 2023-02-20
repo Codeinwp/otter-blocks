@@ -17,15 +17,12 @@ const extractFormFields = form => {
 	const elemsWithError = [];
 	const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href }];
 
-	const inputs = form?.querySelectorAll( '.otter-form__container .wp-block-themeisle-blocks-form-input' );
-	const textarea = form?.querySelectorAll( '.otter-form__container .wp-block-themeisle-blocks-form-textarea' );
+	const inputs = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-input' );
+	const textarea = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-textarea' );
 
 	[ ...inputs, ...textarea ]?.forEach( input => {
-		const label = input.querySelector( '.otter-form-input-label__label, .otter-form-textarea-label__label' )?.innerHTML;
-		const valueElem = input.querySelector( '.otter-form-input, .otter-form-textarea-input' );
-
-		// TODO: use checkbox in the future versions
-		const checked = input.querySelector( '.otter-form-input[type="checkbox"]' )?.checked;
+		const label = input.querySelector( ':scope > .otter-form-input-label__label, :scope > .otter-form-textarea-label__label' )?.innerHTML;
+		const valueElem = input.querySelector( ':scope > .otter-form-input, :scope > .otter-form-textarea-input' );
 
 		if ( valueElem?.hasAttribute( 'required' ) && ! valueElem?.checkValidity() ) {
 			elemsWithError.push( valueElem );
@@ -35,10 +32,25 @@ const extractFormFields = form => {
 			formFieldsData.push({
 				label: label,
 				value: valueElem?.value,
-				type: valueElem?.type,
-				checked: checked
+				type: valueElem?.type
 			});
 		}
+	});
+
+	const multipleChoiceInputs = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-multiple-choice' );
+
+	multipleChoiceInputs?.forEach( input => {
+
+		const label = input.querySelector( ':scope > .otter-form-input-label' )?.innerHTML;
+
+		const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
+		const valuesElem = input.querySelectorAll( '.o-form-multiple-choice-field > input' );
+
+		formFieldsData.push({
+			label: label,
+			value: [ ...labels ].filter( ( label, index ) => valuesElem[index]?.checked ).map( label => label.innerHTML ).join( ', ' ),
+			type: 'multiple-choice'
+		});
 	});
 
 	return { formFieldsData, elemsWithError };
@@ -280,7 +292,7 @@ domReady( () => {
 		const sendBtn = form.querySelector( 'button' );
 		const displayMsg = new DisplayFormMessage( form );
 
-		if ( form.querySelector( 'button[type="submit"]' ) ) {
+		if ( form.querySelector( ':scope > form > button[type="submit"]' ) ) {
 			form?.addEventListener( 'submit', ( event ) => {
 				event.preventDefault();
 				if ( ! sendBtn.disabled ) {
