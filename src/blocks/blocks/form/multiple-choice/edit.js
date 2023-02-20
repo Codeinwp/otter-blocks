@@ -62,6 +62,23 @@ const Field = ({ fieldType, label, setAttributes, position, attributes }) => {
 	);
 };
 
+const SelectField = ({ attributes }) => {
+	return (
+		<select name={attributes.mappedName} id={attributes?.id}>
+			{
+				( attributes?.options ?? '' )?.split( '\n' )?.map( ( label, index ) => {
+					const value = label?.toLowerCase().replace( / /g, '_' );
+
+					return <option
+						key={index}
+						value={value}
+					> {label}</option>;
+				})
+			}
+		</select>
+	);
+};
+
 /**
  * Form Input component
  * @param {import('./types').FormMultipleChoiceInputProps} props
@@ -147,7 +164,7 @@ const Edit = ({
 					) }
 				</label>
 				{
-					( attributes?.options ?? '' )?.split( '\n' )?.map( ( label, index ) => {
+					'select' === attributes?.type ? <SelectField attributes={attributes} /> : ( attributes?.options ?? '' )?.split( '\n' )?.map( ( label, index ) => {
 						return <Field
 							key={index}
 							fieldType={attributes.type}

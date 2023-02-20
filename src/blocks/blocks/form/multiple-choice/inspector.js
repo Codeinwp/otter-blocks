@@ -73,13 +73,17 @@ const Inspector = ({
 						{
 							label: __( 'Checkbox', 'otter-blocks' ),
 							value: 'checkbox'
+						},
+						{
+							label: __( 'Select', 'otter-blocks' ),
+							value: 'select'
 						}
 					] }
 					onChange={ type => {
 						if ( 'textarea' === type ) {
 							switchToTextarea?.();
 							return;
-						} else if ( 'radio' === type || 'checkbox' === type ) {
+						} else if ( 'radio' === type || 'checkbox' === type || 'select' === type ) {
 							setAttributes({ type });
 						} else {
 							switchToInput?.( type );

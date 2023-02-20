@@ -43,12 +43,20 @@ const extractFormFields = form => {
 
 		const label = input.querySelector( ':scope > .otter-form-input-label' )?.innerHTML;
 
-		const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
-		const valuesElem = input.querySelectorAll( '.o-form-multiple-choice-field > input' );
+		const select = input.querySelector( ':scope > select' );
+		let value = undefined;
+
+		if ( select ) {
+			value = [ ...select.selectedOptions ].map( o => o?.label )?.filter( l => l ).join( ', ' );
+		} else {
+			const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
+			const valuesElem = input.querySelectorAll( '.o-form-multiple-choice-field > input' );
+			value = [ ...labels ].filter( ( label, index ) => valuesElem[index]?.checked ).map( label => label.innerHTML ).join( ', ' );
+		}
 
 		formFieldsData.push({
 			label: label,
-			value: [ ...labels ].filter( ( label, index ) => valuesElem[index]?.checked ).map( label => label.innerHTML ).join( ', ' ),
+			value: value,
 			type: 'multiple-choice'
 		});
 	});

@@ -23,21 +23,25 @@ class Form_Multiple_Choice_Block {
 	 */
 	public function render( $attributes ) {
 
-		$class_names = 'wp-block-themeisle-blocks-form-multiple-choice ' . ( isset( $attributes['className'] ) ? $attributes['className'] : '' );
-		$id          = isset( $attributes['id'] ) ? $attributes['id'] : '';
-		$options     = isset( $attributes['options'] ) ? $attributes['options'] : '';
-		$field_type  = isset( $attributes['type'] ) ? $attributes['type'] : 'checkbox';
-
-		$output  = '<div class="' . $class_names . '" id="' . $id . '">';
-		$output .= '<label class="otter-form-input-label" >' . $attributes['label'] . '</label>';
-
+		$class_names   = 'wp-block-themeisle-blocks-form-multiple-choice ' . ( isset( $attributes['className'] ) ? $attributes['className'] : '' );
+		$id            = isset( $attributes['id'] ) ? $attributes['id'] : '';
+		$options       = isset( $attributes['options'] ) ? $attributes['options'] : '';
+		$field_type    = isset( $attributes['type'] ) ? $attributes['type'] : 'checkbox';
+		$label         = isset( $attributes['label'] ) ? $attributes['label'] : __( 'Select option', 'otter-blocks' );
 		$options_array = explode( "\n", $options );
 
-		foreach ( $options_array as $field_label ) {
-			$field_value = implode( '_', explode( ' ', sanitize_title( $field_label ) ) );
-			$field_id    = 'field-' . $field_value;
+		$output = '<div class="' . $class_names . '" id="' . $id . '">';
 
-			$output .= $this->render_field( $field_type, $field_label, $field_value, $id, $field_id );
+		if ( 'select' === $field_type ) {
+			$output .= $this->render_select_field( $label, $options_array, $id );
+		} else {
+			$output .= '<label class="otter-form-input-label" >' . $label . '</label>';
+			foreach ( $options_array as $field_label ) {
+				$field_value = implode( '_', explode( ' ', sanitize_title( $field_label ) ) );
+				$field_id    = 'field-' . $field_value;
+
+				$output .= $this->render_field( $field_type, $field_label, $field_value, $id, $field_id );
+			}
 		}
 
 		$output .= '</div>';
@@ -62,6 +66,27 @@ class Form_Multiple_Choice_Block {
 
 		$output .= '</div>';
 
+		return $output;
+	}
+
+	/**
+	 * Render a select field.
+	 *
+	 * @param string $label The label of the field.
+	 * @param array  $options_array The options of the field.
+	 * @param string $id The id of the field.
+	 * @return string
+	 */
+	public function render_select_field( $label, $options_array, $id ) {
+		$output  = '<label class="otter-form-input-label" for="' . $id . '" >' . $label . '</label>';
+		$output .= '<select id="' . $id . '" multiple >';
+
+		foreach ( $options_array as $field_label ) {
+			$field_value = implode( '_', explode( ' ', sanitize_title( $field_label ) ) );
+			$output     .= '<option value="' . $field_value . '">' . $field_label . '</option>';
+		}
+
+		$output .= '</select>';
 		return $output;
 	}
 }
