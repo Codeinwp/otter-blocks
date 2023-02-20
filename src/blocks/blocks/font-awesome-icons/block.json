@@ -38,12 +38,16 @@
 			"default": "16px"
 		},
 		"padding": {
-			"type": "number",
-			"default": 5
+			"type": [ "number", "object" ]
 		},
 		"margin": {
-			"type": "number",
-			"default": 5
+			"type": [ "number", "object" ],
+			"default": {
+				"top": "5px",
+				"right": "5px",
+				"bottom": "5px",
+				"left": "5px"
+			}
 		},
 		"backgroundColor": {
 			"type": "string"

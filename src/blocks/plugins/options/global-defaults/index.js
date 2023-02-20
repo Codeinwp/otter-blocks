@@ -42,7 +42,7 @@ const GlobalDefaults = ({
 
 	return (
 		<Fragment>
-			<p class="padding-20">{ __( 'Manage site-wide block defaults and visibility for Otter Blocks.', 'otter-blocks' ) }</p>
+			<p className="padding-20">{ __( 'Manage site-wide block defaults and visibility for Otter Blocks.', 'otter-blocks' ) }</p>
 
 			{ blocks.map( block => {
 				const hasSettings = globalControls.find( i => i.name === block.name );
