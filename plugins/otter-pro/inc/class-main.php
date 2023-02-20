@@ -177,6 +177,8 @@ class Main {
 			$asset_file['version'],
 			true
 		);
+	
+		wp_set_script_translations( 'otter-pro', 'otter-pro' );
 
 		wp_localize_script(
 			'otter-pro',
