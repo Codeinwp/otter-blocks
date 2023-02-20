@@ -282,6 +282,7 @@
 			color: var(--help-label-color);
 			margin-bottom: 0px;
 			font-size: var(--help-font-size);
+			width: 100%;
 		}
 	}
 
@@ -349,6 +350,19 @@
 			border-top: 2px solid var(--submit-color);
 			border-right: 2px solid transparent;
 			animation: spinner 0.6s linear infinite;
+		}
+	}
+
+	.wp-block-themeisle-blocks-form-multiple-choice.is-style-inline-list {
+		flex-direction: row;
+		flex-wrap: wrap;
+
+		.otter-form-input-label {
+			width: max-content;
+		}
+
+		.o-form-help {
+			width: 100%;
 		}
 	}
 }

@@ -17,6 +17,15 @@ import {
 	ToggleControl
 } from '@wordpress/components';
 
+import { getActiveStyle, changeActiveStyle } from '../../../helpers/helper-functions.js';
+
+const styles = [
+	{
+		label: __( 'Inline List', 'otter-blocks' ),
+		value: 'inline-list'
+	}
+];
+
 /**
  *
  * @param {import('./types').FormMultipleChoiceInputInspectorProps} props
@@ -109,6 +118,25 @@ const Inspector = ({
 					value={ attributes.helpText }
 					onChange={ helpText => setAttributes({ helpText }) }
 				/>
+
+				<ToggleControl
+					label={ __( 'Inline list', 'otter-blocks' ) }
+					checked={ Boolean( getActiveStyle( styles, attributes.className ) ) }
+					onChange={ value => {
+						const classes = changeActiveStyle( attributes.className, styles, value ? 'inline-list' : undefined );
+						setAttributes({ className: classes });
+					} }
+				/>
+
+				{
+					'select' === attributes?.type && (
+						<ToggleControl
+							label={ __( 'Multiple selection', 'otter-blocks' ) }
+							checked={ attributes.multipleSelection }
+							onChange={ multipleSelection => setAttributes({ multipleSelection }) }
+						/>
+					)
+				}
 
 				<ToggleControl
 					label={ __( 'Required', 'otter-blocks' ) }
