@@ -71,7 +71,7 @@ class Mailchimp_Integration implements FormSubscribeServiceInterface {
 			'success' => false,
 		);
 
-		$url  = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists';
+		$url  = 'https://' . $this->server_name . '.api.mailchimp.com/3.0/lists?count=1000';
 		$args = array(
 			'method'  => 'GET',
 			'headers' => array(
