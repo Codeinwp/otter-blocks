@@ -325,32 +325,32 @@ const Inspector = ({
 								options={ [
 									{
 										value: attributes.titleBackgroundColor,
-										label: __( 'Title background', 'otter-blocks' ),
+										label: __( 'Title Background', 'otter-blocks' ),
 										slug: 'titleBackgroundColor'
 									},
 									{
 										value: attributes.activeTitleBackgroundColor,
-										label: __( 'Active title background', 'otter-blocks' ),
+										label: __( 'Active Title Tackground', 'otter-blocks' ),
 										slug: 'activeTitleBackgroundColor'
 									},
 									{
 										value: attributes.titleColor ?? attributes.tabColor ?? 'white',
-										label: __( 'Title color', 'otter-blocks' ),
+										label: __( 'Title Color', 'otter-blocks' ),
 										slug: 'titleColor'
 									},
 									{
 										value: attributes.activeTitleColor,
-										label: __( 'Active title color', 'otter-blocks' ),
+										label: __( 'Active Title Color', 'otter-blocks' ),
 										slug: 'activeTitleColor'
 									},
 									{
 										value: attributes.contentTextColor,
-										label: __( 'Content text color', 'otter-blocks' ),
+										label: __( 'Content Text Color', 'otter-blocks' ),
 										slug: 'contentTextColor'
 									},
 									{
 										value: attributes.tabColor ?? 'white',
-										label: __( 'Content background', 'otter-blocks' ),
+										label: __( 'Content Background', 'otter-blocks' ),
 										slug: 'tabColor'
 									},
 									{
@@ -360,7 +360,7 @@ const Inspector = ({
 									},
 									{
 										value: attributes.activeBorderColor,
-										label: __( 'Active border', 'otter-blocks' ),
+										label: __( 'Active Border', 'otter-blocks' ),
 										slug: 'activeBorderColor'
 									}
 								] }
