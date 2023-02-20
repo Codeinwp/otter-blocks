@@ -26,58 +26,13 @@ fi
 rsync -rc --exclude-from ".distignore" "./" "dist/$DIST_FOLDER"
 
 cd dist
+
 # Create a zip file in './artifact' from the filtered files in the './dist'
 zip -r "../artifact/$DIST_FOLDER" "./$DIST_FOLDER/"
 
 echo "BUILD GENERATED: $BUILD_NAME"
 
 cd -
-
-plugins=( animation css export-import )
-
-for i in "${plugins[@]}"
-do
-  BUILD_NAME="blocks-${i}"
-  export BUILD_NAME
-
-  if [ ! -z "$1" ] && [ $1 == 'development' ]; then
-    DIST_FOLDER="$BUILD_NAME-dev"
-  else
-    DIST_FOLDER=$BUILD_NAME
-  fi
-
-  echo "BUILD_NAME=$BUILD_NAME"
-
-  cd plugins/$BUILD_NAME
-
-  rsync -rc --exclude-from ".distignore" "./" "../../dist/$DIST_FOLDER"
-
-  cd ../..
-
-  if [ $i == 'animation' ] && [ ! -d "dist/$DIST_FOLDER/assets" ]; then
-    mkdir "dist/$DIST_FOLDER/assets"
-  fi
-
-  if [ ! -d "dist/$DIST_FOLDER/build" ]; then
-    mkdir "dist/$DIST_FOLDER/build"
-  fi
-
-  cp inc/class-blocks-$i.php build/$i dist/$DIST_FOLDER -r
-
-  if [ $i == 'animation' ]; then
-    cp assets/animate dist/$DIST_FOLDER/assets -r
-  fi
-
-  cd dist
-
-  mv $DIST_FOLDER/$i $DIST_FOLDER/build/$i
-
-  zip -r "../artifact/$DIST_FOLDER" "./$DIST_FOLDER/" -x "*.wordpress-org*"
-
-  echo "BUILD GENERATED: $BUILD_NAME"
-
-  cd -
-done
 
 BUILD_NAME="otter-pro"
 export BUILD_NAME
@@ -100,7 +55,7 @@ if [ ! -d "dist/$DIST_FOLDER/build" ]; then
   mkdir "dist/$DIST_FOLDER/build"
 fi
 
-cp build/pro dist/$DIST_FOLDER -r
+cp -r build/pro dist/$DIST_FOLDER
 
 cd dist
 
@@ -111,3 +66,43 @@ zip -r "../artifact/$DIST_FOLDER" "./$DIST_FOLDER/" -x "*.wordpress-org*"
 echo "BUILD GENERATED: $BUILD_NAME"
 
 cd -
+
+npm run plugins
+
+plugins=( animation css export-import )
+
+for i in "${plugins[@]}"
+do
+  BUILD_NAME="blocks-${i}"
+  export BUILD_NAME
+
+  if [ ! -z "$1" ] && [ $1 == 'development' ]; then
+    DIST_FOLDER="$BUILD_NAME-dev"
+  else
+    DIST_FOLDER=$BUILD_NAME
+  fi
+
+  echo "BUILD_NAME=$BUILD_NAME"
+
+  cd plugins/$BUILD_NAME
+
+  rsync -rc --exclude-from ".distignore" "./" "../../dist/$DIST_FOLDER"
+
+  cd ../..
+
+  if [ ! -d "dist/$DIST_FOLDER/build" ]; then
+    mkdir "dist/$DIST_FOLDER/build"
+  fi
+
+  cp -r inc/class-blocks-$i.php build/$i dist/$DIST_FOLDER
+
+  cd dist
+
+  mv $DIST_FOLDER/$i $DIST_FOLDER/build/$i
+
+  zip -r "../artifact/$DIST_FOLDER" "./$DIST_FOLDER/" -x "*.wordpress-org*"
+
+  echo "BUILD GENERATED: $BUILD_NAME"
+
+  cd -
+done
