@@ -349,7 +349,7 @@ class Form_Data_Response {
 				$this->add_reason( __( 'The email was already registered.', 'otter-blocks' ) );
 				break;
 			case self::ERROR_BOT_DETECTED:
-				$this->add_reason( __( 'Failed to validated the data. Please wait 5 seconds and try again.', 'otter-blocks' ) );
+				$this->add_reason( __( 'Failed to validate the data. Please wait 5 seconds and try again.', 'otter-blocks' ) );
 				break;  
 		}
 	}
