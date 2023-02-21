@@ -18,6 +18,7 @@ import {
 } from '@wordpress/components';
 
 import { getActiveStyle, changeActiveStyle } from '../../../helpers/helper-functions.js';
+import { switchFormFieldTo } from '../common';
 
 const styles = [
 	{
@@ -35,8 +36,7 @@ const Inspector = ({
 	attributes,
 	setAttributes,
 	selectParent,
-	switchToTextarea,
-	switchToInput
+	clientId
 }) => {
 	return (
 		<InspectorControls>
@@ -56,47 +56,44 @@ const Inspector = ({
 					value={ attributes.type }
 					options={ [
 						{
-							label: __( 'Text', 'otter-blocks' ),
-							value: 'text'
-						},
-						{
-							label: __( 'Email', 'otter-blocks' ),
-							value: 'email'
+							label: __( 'Checkbox', 'otter-blocks' ),
+							value: 'checkbox'
 						},
 						{
 							label: __( 'Date', 'otter-blocks' ),
 							value: 'date'
 						},
 						{
-							label: __( 'Number', 'otter-blocks' ),
-							value: 'number'
+							label: __( 'Email', 'otter-blocks' ),
+							value: 'email'
 						},
 						{
-							label: __( 'Textarea', 'otter-blocks' ),
-							value: 'textarea'
+							label: __( 'Number', 'otter-blocks' ),
+							value: 'number'
 						},
 						{
 							label: __( 'Radio', 'otter-blocks' ),
 							value: 'radio'
 						},
 						{
-							label: __( 'Checkbox', 'otter-blocks' ),
-							value: 'checkbox'
-						},
-						{
 							label: __( 'Select', 'otter-blocks' ),
 							value: 'select'
+						},
+						{
+							label: __( 'Text', 'otter-blocks' ),
+							value: 'text'
+						},
+						{
+							label: __( 'Textarea', 'otter-blocks' ),
+							value: 'textarea'
 						}
 					] }
 					onChange={ type => {
-						if ( 'textarea' === type ) {
-							switchToTextarea?.();
-							return;
-						} else if ( 'radio' === type || 'checkbox' === type || 'select' === type ) {
+						if ( 'radio' === type || 'checkbox' === type || 'select' === type ) {
 							setAttributes({ type });
-						} else {
-							switchToInput?.( type );
+							return;
 						}
+						switchFormFieldTo( type, clientId, attributes );
 					}}
 				/>
 

@@ -70,11 +70,6 @@ const Edit = ({
 
 	const { selectBlock, replaceBlock } = useDispatch( 'core/block-editor' );
 
-	const switchToInput = type => {
-		const block = createBlock( 'themeisle-blocks/form-input', { ...attributes, type: type });
-		replaceBlock( clientId, block );
-	};
-
 	useEffect( () => {
 		const per = x => x ? x + '%' : x;
 
@@ -99,7 +94,7 @@ const Edit = ({
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 				selectParent={ () => selectBlock( parentClientId ) }
-				switchToInput={ switchToInput }
+				clientId={ clientId }
 			/>
 
 			<div { ...blockProps }>

@@ -39,7 +39,7 @@ registerBlockType( name, {
 		{
 			name: 'themeisle-blocks/form-input-email',
 			description: __( 'Insert an email field', 'otter-blocks' ),
-			icon: 'email',
+			icon: icon,
 			title: __( 'Email Field', 'otter-blocks' ),
 			attributes: {
 				type: 'email'
@@ -48,7 +48,7 @@ registerBlockType( name, {
 		{
 			name: 'themeisle-blocks/form-input-number',
 			description: __( 'Insert a number field', 'otter-blocks' ),
-			icon: 'calculator',
+			icon: icon,
 			title: __( 'Number Field', 'otter-blocks' ),
 			attributes: {
 				type: 'number'
@@ -57,7 +57,7 @@ registerBlockType( name, {
 		{
 			name: 'themeisle-blocks/form-input-date',
 			description: __( 'Insert a date field', 'otter-blocks' ),
-			icon: 'calendar-alt',
+			icon: icon,
 			title: __( 'Date Field', 'otter-blocks' ),
 			attributes: {
 				type: 'date'
@@ -74,6 +74,16 @@ registerBlockType( name, {
 				transform: ( attributes ) => {
 					const attrs = omit( attributes, [ 'type' ]);
 					return createBlock( 'themeisle-blocks/form-textarea', {
+						...attrs
+					});
+				}
+			},
+			{
+				type: 'block',
+				blocks: [ 'themeisle-blocks/form-multiple-choice' ],
+				transform: ( attributes ) => {
+					const attrs = omit( attributes, [ 'type' ]);
+					return createBlock( 'themeisle-blocks/form-multiple-choice', {
 						...attrs
 					});
 				}

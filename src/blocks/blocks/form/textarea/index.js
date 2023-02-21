@@ -46,6 +46,16 @@ registerBlockType( name, {
 						...attributes
 					});
 				}
+			},
+			{
+				type: 'block',
+				blocks: [ 'themeisle-blocks/form-multiple-choice' ],
+				transform: ( attributes ) => {
+
+					return createBlock( 'themeisle-blocks/form-multiple-choice', {
+						...attributes
+					});
+				}
 			}
 		]
 	}

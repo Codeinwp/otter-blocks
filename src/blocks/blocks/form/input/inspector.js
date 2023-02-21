@@ -15,6 +15,7 @@ import {
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
+import { switchFormFieldTo } from '../common';
 
 /**
  *
@@ -25,7 +26,7 @@ const Inspector = ({
 	attributes,
 	setAttributes,
 	selectParent,
-	switchToTextarea
+	clientId
 }) => {
 	return (
 		<InspectorControls>
@@ -45,20 +46,32 @@ const Inspector = ({
 					value={ attributes.type }
 					options={ [
 						{
-							label: __( 'Text', 'otter-blocks' ),
-							value: 'text'
-						},
-						{
-							label: __( 'Email', 'otter-blocks' ),
-							value: 'email'
+							label: __( 'Checkbox', 'otter-blocks' ),
+							value: 'checkbox'
 						},
 						{
 							label: __( 'Date', 'otter-blocks' ),
 							value: 'date'
 						},
 						{
+							label: __( 'Email', 'otter-blocks' ),
+							value: 'email'
+						},
+						{
 							label: __( 'Number', 'otter-blocks' ),
 							value: 'number'
+						},
+						{
+							label: __( 'Radio', 'otter-blocks' ),
+							value: 'radio'
+						},
+						{
+							label: __( 'Select', 'otter-blocks' ),
+							value: 'select'
+						},
+						{
+							label: __( 'Text', 'otter-blocks' ),
+							value: 'text'
 						},
 						{
 							label: __( 'Textarea', 'otter-blocks' ),
@@ -66,10 +79,11 @@ const Inspector = ({
 						}
 					] }
 					onChange={ type => {
-						if ( 'textarea' === type ) {
-							switchToTextarea?.();
+						if ( 'textarea' === type || 'radio' === type || 'checkbox' === type || 'select' === type ) {
+							switchFormFieldTo( type, clientId, attributes );
 							return;
 						}
+
 						setAttributes({ type });
 					}}
 				/>

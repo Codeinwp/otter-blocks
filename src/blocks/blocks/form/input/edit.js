@@ -74,12 +74,6 @@ const Edit = ({
 
 	const { selectBlock, replaceBlock } = useDispatch( 'core/block-editor' );
 
-	const switchToTextarea = () => {
-		const block = createBlock( 'themeisle-blocks/form-textarea', { ...omit( attributes, [ 'type' ]) });
-		replaceBlock( clientId, block );
-	};
-
-
 	useEffect( () => {
 		const per = x => x ? x + '%' : null;
 
@@ -103,8 +97,7 @@ const Edit = ({
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				selectParent={ () => selectBlock( parentClientId ) }
-				switchToTextarea={ switchToTextarea }
+				clientId={ clientId }
 			/>
 
 			<div { ...blockProps }>

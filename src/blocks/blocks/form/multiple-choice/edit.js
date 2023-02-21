@@ -119,25 +119,13 @@ const Edit = ({
 
 	const { selectBlock, replaceBlock } = useDispatch( 'core/block-editor' );
 
-	const switchToTextarea = () => {
-		const block = createBlock( 'themeisle-blocks/form-textarea', { ...omit( attributes, [ 'type', 'multipleSelection', 'options' ]) });
-		replaceBlock( clientId, block );
-	};
-
-	const switchToInput = ( inputType ) => {
-		const block = createBlock( 'themeisle-blocks/form-input', { ...omit( attributes, [ 'type', 'multipleSelection', 'options' ]), type: inputType });
-		replaceBlock( clientId, block );
-	};
-
-
 	return (
 		<Fragment>
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 				selectParent={ () => selectBlock( parentClientId ) }
-				switchToTextarea={ switchToTextarea }
-				switchToInput={ switchToInput }
+				clientId={ clientId }
 			/>
 
 			<div { ...blockProps }>
