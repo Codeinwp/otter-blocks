@@ -2,6 +2,7 @@
  * External dependencies
  */
 import classnames from 'classnames';
+import VisibilitySensor from 'react-visibility-sensor';
 
 /**
  * WordPress dependencies
@@ -182,7 +183,17 @@ const GoogleFontsControl = ({
 															setSearch( '' );
 														}}
 													>
-														{ i.family }
+														<VisibilitySensor
+															onChange={ ( isVisible ) => {
+																if ( isVisible ) {
+																	googleFontsLoader.addPreviewFont( i.family, i.family );
+																}
+															}}
+														>
+															<div style={{ fontFamily: i.family }}>
+																{ i.family }
+															</div>
+														</VisibilitySensor>
 													</MenuItem>
 												);
 											}
