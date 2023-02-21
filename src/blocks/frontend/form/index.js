@@ -14,7 +14,6 @@ import { domReady } from '../../helpers/frontend-helper-functions.js';
 const extractFormFields = form => {
 
 	/** @type {Array.<HTMLDivElement>} */
-	const elemsWithError = [];
 	const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href }];
 
 	const inputs = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-input' );
@@ -23,10 +22,6 @@ const extractFormFields = form => {
 	[ ...inputs, ...textarea ]?.forEach( input => {
 		const label = input.querySelector( ':scope > .otter-form-input-label__label, :scope > .otter-form-textarea-label__label' )?.innerHTML;
 		const valueElem = input.querySelector( ':scope > .otter-form-input, :scope > .otter-form-textarea-input' );
-
-		if ( valueElem?.hasAttribute( 'required' ) && ! valueElem?.checkValidity() ) {
-			elemsWithError.push( valueElem );
-		}
 
 		if ( label && valueElem?.value ) {
 			formFieldsData.push({
@@ -61,7 +56,7 @@ const extractFormFields = form => {
 		});
 	});
 
-	return { formFieldsData, elemsWithError };
+	return { formFieldsData };
 };
 
 /**
@@ -72,6 +67,61 @@ const extractFormFields = form => {
 function extractNonceValue( form ) {
 	const query = `.protection #${form.id || ''}_nonce_field`;
 	return form.querySelector( query )?.value;
+}
+
+/**
+ * Validate the inputs from the form.
+ *
+ * @param {HTMLDivElement} form The form.
+ * @returns
+ */
+function validateInputs( form ) {
+	let result = true;
+
+	// Validate text inputs.
+	const inputs = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-input input' );
+	[ ...inputs ]?.forEach( input => {
+		if ( input?.hasAttribute( 'required' ) && ! input?.checkValidity() ) {
+			input?.reportValidity();
+			result = false;
+		}
+	});
+
+	// Validate textarea inputs.
+	const textarea = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-textarea textarea' );
+	[ ...textarea ]?.forEach( input => {
+		if ( input?.hasAttribute( 'required' ) && ! input?.checkValidity() ) {
+			input?.reportValidity();
+			result = false;
+		}
+	});
+
+	// Validate multiple choice inputs.
+	const multipleChoiceInputs = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-multiple-choice' );
+
+	multipleChoiceInputs?.forEach( input => {
+		const select = input.querySelector( ':scope > select' );
+		if ( select?.hasAttribute( 'required' ) && ! select?.checkValidity() ) {
+			select?.reportValidity();
+			result = false;
+		}
+
+		// Check if it is required and at least one is checked.
+		const radios = input.querySelectorAll( ':scope > .o-form-multiple-choice-field > input[type="radio"]' );
+		if ( radios?.length && radios[0]?.hasAttribute( 'required' ) && ! [ ...radios ].some( radio => radio.checked ) ) {
+			radios[0]?.reportValidity();
+			result = false;
+		}
+
+		const checkboxes = input.querySelectorAll( ':scope > .o-form-multiple-choice-field > input[type="checkbox"]' );
+		if ( checkboxes?.length && checkboxes[0]?.hasAttribute( 'required' ) && ! [ ...checkboxes ].some( checkbox => checkbox.checked ) ) {
+			checkboxes[0]?.reportValidity();
+			result = false;
+		}
+	});
+
+
+	return result;
 }
 
 /**
@@ -86,7 +136,7 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 	const payload = {};
 
 	// Get the data from the form fields.
-	const { formFieldsData, elemsWithError } = extractFormFields( form );
+	const { formFieldsData } = extractFormFields( form );
 	const formIsEmpty = 2 > formFieldsData?.length;
 	const nonceFieldValue = extractNonceValue( form );
 	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
@@ -103,12 +153,7 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 		return;
 	}
 
-	/**
-	 * Validate the form inputs data.
-	 */
-	elemsWithError.forEach( input => {
-		input?.reportValidity();
-	});
+	const isValidationSuccessful = validateInputs( form );
 
 	if ( hasCaptcha && ! hasValidToken ) {
 		const msg = ! window.hasOwnProperty( 'grecaptcha' ) ?
@@ -120,7 +165,7 @@ const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
 		).show();
 	}
 
-	if ( 0 < elemsWithError.length || ( hasCaptcha && ! hasValidToken ) ) {
+	if ( ! isValidationSuccessful || ( hasCaptcha && ! hasValidToken ) ) {
 		btn.disabled = false;
 		btn.removeChild( spinner );
 	} else {

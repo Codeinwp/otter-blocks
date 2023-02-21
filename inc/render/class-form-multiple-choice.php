@@ -43,7 +43,7 @@ class Form_Multiple_Choice_Block {
 				$field_value = implode( '_', explode( ' ', sanitize_title( $field_label ) ) );
 				$field_id    = 'field-' . $field_value;
 
-				$output .= $this->render_field( $field_type, $field_label, $field_value, $id, $field_id );
+				$output .= $this->render_field( $field_type, $field_label, $field_value, $id, $field_id, $is_required );
 			}
 		}
 
@@ -61,12 +61,13 @@ class Form_Multiple_Choice_Block {
 	 * @param string $value The value of the field.
 	 * @param string $name The name of the field.
 	 * @param string $id The id of the field.
+	 * @param bool   $is_required The required status of the field.
 	 * @return string
 	 */
-	public function render_field( $type, $label, $value, $name, $id ) {
+	public function render_field( $type, $label, $value, $name, $id, $is_required = false ) {
 		$output = '<div class="o-form-multiple-choice-field">';
 
-		$output .= '<input type="' . $type . '" name="' . $name . '" id="' . $id . '" value="' . $value . '" />';
+		$output .= '<input type="' . $type . '" name="' . $name . '" id="' . $id . '" value="' . $value . '" ' . ( $is_required ? 'required' : '' ) . ' />';
 		$output .= '<label for="' . $id . '" class="o-form-choice-label__label">' . $label . '</label>';
 
 		$output .= '</div>';
