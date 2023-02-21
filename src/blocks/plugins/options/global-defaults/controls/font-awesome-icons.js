@@ -1,25 +1,47 @@
 /**
+ * External dependencies
+ */
+import { isObjectLike } from 'lodash';
+
+/**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-
+import { ContrastChecker } from '@wordpress/block-editor';
 import {
-	Button,
-	ButtonGroup,
+	__experimentalBoxControl as BoxControl,
+	Disabled,
+	FontSizePicker,
 	PanelBody,
-	RangeControl,
 	SelectControl
 } from '@wordpress/components';
+import { Fragment, useState } from '@wordpress/element';
+import { ColorDropdownControl, ToogleGroupControl } from '../../../../components';
+import { makeBox } from '../../../copy-paste/utils';
+import { _px } from '../../../../helpers/helper-functions';
 
-import {
-	__experimentalColorGradientControl as ColorGradientControl,
-	ContrastChecker
-} from '@wordpress/block-editor';
-
-import {
-	Fragment,
-	useState
-} from '@wordpress/element';
+const defaultFontSizes = [
+	{
+		name: __( 'Small', 'otter-blocks' ),
+		size: '16px',
+		slug: 'small'
+	},
+	{
+		name: __( 'Medium', 'otter-blocks' ),
+		size: '32px',
+		slug: 'medium'
+	},
+	{
+		name: __( 'Large', 'otter-blocks' ),
+		size: '48px',
+		slug: 'large'
+	},
+	{
+		name: __( 'XL', 'otter-blocks' ),
+		size: '60px',
+		slug: 'xl'
+	}
+];
 
 const FontAwesomeIcons = ({
 	blockName,
@@ -55,78 +77,79 @@ const FontAwesomeIcons = ({
 			<PanelBody
 				title={ __( 'Sizing', 'otter-blocks' ) }
 			>
-				<RangeControl
-					label={ __( 'Icon Size', 'otter-blocks' ) }
-					value={ defaults.fontSize || '' }
-					initialPosition={ 16 }
-					onChange={ value => changeConfig( blockName, { fontSize: value }) }
-					step={ 0.1 }
-					min={ 12 }
-					max={ 140 }
+				<FontSizePicker
+					fontSizes={ defaultFontSizes }
+					withReset
+					value={ defaults.fontSize ?? '16px' }
+					onChange={ fontSize =>  changeConfig( blockName, { fontSize }) }
 				/>
 
 				<hr/>
 
-				<RangeControl
+				<BoxControl
 					label={ __( 'Padding', 'otter-blocks' ) }
-					value={ defaults.padding || '' }
-					initialPosition={ 5 }
-					onChange={ value => changeConfig( blockName, { padding: value }) }
-					step={ 0.1 }
-					min={ 0 }
-					max={ 100 }
+					values={ ! isObjectLike( defaults.padding ) ? makeBox( _px( defaults.padding ?? 5 ) ) : defaults.padding }
+					onChange={ padding => changeConfig( blockName, { padding }) }
 				/>
 
 				<hr/>
 
-				<RangeControl
+				<BoxControl
 					label={ __( 'Margin', 'otter-blocks' ) }
-					value={ defaults.margin || '' }
-					initialPosition={ 5 }
-					onChange={ value => changeConfig( blockName, { margin: value }) }
-					step={ 0.1 }
-					min={ 0 }
-					max={ 100 }
+					values={ ! isObjectLike( defaults.margin ) ? makeBox( _px( defaults.margin ?? 5 ) ) : defaults.margin }
+					onChange={ margin => changeConfig( blockName, { margin }) }
 				/>
+
 			</PanelBody>
 
 			<PanelBody
 				title={ __( 'Color', 'otter-blocks' ) }
 				initialOpen={ false }
 			>
-				<ButtonGroup>
-					<Button
-						isSmall
-						isSecondary={ hover }
-						isPrimary={ ! hover }
-						onClick={ () => setHover( false ) }
-					>
-						{ __( 'Normal', 'otter-blocks' ) }
-					</Button>
+				<ToogleGroupControl
+					onChange={ value => setHover( value ) }
+					value={ hover }
+					options={[
+						{
+							value: false,
+							label: __( 'Normal', 'otter-blocks' )
+						},
+						{
+							value: true,
+							label: __( 'Hover', 'otter-blocks' )
+						}
+					]}
+				/>
 
-					<Button
-						isSmall
-						isSecondary={ ! hover }
-						isPrimary={ hover }
-						onClick={ () => setHover( true ) }
-					>
-						{ __( 'Hover', 'otter-blocks' ) }
-					</Button>
-				</ButtonGroup>
+				<br/>
 
 				{ hover ? (
 					<Fragment>
-						<ColorGradientControl
-							label={ __( 'Hover Background', 'otter-blocks' ) }
-							colorValue={ defaults.backgroundColorHover }
-							onColorChange={ value => changeConfig( blockName, { backgroundColorHover: value }) }
-						/>
+						<Disabled
+							isDisabled={ defaults.isSynced?.includes( 'backgroundColorHover' ) || false }
+							className="o-disabled"
+						>
+							<ColorDropdownControl
+								label={ __( 'Background', 'otter-blocks' ) }
+								colorValue={ defaults.backgroundColorHover }
+								onColorChange={ backgroundColorHover => changeConfig( blockName, { backgroundColorHover }) }
+								className="is-list is-first"
+							/>
+						</Disabled>
 
-						<ColorGradientControl
-							label={ __( 'Hover Icon', 'otter-blocks' ) }
-							colorValue={ defaults.textColorHover }
-							onColorChange={ value => changeConfig( blockName, { textColorHover: value }) }
-						/>
+						<Disabled
+							isDisabled={ defaults.isSynced?.includes( 'textColorHover' ) || false }
+							className="o-disabled"
+						>
+							<ColorDropdownControl
+								label={ __( 'Icon', 'otter-blocks' ) }
+								colorValue={ defaults.textColorHover }
+								onColorChange={ textColorHover => changeConfig( blockName, { textColorHover }) }
+								className="is-list is-last"
+							/>
+						</Disabled>
+
+						<br/>
 
 						<ContrastChecker
 							{ ...{
@@ -137,17 +160,31 @@ const FontAwesomeIcons = ({
 					</Fragment>
 				) : (
 					<Fragment>
-						<ColorGradientControl
-							label={ __( 'Background', 'otter-blocks' ) }
-							colorValue={ defaults.backgroundColor }
-							onColorChange={ value => changeConfig( blockName, { backgroundColor: value }) }
-						/>
+						<Disabled
+							isDisabled={ defaults.isSynced?.includes( 'backgroundColor' ) || false }
+							className="o-disabled"
+						>
+							<ColorDropdownControl
+								label={ __( 'Background', 'otter-blocks' ) }
+								colorValue={ defaults.backgroundColor }
+								onColorChange={ backgroundColor => changeConfig( blockName, { backgroundColor }) }
+								className="is-list is-first"
+							/>
+						</Disabled>
 
-						<ColorGradientControl
-							label={ __( 'Icon', 'otter-blocks' ) }
-							colorValue={ defaults.textColor }
-							onColorChange={ value => changeConfig( blockName, { textColor: value }) }
-						/>
+						<Disabled
+							isDisabled={ defaults.isSynced?.includes( 'textColor' ) || false }
+							className="o-disabled"
+						>
+							<ColorDropdownControl
+								label={ __( 'Icon', 'otter-blocks' ) }
+								colorValue={ defaults.textColor }
+								onColorChange={ textColor => changeConfig( blockName, { textColor }) }
+								className="is-list is-last"
+							/>
+						</Disabled>
+
+						<br/>
 
 						<ContrastChecker
 							{ ...{

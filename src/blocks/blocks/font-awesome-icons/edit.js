@@ -2,10 +2,10 @@
  * WordPress dependencies...
  */
 import {
-	isNumber,
+	isNumber, isObjectLike,
 	isString
 } from 'lodash';
-
+import classnames from 'classnames';
 import { useBlockProps } from '@wordpress/block-editor';
 
 import {
@@ -20,10 +20,8 @@ import metadata from './block.json';
 import Controls from './controls.js';
 import Inspector from './inspector.js';
 import themeIsleIcons from './../../helpers/themeisle-icons';
-import {
-	blockInit,
-	getDefaultValueByField, useCSSNode
-} from '../../helpers/block-utility.js';
+import { blockInit, getDefaultValueByField } from '../../helpers/block-utility.js';
+import { _cssBlock, boxValues } from '../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -65,50 +63,20 @@ const Edit = ({
 	const getValue = field => getDefaultValueByField({ name, field, defaultAttributes, attributes });
 
 	const inlineStyles = {
-		'--align': attributes.align,
 		'--border-color': attributes.borderColor,
 		'--border-size': attributes.borderSize !== undefined && `${attributes.borderSize }px`,
 		'--border-radius': attributes.borderRadius !== undefined && `${ attributes.borderRadius }%`,
-		'--margin':	attributes.margin !== undefined && `${ getValue( 'margin' ) }px`,
-		'--padding': attributes.padding !== undefined && `${ getValue( 'padding' ) }px`,
+		'--margin': ! isObjectLike( getValue( 'margin' ) ) ? getValue( 'margin' ) + 'px' : boxValues( getValue( 'margin' ), { top: '5px', right: '5px', bottom: '5px', left: '5px' }),
+		'--padding': attributes.padding && ( ! isObjectLike( getValue( 'padding' ) ) ? getValue( 'padding' ) + 'px' : boxValues( getValue( 'padding' ), { top: '5px', right: '5px', bottom: '5px', left: '5px' }) ),
 		'--font-size': attributes.fontSize !== undefined && ( isNumber( getValue( 'fontSize' ) ) ? `${ getValue( 'fontSize' ) }px` : getValue( 'fontSize' ) ),
 		'--align': alignHandler( attributes.align )?.desktop,
 		'--align-tablet': alignHandler( attributes.align )?.tablet,
 		'--align-mobile': alignHandler( attributes.align )?.mobile
 	};
 
-	const [ cssNodeName, setNodeCSS ] = useCSSNode();
-	useEffect( () => {
-		setNodeCSS([
-			`.wp-block-themeisle-blocks-font-awesome-icons-container {
-				color: ${ getValue( 'textColor' ) };
-				background-color: ${ getValue( 'backgroundColor' ) };
-			}`,
-			`.wp-block-themeisle-blocks-font-awesome-icons-container:hover {
-				color: ${ getValue( 'textColorHover' ) };
-				background-color: ${ getValue( 'backgroundColorHover' ) };
-				border-color: ${ attributes.borderColorHover };
-			}`,
-			`.wp-block-themeisle-blocks-font-awesome-icons-container a {
-				color: ${ getValue( 'textColor' ) };
-			}`,
-			`.wp-block-themeisle-blocks-font-awesome-icons-container svg {
-				fill: ${ getValue( 'textColor' ) };
-			}`,
-			`.wp-block-themeisle-blocks-font-awesome-icons-container:hover svg {
-				fill: ${ getValue( 'textColorHover' ) };
-			}`
-		]);
-	}, [
-		attributes.textColor, attributes.backgroundColor,
-		attributes.textColorHover, attributes.backgroundColorHover, attributes.borderColorHover,
-		attributes.fontSize
-	]);
-
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		style: inlineStyles,
-		className: cssNodeName
+		style: inlineStyles
 	});
 
 	return (
@@ -126,8 +94,46 @@ const Edit = ({
 			/>
 
 			<div { ...blockProps }>
-				<span className="wp-block-themeisle-blocks-font-awesome-icons-container">
-					{ 'themeisle-icons' === attributes.library ? <Icon/> : <i className={ `${ attributes.prefix } fa-${ attributes.icon }` }></i> }
+				<style>
+					{
+						`#block-${clientId} .wp-block-themeisle-blocks-font-awesome-icons-container` + _cssBlock([
+							[ 'color', getValue( 'textColor' ) ],
+							[ 'background-color', getValue( 'backgroundColor' ) ]
+						])
+					}
+					{
+						`#block-${clientId} .wp-block-themeisle-blocks-font-awesome-icons-container:hover` + _cssBlock([
+							[ 'color', getValue( 'textColorHover' ) ],
+							[ 'background-color', getValue( 'backgroundColorHover' ) ],
+							[ 'border-color', attributes.borderColorHover ]
+						])
+					}
+					{
+						`#block-${clientId} .wp-block-themeisle-blocks-font-awesome-icons-container a {` + _cssBlock([
+							[ 'color', getValue( 'textColor' ) ]
+						])
+					}
+					{
+						`#block-${clientId} .wp-block-themeisle-blocks-font-awesome-icons-container svg` + _cssBlock([
+							[ 'fill', getValue( 'textColor' ) ]
+						])
+					}
+					{
+						`#block-${clientId} .wp-block-themeisle-blocks-font-awesome-icons-container:hover svg` + _cssBlock([
+							[ 'fill', getValue( 'textColorHover' ) ]
+						])
+					}
+				</style>
+
+				<span className={ classnames(
+					'wp-block-themeisle-blocks-font-awesome-icons-container',
+					{ 'nan-padding': attributes.padding && ! isNumber( attributes.padding ) }
+				)}>
+					{ 'themeisle-icons' === attributes.library ? <Icon/> : <i className={ classnames(
+						`${ attributes.prefix }`,
+						`fa-${ attributes.icon }`
+					)}
+					/> }
 				</span>
 			</div>
 		</Fragment>

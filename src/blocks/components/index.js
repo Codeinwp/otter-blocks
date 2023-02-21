@@ -39,6 +39,5 @@ export {
 	StyleSwitcherBlockControl as StyleSwitcherBlockControl
 } from './style-switcher-control/index.js';
 export { default as SyncColorPanel } from './sync-color-panel/';
-export { default as SyncControl } from './sync-control/index.js';
 export { default as SyncControlDropdown } from './sync-control-dropdown/index';
 export { default as ToogleGroupControl } from './toogle-group-control/index.js';

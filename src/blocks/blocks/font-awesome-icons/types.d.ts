@@ -13,8 +13,8 @@ type Attributes = {
 	link: string
 	newTab: boolean
 	fontSize: number
-	padding: number
-	margin: number
+	padding: number | object
+	margin: number | object
 	backgroundColor: string
 	textColor: string
 	borderColor: string
