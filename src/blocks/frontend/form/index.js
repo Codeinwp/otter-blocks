@@ -16,44 +16,38 @@ const extractFormFields = form => {
 	/** @type {Array.<HTMLDivElement>} */
 	const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href }];
 
-	const inputs = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-input' );
-	const textarea = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-textarea' );
+	const allInputs = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-input, :scope > .otter-form__container > .wp-block-themeisle-blocks-form-textarea, :scope > .otter-form__container > .wp-block-themeisle-blocks-form-multiple-choice' );
 
-	[ ...inputs, ...textarea ]?.forEach( input => {
-		const label = input.querySelector( ':scope > .otter-form-input-label__label, :scope > .otter-form-textarea-label__label' )?.innerHTML;
-		const valueElem = input.querySelector( ':scope > .otter-form-input, :scope > .otter-form-textarea-input' );
+	allInputs?.forEach( ( input, index ) => {
+		const label = `(Field ${index + 1}) ${input.querySelector( '.otter-form-input-label, .otter-form-input-label__label, .otter-form-textarea-label__label' )?.innerHTML}`;
 
-		if ( label && valueElem?.value ) {
+		let value = undefined;
+		let fieldType = undefined;
+
+		const valueElem = input.querySelector( '.otter-form-input:not([type="checkbox"], [type="radio"]), .otter-form-textarea-input' );
+		if ( null !== valueElem ) {
+			value = valueElem?.value;
+			fieldType = valueElem?.type;
+		} else {
+			const select = input.querySelector( 'select' );
+			if ( select ) {
+				value = [ ...select.selectedOptions ].map( o => o?.label )?.filter( l => l ).join( ', ' );
+				fieldType = 'multiple-choice';
+			} else {
+				const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
+				const valuesElem = input.querySelectorAll( '.o-form-multiple-choice-field > input' );
+				value = [ ...labels ].filter( ( label, index ) => valuesElem[index]?.checked ).map( label => label.innerHTML ).join( ', ' );
+				fieldType = 'multiple-choice';
+			}
+		}
+
+		if ( label && value ) {
 			formFieldsData.push({
 				label: label,
-				value: valueElem?.value,
+				value: value,
 				type: valueElem?.type
 			});
 		}
-	});
-
-	const multipleChoiceInputs = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-multiple-choice' );
-
-	multipleChoiceInputs?.forEach( input => {
-
-		const label = input.querySelector( ':scope > .otter-form-input-label' )?.innerHTML;
-
-		const select = input.querySelector( ':scope > select' );
-		let value = undefined;
-
-		if ( select ) {
-			value = [ ...select.selectedOptions ].map( o => o?.label )?.filter( l => l ).join( ', ' );
-		} else {
-			const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
-			const valuesElem = input.querySelectorAll( '.o-form-multiple-choice-field > input' );
-			value = [ ...labels ].filter( ( label, index ) => valuesElem[index]?.checked ).map( label => label.innerHTML ).join( ', ' );
-		}
-
-		formFieldsData.push({
-			label: label,
-			value: value,
-			type: 'multiple-choice'
-		});
 	});
 
 	return { formFieldsData };
