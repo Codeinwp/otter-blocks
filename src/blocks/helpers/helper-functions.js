@@ -450,7 +450,7 @@ export const buildResponsiveGetAttributes = ( currentView, defaultView = 'Deskto
  * Get Active Style Name.
  *
  * @param { Object } styles    Block styles.
- * @param { Array }  className Classes of the block.
+ * @param { string | undefined }  className Classes of the block.
  *
  * @returns { string }
  */
@@ -477,9 +477,9 @@ export const getActiveStyle = ( styles, className ) => {
 /**
  * Replaces the active style in the block's className.
  *
- * @param { string } className Class name.
+ * @param { string | undefined } className Class name.
  * @param { Object } styles    Block styles.
- * @param { Object } newStyle  The replacing style.
+ * @param { string | undefined } newStyle  The replacing style.
  *
  * @return { string } The updated className.
  */

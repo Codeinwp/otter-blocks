@@ -18,7 +18,7 @@ import {
 } from '@wordpress/components';
 
 import { getActiveStyle, changeActiveStyle } from '../../../helpers/helper-functions.js';
-import { switchFormFieldTo } from '../common';
+import { HideFieldLabelToggle, switchFormFieldTo } from '../common';
 
 const styles = [
 	{
@@ -86,6 +86,10 @@ const Inspector = ({
 						{
 							label: __( 'Textarea', 'otter-blocks' ),
 							value: 'textarea'
+						},
+						{
+							label: __( 'Url', 'otter-blocks' ),
+							value: 'url'
 						}
 					] }
 					onChange={ type => {
@@ -102,6 +106,8 @@ const Inspector = ({
 					value={ attributes.label }
 					onChange={ label => setAttributes({ label }) }
 				/>
+
+				<HideFieldLabelToggle attributes={ attributes } setAttributes={ setAttributes } />
 
 				<TextareaControl
 					label={ __( 'Options', 'otter-blocks' ) }

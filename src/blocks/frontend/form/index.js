@@ -77,7 +77,7 @@ function validateInputs( form ) {
 	// Validate text inputs.
 	const inputs = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-input input' );
 	[ ...inputs ]?.forEach( input => {
-		if ( input?.hasAttribute( 'required' ) && ! input?.checkValidity() ) {
+		if ( ! input?.checkValidity() ) {
 			input?.reportValidity();
 			result = false;
 		}
@@ -86,7 +86,7 @@ function validateInputs( form ) {
 	// Validate textarea inputs.
 	const textarea = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-textarea textarea' );
 	[ ...textarea ]?.forEach( input => {
-		if ( input?.hasAttribute( 'required' ) && ! input?.checkValidity() ) {
+		if ( ! input?.checkValidity() ) {
 			input?.reportValidity();
 			result = false;
 		}

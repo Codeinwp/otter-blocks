@@ -284,6 +284,12 @@
 			font-size: var(--help-font-size);
 			width: 100%;
 		}
+
+		&.is-style-hidden-label {
+			.otter-form-input-label, .otter-form-textarea-label {
+				display: none;
+			}
+		}
 	}
 
 	.wp-block-themeisle-blocks-form-textarea {
@@ -363,6 +369,16 @@
 
 		.o-form-help {
 			width: 100%;
+		}
+	}
+
+	.wp-block-themeisle-blocks-form-multiple-choice {
+		label, select {
+			color: var(--input-color);
+		}
+
+		select {
+			border-color: var(--input-color);
 		}
 	}
 }

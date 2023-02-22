@@ -12,7 +12,7 @@ import {
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
-import { switchFormFieldTo } from '../common';
+import { HideFieldLabelToggle, switchFormFieldTo } from '../common';
 
 const Inspector = ({
 	attributes,
@@ -68,6 +68,10 @@ const Inspector = ({
 						{
 							label: __( 'Textarea', 'otter-blocks' ),
 							value: 'textarea'
+						},
+						{
+							label: __( 'Url', 'otter-blocks' ),
+							value: 'url'
 						}
 					] }
 					onChange={ type => {
@@ -83,6 +87,8 @@ const Inspector = ({
 					value={ attributes.label }
 					onChange={ label => setAttributes({ label }) }
 				/>
+
+				<HideFieldLabelToggle attributes={ attributes } setAttributes={ setAttributes } />
 
 				<TextControl
 					label={ __( 'Placeholder', 'otter-blocks' ) }
