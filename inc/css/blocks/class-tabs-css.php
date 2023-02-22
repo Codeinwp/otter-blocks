@@ -42,7 +42,7 @@ class Tabs_CSS extends Base_CSS {
 						'value'     => 'borderWidth',
 						'unit'      => 'px',
 						'condition' => function( $attrs ) {
-							return isset( $attrs['borderWidth'] ) && ! is_numeric( $attrs['borderWidth'] );
+							return isset( $attrs['borderWidth'] ) && is_numeric( $attrs['borderWidth'] );
 						},
 					),
 					array(
@@ -160,7 +160,7 @@ class Tabs_CSS extends Base_CSS {
 						'property' => '--border-side-width',
 						'value'    => 'borderWidth',
 						'format'   => function( $value, $attrs ) {
-							
+
 							if ( isset( $attrs['tabsPosition'] ) ) {
 								if ( 'left' === $attrs['tabsPosition'] ) {
 									if ( isset( $value['left'] ) ) {
@@ -187,7 +187,7 @@ class Tabs_CSS extends Base_CSS {
 
 	/**
 	 * Generate Form Global CSS
-	 * 
+	 *
 	 * @return string
 	 * @since 2.2.2
 	 * @access public
@@ -247,7 +247,7 @@ class Tabs_CSS extends Base_CSS {
 					array(
 						'property' => '--tabs-title-color',
 						'value'    => 'titleColor',
-						
+
 					),
 					array(
 						'property' => '--tabs-background-color',
