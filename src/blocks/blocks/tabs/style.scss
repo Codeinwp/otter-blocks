@@ -93,7 +93,7 @@
 
 	&:not(.has-pos-left) {
 		&> .wp-block-themeisle-blocks-tabs__header {
-			align-items: center;
+			align-items: flex-end;
 
 			button {
 				margin-left: 10px;
@@ -102,6 +102,8 @@
 
 		.wp-block-themeisle-blocks-tabs__header_item {
 			margin-bottom: calc(0px - var(--border-side-width));
+			word-break: break-all;
+			overflow-wrap: break-word;
 		}
 
 
