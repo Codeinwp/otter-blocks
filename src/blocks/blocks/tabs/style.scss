@@ -197,19 +197,19 @@
 
 	&:not(.has-pos-left) {
 		&.is-align-center {
-			.wp-block-themeisle-blocks-tabs__header {
+			&> .wp-block-themeisle-blocks-tabs__header {
 				justify-content: center;
 			}
 		}
 
 		&.is-align-right {
-			.wp-block-themeisle-blocks-tabs__header {
+			&> .wp-block-themeisle-blocks-tabs__header {
 				justify-content: flex-end;
 			}
 		}
 
 		&.is-align-full {
-			.wp-block-themeisle-blocks-tabs__header {
+			&> .wp-block-themeisle-blocks-tabs__header {
 				justify-content: space-between;
 
 				.wp-block-themeisle-blocks-tabs__header_item {
