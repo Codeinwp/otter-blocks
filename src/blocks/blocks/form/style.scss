@@ -277,6 +277,10 @@
 			background: var(--input-bg-color);
 		}
 
+		.o-form-choice-label {
+			font-size: var(--label-font-size);
+		}
+
 		.o-form-help {
 			opacity: 0.8;
 			color: var(--help-label-color);
@@ -359,13 +363,9 @@
 		}
 	}
 
-	.wp-block-themeisle-blocks-form-multiple-choice.is-style-inline-list {
+	.wp-block-themeisle-blocks-form-multiple-choice.is-style-inline-list:not(:has(select)) {
 		flex-direction: row;
 		flex-wrap: wrap;
-
-		.otter-form-input-label {
-			width: max-content;
-		}
 
 		.o-form-help {
 			width: 100%;
