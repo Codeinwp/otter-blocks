@@ -87,7 +87,7 @@ class Blocks_Animation {
 			)
 		);
 
-		wp_set_script_translations( 'otter-animation', 'otter-blocks' );
+		wp_set_script_translations( 'otter-animation', 'blocks-animation' );
 
 		$asset_file = include BLOCKS_ANIMATION_PATH . '/build/animation/anim-count.asset.php';
 		wp_enqueue_script(
@@ -246,7 +246,7 @@ class Blocks_Animation {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, 'Cheatin&#8217; huh?', '1.0.0' );
 	}
 
 	/**
@@ -258,6 +258,6 @@ class Blocks_Animation {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, 'Cheatin&#8217; huh?', '1.0.0' );
 	}
 }

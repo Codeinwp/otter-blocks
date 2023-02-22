@@ -1,4 +1,10 @@
 /**
+ * External dependencies
+ */
+import classnames from 'classnames';
+import { isNumber } from 'lodash';
+
+/**
  * WordPress dependencies
  */
 import { useBlockProps } from '@wordpress/block-editor';
@@ -17,9 +23,17 @@ const Save = ({
 		id: attributes.id
 	});
 
+	const classes = classnames(
+		`${ attributes.prefix }`,
+		`fa-${ attributes.icon }`
+	);
+
 	return (
 		<div { ...blockProps }>
-			<span className="wp-block-themeisle-blocks-font-awesome-icons-container">
+			<span className={ classnames(
+				'wp-block-themeisle-blocks-font-awesome-icons-container',
+				{ 'nan-padding': attributes.padding && ! isNumber( attributes.padding ) }
+			)}>
 				{ ( attributes.link ) ? (
 					<a
 						href={ attributes.link }
@@ -28,13 +42,13 @@ const Save = ({
 					>
 						{ 'themeisle-icons' === attributes.library ?
 							<Icon/> :
-							<i className={ `${ attributes.prefix } fa-${ attributes.icon }` }></i>
+							<i className={ classes }></i>
 						}
 					</a>
 				) : (
 					'themeisle-icons' === attributes.library ?
 						<Icon/> :
-						<i className={ `${ attributes.prefix } fa-${ attributes.icon }` }></i>
+						<i className={ classes }></i>
 				) }
 			</span>
 		</div>

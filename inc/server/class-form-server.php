@@ -52,6 +52,11 @@ class Form_Server {
 	 */
 	public $version = 'v1';
 
+	/**
+	 * Anti Spam timeout
+	 */
+	const ANTI_SPAM_TIMEOUT = 5000; // 5 seconds
+
 
 	/**
 	 * Initialize the class
@@ -110,6 +115,7 @@ class Form_Server {
 		add_action( 'otter_form_after_submit', array( $this, 'after_submit' ) );
 		add_filter( 'otter_form_email_build_body', array( $this, 'build_email_content' ) );
 		add_filter( 'otter_form_email_build_body_error', array( $this, 'build_email_error_content' ), 1, 2 );
+		add_filter( 'otter_form_anti_spam_validation', array( $this, 'anti_spam_validation' ) );
 	}
 
 	/**
@@ -220,23 +226,29 @@ class Form_Server {
 			$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_payload_field( 'formOption' ) );
 			$form_data->set_form_options( $form_options );
 
-			do_action( 'otter_form_before_submit', $form_data );
-			// Select the submit function based on the provider.
-			$provider_handlers = apply_filters( 'otter_select_form_provider', $form_data );
+			$anti_bot_check = apply_filters( 'otter_form_anti_spam_validation', $form_data );
 
-			if ( $provider_handlers && Form_Providers::provider_has_handler( $provider_handlers, $form_data->get( 'handler' ) ) ) {
+			if ( $anti_bot_check ) {
+				do_action( 'otter_form_before_submit', $form_data );
+				// Select the submit function based on the provider.
+				$provider_handlers = apply_filters( 'otter_select_form_provider', $form_data );
 
-				// Send the data to the provider handler.
-				$provider_response = $provider_handlers[ $form_data->get( 'handler' ) ]( $form_data );
+				if ( $provider_handlers && Form_Providers::provider_has_handler( $provider_handlers, $form_data->get( 'handler' ) ) ) {
+
+					// Send the data to the provider handler.
+					$provider_response = $provider_handlers[ $form_data->get( 'handler' ) ]( $form_data );
+
+					do_action( 'otter_form_after_submit', $form_data );
+
+					return $provider_response;
+				} else {
+					$res->set_code( Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED );
+				}
 
 				do_action( 'otter_form_after_submit', $form_data );
-
-				return $provider_response;
 			} else {
-				$res->set_code( Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED );
-			}
-
-			do_action( 'otter_form_after_submit', $form_data );
+				$res->set_code( Form_Data_Response::ERROR_BOT_DETECTED );
+			}       
 		} catch ( Exception $e ) {
 			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
 			$res->add_reason( $e->getMessage() );
@@ -356,6 +368,31 @@ class Form_Server {
 		) {
 			$this->send_default_email( $form_data );
 		}
+	}
+
+	/**
+	 * Check if the form was not completed by a bot.
+	 *
+	 * @param Form_Data_Request $form_data The form request data.
+	 * @return boolean
+	 * @since 2.2.3
+	 */
+	public function anti_spam_validation( $form_data ) {
+
+		if (
+			$form_data->payload_has_field( 'antiSpamTime' ) &&
+			is_numeric( $form_data->get_payload_field( 'antiSpamTime' ) ) &&
+			$form_data->payload_has_field( 'antiSpamHoneyPot' )
+		) {
+			if (
+				$form_data->get_payload_field( 'antiSpamTime' ) >= self::ANTI_SPAM_TIMEOUT &&
+				'' === $form_data->get_payload_field( 'antiSpamHoneyPot' )
+			) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
