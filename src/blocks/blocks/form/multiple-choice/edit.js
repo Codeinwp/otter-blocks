@@ -16,10 +16,6 @@ import {
 
 import { useDispatch, useSelect } from '@wordpress/data';
 
-import { omit } from 'lodash';
-
-import { createBlock } from '@wordpress/blocks';
-
 /**
  * Internal dependencies
  */
@@ -27,6 +23,7 @@ import metadata from './block.json';
 import { blockInit } from '../../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import { _cssBlock } from '../../../helpers/helper-functions';
+import { Disabled } from '@wordpress/components';
 
 
 const { attributes: defaultAttributes } = metadata;
@@ -48,7 +45,9 @@ const Field = ({ fieldType, label, setAttributes, position, attributes }) => {
 
 	return (
 		<div className='o-form-multiple-choice-field'>
-			<input type={fieldType} id={id} name={attributes.mappedName} value={value} />
+			<Disabled>
+				<input type={fieldType} id={id} name={attributes.mappedName} value={value} />
+			</Disabled>
 			<label for={id}>
 				<RichText
 					placeholder={ __( 'Type here…', 'otter-blocks' ) }
