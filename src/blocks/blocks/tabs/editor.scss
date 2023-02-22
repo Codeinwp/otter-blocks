@@ -101,6 +101,44 @@
     //         }
     //     }
     // }
+
+    &.is-style-border > .wp-block-themeisle-blocks-tabs__content {
+        &> .block-editor-inner-blocks {
+            &> .block-editor-block-list__layout {
+                &> .wp-block-themeisle-blocks-tabs-item {
+                    &> .wp-block-themeisle-blocks-tabs-item__content {
+                        border-left-width: 0px;
+                        border-right-width: 0px;
+        
+                        @media (max-width: 800px) {
+                            border-top-width: 0px;
+                            border-bottom-width: 0px;
+                        }
+        
+                        @media (min-width: 800px) {
+                            border-bottom-width: 0px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &.is-style-boxed {
+
+		&> .wp-block-themeisle-blocks-tabs__content > .block-editor-inner-blocks > .block-editor-block-list__layout > .wp-block-themeisle-blocks-tabs-item {
+			display: flex;
+
+			@media (max-width: 800px) {
+				flex-direction: column;
+			}
+			
+
+			&> .wp-block-themeisle-blocks-tabs-item__content {
+				flex-grow: 1;
+			}
+		}
+	}
     
     .add-header-container {
         display: flex;
