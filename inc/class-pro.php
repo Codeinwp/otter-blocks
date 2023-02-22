@@ -87,6 +87,16 @@ class Pro {
 	}
 
 	/**
+	 * Get Otter Pro Patterns URL
+	 *
+	 * @access  public
+	 * @return  string
+	 */
+	public static function get_patterns_url() {
+		return 'https://themeisle.com/plugins/otter-blocks/patterns/';
+	}
+
+	/**
 	 * Get Otter reference install.
 	 *
 	 * @since   2.0.14
