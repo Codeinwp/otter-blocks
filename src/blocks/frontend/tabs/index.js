@@ -33,6 +33,7 @@ domReady( () => {
 			if ( 'true' === item.dataset.defaultOpen && ! openedTab ) {
 				headerItem.classList.add( 'active' );
 				content.classList.add( 'active' );
+				headerMobile.classList.add( 'active' );
 				openedTab = true;
 			} else {
 				closedTabs.push({ headerItem, content, headerMobile });
