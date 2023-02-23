@@ -31,7 +31,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { SortableTab } from './components/sortable-tabs.js';
 import { InspectorHeader, SyncColorPanel, SyncControlDropdown, ToogleGroupControl } from '../../../components/index.js';
 import { alignCenter, alignLeft, alignRight, menu } from '@wordpress/icons';
-import { changeActiveStyle, getActiveStyle, isEmptyBox } from '../../../helpers/helper-functions.js';
+import { changeActiveStyle, getActiveStyle, isEmptyBox, objectOrNumberAsBox } from '../../../helpers/helper-functions.js';
 import AutoDisableSyncAttr from '../../../components/auto-disable-sync-attr/index';
 import { makeBox } from '../../../plugins/copy-paste/utils';
 
@@ -433,7 +433,7 @@ const Inspector = ({
 								<AutoDisableSyncAttr attr='titleBorderWidth' attributes={attributes}>
 									<BoxControl
 										label={ __( 'Title Border Width', 'otter-blocks' ) }
-										values={ attributes.titleBorderWidth ?? attributes.borderWidth ?? makeBox( '3px' ) }
+										values={ attributes.titleBorderWidth ?? objectOrNumberAsBox( attributes.borderWidth ?? '3px' ) }
 										onChange={ titleBorderWidth => {
 											setAttributes({ titleBorderWidth: ! isEmptyBox( titleBorderWidth ) ? titleBorderWidth : undefined });
 										} }
@@ -442,7 +442,7 @@ const Inspector = ({
 								<AutoDisableSyncAttr attr='borderWidth' attributes={attributes}>
 									<BoxControl
 										label={ __( 'Content Border Width', 'otter-blocks' ) }
-										values={ attributes.borderWidth ?? makeBox( '3px' ) }
+										values={  objectOrNumberAsBox( attributes.borderWidth ?? '3px' ) }
 										onChange={ borderWidth => {
 											setAttributes({ borderWidth: ! isEmptyBox( borderWidth ) ? borderWidth : undefined });
 										} }

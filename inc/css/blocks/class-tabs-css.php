@@ -173,8 +173,13 @@ class Tabs_CSS extends Base_CSS {
 								return $value['top'];
 							}
 
+							if ( is_numeric( $value ) ) {
+								return $value . 'px';
+							}
+
 							return '3px';
 						},
+						'hasSync'  => 'tabs-border-side-width',
 					),
 				),
 			)
@@ -311,6 +316,30 @@ class Tabs_CSS extends Base_CSS {
 									'bottom' => '0px',
 								)
 							);
+						},
+					),
+					array(
+						'property' => '--tabs-border-side-width',
+						'value'    => 'borderWidth',
+						'format'   => function( $value, $attrs ) {
+
+							if ( isset( $attrs['tabsPosition'] ) ) {
+								if ( 'left' === $attrs['tabsPosition'] ) {
+									if ( isset( $value['left'] ) ) {
+										return $value['left'];
+									}
+								}
+							}
+
+							if ( isset( $value['top'] ) ) {
+								return $value['top'];
+							}
+
+							if ( is_numeric( $value ) ) {
+								return $value . 'px';
+							}
+
+							return '3px';
 						},
 					),
 				),

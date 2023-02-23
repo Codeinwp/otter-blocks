@@ -34,12 +34,10 @@ import metadata from './block.json';
 import Inspector from './inspector.js';
 import Controls from './controls.js';
 import { blockInit, getDefaultValueByField } from '../../../helpers/block-utility.js';
-import { boxToCSS, _px } from '../../../helpers/helper-functions';
+import { boxToCSS, objectOrNumberAsBox, _i, _px } from '../../../helpers/helper-functions';
 import classNames from 'classnames';
 import BlockAppender from '../../../components/block-appender-button';
 import { useDarkBackground } from '../../../helpers/utility-hooks.js';
-import { plus } from '@wordpress/icons';
-import { Icon } from '@wordpress/components';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -201,7 +199,7 @@ const Edit = ({
 	 */
 	const inlineStyles = {
 		'--title-border-width': boxToCSS( getSyncValue( 'titleBorderWidth' ) ),
-		'--border-width': boxToCSS( getSyncValue( 'borderWidth' ) ),
+		'--border-width': boxToCSS( _px( getSyncValue( 'borderWidth' ) ) ),
 		'--border-color': getSyncValue( 'borderColor' ),
 		'--title-color': getSyncValue( 'titleColor' ),
 		'--title-background': getSyncValue( 'titleBackgroundColor' ),
@@ -212,7 +210,7 @@ const Edit = ({
 		'--content-text-color': getSyncValue( 'contentTextColor' ),
 		'--title-padding': boxToCSS( getSyncValue( 'titlePadding' ) ),
 		'--content-padding': boxToCSS( getSyncValue( 'contentPadding' ) ),
-		'--border-side-width': 'left' === attributes.tabsPosition ?  getSyncValue( 'borderWidth' )?.left ?? '3px' :  getSyncValue( 'borderWidth' )?.top ?? '3px',
+		'--border-side-width': 'left' === attributes.tabsPosition ?  objectOrNumberAsBox( getSyncValue( 'borderWidth' ) )?.left :  objectOrNumberAsBox( getSyncValue( 'borderWidth' ) )?.top,
 		'--font-size': _px( getSyncValue( 'titleFontSize' ) )
 	};
 
