@@ -9,19 +9,19 @@ import { SortableContainer } from 'react-sortable-hoc';
 import { __ } from '@wordpress/i18n';
 
 import {
-	ContrastChecker,
-	InspectorControls,
-	PanelColorSettings
+	InspectorControls
 } from '@wordpress/block-editor';
 
 import {
+	BaseControl,
 	Button,
+	FontSizePicker,
 	PanelBody,
-	RangeControl,
-	SelectControl
+	SelectControl,
+	__experimentalBoxControl as BoxControl
 } from '@wordpress/components';
 
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, Fragment } from '@wordpress/element';
 
 import { useSelect, useDispatch } from '@wordpress/data';
 
@@ -29,7 +29,34 @@ import { useSelect, useDispatch } from '@wordpress/data';
  * Internal dependencies.
  */
 import { SortableTab } from './components/sortable-tabs.js';
+import { InspectorHeader, SyncColorPanel, SyncControlDropdown, ToogleGroupControl } from '../../../components/index.js';
+import { alignCenter, alignLeft, alignRight, menu } from '@wordpress/icons';
+import { changeActiveStyle, getActiveStyle, isEmptyBox, objectOrNumberAsBox } from '../../../helpers/helper-functions.js';
+import AutoDisableSyncAttr from '../../../components/auto-disable-sync-attr/index';
+import { makeBox } from '../../../plugins/copy-paste/utils';
 
+const styles = [
+	{
+		label: __( 'Default', 'otter-blocks' ),
+		value: 'default',
+		isDefault: true
+	},
+	{
+		label: __( 'Border', 'otter-blocks' ),
+		value: 'border'
+	},
+	{
+		label: __( 'Boxed', 'otter-blocks' ),
+		value: 'boxed'
+	}
+];
+
+
+/**
+ *
+ * @param {import('./types.js').TabsGroupInspectorProps} props
+ * @returns
+ */
 const Inspector = ({
 	attributes,
 	setAttributes,
@@ -80,22 +107,6 @@ const Inspector = ({
 		moveTab( children[oldIndex].clientId, newIndex );
 	};
 
-	const onTabColorChange = value => {
-		setAttributes({ tabColor: value });
-	};
-
-	const onBorderColorChange = value => {
-		setAttributes({ borderColor: value });
-	};
-
-	const onBorderWidthChange = value => {
-		setAttributes({ borderWidth: Number( value ) });
-	};
-
-	const onActiveTitleColorChange = value => {
-		setAttributes({ activeTitleColor: value });
-	};
-
 	const onTabSelect = tabId => {
 		children.forEach( ( child, i ) => {
 			updateBlockAttributes( children[i].clientId, { defaultOpen: false });
@@ -109,84 +120,340 @@ const Inspector = ({
 		return { label: `${ index + 1 }. ${ c.attributes.title || __( 'Untitled Tab', 'otter-blocks' ) }`, value: c.clientId };
 	});
 
+	const [ tab, setTab ] = useState( 'settings' );
+
+
 	return (
 		<InspectorControls>
-			<PanelBody
-				title={ __( 'Tabs Management', 'otter-blocks' ) }
-			>
-				<p>{ __( 'Press and hold to use drag and drop to sort the tabs', 'otter-blocks' ) }</p>
-
-				{ 0 < children?.length && (
-					<TabsList
-						items={ children }
-						onSortEnd={ onSortEnd }
-						useDragHandle
-						axis="y"
-						lockAxis="y"
-					/>
-				) }
-
-				<Button
-					isSecondary
-					className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
-					onClick={ addTab }
-				>
-					{ __( 'Add Tab', 'otter-blocks' ) }
-				</Button>
-
-				<SelectControl
-					label={ __( 'Initial Tab', 'otter-blocks' ) }
-					value={ defaultTab }
-					options={ tabOptions }
-					onChange={ onTabSelect }
+			<div>
+				<InspectorHeader
+					value={ tab }
+					options={[
+						{
+							label: __( 'Settings', 'otter-blocks' ),
+							value: 'settings'
+						},
+						{
+							label: __( 'Style', 'otter-blocks' ),
+							value: 'style'
+						}
+					]}
+					onChange={ setTab }
 				/>
-			</PanelBody>
 
-			<PanelBody
-				title={ __( 'Settings', 'otter-blocks' ) }
-				initialOpen={ false }
-			>
-				<RangeControl
-					label={ __( 'Border Width', 'otter-blocks' ) }
-					value={ attributes.borderWidth }
-					onChange={ onBorderWidthChange }
-					step={ 0.1 }
-					min={ 0 }
-					max={ 5 }
-				/>
-			</PanelBody>
+				{
+					'settings' === tab && (
+						<Fragment>
+							<PanelBody
+								title={ __( 'Tabs Settings', 'otter-blocks' ) }
+							>
+								{/* <BaseControl
+									label={ __( 'Tab titles position', 'otter-blocks' ) }
+								>
+									<ToogleGroupControl
+										value={ attributes.tabsPosition ?? 'top' }
+										options={[
+											{
+												label: __( 'Vertical', 'otter-blocks' ),
+												value: 'top'
+											},
+											{
+												label: __( 'Horizontal', 'otter-blocks' ),
+												value: 'left'
+											}
+										]}
+										onChange={ tabsPosition => setAttributes({ tabsPosition }) }
+									/>
+								</BaseControl> */}
 
-			<PanelColorSettings
-				title={ __( 'Color', 'otter-blocks' ) }
-				initialOpen={ false }
-				colorSettings={ [
-					{
-						value: attributes.activeTitleColor,
-						onChange: onActiveTitleColorChange,
-						label: __( 'Active Title Color', 'otter-blocks' ),
-						isShownByDefault: true
-					},
-					{
-						value: attributes.tabColor,
-						onChange: onTabColorChange,
-						label: __( 'Background', 'otter-blocks' ),
-						isShownByDefault: true
-					},
-					{
-						value: attributes.borderColor,
-						onChange: onBorderColorChange,
-						label: __( 'Border Color', 'otter-blocks' ),
-						isShownByDefault: false
-					}
-				] }
-			>
-				<ContrastChecker
-					{ ...{
-						textColor: attributes.activeTitleColor,
-						backgroundColor: attributes.tabColor
-					} }
-				/>
-			</PanelColorSettings>
+								{
+									'left' !== attributes.tabsPosition && (
+										<BaseControl
+											label={ __( 'Alignment', 'otter-blocks' ) }
+										>
+											<ToogleGroupControl
+												value={ attributes.titleAlignment ?? 'left' }
+												onChange={ titleAlignment => setAttributes({ titleAlignment }) }
+												options={[
+													{
+														icon: alignLeft,
+														label: __( 'Left', 'otter-blocks' ),
+														value: 'left'
+													},
+													{
+														icon: alignCenter,
+														label: __( 'Center', 'otter-blocks' ),
+														value: 'center'
+													},
+													{
+														icon: alignRight,
+														label: __( 'Right', 'otter-blocks' ),
+														value: 'right'
+													},
+													{
+														icon: menu,
+														label: __( 'Full', 'otter-blocks' ),
+														value: 'full'
+													}
+												]}
+												hasIcon={ true }
+											/>
+										</BaseControl>
+									)
+								}
+							</PanelBody>
+							<PanelBody
+								title={ __( 'Tabs Management', 'otter-blocks' ) }
+							>
+								<p>{ __( 'Press and hold to use drag and drop to sort the tabs', 'otter-blocks' ) }</p>
+
+								{ 0 < children?.length && (
+									<TabsList
+										items={ children }
+										onSortEnd={ onSortEnd }
+										useDragHandle
+										axis="y"
+										lockAxis="y"
+									/>
+								) }
+
+								<Button
+									isSecondary
+									className="wp-block-themeisle-blocks-tabs-inspector-add-tab"
+									onClick={ addTab }
+								>
+									{ __( 'Add Tab', 'otter-blocks' ) }
+								</Button>
+
+								<SelectControl
+									label={ __( 'Initial Tab', 'otter-blocks' ) }
+									value={ defaultTab }
+									options={ tabOptions }
+									onChange={ onTabSelect }
+								/>
+							</PanelBody>
+						</Fragment>
+					)
+				}
+
+				{
+					'style' === tab && (
+						<Fragment>
+							<PanelBody
+								title={ __( 'Style variations', 'otter-blocks' ) }
+							>
+								<BaseControl
+									label={ __( 'Select a style', 'otter-blocks' ) }
+								>
+									<ToogleGroupControl
+										value={ getActiveStyle( styles, attributes.className ) }
+										onChange={ value => {
+											const classes = changeActiveStyle( attributes?.className, styles, value ) || undefined;
+											setAttributes({ className: classes });
+										} }
+										options={[
+											{
+												label: __( 'Default', 'otter-blocks' ),
+												value: 'default'
+											},
+											{
+												label: __( 'Border', 'otter-blocks' ),
+												value: 'border'
+											},
+											{
+												label: __( 'Boxed', 'otter-blocks' ),
+												value: 'boxed'
+											}
+										]}
+										hasIcon={ false }
+									/>
+								</BaseControl>
+							</PanelBody>
+							<PanelBody
+								title={ __( 'Typography', 'otter-blocks' ) }
+							>
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									setAttributes={setAttributes}
+									options={[
+										{
+											label: __( 'Font Size', 'otter-blocks' ),
+											value: 'titleFontSize'
+										}
+									]}
+								/>
+								<AutoDisableSyncAttr attr='titleFontSize' attributes={attributes}>
+									<FontSizePicker
+										fontSizes={ [
+											{
+												name: __( 'Extra Small', 'otter-blocks' ),
+												icon: 'small',
+												size: '14px'
+											},
+											{
+												name: __( 'Small', 'otter-blocks' ),
+												slug: 'small',
+												size: '16px'
+											},
+											{
+												name: __( 'Medium', 'otter-blocks' ),
+												slug: 'medium',
+												size: '18px'
+											},
+											{
+												name: __( 'Large', 'otter-blocks' ),
+												slug: 'large',
+												size: '24px'
+											},
+											{
+												name: __( 'Extra Large', 'otter-blocks' ),
+												slug: 'extra-large',
+												size: '28px'
+											}
+										] }
+										value={ attributes.titleFontSize }
+										onChange={ titleFontSize => setAttributes({ titleFontSize }) }
+									/>
+								</AutoDisableSyncAttr>
+
+							</PanelBody>
+							<SyncColorPanel
+								label={ __( 'Colors', 'otter-blocks' ) }
+								isSynced={ attributes.isSynced ?? [] }
+								initialOpen={ false }
+								setAttributes={ setAttributes }
+								options={ [
+									{
+										value: attributes.titleBackgroundColor,
+										label: __( 'Title Background', 'otter-blocks' ),
+										slug: 'titleBackgroundColor'
+									},
+									{
+										value: attributes.activeTitleBackgroundColor,
+										label: __( 'Active Title Tackground', 'otter-blocks' ),
+										slug: 'activeTitleBackgroundColor'
+									},
+									{
+										value: attributes.titleColor ?? attributes.tabColor ?? 'white',
+										label: __( 'Title Color', 'otter-blocks' ),
+										slug: 'titleColor'
+									},
+									{
+										value: attributes.activeTitleColor,
+										label: __( 'Active Title Color', 'otter-blocks' ),
+										slug: 'activeTitleColor'
+									},
+									{
+										value: attributes.contentTextColor,
+										label: __( 'Content Text Color', 'otter-blocks' ),
+										slug: 'contentTextColor'
+									},
+									{
+										value: attributes.tabColor ?? 'white',
+										label: __( 'Content Background', 'otter-blocks' ),
+										slug: 'tabColor'
+									},
+									{
+										value: attributes.borderColor,
+										label: __( 'Border', 'otter-blocks' ),
+										slug: 'borderColor'
+									},
+									{
+										value: attributes.activeBorderColor,
+										label: __( 'Active Border', 'otter-blocks' ),
+										slug: 'activeBorderColor'
+									}
+								] }
+							/>
+							<PanelBody
+								title={ __( 'Dimensions(Layout)', 'otter-blocks' ) }
+								initialOpen={ false }
+							>
+								<SyncControlDropdown
+									isSynced={attributes.isSynced}
+									setAttributes={setAttributes}
+									options={[
+										{
+											label: __( 'Title Padding', 'otter-blocks' ),
+											value: 'titlePadding'
+										},
+										{
+											label: __( 'Content Padding', 'otter-blocks' ),
+											value: 'contentPadding'
+										}
+									]}
+								/>
+								<AutoDisableSyncAttr attr='titlePadding' attributes={attributes}>
+									<BoxControl
+										label={ __( 'Title Padding', 'otter-blocks' ) }
+										values={ attributes.titlePadding ?? makeBox( '16px' )  }
+										onChange={ titlePadding => setAttributes({ titlePadding: ! isEmptyBox( titlePadding ) ? titlePadding : undefined }) }
+									/>
+								</AutoDisableSyncAttr>
+								<AutoDisableSyncAttr attr='contentPadding' attributes={attributes}>
+									<BoxControl
+										label={ __( 'Content Padding', 'otter-blocks' ) }
+										values={ attributes.contentPadding ?? makeBox( '16px' )  }
+										onChange={ contentPadding => setAttributes({ contentPadding:
+											! isEmptyBox( contentPadding ) ? contentPadding : undefined }) }
+									/>
+								</AutoDisableSyncAttr>
+
+							</PanelBody>
+							<PanelBody
+								title={ __( 'Border', 'otter-blocks' ) }
+								initialOpen={ false }
+							>
+								{/*
+
+								TODO: Temporary disabled until the first prototype.
+
+								<BoxControl
+									label={ __( 'Radius', 'otter-blocks' ) }
+									values={ attributes.borderRadius }
+									onChange={ borderRadius => setAttributes({ borderRadius }) }
+									id="o-border-raduis-box"
+								/> */}
+
+								<SyncControlDropdown
+									isSynced={ attributes.isSynced }
+									setAttributes={setAttributes}
+									options={[
+										{
+											label: __( 'Title Border Width', 'otter-blocks' ),
+											value: 'titleBorderWidth'
+										},
+										{
+											label: __( 'Content Border Width', 'otter-blocks' ),
+											value: 'borderWidth'
+										}
+									]}
+								/>
+
+								<AutoDisableSyncAttr attr='titleBorderWidth' attributes={ attributes}>
+									<BoxControl
+										label={ __( 'Title Border Width', 'otter-blocks' ) }
+										values={ attributes.titleBorderWidth ?? objectOrNumberAsBox( attributes.borderWidth ?? '3px' ) }
+										onChange={ titleBorderWidth => {
+											setAttributes({ titleBorderWidth: ! isEmptyBox( titleBorderWidth ) ? titleBorderWidth : undefined });
+										} }
+									/>
+								</AutoDisableSyncAttr>
+
+								<AutoDisableSyncAttr attr='borderWidth' attributes={ attributes}>
+									<BoxControl
+										label={ __( 'Content Border Width', 'otter-blocks' ) }
+										values={  objectOrNumberAsBox( attributes.borderWidth ?? '3px' ) }
+										onChange={ borderWidth => {
+											setAttributes({ borderWidth: ! isEmptyBox( borderWidth ) ? borderWidth : undefined });
+										} }
+									/>
+								</AutoDisableSyncAttr>
+							</PanelBody>
+						</Fragment>
+					)
+				}
+			</div>
 		</InspectorControls>
 	);
 };

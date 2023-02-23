@@ -11,17 +11,54 @@
 		"id": {
 			"type": "string"
 		},
-		"tabColor": {
-			"type": "string"
-		},
 		"borderColor": {
 			"type": "string"
 		},
 		"borderWidth": {
-			"type": "number"
+			"type": ["number", "object"]
+		},
+		"borderRadius": {
+			"type": "object"
+		},
+		"titleBorderWidth": {
+			"type": "object"
+		},
+		"titleColor": {
+			"type": "string"
+		},
+		"tabColor": {
+			"type": "string"
 		},
 		"activeTitleColor": {
 			"type": "string"
+		},
+		"activeTitleBackgroundColor": {
+			"type": "string"
+		},
+		"activeBorderColor": {
+			"type": "string"
+		},
+		"contentTextColor": {
+			"type": "string"
+		},
+		"titleBackgroundColor": {
+			"type": "string"
+		},
+		"titlePadding": {
+			"type": "object"
+		},
+		"contentPadding": {
+			"type": "object"
+		},
+		"titleFontSize" : {
+			"type": "string"
+		},
+		"titleAlignment": {
+			"type": "string"
+		},
+		"isSynced": {
+			"type": "array",
+			"default": []
 		}
 	},
 	"supports": {
