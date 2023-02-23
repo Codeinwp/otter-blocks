@@ -1,12 +1,9 @@
-// @ts-check
-
 /**
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
 
 import {
-	InspectorControls,
 	PanelColorSettings
 } from '@wordpress/block-editor';
 
@@ -64,6 +61,7 @@ const Tabs = ({
 					onChange={ titleFontSize => setAttributes({ titleFontSize }) }
 				/>
 			</PanelBody>
+
 			<PanelColorSettings
 				title={ __( 'Colors', 'otter-blocks' ) }
 				initialOpen={ true }
@@ -71,32 +69,32 @@ const Tabs = ({
 				colorSettings={ [
 					{
 						value: attributes.titleBackgroundColor,
-						label: __( 'Title background', 'otter-blocks' ),
+						label: __( 'Title Background', 'otter-blocks' ),
 						onChange: titleBackgroundColor => setAttributes({ titleBackgroundColor })
 					},
 					{
 						value: attributes.activeTitleBackgroundColor,
-						label: __( 'Active title background', 'otter-blocks' ),
+						label: __( 'Active Title Background', 'otter-blocks' ),
 						onChange: activeTitleBackgroundColor => setAttributes({ activeTitleBackgroundColor })
 					},
 					{
 						value: attributes.titleColor,
-						label: __( 'Title color', 'otter-blocks' ),
+						label: __( 'Title Color', 'otter-blocks' ),
 						onChange: titleColor => setAttributes({ titleColor })
 					},
 					{
 						value: attributes.activeTitleColor,
-						label: __( 'Active title color', 'otter-blocks' ),
+						label: __( 'Active Title Color', 'otter-blocks' ),
 						onChange: activeTitleColor => setAttributes({ activeTitleColor })
 					},
 					{
 						value: attributes.contentTextColor,
-						label: __( 'Content text color', 'otter-blocks' ),
+						label: __( 'Content Text Color', 'otter-blocks' ),
 						onChange: contentTextColor => setAttributes({ contentTextColor })
 					},
 					{
 						value: attributes.tabColor,
-						label: __( 'Content background', 'otter-blocks' ),
+						label: __( 'Content Background', 'otter-blocks' ),
 						onChange: tabColor => setAttributes({ tabColor })
 					},
 					{
@@ -106,11 +104,12 @@ const Tabs = ({
 					},
 					{
 						value: attributes.activeBorderColor,
-						label: __( 'Active border', 'otter-blocks' ),
+						label: __( 'Active Border', 'otter-blocks' ),
 						onChange: activeBorderColor => setAttributes({ activeBorderColor })
 					}
 				] }
 			/>
+
 			<PanelBody
 				title={ __( 'Dimensions(Layout)', 'otter-blocks' ) }
 				initialOpen={ true }

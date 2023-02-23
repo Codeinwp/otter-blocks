@@ -416,7 +416,7 @@ const Inspector = ({
 								/> */}
 
 								<SyncControlDropdown
-									isSynced={attributes.isSynced}
+									isSynced={ attributes.isSynced }
 									setAttributes={setAttributes}
 									options={[
 										{
@@ -430,7 +430,7 @@ const Inspector = ({
 									]}
 								/>
 
-								<AutoDisableSyncAttr attr='titleBorderWidth' attributes={attributes}>
+								<AutoDisableSyncAttr attr='titleBorderWidth' attributes={ attributes}>
 									<BoxControl
 										label={ __( 'Title Border Width', 'otter-blocks' ) }
 										values={ attributes.titleBorderWidth ?? objectOrNumberAsBox( attributes.borderWidth ?? '3px' ) }
@@ -439,7 +439,8 @@ const Inspector = ({
 										} }
 									/>
 								</AutoDisableSyncAttr>
-								<AutoDisableSyncAttr attr='borderWidth' attributes={attributes}>
+
+								<AutoDisableSyncAttr attr='borderWidth' attributes={ attributes}>
 									<BoxControl
 										label={ __( 'Content Border Width', 'otter-blocks' ) }
 										values={  objectOrNumberAsBox( attributes.borderWidth ?? '3px' ) }
