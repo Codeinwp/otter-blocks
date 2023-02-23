@@ -106,6 +106,21 @@
         &> .block-editor-inner-blocks {
             &> .block-editor-block-list__layout {
                 &> .wp-block-themeisle-blocks-tabs-item {
+                    &> .wp-block-themeisle-blocks-tabs-item__header {
+                        border-left-width: 0px;
+                        border-top-width: 0px;
+                        border-right-width: 0px;
+        
+                        &:not(.active) {
+                            border-bottom-color: transparent;
+                        }
+        
+                        &.active {
+                            border-bottom-style: solid;
+                            border-color: var(--active-title-border-color);
+                        }
+                    }
+    
                     &> .wp-block-themeisle-blocks-tabs-item__content {
                         border-left-width: 0px;
                         border-right-width: 0px;
