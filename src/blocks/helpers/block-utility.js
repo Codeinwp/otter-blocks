@@ -28,7 +28,7 @@ import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 window.themeisleGutenberg.blockIDs ??= [];
 
 /**
- * Utiliy function for creating a function that add the gobal defaults values to the block's attribute value.
+ * Utility function for creating a function that add the global defaults values to the block's attribute value.
  *
  * @param {Object}   attributes        The block's attributes provided by WordPress
  * @param {Function} setAttributes     The block's attributes update function provided by WordPress
@@ -180,6 +180,8 @@ export const addBlockId = ( args ) => {
 	// Check if the ID is already used. EXCLUDE the one that come from reusable blocks.
 	const idIsAlreadyUsed = Boolean( attributes.id && localIDs[name].has( attributes.id ) );
 
+	console.log({ idIsAlreadyUsed, attributes, localIDs: localIDs[name], name });
+
 	if ( attributes.id === undefined || idIsAlreadyUsed ) {
 
 		// Auto-generate idPrefix if not provided
@@ -196,16 +198,24 @@ export const addBlockId = ( args ) => {
 			blockIDs.push( instanceId );
 			setAttributes({ id: instanceId });
 
+			return ( savedId ) => {
+				console.log( `Clean up ${instanceId} from global pool.` );
+				localIDs[name].delete( instanceId || savedId );
+			};
+
 		} else if ( idIsAlreadyUsed ) {
+
+			console.log( `ID conflict detected. Generating a new one. ${name} with ${instanceId} from ${attributes.id}` );
 
 			// The block must be a copy and its is already used
 			// Generate a new one and save it to `localIDs` to keep track of it in local mode.
 			localIDs[name].add( instanceId );
 			setAttributes({ id: instanceId });
+
+			return ( savedId ) => {
+				console.log( `Duplication. Keep original ${savedId} to global pool.` );
+			};
 		}
-		return ( savedId ) => {
-			localIDs[name].delete( instanceId || savedId );
-		};
 	} else {
 
 		// No conflicts, save the current id only to keep track of it both in local and global mode.
@@ -215,7 +225,7 @@ export const addBlockId = ( args ) => {
 
 	return ( savedId ) => {
 		idGenerationStatus[clientId] = 'free';
-		localIDs[name].delete( attributes?.id || savedId );
+		localIDs[name].delete( savedId || attributes?.id );
 	};
 };
 
