@@ -696,6 +696,7 @@ class Registration {
 			'sharing-icons'        => '\ThemeIsle\GutenbergBlocks\Render\Sharing_Icons_Block',
 			'stripe-checkout'      => '\ThemeIsle\GutenbergBlocks\Render\Stripe_Checkout_Block',
 			'form-multiple-choice' => '\ThemeIsle\GutenbergBlocks\Render\Form_Multiple_Choice_Block',
+			'form-file'            => '\ThemeIsle\GutenbergBlocks\Render\Form_File_Block',
 		);
 
 		$dynamic_blocks = apply_filters( 'otter_blocks_register_dynamic_blocks', $dynamic_blocks );
@@ -718,6 +719,7 @@ class Registration {
 			'form-nonce',
 			'form-textarea',
 			'form-multiple-choice',
+			'form-file',
 			'google-map',
 			'icon-list',
 			'icon-list-item',
