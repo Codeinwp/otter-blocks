@@ -199,8 +199,9 @@ export const addBlockId = ( args ) => {
 			setAttributes({ id: instanceId });
 
 			return ( savedId ) => {
-				console.log( `Clean up ${instanceId} from global pool.` );
-				localIDs[name].delete( instanceId || savedId );
+				return ( savedId ) => {
+					console.log( `Generating. Do not remove ${savedId} from global pool.` );
+				};
 			};
 
 		} else if ( idIsAlreadyUsed ) {
