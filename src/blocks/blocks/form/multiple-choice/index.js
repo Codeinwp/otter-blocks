@@ -15,7 +15,6 @@ import { omit } from 'lodash';
 import metadata from './block.json';
 import { formFieldIcon as icon } from '../../../helpers/icons.js';
 import edit from './edit.js';
-import save from './save.js';
 
 const { name } = metadata;
 
@@ -32,7 +31,7 @@ registerBlockType( name, {
 		{
 			name: 'themeisle-blocks/form-input-checkbox',
 			description: __( 'Insert a checkbox list field', 'otter-blocks' ),
-			icon: 'email',
+			icon: icon,
 			title: __( 'Checkbox Field', 'otter-blocks' ),
 			attributes: {
 				type: 'checkbox'
@@ -41,10 +40,19 @@ registerBlockType( name, {
 		{
 			name: 'themeisle-blocks/form-input-radio',
 			description: __( 'Insert a radio list field', 'otter-blocks' ),
-			icon: 'calculator',
+			icon: icon,
 			title: __( 'Radio Field', 'otter-blocks' ),
 			attributes: {
 				type: 'radio'
+			}
+		},
+		{
+			name: 'themeisle-blocks/form-input-select',
+			description: __( 'Insert a select field', 'otter-blocks' ),
+			icon: icon,
+			title: __( 'Select Field', 'otter-blocks' ),
+			attributes: {
+				type: 'select'
 			}
 		}
 	],

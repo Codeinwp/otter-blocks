@@ -46,6 +46,15 @@ registerBlockType( name, {
 			}
 		},
 		{
+			name: 'themeisle-blocks/form-input-date',
+			description: __( 'Insert a date field', 'otter-blocks' ),
+			icon: icon,
+			title: __( 'Date Field', 'otter-blocks' ),
+			attributes: {
+				type: 'date'
+			}
+		},
+		{
 			name: 'themeisle-blocks/form-input-number',
 			description: __( 'Insert a number field', 'otter-blocks' ),
 			icon: icon,
@@ -55,12 +64,13 @@ registerBlockType( name, {
 			}
 		},
 		{
-			name: 'themeisle-blocks/form-input-date',
-			description: __( 'Insert a date field', 'otter-blocks' ),
+			name: 'themeisle-blocks/form-input-url',
+			description: __( 'Insert an URL field', 'otter-blocks' ),
 			icon: icon,
-			title: __( 'Date Field', 'otter-blocks' ),
+			title: __( 'URL Field', 'otter-blocks' ),
 			attributes: {
-				type: 'date'
+				type: 'url',
+				placeholder: 'https://'
 			}
 		}
 	],

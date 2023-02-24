@@ -13,13 +13,19 @@ import {
 	ToggleControl
 } from '@wordpress/components';
 import { HideFieldLabelToggle, switchFormFieldTo } from '../common';
+import { FormContext } from '../edit';
+import { useContext } from '@wordpress/element';
 
 const Inspector = ({
 	attributes,
 	setAttributes,
-	selectParent,
 	clientId
 }) => {
+
+	const {
+		selectForm
+	} = useContext( FormContext );
+
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -28,7 +34,7 @@ const Inspector = ({
 				<Button
 					isSecondary
 					variant="secondary"
-					onClick={ () => selectParent?.() }
+					onClick={ () => selectForm?.() }
 				>
 					{ __( 'Back to the Form', 'otter-blocks' ) }
 				</Button>

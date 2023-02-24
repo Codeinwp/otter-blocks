@@ -10,11 +10,8 @@ import {
 
 import {
 	Fragment,
-	useEffect,
-	useRef
+	useEffect
 } from '@wordpress/element';
-
-import { createBlock } from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -22,7 +19,6 @@ import { createBlock } from '@wordpress/blocks';
 import metadata from './block.json';
 import { blockInit } from '../../../helpers/block-utility.js';
 import Inspector from './inspector.js';
-import { useDispatch, useSelect } from '@wordpress/data';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -43,63 +39,23 @@ const Edit = ({
 
 	const blockProps = useBlockProps();
 
-	const labelRef = useRef( null );
-	const inputRef = useRef( null );
-	const helpRef = useRef( null );
-
-	const {
-		parentClientId
-	} = useSelect( select => {
-		const {
-			getBlock,
-			getBlockRootClientId
-		} = select( 'core/block-editor' );
-
-		if ( ! clientId ) {
-			return {
-				parentClientId: ''
-			};
-		}
-
-		const parentClientId = getBlockRootClientId( clientId );
-
-		return {
-			parentClientId: parentClientId ?? ''
-		};
-	}, [ clientId ]);
-
-	const { selectBlock, replaceBlock } = useDispatch( 'core/block-editor' );
-
-	useEffect( () => {
-		const per = x => x ? x + '%' : x;
-
-		/**
-		 * TODO: Refactor this based on #748
-		 */
-
-		if ( inputRef.current ) {
-			inputRef.current?.style?.setProperty( '--input-width', per( attributes.inputWidth ) );
-		}
-		if ( labelRef.current ) {
-			labelRef.current?.style?.setProperty( '--label-color',  attributes.labelColor || null );
-		}
-		if ( helpRef.current ) {
-			helpRef.current?.style?.setProperty( '--label-color', attributes.labelColor || null );
-		}
-	}, [ inputRef.current, labelRef.current, attributes ]);
-
 	return (
 		<Fragment>
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				selectParent={ () => selectBlock( parentClientId ) }
 				clientId={ clientId }
 			/>
 
 			<div { ...blockProps }>
+				<style>
+					{
+						`#block-${clientId}` + _cssBlock([
+							[ '--label-color', attributes.labelColor ]
+						])
+					}
+				</style>
 				<label
-					ref={ labelRef }
 					htmlFor={ attributes.id ? attributes.id + '-input' : '' }
 					className="otter-form-textarea-label"
 				>
@@ -117,7 +73,6 @@ const Edit = ({
 				</label>
 
 				<textarea
-					ref={ inputRef }
 					placeholder={ attributes.placeholder }
 					name={ attributes.id }
 					id={ attributes.id ? attributes.id + '-input' : '' }
@@ -131,7 +86,6 @@ const Edit = ({
 					attributes.helpText && (
 						<span
 							className="o-form-help"
-							ref={ helpRef }
 						>
 							{ attributes.helpText }
 						</span>

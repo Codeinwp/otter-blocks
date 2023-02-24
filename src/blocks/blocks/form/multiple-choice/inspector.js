@@ -19,6 +19,8 @@ import {
 
 import { getActiveStyle, changeActiveStyle } from '../../../helpers/helper-functions.js';
 import { HideFieldLabelToggle, switchFormFieldTo } from '../common';
+import { useContext } from '@wordpress/element';
+import { FormContext } from '../edit.js';
 
 const styles = [
 	{
@@ -35,9 +37,13 @@ const styles = [
 const Inspector = ({
 	attributes,
 	setAttributes,
-	selectParent,
 	clientId
 }) => {
+
+	const {
+		selectForm
+	} = useContext( FormContext );
+
 	return (
 		<InspectorControls>
 			<PanelBody
@@ -46,7 +52,7 @@ const Inspector = ({
 				<Button
 					isSecondary
 					variant="secondary"
-					onClick={ () => selectParent?.() }
+					onClick={ () => selectForm?.() }
 				>
 					{ __( 'Back to the Form', 'otter-blocks' ) }
 				</Button>

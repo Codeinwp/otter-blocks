@@ -841,7 +841,8 @@ const Edit = ({
 					hasEmailField,
 					children,
 					inputFieldActions,
-					hasInnerBlocks
+					hasInnerBlocks,
+					selectForm: () => selectBlock( clientId )
 				}}
 			>
 				<Inspector

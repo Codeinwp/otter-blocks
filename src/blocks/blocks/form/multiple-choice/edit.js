@@ -10,11 +10,8 @@ import {
 
 import {
 	Fragment,
-	useEffect,
-	useRef
+	useEffect
 } from '@wordpress/element';
-
-import { useDispatch, useSelect } from '@wordpress/data';
 
 /**
  * Internal dependencies
@@ -95,35 +92,11 @@ const Edit = ({
 
 	const blockProps = useBlockProps();
 
-	const {
-		parentClientId
-	} = useSelect( select => {
-		const {
-			getBlock,
-			getBlockRootClientId
-		} = select( 'core/block-editor' );
-
-		if ( ! clientId ) {
-			return {
-				parentClientId: ''
-			};
-		}
-
-		const parentClientId = getBlockRootClientId( clientId );
-
-		return {
-			parentClientId: parentClientId ?? ''
-		};
-	}, [ clientId ]);
-
-	const { selectBlock, replaceBlock } = useDispatch( 'core/block-editor' );
-
 	return (
 		<Fragment>
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
-				selectParent={ () => selectBlock( parentClientId ) }
 				clientId={ clientId }
 			/>
 
