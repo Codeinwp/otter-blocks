@@ -39,6 +39,10 @@
 		flex-direction: column;
 		gap: var(--inputs-gap);
 
+		&> div {
+			margin: 0px;
+		}
+
 		p {
 			margin-bottom: 10px;
 		}

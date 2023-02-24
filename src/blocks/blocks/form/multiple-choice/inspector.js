@@ -122,14 +122,18 @@ const Inspector = ({
 					onChange={ helpText => setAttributes({ helpText }) }
 				/>
 
-				<ToggleControl
-					label={ __( 'Inline list', 'otter-blocks' ) }
-					checked={ Boolean( getActiveStyle( styles, attributes.className ) ) }
-					onChange={ value => {
-						const classes = changeActiveStyle( attributes.className, styles, value ? 'inline-list' : undefined );
-						setAttributes({ className: classes });
-					} }
-				/>
+				{
+					'select' !== attributes?.type && (
+						<ToggleControl
+							label={ __( 'Inline list', 'otter-blocks' ) }
+							checked={ Boolean( getActiveStyle( styles, attributes.className ) ) }
+							onChange={ value => {
+								const classes = changeActiveStyle( attributes.className, styles, value ? 'inline-list' : undefined );
+								setAttributes({ className: classes });
+							} }
+						/>
+					)
+				}
 
 				{
 					'select' === attributes?.type && (

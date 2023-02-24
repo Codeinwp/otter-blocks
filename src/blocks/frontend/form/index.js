@@ -18,7 +18,17 @@ const extractFormFields = form => {
 	/** @type {Array.<HTMLDivElement>} */
 	const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href }];
 
-	const allInputs = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-input, :scope > .otter-form__container > .wp-block-themeisle-blocks-form-textarea, :scope > .otter-form__container > .wp-block-themeisle-blocks-form-multiple-choice' );
+	/** @type {Array.<HTMLDivElement>} */
+	const innerForms = [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form' ) ];
+
+	/**
+	 * Remove the field from the inner forms.
+	 *
+	 * @type {Array.<HTMLDivElement>}
+	 */
+	const allInputs = [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form-input, :scope > .otter-form__container .wp-block-themeisle-blocks-form-textarea, :scope > .otter-form__container .wp-block-themeisle-blocks-form-multiple-choice' ) ].filter( input => {
+		return ! innerForms?.some( innerForm => innerForm?.contains( input ) );
+	});
 
 	allInputs?.forEach( ( input, index ) => {
 		const label = `(Field ${index + 1}) ${input.querySelector( '.otter-form-input-label, .otter-form-input-label__label, .otter-form-textarea-label__label' )?.innerHTML}`;
