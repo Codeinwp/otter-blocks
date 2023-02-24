@@ -1,8 +1,6 @@
+@import "style";
+
 .wp-block-themeisle-blocks-tabs {
-	--border-width: 3px;
-	--border-color: #000;
-	--active-title-color: inherit;
-	--tab-color: transparent;
 
     border: none;
 
@@ -14,99 +12,42 @@
         }
     }
 
-    .wp-block-themeisle-blocks-tabs__header {
-        display: flex;
-        flex-direction: row;
-        overflow: hidden;
-        border-color: var( --border-color );
-
-        @media ( max-width: 800px ) {
-            display: none;
-        }
+    .wp-block-themeisle-blocks-tabs__header_item + div {
+        margin-bottom: calc(0px - var(--border-side-width));
     }
-
+    
     .wp-block-themeisle-blocks-tabs__header_item {
-        padding: 5px 10px;
-        white-space: nowrap;
-        cursor: pointer;
-
-        border-color: transparent;
-        border-style: solid;
-        border-bottom-style: none;
-        border-left-style: none;
-        border-right-style: none;
-
+        
         svg {
             fill: gray;
             max-width: 24px;
         }
-
-        &.active {
-            color: var( --active-title-color );
-            background: var( --tab-color );
-            position: relative;
-            border-width: var( --border-width );
-            border-color: var( --border-color );
-            border-style: solid;
-            border-bottom-style: none;
-
-            &::before {
-                right: 100%;
-                bottom: 0;
-                height: 0;
-                width: 999rem;
-                border-bottom-style: solid;
-                display: block;
-                content: "";
-                position: absolute;
-                box-sizing: border-box;
-                border-width: var( --border-width );
-                border-color: var( --border-color );
-            }
-
-            &::after {
-                left: 100%;
-                bottom: 0;
-                height: 0;
-                width: 999rem;
-                border-bottom-style: solid;
-                display: block;
-                content: "";
-                position: absolute;
-                box-sizing: border-box;
-                border-width: var( --border-width );
-                border-color: var( --border-color );
-            }
-        }
     }
 
-    .wp-block-themeisle-blocks-tabs__content {
-        border-color: inherit;
-        background-color: inherit;
+    &:not(.has-pos-left) > .wp-block-themeisle-blocks-tabs__content {
 
-        .block-editor-inner-blocks {
+       &> .block-editor-inner-blocks {
             border-color: inherit;
             background-color: inherit;
 
-            .block-editor-block-list__layout {
+            &> .block-editor-block-list__layout {
                 border-color: var( --border-color );
                 background-color: inherit;
 
-                div {
+                > div {
                     margin-top: 0px;
                     margin-bottom: 0px;
                 }
 
-                .block-editor-block-list__block {
+                &> .block-editor-block-list__block { 
 					border-color: inherit;
                     &:not(:last-of-type) {
-                        .wp-block-themeisle-blocks-tabs-item__header {
+                        &> .wp-block-themeisle-blocks-tabs-item__header {
                             border-bottom-style: none;
                         }
 
-                        @media (max-width: 800px) {
-                            .wp-block-themeisle-blocks-tabs-item__content {
-                                border-bottom-style: none;
+                        @media (min-width: 800px) {
+                            &> .wp-block-themeisle-blocks-tabs-item__content {
 								border-color: inherit;
                             }
                         }
@@ -118,35 +59,130 @@
         .wp-block-themeisle-blocks-tabs-item {
             border-color: inherit;
         }
+    }
 
-        .wp-block-themeisle-blocks-tabs-item__header {
-            border: var( --border-width ) solid var( --border-color );
-            padding: 5px 10px;
-            cursor: pointer;
+    &.has-pos-left {
 
-            @media (min-width: 800px) {
-                display: none;
-            }
-
-            &.active {
-                color: var( --active-title-color );
-                background: var( --tab-color );
-                border-bottom-style: none;
-            }
+        .wp-block-themeisle-blocks-tabs__header {
+            padding-bottom: var(--border-side-width);
         }
 
-        .wp-block-themeisle-blocks-tabs-item__content {
-            border: var( --border-width ) solid var( --border-color );
-            border-top: 0px;
-            padding: 10px;
-            display: none;
-            border-top: 0px;
-            margin-top: 10px;
-
-            &.active {
-                background: var( --tab-color );
-                display: block;
+        .wp-block-themeisle-blocks-tabs__content {
+            > .block-editor-inner-blocks {
+                height: 100%;
+    
+                > .block-editor-block-list__layout {
+                    height: 100%;
+    
+                    > .block-editor-block-list__block {
+                        &:has( > .wp-block-themeisle-blocks-tabs-item__content.active) {
+                            @media (min-width: 800px) {
+                                height: 100%;
+                            }
+                        }
+                    }
+                }
             }
+        }
+    } 
+
+    // &.is-style-boxed > .wp-block-themeisle-blocks-tabs__content {
+    //     &> .block-editor-inner-blocks {
+    //         &> .block-editor-block-list__layout {
+    //             &> .wp-block-themeisle-blocks-tabs-item {
+    //                 display: flex;
+    //                 flex-direction: column;
+    //                 gap: 3px;
+
+    //                 &> .wp-block-themeisle-blocks-tabs-item__content {
+    //                     flex-grow: 1;
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+    &.is-style-border > .wp-block-themeisle-blocks-tabs__content {
+        &> .block-editor-inner-blocks {
+            &> .block-editor-block-list__layout {
+                &> .wp-block-themeisle-blocks-tabs-item {
+                    &> .wp-block-themeisle-blocks-tabs-item__header {
+                        border-left-width: 0px;
+                        border-top-width: 0px;
+                        border-right-width: 0px;
+        
+                        &:not(.active) {
+                            border-bottom-color: transparent;
+                        }
+        
+                        &.active {
+                            border-bottom-style: solid;
+                            border-color: var(--active-title-border-color);
+                        }
+                    }
+    
+                    &> .wp-block-themeisle-blocks-tabs-item__content {
+                        border-left-width: 0px;
+                        border-right-width: 0px;
+        
+                        @media (max-width: 800px) {
+                            border-top-width: 0px;
+                            border-bottom-width: 0px;
+                        }
+        
+                        @media (min-width: 800px) {
+                            border-bottom-width: 0px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &.is-style-boxed {
+
+		&> .wp-block-themeisle-blocks-tabs__content > .block-editor-inner-blocks > .block-editor-block-list__layout > .wp-block-themeisle-blocks-tabs-item {
+			display: flex;
+
+			@media (max-width: 800px) {
+				flex-direction: column;
+			}
+			
+
+			&> .wp-block-themeisle-blocks-tabs-item__content {
+				flex-grow: 1;
+			}
+		}
+	}
+    
+    .add-header-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+
+        &> .add-header-item > button {
+            position: absolute;
+            bottom: 16px;
+            z-index: 10;
+        }
+    }
+    
+    &.has-pos-left {
+        .add-header-container {
+            height: 30px;
+    
+            &> .add-header-item > button {
+                left: 0px;
+                bottom: -10px;
+            }
+        }
+    }
+
+    &:not(.has-pos-left) {
+        &> .add-header-item > button {
+            bottom: -20px;
+            right: 12px;
         }
     }
 }

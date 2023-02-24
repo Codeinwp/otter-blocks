@@ -47,7 +47,7 @@ const WelcomeGuide = () => {
 
 		return {
 			currentUser: user,
-			site: getSite()?.url
+			site: getSite()?.url || window.themeisleGutenberg?.rootUrl
 		};
 	});
 

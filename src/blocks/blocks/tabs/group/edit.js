@@ -1,8 +1,6 @@
 /**
  * External dependencies
  */
-import { plus } from '@wordpress/icons';
-
 import classnames from 'classnames';
 
 /**
@@ -16,8 +14,6 @@ import {
 	InnerBlocks,
 	useBlockProps
 } from '@wordpress/block-editor';
-
-import { Icon } from '@wordpress/components';
 
 import {
 	useSelect,
@@ -37,16 +33,66 @@ import {
 import metadata from './block.json';
 import Inspector from './inspector.js';
 import Controls from './controls.js';
-import { blockInit } from '../../../helpers/block-utility.js';
+import { blockInit, getDefaultValueByField } from '../../../helpers/block-utility.js';
+import { boxToCSS, objectOrNumberAsBox, _i, _px } from '../../../helpers/helper-functions';
+import classNames from 'classnames';
+import BlockAppender from '../../../components/block-appender-button';
 import { useDarkBackground } from '../../../helpers/utility-hooks.js';
 
 const { attributes: defaultAttributes } = metadata;
 
+const TabHeader = ({
+	tag,
+	title,
+	onClick,
+	active
+}) => {
+	const CustomTag = tag ?? 'div';
+	return (
+		<div
+			className={ classnames(
+				'wp-block-themeisle-blocks-tabs__header_item',
+				{
+					'active': active
+				}
+			) }
+			onClick={ onClick }
+		>
+			<CustomTag >{ title }</CustomTag>
+		</div>
+	);
+};
+
+const AddTabHeader = ({
+	clientId,
+	addTab
+}) => {
+	return (
+		<div className='add-header-container'>
+			<div className='add-header-item'>
+				<BlockAppender
+					buttonText={ __( 'Add Tab', 'otter-blocks' ) }
+					variant="primary"
+					allowedBlock="themeisle-blocks/tabs-item"
+					clientId={ clientId }
+					onClick={ addTab }
+				/>
+			</div>
+		</div>
+	);
+};
+
+/**
+ *
+ * @param {import('./types').TabsGroupProps} props
+ * @returns
+ */
 const Edit = ({
 	attributes,
 	setAttributes,
 	isSelected,
-	clientId
+	clientId,
+	name
 }) => {
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
@@ -54,6 +100,19 @@ const Edit = ({
 	}, [ attributes.id ]);
 
 	const contentRef = useRef( null );
+
+	// TODO: Replace this with the builder sync function.
+	/**
+	 * Get global value if it is the case.
+	 * @param {import('../../../common').SyncAttrs<import('./types').TabsGroupAttrs>} field
+	 * @returns
+	 */
+	const getSyncValue = field =>{
+		if ( attributes?.isSynced?.includes( field ) ) {
+			return getDefaultValueByField({ name, field, defaultAttributes, attributes });
+		}
+		return attributes?.[field];
+	};
 
 	const children = useSelect( select => {
 		const { getBlock } = select( 'core/block-editor' );
@@ -66,15 +125,18 @@ const Edit = ({
 		insertBlock,
 		removeBlock,
 		selectBlock,
-		moveBlockToPosition,
-		updateBlockAttributes
+		moveBlockToPosition
 	} = useDispatch( 'core/block-editor' );
 
 	const toggleActiveTab = blockId => {
 		if ( contentRef.current ) {
 			children.forEach( block => {
-				const blockContent = contentRef.current.querySelector( `#block-${ block.clientId } .wp-block-themeisle-blocks-tabs-item__content` );
+				const blockContent = contentRef.current.querySelector( `#block-${ block.clientId } > .wp-block-themeisle-blocks-tabs-item__content` );
+
+				const blockHeader = contentRef.current.querySelector( `#block-${ block.clientId } > .wp-block-themeisle-blocks-tabs-item__header` );
+
 				blockContent?.classList.toggle( 'active', block.clientId === blockId );
+				blockHeader?.classList.toggle( 'active', block.clientId === blockId );
 			});
 			setActiveTab( blockId );
 		}
@@ -99,9 +161,8 @@ const Edit = ({
 
 	/**
 	 * ------------ Tab Actions ------------
-	 *
-	 * @param  blockId
 	 */
+
 	const selectTab = ( blockId ) => {
 		if ( 0 < children?.length ) {
 			const block = children.find( block => block.clientId === blockId );
@@ -127,65 +188,40 @@ const Edit = ({
 	};
 
 	const addTab = () => {
-		const itemBlock = createBlock( 'themeisle-blocks/tabs-item' );
+		const itemBlock = createBlock( 'themeisle-blocks/tabs-item', {
+			title: __( 'Tab ', 'otter-blocks' ) + ( ( children?.length ?? 0 ) + 1 )
+		});
 		insertBlock( itemBlock, ( children?.length ) || 0, clientId, false );
 	};
 
 	/**
 	 * ------------ Tab Dynamic CSS ------------
 	 */
-
-
 	const inlineStyles = {
-		'--border-width': undefined !== attributes.borderWidth ? attributes.borderWidth + 'px' : '3px',
-		'--border-color': attributes.borderColor,
-		'--active-title-color': attributes.activeTitleColor,
-		'--tab-color': attributes.tabColor
-	};
-
-	/**
-	 * ------------ Tab Components ------------
-	 */
-	const TabHeader = ({
-		title,
-		onClick,
-		active
-	}) => {
-		return (
-			<div
-				className={ classnames(
-					'wp-block-themeisle-blocks-tabs__header_item',
-					{
-						'active': active
-					}
-				) }
-			>
-				<div onClick={ onClick }>{ title }</div>
-			</div>
-		);
-	};
-
-	const AddTab = () => {
-		return (
-			<div className="wp-block-themeisle-blocks-tabs__header_item">
-				<div
-					onClick={ addTab }
-					style={{
-						display: 'flex',
-						width: '30px',
-						height: '30px',
-						alignItems: 'center'
-					}}
-				>
-					<Icon icon={ plus } />
-				</div>
-			</div>
-		);
+		'--title-border-width': boxToCSS( getSyncValue( 'titleBorderWidth' ) ),
+		'--border-width': boxToCSS( _px( getSyncValue( 'borderWidth' ) ) ),
+		'--border-color': getSyncValue( 'borderColor' ),
+		'--title-color': getSyncValue( 'titleColor' ),
+		'--title-background': getSyncValue( 'titleBackgroundColor' ),
+		'--tab-color': getSyncValue( 'tabColor' ),
+		'--active-title-color': getSyncValue( 'activeTitleColor' ),
+		'--active-title-background': getSyncValue( 'activeTitleBackgroundColor' ),
+		'--active-title-border-color': getSyncValue( 'activeBorderColor' ),
+		'--content-text-color': getSyncValue( 'contentTextColor' ),
+		'--title-padding': boxToCSS( getSyncValue( 'titlePadding' ) ),
+		'--content-padding': boxToCSS( getSyncValue( 'contentPadding' ) ),
+		'--border-side-width': 'left' === attributes.tabsPosition ?  objectOrNumberAsBox( getSyncValue( 'borderWidth' ) )?.left :  objectOrNumberAsBox( getSyncValue( 'borderWidth' ) )?.top,
+		'--font-size': _px( getSyncValue( 'titleFontSize' ) )
 	};
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		style: inlineStyles
+		style: inlineStyles,
+		className: classNames(
+			attributes.className,
+			{ 'has-pos-left': 'left' === attributes.tabsPosition  },
+			`is-align-${ attributes.titleAlignment }`
+		)
 	});
 
 	return (
@@ -210,18 +246,21 @@ const Edit = ({
 
 			<div { ...blockProps }>
 				<div className="wp-block-themeisle-blocks-tabs__header">
-					{ children?.map( tabHeader => {
+					{ children?.map( ( tabHeader, idx ) => {
 						return (
 							<TabHeader
 								key={ tabHeader.clientId }
-								title={ tabHeader.attributes.title || __( 'Insert Title', 'otter-blocks' ) }
+								tag={ attributes.titleTag }
+								title={ tabHeader.attributes.title ?? `${__( 'Tab', 'otter-blocks' )} ${idx + 1}` }
 								active={ tabHeader.clientId === activeTab }
 								onClick={ () => toggleActiveTab( tabHeader.clientId ) }
 							/>
 						);
 					}) || '' }
 
-					{ ( isSelected || 0 === children.length ) && <AddTab /> }
+					{ ( isSelected || 0 === children.length ) && (
+						<AddTabHeader clientId={ clientId } addTab={ addTab } />
+					) }
 				</div>
 
 				<div
@@ -230,7 +269,33 @@ const Edit = ({
 				>
 					<InnerBlocks
 						allowedBlocks={ [ 'themeisle-blocks/tabs-item' ] }
-						template={ [[ 'themeisle-blocks/tabs-item' ]] }
+						template={ [
+							[ 'themeisle-blocks/tabs-item',
+								{
+									title: __( 'Tab 1', 'otter-blocks' )
+								},
+								[[ 'core/paragraph', {
+									content: __( 'This is just a placeholder to help you visualize how the content is displayed in the tabs. Feel free to edit this with your actual content.', 'otter-blocks' )
+								}]]
+							],
+							[ 'themeisle-blocks/tabs-item',
+								{
+									title: __( 'Tab 2', 'otter-blocks' )
+								},
+								[[ 'core/paragraph', {
+									content: __( 'This is just a placeholder to help you visualize how the content is displayed in the tabs. Feel free to edit this with your actual content.', 'otter-blocks' )
+								}]]
+							],
+							[ 'themeisle-blocks/tabs-item',
+								{
+									title: __( 'Tab 3', 'otter-blocks' )
+
+								},
+								[[ 'core/paragraph', {
+									content: __( 'This is just a placeholder to help you visualize how the content is displayed in the tabs. Feel free to edit this with your actual content.', 'otter-blocks' )
+								}]]
+							]
+						] }
 						orientation="horizontal"
 						renderAppender={ false }
 					/>
