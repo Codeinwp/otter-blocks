@@ -13,9 +13,6 @@ import {
 	useEffect
 } from '@wordpress/element';
 
-import { useSelect, dispatch } from '@wordpress/data';
-
-
 /**
  * Internal dependencies
  */
@@ -23,7 +20,6 @@ import metadata from './block.json';
 import { blockInit } from '../../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import { _cssBlock } from '../../../helpers/helper-functions';
-
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -44,31 +40,12 @@ const Edit = ({
 
 	const blockProps = useBlockProps();
 
-	const {
-		selectParent
-	} = useSelect( select => {
-		const {
-			getBlockRootClientId
-		} = select( 'core/block-editor' );
-
-		const {
-			selectBlock
-		} = dispatch( 'core/block-editor' );
-
-		const parentClientId = getBlockRootClientId( clientId );
-
-		return {
-			selectParent: () => selectBlock?.( parentClientId )
-		};
-	}, [ clientId ]);
-
 	return (
 		<Fragment>
 			<Inspector
 				attributes={ attributes }
 				setAttributes={ setAttributes }
 				clientId={ clientId }
-				selectParent={ selectParent }
 			/>
 
 			<div { ...blockProps }>
