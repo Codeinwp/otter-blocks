@@ -56,6 +56,7 @@ import { makeBox } from '../../plugins/copy-paste/utils';
 import { _px } from '../../helpers/helper-functions.js';
 import { SortableInputField } from './sortable-input-fields';
 import AutoDisableSyncAttr from '../../components/auto-disable-sync-attr/index';
+import { selectAllFieldsFromForm } from './common';
 
 const compare = x => {
 	return x?.[1] && x[0] !== x[1];
@@ -127,9 +128,7 @@ const Inspector = ({
 		hasInnerBlocks
 	} = useContext( FormContext );
 
-	const inputFields = children.filter( inputField => {
-		return 'themeisle-blocks/form-input' === inputField.name || 'themeisle-blocks/form-textarea' === inputField.name;
-	});
+	const inputFields = selectAllFieldsFromForm( children );
 
 	const formIntegrationChanged = isChanged([
 		[ formOptions.provider, savedFormOptions?.integration?.provider ],
@@ -140,12 +139,12 @@ const Inspector = ({
 	const InputFieldList = SortableContainer( ({ items }) => {
 		return (
 			<div>
-				{ items.map( ( inputField, index ) => {
+				{ items.map( ( item, index ) => {
 					return (
 						<SortableInputField
-							key={ inputField.clientId }
+							key={ item.inputClientId }
 							index={ index }
-							inputField={ inputField }
+							item={ item }
 							actions={inputFieldActions}
 						/>
 					);
@@ -155,7 +154,7 @@ const Inspector = ({
 	});
 
 	const onSortEnd = ({ oldIndex, newIndex }) => {
-		inputFieldActions.move( inputFields[oldIndex].clientId, newIndex );
+		inputFieldActions.move( inputFields?.[oldIndex]?.parentClientId, newIndex );
 	};
 
 	return (

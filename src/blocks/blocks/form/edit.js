@@ -802,8 +802,7 @@ const Edit = ({
 	const inputFieldActions = {
 		select: ( blockId ) => {
 			if ( 0 < children?.length ) {
-				const block = children.find( block => block.clientId === blockId );
-				selectBlock( block.clientId );
+				selectBlock( blockId );
 			}
 		},
 		move: ( blockId, position ) => {
@@ -814,8 +813,7 @@ const Edit = ({
 		},
 		delete: ( blockId ) => {
 			if ( 0 < children?.length ) {
-				const block = children.find( block => block.clientId === blockId );
-				removeBlock( block.clientId, false );
+				removeBlock( blockId, false );
 			}
 		},
 		add: ( blockName ) => {

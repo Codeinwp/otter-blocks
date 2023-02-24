@@ -23,7 +23,7 @@ const DragHandle = SortableHandle( () => {
 });
 
 type SortableTabProps = {
-    inputField: FormInputProps
+    item: { parentClientId: string, inputField: FormInputProps}
     actions: {
         select?: ( clientId: string ) => void
         delete?: ( clientId: string ) => void
@@ -38,7 +38,9 @@ const fieldNames: Record<string, string> = {
 	'textarea': __( 'Textarea Field', 'otter-blocks' )
 };
 
-export const SortableInputField = SortableElement( ({ inputField, actions } : SortableTabProps ) => {
+export const SortableInputField = SortableElement( ({ item, actions } : SortableTabProps ) => {
+	const { inputField } = item;
+	console.log({ inputField });
 	const fieldName = 'themeisle-blocks/form-input' === inputField.name ? ( inputField.attributes.type ?? 'text' ) : 'textarea';
 
 	return (

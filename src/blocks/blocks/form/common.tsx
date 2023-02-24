@@ -66,4 +66,45 @@ export const HideFieldLabelToggle = ( props: Partial<BlockProps<FormInputCommonP
 	);
 };
 
+export const hasFormFieldName = ( name?: string ) => ( name?.startsWith( 'themeisle-blocks/form-input' ) || name?.startsWith( 'themeisle-blocks/form-textarea' ) || name?.startsWith( 'themeisle-blocks/form-multiple-choice' ) );
+
+export const getFormFieldsFromInnerBlock = ( block: any ) : ( any | undefined )[] => {
+	return block?.innerBlocks?.map( ( child: any ) => {
+		if ( hasFormFieldName( child?.name ) ) {
+			return child as string;
+		}
+
+		if ( 'themeisle-blocks/form' === child?.name ) {
+			return undefined;
+		}
+
+		if ( child?.innerBlocks?.length ) {
+			return getFormFieldsFromInnerBlock( child )?.flat() as ( string | undefined )[];
+		}
+
+		return undefined;
+	})?.flat();
+};
+
+export const selectAllFieldsFromForm = ( children: any[]) : ({ parentClientId: string, inputField: any })[] => {
+	return ( children?.map( ( child: any ) => {
+
+		if ( hasFormFieldName( child?.name ) ) {
+			return { parentClientId: child?.clientId, inputField: child.clientId };
+		}
+
+		if ( 'themeisle-blocks/form' === child?.name ) {
+			return undefined;
+		}
+
+		if ( child?.innerBlocks?.length ) {
+			return getFormFieldsFromInnerBlock( child )
+				.filter( i => i !== undefined )
+				.map( ( input: any ) => ({ parentClientId: child?.clientId, inputField: input }) );
+		}
+
+		return undefined;
+	}).flat().filter( c => c !== undefined ) ?? []) as ({ parentClientId: string, inputField: any })[];
+};
+
 export default { switchFormFieldTo, HideFieldLabelToggle };
