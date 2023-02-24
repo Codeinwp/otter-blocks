@@ -94,7 +94,7 @@ class Patterns {
 			if ( ! version_compare( get_bloginfo( 'version' ), $block_pattern['minimum'], '>=' ) ) {
 				continue;
 			}
-	
+
 			register_block_pattern( 'otter-pro/' . $block_pattern['slug'], $block_pattern );
 		}
 	}

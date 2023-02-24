@@ -16,22 +16,28 @@ domReady( () => {
 		const closedTabs = [];
 
 		items.forEach( ( item, index ) => {
+			const content = item.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__content' );
+			content.setAttribute( 'role', 'tabpanel' );
+
+			const headerMobile = item.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__header' );
+			headerMobile.setAttribute( 'role', 'tab' );
+
 			const headerItem = document.createElement( 'div' );
 			headerItem.classList.add( 'wp-block-themeisle-blocks-tabs__header_item' );
-			const content = item.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__content' );
+			headerItem.tabIndex = 0;
+
+			const tabTitle = headerMobile.cloneNode( true );
+			tabTitle.classList.remove( 'wp-block-themeisle-blocks-tabs-item__header' );
+			headerItem.appendChild( tabTitle );
 
 			if ( 'true' === item.dataset.defaultOpen && ! openedTab ) {
 				headerItem.classList.add( 'active' );
 				content.classList.add( 'active' );
+				headerMobile.classList.add( 'active' );
 				openedTab = true;
 			} else {
-				closedTabs.push({ headerItem, content });
+				closedTabs.push({ headerItem, content, headerMobile });
 			}
-
-			headerItem.innerHTML = item.dataset.title || `Tab ${ index + 1 }`;
-			headerItem.tabIndex = 0;
-
-			const headerMobile = item.querySelector( '.wp-block-themeisle-blocks-tabs-item__header' );
 
 			const toggleTabs = ( i, idx ) => {
 				const content = i.querySelector( ':scope > .wp-block-themeisle-blocks-tabs-item__content' );
@@ -42,12 +48,14 @@ domReady( () => {
 
 				headerMobile.classList.toggle( 'active', idx === index );
 				headerMobile.classList.toggle( 'hidden', idx !== index );
+				headerMobile.setAttribute( 'aria-selected', idx === index );
 
 				const headerItems = Array.from( header.childNodes );
 
 				headerItems.forEach( ( h, idx ) => {
 					h.classList.toggle( 'active', idx === index );
 					h.classList.toggle( 'hidden', idx !== index );
+					h.setAttribute( 'aria-selected', idx === index );
 				});
 			};
 
@@ -76,6 +84,7 @@ domReady( () => {
 		if ( ! openedTab ) {
 			closedTabs?.[0]?.headerItem.classList.add( 'active' );
 			closedTabs?.[0]?.content.classList.add( 'active' );
+			closedTabs?.[0]?.headerMobile.classList.add( 'active' );
 		}
 	});
 });

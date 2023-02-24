@@ -242,6 +242,7 @@ class Registration {
 				'hasPro'                  => Pro::is_pro_installed(),
 				'isProActive'             => Pro::is_pro_active(),
 				'upgradeLink'             => tsdk_utmify( Pro::get_url(), 'editor', Pro::get_reference() ),
+				'patternsLink'            => tsdk_utmify( Pro::get_patterns_url(), 'editor', Pro::get_reference() ),
 				'should_show_upsell'      => Pro::should_show_upsell(),
 				'assetsPath'              => OTTER_BLOCKS_URL . 'assets',
 				'updatePath'              => admin_url( 'update-core.php' ),

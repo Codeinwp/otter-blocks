@@ -8,7 +8,8 @@ const defaultsAttrs = {
 	'themeisle-blocks/review': {
 		features: []
 	},
-	'themeisle-blocks/form': {}
+	'themeisle-blocks/form': {},
+	'themeisle-blocks/tabs': {}
 };
 
 export default defaultsAttrs;
