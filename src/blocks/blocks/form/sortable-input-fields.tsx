@@ -40,7 +40,6 @@ const fieldNames: Record<string, string> = {
 
 export const SortableInputField = SortableElement( ({ item, actions } : SortableTabProps ) => {
 	const { inputField } = item;
-	console.log({ inputField });
 	const fieldName = 'themeisle-blocks/form-input' === inputField.name ? ( inputField.attributes.type ?? 'text' ) : 'textarea';
 
 	return (
