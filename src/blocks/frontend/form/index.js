@@ -13,56 +13,94 @@ let startTimeAntiBot = null;
  * @param {HTMLDivElement} form The form.
  * @returns
  */
-const extractFormFields = form => {
+const extractFormFields = async( form ) => {
 
-	/** @type {Array.<HTMLDivElement>} */
-	const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href }];
+	return new Promise( resolve => {
 
-	/** @type {Array.<HTMLDivElement>} */
-	const innerForms = [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form' ) ];
+		/** @type {Array.<HTMLDivElement>} */
+		const formFieldsData = [{ label: window?.themeisleGutenbergForm?.messages['form-submission'] || 'Form submission from', value: window.location.href }];
 
-	/**
-	 * Remove the field from the inner forms.
-	 *
-	 * @type {Array.<HTMLDivElement>}
-	 */
-	const allInputs = [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form-input, :scope > .otter-form__container .wp-block-themeisle-blocks-form-textarea, :scope > .otter-form__container .wp-block-themeisle-blocks-form-multiple-choice' ) ].filter( input => {
-		return ! innerForms?.some( innerForm => innerForm?.contains( input ) );
-	});
+		/** @type {Array.<HTMLDivElement>} */
+		const innerForms = [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form' ) ];
 
-	allInputs?.forEach( ( input, index ) => {
-		const label = `(Field ${index + 1}) ${input.querySelector( '.otter-form-input-label, .otter-form-input-label__label, .otter-form-textarea-label__label' )?.innerHTML}`;
+		/**
+		 * Remove the field from the inner forms.
+		 *
+		 * @type {Array.<HTMLDivElement>}
+		 */
+		const allInputs = [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form-input, :scope > .otter-form__container .wp-block-themeisle-blocks-form-textarea, :scope > .otter-form__container .wp-block-themeisle-blocks-form-multiple-choice, :scope > .otter-form__container .wp-block-themeisle-blocks-form-file' ) ].filter( input => {
+			return ! innerForms?.some( innerForm => innerForm?.contains( input ) );
+		});
 
-		let value = undefined;
-		let fieldType = undefined;
+		const fieldsToLoad = allInputs?.map( ( input, index ) => {
+			const fileInput = input.querySelector( 'input[type="file"]' );
+			return ( fileInput?.files?.length ) ?? 0;
+		}).reduce( ( a, b ) => a + b, 0 );
+		let currentLoaded = 0;
 
-		const valueElem = input.querySelector( '.otter-form-input:not([type="checkbox"], [type="radio"]), .otter-form-textarea-input' );
-		if ( null !== valueElem ) {
-			value = valueElem?.value;
-			fieldType = valueElem?.type;
-		} else {
-			const select = input.querySelector( 'select' );
-			if ( select ) {
-				value = [ ...select.selectedOptions ].map( o => o?.label )?.filter( l => l ).join( ', ' );
-				fieldType = 'multiple-choice';
+		allInputs?.forEach( ( input, index ) => {
+			const label = `(Field ${index + 1}) ${input.querySelector( '.otter-form-input-label, .otter-form-input-label__label, .otter-form-textarea-label__label' )?.innerHTML}`;
+
+			let value = undefined;
+			let fieldType = undefined;
+
+			const valueElem = input.querySelector( '.otter-form-input:not([type="checkbox"], [type="radio"], [type="file"]), .otter-form-textarea-input' );
+			if ( null !== valueElem ) {
+				value = valueElem?.value;
+				fieldType = valueElem?.type;
 			} else {
-				const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
-				const valuesElem = input.querySelectorAll( '.o-form-multiple-choice-field > input' );
-				value = [ ...labels ].filter( ( label, index ) => valuesElem[index]?.checked ).map( label => label.innerHTML ).join( ', ' );
-				fieldType = 'multiple-choice';
-			}
-		}
+				const select = input.querySelector( 'select' );
+				const fileInput = input.querySelector( 'input[type="file"]' );
 
-		if ( label && value ) {
-			formFieldsData.push({
-				label: label,
-				value: value,
-				type: valueElem?.type
-			});
+				console.log( fileInput );
+
+				if ( fileInput ) {
+					const files = fileInput?.files;
+
+					for ( let i = 0; i < files.length; i++ ) {
+						console.log( files[i]);
+						const reader = new FileReader();
+
+						reader.onload = function() {
+							formFieldsData.push({
+								label: label,
+								value: reader.result,
+								type: valueElem?.type
+							});
+							currentLoaded++;
+
+							if ( currentLoaded === fieldsToLoad ) {
+								resolve({ formFieldsData, formData });
+							}
+						};
+
+						reader.readAsDataURL( files[i]);
+					}
+				} else if ( select ) {
+					value = [ ...select.selectedOptions ].map( o => o?.label )?.filter( l => l ).join( ', ' );
+					fieldType = 'multiple-choice';
+				} else {
+					const labels = input.querySelectorAll( '.o-form-multiple-choice-field > label' );
+					const valuesElem = input.querySelectorAll( '.o-form-multiple-choice-field > input' );
+					value = [ ...labels ].filter( ( label, index ) => valuesElem[index]?.checked ).map( label => label.innerHTML ).join( ', ' );
+					fieldType = 'multiple-choice';
+				}
+			}
+
+			if ( label && value ) {
+				formFieldsData.push({
+					label: label,
+					value: value,
+					type: valueElem?.type
+				});
+			}
+		});
+
+		if ( 1 > fieldsToLoad.length ) {
+			resolve({ formFieldsData, formData });
 		}
 	});
 
-	return { formFieldsData };
 };
 
 /**
@@ -137,12 +175,13 @@ function validateInputs( form ) {
  * @param {HTMLButtonElement}  btn  The submit button
  * @param {DisplayFormMessage} displayMsg The display message utility
  */
-const collectAndSendInputFormData = ( form, btn, displayMsg ) => {
+const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 	const id = form?.id;
 	const payload = {};
 
 	// Get the data from the form fields.
-	const { formFieldsData } = extractFormFields( form );
+	const { formFieldsData } = await extractFormFields( form );
+	console.log( formFieldsData );
 	const formIsEmpty = 2 > formFieldsData?.length;
 	const nonceFieldValue = extractNonceValue( form );
 	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
