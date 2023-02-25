@@ -231,8 +231,8 @@ const CategoriesFieldToken = ( props ) => {
 		const { getEntityRecords, isResolving } = select( 'core' );
 
 		return {
-			postCategories: ( getEntityRecords( 'taxonomy', 'category', { 'per_page': 100, context: 'view' }) ?? []).map( category => category.slug ),
-			isLoading: isResolving( 'getEntityRecords', [ 'taxonomy', 'category', { 'per_page': 100, context: 'view' }])
+			postCategories: ( getEntityRecords( 'taxonomy', 'category', { 'per_page': -1, context: 'view' }) ?? []).map( category => category.slug ),
+			isLoading: isResolving( 'getEntityRecords', [ 'taxonomy', 'category', { 'per_page': -1, context: 'view' }])
 		};
 	}, [ ]);
 
