@@ -14,6 +14,7 @@ phpcs.xml
 blocks.json
 docker-compose.yml
 webpack.config.js
+webpack.config.plugins.js
 webpack.config.pro.js
 CONTRIBUTING.md
 package.json
