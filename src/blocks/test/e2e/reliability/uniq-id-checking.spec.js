@@ -35,7 +35,7 @@ describe( 'Otter Block ID', () => {
 			fps: 25
 		};
 
-		const savePath = './artifacts/tests/uniq-id-test.mp4';
+		const savePath = './artifact/tests/uniq-id-test.mp4';
 		screenRecorder = new PuppeteerScreenRecorder( page, screenRecorderOptions );
 		await screenRecorder.start( savePath );
 
