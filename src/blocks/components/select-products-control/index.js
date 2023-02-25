@@ -28,12 +28,12 @@ const SelectProducts = ({
 
 		const { COLLECTIONS_STORE_KEY } = window.wc.wcBlocksData;
 
-		const error = select( COLLECTIONS_STORE_KEY ).getCollectionError( '/wc/store', 'products', { per_page: 100 });
+		const error = select( COLLECTIONS_STORE_KEY ).getCollectionError( '/wc/store', 'products', { per_page: -1 });
 
 		if ( error ) {
 			status = 'error';
 		} else {
-			results = 'error' === status ? [] : ( select( COLLECTIONS_STORE_KEY ).getCollection?.( '/wc/store', 'products', { per_page: 100 }) ?? [])?.map( result => ({
+			results = 'error' === status ? [] : ( select( COLLECTIONS_STORE_KEY ).getCollection?.( '/wc/store', 'products', { per_page: -1 }) ?? [])?.map( result => ({
 				value: result.id,
 				label: decodeEntities( result.name )
 			}) );
@@ -51,7 +51,7 @@ const SelectProducts = ({
 		return {
 			results,
 			status,
-			isLoading: select( COLLECTIONS_STORE_KEY ).isResolving( 'getCollection', [ '/wc/store', 'products', { per_page: 100 }])
+			isLoading: select( COLLECTIONS_STORE_KEY ).isResolving( 'getCollection', [ '/wc/store', 'products', { per_page: -1 }])
 		};
 	}, []);
 

@@ -147,16 +147,16 @@ const ProductsMultiselect = ( props ) => {
 		} = select( COLLECTIONS_STORE_KEY );
 
 		// eslint-disable-next-line camelcase
-		const productsError = getCollectionError?.( '/wc/store', 'products', { per_page: 100 });
+		const productsError = getCollectionError?.( '/wc/store', 'products', { per_page: -1 });
 
-		const products = productsError ? [] : ( getCollection?.( '/wc/store', 'products', { 'per_page': 100 }) ?? [])?.map( result => ({
+		const products = productsError ? [] : ( getCollection?.( '/wc/store', 'products', { 'per_page': -1 }) ?? [])?.map( result => ({
 			value: result.id,
 			label: decodeEntities( result.name )
 		}) );
 
 		return {
 			products,
-			isLoading: isResolving( 'getCollection', [ '/wc/store', 'products', { 'per_page': 100 }])
+			isLoading: isResolving( 'getCollection', [ '/wc/store', 'products', { 'per_page': -1 }])
 		};
 	}, []);
 
