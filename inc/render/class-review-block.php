@@ -29,10 +29,12 @@ class Review_Block {
 		}
 
 		if ( isset( $attributes['title'] ) && ! empty( $attributes['title'] ) && isset( $attributes['features'] ) && count( $attributes['features'] ) > 0 && get_option( 'themeisle_blocks_settings_disable_review_schema', true ) ) {
+			$post_id = get_the_ID();
+
 			add_action(
 				'wp_footer',
-				function() use ( $attributes ) {
-					echo '<script type="application/ld+json">' . wp_json_encode( $this->get_json_ld( $attributes ) ) . '</script>';
+				function() use ( $attributes, $post_id ) {
+					echo '<script type="application/ld+json">' . wp_json_encode( $this->get_json_ld( $attributes, $post_id ) ) . '</script>';
 				}
 			);
 		}
@@ -246,10 +248,11 @@ class Review_Block {
 	 * Generate JSON-LD schema
 	 *
 	 * @param array $attributes Block attributes.
+	 * @param int   $post_id Post ID.
 	 *
 	 * @return array
 	 */
-	public function get_json_ld( $attributes ) {
+	public function get_json_ld( $attributes, $post_id ) {
 		$json = array(
 			'@context' => 'https://schema.org/',
 			'@type'    => 'Product',
@@ -273,7 +276,7 @@ class Review_Block {
 			),
 			'author'       => array(
 				'@type' => 'Person',
-				'name'  => get_the_author(),
+				'name'  => get_the_author_meta( 'display_name', get_post_field( 'post_author', $post_id ) ),
 			),
 		);
 
