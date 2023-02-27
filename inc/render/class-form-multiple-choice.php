@@ -39,12 +39,17 @@ class Form_Multiple_Choice_Block {
 			$output .= $this->render_select_field( $label, $options_array, $id, $has_multiple_selection, $is_required );
 		} else {
 			$output .= '<label class="otter-form-input-label" >' . $label . $this->render_required_sign( $is_required ) . '</label>';
+
+			$output .= '<div class="o-form-choices">';
+
 			foreach ( $options_array as $field_label ) {
 				$field_value = implode( '_', explode( ' ', sanitize_title( $field_label ) ) );
 				$field_id    = 'field-' . $field_value;
 
 				$output .= $this->render_field( $field_type, $field_label, $field_value, $id, $field_id, $is_required );
 			}
+
+			$output .= '</div>';
 		}
 
 		$output .= '<span class="o-form-help">' . $help_text . '</span>';
