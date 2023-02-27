@@ -180,8 +180,6 @@ export const addBlockId = ( args ) => {
 	// Check if the ID is already used. EXCLUDE the one that come from reusable blocks.
 	const idIsAlreadyUsed = Boolean( attributes.id && localIDs[name].has( attributes.id ) );
 
-	console.log({ idIsAlreadyUsed, attributes, localIDs: localIDs[name], name });
-
 	if ( attributes.id === undefined || idIsAlreadyUsed ) {
 
 		// Auto-generate idPrefix if not provided
@@ -199,23 +197,17 @@ export const addBlockId = ( args ) => {
 			setAttributes({ id: instanceId });
 
 			return ( savedId ) => {
-				return ( savedId ) => {
-					console.log( `Generating. Do not remove ${savedId} from global pool.` );
-				};
+				return ( savedId ) => {};
 			};
 
 		} else if ( idIsAlreadyUsed ) {
-
-			console.log( `ID conflict detected. Generating a new one. ${name} with ${instanceId} from ${attributes.id}` );
 
 			// The block must be a copy and its is already used
 			// Generate a new one and save it to `localIDs` to keep track of it in local mode.
 			localIDs[name].add( instanceId );
 			setAttributes({ id: instanceId });
 
-			return ( savedId ) => {
-				console.log( `Duplication. Keep original ${savedId} to global pool.` );
-			};
+			return ( savedId ) => {};
 		}
 	} else {
 
