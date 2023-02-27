@@ -123,18 +123,26 @@ const Edit = ({
 						<span className="required">*</span>
 					) }
 				</label>
+
 				{
-					'select' === attributes?.type ? <SelectField attributes={attributes} /> : ( attributes?.options ?? '' )?.split( '\n' )?.map( ( label, index ) => {
-						return <Field
-							key={index}
-							fieldType={attributes.type}
-							label={label}
-							setAttributes={setAttributes}
-							position={index}
-							attributes={attributes}
-						/>;
-					})
+					'select' === attributes?.type ? <SelectField attributes={attributes} /> : (
+						<div className='o-form-choices'>
+							{
+								( attributes?.options ?? '' )?.split( '\n' )?.map( ( label, index ) => {
+									return <Field
+										key={index}
+										fieldType={attributes.type}
+										label={label}
+										setAttributes={setAttributes}
+										position={index}
+										attributes={attributes}
+									/>;
+								})
+							}
+						</div>
+					)
 				}
+
 				{
 					attributes.helpText && (
 						<span
