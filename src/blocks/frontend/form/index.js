@@ -50,6 +50,8 @@ const extractFormFields = async( form ) => {
 				fieldType = valueElem?.type;
 			} else {
 				const select = input.querySelector( 'select' );
+
+				/** @type{HTMLInputElement} */
 				const fileInput = input.querySelector( 'input[type="file"]' );
 
 				console.log( fileInput );
@@ -64,13 +66,18 @@ const extractFormFields = async( form ) => {
 						reader.onload = function() {
 							formFieldsData.push({
 								label: label,
-								value: reader.result,
-								type: valueElem?.type
+								value: `${files[i].name} (${ ( files[i].size / ( 1024 * 1024 ) ).toFixed( 4 ) } MB)`,
+								type: fileInput.type,
+								metadata: {
+									name: files[i].name,
+									size: files[i].size,
+									data: reader.result
+								}
 							});
 							currentLoaded++;
 
 							if ( currentLoaded === fieldsToLoad ) {
-								resolve({ formFieldsData, formData });
+								resolve({ formFieldsData });
 							}
 						};
 

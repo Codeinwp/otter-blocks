@@ -23,18 +23,21 @@ class Form_Data_Response {
 	const SUCCESS_USER_SUBSCRIBED = '1';
 
 	const ERROR_RUNTIME_ERROR = '10';
+	const ERROR_FILE_UPLOAD   = '11';
 
 	// Request validation errors.
-	const ERROR_MISSING_DATA         = '101';
-	const ERROR_MISSING_CAPTCHA      = '102';
-	const ERROR_MISSING_NONCE        = '103';
-	const ERROR_MISSING_EMAIL        = '104';
-	const ERROR_FORM_ID_INVALID      = '105';
-	const ERROR_EMAIL_NOT_SEND       = '106';
-	const ERROR_MISSING_PROVIDER     = '107';
-	const ERROR_MISSING_API_KEY      = '108';
-	const ERROR_MISSING_MAIL_LIST_ID = '109';
-	const ERROR_BOT_DETECTED         = '110';
+	const ERROR_MISSING_DATA          = '101';
+	const ERROR_MISSING_CAPTCHA       = '102';
+	const ERROR_MISSING_NONCE         = '103';
+	const ERROR_MISSING_EMAIL         = '104';
+	const ERROR_FORM_ID_INVALID       = '105';
+	const ERROR_EMAIL_NOT_SEND        = '106';
+	const ERROR_MISSING_PROVIDER      = '107';
+	const ERROR_MISSING_API_KEY       = '108';
+	const ERROR_MISSING_MAIL_LIST_ID  = '109';
+	const ERROR_BOT_DETECTED          = '110';
+	const ERROR_FILES_METADATA_FORMAT = '111';
+
 
 	// Errors from external services.
 	const ERROR_PROVIDER_NOT_REGISTERED            = '201';
@@ -350,7 +353,13 @@ class Form_Data_Response {
 				break;
 			case self::ERROR_BOT_DETECTED:
 				$this->add_reason( __( 'Failed to validate the data. Please wait 5 seconds and try again.', 'otter-blocks' ) );
-				break;  
+				break;
+			case self::ERROR_FILES_METADATA_FORMAT:
+				$this->add_reason( __( 'The files metadata is invalid.', 'otter-blocks' ) );
+				break;
+			case self::ERROR_FILE_UPLOAD:
+				$this->add_reason( __( 'The files could not be uploaded.', 'otter-blocks' ) );
+				break;
 		}
 	}
 }

@@ -13,6 +13,7 @@ use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Email;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Providers;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
+use ThemeIsle\GutenbergBlocks\Integration\Form_Utils;
 use ThemeIsle\GutenbergBlocks\Integration\Mailchimp_Integration;
 use ThemeIsle\GutenbergBlocks\Integration\Sendinblue_Integration;
 use WP_Error;
@@ -116,6 +117,8 @@ class Form_Server {
 		add_filter( 'otter_form_email_build_body', array( $this, 'build_email_content' ) );
 		add_filter( 'otter_form_email_build_body_error', array( $this, 'build_email_error_content' ), 1, 2 );
 		add_filter( 'otter_form_anti_spam_validation', array( $this, 'anti_spam_validation' ) );
+		add_filter( 'otter_form_file_fields_validation', array( $this, 'validate_files' ) );
+		add_filter( 'otter_form_file_fields_saving', array( $this, 'save_files_to_uploads' ) );
 	}
 
 	/**
@@ -229,26 +232,42 @@ class Form_Server {
 			$anti_bot_check = apply_filters( 'otter_form_anti_spam_validation', $form_data );
 
 			if ( $anti_bot_check ) {
-				do_action( 'otter_form_before_submit', $form_data );
-				// Select the submit function based on the provider.
-				$provider_handlers = apply_filters( 'otter_select_form_provider', $form_data );
 
-				if ( $provider_handlers && Form_Providers::provider_has_handler( $provider_handlers, $form_data->get( 'handler' ) ) ) {
+				// Validate the file fields.
+				$files_validation = apply_filters( 'otter_form_file_fields_validation', $form_data );
 
-					// Send the data to the provider handler.
-					$provider_response = $provider_handlers[ $form_data->get( 'handler' ) ]( $form_data );
+				if ( $files_validation ) {
+					// Save the files to the uploads folder.
+					$files_saving = apply_filters( 'otter_form_file_fields_saving', $form_data );
 
-					do_action( 'otter_form_after_submit', $form_data );
+					if ( $files_saving['success'] ) {
+						do_action( 'otter_form_before_submit', $form_data );
 
-					return $provider_response;
+						// Select the submit function based on the provider.
+						$provider_handlers = apply_filters( 'otter_select_form_provider', $form_data );
+
+						if ( $provider_handlers && Form_Providers::provider_has_handler( $provider_handlers, $form_data->get( 'handler' ) ) ) {
+
+							// Send the data to the provider handler.
+							$provider_response = $provider_handlers[ $form_data->get( 'handler' ) ]( $form_data );
+
+							do_action( 'otter_form_after_submit', $form_data );
+
+							return $provider_response;
+						} else {
+							$res->set_code( Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED );
+						}
+
+						do_action( 'otter_form_after_submit', $form_data );
+					} else {
+						$res->set_code( Form_Data_Response::ERROR_FILE_UPLOAD );
+					}
 				} else {
-					$res->set_code( Form_Data_Response::ERROR_PROVIDER_NOT_REGISTERED );
+					$res->set_code( Form_Data_Response::ERROR_FILES_METADATA_FORMAT );
 				}
-
-				do_action( 'otter_form_after_submit', $form_data );
 			} else {
 				$res->set_code( Form_Data_Response::ERROR_BOT_DETECTED );
-			}       
+			}
 		} catch ( Exception $e ) {
 			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
 			$res->add_reason( $e->getMessage() );
@@ -684,24 +703,6 @@ class Form_Server {
 	}
 
 	/**
-	 * The instance method for the static class.
-	 * Defines and returns the instance of the static class.
-	 *
-	 * @static
-	 * @since 1.0.0
-	 * @access public
-	 * @return Form_Server
-	 */
-	public static function instance() {
-		if ( is_null( self::$instance ) ) {
-			self::$instance = new self();
-			self::$instance->init();
-		}
-
-		return self::$instance;
-	}
-
-	/**
 	 * Filter for the content of the email.
 	 *
 	 * @param string $content The content.
@@ -741,6 +742,87 @@ class Form_Server {
 			}
 		}
 		return '';
+	}
+
+	/**
+	 * Validate the input fields with files.
+	 *
+	 * @param Form_Data_Request $data The form data.
+	 * @return boolean
+	 * @since 2.2.3
+	 */
+	public function validate_files( Form_Data_Request $data ) {
+		$inputs = $data->get_form_inputs();
+
+		foreach ( $inputs as $input ) {
+			if ( Form_Utils::is_file_field( $input ) && ! Form_Utils::is_file_field_valid( $input ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Save the files from the form inputs.
+	 *
+	 * @param Form_Data_Request $data The form data.
+	 * @return array
+	 * @since 2.2.3
+	 */
+	public function save_files_to_uploads( Form_Data_Request $data ) {
+		$result = array(
+			'success' => true,
+			'files'   => array(),
+			'error'   => '',
+		);
+
+		$inputs = $data->get_form_inputs();
+
+		$saved_files = array();
+
+		foreach ( $inputs as $input ) {
+			if ( Form_Utils::is_file_field( $input ) ) {
+				$result = Form_Utils::save_file_from_field( $input );
+
+				if ( $result['success'] ) {
+					$saved_files[] = $result['file_id'];
+				} else {
+					// Delete all saved files.
+					foreach ( $saved_files as $file_id ) {
+						wp_delete_attachment( $file_id, true );
+					}
+
+					$result = array(
+						'success' => false,
+						'files'   => array(),
+						'error'   => $result['error'],
+					);
+					return $result;
+				}
+			}
+		}
+
+		$result['files'] = $saved_files;
+		return $result;
+	}
+
+	/**
+	 * The instance method for the static class.
+	 * Defines and returns the instance of the static class.
+	 *
+	 * @static
+	 * @since 1.0.0
+	 * @access public
+	 * @return Form_Server
+	 */
+	public static function instance() {
+		if ( is_null( self::$instance ) ) {
+			self::$instance = new self();
+			self::$instance->init();
+		}
+
+		return self::$instance;
 	}
 
 	/**
