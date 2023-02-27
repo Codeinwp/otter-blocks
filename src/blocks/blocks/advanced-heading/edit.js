@@ -58,7 +58,6 @@ const Edit = ({
 	useEffect( () => {
 		googleFontsLoader.attach( );
 		const unsubscribe = blockInit( clientId, defaultAttributes );
-		console.log( 'Advanced Heading block init' );
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
