@@ -17,11 +17,11 @@ interface FormSubscribeServiceInterface {
 	/**
 	 * Add the email to a contact list.
 	 *
-	 * @param strring $email The email.
+	 * @param Form_Data_Request $form_data The email.
 	 * @return mixed
 	 * @since 2.0.3
 	 */
-	public function subscribe( $email );
+	public function subscribe( $form_data );
 
 	/**
 	 * Get information (contact list) from the provider.

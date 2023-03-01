@@ -25,29 +25,28 @@ class Form_File_Block {
 	 */
 	public function render( $attributes ) {
 
-		if ( ! Pro::is_pro_installed() || ! Pro::is_pro_active() ) {
-			return '';
-		}
-
+		// if ( ! Pro::is_pro_installed() || ! Pro::is_pro_active() ) {
+		// return '';
+		// }
 		$class_names        = 'wp-block-themeisle-blocks-form-file ' . ( isset( $attributes['className'] ) ? $attributes['className'] : '' );
 		$id                 = isset( $attributes['id'] ) ? $attributes['id'] : '';
 		$label              = isset( $attributes['label'] ) ? $attributes['label'] : __( 'Select option', 'otter-blocks' );
 		$help_text          = isset( $attributes['helpText'] ) ? $attributes['helpText'] : '';
-		$is_required        = isset( $attributes['isRequired'] ) ? boolval( $attributes['isRequired'] ) : false;
-		$has_multiple_files = isset( $attributes['multipleFiles'] ) ? boolval( $attributes['multipleFiles'] ) : false;
+		$is_required        = isset( $attributes['isRequired'] ) && boolval( $attributes['isRequired'] );
+		$has_multiple_files = isset( $attributes['multipleFiles'] ) && boolval( $attributes['multipleFiles'] );
 
 		$output = '<div class="' . $class_names . '" id="' . $id . '">';
-		
+
 		$output .= '<label class="otter-form-input-label" for="field-' . $id . '" >' . $label . $this->render_required_sign( $is_required ) . '</label>';
 
-		$output .= '<input type="file" class="otter-form-input" name="field-' 
-		. $id . '" ' 
-		. ( $is_required ? 'required' : '' ) . ' ' 
-		. ( $has_multiple_files ? 'multiple' : '' ) 
+		$output .= '<input type="file" class="otter-form-input" name="field-'
+		. $id . '" '
+		. ( $is_required ? 'required' : '' ) . ' '
+		. ( $has_multiple_files ? 'multiple' : '' )
 		. ( isset( $attributes['allowedFileTypes'] ) ? ( 'accept="' . $attributes['allowedFileTypes'] ) . '"' : '' )
 		. ( isset( $attributes['maxFileSize'] ) ? ( 'data-max-file-size="' . $attributes['maxFileSize'] ) . '"' : '' )
 		. ' />';
-			
+
 		$output .= '<span class="o-form-help">' . $help_text . '</span>';
 
 		$output .= '</div>';
@@ -56,7 +55,7 @@ class Form_File_Block {
 
 	/**
 	 * Render the required sign.
-	 * 
+	 *
 	 * @param bool $is_required The required status of the field.
 	 * @return string
 	 */

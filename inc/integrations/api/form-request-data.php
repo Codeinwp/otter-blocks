@@ -65,6 +65,22 @@ class Form_Data_Request {
 	protected $files_loaded_to_media_library = array();
 
 	/**
+	 * Error code.
+	 *
+	 * @var string
+	 * @since 2.2.3
+	 */
+	protected $error_code = null;
+
+	/**
+	 * Error details.
+	 *
+	 * @var array
+	 * @since 2.2.3
+	 */
+	protected $error_details = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @access  public
@@ -359,5 +375,66 @@ class Form_Data_Request {
 	 */
 	public function set_files_loaded_to_media_library( $files_loaded_to_media_library ) {
 		$this->files_loaded_to_media_library = $files_loaded_to_media_library;
+	}
+
+	/**
+	 * Check if we have an error.
+	 *
+	 * @return bool
+	 * @since 2.2.3
+	 */
+	public function has_error() {
+		return isset( $this->error_code );
+	}
+
+	/**
+	 * Get the error code.
+	 *
+	 * @return string
+	 * @since 2.2.3
+	 */
+	public function get_error_code() {
+		return $this->error_code;
+	}
+
+	/**
+	 * Get the error details.
+	 *
+	 * @return array
+	 * @since 2.2.3
+	 */
+	public function get_error_details() {
+		return $this->error_details;
+	}
+
+	/**
+	 * Set the error.
+	 *
+	 * @param string $error_code The error code.
+	 * @param string $error_details The error details.
+	 * @return void
+	 * @since 2.2.3
+	 */
+	public function set_error( $error_code, $error_details = null ) {
+		$this->error_code    = $error_code;
+		$this->error_details = $error_details;
+	}
+
+	/**
+	 * Get the first email from the input's form.
+	 *
+	 * @return mixed|string
+	 * @since 2.2.3
+	 */
+	public function get_email_from_form_input() {
+		$inputs = $this->get_form_inputs();
+		if ( is_array( $inputs ) ) {
+			foreach ( $inputs as $input_field ) {
+				if ( 'email' == $input_field['type'] ) {
+					return $input_field['value'];
+				}
+			}
+		}
+		return '';
 	}
 }
