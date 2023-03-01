@@ -108,7 +108,8 @@ const CSSEditor = ({
 
 	useEffect( () => {
 		const regex = new RegExp( 'selector', 'g' );
-		const customCSS = editorValue?.replace( regex, `.${ getClassName().split( ' ' ).find( i => i.includes( 'ticss' ) ) }` );
+		const className = getClassName();
+		const customCSS = className ? editorValue?.replace( regex, `.${ className.split( ' ' ).find( i => i.includes( 'ticss' ) ) }` ) : editorValue;
 
 		if ( ( 'selector {\n}\n' ).replace( /\s+/g, '' ) === customCSS?.replace( /\s+/g, '' ) ) {
 			setAttributes({ customCSS: null });
