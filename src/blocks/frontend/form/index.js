@@ -54,13 +54,10 @@ const extractFormFields = async( form ) => {
 				/** @type{HTMLInputElement} */
 				const fileInput = input.querySelector( 'input[type="file"]' );
 
-				console.log( fileInput );
-
 				if ( fileInput ) {
 					const files = fileInput?.files;
 
 					for ( let i = 0; i < files.length; i++ ) {
-						console.log( files[i]);
 						const reader = new FileReader();
 
 						reader.onload = function() {
@@ -103,8 +100,8 @@ const extractFormFields = async( form ) => {
 			}
 		});
 
-		if ( 1 > fieldsToLoad.length ) {
-			resolve({ formFieldsData, formData });
+		if ( 0 === fieldsToLoad ) {
+			resolve({ formFieldsData });
 		}
 	});
 
@@ -188,7 +185,6 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 
 	// Get the data from the form fields.
 	const { formFieldsData } = await extractFormFields( form );
-	console.log( formFieldsData );
 	const formIsEmpty = 2 > formFieldsData?.length;
 	const nonceFieldValue = extractNonceValue( form );
 	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
