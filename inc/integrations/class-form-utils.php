@@ -79,9 +79,11 @@ class Form_Utils {
 	 */
 	public static function save_file_from_field( $field ) {
 		$result = array(
-			'success' => false,
-			'file_id' => '',
-			'error'   => null,
+			'success'   => false,
+			'file_name' => '',
+			'file_path' => '',
+			'file_type' => '',
+			'error'     => null,
 		);
 
 		try {
@@ -96,21 +98,10 @@ class Form_Utils {
 
 			// Check if file was saved.
 			if ( ! $upload['error'] ) {
-				// Save file to media library.
-				$attachment = array(
-					'post_mime_type' => $upload['type'],
-					'post_title'     => $file_name,
-					'post_content'   => '',
-					'post_status'    => 'inherit',
-				);
-
-				$attach_id = wp_insert_attachment( $attachment, $upload['file'] );
-
-				$result['success'] = true;
-				$result['file_id'] = $attach_id;
-
-				$attach_data = wp_generate_attachment_metadata( $attach_id, $upload['file'] );
-				wp_update_attachment_metadata( $attach_id, $attach_data );
+				$result['success']   = true;
+				$result['file_name'] = $file_name;
+				$result['file_type'] = $upload['type'];
+				$result['file_path'] = $upload['file'];
 			} else {
 				$result['error'] = $upload['error'];
 			}
@@ -131,7 +122,10 @@ class Form_Utils {
 	 */
 	public static function generate_file_name( $original_name ) {
 		$original_name = str_replace( ' ', '_', $original_name );
-		return md5( wp_rand() ) . '_' . $original_name;
+		$hash_code     = md5( $original_name . wp_rand() );
+		$hash_code     = substr( $hash_code, 0, 8 );
+
+		return $hash_code . '_' . $original_name;
 	}
 
 	/**

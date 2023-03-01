@@ -41,6 +41,30 @@ class Form_Data_Request {
 	protected $changed_provider = false;
 
 	/**
+	 * Attachments from form.
+	 *
+	 * @var array
+	 * @since 2.2.3
+	 */
+	protected $uploaded_files_path = array();
+
+	/**
+	 * Keep uploaded files.
+	 *
+	 * @var bool
+	 * @since 2.2.3
+	 */
+	protected $keep_uploaded_files = false;
+
+	/**
+	 * Files loaded to media library.
+	 *
+	 * @var array
+	 * @since 2.2.3
+	 */
+	protected $files_loaded_to_media_library = array();
+
+	/**
 	 * Constructor.
 	 *
 	 * @access  public
@@ -253,5 +277,87 @@ class Form_Data_Request {
 	 */
 	public function get_form_options() {
 		return $this->form_options;
+	}
+
+	/**
+	 * Check if we have loaded attachments.
+	 *
+	 * @return bool
+	 */
+	public function has_uploaded_files() {
+		return count( $this->uploaded_files_path ) > 0;
+	}
+
+	/**
+	 * Get the attachments.
+	 *
+	 * @return array
+	 */
+	public function get_uploaded_files_path() {
+		return $this->uploaded_files_path;
+	}
+
+	/**
+	 * Set the attachments.
+	 *
+	 * @param array $uploaded_files_path The attachments.
+	 * @return void
+	 */
+	public function set_uploaded_files_path( $uploaded_files_path ) {
+		if ( is_array( $uploaded_files_path ) ) {
+			$this->uploaded_files_path = $uploaded_files_path;
+		}
+	}
+
+	/**
+	 * Check if we should keep the uploaded files.
+	 *
+	 * @return bool
+	 * @since 2.2.3
+	 */
+	public function can_keep_uploaded_files() {
+		return $this->keep_uploaded_files;
+	}
+
+	/**
+	 * Set if we should keep the uploaded files.
+	 *
+	 * @param bool $keep_uploaded_files True if we should keep the uploaded files.
+	 * @return void
+	 * @since 2.2.3
+	 */
+	public function set_keep_uploaded_files( $keep_uploaded_files ) {
+		$this->keep_uploaded_files = $keep_uploaded_files;
+	}
+
+	/**
+	 * Check if we have loaded files to media library.
+	 *
+	 * @return bool
+	 * @since 2.2.3
+	 */
+	public function has_files_loaded_to_media_library() {
+		return count( $this->files_loaded_to_media_library ) > 0;
+	}
+
+	/**
+	 * Get the files loaded to media library.
+	 *
+	 * @return array
+	 * @since 2.2.3
+	 */
+	public function get_files_loaded_to_media_library() {
+		return $this->files_loaded_to_media_library;
+	}
+
+	/**
+	 * Set the files loaded to media library.
+	 *
+	 * @param array $files_loaded_to_media_library The files loaded to media library.
+	 * @return void
+	 * @since 2.2.3
+	 */
+	public function set_files_loaded_to_media_library( $files_loaded_to_media_library ) {
+		$this->files_loaded_to_media_library = $files_loaded_to_media_library;
 	}
 }

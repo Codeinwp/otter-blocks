@@ -112,13 +112,26 @@ class Form_Server {
 			)
 		);
 
-		add_action( 'otter_form_before_submit', array( $this, 'before_submit' ) );
-		add_action( 'otter_form_after_submit', array( $this, 'after_submit' ) );
+		/**
+		 * Register utility filters.
+		 */
 		add_filter( 'otter_form_email_build_body', array( $this, 'build_email_content' ) );
 		add_filter( 'otter_form_email_build_body_error', array( $this, 'build_email_error_content' ), 1, 2 );
 		add_filter( 'otter_form_anti_spam_validation', array( $this, 'anti_spam_validation' ) );
 		add_filter( 'otter_form_file_fields_validation', array( $this, 'validate_files' ) );
 		add_filter( 'otter_form_file_fields_saving', array( $this, 'save_files_to_uploads' ) );
+
+		/**
+		 * Register utility actions that triggers before the main submit action. Actions that prepare the validated data or add new one.
+		 */
+		add_action( 'otter_form_before_submit', array( $this, 'before_submit' ) );
+		add_action( 'otter_form_before_submit', array( $this, 'load_files_to_media_library' ) );
+
+		/**
+		 * Register utility actions that triggers after the main submit action. Actions that clean the data, generated files or auxiliary actions.
+		 */
+		add_action( 'otter_form_after_submit', array( $this, 'after_submit' ) );
+		add_action( 'otter_form_after_submit', array( $this, 'clean_files_from_uploads' ) );
 	}
 
 	/**
@@ -241,6 +254,9 @@ class Form_Server {
 					$files_saving = apply_filters( 'otter_form_file_fields_saving', $form_data );
 
 					if ( $files_saving['success'] ) {
+						$form_data->set_uploaded_files_path( $files_saving['files'] );
+						$form_data->set_keep_uploaded_files( true );
+
 						do_action( 'otter_form_before_submit', $form_data );
 
 						// Select the submit function based on the provider.
@@ -332,8 +348,15 @@ class Form_Server {
 				}
 			}
 
+			$attachments = array();
+			if ( $form_data->has_uploaded_files() && ! $form_data->can_keep_uploaded_files() ) {
+				foreach ( $form_data->get_uploaded_files_path() as $file ) {
+					$attachments[] = $file['file_path'];
+				}
+			}
+
 			// phpcs:ignore
-			$res->set_success( wp_mail( $to, $email_subject, $email_body, $headers ) );
+			$res->set_success( wp_mail( $to, $email_subject, $email_body, $headers, $attachments ) );
 			if ( $res->is_success() ) {
 				$res->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
 			} else {
@@ -732,7 +755,7 @@ class Form_Server {
 	 * @return mixed|string
 	 * @since 2.0.3
 	 */
-	private function get_email_from_form_input( Form_Data_Request $data ) {
+	private function get_email_from_form_input( $data ) {
 		$inputs = $data->get_payload_field( 'formInputsData' );
 		if ( is_array( $inputs ) ) {
 			foreach ( $data->get_payload_field( 'formInputsData' ) as $input_field ) {
@@ -751,7 +774,7 @@ class Form_Server {
 	 * @return boolean
 	 * @since 2.2.3
 	 */
-	public function validate_files( Form_Data_Request $data ) {
+	public function validate_files( $data ) {
 		$inputs = $data->get_form_inputs();
 
 		foreach ( $inputs as $input ) {
@@ -770,7 +793,7 @@ class Form_Server {
 	 * @return array
 	 * @since 2.2.3
 	 */
-	public function save_files_to_uploads( Form_Data_Request $data ) {
+	public function save_files_to_uploads( $data ) {
 		$result = array(
 			'success' => true,
 			'files'   => array(),
@@ -783,28 +806,83 @@ class Form_Server {
 
 		foreach ( $inputs as $input ) {
 			if ( Form_Utils::is_file_field( $input ) ) {
-				$result = Form_Utils::save_file_from_field( $input );
+				$file = Form_Utils::save_file_from_field( $input );
 
-				if ( $result['success'] ) {
-					$saved_files[] = $result['file_id'];
+				if ( $file['success'] ) {
+					$saved_files[] = $file;
 				} else {
 					// Delete all saved files.
-					foreach ( $saved_files as $file_id ) {
-						wp_delete_attachment( $file_id, true );
+					foreach ( $saved_files as $file_path ) {
+						wp_delete_file( $file_path );
 					}
 
-					$result = array(
+					return array(
 						'success' => false,
 						'files'   => array(),
 						'error'   => $result['error'],
 					);
-					return $result;
 				}
 			}
 		}
 
 		$result['files'] = $saved_files;
 		return $result;
+	}
+
+	/**
+	 * Delete the files uploaded from the File field via attachments.
+	 *
+	 * @param Form_Data_Request $data The files to delete.
+	 * @since 2.2.3
+	 */
+	public function clean_files_from_uploads( $data ) {
+		if ( ! $data->can_keep_uploaded_files() && $data->has_uploaded_files() ) {
+			foreach ( $data->get_uploaded_files_path() as $file ) {
+				wp_delete_file( $file['file_path'] );
+			}
+		}
+	}
+
+	/**
+	 * Load the files to the media library.
+	 *
+	 * @param Form_Data_Request $data The files to load.
+	 * @since 2.2.3
+	 */
+	public function load_files_to_media_library( $data ) {
+		if ( $data->can_keep_uploaded_files() && $data->has_uploaded_files() ) {
+			// Check if function are loaded to avoid errors.
+			if ( ! function_exists( 'wp_insert_attachment' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/image.php';
+				require_once ABSPATH . 'wp-admin/includes/file.php';
+				require_once ABSPATH . 'wp-admin/includes/media.php';
+			}
+
+			// Check if function wp_generate_attachment_metadata exists, if not, load it.
+			if ( ! function_exists( 'wp_generate_attachment_metadata' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/image.php';
+			}
+
+			$media_files = array();
+			foreach ( $data->get_uploaded_files_path() as $file ) {
+				$attachment = array(
+					'post_mime_type' => $file['file_type'],
+					'post_title'     => $file['file_name'],
+					'post_content'   => '',
+					'post_status'    => 'inherit',
+				);
+
+				$attachment_id = wp_insert_attachment( $attachment, $file['file_path'] );
+				$media_files[] = array(
+					'file_path' => $file['file_path'],
+					'file_name' => $file['file_name'],
+					'file_type' => $file['file_type'],
+					'file_id'   => $attachment_id,
+				);
+			}
+
+			$data->set_files_loaded_to_media_library( $media_files );
+		}
 	}
 
 	/**
