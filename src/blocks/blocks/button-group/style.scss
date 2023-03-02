@@ -113,7 +113,7 @@ $device-map: (desktop: '1200px', tablet: '960px', mobile: '600px');
 	--padding: 15px 30px;
 	--padding-tablet: var(--padding);
 	--padding-mobile: var(--padding-tablet);
-	--font-size: 15px;
+	--font-size: var( --btnfs, var(--bodyfontsize, 15px) );
 	--spacing: 20px;
 
 	gap: var(--spacing);
