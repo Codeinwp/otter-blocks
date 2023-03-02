@@ -380,6 +380,73 @@ class Options_Settings {
 
 		register_setting(
 			'themeisle_blocks_settings',
+			'themeisle_blocks_form_fields_option',
+			array(
+				'type'              => 'array',
+				'description'       => __( 'Form Fields used in the Form block.', 'otter-blocks' ),
+				'sanitize_callback' => function ( $array ) {
+					return array_map(
+						function ( $item ) {
+							if ( isset( $item['fieldOptionName'] ) ) {
+								$item['fieldOptionName'] = sanitize_text_field( $item['fieldOptionName'] );
+							}
+							if ( isset( $item['fieldOptionType'] ) ) {
+								$item['fieldOptionType'] = sanitize_text_field( $item['fieldOptionType'] );
+							}
+							if ( isset( $item['options'] ) ) {
+								$item['options'] = sanitize_text_field( $item['options'] );
+
+								if ( isset( $item['maxFileSize'] ) ) {
+									$item['options']['maxFileSize'] = sanitize_text_field( $item['options']['maxFileSize'] );
+								}
+								if ( isset( $item['allowedFileTypes'] ) ) {
+									$item['options']['allowedFileTypes'] = sanitize_text_field( $item['options']['allowedFileTypes'] );
+								}
+								if ( isset( $item['saveFiles'] ) ) {
+									$item['options']['saveFiles'] = sanitize_text_field( $item['options']['saveFiles'] );
+								}
+							}
+							return $item;
+						},
+						$array
+					);
+				},
+				'show_in_rest'      => array(
+					'schema' => array(
+						'type'  => 'array',
+						'items' => array(
+							'type'       => 'object',
+							'properties' => array(
+								'fieldOptionName' => array(
+									'type' => 'string',
+								),
+								'fieldOptionType' => array(
+									'type' => 'string',
+								),
+								'options'         => array(
+									'type'       => 'object',
+									'properties' => array(
+										'maxFileSize'      => array(
+											'type' => array( 'string', 'number' ),
+										),
+										'allowedFileTypes' => array(
+											'type' => 'string',
+										),
+										'saveFiles'        => array(
+											'type' => 'string',
+										),
+									),
+								),
+							),
+						),
+					),
+				),
+				'default'           => array(),
+			)
+		);
+
+		register_setting(
+			'themeisle_blocks_settings',
 			'themeisle_blocks_settings_notifications',
 			array(
 				'type'              => 'object',

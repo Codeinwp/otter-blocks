@@ -43,10 +43,13 @@
 		"allowedFileTypes": {
 			"type": "string"
 		},
+		"saveFiles": {
+			"type": "string"
+		},
 		"multipleFiles": {
 			"type": "boolean"
 		},
-		"fieldOptions": {
+		"fieldOptionName": {
 			"type": "string"
 		}
 	},

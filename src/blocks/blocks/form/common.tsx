@@ -9,6 +9,16 @@ import { changeActiveStyle, getActiveStyle, getChoice } from '../../helpers/help
 import { FormInputProps } from './input/types';
 import { BlockProps } from '../../helpers/blocks';
 
+export type FieldOption = {
+	fieldOptionName: string
+	fieldOptionType: string
+	options: {
+		maxFileSize?: number | string
+		allowedFileTypes?: string
+		saveFiles?: string
+	}
+}
+
 export type FormInputCommonProps = {
 	id: string
 	label: string

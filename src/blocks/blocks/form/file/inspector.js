@@ -139,15 +139,15 @@ const Inspector = ({
 
 				<ToggleControl
 					label={ __( 'Allow multiple file uploads', 'otter-blocks' ) }
-					checked={ attributes.isRequired }
-					onChange={ isRequired => setAttributes({ isRequired }) }
+					checked={ attributes.multipleFiles }
+					onChange={ multipleFiles => setAttributes({ multipleFiles }) }
 				/>
 
 				<ToggleControl
 					label={ __( 'Save to Media Library', 'otter-blocks' ) }
 					help={ __( 'If enabled, the files will be saved to Media Library instead of adding them as attachments to email.', 'otter-blocks' ) }
-					checked={ attributes.isRequired }
-					onChange={ isRequired => setAttributes({ isRequired }) }
+					checked={ 'media-library' === attributes.saveFiles }
+					onChange={ value => setAttributes({ saveFiles: value ? 'media-library' : undefined }) }
 				/>
 
 				{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (

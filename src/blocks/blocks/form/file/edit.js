@@ -1,3 +1,5 @@
+import hash from 'object-hash';
+
 /**
  * WordPress dependencies
  */
@@ -20,6 +22,8 @@ import metadata from './block.json';
 import { blockInit } from '../../../helpers/block-utility.js';
 import Inspector from './inspector.js';
 import { _cssBlock } from '../../../helpers/helper-functions';
+import { select } from '@wordpress/data';
+import useSettings from '../../../helpers/use-settings';
 
 
 const { attributes: defaultAttributes } = metadata;
@@ -39,7 +43,61 @@ const Edit = ({
 		return () => unsubscribe( attributes.id );
 	}, [ attributes.id ]);
 
+	/**
+	 * Create the form identification tag for Otter Options.
+	 */
+	useEffect( () => {
+		if ( attributes.id && select( 'core/edit-widgets' ) ) {
+			setAttributes({ fieldOptionName: `widget_${ attributes.id.slice( -8 ) }` });
+		} else if ( attributes.id ) {
+			setAttributes({ fieldOptionName: `${ hash({ url: window.location.pathname }) }_${ attributes.id.slice( -8 ) }` });
+		}
+	}, [ attributes.id ]);
+
 	const blockProps = useBlockProps();
+
+	const [ getOption, updateOption, status ] = useSettings();
+
+	useEffect( () => {
+
+		if ( attributes.fieldOptionName && 'loaded' === status ) {
+
+			/** @type{import('../common').FieldOption[]} */
+			const fieldOptions = getOption?.( 'themeisle_blocks_form_fields_option' ) ?? [];
+
+			const fieldIndex = fieldOptions.findIndex( field => field.fieldOptionName === attributes.fieldOptionName );
+
+			const isChanged = (
+				-1 !== fieldIndex && (
+					fieldOptions[fieldIndex].options.allowedFileTypes !== attributes.allowedFileTypes ||
+					fieldOptions[fieldIndex].options.maxFileSize !== attributes.maxFileSize ||
+					fieldOptions[fieldIndex].options.saveFiles !== attributes.saveFiles
+				) ||
+				-1 === fieldIndex
+			);
+
+			if ( isChanged ) {
+				if ( -1 !== fieldIndex ) {
+					fieldOptions[fieldIndex].options.allowedFileTypes = attributes.allowedFileTypes;
+					fieldOptions[fieldIndex].options.maxFileSize = attributes.maxFileSize;
+					fieldOptions[fieldIndex].options.saveFiles = attributes.saveFiles;
+				} else {
+					fieldOptions.push({
+						fieldOptionName: attributes.fieldOptionName,
+						fieldOptionType: 'file',
+						options: {
+							allowedFileTypes: attributes.allowedFileTypes,
+							maxFileSize: attributes.maxFileSize,
+							saveFiles: attributes.saveFiles
+						}
+					});
+				}
+
+				updateOption( 'themeisle_blocks_form_fields_option', fieldOptions, __( 'Field settings saved.', 'otter-blocks' ), 'field-option' );
+				console.count( 'New options' );
+			}
+		}
+	}, [ attributes.fieldOptionName, attributes.allowedFileTypes, attributes.maxFileSize, attributes.saveFiles, status ]);
 
 	return (
 		<Fragment>

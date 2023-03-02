@@ -44,7 +44,9 @@ class Form_File_Block {
 		. ( $is_required ? 'required' : '' ) . ' '
 		. ( $has_multiple_files ? 'multiple' : '' )
 		. ( isset( $attributes['allowedFileTypes'] ) ? ( 'accept="' . $attributes['allowedFileTypes'] ) . '"' : '' )
+		. ( isset( $attributes['multipleFiles'] ) ? 'multiple' : '' )
 		. ( isset( $attributes['maxFileSize'] ) ? ( 'data-max-file-size="' . $attributes['maxFileSize'] ) . '"' : '' )
+		. ( isset( $attributes['fieldOptionName'] ) ? ( 'data-field-option-name="' . $attributes['fieldOptionName'] ) . '"' : '' )
 		. ' />';
 
 		$output .= '<span class="o-form-help">' . $help_text . '</span>';

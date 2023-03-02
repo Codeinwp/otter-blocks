@@ -68,7 +68,8 @@ const extractFormFields = async( form ) => {
 								metadata: {
 									name: files[i].name,
 									size: files[i].size,
-									data: reader.result
+									data: reader.result,
+									fieldOptionName: fileInput?.dataset?.fieldOptionName
 								}
 							});
 							currentLoaded++;
@@ -185,6 +186,7 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 
 	// Get the data from the form fields.
 	const { formFieldsData } = await extractFormFields( form );
+	console.log( formFieldsData );
 	const formIsEmpty = 2 > formFieldsData?.length;
 	const nonceFieldValue = extractNonceValue( form );
 	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
