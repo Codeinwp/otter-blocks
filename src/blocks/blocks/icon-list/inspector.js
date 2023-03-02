@@ -261,7 +261,7 @@ const Inspector = ({
 								//help={ __( 'The size of the font size of the content and icon.', 'otter-blocks' ) }
 							>
 								<FontSizePicker
-									value={ attributes.defaultIconSize ?? _px( attributes.defaultSize ) ?? '' }
+									value={ attributes.defaultIconSize ?? '' }
 									onChange={ defaultIconSize => setAttributes({ defaultIconSize }) }
 									fontSizes={[
 										{
