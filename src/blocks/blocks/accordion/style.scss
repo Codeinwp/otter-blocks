@@ -108,7 +108,7 @@
 	// when no gap is set, we need to avoid the doubled border between items
 	&:not( .is-style-default ).no-gap > &-item:not( :first-child ),
 	&:not( .is-style-default ):not( .is-narrow-gap ):not( .is-wide-gap ):not( .is-wider-gap ):not( .has-gap ) > &-item:not( :first-child ) {
-		#{$block}-item__title {
+		&> #{$block}-item__title {
 			border-top: none;
 		}
 	}
