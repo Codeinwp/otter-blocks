@@ -45,6 +45,9 @@
 		},
 		"multipleFiles": {
 			"type": "boolean"
+		},
+		"fieldOptions": {
+			"type": "string"
 		}
 	},
 	"supports": {

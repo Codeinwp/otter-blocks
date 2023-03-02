@@ -10,6 +10,7 @@ type Attributes = FormInputCommonProps & {
 	maxFileSize: string
 	allowedFileTypes: string
 	multipleFiles: boolean
+	fieldOption: string
 }
 
 export type FormFileProps = BlockProps<Attributes>

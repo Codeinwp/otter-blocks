@@ -137,6 +137,19 @@ const Inspector = ({
 					onChange={ isRequired => setAttributes({ isRequired }) }
 				/>
 
+				<ToggleControl
+					label={ __( 'Allow multiple file uploads', 'otter-blocks' ) }
+					checked={ attributes.isRequired }
+					onChange={ isRequired => setAttributes({ isRequired }) }
+				/>
+
+				<ToggleControl
+					label={ __( 'Save to Media Library', 'otter-blocks' ) }
+					help={ __( 'If enabled, the files will be saved to Media Library instead of adding them as attachments to email.', 'otter-blocks' ) }
+					checked={ attributes.isRequired }
+					onChange={ isRequired => setAttributes({ isRequired }) }
+				/>
+
 				{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
 					<Notice
 						notice={<ExternalLink href={setUtm( window.themeisleGutenberg.upgradeLink, 'formfilefieldfeature' )}>{__( 'Activate this field with Otter Pro.', 'otter-blocks' )}</ExternalLink>}
