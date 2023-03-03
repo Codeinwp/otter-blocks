@@ -91,36 +91,21 @@ class Form_Utils {
 			$file_name = self::generate_file_name( $field['metadata']['name'] );
 			$file_data = $field['metadata']['data'];
 
-			$parts     = explode( ';base64,', $file_data );
-			$file_data = base64_decode( $parts[1] );
+			$base64_start = strpos( $file_data, ';base64,' );
+			$file_data    = substr( $file_data, $base64_start + 8 );
+			$file_data    = base64_decode( $file_data );
 
-			$ok = true;
+			// Save file to uploads folder.
+			$upload = wp_upload_bits( $file_name, null, $file_data );
 
-			// Check if file size is valid.
-			if ( ! is_null( $max_size ) ) {
-				// Convert to bytes.
-				$max_size  = $max_size * 1024 * 1024;
-				$file_size = strlen( $file_data );
-
-				if ( $file_size > $max_size ) {
-					$result['error'] = __( 'File size is too big.', 'otter-blocks' );
-					$ok              = false;
-				}
-			}
-
-			if ( $ok ) {
-				// Save file to uploads folder.
-				$upload = wp_upload_bits( $file_name, null, $file_data );
-
-				// Check if file was saved.
-				if ( ! $upload['error'] ) {
-					$result['success']   = true;
-					$result['file_name'] = $file_name;
-					$result['file_type'] = $upload['type'];
-					$result['file_path'] = $upload['file'];
-				} else {
-					$result['error'] = $upload['error'];
-				}
+			// Check if file was saved.
+			if ( ! $upload['error'] ) {
+				$result['success']   = true;
+				$result['file_name'] = $file_name;
+				$result['file_type'] = $upload['type'];
+				$result['file_path'] = $upload['file'];
+			} else {
+				$result['error'] = $upload['error'];
 			}
 		} catch ( \Exception $e ) {
 			// Do nothing.

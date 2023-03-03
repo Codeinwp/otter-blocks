@@ -27,6 +27,7 @@ class Form_Data_Response {
 	const ERROR_FILE_UPLOAD_TYPE             = '12';
 	const ERROR_FILE_UPLOAD_TYPE_WP          = '13';
 	const ERROR_FILE_UPLOAD_MAX_FILES_NUMBER = '14';
+	const ERROR_FILE_UPLOAD_MAX_SIZE         = '15';
 
 	// Request validation errors.
 	const ERROR_MISSING_DATA          = '101';
@@ -391,6 +392,9 @@ class Form_Data_Response {
 				break;
 			case self::ERROR_FILE_UPLOAD_MAX_FILES_NUMBER:
 				$messages[] = ( __( 'The number of files is too big.', 'otter-blocks' ) );
+				break;
+			case self::ERROR_FILE_UPLOAD_MAX_SIZE:
+				$messages[] = ( __( 'The file size exceed the limit.', 'otter-blocks' ) );
 				break;
 		}
 

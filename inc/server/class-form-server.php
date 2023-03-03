@@ -879,14 +879,15 @@ class Form_Server {
 						$form_data->has_field_option( $input['metadata']['fieldOptionName'] )
 					) {
 
-						$file_data = $input['metadata']['data'];
+						$field_option = $form_data->get_field_option( $input['metadata']['fieldOptionName'] );
+						$file_data    = $input['metadata']['data'];
 
 						// Check the mime type from the data encoding.
 						$p1        = strpos( $file_data, 'data:' );
 						$p2        = strpos( $file_data, ';base64' );
 						$mime_type = substr( $file_data, $p1 + 5, $p2 - $p1 - 5 );
 
-						$form_files_ext_string = $form_data->get_field_option( $input['metadata']['fieldOptionName'] )->get_option( 'allowedFileTypes' );
+						$form_files_ext_string = $field_option->get_option( 'allowedFileTypes' );
 
 						if ( ! empty( $form_files_ext_string ) ) {
 							$has_valid_extension = false;
@@ -915,6 +916,22 @@ class Form_Server {
 						if ( ! in_array( $mime_type, $allowed_mime_types, true ) ) {
 							$form_data->set_error( Form_Data_Response::ERROR_FILE_UPLOAD_TYPE_WP, array( __( 'File type not allowed', 'otter-blocks' ) ) );
 							break;
+						}
+
+
+						// Check the file size.
+						if ( $field_option->has_option( 'maxFileSize' ) ) {
+							$max_file_size = $field_option->get_option( 'maxFileSize' );
+							$max_file_size = $max_file_size * 1024 * 1024;
+
+							$base64_start = strpos( $file_data, ';base64,' );
+							$file_data    = substr( $file_data, $base64_start + 8 );
+							$file_data    = base64_decode( $file_data );
+
+							if ( false === $file_data || $max_file_size < strlen( $file_data ) ) {
+								$form_data->set_error( Form_Data_Response::ERROR_FILE_UPLOAD_MAX_SIZE );
+								break;
+							}
 						}
 
 						$approved_fields[] = $input;
