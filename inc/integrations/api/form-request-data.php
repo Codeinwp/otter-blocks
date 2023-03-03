@@ -33,6 +33,14 @@ class Form_Data_Request {
 	protected $form_options = null;
 
 	/**
+	 * Form fields options.
+	 *
+	 * @var array
+	 * @since 2.2.3
+	 */
+	protected $form_fields_options = array();
+
+	/**
 	 * Var indicate the use of another provider.
 	 *
 	 * @var bool|string
@@ -436,5 +444,65 @@ class Form_Data_Request {
 			}
 		}
 		return '';
+	}
+
+	/**
+	 * Add a field option.
+	 *
+	 * @param Form_Field_Option_Data $field_option The field option.
+	 * @return void
+	 */
+	public function add_field_option( $field_option ) {
+		if ( $field_option instanceof Form_Field_Option_Data ) {
+			if ( ! isset( $this->form_fields_options ) ) {
+				$this->form_fields_options = array();
+			}
+
+			$this->form_fields_options[ $field_option->get_name() ] = $field_option;
+		}
+	}
+
+	/**
+	 * Remove a field option.
+	 *
+	 * @param string $field_option_name The field option name.
+	 * @return void
+	 */
+	public function remove_field_option( $field_option_name ) {
+		if ( isset( $this->form_fields_options[ $field_option_name ] ) ) {
+			unset( $this->form_fields_options[ $field_option_name ] );
+		}
+	}
+
+	/**
+	 * Get the field options.
+	 *
+	 * @return array
+	 */
+	public function get_field_options() {
+		return $this->form_fields_options;
+	}
+
+	/**
+	 * Get the field option.
+	 *
+	 * @param string $field_option_name The field option name.
+	 * @return Form_Field_Option_Data|null
+	 */
+	public function get_field_option( $field_option_name ) {
+		if ( isset( $this->form_fields_options[ $field_option_name ] ) ) {
+			return $this->form_fields_options[ $field_option_name ];
+		}
+		return null;
+	}
+
+	/**
+	 * Check if we have a field option.
+	 *
+	 * @param string $field_option_name The field option name.
+	 * @return bool
+	 */
+	public function has_field_option( $field_option_name ) {
+		return isset( $this->form_fields_options[ $field_option_name ] );
 	}
 }

@@ -11,6 +11,7 @@ use Exception;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Request;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Email;
+use ThemeIsle\GutenbergBlocks\Integration\Form_Field_Option_Data;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Providers;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Settings_Data;
 use ThemeIsle\GutenbergBlocks\Integration\Form_Utils;
@@ -239,6 +240,7 @@ class Form_Server {
 
 			$form_options = Form_Settings_Data::get_form_setting_from_wordpress_options( $form_data->get_payload_field( 'formOption' ) );
 			$form_data->set_form_options( $form_options );
+			$form_data = $this->pull_fields_options_for_form( $form_data );
 
 			// Check bot validation.
 			$form_data = apply_filters( 'otter_form_anti_spam_validation', $form_data );
@@ -312,6 +314,7 @@ class Form_Server {
 
 			// Check if we need to send it to another user email.
 			if ( $form_data->payload_has_field( 'formOption' ) ) {
+				// TODO: Refactor this code.
 				$option_name = $form_data->get_payload_field( 'formOption' );
 				$form_emails = get_option( 'themeisle_blocks_form_emails' );
 
@@ -725,18 +728,6 @@ class Form_Server {
 			return $form_data;
 		}
 
-		$form_options = $form_data->get_form_options();
-
-		if (
-			$form_options->form_has_captcha() &&
-			(
-				! $form_data->payload_has_field( 'token' ) ||
-				'' === $form_data->get_payload_field( 'token' )
-			)
-		) {
-			$form_data->set_error( Form_Data_Response::ERROR_MISSING_CAPTCHA );
-		}
-
 		return $form_data;
 	}
 
@@ -753,6 +744,18 @@ class Form_Server {
 
 		if ( ! isset( $form_data ) || $form_data->has_error() ) {
 			return $form_data;
+		}
+
+		$form_options = $form_data->get_form_options();
+
+		if (
+			$form_options->form_has_captcha() &&
+			(
+				! $form_data->payload_has_field( 'token' ) ||
+				'' === $form_data->get_payload_field( 'token' )
+			)
+		) {
+			$form_data->set_error( Form_Data_Response::ERROR_MISSING_CAPTCHA );
 		}
 
 		if ( $form_data->payload_has_field( 'token' ) ) {
@@ -839,30 +842,113 @@ class Form_Server {
 
 		$inputs = $form_data->get_form_inputs();
 
-		$saved_files = array();
+		$saved_files     = array();
+		$approved_fields = array();
 
-		foreach ( $inputs as $input ) {
-			if ( Form_Utils::is_file_field( $input ) ) {
-				$file = Form_Utils::save_file_from_field( $input );
+		try {
+			$counts_files = array();
 
-				if ( $file['success'] ) {
-					$saved_files[] = $file;
-				} else {
-					// Delete all saved files.
-					foreach ( $saved_files as $file_path ) {
-						wp_delete_file( $file_path );
+			foreach ( $inputs as $input ) {
+				if (
+					Form_Utils::is_file_field( $input ) &&
+					isset( $input['metadata']['fieldOptionName'] ) &&
+					$form_data->has_field_option( $input['metadata']['fieldOptionName'] )
+				) {
+					$name = $input['metadata']['fieldOptionName'];
+					if ( ! isset( $counts_files[ $name ] ) ) {
+						$counts_files[ $name ] = 1;
+					} else {
+						$counts_files[ $name ]++;
+
+						if (
+							$form_data->get_field_option( $name )->has_option( 'maxFilesNumber' ) &&
+							$counts_files[ $name ] > $form_data->get_field_option( $name )->get_option( 'maxFilesNumber' )
+						) {
+							$form_data->set_error( Form_Data_Response::ERROR_FILE_UPLOAD_MAX_FILES_NUMBER );
+							break;
+						}
 					}
-
-					$form_data->set_error( Form_Data_Response::ERROR_FILE_UPLOAD, array( $file['error'] ) );
-					return $form_data;
 				}
 			}
-		}
 
-		if ( ! empty( $saved_files ) ) {
-			$form_data->set_uploaded_files_path( $saved_files );
+			if ( ! $form_data->has_error() ) {
+				foreach ( $inputs as $input ) {
+					if (
+						Form_Utils::is_file_field( $input ) &&
+						isset( $input['metadata']['fieldOptionName'] ) &&
+						$form_data->has_field_option( $input['metadata']['fieldOptionName'] )
+					) {
+
+						$file_data = $input['metadata']['data'];
+
+						// Check the mime type from the data encoding.
+						$p1        = strpos( $file_data, 'data:' );
+						$p2        = strpos( $file_data, ';base64' );
+						$mime_type = substr( $file_data, $p1 + 5, $p2 - $p1 - 5 );
+
+						$form_files_ext_string = $form_data->get_field_option( $input['metadata']['fieldOptionName'] )->get_option( 'allowedFileTypes' );
+
+						if ( ! empty( $form_files_ext_string ) ) {
+							$has_valid_extension = false;
+							$extensions          = explode( ',', $form_files_ext_string );
+							foreach ( $extensions as $ext ) {
+
+								// Clean up the extension. '.png, .jpg, image/*' => ['png', 'jpg', 'image/'].
+								$ext = trim( $ext );
+								$ext = str_replace( '.', '', $ext );
+								$ext = str_replace( '*', '', $ext );
+								$ext = strtolower( $ext );
+
+								if ( strpos( $mime_type, $ext ) !== false ) {
+									$has_valid_extension = true;
+									break;
+								}
+							}
+
+							if ( ! $has_valid_extension ) {
+								$form_data->set_error( Form_Data_Response::ERROR_FILE_UPLOAD_TYPE, array( __( 'File type not allowed', 'otter-blocks' ) ) );
+								break;
+							}
+						}
+
+						$allowed_mime_types = get_allowed_mime_types();
+						if ( ! in_array( $mime_type, $allowed_mime_types, true ) ) {
+							$form_data->set_error( Form_Data_Response::ERROR_FILE_UPLOAD_TYPE_WP, array( __( 'File type not allowed', 'otter-blocks' ) ) );
+							break;
+						}
+
+						$approved_fields[] = $input;
+					}
+				}
+			}
+
+			if ( ! $form_data->has_error() ) {
+				foreach ( $approved_fields as $field ) {
+					$file = Form_Utils::save_file_from_field( $field );
+
+					if ( $file['success'] ) {
+						$saved_files[] = $file;
+					} else {
+						$form_data->set_error( Form_Data_Response::ERROR_FILE_UPLOAD, array( $file['error'] ) );
+						break;
+					}
+				}
+
+				if ( ! empty( $saved_files ) ) {
+					$form_data->set_uploaded_files_path( $saved_files );
+				}
+			}
+		} catch ( Exception $e ) {
+			$form_data->set_error( Form_Data_Response::ERROR_FILE_UPLOAD, array( $e->getMessage() ) );
+		} finally {
+			if ( $form_data->has_error() ) {
+				foreach ( $saved_files as $saved_file ) {
+					wp_delete_file( $saved_file['file_path'] );
+				}
+			}
+
+			return $form_data;
 		}
-		return $form_data;
 	}
 
 	/**
@@ -918,6 +1004,39 @@ class Form_Server {
 
 			if ( ! empty( $media_files ) ) {
 				$form_data->set_files_loaded_to_media_library( $media_files );
+			}
+		}
+
+		return $form_data;
+	}
+
+	/**
+	 * Get the Field Options for the given Form.
+	 *
+	 * @param Form_Data_Request $form_data The form data.
+	 * @since 2.2.3
+	 */
+	public function pull_fields_options_for_form( $form_data ) {
+		if ( ! ( $form_data instanceof Form_Data_Request ) || $form_data->has_error() ) {
+			return $form_data;
+		}
+
+		$global_fields_options = get_option( 'themeisle_blocks_form_fields_option' );
+
+		if ( empty( $global_fields_options ) ) {
+			return $form_data;
+		}
+
+		foreach ( $form_data->get_form_inputs() as $input ) {
+			if ( isset( $input['metadata']['fieldOptionName'] ) ) {
+				$field_name = $input['metadata']['fieldOptionName'];
+				foreach ( $global_fields_options as $field ) {
+					if ( isset( $field['fieldOptionName'] ) && $field['fieldOptionName'] === $field_name ) {
+						$new_field = new Form_Field_Option_Data( $field_name, $field['fieldOptionType'], $field['options'] );
+						$form_data->add_field_option( $new_field );
+						break;
+					}
+				}
 			}
 		}
 

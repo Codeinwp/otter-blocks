@@ -22,8 +22,11 @@ class Form_Data_Response {
 	const SUCCESS_EMAIL_SEND      = '0';
 	const SUCCESS_USER_SUBSCRIBED = '1';
 
-	const ERROR_RUNTIME_ERROR = '10';
-	const ERROR_FILE_UPLOAD   = '11';
+	const ERROR_RUNTIME_ERROR                = '10';
+	const ERROR_FILE_UPLOAD                  = '11';
+	const ERROR_FILE_UPLOAD_TYPE             = '12';
+	const ERROR_FILE_UPLOAD_TYPE_WP          = '13';
+	const ERROR_FILE_UPLOAD_MAX_FILES_NUMBER = '14';
 
 	// Request validation errors.
 	const ERROR_MISSING_DATA          = '101';
@@ -37,6 +40,7 @@ class Form_Data_Response {
 	const ERROR_MISSING_MAIL_LIST_ID  = '109';
 	const ERROR_BOT_DETECTED          = '110';
 	const ERROR_FILES_METADATA_FORMAT = '111';
+
 
 
 	// Errors from external services.
@@ -379,6 +383,14 @@ class Form_Data_Response {
 
 			case self::ERROR_PROVIDER_CREDENTIAL_ERROR:
 				$messages[] = ( __( 'The Otter From Block service credentials are invalid.', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_FILE_UPLOAD_TYPE_WP:
+			case self::ERROR_FILE_UPLOAD_TYPE:
+				$messages[] = ( __( 'The file type is not allowed.', 'otter-blocks' ) );
+				break;
+			case self::ERROR_FILE_UPLOAD_MAX_FILES_NUMBER:
+				$messages[] = ( __( 'The number of files is too big.', 'otter-blocks' ) );
 				break;
 		}
 

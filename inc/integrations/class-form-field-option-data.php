@@ -43,31 +43,10 @@ class Form_Field_Option_Data {
 	 * @param string $field_option_type The type of the field option.
 	 * @param array  $options The options of the field option.
 	 */
-	public function __construct( $field_option_name, $field_option_type, $options ) {
+	public function __construct( $field_option_name = '', $field_option_type = '', $options = array() ) {
 		$this->field_option_name = $field_option_name;
 		$this->field_option_type = $field_option_type;
 		$this->options           = $options;
-	}
-
-	/**
-	 * Set the type of the field option.
-	 *
-	 * @param string $field_option_name The name of the field option.
-	 * @param array  $fields The fields.
-	 * @return Form_Field_Option_Data
-	 */
-	public static function extractField( $field_option_name, $fields ) {
-		$new_field = new Form_Field_Option_Data( $field_option_name, '', array() );
-
-		foreach ( $fields as $field ) {
-			if ( isset( $field['fieldOptionName'] ) && $field['fieldOptionName'] === $field_option_name ) {
-				$new_field->set_type( $field['fieldOptionType'] );
-				$new_field->set_options( $field['options'] );
-				break;
-			}
-		}
-
-		return $new_field;
 	}
 
 	/**

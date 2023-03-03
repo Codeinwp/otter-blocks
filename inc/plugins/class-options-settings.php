@@ -393,19 +393,17 @@ class Options_Settings {
 							if ( isset( $item['fieldOptionType'] ) ) {
 								$item['fieldOptionType'] = sanitize_text_field( $item['fieldOptionType'] );
 							}
-							if ( isset( $item['options'] ) ) {
-								$item['options'] = sanitize_text_field( $item['options'] );
 
-								if ( isset( $item['maxFileSize'] ) ) {
-									$item['options']['maxFileSize'] = sanitize_text_field( $item['options']['maxFileSize'] );
-								}
-								if ( isset( $item['allowedFileTypes'] ) ) {
-									$item['options']['allowedFileTypes'] = sanitize_text_field( $item['options']['allowedFileTypes'] );
-								}
-								if ( isset( $item['saveFiles'] ) ) {
-									$item['options']['saveFiles'] = sanitize_text_field( $item['options']['saveFiles'] );
-								}
+							if ( isset( $item['options']['maxFileSize'] ) ) {
+								$item['options']['maxFileSize'] = sanitize_text_field( $item['options']['maxFileSize'] );
 							}
+							if ( isset( $item['options']['allowedFileTypes'] ) ) {
+								$item['options']['allowedFileTypes'] = sanitize_text_field( $item['options']['allowedFileTypes'] );
+							}
+							if ( isset( $item['options']['saveFiles'] ) ) {
+								$item['options']['saveFiles'] = sanitize_text_field( $item['options']['saveFiles'] );
+							}
+
 							return $item;
 						},
 						$array
@@ -436,6 +434,7 @@ class Options_Settings {
 											'type' => 'string',
 										),
 									),
+									'default'    => array(),
 								),
 							),
 						),
