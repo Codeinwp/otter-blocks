@@ -5,6 +5,7 @@ import { sprintf } from '@wordpress/i18n';
 import { __experimentalGetSettings } from '@wordpress/date';
 
 import { __ } from '@wordpress/i18n';
+import { makeBox } from '../plugins/copy-paste/utils';
 
 // Post types to exclude
 const excludedTypes = [
@@ -213,6 +214,29 @@ export const _em = value => _unit( value, 'em' );
  * @returns {string|undefined}
  */
 export const _percent = value => _unit( value, '%' );
+
+/**
+ * Make a box type from a number or an object with Box like props.
+ * @param {Object|number|undefined} value
+ * @param {import('./blocks').BoxType?} defaultValue
+ * @returns {import('./blocks').BoxType}
+ */
+export const objectOrNumberAsBox = ( value, defaultValue = undefined ) => {
+	if ( isNumber( value ) ) {
+		return makeBox( _px( value ) );
+	}
+
+	if ( value === undefined ) {
+		return defaultValue;
+	}
+
+	return {
+		top: value?.top,
+		bottom: value?.bottom,
+		right: value?.right,
+		left: value?.left
+	};
+};
 
 const verticalMapping = {
 	'top': 'flex-start',
@@ -479,7 +503,7 @@ export const changeActiveStyle = ( className, styles, newStyle ) =>{
  * Create a CSS property declaration.
  * @param {string} prop The name of the property.
  * @param {string | undefined | null} value The value.
- * @param { (c: any) => boolean | boolean | undefined } condition The condition.
+ * @param { ((c: any) => boolean) | boolean | undefined } condition The condition.
  * @returns
  */
 export const _cssProp = ( prop, value, condition = undefined ) => value !== undefined && null !== value && ( condition === undefined || ( 'function' === typeof condition ? condition( value ) : condition ) ) ? `${prop}: ${value};` : undefined;
@@ -489,7 +513,12 @@ export const _cssProp = ( prop, value, condition = undefined ) => value !== unde
  * @param {[string, string, ((c: any) => boolean | boolean | undefined) | undefined][]} propsPairs The properties grouped in pairs
  * @returns
  */
-export const _cssBlock = ( propsPairs ) => `{\n${propsPairs?.map( pair => _cssProp( pair?.[0], pair?.[1], pair?.[2]) )?.join( '\n' ) ?? ''} \n}`;
+export const _cssBlock = ( propsPairs ) => `{\n${
+	propsPairs
+		?.map( pair => _cssProp( pair?.[0], pair?.[1], pair?.[2]) )
+		?.filter( x => x !== undefined )
+		?.join( '\n' ) ??
+	''} \n}`;
 
 /**
  * Wrap a given string in a box object.
@@ -604,3 +633,13 @@ export function isAppleOS( _window = null ) {
 		[ 'iPad', 'iPhone' ].includes( platform )
 	);
 }
+
+/**
+ * Check if a box value is empty.
+ *
+ * @param {import('./blocks').BoxType | undefined} box The box.
+ * @returns {boolean}
+ */
+export const isEmptyBox = ( box ) => {
+	return ! ( box?.top !== undefined && box?.right !== undefined && box?.bottom !== undefined && box?.left !== undefined );
+};

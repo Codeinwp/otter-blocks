@@ -60,6 +60,7 @@ import SectionColumn from './global-defaults/controls/section-column.js';
 import ReviewControl from './global-defaults/controls/review.js';
 import Form from './global-defaults/controls/form.js';
 import { otterIconColored } from '../../helpers/icons.js';
+import Tabs from './global-defaults/controls/tabs';
 
 export let NavigatorButton = ({
 	path,
@@ -182,10 +183,10 @@ const Options = () => {
 
 		Object.keys( filterDefault ).forEach( i => {
 			Object.keys( filterDefault[i]).forEach( k => {
-				if ( undefined !== defaultsAttrs[i][k] && filterDefault[i][k] === defaultsAttrs[i][k]) {
+				if ( undefined !== defaultsAttrs[i]?.[k] && filterDefault[i][k] === defaultsAttrs[i][k]) {
 					delete filterDefault[i][k];
-				} else if ( 'object' === typeof filterDefault[i][k]) {
-					if ( isEqual( filterDefault[i][k], defaultsAttrs[i][k]) ) {
+				} else if ( 'object' === typeof filterDefault[i]?.[k]) {
+					if ( isEqual( filterDefault[i]?.[k], defaultsAttrs[i]?.[k]) ) {
 						delete filterDefault[i][k];
 					}
 				}
@@ -235,6 +236,10 @@ const Options = () => {
 		{
 			name: 'themeisle-blocks/form',
 			control: Form
+		},
+		{
+			name: 'themeisle-blocks/tabs',
+			control: Tabs
 		}
 	];
 

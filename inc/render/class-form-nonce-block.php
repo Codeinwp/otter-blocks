@@ -22,12 +22,13 @@ class Form_Nonce_Block {
 	 * @return mixed|string
 	 */
 	public function render( $attributes ) {
-		$output = '<div class="protection">';
+		$output = '<div class="protection" aria-hidden="true">';
 		if ( isset( $attributes['formId'] ) ) {
 			$output .= wp_nonce_field( 'form-verification', $attributes['formId'] . '_nonce_field', true, false );
 		} else {
 			$output .= wp_nonce_field( 'form-verification', '_nonce_field', true, false );
 		}
+		$output .= '<input class="o-anti-bot" type="checkbox">';
 		$output .= '</div>';
 		return $output;
 	}

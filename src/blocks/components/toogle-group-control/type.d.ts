@@ -11,13 +11,13 @@ type Style = {
 
 type Option = {
     label?: number | string
-    value: number | string
+    value: number | string | boolean
     icon?: Icon.Props<any>['icon'] | undefined;
 }
 
 export type ToggleGroupControlProps = {
-    value: number | string,
+    value: number | string | boolean,
     options: Option[],
-    onChange: ( value: number | string ) => void
+    onChange: ( value: number | string | boolean ) => void
     hasIcon?: boolean
 }

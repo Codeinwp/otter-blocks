@@ -14,12 +14,13 @@ import {
 } from '@wordpress/components';
 
 const Inspector = ({
+	attributes,
 	setAttributes,
 	selectParent
 }) => {
 	const onTitleChange = ( value ) => {
 		setAttributes({
-			title: value
+			title: '' === value ? undefined : value
 		});
 	};
 
@@ -39,7 +40,9 @@ const Inspector = ({
 					type="text"
 					label={ __( 'Title', 'otter-blocks' ) }
 					placeholder={ __( 'Insert a title', 'otter-blocks' ) }
-					onChange={ onTitleChange } />
+					onChange={ onTitleChange }
+					value={ attributes.title }
+				/>
 			</PanelBody>
 		</InspectorControls>
 	);

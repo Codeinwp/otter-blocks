@@ -1,10 +1,12 @@
 declare global {
 	interface Window {
 		themeisleGutenberg?: {
+			hasNeve: boolean
 			version: string
 			isCompatible: boolean
 			hasPro: boolean
 			upgradeLink: string
+			patternsLink: string
 			should_show_upsell: boolean
 			assetsPath: string
 			updatePath: string

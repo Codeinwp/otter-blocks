@@ -16,8 +16,6 @@ import {
 	useBlockProps
 } from '@wordpress/block-editor';
 
-import { useSelect } from '@wordpress/data';
-
 import {
 	Fragment,
 	useEffect
@@ -32,8 +30,9 @@ import Inspector from './inspector.js';
 import themeIsleIcons from './../../../helpers/themeisle-icons';
 import {
 	blockInit,
-	useCSSNode
+	buildGetSyncValue
 } from '../../../helpers/block-utility.js';
+import { boxToCSS, objectOrNumberAsBox, _cssBlock, _px } from '../../../helpers/helper-functions';
 
 const { attributes: defaultAttributes } = metadata;
 
@@ -42,98 +41,28 @@ const { attributes: defaultAttributes } = metadata;
  * @param {import('./types').ButtonGroupButtonProps} props
  * @returns
  */
-const Edit = ({
-	attributes,
-	setAttributes,
-	isSelected,
-	clientId
-}) => {
+const Edit = ( props ) => {
+
 	const {
-		hasParent,
-		parentAttributes
-	} = useSelect( select => {
-		const {
-			getBlock,
-			getBlockRootClientId
-		} = select( 'core/block-editor' );
+		attributes,
+		setAttributes,
+		isSelected,
+		clientId,
+		name
+	} = props;
 
-		const parentClientId = getBlockRootClientId( clientId );
-		const parentBlock = getBlock( parentClientId );
-
-		return {
-			hasParent: parentBlock ? true : false,
-			parentAttributes: parentBlock ? parentBlock.attributes : {}
-		};
-	}, []);
+	const getSyncValue = buildGetSyncValue( name, attributes, defaultAttributes );
 
 	useEffect( () => {
 		const unsubscribe = blockInit( clientId, defaultAttributes );
 		return () => unsubscribe( attributes.id );
 	}, []);
 
-	let boxShadowStyle = {};
-
-	let buttonStyle = {};
-
-	let buttonStyleParent = {};
-
-	if ( attributes.boxShadow ) {
-		boxShadowStyle = {
-			boxShadow: `${ attributes.boxShadowHorizontal }px ${ attributes.boxShadowVertical }px ${ attributes.boxShadowBlur }px ${ attributes.boxShadowSpread }px ${ hexToRgba( ( attributes.boxShadowColor ? attributes.boxShadowColor : '#000000' ), attributes.boxShadowColorOpacity ) }`
-		};
-	}
-
-	if ( hasParent ) {
-
-		buttonStyle = {
-			paddingTop: `${ parentAttributes.paddingTopBottom }px`,
-			paddingBottom: `${ parentAttributes.paddingTopBottom }px`,
-			paddingLeft: `${ parentAttributes.paddingLeftRight }px`,
-			paddingRight: `${ parentAttributes.paddingLeftRight }px`,
-			fontSize: parentAttributes.fontSize && `${ parentAttributes.fontSize }px`,
-			fontFamily: parentAttributes.fontFamily,
-			fontWeight: parentAttributes.fontVariant,
-			fontStyle: parentAttributes.fontStyle,
-			textTransform: parentAttributes.textTransform,
-			lineHeight: parentAttributes.lineHeight && `${ parentAttributes.lineHeight }px`
-		};
-	}
-
-	const styles = {
-		color: attributes.color,
-		background: attributes.background || attributes.backgroundGradient,
-		border: `${ attributes.borderSize }px solid ${ attributes.border }`,
-		borderRadius: attributes.borderRadius,
-		...boxShadowStyle,
-		...buttonStyle
-	};
-
-	const iconStyles = {
-		fill: attributes.color,
-		width: parentAttributes.fontSize && `${ parentAttributes.fontSize }px`
-	};
-
 	const Icon = themeIsleIcons.icons[ attributes.icon ];
-
-	const [ cssNodeName, setCSSNode ] = useCSSNode();
-	useEffect( () => {
-		setCSSNode([
-			`.wp-block-button__link:hover {
-				color: ${ attributes.hoverColor } !important;
-				background: ${ attributes.hoverBackground || attributes.hoverBackgroundGradient } !important;
-				border-color: ${ attributes.hoverBorder } !important;
-				${ attributes.boxShadow && `box-shadow: ${ attributes.hoverBoxShadowHorizontal }px ${ attributes.hoverBoxShadowVertical }px ${ attributes.hoverBoxShadowBlur }px ${ attributes.hoverBoxShadowSpread }px ${ hexToRgba( ( attributes.hoverBoxShadowColor ? attributes.hoverBoxShadowColor : '#000000' ), attributes.hoverBoxShadowColorOpacity ) } !important;` }
-			}`,
-			`.wp-block-button__link:hover svg {
-				fill: ${ attributes.hoverColor } !important;
-			}`
-		]);
-	}, [ attributes.hoverColor, attributes.hoverBackground, attributes.hoverBackgroundGradient, attributes.hoverBorder, attributes.hoverColor, attributes.boxShadow, attributes.hoverBoxShadowHorizontal, attributes.hoverBoxShadowBlur, attributes.hoverBoxShadowSpread, attributes.hoverBoxShadowColor, attributes.hoverBoxShadowColorOpacity ]);
 
 	const blockProps = useBlockProps({
 		id: attributes.id,
-		className: classnames( 'wp-block-button', cssNodeName ),
-		style: buttonStyleParent
+		className: classnames( 'wp-block-button' )
 	});
 
 	return (
@@ -150,10 +79,47 @@ const Edit = ({
 			/>
 
 			<div { ...blockProps }>
+				<style>
+					{
+						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button :is(div, a, span).wp-block-button__link` + _cssBlock([
+							[ 'border-color', getSyncValue( 'border' ) ],
+							[ 'border-width', boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderSize' ) ) ), Boolean( getSyncValue( 'borderSize' ) ) ],
+							[ 'border-radius', boxToCSS( objectOrNumberAsBox( getSyncValue( 'borderRadius' ) ) ), Boolean( getSyncValue( 'borderRadius' ) ) ],
+							[ 'border-style', 'solid', Boolean( getSyncValue( 'borderSize' ) ) ]
+						])
+					}
+					{
+						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button :is(div, a, span).wp-block-button__link:not(:hover)` + _cssBlock([
+							[ 'background', getSyncValue( 'background' ) ],
+							[ 'background', getSyncValue( 'backgroundGradient' ) ],
+							[ 'box-shadow', `${ getSyncValue( 'boxShadowHorizontal' ) }px ${ getSyncValue( 'boxShadowVertical' ) }px ${ getSyncValue( 'boxShadowBlur' ) }px ${ getSyncValue( 'boxShadowSpread' ) }px ${ hexToRgba( ( getSyncValue( 'boxShadowColor' ) ? getSyncValue( 'boxShadowColor' ) : '#000000' ), getSyncValue( 'boxShadowColorOpacity' ) ) }`, Boolean(  getSyncValue( 'boxShadow' ) ) ],
+							[ 'color', getSyncValue( 'color' ) ]
+						])
+					}
+					{
+						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button .wp-block-button__link:hover` + _cssBlock([
+							[ 'background', getSyncValue( 'hoverBackground' ) ],
+							[ 'background', getSyncValue( 'hoverBackgroundGradient' ) ],
+							[ 'border-color', getSyncValue( 'hoverBorder' ) ],
+							[ 'box-shadow', `${ getSyncValue( 'hoverBoxShadowHorizontal' ) }px ${ getSyncValue( 'hoverBoxShadowVertical' ) }px ${ getSyncValue( 'hoverBoxShadowBlur' ) }px ${ getSyncValue( 'hoverBoxShadowSpread' ) }px ${ hexToRgba( ( getSyncValue( 'hoverBoxShadowColor' ) ? getSyncValue( 'hoverBoxShadowColor' ) : '#000000' ), Boolean( getSyncValue( 'hoverBoxShadowColorOpacity' ) ) ) }`, Boolean( getSyncValue( 'boxShadow' ) ) ],
+							[ 'color', getSyncValue( 'hoverColor' ) ]
+						])
+					}
+					{
+						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button .wp-block-button__link :is(svg, i, div)` + _cssBlock([
+							[ 'color', getSyncValue( 'color' ) ],
+							[ 'fill', getSyncValue( 'color' ) ]
+						])
+					}
+					{
+						`.wp-block-themeisle-blocks-button-group #block-${clientId}.wp-block-button .wp-block-button__link:hover :is(svg, i, div, a)` + _cssBlock([
+							[ 'fill', getSyncValue( 'hoverColor' ) ]
+						])
+					}
+				</style>
 				{ 'none' !== attributes.iconType ? (
-					<div
+					<a
 						className="wp-block-button__link"
-						style={ styles }
 					>
 						{ ( 'left' === attributes.iconType || 'only' === attributes.iconType ) && (
 							'themeisle-icons' === attributes.library && attributes.icon ? (
@@ -161,7 +127,6 @@ const Edit = ({
 									className={ classnames(
 										{ 'margin-right': 'left' === attributes.iconType }
 									) }
-									style={ iconStyles }
 								/>
 							) : (
 								<i
@@ -181,7 +146,7 @@ const Edit = ({
 								placeholder={ __( 'Add text…', 'otter-blocks' ) }
 								value={ attributes.text }
 								onChange={ value => setAttributes({ text: value }) }
-								tagName="div"
+								tagName="span"
 								withoutInteractiveFormatting
 							/>
 						) }
@@ -190,23 +155,24 @@ const Edit = ({
 							'themeisle-icons' === attributes.library && attributes.icon ? (
 								<Icon
 									className="margin-left"
-									style={ iconStyles }
 								/>
 							) : (
 								<i className={ `${ attributes.prefix } fa-fw fa-${ attributes.icon } margin-left` }></i>
 							)
 						) }
-					</div>
+					</a>
 				) : (
-					<RichText
-						placeholder={ __( 'Add text…', 'otter-blocks' ) }
-						value={ attributes.text }
-						onChange={ value => setAttributes({ text: value }) }
-						tagName="div"
-						withoutInteractiveFormatting
+					<a
 						className="wp-block-button__link"
-						style={ styles }
-					/>
+					>
+						<RichText
+							placeholder={ __( 'Add text…', 'otter-blocks' ) }
+							value={ attributes.text }
+							onChange={ value => setAttributes({ text: value }) }
+							tagName="span"
+							withoutInteractiveFormatting
+						/>
+					</a>
 				) }
 			</div>
 		</Fragment>

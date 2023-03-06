@@ -20,7 +20,7 @@ const Save = ({
 	return (
 		<div { ...blockProps }>
 			<RichText.Content
-				tagName="div"
+				tagName={'div'}
 				className="wp-block-themeisle-blocks-tabs-item__header"
 				value={ attributes.title || __( 'Untitled Tab', 'otter-blocks' ) }
 				tabIndex="0"

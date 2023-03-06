@@ -54,7 +54,7 @@ describe( 'Post Editor Performance', () => {
 			fps: 25
 		};
 
-		const savePath = './artifacts/tests/typing-test.mp4';
+		const savePath = './artifact/tests/typing-test.mp4';
 		screenRecorder = new PuppeteerScreenRecorder( page, screenRecorderOptions );
 		await screenRecorder.start( savePath );
 

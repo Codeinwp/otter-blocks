@@ -8,7 +8,7 @@
 
 	--border-width: 1px;
 	--border-style: solid;
-	--border-color: #ccc;
+	--border-color: currentColor;
 	--box-shadow: none;
 
 	--padding: 18px 24px 18px 24px;
@@ -79,6 +79,10 @@
 			background: var(--content-background);
 			padding: var(--padding);
 
+			> p:last-child {
+				margin-bottom: 0;
+			}
+
 			@media ( max-width: 960px ) {
 				padding: var(--padding-tablet);
 			}
@@ -90,7 +94,7 @@
 	}
 
 	/* boxed style */
-	&.is-style-boxed &-item {
+	&:not( .is-style-default ) &-item {
 		&__title {
 			border: var(--border-width) var(--border-style) var(--border-color);
 		}
@@ -102,32 +106,24 @@
 	}
 
 	// when no gap is set, we need to avoid the doubled border between items
-	&.is-style-boxed.no-gap > &-item:not( :first-child ),
-	&.is-style-boxed:not( .is-narrow-gap ):not( .is-wide-gap ):not( .is-wider-gap ):not( .has-gap ) > &-item:not( :first-child ) {
-		#{$block}-item__title {
+	&:not( .is-style-default ).no-gap > &-item:not( :first-child ),
+	&:not( .is-style-default ):not( .is-narrow-gap ):not( .is-wide-gap ):not( .is-wider-gap ):not( .has-gap ) > &-item:not( :first-child ) {
+		&> #{$block}-item__title {
 			border-top: none;
 		}
 	}
 
 	/* default style */
-	&:not( .is-style-boxed ) > &-item {
-		> #{$block}-item__title {
-			border: 0;
-			border-top: var(--border-width) var(--border-style) var(--border-color);
-		}
-
-		> #{$block}-item__content {
-			border: 0;
-		}
+	&.is-style-default > &-item > #{$block}-item__title {
+		border-top: var(--border-width) var(--border-style) var(--border-color);
 	}
 
-	&:not( .is-style-boxed ) > &-item:last-child {
+	&.is-style-default > &-item:last-child {
 		&:not([open]):not( .is-open ) > #{$block}-item__title {
 			border-bottom: var(--border-width) var(--border-style) var(--border-color);
 		}
 
 		> #{$block}-item__content {
-			border: 0;
 			border-bottom: var(--border-width) var(--border-style) var(--border-color);
 		}
 	}

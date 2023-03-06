@@ -34,6 +34,10 @@
 			}
 		}
 
+		&__content > * > * > p:last-child {
+			margin-bottom: 0;
+		}
+
 		&:not([ data-align="full"] ) {
 			max-width: 100%;
 		}
@@ -47,7 +51,7 @@
 	}
 
 	/* boxed style */
-	&.is-style-boxed &-item {
+	&:not( .is-style-default ) &-item {
 		&__title {
 			border: var(--border-width) var(--border-style) var(--border-color);
 		}
@@ -59,42 +63,30 @@
 	}
 
 	// when no gap is set, we need to avoid the doubled border between items
-	&.is-style-boxed.no-gap > * > * > &-item:not( :first-child ),
-	&.is-style-boxed:not( .is-narrow-gap ):not( .is-wide-gap ):not( .is-wider-gap ):not( .has-gap ) > * > * > &-item:not( :first-child ) {
+	&:not( .is-style-default ).no-gap > * > * > &-item:not( :first-child ),
+	&:not( .is-style-default ):not( .is-narrow-gap ):not( .is-wide-gap ):not( .is-wider-gap ):not( .has-gap ) > * > * > &-item:not( :first-child ) {
 		#{$block}-item__title {
 			border-top: none;
 		}
 	}
 
 	/* default style */
-	&:not( .is-style-boxed ) > * > * > &-item {
-		> #{$block}-item__title {
-			border: 0;
-			border-top: var(--border-width) var(--border-style) var(--border-color);
-		}
-
-		> #{$block}-item__content {
-			border: 0;
-		}
+	&.is-style-default > * > * > &-item > #{$block}-item__title {
+		border-top: var(--border-width) var(--border-style) var(--border-color);
 	}
 
-	&:not( .is-style-boxed ) > * > * > &-item:last-child {
+	&.is-style-default > * > * > &-item:last-child {
 		&:not([open]):not( .is-open ) > #{$block}-item__title {
 			border-bottom: var(--border-width) var(--border-style) var(--border-color);
 		}
 
 		> #{$block}-item__content {
-			border: 0;
 			border-bottom: var(--border-width) var(--border-style) var(--border-color);
 		}
 	}
 
 	> .block-editor-inner-blocks {
 		> .block-editor-block-list__layout {
-			> .block-editor-block-list__block {
-				//margin: 0;
-			}
-
 			> .block-list-appender {
 				position: relative;
 			}

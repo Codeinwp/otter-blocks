@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6534682eac1f8ac8063f575e036146bf",
+    "content-hash": "7fce04b8252778f3e28dbe4bfc0564b2",
     "packages": [
         {
             "name": "codeinwp/themeisle-sdk",
-            "version": "3.2.34",
+            "version": "3.2.37",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Codeinwp/themeisle-sdk.git",
-                "reference": "f8d3a16d65a77d4f31dbfa1ffcb5ca3ac5c9979b"
+                "reference": "a2079ee8cea68b5dbaabec1e06f15048ae9c9de7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/f8d3a16d65a77d4f31dbfa1ffcb5ca3ac5c9979b",
-                "reference": "f8d3a16d65a77d4f31dbfa1ffcb5ca3ac5c9979b",
+                "url": "https://api.github.com/repos/Codeinwp/themeisle-sdk/zipball/a2079ee8cea68b5dbaabec1e06f15048ae9c9de7",
+                "reference": "a2079ee8cea68b5dbaabec1e06f15048ae9c9de7",
                 "shasum": ""
             },
             "require-dev": {
@@ -42,9 +42,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Codeinwp/themeisle-sdk/issues",
-                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.2.34"
+                "source": "https://github.com/Codeinwp/themeisle-sdk/tree/v3.2.37"
             },
-            "time": "2023-01-31T08:26:01+00:00"
+            "time": "2023-03-01T18:02:16+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -170,16 +170,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v9.8.0",
+            "version": "v10.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "5a55767326e77dac8a0f57022d27533beeafc197"
+                "reference": "87def896d9a2e2914871408277d67432cb112f71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/5a55767326e77dac8a0f57022d27533beeafc197",
-                "reference": "5a55767326e77dac8a0f57022d27533beeafc197",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/87def896d9a2e2914871408277d67432cb112f71",
+                "reference": "87def896d9a2e2914871408277d67432cb112f71",
                 "shasum": ""
             },
             "require": {
@@ -225,9 +225,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v9.8.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v10.4.0"
             },
-            "time": "2022-10-20T23:29:24+00:00"
+            "time": "2023-01-19T19:18:38+00:00"
         },
         {
             "name": "tubalmartin/cssmin",

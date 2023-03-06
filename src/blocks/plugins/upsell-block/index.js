@@ -62,7 +62,7 @@ const edit = props => {
 			<h3>{ __( 'Get more Patterns with Otter Pro.', 'otter-blocks' ) }</h3>
 
 			<div className="o-block-patterns-upsell__actions">
-				<a href={ setUtm( window.themeisleGutenberg.upgradeLink, 'patterns' ) } target="_blank">
+				<a href={ setUtm( window.themeisleGutenberg.patternsLink, 'patterns' ) } target="_blank">
 					{ __( 'Get Otter Pro', 'otter-blocks' ) }
 				</a>
 

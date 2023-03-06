@@ -256,7 +256,6 @@ const Inspector = ({
 									onChange={ lineHeight => setAttributes({ lineHeight }) }
 									step={ 0.1 }
 									min={ 0 }
-									max={ 3 }
 									units={[
 										{
 											a11yLabel: 'Unitless (-)',

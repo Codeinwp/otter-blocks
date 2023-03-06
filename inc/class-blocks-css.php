@@ -76,7 +76,7 @@ class Blocks_CSS {
 			)
 		);
 
-		wp_set_script_translations( 'otter-css', 'otter-blocks' );
+		wp_set_script_translations( 'otter-css', 'blocks-css' );
 
 		wp_enqueue_style(
 			'otter-css',
@@ -236,7 +236,7 @@ class Blocks_CSS {
 	 */
 	public function __clone() {
 		// Cloning instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, 'Cheatin&#8217; huh?', '1.0.0' );
 	}
 
 	/**
@@ -248,6 +248,6 @@ class Blocks_CSS {
 	 */
 	public function __wakeup() {
 		// Unserializing instances of the class is forbidden.
-		_doing_it_wrong( __FUNCTION__, esc_html__( 'Cheatin&#8217; huh?', 'otter-blocks' ), '1.0.0' );
+		_doing_it_wrong( __FUNCTION__, 'Cheatin&#8217; huh?', '1.0.0' );
 	}
 }

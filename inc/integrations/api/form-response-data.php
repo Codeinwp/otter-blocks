@@ -34,6 +34,7 @@ class Form_Data_Response {
 	const ERROR_MISSING_PROVIDER     = '107';
 	const ERROR_MISSING_API_KEY      = '108';
 	const ERROR_MISSING_MAIL_LIST_ID = '109';
+	const ERROR_BOT_DETECTED         = '110';
 
 	// Errors from external services.
 	const ERROR_PROVIDER_NOT_REGISTERED            = '201';
@@ -347,6 +348,9 @@ class Form_Data_Response {
 			case self::ERROR_PROVIDER_DUPLICATED_EMAIL:
 				$this->add_reason( __( 'The email was already registered.', 'otter-blocks' ) );
 				break;
+			case self::ERROR_BOT_DETECTED:
+				$this->add_reason( __( 'Failed to validate the data. Please wait 5 seconds and try again.', 'otter-blocks' ) );
+				break;  
 		}
 	}
 }

@@ -6,82 +6,105 @@ import { __ } from '@wordpress/i18n';
 import { __experimentalColorGradientControl as ColorGradientControl } from '@wordpress/block-editor';
 
 import {
-	Button,
-	ButtonGroup,
 	PanelBody,
-	RangeControl
+	RangeControl,
+	SelectControl,
+	TextControl,
+	ToggleControl,
+	__experimentalBoxControl as BoxControl
 } from '@wordpress/components';
 
 import {
 	Fragment,
 	useState
 } from '@wordpress/element';
+import { ColorDropdownControl, ControlPanelControl, ToogleGroupControl } from '../../../../components';
+import { objectOrNumberAsBox } from '../../../../helpers/helper-functions';
 
 const ButtonBlock = ({
 	blockName,
-	defaults,
+	defaults: attributes,
 	changeConfig
 }) => {
 	const [ hover, setHover ] = useState( false );
 
 	const HoverControl = () => {
 		return (
-			<ButtonGroup>
-				<Button
-					isSmall
-					isSecondary={ hover }
-					isPrimary={ ! hover }
-					onClick={ () => setHover( false ) }
-				>
-					{ __( 'Normal', 'otter-blocks' ) }
-				</Button>
-
-				<Button
-					isSmall
-					isSecondary={ ! hover }
-					isPrimary={ hover }
-					onClick={ () => setHover( true ) }
-				>
-					{ __( 'Hover', 'otter-blocks' ) }
-				</Button>
-			</ButtonGroup>
-
+			<Fragment>
+				<ToogleGroupControl
+					onChange={ value => setHover( value ) }
+					value={ hover }
+					options={[
+						{
+							value: false,
+							label: __( 'Normal', 'otter-blocks' )
+						},
+						{
+							value: true,
+							label: __( 'Hover', 'otter-blocks' )
+						}
+					]}
+				/>
+				<br />
+			</Fragment>
 		);
+	};
+
+	const setAttributes = x => {
+		changeConfig( blockName, x );
 	};
 
 	return (
 		<Fragment>
 			<PanelBody
-				title={ __( 'Color', 'otter-blocks' ) }
+				title={ __( 'Colors', 'otter-blocks' ) }
 			>
 				<HoverControl/>
 
 				{ ! hover ? (
 					<Fragment key="without-hover">
-						<ColorGradientControl
-							label={ __( 'Color', 'otter-blocks' ) }
-							colorValue={ defaults.color }
-							onColorChange={ value => changeConfig( blockName, { color: value }) }
+						<ColorDropdownControl
+							label={ __( 'Text', 'otter-blocks' ) }
+							colorValue={ attributes.color }
+							onColorChange={ color => setAttributes({ color }) }
+							className="is-list is-first"
 						/>
 
-						<ColorGradientControl
+						<ColorDropdownControl
 							label={ __( 'Background', 'otter-blocks' ) }
-							colorValue={ defaults.background }
-							onColorChange={ value => changeConfig( blockName, { background: value }) }
+							colorValue={ attributes.background }
+							onColorChange={ background => setAttributes({ background: background })}
+							className="is-list"
+						/>
+
+						<ColorDropdownControl
+							label={ __( 'Border', 'otter-blocks' ) }
+							colorValue={ attributes.border }
+							onColorChange={ border => setAttributes({ border }) }
+							className="is-list"
 						/>
 					</Fragment>
 				) : (
 					<Fragment key="with-hover">
-						<ColorGradientControl
-							label={ __( 'Hover Color', 'otter-blocks' ) }
-							colorValue={ defaults.hoverColor }
-							onColorChange={ value => changeConfig( blockName, { hoverColor: value }) }
+						<ColorDropdownControl
+							label={ __( 'Text', 'otter-blocks' ) }
+							colorValue={ attributes.hoverColor }
+							onColorChange={ hoverColor => setAttributes({ hoverColor }) }
+							className="is-list is-first"
 						/>
 
-						<ColorGradientControl
-							label={ __( 'Hover Background', 'otter-blocks' ) }
-							colorValue={ defaults.hoverBackground }
-							onColorChange={ value => changeConfig( blockName, { hoverBackground: value }) }
+						<ColorDropdownControl
+							label={ __( 'Background', 'otter-blocks' ) }
+							colorValue={ attributes.hoverBackground }
+							onColorChange={ hoverBackground => setAttributes({ hoverBackground }) }
+							className="is-list"
+						/>
+
+						<ColorDropdownControl
+							label={ __( 'Border', 'otter-blocks' ) }
+							colorValue={ attributes.hoverBorder }
+							onColorChange={ hoverBorder => setAttributes({ hoverBorder }) }
+							className="is-list"
 						/>
 					</Fragment>
 				) }
@@ -89,41 +112,141 @@ const ButtonBlock = ({
 
 			<PanelBody
 				title={ __( 'Border & Box Shadow', 'otter-blocks' ) }
-				initialOpen={ false }
+				initialOpen={ true }
 			>
-				<HoverControl/>
-
-				{ ! hover ? (
-					<ColorGradientControl
-						label={ __( 'Border', 'otter-blocks' ) }
-						colorValue={ defaults.border }
-						onColorChange={ value => changeConfig( blockName, { border: value }) }
-					/>
-				) : (
-					<ColorGradientControl
-						label={ __( 'Hover Border', 'otter-blocks' ) }
-						colorValue={ defaults.hoverBorder }
-						onColorChange={ value => changeConfig( blockName, { hoverBorder: value }) }
-					/>
-				) }
-
-				<RangeControl
+				<BoxControl
 					label={ __( 'Border Width', 'otter-blocks' ) }
-					value={ defaults.borderSize }
-					onChange={ value => changeConfig( blockName, { borderSize: value }) }
-					step={ 0.1 }
-					min={ 0 }
-					max={ 10 }
+					values={ objectOrNumberAsBox( attributes.borderSize ) }
+					onChange={ borderSize => setAttributes({ borderSize }) }
 				/>
 
-				<RangeControl
+				<BoxControl
 					label={ __( 'Border Radius', 'otter-blocks' ) }
-					value={ defaults.borderRadius }
-					onChange={ value => changeConfig( blockName, { borderRadius: value }) }
-					step={ 0.1 }
-					min={ 0 }
-					max={ 100 }
+					values={ objectOrNumberAsBox( attributes.borderRadius ) }
+					onChange={ borderRadius => setAttributes({ borderRadius }) }
 				/>
+
+				<ControlPanelControl
+					label={ __( 'Box Shadow', 'otter-blocks' ) }
+					attributes={ attributes }
+					setAttributes={ setAttributes }
+					resetValues={ {
+						boxShadow: false,
+						boxShadowColor: undefined,
+						boxShadowColorOpacity: 50,
+						boxShadowBlur: 5,
+						boxShadowSpread: 1,
+						boxShadowHorizontal: 0,
+						boxShadowVertical: 0,
+						hoverBoxShadowColor: undefined,
+						hoverBoxShadowColorOpacity: 50,
+						hoverBoxShadowBlur: 5,
+						hoverBoxShadowSpread: 1,
+						hoverBoxShadowHorizontal: 0,
+						hoverBoxShadowVertical: 0
+					} }
+					onClick={ () => setAttributes({ boxShadow: true }) }
+				>
+					<HoverControl/>
+
+					{ ! hover ? (
+						<Fragment key="without-hover">
+							<ColorGradientControl
+								label={ __( 'Shadow Color', 'otter-blocks' ) }
+								colorValue={ attributes.boxShadowColor }
+								onColorChange={ e => setAttributes({ boxShadowColor: e }) }
+							/>
+
+							<RangeControl
+								label={ __( 'Opacity', 'otter-blocks' ) }
+								value={ attributes.boxShadowColorOpacity }
+								onChange={ e => setAttributes({ boxShadowColorOpacity: e }) }
+								min={ 0 }
+								max={ 100 }
+							/>
+
+							<RangeControl
+								label={ __( 'Blur', 'otter-blocks' ) }
+								value={ attributes.boxShadowBlur }
+								onChange={ e => setAttributes({ boxShadowBlur: e }) }
+								min={ 0 }
+								max={ 100 }
+							/>
+
+							<RangeControl
+								label={ __( 'Spread', 'otter-blocks' ) }
+								value={ attributes.boxShadowSpread }
+								onChange={ e => setAttributes({ boxShadowSpread: e }) }
+								min={ -100 }
+								max={ 100 }
+							/>
+
+							<RangeControl
+								label={ __( 'Horizontal', 'otter-blocks' ) }
+								value={ attributes.boxShadowHorizontal }
+								onChange={ e => setAttributes({ boxShadowHorizontal: e }) }
+								min={ -100 }
+								max={ 100 }
+							/>
+
+							<RangeControl
+								label={ __( 'Vertical', 'otter-blocks' ) }
+								value={ attributes.boxShadowVertical }
+								onChange={ e => setAttributes({ boxShadowVertical: e }) }
+								min={ -100 }
+								max={ 100 }
+							/>
+						</Fragment>
+					) : (
+						<Fragment key="with-hover">
+							<ColorGradientControl
+								label={ __( 'Shadow Color on Hover', 'otter-blocks' ) }
+								colorValue={ attributes.hoverBoxShadowColor }
+								onColorChange={ e => setAttributes({ hoverBoxShadowColor: e }) }
+							/>
+
+							<RangeControl
+								label={ __( 'Opacity', 'otter-blocks' ) }
+								value={ attributes.hoverBoxShadowColorOpacity }
+								onChange={ e => setAttributes({ hoverBoxShadowColorOpacity: e }) }
+								min={ 0 }
+								max={ 100 }
+							/>
+
+							<RangeControl
+								label={ __( 'Blur', 'otter-blocks' ) }
+								value={ attributes.hoverBoxShadowBlur }
+								onChange={ e => setAttributes({ hoverBoxShadowBlur: e }) }
+								min={ 0 }
+								max={ 100 }
+							/>
+
+							<RangeControl
+								label={ __( 'Spread', 'otter-blocks' ) }
+								value={ attributes.hoverBoxShadowSpread }
+								onChange={ e => setAttributes({ hoverBoxShadowSpread: e }) }
+								min={ -100 }
+								max={ 100 }
+							/>
+
+							<RangeControl
+								label={ __( 'Horizontal', 'otter-blocks' ) }
+								value={ attributes.hoverBoxShadowHorizontal }
+								onChange={ e => setAttributes({ hoverBoxShadowHorizontal: e }) }
+								min={ -100 }
+								max={ 100 }
+							/>
+
+							<RangeControl
+								label={ __( 'Vertical', 'otter-blocks' ) }
+								value={ attributes.hoverBoxShadowVertical }
+								onChange={ e => setAttributes({ hoverBoxShadowVertical: e }) }
+								min={ -100 }
+								max={ 100 }
+							/>
+						</Fragment>
+					) }
+				</ControlPanelControl>
 			</PanelBody>
 		</Fragment>
 	);

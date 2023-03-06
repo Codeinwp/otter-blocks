@@ -17,7 +17,7 @@ type Attributes = {
 	inputPaddingMobile: PaddingType
 	labelColor: string
 	helpLabelColor: string
-	labelFontSize: number
+	labelFontSize: number | string
 	inputBorderRadius: number | PaddingType
 	inputBorderColor: string
 	inputBorderWidth: number | PaddingType
@@ -28,7 +28,7 @@ type Attributes = {
 	submitMessageErrorColor: string
 	submitBackgroundColor: string
 	submitBackgroundColorHover: string
-	submitFontSize: number
+	submitFontSize: number | string
 	submitColor: string
 	submitColorHover: string
 	inputGap: number

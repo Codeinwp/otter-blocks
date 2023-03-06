@@ -267,7 +267,7 @@ class CSS_Handler extends Base_CSS {
 				wp_mkdir_p( $upload_dir );
 			}
 
-			$wp_filesystem->put_contents( $file_path, $css, FS_CHMOD_FILE );
+			$wp_filesystem->put_contents( $file_path, stripslashes( $css ), FS_CHMOD_FILE );
 
 			if ( file_exists( $file_path ) ) {
 				update_post_meta( $post_id, '_themeisle_gutenberg_block_stylesheet', $file_name );
@@ -385,7 +385,7 @@ class CSS_Handler extends Base_CSS {
 				wp_mkdir_p( $upload_dir );
 			}
 
-			$wp_filesystem->put_contents( $file_path, $css, FS_CHMOD_FILE );
+			$wp_filesystem->put_contents( $file_path, stripslashes( $css ), FS_CHMOD_FILE );
 
 			if ( file_exists( $file_path ) ) {
 				update_option( 'themeisle_blocks_widgets_css_file', $file_name );
