@@ -33,8 +33,11 @@ const CSSEditor = ({
 	const getClassName = () => {
 		const uniqueId = clientId.substring( 0, 8 );
 
+		// remove the ticss class if custom CSS is empty.
 		if ( editorValue?.replace( /\s+/g, '' ) === ( 'selector {\n}\n' ).replace( /\s+/g, '' ) ) {
-			return attributes.className;
+			return attributes.className ?
+				attributes.className.split( ' ' ).filter( className => ! className.includes( 'ticss-' ) ).join( ' ' ) :
+				attributes.className;
 		}
 
 		const { className } = attributes;
