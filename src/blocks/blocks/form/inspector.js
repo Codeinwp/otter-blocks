@@ -327,6 +327,21 @@ const Inspector = ({
 							</ToolsPanelItem>
 
 							<ToolsPanelItem
+								hasValue={ () => undefined !== formOptions.autoresponder }
+								label={ __( 'Autoresponder', 'otter-blocks' ) }
+								onDeselect={ () => setFormOption({ autoresponder: '' }) }
+								isShownByDefault
+							>
+								<TextareaControl
+									label={ __( 'Autoresponder', 'otter-blocks' ) }
+									placeholder={ __( 'Thank you for subscribing!', 'otter-blocks' ) }
+									value={ formOptions.autoresponder }
+									onChange={ autoresponder => setFormOption({ autoresponder }) }
+									help={ __( 'Send an email to the user who submitted the form.', 'otter-blocks' ) }
+								/>
+							</ToolsPanelItem>
+
+							<ToolsPanelItem
 								hasValue={ () => true === attributes.hasCaptcha }
 								label={ __( 'Enable reCaptcha', 'otter-blocks' ) }
 								onSelect={ () => setAttributes({ hasCaptcha: true }) }

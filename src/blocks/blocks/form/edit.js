@@ -116,7 +116,8 @@ const Edit = ({
 		errorMessage: undefined,
 		apiKey: undefined,
 		cc: undefined,
-		bcc: undefined
+		bcc: undefined,
+		autoresponder: undefined
 	});
 
 	const {
@@ -251,7 +252,8 @@ const Edit = ({
 			apiKey: wpOptions?.integration?.apiKey,
 			listId: wpOptions?.integration?.listId,
 			action: wpOptions?.integration?.action,
-			hasCaptcha: wpOptions?.hasCaptcha
+			hasCaptcha: wpOptions?.hasCaptcha,
+			autoresponder: wpOptions?.autoresponder
 		});
 	};
 
@@ -313,7 +315,8 @@ const Edit = ({
 						emails[index].errorMessage !== formOptions.errorMessage ||
 						emails[index].fromName !== formOptions.fromName ||
 						emails[index].cc !== formOptions.cc ||
-						emails[index].bcc !== formOptions.bcc
+						emails[index].bcc !== formOptions.bcc ||
+						emails[index].autoresponder !== formOptions.autoresponder
 					);
 
 					// Update the values
@@ -325,6 +328,7 @@ const Edit = ({
 					emails[index].fromName = formOptions.fromName;
 					emails[index].cc = formOptions.cc;
 					emails[index].bcc = formOptions.bcc;
+					emails[index].autoresponder = formOptions.autoresponder;
 					isMissing = false;
 				}
 			});
@@ -339,7 +343,8 @@ const Edit = ({
 					submitMessage: formOptions.submitMessage,
 					errorMessage: formOptions.errorMessage,
 					cc: formOptions.cc,
-					bcc: formOptions.bcc
+					bcc: formOptions.bcc,
+					autoresponder: formOptions.autoresponder
 				});
 			}
 

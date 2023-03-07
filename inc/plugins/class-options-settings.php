@@ -353,6 +353,9 @@ class Options_Settings {
 								'bcc'           => array(
 									'type' => 'string',
 								),
+								'autoresponder' => array(
+									'type' => 'string',
+								),
 								'integration'   => array(
 									'type'       => 'object',
 									'properties' => array(

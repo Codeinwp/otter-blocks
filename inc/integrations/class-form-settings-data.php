@@ -106,6 +106,13 @@ class Form_Settings_Data {
 	private $bcc = '';
 
 	/**
+	 * The autoresponder recipients.
+	 *
+	 * @var string
+	 */
+	private $autoresponder = '';
+
+	/**
 	 * The default constructor.
 	 *
 	 * @param array $integration_data The integration data.
@@ -208,6 +215,9 @@ class Form_Settings_Data {
 				}
 				if ( isset( $form['bcc'] ) ) {
 					$integration->set_bcc( $form['bcc'] );
+				}
+				if ( isset( $form['autoresponder'] ) ) {
+					$integration->set_autoresponder( $form['autoresponder'] );
 				}
 				if ( isset( $form['integration'] ) ) {
 					$integration->extract_integration_data( $form['integration'] );
@@ -596,4 +606,16 @@ class Form_Settings_Data {
 		$this->bcc = $bcc;
 		return $this;
 	}
+
+	/**
+	 * Set the email bcc.
+	 *
+	 * @param string $autoresponder The email bcc.
+	 * @return Form_Settings_Data
+	 */
+	public function set_autoresponder( $autoresponder ) {
+		$this->autoresponder = $autoresponder;
+		return $this;
+	}
+
 }
