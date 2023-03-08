@@ -49,8 +49,8 @@ class Blocks_CSS {
 
 		wp_enqueue_code_editor( array( 'type' => 'text/css' ) );
 
-		wp_add_inline_script( 
-			'wp-codemirror', 
+		wp_add_inline_script(
+			'wp-codemirror',
 			'window.CodeMirror = wp.CodeMirror;'
 		);
 
@@ -88,7 +88,7 @@ class Blocks_CSS {
 
 	/**
 	 * Render server-side CSS
-	 * 
+	 *
 	 * @since   1.0.0
 	 * @access  public
 	 */
@@ -100,7 +100,12 @@ class Blocks_CSS {
 				return;
 			}
 
-			$blocks = parse_blocks( $post->post_content );
+			if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() && current_theme_supports( 'block-templates' ) ) {
+				global $_wp_current_template_content;
+				$blocks = parse_blocks( $_wp_current_template_content );
+			} else {
+				$blocks = parse_blocks( $post->post_content );
+			}
 
 			if ( ! is_array( $blocks ) || empty( $blocks ) ) {
 				return;
@@ -125,7 +130,7 @@ class Blocks_CSS {
 	 *
 	 * @param array $inner_blocks Array of blocks.
 	 * @param int   $id Post ID.
-	 * 
+	 *
 	 * @since   1.0.0
 	 * @access  public
 	 */
@@ -188,9 +193,9 @@ class Blocks_CSS {
 	}
 
 	/**
-	 * Append Block CSS to Otter's CSS file..
+	 * Append Block CSS to Otter's CSS file.
 	 *
-	 * @param int $block Block.
+	 * @param array $block Block.
 	 *
 	 * @since   1.1.4
 	 * @access  public
