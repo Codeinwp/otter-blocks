@@ -12,6 +12,7 @@ import {
 	Button,
 	Disabled,
 	ExternalLink,
+	FormTokenField,
 	PanelBody,
 	SelectControl,
 	TextControl,
@@ -39,11 +40,11 @@ const ProPreview = ({ attributes }) => {
 					help={ __( 'You may need to contact your hosting provider to increase file sizes.', 'otter-blocks' ) }
 				/>
 
-				<TextControl
+				<FormTokenField
 					label={ __( 'Allowed File Types', 'otter-blocks' ) }
 					value={ attributes.allowedFileTypes }
 					onChange={ allowedFileTypes => setAttributes({ allowedFileTypes }) }
-					help={ __( 'Allowed file types separated by coma. E.g.: .png, .jpg, .pdf, .doc', 'otter-blocks' ) }
+					help={ __( 'Add the allowed files types that can be loaded. E.g.: jpg, zip, pdf.', 'otter-blocks' ) }
 				/>
 
 				<TextControl
@@ -64,6 +65,17 @@ const ProPreview = ({ attributes }) => {
 					checked={ attributes.multipleFiles }
 					onChange={ multipleFiles => setAttributes({ multipleFiles }) }
 				/>
+
+				{
+					attributes.multipleFiles && (
+						<TextControl
+							label={ __( 'Maximum number of files', 'otter-blocks' ) }
+							type="number"
+							value={ attributes.maxFilesNumber }
+							onChange={ maxFilesNumber => setAttributes({ maxFilesNumber }) }
+						/>
+					)
+				}
 
 				<ToggleControl
 					label={ __( 'Save to Media Library', 'otter-blocks' ) }

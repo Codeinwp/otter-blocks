@@ -25,15 +25,17 @@ class Form_File_Block {
 	 */
 	public function render( $attributes ) {
 
-		// if ( ! Pro::is_pro_installed() || ! Pro::is_pro_active() ) {
-		// return '';
-		// }
+		if ( ! Pro::is_pro_installed() || ! Pro::is_pro_active() ) {
+			return '';
+		}
+
 		$class_names        = 'wp-block-themeisle-blocks-form-file ' . ( isset( $attributes['className'] ) ? $attributes['className'] : '' );
 		$id                 = isset( $attributes['id'] ) ? $attributes['id'] : '';
 		$label              = isset( $attributes['label'] ) ? $attributes['label'] : __( 'Select option', 'otter-blocks' );
 		$help_text          = isset( $attributes['helpText'] ) ? $attributes['helpText'] : '';
 		$is_required        = isset( $attributes['isRequired'] ) && boolval( $attributes['isRequired'] );
 		$has_multiple_files = isset( $attributes['multipleFiles'] ) && boolval( $attributes['multipleFiles'] );
+		$allowed_files      = isset( $attributes['allowedFileTypes'] ) ? implode( ',', $attributes['allowedFileTypes'] ) : '';
 
 		$output = '<div class="' . $class_names . '" id="' . $id . '">';
 
@@ -43,13 +45,18 @@ class Form_File_Block {
 		. $id . '" '
 		. ( $is_required ? 'required' : '' ) . ' '
 		. ( $has_multiple_files ? 'multiple' : '' )
-		. ( isset( $attributes['allowedFileTypes'] ) ? ( 'accept="' . $attributes['allowedFileTypes'] ) . '"' : '' )
-		. ( isset( $attributes['multipleFiles'] ) ? 'multiple' : '' )
-		. ( isset( $attributes['maxFileSize'] ) ? ( 'data-max-file-size="' . $attributes['maxFileSize'] ) . '"' : '' )
-		. ( isset( $attributes['fieldOptionName'] ) ? ( 'data-field-option-name="' . $attributes['fieldOptionName'] ) . '"' : '' )
+		. ( isset( $attributes['allowedFileTypes'] ) ? ( ' accept="' . $allowed_files ) . '"' : '' )
+		. ( isset( $attributes['multipleFiles'] ) ? ' multiple' : '' )
+		. ( isset( $attributes['maxFileSize'] ) ? ( ' data-max-file-size="' . $attributes['maxFileSize'] . '"' ) : '' )
+		. ( isset( $attributes['fieldOptionName'] ) ? ( ' data-field-option-name="' . $attributes['fieldOptionName'] . '"' ) : '' )
+		. (( isset( $attributes['multipleFiles'] ) && isset( $attributes['maxFilesNumber'] )) ? ( ' data-max-files-number="' . $attributes['maxFilesNumber'] . '"' ) : '' )
 		. ' />';
 
-		$output .= '<span class="o-form-help">' . $help_text . '</span>';
+		$output .= '<span class="o-form-help">'
+		. $help_text
+		. ( isset( $attributes['multipleFiles'] ) && isset( $attributes['maxFilesNumber'] ) ? ( __( 'Max files: ', 'otter-blocks' ) . $attributes['maxFilesNumber'] ) . '. ' : '' )
+		. ( isset( $attributes['maxFileSize'] ) ? ( __( 'Max file size: ', 'otter-blocks' ) . $attributes['maxFileSize'] ) . 'MB' : '' )
+		. '</span>';
 
 		$output .= '</div>';
 		return $output;

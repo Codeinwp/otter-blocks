@@ -8,9 +8,10 @@ type Attributes = FormInputCommonProps & {
 	type: string
 	inputWidth: number
 	maxFileSize: string
-	allowedFileTypes: string
+	allowedFileTypes: string[]
 	multipleFiles: boolean
 	fieldOptionName: string
+	maxFilesNumber: number
 	saveFiles: string
 }
 

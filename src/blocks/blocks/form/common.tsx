@@ -14,8 +14,9 @@ export type FieldOption = {
 	fieldOptionType: string
 	options: {
 		maxFileSize?: number | string
-		allowedFileTypes?: string
+		allowedFileTypes?: string[]
 		saveFiles?: string
+		maxFilesNumber?: number
 	}
 }
 

@@ -397,11 +397,16 @@ class Options_Settings {
 							if ( isset( $item['options']['maxFileSize'] ) ) {
 								$item['options']['maxFileSize'] = sanitize_text_field( $item['options']['maxFileSize'] );
 							}
-							if ( isset( $item['options']['allowedFileTypes'] ) ) {
-								$item['options']['allowedFileTypes'] = sanitize_text_field( $item['options']['allowedFileTypes'] );
+							if ( isset( $item['options']['allowedFileTypes'] ) && is_array( $item['options']['allowedFileTypes'] ) ) {
+								foreach ( $item['options']['allowedFileTypes'] as $key => $value ) {
+									$item['options']['allowedFileTypes'][ $key ] = sanitize_text_field( $value );
+								}
 							}
 							if ( isset( $item['options']['saveFiles'] ) ) {
 								$item['options']['saveFiles'] = sanitize_text_field( $item['options']['saveFiles'] );
+							}
+							if ( isset( $item['options']['maxFilesNumber'] ) && ! is_int( $item['options']['maxFilesNumber'] ) ) {
+								$item['options']['maxFilesNumber'] = sanitize_text_field( $item['options']['maxFilesNumber'] );
 							}
 
 							return $item;
@@ -428,10 +433,16 @@ class Options_Settings {
 											'type' => array( 'string', 'number' ),
 										),
 										'allowedFileTypes' => array(
-											'type' => 'string',
+											'type'  => 'array',
+											'items' => array(
+												'type' => 'string',
+											),
 										),
 										'saveFiles'        => array(
 											'type' => 'string',
+										),
+										'maxFilesNumber'   => array(
+											'type' => array( 'string', 'number' ),
 										),
 									),
 									'default'    => array(),

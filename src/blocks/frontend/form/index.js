@@ -8,6 +8,26 @@ import { domReady } from '../../helpers/frontend-helper-functions.js';
 let startTimeAntiBot = null;
 
 /**
+ * Get the form fields.
+ * @param {HTMLDivElement} form The form.
+ * @returns {(HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement)[]} The form fields.
+ */
+const getFormFieldInputs = ( form ) => {
+
+	/** @type {Array.<HTMLDivElement>} */
+	const innerForms = [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form' ) ];
+
+	/**
+	 * Remove the field from the inner forms.
+	 *
+	 * @type {Array.<HTMLDivElement>}
+	 */
+	return [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form-input, :scope > .otter-form__container .wp-block-themeisle-blocks-form-textarea, :scope > .otter-form__container .wp-block-themeisle-blocks-form-multiple-choice, :scope > .otter-form__container .wp-block-themeisle-blocks-form-file' ) ].filter( input => {
+		return ! innerForms?.some( innerForm => innerForm?.contains( input ) );
+	});
+};
+
+/**
  * Get the fields with their value from the form.
  *
  * @param {HTMLDivElement} form The form.
@@ -28,9 +48,7 @@ const extractFormFields = async( form ) => {
 		 *
 		 * @type {Array.<HTMLDivElement>}
 		 */
-		const allInputs = [ ...form?.querySelectorAll( ':scope > .otter-form__container .wp-block-themeisle-blocks-form-input, :scope > .otter-form__container .wp-block-themeisle-blocks-form-textarea, :scope > .otter-form__container .wp-block-themeisle-blocks-form-multiple-choice, :scope > .otter-form__container .wp-block-themeisle-blocks-form-file' ) ].filter( input => {
-			return ! innerForms?.some( innerForm => innerForm?.contains( input ) );
-		});
+		const allInputs = getFormFieldInputs( form );
 
 		const fieldsToLoad = allInputs?.map( ( input, index ) => {
 			const fileInput = input.querySelector( 'input[type="file"]' );
@@ -412,5 +430,48 @@ domReady( () => {
 				}
 			}, false );
 		}
+	});
+
+	forms.forEach( ( form ) => {
+		const fields = getFormFieldInputs( form );
+		console.log( fields );
+		fields.forEach( ( field ) => {
+			const input = field.querySelector( 'input' );
+			if ( 'file' === input?.type ) {
+				console.log( input );
+				const { maxFilesNumber, maxFileSize } = input.dataset;
+				input.addEventListener( 'change', ( event ) => {
+					let isValidationSuccessful = true;
+					const { files } = event.target;
+
+					if ( files.length > maxFilesNumber ) {
+
+						input.setCustomValidity( window.themeisleGutenbergForm?.messages?.['too-many-files'] + maxFilesNumber );
+						isValidationSuccessful = false;
+					} else {
+						input.setCustomValidity( '' );
+					}
+
+					if ( isValidationSuccessful ) {
+						for ( const file of files ) {
+							if ( file.size > maxFileSize * 1024 * 1024 ) {
+								input.setCustomValidity( window.themeisleGutenbergForm?.messages?.['big-file'] + ' ' + maxFileSize + 'MB.' );
+								isValidationSuccessful = false;
+								break;
+							} else {
+								input.setCustomValidity( '' );
+							}
+						}
+					}
+
+					if ( ! isValidationSuccessful ) {
+						input.reportValidity();
+						input.value = '';
+					}
+
+					console.log( files, { isValidationSuccessful }, files.length > maxFilesNumber, { maxFileSize, maxFilesNumber });
+				});
+			}
+		});
 	});
 });

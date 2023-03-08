@@ -41,7 +41,8 @@
 			"type": "string"
 		},
 		"allowedFileTypes": {
-			"type": "string"
+			"type": "array",
+			"default": [ "image/*", "audio/*", "video/*" ]
 		},
 		"saveFiles": {
 			"type": "string"
@@ -51,6 +52,9 @@
 		},
 		"fieldOptionName": {
 			"type": "string"
+		},
+		"maxFilesNumber": {
+			"type": "number"
 		}
 	},
 	"supports": {

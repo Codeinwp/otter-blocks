@@ -1,7 +1,7 @@
 // @ts-nocheck
 
 import { Fragment } from '@wordpress/element';
-import { TextControl, ToggleControl } from '@wordpress/components';
+import { FormTokenField, TextControl, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
 
@@ -34,11 +34,53 @@ const FormFileInspector = ( Template, {
 				help={ __( 'You may need to contact your hosting provider to increase file sizes.', 'otter-blocks' ) }
 			/>
 
-			<TextControl
+			<FormTokenField
 				label={ __( 'Allowed File Types', 'otter-blocks' ) }
 				value={ attributes.allowedFileTypes }
 				onChange={ allowedFileTypes => setAttributes({ allowedFileTypes }) }
-				help={ __( 'Allowed file types separated by coma. E.g.: .png, .jpg, .pdf, .doc', 'otter-blocks' ) }
+				help={ __( 'Add the allowed files types that can be loaded. E.g.: .png, .mp4, .jpg, .zip, .pdf. Attention: The host provider might not allow to saving of all type of files.', 'otter-blocks' ) }
+				suggestions={ [
+					'image/*',
+					'audio/*',
+					'video/*',
+					'.jpg',
+					'.jpeg',
+					'.png',
+					'.gif',
+					'.pdf',
+					'.doc',
+					'.docx',
+					'.xls',
+					'.xlsx',
+					'.ppt',
+					'.pptx',
+					'.odt',
+					'.ods',
+					'.odp',
+					'.odg',
+					'.odc',
+					'.odf',
+					'.odb',
+					'.csv',
+					'.txt',
+					'.zip',
+					'.rar',
+					'.7z',
+					'.gz',
+					'.psd',
+					'.bmp',
+					'.tif',
+					'.tiff',
+					'.svg',
+					'.mp4',
+					'.m4v',
+					'.mov',
+					'.wmv',
+					'.avi',
+					'.mpg',
+					'.mp3',
+					'.mkv'
+				]}
 			/>
 
 			<TextControl
@@ -59,6 +101,17 @@ const FormFileInspector = ( Template, {
 				checked={ attributes.multipleFiles }
 				onChange={ multipleFiles => setAttributes({ multipleFiles }) }
 			/>
+
+			{
+				attributes.multipleFiles && (
+					<TextControl
+						label={ __( 'Maximum number of files', 'otter-blocks' ) }
+						type="number"
+						value={ attributes.maxFilesNumber }
+						onChange={ maxFilesNumber => setAttributes({ maxFilesNumber }) }
+					/>
+				)
+			}
 
 			<ToggleControl
 				label={ __( 'Save to Media Library', 'otter-blocks' ) }

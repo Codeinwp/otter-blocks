@@ -60,18 +60,20 @@ const Edit = ({
 
 	useEffect( () => {
 
-		if ( attributes.fieldOptionName && 'loaded' === status ) {
+		if ( Boolean( window.themeisleGutenberg?.hasPro ) && attributes.fieldOptionName && 'loaded' === status ) {
 
 			/** @type{import('../common').FieldOption[]} */
 			const fieldOptions = getOption?.( 'themeisle_blocks_form_fields_option' ) ?? [];
+			console.log( 'Old options', fieldOptions );
 
 			const fieldIndex = fieldOptions.findIndex( field => field.fieldOptionName === attributes.fieldOptionName );
 
 			const isChanged = (
 				-1 !== fieldIndex && (
-					fieldOptions[fieldIndex].options.allowedFileTypes !== attributes.allowedFileTypes ||
-					fieldOptions[fieldIndex].options.maxFileSize !== attributes.maxFileSize ||
-					fieldOptions[fieldIndex].options.saveFiles !== attributes.saveFiles
+					fieldOptions[fieldIndex]?.options?.allowedFileTypes?.length !== attributes.allowedFileTypes?.length ||
+					fieldOptions[fieldIndex]?.options?.maxFileSize !== attributes.maxFileSize ||
+					fieldOptions[fieldIndex]?.options?.saveFiles !== attributes.saveFiles ||
+					fieldOptions[fieldIndex]?.options?.maxFilesNumber !== attributes.maxFilesNumber
 				) ||
 				-1 === fieldIndex
 			);
@@ -81,6 +83,7 @@ const Edit = ({
 					fieldOptions[fieldIndex].options.allowedFileTypes = attributes.allowedFileTypes;
 					fieldOptions[fieldIndex].options.maxFileSize = attributes.maxFileSize;
 					fieldOptions[fieldIndex].options.saveFiles = attributes.saveFiles;
+					fieldOptions[fieldIndex].options.maxFilesNumber = attributes.maxFilesNumber;
 				} else {
 					fieldOptions.push({
 						fieldOptionName: attributes.fieldOptionName,
@@ -88,12 +91,14 @@ const Edit = ({
 						options: {
 							allowedFileTypes: attributes.allowedFileTypes,
 							maxFileSize: attributes.maxFileSize,
-							saveFiles: attributes.saveFiles
+							saveFiles: attributes.saveFiles,
+							maxFilesNumber: attributes.maxFilesNumber
 						}
 					});
 				}
 
 				updateOption( 'themeisle_blocks_form_fields_option', fieldOptions, __( 'Field settings saved.', 'otter-blocks' ), 'field-option' );
+				console.log( 'New options', fieldOptions );
 				console.count( 'New options' );
 			}
 		}
