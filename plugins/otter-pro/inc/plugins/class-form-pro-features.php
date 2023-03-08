@@ -156,9 +156,11 @@ class Form_Pro_Features {
 					$file = \ThemeIsle\GutenbergBlocks\Integration\Form_Utils::save_file_from_field( $field );
 
 					if ( $file['success'] ) {
-						$field_option               = $form_data->get_field_option( $input['metadata']['fieldOptionName'] );
-						$file['file_location_slug'] = $field_option->get_option( 'saveFiles' );
-
+						$field_option = $form_data->get_field_option( $input['metadata']['fieldOptionName'] );
+						$saved_file   = $field_option->get_option( 'saveFiles' );
+						if ( isset( $saved_file ) && ! empty( $saved_file ) ) {
+							$file['file_location_slug'] = $field_option->get_option( 'saveFiles' );
+						}
 						$saved_files[] = $file;
 					} else {
 						$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD, array( $file['error'] ) );
@@ -202,7 +204,7 @@ class Form_Pro_Features {
 		try {
 			if ( $form_data->has_uploaded_files() ) {
 				foreach ( $form_data->get_uploaded_files_path() as $file ) {
-					if ( ! empty( $file['file_location_slug'] ) ) {
+					if ( empty( $file['file_location_slug'] ) ) {
 						wp_delete_file( $file['file_path'] );
 					}
 				}
@@ -235,20 +237,20 @@ class Form_Pro_Features {
 
 				$media_files = array();
 				foreach ( $form_data->get_uploaded_files_path() as $file ) {
-	
+
 					if ( empty( $file['file_location_slug'] ) || 'media-library' !== $file['file_location_slug'] ) {
 						continue;
 					}
-	
+
 					$attachment = array(
 						'post_mime_type' => $file['file_type'],
 						'post_title'     => $file['file_name'],
 						'post_content'   => '',
 						'post_status'    => 'inherit',
 					);
-	
+
 					$attachment_id = wp_insert_attachment( $attachment, $file['file_path'] );
-	
+
 					$media_files[] = array(
 						'file_path' => $file['file_path'],
 						'file_name' => $file['file_name'],
@@ -256,7 +258,7 @@ class Form_Pro_Features {
 						'file_id'   => $attachment_id,
 					);
 				}
-	
+
 				if ( ! empty( $media_files ) ) {
 					$form_data->set_files_loaded_to_media_library( $media_files );
 				}

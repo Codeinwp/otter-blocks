@@ -49,7 +49,7 @@ class Form_File_Block {
 		. ( isset( $attributes['multipleFiles'] ) ? ' multiple' : '' )
 		. ( isset( $attributes['maxFileSize'] ) ? ( ' data-max-file-size="' . $attributes['maxFileSize'] . '"' ) : '' )
 		. ( isset( $attributes['fieldOptionName'] ) ? ( ' data-field-option-name="' . $attributes['fieldOptionName'] . '"' ) : '' )
-		. (( isset( $attributes['multipleFiles'] ) && isset( $attributes['maxFilesNumber'] )) ? ( ' data-max-files-number="' . $attributes['maxFilesNumber'] . '"' ) : '' )
+		. ( ( isset( $attributes['multipleFiles'] ) && isset( $attributes['maxFilesNumber'] ) ) ? ( ' data-max-files-number="' . $attributes['maxFilesNumber'] . '"' ) : '' )
 		. ' />';
 
 		$output .= '<span class="o-form-help">'

@@ -348,7 +348,9 @@ class Form_Server {
 			$attachments = array();
 			if ( $form_data->has_uploaded_files() && ! $form_data->can_keep_uploaded_files() ) {
 				foreach ( $form_data->get_uploaded_files_path() as $file ) {
-					$attachments[] = $file['file_path'];
+					if ( empty( $file['file_location_slug'] ) ) {
+						$attachments[] = $file['file_path'];
+					}
 				}
 			}
 

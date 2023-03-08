@@ -10,7 +10,7 @@ let startTimeAntiBot = null;
 /**
  * Get the form fields.
  * @param {HTMLDivElement} form The form.
- * @returns {(HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement)[]} The form fields.
+ * @returns {HTMLDivElement[]} The form fields.
  */
 const getFormFieldInputs = ( form ) => {
 
@@ -145,48 +145,59 @@ function extractNonceValue( form ) {
 function validateInputs( form ) {
 	let result = true;
 
-	// Validate text inputs.
-	const inputs = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-input input' );
-	[ ...inputs ]?.forEach( input => {
-		if ( ! input?.checkValidity() ) {
-			input?.reportValidity();
-			result = false;
+	const inputFields = getFormFieldInputs( form );
+
+	console.log( inputFields );
+
+	for ( const field of inputFields ) {
+		if ( field.classList.contains( 'wp-block-themeisle-blocks-form-input' ) ) {
+			const input = field.querySelector( 'input' );
+			if ( ! input?.checkValidity() ) {
+				input?.reportValidity();
+				result = false;
+				break;
+			}
+		} else if ( field.classList.contains( 'wp-block-themeisle-blocks-form-textarea' ) ) {
+			const input = field.querySelector( 'textarea' );
+			if ( ! input?.checkValidity() ) {
+				input?.reportValidity();
+				result = false;
+				break;
+			}
+		} else if ( field.classList.contains( 'wp-block-themeisle-blocks-form-multiple-choice' ) ) {
+			const select = field.querySelector( 'select' );
+			if ( select?.hasAttribute( 'required' ) && ! select?.checkValidity() ) {
+				select?.reportValidity();
+				result = false;
+				break;
+			}
+
+
+			// Check if it is required and at least one is checked.
+			const radios = field.querySelectorAll( '.o-form-multiple-choice-field input[type="radio"]' );
+			if ( radios?.length && radios[0]?.hasAttribute( 'required' ) && ! [ ...radios ].some( radio => radio.checked ) ) {
+
+				// radios[0]?.setCustomValidity( 'Please select one option.' );
+				radios[0]?.reportValidity();
+				result = false;
+				break;
+			}
+
+			const checkboxes = field.querySelectorAll( '.o-form-multiple-choice-field input[type="checkbox"]' );
+			if ( checkboxes?.length && checkboxes[0]?.hasAttribute( 'required' ) && ! [ ...checkboxes ].some( checkbox => checkbox.checked ) ) {
+				checkboxes[0]?.reportValidity();
+				result = false;
+				break;
+			}
+		} else if ( field.classList.contains( 'wp-block-themeisle-blocks-form-file' ) ) {
+			const input = field.querySelector( 'input' );
+			if ( ! input?.checkValidity() ) {
+				input?.reportValidity();
+				result = false;
+				break;
+			}
 		}
-	});
-
-	// Validate textarea inputs.
-	const textarea = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-textarea textarea' );
-	[ ...textarea ]?.forEach( input => {
-		if ( ! input?.checkValidity() ) {
-			input?.reportValidity();
-			result = false;
-		}
-	});
-
-	// Validate multiple choice inputs.
-	const multipleChoiceInputs = form?.querySelectorAll( ':scope > .otter-form__container > .wp-block-themeisle-blocks-form-multiple-choice' );
-
-	multipleChoiceInputs?.forEach( input => {
-		const select = input.querySelector( ':scope > select' );
-		if ( select?.hasAttribute( 'required' ) && ! select?.checkValidity() ) {
-			select?.reportValidity();
-			result = false;
-		}
-
-		// Check if it is required and at least one is checked.
-		const radios = input.querySelectorAll( ':scope > .o-form-multiple-choice-field > input[type="radio"]' );
-		if ( radios?.length && radios[0]?.hasAttribute( 'required' ) && ! [ ...radios ].some( radio => radio.checked ) ) {
-			radios[0]?.reportValidity();
-			result = false;
-		}
-
-		const checkboxes = input.querySelectorAll( ':scope > .o-form-multiple-choice-field > input[type="checkbox"]' );
-		if ( checkboxes?.length && checkboxes[0]?.hasAttribute( 'required' ) && ! [ ...checkboxes ].some( checkbox => checkbox.checked ) ) {
-			checkboxes[0]?.reportValidity();
-			result = false;
-		}
-	});
-
+	}
 
 	return result;
 }
