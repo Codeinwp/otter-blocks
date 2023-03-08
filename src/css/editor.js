@@ -25,7 +25,6 @@ const CSSEditor = ({
 	setAttributes,
 	clientId
 }) => {
-
 	const editorRef = useRef( null );
 	const [ errors, setErrors ] = useState([]);
 	const [ editorValue, setEditorValue ] = useState( null );
@@ -112,18 +111,20 @@ const CSSEditor = ({
 	useEffect( () => {
 		const regex = new RegExp( 'selector', 'g' );
 		const className = getClassName();
-		const customCSS = className ? editorValue?.replace( regex, `.${ className.split( ' ' ).find( i => i.includes( 'ticss' ) ) }` ) : editorValue;
+
+		const customClass = className?.split( ' ' ).find( i => i.includes( 'ticss' ) );
+		const customCSS = customClass ? editorValue?.replace( regex, `.${ customClass }` ) : editorValue;
 
 		if ( ( 'selector {\n}\n' ).replace( /\s+/g, '' ) === customCSS?.replace( /\s+/g, '' ) ) {
-			setAttributes({ customCSS: null });
-			return;
-		}
-
-		if ( customCSS ) {
+			setAttributes({
+				customCSS: null,
+				className
+			});
+		} else if ( customCSS ) {
 			setAttributes({
 				customCSS,
 				hasCustomCSS: true,
-				className: getClassName()
+				className: className
 			});
 		}
 	}, [ editorValue ]);
