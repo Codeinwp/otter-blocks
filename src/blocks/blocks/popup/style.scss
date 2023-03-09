@@ -100,6 +100,10 @@ $base-index: 99999 !default;
 		overflow: auto;
 		height: 100%;
 
+		@media (max-width: 600px) {
+			padding-top: 20px;
+		}
+
 		&::-webkit-scrollbar {
 			display: none;
 		}
@@ -115,6 +119,10 @@ $base-index: 99999 !default;
 		display: flex;
 		justify-content: flex-end;
 		padding-bottom: 20px;
+
+		@media (max-width: 600px) {
+			padding-bottom: 0px;
+		}
 
 		button {
 			background-color: transparent !important;
