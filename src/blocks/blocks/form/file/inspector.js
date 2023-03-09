@@ -11,7 +11,6 @@ import {
 import {
 	Button,
 	Disabled,
-	ExternalLink,
 	FormTokenField,
 	PanelBody,
 	SelectControl,
@@ -23,8 +22,6 @@ import { Fragment, useContext } from '@wordpress/element';
 
 import { fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
 import { FormContext } from '../edit';
-import { Notice } from '../../../components';
-import { setUtm } from '../../../helpers/helper-functions';
 
 const ProPreview = ({ attributes }) => {
 	const setAttributes = () => {};
@@ -84,12 +81,6 @@ const ProPreview = ({ attributes }) => {
 					onChange={ value => setAttributes({ saveFiles: value ? 'media-library' : undefined }) }
 				/>
 			</Disabled>
-
-			{ ! Boolean( window.themeisleGutenberg?.hasPro ) && (
-				<Notice
-					notice={<ExternalLink href={setUtm( window.themeisleGutenberg.upgradeLink, 'formfilefieldfeature' )}>{__( 'Activate this field with Otter Pro.', 'otter-blocks' )}</ExternalLink>}
-					variant="upsell" instructions={undefined}				/>
-			) }
 		</Fragment>
 	);
 };
