@@ -215,7 +215,6 @@ const collectAndSendInputFormData = async( form, btn, displayMsg ) => {
 
 	// Get the data from the form fields.
 	const { formFieldsData } = await extractFormFields( form );
-	console.log( formFieldsData );
 	const formIsEmpty = 2 > formFieldsData?.length;
 	const nonceFieldValue = extractNonceValue( form );
 	const hasCaptcha = form?.classList?.contains( 'has-captcha' );
@@ -445,11 +444,10 @@ domReady( () => {
 
 	forms.forEach( ( form ) => {
 		const fields = getFormFieldInputs( form );
-		console.log( fields );
+
 		fields.forEach( ( field ) => {
 			const input = field.querySelector( 'input' );
 			if ( 'file' === input?.type ) {
-				console.log( input );
 				const { maxFilesNumber, maxFileSize } = input.dataset;
 				input.addEventListener( 'change', ( event ) => {
 					let isValidationSuccessful = true;
@@ -479,8 +477,6 @@ domReady( () => {
 						input.reportValidity();
 						input.value = '';
 					}
-
-					console.log( files, { isValidationSuccessful }, files.length > maxFilesNumber, { maxFileSize, maxFilesNumber });
 				});
 			}
 		});
