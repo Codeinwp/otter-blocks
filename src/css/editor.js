@@ -25,27 +25,21 @@ const CSSEditor = ({
 	setAttributes,
 	clientId
 }) => {
+
 	const editorRef = useRef( null );
 	const [ errors, setErrors ] = useState([]);
+	const [ customCSS, setCustomCSS ] = useState( null );
 	const [ editorValue, setEditorValue ] = useState( null );
 
 	const getClassName = () => {
-		const uniqueId = clientId.substring( 0, 8 );
+		const uniqueId = clientId.substr( 0, 8 );
 
-		// remove the ticss class if custom CSS is empty.
-		if ( editorValue?.replace( /\s+/g, '' ) === ( 'selector {\n}\n' ).replace( /\s+/g, '' ) ) {
-			return attributes.className ?
-				attributes.className.split( ' ' ).filter( className => ! className.includes( 'ticss-' ) ).join( ' ' ) :
-				attributes.className;
+		if ( customCSS?.replace( /\s+/g, '' ) === ( 'selector {\n}\n' ).replace( /\s+/g, '' ) ) {
+			return attributes.className;
 		}
 
-		const { className } = attributes;
-
-		return className ?
-			( ! className.includes( 'ticss-' ) ?
-				[ ...className.trim().split( ' ' ), `ticss-${ uniqueId }` ].join( ' ' ) :
-				className
-			) :
+		return  attributes.className ?
+			( ! attributes.className.includes( 'ticss-' ) ? [ ...attributes.className.split( ' ' ), `ticss-${ uniqueId }` ].join( ' ' ) : attributes.className ) :
 			`ticss-${ uniqueId }`;
 	};
 
@@ -57,12 +51,11 @@ const CSSEditor = ({
 		}
 
 		editorErrors = editorErrors?.filter( error => ! window.otterCSSLintIgnored.includes( error ) );
-		setErrors( editorErrors );
 
+		setErrors( editorErrors );
 		if ( ! ignoreErrors && 0 < editorErrors?.length ) {
 			return;
 		}
-
 		setEditorValue( editor?.getValue() );
 	};
 
@@ -94,40 +87,35 @@ const CSSEditor = ({
 			}
 		});
 
-		const onChange = () => {
+		editorRef.current.on( 'change', () => {
 			clearTimeout( inputTimeout );
 			inputTimeout = setTimeout( () => {
 				checkInput( editorRef.current );
 			}, 500 );
-		};
-
-		editorRef.current.on( 'change', onChange );
-
-		return () => {
-			editorRef.current.off( 'change', onChange );
-		};
+		});
 	}, []);
 
 	useEffect( () => {
 		const regex = new RegExp( 'selector', 'g' );
-		const className = getClassName();
-
-		const customClass = className?.split( ' ' ).find( i => i.includes( 'ticss' ) );
-		const customCSS = customClass ? editorValue?.replace( regex, `.${ customClass }` ) : editorValue;
-
-		if ( ( 'selector {\n}\n' ).replace( /\s+/g, '' ) === customCSS?.replace( /\s+/g, '' ) ) {
-			setAttributes({
-				customCSS: null,
-				className
-			});
-		} else if ( customCSS ) {
-			setAttributes({
-				customCSS,
-				hasCustomCSS: true,
-				className: className
-			});
-		}
+		setCustomCSS( editorValue?.replace( regex, `.${ getClassName().split( ' ' ).find( i => i.includes( 'ticss' ) ) }` ) );
 	}, [ editorValue ]);
+
+	useEffect( () => {
+		if ( ( 'selector {\n}\n' ).replace( /\s+/g, '' ) === customCSS?.replace( /\s+/g, '' ) ) {
+			setAttributes({ customCSS: null });
+			return;
+		}
+		if ( customCSS ) {
+			setAttributes({ customCSS });
+		}
+	}, [ customCSS ]);
+
+	useEffect( () => {
+		setAttributes({
+			hasCustomCSS: true,
+			className: getClassName()
+		});
+	}, [ attributes ]);
 
 	return (
 		<Fragment>

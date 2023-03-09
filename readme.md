@@ -229,25 +229,6 @@ The Patterns have been designed to make it easier for you to build your site usi
 
 ## Changelog ##
 
-##### [Version 2.2.3](https://github.com/Codeinwp/otter-blocks/compare/v2.2.2...v2.2.3) (2023-03-06)
-
-- Button Group Block Enhancements
-- Tabs Block Enhancements
-- Add Better Onboarding & Placeholders for Content Blocks
-- Add Unlinked Margin Option for the Icon Block
-- Add Live Font Preview in Font Picker
-- Add In-build Spam Protection in Form Block
-- Fix i18n Compatibilities
-- Fix Mailchimp Integration in Form Not Getting All Lists
-- Fix the Issue with the Line Heading in Advanced Heading
-- Fix Issue with Block ID Duplicating When Duplicating Block
-- Fix the Wrong Author in Review Block Schema in Certain Cases
-- Fix Weird Behaviour When Removing CSS Class in CSS Extension
-- Fix Block CSS Not Loading for Dynamic Content
-
-
-
-
 ##### [Version 2.2.2](https://github.com/Codeinwp/otter-blocks/compare/v2.2.1...v2.2.2) (2023-02-06)
 
 - Fix Social Sharing Links When Used with FSE

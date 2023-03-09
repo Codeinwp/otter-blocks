@@ -1,6 +1,6 @@
 {
 	"name": "otter-blocks",
-	"version": "2.2.3",
+	"version": "2.2.2",
 	"description": "Otter – Page Builder Blocks & Extensions for Gutenberg",
 	"scripts": {
 		"build": "npm-run-all --parallel prod:*",
@@ -52,7 +52,7 @@
 		"lasttranslator": "Themeisle Translate Team <friends@themeisle.com>"
 	},
 	"dependencies": {
-		"@wordpress/icons": "^9.19.0",
+		"@wordpress/icons": "^9.17.0",
 		"array-move": "^3.0.1",
 		"classnames": "^2.3.1",
 		"currency-symbol-map": "^5.0.1",
@@ -79,9 +79,9 @@
 		"@wordpress/components": "^21.3.0",
 		"@wordpress/compose": "^5.14.0",
 		"@wordpress/data": "^7.4.0",
-		"@wordpress/dom-ready": "^3.28.0",
+		"@wordpress/dom-ready": "^3.26.0",
 		"@wordpress/e2e-test-utils": "^8.3.0",
-		"@wordpress/element": "^5.5.0",
+		"@wordpress/element": "^5.3.0",
 		"@wordpress/env": "^5.5.0",
 		"@wordpress/scripts": "^22.5.0",
 		"conventional-changelog-simple-preset": "^1.0.20",
@@ -99,7 +99,7 @@
 		"replace-in-file": "^6.3.1",
 		"semantic-release": "^19.0.5",
 		"semantic-release-slack-bot": "^3.5.2",
-		"simple-statistics": "^7.8.3",
+		"simple-statistics": "^7.8.2",
 		"typescript": "^4.7.4"
 	},
 	"optionalDependencies": {
