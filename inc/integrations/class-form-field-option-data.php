@@ -73,7 +73,7 @@ class Form_Field_Option_Data {
 	 * @return array
 	 */
 	public function get_options() {
-		 return $this->options;
+		return $this->options;
 	}
 
 	/**
@@ -139,7 +139,7 @@ class Form_Field_Option_Data {
 	 * @return bool
 	 */
 	public function has_options() {
-		 return ! empty( $this->options );
+		return ! empty( $this->options );
 	}
 
 	/**
