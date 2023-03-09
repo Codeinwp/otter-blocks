@@ -64,16 +64,15 @@ const Edit = ({
 
 			/** @type{import('../common').FieldOption[]} */
 			const fieldOptions = getOption?.( 'themeisle_blocks_form_fields_option' ) ?? [];
-			console.log( 'Old options', fieldOptions );
 
 			const fieldIndex = fieldOptions.findIndex( field => field.fieldOptionName === attributes.fieldOptionName );
 
 			const isChanged = (
 				-1 !== fieldIndex && (
 					fieldOptions[fieldIndex]?.options?.allowedFileTypes?.length !== attributes.allowedFileTypes?.length ||
-					fieldOptions[fieldIndex]?.options?.maxFileSize !== attributes.maxFileSize ||
+					fieldOptions[fieldIndex]?.options?.maxFileSize !== attributes.maxFileSize?.toString() ||
 					fieldOptions[fieldIndex]?.options?.saveFiles !== attributes.saveFiles ||
-					fieldOptions[fieldIndex]?.options?.maxFilesNumber !== attributes.maxFilesNumber
+					fieldOptions[fieldIndex]?.options?.maxFilesNumber !== attributes.maxFilesNumber?.toString()
 				) ||
 				-1 === fieldIndex
 			);
@@ -98,8 +97,6 @@ const Edit = ({
 				}
 
 				updateOption( 'themeisle_blocks_form_fields_option', fieldOptions, __( 'Field settings saved.', 'otter-blocks' ), 'field-option' );
-				console.log( 'New options', fieldOptions );
-				console.count( 'New options' );
 			}
 		}
 	}, [ attributes.fieldOptionName, attributes.allowedFileTypes, attributes.maxFileSize, attributes.saveFiles, status ]);
