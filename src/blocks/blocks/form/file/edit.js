@@ -65,14 +65,18 @@ const Edit = ({
 			/** @type{import('../common').FieldOption[]} */
 			const fieldOptions = getOption?.( 'themeisle_blocks_form_fields_option' ) ?? [];
 
-			const fieldIndex = fieldOptions.findIndex( field => field.fieldOptionName === attributes.fieldOptionName );
+			const fieldIndex = fieldOptions?.findIndex( field => field.fieldOptionName === attributes.fieldOptionName );
+
+			if ( fieldIndex === undefined ) {
+				return;
+			}
 
 			const isChanged = (
 				-1 !== fieldIndex && (
 					fieldOptions[fieldIndex]?.options?.allowedFileTypes?.length !== attributes.allowedFileTypes?.length ||
-					fieldOptions[fieldIndex]?.options?.maxFileSize !== attributes.maxFileSize?.toString() ||
+					fieldOptions[fieldIndex]?.options?.maxFileSize !== attributes.maxFileSize ||
 					fieldOptions[fieldIndex]?.options?.saveFiles !== attributes.saveFiles ||
-					fieldOptions[fieldIndex]?.options?.maxFilesNumber !== attributes.maxFilesNumber?.toString()
+					fieldOptions[fieldIndex]?.options?.maxFilesNumber !== attributes.maxFilesNumber
 				) ||
 				-1 === fieldIndex
 			);
@@ -143,7 +147,7 @@ const Edit = ({
 					className="otter-form-input components-text-control__input"
 				/>
 				{
-					attributes.helpText && (
+					( attributes.helpText ) && (
 						<span
 							className="o-form-help"
 						>

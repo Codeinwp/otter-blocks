@@ -119,14 +119,14 @@ class Form_Pro_Features {
 							}
 
 							if ( ! $has_valid_extension ) {
-								$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_TYPE, array( __( 'File type not allowed', 'otter-blocks' ) ) );
+								$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_TYPE );
 								break;
 							}
 						}
 
 						$allowed_mime_types = get_allowed_mime_types();
 						if ( ! in_array( $mime_type, $allowed_mime_types, true ) ) {
-							$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_TYPE_WP, array( __( 'File type not allowed', 'otter-blocks' ) ) );
+							$form_data->set_error( \ThemeIsle\GutenbergBlocks\Integration\Form_Data_Response::ERROR_FILE_UPLOAD_TYPE_WP );
 							break;
 						}
 

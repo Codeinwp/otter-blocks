@@ -34,7 +34,7 @@ class Form_File_Block {
 		$label              = isset( $attributes['label'] ) ? $attributes['label'] : __( 'Select option', 'otter-blocks' );
 		$help_text          = isset( $attributes['helpText'] ) ? $attributes['helpText'] : '';
 		$is_required        = isset( $attributes['isRequired'] ) && boolval( $attributes['isRequired'] );
-		$has_multiple_files = isset( $attributes['multipleFiles'] ) && boolval( $attributes['multipleFiles'] );
+		$has_multiple_files = isset( $attributes['multipleFiles'] ) && boolval( $attributes['multipleFiles'] ) && ( ! isset( $attributes['maxFilesNumber'] ) || intval( $attributes['maxFilesNumber'] ) > 1 );
 		$allowed_files      = isset( $attributes['allowedFileTypes'] ) ? implode( ',', $attributes['allowedFileTypes'] ) : '';
 
 		$output = '<div class="' . $class_names . '" id="' . $id . '">';
@@ -43,10 +43,9 @@ class Form_File_Block {
 
 		$output .= '<input type="file" class="otter-form-input" name="field-'
 		. $id . '" '
-		. ( $is_required ? 'required' : '' ) . ' '
-		. ( $has_multiple_files ? 'multiple' : '' )
+		. ( $is_required ? 'required ' : '' ) . ' '
+		. ( $has_multiple_files ? 'multiple ' : '' )
 		. ( isset( $attributes['allowedFileTypes'] ) ? ( ' accept="' . $allowed_files ) . '"' : '' )
-		. ( isset( $attributes['multipleFiles'] ) ? ' multiple' : '' )
 		. ( isset( $attributes['maxFileSize'] ) ? ( ' data-max-file-size="' . $attributes['maxFileSize'] . '"' ) : '' )
 		. ( isset( $attributes['fieldOptionName'] ) ? ( ' data-field-option-name="' . $attributes['fieldOptionName'] . '"' ) : '' )
 		. ( ( isset( $attributes['multipleFiles'] ) && isset( $attributes['maxFilesNumber'] ) ) ? ( ' data-max-files-number="' . $attributes['maxFilesNumber'] . '"' ) : '' )
@@ -54,8 +53,6 @@ class Form_File_Block {
 
 		$output .= '<span class="o-form-help">'
 		. $help_text
-		. ( isset( $attributes['multipleFiles'] ) && isset( $attributes['maxFilesNumber'] ) ? ( __( 'Max files: ', 'otter-blocks' ) . $attributes['maxFilesNumber'] ) . '. ' : '' )
-		. ( isset( $attributes['maxFileSize'] ) ? ( __( 'Max file size: ', 'otter-blocks' ) . $attributes['maxFileSize'] ) . 'MB' : '' )
 		. '</span>';
 
 		$output .= '</div>';

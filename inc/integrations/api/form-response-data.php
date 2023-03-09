@@ -359,7 +359,7 @@ class Form_Data_Response {
 				break;
 
 			case self::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED:
-				$messages[] = ( __( 'The email was already registered.', 'otter-blocks' ) );
+				$messages[] = ( __( 'The user with this email was already registered.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_PROVIDER_INVALID_EMAIL:
@@ -387,6 +387,9 @@ class Form_Data_Response {
 				break;
 
 			case self::ERROR_FILE_UPLOAD_TYPE_WP:
+				$messages[] = ( __( 'The file type is not allowed by host provider.', 'otter-blocks' ) );
+				break;
+
 			case self::ERROR_FILE_UPLOAD_TYPE:
 				$messages[] = ( __( 'The file type is not allowed.', 'otter-blocks' ) );
 				break;

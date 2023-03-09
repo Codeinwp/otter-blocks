@@ -29,8 +29,8 @@ const FormFileInspector = ( Template, {
 			<TextControl
 				label={ __( 'Max File Size in MB', 'otter-blocks' ) }
 				type="number"
-				value={ attributes.maxFileSize }
-				onChange={ maxFileSize => setAttributes({ maxFileSize }) }
+				value={ parseInt( attributes.maxFileSize ) }
+				onChange={ maxFileSize => setAttributes({ maxFileSize: maxFileSize?.toString() }) }
 				help={ __( 'You may need to contact your hosting provider to increase file sizes.', 'otter-blocks' ) }
 			/>
 
@@ -106,8 +106,8 @@ const FormFileInspector = ( Template, {
 					<TextControl
 						label={ __( 'Maximum number of files', 'otter-blocks' ) }
 						type="number"
-						value={ attributes.maxFilesNumber }
-						onChange={ maxFilesNumber => setAttributes({ maxFilesNumber }) }
+						value={ parseInt( attributes.maxFilesNumber ) ?? 10 }
+						onChange={ maxFilesNumber => setAttributes({ maxFilesNumber: maxFilesNumber?.toString() }) }
 					/>
 				)
 			}
