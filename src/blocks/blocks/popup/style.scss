@@ -99,6 +99,7 @@ $base-index: 99999 !default;
 		max-height: 75vh;
 		overflow: auto;
 		height: 100%;
+		min-height: 70px; // For Safari.
 
 		@media (max-width: 600px) {
 			padding-top: 20px;
