@@ -248,7 +248,7 @@ class Form_Server {
 				do_action( 'otter_form_after_submit', $form_data );
 			} else {
 				$res->set_code( Form_Data_Response::ERROR_BOT_DETECTED );
-			}       
+			}
 		} catch ( Exception $e ) {
 			$res->set_code( Form_Data_Response::ERROR_RUNTIME_ERROR );
 			$res->add_reason( $e->getMessage() );
@@ -332,6 +332,16 @@ class Form_Server {
 	}
 
 	/**
+	 * Send autoresponder email to the subscriber.
+	 *
+	 * @param Form_Data_Request $form_data Data from request body.
+	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
+	 * @since 2.0.3
+	 */
+	public function send_autoresponder( $form_data ) {
+	}
+
+	/**
 	 * Make additional changes before using the main handler function for submitting.
 	 *
 	 * @param Form_Data_Request $form_data The form request data.
@@ -367,6 +377,11 @@ class Form_Server {
 			'default' !== $form_data->get_form_options()->get_provider()
 		) {
 			$this->send_default_email( $form_data );
+		}
+
+		// Send an autoresponder email to the subscriber.
+		if ( $form_data->get_form_options()->has_autoresponder() ) {
+			$this->send_autoresponder( $form_data );
 		}
 	}
 

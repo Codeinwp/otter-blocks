@@ -3,7 +3,7 @@
  */
 import classnames from 'classnames';
 
-import { get } from 'lodash';
+import { get, isEqual } from 'lodash';
 
 import hash from 'object-hash';
 
@@ -253,7 +253,8 @@ const Edit = ({
 			listId: wpOptions?.integration?.listId,
 			action: wpOptions?.integration?.action,
 			hasCaptcha: wpOptions?.hasCaptcha,
-			autoresponder: wpOptions?.autoresponder
+			autoresponderSubject: wpOptions?.autoresponder?.subject,
+			autoresponderBody: wpOptions?.autoresponder?.body
 		});
 	};
 
@@ -316,7 +317,7 @@ const Edit = ({
 						emails[index].fromName !== formOptions.fromName ||
 						emails[index].cc !== formOptions.cc ||
 						emails[index].bcc !== formOptions.bcc ||
-						emails[index].autoresponder !== formOptions.autoresponder
+						! isEqual( emails[index].autoresponder, formOptions.autoresponder )
 					);
 
 					// Update the values

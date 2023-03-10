@@ -108,9 +108,9 @@ class Form_Settings_Data {
 	/**
 	 * The autoresponder recipients.
 	 *
-	 * @var string
+	 * @var array
 	 */
-	private $autoresponder = '';
+	private $autoresponder = array();
 
 	/**
 	 * The default constructor.
@@ -382,6 +382,16 @@ class Form_Settings_Data {
 	}
 
 	/**
+	* Check if it has an autoresponder.
+	*
+	* @return bool
+	* @since 2.0.3
+	*/
+	public function has_autoresponder() {
+		return isset( $this->autoresponder ) && ! empty( $this->autoresponder );
+	}
+
+	/**
 	 * Set the redirect link.
 	 *
 	 * @param string $redirect_link The redirect link.
@@ -610,7 +620,7 @@ class Form_Settings_Data {
 	/**
 	 * Set the email bcc.
 	 *
-	 * @param string $autoresponder The email bcc.
+	 * @param array $autoresponder The email bcc.
 	 * @return Form_Settings_Data
 	 */
 	public function set_autoresponder( $autoresponder ) {

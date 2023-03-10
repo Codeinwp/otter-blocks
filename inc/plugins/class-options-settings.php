@@ -294,6 +294,12 @@ class Options_Settings {
 							if ( isset( $item['bcc'] ) ) {
 								$item['bcc'] = sanitize_text_field( $item['bcc'] );
 							}
+							if ( isset( $item['autoresponder']['body'] ) ) {
+								$item['autoresponder']['body'] = sanitize_text_field( $item['autoresponder']['body'] );
+							}
+							if ( isset( $item['autoresponder']['subject'] ) ) {
+								$item['autoresponder']['subject'] = sanitize_text_field( $item['autoresponder']['subject'] );
+							}
 							if ( isset( $item['submitMessage'] ) ) {
 								$item['submitMessage'] = sanitize_text_field( $item['submitMessage'] );
 							}
@@ -354,7 +360,15 @@ class Options_Settings {
 									'type' => 'string',
 								),
 								'autoresponder' => array(
-									'type' => 'string',
+									'type'       => 'object',
+									'properties' => array(
+										'subject' => array(
+											'type' => 'string',
+										),
+										'body'    => array(
+											'type' => 'string',
+										),
+									)
 								),
 								'integration'   => array(
 									'type'       => 'object',

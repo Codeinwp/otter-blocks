@@ -329,15 +329,23 @@ const Inspector = ({
 							<ToolsPanelItem
 								hasValue={ () => undefined !== formOptions.autoresponder }
 								label={ __( 'Autoresponder', 'otter-blocks' ) }
-								onDeselect={ () => setFormOption({ autoresponder: '' }) }
+								onDeselect={ () => setFormOption({ autoresponder: {} }) }
 								isShownByDefault
 							>
+								<TextControl
+									label={ __( 'Autoresponder Subject', 'otter-blocks' ) }
+									placeholder={ __( 'Confirmation of your subscription', 'otter-blocks' ) }
+									value={ formOptions.autoresponder?.subject }
+									onChange={ subject => setFormOption({ autoresponder: { ...formOptions.autoresponder, subject }}) }
+									help={ __( 'Enter the subject of the autoresponder email.', 'otter-blocks' ) }
+								/>
+
 								<TextareaControl
-									label={ __( 'Autoresponder', 'otter-blocks' ) }
+									label={ __( 'Autoresponder Body', 'otter-blocks' ) }
 									placeholder={ __( 'Thank you for subscribing!', 'otter-blocks' ) }
-									value={ formOptions.autoresponder }
-									onChange={ autoresponder => setFormOption({ autoresponder }) }
-									help={ __( 'Send an email to the user who submitted the form.', 'otter-blocks' ) }
+									value={ formOptions.autoresponder?.body }
+									onChange={ body => setFormOption({ autoresponder: { ...formOptions.autoresponder, body }}) }
+									help={ __( 'Enter the body of the autoresponder email.', 'otter-blocks' ) }
 								/>
 							</ToolsPanelItem>
 
