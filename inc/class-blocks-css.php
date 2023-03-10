@@ -100,7 +100,13 @@ class Blocks_CSS {
 				return;
 			}
 
-			if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() && current_theme_supports( 'block-templates' ) ) {
+			if (
+				! defined( 'OTTER_BLOCKS_VERSION' ) &&
+				get_queried_object() === null &&
+				function_exists( 'wp_is_block_theme' ) &&
+				wp_is_block_theme() &&
+				current_theme_supports( 'block-templates' )
+			) {
 				global $_wp_current_template_content;
 				$blocks = parse_blocks( $_wp_current_template_content );
 			} else {

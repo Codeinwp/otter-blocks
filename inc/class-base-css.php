@@ -352,10 +352,10 @@ class Base_CSS {
 			} else {
 				$parser = new Parser( file_get_contents( OTTER_BLOCKS_PATH . '/build/animation/index.css' ) ); // phpcs:ignore WordPressVIPMinimum.Performance.FetchingRemoteData.FileGetContentsUnknown
 			}
-	
+
 			$content = $parser->parse()->getContents();
 
-			set_transient( 'otter_animations_parsed', $content, MONTH_IN_SECONDS ); 
+			set_transient( 'otter_animations_parsed', $content, MONTH_IN_SECONDS );
 		}
 
 		$format = OutputFormat::createCompact();
@@ -369,7 +369,7 @@ class Base_CSS {
 				}
 				continue;
 			}
-		
+
 			/*
 			 * This is used to get the reduced-motion animation styles.
 			 */
@@ -377,7 +377,7 @@ class Base_CSS {
 				if ( false === in_array( $rule->atRuleArgs(), array( '(prefers-reduced-motion:reduce),print', 'screen' ) ) ) {
 					continue;
 				}
-		
+
 				$style .= $rule->render( $format );
 				continue;
 			}
