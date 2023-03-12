@@ -117,7 +117,8 @@ const Edit = ({
 		apiKey: undefined,
 		cc: undefined,
 		bcc: undefined,
-		autoresponder: undefined
+		autoresponderSubject: undefined,
+		autoresponderBody: undefined
 	});
 
 	const {
@@ -317,7 +318,8 @@ const Edit = ({
 						emails[index].fromName !== formOptions.fromName ||
 						emails[index].cc !== formOptions.cc ||
 						emails[index].bcc !== formOptions.bcc ||
-						! isEqual( emails[index].autoresponder, formOptions.autoresponder )
+						emails[index].autoresponder.subject !== formOptions.autoresponderSubject ||
+						emails[index].autoresponder.body !== formOptions.autoresponderBody
 					);
 
 					// Update the values
@@ -329,7 +331,7 @@ const Edit = ({
 					emails[index].fromName = formOptions.fromName;
 					emails[index].cc = formOptions.cc;
 					emails[index].bcc = formOptions.bcc;
-					emails[index].autoresponder = formOptions.autoresponder;
+					emails[index].autoresponder = { subject: formOptions.autoresponderSubject, body: formOptions.autoresponderBody };
 					isMissing = false;
 				}
 			});
