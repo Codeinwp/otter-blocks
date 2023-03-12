@@ -2,6 +2,8 @@
  * WordPress dependencies.
  */
 import { __ } from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
+import { select } from '@wordpress/data';
 
 import {
 	isEqual,
@@ -18,7 +20,7 @@ import {
 	PanelBody
 } from '@wordpress/components';
 
-import { Fragment } from '@wordpress/element';
+import { Fragment, useEffect, useState } from '@wordpress/element';
 
 import { applyFilters } from '@wordpress/hooks';
 
@@ -31,7 +33,7 @@ import options from './options.js';
 
 import Notice from './../../../components/notice/index.js';
 
-import { setUtm } from '../../../helpers/helper-functions.js';
+import { getQueryStringFromObject, setUtm } from '../../../helpers/helper-functions.js';
 
 let hasSettingsPanel = [
 	'postExcerpt',
@@ -61,6 +63,21 @@ const Fields = ({
 	changeType,
 	onRemove
 }) => {
+	const [ preview, setPreview ] = useState();
+
+	useEffect( () => {
+		const context = select( 'core/editor' ).getCurrentPostId();
+		const { type } = attributes;
+
+		if ( 'postContent' === type ) {
+			setPreview( undefined );
+		} else {
+			apiFetch({ path: 'otter/v1/dynamic/preview/?' + getQueryStringFromObject({ context, type }) }).then( data => {
+				setPreview( data ? data : undefined );
+			});
+		}
+	}, [ attributes.type ]);
+
 	hasSettingsPanel = applyFilters( 'otter.dynamicContent.text.hasSettingsPanel', hasSettingsPanel );
 
 	const dynamicOptions = applyFilters( 'otter.dynamicContent.text.options', options );
@@ -103,6 +120,15 @@ const Fields = ({
 
 					{ 'postContent' === attributes.type && <p>{ __( 'Post Content can cause an infinite loop when used inside Post Content itself.', 'otter-blocks' ) }</p> }
 				</BaseControl>
+
+				{ preview && (
+					<div className="o-dynamic-modal__preview">
+						<div className="o-dynamic-modal__preview__content">
+							{ preview }
+						</div>
+						<div className="o-dynamic-modal__preview__description">{ __( 'Dynamic Value preview', 'otter-blocks' ) }</div>
+					</div>
+				)}
 
 				{ ( ! Boolean( window.themeisleGutenberg.hasPro ) ) && (
 					<Notice
