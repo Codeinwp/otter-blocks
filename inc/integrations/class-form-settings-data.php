@@ -382,11 +382,11 @@ class Form_Settings_Data {
 	}
 
 	/**
-	* Check if it has an autoresponder.
-	*
-	* @return bool
-	* @since 2.0.3
-	*/
+	 * Check if it has an autoresponder.
+	 *
+	 * @return bool
+	 * @since 2.0.3
+	 */
 	public function has_autoresponder() {
 		return isset( $this->autoresponder ) && ! empty( $this->autoresponder );
 	}
@@ -615,6 +615,15 @@ class Form_Settings_Data {
 	public function set_bcc( $bcc ) {
 		$this->bcc = $bcc;
 		return $this;
+	}
+
+	/**
+	 * Get the autoresponder.
+	 *
+	 * @return array
+	 */
+	public function get_autoresponder() {
+		return $this->autoresponder;
 	}
 
 	/**

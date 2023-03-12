@@ -368,7 +368,7 @@ class Options_Settings {
 										'body'    => array(
 											'type' => 'string',
 										),
-									)
+									),
 								),
 								'integration'   => array(
 									'type'       => 'object',

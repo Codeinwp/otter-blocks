@@ -339,6 +339,40 @@ class Form_Server {
 	 * @since 2.0.3
 	 */
 	public function send_autoresponder( $form_data ) {
+		$res = new Form_Data_Response();
+
+		$to            = $this->get_email_from_form_input( $form_data );
+		$from          = sanitize_email( get_site_option( 'admin_email' ) );
+		$autoresponder = $form_data->get_form_options()->get_autoresponder();
+
+		if ( $form_data->payload_has_field( 'formOption' ) ) {
+			$option_name = $form_data->get_payload_field( 'formOption' );
+			$form_emails = get_option( 'themeisle_blocks_form_emails' );
+
+			foreach ( $form_emails as $form ) {
+				if ( isset( $form['form'] ) && $form['form'] === $option_name && isset( $form['email'] ) && '' !== $form['email'] ) {
+					$from = sanitize_email( $form['email'] );
+				}
+			}
+
+			if ( empty( $to ) ) {
+				$from = sanitize_email( get_site_option( 'admin_email' ) );
+			}
+		}
+
+		$headers = array( 'Content-Type: text/html', 'From: ' . $from );
+
+		// phpcs:ignore
+		$res->set_success( wp_mail( $to, $autoresponder['subject'], $autoresponder['body'], $headers ) );
+		if ( $res->is_success() ) {
+			$res->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
+		} else {
+			$res->set_code( Form_Data_Response::ERROR_EMAIL_NOT_SEND );
+		}
+
+		$form_options = $form_data->get_form_options();
+		$res->add_values( $form_options->get_submit_data() );
+		return $res->build_response();
 	}
 
 	/**
