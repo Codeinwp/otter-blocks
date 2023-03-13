@@ -17,12 +17,15 @@ import {
 	ExternalLink,
 	SelectControl,
 	TextControl,
-	PanelBody
+	PanelBody,
+	Spinner
 } from '@wordpress/components';
 
 import { Fragment, useEffect, useState } from '@wordpress/element';
 
 import { applyFilters } from '@wordpress/hooks';
+
+import classnames from 'classnames';
 
 import moment from 'moment';
 
@@ -64,17 +67,26 @@ const Fields = ({
 	onRemove
 }) => {
 	const [ preview, setPreview ] = useState();
+	const [ isLoading, setLoading ] = useState( false );
 
 	useEffect( () => {
 		const context = select( 'core/editor' ).getCurrentPostId();
 		const { type } = attributes;
 
-		if ( 'postContent' === type ) {
-			setPreview( undefined );
+		if ( !! attributes.type && 'none' !== attributes.type ) {
+			setLoading( true );
+			apiFetch({ path: 'otter/v1/dynamic/preview/?' + getQueryStringFromObject({ context, type }) })
+				.then( data => {
+					setPreview( data );
+				})
+				.catch( () => {
+					setPreview( undefined );
+				})
+				.finally( () => {
+					setLoading( false );
+				});
 		} else {
-			apiFetch({ path: 'otter/v1/dynamic/preview/?' + getQueryStringFromObject({ context, type }) }).then( data => {
-				setPreview( data ? data : undefined );
-			});
+			setPreview( undefined );
 		}
 	}, [ attributes.type ]);
 
@@ -121,10 +133,13 @@ const Fields = ({
 					{ 'postContent' === attributes.type && <p>{ __( 'Post Content can cause an infinite loop when used inside Post Content itself.', 'otter-blocks' ) }</p> }
 				</BaseControl>
 
-				{ preview && (
+				{ ( preview !== undefined || isLoading ) && (
 					<div className="o-dynamic-modal__preview">
-						<div className="o-dynamic-modal__preview__content">
-							{ preview }
+						<div className={ classnames( 'o-dynamic-modal__preview__content', { 'is-loading': isLoading })}>
+							{ isLoading ?
+								<Spinner /> :
+								preview || __( 'No preview available.', 'otter-blocks' )
+							}
 						</div>
 						<div className="o-dynamic-modal__preview__description">{ __( 'Dynamic Value preview', 'otter-blocks' ) }</div>
 					</div>
