@@ -13,6 +13,7 @@ import {
 	Rect,
 	SVG
 } from '@wordpress/primitives';
+import { Circle } from '@wordpress/components';
 
 export const otterIcon = ({ className }) => {
 	return (
@@ -616,4 +617,41 @@ export const alignTop = (
 	<SVG xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 		<Path d="M9 20h6V9H9v11zM4 4v1.5h16V4H4z" />
 	</SVG>
+);
+
+export const popupScratch = (
+	<SVG width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<Rect x="1.5" y="8.5" width="45" height="31" rx="0.5" stroke="#2271B1" fill="none"/>
+		<Rect x="42" y="11" width="2" height="2" rx="1" fill="#2271B1"/>
+	</SVG>
+);
+
+export const popupWithForm = (
+	<SVG width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+		<Rect x="1.5" y="8.5" width="45" height="31" rx="0.5" stroke="#2271B1" fill="none"/>
+		<Rect x="42" y="11" width="2" height="2" rx="1" fill="#2271B1"/>
+		<Rect x="16.5" y="14.5" width="15" height="19" rx="0.5" stroke="#2271B1" fill="none"/>
+		<Rect x="18.5" y="16.5" width="11" height="3" rx="0.5" stroke="#2271B1" fill="none"/>
+		<Rect x="18.5" y="22.5" width="11" height="2" rx="0.5" stroke="#2271B1" fill="none"/>
+		<Rect x="18.5" y="26.5" width="11" height="5" rx="0.5" stroke="#2271B1" fill="none"/>
+	</SVG>
+
+);
+
+export const popupWithImageAndText = (
+	<SVG width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" fill="none">
+		<Circle cx="37.5" cy="21.5" r="2" stroke="#2271B1"/>
+		<Path d="M29 28.9V19.2261C29 19.1392 29.103 19.0937 29.1673 19.1521L34.5 24L39.8086 28.826C39.8762 28.8875 39.8327 29 39.7413 29H34.5H29.1C29.0448 29 29 28.9552 29 28.9Z" stroke="#2271B1" fill="none"/>
+		<mask id="path-3-inside-1_3034_34948" fill="white">
+			<Path d="M25 16C25 15.4477 25.4477 15 26 15H42C42.5523 15 43 15.4477 43 16V32C43 32.5523 42.5523 33 42 33H26C25.4477 33 25 32.5523 25 32V16Z"/>
+		</mask>
+		<Path d="M24 16C24 14.8954 24.8954 14 26 14H42C43.1046 14 44 14.8954 44 16H42H26H24ZM44 32C44 33.1046 43.1046 34 42 34H26C24.8954 34 24 33.1046 24 32H26H42H44ZM26 34C24.8954 34 24 33.1046 24 32V16C24 14.8954 24.8954 14 26 14V16V32V34ZM42 14C43.1046 14 44 14.8954 44 16V32C44 33.1046 43.1046 34 42 34V32V16V14Z" fill="#2271B1" mask="url(#path-3-inside-1_3034_34948)"/>
+		<Path d="M5 18H21" stroke="#2271B1" stroke-linecap="round" fill="none"/>
+		<Path d="M5 22H21" stroke="#2271B1" stroke-linecap="round" fill="none"/>
+		<Path d="M5 26H21" stroke="#2271B1" stroke-linecap="round" fill="none"/>
+		<Path d="M5 30H13.8889" stroke="#2271B1" stroke-linecap="round" fill="none"/>
+		<Rect x="1.5" y="8.5" width="45" height="31" rx="0.5" stroke="#2271B1" fill="none"/>
+		<Rect x="42" y="11" width="2" height="2" rx="1" fill="#2271B1"/>
+	</SVG>
+
 );
