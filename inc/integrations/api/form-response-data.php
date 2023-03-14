@@ -22,19 +22,27 @@ class Form_Data_Response {
 	const SUCCESS_EMAIL_SEND      = '0';
 	const SUCCESS_USER_SUBSCRIBED = '1';
 
-	const ERROR_RUNTIME_ERROR = '10';
+	const ERROR_RUNTIME_ERROR                = '10';
+	const ERROR_FILE_UPLOAD                  = '11';
+	const ERROR_FILE_UPLOAD_TYPE             = '12';
+	const ERROR_FILE_UPLOAD_TYPE_WP          = '13';
+	const ERROR_FILE_UPLOAD_MAX_FILES_NUMBER = '14';
+	const ERROR_FILE_UPLOAD_MAX_SIZE         = '15';
 
 	// Request validation errors.
-	const ERROR_MISSING_DATA         = '101';
-	const ERROR_MISSING_CAPTCHA      = '102';
-	const ERROR_MISSING_NONCE        = '103';
-	const ERROR_MISSING_EMAIL        = '104';
-	const ERROR_FORM_ID_INVALID      = '105';
-	const ERROR_EMAIL_NOT_SEND       = '106';
-	const ERROR_MISSING_PROVIDER     = '107';
-	const ERROR_MISSING_API_KEY      = '108';
-	const ERROR_MISSING_MAIL_LIST_ID = '109';
-	const ERROR_BOT_DETECTED         = '110';
+	const ERROR_MISSING_DATA          = '101';
+	const ERROR_MISSING_CAPTCHA       = '102';
+	const ERROR_MISSING_NONCE         = '103';
+	const ERROR_MISSING_EMAIL         = '104';
+	const ERROR_FORM_ID_INVALID       = '105';
+	const ERROR_EMAIL_NOT_SEND        = '106';
+	const ERROR_MISSING_PROVIDER      = '107';
+	const ERROR_MISSING_API_KEY       = '108';
+	const ERROR_MISSING_MAIL_LIST_ID  = '109';
+	const ERROR_BOT_DETECTED          = '110';
+	const ERROR_FILES_METADATA_FORMAT = '111';
+
+
 
 	// Errors from external services.
 	const ERROR_PROVIDER_NOT_REGISTERED            = '201';
@@ -45,6 +53,7 @@ class Form_Data_Response {
 	const ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED = '206';
 	const ERROR_PROVIDER_INVALID_EMAIL             = '207';
 	const ERROR_PROVIDER_DUPLICATED_EMAIL          = '208';
+	const ERROR_PROVIDER_CREDENTIAL_ERROR          = '209';
 
 
 	/**
@@ -280,77 +289,118 @@ class Form_Data_Response {
 	 * @since 2.1.7
 	 */
 	public function process_error_code() {
-		switch ( $this->response['code'] ) {
+		$this->add_reason( self::get_error_code_message( $this->response['code'] ) );
+	}
+
+	/**
+	 * Get the error message based on the error code.
+	 *
+	 * @param int $error_code The error code.
+	 * @return string
+	 * @since 2.2.3
+	 */
+	public static function get_error_code_message( $error_code ) {
+		$messages = array();
+		switch ( $error_code ) {
 			case self::ERROR_MISSING_DATA:
-				$this->add_reason( __( 'Essential data is missing: invalid Form id or protection.', 'otter-blocks' ) );
+				$messages[] = ( __( 'Essential data is missing: invalid Form id or protection.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_MISSING_CAPTCHA:
-				$this->add_reason( __( 'Captcha token is missing.', 'otter-blocks' ) );
+				$messages[] = ( __( 'Captcha token is missing.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_MISSING_EMAIL:
-				$this->add_reason( __( 'Missing email field in form.', 'otter-blocks' ) );
+				$messages[] = ( __( 'Missing email field in form.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_MISSING_NONCE:
-				$this->add_reason( __( 'Missing CSRF protection in form.', 'otter-blocks' ) );
+				$messages[] = ( __( 'Missing CSRF protection in form.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_FORM_ID_INVALID:
-				$this->add_reason( __( 'Form ID is invalid.', 'otter-blocks' ) );
+				$messages[] = ( __( 'Form ID is invalid.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_EMAIL_NOT_SEND:
-				$this->add_reason( __( 'Email could not be send. Might be an error with the service.', 'otter-blocks' ) );
+				$messages[] = ( __( 'Email could not be send. Might be an error with the service.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_PROVIDER_INVALID_KEY:
-				$this->add_reason( __( 'Invalid service authentication credentials.', 'otter-blocks' ) );
+				$messages[] = ( __( 'Invalid service authentication credentials.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_PROVIDER_NOT_REGISTERED:
-				$this->add_reason( __( 'The 3rd-party service is not registered.', 'otter-blocks' ) );
+				$messages[] = ( __( 'The 3rd-party service is not registered.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_PROVIDER_SUBSCRIBE_ERROR:
-				$this->add_reason( __( 'Error received from service when subscribing the user.', 'otter-blocks' ) );
+				$messages[] = ( __( 'Error received from service when subscribing the user.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_MISSING_PROVIDER:
-				$this->add_reason( __( 'Provider settings are missing.', 'otter-blocks' ) );
+				$messages[] = ( __( 'Provider settings are missing.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_MISSING_API_KEY:
-				$this->add_reason( __( 'API Key is missing from settings.', 'otter-blocks' ) );
+				$messages[] = ( __( 'API Key is missing from settings.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_MISSING_MAIL_LIST_ID:
-				$this->add_reason( __( 'API Key is missing.', 'otter-blocks' ) );
+				$messages[] = ( __( 'API Key is missing.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_INVALID_CAPTCHA_TOKEN:
-				$this->add_reason( __( 'The reCaptcha token is invalid.', 'otter-blocks' ) );
+				$messages[] = ( __( 'The reCaptcha token is invalid.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_PROVIDER_INVALID_API_KEY_FORMAT:
-				$this->add_reason( __( 'The API key format is invalid.', 'otter-blocks' ) );
+				$messages[] = ( __( 'The API key format is invalid.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_PROVIDER_CLIENT_ALREADY_REGISTERED:
-				$this->add_reason( __( 'The email was already registered.', 'otter-blocks' ) );
+				$messages[] = ( __( 'The user with this email was already registered.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_PROVIDER_INVALID_EMAIL:
-				$this->add_reason( __( 'The email address is invalid.', 'otter-blocks' ) );
+				$messages[] = ( __( 'The email address is invalid.', 'otter-blocks' ) );
 				break;
 
 			case self::ERROR_PROVIDER_DUPLICATED_EMAIL:
-				$this->add_reason( __( 'The email was already registered.', 'otter-blocks' ) );
+				$messages[] = ( __( 'The email was already registered.', 'otter-blocks' ) );
 				break;
+
 			case self::ERROR_BOT_DETECTED:
-				$this->add_reason( __( 'Failed to validate the data. Please wait 5 seconds and try again.', 'otter-blocks' ) );
-				break;  
+				$messages[] = ( __( 'Failed to validate the data. Please wait 5 seconds and try again.', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_FILES_METADATA_FORMAT:
+				$messages[] = ( __( 'The files metadata is invalid.', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_FILE_UPLOAD:
+				$messages[] = ( __( 'The files could not be uploaded.', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_PROVIDER_CREDENTIAL_ERROR:
+				$messages[] = ( __( 'The Otter From Block service credentials are invalid.', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_FILE_UPLOAD_TYPE_WP:
+				$messages[] = ( __( 'The file type is not allowed by host provider.', 'otter-blocks' ) );
+				break;
+
+			case self::ERROR_FILE_UPLOAD_TYPE:
+				$messages[] = ( __( 'The file type is not allowed.', 'otter-blocks' ) );
+				break;
+			case self::ERROR_FILE_UPLOAD_MAX_FILES_NUMBER:
+				$messages[] = ( __( 'The number of files is too big.', 'otter-blocks' ) );
+				break;
+			case self::ERROR_FILE_UPLOAD_MAX_SIZE:
+				$messages[] = ( __( 'The file size exceed the limit.', 'otter-blocks' ) );
+				break;
 		}
+
+		return implode( ' ', $messages );
 	}
 }

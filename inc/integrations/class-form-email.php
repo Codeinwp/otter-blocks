@@ -106,7 +106,7 @@ class Form_Email {
 		<hr/>',
 			esc_html( __( 'Content Form submission from ', 'otter-blocks' ) ),
 			esc_url( get_site_url() ),
-			get_bloginfo( 'name', 'display' ) 
+			get_bloginfo( 'name', 'display' )
 		);
 	}
 
@@ -120,13 +120,25 @@ class Form_Email {
 	public function build_body( $form_data ) {
 		$email_form_content = $form_data->get_form_inputs();
 		$content            = '';
+		$attachment_links   = '';
+
 		foreach ( $email_form_content as $input ) {
 			$content .= sprintf( '<tr><td><strong>%s:</strong> %s</td></tr>', $input['label'], $input['value'] );
 		}
+
+		if ( $form_data->has_files_loaded_to_media_library() ) {
+			$attachment_links = '<tr><td><strong>' . esc_html__( 'Files loaded to media library', 'otter-blocks' ) . ':</strong> ';
+			foreach ( $form_data->get_files_loaded_to_media_library() as $file ) {
+				$attachment_links .= '<a href="' . esc_url( wp_get_attachment_url( $file['file_id'] ) ) . '">' . esc_html( $file['file_name'] ) . '</a>, ';
+			}
+			$attachment_links .= '</td></tr>';
+		}
+
 		return "
 		<table>
 		<tbody>
 		$content
+		$attachment_links
 		</tbody>
 			<tfoot>
 			<tr>
@@ -224,7 +236,7 @@ class Form_Email {
 			esc_html__( 'Mail From: ', 'otter-blocks' ),
 			sanitize_email( get_site_option( 'admin_email' ) ),
 			esc_html( __( 'This a test email. If you receive this email, your SMTP set-up is working for sending emails via Form Block.', 'otter-blocks' ) ),
-			$form_data->get_payload_field( 'site' ) 
+			$form_data->get_payload_field( 'site' )
 		);
 	}
 

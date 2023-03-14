@@ -12,7 +12,7 @@ import {
 	TextControl,
 	ToggleControl
 } from '@wordpress/components';
-import { HideFieldLabelToggle, switchFormFieldTo } from '../common';
+import { fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
 import { FormContext } from '../edit';
 import { useContext } from '@wordpress/element';
 
@@ -42,44 +42,7 @@ const Inspector = ({
 				<SelectControl
 					label={ __( 'Field Type', 'otter-blocks' ) }
 					value={ 'textarea' }
-					options={ [
-						{
-							label: __( 'Checkbox', 'otter-blocks' ),
-							value: 'checkbox'
-						},
-						{
-							label: __( 'Date', 'otter-blocks' ),
-							value: 'date'
-						},
-						{
-							label: __( 'Email', 'otter-blocks' ),
-							value: 'email'
-						},
-						{
-							label: __( 'Number', 'otter-blocks' ),
-							value: 'number'
-						},
-						{
-							label: __( 'Radio', 'otter-blocks' ),
-							value: 'radio'
-						},
-						{
-							label: __( 'Select', 'otter-blocks' ),
-							value: 'select'
-						},
-						{
-							label: __( 'Text', 'otter-blocks' ),
-							value: 'text'
-						},
-						{
-							label: __( 'Textarea', 'otter-blocks' ),
-							value: 'textarea'
-						},
-						{
-							label: __( 'Url', 'otter-blocks' ),
-							value: 'url'
-						}
-					] }
+					options={ fieldTypesOptions }
 					onChange={ type => {
 						if ( 'textarea' === type ) {
 							return;

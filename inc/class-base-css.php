@@ -89,6 +89,7 @@ class Base_CSS {
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_Input_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_Textarea_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_Multiple_Choice_CSS',
+			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Form_File_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Flip_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Progress_Bar_CSS',
 			'\ThemeIsle\GutenbergBlocks\CSS\Blocks\Popup_CSS',
