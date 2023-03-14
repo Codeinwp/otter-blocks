@@ -155,11 +155,13 @@
 			border: 1px solid #e2e4e7;
 			border-radius: 10px;
 
-			.components-panel__body-toggle {
-				border-bottom: 1px solid #d6e2ed;
+			&.is-opened {
+				.components-panel__body-toggle {
+					border-bottom: 1px solid #d6e2ed;
 
-				&:hover {
-					border-bottom: 1px solid #d6e2ed !important;
+					&:hover {
+						border-bottom: 1px solid #d6e2ed !important;
+					}
 				}
 			}
 
