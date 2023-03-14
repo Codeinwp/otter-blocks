@@ -84,6 +84,32 @@ o-dynamic-link {
 		padding: 0 24px;
 		margin: 0;
 	}
+
+	&__preview {
+		&__content {
+			padding: 15px;
+			background-color: #F3F3F3;
+			border-radius: 4px;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			overflow: hidden;
+
+			&.is-loading {
+				display: flex;
+				justify-content: center;
+			}
+
+			.components-spinner {
+				margin: 0;
+			}
+		}
+
+		&__description {
+			font-style: italic;
+			font-size: 11px;
+			margin-top: 5px;
+		}
+	}
 }
 
 .o-dynamic-popover {
