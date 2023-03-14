@@ -179,6 +179,10 @@ $base-index: 99999 !default;
 		}
 	}
 
+	&> .block-editor-block-variation-picker .block-editor-block-variation-picker__variations .components-button {
+		box-shadow: unset;
+		margin-bottom: 0px;
+	}
 }
 
 .o-lock-body {
