@@ -65,6 +65,7 @@ class Main {
 			'\ThemeIsle\OtterPro\Plugins\Posts_ACF_Integration',
 			'\ThemeIsle\OtterPro\Plugins\Review_Woo_Integration',
 			'\ThemeIsle\OtterPro\Plugins\WooCommerce_Builder',
+			'\ThemeIsle\OtterPro\Plugins\Form_Pro_Features',
 			'\ThemeIsle\OtterPro\Server\Dashboard_Server',
 			'\ThemeIsle\OtterPro\Server\Filter_Blocks_Server',
 			'\ThemeIsle\OtterPro\Server\Live_Search_Server',
@@ -177,7 +178,7 @@ class Main {
 			$asset_file['version'],
 			true
 		);
-	
+
 		wp_set_script_translations( 'otter-pro', 'otter-pro' );
 
 		wp_localize_script(
