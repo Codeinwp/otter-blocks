@@ -338,6 +338,13 @@ class Registration {
 			}
 		);
 
+		add_action(
+			'wp_footer',
+			function() {
+				$this->enqueue_dependencies();
+			}
+		);
+
 		$has_widgets = false;
 
 		foreach ( $wp_registered_sidebars as $key => $sidebar ) {
