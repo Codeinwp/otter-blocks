@@ -62,15 +62,15 @@ registerBlockType( name, {
 			'attributes': {
 				'minWidth': 900,
 				'trigger': 'onLoad',
-				'wait': 3,
+				'wait': 1,
 				'scroll': 75,
 				'showClose': false,
 				'outsideClose': true,
 				'anchorClose': false,
 				'recurringClose': false,
-				'backgroundColor': 'var(--nv-site-bg)',
+				'backgroundColor': '#ffffff',
 				'closeColor': 'var(--nv-text-color)',
-				'overlayColor': 'var(--nv-dark-bg)',
+				'overlayColor': '#000000',
 				'overlayOpacity': 95,
 				'paddingMobile': {
 					'top': '8px',
@@ -218,7 +218,6 @@ registerBlockType( name, {
 										'tag': 'p',
 										'alignTablet': 'left',
 										'alignMobile': 'left',
-										'headingColor': 'var(--nv-primary-accent)',
 										'fontSize': '12px',
 										'fontSizeTablet': 16,
 										'fontSizeMobile': 16,
@@ -230,9 +229,7 @@ registerBlockType( name, {
 										'textShadowBlur': 5,
 										'textShadowHorizontal': 0,
 										'textShadowVertical': 0,
-										'paddingTop': 0,
-										'hasCustomCSS': false,
-										'customCSS': null
+										'paddingTop': 0
 									}
 								},
 								{
@@ -363,12 +360,12 @@ registerBlockType( name, {
 			'scope': [ 'block' ],
 			'attributes': {
 				'trigger': 'onLoad',
-				'wait': 3,
+				'wait': 1,
 				'showClose': true,
 				'outsideClose': true,
 				'anchorClose': false,
 				'recurringClose': false,
-				'backgroundColor': 'var(--nv-light-bg)',
+				'backgroundColor': '#ffffff',
 				'closeColor': 'var(--nv-text-color)',
 				'lockScrolling': false,
 				'padding': {
@@ -386,7 +383,7 @@ registerBlockType( name, {
 					'left': '5px',
 					'right': '5px'
 				},
-				'borderColor': 'var(--nv-primary-accent)',
+				'borderColor': '#ed6f57',
 				'width': '540px',
 				'closeButtonType': 'outside',
 				'boxShadow': {
@@ -439,8 +436,6 @@ registerBlockType( name, {
 						'submitLabel': 'Send me the survey',
 						'submitMessageColor': 'var(--nv-c-1)',
 						'submitMessageErrorColor': 'var(--nv-c-2)',
-						'submitBackgroundColor': 'var(--nv-primary-accent)',
-						'submitColor': 'var(--nv-text-dark-bg)',
 						'submitStyle': 'full'
 					},
 					'innerBlocks': [
