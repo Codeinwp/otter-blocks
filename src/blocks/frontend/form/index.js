@@ -147,8 +147,6 @@ function validateInputs( form ) {
 
 	const inputFields = getFormFieldInputs( form );
 
-	console.log( inputFields );
-
 	for ( const field of inputFields ) {
 		if ( field.classList.contains( 'wp-block-themeisle-blocks-form-input' ) ) {
 			const input = field.querySelector( 'input' );
