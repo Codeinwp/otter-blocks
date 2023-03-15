@@ -329,6 +329,15 @@ class Registration {
 			}
 		}
 
+		add_filter(
+			'the_content',
+			function ( $content ) {
+				$this->enqueue_dependencies();
+
+				return $content;
+			}
+		);
+
 		add_action(
 			'wp_footer',
 			function() {
