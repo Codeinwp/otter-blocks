@@ -24,7 +24,6 @@ import { fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../c
 import { FormContext } from '../edit';
 
 const ProPreview = ({ attributes }) => {
-	const setAttributes = () => {};
 
 	return (
 		<Fragment>

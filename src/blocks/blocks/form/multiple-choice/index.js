@@ -79,6 +79,16 @@ registerBlockType( name, {
 						...attrs
 					});
 				}
+			},
+			{
+				type: 'block',
+				blocks: [ 'themeisle-blocks/form-file' ],
+				transform: ( attributes ) => {
+					const attrs = omit( attributes, [ 'type' ]);
+					return createBlock( 'themeisle-blocks/form-file', {
+						...attrs
+					});
+				}
 			}
 		]
 	}

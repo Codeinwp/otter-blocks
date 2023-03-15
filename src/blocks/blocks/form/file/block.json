@@ -45,7 +45,8 @@
 			"default": [ "image/*", "audio/*", "video/*" ]
 		},
 		"saveFiles": {
-			"type": "string"
+			"type": "string",
+			"default": "media-library"
 		},
 		"multipleFiles": {
 			"type": "boolean"

@@ -123,7 +123,7 @@ class Form_Utils {
 	 * @since 2.2.3
 	 */
 	public static function generate_file_name( $original_name ) {
-		$original_name = str_replace( ' ', '_', $original_name );
+		$original_name = sanitize_file_name( $original_name );
 		$hash_code     = md5( $original_name . wp_rand() );
 		$hash_code     = substr( $hash_code, 0, 8 );
 
