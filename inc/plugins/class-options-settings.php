@@ -295,7 +295,7 @@ class Options_Settings {
 								$item['bcc'] = sanitize_text_field( $item['bcc'] );
 							}
 							if ( isset( $item['autoresponder']['body'] ) ) {
-								$item['autoresponder']['body'] = sanitize_text_field( $item['autoresponder']['body'] );
+								$item['autoresponder']['body'] = wp_kses( $item['autoresponder']['body'], $this::get_allowed_mail_HTML() );
 							}
 							if ( isset( $item['autoresponder']['subject'] ) ) {
 								$item['autoresponder']['subject'] = sanitize_text_field( $item['autoresponder']['subject'] );
@@ -477,6 +477,297 @@ class Options_Settings {
 		$post_type_object           = get_post_type_object( 'page' );
 		$post_type_object->template = array(
 			array( 'themeisle-blocks/advanced-columns', $attributes ),
+		);
+	}
+
+	/**
+	 * Get allowed HTML for mail body.
+	 *
+	 * @static
+	 * @access  public
+	 * @return array
+	 */
+	public static function get_allowed_mail_HTML() {
+		return array(
+			'a' => array(
+				'alt'    => array(),
+				'class'  => array(),
+				'coords' => array(),
+				'href'   => array(),
+				'id'     => array(),
+				'name'   => array(),
+				'shape'  => array(),
+				'style'  => array(),
+				'target' => array(),
+				'title'  => array(),
+			),
+			'b' => array(
+				'class' => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'body' => array(),
+			'br' => array(
+				'class' => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'big' => array(
+				'class' => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'blockquote' => array(
+				'class' => array(),
+				'id'    => array(),
+				'style' => array(),
+				'title' => array(),
+			),
+			'caption' => array(
+				'class' => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'code' => array(
+				'class' => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'del' => array(
+				'class' => array(),
+				'id'    => array(),
+				'style' => array(),
+				'title' => array(),
+			),
+			'div' => array(
+				'align' => array(),
+				'class' => array(),
+				'dir'   => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'dt' => array(
+				'class' => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'dd' => array(
+				'class' => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'font' => array(
+				'class' => array(),
+				'color' => array(),
+				'face'  => array(),
+				'id'    => array(),
+				'size'  => array(),
+				'style' => array(),
+			),
+			'h1' => array(
+				'align' => array(),
+				'class' => array(),
+				'dir'   => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'h2' => array(
+				'align' => array(),
+				'class' => array(),
+				'dir'   => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'h3' => array(
+				'align' => array(),
+				'class' => array(),
+				'dir'   => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'h4' => array(
+				'align' => array(),
+				'class' => array(),
+				'dir'   => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'h5' => array(
+				'align' => array(),
+				'class' => array(),
+				'dir'   => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'h6' => array(
+				'align' => array(),
+				'class' => array(),
+				'dir'   => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'head' => array(),
+			'hr' => array(
+				'align'   => array(),
+				'size'    => array(),
+				'width'   => array(),
+			),
+			'html' => array(),
+			'i' => array(
+				'class' => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'img'  => array(
+				'align'  => array(),
+				'border' => array(),
+				'class'  => array(),
+				'height' => array(),
+				'hspace' => array(),
+				'id'     => array(),
+				'src'    => array(),
+				'style'  => array(),
+				'usemap' => array(),
+				'vspace' => array(),
+				'width'  => array(),
+			),
+			'ins' => array(
+				'class' => array(),
+				'id'    => array(),
+				'style' => array(),
+				'title' => array(),
+			),
+			'li' => array(
+				'class' => array(),
+				'dir'   => array(),
+				'id'    => array(),
+				'style' => array(),
+				'type'  => array(),
+			),
+			'ol' => array(
+				'class' => array(),
+				'dir'   => array(),
+				'id'    => array(),
+				'style' => array(),
+				'type'  => array(),
+			),
+			'meta' => array(
+				'content' => array(),
+				'name' => array(),
+				'http-equiv' => array(),
+			),
+			'p' => array(
+				'align' => array(),
+				'class' => array(),
+				'dir'   => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'span' => array(
+				'class' => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'small' => array(
+				'class' => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'strong' => array(
+				'class' => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'style' => array(
+				'type' => array(),
+			),
+			'table' => array(
+				'align'      => array(),
+				'bgcolor'    => array(),
+				'border'     => array(),
+				'cellpadding' => array(),
+				'cellspacing' => array(),
+				'class'      => array(),
+				'dir'        => array(),
+				'frame'      => array(),
+				'id'         => array(),
+				'rules'      => array(),
+				'style'      => array(),
+				'width'      => array(),
+			),
+			'tbody' => array(
+				'align'   => array(),
+				'class'   => array(),
+				'id'      => array(),
+				'style'   => array(),
+				'valign'  => array(),
+			),
+			'td' => array(
+				'abbr'      => array(),
+				'align'     => array(),
+				'bgcolor'   => array(),
+				'class'     => array(),
+				'colspan'   => array(),
+				'dir'       => array(),
+				'height'    => array(),
+				'id'        => array(),
+				'lang'      => array(),
+				'rowspan'   => array(),
+				'scope'     => array(),
+				'style'     => array(),
+				'valign'    => array(),
+				'width'     => array(),
+			),
+			'tfoot' => array(
+				'align'   => array(),
+				'class'   => array(),
+				'id'      => array(),
+				'style'   => array(),
+				'valign'  => array(),
+			),
+			'th' => array(
+				'abbr'       => array(),
+				'align'      => array(),
+				'background' => array(),
+				'bgcolor'    => array(),
+				'class'      => array(),
+				'colspan'    => array(),
+				'dir'        => array(),
+				'height'     => array(),
+				'id'         => array(),
+				'lang'       => array(),
+				'scope'      => array(),
+				'style'      => array(),
+				'valign'     => array(),
+				'width'      => array(),
+			),
+			'thead' => array(
+				'align'   => array(),
+				'class'   => array(),
+				'id'      => array(),
+				'style'   => array(),
+				'valign'  => array(),
+			),
+			'tr' => array(
+				'align'   => array(),
+				'bgcolor' => array(),
+				'class'   => array(),
+				'dir'     => array(),
+				'id'      => array(),
+				'style'   => array(),
+				'valign'  => array(),
+			),
+			'u' => array(
+				'class' => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
+			'ul' => array(
+				'class' => array(),
+				'dir'   => array(),
+				'id'    => array(),
+				'style' => array(),
+			),
 		);
 	}
 
