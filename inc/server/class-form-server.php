@@ -341,29 +341,20 @@ class Form_Server {
 	public function send_autoresponder( $form_data ) {
 		$res = new Form_Data_Response();
 
-		$to            = $this->get_email_from_form_input( $form_data );
-		$from          = sanitize_email( get_site_option( 'admin_email' ) );
-		$autoresponder = $form_data->get_form_options()->get_autoresponder();
-
-		if ( $form_data->payload_has_field( 'formOption' ) ) {
-			$option_name = $form_data->get_payload_field( 'formOption' );
-			$form_emails = get_option( 'themeisle_blocks_form_emails' );
-
-			foreach ( $form_emails as $form ) {
-				if ( isset( $form['form'] ) && $form['form'] === $option_name && isset( $form['email'] ) && '' !== $form['email'] ) {
-					$from = sanitize_email( $form['email'] );
-				}
-			}
-
-			if ( empty( $to ) ) {
-				$from = sanitize_email( get_site_option( 'admin_email' ) );
-			}
+		$to = $this->get_email_from_form_input( $form_data );
+		if ( empty( $to ) ) {
+			$res->set_code( Form_Data_Response::ERROR_EMAIL_NOT_SEND );
+			return $res->build_response();
 		}
 
-		$headers = array( 'Content-Type: text/html', 'From: ' . $from );
+		$headers[] = 'Content-Type: text/html';
+		$headers[] = 'From: ' . ( $form_data->get_form_options()->has_from_name() ? sanitize_text_field( $form_data->get_form_options()->get_from_name() ) : get_bloginfo( 'name', 'display' ) );
+
+		$autoresponder = $form_data->get_form_options()->get_autoresponder();
+		$body          = $this->replace_magic_tags( $autoresponder['body'], $form_data->get_form_inputs() );
 
 		// phpcs:ignore
-		$res->set_success( wp_mail( $to, $autoresponder['subject'], $autoresponder['body'], $headers ) );
+		$res->set_success( wp_mail( $to, $autoresponder['subject'], $body, $headers ) );
 		if ( $res->is_success() ) {
 			$res->set_code( Form_Data_Response::SUCCESS_EMAIL_SEND );
 		} else {
@@ -442,6 +433,36 @@ class Form_Server {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Replace magic tags with the values from the form inputs.
+	 *
+	 * @param string $content The content to replace the magic tags.
+	 * @param array  $form_inputs The form inputs.
+	 *
+	 * @return string
+	 */
+	public function replace_magic_tags( $content, $form_inputs ) {
+		$magic_tags = array_map(
+			function( $field ) {
+				return array(
+					$field['id'] => $field['value'],
+				);
+			},
+			array_filter(
+				$form_inputs,
+				function( $field ) {
+					return isset( $field['id'] );
+				}
+			)
+		);
+
+		foreach ( $magic_tags as $key => $value ) {
+			$content = str_replace( '%' . $key . '%', $value, $content );
+		}
+
+		return $content;
 	}
 
 	/**

@@ -295,7 +295,7 @@ class Options_Settings {
 								$item['bcc'] = sanitize_text_field( $item['bcc'] );
 							}
 							if ( isset( $item['autoresponder']['body'] ) ) {
-								$item['autoresponder']['body'] = wp_kses( $item['autoresponder']['body'], $this::get_allowed_mail_HTML() );
+								$item['autoresponder']['body'] = wp_kses( $item['autoresponder']['body'], $this::get_allowed_mail_html() );
 							}
 							if ( isset( $item['autoresponder']['subject'] ) ) {
 								$item['autoresponder']['subject'] = sanitize_text_field( $item['autoresponder']['subject'] );
@@ -487,9 +487,9 @@ class Options_Settings {
 	 * @access  public
 	 * @return array
 	 */
-	public static function get_allowed_mail_HTML() {
+	public static function get_allowed_mail_html() {
 		return array(
-			'a' => array(
+			'a'          => array(
 				'alt'    => array(),
 				'class'  => array(),
 				'coords' => array(),
@@ -501,18 +501,18 @@ class Options_Settings {
 				'target' => array(),
 				'title'  => array(),
 			),
-			'b' => array(
+			'b'          => array(
 				'class' => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'body' => array(),
-			'br' => array(
+			'body'       => array(),
+			'br'         => array(
 				'class' => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'big' => array(
+			'big'        => array(
 				'class' => array(),
 				'id'    => array(),
 				'style' => array(),
@@ -523,40 +523,40 @@ class Options_Settings {
 				'style' => array(),
 				'title' => array(),
 			),
-			'caption' => array(
+			'caption'    => array(
 				'class' => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'code' => array(
+			'code'       => array(
 				'class' => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'del' => array(
+			'del'        => array(
 				'class' => array(),
 				'id'    => array(),
 				'style' => array(),
 				'title' => array(),
 			),
-			'div' => array(
+			'div'        => array(
 				'align' => array(),
 				'class' => array(),
 				'dir'   => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'dt' => array(
+			'dt'         => array(
 				'class' => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'dd' => array(
+			'dd'         => array(
 				'class' => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'font' => array(
+			'font'       => array(
 				'class' => array(),
 				'color' => array(),
 				'face'  => array(),
@@ -564,61 +564,61 @@ class Options_Settings {
 				'size'  => array(),
 				'style' => array(),
 			),
-			'h1' => array(
+			'h1'         => array(
 				'align' => array(),
 				'class' => array(),
 				'dir'   => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'h2' => array(
+			'h2'         => array(
 				'align' => array(),
 				'class' => array(),
 				'dir'   => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'h3' => array(
+			'h3'         => array(
 				'align' => array(),
 				'class' => array(),
 				'dir'   => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'h4' => array(
+			'h4'         => array(
 				'align' => array(),
 				'class' => array(),
 				'dir'   => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'h5' => array(
+			'h5'         => array(
 				'align' => array(),
 				'class' => array(),
 				'dir'   => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'h6' => array(
+			'h6'         => array(
 				'align' => array(),
 				'class' => array(),
 				'dir'   => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'head' => array(),
-			'hr' => array(
-				'align'   => array(),
-				'size'    => array(),
-				'width'   => array(),
+			'head'       => array(),
+			'hr'         => array(
+				'align' => array(),
+				'size'  => array(),
+				'width' => array(),
 			),
-			'html' => array(),
-			'i' => array(
+			'html'       => array(),
+			'i'          => array(
 				'class' => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'img'  => array(
+			'img'        => array(
 				'align'  => array(),
 				'border' => array(),
 				'class'  => array(),
@@ -631,101 +631,101 @@ class Options_Settings {
 				'vspace' => array(),
 				'width'  => array(),
 			),
-			'ins' => array(
+			'ins'        => array(
 				'class' => array(),
 				'id'    => array(),
 				'style' => array(),
 				'title' => array(),
 			),
-			'li' => array(
+			'li'         => array(
 				'class' => array(),
 				'dir'   => array(),
 				'id'    => array(),
 				'style' => array(),
 				'type'  => array(),
 			),
-			'ol' => array(
+			'ol'         => array(
 				'class' => array(),
 				'dir'   => array(),
 				'id'    => array(),
 				'style' => array(),
 				'type'  => array(),
 			),
-			'meta' => array(
-				'content' => array(),
-				'name' => array(),
+			'meta'       => array(
+				'content'    => array(),
+				'name'       => array(),
 				'http-equiv' => array(),
 			),
-			'p' => array(
+			'p'          => array(
 				'align' => array(),
 				'class' => array(),
 				'dir'   => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'span' => array(
+			'span'       => array(
 				'class' => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'small' => array(
+			'small'      => array(
 				'class' => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'strong' => array(
+			'strong'     => array(
 				'class' => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'style' => array(
+			'style'      => array(
 				'type' => array(),
 			),
-			'table' => array(
-				'align'      => array(),
-				'bgcolor'    => array(),
-				'border'     => array(),
+			'table'      => array(
+				'align'       => array(),
+				'bgcolor'     => array(),
+				'border'      => array(),
 				'cellpadding' => array(),
 				'cellspacing' => array(),
-				'class'      => array(),
-				'dir'        => array(),
-				'frame'      => array(),
-				'id'         => array(),
-				'rules'      => array(),
-				'style'      => array(),
-				'width'      => array(),
+				'class'       => array(),
+				'dir'         => array(),
+				'frame'       => array(),
+				'id'          => array(),
+				'rules'       => array(),
+				'style'       => array(),
+				'width'       => array(),
 			),
-			'tbody' => array(
+			'tbody'      => array(
+				'align'  => array(),
+				'class'  => array(),
+				'id'     => array(),
+				'style'  => array(),
+				'valign' => array(),
+			),
+			'td'         => array(
+				'abbr'    => array(),
 				'align'   => array(),
+				'bgcolor' => array(),
 				'class'   => array(),
+				'colspan' => array(),
+				'dir'     => array(),
+				'height'  => array(),
 				'id'      => array(),
+				'lang'    => array(),
+				'rowspan' => array(),
+				'scope'   => array(),
 				'style'   => array(),
 				'valign'  => array(),
+				'width'   => array(),
 			),
-			'td' => array(
-				'abbr'      => array(),
-				'align'     => array(),
-				'bgcolor'   => array(),
-				'class'     => array(),
-				'colspan'   => array(),
-				'dir'       => array(),
-				'height'    => array(),
-				'id'        => array(),
-				'lang'      => array(),
-				'rowspan'   => array(),
-				'scope'     => array(),
-				'style'     => array(),
-				'valign'    => array(),
-				'width'     => array(),
+			'tfoot'      => array(
+				'align'  => array(),
+				'class'  => array(),
+				'id'     => array(),
+				'style'  => array(),
+				'valign' => array(),
 			),
-			'tfoot' => array(
-				'align'   => array(),
-				'class'   => array(),
-				'id'      => array(),
-				'style'   => array(),
-				'valign'  => array(),
-			),
-			'th' => array(
+			'th'         => array(
 				'abbr'       => array(),
 				'align'      => array(),
 				'background' => array(),
@@ -741,14 +741,14 @@ class Options_Settings {
 				'valign'     => array(),
 				'width'      => array(),
 			),
-			'thead' => array(
-				'align'   => array(),
-				'class'   => array(),
-				'id'      => array(),
-				'style'   => array(),
-				'valign'  => array(),
+			'thead'      => array(
+				'align'  => array(),
+				'class'  => array(),
+				'id'     => array(),
+				'style'  => array(),
+				'valign' => array(),
 			),
-			'tr' => array(
+			'tr'         => array(
 				'align'   => array(),
 				'bgcolor' => array(),
 				'class'   => array(),
@@ -757,12 +757,12 @@ class Options_Settings {
 				'style'   => array(),
 				'valign'  => array(),
 			),
-			'u' => array(
+			'u'          => array(
 				'class' => array(),
 				'id'    => array(),
 				'style' => array(),
 			),
-			'ul' => array(
+			'ul'         => array(
 				'class' => array(),
 				'dir'   => array(),
 				'id'    => array(),
