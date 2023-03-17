@@ -84,7 +84,7 @@ class Dynamic_Content {
 		if ( ! isset( $data['default'] ) ) {
 			$data['default'] = '';
 		}
-	
+
 		$data = $this->apply_data( $data, true );
 
 		return $data;
@@ -97,7 +97,7 @@ class Dynamic_Content {
 	 *
 	 * @return string
 	 */
-	public function apply_dynamic_link( $content ) { 
+	public function apply_dynamic_link( $content ) {
 		if ( false === strpos( $content, '<o-dynamic-link' ) ) {
 			return $content;
 		}
@@ -371,7 +371,7 @@ class Dynamic_Content {
 	 * @return string
 	 */
 	public function get_content( $data ) {
-		$content = get_the_content( $data['context'] );
+		$content = apply_filters( 'the_content', str_replace( ']]>', ']]&gt;', get_the_content( $data['context'] ) ) );
 		return wp_kses_post( $content );
 	}
 
@@ -598,7 +598,7 @@ class Dynamic_Content {
 
 		$data = explode( '#otterDynamicLink', $data[0] );
 		$data = self::query_string_to_array( $data[1] );
-	
+
 		$link = $this->get_link( $data );
 
 		if ( empty( $link ) ) {
