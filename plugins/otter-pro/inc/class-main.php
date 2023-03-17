@@ -101,8 +101,7 @@ class Main {
 			'product-tabs',
 			'product-title',
 			'product-upsells',
-			'review-comparison',
-			'form-file',
+			'review-comparison'
 		);
 
 		$blocks = array_merge( $blocks, $pro_blocks );
