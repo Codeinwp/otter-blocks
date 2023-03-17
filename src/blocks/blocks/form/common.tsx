@@ -43,7 +43,7 @@ export const fieldTypesOptions = [
 		value: 'email'
 	},
 	{
-		label: __( 'File (Pro)', 'otter-blocks' ),
+		label: ( Boolean( window.otterPro?.isActive ) && ! Boolean( window.otterPro?.isExpired ) ) ? __( 'File', 'otter-blocks' ) : __( 'File (Pro)', 'otter-blocks' ),
 		value: 'file'
 	},
 	{

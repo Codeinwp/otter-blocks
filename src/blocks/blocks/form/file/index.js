@@ -15,6 +15,8 @@ import { omit } from 'lodash';
 import metadata from './block.json';
 import { formFieldIcon as icon } from '../../../helpers/icons.js';
 import edit from './edit.js';
+import Inactive from '../../../../pro/components/inactive';
+import { useBlockProps } from '@wordpress/block-editor';
 
 const { name } = metadata;
 

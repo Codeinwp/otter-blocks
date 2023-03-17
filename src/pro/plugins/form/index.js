@@ -4,6 +4,7 @@ import { Fragment } from '@wordpress/element';
 import { FormTokenField, TextControl, ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
+import { HideFieldLabelToggle } from '../../../blocks/blocks/form/common';
 
 const { Notice } = window.otterComponents;
 
