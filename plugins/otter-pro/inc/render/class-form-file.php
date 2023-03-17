@@ -2,10 +2,10 @@
 /**
  * Form_File_Block
  *
- * @package ThemeIsle\GutenbergBlocks\Render
+ * @package ThemeIsle\OtterPro\Render
  */
-
-namespace ThemeIsle\GutenbergBlocks\Render;
+ 
+namespace ThemeIsle\OtterPro\Render;
 
 use ThemeIsle\GutenbergBlocks\Pro;
 

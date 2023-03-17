@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * WordPress dependencies
  */
@@ -20,11 +22,11 @@ import {
 } from '@wordpress/components';
 import { applyFilters } from '@wordpress/hooks';
 import { Fragment, useContext } from '@wordpress/element';
+import { fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../../../blocks/blocks/form/common';
+import { Notice } from '../../../blocks/components';
+import { setUtm } from '../../../blocks/helpers/helper-functions';
+import { FormContext } from '../../../blocks/blocks/form/edit';
 
-import { fieldTypesOptions, HideFieldLabelToggle, switchFormFieldTo } from '../common';
-import { FormContext } from '../edit';
-import { setUtm } from '../../../helpers/helper-functions';
-import { Notice } from '../../../components';
 
 const ProPreview = ({ attributes }) => {
 
@@ -141,8 +143,16 @@ const Inspector = ({
 					}}
 				/>
 
-				<ProPreview attributes={ attributes } />
+				{
+					( ! window.themeisleGutenberg.hasPro ) ? <ProPreview attributes={ attributes } /> : (
+						applyFilters( 'otter.form.file.inspector', <ProPreview attributes={attributes} />, { attributes: attributes, setAttributes: setAttributes })
+					)
+				}
 
+				<div className="o-fp-wrap">
+					{ applyFilters( 'otter.feedback', '', 'sticky' ) }
+					{ applyFilters( 'otter.poweredBy', '' ) }
+				</div>
 			</PanelBody>
 
 			<PanelColorSettings
@@ -151,7 +161,7 @@ const Inspector = ({
 				colorSettings={ [
 					{
 						value: attributes.labelColor,
-						onChange: () => {},
+						onChange: labelColor => setAttributes({ labelColor }),
 						label: __( 'Label Color', 'otter-blocks' )
 					}
 				] }

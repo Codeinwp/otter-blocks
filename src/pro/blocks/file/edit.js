@@ -19,11 +19,11 @@ import {
  * Internal dependencies
  */
 import metadata from './block.json';
-import { blockInit } from '../../../helpers/block-utility.js';
 import Inspector from './inspector.js';
-import { _cssBlock } from '../../../helpers/helper-functions';
+import { blockInit } from '../../../blocks/helpers/block-utility';
+import { _cssBlock } from '../../../blocks/helpers/helper-functions';
+import useSettings from '../../../blocks/helpers/use-settings';
 import { select } from '@wordpress/data';
-import useSettings from '../../../helpers/use-settings';
 
 
 const { attributes: defaultAttributes } = metadata;
@@ -62,7 +62,7 @@ const Edit = ({
 
 		if ( Boolean( window.themeisleGutenberg?.hasPro ) && attributes.fieldOptionName && 'loaded' === status ) {
 
-			/** @type{import('../common').FieldOption[]} */
+			/** @type{import('../../../blocks/blocks/form/common').FieldOption[]} */
 			const fieldOptions = getOption?.( 'themeisle_blocks_form_fields_option' ) ?? [];
 
 			const fieldIndex = fieldOptions?.findIndex( field => field.fieldOptionName === attributes.fieldOptionName );
