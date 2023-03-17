@@ -203,7 +203,7 @@ const Edit = ({
 		});
 
 		if ( null !== sliderRef.current ) {
-			sliderRef.current.destroy();
+			sliderRef.current.destroy?.();
 		}
 
 		initSlider();
@@ -211,14 +211,14 @@ const Edit = ({
 
 	const changePerView = value => {
 		setAttributes({ perView: Number( value ) });
-		sliderRef.current.update({ perView: Number( value ) });
+		sliderRef?.current?.update?.({ perView: Number( value ) });
 		if ( 1 === value ) {
 			setAttributes({
 				gap: 0,
 				peek: 0
 			});
 
-			sliderRef.current.update({
+			sliderRef?.current?.update?.({
 				gap: 0,
 				peek: 0
 			});
